@@ -1,0 +1,59 @@
+@main("HTML-Test") {
+
+<div class="row row-eq-height">
+  <div class="col-sm-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">Aufgabenstellung</div>
+      <div class="panel-body">Bestimmen Sie...</div>
+    </div>
+  </div>
+
+  <div class="col-sm-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">Nachrichten</div>
+      <div class="panel-body">
+        <textarea class="form-control" rows="8" id="console"></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+
+  <div class="col-sm-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">Lernerl&ouml;sung</div>
+      <div class="panel-body">
+        <textarea class="form-control" onchange="style()" rows="25" id="lernerlsg">
+        </textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">Feedback</div>
+      <div class="panel-body">
+        <div class="panel-group">
+          <div class="panel panel-success">
+            <div class="panel-heading">Kompilierung</div>
+            <div class="panel-body">HTML konnte erfolgreich kompiliert werden.</div>
+          </div>
+          <div class="panel panel-danger">
+            <div class="panel-heading">Fehler in Zeile 5</div>
+            <div class="panel-body">Beispielfehler in Zeile 5...</div>
+          </div>
+          <div class="panel panel-danger">
+            <div class="panel-heading">Fehler in Zeile 6</div>
+            <div class="panel-body">Beispielfehler in Zeile 6...</div>
+          </div>
+        </div>
+        <div>
+          <input class="form-control" type="reset" /> <input class="form-control" type="submit" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+}

@@ -1,0 +1,96 @@
+@(exercise: model.html.HtmlExercise) @main("HTML-Test") {
+
+<script type="text/javascript">
+  if("WebSocket" in window) {
+    // Let us open a web socket
+    var ws = new WebSocket("@routes.HTML.getWebSocket().webSocketURL(request)");
+    
+    ws.onopen = function() {
+      // ws.send("Websocket opened!");
+    };
+    
+    ws.onmessage = function(evt) {
+      console_write(evt.data);
+    };
+    
+    ws.onclose = function() {
+      console_write("Websocket closed!");
+    };
+  }
+
+  function console_write(msg) {
+    var console = document.getElementById("feedBackDiv");
+    if(msg == "Keine Fehler") {
+      console.innerHTML = "";
+      var div = document.createElement("div");
+      var att = document.createAttribute("class");
+      att.value = "alert alert-success";
+      div.setAttributeNode(att);
+      div.appendChild(document.createTextNode(msg));
+      console.appendChild(div);
+    } else {
+      console.innerHTML = "";
+      var div = document.createElement("div");
+      var att = document.createAttribute("class");
+      att.value = "alert alert-danger";
+      div.setAttributeNode(att);
+      var errors = msg.split("\n");
+      for(err in errors) {
+        paragraph = document.createElement("p");
+        paragraph.innerHTML = errors[err];
+        div.appendChild(paragraph);
+      }
+      console.appendChild(div);
+    }
+  }
+
+  function send() {
+    var text = document.getElementById("lernerlsg").value;
+    ws.send(text);
+  }
+</script>
+
+<div class="row-eq-height">
+
+  <div class="col-sm-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">Lernerl&ouml;sung</div>
+      <div class="panel-body">
+        <div>
+          <textarea class="form-control" onchange="style()" rows="25" id="lernerlsg">@exercise.getDefaultSolution()
+        </textarea>
+        </div>
+        <div class="btn-group btn-group-justified">
+          <div class="btn-group">
+            <button type="button" class="btn btn-default">Zur&uuml;cksetzen</button>
+          </div>
+          <div class="btn-group">
+            <button type="button" onclick="send();" class="btn btn-default">L&ouml;sung pr&uuml;fen</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">Aufgabenstellung</div>
+      <div class="panel-body">
+        @for(line <- exercise.getExerciseTextInLines) {
+        <p>@line</p>
+        } @for(subtask <- exercise.getTasks) {
+        <p>
+          <span class="glyphicon glyphicon-remove"></span> @subtask
+        </p>
+        }
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">Feedback</div>
+      <div class="panel-body" id="feedBackDiv"></div>
+    </div>
+  </div>
+
+</div>
+}
