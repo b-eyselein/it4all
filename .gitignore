@@ -6,3 +6,10 @@ target
 /.project
 /.settings
 /RUNNING_PID
+
+# Own ignores
+project/project
+project/target
+tmp
+dist
+.cache
