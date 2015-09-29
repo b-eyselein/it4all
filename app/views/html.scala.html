@@ -1,18 +1,21 @@
 @(exercise: model.html.HtmlExercise) @main("HTML-Test") {
 
+<script src="@routes.Assets.versioned("javascripts/src-min/ace.js")"></script>
+
+
 <script type="text/javascript">
   if("WebSocket" in window) {
     // Let us open a web socket
     var ws = new WebSocket("@routes.HTML.getWebSocket().webSocketURL(request)");
-    
+
     ws.onopen = function() {
       // ws.send("Websocket opened!");
     };
-    
+
     ws.onmessage = function(evt) {
       console_write(evt.data);
     };
-    
+
     ws.onclose = function() {
       console_write("Websocket closed!");
     };
@@ -45,7 +48,7 @@
   }
 
   function send() {
-    var text = document.getElementById("lernerlsg").value;
+    var text = document.getElementById("editor").value;
     ws.send(text);
   }
 </script>
@@ -53,13 +56,20 @@
 <div class="row-eq-height">
 
   <div class="col-sm-6">
+
     <div class="panel panel-default">
       <div class="panel-heading">Lernerl&ouml;sung</div>
       <div class="panel-body">
-        <div>
-          <textarea class="form-control" onchange="style()" rows="25" id="lernerlsg">@exercise.getDefaultSolution()
-        </textarea>
-        </div>
+
+        <div class="form-control" style="height: 500px;" id="editor">@exercise.getDefaultSolution</div>
+          <script>
+            var editor = ace.edit("editor");
+            editor.setTheme("ace/theme/eclipse");
+            editor.getSession().setMode("ace/mode/html");
+            editor.getSession().setTabSize(2);
+            document.getElementById('editor').style.fontSize='16px';
+          </script>
+
         <div class="btn-group btn-group-justified">
           <div class="btn-group">
             <button type="button" class="btn btn-default">Zur&uuml;cksetzen</button>
