@@ -5,8 +5,10 @@ import play.mvc.Result;
 import views.html.index;
 
 public class Application extends Controller {
-  
+
   public Result index() {
-    return ok(index.render());
+    //TODO: temporary redirect until site is established
+    return redirect("/html");
+    //return ok(index.render());
   }
 }

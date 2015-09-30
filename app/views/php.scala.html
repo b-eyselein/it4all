@@ -1,4 +1,4 @@
-@(exercise: model.html.HtmlExercise) @main("HTML-Test") {
+@main("HTML-Test") {
 
 <script src="@routes.Assets.versioned("javascripts/src-min/ace.js")"></script>
 
@@ -7,15 +7,15 @@
   if("WebSocket" in window) {
     // Let us open a web socket
     var ws = new WebSocket("@routes.HTML.getWebSocket().webSocketURL(request)");
-    
+
     ws.onopen = function() {
       // ws.send("Websocket opened!");
     };
-    
+
     ws.onmessage = function(evt) {
       console_write(evt.data);
     };
-    
+
     ws.onclose = function() {
       console_write("Websocket closed!");
     };
@@ -57,20 +57,18 @@
 
   <div class="col-sm-6">
 
-
-
-
-
-    <script>
-          var editor = ace.edit("editor");
-          editor.setTheme("ace/theme/monokai");
-          editor.getSession().setMode("ace/mode/javascript");
-        </script>
-
     <div class="panel panel-default">
       <div class="panel-heading">Lernerl&ouml;sung</div>
       <div class="panel-body">
-        <div class="panel" id="editor">function foo(items) { var x = "All this is syntax highlighted"; return x; }</div>
+
+        <div class="form-control" style="height: 500px;" id="editor">@@exercise.getDefaultSolution</div>
+          <script>
+            var editor = ace.edit("editor");
+            editor.setTheme("ace/theme/eclipse");
+            editor.getSession().setMode("ace/mode/php");
+            editor.getSession().setTabSize(2);
+            document.getElementById('editor').style.fontSize='16px';
+          </script>
 
         <div class="btn-group btn-group-justified">
           <div class="btn-group">
@@ -88,13 +86,13 @@
     <div class="panel panel-default">
       <div class="panel-heading">Aufgabenstellung</div>
       <div class="panel-body">
-        @for(line <- exercise.getExerciseTextInLines) {
-        <p>@line</p>
-        } @for(subtask <- exercise.getTasks) {
+      <!-- @@for(line <- exercise.getExerciseTextInLines) {
+        <p>@@line</p>
+      } @@for(subtask <- exercise.getTasks) {
         <p>
-          <span class="glyphicon glyphicon-remove"></span> @subtask
+          <span class="glyphicon glyphicon-remove"></span> @@subtask
         </p>
-        }
+      } -->
       </div>
     </div>
 

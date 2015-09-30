@@ -13,3 +13,4 @@ project/target
 tmp
 dist
 .cache
+bin
