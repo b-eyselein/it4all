@@ -7,10 +7,10 @@ GET     /                           controllers.Application.index()
 
 # HTML
 GET     /html                       controllers.HTML.html()
-GET		  /socket					            controllers.HTML.getWebSocket()
+GET		/socket					    controllers.HTML.getWebSocket()
 
 # SQL
-GET	   /sql						              controllers.SQL.index()
+GET	   /sql						    controllers.SQL.index()
 
 # PHP
 GET    /php                         controllers.PHP.index()
