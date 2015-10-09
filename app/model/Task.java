@@ -1,28 +1,18 @@
 package model;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 
-public class Task {
+import model.html.HtmlExercise;
+
+import com.avaje.ebean.Model;
+
+@Entity
+public class Task extends Model {
+
+  @ManyToOne
+  public HtmlExercise exercise;
   
-  private String shortDesc;
-  private int pts;
-  
-  public Task(String shortDescription, int points) {
-    shortDesc = shortDescription;
-    pts = points;
-  }
-  
-  public String getShortDescription() {
-    return shortDesc;
-  }
-  
-  public int getPoints() {
-    return pts;
-  }
-  
-  public String toString() {
-    if(pts == 1)
-      return shortDesc + " (1 Punkt)";
-    else
-      return shortDesc + " (" + pts + " Punkte)";
-  }
+  public String taskDescription;
+  public int pts;
   
 }

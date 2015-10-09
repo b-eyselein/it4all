@@ -3,14 +3,30 @@
 
 # --- !Ups
 
-create table user (
-  id                        bigint not null,
-  name                      varchar(255),
-  constraint pk_user primary key (id))
+create table html_exercise (
+  id                        integer not null,
+  exercise_text             varchar(255),
+  default_solution          varchar(255),
+  constraint pk_html_exercise primary key (id))
 ;
 
-create sequence user_seq;
+create table student (
+  name                      varchar(255) not null,
+  constraint pk_student primary key (name))
+;
 
+create table task (
+  exercise_id               integer,
+  task_description          varchar(255),
+  pts                       integer)
+;
+
+create sequence html_exercise_seq;
+
+create sequence student_seq;
+
+alter table task add constraint fk_task_exercise_1 foreign key (exercise_id) references html_exercise (id) on delete restrict on update restrict;
+create index ix_task_exercise_1 on task (exercise_id);
 
 
 
@@ -18,9 +34,15 @@ create sequence user_seq;
 
 SET REFERENTIAL_INTEGRITY FALSE;
 
-drop table if exists user;
+drop table if exists html_exercise;
+
+drop table if exists student;
+
+drop table if exists task;
 
 SET REFERENTIAL_INTEGRITY TRUE;
 
-drop sequence if exists user_seq;
+drop sequence if exists html_exercise_seq;
+
+drop sequence if exists student_seq;
 

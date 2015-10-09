@@ -5,3 +5,19 @@ body {
 textarea {
 	resize: none;
 }
+
+.row-eq-height {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+}
+
+.full {
+	height: inherit;
+}
+
+body, html, .full {
+	height: 100%;
+	border: 1px solid grey;
+}

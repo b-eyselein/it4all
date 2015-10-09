@@ -5,9 +5,15 @@
 # Home page
 GET     /                           controllers.Application.index()
 
+# Login && Logout
+GET		/login						controllers.Application.login()
+POST	/login						controllers.Application.authenticate()
+GET		/logout						controllers.Application.logout()
+
 # HTML
-GET     /html                       controllers.HTML.html()
-GET		/socket					    controllers.HTML.getWebSocket()
+GET     /html                       controllers.HTML.html(exercise: Int ?= -1)
+GET		/html/solution/:snr			controllers.HTML.site(snr: String)
+GET		/html/socket			    controllers.HTML.getWebSocket()
 
 # SQL
 GET	   /sql						    controllers.SQL.index()

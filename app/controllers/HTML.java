@@ -1,46 +1,75 @@
 package controllers;
 
-import java.sql.Connection;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.List;
 
-import model.Task;
+import model.Student;
 import model.html.HtmlCorrector;
 import model.html.HtmlExercise;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.WebSocket;
-import views.html.html;
-import play.db.*;
+import play.twirl.api.Html;
+import views.html.empty;
+import views.html.htmlexercise;
+import views.html.htmloverview;
 
 public class HTML extends Controller {
   
-  HtmlCorrector corrector = new HtmlCorrector(STANDARD_EXERCISE);
-  
-  // TODO: lese Standardaufgabe aus Datei/Datenbank??
-  private static final HtmlExercise STANDARD_EXERCISE = new HtmlExercise(
-      "Erstellen sie eine HTML-Seite mit folgenden Inhalten:",
-      "<!DOCTYPE html>\n<html>\n<head>\n    <title>Titel</title>\n</head>\n<body>\n    Body...\n</body>\n</html>",
-      new Task("Eine geordnete Liste, die eine ungeordnete Liste beinhaltet", 2), new Task(
-          "Einen Link auf eine beliebige Website", 1), new Task("Eine Tabelle 3 x 3 mit Zahlen", 1), new Task(
-          "Ein Eingabefeld, dass nur Eingaben vom Typ \"email\" zulässt", 1), new Task("Ein Bild", 1));
-  
-  public Result html() {
+  public Result html(int exercise) {
+    String userName = session("id");
+    if(userName == null)
+      return redirect("/login");
+    Student user = Student.find.byId(userName);
     
-    Connection connection = DB.getConnection();
-    
-    return ok(html.render(STANDARD_EXERCISE));
+    if(exercise == -1 || HtmlExercise.exerciseFinder.byId(exercise) == null)
+      return ok(htmloverview.render(HtmlExercise.exerciseFinder.all(), user));
+    else
+      return ok(htmlexercise.render(HtmlExercise.exerciseFinder.byId(exercise), user));
+  }
+  
+  public Result site(String snr) {
+    List<String> strings;
+    try {
+      Path path = Paths.get("solutions/html/" + snr + "/file.html");
+      strings = Files.readAllLines(path);
+    } catch (IOException e) {
+      strings = Arrays.asList("Es gab einen Fehler...");
+    }
+    return ok(empty.render(new Html(String.join("\n", strings))));
   }
   
   public WebSocket<String> getWebSocket() {
+    final String user = session("id");
     return WebSocket.whenReady((in, out) -> {
       in.onMessage(solution -> {
-        List<String> errors = corrector.correct(solution);
-        out.write(String.join("\n", errors));
+        saveSolutionForUser(user, solution);
+        // TODO: correct solution
+        HtmlCorrector corrector = new HtmlCorrector();
+        String url = "/html/solution/" + user;
+        out.write(String.join("\n", corrector.correct(url)));
       });
       
       in.onClose(() -> {
-        // TODO: speichere Loesung??
+        // TODO: save current solution (already saved?)
       });
     });
+  }
+  
+  private void saveSolutionForUser(final String user, String solution) {
+    try {
+      Path directory = Paths.get("solutions/html/" + user);
+      if(!Files.exists(directory))
+        Files.createDirectory(directory);
+      Path path = Paths.get(directory.toString(), "/file.html");
+      Files.write(path, Arrays.asList(solution), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+    } catch (IOException e) {
+      // TODO: Konnte Loesung nicht speichern!
+    }
   }
 }

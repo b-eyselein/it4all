@@ -1,0 +1,12 @@
+@(exercises: List[model.html.HtmlExercise], user: model.Student) @main("HTML-Test", user) {
+<div class="container">
+  @for(exer <- exercises) {
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <a href="/html?exercise=@exer.id">Aufgabe @exer.id</a> 
+    </div>
+    <div class="panel-body">@exer.exerciseText</div>
+  </div>
+  }
+</div>
+}

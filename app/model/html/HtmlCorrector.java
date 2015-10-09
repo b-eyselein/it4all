@@ -1,39 +1,43 @@
 package model.html;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import model.Corrector;
-import uniwue.html.parser.Parser;
-import uniwue.html.parser.result.FailureParseResult;
-import uniwue.html.parser.result.HtmlParsingError;
-import uniwue.html.parser.result.ParseResult;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 public class HtmlCorrector extends Corrector<HtmlExercise> {
-  
-  private Parser parser = new Parser();
   
   public HtmlCorrector(HtmlExercise exercise) {
     super(exercise);
   }
   
-  public List<HtmlParsingError> tryParsing(String solution) {
-    ParseResult parseResult = parser.parse(solution);
-    if(parseResult.parseWasSuccessful())
-      return Collections.emptyList();
-    else
-      return ((FailureParseResult) parseResult).getErrors();
+  public HtmlCorrector() {
+    // TODO: Fix, falls nur eine Aufgabe!!!!!
+    super(HtmlExercise.exerciseFinder.byId(1));
   }
   
   @Override
-  public List<String> correct(String solution) {
-    List<HtmlParsingError> errors = tryParsing(solution);
-    if(errors.isEmpty())
-      return Arrays.asList("Keine Fehler");
-    else
-      return errors.stream().map(error -> error.toString()).collect(Collectors.toList());
+  public List<String> correct(String url) {
+    // FIXME: correct with Selenium!!!!
+    WebDriver driver = new HtmlUnitDriver();
+    String newUrl = "http://localhost:9000" + url;
+    driver.get(newUrl);
+    try {
+      WebElement paragraph = driver.findElement(By.tagName("p"));
+      if(paragraph != null)
+        System.out.println("Paragraph gefunden!");
+      else
+        System.out.println("Keinen Paragraph gefunden...");
+    } catch (NoSuchElementException e) {
+      System.out.println("Keinen Paragraph gefunden...");
+    }
+    return Arrays.asList("Keine Fehler");
   }
   
 }
