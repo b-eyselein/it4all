@@ -3,9 +3,14 @@
   @for(exer <- exercises) {
   <div class="panel panel-default">
     <div class="panel-heading">
-      <a href="/html?exercise=@exer.id">Aufgabe @exer.id</a> 
+      <a href="/html?exercise=@exer.id">Aufgabe @exer.id : @exer.exerciseName</a>
     </div>
-    <div class="panel-body">@exer.exerciseText</div>
+    <div class="panel-body">
+      <p>@exer.exerciseText</p>
+      @for(task <- exer.tasks) {
+      <p>- @task.taskDescription</p>
+      }
+    </div>
   </div>
   }
 </div>

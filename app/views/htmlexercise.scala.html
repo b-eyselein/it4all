@@ -103,7 +103,7 @@
           <div class="panel-body">
             <!-- TODO: exerciseText! -->
             <p>@exercise.exerciseText</p>
-            @for(task <- exercise.getAllTasks) {
+            @for(task <- exercise.tasks) {
             <p>- @task.taskDescription</p>
             }
             <hr>

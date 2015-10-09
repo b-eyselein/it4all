@@ -18,19 +18,15 @@ public class HtmlExercise extends Model implements Exercise {
   @Id
   public int id;
   
+  public String exerciseName;
+  
   public String exerciseText;
   public String defaultSolution;
   
-  @OneToMany
+  @OneToMany(mappedBy="exercise")
   public List<Task> tasks;
   
   public static Finder<Integer, HtmlExercise> exerciseFinder = new Finder<Integer, HtmlExercise>(HtmlExercise.class);
-  
-  public List<Task> getAllTasks() {
-    Finder<Integer, Task> taskFinder = new Finder<Integer, Task>(Task.class);
-    return taskFinder.all();
-  }
-  
   
   @Override
   public List<String> getExerciseTextInLines() {
