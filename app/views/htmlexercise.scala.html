@@ -1,4 +1,4 @@
-@(exercise: model.html.HtmlExercise, user: model.Student) @main("HTML-Test", user) {
+@(exercise: model.Exercise, user: model.Student) @main("HTML-Test", user) {
 <script src="@routes.Assets.versioned("javascripts/src-min/ace.js")"></script>
 
 <script type="text/javascript">
@@ -31,17 +31,24 @@
       console.appendChild(div);
     } else {
       console.innerHTML = "";
-      var div = document.createElement("div");
-      var att = document.createAttribute("class");
-      att.value = "alert alert-danger";
-      div.setAttributeNode(att);
       var errors = msg.split("\n");
       for(err in errors) {
+        if(errors[err].lastIndexOf("+") === 0) {
+          var div = document.createElement("div");
+          var att = document.createAttribute("class");
+          att.value = "alert alert-success";
+          div.setAttributeNode(att);
+        } else {
+          var div = document.createElement("div");
+          var att = document.createAttribute("class");
+          att.value = "alert alert-danger";
+          div.setAttributeNode(att);
+        }
         paragraph = document.createElement("p");
         paragraph.innerHTML = errors[err];
         div.appendChild(paragraph);
+        console.appendChild(div);
       }
-      console.appendChild(div);
     }
   }
 
@@ -65,7 +72,7 @@
         <div class="panel panel-default">
           <div class="panel-body">
             <div class="form-control" style="height: 500px;" id="editor">@for(line <- exercise.getDefaultInLines) {@line 
-}           </div>
+}</div>
             <script>
                           var editor = ace.edit("editor");
                           editor.setTheme("ace/theme/eclipse");
@@ -93,7 +100,8 @@
 
   <div class="col-sm-12 col-md-6">
     <ul class="nav nav-tabs">
-      <li class="active"><a data-toggle="tab" href="#aufgabe">Aufgabenstellung</a></li>
+      <li class="active"><a data-toggle="tab" href="#aufgabe">Aufgabenstellung: @exercise.title</a></li>
+      <li><a data-toggle="tab" href="#example">Beispiell&ouml;sung</a></li>
       <li><a data-toggle="tab" href="#feedback">Feedback</a></li>
     </ul>
 
@@ -101,12 +109,25 @@
       <div id="aufgabe" class="tab-pane in active">
         <div class="panel panel-default">
           <div class="panel-body">
-            <!-- TODO: exerciseText! -->
-            <p>@exercise.exerciseText</p>
-            @for(task <- exercise.tasks) {
-            <p>- @task.taskDescription</p>
-            }
+            <p>@exercise.text</p>
+            @for(subExercise <- exercise.subExercises) {
+            <div class="panel panel-default">
+              <div class="panel-heading">@subExercise.id) @subExercise.title (@subExercise.getPoints Punkte)</div>
+              <div class="panel-body">
+                @for(task <- subExercise.tasks) {
+                <p>- @task.taskDescription (@task.pts @if(task.pts == 1) {Punkt} else {Punkte})</p>
+                }
+              </div>
+            </div>
             <hr>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div id="example" class="tab-pane">
+        <div class="panel panel-default">
+          <div class="panel-body">
             <h3>Beispiell&ouml;sung:</h3>
             <img class="img-responsive center-block" src="@routes.Assets.versioned("images/sol1.jpg")" alt="Musterl&ouml;sung" width="640" height="360">
           </div>
@@ -115,7 +136,7 @@
 
       <div id="feedback" class="tab-pane">
         <div class="panel panel-default">
-          <div class="panel-body">
+          <div class="panel-body" id="feedBackDiv">
             <h3>//TODO: Feedback...</h3>
           </div>
         </div>

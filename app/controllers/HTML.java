@@ -8,9 +8,9 @@ import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
 
+import model.Exercise;
 import model.Student;
 import model.html.HtmlCorrector;
-import model.html.HtmlExercise;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.WebSocket;
@@ -27,10 +27,10 @@ public class HTML extends Controller {
       return redirect("/login");
     Student user = Student.find.byId(userName);
     
-    if(exercise == -1 || HtmlExercise.exerciseFinder.byId(exercise) == null)
-      return ok(htmloverview.render(HtmlExercise.exerciseFinder.all(), user));
+    if(exercise == -1 || Exercise.finder.byId(exercise) == null)
+      return ok(htmloverview.render(Exercise.finder.all(), user));
     else
-      return ok(htmlexercise.render(HtmlExercise.exerciseFinder.byId(exercise), user));
+      return ok(htmlexercise.render(Exercise.finder.byId(exercise), user));
   }
   
   public Result site(String snr) {

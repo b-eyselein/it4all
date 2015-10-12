@@ -1,14 +1,14 @@
-@(exercises: List[model.html.HtmlExercise], user: model.Student) @main("HTML-Test", user) {
+@(exercises: List[model.Exercise], user: model.Student) @main("HTML-Test", user) {
 <div class="container">
   @for(exer <- exercises) {
   <div class="panel panel-default">
     <div class="panel-heading">
-      <a href="/html?exercise=@exer.id">Aufgabe @exer.id : @exer.exerciseName</a>
+      <a href="/html?exercise=@exer.id">Aufgabe @exer.id : @exer.title</a>
     </div>
     <div class="panel-body">
-      <p>@exer.exerciseText</p>
-      @for(task <- exer.tasks) {
-      <p>- @task.taskDescription</p>
+      <p>@exer.text</p>
+      @for(subExercise <- exer.subExercises) {
+      <p>@subExercise.id) @subExercise.title</p>
       }
     </div>
   </div>
