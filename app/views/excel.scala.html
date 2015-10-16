@@ -1,5 +1,13 @@
-@main("Excel", student) {
-<div>
-	<h3>Put uplead here...</h3>
+@(student: model.Student) @main("Excel", student) {
+<div class="container">
+  <form action="excel/uploadFile" method="post">
+    <h3>Laden Sie hier ihre Datei hoch...</h3>
+    <p>
+      <input type="file" class="form-control" placeholder="Ihre Excel- / Calc - Datei">
+    </p>
+    <p>
+      <input type="reset"> <input type="submit">
+    </p>
+  </form>
 </div>
 }

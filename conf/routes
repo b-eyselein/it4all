@@ -15,6 +15,10 @@ GET     /html                       controllers.HTML.html(exercise: Int ?= -1)
 GET		/html/solution/:snr			controllers.HTML.site(snr: String)
 GET		/html/socket			    controllers.HTML.getWebSocket()
 
+# Excel
+GET		/excel						controllers.Excel.index()
+POST	/excel/uploadFile			controllers.Excel.upload()
+
 # SQL
 GET	   /sql						    controllers.SQL.index()
 
