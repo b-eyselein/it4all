@@ -13,7 +13,7 @@ public class Task extends Model {
   public int id;
   
   @ManyToOne
-  public SubExercise exercise;
+  public SubExercise subExercise;
   
   public String taskDescription;
   public int pts;
