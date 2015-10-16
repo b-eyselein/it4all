@@ -10,5 +10,5 @@ INSERT INTO sub_exercise (`id`, `title`, `text`, `exercise_id`, `default_solutio
   
 INSERT INTO task (`id`, `exercise_id`, `sub_exercise_id`, `task_Description`, `pts`) VALUES
   (1, 1, 1, 'Einem Eingabefeld für einen Namen (name)', 1),
-  (1, 2, 1, 'Einem Eingabefeld für eine Email (email)', 1),
-  (1, 3, 1, '', 1);
+  (2, 1, 1, 'Einem Eingabefeld für eine Email (email)', 1),
+  (3, 1, 1, 'Test', 1);
