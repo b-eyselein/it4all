@@ -28,7 +28,7 @@ public class SubExercise extends Model {
   
   public String defaultSolution;
   
-  @OneToMany(mappedBy = "exercise")
+  @OneToMany(mappedBy = "subExercise")
   public List<Task> tasks;
   
   public int getPoints() {

@@ -16,8 +16,8 @@ import play.mvc.Result;
 import play.mvc.WebSocket;
 import play.twirl.api.Html;
 import views.html.empty;
-import views.html.htmlexercise;
-import views.html.htmloverview;
+import views.html.html.htmlexercise;
+import views.html.html.htmloverview;
 
 public class HTML extends Controller {
   

@@ -4,7 +4,7 @@
 # --- !Ups
 
 create table exercise (
-  id                        integer not null,
+  id                        integer auto_increment not null,
   title                     varchar(255),
   text                      varchar(255),
   default_solution          varchar(255),
@@ -17,7 +17,7 @@ create table student (
 ;
 
 create table sub_exercise (
-  id                        integer not null,
+  id                        integer auto_increment not null,
   title                     varchar(255),
   text                      varchar(255),
   exercise_id               integer,
@@ -26,47 +26,31 @@ create table sub_exercise (
 ;
 
 create table task (
-  id                        integer not null,
-  exercise_id               integer,
+  id                        integer auto_increment not null,
+  sub_exercise_id           integer,
   task_description          varchar(255),
   pts                       integer,
   constraint pk_task primary key (id))
 ;
 
-create sequence exercise_seq;
-
-create sequence student_seq;
-
-create sequence sub_exercise_seq;
-
-create sequence task_seq;
-
 alter table sub_exercise add constraint fk_sub_exercise_exercise_1 foreign key (exercise_id) references exercise (id) on delete restrict on update restrict;
 create index ix_sub_exercise_exercise_1 on sub_exercise (exercise_id);
-alter table task add constraint fk_task_exercise_2 foreign key (exercise_id) references sub_exercise (id) on delete restrict on update restrict;
-create index ix_task_exercise_2 on task (exercise_id);
+alter table task add constraint fk_task_subExercise_2 foreign key (sub_exercise_id) references sub_exercise (id) on delete restrict on update restrict;
+create index ix_task_subExercise_2 on task (sub_exercise_id);
 
 
 
 # --- !Downs
 
-SET REFERENTIAL_INTEGRITY FALSE;
+SET FOREIGN_KEY_CHECKS=0;
 
-drop table if exists exercise;
+drop table exercise;
 
-drop table if exists student;
+drop table student;
 
-drop table if exists sub_exercise;
+drop table sub_exercise;
 
-drop table if exists task;
+drop table task;
 
-SET REFERENTIAL_INTEGRITY TRUE;
-
-drop sequence if exists exercise_seq;
-
-drop sequence if exists student_seq;
-
-drop sequence if exists sub_exercise_seq;
-
-drop sequence if exists task_seq;
+SET FOREIGN_KEY_CHECKS=1;
 
