@@ -12,8 +12,9 @@ libraryDependencies ++= Seq(
   
   "mysql" % "mysql-connector-java" % "5.1.27",
   
-  // Apache POI for Excel
+  // Apache POI for Excel, ODF Toolkit for Opencalc
   "org.apache.poi" % "poi" % "3.13",
+  "org.apache.odftoolkit" % "simple-odf" % "0.8.1-incubating",
   
   // Selenium for Html Tests
   "org.seleniumhq.selenium" % "selenium-java" % "2.48.1"
