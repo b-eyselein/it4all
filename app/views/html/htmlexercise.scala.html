@@ -114,6 +114,7 @@
             <div class="panel panel-default">
               <div class="panel-heading">@subExercise.id) @subExercise.title (@subExercise.getPoints Punkte)</div>
               <div class="panel-body">
+              <p>@subExercise.text</p>
                 @for(task <- subExercise.tasks) {
                 <p>- @task.taskDescription (@task.pts @if(task.pts == 1) {Punkt} else {Punkte})</p>
                 }

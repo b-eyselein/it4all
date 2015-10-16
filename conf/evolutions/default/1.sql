@@ -21,7 +21,6 @@ create table sub_exercise (
   title                     varchar(255),
   text                      varchar(255),
   exercise_id               integer,
-  default_solution          varchar(255),
   constraint pk_sub_exercise primary key (id))
 ;
 
