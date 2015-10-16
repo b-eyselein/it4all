@@ -14,7 +14,7 @@ libraryDependencies ++= Seq(
   
   // Apache POI for Excel, ODF Toolkit for Opencalc
   "org.apache.poi" % "poi" % "3.13",
-  "org.apache.odftoolkit" % "simple-odf" % "0.8.1-incubating",
+  //"org.apache.odftoolkit" % "simple-odf" % "0.8.1-incubating",
   
   // Selenium for Html Tests
   "org.seleniumhq.selenium" % "selenium-java" % "2.48.1"
