@@ -14,7 +14,8 @@ public class HtmlCorrector {
     LinkedList<ElementResult> result = new LinkedList<ElementResult>();
     
     WebDriver driver = new HtmlUnitDriver();
-    String newUrl = "http://localhost:8000" + solutionUrl;
+    //FIXME: get real port!
+    String newUrl = "http://localhost:9000" + solutionUrl;
     driver.get(newUrl);
     
     result.add(new ElementResult(driver, "input", "name", "type=text", "required=true"));

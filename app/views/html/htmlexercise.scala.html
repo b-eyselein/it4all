@@ -21,34 +21,24 @@
 
   function console_write(msg) {
     var console = document.getElementById("feedBackDiv");
-    if(msg == "Keine Fehler") {
-      console.innerHTML = "";
-      var div = document.createElement("div");
-      var att = document.createAttribute("class");
-      att.value = "alert alert-success";
-      div.setAttributeNode(att);
-      div.appendChild(document.createTextNode(msg));
-      console.appendChild(div);
-    } else {
-      console.innerHTML = "";
-      var errors = msg.split("\n");
-      for(err in errors) {
-        if(errors[err].lastIndexOf("+") === 0) {
-          var div = document.createElement("div");
-          var att = document.createAttribute("class");
-          att.value = "alert alert-success";
-          div.setAttributeNode(att);
-        } else {
-          var div = document.createElement("div");
-          var att = document.createAttribute("class");
-          att.value = "alert alert-danger";
-          div.setAttributeNode(att);
-        }
-        paragraph = document.createElement("p");
-        paragraph.innerHTML = errors[err];
-        div.appendChild(paragraph);
-        console.appendChild(div);
+    console.innerHTML = "";
+    var errors = msg.split("\n");
+    for(err in errors) {
+      if(errors[err].lastIndexOf("+") === 0) {
+        var div = document.createElement("div");
+        var att = document.createAttribute("class");
+        att.value = "alert alert-success";
+        div.setAttributeNode(att);
+      } else {
+        var div = document.createElement("div");
+        var att = document.createAttribute("class");
+        att.value = "alert alert-danger";
+        div.setAttributeNode(att);
       }
+      paragraph = document.createElement("p");
+      paragraph.innerHTML = errors[err];
+      div.appendChild(paragraph);
+      console.appendChild(div);
     }
   }
 
@@ -71,7 +61,7 @@
       <div id="theeditor" class="tab-pane in active">
         <div class="panel panel-default">
           <div class="panel-body">
-            <div class="form-control" style="height: 500px;" id="editor">@for(line <- defaultSolution) {@line 
+            <div class="form-control" style="height: 500px;" id="editor">@for(line <- defaultSolution) {@line
 }</div>
             <script>
                           var editor = ace.edit("editor");
@@ -114,9 +104,12 @@
             <div class="panel panel-default">
               <div class="panel-heading">@subExercise.id) @subExercise.title (@subExercise.getPoints Punkte)</div>
               <div class="panel-body">
-              <p>@subExercise.text</p>
+                <div class="panel-group">@subExercise.text</div>
                 @for(task <- subExercise.tasks) {
-                <p>- @task.taskDescription (@task.pts @if(task.pts == 1) {Punkt} else {Punkte})</p>
+                <div class="panel panel-collapse panel-default">
+                  <div class="panel-heading">- @task.taskDescription (@task.pts @if(task.pts == 1) {Punkt} else {Punkte})</div>
+                  <div class="panel-body">Leerer Panelbody --> Feedback!</div>
+                </div>
                 }
               </div>
             </div>
