@@ -1,10 +1,10 @@
-@(exercise: model.Exercise, user: model.Student) @main("HTML-Test", user) {
+@(exercise: model.Exercise, user: model.Student, defaultSolution: List[String]) @main("HTML-Test", user) {
 <script src="@routes.Assets.versioned("javascripts/src-min/ace.js")"></script>
 
 <script type="text/javascript">
   if("WebSocket" in window) {
     // Let us open a web socket
-    var ws = new WebSocket("@routes.HTML.getWebSocket().webSocketURL(request)");
+    var ws = new WebSocket("@routes.HTML.getWebSocket().webSocketURL(request)?ex=@exercise.id");
     
     ws.onopen = function() {
       // ws.send("Websocket opened!");
@@ -71,7 +71,7 @@
       <div id="theeditor" class="tab-pane in active">
         <div class="panel panel-default">
           <div class="panel-body">
-            <div class="form-control" style="height: 500px;" id="editor">@for(line <- exercise.getDefaultInLines) {@line 
+            <div class="form-control" style="height: 500px;" id="editor">@for(line <- defaultSolution) {@line 
 }</div>
             <script>
                           var editor = ace.edit("editor");
@@ -89,7 +89,7 @@
         <div class="panel panel-default">
           <div class="panel-body">
             <div class="embed-responsive embed-responsive-16by9">
-              <iframe id="iframeid" class="embed-responsive-item" src="/html/solution/@user.name"></iframe>
+              <iframe id="iframeid" class="embed-responsive-item" src="/solutions/@user.name/html/@exercise.id"></iframe>
             </div>
           </div>
         </div>

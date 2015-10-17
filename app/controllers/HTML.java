@@ -21,55 +21,73 @@ import views.html.html.htmloverview;
 
 public class HTML extends Controller {
   
-  public Result html(int exercise) {
+  public Result html(int exerciseNumber) {
     String userName = session("id");
     if(userName == null)
       return redirect("/login");
     Student user = Student.find.byId(userName);
     
-    if(exercise == -1 || Exercise.finder.byId(exercise) == null)
+    if(exerciseNumber == -1 || Exercise.finder.byId(exerciseNumber) == null)
       return ok(htmloverview.render(Exercise.finder.all(), user));
-    else
-      return ok(htmlexercise.render(Exercise.finder.byId(exercise), user));
+    else {
+      Exercise exercise = Exercise.finder.byId(exerciseNumber);
+      List<String> defaultSolution = exercise.getDefaultInLines();
+      try {
+        Path directory = Paths.get("solutions/" + userName + "/html/");
+        if(!Files.exists(directory) || !Files.isDirectory(directory)) {
+          Files.createDirectory(directory);
+        }
+        Path file = Paths.get(directory.toString(), exerciseNumber + ".html");
+        if(!Files.exists(file) || !Files.isRegularFile(file)) {
+          try {
+            Files.write(file, exercise.getDefaultInLines(), StandardOpenOption.CREATE,
+                StandardOpenOption.TRUNCATE_EXISTING);
+          } catch (IOException e) {
+          }
+        } else {
+          defaultSolution = Files.readAllLines(file);
+        }
+      } catch (IOException e) {
+      }
+      return ok(htmlexercise.render(exercise, user, defaultSolution));
+    }
   }
   
-  public Result site(String snr) {
-    List<String> strings;
-    try {
-      Path path = Paths.get("solutions/html/" + snr + "/file.html");
-      strings = Files.readAllLines(path);
-    } catch (IOException e) {
-      strings = Arrays.asList("Es gab einen Fehler...");
+  public Result site(String userName, int exercise) {
+    List<String> strings = Arrays.asList("Es gab einen Fehler...");
+    Path path = Paths.get("solutions/" + userName + "/html/" + exercise + ".html");
+    if(Files.exists(path)) {
+      try {
+        strings = Files.readAllLines(path);
+        for(String s: strings)
+          s.trim();
+      } catch (IOException e) {
+      }
     }
     return ok(empty.render(new Html(String.join("\n", strings))));
   }
   
-  public WebSocket<String> getWebSocket() {
-    final String user = session("id");
+  public WebSocket<String> getWebSocket(int exercise) {
+    final String user = session(Application.SESSION_ID_FIELD);
     return WebSocket.whenReady((in, out) -> {
       in.onMessage(solution -> {
-        saveSolutionForUser(user, solution);
-        // TODO: correct solution
+        saveSolutionForUser(user, solution, exercise);
         HtmlCorrector corrector = new HtmlCorrector();
-        String url = "/html/solution/" + user;
-        out.write(String.join("\n", corrector.correct(url)));
+        String url = "/solutions/" + user + "/html/" + exercise;
+        Exercise exerciseToCorrect = Exercise.finder.byId(exercise);
+        out.write(String.join("\n", corrector.correct(url, exerciseToCorrect)));
       });
       
       in.onClose(() -> {
-        // TODO: save current solution (already saved?)
       });
     });
   }
   
-  private void saveSolutionForUser(final String user, String solution) {
+  private void saveSolutionForUser(final String user, String solution, int exercise) {
     try {
-      Path directory = Paths.get("solutions/html/" + user);
-      if(!Files.exists(directory))
-        Files.createDirectory(directory);
-      Path path = Paths.get(directory.toString(), "/file.html");
-      Files.write(path, Arrays.asList(solution), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+      Path file = Paths.get("solutions/" + user + "/html/" + exercise + ".html");
+      Files.write(file, Arrays.asList(solution), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     } catch (IOException e) {
-      // TODO: Konnte Loesung nicht speichern!
     }
   }
 }

@@ -13,9 +13,4 @@ public class Student extends Model {
   
   public static Finder<String, Student> find = new Finder<String, Student>(Student.class);
   
-  public static Student authenticate(String name, String password) {
-    // TODO Auto-generated method stub
-    return find.byId(name);
-  }
-  
 }

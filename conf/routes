@@ -3,23 +3,24 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index()
+GET     /                           			controllers.Application.index()
 
 # Login && Logout
-GET		/login						controllers.Application.login()
-POST	/login						controllers.Application.authenticate()
-GET		/logout						controllers.Application.logout()
+GET		/login									controllers.Application.login()
+POST	/login									controllers.Application.authenticate()
+GET		/logout									controllers.Application.logout()
+GET		/directlogin							controllers.Application.directlogin(ex: Int ?= -1, snr: String ?= "")
 
 # HTML
-GET     /html                       controllers.HTML.html(exercise: Int ?= -1)
-GET		/html/solution/:snr			controllers.HTML.site(snr: String)
-GET		/html/socket			    controllers.HTML.getWebSocket()
+GET     /html                       			controllers.HTML.html(exercise: Int ?= -1)
+GET		/solutions/:userName/html/:exercise		controllers.HTML.site(userName: String, exercise: Int)
+GET		/html/socket			    			controllers.HTML.getWebSocket(ex: Int ?= -1)
 
 # SQL
-GET	   /sql						    controllers.SQL.index()
+GET	   /sql						    			controllers.SQL.index()
 
 # PHP
-GET    /php                         controllers.PHP.index()
+GET    /php                         			controllers.PHP.index()
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+GET     /assets/*file               			controllers.Assets.versioned(path="/public", file: Asset)
