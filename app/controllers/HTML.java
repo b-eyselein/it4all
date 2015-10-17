@@ -7,9 +7,11 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import model.Exercise;
 import model.Student;
+import model.html.ElementResult;
 import model.html.HtmlCorrector;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -45,7 +47,9 @@ public class HTML extends Controller {
           } catch (IOException e) {
           }
         } else {
-          defaultSolution = Files.readAllLines(file);
+          // FIXME: Trim all lines, filter out empty lines
+          defaultSolution = Files.readAllLines(file).stream().map(line -> line.trim()).filter(line -> !line.isEmpty())
+              .collect(Collectors.toList());
         }
       } catch (IOException e) {
       }
@@ -72,10 +76,11 @@ public class HTML extends Controller {
     return WebSocket.whenReady((in, out) -> {
       in.onMessage(solution -> {
         saveSolutionForUser(user, solution, exercise);
-        HtmlCorrector corrector = new HtmlCorrector();
         String url = "/solutions/" + user + "/html/" + exercise;
         Exercise exerciseToCorrect = Exercise.finder.byId(exercise);
-        out.write(String.join("\n", corrector.correct(url, exerciseToCorrect)));
+        List<ElementResult> result = HtmlCorrector.correct(url, exerciseToCorrect);
+        List<String> strings = result.stream().map(res -> res.toString()).collect(Collectors.toList());
+        out.write(String.join("\n", strings));
       });
       
       in.onClose(() -> {

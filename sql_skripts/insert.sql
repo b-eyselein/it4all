@@ -1,7 +1,7 @@
 INSERT INTO student (`name`) VALUES ('default');
 
 INSERT INTO exercise (`id`, `title`, `text`, `default_solution`) VALUES
-  (1, 'Formulare', 'Sie sollen für eine Website ein Formular erstellen, mit dem sich neue Nutzer registrieren können. Dabei sollen verschiedene Dinge abgefragt werden. Nutzen Sie die in Klammern angegebenen Namen für die Inputfelder, um eine Korrektur zu ermöglichen.',
+  (1, 'Formulare', 'Sie sollen für eine Website ein Formular erstellen, mit dem sich neue Nutzer registrieren können. Dabei sollen verschiedene Dinge abgefragt werden. Nutzen Sie die in Klammern angegebenen Namen für die Attribute name der Inputfelder, um eine Korrektur zu ermöglichen.',
   '<!DOCTYPE html>\n<html>\n<head>\n  <title>Titel</title>\n</head>\n<body>\n  Body...\n</body>\n</html>');
   
 INSERT INTO sub_exercise (`id`, `title`, `text`, `exercise_id`, `default_solution`) VALUES
