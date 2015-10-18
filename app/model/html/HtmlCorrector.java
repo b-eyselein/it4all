@@ -14,20 +14,20 @@ public class HtmlCorrector {
     LinkedList<ElementResult> result = new LinkedList<ElementResult>();
     
     WebDriver driver = new HtmlUnitDriver();
-    //FIXME: get real port!
+    // FIXME: get real port!
     String newUrl = "http://localhost:9000" + solutionUrl;
     driver.get(newUrl);
     
-    result.add(new ElementResult(driver, "input", "name", "type=text", "required=true"));
+    result.add(new ElementResult(driver, "input", "name", 1, 1, 1, "type=text", "required=true"));
     
-    result.add(new ElementResult(driver, "input", "email", "type=email", "required=true"));
+    result.add(new ElementResult(driver, "input", "email", 1, 1, 2, "type=email"));
     
-    result.add(new ElementResult(driver, "input", "passwort", "type=password"));
+    result.add(new ElementResult(driver, "input", "passwort", 1, 1, 3, "type=password", "required=true"));
     
-    for(ElementResult theResult: result)
-      System.out.println(theResult.toString());
-
-    System.out.println();
+    for(ElementResult res: result)
+      System.out.println(res);
+    System.out.println("------------------------------------------------------------------");
+    
     return result;
   }
   

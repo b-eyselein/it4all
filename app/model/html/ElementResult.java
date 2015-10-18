@@ -2,6 +2,7 @@ package model.html;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -14,15 +15,22 @@ public class ElementResult {
   private String tag;
   private String element;
   
+  private int ex, subEx, ts;
+  
   private boolean elementFound;
   
   private List<AttributeResult> attrs = new LinkedList<AttributeResult>();
   
-  public ElementResult(WebDriver driver, String tagName, String elementName, String... attributes) {
+  public ElementResult(WebDriver driver, String tagName, String elementName, int exercise, int subExercise, int task,
+      String... attributes) {
     dri = driver;
     
     tag = tagName;
     element = elementName;
+    
+    ex = exercise;
+    subEx = subExercise;
+    ts = task;
     
     evaluate(attributes);
   }
@@ -54,16 +62,12 @@ public class ElementResult {
   
   @Override
   public String toString() {
-    String ret = "";
-    ret += elementFound ? "+ " : "- ";
-    ret += element + " {\n";
-    for(AttributeResult attResult: attrs) {
-      ret += "\t" + (attResult.isFound() ? "++ " : "-- ");
-      ret += attResult.getAttributeName() + " :: " + attResult.getAttributeValue();
-      ret += "\n";
-    }
-    ret += "}";
+    String ret = (elementFound ? "+ " : "- ") + "(" + ex + "_" + subEx + "_" + ts + ") " + element + " {";
+    List<String> attrResults = attrs.stream()
+        .map(att -> (att.isFound() ? "+" : "-") + att.getAttributeName() + "=" + att.getAttributeValue())
+        .collect(Collectors.toList());
+    
+    ret += String.join(";", attrResults) + "}";
     return ret;
   }
-  
 }
