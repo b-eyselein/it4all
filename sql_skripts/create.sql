@@ -1,7 +1,7 @@
 create table exercise (
   id                        integer primary key auto_increment,
   title                     varchar(255),
-  text                      varchar(500),
+  text                      varchar(1000),
   default_solution          varchar(255));
 
 create table student (
