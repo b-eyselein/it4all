@@ -14,6 +14,7 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.index;
 import views.html.login;
+import static controllers.Util.*;
 
 public class Application extends Controller {
   
@@ -42,10 +43,11 @@ public class Application extends Controller {
       Student newStudent = new Student();
       newStudent.name = userName;
       newStudent.save();
-      Path path = Paths.get("solutions/" + userName);
-      if(!Files.exists(path, LinkOption.NOFOLLOW_LINKS))
+      Path solutionDirectory = getSolDirForUser(userName);
+      if(!Files.exists(solutionDirectory, LinkOption.NOFOLLOW_LINKS))
         try {
-          Files.createDirectory(path);
+        	System.out.println("Creating dir: " + solutionDirectory);
+          Files.createDirectory(solutionDirectory);
         } catch (IOException e) {
         }
     }
