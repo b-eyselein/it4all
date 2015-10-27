@@ -1,4 +1,5 @@
-@(exercise: model.Exercise, user: model.Student, defaultSolution: List[String]) @main("HTML-Test", user) {
+@(exercise: model.Exercise, user: model.Student, defaultSolution: List[String])
+@main("HTML-Test", user) {
 <script src="@routes.Assets.versioned("javascripts/src-min/ace.js")"></script>
 
 <script src="@routes.Assets.versioned("javascripts/feedbackWriter.js")"></script>
@@ -6,19 +7,20 @@
 <script type="text/javascript">
   if("WebSocket" in window) {
     // Let us open a web socket
-    var ws = new WebSocket("@routes.HTML.getWebSocket().webSocketURL(request)?ex=@exercise.id");
+    //var ws = new WebSocket("@@routes.HTML.getWebSocket().webSocketURL(request)");
     
-    ws.onopen = function() {
+    //ws.onopen = function() {
       // ws.send("Websocket opened!");
-    };
+    //};
     
-    ws.onmessage = function(evt) {
-      writeFeedback(evt.data);
-    };
+    //ws.onmessage = function(evt) {
+      //alert(evt.data);
+      //writeFeedback(evt.data);
+    //};
     
-    ws.onclose = function() {
+    //ws.onclose = function() {
       // console_write("Websocket closed!");
-    };
+    //};
   }
 </script>
 
@@ -40,13 +42,22 @@
             <div class="form-control" style="height: 500px;" id="editor">@for(line <- defaultSolution) {@line 
 }</div>
             <script>
-                          var editor = ace.edit("editor");
-                          editor.setTheme("ace/theme/eclipse");
-                          editor.getSession().setMode("ace/mode/html");
-                          editor.getSession().setTabSize(2);
-                          editor.getSession().setUseWrapMode(true);
-                          document.getElementById('editor').style.fontSize = '16px';
-                        </script>
+													var editor = ace
+															.edit("editor");
+													editor
+															.setTheme("ace/theme/eclipse");
+													editor
+															.getSession()
+															.setMode(
+																	"ace/mode/html");
+													editor.getSession()
+															.setTabSize(2);
+													editor.getSession()
+															.setUseWrapMode(
+																	true);
+													document
+															.getElementById('editor').style.fontSize = '16px';
+												</script>
           </div>
         </div>
       </div>

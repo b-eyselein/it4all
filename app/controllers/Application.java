@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import model.Student;
 import play.data.Form;
 import play.mvc.Controller;
@@ -31,7 +29,7 @@ public class Application extends Controller {
     Student student = findOrCreateStudent(snr);
     session().clear();
     session(SESSION_ID_FIELD, student.name);
-    return redirect(routes.HTML.html(exercise));
+    return redirect(routes.HTML.upload());
   }
   
   public Result login() {
@@ -46,7 +44,6 @@ public class Application extends Controller {
       Path solutionDirectory = getSolDirForUser(userName);
       if(!Files.exists(solutionDirectory, LinkOption.NOFOLLOW_LINKS))
         try {
-        	System.out.println("Creating dir: " + solutionDirectory);
           Files.createDirectory(solutionDirectory);
         } catch (IOException e) {
         }

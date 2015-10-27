@@ -1,0 +1,51 @@
+@(user: model.Student, solution: List[model.html.ElementResult]) @main("HTML-Test", user) {
+<script src="@routes.Assets.versioned("javascripts/src-min/ace.js")"></script>
+
+<div class="container">
+  <div class="panel">
+    <h2>Ihr Ergebnis: </h2><br>
+    <p><span class="pull-right"><a href="/html/upload">Neue L&ouml;sung hochladen...</a></p>
+  </div>
+  <div class="panel-group">
+    @for(solLine <- solution) {
+      @if(solLine.isFound) {
+        @if(solLine.allAttributesFound) { 
+          <div class="panel panel-success">
+        } else {
+          <div class="panel panel-info">
+        } 
+      }else {
+        <div class="panel panel-danger">
+      }
+      <div class="panel-heading" data-toggle="collapse" href="#task@solLine.getTask.id">
+        @solLine.getTask.taskDescription (@solLine.getPoints @if(solLine.getPoints == 1) { Punkt} else { Punkte})
+      </div>
+      
+      @if(solLine.isFound && solLine.allAttributesFound) {
+        <div id="task@solLine.getTask.id" class="panel-collapse collapse">
+      } else {
+        <div id="task@solLine.getTask.id" class="panel-collapse collapse in">
+      }
+        <div class="panel-body">
+          @if(solLine.isFound) {
+            @for(attribute <- solLine.getAttributes) {
+          	  @if(attribute.isFound) {
+          	   	<div class="alert alert-success"><span class="glyphicon glyphicon-ok-circle"></span> Attribute @attribute.getAttributeName gefunden.</div>
+              } else {
+          	   	<div class="alert alert-danger"><span class="glyphicon glyphicon-remove-circle"></span> Attribute @attribute.getAttributeName nicht gefunden!</div>
+              }
+            }
+          } else {
+            <div class="alert alert-danger"><span class="glyphicon glyphicon-remove-circle"></span> Element @solLine.getElementName nicht gefunden!</div>
+          }
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+  <div class="panel">
+    <h3>Ihr Ergebnis wurde gespeichert.</h3>
+  </div>
+</div>
+
+}

@@ -4,36 +4,49 @@ import java.util.LinkedList;
 import java.util.List;
 
 import model.Exercise;
+import model.Task;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 public class HtmlCorrector {
-  
+
   public static List<ElementResult> correct(String solutionUrl, Exercise exercise) {
     LinkedList<ElementResult> result = new LinkedList<ElementResult>();
-    
+
     WebDriver driver = new HtmlUnitDriver();
+
     // FIXME: get real port!
-//    String newUrl = "http://localhost:9000/" + solutionUrl;
-    String newUrl = "https://www.it4all.uni-wuerzburg.de" + solutionUrl;
+    String newUrl = "http://localhost:9000/" + solutionUrl;
+    // String newUrl = "https://www.it4all.uni-wuerzburg.de" + solutionUrl;
+
+    exercise.subExercises.get(0).tasks.get(0);
+
     driver.get(newUrl);
-    
-    result.add(new ElementResultByTag(driver, "form", "", 1, 1, 1, "method=post", "action=test"));
-    
-    result.add(new ElementResultByName(driver, "input", "name", 1, 1, 2, "type=text", "required=true"));
-    
-    result.add(new ElementResultByName(driver, "input", "email", 1, 1, 3, "type=email", "required=true"));
-    
-    result.add(new ElementResultByName(driver, "input", "passwort", 1, 1, 4, "type=password", "required=true"));
-    
-    result.add(new ElementResultByName(driver, "input", "agb", 1, 1, 5, "type=checkbox", "required=true"));
-    
-    result.add(new ElementResultByName(driver, "input", "reset", 1, 1, 6, "type=reset"));
-    
-    result.add(new ElementResultByName(driver, "input", "submit", 1, 1, 7, "type=submit"));
-    
+
+    Task t1 = exercise.subExercises.get(0).tasks.get(0);
+    Task t2 = exercise.subExercises.get(0).tasks.get(1);
+    Task t3 = exercise.subExercises.get(0).tasks.get(2);
+    Task t4 = exercise.subExercises.get(0).tasks.get(3);
+    Task t5 = exercise.subExercises.get(0).tasks.get(4);
+    Task t6 = exercise.subExercises.get(0).tasks.get(5);
+    Task t7 = exercise.subExercises.get(0).tasks.get(6);
+
+    result.add(new ElementResultByTag(driver, t1, "form", "", "method=post", "action=test"));
+
+    result.add(new ElementResultByName(driver, t2, "input", "name", "type=text", "required=true"));
+
+    result.add(new ElementResultByName(driver, t3, "input", "email", "type=email", "required=true"));
+
+    result.add(new ElementResultByName(driver, t4, "input", "passwort", "type=password", "required=true"));
+
+    result.add(new ElementResultByName(driver, t5, "input", "agb", "type=checkbox", "required=true"));
+
+    result.add(new ElementResultByName(driver, t6, "input", "reset", "type=reset"));
+
+    result.add(new ElementResultByName(driver, t7, "input", "submit", "type=submit"));
+
     return result;
   }
-  
+
 }

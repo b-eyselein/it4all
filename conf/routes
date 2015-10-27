@@ -12,9 +12,13 @@ GET		/logout									controllers.Application.logout()
 GET		/directlogin							controllers.Application.directlogin(ex: Int ?= -1, snr: String ?= "")
 
 # HTML
-GET     /html                       			controllers.HTML.html(exercise: Int ?= -1)
+#GET     /html                       			controllers.HTML.html(exercise: Int ?= -1)
 GET		/solutions/:userName/html/:exercise		controllers.HTML.site(userName: String, exercise: Int)
-GET		/html/socket			    			controllers.HTML.getWebSocket(ex: Int ?= -1)
+
+GET		/html/upload							controllers.HTML.upload()
+POST	/html/save								controllers.HTML.saveSol()
+
+#GET		/html/socket			    			controllers.HTML.getWebSocket()
 
 # SQL
 GET	   /sql						    			controllers.SQL.index()
