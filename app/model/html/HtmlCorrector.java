@@ -16,9 +16,7 @@ public class HtmlCorrector {
 
     WebDriver driver = new HtmlUnitDriver();
 
-    // FIXME: get real port!
     String newUrl = "http://localhost:9000/" + solutionUrl;
-    // String newUrl = "https://www.it4all.uni-wuerzburg.de" + solutionUrl;
 
     exercise.subExercises.get(0).tasks.get(0);
 
