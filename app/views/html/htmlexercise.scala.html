@@ -1,61 +1,26 @@
-@(exercise: model.Exercise, user: model.Student) @main("HTML-Test", user) {
+@(exercise: model.Exercise, user: model.Student, defaultSolution: List[String])
+@main("HTML-Test", user) {
 <script src="@routes.Assets.versioned("javascripts/src-min/ace.js")"></script>
+
+<script src="@routes.Assets.versioned("javascripts/feedbackWriter.js")"></script>
 
 <script type="text/javascript">
   if("WebSocket" in window) {
     // Let us open a web socket
-    var ws = new WebSocket("@routes.HTML.getWebSocket().webSocketURL(request)");
+    //var ws = new WebSocket("@@routes.HTML.getWebSocket().webSocketURL(request)");
     
-    ws.onopen = function() {
+    //ws.onopen = function() {
       // ws.send("Websocket opened!");
-    };
+    //};
     
-    ws.onmessage = function(evt) {
-      console_write(evt.data);
-    };
+    //ws.onmessage = function(evt) {
+      //alert(evt.data);
+      //writeFeedback(evt.data);
+    //};
     
-    ws.onclose = function() {
-      console_write("Websocket closed!");
-    };
-  }
-
-  function console_write(msg) {
-    var console = document.getElementById("feedBackDiv");
-    if(msg == "Keine Fehler") {
-      console.innerHTML = "";
-      var div = document.createElement("div");
-      var att = document.createAttribute("class");
-      att.value = "alert alert-success";
-      div.setAttributeNode(att);
-      div.appendChild(document.createTextNode(msg));
-      console.appendChild(div);
-    } else {
-      console.innerHTML = "";
-      var errors = msg.split("\n");
-      for(err in errors) {
-        if(errors[err].lastIndexOf("+") === 0) {
-          var div = document.createElement("div");
-          var att = document.createAttribute("class");
-          att.value = "alert alert-success";
-          div.setAttributeNode(att);
-        } else {
-          var div = document.createElement("div");
-          var att = document.createAttribute("class");
-          att.value = "alert alert-danger";
-          div.setAttributeNode(att);
-        }
-        paragraph = document.createElement("p");
-        paragraph.innerHTML = errors[err];
-        div.appendChild(paragraph);
-        console.appendChild(div);
-      }
-    }
-  }
-
-  function send() {
-    var text = editor.getValue();
-    ws.send(text);
-    document.getElementById('iframeid').src = document.getElementById('iframeid').src;
+    //ws.onclose = function() {
+      // console_write("Websocket closed!");
+    //};
   }
 </script>
 
@@ -64,23 +29,35 @@
   <div class="col-sm-12 col-md-6">
     <ul class="nav nav-tabs">
       <li class="active"><a data-toggle="tab" href="#theeditor">Editor</a></li>
-      <li><a data-toggle="tab" onclick="send()" href="#loesung">Ihre L&ouml;sung...</a></li>
+      <li><a data-toggle="tab" href="#loesung">Ihre L&ouml;sung...</a></li>
     </ul>
 
     <div class="tab-content">
       <div id="theeditor" class="tab-pane in active">
         <div class="panel panel-default">
+          <div class="panel-heading">
+            <button class="btn btn-primary btn-block" onclick="send()">L&ouml;sung aktualisieren und testen</button>
+          </div>
           <div class="panel-body">
-            <div class="form-control" style="height: 500px;" id="editor">@for(line <- exercise.getDefaultInLines) {@line 
+            <div class="form-control" style="height: 500px;" id="editor">@for(line <- defaultSolution) {@line 
 }</div>
             <script>
-                          var editor = ace.edit("editor");
-                          editor.setTheme("ace/theme/eclipse");
-                          editor.getSession().setMode("ace/mode/html");
-                          editor.getSession().setTabSize(2);
-                          editor.getSession().setUseWrapMode(true);
-                          document.getElementById('editor').style.fontSize = '16px';
-                        </script>
+													var editor = ace
+															.edit("editor");
+													editor
+															.setTheme("ace/theme/eclipse");
+													editor
+															.getSession()
+															.setMode(
+																	"ace/mode/html");
+													editor.getSession()
+															.setTabSize(2);
+													editor.getSession()
+															.setUseWrapMode(
+																	true);
+													document
+															.getElementById('editor').style.fontSize = '16px';
+												</script>
           </div>
         </div>
       </div>
@@ -89,7 +66,7 @@
         <div class="panel panel-default">
           <div class="panel-body">
             <div class="embed-responsive embed-responsive-16by9">
-              <iframe id="iframeid" class="embed-responsive-item" src="/html/solution/@user.name"></iframe>
+              <iframe id="iframeid" class="embed-responsive-item" src="/solutions/@user.name/html/@exercise.id"></iframe>
             </div>
           </div>
         </div>
@@ -102,7 +79,6 @@
     <ul class="nav nav-tabs">
       <li class="active"><a data-toggle="tab" href="#aufgabe">Aufgabenstellung: @exercise.title</a></li>
       <li><a data-toggle="tab" href="#example">Beispiell&ouml;sung</a></li>
-      <li><a data-toggle="tab" href="#feedback">Feedback</a></li>
     </ul>
 
     <div class="tab-content">
@@ -111,11 +87,17 @@
           <div class="panel-body">
             <p>@exercise.text</p>
             @for(subExercise <- exercise.subExercises) {
-            <div class="panel panel-default">
+            <div class="panel panel-default" id="@{subExercise.exercise.id}_@subExercise.id">
               <div class="panel-heading">@subExercise.id) @subExercise.title (@subExercise.getPoints Punkte)</div>
               <div class="panel-body">
+                <div class="panel-group">@subExercise.text</div>
                 @for(task <- subExercise.tasks) {
-                <p>- @task.taskDescription (@task.pts @if(task.pts == 1) {Punkt} else {Punkte})</p>
+                <div class="panel panel-default" id="@{task.subExercise.exercise.id}_@{task.subExercise.id}_@{task.id}">
+                  <div class="panel-heading" data-toggle="collapse" data-target="#task@{task.subExercise.exercise.id}_@{task.subExercise.id}_@{task.id}">
+                    @task.taskDescription (@task.pts @if(task.pts == 1) {Punkt} else {Punkte}) <span class="pull-right glyphicon glyphicon-chevron-down"></span></div>
+                  <div class="panel-body collapse" id="task@{task.subExercise.exercise.id}_@{task.subExercise.id}_@{task.id}">Testen Sie ihre L&ouml;sung
+                    um Feedback zu bekommen!</div>
+                </div>
                 }
               </div>
             </div>
@@ -130,14 +112,6 @@
           <div class="panel-body">
             <h3>Beispiell&ouml;sung:</h3>
             <img class="img-responsive center-block" src="@routes.Assets.versioned("images/sol1.jpg")" alt="Musterl&ouml;sung" width="640" height="360">
-          </div>
-        </div>
-      </div>
-
-      <div id="feedback" class="tab-pane">
-        <div class="panel panel-default">
-          <div class="panel-body" id="feedBackDiv">
-            <h3>//TODO: Feedback...</h3>
           </div>
         </div>
       </div>

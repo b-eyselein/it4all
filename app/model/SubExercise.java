@@ -26,8 +26,6 @@ public class SubExercise extends Model {
   @ManyToOne
   public Exercise exercise;
   
-  public String defaultSolution;
-  
   @OneToMany(mappedBy = "subExercise")
   public List<Task> tasks;
   
