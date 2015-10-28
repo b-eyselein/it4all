@@ -16,7 +16,9 @@ GET		/directlogin							controllers.Application.directlogin(ex: Int ?= -1, snr: 
 GET		/solutions/:userName/html/:exercise		controllers.HTML.site(userName: String, exercise: Int)
 
 GET		/html/upload							controllers.HTML.upload()
+GET		/html/uploadfile						controllers.HTML.uploadFile()
 POST	/html/save								controllers.HTML.saveSol()
+POST	/html/saveFile							controllers.HTML.saveSolFile()
 
 #GET		/html/socket			    			controllers.HTML.getWebSocket()
 
