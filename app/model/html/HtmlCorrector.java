@@ -2,10 +2,12 @@ package model.html;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import model.Exercise;
 import model.Task;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
@@ -29,6 +31,7 @@ public class HtmlCorrector {
     Task t5 = exercise.subExercises.get(0).tasks.get(4);
     Task t6 = exercise.subExercises.get(0).tasks.get(5);
     Task t7 = exercise.subExercises.get(0).tasks.get(6);
+    Task t8 = exercise.subExercises.get(0).tasks.get(7);
 
     result.add(new ElementResultByTag(driver, t1, "form", "", "method=post", "action=test"));
 
@@ -39,10 +42,15 @@ public class HtmlCorrector {
     result.add(new ElementResultByName(driver, t4, "input", "passwort", "type=password", "required=true"));
 
     result.add(new ElementResultByName(driver, t5, "input", "agb", "type=checkbox", "required=true"));
+    
+    result.add(new ElementResultByTag(driver, t6, "input", "radio", "value=Rad1"));
 
-    result.add(new ElementResultByName(driver, t6, "input", "reset", "type=reset"));
+    result.add(new ElementResultByTag(driver, t7, "input", "reset", "type=reset"));
 
-    result.add(new ElementResultByName(driver, t7, "input", "submit", "type=submit"));
+    result.add(new ElementResultByName(driver, t8, "input", "submit", "type=submit"));
+
+    System.out.println(driver.findElements(By.tagName("input")).stream().filter(element -> element.getAttribute("type").equals("radio"))
+        .collect(Collectors.toList()));
 
     return result;
   }
