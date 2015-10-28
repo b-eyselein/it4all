@@ -2,9 +2,13 @@
 <script src="@routes.Assets.versioned("javascripts/src-min/ace.js")"></script>
 
 <div class="container">
-  <form action="/html/save" method="post">
+  <form action="/html/saveFile" method="post" enctype="multipart/form-data">
     <h3>Laden Sie hier ihre L&ouml;sung hoch:</h3>
-    <textarea class="form-control" rows="30" name="solution"></textarea>    
+    
+    <div class="form-group">
+      <input type="file" class="form-control" name="solFile" accept=".htm, .html">
+    </div>
+    
     <input type="number" hidden="hidden" value="1" name="exercise">
     <div class="btn-group btn-group-justified">
       <div class="btn-group">
