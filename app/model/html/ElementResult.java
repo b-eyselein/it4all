@@ -20,18 +20,16 @@ public abstract class ElementResult {
 
   protected List<AttributeResult> attrs = new LinkedList<AttributeResult>();
 
-  public ElementResult(WebDriver driver, Task task, String tagName, String elementName, String... attributes) {
+  public ElementResult(WebDriver driver, Task task, String tagName, String elementName) {
     dri = driver;
 
     tag = tagName;
     this.elementName = elementName;
 
     this.task = task;
-
-    evaluate(attributes);
   }
 
-  protected abstract void evaluate(String attrsToFind[]);
+  public abstract void evaluate();
 
   public double getPoints() {
     double attrsFound = attrs.stream().filter(attr -> attr.isFound()).collect(Collectors.counting()) / 2;

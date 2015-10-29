@@ -1,13 +1,13 @@
 package model.html;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import model.Exercise;
 import model.Task;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
@@ -43,14 +43,14 @@ public class HtmlCorrector {
 
     result.add(new ElementResultByName(driver, t5, "input", "agb", "type=checkbox", "required=true"));
     
-    result.add(new ElementResultByTag(driver, t6, "input", "radio", "value=Rad1"));
+    result.add(new MultiElementResultByName(driver, t6, "input", "radio", Collections.emptyList(), Arrays.asList("value=Rad1", "value=Rad2", "value=Rad3")));
 
     result.add(new ElementResultByTag(driver, t7, "input", "reset", "type=reset"));
 
     result.add(new ElementResultByName(driver, t8, "input", "submit", "type=submit"));
-
-    System.out.println(driver.findElements(By.tagName("input")).stream().filter(element -> element.getAttribute("type").equals("radio"))
-        .collect(Collectors.toList()));
+    
+    for(ElementResult res: result)
+      res.evaluate();
 
     return result;
   }
