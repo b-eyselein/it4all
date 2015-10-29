@@ -6,6 +6,8 @@ target
 /.project
 /.settings
 /RUNNING_PID
+/.cache-main
+/.cache-tests
 
 # Own ignores
 project/project
