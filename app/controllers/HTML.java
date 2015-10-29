@@ -1,7 +1,5 @@
 package controllers;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,8 +8,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import com.sun.org.apache.xerces.internal.impl.dv.xs.XSSimpleTypeDecl;
 
 import model.Exercise;
 import model.Student;
@@ -26,9 +22,9 @@ import play.twirl.api.Html;
 import views.html.empty;
 import views.html.html.htmlcorrect;
 import views.html.html.htmlexercise;
+import views.html.html.htmlfileupload;
 import views.html.html.htmloverview;
 import views.html.html.htmlupload;
-import views.html.html.htmlfileupload;
 
 public class HTML extends Controller {
   
@@ -79,6 +75,12 @@ public class HTML extends Controller {
     return ok(empty.render(new Html(String.join("\n", strings))));
   }
   
+  public Result htmlOverview() {
+    Student student = Student.find.byId(session(Application.SESSION_ID_FIELD));
+    List<Exercise> exercises = Exercise.finder.all();
+    return ok(htmloverview.render(exercises, student));
+  }
+  
   public Result upload() {
     if(session(Application.SESSION_ID_FIELD) == null)
       return redirect("/login");
@@ -86,11 +88,14 @@ public class HTML extends Controller {
     return ok(htmlupload.render(student));
   }
   
-  public Result uploadFile() {
+  public Result uploadFile(int exerciseID) {
+    if(exerciseID == -1)
+      return redirect("/index");
     if(session(Application.SESSION_ID_FIELD) == null)
       return redirect("/login");
     Student student = Student.find.byId(session(Application.SESSION_ID_FIELD));
-    return ok(htmlfileupload.render(student));
+    Exercise exercise = Exercise.finder.byId(exerciseID);
+    return ok(htmlfileupload.render(student, exercise));
   }
   
   public Result saveSol() {
