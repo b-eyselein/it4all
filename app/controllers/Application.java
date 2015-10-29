@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
+import java.util.List;
+
+import model.Exercise;
 import model.Student;
 import play.data.Form;
 import play.mvc.Controller;
@@ -22,14 +25,15 @@ public class Application extends Controller {
     if(session(SESSION_ID_FIELD) == null)
       return redirect("/login");
     Student student = Student.find.byId(session(SESSION_ID_FIELD));
-    return ok(index.render(student));
+    List<Exercise> exercises = Exercise.finder.all();
+    return ok(index.render(student, exercises));
   }
   
   public Result directlogin(int exercise, String snr) {
     Student student = findOrCreateStudent(snr);
     session().clear();
     session(SESSION_ID_FIELD, student.name);
-    return redirect(routes.HTML.upload());
+    return redirect(routes.HTML.uploadFile(exercise));
   }
   
   public Result login() {

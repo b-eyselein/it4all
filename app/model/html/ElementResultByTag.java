@@ -11,12 +11,15 @@ import org.openqa.selenium.WebElement;
 
 public class ElementResultByTag extends ElementResult {
   
+  private String[] attrsToFind;
+
   public ElementResultByTag(WebDriver driver, Task task, String tagName, String elementName, String... attributes) {
-    super(driver, task, tagName, elementName, attributes);
+    super(driver, task, tagName, elementName);
+    attrsToFind = attributes;
   }
   
   @Override
-  protected void evaluate(String attrsToFind[]) {
+  public void evaluate() {
     List<WebElement> foundElements = dri.findElements(By.tagName(tag));
     if(!elementName.isEmpty())
       foundElements = foundElements.stream().filter(element -> element.getAttribute("type").equals(elementName))
