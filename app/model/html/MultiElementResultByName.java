@@ -1,5 +1,6 @@
 package model.html;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,19 +13,23 @@ import org.openqa.selenium.WebElement;
 public class MultiElementResultByName extends ElementResult {
   
   protected List<String> commonAttrs;
-  private List<String> differentAttrs;
   
-  public MultiElementResultByName(WebDriver driver, Task task, String tagName, String elementName,
-      List<String> commonAttributes, List<String> differentAttributes) {
-    super(driver, task, tagName, elementName);
+  private List<String> differentAttrs;
+  private HashMap<String, WebElement> singleResults;
+  
+  public MultiElementResultByName(Task task, String tagName, String elementName, List<String> commonAttributes,
+      List<String> differentAttributes) {
+    super(task, tagName, elementName);
     commonAttrs = commonAttributes;
     differentAttrs = differentAttributes;
+    
+    singleResults = new HashMap<String, WebElement>();
   }
   
   @Override
-  public void evaluate() {
+  public void evaluate(WebDriver driver) {
     // elementName muss bei allen Element gleich sein
-    List<WebElement> foundElements = dri.findElements(By.name(elementName));
+    List<WebElement> foundElements = driver.findElements(By.name(elementName));
     
     // Stelle sicher, dass alle gefundenen Elemente alle Common-Attribute
     // besitzen
@@ -51,5 +56,12 @@ public class MultiElementResultByName extends ElementResult {
       }
       return false;
     }).collect(Collectors.toList());
+    
+    int i = 0;
+    for(WebElement element: foundElements)
+      singleResults.put(differentAttrs.get(i++), element);
+    
+    System.out.println(singleResults);
   }
+
 }

@@ -4,36 +4,37 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import model.Success;
 import model.Task;
 
 import org.openqa.selenium.WebDriver;
 
 public abstract class ElementResult {
-
-  protected WebDriver dri;
+  
   protected Task task;
-
+  
   protected String tag;
   protected String elementName;
-
-  protected boolean elementFound;
-
+  
+  protected Success success;
+  
   protected List<AttributeResult> attrs = new LinkedList<AttributeResult>();
-
-  public ElementResult(WebDriver driver, Task task, String tagName, String elementName) {
-    dri = driver;
-
+  
+  public ElementResult(Task task, String tagName, String elementName) {
     tag = tagName;
     this.elementName = elementName;
-
+    
     this.task = task;
   }
-
-  public abstract void evaluate();
-
+  
+  public abstract void evaluate(WebDriver driver);
+  
   public double getPoints() {
-    double attrsFound = attrs.stream().filter(attr -> attr.isFound()).collect(Collectors.counting()) / 2;
-    return isFound() ? 1 + attrsFound : 0;
+    // TODO: calculate!
+    // double attrsFound = attrs.stream().filter(attr ->
+    // attr.isFound()).collect(Collectors.counting()) / 2;
+    // return isFound() ? 1 + attrsFound : 0;
+    return -1;
   }
   
   public String getElementName() {
@@ -43,30 +44,21 @@ public abstract class ElementResult {
   public boolean allAttributesFound() {
     return attrs.stream().filter(attr -> attr.isFound()).collect(Collectors.counting()) == attrs.size();
   }
-
-  public void setElementFound(boolean found) {
-    elementFound = true;
+  
+  public void setSuccess(Success suc) {
+    success = suc;
   }
-
+  
   public Task getTask() {
     return task;
   }
   
-  public boolean isFound() {
-    return elementFound;
+  public Success getSuccess() {
+    return success;
   }
   
   public List<AttributeResult> getAttributes() {
     return attrs;
   }
-
-  @Override
-  public String toString() {
-    String ret = "(" + task.id + ") " + elementName + " {";
-    List<String> attrResults = attrs.stream().map(att -> (att.isFound() ? "+" : "-") + att.getAttributeName() + "=" + att.getAttributeValue())
-        .collect(Collectors.toList());
-
-    ret += String.join(";", attrResults) + "}";
-    return ret;
-  }
+  
 }
