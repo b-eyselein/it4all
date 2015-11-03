@@ -35,9 +35,9 @@
           @if(solLine.getSuccess() == Success.PARTIALLY || solLine.getSuccess() == Success.COMPLETE) {
             @for(attribute <- solLine.getAttributes) {
           	  @if(attribute.isFound) {
-          	   	<div class="alert alert-success"><span class="glyphicon glyphicon-ok-circle"></span> Attribute "@attribute.getAttributeName" gefunden.</div>
+          	   	<div class="alert alert-success"><span class="glyphicon glyphicon-ok-circle"></span> Attribute "@attribute.getAttributeName=@attribute.getAttributeValue()" gefunden.</div>
               } else {
-          	   	<div class="alert alert-danger"><span class="glyphicon glyphicon-remove-circle"></span> Attribute "@attribute.getAttributeName" nicht gefunden!</div>
+          	   	<div class="alert alert-danger"><span class="glyphicon glyphicon-remove-circle"></span> Attribute "@attribute.getAttributeName=@attribute.getAttributeValue()" nicht gefunden!</div>
               }
             }
           } else {

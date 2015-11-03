@@ -25,7 +25,7 @@ public class ElementResultByTag extends ElementResult {
       foundElements = foundElements.stream().filter(element -> element.getAttribute("type").equals(elementName))
           .collect(Collectors.toList());
     
-    // FIXME: multiple elements possible! (--> <input type="reset"><input
+    // TODO: multiple elements possible! (--> <input type="reset"><input
     // type="submit">
     for(WebElement element: foundElements) {
       for(String att: attrsToFind.split(";")) {

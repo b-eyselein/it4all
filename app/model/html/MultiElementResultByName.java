@@ -40,20 +40,21 @@ public class MultiElementResultByName extends ElementResult {
         AttributeResult attributeResult = new AttributeResult(ele, key, value);
         if(!attributeResult.isFound())
           return false;
-        attrs.add(new AttributeResult(ele, key, value));
+        // attrs.add(new AttributeResult(ele, key, value));
       }
       return true;
     }).collect(Collectors.toList());
     
-    // Stelle sicher, dass alle Elemente jeweils ein Different-Attribute
+    // Stelle sicher, dass alle Elemente jeweils ein Different-Attribut
     // enthalten
     foundElements.stream().filter(ele -> {
       for(String att: differentAttrs) {
         String key = att.split("=")[0], value = att.split("=")[1];
         AttributeResult attributeResult = new AttributeResult(ele, key, value);
-        if(!attributeResult.isFound())
+        if(attributeResult.isFound()) {
+          attrs.add(new AttributeResult(ele, key, value));
           return true;
-        attrs.add(new AttributeResult(ele, key, value));
+        }
       }
       return false;
     }).collect(Collectors.toList());

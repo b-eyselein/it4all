@@ -30,11 +30,8 @@ public abstract class ElementResult {
   public abstract void evaluate(WebDriver driver);
   
   public double getPoints() {
-    // TODO: calculate!
-    // double attrsFound = attrs.stream().filter(attr ->
-    // attr.isFound()).collect(Collectors.counting()) / 2;
-    // return isFound() ? 1 + attrsFound : 0;
-    return -1;
+    double attrsFound = attrs.stream().filter(attr -> attr.isFound()).collect(Collectors.counting()) / 2.;
+    return (success != Success.NONE) ? 1 + attrsFound : 0;
   }
   
   public String getElementName() {
