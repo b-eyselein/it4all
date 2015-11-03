@@ -14,6 +14,6 @@ INSERT INTO task (`id`, `exercise_id`, `sub_exercise_id`, `task_Description`, `p
   (3, 1, 1, 'Die Nutzer müssen ihre Emailadresse* („email“)', 2),
   (4, 1, 1, 'Sie sollen ein Passwort* („password“) angeben können', 2),
   (5, 1, 1, 'Aufgrund gesetzlicher Bestimmungen soll es außerdem möglich sein, die AGBs* („agb“) der Seite zu akzeptieren.', 2),
-  (6, 1, 1, 'Der Benutzer soll zwischen 3 Radiosendern wählen können. Benutzen Sie Radiobuttons und geben Sie als Werte Rad1, Rad2 und Rad3 an.'),
+  (6, 1, 1, 'Der Benutzer soll zwischen 3 Radiosendern wählen können. Benutzen Sie Radiobuttons und geben Sie als Werte Rad1, Rad2 und Rad3 an.', 2),
   (7, 1, 1, 'Fügen Sie außerdem Möglichkeiten ein, das Formular zurückzusetzen (reset)', 1),
   (8, 1, 1, 'beziehungsweise abzusenden (submit)', 1);
