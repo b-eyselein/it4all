@@ -36,13 +36,11 @@ public class ElementResultByName extends ElementResult {
         attrs.add(new AttributeResult(element, key, value));
       }
       return true;
-    }).peek(System.out::println).collect(Collectors.toList());
+    }).collect(Collectors.toList());
     
-    System.out.println();
-    
-    if(allAttributesFound)
+    if(!foundElements.isEmpty() && allAttributesFound)
       setSuccess(Success.COMPLETE);
-    else if(foundElements.size() > 0)
+    else if(!foundElements.isEmpty() && foundElements.size() > 0)
       setSuccess(Success.PARTIALLY);
     else
       setSuccess(Success.NONE);

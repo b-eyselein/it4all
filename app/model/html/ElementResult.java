@@ -23,7 +23,7 @@ public abstract class ElementResult {
   public ElementResult(Task task, String tagName, String elementName) {
     tag = tagName;
     this.elementName = elementName;
-    
+    success = Success.NONE;
     this.task = task;
   }
   
@@ -38,7 +38,7 @@ public abstract class ElementResult {
   }
   
   public String getElementName() {
-    return tag;
+    return elementName;
   }
   
   public boolean allAttributesFound() {

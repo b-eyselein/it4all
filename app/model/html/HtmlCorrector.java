@@ -33,7 +33,7 @@ public class HtmlCorrector {
     Task t7 = exercise.subExercises.get(0).tasks.get(6);
     Task t8 = exercise.subExercises.get(0).tasks.get(7);
     
-    result.add(new ElementResultByTag(t1, "form", "", "method=post;action=test"));
+    result.add(new ElementResultByName(t1, "form", "form", "method=post;action=test"));
     
     result.add(new ElementResultByName(t2, "input", "name", "type=text;required=true"));
     
@@ -46,13 +46,13 @@ public class HtmlCorrector {
     result.add(new MultiElementResultByName(t6, "input", "radio", Collections.emptyList(), Arrays.asList("value=Rad1",
         "value=Rad2", "value=Rad3")));
     
-    result.add(new ElementResultByTag(t7, "input", "reset", "type=reset"));
+    result.add(new ElementResultByName(t7, "input", "reset", "type=reset"));
     
     result.add(new ElementResultByName(t8, "input", "submit", "type=submit"));
     
     for(ElementResult res: result)
       evaluateElement(driver, res);
-    
+
     return result;
   }
   

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import model.Success;
 import model.Task;
 
 import org.openqa.selenium.By;
@@ -61,7 +62,13 @@ public class MultiElementResultByName extends ElementResult {
     for(WebElement element: foundElements)
       singleResults.put(differentAttrs.get(i++), element);
     
-    System.out.println(singleResults);
+    if(singleResults.size() == differentAttrs.size())
+      setSuccess(Success.COMPLETE);
+    else if(singleResults.size() > 0)
+      setSuccess(Success.PARTIALLY);
+    else
+      setSuccess(Success.NONE);
+    
   }
-
+  
 }
