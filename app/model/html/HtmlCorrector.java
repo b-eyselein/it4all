@@ -20,8 +20,6 @@ public class HtmlCorrector {
     
     String newUrl = "http://localhost:9000/" + solutionUrl;
     
-    exercise.subExercises.get(0).tasks.get(0);
-    
     driver.get(newUrl);
     
     Task t1 = exercise.subExercises.get(0).tasks.get(0);
@@ -33,6 +31,8 @@ public class HtmlCorrector {
     Task t7 = exercise.subExercises.get(0).tasks.get(6);
     Task t8 = exercise.subExercises.get(0).tasks.get(7);
     
+    // FIXME: extract Attributes/TagName/Element into task!
+    // --> maybe HtmlTask?
     result.add(new ElementResultByName(t1, "form", "form", "method=post;action=test"));
     
     result.add(new ElementResultByName(t2, "input", "name", "type=text;required=true"));
@@ -52,7 +52,7 @@ public class HtmlCorrector {
     
     for(ElementResult res: result)
       evaluateElement(driver, res);
-
+    
     return result;
   }
   
