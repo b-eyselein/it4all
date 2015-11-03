@@ -2,8 +2,6 @@ package model.excel;
 
 import org.apache.poi.ss.usermodel.Cell;
 
-import general.StringHelper;
-
 /**
  * 
  * @author Stefan Olbrecht

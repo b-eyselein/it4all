@@ -13,12 +13,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import general.CellStyler;
-import general.SheetStyler;
-import model.CellComparator;
-import model.SheetComparator;
-import model.WorkbookComparator;
-
 /**
  * 
  * @author Stefan Olbrecht

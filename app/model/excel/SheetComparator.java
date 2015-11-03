@@ -15,10 +15,6 @@ import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 
-import general.HashSetHelper;
-import general.RegExpHelper;
-import general.StringHelper;
-
 /**
  * 
  * @author Stefan Olbrecht
