@@ -19,7 +19,7 @@
     </div>
     <div class="col-sm-6 panel-group">
     <div class="panel panel-default">
-      <div class="panel-body"><a href="/html/upload">Neue L&ouml;sung hochladen...</a></div>
+      <div class="panel-body"><a href="/html/uploadfile/@result.get(0).getTask.subExercise.exercise.id">Neue L&ouml;sung hochladen...</a></div>
     </div>
       @for(solLine <- result) {
         @if(solLine.getSuccess() == Success.COMPLETE) {
