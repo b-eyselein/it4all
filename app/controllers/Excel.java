@@ -3,7 +3,8 @@ package controllers;
 import model.Student;
 import play.mvc.Controller;
 import play.mvc.Result;
-import views.html.excel;
+import views.html.excel.excel;
+import views.html.excel.excelcorrect;
 
 public class Excel extends Controller {
   
@@ -22,7 +23,7 @@ public class Excel extends Controller {
       return redirect("/login");
     Student user = Student.find.byId(userName);
     
-    return ok(excel.render(user));
+    return ok(excelcorrect.render(user));
   }
   
 }
