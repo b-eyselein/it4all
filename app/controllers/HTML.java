@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import model.Exercise;
@@ -99,15 +98,16 @@ public class HTML extends Controller {
   }
   
   public Result saveSol() {
-    Student user = Student.find.byId(session(Application.SESSION_ID_FIELD));
-    Map<String, String[]> asFormUrl = request().body().asFormUrlEncoded();
-    String solution = asFormUrl.get("solution")[0];
-    int exercise = Integer.parseInt(asFormUrl.get("exercise")[0]);
-    saveSolutionForUser(user.name, solution, exercise);
-    
-    String url = "/solutions/" + user.name + "/html/" + exercise;
-    List<ElementResult> result = HtmlCorrector.correct(url, Exercise.finder.byId(exercise));
-    return ok(htmlcorrect.render(user, result));
+//    Student user = Student.find.byId(session(Application.SESSION_ID_FIELD));
+//    Map<String, String[]> asFormUrl = request().body().asFormUrlEncoded();
+//    String solution = asFormUrl.get("solution")[0];
+//    int exercise = Integer.parseInt(asFormUrl.get("exercise")[0]);
+//    saveSolutionForUser(user.name, solution, exercise);
+//    
+//    String url = "/solutions/" + user.name + "/html/" + exercise;
+//    List<ElementResult> result = HtmlCorrector.correct(url, Exercise.finder.byId(exercise));
+//    return ok(htmlcorrect.render(user, result, lines));
+    return badRequest("Seite sollte nicht aufrufbar sein!");
   }
   
   public Result saveSolFile() {
@@ -123,7 +123,11 @@ public class HTML extends Controller {
         
         String url = "/solutions/" + user.name + "/html/" + exercise;
         List<ElementResult> result = HtmlCorrector.correct(url, Exercise.finder.byId(exercise));
-        return ok(htmlcorrect.render(user, result));
+        
+        
+        List<String> solution = Files.readAllLines(Util.getSolFileForExercise(user.name, exercise));
+        
+        return ok(htmlcorrect.render(user, result, solution));
       } catch (IOException e) {
         System.out.println(e);
         return badRequest("Datei konnte nicht hochgeladen werden!");
