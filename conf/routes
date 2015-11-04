@@ -21,8 +21,6 @@ GET		/html/uploadfile/:ex					controllers.HTML.uploadFile(ex: Int)
 #POST	/html/save								controllers.HTML.saveSol()
 POST	/html/saveFile							controllers.HTML.saveSolFile()
 
-#GET		/html/socket			    			controllers.HTML.getWebSocket()
-
 # Excel
 GET		/excel						controllers.Excel.index()
 POST	/excel/uploadFile			controllers.Excel.upload()
