@@ -25,6 +25,10 @@ public class Application extends Controller {
     if(session(SESSION_ID_FIELD) == null)
       return redirect("/login");
     Student student = Student.find.byId(session(SESSION_ID_FIELD));
+    if(student == null) {
+      session().clear();
+      return redirect("/login");
+    }
     List<Exercise> exercises = Exercise.finder.all();
     return ok(index.render(student, exercises));
   }
