@@ -15,8 +15,11 @@ public class HtmlCorrector {
     WebDriver driver = new HtmlUnitDriver();
     driver.get(newUrl);
     
-    List<ElementResult> result = exercise.tasks.parallelStream().map(task -> task.getElementResult()).collect(Collectors.toList());
+    List<ElementResult> result = exercise.tasks.parallelStream().map(task -> task.getElementResult())
+        .collect(Collectors.toList());
     result.parallelStream().forEach(result1 -> result1.evaluate(driver));
+    
+    // FIXME: aktualisiere Punktzahl und speichern in Tabelle!
     
     return result;
   }
