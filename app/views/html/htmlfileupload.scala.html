@@ -30,12 +30,9 @@
       <div class="panel-heading">Aufgabenstellung</div>
       <div class="panel-body">
         <p>@exercise.text</p>
-        @for(subExercise <- exercise.subExercises) {
-          <p>@subExercise.id) @subExercise.title</p>
-          @for(task <- subExercise.tasks) {
+          @for(task <- exercise.tasks) {
           	<p>- @task.taskDescription</p>
           }
-        }
       </div>
     </div>
     

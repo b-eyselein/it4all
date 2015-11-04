@@ -29,6 +29,10 @@ public abstract class ElementResult {
   
   public abstract void evaluate(WebDriver driver);
   
+  public String getElementNotFoundMessage() {
+    return "Element " + elementName + " wurde nicht gefunden.";
+  }
+  
   public double getPoints() {
     double attrsFound = attrs.stream().filter(attr -> attr.isFound()).collect(Collectors.counting()) / 2.;
     return (success != Success.NONE) ? 1 + attrsFound : 0;

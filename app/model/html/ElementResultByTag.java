@@ -20,6 +20,7 @@ public class ElementResultByTag extends ElementResult {
   
   @Override
   public void evaluate(WebDriver driver) {
+    //FIXME: Nicht verwendet, später komplette Umstellung, um Elementname nicht angeben zu müssen?
     List<WebElement> foundElements = driver.findElements(By.tagName(tag));
     if(!elementName.isEmpty())
       foundElements = foundElements.stream().filter(element -> element.getAttribute("type").equals(elementName))
@@ -40,4 +41,5 @@ public class ElementResultByTag extends ElementResult {
       }
     }
   }
+  
 }

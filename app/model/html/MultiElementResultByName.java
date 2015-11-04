@@ -13,16 +13,16 @@ import org.openqa.selenium.WebElement;
 
 public class MultiElementResultByName extends ElementResult {
   
-  protected List<String> commonAttrs;
+  protected String[] commonAttrs;
   
-  private List<String> differentAttrs;
+  private String[] differentAttrs;
   private HashMap<String, WebElement> singleResults;
   
-  public MultiElementResultByName(Task task, String tagName, String elementName, List<String> commonAttributes,
-      List<String> differentAttributes) {
+  public MultiElementResultByName(Task task, String tagName, String elementName, String commonAttributes,
+      String differentAttributes) {
     super(task, tagName, elementName);
-    commonAttrs = commonAttributes;
-    differentAttrs = differentAttributes;
+    commonAttrs = commonAttributes.split(";");
+    differentAttrs = differentAttributes.split(";");
     
     singleResults = new HashMap<String, WebElement>();
   }
@@ -36,14 +36,16 @@ public class MultiElementResultByName extends ElementResult {
     // besitzen
     foundElements.stream().filter(ele -> {
       for(String att: commonAttrs) {
-        String key = att.split("=")[0], value = att.split("=")[1];
-        AttributeResult attributeResult = new AttributeResult(ele, key, value);
-        if(!attributeResult.isFound())
-          return false;
-        // attrs.add(new AttributeResult(ele, key, value));
+        if(!att.isEmpty()) {
+          String key = att.split("=")[0], value = att.split("=")[1];
+          AttributeResult attributeResult = new AttributeResult(ele, key, value);
+          if(!attributeResult.isFound())
+            return false;
+          // attrs.add(new AttributeResult(ele, key, value));
       }
-      return true;
-    }).collect(Collectors.toList());
+    }
+    return true;
+  } ).collect(Collectors.toList());
     
     // Stelle sicher, dass alle Elemente jeweils ein Different-Attribut
     // enthalten
@@ -61,9 +63,9 @@ public class MultiElementResultByName extends ElementResult {
     
     int i = 0;
     for(WebElement element: foundElements)
-      singleResults.put(differentAttrs.get(i++), element);
+      singleResults.put(differentAttrs[i++], element);
     
-    if(singleResults.size() == differentAttrs.size())
+    if(singleResults.size() == differentAttrs.length)
       setSuccess(Success.COMPLETE);
     else if(singleResults.size() > 0)
       setSuccess(Success.PARTIALLY);

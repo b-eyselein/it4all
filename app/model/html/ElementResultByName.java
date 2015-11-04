@@ -12,13 +12,26 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class ElementResultByName extends ElementResult {
-  
-  private List<String> attrsToFind;
+
+  private boolean rightTagName = false;
   private boolean allAttributesFound = true;
+  private List<String> attrsToFind;
   
   public ElementResultByName(Task task, String tagName, String elementName, String attributes) {
     super(task, tagName, elementName);
     attrsToFind = Arrays.asList(attributes.split(";"));
+  }
+  
+  public boolean rightTagNameWasUsed() {
+    return rightTagName;
+  }
+
+  @Override
+  public String getElementNotFoundMessage() {
+    String ret = "Element " + elementName + " wurde nicht gefunden.";
+    if(!rightTagName)
+      ret += "Vielleicht wurde der falsche TagName verwendet?";
+    return ret;
   }
   
   @Override
@@ -26,17 +39,20 @@ public class ElementResultByName extends ElementResult {
     List<WebElement> foundElements = driver.findElements(By.name(elementName));
     
     foundElements.parallelStream().filter(element -> {
-      if(!element.getTagName().equals(tag))
-        return false;
-      for(String att: attrsToFind) {
-        String key = att.split("=")[0], value = att.split("=")[1];
-        AttributeResult result = new AttributeResult(element, key, value);
-        if(!result.isFound())
-          allAttributesFound = false;
-        attrs.add(new AttributeResult(element, key, value));
-      }
-      return true;
-    }).collect(Collectors.toList());
+      // TODO: Fehler, dass falsches Tag verwendet wurde!
+        if(!element.getTagName().equals(tag))
+          return false;
+        else
+          rightTagName = true;
+        for(String att: attrsToFind) {
+          String key = att.split("=")[0], value = att.split("=")[1];
+          AttributeResult result = new AttributeResult(element, key, value);
+          if(!result.isFound())
+            allAttributesFound = false;
+          attrs.add(new AttributeResult(element, key, value));
+        }
+        return true;
+      }).collect(Collectors.toList());
     
     if(!foundElements.isEmpty() && allAttributesFound)
       setSuccess(Success.COMPLETE);

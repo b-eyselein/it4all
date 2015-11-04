@@ -86,16 +86,16 @@
         <div class="panel panel-default">
           <div class="panel-body">
             <p>@exercise.text</p>
-            @for(subExercise <- exercise.subExercises) {
-            <div class="panel panel-default" id="@{subExercise.exercise.id}_@subExercise.id">
-              <div class="panel-heading">@subExercise.id) @subExercise.title (@subExercise.getPoints Punkte)</div>
+            @@for(subExercise <- exercise.subExercises) {
+            <div class="panel panel-default" id="@@{subExercise.exercise.id}_@@subExercise.id">
+              <div class="panel-heading">@@subExercise.id) @@subExercise.title (@@subExercise.getPoints Punkte)</div>
               <div class="panel-body">
-                <div class="panel-group">@subExercise.text</div>
-                @for(task <- subExercise.tasks) {
-                <div class="panel panel-default" id="@{task.subExercise.exercise.id}_@{task.subExercise.id}_@{task.id}">
-                  <div class="panel-heading" data-toggle="collapse" data-target="#task@{task.subExercise.exercise.id}_@{task.subExercise.id}_@{task.id}">
-                    @task.taskDescription (@task.pts @if(task.pts == 1) {Punkt} else {Punkte}) <span class="pull-right glyphicon glyphicon-chevron-down"></span></div>
-                  <div class="panel-body collapse" id="task@{task.subExercise.exercise.id}_@{task.subExercise.id}_@{task.id}">Testen Sie ihre L&ouml;sung
+                <div class="panel-group">@@subExercise.text</div>
+                @@for(task <- subExercise.tasks) {
+                <div class="panel panel-default" id="@@{task.subExercise.exercise.id}_v@@{task.subExercise.id}_@@{task.id}">
+                  <div class="panel-heading" data-toggle="collapse" data-target="#task@@{task.subExercise.exercise.id}_@@{task.subExercise.id}_@@{task.id}">
+                    @@task.taskDescription (@@task.pts @@if(task.pts == 1) {Punkt} else {Punkte}) <span class="pull-right glyphicon glyphicon-chevron-down"></span></div>
+                  <div class="panel-body collapse" id="taskv@@{task.subExercise.exercise.id}_@@{task.subExercise.id}_@@{task.id}">Testen Sie ihre L&ouml;sung
                     um Feedback zu bekommen!</div>
                 </div>
                 }

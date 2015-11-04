@@ -1,9 +1,10 @@
 package model;
 
-import java.util.Arrays;
 import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 import play.data.validation.Constraints.Required;
 
@@ -24,13 +25,6 @@ public class Exercise extends Model {
   public String text;
   
   @OneToMany(mappedBy = "exercise")
-  public List<SubExercise> subExercises;
-  
-  // TODO: check!
-  public String defaultSolution;
-  
-  public List<String> getDefaultInLines() {
-    return Arrays.asList(defaultSolution.split("\\\\n"));
-  }
+  public List<Task> tasks;
   
 }
