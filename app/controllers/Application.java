@@ -1,21 +1,19 @@
 package controllers;
 
-import static play.data.Form.form;
+import static controllers.Util.getSolDirForUser;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
-import java.util.List;
+import java.util.Map;
 
 import model.Exercise;
 import model.Student;
-import play.data.Form;
 import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.index;
 import views.html.login;
-import static controllers.Util.*;
 
 public class Application extends Controller {
   
@@ -29,22 +27,22 @@ public class Application extends Controller {
       session().clear();
       return redirect("/login");
     }
-    List<Exercise> exercises = Exercise.finder.all();
-    return ok(index.render(student, exercises));
+    return ok(index.render(student, Exercise.finder.all()));
   }
   
-  public Result directlogin(int exercise, String snr) {
-    Student student = findOrCreateStudent(snr);
+  public Result directlogin(int exercise, String userName) {
+    String passwort = "";
+    Student student = findOrCreateStudent(userName, passwort);
     session().clear();
     session(SESSION_ID_FIELD, student.name);
     return redirect(routes.HTML.uploadFile(exercise));
   }
   
   public Result login() {
-    return ok(login.render(form(Login.class)));
+    return ok(login.render());
   }
   
-  private Student findOrCreateStudent(String userName) {
+  private Student findOrCreateStudent(String userName, String passwort) {
     if(Student.find.byId(userName) == null) {
       Student newStudent = new Student();
       newStudent.name = userName;
@@ -61,19 +59,20 @@ public class Application extends Controller {
   
   public Result logout() {
     session().clear();
-    return ok(login.render(form(Login.class)));
+    return ok(login.render());
   }
   
   public Result authenticate() {
-    Form<Login> loginForm = form(Login.class).bindFromRequest();
-    if(loginForm.hasErrors()) {
-      return badRequest(login.render(loginForm));
-    } else {
-      Student student = findOrCreateStudent(loginForm.get().name);
-      session().clear();
-      session(SESSION_ID_FIELD, student.name);
-      return redirect(routes.Application.index());
-    }
+    Map<String, String[]> formValues = request().body().asFormUrlEncoded();
+    
+    String userName = formValues.get("name")[0];
+    String passwort = formValues.get("passwort")[0];
+    
+    Student student = findOrCreateStudent(userName, passwort);
+    session().clear();
+    session(SESSION_ID_FIELD, student.name);
+    
+    return ok(index.render(student, Exercise.finder.all()));
   }
   
   public static class Login {

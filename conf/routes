@@ -3,33 +3,24 @@
 # ~~~~
 
 # Home page
-GET     /                           			controllers.Application.index()
+GET     /                           	controllers.Application.index()
 
 # Login && Logout
-GET		/login									controllers.Application.login()
-POST	/login									controllers.Application.authenticate()
-GET		/logout									controllers.Application.logout()
-GET		/directlogin							controllers.Application.directlogin(ex: Int ?= -1, snr: String ?= "")
+GET		/login							controllers.Application.login()
+POST	/authenticate					controllers.Application.authenticate()
+GET		/logout							controllers.Application.logout()
+GET		/directlogin					controllers.Application.directlogin(ex: Int ?= -1, snr: String ?= "")
 
 # HTML
-#GET     /html                       			controllers.HTML.html(exercise: Int ?= -1)
-GET		/solutions/:userName/html/:exercise		controllers.HTML.site(userName: String, exercise: Int)
+GET		/solutions/:user/html/:ex		controllers.HTML.site(user: String, ex: Int)
 
-GET		/html/overview							controllers.HTML.htmlOverview()
-#GET	/html/upload							controllers.HTML.upload()
-GET		/html/uploadfile/:ex					controllers.HTML.uploadFile(ex: Int)
-#POST	/html/save								controllers.HTML.saveSol()
-POST	/html/saveFile							controllers.HTML.saveSolFile()
+GET		/html/overview					controllers.HTML.htmlOverview()
+GET		/html/uploadfile/:ex			controllers.HTML.uploadFile(ex: Int)
+POST	/html/saveFile					controllers.HTML.saveSolFile()
 
 # Excel
-GET		/excel						controllers.Excel.index()
-POST	/excel/uploadFile			controllers.Excel.upload()
-
-# SQL
-GET	   /sql						    			controllers.SQL.index()
-
-# PHP
-GET    /php                         			controllers.PHP.index()
+GET		/excel							controllers.Excel.index()
+POST	/excel/uploadFile				controllers.Excel.upload()
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               			controllers.Assets.versioned(path="/public", file: Asset)
+GET     /assets/*file               	controllers.Assets.versioned(path="/public", file: Asset)
