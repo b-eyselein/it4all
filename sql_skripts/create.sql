@@ -17,4 +17,12 @@ create table task (
   attributes                varchar(255),
   constraint ck_task_result_type check (result_type in (0,1,2)),
   primary key(exercise_id, id),
-  foreign key(exercise_id) references exercise(id) on delete cascade on update cascade);
+  foreign key(exercise_id)  references exercise(id) on delete cascade on update cascade);
+  
+create table grading (
+  id                        integer primary key,
+  student_name              varchar(255),
+  exercise_id               integer,
+  points					integer not null,
+  foreign key(student_name) references student(name) on delete cascade on update cascade,
+  foreign key(exercise_id)  references exercise(id) on delete cascade on update cascade);

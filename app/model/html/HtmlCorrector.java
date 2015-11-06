@@ -4,13 +4,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import model.Exercise;
+import model.Grading;
+import model.Student;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 public class HtmlCorrector {
   
-  public static List<ElementResult> correct(String solutionUrl, Exercise exercise) {
+  public static List<ElementResult> correct(String solutionUrl, Exercise exercise, Student student) {
     String newUrl = "http://localhost:9000/" + solutionUrl;
     WebDriver driver = new HtmlUnitDriver();
     driver.get(newUrl);
@@ -20,6 +22,13 @@ public class HtmlCorrector {
     result.parallelStream().forEach(result1 -> result1.evaluate(driver));
     
     // FIXME: aktualisiere Punktzahl und speichern in Tabelle!
+    int points = result.stream().mapToDouble(res -> res.getPoints()).sum();
+    
+    Grading grading = new Grading();
+    grading.student = student;
+    grading.exercise = exercise;
+    grading.points = points;
+//    grading.save();
     
     return result;
   }

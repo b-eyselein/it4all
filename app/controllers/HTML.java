@@ -111,7 +111,9 @@ public class HTML extends Controller {
   
   public Result saveSolFile() {
     Student user = Student.find.byId(session(Application.SESSION_ID_FIELD));
+    // FIXME: getExercise!
     int exercise = 1;
+    Exercise ex = Exercise.finder.byId(exercise);
     MultipartFormData body = request().body().asMultipartFormData();
     FilePart htmlFile = body.getFile("solFile");
     if(htmlFile != null) {
@@ -121,10 +123,9 @@ public class HTML extends Controller {
         saveSolutionForUser(user.name, String.join("\n", fileContent), exercise);
         
         String url = "/solutions/" + user.name + "/html/" + exercise;
-        List<ElementResult> result = HtmlCorrector.correct(url, Exercise.finder.byId(exercise));
+        List<ElementResult> result = HtmlCorrector.correct(url, ex, user);
         
         List<String> solution = Files.readAllLines(Util.getSolFileForExercise(user.name, exercise));
-        Exercise ex = Exercise.finder.byId(exercise);
         
         return ok(htmlcorrect.render(user, ex, result, solution));
       } catch (IOException e) {

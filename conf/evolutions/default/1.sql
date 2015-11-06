@@ -10,6 +10,14 @@ create table exercise (
   constraint pk_exercise primary key (id))
 ;
 
+create table grading (
+  id                        integer auto_increment not null,
+  student_name              varchar(255),
+  exercise_id               integer,
+  points                    integer,
+  constraint pk_grading primary key (id))
+;
+
 create table student (
   name                      varchar(255) not null,
   constraint pk_student primary key (name))
@@ -28,8 +36,12 @@ create table task (
   constraint pk_task primary key (id))
 ;
 
-alter table task add constraint fk_task_exercise_1 foreign key (exercise_id) references exercise (id) on delete restrict on update restrict;
-create index ix_task_exercise_1 on task (exercise_id);
+alter table grading add constraint fk_grading_student_1 foreign key (student_name) references student (name) on delete restrict on update restrict;
+create index ix_grading_student_1 on grading (student_name);
+alter table grading add constraint fk_grading_exercise_2 foreign key (exercise_id) references exercise (id) on delete restrict on update restrict;
+create index ix_grading_exercise_2 on grading (exercise_id);
+alter table task add constraint fk_task_exercise_3 foreign key (exercise_id) references exercise (id) on delete restrict on update restrict;
+create index ix_task_exercise_3 on task (exercise_id);
 
 
 
@@ -38,6 +50,8 @@ create index ix_task_exercise_1 on task (exercise_id);
 SET FOREIGN_KEY_CHECKS=0;
 
 drop table exercise;
+
+drop table grading;
 
 drop table student;
 
