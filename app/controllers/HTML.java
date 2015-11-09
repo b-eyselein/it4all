@@ -51,7 +51,7 @@ public class HTML extends Controller {
           } catch (IOException e) {
           }
         } else {
-          // FIXME: Trim all lines, filter out empty lines
+          // TODO: Trim all lines, filter out empty lines
           defaultSolution = Files.readAllLines(file).stream().map(line -> line.trim()).filter(line -> !line.isEmpty())
               .collect(Collectors.toList());
         }
