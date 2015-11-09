@@ -34,10 +34,10 @@ public class Excel extends Controller {
     }
     if(exercise == -1)
       return redirect("/index");
-    return ok(excel.render(user));
+    return ok(excel.render(user, exercise));
   }
   
-  public Result upload() {
+  public Result upload(int exercise) {
     if(session(Application.SESSION_ID_FIELD) == null)
       return redirect("/login");
     Student user = Student.find.byId(session(Application.SESSION_ID_FIELD));

@@ -57,10 +57,8 @@ public class HTML extends Controller {
     return ok(html.render(student, exer));
   }
   
-  public Result upload() {
+  public Result upload(int exercise) {
     Student user = Student.find.byId(session(Application.SESSION_ID_FIELD));
-    // FIXME: getExercise!
-    int exercise = 1;
     Exercise ex = Exercise.finder.byId(exercise);
     MultipartFormData body = request().body().asMultipartFormData();
     FilePart htmlFile = body.getFile("solFile");
