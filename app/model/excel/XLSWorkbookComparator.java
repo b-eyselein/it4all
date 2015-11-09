@@ -9,12 +9,12 @@ import org.apache.poi.ss.usermodel.Workbook;
  * @author Stefan Olbrecht
  *
  */
-public class WorkbookComparator {
+public class XLSWorkbookComparator {
 	
 	private Workbook wbMaster;
 	private Workbook wbCompare;
 	
-	public WorkbookComparator(Workbook wb1, Workbook wb2) {
+	public XLSWorkbookComparator(Workbook wb1, Workbook wb2) {
 		this.wbMaster = wb1;
 		this.wbCompare = wb2;
 	}
@@ -28,7 +28,7 @@ public class WorkbookComparator {
 	}
 	
 	public boolean compareSheetNum() {
-		if (wbMaster.getNumberOfSheets() != wbCompare.getNumberOfSheets()) {
+		if (this.wbMaster.getNumberOfSheets() != this.wbCompare.getNumberOfSheets()) {
 			return false;
 		} else {
 			return true;

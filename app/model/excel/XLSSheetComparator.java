@@ -20,13 +20,13 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
  * @author Stefan Olbrecht
  *
  */
-public class SheetComparator {
+public class XLSSheetComparator {
 
 	private Sheet shMaster;
 	private Sheet shCompare;
 	private String message;
 	
-	public SheetComparator(Sheet sheet1, Sheet sheet2) {
+	public XLSSheetComparator(Sheet sheet1, Sheet sheet2) {
 		this.shMaster = sheet1;
 		this.shCompare = sheet2;
 		this.message = "";
@@ -47,18 +47,17 @@ public class SheetComparator {
 		int count2 = scf2.getNumConditionalFormattings();
 		if (0 < count1) {
 			if (count2 == 0) {
-				this.message = "Bedingte Formatierung falsch. Keine Bedingte Formatierung gefunden.";
+				this.message += "Bedingte Formatierung falsch. Keine Bedingte Formatierung gefunden.\n";
 			} else if (count1 != count2) {
-				this.message = "Bedingte Formatierung falsch. Zu wenig Bedingte Formatierungen (Erwartet: " + count1 + ").";
+				this.message += "Bedingte Formatierung falsch. Zu wenig Bedingte Formatierungen (Erwartet: " + count1 + ").\n";
 			} else {
 				for (int i = 0; i < count1; i++) {
 					ConditionalFormatting format1 = scf1.getConditionalFormattingAt(i);
 					ConditionalFormatting format2 = scf2.getConditionalFormattingAt(i);
 					if (format2 != null) {
 						if (format1.equals(format2)) {
-							this.message = "Bedingte Formatierung richtig.";
+							this.message += "Bedingte Formatierung richtig.\n";
 						} else {
-							this.message = "Bedingte Formatierung falsch.";
 							// Compare ranges reference
 							HashSet<String> items1 = new HashSet<String>();
 							for (CellRangeAddress cf : format1.getFormattingRanges()) {
@@ -69,12 +68,18 @@ public class SheetComparator {
 								items2.add(cf.formatAsString());
 							}
 							String cfDiff = HashSetHelper.getSheetCFDiff(items2, items1);
-							if (cfDiff != "") {
-								this.message += " Der Bereich " + cfDiff + " ist falsch.";
+							if (!cfDiff.equals("")) {
+								this.message += "Bedingte Formatierung falsch.";
+								this.message += " Der Bereich " + cfDiff + " ist falsch.\n";
 							} else {
 								String string1 = RegExpHelper.getExcelCFFormulaList(format1.toString());
 								String string2 = RegExpHelper.getExcelCFFormulaList(format2.toString());
-								this.message += StringHelper.getDiffOfTwoFormulas(string1, string2);
+								String diff = StringHelper.getDiffOfTwoFormulas(string1, string2);
+								if (diff.equals("")) {
+									this.message += "Bedingte Formatierung richtig.\n";
+								} else {
+									this.message += "Bedingte Formatierung falsch." + diff + "\n";
+								}
 							}
 						}
 					}

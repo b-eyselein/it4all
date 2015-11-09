@@ -43,6 +43,15 @@ public class RegExpHelper {
 		return string;
 	}
 	
+	public static boolean getPatternInString(String pattern, String string) {
+		Pattern p = Pattern.compile(".*?(" + pattern + ").*?");
+		Matcher m = p.matcher(string);
+		if (m.find()) {
+			return true;
+		}
+		return false;
+	}
+	
 	public static String getExcelChartTitle(String string) {
 		String title = "";
 		Pattern p = Pattern.compile("<a:t>(.*?)</a:t>");
@@ -78,6 +87,7 @@ public class RegExpHelper {
 	
 	private static HashSet<String> getCellRangesList(String string) {
 		Pattern p = Pattern.compile("([A-Z]+[0-9]+)");
+		string = string.replace("$", "");
 		Matcher m = p.matcher(string);
 		HashSet<String> matches = new HashSet<String>();
 		while (m.find()) {

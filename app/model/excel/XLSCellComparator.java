@@ -7,13 +7,13 @@ import org.apache.poi.ss.usermodel.Cell;
  * @author Stefan Olbrecht
  *
  */
-public class CellComparator {
+public class XLSCellComparator {
 	
 	private Cell cMaster;
 	private Cell cCompare;
 	private String message;
 	
-	public CellComparator(Cell cell1, Cell cell2) {
+	public XLSCellComparator(Cell cell1, Cell cell2) {
 		this.cMaster = cell1;
 		this.cCompare = cell2;
 		this.message = "";
@@ -31,12 +31,12 @@ public class CellComparator {
 		if (cell2Value.equals("")) {
 			this.message += "Wert falsch. Kein Wert eingetragen.\n";
 			return false;
-		} else if (!cell1Value.equals(cell2Value)) {
-			this.message += "Wert falsch. Erwartet wurde '" + cell1Value + "'.\n";
-			return false;
-		} else {
+		} else if (cell1Value.equals(cell2Value)) {
 			this.message += "Wert richtig.\n";
 			return true;
+		} else {
+			this.message += "Wert falsch. Erwartet wurde '" + cell1Value + "'.\n";
+			return false;
 		}
 	}
 	
@@ -48,16 +48,15 @@ public class CellComparator {
 				this.message += "Formel richtig.\n";
 				return true;
 			} else {
-				this.message += "Formel falsch.";
 				if (cell2.getCellType() != Cell.CELL_TYPE_FORMULA) {
-					this.message += " Bitte Formel verwenden.\n";
+					this.message += "Formel falsch. Bitte Formel verwenden.\n";
 				} else {
 					String string = StringHelper.getDiffOfTwoFormulas(cell1.toString(), cell2.toString());
-					if (string.equals("Formel richtig.")) {
-						this.message += string;
+					if (string.equals("")) {
+						this.message += "Formel richtig.\n";
 						return true;
 					} else {
-						this.message += string;
+						this.message += "Formel falsch." + string + "\n";
 						return false;
 					}
 				}
