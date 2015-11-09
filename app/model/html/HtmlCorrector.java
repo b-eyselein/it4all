@@ -21,14 +21,13 @@ public class HtmlCorrector {
         .collect(Collectors.toList());
     result.parallelStream().forEach(result1 -> result1.evaluate(driver));
     
-    // FIXME: aktualisiere Punktzahl und speichern in Tabelle!
-    int points = result.stream().mapToDouble(res -> res.getPoints()).sum();
+    int points = result.stream().mapToInt(res -> res.getPoints()).sum();
     
     Grading grading = new Grading();
     grading.student = student;
     grading.exercise = exercise;
     grading.points = points;
-//    grading.save();
+    grading.save();
     
     return result;
   }

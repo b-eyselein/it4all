@@ -34,8 +34,12 @@ public abstract class ElementResult {
   }
   
   public int getPoints() {
-    double attrsFound = attrs.stream().filter(attr -> attr.isFound()).collect(Collectors.counting()) / 2.;
-    return (success != Success.NONE) ? 1 + attrsFound : 0;
+    if(success == Success.NONE)
+      return 0;
+    else if(success == Success.COMPLETE)
+      return 2;
+    else
+      return 1;
   }
   
   public String getElementName() {

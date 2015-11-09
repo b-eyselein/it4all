@@ -20,9 +20,9 @@ create table task (
   foreign key(exercise_id)  references exercise(id) on delete cascade on update cascade);
   
 create table grading (
-  id                        integer primary key,
-  student_name              varchar(255),
-  exercise_id               integer,
+  id                        integer primary key auto_increment,
+  student_name              varchar(255) not null,
+  exercise_id               integer not null,
   points					integer not null,
   foreign key(student_name) references student(name) on delete cascade on update cascade,
   foreign key(exercise_id)  references exercise(id) on delete cascade on update cascade);
