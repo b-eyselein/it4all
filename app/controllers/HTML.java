@@ -18,44 +18,10 @@ import play.mvc.Result;
 import play.twirl.api.Html;
 import views.html.empty;
 import views.html.html.htmlcorrect;
-import views.html.html.htmlfileupload;
+import views.html.html.html;
 import views.html.html.htmloverview;
 
 public class HTML extends Controller {
-  
-  public Result html(int exerciseNumber) {
-//    String userName = session("id");
-//    if(userName == null)
-//      return redirect("/login");
-//    Student user = Student.find.byId(userName);
-//    
-//    if(exerciseNumber == -1 || Exercise.finder.byId(exerciseNumber) == null)
-//      return ok(htmloverview.render(Exercise.finder.all(), user));
-//    else {
-//      Exercise exercise = Exercise.finder.byId(exerciseNumber);
-//      List<String> defaultSolution = exercise.getDefaultInLines();
-//      try {
-//        Path directory = Util.getSolDirForUserAndType("html", userName);
-//        if(!Files.exists(directory) || !Files.isDirectory(directory))
-//          Files.createDirectory(directory);
-//        Path file = Util.getSolFileForExercise(user.name, exerciseNumber);
-//        if(!Files.exists(file) || !Files.isRegularFile(file)) {
-//          try {
-//            Files.write(file, exercise.getDefaultInLines(), StandardOpenOption.CREATE,
-//                StandardOpenOption.TRUNCATE_EXISTING);
-//          } catch (IOException e) {
-//          }
-//        } else {
-//          // TODO: Trim all lines, filter out empty lines
-//          defaultSolution = Files.readAllLines(file).stream().map(line -> line.trim()).filter(line -> !line.isEmpty())
-//              .collect(Collectors.toList());
-//        }
-//      } catch (IOException e) {
-//      }
-//      return ok(htmlexercise.render(exercise, user, defaultSolution));
-//    }
-    return badRequest("Diese Seite sollte nicht aufrufbar sein!");
-  }
   
   public Result site(String userName, int exercise) {
     List<String> strings = Arrays.asList("Es gab einen Fehler...");
@@ -77,36 +43,18 @@ public class HTML extends Controller {
     return ok(htmloverview.render(exercises, student));
   }
   
-  public Result upload() {
-//    if(session(Application.SESSION_ID_FIELD) == null)
-//      return redirect("/login");
-//    Student student = Student.find.byId(session(Application.SESSION_ID_FIELD));
-//    return ok(htmlupload.render(student));
-    return badRequest("Diese Seite sollte nicht aufrufbar sein!");
-  }
-  
-  public Result uploadFile(int exerciseID) {
+  public Result exericse(int exercise) {
     if(session(Application.SESSION_ID_FIELD) == null)
       return redirect("/login");
-    if(exerciseID == -1)
-      return redirect("/index");
+    // FIXME: kann exericse < 1 sein?
+    // FIXME: Student oder Exercise null!
     Student student = Student.find.byId(session(Application.SESSION_ID_FIELD));
-    Exercise exercise = Exercise.finder.byId(exerciseID);
-    return ok(htmlfileupload.render(student, exercise));
-  }
-  
-  public Result saveSol() {
-    // Student user = Student.find.byId(session(Application.SESSION_ID_FIELD));
-    // Map<String, String[]> asFormUrl = request().body().asFormUrlEncoded();
-    // String solution = asFormUrl.get("solution")[0];
-    // int exercise = Integer.parseInt(asFormUrl.get("exercise")[0]);
-    // saveSolutionForUser(user.name, solution, exercise);
-    //
-    // String url = "/solutions/" + user.name + "/html/" + exercise;
-    // List<ElementResult> result = HtmlCorrector.correct(url,
-    // Exercise.finder.byId(exercise));
-    // return ok(htmlcorrect.render(user, result, lines));
-    return badRequest("Seite sollte nicht aufrufbar sein!");
+    if(student == null)
+      return redirect("/login");
+    Exercise exer = Exercise.finder.byId(exercise);
+    if(exer == null)
+      return redirect("/html/");
+    return ok(html.render(student, exer));
   }
   
   public Result saveSolFile() {

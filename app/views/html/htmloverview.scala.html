@@ -1,12 +1,13 @@
-@(exercises: List[model.Exercise], user: model.Student) @main("HTML-Test", user) {
+@import model._
+
+@(exercises: List[Exercise], user: Student)
+
+@main("HTML-Test", user) {
 <div class="container">
   @for(exer <- exercises) {
   <div class="panel panel-default">
     <div class="panel-heading">
-      <a href="/html/uploadfile/@exer.id">Aufgabe @exer.id : @exer.title</a>
-    </div>
-    <div class="panel-body">
-      <p>@exer.text</p>
+      <a href="/html/@exer.id">Aufgabe @exer.id : @exer.title</a>
     </div>
   </div>
   }

@@ -9,21 +9,21 @@ GET     /                           	controllers.Application.index()
 GET		/login							controllers.Application.login()
 POST	/authenticate					controllers.Application.authenticate()
 GET		/logout							controllers.Application.logout()
-GET		/directlogin					controllers.Application.directlogin(ex: Int ?= -1, snr: String ?= "")
-GET		/direct/:name/:type/:id			controllers.Application.direct(name: String, type: String, id: Int)
+GET		/direct/:name/:type/:id			controllers.Application.directLogin(name: String, type: String, id: Int)
 
 # HTML
-GET		/solutions/:user/html/:ex		controllers.HTML.site(user: String, ex: Int)
-GET		/html/overview					controllers.HTML.htmlOverview()
-GET		/html/uploadfile/:ex			controllers.HTML.uploadFile(ex: Int)
+GET		/html/							controllers.HTML.htmlOverview()
+GET		/html/:ex						controllers.HTML.exericse(ex: Int)
 POST	/html/saveFile					controllers.HTML.saveSolFile()
+GET		/solutions/:user/html/:ex		controllers.HTML.site(user: String, ex: Int)
 
 # Evaluation
 GET		/eval/:user						controllers.Evaluation.index(user: String)
 POST	/eval/submit					controllers.Evaluation.submit()
 
 # Excel
-GET		/excel							controllers.Excel.index(name: String ?= "")
+GET		/excel/							controllers.Excel.index()
+GET		/excel/:ex						controllers.Excel.exercise(ex: Int)
 POST	/excel/uploadFile				controllers.Excel.upload()
 
 # User

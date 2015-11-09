@@ -30,28 +30,13 @@ public class Application extends Controller {
     return ok(index.render(student, Exercise.finder.all()));
   }
   
-  public Result directlogin(int exercise, String userName) {
-    String passwort = "";
-    Student student = findOrCreateStudent(userName, passwort);
-    session().clear();
-    session(SESSION_ID_FIELD, student.name);
-    return redirect(routes.HTML.uploadFile(exercise));
-  }
-  
-  public Result direct(String name, String type, int id) {
+  public Result directLogin(String name, String type, int id) {
     String passwort = "";
     Student student = findOrCreateStudent(name, passwort);
     session().clear();
     session(SESSION_ID_FIELD, student.name);
     
-    switch(type) {
-    case "html":
-      return redirect("/html/uploadfile/" + id);
-    case "excel":
-      return redirect("/");
-    default:
-      return redirect("/");
-    }
+    return redirect("/" + type + "/" + id);
   }
   
   public Result login() {
