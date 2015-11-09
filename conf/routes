@@ -12,9 +12,9 @@ GET		/logout							controllers.Application.logout()
 GET		/direct/:name/:type/:id			controllers.Application.directLogin(name: String, type: String, id: Int)
 
 # HTML
-GET		/html/							controllers.HTML.htmlOverview()
+GET		/html/							controllers.HTML.index()
 GET		/html/:ex						controllers.HTML.exericse(ex: Int)
-POST	/html/saveFile					controllers.HTML.saveSolFile()
+POST	/html/upload					controllers.HTML.upload()
 GET		/solutions/:user/html/:ex		controllers.HTML.site(user: String, ex: Int)
 
 # Evaluation
@@ -24,7 +24,7 @@ POST	/eval/submit					controllers.Evaluation.submit()
 # Excel
 GET		/excel/							controllers.Excel.index()
 GET		/excel/:ex						controllers.Excel.exercise(ex: Int)
-POST	/excel/uploadFile				controllers.Excel.upload()
+POST	/excel/upload					controllers.Excel.upload()
 
 # User
 GET		/user							controllers.User.index()
