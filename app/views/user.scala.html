@@ -1,0 +1,14 @@
+@import model._
+
+@(title: String, user: Student, gradings: List[Grading])
+
+@main(title, user) {
+<div class="container">
+  <h3>Ihre Bewertungen:</h3>
+  @for(grad <- gradings) {
+  <div class="panel panel-default">
+    <div class="panel-body">Html-Aufgabe @grad.exercise.id: @grad.points Punkte</div>
+  </div>
+  }
+</div>
+}
