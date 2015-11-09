@@ -37,7 +37,7 @@ public class HTML extends Controller {
     return ok(empty.render(new Html(String.join("\n", strings))));
   }
   
-  public Result htmlOverview() {
+  public Result index() {
     Student student = Student.find.byId(session(Application.SESSION_ID_FIELD));
     List<Exercise> exercises = Exercise.finder.all();
     return ok(htmloverview.render(exercises, student));
@@ -57,7 +57,7 @@ public class HTML extends Controller {
     return ok(html.render(student, exer));
   }
   
-  public Result saveSolFile() {
+  public Result upload() {
     Student user = Student.find.byId(session(Application.SESSION_ID_FIELD));
     // FIXME: getExercise!
     int exercise = 1;
