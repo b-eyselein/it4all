@@ -10,6 +10,18 @@ create table exercise (
   constraint pk_exercise primary key (id))
 ;
 
+create table feedback (
+  id                        integer auto_increment not null,
+  bedienung                 integer,
+  feedback                  integer,
+  korrektur                 integer,
+  kommentar                 varchar(255),
+  constraint ck_feedback_bedienung check (bedienung in (0,1,2,3,4)),
+  constraint ck_feedback_feedback check (feedback in (0,1,2,3,4)),
+  constraint ck_feedback_korrektur check (korrektur in (0,1,2,3,4)),
+  constraint pk_feedback primary key (id))
+;
+
 create table grading (
   id                        integer auto_increment not null,
   student_name              varchar(255),
@@ -50,6 +62,8 @@ create index ix_task_exercise_3 on task (exercise_id);
 SET FOREIGN_KEY_CHECKS=0;
 
 drop table exercise;
+
+drop table feedback;
 
 drop table grading;
 

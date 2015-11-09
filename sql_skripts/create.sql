@@ -26,3 +26,13 @@ create table grading (
   points					integer not null,
   foreign key(student_name) references student(name) on delete cascade on update cascade,
   foreign key(exercise_id)  references exercise(id) on delete cascade on update cascade);
+  
+create table feedback (
+  id                        integer primary key auto_increment,
+  bedienung                 integer,
+  feedback                  integer,
+  korrektur                 integer,
+  kommentar                 varchar(255),
+  constraint ck_feedback_bedienung check (bedienung in (0,1,2,3,4)),
+  constraint ck_feedback_feedback check (feedback in (0,1,2,3,4)),
+  constraint ck_feedback_korrektur check (korrektur in (0,1,2,3,4)));
