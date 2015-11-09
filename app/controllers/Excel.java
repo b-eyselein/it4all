@@ -47,9 +47,9 @@ public class Excel extends Controller {
     }
     
     MultipartFormData body = request().body().asMultipartFormData();
-    FilePart htmlFile = body.getFile("solFile");
-    if(htmlFile != null) {
-      Path path = htmlFile.getFile().toPath();
+    FilePart solutionFile = body.getFile("solFile");
+    if(solutionFile != null) {
+      Path path = solutionFile.getFile().toPath();
       System.out.println(path);
       // FIXME: Save file with correct name!
       
