@@ -42,7 +42,21 @@ public class Application extends Controller {
     return ok(login.render());
   }
   
+  public Result authenticate() {
+    Map<String, String[]> formValues = request().body().asFormUrlEncoded();
+    
+    String userName = formValues.get("name")[0];
+    String passwort = formValues.get("passwort")[0];
+    
+    Student student = findOrCreateStudent(userName, passwort);
+    session().clear();
+    session(SESSION_ID_FIELD, student.name);
+    
+    return redirect("/");
+  }
+  
   private Student findOrCreateStudent(String userName, String passwort) {
+    // TODO: Passwort!
     if(Student.find.byId(userName) == null) {
       Student newStudent = new Student();
       newStudent.name = userName;
@@ -60,24 +74,6 @@ public class Application extends Controller {
   public Result logout() {
     session().clear();
     return ok(login.render());
-  }
-  
-  public Result authenticate() {
-    Map<String, String[]> formValues = request().body().asFormUrlEncoded();
-    
-    String userName = formValues.get("name")[0];
-    String passwort = formValues.get("passwort")[0];
-    
-    Student student = findOrCreateStudent(userName, passwort);
-    session().clear();
-    session(SESSION_ID_FIELD, student.name);
-    
-    return ok(index.render(student, Exercise.finder.all()));
-  }
-  
-  public static class Login {
-    public String name;
-    public String password;
   }
   
 }
