@@ -1,13 +1,34 @@
 @(student: model.Student, exercises: List[model.Exercise])
 
 @main("HTML-Test", student) {
-  <div class="container">
-    <div class="panel panel-default">
-      <div class="panel-body">
-        @for(exercise <- exercises) {
+<div class="container">
+  <div class="panel panel-default">
+    <div class="panel-heading">Html</div>
+    <div class="panel-body">
+    @for(exercise <- exercises) {
+      <div class="panel panel-default">
+        <div class="panel-body">
           <a href="/html/@exercise.id">Dateiupload f&uuml;r Html-Aufgabe @exercise.id</a>
-        }
+        </div>
+      </div>
+    }
+    </div>
+  </div>
+  
+  <div class="panel panel-default">
+    <div class="panel-heading">Excel</div>
+    <div class="panel-body">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <a href="/excel/1">Dateiupload f&uuml;r Excel-Aufgabe 1</a>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <a href="/excel/2">Dateiupload f&uuml;r Excel-Aufgabe 2</a>
+        </div>
       </div>
     </div>
   </div>
+</div>
 }
