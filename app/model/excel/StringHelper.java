@@ -12,7 +12,7 @@ public class StringHelper {
 		// Compare operators
 		String operDiff = RegExpHelper.getCellOperatorsDiff(string1, string2);
 		if (operDiff != "") {
-			message += " Der Operator " + operDiff + " fehlt.";
+			message += " Ein Operator (" + operDiff + ") fehlt.";
 		} else {
 			// Compare ranges
 			String rangeDiff = RegExpHelper.getCellRangesDiff(string1, string2);
@@ -23,8 +23,6 @@ public class StringHelper {
 				String formulaDiff = RegExpHelper.getCellFormulasDiff(string1, string2);
 				if (formulaDiff != "") {
 					message += " Verwenden Sie " + formulaDiff + ".";
-				} else {
-					message += "Formel richtig.";
 				}
 			}
 		}
