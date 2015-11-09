@@ -8,11 +8,10 @@ import views.html.excel.excelcorrect;
 
 public class Excel extends Controller {
   
-  public Result index() {
-    String userName = session("id");
-    if(userName == null)
+  public Result index(String name) {
+    if(name == null || name.isEmpty())
       return redirect("/login");
-    Student user = Student.find.byId(userName);
+    Student user = Student.find.byId(name);
     
     return ok(excel.render(user));
   }

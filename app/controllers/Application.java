@@ -38,6 +38,22 @@ public class Application extends Controller {
     return redirect(routes.HTML.uploadFile(exercise));
   }
   
+  public Result direct(String name, String type, int id) {
+    String passwort = "";
+    Student student = findOrCreateStudent(name, passwort);
+    session().clear();
+    session(SESSION_ID_FIELD, student.name);
+    
+    switch(type) {
+    case "html":
+      return redirect("/html/uploadfile/" + id);
+    case "excel":
+      return redirect("/");
+    default:
+      return redirect("/");
+    }
+  }
+  
   public Result login() {
     return ok(login.render());
   }

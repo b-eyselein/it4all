@@ -10,6 +10,7 @@ GET		/login							controllers.Application.login()
 POST	/authenticate					controllers.Application.authenticate()
 GET		/logout							controllers.Application.logout()
 GET		/directlogin					controllers.Application.directlogin(ex: Int ?= -1, snr: String ?= "")
+GET		/direct/:name/:type/:id			controllers.Application.direct(name: String, type: String, id: Int)
 
 # HTML
 GET		/solutions/:user/html/:ex		controllers.HTML.site(user: String, ex: Int)
@@ -22,7 +23,7 @@ GET		/eval/:user						controllers.Evaluation.index(user: String)
 POST	/eval/submit					controllers.Evaluation.submit()
 
 # Excel
-GET		/excel							controllers.Excel.index()
+GET		/excel							controllers.Excel.index(name: String ?= "")
 POST	/excel/uploadFile				controllers.Excel.upload()
 
 # User
