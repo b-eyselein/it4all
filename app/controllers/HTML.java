@@ -25,7 +25,7 @@ public class HTML extends Controller {
   
   public Result site(String userName, int exercise) {
     List<String> strings = Arrays.asList("Es gab einen Fehler...");
-    Path path = Util.getSolFileForExercise(userName, exercise);
+    Path path = Util.getHtmlSolFileForExercise(userName, "html", exercise);
     if(Files.exists(path)) {
       try {
         strings = Files.readAllLines(path);
@@ -71,7 +71,7 @@ public class HTML extends Controller {
         String url = "/solutions/" + user.name + "/html/" + exercise;
         List<ElementResult> result = HtmlCorrector.correct(url, ex, user);
         
-        List<String> solution = Files.readAllLines(Util.getSolFileForExercise(user.name, exercise));
+        List<String> solution = Files.readAllLines(Util.getHtmlSolFileForExercise(user.name, "html", exercise));
         
         return ok(htmlcorrect.render(user, ex, result, solution));
       } catch (IOException e) {
@@ -81,7 +81,7 @@ public class HTML extends Controller {
       return badRequest("Datei konnte nicht hochgeladen werden!");
   }
   
-  private void saveSolutionForUser(final String user, String solution, int exercise) {
+  private void saveSolutionForUser(String user, String solution, int exercise) {
     try {
       if(!Files.exists(Util.getSolDirForUser(user)))
         Files.createDirectory(Util.getSolDirForUser(user));
@@ -90,7 +90,7 @@ public class HTML extends Controller {
       if(!Files.exists(solDir))
         Files.createDirectory(solDir);
       
-      Path saveTo = Util.getSolFileForExercise(user, exercise);
+      Path saveTo = Util.getHtmlSolFileForExercise(user, "html", exercise);
       Files.write(saveTo, Arrays.asList(solution), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     } catch (IOException e) {
       System.out.println(e);
