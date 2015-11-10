@@ -36,3 +36,8 @@ create table feedback (
   constraint ck_feedback_bedienung check (bedienung in (0,1,2,3,4)),
   constraint ck_feedback_feedback check (feedback in (0,1,2,3,4)),
   constraint ck_feedback_korrektur check (korrektur in (0,1,2,3,4)));
+  
+create table excel_exercise (
+  id						integer primary key auto_increment,
+  title						varchar(255) not null,
+  file_name					varchar(255) not null);

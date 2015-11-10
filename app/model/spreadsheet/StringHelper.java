@@ -1,4 +1,4 @@
-package model.excel;
+package model.spreadsheet;
 
 /**
  * 

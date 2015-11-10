@@ -1,4 +1,4 @@
-package model.excel;
+package model.spreadsheet;
 
 import java.util.HashSet;
 import java.util.regex.Matcher;

@@ -1,4 +1,4 @@
-package model.excel;
+package model.spreadsheet.openoffice;
 
 import org.odftoolkit.simple.SpreadsheetDocument;
 

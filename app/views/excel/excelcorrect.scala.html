@@ -1,5 +1,9 @@
-@(student: model.Student) @main("Excel", student) {
+@import model.Student
+
+@(student: Student, notice: String)
+
+@main("Excel", student) {
 <div class="container">
-  <p>File was uploaded??</p>
+  <h3>@notice</h3>
 </div>
 }

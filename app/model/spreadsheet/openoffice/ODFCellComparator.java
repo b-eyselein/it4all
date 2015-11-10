@@ -1,4 +1,6 @@
-package model.excel;
+package model.spreadsheet.openoffice;
+
+import model.spreadsheet.StringHelper;
 
 import org.odftoolkit.simple.table.Cell;
 

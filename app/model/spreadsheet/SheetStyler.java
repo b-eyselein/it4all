@@ -1,4 +1,4 @@
-package model.excel;
+package model.spreadsheet;
 
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Comment;

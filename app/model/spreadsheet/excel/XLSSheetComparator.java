@@ -1,7 +1,11 @@
-package model.excel;
+package model.spreadsheet.excel;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+
+import model.spreadsheet.HashSetHelper;
+import model.spreadsheet.RegExpHelper;
+import model.spreadsheet.StringHelper;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Color;

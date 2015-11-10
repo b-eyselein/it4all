@@ -3,6 +3,13 @@
 
 # --- !Ups
 
+create table excel_exercise (
+  id                        integer auto_increment not null,
+  title                     varchar(255),
+  file_name                 varchar(255),
+  constraint pk_excel_exercise primary key (id))
+;
+
 create table exercise (
   id                        integer auto_increment not null,
   title                     varchar(255),
@@ -60,6 +67,8 @@ create index ix_task_exercise_3 on task (exercise_id);
 # --- !Downs
 
 SET FOREIGN_KEY_CHECKS=0;
+
+drop table excel_exercise;
 
 drop table exercise;
 

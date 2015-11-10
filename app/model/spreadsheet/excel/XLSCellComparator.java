@@ -1,4 +1,6 @@
-package model.excel;
+package model.spreadsheet.excel;
+
+import model.spreadsheet.StringHelper;
 
 import org.apache.poi.ss.usermodel.Cell;
 
