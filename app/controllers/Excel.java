@@ -3,6 +3,7 @@ package controllers;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 
@@ -69,10 +70,29 @@ public class Excel extends Controller {
       musterPath += "/" + fileName + "_Muster." + SpreadSheetCorrector.getExtension(testPath);
       String notice = SpreadSheetCorrector.startComparison(musterPath, testPath, fileName, false, false);
       
-      return ok(excelcorrect.render(user, notice));
+      return ok(excelcorrect.render(user, notice, exerciseId, SpreadSheetCorrector.getExtension(testPath)));
     } else {
       return badRequest("Datei konnte nicht hochgeladen werden!");
     }
+  }
+  
+  public Result download(int exerciseId, String typ) {
+    if(session(Application.SESSION_ID_FIELD) == null)
+      return redirect("/login");
+    Student user = Student.find.byId(session(Application.SESSION_ID_FIELD));
+    if(user == null) {
+      session().clear();
+      return redirect("/login");
+    }
+    
+    ExcelExercise exercise = ExcelExercise.finder.byId(exerciseId);
+    
+    Path fileToDownload = Paths.get("/var/lib/it4all/solutions", user.name, "excel", exercise.fileName + "_Korrektur."
+        + typ);
+    if(Files.exists(fileToDownload))
+      return ok(fileToDownload.toFile());
+    else
+      return badRequest("Korrigierte Datei existiert nicht!");
   }
   
   private void saveSolutionForUser(String user, Path uploadedSolution, String fileName, int exercise) {

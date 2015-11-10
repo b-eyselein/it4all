@@ -25,6 +25,7 @@ POST	/eval/submit					controllers.Evaluation.submit()
 GET		/excel/							controllers.Excel.index()
 GET		/excel/:ex						controllers.Excel.exercise(ex: Int)
 POST	/excel/upload/:ex				controllers.Excel.upload(ex: Int)
+GET		/excel/download/:ex/:typ		controllers.Excel.download(ex: Int, typ: String)
 
 # User
 GET		/user							controllers.User.index()
