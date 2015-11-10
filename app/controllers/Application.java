@@ -8,6 +8,7 @@ import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.util.Map;
 
+import model.ExcelExercise;
 import model.Exercise;
 import model.Student;
 import play.mvc.Controller;
@@ -27,7 +28,7 @@ public class Application extends Controller {
       session().clear();
       return redirect("/login");
     }
-    return ok(index.render(student, Exercise.finder.all()));
+    return ok(index.render(student, Exercise.finder.all(), ExcelExercise.finder.all()));
   }
   
   public Result directLogin(String name, String type, int id) {

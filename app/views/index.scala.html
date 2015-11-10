@@ -1,14 +1,16 @@
-@(student: model.Student, exercises: List[model.Exercise])
+@import model._
+
+@(student: Student, htmlexercises: List[Exercise], excelexercises: List[ExcelExercise])
 
 @main("HTML-Test", student) {
 <div class="container">
   <div class="panel panel-default">
     <div class="panel-heading">Html</div>
     <div class="panel-body">
-    @for(exercise <- exercises) {
+    @for(htmlex <- htmlexercises) {
       <div class="panel panel-default">
         <div class="panel-body">
-          <a href="/html/@exercise.id">Dateiupload f&uuml;r Html-Aufgabe @exercise.id</a>
+          <a href="/html/@htmlex.id">Dateiupload f&uuml;r Html-Aufgabe @htmlex.id: @htmlex.title</a>
         </div>
       </div>
     }
@@ -18,16 +20,13 @@
   <div class="panel panel-default">
     <div class="panel-heading">Excel</div>
     <div class="panel-body">
+    @for(excelex <- excelexercises) {
       <div class="panel panel-default">
         <div class="panel-body">
-          <a href="/excel/1">Dateiupload f&uuml;r Excel-Aufgabe 1</a>
+          <a href="/excel/@excelex.id">Dateiupload f&uuml;r Excel-Aufgabe @excelex.id: @excelex.title</a>
         </div>
       </div>
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <a href="/excel/2">Dateiupload f&uuml;r Excel-Aufgabe 2</a>
-        </div>
-      </div>
+    }
     </div>
   </div>
 </div>
