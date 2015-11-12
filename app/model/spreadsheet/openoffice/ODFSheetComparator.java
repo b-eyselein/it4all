@@ -13,6 +13,9 @@ import org.odftoolkit.simple.table.Table;
  */
 public class ODFSheetComparator {
 	
+	private static final int MAXROW = 80;
+	private static final int MAXCOLUMN = 22;
+	
 	private Table tMaster;
 	private Table tCompare;
 	private String message;
@@ -34,9 +37,9 @@ public class ODFSheetComparator {
 	@SuppressWarnings("deprecation")
 	public ArrayList<Cell> getColoredRange() {
 		ArrayList<Cell> range = new ArrayList<Cell>();
-		for (int row = 0; row < 50; row++) {
+		for (int row = 0; row < MAXROW; row++) {
 			Row oRow = this.tMaster.getRowByIndex(row);
-			for (int column = 0; column < 26; column++) {
+			for (int column = 0; column < MAXCOLUMN; column++) {
 				Cell oCell = oRow.getCellByIndex(column);
 				String color = oCell.getCellBackgroundColorString();
 				if (!color.equals("#FFFFFF")) {

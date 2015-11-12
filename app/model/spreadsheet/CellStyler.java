@@ -31,9 +31,9 @@ public class CellStyler {
 	
 	public static void setODFCellStyle(org.odftoolkit.simple.table.Cell cell, boolean bool) {
 		org.odftoolkit.simple.style.Font fontGreen =
-				new org.odftoolkit.simple.style.Font("Arial", FontStyle.BOLD, 11, Color.GREEN);
+				new org.odftoolkit.simple.style.Font("Arial", FontStyle.BOLD, 10, Color.GREEN);
 		org.odftoolkit.simple.style.Font fontRed =
-				new org.odftoolkit.simple.style.Font("Arial", FontStyle.ITALIC, 11, Color.RED);
+				new org.odftoolkit.simple.style.Font("Arial", FontStyle.ITALIC, 10, Color.RED);
 	    if (bool) {
 		    cell.setFont(fontGreen);
 		} else {
