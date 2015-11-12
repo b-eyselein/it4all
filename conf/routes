@@ -10,6 +10,7 @@ GET		/login							controllers.Application.login()
 POST	/authenticate					controllers.Application.authenticate()
 GET		/logout							controllers.Application.logout()
 GET		/direct/:name/:type/:id			controllers.Application.directLogin(name: String, type: String, id: Int)
+GET		/direct/:type/:id				controllers.Application.fromWuecampus(type: String, id: Int, name: String ?= "")
 
 # HTML
 GET		/html/							controllers.HTML.index()

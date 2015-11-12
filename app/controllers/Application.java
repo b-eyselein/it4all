@@ -40,6 +40,17 @@ public class Application extends Controller {
     return redirect("/" + type + "/" + id);
   }
   
+  public Result fromWuecampus(String type, int id, String name) {
+    if(name.isEmpty())
+      return redirect("/login");
+    String passwort = "";
+    Student student = findOrCreateStudent(name, passwort);
+    session().clear();
+    session(SESSION_ID_FIELD, student.name);
+    
+    return redirect("/" + type + "/" + id);
+  }
+  
   public Result login() {
     return ok(login.render());
   }
