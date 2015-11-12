@@ -14,3 +14,6 @@ INSERT INTO task (`exercise_id`, `id`, `task_Description`, `pts`, `result_type`,
 	(1, 6, 'Eine Checkbox* (agb), um die AGBs der Seite zu akzeptieren', 2, 0, 'input', 'agb', 'type=checkbox;required=true'),
 	(1, 7, 'Eine Möglichkeit, das Formular zurückzusetzen (reset)', 1, 0, 'input', 'reset', 'type=reset'),
 	(1, 8, 'Eine Möglichkeit, das Formular abzusenden (submit)', 1, 0, 'input', 'submit', 'type=submit');
+	
+INSERT INTO excel_exercise (`id`, `title`, `file_name`) VALUES
+	(1, 'Planung Schullandheimaufenthalt', 'Aufgabe_Schullandheim');
