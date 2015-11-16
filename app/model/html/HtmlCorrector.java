@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import model.Exercise;
 import model.Grading;
-import model.Student;
+import model.user.Student;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;

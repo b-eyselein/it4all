@@ -1,4 +1,6 @@
-@(title: String, user: model.Student)(content: Html)
+@import model.user.User
+
+@(title: String, user: User)(content: Html)
 
 <!DOCTYPE html>
 
@@ -21,10 +23,10 @@
           <ul class="nav navbar-nav">
             <li><a href="/html/">Html</a></li>
             <li><a href="/excel/">Excel</a></li>
-            <li><a href="/eval/@user.name">Evaluation Html</a></li>
+            <li><a href="/eval/@user.getName()">Evaluation Html</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="/user"><span class="glyphicon glyphicon-user"></span> @user.name</a></li>
+            <li><a href="/user"><span class="glyphicon glyphicon-user"></span> @user.getName()</a></li>
             <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
           </ul>
         </div>

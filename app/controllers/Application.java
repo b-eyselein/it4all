@@ -10,7 +10,9 @@ import java.util.Map;
 
 import model.ExcelExercise;
 import model.Exercise;
-import model.Student;
+import model.user.Administrator;
+import model.user.Student;
+import model.user.User;
 import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.index;
@@ -61,9 +63,14 @@ public class Application extends Controller {
     String userName = formValues.get("name")[0];
     String passwort = formValues.get("passwort")[0];
     
-    Student student = findOrCreateStudent(userName, passwort);
+    User user = null;
+    if(userName.equals("Administrator"))
+      user = new Administrator();
+    else
+      user = findOrCreateStudent(userName, passwort);
+    
     session().clear();
-    session(SESSION_ID_FIELD, student.name);
+    session(SESSION_ID_FIELD, user.getName());
     
     return redirect("/");
   }

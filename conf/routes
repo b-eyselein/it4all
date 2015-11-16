@@ -5,6 +5,9 @@
 # Home page
 GET     /                           	controllers.Application.index()
 
+# Administrator
+GET		/admin							controllers.Admin.index()
+
 # Login && Logout
 GET		/login							controllers.Application.login()
 POST	/authenticate					controllers.Application.authenticate()
@@ -29,7 +32,7 @@ POST	/excel/upload/:ex				controllers.Excel.upload(ex: Int)
 GET		/excel/download/:ex/:typ		controllers.Excel.download(ex: Int, typ: String)
 
 # User
-GET		/user							controllers.User.index()
+GET		/user							controllers.UserController.index()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               	controllers.Assets.versioned(path="/public", file: Asset)

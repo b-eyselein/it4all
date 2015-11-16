@@ -8,8 +8,8 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import model.ExcelExercise;
-import model.Student;
 import model.spreadsheet.SpreadSheetCorrector;
+import model.user.Student;
 import play.mvc.Controller;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;

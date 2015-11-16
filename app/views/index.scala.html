@@ -1,6 +1,7 @@
 @import model._
+@import model.user.User
 
-@(student: Student, htmlexercises: List[Exercise], excelexercises: List[ExcelExercise])
+@(student: User, htmlexercises: List[Exercise], excelexercises: List[ExcelExercise])
 
 @main("HTML-Test", student) {
 <div class="container">

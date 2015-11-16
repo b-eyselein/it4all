@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import model.user.Student;
 import play.data.validation.Constraints.Required;
 
 import com.avaje.ebean.Model;

@@ -8,9 +8,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import model.Exercise;
-import model.Student;
 import model.html.ElementResult;
 import model.html.HtmlCorrector;
+import model.user.Student;
 import play.mvc.Controller;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;

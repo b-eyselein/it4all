@@ -3,12 +3,12 @@ package controllers;
 import java.util.List;
 
 import model.Grading;
-import model.Student;
+import model.user.Student;
 import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.user;
 
-public class User extends Controller {
+public class UserController extends Controller {
   
   public Result index() {
     if(session(Application.SESSION_ID_FIELD) == null)
