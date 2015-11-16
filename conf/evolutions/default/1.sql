@@ -3,6 +3,12 @@
 
 # --- !Ups
 
+create table administrator (
+  name                      varchar(255) not null,
+  password                  varchar(255),
+  constraint pk_administrator primary key (name))
+;
+
 create table excel_exercise (
   id                        integer auto_increment not null,
   title                     varchar(255),
@@ -72,6 +78,8 @@ create index ix_task_exercise_3 on task (exercise_id);
 # --- !Downs
 
 SET FOREIGN_KEY_CHECKS=0;
+
+drop table administrator;
 
 drop table excel_exercise;
 

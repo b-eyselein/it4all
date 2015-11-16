@@ -64,9 +64,10 @@ public class Application extends Controller {
     String passwort = formValues.get("passwort")[0];
     
     User user = null;
-    if(userName.equals("Administrator"))
+    if(userName.equals("Administrator")) {
       user = new Administrator();
-    else
+      ((Administrator) user).name = "Administrator";
+    } else
       user = findOrCreateStudent(userName, passwort);
     
     session().clear();
