@@ -3,7 +3,7 @@ package controllers;
 import model.user.Administrator;
 import play.mvc.Controller;
 import play.mvc.Result;
-import views.html.admin;
+import views.html.admin.admin;
 
 public class Admin extends Controller {
 

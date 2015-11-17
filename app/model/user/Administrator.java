@@ -19,5 +19,10 @@ public class Administrator implements User {
     return name;
   }
   // FIXME: change name and password!!!!
+
+  @Override
+  public boolean isAdmin() {
+    return true;
+  }
   
 }

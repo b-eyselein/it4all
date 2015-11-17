@@ -63,6 +63,7 @@ public class Application extends Controller {
     String userName = formValues.get("name")[0];
     String passwort = formValues.get("passwort")[0];
     
+    // TODO: schöner...
     User user = null;
     if(userName.equals("Administrator")) {
       user = new Administrator();
@@ -73,7 +74,10 @@ public class Application extends Controller {
     session().clear();
     session(SESSION_ID_FIELD, user.getName());
     
-    return redirect("/");
+    if(user.isAdmin())
+      return redirect("/admin");
+    else
+      return redirect("/");
   }
   
   private Student findOrCreateStudent(String userName, String passwort) {

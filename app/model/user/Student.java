@@ -25,5 +25,10 @@ public class Student extends Model implements User {
   public String getName() {
     return name;
   }
+
+  @Override
+  public boolean isAdmin() {
+    return false;
+  }
   
 }
