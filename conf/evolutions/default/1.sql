@@ -25,6 +25,8 @@ create table exercise (
 
 create table feedback (
   id                        integer auto_increment not null,
+  sinn                      integer,
+  nutzen                    integer,
   bedienung                 integer,
   feedback                  integer,
   korrektur                 integer,

@@ -29,6 +29,8 @@ create table grading (
   
 create table feedback (
   id                        integer primary key auto_increment,
+  sinn						integer,
+  nutzen					integer,
   bedienung                 integer,
   feedback                  integer,
   korrektur                 integer,

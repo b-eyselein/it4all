@@ -26,11 +26,16 @@ public class Evaluation extends Controller {
       return redirect("/login");
     
     Map<String, String[]> evaluation = request().body().asFormUrlEncoded();
+    String sinn = evaluation.get("sinn")[0];
+    String nutzen = evaluation.get("nutzen")[0];
+    
     String[] bedienung = evaluation.get("bedienung");
     String[] feedback = evaluation.get("feedback");
     String[] korrektur = evaluation.get("korrektur");
     
     Feedback fb = new Feedback();
+    fb.sinn = sinn != null ? Integer.parseInt(sinn) : -1;
+    fb.nutzen = nutzen != null ? Integer.parseInt(nutzen) : -1;
     fb.bedienung = Note.values()[bedienung != null ? Integer.parseInt(bedienung[0]) : 0];
     fb.feedback = Note.values()[feedback != null ? Integer.parseInt(feedback[0]) : 0];
     fb.korrektur = Note.values()[korrektur != null ? Integer.parseInt(korrektur[0]) : 0];

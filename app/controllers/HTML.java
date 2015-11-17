@@ -46,10 +46,9 @@ public class HTML extends Controller {
   public Result exericse(int exercise) {
     if(session(Application.SESSION_ID_FIELD) == null)
       return redirect("/login");
-    // FIXME: kann exericse < 1 sein?
-    // FIXME: Student oder Exercise null!
     Student student = Student.find.byId(session(Application.SESSION_ID_FIELD));
     if(student == null)
+      // FIXME: session besetzt, aber nicht in Datenbank!
       return redirect("/login");
     Exercise exer = Exercise.finder.byId(exercise);
     if(exer == null)

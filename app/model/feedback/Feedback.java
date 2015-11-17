@@ -11,6 +11,10 @@ public class Feedback extends Model {
   @Id
   public int id;
   
+  public int sinn;
+  
+  public int nutzen;
+  
   public Note bedienung;
   
   public Note feedback;
