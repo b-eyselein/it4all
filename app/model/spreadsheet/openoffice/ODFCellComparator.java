@@ -6,85 +6,37 @@ import org.odftoolkit.simple.table.Cell;
 
 public class ODFCellComparator {
   
-  private Cell cMaster;
-  private Cell cCompare;
-  private String message;
-  
-  public ODFCellComparator(Cell cell1, Cell cell2) {
-    this.cMaster = cell1;
-    this.cCompare = cell2;
-    this.message = "";
+  public static String compareCellValues(Cell masterCell, Cell compareCell) {
+    String masterValue = masterCell.getStringValue(), compareValue = compareCell.getStringValue();
+    // FIXME: why substring from 0 to first newline?
+    compareValue = compareValue.substring(0, compareValue.indexOf("\n"));
+    if(compareValue.isEmpty())
+      return "Keinen Wert angegeben!";
+    else if(masterValue.equals(compareValue))
+      return "Wert richtig.";
+    else
+      return "Wert falsch. Erwartet wurde '" + masterValue + "'.";
   }
   
-  public String getMessage() {
-    return this.message;
-  }
-  
-  public boolean compareCellValues() {
-    String cell1Value = cMaster.getStringValue();
-    String cell2Value = cCompare.getStringValue();
-    cell2Value = cell2Value.substring(0, cell2Value.indexOf("\n"));
-    if(cell2Value.equals("")) {
-      this.message += "Wert falsch. Kein Wert eingetragen.\n";
-      return false;
-    } else if(cell1Value.equals(cell2Value)) {
-      this.message += "Wert richtig.\n";
-      return true;
-    } else {
-      this.message += "Wert falsch. Erwartet wurde '" + cell1Value + "'.\n";
-      return false;
-    }
-  }
-  
-  public boolean compareCellFormulas() {
-    String masterFormula = cMaster.getFormula();
-    String compareFormula = cCompare.getFormula();
-    if(masterFormula == null) {
+  public static String compareCellFormulas(Cell masterCell, Cell compareCell) {
+    String masterFormula = masterCell.getFormula();
+    String compareFormula = compareCell.getFormula();
+    if(masterFormula == null)
       // Keine Formel zu vergleichen
-      return true;
-    } else if(masterFormula.equals(compareFormula)) {
+      return "";
+    else if(masterFormula.equals(compareFormula))
       // Formel richtig
-      this.message += "Formel richtig.\n";
-      return true;
-    } else if(compareFormula == null) {
+      return "Formel richtig.";
+    else if(compareFormula == null)
       // Keine Formel von Student angegeben
-      this.message += "Formel falsch. Bitte Formel verwenden.\n";
-      return false;
-    } else {
+      return "Keine Formel angegeben!";
+    else {
       String string = StringHelper.getDiffOfTwoFormulas(masterFormula, compareFormula);
-      if(string.equals("")) {
-        this.message += "Formel richtig.\n";
-        return true;
-      } else {
-        this.message += "Formel falsch." + string + "\n";
-        return false;
-      }
+      if(string.equals(""))
+        // TODO: can this happen?
+        return "Formel richtig.";
+      else
+        return "Formel falsch. " + string;
     }
   }
-  
-  @SuppressWarnings("unused")
-  private String getStringValueOfCell(Cell cell) {
-    String value = cell.getStringValue();
-    switch(cell.getValueType()) {
-    case "boolean":
-      value = cell.getBooleanValue().toString();
-      break;
-    case "currency":
-      value = Double.toString(cell.getCurrencyValue());
-      break;
-    case "date":
-      value = cell.getDateValue().toString();
-      break;
-    case "float":
-      value = Double.toString(cell.getCurrencyValue());
-      break;
-    case "percentage":
-      value = Double.toString(cell.getPercentageValue());
-      break;
-    case "time":
-      value = cell.getTimeValue().toString();
-    }
-    return value;
-  }
-  
 }

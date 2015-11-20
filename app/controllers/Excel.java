@@ -64,12 +64,12 @@ public class Excel extends Controller {
       String fileName = exercise.fileName;
       saveSolutionForUser(user.name, path, solutionFile.getFilename(), exerciseId);
       
-      // FIXME: get Paths!
+      // TODO: get Paths!
       Path testPath = Util.getExcelSolFileForExercise(user.name, solutionFile.getFilename());
       Path musterPath = Util.getExcelSampleDirectoryForExercise(exerciseId);
       musterPath = Paths
           .get(musterPath.toString(), fileName + "_Muster." + SpreadSheetCorrector.getExtension(testPath));
-      String notice = SpreadSheetCorrector.startComparison(musterPath, testPath, false, false);
+      String notice = SpreadSheetCorrector.correct(musterPath, testPath, false, false);
       
       return ok(excelcorrect.render(user, notice, exerciseId, SpreadSheetCorrector.getExtension(testPath)));
     } else {

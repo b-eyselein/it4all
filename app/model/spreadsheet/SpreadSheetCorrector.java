@@ -1,6 +1,7 @@
 package model.spreadsheet;
 
 import java.nio.file.Path;
+import java.util.Arrays;
 
 import model.spreadsheet.excel.XLSCorrector;
 import model.spreadsheet.openoffice.ODFCorrector;
@@ -12,9 +13,7 @@ import model.spreadsheet.openoffice.ODFCorrector;
  */
 public class SpreadSheetCorrector {
   
-  static final String DIR = "files/";
-  
-  public static String startComparison(Path musterPath, Path testPath, boolean conditionalFormating, boolean charts) {
+  public static String correct(Path musterPath, Path testPath, boolean conditionalFormating, boolean charts) {
     String fileExtension = getExtension(testPath);
     if(fileExtension.equals("ods"))
       // FIXME: komplette Umstellung auf SpreadSheetCorrectionResult!
@@ -22,7 +21,8 @@ public class SpreadSheetCorrector {
     else if(fileExtension.equals("xlsx") || fileExtension.equals("xlsm"))
       return XLSCorrector.correct(musterPath, testPath, conditionalFormating, charts);
     else
-      return "Falsche Dateiendung: \"" + fileExtension + "\". Korrektur konnte nicht gestartet werden.";
+      return new SpreadSheetCorrectionResult(false, Arrays.asList("Falsche Dateiendung: \"" + fileExtension
+          + "\". Korrektur konnte nicht gestartet werden.")).getNotices().get(0);
   }
   
   public static String getUserFolder(Path path) {

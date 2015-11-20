@@ -2,7 +2,6 @@ package model.spreadsheet.openoffice;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +22,10 @@ public class ODFCorrector {
   // TODO: magic numbers...
   private static final int MAXROW = 80;
   private static final int MAXCOLUMN = 22;
+  
+  private static final String COLOR_WHITE = "#FFFFFF";
+  private static final String FONT = "Arial";
+  private static final double FONT_SIZE = 10.;
   
   public static SpreadSheetCorrectionResult correct(Path musterPath, Path testPath, boolean conditionalFormating,
       boolean compareCharts) {
@@ -47,7 +50,7 @@ public class ODFCorrector {
           Arrays.asList("Anzahl an Arbeitsblättern stimmt nicht überein. Haben Sie die richtige Datei hochgeladen?"));
     
     if(compareCharts)
-      compareNumberOfChartsInSheet(compareDocument, sampleDocument);
+      compareNumberOfChartsInDocument(compareDocument, sampleDocument);
     
     // Iterate over sheets
     int sheetCount = sampleDocument.getSheetCount();
@@ -60,18 +63,8 @@ public class ODFCorrector {
         compareSheet(sampleTable, compareTable, conditionalFormating);
     }
     
-    // Save and close
-    // TODO userFolder: saveFolder!
-    String userFolder = SpreadSheetCorrector.getUserFolder(testPath);
-    String fileName = SpreadSheetCorrector.getFileName(testPath);
-    try {
-      ODFCorrector.saveSpreadsheet(compareDocument, userFolder, fileName);
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    
-    // Close Workbooks
+    // Save and close workbooks
+    saveCorrectedSpreadsheet(compareDocument, testPath);
     compareDocument.close();
     sampleDocument.close();
     
@@ -81,7 +74,7 @@ public class ODFCorrector {
       return new SpreadSheetCorrectionResult(false, notices);
   }
   
-  private static void compareNumberOfChartsInSheet(SpreadsheetDocument compare, SpreadsheetDocument sample) {
+  private static void compareNumberOfChartsInDocument(SpreadsheetDocument compare, SpreadsheetDocument sample) {
     int sampleCount = sample.getChartCount(), compareCount = compare.getChartCount();
     String message = "";
     
@@ -107,27 +100,28 @@ public class ODFCorrector {
       int columnIndex = cellMaster.getColumnIndex();
       Cell cellCompare = compareTable.getCellByPosition(columnIndex, rowIndex);
       
-      if(cellCompare != null) {
-        // Create CellComparator
-        ODFCellComparator cc = new ODFCellComparator(cellMaster, cellCompare);
-        cellCompare.setNoteText(null);
-        // Compare cell values
-        boolean equalCell = cc.compareCellValues();
-        boolean equalFormula = cc.compareCellFormulas();
-        setODFCellComment(cellCompare, cc.getMessage());
-        
-        if(equalCell && equalFormula)
-          cellCompare.setFont(new Font("Arial", FontStyle.BOLD, 10, Color.GREEN));
-        else
-          cellCompare.setFont(new Font("Arial", FontStyle.ITALIC, 10, Color.RED));
-      }
+      if(cellCompare == null)
+        // TODO: Fehler werfen? Kann das überhaupt passieren?
+        return;
+      
+      // Compare cell values
+      String cellValueResult = ODFCellComparator.compareCellValues(cellMaster, cellCompare);
+      String cellFormulaResult = ODFCellComparator.compareCellFormulas(cellMaster, cellCompare);
+      
+      setODFCellComment(cellCompare, cellValueResult + "\n" + cellFormulaResult);
+      
+      if(cellValueResult.equals("Wert richtig.")
+          && (cellFormulaResult.isEmpty() || cellFormulaResult.equals("Formel richtig.")))
+        cellCompare.setFont(new Font(FONT, FontStyle.BOLD, FONT_SIZE, Color.GREEN));
+      else
+        cellCompare.setFont(new Font(FONT, FontStyle.ITALIC, FONT_SIZE, Color.RED));
     }
   }
   
   private static void setODFCellComment(Cell cell, String message) {
     if(message.isEmpty())
       return;
-    // TODO: Why remove note if exists
+    // TODO: Warum auf null setzen, wenn sowiese überschrieben?
     if(cell.getNoteText() != null)
       cell.setNoteText(null);
     cell.setNoteText(message);
@@ -139,14 +133,17 @@ public class ODFCorrector {
     for(int row = 0; row < MAXROW; row++) {
       for(int column = 0; column < MAXCOLUMN; column++) {
         Cell oCell = master.getRowByIndex(row).getCellByIndex(column);
-        if(!oCell.getCellBackgroundColorString().equals("#FFFFFF"))
+        if(!oCell.getCellBackgroundColorString().equals(COLOR_WHITE))
           range.add(oCell);
       }
     }
     return range;
   }
   
-  private static void saveSpreadsheet(SpreadsheetDocument document, String userFolder, String fileName) throws IOException {
+  private static void saveCorrectedSpreadsheet(SpreadsheetDocument document, Path testPath) {
+    // TODO userFolder: saveFolder!
+    String userFolder = SpreadSheetCorrector.getUserFolder(testPath);
+    String fileName = SpreadSheetCorrector.getFileName(testPath);
     try {
       File dir = new File(userFolder);
       if(!dir.exists()) {

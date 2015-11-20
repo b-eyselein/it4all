@@ -47,9 +47,10 @@ public class HTML extends Controller {
     if(session(Application.SESSION_ID_FIELD) == null)
       return redirect("/login");
     Student student = Student.find.byId(session(Application.SESSION_ID_FIELD));
-    if(student == null)
-      // FIXME: session besetzt, aber nicht in Datenbank!
+    if(student == null) {
+      session().clear();
       return redirect("/login");
+    }
     Exercise exer = Exercise.finder.byId(exercise);
     if(exer == null)
       return redirect("/html/");
