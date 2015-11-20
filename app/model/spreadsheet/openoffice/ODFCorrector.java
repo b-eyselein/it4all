@@ -1,133 +1,163 @@
 package model.spreadsheet.openoffice;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 
-import model.spreadsheet.CellStyler;
+import model.spreadsheet.SpreadSheetCorrectionResult;
 import model.spreadsheet.SpreadSheetCorrector;
-import model.spreadsheet.SheetStyler;
 
+import org.odftoolkit.odfdom.type.Color;
 import org.odftoolkit.simple.SpreadsheetDocument;
+import org.odftoolkit.simple.style.Font;
+import org.odftoolkit.simple.style.StyleTypeDefinitions.FontStyle;
 import org.odftoolkit.simple.table.Cell;
-import org.odftoolkit.simple.table.Row;
 import org.odftoolkit.simple.table.Table;
 
-/**
- * 
- * @author Stefan Olbrecht
- *
- */
 public class ODFCorrector {
   
-  public static String startComparison(String musterPath, String testPath, boolean conditionalFormating, boolean charts) {
-    String notice = "";
+  // TODO: magic numbers...
+  private static final int MAXROW = 80;
+  private static final int MAXCOLUMN = 22;
+  
+  public static SpreadSheetCorrectionResult correct(Path musterPath, Path testPath, boolean conditionalFormating,
+      boolean compareCharts) {
+    LinkedList<String> notices = new LinkedList<String>();
+    
+    SpreadsheetDocument sampleDocument = null;
+    SpreadsheetDocument compareDocument = null;
     try {
-      String userFolder = SpreadSheetCorrector.getUserFolder(testPath);
-      String fileName = SpreadSheetCorrector.getFileName(testPath);
-      // Create workbook of master file
-      // SpreadsheetDocument sdMaster =
-      // ODFCorrector.getSpreadsheetOfPath(ExcelCorrector.DIR + "muster/" +
-      // fileName + "_Muster.ods");
-      SpreadsheetDocument sdMaster = ODFCorrector.getSpreadsheetOfPath(musterPath);
-      // Create workbook of file to test
-      SpreadsheetDocument sdCompare = ODFCorrector.getSpreadsheetOfPath(testPath);
-      // Create WorkbookComparison
-      ODFWorkbookComparator wc = new ODFWorkbookComparator(sdMaster, sdCompare);
-      // Compare sheet number
-      if(!wc.compareSheetNum()) {
-        return "Sie haben die falsche Datei hochgeladen.";
-      }
-      if(sdMaster != null) {
-        // Iterate over sheets
-        int sCount = sdMaster.getSheetCount();
-        for(int index = 0; index < sCount; index++) {
-          Table tMaster = sdMaster.getSheetByIndex(index);
-          Table tCompare = wc.getCompareWorkbook().getSheetByIndex(index);
-          // Compare charts
-          if(index == 0 && charts) {
-            wc.compareSheetCharts();
-            SheetStyler.setODFSheetComment(tCompare, wc.getMessage(), 0, 0);
-          }
-          if(tCompare != null) {
-            // Create SheetComparator
-            ODFSheetComparator sc = new ODFSheetComparator(tMaster, tCompare);
-            // Compare conditional formatting
-            if(conditionalFormating) {
-              // NOTICE: Does not work in ODF Toolkit
-            }
-            // Iterate over colored cells
-            ArrayList<Cell> range = sc.getColoredRange();
-            for(Cell cellMaster: range) {
-              int rowIndex = cellMaster.getRowIndex();
-              int columnIndex = cellMaster.getColumnIndex();
-              Row rowCompare = sc.getSheetCompare().getRowByIndex(rowIndex);
-              if(rowCompare != null) {
-                Cell cellCompare = rowCompare.getCellByIndex(columnIndex);
-                if(cellCompare != null) {
-                  // Create CellComparator
-                  ODFCellComparator cc = new ODFCellComparator(cellMaster, cellCompare);
-                  cellCompare.setNoteText(null);
-                  // Compare cell values
-                  boolean equalCell = cc.compareCellValues();
-                  boolean equalFormula = cc.compareCellFormulas();
-                  CellStyler.setODFCellComment(cellCompare, cc.getMessage());
-                  if(equalCell && equalFormula) {
-                    // Style green
-                    CellStyler.setODFCellStyle(cellCompare, true);
-                  } else {
-                    // Style red
-                    CellStyler.setODFCellStyle(cellCompare, false);
-                  }
-                }
-              }
-            }
-          } else {
-            notice = "Ihre Upload-Datei konnte nicht geöffnet werden.";
-          }
-        }
-      } else {
-        notice = "Der Test konnte nicht gestartet werden.";
-      }
-      // Save and close
-      ODFCorrector.saveSpreadsheet(wc.getCompareWorkbook(), userFolder, fileName);
-      wc.closeWorkbooks();
-      if(notice.isEmpty())
-        return "Korrektur ist durchgelaufen...";
-      return notice;
+      sampleDocument = SpreadsheetDocument.loadDocument(musterPath.toFile());
+      compareDocument = SpreadsheetDocument.loadDocument(testPath.toFile());
     } catch (Exception e) {
+      return new SpreadSheetCorrectionResult(false,
+          Arrays.asList("Test konnte nicht gestartet werden. Beim Laden der Dateien ist ein Fehler aufgetreten."));
+    }
+    
+    if(sampleDocument == null || compareDocument == null)
+      return new SpreadSheetCorrectionResult(false,
+          Arrays.asList("Test konnte nicht gestartet werden. Beim Laden der Dateien ist ein Fehler aufgetreten."));
+    
+    if(sampleDocument.getSheetCount() != compareDocument.getSheetCount())
+      return new SpreadSheetCorrectionResult(false,
+          Arrays.asList("Anzahl an Arbeitsblättern stimmt nicht überein. Haben Sie die richtige Datei hochgeladen?"));
+    
+    if(compareCharts)
+      compareNumberOfChartsInSheet(compareDocument, sampleDocument);
+    
+    // Iterate over sheets
+    int sheetCount = sampleDocument.getSheetCount();
+    for(int sheetIndex = 0; sheetIndex < sheetCount; sheetIndex++) {
+      Table sampleTable = sampleDocument.getSheetByIndex(sheetIndex);
+      Table compareTable = compareDocument.getSheetByIndex(sheetIndex);
+      if(compareTable == null || sampleTable == null)
+        notices.add("Es gab einen Fehler beim Öffnen der " + (sheetCount + 1) + ". Tabelle!");
+      else
+        compareSheet(sampleTable, compareTable, conditionalFormating);
+    }
+    
+    // Save and close
+    // TODO userFolder: saveFolder!
+    String userFolder = SpreadSheetCorrector.getUserFolder(testPath);
+    String fileName = SpreadSheetCorrector.getFileName(testPath);
+    try {
+      ODFCorrector.saveSpreadsheet(compareDocument, userFolder, fileName);
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
       e.printStackTrace();
-      notice = "Es ist ein unerwarteter Fehler aufgetreten. Bitte wenden Sie sich an den Übungsleiter.";
-      return notice;
+    }
+    
+    // Close Workbooks
+    compareDocument.close();
+    sampleDocument.close();
+    
+    if(notices.isEmpty())
+      return new SpreadSheetCorrectionResult(true, Arrays.asList("Korrektur ist erfolgreicht durchgelaufen."));
+    else
+      return new SpreadSheetCorrectionResult(false, notices);
+  }
+  
+  private static void compareNumberOfChartsInSheet(SpreadsheetDocument compare, SpreadsheetDocument sample) {
+    int sampleCount = sample.getChartCount(), compareCount = compare.getChartCount();
+    String message = "";
+    
+    if(sampleCount == 0)
+      message = "Es waren keine Diagramme zu erstellen.";
+    else if(sampleCount != compareCount)
+      message = "Falsche Anzahl Diagramme im Dokument (erwartet: " + sampleCount + ", gezählt: " + compareCount + ").";
+    else
+      message = "Richtige Anzahl Diagramme gefunden.";
+    
+    // write message in Cell A0 on first Sheet
+    setODFCellComment(compare.getSheetByIndex(0).getCellByPosition(0, 0), message);
+  }
+  
+  private static void compareSheet(Table sampleTable, Table compareTable, boolean correctConditionalFormating) {
+    if(correctConditionalFormating) {
+      // NOTICE: Does not work in ODF Toolkit
+    }
+    // Iterate over colored cells
+    ArrayList<Cell> range = getColoredRange(sampleTable);
+    for(Cell cellMaster: range) {
+      int rowIndex = cellMaster.getRowIndex();
+      int columnIndex = cellMaster.getColumnIndex();
+      Cell cellCompare = compareTable.getCellByPosition(columnIndex, rowIndex);
+      
+      if(cellCompare != null) {
+        // Create CellComparator
+        ODFCellComparator cc = new ODFCellComparator(cellMaster, cellCompare);
+        cellCompare.setNoteText(null);
+        // Compare cell values
+        boolean equalCell = cc.compareCellValues();
+        boolean equalFormula = cc.compareCellFormulas();
+        setODFCellComment(cellCompare, cc.getMessage());
+        
+        if(equalCell && equalFormula)
+          cellCompare.setFont(new Font("Arial", FontStyle.BOLD, 10, Color.GREEN));
+        else
+          cellCompare.setFont(new Font("Arial", FontStyle.ITALIC, 10, Color.RED));
+      }
     }
   }
   
-  private static void saveSpreadsheet(SpreadsheetDocument sd, String userFolder, String fileName) throws IOException {
+  private static void setODFCellComment(Cell cell, String message) {
+    if(message.isEmpty())
+      return;
+    // TODO: Why remove note if exists
+    if(cell.getNoteText() != null)
+      cell.setNoteText(null);
+    cell.setNoteText(message);
+  }
+  
+  @SuppressWarnings("deprecation")
+  private static ArrayList<Cell> getColoredRange(Table master) {
+    ArrayList<Cell> range = new ArrayList<Cell>();
+    for(int row = 0; row < MAXROW; row++) {
+      for(int column = 0; column < MAXCOLUMN; column++) {
+        Cell oCell = master.getRowByIndex(row).getCellByIndex(column);
+        if(!oCell.getCellBackgroundColorString().equals("#FFFFFF"))
+          range.add(oCell);
+      }
+    }
+    return range;
+  }
+  
+  private static void saveSpreadsheet(SpreadsheetDocument document, String userFolder, String fileName) throws IOException {
     try {
       File dir = new File(userFolder);
       if(!dir.exists()) {
         dir.mkdirs();
       }
       FileOutputStream fileOut = new FileOutputStream(userFolder + fileName + "_Korrektur.ods");
-      sd.save(fileOut);
+      document.save(fileOut);
       fileOut.close();
     } catch (Exception e) {
       System.out.println(e);
     }
   }
   
-  private static SpreadsheetDocument getSpreadsheetOfPath(String path) {
-    try {
-      File file = new File(path);
-      FileInputStream fis = new FileInputStream(file);
-      SpreadsheetDocument sd = SpreadsheetDocument.loadDocument(fis);
-      fis.close();
-      return sd;
-    } catch (Exception e) {
-      System.out.println(e);
-      return null;
-    }
-  }
 }

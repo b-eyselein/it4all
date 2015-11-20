@@ -23,6 +23,7 @@ public class HtmlCorrector {
     
     int points = result.stream().mapToInt(res -> res.getPoints()).sum();
     
+    // TODO: override old Grading?
     Grading grading = new Grading();
     grading.student = student;
     grading.exercise = exercise;
