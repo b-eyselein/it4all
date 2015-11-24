@@ -11,17 +11,23 @@ public class Feedback extends Model {
   @Id
   public int id;
   
-  public int sinn;
+  public int sinnHtml;  
+  public int sinnExcel;
   
-  public int nutzen;
+  public int nutzenHtml;
+  public int nutzenExcel;
   
-  public Note bedienung;
+  public Note bedienungHtml;  
+  public Note bedienungExcel;
   
-  public Note feedback;
+  public Note feedbackHtml;
+  public Note feedbackExcel;
   
-  public Note korrektur;
+  public Note korrekturHtml;
+  public Note korrekturExcel;
   
-  public String kommentar;
+  public String kommentarHtml;
+  public String kommentarExcel;
   
   public enum Note {
     NO_FEEDBACK, SEHR_GUT, GUT, EHER_SCHLECHT, SCHLECHT;

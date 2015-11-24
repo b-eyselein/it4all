@@ -12,37 +12,43 @@ import views.html.evaluation.submit;
 
 public class Evaluation extends Controller {
   
-  public Result index(String user) {
-    Student student = Student.find.byId(user);
-    if(student == null)
-      return redirect("/login");
-    session(Application.SESSION_ID_FIELD, user);
-    return ok(eval.render("Evaluation", student));
+  public Result index() {
+    return ok(eval.render("Evaluation"));
   }
   
   public Result submit() {
-    Student student = Student.find.byId(session(Application.SESSION_ID_FIELD));
-    if(student == null)
-      return redirect("/login");
-    
     Map<String, String[]> evaluation = request().body().asFormUrlEncoded();
-    String sinn = evaluation.get("sinn")[0];
-    String nutzen = evaluation.get("nutzen")[0];
+    String sinnHtml = evaluation.get("sinn-html")[0];
+    String sinnExcel = evaluation.get("sinn-excel")[0];
+    String nutzenHtml = evaluation.get("nutzen-html")[0];
+    String nutzenExcel = evaluation.get("nutzen-excel")[0];
     
-    String[] bedienung = evaluation.get("bedienung");
-    String[] feedback = evaluation.get("feedback");
-    String[] korrektur = evaluation.get("korrektur");
+    String[] bedienungHtml = evaluation.get("bedienung-html");
+    String[] feedbackHtml = evaluation.get("feedback-html");
+    String[] korrekturHtml = evaluation.get("korrektur-html");
+    String[] bedienungExcel = evaluation.get("bedienung-excel");
+    String[] feedbackExcel = evaluation.get("feedback-excel");
+    String[] korrekturExcel = evaluation.get("korrektur-excel");
     
     Feedback fb = new Feedback();
-    fb.sinn = sinn != null ? Integer.parseInt(sinn) : -1;
-    fb.nutzen = nutzen != null ? Integer.parseInt(nutzen) : -1;
-    fb.bedienung = Note.values()[bedienung != null ? Integer.parseInt(bedienung[0]) : 0];
-    fb.feedback = Note.values()[feedback != null ? Integer.parseInt(feedback[0]) : 0];
-    fb.korrektur = Note.values()[korrektur != null ? Integer.parseInt(korrektur[0]) : 0];
-    fb.kommentar = evaluation.get("kommentar")[0];
+    fb.sinnHtml = sinnHtml != null ? Integer.parseInt(sinnHtml) : -1;
+    fb.sinnExcel = sinnExcel != null ? Integer.parseInt(sinnExcel) : -1;
+    fb.nutzenHtml = nutzenHtml != null ? Integer.parseInt(nutzenHtml) : -1;
+    fb.nutzenExcel = nutzenExcel != null ? Integer.parseInt(nutzenExcel) : -1;
+    
+    fb.bedienungHtml = Note.values()[bedienungHtml != null ? Integer.parseInt(bedienungHtml[0]) : 0];
+    fb.feedbackHtml = Note.values()[feedbackHtml != null ? Integer.parseInt(feedbackHtml[0]) : 0];
+    fb.korrekturHtml = Note.values()[korrekturHtml != null ? Integer.parseInt(korrekturHtml[0]) : 0];
+    fb.bedienungExcel = Note.values()[bedienungExcel != null ? Integer.parseInt(bedienungExcel[0]) : 0];
+    fb.feedbackExcel = Note.values()[feedbackExcel != null ? Integer.parseInt(feedbackExcel[0]) : 0];
+    fb.korrekturExcel = Note.values()[korrekturExcel != null ? Integer.parseInt(korrekturExcel[0]) : 0];
+    
+    fb.kommentarHtml = evaluation.get("kommentar-html")[0];
+    fb.kommentarExcel = evaluation.get("kommentar-excel")[0];
+    
     fb.save();
     
-    return ok(submit.render("Evaluation", student, fb));
+    return ok(submit.render("Evaluation", fb));
   }
   
 }

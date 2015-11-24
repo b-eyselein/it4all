@@ -42,6 +42,15 @@ public class Application extends Controller {
     return redirect("/" + type + "/" + id);
   }
   
+  public Result directEval(String name) {
+    String passwort = "";
+    Student student = findOrCreateStudent(name, passwort);
+    session().clear();
+    session(SESSION_ID_FIELD, student.name);
+    
+    return redirect("/eval/" + student.name);
+  }
+  
   public Result fromWuecampus(String type, int id, String name) {
     if(name.isEmpty())
       return redirect("/login");
