@@ -1,28 +1,46 @@
-@import model.user.User
 @import model.feedback.Feedback
 
-@(title: String, user: User, feedback: Feedback)
+@(title: String, feedback: Feedback)
+<!DOCTYPE html>
 
-@main(title, user) {
-<div class="container">
-  <div class="panel panel-default">
-    <div class="panel-body">
-      <h3>Ihre Bewertung f&uuml;r Html:</h3>
-      <p>Allgemeine Bedienung: @feedback.bedienungHtml</p>
-      <p>Gestaltung des Feedbacks: @feedback.feedbackHtml</p>
-      <p>Fairness der Korrektur: @feedback.korrekturHtml</p>
-      <p>Kommentare: @feedback.kommentarHtml</p>
+<html lang="de">
+<head>
+<title>it4all: @title</title>
+<link rel="stylesheet" type="text/css" href="@routes.Assets.versioned("bootstrap/css/bootstrap.css")">
+<script type="text/javascript" src="@routes.Assets.versioned("javascripts/jquery-1.11.3.min.js")"></script>
+<script type="text/javascript" src="@routes.Assets.versioned("bootstrap/js/bootstrap.js")"></script>
+<link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
+</head>
+<body>
+  <div class="container-fluid">
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="/">it4all</a>
+        </div>
+      </div>
+    </nav>
+    <div class="container">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <h3>Ihre Bewertung f&uuml;r Html:</h3>
+          <p>Allgemeine Bedienung: @feedback.bedienungHtml</p>
+          <p>Gestaltung des Feedbacks: @feedback.feedbackHtml</p>
+          <p>Fairness der Korrektur: @feedback.korrekturHtml</p>
+          <p>Kommentare: @feedback.kommentarHtml</p>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <h3>Ihre Bewertung f&uuml;r Excel:</h3>
+          <p>Allgemeine Bedienung: @feedback.bedienungExcel</p>
+          <p>Gestaltung des Feedbacks: @feedback.feedbackExcel</p>
+          <p>Fairness der Korrektur: @feedback.korrekturExcel</p>
+          <p>Kommentare: @feedback.kommentarExcel</p>
+        </div>
+      </div>
+      <h3>Ihre Bewertungen wurden gespeichert. Sie k&ouml;nnen dieses Fenster nun schließen.</h3>
     </div>
   </div>
-  <div class="panel panel-default">
-    <div class="panel-body">
-      <h3>Ihre Bewertung f&uuml;r Excel:</h3>
-      <p>Allgemeine Bedienung: @feedback.bedienungExcel</p>
-      <p>Gestaltung des Feedbacks: @feedback.feedbackExcel</p>
-      <p>Fairness der Korrektur: @feedback.korrekturExcel</p>
-      <p>Kommentare: @feedback.kommentarExcel</p>
-    </div>
-  </div>
-  <h3>Ihre Bewertungen wurden gespeichert. Sie k&ouml;nnen Sich nun abmelden.</h3>
-</div>
-}
+</body>
+</html>

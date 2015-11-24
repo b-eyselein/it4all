@@ -22,7 +22,7 @@ POST	/html/upload/:ex				controllers.HTML.upload(ex: Int)
 GET		/solutions/:user/html/:ex		controllers.HTML.site(user: String, ex: Int)
 
 # Evaluation
-GET		/eval/:user						controllers.Evaluation.index(user: String)
+GET		/eval/							controllers.Evaluation.index()
 POST	/eval/submit					controllers.Evaluation.submit()
 
 # Excel

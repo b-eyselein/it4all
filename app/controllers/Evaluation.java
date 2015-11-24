@@ -12,19 +12,11 @@ import views.html.evaluation.submit;
 
 public class Evaluation extends Controller {
   
-  public Result index(String user) {
-    Student student = Student.find.byId(user);
-    if(student == null)
-      return redirect("/login");
-    session(Application.SESSION_ID_FIELD, user);
-    return ok(eval.render("Evaluation", student));
+  public Result index() {
+    return ok(eval.render("Evaluation"));
   }
   
   public Result submit() {
-    Student student = Student.find.byId(session(Application.SESSION_ID_FIELD));
-    if(student == null)
-      return redirect("/login");
-    
     Map<String, String[]> evaluation = request().body().asFormUrlEncoded();
     String sinnHtml = evaluation.get("sinn-html")[0];
     String sinnExcel = evaluation.get("sinn-excel")[0];
@@ -56,7 +48,7 @@ public class Evaluation extends Controller {
     
     fb.save();
     
-    return ok(submit.render("Evaluation", student, fb));
+    return ok(submit.render("Evaluation", fb));
   }
   
 }
