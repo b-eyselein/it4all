@@ -4,10 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
 
-import model.spreadsheet.SpreadSheetCorrectionResult;
+import model.spreadsheet.SpreadCorrector;
 import model.spreadsheet.SpreadSheetCorrector;
 
 import org.odftoolkit.odfdom.type.Color;
@@ -17,7 +15,7 @@ import org.odftoolkit.simple.style.StyleTypeDefinitions.FontStyle;
 import org.odftoolkit.simple.table.Cell;
 import org.odftoolkit.simple.table.Table;
 
-public class ODFCorrector {
+public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Cell> {
   
   // TODO: magic numbers...
   private static final int MAXROW = 80;
@@ -27,54 +25,43 @@ public class ODFCorrector {
   private static final String FONT = "Arial";
   private static final double FONT_SIZE = 10.;
   
-  public static SpreadSheetCorrectionResult correct(Path musterPath, Path testPath, boolean conditionalFormating,
-      boolean compareCharts) {
-    LinkedList<String> notices = new LinkedList<String>();
-    
-    SpreadsheetDocument sampleDocument = null;
-    SpreadsheetDocument compareDocument = null;
-    try {
-      sampleDocument = SpreadsheetDocument.loadDocument(musterPath.toFile());
-      compareDocument = SpreadsheetDocument.loadDocument(testPath.toFile());
-    } catch (Exception e) {
-      return new SpreadSheetCorrectionResult(false,
-          Arrays.asList("Test konnte nicht gestartet werden. Beim Laden der Dateien ist ein Fehler aufgetreten."));
-    }
-    
-    if(sampleDocument == null || compareDocument == null)
-      return new SpreadSheetCorrectionResult(false,
-          Arrays.asList("Test konnte nicht gestartet werden. Beim Laden der Dateien ist ein Fehler aufgetreten."));
-    
-    if(sampleDocument.getSheetCount() != compareDocument.getSheetCount())
-      return new SpreadSheetCorrectionResult(false,
-          Arrays.asList("Anzahl an Arbeitsblättern stimmt nicht überein. Haben Sie die richtige Datei hochgeladen?"));
-    
-    if(compareCharts)
-      compareNumberOfChartsInDocument(compareDocument, sampleDocument);
-    
-    // Iterate over sheets
-    int sheetCount = sampleDocument.getSheetCount();
-    for(int sheetIndex = 0; sheetIndex < sheetCount; sheetIndex++) {
-      Table sampleTable = sampleDocument.getSheetByIndex(sheetIndex);
-      Table compareTable = compareDocument.getSheetByIndex(sheetIndex);
-      if(compareTable == null || sampleTable == null)
-        notices.add("Es gab einen Fehler beim Öffnen der " + (sheetCount + 1) + ". Tabelle!");
-      else
-        compareSheet(sampleTable, compareTable, conditionalFormating);
-    }
-    
-    // Save and close workbooks
-    saveCorrectedSpreadsheet(compareDocument, testPath);
-    compareDocument.close();
-    sampleDocument.close();
-    
-    if(notices.isEmpty())
-      return new SpreadSheetCorrectionResult(true, Arrays.asList("Korrektur ist erfolgreicht durchgelaufen."));
-    else
-      return new SpreadSheetCorrectionResult(false, notices);
+  private void setODFCellComment(Cell cell, String message) {
+    if(message.isEmpty())
+      return;
+    // TODO: Warum auf null setzen, wenn sowiese überschrieben?
+    if(cell.getNoteText() != null)
+      cell.setNoteText(null);
+    cell.setNoteText(message);
   }
   
-  private static void compareNumberOfChartsInDocument(SpreadsheetDocument compare, SpreadsheetDocument sample) {
+  @SuppressWarnings("deprecation")
+  protected ArrayList<Cell> getColoredRange(Table master) {
+    ArrayList<Cell> range = new ArrayList<Cell>();
+    for(int row = 0; row < MAXROW; row++) {
+      for(int column = 0; column < MAXCOLUMN; column++) {
+        Cell oCell = master.getRowByIndex(row).getCellByIndex(column);
+        if(!oCell.getCellBackgroundColorString().equals(COLOR_WHITE))
+          range.add(oCell);
+      }
+    }
+    return range;
+  }
+  
+  @Override
+  protected SpreadsheetDocument loadDocument(Path path) {
+    try {
+      return SpreadsheetDocument.loadDocument(path.toFile());
+    } catch (Exception e) {
+      return null;
+    }
+  }
+  
+  @Override
+  protected int getSheetCount(SpreadsheetDocument document) {
+    return document.getSheetCount();
+  }
+  
+  protected void compareNumberOfChartsInDocument(SpreadsheetDocument compare, SpreadsheetDocument sample) {
     int sampleCount = sample.getChartCount(), compareCount = compare.getChartCount();
     String message = "";
     
@@ -89,7 +76,12 @@ public class ODFCorrector {
     setODFCellComment(compare.getSheetByIndex(0).getCellByPosition(0, 0), message);
   }
   
-  private static void compareSheet(Table sampleTable, Table compareTable, boolean correctConditionalFormating) {
+  @Override
+  protected Table getSheetByIndex(SpreadsheetDocument document, int sheetIndex) {
+    return document.getSheetByIndex(sheetIndex);
+  }
+  
+  protected void compareSheet(Table sampleTable, Table compareTable, boolean correctConditionalFormating) {
     if(correctConditionalFormating) {
       // NOTICE: Does not work in ODF Toolkit
     }
@@ -118,33 +110,13 @@ public class ODFCorrector {
     }
   }
   
-  private static void setODFCellComment(Cell cell, String message) {
-    if(message.isEmpty())
-      return;
-    // TODO: Warum auf null setzen, wenn sowiese überschrieben?
-    if(cell.getNoteText() != null)
-      cell.setNoteText(null);
-    cell.setNoteText(message);
-  }
-  
-  @SuppressWarnings("deprecation")
-  private static ArrayList<Cell> getColoredRange(Table master) {
-    ArrayList<Cell> range = new ArrayList<Cell>();
-    for(int row = 0; row < MAXROW; row++) {
-      for(int column = 0; column < MAXCOLUMN; column++) {
-        Cell oCell = master.getRowByIndex(row).getCellByIndex(column);
-        if(!oCell.getCellBackgroundColorString().equals(COLOR_WHITE))
-          range.add(oCell);
-      }
-    }
-    return range;
-  }
-  
-  private static void saveCorrectedSpreadsheet(SpreadsheetDocument document, Path testPath) {
+  protected void saveCorrectedSpreadsheet(SpreadsheetDocument document, Path testPath) {
     // TODO userFolder: saveFolder!
     String userFolder = SpreadSheetCorrector.getUserFolder(testPath);
     String fileName = SpreadSheetCorrector.getFileName(testPath);
     try {
+      // FIXME: use document.save(File file);
+      File saveTo = new File("TODO");
       File dir = new File(userFolder);
       if(!dir.exists()) {
         dir.mkdirs();
@@ -154,6 +126,16 @@ public class ODFCorrector {
       fileOut.close();
     } catch (Exception e) {
       System.out.println(e);
+    }
+  }
+  
+  @Override
+  protected void closeDocument(SpreadsheetDocument document) {
+    try {
+      // FIXME: try/catch entfernen!
+      document.close();
+    } catch (Exception e) {
+      System.out.println(e.getStackTrace());
     }
   }
   

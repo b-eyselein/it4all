@@ -8,6 +8,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import model.ExcelExercise;
+import model.spreadsheet.SpreadSheetCorrectionResult;
 import model.spreadsheet.SpreadSheetCorrector;
 import model.user.Student;
 import play.mvc.Controller;
@@ -64,14 +65,14 @@ public class Excel extends Controller {
       String fileName = exercise.fileName;
       saveSolutionForUser(user.name, path, solutionFile.getFilename(), exerciseId);
       
-      // TODO: get Paths!
+      // FIXME: get Paths!
       Path testPath = Util.getExcelSolFileForExercise(user.name, solutionFile.getFilename());
       Path musterPath = Util.getExcelSampleDirectoryForExercise(exerciseId);
       musterPath = Paths
           .get(musterPath.toString(), fileName + "_Muster." + SpreadSheetCorrector.getExtension(testPath));
-      String notice = SpreadSheetCorrector.correct(musterPath, testPath, false, false);
+      SpreadSheetCorrectionResult result = SpreadSheetCorrector.correct(musterPath, testPath, false, false);
       
-      return ok(excelcorrect.render(user, notice, exerciseId, SpreadSheetCorrector.getExtension(testPath)));
+      return ok(excelcorrect.render(user, result, exerciseId, SpreadSheetCorrector.getExtension(testPath)));
     } else {
       return badRequest("Datei konnte nicht hochgeladen werden!");
     }

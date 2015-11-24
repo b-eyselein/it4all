@@ -1,17 +1,16 @@
 package model.spreadsheet.excel;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
-import model.spreadsheet.SpreadSheetCorrector;
+import model.spreadsheet.SpreadCorrector;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Drawing;
@@ -29,112 +28,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * @author Stefan Olbrecht
  *
  */
-public class XLSCorrector {
-  
-  public static String correct(Path musterPath, Path testPath, boolean conditionalFormating, boolean charts) {
-    String notice = "";
-    try {
-      String fileName = SpreadSheetCorrector.getFileName(testPath);
-      String extension = SpreadSheetCorrector.getExtension(testPath);
-      // Create workbook of master file
-      // Workbook wbMaster = XLSCorrector.getWorkbookOfPath(ExcelCorrector.DIR +
-      // "muster/" + fileName + "_Muster." + extension);
-      Workbook wbMaster = XLSCorrector.getWorkbookOfPath(musterPath);
-      // Create workbook of file to test
-      Workbook wbCompare = XLSCorrector.getWorkbookOfPath(testPath);
-      // Create WorkbookComparison
-      XLSWorkbookComparator wc = new XLSWorkbookComparator(wbMaster, wbCompare);
-      // Compare sheet number
-      if(!wc.compareSheetNum()) {
-        return "Sie haben die falsche Datei hochgeladen.";
-      }
-      if(wbMaster != null) {
-        // Iterate over sheets
-        for(Sheet shMaster: wc.getMasterWorkbook()) {
-          int index = shMaster.getWorkbook().getSheetIndex(shMaster);
-          Sheet shCompare = wc.getCompareWorkbook().getSheetAt(index);
-          if(shCompare != null) {
-            // Create SheetComparator
-            XLSSheetComparator sc = new XLSSheetComparator(shMaster, shCompare);
-            // Compare conditional formatting
-            if(conditionalFormating) {
-              sc.compareSheetConditionalFormatting();
-            }
-            // Compare charts
-            if(charts) {
-              sc.compareSheetCharts();
-            }
-            if(conditionalFormating || charts)
-              setXLSSheetComment(shCompare, sc.getMessage(), 0, 0);
-            
-            // Iterate over colored cells
-            ArrayList<Cell> range = sc.getColoredRange();
-            for(Cell cellMaster: range) {
-              int rowIndex = cellMaster.getRowIndex();
-              int columnIndex = cellMaster.getColumnIndex();
-              Row rowCompare = sc.getSheetCompare().getRow(rowIndex);
-              if(rowCompare != null) {
-                Cell cellCompare = rowCompare.getCell(columnIndex);
-                if(cellCompare != null) {
-                  // Create CellComparator
-                  XLSCellComparator cc = new XLSCellComparator(cellMaster, cellCompare);
-                  cellCompare.setCellComment(null);
-                  // Compare cell values
-                  boolean equalCell = cc.compareCellValues();
-                  boolean equalFormula = cc.compareCellFormulas();
-                  setXLSCellComment(cellCompare, cc.getMessage());
-                  if(equalCell && equalFormula) {
-                    // Style green
-                    setXLSCellStyle(cellCompare, true);
-                  } else {
-                    // Style red
-                    setXLSCellStyle(cellCompare, false);
-                  }
-                }
-              }
-            }
-          } else {
-            notice = "Ihre Upload-Datei konnte nicht geöffnet werden.";
-          }
-        }
-      } else {
-        notice = "Der Test konnte nicht gestartet werden.";
-      }
-      // Save and close
-      // TODO userFolder: saveFolder!
-      String userFolder = SpreadSheetCorrector.getUserFolder(testPath);
-      XLSCorrector.saveWorkbook(wc.getCompareWorkbook(), userFolder, fileName, extension);
-      wc.closeWorkbooks();
-      if(notice.isEmpty())
-        return "Korrektur ist durchgelaufen...";
-      return notice;
-    } catch (Exception e) {
-      e.printStackTrace();
-      notice = "Es ist ein unerwarteter Fehler aufgetreten. Bitte wenden Sie sich an den Übungsleiter.";
-      return notice;
-    }
-  }
-  
-  private static void saveWorkbook(Workbook wb, String userFolder, String fileName, String extension) throws Exception {
-    File dir = new File(userFolder);
-    if(!dir.exists()) {
-      dir.mkdirs();
-    }
-    FileOutputStream fileOut = new FileOutputStream(userFolder + fileName + "_Korrektur." + extension);
-    wb.write(fileOut);
-    fileOut.close();
-  }
-  
-  private static Workbook getWorkbookOfPath(Path path) {
-    // TODO: Path is >> always << of extension ".xlsx" or ".xlsm" --> SpreadSheetCorrector!
-    try {
-      return new XSSFWorkbook(path.toFile());
-    } catch (InvalidFormatException | IOException e) {
-      // TODO: entsprechenden Fehler werfen!
-      e.printStackTrace();
-      return null;
-    }
-  }
+public class XLSCorrector extends SpreadCorrector<Workbook, Sheet, Cell> {
   
   private static void setXLSSheetComment(Sheet sheet, String message, int row, int column) {
     if(!message.equals("")) {
@@ -166,7 +60,7 @@ public class XLSCorrector {
     }
   }
   
-  private static void setXLSCellComment(org.apache.poi.ss.usermodel.Cell cell, String message) {
+  private static void setXLSCellComment(Cell cell, String message) {
     if(!message.equals("")) {
       // Remove comment if exists
       if(cell.getCellComment() != null) {
@@ -191,7 +85,7 @@ public class XLSCorrector {
     }
   }
   
-  private static void setXLSCellStyle(org.apache.poi.ss.usermodel.Cell cell, boolean bool) {
+  private static void setXLSCellStyle(Cell cell, boolean bool) {
     CellStyle style = cell.getSheet().getWorkbook().createCellStyle();
     short alignment = cell.getCellStyle().getAlignment();
     short format = cell.getCellStyle().getDataFormat();
@@ -213,4 +107,107 @@ public class XLSCorrector {
     cell.setCellStyle(style);
   }
   
+  @Override
+  protected Workbook loadDocument(Path path) {
+    try {
+      return new XSSFWorkbook(path.toFile());
+    } catch (InvalidFormatException | IOException e) {
+      // TODO: entsprechenden Fehler werfen!
+      e.printStackTrace();
+      return null;
+    }
+  }
+  
+  @Override
+  protected int getSheetCount(Workbook document) {
+    return document.getNumberOfSheets();
+  }
+  
+  @Override
+  protected void compareNumberOfChartsInDocument(Workbook compareDocument, Workbook sampleDocument) {
+    // TODO Auto-generated method stub
+    
+  }
+  
+  @Override
+  protected Sheet getSheetByIndex(Workbook document, int sheetIndex) {
+    return document.getSheetAt(sheetIndex);
+  }
+  
+  @Override
+  protected ArrayList<Cell> getColoredRange(Sheet master) {
+    ArrayList<Cell> range = new ArrayList<Cell>();
+    for(Row row: master) {
+      for(Cell cell: row) {
+        Color foreground = cell.getCellStyle().getFillForegroundColorColor();
+        Color background = cell.getCellStyle().getFillBackgroundColorColor();
+        if(foreground != null && background != null)
+          range.add(cell);
+      }
+    }
+    return range;
+  }
+  
+  @Override
+  protected void compareSheet(Sheet sampleTable, Sheet compareTable, boolean conditionalFormating) {
+    
+    // Create SheetComparator
+    XLSSheetComparator sc = new XLSSheetComparator(sampleTable, compareTable);
+    // Compare conditional formatting
+    if(conditionalFormating) {
+      sc.compareSheetConditionalFormatting();
+    }
+    
+    if(conditionalFormating)
+      setXLSSheetComment(compareTable, sc.getMessage(), 0, 0);
+    
+    // Iterate over colored cells
+    ArrayList<Cell> range = getColoredRange(sampleTable);
+    for(Cell cellMaster: range) {
+      int rowIndex = cellMaster.getRowIndex();
+      int columnIndex = cellMaster.getColumnIndex();
+      Row rowCompare = sc.getSheetCompare().getRow(rowIndex);
+      if(rowCompare != null) {
+        Cell cellCompare = rowCompare.getCell(columnIndex);
+        if(cellCompare != null) {
+          // Create CellComparator
+          XLSCellComparator cc = new XLSCellComparator(cellMaster, cellCompare);
+          cellCompare.setCellComment(null);
+          // Compare cell values
+          boolean equalCell = cc.compareCellValues();
+          boolean equalFormula = cc.compareCellFormulas();
+          setXLSCellComment(cellCompare, cc.getMessage());
+          if(equalCell && equalFormula) {
+            // Style green
+            setXLSCellStyle(cellCompare, true);
+          } else {
+            // Style red
+            setXLSCellStyle(cellCompare, false);
+          }
+        }
+      }
+    }
+    
+  }
+  
+  @Override
+  protected void saveCorrectedSpreadsheet(Workbook compareDocument, Path testPath) {
+    // File dir = new File(userFolder);
+    // if(!dir.exists()) {
+    // dir.mkdirs();
+    // }
+    // FileOutputStream fileOut = new FileOutputStream(userFolder + fileName +
+    // "_Korrektur." + extension);
+    // wb.write(fileOut);
+    // fileOut.close();
+  }
+  
+  @Override
+  protected void closeDocument(Workbook document) {
+    try {
+      document.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
 }
