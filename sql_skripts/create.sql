@@ -29,15 +29,24 @@ create table grading (
   
 create table feedback (
   id                        integer primary key auto_increment,
-  sinn						integer,
-  nutzen					integer,
-  bedienung                 integer,
-  feedback                  integer,
-  korrektur                 integer,
-  kommentar                 varchar(255),
-  constraint ck_feedback_bedienung check (bedienung in (0,1,2,3,4)),
-  constraint ck_feedback_feedback check (feedback in (0,1,2,3,4)),
-  constraint ck_feedback_korrektur check (korrektur in (0,1,2,3,4)));
+  sinn_html					integer,
+  sinn_excel				integer,
+  nutzen_html				integer,
+  nutzen_excel				integer,
+  bedienung_html            integer,
+  bedienung_excel           integer,
+  feedback_html             integer,
+  feedback_excel            integer,
+  korrektur_html            integer,
+  korrektur_excel           integer,
+  kommentar_html            varchar(255),
+  kommentar_excel           varchar(255),
+  constraint ck_feedback_bedienung_html check (bedienung_html in (0,1,2,3,4)),
+  constraint ck_feedback_bedienung_excel check (bedienung_excel in (0,1,2,3,4)),
+  constraint ck_feedback_feedback_html check (feedback_html in (0,1,2,3,4)),
+  constraint ck_feedback_feedback_excel check (feedback_excel in (0,1,2,3,4)),
+  constraint ck_feedback_korrektur_html check (korrektur_html in (0,1,2,3,4)),
+  constraint ck_feedback_korrektur_excel check (korrektur_excel in (0,1,2,3,4)));
   
 create table excel_exercise (
   id						integer primary key auto_increment,

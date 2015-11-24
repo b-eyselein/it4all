@@ -5,11 +5,24 @@
 
 @main(title, user) {
 <div class="container">
-  <h3>Ihre Bewertung:</h3>
-    <p>Allgemeine Bedienung: @feedback.bedienung</p>
-    <p>Gestaltung des Feedbacks: @feedback.feedback</p>
-    <p>Fairness der Korrektur: @feedback.korrektur</p>
-    <p>Kommentare: @feedback.kommentar</p>
-  <h3>wurde gespeichert. Sie k&ouml;nnen Sich nun abmelden.</h3>
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <h3>Ihre Bewertung f&uuml;r Html:</h3>
+      <p>Allgemeine Bedienung: @feedback.bedienungHtml</p>
+      <p>Gestaltung des Feedbacks: @feedback.feedbackHtml</p>
+      <p>Fairness der Korrektur: @feedback.korrekturHtml</p>
+      <p>Kommentare: @feedback.kommentarHtml</p>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <h3>Ihre Bewertung f&uuml;r Excel:</h3>
+      <p>Allgemeine Bedienung: @feedback.bedienungExcel</p>
+      <p>Gestaltung des Feedbacks: @feedback.feedbackExcel</p>
+      <p>Fairness der Korrektur: @feedback.korrekturExcel</p>
+      <p>Kommentare: @feedback.kommentarExcel</p>
+    </div>
+  </div>
+  <h3>Ihre Bewertungen wurden gespeichert. Sie k&ouml;nnen Sich nun abmelden.</h3>
 </div>
 }
