@@ -29,8 +29,11 @@ public abstract class SpreadCorrector<DocType, TableType, CellType> {
       return new SpreadSheetCorrectionResult(false,
           Arrays.asList("Anzahl an Arbeitsblättern stimmt nicht überein. Haben Sie die richtige Datei hochgeladen?"));
     
-    if(compareCharts)
-      compareNumberOfChartsInDocument(compareDocument, sampleDocument);
+    if(compareCharts) {
+      String message = compareNumberOfChartsInDocument(compareDocument, sampleDocument);
+      // write message in Cell A0 on first Sheet
+      setCellComment(getCellByPosition(getSheetByIndex(compareDocument, 0), 0, 0), message);
+    }
     
     // Iterate over sheets
     int sheetCount = getSheetCount(sampleDocument);
@@ -58,7 +61,9 @@ public abstract class SpreadCorrector<DocType, TableType, CellType> {
   
   protected abstract int getSheetCount(DocType sampleDocument);
   
-  protected abstract void compareNumberOfChartsInDocument(DocType compareDocument, DocType sampleDocument);
+  protected abstract String compareNumberOfChartsInDocument(DocType compareDocument, DocType sampleDocument);
+  
+  protected abstract CellType getCellByPosition(TableType table, int row, int column);
   
   protected abstract TableType getSheetByIndex(DocType sampleDocument, int sheetIndex);
   
@@ -69,5 +74,7 @@ public abstract class SpreadCorrector<DocType, TableType, CellType> {
   protected abstract void saveCorrectedSpreadsheet(DocType compareDocument, Path testPath);
   
   protected abstract void closeDocument(DocType compareDocument);
+  
+  protected abstract void setCellComment(CellType type, String comment);
   
 }

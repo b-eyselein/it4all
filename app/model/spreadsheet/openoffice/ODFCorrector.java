@@ -25,15 +25,6 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
   private static final String FONT = "Arial";
   private static final double FONT_SIZE = 10.;
   
-  private void setODFCellComment(Cell cell, String message) {
-    if(message.isEmpty())
-      return;
-    // TODO: Warum auf null setzen, wenn sowiese überschrieben?
-    if(cell.getNoteText() != null)
-      cell.setNoteText(null);
-    cell.setNoteText(message);
-  }
-  
   @SuppressWarnings("deprecation")
   protected ArrayList<Cell> getColoredRange(Table master) {
     ArrayList<Cell> range = new ArrayList<Cell>();
@@ -61,19 +52,14 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
     return document.getSheetCount();
   }
   
-  protected void compareNumberOfChartsInDocument(SpreadsheetDocument compare, SpreadsheetDocument sample) {
+  protected String compareNumberOfChartsInDocument(SpreadsheetDocument compare, SpreadsheetDocument sample) {
     int sampleCount = sample.getChartCount(), compareCount = compare.getChartCount();
-    String message = "";
-    
     if(sampleCount == 0)
-      message = "Es waren keine Diagramme zu erstellen.";
+      return "Es waren keine Diagramme zu erstellen.";
     else if(sampleCount != compareCount)
-      message = "Falsche Anzahl Diagramme im Dokument (erwartet: " + sampleCount + ", gezählt: " + compareCount + ").";
+      return "Falsche Anzahl Diagramme im Dokument (erwartet: " + sampleCount + ", gezählt: " + compareCount + ").";
     else
-      message = "Richtige Anzahl Diagramme gefunden.";
-    
-    // write message in Cell A0 on first Sheet
-    setODFCellComment(compare.getSheetByIndex(0).getCellByPosition(0, 0), message);
+      return "Richtige Anzahl Diagramme gefunden.";
   }
   
   @Override
@@ -100,7 +86,7 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
       String cellValueResult = ODFCellComparator.compareCellValues(cellMaster, cellCompare);
       String cellFormulaResult = ODFCellComparator.compareCellFormulas(cellMaster, cellCompare);
       
-      setODFCellComment(cellCompare, cellValueResult + "\n" + cellFormulaResult);
+      setCellComment(cellCompare, cellValueResult + "\n" + cellFormulaResult);
       
       if(cellValueResult.equals("Wert richtig.")
           && (cellFormulaResult.isEmpty() || cellFormulaResult.equals("Formel richtig.")))
@@ -116,7 +102,7 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
     String fileName = SpreadSheetCorrector.getFileName(testPath);
     try {
       // FIXME: use document.save(File file);
-      File saveTo = new File("TODO");
+      // File saveTo = new File("TODO");
       File dir = new File(userFolder);
       if(!dir.exists()) {
         dir.mkdirs();
@@ -131,12 +117,19 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
   
   @Override
   protected void closeDocument(SpreadsheetDocument document) {
-    try {
-      // FIXME: try/catch entfernen!
-      document.close();
-    } catch (Exception e) {
-      System.out.println(e.getStackTrace());
-    }
+    document.close();
+  }
+  
+  @Override
+  protected Cell getCellByPosition(Table table, int column, int row) {
+    return table.getCellByPosition(column, row);
+  }
+  
+  @Override
+  protected void setCellComment(Cell cell, String message) {
+    if(message == null || message.isEmpty())
+      return;
+    cell.setNoteText(message);
   }
   
 }

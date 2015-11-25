@@ -9,7 +9,8 @@ public class ODFCellComparator {
   public static String compareCellValues(Cell masterCell, Cell compareCell) {
     String masterValue = masterCell.getStringValue(), compareValue = compareCell.getStringValue();
     // FIXME: why substring from 0 to first newline?
-    compareValue = compareValue.substring(0, compareValue.indexOf("\n"));
+    if(compareValue.indexOf("\n") != -1)
+      compareValue = compareValue.substring(0, compareValue.indexOf("\n"));
     if(compareValue.isEmpty())
       return "Keinen Wert angegeben!";
     else if(masterValue.equals(compareValue))

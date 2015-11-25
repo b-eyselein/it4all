@@ -124,9 +124,9 @@ public class XLSCorrector extends SpreadCorrector<Workbook, Sheet, Cell> {
   }
   
   @Override
-  protected void compareNumberOfChartsInDocument(Workbook compareDocument, Workbook sampleDocument) {
+  protected String compareNumberOfChartsInDocument(Workbook compareDocument, Workbook sampleDocument) {
     // TODO Auto-generated method stub
-    
+    return null;
   }
   
   @Override
@@ -209,5 +209,17 @@ public class XLSCorrector extends SpreadCorrector<Workbook, Sheet, Cell> {
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+  
+  @Override
+  protected Cell getCellByPosition(Sheet table, int row, int column) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  
+  @Override
+  protected void setCellComment(Cell type, String comment) {
+    // TODO Auto-generated method stub
+    
   }
 }
