@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import model.spreadsheet.SpreadCorrector;
 import model.spreadsheet.SpreadSheetCorrector;
+import model.spreadsheet.StringHelper;
 
 import org.odftoolkit.odfdom.type.Color;
 import org.odftoolkit.simple.SpreadsheetDocument;
@@ -24,6 +25,41 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
   private static final String COLOR_WHITE = "#FFFFFF";
   private static final String FONT = "Arial";
   private static final double FONT_SIZE = 10.;
+  
+  protected String compareCellValues(Cell masterCell, Cell compareCell) {
+    String masterValue = masterCell.getStringValue(), compareValue = compareCell.getStringValue();
+    // FIXME: why substring from 0 to first newline?
+    if(compareValue.indexOf("\n") != -1)
+      compareValue = compareValue.substring(0, compareValue.indexOf("\n"));
+    if(compareValue.isEmpty())
+      return "Keinen Wert angegeben!";
+    else if(masterValue.equals(compareValue))
+      return "Wert richtig.";
+    else
+      return "Wert falsch. Erwartet wurde '" + masterValue + "'.";
+  }
+  
+  protected String compareCellFormulas(Cell masterCell, Cell compareCell) {
+    String masterFormula = masterCell.getFormula();
+    String compareFormula = compareCell.getFormula();
+    if(masterFormula == null)
+      // Keine Formel zu vergleichen
+      return "";
+    else if(masterFormula.equals(compareFormula))
+      // Formel richtig
+      return "Formel richtig.";
+    else if(compareFormula == null)
+      // Keine Formel von Student angegeben
+      return "Keine Formel angegeben!";
+    else {
+      String string = StringHelper.getDiffOfTwoFormulas(masterFormula, compareFormula);
+      if(string.equals(""))
+        // TODO: can this happen?
+        return "Formel richtig.";
+      else
+        return "Formel falsch. " + string;
+    }
+  }
   
   @SuppressWarnings("deprecation")
   protected ArrayList<Cell> getColoredRange(Table master) {
@@ -83,8 +119,8 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
         return;
       
       // Compare cell values
-      String cellValueResult = ODFCellComparator.compareCellValues(cellMaster, cellCompare);
-      String cellFormulaResult = ODFCellComparator.compareCellFormulas(cellMaster, cellCompare);
+      String cellValueResult = compareCellValues(cellMaster, cellCompare);
+      String cellFormulaResult = compareCellFormulas(cellMaster, cellCompare);
       
       setCellComment(cellCompare, cellValueResult + "\n" + cellFormulaResult);
       

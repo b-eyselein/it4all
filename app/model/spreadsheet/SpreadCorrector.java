@@ -57,6 +57,10 @@ public abstract class SpreadCorrector<DocType, TableType, CellType> {
       return new SpreadSheetCorrectionResult(false, notices);
   }
   
+  protected abstract String compareCellValues(CellType masterCell, CellType compareCell);
+  
+  protected abstract String compareCellFormulas(CellType masterCell, CellType compareCell);
+  
   protected abstract DocType loadDocument(Path musterPath);
   
   protected abstract int getSheetCount(DocType sampleDocument);

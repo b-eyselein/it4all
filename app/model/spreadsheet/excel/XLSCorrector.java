@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 
 import model.spreadsheet.SpreadCorrector;
+import model.spreadsheet.StringHelper;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
@@ -111,9 +112,9 @@ public class XLSCorrector extends SpreadCorrector<Workbook, Sheet, Cell> {
   protected Workbook loadDocument(Path path) {
     try {
       return new XSSFWorkbook(path.toFile());
-    } catch (InvalidFormatException | IOException e) {
-      // TODO: entsprechenden Fehler werfen!
+    } catch (Exception e) {
       e.printStackTrace();
+      // TODO: IllegalStateException: Falscher Path!
       return null;
     }
   }
@@ -222,4 +223,55 @@ public class XLSCorrector extends SpreadCorrector<Workbook, Sheet, Cell> {
     // TODO Auto-generated method stub
     
   }
+  
+  @Override
+  protected String compareCellValues(Cell masterCell, Cell compareCell) {
+    String cell1Value = getStringValueOfCell(masterCell);
+    String cell2Value = getStringValueOfCell(compareCell);
+    if(cell2Value.equals("")) {
+      return "Keinen Wert angegeben!";
+    } else if(cell1Value.equals(cell2Value)) {
+      return "Wert richtig.";
+    } else {
+      return "Wert falsch. Erwartet wurde '" + cell1Value + "'.";
+    }
+  }
+  
+  @Override
+  protected String compareCellFormulas(Cell masterCell, Cell compareCell) {
+    // TODO Auto-generated method stub
+    if(masterCell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+      if(masterCell.toString().equals(compareCell.toString())) {
+        return "Formel richtig.";
+      } else {
+        if(compareCell.getCellType() != Cell.CELL_TYPE_FORMULA) {
+          return "Keine Formel angegeben!";
+        } else {
+          String string = StringHelper.getDiffOfTwoFormulas(masterCell.toString(), compareCell.toString());
+          if(string.equals("")) {
+            return "Formel richtig.";
+          } else {
+            return "Formel falsch. " + string;
+          }
+        }
+      }
+    } else
+      return "";
+    // return "Fehler!";
+  }
+  
+  private static String getStringValueOfCell(Cell cell) {
+    if(cell.getCellType() == Cell.CELL_TYPE_FORMULA)
+      switch(cell.getCachedFormulaResultType()) {
+      case Cell.CELL_TYPE_NUMERIC:
+        return Double.toString(cell.getNumericCellValue());
+      case Cell.CELL_TYPE_STRING:
+        return cell.getRichStringCellValue().toString();
+      default:
+        return "";
+      }
+    else
+      return cell.toString();
+  }
+  
 }

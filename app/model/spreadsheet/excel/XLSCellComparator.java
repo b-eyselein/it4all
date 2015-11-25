@@ -31,13 +31,13 @@ public class XLSCellComparator {
     String cell1Value = this.getStringValueOfCell(cell1);
     String cell2Value = this.getStringValueOfCell(cell2);
     if(cell2Value.equals("")) {
-      this.message += "Wert falsch. Kein Wert eingetragen.\n";
+      this.message += "Wert falsch. Kein Wert eingetragen.";
       return false;
     } else if(cell1Value.equals(cell2Value)) {
-      this.message += "Wert richtig.\n";
+      this.message += "Wert richtig.";
       return true;
     } else {
-      this.message += "Wert falsch. Erwartet wurde '" + cell1Value + "'.\n";
+      this.message += "Wert falsch. Erwartet wurde '" + cell1Value + "'.";
       return false;
     }
   }

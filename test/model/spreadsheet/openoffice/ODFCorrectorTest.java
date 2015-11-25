@@ -25,6 +25,54 @@ public class ODFCorrectorTest {
   private Path schullandheimTeilLoesung = Paths.get(schullandheimDir.toString(), "Aufgabe_Schullandheim.ods");
   
   @Test
+  public void testCompareCellValues() {
+    SpreadsheetDocument muster = corrector.loadDocument(schullandheimMuster);
+    SpreadsheetDocument teilLsg = corrector.loadDocument(schullandheimTeilLoesung);
+    
+    Cell musterCell = muster.getSheetByIndex(2).getCellByPosition(7, 15);
+    Cell compareCell = teilLsg.getSheetByIndex(2).getCellByPosition(7, 15);
+    assertThat(corrector.compareCellValues(musterCell, compareCell), equalTo("Wert richtig."));
+    
+    // Wert in Muster, Compare leer
+    musterCell = muster.getSheetByIndex(3).getCellByPosition(5, 16);
+    compareCell = teilLsg.getSheetByIndex(3).getCellByPosition(5, 16);
+    assertThat(corrector.compareCellValues(musterCell, compareCell), equalTo("Keinen Wert angegeben!"));
+    
+    // Wert in Muster, Compare falsch
+    musterCell = muster.getSheetByIndex(3).getCellByPosition(5, 19);
+    compareCell = teilLsg.getSheetByIndex(3).getCellByPosition(5, 19);
+    assertThat(corrector.compareCellValues(musterCell, compareCell),
+        equalTo("Wert falsch. Erwartet wurde '12,14 €'."));
+    
+  }
+  
+  @Test
+  public void testCompareCellFormulas() {
+    SpreadsheetDocument muster = corrector.loadDocument(schullandheimMuster);
+    SpreadsheetDocument teilLsg = corrector.loadDocument(schullandheimTeilLoesung);
+    
+    Cell musterCell = muster.getSheetByIndex(2).getCellByPosition(7, 15);
+    Cell compareCell = teilLsg.getSheetByIndex(2).getCellByPosition(7, 15);
+    assertThat(corrector.compareCellFormulas(musterCell, compareCell), equalTo("Formel richtig."));
+    
+    // Wert in Muster null, Compare leer
+    musterCell = muster.getSheetByIndex(3).getCellByPosition(3, 9);
+    compareCell = teilLsg.getSheetByIndex(3).getCellByPosition(3, 9);
+    assertThat(corrector.compareCellFormulas(musterCell, compareCell), equalTo(""));
+    
+    // Wert in Muster, Compare leer
+    musterCell = muster.getSheetByIndex(3).getCellByPosition(5, 16);
+    compareCell = teilLsg.getSheetByIndex(3).getCellByPosition(5, 16);
+    assertThat(corrector.compareCellFormulas(musterCell, compareCell), equalTo("Keine Formel angegeben!"));
+    
+    // Wert in Muster, Compare leer
+    musterCell = muster.getSheetByIndex(3).getCellByPosition(5, 19);
+    compareCell = teilLsg.getSheetByIndex(3).getCellByPosition(5, 19);
+    assertThat(corrector.compareCellFormulas(musterCell, compareCell),
+        equalTo("Formel falsch. Der Bereich D20 fehlt."));
+  }
+  
+  @Test
   public void testGetColoredRange() {
     SpreadsheetDocument muster = corrector.loadDocument(schullandheimMuster);
     List<Cell> coloredRange = corrector.getColoredRange(muster.getSheetByIndex(1));
@@ -152,7 +200,7 @@ public class ODFCorrectorTest {
     Cell cell = document.getSheetByIndex(0).getCellByPosition("D4");
     
     assertNull(cell.getNoteText());
-
+    
     corrector.setCellComment(cell, null);
     assertNull(cell.getNoteText());
     

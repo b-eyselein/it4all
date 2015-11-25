@@ -1,0 +1,220 @@
+package model.spreadsheet.excel;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.junit.Test;
+
+public class XLSCorrectorTest {
+  
+  private XLSCorrector corrector = new XLSCorrector();
+  private Path standardDocument = Paths.get("test/resources/spreadsheet/standard.xlsx");
+  
+  private Path schullandheimDir = Paths.get("test/resources/spreadsheet/schullandheim");
+  private Path schullandheimMuster = Paths.get(schullandheimDir.toString(), "Aufgabe_Schullandheim_Muster.xlsx");
+  private Path schullandheimTeilLoesung = Paths.get(schullandheimDir.toString(), "Aufgabe_Schullandheim.xlsx");
+  
+  @Test
+  public void testCompareCellValues() {
+    Workbook muster = corrector.loadDocument(schullandheimMuster);
+    Workbook teilLsg = corrector.loadDocument(schullandheimTeilLoesung);
+    
+    Cell musterCell = muster.getSheetAt(2).getRow(15).getCell(7);
+    Cell compareCell = teilLsg.getSheetAt(2).getRow(15).getCell(7);
+    assertThat(corrector.compareCellValues(musterCell, compareCell), equalTo("Wert richtig."));
+    
+    // Wert in Muster, Compare leer
+    musterCell = muster.getSheetAt(3).getRow(16).getCell(5);
+    compareCell = teilLsg.getSheetAt(3).getRow(16).getCell(5);
+    assertThat(corrector.compareCellValues(musterCell, compareCell), equalTo("Keinen Wert angegeben!"));
+    
+    // Wert in Muster, Compare falsch
+    musterCell = muster.getSheetAt(3).getRow(19).getCell(5);
+    compareCell = teilLsg.getSheetAt(3).getRow(19).getCell(5);
+    // TODO: Zahl schoener formatieren... 12.142857142857142
+    assertThat(corrector.compareCellValues(musterCell, compareCell),
+        equalTo("Wert falsch. Erwartet wurde '12.142857142857142'."));
+  }
+  
+  @Test
+  public void testCompareCellFormulas() {
+    Workbook muster = corrector.loadDocument(schullandheimMuster);
+    Workbook teilLsg = corrector.loadDocument(schullandheimTeilLoesung);
+    
+    Cell musterCell = muster.getSheetAt(2).getRow(15).getCell(7);
+    Cell compareCell = teilLsg.getSheetAt(2).getRow(15).getCell(7);
+    assertThat(corrector.compareCellFormulas(musterCell, compareCell), equalTo("Formel richtig."));
+    
+    // Kein Formel in Muster null, Compare leer
+    musterCell = muster.getSheetAt(3).getRow(16).getCell(1);
+    compareCell = teilLsg.getSheetAt(3).getRow(16).getCell(1);
+    assertThat(corrector.compareCellFormulas(musterCell, compareCell), equalTo(""));
+    
+    // Wert in Muster, Compare leer
+    musterCell = muster.getSheetAt(3).getRow(16).getCell(5);
+    compareCell = teilLsg.getSheetAt(3).getRow(16).getCell(5);
+    assertThat(corrector.compareCellFormulas(musterCell, compareCell), equalTo("Keine Formel angegeben!"));
+    
+    // Wert in Muster, Compare leer
+    musterCell = muster.getSheetAt(3).getRow(19).getCell(5);
+    compareCell = teilLsg.getSheetAt(3).getRow(19).getCell(5);
+    assertThat(corrector.compareCellFormulas(musterCell, compareCell), equalTo("Formel falsch. Der Bereich D20 fehlt."));
+  }
+  
+  @Test
+  public void testGetColoredRange() {
+    // Workbook muster = corrector.loadDocument(schullandheimMuster);
+    // List<Cell> coloredRange =
+    // corrector.getColoredRange(muster.getSheetAt(1));
+    // assertTrue(coloredRange.isEmpty());
+    //
+    // coloredRange = corrector.getColoredRange(muster.getSheetAt(2));
+    // assertThat(coloredRange.size(), equalTo(28));
+    // for(int i = 0; i < 25; i++) {
+    // Cell cell = coloredRange.get(i);
+    // assertThat(cell.getRowIndex(), equalTo(15 + i));
+    // assertThat(cell.getColumnIndex(), equalTo(7));
+    // }
+    // Cell maennlich = coloredRange.get(26);
+    // assertThat(maennlich.getRowIndex(), equalTo(44));
+    // assertThat(maennlich.getColumnIndex(), equalTo(1));
+    // Cell weiblich = coloredRange.get(27);
+    // assertThat(weiblich.getRowIndex(), equalTo(45));
+    // assertThat(weiblich.getColumnIndex(), equalTo(1));
+    fail("Still things to implement!");
+  }
+  
+  @Test
+  public void testLoadDocument() {
+    Workbook document = corrector.loadDocument(standardDocument);
+    assertNotNull("Dokument standardDokument konnte nicht geladen werden!", document);
+    
+    document = corrector.loadDocument(schullandheimMuster);
+    assertNotNull("Dokument schullandheimMuster konnte nicht geladen werden!", document);
+    fail("Still things to implement!");
+  }
+  
+  @Test
+  public void testLoadDocumentWithWrongPath() {
+    assertNull(corrector.loadDocument(Paths.get("")));
+  }
+  
+  @Test
+  public void testGetSheetCount() {
+    // Workbook document = corrector.loadDocument(standardDocument);
+    // assertThat(corrector.getSheetCount(document), equalTo(1));
+    //
+    // document = corrector.loadDocument(schullandheimMuster);
+    // assertThat(corrector.getSheetCount(document), equalTo(8));
+    //
+    // document = corrector.loadDocument(schullandheimTeilLoesung);
+    // assertThat(corrector.getSheetCount(document), equalTo(8));
+  }
+  
+  @Test
+  public void testCompareNumberOfChartsInDocument() {
+    // Workbook muster = corrector.loadDocument(schullandheimMuster);
+    // assertThat(corrector.compareNumberOfChartsInDocument(muster, muster),
+    // equalTo("Richtige Anzahl Diagramme gefunden."));
+    //
+    // Workbook solution = corrector.loadDocument(schullandheimTeilLoesung);
+    // assertThat(corrector.compareNumberOfChartsInDocument(solution, muster),
+    // equalTo("Falsche Anzahl Diagramme im Dokument (erwartet: 2, gezählt: 0)."));
+    //
+    // assertThat(corrector.compareNumberOfChartsInDocument(solution, solution),
+    // equalTo("Es waren keine Diagramme zu erstellen."));
+    fail("Still things to implement!");
+  }
+  
+  @Test
+  public void testGetSheetByIndex() {
+    Workbook document = corrector.loadDocument(standardDocument);
+    assertNotNull("Standarddokument konnte nicht geladen werden!", document);
+    Sheet sheet = corrector.getSheetByIndex(document, 0);
+    assertNotNull(sheet);
+    // TODO: weitere Tests?
+    
+    Workbook muster = corrector.loadDocument(schullandheimMuster);
+    Sheet musterSheet = corrector.getSheetByIndex(muster, 0);
+    assertNotNull(musterSheet);
+    assertThat(musterSheet.getRow(0).getCell(0).toString(), equalTo("Verwalten und Auswerten von Daten"));
+    musterSheet = corrector.getSheetByIndex(muster, 4);
+    assertNotNull(musterSheet);
+    // assertThat(musterSheet.getRow(10).getCell(16).getStringValue(),
+    // equalTo("5% Rabatt auf den Gesamtpreis"));
+    
+    fail("Still things to implement!");
+  }
+  
+  @Test
+  public void testCompareSheet() {
+    // FIXME: fail("Not yet implemented");
+  }
+  
+  @Test
+  public void testSaveCorrectedSpreadsheet() {
+    // FIXME: fail("Not yet implemented");
+  }
+  
+  @Test
+  public void testCloseDocument() {
+    // Workbook document = corrector.loadDocument(standardDocument);
+    // assertNotNull(document);
+    // corrector.closeDocument(document);
+  }
+  
+  @Test
+  public void testGetCellByPosition() {
+    Workbook muster = corrector.loadDocument(schullandheimMuster);
+    Sheet musterSheet = corrector.getSheetByIndex(muster, 0);
+    // assertThat(corrector.getCellByPosition(musterSheet, 0,
+    // 0).getStringValue(),
+    // equalTo(musterSheet.getCellByPosition("A1").getStringValue()));
+    // assertThat(corrector.getCellByPosition(musterSheet, 7,
+    // 5).getStringValue(),
+    // equalTo(musterSheet.getCellByPosition("F8").getStringValue()));
+    
+    Sheet musterSheet4 = corrector.getSheetByIndex(muster, 4);
+    // assertThat(corrector.getCellByPosition(musterSheet4, 10,
+    // 15).getStringValue(), equalTo(musterSheet4
+    // .getCellByPosition(10, 15).getStringValue()));
+    
+    fail("Still things to implement!");
+  }
+  
+  @Test
+  public void testSetCellComment() {
+    // String message = "Dies ist eine Testnachricht!";
+    // String message2 = "Dies ist eine zweite  Testnachricht!";
+    //
+    // Workbook document = corrector.loadDocument(standardDocument);
+    // Cell cell = document.getSheetAt(0).getCellByPosition("D4");
+    //
+    // assertNull(cell.getNoteText());
+    //
+    // corrector.setCellComment(cell, null);
+    // assertNull(cell.getNoteText());
+    //
+    // corrector.setCellComment(cell, "");
+    // assertNull(cell.getNoteText());
+    //
+    // corrector.setCellComment(cell, message);
+    // assertThat(cell.getNoteText(), equalTo(message));
+    //
+    // corrector.setCellComment(cell, message2);
+    // assertThat(cell.getNoteText(), equalTo(message2));
+    //
+    // cell.setNoteText(null);
+    fail("Still things to implement!");
+  }
+  
+}
