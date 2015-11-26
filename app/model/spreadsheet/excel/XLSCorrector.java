@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import model.spreadsheet.SpreadCorrector;
 import model.spreadsheet.StringHelper;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.ClientAnchor;
@@ -30,61 +29,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  *
  */
 public class XLSCorrector extends SpreadCorrector<Workbook, Sheet, Cell> {
-  
-  private static void setXLSSheetComment(Sheet sheet, String message, int row, int column) {
-    if(!message.equals("")) {
-      org.apache.poi.ss.usermodel.Cell cell = sheet.getRow(row).getCell(column);
-      // Remove comment if exists
-      if(cell.getCellComment() != null) {
-        cell.removeCellComment();
-      }
-      // Remove comment if exists
-      if(cell.getCellComment() != null) {
-        cell.removeCellComment();
-      }
-      // Create new drawing object
-      Drawing drawing = sheet.createDrawingPatriarch();
-      CreationHelper factory = sheet.getWorkbook().getCreationHelper();
-      // Create comment space
-      ClientAnchor anchor = factory.createClientAnchor();
-      anchor.setCol1(cell.getColumnIndex() + 1);
-      anchor.setCol2(cell.getColumnIndex() + 3);
-      anchor.setRow1(cell.getRowIndex() + 1);
-      anchor.setRow2(cell.getRowIndex() + 3);
-      // Insert new comment
-      Comment comment = drawing.createCellComment(anchor);
-      RichTextString str = factory.createRichTextString(message);
-      comment.setVisible(true);
-      comment.setString(str);
-      // Set comment
-      cell.setCellComment(comment);
-    }
-  }
-  
-  private static void setXLSCellComment(Cell cell, String message) {
-    if(!message.equals("")) {
-      // Remove comment if exists
-      if(cell.getCellComment() != null) {
-        cell.removeCellComment();
-      }
-      // Create new drawing object
-      Drawing drawing = cell.getSheet().createDrawingPatriarch();
-      CreationHelper factory = cell.getSheet().getWorkbook().getCreationHelper();
-      // Create comment space
-      ClientAnchor anchor = factory.createClientAnchor();
-      anchor.setCol1(cell.getColumnIndex());
-      anchor.setCol2(cell.getColumnIndex() + 3);
-      anchor.setRow1(cell.getRowIndex());
-      anchor.setRow2(cell.getRowIndex() + 3);
-      // Insert new comment
-      Comment comment = drawing.createCellComment(anchor);
-      RichTextString str = factory.createRichTextString(message);
-      comment.setVisible(false);
-      comment.setString(str);
-      // Set comment
-      cell.setCellComment(comment);
-    }
-  }
   
   private static void setXLSCellStyle(Cell cell, boolean bool) {
     CellStyle style = cell.getSheet().getWorkbook().createCellStyle();
@@ -113,7 +57,7 @@ public class XLSCorrector extends SpreadCorrector<Workbook, Sheet, Cell> {
     try {
       return new XSSFWorkbook(path.toFile());
     } catch (Exception e) {
-      e.printStackTrace();
+      // e.printStackTrace();
       // TODO: IllegalStateException: Falscher Path!
       return null;
     }
@@ -160,7 +104,7 @@ public class XLSCorrector extends SpreadCorrector<Workbook, Sheet, Cell> {
     }
     
     if(conditionalFormating)
-      setXLSSheetComment(compareTable, sc.getMessage(), 0, 0);
+      setCellComment(compareTable.getRow(0).getCell(0), sc.getMessage());
     
     // Iterate over colored cells
     ArrayList<Cell> range = getColoredRange(sampleTable);
@@ -177,7 +121,7 @@ public class XLSCorrector extends SpreadCorrector<Workbook, Sheet, Cell> {
           // Compare cell values
           boolean equalCell = cc.compareCellValues();
           boolean equalFormula = cc.compareCellFormulas();
-          setXLSCellComment(cellCompare, cc.getMessage());
+          setCellComment(cellCompare, cc.getMessage());
           if(equalCell && equalFormula) {
             // Style green
             setXLSCellStyle(cellCompare, true);
@@ -214,14 +158,36 @@ public class XLSCorrector extends SpreadCorrector<Workbook, Sheet, Cell> {
   
   @Override
   protected Cell getCellByPosition(Sheet table, int row, int column) {
-    // TODO Auto-generated method stub
-    return null;
+    if(table.getRow(row) != null)
+      return table.getRow(row).getCell(column);
+    else
+      return null;
   }
   
   @Override
-  protected void setCellComment(Cell type, String comment) {
-    // TODO Auto-generated method stub
+  protected void setCellComment(Cell cell, String message) {
+    if(message == null || message.isEmpty())
+      return;
+    // Remove comment if exists
+    if(cell.getCellComment() != null)
+      cell.removeCellComment();
     
+    // Create new drawing object
+    Drawing drawing = cell.getSheet().createDrawingPatriarch();
+    CreationHelper factory = cell.getSheet().getWorkbook().getCreationHelper();
+    // Create comment space
+    ClientAnchor anchor = factory.createClientAnchor();
+    anchor.setCol1(cell.getColumnIndex() + 1);
+    anchor.setCol2(cell.getColumnIndex() + 3);
+    anchor.setRow1(cell.getRowIndex() + 1);
+    anchor.setRow2(cell.getRowIndex() + 3);
+    // Insert new comment
+    Comment comment = drawing.createCellComment(anchor);
+    RichTextString str = factory.createRichTextString(message);
+    comment.setVisible(true);
+    comment.setString(str);
+    // Set comment
+    cell.setCellComment(comment);
   }
   
   @Override
