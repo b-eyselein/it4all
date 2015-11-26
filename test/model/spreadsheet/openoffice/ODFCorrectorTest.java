@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -41,8 +42,7 @@ public class ODFCorrectorTest {
     // Wert in Muster, Compare falsch
     musterCell = muster.getSheetByIndex(3).getCellByPosition(5, 19);
     compareCell = teilLsg.getSheetByIndex(3).getCellByPosition(5, 19);
-    assertThat(corrector.compareCellValues(musterCell, compareCell),
-        equalTo("Wert falsch. Erwartet wurde '12,14 €'."));
+    assertThat(corrector.compareCellValues(musterCell, compareCell), equalTo("Wert falsch. Erwartet wurde '12,14 €'."));
     
   }
   
@@ -68,8 +68,7 @@ public class ODFCorrectorTest {
     // Wert in Muster, Compare leer
     musterCell = muster.getSheetByIndex(3).getCellByPosition(5, 19);
     compareCell = teilLsg.getSheetByIndex(3).getCellByPosition(5, 19);
-    assertThat(corrector.compareCellFormulas(musterCell, compareCell),
-        equalTo("Formel falsch. Der Bereich D20 fehlt."));
+    assertThat(corrector.compareCellFormulas(musterCell, compareCell), equalTo("Formel falsch. Der Bereich D20 fehlt."));
   }
   
   @Test
@@ -161,12 +160,14 @@ public class ODFCorrectorTest {
   
   @Test
   public void testCompareSheet() {
-    // FIXME: fail("Not yet implemented");
+    // FIXME: implement and test!
+    fail("Not yet implemented");
   }
   
   @Test
   public void testSaveCorrectedSpreadsheet() {
-    // FIXME: fail("Not yet implemented");
+    // FIXME: implement and test!
+    fail("Not yet implemented");
   }
   
   @Test

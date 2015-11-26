@@ -89,7 +89,7 @@ public class XLSSheetComparator {
     return false;
   }
   
-  public boolean compareSheetCharts() {
+  private boolean compareSheetCharts() {
     XSSFDrawing drawing1 = ((XSSFSheet) this.shMaster).createDrawingPatriarch();
     XSSFDrawing drawing2 = ((XSSFSheet) this.shCompare).createDrawingPatriarch();
     int count1 = drawing1.getCharts().size();

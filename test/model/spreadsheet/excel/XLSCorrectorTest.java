@@ -125,7 +125,6 @@ public class XLSCorrectorTest {
     
     document = corrector.loadDocument(schullandheimTeilLoesung);
     assertThat(corrector.getSheetCount(document), equalTo(8));
-    
   }
   
   @Test
@@ -140,7 +139,6 @@ public class XLSCorrectorTest {
     
     assertThat(corrector.compareNumberOfChartsInDocument(solution, solution),
         equalTo("Es waren keine Diagramme zu erstellen."));
-    // FIXME:
     fail("Still things to implement!");
   }
   
@@ -162,13 +160,13 @@ public class XLSCorrectorTest {
   
   @Test
   public void testCompareSheet() {
-    // FIXME:
+    // FIXME: implement and test!
     fail("Not yet implemented");
   }
   
   @Test
   public void testSaveCorrectedSpreadsheet() {
-    // FIXME:
+    // FIXME: implement and test!
     fail("Not yet implemented");
   }
   

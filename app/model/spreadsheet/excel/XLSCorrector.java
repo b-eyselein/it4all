@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
+import model.spreadsheet.RegExpHelper;
 import model.spreadsheet.SpreadCorrector;
 import model.spreadsheet.StringHelper;
 
@@ -21,7 +22,10 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFDrawing;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 
 /**
  * 
@@ -70,8 +74,50 @@ public class XLSCorrector extends SpreadCorrector<Workbook, Sheet, Cell> {
   
   @Override
   protected String compareNumberOfChartsInDocument(Workbook compareDocument, Workbook sampleDocument) {
-    // TODO Auto-generated method stub
-    return null;
+    // FIXME: compare Charts by sheet!
+    int sheetNumber = 0;
+    
+    XSSFDrawing drawing1 = ((XSSFSheet) sampleDocument.getSheetAt(sheetNumber)).createDrawingPatriarch();
+    XSSFDrawing drawing2 = ((XSSFSheet) compareDocument.getSheetAt(sheetNumber)).createDrawingPatriarch();
+    int count1 = drawing1.getCharts().size();
+    int count2 = drawing2.getCharts().size();
+    if(count1 == 0)
+      return "Keine Diagramme zu erstellen.";
+    if(count2 == 0) {
+      return "Diagramm falsch. Kein Diagramm gefunden.";
+    } else if(count1 != count2) {
+      return "Diagramm falsch. Zu wenig Diagramme (Erwartet: " + count1 + ").";
+    } else {
+      String message = "";
+      for(int i = 0; i < count1; i++) {
+        CTChart chartMaster = drawing1.getCharts().get(i).getCTChart();
+        CTChart chartCompare = drawing2.getCharts().get(i).getCTChart();
+        if(chartCompare == null)
+          message += "Sheet konnte nicht geöffnet werden!";
+        else {
+          message += "Diagramm falsch.";
+          String stringMaster = chartMaster.toString();
+          String stringCompare = chartCompare.toString();
+          // Compare Title
+          String title1 = RegExpHelper.getExcelChartTitle(stringMaster);
+          String title2 = RegExpHelper.getExcelChartTitle(stringCompare);
+          if(!title1.equals(title2)) {
+            message += " Der Titel sollte " + title1 + " lauten.";
+          } else {
+            // Compare ranges
+            String chDiff = RegExpHelper.getExcelChartRangesDiff(sampleDocument.getSheetAt(sheetNumber).getSheetName(),
+                stringMaster, compareDocument.getSheetAt(sheetNumber).getSheetName(), stringCompare);
+            if(chDiff != "") {
+              message += " Der Bereich " + chDiff + " ist falsch.";
+            } else {
+              message = "Diagramm richtig.";
+            }
+          }
+        }
+      }
+      return message;
+    }
+    
   }
   
   @Override
@@ -99,9 +145,8 @@ public class XLSCorrector extends SpreadCorrector<Workbook, Sheet, Cell> {
     // Create SheetComparator
     XLSSheetComparator sc = new XLSSheetComparator(sampleTable, compareTable);
     // Compare conditional formatting
-    if(conditionalFormating) {
+    if(conditionalFormating)
       sc.compareSheetConditionalFormatting();
-    }
     
     if(conditionalFormating)
       setCellComment(compareTable.getRow(0).getCell(0), sc.getMessage());
