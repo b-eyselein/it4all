@@ -16,7 +16,7 @@ import org.odftoolkit.simple.style.StyleTypeDefinitions.FontStyle;
 import org.odftoolkit.simple.table.Cell;
 import org.odftoolkit.simple.table.Table;
 
-public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Cell> {
+public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Cell, Font, Color> {
   
   // TODO: magic numbers...
   private static final int MAXROW = 80;
@@ -25,6 +25,20 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
   private static final String COLOR_WHITE = "#FFFFFF";
   private static final String FONT = "Arial";
   private static final double FONT_SIZE = 10.;
+  
+  @Override
+  protected SpreadsheetDocument loadDocument(Path path) {
+    try {
+      return SpreadsheetDocument.loadDocument(path.toFile());
+    } catch (Exception e) {
+      return null;
+    }
+  }
+  
+  @Override
+  protected int getSheetCount(SpreadsheetDocument document) {
+    return document.getSheetCount();
+  }
   
   protected String compareCellValues(Cell masterCell, Cell compareCell) {
     String masterValue = masterCell.getStringValue(), compareValue = compareCell.getStringValue();
@@ -74,20 +88,6 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
     return range;
   }
   
-  @Override
-  protected SpreadsheetDocument loadDocument(Path path) {
-    try {
-      return SpreadsheetDocument.loadDocument(path.toFile());
-    } catch (Exception e) {
-      return null;
-    }
-  }
-  
-  @Override
-  protected int getSheetCount(SpreadsheetDocument document) {
-    return document.getSheetCount();
-  }
-  
   protected String compareNumberOfChartsInDocument(SpreadsheetDocument compare, SpreadsheetDocument sample) {
     int sampleCount = sample.getChartCount(), compareCount = compare.getChartCount();
     if(sampleCount == 0)
@@ -126,9 +126,13 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
       
       if(cellValueResult.equals("Wert richtig.")
           && (cellFormulaResult.isEmpty() || cellFormulaResult.equals("Formel richtig.")))
-        cellCompare.setFont(new Font(FONT, FontStyle.BOLD, FONT_SIZE, Color.GREEN));
+        setCellStyle(cellCompare, new Font(FONT, FontStyle.BOLD, FONT_SIZE), Color.GREEN);
+      // cellCompare.setFont(new Font(FONT, FontStyle.BOLD, FONT_SIZE,
+      // Color.GREEN));
       else
-        cellCompare.setFont(new Font(FONT, FontStyle.ITALIC, FONT_SIZE, Color.RED));
+        setCellStyle(cellCompare, new Font(FONT, FontStyle.ITALIC, FONT_SIZE), Color.RED);
+      // cellCompare.setFont(new Font(FONT, FontStyle.ITALIC, FONT_SIZE,
+      // Color.RED));
     }
   }
   
@@ -166,6 +170,12 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
     if(message == null || message.isEmpty())
       return;
     cell.setNoteText(message);
+  }
+  
+  @Override
+  protected void setCellStyle(Cell cell, Font font, Color color) {
+    font.setColor(color);
+    cell.setFont(font);
   }
   
 }

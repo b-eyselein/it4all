@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-public abstract class SpreadCorrector<DocType, TableType, CellType> {
+public abstract class SpreadCorrector<DocType, TableType, CellType, FontType, ColorType> {
   
   public SpreadSheetCorrectionResult correct(Path musterPath, Path testPath, boolean conditionalFormating,
       boolean compareCharts) {
@@ -79,6 +79,8 @@ public abstract class SpreadCorrector<DocType, TableType, CellType> {
   
   protected abstract void closeDocument(DocType compareDocument);
   
-  protected abstract void setCellComment(CellType type, String comment);
+  protected abstract void setCellComment(CellType cell, String comment);
+  
+  protected abstract void setCellStyle(CellType cell, FontType font, ColorType color);
   
 }

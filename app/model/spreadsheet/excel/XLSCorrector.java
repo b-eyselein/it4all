@@ -3,7 +3,9 @@ package model.spreadsheet.excel;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 
+import model.spreadsheet.HashSetHelper;
 import model.spreadsheet.RegExpHelper;
 import model.spreadsheet.SpreadCorrector;
 import model.spreadsheet.StringHelper;
@@ -13,14 +15,19 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.ConditionalFormatting;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.RichTextString;
+//TODO: Umstellung auf XSSFROW!
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -32,29 +39,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
  * @author Stefan Olbrecht
  *
  */
-public class XLSCorrector extends SpreadCorrector<Workbook, Sheet, Cell> {
-  
-  private static void setXLSCellStyle(Cell cell, boolean bool) {
-    CellStyle style = cell.getSheet().getWorkbook().createCellStyle();
-    short alignment = cell.getCellStyle().getAlignment();
-    short format = cell.getCellStyle().getDataFormat();
-    Font font = cell.getSheet().getWorkbook().createFont();
-    if(bool) {
-      font.setBold(true);
-      font.setColor(IndexedColors.GREEN.getIndex());
-    } else {
-      font.setItalic(true);
-      font.setColor(IndexedColors.RED.getIndex());
-    }
-    style.setFont(font);
-    style.setAlignment(alignment);
-    style.setDataFormat(format);
-    style.setBorderLeft(XSSFCellStyle.BORDER_MEDIUM);
-    style.setBorderBottom(XSSFCellStyle.BORDER_MEDIUM);
-    style.setBorderRight(XSSFCellStyle.BORDER_MEDIUM);
-    style.setBorderTop(XSSFCellStyle.BORDER_MEDIUM);
-    cell.setCellStyle(style);
-  }
+public class XLSCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Font, Short> {
   
   @Override
   protected Workbook loadDocument(Path path) {
@@ -126,14 +111,14 @@ public class XLSCorrector extends SpreadCorrector<Workbook, Sheet, Cell> {
   }
   
   @Override
-  protected ArrayList<Cell> getColoredRange(Sheet master) {
-    ArrayList<Cell> range = new ArrayList<Cell>();
+  protected ArrayList<XSSFCell> getColoredRange(Sheet master) {
+    ArrayList<XSSFCell> range = new ArrayList<XSSFCell>();
     for(Row row: master) {
       for(Cell cell: row) {
         Color foreground = cell.getCellStyle().getFillForegroundColorColor();
         Color background = cell.getCellStyle().getFillBackgroundColorColor();
         if(foreground != null && background != null)
-          range.add(cell);
+          range.add((XSSFCell) cell);
       }
     }
     return range;
@@ -142,37 +127,34 @@ public class XLSCorrector extends SpreadCorrector<Workbook, Sheet, Cell> {
   @Override
   protected void compareSheet(Sheet sampleTable, Sheet compareTable, boolean conditionalFormating) {
     
-    // Create SheetComparator
-    XLSSheetComparator sc = new XLSSheetComparator(sampleTable, compareTable);
     // Compare conditional formatting
-    if(conditionalFormating)
-      sc.compareSheetConditionalFormatting();
-    
-    if(conditionalFormating)
-      setCellComment(compareTable.getRow(0).getCell(0), sc.getMessage());
+    if(conditionalFormating) {
+      String conditionalFormattingResult = compareSheetConditionalFormatting(sampleTable, compareTable);
+      setCellComment((XSSFCell) compareTable.getRow(0).getCell(0), conditionalFormattingResult);
+    }
     
     // Iterate over colored cells
-    ArrayList<Cell> range = getColoredRange(sampleTable);
+    ArrayList<XSSFCell> range = getColoredRange(sampleTable);
     for(Cell cellMaster: range) {
       int rowIndex = cellMaster.getRowIndex();
       int columnIndex = cellMaster.getColumnIndex();
-      Row rowCompare = sc.getSheetCompare().getRow(rowIndex);
+      Row rowCompare = compareTable.getRow(rowIndex);
       if(rowCompare != null) {
-        Cell cellCompare = rowCompare.getCell(columnIndex);
+        XSSFCell cellCompare = (XSSFCell) rowCompare.getCell(columnIndex);
         if(cellCompare != null) {
           // Create CellComparator
-          XLSCellComparator cc = new XLSCellComparator(cellMaster, cellCompare);
           cellCompare.setCellComment(null);
           // Compare cell values
-          boolean equalCell = cc.compareCellValues();
-          boolean equalFormula = cc.compareCellFormulas();
-          setCellComment(cellCompare, cc.getMessage());
-          if(equalCell && equalFormula) {
+          String equalCell = compareCellValues((XSSFCell) cellMaster, cellCompare);
+          String equalFormula = compareCellFormulas((XSSFCell) cellMaster, cellCompare);
+          setCellComment(cellCompare, equalCell + "\n" + equalFormula);
+          // FIXME
+          if(equalCell.equals("Wert richtig.") && equalFormula.equals("Formel richtig.")) {
             // Style green
-            setXLSCellStyle(cellCompare, true);
+            setCellStyle(cellCompare, compareTable.getWorkbook().createFont(), IndexedColors.GREEN.getIndex());
           } else {
             // Style red
-            setXLSCellStyle(cellCompare, false);
+            setCellStyle(cellCompare, compareTable.getWorkbook().createFont(), IndexedColors.RED.getIndex());
           }
         }
       }
@@ -202,15 +184,15 @@ public class XLSCorrector extends SpreadCorrector<Workbook, Sheet, Cell> {
   }
   
   @Override
-  protected Cell getCellByPosition(Sheet table, int row, int column) {
+  protected XSSFCell getCellByPosition(Sheet table, int row, int column) {
     if(table.getRow(row) != null)
-      return table.getRow(row).getCell(column);
+      return (XSSFCell) table.getRow(row).getCell(column);
     else
       return null;
   }
   
   @Override
-  protected void setCellComment(Cell cell, String message) {
+  protected void setCellComment(XSSFCell cell, String message) {
     if(message == null || message.isEmpty())
       return;
     // Remove comment if exists
@@ -236,7 +218,7 @@ public class XLSCorrector extends SpreadCorrector<Workbook, Sheet, Cell> {
   }
   
   @Override
-  protected String compareCellValues(Cell masterCell, Cell compareCell) {
+  protected String compareCellValues(XSSFCell masterCell, XSSFCell compareCell) {
     String cell1Value = getStringValueOfCell(masterCell);
     String cell2Value = getStringValueOfCell(compareCell);
     if(cell2Value.equals("")) {
@@ -249,25 +231,25 @@ public class XLSCorrector extends SpreadCorrector<Workbook, Sheet, Cell> {
   }
   
   @Override
-  protected String compareCellFormulas(Cell masterCell, Cell compareCell) {
+  protected String compareCellFormulas(XSSFCell masterCell, XSSFCell compareCell) {
     // TODO Auto-generated method stub
-    if(masterCell.getCellType() == Cell.CELL_TYPE_FORMULA) {
-      if(masterCell.toString().equals(compareCell.toString())) {
-        return "Formel richtig.";
+    if(masterCell.getCellType() != Cell.CELL_TYPE_FORMULA)
+      return "Es war keine Formel anzugeben.";
+    
+    if(masterCell.toString().equals(compareCell.toString())) {
+      return "Formel richtig.";
+    } else {
+      if(compareCell.getCellType() != Cell.CELL_TYPE_FORMULA) {
+        return "Keine Formel angegeben!";
       } else {
-        if(compareCell.getCellType() != Cell.CELL_TYPE_FORMULA) {
-          return "Keine Formel angegeben!";
+        String string = StringHelper.getDiffOfTwoFormulas(masterCell.toString(), compareCell.toString());
+        if(string.equals("")) {
+          return "Formel richtig.";
         } else {
-          String string = StringHelper.getDiffOfTwoFormulas(masterCell.toString(), compareCell.toString());
-          if(string.equals("")) {
-            return "Formel richtig.";
-          } else {
-            return "Formel falsch. " + string;
-          }
+          return "Formel falsch. " + string;
         }
       }
-    } else
-      return "";
+    }
     // return "Fehler!";
   }
   
@@ -283,6 +265,78 @@ public class XLSCorrector extends SpreadCorrector<Workbook, Sheet, Cell> {
       }
     else
       return cell.toString();
+  }
+  
+  protected static String compareSheetConditionalFormatting(Sheet master, Sheet compare) {
+    String message = "";
+    SheetConditionalFormatting scf1 = master.getSheetConditionalFormatting();
+    SheetConditionalFormatting scf2 = compare.getSheetConditionalFormatting();
+    int count1 = scf1.getNumConditionalFormattings();
+    int count2 = scf2.getNumConditionalFormattings();
+    
+    if(count1 == 0)
+      return "Keine bedingten Formatierungen erwartet.";
+    if(count2 == 0)
+      return "Bedingte Formatierung falsch. Keine Bedingte Formatierung gefunden.";
+    if(count1 != count2)
+      return "Bedingte Formatierung falsch. Zu wenig Bedingte Formatierungen (Erwartet: " + count1 + ", Gefunden: "
+          + count2 + ").\n";
+    
+    for(int i = 0; i < count1; i++) {
+      ConditionalFormatting format1 = scf1.getConditionalFormattingAt(i);
+      ConditionalFormatting format2 = scf2.getConditionalFormattingAt(i);
+      if(format2 != null) {
+        if(format1.equals(format2)) {
+          message += "Bedingte Formatierung richtig.\n";
+        } else {
+          // Compare ranges reference
+          HashSet<String> items1 = new HashSet<String>();
+          for(CellRangeAddress cf: format1.getFormattingRanges()) {
+            items1.add(cf.formatAsString());
+          }
+          HashSet<String> items2 = new HashSet<String>();
+          for(CellRangeAddress cf: format2.getFormattingRanges()) {
+            items2.add(cf.formatAsString());
+          }
+          String cfDiff = HashSetHelper.getSheetCFDiff(items2, items1);
+          if(!cfDiff.equals("")) {
+            message += "Bedingte Formatierung falsch.";
+            message += " Der Bereich " + cfDiff + " ist falsch.\n";
+          } else {
+            String string1 = RegExpHelper.getExcelCFFormulaList(format1.toString());
+            String string2 = RegExpHelper.getExcelCFFormulaList(format2.toString());
+            String diff = StringHelper.getDiffOfTwoFormulas(string1, string2);
+            if(diff.equals("")) {
+              message += "Bedingte Formatierung richtig.\n";
+            } else {
+              message += "Bedingte Formatierung falsch." + diff + "\n";
+            }
+          }
+        }
+      }
+    }
+    return message;
+  }
+  
+  @Override
+  protected void setCellStyle(XSSFCell cell, Font font, Short color) {
+    CellStyle style = cell.getSheet().getWorkbook().createCellStyle();
+    
+    // FIXME: BOLD or ITALIC?
+    // if(bool)
+    // font.setBold(true);
+    // else
+    // font.setItalic(true);
+    font.setColor(color);
+    style.setFont(font);
+    
+    style.setAlignment(cell.getCellStyle().getAlignment());
+    style.setDataFormat(cell.getCellStyle().getDataFormat());
+    style.setBorderLeft(XSSFCellStyle.BORDER_MEDIUM);
+    style.setBorderBottom(XSSFCellStyle.BORDER_MEDIUM);
+    style.setBorderRight(XSSFCellStyle.BORDER_MEDIUM);
+    style.setBorderTop(XSSFCellStyle.BORDER_MEDIUM);
+    cell.setCellStyle(style);
   }
   
 }
