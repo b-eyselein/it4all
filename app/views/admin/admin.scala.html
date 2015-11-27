@@ -1,9 +1,13 @@
-@import model.user._
+@import model.user.User
+@import model.feedback.Feedback
 
-@(user: User)
+@(user: User, feedbackList: List[Feedback])
 
 @adminMain("Administrator", user) {
 <div class="container">
   <h3>Administrator...</h3>
+  @for(feedback <- feedbackList) {
+  	<p>@feedback</p>
+  }
 </div>
 }
