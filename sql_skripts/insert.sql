@@ -1,7 +1,7 @@
 INSERT INTO exercise (`id`, `title`, `text`) VALUES
   (1, 'Formulare',
   'Sie sind beauftragt, für die Internetseite einer Werkstatt ein Kontaktformular für die Terminabsprache erstellen.
-  Das Formular (formular) soll folgenden Umfang haben:');
+  Das Formular (form) soll folgenden Umfang haben:');
   
 INSERT INTO task (`exercise_id`, `id`, `task_Description`, `pts`, `result_type`, `tag_name`, `element_name`, `attributes`) VALUES
 	(1, 1, 'Es soll als Methode „post“ und als Aktion „test“ verwendet werden', 2, 0, 'form', 'form', 'method=post;action=test'),
