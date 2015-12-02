@@ -39,7 +39,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
  * @author Stefan Olbrecht
  *
  */
-public class XLSCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Font, Short> {
+public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Font, Short> {
   
   @Override
   protected Workbook loadDocument(Path path) {

@@ -3,7 +3,7 @@ package model.spreadsheet;
 import java.nio.file.Path;
 import java.util.Arrays;
 
-import model.spreadsheet.excel.XLSCorrector;
+import model.spreadsheet.excel.XLSXCorrector;
 import model.spreadsheet.openoffice.ODFCorrector;
 
 /**
@@ -19,7 +19,7 @@ public class SpreadSheetCorrector {
     if(fileExtension.equals("ods"))
       return (new ODFCorrector()).correct(musterPath, testPath, conditionalFormating, charts);
     else if(fileExtension.equals("xlsx") || fileExtension.equals("xlsm"))
-      return (new XLSCorrector()).correct(musterPath, testPath, conditionalFormating, charts);
+      return (new XLSXCorrector()).correct(musterPath, testPath, conditionalFormating, charts);
     else
       return new SpreadSheetCorrectionResult(false, Arrays.asList("Falsche Dateiendung: \"" + fileExtension
           + "\". Korrektur konnte nicht gestartet werden."));

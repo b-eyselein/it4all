@@ -16,9 +16,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.junit.Test;
 
-public class XLSCorrectorTest {
+public class XLSXCorrectorTest {
   
-  private XLSCorrector corrector = new XLSCorrector();
+  private XLSXCorrector corrector = new XLSXCorrector();
   private Path standardDocument = Paths.get("test/resources/spreadsheet/standard.xlsx");
   
   private Path schullandheimDir = Paths.get("test/resources/spreadsheet/schullandheim");
