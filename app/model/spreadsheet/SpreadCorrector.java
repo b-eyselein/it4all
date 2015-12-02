@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-public abstract class SpreadCorrector<DocType, TableType, CellType, FontType, ColorType> {
+public abstract class SpreadCorrector<DocType, SheetType, CellType, FontType, ColorType> {
   
   public SpreadSheetCorrectionResult correct(Path musterPath, Path testPath, boolean conditionalFormating,
       boolean compareCharts) {
@@ -38,8 +38,8 @@ public abstract class SpreadCorrector<DocType, TableType, CellType, FontType, Co
     // Iterate over sheets
     int sheetCount = getSheetCount(sampleDocument);
     for(int sheetIndex = 0; sheetIndex < sheetCount; sheetIndex++) {
-      TableType sampleTable = getSheetByIndex(sampleDocument, sheetIndex);
-      TableType compareTable = getSheetByIndex(compareDocument, sheetIndex);
+      SheetType sampleTable = getSheetByIndex(sampleDocument, sheetIndex);
+      SheetType compareTable = getSheetByIndex(compareDocument, sheetIndex);
       if(compareTable == null || sampleTable == null)
         notices.add("Es gab einen Fehler beim Öffnen der " + (sheetCount + 1) + ". Tabelle!");
       else
@@ -67,13 +67,15 @@ public abstract class SpreadCorrector<DocType, TableType, CellType, FontType, Co
   
   protected abstract String compareNumberOfChartsInDocument(DocType compareDocument, DocType sampleDocument);
   
-  protected abstract CellType getCellByPosition(TableType table, int row, int column);
+  protected abstract String compareChartsInSheet(SheetType compareSheet, SheetType sampleSheet);
   
-  protected abstract TableType getSheetByIndex(DocType sampleDocument, int sheetIndex);
+  protected abstract CellType getCellByPosition(SheetType table, int row, int column);
   
-  protected abstract ArrayList<CellType> getColoredRange(TableType master);
+  protected abstract SheetType getSheetByIndex(DocType sampleDocument, int sheetIndex);
   
-  protected abstract void compareSheet(TableType sampleTable, TableType compareTable, boolean conditionalFormating);
+  protected abstract ArrayList<CellType> getColoredRange(SheetType master);
+  
+  protected abstract void compareSheet(SheetType sampleTable, SheetType compareTable, boolean conditionalFormating);
   
   protected abstract void saveCorrectedSpreadsheet(DocType compareDocument, Path testPath);
   
