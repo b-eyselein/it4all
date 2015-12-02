@@ -15,12 +15,14 @@ import play.mvc.Controller;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
+import play.mvc.Security;
 import play.twirl.api.Html;
 import views.html.empty;
 import views.html.html.htmlcorrect;
 import views.html.html.html;
 import views.html.html.htmloverview;
 
+@Security.Authenticated(Secured.class)
 public class HTML extends Controller {
   
   public Result site(String userName, int exercise) {
@@ -44,8 +46,6 @@ public class HTML extends Controller {
   }
   
   public Result exericse(int exercise) {
-    if(session(Application.SESSION_ID_FIELD) == null)
-      return redirect("/login");
     Student student = Student.find.byId(session(Application.SESSION_ID_FIELD));
     if(student == null) {
       session().clear();

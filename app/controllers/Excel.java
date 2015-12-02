@@ -15,46 +15,29 @@ import play.mvc.Controller;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
+import play.mvc.Security;
 import views.html.excel.excel;
 import views.html.excel.excelcorrect;
 import views.html.excel.exceloverview;
 
+@Security.Authenticated(Secured.class)
 public class Excel extends Controller {
   
   public Result index() {
-    if(session(Application.SESSION_ID_FIELD) == null)
-      return redirect("/login");
     Student user = Student.find.byId(session(Application.SESSION_ID_FIELD));
-    if(user == null) {
-      session().clear();
-      return redirect("/login");
-    }
     List<ExcelExercise> exercises = ExcelExercise.finder.all();
     return ok(exceloverview.render(user, exercises));
   }
   
   public Result exercise(int exerciseId) {
-    if(session(Application.SESSION_ID_FIELD) == null)
-      return redirect("/login");
     Student user = Student.find.byId(session(Application.SESSION_ID_FIELD));
-    if(user == null) {
-      session().clear();
-      return redirect("/login");
-    }
     if(exerciseId == -1 || ExcelExercise.finder.byId(exerciseId) == null)
       return redirect("/index");
     return ok(excel.render(user, ExcelExercise.finder.byId(exerciseId)));
   }
   
   public Result upload(int exerciseId) {
-    if(session(Application.SESSION_ID_FIELD) == null)
-      return redirect("/login");
     Student user = Student.find.byId(session(Application.SESSION_ID_FIELD));
-    if(user == null) {
-      session().clear();
-      return redirect("/login");
-    }
-    
     ExcelExercise exercise = ExcelExercise.finder.byId(exerciseId);
     
     MultipartFormData body = request().body().asMultipartFormData();
@@ -79,14 +62,7 @@ public class Excel extends Controller {
   }
   
   public Result download(int exerciseId, String typ) {
-    if(session(Application.SESSION_ID_FIELD) == null)
-      return redirect("/login");
     Student user = Student.find.byId(session(Application.SESSION_ID_FIELD));
-    if(user == null) {
-      session().clear();
-      return redirect("/login");
-    }
-    
     ExcelExercise exercise = ExcelExercise.finder.byId(exerciseId);
     
     Path fileToDownload = Paths.get("/var/lib/it4all/solutions", user.name, "excel", exercise.fileName + "_Korrektur."
