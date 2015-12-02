@@ -178,4 +178,10 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
     cell.setFont(font);
   }
   
+  @Override
+  protected String compareChartsInSheet(Table compareSheet, Table sampleSheet) {
+    // FIXME: nicht von ODFToolkit unterstützt...
+    return null;
+  }
+  
 }

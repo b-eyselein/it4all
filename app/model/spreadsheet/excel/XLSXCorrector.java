@@ -43,11 +43,11 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
   
   @Override
   protected Workbook loadDocument(Path path) {
+    // FIXME: differenziere zwichen verschiedenen Fehlergründen! ==> Bessere
+    // Rückmeldung?
     try {
       return new XSSFWorkbook(path.toFile());
     } catch (Exception e) {
-      // e.printStackTrace();
-      // TODO: IllegalStateException: Falscher Path!
       return null;
     }
   }
@@ -59,50 +59,8 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
   
   @Override
   protected String compareNumberOfChartsInDocument(Workbook compareDocument, Workbook sampleDocument) {
-    // FIXME: compare Charts by sheet!
-    int sheetNumber = 0;
-    
-    XSSFDrawing drawing1 = ((XSSFSheet) sampleDocument.getSheetAt(sheetNumber)).createDrawingPatriarch();
-    XSSFDrawing drawing2 = ((XSSFSheet) compareDocument.getSheetAt(sheetNumber)).createDrawingPatriarch();
-    int count1 = drawing1.getCharts().size();
-    int count2 = drawing2.getCharts().size();
-    if(count1 == 0)
-      return "Keine Diagramme zu erstellen.";
-    if(count2 == 0) {
-      return "Diagramm falsch. Kein Diagramm gefunden.";
-    } else if(count1 != count2) {
-      return "Diagramm falsch. Zu wenig Diagramme (Erwartet: " + count1 + ").";
-    } else {
-      String message = "";
-      for(int i = 0; i < count1; i++) {
-        CTChart chartMaster = drawing1.getCharts().get(i).getCTChart();
-        CTChart chartCompare = drawing2.getCharts().get(i).getCTChart();
-        if(chartCompare == null)
-          message += "Sheet konnte nicht geöffnet werden!";
-        else {
-          message += "Diagramm falsch.";
-          String stringMaster = chartMaster.toString();
-          String stringCompare = chartCompare.toString();
-          // Compare Title
-          String title1 = RegExpHelper.getExcelChartTitle(stringMaster);
-          String title2 = RegExpHelper.getExcelChartTitle(stringCompare);
-          if(!title1.equals(title2)) {
-            message += " Der Titel sollte " + title1 + " lauten.";
-          } else {
-            // Compare ranges
-            String chDiff = RegExpHelper.getExcelChartRangesDiff(sampleDocument.getSheetAt(sheetNumber).getSheetName(),
-                stringMaster, compareDocument.getSheetAt(sheetNumber).getSheetName(), stringCompare);
-            if(chDiff != "") {
-              message += " Der Bereich " + chDiff + " ist falsch.";
-            } else {
-              message = "Diagramm richtig.";
-            }
-          }
-        }
-      }
-      return message;
-    }
-    
+    // FIXME: wird nur von ODFCorrector benutzt!
+    return null;
   }
   
   @Override
@@ -219,15 +177,14 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
   
   @Override
   protected String compareCellValues(XSSFCell masterCell, XSSFCell compareCell) {
-    String cell1Value = getStringValueOfCell(masterCell);
-    String cell2Value = getStringValueOfCell(compareCell);
-    if(cell2Value.equals("")) {
+    String masterCellValue = getStringValueOfCell(masterCell);
+    String compareCellValue = getStringValueOfCell(compareCell);
+    if(compareCellValue.equals(""))
       return "Keinen Wert angegeben!";
-    } else if(cell1Value.equals(cell2Value)) {
+    else if(masterCellValue.equals(compareCellValue))
       return "Wert richtig.";
-    } else {
-      return "Wert falsch. Erwartet wurde '" + cell1Value + "'.";
-    }
+    else
+      return "Wert falsch. Erwartet wurde '" + masterCellValue + "'.";
   }
   
   @Override
@@ -254,17 +211,18 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
   }
   
   private static String getStringValueOfCell(Cell cell) {
-    if(cell.getCellType() == Cell.CELL_TYPE_FORMULA)
-      switch(cell.getCachedFormulaResultType()) {
-      case Cell.CELL_TYPE_NUMERIC:
-        return Double.toString(cell.getNumericCellValue());
-      case Cell.CELL_TYPE_STRING:
-        return cell.getRichStringCellValue().toString();
-      default:
-        return "";
-      }
-    else
+    if(cell.getCellType() != Cell.CELL_TYPE_FORMULA)
       return cell.toString();
+    switch(cell.getCachedFormulaResultType()) {
+    case Cell.CELL_TYPE_BLANK:
+      return "";
+    case Cell.CELL_TYPE_NUMERIC:
+      return Double.toString(cell.getNumericCellValue());
+    case Cell.CELL_TYPE_STRING:
+      return cell.getRichStringCellValue().toString();
+    default:
+      return "";
+    }
   }
   
   protected static String compareSheetConditionalFormatting(Sheet master, Sheet compare) {
@@ -337,6 +295,52 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
     style.setBorderRight(XSSFCellStyle.BORDER_MEDIUM);
     style.setBorderTop(XSSFCellStyle.BORDER_MEDIUM);
     cell.setCellStyle(style);
+  }
+  
+  @Override
+  protected String compareChartsInSheet(Sheet compareSheet, Sheet sampleSheet) {
+    XSSFDrawing sampleDrawing = ((XSSFSheet) sampleSheet).createDrawingPatriarch();
+    XSSFDrawing compareDrawing = ((XSSFSheet) compareSheet).createDrawingPatriarch();
+    int sampleChartCount = sampleDrawing.getCharts().size();
+    int compareChartCount = compareDrawing.getCharts().size();
+    
+    if(sampleChartCount == 0)
+      return "Es waren keine Diagramme zu erstellen.";
+    
+    if(sampleChartCount != compareChartCount)
+      return "Falsche Anzahl an Diagrammen im Sheet (Erwartet: " + sampleChartCount + ", Gefunden: "
+          + compareChartCount + ").";
+    
+    // FIXME: refactor & test!
+    String message = "";
+    for(int i = 0; i < sampleChartCount; i++) {
+      CTChart chartMaster = sampleDrawing.getCharts().get(i).getCTChart();
+      CTChart chartCompare = compareDrawing.getCharts().get(i).getCTChart();
+      if(chartCompare == null)
+        message += "Sheet konnte nicht geöffnet werden!";
+      else {
+        message += "Diagramm falsch.";
+        String stringMaster = chartMaster.toString();
+        String stringCompare = chartCompare.toString();
+        // Compare Title
+        String title1 = RegExpHelper.getExcelChartTitle(stringMaster);
+        String title2 = RegExpHelper.getExcelChartTitle(stringCompare);
+        if(!title1.equals(title2)) {
+          message += " Der Titel sollte " + title1 + " lauten.";
+        } else {
+          // Compare ranges
+          String chDiff = RegExpHelper.getExcelChartRangesDiff(sampleSheet.getSheetName(), stringMaster,
+              compareSheet.getSheetName(), stringCompare);
+          if(chDiff != "") {
+            message += " Der Bereich " + chDiff + " ist falsch.";
+          } else {
+            message = "Diagramm(e) richtig.";
+          }
+        }
+      }
+    }
+    return message;
+    
   }
   
 }

@@ -56,10 +56,10 @@ public class XLSXCorrectorTest {
     XSSFCell compareCell = (XSSFCell) teilLsg.getSheetAt(2).getRow(15).getCell(7);
     assertThat(corrector.compareCellFormulas(musterCell, compareCell), equalTo("Formel richtig."));
     
-    // Kein Formel in Muster null, Compare leer
+    // Kein Formel in Muster, Compare leer
     musterCell = (XSSFCell) muster.getSheetAt(3).getRow(16).getCell(1);
     compareCell = (XSSFCell) teilLsg.getSheetAt(3).getRow(16).getCell(1);
-    assertThat(corrector.compareCellFormulas(musterCell, compareCell), equalTo(""));
+    assertThat(corrector.compareCellFormulas(musterCell, compareCell), equalTo("Es war keine Formel anzugeben."));
     
     // Wert in Muster, Compare leer
     musterCell = (XSSFCell) muster.getSheetAt(3).getRow(16).getCell(5);
@@ -129,18 +129,8 @@ public class XLSXCorrectorTest {
   
   @Test
   public void testCompareNumberOfChartsInDocument() {
-    // Workbook muster = corrector.loadDocument(schullandheimMuster);
-    // assertThat(corrector.compareNumberOfChartsInDocument(muster, muster),
-    // equalTo("Richtige Anzahl Diagramme gefunden."));
-    //
-    // Workbook solution = corrector.loadDocument(schullandheimTeilLoesung);
-    // assertThat(corrector.compareNumberOfChartsInDocument(solution, muster),
-    // equalTo("Falsche Anzahl Diagramme im Dokument (erwartet: 2, gezählt: 0)."));
-    //
-    // assertThat(corrector.compareNumberOfChartsInDocument(solution, solution),
-    // equalTo("Es waren keine Diagramme zu erstellen."));
-    // FIXME: Implement!
-    // fail("Still things to implement!");
+    Workbook document = corrector.loadDocument(standardDocument);
+    assertNull(corrector.compareNumberOfChartsInDocument(document, document));
   }
   
   @Test
@@ -218,4 +208,20 @@ public class XLSXCorrectorTest {
     cell.removeCellComment();
   }
   
+  @Test
+  public void testCompareChartsInSheet() {
+    
+    Workbook muster = corrector.loadDocument(schullandheimMuster);
+    assertThat(corrector.compareChartsInSheet(muster.getSheetAt(0), muster.getSheetAt(0)),
+        equalTo("Es waren keine Diagramme zu erstellen."));
+    
+    Workbook solution = corrector.loadDocument(schullandheimTeilLoesung);
+    assertThat(corrector.compareChartsInSheet(solution.getSheetAt(0), muster.getSheetAt(2)),
+        equalTo("Falsche Anzahl an Diagrammen im Sheet (Erwartet: 2, Gefunden: 0)."));
+    
+    assertThat(corrector.compareChartsInSheet(muster.getSheetAt(2), muster.getSheetAt(2)),
+        equalTo("Diagramm(e) richtig."));
+    // FIXME: Implement!
+    // fail("Still things to implement!");
+  }
 }
