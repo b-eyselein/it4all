@@ -59,11 +59,6 @@ create table student (
   constraint pk_student primary key (name))
 ;
 
-create table student (
-  name                      varchar(255) not null,
-  constraint pk_student primary key (name))
-;
-
 create table task (
   id                        integer auto_increment not null,
   exercise_id               integer,
@@ -99,8 +94,6 @@ drop table exercise;
 drop table feedback;
 
 drop table grading;
-
-drop table student;
 
 drop table student;
 
