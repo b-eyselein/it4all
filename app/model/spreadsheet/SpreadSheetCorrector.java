@@ -3,9 +3,6 @@ package model.spreadsheet;
 import java.nio.file.Path;
 import java.util.Arrays;
 
-import model.spreadsheet.excel.XLSXCorrector;
-import model.spreadsheet.openoffice.ODFCorrector;
-
 /**
  * 
  * @author Stefan Olbrecht

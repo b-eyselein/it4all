@@ -1,13 +1,9 @@
-package model.spreadsheet.openoffice;
+package model.spreadsheet;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
-
-import model.spreadsheet.SpreadCorrector;
-import model.spreadsheet.SpreadSheetCorrector;
-import model.spreadsheet.StringHelper;
 
 import org.odftoolkit.odfdom.type.Color;
 import org.odftoolkit.simple.SpreadsheetDocument;
@@ -27,32 +23,11 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
   private static final double FONT_SIZE = 10.;
   
   @Override
-  protected SpreadsheetDocument loadDocument(Path path) {
-    try {
-      return SpreadsheetDocument.loadDocument(path.toFile());
-    } catch (Exception e) {
-      return null;
-    }
+  protected void closeDocument(SpreadsheetDocument document) {
+    document.close();
   }
   
   @Override
-  protected int getSheetCount(SpreadsheetDocument document) {
-    return document.getSheetCount();
-  }
-  
-  protected String compareCellValues(Cell masterCell, Cell compareCell) {
-    String masterValue = masterCell.getStringValue(), compareValue = compareCell.getStringValue();
-    // FIXME: why substring from 0 to first newline?
-    if(compareValue.indexOf("\n") != -1)
-      compareValue = compareValue.substring(0, compareValue.indexOf("\n"));
-    if(compareValue.isEmpty())
-      return "Keinen Wert angegeben!";
-    else if(masterValue.equals(compareValue))
-      return "Wert richtig.";
-    else
-      return "Wert falsch. Erwartet wurde '" + masterValue + "'.";
-  }
-  
   protected String compareCellFormulas(Cell masterCell, Cell compareCell) {
     String masterFormula = masterCell.getFormula();
     String compareFormula = compareCell.getFormula();
@@ -75,19 +50,27 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
     }
   }
   
-  @SuppressWarnings("deprecation")
-  protected ArrayList<Cell> getColoredRange(Table master) {
-    ArrayList<Cell> range = new ArrayList<Cell>();
-    for(int row = 0; row < MAXROW; row++) {
-      for(int column = 0; column < MAXCOLUMN; column++) {
-        Cell oCell = master.getRowByIndex(row).getCellByIndex(column);
-        if(!oCell.getCellBackgroundColorString().equals(COLOR_WHITE))
-          range.add(oCell);
-      }
-    }
-    return range;
+  @Override
+  protected String compareCellValues(Cell masterCell, Cell compareCell) {
+    String masterValue = masterCell.getStringValue(), compareValue = compareCell.getStringValue();
+    // FIXME: why substring from 0 to first newline?
+    if(compareValue.indexOf("\n") != -1)
+      compareValue = compareValue.substring(0, compareValue.indexOf("\n"));
+    if(compareValue.isEmpty())
+      return "Keinen Wert angegeben!";
+    else if(masterValue.equals(compareValue))
+      return "Wert richtig.";
+    else
+      return "Wert falsch. Erwartet wurde '" + masterValue + "'.";
   }
   
+  @Override
+  protected String compareChartsInSheet(Table compareSheet, Table sampleSheet) {
+    // FIXME: nicht von ODFToolkit unterstützt...
+    return null;
+  }
+  
+  @Override
   protected String compareNumberOfChartsInDocument(SpreadsheetDocument compare, SpreadsheetDocument sample) {
     int sampleCount = sample.getChartCount(), compareCount = compare.getChartCount();
     if(sampleCount == 0)
@@ -99,10 +82,6 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
   }
   
   @Override
-  protected Table getSheetByIndex(SpreadsheetDocument document, int sheetIndex) {
-    return document.getSheetByIndex(sheetIndex);
-  }
-  
   protected void compareSheet(Table sampleTable, Table compareTable, boolean correctConditionalFormating) {
     if(correctConditionalFormating) {
       // NOTICE: Does not work in ODF Toolkit
@@ -136,6 +115,45 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
     }
   }
   
+  @Override
+  protected Cell getCellByPosition(Table table, int column, int row) {
+    return table.getCellByPosition(column, row);
+  }
+  
+  @Override
+  @SuppressWarnings("deprecation")
+  protected ArrayList<Cell> getColoredRange(Table master) {
+    ArrayList<Cell> range = new ArrayList<Cell>();
+    for(int row = 0; row < MAXROW; row++) {
+      for(int column = 0; column < MAXCOLUMN; column++) {
+        Cell oCell = master.getRowByIndex(row).getCellByIndex(column);
+        if(!oCell.getCellBackgroundColorString().equals(COLOR_WHITE))
+          range.add(oCell);
+      }
+    }
+    return range;
+  }
+  
+  @Override
+  protected Table getSheetByIndex(SpreadsheetDocument document, int sheetIndex) {
+    return document.getSheetByIndex(sheetIndex);
+  }
+  
+  @Override
+  protected int getSheetCount(SpreadsheetDocument document) {
+    return document.getSheetCount();
+  }
+  
+  @Override
+  protected SpreadsheetDocument loadDocument(Path path) {
+    try {
+      return SpreadsheetDocument.loadDocument(path.toFile());
+    } catch (Exception e) {
+      return null;
+    }
+  }
+  
+  @Override
   protected void saveCorrectedSpreadsheet(SpreadsheetDocument document, Path testPath) {
     // TODO userFolder: saveFolder!
     String userFolder = SpreadSheetCorrector.getUserFolder(testPath);
@@ -156,16 +174,6 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
   }
   
   @Override
-  protected void closeDocument(SpreadsheetDocument document) {
-    document.close();
-  }
-  
-  @Override
-  protected Cell getCellByPosition(Table table, int column, int row) {
-    return table.getCellByPosition(column, row);
-  }
-  
-  @Override
   protected void setCellComment(Cell cell, String message) {
     if(message == null || message.isEmpty())
       return;
@@ -176,12 +184,6 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
   protected void setCellStyle(Cell cell, Font font, Color color) {
     font.setColor(color);
     cell.setFont(font);
-  }
-  
-  @Override
-  protected String compareChartsInSheet(Table compareSheet, Table sampleSheet) {
-    // FIXME: nicht von ODFToolkit unterstützt...
-    return null;
   }
   
 }

@@ -1,4 +1,4 @@
-package model.spreadsheet.excel;
+package model.spreadsheet;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertNotNull;
@@ -9,6 +9,8 @@ import static org.junit.Assert.assertTrue;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+
+import model.spreadsheet.XLSXCorrector;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;

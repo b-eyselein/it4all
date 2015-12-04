@@ -27,7 +27,19 @@ public abstract class ElementResult {
     this.task = task;
   }
   
+  public boolean allAttributesFound() {
+    return attrs.stream().filter(attr -> attr.isFound()).collect(Collectors.counting()) == attrs.size();
+  }
+  
   public abstract void evaluate(WebDriver driver);
+  
+  public List<AttributeResult> getAttributes() {
+    return attrs;
+  }
+  
+  public String getElementName() {
+    return elementName;
+  }
   
   public String getElementNotFoundMessage() {
     return "Element " + elementName + " wurde nicht gefunden.";
@@ -42,28 +54,16 @@ public abstract class ElementResult {
       return 1;
   }
   
-  public String getElementName() {
-    return elementName;
-  }
-  
-  public boolean allAttributesFound() {
-    return attrs.stream().filter(attr -> attr.isFound()).collect(Collectors.counting()) == attrs.size();
-  }
-  
-  public void setSuccess(Success suc) {
-    success = suc;
+  public Success getSuccess() {
+    return success;
   }
   
   public Task getTask() {
     return task;
   }
   
-  public Success getSuccess() {
-    return success;
-  }
-  
-  public List<AttributeResult> getAttributes() {
-    return attrs;
+  public void setSuccess(Success suc) {
+    success = suc;
   }
   
 }

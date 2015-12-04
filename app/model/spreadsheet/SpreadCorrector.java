@@ -7,6 +7,18 @@ import java.util.LinkedList;
 
 public abstract class SpreadCorrector<DocType, SheetType, CellType, FontType, ColorType> {
   
+  protected abstract void closeDocument(DocType compareDocument);
+  
+  protected abstract String compareCellFormulas(CellType masterCell, CellType compareCell);
+  
+  protected abstract String compareCellValues(CellType masterCell, CellType compareCell);
+  
+  protected abstract String compareChartsInSheet(SheetType compareSheet, SheetType sampleSheet);
+  
+  protected abstract String compareNumberOfChartsInDocument(DocType compareDocument, DocType sampleDocument);
+  
+  protected abstract void compareSheet(SheetType sampleTable, SheetType compareTable, boolean conditionalFormating);
+  
   public SpreadSheetCorrectionResult correct(Path musterPath, Path testPath, boolean conditionalFormating,
       boolean compareCharts) {
     LinkedList<String> notices = new LinkedList<String>();
@@ -57,29 +69,17 @@ public abstract class SpreadCorrector<DocType, SheetType, CellType, FontType, Co
       return new SpreadSheetCorrectionResult(false, notices);
   }
   
-  protected abstract String compareCellValues(CellType masterCell, CellType compareCell);
-  
-  protected abstract String compareCellFormulas(CellType masterCell, CellType compareCell);
-  
-  protected abstract DocType loadDocument(Path musterPath);
-  
-  protected abstract int getSheetCount(DocType sampleDocument);
-  
-  protected abstract String compareNumberOfChartsInDocument(DocType compareDocument, DocType sampleDocument);
-  
-  protected abstract String compareChartsInSheet(SheetType compareSheet, SheetType sampleSheet);
-  
   protected abstract CellType getCellByPosition(SheetType table, int row, int column);
-  
-  protected abstract SheetType getSheetByIndex(DocType sampleDocument, int sheetIndex);
   
   protected abstract ArrayList<CellType> getColoredRange(SheetType master);
   
-  protected abstract void compareSheet(SheetType sampleTable, SheetType compareTable, boolean conditionalFormating);
+  protected abstract SheetType getSheetByIndex(DocType sampleDocument, int sheetIndex);
+  
+  protected abstract int getSheetCount(DocType sampleDocument);
+  
+  protected abstract DocType loadDocument(Path musterPath);
   
   protected abstract void saveCorrectedSpreadsheet(DocType compareDocument, Path testPath);
-  
-  protected abstract void closeDocument(DocType compareDocument);
   
   protected abstract void setCellComment(CellType cell, String comment);
   
