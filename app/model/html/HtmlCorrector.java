@@ -1,7 +1,6 @@
 package model.html;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import model.Exercise;
 import model.Grading;
@@ -12,13 +11,12 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 public class HtmlCorrector {
   
+  private static final String LOCALHOST = "http://localhost:9000/";
+  
   public static List<ElementResult> correct(String solutionUrl, Exercise exercise, Student student) {
-    String newUrl = "http://localhost:9000/" + solutionUrl;
-    WebDriver driver = new HtmlUnitDriver();
-    driver.get(newUrl);
+    WebDriver driver = getDriverWithUrlAndLoadPage(solutionUrl);
     
-    List<ElementResult> result = exercise.tasks.parallelStream().map(task -> task.getElementResult())
-        .collect(Collectors.toList());
+    List<ElementResult> result = getElementResultsForExercise(exercise);
     result.parallelStream().forEach(result1 -> result1.evaluate(driver));
     
     int points = result.stream().mapToInt(res -> res.getPoints()).sum();
@@ -31,6 +29,17 @@ public class HtmlCorrector {
     grading.save();
     
     return result;
+  }
+  
+  private static WebDriver getDriverWithUrlAndLoadPage(String solutionUrl) {
+    String newUrl = LOCALHOST + solutionUrl;
+    WebDriver driver = new HtmlUnitDriver();
+    driver.get(newUrl);
+    return driver;
+  }
+  
+  private static List<ElementResult> getElementResultsForExercise(Exercise exercise) {
+    return exercise.getElementResults();
   }
   
 }

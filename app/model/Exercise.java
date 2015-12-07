@@ -1,11 +1,13 @@
 package model;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import model.html.ElementResult;
 import play.data.validation.Constraints.Required;
 
 import com.avaje.ebean.Model;
@@ -26,5 +28,9 @@ public class Exercise extends Model {
   
   @OneToMany(mappedBy = "exercise")
   public List<Task> tasks;
+  
+  public List<ElementResult> getElementResults() {
+    return tasks.parallelStream().map(task -> task.getElementResult()).collect(Collectors.toList());
+  }
   
 }
