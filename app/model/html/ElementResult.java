@@ -11,20 +11,20 @@ import org.openqa.selenium.WebDriver;
 
 public abstract class ElementResult {
   
-  protected Task task;
+  protected Task theTask;
   
   protected String tag;
   protected String elementName;
   
-  protected Success success;
+  protected Success success = Success.NONE;
+  protected String message;
   
   protected List<AttributeResult> attrs = new LinkedList<AttributeResult>();
   
   public ElementResult(Task task, String tagName, String elementName) {
+    theTask = task;
     tag = tagName;
     this.elementName = elementName;
-    success = Success.NONE;
-    this.task = task;
   }
   
   public boolean allAttributesFound() {
@@ -41,9 +41,9 @@ public abstract class ElementResult {
     return elementName;
   }
   
-  public String getElementNotFoundMessage() {
-    return "Element " + elementName + " wurde nicht gefunden.";
-  }
+  // public String getElementNotFoundMessage() {
+  // return "Element " + elementName + " wurde nicht gefunden.";
+  // }
   
   public int getPoints() {
     if(success == Success.NONE)
@@ -59,11 +59,12 @@ public abstract class ElementResult {
   }
   
   public Task getTask() {
-    return task;
+    return theTask;
   }
   
-  public void setSuccess(Success suc) {
+  public void setResult(Success suc, String mes) {
     success = suc;
+    message = mes;
   }
   
 }

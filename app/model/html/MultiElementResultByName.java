@@ -66,11 +66,11 @@ public class MultiElementResultByName extends ElementResult {
       singleResults.put(differentAttrs[i++], element);
     
     if(singleResults.size() == differentAttrs.length)
-      setSuccess(Success.COMPLETE);
+      setResult(Success.COMPLETE, "TODO");
     else if(singleResults.size() > 0)
-      setSuccess(Success.PARTIALLY);
+      setResult(Success.PARTIALLY, "TODO");
     else
-      setSuccess(Success.NONE);
+      setResult(Success.NONE, "TODO");
     
   }
   

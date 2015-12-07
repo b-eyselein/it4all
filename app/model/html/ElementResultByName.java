@@ -12,9 +12,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class ElementResultByName extends ElementResult {
-
+  
   private boolean rightTagName = false;
-  private boolean allAttributesFound = true;
+  private boolean allAttributesFound = false;
   private List<String> attrsToFind;
   
   public ElementResultByName(Task task, String tagName, String elementName, String attributes) {
@@ -22,43 +22,61 @@ public class ElementResultByName extends ElementResult {
     attrsToFind = Arrays.asList(attributes.split(";"));
   }
   
-  public boolean rightTagNameWasUsed() {
-    return rightTagName;
-  }
-
-  @Override
-  public String getElementNotFoundMessage() {
-    String ret = "Element " + elementName + " wurde nicht gefunden.";
-    if(!rightTagName)
-      ret += "Vielleicht wurde der falsche TagName verwendet?";
-    return ret;
+  private boolean checkAttributes(WebElement element) {
+    boolean attributesFound = true;
+    for(String att: attrsToFind) {
+      if(!att.isEmpty()) {
+        String key = att.split("=")[0], value = att.split("=")[1];
+        AttributeResult result = new AttributeResult(element, key, value);
+        if(!result.isFound())
+          attributesFound = false;
+        attrs.add(new AttributeResult(element, key, value));
+      }
+    }
+    return attributesFound;
   }
   
   @Override
   public void evaluate(WebDriver driver) {
     List<WebElement> foundElements = driver.findElements(By.name(elementName));
+    if(foundElements.isEmpty()) {
+      setResult(Success.NONE, "Es wurde kein Element mit dem Namen " + elementName + " gefunden");
+      return;
+    }
     
-    foundElements.parallelStream().filter(element -> {
-      // TODO: Fehler, dass falsches Tag verwendet wurde!
-        if(!element.getTagName().equals(tag))
-          return false;
-        else
-          rightTagName = true;
-        for(String att: attrsToFind) {
-          String key = att.split("=")[0], value = att.split("=")[1];
-          AttributeResult result = new AttributeResult(element, key, value);
-          if(!result.isFound())
-            allAttributesFound = false;
-          attrs.add(new AttributeResult(element, key, value));
-        }
-        return true;
-      }).collect(Collectors.toList());
+    foundElements = filterForTagName(foundElements, tag);
+    if(foundElements.isEmpty()) {
+      setResult(Success.NONE, "Keines der gefundenen Elemente hat den passenden Tag!");
+      return;
+    }
     
-    if(!foundElements.isEmpty() && allAttributesFound)
-      setSuccess(Success.COMPLETE);
-    else if(!foundElements.isEmpty() && foundElements.size() > 0)
-      setSuccess(Success.PARTIALLY);
+    if(foundElements.size() > 1)
+      message = "Es wurde mehr als 1 Element mit passendem Namen und passendem Tag gefunden. Verwende das erste für weitere Korrektur.";
+    WebElement element = foundElements.get(0);
+    
+    allAttributesFound = checkAttributes(element);
+    
+    if(allAttributesFound)
+      setResult(Success.COMPLETE, "Alle Attribute wurden gefunden.");
     else
-      setSuccess(Success.NONE);
+      setResult(Success.PARTIALLY, "Mindestens 1 Attribut wurde nicht gefunden!");
+    
+  }
+  
+  private List<WebElement> filterForTagName(List<WebElement> foundElements, String tagName) {
+    return foundElements.parallelStream().filter(element -> element.getTagName().equals(tagName))
+        .collect(Collectors.toList());
+  }
+  
+  // @Override
+  // public String getElementNotFoundMessage() {
+  // String ret = "Element " + elementName + " wurde nicht gefunden.";
+  // if(!rightTagName)
+  // ret += "Vielleicht wurde der falsche TagName verwendet?";
+  // return ret;
+  // }
+  
+  public boolean rightTagNameWasUsed() {
+    return rightTagName;
   }
 }
