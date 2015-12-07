@@ -25,13 +25,11 @@ public class ElementResultByName extends ElementResult {
   private boolean checkAttributes(WebElement element) {
     boolean attributesFound = true;
     for(String att: attrsToFind) {
-      if(!att.isEmpty()) {
-        String key = att.split("=")[0], value = att.split("=")[1];
-        AttributeResult result = new AttributeResult(element, key, value);
-        if(!result.isFound())
-          attributesFound = false;
-        attrs.add(new AttributeResult(element, key, value));
-      }
+      String key = att.split("=")[0], value = att.split("=")[1];
+      AttributeResult result = new AttributeResult(element, key, value);
+      if(!result.isFound())
+        attributesFound = false;
+      attrs.add(new AttributeResult(element, key, value));
     }
     return attributesFound;
   }
@@ -40,18 +38,20 @@ public class ElementResultByName extends ElementResult {
   public void evaluate(WebDriver driver) {
     List<WebElement> foundElements = driver.findElements(By.name(elementName));
     if(foundElements.isEmpty()) {
-      setResult(Success.NONE, "Es wurde kein Element mit dem Namen " + elementName + " gefunden");
+      setResult(Success.NONE, "Es wurde kein Element mit dem Namen \"" + elementName + "\" gefunden");
       return;
     }
     
     foundElements = filterForTagName(foundElements, tag);
     if(foundElements.isEmpty()) {
-      setResult(Success.NONE, "Keines der gefundenen Elemente hat den passenden Tag!");
+      setResult(Success.NONE, "Keines der gefundenen Elemente hat den passenden Tag \"" + tag + "\"!");
       return;
     }
     
+    rightTagName = true;
+    
     if(foundElements.size() > 1)
-      message = "Es wurde mehr als 1 Element mit passendem Namen und passendem Tag gefunden. Verwende das erste für weitere Korrektur.";
+      message = "Es wurde mehr als 1 Element mit passendem Namen und passendem Tag gefunden. Verwende das erste für weitere Korrektur. ";
     WebElement element = foundElements.get(0);
     
     allAttributesFound = checkAttributes(element);
@@ -67,14 +67,6 @@ public class ElementResultByName extends ElementResult {
     return foundElements.parallelStream().filter(element -> element.getTagName().equals(tagName))
         .collect(Collectors.toList());
   }
-  
-  // @Override
-  // public String getElementNotFoundMessage() {
-  // String ret = "Element " + elementName + " wurde nicht gefunden.";
-  // if(!rightTagName)
-  // ret += "Vielleicht wurde der falsche TagName verwendet?";
-  // return ret;
-  // }
   
   public boolean rightTagNameWasUsed() {
     return rightTagName;

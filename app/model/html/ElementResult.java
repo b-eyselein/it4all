@@ -17,7 +17,7 @@ public abstract class ElementResult {
   protected String elementName;
   
   protected Success success = Success.NONE;
-  protected String message;
+  protected String message = "";
   
   protected List<AttributeResult> attrs = new LinkedList<AttributeResult>();
   
@@ -41,9 +41,9 @@ public abstract class ElementResult {
     return elementName;
   }
   
-  // public String getElementNotFoundMessage() {
-  // return "Element " + elementName + " wurde nicht gefunden.";
-  // }
+  public String getMessage() {
+    return message;
+  }
   
   public int getPoints() {
     if(success == Success.NONE)
@@ -64,7 +64,7 @@ public abstract class ElementResult {
   
   public void setResult(Success suc, String mes) {
     success = suc;
-    message = mes;
+    message += mes;
   }
   
 }
