@@ -37,7 +37,7 @@ libraryDependencies ++= Seq(
   "org.seleniumhq.selenium" % "selenium-java" % "2.48.1",
   
   // Mockito for Testing
-  "org.mockito" % "mockito-all" % "1.9.5"
+  "org.mockito" % "mockito-core" % "1.9.5"
   
 )
 
