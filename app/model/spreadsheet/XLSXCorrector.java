@@ -181,7 +181,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
           String chDiff = RegExpHelper.getExcelChartRangesDiff(sampleSheet.getSheetName(), stringMaster,
               compareSheet.getSheetName(), stringCompare);
           if(chDiff != "") {
-            message += " Der Bereich " + chDiff + " ist falsch.";
+            message += " Folgende Bereiche sind falsch: " + chDiff;
           } else {
             message = "Diagramm(e) richtig.";
           }
