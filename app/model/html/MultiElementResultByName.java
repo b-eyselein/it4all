@@ -14,14 +14,14 @@ import org.openqa.selenium.WebElement;
 public class MultiElementResultByName extends ElementResult {
   
   protected String[] commonAttrs;
-  
+  private String elemName;
   private String[] differentAttrs;
   private HashMap<String, WebElement> singleResults;
   
   public MultiElementResultByName(Task task, String tagName, String elementName, String commonAttributes,
       String differentAttributes) {
-    super(task, tagName, elementName);
-    commonAttrs = commonAttributes.split(";");
+    super(task, tagName, commonAttributes);
+    elemName = elementName;
     differentAttrs = differentAttributes.split(";");
     
     singleResults = new HashMap<String, WebElement>();
@@ -30,7 +30,7 @@ public class MultiElementResultByName extends ElementResult {
   @Override
   public void evaluate(WebDriver driver) {
     // elementName muss bei allen Element gleich sein
-    List<WebElement> foundElements = driver.findElements(By.name(elementName));
+    List<WebElement> foundElements = driver.findElements(By.name(elemName));
     
     // Stelle sicher, dass alle gefundenen Elemente alle Common-Attribute
     // besitzen

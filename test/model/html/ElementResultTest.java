@@ -14,15 +14,15 @@ import org.openqa.selenium.WebDriver;
 
 public class ElementResultTest {
   
-  private static final String ELEMENT_NAME = "email";
   private static final String TAG_NAME = "input";
-  private static final Task task = mock(Task.class);
+  private static final Task TASK = mock(Task.class);
+  private static final String ATTRIBUTES = "name=email;hidden=true";
   
   private static ElementResult result;
   
   @Before
   public void setUp() {
-    result = new ElementResult(task, TAG_NAME, ELEMENT_NAME) {
+    result = new ElementResult(TASK, TAG_NAME, ATTRIBUTES) {
       @Override
       public void evaluate(WebDriver driver) {
         // Not tested!
@@ -63,14 +63,9 @@ public class ElementResultTest {
   }
   
   @Test
-  public void testGetElementName() {
-    assertThat(result.getElementName(), equalTo(ELEMENT_NAME));
-  }
-  
-  @Test
   public void testGetTask() {
     assertNotNull(result.getTask());
-    assertThat(result.getTask(), equalTo(task));
+    assertThat(result.getTask(), equalTo(TASK));
   }
   
 }

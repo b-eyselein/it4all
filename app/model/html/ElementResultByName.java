@@ -1,6 +1,5 @@
 package model.html;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,31 +13,18 @@ import org.openqa.selenium.WebElement;
 public class ElementResultByName extends ElementResult {
   
   private boolean rightTagName = false;
-  private boolean allAttributesFound = false;
-  private List<String> attrsToFind;
+  private String elemName;
   
   public ElementResultByName(Task task, String tagName, String elementName, String attributes) {
-    super(task, tagName, elementName);
-    attrsToFind = Arrays.asList(attributes.split(";"));
-  }
-  
-  private boolean checkAttributes(WebElement element) {
-    boolean attributesFound = true;
-    for(String att: attrsToFind) {
-      String key = att.split("=")[0], value = att.split("=")[1];
-      AttributeResult result = new AttributeResult(element, key, value);
-      if(!result.isFound())
-        attributesFound = false;
-      attrs.add(new AttributeResult(element, key, value));
-    }
-    return attributesFound;
+    super(task, tagName, attributes);
+    elemName = elementName;
   }
   
   @Override
   public void evaluate(WebDriver driver) {
-    List<WebElement> foundElements = driver.findElements(By.name(elementName));
+    List<WebElement> foundElements = driver.findElements(By.name(elemName));
     if(foundElements.isEmpty()) {
-      setResult(Success.NONE, "Es wurde kein Element mit dem Namen \"" + elementName + "\" gefunden");
+      setResult(Success.NONE, "Es wurde kein Element mit dem Namen \"" + elemName + "\" gefunden");
       return;
     }
     
@@ -54,9 +40,7 @@ public class ElementResultByName extends ElementResult {
       message = "Es wurde mehr als 1 Element mit passendem Namen und passendem Tag gefunden. Verwende das erste für weitere Korrektur. ";
     WebElement element = foundElements.get(0);
     
-    allAttributesFound = checkAttributes(element);
-    
-    if(allAttributesFound)
+    if(checkAttributes(element))
       setResult(Success.COMPLETE, "Alle Attribute wurden gefunden.");
     else
       setResult(Success.PARTIALLY, "Mindestens 1 Attribut wurde nicht gefunden!");
