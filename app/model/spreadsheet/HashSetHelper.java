@@ -27,8 +27,33 @@ public class HashSetHelper {
     return diff;
   }
   
+  public static String getDiffOfTwoFormulas(String string1, String string2) {
+    String message = "";
+    
+    // Compare operators
+    String operDiff = RegExpHelper.getCellOperatorsDiff(string1, string2);
+    if(operDiff != "")
+      message += "Ein Operator (" + operDiff + ") fehlt.";
+    
+    // Compare ranges
+    String rangeDiff = RegExpHelper.getCellRangesDiff(string1, string2);
+    if(rangeDiff != "")
+      message += "Der Bereich " + rangeDiff + " fehlt.";
+    
+    // Compare formulas
+    String formulaDiff = RegExpHelper.getCellFormulasDiff(string1, string2);
+    if(formulaDiff != "")
+      message += "Verwenden Sie " + formulaDiff + ".";
+    
+    return message;
+  }
+  
   public static String getSheetCFDiff(HashSet<String> hs1, HashSet<String> hs2) {
-    return HashSetHelper.getDifferenceOfCollections(hs1, hs2).toString();
+    Collection<String> difference = getDifferenceOfCollections(hs1, hs2);
+    if(difference.size() == 0)
+      return "";
+    else
+      return difference.toString();
   }
   
 }

@@ -41,7 +41,7 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
       // Keine Formel von Student angegeben
       return "Keine Formel angegeben!";
     else {
-      String diffOfTwoFormulas = StringHelper.getDiffOfTwoFormulas(masterFormula, compareFormula);
+      String diffOfTwoFormulas = HashSetHelper.getDiffOfTwoFormulas(masterFormula, compareFormula);
       if(diffOfTwoFormulas.equals(""))
         // TODO: can this happen?
         return "Formel richtig.";

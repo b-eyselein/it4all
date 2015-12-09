@@ -74,7 +74,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
           } else {
             String string1 = RegExpHelper.getExcelCFFormulaList(format1.toString());
             String string2 = RegExpHelper.getExcelCFFormulaList(format2.toString());
-            String diff = StringHelper.getDiffOfTwoFormulas(string1, string2);
+            String diff = HashSetHelper.getDiffOfTwoFormulas(string1, string2);
             if(diff.equals("")) {
               message += "Bedingte Formatierung richtig.\n";
             } else {
@@ -123,11 +123,11 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
       if(compareCell.getCellType() != Cell.CELL_TYPE_FORMULA) {
         return "Keine Formel angegeben!";
       } else {
-        String string = StringHelper.getDiffOfTwoFormulas(masterCell.toString(), compareCell.toString());
-        if(string.equals("")) {
+        String difference = HashSetHelper.getDiffOfTwoFormulas(masterCell.toString(), compareCell.toString());
+        if(difference.equals("")) {
           return "Formel richtig.";
         } else {
-          return "Formel falsch. " + string;
+          return "Formel falsch. " + difference;
         }
       }
     }

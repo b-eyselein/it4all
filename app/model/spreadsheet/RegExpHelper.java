@@ -16,7 +16,10 @@ public class RegExpHelper {
     HashSet<String> al1 = RegExpHelper.getCellFormulasList(string1);
     HashSet<String> al2 = RegExpHelper.getCellFormulasList(string2);
     Collection<String> diff = HashSetHelper.getDifferenceOfCollections(al1, al2);
-    return diff.toString();
+    if(diff.isEmpty())
+      return "";
+    else
+      return diff.toString();
   }
   
   private static HashSet<String> getCellFormulasList(String string) {
@@ -33,7 +36,10 @@ public class RegExpHelper {
     HashSet<String> al1 = RegExpHelper.getCellOperatorsList(string1);
     HashSet<String> al2 = RegExpHelper.getCellOperatorsList(string2);
     Collection<String> diff = HashSetHelper.getDifferenceOfCollections(al1, al2);
-    return diff.toString();
+    if(diff.isEmpty())
+      return "";
+    else
+      return diff.toString();
   }
   
   private static HashSet<String> getCellOperatorsList(String string) {
@@ -50,7 +56,10 @@ public class RegExpHelper {
     HashSet<String> al1 = RegExpHelper.getCellRangesList(string1);
     HashSet<String> al2 = RegExpHelper.getCellRangesList(string2);
     Collection<String> diff = HashSetHelper.getDifferenceOfCollections(al1, al2);
-    return diff.toString();
+    if(diff.isEmpty())
+      return "";
+    else
+      return diff.toString();
   }
   
   private static HashSet<String> getCellRangesList(String string) {
@@ -79,7 +88,10 @@ public class RegExpHelper {
     HashSet<String> al1 = RegExpHelper.getExcelChartRangesList(name1, string1);
     HashSet<String> al2 = RegExpHelper.getExcelChartRangesList(name2, string2);
     Collection<String> diff = HashSetHelper.getDifferenceOfCollections(al1, al2);
-    return diff.toString();
+    if(diff.isEmpty())
+      return "";
+    else
+      return diff.toString();
   }
   
   private static HashSet<String> getExcelChartRangesList(String name, String string) {
@@ -111,14 +123,6 @@ public class RegExpHelper {
       return true;
     }
     return false;
-  }
-  
-  public static void main(String[] args) {
-    String string1 = "<main:formula>$G$2/$G$9</main:formula></main:cfRule></xml-fragment>";
-    String string2 = "<main:formula>($H$2:$H$9)</main:formula></main:cfRule></xml-fragment>";
-    string1 = RegExpHelper.getExcelCFFormulaList(string1);
-    string2 = RegExpHelper.getExcelCFFormulaList(string2);
-    System.out.println(StringHelper.getDiffOfTwoFormulas(string1, string2));
   }
   
 }

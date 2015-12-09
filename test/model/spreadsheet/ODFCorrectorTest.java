@@ -10,8 +10,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import model.spreadsheet.ODFCorrector;
-
 import org.junit.Test;
 import org.odftoolkit.odfdom.type.Color;
 import org.odftoolkit.simple.SpreadsheetDocument;
@@ -63,7 +61,8 @@ public class ODFCorrectorTest {
     // Wert in Muster, Compare leer
     musterCell = muster.getSheetByIndex(3).getCellByPosition(5, 19);
     compareCell = teilLsg.getSheetByIndex(3).getCellByPosition(5, 19);
-    assertThat(corrector.compareCellFormulas(musterCell, compareCell), equalTo("Formel falsch. Der Bereich D20 fehlt."));
+    assertThat(corrector.compareCellFormulas(musterCell, compareCell),
+        equalTo("Formel falsch. Der Bereich [D20] fehlt."));
   }
   
   @Test
