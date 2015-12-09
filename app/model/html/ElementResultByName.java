@@ -1,7 +1,6 @@
 package model.html;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import model.Success;
 import model.Task;
@@ -45,11 +44,6 @@ public class ElementResultByName extends ElementResult {
     else
       setResult(Success.PARTIALLY, "Mindestens 1 Attribut wurde nicht gefunden!");
     
-  }
-  
-  private List<WebElement> filterForTagName(List<WebElement> foundElements, String tagName) {
-    return foundElements.parallelStream().filter(element -> element.getTagName().equals(tagName))
-        .collect(Collectors.toList());
   }
   
   public boolean rightTagNameWasUsed() {

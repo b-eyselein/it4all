@@ -1,8 +1,8 @@
 package model.html;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import model.Success;
 import model.Task;
@@ -13,59 +13,60 @@ import org.openqa.selenium.WebElement;
 
 public class MultiElementResultByName extends ElementResult {
   
-  protected String[] commonAttrs;
+  private List<String> defining_Attributes = new LinkedList<String>();
   private String elemName;
-  private String[] differentAttrs;
   private HashMap<String, WebElement> singleResults;
   
   public MultiElementResultByName(Task task, String tagName, String elementName, String commonAttributes,
       String differentAttributes) {
     super(task, tagName, commonAttributes);
     elemName = elementName;
-    differentAttrs = differentAttributes.split(";");
+    
+    for(String attribute: differentAttributes.split(";"))
+      if(attribute.contains("="))
+        defining_Attributes.add(attribute);
+    
+    // TODO: Defining Attributes must not be empty (or size >= 2?
+    // [___MULTI___ElementResult])
+    if(defining_Attributes.size() < 2)
+      throw new IllegalArgumentException("Es müssen mindestens 2 definierende Attribute vorhanden sein!");
     
     singleResults = new HashMap<String, WebElement>();
   }
   
   @Override
   public void evaluate(WebDriver driver) {
-    // elementName muss bei allen Element gleich sein
     List<WebElement> foundElements = driver.findElements(By.name(elemName));
-    
-    // Stelle sicher, dass alle gefundenen Elemente alle Common-Attribute
-    // besitzen
-    foundElements.stream().filter(ele -> {
-      for(String att: commonAttrs) {
-        if(!att.isEmpty()) {
-          String key = att.split("=")[0], value = att.split("=")[1];
-          AttributeResult attributeResult = new AttributeResult(ele, key, value);
-          if(!attributeResult.isFound())
-            return false;
-          // attrs.add(new AttributeResult(ele, key, value));
-      }
+    if(foundElements.isEmpty()) {
+      setResult(Success.NONE, "Es wurde kein Element mit dem Namen \"" + elemName + "\" gefunden");
+      return;
     }
-    return true;
-  } ).collect(Collectors.toList());
+    
+    foundElements = filterForTagName(foundElements, tag);
+    if(foundElements.isEmpty()) {
+      setResult(Success.NONE, "Keines der gefundenen Elemente hat den passenden Tag \"" + tag + "\"!");
+      return;
+    }
+    
+    // TODO: Stelle sicher, dass alle gefundenen Elemente alle Common-Attribute
+    // besitzen
+    for(WebElement element: foundElements)
+      checkAttributes(element);
     
     // Stelle sicher, dass alle Elemente jeweils ein Different-Attribut
     // enthalten
-    foundElements.stream().filter(ele -> {
-      for(String att: differentAttrs) {
-        String key = att.split("=")[0], value = att.split("=")[1];
-        AttributeResult attributeResult = new AttributeResult(ele, key, value);
+    for(String attribute: defining_Attributes) {
+      for(WebElement element: foundElements) {
+        String key = attribute.split("=")[0], value = attribute.split("=")[1];
+        AttributeResult attributeResult = new AttributeResult(element, key, value);
         if(attributeResult.isFound()) {
-          attrs.add(new AttributeResult(ele, key, value));
-          return true;
+          attrs.add(new AttributeResult(element, key, value));
+          singleResults.put(attribute, element);
         }
       }
-      return false;
-    }).collect(Collectors.toList());
+    }
     
-    int i = 0;
-    for(WebElement element: foundElements)
-      singleResults.put(differentAttrs[i++], element);
-    
-    if(singleResults.size() == differentAttrs.length)
+    if(singleResults.size() == defining_Attributes.size())
       setResult(Success.COMPLETE, "TODO");
     else if(singleResults.size() > 0)
       setResult(Success.PARTIALLY, "TODO");

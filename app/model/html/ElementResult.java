@@ -1,6 +1,5 @@
 package model.html;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,13 +19,18 @@ public abstract class ElementResult {
   protected Success success = Success.NONE;
   protected String message = "";
   
-  protected List<String> attributesToFind;
+  protected List<String> attributesToFind = new LinkedList<String>();
   protected List<AttributeResult> attrs = new LinkedList<AttributeResult>();
   
   public ElementResult(Task task, String tagName, String attributes) {
     theTask = task;
     tag = tagName;
-    attributesToFind = Arrays.asList(attributes.split(";"));
+    for(String attribute: attributes.split(";"))
+      if(!attribute.isEmpty() && attribute.contains("="))
+        attributesToFind.add(attribute);
+    // else
+    // FIXME: Log failure!!
+    // System.out.println("Fehler bei den Attributen!");
   }
   
   public boolean allAttributesFound() {
@@ -36,18 +40,21 @@ public abstract class ElementResult {
   protected boolean checkAttributes(WebElement element) {
     boolean attributesFound = true;
     for(String att: attributesToFind) {
-      if(!att.isEmpty()) {
-        String key = att.split("=")[0], value = att.split("=")[1];
-        AttributeResult result = new AttributeResult(element, key, value);
-        if(!result.isFound())
-          attributesFound = false;
-        attrs.add(new AttributeResult(element, key, value));
-      }
+      String key = att.split("=")[0], value = att.split("=")[1];
+      AttributeResult result = new AttributeResult(element, key, value);
+      if(!result.isFound())
+        attributesFound = false;
+      attrs.add(new AttributeResult(element, key, value));
     }
     return attributesFound;
   }
   
   public abstract void evaluate(WebDriver driver);
+  
+  protected List<WebElement> filterForTagName(List<WebElement> foundElements, String tagName) {
+    return foundElements.parallelStream().filter(element -> element.getTagName().equals(tagName))
+        .collect(Collectors.toList());
+  }
   
   public List<AttributeResult> getAttributes() {
     return attrs;
