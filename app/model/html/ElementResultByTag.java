@@ -1,7 +1,6 @@
 package model.html;
 
 import java.util.List;
-import model.Task;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;

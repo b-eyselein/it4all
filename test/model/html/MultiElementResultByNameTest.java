@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collections;
 
-import model.Task;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;

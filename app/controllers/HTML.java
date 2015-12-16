@@ -7,9 +7,9 @@ import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
 
-import model.Exercise;
 import model.html.ElementResult;
 import model.html.HtmlCorrector;
+import model.html.HtmlExercise;
 import model.user.Student;
 import play.mvc.Controller;
 import play.mvc.Http.MultipartFormData;
@@ -31,7 +31,7 @@ public class HTML extends Controller {
       session().clear();
       return redirect("/login");
     }
-    Exercise exer = Exercise.finder.byId(exercise);
+    HtmlExercise exer = HtmlExercise.finder.byId(exercise);
     if(exer == null)
       return redirect("/html/");
     return ok(html.render(student, exer));
@@ -40,7 +40,7 @@ public class HTML extends Controller {
   @Security.Authenticated(Secured.class)
   public Result index() {
     Student student = Student.find.byId(session(Application.SESSION_ID_FIELD));
-    List<Exercise> exercises = Exercise.finder.all();
+    List<HtmlExercise> exercises = HtmlExercise.finder.all();
     return ok(htmloverview.render(exercises, student));
   }
   
@@ -78,7 +78,7 @@ public class HTML extends Controller {
   @Security.Authenticated(Secured.class)
   public Result upload(int exercise) {
     Student user = Student.find.byId(session(Application.SESSION_ID_FIELD));
-    Exercise ex = Exercise.finder.byId(exercise);
+    HtmlExercise ex = HtmlExercise.finder.byId(exercise);
     MultipartFormData body = request().body().asMultipartFormData();
     FilePart htmlFile = body.getFile("solFile");
     if(htmlFile != null) {

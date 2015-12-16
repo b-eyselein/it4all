@@ -3,7 +3,6 @@ package model.html;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import model.Task;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;

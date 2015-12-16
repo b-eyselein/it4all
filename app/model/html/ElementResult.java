@@ -4,8 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import model.Task;
-
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 

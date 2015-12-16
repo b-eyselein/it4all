@@ -2,7 +2,7 @@ package controllers;
 
 import java.util.List;
 
-import model.Grading;
+import model.html.Grading;
 import model.user.Student;
 import play.mvc.Controller;
 import play.mvc.Result;

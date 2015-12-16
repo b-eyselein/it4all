@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 
-import model.ExcelExercise;
+import model.spreadsheet.ExcelExercise;
 import model.spreadsheet.SpreadSheetCorrectionResult;
 import model.spreadsheet.SpreadSheetCorrector;
 import model.user.Student;

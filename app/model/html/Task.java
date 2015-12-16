@@ -1,13 +1,8 @@
-package model;
+package model.html;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-
-import model.html.ElementResult;
-import model.html.ElementResultByName;
-import model.html.ElementResultByTag;
-import model.html.MultiElementResultByName;
 
 import com.avaje.ebean.Model;
 
@@ -22,7 +17,7 @@ public class Task extends Model {
   public int id;
   
   @ManyToOne
-  public Exercise exercise;
+  public HtmlExercise exercise;
   public String taskDescription;
   
   public int pts;

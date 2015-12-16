@@ -8,8 +8,8 @@ import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.util.Map;
 
-import model.ExcelExercise;
-import model.Exercise;
+import model.html.HtmlExercise;
+import model.spreadsheet.ExcelExercise;
 import model.user.Administrator;
 import model.user.Student;
 import model.user.User;
@@ -30,7 +30,7 @@ public class Application extends Controller {
       session().clear();
       return redirect("/login");
     }
-    return ok(index.render(student, Exercise.finder.all(), ExcelExercise.finder.all()));
+    return ok(index.render(student, HtmlExercise.finder.all(), ExcelExercise.finder.all()));
   }
   
   public Result directLogin(String name, String type, int id) {

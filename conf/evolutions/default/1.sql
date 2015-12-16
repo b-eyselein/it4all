@@ -16,13 +16,6 @@ create table excel_exercise (
   constraint pk_excel_exercise primary key (id))
 ;
 
-create table exercise (
-  id                        integer auto_increment not null,
-  title                     varchar(255),
-  text                      varchar(255),
-  constraint pk_exercise primary key (id))
-;
-
 create table feedback (
   id                        integer auto_increment not null,
   sinn_html                 integer,
@@ -54,6 +47,13 @@ create table grading (
   constraint pk_grading primary key (id))
 ;
 
+create table html_exercise (
+  id                        integer auto_increment not null,
+  title                     varchar(255),
+  text                      varchar(255),
+  constraint pk_html_exercise primary key (id))
+;
+
 create table student (
   name                      varchar(255) not null,
   constraint pk_student primary key (name))
@@ -74,9 +74,9 @@ create table task (
 
 alter table grading add constraint fk_grading_student_1 foreign key (student_name) references student (name) on delete restrict on update restrict;
 create index ix_grading_student_1 on grading (student_name);
-alter table grading add constraint fk_grading_exercise_2 foreign key (exercise_id) references exercise (id) on delete restrict on update restrict;
+alter table grading add constraint fk_grading_exercise_2 foreign key (exercise_id) references html_exercise (id) on delete restrict on update restrict;
 create index ix_grading_exercise_2 on grading (exercise_id);
-alter table task add constraint fk_task_exercise_3 foreign key (exercise_id) references exercise (id) on delete restrict on update restrict;
+alter table task add constraint fk_task_exercise_3 foreign key (exercise_id) references html_exercise (id) on delete restrict on update restrict;
 create index ix_task_exercise_3 on task (exercise_id);
 
 
@@ -89,11 +89,11 @@ drop table administrator;
 
 drop table excel_exercise;
 
-drop table exercise;
-
 drop table feedback;
 
 drop table grading;
+
+drop table html_exercise;
 
 drop table student;
 

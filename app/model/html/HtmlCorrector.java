@@ -2,8 +2,6 @@ package model.html;
 
 import java.util.List;
 
-import model.Exercise;
-import model.Grading;
 import model.user.Student;
 
 import org.openqa.selenium.WebDriver;
@@ -13,20 +11,19 @@ public class HtmlCorrector {
   
   private static final String LOCALHOST = "http://localhost:9000/";
   
-  public static List<ElementResult> correct(String solutionUrl, Exercise exercise, Student student) {
+  private static int calculatePoints(List<ElementResult> result) {
+    return result.stream().mapToInt(res -> res.getPoints()).sum();
+  }
+  
+  public static List<ElementResult> correct(String solutionUrl, HtmlExercise exercise, Student student) {
     WebDriver driver = getDriverWithUrlAndLoadPage(solutionUrl);
     
     List<ElementResult> result = getElementResultsForExercise(exercise);
     result.parallelStream().forEach(result1 -> result1.evaluate(driver));
     
-    int points = result.stream().mapToInt(res -> res.getPoints()).sum();
+    int points = calculatePoints(result);
     
-    // TODO: override old Grading?
-    Grading grading = new Grading();
-    grading.student = student;
-    grading.exercise = exercise;
-    grading.points = points;
-    grading.save();
+    saveGrading(exercise, student, points);
     
     return result;
   }
@@ -34,12 +31,22 @@ public class HtmlCorrector {
   private static WebDriver getDriverWithUrlAndLoadPage(String solutionUrl) {
     String newUrl = LOCALHOST + solutionUrl;
     WebDriver driver = new HtmlUnitDriver();
+    // FIXME: what if url does not exist?
     driver.get(newUrl);
     return driver;
   }
   
-  private static List<ElementResult> getElementResultsForExercise(Exercise exercise) {
+  private static List<ElementResult> getElementResultsForExercise(HtmlExercise exercise) {
     return exercise.getElementResults();
+  }
+  
+  private static void saveGrading(HtmlExercise exercise, Student student, int points) {
+    // TODO: override old Grading?
+    Grading grading = new Grading();
+    grading.student = student;
+    grading.exercise = exercise;
+    grading.points = points;
+    grading.save();
   }
   
 }
