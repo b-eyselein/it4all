@@ -19,20 +19,19 @@ public class AttributeResult {
   
   private void evaluate() {
     String foundAttribute = element.getAttribute(key);
-    if(foundAttribute != null && foundAttribute.equals(value))
-      found = true;
+    found = foundAttribute != null && foundAttribute.equals(value);
+  }
+  
+  public String getAttributeName() {
+    return key;
+  }
+  
+  public String getAttributeValue() {
+    return value;
   }
   
   public boolean isFound() {
     return found;
-  }
-
-  public String getAttributeName() {
-    return key;
-  }
-
-  public String getAttributeValue() {
-    return value;
   }
   
 }

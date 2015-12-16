@@ -1,4 +1,4 @@
-package model;
+package model.html;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -21,7 +21,7 @@ public class Grading extends Model {
   public Student student;
   
   @ManyToOne
-  public Exercise exercise;
+  public HtmlExercise exercise;
   
   @Required
   public int points;

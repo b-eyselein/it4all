@@ -6,7 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import model.Grading;
+import model.html.Grading;
 
 import com.avaje.ebean.Model;
 

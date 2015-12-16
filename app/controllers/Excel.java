@@ -7,53 +7,37 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 
-import model.ExcelExercise;
+import model.spreadsheet.ExcelExercise;
+import model.spreadsheet.SpreadSheetCorrectionResult;
 import model.spreadsheet.SpreadSheetCorrector;
 import model.user.Student;
 import play.mvc.Controller;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
+import play.mvc.Security;
 import views.html.excel.excel;
 import views.html.excel.excelcorrect;
 import views.html.excel.exceloverview;
 
+@Security.Authenticated(Secured.class)
 public class Excel extends Controller {
   
   public Result index() {
-    if(session(Application.SESSION_ID_FIELD) == null)
-      return redirect("/login");
     Student user = Student.find.byId(session(Application.SESSION_ID_FIELD));
-    if(user == null) {
-      session().clear();
-      return redirect("/login");
-    }
     List<ExcelExercise> exercises = ExcelExercise.finder.all();
     return ok(exceloverview.render(user, exercises));
   }
   
   public Result exercise(int exerciseId) {
-    if(session(Application.SESSION_ID_FIELD) == null)
-      return redirect("/login");
     Student user = Student.find.byId(session(Application.SESSION_ID_FIELD));
-    if(user == null) {
-      session().clear();
-      return redirect("/login");
-    }
     if(exerciseId == -1 || ExcelExercise.finder.byId(exerciseId) == null)
       return redirect("/index");
     return ok(excel.render(user, ExcelExercise.finder.byId(exerciseId)));
   }
   
   public Result upload(int exerciseId) {
-    if(session(Application.SESSION_ID_FIELD) == null)
-      return redirect("/login");
     Student user = Student.find.byId(session(Application.SESSION_ID_FIELD));
-    if(user == null) {
-      session().clear();
-      return redirect("/login");
-    }
-    
     ExcelExercise exercise = ExcelExercise.finder.byId(exerciseId);
     
     MultipartFormData body = request().body().asMultipartFormData();
@@ -65,26 +49,20 @@ public class Excel extends Controller {
       saveSolutionForUser(user.name, path, solutionFile.getFilename(), exerciseId);
       
       // FIXME: get Paths!
-      String testPath = Util.getExcelSolFileForExercise(user.name, solutionFile.getFilename()).toString();
-      String musterPath = Util.getExcelSampleDirectoryForExercise(exerciseId).toString();
-      musterPath += "/" + fileName + "_Muster." + SpreadSheetCorrector.getExtension(testPath);
-      String notice = SpreadSheetCorrector.startComparison(musterPath, testPath, fileName, false, false);
+      Path testPath = Util.getExcelSolFileForExercise(user.name, solutionFile.getFilename());
+      Path musterPath = Util.getExcelSampleDirectoryForExercise(exerciseId);
+      musterPath = Paths
+          .get(musterPath.toString(), fileName + "_Muster." + SpreadSheetCorrector.getExtension(testPath));
+      SpreadSheetCorrectionResult result = SpreadSheetCorrector.correct(musterPath, testPath, false, false);
       
-      return ok(excelcorrect.render(user, notice, exerciseId, SpreadSheetCorrector.getExtension(testPath)));
+      return ok(excelcorrect.render(user, result, exerciseId, SpreadSheetCorrector.getExtension(testPath)));
     } else {
       return badRequest("Datei konnte nicht hochgeladen werden!");
     }
   }
   
   public Result download(int exerciseId, String typ) {
-    if(session(Application.SESSION_ID_FIELD) == null)
-      return redirect("/login");
     Student user = Student.find.byId(session(Application.SESSION_ID_FIELD));
-    if(user == null) {
-      session().clear();
-      return redirect("/login");
-    }
-    
     ExcelExercise exercise = ExcelExercise.finder.byId(exerciseId);
     
     Path fileToDownload = Paths.get("/var/lib/it4all/solutions", user.name, "excel", exercise.fileName + "_Korrektur."

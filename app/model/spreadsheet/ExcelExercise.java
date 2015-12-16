@@ -1,4 +1,4 @@
-package model;
+package model.spreadsheet;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

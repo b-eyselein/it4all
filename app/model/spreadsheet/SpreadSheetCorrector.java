@@ -1,7 +1,7 @@
 package model.spreadsheet;
 
-import model.spreadsheet.excel.XLSCorrector;
-import model.spreadsheet.openoffice.ODFCorrector;
+import java.nio.file.Path;
+import java.util.Arrays;
 
 /**
  * 
@@ -10,34 +10,29 @@ import model.spreadsheet.openoffice.ODFCorrector;
  */
 public class SpreadSheetCorrector {
   
-  static final String DIR = "files/";
-  
-  public static String startComparison(String musterPath, String testPath, String fileName, boolean conditionalFormating, boolean charts) {
-    if(SpreadSheetCorrector.getExtension(testPath).equals("ods")) {
-      return ODFCorrector.startComparison(musterPath, testPath, conditionalFormating, charts);
-    } else if(SpreadSheetCorrector.getExtension(testPath).equals("xlsx")
-        || SpreadSheetCorrector.getExtension(testPath).equals("xlsm")) {
-      return XLSCorrector.startComparison(musterPath, testPath, conditionalFormating, charts);
-    } else
-      return "Falsche Dateiendung...";
+  public static SpreadSheetCorrectionResult correct(Path musterPath, Path testPath, boolean conditionalFormating,
+      boolean charts) {
+    String fileExtension = getExtension(testPath);
+    if(fileExtension.equals("ods"))
+      return (new ODFCorrector()).correct(musterPath, testPath, conditionalFormating, charts);
+    else if(fileExtension.equals("xlsx") || fileExtension.equals("xlsm"))
+      return (new XLSXCorrector()).correct(musterPath, testPath, conditionalFormating, charts);
+    else
+      return new SpreadSheetCorrectionResult(false, Arrays.asList("Falsche Dateiendung: \"" + fileExtension
+          + "\". Korrektur konnte nicht gestartet werden."));
   }
   
-  public static String getUserFolder(String string) {
-    return string.substring(0, string.lastIndexOf("/"));
+  public static String getUserFolder(Path path) {
+    return path.toString().substring(0, path.toAbsolutePath().toString().lastIndexOf("/"));
   }
   
-  public static String getFileName(String string) {
-    return string.substring(string.lastIndexOf("/"), string.lastIndexOf("."));
+  public static String getFileName(Path path) {
+    return path.toString().substring(path.toAbsolutePath().toString().lastIndexOf("/"),
+        path.toAbsolutePath().toString().lastIndexOf("."));
   }
   
-  public static String getExtension(String string) {
-    return string.substring(string.lastIndexOf(".") + 1).trim().toLowerCase();
+  public static String getExtension(Path path) {
+    return path.toString().substring(path.toAbsolutePath().toString().lastIndexOf(".") + 1).trim().toLowerCase();
   }
-  
-  // public static void main(String[] args) {
-  // ExcelCorrector.startComparison(ExcelCorrector.DIR + "muster/",
-  // ExcelCorrector.DIR + "test/Aufgabe_Fahrrad.xlsx", false, false);
-  // System.out.println("Check: Done!");
-  // }
   
 }
