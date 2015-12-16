@@ -10,7 +10,6 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collections;
 
-import model.Success;
 import model.Task;
 
 import org.junit.Before;
@@ -58,7 +57,7 @@ public class ElementResultByNameTest {
     assertNotNull(result);
     result.evaluate(webDriver);
     assertNotNull(result);
-    assertThat(result.getSuccess(), equalTo(Success.COMPLETE));
+    assertThat(result.getSuccess(), equalTo(ElementResult.Success.COMPLETE));
     assertTrue(result.rightTagNameWasUsed());
   }
   
@@ -72,7 +71,7 @@ public class ElementResultByNameTest {
     assertNotNull(result);
     result.evaluate(webDriver);
     assertNotNull(result);
-    assertThat(result.getSuccess(), equalTo(Success.COMPLETE));
+    assertThat(result.getSuccess(), equalTo(ElementResult.Success.COMPLETE));
     assertTrue(result.rightTagNameWasUsed());
   }
   
@@ -83,7 +82,7 @@ public class ElementResultByNameTest {
     assertNotNull(result);
     result.evaluate(webDriver);
     assertNotNull(result);
-    assertThat(result.getSuccess(), equalTo(Success.COMPLETE));
+    assertThat(result.getSuccess(), equalTo(ElementResult.Success.COMPLETE));
     assertTrue(result.rightTagNameWasUsed());
   }
   
@@ -96,7 +95,7 @@ public class ElementResultByNameTest {
     assertNotNull(result);
     result.evaluate(webDriver);
     assertNotNull(result);
-    assertThat(result.getSuccess(), equalTo(Success.PARTIALLY));
+    assertThat(result.getSuccess(), equalTo(ElementResult.Success.PARTIALLY));
     assertTrue(result.rightTagNameWasUsed());
   }
   
@@ -109,7 +108,7 @@ public class ElementResultByNameTest {
     result.evaluate(webDriver);
     
     assertNotNull(result);
-    assertThat(result.getSuccess(), equalTo(Success.COMPLETE));
+    assertThat(result.getSuccess(), equalTo(ElementResult.Success.COMPLETE));
     assertThat(result.getMessage(),
         equalTo("Es wurde mehr als 1 Element mit passendem Namen und passendem Tag gefunden. "
             + "Verwende das erste für weitere Korrektur. Alle Attribute wurden gefunden."));
@@ -124,7 +123,7 @@ public class ElementResultByNameTest {
     result.evaluate(webDriver);
     
     assertNotNull(result);
-    assertThat(result.getSuccess(), equalTo(Success.NONE));
+    assertThat(result.getSuccess(), equalTo(ElementResult.Success.NONE));
     assertThat(result.getMessage(), equalTo("Es wurde kein Element mit dem Namen \"email\" gefunden"));
   }
   
@@ -137,7 +136,7 @@ public class ElementResultByNameTest {
     result.evaluate(webDriver);
     
     assertNotNull(result);
-    assertThat(result.getSuccess(), equalTo(Success.NONE));
+    assertThat(result.getSuccess(), equalTo(ElementResult.Success.NONE));
     assertThat(result.getMessage(), equalTo("Keines der gefundenen Elemente hat den passenden Tag \"" + TAG_NAME
         + "\"!"));
   }

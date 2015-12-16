@@ -1,8 +1,6 @@
 package model.html;
 
 import java.util.List;
-
-import model.Success;
 import model.Task;
 
 import org.openqa.selenium.By;

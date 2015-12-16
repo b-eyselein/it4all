@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collections;
 
-import model.Success;
 import model.Task;
 
 import org.junit.Before;
@@ -59,7 +58,7 @@ public class ElementResultByTagTest {
     assertNotNull(result);
     result.evaluate(webDriver);
     assertNotNull(result);
-    assertThat(result.getSuccess(), equalTo(Success.COMPLETE));
+    assertThat(result.getSuccess(), equalTo(ElementResult.Success.COMPLETE));
   }
   
   @Test
@@ -70,7 +69,7 @@ public class ElementResultByTagTest {
     assertNotNull(result);
     result.evaluate(webDriver);
     assertNotNull(result);
-    assertThat(result.getSuccess(), equalTo(Success.PARTIALLY));
+    assertThat(result.getSuccess(), equalTo(ElementResult.Success.PARTIALLY));
     
     when(webDriver.findElements(By.tagName(TAG_NAME))).thenReturn(Arrays.asList(element2));
     
@@ -78,7 +77,7 @@ public class ElementResultByTagTest {
     assertNotNull(resultNew);
     resultNew.evaluate(webDriver);
     assertNotNull(resultNew);
-    assertThat(resultNew.getSuccess(), equalTo(Success.COMPLETE));
+    assertThat(resultNew.getSuccess(), equalTo(ElementResult.Success.COMPLETE));
   }
   
   @Test
@@ -89,7 +88,7 @@ public class ElementResultByTagTest {
     assertNotNull(result);
     result.evaluate(webDriver);
     assertNotNull(result);
-    assertThat(result.getSuccess(), equalTo(Success.COMPLETE));
+    assertThat(result.getSuccess(), equalTo(ElementResult.Success.COMPLETE));
   }
   
   @Test
@@ -101,7 +100,7 @@ public class ElementResultByTagTest {
     assertNotNull(result);
     result.evaluate(webDriver);
     assertNotNull(result);
-    assertThat(result.getSuccess(), equalTo(Success.PARTIALLY));
+    assertThat(result.getSuccess(), equalTo(ElementResult.Success.PARTIALLY));
   }
   
   @Test
@@ -113,7 +112,7 @@ public class ElementResultByTagTest {
     result.evaluate(webDriver);
     
     assertNotNull(result);
-    assertThat(result.getSuccess(), equalTo(Success.COMPLETE));
+    assertThat(result.getSuccess(), equalTo(ElementResult.Success.COMPLETE));
     assertThat(result.getMessage(),
         equalTo("Es wurde mehr als 1 Element mit passendem Namen und passendem Tag gefunden. "
             + "Verwende das erste für weitere Korrektur. Alle Attribute wurden gefunden."));
@@ -128,7 +127,7 @@ public class ElementResultByTagTest {
     result.evaluate(webDriver);
     
     assertNotNull(result);
-    assertThat(result.getSuccess(), equalTo(Success.NONE));
+    assertThat(result.getSuccess(), equalTo(ElementResult.Success.NONE));
     assertThat(result.getMessage(), equalTo("Es wurde kein Element mit dem Tag \"input\" gefunden"));
   }
   

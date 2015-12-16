@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import model.Success;
 import model.Task;
 
 import org.openqa.selenium.WebDriver;
@@ -12,14 +11,18 @@ import org.openqa.selenium.WebElement;
 
 public abstract class ElementResult {
   
+  public enum Success {
+    COMPLETE, PARTIALLY, NONE;
+  }
+  
   protected Task theTask;
   
   protected String tag;
-  
   protected Success success = Success.NONE;
-  protected String message = "";
   
+  protected String message = "";
   protected List<String> attributesToFind = new LinkedList<String>();
+  
   protected List<AttributeResult> attrs = new LinkedList<AttributeResult>();
   
   public ElementResult(Task task, String tagName, String attributes) {

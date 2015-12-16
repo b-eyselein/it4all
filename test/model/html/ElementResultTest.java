@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-import model.Success;
 import model.Task;
 
 import org.junit.Before;
@@ -43,16 +42,16 @@ public class ElementResultTest {
   
   @Test
   public void testGet_Set_Success_AND_GetPoints() {
-    assertThat(result.getSuccess(), equalTo(Success.NONE));
+    assertThat(result.getSuccess(), equalTo(ElementResult.Success.NONE));
     assertThat(result.getPoints(), equalTo(0));
-    result.setResult(Success.PARTIALLY, "Test0");
-    assertThat(result.getSuccess(), equalTo(Success.PARTIALLY));
+    result.setResult(ElementResult.Success.PARTIALLY, "Test0");
+    assertThat(result.getSuccess(), equalTo(ElementResult.Success.PARTIALLY));
     assertThat(result.getPoints(), equalTo(1));
-    result.setResult(Success.COMPLETE, "Test1");
-    assertThat(result.getSuccess(), equalTo(Success.COMPLETE));
+    result.setResult(ElementResult.Success.COMPLETE, "Test1");
+    assertThat(result.getSuccess(), equalTo(ElementResult.Success.COMPLETE));
     assertThat(result.getPoints(), equalTo(2));
-    result.setResult(Success.NONE, "Test2");
-    assertThat(result.getSuccess(), equalTo(Success.NONE));
+    result.setResult(ElementResult.Success.NONE, "Test2");
+    assertThat(result.getSuccess(), equalTo(ElementResult.Success.NONE));
     assertThat(result.getPoints(), equalTo(0));
   }
   

@@ -9,9 +9,7 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collections;
 
-import model.Success;
 import model.Task;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -72,7 +70,7 @@ public class MultiElementResultByNameTest {
     assertNotNull(result);
     result.evaluate(webDriver);
     assertNotNull(result);
-    assertThat(result.getSuccess(), equalTo(Success.COMPLETE));
+    assertThat(result.getSuccess(), equalTo(ElementResult.Success.COMPLETE));
   }
   
   @Test
@@ -84,7 +82,7 @@ public class MultiElementResultByNameTest {
     assertNotNull(result);
     result.evaluate(webDriver);
     assertNotNull(result);
-    assertThat(result.getSuccess(), equalTo(Success.COMPLETE));
+    assertThat(result.getSuccess(), equalTo(ElementResult.Success.COMPLETE));
   }
   
   @Test(expected = IllegalArgumentException.class)
@@ -104,7 +102,7 @@ public class MultiElementResultByNameTest {
     assertNotNull(result);
     result.evaluate(webDriver);
     assertNotNull(result);
-    assertThat(result.getSuccess(), equalTo(Success.NONE));
+    assertThat(result.getSuccess(), equalTo(ElementResult.Success.NONE));
   }
   
   @Test
@@ -116,7 +114,7 @@ public class MultiElementResultByNameTest {
     result.evaluate(webDriver);
     
     assertNotNull(result);
-    assertThat(result.getSuccess(), equalTo(Success.NONE));
+    assertThat(result.getSuccess(), equalTo(ElementResult.Success.NONE));
     assertThat(result.getMessage(), equalTo("Es wurde kein Element mit dem Namen \"" + ELEMENT_NAME + "\" gefunden"));
   }
   
@@ -134,7 +132,7 @@ public class MultiElementResultByNameTest {
     result.evaluate(webDriver);
     
     assertNotNull(result);
-    assertThat(result.getSuccess(), equalTo(Success.NONE));
+    assertThat(result.getSuccess(), equalTo(ElementResult.Success.NONE));
     assertThat(result.getMessage(), equalTo("Keines der gefundenen Elemente hat den passenden Tag \"" + TAG_NAME
         + "\"!"));
   }
@@ -148,7 +146,7 @@ public class MultiElementResultByNameTest {
     assertNotNull(result);
     result.evaluate(webDriver);
     assertNotNull(result);
-    assertThat(result.getSuccess(), equalTo(Success.PARTIALLY));
+    assertThat(result.getSuccess(), equalTo(ElementResult.Success.PARTIALLY));
   }
   
 }
