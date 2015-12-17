@@ -1,0 +1,30 @@
+@import model.user.User
+
+@(user: User, exercise: String)
+
+@main("JavaScript-Test", user) {
+<script src="@routes.Assets.versioned("javascripts/ace/ace.js")" type="text/javascript" charset="utf-8"></script>
+<div class="container">
+  <h3>Dies ist eine neue Testseite für JavaScript...</h3>
+  <h3>TODO: Aufgabenbeschreibung...</h3>
+  <div class="row">
+    <form action="/javascript/commit" onsubmit="pasteCode();" method="post">
+      <div id="editor" class="form-control" name="editor" style="height: 500px;">@exercise</div>
+      <textarea hidden="hidden" id="editorContent" name="editorContent"></textarea>
+      <script>
+document.getElementById('editor').style.fontSize = '14px';
+var editor = ace.edit("editor");
+editor.setTheme("ace/theme/eclipse");
+editor.getSession().setMode("ace/mode/javascript");
+editor.setTabSize(4);
+
+function pasteCode() {
+  var content = editor.getValue();
+  document.getElementById('editorContent').value = content;
+}
+      </script>
+      <p><input type="submit" class="form-control"></p>
+    </form>
+  </div>
+</div>
+}

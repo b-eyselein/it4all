@@ -1,0 +1,39 @@
+@import model.user.User
+
+@(title: String, user: User)(content: Html)
+
+<!DOCTYPE html>
+
+<html lang="de">
+<head>
+<title>it4all: @title</title>
+<link rel="stylesheet" type="text/css" href="@routes.Assets.versioned("bootstrap/css/bootstrap.css")">
+<script type="text/javascript" src="@routes.Assets.versioned("javascripts/jquery-1.11.3.min.js")"></script>
+<script type="text/javascript" src="@routes.Assets.versioned("bootstrap/js/bootstrap.js")"></script>
+<link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
+</head>
+<body>
+  <div class="container-fluid">
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="/">it4all</a>
+        </div>
+        <div>
+          <ul class="nav navbar-nav">
+            <li><a href="/html/">Html</a></li>
+            <li><a href="/excel/">Excel</a></li>
+            <li><a href="/javascript">JavaScript</a></li>
+            <li><a href="/eval/@user.getName()">Evaluation Html</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="/user"><span class="glyphicon glyphicon-user"></span> @user.getName()</a></li>
+            <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    @content
+  </div>
+</body>
+</html>
