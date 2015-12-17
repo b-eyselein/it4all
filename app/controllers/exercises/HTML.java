@@ -1,4 +1,4 @@
-package controllers;
+package controllers.exercises;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -7,6 +7,9 @@ import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
 
+import controllers.Application;
+import controllers.Secured;
+import controllers.Util;
 import model.html.ElementResult;
 import model.html.HtmlCorrector;
 import model.html.HtmlExercise;

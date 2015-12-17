@@ -1,4 +1,4 @@
-package controllers;
+package controllers.exercises;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -7,6 +7,9 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 
+import controllers.Application;
+import controllers.Secured;
+import controllers.Util;
 import model.spreadsheet.ExcelExercise;
 import model.spreadsheet.SpreadSheetCorrectionResult;
 import model.spreadsheet.SpreadSheetCorrector;

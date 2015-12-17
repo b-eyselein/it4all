@@ -16,20 +16,24 @@ GET		/direct/:name/:type/:id			controllers.Application.directLogin(name: String,
 GET		/direct/:type/:id				controllers.Application.fromWuecampus(type: String, id: Int, name: String ?= "")
 
 # HTML
-GET		/html/							controllers.HTML.index()
-GET		/html/:ex						controllers.HTML.exericse(ex: Int)
-POST	/html/upload/:ex				controllers.HTML.upload(ex: Int)
-GET		/solutions/:user/html/:ex		controllers.HTML.site(user: String, ex: Int)
+GET		/html/							controllers.exercises.HTML.index()
+GET		/html/:ex						controllers.exercises.HTML.exericse(ex: Int)
+POST	/html/upload/:ex				controllers.exercises.HTML.upload(ex: Int)
+GET		/solutions/:user/html/:ex		controllers.exercises.HTML.site(user: String, ex: Int)
 
 # Evaluation
 GET		/eval/							controllers.Evaluation.index()
 POST	/eval/submit					controllers.Evaluation.submit()
 
 # Excel
-GET		/excel/							controllers.Excel.index()
-GET		/excel/:ex						controllers.Excel.exercise(ex: Int)
-POST	/excel/upload/:ex				controllers.Excel.upload(ex: Int)
-GET		/excel/download/:ex/:typ		controllers.Excel.download(ex: Int, typ: String)
+GET		/excel/							controllers.exercises.Excel.index()
+GET		/excel/:ex						controllers.exercises.Excel.exercise(ex: Int)
+POST	/excel/upload/:ex				controllers.exercises.Excel.upload(ex: Int)
+GET		/excel/download/:ex/:typ		controllers.exercises.Excel.download(ex: Int, typ: String)
+
+# JavaScript
+GET		/javascript						controllers.exercises.JavaScript.index()
+POST	/javascript/commit				controllers.exercises.JavaScript.commit()
 
 # User
 GET		/user							controllers.UserController.index()
