@@ -19,6 +19,7 @@ import views.html.javascript.*;
 public class JavaScript extends Controller {
   
   private static String[][] testValues = {{"1", "1", "2"}, {"1", "2", "3"}, {"4", "7", "11"}, {"83", "74", "157"}};
+  private static String exerciseText = "Implementieren Sie folgende Funktion 'sum', die zwei Zahlen entegennimmt und deren Summe zurückgibt.";
   private static final String exercise = "function sum(a, b) {\n  return 0;\n}";
   
   public Result commit() {
@@ -51,6 +52,6 @@ public class JavaScript extends Controller {
   }
   
   public Result index() {
-    return ok(javascript.render(Student.find.byId(session(Application.SESSION_ID_FIELD)), exercise));
+    return ok(javascript.render(Student.find.byId(session(Application.SESSION_ID_FIELD)), exerciseText, exercise));
   }
 }
