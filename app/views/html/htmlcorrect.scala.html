@@ -34,7 +34,7 @@
           }
         }
         <div class="panel-heading" data-toggle="collapse" href="#task@solLine.getTask.id">
-          @solLine.getTask.taskDescription (@solLine.getPoints @if(solLine.getPoints == 1) { Punkt} else { Punkte})
+          @solLine.getTask.taskDescription (@solLine.getPoints() / @solLine.getPointsMax() Punkte)
         </div>
       
         @if(solLine.getSuccess() == Success.COMPLETE) {

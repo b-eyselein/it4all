@@ -74,6 +74,10 @@ public abstract class ElementResult {
       return 1;
   }
   
+  public int getPointsMax() {
+    return 2;
+  }
+  
   public Success getSuccess() {
     return success;
   }
