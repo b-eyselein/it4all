@@ -1,0 +1,27 @@
+@import model.user.User
+@import model.javascript.JavascriptTest
+
+@(learnerSolution: String, testResults: List[JavascriptTest[Integer, Long]], user: User)
+
+@main("JavaScript: Korrektur", user) {
+  <div class="container">
+    <div class="panel panel-default">
+      <div class="panel-heading">Ihre L&ouml;sung</div>
+      <div class="panel-body">
+      	<pre>@learnerSolution</pre>
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-heading">Testergebnisse</div>
+      <div class="panel-body">
+      @for(testResult <- testResults) {
+      	@if(testResult.wasSuccessful()) {
+        <div class="alert alert-success">@testResult.getAwaitedResult() =?= @testResult.getRealResult()</div>
+        } else {
+        <div class="alert alert-danger">@testResult.getAwaitedResult() =!= @testResult.getRealResult()</div>
+        }
+      }
+      </div>
+    </div>
+  </div>
+}
