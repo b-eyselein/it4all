@@ -3,31 +3,31 @@ package model.javascript;
 import java.util.List;
 import java.util.LinkedList;
 
-public class JavascriptTest<ValueType, ResultType> {
+public class JavascriptTest {
   
-  private List<ValueType> values = new LinkedList<ValueType>();
-  private ResultType awaitedResult;
-  private Object gottenResult;
+  private List<String> values = new LinkedList<String>();
+  private String awaitedResult;
+  private String gottenResult;
   private boolean wasSuccessful;
   
-  public JavascriptTest(List<ValueType> testValues, ResultType awaitedTestResult) {
+  public JavascriptTest(List<String> testValues, String awaitedTestResult) {
     values = testValues;
     awaitedResult = awaitedTestResult;
   }
   
-  public ResultType getAwaitedResult() {
+  public String getAwaitedResult() {
     return awaitedResult;
   }
   
-  public Object getRealResult() {
+  public String getRealResult() {
     return gottenResult;
   }
   
-  public List<ValueType> getTestValues() {
+  public List<String> getTestValues() {
     return values;
   }
   
-  public void setRealResult(Object realResult) {
+  public void setRealResult(String realResult) {
     gottenResult = realResult;
   }
   

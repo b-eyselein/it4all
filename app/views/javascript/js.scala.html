@@ -1,7 +1,7 @@
 @import model.user.User
 @import model.javascript.JavascriptExercise
 
-@(user: User, exercise: JavascriptExercise[Integer, Long])
+@(user: User, exercise: JavascriptExercise)
 
 @main("JavaScript-Test", user) {
 <script src="@routes.Assets.versioned("javascripts/ace/ace.js")" type="text/javascript" charset="utf-8"></script>

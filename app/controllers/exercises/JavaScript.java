@@ -23,19 +23,22 @@ import controllers.Secured;
 @Security.Authenticated(Secured.class)
 public class JavaScript extends Controller {
   
-  private static String exerciseText = "Implementieren Sie folgende Funktion 'sum', die zwei Zahlen entegennimmt und deren Summe zurückgibt.";
-  private static final String exercise = "function sum(a, b) {\n  return 0;\n}";
-  
-  public Result commit(int exercise) {
+  public Result commit(int exerciseId) {
     Map<String, String[]> body = request().body().asFormUrlEncoded();
     String learnerSolution = body.get("editorContent")[0];
     
-    List<JavascriptTest<Integer, Long>> testResults = correct(learnerSolution);
+    JavascriptExercise ex = null;
+    if(exerciseId == 1)
+      ex = new JavascriptExercise.IntegerStandardTest();
+    else
+      ex = new JavascriptExercise.StringStandardTest();
+    
+    List<JavascriptTest> testResults = correct(ex, learnerSolution);
     
     return ok(jscorrect.render(learnerSolution, testResults, Student.find.byId(session(Application.SESSION_ID_FIELD))));
   }
   
-  private List<JavascriptTest<Integer, Long>> correct(String learnerSolution) {
+  private List<JavascriptTest> correct(JavascriptExercise exercise, String learnerSolution) {
     ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
     
     try {
@@ -43,14 +46,13 @@ public class JavaScript extends Controller {
       engine.eval(learnerSolution);
       
       // Evaluiere Lernerlösung mit Testwerten
-      JavascriptExercise<Integer, Long> exercise = new JavascriptExercise.IntegerStandardTest();
-      for(JavascriptTest<Integer, Long> test: exercise.getTests()) {
+      for(JavascriptTest test: exercise.getTests()) {
         // TODO: testing!
         List<String> values = test.getTestValues().stream().map(value -> {
           return value.toString();
         }).collect(Collectors.toList());
-        String toEvaluate = "sum(" + String.join(", ", values) + ");";
-        Object ergebnis = engine.eval(toEvaluate);
+        String toEvaluate = exercise.getFunctionName() + "(" + String.join(", ", values) + ");";
+        String ergebnis = engine.eval(toEvaluate).toString();
         test.setRealResult(ergebnis);
         test.setSuccessful(ergebnis.equals(test.getAwaitedResult()));
       }
@@ -62,7 +64,12 @@ public class JavaScript extends Controller {
   }
   
   public Result exercise(int id) {
-    JavascriptExercise ex = new JavascriptExercise.IntegerStandardTest();
+    JavascriptExercise ex = null;
+    if(id == 1)
+      ex = new JavascriptExercise.IntegerStandardTest();
+    else
+      ex = new JavascriptExercise.StringStandardTest();
+    
     return ok(js.render(Student.find.byId(session(Application.SESSION_ID_FIELD)), ex));
   }
   
