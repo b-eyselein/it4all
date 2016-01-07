@@ -33,7 +33,8 @@ GET		/excel/download/:ex/:typ		controllers.exercises.Excel.download(ex: Int, typ
 
 # JavaScript
 GET		/javascript						controllers.exercises.JavaScript.index()
-POST	/javascript/commit				controllers.exercises.JavaScript.commit()
+GET		/javascript/:ex					controllers.exercises.JavaScript.exercise(ex: Int)
+POST	/javascript/commit/:ex			controllers.exercises.JavaScript.commit(ex: Int)
 
 # User
 GET		/user							controllers.UserController.index()

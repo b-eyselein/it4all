@@ -6,7 +6,9 @@ import java.util.LinkedList;
 public class JavascriptTest<ValueType, ResultType> {
   
   private List<ValueType> values = new LinkedList<ValueType>();
-  private ResultType awaitedResult, gottenResult;
+  private ResultType awaitedResult;
+  private Object gottenResult;
+  private boolean wasSuccessful;
   
   public JavascriptTest(List<ValueType> testValues, ResultType awaitedTestResult) {
     values = testValues;
@@ -17,12 +19,24 @@ public class JavascriptTest<ValueType, ResultType> {
     return awaitedResult;
   }
   
-  public ResultType getRealResult() {
+  public Object getRealResult() {
     return gottenResult;
   }
   
   public List<ValueType> getTestValues() {
     return values;
+  }
+  
+  public void setRealResult(Object realResult) {
+    gottenResult = realResult;
+  }
+  
+  public void setSuccessful(boolean testWasSuccessful) {
+    wasSuccessful = testWasSuccessful;
+  }
+  
+  public boolean wasSuccessful() {
+    return wasSuccessful;
   }
   
 }

@@ -1,6 +1,5 @@
 package controllers.exercises;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -15,34 +14,29 @@ import model.user.Student;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
+import views.html.javascript.js;
+import views.html.javascript.jscorrect;
+import views.html.javascript.jsoverview;
 import controllers.Application;
 import controllers.Secured;
-import views.html.javascript.*;
 
 @Security.Authenticated(Secured.class)
 public class JavaScript extends Controller {
   
-  // private static String[][] testValues = {{"1", "1", "2"}, {"1", "2", "3"},
-  // {"2", "2", "4"}, {"4", "7", "11"},
-  // {"83", "74", "157"}};
-  // private static String exerciseText =
-  // "Implementieren Sie folgende Funktion 'sum', die zwei Zahlen entegennimmt und deren Summe zurückgibt.";
-  // private static final String exercise =
-  // "function sum(a, b) {\n  return 0;\n}";
+  private static String exerciseText = "Implementieren Sie folgende Funktion 'sum', die zwei Zahlen entegennimmt und deren Summe zurückgibt.";
+  private static final String exercise = "function sum(a, b) {\n  return 0;\n}";
   
-  public Result commit() {
+  public Result commit(int exercise) {
     Map<String, String[]> body = request().body().asFormUrlEncoded();
     String learnerSolution = body.get("editorContent")[0];
     
-    LinkedList<String> testResults = correct(learnerSolution);
+    List<JavascriptTest<Integer, Long>> testResults = correct(learnerSolution);
     
-    return ok(javascriptcorrect.render(learnerSolution, testResults,
-        Student.find.byId(session(Application.SESSION_ID_FIELD))));
+    return ok(jscorrect.render(learnerSolution, testResults, Student.find.byId(session(Application.SESSION_ID_FIELD))));
   }
   
-  private LinkedList<String> correct(String learnerSolution) {
+  private List<JavascriptTest<Integer, Long>> correct(String learnerSolution) {
     ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
-    LinkedList<String> testResults = new LinkedList<String>();
     
     try {
       // Lese programmierte Lernerlösung ein
@@ -55,26 +49,24 @@ public class JavaScript extends Controller {
         List<String> values = test.getTestValues().stream().map(value -> {
           return value.toString();
         }).collect(Collectors.toList());
-        String testValues = String.join(", ", values);
-        Long ergebnis = (Long) engine.eval("sum(" + testValues + ");");
-        
-        if(ergebnis.equals(test.getRealResult()))
-          testResults.add("Test von " + test.toString() + " war erfolgreich!");
-        else
-          testResults.add("Ergebnis von " + test.toString() + " war " + ergebnis + ", erwartet wurde "
-              + test.getRealResult());
+        String toEvaluate = "sum(" + String.join(", ", values) + ");";
+        Object ergebnis = engine.eval(toEvaluate);
+        test.setRealResult(ergebnis);
+        test.setSuccessful(ergebnis.equals(test.getAwaitedResult()));
       }
-      
+      return exercise.getTests();
     } catch (ScriptException e) {
       e.printStackTrace();
     }
-    return testResults;
+    return null;
+  }
+  
+  public Result exercise(int id) {
+    JavascriptExercise ex = new JavascriptExercise.IntegerStandardTest();
+    return ok(js.render(Student.find.byId(session(Application.SESSION_ID_FIELD)), ex));
   }
   
   public Result index() {
-    return ok(javascript.render(Student.find.byId(session(Application.SESSION_ID_FIELD)), "", ""));
-    // return
-    // ok(javascript.render(Student.find.byId(session(Application.SESSION_ID_FIELD)),
-    // exerciseText, exercise));
+    return ok(jsoverview.render(Student.find.byId(session(Application.SESSION_ID_FIELD))));
   }
 }

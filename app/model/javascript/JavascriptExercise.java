@@ -8,7 +8,7 @@ public abstract class JavascriptExercise<ValueType, ResultType> {
   public final static class IntegerStandardTest extends JavascriptExercise<Integer, Long> {
     
     private static final List<JavascriptTest<Integer, Long>> STANDARD_EXERCISE_TESTS = Arrays.asList(
-        new JavascriptTest<>(Arrays.asList(1, 1), 1L), new JavascriptTest<>(Arrays.asList(1, 2), 3L),
+        new JavascriptTest<>(Arrays.asList(1, 1), 2L), new JavascriptTest<>(Arrays.asList(1, 2), 3L),
         new JavascriptTest<>(Arrays.asList(2, 2), 4L), new JavascriptTest<>(Arrays.asList(4, 7), 11L),
         new JavascriptTest<>(Arrays.asList(83, 74), 157L));
     
@@ -32,6 +32,11 @@ public abstract class JavascriptExercise<ValueType, ResultType> {
     this.exerciseText = exerciseText;
     this.solutionDefault = solutionDefault;
     this.tests = tests;
+  }
+  
+  public int getExerciseId() {
+    // FIXME: id!
+    return 1;
   }
   
   public String getExerciseText() {
