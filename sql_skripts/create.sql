@@ -1,7 +1,7 @@
 create table student (
   name                      varchar(255) primary key);
 
-create table exercise (
+create table html_exercise (
   id                        integer primary key auto_increment,
   title                     varchar(255),
   text                      varchar(1000));
