@@ -1,0 +1,3 @@
+insert into js_exercise values
+	(1, "Implementieren Sie folgende Funktion 'sum', die zwei Zahlen entegennimmt und deren Summe zurückgibt.", "function sum(a, b) {\n  return 0;\n}", "sum"),
+	(2, "Implementieren Sie die folgende Funktion 'concat', die drei beliebige Strings entgegennimmt und die Konkatenation der Strings zurückgibt.", "function concat(str1, str2, str3) {\n  return \"\";\n}", "concat");

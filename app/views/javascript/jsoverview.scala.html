@@ -1,15 +1,15 @@
 @import model.user.User
+@import model.javascript.JsExercise
 
-@(user: User)
+@(user: User, exercises: List[JsExercise])
 
 @main("JavaScript-Test", user) {
   <div class="container">
     <h1>TODO: &Uuml;bersichsseite!</h1>
+    @for(exercise <- exercises) {
     <p>
-      <a href="/javascript/1">Link zur ersten Aufgabe...</a>
+      <a href="/javascript/@exercise.id">Link zur Aufgabe: @exercise.id + TODO: Aufgabenname...</a>
     </p>
-    <p>
-      <a href="/javascript/2">Link zur zweiten Aufgabe...</a>
-    </p>
+    }
   </div>
 }

@@ -1,4 +1,4 @@
-INSERT INTO exercise (`id`, `title`, `text`) VALUES
+INSERT INTO html_exercise (`id`, `title`, `text`) VALUES
   (1, 'Formulare',
   'Sie sind beauftragt, für die Internetseite einer Werkstatt ein Kontaktformular für die Terminabsprache erstellen.
   Das Formular (form) soll folgenden Umfang haben:');
@@ -17,3 +17,7 @@ INSERT INTO task (`exercise_id`, `id`, `task_Description`, `pts`, `result_type`,
 	
 INSERT INTO excel_exercise (`id`, `title`, `file_name`) VALUES
 	(1, 'Planung Schullandheimaufenthalt', 'Aufgabe_Schullandheim');
+	
+INSERT INTO js_exercise VALUES
+	(1, "Implementieren Sie folgende Funktion 'sum', die zwei Zahlen entegennimmt und deren Summe zurückgibt.", "function sum(a, b) {\n  return 0;\n}", "sum"),
+	(2, "Implementieren Sie die folgende Funktion 'concat', die drei beliebige Strings entgegennimmt und die Konkatenation der Strings zurückgibt.", "function concat(str1, str2, str3) {\n  return \"\";\n}", "concat");

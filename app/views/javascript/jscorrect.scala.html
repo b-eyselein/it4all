@@ -1,7 +1,7 @@
 @import model.user.User
-@import model.javascript.JavascriptTest
+@import model.javascript.JsTest
 
-@(learnerSolution: String, testResults: List[JavascriptTest], user: User)
+@(learnerSolution: String, testResults: List[JsTest], user: User)
 
 @main("JavaScript: Korrektur", user) {
   <div class="container">
@@ -15,10 +15,10 @@
       <div class="panel-heading">Testergebnisse</div>
       <div class="panel-body">
       @for(testResult <- testResults) {
-      	@if(testResult.wasSuccessful()) {
-        <div class="alert alert-success">@testResult.getAwaitedResult() =?= @testResult.getRealResult()</div>
+      	@if(true) {//testResult.wasSuccessful())
+        <div class="alert alert-success">Test erfolgreich.</div>
         } else {
-        <div class="alert alert-danger">@testResult.getAwaitedResult() =!= @testResult.getRealResult()</div>
+        <div class="alert alert-danger">Test fehlgeschlagen. Erwartet: "@testResult.awaitedResult", bekommen: "@@testResult.getRealResult()"</div>
         }
       }
       </div>

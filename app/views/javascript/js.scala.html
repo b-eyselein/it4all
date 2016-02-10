@@ -1,18 +1,18 @@
 @import model.user.User
-@import model.javascript.JavascriptExercise
+@import model.javascript.JsExercise
 
-@(user: User, exercise: JavascriptExercise)
+@(user: User, exercise: JsExercise)
 
 @main("JavaScript-Test", user) {
 <script src="@routes.Assets.versioned("javascripts/ace/ace.js")" type="text/javascript" charset="utf-8"></script>
 <div class="container">
-  <form action="/javascript/commit/@exercise.getExerciseId()" onsubmit="pasteCode();" method="post">
+  <form action="/javascript/commit/@exercise.id" onsubmit="pasteCode();" method="post">
     <div class="panel panel-default">
       <div class="panel-heading">Aufgabenstellung</div>
-      <div class="panel-body">@exercise.getExerciseText()</div>
+      <div class="panel-body">@exercise.text</div>
     </div>
     <div class="panel panel-default">
-      <div id="editor" class="form-control" style="height: 500px;">@exercise.getSolutionDefault()</div>
+      <div id="editor" class="form-control" style="height: 500px;">@exercise.defaultSolution</div>
       <textarea hidden="hidden" id="editorContent" name="editorContent"></textarea>
       <script>
 document.getElementById('editor').style.fontSize = '14px';

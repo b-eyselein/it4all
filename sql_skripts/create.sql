@@ -17,7 +17,7 @@ create table task (
   attributes                varchar(255),
   constraint ck_task_result_type check (result_type in (0,1,2)),
   primary key(exercise_id, id),
-  foreign key(exercise_id)  references exercise(id) on delete cascade on update cascade);
+  foreign key(exercise_id)  references html_exercise(id) on delete cascade on update cascade);
   
 create table grading (
   id                        integer primary key auto_increment,
@@ -25,7 +25,7 @@ create table grading (
   exercise_id               integer not null,
   points					integer not null,
   foreign key(student_name) references student(name) on delete cascade on update cascade,
-  foreign key(exercise_id)  references exercise(id) on delete cascade on update cascade);
+  foreign key(exercise_id)  references html_exercise(id) on delete cascade on update cascade);
   
 create table feedback (
   id                        integer primary key auto_increment,
@@ -52,3 +52,21 @@ create table excel_exercise (
   id						integer primary key auto_increment,
   title						varchar(255) not null,
   file_name					varchar(255) not null);
+  
+create table js_exercise (
+  id                        integer primary key auto_increment,
+  text                      varchar(255),
+  default_solution          varchar(255),
+  function_name             varchar(255));
+
+create table js_test (
+  id                        integer primary key auto_increment,
+  awaited_result            varchar(255),
+  exercise_id               integer,
+  foreign key(exercise_id) references js_exercise(id) on delete cascade on update cascade);
+
+create table js_testvalue (
+  id                        integer primary key auto_increment,
+  value                     varchar(255),
+  test_id                   integer,
+  foreign key(test_id) references js_test(id) on delete cascade on update cascade);

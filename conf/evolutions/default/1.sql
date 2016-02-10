@@ -54,6 +54,28 @@ create table html_exercise (
   constraint pk_html_exercise primary key (id))
 ;
 
+create table js_exercise (
+  id                        integer auto_increment not null,
+  text                      varchar(255),
+  default_solution          varchar(255),
+  function_name             varchar(255),
+  constraint pk_js_exercise primary key (id))
+;
+
+create table js_test (
+  id                        integer auto_increment not null,
+  awaited_result            varchar(255),
+  exercise_id               integer,
+  constraint pk_js_test primary key (id))
+;
+
+create table js_testvalue (
+  id                        integer auto_increment not null,
+  value                     varchar(255),
+  test_id                   integer,
+  constraint pk_js_testvalue primary key (id))
+;
+
 create table student (
   name                      varchar(255) not null,
   constraint pk_student primary key (name))
@@ -76,8 +98,12 @@ alter table grading add constraint fk_grading_student_1 foreign key (student_nam
 create index ix_grading_student_1 on grading (student_name);
 alter table grading add constraint fk_grading_exercise_2 foreign key (exercise_id) references html_exercise (id) on delete restrict on update restrict;
 create index ix_grading_exercise_2 on grading (exercise_id);
-alter table task add constraint fk_task_exercise_3 foreign key (exercise_id) references html_exercise (id) on delete restrict on update restrict;
-create index ix_task_exercise_3 on task (exercise_id);
+alter table js_test add constraint fk_js_test_exercise_3 foreign key (exercise_id) references js_exercise (id) on delete restrict on update restrict;
+create index ix_js_test_exercise_3 on js_test (exercise_id);
+alter table js_testvalue add constraint fk_js_testvalue_test_4 foreign key (test_id) references js_test (id) on delete restrict on update restrict;
+create index ix_js_testvalue_test_4 on js_testvalue (test_id);
+alter table task add constraint fk_task_exercise_5 foreign key (exercise_id) references html_exercise (id) on delete restrict on update restrict;
+create index ix_task_exercise_5 on task (exercise_id);
 
 
 
@@ -94,6 +120,12 @@ drop table feedback;
 drop table grading;
 
 drop table html_exercise;
+
+drop table js_exercise;
+
+drop table js_test;
+
+drop table js_testvalue;
 
 drop table student;
 
