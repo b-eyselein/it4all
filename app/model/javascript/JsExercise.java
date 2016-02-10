@@ -27,7 +27,7 @@ public class JsExercise extends Model {
   @Required
   public String functionName;
   
-  @OneToMany
+  @OneToMany(mappedBy = "exercise")
   public List<JsTest> functionTests;
   
 }

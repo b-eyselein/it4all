@@ -22,48 +22,8 @@ public class Application extends Controller {
   
   public static final String SESSION_ID_FIELD = "id";
   
-  public Result index() {
-    if(session(SESSION_ID_FIELD) == null)
-      return redirect("/login");
-    Student student = Student.find.byId(session(SESSION_ID_FIELD));
-    if(student == null) {
-      session().clear();
-      return redirect("/login");
-    }
-    return ok(index.render(student, HtmlExercise.finder.all(), ExcelExercise.finder.all()));
-  }
-  
-  public Result directLogin(String name, String type, int id) {
-    String passwort = "";
-    Student student = findOrCreateStudent(name, passwort);
-    session().clear();
-    session(SESSION_ID_FIELD, student.name);
-    
-    return redirect("/" + type + "/" + id);
-  }
-  
-  public Result directEval(String name) {
-    String passwort = "";
-    Student student = findOrCreateStudent(name, passwort);
-    session().clear();
-    session(SESSION_ID_FIELD, student.name);
-    
-    return redirect("/eval/" + student.name);
-  }
-  
-  public Result fromWuecampus(String type, int id, String name) {
-    if(name.isEmpty())
-      return redirect("/login");
-    String passwort = "";
-    Student student = findOrCreateStudent(name, passwort);
-    session().clear();
-    session(SESSION_ID_FIELD, student.name);
-    
-    return redirect("/" + type + "/" + id);
-  }
-  
-  public Result login() {
-    return ok(login.render());
+  public static User getUser() {
+    return Student.find.byId(session(Application.SESSION_ID_FIELD));
   }
   
   public Result authenticate() {
@@ -89,6 +49,24 @@ public class Application extends Controller {
       return redirect("/");
   }
   
+  public Result directEval(String name) {
+    String passwort = "";
+    Student student = findOrCreateStudent(name, passwort);
+    session().clear();
+    session(SESSION_ID_FIELD, student.name);
+    
+    return redirect("/eval/" + student.name);
+  }
+  
+  public Result directLogin(String name, String type, int id) {
+    String passwort = "";
+    Student student = findOrCreateStudent(name, passwort);
+    session().clear();
+    session(SESSION_ID_FIELD, student.name);
+    
+    return redirect("/" + type + "/" + id);
+  }
+  
   private Student findOrCreateStudent(String userName, String passwort) {
     // TODO: Passwort!
     if(Student.find.byId(userName) == null) {
@@ -103,6 +81,32 @@ public class Application extends Controller {
         }
     }
     return Student.find.byId(userName);
+  }
+  
+  public Result fromWuecampus(String type, int id, String name) {
+    if(name.isEmpty())
+      return redirect("/login");
+    String passwort = "";
+    Student student = findOrCreateStudent(name, passwort);
+    session().clear();
+    session(SESSION_ID_FIELD, student.name);
+    
+    return redirect("/" + type + "/" + id);
+  }
+  
+  public Result index() {
+    if(session(SESSION_ID_FIELD) == null)
+      return redirect("/login");
+    Student student = Student.find.byId(session(SESSION_ID_FIELD));
+    if(student == null) {
+      session().clear();
+      return redirect("/login");
+    }
+    return ok(index.render(student, HtmlExercise.finder.all(), ExcelExercise.finder.all()));
+  }
+  
+  public Result login() {
+    return ok(login.render());
   }
   
   public Result logout() {

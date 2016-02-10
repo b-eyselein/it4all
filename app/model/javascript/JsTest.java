@@ -18,29 +18,11 @@ public class JsTest extends Model {
   
   @Required
   public String awaitedResult;
-  // private String gottenResult;
-  // private boolean wasSuccessful;
   
   @OneToMany(mappedBy = "test")
   public List<JsTestvalue> values;
   
   @ManyToOne
   public JsExercise exercise;
-  
-  // public String getRealResult() {
-  // return gottenResult;
-  // }
-  
-  // public void setRealResult(String realResult) {
-  // gottenResult = realResult;
-  // }
-  //
-  // public void setSuccessful(boolean testWasSuccessful) {
-  // wasSuccessful = testWasSuccessful;
-  // }
-  
-  // public boolean wasSuccessful() {
-  // return wasSuccessful;
-  // }
   
 }

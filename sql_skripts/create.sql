@@ -60,13 +60,15 @@ create table js_exercise (
   function_name             varchar(255));
 
 create table js_test (
-  id                        integer primary key auto_increment,
-  awaited_result            varchar(255),
+  id                        integer auto_increment,
   exercise_id               integer,
+  awaited_result            varchar(255),
+  primary key(id, exercise_id),
   foreign key(exercise_id) references js_exercise(id) on delete cascade on update cascade);
 
 create table js_testvalue (
-  id                        integer primary key auto_increment,
-  value                     varchar(255),
+  id                        integer auto_increment,
   test_id                   integer,
+  value                     varchar(255),
+  primary key(id, test_id),
   foreign key(test_id) references js_test(id) on delete cascade on update cascade);
