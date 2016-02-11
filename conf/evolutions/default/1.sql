@@ -56,6 +56,7 @@ create table html_exercise (
 
 create table js_exercise (
   id                        integer auto_increment not null,
+  name                      varchar(255),
   text                      varchar(255),
   default_solution          varchar(255),
   function_name             varchar(255),

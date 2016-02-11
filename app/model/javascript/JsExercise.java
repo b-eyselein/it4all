@@ -19,6 +19,9 @@ public class JsExercise extends Model {
   public int id;
   
   @Required
+  public String name;
+  
+  @Required
   public String text;
   
   @Required

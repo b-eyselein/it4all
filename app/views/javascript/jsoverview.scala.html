@@ -5,11 +5,14 @@
 
 @main("JavaScript-Test", user) {
   <div class="container">
-    <h1>TODO: &Uuml;bersichsseite!</h1>
-    @for(exercise <- exercises) {
-    <p>
-      <a href="/javascript/@exercise.id">Link zur Aufgabe: @exercise.id + TODO: Aufgabenname...</a>
-    </p>
-    }
+    <h1>&Uuml;bersichs &uuml;ber alle verf&uuml;gbaren Aufgaben</h1>
+    <div class="panel panel-default">
+      <div class="panel-heading">Korrektur mit Java-JSEngine Nashorn</div>
+      <div class="panel-body">
+      @for(exercise <- exercises) {
+        <a href="/javascript/@exercise.id" class="btn btn-default btn-block">Link zur Aufgabe @exercise.id: @exercise.name</a>
+      }
+      </div>
+    </div>
   </div>
 }

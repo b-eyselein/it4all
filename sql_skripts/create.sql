@@ -55,20 +55,19 @@ create table excel_exercise (
   
 create table js_exercise (
   id                        integer primary key auto_increment,
-  text                      varchar(255),
-  default_solution          varchar(255),
-  function_name             varchar(255));
+  name                      varchar(255) not null,
+  text                      varchar(255) not null,
+  default_solution          varchar(255) not null,
+  function_name             varchar(255) not null);
 
 create table js_test (
-  id                        integer auto_increment,
-  exercise_id               integer,
-  awaited_result            varchar(255),
-  primary key(id, exercise_id),
+  id                        integer primary key auto_increment,
+  exercise_id               integer not null,
+  awaited_result            varchar(255) not null,
   foreign key(exercise_id) references js_exercise(id) on delete cascade on update cascade);
 
 create table js_testvalue (
-  id                        integer auto_increment,
-  test_id                   integer,
-  value                     varchar(255),
-  primary key(id, test_id),
+  id                        integer primary key auto_increment,
+  test_id                   integer not null,
+  value                     varchar(255) not null,
   foreign key(test_id) references js_test(id) on delete cascade on update cascade);

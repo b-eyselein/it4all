@@ -18,17 +18,19 @@ INSERT INTO task (`exercise_id`, `id`, `task_Description`, `pts`, `result_type`,
 INSERT INTO excel_exercise (`id`, `title`, `file_name`) VALUES
 	(1, 'Planung Schullandheimaufenthalt', 'Aufgabe_Schullandheim');
 	
-INSERT INTO js_exercise VALUES
-	(1, "Implementieren Sie folgende Funktion 'sum', die zwei Zahlen entegennimmt und deren Summe zurückgibt.", "function sum(a, b) {\n  return 0;\n}", "sum"),
-	(2, "Implementieren Sie die folgende Funktion 'concat', die drei beliebige Strings entgegennimmt und die Konkatenation der Strings zurückgibt.", "function concat(str1, str2, str3) {\n  return \"\";\n}", "concat");
+INSERT INTO js_exercise (`id`, `name`, `text`, `default_solution`, `function_name`) VALUES
+	(1, "Summen", "Implementieren Sie folgende Funktion 'sum', die zwei Zahlen entegennimmt und deren Summe zurückgibt.", "function sum(a, b) {\n  return 0;\n}", "sum"),
+	(2, "Konkatenation von Strings", "Implementieren Sie die folgende Funktion 'concat', die drei beliebige Strings entgegennimmt und die Konkatenation der Strings zurückgibt.", "function concat(str1, str2, str3) {\n  return \"\";\n}", "concat");
 
-INSERT INTO js_test VALUES
+INSERT INTO js_test (`id`, `exercise_id`, `awaited_result`) VALUES
 	(1, 1, 2),
 	(2, 1, 3),
-	(3, 1, 87);
+	(3, 1, 87),
+	(4, 2, "Hallo Welt!");
 
-INSERT INTO js_testvalue VALUES
+INSERT INTO js_testvalue (`id`, `test_id`, `value`) VALUES
 	(1, 1, 1), (2, 1, 1),
-	(1, 2, 1), (2, 2, 2),
-	(1, 3, 44), (2, 3, 43);
+	(3, 2, 1), (4, 2, 2),
+	(5, 3, 44), (6, 3, 43),
+	(7, 4, "'Hallo '"), (8, 4, "'Welt'"), (9, 4, "'!'");
 	
