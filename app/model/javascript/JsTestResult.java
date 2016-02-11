@@ -16,11 +16,18 @@ public class JsTestResult {
     this.test = test;
     List<String> valueList = test.values.stream().map(value -> value.value).collect(Collectors.toList());
     toEvaluate = test.exercise.functionName + "(" + String.join(", ", valueList) + ");";
-    
   }
   
   public void eval(ScriptEngine engine) throws ScriptException {
     realResult = engine.eval(toEvaluate).toString();
+  }
+  
+  public String getAsString() {
+    // FIXME: Format festlegen und implementieren!
+    String ret = wasSuccessful() ? "+ " : "- ";
+    ret += "Test " + test.id + ": \"" + toEvaluate + "\" ";
+    ret += wasSuccessful() ? "war erfolgreich." : "war nicht erfolgreich";
+    return ret;
   }
   
   public String getAwaitedResult() {

@@ -5,29 +5,60 @@
 
 @main("JavaScript-Test", user) {
 <script src="@routes.Assets.versioned("javascripts/ace/ace.js")" type="text/javascript" charset="utf-8"></script>
-<div class="container">
-  <form action="/javascript/commit/@exercise.id" onsubmit="pasteCode();" method="post">
-    <div class="panel panel-default">
-      <div class="panel-heading">Aufgabenstellung</div>
-      <div class="panel-body">@exercise.text</div>
-    </div>
-    <div class="panel panel-default">
-      <div id="editor" class="form-control" style="height: 500px;">@exercise.defaultSolution</div>
-      <textarea hidden="hidden" id="editorContent" name="editorContent"></textarea>
-      <script>
-document.getElementById('editor').style.fontSize = '14px';
-var editor = ace.edit("editor");
-editor.setTheme("ace/theme/eclipse");
-editor.getSession().setMode("ace/mode/javascript");
-editor.setTabSize(4);
+<script>
+function testSolution() {
+  // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
+  var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      processCorrection(xhttp.responseText);
+    }
+  };
 
-function pasteCode() {
-  var content = editor.getValue();
-  document.getElementById('editorContent').value = content;
+  // AJAX-Objekt mit Daten füllen, absenden
+  var parameters = "editorContent=" + encodeURIComponent(editor.getValue());
+  xhttp.open("POST", "http://localhost:9000/javascript/commit/@exercise.id", true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.send(parameters);
 }
-      </script>
+
+function processCorrection(correction) {
+  var loesungsraum = document.getElementById("loesungsraum");
+  loesungsraum.innerHTML = "";
+  
+  var corrs = correction.split("\n");
+  for(i = 0; i < corrs.length; i++) {
+    loesungsraum.innerHTML += "<p>" + corrs[i] + "</p>";
+  }
+}
+</script>
+<div class="container">
+  <div class="panel panel-default">
+    <div class="panel-heading">Aufgabenstellung</div>
+    <div class="panel-body">@exercise.text</div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div id="editor" class="form-control" style="height: 500px;">@exercise.defaultSolution</div>
+	    <script>
+		document.getElementById('editor').style.fontSize = '14px';
+		var editor = ace.edit("editor");
+		editor.setTheme("ace/theme/eclipse");
+		editor.getSession().setMode("ace/mode/javascript");
+		editor.setTabSize(4);
+	    </script>
+	  </div>
+	</div>
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">Korrektur</div>
+        <div class="panel-body" id="loesungsraum">
+          Hier stehen bald die Korrekturwerte...
+        </div>
+      </div>
     </div>
-    <p><input type="submit" class="form-control"></p>
-  </form>
+  </div>
+  <p><button class="form-control" onclick="testSolution();">L&ouml;sung testen</button></p>
 </div>
 }

@@ -16,7 +16,6 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
 import views.html.javascript.js;
-import views.html.javascript.jscorrect;
 import views.html.javascript.jsoverview;
 import controllers.Application;
 import controllers.Secured;
@@ -28,29 +27,35 @@ public class JavaScript extends Controller {
     Map<String, String[]> body = request().body().asFormUrlEncoded();
     String learnerSolution = body.get("editorContent")[0];
     
+    System.out.println(learnerSolution);
+    
     List<JsTestResult> testResults = correct(JsExercise.finder.byId(exerciseId), learnerSolution);
     
-    return ok(jscorrect.render(learnerSolution, testResults, Application.getUser()));
+    List<String> results = testResults.stream().map(res -> res.getAsString()).collect(Collectors.toList());
+    return ok(String.join("\n", results));
+    
+    // TODO: Wird jscorrecot.scala.html gebraucht? --> Nur für Endkorrektur ?!?
+    // return ok(jscorrect.render(learnerSolution, testResults,
+    // Application.getUser()));
   }
   
   private List<JsTestResult> correct(JsExercise exercise, String learnerSolution) {
-    ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
-    
     try {
+      ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
+      
       // Lese programmierte Lernerlösung ein
       engine.eval(learnerSolution);
       
-      List<JsTestResult> testResults = getTestResults(exercise.functionTests);
-      
       // Evaluiere Lernerlösung mit Testwerten
-      for(JsTestResult testResult: testResults) {
+      List<JsTestResult> testResults = getTestResults(exercise.functionTests);
+      for(JsTestResult testResult: testResults)
         testResult.eval(engine);
-      }
       return testResults;
     } catch (ScriptException e) {
+      // TODO: Log Exception or submit to learner?
       e.printStackTrace();
+      return Collections.emptyList();
     }
-    return Collections.emptyList();
   }
   
   public Result exercise(int id) {
@@ -67,4 +72,5 @@ public class JavaScript extends Controller {
   public Result index() {
     return ok(jsoverview.render(Application.getUser(), JsExercise.finder.all()));
   }
+  
 }
