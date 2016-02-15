@@ -28,7 +28,13 @@ function processCorrection(correction) {
   
   var corrs = correction.split("\n");
   for(i = 0; i < corrs.length; i++) {
-    loesungsraum.innerHTML += "<p>" + corrs[i] + "</p>";
+	if(corrs[i].startsWith("+")) {
+      loesungsraum.innerHTML += "<div class=\"alert alert-success\">" + corrs[i] + "</p>";
+	} else if(corrs[i].startsWith("-")) {
+	  loesungsraum.innerHTML += "<div class=\"alert alert-danger\">" + corrs[i] + "</div>";
+	} else {
+	  loesungsraum.innerHTML += "<div class=\"alert alert-warning\">" + corrs[i] + "</div>";
+	}
   }
 }
 </script>
