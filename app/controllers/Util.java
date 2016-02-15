@@ -5,8 +5,12 @@ import java.nio.file.Paths;
 
 public class Util {
   
+  // FIXME: load config in folders.conf at startup...
+  
+  private static String rootSolDir = "/var/lib/it4all/";
+  
   public static Path getSolDirForUser(String user) {
-    return Paths.get("/var/lib/it4all/solutions/" + user + "/");
+    return Paths.get(rootSolDir, "solutions/" + user + "/");
   }
   
   public static Path getSolDirForUserAndType(String type, String user) {
@@ -19,7 +23,7 @@ public class Util {
   }
   
   public static Path getExcelSampleDirectoryForExercise(int exerciseId) {
-    return Paths.get("/var/lib/it4all/samples/excel/ex_" + exerciseId + "/");
+    return Paths.get(rootSolDir, "samples/excel/ex_" + exerciseId + "/");
   }
   
   public static Path getExcelSolFileForExercise(String user, String fileName) {
