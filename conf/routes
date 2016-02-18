@@ -8,6 +8,8 @@ GET     /                           	controllers.Application.index()
 # Administrator
 GET		/admin							controllers.Admin.index()
 
+->		/mindmap						mindmap.Routes
+
 # Login && Logout
 GET		/login							controllers.Application.login()
 POST	/authenticate					controllers.Application.authenticate()

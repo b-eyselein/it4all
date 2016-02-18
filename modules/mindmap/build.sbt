@@ -1,0 +1,3 @@
+name := "myadmin"
+
+routesGenerator := InjectedRoutesGenerator

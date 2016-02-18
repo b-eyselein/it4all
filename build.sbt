@@ -1,12 +1,28 @@
 name := """it4all"""
 
-version := "0.1.0-SNAPSHOT"
+version := "0.1"
+
+lazy val commonSettings = Seq(
+  organization := "example.com",
+  version := "0.1.0",
+  scalaVersion := "2.11.6"
+)
 
 lazy val root = (project in file("."))
 	.enablePlugins(PlayJava, PlayEbean)
+	.aggregate(web, mindmap)
+	.dependsOn(web, mindmap)
+	.settings(commonSettings: _*)
+	
+lazy val web = (project in file("modules/web"))
+	.enablePlugins(PlayJava)
+	.settings(commonSettings: _*)
 
-scalaVersion := "2.11.6"
+lazy val mindmap = (project in file("modules/mindmap"))
+	.enablePlugins(PlayJava)
+	.settings(commonSettings: _*)
 
+// Used libraries from Maven Repository
 libraryDependencies ++= Seq(
   javaJdbc,
   cache,
