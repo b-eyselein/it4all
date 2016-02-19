@@ -1,7 +1,5 @@
 name := """it4all"""
 
-version := "0.1"
-
 lazy val commonSettings = Seq(
   organization := "example.com",
   version := "0.1.0",
@@ -15,7 +13,7 @@ lazy val root = (project in file("."))
 	.settings(commonSettings: _*)
 	
 lazy val core = (project in file("modules/core"))
-	.enablePlugins(PlayJava, PlayEbean)
+	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
 	.settings(commonSettings: _*)
 	
 lazy val web = (project in file("modules/web"))

@@ -34,7 +34,7 @@ POST	/excel/upload/:ex				controllers.exercises.Excel.upload(ex: Int)
 GET		/excel/download/:ex/:typ		controllers.exercises.Excel.download(ex: Int, typ: String)
 
 # JavaScript
-GET		/javascript						controllers.exercises.JavaScript.index()
+GET		/javascript/					controllers.exercises.JavaScript.index()
 GET		/javascript/:ex					controllers.exercises.JavaScript.exercise(ex: Int)
 POST	/javascript/commit/:ex			controllers.exercises.JavaScript.commit(ex: Int)
 
