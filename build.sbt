@@ -11,15 +11,21 @@ lazy val commonSettings = Seq(
 lazy val root = (project in file("."))
 	.enablePlugins(PlayJava, PlayEbean)
 	.aggregate(web, mindmap)
-	.dependsOn(web, mindmap)
+	.dependsOn(web, mindmap, core)
+	.settings(commonSettings: _*)
+	
+lazy val core = (project in file("modules/core"))
+	.enablePlugins(PlayJava, PlayEbean)
 	.settings(commonSettings: _*)
 	
 lazy val web = (project in file("modules/web"))
 	.enablePlugins(PlayJava)
+	.dependsOn(core)
 	.settings(commonSettings: _*)
 
 lazy val mindmap = (project in file("modules/mindmap"))
 	.enablePlugins(PlayJava)
+	.dependsOn(core)
 	.settings(commonSettings: _*)
 
 // Used libraries from Maven Repository

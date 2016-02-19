@@ -1,1 +1,3 @@
-GET	/test				controllers.mindmap.Mindmap.test()
+GET			/index				controllers.mindmap.Mindmap.index()
+
+GET			/test				controllers.mindmap.Mindmap.test()

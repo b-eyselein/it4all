@@ -1,4 +1,4 @@
-name := "myadmin"
+name := "mindmap"
 
 routesGenerator := InjectedRoutesGenerator
 

@@ -14,6 +14,7 @@ import model.html.ElementResult;
 import model.html.HtmlCorrector;
 import model.html.HtmlExercise;
 import model.user.Student;
+import model.user.User;
 import play.mvc.Controller;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
@@ -24,12 +25,13 @@ import views.html.empty;
 import views.html.html.htmlcorrect;
 import views.html.html.html;
 import views.html.html.htmloverview;
+import model.user.UserControl;
 
 public class HTML extends Controller {
   
   @Security.Authenticated(Secured.class)
   public Result exericse(int exercise) {
-    Student student = Student.find.byId(session(Application.SESSION_ID_FIELD));
+    User student = UserControl.getUser();
     if(student == null) {
       session().clear();
       return redirect("/login");
@@ -42,7 +44,7 @@ public class HTML extends Controller {
   
   @Security.Authenticated(Secured.class)
   public Result index() {
-    Student student = Student.find.byId(session(Application.SESSION_ID_FIELD));
+    User student = UserControl.getUser();
     List<HtmlExercise> exercises = HtmlExercise.finder.all();
     return ok(htmloverview.render(exercises, student));
   }
@@ -80,7 +82,7 @@ public class HTML extends Controller {
   
   @Security.Authenticated(Secured.class)
   public Result upload(int exercise) {
-    Student user = Student.find.byId(session(Application.SESSION_ID_FIELD));
+    User user = UserControl.getUser();
     HtmlExercise ex = HtmlExercise.finder.byId(exercise);
     MultipartFormData body = request().body().asMultipartFormData();
     FilePart htmlFile = body.getFile("solFile");
@@ -88,12 +90,12 @@ public class HTML extends Controller {
       try {
         Path file = htmlFile.getFile().toPath();
         List<String> fileContent = Files.readAllLines(file);
-        saveSolutionForUser(user.name, String.join("\n", fileContent), exercise);
+        saveSolutionForUser(user.getName(), String.join("\n", fileContent), exercise);
         
-        String url = "/solutions/" + user.name + "/html/" + exercise;
+        String url = "/solutions/" + user.getName() + "/html/" + exercise;
         List<ElementResult> result = HtmlCorrector.correct(url, ex, user);
         
-        List<String> solution = Files.readAllLines(Util.getHtmlSolFileForExercise(user.name, "html", exercise));
+        List<String> solution = Files.readAllLines(Util.getHtmlSolFileForExercise(user.getName(), "html", exercise));
         
         return ok(htmlcorrect.render(user, ex, result, solution));
       } catch (IOException e) {

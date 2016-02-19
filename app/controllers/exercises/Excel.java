@@ -14,6 +14,7 @@ import model.spreadsheet.ExcelExercise;
 import model.spreadsheet.SpreadSheetCorrectionResult;
 import model.spreadsheet.SpreadSheetCorrector;
 import model.user.Student;
+import model.user.User;
 import play.mvc.Controller;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
@@ -22,25 +23,26 @@ import play.mvc.Security;
 import views.html.excel.excel;
 import views.html.excel.excelcorrect;
 import views.html.excel.exceloverview;
+import model.user.UserControl;
 
 @Security.Authenticated(Secured.class)
 public class Excel extends Controller {
   
   public Result index() {
-    Student user = Student.find.byId(session(Application.SESSION_ID_FIELD));
+    User user = UserControl.getUser();
     List<ExcelExercise> exercises = ExcelExercise.finder.all();
     return ok(exceloverview.render(user, exercises));
   }
   
   public Result exercise(int exerciseId) {
-    Student user = Student.find.byId(session(Application.SESSION_ID_FIELD));
+    User user = UserControl.getUser();
     if(exerciseId == -1 || ExcelExercise.finder.byId(exerciseId) == null)
       return redirect("/index");
     return ok(excel.render(user, ExcelExercise.finder.byId(exerciseId)));
   }
   
   public Result upload(int exerciseId) {
-    Student user = Student.find.byId(session(Application.SESSION_ID_FIELD));
+    User user = UserControl.getUser();
     ExcelExercise exercise = ExcelExercise.finder.byId(exerciseId);
     
     MultipartFormData body = request().body().asMultipartFormData();
@@ -49,10 +51,10 @@ public class Excel extends Controller {
       
       Path path = solutionFile.getFile().toPath();
       String fileName = exercise.fileName;
-      saveSolutionForUser(user.name, path, solutionFile.getFilename(), exerciseId);
+      saveSolutionForUser(user.getName(), path, solutionFile.getFilename(), exerciseId);
       
       // FIXME: get Paths!
-      Path testPath = Util.getExcelSolFileForExercise(user.name, solutionFile.getFilename());
+      Path testPath = Util.getExcelSolFileForExercise(user.getName(), solutionFile.getFilename());
       Path musterPath = Util.getExcelSampleDirectoryForExercise(exerciseId);
       musterPath = Paths
           .get(musterPath.toString(), fileName + "_Muster." + SpreadSheetCorrector.getExtension(testPath));
@@ -65,10 +67,10 @@ public class Excel extends Controller {
   }
   
   public Result download(int exerciseId, String typ) {
-    Student user = Student.find.byId(session(Application.SESSION_ID_FIELD));
+    User user = UserControl.getUser();
     ExcelExercise exercise = ExcelExercise.finder.byId(exerciseId);
     
-    Path fileToDownload = Paths.get("/var/lib/it4all/solutions", user.name, "excel", exercise.fileName + "_Korrektur."
+    Path fileToDownload = Paths.get("/var/lib/it4all/solutions", user.getName(), "excel", exercise.fileName + "_Korrektur."
         + typ);
     if(Files.exists(fileToDownload))
       return ok(fileToDownload.toFile());

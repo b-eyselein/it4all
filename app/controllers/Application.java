@@ -18,13 +18,15 @@ import play.mvc.Result;
 import views.html.index;
 import views.html.login;
 
+import model.user.UserControl;
+
 public class Application extends Controller {
   
-  public static final String SESSION_ID_FIELD = "id";
-  
-  public static User getUser() {
-    return Student.find.byId(session(Application.SESSION_ID_FIELD));
-  }
+//  public static final String SESSION_ID_FIELD = "id";
+//  
+//  public static User getUser() {
+//    return Student.find.byId(session(Application.SESSION_ID_FIELD));
+//  }
   
   public Result authenticate() {
     Map<String, String[]> formValues = request().body().asFormUrlEncoded();
@@ -41,7 +43,7 @@ public class Application extends Controller {
       user = findOrCreateStudent(userName, passwort);
     
     session().clear();
-    session(SESSION_ID_FIELD, user.getName());
+    session(UserControl.SESSION_ID_FIELD, user.getName());
     
     if(user.isAdmin())
       return redirect("/admin");
@@ -53,7 +55,7 @@ public class Application extends Controller {
     String passwort = "";
     Student student = findOrCreateStudent(name, passwort);
     session().clear();
-    session(SESSION_ID_FIELD, student.name);
+    session(UserControl.SESSION_ID_FIELD, student.name);
     
     return redirect("/eval/" + student.name);
   }
@@ -62,7 +64,7 @@ public class Application extends Controller {
     String passwort = "";
     Student student = findOrCreateStudent(name, passwort);
     session().clear();
-    session(SESSION_ID_FIELD, student.name);
+    session(UserControl.SESSION_ID_FIELD, student.name);
     
     return redirect("/" + type + "/" + id);
   }
@@ -89,15 +91,15 @@ public class Application extends Controller {
     String passwort = "";
     Student student = findOrCreateStudent(name, passwort);
     session().clear();
-    session(SESSION_ID_FIELD, student.name);
+    session(UserControl.SESSION_ID_FIELD, student.name);
     
     return redirect("/" + type + "/" + id);
   }
   
   public Result index() {
-    if(session(SESSION_ID_FIELD) == null)
+    if(session(UserControl.SESSION_ID_FIELD) == null)
       return redirect("/login");
-    Student student = Student.find.byId(session(SESSION_ID_FIELD));
+    Student student = Student.find.byId(session(UserControl.SESSION_ID_FIELD));
     if(student == null) {
       session().clear();
       return redirect("/login");

@@ -3,6 +3,7 @@ package model.html;
 import java.util.List;
 
 import model.user.Student;
+import model.user.User;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
@@ -15,7 +16,7 @@ public class HtmlCorrector {
     return result.stream().mapToInt(res -> res.getPoints()).sum();
   }
   
-  public static List<ElementResult> correct(String solutionUrl, HtmlExercise exercise, Student student) {
+  public static List<ElementResult> correct(String solutionUrl, HtmlExercise exercise, User student) {
     WebDriver driver = getDriverWithUrlAndLoadPage(solutionUrl);
     
     List<ElementResult> result = getElementResultsForExercise(exercise);
@@ -40,10 +41,11 @@ public class HtmlCorrector {
     return exercise.getElementResults();
   }
   
-  private static void saveGrading(HtmlExercise exercise, Student student, int points) {
+  private static void saveGrading(HtmlExercise exercise, User student, int points) {
     // TODO: override old Grading?
     Grading grading = new Grading();
-    grading.student = student;
+    // TODO: Casting!
+    grading.student = (Student) student;
     grading.exercise = exercise;
     grading.points = points;
     grading.save();

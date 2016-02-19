@@ -19,7 +19,7 @@ import views.html.javascript.js;
 import views.html.javascript.jsoverview;
 import controllers.Application;
 import controllers.Secured;
-
+import model.user.UserControl;
 @Security.Authenticated(Secured.class)
 public class JavaScript extends Controller {
   
@@ -60,7 +60,7 @@ public class JavaScript extends Controller {
   
   public Result exercise(int id) {
     if(JsExercise.finder.byId(id) != null)
-      return ok(js.render(Application.getUser(), JsExercise.finder.byId(id)));
+      return ok(js.render(UserControl.getUser(), JsExercise.finder.byId(id)));
     else
       return badRequest("Diese Aufgabe existert leider nicht.");
   }
@@ -70,7 +70,7 @@ public class JavaScript extends Controller {
   }
   
   public Result index() {
-    return ok(jsoverview.render(Application.getUser(), JsExercise.finder.all()));
+    return ok(jsoverview.render(UserControl.getUser(), JsExercise.finder.all()));
   }
   
 }
