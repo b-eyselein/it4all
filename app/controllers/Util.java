@@ -3,18 +3,19 @@ package controllers;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import play.Configuration;
+
 public class Util {
-  
-  // FIXME: load config in folders.conf at startup...
-  
-  private static String rootSolDir = "/var/lib/it4all/";
+
+  // Load root directory for solutions and samples at startUp
+  private static String rootSolDir = Configuration.root().getString("rootDir");
   
   public static Path getSolDirForUser(String user) {
-    return Paths.get(rootSolDir, "solutions/" + user + "/");
+    return Paths.get(rootSolDir, "solutions", user);
   }
   
   public static Path getSolDirForUserAndType(String type, String user) {
-    return Paths.get(getSolDirForUser(user).toString(), type + "/");
+    return Paths.get(getSolDirForUser(user).toString(), type);
   }
   
   public static Path getHtmlSolFileForExercise(String user, String exerciseType, int exercise) {
@@ -23,7 +24,7 @@ public class Util {
   }
   
   public static Path getExcelSampleDirectoryForExercise(int exerciseId) {
-    return Paths.get(rootSolDir, "samples/excel/ex_" + exerciseId + "/");
+    return Paths.get(rootSolDir, "samples", "excel", "ex_" + exerciseId);
   }
   
   public static Path getExcelSolFileForExercise(String user, String fileName) {
