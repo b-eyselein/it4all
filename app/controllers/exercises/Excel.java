@@ -8,11 +8,11 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import controllers.Application;
-import controllers.Secured;
 import controllers.Util;
 import model.spreadsheet.ExcelExercise;
 import model.spreadsheet.SpreadSheetCorrectionResult;
 import model.spreadsheet.SpreadSheetCorrector;
+import model.user.Secured;
 import model.user.Student;
 import model.user.User;
 import play.mvc.Controller;

@@ -18,7 +18,7 @@ import play.mvc.Security;
 import views.html.javascript.js;
 import views.html.javascript.jsoverview;
 import controllers.Application;
-import controllers.Secured;
+import model.user.Secured;
 import model.user.UserControl;
 @Security.Authenticated(Secured.class)
 public class JavaScript extends Controller {

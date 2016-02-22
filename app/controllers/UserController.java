@@ -3,6 +3,7 @@ package controllers;
 import java.util.List;
 
 import model.html.Grading;
+import model.user.Secured;
 import model.user.Student;
 import model.user.UserControl;
 import play.mvc.Controller;

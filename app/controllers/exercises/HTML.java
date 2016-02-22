@@ -8,11 +8,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import controllers.Application;
-import controllers.Secured;
 import controllers.Util;
 import model.html.ElementResult;
 import model.html.HtmlCorrector;
 import model.html.HtmlExercise;
+import model.user.Secured;
 import model.user.Student;
 import model.user.User;
 import play.mvc.Controller;
