@@ -9,4 +9,4 @@ GET		/javascript/					controllers.web.JavaScript.index()
 GET		/javascript/:ex					controllers.web.JavaScript.exercise(ex: Int)
 POST	/javascript/commit/:ex			controllers.web.JavaScript.commit(ex: Int)
 
-GET 	/assets/*file           		controllers.web.Assets.versioned(path="/public/lib/web", file: Asset)
+GET 	/assets/*file           		controllers.web.Assets.versioned(path = "/public/lib/web", file: Asset)

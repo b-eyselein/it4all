@@ -92,7 +92,7 @@ public class HTML extends Controller {
         List<String> fileContent = Files.readAllLines(file);
         saveSolutionForUser(user.getName(), String.join("\n", fileContent), exercise);
         
-        String url = "/solutions/" + user.getName() + "/html/" + exercise;
+        String url = "/web/solutions/" + user.getName() + "/html/" + exercise;
         List<ElementResult> result = HtmlCorrector.correct(url, ex, user);
         
         List<String> solution = Files.readAllLines(Util.getHtmlSolFileForExercise(user.getName(), "html", exercise));

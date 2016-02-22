@@ -5,14 +5,12 @@ import play.api.mvc.AnyContent;
 
 import com.google.inject.Inject;
 
-import controllers.Assets.Asset;
-
 public class Assets {
   
   @Inject
-  Assets asset;
+  controllers.Assets assets;
   
-  public Action<AnyContent> versioned(String path, Asset file) {
-    return asset.versioned(path, file);
+  public Action<AnyContent> versioned(String path, controllers.Assets.Asset file) {
+    return assets.versioned(path, file);
   }
 }
