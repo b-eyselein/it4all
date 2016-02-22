@@ -4,7 +4,7 @@
 @(user: User, exercise: JsExercise)
 
 @main("JavaScript-Test", user) {
-<script src="@routes.Assets.versioned("javascripts/ace/ace.js")" type="text/javascript" charset="utf-8"></script>
+<script src="@controllers.web.routes.Assets.versioned("javascripts/ace/ace.js")" type="text/javascript" charset="utf-8"></script>
 <script>
 function testSolution() {
   // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
@@ -17,7 +17,7 @@ function testSolution() {
 
   // AJAX-Objekt mit Daten füllen, absenden
   var parameters = "editorContent=" + encodeURIComponent(editor.getValue());
-  xhttp.open("POST", "http://localhost:9000/javascript/commit/@exercise.id", true);
+  xhttp.open("POST", "http://localhost:9000/web/javascript/commit/@exercise.id", true);
   xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
   xhttp.send(parameters);
 }

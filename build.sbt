@@ -17,7 +17,7 @@ lazy val core = (project in file("modules/core"))
 	.settings(commonSettings: _*)
 	
 lazy val web = (project in file("modules/web"))
-	.enablePlugins(PlayJava)
+	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
 	.dependsOn(core)
 	.settings(commonSettings: _*)
 

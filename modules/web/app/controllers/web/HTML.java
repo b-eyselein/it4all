@@ -1,4 +1,4 @@
-package controllers.exercises;
+package controllers.web;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -7,7 +7,8 @@ import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
 
-import controllers.Application;
+//import controllers.Application;
+
 import controllers.Util;
 import model.html.ElementResult;
 import model.html.HtmlCorrector;
@@ -21,7 +22,6 @@ import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
 import play.mvc.Security;
 import play.twirl.api.Html;
-import views.html.empty;
 import views.html.html.htmlcorrect;
 import views.html.html.html;
 import views.html.html.htmloverview;
@@ -30,7 +30,7 @@ import model.user.UserControl;
 public class HTML extends Controller {
   
   @Security.Authenticated(Secured.class)
-  public Result exericse(int exercise) {
+  public Result exercise(int exercise) {
     User student = UserControl.getUser();
     if(student == null) {
       session().clear();
@@ -77,7 +77,7 @@ public class HTML extends Controller {
       } catch (IOException e) {
       }
     }
-    return ok(empty.render(new Html(String.join("\n", strings))));
+    return ok(new Html(String.join("\n", strings)));
   }
   
   @Security.Authenticated(Secured.class)
