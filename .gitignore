@@ -1,20 +1,43 @@
+# Allgemein / SBT
 logs
 target
-/.idea
-/.idea_modules
-/.classpath
-/.project
-/.settings
-/RUNNING_PID
-/.cache-main
-/.cache-tests
-
-# Own ignores
+RUNNING_PID
+.cache-main
+.cache-tests
 project/project
 project/target
 tmp
 dist
+.history
+
+
+# Eclipse
+.settings
+.cache
+.project
+.classpath
+.scala_dependencies
 bin
+
+# Modules
+# Core
+modules/core/.classpath
+modules/core/.project
+modules/core/.settings
+modules/core/.cache-main
+modules/core/.cache-tests
+
+# Mindmap
+modules/mindmap/.classpath
+modules/mindmap/.project
+modules/mindmap/.settings
 modules/mindmap/.cache-main
 modules/mindmap/.cache-tests
-.history
+
+# Web
+modules/web/.classpath
+modules/web/.project
+modules/web/.settings
+modules/web/.cache-main
+modules/web/.cache-tests
+

@@ -22,11 +22,11 @@ import model.user.UserControl;
 
 public class Application extends Controller {
   
-//  public static final String SESSION_ID_FIELD = "id";
-//  
-//  public static User getUser() {
-//    return Student.find.byId(session(Application.SESSION_ID_FIELD));
-//  }
+  // public static final String SESSION_ID_FIELD = "id";
+  //
+  // public static User getUser() {
+  // return Student.find.byId(session(Application.SESSION_ID_FIELD));
+  // }
   
   public Result authenticate() {
     Map<String, String[]> formValues = request().body().asFormUrlEncoded();

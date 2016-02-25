@@ -7,25 +7,23 @@ import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
 
-//import controllers.Application;
-
-import controllers.Util;
 import model.html.ElementResult;
 import model.html.HtmlCorrector;
 import model.html.HtmlExercise;
 import model.user.Secured;
-import model.user.Student;
 import model.user.User;
+import model.user.UserControl;
 import play.mvc.Controller;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
 import play.mvc.Security;
 import play.twirl.api.Html;
-import views.html.html.htmlcorrect;
 import views.html.html.html;
+import views.html.html.htmlcorrect;
 import views.html.html.htmloverview;
-import model.user.UserControl;
+//import controllers.Application;
+import controllers.Util;
 
 public class HTML extends Controller {
   
