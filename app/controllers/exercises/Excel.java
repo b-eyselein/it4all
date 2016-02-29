@@ -12,7 +12,6 @@ import model.spreadsheet.SpreadSheetCorrectionResult;
 import model.spreadsheet.SpreadSheetCorrector;
 import model.user.Secured;
 import model.user.User;
-import model.user.UserControl;
 import play.mvc.Controller;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
@@ -21,7 +20,8 @@ import play.mvc.Security;
 import views.html.excel.excel;
 import views.html.excel.excelcorrect;
 import views.html.excel.exceloverview;
-import controllers.Util;
+import controllers.core.UserControl;
+import controllers.core.Util;
 
 @Security.Authenticated(Secured.class)
 public class Excel extends Controller {

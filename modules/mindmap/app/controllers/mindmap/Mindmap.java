@@ -1,7 +1,7 @@
 package controllers.mindmap;
 
+import controllers.core.UserControl;
 import model.user.Secured;
-import model.user.UserControl;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;

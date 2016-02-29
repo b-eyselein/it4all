@@ -9,11 +9,11 @@
     <div class="panel-body">
       <form action="/web/html/upload/@exercise.id" method="post" enctype="multipart/form-data">
         <h3>Laden Sie hier ihre L&ouml;sung f&uuml;r Aufgabe @exercise.id hoch:</h3>
-  
+
         <div class="form-group">
           <input type="file" class="form-control" name="solFile" required accept=".htm, .html">
         </div>
-    
+
         <input type="number" hidden="hidden" value="1" name="exercise">
         <div class="btn-group btn-group-justified">
           <div class="btn-group">
@@ -26,13 +26,13 @@
       </form>
     </div>
   </div>
-    
+
   <div class="panel panel-default">
     <div class="panel-heading">Aufgabenstellung</div>
     <div class="panel-body">
       <p>@exercise.text</p>
       @for(task <- exercise.tasks) {
-        <p>- @task.taskDescription</p>
+      <p>- @task.taskDescription</p>
       }
     </div>
   </div>

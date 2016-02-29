@@ -12,7 +12,6 @@ import model.html.HtmlCorrector;
 import model.html.HtmlExercise;
 import model.user.Secured;
 import model.user.User;
-import model.user.UserControl;
 import play.mvc.Controller;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
@@ -23,7 +22,8 @@ import views.html.html.html;
 import views.html.html.htmlcorrect;
 import views.html.html.htmloverview;
 //import controllers.Application;
-import controllers.Util;
+import controllers.core.UserControl;
+import controllers.core.Util;
 
 public class HTML extends Controller {
   

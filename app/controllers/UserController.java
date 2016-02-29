@@ -2,10 +2,10 @@ package controllers;
 
 import java.util.List;
 
+import controllers.core.UserControl;
 import model.html.Grading;
 import model.user.Secured;
 import model.user.Student;
-import model.user.UserControl;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;

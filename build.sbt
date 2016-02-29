@@ -65,8 +65,7 @@ libraryDependencies ++= Seq(
 EclipseKeys.skipParents in ThisBuild := false
 EclipseKeys.withSource := true
 
-// Play provides two styles of routers, one expects its actions to be injected, the
-// other, legacy style, accesses its actions statically.
+// Injected for non-static Routes
 routesGenerator := InjectedRoutesGenerator
 
 // JaCoCo - siehe project/plugins.sbt

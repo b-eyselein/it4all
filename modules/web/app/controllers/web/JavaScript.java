@@ -9,6 +9,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import controllers.core.UserControl;
 import model.javascript.JsExercise;
 import model.javascript.JsTest;
 import model.javascript.JsTestResult;
@@ -18,7 +19,6 @@ import play.mvc.Security;
 import views.html.javascript.js;
 import views.html.javascript.jsoverview;
 import model.user.Secured;
-import model.user.UserControl;
 
 @Security.Authenticated(Secured.class)
 public class JavaScript extends Controller {

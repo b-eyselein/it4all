@@ -3,35 +3,29 @@
 # ~~~~
 
 # Home page
-GET     /                           	controllers.Application.index()
+GET    /                          controllers.Application.index()
 
 # Administrator
-GET		/admin							controllers.Admin.index()
+GET    /admin                     controllers.Admin.index()
 
-->		/web							web.Routes
+->     /                          conf.Routes
 
-->		/mindmap						mindmap.Routes
+->     /web                       web.Routes
 
-# Login && Logout
-GET		/login							controllers.Application.login()
-POST	/authenticate					controllers.Application.authenticate()
-GET		/logout							controllers.Application.logout()
-GET		/direct/:name/:type/:id			controllers.Application.directLogin(name: String, type: String, id: Int)
-GET		/direct/:type/:id				controllers.Application.fromWuecampus(type: String, id: Int, name: String ?= "")
-
+->     /mindmap                   mindmap.Routes
 
 # Evaluation
-GET		/eval/							controllers.Evaluation.index()
-POST	/eval/submit					controllers.Evaluation.submit()
+GET    /eval/                     controllers.Evaluation.index()
+POST   /eval/submit               controllers.Evaluation.submit()
 
 # Excel
-GET		/excel/							controllers.exercises.Excel.index()
-GET		/excel/:ex						controllers.exercises.Excel.exercise(ex: Int)
-POST	/excel/upload/:ex				controllers.exercises.Excel.upload(ex: Int)
-GET		/excel/download/:ex/:typ		controllers.exercises.Excel.download(ex: Int, typ: String)
+GET    /excel/                    controllers.exercises.Excel.index()
+GET    /excel/:ex                 controllers.exercises.Excel.exercise(ex: Int)
+POST   /excel/upload/:ex          controllers.exercises.Excel.upload(ex: Int)
+GET    /excel/download/:ex/:typ   controllers.exercises.Excel.download(ex: Int, typ: String)
 
 # User
-GET		/user							controllers.UserController.index()
+GET    /user                      controllers.UserController.index()
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               	controllers.Assets.versioned(path="/public", file: Asset)
+GET    /assets/*file              controllers.Assets.versioned(path="/public", file: Asset)
