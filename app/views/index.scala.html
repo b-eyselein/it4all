@@ -12,7 +12,7 @@
     @for(htmlex <- htmlexercises) {
       <div class="panel panel-default">
         <div class="panel-body">
-          <a href="/html/@htmlex.id">Dateiupload f&uuml;r Html-Aufgabe @htmlex.id: @htmlex.title</a>
+          <a href="@controllers.web.routes.HTML.exercise(htmlex.id)">Dateiupload f&uuml;r Html-Aufgabe @htmlex.id: @htmlex.title</a>
         </div>
       </div>
     }
@@ -25,7 +25,7 @@
     @for(excelex <- excelexercises) {
       <div class="panel panel-default">
         <div class="panel-body">
-          <a href="/excel/@excelex.id">Dateiupload f&uuml;r Excel-Aufgabe @excelex.id: @excelex.title</a>
+          <a href="@controllers.exercises.routes.Excel.exercise(excelex.id)">Dateiupload f&uuml;r Excel-Aufgabe @excelex.id: @excelex.title</a>
         </div>
       </div>
     }
