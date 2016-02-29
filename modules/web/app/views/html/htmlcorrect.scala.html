@@ -1,5 +1,8 @@
-@import model.user.User @import model.html.ElementResult.Success @import model.html._ @(user: User, exercise: HtmlExercise, result: List[ElementResult],
-solution: List[String]) @main("HTML-Test", user) {
+@import model.user.User
+@import model.html.ElementResult.Success
+@import model.html._
+
+@(user: User, exercise: HtmlExercise, result: List[ElementResult], solution: List[String]) @main("HTML-Test", user) {
 
 <!-- <script src="@@controllers.web.routes.Assets.versioned("javascripts/src-min/ace.js")"></script> -->
 
