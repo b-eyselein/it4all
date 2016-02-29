@@ -4,5 +4,3 @@ POST   /authenticate             controllers.core.UserControl.authenticate()
 GET    /logout                   controllers.core.UserControl.logout()
 GET    /direct/:name/:type/:id   controllers.core.UserControl.directLogin(name: String, type: String, id: Int)
 GET    /direct/:type/:id         controllers.core.UserControl.fromWuecampus(type: String, id: Int, name: String ?= "")
-
-GET    /blub                     controllers.core.UserControl.test()

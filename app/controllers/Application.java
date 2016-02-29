@@ -1,7 +1,5 @@
 package controllers;
 
-import model.html.HtmlExercise;
-import model.spreadsheet.ExcelExercise;
 import model.user.Secured;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -13,7 +11,7 @@ public class Application extends Controller {
   
   @Security.Authenticated(Secured.class)
   public Result index() {
-    return ok(index.render(UserControl.getUser(), HtmlExercise.finder.all(), ExcelExercise.finder.all()));
+    return ok(index.render(UserControl.getUser()));
   }
   
 }

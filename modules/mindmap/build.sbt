@@ -1,5 +1,8 @@
 name := "mindmap"
 
+Common.settings
+
+// Injected for non-static Routes
 routesGenerator := InjectedRoutesGenerator
 
 libraryDependencies ++= Seq(
@@ -10,7 +13,7 @@ libraryDependencies ++= Seq(
   "org.apache.poi" % "poi-ooxml-schemas" % "3.13",
   "org.apache.poi" % "poi-scratchpad" % "3.13",
   "org.apache.xmlbeans" % "xmlbeans" % "2.6.0",
-  
+
   // Apache Commons IO
   "commons-io" % "commons-io" % "2.4"
  )

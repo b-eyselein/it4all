@@ -1,35 +1,26 @@
-@import model.html.HtmlExercise
 @import model.spreadsheet.ExcelExercise
 @import model.user.User
-
-@(student: User, htmlexercises: List[HtmlExercise], excelexercises: List[ExcelExercise])
+@(student: User)
 
 @main("HTML-Test", student) {
 <div class="container">
+
   <div class="panel panel-default">
-    <div class="panel-heading">Html</div>
+    <div class="panel-heading">Webtechnologie</div>
     <div class="panel-body">
-    @for(htmlex <- htmlexercises) {
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <a href="@controllers.web.routes.HTML.exercise(htmlex.id)">Dateiupload f&uuml;r Html-Aufgabe @htmlex.id: @htmlex.title</a>
-        </div>
-      </div>
-    }
+      <a type="button" class="btn btn-default btn-block" href="@controllers.web.routes.HTML.index()">Html</a>
+      <a type="button" class="btn btn-default btn-block" href="@controllers.web.routes.CSS.index()">CSS</a>
+      <a type="button" class="btn btn-default btn-block" href="@controllers.web.routes.JavaScript.index()">JavaScript</a>
+      <a type="button" class="btn btn-default btn-block" href="/sql">SQL</a>
     </div>
   </div>
-  
+
   <div class="panel panel-default">
     <div class="panel-heading">Excel</div>
     <div class="panel-body">
-    @for(excelex <- excelexercises) {
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <a href="@controllers.exercises.routes.Excel.exercise(excelex.id)">Dateiupload f&uuml;r Excel-Aufgabe @excelex.id: @excelex.title</a>
-        </div>
-      </div>
-    }
+      <a type="button" class="btn btn-default btn-block" href="@controllers.exercises.routes.Excel.index()">Tabellenkalkuation</a>
     </div>
   </div>
+
 </div>
 }

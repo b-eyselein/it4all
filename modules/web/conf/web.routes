@@ -4,9 +4,13 @@ GET		/html/:ex						controllers.web.HTML.exercise(ex: Int)
 POST	/html/upload/:ex				controllers.web.HTML.upload(ex: Int)
 GET		/solutions/:user/html/:ex		controllers.web.HTML.site(user: String, ex: Int)
 
+# CSS
+GET		/css/							controllers.web.CSS.index()
+
 # JavaScript
 GET		/javascript/					controllers.web.JavaScript.index()
 GET		/javascript/:ex					controllers.web.JavaScript.exercise(ex: Int)
 POST	/javascript/commit/:ex			controllers.web.JavaScript.commit(ex: Int)
 
+# Web-Assets
 GET 	/assets/*file           		controllers.web.Assets.versioned(path = "/public/lib/web", file: Asset)
