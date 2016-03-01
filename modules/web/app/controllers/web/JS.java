@@ -21,13 +21,11 @@ import views.html.javascript.jsoverview;
 import model.user.Secured;
 
 @Security.Authenticated(Secured.class)
-public class JavaScript extends Controller {
+public class JS extends Controller {
   
   public Result commit(int exerciseId) {
     Map<String, String[]> body = request().body().asFormUrlEncoded();
     String learnerSolution = body.get("editorContent")[0];
-    
-    System.out.println(learnerSolution);
     
     List<JsTestResult> testResults = correct(JsExercise.finder.byId(exerciseId), learnerSolution);
     

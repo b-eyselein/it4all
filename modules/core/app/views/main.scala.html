@@ -23,12 +23,12 @@
         <ul class="nav navbar-nav">
           <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="">Web <span class="caret"></span></a>
             <ul class="dropdown-menu">
-              <li><a href="@controllers.web.routes.HTML.index() /web/html/">Html</a></li>
-              <li><a href="/web/html/">CSS</a></li>
-              <li><a href="/web/javascript/">Javascript</a></li>
+              <li><a href="@controllers.web.routes.HTML.index()">Html</a></li>
+              <li><a href="@controllers.web.routes.CSS.index()">CSS</a></li>
+              <li><a href="@controllers.web.routes.JS.index">Javascript</a></li>
             </ul></li>
-          <li><a href="/excel/">Tabellenkalkulation</a></li>
-          <li><a href="/mindmap/index">MindMap</a></li>
+          <li><a href="@controllers.exercises.routes.Excel.index()">Tabellenkalkulation</a></li>
+          <li><a href="@controllers.mindmap.routes.Mindmap.index()">MindMap</a></li>
           <!-- <li><a href="/eval/@user.getName()">Evaluation Html</a></li> -->
         </ul>
         <ul class="nav navbar-nav navbar-right">
