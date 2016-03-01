@@ -1,40 +1,57 @@
-@import model.html.HtmlExercise
-@import model.user.User
+@(user: model.user.User, exercise: model.html.HtmlExercise) @main("HTML-Test", user) {
 
-@(user: User, exercise: HtmlExercise)
+<script src="@controllers.web.routes.Assets.versioned("assets/ace/ace.js")"></script>
 
-@main("HTML-Test", user) {
-<div class="container">
-  <div class="panel panel-default">
-    <div class="panel-body">
-      <form action="/web/html/upload/@exercise.id" method="post" enctype="multipart/form-data">
-        <h3>Laden Sie hier ihre L&ouml;sung f&uuml;r Aufgabe @exercise.id hoch:</h3>
+<div class="container-fluid">
+  <div class="panel">
+    <button type="button" class="btn btn-default btn-block" onclick="alert('Hallo')">L&ouml;sung testen</button>
+  </div>
+  
+  <div class="row">
 
-        <div class="form-group">
-          <input type="file" class="form-control" name="solFile" required accept=".htm, .html">
+    <!-- Programmierfenster -->
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div id="editor" class="form-control" style="height: 500px;"></div>
+        <script type="text/javascript">
+                  document.getElementById('editor').style.fontSize = '14px';
+                  var editor = ace.edit("editor");
+                  editor.setTheme("ace/theme/eclipse");
+                  editor.getSession().setMode("ace/mode/html");
+                  editor.setTabSize(4);
+                </script>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#aufgaben">Aufgabenstellung</a></li>
+        <li><a data-toggle="tab" href="#korrektur">Korrektur</a></li>
+      </ul>
+
+      <div class="tab-content">
+        <!-- Aufgabenstellung anzeigen -->
+        <div id="aufgaben" class="tab-pane fade in active">
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <p>@exercise.text</p>
+              @for(task <- exercise.tasks) {
+              <p>- @task.taskDescription</p>
+              }
+            </div>
+          </div>
         </div>
 
-        <input type="number" hidden="hidden" value="1" name="exercise">
-        <div class="btn-group btn-group-justified">
-          <div class="btn-group">
-            <button class="btn btn-primary" type="reset">Zur&uuml;cksetzen</button>
-          </div>
-          <div class="btn-group">
-            <button class="btn btn-primary" type="submit">Abschicken und testen</button>
+        <div id="korrektur" class="tab-pane fade">
+          <div class="panel panel-default">
+            <div class="panel-body" id="loesungsraum">Hier stehen bald die Korrekturwerte...</div>
           </div>
         </div>
-      </form>
+      </div>
+
     </div>
+
   </div>
 
-  <div class="panel panel-default">
-    <div class="panel-heading">Aufgabenstellung</div>
-    <div class="panel-body">
-      <p>@exercise.text</p>
-      @for(task <- exercise.tasks) {
-      <p>- @task.taskDescription</p>
-      }
-    </div>
-  </div>
 </div>
 }
