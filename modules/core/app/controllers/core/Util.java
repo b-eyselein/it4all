@@ -6,9 +6,23 @@ import java.nio.file.Paths;
 import play.Configuration;
 
 public class Util {
-
+  
   // Load root directory for solutions and samples at startUp
-  private static String rootSolDir = Configuration.root().getString("rootDir");
+  private static String rootSolDir = getRootDir();
+  
+  private static String getRootDir() {
+    String os = System.getProperty("os.name").toLowerCase();
+    
+    // WINDOWS
+    if(os.indexOf("win") >= 0)
+      return Configuration.root().getString("rootDirWin");
+    // UNIX
+    else if(os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0 || os.indexOf("aix") > 0)
+      return Configuration.root().getString("rootDirLinux");
+    // OTHER OS, NEEDS CONFIGURATION
+    else
+      throw new IllegalArgumentException("OS not detectable");
+  }
   
   public static Path getSolDirForUser(String user) {
     return Paths.get(rootSolDir, "solutions", user);
