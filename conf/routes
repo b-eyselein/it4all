@@ -8,10 +8,15 @@ GET    /                          controllers.Application.index()
 # Administrator
 GET    /admin                     controllers.Admin.index()
 
+# Userverwaltung
 ->     /                          conf.Routes
+# User
+GET    /user                      controllers.UserController.index()
 
+# Web-Korrektur
 ->     /web                       web.Routes
 
+# Mindmap-Korrektur
 ->     /mindmap                   mindmap.Routes
 
 # Evaluation
@@ -24,8 +29,6 @@ GET    /excel/:ex                 controllers.exercises.Excel.exercise(ex: Int)
 POST   /excel/upload/:ex          controllers.exercises.Excel.upload(ex: Int)
 GET    /excel/download/:ex/:typ   controllers.exercises.Excel.download(ex: Int, typ: String)
 
-# User
-GET    /user                      controllers.UserController.index()
 
 # Map static resources from the /public folder to the /assets URL path
 GET    /assets/*file              controllers.Assets.versioned(path="/public", file: Asset)

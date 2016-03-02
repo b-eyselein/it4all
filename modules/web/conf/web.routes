@@ -1,7 +1,9 @@
 # HTML
 GET		/html/							controllers.web.HTML.index()
 GET		/html/:ex						controllers.web.HTML.exercise(ex: Int)
+# TODO: Old: upload, New: commit!
 POST	/html/upload/:ex				controllers.web.HTML.upload(ex: Int)
+POST	/html/commit/:ex				controllers.web.HTML.commit(ex: Int)
 GET		/solutions/:user/html/:ex		controllers.web.HTML.site(user: String, ex: Int)
 
 # CSS
