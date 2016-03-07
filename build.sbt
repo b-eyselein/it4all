@@ -46,17 +46,10 @@ libraryDependencies ++= Seq(
   "xerces" % "xercesImpl" % "2.9.1",
   "xml-apis" % "xml-apis" % "1.3.04",
 
-
-  // Selenium for Html Tests
-  "org.seleniumhq.selenium" % "selenium-java" % "2.48.1",
-
   // Mockito for Testing
-  "org.mockito" % "mockito-core" % "1.9.5"
+  "org.mockito" % "mockito-core" % "1.10.19"
 
 )
-
-EclipseKeys.skipParents in ThisBuild := false
-EclipseKeys.withSource := true
 
 // Injected for non-static Routes
 routesGenerator := InjectedRoutesGenerator

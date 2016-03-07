@@ -4,11 +4,23 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import play.Configuration;
+import play.Play;
 
 public class Util {
   
   // Load root directory for solutions and samples at startUp
   private static String rootSolDir = getRootDir();
+  
+  public static String getServerUrl() {
+    if(Play.isDev())
+      return "http://localhost:9000";
+    else if(Play.isProd())
+      return "https://www.it4all.uni-wuerzburg.de";
+    else if(Play.isTest())
+      return "http://localhost:9000";
+    else
+      throw new IllegalArgumentException("Cound not determine Upload-URL for JS-Testing!");
+  }
   
   private static String getRootDir() {
     String os = System.getProperty("os.name").toLowerCase();

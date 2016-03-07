@@ -6,17 +6,15 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
+import controllers.core.UserControl;
+import controllers.core.Util;
 import model.html.ElementResult;
 import model.html.HtmlCorrector;
 import model.html.HtmlExercise;
-import model.javascript.JsExercise;
-import model.javascript.JsTestResult;
 import model.user.Secured;
 import model.user.User;
-import play.Play;
 import play.mvc.Controller;
 import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
@@ -24,55 +22,45 @@ import play.mvc.Security;
 import views.html.html.html;
 import views.html.html.htmlcorrect;
 import views.html.html.htmloverview;
-import controllers.core.UserControl;
-import controllers.core.Util;
 
-@Security.Authenticated(Secured.class)
 public class HTML extends Controller {
   
-  private static String serverUrl = getServerUrl();
+  private static String serverUrl = Util.getServerUrl();
   
-  private static String getServerUrl() {
-    if(Play.isDev())
-      return "http://localhost:9000";
-    else if(Play.isProd())
-      return "https://www.it4all.uni-wuerzburg.de";
-    else if(Play.isTest())
-      return "http://localhost:9000";
-    else
-      throw new IllegalArgumentException("Cound not determine Upload-URL for JS-Testing!");
-  }
-  
+  @Security.Authenticated(Secured.class)
   public Result exercise(int exerciseId) {
     HtmlExercise exercise = HtmlExercise.finder.byId(exerciseId);
     if(exercise == null)
-      return redirect("/html/");
+      return redirect(controllers.web.routes.HTML.index());
     else
       return ok(html.render(UserControl.getUser(), exercise, serverUrl));
   }
   
+  @Security.Authenticated(Secured.class)
   public Result commit(int exerciseId) {
-    // Map<String, String[]> body = request().body().asFormUrlEncoded();
-    // String learnerSolution = body.get("editorContent")[0];
+    User user = UserControl.getUser();
+    HtmlExercise exercise = HtmlExercise.finder.byId(exerciseId);
+    String learnerSolution = request().body().asFormUrlEncoded().get("editorContent")[0];
+    saveSolutionForUser(user.getName(), learnerSolution, exerciseId);
     
-    return ok("This is a test");
+    String url = "/web/solutions/" + user.getName() + "/html/" + exerciseId;
+    List<ElementResult> result = HtmlCorrector.correct(url, exercise, user);
     
-    // List<JsTestResult> testResults =
-    // correct(JsExercise.finder.byId(exerciseId), learnerSolution);
-    //
-    // List<String> results = testResults.stream().map(res ->
-    // res.getAsString()).collect(Collectors.toList());
-    // return ok(String.join("\n", results));
+    for(ElementResult res: result)
+      System.out.println(res);
+    System.out.println("-------------------------");
     
-    // TODO: Wird jscorrecot.scala.html gebraucht? --> Nur für Endkorrektur ?!?
-    // return ok(jscorrect.render(learnerSolution, testResults,
-    // Application.getUser()));
+    List<String> results = result.stream().map(res -> res.toString()).collect(Collectors.toList());
+    
+    return ok(String.join("\n", results));
   }
   
+  @Security.Authenticated(Secured.class)
   public Result index() {
     return ok(htmloverview.render(HtmlExercise.finder.all(), UserControl.getUser()));
   }
   
+  @Security.Authenticated(Secured.class)
   private void saveSolutionForUser(String user, String solution, int exercise) {
     try {
       if(!Files.exists(Util.getSolDirForUser(user)))
@@ -92,12 +80,18 @@ public class HTML extends Controller {
   
   public Result site(String userName, int exercise) {
     Path file = Util.getHtmlSolFileForExercise(userName, "html", exercise);
-    if(Files.exists(file))
-      return ok(file.toFile());
-    else
-      return badRequest("Fehler: Datei nicht vorhanden!");
+    try {
+      if(Files.exists(file))
+        return ok(String.join("\n", Files.readAllLines(file)));
+      else
+        return badRequest("Fehler: Datei nicht vorhanden!");
+    } catch (IOException e) {
+      // TODO: Log Error!
+      return badRequest("Fehler!");
+    }
   }
   
+  @Security.Authenticated(Secured.class)
   public Result upload(int exerciseId) {
     User user = UserControl.getUser();
     HtmlExercise exercise = HtmlExercise.finder.byId(exerciseId);

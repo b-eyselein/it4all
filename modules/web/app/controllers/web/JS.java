@@ -10,10 +10,10 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import controllers.core.UserControl;
+import controllers.core.Util;
 import model.javascript.JsExercise;
 import model.javascript.JsTest;
 import model.javascript.JsTestResult;
-import play.Play;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
@@ -24,7 +24,7 @@ import model.user.Secured;
 @Security.Authenticated(Secured.class)
 public class JS extends Controller {
   
-  private static String serverUrl = getServerUrl();
+  private static String serverUrl = Util.getServerUrl();
   
   public Result commit(int exerciseId) {
     Map<String, String[]> body = request().body().asFormUrlEncoded();
@@ -40,17 +40,6 @@ public class JS extends Controller {
     // Application.getUser()));
   }
   
-  private static String getServerUrl() {
-    if(Play.isDev())
-      return "http://localhost:9000";
-    else if(Play.isProd())
-      return "https://www.it4all.uni-wuerzburg.de";
-    else if(Play.isTest())
-      return "http://localhost:9000";
-    else 
-      throw new IllegalArgumentException("Cound not determine Upload-URL for JS-Testing!");
-  }
-
   private List<JsTestResult> correct(JsExercise exercise, String learnerSolution) {
     try {
       ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
