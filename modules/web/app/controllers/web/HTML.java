@@ -28,15 +28,6 @@ public class HTML extends Controller {
   private static String serverUrl = Util.getServerUrl();
   
   @Security.Authenticated(Secured.class)
-  public Result exercise(int exerciseId) {
-    HtmlExercise exercise = HtmlExercise.finder.byId(exerciseId);
-    if(exercise == null)
-      return redirect(controllers.web.routes.HTML.index());
-    else
-      return ok(html.render(UserControl.getUser(), exercise, serverUrl));
-  }
-  
-  @Security.Authenticated(Secured.class)
   public Result commit(int exerciseId) {
     User user = UserControl.getUser();
     HtmlExercise exercise = HtmlExercise.finder.byId(exerciseId);
@@ -53,6 +44,15 @@ public class HTML extends Controller {
     List<String> results = result.stream().map(res -> res.toString()).collect(Collectors.toList());
     
     return ok(String.join("\n", results));
+  }
+  
+  @Security.Authenticated(Secured.class)
+  public Result exercise(int exerciseId) {
+    HtmlExercise exercise = HtmlExercise.finder.byId(exerciseId);
+    if(exercise == null)
+      return redirect(controllers.web.routes.HTML.index());
+    else
+      return ok(html.render(UserControl.getUser(), exercise, serverUrl));
   }
   
   @Security.Authenticated(Secured.class)
@@ -80,6 +80,7 @@ public class HTML extends Controller {
   
   public Result site(String userName, int exercise) {
     Path file = Util.getHtmlSolFileForExercise(userName, "html", exercise);
+    System.out.println(file);
     try {
       if(Files.exists(file))
         return ok(String.join("\n", Files.readAllLines(file)));

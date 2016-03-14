@@ -21,8 +21,10 @@ public class HtmlCorrector {
   public static List<ElementResult> correct(String solutionUrl, HtmlExercise exercise, User student) {
     WebDriver driver = getDriverWithUrlAndLoadPage(solutionUrl);
     
-    System.out.println(driver.getPageSource());
-    System.out.println("******************************");
+    System.out.println(solutionUrl);
+    
+    if(driver.getPageSource() == null || driver.getPageSource().isEmpty())
+      throw new IllegalArgumentException("Probleme mit Quelltext der Seite!");
     
     // TODO: entfernen!
     if(driver.getTitle() == null)
