@@ -2,13 +2,11 @@ package model.html;
 
 import java.util.List;
 
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-
 import model.user.Student;
 import model.user.User;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 public class HtmlCorrector {
   
@@ -20,17 +18,6 @@ public class HtmlCorrector {
   
   public static List<ElementResult> correct(String solutionUrl, HtmlExercise exercise, User student) {
     WebDriver driver = getDriverWithUrlAndLoadPage(solutionUrl);
-    
-    System.out.println(solutionUrl);
-    
-    if(driver.getPageSource() == null || driver.getPageSource().isEmpty())
-      throw new IllegalArgumentException("Probleme mit Quelltext der Seite!");
-    
-    // TODO: entfernen!
-    if(driver.getTitle() == null)
-      throw new IllegalArgumentException("Kein Titel!");
-    if(!driver.getTitle().equals("Kontaktformular Werkstatt"))
-      throw new IllegalArgumentException("Falsche Seite geladen!");
     
     List<ElementResult> result = getElementResultsForExercise(exercise);
     result.stream().forEach(result1 -> result1.evaluate(driver));
@@ -44,7 +31,7 @@ public class HtmlCorrector {
   
   private static WebDriver getDriverWithUrlAndLoadPage(String solutionUrl) {
     String newUrl = LOCALHOST + solutionUrl;
-    WebDriver driver = new HtmlUnitDriver(BrowserVersion.CHROME);
+    WebDriver driver = new HtmlUnitDriver();
     // FIXME: what if url does not exist?
     driver.get(newUrl);
     return driver;

@@ -19,6 +19,7 @@ import play.mvc.Controller;
 import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
 import play.mvc.Security;
+import play.twirl.api.Html;
 import views.html.html.html;
 import views.html.html.htmlcorrect;
 import views.html.html.htmloverview;
@@ -31,15 +32,12 @@ public class HTML extends Controller {
   public Result commit(int exerciseId) {
     User user = UserControl.getUser();
     HtmlExercise exercise = HtmlExercise.finder.byId(exerciseId);
+    
     String learnerSolution = request().body().asFormUrlEncoded().get("editorContent")[0];
     saveSolutionForUser(user.getName(), learnerSolution, exerciseId);
     
     String url = "/web/solutions/" + user.getName() + "/html/" + exerciseId;
     List<ElementResult> result = HtmlCorrector.correct(url, exercise, user);
-    
-    for(ElementResult res: result)
-      System.out.println(res);
-    System.out.println("-------------------------");
     
     List<String> results = result.stream().map(res -> res.toString()).collect(Collectors.toList());
     
@@ -80,16 +78,17 @@ public class HTML extends Controller {
   
   public Result site(String userName, int exercise) {
     Path file = Util.getHtmlSolFileForExercise(userName, "html", exercise);
-    System.out.println(file);
-    try {
-      if(Files.exists(file))
-        return ok(String.join("\n", Files.readAllLines(file)));
-      else
-        return badRequest("Fehler: Datei nicht vorhanden!");
-    } catch (IOException e) {
-      // TODO: Log Error!
-      return badRequest("Fehler!");
-    }
+    if(Files.exists(file))
+      try {
+        // IMPORTANT: return HTML!
+        return ok(new Html(String.join("\n", Files.readAllLines(file))));
+      } catch (IOException e) {
+        // TODO: Log Error!?!
+        // --> Evtl. entsprechend Fehler werfen bzw. in Korrektor auffangen!
+        return badRequest("Fehler beim Lesen der Datei!");
+      }
+    else
+      return badRequest("Fehler: Datei nicht vorhanden!");
   }
   
   @Security.Authenticated(Secured.class)

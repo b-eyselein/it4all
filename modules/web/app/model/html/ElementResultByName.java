@@ -19,14 +19,10 @@ public class ElementResultByName extends ElementResult {
   @Override
   public void evaluate(WebDriver driver) {
     List<WebElement> foundElements = driver.findElements(By.name(elemName));
-    System.out.println("Looking for element with name: " + elemName);
     if(foundElements.isEmpty()) {
-      System.out.println("\tNo elements found with this name!");
       setResult(Success.NONE, "Es wurde kein Element mit dem Namen \"" + elemName + "\" gefunden");
       return;
     }
-    for(WebElement elem: foundElements)
-      System.out.println("\t" + elem);
     
     foundElements = filterForTagName(foundElements, tag);
     if(foundElements.isEmpty()) {
