@@ -22,25 +22,28 @@
   }
 
   function processCorrection(correction) {
-    var loesungsraum = document.getElementById("loesungsraum");
-    loesungsraum.innerHTML = "";
-	alert(correction);
     
     var corrs = correction.split("\n");
     for(i = 0; i < corrs.length; i++) {
+      var id = corrs[i].substring(1, 4);
+      var taskDiv = document.getElementById("ex" + id.charAt(0) + "_task" + id.charAt(2));
       if(corrs[i].startsWith("+")) {
-        loesungsraum.innerHTML += "<div class=\"alert alert-success\">" + corrs[i] + "</p>";
+        taskDiv.className = "alert alert-success";
       } else if(corrs[i].startsWith("-")) {
-        loesungsraum.innerHTML += "<div class=\"alert alert-danger\">" + corrs[i] + "</div>";
+        taskDiv.className = "alert alert-danger";
       } else {
-        loesungsraum.innerHTML += "<div class=\"alert alert-warning\">" + corrs[i] + "</div>";
+        taskDiv.className = "alert alert-warning";
       }
     }
+    
+    // TODO: Update Live-Ansicht
+    var live = document.getElementById("live");
+    live.src = live.src;
   }
 </script>
 
 <style>
-#editor {
+#editor, #live {
   height: 500px;
 }
 </style>
@@ -69,41 +72,29 @@
 
         <div id="ansicht" class="tab-pane fade">
           <div class="panel panel-default">
-            <div class="panel-body" id="loesungsraum">TODO: Live-Ansicht Website</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <ul class="nav nav-tabs nav-justified">
-        <li class="active"><a data-toggle="tab" href="#aufgaben">Aufgabenstellung</a></li>
-        <li><a data-toggle="tab" href="#korrektur">Korrektur</a></li>
-      </ul>
-
-      <div class="tab-content">
-        <!-- Aufgabenstellung anzeigen -->
-        <div id="aufgaben" class="tab-pane fade in active">
-          <div class="panel panel-default">
             <div class="panel-body">
-              <p>@exercise.text</p>
-              @for(task <- exercise.tasks) {
-              <p>- @task.taskDescription</p>
-              }
+              <iframe width="100%" height="100%" id="live" src="@controllers.web.routes.HTML.site(user.getName(), exercise.id)"></iframe>
             </div>
-            <div class="panel-footer">
-              <button type="button" class="btn btn-primary btn-block" onclick="testSolution();">L&ouml;sung testen</button>
-            </div>
-          </div>
-        </div>
-
-        <div id="korrektur" class="tab-pane fade">
-          <div class="panel panel-default">
-            <div class="panel-body" id="loesungsraum">Hier stehen bald die Korrekturwerte...</div>
           </div>
         </div>
       </div>
-
     </div>
-
+    
+    <div class="col-md-6">
+      <!-- Aufgabenstellung anzeigen -->
+      <div class="panel panel-default">
+        <div class="panel-heading">Aufgabenstellung</div>
+        <div class="panel-body">
+          <p>@exercise.text</p>
+          @for(task <- exercise.tasks) {
+          <div id="ex@{task.exercise.id}_task@task.id" class="well well-sm">- @task.taskDescription</div>
+          }
+        </div>
+        <div class="panel-footer">
+          <button type="button" class="btn btn-primary btn-block" onclick="testSolution();">L&ouml;sung testen</button>
+        </div>
+      </div>
+    </div>
   </div>
-  }
+</div>
+}

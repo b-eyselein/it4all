@@ -8,21 +8,21 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public abstract class ElementResult {
-
+  
   public enum Success {
     COMPLETE, PARTIALLY, NONE;
   }
-
+  
   protected Task theTask;
-
+  
   protected String tag;
   protected Success success = Success.NONE;
-
+  
   protected String message = "";
   protected List<String> attributesToFind = new LinkedList<String>();
-
+  
   protected List<AttributeResult> attrs = new LinkedList<AttributeResult>();
-
+  
   public ElementResult(Task task, String tagName, String attributes) {
     theTask = task;
     tag = tagName;
@@ -33,11 +33,11 @@ public abstract class ElementResult {
     // FIXME: Log failure!!
     // System.out.println("Fehler bei den Attributen!");
   }
-
+  
   public boolean allAttributesFound() {
     return attrs.stream().filter(attr -> attr.isFound()).collect(Collectors.counting()) == attrs.size();
   }
-
+  
   protected boolean checkAttributes(WebElement element) {
     boolean attributesFound = true;
     for(String att: attributesToFind) {
@@ -49,22 +49,22 @@ public abstract class ElementResult {
     }
     return attributesFound;
   }
-
+  
   public abstract void evaluate(WebDriver driver);
-
+  
   protected List<WebElement> filterForTagName(List<WebElement> foundElements, String tagName) {
     return foundElements.parallelStream().filter(element -> element.getTagName().equals(tagName))
         .collect(Collectors.toList());
   }
-
+  
   public List<AttributeResult> getAttributes() {
     return attrs;
   }
-
+  
   public String getMessage() {
     return message;
   }
-
+  
   public int getPoints() {
     if(success == Success.NONE)
       return 0;
@@ -73,24 +73,25 @@ public abstract class ElementResult {
     else
       return 1;
   }
-
+  
   public int getPointsMax() {
     return 2;
   }
-
+  
   public Success getSuccess() {
     return success;
   }
-
+  
   public Task getTask() {
     return theTask;
   }
-
+  
   public void setResult(Success suc, String mes) {
     success = suc;
     message += mes;
   }
-
+  
+  @Override
   public String toString() {
     String retString = "";
     if(success == Success.COMPLETE)
@@ -99,8 +100,8 @@ public abstract class ElementResult {
       retString += "o";
     else
       retString += "-";
-    retString += " Tag: " + tag;
+    retString += theTask.exercise.id + "-" + theTask.id + " Tag: " + tag;
     return retString;
   }
-
+  
 }
