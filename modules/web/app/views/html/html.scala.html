@@ -28,11 +28,11 @@
       var id = corrs[i].substring(1, 4);
       var taskDiv = document.getElementById("ex" + id.charAt(0) + "_task" + id.charAt(2));
       if(corrs[i].startsWith("+")) {
-        taskDiv.className = "alert alert-success";
+        taskDiv.className = "panel panel-success";
       } else if(corrs[i].startsWith("-")) {
-        taskDiv.className = "alert alert-danger";
+        taskDiv.className = "panel panel-danger";
       } else {
-        taskDiv.className = "alert alert-warning";
+        taskDiv.className = "panel panel-warning";
       }
     }
     
@@ -87,7 +87,12 @@
         <div class="panel-body">
           <p>@exercise.text</p>
           @for(task <- exercise.tasks) {
-          <div id="ex@{task.exercise.id}_task@task.id" class="well well-sm">- @task.taskDescription</div>
+          <div id="ex@{task.exercise.id}_task@task.id" class="panel panel-default">
+            <div class="panel-heading" data-toggle="collapse" href="#task@task.id">- @task.taskDescription</div>
+            <div id="task@task.id" class="panel-collapse collapse">
+              <div class="panel-body">TODO: Kommentar...</div>
+            </div>
+          </div>
           }
         </div>
         <div class="panel-footer">
