@@ -39,9 +39,11 @@ public class HTML extends Controller {
     String url = "/web/solutions/" + user.getName() + "/html/" + exerciseId;
     List<ElementResult> result = HtmlCorrector.correct(url, exercise, user);
     
-    List<String> results = result.stream().map(res -> res.toString()).collect(Collectors.toList());
+    List<String> results = result.stream().map(res -> res.toJSON()).collect(Collectors.toList());
     
-    return ok(String.join("\n", results));
+    String ret = "{\"results\": [\n    " + String.join(",\n    ", results) + "\n]}";
+    
+    return ok(ret);
   }
   
   @Security.Authenticated(Secured.class)

@@ -10,7 +10,18 @@ import org.openqa.selenium.WebElement;
 public abstract class ElementResult {
   
   public enum Success {
-    COMPLETE, PARTIALLY, NONE;
+    COMPLETE("+"), PARTIALLY("o"), NONE("-");
+    
+    private String jsonRepresentant;
+    
+    private Success(String jsonRep) {
+      jsonRepresentant = jsonRep;
+    }
+    
+    public String getJsonRepresentant() {
+      return this.jsonRepresentant;
+    }
+    
   }
   
   protected Task theTask;
@@ -91,17 +102,20 @@ public abstract class ElementResult {
     message += mes;
   }
   
-  @Override
-  public String toString() {
-    String retString = "";
-    if(success == Success.COMPLETE)
-      retString += "+";
-    else if(success == Success.PARTIALLY)
-      retString += "o";
-    else
-      retString += "-";
-    retString += theTask.exercise.id + "-" + theTask.id + " Tag: " + tag;
-    return retString;
+  public String toJSON() {
+    String json = "{";
+    
+    // Success
+    json += "\"suc\":\"" + success.getJsonRepresentant() + "\", ";
+    
+    // Exercise and Task
+    json += "\"ex\":\"" + theTask.exercise.id + "\", \"task\":\"" + theTask.id + "\",";
+    
+    // Tag
+    json += "\"tag\":\"" + tag + "\"";
+    
+    json += "}";
+    return json;
   }
   
 }

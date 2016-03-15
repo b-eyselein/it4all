@@ -3,6 +3,7 @@
 @main("HTML-Test", user) {
 
 <script src="@controllers.web.routes.Assets.versioned("assets/ace/ace.js")"></script>
+<script src="@controllers.web.routes.Assets.versioned("assets/processor.js")"></script>
 
 <script>
   function testSolution() {
@@ -19,26 +20,6 @@
     xhttp.open("POST", "@serverUrl/web/html/commit/@exercise.id", true);
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhttp.send(parameters);
-  }
-
-  function processCorrection(correction) {
-    
-    var corrs = correction.split("\n");
-    for(i = 0; i < corrs.length; i++) {
-      var id = corrs[i].substring(1, 4);
-      var taskDiv = document.getElementById("ex" + id.charAt(0) + "_task" + id.charAt(2));
-      if(corrs[i].startsWith("+")) {
-        taskDiv.className = "panel panel-success";
-      } else if(corrs[i].startsWith("-")) {
-        taskDiv.className = "panel panel-danger";
-      } else {
-        taskDiv.className = "panel panel-warning";
-      }
-    }
-    
-    // TODO: Update Live-Ansicht
-    var live = document.getElementById("live");
-    live.src = live.src;
   }
 </script>
 
