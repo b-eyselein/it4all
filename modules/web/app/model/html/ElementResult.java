@@ -109,10 +109,13 @@ public abstract class ElementResult {
     json += "\"suc\":\"" + success.getJsonRepresentant() + "\", ";
     
     // Exercise and Task
-    json += "\"ex\":\"" + theTask.exercise.id + "\", \"task\":\"" + theTask.id + "\",";
+    json += "\"ex\":\"" + theTask.exercise.id + "\", \"task\":\"" + theTask.id + "\", ";
     
     // Tag
-    json += "\"tag\":\"" + tag + "\"";
+    json += "\"tag\":\"" + tag + "\", ";
+    
+    // Message
+    json += "\"message\":\"" + message + "\"";
     
     json += "}";
     return json;

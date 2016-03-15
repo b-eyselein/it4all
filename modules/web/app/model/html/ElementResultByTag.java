@@ -20,7 +20,7 @@ public class ElementResultByTag extends ElementResult {
     System.out.println("Looking for Element with tag: " + tag);
     if(foundElements.isEmpty()) {
       System.out.println("\tNo Element found with this tag!");
-      setResult(Success.NONE, "Es wurde kein Element mit dem Tag \"" + tag + "\" gefunden");
+      setResult(Success.NONE, "Es wurde kein Element mit dem Tag '" + tag + "' gefunden");
       return;
     }
     System.out.println("\t" + foundElements.size() + "Elemente gefunden!");

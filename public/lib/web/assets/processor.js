@@ -1,14 +1,14 @@
 function processCorrection(correction) {
   
-  alert(correction);
+  try {
+    var newCorrection = JSON.parse(correction);
+  } catch(err) {
+    alert(err);
+  }
   
-  var newCorrection = JSON.parse(correction);
-  
-  // TODO: entfernen!
-  // var corrs = correction.split("\n");
   for(i = 0; i < newCorrection.results.length; i++) {
     var res = newCorrection.results[i];
-    var taskDiv = document.getElementById("ex" + res.ex + "_task" + res.task);
+    var taskDiv = document.getElementById("pan_ex" + res.ex + "_task" + res.task);
     if(res.suc === "+") {
       taskDiv.className = "panel panel-success";
     } else if(res.suc === "-") {
@@ -18,9 +18,14 @@ function processCorrection(correction) {
     } else {
       alert("Es gab einen Fehler!");
     }
+    
+    var comDiv = document.getElementById("com_ex" + res.ex + "_task" + res.task);
+    comDiv.innerHTML = res.message;
+    
   }
   
-  // TODO: Update Live-Ansicht
+  // TODO: Evtl. Update Live-Ansicht in andere Funktion auslagern
+  // --> andere Aktivierung (onclick Data-toggle?)
   var live = document.getElementById("live");
   live.src = live.src;
 }

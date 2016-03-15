@@ -35,13 +35,13 @@ public class MultiElementResultByName extends ElementResult {
   public void evaluate(WebDriver driver) {
     List<WebElement> foundElements = driver.findElements(By.name(elemName));
     if(foundElements.isEmpty()) {
-      setResult(Success.NONE, "Es wurde kein Element mit dem Namen \"" + elemName + "\" gefunden");
+      setResult(Success.NONE, "Es wurde kein Element mit dem Namen '" + elemName + "' gefunden");
       return;
     }
     
     foundElements = filterForTagName(foundElements, tag);
     if(foundElements.isEmpty()) {
-      setResult(Success.NONE, "Keines der gefundenen Elemente hat den passenden Tag \"" + tag + "\"!");
+      setResult(Success.NONE, "Keines der gefundenen Elemente hat den passenden Tag '" + tag + "'!");
       return;
     }
     
