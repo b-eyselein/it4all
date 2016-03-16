@@ -20,7 +20,28 @@ function processCorrection(correction) {
     }
     
     var comDiv = document.getElementById("com_ex" + res.ex + "_task" + res.task);
-    comDiv.innerHTML = res.message;
+    comDiv.innerHTML = "";
+    // TODO: Use message?
+    // comDiv.innerHTML = res.message;
+    
+    if(res.suc === "-") {
+      // Element wurde nicht gefunden
+      comDiv.innerHTML += "<div class=\"alert alert-danger\">Element konnte nicht gefunden werden!</div>";
+    }
+    
+    for(attCount = 0; attCount < res.attrs.length; attCount++) {
+      var attr = res.attrs[attCount];
+      if(attr.suc === "+") {
+        comDiv.innerHTML += "<div class=\"alert alert-success\">Attribut \"" + attr.key
+            + "\" hat gesuchten Wert.</div>";
+      } else if(attr.suc === "-") {
+        comDiv.innerHTML += "<div class=\"alert alert-danger\">Attribut \"" + attr.key
+            + "\" hat nicht den gesuchten Wert oder konnte nicht gefunden werden!</div>";
+      } else {
+        comDiv.innerHTML += "<div class=\"alert alert-warning\">Es gab einen Fehler beim Suchen des Attributes \""
+            + attr.key + "\"</div>";
+      }
+    }
     
   }
   

@@ -1,7 +1,8 @@
 INSERT INTO html_exercise (`id`, `title`, `text`) VALUES
-  (1, 'Formulare',
-  'Sie sind beauftragt, für die Internetseite einer Werkstatt ein Kontaktformular für die Terminabsprache erstellen.
-  Das Formular (form) soll folgenden Umfang haben:');
+  (1, "Formulare",
+  "Sie sind beauftragt, für die Internetseite einer Werkstatt ein Kontaktformular für die Terminabsprache erstellen.
+  Das Formular (form) soll folgenden Umfang haben:"),
+  (2, "Terminabsprache Werkstatt", "TODO");
   
 INSERT INTO task (`exercise_id`, `id`, `task_Description`, `pts`, `result_type`, `tag_name`, `element_name`, `attributes`) VALUES
 	(1, 1, 'Es soll als Methode „post“ und als Aktion „test“ verwendet werden', 2, 0, 'form', 'form', 'method=post;action=test'),
@@ -13,7 +14,11 @@ INSERT INTO task (`exercise_id`, `id`, `task_Description`, `pts`, `result_type`,
 				'input', 'datum', 'type=date;required=true'),
 	(1, 6, 'Eine Checkbox* (agb), um die AGBs der Seite zu akzeptieren', 2, 0, 'input', 'agb', 'type=checkbox;required=true'),
 	(1, 7, 'Eine Möglichkeit, das Formular zurückzusetzen (reset)', 1, 0, 'input', 'reset', 'type=reset'),
-	(1, 8, 'Eine Möglichkeit, das Formular abzusenden (submit)', 1, 0, 'input', 'submit', 'type=submit');
+	(1, 8, 'Eine Möglichkeit, das Formular abzusenden (submit)', 1, 0, 'input', 'submit', 'type=submit'),
+	(2, 1, 'Erstellen Sie ein Formular, in dem die Daten abgefragt werden. Es soll als Methode "post" und als Aktion "test" verwendet werden.',
+				2, 1, 'form', '', 'method=post;action=test'),
+	(2, 2, 'Ein Namensfeld* (name) für den (kompletten) Namen des Kunden', 2, 0, 'input', 'name', 'type=text;required=true'),
+	(2, 3, 'Ein Datumsfeld* (datum), um einen Wunschtermin anzugeben', 2, 0, 'input', 'datum', 'type=date;required=true');
 	
 INSERT INTO excel_exercise (`id`, `title`, `file_name`) VALUES
 	(1, 'Planung Schullandheimaufenthalt', 'Aufgabe_Schullandheim');

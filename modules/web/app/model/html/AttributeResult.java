@@ -34,4 +34,18 @@ public class AttributeResult {
     return found;
   }
   
+  public String toJSON() {
+    String json = "{";
+    
+    // Success
+    json += "\"suc\":\"" + (found ? "+" : "-") + "\", ";
+    
+    // Key and Value
+    json += "\"key\":\"" + key + "\", ";
+    json += "\"value\":\"" + value + "\"";
+    
+    json += "}";
+    return json;
+  }
+  
 }

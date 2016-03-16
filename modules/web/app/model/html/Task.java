@@ -32,7 +32,7 @@ public class Task extends Model {
     case NAME:
       return new ElementResultByName(this, tagName, elementName, attributes);
     case TAG:
-      return new ElementResultByTag(this, tagName, "name=elementName;" + attributes);
+      return new ElementResultByTag(this, tagName, attributes);
     case MULTINAME:
       String[] attrs = attributes.split("#");
       return new MultiElementResultByName(this, tagName, elementName, attrs[0], attrs[1]);

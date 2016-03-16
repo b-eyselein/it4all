@@ -41,9 +41,9 @@ public class HTML extends Controller {
     
     List<String> results = result.stream().map(res -> res.toJSON()).collect(Collectors.toList());
     
-    String ret = "{\"results\": [\n    " + String.join(",\n    ", results) + "\n]}";
+    String json = "{\"results\": [\n\t" + String.join(",\n\t", results) + "\n]}";
     
-    return ok(ret);
+    return ok(json);
   }
   
   @Security.Authenticated(Secured.class)
