@@ -8,8 +8,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import controllers.core.UserControl;
-import controllers.core.Util;
 import model.html.ElementResult;
 import model.html.HtmlCorrector;
 import model.html.HtmlExercise;
@@ -23,6 +21,9 @@ import play.twirl.api.Html;
 import views.html.html.html;
 import views.html.html.htmlcorrect;
 import views.html.html.htmloverview;
+
+import controllers.core.UserControl;
+import controllers.core.Util;
 
 public class HTML extends Controller {
   
@@ -42,8 +43,7 @@ public class HTML extends Controller {
     List<String> results = result.stream().map(res -> res.toJSON()).collect(Collectors.toList());
     
     String json = "{\"results\": [\n\t" + String.join(",\n\t", results) + "\n]}";
-    
-    return ok(json);
+    return ok(json).as("application/json");
   }
   
   @Security.Authenticated(Secured.class)

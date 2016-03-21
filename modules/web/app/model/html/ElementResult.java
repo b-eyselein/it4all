@@ -121,7 +121,8 @@ public abstract class ElementResult {
     if(!attrs.isEmpty()) {
       List<String> attrJSONs = attrs.stream().map(attr -> attr.toJSON()).collect(Collectors.toList());
       json += ",\n\t\"attrs\": [\n\t\t" + String.join(",\n\t\t", attrJSONs) + "\n\t]";
-    }
+    } else
+      json += ",\n\t\"attrs\": []";
     
     json += "}";
     
