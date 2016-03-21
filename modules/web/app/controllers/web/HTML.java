@@ -32,18 +32,21 @@ public class HTML extends Controller {
   @Security.Authenticated(Secured.class)
   public Result commit(int exerciseId) {
     User user = UserControl.getUser();
-    HtmlExercise exercise = HtmlExercise.finder.byId(exerciseId);
     
     String learnerSolution = request().body().asFormUrlEncoded().get("editorContent")[0];
     saveSolutionForUser(user.getName(), learnerSolution, exerciseId);
     
-    String url = "/web/solutions/" + user.getName() + "/html/" + exerciseId;
+    String json = correctExercise(user, HtmlExercise.finder.byId(exerciseId));
+    return ok(json).as("application/json");
+  }
+  
+  private String correctExercise(User user, HtmlExercise exercise) {
+    String url = "/web/solutions/" + user.getName() + "/html/" + exercise.id;
     List<ElementResult> result = HtmlCorrector.correct(url, exercise, user);
     
     List<String> results = result.stream().map(res -> res.toJSON()).collect(Collectors.toList());
     
-    String json = "{\"results\": [\n\t" + String.join(",\n\t", results) + "\n]}";
-    return ok(json).as("application/json");
+    return "{\"results\": [\n\t" + String.join(",\n\t", results) + "\n]}";
   }
   
   @Security.Authenticated(Secured.class)
@@ -60,7 +63,6 @@ public class HTML extends Controller {
     return ok(htmloverview.render(HtmlExercise.finder.all(), UserControl.getUser()));
   }
   
-  @Security.Authenticated(Secured.class)
   private void saveSolutionForUser(String user, String solution, int exercise) {
     try {
       if(!Files.exists(Util.getSolDirForUser(user)))
