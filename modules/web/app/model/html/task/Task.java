@@ -1,10 +1,11 @@
 package model.html.task;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import model.html.HtmlExercise;
@@ -16,11 +17,12 @@ import com.avaje.ebean.Model;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class Task extends Model {
   
-  @Id
-  public int id;
+  @EmbeddedId
+  public TaskKey id;
   
-  @Column(name = "exerciseId")
+  // @Column(name = "exerciseId")
   @ManyToOne
+  @JoinColumn(name = "exerciseId", insertable = false, updatable = false)
   public HtmlExercise exercise;
   
   @Column(name = "taskDesc")
@@ -30,7 +32,7 @@ public abstract class Task extends Model {
   public String tagName;
   
   public String attributes;
-
+  
   public abstract ElementResult<? extends Task> getElementResult();
   
 }
