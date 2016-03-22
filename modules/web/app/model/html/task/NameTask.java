@@ -10,13 +10,13 @@ import model.html.result.NameResult;
 @Entity
 @DiscriminatorValue("name")
 public class NameTask extends Task {
-
+  
   @Column(name = "elemName")
   public String elemName;
-
+  
   @Override
-  public ElementResult getElementResult() {
+  public ElementResult<? extends Task> getElementResult() {
     return new NameResult(this, tagName, elemName, attributes);
   }
-
+  
 }
