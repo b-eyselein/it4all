@@ -1,10 +1,13 @@
-package model.html;
+package model.html.result;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import model.html.ElementResult.Success;
+import model.html.result.ElementResult;
+import model.html.task.Task;
 
 import org.junit.Before;
 import org.junit.Test;

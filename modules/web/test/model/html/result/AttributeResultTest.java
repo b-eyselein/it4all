@@ -1,4 +1,4 @@
-package model.html;
+package model.html.result;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertFalse;
@@ -7,6 +7,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import model.html.result.AttributeResult;
 
 import org.junit.Test;
 import org.openqa.selenium.WebElement;

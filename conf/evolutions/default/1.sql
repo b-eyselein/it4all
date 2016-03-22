@@ -47,11 +47,11 @@ create table grading (
   constraint pk_grading primary key (id))
 ;
 
-create table html_exercise (
+create table htmlexercise (
   id                        integer auto_increment not null,
   title                     varchar(255),
   text                      varchar(255),
-  constraint pk_html_exercise primary key (id))
+  constraint pk_htmlexercise primary key (id))
 ;
 
 create table js_exercise (
@@ -83,27 +83,26 @@ create table student (
 ;
 
 create table task (
+  dtype                     varchar(10) not null,
   id                        integer auto_increment not null,
   exercise_id               integer,
-  task_description          varchar(255),
-  pts                       integer,
-  result_type               integer,
-  tag_name                  varchar(255),
-  element_name              varchar(255),
+  taskDesc                  varchar(255),
+  tagName                   varchar(255),
   attributes                varchar(255),
-  constraint ck_task_result_type check (result_type in (0,1,2)),
+  elemName                  varchar(255),
+  title                     varchar(255),
   constraint pk_task primary key (id))
 ;
 
 alter table grading add constraint fk_grading_student_1 foreign key (student_name) references student (name) on delete restrict on update restrict;
 create index ix_grading_student_1 on grading (student_name);
-alter table grading add constraint fk_grading_exercise_2 foreign key (exercise_id) references html_exercise (id) on delete restrict on update restrict;
+alter table grading add constraint fk_grading_exercise_2 foreign key (exercise_id) references htmlexercise (id) on delete restrict on update restrict;
 create index ix_grading_exercise_2 on grading (exercise_id);
 alter table js_test add constraint fk_js_test_exercise_3 foreign key (exercise_id) references js_exercise (id) on delete restrict on update restrict;
 create index ix_js_test_exercise_3 on js_test (exercise_id);
 alter table js_testvalue add constraint fk_js_testvalue_test_4 foreign key (test_id) references js_test (id) on delete restrict on update restrict;
 create index ix_js_testvalue_test_4 on js_testvalue (test_id);
-alter table task add constraint fk_task_exercise_5 foreign key (exercise_id) references html_exercise (id) on delete restrict on update restrict;
+alter table task add constraint fk_task_exercise_5 foreign key (exercise_id) references htmlexercise (id) on delete restrict on update restrict;
 create index ix_task_exercise_5 on task (exercise_id);
 
 
@@ -120,7 +119,7 @@ drop table feedback;
 
 drop table grading;
 
-drop table html_exercise;
+drop table htmlexercise;
 
 drop table js_exercise;
 

@@ -1,4 +1,4 @@
-package model.html;
+package model.html.result;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertNotNull;
@@ -9,13 +9,17 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collections;
 
+import model.html.result.ElementResult;
+import model.html.result.MultiNameResult;
+import model.html.task.Task;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class MultiElementResultByNameTest {
+public class MultiNameResultTest {
   
   private static final String ELEMENT_NAME = "test_name";
   
@@ -64,7 +68,7 @@ public class MultiElementResultByNameTest {
   public void testElementWithAllAttributes() {
     when(webDriver.findElements(By.name(ELEMENT_NAME))).thenReturn(Arrays.asList(element1, element2, element3));
     
-    MultiElementResultByName result = new MultiElementResultByName(TASK, TAG_NAME, ELEMENT_NAME, COMMON_ATTRIBUTES,
+    MultiNameResult result = new MultiNameResult(TASK, TAG_NAME, ELEMENT_NAME, COMMON_ATTRIBUTES,
         DEFINING_ATTRIBUTES);
     assertNotNull(result);
     result.evaluate(webDriver);
@@ -76,7 +80,7 @@ public class MultiElementResultByNameTest {
   public void testElementWithEmptyCOMMONAttributes() {
     when(webDriver.findElements(By.name(ELEMENT_NAME))).thenReturn(Arrays.asList(element1, element2, element3));
     
-    MultiElementResultByName result = new MultiElementResultByName(TASK, TAG_NAME, ELEMENT_NAME, COMMON_ATTRIBUTES
+    MultiNameResult result = new MultiNameResult(TASK, TAG_NAME, ELEMENT_NAME, COMMON_ATTRIBUTES
         + ";abcde;", DEFINING_ATTRIBUTES);
     assertNotNull(result);
     result.evaluate(webDriver);
@@ -87,7 +91,7 @@ public class MultiElementResultByNameTest {
   @Test(expected = IllegalArgumentException.class)
   public void testElementWithOutAttributes() {
     when(webDriver.findElements(By.name(ELEMENT_NAME))).thenReturn(Arrays.asList(element1, element2));
-    new MultiElementResultByName(TASK, TAG_NAME, ELEMENT_NAME, "", "");
+    new MultiNameResult(TASK, TAG_NAME, ELEMENT_NAME, "", "");
   }
   
   @Test
@@ -96,7 +100,7 @@ public class MultiElementResultByNameTest {
     when(element2.getAttribute(ATT_2_KEY)).thenReturn(ATT_2_VALUE_FALSE);
     when(webDriver.findElements(By.name(ELEMENT_NAME))).thenReturn(Arrays.asList(element1, element2));
     
-    MultiElementResultByName result = new MultiElementResultByName(TASK, TAG_NAME, ELEMENT_NAME, COMMON_ATTRIBUTES,
+    MultiNameResult result = new MultiNameResult(TASK, TAG_NAME, ELEMENT_NAME, COMMON_ATTRIBUTES,
         DEFINING_ATTRIBUTES);
     assertNotNull(result);
     result.evaluate(webDriver);
@@ -108,7 +112,7 @@ public class MultiElementResultByNameTest {
   public void testNoElementsWithMatchingName() {
     when(webDriver.findElements(By.name(ELEMENT_NAME))).thenReturn(Collections.emptyList());
     
-    MultiElementResultByName result = new MultiElementResultByName(TASK, TAG_NAME, ELEMENT_NAME, COMMON_ATTRIBUTES,
+    MultiNameResult result = new MultiNameResult(TASK, TAG_NAME, ELEMENT_NAME, COMMON_ATTRIBUTES,
         DEFINING_ATTRIBUTES);
     result.evaluate(webDriver);
     
@@ -126,7 +130,7 @@ public class MultiElementResultByNameTest {
     when(element3.getTagName()).thenReturn(TAG_NAME_FALSE);
     when(webDriver.findElements(By.name(ELEMENT_NAME))).thenReturn(Arrays.asList(element1, element2, element3));
     
-    MultiElementResultByName result = new MultiElementResultByName(TASK, TAG_NAME, ELEMENT_NAME, COMMON_ATTRIBUTES,
+    MultiNameResult result = new MultiNameResult(TASK, TAG_NAME, ELEMENT_NAME, COMMON_ATTRIBUTES,
         DEFINING_ATTRIBUTES);
     result.evaluate(webDriver);
     
@@ -140,7 +144,7 @@ public class MultiElementResultByNameTest {
   public void testNotEnoughElementsWithDEFININGAttributes() {
     when(webDriver.findElements(By.name(ELEMENT_NAME))).thenReturn(Arrays.asList(element1, element2));
     
-    MultiElementResultByName result = new MultiElementResultByName(TASK, TAG_NAME, ELEMENT_NAME, COMMON_ATTRIBUTES,
+    MultiNameResult result = new MultiNameResult(TASK, TAG_NAME, ELEMENT_NAME, COMMON_ATTRIBUTES,
         DEFINING_ATTRIBUTES);
     assertNotNull(result);
     result.evaluate(webDriver);

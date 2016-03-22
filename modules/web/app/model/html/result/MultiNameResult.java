@@ -1,20 +1,22 @@
-package model.html;
+package model.html.result;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import model.html.task.MultiNameTask;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class MultiElementResultByName extends ElementResult {
+public class MultiNameResult extends ElementResult<MultiNameTask> {
   
   private List<String> defining_Attributes = new LinkedList<String>();
   private String elemName;
   private HashMap<String, WebElement> singleResults;
   
-  public MultiElementResultByName(Task task, String tagName, String elementName, String commonAttributes,
+  public MultiNameResult(MultiNameTask task, String tagName, String elementName, String commonAttributes,
       String differentAttributes) {
     super(task, tagName, commonAttributes);
     elemName = elementName;
@@ -39,9 +41,9 @@ public class MultiElementResultByName extends ElementResult {
       return;
     }
     
-    foundElements = filterForTagName(foundElements, tag);
+    foundElements = filterForTagName(foundElements, task.tagName);
     if(foundElements.isEmpty()) {
-      setResult(Success.NONE, "Keines der gefundenen Elemente hat den passenden Tag '" + tag + "'!");
+      setResult(Success.NONE, "Keines der gefundenen Elemente hat den passenden Tag '" + task.tagName + "'!");
       return;
     }
     

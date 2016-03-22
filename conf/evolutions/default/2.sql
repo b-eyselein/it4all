@@ -1,3 +1,13 @@
-insert into js_exercise values
-	(1, "Implementieren Sie folgende Funktion 'sum', die zwei Zahlen entegennimmt und deren Summe zurückgibt.", "function sum(a, b) {\n  return 0;\n}", "sum"),
-	(2, "Implementieren Sie die folgende Funktion 'concat', die drei beliebige Strings entgegennimmt und die Konkatenation der Strings zurückgibt.", "function concat(str1, str2, str3) {\n  return \"\";\n}", "concat");
+# --- !Ups
+
+insert into student values
+	("s319286") on duplicate key update name = "s319286";
+
+insert into htmlexercise values
+	(1, "Terminabsprache Werkstatt", "TODO") on duplicate key update id = 1;
+
+insert into task values
+	("name", 1, 1, "taskDesc", "attrs", "elemname", "tagname", "title");
+	
+# --- !Downs
+
