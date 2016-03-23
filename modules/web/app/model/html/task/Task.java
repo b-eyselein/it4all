@@ -16,23 +16,22 @@ import com.avaje.ebean.Model;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class Task extends Model {
-  
+
   @EmbeddedId
-  public TaskKey id;
-  
-  // @Column(name = "exerciseId")
+  public TaskKey taskCompositeId;
+
   @ManyToOne
   @JoinColumn(name = "exerciseId", insertable = false, updatable = false)
   public HtmlExercise exercise;
-  
+
   @Column(name = "taskDesc")
   public String taskDescription;
-  
+
   @Column(name = "tagName")
   public String tagName;
-  
+
   public String attributes;
-  
+
   public abstract ElementResult<? extends Task> getElementResult();
-  
+
 }

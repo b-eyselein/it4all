@@ -151,5 +151,10 @@ public class MultiNameResultTest {
     assertNotNull(result);
     assertThat(result.getSuccess(), equalTo(ElementResult.Success.PARTIALLY));
   }
+
+  @Test
+  public void testEvaluate() throws Exception {
+    throw new RuntimeException("not yet implemented");
+  }
   
 }

@@ -1,6 +1,5 @@
 package model.html.result;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,38 +26,13 @@ public abstract class ElementResult<TaskType extends Task> {
   }
 
   protected TaskType task;
-
-  // protected String tag;
   protected Success success = Success.NONE;
 
-  protected String message = "";
-  protected List<String> attributesToFind = new LinkedList<String>();
-
-  protected List<AttributeResult> attrs = new LinkedList<AttributeResult>();
-
-  public ElementResult(TaskType task, String tagName, String attributes) {
-    this.task = task;
-    for(String attribute: attributes.split(";"))
-      if(!attribute.isEmpty() && attribute.contains("="))
-        attributesToFind.add(attribute);
-    // else
-    // FIXME: Log failure!!
-    // System.out.println("Fehler bei den Attributen!");
+  public ElementResult(TaskType theTask) {
+    task = theTask;
   }
 
-  public boolean allAttributesFound() {
-    return attrs.stream().filter(attr -> attr.isFound()).collect(Collectors.counting()) == attrs.size();
-  }
-
-  public abstract void evaluate(WebDriver driver);
-
-  public List<AttributeResult> getAttributes() {
-    return attrs;
-  }
-
-  public String getMessage() {
-    return message;
-  }
+  public abstract Success evaluate(WebDriver driver);
 
   public int getPoints() {
     if(success == Success.NONE)
@@ -69,10 +43,6 @@ public abstract class ElementResult<TaskType extends Task> {
       return 1;
   }
 
-  public int getPointsMax() {
-    return 2;
-  }
-
   public Success getSuccess() {
     return success;
   }
@@ -81,53 +51,63 @@ public abstract class ElementResult<TaskType extends Task> {
     return task;
   }
 
-  public void setResult(Success suc, String mes) {
+  public void setResult(Success suc) {
     success = suc;
-    message += mes;
   }
 
   public String toJSON() {
     String json = "{";
 
     // Success
-    json += "\"suc\":\"" + success.getJsonRepresentant() + "\", ";
+    json += "\n\t" + "\"suc\": \"" + success.getJsonRepresentant() + "\"" + ", ";
 
-    // Exercise and Task
-    json += "\"ex\":\"" + task.exercise.id + "\", \"task\":\"" + task.id + "\", ";
+    // Exercise
+    json += "\n\t" + "\"ex\": " + task.taskCompositeId.exerciseid + ",";
 
-    // Tag!!
-    json += "\"tag\":\"" + task.tagName + "\", ";
+    // Task
+    json += " " + "\"task\": " + task.taskCompositeId.id + ",";
 
-    // Message
-    json += "\"message\":\"" + message + "\"";
+    // Messages
+    List<String> messages = getMessagesAsJson();
+    json = addMessagesToJson(json, messages);
 
     // Attributes
+    
+    List<String> attrs = getAttributesAsJson();
+    json += ",";
     if(!attrs.isEmpty()) {
-      List<String> attrJSONs = attrs.stream().map(attr -> attr.toJSON()).collect(Collectors.toList());
-      json += ",\n\t\"attrs\": [\n\t\t" + String.join(",\n\t\t", attrJSONs) + "\n\t]";
+      json += "\n\t\"attrs\": [\n\t\t" + String.join(",\n\t\t", attrs) + "\n\t]";
     } else
-      json += ",\n\t\"attrs\": []";
+      json += "\n\t\"attrs\": []";
 
-    json += "}";
+    json += "\n}";
 
     return json;
   }
 
-  protected boolean checkAttributes(WebElement element) {
-    boolean attributesFound = true;
-    for(String att: attributesToFind) {
-      String key = att.split("=")[0], value = att.split("=")[1];
-      AttributeResult result = new AttributeResult(element, key, value);
-      if(!result.isFound())
-        attributesFound = false;
-      attrs.add(new AttributeResult(element, key, value));
+  private String addMessagesToJson(String json, List<String> messages) {
+    json += "\n\t";
+    json += "\"messages\": [";
+    for(int i = 0; i < messages.size(); i++) {
+      json += "\n\t\t";
+      json += messages.get(i);
+
+      if(i == messages.size() - 1)
+        json += "\n\t";
+      else
+        json += ",";
     }
-    return attributesFound;
+    json += "]";
+    return json;
   }
 
   protected List<WebElement> filterForTagName(List<WebElement> foundElements, String tagName) {
     return foundElements.parallelStream().filter(element -> element.getTagName().equals(tagName))
         .collect(Collectors.toList());
   }
+
+  protected abstract List<String> getAttributesAsJson();
+
+  protected abstract List<String> getMessagesAsJson();
 
 }

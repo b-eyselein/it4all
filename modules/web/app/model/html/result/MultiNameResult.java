@@ -1,5 +1,6 @@
 package model.html.result;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,16 +11,13 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class MultiNameResult extends ElementResult<MultiNameTask> {
+public class MultiNameResult extends ElementResultWithAttributes<MultiNameTask> {
   
   private List<String> defining_Attributes = new LinkedList<String>();
-  private String elemName;
   private HashMap<String, WebElement> singleResults;
   
-  public MultiNameResult(MultiNameTask task, String tagName, String elementName, String commonAttributes,
-      String differentAttributes) {
-    super(task, tagName, commonAttributes);
-    elemName = elementName;
+  public MultiNameResult(MultiNameTask task, String commonAttributes, String differentAttributes) {
+    super(task);
     
     for(String attribute: differentAttributes.split(";"))
       if(attribute.contains("="))
@@ -34,18 +32,14 @@ public class MultiNameResult extends ElementResult<MultiNameTask> {
   }
   
   @Override
-  public void evaluate(WebDriver driver) {
-    List<WebElement> foundElements = driver.findElements(By.name(elemName));
-    if(foundElements.isEmpty()) {
-      setResult(Success.NONE, "Es wurde kein Element mit dem Namen '" + elemName + "' gefunden");
-      return;
-    }
+  public Success evaluate(WebDriver driver) {
+    List<WebElement> foundElements = driver.findElements(By.name(task.elemName));
+    if(foundElements.isEmpty())
+      return Success.NONE;
     
     foundElements = filterForTagName(foundElements, task.tagName);
-    if(foundElements.isEmpty()) {
-      setResult(Success.NONE, "Keines der gefundenen Elemente hat den passenden Tag '" + task.tagName + "'!");
-      return;
-    }
+    if(foundElements.isEmpty())
+      return Success.NONE;
     
     // TODO: Stelle sicher, dass alle gefundenen Elemente alle Common-Attribute
     // besitzen
@@ -55,23 +49,37 @@ public class MultiNameResult extends ElementResult<MultiNameTask> {
     // Stelle sicher, dass alle Elemente jeweils ein Different-Attribut
     // enthalten
     for(String attribute: defining_Attributes) {
-      for(WebElement element: foundElements) {
-        String key = attribute.split("=")[0], value = attribute.split("=")[1];
-        AttributeResult attributeResult = new AttributeResult(element, key, value);
-        if(attributeResult.isFound()) {
-          attrs.add(new AttributeResult(element, key, value));
-          singleResults.put(attribute, element);
-        }
-      }
+      // for(WebElement element: foundElements) {
+      // String key = attribute.split("=")[0], value = attribute.split("=")[1];
+      // AttributeResult attributeResult = new AttributeResult(element, key,
+      // value);
+      // if(attributeResult.isFound()) {
+      // attrs.add(new AttributeResult(element, key, value));
+      // singleResults.put(attribute, element);
+      // }
+      // }
     }
     
     if(singleResults.size() == defining_Attributes.size())
-      setResult(Success.COMPLETE, "TODO");
+      return Success.COMPLETE;
     else if(singleResults.size() > 0)
-      setResult(Success.PARTIALLY, "TODO");
+      return Success.PARTIALLY;
     else
-      setResult(Success.NONE, "TODO");
+      return Success.NONE;
     
+  }
+  
+  @Override
+  protected List<String> getAttributesAsJson() {
+    // TODO Auto-generated method stub
+    List<String> retList = new LinkedList<String>();
+    return retList;
+  }
+  
+  @Override
+  protected List<String> getMessagesAsJson() {
+    // TODO Auto-generated method stub
+    return Collections.emptyList();
   }
   
 }

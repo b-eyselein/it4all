@@ -4,22 +4,20 @@ import org.openqa.selenium.WebElement;
 
 public class AttributeResult {
   
-  private WebElement element;
   private String key;
   private String value;
   
   private boolean found;
   
-  public AttributeResult(WebElement webElement, String attributeName, String attributeValue) {
-    element = webElement;
+  public AttributeResult(String attributeName, String attributeValue) {
     key = attributeName;
     value = attributeValue;
-    evaluate();
   }
   
-  private void evaluate() {
+  public boolean evaluate(WebElement element) {
     String foundAttribute = element.getAttribute(key);
     found = foundAttribute != null && foundAttribute.equals(value);
+    return found;
   }
   
   public String getAttributeName() {

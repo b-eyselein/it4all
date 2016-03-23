@@ -1,6 +1,9 @@
 package model.html.result;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import model.html.task.NameTask;
 
@@ -8,42 +11,55 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class NameResult extends ElementResult<NameTask> {
-
+public class NameResult extends ElementResultWithAttributes<NameTask> {
+  
   private boolean rightTagName = false;
-
-  public NameResult(NameTask task, String tagName, String elementName, String attributes) {
-    super(task, tagName, attributes);
+  
+  public NameResult(NameTask task) {
+    super(task);
   }
-
+  
   @Override
-  public void evaluate(WebDriver driver) {
+  public Success evaluate(WebDriver driver) {
     List<WebElement> foundElements = driver.findElements(By.name(task.elemName));
-    if(foundElements.isEmpty()) {
-      setResult(Success.NONE, "Es wurde kein Element mit dem Namen '" + task.elemName + "' gefunden");
-      return;
-    }
-
+    if(foundElements.isEmpty())
+      return Success.NONE;
+    
     foundElements = filterForTagName(foundElements, task.tagName);
-    if(foundElements.isEmpty()) {
-      setResult(Success.NONE, "Keines der gefundenen Elemente hat den passenden Tag '" + task.tagName + "'!");
-      return;
-    }
-
+    if(foundElements.isEmpty())
+      return Success.NONE;
+    
     rightTagName = true;
-
-    if(foundElements.size() > 1)
-      message = "Es wurde mehr als 1 Element mit passendem Namen und passendem Tag gefunden. Verwende das erste für weitere Korrektur. ";
+    
+    // FIXME!
+    // if(foundElements.size() > 1)
+    
     WebElement element = foundElements.get(0);
-
+    
     if(checkAttributes(element))
-      setResult(Success.COMPLETE, "Alle Attribute wurden gefunden.");
+      return Success.COMPLETE;
     else
-      setResult(Success.PARTIALLY, "Mindestens 1 Attribut wurde nicht gefunden!");
-
+      return Success.PARTIALLY;
+    
   }
-
+  
   public boolean rightTagNameWasUsed() {
     return rightTagName;
+  }
+  
+  @Override
+  protected List<String> getAttributesAsJson() {
+    if(attributesToFind.isEmpty())
+      return Collections.emptyList();
+    else
+      return attributesToFind.parallelStream().map(attrRes -> attrRes.toJSON()).collect(Collectors.toList());
+  }
+  
+  @Override
+  protected List<String> getMessagesAsJson() {
+    if(success == Success.NONE)
+      return Arrays.asList("{\"suc\": \"-\", \"mes\": \"Element wurde nicht gefunden!\"}");
+    else
+      return Arrays.asList("{\"suc\": \"+\", \"mes\": \"Element wurde gefunden.\"}");
   }
 }

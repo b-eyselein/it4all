@@ -9,11 +9,11 @@ import model.html.result.TagResult;
 @Entity
 @DiscriminatorValue("tag")
 public class TagTask extends Task {
-  
+
   @Override
   public ElementResult<? extends Task> getElementResult() {
     // TODO Auto-generated method stub
-    return new TagResult(this, tagName, attributes);
+    return new TagResult(this);
   }
-  
+
 }

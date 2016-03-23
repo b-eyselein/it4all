@@ -69,11 +69,13 @@
           <div class="panel-body">
             <p>@exercise.text</p>
             @for(task <- exercise.tasks) {
-            <div id="pan_task@task.id" class="panel panel-default">
-              <div class="panel-heading" data-toggle="collapse" href="#task@task.id">- @task.taskDescription 
-              <span class="glyphicon glyphicon-chevron-down pull-right"></span></div>
-              <div id="task@task.id" class="panel-collapse collapse">
-                <div class="panel-body" id="com_ex@{task.exercise.id}_task@task.id">TODO: Kommentar...</div>
+            <div id="pan_task@task.taskCompositeId.id" class="panel panel-default">
+              <div class="panel-heading" data-toggle="collapse" href="#task@task.taskCompositeId.id">
+                @task.taskDescription 
+                <span class="glyphicon glyphicon-chevron-down pull-right" id="chev@task.taskCompositeId.id"></span>
+              </div>
+              <div id="task@task.taskCompositeId.id" class="panel-collapse collapse">
+                <div class="panel-body" id="com_ex@{task.taskCompositeId.exerciseid}_task@task.taskCompositeId.id">TODO: Kommentar...</div>
               </div>
             </div>
             }
