@@ -19,7 +19,7 @@ function processCorrection(correction) {
         alert("Es gab einen Fehler!");
       }
       
-      var comDiv = document.getElementById("com_ex" + res.ex + "_task" + res.task);
+      var comDiv = document.getElementById("com_task" + res.task);
       comDiv.innerHTML = "";
       
       var messages = res.messages;

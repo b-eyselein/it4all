@@ -11,7 +11,7 @@ public class TaskKey implements Serializable {
 
   public int id;
 
-  public int exerciseid;
+  public int exerciseId;
 
   @Override
   public boolean equals(Object other) {
@@ -19,11 +19,11 @@ public class TaskKey implements Serializable {
       return false;
 
     TaskKey otherKey = (TaskKey) other;
-    return otherKey.id == id && otherKey.exerciseid == exerciseid;
+    return otherKey.id == id && otherKey.exerciseId == exerciseId;
   }
 
   @Override
   public int hashCode() {
-    return 1000 * exerciseid + id;
+    return 1000 * exerciseId + id;
   }
 }

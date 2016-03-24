@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -28,11 +29,12 @@ public class HtmlExercise extends Model {
   public String title;
 
   @Required
+  @Column(length = 1000)
   public String text;
 
   @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
   public List<Task> tasks;
-  
+
   public List<ElementResult<? extends Task>> getElementResults() {
     // FIXME: implement!
     return tasks.parallelStream().map(task -> task.getElementResult()).collect(Collectors.toList());

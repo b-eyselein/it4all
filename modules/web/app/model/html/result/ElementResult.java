@@ -10,21 +10,6 @@ import org.openqa.selenium.WebElement;
 
 public abstract class ElementResult<TaskType extends Task> {
 
-  public enum Success {
-    COMPLETE("+"), PARTIALLY("o"), NONE("-");
-
-    private String jsonRepresentant;
-
-    private Success(String jsonRep) {
-      jsonRepresentant = jsonRep;
-    }
-
-    public String getJsonRepresentant() {
-      return this.jsonRepresentant;
-    }
-
-  }
-
   protected TaskType task;
   protected Success success = Success.NONE;
 
@@ -62,17 +47,17 @@ public abstract class ElementResult<TaskType extends Task> {
     json += "\n\t" + "\"suc\": \"" + success.getJsonRepresentant() + "\"" + ", ";
 
     // Exercise
-    json += "\n\t" + "\"ex\": " + task.taskCompositeId.exerciseid + ",";
+    json += "\n\t" + "\"ex\": " + task.key.exerciseId + ",";
 
     // Task
-    json += " " + "\"task\": " + task.taskCompositeId.id + ",";
+    json += " " + "\"task\": " + task.key.id + ",";
 
     // Messages
     List<String> messages = getMessagesAsJson();
     json = addMessagesToJson(json, messages);
 
     // Attributes
-    
+
     List<String> attrs = getAttributesAsJson();
     json += ",";
     if(!attrs.isEmpty()) {
