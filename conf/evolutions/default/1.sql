@@ -92,7 +92,7 @@ create table student (
 ;
 
 create table task (
-  dtype                     varchar(10) not null,
+  tasktype                  varchar(31) not null,
   id                        integer,
   exercise_id               integer,
   taskDesc                  varchar(255),

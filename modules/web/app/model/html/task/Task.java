@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
@@ -26,6 +27,7 @@ import com.avaje.ebean.Model;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "taskType")
 public abstract class Task extends Model {
 
   public static final String SPLIT_CHARACTER = ":";

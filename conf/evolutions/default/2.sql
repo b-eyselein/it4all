@@ -9,7 +9,7 @@ insert into htmlexercise values
 	Die Werkstatt kann nur Modelle der Marken Audi, Seat, Skoda und VW reparieren.
 	Ihre Firma beschließt, zuerst einen statischen Seitenprototyp mit verminderter Funktion zu erstellen. Benutzen Sie nur Html, um folgende Elemente zu erstellen. Versuchen Sie jedoch so viel Funktionalität wie möglich umzusetzen, indem Sie entsprechende Elemente bzw. Attribute von Html5 verwenden! Elemente, die mit einem „*“ markiert sind, sollen zur Formularabsendung eingegeben werden müssen.");
 	
-insert into task (`dtype`, `exercise_id`, `id`, `taskDesc`, `tagName`, `attributes`, `elemName`, `title`) values
+insert into task (`taskType`, `exercise_id`, `id`, `taskDesc`, `tagName`, `attributes`, `elemName`, `title`) values
 	("title", 1, 1, "Der Titel der Seite soll 'Kontaktformular Werkstatt' lauten.", "", "", "", "Kontaktformular Werkstatt"),
 	
 	("tag", 1, 2, "Erstellen Sie ein Formular auf der Seite. Als Aktion soll test und als Methode 'post' angegeben werden.",
