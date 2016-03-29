@@ -1,23 +1,20 @@
 package model.html.result;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import model.html.task.Task;
-
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
 public abstract class ElementResult<TaskType extends Task> {
 
   protected TaskType task;
   protected Success success = Success.NONE;
+  protected List<AttributeResult> attributeResults;
 
-  public ElementResult(TaskType theTask) {
+  public ElementResult(TaskType theTask, Success theSuccess, List<AttributeResult> theAttributeResults) {
     task = theTask;
+    success = theSuccess;
+    attributeResults = theAttributeResults;
   }
-
-  public abstract Success evaluate(WebDriver driver);
 
   public int getPoints() {
     if(success == Success.NONE)
@@ -84,11 +81,6 @@ public abstract class ElementResult<TaskType extends Task> {
     }
     json += "]";
     return json;
-  }
-
-  protected List<WebElement> filterForTagName(List<WebElement> foundElements, String tagName) {
-    return foundElements.parallelStream().filter(element -> element.getTagName().equals(tagName))
-        .collect(Collectors.toList());
   }
 
   protected abstract List<String> getAttributesAsJson();

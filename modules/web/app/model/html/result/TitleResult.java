@@ -6,27 +6,10 @@ import java.util.List;
 
 import model.html.task.TitleTask;
 
-import org.openqa.selenium.WebDriver;
-
 public class TitleResult extends ElementResult<TitleTask> {
 
-  private String title;
-
-  public TitleResult(TitleTask task, String theTitle) {
-    super(task);
-    title = theTitle;
-  }
-
-  @Override
-  public Success evaluate(WebDriver driver) {
-    // TODO: evtl. ueber driver.findElement(By.tag("title")), um genauere
-    // Meldung hinzubekommen?
-    if(driver.getTitle() == null || driver.getTitle().isEmpty())
-      return Success.NONE;
-    else if(driver.getTitle().equals(title))
-      return Success.COMPLETE;
-    else
-      return Success.PARTIALLY;
+  public TitleResult(TitleTask task, Success success) {
+    super(task, success, Collections.emptyList());
   }
 
   @Override

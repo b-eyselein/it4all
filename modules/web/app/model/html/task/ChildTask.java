@@ -1,4 +1,4 @@
-package model.html.result;
+package model.html.task;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -8,6 +8,7 @@ import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import model.html.result.ChildResult;
 import model.html.task.ChildTaskKey;
 import model.html.task.Task;
 

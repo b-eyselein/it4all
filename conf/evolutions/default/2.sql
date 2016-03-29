@@ -3,6 +3,7 @@
 insert into student values
 	("s319286");
 	
+	
 insert into htmlexercise values
 	(1, "Terminabsprache Werkstatt", "Ihre Firma für Webdesign ist von einer lokalen Werkstatt beauftragt worden, ein Kontaktformular für die Absprache eines Termins zu erstellen. Die Kunden sollen in einem Formular ihre Daten (Namen, Adresse, Automarke, Baujahr, …) sowie einen Datumswunsch angeben. Diese Daten werden an den Server gesendet und, falls der Termin möglich ist, in einer Datenbank gespeichert. Falls der Termin bereits besetzt ist, bekommt der Kunde eine Fehlermeldung angezeigt.
 	Die Werkstatt kann nur Modelle der Marken Audi, Seat, Skoda und VW reparieren.
@@ -27,13 +28,6 @@ insert into task (`dtype`, `exercise_id`, `id`, `taskDesc`, `tagName`, `attribut
 	("name", 1, 6, "Erstellen Sie ein Dropdownmenü* (marke), um eine der vier Automarken auswählen zu können.
 	Geben Sie außerdem als erste Option „Bitte wählen“ mit einem leeren „value“-Attribut an,
 	damit Sie die „required“-Option modellieren können.", "select", "", "marke", "");
-
-insert into childtask (`id`, `task_id`, `exercise_id`, `tagName`, `attributes`) values
-	(1, 6, 1, "option", "value="),
-	(2, 6, 1, "option", "value=Audi"),
-	(3, 6, 1, "option", "value=Seat"),
-	(4, 6, 1, "option", "value=Skoda"),
-	(5, 6, 1, "option", "value=VW");
 
 # --- !Downs
 

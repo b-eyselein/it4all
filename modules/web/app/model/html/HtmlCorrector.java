@@ -1,6 +1,7 @@
 package model.html;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import model.html.result.ElementResult;
 import model.html.task.Task;
@@ -17,8 +18,8 @@ public class HtmlCorrector {
   public static List<ElementResult<? extends Task>> correct(String solutionUrl, HtmlExercise exercise, User student) {
     WebDriver driver = getDriverWithUrlAndLoadPage(solutionUrl);
 
-    List<ElementResult<? extends Task>> result = getElementResultsForExercise(exercise);
-    result.stream().forEach(result1 -> result1.setResult(result1.evaluate(driver)));
+    List<ElementResult<? extends Task>> result = exercise.tasks.stream().map(task -> task.evaluate(driver))
+        .collect(Collectors.toList());
 
     int points = calculatePoints(result);
 
@@ -37,10 +38,6 @@ public class HtmlCorrector {
     // FIXME: what if url does not exist?
     driver.get(newUrl);
     return driver;
-  }
-
-  private static List<ElementResult<? extends Task>> getElementResultsForExercise(HtmlExercise exercise) {
-    return exercise.getElementResults();
   }
 
   private static void saveGrading(HtmlExercise exercise, User student, int points) {
