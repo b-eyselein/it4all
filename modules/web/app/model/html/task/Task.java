@@ -29,37 +29,36 @@ import com.avaje.ebean.Model;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "taskType")
 public abstract class Task extends Model {
-
+  
   public static final String SPLIT_CHARACTER = ":";
   public static final String KEY_VALUE_CHARACTER = "=";
-
+  
   @EmbeddedId
   public TaskKey key;
-
+  
   @ManyToOne
   @JoinColumn(name = "exercise_id", insertable = false, updatable = false)
   public HtmlExercise exercise;
-
+  
   @Column(name = "taskDesc")
   public String taskDescription;
-
+  
   @Column(name = "tagName")
   public String tagName;
-
+  
   @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
   public List<ChildTask> childTasks;
-
+  
   public String attributes;
-
+  
   public List<AttributeResult> checkAttributes(WebElement element) {
     List<AttributeResult> results = getAttributeResults();
-    for(AttributeResult result: results)
-      result.evaluate(element);
+    results.forEach(result -> result.evaluate(element));
     return results;
   }
-
+  
   public abstract ElementResult<? extends Task> evaluate(SearchContext searchContext);
-
+  
   private List<AttributeResult> getAttributeResults() {
     List<AttributeResult> attributesToFind = new LinkedList<AttributeResult>();
     for(String attribute: attributes.split(SPLIT_CHARACTER)) {
@@ -70,11 +69,11 @@ public abstract class Task extends Model {
     }
     return attributesToFind;
   }
-
+  
   protected boolean allAttributesFound(List<AttributeResult> results) {
-    return results.stream().mapToInt(result -> result.isFound() ? 1 : 0).sum() > 0;
+    return results.stream().mapToInt(result -> result.isFound() ? 0 : 1).sum() == 0;
   }
-
+  
   protected List<WebElement> filterForTagName(List<WebElement> foundElements, String tagName) {
     return foundElements.parallelStream().filter(element -> element.getTagName().equals(tagName))
         .collect(Collectors.toList());

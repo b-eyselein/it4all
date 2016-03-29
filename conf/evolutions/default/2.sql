@@ -27,8 +27,15 @@ insert into task (`taskType`, `exercise_id`, `id`, `taskDesc`, `tagName`, `attri
 	
 	("name", 1, 6, "Erstellen Sie ein Dropdownmenü* (marke), um eine der vier Automarken auswählen zu können.
 	Geben Sie außerdem als erste Option „Bitte wählen“ mit einem leeren „value“-Attribut an,
-	damit Sie die „required“-Option modellieren können.", "select", "", "marke", "");
+	damit Sie die „required“-Option modellieren können.", "select", "required=true", "marke", "");
 
+insert into childtask (`id`, `task_id`, `exercise_id`, `tagName`, `attributes`) values
+	(1, 6, 1, "option", "value="),
+ 	(2, 6, 1, "option", "value=Audi"),
+ 	(3, 6, 1, "option", "value=Seat"),
+ 	(4, 6, 1, "option", "value=Skoda"),
+ 	(5, 6, 1, "option", "value=VW");
+	
 # --- !Downs
 
 SET FOREIGN_KEY_CHECKS = 0;

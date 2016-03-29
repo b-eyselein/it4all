@@ -9,19 +9,15 @@ import java.util.stream.Collectors;
 import model.html.task.NameTask;
 
 public class NameResult extends ElementResult<NameTask> {
-  
-  private boolean rightTagName = false;
-  private List<ChildResult> childResults;
-  
-  public NameResult(NameTask task, Success success, List<AttributeResult> attributeResults) {
+
+  private List<ChildResult> childResults = new LinkedList<ChildResult>();
+
+  public NameResult(NameTask task, Success success, List<AttributeResult> attributeResults,
+      List<ChildResult> theChildResults) {
     super(task, success, attributeResults);
-    childResults = task.childTasks.stream().map(childTask -> childTask.getChildResult()).collect(Collectors.toList());
+    childResults = theChildResults;
   }
-  
-  public boolean rightTagNameWasUsed() {
-    return rightTagName;
-  }
-  
+
   @Override
   protected List<String> getAttributesAsJson() {
     if(attributeResults.isEmpty())
@@ -29,12 +25,12 @@ public class NameResult extends ElementResult<NameTask> {
     else
       return attributeResults.parallelStream().map(attrRes -> attrRes.toJSON()).collect(Collectors.toList());
   }
-  
+
   @Override
   protected List<String> getMessagesAsJson() {
     if(success == Success.NONE)
       return Arrays.asList("{\"suc\": \"-\", \"mes\": \"Element wurde nicht gefunden!\"}");
-    
+
     List<String> messages = new LinkedList<String>();
     messages.add("{\"suc\": \"+\", \"mes\": \"Element wurde gefunden.\"}");
     childResults.forEach(childRes -> messages.add(childRes.toJson()));
