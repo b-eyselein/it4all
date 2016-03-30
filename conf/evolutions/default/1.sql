@@ -59,7 +59,7 @@ create table grading (
 create table htmlexercise (
   id                        integer auto_increment not null,
   title                     varchar(255),
-  exercise_text             varchar(1000),
+  exerciseText              varchar(1000),
   constraint pk_htmlexercise primary key (id))
 ;
 

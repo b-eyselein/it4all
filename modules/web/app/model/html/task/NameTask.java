@@ -31,7 +31,7 @@ public class NameTask extends Task {
     if(foundElements.isEmpty())
       return new NameResult(this, Success.NONE, Collections.emptyList(), Collections.emptyList());
 
-    foundElements = filterForTagName(foundElements, tagName);
+    foundElements = filterElementsForTagName(foundElements, tagName);
     if(foundElements.isEmpty())
       return new NameResult(this, Success.NONE, Collections.emptyList(), Collections.emptyList());
 
@@ -49,7 +49,7 @@ public class NameTask extends Task {
         childResults.add(childResult);
       });
 
-    List<AttributeResult> attributeResults = checkAttributes(element);
+    List<AttributeResult> attributeResults = evaluateAllAttributes(element);
 
     if(allAttributesFound(attributeResults))
       return new NameResult(this, Success.COMPLETE, attributeResults, childResults);

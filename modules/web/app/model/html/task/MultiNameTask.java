@@ -28,7 +28,7 @@ public class MultiNameTask extends Task {
 
       return new MultiNameResult(this, Success.NONE, attributes, attributes);
 
-    foundElements = filterForTagName(foundElements, tagName);
+    foundElements = filterElementsForTagName(foundElements, tagName);
     if(foundElements.isEmpty())
 
       return new MultiNameResult(this, Success.NONE, attributes, attributes);
@@ -36,7 +36,7 @@ public class MultiNameTask extends Task {
     // TODO: Stelle sicher, dass alle gefundenen Elemente alle Common-Attribute
     // besitzen
     for(WebElement element: foundElements)
-      checkAttributes(element);
+      evaluateAllAttributes(element);
 
     // Stelle sicher, dass alle Elemente jeweils ein Different-Attribut
     // enthalten

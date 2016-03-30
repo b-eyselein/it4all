@@ -3,7 +3,6 @@
 insert into student values
 	("s319286");
 	
-	
 insert into htmlexercise values
 	(1, "Terminabsprache Werkstatt", "Ihre Firma für Webdesign ist von einer lokalen Werkstatt beauftragt worden, ein Kontaktformular für die Absprache eines Termins zu erstellen. Die Kunden sollen in einem Formular ihre Daten (Namen, Adresse, Automarke, Baujahr, …) sowie einen Datumswunsch angeben. Diese Daten werden an den Server gesendet und, falls der Termin möglich ist, in einer Datenbank gespeichert. Falls der Termin bereits besetzt ist, bekommt der Kunde eine Fehlermeldung angezeigt.
 	Die Werkstatt kann nur Modelle der Marken Audi, Seat, Skoda und VW reparieren.

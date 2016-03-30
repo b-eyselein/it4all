@@ -37,7 +37,7 @@ public abstract class Task extends Model {
   public TaskKey key;
   
   @ManyToOne
-  @JoinColumn(name = "exercise_id", insertable = false, updatable = false)
+  @JoinColumn(name = "exercise_id")
   public HtmlExercise exercise;
   
   @Column(name = "taskDesc")
@@ -51,7 +51,7 @@ public abstract class Task extends Model {
   
   public String attributes;
   
-  public List<AttributeResult> checkAttributes(WebElement element) {
+  public List<AttributeResult> evaluateAllAttributes(WebElement element) {
     List<AttributeResult> results = getAttributeResults();
     results.forEach(result -> result.evaluate(element));
     return results;
@@ -74,7 +74,7 @@ public abstract class Task extends Model {
     return results.stream().mapToInt(result -> result.isFound() ? 0 : 1).sum() == 0;
   }
   
-  protected List<WebElement> filterForTagName(List<WebElement> foundElements, String tagName) {
+  protected List<WebElement> filterElementsForTagName(List<WebElement> foundElements, String tagName) {
     return foundElements.parallelStream().filter(element -> element.getTagName().equals(tagName))
         .collect(Collectors.toList());
   }

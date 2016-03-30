@@ -31,7 +31,7 @@ public class TagTask extends Task {
     // " und passendem Tag gefunden. Verwende das erste für weitere Korrektur. ";
     WebElement element = foundElements.get(0);
     
-    List<AttributeResult> attributeResults = checkAttributes(element);
+    List<AttributeResult> attributeResults = evaluateAllAttributes(element);
     
     if(allAttributesFound(attributeResults))
       return new TagResult(this, Success.COMPLETE, attributeResults);
