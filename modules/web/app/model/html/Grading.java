@@ -14,6 +14,7 @@ public class Grading extends Model {
   
   public static Finder<Integer, Grading> finder = new Finder<Integer, Grading>(Grading.class);
   
+  // FIXME: id -> student.id + exercise.id
   @Id
   public int id;
   

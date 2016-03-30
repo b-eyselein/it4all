@@ -28,7 +28,7 @@ public class HtmlExercise extends Model {
   
   @Required
   @Column(length = 1000)
-  public String text;
+  public String exerciseText;
   
   @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
   public List<Task> tasks;

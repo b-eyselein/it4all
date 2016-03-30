@@ -25,21 +25,21 @@ import controllers.core.UserControl;
 import controllers.core.Util;
 
 public class HTML extends Controller {
-
+  
   private static String serverUrl = Util.getServerUrl();
-  private static String learnerSolValue = "editorContent";
-
+  private static final String LEARNER_SOLUTION_VALUE = "editorContent";
+  
   @Security.Authenticated(Secured.class)
   public Result commit(int exerciseId) {
     User user = UserControl.getUser();
-
-    String learnerSolution = extractLearnerSolutionFromRequest(request(), learnerSolValue);
+    
+    String learnerSolution = extractLearnerSolutionFromRequest(request());
     saveSolutionForUser(user.getName(), learnerSolution, exerciseId);
-
+    
     String json = correctExercise(user, HtmlExercise.finder.byId(exerciseId));
     return ok(json).as("application/json");
   }
-
+  
   @Security.Authenticated(Secured.class)
   public Result exercise(int exerciseId) {
     HtmlExercise exercise = HtmlExercise.finder.byId(exerciseId);
@@ -48,55 +48,53 @@ public class HTML extends Controller {
     else
       return ok(html.render(UserControl.getUser(), exercise, serverUrl));
   }
-
+  
   @Security.Authenticated(Secured.class)
   public Result index() {
     return ok(htmloverview.render(HtmlExercise.finder.all(), UserControl.getUser()));
   }
-
+  
   public Result site(String userName, int exercise) {
     Path file = Util.getHtmlSolFileForExercise(userName, "html", exercise);
-    if(Files.exists(file))
-      try {
-        // IMPORTANT: return HTML!
-        return ok(new Html(String.join("\n", Files.readAllLines(file))));
-      } catch (IOException e) {
-        // TODO: Log Error!?!
-        // --> Evtl. entsprechend Fehler werfen bzw. in Korrektor auffangen!
-        return badRequest("Fehler beim Lesen der Datei!");
-      }
-
-    else
+    if(!Files.exists(file))
       return badRequest("Fehler: Datei nicht vorhanden!");
+    
+    try {
+      // IMPORTANT: return HTML!
+      return ok(new Html(String.join("\n", Files.readAllLines(file))));
+    } catch (IOException e) {
+      // TODO: Log Error!?!
+      // --> Evtl. entsprechend Fehler werfen bzw. in Korrektor auffangen!
+      return badRequest("Fehler beim Lesen der Datei!");
+    }
+    
   }
-
+  
   private String correctExercise(User user, HtmlExercise exercise) {
-    // FIXME: implement!
-    String url = "/web/solutions/" + user.getName() + "/html/" + exercise.id;
-    List<ElementResult<? extends Task>> result = HtmlCorrector.correct(url, exercise, user);
-
+    String solutionUrl = routes.HTML.site(user.getName(), exercise.id).absoluteURL(request());
+    
+    List<ElementResult<? extends Task>> result = HtmlCorrector.correct(solutionUrl, exercise, user);
+    
     List<String> results = result.stream().map(res -> res.toJSON()).collect(Collectors.toList());
-
+    
     String ret = "{\"results\": [\n" + String.join(",\n", results) + "\n]}";
-    // System.out.println(ret);
-    // System.out.println("-------------------------");
-
+    
     return ret;
   }
-
-  private String extractLearnerSolutionFromRequest(Request request, String value) {
-    return request.body().asFormUrlEncoded().get(value)[0];
+  
+  private String extractLearnerSolutionFromRequest(Request request) {
+    return request.body().asFormUrlEncoded().get(LEARNER_SOLUTION_VALUE)[0];
   }
-
+  
   private void saveSolutionForUser(String userName, String solution, int exercise) {
     try {
       if(!Files.exists(Util.getSolDirForUser(userName)))
         Files.createDirectory(Util.getSolDirForUser(userName));
-
+      
       Path solDir = Util.getSolDirForUserAndType("html", userName);
       if(!Files.exists(solDir))
         Files.createDirectory(solDir);
-
+      
       Path saveTo = Util.getHtmlSolFileForExercise(userName, "html", exercise);
       Files.write(saveTo, Arrays.asList(solution), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     } catch (IOException e) {
