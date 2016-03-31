@@ -40,8 +40,8 @@ insert into task (`taskType`, `exercise_id`, `id`, `taskDesc`, `tagName`, `attri
 	("name", 1, 9, "Erstellen Sie eine Checkbox* (agb), um die AGBs der Seite zu akzeptieren",
 	 "input", "type=checkbox:required=true", "agb", ""),
 	 
-	("tag", 1, 10, "Erstellen Sie eine Möglichkeit, das Formular abzusenden",
-	 "input", "type=submit", "", "");
+	("tag", 1, 10, "Erstellen Sie eine Möglichkeit, das Formular abzusenden. Geben Sie als Wert 'Absenden' an.",
+	 "input", "type=submit:value=Absenden", "", "");
 
 insert into childtask (`id`, `task_id`, `exercise_id`, `tagName`, `attributes`) values
 	(1, 6, 1, "option", "value="),
