@@ -4,14 +4,18 @@ Common.settings
 
 lazy val root = (project in file("."))
 	.enablePlugins(PlayJava, PlayEbean)
-	.aggregate(web, mindmap)
-	.dependsOn(web, mindmap, core)
+	.aggregate(web, mindmap, sql)
+	.dependsOn(web, mindmap, sql, core)
 
 lazy val core: Project = (project in file("modules/core"))
 	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
-	.settings(aggregateReverseRoutes := Seq(web, mindmap, root))
+	.settings(aggregateReverseRoutes := Seq(web, mindmap, sql, root))
 
 lazy val web = (project in file("modules/web"))
+	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
+	.dependsOn(core)
+
+lazy val sql = (project in file("modules/sql"))
 	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
 	.dependsOn(core)
 
