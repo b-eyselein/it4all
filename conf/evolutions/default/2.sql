@@ -12,28 +12,47 @@ insert into task (`taskType`, `exercise_id`, `id`, `taskDesc`, `tagName`, `attri
 	("title", 1, 1, "Der Titel der Seite soll 'Kontaktformular Werkstatt' lauten.", "", "", "", "Kontaktformular Werkstatt"),
 	
 	("tag", 1, 2, "Erstellen Sie ein Formular auf der Seite. Als Aktion soll test und als Methode 'post' angegeben werden.",
-	"form", "action=test:method=post", "", ""),
+	 "form", "action=test:method=post", "", ""),
 	
 	("name", 1, 3, "Erstellen Sie ein Namensfeld* (name) für den kompletten Namen des Kunden.", "input",
-	"type=text:required=true", "name", ""),
+	 "type=text:required=true", "name", ""),
 	
 	("name", 1, 4, "Erstellen Sie ein Feld für die Emailadresse* (email) des Kunden.", "input", 
-	"type=email:required=true", "email", ""),
+	 "type=email:required=true", "email", ""),
 	
 	("name", 1, 5, "Erstellen Sie ein Datumsfeld* (datum), um einen Wunschtermin angeben zu können.
-	Die Vorgabe soll der 01.01.2016 sein.", "input",
-	"type=date:required=true:value=2016-01-01", "datum", ""),
+	 Die Vorgabe soll der 01.01.2016 sein.", "input",
+	 "type=date:required=true:value=2016-01-01", "datum", ""),
 	
 	("name", 1, 6, "Erstellen Sie ein Dropdownmenü* (marke), um eine der vier Automarken auswählen zu können.
-	Geben Sie außerdem als erste Option „Bitte wählen“ mit einem leeren „value“-Attribut an,
-	damit Sie die „required“-Option modellieren können.", "select", "required=true", "marke", "");
+	 Geben Sie außerdem als erste Option „Bitte wählen“ mit einem leeren „value“-Attribut an,
+	 damit Sie die „required“-Option modellieren können.", "select", "required=true", "marke", ""),
+	
+	("name", 1, 7, "Ein weiteres Dropdownmenü (modell), um passende Automodelle auswählen zu können. Geben Sie je Hersteller
+	 mindestens folgende Modell an: A3, Leon, Fabia, Golf.
+	 Geben Sie außerdem als erste Option „Bitte wählen“ mit einem leeren „value“-Attribut an, damit Sie die „required“-Option
+	 modellieren können.", "select", "required=true", "modell", ""),
+	 
+	("name", 1, 8, "Erstellen Sie ein Eingabefeld* (jahr) für das Baujahr des Autos (1950 <= year <= 2016). Als Vorgabe soll
+	 2000 eingestellt sein.",
+	 "input", "type=number:required=true:value=2000", "jahr", ""),
+	 
+	("name", 1, 9, "Erstellen Sie eine Checkbox* (agb), um die AGBs der Seite zu akzeptieren",
+	 "input", "type=checkbox:required=true", "agb", ""),
+	 
+	("tag", 1, 10, "Erstellen Sie eine Möglichkeit, das Formular abzusenden",
+	 "input", "type=submit", "", "");
 
 insert into childtask (`id`, `task_id`, `exercise_id`, `tagName`, `attributes`) values
 	(1, 6, 1, "option", "value="),
  	(2, 6, 1, "option", "value=Audi"),
  	(3, 6, 1, "option", "value=Seat"),
  	(4, 6, 1, "option", "value=Skoda"),
- 	(5, 6, 1, "option", "value=VW");
+ 	(5, 6, 1, "option", "value=VW"),
+ 	(1, 7, 1, "option", "value=A3"),
+ 	(2, 7, 1, "option", "value=Leon"),
+ 	(3, 7, 1, "option", "value=Fabia"),
+ 	(4, 7, 1, "option", "value=Golf");
 	
 # --- !Downs
 

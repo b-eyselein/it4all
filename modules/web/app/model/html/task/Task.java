@@ -40,7 +40,7 @@ public abstract class Task extends Model {
   @JoinColumn(name = "exercise_id")
   public HtmlExercise exercise;
   
-  @Column(name = "taskDesc")
+  @Column(name = "taskDesc", length = 2000)
   public String taskDescription;
   
   @Column(name = "tagName")
@@ -51,13 +51,13 @@ public abstract class Task extends Model {
   
   public String attributes;
   
+  public abstract ElementResult<? extends Task> evaluate(SearchContext searchContext);
+  
   public List<AttributeResult> evaluateAllAttributes(WebElement element) {
     List<AttributeResult> results = getAttributeResults();
     results.forEach(result -> result.evaluate(element));
     return results;
   }
-  
-  public abstract ElementResult<? extends Task> evaluate(SearchContext searchContext);
   
   private List<AttributeResult> getAttributeResults() {
     List<AttributeResult> attributesToFind = new LinkedList<AttributeResult>();

@@ -25,18 +25,12 @@ public class TagTask extends Task {
     if(foundElements.isEmpty())
       return new TagResult(this, Success.NONE, Collections.emptyList());
     
-    // TODO: Mehrere Elemente!
-    // if(foundElements.size() > 1)
-    // message = "Es wurde mehr als 1 Element mit passendem Namen" +
-    // " und passendem Tag gefunden. Verwende das erste für weitere Korrektur. ";
-    WebElement element = foundElements.get(0);
+    for(WebElement element: foundElements) {
+      List<AttributeResult> attributeResults = evaluateAllAttributes(element);
+      if(allAttributesFound(attributeResults))
+        return new TagResult(this, Success.COMPLETE, attributeResults);
+    }
     
-    List<AttributeResult> attributeResults = evaluateAllAttributes(element);
-    
-    if(allAttributesFound(attributeResults))
-      return new TagResult(this, Success.COMPLETE, attributeResults);
-    else
-      return new TagResult(this, Success.PARTIALLY, attributeResults);
+    return new TagResult(this, Success.NONE, Collections.emptyList());
   }
-  
 }
