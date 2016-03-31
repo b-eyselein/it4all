@@ -4,41 +4,53 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.inject.Inject;
 
+import controllers.core.UserControl;
 import play.db.Database;
 import play.db.NamedDatabase;
 import play.mvc.Controller;
 import play.mvc.Result;
+import views.html.sql;
 
 public class SQL extends Controller {
-
+  
   @Inject
   @NamedDatabase("sqltest")
   Database db;
-
+  
   public Result index() {
-
-    String sql = "select * from task";
-
+    
+    String sqlStatement = "select * from task";
+    
     try {
-
       Connection connection = db.getConnection();
-      ResultSet resultSet = connection.createStatement().executeQuery(sql);
-      ResultSetMetaData metadata = resultSet.getMetaData();
-
-      System.out.println("Anzahl Spalten: " + metadata.getColumnCount());
       
-      for(int j = 1; j <= metadata.getColumnCount(); j++)
-        System.out.println(metadata.getColumnName(j));
-
+      // Change db to users own db
+      connection.setCatalog("sql_s319286");
+      
+      // Execute query
+      ResultSet resultSet = connection.createStatement().executeQuery(sqlStatement);
+      ResultSetMetaData metadata = resultSet.getMetaData();
+      
+      // Syso result of query
+      List<List<String>> result = new LinkedList<List<String>>();
+      
+      while(resultSet.next()) {
+        List<String> row = new LinkedList<String>();
+        for(int columnCount = 1; columnCount <= metadata.getColumnCount(); columnCount++)
+          row.add(resultSet.getObject(columnCount).toString());
+        result.add(row);
+      }
       connection.close();
-
+      return ok(sql.render(result, UserControl.getUser()));
+      
     } catch (SQLException e) {
-      System.out.println("FEHLER: " + e.getMessage());
+      return badRequest("Fehler bei Verarbeitung: " + e.getMessage() + "!");
     }
-
-    return ok("TODO: SQL");
+    
   }
 }
