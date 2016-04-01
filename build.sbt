@@ -28,7 +28,7 @@ libraryDependencies ++= Seq(
   javaJdbc,
   cache,
 
-  "mysql" % "mysql-connector-java" % "5.1.27",
+  "mysql" % "mysql-connector-java" % "5.1.38",
 
   // Apache POI for Excel
   "org.apache.poi" % "poi" % "3.13",

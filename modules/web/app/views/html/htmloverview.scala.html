@@ -5,10 +5,15 @@
 
 @main("HTML-Test", user) {
 <div class="container">
-  @for(exer <- exercises) {
+  @for(exercise <- exercises) {
   <div class="panel panel-default">
+    <div class="panel-heading">
+      <a href="@controllers.web.routes.HTML.exercise(exercise.id)">Aufgabe @exercise.id: @exercise.title</a>
+    </div>
     <div class="panel-body">
-      <a href="/web/html/@exer.id">Aufgabe @exer.id : @exer.title</a>
+    @for(exerText <- exercise.exerciseText.split("\n")) {
+      <p>@exerText</p>
+    }
     </div>
   </div>
   }

@@ -1,4 +1,4 @@
-package model.html;
+package model.html.result;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertNotNull;
@@ -10,13 +10,17 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collections;
 
+import model.html.result.ElementResult;
+import model.html.result.NameResult;
+import model.html.task.Task;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class ElementResultByNameTest {
+public class NameResultTest {
   
   private static final String ELEMENT_NAME = "email";
   
@@ -51,7 +55,7 @@ public class ElementResultByNameTest {
   public void testElementWithAllAttributes() {
     when(webDriver.findElements(By.name(ELEMENT_NAME))).thenReturn(Arrays.asList(element1, element2));
     
-    ElementResultByName result = new ElementResultByName(TASK, TAG_NAME, ELEMENT_NAME, ATTRIBUTES);
+    NameResult result = new NameResult(TASK, TAG_NAME, ELEMENT_NAME, ATTRIBUTES);
     assertNotNull(result);
     result.evaluate(webDriver);
     assertNotNull(result);
@@ -65,7 +69,7 @@ public class ElementResultByNameTest {
     
     String attributes = ATTRIBUTES + ";";
     
-    ElementResultByName result = new ElementResultByName(TASK, TAG_NAME, ELEMENT_NAME, attributes);
+    NameResult result = new NameResult(TASK, TAG_NAME, ELEMENT_NAME, attributes);
     assertNotNull(result);
     result.evaluate(webDriver);
     assertNotNull(result);
@@ -76,7 +80,7 @@ public class ElementResultByNameTest {
   @Test
   public void testElementWithOutAttributes() {
     when(webDriver.findElements(By.name(ELEMENT_NAME))).thenReturn(Arrays.asList(element1, element2));
-    ElementResultByName result = new ElementResultByName(TASK, TAG_NAME, ELEMENT_NAME, "");
+    NameResult result = new NameResult(TASK, TAG_NAME, ELEMENT_NAME, "");
     assertNotNull(result);
     result.evaluate(webDriver);
     assertNotNull(result);
@@ -89,7 +93,7 @@ public class ElementResultByNameTest {
     when(webDriver.findElements(By.name(ELEMENT_NAME))).thenReturn(Arrays.asList(element1, element2));
     
     String attributes = ATTRIBUTES + ";" + FALSE_ATTRIBUTE_KEY + "=" + ATT_2_VALUE;
-    ElementResultByName result = new ElementResultByName(TASK, TAG_NAME, ELEMENT_NAME, attributes);
+    NameResult result = new NameResult(TASK, TAG_NAME, ELEMENT_NAME, attributes);
     assertNotNull(result);
     result.evaluate(webDriver);
     assertNotNull(result);
@@ -102,7 +106,7 @@ public class ElementResultByNameTest {
     WebDriver webDriver = mock(WebDriver.class);
     when(webDriver.findElements(By.name(ELEMENT_NAME))).thenReturn(Arrays.asList(element2, element2, element2));
     
-    ElementResultByName result = new ElementResultByName(TASK, TAG_NAME, ELEMENT_NAME, ATTRIBUTES);
+    NameResult result = new NameResult(TASK, TAG_NAME, ELEMENT_NAME, ATTRIBUTES);
     result.evaluate(webDriver);
     
     assertNotNull(result);
@@ -117,7 +121,7 @@ public class ElementResultByNameTest {
     WebDriver webDriver = mock(WebDriver.class);
     when(webDriver.findElements(By.name(ELEMENT_NAME))).thenReturn(Collections.emptyList());
     
-    ElementResultByName result = new ElementResultByName(TASK, TAG_NAME, ELEMENT_NAME, ATTRIBUTES);
+    NameResult result = new NameResult(TASK, TAG_NAME, ELEMENT_NAME, ATTRIBUTES);
     result.evaluate(webDriver);
     
     assertNotNull(result);
@@ -130,7 +134,7 @@ public class ElementResultByNameTest {
     WebDriver webDriver = mock(WebDriver.class);
     when(webDriver.findElements(By.name(ELEMENT_NAME))).thenReturn(Arrays.asList(element1));
     
-    ElementResultByName result = new ElementResultByName(TASK, TAG_NAME, ELEMENT_NAME, ATTRIBUTES);
+    NameResult result = new NameResult(TASK, TAG_NAME, ELEMENT_NAME, ATTRIBUTES);
     result.evaluate(webDriver);
     
     assertNotNull(result);

@@ -1,4 +1,4 @@
-package model.html;
+package model.html.result;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertNotNull;
@@ -9,13 +9,17 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collections;
 
+import model.html.result.ElementResult;
+import model.html.result.TagResult;
+import model.html.task.Task;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class ElementResultByTagTest {
+public class TagResultTest {
   
   private static final String TAG_NAME = "input";
   private static final String TAG_NAME_FALSE = "button";
@@ -52,7 +56,7 @@ public class ElementResultByTagTest {
   public void testElementWithAllAttributes() {
     when(webDriver.findElements(By.tagName(TAG_NAME))).thenReturn(Arrays.asList(element2, element1));
     
-    ElementResultByTag result = new ElementResultByTag(TASK, TAG_NAME, ATTRIBUTES);
+    TagResult result = new TagResult(TASK, TAG_NAME, ATTRIBUTES);
     assertNotNull(result);
     result.evaluate(webDriver);
     assertNotNull(result);
@@ -63,7 +67,7 @@ public class ElementResultByTagTest {
   public void testElementWithEmptyAttribute() {
     when(webDriver.findElements(By.tagName(TAG_NAME))).thenReturn(Arrays.asList(element1, element2));
     
-    ElementResultByTag result = new ElementResultByTag(TASK, TAG_NAME, ATTRIBUTES + ";");
+    TagResult result = new TagResult(TASK, TAG_NAME, ATTRIBUTES + ";");
     assertNotNull(result);
     result.evaluate(webDriver);
     assertNotNull(result);
@@ -71,7 +75,7 @@ public class ElementResultByTagTest {
     
     when(webDriver.findElements(By.tagName(TAG_NAME))).thenReturn(Arrays.asList(element2));
     
-    ElementResultByTag resultNew = new ElementResultByTag(TASK, TAG_NAME, ATTRIBUTES + ";");
+    TagResult resultNew = new TagResult(TASK, TAG_NAME, ATTRIBUTES + ";");
     assertNotNull(resultNew);
     resultNew.evaluate(webDriver);
     assertNotNull(resultNew);
@@ -82,7 +86,7 @@ public class ElementResultByTagTest {
   public void testElementWithOutAttributes() {
     when(webDriver.findElements(By.tagName(TAG_NAME))).thenReturn(Arrays.asList(element1, element2));
     
-    ElementResultByTag result = new ElementResultByTag(TASK, TAG_NAME, "");
+    TagResult result = new TagResult(TASK, TAG_NAME, "");
     assertNotNull(result);
     result.evaluate(webDriver);
     assertNotNull(result);
@@ -94,7 +98,7 @@ public class ElementResultByTagTest {
     when(webDriver.findElements(By.tagName(TAG_NAME))).thenReturn(Arrays.asList(element1, element2));
     
     String attributes = ATTRIBUTES + ";" + FALSE_ATTRIBUTE_KEY + "=" + ATT_2_VALUE;
-    ElementResultByTag result = new ElementResultByTag(TASK, TAG_NAME, attributes);
+    TagResult result = new TagResult(TASK, TAG_NAME, attributes);
     assertNotNull(result);
     result.evaluate(webDriver);
     assertNotNull(result);
@@ -106,7 +110,7 @@ public class ElementResultByTagTest {
     WebDriver webDriver = mock(WebDriver.class);
     when(webDriver.findElements(By.tagName(TAG_NAME))).thenReturn(Arrays.asList(element2, element2, element2));
     
-    ElementResultByTag result = new ElementResultByTag(TASK, TAG_NAME, ATTRIBUTES);
+    TagResult result = new TagResult(TASK, TAG_NAME, ATTRIBUTES);
     result.evaluate(webDriver);
     
     assertNotNull(result);
@@ -121,7 +125,7 @@ public class ElementResultByTagTest {
     WebDriver webDriver = mock(WebDriver.class);
     when(webDriver.findElements(By.tagName(TAG_NAME))).thenReturn(Collections.emptyList());
     
-    ElementResultByTag result = new ElementResultByTag(TASK, TAG_NAME, ATTRIBUTES);
+    TagResult result = new TagResult(TASK, TAG_NAME, ATTRIBUTES);
     result.evaluate(webDriver);
     
     assertNotNull(result);
