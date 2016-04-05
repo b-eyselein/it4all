@@ -11,8 +11,8 @@ libraryDependencies ++= Seq(
   javaJdbc,
 
   // Selenium for Html Tests
-  "org.seleniumhq.selenium" % "selenium-java" % "2.52.0",
+  Common.seleniumDep,
 
   // Mockito for Testing
-  "org.mockito" % "mockito-core" % "1.10.19"
+  Common.mockitoDep
 )
