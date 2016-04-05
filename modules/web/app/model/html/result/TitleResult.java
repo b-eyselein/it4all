@@ -5,18 +5,19 @@ import java.util.Collections;
 import java.util.List;
 
 import model.html.task.TitleTask;
+import play.Logger;
 
 public class TitleResult extends ElementResult<TitleTask> {
-
+  
   public TitleResult(TitleTask task, Success success) {
     super(task, success, Collections.emptyList());
   }
-
+  
   @Override
   protected List<String> getAttributesAsJson() {
     return Collections.emptyList();
   }
-
+  
   @Override
   protected List<String> getMessagesAsJson() {
     switch(success) {
@@ -27,7 +28,7 @@ public class TitleResult extends ElementResult<TitleTask> {
     case NONE:
       return Arrays.asList("{\"suc\": \"-\", \"mes\": \"Titel wurde nicht gefunden!\"}");
     default:
-      // TODO: LOG Failure!
+      Logger.error("Fehler bei Titlesuche!");
       return Arrays.asList("{\"suc\": \"-\", \"mes\": \"Fehler bei Titelsuche!\"}");
     }
   }

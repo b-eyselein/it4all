@@ -16,6 +16,9 @@ GET    /user                      controllers.UserController.index()
 # Web-Korrektur
 ->     /web                       web.Routes
 
+# SQL-Korrektur
+->     /sql                       sql.Routes
+
 # Mindmap-Korrektur
 ->     /mindmap                   mindmap.Routes
 
