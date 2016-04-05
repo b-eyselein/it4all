@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import controllers.core.UserControl;
+import controllers.core.Util;
 import model.html.HtmlCorrector;
 import model.html.HtmlExercise;
 import model.html.result.ElementResult;
@@ -15,14 +17,12 @@ import model.html.task.Task;
 import model.user.Secured;
 import model.user.User;
 import play.mvc.Controller;
+import play.mvc.Http.Request;
 import play.mvc.Result;
 import play.mvc.Security;
-import play.mvc.Http.Request;
 import play.twirl.api.Html;
 import views.html.html.html;
 import views.html.html.htmloverview;
-import controllers.core.UserControl;
-import controllers.core.Util;
 
 public class HTML extends Controller {
   
@@ -37,7 +37,11 @@ public class HTML extends Controller {
     saveSolutionForUser(user.getName(), learnerSolution, exerciseId);
     
     String json = correctExercise(user, HtmlExercise.finder.byId(exerciseId));
-    return ok(json).as("application/json");
+    
+    if(request().accepts("application/json"))
+      return ok(json).as("application/json");
+    else
+      return ok("TODO!");
   }
   
   @Security.Authenticated(Secured.class)

@@ -14,8 +14,9 @@
       
       // AJAX-Objekt mit Daten fuellen, absenden
       var parameters = "editorContent=" + encodeURIComponent(editor.getValue());
-      xhttp.open("POST", "@serverUrl@controllers.web.routes.HTML.commit(exercise.id)", true);
+      xhttp.open("PUT", "@serverUrl@controllers.web.routes.HTML.commit(exercise.id)", true);
       xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      xhttp.setRequestHeader("Accept", "application/json");
       xhttp.send(parameters);
     }
   </script>
@@ -65,7 +66,6 @@
                                   editor.getSession().setUseWrapMode(true);
                                 </script>
               </div>
-              <div class="panel-footer">TODO: Einstellungen!</div>
             </div>
           </div>
           

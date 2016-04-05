@@ -1,7 +1,7 @@
 # HTML
 GET		/html/exercises					controllers.web.HTML.index()
 GET		/html/exercises/:ex				controllers.web.HTML.exercise(ex: Int)
-POST	/html/exercises/:ex				controllers.web.HTML.commit(ex: Int)
+PUT		/html/exercises/:ex				controllers.web.HTML.commit(ex: Int)
 GET		/html/solutions/:user/:ex		controllers.web.HTML.site(user: String, ex: Int)
 
 # CSS

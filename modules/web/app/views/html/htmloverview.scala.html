@@ -4,18 +4,15 @@
 @(exercises: List[HtmlExercise], user: User)
 
 @main("HTML-Test", user) {
-<div class="container">
-  @for(exercise <- exercises) {
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <a href="@controllers.web.routes.HTML.exercise(exercise.id)">Aufgabe @exercise.id: @exercise.title</a>
+  <div class="container">
+    @for(exercise <- exercises) {
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <a href="@controllers.web.routes.HTML.exercise(exercise.id)">Aufgabe @exercise.id: @exercise.title</a>
+      </div>
+      <div class="panel-body">
+      @for(exerText <- exercise.exerciseText.split("\n")) {<p>@exerText</p>
+      }</div>
     </div>
-    <div class="panel-body">
-    @for(exerText <- exercise.exerciseText.split("\n")) {
-      <p>@exerText</p>
-    }
-    </div>
-  </div>
-  }
-</div>
+  }</div>
 }
