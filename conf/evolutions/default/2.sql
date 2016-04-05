@@ -2,6 +2,8 @@
 
 insert into student values
 	("s319286");
+
+# HTML
 	
 insert into htmlexercise values
 	(1, "Terminabsprache Werkstatt", "Ihre Firma für Webdesign ist von einer lokalen Werkstatt beauftragt worden, ein Kontaktformular für die Absprache eines Termins zu erstellen. Die Kunden sollen in einem Formular ihre Daten (Namen, Adresse, Automarke, Baujahr, …) sowie einen Datumswunsch angeben. Diese Daten werden an den Server gesendet und, falls der Termin möglich ist, in einer Datenbank gespeichert. Falls der Termin bereits besetzt ist, bekommt der Kunde eine Fehlermeldung angezeigt.
@@ -25,8 +27,8 @@ insert into task (`taskType`, `exercise_id`, `id`, `taskDesc`, `tagName`, `attri
 	 "type=date:required=true:value=2016-01-01", "datum", ""),
 	
 	("name", 1, 6, "Erstellen Sie ein Dropdownmenü* (marke), um eine der vier Automarken auswählen zu können.
-	 Geben Sie außerdem als erste Option „Bitte wählen“ mit einem leeren „value“-Attribut an,
-	 damit Sie die „required“-Option modellieren können.", "select", "required=true", "marke", ""),
+	 Geben Sie außerdem als erste Option 'Bitte wählen' mit einem leeren 'value'-Attribut an,
+	 damit Sie die 'required'-Option modellieren können.", "select", "required=true", "marke", ""),
 	
 	("name", 1, 7, "Ein weiteres Dropdownmenü (modell), um passende Automodelle auswählen zu können. Geben Sie je Hersteller
 	 mindestens folgende Modell an: A3, Leon, Fabia, Golf.
@@ -53,12 +55,44 @@ insert into childtask (`id`, `task_id`, `exercise_id`, `tagName`, `attributes`) 
  	(2, 7, 1, "option", "value=Leon"),
  	(3, 7, 1, "option", "value=Fabia"),
  	(4, 7, 1, "option", "value=Golf");
+
+ 
+# JavaScript
+ 
+insert into js_exercise (`id`, `name`, `text`, `default_solution`, `function_name`) values
+	(1, "Summen", "Implementieren Sie folgende Funktion 'sum', die zwei Zahlen entegennimmt und deren Summe zurückgibt.",
+	 "function sum(a, b) {\n  return 0\n}", "sum"),
+	(2, "Konkatenation von Strings", "Implementieren Sie die folgende Funktion 'concat',
+	 die drei beliebige Strings entgegennimmt und die Konkatenation der Strings zurückgibt.",
+	 "function concat(str1, str2, str3) {\n  return \"\"\n}", "concat");
+
+insert into js_test (`id`, `exercise_id`, `awaited_result`) values
+	(1, 1, 2),
+	(2, 1, 3),
+	(3, 1, 87),
+	(4, 2, "Hallo Welt!"),
+	(5, 2, "TestTest");
+
+insert into js_testvalue (`id`, `test_id`, `value`) values
+	(1, 1, 1), (2, 1, 1),
+	(3, 2, 1), (4, 2, 2),
+	(5, 3, 44), (6, 3, 43),
+	(7, 4, "'Hallo '"), (8, 4, "'Welt'"), (9, 4, "'!'"),
+	(10, 5, "'Test'"), (11, 5, "'Test'");
 	
 # --- !Downs
 
 SET FOREIGN_KEY_CHECKS = 0;
 
 delete from grading;
+
+delete from js_testvalue;
+
+delete from js_test;
+
+delete from js_exercise;
+
+delete from childtask;
 
 delete from task;
 
