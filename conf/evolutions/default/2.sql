@@ -71,14 +71,14 @@ insert into js_test (`id`, `exercise_id`, `awaited_result`) values
 	(2, 1, 3),
 	(3, 1, 87),
 	(4, 2, "Hallo Welt!"),
-	(5, 2, "TestTest");
+	(5, 2, "TestTestTest");
 
 insert into js_testvalue (`id`, `test_id`, `value`) values
 	(1, 1, 1), (2, 1, 1),
 	(3, 2, 1), (4, 2, 2),
 	(5, 3, 44), (6, 3, 43),
 	(7, 4, "'Hallo '"), (8, 4, "'Welt'"), (9, 4, "'!'"),
-	(10, 5, "'Test'"), (11, 5, "'Test'");
+	(10, 5, "'Test'"), (11, 5, "'Test'"), (12, 5, "'Test'");
 	
 # --- !Downs
 
