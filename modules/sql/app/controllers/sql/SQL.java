@@ -21,32 +21,32 @@ import views.html.sql;
 
 @Authenticated(Secured.class)
 public class SQL extends Controller {
-
+  
   private static final String DB_BASENAME = "sql_";
-
+  
   @Inject
-  @NamedDatabase("sqltest")
+  // @NamedDatabase("sqltest")
   Database db;
-
+  
   public Result index() {
-
+    
     User user = UserControl.getUser();
-
+    
     String sqlStatement = "select * from task";
-
+    
     try {
       Connection connection = db.getConnection();
-
+      
       // Change db to users own db
       connection.setCatalog(DB_BASENAME + user.getName());
-
+      
       // Execute query
       ResultSet resultSet = connection.createStatement().executeQuery(sqlStatement);
       ResultSetMetaData metadata = resultSet.getMetaData();
-
+      
       // Syso result of query
       List<List<String>> result = new LinkedList<List<String>>();
-
+      
       while(resultSet.next()) {
         List<String> row = new LinkedList<String>();
         for(int columnCount = 1; columnCount <= metadata.getColumnCount(); columnCount++)
@@ -55,10 +55,10 @@ public class SQL extends Controller {
       }
       connection.close();
       return ok(sql.render(result, UserControl.getUser()));
-
+      
     } catch (SQLException e) {
       return badRequest("Fehler bei Verarbeitung: " + e.getMessage() + "!");
     }
-
+    
   }
 }
