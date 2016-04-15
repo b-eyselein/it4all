@@ -33,12 +33,12 @@ You can start the Play Framework Console with the command `activator`
 
 `run` - Start Application in ***Development*** mode
 
-`eclipse (with-source=true) (skip-parents=false)` - Generate the files needed for Eclipse IDE (with sources respectively with respect
+`eclipse with-source=true skip-parents=false` - Generate the files needed for Eclipse IDE (with sources respectively with respect
 to parent Projects)
 
 ### Prerequisites
 it4all needs a MySQL-Database called `it4all`. Username and Password have to be stored in the `app/conf/application.conf` - file.
-Skripts for generating the tables and inserting examples can be found in the `sql_skripts` - Folder.
+This project uses the ***evolutions*** of the Play Framework which generates SQL-Scripts after reloading the application in the browser.
 
 ### Eclipse IDE
 Start the Play Framework Console with `activator`. You can generate the files needed for the Eclipse IDE with the command
