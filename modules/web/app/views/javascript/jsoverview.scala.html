@@ -1,17 +1,10 @@
-@import model.user.User
-@import model.javascript.JsExercise
-
-@(user: User, exercises: List[JsExercise])
-
-@main("JavaScript", user) {
+@(exercises: List[model.javascript.JsExercise], user: model.user.User) @main("JavaScript", user) {
   <div class="container">
-    <h1>&Uuml;bersichs &uuml;ber alle verf&uuml;gbaren Aufgaben</h1>
+    <h2>&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h2>
     <div class="panel panel-default">
       <div class="panel-heading">Korrektur mit Java-JSEngine Nashorn</div>
       <div class="panel-body">
-      @for(exercise <- exercises) {
-        <a href="/web/javascript/@exercise.id" class="btn btn-default btn-block">Link zur Aufgabe @exercise.id: @exercise.name</a>
-      }
+        @for(exercise <- exercises) { <a href="/web/javascript/@exercise.id" class="btn btn-default btn-block">Link zur Aufgabe @exercise.id: @exercise.name</a> }
       </div>
     </div>
   </div>
