@@ -9,7 +9,7 @@ import model.html.task.MultiNameTask;
 public class MultiNameResult extends ElementResult<MultiNameTask> {
 
   private List<String> defining_Attributes = new LinkedList<String>();
-  
+
   // private HashMap<String, WebElement> singleResults;
 
   public MultiNameResult(MultiNameTask task, Success success, String commonAttributes, String differentAttributes) {
@@ -25,19 +25,6 @@ public class MultiNameResult extends ElementResult<MultiNameTask> {
       throw new IllegalArgumentException("Es müssen mindestens 2 definierende Attribute vorhanden sein!");
 
     // singleResults = new HashMap<String, WebElement>();
-  }
-
-  @Override
-  protected List<String> getAttributesAsJson() {
-    // TODO Auto-generated method stub
-    List<String> retList = new LinkedList<String>();
-    return retList;
-  }
-
-  @Override
-  protected List<String> getMessagesAsJson() {
-    // TODO Auto-generated method stub
-    return Collections.emptyList();
   }
 
 }

@@ -17,6 +17,7 @@ import javax.persistence.OneToMany;
 
 import model.html.HtmlExercise;
 import model.html.result.AttributeResult;
+import model.html.result.Success;
 import model.html.task.ChildTask;
 import model.html.result.ElementResult;
 
@@ -24,6 +25,9 @@ import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
 
 import com.avaje.ebean.Model;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -38,17 +42,23 @@ public abstract class Task extends Model {
   
   @ManyToOne
   @JoinColumn(name = "exercise_id")
+  @JsonBackReference
   public HtmlExercise exercise;
   
   @Column(name = "taskDesc", length = 2000)
+  @JsonIgnore
   public String taskDescription;
   
   @Column(name = "tagName")
+  @JsonIgnore
   public String tagName;
   
   @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
+  @JsonManagedReference
+  @JsonIgnore
   public List<ChildTask> childTasks;
   
+  @JsonIgnore
   public String attributes;
   
   public abstract ElementResult<? extends Task> evaluate(SearchContext searchContext);
@@ -71,7 +81,7 @@ public abstract class Task extends Model {
   }
   
   protected boolean allAttributesFound(List<AttributeResult> results) {
-    return results.stream().mapToInt(result -> result.isFound() ? 0 : 1).sum() == 0;
+    return results.stream().mapToInt(result -> (result.getSuccess() == Success.COMPLETE) ? 0 : 1).sum() == 0;
   }
   
   protected List<WebElement> filterElementsForTagName(List<WebElement> foundElements, String tagName) {

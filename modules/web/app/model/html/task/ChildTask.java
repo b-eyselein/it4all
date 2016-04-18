@@ -13,26 +13,28 @@ import model.html.task.ChildTaskKey;
 import model.html.task.Task;
 
 import com.avaje.ebean.Model;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "childtask")
 public class ChildTask extends Model {
-  
+
   @EmbeddedId
   public ChildTaskKey key;
-  
+
   @ManyToOne
   @JoinColumns({@JoinColumn(name = "task_id", referencedColumnName = "id"),
-      @JoinColumn(name = "exercise_id", referencedColumnName = "exercise_id")})
+    @JoinColumn(name = "exercise_id", referencedColumnName = "exercise_id")})
+  @JsonBackReference
   public Task task;
-  
+
   @Column(name = "tagName")
   public String tagName;
-  
+
   public String attributes;
-  
+
   public ChildResult getChildResult() {
     return new ChildResult(this);
   }
-  
+
 }
