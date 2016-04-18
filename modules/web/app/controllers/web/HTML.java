@@ -40,6 +40,7 @@ public class HTML extends Controller {
     List<ElementResult<? extends Task>> elementResults = correctExercise(user, HtmlExercise.finder.byId(exerciseId));
 
     if(request().accepts("application/json"))
+      // FIXME: ChildResults -> toJson!
       return ok(Json.toJson(elementResults));
     else
       // TODO: Definitive Abgabe Html, rendere Html!
