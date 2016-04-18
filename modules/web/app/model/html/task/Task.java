@@ -17,6 +17,7 @@ import javax.persistence.OneToMany;
 
 import model.html.HtmlExercise;
 import model.html.result.AttributeResult;
+import model.html.result.ChildResult;
 import model.html.result.Success;
 import model.html.task.ChildTask;
 import model.html.result.ElementResult;
@@ -33,42 +34,42 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "taskType")
 public abstract class Task extends Model {
-  
+
   public static final String SPLIT_CHARACTER = ":";
   public static final String KEY_VALUE_CHARACTER = "=";
-  
+
   @EmbeddedId
   public TaskKey key;
-  
+
   @ManyToOne
   @JoinColumn(name = "exercise_id")
   @JsonBackReference
   public HtmlExercise exercise;
-  
+
   @Column(name = "taskDesc", length = 2000)
   @JsonIgnore
   public String taskDescription;
-  
+
   @Column(name = "tagName")
   @JsonIgnore
   public String tagName;
-  
+
   @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
   @JsonManagedReference
   @JsonIgnore
   public List<ChildTask> childTasks;
-  
+
   @JsonIgnore
   public String attributes;
-  
+
   public abstract ElementResult<? extends Task> evaluate(SearchContext searchContext);
-  
+
   public List<AttributeResult> evaluateAllAttributes(WebElement element) {
     List<AttributeResult> results = getAttributeResults();
     results.forEach(result -> result.evaluate(element));
     return results;
   }
-  
+
   private List<AttributeResult> getAttributeResults() {
     List<AttributeResult> attributesToFind = new LinkedList<AttributeResult>();
     for(String attribute: attributes.split(SPLIT_CHARACTER)) {
@@ -79,11 +80,15 @@ public abstract class Task extends Model {
     }
     return attributesToFind;
   }
-  
-  protected boolean allAttributesFound(List<AttributeResult> results) {
-    return results.stream().mapToInt(result -> (result.getSuccess() == Success.COMPLETE) ? 0 : 1).sum() == 0;
+
+  protected boolean allAttributesFound(List<AttributeResult> attributeResults) {
+    return attributeResults.stream().mapToInt(result -> (result.getSuccess() == Success.COMPLETE) ? 0 : 1).sum() == 0;
   }
-  
+
+  protected boolean allChildElementsFound(List<ChildResult> childResults) {
+    return childResults.stream().mapToInt(result -> (result.getSuccess() == Success.COMPLETE) ? 0 : 1).sum() == 0;
+  }
+
   protected List<WebElement> filterElementsForTagName(List<WebElement> foundElements, String tagName) {
     return foundElements.parallelStream().filter(element -> element.getTagName().equals(tagName))
         .collect(Collectors.toList());

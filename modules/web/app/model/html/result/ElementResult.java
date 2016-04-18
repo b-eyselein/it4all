@@ -1,5 +1,6 @@
 package model.html.result;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -12,6 +13,9 @@ public abstract class ElementResult<TaskType extends Task> {
   protected Success success = Success.NONE;
   protected List<AttributeResult> attributeResults;
 
+  // Bisher nur bei NameResult!
+  protected List<ChildResult> childResults = new LinkedList<ChildResult>();
+
   public ElementResult(TaskType theTask, Success theSuccess, List<AttributeResult> theAttributeResults) {
     task = theTask;
     success = theSuccess;
@@ -20,6 +24,10 @@ public abstract class ElementResult<TaskType extends Task> {
 
   public List<AttributeResult> getAttributeResults() {
     return attributeResults;
+  }
+
+  public List<ChildResult> getChildResults() {
+    return childResults;
   }
 
   @JsonIgnore

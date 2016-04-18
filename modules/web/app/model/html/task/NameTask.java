@@ -43,17 +43,17 @@ public class NameTask extends Task {
 
     // FIXME: ChildResults!
     List<ChildResult> childResults = new LinkedList<ChildResult>();
-    if(!childTasks.isEmpty())
-      childTasks.stream().map(childTask -> childTask.getChildResult()).forEach(childResult -> {
-        childResult.evaluate(element);
-        childResults.add(childResult);
-      });
+    childTasks.stream().map(childTask -> childTask.getChildResult()).forEach(childResult -> {
+      childResult.evaluate(element);
+      childResults.add(childResult);
+    });
 
     List<AttributeResult> attributeResults = evaluateAllAttributes(element);
 
-    if(allAttributesFound(attributeResults))
+    if(allAttributesFound(attributeResults) && allChildElementsFound(childResults))
       return new NameResult(this, Success.COMPLETE, attributeResults, childResults);
     else
       return new NameResult(this, Success.PARTIALLY, attributeResults, childResults);
   }
+
 }

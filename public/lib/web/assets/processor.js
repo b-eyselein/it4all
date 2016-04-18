@@ -15,17 +15,17 @@ function processCorrection(correction) {
   live.src = live.src;
 }
 
-function handleResult(res) {
-  var taskID = res.task.key.id;
+function handleResult(result) {
+  var taskID = result.task.key.id;
   var taskDiv = document.getElementById("pan_task" + taskID);
   
-  if(res.success === "COMPLETE") {
+  if(result.success === "COMPLETE") {
     taskDiv.className = "panel panel-success";
     $("#task" + taskID).collapse('hide');
-  } else if(res.success === "PARTIALLY") {
+  } else if(result.success === "PARTIALLY") {
     taskDiv.className = "panel panel-warning";
     $("#task" + taskID).collapse('show');
-  } else if(res.success === "NONE") {
+  } else if(result.success === "NONE") {
     taskDiv.className = "panel panel-danger";
     $("#task" + taskID).collapse('show');
   } else {
@@ -35,16 +35,17 @@ function handleResult(res) {
   var comDiv = document.getElementById("com_task" + taskID);
   comDiv.innerHTML = "";
   
-  if(res.success === "COMPLETE" || res.success === "PARTIALLY") {
+  if(result.success === "COMPLETE" || result.success === "PARTIALLY") {
     comDiv.innerHTML += "<div class=\"alert alert-success\">Element wurde gefunden!</div>";
   } else {
     comDiv.innerHTML += "<div class=\"alert alert-danger\">Element konnte nicht gefunden werden!</div>";
   }
   
-  for(attCount = 0; attCount < res.attributeResults.length; attCount++) {
-    var attr = res.attributeResults[attCount];
+  for(attCount = 0; attCount < result.attributeResults.length; attCount++) {
+    var attr = result.attributeResults[attCount];
     if(attr.success === "COMPLETE") {
-      comDiv.innerHTML += "<div class=\"alert alert-success\">Attribut \"" + attr.key + "\" hat gesuchten Wert.</div>";
+      comDiv.innerHTML += "<div class=\"alert alert-success\">Attribut \"" + attr.key
+          + "\" hat den gesuchten Wert.</div>";
     } else if(attr.success === "PARTIALLY") {
       comDiv.innerHTML += "<div class=\"alert alert-danger\">Attribut \"" + attr.key
           + "\" hat nicht den gesuchten Wert!</div>";
@@ -58,4 +59,20 @@ function handleResult(res) {
   }
   
   // TODO: childResults!
+  for(childCount = 0; childCount < result.childResults.length; childCount++) {
+    var childResult = result.childResults[childCount];
+    if(childResult.success === "COMPLETE") {
+      comDiv.innerHTML += "<div class=\"alert alert-success\">Kindelement \"" + childResult.key
+          + "\" hat den gesuchten Wert \"" + childResult.value + "\".</div>";
+    } else if(childResult.success === "PARTIALLY") {
+      comDiv.innerHTML += "<div class=\"alert alert-danger\">Kindelement \"" + childResult.key
+          + "\" hat nicht den gesuchten Wert \"" + childResult.value + "\"!</div>";
+    } else if(childResult.success === "NONE") {
+      comDiv.innerHTML += "<div class=\"alert alert-danger\">Kindelement \"" + childResult.key + "\" mit Wert \""
+          + childResult.value + "\" konnte nicht gefunden werden!</div>";
+    } else {
+      comDiv.innerHTML += "<div class=\"alert alert-warning\">Es gab einen Fehler beim Suchen des Kindelements \""
+          + childResult.key + "\"</div>";
+    }
+  }
 }

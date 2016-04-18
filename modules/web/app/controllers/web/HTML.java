@@ -39,6 +39,8 @@ public class HTML extends Controller {
 
     List<ElementResult<? extends Task>> elementResults = correctExercise(user, HtmlExercise.finder.byId(exerciseId));
 
+    System.out.println(Json.prettyPrint(Json.toJson(elementResults)));
+
     if(request().accepts("application/json"))
       // FIXME: ChildResults -> toJson!
       return ok(Json.toJson(elementResults));

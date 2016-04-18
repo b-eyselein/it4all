@@ -33,19 +33,16 @@ public class ChildResult {
     }
   }
 
+  public String getKey() {
+    return key;
+  }
+
   public Success getSuccess() {
     return success;
   }
 
-  public String toJson() {
-    String json = "{\"suc\": \"" + success.getJsonRepresentant() + "\"";
-    json += ", ";
-    json += "\"mes\": \"" + "Kindelement mit Tag '" + task.tagName + "' und Attribut '" + key + "' mit Wert '" + value
-        + "'";
-    if(success == Success.COMPLETE)
-      json += " wurde erfolgreich gefunden.\"}";
-    else if(success == Success.NONE)
-      json += " konnte nicht gefunden werden!\"}";
-    return json;
+  public String getValue() {
+    return value;
   }
+
 }
