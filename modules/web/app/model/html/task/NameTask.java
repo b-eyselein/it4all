@@ -18,6 +18,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
 
+import play.Logger;
+
 @Entity
 @DiscriminatorValue("name")
 public class NameTask extends Task {
@@ -35,9 +37,8 @@ public class NameTask extends Task {
     if(foundElements.isEmpty())
       return new NameResult(this, Success.NONE, Collections.emptyList(), Collections.emptyList());
 
-    // TODO: LOG?!
     if(foundElements.size() > 1)
-      System.out.println("Mehrere Elemente gefunden, benutze erstes!");
+      Logger.warn("Mehrere Elemente gefunden, benutze erstes!");
 
     WebElement element = foundElements.get(0);
 
