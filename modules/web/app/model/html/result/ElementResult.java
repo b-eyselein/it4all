@@ -13,23 +13,25 @@ public class ElementResult {
   protected Success success = Success.NONE;
   protected List<AttributeResult> attributeResults;
   protected List<ChildResult> childResults = new LinkedList<ChildResult>();
-  
+  protected String reason;
+
   public ElementResult(Task theTask, Success theSuccess, List<AttributeResult> theAttributeResults,
-      List<ChildResult> theChildResults) {
+      List<ChildResult> theChildResults, String theReason) {
     task = theTask;
     success = theSuccess;
     attributeResults = theAttributeResults;
     childResults = theChildResults;
+    reason = theReason;
   }
-  
+
   public List<AttributeResult> getAttributeResults() {
     return attributeResults;
   }
-  
+
   public List<ChildResult> getChildResults() {
     return childResults;
   }
-  
+
   @JsonIgnore
   public int getPoints() {
     if(success == Success.NONE)
@@ -39,17 +41,21 @@ public class ElementResult {
     else
       return 1;
   }
-  
+
+  public String getReason() {
+    return reason;
+  }
+
   public Success getSuccess() {
     return success;
   }
-  
+
   public Task getTask() {
     return task;
   }
-  
+
   public void setResult(Success suc) {
     success = suc;
   }
-  
+
 }

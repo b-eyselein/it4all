@@ -28,16 +28,16 @@ public class HTML extends Controller {
   
   private static String serverUrl = Util.getServerUrl();
   private static final String LEARNER_SOLUTION_VALUE = "editorContent";
-  
+
   @Security.Authenticated(Secured.class)
   public Result commit(int exerciseId) {
     User user = UserControl.getUser();
-    
+
     String learnerSolution = extractLearnerSolutionFromRequest(request());
     saveSolutionForUser(user.getName(), learnerSolution, exerciseId);
-    
+
     List<ElementResult> elementResults = correctExercise(user, HtmlExercise.finder.byId(exerciseId));
-    
+
     if(request().accepts("application/json"))
       // FIXME: ChildResults -> toJson!
       return ok(Json.toJson(elementResults));
@@ -45,21 +45,22 @@ public class HTML extends Controller {
       // TODO: Definitive Abgabe Html, rendere Html!
       return ok("TODO!");
   }
-  
+
   @Security.Authenticated(Secured.class)
   public Result exercise(int exerciseId) {
     HtmlExercise exercise = HtmlExercise.finder.byId(exerciseId);
+
     if(exercise == null)
       return redirect(controllers.web.routes.HTML.index());
-    else
-      return ok(html.render(UserControl.getUser(), exercise, serverUrl));
+    
+    return ok(html.render(UserControl.getUser(), exercise, serverUrl));
   }
-  
+
   @Security.Authenticated(Secured.class)
   public Result index() {
     return ok(htmloverview.render(HtmlExercise.finder.all(), UserControl.getUser()));
   }
-  
+
   public Result site(String userName, int exercise) {
     Path file = Util.getHtmlSolFileForExercise(userName, "html", exercise);
     if(!Files.exists(file))
@@ -71,19 +72,19 @@ public class HTML extends Controller {
       Logger.error("Fehler beim Lesen einer Html-Datei: " + file, error);
       return badRequest("Fehler beim Lesen der Datei!");
     }
-    
+
   }
-  
+
   private List<ElementResult> correctExercise(User user, HtmlExercise exercise) {
     String solutionUrl = routes.HTML.site(user.getName(), exercise.id).absoluteURL(request());
-    
+
     return HtmlCorrector.correct(solutionUrl, exercise, user);
   }
-  
+
   private String extractLearnerSolutionFromRequest(Request request) {
     return request.body().asFormUrlEncoded().get(LEARNER_SOLUTION_VALUE)[0];
   }
-  
+
   private void saveSolutionForUser(String userName, String solution, int exercise) {
     try {
       if(!Files.exists(Util.getSolDirForUser(userName)))

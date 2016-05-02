@@ -92,15 +92,12 @@ create table student (
 ;
 
 create table task (
-  tasktype                  varchar(31) not null,
   id                        integer,
   exercise_id               integer,
   taskDesc                  varchar(2000),
   tagName                   varchar(255),
   defining_attribute        varchar(255),
   attributes                varchar(255),
-  elemName                  varchar(255),
-  title                     varchar(255),
   constraint pk_task primary key (id, exercise_id))
 ;
 
