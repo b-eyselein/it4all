@@ -3,12 +3,14 @@ package model.html.result;
 import model.html.task.ChildTask;
 import model.html.task.Task;
 
+import java.util.List;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
 
 public class ChildResult {
-
+  
   private ChildTask task;
   private Success success = Success.NONE;
   private String key = "";
@@ -25,7 +27,10 @@ public class ChildResult {
   }
 
   public void evaluate(SearchContext element) {
-    for(WebElement child: element.findElements(By.xpath(".//*"))) {
+    // TODO: Do not use @... in XPath, since it is not working...
+    String xpathQuery = "./" + task.tagName;
+    List<WebElement> foundElements = element.findElements(By.xpath(xpathQuery));
+    for(WebElement child: foundElements) {
       if(child.getAttribute(key).equals(value)) {
         success = Success.COMPLETE;
         return;

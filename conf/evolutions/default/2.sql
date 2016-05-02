@@ -10,51 +10,40 @@ insert into htmlexercise values
 	Die Werkstatt kann nur Modelle der Marken Audi, Seat, Skoda und VW reparieren.
 	Ihre Firma beschließt, zuerst einen statischen Seitenprototyp mit verminderter Funktion zu erstellen. Benutzen Sie nur Html, um folgende Elemente zu erstellen. Versuchen Sie jedoch so viel Funktionalität wie möglich umzusetzen, indem Sie entsprechende Elemente bzw. Attribute von Html5 verwenden! Elemente, die mit einem „*“ markiert sind, sollen zur Formularabsendung eingegeben werden müssen.");
 	
-insert into task (`exercise_id`, `id`, `taskDesc`, `tagName`, `attributes`, `defining_attribute`) values
-	(1, 1, "Der Titel der Seite soll 'Kontaktformular Werkstatt' lauten.", "title", "", ""),
+insert into task (`exercise_id`, `id`, `taskDesc`, `tag_name`, `attributes`, `defining_attribute`) values
+	(1, 1, "Erstellen Sie ein Formular auf der Seite. Als Aktion soll test und als Methode 'post' angegeben werden.",
+	"//form", "action=test:method=post",  ""),
 	
-	(1, 2, "Erstellen Sie ein Formular auf der Seite. Als Aktion soll test und als Methode 'post' angegeben werden.",
-	 "form", "action=test:method=post",  ""),
+	(1, 2, "Erstellen Sie ein Namensfeld* (name) für den kompletten Namen des Kunden.",
+	"//input", "type=text:required=true", "name=name"),
 	
-	(1, 3, "Erstellen Sie ein Namensfeld* (name) für den kompletten Namen des Kunden.", "input",
-	 "type=text:required=true", "name=name"),
+	(1, 3, "Erstellen Sie ein Feld für die Emailadresse* (email) des Kunden.",
+	"//input", "type=email:required=true", "name=email"),
 	
-	(1, 4, "Erstellen Sie ein Feld für die Emailadresse* (email) des Kunden.", "input", 
-	 "type=email:required=true", "name=email"),
+	(1, 4, "Erstellen Sie ein Datumsfeld* (datum), um einen Wunschtermin angeben zu können. Die Vorgabe soll der 01.01.2016 sein.",
+	"//input", "type=date:required=true:value=2016-01-01", "name=datum"),
 	
-	(1, 5, "Erstellen Sie ein Datumsfeld* (datum), um einen Wunschtermin angeben zu können.
-	 Die Vorgabe soll der 01.01.2016 sein.", "input",
-	 "type=date:required=true:value=2016-01-01", "name=datum"),
-	
-	(1, 6, "Erstellen Sie ein Dropdownmenü* (marke), um eine der vier Automarken auswählen zu können.
+	(1, 5, "Erstellen Sie ein Dropdownmenü* (marke), um eine der vier Automarken auswählen zu können.
 	 Geben Sie außerdem als erste Option 'Bitte wählen' mit einem leeren 'value'-Attribut an,
-	 damit Sie die 'required'-Option modellieren können.", "select", "required=true", "name=marke"),
-	
-	(1, 7, "Ein weiteres Dropdownmenü (modell), um passende Automodelle auswählen zu können. Geben Sie je Hersteller
-	 mindestens folgende Modell an: A3, Leon, Fabia, Golf.
-	 Geben Sie außerdem als erste Option „Bitte wählen“ mit einem leeren „value“-Attribut an, damit Sie die „required“-Option
-	 modellieren können.", "select", "required=true", "name=modell"),
+	 damit Sie die 'required'-Option modellieren können.",
+	"//select", "required=true", "name=marke"),
 	 
-	(1, 8, "Erstellen Sie ein Eingabefeld* (jahr) für das Baujahr des Autos (1950 <= year <= 2016). Als Vorgabe soll
+	(1, 6, "Erstellen Sie ein Eingabefeld* (jahr) für das Baujahr des Autos (1950 <= year <= 2016). Als Vorgabe soll
 	 2000 eingestellt sein.",
-	 "input", "type=number:required=true:value=2000", "name=jahr"),
+	"//input", "type=number:required=true:value=2000", "name=jahr"),
 	 
-	(1, 9, "Erstellen Sie eine Checkbox* (agb), um die AGBs der Seite zu akzeptieren",
-	 "input", "type=checkbox:required=true", "name=agb"),
+	(1, 7, "Erstellen Sie eine Checkbox* (agb), um die AGBs der Seite zu akzeptieren",
+	"//input", "type=checkbox:required=true", "name=agb"),
 	 
-	(1, 10, "Erstellen Sie eine Möglichkeit, das Formular abzusenden. Geben Sie als Wert 'Absenden' an.",
-	 "input", "value=Absenden", "type=submit");
+	(1, 8, "Erstellen Sie eine Möglichkeit, das Formular abzusenden. Geben Sie als Wert 'Absenden' an.",
+	"//input", "value=Absenden", "type=submit");
 
 insert into childtask (`id`, `task_id`, `exercise_id`, `tagName`, `attributes`) values
-	(1, 6, 1, "option", "value="),
- 	(2, 6, 1, "option", "value=Audi"),
- 	(3, 6, 1, "option", "value=Seat"),
- 	(4, 6, 1, "option", "value=Skoda"),
- 	(5, 6, 1, "option", "value=VW"),
- 	(1, 7, 1, "option", "value=A3"),
- 	(2, 7, 1, "option", "value=Leon"),
- 	(3, 7, 1, "option", "value=Fabia"),
- 	(4, 7, 1, "option", "value=Golf");
+	(1, 5, 1, "option", "value="),
+ 	(2, 5, 1, "option", "value=Audi"),
+ 	(3, 5, 1, "option", "value=Seat"),
+ 	(4, 5, 1, "option", "value=Skoda"),
+ 	(5, 5, 1, "option", "value=VW");
 
 # JavaScript
  
