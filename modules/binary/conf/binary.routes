@@ -1,1 +1,1 @@
-GET	/index	controllers.binary.Binary.index()
+GET   /index   controllers.binary.Binary.index()
