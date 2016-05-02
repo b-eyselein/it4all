@@ -1,43 +1,34 @@
 package model.html.task;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
 
 import model.html.result.ElementResult;
-import model.html.result.MultiNameResult;
 import model.html.result.Success;
 
 @Entity
 @DiscriminatorValue("multiname")
 public class MultiNameTask extends Task {
-
+  
   @Column(name = "elemName")
   public String elemName;
-
+  
   @Override
-  public ElementResult<? extends Task> evaluate(SearchContext driver) {
-    List<WebElement> foundElements = driver.findElements(By.name(elemName));
+  public ElementResult evaluateMore(List<WebElement> foundElements) {
     if(foundElements.isEmpty())
-
-      return new MultiNameResult(this, Success.NONE, attributes, attributes);
-
-    foundElements = filterElementsForTagName(foundElements, tagName);
-    if(foundElements.isEmpty())
-
-      return new MultiNameResult(this, Success.NONE, attributes, attributes);
-
+      return new ElementResult(this, Success.NONE, Collections.emptyList(), Collections.emptyList());
+    
     // TODO: Stelle sicher, dass alle gefundenen Elemente alle Common-Attribute
     // besitzen
     for(WebElement element: foundElements)
       evaluateAllAttributes(element);
-
+    
     // Stelle sicher, dass alle Elemente jeweils ein Different-Attribut
     // enthalten
     // for(String attribute: defining_Attributes) {
@@ -51,15 +42,15 @@ public class MultiNameTask extends Task {
     // }
     // }
     // }
-
+    
     // if(singleResults.size() == defining_Attributes.size())
     // return Success.COMPLETE;
     // else if(singleResults.size() > 0)
     // return Success.PARTIALLY;
     // else
-
-    return new MultiNameResult(this, Success.PARTIALLY, attributes, attributes);
-
+    
+    return new ElementResult(this, Success.PARTIALLY, Collections.emptyList(), Collections.emptyList());
+    
   }
-
+  
 }

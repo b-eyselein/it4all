@@ -97,6 +97,7 @@ create table task (
   exercise_id               integer,
   taskDesc                  varchar(2000),
   tagName                   varchar(255),
+  defining_attribute        varchar(255),
   attributes                varchar(255),
   elemName                  varchar(255),
   title                     varchar(255),
