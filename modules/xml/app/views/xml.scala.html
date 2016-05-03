@@ -1,5 +1,5 @@
-@(user: model.user.User, exercise: model.html.HtmlExercise, serverUrl: String)
-@main("HTML-Test", user) {
+@(user: model.user.User, exercise: model.XmlExercise, serverUrl: String)
+@main("XML-Test", user) {
   <script src="@controllers.web.routes.Assets.versioned("assets/ace/ace.js")"></script>
   <script src="@controllers.web.routes.Assets.versioned("assets/processor.js")"></script>
   <script>
@@ -14,7 +14,7 @@
       
       // AJAX-Objekt mit Daten fuellen, absenden
       var parameters = "editorContent=" + encodeURIComponent(editor.getValue());
-      xhttp.open("PUT", "@serverUrl@controllers.web.routes.HTML.commit(exercise.id)", true);
+      xhttp.open("PUT", "@serverUrl@controllers.xml.routes.XML.commit(exercise.id)", true);
       xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
       xhttp.setRequestHeader("Accept", "application/json");
       xhttp.send(parameters);
@@ -60,7 +60,7 @@
                                   var editor = ace.edit("editor");
                                   editor.setTheme("ace/theme/eclipse");
                                   editor.setFontSize("14px");
-                                  editor.getSession().setMode("ace/mode/html");
+                                  @if(exercise.type)editor.getSession().setMode("ace/mode/xml");
                                   editor.getSession().setTabSize(2);
                                   editor.getSession().setUseSoftTabs(true);
                                   editor.getSession().setUseWrapMode(true);
