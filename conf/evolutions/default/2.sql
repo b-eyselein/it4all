@@ -49,10 +49,10 @@ insert into childtask (`id`, `task_id`, `exercise_id`, `tagName`, `defining_attr
  
 insert into js_exercise (`id`, `name`, `text`, `default_solution`, `function_name`) values
 	(1, "Summen", "Implementieren Sie folgende Funktion 'sum', die zwei Zahlen entegennimmt und deren Summe zurückgibt.",
-	 "function sum(a, b) {\n  return 0\n}", "sum"),
+	 "function sum(a, b) {\n  return 0;;\n}", "sum"),
 	(2, "Konkatenation von Strings", "Implementieren Sie die folgende Funktion 'concat',
 	 die drei beliebige Strings entgegennimmt und die Konkatenation der Strings zurückgibt.",
-	 "function concat(str1, str2, str3) {\n  return \"\"\n}", "concat");
+	 "function concat(str1, str2, str3) {\n  return \"\";;\n}", "concat");
 
 insert into js_test (`id`, `exercise_id`, `awaited_result`) values
 	(1, 1, 2),
