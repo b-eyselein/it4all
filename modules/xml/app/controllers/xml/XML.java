@@ -9,7 +9,7 @@ import play.mvc.Security;
 public class XML extends Controller {
   
   public Result index() {
-    return ok("Hello World");
+    return ok("Hello");
   }
   
 }
