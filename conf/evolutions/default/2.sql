@@ -38,7 +38,7 @@ insert into task (`exercise_id`, `id`, `taskDesc`, `xpath_query_name`, `attribut
 	(1, 8, "Erstellen Sie eine Möglichkeit, das Formular abzusenden. Geben Sie als Wert 'Absenden' an.",
 	"//form//input", "value=Absenden", "type=submit");
 
-insert into childtask (`id`, `task_id`, `exercise_id`, `tagName`, `attributes`) values
+insert into childtask (`id`, `task_id`, `exercise_id`, `tagName`, `defining_attribute`) values
 	(1, 5, 1, "option", "value="),
  	(2, 5, 1, "option", "value=Audi"),
  	(3, 5, 1, "option", "value=Seat"),

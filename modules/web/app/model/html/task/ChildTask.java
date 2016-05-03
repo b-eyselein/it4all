@@ -21,7 +21,7 @@ public class ChildTask extends Model {
   
   @EmbeddedId
   public ChildTaskKey key;
-  
+
   @ManyToOne
   // @formatter:off
   @JoinColumns({
@@ -31,14 +31,14 @@ public class ChildTask extends Model {
   //@formatter:on
   @JsonBackReference
   public Task task;
-  
+
   @Column(name = "tagName")
   public String tagName;
-  
-  public String attributes;
-  
+
+  public String definingAttribute;
+
   public ChildResult getChildResult() {
     return new ChildResult(this);
   }
-  
+
 }

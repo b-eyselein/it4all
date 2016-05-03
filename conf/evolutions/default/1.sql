@@ -14,7 +14,7 @@ create table childtask (
   task_id                   integer,
   exercise_id               integer,
   tagName                   varchar(255),
-  attributes                varchar(255),
+  defining_attribute        varchar(255),
   constraint pk_childtask primary key (id, task_id))
 ;
 

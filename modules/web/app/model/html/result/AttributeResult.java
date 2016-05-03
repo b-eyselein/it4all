@@ -2,18 +2,16 @@ package model.html.result;
 
 import org.openqa.selenium.WebElement;
 
-public class AttributeResult {
+public class AttributeResult extends EvaluationResult {
   
   private String key;
   private String value;
-  
-  private Success success;
-  
+
   public AttributeResult(String attributeKey, String attributeValue) {
     key = attributeKey;
     value = attributeValue;
   }
-  
+
   public void evaluate(WebElement element) {
     String foundValue = element.getAttribute(key);
     if(foundValue == null)
@@ -23,17 +21,13 @@ public class AttributeResult {
     else
       success = Success.PARTIALLY;
   }
-  
+
   public String getKey() {
     return key;
   }
-  
-  public Success getSuccess() {
-    return success;
-  }
-  
+
   public String getValue() {
     return value;
   }
-  
+
 }
