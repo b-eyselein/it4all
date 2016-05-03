@@ -22,7 +22,7 @@ public class XmlAgainstXSD {
 		final List<String> output = new LinkedList<>();
 		Source schemaFile = new StreamSource(new File("//home/shpend//Downloads//books.xsd"));
 
-		Source xmlFile = new StreamSource(new File("//home/shpend//Downloads//xmlFile.xml"));
+		Source xmlFile = new StreamSource(new File( "//home/shpend//Downloads//xmlFile.xml"));
 		SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		Schema schema = null;
 		try {

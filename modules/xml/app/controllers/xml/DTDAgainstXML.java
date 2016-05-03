@@ -13,7 +13,7 @@ public class DTDAgainstXML {
 	public static void main(String[] args) throws IOException {
 
 		FileInputStream fstream1 = new FileInputStream("//home//shpend//Downloads//party2.dtd");
-		FileInputStream fstream2 = new FileInputStream("//home//shpend//Downloads//party.dtd");
+		FileInputStream fstream2 = new FileInputStream("//home//shpend//Downloads//party.dtd" );
 
 		DataInputStream in1 = new DataInputStream(fstream1);
 		DataInputStream in2 = new DataInputStream(fstream2);

@@ -19,7 +19,7 @@ public class XmlAgainstDTD {
 		final List<String> output = new LinkedList<>();
 
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		factory.setValidating(true);
+		factory.setValidating(true) ;
 		DocumentBuilder builder = null;
 		try {
 			builder = factory.newDocumentBuilder();
