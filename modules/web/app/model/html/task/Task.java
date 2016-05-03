@@ -33,36 +33,36 @@ public class Task extends Model {
   
   public static final String MULTIPLE_ATTRIBUTES_SPLIT_CHARACTER = ":";
   public static final String KEY_VALUE_CHARACTER = "=";
-  
+
   @EmbeddedId
   public TaskKey key;
-  
+
   @ManyToOne
   @JoinColumn(name = "exercise_id")
   @JsonBackReference
   public HtmlExercise exercise;
-  
+
   @Column(name = "taskDesc", length = 2000)
   @JsonIgnore
   public String taskDescription;
-  
+
   @JsonIgnore
-  public String tagName;
-  
+  public String xpathQueryName;
+
   public String definingAttribute;
-  
+
   @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
   @JsonManagedReference
   @JsonIgnore
   public List<ChildTask> childTasks;
-  
+
   @JsonIgnore
   public String attributes;
-  
+
   public ElementResult evaluate(SearchContext searchContext) {
     String xpathQuery = buildXPathQuery();
     List<WebElement> foundElements = searchContext.findElements(By.xpath(xpathQuery));
-    
+
     if(foundElements.isEmpty())
       return new ElementResult(this, Success.NONE, Collections.emptyList(), Collections.emptyList(),
           "Kein passendes Element gefunden!");
@@ -74,32 +74,22 @@ public class Task extends Model {
     
     // Nur noch ein passendes Element
     WebElement foundElement = foundElements.get(0);
-    
+
     // Evaluate ChildResults!
-    List<ChildResult> childResults = new LinkedList<ChildResult>();
-    childTasks.stream().map(childTask -> childTask.getChildResult()).forEach(childResult -> {
-      childResult.evaluate(foundElement);
-      childResults.add(childResult);
-    });
-    
+    List<ChildResult> childResults = evaluateAllChildResults(foundElement);
+
     List<AttributeResult> attributeResults = evaluateAllAttributes(foundElement);
-    
+
     if(allAttributesFound(attributeResults) && allChildElementsFound(childResults))
       return new ElementResult(this, Success.COMPLETE, attributeResults, childResults, "TODO!");
     else
       return new ElementResult(this, Success.PARTIALLY, attributeResults, childResults, "TODO!");
     
   }
-  
-  public List<AttributeResult> evaluateAllAttributes(WebElement element) {
-    List<AttributeResult> results = getAttributeResults();
-    results.forEach(result -> result.evaluate(element));
-    return results;
-  }
-  
+
   private String buildXPathQuery() {
-    String xpathQuery = "" + tagName;
-    
+    String xpathQuery = xpathQueryName;
+
     // Kein Attribut, wenn Tag eindeutig
     if(definingAttribute == null || definingAttribute.isEmpty())
       return xpathQuery;
@@ -108,7 +98,19 @@ public class Task extends Model {
     xpathQuery += "[@" + valueAndKey[0] + " = '" + valueAndKey[1] + "']";
     return xpathQuery;
   }
-  
+
+  private List<AttributeResult> evaluateAllAttributes(WebElement foundElement) {
+    List<AttributeResult> attributeResults = getAttributeResults();
+    attributeResults.forEach(attributeResult -> attributeResult.evaluate(foundElement));
+    return attributeResults;
+  }
+
+  private List<ChildResult> evaluateAllChildResults(WebElement foundElement) {
+    List<ChildResult> childResults = getChildResults();
+    childResults.forEach(childResult -> childResult.evaluate(foundElement));
+    return childResults;
+  }
+
   private List<AttributeResult> getAttributeResults() {
     List<AttributeResult> attributesToFind = new LinkedList<AttributeResult>();
     for(String attribute: attributes.split(MULTIPLE_ATTRIBUTES_SPLIT_CHARACTER)) {
@@ -119,15 +121,19 @@ public class Task extends Model {
     }
     return attributesToFind;
   }
-  
+
+  private List<ChildResult> getChildResults() {
+    return childTasks.stream().map(childTask -> childTask.getChildResult()).collect(Collectors.toList());
+  }
+
   protected boolean allAttributesFound(List<AttributeResult> attributeResults) {
     return attributeResults.stream().mapToInt(result -> (result.getSuccess() == Success.COMPLETE) ? 0 : 1).sum() == 0;
   }
-  
+
   protected boolean allChildElementsFound(List<ChildResult> childResults) {
     return childResults.stream().mapToInt(result -> (result.getSuccess() == Success.COMPLETE) ? 0 : 1).sum() == 0;
   }
-  
+
   protected List<WebElement> filterElementsForTagName(List<WebElement> foundElements, String tagName) {
     return foundElements.parallelStream().filter(element -> element.getTagName().equals(tagName))
         .collect(Collectors.toList());

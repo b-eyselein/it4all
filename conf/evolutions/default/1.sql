@@ -95,7 +95,7 @@ create table task (
   id                        integer,
   exercise_id               integer,
   taskDesc                  varchar(2000),
-  tag_name                  varchar(255),
+  xpath_query_name          varchar(255),
   defining_attribute        varchar(255),
   attributes                varchar(255),
   constraint pk_task primary key (id, exercise_id))
