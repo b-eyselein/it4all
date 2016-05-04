@@ -8,42 +8,44 @@ insert into student values
 insert into htmlexercise values
 	(1, "Terminabsprache Werkstatt", "Ihre Firma für Webdesign ist von einer lokalen Werkstatt beauftragt worden, ein Kontaktformular für die Absprache eines Termins zu erstellen. Die Kunden sollen in einem Formular ihre Daten (Namen, Adresse, Automarke, Baujahr, …) sowie einen Datumswunsch angeben. Diese Daten werden an den Server gesendet und, falls der Termin möglich ist, in einer Datenbank gespeichert. Falls der Termin bereits besetzt ist, bekommt der Kunde eine Fehlermeldung angezeigt.
 	Die Werkstatt kann nur Modelle der Marken Audi, Seat, Skoda und VW reparieren.
-	Ihre Firma beschließt, zuerst einen statischen Seitenprototyp mit verminderter Funktion zu erstellen. Benutzen Sie nur Html, um folgende Elemente zu erstellen. Versuchen Sie jedoch so viel Funktionalität wie möglich umzusetzen, indem Sie entsprechende Elemente bzw. Attribute von Html5 verwenden! Elemente, die mit einem „*“ markiert sind, sollen zur Formularabsendung eingegeben werden müssen.");
+	Ihre Firma beschließt, zuerst einen statischen Seitenprototyp mit verminderter Funktion zu erstellen. Benutzen Sie nur Html, um folgende Elemente zu erstellen. Versuchen Sie jedoch so viel Funktionalität wie möglich umzusetzen, indem Sie entsprechende Elemente bzw. Attribute von Html5 verwenden! Elemente, die mit einem „*“ markiert sind, sollen zur Formularabsendung eingegeben werden müssen. Erstellen Sie jedes Eingabefeld für das spätere Styling mit CSS jeweils eine eigene <div>-Umgebung!");
 	
 insert into task (`exercise_id`, `id`, `taskDesc`, `xpath_query_name`, `attributes`, `defining_attribute`) values
 	(1, 1, "Erstellen Sie ein Formular auf der Seite. Als Aktion soll test und als Methode 'post' angegeben werden.",
 	"//form", "action=test:method=post",  ""),
+
+	(1, 2, "Geben Sie im Fomular eine <h1>-Überschrift mit passendem Text an", "//form//h1", "", ""),
 	
-	(1, 2, "Erstellen Sie ein Namensfeld* (name) für den kompletten Namen des Kunden.",
-	"//form//input", "type=text:required=true", "name=name"),
+	(1, 3, "Erstellen Sie ein Namensfeld* (name) für den kompletten Namen des Kunden.",
+	"//form/div//input", "type=text:required=true", "name=name"),
 	
-	(1, 3, "Erstellen Sie ein Feld für die Emailadresse* (email) des Kunden.",
-	"//form//input", "type=email:required=true", "name=email"),
+	(1, 4, "Erstellen Sie ein Feld für die Emailadresse* (email) des Kunden.",
+	"//form/div//input", "type=email:required=true", "name=email"),
 	
-	(1, 4, "Erstellen Sie ein Datumsfeld* (datum), um einen Wunschtermin angeben zu können. Die Vorgabe soll der 01.01.2016 sein.",
-	"//form//input", "type=date:required=true:value=2016-01-01", "name=datum"),
+	(1, 5, "Erstellen Sie ein Datumsfeld* (datum), um einen Wunschtermin angeben zu können. Die Vorgabe soll der 01.01.2016 sein.",
+	"//form/div//input", "type=date:required=true:value=2016-01-01", "name=datum"),
 	
-	(1, 5, "Erstellen Sie ein Dropdownmenü* (marke), um eine der vier Automarken auswählen zu können.
+	(1, 6, "Erstellen Sie ein Dropdownmenü* (marke), um eine der vier Automarken auswählen zu können.
 	 Geben Sie außerdem als erste Option 'Bitte wählen' mit einem leeren 'value'-Attribut an,
 	 damit Sie die 'required'-Option modellieren können.",
-	"//form//select", "required=true", "name=marke"),
+	"//form/div//select", "required=true", "name=marke"),
 	 
-	(1, 6, "Erstellen Sie ein Eingabefeld* (jahr) für das Baujahr des Autos (1950 <= year <= 2016). Als Vorgabe soll
+	(1, 7, "Erstellen Sie ein Eingabefeld* (jahr) für das Baujahr des Autos (1950 <= year <= 2016). Als Vorgabe soll
 	 2000 eingestellt sein.",
-	"//form//input", "type=number:required=true:value=2000", "name=jahr"),
+	"//form/div//input", "type=number:required=true:value=2000", "name=jahr"),
 	 
-	(1, 7, "Erstellen Sie eine Checkbox* (agb), um die AGBs der Seite zu akzeptieren",
-	"//form//input", "type=checkbox:required=true", "name=agb"),
+	(1, 8, "Erstellen Sie eine Checkbox* (agb), um die AGBs der Seite zu akzeptieren",
+	"//form/div//input", "type=checkbox:required=true", "name=agb"),
 	 
-	(1, 8, "Erstellen Sie eine Möglichkeit, das Formular abzusenden. Geben Sie als Wert 'Absenden' an.",
-	"//form//input", "value=Absenden", "type=submit");
+	(1, 9, "Erstellen Sie eine Möglichkeit, das Formular abzusenden. Geben Sie als Wert 'Absenden' an.",
+	"//form/div//input", "value=Absenden", "type=submit");
 
 insert into childtask (`id`, `task_id`, `exercise_id`, `tagName`, `defining_attribute`) values
-	(1, 5, 1, "option", "value="),
- 	(2, 5, 1, "option", "value=Audi"),
- 	(3, 5, 1, "option", "value=Seat"),
- 	(4, 5, 1, "option", "value=Skoda"),
- 	(5, 5, 1, "option", "value=VW");
+	(1, 6, 1, "option", "value="),
+ 	(2, 6, 1, "option", "value=Audi"),
+ 	(3, 6, 1, "option", "value=Seat"),
+ 	(4, 6, 1, "option", "value=Skoda"),
+ 	(5, 6, 1, "option", "value=VW");
 
 # JavaScript
  
