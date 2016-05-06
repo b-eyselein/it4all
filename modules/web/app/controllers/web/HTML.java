@@ -2,6 +2,7 @@ package controllers.web;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
@@ -28,6 +29,7 @@ public class HTML extends Controller {
   
   private static String serverUrl = Util.getServerUrl();
   private static final String LEARNER_SOLUTION_VALUE = "editorContent";
+  private static final String STANDARD_HTML = "<!doctype html>\n<html>\n\n<head>\n</head>\n\n<body>\n</body>\n\n</html>";
 
   @Security.Authenticated(Secured.class)
   public Result commit(int exerciseId) {
@@ -53,7 +55,20 @@ public class HTML extends Controller {
       return badRequest(new Html("<p>Diese Aufgabe existert leider nicht.</p><p>Zur&uuml;ck zur <a href=\""
           + routes.HTML.index() + "\">Startseite</a>.</p>"));
     
-    return ok(html.render(UserControl.getUser(), exercise, serverUrl));
+    User user = UserControl.getUser();
+
+    // FIXME: Lade letzte Lösung!
+    String oldSolution = STANDARD_HTML;
+    try {
+      Path oldSolutionPath = Util.getHtmlSolFileForExercise(user.getName(), "html", exerciseId);
+      if(Files.exists(oldSolutionPath, LinkOption.NOFOLLOW_LINKS))
+        oldSolution = String.join("\n", Files.readAllLines(oldSolutionPath));
+      
+    } catch (IOException e) {
+      Logger.error(e.getMessage());
+    }
+
+    return ok(html.render(user, exercise, oldSolution, serverUrl));
   }
 
   @Security.Authenticated(Secured.class)

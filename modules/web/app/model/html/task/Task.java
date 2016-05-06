@@ -22,12 +22,12 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import model.EvaluationResult;
+import model.Success;
 import model.html.HtmlExercise;
 import model.html.result.AttributeResult;
 import model.html.result.ChildResult;
 import model.html.result.ElementResult;
-import model.html.result.EvaluationResult;
-import model.html.result.Success;
 
 @Entity
 public class Task extends Model {

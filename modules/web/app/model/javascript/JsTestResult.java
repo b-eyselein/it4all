@@ -1,7 +1,7 @@
 package model.javascript;
 
-import model.html.result.EvaluationResult;
-import model.html.result.Success;
+import model.EvaluationResult;
+import model.Success;
 
 public class JsTestResult extends EvaluationResult {
   

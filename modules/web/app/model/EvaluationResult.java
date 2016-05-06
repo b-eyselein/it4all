@@ -1,4 +1,4 @@
-package model.html.result;
+package model;
 
 import play.Logger;
 

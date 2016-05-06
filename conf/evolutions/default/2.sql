@@ -47,6 +47,10 @@ insert into childtask (`id`, `task_id`, `exercise_id`, `tagName`, `defining_attr
  	(4, 6, 1, "option", "value=Skoda"),
  	(5, 6, 1, "option", "value=VW");
 
+# CSS
+insert into css_exercise (`id`, `title`, `exerciseText`) values
+	(1, "Terminabsprache Werkstatt", "TODO!");
+
 # JavaScript
  
 insert into js_exercise (`id`, `name`, `text`, `default_solution`, `function_name`) values

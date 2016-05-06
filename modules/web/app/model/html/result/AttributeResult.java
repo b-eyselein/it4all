@@ -2,6 +2,9 @@ package model.html.result;
 
 import org.openqa.selenium.WebElement;
 
+import model.EvaluationResult;
+import model.Success;
+
 public class AttributeResult extends EvaluationResult {
   
   private String key;

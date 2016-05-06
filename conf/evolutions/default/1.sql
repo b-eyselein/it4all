@@ -18,6 +18,13 @@ create table childtask (
   constraint pk_childtask primary key (id, task_id))
 ;
 
+create table css_exercise (
+  id                        integer auto_increment not null,
+  title                     varchar(255),
+  exerciseText              varchar(2000),
+  constraint pk_css_exercise primary key (id))
+;
+
 create table excel_exercise (
   id                        integer auto_increment not null,
   title                     varchar(255),
@@ -123,6 +130,8 @@ SET FOREIGN_KEY_CHECKS=0;
 drop table administrator;
 
 drop table childtask;
+
+drop table css_exercise;
 
 drop table excel_exercise;
 

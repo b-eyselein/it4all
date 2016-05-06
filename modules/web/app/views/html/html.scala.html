@@ -1,4 +1,6 @@
-@(user: model.user.User, exercise: model.html.HtmlExercise, serverUrl: String) @main("HTML-Test", user) {
+@(user: model.user.User, exercise: model.html.HtmlExercise, oldSolution: String, serverUrl: String)
+
+@main("HTML-Test", user) {
 <script src="@controllers.web.routes.Assets.versioned("assets/ace/ace.js")"></script>
   <script src="@controllers.web.routes.Assets.versioned("assets/processor.js")"></script>
   <script>
@@ -52,13 +54,8 @@
           <div id="editorFenster" class="tab-pane fade in active">
             <div class="panel panel-default">
               <div class="panel-body">
-                <pre id="editor" class="form-control">&lt;!doctype html&gt;
-&lt;html&gt;
-  &lt;head&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-  &lt;/body&gt;
-&lt;/html&gt;</pre>
+                <pre id="editor" class="form-control">@for(sol <- oldSolution.split("\n")) {@sol
+}</pre>
                 <script type="text/javascript">
                                   var editor = ace.edit("editor");
                                   editor.setTheme("ace/theme/eclipse");

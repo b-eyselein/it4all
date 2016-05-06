@@ -18,18 +18,18 @@ import model.html.task.Task;
 @Table(name = "htmlexercise")
 public class HtmlExercise extends Model {
   
-  public static Finder<Integer, HtmlExercise> finder = new Finder<Integer, HtmlExercise>(HtmlExercise.class);
-  
+  public static final Finder<Integer, HtmlExercise> finder = new Finder<Integer, HtmlExercise>(HtmlExercise.class);
+
   @Id
   public int id;
-  
+
   public String title;
-  
+
   @Column(name = "exerciseText", length = 2000)
   public String exerciseText;
-  
+
   @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
   @JsonManagedReference
   public List<Task> tasks;
-  
+
 }
