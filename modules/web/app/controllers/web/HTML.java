@@ -21,13 +21,14 @@ import play.mvc.Result;
 import play.mvc.Security;
 import play.twirl.api.Html;
 import views.html.html.html;
+import views.html.html.htmlcorrect;
 import views.html.html.htmloverview;
 import controllers.core.UserControl;
 import controllers.core.Util;
 
 public class HTML extends Controller {
   
-  private static String serverUrl = Util.getServerUrl();
+  private static final String SERVER_URL = Util.getServerUrl();
   private static final String LEARNER_SOLUTION_VALUE = "editorContent";
   private static final String STANDARD_HTML = "<!doctype html>\n<html>\n\n<head>\n</head>\n\n<body>\n</body>\n\n</html>";
 
@@ -40,11 +41,11 @@ public class HTML extends Controller {
 
     List<ElementResult> elementResults = correctExercise(user, HtmlExercise.finder.byId(exerciseId));
 
-    if(request().accepts("application/json"))
+    if(request().acceptedTypes().get(0).toString().equals("application/json"))
       return ok(Json.toJson(elementResults));
     else
       // TODO: Definitive Abgabe Html, rendere Html!
-      return ok("TODO!");
+      return ok(htmlcorrect.render(learnerSolution, UserControl.getUser()));
   }
 
   @Security.Authenticated(Secured.class)
@@ -57,18 +58,17 @@ public class HTML extends Controller {
     
     User user = UserControl.getUser();
 
-    // FIXME: Lade letzte Lösung!
-    String oldSolution = STANDARD_HTML;
+    String defaultOrOldSolution = STANDARD_HTML;
     try {
       Path oldSolutionPath = Util.getHtmlSolFileForExercise(user.getName(), "html", exerciseId);
       if(Files.exists(oldSolutionPath, LinkOption.NOFOLLOW_LINKS))
-        oldSolution = String.join("\n", Files.readAllLines(oldSolutionPath));
+        defaultOrOldSolution = String.join("\n", Files.readAllLines(oldSolutionPath));
       
     } catch (IOException e) {
       Logger.error(e.getMessage());
     }
 
-    return ok(html.render(user, exercise, oldSolution, serverUrl));
+    return ok(html.render(user, exercise, defaultOrOldSolution, SERVER_URL));
   }
 
   @Security.Authenticated(Secured.class)

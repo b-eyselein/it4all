@@ -1,0 +1,26 @@
+@(solution: String, user: model.user.User) @main("HTML-Test", user) {
+<div class="container-fluid">
+
+  <div class="alert alert-success">Ihre L&ouml;sung wurde gespeichert. Sie k&ouml;nnen sich nun <a href="@controllers.core.routes.UserControl.logout()">ausloggen.</a></div>
+
+  <div class="row row-eq-height">
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">Ihre L&ouml;sung</div>
+        <div class="panel-body">
+          <pre>@for(sol <- solution.split("\n")) {@sol
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">Korrektur</div>
+        <div class="panel-body">TODO...</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+}
