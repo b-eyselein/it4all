@@ -1,18 +1,17 @@
-@import model.html.HtmlExercise
-@import model.user.User
-
-@(exercises: List[HtmlExercise], user: User)
-
-@main("HTML-Test", user) {
+@(exercises: List[model.html.HtmlExercise], user: model.user.User) @main("HTML-Test", user) {
   <div class="container">
+    <h2>&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h2>
     @for(exercise <- exercises) {
     <div class="panel panel-default">
       <div class="panel-heading">
         <a href="@controllers.web.routes.HTML.exercise(exercise.id)">Aufgabe @exercise.id: @exercise.title</a>
       </div>
       <div class="panel-body">
-      @for(exerText <- exercise.exerciseText.split("\n")) {<p>@exerText</p>
-      }</div>
+        @for(exerText <- exercise.exerciseText.split("\n")) {
+        <p>@exerText</p>
+        }
+      </div>
     </div>
-  }</div>
+    }
+  </div>
 }

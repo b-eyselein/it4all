@@ -18,39 +18,39 @@ import views.html.login;
 public class UserControl extends Controller {
   
   public static final String SESSION_ID_FIELD = "id";
-  
+
   public static User getUser() {
     Http.Session session = Http.Context.current().session();
     return Student.find.byId(session.get(SESSION_ID_FIELD));
   }
-  
+
   public Result authenticate() {
     Map<String, String[]> formValues = request().body().asFormUrlEncoded();
-    
+
     String userName = formValues.get("name")[0];
     String passwort = formValues.get("passwort")[0];
-    
+
     // TODO: schöner...
     User user = findOrCreateStudent(userName, passwort);
-    
+
     session().clear();
     session(UserControl.SESSION_ID_FIELD, user.getName());
-    
+
     if(user.isAdmin())
       return redirect("/admin");
     else
       return redirect("/");
   }
-  
+
   public Result directLogin(String name, String type, int id) {
     String passwort = "";
     Student student = findOrCreateStudent(name, passwort);
     session().clear();
     session(UserControl.SESSION_ID_FIELD, student.name);
-    
+
     return redirect("/" + type + "/" + id);
   }
-  
+
   public Result fromWuecampus(String type, int id, String name) {
     if(name.isEmpty())
       return redirect("/login");
@@ -58,23 +58,19 @@ public class UserControl extends Controller {
     Student student = findOrCreateStudent(name, passwort);
     session().clear();
     session(UserControl.SESSION_ID_FIELD, student.name);
-    
+
     return redirect("/" + type + "/" + id);
   }
-  
+
   public Result login() {
     return ok(login.render());
   }
-  
+
   public Result logout() {
     session().clear();
     return ok(login.render());
   }
-  
-  public Result test() {
-    return ok("TEST");
-  }
-  
+
   private Student findOrCreateStudent(String userName, String passwort) {
     // TODO: Passwort!
     if(Student.find.byId(userName) == null) {
@@ -90,5 +86,5 @@ public class UserControl extends Controller {
     }
     return Student.find.byId(userName);
   }
-  
+
 }

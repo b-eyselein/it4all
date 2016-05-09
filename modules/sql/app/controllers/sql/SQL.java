@@ -9,14 +9,13 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import controllers.core.UserControl;
 import model.user.Secured;
 import model.user.User;
 import play.db.Database;
-import play.db.NamedDatabase;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security.Authenticated;
-import controllers.core.UserControl;
 import views.html.sql;
 
 @Authenticated(Secured.class)
