@@ -1,4 +1,4 @@
-package model.html;
+package model.xml;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,12 +10,11 @@ import model.user.User;
 
 public class XmlCorrector {
   
-  public static List<ElementResult<? extends Task>> correct(String solutionUrl, XmlExercise exercise, User student) {
-    WebDriver driver = new HtmlUnitDriver();
-    driver.get(solutionUrl);
-    
-    List<ElementResult<? extends Task>> result = exercise.tasks.stream().map(task -> task.evaluate(driver))
-        .collect(Collectors.toList());
+  // TODO: change List<Object> to something custom
+  public static List<Object> correct(String solutionText, XmlExercise exercise, User student) {
+    // the path of the reference file could be
+	// found by XmlExercise.pathToReference
+	// TODO!!!
     
     return result;
   }
