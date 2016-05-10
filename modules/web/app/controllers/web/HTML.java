@@ -27,7 +27,7 @@ import controllers.core.UserControl;
 import controllers.core.Util;
 
 public class HTML extends Controller {
-
+  
   private static final String SERVER_URL = Util.getServerUrl();
   private static final String LEARNER_SOLUTION_VALUE = "editorContent";
   private static final String STANDARD_HTML = "<!doctype html>\n<html>\n\n<head>\n</head>\n\n<body>\n</body>\n\n</html>";
@@ -55,7 +55,7 @@ public class HTML extends Controller {
     if(exercise == null)
       return badRequest(new Html("<p>Diese Aufgabe existert leider nicht.</p><p>Zur&uuml;ck zur <a href=\""
           + routes.HTML.index() + "\">Startseite</a>.</p>"));
-
+    
     User user = UserControl.getUser();
 
     String defaultOrOldSolution = STANDARD_HTML;
@@ -63,12 +63,10 @@ public class HTML extends Controller {
       Path oldSolutionPath = Util.getHtmlSolFileForExercise(user.getName(), "html", exerciseId);
       if(Files.exists(oldSolutionPath, LinkOption.NOFOLLOW_LINKS))
         defaultOrOldSolution = String.join("\n", Files.readAllLines(oldSolutionPath));
-
+      
     } catch (IOException e) {
       Logger.error(e.getMessage());
     }
-
-    System.out.println(defaultOrOldSolution);
 
     return ok(html.render(user, exercise, defaultOrOldSolution, SERVER_URL));
   }
@@ -82,7 +80,7 @@ public class HTML extends Controller {
     Path file = Util.getHtmlSolFileForExercise(userName, "html", exercise);
     if(!Files.exists(file))
       return badRequest("Fehler: Datei nicht vorhanden!");
-
+    
     try {
       return ok(new Html(String.join("\n", Files.readAllLines(file))));
     } catch (IOException error) {
@@ -106,11 +104,11 @@ public class HTML extends Controller {
     try {
       if(!Files.exists(Util.getSolDirForUser(userName)))
         Files.createDirectory(Util.getSolDirForUser(userName));
-
+      
       Path solDir = Util.getSolDirForUserAndType("html", userName);
       if(!Files.exists(solDir))
         Files.createDirectory(solDir);
-
+      
       Path saveTo = Util.getHtmlSolFileForExercise(userName, "html", exercise);
       Files.write(saveTo, Arrays.asList(solution), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     } catch (IOException error) {
