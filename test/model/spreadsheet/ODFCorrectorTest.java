@@ -18,6 +18,8 @@ import org.odftoolkit.simple.style.StyleTypeDefinitions.FontStyle;
 import org.odftoolkit.simple.table.Cell;
 import org.odftoolkit.simple.table.Table;
 
+import model.spread.ODFCorrector;
+
 public class ODFCorrectorTest {
   
   private ODFCorrector corrector = new ODFCorrector();

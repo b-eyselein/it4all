@@ -16,6 +16,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.junit.Test;
 
+import model.spread.XLSXCorrector;
+
 public class XLSXCorrectorTest {
   
   private XLSXCorrector corrector = new XLSXCorrector();

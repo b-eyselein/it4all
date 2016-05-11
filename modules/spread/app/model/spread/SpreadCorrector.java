@@ -1,4 +1,4 @@
-package model.spreadsheet;
+package model.spread;
 
 import java.nio.file.Path;
 import java.util.ArrayList;

@@ -1,0 +1,4 @@
+GET    /                    controllers.spread.Excel.index()
+GET    /:ex                 controllers.spread.Excel.exercise(ex: Int)
+POST   /upload/:ex          controllers.spread.Excel.upload(ex: Int)
+GET    /download/:ex/:typ   controllers.spread.Excel.download(ex: Int, typ: String)

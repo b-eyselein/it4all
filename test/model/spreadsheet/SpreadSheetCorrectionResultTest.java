@@ -11,6 +11,8 @@ import java.util.List;
 
 import org.junit.Test;
 
+import model.spread.SpreadSheetCorrectionResult;
+
 public class SpreadSheetCorrectionResultTest {
   
   @Test

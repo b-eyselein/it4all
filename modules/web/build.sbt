@@ -12,6 +12,7 @@ libraryDependencies ++= Seq(
 
   // Selenium for Html Tests
   Common.seleniumDep,
+  Common.htmlUnitDep,
 
   // Mockito for Testing
   Common.mockitoDep

@@ -1,4 +1,4 @@
-package model.spreadsheet;
+package model.spread;
 
 import java.io.File;
 import java.io.FileOutputStream;
