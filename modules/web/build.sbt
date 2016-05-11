@@ -16,3 +16,6 @@ libraryDependencies ++= Seq(
   // Mockito for Testing
   Common.mockitoDep
 )
+
+// JaCoCo - siehe project/plugins.sbt
+jacoco.settings
