@@ -1,16 +1,9 @@
-package model.xml;
+package model;
 
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import model.html.task.Task;
-import play.data.validation.Constraints.Required;
 
 import com.avaje.ebean.Model;
 
