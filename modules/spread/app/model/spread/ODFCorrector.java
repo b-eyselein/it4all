@@ -23,12 +23,12 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
   private static final double FONT_SIZE = 10.;
   
   @Override
-  protected void closeDocument(SpreadsheetDocument document) {
+  public void closeDocument(SpreadsheetDocument document) {
     document.close();
   }
   
   @Override
-  protected String compareCellFormulas(Cell masterCell, Cell compareCell) {
+  public String compareCellFormulas(Cell masterCell, Cell compareCell) {
     String masterFormula = masterCell.getFormula();
     String compareFormula = compareCell.getFormula();
     if(masterFormula == null)
@@ -51,7 +51,7 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
   }
   
   @Override
-  protected String compareCellValues(Cell masterCell, Cell compareCell) {
+  public String compareCellValues(Cell masterCell, Cell compareCell) {
     String masterValue = masterCell.getStringValue(), compareValue = compareCell.getStringValue();
     // FIXME: why substring from 0 to first newline?
     if(compareValue.indexOf("\n") != -1)
@@ -65,13 +65,13 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
   }
   
   @Override
-  protected String compareChartsInSheet(Table compareSheet, Table sampleSheet) {
+  public String compareChartsInSheet(Table compareSheet, Table sampleSheet) {
     // FIXME: nicht von ODFToolkit unterstützt...
     return null;
   }
   
   @Override
-  protected String compareNumberOfChartsInDocument(SpreadsheetDocument compare, SpreadsheetDocument sample) {
+  public String compareNumberOfChartsInDocument(SpreadsheetDocument compare, SpreadsheetDocument sample) {
     int sampleCount = sample.getChartCount(), compareCount = compare.getChartCount();
     if(sampleCount == 0)
       return "Es waren keine Diagramme zu erstellen.";
@@ -82,7 +82,7 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
   }
   
   @Override
-  protected void compareSheet(Table sampleTable, Table compareTable, boolean correctConditionalFormating) {
+  public void compareSheet(Table sampleTable, Table compareTable, boolean correctConditionalFormating) {
     if(correctConditionalFormating) {
       // NOTICE: Does not work in ODF Toolkit
     }
@@ -116,13 +116,13 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
   }
   
   @Override
-  protected Cell getCellByPosition(Table table, int column, int row) {
+  public Cell getCellByPosition(Table table, int column, int row) {
     return table.getCellByPosition(column, row);
   }
   
   @Override
   @SuppressWarnings("deprecation")
-  protected ArrayList<Cell> getColoredRange(Table master) {
+  public ArrayList<Cell> getColoredRange(Table master) {
     ArrayList<Cell> range = new ArrayList<Cell>();
     for(int row = 0; row < MAXROW; row++) {
       for(int column = 0; column < MAXCOLUMN; column++) {
@@ -135,17 +135,17 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
   }
   
   @Override
-  protected Table getSheetByIndex(SpreadsheetDocument document, int sheetIndex) {
+  public Table getSheetByIndex(SpreadsheetDocument document, int sheetIndex) {
     return document.getSheetByIndex(sheetIndex);
   }
   
   @Override
-  protected int getSheetCount(SpreadsheetDocument document) {
+  public int getSheetCount(SpreadsheetDocument document) {
     return document.getSheetCount();
   }
   
   @Override
-  protected SpreadsheetDocument loadDocument(Path path) {
+  public SpreadsheetDocument loadDocument(Path path) {
     try {
       return SpreadsheetDocument.loadDocument(path.toFile());
     } catch (Exception e) {
@@ -154,7 +154,7 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
   }
   
   @Override
-  protected void saveCorrectedSpreadsheet(SpreadsheetDocument document, Path testPath) {
+  public void saveCorrectedSpreadsheet(SpreadsheetDocument document, Path testPath) {
     // TODO userFolder: saveFolder!
     String userFolder = SpreadSheetCorrector.getUserFolder(testPath);
     String fileName = SpreadSheetCorrector.getFileName(testPath);
@@ -174,14 +174,14 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
   }
   
   @Override
-  protected void setCellComment(Cell cell, String message) {
+  public void setCellComment(Cell cell, String message) {
     if(message == null || message.isEmpty())
       return;
     cell.setNoteText(message);
   }
   
   @Override
-  protected void setCellStyle(Cell cell, Font font, Color color) {
+  public void setCellStyle(Cell cell, Font font, Color color) {
     font.setColor(color);
     cell.setFont(font);
   }

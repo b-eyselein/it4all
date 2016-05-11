@@ -30,11 +30,26 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 
 /**
- * 
+ *
  * @author Stefan Olbrecht
  *
  */
 public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Font, Short> {
+  
+  private static String getStringValueOfCell(Cell cell) {
+    if(cell.getCellType() != Cell.CELL_TYPE_FORMULA)
+      return cell.toString();
+    switch(cell.getCachedFormulaResultType()) {
+    case Cell.CELL_TYPE_BLANK:
+      return "";
+    case Cell.CELL_TYPE_NUMERIC:
+      return Double.toString(cell.getNumericCellValue());
+    case Cell.CELL_TYPE_STRING:
+      return cell.getRichStringCellValue().toString();
+    default:
+      return "";
+    }
+  }
   
   protected static String compareSheetConditionalFormatting(Sheet master, Sheet compare) {
     String message = "";
@@ -87,23 +102,8 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
     return message;
   }
   
-  private static String getStringValueOfCell(Cell cell) {
-    if(cell.getCellType() != Cell.CELL_TYPE_FORMULA)
-      return cell.toString();
-    switch(cell.getCachedFormulaResultType()) {
-    case Cell.CELL_TYPE_BLANK:
-      return "";
-    case Cell.CELL_TYPE_NUMERIC:
-      return Double.toString(cell.getNumericCellValue());
-    case Cell.CELL_TYPE_STRING:
-      return cell.getRichStringCellValue().toString();
-    default:
-      return "";
-    }
-  }
-  
   @Override
-  protected void closeDocument(Workbook document) {
+  public void closeDocument(Workbook document) {
     try {
       document.close();
     } catch (IOException e) {
@@ -112,7 +112,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
   }
   
   @Override
-  protected String compareCellFormulas(XSSFCell masterCell, XSSFCell compareCell) {
+  public String compareCellFormulas(XSSFCell masterCell, XSSFCell compareCell) {
     // TODO Auto-generated method stub
     if(masterCell.getCellType() != Cell.CELL_TYPE_FORMULA)
       return "Es war keine Formel anzugeben.";
@@ -135,7 +135,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
   }
   
   @Override
-  protected String compareCellValues(XSSFCell masterCell, XSSFCell compareCell) {
+  public String compareCellValues(XSSFCell masterCell, XSSFCell compareCell) {
     String masterCellValue = getStringValueOfCell(masterCell);
     String compareCellValue = getStringValueOfCell(compareCell);
     if(compareCellValue.equals(""))
@@ -147,7 +147,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
   }
   
   @Override
-  protected String compareChartsInSheet(Sheet compareSheet, Sheet sampleSheet) {
+  public String compareChartsInSheet(Sheet compareSheet, Sheet sampleSheet) {
     XSSFDrawing sampleDrawing = ((XSSFSheet) sampleSheet).createDrawingPatriarch();
     XSSFDrawing compareDrawing = ((XSSFSheet) compareSheet).createDrawingPatriarch();
     int sampleChartCount = sampleDrawing.getCharts().size();
@@ -157,8 +157,8 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
       return "Es waren keine Diagramme zu erstellen.";
     
     if(sampleChartCount != compareChartCount)
-      return "Falsche Anzahl an Diagrammen im Sheet (Erwartet: " + sampleChartCount + ", Gefunden: "
-          + compareChartCount + ").";
+      return "Falsche Anzahl an Diagrammen im Sheet (Erwartet: " + sampleChartCount + ", Gefunden: " + compareChartCount
+          + ").";
     
     // FIXME: refactor & test!
     String message = "";
@@ -193,13 +193,13 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
   }
   
   @Override
-  protected String compareNumberOfChartsInDocument(Workbook compareDocument, Workbook sampleDocument) {
+  public String compareNumberOfChartsInDocument(Workbook compareDocument, Workbook sampleDocument) {
     // FIXME: wird nur von ODFCorrector benutzt!
     return null;
   }
   
   @Override
-  protected void compareSheet(Sheet sampleTable, Sheet compareTable, boolean conditionalFormating) {
+  public void compareSheet(Sheet sampleTable, Sheet compareTable, boolean conditionalFormating) {
     
     // Compare conditional formatting
     if(conditionalFormating) {
@@ -237,7 +237,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
   }
   
   @Override
-  protected XSSFCell getCellByPosition(Sheet table, int row, int column) {
+  public XSSFCell getCellByPosition(Sheet table, int row, int column) {
     if(table.getRow(row) != null)
       return (XSSFCell) table.getRow(row).getCell(column);
     else
@@ -245,7 +245,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
   }
   
   @Override
-  protected ArrayList<XSSFCell> getColoredRange(Sheet master) {
+  public ArrayList<XSSFCell> getColoredRange(Sheet master) {
     ArrayList<XSSFCell> range = new ArrayList<XSSFCell>();
     for(Row row: master) {
       for(Cell cell: row) {
@@ -259,17 +259,17 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
   }
   
   @Override
-  protected Sheet getSheetByIndex(Workbook document, int sheetIndex) {
+  public Sheet getSheetByIndex(Workbook document, int sheetIndex) {
     return document.getSheetAt(sheetIndex);
   }
   
   @Override
-  protected int getSheetCount(Workbook document) {
+  public int getSheetCount(Workbook document) {
     return document.getNumberOfSheets();
   }
   
   @Override
-  protected Workbook loadDocument(Path path) {
+  public Workbook loadDocument(Path path) {
     // FIXME: differenziere zwichen verschiedenen Fehlergründen! ==> Bessere
     // Rückmeldung?
     try {
@@ -281,7 +281,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
   }
   
   @Override
-  protected void saveCorrectedSpreadsheet(Workbook compareDocument, Path testPath) {
+  public void saveCorrectedSpreadsheet(Workbook compareDocument, Path testPath) {
     // File dir = new File(userFolder);
     // if(!dir.exists()) {
     // dir.mkdirs();
@@ -293,7 +293,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
   }
   
   @Override
-  protected void setCellComment(XSSFCell cell, String message) {
+  public void setCellComment(XSSFCell cell, String message) {
     if(message == null || message.isEmpty())
       return;
     // Remove comment if exists
@@ -319,7 +319,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
   }
   
   @Override
-  protected void setCellStyle(XSSFCell cell, Font font, Short color) {
+  public void setCellStyle(XSSFCell cell, Font font, Short color) {
     CellStyle style = cell.getSheet().getWorkbook().createCellStyle();
     
     // FIXME: BOLD or ITALIC?

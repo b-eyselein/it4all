@@ -1,4 +1,4 @@
-package model.spreadsheet;
+package controllers.spread;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertFalse;
