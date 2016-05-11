@@ -14,12 +14,13 @@ import com.avaje.ebean.Model;
 @DiscriminatorColumn(name = "type")
 public class Exercise extends Model {
   
+  // FIXME: PK: type + int!
   @Id
   public int id;
-  
+
   public String title;
-  
+
   @Column(name = "exerciseText", length = 2000)
   public String exerciseText;
-  
+
 }

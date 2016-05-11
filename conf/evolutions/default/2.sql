@@ -2,12 +2,20 @@
 
 # HTML
 	
-insert into exercise (`type`, `id`, `title`, `exerciseText`, `file_name`) values
+insert into exercise (`type`, `id`, `title`, `exerciseText`, `file_name`, `default_solution`, `function_name`) values
 	("html", 1, "Terminabsprache Werkstatt", "Ihre Firma für Webdesign ist von einer lokalen Werkstatt beauftragt worden, ein Kontaktformular für die Absprache eines Termins zu erstellen. Die Kunden sollen in einem Formular ihre Daten (Namen, Adresse, Automarke, Baujahr, …) sowie einen Datumswunsch angeben. Diese Daten werden an den Server gesendet und, falls der Termin möglich ist, in einer Datenbank gespeichert. Falls der Termin bereits besetzt ist, bekommt der Kunde eine Fehlermeldung angezeigt.
 	Die Werkstatt kann nur Modelle der Marken Audi, Seat, Skoda und VW reparieren.
-	Ihre Firma beschließt, zuerst einen statischen Seitenprototyp mit verminderter Funktion zu erstellen. Benutzen Sie nur Html, um folgende Elemente zu erstellen. Versuchen Sie jedoch so viel Funktionalität wie möglich umzusetzen, indem Sie entsprechende Elemente bzw. Attribute von Html5 verwenden! Elemente, die mit einem „*“ markiert sind, sollen zur Formularabsendung eingegeben werden müssen. Benutzen Sie die in Klammern angegeben Namen für die Elemente! Erstellen Sie jedes Eingabefeld für das spätere Styling mit CSS jeweils eine eigene <div>-Umgebung!", ""),
+	Ihre Firma beschließt, zuerst einen statischen Seitenprototyp mit verminderter Funktion zu erstellen. Benutzen Sie nur Html, um folgende Elemente zu erstellen. Versuchen Sie jedoch so viel Funktionalität wie möglich umzusetzen, indem Sie entsprechende Elemente bzw. Attribute von Html5 verwenden! Elemente, die mit einem „*“ markiert sind, sollen zur Formularabsendung eingegeben werden müssen. Benutzen Sie die in Klammern angegeben Namen für die Elemente! Erstellen Sie jedes Eingabefeld für das spätere Styling mit CSS jeweils eine eigene <div>-Umgebung!",
+	"", "", ""),
 
-	("css", 2, "Terminabsprache Werkstatt", "TODO!", "");
+	("css", 2, "Terminabsprache Werkstatt", "TODO!", "", "", ""),
+
+	("js", 3, "Summen", "Implementieren Sie folgende Funktion 'sum', die zwei Zahlen entegennimmt und deren Summe zurückgibt.", "",
+	 "function sum(a, b) {\n  return 0;;\n}", "sum"),
+	 
+	("js", 4, "Konkatenation von Strings", "Implementieren Sie die folgende Funktion 'concat', die drei beliebige Strings entgegennimmt
+	 und die Konkatenation der Strings zurückgibt.", "",
+	 "function concat(str1, str2, str3) {\n  return \"\";;\n}", "concat");
 	
 insert into task (`exercise_id`, `id`, `taskDesc`, `xpath_query_name`, `attributes`, `defining_attribute`) values
 	(1, 1, "Erstellen Sie ein Formular auf der Seite. Als Aktion soll test und als Methode 'post' angegeben werden.",
@@ -46,20 +54,13 @@ insert into childtask (`id`, `task_id`, `exercise_id`, `tagName`, `defining_attr
  	(5, 6, 1, "option", "value=VW");
 
 # JavaScript
- 
-insert into js_exercise (`id`, `name`, `text`, `default_solution`, `function_name`) values
-	(1, "Summen", "Implementieren Sie folgende Funktion 'sum', die zwei Zahlen entegennimmt und deren Summe zurückgibt.",
-	 "function sum(a, b) {\n  return 0;;\n}", "sum"),
-	(2, "Konkatenation von Strings", "Implementieren Sie die folgende Funktion 'concat',
-	 die drei beliebige Strings entgegennimmt und die Konkatenation der Strings zurückgibt.",
-	 "function concat(str1, str2, str3) {\n  return \"\";;\n}", "concat");
 
 insert into js_test (`id`, `exercise_id`, `awaited_result`) values
-	(1, 1, 2),
-	(2, 1, 3),
-	(3, 1, 87),
-	(4, 2, "Hallo Welt!"),
-	(5, 2, "TestTestTest");
+	(1, 3, 2),
+	(2, 3, 3),
+	(3, 3, 87),
+	(4, 4, "Hallo Welt!"),
+	(5, 4, "TestTestTest");
 
 insert into js_testvalue (`id`, `test_id`, `value`) values
 	(1, 1, 1), (2, 1, 1),
@@ -77,8 +78,6 @@ delete from grading;
 delete from js_testvalue;
 
 delete from js_test;
-
-delete from js_exercise;
 
 delete from childtask;
 

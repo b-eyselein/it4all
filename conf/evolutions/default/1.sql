@@ -18,6 +18,8 @@ create table exercise (
   title                     varchar(255),
   exerciseText              varchar(2000),
   file_name                 varchar(255),
+  default_solution          varchar(255),
+  function_name             varchar(255),
   constraint pk_exercise primary key (id))
 ;
 
@@ -49,15 +51,6 @@ create table grading (
   exercise_id               integer,
   points                    integer,
   constraint pk_grading primary key (user_name, exercise_id))
-;
-
-create table js_exercise (
-  id                        integer auto_increment not null,
-  name                      varchar(255),
-  text                      varchar(255),
-  default_solution          varchar(255),
-  function_name             varchar(255),
-  constraint pk_js_exercise primary key (id))
 ;
 
 create table js_test (
@@ -95,7 +88,7 @@ alter table grading add constraint fk_grading_user_2 foreign key (user_name) ref
 create index ix_grading_user_2 on grading (user_name);
 alter table grading add constraint fk_grading_exercise_3 foreign key (exercise_id) references exercise (id) on delete restrict on update restrict;
 create index ix_grading_exercise_3 on grading (exercise_id);
-alter table js_test add constraint fk_js_test_exercise_4 foreign key (exercise_id) references js_exercise (id) on delete restrict on update restrict;
+alter table js_test add constraint fk_js_test_exercise_4 foreign key (exercise_id) references exercise (id) on delete restrict on update restrict;
 create index ix_js_test_exercise_4 on js_test (exercise_id);
 alter table js_testvalue add constraint fk_js_testvalue_test_5 foreign key (test_id) references js_test (id) on delete restrict on update restrict;
 create index ix_js_testvalue_test_5 on js_testvalue (test_id);
@@ -115,8 +108,6 @@ drop table exercise;
 drop table feedback;
 
 drop table grading;
-
-drop table js_exercise;
 
 drop table js_test;
 
