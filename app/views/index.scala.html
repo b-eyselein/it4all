@@ -1,8 +1,4 @@
-@import model.spreadsheet.ExcelExercise
-@import model.user.User
-@(student: User)
-
-@main("HTML-Test", student) {
+@(student: model.user.User) @main("HTML-Test", student) {
 <div class="container">
 
   <div class="panel panel-default">
@@ -11,7 +7,7 @@
       <a type="button" class="btn btn-default btn-block" href="@controllers.web.routes.HTML.index()">Html</a>
       <a type="button" class="btn btn-default btn-block" href="@controllers.web.routes.CSS.index()">CSS</a>
       <a type="button" class="btn btn-default btn-block" href="@controllers.web.routes.JS.index()">JavaScript</a>
-      <a type="button" class="btn btn-default btn-block" href="/sql">SQL</a>
+      <a type="button" class="btn btn-default btn-block" href="@controllers.sql.routes.SQL.index()">SQL</a>
     </div>
   </div>
 
