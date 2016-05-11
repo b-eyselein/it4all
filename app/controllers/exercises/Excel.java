@@ -27,11 +27,11 @@ import controllers.core.Util;
 public class Excel extends Controller {
   
   public Result download(int exerciseId, String typ) {
-    User user = UserControl.getUser();
+    User user = UserControl.getCurrentUser();
     ExcelExercise exercise = ExcelExercise.finder.byId(exerciseId);
     
-    Path fileToDownload = Paths.get("/var/lib/it4all/solutions", user.getName(), "excel", exercise.fileName
-        + "_Korrektur." + typ);
+    Path fileToDownload = Paths.get("/var/lib/it4all/solutions", user.getName(), "excel",
+        exercise.fileName + "_Korrektur." + typ);
     if(Files.exists(fileToDownload))
       return ok(fileToDownload.toFile());
     else
@@ -39,16 +39,41 @@ public class Excel extends Controller {
   }
   
   public Result exercise(int exerciseId) {
-    User user = UserControl.getUser();
+    User user = UserControl.getCurrentUser();
     if(exerciseId == -1 || ExcelExercise.finder.byId(exerciseId) == null)
       return redirect("/index");
     return ok(excel.render(user, ExcelExercise.finder.byId(exerciseId)));
   }
   
   public Result index() {
-    User user = UserControl.getUser();
+    User user = UserControl.getCurrentUser();
     List<ExcelExercise> exercises = ExcelExercise.finder.all();
     return ok(exceloverview.render(user, exercises));
+  }
+  
+  public Result upload(int exerciseId) {
+    User user = UserControl.getCurrentUser();
+    ExcelExercise exercise = ExcelExercise.finder.byId(exerciseId);
+    
+    MultipartFormData body = request().body().asMultipartFormData();
+    FilePart solutionFile = body.getFile("solFile");
+    if(solutionFile != null) {
+      
+      Path path = solutionFile.getFile().toPath();
+      String fileName = exercise.fileName;
+      saveSolutionForUser(user.getName(), path, solutionFile.getFilename(), exerciseId);
+      
+      // FIXME: get Paths!
+      Path testPath = Util.getExcelSolFileForExercise(user.getName(), solutionFile.getFilename());
+      Path musterPath = Util.getExcelSampleDirectoryForExercise(exerciseId);
+      musterPath = Paths.get(musterPath.toString(),
+          fileName + "_Muster." + SpreadSheetCorrector.getExtension(testPath));
+      SpreadSheetCorrectionResult result = SpreadSheetCorrector.correct(musterPath, testPath, false, false);
+      
+      return ok(excelcorrect.render(user, result, exerciseId, SpreadSheetCorrector.getExtension(testPath)));
+    } else {
+      return badRequest("Datei konnte nicht hochgeladen werden!");
+    }
   }
   
   private void saveSolutionForUser(String user, Path uploadedSolution, String fileName, int exercise) {
@@ -64,31 +89,6 @@ public class Excel extends Controller {
       
     } catch (IOException e) {
       System.out.println(e);
-    }
-  }
-  
-  public Result upload(int exerciseId) {
-    User user = UserControl.getUser();
-    ExcelExercise exercise = ExcelExercise.finder.byId(exerciseId);
-    
-    MultipartFormData body = request().body().asMultipartFormData();
-    FilePart solutionFile = body.getFile("solFile");
-    if(solutionFile != null) {
-      
-      Path path = solutionFile.getFile().toPath();
-      String fileName = exercise.fileName;
-      saveSolutionForUser(user.getName(), path, solutionFile.getFilename(), exerciseId);
-      
-      // FIXME: get Paths!
-      Path testPath = Util.getExcelSolFileForExercise(user.getName(), solutionFile.getFilename());
-      Path musterPath = Util.getExcelSampleDirectoryForExercise(exerciseId);
-      musterPath = Paths
-          .get(musterPath.toString(), fileName + "_Muster." + SpreadSheetCorrector.getExtension(testPath));
-      SpreadSheetCorrectionResult result = SpreadSheetCorrector.correct(musterPath, testPath, false, false);
-      
-      return ok(excelcorrect.render(user, result, exerciseId, SpreadSheetCorrector.getExtension(testPath)));
-    } else {
-      return badRequest("Datei konnte nicht hochgeladen werden!");
     }
   }
   

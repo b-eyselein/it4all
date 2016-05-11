@@ -1,4 +1,4 @@
-@import model.html.Grading
+@import model.exercise.Grading
 @import model.user.User
 
 @(title: String, user: User, gradings: List[Grading])
@@ -8,7 +8,7 @@
   <h3>Ihre Bewertungen:</h3>
   @for(grad <- gradings) {
   <div class="panel panel-default">
-    <div class="panel-body">Html-Aufgabe @grad.exercise.id: @grad.points Punkte</div>
+    <div class="panel-body">@grad.exercise.id: @grad.points Punkte</div>
   </div>
   }
 </div>

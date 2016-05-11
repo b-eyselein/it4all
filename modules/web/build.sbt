@@ -5,7 +5,7 @@ Common.settings
 // Injected for non-static Routes
 routesGenerator := InjectedRoutesGenerator
 
-playEbeanModels in Compile := Seq("model.html.*", "model.javascript.*", "model.css.*")
+playEbeanModels in Compile := Seq("model.*", "model.html.*", "model.javascript.*", "model.css.*")
 
 libraryDependencies ++= Seq(
   javaJdbc,

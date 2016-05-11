@@ -33,7 +33,7 @@ public class JS extends Controller {
       return ok(Json.toJson(testResults));
     else
       // TODO: jscorrect --> Nur für Endkorrektur ?!?
-      return ok(jscorrect.render(learnerSolution, testResults, UserControl.getUser()));
+      return ok(jscorrect.render(learnerSolution, testResults, UserControl.getCurrentUser()));
   }
 
   public Result exercise(int id) {
@@ -43,12 +43,12 @@ public class JS extends Controller {
       return badRequest(new Html("<p>Diese Aufgabe existert leider nicht.</p><p>Zur&uuml;ck zur <a href=\""
           + routes.JS.index() + "\">Startseite</a>.</p>"));
     
-    return ok(js.render(UserControl.getUser(), exercise, serverUrl));
+    return ok(js.render(UserControl.getCurrentUser(), exercise, serverUrl));
 
   }
 
   public Result index() {
-    return ok(jsoverview.render(JsExercise.finder.all(), UserControl.getUser()));
+    return ok(jsoverview.render(JsExercise.finder.all(), UserControl.getCurrentUser()));
   }
 
 }

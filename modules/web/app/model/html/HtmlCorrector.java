@@ -6,9 +6,9 @@ import java.util.stream.Collectors;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
-import model.html.result.ElementResult;
-import model.user.Student;
 import model.user.User;
+import model.exercise.Grading;
+import model.html.result.ElementResult;
 
 public class HtmlCorrector {
   
@@ -34,7 +34,7 @@ public class HtmlCorrector {
     // TODO: override old Grading?
     Grading grading = new Grading();
     // TODO: Casting!
-    grading.student = (Student) student;
+    grading.student = student;
     grading.exercise = exercise;
     grading.points = points;
     grading.save();

@@ -3,12 +3,6 @@
 
 # --- !Ups
 
-create table administrator (
-  name                      varchar(255) not null,
-  password                  varchar(255),
-  constraint pk_administrator primary key (name))
-;
-
 create table childtask (
   id                        integer,
   task_id                   integer,
@@ -18,18 +12,19 @@ create table childtask (
   constraint pk_childtask primary key (id, task_id))
 ;
 
-create table css_exercise (
-  id                        integer auto_increment not null,
-  title                     varchar(255),
-  exerciseText              varchar(2000),
-  constraint pk_css_exercise primary key (id))
-;
-
 create table excel_exercise (
   id                        integer auto_increment not null,
   title                     varchar(255),
   file_name                 varchar(255),
   constraint pk_excel_exercise primary key (id))
+;
+
+create table exercise (
+  type                      varchar(31) not null,
+  id                        integer auto_increment not null,
+  title                     varchar(255),
+  exerciseText              varchar(2000),
+  constraint pk_exercise primary key (id))
 ;
 
 create table feedback (
@@ -63,13 +58,6 @@ create table grading (
   constraint pk_grading primary key (id))
 ;
 
-create table htmlexercise (
-  id                        integer auto_increment not null,
-  title                     varchar(255),
-  exerciseText              varchar(2000),
-  constraint pk_htmlexercise primary key (id))
-;
-
 create table js_exercise (
   id                        integer auto_increment not null,
   name                      varchar(255),
@@ -93,11 +81,6 @@ create table js_testvalue (
   constraint pk_js_testvalue primary key (id))
 ;
 
-create table student (
-  name                      varchar(255) not null,
-  constraint pk_student primary key (name))
-;
-
 create table task (
   id                        integer,
   exercise_id               integer,
@@ -108,17 +91,22 @@ create table task (
   constraint pk_task primary key (id, exercise_id))
 ;
 
+create table users (
+  name                      varchar(255) not null,
+  constraint pk_users primary key (name))
+;
+
 alter table childtask add constraint fk_childtask_task_1 foreign key (task_id,exercise_id) references task (id,exercise_id) on delete restrict on update restrict;
 create index ix_childtask_task_1 on childtask (task_id,exercise_id);
-alter table grading add constraint fk_grading_student_2 foreign key (student_name) references student (name) on delete restrict on update restrict;
+alter table grading add constraint fk_grading_student_2 foreign key (student_name) references users (name) on delete restrict on update restrict;
 create index ix_grading_student_2 on grading (student_name);
-alter table grading add constraint fk_grading_exercise_3 foreign key (exercise_id) references htmlexercise (id) on delete restrict on update restrict;
+alter table grading add constraint fk_grading_exercise_3 foreign key (exercise_id) references exercise (id) on delete restrict on update restrict;
 create index ix_grading_exercise_3 on grading (exercise_id);
 alter table js_test add constraint fk_js_test_exercise_4 foreign key (exercise_id) references js_exercise (id) on delete restrict on update restrict;
 create index ix_js_test_exercise_4 on js_test (exercise_id);
 alter table js_testvalue add constraint fk_js_testvalue_test_5 foreign key (test_id) references js_test (id) on delete restrict on update restrict;
 create index ix_js_testvalue_test_5 on js_testvalue (test_id);
-alter table task add constraint fk_task_exercise_6 foreign key (exercise_id) references htmlexercise (id) on delete restrict on update restrict;
+alter table task add constraint fk_task_exercise_6 foreign key (exercise_id) references exercise (id) on delete restrict on update restrict;
 create index ix_task_exercise_6 on task (exercise_id);
 
 
@@ -127,19 +115,15 @@ create index ix_task_exercise_6 on task (exercise_id);
 
 SET FOREIGN_KEY_CHECKS=0;
 
-drop table administrator;
-
 drop table childtask;
 
-drop table css_exercise;
-
 drop table excel_exercise;
+
+drop table exercise;
 
 drop table feedback;
 
 drop table grading;
-
-drop table htmlexercise;
 
 drop table js_exercise;
 
@@ -147,9 +131,9 @@ drop table js_test;
 
 drop table js_testvalue;
 
-drop table student;
-
 drop table task;
+
+drop table users;
 
 SET FOREIGN_KEY_CHECKS=1;
 

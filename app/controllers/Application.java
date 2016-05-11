@@ -8,9 +8,9 @@ import views.html.index;
 import controllers.core.UserControl;
 
 public class Application extends Controller {
-
+  
   @Security.Authenticated(Secured.class)
   public Result index() {
-    return ok(index.render(UserControl.getUser()));
+    return ok(index.render(UserControl.getCurrentUser()));
   }
 }
