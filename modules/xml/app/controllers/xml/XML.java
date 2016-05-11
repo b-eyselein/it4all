@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import model.xml.XmlExercise;
+import model.xml.ElementResult;
 import model.xml.XmlCorrector;
 import model.user.Secured;
 import model.user.User;
@@ -67,7 +68,7 @@ public class XML extends Controller {
     String learnerSolution = extractLearnerSolutionFromRequest(request());
     saveSolutionForUser(user.getName(), learnerSolution, exerciseId);
 
-    List<Object> elementResults = correctExercise(learnerSolution, user, XmlExercise.finder.byId(exerciseId));
+    List<ElementResult> elementResults = correctExercise(learnerSolution, user, XmlExercise.finder.byId(exerciseId));
 
     if(request().acceptedTypes().get(0).toString().equals("application/json"))
 	  // print this JSON-tree!!! to know what is inside
@@ -76,7 +77,7 @@ public class XML extends Controller {
       return ok(xmlcorrect.render(learnerSolution, elementResults, UserControl.getUser()));
   }
   
-  private List<Object> correctExercise(String solutionText, User user, XmlExercise exercise) {
+  private List<ElementResult> correctExercise(String solutionText, User user, XmlExercise exercise) {
     return XmlCorrector.correct(solutionText, exercise, user);
   }
 

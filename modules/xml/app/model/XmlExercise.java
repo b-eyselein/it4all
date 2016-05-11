@@ -27,8 +27,8 @@ public class XmlExercise extends Model {
   @Column(name = "exerciseType")
   public int type;
   
-  @Column(name = "pathToReferenceFile", length = 100)
-  public String pathToReference;
+  @Column(name = "referenceFileName", length = 100)
+  public String referenceFileName; // use with Util.getXmlReferenceFilePath
   
   @Column(name = "exerciseText", length = 1000)
   public String exerciseText;
