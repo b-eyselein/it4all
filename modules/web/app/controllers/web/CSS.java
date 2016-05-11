@@ -1,30 +1,21 @@
 package controllers.web;
 
-import java.util.Arrays;
-import java.util.List;
-
 import controllers.core.UserControl;
 import controllers.core.Util;
 import model.css.CssExercise;
-import model.html.HtmlExercise;
-import model.html.result.ElementResult;
 import model.user.Secured;
-import model.user.User;
-import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
 import play.twirl.api.Html;
-import views.html.css.cssOverview;
 import views.html.css.css;
+import views.html.css.cssOverview;
 
 @Security.Authenticated(Secured.class)
 public class CSS extends Controller {
   
   @Security.Authenticated(Secured.class)
   public Result commit(int exerciseId) {
-    User user = UserControl.getUser();
-
     if(request().accepts("application/json"))
       return ok("{}");
     else
