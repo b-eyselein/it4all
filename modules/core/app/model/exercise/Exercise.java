@@ -16,9 +16,10 @@ public class Exercise extends Model {
   
   @Id
   public int id;
-
+  
   public String title;
-
+  
   @Column(name = "exerciseText", length = 2000)
   public String exerciseText;
+  
 }

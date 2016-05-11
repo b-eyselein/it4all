@@ -45,11 +45,10 @@ create table feedback (
 ;
 
 create table grading (
-  id                        integer auto_increment not null,
-  student_name              varchar(255),
+  user_name                 varchar(255),
   exercise_id               integer,
   points                    integer,
-  constraint pk_grading primary key (id))
+  constraint pk_grading primary key (user_name, exercise_id))
 ;
 
 create table js_exercise (
@@ -92,8 +91,8 @@ create table users (
 
 alter table childtask add constraint fk_childtask_task_1 foreign key (task_id,exercise_id) references task (id,exercise_id) on delete restrict on update restrict;
 create index ix_childtask_task_1 on childtask (task_id,exercise_id);
-alter table grading add constraint fk_grading_student_2 foreign key (student_name) references users (name) on delete restrict on update restrict;
-create index ix_grading_student_2 on grading (student_name);
+alter table grading add constraint fk_grading_user_2 foreign key (user_name) references users (name) on delete restrict on update restrict;
+create index ix_grading_user_2 on grading (user_name);
 alter table grading add constraint fk_grading_exercise_3 foreign key (exercise_id) references exercise (id) on delete restrict on update restrict;
 create index ix_grading_exercise_3 on grading (exercise_id);
 alter table js_test add constraint fk_js_test_exercise_4 foreign key (exercise_id) references js_exercise (id) on delete restrict on update restrict;

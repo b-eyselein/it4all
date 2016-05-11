@@ -8,6 +8,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import model.user.User;
 import model.exercise.Grading;
+import model.exercise.GradingKey;
 import model.html.result.ElementResult;
 
 public class HtmlCorrector {
@@ -30,12 +31,14 @@ public class HtmlCorrector {
     return result.stream().mapToInt(res -> res.getPoints()).sum();
   }
   
-  private static void saveGrading(HtmlExercise exercise, User student, int points) {
-    // TODO: override old Grading?
-    Grading grading = new Grading();
-    // TODO: Casting!
-    grading.student = student;
-    grading.exercise = exercise;
+  private static void saveGrading(HtmlExercise exercise, User user, int points) {
+    GradingKey gradingKey = new GradingKey(user.name, exercise.id);
+    
+    Grading grading = Grading.finder.byId(gradingKey);
+
+    if(grading == null)
+      grading = new Grading(gradingKey);
+    
     grading.points = points;
     grading.save();
   }

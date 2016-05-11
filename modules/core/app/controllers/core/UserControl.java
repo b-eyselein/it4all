@@ -31,7 +31,6 @@ public class UserControl extends Controller {
     String userName = formValues.get("name")[0];
     String passwort = formValues.get("passwort")[0];
 
-    // TODO: schöner...
     User user = findOrCreateStudent(userName, passwort);
 
     session().clear();
