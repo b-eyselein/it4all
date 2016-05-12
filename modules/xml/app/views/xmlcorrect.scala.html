@@ -1,4 +1,4 @@
-@(solution: String, results: List[Object], user: model.user.User)
+@(solution: String, results: List[model.ElementResult], user: model.user.User)
 
 @main("XML-Test", user) {
 <div class="container-fluid">
@@ -21,23 +21,23 @@
       <div class="panel panel-default">
         <div class="panel-heading">Korrektur</div>
         <div class="panel-body">
-        @for(result <- results) {
-          @if(result.getSuccess == model.Success.COMPLETE) {
+        @@for(result <- results) {
+          @@if(result.getSuccess == model.Success.COMPLETE) {
             <div class="panel panel-default panel-success">
-              <div class="panel-heading">Teilaufgabe @result.getTask.key.id erfolgreich!<span class="pull-right">@result.getPoints Punkt(e)</span></div>
-              <div class="panel-body">@result.getTask.taskDescription</div>
+              <div class="panel-heading">Teilaufgabe @@result.getTask.key.id erfolgreich!<span class="pull-right">@@result.getPoints Punkt(e)</span></div>
+              <div class="panel-body">@@result.getTask.taskDescription</div>
             </div>
           }
-          @if(result.getSuccess == model.Success.PARTIALLY) {
+          @@if(result.getSuccess == model.Success.PARTIALLY) {
             <div class="panel panel-default panel-warning">
-              <div class="panel-heading">Teilaufgabe @result.getTask.key.id nicht komplett erfolgreich!<span class="pull-right">@result.getPoints Punkt(e)</span></div>
-              <div class="panel-body">@result.getTask.taskDescription</div>
+              <div class="panel-heading">Teilaufgabe @@result.getTask.key.id nicht komplett erfolgreich!<span class="pull-right">@@result.getPoints Punkt(e)</span></div>
+              <div class="panel-body">@@result.getTask.taskDescription</div>
             </div>
           }
-          @if(result.getSuccess == model.Success.NONE) {
+          @@if(result.getSuccess == model.Success.NONE) {
           <div class="panel panel-default panel-danger">
-            <div class="panel-heading">Teilaufgabe @result.getTask.key.id nicht erfolgreich!<span class="pull-right">@result.getPoints Punkt(e)</span></div>
-            <div class="panel-body">@result.getTask.taskDescription</div>
+            <div class="panel-heading">Teilaufgabe @@result.getTask.key.id nicht erfolgreich!<span class="pull-right">@@result.getPoints Punkt(e)</span></div>
+            <div class="panel-body">@@result.getTask.taskDescription</div>
           </div>
           }
         }

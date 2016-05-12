@@ -2,34 +2,29 @@ package model;
 
 import java.util.List;
 
-import model.EvaluationResult;
 import model.Success;
-import model.html.task.Task;
 
-public class ElementResult extends EvaluationResult {
-  
-  private Task task;
-  private List<AttributeResult> attributeResults;
-  private List<ChildResult> childResults;
+public class ElementResult {
 
-  public ElementResult(Task theTask, Success theSuccess, List<AttributeResult> theAttributeResults,
-      List<ChildResult> theChildResults) {
-    task = theTask;
+  protected Success success = Success.NONE;
+  protected String title = "";
+  protected String message = "";
+
+  public ElementResult(Success theSuccess, String title, String message) {
     success = theSuccess;
-    attributeResults = theAttributeResults;
-    childResults = theChildResults;
+	message = message;
+	
   }
-
-  public List<AttributeResult> getAttributeResults() {
-    return attributeResults;
+  
+  public Success getSuccess() {
+    return success;
   }
-
-  public List<ChildResult> getChildResults() {
-    return childResults;
+  
+  public String getTitle() {
+    return title;
   }
-
-  public Task getTask() {
-    return task;
+  
+  public String getMessage() {
+    return message;
   }
-
 }

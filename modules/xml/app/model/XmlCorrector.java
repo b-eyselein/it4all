@@ -169,13 +169,9 @@ public class XmlCorrector {
 	}
 
 	public static List<ElementResult> correct(String solutionUrl, XmlExercise exercise, User student) {
-	    WebDriver driver = new HtmlUnitDriver();
-	    driver.get(solutionUrl);
-	    
 	    // TODO Do some correction depending on type of exercise
 	    
-	    List<ElementResult> result = exercise.tasks.stream().map(task -> task.evaluate(driver))
-	        .collect(Collectors.toList());
+	    List<ElementResult> result = new ArrayList<ElementResult>();
 	    
 	    return result;
 	  }

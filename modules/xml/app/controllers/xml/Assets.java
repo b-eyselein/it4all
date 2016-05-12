@@ -1,4 +1,4 @@
-package controllers.web;
+package controllers.xml;
 
 import play.api.mvc.Action;
 import play.api.mvc.AnyContent;

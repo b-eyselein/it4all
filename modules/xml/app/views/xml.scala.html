@@ -44,7 +44,7 @@
       </div>
     </div>
   
-    <form action="@xml.routes.XML.commit(exercise.id)" method="post" onsubmit="prepareFormForSubmitting();">
+    <form action="@controllers.xml.routes.XML.commit(exercise.id)" method="post" onsubmit="prepareFormForSubmitting();">
       <div class="panel">
         <div class="btn-group btn-group-justified">
           <div class="btn-group">
@@ -75,9 +75,9 @@
                     var editor = ace.edit("editor");
                       editor.setTheme("ace/theme/eclipse");
                       editor.setFontSize("14px");
-                      @if(exercise.type == 0 || exercise.type == 1 || exercise.type == 2) {
+                      @if(exercise.exerciseType == 0 || exercise.exerciseType == 1 || exercise.exerciseType == 2) {
                         editor.getSession().setMode("ace/mode/xml");}
-                      @if(exercise.type == 3) {
+                      @if(exercise.exerciseType == 3) {
                         editor.getSession().setMode("ace/mode/dtd");}
                       editor.getSession().setTabSize(2);
                       editor.getSession().setUseSoftTabs(true);
@@ -102,14 +102,14 @@
           <div class="panel panel-default">
             <div class="panel-heading">Teilaufgaben und Korrektur</div>
             <div class="panel-body">
-              @for(task <- exercise.tasks) {
-              <div id="pan_task@task.key.id" class="panel panel-default">
-                <div class="panel-heading" data-toggle="collapse" href="#task@task.key.id">
-                  @{task.key.id}. @task.taskDescription
-                  <span class="glyphicon glyphicon-chevron-down pull-right" id="chev@task.key.id"></span>
+              @@for(task <- exercise.tasks) {
+              <div hidden id="pan_task@@task.key.id" class="panel panel-default">
+                <div class="panel-heading" data-toggle="collapse" href="#task@@task.key.id">
+                  @@{task.key.id}. @@task.taskDescription
+                  <span class="glyphicon glyphicon-chevron-down pull-right" id="chev@@task.key.id"></span>
                 </div>
-                <div id="task@task.key.id" class="panel-collapse collapse">
-                  <div class="panel-body" id="com_task@task.key.id">TODO: Kommentar...</div>
+                <div id="task@@task.key.id" class="panel-collapse collapse">
+                  <div class="panel-body" id="com_task@@task.key.id">TODO: Kommentar...</div>
                 </div>
               </div>
               }

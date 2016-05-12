@@ -70,6 +70,15 @@ create table htmlexercise (
   constraint pk_htmlexercise primary key (id))
 ;
 
+create table xmlexercise (
+  id                        integer auto_increment not null,
+  title                     varchar(255),
+  exerciseType              integer,
+  referenceFileName         varchar(100),
+  exerciseText              varchar(2000),
+  constraint pk_htmlexercise primary key (id))
+;
+
 create table js_exercise (
   id                        integer auto_increment not null,
   name                      varchar(255),

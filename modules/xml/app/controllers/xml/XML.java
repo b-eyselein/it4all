@@ -8,9 +8,9 @@ import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
 
-import model.xml.XmlExercise;
-import model.xml.ElementResult;
-import model.xml.XmlCorrector;
+import model.XmlExercise;
+import model.ElementResult;
+import model.XmlCorrector;
 import model.user.Secured;
 import model.user.User;
 import play.Logger;
@@ -19,6 +19,7 @@ import play.mvc.Controller;
 import play.mvc.Http.Request;
 import play.mvc.Result;
 import play.mvc.Security;
+import play.twirl.api.Html;
 import views.html.xml;
 import views.html.xmloverview;
 import views.html.xmlcorrect;
@@ -48,7 +49,7 @@ public class XML extends Controller {
           + routes.XML.index() + "\">Startseite</a>.</p>"));
     
     User user = UserControl.getUser();
-	String defaultOrOldSolution = STANDARD_HTML;
+	String defaultOrOldSolution = STANDARD_XML;
     try {
       Path oldSolutionPath = Util.getXmlSolFileForExercise(user.getName(), exerciseId);
       if(Files.exists(oldSolutionPath, LinkOption.NOFOLLOW_LINKS))
@@ -58,7 +59,7 @@ public class XML extends Controller {
       Logger.error(e.getMessage());
     }
 	
-    return ok(xml.render(UserControl.getUser(), exercise, defaultOrOldSolution, SERVER_URL));
+    return ok(xml.render(UserControl.getUser(), exercise, "TODO", defaultOrOldSolution, SERVER_URL));
   }
   
   @Security.Authenticated(Secured.class)

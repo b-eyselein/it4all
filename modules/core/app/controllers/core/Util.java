@@ -26,11 +26,11 @@ public class Util {
   
   public static Path getXmlSolFileForExercise(String user, int exerciseId) {
     // TODO: Test
-    return Paths.get(getSolDirForUserAndType("xml", user).toString(), exerciseId);
+    return Paths.get(getSolDirForUserAndType("xml", user).toString(), exerciseId + "");
   }
   
   public static Path getXmlReferenceFilePath(String referenceFileName) {
-    Paths.get(rootSolDir, "references", "xml", referenceFileName);
+    return Paths.get(rootSolDir, "references", "xml", referenceFileName);
   }
   
   private static String getRootDir() {

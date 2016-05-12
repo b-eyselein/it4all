@@ -25,7 +25,7 @@ public class XmlExercise extends Model {
   // 3: check DTD against XML
   // TODO: enum?
   @Column(name = "exerciseType")
-  public int type;
+  public int exerciseType;
   
   @Column(name = "referenceFileName", length = 100)
   public String referenceFileName; // use with Util.getXmlReferenceFilePath
