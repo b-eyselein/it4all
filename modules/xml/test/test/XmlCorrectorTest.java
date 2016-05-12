@@ -1,11 +1,12 @@
 /**
  * 
  */
-package test.xml;
+package test;
 
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -16,7 +17,7 @@ import model.XmlCorrector;
  * @author rav
  *
  */
-public class JUnitXmlCorrectorTestCase {
+public class XmlCorrectorTest {
 
 	/**
 	 * Test method for {@link model.XmlCorrector#XmlCorrector()}.
@@ -43,7 +44,7 @@ public class JUnitXmlCorrectorTestCase {
 	public void testXmlToDTD() {
 		XmlCorrector corrector = new XmlCorrector();
 
-		File file = new File("/resources.xml/noteDTD.xml");
+		File file = new File("/resources/noteDTD.xml");
 		String out = corrector.xmlToDTD(file);
 		Assert.assertEquals("", out);
 	}
@@ -54,8 +55,15 @@ public class JUnitXmlCorrectorTestCase {
 	@Test
 	public void testXmlToXSD() {
 		XmlCorrector corrector = new XmlCorrector();
-		File file = new File("/resources.xml/noteXML.xml");
-		String out = corrector.xmlToXSD(file);
+		File xml = new File("/resources/noteXML.xml");
+		File xsd = new File("/resources/note.xsd");
+		String out = null;
+		try {
+			out = corrector.xmlToXSD(xsd, xml);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Assert.assertNotNull(out);
 		Assert.assertEquals("", out);
 	}
 
