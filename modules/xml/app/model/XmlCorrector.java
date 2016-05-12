@@ -47,10 +47,17 @@ public class XmlCorrector {
 			// TODO Auto-generated catch block
 			// e.printStackTrace();
 		}
-
+	}
+	
+	public DocumentBuilder getBuilder() {
+		return builder;
+	}
+	
+	public DocumentBuilderFactory getFactory() {
+		return factory;
 	}
 
-	private String dtdToXml(File file1, File file2) throws FileNotFoundException, IOException {
+	public String dtdToXml(File file1, File file2) throws FileNotFoundException, IOException {
 		FileInputStream fstream1 = new FileInputStream(file1);
 		FileInputStream fstream2 = new FileInputStream(file2);
 
@@ -87,7 +94,7 @@ public class XmlCorrector {
 		return result;
 	}
 
-	private String xmlToDTD(File file) {
+	public String xmlToDTD(File file) {
 		final String output = new String();
 		builder.setErrorHandler(new ErrorHandler() {
 			@Override
@@ -122,7 +129,7 @@ public class XmlCorrector {
 		return output;
 	}
 
-	private String xmlToXSD(File xsd, File xml) throws IOException {
+	public String xmlToXSD(File xsd, File xml) throws IOException {
 		final String output = new String();
 		Source schemaFile = new StreamSource(xsd);
 
