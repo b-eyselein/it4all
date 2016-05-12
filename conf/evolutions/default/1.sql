@@ -14,8 +14,15 @@ create table childtask (
   task_id                   integer,
   exercise_id               integer,
   tagName                   varchar(255),
-  attributes                varchar(255),
+  defining_attribute        varchar(255),
   constraint pk_childtask primary key (id, task_id))
+;
+
+create table css_exercise (
+  id                        integer auto_increment not null,
+  title                     varchar(255),
+  exerciseText              varchar(2000),
+  constraint pk_css_exercise primary key (id))
 ;
 
 create table excel_exercise (
@@ -59,7 +66,7 @@ create table grading (
 create table htmlexercise (
   id                        integer auto_increment not null,
   title                     varchar(255),
-  exerciseText              varchar(1000),
+  exerciseText              varchar(2000),
   constraint pk_htmlexercise primary key (id))
 ;
 
@@ -92,14 +99,12 @@ create table student (
 ;
 
 create table task (
-  tasktype                  varchar(31) not null,
   id                        integer,
   exercise_id               integer,
   taskDesc                  varchar(2000),
-  tagName                   varchar(255),
+  xpath_query_name          varchar(255),
+  defining_attribute        varchar(255),
   attributes                varchar(255),
-  elemName                  varchar(255),
-  title                     varchar(255),
   constraint pk_task primary key (id, exercise_id))
 ;
 
@@ -125,6 +130,8 @@ SET FOREIGN_KEY_CHECKS=0;
 drop table administrator;
 
 drop table childtask;
+
+drop table css_exercise;
 
 drop table excel_exercise;
 

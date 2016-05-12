@@ -2,47 +2,35 @@ package model.html.result;
 
 import org.openqa.selenium.WebElement;
 
-public class AttributeResult {
+import model.EvaluationResult;
+import model.Success;
 
+public class AttributeResult extends EvaluationResult {
+  
   private String key;
   private String value;
 
-  private boolean found;
-
-  public AttributeResult(String attributeName, String attributeValue) {
-    key = attributeName;
+  public AttributeResult(String attributeKey, String attributeValue) {
+    key = attributeKey;
     value = attributeValue;
   }
 
   public void evaluate(WebElement element) {
-    String foundAttribute = element.getAttribute(key);
-    found = foundAttribute != null && foundAttribute.equals(value);
+    String foundValue = element.getAttribute(key);
+    if(foundValue == null)
+      success = Success.NONE;
+    else if(foundValue.equals(value))
+      success = Success.COMPLETE;
+    else
+      success = Success.PARTIALLY;
   }
 
-  public String getAttributeName() {
+  public String getKey() {
     return key;
   }
 
-  public String getAttributeValue() {
+  public String getValue() {
     return value;
-  }
-
-  public boolean isFound() {
-    return found;
-  }
-
-  public String toJSON() {
-    String json = "{";
-
-    // Success
-    json += "\"suc\":\"" + (found ? "+" : "-") + "\", ";
-
-    // Key and Value
-    json += "\"key\":\"" + key + "\", ";
-    json += "\"value\":\"" + value + "\"";
-
-    json += "}";
-    return json;
   }
 
 }

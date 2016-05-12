@@ -1,8 +1,7 @@
-@(user: model.user.User, exercise: model.html.HtmlExercise, oldSolution: String, serverUrl: String)
-
-@main("HTML-Test", user) {
-<script src="@controllers.web.routes.Assets.versioned("assets/ace/ace.js")"></script>
-  <script src="@controllers.web.routes.Assets.versioned("assets/processor.js")"></script>
+@(user: model.user.User, exercise: model.XmlExercise, referenceFile: String, oldSolution: String, serverUrl: String)
+@main("XML-Test", user) {
+  <script src="@controllers.web.routes.Assets.versioned("assets/ace/ace.js")"></script>
+  <script src="@controllers.xml.routes.Assets.versioned("assets/xmlProcessor.js")"></script>
   <script>
     function testSolution() {
       // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
@@ -12,10 +11,10 @@
           processCorrection(xhttp.responseText);
         }
       };
-
+      
       // AJAX-Objekt mit Daten fuellen, absenden
       var parameters = "editorContent=" + encodeURIComponent(editor.getValue());
-      xhttp.open("PUT", "@serverUrl@controllers.web.routes.HTML.commit(exercise.id)", true);
+      xhttp.open("PUT", "@serverUrl@controllers.xml.routes.XML.commit(exercise.id)", true);
       xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
       xhttp.setRequestHeader("Accept", "application/json");
       xhttp.send(parameters);
@@ -25,14 +24,14 @@
       document.getElementById("editorContent").value = editor.getValue();
     }
   </script>
-
+  
   <!-- TODO: Höhe Editor und Live-Preview anders / automatisch? -->
   <style>
   #editor {
     height: 500px;
   }
   </style>
-
+  
   <div class="container-fluid">
     <div class="panel panel-default">
       <div class="panel-heading" data-toggle="collapse" href="#exerciseText">Aufgabenstellung <span class="glyphicon glyphicon-chevron-down pull-right"></span></div>
@@ -44,8 +43,8 @@
         </div>
       </div>
     </div>
-
-    <form action="@web.routes.HTML.commit(exercise.id)" method="post" onsubmit="prepareFormForSubmitting();">
+  
+    <form action="@xml.routes.XML.commit(exercise.id)" method="post" onsubmit="prepareFormForSubmitting();">
       <div class="panel">
         <div class="btn-group btn-group-justified">
           <div class="btn-group">
@@ -73,14 +72,17 @@
                   <pre id="editor" class="form-control">@for(sol <- oldSolution.split("\n")) {@sol
 }</pre>
                   <script type="text/javascript">
-                                      var editor = ace.edit("editor");
-                                      editor.setTheme("ace/theme/eclipse");
-                                      editor.setFontSize("14px");
-                                      editor.getSession().setMode("ace/mode/html");
-                                      editor.getSession().setTabSize(2);
-                                      editor.getSession().setUseSoftTabs(true);
-                                      editor.getSession().setUseWrapMode(true);
-                                    </script>
+                    var editor = ace.edit("editor");
+                      editor.setTheme("ace/theme/eclipse");
+                      editor.setFontSize("14px");
+                      @if(exercise.type == 0 || exercise.type == 1 || exercise.type == 2) {
+                        editor.getSession().setMode("ace/mode/xml");}
+                      @if(exercise.type == 3) {
+                        editor.getSession().setMode("ace/mode/dtd");}
+                      editor.getSession().setTabSize(2);
+                      editor.getSession().setUseSoftTabs(true);
+                      editor.getSession().setUseWrapMode(true);
+                  </script>
                 </div>
               </div>
             </div>
@@ -119,6 +121,5 @@
 
       <textarea hidden name="editorContent" id="editorContent"></textarea>
     </form>
-
   </div>
 }

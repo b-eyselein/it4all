@@ -37,8 +37,12 @@ You can start the Play Framework Console with the command `activator`
 to parent Projects)
 
 ### Prerequisites
-it4all needs a MySQL-Database called `it4all`. Username and Password have to be stored in the `app/conf/application.conf` - file.
+it4all needs a MySQL-Database called `it4all`. Username and Password have to be stored in the `conf/application.conf` - file.
 This project uses the ***evolutions*** of the Play Framework which generates SQL-Scripts after reloading the application in the browser.
+
+The correction for Html also saves files to your local hard drive. The paths to the folders can be found in the `conf/application.conf`
+Configuration file under `rootDirLinux` for linux- and unix-like systems respectively rootDirWin for Windows systems. Under Linux the folder
+has to be owned by the user starting the program (in development mode too).
 
 ### Eclipse IDE
 Start the Play Framework Console with `activator`. You can generate the files needed for the Eclipse IDE with the command

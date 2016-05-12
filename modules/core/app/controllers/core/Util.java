@@ -24,6 +24,11 @@ public class Util {
     return Paths.get(getSolDirForUserAndType("html", user).toString(), exercise + ".html");
   }
   
+  public static Path getXmlSolFileForExercise(String user, int exercise) {
+    // TODO: Test
+    return Paths.get(getSolDirForUserAndType("xml", user).toString(), exercise);
+  }
+  
   private static String getRootDir() {
     String os = System.getProperty("os.name").toLowerCase();
     
