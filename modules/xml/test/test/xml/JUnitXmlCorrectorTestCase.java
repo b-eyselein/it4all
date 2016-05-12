@@ -53,7 +53,10 @@ public class JUnitXmlCorrectorTestCase {
 	 */
 	@Test
 	public void testXmlToXSD() {
-		fail("Not yet implemented"); // TODO
+		XmlCorrector corrector = new XmlCorrector();
+		File file = new File("/resources.xml/noteXML.xml");
+		String out = corrector.xmlToXSD(file);
+		Assert.assertEquals("", out);
 	}
 
 }
