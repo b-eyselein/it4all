@@ -7,10 +7,13 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ArrayList;
 
 import model.XmlExercise;
 import model.ElementResult;
-import model.XmlCorrector;
+import model.Success;
+// import model.XmlCorrector;
+import model.CorrectorXml;
 import model.user.Secured;
 import model.user.User;
 import play.Logger;
@@ -59,7 +62,17 @@ public class XML extends Controller {
       Logger.error(e.getMessage());
     }
 	
-    return ok(xml.render(UserControl.getUser(), exercise, "TODO", defaultOrOldSolution, SERVER_URL));
+	String referenceCode = "";
+    try {
+      Path referenceFilePath = Util.getXmlReferenceFilePath(exercise.referenceFileName);
+      if(Files.exists(referenceFilePath, LinkOption.NOFOLLOW_LINKS))
+        referenceCode = String.join("\n", Files.readAllLines(referenceFilePath));
+
+    } catch (IOException e) {
+      Logger.error(e.getMessage());
+    }
+	
+    return ok(xml.render(UserControl.getUser(), exercise, referenceCode, defaultOrOldSolution, SERVER_URL));
   }
   
   @Security.Authenticated(Secured.class)
@@ -78,8 +91,17 @@ public class XML extends Controller {
       return ok(xmlcorrect.render(learnerSolution, elementResults, UserControl.getUser()));
   }
   
+  /** Replaces characters which cause problems when displayed in html.
+  private String escapeCode(String code) {
+    return code.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("&", "&amp;");
+  } */
+  
   private List<ElementResult> correctExercise(String solutionText, User user, XmlExercise exercise) {
-    return XmlCorrector.correct(solutionText, exercise, user);
+    // TODO implement .correct
+	// return CorrectorXml.correct(solutionText, exercise, user);
+	List<ElementResult> result = new ArrayList<ElementResult>();
+	result.add(new ElementResult(Success.PARTIALLY, "Test Result", "message"));
+	return result;
   }
 
   private String extractLearnerSolutionFromRequest(Request request) {

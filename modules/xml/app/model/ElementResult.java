@@ -11,9 +11,9 @@ public class ElementResult {
   protected String message = "";
 
   public ElementResult(Success theSuccess, String title, String message) {
-    success = theSuccess;
-	message = message;
-	
+    this.success = theSuccess;
+	this.title = title;
+	this.message = message;
   }
   
   public Success getSuccess() {
