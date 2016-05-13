@@ -1,7 +1,7 @@
 /**
  * 
  */
-package test;
+
 
 import static org.junit.Assert.fail;
 
@@ -55,7 +55,7 @@ public class XmlCorrectorTest {
 	@Test
 	public void testXmlToXSD() {
 		XmlCorrector corrector = new XmlCorrector();
-		File xml = new File("/resources/noteXML.xml");
+		File xml = new File("/resources/note.xml");
 		File xsd = new File("/resources/note.xsd");
 		String out = new String();
 		try {
@@ -65,7 +65,7 @@ public class XmlCorrectorTest {
 		}
 		System.out.println(out);
 		Assert.assertNotNull(out);
-		Assert.assertEquals("Keine Fehler", out);
+		Assert.assertEquals("", out);
 	}
 
 }
