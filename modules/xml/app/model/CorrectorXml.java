@@ -23,7 +23,7 @@ import org.xml.sax.SAXParseException;
 public class CorrectorXml {
 	final List<String> output = new LinkedList<>();
 
-	public void correctXMLAgainstDTD(File studentensolutionForXML) {
+	public List<String> correctXMLAgainstDTD(File studentensolutionForXML) {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setValidating(true);
 		DocumentBuilder builder = null;
@@ -56,16 +56,11 @@ public class CorrectorXml {
 		} catch (SAXException e) {
 		} catch (IOException e) {
 		}
-		if (!output.isEmpty()) {
-			for (String item : output) {
-				System.out.println(item);
-			}
-		} else {
-			System.out.println("Dokument ist fehlerfrei");
-		}
+
+		return output;
 	}
 
-	public void correctXMLAgainstXSD(File sampleSolution, File studentSolution) throws IOException {
+	public List<String> correctXMLAgainstXSD(File sampleSolution, File studentSolution) throws IOException {
 		Source schemaFile = new StreamSource(sampleSolution);
 		Source xmlFile = new StreamSource(studentSolution);
 		SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -97,17 +92,10 @@ public class CorrectorXml {
 			validator.validate(xmlFile);
 		} catch (SAXException e) {
 		}
-
-		if (!output.isEmpty()) {
-			for (String item : output) {
-				System.out.println(item);
-			}
-		} else {
-			System.out.println("Dokument ist fehlerfrei");
-		}
+		return output;
 	}
 
-	public void correctDTDAgainstXML(File studentenSolutionForDTD) {
+	public List<String> correctDTDAgainstXML(File studentenSolutionForDTD) {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setValidating(true);
 		DocumentBuilder builder = null;
@@ -153,7 +141,6 @@ public class CorrectorXml {
 				} else {
 					printFatalError(exception);
 				}
-
 			}
 
 			@Override
@@ -174,7 +161,6 @@ public class CorrectorXml {
 				} else {
 					printError(exception);
 				}
-
 			}
 		});
 
@@ -184,13 +170,8 @@ public class CorrectorXml {
 		} catch (SAXException e) {
 		} catch (IOException e) {
 		}
-		if (!output.isEmpty()) {
-			for (String item : output) {
-				System.out.println(item);
-			}
-		} else {
-			System.out.println("DTD ist fehlerfrei");
-		}
+
+		return output;
 	}
 
 	private void printWarning(SAXParseException exception) {
@@ -213,9 +194,23 @@ public class CorrectorXml {
 	}
 
 	public static void main(String[] args) throws IOException {
-//		CorrectorXml xml = new CorrectorXml();
-//		xml.correctXMLAgainstDTD(new File("//home//rav//XML//party.xml"));
-//		xml.correctXMLAgainstXSD(new File("//home//rav//XML//books.xsd"), new File("//home//rav//XML//xmlFile.xml"));
-//		xml.correctDTDAgainstXML(new File("//home//rav//XML//party.xml"));
+		List<String> output = new LinkedList<>();
+		 CorrectorXml xml = new CorrectorXml();
+		 output = xml.correctXMLAgainstDTD(new
+		 File("//home//shpend//Downloads//party.xml"));
+		// output = xml.correctXMLAgainstXSD(new
+		// File("//home/shpend//Downloads//books.xsd"),
+		// new File("//home/shpend//Downloads//xmlFile.xml"));
+		// xml.correctDTDAgainstXML(new
+		// File("//home//shpend//Downloads//party.xml"));
+		 
+//		if (!output.isEmpty()) {
+//			for (String item : output) {
+//				System.out.println(item);
+//			}
+//
+//		} else {
+//			System.out.println("Dokument ist fehlerfrei");
+//		}
 	}
 }
