@@ -57,12 +57,13 @@ public class XmlCorrectorTest {
 		XmlCorrector corrector = new XmlCorrector();
 		File xml = new File("/resources/noteXML.xml");
 		File xsd = new File("/resources/note.xsd");
-		String out = null;
+		String out = new String();
 		try {
 			out = corrector.xmlToXSD(xsd, xml);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		System.out.println(out);
 		Assert.assertNotNull(out);
 		Assert.assertEquals("", out);
 	}

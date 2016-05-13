@@ -8,9 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -22,14 +20,11 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.w3c.dom.Document;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import model.ElementResult;
 import model.user.User;
 
 public class XmlCorrector {
@@ -48,11 +43,11 @@ public class XmlCorrector {
 			// e.printStackTrace();
 		}
 	}
-	
+
 	public DocumentBuilder getBuilder() {
 		return builder;
 	}
-	
+
 	public DocumentBuilderFactory getFactory() {
 		return factory;
 	}
@@ -64,33 +59,46 @@ public class XmlCorrector {
 		DataInputStream in1 = new DataInputStream(fstream1);
 		DataInputStream in2 = new DataInputStream(fstream2);
 
-		BufferedReader br1 = new BufferedReader(new InputStreamReader(in1));
-		BufferedReader br2 = new BufferedReader(new InputStreamReader(in2));
+		BufferedReader br1 = null;
+		BufferedReader br2 = null;
+		
+		String result = null;
+		
+		try {
+			br1 = new BufferedReader(new InputStreamReader(in1));
+			br2 = new BufferedReader(new InputStreamReader(in2));
 
-		String strLine1 = null, strLine2 = null;
-		List<String> output = new ArrayList<>();
-		List<String> output2 = new ArrayList<>();
-		int lines = 0;
+			String strLine1 = null, strLine2 = null;
+			List<String> output = new ArrayList<>();
+			List<String> output2 = new ArrayList<>();
+			int lines = 0;
 
-		while ((strLine1 = br1.readLine()) != null && (strLine2 = br2.readLine()) != null) {
-			lines++;
-			if (!strLine1.equals(strLine2)) {
-				output.add(strLine1 + "\n" + "Zeile: " + lines);
-				output2.add(strLine2);
+			while ((strLine1 = br1.readLine()) != null && (strLine2 = br2.readLine()) != null) {
+				lines++;
+				if (!strLine1.equals(strLine2)) {
+					output.add(strLine1 + "\n" + "Zeile: " + lines);
+					output2.add(strLine2);
+				}
+			}
+
+			result = new String();
+			if (!output.isEmpty()) {
+				for (String string : output) {
+					result.concat("But was: " + string + "\n");
+				}
+			} else {
+				for (String string : output) {
+					result.concat(string);
+				}
+			}
+		} finally {
+			if (br1 != null) {
+				br1.close();
+			}
+			if (br2 != null) {
+				br2.close();
 			}
 		}
-
-		String result = new String();
-		if (!output.isEmpty()) {
-			for (String string : output) {
-				result.concat("But was: " + string + "\n");
-			}
-		} else {
-			for (String string : output) {
-				result.concat(string);
-			}
-		}
-
 		return result;
 	}
 
@@ -176,11 +184,10 @@ public class XmlCorrector {
 	}
 
 	public static List<ElementResult> correct(String solutionUrl, XmlExercise exercise, User student) {
-	    // TODO Do some correction depending on type of exercise
-	    
-	    List<ElementResult> result = new ArrayList<ElementResult>();
-	    
-	    return result;
-	  }
+		// TODO Do some correction depending on type of exercise
 
+		List<ElementResult> result = new ArrayList<ElementResult>();
+
+		return result;
+	}
 }
