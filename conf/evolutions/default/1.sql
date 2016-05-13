@@ -70,15 +70,6 @@ create table htmlexercise (
   constraint pk_htmlexercise primary key (id))
 ;
 
-create table xmlexercise (
-  id                        integer auto_increment not null,
-  title                     varchar(255),
-  exerciseType              integer,
-  referenceFileName         varchar(100),
-  exerciseText              varchar(2000),
-  constraint pk_htmlexercise primary key (id))
-;
-
 create table js_exercise (
   id                        integer auto_increment not null,
   name                      varchar(255),
@@ -115,6 +106,15 @@ create table task (
   defining_attribute        varchar(255),
   attributes                varchar(255),
   constraint pk_task primary key (id, exercise_id))
+;
+
+create table xmlexercise (
+  id                        integer auto_increment not null,
+  title                     varchar(255),
+  exerciseType              integer,
+  referenceFileName         varchar(100),
+  exerciseText              varchar(1000),
+  constraint pk_xmlexercise primary key (id))
 ;
 
 alter table childtask add constraint fk_childtask_task_1 foreign key (task_id,exercise_id) references task (id,exercise_id) on delete restrict on update restrict;
@@ -159,6 +159,8 @@ drop table js_testvalue;
 drop table student;
 
 drop table task;
+
+drop table xmlexercise;
 
 SET FOREIGN_KEY_CHECKS=1;
 

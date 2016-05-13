@@ -20,7 +20,7 @@ lazy val sql = (project in file("modules/sql"))
 	.dependsOn(core)
 
 lazy val xml = (project in file("modules/xml"))
-	.enablePlugins(PlayJava)
+	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
 	.dependsOn(core)
 
 lazy val binary = (project in file("modules/binary"))
