@@ -65,7 +65,7 @@ public class XmlCorrectorTest {
 		}
 		System.out.println(out);
 		Assert.assertNotNull(out);
-		Assert.assertEquals("", out);
+		Assert.assertEquals("Keine Fehler", out);
 	}
 
 }

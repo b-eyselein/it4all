@@ -20,6 +20,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.junit.Assert;
 import org.w3c.dom.Document;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
@@ -61,9 +62,9 @@ public class XmlCorrector {
 
 		BufferedReader br1 = null;
 		BufferedReader br2 = null;
-		
+
 		String result = null;
-		
+
 		try {
 			br1 = new BufferedReader(new InputStreamReader(in1));
 			br2 = new BufferedReader(new InputStreamReader(in2));
@@ -139,13 +140,12 @@ public class XmlCorrector {
 
 	public String xmlToXSD(File xsd, File xml) throws IOException {
 		final String output = new String();
-		Source schemaFile = new StreamSource(xsd);
 
 		Source xmlFile = new StreamSource(xml);
 		SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		Schema schema = null;
 		try {
-			schema = schemaFactory.newSchema(schemaFile);
+			schema = schemaFactory.newSchema(xsd);
 		} catch (SAXException e) {
 		}
 
@@ -180,7 +180,7 @@ public class XmlCorrector {
 		} catch (SAXException e) {
 		}
 
-		return !output.isEmpty() ? output : "Keine Fehler";
+		return output;
 	}
 
 	public static List<ElementResult> correct(String solutionUrl, XmlExercise exercise, User student) {
@@ -189,5 +189,14 @@ public class XmlCorrector {
 		List<ElementResult> result = new ArrayList<ElementResult>();
 
 		return result;
+	}
+
+	public static void main(String[] args) throws IOException {
+		XmlCorrector corrector = new XmlCorrector();
+		File file = new File("/resources/noteDTD.xml");
+		String out = corrector.xmlToDTD(file);
+		String out2 = corrector.xmlToXSD(new File("/resources/note.xsd"), new File("/resources/noteXML.xml"));
+		System.out.println(out);
+		System.out.println(out2);
 	}
 }

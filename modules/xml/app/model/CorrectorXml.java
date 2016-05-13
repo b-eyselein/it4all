@@ -213,12 +213,9 @@ public class CorrectorXml {
 	}
 
 	public static void main(String[] args) throws IOException {
-//		CorrectorXML xml = new CorrectorXML();
-//		 xml.correctXMLAgainstDTD(new File("//home//shpend//Downloads//party.xml"));
-//		 xml.correctXMLAgainstXSD(new File("//home/shpend//Downloads//books.xsd"),
-//		 new File("//home/shpend//Downloads//xmlFile.xml"));
-//		 xml.correctDTDAgainstXML(new File("//home//shpend//Downloads//party.xml"));
+//		CorrectorXml xml = new CorrectorXml();
+//		xml.correctXMLAgainstDTD(new File("//home//rav//XML//party.xml"));
+//		xml.correctXMLAgainstXSD(new File("//home//rav//XML//books.xsd"), new File("//home//rav//XML//xmlFile.xml"));
+//		xml.correctDTDAgainstXML(new File("//home//rav//XML//party.xml"));
 	}
 }
-
-
