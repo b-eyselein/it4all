@@ -1,7 +1,7 @@
 package model.html.result;
 
-import model.EvaluationResult;
-import model.Success;
+import model.exercise.EvaluationResult;
+import model.exercise.Success;
 import model.html.task.ChildTask;
 import model.html.task.Task;
 

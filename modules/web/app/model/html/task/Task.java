@@ -22,8 +22,8 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import model.EvaluationResult;
-import model.Success;
+import model.exercise.EvaluationResult;
+import model.exercise.Success;
 import model.html.HtmlExercise;
 import model.html.result.AttributeResult;
 import model.html.result.ChildResult;

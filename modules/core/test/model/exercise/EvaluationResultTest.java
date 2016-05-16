@@ -1,8 +1,13 @@
-package model;
+package model.exercise;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+
+import model.exercise.Success;
+
+import model.exercise.EvaluationResult;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 
 public class EvaluationResultTest {

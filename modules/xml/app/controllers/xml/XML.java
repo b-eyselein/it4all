@@ -32,15 +32,25 @@ import controllers.core.Util;
 
 //@Security.Authenticated(Secured.class)
 public class XML extends Controller {
-
+  
   private static final String SERVER_URL = Util.getServerUrl();
   private static final String LEARNER_SOLUTION_VALUE = "editorContent";
   private static final String STANDARD_XML = "";
 
-
   @Security.Authenticated(Secured.class)
-  public Result index() {
-    return ok(xmloverview.render(XmlExercise.finder.all(), UserControl.getCurrentUser()));
+  public Result commit(int exerciseId) {
+    User user = UserControl.getCurrentUser();
+
+    String learnerSolution = extractLearnerSolutionFromRequest(request());
+    saveSolutionForUser(user.name, learnerSolution, exerciseId);
+
+    List<ElementResult> elementResults = correctExercise(learnerSolution, user, XmlExercise.finder.byId(exerciseId));
+
+    if(request().acceptedTypes().get(0).toString().equals("application/json"))
+      // print this JSON-tree!!! to know what is inside
+      return ok(Json.toJson(elementResults));
+    else
+      return ok(xmlcorrect.render(learnerSolution, elementResults, UserControl.getCurrentUser()));
   }
 
   @Security.Authenticated(Secured.class)
@@ -50,24 +60,24 @@ public class XML extends Controller {
     if(exercise == null)
       return badRequest(new Html("<p>Diese Aufgabe existert leider nicht.</p><p>Zur&uuml;ck zur <a href=\""
           + routes.XML.index() + "\">Startseite</a>.</p>"));
-
+    
     User user = UserControl.getCurrentUser();
-	String defaultOrOldSolution = STANDARD_XML;
+    String defaultOrOldSolution = STANDARD_XML;
     try {
       Path oldSolutionPath = Util.getXmlSolFileForExercise(user.name, exerciseId);
       if(Files.exists(oldSolutionPath, LinkOption.NOFOLLOW_LINKS))
         defaultOrOldSolution = String.join("\n", Files.readAllLines(oldSolutionPath));
-
+      
     } catch (IOException e) {
       Logger.error(e.getMessage());
     }
 
-	String referenceCode = "";
+    String referenceCode = "";
     try {
       Path referenceFilePath = Util.getXmlReferenceFilePath(exercise.referenceFileName);
       if(Files.exists(referenceFilePath, LinkOption.NOFOLLOW_LINKS))
         referenceCode = String.join("\n", Files.readAllLines(referenceFilePath));
-
+      
     } catch (IOException e) {
       Logger.error(e.getMessage());
     }
@@ -76,32 +86,22 @@ public class XML extends Controller {
   }
 
   @Security.Authenticated(Secured.class)
-  public Result commit(int exerciseId) {
-    User user = UserControl.getCurrentUser();
-
-    String learnerSolution = extractLearnerSolutionFromRequest(request());
-    saveSolutionForUser(user.getName(), learnerSolution, exerciseId);
-
-    List<ElementResult> elementResults = correctExercise(learnerSolution, user, XmlExercise.finder.byId(exerciseId));
-
-    if(request().acceptedTypes().get(0).toString().equals("application/json"))
-	  // print this JSON-tree!!! to know what is inside
-      return ok(Json.toJson(elementResults));
-    else
-      return ok(xmlcorrect.render(learnerSolution, elementResults, UserControl.getCurrentUser()));
+  public Result index() {
+    return ok(xmloverview.render(XmlExercise.finder.all(), UserControl.getCurrentUser()));
   }
 
-  /** Replaces characters which cause problems when displayed in html.
-  private String escapeCode(String code) {
-    return code.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("&", "&amp;");
-  } */
+  /**
+   * Replaces characters which cause problems when displayed in html. private
+   * String escapeCode(String code) { return code.replaceAll("<",
+   * "&lt;").replaceAll(">", "&gt;").replaceAll("&", "&amp;"); }
+   */
 
   private List<ElementResult> correctExercise(String solutionText, User user, XmlExercise exercise) {
     // TODO implement .correct
-	// return CorrectorXml.correct(solutionText, exercise, user);
-	List<ElementResult> result = new ArrayList<ElementResult>();
-	result.add(new ElementResult(Success.PARTIALLY, "Test Result", "message"));
-	return result;
+    // return CorrectorXml.correct(solutionText, exercise, user);
+    List<ElementResult> result = new ArrayList<ElementResult>();
+    result.add(new ElementResult(Success.PARTIALLY, "Test Result", "message"));
+    return result;
   }
 
   private String extractLearnerSolutionFromRequest(Request request) {
@@ -112,11 +112,11 @@ public class XML extends Controller {
     try {
       if(!Files.exists(Util.getSolDirForUser(userName)))
         Files.createDirectory(Util.getSolDirForUser(userName));
-
+      
       Path solDir = Util.getSolDirForUserAndType("xml", userName);
       if(!Files.exists(solDir))
         Files.createDirectory(solDir);
-
+      
       Path saveTo = Util.getXmlSolFileForExercise(userName, exercise);
       Files.write(saveTo, Arrays.asList(solution), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     } catch (IOException error) {

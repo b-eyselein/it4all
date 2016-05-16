@@ -14,7 +14,7 @@ import com.avaje.ebean.Model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import model.Success;
+import model.exercise.Success;
 import play.data.validation.Constraints.Required;
 
 @Entity

@@ -2,8 +2,8 @@ package model.html.result;
 
 import org.openqa.selenium.WebElement;
 
-import model.EvaluationResult;
-import model.Success;
+import model.exercise.EvaluationResult;
+import model.exercise.Success;
 
 public class AttributeResult extends EvaluationResult {
   

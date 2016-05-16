@@ -2,8 +2,8 @@ package model.html.result;
 
 import java.util.List;
 
-import model.EvaluationResult;
-import model.Success;
+import model.exercise.EvaluationResult;
+import model.exercise.Success;
 import model.html.task.Task;
 
 public class ElementResult extends EvaluationResult {
