@@ -5,12 +5,6 @@
 insert into exercise (`type`, `id`, `title`, `exerciseText`, `file_name`, `default_solution`, `function_name`) values
 	("html", 1, "Terminabsprache Werkstatt", "Ihre Firma für Webdesign ist von einer lokalen Werkstatt beauftragt worden, ein Kontaktformular für die Absprache eines Termins zu erstellen. Die Kunden sollen in einem Formular ihre Daten (Namen, Adresse, Automarke, Baujahr, …) sowie einen Datumswunsch angeben. Diese Daten werden an den Server gesendet und, falls der Termin möglich ist, in einer Datenbank gespeichert. Falls der Termin bereits besetzt ist, bekommt der Kunde eine Fehlermeldung angezeigt.
 	Die Werkstatt kann nur Modelle der Marken Audi, Seat, Skoda und VW reparieren.
-<<<<<<< HEAD
-	Ihre Firma beschließt, zuerst einen statischen Seitenprototyp mit verminderter Funktion zu erstellen. Benutzen Sie nur Html, um folgende Elemente zu erstellen. Versuchen Sie jedoch so viel Funktionalität wie möglich umzusetzen, indem Sie entsprechende Elemente bzw. Attribute von Html5 verwenden! Elemente, die mit einem „*“ markiert sind, sollen zur Formularabsendung eingegeben werden müssen. Erstellen Sie jedes Eingabefeld für das spätere Styling mit CSS jeweils eine eigene <div>-Umgebung!");
-
-insert into xmlexercise values
-	(1, "Hello, XML", 1, "first.dtd", "exerciseText");
-=======
 	Ihre Firma beschließt, zuerst einen statischen Seitenprototyp mit verminderter Funktion zu erstellen. Benutzen Sie nur Html, um folgende Elemente zu erstellen. Versuchen Sie jedoch so viel Funktionalität wie möglich umzusetzen, indem Sie entsprechende Elemente bzw. Attribute von Html5 verwenden! Elemente, die mit einem „*“ markiert sind, sollen zur Formularabsendung eingegeben werden müssen. Benutzen Sie die in Klammern angegeben Namen für die Elemente! Erstellen Sie jedes Eingabefeld für das spätere Styling mit CSS jeweils eine eigene <div>-Umgebung!",
 	"", "", ""),
 
@@ -22,8 +16,10 @@ insert into xmlexercise values
 	("js", 4, "Konkatenation von Strings", "Implementieren Sie die folgende Funktion 'concat', die drei beliebige Strings entgegennimmt
 	 und die Konkatenation der Strings zurückgibt.", "",
 	 "function concat(str1, str2, str3) {\n  return \"\";;\n}", "concat");
->>>>>>> origin/master
 	
+insert into xmlexercise values
+	(1, "Hello, XML", 1, "first.dtd", "exerciseText");
+
 insert into task (`exercise_id`, `id`, `taskDesc`, `xpath_query_name`, `attributes`, `defining_attribute`) values
 	(1, 1, "Erstellen Sie ein Formular auf der Seite. Als Aktion soll test und als Methode 'post' angegeben werden.",
 	"//form", "action=test:method=post",  ""),

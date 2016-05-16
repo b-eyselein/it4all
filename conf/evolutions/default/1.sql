@@ -77,7 +77,11 @@ create table task (
   constraint pk_task primary key (id, exercise_id))
 ;
 
-<<<<<<< HEAD
+create table users (
+  name                      varchar(255) not null,
+  constraint pk_users primary key (name))
+;
+
 create table xmlexercise (
   id                        integer auto_increment not null,
   title                     varchar(255),
@@ -85,11 +89,6 @@ create table xmlexercise (
   referenceFileName         varchar(100),
   exerciseText              varchar(1000),
   constraint pk_xmlexercise primary key (id))
-=======
-create table users (
-  name                      varchar(255) not null,
-  constraint pk_users primary key (name))
->>>>>>> origin/master
 ;
 
 alter table childtask add constraint fk_childtask_task_1 foreign key (task_id,exercise_id) references task (id,exercise_id) on delete restrict on update restrict;
@@ -125,11 +124,9 @@ drop table js_testvalue;
 
 drop table task;
 
-<<<<<<< HEAD
-drop table xmlexercise;
-=======
 drop table users;
->>>>>>> origin/master
+
+drop table xmlexercise;
 
 SET FOREIGN_KEY_CHECKS=1;
 
