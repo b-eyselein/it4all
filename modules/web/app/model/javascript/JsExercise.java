@@ -2,33 +2,22 @@ package model.javascript;
 
 import java.util.List;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import play.data.validation.Constraints.Required;
-
-import com.avaje.ebean.Model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import model.exercise.Exercise;
+
 @Entity
-public class JsExercise extends Model {
+@DiscriminatorValue(value = "js")
+public class JsExercise extends Exercise {
   
   public static Finder<Integer, JsExercise> finder = new Finder<Integer, JsExercise>(JsExercise.class);
 
-  @Id
-  public int id;
-
-  @Required
-  public String name;
-
-  @Required
-  public String text;
-
-  @Required
   public String defaultSolution;
 
-  @Required
   public String functionName;
 
   @OneToMany(mappedBy = "exercise")

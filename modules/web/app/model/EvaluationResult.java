@@ -1,20 +1,11 @@
 package model;
 
-import play.Logger;
-
 public abstract class EvaluationResult {
   
   protected Success success = Success.NONE;
 
   public int getPoints() {
-    if(success == Success.NONE)
-      return 0;
-    if(success == Success.PARTIALLY)
-      return 1;
-    if(success == Success.COMPLETE)
-      return 2;
-    Logger.error("Wrong type of Success!");
-    return -1;
+    return success.getPoints();
   }
 
   public Success getSuccess() {
@@ -22,6 +13,8 @@ public abstract class EvaluationResult {
   }
 
   public void setSuccess(Success suc) {
+    if(suc == null)
+      throw new IllegalArgumentException("Succes kann nicht auf \"null\" gesetzt werden!");
     success = suc;
   }
 

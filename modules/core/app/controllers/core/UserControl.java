@@ -8,7 +8,6 @@ import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.util.Map;
 
-import model.user.Student;
 import model.user.User;
 import play.mvc.Controller;
 import play.mvc.Http;
@@ -19,9 +18,11 @@ public class UserControl extends Controller {
   
   public static final String SESSION_ID_FIELD = "id";
 
-  public static User getUser() {
+  public static User getCurrentUser() {
     Http.Session session = Http.Context.current().session();
-    return Student.find.byId(session.get(SESSION_ID_FIELD));
+    if(session.get(SESSION_ID_FIELD).equals(""))
+      throw new IllegalArgumentException("problem!");
+    return User.finder.byId(session.get(SESSION_ID_FIELD));
   }
 
   public Result authenticate() {
@@ -30,21 +31,17 @@ public class UserControl extends Controller {
     String userName = formValues.get("name")[0];
     String passwort = formValues.get("passwort")[0];
 
-    // TODO: schöner...
     User user = findOrCreateStudent(userName, passwort);
 
     session().clear();
-    session(UserControl.SESSION_ID_FIELD, user.getName());
+    session(UserControl.SESSION_ID_FIELD, user.name);
 
-    if(user.isAdmin())
-      return redirect("/admin");
-    else
-      return redirect("/");
+    return redirect(controllers.routes.Application.index());
   }
 
   public Result directLogin(String name, String type, int id) {
     String passwort = "";
-    Student student = findOrCreateStudent(name, passwort);
+    User student = findOrCreateStudent(name, passwort);
     session().clear();
     session(UserControl.SESSION_ID_FIELD, student.name);
 
@@ -55,7 +52,7 @@ public class UserControl extends Controller {
     if(name.isEmpty())
       return redirect("/login");
     String passwort = "";
-    Student student = findOrCreateStudent(name, passwort);
+    User student = findOrCreateStudent(name, passwort);
     session().clear();
     session(UserControl.SESSION_ID_FIELD, student.name);
 
@@ -71,10 +68,10 @@ public class UserControl extends Controller {
     return ok(login.render());
   }
 
-  private Student findOrCreateStudent(String userName, String passwort) {
+  private User findOrCreateStudent(String userName, String passwort) {
     // TODO: Passwort!
-    if(Student.find.byId(userName) == null) {
-      Student newStudent = new Student();
+    if(User.finder.byId(userName) == null) {
+      User newStudent = new User();
       newStudent.name = userName;
       newStudent.save();
       Path solutionDirectory = getSolDirForUser(userName);
@@ -84,7 +81,7 @@ public class UserControl extends Controller {
         } catch (IOException e) {
         }
     }
-    return Student.find.byId(userName);
+    return User.finder.byId(userName);
   }
 
 }

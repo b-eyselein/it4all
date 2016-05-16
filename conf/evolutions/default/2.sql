@@ -1,17 +1,28 @@
 # --- !Ups
 
-insert into student values
-	("s319286");
-
 # HTML
 	
-insert into htmlexercise values
-	(1, "Terminabsprache Werkstatt", "Ihre Firma für Webdesign ist von einer lokalen Werkstatt beauftragt worden, ein Kontaktformular für die Absprache eines Termins zu erstellen. Die Kunden sollen in einem Formular ihre Daten (Namen, Adresse, Automarke, Baujahr, …) sowie einen Datumswunsch angeben. Diese Daten werden an den Server gesendet und, falls der Termin möglich ist, in einer Datenbank gespeichert. Falls der Termin bereits besetzt ist, bekommt der Kunde eine Fehlermeldung angezeigt.
+insert into exercise (`type`, `id`, `title`, `exerciseText`, `file_name`, `default_solution`, `function_name`) values
+	("html", 1, "Terminabsprache Werkstatt", "Ihre Firma für Webdesign ist von einer lokalen Werkstatt beauftragt worden, ein Kontaktformular für die Absprache eines Termins zu erstellen. Die Kunden sollen in einem Formular ihre Daten (Namen, Adresse, Automarke, Baujahr, …) sowie einen Datumswunsch angeben. Diese Daten werden an den Server gesendet und, falls der Termin möglich ist, in einer Datenbank gespeichert. Falls der Termin bereits besetzt ist, bekommt der Kunde eine Fehlermeldung angezeigt.
 	Die Werkstatt kann nur Modelle der Marken Audi, Seat, Skoda und VW reparieren.
+<<<<<<< HEAD
 	Ihre Firma beschließt, zuerst einen statischen Seitenprototyp mit verminderter Funktion zu erstellen. Benutzen Sie nur Html, um folgende Elemente zu erstellen. Versuchen Sie jedoch so viel Funktionalität wie möglich umzusetzen, indem Sie entsprechende Elemente bzw. Attribute von Html5 verwenden! Elemente, die mit einem „*“ markiert sind, sollen zur Formularabsendung eingegeben werden müssen. Erstellen Sie jedes Eingabefeld für das spätere Styling mit CSS jeweils eine eigene <div>-Umgebung!");
 
 insert into xmlexercise values
 	(1, "Hello, XML", 1, "first.dtd", "exerciseText");
+=======
+	Ihre Firma beschließt, zuerst einen statischen Seitenprototyp mit verminderter Funktion zu erstellen. Benutzen Sie nur Html, um folgende Elemente zu erstellen. Versuchen Sie jedoch so viel Funktionalität wie möglich umzusetzen, indem Sie entsprechende Elemente bzw. Attribute von Html5 verwenden! Elemente, die mit einem „*“ markiert sind, sollen zur Formularabsendung eingegeben werden müssen. Benutzen Sie die in Klammern angegeben Namen für die Elemente! Erstellen Sie jedes Eingabefeld für das spätere Styling mit CSS jeweils eine eigene <div>-Umgebung!",
+	"", "", ""),
+
+	("css", 2, "Terminabsprache Werkstatt", "TODO!", "", "", ""),
+
+	("js", 3, "Summen", "Implementieren Sie folgende Funktion 'sum', die zwei Zahlen entegennimmt und deren Summe zurückgibt.", "",
+	 "function sum(a, b) {\n  return 0;;\n}", "sum"),
+	 
+	("js", 4, "Konkatenation von Strings", "Implementieren Sie die folgende Funktion 'concat', die drei beliebige Strings entgegennimmt
+	 und die Konkatenation der Strings zurückgibt.", "",
+	 "function concat(str1, str2, str3) {\n  return \"\";;\n}", "concat");
+>>>>>>> origin/master
 	
 insert into task (`exercise_id`, `id`, `taskDesc`, `xpath_query_name`, `attributes`, `defining_attribute`) values
 	(1, 1, "Erstellen Sie ein Formular auf der Seite. Als Aktion soll test und als Methode 'post' angegeben werden.",
@@ -33,8 +44,7 @@ insert into task (`exercise_id`, `id`, `taskDesc`, `xpath_query_name`, `attribut
 	 damit Sie die 'required'-Option modellieren können.",
 	"//form/div//select", "required=true", "name=marke"),
 	 
-	(1, 7, "Erstellen Sie ein Eingabefeld* (jahr) für das Baujahr des Autos (1950 <= year <= 2016). Als Vorgabe soll
-	 2000 eingestellt sein.",
+	(1, 7, "Erstellen Sie ein Eingabefeld* (jahr) für das Baujahr des Autos (1950 <= year <= 2016). Als Vorgabe soll 2000 eingestellt sein.",
 	"//form/div//input", "type=number:required=true:value=2000", "name=jahr"),
 	 
 	(1, 8, "Erstellen Sie eine Checkbox* (agb), um die AGBs der Seite zu akzeptieren",
@@ -50,25 +60,14 @@ insert into childtask (`id`, `task_id`, `exercise_id`, `tagName`, `defining_attr
  	(4, 6, 1, "option", "value=Skoda"),
  	(5, 6, 1, "option", "value=VW");
 
-# CSS
-insert into css_exercise (`id`, `title`, `exerciseText`) values
-	(1, "Terminabsprache Werkstatt", "TODO!");
-
 # JavaScript
- 
-insert into js_exercise (`id`, `name`, `text`, `default_solution`, `function_name`) values
-	(1, "Summen", "Implementieren Sie folgende Funktion 'sum', die zwei Zahlen entegennimmt und deren Summe zurückgibt.",
-	 "function sum(a, b) {\n  return 0;;\n}", "sum"),
-	(2, "Konkatenation von Strings", "Implementieren Sie die folgende Funktion 'concat',
-	 die drei beliebige Strings entgegennimmt und die Konkatenation der Strings zurückgibt.",
-	 "function concat(str1, str2, str3) {\n  return \"\";;\n}", "concat");
 
 insert into js_test (`id`, `exercise_id`, `awaited_result`) values
-	(1, 1, 2),
-	(2, 1, 3),
-	(3, 1, 87),
-	(4, 2, "Hallo Welt!"),
-	(5, 2, "TestTestTest");
+	(1, 3, 2),
+	(2, 3, 3),
+	(3, 3, 87),
+	(4, 4, "Hallo Welt!"),
+	(5, 4, "TestTestTest");
 
 insert into js_testvalue (`id`, `test_id`, `value`) values
 	(1, 1, 1), (2, 1, 1),
@@ -87,14 +86,12 @@ delete from js_testvalue;
 
 delete from js_test;
 
-delete from js_exercise;
-
 delete from childtask;
 
 delete from task;
 
-delete from htmlexercise;
+delete from exercise;
 
-delete from student;
+delete from users;
 
 SET FOREIGN_KEY_CHECKS = 1;

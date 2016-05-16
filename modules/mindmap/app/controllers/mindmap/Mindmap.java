@@ -12,12 +12,12 @@ import views.html.mindmapcorrect;
 public class Mindmap extends Controller {
   
   public Result index() {
-    return ok(mindmapindex.render(UserControl.getUser()));
+    return ok(mindmapindex.render(UserControl.getCurrentUser()));
   }
-  
+
   public Result upload() {
     // TODO: getFile, correct and present for download!
-    return ok(mindmapcorrect.render(UserControl.getUser()));
+    return ok(mindmapcorrect.render(UserControl.getCurrentUser()));
   }
-  
+
 }

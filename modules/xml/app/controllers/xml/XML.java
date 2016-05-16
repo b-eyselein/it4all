@@ -32,17 +32,17 @@ import controllers.core.Util;
 
 //@Security.Authenticated(Secured.class)
 public class XML extends Controller {
-  
+
   private static final String SERVER_URL = Util.getServerUrl();
   private static final String LEARNER_SOLUTION_VALUE = "editorContent";
   private static final String STANDARD_XML = "";
 
-  
+
   @Security.Authenticated(Secured.class)
   public Result index() {
-    return ok(xmloverview.render(XmlExercise.finder.all(), UserControl.getUser()));
+    return ok(xmloverview.render(XmlExercise.finder.all(), UserControl.getCurrentUser()));
   }
-  
+
   @Security.Authenticated(Secured.class)
   public Result exercise(int exerciseId) {
     XmlExercise exercise = XmlExercise.finder.byId(exerciseId);
@@ -50,18 +50,18 @@ public class XML extends Controller {
     if(exercise == null)
       return badRequest(new Html("<p>Diese Aufgabe existert leider nicht.</p><p>Zur&uuml;ck zur <a href=\""
           + routes.XML.index() + "\">Startseite</a>.</p>"));
-    
-    User user = UserControl.getUser();
+
+    User user = UserControl.getCurrentUser();
 	String defaultOrOldSolution = STANDARD_XML;
     try {
-      Path oldSolutionPath = Util.getXmlSolFileForExercise(user.getName(), exerciseId);
+      Path oldSolutionPath = Util.getXmlSolFileForExercise(user.name, exerciseId);
       if(Files.exists(oldSolutionPath, LinkOption.NOFOLLOW_LINKS))
         defaultOrOldSolution = String.join("\n", Files.readAllLines(oldSolutionPath));
 
     } catch (IOException e) {
       Logger.error(e.getMessage());
     }
-	
+
 	String referenceCode = "";
     try {
       Path referenceFilePath = Util.getXmlReferenceFilePath(exercise.referenceFileName);
@@ -71,13 +71,13 @@ public class XML extends Controller {
     } catch (IOException e) {
       Logger.error(e.getMessage());
     }
-	
-    return ok(xml.render(UserControl.getUser(), exercise, referenceCode, defaultOrOldSolution, SERVER_URL));
+
+    return ok(xml.render(UserControl.getCurrentUser(), exercise, referenceCode, defaultOrOldSolution, SERVER_URL));
   }
-  
+
   @Security.Authenticated(Secured.class)
   public Result commit(int exerciseId) {
-    User user = UserControl.getUser();
+    User user = UserControl.getCurrentUser();
 
     String learnerSolution = extractLearnerSolutionFromRequest(request());
     saveSolutionForUser(user.getName(), learnerSolution, exerciseId);
@@ -88,14 +88,14 @@ public class XML extends Controller {
 	  // print this JSON-tree!!! to know what is inside
       return ok(Json.toJson(elementResults));
     else
-      return ok(xmlcorrect.render(learnerSolution, elementResults, UserControl.getUser()));
+      return ok(xmlcorrect.render(learnerSolution, elementResults, UserControl.getCurrentUser()));
   }
-  
+
   /** Replaces characters which cause problems when displayed in html.
   private String escapeCode(String code) {
     return code.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("&", "&amp;");
   } */
-  
+
   private List<ElementResult> correctExercise(String solutionText, User user, XmlExercise exercise) {
     // TODO implement .correct
 	// return CorrectorXml.correct(solutionText, exercise, user);
@@ -107,7 +107,7 @@ public class XML extends Controller {
   private String extractLearnerSolutionFromRequest(Request request) {
     return request.body().asFormUrlEncoded().get(LEARNER_SOLUTION_VALUE)[0];
   }
-  
+
   private void saveSolutionForUser(String userName, String solution, int exercise) {
     try {
       if(!Files.exists(Util.getSolDirForUser(userName)))
@@ -123,5 +123,5 @@ public class XML extends Controller {
       Logger.error("Fehler beim Speichern einer Xml-Loesungsdatei!", error);
     }
   }
-  
+
 }
