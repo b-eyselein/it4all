@@ -7,12 +7,12 @@ import play.Configuration;
 import play.Play;
 
 public class Util {
-
+  
   // Load root directory for solutions and samples at startUp
   private static String rootSolDir = getRootDir();
 
-  public static Path getExcelSampleDirectoryForExercise(int exerciseId) {
-    return Paths.get(rootSolDir, "samples", "excel", "ex_" + exerciseId);
+  public static Path getExcelSampleDirectoryForExercise(String exerciseType, int exerciseId) {
+    return Paths.get(rootSolDir, "samples", exerciseType, "ex_" + exerciseId);
   }
 
   public static Path getExcelSolFileForExercise(String user, String fileName) {
@@ -22,29 +22,6 @@ public class Util {
   public static Path getHtmlSolFileForExercise(String user, String exerciseType, int exercise) {
     // TODO: Test for Html!
     return Paths.get(getSolDirForUserAndType("html", user).toString(), exercise + ".html");
-  }
-
-  public static Path getXmlSolFileForExercise(String user, int exerciseId) {
-    // TODO: Test
-    return Paths.get(getSolDirForUserAndType("xml", user).toString(), exerciseId + "");
-  }
-
-  public static Path getXmlReferenceFilePath(String referenceFileName) {
-    return Paths.get(rootSolDir, "references", "xml", referenceFileName);
-  }
-
-  private static String getRootDir() {
-    String os = System.getProperty("os.name").toLowerCase();
-
-    // WINDOWS
-    if(os.indexOf("win") >= 0)
-      return Configuration.root().getString("rootDirWin");
-    // UNIX
-    else if(os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0 || os.indexOf("aix") > 0)
-      return Configuration.root().getString("rootDirLinux");
-    // OTHER OS, NEEDS CONFIGURATION
-    else
-      throw new IllegalArgumentException("OS not detectable");
   }
 
   public static String getServerUrl() {
@@ -62,6 +39,29 @@ public class Util {
 
   public static Path getSolDirForUserAndType(String type, String user) {
     return Paths.get(getSolDirForUser(user).toString(), type);
+  }
+
+  public static Path getXmlReferenceFilePath(String referenceFileName) {
+    return Paths.get(rootSolDir, "references", "xml", referenceFileName);
+  }
+
+  public static Path getXmlSolFileForExercise(String user, int exerciseId) {
+    // TODO: Test
+    return Paths.get(getSolDirForUserAndType("xml", user).toString(), exerciseId + "");
+  }
+
+  private static String getRootDir() {
+    String os = System.getProperty("os.name").toLowerCase();
+
+    // WINDOWS
+    if(os.indexOf("win") >= 0)
+      return Configuration.root().getString("rootDirWin");
+    // UNIX
+    else if(os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0 || os.indexOf("aix") > 0)
+      return Configuration.root().getString("rootDirLinux");
+    // OTHER OS, NEEDS CONFIGURATION
+    else
+      throw new IllegalArgumentException("OS not detectable");
   }
 
 }

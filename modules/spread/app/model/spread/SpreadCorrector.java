@@ -1,5 +1,6 @@
 package model.spread;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,23 +20,24 @@ public abstract class SpreadCorrector<DocType, SheetType, CellType, FontType, Co
 
   public abstract void compareSheet(SheetType sampleTable, SheetType compareTable, boolean conditionalFormating);
 
-  public SpreadSheetCorrectionResult correct(Path musterPath, Path testPath, boolean conditionalFormating,
+  public SpreadSheetCorrectionResult correct(Path samplePath, Path comparePath, boolean conditionalFormating,
       boolean compareCharts) {
-    LinkedList<String> notices = new LinkedList<String>();
-
-    DocType sampleDocument = null;
-    DocType compareDocument = null;
-    try {
-      sampleDocument = loadDocument(musterPath);
-      compareDocument = loadDocument(testPath);
-    } catch (Exception e) {
+    
+    // Check if both documents exist as files
+    if(!Files.exists(samplePath))
+      return new SpreadSheetCorrectionResult(false, Arrays.asList("Musterdatei ist nicht vorhanden!"));
+    if(!Files.exists(comparePath))
+      return new SpreadSheetCorrectionResult(false, Arrays.asList("Lösungsdatei ist nicht vorhanden!"));
+    
+    // Load document, if loading returns null, return Error
+    DocType sampleDocument = loadDocument(samplePath);
+    DocType compareDocument = loadDocument(comparePath);
+    if(sampleDocument == null)
       return new SpreadSheetCorrectionResult(false,
-          Arrays.asList("Test konnte nicht gestartet werden. Beim Laden der Dateien ist ein Fehler aufgetreten."));
-    }
-
-    if(sampleDocument == null || compareDocument == null)
+          Arrays.asList("Beim Laden der Musterdatei ist ein Fehler aufgetreten."));
+    if(compareDocument == null)
       return new SpreadSheetCorrectionResult(false,
-          Arrays.asList("Test konnte nicht gestartet werden. Beim Laden der Dateien ist ein Fehler aufgetreten."));
+          Arrays.asList("Beim Laden der eingereichten Datei ist ein Fehler aufgetreten."));
     
     if(getSheetCount(sampleDocument) != getSheetCount(compareDocument))
       return new SpreadSheetCorrectionResult(false,
@@ -46,6 +48,8 @@ public abstract class SpreadCorrector<DocType, SheetType, CellType, FontType, Co
       // write message in Cell A0 on first Sheet
       setCellComment(getCellByPosition(getSheetByIndex(compareDocument, 0), 0, 0), message);
     }
+
+    LinkedList<String> notices = new LinkedList<String>();
 
     // Iterate over sheets
     int sheetCount = getSheetCount(sampleDocument);
@@ -59,7 +63,7 @@ public abstract class SpreadCorrector<DocType, SheetType, CellType, FontType, Co
     }
 
     // Save and close workbooks
-    saveCorrectedSpreadsheet(compareDocument, testPath);
+    saveCorrectedSpreadsheet(compareDocument, comparePath);
     closeDocument(compareDocument);
     closeDocument(sampleDocument);
 
@@ -77,6 +81,13 @@ public abstract class SpreadCorrector<DocType, SheetType, CellType, FontType, Co
 
   public abstract int getSheetCount(DocType sampleDocument);
 
+  /**
+   * Loads a document from a given path
+   *
+   * @param musterPath
+   *          - path to the document
+   * @return the document if there is a document that can be loaded, else null
+   */
   public abstract DocType loadDocument(Path musterPath);
 
   public abstract void saveCorrectedSpreadsheet(DocType compareDocument, Path testPath);

@@ -15,7 +15,9 @@ insert into exercise (`type`, `id`, `title`, `exerciseText`, `file_name`, `defau
 	 
 	("js", 4, "Konkatenation von Strings", "Implementieren Sie die folgende Funktion 'concat', die drei beliebige Strings entgegennimmt
 	 und die Konkatenation der Strings zurückgibt.", "",
-	 "function concat(str1, str2, str3) {\n  return \"\";;\n}", "concat");
+	 "function concat(str1, str2, str3) {\n  return \"\";;\n}", "concat"),
+	 
+   	("spread", 5, "Planung Schullandheimaufenthalt", "Sie sind beauftragt, einen Schullandheimaufenthalt zu planen und die Kosten zu kalkulieren.", "Aufgabe_Schullandheim", "", "");
 	
 insert into xmlexercise values
 	(1, "Hello, XML", 1, "first.dtd", "exerciseText");

@@ -1,11 +1,21 @@
-@(user: model.user.User, exercises: List[model.spread.ExcelExercise])
+@import model.user.User
+@import model.spread.ExcelExercise
+
+@(exercises: List[ExcelExercise], user: User)
 
 @main("HTML-Test", user) {
 <div class="container">
+
+  <h2>&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h2>
   @for(exercise <- exercises) {
   <div class="panel panel-default">
+    <div class="panel-heading">
+      <a href="@controllers.spread.routes.Excel.exercise(exercise.id)">Aufgabe @exercise.id: @exercise.title</a>
+    </div>
     <div class="panel-body">
-      <a href="/excel/@exercise.id">Aufgabe @exercise.id: @exercise.title</a>
+      @for(exerText <- exercise.exerciseText.split("\n")) {
+      <p>@exerText</p>
+      }
     </div>
   </div>
   }
