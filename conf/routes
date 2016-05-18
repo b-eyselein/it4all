@@ -6,7 +6,8 @@
 GET    /               controllers.Application.index()
 
 # Userverwaltung
-->     /               conf.Routes
+->     /               core.Routes
+
 # User
 GET    /user           controllers.UserController.index()
 
