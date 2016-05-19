@@ -197,7 +197,7 @@ public class CorrectorXml {
 		List<String> output = new LinkedList<>();
 		CorrectorXml xml = new CorrectorXml();
 		output = xml.correctXMLAgainstDTD(new File("//home//rav//XML//party.xml"));
-		
+
 		System.out.println(output);
 		// output = xml.correctXMLAgainstXSD(new
 		// File("//home/shpend//Downloads//books.xsd"),
