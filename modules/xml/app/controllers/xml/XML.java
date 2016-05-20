@@ -1,6 +1,5 @@
 package controllers.xml;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -43,11 +42,9 @@ public class XML extends Controller {
     User user = UserControl.getCurrentUser();
 
     String learnerSolution = extractLearnerSolutionFromRequest(request());
-    Logger.info(learnerSolution);
-    Path path2solution = saveSolutionForUser(user.name, learnerSolution, exerciseId);
-    Logger.info(path2solution.toString());
+    saveSolutionForUser(user.name, learnerSolution, exerciseId);
 
-    List<ElementResult> elementResults = correctExercise(path2solution, user, XmlExercise.finder.byId(exerciseId));
+    List<ElementResult> elementResults = correctExercise(learnerSolution, user, XmlExercise.finder.byId(exerciseId));
 
     if(request().acceptedTypes().get(0).toString().equals("application/json"))
       // print this JSON-tree!!! to know what is inside
@@ -99,12 +96,11 @@ public class XML extends Controller {
    * "&lt;").replaceAll(">", "&gt;").replaceAll("&", "&amp;"); }
    */
 
-  private List<ElementResult> correctExercise(Path solutionPath, User user, XmlExercise exercise) {
-	  File solutionFile = new File(solutionPath.toString());
-	  File referenceFile = new File(Util.getXmlReferenceFilePath(exercise.referenceFileName).toString());
-	  List<ElementResult> result = CorrectorXml.correct(solutionFile, referenceFile, exercise, user);
-//    List<ElementResult> result = new ArrayList<ElementResult>();
-//    result.add(new ElementResult(Success.PARTIALLY, "Test Result", "message"));
+  private List<ElementResult> correctExercise(String solutionText, User user, XmlExercise exercise) {
+    // TODO implement .correct
+    // return CorrectorXml.correct(solutionText, exercise, user);
+    List<ElementResult> result = new ArrayList<ElementResult>();
+    result.add(new ElementResult(Success.PARTIALLY, "Test Result", "message"));
     return result;
   }
 
@@ -112,7 +108,7 @@ public class XML extends Controller {
     return request.body().asFormUrlEncoded().get(LEARNER_SOLUTION_VALUE)[0];
   }
 
-  private Path saveSolutionForUser(String userName, String solution, int exercise) {
+  private void saveSolutionForUser(String userName, String solution, int exercise) {
     try {
       if(!Files.exists(Util.getSolDirForUser(userName)))
         Files.createDirectory(Util.getSolDirForUser(userName));
@@ -123,11 +119,9 @@ public class XML extends Controller {
       
       Path saveTo = Util.getXmlSolFileForExercise(userName, exercise);
       Files.write(saveTo, Arrays.asList(solution), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-      return saveTo;
     } catch (IOException error) {
       Logger.error("Fehler beim Speichern einer Xml-Loesungsdatei!", error);
     }
-    return null;
   }
 
 }
