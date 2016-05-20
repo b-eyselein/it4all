@@ -196,26 +196,4 @@ public class CorrectorXml {
 				+ exception.getLineNumber() + "\n" + "Fehler: " + exception.getMessage() + "\n";
 		output.add(string);
 	}
-
-	public static void main(String[] args) throws IOException {
-		List<String> output = new LinkedList<>();
-		CorrectorXml xml = new CorrectorXml();
-		output = xml.correctXMLAgainstDTD(new File("//home//rav//XML//party.xml"));
-
-		System.out.println(output);
-		// output = xml.correctXMLAgainstXSD(new
-		// File("//home/shpend//Downloads//books.xsd"),
-		// new File("//home/shpend//Downloads//xmlFile.xml"));
-		// xml.correctDTDAgainstXML(new
-		// File("//home//shpend//Downloads//party.xml"));
-
-		// if (!output.isEmpty()) {
-		// for (String item : output) {
-		// System.out.println(item);
-		// }
-		//
-		// } else {
-		// System.out.println("Dokument ist fehlerfrei");
-		// }
-	}
 }
