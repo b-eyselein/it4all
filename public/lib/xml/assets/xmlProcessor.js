@@ -5,7 +5,10 @@ function processCorrection(correction) {
     var numOfSuccessfulResults = 0;
 	
     var resultsContainer = document.getElementById("element_result_container");
-	resultsContainer.innerHtml = ""; // remove previous message
+	// remove previous messages
+	while (resultsContainer.firstChild) {
+	  resultsContainer.removeChild(resultsContainer.firstChild);
+	}
 	
     for(i = 0; i < newResults.length; i++) {
       handleResult(newResults[i]);
@@ -36,11 +39,12 @@ function handleResult(result) {
   var panelHeading = document.createElement("div");
   panelHeading.className = "panel-heading";
   panelHeading.setAttribute("data-toggle", "collapse");
-  panelHeading.setAttribute("href", "result_body_" + resultsContainer.length); // href
+  panelHeading.href = "result_body_" + resultsContainer.length;
   var pullButton = document.createElement("span");
   pullButton.className = "glyphicon glyphicon-chevron-down pull-right";
-  panelHeading.textContent = result.title;
-  panelHeading.appendChild(pullButton); // !!!
+  //panelHeading.textContent = result.title;
+  panelHeading.appendChild(new Text(result.title));
+  panelHeading.appendChild(pullButton);
   
   var panelCollapse = document.createElement("div");
   panelCollapse.className = "panel-collapse collapse";
