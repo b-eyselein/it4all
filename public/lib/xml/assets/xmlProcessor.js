@@ -3,7 +3,10 @@ function processCorrection(correction) {
     var newResults = JSON.parse(correction);
 
     var numOfSuccessfulResults = 0;
-
+	
+    var resultsContainer = document.getElementById("element_result_container");
+	resultsContainer.innerHtml = ""; // remove previous message
+	
     for(i = 0; i < newResults.length; i++) {
       handleResult(newResults[i]);
       if(newResults[i].success === "COMPLETE") {
@@ -33,7 +36,7 @@ function handleResult(result) {
   var panelHeading = document.createElement("div");
   panelHeading.className = "panel-heading";
   panelHeading.setAttribute("data-toggle", "collapse");
-  // href? // panelHeading.setAttribute("href", "result_body_" + resultsContainer.length);
+  panelHeading.setAttribute("href", "result_body_" + resultsContainer.length); // href
   var pullButton = document.createElement("span");
   pullButton.className = "glyphicon glyphicon-chevron-down pull-right";
   panelHeading.textContent = result.title;
@@ -44,7 +47,7 @@ function handleResult(result) {
   panelCollapse.id = "result_body_" + resultsContainer.length;
   var panelBody = document.createElement("div");
   panelBody.className = "panel-body";
-  panelBody.textContent = result.message;
+  panelBody.appendChild(new Text(result.message));
   panelCollapse.appendChild(panelBody);
   
   resultDiv.appendChild(panelHeading);
