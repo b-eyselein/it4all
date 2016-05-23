@@ -105,6 +105,9 @@ public class XML extends Controller {
 	  List<ElementResult> result = CorrectorXml.correct(solutionFile, referenceFile, exercise, user);
 //    List<ElementResult> result = new ArrayList<ElementResult>();
 //    result.add(new ElementResult(Success.PARTIALLY, "Test Result", "message"));
+      if (result.isEmpty()) {
+	    result.add(new ElementResult(Success.COMPLETE, "Super!", "Bist ein ganz guter Student."));
+	  }
     return result;
   }
 
