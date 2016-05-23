@@ -24,7 +24,7 @@ public class CorrectorTest {
 	@Test
 	public void testCorrectXMLAgainstDTD() {
 		CorrectorXml corrector = new CorrectorXml();
-		File file = new File("test/resources/note.xml");
+		File file = new File("test/resources/noteDTD.xml");
 		List<String> out = corrector.correctXMLAgainstDTD(file);
 		Assert.assertTrue(out.isEmpty());
 	}
