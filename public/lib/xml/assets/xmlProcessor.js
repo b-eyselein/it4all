@@ -40,11 +40,11 @@ function handleResult(result, resultIndex) {
   panelHeading.className = "panel-heading";
   panelHeading.setAttribute("data-toggle", "collapse");
   panelHeading.href = "result_body_" + resultIndex;
-  var pullButton = document.createElement("span");
-  pullButton.className = "glyphicon glyphicon-chevron-down pull-right";
+  // var pullButton = document.createElement("span");
+  // pullButton.className = "glyphicon glyphicon-chevron-down pull-right";
   //panelHeading.textContent = result.title;
   panelHeading.appendChild(new Text(result.title));
-  panelHeading.appendChild(pullButton);
+  // panelHeading.appendChild(pullButton);
   
   var panelCollapse = document.createElement("div");
   panelCollapse.className = "panel-collapse collapse in";
