@@ -47,10 +47,11 @@ function handleResult(result, resultIndex) {
   panelHeading.setAttribute("data-toggle", "collapse");
   panelHeading.href = "result_body_" + resultIndex;
   panelHeading.appendChild(new Text(result.title));
+  resultDiv.appendChild(panelHeading);
   
   if(result.message !== "") {
     // create button
-	var pullButton = document.createElement("span");
+	var pullButton = document.createElement("button");
 	pullButton.className = "glyphicon glyphicon-chevron-down pull-right";
 	pullButton.setAttribute("data-toggle", "collapse");
 	pullButton.setAttribute("data-target", "result_body_" + resultIndex);
@@ -58,10 +59,11 @@ function handleResult(result, resultIndex) {
   
     // create message div
 	var panelCollapse = document.createElement("div");
-	panelCollapse.className = "panel-collapse collapse in";
-	panelCollapse.id = "result_body_" + resultIndex;
+	panelCollapse.className = "panel-collapse"; // collapse in";
+	// panelCollapse.id = "result_body_" + resultIndex;
 	var panelBody = document.createElement("div");
 	panelBody.className = "collapse";
+	panelBody.id = "result_body_" + resultIndex;
 	panelBody.appendChild(new Text(result.message));
 	panelCollapse.appendChild(panelBody);
 	resultDiv.appendChild(panelCollapse);
@@ -75,6 +77,5 @@ function handleResult(result, resultIndex) {
 	  }
   }
   
-  resultDiv.appendChild(panelHeading);
   resultsContainer.appendChild(resultDiv);
 }
