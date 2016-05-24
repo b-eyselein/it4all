@@ -112,6 +112,7 @@ public class HTML extends Controller {
       Path saveTo = Util.getHtmlSolFileForExercise(userName, "html", exercise);
       Files.write(saveTo, Arrays.asList(solution), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     } catch (IOException error) {
+      // FIXME: Stelle sicher, dass Ordner beim Startup existieren!
       Logger.error("Fehler beim Speichern einer Html-Loesungsdatei!", error);
     }
   }
