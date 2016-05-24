@@ -8,6 +8,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import model.CorrectorXml;
+import model.ElementResult;
 
 /**
  * 
@@ -20,27 +21,28 @@ import model.CorrectorXml;
 public class CorrectorTest {
 
 	/**
-	 * Test method for {@link model.CorrectorXml#correctXMLAgainstDTD(java.io.File)}.
+	 * Test method for
+	 * {@link model.CorrectorXml#correctXMLAgainstDTD(java.io.File)}.
 	 */
 	@Test
 	public void testCorrectXMLAgainstDTD() {
-		CorrectorXml corrector = new CorrectorXml();
-		File file = new File("/resources/noteDTD.xml");
-		List<ElementResult> out = corrector.correctXMLAgainstDTD(file);
+		File file = new File("test/resources/noteDTD.xml");
+		List<ElementResult> out = CorrectorXml.correctXMLAgainstDTD(file);
 		Assert.assertTrue(out.isEmpty());
 	}
 
 	/**
-	 * Test method for {@link model.CorrectorXml#correctXMLAgainstXSD(java.io.File, java.io.File)}.
+	 * Test method for
+	 * {@link model.CorrectorXml#correctXMLAgainstXSD(java.io.File, java.io.File)}
+	 * .
 	 */
 	@Test
 	public void testCorrectXMLAgainstXSD() {
-		CorrectorXml corrector = new CorrectorXml();
-		File xml = new File("/resources/note.xml");
-		File xsd = new File("/resources/note.xsd");
+		File xml = new File("test/resources/note.xml");
+		File xsd = new File("test/resources/note.xsd");
 		List<ElementResult> out = null;
 		try {
-			out = corrector.correctXMLAgainstXSD(xsd, xml);
+			out = CorrectorXml.correctXMLAgainstXSD(xsd, xml);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -49,7 +51,8 @@ public class CorrectorTest {
 	}
 
 	/**
-	 * Test method for {@link model.CorrectorXml#correctDTDAgainstXML(java.io.File)}.
+	 * Test method for
+	 * {@link model.CorrectorXml#correctDTDAgainstXML(java.io.File)}.
 	 */
 	@Test
 	public void testCorrectDTDAgainstXML() {
