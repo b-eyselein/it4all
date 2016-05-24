@@ -54,16 +54,17 @@ function handleResult(result, resultIndex) {
 	var pullButton = document.createElement("button");
 	pullButton.className = "glyphicon glyphicon-chevron-down pull-right";
 	pullButton.setAttribute("data-toggle", "collapse");
-	pullButton.setAttribute("data-target", "result_body_" + resultIndex);
+	// pullButton.setAttribute("data-target", "#result_body_" + resultIndex);
+	pullButton.setAttribute("href", "#result_body_" + resultIndex);
 	panelHeading.appendChild(pullButton);
   
     // create message div
 	var panelCollapse = document.createElement("div");
-	panelCollapse.className = "panel-collapse"; // collapse in";
-	// panelCollapse.id = "result_body_" + resultIndex;
-	var panelBody = document.createElement("div");
-	panelBody.className = "collapse";
-	panelBody.id = "result_body_" + resultIndex;
+	panelCollapse.className = "panel-collapse collapse"; // collapse in";
+	panelCollapse.id = "result_body_" + resultIndex;
+	var panelBody = document.createElement("h4");
+	// panelBody.className = "collapse in";
+	// panelBody.id = "result_body_" + resultIndex;
 	panelBody.appendChild(new Text(result.message));
 	panelCollapse.appendChild(panelBody);
 	resultDiv.appendChild(panelCollapse);
