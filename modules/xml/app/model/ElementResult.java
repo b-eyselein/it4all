@@ -1,9 +1,5 @@
 package model;
 
-import java.util.List;
-
-import model.Success;
-
 public class ElementResult {
 
   protected Success success = Success.NONE;

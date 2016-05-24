@@ -118,7 +118,7 @@ public class CorrectorXml {
 					// würde den Fehler in der XML anzeigen
 					// nur Ausgabe des Fehlers da die Reihenfolge in er DTD
 					// keine Rolle spielt
-					string = "WARNING:" + "\n" + "SystemID: " + exception.getSystemId() + "\n" + "Fehler: "
+					string = "WARNING:" + "\n" + "Fehler: "
 							+ exception.getMessage() + "\n";
 					//TODO
 //					if (!output.contains(string)) {
@@ -138,7 +138,7 @@ public class CorrectorXml {
 					// würde den Fehler in der XML anzeigen
 					// nur Ausgabe des Fehlers da die Reihenfolge in er DTD
 					// keine Rolle spielt
-					string = "FATAL ERROR:" + "\n" + "SystemID: " + exception.getSystemId() + "\n" + "Fehler: "
+					string = "FATAL ERROR:" + "\n" + "\n" + "Fehler: "
 							+ exception.getMessage() + "\n";
 					//TODO
 //					if (!output.contains(string)) {
@@ -157,7 +157,7 @@ public class CorrectorXml {
 					// würde den Fehler in der XML anzeigen
 					// nur Ausgabe des Fehlers, da die Reihenfolge in DTD keine
 					// Rolle spielt
-					string = "ERROR:" + "\n" + "SystemID: " + exception.getSystemId() + "\n" + "Fehler: "
+					string = "ERROR:" + "\n" + "Fehler: "
 							+ exception.getMessage() + "\n";
 					// manche Fehler werden mehrmals ausgegeben, daher
 					// überprüfen ob der Fehler schon in der Ausgabe ist
