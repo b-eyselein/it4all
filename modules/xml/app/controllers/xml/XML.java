@@ -108,6 +108,14 @@ public class XML extends Controller {
       if (result.isEmpty()) {
 	    result.add(new ElementResult(Success.COMPLETE, "Super!", "Bist ein ganz guter Student."));
 	  }
+	  boolean malformed = false;
+	  for (ElementResult el : result) {
+	    if (el.getSuccess() == Success.NONE)
+		   malformed = true;
+	  }
+	  if (!result.isEmpty() && !malformed) {
+	    result.add(new ElementResult(Success.COMPLETE, "Die Eingabe ist wohlgeformt", ""));
+	  }
     return result;
   }
 

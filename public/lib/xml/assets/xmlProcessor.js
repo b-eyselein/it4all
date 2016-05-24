@@ -35,40 +35,46 @@ function handleResult(result, resultIndex) {
   var resultsContainer = document.getElementById("element_result_container");
   
   var resultDiv = document.createElement("div");
-  resultDiv.className = "panel panel-default";
+  if(result.success === "COMPLETE") {
+    resultDiv.className = "panel panel-success";
+  } else if(result.success === "PARTIALLY") {
+    resultDiv.className = "panel panel-warning";
+  } else if(result.success === "NONE") {
+    resultDiv.className = "panel panel-danger";
+  }
   var panelHeading = document.createElement("div");
   panelHeading.className = "panel-heading";
   panelHeading.setAttribute("data-toggle", "collapse");
   panelHeading.href = "result_body_" + resultIndex;
-  // var pullButton = document.createElement("span");
-  // pullButton.className = "glyphicon glyphicon-chevron-down pull-right";
-  //panelHeading.textContent = result.title;
   panelHeading.appendChild(new Text(result.title));
-  // panelHeading.appendChild(pullButton);
   
-  var panelCollapse = document.createElement("div");
-  panelCollapse.className = "panel-collapse collapse in";
-  panelCollapse.id = "result_body_" + resultIndex;
-  var panelBody = document.createElement("div");
-  panelBody.className = "panel-body";
-  panelBody.appendChild(new Text(result.message));
-  panelCollapse.appendChild(panelBody);
+  if(result.message !== "") {
+    // create button
+	var pullButton = document.createElement("span");
+	pullButton.className = "glyphicon glyphicon-chevron-down pull-right";
+	pullButton.setAttribute("data-toggle", "collapse");
+	pullButton.setAttribute("data-target", "result_body_" + resultIndex);
+	panelHeading.appendChild(pullButton);
   
-  resultDiv.appendChild(panelHeading);
-  resultDiv.appendChild(panelCollapse);
-  
-  if(result.success === "COMPLETE") {
-    resultDiv.className = "panel panel-success";
-    // panelCollapse.collapse('hide');
-  } else if(result.success === "PARTIALLY") {
-    resultDiv.className = "panel panel-warning";
-    // panelCollapse.collapse('show');
-  } else if(result.success === "NONE") {
-    resultDiv.className = "panel panel-danger";
-    // panelCollapse.collapse('show');
-  } else {
-    alert("Es gab einen Fehler!");
+    // create message div
+	var panelCollapse = document.createElement("div");
+	panelCollapse.className = "panel-collapse collapse in";
+	panelCollapse.id = "result_body_" + resultIndex;
+	var panelBody = document.createElement("div");
+	panelBody.className = "collapse";
+	panelBody.appendChild(new Text(result.message));
+	panelCollapse.appendChild(panelBody);
+	resultDiv.appendChild(panelCollapse);
+	
+	  if(result.success === "COMPLETE") {
+        // panelCollapse.setAttribute("data-toggle", "collapse");
+	  } else if(result.success === "PARTIALLY") {
+		// panelCollapse.collapse('show');
+	  } else if(result.success === "NONE") {
+		// panelCollapse.collapse('show');
+	  }
   }
   
+  resultDiv.appendChild(panelHeading);
   resultsContainer.appendChild(resultDiv);
 }
