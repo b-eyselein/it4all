@@ -27,6 +27,7 @@ public class CorrectorFailTest {
 	public void testCorrectXMLAgainstDTD() {
 		File file = new File("test/resources/noteNoClosingTag.xml");
 		List<ElementResult> out = CorrectorXml.correctXMLAgainstDTD(file);
+		Assert.assertTrue(out.size() == 1);
 		Assert.assertEquals(
 				"FATAL ERROR:" + "\n" + "Zeile: 10" + "\n" + "Fehler: "
 						+ "The element type \"to\" must be terminated by the matching end-tag \"</to>\".\n",
