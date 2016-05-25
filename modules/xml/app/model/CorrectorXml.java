@@ -118,7 +118,7 @@ public class CorrectorXml {
 					// würde den Fehler in der XML anzeigen
 					// nur Ausgabe des Fehlers da die Reihenfolge in er DTD
 					// keine Rolle spielt
-					string = "WARNING:" + "\n" + "SystemID: " + exception.getSystemId() + "\n" + "Fehler: "
+					string = "WARNING:" + "\n" + "Fehler: "
 							+ exception.getMessage() + "\n";
 					//TODO
 //					if (!output.contains(string)) {
@@ -138,7 +138,7 @@ public class CorrectorXml {
 					// würde den Fehler in der XML anzeigen
 					// nur Ausgabe des Fehlers da die Reihenfolge in er DTD
 					// keine Rolle spielt
-					string = "FATAL ERROR:" + "\n" + "SystemID: " + exception.getSystemId() + "\n" + "Fehler: "
+					string = "FATAL ERROR:" + "\n" + "Fehler: "
 							+ exception.getMessage() + "\n";
 					//TODO
 //					if (!output.contains(string)) {
@@ -157,7 +157,7 @@ public class CorrectorXml {
 					// würde den Fehler in der XML anzeigen
 					// nur Ausgabe des Fehlers, da die Reihenfolge in DTD keine
 					// Rolle spielt
-					string = "ERROR:" + "\n" + "SystemID: " + exception.getSystemId() + "\n" + "Fehler: "
+					string = "ERROR:" + "\n" + "Fehler: "
 							+ exception.getMessage() + "\n";
 					// manche Fehler werden mehrmals ausgegeben, daher
 					// überprüfen ob der Fehler schon in der Ausgabe ist
@@ -183,7 +183,7 @@ public class CorrectorXml {
 	}
 
 	private static ElementResult printWarning(SAXParseException exception) {
-		String string = "WARNING:" + "\n" + "SystemID: " + exception.getSystemId() + "\n" + "Zeile: "
+		String string = "WARNING:" + "\n" +  "Zeile: "
 				+ exception.getLineNumber() + "\n" + "Fehler" + exception.getMessage() + "\n";
 		ElementResult result = new ElementResult(Success.PARTIALLY, "", string);
 		return result;
@@ -191,14 +191,14 @@ public class CorrectorXml {
 	}
 
 	private static ElementResult printFatalError(SAXParseException exception) {
-		String string = "FATAL ERROR:" + "\n" + "SystemID: " + exception.getSystemId() + "\n" + "Zeile: "
+		String string = "FATAL ERROR:" + "\n" + "Zeile: "
 				+ exception.getLineNumber() + "\n" + "Fehler: " + exception.getMessage() + "\n";
 		ElementResult result = new ElementResult(Success.NONE, "", string);
 		return result;
 	}
 
 	private static ElementResult printError(SAXParseException exception) {
-		String string = "ERROR:" + "\n" + "SystemID: " + exception.getSystemId() + "\n" + "Zeile: "
+		String string = "ERROR:" + "\n" + "Zeile: "
 				+ exception.getLineNumber() + "\n" + "Fehler: " + exception.getMessage() + "\n";
 		ElementResult result = new ElementResult(Success.PARTIALLY, "", string);
 		return result;
@@ -225,26 +225,4 @@ public class CorrectorXml {
 		}
 		return null;
 	}
-
-//	public static void main(String[] args) throws IOException {
-//		List<String> output = new LinkedList<>();
-//		CorrectorXml xml = new CorrectorXml();
-////		output = xml.correctXMLAgainstDTD(new File("//home//rav//XML//party.xml"));
-//
-//		System.out.println(output);
-//		// output = xml.correctXMLAgainstXSD(new
-//		// File("//home/shpend//Downloads//books.xsd"),
-//		// new File("//home/shpend//Downloads//xmlFile.xml"));
-//		// xml.correctDTDAgainstXML(new
-//		// File("//home//shpend//Downloads//party.xml"));
-//
-//		// if (!output.isEmpty()) {
-//		// for (String item : output) {
-//		// System.out.println(item);
-//		// }
-//		//
-//		// } else {
-//		// System.out.println("Dokument ist fehlerfrei");
-//		// }
-//	}
 }

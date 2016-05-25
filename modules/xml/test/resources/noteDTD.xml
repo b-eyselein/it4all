@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 
-<!DOCTYPE note SYSTEM
-"http://www.w3schools.com/xml/note.dtd">
+<!DOCTYPE note SYSTEM "note.dtd">
 
 <note>
   <to>Tove</to>
