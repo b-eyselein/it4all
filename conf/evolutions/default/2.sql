@@ -92,6 +92,4 @@ delete from xmlexercise;
 
 delete from exercise;
 
-delete from users;
-
 SET FOREIGN_KEY_CHECKS = 1;

@@ -1,0 +1,11 @@
+@(user: model.user.User, notices: List[String])
+
+@main("HTML-Test", user) {
+<div class="container-fluid">
+  <div class="alert alert-danger">
+  @for(notice <- notices) {
+    <p>@notice</p>
+  }
+  </div>
+</div>
+}

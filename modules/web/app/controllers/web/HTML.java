@@ -23,6 +23,7 @@ import play.twirl.api.Html;
 import views.html.html.html;
 import views.html.html.htmlcorrect;
 import views.html.html.htmloverview;
+import views.html.*;
 import controllers.core.UserControl;
 import controllers.core.Util;
 
@@ -73,7 +74,14 @@ public class HTML extends Controller {
 
   @Security.Authenticated(Secured.class)
   public Result index() {
-    return ok(htmloverview.render(HtmlExercise.finder.all(), UserControl.getCurrentUser()));
+    User currentUser = UserControl.getCurrentUser();
+
+    Path rootFolderForSolutions = Util.getRootSolDir();
+    if(!Files.exists(rootFolderForSolutions))
+      return internalServerError(error.render(currentUser,
+          Arrays.asList("Ordner für Lösungen existiert nicht!", "Bitte erstellen Sie diesen Ordner!")));
+    
+    return ok(htmloverview.render(HtmlExercise.finder.all(), currentUser));
   }
 
   public Result site(String userName, int exercise) {
@@ -102,17 +110,13 @@ public class HTML extends Controller {
 
   private void saveSolutionForUser(String userName, String solution, int exercise) {
     try {
-      if(!Files.exists(Util.getSolDirForUser(userName)))
-        Files.createDirectory(Util.getSolDirForUser(userName));
-      
       Path solDir = Util.getSolDirForUserAndType("html", userName);
       if(!Files.exists(solDir))
-        Files.createDirectory(solDir);
+        Files.createDirectories(solDir);
       
       Path saveTo = Util.getHtmlSolFileForExercise(userName, "html", exercise);
       Files.write(saveTo, Arrays.asList(solution), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     } catch (IOException error) {
-      // FIXME: Stelle sicher, dass Ordner beim Startup existieren!
       Logger.error("Fehler beim Speichern einer Html-Loesungsdatei!", error);
     }
   }
