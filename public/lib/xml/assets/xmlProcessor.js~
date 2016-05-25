@@ -3,15 +3,9 @@ function processCorrection(correction) {
     var newResults = JSON.parse(correction);
 
     var numOfSuccessfulResults = 0;
-	
-    var resultsContainer = document.getElementById("element_result_container");
-	// remove previous messages
-	while (resultsContainer.firstChild) {
-	  resultsContainer.removeChild(resultsContainer.firstChild);
-	}
-	
+
     for(i = 0; i < newResults.length; i++) {
-      handleResult(newResults[i], i);
+      handleResult(newResults[i]);
       if(newResults[i].success === "COMPLETE") {
         numOfSuccessfulResults++;
       }
@@ -31,7 +25,7 @@ function processCorrection(correction) {
   }
 }
 
-function handleResult(result, resultIndex) {
+function handleResult(result) {
   var resultsContainer = document.getElementById("element_result_container");
   
   var resultDiv = document.createElement("div");
@@ -39,19 +33,18 @@ function handleResult(result, resultIndex) {
   var panelHeading = document.createElement("div");
   panelHeading.className = "panel-heading";
   panelHeading.setAttribute("data-toggle", "collapse");
-  panelHeading.href = "result_body_" + resultIndex;
-  // var pullButton = document.createElement("span");
-  // pullButton.className = "glyphicon glyphicon-chevron-down pull-right";
-  //panelHeading.textContent = result.title;
-  panelHeading.appendChild(new Text(result.title));
-  // panelHeading.appendChild(pullButton);
+  // href? // panelHeading.setAttribute("href", "result_body_" + resultsContainer.length);
+  var pullButton = document.createElement("span");
+  pullButton.className = "glyphicon glyphicon-chevron-down pull-right";
+  panelHeading.textContent = result.title;
+  panelHeading.appendChild(pullButton); // !!!
   
   var panelCollapse = document.createElement("div");
-  panelCollapse.className = "panel-collapse collapse in";
-  panelCollapse.id = "result_body_" + resultIndex;
+  panelCollapse.className = "panel-collapse collapse";
+  panelCollapse.id = "result_body_" + resultsContainer.length;
   var panelBody = document.createElement("div");
   panelBody.className = "panel-body";
-  panelBody.appendChild(new Text(result.message));
+  panelBody.textContent = result.message;
   panelCollapse.appendChild(panelBody);
   
   resultDiv.appendChild(panelHeading);

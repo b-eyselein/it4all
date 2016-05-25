@@ -26,7 +26,7 @@ public class CorrectorTest {
 	public void testCorrectXMLAgainstDTD() {
 		CorrectorXml corrector = new CorrectorXml();
 		File file = new File("/resources/noteDTD.xml");
-		List<String> out = corrector.correctXMLAgainstDTD(file);
+		List<ElementResult> out = corrector.correctXMLAgainstDTD(file);
 		Assert.assertTrue(out.isEmpty());
 	}
 
@@ -38,7 +38,7 @@ public class CorrectorTest {
 		CorrectorXml corrector = new CorrectorXml();
 		File xml = new File("/resources/note.xml");
 		File xsd = new File("/resources/note.xsd");
-		List<String> out = null;
+		List<ElementResult> out = null;
 		try {
 			out = corrector.correctXMLAgainstXSD(xsd, xml);
 		} catch (IOException e) {
