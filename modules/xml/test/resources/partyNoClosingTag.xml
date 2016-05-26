@@ -3,7 +3,7 @@
 <party datum="31.12.01">
     <gast name="Albert Angsthase">
         <getraenk>Wein</getraenk>
-        <getraenk>Bier</getraenk>
+        <getraenk>Bier
         <zustand ledig="true" nuechtern="false"/>
     </gast>
     <gast name="Martina Mutig">
