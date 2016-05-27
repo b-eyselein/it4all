@@ -1,3 +1,5 @@
 GET   /index   controllers.binary.Binary.index()
 GET	  /bool    controllers.binary.Bool.index()
 GET   /nary    controllers.binary.NAry.index()
+GET   /nary/solution    controllers.binary.NAry.index2()
+POST  /nary    controllers.binary.NAry.addFormula()

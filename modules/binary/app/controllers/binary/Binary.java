@@ -11,7 +11,7 @@ public class Binary extends Controller {
 
 	
   public Result index() {
-    return ok(BinaryV.render("Bool"));
+    return ok(BinaryV.render());
   }
 
 }
