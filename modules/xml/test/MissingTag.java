@@ -1,4 +1,4 @@
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +18,7 @@ import model.ElementResult;
  * @author rav
  *
  */
-public class CorrectorTest {
+public class MissingTag {
 
 	/**
 	 * Test method for
@@ -26,9 +26,13 @@ public class CorrectorTest {
 	 */
 	@Test
 	public void testCorrectXMLAgainstDTD() {
-		File file = new File("test/resources/party.xml");
+		File file = new File("test/resources/partyMissingAttribute.xml");
 		List<ElementResult> out = CorrectorXml.correctXMLAgainstDTD(file);
-		Assert.assertTrue(out.isEmpty());
+		Assert.assertTrue(out.size() == 1);
+		Assert.assertEquals(
+				"ERROR:" + "\n" + "Zeile: 9" + "\n" + "Fehler: "
+						+ "Attribute \"name\" is required and must be specified for element type \"gast\".\n",
+				out.get(0).getMessage());
 	}
 
 	/**
@@ -38,25 +42,19 @@ public class CorrectorTest {
 	 */
 	@Test
 	public void testCorrectXMLAgainstXSD() {
-		File xml = new File("test/resources/note.xml");
+		File file = new File("test/resources/noteMissingTag.xml");
 		File xsd = new File("test/resources/note.xsd");
 		List<ElementResult> out = null;
 		try {
-			out = CorrectorXml.correctXMLAgainstXSD(xsd, xml);
+			out = CorrectorXml.correctXMLAgainstXSD(xsd, file);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		Assert.assertNotNull(out);
-		Assert.assertTrue(out.isEmpty());
-	}
-
-	/**
-	 * Test method for
-	 * {@link model.CorrectorXml#correctDTDAgainstXML(java.io.File)}.
-	 */
-	@Test
-	public void testCorrectDTDAgainstXML() {
-		fail("Not yet implemented"); // TODO
+		Assert.assertTrue(out.size() == 1);
+		Assert.assertEquals(
+				"ERROR:" + "\n" + "Zeile: 5" + "\n" + "Fehler: "
+						+ "cvc-complex-type.2.4.a: Invalid content was found starting with element 'body'. One of '{heading}' is expected.\n",
+				out.get(0).getMessage());
 	}
 
 }
