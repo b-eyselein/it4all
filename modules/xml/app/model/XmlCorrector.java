@@ -23,9 +23,9 @@ import org.xml.sax.SAXParseException;
 
 import model.user.User;
 
-public class CorrectorXml {
-	public static List<ElementResult> correctXMLAgainstDTD(File studentensolutionForXML) {
-		List<ElementResult> output = new LinkedList<>();
+public class XmlCorrector {
+	public static List<XMLError> correctXMLAgainstDTD(File studentensolutionForXML) {
+		List<XMLError> output = new LinkedList<>();
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setValidating(true);
 		DocumentBuilder builder = null;
@@ -34,6 +34,7 @@ public class CorrectorXml {
 		} catch (ParserConfigurationException e) {
 		}
 		builder.setErrorHandler(new ErrorHandler() {
+			//kommt in eigene Klasse
 
 			@Override
 			public void warning(SAXParseException exception) throws SAXException {
@@ -62,8 +63,8 @@ public class CorrectorXml {
 		return output;
 	}
 
-	public static List<ElementResult> correctXMLAgainstXSD(File sampleSolution, File studentSolution) throws IOException {
-		List<ElementResult> output = new LinkedList<>();
+	public static List<XMLError> correctXMLAgainstXSD(File studentSolution, File sampleSolution) throws IOException {
+		List<XMLError> output = new LinkedList<>();
 		Source schemaFile = new StreamSource(sampleSolution);
 		Source xmlFile = new StreamSource(studentSolution);
 		SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -99,8 +100,8 @@ public class CorrectorXml {
 		return output;
 	}
 
-	public static List<ElementResult> correctDTDAgainstXML(File studentenSolutionForDTD) {
-		List<ElementResult> output = new LinkedList<>();
+	public static List<XMLError> correctDTDAgainstXML(File studentenSolutionForDTD) {
+		List<XMLError> output = new LinkedList<>();
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setValidating(true);
 		DocumentBuilder builder = null;
@@ -182,29 +183,22 @@ public class CorrectorXml {
 		return output;
 	}
 
-	private static ElementResult printWarning(SAXParseException exception) {
-		String string = "WARNING:" + "\n" +  "Zeile: "
-				+ exception.getLineNumber() + "\n" + "Fehler" + exception.getMessage() + "\n";
-		ElementResult result = new ElementResult(Success.PARTIALLY, "", string);
-		return result;
-
+	private static XMLError printWarning(SAXParseException exception) {
+		XMLError error = new XMLError(exception.getLineNumber(), exception.getMessage(), XmlErrorType.WARNING);
+		return error;
 	}
 
-	private static ElementResult printFatalError(SAXParseException exception) {
-		String string = "FATAL ERROR:" + "\n" + "Zeile: "
-				+ exception.getLineNumber() + "\n" + "Fehler: " + exception.getMessage() + "\n";
-		ElementResult result = new ElementResult(Success.NONE, "", string);
-		return result;
+	private static XMLError printFatalError(SAXParseException exception) {
+		XMLError error = new XMLError(exception.getLineNumber(), exception.getMessage(), XmlErrorType.FATALERROR);
+		return error;
 	}
 
-	private static ElementResult printError(SAXParseException exception) {
-		String string = "ERROR:" + "\n" + "Zeile: "
-				+ exception.getLineNumber() + "\n" + "Fehler: " + exception.getMessage() + "\n";
-		ElementResult result = new ElementResult(Success.PARTIALLY, "", string);
-		return result;
+	private static XMLError printError(SAXParseException exception) {
+		XMLError error = new XMLError(exception.getLineNumber(), exception.getMessage(), XmlErrorType.ERROR);
+		return error;
 	}
 
-	public static List<ElementResult> correct(File solutionFile, File referenceFile, XmlExercise exercise, User user) {
+	public static List<XMLError> correct(File solutionFile, File referenceFile, XmlExercise exercise, User user) {
 		if (exercise.exerciseType == 0) {
 			try {
 				return correctXMLAgainstXSD(solutionFile, referenceFile);
