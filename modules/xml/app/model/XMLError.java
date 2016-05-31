@@ -3,6 +3,7 @@ package model;
 public class XMLError {
   
   protected int line;
+  protected String title;
   protected String errorMessage;
   protected XmlErrorType errorType;
   
@@ -21,6 +22,15 @@ public class XMLError {
     }
     this.errorMessage = errorMessage;
     this.errorType = errorType;
+  }
+  
+  public XMLError(XmlErrorType errorType, String title, String errorMessage) {
+    if(errorMessage == null || errorType == null) {
+      throw new NullPointerException();
+    }
+    this.errorMessage = errorMessage;
+    this.errorType = errorType;
+    this.title = title;
   }
   
   public int getLine() {
@@ -45,6 +55,14 @@ public class XMLError {
   
   public void setErrorType(XmlErrorType errorType) {
     this.errorType = errorType;
+  }
+
+  public String getTitle() {
+    return title;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
   }
   
 }
