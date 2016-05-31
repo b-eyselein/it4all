@@ -135,6 +135,13 @@ public class BoolscheFormelTree {
 	}
 	
 	/*
+	 * gibt Anzahl der Variablen zurueck
+	 */
+	public int getAnzahlVariablen() {
+		return vars.length;
+	}
+	
+	/*
 	 * gibt Vector mit den Werten des Ausdrucks zurueck
 	 */
 	public boolean[] getWahrheitsVector() {

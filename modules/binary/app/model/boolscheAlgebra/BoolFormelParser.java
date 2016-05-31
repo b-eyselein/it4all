@@ -7,8 +7,6 @@ import model.boolscheAlgebra.BFTree.*;
 
 public class BoolFormelParser {
 	
-	
-	
 	/* ----------------------------------------------------------------
 	 * Gibt die Formel als Tree zurueck, der interpretiert werden kann.
 	 * ----------------------------------------------------------------
@@ -157,7 +155,7 @@ public class BoolFormelParser {
 			return new BF_1();
 		}
 		
-		throw new IllegalArgumentException("es ist ein Fehler aufgetrten / fehlende Variable / fehlender Ausdruck");
+		throw new IllegalArgumentException("fehlende Variable / fehlender Ausdruck");
 	}
 
 }
