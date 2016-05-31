@@ -1,8 +1,5 @@
 package controllers.web;
 
-import java.nio.file.Files;
-
-import controllers.core.Util;
 import model.css.CssExercise;
 import model.html.HtmlExercise;
 import model.javascript.JsExercise;
@@ -14,12 +11,6 @@ public class WebStartUpChecker {
 
   public static void performStartUpCheck() {
     boolean noErrorsOrWarnigs = true;
-
-    // TODO: Assert folder for solutions exists
-    if(!Files.exists(Util.getRootSolDir())) {
-      theLogger.error("Folder for solutions does not exits!");
-      noErrorsOrWarnigs = false;
-    }
 
     // Assert that there is at least one exercise for all types
     if(HtmlExercise.finder.all().size() == 0) {
