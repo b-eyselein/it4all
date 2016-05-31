@@ -18,14 +18,8 @@ public class XmlExercise extends Model {
   
   public String title;
   
-  // type of exercise
-  // 0: check XML against XSD
-  // 1: check XML against DTD
-  // 2: check XSD against XML
-  // 3: check DTD against XML
-  // TODO: enum?
   @Column(name = "exerciseType")
-  public int exerciseType;
+  public ExerciseType exerciseType;
   
   @Column(name = "referenceFileName", length = 100)
   public String referenceFileName; // use with Util.getXmlReferenceFilePath
