@@ -30,9 +30,9 @@ public class ClosingTagFailTest {
     List<XMLError> out = XmlCorrector.correctXMLAgainstDTD(xml);
     assertEquals("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), 1);
     assertEquals(
-        "FATAL ERROR:" + "\n" + "Zeile: 8" + "\n" + "Fehler: "
+        "FATALERROR" + ":\nZeile: " + "8" + "\nFehler: "
             + "The element type \"getraenk\" must be terminated by the matching end-tag \"</getraenk>\".\n",
-        out.get(0).getErrorMessage());
+        out.get(0).toString());
   }
   
   /**
@@ -51,9 +51,7 @@ public class ClosingTagFailTest {
       e.printStackTrace();
     }
     assertEquals("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), 1);
-    assertEquals(
-        "FATAL ERROR:" + "\n" + "Zeile: 7" + "\n" + "Fehler: "
-            + "The element type \"to\" must be terminated by the matching end-tag \"</to>\".\n",
-        out.get(0).getErrorMessage());
+    assertEquals("FATALERROR:" + "\n" + "Zeile: 7" + "\n" + "Fehler: "
+        + "The element type \"to\" must be terminated by the matching end-tag \"</to>\".\n", out.get(0).toString());
   }
 }

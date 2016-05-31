@@ -1,5 +1,7 @@
 package model;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -25,13 +27,11 @@ public class NoRoot {
   public void testCorrectXMLAgainstDTD() {
     File file = new File("test/resources/partyNoRoot.xml");
     List<XMLError> out = XmlCorrector.correctXMLAgainstDTD(file);
-    Assert.assertTrue(out.size() == 2);
-    Assert.assertEquals("ERROR:" + "\n" + "Zeile: 3" + "\n" + "Fehler: "
-        + "Document root element \"gast\", must match DOCTYPE root \"party\".\n", out.get(0).getErrorMessage());
-    Assert.assertEquals(
-        "FATAL ERROR:" + "\n" + "Zeile: 8" + "\n" + "Fehler: "
-            + "The markup in the document following the root element must be well-formed.\n",
-        out.get(1).getErrorMessage());
+    assertEquals("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), 2);
+    assertEquals("ERROR:" + "\n" + "Zeile: 3" + "\n" + "Fehler: "
+        + "Document root element \"gast\", must match DOCTYPE root \"party\".\n", out.get(0).toString());
+    assertEquals("FATALERROR:" + "\n" + "Zeile: 8" + "\n" + "Fehler: "
+        + "The markup in the document following the root element must be well-formed.\n", out.get(1).toString());
   }
   
   /**
@@ -49,13 +49,11 @@ public class NoRoot {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    Assert.assertTrue(out.size() == 2);
-    Assert.assertEquals("ERROR:" + "\n" + "Zeile: 2" + "\n" + "Fehler: "
-        + "cvc-elt.1.a: Cannot find the declaration of element 'to'.\n", out.get(0).getErrorMessage());
-    Assert.assertEquals(
-        "FATAL ERROR:" + "\n" + "Zeile: 3" + "\n" + "Fehler: "
-            + "The markup in the document following the root element must be well-formed.\n",
-        out.get(1).getErrorMessage());
+    assertEquals("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), 2);
+    assertEquals("ERROR:" + "\n" + "Zeile: 2" + "\n" + "Fehler: "
+        + "cvc-elt.1.a: Cannot find the declaration of element 'to'.\n", out.get(0).toString());
+    assertEquals("FATALERROR:" + "\n" + "Zeile: 3" + "\n" + "Fehler: "
+        + "The markup in the document following the root element must be well-formed.\n", out.get(1).toString());
   }
   
 }
