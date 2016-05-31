@@ -22,19 +22,20 @@
         <div class="panel-heading">Korrektur</div>
         <div class="panel-body">
         @@for(result <- results) {
-          @@if(result.getSuccess == model.Success.COMPLETE) {
+          @@if(result.getErrorType == model.XmlErrorType.NONE) {
             <div class="panel panel-default panel-success">
               <div class="panel-heading">Teilaufgabe @@result.getTask.key.id erfolgreich!<span class="pull-right">@@result.getPoints Punkt(e)</span></div>
               <div class="panel-body">@@result.getTask.taskDescription</div>
             </div>
           }
-          @@if(result.getSuccess == model.Success.PARTIALLY) {
+          @@XmlErrorType PARTIALLY?
+          @@if(result.getErrorType == model.Success.PARTIALLY) {
             <div class="panel panel-default panel-warning">
               <div class="panel-heading">Teilaufgabe @@result.getTask.key.id nicht komplett erfolgreich!<span class="pull-right">@@result.getPoints Punkt(e)</span></div>
               <div class="panel-body">@@result.getTask.taskDescription</div>
             </div>
           }
-          @@if(result.getSuccess == model.Success.NONE) {
+          @@if(result.getErrorType != model.XmlErrorType.NONE) {
           <div class="panel panel-default panel-danger">
             <div class="panel-heading">Teilaufgabe @@result.getTask.key.id nicht erfolgreich!<span class="pull-right">@@result.getPoints Punkt(e)</span></div>
             <div class="panel-body">@@result.getTask.taskDescription</div>
