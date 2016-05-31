@@ -1,4 +1,4 @@
-import static org.junit.Assert.fail;
+package model;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,9 +6,6 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
-
-import model.CorrectorXml;
-import model.ElementResult;
 
 /**
  *
@@ -29,7 +26,7 @@ public class CorrectorTest {
     // FIXME: implement!
     // fail("Not yet implemented");
   }
-
+  
   /**
    * Test method for
    * {@link model.CorrectorXml#correctXMLAgainstDTD(java.io.File)}.
@@ -37,10 +34,10 @@ public class CorrectorTest {
   @Test
   public void testCorrectXMLAgainstDTD() {
     File file = new File("test/resources/party.xml");
-    List<ElementResult> out = CorrectorXml.correctXMLAgainstDTD(file);
+    List<XMLError> out = XmlCorrector.correctXMLAgainstDTD(file);
     Assert.assertTrue(out.isEmpty());
   }
-
+  
   /**
    * Test method for
    * {@link model.CorrectorXml#correctXMLAgainstXSD(java.io.File, java.io.File)}
@@ -50,14 +47,14 @@ public class CorrectorTest {
   public void testCorrectXMLAgainstXSD() {
     File xml = new File("test/resources/note.xml");
     File xsd = new File("test/resources/note.xsd");
-    List<ElementResult> out = null;
+    List<XMLError> out = null;
     try {
-      out = CorrectorXml.correctXMLAgainstXSD(xsd, xml);
+      out = XmlCorrector.correctXMLAgainstXSD(xsd, xml);
     } catch (IOException e) {
       e.printStackTrace();
     }
     Assert.assertNotNull(out);
     Assert.assertTrue(out.isEmpty());
   }
-
+  
 }
