@@ -2,27 +2,34 @@ package controllers.binary;
 
 import model.user.Secured;
 import play.data.DynamicForm;
-import play.data.Form;
+import play.data.FormFactory;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
 import java.util.Random;
+
+import javax.inject.Inject;
+
 import views.html.NAryV;
 import views.html.NArySolution;
 import model.NAryNumbers.*;
 
 @Security.Authenticated(Secured.class)
 public class NAry extends Controller {
+  
+  @Inject
+  FormFactory factory;
+  
   int number;
   String formula;
   String numberType;
-
+  
   public Result addFormula() {
-    DynamicForm dynFormula = Form.form().bindFromRequest();
+    DynamicForm dynFormula = factory.form().bindFromRequest();
     formula = dynFormula.get("formula");
     return redirect(routes.NAry.index2());
   }
-
+  
   public Result index() {
     Random generator = new Random();
     number = generator.nextInt(256);
@@ -37,7 +44,7 @@ public class NAry extends Controller {
     }
     return ok(NAryV.render(n, numberType));
   }
-
+  
   public Result index2() {
     if(numberType.equals("Oktalzahl")) {
       OctalNumber nr = new OctalNumber(number);

@@ -1,6 +1,9 @@
 package controllers.web;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
+
+import javax.inject.Inject;
 
 import controllers.core.Util;
 import model.css.CssExercise;
@@ -10,17 +13,26 @@ import play.Logger;
 
 public class WebStartUpChecker {
   
-  static Logger.ALogger theLogger = Logger.of("startup");
-
-  public static void performStartUpCheck() {
+  private static Logger.ALogger theLogger = Logger.of("startup");
+  
+  private Util util;
+  
+  @Inject
+  public WebStartUpChecker(Util theUtil) {
+    util = theUtil;
+    performStartUpCheck();
+  }
+  
+  public void performStartUpCheck() {
     boolean noErrorsOrWarnigs = true;
-
+    
     // TODO: Assert folder for solutions exists
-    if(!Files.exists(Util.getRootSolDir())) {
+    Path rootSolDir = util.getRootSolDir();
+    if(!Files.exists(rootSolDir)) {
       theLogger.error("Folder for solutions does not exits!");
       noErrorsOrWarnigs = false;
     }
-
+    
     // Assert that there is at least one exercise for all types
     if(HtmlExercise.finder.all().size() == 0) {
       theLogger.error("\t- No exercises found for Html!");
@@ -34,10 +46,10 @@ public class WebStartUpChecker {
       theLogger.error("\t- No exercises found for Javascript!");
       noErrorsOrWarnigs = false;
     }
-
+    
     if(noErrorsOrWarnigs)
       theLogger.info("\tStartUp-Check for Web successful.");
     
   }
-
+  
 }

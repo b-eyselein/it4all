@@ -32,37 +32,38 @@ import controllers.core.Util;
 public class HTML extends Controller {
   
   private static final String LEARNER_SOLUTION_VALUE = "editorContent";
-  
+
   private static final String STANDARD_HTML = "<!doctype html>\n<html>\n\n<head>\n</head>\n\n<body>\n</body>\n\n</html>";
+
   @Inject
   Util util;
-  
+
   @Security.Authenticated(Secured.class)
   public Result commit(int exerciseId) {
     User user = UserControl.getCurrentUser();
-    
+
     String learnerSolution = extractLearnerSolutionFromRequest(request());
     saveSolutionForUser(user.name, learnerSolution, exerciseId);
-    
+
     List<ElementResult> elementResults = correctExercise(user, HtmlExercise.finder.byId(exerciseId));
-    
+
     if(request().acceptedTypes().get(0).toString().equals("application/json"))
       return ok(Json.toJson(elementResults));
     else
       // TODO: Definitive Abgabe Html, rendere Html!
       return ok(htmlcorrect.render(learnerSolution, elementResults, UserControl.getCurrentUser()));
   }
-  
+
   @Security.Authenticated(Secured.class)
   public Result exercise(int exerciseId) {
     HtmlExercise exercise = HtmlExercise.finder.byId(exerciseId);
-    
+
     if(exercise == null)
       return badRequest(new Html("<p>Diese Aufgabe existert leider nicht.</p><p>Zur&uuml;ck zur <a href=\""
           + routes.HTML.index() + "\">Startseite</a>.</p>"));
     
     User user = UserControl.getCurrentUser();
-    
+
     String defaultOrOldSolution = STANDARD_HTML;
     try {
       Path oldSolutionPath = util.getHtmlSolFileForExercise(user.name, "html", exerciseId);
@@ -72,14 +73,14 @@ public class HTML extends Controller {
     } catch (IOException e) {
       Logger.error(e.getMessage());
     }
-    
+
     return ok(html.render(user, exercise, defaultOrOldSolution, util.getServerUrl()));
   }
-  
+
   @Security.Authenticated(Secured.class)
   public Result index() {
     User currentUser = UserControl.getCurrentUser();
-    
+
     Path rootFolderForSolutions = util.getRootSolDir();
     if(!Files.exists(rootFolderForSolutions))
       return internalServerError(error.render(currentUser,
@@ -87,7 +88,7 @@ public class HTML extends Controller {
     
     return ok(htmloverview.render(HtmlExercise.finder.all(), currentUser));
   }
-  
+
   public Result site(String userName, int exercise) {
     Path file = util.getHtmlSolFileForExercise(userName, "html", exercise);
     if(!Files.exists(file))
@@ -99,19 +100,19 @@ public class HTML extends Controller {
       Logger.error("Fehler beim Lesen einer Html-Datei: " + file, error);
       return badRequest("Fehler beim Lesen der Datei!");
     }
-    
+
   }
-  
+
   private List<ElementResult> correctExercise(User user, HtmlExercise exercise) {
     String solutionUrl = routes.HTML.site(user.name, exercise.id).absoluteURL(request());
-    
+
     return HtmlCorrector.correct(solutionUrl, exercise, user);
   }
-  
+
   private String extractLearnerSolutionFromRequest(Request request) {
     return request.body().asFormUrlEncoded().get(LEARNER_SOLUTION_VALUE)[0];
   }
-  
+
   private void saveSolutionForUser(String userName, String solution, int exercise) {
     try {
       Path solDir = util.getSolDirForUserAndType("html", userName);
