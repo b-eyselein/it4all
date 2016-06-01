@@ -12,7 +12,7 @@ function processCorrection(correction) {
 	
     for(i = 0; i < newResults.length; i++) {
       handleResult(newResults[i], i);
-      if(newResults[i].success === "COMPLETE") {
+      if(newResults[i].errorType === "NONE") {
         numOfSuccessfulResults++;
       }
     }
@@ -35,47 +35,43 @@ function handleResult(result, resultIndex) {
   var resultsContainer = document.getElementById("element_result_container");
   
   var resultDiv = document.createElement("div");
-  if(result.success === "COMPLETE") {
+  if(result.errorType === "NONE") {
     resultDiv.className = "panel panel-success";
-  } else if(result.success === "PARTIALLY") {
+  } else if(result.errorType === "WARNING") {
     resultDiv.className = "panel panel-warning";
-  } else if(result.success === "NONE") {
+  } else if(result.errorType === "FATALERROR" || result.errorType === "ERROR") {
     resultDiv.className = "panel panel-danger";
   }
   var panelHeading = document.createElement("div");
   panelHeading.className = "panel-heading";
   panelHeading.setAttribute("data-toggle", "collapse");
   panelHeading.href = "result_body_" + resultIndex;
-  panelHeading.appendChild(new Text(result.title));
+  panelHeading.appendChild(new Text("(Zeile:" + result.line + ") " + result.title));
   resultDiv.appendChild(panelHeading);
   
-  if(result.message !== "") {
+  if(result.errorMessage !== "") {
     // create button
 	var pullButton = document.createElement("button");
 	pullButton.className = "glyphicon glyphicon-chevron-down pull-right";
 	pullButton.setAttribute("data-toggle", "collapse");
-	// pullButton.setAttribute("data-target", "#result_body_" + resultIndex);
 	pullButton.setAttribute("href", "#result_body_" + resultIndex);
 	panelHeading.appendChild(pullButton);
   
     // create message div
 	var panelCollapse = document.createElement("div");
-	panelCollapse.className = "panel-collapse collapse"; // collapse in";
+	if(result.errorType === "COMPLETE") {
+      panelCollapse.className = "panel-collapse collapse";
+	} else if(result.errorType === "WARNING") {
+	  panelCollapse.className = "panel-collapse collapse";
+	} else if(result.errorType === "FATALERROR" || result.errorType === "ERROR") {
+      panelCollapse.className = "panel-collapse collapse in";
+    }
 	panelCollapse.id = "result_body_" + resultIndex;
 	var panelBody = document.createElement("h4");
-	// panelBody.className = "collapse in";
-	// panelBody.id = "result_body_" + resultIndex;
-	panelBody.appendChild(new Text(result.message));
+	panelBody.appendChild(new Text(result.errorMessage));
 	panelCollapse.appendChild(panelBody);
 	resultDiv.appendChild(panelCollapse);
 	
-	  if(result.success === "COMPLETE") {
-        // panelCollapse.setAttribute("data-toggle", "collapse");
-	  } else if(result.success === "PARTIALLY") {
-		// panelCollapse.collapse('show');
-	  } else if(result.success === "NONE") {
-		// panelCollapse.collapse('show');
-	  }
   }
   
   resultsContainer.appendChild(resultDiv);
