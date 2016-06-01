@@ -29,17 +29,16 @@ import views.html.xmloverview;
 import views.html.xmlcorrect;
 import controllers.core.UserControl;
 import controllers.core.Util;
-//import controllers.xml.;
 
-//@Security.Authenticated(Secured.class)
+@Security.Authenticated(Secured.class)
 public class XML extends Controller {
   
   private static final String LEARNER_SOLUTION_VALUE = "editorContent";
   private static final String STANDARD_XML = "";
+
   @Inject
   Util util;
 
-  @Security.Authenticated(Secured.class)
   public Result commit(int exerciseId) {
     User user = UserControl.getCurrentUser();
 
@@ -57,7 +56,6 @@ public class XML extends Controller {
       return ok(xmlcorrect.render(learnerSolution, elementResults, UserControl.getCurrentUser()));
   }
 
-  @Security.Authenticated(Secured.class)
   public Result exercise(int exerciseId) {
     XmlExercise exercise = XmlExercise.finder.byId(exerciseId);
 
@@ -90,7 +88,6 @@ public class XML extends Controller {
         xml.render(UserControl.getCurrentUser(), exercise, referenceCode, defaultOrOldSolution, util.getServerUrl()));
   }
 
-  @Security.Authenticated(Secured.class)
   public Result index() {
     return ok(xmloverview.render(XmlExercise.finder.all(), UserControl.getCurrentUser()));
   }

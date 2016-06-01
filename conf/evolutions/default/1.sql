@@ -88,6 +88,7 @@ create table xmlexercise (
   exercisetype                  integer,
   referencefilename             varchar(100),
   exercisetext                  varchar(1000),
+  constraint ck_xmlexercise_exercisetype check (exerciseType in (0,1,2,3)),
   constraint pk_xmlexercise primary key (id)
 );
 
