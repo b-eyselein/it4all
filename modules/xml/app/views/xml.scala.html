@@ -45,52 +45,6 @@
     </div>
   
     <form action="@controllers.xml.routes.XML.commit(exercise.id)" method="post" onsubmit="prepareFormForSubmitting();">
-      <div class="row row-eq-height">
-        <div class="col-md-6">
-          <ul class="nav nav-tabs nav-justified">
-            <li class="active"><a data-toggle="tab" href="#editorFenster">Editor</a></li>
-            <li><a data-toggle="tab" href="#referenceFileDisplay">Referenzdatei</a></li>
-          </ul>
-
-          <div class="tab-content">
-            <!-- Programmierfenster anzeigen -->
-            <div id="editorFenster" class="tab-pane active">
-              <div class="panel panel-default">
-                <div class="panel-body">
-                  <pre id="editor" class="form-control">@for(sol <- oldSolution.split("\n")) {@sol
-}</pre>
-                  <script type="text/javascript">
-                    var editor = ace.edit("editor");
-                    editor.setTheme("ace/theme/eclipse");
-                    editor.setFontSize("14px");
-                    @if(exercise.exerciseType == 0 || exercise.exerciseType == 1 || exercise.exerciseType == 2) {
-                      editor.getSession().setMode("ace/mode/xml");}
-                    @if(exercise.exerciseType == 3) {
-                      editor.getSession().setMode("ace/mode/dtd");}
-                    editor.getSession().setTabSize(2);
-                    editor.getSession().setUseSoftTabs(true);
-                    editor.getSession().setUseWrapMode(true);
-                  </script>
-                </div>
-              </div>
-            </div>
-
-           <div id="referenceFileDisplay" class="tab-pane">
-            <pre>@for(ref <- referenceFile.split("\n")) {@ref
-}</pre>
-           </div>
-          </div>
-        </div>
-
-        <div class="col-md-6">
-          <div class="panel panel-default">
-            <div class="panel-heading">Diverse Bemerkungen</div>
-            <div id="element_result_container" class="panel-body">
-            </div>
-          </div>
-        </div>
-      </div>
-	  
       <div class="panel">
         <div class="btn-group btn-group-justified">
           <div class="btn-group">
@@ -102,7 +56,49 @@
         </div>
       </div>
 	  
+      <div class="row row-eq-height">
+        <!-- Programmierfenster anzeigen -->
+        <div id="editorFenster" class="col-md-6">
+		  <div class="panel panel-default">
+            <div class="panel-heading">Editor</div>
+            <div class="panel-body">
+              <pre id="editor" class="form-control">@for(sol <- oldSolution.split("\n")) {@sol
+}</pre>
+              <script type="text/javascript">
+				var editor = ace.edit("editor");
+				editor.setTheme("ace/theme/eclipse");
+				editor.setFontSize("14px");
+				@if(exercise.exerciseType.toString == "XMLAgainstXSD" || 
+					exercise.exerciseType.toString == "XMLAgainstDTD" ||
+					exercise.exerciseType.toString == "XSDAgainstXML") {
+				  editor.getSession().setMode("ace/mode/xml");}
+				editor.getSession().setTabSize(2);
+				editor.getSession().setUseSoftTabs(true);
+				editor.getSession().setUseWrapMode(true);
+              </script>
+            </div>
+          </div>
+        </div>
+
+        <div id="referenceFileDisplay" class="col-md-6">
+		  <div class="panel panel-default">
+            <div class="panel-heading">Referenzdatei</div>
+		    <div class="panel-body">
+              <pre>@for(ref <- referenceFile.split("\n")) {@ref
+}</pre>
+            </div>
+          </div>
+		</div>
+	  </div>
+	  
       <textarea hidden name="editorContent" id="editorContent"></textarea>
     </form>
+	
+	<div class="col-md-12">
+	  <div class="panel panel-default">
+		<div class="panel-heading">Bemerkungen</div>
+		<div id="element_result_container" class="panel-body"></div>
+	  </div>
+	</div>
   </div>
 }

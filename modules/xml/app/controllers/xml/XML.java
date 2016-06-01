@@ -14,7 +14,6 @@ import model.XmlExercise;
 import model.XMLError;
 import model.XmlCorrector;
 import model.XmlErrorType;
-import model.XMLError;
 import model.XmlCorrector;
 import model.user.Secured;
 import model.user.User;
@@ -30,9 +29,7 @@ import views.html.xmloverview;
 import views.html.xmlcorrect;
 import controllers.core.UserControl;
 import controllers.core.Util;
-//import controllers.xml.;
 
-//@Security.Authenticated(Secured.class)
 public class XML extends Controller {
   
   private static final String SERVER_URL = Util.getServerUrl();
@@ -51,7 +48,6 @@ public class XML extends Controller {
     List<XMLError> elementResults = correctExercise(path2solution, user, XmlExercise.finder.byId(exerciseId));
     
     if(request().acceptedTypes().get(0).toString().equals("application/json"))
-      // print this JSON-tree!!! to know what is inside
       return ok(Json.toJson(elementResults));
     else
       return ok(xmlcorrect.render(learnerSolution, elementResults, UserControl.getCurrentUser()));
@@ -94,12 +90,6 @@ public class XML extends Controller {
     return ok(xmloverview.render(XmlExercise.finder.all(), UserControl.getCurrentUser()));
   }
   
-  /**
-   * Replaces characters which cause problems when displayed in html. private
-   * String escapeCode(String code) { return code.replaceAll("<",
-   * "&lt;").replaceAll(">", "&gt;").replaceAll("&", "&amp;"); }
-   */
-  
   private List<XMLError> correctExercise(Path solutionPath, User user, XmlExercise exercise) {
     File solutionFile = new File(solutionPath.toString());
     File referenceFile = new File(Util.getXmlReferenceFilePath(exercise.referenceFileName).toString());
@@ -110,9 +100,6 @@ public class XML extends Controller {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    // List<ElementResult> result = new ArrayList<ElementResult>();
-    // result.add(new ElementResult(Success.PARTIALLY, "Test Result",
-    // "message"));
     if(result.isEmpty()) {
       result.add(new XMLError(XmlErrorType.NONE, "Super!", "Bist ein ganz guter Student."));
     }

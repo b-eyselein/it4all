@@ -2,6 +2,9 @@ package model;
 
 public enum ExerciseType {
   
-  XMLAgainstXSD, XMLAgainstDTD, XSDAgainstXML, DTDAgainstXML
+  XMLAgainstXSD,
+  XMLAgainstDTD,
+  XSDAgainstXML,
+  DTDAgainstXML
   
 }

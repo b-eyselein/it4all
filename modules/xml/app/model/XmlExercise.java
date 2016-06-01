@@ -4,6 +4,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Enumerated;
+import javax.persistence.EnumType;
+
+import model.ExerciseType;
 
 import com.avaje.ebean.Model;
 
@@ -19,6 +23,7 @@ public class XmlExercise extends Model {
   public String title;
   
   @Column(name = "exerciseType")
+  @Enumerated(EnumType.STRING)
   public ExerciseType exerciseType;
   
   @Column(name = "referenceFileName", length = 100)

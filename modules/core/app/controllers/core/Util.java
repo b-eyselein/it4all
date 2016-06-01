@@ -46,7 +46,7 @@ public class Util {
   }
   
   public static Path getXmlReferenceFilePath(String referenceFileName) {
-    return Paths.get(rootSolDir, "references", "xml", referenceFileName);
+    return Paths.get(rootSolDir, "samples", "xml", referenceFileName);
   }
   
   public static Path getXmlSolFileForExercise(String user, int exerciseId) {
