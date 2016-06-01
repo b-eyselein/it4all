@@ -1,12 +1,14 @@
 package controllers.core;
 
-import static controllers.core.Util.getSolDirForUser;
+//import static controllers.core.Util.getSolDirForUser;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.util.Map;
+
+import javax.inject.Inject;
 
 import model.user.User;
 import play.mvc.Controller;
@@ -24,6 +26,9 @@ public class UserControl extends Controller {
       throw new IllegalArgumentException("problem!");
     return User.finder.byId(session.get(SESSION_ID_FIELD));
   }
+
+  @Inject
+  Util util;
 
   public Result authenticate() {
     Map<String, String[]> formValues = request().body().asFormUrlEncoded();
@@ -74,7 +79,7 @@ public class UserControl extends Controller {
       User newStudent = new User();
       newStudent.name = userName;
       newStudent.save();
-      Path solutionDirectory = getSolDirForUser(userName);
+      Path solutionDirectory = util.getSolDirForUser(userName);
       if(!Files.exists(solutionDirectory, LinkOption.NOFOLLOW_LINKS))
         try {
           Files.createDirectory(solutionDirectory);

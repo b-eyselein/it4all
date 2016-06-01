@@ -8,7 +8,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ArrayList;
+
+import javax.inject.Inject;
 
 import model.XmlExercise;
 import model.XMLError;
@@ -38,11 +39,11 @@ public class XML extends Controller {
   private static final String SERVER_URL = Util.getServerUrl();
   private static final String LEARNER_SOLUTION_VALUE = "editorContent";
   private static final String STANDARD_XML = "";
-  
+
   @Security.Authenticated(Secured.class)
   public Result commit(int exerciseId) {
     User user = UserControl.getCurrentUser();
-    
+
     String learnerSolution = extractLearnerSolutionFromRequest(request());
     Logger.info(learnerSolution);
     Path path2solution = saveSolutionForUser(user.name, learnerSolution, exerciseId);
@@ -56,11 +57,11 @@ public class XML extends Controller {
     else
       return ok(xmlcorrect.render(learnerSolution, elementResults, UserControl.getCurrentUser()));
   }
-  
+
   @Security.Authenticated(Secured.class)
   public Result exercise(int exerciseId) {
     XmlExercise exercise = XmlExercise.finder.byId(exerciseId);
-    
+
     if(exercise == null)
       return badRequest(new Html("<p>Diese Aufgabe existert leider nicht.</p><p>Zur&uuml;ck zur <a href=\""
           + routes.XML.index() + "\">Startseite</a>.</p>"));
@@ -68,32 +69,33 @@ public class XML extends Controller {
     User user = UserControl.getCurrentUser();
     String defaultOrOldSolution = STANDARD_XML;
     try {
-      Path oldSolutionPath = Util.getXmlSolFileForExercise(user.name, exerciseId);
+      Path oldSolutionPath = util.getXmlSolFileForExercise(user.name, exerciseId);
       if(Files.exists(oldSolutionPath, LinkOption.NOFOLLOW_LINKS))
         defaultOrOldSolution = String.join("\n", Files.readAllLines(oldSolutionPath));
       
     } catch (IOException e) {
       Logger.error(e.getMessage());
     }
-    
+
     String referenceCode = "";
     try {
-      Path referenceFilePath = Util.getXmlReferenceFilePath(exercise.referenceFileName);
+      Path referenceFilePath = util.getXmlReferenceFilePath(exercise.referenceFileName);
       if(Files.exists(referenceFilePath, LinkOption.NOFOLLOW_LINKS))
         referenceCode = String.join("\n", Files.readAllLines(referenceFilePath));
       
     } catch (IOException e) {
       Logger.error(e.getMessage());
     }
-    
-    return ok(xml.render(UserControl.getCurrentUser(), exercise, referenceCode, defaultOrOldSolution, SERVER_URL));
+
+    return ok(
+        xml.render(UserControl.getCurrentUser(), exercise, referenceCode, defaultOrOldSolution, util.getServerUrl()));
   }
-  
+
   @Security.Authenticated(Secured.class)
   public Result index() {
     return ok(xmloverview.render(XmlExercise.finder.all(), UserControl.getCurrentUser()));
   }
-  
+
   /**
    * Replaces characters which cause problems when displayed in html. private
    * String escapeCode(String code) { return code.replaceAll("<",
@@ -127,21 +129,21 @@ public class XML extends Controller {
     }
     return result;
   }
-  
+
   private String extractLearnerSolutionFromRequest(Request request) {
     return request.body().asFormUrlEncoded().get(LEARNER_SOLUTION_VALUE)[0];
   }
-  
+
   private Path saveSolutionForUser(String userName, String solution, int exercise) {
     try {
-      if(!Files.exists(Util.getSolDirForUser(userName)))
-        Files.createDirectory(Util.getSolDirForUser(userName));
+      if(!Files.exists(util.getSolDirForUser(userName)))
+        Files.createDirectory(util.getSolDirForUser(userName));
       
-      Path solDir = Util.getSolDirForUserAndType("xml", userName);
+      Path solDir = util.getSolDirForUserAndType("xml", userName);
       if(!Files.exists(solDir))
         Files.createDirectory(solDir);
       
-      Path saveTo = Util.getXmlSolFileForExercise(userName, exercise);
+      Path saveTo = util.getXmlSolFileForExercise(userName, exercise);
       Files.write(saveTo, Arrays.asList(solution), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
       return saveTo;
     } catch (IOException error) {
@@ -149,5 +151,5 @@ public class XML extends Controller {
     }
     return null;
   }
-  
+
 }

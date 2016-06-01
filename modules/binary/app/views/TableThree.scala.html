@@ -1,0 +1,67 @@
+@* TableThree Template File *@
+@(var1: String)(var2: String)(var3: String)(formula: String)
+<form action="@binary.routes.Bool.tableThreeAdd" method="post">
+<table border = "2" >
+	<thread align = "right">
+		<tr>
+			<td>
+				@var1
+			</td>
+			<td>
+				@var2
+			</td>
+			<td>
+				@var3
+			</td>
+			<td>
+				@formula
+			</td>
+		</tr>
+	</thread>
+	<tbody align = "left"">
+		<tr>
+			<td>0</td><td>0</td><td>0</td>
+			<td>
+				<input type="text" name = "sol1" size = 1>
+			</td>
+		</tr><tr>
+			<td>0</td><td>0</td><td>1</td>
+			<td>
+				<input type="text" name = "sol2" size = 1>
+			</td>
+		</tr><tr>
+			<td>0</td><td>1</td><td>0</td>
+			<td>
+				<input type="text" name = "sol3" size = 1>
+			</td>
+		</tr><tr>
+			<td>0</td><td>1</td><td>1</td>
+			<td>
+				<input type="text" name = "sol4" size = 1>
+			</td>
+		</tr><tr>
+			<td>1</td><td>0</td><td>0</td>
+			<td>
+				<input type="text" name = "sol5" size = 1>
+			</td>
+		</tr><tr>
+			<td>1</td><td>0</td><td>1</td>
+			<td>
+				<input type="text" name = "sol6" size = 1>
+			</td>
+		</tr><tr>
+			<td>1</td><td>1</td><td>0</td>
+			<td>
+				<input type="text" name = "sol7" size = 1>
+			</td>
+		</tr><tr>
+			<td>1</td><td>1</td><td>1</td>
+			<td>
+				<input type="text" name = "sol8" size = 1>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+	<input type = "submit">
+</form>
