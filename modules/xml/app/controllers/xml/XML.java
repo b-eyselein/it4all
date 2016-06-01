@@ -15,8 +15,6 @@ import model.XmlExercise;
 import model.XMLError;
 import model.XmlCorrector;
 import model.XmlErrorType;
-import model.XMLError;
-import model.XmlCorrector;
 import model.user.Secured;
 import model.user.User;
 import play.Logger;
@@ -36,9 +34,10 @@ import controllers.core.Util;
 //@Security.Authenticated(Secured.class)
 public class XML extends Controller {
   
-  private static final String SERVER_URL = Util.getServerUrl();
   private static final String LEARNER_SOLUTION_VALUE = "editorContent";
   private static final String STANDARD_XML = "";
+  @Inject
+  Util util;
 
   @Security.Authenticated(Secured.class)
   public Result commit(int exerciseId) {
@@ -48,9 +47,9 @@ public class XML extends Controller {
     Logger.info(learnerSolution);
     Path path2solution = saveSolutionForUser(user.name, learnerSolution, exerciseId);
     Logger.info(path2solution.toString());
-    
+
     List<XMLError> elementResults = correctExercise(path2solution, user, XmlExercise.finder.byId(exerciseId));
-    
+
     if(request().acceptedTypes().get(0).toString().equals("application/json"))
       // print this JSON-tree!!! to know what is inside
       return ok(Json.toJson(elementResults));
@@ -101,10 +100,10 @@ public class XML extends Controller {
    * String escapeCode(String code) { return code.replaceAll("<",
    * "&lt;").replaceAll(">", "&gt;").replaceAll("&", "&amp;"); }
    */
-  
+
   private List<XMLError> correctExercise(Path solutionPath, User user, XmlExercise exercise) {
     File solutionFile = new File(solutionPath.toString());
-    File referenceFile = new File(Util.getXmlReferenceFilePath(exercise.referenceFileName).toString());
+    File referenceFile = new File(util.getXmlReferenceFilePath(exercise.referenceFileName).toString());
     List<XMLError> result = null;
     try {
       result = XmlCorrector.correct(solutionFile, referenceFile, exercise, user);
@@ -120,7 +119,8 @@ public class XML extends Controller {
     }
     boolean malformed = false;
     for(XMLError el: result) {
-      // TODO: passt hier pruefen auf FATALERROR oder vielleicht doch lieber "el.getErrorType() != XmlErrorType.NONE"
+      // TODO: passt hier pruefen auf FATALERROR oder vielleicht doch lieber
+      // "el.getErrorType() != XmlErrorType.NONE"
       if(el.getErrorType() == XmlErrorType.FATALERROR)
         malformed = true;
     }
