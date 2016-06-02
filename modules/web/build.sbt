@@ -7,6 +7,9 @@ routesGenerator := InjectedRoutesGenerator
 
 playEbeanModels in Compile := Seq("model.*", "model.html.*", "model.javascript.*", "model.css.*")
 
+// JaCoCo - siehe project/plugins.sbt
+jacoco.settings
+
 libraryDependencies ++= Seq(
   javaJdbc,
 
@@ -17,6 +20,3 @@ libraryDependencies ++= Seq(
   // Mockito for Testing
   Common.mockitoDep
 )
-
-// JaCoCo - siehe project/plugins.sbt
-jacoco.settings
