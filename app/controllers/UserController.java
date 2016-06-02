@@ -1,7 +1,7 @@
 package controllers;
 
-import controllers.core.UserControl;
-import model.user.Secured;
+import controllers.core.UserManagement;
+import model.Secured;
 import model.user.User;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -12,8 +12,8 @@ import views.html.user;
 public class UserController extends Controller {
   
   public Result index() {
-    User theUser = UserControl.getCurrentUser();
+    User theUser = UserManagement.getCurrentUser();
     return ok(user.render("User", theUser, theUser.gradings));
   }
-  
+
 }

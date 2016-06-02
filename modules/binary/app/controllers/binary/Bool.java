@@ -2,7 +2,7 @@ package controllers.binary;
 
 import javax.inject.Inject;
 
-import model.user.Secured;
+import model.Secured;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.mvc.Controller;
