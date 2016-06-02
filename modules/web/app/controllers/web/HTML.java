@@ -38,6 +38,9 @@ public class HTML extends Controller {
   @Inject
   Util util;
 
+  @Inject
+  WebStartUpChecker checker;
+
   @Security.Authenticated(Secured.class)
   public Result commit(int exerciseId) {
     User user = UserControl.getCurrentUser();
@@ -66,7 +69,7 @@ public class HTML extends Controller {
 
     String defaultOrOldSolution = STANDARD_HTML;
     try {
-      Path oldSolutionPath = util.getHtmlSolFileForExercise(user.name, "html", exerciseId);
+      Path oldSolutionPath = util.getSolutionFileForExerciseAndType(user.name, "html", exerciseId);
       if(Files.exists(oldSolutionPath, LinkOption.NOFOLLOW_LINKS))
         defaultOrOldSolution = String.join("\n", Files.readAllLines(oldSolutionPath));
       
@@ -90,7 +93,7 @@ public class HTML extends Controller {
   }
 
   public Result site(String userName, int exercise) {
-    Path file = util.getHtmlSolFileForExercise(userName, "html", exercise);
+    Path file = util.getSolutionFileForExerciseAndType(userName, "html", exercise);
     if(!Files.exists(file))
       return badRequest("Fehler: Datei nicht vorhanden!");
     
@@ -119,7 +122,7 @@ public class HTML extends Controller {
       if(!Files.exists(solDir))
         Files.createDirectories(solDir);
       
-      Path saveTo = util.getHtmlSolFileForExercise(userName, "html", exercise);
+      Path saveTo = util.getSolutionFileForExerciseAndType(userName, "html", exercise);
       Files.write(saveTo, Arrays.asList(solution), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     } catch (IOException error) {
       Logger.error("Fehler beim Speichern einer Html-Loesungsdatei!", error);

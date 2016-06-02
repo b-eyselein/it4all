@@ -1,5 +1,6 @@
 package controllers.core;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -8,60 +9,61 @@ import javax.inject.Singleton;
 
 import play.Configuration;
 import play.Environment;
+import play.Logger;
 
 @Singleton
 public class Util {
   
-  // Load root directory for solutions and samples at startUp
-  private String rootSolDir;
+  private static Logger.ALogger theLogger = Logger.of("startup");
+  private Path rootSolDir;
+
+  private String serverUrl;
 
   private Environment environment;
-
   private Configuration configuration;
 
   @Inject
   public Util(Configuration theConfiguration, Environment theEnvironment) {
     environment = theEnvironment;
     configuration = theConfiguration;
-    rootSolDir = getRootDir();
+    readRootDir();
+    readServerUrl();
+
+    if(!Files.exists(rootSolDir))
+      theLogger.error("Folder for solutions does not exits!");
+    
   }
 
   public Path getExcelSampleDirectoryForExercise(String exerciseType, int exerciseId) {
-    return Paths.get(rootSolDir, "samples", exerciseType, "ex_" + exerciseId);
+    return Paths.get(rootSolDir.toString(), "samples", exerciseType, "ex_" + exerciseId);
   }
 
   public Path getExcelSolFileForExercise(String user, String fileName) {
     return Paths.get(getSolDirForUserAndType("excel", user).toString(), fileName);
   }
 
-  public Path getHtmlSolFileForExercise(String user, String exerciseType, int exercise) {
-    // TODO: Test for Html!
-    return Paths.get(getSolDirForUserAndType("html", user).toString(), exercise + ".html");
-  }
-
   public Path getRootSolDir() {
-    return Paths.get(rootSolDir);
+    return rootSolDir;
   }
 
   public String getServerUrl() {
-    if(environment.isDev() || environment.isTest())
-      return "http://localhost:9000";
-    else if(environment.isProd())
-      return "https://www.it4all.uni-wuerzburg.de";
-    else
-      throw new IllegalArgumentException("Cound not determine Upload-URL for JS-Testing!");
+    return serverUrl;
   }
 
   public Path getSolDirForUser(String user) {
-    return Paths.get(rootSolDir, "solutions", user);
+    return Paths.get(rootSolDir.toString(), "solutions", user);
   }
 
   public Path getSolDirForUserAndType(String type, String user) {
     return Paths.get(getSolDirForUser(user).toString(), type);
   }
-  
+
+  public Path getSolutionFileForExerciseAndType(String user, String exerciseType, int exercise) {
+    return Paths.get(getSolDirForUserAndType(exerciseType, user).toString(), exercise + ".html");
+  }
+
   public Path getXmlReferenceFilePath(String referenceFileName) {
-    return Paths.get(rootSolDir, "samples", "xml", referenceFileName);
+    return Paths.get(rootSolDir.toString(), "samples", "xml", referenceFileName);
   }
 
   public Path getXmlSolFileForExercise(String user, int exerciseId) {
@@ -69,15 +71,24 @@ public class Util {
     return Paths.get(getSolDirForUserAndType("xml", user).toString(), exerciseId + "");
   }
 
-  private String getRootDir() {
+  public void readServerUrl() {
+    if(environment.isDev() || environment.isTest())
+      serverUrl = "http://localhost:9000";
+    else if(environment.isProd())
+      serverUrl = "https://www.it4all.uni-wuerzburg.de";
+    else
+      throw new IllegalArgumentException("Cound not determine URL of Server!");
+  }
+
+  private void readRootDir() {
     String os = System.getProperty("os.name").toLowerCase();
 
     // WINDOWS
     if(os.indexOf("win") >= 0)
-      return configuration.getString("rootDirWin");
+      rootSolDir = Paths.get(configuration.getString("rootDirWin"));
     // UNIX
     else if(os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0 || os.indexOf("aix") > 0)
-      return configuration.getString("rootDirLinux");
+      rootSolDir = Paths.get(configuration.getString("rootDirLinux"));
     // OTHER OS, NEEDS CONFIGURATION
     else
       throw new IllegalArgumentException("OS not detectable");

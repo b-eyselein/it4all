@@ -85,10 +85,10 @@ create table users (
 create table xmlexercise (
   id                            integer auto_increment not null,
   title                         varchar(255),
-  exercisetype                  integer,
+  exercisetype                  varchar(13),
   referencefilename             varchar(100),
   exercisetext                  varchar(1000),
-  constraint ck_xmlexercise_exercisetype check (exerciseType in (0,1,2,3)),
+  constraint ck_xmlexercise_exercisetype check (exerciseType in ('XMLAgainstXSD','XMLAgainstDTD','XSDAgainstXML','DTDAgainstXML')),
   constraint pk_xmlexercise primary key (id)
 );
 
