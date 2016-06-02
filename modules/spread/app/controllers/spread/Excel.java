@@ -9,11 +9,11 @@ import java.nio.file.StandardCopyOption;
 import javax.inject.Inject;
 
 import controllers.core.UserManagement;
+import model.Secured;
 import model.Util;
 import model.spread.ExcelExercise;
 import model.spread.SpreadSheetCorrectionResult;
 import model.spread.SpreadSheetCorrector;
-import model.user.Secured;
 import model.user.User;
 import play.Logger;
 import play.mvc.Controller;

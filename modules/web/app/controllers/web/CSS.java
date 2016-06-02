@@ -5,9 +5,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import controllers.core.UserManagement;
+import model.Secured;
 import model.Util;
 import model.css.CssExercise;
-import model.user.Secured;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;

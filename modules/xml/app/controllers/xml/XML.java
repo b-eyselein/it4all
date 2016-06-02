@@ -1,6 +1,5 @@
 package controllers.xml;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -13,11 +12,11 @@ import javax.inject.Inject;
 
 import model.XmlExercise;
 import controllers.core.UserManagement;
+import model.Secured;
 import model.Util;
 import model.XMLError;
 import model.XmlCorrector;
 import model.XmlErrorType;
-import model.user.Secured;
 import model.user.User;
 import play.Logger;
 import play.libs.Json;
@@ -77,7 +76,7 @@ public class XML extends Controller {
 
     String referenceCode = "";
     try {
-      Path referenceFilePath = util.getXmlReferenceFilePath(exercise.referenceFileName);
+      Path referenceFilePath = util.getSampleFileForExerciseAndType(EXERCISE_TYPE, exercise.referenceFileName);
       Logger.debug(referenceFilePath.toString());
       if(Files.exists(referenceFilePath, LinkOption.NOFOLLOW_LINKS))
         referenceCode = String.join("\n", Files.readAllLines(referenceFilePath));
@@ -95,11 +94,11 @@ public class XML extends Controller {
   }
 
   private List<XMLError> correctExercise(Path solutionPath, User user, XmlExercise exercise) {
-    File solutionFile = new File(solutionPath.toString());
-    File referenceFile = new File(util.getXmlReferenceFilePath(exercise.referenceFileName).toString());
+    Path learnerSolution = solutionPath;
+    Path referenceFile = util.getSampleFileForExerciseAndType(EXERCISE_TYPE, exercise.referenceFileName);
     List<XMLError> result = null;
     try {
-      result = XmlCorrector.correct(solutionFile, referenceFile, exercise, user);
+      result = XmlCorrector.correct(learnerSolution.toFile(), referenceFile.toFile(), exercise, user);
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();

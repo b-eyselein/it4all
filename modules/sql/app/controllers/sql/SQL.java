@@ -9,9 +9,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import model.Secured;
 import model.user.User;
 import controllers.core.UserManagement;
-import model.user.Secured;
 import play.db.Database;
 import play.mvc.Controller;
 import play.mvc.Result;

@@ -12,11 +12,11 @@ import javax.inject.Inject;
 
 import model.user.User;
 import controllers.core.UserManagement;
+import model.Secured;
 import model.Util;
 import model.html.HtmlCorrector;
 import model.html.HtmlExercise;
 import model.html.result.ElementResult;
-import model.user.Secured;
 import play.Logger;
 import play.libs.Json;
 import play.mvc.Controller;

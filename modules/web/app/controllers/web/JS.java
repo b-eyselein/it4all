@@ -6,11 +6,11 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import controllers.core.UserManagement;
+import model.Secured;
 import model.Util;
 import model.javascript.JsCorrector;
 import model.javascript.JsExercise;
 import model.javascript.JsTestResult;
-import model.user.Secured;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
