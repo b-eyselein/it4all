@@ -5,8 +5,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import controllers.core.UserControl;
-import controllers.core.Util;
+import controllers.core.UserManagement;
+import model.Util;
 import model.javascript.JsCorrector;
 import model.javascript.JsExercise;
 import model.javascript.JsTestResult;
@@ -36,7 +36,7 @@ public class JS extends Controller {
       return ok(Json.toJson(testResults));
     else
       // TODO: jscorrect --> Nur für Endkorrektur ?!?
-      return ok(jscorrect.render(learnerSolution, testResults, UserControl.getCurrentUser()));
+      return ok(jscorrect.render(learnerSolution, testResults, UserManagement.getCurrentUser()));
   }
 
   public Result exercise(int id) {
@@ -46,12 +46,12 @@ public class JS extends Controller {
       return badRequest(new Html("<p>Diese Aufgabe existert leider nicht.</p><p>Zur&uuml;ck zur <a href=\""
           + routes.JS.index() + "\">Startseite</a>.</p>"));
     
-    return ok(js.render(UserControl.getCurrentUser(), exercise, util.getServerUrl()));
+    return ok(js.render(UserManagement.getCurrentUser(), exercise, util.getServerUrl()));
 
   }
 
   public Result index() {
-    return ok(jsoverview.render(JsExercise.finder.all(), UserControl.getCurrentUser()));
+    return ok(jsoverview.render(JsExercise.finder.all(), UserManagement.getCurrentUser()));
   }
 
 }

@@ -11,6 +11,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import model.user.User;
+import controllers.core.UserManagement;
+import model.Util;
 import model.html.HtmlCorrector;
 import model.html.HtmlExercise;
 import model.html.result.ElementResult;
@@ -26,13 +28,12 @@ import views.html.html.html;
 import views.html.html.htmlcorrect;
 import views.html.html.htmloverview;
 import views.html.*;
-import controllers.core.UserControl;
-import controllers.core.Util;
 
 public class HTML extends Controller {
   
   private static final String LEARNER_SOLUTION_VALUE = "editorContent";
-
+  private static final String FILE_TYPE = "html";
+  private static final String EXERCISE_TYPE = "html";
   private static final String STANDARD_HTML = "<!doctype html>\n<html>\n\n<head>\n</head>\n\n<body>\n</body>\n\n</html>";
 
   @Inject
@@ -43,10 +44,10 @@ public class HTML extends Controller {
 
   @Security.Authenticated(Secured.class)
   public Result commit(int exerciseId) {
-    User user = UserControl.getCurrentUser();
+    User user = UserManagement.getCurrentUser();
 
     String learnerSolution = extractLearnerSolutionFromRequest(request());
-    saveSolutionForUser(user.name, learnerSolution, exerciseId);
+    saveSolutionForUser(user, learnerSolution, exerciseId);
 
     List<ElementResult> elementResults = correctExercise(user, HtmlExercise.finder.byId(exerciseId));
 
@@ -54,7 +55,7 @@ public class HTML extends Controller {
       return ok(Json.toJson(elementResults));
     else
       // TODO: Definitive Abgabe Html, rendere Html!
-      return ok(htmlcorrect.render(learnerSolution, elementResults, UserControl.getCurrentUser()));
+      return ok(htmlcorrect.render(learnerSolution, elementResults, UserManagement.getCurrentUser()));
   }
 
   @Security.Authenticated(Secured.class)
@@ -65,11 +66,11 @@ public class HTML extends Controller {
       return badRequest(new Html("<p>Diese Aufgabe existert leider nicht.</p><p>Zur&uuml;ck zur <a href=\""
           + routes.HTML.index() + "\">Startseite</a>.</p>"));
     
-    User user = UserControl.getCurrentUser();
+    User user = UserManagement.getCurrentUser();
 
     String defaultOrOldSolution = STANDARD_HTML;
     try {
-      Path oldSolutionPath = util.getSolutionFileForExerciseAndType(user.name, "html", exerciseId);
+      Path oldSolutionPath = util.getSolutionFileForExerciseAndType(user, EXERCISE_TYPE, exerciseId, FILE_TYPE);
       if(Files.exists(oldSolutionPath, LinkOption.NOFOLLOW_LINKS))
         defaultOrOldSolution = String.join("\n", Files.readAllLines(oldSolutionPath));
       
@@ -82,7 +83,7 @@ public class HTML extends Controller {
 
   @Security.Authenticated(Secured.class)
   public Result index() {
-    User currentUser = UserControl.getCurrentUser();
+    User currentUser = UserManagement.getCurrentUser();
 
     Path rootFolderForSolutions = util.getRootSolDir();
     if(!Files.exists(rootFolderForSolutions))
@@ -92,8 +93,8 @@ public class HTML extends Controller {
     return ok(htmloverview.render(HtmlExercise.finder.all(), currentUser));
   }
 
-  public Result site(String userName, int exercise) {
-    Path file = util.getSolutionFileForExerciseAndType(userName, "html", exercise);
+  public Result site(User user, int exercise) {
+    Path file = util.getSolutionFileForExerciseAndType(user, EXERCISE_TYPE, exercise, FILE_TYPE);
     if(!Files.exists(file))
       return badRequest("Fehler: Datei nicht vorhanden!");
     
@@ -107,7 +108,7 @@ public class HTML extends Controller {
   }
 
   private List<ElementResult> correctExercise(User user, HtmlExercise exercise) {
-    String solutionUrl = routes.HTML.site(user.name, exercise.id).absoluteURL(request());
+    String solutionUrl = routes.HTML.site(user, exercise.id).absoluteURL(request());
 
     return HtmlCorrector.correct(solutionUrl, exercise, user);
   }
@@ -116,13 +117,13 @@ public class HTML extends Controller {
     return request.body().asFormUrlEncoded().get(LEARNER_SOLUTION_VALUE)[0];
   }
 
-  private void saveSolutionForUser(String userName, String solution, int exercise) {
+  private void saveSolutionForUser(User user, String solution, int exercise) {
     try {
-      Path solDir = util.getSolDirForUserAndType("html", userName);
+      Path solDir = util.getSolDirForUserAndType(user, EXERCISE_TYPE);
       if(!Files.exists(solDir))
         Files.createDirectories(solDir);
       
-      Path saveTo = util.getSolutionFileForExerciseAndType(userName, "html", exercise);
+      Path saveTo = util.getSolutionFileForExerciseAndType(user, EXERCISE_TYPE, exercise, FILE_TYPE);
       Files.write(saveTo, Arrays.asList(solution), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     } catch (IOException error) {
       Logger.error("Fehler beim Speichern einer Html-Loesungsdatei!", error);

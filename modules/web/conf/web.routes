@@ -3,7 +3,7 @@ GET    /html/exercises                     controllers.web.HTML.index()
 GET    /html/exercises/:exerciseId         controllers.web.HTML.exercise(exerciseId: Int)
 PUT    /html/exercises/:exerciseId         controllers.web.HTML.commit(exerciseId: Int)
 POST   /html/exercises/:exerciseId         controllers.web.HTML.commit(exerciseId: Int)
-GET    /html/solutions/:user/:exerciseId   controllers.web.HTML.site(user: String, exerciseId: Int)
+GET    /html/solutions/:user/:exerciseId   controllers.web.HTML.site(user: model.user.User, exerciseId: Int)
 
 # CSS
 GET    /css/                               controllers.web.CSS.index()

@@ -1,6 +1,6 @@
 package controllers.mindmap;
 
-import controllers.core.UserControl;
+import controllers.core.UserManagement;
 import model.user.Secured;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -12,12 +12,12 @@ import views.html.mindmapcorrect;
 public class Mindmap extends Controller {
   
   public Result index() {
-    return ok(mindmapindex.render(UserControl.getCurrentUser()));
+    return ok(mindmapindex.render(UserManagement.getCurrentUser()));
   }
 
   public Result upload() {
     // TODO: getFile, correct and present for download!
-    return ok(mindmapcorrect.render(UserControl.getCurrentUser()));
+    return ok(mindmapcorrect.render(UserManagement.getCurrentUser()));
   }
 
 }

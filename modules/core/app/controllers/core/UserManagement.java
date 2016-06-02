@@ -10,20 +10,21 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import model.Util;
 import model.user.User;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import views.html.login;
 
-public class UserControl extends Controller {
+public class UserManagement extends Controller {
   
   public static final String SESSION_ID_FIELD = "id";
 
   public static User getCurrentUser() {
     Http.Session session = Http.Context.current().session();
     if(session.get(SESSION_ID_FIELD).equals(""))
-      throw new IllegalArgumentException("problem!");
+      throw new IllegalArgumentException("No user name was given!");
     return User.finder.byId(session.get(SESSION_ID_FIELD));
   }
 
@@ -39,7 +40,7 @@ public class UserControl extends Controller {
     User user = findOrCreateStudent(userName, passwort);
 
     session().clear();
-    session(UserControl.SESSION_ID_FIELD, user.name);
+    session(UserManagement.SESSION_ID_FIELD, user.name);
 
     return redirect(controllers.routes.Application.index());
   }
@@ -48,7 +49,7 @@ public class UserControl extends Controller {
     String passwort = "";
     User student = findOrCreateStudent(name, passwort);
     session().clear();
-    session(UserControl.SESSION_ID_FIELD, student.name);
+    session(UserManagement.SESSION_ID_FIELD, student.name);
 
     return redirect("/" + type + "/" + id);
   }
@@ -59,7 +60,7 @@ public class UserControl extends Controller {
     String passwort = "";
     User student = findOrCreateStudent(name, passwort);
     session().clear();
-    session(UserControl.SESSION_ID_FIELD, student.name);
+    session(UserManagement.SESSION_ID_FIELD, student.name);
 
     return redirect("/" + type + "/" + id);
   }
@@ -79,7 +80,7 @@ public class UserControl extends Controller {
       User newStudent = new User();
       newStudent.name = userName;
       newStudent.save();
-      Path solutionDirectory = util.getSolDirForUser(userName);
+      Path solutionDirectory = util.getSolDirForUser(newStudent);
       if(!Files.exists(solutionDirectory, LinkOption.NOFOLLOW_LINKS))
         try {
           Files.createDirectory(solutionDirectory);

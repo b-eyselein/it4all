@@ -1,6 +1,6 @@
 # Login && Logout
-GET    /login                    controllers.core.UserControl.login()
-POST   /authenticate             controllers.core.UserControl.authenticate()
-GET    /logout                   controllers.core.UserControl.logout()
-GET    /direct/:name/:type/:id   controllers.core.UserControl.directLogin(name: String, type: String, id: Int)
-GET    /direct/:type/:id         controllers.core.UserControl.fromWuecampus(type: String, id: Int, name: String ?= "")
+GET    /login                    controllers.core.UserManagement.login()
+POST   /authenticate             controllers.core.UserManagement.authenticate()
+GET    /logout                   controllers.core.UserManagement.logout()
+GET    /direct/:name/:type/:id   controllers.core.UserManagement.directLogin(name: String, type: String, id: Int)
+GET    /direct/:type/:id         controllers.core.UserManagement.fromWuecampus(type: String, id: Int, name: String ?= "")

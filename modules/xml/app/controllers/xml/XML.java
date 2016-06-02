@@ -12,6 +12,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import model.XmlExercise;
+import controllers.core.UserManagement;
+import model.Util;
 import model.XMLError;
 import model.XmlCorrector;
 import model.XmlErrorType;
@@ -27,12 +29,11 @@ import play.twirl.api.Html;
 import views.html.xml;
 import views.html.xmloverview;
 import views.html.xmlcorrect;
-import controllers.core.UserControl;
-import controllers.core.Util;
 
 @Security.Authenticated(Secured.class)
 public class XML extends Controller {
   
+  private static final String EXERCISE_TYPE = "xml";
   private static final String LEARNER_SOLUTION_VALUE = "editorContent";
   private static final String STANDARD_XML = "";
 
@@ -40,19 +41,18 @@ public class XML extends Controller {
   Util util;
 
   public Result commit(int exerciseId) {
-    User user = UserControl.getCurrentUser();
+    User user = UserManagement.getCurrentUser();
 
     String learnerSolution = extractLearnerSolutionFromRequest(request());
     Logger.info(learnerSolution);
-    Path path2solution = saveSolutionForUser(user.name, learnerSolution, exerciseId);
-    Logger.info(path2solution.toString());
+    Path path2solution = saveSolutionForUser(user, learnerSolution, exerciseId);
 
     List<XMLError> elementResults = correctExercise(path2solution, user, XmlExercise.finder.byId(exerciseId));
 
     if(request().acceptedTypes().get(0).toString().equals("application/json"))
       return ok(Json.toJson(elementResults));
     else
-      return ok(xmlcorrect.render(learnerSolution, elementResults, UserControl.getCurrentUser()));
+      return ok(xmlcorrect.render(learnerSolution, elementResults, UserManagement.getCurrentUser()));
   }
 
   public Result exercise(int exerciseId) {
@@ -62,10 +62,12 @@ public class XML extends Controller {
       return badRequest(new Html("<p>Diese Aufgabe existert leider nicht.</p><p>Zur&uuml;ck zur <a href=\""
           + routes.XML.index() + "\">Startseite</a>.</p>"));
     
-    User user = UserControl.getCurrentUser();
+    User user = UserManagement.getCurrentUser();
     String defaultOrOldSolution = STANDARD_XML;
     try {
-      Path oldSolutionPath = util.getXmlSolFileForExercise(user.name, exerciseId);
+      // TODO: bestimme fileType ("xml", "xsd", "dtd")
+      String fileType = "xml";
+      Path oldSolutionPath = util.getSolutionFileForExerciseAndType(user, EXERCISE_TYPE, exerciseId, fileType);
       if(Files.exists(oldSolutionPath, LinkOption.NOFOLLOW_LINKS))
         defaultOrOldSolution = String.join("\n", Files.readAllLines(oldSolutionPath));
       
@@ -76,6 +78,7 @@ public class XML extends Controller {
     String referenceCode = "";
     try {
       Path referenceFilePath = util.getXmlReferenceFilePath(exercise.referenceFileName);
+      Logger.debug(referenceFilePath.toString());
       if(Files.exists(referenceFilePath, LinkOption.NOFOLLOW_LINKS))
         referenceCode = String.join("\n", Files.readAllLines(referenceFilePath));
       
@@ -83,12 +86,12 @@ public class XML extends Controller {
       Logger.error(e.getMessage());
     }
 
-    return ok(
-        xml.render(UserControl.getCurrentUser(), exercise, referenceCode, defaultOrOldSolution, util.getServerUrl()));
+    return ok(xml.render(UserManagement.getCurrentUser(), exercise, referenceCode, defaultOrOldSolution,
+        util.getServerUrl()));
   }
 
   public Result index() {
-    return ok(xmloverview.render(XmlExercise.finder.all(), UserControl.getCurrentUser()));
+    return ok(xmloverview.render(XmlExercise.finder.all(), UserManagement.getCurrentUser()));
   }
 
   private List<XMLError> correctExercise(Path solutionPath, User user, XmlExercise exercise) {
@@ -121,13 +124,15 @@ public class XML extends Controller {
     return request.body().asFormUrlEncoded().get(LEARNER_SOLUTION_VALUE)[0];
   }
 
-  private Path saveSolutionForUser(String userName, String solution, int exercise) {
+  private Path saveSolutionForUser(User user, String solution, int exercise) {
     try {
-      Path solDir = util.getSolDirForUserAndType("xml", userName);
+      Path solDir = util.getSolDirForUserAndType(user, EXERCISE_TYPE);
       if(!Files.exists(solDir))
         Files.createDirectories(solDir);
       
-      Path saveTo = util.getXmlSolFileForExercise(userName, exercise);
+      // TODO: bestimme fileType ("xml", "xsd", "dtd")
+      String fileType = "xml";
+      Path saveTo = util.getSolutionFileForExerciseAndType(user, EXERCISE_TYPE, exercise, fileType);
       Files.write(saveTo, Arrays.asList(solution), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
       return saveTo;
     } catch (IOException error) {

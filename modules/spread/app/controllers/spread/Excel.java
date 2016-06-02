@@ -8,8 +8,8 @@ import java.nio.file.StandardCopyOption;
 
 import javax.inject.Inject;
 
-import controllers.core.UserControl;
-import controllers.core.Util;
+import controllers.core.UserManagement;
+import model.Util;
 import model.spread.ExcelExercise;
 import model.spread.SpreadSheetCorrectionResult;
 import model.spread.SpreadSheetCorrector;
@@ -30,16 +30,17 @@ import views.html.excel.spreadcorrectionerror;
 @Security.Authenticated(Secured.class)
 public class Excel extends Controller {
   
+  private static final String EXERCISE_TYPE = "spreadsheet";
   private static final String BODY_SOL_FILE_NAME = "solFile";
 
   @Inject
   Util util;
 
   public Result download(int exerciseId, String typ) {
-    User user = UserControl.getCurrentUser();
+    User user = UserManagement.getCurrentUser();
     ExcelExercise exercise = ExcelExercise.finder.byId(exerciseId);
 
-    Path dirForCorrectedFile = util.getSolDirForUserAndType("excel", user.name);
+    Path dirForCorrectedFile = util.getSolDirForUserAndType(user, EXERCISE_TYPE);
     File fileToDownload = Paths.get(dirForCorrectedFile.toString(), exercise.fileName + "_Korrektur." + typ).toFile();
 
     if(!fileToDownload.exists())
@@ -50,7 +51,7 @@ public class Excel extends Controller {
   }
 
   public Result exercise(int exerciseId) {
-    User user = UserControl.getCurrentUser();
+    User user = UserManagement.getCurrentUser();
     ExcelExercise exercise = ExcelExercise.finder.byId(exerciseId);
 
     if(exercise == null)
@@ -61,11 +62,11 @@ public class Excel extends Controller {
   }
 
   public Result index() {
-    return ok(exceloverview.render(ExcelExercise.finder.all(), UserControl.getCurrentUser()));
+    return ok(exceloverview.render(ExcelExercise.finder.all(), UserManagement.getCurrentUser()));
   }
 
   public Result upload(int exerciseId) {
-    User user = UserControl.getCurrentUser();
+    User user = UserManagement.getCurrentUser();
     ExcelExercise exercise = ExcelExercise.finder.byId(exerciseId);
 
     // Extract solution from request
@@ -76,13 +77,13 @@ public class Excel extends Controller {
     
     // Save solution
     Path pathToUploadedFile = uploadedFile.getFile().toPath();
-    Path targetFilePath = util.getExcelSolFileForExercise(user.name, uploadedFile.getFilename());
-    boolean fileSuccessfullySaved = saveSolutionForUser(user.name, pathToUploadedFile, targetFilePath);
+    Path targetFilePath = util.getExcelSolFileForExercise(user, uploadedFile.getFilename(), EXERCISE_TYPE);
+    boolean fileSuccessfullySaved = saveSolutionForUser(pathToUploadedFile, targetFilePath);
     if(!fileSuccessfullySaved)
       return internalServerError(spreadcorrectionerror.render(user, "Die Datei konnte nicht gespeichert werden!"));
     
     // Get paths to sample document
-    Path sampleDocumentDirectoryPath = util.getExcelSampleDirectoryForExercise("excel", exercise.id);
+    Path sampleDocumentDirectoryPath = util.getSampleDirectoryForExercise(EXERCISE_TYPE, exercise.id);
     Path sampleDocumentPath = Paths.get(sampleDocumentDirectoryPath.toString(),
         exercise.fileName + "_Muster." + SpreadSheetCorrector.getExtension(targetFilePath));
     if(!Files.exists(sampleDocumentPath))
@@ -97,7 +98,7 @@ public class Excel extends Controller {
     
   }
 
-  private boolean saveSolutionForUser(String user, Path uploadedSolution, Path targetFilePath) {
+  private boolean saveSolutionForUser(Path uploadedSolution, Path targetFilePath) {
     try {
       Path solDirForExercise = targetFilePath.getParent();
       if(!Files.exists(solDirForExercise) && !Files.isDirectory(solDirForExercise))

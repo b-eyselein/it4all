@@ -1,11 +1,11 @@
 package controllers.web;
 
-import controllers.core.UserControl;
-import controllers.core.Util;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import controllers.core.UserManagement;
+import model.Util;
 import model.css.CssExercise;
 import model.user.Secured;
 import play.mvc.Controller;
@@ -38,12 +38,12 @@ public class CSS extends Controller {
       return badRequest(new Html("<p>Diese Aufgabe existert leider nicht.</p><p>Zur&uuml;ck zur <a href=\""
           + routes.HTML.index() + "\">Startseite</a>.</p>"));
     
-    return ok(css.render(UserControl.getCurrentUser(), exercise, util.getServerUrl()));
+    return ok(css.render(UserManagement.getCurrentUser(), exercise, util.getServerUrl()));
   }
 
   public Result index() {
     List<CssExercise> exercises = CssExercise.finder.all();
-    return ok(cssOverview.render(exercises, UserControl.getCurrentUser()));
+    return ok(cssOverview.render(exercises, UserManagement.getCurrentUser()));
   }
 
 }
