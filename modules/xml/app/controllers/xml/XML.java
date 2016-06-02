@@ -30,6 +30,7 @@ import views.html.xmlcorrect;
 import controllers.core.UserControl;
 import controllers.core.Util;
 
+@Security.Authenticated(Secured.class)
 public class XML extends Controller {
   
   private static final String LEARNER_SOLUTION_VALUE = "editorContent";
@@ -122,12 +123,9 @@ public class XML extends Controller {
 
   private Path saveSolutionForUser(String userName, String solution, int exercise) {
     try {
-      if(!Files.exists(util.getSolDirForUser(userName)))
-        Files.createDirectory(util.getSolDirForUser(userName));
-      
       Path solDir = util.getSolDirForUserAndType("xml", userName);
       if(!Files.exists(solDir))
-        Files.createDirectory(solDir);
+        Files.createDirectories(solDir);
       
       Path saveTo = util.getXmlSolFileForExercise(userName, exercise);
       Files.write(saveTo, Arrays.asList(solution), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
