@@ -5,14 +5,14 @@ import model.Secured;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
-import views.html.BinaryV;
+import views.html.overview;
 
 @Security.Authenticated(Secured.class)
 public class Binary extends Controller {
 
 	
   public Result index() {
-    return ok(BinaryV.render(UserManagement.getCurrentUser()));
+    return ok(overview.render(UserManagement.getCurrentUser()));
   }
 
 }

@@ -10,8 +10,9 @@ import java.util.Random;
 
 import javax.inject.Inject;
 
-import views.html.NAryV;
-import views.html.NArySolution;
+import controllers.core.UserManagement;
+import views.html.naryquestion;
+import views.html.narysolution;
 import model.NAryNumbers.*;
 
 @Security.Authenticated(Secured.class)
@@ -20,55 +21,35 @@ public class NAry extends Controller {
   @Inject
   FormFactory factory;
   
-  int number;
-  String formula;
+  NAryNumber number;
+  String learnerSolution;
   String numberType;
   
-  public Result addFormula() {
+  public Result addLearnerSolution() {
     DynamicForm dynFormula = factory.form().bindFromRequest();
-    formula = dynFormula.get("formula");
-    return redirect(routes.NAry.index2());
+    learnerSolution = dynFormula.get("learnerSolution");
+    return redirect(routes.NAry.checkSolution());
   }
   
   public Result index() {
     Random generator = new Random();
-    number = generator.nextInt(256);
-    String n = "" + number;
+    int nValue = generator.nextInt(256);
     int nType = generator.nextInt(3);
     if(nType == 0) {
       numberType = "Binärzahl";
+      nType = 2;
     } else if(nType == 1) {
       numberType = "Oktalzahl";
+      nType = 8;
     } else if(nType == 2) {
       numberType = "Hexadezimalzahl";
+      nType = 16;
     }
-    return ok(NAryV.render(n, numberType));
+    number = new NAryNumber(nValue, nType);
+    return ok(naryquestion.render(UserManagement.getCurrentUser(), number.toDec(), numberType));
   }
   
-  public Result index2() {
-    if(numberType.equals("Oktalzahl")) {
-      NAryNumber nr = new NAryNumber(number, 8);
-      if(nr.toString().equals(formula)) {
-        return ok(NArySolution.render(formula, "richtig"));
-      } else {
-        return ok(NArySolution.render(formula, "falsch"));
-      }
-    } else if(numberType.equals("Binärzahl")) {
-      BinaryNumber nr = new BinaryNumber(number);
-      if(nr.toString().equals(formula)) {
-        return ok(NArySolution.render(formula, "richtig"));
-      } else {
-        return ok(NArySolution.render(formula, "falsch"));
-      }
-    } else if(numberType.equals("Hexadezimalzahl")) {
-    	NAryNumber nr = new NAryNumber(number, 16);
-      if(nr.toString().equals(formula)) {
-        return ok(NArySolution.render(formula, "richtig"));
-      } else {
-        return ok(NArySolution.render(formula, "falsch"));
-      }
-    } else {
-      return ok("fail");
-    }
+  public Result checkSolution() {
+	return ok(narysolution.render(UserManagement.getCurrentUser(), number.toDec(), numberType, learnerSolution, number.toString(), number.toString().equals(learnerSolution)));
   }
 }

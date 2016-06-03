@@ -1,0 +1,22 @@
+@(user: model.user.User)
+
+@main("HTML-Test", user) {
+	<div class="container">
+		<div class="panel panel-default">
+	      <div class="panel-heading">
+	        <a href="@binary.routes.Bool.index">Bool'sche Algebra</a>
+	      </div>
+	      <div class="panel-body">
+	        <p>Wahrheitstabellen ausf&uuml;llen.</p>
+	      </div>
+	    </div>
+	    <div class="panel panel-default">
+	      <div class="panel-heading">
+	        <a href="@binary.routes.NAry.index">Zahlensysteme</a>
+	      </div>
+	      <div class="panel-body">
+	        <p>Umformen von Zahlen ins Bin&auml;r-, Octal- und Hexadezimalsystem.</p>
+	      </div>
+	    </div>
+	</div>
+}
