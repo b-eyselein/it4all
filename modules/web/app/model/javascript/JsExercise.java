@@ -24,4 +24,9 @@ public class JsExercise extends Exercise {
   @JsonManagedReference
   public List<JsTest> functionTests;
 
+  @Override
+  public int getMaxPoints() {
+    return 2;
+  }
+
 }

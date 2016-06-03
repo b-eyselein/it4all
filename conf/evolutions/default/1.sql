@@ -3,6 +3,16 @@
 
 # --- !Ups
 
+create table csstask (
+  id                            integer not null,
+  exercise_id                   integer not null,
+  taskdesc                      varchar(2000),
+  xpath_query_name              varchar(255),
+  defining_attribute            varchar(255),
+  attributes                    varchar(255),
+  constraint pk_csstask primary key (id,exercise_id)
+);
+
 create table childtask (
   id                            integer not null,
   task_id                       integer not null,
@@ -92,6 +102,9 @@ create table xmlexercise (
   constraint pk_xmlexercise primary key (id)
 );
 
+alter table csstask add constraint fk_csstask_exercise_id foreign key (exercise_id) references exercise (id) on delete restrict on update restrict;
+create index ix_csstask_exercise_id on csstask (exercise_id);
+
 alter table childtask add constraint fk_childtask_task foreign key (task_id,exercise_id) references task (id,exercise_id) on delete restrict on update restrict;
 create index ix_childtask_task on childtask (task_id,exercise_id);
 
@@ -113,6 +126,9 @@ create index ix_task_exercise_id on task (exercise_id);
 
 # --- !Downs
 
+alter table csstask drop foreign key fk_csstask_exercise_id;
+drop index ix_csstask_exercise_id on csstask;
+
 alter table childtask drop foreign key fk_childtask_task;
 drop index ix_childtask_task on childtask;
 
@@ -130,6 +146,8 @@ drop index ix_js_testvalue_test_id on js_testvalue;
 
 alter table task drop foreign key fk_task_exercise_id;
 drop index ix_task_exercise_id on task;
+
+drop table if exists csstask;
 
 drop table if exists childtask;
 

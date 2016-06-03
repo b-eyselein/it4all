@@ -29,7 +29,7 @@ import model.html.result.ChildResult;
 import model.html.result.ElementResult;
 
 @Entity
-public class Task extends Model {
+public class CSSTask extends Model {
   
   public static final String MULTIPLE_ATTRIBUTES_SPLIT_CHARACTER = ":";
   public static final String KEY_VALUE_CHARACTER = "=";
@@ -64,10 +64,10 @@ public class Task extends Model {
     List<WebElement> foundElements = searchContext.findElements(By.xpath(xpathQuery));
 
     if(foundElements.isEmpty())
-      return new ElementResult(this, Success.NONE);
+      return new ElementResult(null, Success.NONE);
     
     if(foundElements.size() > 1)
-      return new ElementResult(this, Success.NONE);
+      return new ElementResult(null, Success.NONE);
     
     // Nur noch ein passendes Element
     WebElement foundElement = foundElements.get(0);
@@ -77,11 +77,11 @@ public class Task extends Model {
 
     if(allResultsSuccessful(evaluatedAttributeResults) && allResultsSuccessful(evaluatedChildResults))
       //@formatter:off
-      return new ElementResult(this, Success.COMPLETE)
+      return new ElementResult(null, Success.COMPLETE)
           .withAttributeResults(evaluatedAttributeResults)
           .withChildResults(evaluatedChildResults);
     else
-      return new ElementResult(this, Success.PARTIALLY)
+      return new ElementResult(null, Success.PARTIALLY)
           .withAttributeResults(evaluatedAttributeResults)
           .withChildResults(evaluatedChildResults);
       //@formatter:on

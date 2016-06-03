@@ -1,4 +1,4 @@
-@(user: model.user.User, exercise: model.css.CssExercise, serverUrl: String)
+@(user: model.user.User, exercise: model.html.HtmlExercise, oldSolution: String, serverUrl: String)
 
 @main("HTML-Test", user) {
 <script src="@controllers.web.routes.Assets.versioned("assets/ace/ace.js")"></script>
@@ -56,13 +56,8 @@
         <div id="editorFenster" class="tab-pane fade in active">
           <div class="panel panel-default">
             <div class="panel-body">
-              <pre id="editor" class="form-control">&lt;!doctype html&gt;
-&lt;html&gt;
-  &lt;head&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-  &lt;/body&gt;
-&lt;/html&gt;</pre>
+              <pre id="editor" class="form-control">@oldSolution
+</pre>
               <script type="text/javascript">
                               var editor = ace.edit("editor");
                               editor.setTheme("ace/theme/eclipse");
@@ -79,7 +74,7 @@
         <div id="ansicht" class="tab-pane fade">
           <div class="panel panel-default">
             <div class="panel-body embed-responsive embed-responsive-4by3"">
-              <iframe class="embed-responsive-item" src="@@controllers.web.routes.HTML.site(user.getName(), exercise.id)"></iframe>
+              <iframe class="embed-responsive-item" src="@controllers.web.routes.HTML.site(user, exercise.id)"></iframe>
             </div>
           </div>
         </div>
@@ -94,13 +89,13 @@
       <div class="panel panel-default">
         <div class="panel-heading">Teilaufgaben und Korrektur</div>
         <div class="panel-body">
-          @@for(task <- exercise.tasks) {
-          <div id="pan_task@@task.key.id" class="panel panel-default">
-            <div class="panel-heading" data-toggle="collapse" href="#task@@task.key.id">
-              @@{task.key.id}.@@task.taskDescription <span class="glyphicon glyphicon-chevron-down pull-right" id="chev@@task.key.id"></span>
+          @for(task <- exercise.cssTasks) {
+          <div id="pan_task@task.key.id" class="panel panel-default">
+            <div class="panel-heading" data-toggle="collapse" href="#task@task.key.id">
+              @{task.key.id}.@task.taskDescription <span class="glyphicon glyphicon-chevron-down pull-right" id="chev@task.key.id"></span>
             </div>
-            <div id="task@@task.key.id" class="panel-collapse collapse">
-              <div class="panel-body" id="com_task@@task.key.id">TODO: Kommentar...</div>
+            <div id="task@task.key.id" class="panel-collapse collapse">
+              <div class="panel-body" id="com_task@task.key.id">TODO: Kommentar...</div>
             </div>
           </div>
           }

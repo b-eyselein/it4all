@@ -12,7 +12,7 @@ import com.avaje.ebean.Model;
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @DiscriminatorColumn(name = "type")
-public class Exercise extends Model {
+public abstract class Exercise extends Model {
   
   // FIXME: PK: type + int!
   @Id
@@ -22,5 +22,7 @@ public class Exercise extends Model {
 
   @Column(name = "exerciseText", length = 2000)
   public String exerciseText;
+
+  public abstract int getMaxPoints();
 
 }

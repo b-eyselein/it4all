@@ -31,4 +31,8 @@ public class Grading extends Model {
     key = theKey;
   }
 
+  public boolean hasAllPoints() {
+    return points == exercise.getMaxPoints();
+  }
+  
 }
