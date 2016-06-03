@@ -47,7 +47,7 @@ public class NAry extends Controller {
   
   public Result index2() {
     if(numberType.equals("Oktalzahl")) {
-      OctalNumber nr = new OctalNumber(number);
+      NAryNumber nr = new NAryNumber(number, 8);
       if(nr.toString().equals(formula)) {
         return ok(NArySolution.render(formula, "richtig"));
       } else {
@@ -61,7 +61,7 @@ public class NAry extends Controller {
         return ok(NArySolution.render(formula, "falsch"));
       }
     } else if(numberType.equals("Hexadezimalzahl")) {
-      HexadecimalNumber nr = new HexadecimalNumber(number);
+    	NAryNumber nr = new NAryNumber(number, 16);
       if(nr.toString().equals(formula)) {
         return ok(NArySolution.render(formula, "richtig"));
       } else {
