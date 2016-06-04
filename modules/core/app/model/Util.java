@@ -1,5 +1,6 @@
 package model;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,9 +29,18 @@ public class Util {
 
     readRootDir();
 
+    // TODO: get owner of rootSolDir
     if(!Files.exists(rootSolDir))
       theLogger.error("Folder for solutions does not exits!");
     
+    try {
+      String fileOwner = Files.getOwner(rootSolDir).getName();
+      String processOwner = System.getProperty("user.name");
+      if(!fileOwner.equals(processOwner))
+        theLogger.error(
+            "FileOwner of folder for solutions " + fileOwner + " does not match starter of programm " + processOwner);
+    } catch (IOException e) {
+    }
   }
 
   public Path getExcelSolFileForExercise(User user, String fileName, String exerciseType) {
