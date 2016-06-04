@@ -1,4 +1,4 @@
-package model.boolscheAlgebra.BFTree;
+package model.boolescheAlgebra.BFTree;
 
 import java.util.List;
 
@@ -21,10 +21,10 @@ public class BF_NOT implements BFKnoten {
 	}
 
 	@Override
-	public List<BoolscheFormelTree> getTeilformeln(BF_Variable[] vars) {
+	public List<BoolescheFunktionTree> getTeilformeln(BF_Variable[] vars) {
 		//System.out.println(knoten.getClass()); // TODO: remove
-		List<BoolscheFormelTree> list = this.knoten.getTeilformeln(vars);
-		list.add(new BoolscheFormelTree(this, vars));
+		List<BoolescheFunktionTree> list = this.knoten.getTeilformeln(vars);
+		list.add(new BoolescheFunktionTree(this, vars));
 		return list;
 	}
 

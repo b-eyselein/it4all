@@ -1,17 +1,19 @@
-package model.boolscheAlgebra;
+package model.boolescheAlgebra;
 
 import java.util.Arrays;
 import java.util.TreeSet;
 
-import model.boolscheAlgebra.BFTree.*;
+import model.boolescheAlgebra.BFTree.*;
 
-public class BoolFormelParser {
+public class BoolescheFunktionParser {
+	
+	// TODO: einzelne Methoden beim Parsen.
 	
 	/* ----------------------------------------------------------------
 	 * Gibt die Formel als Tree zurueck, der interpretiert werden kann.
 	 * ----------------------------------------------------------------
 	 */
-	public BoolscheFormelTree getBFTree(String originalformel) {
+	public static BoolescheFunktionTree getBFTree(String originalformel) throws IllegalArgumentException {
 		String formel = originalformel.toLowerCase();
 		// Pruefung auf fehlende Klammern
 		int klammerauf = 0;
@@ -77,14 +79,14 @@ public class BoolFormelParser {
 			bf_vars[i_vars] = new BF_Variable(s);
 			i_vars++;
 		}
-		return new BoolscheFormelTree(getNextKnoten(formel, bf_vars), bf_vars);
+		return new BoolescheFunktionTree(getNextKnoten(formel, bf_vars), bf_vars);
 	}
 	
 	/* ---------------------------
 	 * parst Teilstueck der Formel
 	 * ---------------------------
 	 */
-	private BFKnoten getNextKnoten(String ausdruck, BF_Variable[] vars) { // TODO
+	private static BFKnoten getNextKnoten(String ausdruck, BF_Variable[] vars) throws IllegalArgumentException {
 		// entfernt fuehrende und anhaengend Leerzeichen und Klammern
 		ausdruck = ausdruck.trim();
 		while (ausdruck.startsWith("(") && ausdruck.endsWith(")")) {
@@ -155,7 +157,7 @@ public class BoolFormelParser {
 			return new BF_1();
 		}
 		
-		throw new IllegalArgumentException("fehlende Variable / fehlender Ausdruck");
+		throw new IllegalArgumentException("fehlende Variable / fehlender Ausdruck"); // TODO: Fehlerbeschreibung ergaenzen
 	}
 
 }
