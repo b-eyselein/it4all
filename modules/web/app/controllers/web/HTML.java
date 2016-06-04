@@ -35,34 +35,34 @@ public class HTML extends Controller {
   private static final String FILE_TYPE = "html";
   private static final String EXERCISE_TYPE = "html";
   private static final String STANDARD_HTML = "<!doctype html>\n<html>\n\n<head>\n</head>\n\n<body>\n</body>\n\n</html>";
-
+  
   @Inject
   Util util;
-
+  
   @Inject
   WebStartUpChecker checker;
-
+  
   @Security.Authenticated(Secured.class)
   public Result commit(int exerciseId) {
     User user = UserManagement.getCurrentUser();
-
+    
     String learnerSolution = extractLearnerSolutionFromRequest(request());
     saveSolutionForUser(user, learnerSolution, exerciseId);
-
+    
     List<ElementResult> elementResults = correctExercise(user, HtmlExercise.finder.byId(exerciseId));
-
+    
     if(request().acceptedTypes().get(0).toString().equals("application/json"))
       return ok(Json.toJson(elementResults));
     else
       // TODO: Definitive Abgabe Html, rendere Html!
       return ok(htmlcorrect.render(learnerSolution, elementResults, UserManagement.getCurrentUser()));
   }
-
+  
   @Security.Authenticated(Secured.class)
   public Result exercise(int exerciseId) {
     User user = UserManagement.getCurrentUser();
     HtmlExercise exercise = HtmlExercise.finder.byId(exerciseId);
-
+    
     if(exercise == null)
       return badRequest(
           error.render(user, new Html("<p>Diese Aufgabe existert leider nicht.</p><p>Zur&uuml;ck zur <a href=\""
@@ -77,14 +77,14 @@ public class HTML extends Controller {
     } catch (IOException e) {
       Logger.error(e.getMessage());
     }
-
+    
     return ok(html.render(user, exercise, defaultOrOldSolution));
   }
-
+  
   @Security.Authenticated(Secured.class)
   public Result index() {
     User currentUser = UserManagement.getCurrentUser();
-
+    
     Path rootFolderForSolutions = util.getRootSolDir();
     if(!Files.exists(rootFolderForSolutions))
       return internalServerError(error.render(currentUser,
@@ -92,7 +92,7 @@ public class HTML extends Controller {
     
     return ok(htmloverview.render(HtmlExercise.finder.all(), currentUser));
   }
-
+  
   public Result site(User user, int exercise) {
     Path file = util.getSolutionFileForExerciseAndType(user, EXERCISE_TYPE, exercise, FILE_TYPE);
     if(!Files.exists(file))
@@ -104,19 +104,19 @@ public class HTML extends Controller {
       Logger.error("Fehler beim Lesen einer Html-Datei: " + file, error);
       return badRequest("Fehler beim Lesen der Datei!");
     }
-
+    
   }
-
+  
   private List<ElementResult> correctExercise(User user, HtmlExercise exercise) {
     String solutionUrl = routes.HTML.site(user, exercise.id).absoluteURL(request());
-
+    
     return HtmlCorrector.correct(solutionUrl, exercise, user);
   }
-
+  
   private String extractLearnerSolutionFromRequest(Request request) {
     return request.body().asFormUrlEncoded().get(LEARNER_SOLUTION_VALUE)[0];
   }
-
+  
   private void saveSolutionForUser(User user, String solution, int exercise) {
     try {
       Path solDir = util.getSolDirForUserAndType(user, EXERCISE_TYPE);

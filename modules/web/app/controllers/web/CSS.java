@@ -28,9 +28,10 @@ public class CSS extends Controller {
   private static final String FILE_TYPE = "html";
   private static final String STANDARD_HTML = "<!doctype html>\n<html>\n\n<head>\n</head>\n\n<body>\n</body>\n\n</html>";
   private static final String EXERCISE_TYPE = "html";
+
   @Inject
   Util util;
-
+  
   public Result commit(int exerciseId) {
     if(request().accepts("application/json"))
       return ok("{}");
@@ -38,11 +39,11 @@ public class CSS extends Controller {
       // TODO: Definitive Abgabe Html, rendere Html!
       return ok("TODO!");
   }
-
+  
   public Result exercise(int exerciseId) {
     User user = UserManagement.getCurrentUser();
     HtmlExercise exercise = HtmlExercise.finder.byId(exerciseId);
-
+    
     if(exercise == null)
       return badRequest(
           error.render(user, new Html("<p>Diese Aufgabe existert leider nicht.</p><p>Zur&uuml;ck zur <a href=\""
@@ -64,13 +65,13 @@ public class CSS extends Controller {
     } catch (IOException e) {
       Logger.error("Fehler beim Laden der alten Lösung!", e);
     }
-
+    
     return ok(css.render(UserManagement.getCurrentUser(), exercise, defaultOrOldSolution));
   }
-
+  
   public Result index() {
     List<HtmlExercise> exercises = HtmlExercise.finder.all();
     return ok(cssOverview.render(exercises, UserManagement.getCurrentUser()));
   }
-
+  
 }
