@@ -85,8 +85,7 @@ public class XML extends Controller {
       Logger.error(e.getMessage());
     }
 
-    return ok(xml.render(UserManagement.getCurrentUser(), exercise, referenceCode, defaultOrOldSolution,
-        util.getServerUrl()));
+    return ok(xml.render(UserManagement.getCurrentUser(), exercise, referenceCode, defaultOrOldSolution));
   }
 
   public Result index() {
