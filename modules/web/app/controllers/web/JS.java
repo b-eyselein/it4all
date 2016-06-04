@@ -3,11 +3,8 @@ package controllers.web;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import controllers.core.UserManagement;
 import model.Secured;
-import model.Util;
 import model.javascript.JsCorrector;
 import model.javascript.JsExercise;
 import model.javascript.JsTestResult;
