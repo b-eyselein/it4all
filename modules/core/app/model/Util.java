@@ -1,5 +1,6 @@
 package model;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -9,7 +10,6 @@ import javax.inject.Singleton;
 
 import model.user.User;
 import play.Configuration;
-import play.Environment;
 import play.Logger;
 
 @Singleton
@@ -18,50 +18,51 @@ public class Util {
   private static final String SAMPLE_SUB_DIRECTORY = "samples";
   private static final String SOLUTIONS_SUB_DIRECTORY = "solutions";
   private static final Logger.ALogger theLogger = Logger.of("startup");
-  
+
   private Path rootSolDir;
-  private String serverUrl;
-  
-  private Environment environment;
+
   private Configuration configuration;
-  
+
   @Inject
-  public Util(Configuration theConfiguration, Environment theEnvironment) {
-    environment = theEnvironment;
+  public Util(Configuration theConfiguration) {
     configuration = theConfiguration;
-    
+
     readRootDir();
-    readServerUrl();
-    
+
+    // TODO: get owner of rootSolDir
     if(!Files.exists(rootSolDir))
       theLogger.error("Folder for solutions does not exits!");
     
+    try {
+      String fileOwner = Files.getOwner(rootSolDir).getName();
+      String processOwner = System.getProperty("user.name");
+      if(!fileOwner.equals(processOwner))
+        theLogger.error(
+            "FileOwner of folder for solutions " + fileOwner + " does not match starter of programm " + processOwner);
+    } catch (IOException e) {
+    }
   }
-  
+
   public Path getExcelSolFileForExercise(User user, String fileName, String exerciseType) {
     return Paths.get(getSolDirForUserAndType(user, exerciseType).toString(), fileName);
   }
-  
+
   public Path getRootSolDir() {
     return rootSolDir;
   }
-  
+
   public Path getSampleDirectoryForExercise(String exerciseType, int exerciseId) {
     return Paths.get(rootSolDir.toString(), SAMPLE_SUB_DIRECTORY, exerciseType, "ex_" + exerciseId);
   }
-  
+
   public Path getSampleFileForExerciseAndType(String exerciseType, String fileName) {
     return Paths.get(rootSolDir.toString(), SAMPLE_SUB_DIRECTORY, exerciseType, fileName);
   }
-  
-  public String getServerUrl() {
-    return serverUrl;
-  }
-  
+
   public Path getSolDirForUser(User user) {
     return Paths.get(rootSolDir.toString(), SOLUTIONS_SUB_DIRECTORY, user.name);
   }
-  
+
   public Path getSolDirForUserAndType(User user, String exerciseType) {
     return Paths.get(getSolDirForUser(user).toString(), exerciseType);
   }
@@ -70,18 +71,9 @@ public class Util {
     return Paths.get(getSolDirForUserAndType(user, exerciseType).toString(), exercise + "." + fileType);
   }
 
-  public void readServerUrl() {
-    if(environment.isDev() || environment.isTest())
-      serverUrl = "http://localhost:9000";
-    else if(environment.isProd())
-      serverUrl = "https://www.it4all.uni-wuerzburg.de";
-    else
-      throw new IllegalArgumentException("Cound not determine URL of Server!");
-  }
-  
   private void readRootDir() {
     String os = System.getProperty("os.name").toLowerCase();
-    
+
     // WINDOWS
     if(os.indexOf("win") >= 0)
       rootSolDir = Paths.get(configuration.getString("rootDirWin"));
@@ -92,5 +84,5 @@ public class Util {
     else
       throw new IllegalArgumentException("OS not detectable");
   }
-  
+
 }

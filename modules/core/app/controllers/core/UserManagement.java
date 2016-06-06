@@ -23,7 +23,7 @@ public class UserManagement extends Controller {
 
   public static User getCurrentUser() {
     Http.Session session = Http.Context.current().session();
-    if(session.get(SESSION_ID_FIELD).equals(""))
+    if(session == null || session.get(SESSION_ID_FIELD) == null || session.get(SESSION_ID_FIELD).isEmpty())
       throw new IllegalArgumentException("No user name was given!");
     return User.finder.byId(session.get(SESSION_ID_FIELD));
   }

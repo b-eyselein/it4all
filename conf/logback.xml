@@ -29,7 +29,7 @@
 
 	<logger name="play" level="INFO" />
 	<logger name="application" level="DEBUG" />
-	<logger name="startup" level="INFO" />
+	<logger name="startup" level="DEBUG" />
 
 	<!-- Off these ones as they are annoying, and anyway we manage configuration 
 		ourselves -->

@@ -10,7 +10,7 @@ import javax.persistence.Table;
 
 import model.html.result.ChildResult;
 import model.html.task.ChildTaskKey;
-import model.html.task.Task;
+import model.html.task.HtmlTask;
 
 import com.avaje.ebean.Model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -30,7 +30,7 @@ public class ChildTask extends Model {
   })
   //@formatter:on
   @JsonBackReference
-  public Task task;
+  public HtmlTask task;
 
   @Column(name = "tagName")
   public String tagName;
