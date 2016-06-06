@@ -23,6 +23,7 @@ import org.xml.sax.SAXParseException;
 import model.user.User;
 
 public class XmlCorrector {
+  
   public static List<XMLError> correctXMLAgainstDTD(File studentSolutionXML) {
     List<XMLError> output = new LinkedList<>();
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -33,7 +34,6 @@ public class XmlCorrector {
     } catch (ParserConfigurationException e) {
     }
     builder.setErrorHandler(new ErrorHandler() {
-      // kommt in eigene Klasse
       
       @Override
       public void warning(SAXParseException exception) throws SAXException {
@@ -99,6 +99,7 @@ public class XmlCorrector {
   }
   
   public static List<XMLError> correctDTDAgainstXML(File studentenSolutionDTD) {
+    
     List<XMLError> output = new LinkedList<>();
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     factory.setValidating(true);
@@ -111,73 +112,54 @@ public class XmlCorrector {
       
       @Override
       public void warning(SAXParseException exception) throws SAXException {
-        String string = null;
+        // String string = null;
         if(exception.getSystemId().indexOf("xml") >= 0) {
           
-          // würde den Fehler in der XML anzeigen
-          // nur Ausgabe des Fehlers da die Reihenfolge in er DTD
-          // keine Rolle spielt
-          string = "WARNING:" + "\n" + "Fehler: " + exception.getMessage() + "\n";
-          // TODO
-          // if (!output.contains(string)) {
-          // output.add(string);
-          // }
+          output.add(new XMLError(exception.getMessage(), XmlErrorType.WARNING));
           
         } else {
-          output.add(new XMLError(exception.getMessage(), XmlErrorType.WARNING));
+          output.add(new XMLError(exception.getLineNumber(), exception.getMessage(), XmlErrorType.WARNING));
         }
-        
       }
       
       @Override
       public void fatalError(SAXParseException exception) throws SAXException {
-        String string = null;
+        // String string = null;
         if(exception.getSystemId().indexOf("xml") >= 0) {
-          // würde den Fehler in der XML anzeigen
-          // nur Ausgabe des Fehlers da die Reihenfolge in er DTD
-          // keine Rolle spielt
-          string = "FATAL ERROR:" + "\n" + "Fehler: " + exception.getMessage() + "\n";
-          // TODO
-          // if (!output.contains(string)) {
-          // output.add(string);
-          // }
+          
+          output.add(new XMLError(exception.getMessage(), XmlErrorType.WARNING));
           
         } else {
-          output.add(new XMLError(exception.getMessage(), XmlErrorType.FATALERROR));
+          output.add(new XMLError(exception.getLineNumber(), exception.getMessage(), XmlErrorType.FATALERROR));
         }
       }
       
       @Override
       public void error(SAXParseException exception) throws SAXException {
-        String string = null;
+        // String string = null;
         if(exception.getSystemId().indexOf("xml") >= 0) {
-          // würde den Fehler in der XML anzeigen
-          // nur Ausgabe des Fehlers, da die Reihenfolge in DTD keine
-          // Rolle spielt
-          string = "ERROR:" + "\n" + "Fehler: " + exception.getMessage() + "\n";
-          // manche Fehler werden mehrmals ausgegeben, daher
-          // überprüfen ob der Fehler schon in der Ausgabe ist
-          // TODO
-          // if (!output.contains(string)) {
-          // ElementResult result = new ElementResult(Success.PARTIALLY, "",
-          // string);
-          // output.add(result);
-          // }
+          
+          output.add(new XMLError(exception.getMessage(), XmlErrorType.WARNING));
+          
         } else {
-          output.add(new XMLError(exception.getMessage(), XmlErrorType.ERROR));
+          output.add(new XMLError(exception.getLineNumber(), exception.getMessage(), XmlErrorType.ERROR));
         }
       }
     });
     
     try {
-      Document doc = builder.parse(studentenSolutionDTD);
+      Document doc = builder.parse(studentenSolutionDTD); // studentenSolutionDTD);
     } catch (SAXException | IOException e) {
+    }
+    for(XMLError item: output) {
+      System.out.println(item);
     }
     
     return output;
   }
-  
-  public static List<XMLError> correct(File solutionFile, File referenceFile, XmlExercise exercise, User user) throws IOException {
+
+  public static List<XMLError> correct(File solutionFile, File referenceFile, XmlExercise exercise, User user)
+      throws IOException {
     switch(exercise.exerciseType) {
     case XMLAgainstXSD:
       return correctXMLAgainstXSD(solutionFile, referenceFile);
@@ -187,7 +169,6 @@ public class XmlCorrector {
       return correctDTDAgainstXML(solutionFile);
     // case XSDAgainstXML:
     // return correctXSDAgainstXML(solutionFile, referenceFile);
-    // break;
     default:
       return null;
     }

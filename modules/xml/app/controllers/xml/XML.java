@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -97,12 +98,14 @@ public class XML extends Controller {
     Path learnerSolution = solutionPath;
     Path referenceFile = util.getSampleFileForExerciseAndType(EXERCISE_TYPE, exercise.referenceFileName);
     List<XMLError> result = null;
+    Logger.info(exercise.exerciseType.toString());
     try {
       result = XmlCorrector.correct(learnerSolution.toFile(), referenceFile.toFile(), exercise, user);
     } catch (IOException e) {
       // TODO Auto-generated catch block
-      e.printStackTrace();
+      Logger.error(")))))))" + e.getMessage());
     }
+//    result = new ArrayList<XMLError>();
     if(result.isEmpty()) {
       result.add(new XMLError(XmlErrorType.NONE, "Super!", "Bist ein ganz guter Student."));
     }

@@ -20,7 +20,8 @@ insert into exercise (`type`, `id`, `title`, `exerciseText`, `file_name`, `defau
    	("spread", 5, "Planung Schullandheimaufenthalt", "Sie sind beauftragt, einen Schullandheimaufenthalt zu planen und die Kosten zu kalkulieren.", "Aufgabe_Schullandheim", "", "");
 	
 insert into xmlexercise (`id`, `title`, `exerciseType`, `referenceFileName`, `exerciseText`) values
-	(1, "Hello, XML", "XMLAgainstDTD", "first.dtd", "exerciseText"), (2, "Hello2, XSD", "XMLAgainstXSD","books.xsd", "teeeeeeeext");
+	(1, "Hello, XML", "XMLAgainstDTD", "first.dtd", "exerciseText"), (2, "Hello2, XSD", "XMLAgainstXSD","books.xsd", "teeeeeeeext"),
+	(3, "Hello3, DTD", "DTDAgainstXML","third.xml", "teeeeeeeeeeeeext");
 
 insert into task (`exercise_id`, `id`, `taskDesc`, `xpath_query_name`, `attributes`, `defining_attribute`) values
 	(1, 1, "Erstellen Sie ein Formular auf der Seite. Als Aktion soll test und als Methode 'post' angegeben werden.",
