@@ -17,12 +17,12 @@ public abstract class Exercise extends Model {
   // FIXME: PK: type + int!
   @Id
   public int id;
-
+  
   public String title;
-
-  @Column(name = "exerciseText", length = 2000)
+  
+  @Column(name = "exerciseText", columnDefinition = "text")
   public String exerciseText;
-
+  
   public abstract int getMaxPoints();
-
+  
 }

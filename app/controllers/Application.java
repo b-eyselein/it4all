@@ -11,12 +11,12 @@ import javax.inject.Inject;
 import controllers.core.UserManagement;
 import controllers.web.WebStartUpChecker;
 
+@Security.Authenticated(Secured.class)
 public class Application extends Controller {
   
   @Inject
   WebStartUpChecker checker;
-  
-  @Security.Authenticated(Secured.class)
+
   public Result index() {
     return ok(index.render(UserManagement.getCurrentUser()));
   }
