@@ -1,5 +1,5 @@
 @* boolsolution Template File *@
-@(user: model.user.User)(correct: Boolean)(lsg: String)
+@(user: model.user.User)(correct: Boolean)(formula: String)(vars: Array[String])(zeros: Array[Array[Char]])(length: Int)(userInput: Array[String])(eins: String)
 @main("Wertetabelle-Lösung", user) {
 	<div class="container">
 		<div class="panel panel-@if(correct){success}else{danger}">
@@ -11,8 +11,34 @@
 			@if(correct) {
 				richtig ausgefüllt.
 			} else {
-				leider falsch ausgefüllt. <BR> Die richtigen Antworten lauten: <BR> @lsg.
-			}
+				leider falsch ausgefüllt. <BR> Die richtige Lösungen sieht folgendermaßen aus: <BR> 
+				<table class="table">
+					<thread align = "right">
+						<tr>
+							@for(v <- vars){
+								<td>
+									@v
+								</td>
+							}
+							<td>
+								@formula
+							</td>
+						</tr>
+					</thread>
+					<tbody align = "left">
+						@for(i <- 0 until (length)){
+							<tr>
+								@for(j <- 0 until (vars.length)){
+									<td>@zeros(j)(i)</td>
+								}
+							<td>
+								<p class="text-@if(userInput(i) == eins){success}else{danger}">@eins</p>
+							</td>
+						}
+					</tbody>
+					</table>
+				}
+			<BR>
 	       	<p><a href="@binary.routes.Bool.index" class="btn btn-primary" role="button">Nächste Aufgabe</a></p>
 	      </div>
 	    </div>
