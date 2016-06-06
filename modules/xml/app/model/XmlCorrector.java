@@ -16,7 +16,6 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.w3c.dom.Document;
-import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
@@ -33,28 +32,10 @@ public class XmlCorrector {
       builder = factory.newDocumentBuilder();
     } catch (ParserConfigurationException e) {
     }
-    builder.setErrorHandler(new ErrorHandler() {
-      
-      @Override
-      public void warning(SAXParseException exception) throws SAXException {
-        output.add(new XMLError(exception.getLineNumber(), exception.getMessage(), XmlErrorType.WARNING));
-      }
-      
-      @Override
-      public void fatalError(SAXParseException exception) throws SAXException {
-        output.add(new XMLError(exception.getLineNumber(), exception.getMessage(), XmlErrorType.FATALERROR));
-      }
-      
-      @Override
-      public void error(SAXParseException exception) throws SAXException {
-        output.add(new XMLError(exception.getLineNumber(), exception.getMessage(), XmlErrorType.ERROR));
-        
-      }
-    });
+    builder.setErrorHandler(new SimpleXMLErrorHandler(output));
     
     try {
       Document doc = builder.parse(studentSolutionXML);
-      
     } catch (SAXException e) {
     } catch (IOException e) {
     }
@@ -73,24 +54,7 @@ public class XmlCorrector {
     }
     
     Validator validator = schema.newValidator();
-    validator.setErrorHandler(new ErrorHandler() {
-      
-      @Override
-      public void warning(SAXParseException exception) throws SAXException {
-        output.add(new XMLError(exception.getLineNumber(), exception.getMessage(), XmlErrorType.WARNING));
-      }
-      
-      @Override
-      public void fatalError(SAXParseException exception) throws SAXException {
-        output.add(new XMLError(exception.getLineNumber(), exception.getMessage(), XmlErrorType.FATALERROR));
-      }
-      
-      @Override
-      public void error(SAXParseException exception) throws SAXException {
-        output.add(new XMLError(exception.getLineNumber(), exception.getMessage(), XmlErrorType.ERROR));
-        
-      }
-    });
+    validator.setErrorHandler(new SimpleXMLErrorHandler(output));
     try {
       validator.validate(xmlFile);
     } catch (SAXException e) {
@@ -99,7 +63,6 @@ public class XmlCorrector {
   }
   
   public static List<XMLError> correctDTDAgainstXML(File studentenSolutionDTD) {
-    
     List<XMLError> output = new LinkedList<>();
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     factory.setValidating(true);
@@ -108,44 +71,7 @@ public class XmlCorrector {
       builder = factory.newDocumentBuilder();
     } catch (ParserConfigurationException e) {
     }
-    builder.setErrorHandler(new ErrorHandler() {
-      
-      @Override
-      public void warning(SAXParseException exception) throws SAXException {
-        // String string = null;
-        if(exception.getSystemId().indexOf("xml") >= 0) {
-          
-          output.add(new XMLError(exception.getMessage(), XmlErrorType.WARNING));
-          
-        } else {
-          output.add(new XMLError(exception.getLineNumber(), exception.getMessage(), XmlErrorType.WARNING));
-        }
-      }
-      
-      @Override
-      public void fatalError(SAXParseException exception) throws SAXException {
-        // String string = null;
-        if(exception.getSystemId().indexOf("xml") >= 0) {
-          
-          output.add(new XMLError(exception.getMessage(), XmlErrorType.WARNING));
-          
-        } else {
-          output.add(new XMLError(exception.getLineNumber(), exception.getMessage(), XmlErrorType.FATALERROR));
-        }
-      }
-      
-      @Override
-      public void error(SAXParseException exception) throws SAXException {
-        // String string = null;
-        if(exception.getSystemId().indexOf("xml") >= 0) {
-          
-          output.add(new XMLError(exception.getMessage(), XmlErrorType.WARNING));
-          
-        } else {
-          output.add(new XMLError(exception.getLineNumber(), exception.getMessage(), XmlErrorType.ERROR));
-        }
-      }
-    });
+    builder.setErrorHandler(new DTDXMLErrorHandler(output));
     
     try {
       Document doc = builder.parse(studentenSolutionDTD); // studentenSolutionDTD);
