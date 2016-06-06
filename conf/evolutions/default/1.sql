@@ -3,16 +3,6 @@
 
 # --- !Ups
 
-create table csstask (
-  id                            integer not null,
-  exercise_id                   integer not null,
-  taskdesc                      varchar(2000),
-  xpath_query_name              varchar(255),
-  defining_attribute            varchar(255),
-  attributes                    varchar(255),
-  constraint pk_csstask primary key (id,exercise_id)
-);
-
 create table childtask (
   id                            integer not null,
   task_id                       integer not null,
@@ -22,11 +12,21 @@ create table childtask (
   constraint pk_childtask primary key (id,task_id)
 );
 
+create table css_task (
+  id                            integer not null,
+  exercise_id                   integer not null,
+  taskdesc                      text,
+  xpath_query_name              varchar(255),
+  defining_attribute            varchar(255),
+  attributes                    varchar(255),
+  constraint pk_css_task primary key (id,exercise_id)
+);
+
 create table exercise (
   type                          varchar(31) not null,
   id                            integer auto_increment not null,
   title                         varchar(255),
-  exercisetext                  varchar(2000),
+  exercisetext                  text,
   file_name                     varchar(255),
   default_solution              varchar(255),
   function_name                 varchar(255),
@@ -63,6 +63,16 @@ create table grading (
   constraint pk_grading primary key (user_name,exercise_id)
 );
 
+create table html_task (
+  id                            integer not null,
+  exercise_id                   integer not null,
+  taskdesc                      text,
+  xpath_query_name              varchar(255),
+  defining_attribute            varchar(255),
+  attributes                    varchar(255),
+  constraint pk_html_task primary key (id,exercise_id)
+);
+
 create table js_test (
   id                            integer auto_increment not null,
   awaited_result                varchar(255),
@@ -75,16 +85,6 @@ create table js_testvalue (
   value                         varchar(255),
   test_id                       integer,
   constraint pk_js_testvalue primary key (id)
-);
-
-create table task (
-  id                            integer not null,
-  exercise_id                   integer not null,
-  taskdesc                      varchar(2000),
-  xpath_query_name              varchar(255),
-  defining_attribute            varchar(255),
-  attributes                    varchar(255),
-  constraint pk_task primary key (id,exercise_id)
 );
 
 create table users (
@@ -102,11 +102,11 @@ create table xmlexercise (
   constraint pk_xmlexercise primary key (id)
 );
 
-alter table csstask add constraint fk_csstask_exercise_id foreign key (exercise_id) references exercise (id) on delete restrict on update restrict;
-create index ix_csstask_exercise_id on csstask (exercise_id);
-
-alter table childtask add constraint fk_childtask_task foreign key (task_id,exercise_id) references task (id,exercise_id) on delete restrict on update restrict;
+alter table childtask add constraint fk_childtask_task foreign key (task_id,exercise_id) references html_task (id,exercise_id) on delete restrict on update restrict;
 create index ix_childtask_task on childtask (task_id,exercise_id);
+
+alter table css_task add constraint fk_css_task_exercise_id foreign key (exercise_id) references exercise (id) on delete restrict on update restrict;
+create index ix_css_task_exercise_id on css_task (exercise_id);
 
 alter table grading add constraint fk_grading_user_name foreign key (user_name) references users (name) on delete restrict on update restrict;
 create index ix_grading_user_name on grading (user_name);
@@ -114,23 +114,23 @@ create index ix_grading_user_name on grading (user_name);
 alter table grading add constraint fk_grading_exercise_id foreign key (exercise_id) references exercise (id) on delete restrict on update restrict;
 create index ix_grading_exercise_id on grading (exercise_id);
 
+alter table html_task add constraint fk_html_task_exercise_id foreign key (exercise_id) references exercise (id) on delete restrict on update restrict;
+create index ix_html_task_exercise_id on html_task (exercise_id);
+
 alter table js_test add constraint fk_js_test_exercise_id foreign key (exercise_id) references exercise (id) on delete restrict on update restrict;
 create index ix_js_test_exercise_id on js_test (exercise_id);
 
 alter table js_testvalue add constraint fk_js_testvalue_test_id foreign key (test_id) references js_test (id) on delete restrict on update restrict;
 create index ix_js_testvalue_test_id on js_testvalue (test_id);
 
-alter table task add constraint fk_task_exercise_id foreign key (exercise_id) references exercise (id) on delete restrict on update restrict;
-create index ix_task_exercise_id on task (exercise_id);
-
 
 # --- !Downs
 
-alter table csstask drop foreign key fk_csstask_exercise_id;
-drop index ix_csstask_exercise_id on csstask;
-
 alter table childtask drop foreign key fk_childtask_task;
 drop index ix_childtask_task on childtask;
+
+alter table css_task drop foreign key fk_css_task_exercise_id;
+drop index ix_css_task_exercise_id on css_task;
 
 alter table grading drop foreign key fk_grading_user_name;
 drop index ix_grading_user_name on grading;
@@ -138,18 +138,18 @@ drop index ix_grading_user_name on grading;
 alter table grading drop foreign key fk_grading_exercise_id;
 drop index ix_grading_exercise_id on grading;
 
+alter table html_task drop foreign key fk_html_task_exercise_id;
+drop index ix_html_task_exercise_id on html_task;
+
 alter table js_test drop foreign key fk_js_test_exercise_id;
 drop index ix_js_test_exercise_id on js_test;
 
 alter table js_testvalue drop foreign key fk_js_testvalue_test_id;
 drop index ix_js_testvalue_test_id on js_testvalue;
 
-alter table task drop foreign key fk_task_exercise_id;
-drop index ix_task_exercise_id on task;
-
-drop table if exists csstask;
-
 drop table if exists childtask;
+
+drop table if exists css_task;
 
 drop table if exists exercise;
 
@@ -157,11 +157,11 @@ drop table if exists feedback;
 
 drop table if exists grading;
 
+drop table if exists html_task;
+
 drop table if exists js_test;
 
 drop table if exists js_testvalue;
-
-drop table if exists task;
 
 drop table if exists users;
 

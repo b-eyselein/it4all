@@ -1,6 +1,6 @@
 @(user: model.user.User, exercise: model.html.HtmlExercise, oldSolution: String)
 
-@main("HTML-Test", user) {
+@main("Html-Korrektur", user) {
 <script src="@controllers.web.routes.Assets.versioned("assets/ace/ace.js")"></script>
   <script src="@controllers.web.routes.Assets.versioned("assets/processor.js")"></script>
   <script>
@@ -88,7 +88,7 @@
             <div id="ansicht" class="tab-pane fade">
               <div class="panel panel-default">
                 <div class="panel-body embed-responsive embed-responsive-4by3">
-                  <iframe class="embed-responsive-item"  src="@controllers.web.routes.HTML.site(user, exercise.id)"></iframe>
+                  <iframe class="embed-responsive-item" id="live" src="@controllers.web.routes.HTML.site(user, exercise.id)"></iframe>
                 </div>
               </div>
             </div>

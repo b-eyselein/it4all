@@ -9,7 +9,9 @@
         <a href="@web.routes.CSS.exercise(exercise.id)">Aufgabe @exercise.id: @exercise.title</a>
       </div>
       <div class="panel-body">
-        <p>@exercise.exerciseText</p>
+      @for(exerText <- exercise.exerciseText.split("\n")) {
+        <p>@exerText</p>
+      }
       </div>
     </div>
     }

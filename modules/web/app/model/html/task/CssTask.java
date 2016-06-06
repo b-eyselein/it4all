@@ -4,13 +4,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
@@ -19,17 +17,15 @@ import org.openqa.selenium.WebElement;
 import com.avaje.ebean.Model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import model.exercise.EvaluationResult;
 import model.exercise.Success;
 import model.html.HtmlExercise;
 import model.html.result.AttributeResult;
-import model.html.result.ChildResult;
 import model.html.result.ElementResult;
 
 @Entity
-public class CSSTask extends Model {
+public class CssTask extends Model implements Task {
   
   public static final String MULTIPLE_ATTRIBUTES_SPLIT_CHARACTER = ":";
   public static final String KEY_VALUE_CHARACTER = "=";
@@ -42,7 +38,7 @@ public class CSSTask extends Model {
   @JsonBackReference
   public HtmlExercise exercise;
 
-  @Column(name = "taskDesc", length = 2000)
+  @Column(name = "taskDesc", columnDefinition = "text")
   @JsonIgnore
   public String taskDescription;
 
@@ -50,11 +46,6 @@ public class CSSTask extends Model {
   public String xpathQueryName;
 
   public String definingAttribute;
-
-  @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
-  @JsonManagedReference
-  @JsonIgnore
-  public List<ChildTask> childTasks;
 
   @JsonIgnore
   public String attributes;
@@ -64,27 +55,31 @@ public class CSSTask extends Model {
     List<WebElement> foundElements = searchContext.findElements(By.xpath(xpathQuery));
 
     if(foundElements.isEmpty())
-      return new ElementResult(null, Success.NONE);
+      return new ElementResult(this, Success.NONE);
     
-    if(foundElements.size() > 1)
-      return new ElementResult(null, Success.NONE);
-    
-    // Nur noch ein passendes Element
-    WebElement foundElement = foundElements.get(0);
+    boolean allSuccesful = true;
 
-    List<ChildResult> evaluatedChildResults = evaluateAllChildResults(foundElement);
-    List<AttributeResult> evaluatedAttributeResults = evaluateAllAttributeResults(foundElement);
+    // FIXME: evaluate attributes on all elements...
+    for(WebElement element: foundElements) {
+      List<AttributeResult> evaluatedAttributeResults = evaluateAllAttributeResults(element);
+      if(!allResultsSuccessful(evaluatedAttributeResults))
+        allSuccesful = false;
+    }
 
-    if(allResultsSuccessful(evaluatedAttributeResults) && allResultsSuccessful(evaluatedChildResults))
-      //@formatter:off
-      return new ElementResult(null, Success.COMPLETE)
-          .withAttributeResults(evaluatedAttributeResults)
-          .withChildResults(evaluatedChildResults);
+    if(allSuccesful)
+      return new ElementResult(this, Success.COMPLETE);
     else
-      return new ElementResult(null, Success.PARTIALLY)
-          .withAttributeResults(evaluatedAttributeResults)
-          .withChildResults(evaluatedChildResults);
-      //@formatter:on
+      return new ElementResult(this, Success.PARTIALLY);
+  }
+
+  @Override
+  public String getDescription() {
+    return taskDescription;
+  }
+
+  @Override
+  public int getId() {
+    return key.id;
   }
 
   private boolean allResultsSuccessful(List<? extends EvaluationResult> results) {
@@ -109,12 +104,6 @@ public class CSSTask extends Model {
     return attributeResults;
   }
 
-  private List<ChildResult> evaluateAllChildResults(WebElement foundElement) {
-    List<ChildResult> childResults = getChildResults();
-    childResults.forEach(childResult -> childResult.evaluate(foundElement));
-    return childResults;
-  }
-
   private List<AttributeResult> getAttributeResults() {
     List<AttributeResult> attributesToFind = new LinkedList<AttributeResult>();
     for(String attribute: attributes.split(MULTIPLE_ATTRIBUTES_SPLIT_CHARACTER)) {
@@ -124,10 +113,6 @@ public class CSSTask extends Model {
       }
     }
     return attributesToFind;
-  }
-
-  private List<ChildResult> getChildResults() {
-    return childTasks.stream().map(childTask -> childTask.getChildResult()).collect(Collectors.toList());
   }
 
   protected List<WebElement> filterElementsForTagName(List<WebElement> foundElements, String tagName) {
