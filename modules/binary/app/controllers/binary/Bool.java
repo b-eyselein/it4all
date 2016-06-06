@@ -10,6 +10,7 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
 import views.html.boolquestion;
+import views.html.boolsolution;
 import model.boolescheAlgebra.*;
 import model.boolescheAlgebra.BFTree.*;
 
@@ -31,12 +32,8 @@ public class Bool extends Controller {
   }
 
   public Result indexSolution() {
-    String s = "";
-    for(int i = 0; i<length; i++)
-    {
-      s = s+solutions[i];
-    }
-    return ok(s);
+    boolean correct = bft.compareStringArray(solutions);
+    return ok(boolsolution.render(UserManagement.getCurrentUser(), correct, bft.getWahrheitstafelString()));
   }
 
   public Result tableAdd() {
