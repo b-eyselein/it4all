@@ -3,7 +3,7 @@ package model.html.result;
 import model.exercise.EvaluationResult;
 import model.exercise.Success;
 import model.html.task.ChildTask;
-import model.html.task.Task;
+import model.html.task.HtmlTask;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ public class ChildResult extends EvaluationResult {
   public ChildResult(ChildTask theChildTask) {
     childTask = theChildTask;
 
-    String[] keyAndValue = childTask.definingAttribute.split(Task.KEY_VALUE_CHARACTER);
+    String[] keyAndValue = childTask.definingAttribute.split(HtmlTask.KEY_VALUE_CHARACTER);
     if(keyAndValue.length > 0)
       definingAttributeKey = keyAndValue[0];
     if(keyAndValue.length == 2)

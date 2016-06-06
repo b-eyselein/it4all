@@ -1,20 +1,17 @@
-package model.boolscheAlgebra.Tests;
+package model.boolscheAlgebraTests;
 
 import static org.junit.Assert.*;
 
-import java.util.List;
-
 import org.junit.Test;
 
-import model.boolscheAlgebra.BoolFormelParser;
-import model.boolscheAlgebra.BFTree.BoolscheFormelTree;
+import model.boolescheAlgebra.BoolescheFunktionParser;
+import model.boolescheAlgebra.BFTree.BoolescheFunktionTree;
 
 public class BFP_Test_komplexe_Formeln {
 
 	@Test
 	public void test_lange_Formel() {
-		BoolFormelParser bfp = new BoolFormelParser();
-		BoolscheFormelTree t1 = bfp.getBFTree("a and b or a and c or b and not c");
+		BoolescheFunktionTree t1 = BoolescheFunktionParser.getBFTree("a and b or a and c or b and not c");
 		boolean[] b = {false, false, true, false, false, true, true, true};
 		boolean[] vector = t1.getWahrheitsVector();
 		assertArrayEquals(b, vector);
@@ -24,8 +21,8 @@ public class BFP_Test_komplexe_Formeln {
 	
 	@Test
 	public void test_Or_And1() {
-		BoolFormelParser bfp = new BoolFormelParser();
-		BoolscheFormelTree t1 = bfp.getBFTree("a or b and c");
+		
+		BoolescheFunktionTree t1 = BoolescheFunktionParser.getBFTree("a or b and c");
 		boolean[] b = {false, true, false};
 		boolean wert = t1.getWert(b);
 		assertFalse(wert);
@@ -33,8 +30,8 @@ public class BFP_Test_komplexe_Formeln {
 	
 	@Test
 	public void test_Or_And2() {
-		BoolFormelParser bfp = new BoolFormelParser();
-		BoolscheFormelTree t1 = bfp.getBFTree("(a or b) and c");
+		
+		BoolescheFunktionTree t1 = BoolescheFunktionParser.getBFTree("(a or b) and c");
 		boolean[] b = {true, false, true};
 		boolean wert = t1.getWert(b);
 		assertTrue(wert);
@@ -42,8 +39,8 @@ public class BFP_Test_komplexe_Formeln {
 	
 	@Test
 	public void test_Not_Or() {
-		BoolFormelParser bfp = new BoolFormelParser();
-		BoolscheFormelTree t1 = bfp.getBFTree("not a or b");
+		
+		BoolescheFunktionTree t1 = BoolescheFunktionParser.getBFTree("not a or b");
 		boolean[] b = {true, false};
 		boolean wert = t1.getWert(b);
 		assertFalse(wert);
@@ -51,8 +48,8 @@ public class BFP_Test_komplexe_Formeln {
 	
 	@Test
 	public void test_Not_And() {
-		BoolFormelParser bfp = new BoolFormelParser();
-		BoolscheFormelTree t1 = bfp.getBFTree("not a and b");
+		
+		BoolescheFunktionTree t1 = BoolescheFunktionParser.getBFTree("not a and b");
 		boolean[] b = {true, false};
 		boolean wert = t1.getWert(b);
 		assertFalse(wert);
@@ -62,44 +59,37 @@ public class BFP_Test_komplexe_Formeln {
 	
 	@Test (expected = IllegalArgumentException.class)
 	public void testKlammerung1() {
-		BoolFormelParser bfp = new BoolFormelParser();
-		BoolscheFormelTree t1 = bfp.getBFTree("(a and b");
+		BoolescheFunktionParser.getBFTree("(a and b");
 	}
 	
 	@Test (expected = IllegalArgumentException.class)
 	public void testKlammerung2() {
-		BoolFormelParser bfp = new BoolFormelParser();
-		BoolscheFormelTree t1 = bfp.getBFTree("a and b)");
+		BoolescheFunktionParser.getBFTree("a and b)");
 	}
 	
 	@Test (expected = IllegalArgumentException.class)
 	public void testKlammerung3() {
-		BoolFormelParser bfp = new BoolFormelParser();
-		BoolscheFormelTree t1 = bfp.getBFTree(")a and b(");
+		BoolescheFunktionParser.getBFTree(")a and b(");
 	}
 	
 	@Test (expected = IllegalArgumentException.class)
 	public void testunvollstaendigerAusdruck1() {
-		BoolFormelParser bfp = new BoolFormelParser();
-		BoolscheFormelTree t1 = bfp.getBFTree("a or");
+		BoolescheFunktionParser.getBFTree("a or");
 	}
 	
 	@Test (expected = IllegalArgumentException.class)
 	public void testunvollstaendigerAusdruck2() {
-		BoolFormelParser bfp = new BoolFormelParser();
-		BoolscheFormelTree t1 = bfp.getBFTree("a b");
+		BoolescheFunktionParser.getBFTree("a b");
 	}
 	
 	@Test (expected = IllegalArgumentException.class)
 	public void testunvollstaendigerAusdruck3() {
-		BoolFormelParser bfp = new BoolFormelParser();
-		BoolscheFormelTree t1 = bfp.getBFTree("a or ()");
+		BoolescheFunktionParser.getBFTree("a or ()");
 	}
 	
 	@Test (expected = IllegalArgumentException.class)
 	public void testunvollstaendigerAusdruck4() {
-		BoolFormelParser bfp = new BoolFormelParser();
-		BoolscheFormelTree t1 = bfp.getBFTree("a (or b)");
+		BoolescheFunktionParser.getBFTree("a (or b)");
 	}
 	
 	/*

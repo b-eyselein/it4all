@@ -109,9 +109,9 @@ public class NAryNumber
 		return false;
 	}
 
-	public int toDec()
+	public String toDec()
 	{	
-		return value;
+		return ""+value;
 	}
 	
 	public int getValue()

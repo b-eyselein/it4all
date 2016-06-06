@@ -46,10 +46,15 @@ public class HTML extends Controller {
   public Result commit(int exerciseId) {
     User user = UserManagement.getCurrentUser();
 
+    HtmlExercise exercise = HtmlExercise.finder.byId(exerciseId);
+    if(exercise == null)
+      return badRequest("There is no such exercise!");
+    
     String learnerSolution = extractLearnerSolutionFromRequest(request());
     saveSolutionForUser(user, learnerSolution, exerciseId);
 
-    List<ElementResult> elementResults = correctExercise(user, HtmlExercise.finder.byId(exerciseId));
+    String solutionUrl = routes.HTML.site(user, exercise.id).absoluteURL(request());
+    List<ElementResult> elementResults = HtmlCorrector.correct(solutionUrl, HtmlExercise.finder.byId(exerciseId), user);
 
     if(request().acceptedTypes().get(0).toString().equals("application/json"))
       return ok(Json.toJson(elementResults));
@@ -60,14 +65,14 @@ public class HTML extends Controller {
 
   @Security.Authenticated(Secured.class)
   public Result exercise(int exerciseId) {
+    User user = UserManagement.getCurrentUser();
     HtmlExercise exercise = HtmlExercise.finder.byId(exerciseId);
 
     if(exercise == null)
-      return badRequest(new Html("<p>Diese Aufgabe existert leider nicht.</p><p>Zur&uuml;ck zur <a href=\""
-          + routes.HTML.index() + "\">Startseite</a>.</p>"));
+      return badRequest(
+          error.render(user, new Html("<p>Diese Aufgabe existert leider nicht.</p><p>Zur&uuml;ck zur <a href=\""
+              + routes.HTML.index() + "\">Startseite</a>.</p>")));
     
-    User user = UserManagement.getCurrentUser();
-
     String defaultOrOldSolution = STANDARD_HTML;
     try {
       Path oldSolutionPath = util.getSolutionFileForExerciseAndType(user, EXERCISE_TYPE, exerciseId, FILE_TYPE);
@@ -78,7 +83,7 @@ public class HTML extends Controller {
       Logger.error(e.getMessage());
     }
 
-    return ok(html.render(user, exercise, defaultOrOldSolution, util.getServerUrl()));
+    return ok(html.render(user, exercise, defaultOrOldSolution));
   }
 
   @Security.Authenticated(Secured.class)
@@ -88,7 +93,7 @@ public class HTML extends Controller {
     Path rootFolderForSolutions = util.getRootSolDir();
     if(!Files.exists(rootFolderForSolutions))
       return internalServerError(error.render(currentUser,
-          Arrays.asList("Ordner für Lösungen existiert nicht!", "Bitte erstellen Sie diesen Ordner!")));
+          new Html("<p>Ordner für Lösungen existiert nicht!</p><p>Bitte erstellen Sie diesen Ordner!</p>")));
     
     return ok(htmloverview.render(HtmlExercise.finder.all(), currentUser));
   }
@@ -105,12 +110,6 @@ public class HTML extends Controller {
       return badRequest("Fehler beim Lesen der Datei!");
     }
 
-  }
-
-  private List<ElementResult> correctExercise(User user, HtmlExercise exercise) {
-    String solutionUrl = routes.HTML.site(user, exercise.id).absoluteURL(request());
-
-    return HtmlCorrector.correct(solutionUrl, exercise, user);
   }
 
   private String extractLearnerSolutionFromRequest(Request request) {

@@ -1,0 +1,20 @@
+@* boolsolution Template File *@
+@(user: model.user.User)(correct: Boolean)(lsg: String)
+@main("Wertetabelle-Lösung", user) {
+	<div class="container">
+		<div class="panel panel-@if(correct){success}else{danger}">
+	      <div class="panel-heading">
+	        Ausfüllen der Wertetabelle
+	      </div>
+	      <div class="panel-body">
+	      	Die Wertetabelle wurde
+			@if(correct) {
+				richtig ausgefüllt.
+			} else {
+				leider falsch ausgefüllt. <BR> Die richtigen Antworten lauten: <BR> @lsg.
+			}
+	       	<p><a href="@binary.routes.Bool.index" class="btn btn-primary" role="button">Nächste Aufgabe</a></p>
+	      </div>
+	    </div>
+	</div>
+}
