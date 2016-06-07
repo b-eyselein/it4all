@@ -101,13 +101,13 @@
             <div class="panel-heading">Teilaufgaben und Korrektur</div>
             <div class="panel-body">
               @for(task <- exercise.tasks) {
-              <div id="pan_task@task.key.id" class="panel panel-default">
-                <div class="panel-heading" data-toggle="collapse" href="#task@task.key.id">
-                  @{task.key.id}. @task.taskDescription
-                  <span class="glyphicon glyphicon-chevron-down pull-right" id="chev@task.key.id"></span>
+              <div id="pan_task@task.getId()" class="panel panel-default">
+                <div class="panel-heading" data-toggle="collapse" href="#task@task.getId()">
+                  @{task.getId()}. @task.taskDescription
+                  <span class="glyphicon glyphicon-chevron-down pull-right" id="chev@task.getId()"></span>
                 </div>
-                <div id="task@task.key.id" class="panel-collapse collapse">
-                  <div class="panel-body" id="com_task@task.key.id">TODO: Kommentar...</div>
+                <div id="task@task.getId()" class="panel-collapse collapse">
+                  <div class="panel-body" id="com_task@task.getId()">TODO: Kommentar...</div>
                 </div>
               </div>
               }

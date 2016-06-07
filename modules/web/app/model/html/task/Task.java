@@ -9,6 +9,7 @@ public interface Task {
   public ElementResult evaluate(SearchContext context);
 
   public String getDescription();
-  
+
   public int getId();
+
 }
