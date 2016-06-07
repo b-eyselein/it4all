@@ -33,7 +33,7 @@ public class Bool extends Controller {
 
   public Result indexSolution() {
     boolean correct = bft.compareStringArray(solutions);
-    return ok(boolsolution.render(UserManagement.getCurrentUser(), correct, bft.getWahrheitstafelString()));
+    return ok(boolsolution.render(UserManagement.getCurrentUser(), correct, bft.toString(), bft.getVariablen(), bft.getVariablenTabelle(), length, solutions, "1"));
   }
 
   public Result tableAdd() {
