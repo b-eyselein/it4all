@@ -60,20 +60,17 @@ public class HTML extends Controller {
 
     List<ElementResult> elementResults = Collections.emptyList();
 
-    if(type.equals("html"))
-      elementResults = HtmlCorrector.correctHtml(solutionUrl, HtmlExercise.finder.byId(exerciseId), user);
-    else if(type.equals("css"))
-      elementResults = HtmlCorrector.correctCSS(solutionUrl, HtmlExercise.finder.byId(exerciseId), user);
+    if(type.equals("html") || type.equals("css"))
+      elementResults = HtmlCorrector.correct(solutionUrl, HtmlExercise.finder.byId(exerciseId), user, type);
     else
       return badRequest(error.render(user, new Html("Der Korrekturtyp wurde nicht korrekt spezifiziert!")));
     
     if(request().acceptedTypes().get(0).toString().equals("application/json"))
       return ok(Json.toJson(elementResults));
     else if(type.equals("html"))
-      // TODO: Definitive Abgabe Html, rendere Html!
       return ok(htmlcorrect.render(learnerSolution, elementResults, UserManagement.getCurrentUser()));
     else
-      // TODO: Definitive Abgabe Css, rendere Html!
+      // FIXME: Definitive Abgabe Css, rendere Html!
       return ok("TODO!");
   }
 

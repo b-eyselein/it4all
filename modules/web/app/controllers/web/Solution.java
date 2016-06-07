@@ -23,13 +23,12 @@ public class Solution extends Controller {
     Path file = util.getSolutionFileForExerciseAndType(user, "html", exercise, "html");
     if(!Files.exists(file))
       return badRequest(error.render(user, new Html("Fehler: Datei nicht vorhanden!")));
-    
     try {
       return ok(new Html(String.join("\n", Files.readAllLines(file))));
     } catch (IOException err) {
       Logger.error("Fehler beim Lesen einer Html-Datei: " + file, err);
       return badRequest(error.render(user, new Html("Fehler beim Lesen der Datei!")));
     }
-    
+
   }
 }
