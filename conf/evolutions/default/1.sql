@@ -13,13 +13,13 @@ create table childtask (
 );
 
 create table css_task (
-  id                            integer not null,
+  task_id                       integer not null,
   exercise_id                   integer not null,
   taskdesc                      text,
   xpath_query_name              varchar(255),
   defining_attribute            varchar(255),
   attributes                    varchar(255),
-  constraint pk_css_task primary key (id,exercise_id)
+  constraint pk_css_task primary key (task_id,exercise_id)
 );
 
 create table exercise (
@@ -64,13 +64,13 @@ create table grading (
 );
 
 create table html_task (
-  id                            integer not null,
+  task_id                       integer not null,
   exercise_id                   integer not null,
   taskdesc                      text,
   xpath_query_name              varchar(255),
   defining_attribute            varchar(255),
   attributes                    varchar(255),
-  constraint pk_html_task primary key (id,exercise_id)
+  constraint pk_html_task primary key (task_id,exercise_id)
 );
 
 create table js_test (
@@ -102,7 +102,7 @@ create table xmlexercise (
   constraint pk_xmlexercise primary key (id)
 );
 
-alter table childtask add constraint fk_childtask_task foreign key (task_id,exercise_id) references html_task (id,exercise_id) on delete restrict on update restrict;
+alter table childtask add constraint fk_childtask_task foreign key (task_id,exercise_id) references html_task (task_id,exercise_id) on delete restrict on update restrict;
 create index ix_childtask_task on childtask (task_id,exercise_id);
 
 alter table css_task add constraint fk_css_task_exercise_id foreign key (exercise_id) references exercise (id) on delete restrict on update restrict;

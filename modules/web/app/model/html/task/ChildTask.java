@@ -21,24 +21,24 @@ public class ChildTask extends Model {
   
   @EmbeddedId
   public ChildTaskKey key;
-
+  
   @ManyToOne
   // @formatter:off
   @JoinColumns({
-      @JoinColumn(name = "task_id", referencedColumnName = "id"),
+      @JoinColumn(name = "task_id", referencedColumnName = "task_id"),
       @JoinColumn(name = "exercise_id", referencedColumnName = "exercise_id")
   })
   //@formatter:on
   @JsonBackReference
   public HtmlTask task;
-
+  
   @Column(name = "tagName")
   public String tagName;
-
+  
   public String definingAttribute;
-
+  
   public ChildResult getChildResult() {
     return new ChildResult(this);
   }
-
+  
 }

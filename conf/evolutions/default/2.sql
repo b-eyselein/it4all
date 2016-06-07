@@ -23,7 +23,7 @@ insert into xmlexercise (`id`, `title`, `exerciseType`, `referenceFileName`, `ex
 	(1, "Hello, XML", "XMLAgainstDTD", "first.dtd", "exerciseText"), (2, "Hello2, XSD", "XMLAgainstXSD","books.xsd", "teeeeeeeext"),
 	(3, "Hello3, DTD", "DTDAgainstXML","third.xml", "teeeeeeeeeeeeext");
 
-insert into html_task (`exercise_id`, `id`, `taskDesc`, `xpath_query_name`, `attributes`, `defining_attribute`) values
+insert into html_task (`exercise_id`, `task_id`, `taskDesc`, `xpath_query_name`, `attributes`, `defining_attribute`) values
 	(1, 1, "Erstellen Sie ein Formular auf der Seite. Als Aktion soll test und als Methode 'post' angegeben werden.",
 	"//form", "action=test:method=post",  ""),
 
@@ -61,7 +61,7 @@ insert into childtask (`id`, `task_id`, `exercise_id`, `tagName`, `defining_attr
  	(4, 6, 1, "option", "value=Skoda"),
  	(5, 6, 1, "option", "value=VW");
  	
-insert into css_task (`id`, `exercise_id`, `taskdesc`, `xpath_query_name`, `defining_attribute`, `attributes`) values
+insert into css_task (`task_id`, `exercise_id`, `taskdesc`, `xpath_query_name`, `defining_attribute`, `attributes`) values
 	(1, 1, "Geben Sie allen div-Elementen, die die einzelnen Inputs einschließen, die Klasse 'form-group'.", "//form/div", "", "class=form-group"),
 	(2, 1, "Verwenden Sie für alle Inputs die Klasse form-control", "//form/div/input", "", "class=form-control");
 
