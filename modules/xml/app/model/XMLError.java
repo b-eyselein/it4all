@@ -2,7 +2,7 @@ package model;
 
 public class XMLError {
   
-  protected int line;
+  protected int line = 0;
   protected String title;
   protected String errorMessage;
   protected XmlErrorType errorType;
@@ -56,13 +56,18 @@ public class XMLError {
   public void setErrorType(XmlErrorType errorType) {
     this.errorType = errorType;
   }
-
+  
   public String getTitle() {
     return title;
   }
-
+  
   public void setTitle(String title) {
     this.title = title;
   }
   
+  @Override
+  public String toString() {
+    return (line != 0) ? errorType + ":\nZeile: " + line + "\nFehler: " + errorMessage + "\n"
+        : errorType + ":\nFehler: " + errorMessage + "\n";
+  }
 }
