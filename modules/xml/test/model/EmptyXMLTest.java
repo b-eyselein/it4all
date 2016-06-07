@@ -11,10 +11,10 @@ public class EmptyXMLTest {
   
   @Test
   public void emptyXML() {
-    // FIXME: behebe NullpointerException!
     File xml = new File("test/resources/empty.xml");
     List<XMLError> out = XmlCorrector.correctXMLAgainstDTD(xml);
     assertEquals("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), 1);
+    assertEquals("FATALERROR:\n" + "Fehler: leere XML\n", out.get(0).toString());
   }
-
+  
 }
