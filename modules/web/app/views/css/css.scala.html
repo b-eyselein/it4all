@@ -1,8 +1,8 @@
 @(user: model.user.User, exercise: model.html.HtmlExercise, oldSolution: String)
 
 @main("Css-Korrektur", user) {
-<script src="@controllers.web.routes.Assets.versioned("assets/ace/ace.js")"></script>
-  <script src="@controllers.web.routes.Assets.versioned("assets/cssProcessor.js")"></script>
+<script src="@controllers.routes.Assets.versioned("javascripts/ace/ace.js")"></script>
+  <script src="@controllers.routes.Assets.versioned("javascripts/cssProcessor.js")"></script>
   <script>
     function testSolution() {
       // AJAX-Objekt erstellen, Callback-Funktion bereitstellen

@@ -71,8 +71,8 @@ public class CSS extends Controller {
     
     // check grading to see if user has done html part of this exercise
     // completely
-    List<Grading> gradings = Grading.finder.where().eq("user_name", user.name).eq("exercise_id", exerciseId).findList();
-    if(gradings.size() == 0 || !gradings.get(0).hasAllPoints())
+    boolean otherPartCompleted = Grading.otherPartCompleted(exerciseId, user);
+    if(!otherPartCompleted)
       return badRequest(error.render(user, new Html("Bearbeiten Sie zuerst den <a href=\""
           + routes.HTML.exercise(exerciseId) + "\">Html-Teil der Aufgabe</a> komplett!")));
     
@@ -89,12 +89,7 @@ public class CSS extends Controller {
 
     return ok(css.render(UserManagement.getCurrentUser(), exercise, defaultOrOldSolution));
   }
-
-  public Result index() {
-    List<HtmlExercise> exercises = HtmlExercise.finder.all();
-    return ok(cssOverview.render(exercises, UserManagement.getCurrentUser()));
-  }
-
+  
   private String extractLearnerSolutionFromRequest(Request request) {
     return request.body().asFormUrlEncoded().get(LEARNER_SOLUTION_VALUE)[0];
   }

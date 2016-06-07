@@ -7,6 +7,8 @@ insert into exercise (`type`, `id`, `title`, `exerciseText`, `file_name`, `defau
 	Die Werkstatt kann nur Modelle der Marken Audi, Seat, Skoda und VW reparieren.
 	Ihre Firma beschließt, zuerst einen statischen Seitenprototyp mit verminderter Funktion zu erstellen. Benutzen Sie nur Html, um folgende Elemente zu erstellen. Versuchen Sie jedoch so viel Funktionalität wie möglich umzusetzen, indem Sie entsprechende Elemente bzw. Attribute von Html5 verwenden! Elemente, die mit einem „*“ markiert sind, sollen zur Formularabsendung eingegeben werden müssen. Benutzen Sie die in Klammern angegeben Namen für die Elemente! Erstellen Sie jedes Eingabefeld für das spätere Styling mit CSS jeweils eine eigene <div>-Umgebung!",
 	"", "", ""),
+	
+	("html", 2, "Neue Aufgabe..." , "Text...", "", "", ""),
 
 	("js", 3, "Summen", "Implementieren Sie folgende Funktion 'sum', die zwei Zahlen entegennimmt und deren Summe zurückgibt.", "",
 	 "function sum(a, b) {\n  return 0;;\n}", "sum"),
@@ -48,7 +50,9 @@ insert into html_task (`exercise_id`, `id`, `taskDesc`, `xpath_query_name`, `att
 	"//form/div//input", "type=checkbox:required=true", "name=agb"),
 	 
 	(1, 9, "Erstellen Sie eine Möglichkeit, das Formular abzusenden. Geben Sie als Wert 'Absenden' an.",
-	"//form/div//input", "value=Absenden", "type=submit");
+	"//form/div//input", "value=Absenden", "type=submit"),
+	
+	(2, 1, "Erster Task", "//*", "", "");
 
 insert into childtask (`id`, `task_id`, `exercise_id`, `tagName`, `defining_attribute`) values
 	(1, 6, 1, "option", "value="),
@@ -59,7 +63,7 @@ insert into childtask (`id`, `task_id`, `exercise_id`, `tagName`, `defining_attr
  	
 insert into css_task (`id`, `exercise_id`, `taskdesc`, `xpath_query_name`, `defining_attribute`, `attributes`) values
 	(1, 1, "Geben Sie allen div-Elementen, die die einzelnen Inputs einschließen, die Klasse 'form-group'.", "//form/div", "", "class=form-group"),
-	(2, 1, "Inputs mit form-control", "//form/div/input", "", "class=form-control");
+	(2, 1, "Verwenden Sie für alle Inputs die Klasse form-control", "//form/div/input", "", "class=form-control");
 
 	
 # JavaScript
@@ -81,8 +85,6 @@ insert into js_testvalue (`id`, `test_id`, `value`) values
 # --- !Downs
 
 SET FOREIGN_KEY_CHECKS = 0;
-
-delete from grading;
 
 delete from js_testvalue;
 
