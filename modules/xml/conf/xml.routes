@@ -1,7 +1,4 @@
 #XML
-GET			/exercises				controllers.xml.XML.index()
-GET			/exercises/:ex			controllers.xml.XML.exercise(ex: Int)
-PUT			/exercises/:ex			controllers.xml.XML.commit(ex: Int)
-
-# Assets
-#GET    /assets/*file				controllers.xml.Assets.versioned(path = "/public/lib/xml", file: Asset)
+GET   /exercises       controllers.xml.XML.index()
+GET   /exercises/:ex   controllers.xml.XML.exercise(ex: Int)
+PUT   /exercises/:ex   controllers.xml.XML.commit(ex: Int)
