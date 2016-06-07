@@ -23,67 +23,81 @@ import model.user.User;
 
 public class XmlCorrector {
   
+  private static DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+  private static DocumentBuilder builder = null;
+  private static SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+  
+  
   public static List<XMLError> correctXMLAgainstDTD(File studentSolutionXML) {
+    
     List<XMLError> output = new LinkedList<>();
-    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    
     factory.setValidating(true);
-    DocumentBuilder builder = null;
     try {
       builder = factory.newDocumentBuilder();
     } catch (ParserConfigurationException e) {
     }
+    
     builder.setErrorHandler(new SimpleXMLErrorHandler(output));
     
     try {
       Document doc = builder.parse(studentSolutionXML);
-    } catch (SAXException e) {
-    } catch (IOException e) {
+    } catch (SAXException | IOException e) {
+    } catch (NullPointerException e){
+      output.add(new XMLError("leere XML", XmlErrorType.FATALERROR));
     }
     
     return output;
+    
   }
   
   public static List<XMLError> correctXMLAgainstXSD(File studentSolutionXML, File xsd) throws IOException {
+    
     List<XMLError> output = new LinkedList<>();
     Source xmlFile = new StreamSource(studentSolutionXML);
-    SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+    Source xsdFile = new StreamSource(xsd);
+    
     Schema schema = null;
     try {
-      schema = schemaFactory.newSchema(xsd);
+      schema = schemaFactory.newSchema(xmlFile);
     } catch (SAXException e) {
     }
     
     Validator validator = schema.newValidator();
     validator.setErrorHandler(new SimpleXMLErrorHandler(output));
     try {
-      validator.validate(xmlFile);
+      validator.validate(xsdFile);
     } catch (SAXException e) {
     }
+    
     return output;
   }
   
   public static List<XMLError> correctDTDAgainstXML(File studentenSolutionDTD) {
+    
     List<XMLError> output = new LinkedList<>();
-    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    
     factory.setValidating(true);
-    DocumentBuilder builder = null;
     try {
       builder = factory.newDocumentBuilder();
     } catch (ParserConfigurationException e) {
     }
+    
     builder.setErrorHandler(new DTDXMLErrorHandler(output));
     
     try {
       Document doc = builder.parse(studentenSolutionDTD); // studentenSolutionDTD);
     } catch (SAXException | IOException e) {
     }
+    
     for(XMLError item: output) {
       System.out.println(item);
     }
     
     return output;
+    
   }
-
+  
   public static List<XMLError> correct(File solutionFile, File referenceFile, XmlExercise exercise, User user)
       throws IOException {
     switch(exercise.exerciseType) {
