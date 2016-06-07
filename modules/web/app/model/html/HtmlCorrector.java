@@ -15,7 +15,7 @@ import model.html.task.HtmlTask;
 
 public class HtmlCorrector {
   
-  public static List<ElementResult> correct(String solutionUrl, HtmlExercise exercise, User student) {
+  public static List<ElementResult> correctHtml(String solutionUrl, HtmlExercise exercise, User student) {
     WebDriver driver = loadWebSite(solutionUrl);
     
     List<HtmlTask> tasks = exercise.tasks;

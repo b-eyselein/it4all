@@ -14,12 +14,12 @@
       <div class="panel-footer">
         <div class="btn-group btn-group-justified">
         @if(exercise.tasks.size() > 0) {
-          <a href="@web.routes.HTML.exercise(exercise.id)" class="btn btn-primary" role="button">Html-Teil der Aufgabe</a>
+          <a href="@web.routes.HTML.exercise(exercise.id, "html")" class="btn btn-primary" role="button">Html-Teil der Aufgabe</a>
         }
         @if(exercise.cssTasks.size() > 0) {
           @* FIXME: disable if user has not completed html-part of exercise.... *@
           @if(model.exercise.Grading.otherPartCompleted(exercise.id, user)) {
-          <a href="@web.routes.CSS.exercise(exercise.id)" class="btn btn-primary" role="button">Css-Teil der Aufgabe</a>
+          <a href="@web.routes.HTML.exercise(exercise.id, "css")" class="btn btn-primary" role="button">Css-Teil der Aufgabe</a>
           } else {
           <a onclick="return false;" class="btn btn-primary" title="Bearbeiten Sie zuerst den Html-Teil dieser Aufgabe!"
           disabled role="button">Css-Teil der Aufgabe</a>
