@@ -1,14 +1,14 @@
 # HTML & CSS
-GET    /html/exercises               controllers.web.HTML.index()
+GET    /html/                        controllers.web.HTML.index()
 
-GET    /html/exercises/:exerciseId   controllers.web.HTML.exercise(exerciseId: Int, type: String)
+GET    /html/:exerciseId/:type       controllers.web.HTML.exercise(exerciseId: Int, type: String)
 
-PUT    /html/exercises/:exerciseId   controllers.web.HTML.commit(exerciseId: Int, type: String)
-POST   /html/exercises/:exerciseId   controllers.web.HTML.commit(exerciseId: Int, type: String)
+PUT    /html/:exerciseId/:type       controllers.web.HTML.commit(exerciseId: Int, type: String)
+POST   /html/:exerciseId/:type       controllers.web.HTML.commit(exerciseId: Int, type: String)
 
 GET    /solution/:user/:exerciseId   controllers.web.Solution.site(user: model.user.User, exerciseId: Int)
 
 # JavaScript
 GET    /js/                          controllers.web.JS.index()
 GET    /js/:ex                       controllers.web.JS.exercise(ex: Int)
-POST   /js/commit/:ex                controllers.web.JS.commit(ex: Int)
+POST   /js/:ex                       controllers.web.JS.commit(ex: Int)
