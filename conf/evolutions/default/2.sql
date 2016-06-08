@@ -25,18 +25,18 @@ insert into xmlexercise (`id`, `title`, `exerciseType`, `referenceFileName`, `ex
 
 insert into html_task (`exercise_id`, `task_id`, `taskDesc`, `xpath_query_name`, `attributes`, `defining_attribute`) values
 	(1, 1, "Erstellen Sie ein Formular auf der Seite. Als Aktion soll test und als Methode 'post' angegeben werden.",
-	"//form", "action=test:method=post",  ""),
+	"//form", "action=test;;method=post",  ""),
 
 	(1, 2, "Geben Sie im Fomular eine <h1>-Überschrift mit passendem Text an", "//form//h1", "", ""),
 	
 	(1, 3, "Erstellen Sie ein Namensfeld* (name) für den kompletten Namen des Kunden.",
-	"//form/div//input", "type=text:required=true", "name=name"),
+	"//form/div//input", "type=text;;required=true", "name=name"),
 	
 	(1, 4, "Erstellen Sie ein Feld für die Emailadresse* (email) des Kunden.",
-	"//form/div//input", "type=email:required=true", "name=email"),
+	"//form/div//input", "type=email;;required=true", "name=email"),
 	
 	(1, 5, "Erstellen Sie ein Datumsfeld* (datum), um einen Wunschtermin angeben zu können. Die Vorgabe soll der 01.01.2016 sein.",
-	"//form/div//input", "type=date:required=true:value=2016-01-01", "name=datum"),
+	"//form/div//input", "type=date;;required=true;;value=2016-01-01", "name=datum"),
 	
 	(1, 6, "Erstellen Sie ein Dropdownmenü* (marke), um eine der vier Automarken auswählen zu können.
 	 Geben Sie außerdem als erste Option 'Bitte wählen' mit einem leeren 'value'-Attribut an,
@@ -44,10 +44,10 @@ insert into html_task (`exercise_id`, `task_id`, `taskDesc`, `xpath_query_name`,
 	"//form/div//select", "required=true", "name=marke"),
 	 
 	(1, 7, "Erstellen Sie ein Eingabefeld* (jahr) für das Baujahr des Autos (1950 <= year <= 2016). Als Vorgabe soll 2000 eingestellt sein.",
-	"//form/div//input", "type=number:required=true:value=2000", "name=jahr"),
+	"//form/div//input", "type=number;;required=true;;value=2000", "name=jahr"),
 	 
 	(1, 8, "Erstellen Sie eine Checkbox* (agb), um die AGBs der Seite zu akzeptieren",
-	"//form/div//input", "type=checkbox:required=true", "name=agb"),
+	"//form/div//input", "type=checkbox;;required=true", "name=agb"),
 	 
 	(1, 9, "Erstellen Sie eine Möglichkeit, das Formular abzusenden. Geben Sie als Wert 'Absenden' an.",
 	"//form/div//input", "value=Absenden", "type=submit"),
@@ -62,8 +62,10 @@ insert into childtask (`id`, `task_id`, `exercise_id`, `tagName`, `defining_attr
  	(5, 6, 1, "option", "value=VW");
  	
 insert into css_task (`task_id`, `exercise_id`, `taskdesc`, `xpath_query_name`, `defining_attribute`, `attributes`) values
-	(1, 1, "Geben Sie allen div-Elementen, die die einzelnen Inputs einschließen, die Klasse 'form-group'.", "//form/div", "", "class=form-group"),
-	(2, 1, "Verwenden Sie für alle Inputs die Klasse form-control", "//form/div/input", "", "class=form-control");
+	(1, 1, 'Binden Sie Bootstrap über folgenden Link ein: <link rel=\"stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css\">', 
+	"//link", "rel=stylesheet", "href=http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"),
+	(2, 1, "Geben Sie allen div-Elementen, die die einzelnen Inputs einschließen, die Klasse 'form-group'.", "//form/div", "", "class=form-group"),
+	(3, 1, "Verwenden Sie für alle Inputs die Klasse form-control", "//form/div/input", "", "class=form-control");
 
 	
 # JavaScript

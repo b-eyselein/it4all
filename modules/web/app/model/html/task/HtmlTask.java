@@ -31,9 +31,6 @@ import model.html.result.ElementResult;
 @Entity
 public class HtmlTask extends Model implements Task {
   
-  public static final String MULTIPLE_ATTRIBUTES_SPLIT_CHARACTER = ":";
-  public static final String KEY_VALUE_CHARACTER = "=";
-
   @EmbeddedId
   public TaskKey key;
 
@@ -140,7 +137,7 @@ public class HtmlTask extends Model implements Task {
   private List<ChildResult> getChildResults() {
     return childTasks.stream().map(childTask -> childTask.getChildResult()).collect(Collectors.toList());
   }
-  
+
   protected List<WebElement> filterElementsForTagName(List<WebElement> foundElements, String tagName) {
     return foundElements.parallelStream().filter(element -> element.getTagName().equals(tagName))
         .collect(Collectors.toList());
