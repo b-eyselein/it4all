@@ -27,7 +27,6 @@ public class XmlCorrector {
   private static DocumentBuilder builder = null;
   private static SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
   
-  
   public static List<XMLError> correctXMLAgainstDTD(File studentSolutionXML) {
     
     List<XMLError> output = new LinkedList<>();
@@ -43,7 +42,7 @@ public class XmlCorrector {
     try {
       Document doc = builder.parse(studentSolutionXML);
     } catch (SAXException | IOException e) {
-    } catch (NullPointerException e){
+    } catch (NullPointerException e) {
       output.add(new XMLError("leere XML", XmlErrorType.FATALERROR));
     }
     
@@ -73,7 +72,7 @@ public class XmlCorrector {
     return output;
   }
   
-  public static List<XMLError> correctDTDAgainstXML(File studentenSolutionDTD) {
+  public static List<XMLError> correctDTDAgainstXML(File studentenSolutionDTD, File referenceXML) {
     
     List<XMLError> output = new LinkedList<>();
     
@@ -86,7 +85,7 @@ public class XmlCorrector {
     builder.setErrorHandler(new DTDXMLErrorHandler(output));
     
     try {
-      Document doc = builder.parse(studentenSolutionDTD); // studentenSolutionDTD);
+      Document doc = builder.parse(referenceXML);
     } catch (SAXException | IOException e) {
     }
     
@@ -106,7 +105,7 @@ public class XmlCorrector {
     case XMLAgainstDTD:
       return correctXMLAgainstDTD(solutionFile);
     case DTDAgainstXML:
-      return correctDTDAgainstXML(solutionFile);
+      return correctDTDAgainstXML(solutionFile, referenceFile);
     // case XSDAgainstXML:
     // return correctXSDAgainstXML(solutionFile, referenceFile);
     default:
