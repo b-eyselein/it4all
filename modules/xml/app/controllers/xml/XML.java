@@ -82,7 +82,6 @@ public class XML extends Controller {
     String referenceCode = "";
     try {
       Path referenceFilePath = util.getSampleFileForExerciseAndType(EXERCISE_TYPE, exercise.referenceFileName);
-      Logger.debug(referenceFilePath.toString());
       if(Files.exists(referenceFilePath, LinkOption.NOFOLLOW_LINKS))
         referenceCode = String.join("\n", Files.readAllLines(referenceFilePath));
       
