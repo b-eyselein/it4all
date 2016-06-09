@@ -2,6 +2,7 @@ package model;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -94,20 +95,23 @@ public class XmlCorrector {
     List<XMLError> output = new LinkedList<>();
     Source xmlFile = new StreamSource(studentSolutionXML);
     Source xsdFile = new StreamSource(xsd);
-
+    
     Schema schema = null;
     try {
       schema = schemaFactory.newSchema(xmlFile);
     } catch (SAXException e) {
     }
-
+    
+    if(schema == null)
+      return Arrays.asList(new XMLError("Ihre Eingabedaten konnten nicht geladen werden!", XmlErrorType.FATALERROR));
+    
     Validator validator = schema.newValidator();
     validator.setErrorHandler(new SimpleXMLErrorHandler(output));
     try {
       validator.validate(xsdFile);
     } catch (SAXException | IOException e) {
     }
-
+    
     return output;
   }
 }
