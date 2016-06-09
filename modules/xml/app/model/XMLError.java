@@ -5,6 +5,32 @@ public class XMLError {
   protected int line = 0;
   protected String title;
   protected String errorMessage;
+  
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((errorMessage == null) ? 0 : errorMessage.hashCode());
+    return result;
+  }
+  
+  @Override
+  public boolean equals(Object obj) {
+    if(this == obj)
+      return true;
+    if(obj == null)
+      return false;
+    if(getClass() != obj.getClass())
+      return false;
+    XMLError other = (XMLError) obj;
+    if(errorMessage == null) {
+      if(other.errorMessage != null)
+        return false;
+    } else if(!errorMessage.equals(other.errorMessage))
+      return false;
+    return true;
+  }
+  
   protected XmlErrorType errorType;
   
   public XMLError(int line, String errorMessage, XmlErrorType errorType) throws NullPointerException {
