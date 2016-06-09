@@ -41,10 +41,11 @@ public class HTML extends Controller {
   private static final String STANDARD_HTML = "<!doctype html>\n<html>\n\n<head>\n</head>\n\n<body>\n</body>\n\n</html>";
 
   @Inject
-  Util util;
+  private Util util;
 
   @Inject
-  WebStartUpChecker checker;
+  @SuppressWarnings("unused")
+  private WebStartUpChecker checker;
 
   public Result commit(int exerciseId, String type) {
     User user = UserManagement.getCurrentUser();
