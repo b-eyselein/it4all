@@ -38,46 +38,49 @@ public class HTML extends Controller {
   private static final String FILE_TYPE = "html";
   private static final String EXERCISE_TYPE = "html";
   private static final String STANDARD_HTML = "<!doctype html>\n<html>\n\n<head>\n</head>\n\n<body>\n</body>\n\n</html>";
-
+  
   @Inject
   private Util util;
-
+  
   @Inject
   @SuppressWarnings("unused")
   private WebStartUpChecker checker;
-
+  
   public Result commit(int exerciseId, String type) {
     User user = UserManagement.getCurrentUser();
     HtmlExercise exercise = HtmlExercise.finder.byId(exerciseId);
-
+    
     if(exercise == null)
       return badRequest(error.render(user, new Html("There is no such exercise!")));
     
     String learnerSolution = extractLearnerSolutionFromRequest(request());
     saveSolutionForUser(user, learnerSolution, exerciseId);
-
+    
     String solutionUrl = routes.Solution.site(user, exercise.id).absoluteURL(request());
-
+    
     List<ElementResult> elementResults = Collections.emptyList();
-
+    
     if(type.equals("html") || type.equals("css"))
       elementResults = HtmlCorrector.correct(solutionUrl, HtmlExercise.finder.byId(exerciseId), user, type);
     else
       return badRequest(error.render(user, new Html("Der Korrekturtyp wurde nicht korrekt spezifiziert!")));
     
+    // Live-Abgabe, sende Resultat als Json
     if(request().acceptedTypes().get(0).toString().equals("application/json"))
       return ok(Json.toJson(elementResults));
-    else if(type.equals("html"))
-      return ok(htmlcorrect.render(learnerSolution, elementResults, UserManagement.getCurrentUser()));
-    else
-      // FIXME: Definitive Abgabe Css, rendere Html!
-      return ok("TODO!");
+    
+    // Definitive Abgabe, zeige Seite
+    return ok(htmlcorrect.render(learnerSolution, elementResults, UserManagement.getCurrentUser()));
   }
-
+  
   public Result exercise(int exerciseId, String type) {
     User user = UserManagement.getCurrentUser();
+    
+    if(!type.equals("html") && !type.equals("css"))
+      return badRequest(error.render(user, new Html("Der Aufgabentyp wurde nicht korrekt spezifiziert!")));
+    
     HtmlExercise exercise = HtmlExercise.finder.byId(exerciseId);
-
+    
     if(exercise == null)
       return badRequest(
           error.render(user, new Html("<p>Diese Aufgabe existert leider nicht.</p><p>Zur&uuml;ck zur <a href=\""
@@ -95,19 +98,14 @@ public class HTML extends Controller {
     } catch (IOException e) {
       Logger.error(e.getMessage());
     }
-
-    if(type.equals("html"))
-      return ok(html.render(user, exercise, "html", defaultOrOldSolution, "Html-Korrektur"));
-    else if(type.equals("css"))
-      return ok(html.render(UserManagement.getCurrentUser(), exercise, "css", defaultOrOldSolution, "Css-Korrektur"));
-    else
-      return badRequest(error.render(user, new Html("Der Aufgabentyp wurde nicht korrekt spezifiziert!")));
+    
+    return ok(html.render(user, exercise, type, defaultOrOldSolution, "Html-Korrektur"));
     
   }
-
+  
   public Result index() {
     User currentUser = UserManagement.getCurrentUser();
-
+    
     Path rootFolderForSolutions = util.getRootSolDir();
     if(!Files.exists(rootFolderForSolutions))
       return internalServerError(error.render(currentUser,
@@ -115,11 +113,11 @@ public class HTML extends Controller {
     
     return ok(htmloverview.render(HtmlExercise.finder.all(), currentUser));
   }
-
+  
   private String extractLearnerSolutionFromRequest(Request request) {
     return request.body().asFormUrlEncoded().get(LEARNER_SOLUTION_VALUE)[0];
   }
-
+  
   private void saveSolutionForUser(User user, String solution, int exercise) {
     try {
       Path solDir = util.getSolDirForUserAndType(user, EXERCISE_TYPE);
