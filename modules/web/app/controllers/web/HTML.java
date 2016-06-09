@@ -30,7 +30,6 @@ import views.html.html.html;
 import views.html.html.htmlcorrect;
 import views.html.html.htmloverview;
 import views.html.*;
-import views.html.css.css;
 
 @Security.Authenticated(Secured.class)
 public class HTML extends Controller {
@@ -98,9 +97,9 @@ public class HTML extends Controller {
     }
 
     if(type.equals("html"))
-      return ok(html.render(user, exercise, defaultOrOldSolution));
+      return ok(html.render(user, exercise, "html", defaultOrOldSolution, "Html-Korrektur"));
     else if(type.equals("css"))
-      return ok(css.render(UserManagement.getCurrentUser(), exercise, defaultOrOldSolution));
+      return ok(html.render(UserManagement.getCurrentUser(), exercise, "css", defaultOrOldSolution, "Css-Korrektur"));
     else
       return badRequest(error.render(user, new Html("Der Aufgabentyp wurde nicht korrekt spezifiziert!")));
     

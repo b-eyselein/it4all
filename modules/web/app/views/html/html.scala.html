@@ -1,8 +1,12 @@
-@(user: model.user.User, exercise: model.html.HtmlExercise, oldSolution: String)
+@(user: model.user.User, exercise: model.html.HtmlExercise, exType: String, oldSolution: String, title: String)
 
-@main("Html-Korrektur", user) {
-<script src="@controllers.routes.Assets.versioned("javascripts/ace/ace.js")"></script>
-  <script src="@controllers.routes.Assets.versioned("javascripts/processor.js")"></script>
+@main(title, user) {
+  <script src="@controllers.routes.Assets.versioned("javascripts/ace/ace.js")"></script>
+  @if(exType.equals("html")) {
+  <script src="@controllers.routes.Assets.versioned("javascripts/htmlProcessor.js")"></script>
+  } else {
+  <script src="@controllers.routes.Assets.versioned("javascripts/cssProcessor.js")"></script>
+  }
   <script>
     function testSolution() {
       // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
@@ -15,7 +19,7 @@
 
       // AJAX-Objekt mit Daten fuellen, absenden
       var parameters = "editorContent=" + encodeURIComponent(editor.getValue());
-      xhttp.open("PUT", "@controllers.web.routes.HTML.commit(exercise.id, "html")", true);
+      xhttp.open("PUT", "@controllers.web.routes.HTML.commit(exercise.id, exType)", true);
       xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
       xhttp.setRequestHeader("Accept", "application/json");
       xhttp.send(parameters);
@@ -45,7 +49,7 @@
       </div>
     </div>
 
-    <form action="@web.routes.HTML.commit(exercise.id, "html")" method="post" onsubmit="prepareFormForSubmitting();">
+    <form action="@web.routes.HTML.commit(exercise.id, exType)" method="post" onsubmit="prepareFormForSubmitting();">
       <div class="panel">
         <div class="btn-group btn-group-justified">
           <div class="btn-group">
@@ -100,16 +104,30 @@
           <div class="panel panel-default">
             <div class="panel-heading">Teilaufgaben und Korrektur</div>
             <div class="panel-body">
-              @for(task <- exercise.tasks) {
-              <div id="pan_task@task.getId()" class="panel panel-default">
-                <div class="panel-heading" data-toggle="collapse" href="#task@task.getId()">
-                  @{task.getId()}. @task.taskDescription
-                  <span class="glyphicon glyphicon-chevron-down pull-right" id="chev@task.getId()"></span>
+              @if(exType.equals("html")) {
+                @for(task <- exercise.tasks) {
+                <div id="pan_task@task.getId()" class="panel panel-default">
+                  <div class="panel-heading" data-toggle="collapse" href="#task@task.getId()">
+                    @{task.getId()}. @task.taskDescription
+                    <span class="glyphicon glyphicon-chevron-down pull-right" id="chev@task.getId()"></span>
+                  </div>
+                  <div id="task@task.getId()" class="panel-collapse collapse">
+                    <div class="panel-body" id="com_task@task.getId()">TODO: Kommentar...</div>
+                  </div>
                 </div>
-                <div id="task@task.getId()" class="panel-collapse collapse">
-                  <div class="panel-body" id="com_task@task.getId()">TODO: Kommentar...</div>
+                }
+              } else {
+                @for(task <- exercise.cssTasks) {
+                <div id="pan_task@task.getId()" class="panel panel-default">
+                  <div class="panel-heading" data-toggle="collapse" href="#task@task.getId()">
+                    @{task.getId()}. @task.taskDescription
+                    <span class="glyphicon glyphicon-chevron-down pull-right" id="chev@task.getId()"></span>
+                  </div>
+                  <div id="task@task.getId()" class="panel-collapse collapse">
+                    <div class="panel-body" id="com_task@task.getId()">TODO: Kommentar...</div>
+                  </div>
                 </div>
-              </div>
+                }
               }
             </div>
 
