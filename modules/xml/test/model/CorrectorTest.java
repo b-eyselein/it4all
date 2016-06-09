@@ -1,7 +1,6 @@
 package model;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import org.junit.Assert;
@@ -48,11 +47,7 @@ public class CorrectorTest {
     File xml = new File("test/resources/note.xml");
     File xsd = new File("test/resources/note.xsd");
     List<XMLError> out = null;
-    try {
-      out = XmlCorrector.correctXMLAgainstXSD(xsd, xml);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    out = XmlCorrector.correctXMLAgainstXSD(xsd, xml);
     Assert.assertNotNull(out);
     Assert.assertTrue(out.isEmpty());
   }

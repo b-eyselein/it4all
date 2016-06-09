@@ -3,7 +3,6 @@ package model;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import org.junit.Test;
@@ -34,7 +33,7 @@ public class ClosingTagFailTest {
             + "The element type \"getraenk\" must be terminated by the matching end-tag \"</getraenk>\".\n",
         out.get(0).toString());
   }
-  
+
   /**
    * Test method for
    * {@link model.CorrectorXml#correctXMLAgainstXSD(java.io.File, java.io.File)}
@@ -45,11 +44,7 @@ public class ClosingTagFailTest {
     File xml = new File("test/resources/noteNoClosingTag.xml");
     File xsd = new File("test/resources/note.xsd");
     List<XMLError> out = null;
-    try {
-      out = XmlCorrector.correctXMLAgainstXSD(xsd, xml);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    out = XmlCorrector.correctXMLAgainstXSD(xsd, xml);
     assertEquals("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), 1);
     assertEquals("FATALERROR:" + "\n" + "Zeile: 7" + "\n" + "Fehler: "
         + "The element type \"to\" must be terminated by the matching end-tag \"</to>\".\n", out.get(0).toString());
