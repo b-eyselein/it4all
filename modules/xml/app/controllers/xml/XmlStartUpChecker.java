@@ -35,7 +35,7 @@ public class XmlStartUpChecker {
   }
   
   private void checkOrCreateSampleFile(XmlExercise exercise) {
-    Path sampleFile = util.getSampleFileForExerciseAndType("xml", exercise.referenceFileName);
+    Path sampleFile = util.getSampleFileForExercise("xml", exercise.referenceFileName);
     if(Files.exists(sampleFile))
       return;
     

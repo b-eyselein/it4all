@@ -70,7 +70,7 @@ public class XML extends Controller {
     User user = UserManagement.getCurrentUser();
     String defaultOrOldSolution = STANDARD_XML;
     try {
-      Path oldSolutionPath = util.getSolutionFileForExerciseAndType(user, EXERCISE_TYPE, exerciseId,
+      Path oldSolutionPath = util.getSolFileForExerciseAndType(user, EXERCISE_TYPE, exerciseId,
           exercise.exerciseType.studentFileEnding);
       if(Files.exists(oldSolutionPath, LinkOption.NOFOLLOW_LINKS))
         defaultOrOldSolution = String.join("\n", Files.readAllLines(oldSolutionPath));
@@ -81,7 +81,7 @@ public class XML extends Controller {
 
     String referenceCode = "";
     try {
-      Path referenceFilePath = util.getSampleFileForExerciseAndType(EXERCISE_TYPE, exercise.referenceFileName);
+      Path referenceFilePath = util.getSampleFileForExercise(EXERCISE_TYPE, exercise.referenceFileName);
       if(Files.exists(referenceFilePath, LinkOption.NOFOLLOW_LINKS))
         referenceCode = String.join("\n", Files.readAllLines(referenceFilePath));
       
@@ -100,7 +100,7 @@ public class XML extends Controller {
     Path learnerSolution = solutionPath;
     Path referenceFile = null;
     if(exercise.exerciseType == ExerciseType.XMLAgainstDTD || exercise.exerciseType == ExerciseType.XMLAgainstXSD) {
-      referenceFile = util.getSampleFileForExerciseAndType(EXERCISE_TYPE, exercise.referenceFileName);
+      referenceFile = util.getSampleFileForExercise(EXERCISE_TYPE, exercise.referenceFileName);
     } else if(exercise.exerciseType == ExerciseType.DTDAgainstXML) {
       referenceFile = createCustomReferenceFileforUser(solutionPath, user, exercise);
     }
@@ -129,12 +129,12 @@ public class XML extends Controller {
   }
 
   private Path createCustomReferenceFileforUser(Path solutionPath, User user, XmlExercise exercise) {
-    Path result = util.getSolutionFileForExerciseAndType(user, EXERCISE_TYPE, "reference_for_" + exercise.id, "xml");
+    Path result = util.getSolFileForExerciseAndType(user, EXERCISE_TYPE, "reference_for_" + exercise.id, "xml");
     String content = "";
     try {
       content = "<?xml version=\"1.0\" ?>\n" + "<!DOCTYPE party SYSTEM \"" + solutionPath.toString() + "\">\n"
           + String.join("\n",
-              Files.readAllLines(util.getSampleFileForExerciseAndType(EXERCISE_TYPE, exercise.referenceFileName)))
+              Files.readAllLines(util.getSampleFileForExercise(EXERCISE_TYPE, exercise.referenceFileName)))
           + "\n";
 
       Files.write(result, Arrays.asList(content), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
@@ -155,7 +155,7 @@ public class XML extends Controller {
       if(!Files.exists(solDir))
         Files.createDirectories(solDir);
       
-      Path saveTo = util.getSolutionFileForExerciseAndType(user, EXERCISE_TYPE, exercise.id,
+      Path saveTo = util.getSolFileForExerciseAndType(user, EXERCISE_TYPE, exercise.id,
           exercise.exerciseType.studentFileEnding);
       Files.write(saveTo, Arrays.asList(solution), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
       return saveTo;

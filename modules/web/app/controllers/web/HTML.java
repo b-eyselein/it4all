@@ -92,7 +92,7 @@ public class HTML extends Controller {
     
     String defaultOrOldSolution = STANDARD_HTML;
     try {
-      Path oldSolutionPath = util.getSolutionFileForExerciseAndType(user, EXERCISE_TYPE, exerciseId, FILE_TYPE);
+      Path oldSolutionPath = util.getSolFileForExerciseAndType(user, EXERCISE_TYPE, exerciseId, FILE_TYPE);
       if(Files.exists(oldSolutionPath, LinkOption.NOFOLLOW_LINKS))
         defaultOrOldSolution = String.join("\n", Files.readAllLines(oldSolutionPath));
     } catch (IOException e) {
@@ -124,7 +124,7 @@ public class HTML extends Controller {
       if(!Files.exists(solDir))
         Files.createDirectories(solDir);
       
-      Path saveTo = util.getSolutionFileForExerciseAndType(user, EXERCISE_TYPE, exercise, FILE_TYPE);
+      Path saveTo = util.getSolFileForExerciseAndType(user, EXERCISE_TYPE, exercise, FILE_TYPE);
       Files.write(saveTo, Arrays.asList(solution), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     } catch (IOException error) {
       Logger.error("Fehler beim Speichern einer Html-Loesungsdatei!", error);

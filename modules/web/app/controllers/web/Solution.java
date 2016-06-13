@@ -16,11 +16,13 @@ import views.html.error;
 
 public class Solution extends Controller {
   
+  private static final String EXERCISE_TYPE = "html";
+
   @Inject
   private Util util;
 
   public Result site(User user, int exercise) {
-    Path file = util.getSolutionFileForExerciseAndType(user, "html", exercise, "html");
+    Path file = util.getSolFileForExerciseAndType(user, EXERCISE_TYPE, exercise, EXERCISE_TYPE);
     if(!Files.exists(file))
       return badRequest(error.render(user, new Html("Fehler: Datei nicht vorhanden!")));
     try {
