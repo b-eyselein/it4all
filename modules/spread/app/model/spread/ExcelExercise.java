@@ -13,4 +13,9 @@ public class ExcelExercise extends Exercise {
 
   public String fileName;
 
+  @Override
+  public int getMaxPoints() {
+    return 1;
+  }
+
 }

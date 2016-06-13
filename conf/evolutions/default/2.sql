@@ -7,8 +7,8 @@ insert into exercise (`type`, `id`, `title`, `exerciseText`, `file_name`, `defau
 	Die Werkstatt kann nur Modelle der Marken Audi, Seat, Skoda und VW reparieren.
 	Ihre Firma beschließt, zuerst einen statischen Seitenprototyp mit verminderter Funktion zu erstellen. Benutzen Sie nur Html, um folgende Elemente zu erstellen. Versuchen Sie jedoch so viel Funktionalität wie möglich umzusetzen, indem Sie entsprechende Elemente bzw. Attribute von Html5 verwenden! Elemente, die mit einem „*“ markiert sind, sollen zur Formularabsendung eingegeben werden müssen. Benutzen Sie die in Klammern angegeben Namen für die Elemente! Erstellen Sie jedes Eingabefeld für das spätere Styling mit CSS jeweils eine eigene <div>-Umgebung!",
 	"", "", ""),
-
-	("css", 2, "Terminabsprache Werkstatt", "TODO!", "", "", ""),
+	
+	("html", 2, "Neue Aufgabe..." , "Text...", "", "", ""),
 
 	("js", 3, "Summen", "Implementieren Sie folgende Funktion 'sum', die zwei Zahlen entegennimmt und deren Summe zurückgibt.", "",
 	 "function sum(a, b) {\n  return 0;;\n}", "sum"),
@@ -20,9 +20,10 @@ insert into exercise (`type`, `id`, `title`, `exerciseText`, `file_name`, `defau
    	("spread", 5, "Planung Schullandheimaufenthalt", "Sie sind beauftragt, einen Schullandheimaufenthalt zu planen und die Kosten zu kalkulieren.", "Aufgabe_Schullandheim", "", "");
 	
 insert into xmlexercise (`id`, `title`, `exerciseType`, `referenceFileName`, `exerciseText`) values
-	(1, "Hello, XML", "XMLAgainstDTD", "first.dtd", "exerciseText"), (2, "Hello2, XSD", "XMLAgainstXSD","books.xsd", "teeeeeeeext");
+	(1, "Hello, XML", "XMLAgainstDTD", "first.dtd", "exerciseText"), (2, "Hello2, XSD", "XMLAgainstXSD","books.xsd", "teeeeeeeext"),
+	(3, "Hello3, DTD", "DTDAgainstXML","third.xml", "teeeeeeeeeeeeext");
 
-insert into task (`exercise_id`, `id`, `taskDesc`, `xpath_query_name`, `attributes`, `defining_attribute`) values
+insert into html_task (`exercise_id`, `id`, `taskDesc`, `xpath_query_name`, `attributes`, `defining_attribute`) values
 	(1, 1, "Erstellen Sie ein Formular auf der Seite. Als Aktion soll test und als Methode 'post' angegeben werden.",
 	"//form", "action=test:method=post",  ""),
 
@@ -49,7 +50,9 @@ insert into task (`exercise_id`, `id`, `taskDesc`, `xpath_query_name`, `attribut
 	"//form/div//input", "type=checkbox:required=true", "name=agb"),
 	 
 	(1, 9, "Erstellen Sie eine Möglichkeit, das Formular abzusenden. Geben Sie als Wert 'Absenden' an.",
-	"//form/div//input", "value=Absenden", "type=submit");
+	"//form/div//input", "value=Absenden", "type=submit"),
+	
+	(2, 1, "Erster Task", "//*", "", "");
 
 insert into childtask (`id`, `task_id`, `exercise_id`, `tagName`, `defining_attribute`) values
 	(1, 6, 1, "option", "value="),
@@ -57,7 +60,12 @@ insert into childtask (`id`, `task_id`, `exercise_id`, `tagName`, `defining_attr
  	(3, 6, 1, "option", "value=Seat"),
  	(4, 6, 1, "option", "value=Skoda"),
  	(5, 6, 1, "option", "value=VW");
+ 	
+insert into css_task (`id`, `exercise_id`, `taskdesc`, `xpath_query_name`, `defining_attribute`, `attributes`) values
+	(1, 1, "Geben Sie allen div-Elementen, die die einzelnen Inputs einschließen, die Klasse 'form-group'.", "//form/div", "", "class=form-group"),
+	(2, 1, "Verwenden Sie für alle Inputs die Klasse form-control", "//form/div/input", "", "class=form-control");
 
+	
 # JavaScript
 
 insert into js_test (`id`, `exercise_id`, `awaited_result`) values
@@ -78,15 +86,15 @@ insert into js_testvalue (`id`, `test_id`, `value`) values
 
 SET FOREIGN_KEY_CHECKS = 0;
 
-delete from grading;
-
 delete from js_testvalue;
 
 delete from js_test;
 
 delete from childtask;
 
-delete from task;
+delete from css_task;
+
+delete from html_task;
 
 delete from xmlexercise;
 

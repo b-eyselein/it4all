@@ -1,8 +1,8 @@
-@(user: model.user.User, exercise: model.javascript.JsExercise, serverUrl: String)
+@(user: model.user.User, exercise: model.javascript.JsExercise)
 
 @main("JavaScript-Test", user) {
-  <script src="@controllers.web.routes.Assets.versioned("assets/ace/ace.js")" type="text/javascript" charset="utf-8"></script>
-  <script src="@controllers.web.routes.Assets.versioned("assets/jsProcessor.js")" type="text/javascript" charset="utf-8"></script>
+  <script src="@controllers.routes.Assets.versioned("javascripts/ace/ace.js")" type="text/javascript" charset="utf-8"></script>
+  <script src="@controllers.routes.Assets.versioned("javascripts/jsProcessor.js")" type="text/javascript" charset="utf-8"></script>
   <script>
     function testSolution() {
       // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
@@ -15,7 +15,7 @@
       
       // AJAX-Objekt mit Daten fuellen, absenden
       var parameters = "editorContent=" + encodeURIComponent(editor.getValue());
-      xhttp.open("POST", "@serverUrl@controllers.web.routes.JS.commit(exercise.id)", true);
+      xhttp.open("POST", "@controllers.web.routes.JS.commit(exercise.id)", true);
       xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
       xhttp.setRequestHeader("Accept", "application/json");
       xhttp.send(parameters);

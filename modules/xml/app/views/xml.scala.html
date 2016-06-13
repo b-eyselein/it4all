@@ -1,7 +1,7 @@
-@(user: model.user.User, exercise: model.XmlExercise, referenceFile: String, oldSolution: String, serverUrl: String)
+@(user: model.user.User, exercise: model.XmlExercise, referenceFile: String, oldSolution: String)
 @main("XML-Test", user) {
-  <script src="@controllers.web.routes.Assets.versioned("assets/ace/ace.js")"></script>
-  <script src="@controllers.xml.routes.Assets.versioned("assets/xmlProcessor.js")"></script>
+  <script src="@controllers.routes.Assets.versioned("javascripts/ace/ace.js")"></script>
+  <script src="@controllers.routes.Assets.versioned("javascripts/xmlProcessor.js")"></script>
   <script>
     function testSolution() {
       // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
@@ -14,7 +14,7 @@
       
       // AJAX-Objekt mit Daten fuellen, absenden
       var parameters = "editorContent=" + encodeURIComponent(editor.getValue());
-      xhttp.open("PUT", "@serverUrl@controllers.xml.routes.XML.commit(exercise.id)", true);
+      xhttp.open("PUT", "@controllers.xml.routes.XML.commit(exercise.id)", true);
       xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
       xhttp.setRequestHeader("Accept", "application/json");
       xhttp.send(parameters);

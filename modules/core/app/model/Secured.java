@@ -12,9 +12,11 @@ public class Secured extends Security.Authenticator {
   @Override
   public String getUsername(Context ctx) {
     String userName = ctx.session().get(SESSION_ID_FIELD);
-    if(userName == null || User.finder.byId(userName) == null)
+    if(userName == null || User.finder.byId(userName) == null) {
       ctx.session().clear();
-    
+      return null;
+    }
+
     return userName;
   }
 

@@ -1,5 +1,7 @@
 package model.exercise;
 
+import java.util.List;
+
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -13,6 +15,11 @@ import model.user.User;
 public class Grading extends Model {
   
   public static final Finder<GradingKey, Grading> finder = new Finder<GradingKey, Grading>(Grading.class);
+
+  public static boolean otherPartCompleted(int exerciseId, User user) {
+    List<Grading> gradings = Grading.finder.where().eq("user_name", user.name).eq("exercise_id", exerciseId).findList();
+    return gradings.size() == 1 && gradings.get(0).hasAllPoints();
+  }
 
   @EmbeddedId
   public GradingKey key;
@@ -29,6 +36,10 @@ public class Grading extends Model {
 
   public Grading(GradingKey theKey) {
     key = theKey;
+  }
+
+  public boolean hasAllPoints() {
+    return points == exercise.getMaxPoints();
   }
 
 }

@@ -16,168 +16,90 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.w3c.dom.Document;
-import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import model.user.User;
 
 public class XmlCorrector {
+  
+  private static DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+  private static DocumentBuilder builder = null;
+  private static SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+  
+  
   public static List<XMLError> correctXMLAgainstDTD(File studentSolutionXML) {
+    
     List<XMLError> output = new LinkedList<>();
-    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    
     factory.setValidating(true);
-    DocumentBuilder builder = null;
     try {
       builder = factory.newDocumentBuilder();
     } catch (ParserConfigurationException e) {
     }
-    builder.setErrorHandler(new ErrorHandler() {
-      // kommt in eigene Klasse
-      
-      @Override
-      public void warning(SAXParseException exception) throws SAXException {
-        output.add(new XMLError(exception.getLineNumber(), exception.getMessage(), XmlErrorType.WARNING));
-      }
-      
-      @Override
-      public void fatalError(SAXParseException exception) throws SAXException {
-        output.add(new XMLError(exception.getLineNumber(), exception.getMessage(), XmlErrorType.FATALERROR));
-      }
-      
-      @Override
-      public void error(SAXParseException exception) throws SAXException {
-        output.add(new XMLError(exception.getLineNumber(), exception.getMessage(), XmlErrorType.ERROR));
-        
-      }
-    });
+    
+    builder.setErrorHandler(new SimpleXMLErrorHandler(output));
     
     try {
       Document doc = builder.parse(studentSolutionXML);
-      
-    } catch (SAXException e) {
-    } catch (IOException e) {
+    } catch (SAXException | IOException e) {
+    } catch (NullPointerException e){
+      output.add(new XMLError("leere XML", XmlErrorType.FATALERROR));
     }
     
     return output;
+    
   }
   
   public static List<XMLError> correctXMLAgainstXSD(File studentSolutionXML, File xsd) throws IOException {
+    
     List<XMLError> output = new LinkedList<>();
     Source xmlFile = new StreamSource(studentSolutionXML);
-    SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+    Source xsdFile = new StreamSource(xsd);
+    
     Schema schema = null;
     try {
-      schema = schemaFactory.newSchema(xsd);
+      schema = schemaFactory.newSchema(xmlFile);
     } catch (SAXException e) {
     }
     
     Validator validator = schema.newValidator();
-    validator.setErrorHandler(new ErrorHandler() {
-      
-      @Override
-      public void warning(SAXParseException exception) throws SAXException {
-        output.add(new XMLError(exception.getLineNumber(), exception.getMessage(), XmlErrorType.WARNING));
-      }
-      
-      @Override
-      public void fatalError(SAXParseException exception) throws SAXException {
-        output.add(new XMLError(exception.getLineNumber(), exception.getMessage(), XmlErrorType.FATALERROR));
-      }
-      
-      @Override
-      public void error(SAXParseException exception) throws SAXException {
-        output.add(new XMLError(exception.getLineNumber(), exception.getMessage(), XmlErrorType.ERROR));
-        
-      }
-    });
+    validator.setErrorHandler(new SimpleXMLErrorHandler(output));
     try {
-      validator.validate(xmlFile);
+      validator.validate(xsdFile);
     } catch (SAXException e) {
     }
+    
     return output;
   }
   
   public static List<XMLError> correctDTDAgainstXML(File studentenSolutionDTD) {
+    
     List<XMLError> output = new LinkedList<>();
-    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    
     factory.setValidating(true);
-    DocumentBuilder builder = null;
     try {
       builder = factory.newDocumentBuilder();
     } catch (ParserConfigurationException e) {
     }
-    builder.setErrorHandler(new ErrorHandler() {
-      
-      @Override
-      public void warning(SAXParseException exception) throws SAXException {
-        String string = null;
-        if(exception.getSystemId().indexOf("xml") >= 0) {
-          
-          // würde den Fehler in der XML anzeigen
-          // nur Ausgabe des Fehlers da die Reihenfolge in er DTD
-          // keine Rolle spielt
-          string = "WARNING:" + "\n" + "Fehler: " + exception.getMessage() + "\n";
-          // TODO
-          // if (!output.contains(string)) {
-          // output.add(string);
-          // }
-          
-        } else {
-          output.add(new XMLError(exception.getMessage(), XmlErrorType.WARNING));
-        }
-        
-      }
-      
-      @Override
-      public void fatalError(SAXParseException exception) throws SAXException {
-        String string = null;
-        if(exception.getSystemId().indexOf("xml") >= 0) {
-          // würde den Fehler in der XML anzeigen
-          // nur Ausgabe des Fehlers da die Reihenfolge in er DTD
-          // keine Rolle spielt
-          string = "FATAL ERROR:" + "\n" + "Fehler: " + exception.getMessage() + "\n";
-          // TODO
-          // if (!output.contains(string)) {
-          // output.add(string);
-          // }
-          
-        } else {
-          output.add(new XMLError(exception.getMessage(), XmlErrorType.FATALERROR));
-        }
-      }
-      
-      @Override
-      public void error(SAXParseException exception) throws SAXException {
-        String string = null;
-        if(exception.getSystemId().indexOf("xml") >= 0) {
-          // würde den Fehler in der XML anzeigen
-          // nur Ausgabe des Fehlers, da die Reihenfolge in DTD keine
-          // Rolle spielt
-          string = "ERROR:" + "\n" + "Fehler: " + exception.getMessage() + "\n";
-          // manche Fehler werden mehrmals ausgegeben, daher
-          // überprüfen ob der Fehler schon in der Ausgabe ist
-          // TODO
-          // if (!output.contains(string)) {
-          // ElementResult result = new ElementResult(Success.PARTIALLY, "",
-          // string);
-          // output.add(result);
-          // }
-        } else {
-          output.add(new XMLError(exception.getMessage(), XmlErrorType.ERROR));
-        }
-      }
-    });
+    
+    builder.setErrorHandler(new DTDXMLErrorHandler(output));
     
     try {
-      Document doc = builder.parse(studentenSolutionDTD);
+      Document doc = builder.parse(studentenSolutionDTD); // studentenSolutionDTD);
     } catch (SAXException | IOException e) {
     }
     
+    for(XMLError item: output) {
+      System.out.println(item);
+    }
+    
     return output;
+    
   }
   
-  public static List<XMLError> correct(File solutionFile, File referenceFile, XmlExercise exercise, User user) throws IOException {
+  public static List<XMLError> correct(File solutionFile, File referenceFile, XmlExercise exercise, User user)
+      throws IOException {
     switch(exercise.exerciseType) {
     case XMLAgainstXSD:
       return correctXMLAgainstXSD(solutionFile, referenceFile);
@@ -187,7 +109,6 @@ public class XmlCorrector {
       return correctDTDAgainstXML(solutionFile);
     // case XSDAgainstXML:
     // return correctXSDAgainstXML(solutionFile, referenceFile);
-    // break;
     default:
       return null;
     }
