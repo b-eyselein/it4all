@@ -54,6 +54,9 @@ public class XML extends Controller {
 
     List<XMLError> elementResults = correctExercise(path2solution, user, exercise);
 
+    for(XMLError error: elementResults)
+      Logger.debug(error.toString());
+    
     if(request().acceptedTypes().get(0).toString().equals("application/json"))
       return ok(Json.toJson(elementResults));
     else
@@ -99,11 +102,18 @@ public class XML extends Controller {
   private List<XMLError> correctExercise(Path solutionPath, User user, XmlExercise exercise) {
     Path learnerSolution = solutionPath;
     Path referenceFile = null;
-    if(exercise.exerciseType == ExerciseType.XMLAgainstDTD || exercise.exerciseType == ExerciseType.XMLAgainstXSD) {
-      referenceFile = util.getSampleFileForExercise(EXERCISE_TYPE, exercise.referenceFileName);
-    } else if(exercise.exerciseType == ExerciseType.DTDAgainstXML) {
+    switch(exercise.exerciseType) {
+    case XMLAgainstDTD:
+    case XMLAgainstXSD:
+      referenceFile = util.getSampleFileForExerciseAndType(EXERCISE_TYPE, exercise.referenceFileName);
+      break;
+    case DTDAgainstXML:
       referenceFile = createCustomReferenceFileforUser(solutionPath, user, exercise);
+      break;
+    default:
+      return null;
     }
+
     List<XMLError> result = null;
     Logger.info(exercise.exerciseType.toString());
     try {
@@ -111,19 +121,17 @@ public class XML extends Controller {
     } catch (IOException e) {
       Logger.error(e.getMessage());
     }
-    // result = new ArrayList<XMLError>();
+    
     if(result.isEmpty()) {
-      result.add(new XMLError(XmlErrorType.NONE, "Super!", "Bist ein ganz guter Student."));
+      result.add(new XMLError(XmlErrorType.NONE, "Alles richtig!", ""));
     }
     boolean malformed = false;
     for(XMLError el: result) {
-      // TODO: passt hier pruefen auf FATALERROR oder vielleicht doch lieber
-      // "el.getErrorType() != XmlErrorType.NONE"
-      if(el.getErrorType() == XmlErrorType.FATALERROR)
+      if(el.getErrorType() == XmlErrorType.FATALERROR || el.getErrorType() == XmlErrorType.ERROR)
         malformed = true;
     }
     if(!result.isEmpty() && !malformed) {
-      result.add(new XMLError(XmlErrorType.NONE, "Die Eingabe ist wohlgeformt", ""));
+      result.add(new XMLError(XmlErrorType.NONE, "Die Eingabe ist wohlgeformt.", ""));
     }
     return result;
   }
@@ -139,9 +147,9 @@ public class XML extends Controller {
 
       Files.write(result, Arrays.asList(content), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     } catch (IOException e) {
-      System.out.println("YUHU");
+      Logger.error("Fehler beim Lesen oder Schreiben einer XML-Referenzdatei.");
     }
-    Logger.info(content);
+    // Logger.info(content);
     return result;
   }
 
