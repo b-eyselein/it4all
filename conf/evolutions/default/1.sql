@@ -23,7 +23,7 @@ create table css_task (
 );
 
 create table exercise (
-  type                          varchar(31) not null,
+  type                          varchar(10) not null,
   id                            integer auto_increment not null,
   title                         varchar(255),
   exercisetext                  text,

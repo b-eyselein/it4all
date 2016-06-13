@@ -7,8 +7,6 @@ insert into exercise (`type`, `id`, `title`, `exerciseText`, `file_name`, `defau
 	Die Werkstatt kann nur Modelle der Marken Audi, Seat, Skoda und VW reparieren.
 	Ihre Firma beschließt, zuerst einen statischen Seitenprototyp mit verminderter Funktion zu erstellen. Benutzen Sie nur Html, um folgende Elemente zu erstellen. Versuchen Sie jedoch so viel Funktionalität wie möglich umzusetzen, indem Sie entsprechende Elemente bzw. Attribute von Html5 verwenden! Elemente, die mit einem „*“ markiert sind, sollen zur Formularabsendung eingegeben werden müssen. Benutzen Sie die in Klammern angegeben Namen für die Elemente! Erstellen Sie jedes Eingabefeld für das spätere Styling mit CSS jeweils eine eigene <div>-Umgebung!",
 	"", "", ""),
-	
-	("html", 2, "Neue Aufgabe..." , "Text...", "", "", ""),
 
 	("js", 3, "Summen", "Implementieren Sie folgende Funktion 'sum', die zwei Zahlen entegennimmt und deren Summe zurückgibt.", "",
 	 "function sum(a, b) {\n  return 0;;\n}", "sum"),
@@ -51,9 +49,7 @@ insert into html_task (`exercise_id`, `task_id`, `taskDesc`, `xpath_query_name`,
 	"//form/div//input", "type=checkbox;;required=true", "name=agb"),
 	 
 	(1, 9, "Erstellen Sie eine Möglichkeit, das Formular abzusenden. Geben Sie als Wert 'Absenden' an.",
-	"//form/div//input", "value=Absenden", "type=submit"),
-	
-	(2, 1, "Erster Task", "//*", "", "");
+	"//form/div//input", "value=Absenden", "type=submit");
 
 insert into childtask (`id`, `task_id`, `exercise_id`, `tagName`, `defining_attribute`) values
 	(1, 6, 1, "option", "value="),
