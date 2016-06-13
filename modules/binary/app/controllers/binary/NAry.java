@@ -6,7 +6,6 @@ import play.data.FormFactory;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
-import java.util.Random;
 
 import javax.inject.Inject;
 
@@ -21,9 +20,9 @@ public class NAry extends Controller {
   @Inject
   FormFactory factory;
   
-  NAryNumber number;
+  NAryConvertionQuestion question;
+  
   String learnerSolution;
-  String numberType;
   
   public Result addLearnerSolution() {
     DynamicForm dynFormula = factory.form().bindFromRequest();
@@ -32,24 +31,15 @@ public class NAry extends Controller {
   }
   
   public Result index() {
-    Random generator = new Random();
-    int nValue = generator.nextInt(256);
-    int nType = generator.nextInt(3);
-    if(nType == 0) {
-      numberType = "Binärzahl";
-      nType = 2;
-    } else if(nType == 1) {
-      numberType = "Oktalzahl";
-      nType = 8;
-    } else if(nType == 2) {
-      numberType = "Hexadezimalzahl";
-      nType = 16;
-    }
-    number = new NAryNumber(nValue, nType);
-    return ok(naryquestion.render(UserManagement.getCurrentUser(), number.toDec(), numberType));
-  }
+    question = new NAryConvertionQuestion();
+   	return ok(naryquestion.render(UserManagement.getCurrentUser(),
+   			question.getFromNumberType(), question.getFromValue(), question.getToNumberType()));
+   	}
   
   public Result checkSolution() {
-	return ok(narysolution.render(UserManagement.getCurrentUser(), number.toDec(), numberType, learnerSolution, number.toString(), number.toString().equals(learnerSolution)));
+	return ok(narysolution.render(UserManagement.getCurrentUser(), learnerSolution,
+			question.getFromNumberType(), question.getFromValue(),
+			question.getToNumberType(), question.getToValue(),
+			question.getToValue().equals(learnerSolution)));
   }
 }
