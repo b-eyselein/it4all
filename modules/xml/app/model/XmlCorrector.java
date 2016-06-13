@@ -95,15 +95,15 @@ public class XmlCorrector {
     List<XMLError> output = new LinkedList<>();
     Source xmlFile = new StreamSource(studentSolutionXML);
     Source xsdFile = new StreamSource(xsd);
-    
+
     Schema schema = null;
     try {
       schema = schemaFactory.newSchema(xmlFile);
     } catch (SAXException e) {
-	  output.add(new XMLError("Beim parsen der XML ist ein Fehler aufgetreten.", XmlErrorType.FATALERROR));
-	  return output;
+      output.add(new XMLError("Beim parsen der XML ist ein Fehler aufgetreten.", XmlErrorType.FATALERROR));
+      return output;
     }
-    
+
     if(schema == null)
       return Arrays.asList(new XMLError("Ihre Eingabedaten konnten nicht geladen werden!", XmlErrorType.FATALERROR));
     
@@ -115,7 +115,7 @@ public class XmlCorrector {
     } catch (NullPointerException e) {
       output.add(new XMLError("konnte XSD nicht validieren.", XmlErrorType.FATALERROR));
     }
-    
+
     return output;
   }
 }

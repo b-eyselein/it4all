@@ -1,9 +1,6 @@
 package controllers.xml;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,17 +20,17 @@ import play.libs.Json;
 public class XmlStartUpChecker {
   
   private static Logger.ALogger theLogger = Logger.of("startup");
-
+  
   private Util util;
-
+  
   @Inject
   public XmlStartUpChecker(Util theUtil) {
     util = theUtil;
     performStartUpCheck();
-
+    
     testJsonCreation();
   }
-
+  
   public void performStartUpCheck() {
     List<XmlExercise> exercises = XmlExercise.finder.all();
     if(exercises.size() == 0)
@@ -42,7 +39,7 @@ public class XmlStartUpChecker {
       for(XmlExercise exercise: exercises)
         checkOrCreateSampleFile(exercise);
   }
-
+  
   private void checkOrCreateSampleFile(XmlExercise exercise) {
     Path sampleFile = util.getSampleFileForExercise("xml", exercise.referenceFileName);
     if(Files.exists(sampleFile))
@@ -50,7 +47,7 @@ public class XmlStartUpChecker {
     
     theLogger.warn("Die Lösungsdatei für Xml-Aufgabe " + exercise.id + " \"" + sampleFile
         + "\" existiert nicht! Versuche, Datei zu erstellen...");
-
+    
     Path providedFile = Paths.get("modules/xml/conf/resources", exercise.referenceFileName);
     if(Files.exists(providedFile))
       try {
@@ -62,7 +59,7 @@ public class XmlStartUpChecker {
     else
       theLogger.error("Konnte Datei nicht erstellen: Keine Lösungsdatei mitgeliefert...");
   }
-
+  
   private void testJsonCreation() {
     // FIXME: Generate/Read exercises from this file
     String fileName = "modules/xml/conf/resources/exercises.json";
@@ -76,5 +73,5 @@ public class XmlStartUpChecker {
       theLogger.error("Fehler beim Lesen aus der Datei " + fileName, e);
     }
   }
-
+  
 }
