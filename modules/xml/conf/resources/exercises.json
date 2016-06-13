@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Ich veranstalte eine Party...",
+    "type": "XML_Against_DTD",
+    "fileName": "party.dtd",
+    "description": "Erstellen Sie zu dieser Document Type Definition ein passendes XML-Dokument!"
+  },
+  {
+    "name": "Ich lese ein Buch...",
+    "type": "XML_Against_XSD",
+    "fileName": "books.xsd",
+    "description": "Erstellen Sie zu diesem XML Schema ein passendes XML-Dokument!"
+  }
+]
