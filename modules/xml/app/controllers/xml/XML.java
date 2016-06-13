@@ -54,6 +54,9 @@ public class XML extends Controller {
 
     List<XMLError> elementResults = correctExercise(path2solution, user, exercise);
 
+    for(XMLError error: elementResults)
+      Logger.debug(error.toString());
+    
     if(request().acceptedTypes().get(0).toString().equals("application/json"))
       return ok(Json.toJson(elementResults));
     else
@@ -99,18 +102,18 @@ public class XML extends Controller {
   private List<XMLError> correctExercise(Path solutionPath, User user, XmlExercise exercise) {
     Path learnerSolution = solutionPath;
     Path referenceFile = null;
-	switch(exercise.exerciseType) {
+    switch(exercise.exerciseType) {
     case XMLAgainstDTD:
-	case XMLAgainstXSD:
-	  referenceFile = util.getSampleFileForExerciseAndType(EXERCISE_TYPE, exercise.referenceFileName);
-	  break;
-	case DTDAgainstXML:
-	  referenceFile = createCustomReferenceFileforUser(solutionPath, user, exercise);
-	  break;
-	default:
+    case XMLAgainstXSD:
+      referenceFile = util.getSampleFileForExerciseAndType(EXERCISE_TYPE, exercise.referenceFileName);
+      break;
+    case DTDAgainstXML:
+      referenceFile = createCustomReferenceFileforUser(solutionPath, user, exercise);
+      break;
+    default:
       return null;
-	}
-	
+    }
+
     List<XMLError> result = null;
     Logger.info(exercise.exerciseType.toString());
     try {
