@@ -61,10 +61,7 @@ public class HtmlTask extends Model implements Task {
     String xpathQuery = buildXPathQuery();
     List<WebElement> foundElements = searchContext.findElements(By.xpath(xpathQuery));
 
-    if(foundElements.isEmpty())
-      return new ElementResult(this, Success.NONE);
-    
-    if(foundElements.size() > 1)
+    if(foundElements.isEmpty() || foundElements.size() > 1)
       return new ElementResult(this, Success.NONE);
     
     // Nur noch ein passendes Element
