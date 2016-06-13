@@ -16,14 +16,6 @@ public class JsTestResult extends EvaluationResult {
     realResult = theRealResult;
   }
 
-  // public String getAsString() {
-  // // FIXME: Format festlegen und implementieren!
-  // String ret = wasSuccessful() ? "+ " : "- ";
-  // ret += "Test " + test.id + ": \"" + evaluated + "\" ";
-  // ret += wasSuccessful() ? "war erfolgreich." : "war nicht erfolgreich";
-  // return ret;
-  // }
-
   public String getAwaitedResult() {
     return test.awaitedResult;
   }

@@ -10,19 +10,19 @@ import javax.persistence.InheritanceType;
 import com.avaje.ebean.Model;
 
 @Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "type", length = 10)
 public abstract class Exercise extends Model {
   
   // FIXME: PK: type + int!
   @Id
   public int id;
-
+  
   public String title;
-
+  
   @Column(name = "exerciseText", columnDefinition = "text")
   public String exerciseText;
-
+  
   public abstract int getMaxPoints();
-
+  
 }
