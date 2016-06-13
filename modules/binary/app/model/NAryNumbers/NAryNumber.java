@@ -186,4 +186,12 @@ public class NAryNumber
 		if(input.toLowerCase().matches("-?0b[a-v0-9]*")) return StringToNAry(input,2);
 		throw new IllegalArgumentException("The input " + input + "does not specify the base.");
 	}
+	
+	// adds two given NAryNumbers	
+	public static NAryNumber addNArys(NAryNumber number1, NAryNumber number2)
+	{
+		NAryNumber result = new NAryNumber(number1.getValue(),number2.getBase());
+		result.add(number2);
+		return result;
+	}
 }

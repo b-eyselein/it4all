@@ -3,20 +3,25 @@
 @main("HTML-Test", user) {
 	<div class="container">
 		<div class="panel panel-default">
-	      <div class="panel-heading">
-	        <a href="@binary.routes.Bool.index">Bool'sche Algebra</a>
-	      </div>
-	      <div class="panel-body">
-	        <p>Wahrheitstabellen ausf&uuml;llen.</p>
-	      </div>
-	    </div>
-	    <div class="panel panel-default">
-	      <div class="panel-heading">
-	        <a href="@binary.routes.NAry.index">Zahlensysteme</a>
-	      </div>
-	      <div class="panel-body">
-	        <p>Umformen von Dezimalen ins Bin&auml;r-, Octal- und Hexadezimalsystem oder umgekehrt.</p>
-	      </div>
-	    </div>
+	<div class="panel-heading">
+	<a href="@binary.routes.Bool.index">Bool'sche Algebra</a>
+	</div>
+	<div class="panel-body">
+	<p>Wahrheitstabellen ausf&uuml;llen.</p>
+	</div>
+	</div>
+	<div class="panel panel-default">
+	<div class="panel-heading">
+	Zahlensysteme
+	</div>
+	<div class="panel-body">
+	<a href="@binary.routes.NAryConvertion.index">
+	<p>Umformen von Dezimalen ins Bin&auml;r-, Octal- und Hexadezimalsystem oder umgekehrt.</p>
+	</a>
+	<a href="@binary.routes.NAryAddition.index">
+	<p>Addition in anderen Zahlensystemen</p>
+	</a>
+	</div>
+	</div>
 	</div>
 }
