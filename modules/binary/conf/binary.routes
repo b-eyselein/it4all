@@ -1,7 +1,13 @@
 GET   /index   controllers.binary.Binary.index()
+
 GET	  /bool    controllers.binary.Bool.index()
-GET   /nary    controllers.binary.NAry.index()
-GET   /nary/solution    controllers.binary.NAry.checkSolution()
-POST  /nary    controllers.binary.NAry.addLearnerSolution()
-POST  /bool    controllers.binary.Bool.tableAdd()
 GET	  /bool/solution		controllers.binary.Bool.indexSolution()
+POST  /bool    controllers.binary.Bool.tableAdd()
+
+GET   /naryconvertion    controllers.binary.NAryConvertion.index()
+GET   /naryconvertion/solution    controllers.binary.NAryConvertion.checkSolution()
+POST  /naryconvertion    controllers.binary.NAryConvertion.addLearnerSolution()
+
+GET   /naryaddition    controllers.binary.NAryAddition.index()
+GET   /naryaddition/solution    controllers.binary.NAryAddition.checkSolution()
+POST  /naryaddition    controllers.binary.NAryAddition.addLearnerSolution()

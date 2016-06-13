@@ -1,7 +1,8 @@
-package controllers.binary;
+package model.NAryNumbers.Questions;
 
 import java.util.Random;
 
+import model.NAryNumbers.BinaryNumber;
 import model.NAryNumbers.NAryNumber;
 
 public class NAryConvertionQuestion {
@@ -27,6 +28,9 @@ public class NAryConvertionQuestion {
 		    	nBase = 16;
 		    }
 		    number = new NAryNumber(nValue, nBase);
+		    if (numberType.equals("Binärzahl")) {
+		    	number = BinaryNumber.nAryToBinary(number);
+		    }
 
 		    // Randomly convert from decimal to nary or vice versa
 		    int nToDecimalNumber = generator.nextInt(2);
@@ -45,16 +49,16 @@ public class NAryConvertionQuestion {
 		  return toNumberType;
 	  }
 	  
-	  String getFromNumberType() {
+	  public String getFromNumberType() {
 		  return fromNumberType;
 	  }
 	  
-	  String getFromValue() {
+	  public String getFromValue() {
 		  if(toDecimalNumber) return number.toString();
 		  else return number.toDec();
 	  }
 	  
-	  String getToValue() {
+	  public String getToValue() {
 		  if(toDecimalNumber) return number.toDec();
 		  else return number.toString();
 	  }
