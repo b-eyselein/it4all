@@ -12,6 +12,7 @@ import javax.inject.Inject;
 
 import model.Util;
 import model.user.User;
+import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
@@ -29,7 +30,7 @@ public class UserManagement extends Controller {
   }
 
   @Inject
-  Util util;
+  private Util util;
 
   public Result authenticate() {
     Map<String, String[]> formValues = request().body().asFormUrlEncoded();
@@ -85,6 +86,7 @@ public class UserManagement extends Controller {
         try {
           Files.createDirectory(solutionDirectory);
         } catch (IOException e) {
+          Logger.error("Could not create solution directory for user " + userName, e);
         }
     }
     return User.finder.byId(userName);

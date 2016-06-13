@@ -10,8 +10,8 @@ import javax.persistence.InheritanceType;
 import com.avaje.ebean.Model;
 
 @Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-@DiscriminatorColumn(name = "type")
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "type", length = 10)
 public abstract class Exercise extends Model {
   
   // FIXME: PK: type + int!

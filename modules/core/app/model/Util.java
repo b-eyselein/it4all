@@ -29,10 +29,15 @@ public class Util {
 
     readRootDir();
 
-    // TODO: get owner of rootSolDir
-    if(!Files.exists(rootSolDir))
-      theLogger.error("Folder for solutions does not exits!");
-    
+    if(!Files.exists(rootSolDir)) {
+      theLogger.error("Folder for solutions does not exits. Trying to create it...");
+      try {
+        Files.createDirectories(rootSolDir);
+      } catch (IOException e) {
+        theLogger.error("Could not create folder for solutions!", e);
+      }
+    }
+
     try {
       String fileOwner = Files.getOwner(rootSolDir).getName();
       String processOwner = System.getProperty("user.name");
@@ -43,20 +48,20 @@ public class Util {
     }
   }
 
-  public Path getExcelSolFileForExercise(User user, String fileName, String exerciseType) {
-    return Paths.get(getSolDirForUserAndType(user, exerciseType).toString(), fileName);
-  }
-
   public Path getRootSolDir() {
     return rootSolDir;
   }
 
-  public Path getSampleDirectoryForExercise(String exerciseType, int exerciseId) {
-    return Paths.get(rootSolDir.toString(), SAMPLE_SUB_DIRECTORY, exerciseType, "ex_" + exerciseId);
+  public Path getSampleDirForExercise(String exerciseType) {
+    return Paths.get(rootSolDir.toString(), SAMPLE_SUB_DIRECTORY, exerciseType);
   }
 
-  public Path getSampleFileForExerciseAndType(String exerciseType, String fileName) {
-    return Paths.get(rootSolDir.toString(), SAMPLE_SUB_DIRECTORY, exerciseType, fileName);
+  public Path getSampleFileForExercise(String exerciseType, String fileName) {
+    return Paths.get(getSampleDirForExercise(exerciseType).toString(), fileName);
+  }
+
+  public Path getSoFileForExercise(User user, String exerciseType, String fileName) {
+    return Paths.get(getSolDirForUserAndType(user, exerciseType).toString(), fileName);
   }
 
   public Path getSolDirForUser(User user) {
@@ -67,7 +72,11 @@ public class Util {
     return Paths.get(getSolDirForUser(user).toString(), exerciseType);
   }
 
-  public Path getSolutionFileForExerciseAndType(User user, String exerciseType, int exercise, String fileType) {
+  public Path getSolFileForExerciseAndType(User user, String exerciseType, int exercise, String fileType) {
+    return Paths.get(getSolDirForUserAndType(user, exerciseType).toString(), exercise + "." + fileType);
+  }
+
+  public Path getSolFileForExerciseAndType(User user, String exerciseType, String exercise, String fileType) {
     return Paths.get(getSolDirForUserAndType(user, exerciseType).toString(), exercise + "." + fileType);
   }
 

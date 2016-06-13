@@ -28,8 +28,10 @@ public class ChildResult extends EvaluationResult {
   }
 
   public void evaluate(SearchContext element) {
-    // TODO: Do not use @... in XPath, since it is not working...
+    // HINT: Do not use [@...] in XPath-Query, since it is not working with e.
+    // g. automatic value attribute in <option>Value</option>
     String xpathQuery = "./" + childTask.tagName;
+
     List<WebElement> foundElements = element.findElements(By.xpath(xpathQuery));
     for(WebElement child: foundElements) {
       if(child.getAttribute(definingAttributeKey).equals(definingAttributeValue)) {

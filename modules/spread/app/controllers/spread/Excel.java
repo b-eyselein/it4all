@@ -30,11 +30,15 @@ import views.html.excel.spreadcorrectionerror;
 @Security.Authenticated(Secured.class)
 public class Excel extends Controller {
   
-  private static final String EXERCISE_TYPE = "spreadsheet";
+  private static final String EXERCISE_TYPE = "spread";
   private static final String BODY_SOL_FILE_NAME = "solFile";
 
   @Inject
-  Util util;
+  private Util util;
+
+  @Inject
+  @SuppressWarnings("unused")
+  private SpreadStartUpChecker startUpChecker;
 
   public Result download(int exerciseId, String typ) {
     User user = UserManagement.getCurrentUser();
@@ -77,13 +81,14 @@ public class Excel extends Controller {
     
     // Save solution
     Path pathToUploadedFile = uploadedFile.getFile().toPath();
-    Path targetFilePath = util.getExcelSolFileForExercise(user, uploadedFile.getFilename(), EXERCISE_TYPE);
+    // FIXME: make sure fileName equals exercise.fileName for download purposes!
+    Path targetFilePath = util.getSoFileForExercise(user, EXERCISE_TYPE, uploadedFile.getFilename());
     boolean fileSuccessfullySaved = saveSolutionForUser(pathToUploadedFile, targetFilePath);
     if(!fileSuccessfullySaved)
       return internalServerError(spreadcorrectionerror.render(user, "Die Datei konnte nicht gespeichert werden!"));
     
     // Get paths to sample document
-    Path sampleDocumentDirectoryPath = util.getSampleDirectoryForExercise(EXERCISE_TYPE, exercise.id);
+    Path sampleDocumentDirectoryPath = util.getSampleDirForExercise(EXERCISE_TYPE);
     Path sampleDocumentPath = Paths.get(sampleDocumentDirectoryPath.toString(),
         exercise.fileName + "_Muster." + SpreadSheetCorrector.getExtension(targetFilePath));
     if(!Files.exists(sampleDocumentPath))

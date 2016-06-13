@@ -31,7 +31,7 @@ function processCorrection(correction) {
 }
 
 function handleResult(result) {
-  var taskID = result.task.key.id;
+  var taskID = result.task.key.taskId;
   var taskDiv = document.getElementById("pan_task" + taskID);
   
   if(result.success === "COMPLETE") {

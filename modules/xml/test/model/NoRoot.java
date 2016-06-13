@@ -3,14 +3,12 @@ package model;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 
+ *
  */
 
 /**
@@ -33,7 +31,7 @@ public class NoRoot {
     assertEquals("FATALERROR:" + "\n" + "Zeile: 8" + "\n" + "Fehler: "
         + "The markup in the document following the root element must be well-formed.\n", out.get(1).toString());
   }
-  
+
   /**
    * Test method for
    * {@link model.CorrectorXml#correctXMLAgainstXSD(java.io.File, java.io.File)}
@@ -44,16 +42,12 @@ public class NoRoot {
     File file = new File("test/resources/noteNoRoot.xml");
     File xsd = new File("test/resources/note.xsd");
     List<XMLError> out = null;
-    try {
-      out = XmlCorrector.correctXMLAgainstXSD(xsd, file);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    out = XmlCorrector.correctXMLAgainstXSD(xsd, file);
     assertEquals("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), 2);
     assertEquals("ERROR:" + "\n" + "Zeile: 2" + "\n" + "Fehler: "
         + "cvc-elt.1.a: Cannot find the declaration of element 'to'.\n", out.get(0).toString());
     assertEquals("FATALERROR:" + "\n" + "Zeile: 3" + "\n" + "Fehler: "
         + "The markup in the document following the root element must be well-formed.\n", out.get(1).toString());
   }
-  
+
 }

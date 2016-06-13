@@ -27,9 +27,6 @@ import model.html.result.ElementResult;
 @Entity
 public class CssTask extends Model implements Task {
   
-  public static final String MULTIPLE_ATTRIBUTES_SPLIT_CHARACTER = ":";
-  public static final String KEY_VALUE_CHARACTER = "=";
-
   @EmbeddedId
   public TaskKey key;
 
@@ -50,6 +47,7 @@ public class CssTask extends Model implements Task {
   @JsonIgnore
   public String attributes;
 
+  @Override
   public ElementResult evaluate(SearchContext searchContext) {
     String xpathQuery = buildXPathQuery();
     List<WebElement> foundElements = searchContext.findElements(By.xpath(xpathQuery));
@@ -58,8 +56,6 @@ public class CssTask extends Model implements Task {
       return new ElementResult(this, Success.NONE);
     
     boolean allSuccesful = true;
-
-    // FIXME: evaluate attributes on all elements...
     for(WebElement element: foundElements) {
       List<AttributeResult> evaluatedAttributeResults = evaluateAllAttributeResults(element);
       if(!allResultsSuccessful(evaluatedAttributeResults))
@@ -79,7 +75,7 @@ public class CssTask extends Model implements Task {
 
   @Override
   public int getId() {
-    return key.id;
+    return key.taskId;
   }
 
   private boolean allResultsSuccessful(List<? extends EvaluationResult> results) {

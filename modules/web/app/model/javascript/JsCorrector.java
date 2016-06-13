@@ -19,13 +19,13 @@ public class JsCorrector {
       engine.eval(learnerSolution);
     } catch (ScriptException e) {
       // TODO: Log Exception or submit to learner?
-      Logger.error(e.getMessage());
+      Logger.error("Fehler beim Laden der Lernerlösung", e);
       return Collections.emptyList();
     }
-    
+
     // Evaluiere Lernerlösung mit Testwerten
     return exercise.functionTests.stream().map(test -> test.evaluate(engine)).collect(Collectors.toList());
-    
+
   }
-  
+
 }

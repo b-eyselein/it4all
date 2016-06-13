@@ -1,17 +1,14 @@
 # HTML & CSS
-GET    /html/exercises                     controllers.web.HTML.index()
-GET    /html/exercises/:exerciseId         controllers.web.HTML.exercise(exerciseId: Int)
-PUT    /html/exercises/:exerciseId         controllers.web.HTML.commit(exerciseId: Int)
-POST   /html/exercises/:exerciseId         controllers.web.HTML.commit(exerciseId: Int)
-GET    /html/solutions/:user/:exerciseId   controllers.web.HTML.site(user: model.user.User, exerciseId: Int)
+GET    /html/                        controllers.web.HTML.index()
 
-GET    /css/exercises/:ex                  controllers.web.CSS.exercise(ex: Int)
-PUT    /css/exercises/:ex                  controllers.web.CSS.commit(ex: Int)
+GET    /html/:exerciseId/:type       controllers.web.HTML.exercise(exerciseId: Int, type: String)
+
+PUT    /html/:exerciseId/:type       controllers.web.HTML.commit(exerciseId: Int, type: String)
+POST   /html/:exerciseId/:type       controllers.web.HTML.commit(exerciseId: Int, type: String)
+
+GET    /solution/:user/:exerciseId   controllers.web.Solution.site(user: model.user.User, exerciseId: Int)
 
 # JavaScript
-GET    /js/                                controllers.web.JS.index()
-GET    /js/:ex                             controllers.web.JS.exercise(ex: Int)
-POST   /js/commit/:ex                      controllers.web.JS.commit(ex: Int)
-
-# Web-Assets
-#GET    /assets/*file                       controllers.web.Assets.versioned(path = "/public/lib/web", file: Asset)
+GET    /js/                          controllers.web.JS.index()
+GET    /js/:ex                       controllers.web.JS.exercise(ex: Int)
+POST   /js/:ex                       controllers.web.JS.commit(ex: Int)

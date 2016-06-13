@@ -3,14 +3,12 @@ package model;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 
+ *
  */
 
 /**
@@ -44,11 +42,7 @@ public class WrongTagFailTest {
     File file = new File("test/resources/noteWrongTag.xml");
     File xsd = new File("test/resources/note.xsd");
     List<XMLError> out = null;
-    try {
-      out = XmlCorrector.correctXMLAgainstXSD(xsd, file);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    out = XmlCorrector.correctXMLAgainstXSD(xsd, file);
     assertEquals("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), 1);
     assertEquals(
         "ERROR:" + "\n" + "Zeile: 5" + "\n" + "Fehler: "
