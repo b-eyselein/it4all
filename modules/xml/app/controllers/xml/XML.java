@@ -12,7 +12,6 @@ import javax.inject.Inject;
 
 import model.XmlExercise;
 import controllers.core.UserManagement;
-import model.ExerciseType;
 import model.Secured;
 import model.Util;
 import model.XMLError;
@@ -105,7 +104,7 @@ public class XML extends Controller {
     switch(exercise.exerciseType) {
     case XMLAgainstDTD:
     case XMLAgainstXSD:
-      referenceFile = util.getSampleFileForExerciseAndType(EXERCISE_TYPE, exercise.referenceFileName);
+      referenceFile = util.getSampleFileForExercise(EXERCISE_TYPE, exercise.referenceFileName);
       break;
     case DTDAgainstXML:
       referenceFile = createCustomReferenceFileforUser(solutionPath, user, exercise);
@@ -121,7 +120,7 @@ public class XML extends Controller {
     } catch (IOException e) {
       Logger.error(e.getMessage());
     }
-    
+
     if(result.isEmpty()) {
       result.add(new XMLError(XmlErrorType.NONE, "Alles richtig!", ""));
     }
@@ -140,9 +139,8 @@ public class XML extends Controller {
     Path result = util.getSolFileForExerciseAndType(user, EXERCISE_TYPE, "reference_for_" + exercise.id, "xml");
     String content = "";
     try {
-      content = "<?xml version=\"1.0\" ?>\n" + "<!DOCTYPE party SYSTEM \"" + solutionPath.toString() + "\">\n"
-          + String.join("\n",
-              Files.readAllLines(util.getSampleFileForExercise(EXERCISE_TYPE, exercise.referenceFileName)))
+      content = "<?xml version=\"1.0\" ?>\n" + "<!DOCTYPE party SYSTEM \"" + solutionPath.toString() + "\">\n" + String
+          .join("\n", Files.readAllLines(util.getSampleFileForExercise(EXERCISE_TYPE, exercise.referenceFileName)))
           + "\n";
 
       Files.write(result, Arrays.asList(content), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
