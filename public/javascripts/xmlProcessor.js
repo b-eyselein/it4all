@@ -46,7 +46,11 @@ function handleResult(result, resultIndex) {
   panelHeading.className = "panel-heading";
   panelHeading.setAttribute("data-toggle", "collapse");
   panelHeading.href = "result_body_" + resultIndex;
-  panelHeading.appendChild(new Text("(Zeile:" + result.line + ") " + result.title));
+  if(result.line <= 0) {
+    panelHeading.appendChild(new Text(result.title));
+  } else {
+    panelHeading.appendChild(new Text("(Zeile:" + result.line + ") " + result.title));
+  }
   resultDiv.appendChild(panelHeading);
   
   if(result.errorMessage !== "") {
