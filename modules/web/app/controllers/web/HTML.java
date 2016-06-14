@@ -38,28 +38,28 @@ public class HTML extends Controller {
   private static final String FILE_TYPE = "html";
   private static final String EXERCISE_TYPE = "html";
   private static final String STANDARD_HTML = "<!doctype html>\n<html>\n\n<head>\n</head>\n\n<body>\n</body>\n\n</html>";
-  
+
   @Inject
   private Util util;
-  
+
   @Inject
   @SuppressWarnings("unused")
   private WebStartUpChecker checker;
-  
+
   public Result commit(int exerciseId, String type) {
     User user = UserManagement.getCurrentUser();
     HtmlExercise exercise = HtmlExercise.finder.byId(exerciseId);
-    
+
     if(exercise == null)
       return badRequest(error.render(user, new Html("There is no such exercise!")));
     
     String learnerSolution = extractLearnerSolutionFromRequest(request());
     saveSolutionForUser(user, learnerSolution, exerciseId);
-    
+
     String solutionUrl = routes.Solution.site(user, exercise.id).absoluteURL(request());
-    
+
     List<ElementResult> elementResults = Collections.emptyList();
-    
+
     if(type.equals("html") || type.equals("css"))
       elementResults = HtmlCorrector.correct(solutionUrl, HtmlExercise.finder.byId(exerciseId), user, type);
     else
@@ -72,15 +72,15 @@ public class HTML extends Controller {
     // Definitive Abgabe, zeige Seite
     return ok(htmlcorrect.render(learnerSolution, elementResults, UserManagement.getCurrentUser()));
   }
-  
+
   public Result exercise(int exerciseId, String type) {
     User user = UserManagement.getCurrentUser();
-    
+
     if(!type.equals("html") && !type.equals("css"))
       return badRequest(error.render(user, new Html("Der Aufgabentyp wurde nicht korrekt spezifiziert!")));
     
     HtmlExercise exercise = HtmlExercise.finder.byId(exerciseId);
-    
+
     if(exercise == null)
       return badRequest(
           error.render(user, new Html("<p>Diese Aufgabe existert leider nicht.</p><p>Zur&uuml;ck zur <a href=\""
@@ -92,39 +92,32 @@ public class HTML extends Controller {
     
     String defaultOrOldSolution = STANDARD_HTML;
     try {
-      Path oldSolutionPath = util.getSolFileForExerciseAndType(user, EXERCISE_TYPE, exerciseId, FILE_TYPE);
+      Path oldSolutionPath = util.getSolFileForExercise(user, EXERCISE_TYPE, exerciseId, FILE_TYPE);
       if(Files.exists(oldSolutionPath, LinkOption.NOFOLLOW_LINKS))
         defaultOrOldSolution = String.join("\n", Files.readAllLines(oldSolutionPath));
     } catch (IOException e) {
       Logger.error(e.getMessage());
     }
-    
+
     return ok(html.render(user, exercise, type, defaultOrOldSolution, "Html-Korrektur"));
-    
+
   }
-  
+
   public Result index() {
-    User currentUser = UserManagement.getCurrentUser();
-    
-    Path rootFolderForSolutions = util.getRootSolDir();
-    if(!Files.exists(rootFolderForSolutions))
-      return internalServerError(error.render(currentUser,
-          new Html("<p>Ordner für Lösungen existiert nicht!</p><p>Bitte erstellen Sie diesen Ordner!</p>")));
-    
-    return ok(htmloverview.render(HtmlExercise.finder.all(), currentUser));
+    return ok(htmloverview.render(HtmlExercise.finder.all(), UserManagement.getCurrentUser()));
   }
-  
+
   private String extractLearnerSolutionFromRequest(Request request) {
     return request.body().asFormUrlEncoded().get(LEARNER_SOLUTION_VALUE)[0];
   }
-  
+
   private void saveSolutionForUser(User user, String solution, int exercise) {
     try {
       Path solDir = util.getSolDirForUserAndType(user, EXERCISE_TYPE);
       if(!Files.exists(solDir))
         Files.createDirectories(solDir);
       
-      Path saveTo = util.getSolFileForExerciseAndType(user, EXERCISE_TYPE, exercise, FILE_TYPE);
+      Path saveTo = util.getSolFileForExercise(user, EXERCISE_TYPE, exercise, FILE_TYPE);
       Files.write(saveTo, Arrays.asList(solution), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     } catch (IOException error) {
       Logger.error("Fehler beim Speichern einer Html-Loesungsdatei!", error);
