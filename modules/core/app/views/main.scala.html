@@ -4,41 +4,37 @@
 <html lang="de">
 
 <head>
-  <title>it4all: @title</title>
-  <!-- Bootstrap: CSS, JQuery und BS-JS -->
-  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<title>it4all: @title</title>
+<!-- Bootstrap: CSS, JQuery und BS-JS -->
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 </head>
 
 <body>
-  <nav class="navbar navbar-default">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="/">it4all</a>
-      </div>
-      <div>
-        <ul class="nav navbar-nav">
-          <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="">Web <span class="caret"></span></a>
-            <ul class="dropdown-menu">
-              <li><a href="@controllers.web.routes.HTML.index()">Html</a></li>
-              <li><a href="@controllers.web.routes.CSS.index()">CSS</a></li>
-              <li><a href="@controllers.web.routes.JS.index">Javascript</a></li>
-            </ul></li>
-          <li><a href="@controllers.spread.routes.Excel.index()">Tabellenkalkulation</a></li>
-          <li><a href="@controllers.mindmap.routes.Mindmap.index()">MindMap</a></li>
-          <li><a href="@controllers.xml.routes.XML.index()">XML</a></li>
-          <li><a href="@controllers.binary.routes.Binary.index()">Binär &amp; Boole</a></li>
-          <li><a href="@controllers.sql.routes.SQL.index()">SQL</a></li>
-          <!-- <li><a href="/eval/@user.name">Evaluation Html</a></li> -->
-        </ul>
-        <ul class="nav navbar-nav navbar-right">
-          <li><a href="@controllers.routes.UserController.index()"><span class="glyphicon glyphicon-user"></span> @user.name</a></li>
-          <li><a href="@controllers.core.routes.UserManagement.logout()"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-  @content
+<nav class="navbar navbar-default">
+<div class="container-fluid">
+<div class="navbar-header">
+<a class="navbar-brand" href="/">it4all</a>
+</div>
+<div>
+<ul class="nav navbar-nav">
+<li><a href="@controllers.web.routes.HTML.index()">Html &amp; Css</a></li>
+<li><a href="@controllers.web.routes.JS.index">Javascript</a></li>
+<li><a href="@controllers.spread.routes.Excel.index()">Tabellenkalkulation</a></li>
+<li><a href="@controllers.mindmap.routes.Mindmap.index()">MindMap</a></li>
+<li><a href="@controllers.xml.routes.XML.index()">XML</a></li>
+<li><a href="@controllers.binary.routes.Binary.index()">Binär &amp; Boole</a></li>
+<li><a href="@controllers.sql.routes.SQL.index()">SQL</a></li>
+<!-- <li><a href="/eval/@user.name">Evaluation Html</a></li> -->
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li><a href="@controllers.routes.UserController.index()"><span class="glyphicon glyphicon-user"></span> @user.name</a></li>
+<li><a href="@controllers.core.routes.UserManagement.logout()"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+</ul>
+</div>
+</div>
+</nav>
+@content
 </body>
 </html>

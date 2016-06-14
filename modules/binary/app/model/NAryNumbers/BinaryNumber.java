@@ -38,4 +38,8 @@ public class BinaryNumber extends NAryNumber
 		BinaryNumber result = new BinaryNumber(NAryNumber.StringToNAry(input,2).getValue());
 		return result;
 	}
+	
+	public static BinaryNumber nAryToBinary(NAryNumber nAry) {
+		return new BinaryNumber(nAry.getValue());
+	}
 }

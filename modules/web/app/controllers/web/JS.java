@@ -3,11 +3,8 @@ package controllers.web;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import controllers.core.UserManagement;
 import model.Secured;
-import model.Util;
 import model.javascript.JsCorrector;
 import model.javascript.JsExercise;
 import model.javascript.JsTestResult;
@@ -23,9 +20,6 @@ import views.html.javascript.jscorrect;
 @Security.Authenticated(Secured.class)
 public class JS extends Controller {
   
-  @Inject
-  Util util;
-
   public Result commit(int exerciseId) {
     Map<String, String[]> body = request().body().asFormUrlEncoded();
     String learnerSolution = body.get("editorContent")[0];
@@ -46,7 +40,7 @@ public class JS extends Controller {
       return badRequest(new Html("<p>Diese Aufgabe existert leider nicht.</p><p>Zur&uuml;ck zur <a href=\""
           + routes.JS.index() + "\">Startseite</a>.</p>"));
     
-    return ok(js.render(UserManagement.getCurrentUser(), exercise, util.getServerUrl()));
+    return ok(js.render(UserManagement.getCurrentUser(), exercise));
 
   }
 

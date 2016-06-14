@@ -1,54 +1,54 @@
-@(user: model.user.User, exercise: model.javascript.JsExercise, serverUrl: String)
+@(user: model.user.User, exercise: model.javascript.JsExercise)
 
 @main("JavaScript-Test", user) {
-  <script src="@controllers.web.routes.Assets.versioned("assets/ace/ace.js")" type="text/javascript" charset="utf-8"></script>
-  <script src="@controllers.web.routes.Assets.versioned("assets/jsProcessor.js")" type="text/javascript" charset="utf-8"></script>
-  <script>
-    function testSolution() {
-      // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
-      var xhttp = new XMLHttpRequest();
-      xhttp.onreadystatechange = function() {
-        if(xhttp.readyState == 4 && xhttp.status == 200) {
-          processCorrection(xhttp.responseText);
-        }
-      };
-      
-      // AJAX-Objekt mit Daten fuellen, absenden
-      var parameters = "editorContent=" + encodeURIComponent(editor.getValue());
-      xhttp.open("POST", "@serverUrl@controllers.web.routes.JS.commit(exercise.id)", true);
-      xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      xhttp.setRequestHeader("Accept", "application/json");
-      xhttp.send(parameters);
-    }
-  </script>
-  
-  <div class="container-fluid">
-    <div class="panel panel-default">
-      <div class="panel-heading">Aufgabenstellung</div>
-      <div class="panel-body">@exercise.exerciseText</div>
-    </div>
-    <div class="row">
-      <div class="col-md-6">
-        <div class="panel panel-default">
-          <div id="editor" class="form-control" style="height: 500px;">@exercise.defaultSolution</div>
-          <script>
-                    document.getElementById('editor').style.fontSize = '14px';
-                    var editor = ace.edit("editor");
-                    editor.setTheme("ace/theme/eclipse");
-                    editor.getSession().setMode("ace/mode/javascript");
-                    editor.setTabSize(4);
-                  </script>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="panel panel-default">
-          <div class="panel-heading">Korrektur</div>
-          <div class="panel-body" id="loesungsraum">Hier stehen bald die Korrekturwerte...</div>
-        </div>
-      </div>
-    </div>
-    <p>
-      <button class="form-control" onclick="testSolution();">L&ouml;sung testen</button>
-    </p>
-  </div>
+<script src="@controllers.routes.Assets.versioned("javascripts/ace/ace.js")" type="text/javascript" charset="utf-8"></script>
+<script src="@controllers.routes.Assets.versioned("javascripts/jsProcessor.js")" type="text/javascript" charset="utf-8"></script>
+<script>
+function testSolution() {
+// AJAX-Objekt erstellen, Callback-Funktion bereitstellen
+var xhttp = new XMLHttpRequest();
+xhttp.onreadystatechange = function() {
+if(xhttp.readyState == 4 && xhttp.status == 200) {
+processCorrection(xhttp.responseText);
+}
+};
+
+// AJAX-Objekt mit Daten fuellen, absenden
+var parameters = "editorContent=" + encodeURIComponent(editor.getValue());
+xhttp.open("POST", "@controllers.web.routes.JS.commit(exercise.id)", true);
+xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+xhttp.setRequestHeader("Accept", "application/json");
+xhttp.send(parameters);
+}
+</script>
+
+<div class="container-fluid">
+<div class="panel panel-default">
+<div class="panel-heading">Aufgabenstellung</div>
+<div class="panel-body">@exercise.exerciseText</div>
+</div>
+<div class="row">
+<div class="col-md-6">
+<div class="panel panel-default">
+<div id="editor" class="form-control" style="height: 500px;">@exercise.defaultSolution</div>
+<script>
+document.getElementById('editor').style.fontSize = '14px';
+var editor = ace.edit("editor");
+editor.setTheme("ace/theme/eclipse");
+editor.getSession().setMode("ace/mode/javascript");
+editor.setTabSize(4);
+</script>
+</div>
+</div>
+<div class="col-md-6">
+<div class="panel panel-default">
+<div class="panel-heading">Korrektur</div>
+<div class="panel-body" id="loesungsraum">Hier stehen bald die Korrekturwerte...</div>
+</div>
+</div>
+</div>
+<p>
+<button class="form-control" onclick="testSolution();">L&ouml;sung testen</button>
+</p>
+</div>
 }

@@ -37,17 +37,25 @@ public class XML extends Controller {
   private static final String STANDARD_XML = "";
 
   @Inject
-  Util util;
+  private Util util;
+
+  @Inject
+  @SuppressWarnings("unused")
+  private XmlStartUpChecker checker;
 
   public Result commit(int exerciseId) {
     User user = UserManagement.getCurrentUser();
+    XmlExercise exercise = XmlExercise.finder.byId(exerciseId);
 
     String learnerSolution = extractLearnerSolutionFromRequest(request());
     Logger.info(learnerSolution);
-    Path path2solution = saveSolutionForUser(user, learnerSolution, exerciseId);
+    Path path2solution = saveSolutionForUser(user, learnerSolution, exercise);
 
-    List<XMLError> elementResults = correctExercise(path2solution, user, XmlExercise.finder.byId(exerciseId));
+    List<XMLError> elementResults = correctExercise(path2solution, user, exercise);
 
+    for(XMLError error: elementResults)
+      Logger.debug(error.toString());
+    
     if(request().acceptedTypes().get(0).toString().equals("application/json"))
       return ok(Json.toJson(elementResults));
     else
@@ -64,9 +72,8 @@ public class XML extends Controller {
     User user = UserManagement.getCurrentUser();
     String defaultOrOldSolution = STANDARD_XML;
     try {
-      // TODO: bestimme fileType ("xml", "xsd", "dtd")
-      String fileType = "xml";
-      Path oldSolutionPath = util.getSolutionFileForExerciseAndType(user, EXERCISE_TYPE, exerciseId, fileType);
+      Path oldSolutionPath = util.getSolFileForExerciseAndType(user, EXERCISE_TYPE, exerciseId,
+          exercise.exerciseType.studentFileEnding);
       if(Files.exists(oldSolutionPath, LinkOption.NOFOLLOW_LINKS))
         defaultOrOldSolution = String.join("\n", Files.readAllLines(oldSolutionPath));
       
@@ -76,8 +83,7 @@ public class XML extends Controller {
 
     String referenceCode = "";
     try {
-      Path referenceFilePath = util.getSampleFileForExerciseAndType(EXERCISE_TYPE, exercise.referenceFileName);
-      Logger.debug(referenceFilePath.toString());
+      Path referenceFilePath = util.getSampleFileForExercise(EXERCISE_TYPE, exercise.referenceFileName);
       if(Files.exists(referenceFilePath, LinkOption.NOFOLLOW_LINKS))
         referenceCode = String.join("\n", Files.readAllLines(referenceFilePath));
       
@@ -85,8 +91,7 @@ public class XML extends Controller {
       Logger.error(e.getMessage());
     }
 
-    return ok(xml.render(UserManagement.getCurrentUser(), exercise, referenceCode, defaultOrOldSolution,
-        util.getServerUrl()));
+    return ok(xml.render(UserManagement.getCurrentUser(), exercise, referenceCode, defaultOrOldSolution));
   }
 
   public Result index() {
@@ -95,27 +100,54 @@ public class XML extends Controller {
 
   private List<XMLError> correctExercise(Path solutionPath, User user, XmlExercise exercise) {
     Path learnerSolution = solutionPath;
-    Path referenceFile = util.getSampleFileForExerciseAndType(EXERCISE_TYPE, exercise.referenceFileName);
+    Path referenceFile = null;
+    switch(exercise.exerciseType) {
+    case XMLAgainstDTD:
+    case XMLAgainstXSD:
+      referenceFile = util.getSampleFileForExercise(EXERCISE_TYPE, exercise.referenceFileName);
+      break;
+    case DTDAgainstXML:
+      referenceFile = createCustomReferenceFileforUser(solutionPath, user, exercise);
+      break;
+    default:
+      return null;
+    }
+
     List<XMLError> result = null;
+    Logger.info(exercise.exerciseType.toString());
     try {
       result = XmlCorrector.correct(learnerSolution.toFile(), referenceFile.toFile(), exercise, user);
     } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      Logger.error(e.getMessage());
     }
+
     if(result.isEmpty()) {
-      result.add(new XMLError(XmlErrorType.NONE, "Super!", "Bist ein ganz guter Student."));
+      result.add(new XMLError(XmlErrorType.NONE, "Alles richtig!", ""));
     }
     boolean malformed = false;
     for(XMLError el: result) {
-      // TODO: passt hier pruefen auf FATALERROR oder vielleicht doch lieber
-      // "el.getErrorType() != XmlErrorType.NONE"
-      if(el.getErrorType() == XmlErrorType.FATALERROR)
+      if(el.getErrorType() == XmlErrorType.FATALERROR || el.getErrorType() == XmlErrorType.ERROR)
         malformed = true;
     }
     if(!result.isEmpty() && !malformed) {
-      result.add(new XMLError(XmlErrorType.NONE, "Die Eingabe ist wohlgeformt", ""));
+      result.add(new XMLError(XmlErrorType.NONE, "Die Eingabe ist wohlgeformt.", ""));
     }
+    return result;
+  }
+
+  private Path createCustomReferenceFileforUser(Path solutionPath, User user, XmlExercise exercise) {
+    Path result = util.getSolFileForExerciseAndType(user, EXERCISE_TYPE, "reference_for_" + exercise.id, "xml");
+    String content = "";
+    try {
+      content = "<?xml version=\"1.0\" ?>\n" + "<!DOCTYPE party SYSTEM \"" + solutionPath.toString() + "\">\n" + String
+          .join("\n", Files.readAllLines(util.getSampleFileForExercise(EXERCISE_TYPE, exercise.referenceFileName)))
+          + "\n";
+
+      Files.write(result, Arrays.asList(content), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+    } catch (IOException e) {
+      Logger.error("Fehler beim Lesen oder Schreiben einer XML-Referenzdatei.");
+    }
+    // Logger.info(content);
     return result;
   }
 
@@ -123,15 +155,14 @@ public class XML extends Controller {
     return request.body().asFormUrlEncoded().get(LEARNER_SOLUTION_VALUE)[0];
   }
 
-  private Path saveSolutionForUser(User user, String solution, int exercise) {
+  private Path saveSolutionForUser(User user, String solution, XmlExercise exercise) {
     try {
       Path solDir = util.getSolDirForUserAndType(user, EXERCISE_TYPE);
       if(!Files.exists(solDir))
         Files.createDirectories(solDir);
       
-      // TODO: bestimme fileType ("xml", "xsd", "dtd")
-      String fileType = "xml";
-      Path saveTo = util.getSolutionFileForExerciseAndType(user, EXERCISE_TYPE, exercise, fileType);
+      Path saveTo = util.getSolFileForExerciseAndType(user, EXERCISE_TYPE, exercise.id,
+          exercise.exerciseType.studentFileEnding);
       Files.write(saveTo, Arrays.asList(solution), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
       return saveTo;
     } catch (IOException error) {

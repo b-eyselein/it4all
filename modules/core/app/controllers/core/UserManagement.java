@@ -12,6 +12,7 @@ import javax.inject.Inject;
 
 import model.Util;
 import model.user.User;
+import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
@@ -23,13 +24,13 @@ public class UserManagement extends Controller {
 
   public static User getCurrentUser() {
     Http.Session session = Http.Context.current().session();
-    if(session.get(SESSION_ID_FIELD).equals(""))
+    if(session == null || session.get(SESSION_ID_FIELD) == null || session.get(SESSION_ID_FIELD).isEmpty())
       throw new IllegalArgumentException("No user name was given!");
     return User.finder.byId(session.get(SESSION_ID_FIELD));
   }
 
   @Inject
-  Util util;
+  private Util util;
 
   public Result authenticate() {
     Map<String, String[]> formValues = request().body().asFormUrlEncoded();
@@ -85,6 +86,7 @@ public class UserManagement extends Controller {
         try {
           Files.createDirectory(solutionDirectory);
         } catch (IOException e) {
+          Logger.error("Could not create solution directory for user " + userName, e);
         }
     }
     return User.finder.byId(userName);
