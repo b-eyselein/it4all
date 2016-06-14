@@ -59,10 +59,6 @@ public class XmlCorrector {
     } catch (SAXException | IOException e) {
     }
     
-    for(XMLError item: output) {
-      System.out.println(item);
-    }
-    
     return output;
     
   }
@@ -98,7 +94,7 @@ public class XmlCorrector {
     
     Schema schema = null;
     try {
-      schema = schemaFactory.newSchema(xmlFile);
+      schema = schemaFactory.newSchema(xsdFile);
     } catch (SAXException e) {
       // output.add(new XMLError("Beim parsen der XML ist ein Fehler
       // aufgetreten.", XmlErrorType.FATALERROR));
@@ -111,7 +107,7 @@ public class XmlCorrector {
     Validator validator = schema.newValidator();
     validator.setErrorHandler(new SimpleXMLErrorHandler(output));
     try {
-      validator.validate(xsdFile);
+      validator.validate(xmlFile);
     } catch (SAXException | IOException e) {
     } catch (NullPointerException e) {
       output.add(new XMLError("konnte XSD nicht validieren.", XmlErrorType.FATALERROR));
