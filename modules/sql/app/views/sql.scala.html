@@ -1,13 +1,6 @@
-@(result: List[List[String]], user: model.user.User)
+@(content: Html, user: model.user.User)
 
 @main("SQL", user) {
-<table class="table table-striped">
-@for(row <- result) {
-<tr>
-@for(column <- row) {
-<td>@column</td>
-}
-</tr>
-}
-</table>
+  <h1>SQL!</h1>
+  @content
 }
