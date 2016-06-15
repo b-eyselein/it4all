@@ -120,6 +120,31 @@ public class BoolescheFunktionTree {
 		return wtafel;
 	}
 	
+	 /*
+   * Gibt Wahrheitstafel als char Array zurueck. char[Spalte][Zeile] ; Anzahl_der_Spalten = Anzahl_der_Variablen+1 ; Anzahl_der_Zeilen = 2^Anzahl_der_Variablen ;
+   */
+  public char[][] getWahrheitstafelChar() {
+    char[][] wtafel = new char[this.vars.length+1][(int) Math.pow(2,this.vars.length)];
+    boolean[] zeile = new boolean[this.vars.length];
+    for (int i = 0; i<Math.pow(2, vars.length); i++) {
+      for (int j = 0; j<zeile.length; j++) {
+        wtafel[j][i] = booleantochar(zeile[j]);
+      }
+      wtafel[this.vars.length][i] = booleantochar(this.getWert(zeile));
+      int k = vars.length-1;
+      if (zeile[vars.length-1]) {
+        while (k > 0 && zeile[k]) {
+          zeile[k] = false;
+          k--;
+        }
+        zeile[k] = true;
+      } else {
+        zeile[vars.length-1] = true;
+      }
+    }
+    return wtafel;
+  }
+	
 	/*
 	 *  gibt den Teil der Tabelle der die Belegungen der Variablen enthaelt als Char-Array zurueck. char[Spalte][Zeile] mit '1' fur wahr und '0' fuer falsch
 	 */

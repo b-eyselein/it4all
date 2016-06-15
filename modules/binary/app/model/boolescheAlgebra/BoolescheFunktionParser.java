@@ -16,31 +16,10 @@ public class BoolescheFunktionParser {
    */
   public static BoolescheFunktionTree getBFTree(String originalformel) throws IllegalArgumentException {
     String formel = originalformel.toLowerCase();
+    
     // Pruefung auf fehlende Klammern
-    int klammerauf = 0;
-    for(int i = 0; i < formel.length(); i++) {
-      if(formel.charAt(i) == '(') {
-        klammerauf++;
-      } else if(formel.charAt(i) == ')') {
-        klammerauf--;
-        if(klammerauf < 0) {
-          String iaexception = "opening bracket is missing:\n" + originalformel + "\n";
-          for(int j = 0; j < i; j++) {
-            iaexception += " ";
-          }
-          iaexception += "^";
-          throw new IllegalArgumentException(iaexception);
-        }
-      }
-    }
-    if(klammerauf > 0) {
-      String iaexception = "closing bracket is missing:\n" + originalformel + "\n";
-      for(int j = 0; j < formel.length() - 1; j++) {
-        iaexception += " ";
-      }
-      iaexception += "^";
-      throw new IllegalArgumentException(iaexception);
-    }
+    pruefeKlammern(originalformel);
+    
     // Pruefung auf ungueltige Zeichen
     TreeSet<Character> zeichensatz = new TreeSet<Character>();
     zeichensatz.addAll(Arrays.asList('0', '1', '(', ')', ' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
@@ -164,6 +143,34 @@ public class BoolescheFunktionParser {
     }
     
     throw new IllegalArgumentException("fehlende Variable / fehlender Ausdruck"); // TODO: Fehlerbeschreibung ergaenzen
+  }
+  
+  private static void pruefeKlammern(String formel) throws IllegalArgumentException {
+ // Pruefung auf fehlende Klammern
+    int klammerauf = 0;
+    for(int i = 0; i < formel.length(); i++) {
+      if(formel.charAt(i) == '(') {
+        klammerauf++;
+      } else if(formel.charAt(i) == ')') {
+        klammerauf--;
+        if(klammerauf < 0) {
+          String iaexception = "opening bracket is missing:\n" + formel + "\n";
+          for(int j = 0; j < i; j++) {
+            iaexception += " ";
+          }
+          iaexception += "^";
+          throw new IllegalArgumentException(iaexception);
+        }
+      }
+    }
+    if(klammerauf > 0) {
+      String iaexception = "closing bracket is missing:\n" + formel + "\n";
+      for(int j = 0; j < formel.length() - 1; j++) {
+        iaexception += " ";
+      }
+      iaexception += "^";
+      throw new IllegalArgumentException(iaexception);
+    }
   }
   
 }

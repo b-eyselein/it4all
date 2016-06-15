@@ -1,0 +1,35 @@
+@* NArySolution Template File *@
+@(user: model.user.User, givenAnswer: String, correct: Boolean, exception_msg: String)
+@main("HTML-Test", user) {
+	<div class="container">
+		<div class="panel panel-@if(correct){success}else{danger}">
+			<div class="panel-heading">
+					Erstellen Sie die Formel zu folgender Wahrheitstafel:
+			
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-sm-2">
+						<p class="text-right"><strong>= @givenAnswer &nbsp;&nbsp;</strong></p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="container">
+						<p>Ihre Lösung ist 
+							@if(correct) {
+								richtig.</p>
+							} else {
+								leider falsch. </p>
+								<p>@exception_msg</p>
+							}
+						&nbsp;<br>
+						<a href="@binary.routes.BoolFormelErstellen.index" class="btn btn-primary" role="button">
+							Nächste Aufgabe
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
