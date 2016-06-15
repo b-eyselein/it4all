@@ -1,5 +1,5 @@
 @* boolsolution Template File *@
-@(user: model.user.User)(correct: Boolean)(formula: String)(vars: Array[String])(zeros: Array[Array[Char]])(length: Int)(userInput: Array[String])(eins: String)
+@(user: model.user.User)(correct: Boolean)(formula: String)(vars: Array[String])(zeros: Array[Array[Char]])(length: Int)(userInput: Array[String])(answer: Array[String])
 @main("Wertetabelle-Lösung", user) {
 	<div class="container">
 		<div class="panel panel-@if(correct){success}else{danger}">
@@ -32,7 +32,7 @@
 									<td>@zeros(j)(i)</td>
 								}
 							<td>
-								<p class="text-@if(userInput(i) == eins){success}else{danger}">@eins</p>
+								<p class="text-@if(userInput(i) == answer(i)){success}else{danger}">@answer(i)</p>
 							</td>
 						}
 					</tbody>
