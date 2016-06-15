@@ -32,13 +32,19 @@ public class Bool extends Controller {
   }
 
   public Result indexSolution() {
-    boolean correct = bft.compareStringArray(solutions);
+    boolean correct = false;
+    String exception_msg = "";
+    try {
+      correct = bft.compareStringArray(solutions);
+    } catch (IllegalArgumentException e) {
+      exception_msg = e.getMessage();
+    }
     String[] answer = new String[solutions.length];
     char[] ansOld = bft.getWahrheitsVectorChar();
     for(int i = 0; i < answer.length; i++){
       answer[i] = ""+ansOld[i];
     }
-    return ok(boolsolution.render(UserManagement.getCurrentUser(), correct, bft.toString(), bft.getVariablen(), bft.getVariablenTabelle(), length, solutions, answer));
+    return ok(boolsolution.render(UserManagement.getCurrentUser(), correct, bft.toString(), bft.getVariablen(), bft.getVariablenTabelle(), length, solutions, answer, exception_msg));
   }
 
   public Result tableAdd() {

@@ -1,17 +1,17 @@
 @* boolsolution Template File *@
-@(user: model.user.User)(correct: Boolean)(formula: String)(vars: Array[String])(zeros: Array[Array[Char]])(length: Int)(userInput: Array[String])(answer: Array[String])
-@main("Wertetabelle-Lösung", user) {
+@(user: model.user.User)(correct: Boolean)(formula: String)(vars: Array[String])(zeros: Array[Array[Char]])(length: Int)(userInput: Array[String])(answer: Array[String])(exception_msg: String)
+@main("Wertetabelle-L�sung", user) {
 	<div class="container">
 		<div class="panel panel-@if(correct){success}else{danger}">
 	<div class="panel-heading">
-	Ausfüllen der Wertetabelle
+	Ausf&uuml;llen der Wertetabelle
 	</div>
 	<div class="panel-body">
 		Die Wertetabelle wurde
 			@if(correct) {
-				richtig ausgefüllt.
+				richtig ausgef&uuml;llt.
 			} else {
-				leider falsch ausgefüllt. <BR> Die richtige Lösungen sieht folgendermaßen aus: <BR> 
+				leider falsch ausgef&uuml;llt. <BR> Die richtige L&ouml;sungen sieht folgenderma&szlig;en aus: <BR> 
 				<table class="table">
 					<thread align = "right">
 						<tr>
@@ -39,7 +39,7 @@
 					</table>
 				}
 			<BR>
-	 	<p><a href="@binary.routes.Bool.index" class="btn btn-primary" role="button">Nächste Aufgabe</a></p>
+	 	<p><a href="@binary.routes.Bool.index" class="btn btn-primary" role="button">N&auml;chste Aufgabe</a></p>
 	</div>
 	</div>
 	</div>
