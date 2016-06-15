@@ -21,7 +21,7 @@ import play.libs.Json;
 public class XmlStartUpChecker {
   
   private static Logger.ALogger theLogger = Logger.of("startup");
-
+  private static final String EXERCISE_TYPE = "xml";
   private Util util;
 
   @Inject
@@ -33,6 +33,14 @@ public class XmlStartUpChecker {
   }
 
   public void performStartUpCheck() {
+    Path sampleDir = util.getSampleDirForExercise(EXERCISE_TYPE);
+    if(!Files.exists(sampleDir))
+      try {
+        Files.createDirectories(sampleDir);
+      } catch (IOException e) {
+        theLogger.error("Could not create directory for xml samples!", e);
+      }
+    
     List<XmlExercise> exercises = XmlExercise.finder.all();
     if(exercises.size() == 0)
       theLogger.error("\t- No exercises found for Xml!");
@@ -42,7 +50,7 @@ public class XmlStartUpChecker {
   }
 
   private void checkOrCreateSampleFile(XmlExercise exercise) {
-    Path sampleFile = util.getSampleFileForExercise("xml", exercise.referenceFileName);
+    Path sampleFile = util.getSampleFileForExercise(EXERCISE_TYPE, exercise.referenceFileName);
     if(Files.exists(sampleFile))
       return;
     

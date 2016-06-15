@@ -24,7 +24,7 @@ public class Util {
   private Configuration configuration;
 
   @Inject
-  public Util(Configuration theConfiguration) {
+  public Util(Configuration theConfiguration) throws IOException {
     configuration = theConfiguration;
 
     rootDirForFiles = readRootDirFromConfig();
@@ -43,7 +43,7 @@ public class Util {
         theLogger.error(
             "FileOwner of folder for solutions " + fileOwner + " does not match starter of programm " + processOwner);
     } catch (IOException e) {
-      theLogger.error("Could not create folder for samples and solutions!", e);
+      throw new IOException("Could not create folder for samples and solutions " + rootDirForFiles, e);
     }
 
   }
