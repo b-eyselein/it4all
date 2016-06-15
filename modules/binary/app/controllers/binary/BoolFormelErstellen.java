@@ -23,6 +23,8 @@ public class BoolFormelErstellen extends Controller {
   FormFactory factory;
   BoolescheFunktionTree bft;
   String learnerSolution;
+  int zeilen;
+  int spalten;
   
   public Result addLearnerSolution() {
     DynamicForm dynFormula = factory.form().bindFromRequest();
@@ -32,10 +34,11 @@ public class BoolFormelErstellen extends Controller {
   
   public Result index() {
     bft = BoolescheFunktionenGenerator.neueBoolescheFunktion();
-    int zeilen = (int) Math.pow(2.0, bft.getAnzahlVariablen());
-    int spalten = bft.getAnzahlVariablen()+1;
-   	return ok(bool_formel_erstellen_q.render(UserManagement.getCurrentUser(),bft.getVariablen(),bft.getWahrheitstafelChar(),spalten,zeilen));
-   	}
+    zeilen = (int) Math.pow(2.0, bft.getAnzahlVariablen());
+    spalten = bft.getAnzahlVariablen() + 1;
+    return ok(bool_formel_erstellen_q.render(UserManagement.getCurrentUser(), bft.getVariablen(),
+        bft.getWahrheitstafelChar(), spalten, zeilen));
+  }
   
   public Result checkSolution() {
     String exception_msg = "";
@@ -45,9 +48,7 @@ public class BoolFormelErstellen extends Controller {
     } catch (IllegalArgumentException e) {
       exception_msg = e.getMessage();
     }
-    
-	return ok(bool_formel_erstellen_s.render(UserManagement.getCurrentUser(),
-			learnerSolution , correct, exception_msg));
+    return ok(bool_formel_erstellen_s.render(UserManagement.getCurrentUser(), learnerSolution, correct, exception_msg,
+        bft.getVariablen(), bft.getWahrheitstafelChar(), spalten, zeilen));
   }
 }
-

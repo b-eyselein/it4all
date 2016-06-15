@@ -1,20 +1,41 @@
 @* NArySolution Template File *@
-@(user: model.user.User, givenAnswer: String, correct: Boolean, exception_msg: String)
+@(user: model.user.User, givenAnswer: String, correct: Boolean, exception_msg: String, var_names: Array[String], wahrheitstafel: Array[Array[Char]], spalten: Int, zeilen: Int)
 @main("HTML-Test", user) {
 	<div class="container">
 		<div class="panel panel-@if(correct){success}else{danger}">
 			<div class="panel-heading">
 					Erstellen Sie die Formel zu folgender Wahrheitstafel:
-			
 			</div>
 			<div class="panel-body">
 				<div class="row">
-					<div class="col-sm-2">
-						<p class="text-right"><strong>= @givenAnswer &nbsp;&nbsp;</strong></p>
+					<div class="col-sm-4">
+						<table class="table">
+							<thread align = "right">
+								<tr>
+									@for(v <- var_names){
+									<td>
+										@v
+									</td>
+									}
+									<td>
+										Resultat
+									</td>
+								</tr>
+							</thread>
+							<tbody align = "left">
+							@for(i <- 0 until (zeilen)){
+								<tr>
+								@for(j <- 0 until (spalten)){
+									<td>@wahrheitstafel(j)(i)</td>
+									}
+								}
+							</tbody>
+						</table>
 					</div>
 				</div>
 				<div class="row">
-					<div class="container">
+					<div class="container-fluid">
+						<p><strong>Ihre Antwort: @givenAnswer &nbsp;&nbsp;</strong></p>
 						<p>Ihre L&ouml;sung ist 
 							@if(correct) {
 								richtig.</p>
