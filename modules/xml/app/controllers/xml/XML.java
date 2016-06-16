@@ -141,13 +141,6 @@ public class XML extends Controller {
     List<XMLError> result = null;
     Logger.info("Exercise type: " + exercise.exerciseType.toString());
     try {
-      
-      if(exercise.exerciseType == ExerciseType.XMLAgainstDTD) {
-        insert(solutionPath, 0,
-            new String("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE "
-                + referenceFile.getFileName().toString().split("\\.")[0] + " SYSTEM \"" + referenceFile.toAbsolutePath()
-                + "\">\n").getBytes());
-      }
       result = XmlCorrector.correct(learnerSolution.toFile(), referenceFile.toFile(), exercise, user);
     } catch (IOException e) {
       Logger.error(e.getMessage());
@@ -166,40 +159,7 @@ public class XML extends Controller {
     }
     return result;
   }
-  
-  
-  private void insert(Path filePath, long offset, byte[] content) {
-    RandomAccessFile r = null;
-    RandomAccessFile rtemp = null;
-    try {
-      r = new RandomAccessFile(new File(filePath.toString()), "rw");
-      rtemp = new RandomAccessFile(new File(filePath.toString() + "~"), "rw");
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    }
-    long fileSize = 0;
-    try {
-      fileSize = r.length();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    FileChannel sourceChannel = r.getChannel();
-    FileChannel targetChannel = rtemp.getChannel();
-    long newOffset;
-    try {
-      sourceChannel.transferTo(offset, (fileSize - offset), targetChannel);
-      sourceChannel.truncate(offset);
-      r.seek(offset);
-      r.write(content);
-      newOffset = r.getFilePointer();
-      targetChannel.position(0L);
-      sourceChannel.transferFrom(targetChannel, newOffset, (fileSize - offset));
-      sourceChannel.close();
-      targetChannel.close();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
+
   
   private String generateFixedStart(XmlExercise exercise, String dtdPathString) {
     // + exercise.rootElementName +
