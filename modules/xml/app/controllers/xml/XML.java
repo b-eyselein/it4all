@@ -1,18 +1,19 @@
 package controllers.xml;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import model.XmlExercise;
-import model.exercise.Exercise;
 import controllers.core.UserManagement;
 import model.ExerciseType;
 import model.Secured;
@@ -20,6 +21,7 @@ import model.Util;
 import model.XMLError;
 import model.XmlCorrector;
 import model.XmlErrorType;
+import model.XmlExercise;
 import model.user.User;
 import play.Logger;
 import play.libs.Json;
@@ -30,7 +32,7 @@ import play.mvc.Security;
 import play.twirl.api.Html;
 import views.html.xml;
 import views.html.xmloverview;
-import views.html.xmlcorrect;
+import views.html.xmlcorrect;;
 
 @Security.Authenticated(Secured.class)
 public class XML extends Controller {
@@ -124,10 +126,18 @@ public class XML extends Controller {
     default:
       return null;
     }
+    Logger.info("Reference File: " + referenceFile.toString());
     
     List<XMLError> result = null;
-    Logger.info(exercise.exerciseType.toString());
+    Logger.info("Exercise type: " + exercise.exerciseType.toString());
     try {
+      
+      if(exercise.exerciseType == ExerciseType.XMLAgainstDTD) {
+        insert(solutionPath, 0,
+            new String("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE "
+                + referenceFile.getFileName().toString().split("\\.")[0] + " SYSTEM \"" + referenceFile.toAbsolutePath()
+                + "\">\n").getBytes());
+      }
       result = XmlCorrector.correct(learnerSolution.toFile(), referenceFile.toFile(), exercise, user);
     } catch (IOException e) {
       Logger.error(e.getMessage());
@@ -145,6 +155,40 @@ public class XML extends Controller {
       result.add(new XMLError(XmlErrorType.NONE, "Die Eingabe ist wohlgeformt.", ""));
     }
     return result;
+  }
+  
+  
+  private void insert(Path filePath, long offset, byte[] content) {
+    RandomAccessFile r = null;
+    RandomAccessFile rtemp = null;
+    try {
+      r = new RandomAccessFile(new File(filePath.toString()), "rw");
+      rtemp = new RandomAccessFile(new File(filePath.toString() + "~"), "rw");
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    }
+    long fileSize = 0;
+    try {
+      fileSize = r.length();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    FileChannel sourceChannel = r.getChannel();
+    FileChannel targetChannel = rtemp.getChannel();
+    long newOffset;
+    try {
+      sourceChannel.transferTo(offset, (fileSize - offset), targetChannel);
+      sourceChannel.truncate(offset);
+      r.seek(offset);
+      r.write(content);
+      newOffset = r.getFilePointer();
+      targetChannel.position(0L);
+      sourceChannel.transferFrom(targetChannel, newOffset, (fileSize - offset));
+      sourceChannel.close();
+      targetChannel.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
   
   private String generateFixedStart(XmlExercise exercise, String dtdPathString) {

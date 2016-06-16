@@ -2,9 +2,7 @@ package model;
 
 public class XMLError {
   
-  // FIXME: better use -1, since maybe line numbers in xml documents are counted
-  // starting from zero...
-  protected int line = 0;
+  protected int line = -1;
   protected String title = "";
   protected String errorMessage;
   
@@ -13,26 +11,32 @@ public class XMLError {
   // FIXME: use IllegalArgumentException instead of NullPointerException in all
   // constuctors with message: has not to be declared to be thrown and fits use
   // case better (checking of Arguments!)
-  public XMLError(int line, String errorMessage, XmlErrorType errorType) throws NullPointerException {
-    if(line <= 0 || errorMessage == null || errorType == null) {
-      throw new NullPointerException();
+  public XMLError(int line, String errorMessage, XmlErrorType errorType) {
+    if(line < 0) {
+      throw new IllegalArgumentException("Linenumber has to be greater equal 0");
+    }
+    if(errorMessage == null || errorType == null) {
+      throw new IllegalArgumentException("An XMLError has a message and a type");
     }
     this.line = line;
     this.errorMessage = errorMessage;
     this.errorType = errorType;
   }
   
-  public XMLError(String errorMessage, XmlErrorType errorType) throws NullPointerException {
+  public XMLError(String errorMessage, XmlErrorType errorType) {
     if(errorMessage == null || errorType == null) {
-      throw new NullPointerException();
+      throw new IllegalArgumentException("An XMLError has a message and a type");
     }
     this.errorMessage = errorMessage;
     this.errorType = errorType;
   }
   
   public XMLError(XmlErrorType errorType, String title, String errorMessage) {
+    if(title == null) {
+      throw new IllegalArgumentException("Title can not be null");
+    }
     if(errorMessage == null || errorType == null) {
-      throw new NullPointerException();
+      throw new IllegalArgumentException("An XMLError has a message and a type");
     }
     this.errorMessage = errorMessage;
     this.errorType = errorType;
@@ -98,7 +102,10 @@ public class XMLError {
   
   @Override
   public String toString() {
-    return (line != 0) ? errorType + ":\nZeile: " + line + "\nFehler: " + errorMessage + "\n"
-        : errorType + ":\nFehler: " + errorMessage + "\n";
+    if(errorType == XmlErrorType.NONE)
+      return errorType.toString();
+    else
+      return (line != -1) ? errorType + ":\nZeile: " + line + "\nFehler: " + errorMessage + "\n"
+          : errorType + ":\nFehler: " + errorMessage + "\n";
   }
 }
