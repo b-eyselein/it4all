@@ -2,60 +2,89 @@ package controllers.sql;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import controllers.core.UserManagement;
 import model.Secured;
 import model.user.User;
-import controllers.core.UserManagement;
+import play.Logger;
 import play.db.Database;
+import play.db.NamedDatabase;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security.Authenticated;
+import play.twirl.api.Html;
+import views.html.error;
 import views.html.sql;
 
 @Authenticated(Secured.class)
 public class SQL extends Controller {
   
   private static final String DB_BASENAME = "sql_";
-  
+
+  private static final Logger.ALogger theLogger = Logger.of("application");
+
   @Inject
-  // @NamedDatabase("sqltest")
+  // IMPORTANT: DO NOT USE "DEFAULT" DATABASE
+  @NamedDatabase("sqltest")
   Database db;
-  
+
   public Result index() {
     
     User user = UserManagement.getCurrentUser();
-    
-    String sqlStatement = "select * from task";
-    
     try {
       Connection connection = db.getConnection();
+
+      // Check if slave DB exists, if not, create
+      String slaveDB = DB_BASENAME + user.name;
+      if(!databaseAlreadyExists(connection, slaveDB))
+        createDatabase(connection, slaveDB);
+      else
+        theLogger.debug("Database " + slaveDB + " already exists");
       
+      Html result = new Html("");
+
       // Change db to users own db
-      connection.setCatalog(DB_BASENAME + user.name);
-      ResultSet resultSet = connection.createStatement().executeQuery(sqlStatement);
-      ResultSetMetaData metadata = resultSet.getMetaData();
-      
-      // Syso result of query
-      List<List<String>> result = new LinkedList<List<String>>();
-      
-      while(resultSet.next()) {
-        List<String> row = new LinkedList<String>();
-        for(int columnCount = 1; columnCount <= metadata.getColumnCount(); columnCount++)
-          row.add(resultSet.getObject(columnCount).toString());
-        result.add(row);
-      }
+      connection.setCatalog(slaveDB);
+      theLogger.debug(connection.getCatalog());
+
       connection.close();
       return ok(sql.render(result, UserManagement.getCurrentUser()));
-      
+
     } catch (SQLException e) {
-      return badRequest("Fehler bei Verarbeitung: " + e.getMessage() + "!");
+      return badRequest(error.render(user, new Html("Fehler bei Verarbeitung: " + e.getMessage() + "!")));
     }
-    
+
+  }
+
+  private void createDatabase(Connection connection, String slaveDB) {
+    theLogger.debug("Trying to create the new database " + slaveDB);
+    String createStatement = "CREATE DATABASE " + slaveDB;
+    try {
+      connection.createStatement().executeUpdate(createStatement);
+    } catch (SQLException e) {
+      theLogger.error("Could not create database " + slaveDB, e);
+    }
+  }
+
+  private boolean databaseAlreadyExists(Connection connection, String slaveDB) {
+    List<String> existingDatabases = queryExistingDatabases(connection);
+    return existingDatabases.contains(slaveDB);
+  }
+
+  private List<String> queryExistingDatabases(Connection connection) {
+    List<String> existingDatabases = new LinkedList<String>();
+    try {
+      ResultSet existingDBs = connection.createStatement().executeQuery("SHOW DATABASES");
+      while(existingDBs.next())
+        existingDatabases.add(existingDBs.getString(1));
+    } catch (SQLException e) {
+      theLogger.error("Error at creating existing databases", e);
+    }
+    return existingDatabases;
   }
 }
