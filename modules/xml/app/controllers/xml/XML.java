@@ -147,7 +147,7 @@ public class XML extends Controller {
     }
     
     if(result.isEmpty()) {
-      result.add(new XMLError(XmlErrorType.NONE, "Alles richtig!", ""));
+      result.add(new XMLError("Alles richtig!", "", XmlErrorType.NONE));
     }
     boolean malformed = false;
     for(XMLError el: result) {
@@ -155,7 +155,7 @@ public class XML extends Controller {
         malformed = true;
     }
     if(!result.isEmpty() && !malformed) {
-      result.add(new XMLError(XmlErrorType.NONE, "Die Eingabe ist wohlgeformt.", ""));
+      result.add(new XMLError("Die Eingabe ist wohlgeformt.", "", XmlErrorType.NONE));
     }
     return result;
   }

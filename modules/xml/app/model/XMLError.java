@@ -8,9 +8,6 @@ public class XMLError {
   
   protected XmlErrorType errorType;
   
-  // FIXME: use IllegalArgumentException instead of NullPointerException in all
-  // constuctors with message: has not to be declared to be thrown and fits use
-  // case better (checking of Arguments!)
   public XMLError(int line, String errorMessage, XmlErrorType errorType) {
     if(line < 0) {
       throw new IllegalArgumentException("Linenumber has to be greater equal 0");
@@ -31,7 +28,7 @@ public class XMLError {
     this.errorType = errorType;
   }
   
-  public XMLError(XmlErrorType errorType, String title, String errorMessage) {
+  public XMLError(String title, String errorMessage, XmlErrorType errorType) {
     if(title == null) {
       throw new IllegalArgumentException("Title can not be null");
     }
