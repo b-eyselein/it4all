@@ -52,11 +52,11 @@ public class XML extends Controller {
     
     String learnerSolution = extractLearnerSolutionFromRequest(request());
     Logger.info(learnerSolution);
-    Path path2solution = saveSolutionForUser(user, learnerSolution, exercise);
     if(exercise.exerciseType == ExerciseType.XMLAgainstDTD) {
       learnerSolution = generateFixedStart(exercise,
           util.getSampleFileForExercise(EXERCISE_TYPE, exercise.referenceFileName).toString()) + "\n" + learnerSolution;
     }
+    Path path2solution = saveSolutionForUser(user, learnerSolution, exercise);
     
     List<XMLError> elementResults = correctExercise(path2solution, user, exercise);
     
@@ -101,6 +101,16 @@ public class XML extends Controller {
     String fixedStart = "";
     if(exercise.exerciseType == ExerciseType.XMLAgainstDTD) {
       fixedStart = generateFixedStart(exercise, exercise.referenceFileName);
+      if(defaultOrOldSolution.startsWith("<?xml")) {
+        // List<String> solutionList =
+        // Arrays.asList((defaultOrOldSolution.split("\n")));
+        // defaultOrOldSolution = String.join("\n",
+        // List.copyOfRange(solutionList, 2, solutionList.size()));
+        defaultOrOldSolution = defaultOrOldSolution.substring(defaultOrOldSolution.indexOf('\n') + 1);
+        defaultOrOldSolution = defaultOrOldSolution.substring(defaultOrOldSolution.indexOf('\n') + 1);
+        
+      }
+      
     }
     
     return ok(xml.render(UserManagement.getCurrentUser(), exercise, referenceCode, defaultOrOldSolution, fixedStart));

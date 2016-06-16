@@ -62,6 +62,11 @@ function handleResult(result, resultIndex) {
 	panelHeading.appendChild(pullButton);
   
     // create message div
+        if (result.errorMessage.startsWith("cvc-complex-type.2.4.")) {
+          result.errorMessage = result.errorMessage.substring(24);
+        }
+        result.errorMessage = " " + result.errorMessage;
+
 	var panelCollapse = document.createElement("div");
 	if(result.errorType === "COMPLETE") {
       panelCollapse.className = "panel-collapse collapse";
