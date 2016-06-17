@@ -19,7 +19,7 @@ public class EmptyXMLTest {
     XMLError error = out.get(0);
     
     assertEquals(XmlErrorType.FATALERROR, error.getErrorType());
-    assertEquals("Ihre Eingabedaten konnten nicht geladen werden!", error.getErrorMessage());
+    assertEquals("Premature end of file.", error.getErrorMessage());
   }
   
   @Test
@@ -31,7 +31,7 @@ public class EmptyXMLTest {
     XMLError error = out.get(0);
     
     assertEquals(XmlErrorType.FATALERROR, error.getErrorType());
-    assertEquals("leere XML", error.getErrorMessage());
+    assertEquals("Premature end of file.", error.getErrorMessage());
   }
   
 }

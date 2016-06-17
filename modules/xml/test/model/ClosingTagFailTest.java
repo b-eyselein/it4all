@@ -17,7 +17,7 @@ import org.junit.Test;
  *
  */
 public class ClosingTagFailTest {
-  
+
   /**
    * Test method for
    * {@link model.CorrectorXml#correctXMLAgainstDTD(java.io.File)}.
@@ -28,18 +28,18 @@ public class ClosingTagFailTest {
   public void testCorrectXMLAgainstDTD() {
     File xml = new File("test/resources/partyNoClosingTag.xml");
     List<XMLError> out = XmlCorrector.correctXMLAgainstDTD(xml);
-    
+
     assertNotNull(out);
     assertEquals("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), 1);
-    
+
     XMLError error = out.get(0);
-    
+
     assertEquals(XmlErrorType.FATALERROR, error.getErrorType());
     assertEquals(8, error.getLine());
     assertEquals("The element type \"getraenk\" must be terminated by the matching end-tag \"</getraenk>\".",
         error.getErrorMessage());
   }
-  
+
   /**
    * Test method for
    * {@link model.CorrectorXml#correctXMLAgainstXSD(java.io.File, java.io.File)}
@@ -50,13 +50,13 @@ public class ClosingTagFailTest {
     File xml = new File("test/resources/noteNoClosingTag.xml");
     File xsd = new File("test/resources/note.xsd");
     List<XMLError> out = null;
-    out = XmlCorrector.correctXMLAgainstXSD(xsd, xml);
-    
+    out = XmlCorrector.correctXMLAgainstXSD(xml, xsd);
+
     assertNotNull(out);
     assertEquals("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), 1);
-    
+
     XMLError error = out.get(0);
-    
+
     assertEquals(XmlErrorType.FATALERROR, error.errorType);
     assertEquals(7, error.line);
     assertEquals("The element type \"to\" must be terminated by the matching end-tag \"</to>\".",

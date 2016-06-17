@@ -46,10 +46,10 @@ public class NoRoot {
    */
   @Test
   public void testCorrectXMLAgainstXSD() {
-    File file = new File("test/resources/noteNoRoot.xml");
+    File xml = new File("test/resources/noteNoRoot.xml");
     File xsd = new File("test/resources/note.xsd");
     List<XMLError> out = null;
-    out = XmlCorrector.correctXMLAgainstXSD(xsd, file);
+    out = XmlCorrector.correctXMLAgainstXSD(xml, xsd);
     assertEquals("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), 2);
 
     XMLError error = out.get(0);
@@ -57,7 +57,7 @@ public class NoRoot {
 
     assertEquals(XmlErrorType.ERROR, error.getErrorType());
     assertEquals(2, error.getLine());
-    assertEquals("cvc-elt.1.a: Cannot find the declaration of element 'to'.", error.getErrorMessage());
+    assertEquals("Cannot find the declaration of element 'to'.", error.getErrorMessage());
 
     assertEquals(XmlErrorType.FATALERROR, fatalError.getErrorType());
     assertEquals(3, fatalError.getLine());

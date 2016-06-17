@@ -46,10 +46,10 @@ public class WrongTagFailTest {
    */
   @Test
   public void testCorrectXMLAgainstXSD() {
-    File file = new File("test/resources/noteWrongTag.xml");
+    File xml = new File("test/resources/noteWrongTag.xml");
     File xsd = new File("test/resources/note.xsd");
     List<XMLError> out = null;
-    out = XmlCorrector.correctXMLAgainstXSD(xsd, file);
+    out = XmlCorrector.correctXMLAgainstXSD(xml, xsd);
     assertEquals("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), 1);
 
     XMLError error = out.get(0);
