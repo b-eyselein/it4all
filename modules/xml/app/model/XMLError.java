@@ -10,13 +10,16 @@ public class XMLError {
   
   public XMLError(int line, String errorMessage, XmlErrorType errorType) {
     if(line < 0) {
-      throw new IllegalArgumentException("Linenumber has to be greater equal 0");
+      throw new IllegalArgumentException("Linenumber has to be greater or equal 0");
     }
     if(errorMessage == null || errorType == null) {
       throw new IllegalArgumentException("An XMLError has a message and a type");
     }
     this.line = line;
     this.errorMessage = errorMessage;
+    if(this.errorMessage.contains("cvc-elt.1.a: ")) {
+      this.errorMessage = this.errorMessage.replace("cvc-elt.1.a: ", "");
+    }
     this.errorType = errorType;
   }
   
@@ -25,6 +28,9 @@ public class XMLError {
       throw new IllegalArgumentException("An XMLError has a message and a type");
     }
     this.errorMessage = errorMessage;
+    if(this.errorMessage.contains("cvc-elt.1.a: ")) {
+      this.errorMessage = this.errorMessage.replace("cvc-elt.1.a: ", "");
+    }
     this.errorType = errorType;
   }
   
@@ -36,6 +42,9 @@ public class XMLError {
       throw new IllegalArgumentException("An XMLError has a message and a type");
     }
     this.errorMessage = errorMessage;
+    if(this.errorMessage.contains("cvc-elt.1.a: ")) {
+      this.errorMessage = this.errorMessage.replace("cvc-elt.1.a: ", "");
+    }
     this.errorType = errorType;
     this.title = title;
   }
