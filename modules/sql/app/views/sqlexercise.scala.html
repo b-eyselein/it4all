@@ -1,5 +1,35 @@
-@(user: model.user.User)
+@(user: model.user.User, exercise: model.SqlExercise) @main("SQL", user) {
+<style>
+#editor {
+	height: 500px;
+}
+</style>
 
-@main("SQL", user) {
-  <h1>SQL!</h1>
+<script src="@controllers.routes.Assets.versioned("javascripts/ace/ace.js")"></script>
+<div class="container">
+  <div class="alert alert-info">Aufgabe @exercise.id: @exercise.text</div>
+
+  <div class="row">
+
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <pre id="editor" class="form-control"></pre>
+          <script type="text/javascript">
+                      var editor = ace.edit("editor");
+                      editor.setTheme("ace/theme/eclipse");
+                      editor.setFontSize("14px");
+                      editor.getSession().setMode("ace/mode/sql");
+                      editor.getSession().setTabSize(2);
+                      editor.getSession().setUseSoftTabs(true);
+                      editor.getSession().setUseWrapMode(true);
+                    </script>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">Todo...</div>
+
+  </div>
+</div>
 }

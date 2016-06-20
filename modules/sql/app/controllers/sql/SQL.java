@@ -42,8 +42,8 @@ public class SQL extends Controller {
   
   public Result exercise(int exerciseId) {
     User user = UserManagement.getCurrentUser();
-    
-    return ok(sqlexercise.render(user));
+    SqlExercise exercise = SqlExercise.byId(exerciseId);
+    return ok(sqlexercise.render(user, exercise));
   }
   
   public Result index() {

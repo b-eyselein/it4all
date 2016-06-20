@@ -9,6 +9,10 @@ public class SqlExercise {
     return Arrays.asList(new SqlExercise(0), new SqlExercise(1));
   }
 
+  public static SqlExercise byId(int exerciseId) {
+    return new SqlExercise(exerciseId);
+  }
+
   public int id;
 
   public String text = "Geben Sie alle Telefonnummern aus!";
