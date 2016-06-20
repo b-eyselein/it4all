@@ -1,1 +1,2 @@
-GET		/index					controllers.sql.SQL.index()
+GET   /index                  controllers.sql.SQL.index()
+GET   /exercise/:exerciseId   controllers.sql.SQL.exercise(exerciseId: Int)

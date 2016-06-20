@@ -1,6 +1,14 @@
-@(content: Html, user: model.user.User)
+@(user: model.user.User, exercises: List[model.SqlExercise])
 
 @main("SQL", user) {
-  <h1>SQL!</h1>
-  @content
+  <div class="container">
+    <div class="panel panel-default">
+      <div class="panel-heading">Verf&uuml;gbare Aufgaben</div>
+      <div class="panel-body">
+      @for(exercise <- exercises) {
+    	<a href="@controllers.sql.routes.SQL.exercise(exercise.id)" class="btn btn-default btn-block">Aufgabe @exercise.id</a>
+      }
+      </div>
+    </div>
+  </div>
 }
