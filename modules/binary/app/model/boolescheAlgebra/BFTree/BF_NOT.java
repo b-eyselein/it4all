@@ -17,6 +17,9 @@ public class BF_NOT implements BFKnoten {
 	
 	@Override
 	public String toString() {
+	  if (this.knoten.getClass() == BF_Variable.class || this.knoten.getClass() == BF_0.class || this.knoten.getClass() == BF_1.class) {
+	    return "NOT "+this.knoten.toString();
+	  }
 		return "NOT("+this.knoten.toString()+")";
 	}
 

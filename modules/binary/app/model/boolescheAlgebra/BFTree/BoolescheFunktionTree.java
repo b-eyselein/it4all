@@ -248,7 +248,7 @@ public class BoolescheFunktionTree {
 	public boolean compareBoolscheFormelTree(BoolescheFunktionTree otherBFT) throws IllegalArgumentException {
 		
 		if (this.getAnzahlVariablen() != otherBFT.getAnzahlVariablen()) {
-			throw new IllegalArgumentException("Wrong number of vars. Exspected "+this.getAnzahlVariablen()+" but was "+otherBFT.getAnzahlVariablen()+".");
+			throw new IllegalArgumentException("Wrong number of vars. Expected "+this.getAnzahlVariablen()+" but was "+otherBFT.getAnzahlVariablen()+".");
 		}
 		String[] thisVars = this.getVariablen();
 		String[] otherVars = otherBFT.getVariablen();
