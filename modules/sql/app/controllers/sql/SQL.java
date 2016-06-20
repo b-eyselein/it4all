@@ -32,35 +32,35 @@ public class SQL extends Controller {
   
   private static final String DB_BASENAME = "sql_";
   private static final String CREATE_DB_DUMMY = "CREATE DATABASE IF NOT EXISTS ";
-  
+
   private static final Logger.ALogger theLogger = Logger.of("sql");
-  
+
   @Inject
   @NamedDatabase("sqltest")
   // IMPORTANT: DO NOT USE "DEFAULT" DATABASE
   private Database db;
-  
+
   public Result exercise(int exerciseId) {
     User user = UserManagement.getCurrentUser();
     SqlExercise exercise = SqlExercise.byId(exerciseId);
     return ok(sqlexercise.render(user, exercise));
   }
-  
+
   public Result index() {
     User user = UserManagement.getCurrentUser();
     try {
       String slaveDB = DB_BASENAME + user.name;
       Connection connection = db.getConnection();
-      
+
       initializeDB(connection, slaveDB);
       connection.close();
-      
+
       return ok(sql.render(UserManagement.getCurrentUser(), SqlExercise.all()));
     } catch (SQLException e) {
       return badRequest(error.render(user, new Html("Fehler bei Verarbeitung: " + e.getMessage() + "!")));
     }
   }
-  
+
   private boolean databaseAlreadyExists(Connection connection, String slaveDB) throws SQLException {
     ResultSet existingDBs = connection.createStatement().executeQuery("SHOW DATABASES");
     while(existingDBs.next())
@@ -68,7 +68,7 @@ public class SQL extends Controller {
         return true;
     return false;
   }
-  
+
   private void initializeDB(Connection connection, String slaveDB) {
     long startTime = System.currentTimeMillis();
     try {
@@ -92,5 +92,5 @@ public class SQL extends Controller {
     }
     theLogger.debug("time initializing the db: " + (System.currentTimeMillis() - startTime) / 1000.);
   }
-  
+
 }
