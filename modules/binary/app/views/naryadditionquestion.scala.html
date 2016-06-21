@@ -1,13 +1,13 @@
 @* NAryV Template File *@
 @(user: model.user.User, number1: String, number2: String, numberType: String)
 
-@main("HTML-Test", user) {
+@main("Addition", user) {
 	<div class="container">
 		<div class="panel panel-default">
 			<div class="panel-heading">
 			Addieren sie die folgenden @numberType:
-			@if(numberType.equals("Bin√§rzahlen")) {
-			<em><p class="text-info .small">(Bin√§rzahlen bitte in 8-Bit-Darstellung mit f√ºhrenden Nullen angeben.)</p><em>
+			@if(numberType.equals("Bin‰rzahlen")) {
+			<em><p class="text-info .small">(Bin‰rzahlen bitte in 8-Bit-Darstellung mit f¸hrenden Nullen angeben.)</p><em>
 			}
 			</div>
 			<div class="panel-body">
@@ -16,7 +16,7 @@
 					<p class="text-right">+ @number2 &nbsp;&nbsp;</p>
 					<form role="form" action="@binary.routes.NAryAddition.addLearnerSolution" method="post">
 						<div class="form-group">
-							<input class="form-control text-right" name="learnerSolution" placeholder="Ihre L√∂sung">
+							<input class="form-control text-right" name="learnerSolution" placeholder="Ihre Lˆsung">
 						</div>
 						<button type="submit" class="btn btn-primary">Pr&uuml;fen</button>
 					</form>

@@ -1,12 +1,12 @@
 @* NArySolution Template File *@
 @(user: model.user.User, givenAnswer: String, fromNumberType: String, number: String, toNumberType: String,correctAnswer: String, correct: Boolean)
-@main("HTML-Test", user) {
+@main("Zahlen umformen", user) {
 	<div class="container">
 		<div class="panel panel-@if(correct){success}else{danger}">
 	<div class="panel-heading">
 	Wandeln Sie die @fromNumberType @number in eine @toNumberType um:
-	@if(toNumberType.equals("Bin√§rzahl")) {
-	<em><p class="text-info .small">(Bin√§rzahlen bitte in 8-Bit-Darstellung mit f√ºhrenden Nullen angeben.)</p><em>
+	@if(toNumberType.equals("Bin‰rzahl")) {
+	<em><p class="text-info .small">(Bin‰rzahlen bitte in 8-Bit-Darstellung mit f¸hrenden Nullen angeben.)</p><em>
 	}
 	</div>
 	<div class="panel-body">
@@ -18,7 +18,7 @@
 				Die richtige Antwort lautet @correctAnswer.<br>
 			}
 			&nbsp;<br> 
-	 	<p><a href="@binary.routes.NAryConvertion.index" class="btn btn-primary" role="button">N√§chste Aufgabe</a></p>
+	 	<p><a href="@binary.routes.NAryConvertion.index" class="btn btn-primary" role="button">N‰chste Aufgabe</a></p>
 	</div>
 	</div>
 	</div>

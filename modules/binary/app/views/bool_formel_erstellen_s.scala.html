@@ -1,6 +1,6 @@
 @* NArySolution Template File *@
 @(user: model.user.User, givenAnswer: String, correct: Boolean, exception_msg: String, var_names: Array[String], wahrheitstafel: Array[Array[Char]], spalten: Int, zeilen: Int)
-@main("HTML-Test", user) {
+@main("Formel erstellen", user) {
 	<div class="container">
 		<div class="panel panel-@if(correct){success}else{danger}">
 			<div class="panel-heading">
@@ -53,4 +53,3 @@
 		</div>
 	</div>
 }
-

@@ -28,7 +28,7 @@ public class Bool extends Controller {
     bft = bGen.neueBoolescheFunktion();
     double d = (double) bft.getAnzahlVariablen();
     length = (int)(Math.pow(2.0, d));
-    return ok(boolquestion.render(bft.toString(),bft.getVariablen(), UserManagement.getCurrentUser(), bft.getVariablenTabelle(), length));
+    return ok(boolquestion.render(parseFormel(bft.toString()),bft.getVariablen(), UserManagement.getCurrentUser(), bft.getVariablenTabelle(), length));
   }
 
   public Result indexSolution() {
@@ -54,5 +54,29 @@ public class Bool extends Controller {
       solutions[i] = dynFormula.get("" + i + "");
     }
     return redirect(routes.Bool.indexSolution());
+  }
+  
+  private String parseFormel(String formel) {
+    String s = "";
+    int i = 0;
+    while (i<formel.length()) {
+      if (i+2<formel.length() && formel.substring(i, i+3).equals("XOR")) {
+        s += "\u2295";
+        i += 3;
+      } else if (i+2<formel.length() && formel.substring(i, i+3).equals("NOT")) {
+        s += "\u00ac";
+        i += 3;
+      } else if (i+2<formel.length() && formel.substring(i, i+3).equals("AND")) {
+        s += "\u2227";
+        i += 3;
+      } else if (i+1<formel.length() && formel.substring(i, i+2).equals("OR")) {
+        s += "\u2228";
+        i += 2;
+      } else {
+        s += formel.charAt(i);
+        i++;
+      }
+    }
+    return s;
   }
 }

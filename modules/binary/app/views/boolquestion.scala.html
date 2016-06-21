@@ -1,35 +1,64 @@
-@* TableThree Template File *@
-@(formula: String)(vars: Array[String])(user: model.user.User)(zeros: Array[Array[Char]])(length: Int)
+@* boolquestion Template File *@
+@(formula: String, vars: Array[String], user: model.user.User, zeros: Array[Array[Char]], length: Int)
 @main("Wertetabelle", user) {
 <div class="container">
-<form action="@binary.routes.Bool.tableAdd" method="post">
-<table class="table">
-	<thread align = "right">
-		<tr>
-			@for(v <- vars){
-			<td>
-				@v
-			</td>
-			}
-			<td>
-				@formula
-			</td>
-		</tr>
-	</thread>
-	<tbody align = "left">
-	@for(i <- 0 until (length)){
-		<tr>
-		@for(j <- 0 until (vars.length)){
-			<td>@zeros(j)(i)</td>
-			}
-			<td>
-				<input type="text" name = @i.toString size = 1>
-			</td>
-		}
-	</tbody>
-</table>
-
-	<input type = "submit" class="form-control">
-</form>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			F&uuml;llen Sie folgende Tabelle aus:
+		</div>
+		<div class="panel-body">
+			<form action="@binary.routes.Bool.tableAdd" method="post">
+				<table class="table">
+					<thread align = "right">
+						<tr>
+							@for(v <- vars){
+							<td>
+								@v
+							</td>
+							}
+							<td>
+							@*
+								@for(i <- 0 to formula.length()-3) {
+									@if(formula.subSequence(i,i+2)==XOR) {
+										<p>&oplus;</p>
+									} else {
+										@if(formula.subSequence(i,i+2)==NOT) {
+											<p>&not;</p>
+										} else {
+											@if(formula.subSequence(i,i+2)==AND) {
+												<p>&and;</p>
+											} else {
+												@if(formula.subSequence(i,i+1)==OR) {
+													<p>&or;</p>
+												} else {
+													@formula.charAt(i)
+												}
+											}
+										}
+									}
+								}
+								*@
+								@formula
+								@* &nbsp; &and; &or; &not; &oplus; *@
+							</td>
+						</tr>
+					</thread>
+					<tbody align = "left">
+					@for(i <- 0 until (length)){
+						<tr>
+						@for(j <- 0 until (vars.length)){
+							<td>@zeros(j)(i)</td>
+							}
+							<td>
+								<input type="text" name = @i.toString size = 1>
+							</td>
+						}
+					</tbody>
+				</table>
+				
+				<button type="submit" class="btn btn-primary">Pr&uuml;fen</button>
+			</form>
+		</div>
+	</div>
 </div>
 }

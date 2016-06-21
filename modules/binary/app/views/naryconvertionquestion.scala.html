@@ -1,19 +1,19 @@
 @* NAryV Template File *@
 @(user: model.user.User, fromNumberType: String, number: String, toNumberType: String)
 
-@main("HTML-Test", user) {
+@main("Zahlen umformen", user) {
 	<div class="container">
 		<div class="panel panel-default">
 	<div class="panel-heading">
 	Wandeln Sie die @fromNumberType @number in eine @toNumberType um:
-	@if(toNumberType.equals("Bin√§rzahl")) {
-	<em><p class="text-info .small">(Bin√§rzahlen bitte in 8-Bit-Darstellung mit f√ºhrenden Nullen angeben.)</p><em>
+	@if(toNumberType.equals("Bin‰rzahl")) {
+	<em><p class="text-info .small">(Bin‰rzahlen bitte in 8-Bit-Darstellung mit f¸hrenden Nullen angeben.)</p><em>
 	}
 	</div>
 	<div class="panel-body">
 	 <form role="form" action="@binary.routes.NAryConvertion.addLearnerSolution" method="post">
 			<div class="form-group">
-			<input class="form-control" name="learnerSolution" placeholder="Ihre L√∂sung">
+			<input class="form-control" name="learnerSolution" placeholder="Ihre Lˆsung">
 			</div>
 			<button type="submit" class="btn btn-primary">Pr&uuml;fen</button>
 			</form>
