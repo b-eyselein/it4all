@@ -26,11 +26,14 @@ public class BoolescheFunktionParser {
         'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'));
     for(int i = 0; i < formel.length(); i++) {
       if(!zeichensatz.contains(formel.charAt(i))) {
+        /*
         String iaexception = "illegal caracter \"" + formel.charAt(i) + "\" at:\n" + originalformel + "\n";
         for(int j = 0; j < i; j++) {
           iaexception += " ";
         }
         iaexception += "^";
+        */
+        String iaexception = "Deine L\u00f6sung enth\u00e4lt ein ung\u00fcltiges Zeichen: "+formel.charAt(i);
         throw new IllegalArgumentException(iaexception);
       }
     }
@@ -52,7 +55,7 @@ public class BoolescheFunktionParser {
     }
     // Fehler falls keine Variablen vorhanden
     if(vars.size() == 0) {
-      throw new IllegalArgumentException("no variables found: " + originalformel);
+      throw new IllegalArgumentException("Die Formel enth\u00e4lt keine Variablen: " + originalformel);
     }
     BF_Variable[] bf_vars = new BF_Variable[vars.size()];
     int i_vars = 0;
@@ -123,7 +126,7 @@ public class BoolescheFunktionParser {
     if(ausdruck.length() > 3 && ausdruck.substring(0, 3).equals("not")) {
       String next = ausdruck.substring(3, ausdruck.length());
       if(next.equals("")) {
-        throw new IllegalArgumentException("NOT-Ausdruck unfollstaendig: " + ausdruck);
+        throw new IllegalArgumentException("NOT-Ausdruck unfollst\u00e4ndig: " + ausdruck);
       }
       return new BF_NOT(getNextKnoten(next, vars));
     }
@@ -142,7 +145,7 @@ public class BoolescheFunktionParser {
       return new BF_1();
     }
     
-    throw new IllegalArgumentException("fehlende Variable / fehlender Ausdruck"); // TODO: Fehlerbeschreibung ergaenzen
+    throw new IllegalArgumentException("Der Ausdruck ist unvollst\u00e4ndig. M\u00f6glicherweise fehlt eine bei einem Operator eine Variable."); // TODO: Fehlerbeschreibung ergaenzen
   }
   
   private static void pruefeKlammern(String formel) throws IllegalArgumentException {
@@ -154,21 +157,27 @@ public class BoolescheFunktionParser {
       } else if(formel.charAt(i) == ')') {
         klammerauf--;
         if(klammerauf < 0) {
+          /*
           String iaexception = "opening bracket is missing:\n" + formel + "\n";
           for(int j = 0; j < i; j++) {
             iaexception += " ";
           }
           iaexception += "^";
+          */
+          String iaexception = "Bei der Formel fehlt eine \u00f6ffnende Klammer: "+formel;
           throw new IllegalArgumentException(iaexception);
         }
       }
     }
     if(klammerauf > 0) {
+      /*
       String iaexception = "closing bracket is missing:\n" + formel + "\n";
       for(int j = 0; j < formel.length() - 1; j++) {
         iaexception += " ";
       }
       iaexception += "^";
+      */
+      String iaexception = "Bei der Formel fehlt eine schlie\u00dfende Klammer: "+formel;
       throw new IllegalArgumentException(iaexception);
     }
   }

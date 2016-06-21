@@ -19,7 +19,7 @@ public class BF_OR implements BFKnoten {
 	
 	@Override
 	public String toString() {
-		return "("+this.linkerK.toString()+" OR "+this.rechterK.toString()+")";
+		return this.linkerK.toString()+" OR "+this.rechterK.toString();
 	}
 	
 	@Override
