@@ -1,6 +1,7 @@
 @* TableThree Template File *@
 @(formula: String)(vars: Array[String])(user: model.user.User)(zeros: Array[Array[Char]])(length: Int)
 @main("Wertetabelle", user) {
+<div class="container">
 <form action="@binary.routes.Bool.tableAdd" method="post">
 <table class="table">
 	<thread align = "right">
@@ -30,4 +31,5 @@
 
 	<input type = "submit" class="form-control">
 </form>
+</div>
 }
