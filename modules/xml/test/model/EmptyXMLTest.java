@@ -15,14 +15,23 @@ public class EmptyXMLTest {
     File xsd = new File("test/resources/note.xsd");
     List<XMLError> out = XmlCorrector.correctXMLAgainstXSD(emptyXML, xsd);
     assertEquals("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), 1);
+    
+    XMLError error = out.get(0);
+    
+    assertEquals(XmlErrorType.FATALERROR, error.getErrorType());
+    assertEquals("Premature end of file.", error.getErrorMessage());
   }
-
+  
   @Test
   public void xmlNoElement() {
     File xml = new File("test/resources/xmlNoElement.xml");
     List<XMLError> out = XmlCorrector.correctXMLAgainstDTD(xml);
     assertEquals("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), 1);
-    assertEquals("FATALERROR:\n" + "Fehler: leere XML\n", out.get(0).toString());
+    
+    XMLError error = out.get(0);
+    
+    assertEquals(XmlErrorType.FATALERROR, error.getErrorType());
+    assertEquals("Premature end of file.", error.getErrorMessage());
   }
-
+  
 }

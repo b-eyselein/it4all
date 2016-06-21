@@ -32,7 +32,4 @@ public class XmlExercise extends Model {
   @Column(name = "exerciseText", length = 1000)
   public String exerciseText;
   
-  /* @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
-  public List<Task> tasks; */
-  
 }

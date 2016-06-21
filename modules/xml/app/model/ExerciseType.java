@@ -1,7 +1,7 @@
 package model;
 
 public enum ExerciseType {
-  XMLAgainstXSD("xml"), XMLAgainstDTD("xml"), XSDAgainstXML("xml"), DTDAgainstXML("dtd");
+  XMLAgainstXSD("xml"), XMLAgainstDTD("xml"), XSDAgainstXML("xsd"), DTDAgainstXML("dtd");
   
   public String studentFileEnding;
   
