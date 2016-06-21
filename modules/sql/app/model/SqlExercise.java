@@ -1,26 +1,24 @@
 package model;
 
-import java.util.Arrays;
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
-public class SqlExercise {
+import com.avaje.ebean.Model;
+
+@Entity
+public class SqlExercise extends Model {
   
-  public static List<SqlExercise> all() {
-    return Arrays.asList(new SqlExercise(0), new SqlExercise(1));
-  }
+  public static Finder<Integer, SqlExercise> finder = new Finder<Integer, SqlExercise>(SqlExercise.class);
 
-  public static SqlExercise byId(int exerciseId) {
-    return new SqlExercise(exerciseId);
-  }
-
+  @Id
   public int id;
 
-  public String text = "Geben Sie alle Telefonnummern aus!";
+  public String title;
 
-  public String sample = "SELECT phone FROM phonenumbers;";
+  @Column(columnDefinition = "text")
+  public String text;
 
-  public SqlExercise(int theId) {
-    id = theId;
-  }
+  public String sample;
 
 }

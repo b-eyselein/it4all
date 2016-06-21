@@ -80,7 +80,13 @@ insert into js_testvalue (`id`, `test_id`, `value`) values
 	(5, 3, 44), (6, 3, 43),
 	(7, 4, "'Hallo '"), (8, 4, "'Welt'"), (9, 4, "'!'"),
 	(10, 5, "'Test'"), (11, 5, "'Test'"), (12, 5, "'Test'");
-	
+
+# SQL
+
+insert into sql_exercise(`id`, `title`, `text`, `sample`) values
+	(1, "Alle Telefonnumern", "Geben Sie alle Telefonnummern aus!", "SELECT * FROM phone"),
+	(2, "TODO", "Geben Sie die Namen aller Personen aus, die eine Geschäftsnummer besitzen", "SELECT name FROM phone WHERE type=\'work\'");
+
 # --- !Downs
 
 SET FOREIGN_KEY_CHECKS = 0;
