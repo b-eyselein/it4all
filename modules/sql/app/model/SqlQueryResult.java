@@ -11,6 +11,8 @@ import java.util.List;
 public class SqlQueryResult {
   
   private List<String> colNames;
+  
+  // TODO: evtl. eigene Klasse?
   private List<List<String>> rows;
   
   public SqlQueryResult(ResultSet resultSet) throws SQLException {
@@ -64,8 +66,19 @@ public class SqlQueryResult {
     
     // Check rows
     int rowCount = rows.size();
-    if(other.getRows().size() != rowCount)
+    List<List<String>> otherRows = other.getRows();
+    if(otherRows.size() != rowCount)
       return false;
+    for(int rowCounter = 0; rowCounter < rowCount; rowCounter++) {
+      List<String> otherRow = otherRows.get(rowCounter);
+      List<String> thisRow = rows.get(rowCounter);
+      if(otherRow.size() != thisRow.size())
+        return false;
+      for(int cellCounter = 0; cellCounter < thisRow.size(); cellCounter++)
+        if(!otherRow.get(cellCounter).equals(thisRow.get(cellCounter)))
+          return false;
+    }
+    
     return true;
   }
   
