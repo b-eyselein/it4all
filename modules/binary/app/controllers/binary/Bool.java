@@ -21,7 +21,7 @@ public class Bool extends Controller {
   private FormFactory factory;
   private BoolescheFunktionTree bft;
   private String[] solutions;
-  int length;
+  private int length;
 
   public Result index() {
     bft = BoolescheFunktionenGenerator.neueBoolescheFunktion();
