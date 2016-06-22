@@ -18,17 +18,17 @@ import model.boolescheAlgebra.BFTree.*;
 public class Bool extends Controller {
   
   @Inject
-  FormFactory factory;
-  BoolescheFunktionTree bft;
-  BoolescheFunktionenGenerator bGen = new BoolescheFunktionenGenerator();
-  String[] solutions;
+  private FormFactory factory;
+  private BoolescheFunktionTree bft;
+  private String[] solutions;
   int length;
 
   public Result index() {
-    bft = bGen.neueBoolescheFunktion();
-    double d = (double) bft.getAnzahlVariablen();
-    length = (int)(Math.pow(2.0, d));
-    return ok(boolquestion.render(parseFormel(bft.toString()), UserManagement.getCurrentUser(), bft.getVariablenTabelle(), length, bft));
+    bft = BoolescheFunktionenGenerator.neueBoolescheFunktion();
+    double d = bft.getAnzahlVariablen();
+    length = (int) (Math.pow(2.0, d));
+    return ok(boolquestion.render(parseFormel(bft.toString()), UserManagement.getCurrentUser(),
+        bft.getVariablenTabelle(), length, bft));
   }
 
   public Result indexSolution() {
@@ -41,10 +41,11 @@ public class Bool extends Controller {
     }
     String[] answer = new String[solutions.length];
     char[] ansOld = bft.getWahrheitsVectorChar();
-    for(int i = 0; i < answer.length; i++){
-      answer[i] = ""+ansOld[i];
+    for(int i = 0; i < answer.length; i++) {
+      answer[i] = "" + ansOld[i];
     }
-    return ok(boolsolution.render(UserManagement.getCurrentUser(), correct, parseFormel(bft.toString()), bft.getVariablenTabelle(), length, solutions, answer, exception_msg, bft));
+    return ok(boolsolution.render(UserManagement.getCurrentUser(), correct, parseFormel(bft.toString()),
+        bft.getVariablenTabelle(), length, solutions, answer, exception_msg, bft));
   }
 
   public Result tableAdd() {
@@ -55,28 +56,41 @@ public class Bool extends Controller {
     }
     return redirect(routes.Bool.indexSolution());
   }
-  
+
   private String parseFormel(String formel) {
-    String s = "";
-    int i = 0;
-    while (i<formel.length()) {
-      if (i+2<formel.length() && formel.substring(i, i+3).equals("XOR")) {
-        s += "\u2295";
-        i += 3;
-      } else if (i+2<formel.length() && formel.substring(i, i+3).equals("NOT")) {
-        s += "\u00ac";
-        i += 3;
-      } else if (i+2<formel.length() && formel.substring(i, i+3).equals("AND")) {
-        s += "\u2227";
-        i += 3;
-      } else if (i+1<formel.length() && formel.substring(i, i+2).equals("OR")) {
-        s += "\u2228";
-        i += 2;
-      } else {
-        s += formel.charAt(i);
-        i++;
-      }
-    }
-    return s;
+    // String s = "";
+    // int i = 0;
+    // while(i < formel.length()) {
+    // if(i + 2 < formel.length() && formel.substring(i, i + 3).equals("XOR")) {
+    // s += "\u2295";
+    // i += 3;
+    // } else if(i + 2 < formel.length() && formel.substring(i, i +
+    // 3).equals("NOT")) {
+    // s += "\u00ac";
+    // i += 3;
+    // } else if(i + 2 < formel.length() && formel.substring(i, i +
+    // 3).equals("AND")) {
+    // s += "\u2227";
+    // i += 3;
+    // } else if(i + 1 < formel.length() && formel.substring(i, i +
+    // 2).equals("OR")) {
+    // s += "\u2228";
+    // i += 2;
+    // } else {
+    // s += formel.charAt(i);
+    // i++;
+    // }
+    // }
+    // return s;
+
+    // FIXME: Teste String.replace()!!
+    // @formatter:off
+    String parsedFormel = formel
+        .replaceAll("XOR", "\u2295")
+        .replaceAll("NOT", "\u00ac")
+        .replaceAll("AND", "\u2227")
+        .replaceAll("OR", "\u2228");
+    // @formatter:on
+    return parsedFormel;
   }
 }
