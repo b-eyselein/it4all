@@ -15,21 +15,31 @@ import com.avaje.ebean.Model;
 @Table(name = "xmlexercise")
 public class XmlExercise extends Model {
   
+  public enum XmlExType {
+    XMLAgainstXSD("xml"), XMLAgainstDTD("xml"), XSDAgainstXML("xsd"), DTDAgainstXML("dtd");
+
+    public String studentFileEnding;
+
+    private XmlExType(String studentEnding) {
+      this.studentFileEnding = studentEnding;
+    }
+  }
+
   public static Finder<Integer, XmlExercise> finder = new Finder<Integer, XmlExercise>(XmlExercise.class);
-  
+
   @Id
   public int id;
-  
+
   public String title;
-  
+
   @Column(name = "exerciseType")
   @Enumerated(EnumType.STRING)
-  public ExerciseType exerciseType;
-  
+  public XmlExType exerciseType;
+
   @Column(name = "referenceFileName", length = 100)
   public String referenceFileName; // use with Util.getXmlReferenceFilePath
-  
+
   @Column(name = "exerciseText", length = 1000)
   public String exerciseText;
-  
+
 }

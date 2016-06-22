@@ -12,7 +12,7 @@ import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import model.ExerciseType;
+import model.XmlExercise.XmlExType;
 import model.Util;
 import model.XmlExercise;
 import play.Logger;
@@ -80,7 +80,7 @@ public class XmlStartUpChecker {
         XmlExercise newExercise = new XmlExercise();
         newExercise.id = node.get("id").asInt();
         newExercise.title = node.get("title").asText();
-        newExercise.exerciseType = ExerciseType.valueOf(node.get("exerciseType").asText());
+        newExercise.exerciseType = XmlExType.valueOf(node.get("exerciseType").asText());
         newExercise.referenceFileName = node.get("referenceFileName").asText();
         newExercise.exerciseText = node.get("exerciseText").asText();
         

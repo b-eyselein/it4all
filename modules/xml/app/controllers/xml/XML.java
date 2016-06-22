@@ -1,10 +1,6 @@
 package controllers.xml;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
@@ -16,7 +12,7 @@ import javax.inject.Inject;
 
 import model.XmlExercise;
 import controllers.core.UserManagement;
-import model.ExerciseType;
+import model.XmlExercise.XmlExType;
 import model.Secured;
 import model.Util;
 import model.XMLError;
@@ -54,7 +50,7 @@ public class XML extends Controller {
 
     String learnerSolution = extractLearnerSolutionFromRequest(request());
     Logger.info(learnerSolution);
-    if(exercise.exerciseType == ExerciseType.XMLAgainstDTD) {
+    if(exercise.exerciseType == XmlExType.XMLAgainstDTD) {
       learnerSolution = generateFixedStart(exercise,
           util.getSampleFileForExercise(EXERCISE_TYPE, exercise.referenceFileName).toString()) + "\n" + learnerSolution;
     }
@@ -101,7 +97,7 @@ public class XML extends Controller {
     }
 
     String fixedStart = "";
-    if(exercise.exerciseType == ExerciseType.XMLAgainstDTD) {
+    if(exercise.exerciseType == XmlExType.XMLAgainstDTD) {
       fixedStart = generateFixedStart(exercise, exercise.referenceFileName);
       if(defaultOrOldSolution.startsWith("<?xml")) {
         // List<String> solutionList =
