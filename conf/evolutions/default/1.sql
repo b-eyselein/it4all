@@ -92,6 +92,8 @@ create table sql_exercise (
   title                         varchar(255),
   text                          text,
   sample                        varchar(255),
+  ex_type                       varchar(6),
+  constraint ck_sql_exercise_ex_type check (ex_type in ('SELECT','UPDATE','INSERT','DELETE','CREATE')),
   constraint pk_sql_exercise primary key (id)
 );
 

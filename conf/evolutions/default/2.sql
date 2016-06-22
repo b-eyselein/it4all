@@ -83,9 +83,10 @@ insert into js_testvalue (`id`, `test_id`, `value`) values
 
 # SQL
 
-insert into sql_exercise(`id`, `title`, `text`, `sample`) values
-	(1, "Alle Telefonnumern", "Geben Sie alle Telefonnummern aus!", "SELECT * FROM phone"),
-	(2, "TODO", "Geben Sie die Namen aller Personen aus, die eine Geschäftsnummer besitzen", "SELECT name FROM phone WHERE type=\'work\'");
+insert into sql_exercise(`id`, `title`, `text`, `sample`, `ex_type`) values
+	(1, 'Create todo', 'Erstellen Sie folgendes CREATE-Statement: TODO!', "CREATE TABLE todo IF NOT EXISTS", 'CREATE'),
+	(2, 'Alle Telefonnumern', 'Geben Sie alle Telefonnummern aus!', "SELECT * FROM phone", 'SELECT'),
+	(3, 'TODO', 'Geben Sie die Namen aller Personen aus, die eine Geschäftsnummer besitzen', "SELECT name FROM phone WHERE type=\'work\'", 'SELECT');
 
 # --- !Downs
 

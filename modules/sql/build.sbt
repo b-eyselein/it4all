@@ -8,5 +8,6 @@ routesGenerator := InjectedRoutesGenerator
 playEbeanModels in Compile := Seq("model.*")
 
 libraryDependencies ++= Seq(
-  javaJdbc
+  javaJdbc,
+  Common.jsqlParser
 )

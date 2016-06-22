@@ -25,8 +25,6 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Reader;
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -91,11 +89,10 @@ public class ScriptRunner {
           command.append(line.substring(0, line.lastIndexOf(DELIMITER)) + " ");
           Statement statement = conn.createStatement();
 
-          theLogger.info(command + "");
-
-          boolean hasResults = false;
+          // boolean hasResults = false;
           if(stopOnError) {
-            hasResults = statement.execute(command.toString());
+            // hasResults = statement.execute(command.toString());
+            statement.execute(command.toString());
           } else {
             try {
               statement.execute(command.toString());
@@ -109,21 +106,21 @@ public class ScriptRunner {
             conn.commit();
           }
 
-          ResultSet rs = statement.getResultSet();
-          if(hasResults && rs != null) {
-            ResultSetMetaData md = rs.getMetaData();
-            int cols = md.getColumnCount();
-            for(int i = 0; i < cols; i++) {
-              String name = md.getColumnLabel(i);
-              theLogger.info(name + "\n");
-            }
-            while(rs.next()) {
-              for(int i = 0; i < cols; i++) {
-                String value = rs.getString(i);
-                theLogger.info(value + "\n");
-              }
-            }
-          }
+          // ResultSet rs = statement.getResultSet();
+          // if(hasResults && rs != null) {
+          // ResultSetMetaData md = rs.getMetaData();
+          // int cols = md.getColumnCount();
+          // for(int i = 0; i < cols; i++) {
+          // String name = md.getColumnLabel(i);
+          // theLogger.info(name + "\n");
+          // }
+          // while(rs.next()) {
+          // for(int i = 0; i < cols; i++) {
+          // String value = rs.getString(i);
+          // theLogger.info(value + "\n");
+          // }
+          // }
+          // }
 
           command = null;
           try {
