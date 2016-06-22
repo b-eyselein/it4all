@@ -7,8 +7,6 @@ import javax.persistence.Table;
 import javax.persistence.Enumerated;
 import javax.persistence.EnumType;
 
-import model.ExerciseType;
-
 import com.avaje.ebean.Model;
 
 @Entity

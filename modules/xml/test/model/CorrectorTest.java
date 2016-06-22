@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.util.List;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -30,7 +29,7 @@ public class CorrectorTest {
     List<XMLError> out = XmlCorrector.correctDTDAgainstXML(solution, referenceFile);
     assertTrue(out.isEmpty());
   }
-  
+
   /**
    * Test method for
    * {@link model.CorrectorXml#correctXMLAgainstDTD(java.io.File)}.
@@ -41,7 +40,7 @@ public class CorrectorTest {
     List<XMLError> out = XmlCorrector.correctXMLAgainstDTD(file);
     assertTrue(out.isEmpty());
   }
-  
+
   /**
    * Test method for
    * {@link model.CorrectorXml#correctXMLAgainstXSD(java.io.File, java.io.File)}
@@ -56,5 +55,5 @@ public class CorrectorTest {
     assertNotNull(out);
     assertTrue(out.isEmpty());
   }
-  
+
 }
