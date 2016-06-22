@@ -28,7 +28,7 @@ public class Bool extends Controller {
     bft = bGen.neueBoolescheFunktion();
     double d = (double) bft.getAnzahlVariablen();
     length = (int)(Math.pow(2.0, d));
-    return ok(boolquestion.render(parseFormel(bft.toString()),bft.getVariablen(), UserManagement.getCurrentUser(), bft.getVariablenTabelle(), length));
+    return ok(boolquestion.render(parseFormel(bft.toString()), UserManagement.getCurrentUser(), bft.getVariablenTabelle(), length, bft));
   }
 
   public Result indexSolution() {
@@ -44,7 +44,7 @@ public class Bool extends Controller {
     for(int i = 0; i < answer.length; i++){
       answer[i] = ""+ansOld[i];
     }
-    return ok(boolsolution.render(UserManagement.getCurrentUser(), correct, bft.toString(), bft.getVariablen(), bft.getVariablenTabelle(), length, solutions, answer, exception_msg));
+    return ok(boolsolution.render(UserManagement.getCurrentUser(), correct, parseFormel(bft.toString()), bft.getVariablenTabelle(), length, solutions, answer, exception_msg, bft));
   }
 
   public Result tableAdd() {

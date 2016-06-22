@@ -1,5 +1,5 @@
 @* boolsolution Template File *@
-@(user: model.user.User, correct: Boolean, formula: String, vars: Array[String], zeros: Array[Array[Char]], length: Int, userInput: Array[String], answer: Array[String], exception_msg: String)
+@(user: model.user.User, correct: Boolean, formula: String, zeros: Array[Array[Char]], length: Int, userInput: Array[String], answer: Array[String], exception_msg: String, bft: model.boolescheAlgebra.BFTree.BoolescheFunktionTree)
 @main("Wertetabelle-L\u00f6sung", user) {
 	<div class="container">
 		<div class="panel panel-@if(correct){success}else{danger}">
@@ -15,7 +15,7 @@
 				<table class="table">
 					<thread align = "right">
 						<tr>
-							@for(v <- vars){
+							@for(v <- bft.getVariablen()){
 								<td>
 									@v
 								</td>
@@ -28,7 +28,7 @@
 					<tbody align = "left">
 						@for(i <- 0 until (length)){
 							<tr>
-								@for(j <- 0 until (vars.length)){
+								@for(j <- 0 until (bft.getVariablen().length)){
 									<td>@zeros(j)(i)</td>
 								}
 							<td>
