@@ -24,7 +24,7 @@ public class Bool extends Controller {
   private int length;
 
   public Result index() {
-    bft = BoolescheFunktionenGenerator.neueBoolescheFunktion();
+    bft = BoolescheFunktionenGenerator.neueBoolescheFunktion(2,3);
     double d = bft.getAnzahlVariablen();
     length = (int) (Math.pow(2.0, d));
     return ok(boolquestion.render(parseFormel(bft.toString()), UserManagement.getCurrentUser(),

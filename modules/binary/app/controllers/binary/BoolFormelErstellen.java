@@ -45,7 +45,7 @@ public class BoolFormelErstellen extends Controller {
   }
   
   public Result index() {
-    bft = BoolescheFunktionenGenerator.neueBoolescheFunktion();
+    bft = BoolescheFunktionenGenerator.neueBoolescheFunktion(2,3);
     zeilen = (int) Math.pow(2.0, bft.getAnzahlVariablen());
     spalten = bft.getAnzahlVariablen() + 1;
     return ok(bool_formel_erstellen_q.render(UserManagement.getCurrentUser(), bft.getVariablen(),
