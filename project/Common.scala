@@ -13,4 +13,6 @@ object Common {
   val htmlUnitDep = "org.seleniumhq.selenium" % "selenium-htmlunit-driver" % "2.52.0"
 
   val mockitoDep = "org.mockito" % "mockito-core" % "1.10.19"
+  
+  var jsqlParser = "com.github.jsqlparser" % "jsqlparser" % "0.9.5"
 }
