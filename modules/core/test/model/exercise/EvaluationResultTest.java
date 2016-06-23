@@ -11,10 +11,10 @@ import model.exercise.EvaluationResult;
 import static org.hamcrest.CoreMatchers.equalTo;
 
 public class EvaluationResultTest {
-  
+
   @Test
   public void testCompletely() {
-    EvaluationResult result = new EvaluationResult() {
+    EvaluationResult result = new EvaluationResult(Success.NONE) {
     };
     assertThat(result.getSuccess(), equalTo(Success.NONE));
     assertThat(result.getPoints(), equalTo(0));
@@ -34,7 +34,7 @@ public class EvaluationResultTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testIllegalSuccess() {
-    EvaluationResult result = new EvaluationResult() {
+    EvaluationResult result = new EvaluationResult(Success.NONE) {
     };
     result.setSuccess(null);
   }

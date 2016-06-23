@@ -14,8 +14,8 @@ public class ElementResult extends EvaluationResult {
   private List<ChildResult> childResults = Collections.emptyList();
 
   public ElementResult(Task theTask, Success theSuccess) {
+    super(theSuccess);
     task = theTask;
-    success = theSuccess;
   }
 
   public List<AttributeResult> getAttributeResults() {

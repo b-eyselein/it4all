@@ -1,4 +1,4 @@
-@import model.SqlQueryResult
+@import model.SqlQueryResult;
 
 @(user: model.user.User, exercise: model.SqlExercise, result: SqlQueryResult)
 
@@ -46,7 +46,13 @@
       <div class="col-md-6">
         <div class="panel panel-default">
           <div class="panel-heading">Aufgabe @exercise.id</div>
-          <div class="panel-body">@exercise.text</div>
+          <div class="panel-body">
+            <p>@exercise.text</p>
+          </div>
+          <div class="panel-footer">
+            <button type="button" class="btn btn-default btn-block" onclick="testSolution();">L&ouml;sung testen</button>
+            <input type="submit" class="btn btn-default btn-block disabled"  disabled id="commit" title="Noch nicht m&ouml;glich. Testen Sie ihre L&ouml;sung erst." value="L&ouml;sung abgeben">
+          </div>
         </div>
       </div>
         
@@ -68,17 +74,6 @@
         </div>
       </div>
     
-    </div>
-  
-    <div class="panel">
-      <div class="btn-group btn-group-justified">
-        <div class="btn-group">
-          <button type="button" class="btn btn-primary" onclick="testSolution();">L&ouml;sung testen</button>
-        </div>
-        <div class="btn-group">
-          <input type="submit" class="btn disabled"  disabled id="commit" title="Noch nicht m&ouml;glich. Testen Sie ihre L&ouml;sung erst." value="L&ouml;sung abgeben">
-        </div>
-      </div>
     </div>
   
     <div class="panel panel-default">
