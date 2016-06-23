@@ -88,13 +88,19 @@ create table js_testvalue (
 );
 
 create table sql_exercise (
-  id                            integer auto_increment not null,
+  id                            integer not null,
+  scenario_name                 varchar(255) not null,
   title                         varchar(255),
   text                          text,
   sample                        varchar(255),
   ex_type                       varchar(6),
   constraint ck_sql_exercise_ex_type check (ex_type in ('SELECT','UPDATE','INSERT','DELETE','CREATE')),
-  constraint pk_sql_exercise primary key (id)
+  constraint pk_sql_exercise primary key (id,scenario_name)
+);
+
+create table sql_scenario (
+  name                          varchar(255) not null,
+  constraint pk_sql_scenario primary key (name)
 );
 
 create table users (
@@ -133,6 +139,9 @@ create index ix_js_test_exercise_id on js_test (exercise_id);
 alter table js_testvalue add constraint fk_js_testvalue_test_id foreign key (test_id) references js_test (id) on delete restrict on update restrict;
 create index ix_js_testvalue_test_id on js_testvalue (test_id);
 
+alter table sql_exercise add constraint fk_sql_exercise_scenario_name foreign key (scenario_name) references sql_scenario (name) on delete restrict on update restrict;
+create index ix_sql_exercise_scenario_name on sql_exercise (scenario_name);
+
 
 # --- !Downs
 
@@ -157,6 +166,9 @@ drop index ix_js_test_exercise_id on js_test;
 alter table js_testvalue drop foreign key fk_js_testvalue_test_id;
 drop index ix_js_testvalue_test_id on js_testvalue;
 
+alter table sql_exercise drop foreign key fk_sql_exercise_scenario_name;
+drop index ix_sql_exercise_scenario_name on sql_exercise;
+
 drop table if exists childtask;
 
 drop table if exists css_task;
@@ -174,6 +186,8 @@ drop table if exists js_test;
 drop table if exists js_testvalue;
 
 drop table if exists sql_exercise;
+
+drop table if exists sql_scenario;
 
 drop table if exists users;
 

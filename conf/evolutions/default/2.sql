@@ -83,11 +83,14 @@ insert into js_testvalue (`id`, `test_id`, `value`) values
 
 # SQL
 
-insert into sql_exercise (`id`, `title`, `text`, `sample`, `ex_type`) values
-	(1, 'Create todo', 'Erstellen Sie folgendes CREATE-Statement: TODO!', "CREATE TABLE todo IF NOT EXISTS", 'CREATE'),
-	(2, 'Alle Telefonnumern', 'Geben Sie alle Telefonnummern aus!', "SELECT * FROM phone", 'SELECT'),
-	(3, 'TODO', 'Geben Sie die Nachnamen aller Personen aus, die eine Geschäftsnummer besitzen', "SELECT lastname FROM phone JOIN users on phone.username = users.username WHERE phonetype=\'work\'", 'SELECT'),
-	(4, 'Handy verloren...', 'Martina Musterfrau (Nutzername f_martina) hat ein neues Handy mit der Nummer 2345 bekommen. Aktualisieren Sie den Eintrag!', "UPDATE phone SET phonenumber = 2345 WHERE username = 'f_martina'", 'UPDATE');
+insert into sql_scenario(`name`) values
+	("phone");
+
+insert into sql_exercise (`scenario_name`, `id`, `title`, `text`, `sample`, `ex_type`) values
+	("phone", 1, 'Create todo', 'Erstellen Sie folgendes CREATE-Statement: TODO!', "CREATE TABLE todo IF NOT EXISTS", 'CREATE'),
+	("phone", 2, 'Alle Telefonnumern', 'Geben Sie alle Telefonnummern aus!', "SELECT phonenumber FROM phone", 'SELECT'),
+	("phone", 3, 'TODO', 'Geben Sie die Nachnamen aller Personen aus, die eine Geschäftsnummer besitzen', "SELECT lastname FROM phone JOIN users on phone.username = users.username WHERE phonetype=\'work\'", 'SELECT'),
+	("phone", 4, 'Handy verloren...', 'Martina Musterfrau (Nutzername f_martina) hat ein neues Handy mit der Nummer 2345 bekommen. Aktualisieren Sie den Eintrag!', "UPDATE phone SET phonenumber = 2345 WHERE username = 'f_martina'", 'UPDATE');
 
 # --- !Downs
 
@@ -106,6 +109,8 @@ delete from html_task;
 delete from xmlexercise;
 
 delete from sql_exercise;
+
+delete from sql_scenario;
 
 delete from exercise;
 

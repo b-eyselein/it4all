@@ -26,7 +26,7 @@
     
     // AJAX-Objekt mit Daten fuellen, absenden
     var parameters = "editorContent=" + encodeURIComponent(editorContent);
-    xhttp.open("PUT", "@controllers.sql.routes.SQL.commit(exercise.id)", true);
+    xhttp.open("PUT", "@controllers.sql.routes.SQL.commit(exercise.key.scenarioName, exercise.key.id)", true);
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhttp.setRequestHeader("Accept", "application/json");
     xhttp.send(parameters);
@@ -43,7 +43,7 @@
 
     <div class="col-md-6">
       <div class="panel panel-default">
-        <div class="panel-heading">Aufgabe @exercise.id</div>
+        <div class="panel-heading">Aufgabe @exercise.key.id</div>
         <div class="panel-body">
           <p>@exercise.text</p>
         </div>
@@ -80,12 +80,19 @@
       Tabelleninhalte
     </div>
     <div class="panel-body">
-      <ul class="nav nav-tabs">@for((result, index) <- tables.zipWithIndex) {
-        <li@if(index == 0) { class="active"}><a data-toggle="tab" href="#@result.getTableName()">@result.getTableName()</a></li>}
+      <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#db_scheme">Datenbankschema</a></li>@for(result <- tables) {
+        <li><a data-toggle="tab" href="#@result.getTableName()">@result.getTableName()</a></li>}
       </ul>
 
-      <div class="tab-content">@for((result, index) <- tables.zipWithIndex) {
-        <div id="@result.getTableName()" class="tab-pane fade@if(index == 0) { in active}">
+      <div class="tab-content">
+        <div id="db_scheme" class="tab-pane fade in active">
+          <img class="img-rounded img-responsive center-block" src="@routes.Assets.versioned("images/sql/phone.png")" alt="Datenbankschema">
+        </div>
+      
+      
+      @for(result <- tables) {
+        <div id="@result.getTableName()" class="tab-pane fade">
         <table class="table table-responsive table-hover table-bordered">
           <thead>
             <tr>@for(colName <- result.getColumnNames()) {

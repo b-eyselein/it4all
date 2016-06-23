@@ -1,14 +1,18 @@
-@(user: model.user.User, exercises: List[model.SqlExercise])
+@(user: model.user.User, scenarioes: List[model.SqlScenario])
 
 @main("SQL", user) {
-  <div class="container">
+  <div class="container">@for(scenario <- scenarioes) {
     <div class="panel panel-default">
-      <div class="panel-heading">Verf&uuml;gbare Aufgaben</div>
+      <div class="panel-heading">Szenario @scenario.name: Verf&uuml;gbare Aufgaben</div>
       <div class="panel-body">
-      @for(exercise <- exercises) {
-    	<a href="@controllers.sql.routes.SQL.exercise(exercise.id)" class="btn btn-default btn-block">Aufgabe @exercise.id: @exercise.text</a>
-      }
+      
+        <div class="list-group">
+        @for(exercise <- scenario.exercises) {
+          <a href="@controllers.sql.routes.SQL.exercise(exercise.key.scenarioName, exercise.key.id)"
+          class="list-group-item">Aufgabe @exercise.key.id: @exercise.text</a>}
+        </div>
+        
       </div>
-    </div>
+    </div>}
   </div>
 }
