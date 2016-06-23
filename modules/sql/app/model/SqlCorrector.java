@@ -3,6 +3,8 @@ package model;
 import java.sql.Connection;
 
 import model.exercise.Success;
+import model.queryCorrectors.CreateCorrector;
+import model.queryCorrectors.DeleteCorrector;
 import model.queryCorrectors.SelectCorrector;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;

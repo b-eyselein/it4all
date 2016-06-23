@@ -1,9 +1,10 @@
-package model;
+package model.queryCorrectors;
 
 import java.sql.Connection;
 
+import model.SqlCorrectionResult;
+import model.SqlExercise;
 import model.SqlExercise.SqlExType;
-import model.queryCorrectors.QueryCorrector;
 import net.sf.jsqlparser.statement.delete.Delete;
 
 public class DeleteCorrector extends QueryCorrector<Delete> {

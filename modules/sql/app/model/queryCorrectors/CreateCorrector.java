@@ -1,13 +1,14 @@
-package model;
+package model.queryCorrectors;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import model.SqlCorrectionResult;
+import model.SqlExercise;
 import model.SqlExercise.SqlExType;
 import model.exercise.Success;
-import model.queryCorrectors.QueryCorrector;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
 import play.Logger;
 
