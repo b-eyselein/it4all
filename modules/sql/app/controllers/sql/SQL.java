@@ -8,6 +8,8 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -30,14 +32,16 @@ import play.mvc.Result;
 import play.mvc.Security.Authenticated;
 import play.twirl.api.Html;
 import views.html.error;
-import views.html.sqloverview;
 import views.html.sqlexercise;
+import views.html.sqloverview;
 
 @Authenticated(Secured.class)
 public class SQL extends Controller {
-
+  
   private static final String DB_BASENAME = "sql_";
   private static final String CREATE_DB_DUMMY = "CREATE DATABASE IF NOT EXISTS ";
+  private static final String SHOW_ALL_DBS = "SHOW DATABASES";
+  private static final String SHOW_ALL_TABLES = "SHOW TABLES";
   
   private static final Logger.ALogger theLogger = Logger.of("sql");
   
@@ -77,11 +81,17 @@ public class SQL extends Controller {
     Connection connection = db.getConnection();
     try {
       connection.setCatalog(DB_BASENAME + user.name);
-      ResultSet set = connection.createStatement().executeQuery("SELECT * FROM phone");
-      SqlQueryResult resNew = new SqlQueryResult(set);
-      
+
+      List<SqlQueryResult> tables = new LinkedList<>();
+      ResultSet existingDBs = connection.createStatement().executeQuery(SHOW_ALL_TABLES);
+      while(existingDBs.next()) {
+        String tableName = existingDBs.getString(1);
+        ResultSet tableResult = connection.createStatement().executeQuery("SELECT * FROM " + tableName);
+        tables.add(new SqlQueryResult(tableResult, tableName));
+      }
+
       connection.close();
-      return ok(sqlexercise.render(user, exercise, resNew));
+      return ok(sqlexercise.render(user, exercise, tables));
     } catch (SQLException e) {
       theLogger.error("Fehler: ", e);
       return badRequest(error.render(user, new Html("Fehler beim Auslesen der Tabellen!")));
@@ -104,7 +114,7 @@ public class SQL extends Controller {
   }
   
   private boolean databaseAlreadyExists(Connection connection, String slaveDB) throws SQLException {
-    ResultSet existingDBs = connection.createStatement().executeQuery("SHOW DATABASES");
+    ResultSet existingDBs = connection.createStatement().executeQuery(SHOW_ALL_DBS);
     while(existingDBs.next())
       if(slaveDB.equals(existingDBs.getString(1)))
         return true;
@@ -117,18 +127,18 @@ public class SQL extends Controller {
       // Check if slave DB exists, if not, create
       if(!databaseAlreadyExists(connection, slaveDB))
         connection.createStatement().executeUpdate(CREATE_DB_DUMMY + slaveDB);
-
+      
       // Change db to users own db
       if(!connection.getCatalog().equals(slaveDB))
         connection.setCatalog(slaveDB);
-
+      
       // Initialize DB with values
       Path sqlScriptFile = Paths.get("modules/sql/conf/resources/phone.sql");
       if(Files.exists(sqlScriptFile))
         ScriptRunner.runScript(connection, new FileReader(sqlScriptFile.toFile()), false, false);
       else
         theLogger.debug("There is no such file " + sqlScriptFile);
-
+      
     } catch (SQLException | IOException e) {
       theLogger.error("Error while initializing database " + slaveDB, e);
     }

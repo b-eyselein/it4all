@@ -83,10 +83,11 @@ insert into js_testvalue (`id`, `test_id`, `value`) values
 
 # SQL
 
-insert into sql_exercise(`id`, `title`, `text`, `sample`, `ex_type`) values
+insert into sql_exercise (`id`, `title`, `text`, `sample`, `ex_type`) values
 	(1, 'Create todo', 'Erstellen Sie folgendes CREATE-Statement: TODO!', "CREATE TABLE todo IF NOT EXISTS", 'CREATE'),
 	(2, 'Alle Telefonnumern', 'Geben Sie alle Telefonnummern aus!', "SELECT * FROM phone", 'SELECT'),
-	(3, 'TODO', 'Geben Sie die Namen aller Personen aus, die eine Geschäftsnummer besitzen', "SELECT name FROM phone WHERE type=\'work\'", 'SELECT');
+	(3, 'TODO', 'Geben Sie die Nachnamen aller Personen aus, die eine Geschäftsnummer besitzen', "SELECT lastname FROM phone JOIN users on phone.username = users.username WHERE phonetype=\'work\'", 'SELECT'),
+	(4, 'Handy verloren...', 'Martina Musterfrau (Nutzername f_martina) hat ein neues Handy mit der Nummer 2345 bekommen. Aktualisieren Sie den Eintrag!', "UPDATE phone SET phonenumber = 2345 WHERE username = 'f_martina'", 'UPDATE');
 
 # --- !Downs
 
@@ -103,6 +104,8 @@ delete from css_task;
 delete from html_task;
 
 delete from xmlexercise;
+
+delete from sql_exercise;
 
 delete from exercise;
 

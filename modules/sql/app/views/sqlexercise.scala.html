@@ -1,104 +1,108 @@
-@import model.SqlQueryResult;
-
-@(user: model.user.User, exercise: model.SqlExercise, result: SqlQueryResult)
+@(user: model.user.User, exercise: model.SqlExercise, tables: List[model.SqlQueryResult])
 
 @main("SQL", user) {
-  <style>
-  #editor {
-    height: 200px;
-  }
-  </style>
-  <script src="@controllers.routes.Assets.versioned("javascripts/ace/ace.js")"></script>
+<style>
+#editor {
+	height: 200px;
+}
+</style>
+<script src="@controllers.routes.Assets.versioned("javascripts/ace/ace.js")"></script>
 
-  <script>
-    function testSolution() {
-      var editorContent = editor.getValue();
-      if(editorContent == "") {
-        alert("Geben Sie eine Query ein!");
-        return;
-      }
-      
-      // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
-      var xhttp = new XMLHttpRequest();
-      xhttp.onreadystatechange = function() {
-        if(xhttp.readyState == 4 && xhttp.status == 200) {
-          alert(xhttp.responseText);
-        }
-      };
-
-      // AJAX-Objekt mit Daten fuellen, absenden
-      var parameters = "editorContent=" + encodeURIComponent(editorContent);
-      xhttp.open("PUT", "@controllers.sql.routes.SQL.commit(exercise.id)", true);
-      xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      xhttp.setRequestHeader("Accept", "application/json");
-      xhttp.send(parameters);
+<script>
+  function testSolution() {
+    var editorContent = editor.getValue();
+    if(editorContent == "") {
+      alert("Geben Sie eine Query ein!");
+      return;
     }
-
-    function prepareFormForSubmitting() {
-      document.getElementById("editorContent").value = editor.getValue();
-    }
-  </script>
-
-  <div class="container">
-  
-    <div class="row row-eq-height">
-  
-      <div class="col-md-6">
-        <div class="panel panel-default">
-          <div class="panel-heading">Aufgabe @exercise.id</div>
-          <div class="panel-body">
-            <p>@exercise.text</p>
-          </div>
-          <div class="panel-footer">
-            <button type="button" class="btn btn-default btn-block" onclick="testSolution();">L&ouml;sung testen</button>
-            <input type="submit" class="btn btn-default btn-block disabled"  disabled id="commit" title="Noch nicht m&ouml;glich. Testen Sie ihre L&ouml;sung erst." value="L&ouml;sung abgeben">
-          </div>
-        </div>
-      </div>
-        
-      <div class="col-md-6">
-        <div class="panel panel-default">
-          <div class="panel-heading">Query</div>
-          <div class="panel-body">
-            <pre id="editor" class="form-control"></pre>
-            <script type="text/javascript">
-                        var editor = ace.edit("editor");
-                        editor.setTheme("ace/theme/eclipse");
-                        editor.setFontSize("14px");
-                        editor.getSession().setMode("ace/mode/sql");
-                        editor.getSession().setTabSize(2);
-                        editor.getSession().setUseSoftTabs(true);
-                        editor.getSession().setUseWrapMode(true);
-                      </script>
-          </div>
-        </div>
-      </div>
     
+    // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if(xhttp.readyState == 4 && xhttp.status == 200) {
+        alert(xhttp.responseText);
+      }
+    };
+    
+    // AJAX-Objekt mit Daten fuellen, absenden
+    var parameters = "editorContent=" + encodeURIComponent(editorContent);
+    xhttp.open("PUT", "@controllers.sql.routes.SQL.commit(exercise.id)", true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.setRequestHeader("Accept", "application/json");
+    xhttp.send(parameters);
+  }
+
+  function prepareFormForSubmitting() {
+    document.getElementById("editorContent").value = editor.getValue();
+  }
+</script>
+
+<div class="container">
+
+  <div class="row row-eq-height">
+
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">Aufgabe @exercise.id</div>
+        <div class="panel-body">
+          <p>@exercise.text</p>
+        </div>
+        <div class="panel-footer">
+          <button type="button" class="btn btn-default btn-block" onclick="testSolution();">L&ouml;sung testen</button>
+          <input type="submit" class="btn btn-default btn-block disabled" disabled id="commit"
+            title="Noch nicht m&ouml;glich. Testen Sie ihre L&ouml;sung erst." value="L&ouml;sung abgeben">
+        </div>
+      </div>
     </div>
-  
-    <div class="panel panel-default">
-      <div class="panel-heading">Tabelleninhalte</div>
-      <div class="panel-body">
-        <table class="table">
+
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">Query</div>
+        <div class="panel-body">
+          <pre id="editor" class="form-control"></pre>
+          <script type="text/javascript">
+                      var editor = ace.edit("editor");
+                      editor.setTheme("ace/theme/eclipse");
+                      editor.setFontSize("14px");
+                      editor.getSession().setMode("ace/mode/sql");
+                      editor.getSession().setTabSize(2);
+                      editor.getSession().setUseSoftTabs(true);
+                      editor.getSession().setUseWrapMode(true);
+                    </script>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      Tabelleninhalte
+    </div>
+    <div class="panel-body">
+      <ul class="nav nav-tabs">@for((result, index) <- tables.zipWithIndex) {
+        <li@if(index == 0) { class="active"}><a data-toggle="tab" href="#@result.getTableName()">@result.getTableName()</a></li>}
+      </ul>
+
+      <div class="tab-content">@for((result, index) <- tables.zipWithIndex) {
+        <div id="@result.getTableName()" class="tab-pane fade@if(index == 0) { in active}">
+        <table class="table table-responsive table-hover table-bordered">
           <thead>
-            <tr>
-            @for(colName <- result.getColumnNames()) {
-              <th>@colName</th>
-            }
+            <tr>@for(colName <- result.getColumnNames()) {
+              <th>@colName</th>}
             </tr>
           </thead>
-          <tbody>
-          @for(row <- result.getRows()) {
-            <tr>
-            @for(cell <- row) {
-              <td>@cell</td>
-            }
-            </tr>
-          }
+          <tbody>@for(row <- result.getRows()) {
+            <tr>@for(cell <- row) {
+              <td>@cell</td>}
+            </tr>}
           </tbody>
         </table>
+        </div>}
       </div>
     </div>
-  
+
   </div>
+
+</div>
 }

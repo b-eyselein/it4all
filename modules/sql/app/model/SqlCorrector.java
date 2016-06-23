@@ -1,10 +1,12 @@
 package model;
 
 import java.sql.Connection;
+import java.util.HashMap;
 
 import model.exercise.Success;
 import model.queryCorrectors.CreateCorrector;
 import model.queryCorrectors.DeleteCorrector;
+import model.queryCorrectors.QueryCorrector;
 import model.queryCorrectors.SelectCorrector;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
@@ -14,40 +16,44 @@ import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.select.Select;
 
 public class SqlCorrector {
-  
-  private static SelectCorrector selectCor = new SelectCorrector();
-  
-  private static DeleteCorrector deleteCor = new DeleteCorrector();
-  
-  private static CreateCorrector createCor = new CreateCorrector();
-  
+
+  private static HashMap<String, QueryCorrector<? extends Statement>> correctors = new HashMap<>();
+
+  static {
+    correctors.put(Select.class.getSimpleName(), new SelectCorrector());
+    correctors.put(Delete.class.getSimpleName(), new DeleteCorrector());
+    correctors.put(CreateTable.class.getSimpleName(), new CreateCorrector());
+  }
+
+  /**
+   * This method parses the learners solution (an sql statement) and corrects it
+   * against a given exercise with one or more sample solutions. Part of the
+   * correction is an execution on a real sql database.
+   *
+   * @param statement
+   *          the learners solution, a sql statement
+   * @param exercise
+   *          the exercise with the sample solution
+   * @param connection
+   *          the connection to execute both of the queries on
+   * @return SqlCorrectionResult
+   */
   public static SqlCorrectionResult correct(String statement, SqlExercise exercise, Connection connection) {
-    // Steps taken:
-    // 1. preprocess statement --> syntax
-    // 2. compare statement to sample statement
-    // 3. execute statement, compare results
-    
-    // FIXME: preprocess Statement!
+
+    Statement parsedStatement = null;
     try {
-      Statement parsedStatement = CCJSqlParserUtil.parse(statement);
-      
-      if(parsedStatement instanceof Select)
-        return selectCor.correct((Select) parsedStatement, exercise, connection);
-      
-      else if(parsedStatement instanceof Delete)
-        return deleteCor.correct((Delete) parsedStatement, exercise, connection);
-      
-      else if(parsedStatement instanceof CreateTable)
-        return createCor.correct((CreateTable) parsedStatement, exercise, connection);
-      
-      else
-        return new SqlCorrectionResult(Success.NONE, "Query war vom Typ \"" + parsedStatement.getClass().getSimpleName()
-            + "\", der nicht korrigiert werden kann!");
-      
+      parsedStatement = CCJSqlParserUtil.parse(statement);
     } catch (JSQLParserException e) {
       return new SqlCorrectionResult(Success.NONE, "Query konnte nicht geparst werden: " + e.getCause().getMessage());
     }
-    
+
+    QueryCorrector<? extends Statement> corr = correctors.get(parsedStatement.getClass().getSimpleName());
+    if(corr == null)
+      return new SqlCorrectionResult(Success.NONE, "Query war vom Typ \"" + parsedStatement.getClass().getSimpleName()
+          + "\", der nicht korrigiert werden kann!");
+
+    return corr.correct(parsedStatement, exercise, connection);
+
   }
-  
+
 }
