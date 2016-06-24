@@ -1,4 +1,4 @@
-@(user: model.user.User, scenarioes: List[model.SqlScenario])
+@(user: model.user.User, scenarioes: List[model.exercise.SqlScenario])
 
 @main("SQL", user) {
   <div class="container">@for(scenario <- scenarioes) {

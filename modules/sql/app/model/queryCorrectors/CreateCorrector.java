@@ -6,8 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import model.SqlCorrectionResult;
-import model.SqlExercise;
-import model.SqlExercise.SqlExType;
+import model.exercise.SqlExercise.SqlExType;
 import model.exercise.Success;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
 import play.Logger;
@@ -25,12 +24,10 @@ public class CreateCorrector extends QueryCorrector<CreateTable> {
   }
 
   @Override
-  protected SqlCorrectionResult correctSpecialForQuery(CreateTable parsedStatement, SqlExercise exercise,
-      Connection connection) {
+  protected SqlCorrectionResult executeQuery(CreateTable parsedStatement, CreateTable parsedSampleStatement,
+      Connection connection, String slaveDB) {
 
     try {
-      if(exercise.exType != SqlExType.CREATE)
-        return new SqlCorrectionResult(Success.NONE, "Es wurde das falsche Keyword verwendet!");
       // connection.createStatement().executeQuery(statement);
 
       DatabaseMetaData dbmd = connection.getMetaData();

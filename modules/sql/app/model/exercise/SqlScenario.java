@@ -1,4 +1,4 @@
-package model;
+package model.exercise;
 
 import java.util.List;
 

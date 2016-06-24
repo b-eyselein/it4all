@@ -1,4 +1,4 @@
-@(user: model.user.User, exercise: model.SqlExercise, tables: List[model.SqlQueryResult])
+@(user: model.user.User, exercise: model.exercise.SqlExercise, tables: List[model.SqlQueryResult])
 
 @main("SQL", user) {
 <style>
@@ -108,7 +108,15 @@
         </div>}
       </div>
     </div>
+  </div>
 
+  <div class="panel panel-default">
+    <div class="panel-heading">Debug: Musterl&ouml;sungen...</div>
+    <div class="panel-body">
+    @for(sample <- exercise.samples) {
+      <pre>@sample.sample</pre>
+    }
+    </div>
   </div>
 
 </div>

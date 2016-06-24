@@ -92,10 +92,17 @@ create table sql_exercise (
   scenario_name                 varchar(255) not null,
   title                         varchar(255),
   text                          text,
-  sample                        varchar(255),
   ex_type                       varchar(6),
   constraint ck_sql_exercise_ex_type check (ex_type in ('SELECT','UPDATE','INSERT','DELETE','CREATE')),
   constraint pk_sql_exercise primary key (id,scenario_name)
+);
+
+create table sql_sample_solution (
+  sample_id                     integer not null,
+  exercise_id                   integer not null,
+  scenario_name                 varchar(255) not null,
+  sample                        varchar(255),
+  constraint pk_sql_sample_solution primary key (sample_id,exercise_id,scenario_name)
 );
 
 create table sql_scenario (
@@ -142,6 +149,9 @@ create index ix_js_testvalue_test_id on js_testvalue (test_id);
 alter table sql_exercise add constraint fk_sql_exercise_scenario_name foreign key (scenario_name) references sql_scenario (name) on delete restrict on update restrict;
 create index ix_sql_exercise_scenario_name on sql_exercise (scenario_name);
 
+alter table sql_sample_solution add constraint fk_sql_sample_solution_exercise foreign key (scenario_name,exercise_id) references sql_exercise (scenario_name,id) on delete restrict on update restrict;
+create index ix_sql_sample_solution_exercise on sql_sample_solution (scenario_name,exercise_id);
+
 
 # --- !Downs
 
@@ -169,6 +179,9 @@ drop index ix_js_testvalue_test_id on js_testvalue;
 alter table sql_exercise drop foreign key fk_sql_exercise_scenario_name;
 drop index ix_sql_exercise_scenario_name on sql_exercise;
 
+alter table sql_sample_solution drop foreign key fk_sql_sample_solution_exercise;
+drop index ix_sql_sample_solution_exercise on sql_sample_solution;
+
 drop table if exists childtask;
 
 drop table if exists css_task;
@@ -186,6 +199,8 @@ drop table if exists js_test;
 drop table if exists js_testvalue;
 
 drop table if exists sql_exercise;
+
+drop table if exists sql_sample_solution;
 
 drop table if exists sql_scenario;
 

@@ -7,9 +7,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import model.SqlCorrectionResult;
-import model.SqlExercise;
-import model.SqlExercise.SqlExType;
 import model.SqlQueryResult;
+import model.exercise.SqlExercise.SqlExType;
 import model.exercise.Success;
 import net.sf.jsqlparser.statement.select.Select;
 
@@ -28,7 +27,7 @@ public class SelectCorrector extends QueryCorrector<Select> {
     tablesNotUsed.removeAll(tablesInUserStatement);
     List<String> tablesNotNeeded = new LinkedList<>(tablesInUserStatement);
     tablesNotNeeded.removeAll(tablesInSampleStatement);
-
+    
     String message = "Die Anzahl an verwendeten Tabellen stimmt nicht überein!";
     if(tablesNotUsed.size() > 0)
       message += "\nDiese Tabellen fehlen: " + String.join(", ", tablesNotUsed);
@@ -42,14 +41,19 @@ public class SelectCorrector extends QueryCorrector<Select> {
   }
   
   @Override
-  protected SqlCorrectionResult correctSpecialForQuery(Select parsedUserStatement, SqlExercise exercise,
-      Connection connection) {
+  protected SqlCorrectionResult executeQuery(Select parsedUserStatement, Select parsedSampleStatement,
+      Connection connection, String slaveDB) {
     try {
+      initializeDB(connection, slaveDB);
+      connection.setCatalog(slaveDB);
+      
       ResultSet userResultSet = connection.createStatement().executeQuery(parsedUserStatement.toString());
       SqlQueryResult userResult = new SqlQueryResult(userResultSet, true);
       
-      ResultSet sampleResultSet = connection.createStatement().executeQuery(exercise.sample);
+      ResultSet sampleResultSet = connection.createStatement().executeQuery(parsedSampleStatement.toString());
       SqlQueryResult sampleResult = new SqlQueryResult(sampleResultSet, true);
+      
+      deleteDB(connection, slaveDB);
       
       if(userResult.isIdentic(sampleResult))
         return new SqlCorrectionResult(Success.COMPLETE, "Passt...?");

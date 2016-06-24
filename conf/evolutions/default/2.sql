@@ -86,11 +86,18 @@ insert into js_testvalue (`id`, `test_id`, `value`) values
 insert into sql_scenario(`name`) values
 	("phone");
 
-insert into sql_exercise (`scenario_name`, `id`, `title`, `text`, `sample`, `ex_type`) values
-	("phone", 1, 'Create todo', 'Erstellen Sie folgendes CREATE-Statement: TODO!', "CREATE TABLE todo IF NOT EXISTS", 'CREATE'),
-	("phone", 2, 'Alle Telefonnumern', 'Geben Sie alle Telefonnummern aus!', "SELECT phonenumber FROM phone", 'SELECT'),
-	("phone", 3, 'TODO', 'Geben Sie die Nachnamen aller Personen aus, die eine Geschäftsnummer besitzen', "SELECT lastname FROM phone JOIN users on phone.username = users.username WHERE phonetype=\'work\'", 'SELECT'),
-	("phone", 4, 'Handy verloren...', 'Martina Musterfrau (Nutzername f_martina) hat ein neues Handy mit der Nummer 2345 bekommen. Aktualisieren Sie den Eintrag!', "UPDATE phone SET phonenumber = 2345 WHERE username = 'f_martina'", 'UPDATE');
+insert into sql_exercise (`scenario_name`, `id`, `title`, `text`, `ex_type`) values
+	("phone", 1, 'Create todo', 'Erstellen Sie das CREATE-Statement für die Tabelle users!', 'CREATE'),
+	("phone", 2, 'Alle Telefonnumern', 'Geben Sie alle Telefonnummern aus!', 'SELECT'),
+	("phone", 3, 'TODO', 'Geben Sie die Nachnamen aller Personen aus, die eine Geschäftsnummer besitzen', 'SELECT'),
+	("phone", 4, 'Handy verloren...', 'Martina Musterfrau (Nutzername f_martina) hat ein neues Handy mit der Nummer 2345 bekommen. Aktualisieren Sie den Eintrag!', 'UPDATE');
+
+insert into sql_sample_solution (`sample_id`, `exercise_id`, `scenario_name`, `sample`) values
+	(1, 1, "phone", "CREATE TABLE users (\n\tusername varchar(20) primary key,\n\tfirstname varchar(50),\n\tlastname varchar(50)\n);;"),
+	(1, 2, "phone", "SELECT phonenumber\n\tFROM phone;;"),
+	(1, 3, "phone", "SELECT lastname\n\tFROM phone\n\tJOIN users ON phone.username = users.username\n\tWHERE phonetype = \'work\';;"),
+	(2, 3, "phone", "SELECT lastname\n\tFROM phone p, users u\n\tWHERE u.username = p.username\n\tAND phonetype = \'work\';;"),
+	(1, 4, "phone", "UPDATE phone\n\tSET phonenumber = \'2345\'\n\tWHERE username = \'f_martina\';;");
 
 # --- !Downs
 
@@ -107,6 +114,8 @@ delete from css_task;
 delete from html_task;
 
 delete from xmlexercise;
+
+delete from sql_sample_solution;
 
 delete from sql_exercise;
 
