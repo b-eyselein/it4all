@@ -7,6 +7,7 @@
 }
 </style>
 <script src="@controllers.routes.Assets.versioned("javascripts/ace/ace.js")"></script>
+<script src="@controllers.routes.Assets.versioned("javascripts/sqlProcessor.js")"></script>
 
 <script>
   function testSolution() {
@@ -20,7 +21,7 @@
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
       if(xhttp.readyState == 4 && xhttp.status == 200) {
-        alert(xhttp.responseText);
+        processCorrection(xhttp.responseText);
       }
     };
     
@@ -59,7 +60,7 @@
       <div class="panel panel-default">
         <div class="panel-heading">Query</div>
         <div class="panel-body">
-          <pre id="editor" class="form-control"></pre>
+          <pre id="editor" class="form-control">select phonenumber from phone</pre>
           <script type="text/javascript">
                       var editor = ace.edit("editor");
                       editor.setTheme("ace/theme/eclipse");
@@ -73,6 +74,13 @@
       </div>
     </div>
 
+  </div>
+
+  <div id="resultPanel" class="panel panel-default" hidden>
+    <div class="panel-heading">Ergebnisse</div>
+    <div id="resultDiv" class="panel-body">
+      
+    </div>
   </div>
 
   <div class="panel panel-default">
@@ -111,7 +119,7 @@
   </div>
 
   <div class="panel panel-default">
-    <div class="panel-heading">Debug: Musterl&ouml;sungen...</div>
+    <div class="panel-heading">Debug: Musterl&ouml;sungen + Fertige Query in Box!...</div>
     <div class="panel-body">
     @for(sample <- exercise.samples) {
       <pre>@sample.sample</pre>
