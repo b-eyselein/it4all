@@ -1,6 +1,5 @@
 package model.queryCorrectors;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,6 +12,7 @@ import java.util.List;
 import model.Levenshtein;
 import model.ScriptRunner;
 import model.SqlCorrectionResult;
+import model.TableComparisonResult;
 import model.exercise.SqlExercise;
 import model.exercise.SqlExercise.SqlExType;
 import model.exercise.SqlSampleSolution;
@@ -71,14 +71,17 @@ public abstract class QueryCorrector<QueryType extends Statement> {
       return new SqlCorrectionResult(Success.NONE, "Es gab einen Fehler bei der Korrektur!");
     }
 
+    // if parsed statements are equal, no need to execute queries!
+    if(parsedUserStatement.toString().equals(parsedSampleStatement.toString()))
+      return new SqlCorrectionResult(Success.COMPLETE, "Stimmt mit Musterlösung überein!");
+
     // 4. Compare queries statically
-    SqlCorrectionResult tablesUsed = compareUsedTables(parsedUserStatement, parsedSampleStatement);
-    if(tablesUsed != null)
-      return tablesUsed;
+    TableComparisonResult tableComparison = compareUsedTables(parsedUserStatement, parsedSampleStatement);
 
     // 5. Execute both queries, check if results match
     String slaveDB = DB_BASENAME + user.name;
-    return executeQuery(parsedUserStatement, parsedSampleStatement, connection, slaveDB);
+    SqlCorrectionResult afterExecution = executeQuery(parsedUserStatement, parsedSampleStatement, connection, slaveDB);
+    return afterExecution.withTableComparisonResult(tableComparison);
   }
 
   private boolean databaseAlreadyExists(Connection connection, String slaveDB) throws SQLException {
@@ -94,17 +97,17 @@ public abstract class QueryCorrector<QueryType extends Statement> {
     int bestDistance = Integer.MAX_VALUE;
 
     for(SqlSampleSolution sample: samples) {
-      int newDistance = Levenshtein.levenshteinDistance(sample.sample.trim(), userStatement.toString().trim());
+      int newDistance = Levenshtein.levenshteinDistance(sample.sample, userStatement.toString());
       if(newDistance < bestDistance) {
         bestFitting = sample;
         bestDistance = newDistance;
       }
     }
-    theLogger.debug(bestDistance + ":\n" + bestFitting.sample);
     return bestFitting;
   }
 
-  protected abstract SqlCorrectionResult compareUsedTables(QueryType parsedStatement, QueryType parsedSampleStatement);
+  protected abstract TableComparisonResult compareUsedTables(QueryType parsedStatement,
+      QueryType parsedSampleStatement);
 
   protected void deleteDB(Connection connection, String slaveDB) {
     // TODO Auto-generated method stub
@@ -118,8 +121,8 @@ public abstract class QueryCorrector<QueryType extends Statement> {
     theLogger.info("Successfully dropped database " + slaveDB + " in " + timeTaken + "ms");
   }
 
-  protected abstract SqlCorrectionResult executeQuery(QueryType parsedUserStatement, QueryType parsedSampleStatement,
-      Connection connection, String slaveDB);
+  protected abstract SqlCorrectionResult executeQuery(QueryType userStatement, QueryType sampleStatement,
+      Connection conn, String slaveDB);
 
   protected void initializeDB(Connection connection, String slaveDB) {
     long startTime = System.currentTimeMillis();
@@ -134,7 +137,7 @@ public abstract class QueryCorrector<QueryType extends Statement> {
       // Initialize DB with values
       Path sqlScriptFile = Paths.get("modules/sql/conf/resources/phone.sql");
       if(Files.exists(sqlScriptFile))
-        ScriptRunner.runScript(connection, new FileReader(sqlScriptFile.toFile()), false, false);
+        ScriptRunner.runScript(connection, Files.readAllLines(sqlScriptFile), false, false);
       else
         theLogger.error("Trying to initialize database with script " + sqlScriptFile + ", but there is no such file!");
 

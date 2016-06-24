@@ -3,6 +3,7 @@ package controllers.sql;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -75,16 +76,22 @@ public class SQL extends Controller {
     Connection connection = sql_main.getConnection();
     try {
       List<SqlQueryResult> tables = new LinkedList<>();
-      ResultSet existingDBs = connection.createStatement().executeQuery(SHOW_ALL_TABLES);
+      Statement statement = connection.createStatement();
+      ResultSet existingDBs = statement.executeQuery(SHOW_ALL_TABLES);
+
       while(existingDBs.next()) {
         String tableName = existingDBs.getString(1);
-        ResultSet tableResult = connection.createStatement().executeQuery("SELECT * FROM " + tableName);
+        Statement selectStatement = connection.createStatement();
+        ResultSet tableResult = selectStatement.executeQuery("SELECT * FROM " + tableName);
         tables.add(new SqlQueryResult(tableResult, tableName));
+        selectStatement.close();
       }
-      
+
+      statement.close();
       connection.close();
       return ok(sqlexercise.render(user, exercise, tables));
     } catch (SQLException e) {
+      play.Logger.error("Es gab einen Fehler beim Auslesen der Tabellen!", e);
       return badRequest(error.render(user, new Html("Fehler beim Auslesen der Tabellen!")));
     }
   }

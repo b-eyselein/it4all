@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import model.SqlCorrectionResult;
+import model.TableComparisonResult;
 import model.exercise.SqlExercise.SqlExType;
 import model.exercise.Success;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
@@ -18,7 +19,7 @@ public class CreateCorrector extends QueryCorrector<CreateTable> {
   }
 
   @Override
-  protected SqlCorrectionResult compareUsedTables(CreateTable parsedStatement, CreateTable parsedSampleStatement) {
+  protected TableComparisonResult compareUsedTables(CreateTable parsedStatement, CreateTable parsedSampleStatement) {
     // TODO Auto-generated method stub
     return null;
   }

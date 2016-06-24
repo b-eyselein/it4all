@@ -8,61 +8,53 @@ import java.util.List;
 
 import model.SqlCorrectionResult;
 import model.SqlQueryResult;
+import model.TableComparisonResult;
 import model.exercise.SqlExercise.SqlExType;
 import model.exercise.Success;
 import net.sf.jsqlparser.statement.select.Select;
 
 public class SelectCorrector extends QueryCorrector<Select> {
-  
+
   public SelectCorrector() {
     super(SqlExType.SELECT);
   }
-  
+
   @Override
-  protected SqlCorrectionResult compareUsedTables(Select parsedStatement, Select parsedSampleStatement) {
+  protected TableComparisonResult compareUsedTables(Select parsedStatement, Select parsedSampleStatement) {
     List<String> tablesInUserStatement = tableNameFinder.getTableList(parsedStatement);
     List<String> tablesInSampleStatement = tableNameFinder.getTableList(parsedSampleStatement);
-    
-    List<String> tablesNotUsed = new LinkedList<>(tablesInSampleStatement);
-    tablesNotUsed.removeAll(tablesInUserStatement);
-    List<String> tablesNotNeeded = new LinkedList<>(tablesInUserStatement);
-    tablesNotNeeded.removeAll(tablesInSampleStatement);
-    
-    String message = "Die Anzahl an verwendeten Tabellen stimmt nicht überein!";
-    if(tablesNotUsed.size() > 0)
-      message += "\nDiese Tabellen fehlen: " + String.join(", ", tablesNotUsed);
-    if(tablesNotNeeded.size() > 0)
-      message += "\nDiese Tabelle werden nicht benötigt: " + String.join(", ", tablesNotNeeded);
-    
-    if(tablesInSampleStatement.size() != tablesInUserStatement.size())
-      return new SqlCorrectionResult(Success.PARTIALLY, message);
-    else
-      return null;
+
+    List<String> missingTables = new LinkedList<>(tablesInSampleStatement);
+    missingTables.removeAll(tablesInUserStatement);
+    List<String> unneccessaryTables = new LinkedList<>(tablesInUserStatement);
+    unneccessaryTables.removeAll(tablesInSampleStatement);
+
+    return new TableComparisonResult().withMissingTables(missingTables).withUnneccessaryTables(unneccessaryTables);
   }
-  
+
   @Override
-  protected SqlCorrectionResult executeQuery(Select parsedUserStatement, Select parsedSampleStatement,
-      Connection connection, String slaveDB) {
+  protected SqlCorrectionResult executeQuery(Select userStatement, Select sampleStatement, Connection conn,
+      String slaveDB) {
     try {
-      initializeDB(connection, slaveDB);
-      connection.setCatalog(slaveDB);
-      
-      ResultSet userResultSet = connection.createStatement().executeQuery(parsedUserStatement.toString());
+      initializeDB(conn, slaveDB);
+      conn.setCatalog(slaveDB);
+
+      ResultSet userResultSet = conn.createStatement().executeQuery(userStatement.toString());
       SqlQueryResult userResult = new SqlQueryResult(userResultSet, true);
-      
-      ResultSet sampleResultSet = connection.createStatement().executeQuery(parsedSampleStatement.toString());
+
+      ResultSet sampleResultSet = conn.createStatement().executeQuery(sampleStatement.toString());
       SqlQueryResult sampleResult = new SqlQueryResult(sampleResultSet, true);
-      
-      deleteDB(connection, slaveDB);
-      
+
+      deleteDB(conn, slaveDB);
+
       if(userResult.isIdentic(sampleResult))
         return new SqlCorrectionResult(Success.COMPLETE, "Passt...?");
       else
         return new SqlCorrectionResult(Success.PARTIALLY, "Resultate waren nicht identisch!");
-      
+
     } catch (SQLException e) {
       return new SqlCorrectionResult(Success.NONE, "Es gab ein Problem beim Ausführen der Query: " + e.getMessage());
     }
   }
-  
+
 }
