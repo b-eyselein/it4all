@@ -27,7 +27,7 @@ public class NAryAddition extends Controller {
   
   public Result addLearnerSolution() {
     DynamicForm dynFormula = factory.form().bindFromRequest();
-    learnerSolution = dynFormula.get("learnerSolution");
+    learnerSolution = new StringBuilder(dynFormula.get("learnerSolution")).reverse().toString();
     return redirect(routes.NAryAddition.checkSolution());
   }
   
