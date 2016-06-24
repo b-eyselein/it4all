@@ -2,6 +2,9 @@
 @(user: model.user.User, number1: String, number2: String, numberType: String)
 
 @main("HTML-Test", user) {
+
+	@defining(if (numberType.equals("Binärzahlen")) "2" else 
+	    if (numberType.equals("Oktalzahlen")) "8" else "16") { sub =>
 	<div class="container">
 		<div class="panel panel-default">
 			<div class="panel-heading">
@@ -12,8 +15,8 @@
 			</div>
 			<div class="panel-body">
 				<div class="col-sm-2">	
-					<p class="text-right">@number1 &nbsp;&nbsp;</p>
-					<p class="text-right">+ @number2 &nbsp;&nbsp;</p>
+					<p class="text-right">@number1<sub>@sub</sub>&nbsp;</p>
+					<p class="text-right">+ @number2<sub>@sub</sub>&nbsp;</p>
 					<form role="form" action="@binary.routes.NAryAddition.addLearnerSolution" method="post">
 						<div class="form-group">
 							<input style="direction: rtl;unicode-bidi: bidi-override;" class="form-control text-right" name="learnerSolution" placeholder="Ihre Lösung">
@@ -25,4 +28,5 @@
 			</div>
 		</div>
 	</div>
+	}
 }

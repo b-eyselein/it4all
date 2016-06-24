@@ -1,6 +1,8 @@
 @* NArySolution Template File *@
 @(user: model.user.User, givenAnswer: String, numberType: String, number1: String, number2: String, correctAnswer: String, correct: Boolean)
 @main("HTML-Test", user) {
+	@defining(if (numberType.equals("Binärzahlen")) "2" else 
+	    if (numberType.equals("Oktalzahlen")) "8" else "16") { sub =>
 	<div class="container">
 		<div class="panel panel-@if(correct){success}else{danger}">
 			<div class="panel-heading">
@@ -12,9 +14,9 @@
 			<div class="panel-body">
 				<div class="row">
 					<div class="col-sm-2">
-						<p class="text-right">@number1 &nbsp;&nbsp;</p>
-						<p class="text-right">+ @number2 &nbsp;&nbsp;</p>
-						<p class="text-right"><strong>= @givenAnswer &nbsp;&nbsp;</strong></p>
+						<p class="text-right">@number1<sub>@sub</sub>&nbsp;</p>
+						<p class="text-right">+ @number2<sub>@sub</sub>&nbsp;</p>
+						<p class="text-right"><strong>= @givenAnswer<sub>@sub</sub>&nbsp;</strong></p>
 					</div>
 				</div>
 				<div class="row">
@@ -35,5 +37,6 @@
 			</div>
 		</div>
 	</div>
+	}
 }
 
