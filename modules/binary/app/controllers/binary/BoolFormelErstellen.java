@@ -36,7 +36,7 @@ public class BoolFormelErstellen extends Controller {
     String exception_msg = "";
     boolean correct = false;
     try {
-      correct = bft.compareBoolscheFormelTree(BoolescheFunktionParser.getBFTree(learnerSolution));
+      correct = bft.compareBoolscheFormelTree(BoolescheFunktionParser.getBFTreeMitVars(learnerSolution,bft.getVariablen()));
     } catch (IllegalArgumentException e) {
       exception_msg = e.getMessage();
     }

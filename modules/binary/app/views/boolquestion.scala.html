@@ -16,30 +16,8 @@
 								@v
 							</td>
 							}
-							<td>
-							@*
-								@for(i <- 0 to formula.length()-3) {
-									@if(formula.subSequence(i,i+2)==XOR) {
-										<p>&oplus;</p>
-									} else {
-										@if(formula.subSequence(i,i+2)==NOT) {
-											<p>&not;</p>
-										} else {
-											@if(formula.subSequence(i,i+2)==AND) {
-												<p>&and;</p>
-											} else {
-												@if(formula.subSequence(i,i+1)==OR) {
-													<p>&or;</p>
-												} else {
-													@formula.charAt(i)
-												}
-											}
-										}
-									}
-								}
-								*@
+							<td class="col-md-10">
 								@formula
-								@* &nbsp; &and; &or; &not; &oplus; *@
 							</td>
 						</tr>
 					</thread>
