@@ -6,8 +6,8 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">
 			Addieren sie die folgenden @numberType:
-			@if(numberType.equals("Binärzahlen")) {
-			<em><p class="text-info .small">(Binärzahlen bitte in 8-Bit-Darstellung mit führenden Nullen angeben.)</p><em>
+			@if(numberType.equals("Bin\u00e4rzahlen")) {
+			<em><p class="text-info .small">(Bin&auml;rzahlen bitte in 8-Bit-Darstellung mit f&uuml;hrenden Nullen angeben.)</p><em>
 			}
 			</div>
 			<div class="panel-body">
@@ -16,7 +16,7 @@
 					<p class="text-right">+ @number2 &nbsp;&nbsp;</p>
 					<form role="form" action="@binary.routes.NAryAddition.addLearnerSolution" method="post">
 						<div class="form-group">
-							<input class="form-control text-right" name="learnerSolution" placeholder="Ihre Lösung">
+							<input class="form-control text-right" name="learnerSolution" placeholder="Ihre L&ouml;sung">
 						</div>
 						<button type="submit" class="btn btn-primary">Pr&uuml;fen</button>
 					</form>

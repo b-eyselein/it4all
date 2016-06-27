@@ -5,8 +5,8 @@
 		<div class="panel panel-@if(correct){success}else{danger}">
 	<div class="panel-heading">
 	Wandeln Sie die @fromNumberType @number in eine @toNumberType um:
-	@if(toNumberType.equals("Binärzahl")) {
-	<em><p class="text-info .small">(Binärzahlen bitte in 8-Bit-Darstellung mit führenden Nullen angeben.)</p><em>
+	@if(toNumberType.equals("Bin\u00e4rzahl")) {
+	<em><p class="text-info .small">(Bin&auml;rzahlen bitte in 8-Bit-Darstellung mit f&uuml;hrenden Nullen angeben.)</p><em>
 	}
 	</div>
 	<div class="panel-body">
@@ -18,7 +18,7 @@
 				Die richtige Antwort lautet @correctAnswer.<br>
 			}
 			&nbsp;<br> 
-	 	<p><a href="@binary.routes.NAryConvertion.index" class="btn btn-primary" role="button">Nächste Aufgabe</a></p>
+	 	<p><a href="@binary.routes.NAryConvertion.index" class="btn btn-primary" role="button">N&auml;chste Aufgabe</a></p>
 	</div>
 	</div>
 	</div>
