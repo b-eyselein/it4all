@@ -19,6 +19,8 @@ public class BoolescheFunktionParser {
   public static BoolescheFunktionTree getBFTree(String originalformel) throws IllegalArgumentException {
     String formel = originalformel.toLowerCase();
     
+    formel = substitution(formel);
+    
     // Pruefung auf fehlende Klammern
     pruefeKlammern(originalformel);
     
@@ -64,7 +66,7 @@ public class BoolescheFunktionParser {
       throws IllegalArgumentException {
     String formel = originalformel.toLowerCase();
     
-    
+    formel = substitution(formel);
     
     // Pruefung auf fehlende Klammern
     pruefeKlammern(originalformel);
@@ -105,7 +107,7 @@ public class BoolescheFunktionParser {
     }
     return new BoolescheFunktionTree(getNextKnoten(formel, bf_vars), bf_vars);
   }
-  
+
   /**
    * ---------------------------´ parst Teilstueck der Formel
    * ---------------------------
@@ -224,6 +226,14 @@ public class BoolescheFunktionParser {
       }
     }
     return true;
+  }
+  
+  private static String substitution(String formel) {
+    formel = formel.replaceAll("xoder", "xor")
+                   .replaceAll("oder", "or")
+                   .replaceAll("und", "and")
+                   .replaceAll("nicht", "not");
+    return formel;
   }
   
 }

@@ -31,14 +31,100 @@
 							}
 						</tbody>
 					</table>
+				</div>
+				
+				<div>
+				<form role="form" action="@binary.routes.BoolFormelErstellen.addLearnerSolution" method="post">
+					<div class="form-group">
+						<input class="form-control" name="learnerSolution" placeholder="Ihre L&ouml;sung">
 					</div>
-					<div>
-					<form role="form" action="@binary.routes.BoolFormelErstellen.addLearnerSolution" method="post">
-						<div class="form-group">
-							<input class="form-control" name="learnerSolution" placeholder="Ihre L&ouml;sung">
-						</div>
-						<button type="submit" class="btn btn-primary">Pr&uuml;fen</button>
-					</form>
+					<button type="submit" class="btn btn-primary">Pr&uuml;fen</button>
+				</form>
+				</div>
+				
+				<div>
+					<br>
+					<div class="alert alert-info">
+						<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+						<h5>
+						<span class="glyphicon glyphicon-info-sign"></span>
+						<strong>Information</strong>
+						</h5>
+						<table>
+							<tr>
+								<td padding-bottom=10px>
+									Schreibe f&uuml;r &not; a:&nbsp;
+								</td>
+								<td>
+									<div class="well well-sm">not a</div>
+								</td>
+								<td>
+									&nbsp;oder&nbsp;
+								</td>
+								<td>
+									<div class="well well-sm">nicht a</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									Schreibe f&uuml;r a &and; b:&nbsp;
+								</td>
+								<td>
+									<div class="well well-sm">a and b</div>
+								</td>
+								<td>
+									&nbsp;oder&nbsp;
+								</td>
+								<td>
+									<div class="well well-sm">a und b</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									Schreibe f&uuml;r a &or; b:&nbsp;
+								</td>
+								<td>
+									<div class="well well-sm">a or b</div>
+								</td>
+								<td>
+									&nbsp;oder&nbsp;
+								</td>
+								<td>
+									<div class="well well-sm">a oder b</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									Schreibe f&uuml;r a &oplus; b:&nbsp;
+								</td>
+								<td>
+									<div class="well well-sm">a xor b</div>
+								</td>
+								<td>
+									&nbsp;oder&nbsp;
+								</td>
+								<td>
+									<div class="well well-sm">a xoder b</div>
+								</td>
+							</tr>
+						</table>
+						<table>
+							<tr>
+								<td>
+									Benutze Klammern um die Reihenfolge festzulegen, in der die Ausdr&uuml;cke ausgewertet werden. Beispiel: &nbsp;
+								</td>
+								<td>
+									<div class="well well-sm">not((a or b) and c)</div>
+								</td>
+								<td>
+									&nbsp;oder&nbsp;
+								</td>
+								<td>
+									<div class="well well-sm">nicht((a oder b) und c)</div>
+								</td>
+							</tr>
+						</table>
+						Gro&szlig;- und Kleinschreibung spielt keine Rolle.
 					</div>
 				</div>
 			</div>
