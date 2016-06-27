@@ -1,39 +1,34 @@
-@(user: model.user.User, exercise: model.XmlExercise, referenceFile: String, oldSolution: String, fixedStart: String) @main("XML-Test",
-user) {
+@(user: model.user.User, exercise: model.XmlExercise, referenceFile: String, oldSolution: String, fixedStart: String)
+
+@main("XML-Test", user) {
 <script src="@controllers.routes.Assets.versioned("javascripts/ace/ace.js")"></script>
 <script src="@controllers.routes.Assets.versioned("javascripts/xmlProcessor.js")"></script>
 <script>
 function testSolution() {
-// AJAX-Objekt erstellen, Callback-Funktion bereitstellen
-var xhttp = new XMLHttpRequest();
-xhttp.onreadystatechange = function() {
-if(xhttp.readyState == 4 && xhttp.status == 200) {
-processCorrection(xhttp.responseText);
-}
-};
+	// AJAX-Objekt erstellen, Callback-Funktion bereitstellen
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if(xhttp.readyState == 4 && xhttp.status == 200) {
+			processCorrection(xhttp.responseText);
+		}
+	};
 
-// AJAX-Objekt mit Daten fuellen, absenden
-var parameters = "editorContent=" + encodeURIComponent(editor.getValue());
-xhttp.open("PUT", "@controllers.xml.routes.XML.commit(exercise.id)", true);
-xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-xhttp.setRequestHeader("Accept", "application/json");
-xhttp.send(parameters);
+	// AJAX-Objekt mit Daten fuellen, absenden
+	var parameters = "editorContent=" + encodeURIComponent(editor.getValue());
+	xhttp.open("PUT", "@controllers.xml.routes.XML.commit(exercise.id)", true);
+	xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	xhttp.setRequestHeader("Accept", "application/json");
+	xhttp.send(parameters);
 }
 
 function prepareFormForSubmitting() {
-document.getElementById("editorContent").value = editor.getValue();
+	document.getElementById("editorContent").value = editor.getValue();
 }
+
 function affirmFinalCommit() {
-window.alert("Erfolgreich abgegeben!");
+	window.alert("Erfolgreich abgegeben!");
 }
 </script>
-
-<!-- TODO: Höhe Editor und Live-Preview anders / automatisch? -->
-<style>
-#editor {
-	height: 500px;
-}
-</style>
 
 <div class="container-fluid">
   <div class="panel panel-default">
@@ -83,6 +78,10 @@ window.alert("Erfolgreich abgegeben!");
 				editor.getSession().setTabSize(2);
 				editor.getSession().setUseSoftTabs(true);
 				editor.getSession().setUseWrapMode(true);
+                editor.setOptions({
+                   minLines: 25,
+                   maxLines: 45
+                });
 </script>
 </div>
 </div>

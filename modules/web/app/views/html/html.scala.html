@@ -30,13 +30,6 @@
     }
   </script>
 
-  <!-- TODO: Höhe Editor und Live-Preview anders / automatisch? -->
-  <style>
-  #editor {
-    height: 500px;
-  }
-  </style>
-
   <div class="container-fluid">
     <div class="panel panel-default">
       <div class="panel-heading" data-toggle="collapse" href="#exerciseText">Aufgabenstellung <span class="glyphicon glyphicon-chevron-down pull-right"></span></div>
@@ -84,6 +77,10 @@
                                       editor.getSession().setTabSize(2);
                                       editor.getSession().setUseSoftTabs(true);
                                       editor.getSession().setUseWrapMode(true);
+                                      editor.setOptions({
+                                        minLines: 25,
+                                        maxLines: 45
+                                      });
                                     </script>
                 </div>
               </div>
