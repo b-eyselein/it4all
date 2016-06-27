@@ -18,21 +18,21 @@ import com.avaje.ebean.Model;
 
 @Entity
 public class SqlExercise extends Model {
-  
+
   @Embeddable
   public static class SqlExerciseKey implements Serializable {
-    
+
     private static final long serialVersionUID = -670842276417613477L;
-    
+
     public int id;
-    
+
     public String scenarioName;
-    
+
     public SqlExerciseKey(String theScenarioName, int theExerciseId) {
       id = theExerciseId;
       scenarioName = theScenarioName;
     }
-    
+
     @Override
     public boolean equals(Object obj) {
       if(obj == null || !(obj instanceof SqlExerciseKey))
@@ -40,7 +40,7 @@ public class SqlExercise extends Model {
       SqlExerciseKey other = (SqlExerciseKey) obj;
       return (other.id == id) && (other.scenarioName.equals(scenarioName));
     }
-    
+
     @Override
     public int hashCode() {
       final int prime = 31;
@@ -49,31 +49,31 @@ public class SqlExercise extends Model {
       result = prime * result + ((scenarioName == null) ? 0 : scenarioName.hashCode());
       return result;
     }
-    
+
   }
-  
+
   public enum SqlExType {
-    SELECT, UPDATE, INSERT, DELETE, CREATE;
+    CREATE, SELECT, UPDATE, INSERT, DELETE;
   }
-  
+
   public static Finder<SqlExerciseKey, SqlExercise> finder = new Finder<>(SqlExercise.class);
-  
+
   @EmbeddedId
   public SqlExerciseKey key;
-  
+
   public String title;
-  
+
   @Column(columnDefinition = "text")
   public String text;
-  
+
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "exercise")
   public List<SqlSampleSolution> samples;
-  
+
   @Enumerated(EnumType.STRING)
   public SqlExType exType;
-  
+
   @ManyToOne
   @JoinColumn(name = "scenario_name", insertable = false, updatable = false)
   public SqlScenario scenario;
-  
+
 }

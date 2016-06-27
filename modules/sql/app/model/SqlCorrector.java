@@ -3,6 +3,7 @@ package model;
 import java.sql.Connection;
 import java.util.HashMap;
 
+import model.correctionResult.SqlCorrectionResult;
 import model.exercise.SqlExercise;
 import model.exercise.Success;
 import model.queryCorrectors.CreateCorrector;
@@ -18,15 +19,15 @@ import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.select.Select;
 
 public class SqlCorrector {
-  
+
   private static HashMap<String, QueryCorrector<? extends Statement>> correctors = new HashMap<>();
-  
+
   static {
     correctors.put(Select.class.getSimpleName(), new SelectCorrector());
     correctors.put(Delete.class.getSimpleName(), new DeleteCorrector());
     correctors.put(CreateTable.class.getSimpleName(), new CreateCorrector());
   }
-  
+
   /**
    * This method parses the learners solution (an sql statement) and corrects it
    * against a given exercise with one or more sample solutions. Part of the
@@ -41,23 +42,23 @@ public class SqlCorrector {
    * @return SqlCorrectionResult
    */
   public static SqlCorrectionResult correct(User user, String statement, SqlExercise exercise, Connection connection) {
-    
+
     Statement parsedStatement = null;
     try {
       parsedStatement = CCJSqlParserUtil.parse(statement);
     } catch (JSQLParserException e) {
       return new SqlCorrectionResult(Success.NONE, "Query konnte nicht geparst werden: " + e.getCause().getMessage());
     }
-    
-    // Get matching Corrector to parsed Statement (e. g. "Select" -->
-    // SelectCorrector) from correctors
+
+    // Get matching Corrector to parsed Statement
+    // e. g. "Select" --> SelectCorrector) from correctors
     QueryCorrector<? extends Statement> corrector = correctors.get(parsedStatement.getClass().getSimpleName());
     if(corrector == null)
       return new SqlCorrectionResult(Success.NONE, "Query war vom Typ \"" + parsedStatement.getClass().getSimpleName()
           + "\", der nicht korrigiert werden kann!");
-    
-    return corrector.correct(user, parsedStatement, exercise, connection);
-    
+
+    return corrector.correct(user, statement, exercise, connection);
+
   }
-  
+
 }

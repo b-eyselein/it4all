@@ -1,17 +1,36 @@
+@import model.exercise.SqlExercise.SqlExType
+
 @(user: model.user.User, scenarioes: List[model.exercise.SqlScenario])
 
 @main("SQL", user) {
-  <div class="container">@for(scenario <- scenarioes) {
-    <div class="panel panel-default">
-      <div class="panel-heading">Szenario @scenario.name: Verf&uuml;gbare Aufgaben</div>
-      <div class="panel-body">
-      
-        <div class="list-group">
-        @for(exercise <- scenario.exercises) {
-          <a href="@controllers.sql.routes.SQL.exercise(exercise.key.scenarioName, exercise.key.id)"
-          class="list-group-item">Aufgabe @exercise.key.id: @exercise.text</a>}
+<div class="container">
+  @for(scenario <- scenarioes) {
+  <div class="panel panel-default">
+    <div class="panel-heading">Szenario "@scenario.longName": Verf&uuml;gbare Aufgaben</div>
+    <div class="panel-body">
+
+      <div class="panel-group" id="accordion">
+        @for(sqlExType <- SqlExType.values()) {
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title">
+              <a data-toggle="collapse" data-parent="#accordion" href="#collapse_@sqlExType">@sqlExType.toString() - Aufgaben</a>
+            </h4>
+          </div>
+          <div id="collapse_@sqlExType" class="panel-collapse collapse">
+            <ul class="list-group">
+              @for(ex <- scenario.getExercises(sqlExType)) {
+              <li class="list-group-item">
+                <a href="@controllers.sql.routes.SQL.exercise(ex.key.scenarioName, ex.key.id)" class="list-group-item">
+                  Aufgabe @ex.key.id: @ex.text
+                </a>
+              </li>
+              }
+            </ul>
+          </div>
         </div>
-        
+        }
+      </div>
       </div>
     </div>}
   </div>

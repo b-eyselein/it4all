@@ -11,9 +11,9 @@ import javax.inject.Inject;
 
 import controllers.core.UserManagement;
 import model.Secured;
-import model.SqlCorrectionResult;
 import model.SqlCorrector;
 import model.SqlQueryResult;
+import model.correctionResult.SqlCorrectionResult;
 import model.exercise.SqlExercise;
 import model.exercise.SqlScenario;
 import model.exercise.SqlExercise.SqlExerciseKey;

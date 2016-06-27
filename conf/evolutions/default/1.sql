@@ -93,7 +93,7 @@ create table sql_exercise (
   title                         varchar(255),
   text                          text,
   ex_type                       varchar(6),
-  constraint ck_sql_exercise_ex_type check (ex_type in ('SELECT','UPDATE','INSERT','DELETE','CREATE')),
+  constraint ck_sql_exercise_ex_type check (ex_type in ('CREATE','SELECT','UPDATE','INSERT','DELETE')),
   constraint pk_sql_exercise primary key (id,scenario_name)
 );
 
@@ -106,8 +106,9 @@ create table sql_sample_solution (
 );
 
 create table sql_scenario (
-  name                          varchar(255) not null,
-  constraint pk_sql_scenario primary key (name)
+  short_name                    varchar(255) not null,
+  long_name                     varchar(255),
+  constraint pk_sql_scenario primary key (short_name)
 );
 
 create table users (
@@ -146,7 +147,7 @@ create index ix_js_test_exercise_id on js_test (exercise_id);
 alter table js_testvalue add constraint fk_js_testvalue_test_id foreign key (test_id) references js_test (id) on delete restrict on update restrict;
 create index ix_js_testvalue_test_id on js_testvalue (test_id);
 
-alter table sql_exercise add constraint fk_sql_exercise_scenario_name foreign key (scenario_name) references sql_scenario (name) on delete restrict on update restrict;
+alter table sql_exercise add constraint fk_sql_exercise_scenario_name foreign key (scenario_name) references sql_scenario (short_name) on delete restrict on update restrict;
 create index ix_sql_exercise_scenario_name on sql_exercise (scenario_name);
 
 alter table sql_sample_solution add constraint fk_sql_sample_solution_exercise foreign key (scenario_name,exercise_id) references sql_exercise (scenario_name,id) on delete restrict on update restrict;

@@ -11,8 +11,7 @@ import java.util.List;
 
 import model.Levenshtein;
 import model.ScriptRunner;
-import model.SqlCorrectionResult;
-import model.TableComparisonResult;
+import model.correctionResult.SqlCorrectionResult;
 import model.exercise.SqlExercise;
 import model.exercise.SqlExercise.SqlExType;
 import model.exercise.SqlSampleSolution;
@@ -21,17 +20,16 @@ import model.user.User;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
-import net.sf.jsqlparser.util.TablesNamesFinder;
 import play.Logger;
 
 public abstract class QueryCorrector<QueryType extends Statement> {
 
-  protected static final String DB_BASENAME = "sql_";
-  protected static TablesNamesFinder tableNameFinder = new TablesNamesFinder();
+  private static final String DB_BASENAME = "sql_";
   private static final String CREATE_DB_DUMMY = "CREATE DATABASE IF NOT EXISTS ";
-
   private static final String SHOW_ALL_DBS = "SHOW DATABASES";
+
   private static final Logger.ALogger theLogger = Logger.of("sql");
+
   protected SqlExType exType;
 
   public QueryCorrector(SqlExType theExType) {
@@ -52,36 +50,33 @@ public abstract class QueryCorrector<QueryType extends Statement> {
    * @param connection
    * @return
    */
-  @SuppressWarnings("unchecked")
-  public SqlCorrectionResult correct(User user, Statement userStatement, SqlExercise exercise, Connection connection) {
-    // 1. Check if the right operator (SELECT/DELETE/UPDATE/...) was used
+  public SqlCorrectionResult correct(User user, String userStatement, SqlExercise exercise, Connection connection) {
+    // Check if the right operator (SELECT/DELETE/UPDATE/...) was used
     if(exercise.exType != exType)
       return new SqlCorrectionResult(Success.NONE, "Es wurde das falsche Keyword verwendet!");
 
-    // 2. FIXME Get best fitting sample solution
-    SqlSampleSolution bestFitting = findBestFittingSample(userStatement, exercise.samples);
+    // Parse user statement to right QueryType
+    QueryType parsedUserStatement = parseStatement(userStatement);
+    if(parsedUserStatement == null)
+      return new SqlCorrectionResult(Success.NONE, "Es gab einen Fehler beim Parsen der Musterlösung!");
 
-    // 3. Cast learner solution to right class, get sample solution
-    QueryType parsedSampleStatement = null;
-    QueryType parsedUserStatement = null;
-    try {
-      parsedSampleStatement = (QueryType) CCJSqlParserUtil.parse(bestFitting.sample);
-      parsedUserStatement = (QueryType) userStatement;
-    } catch (JSQLParserException | ClassCastException e) {
-      return new SqlCorrectionResult(Success.NONE, "Es gab einen Fehler bei der Korrektur!");
-    }
+    // Get and parse best fitting sample solution
+    SqlSampleSolution bestFitting = findBestFittingSample(parsedUserStatement, exercise.samples);
+    QueryType parsedSampleStatement = parseStatement(bestFitting.sample);
+    if(parsedSampleStatement == null)
+      return new SqlCorrectionResult(Success.NONE, "Es gab einen Fehler beim Parsen der Musterlösung!");
 
-    // if parsed statements are equal, no need to execute queries!
-    if(parsedUserStatement.toString().equals(parsedSampleStatement.toString()))
-      return new SqlCorrectionResult(Success.COMPLETE, "Stimmt mit Musterlösung überein!");
+    // Compare queries statically
+    SqlCorrectionResult staticComp = compareStatically(parsedUserStatement, parsedSampleStatement);
 
-    // 4. Compare queries statically
-    TableComparisonResult tableComparison = compareUsedTables(parsedUserStatement, parsedSampleStatement);
+    if(staticComp.getSuccess() == Success.NONE)
+      // There is a table or a column missing...
+      return staticComp;
 
-    // 5. Execute both queries, check if results match
-    String slaveDB = DB_BASENAME + user.name;
-    SqlCorrectionResult afterExecution = executeQuery(parsedUserStatement, parsedSampleStatement, connection, slaveDB);
-    return afterExecution.withTableComparisonResult(tableComparison);
+    // Execute both queries, check if results match
+    return executeQuery(parsedUserStatement, parsedSampleStatement, connection, DB_BASENAME + user.name)
+        .withTableComparisonResult(staticComp.getUsedTablesComparison())
+        .withColumnsComparisonResult(staticComp.getUsedColumnsComparison());
   }
 
   private boolean databaseAlreadyExists(Connection connection, String slaveDB) throws SQLException {
@@ -92,7 +87,7 @@ public abstract class QueryCorrector<QueryType extends Statement> {
     return false;
   }
 
-  private SqlSampleSolution findBestFittingSample(Statement userStatement, List<SqlSampleSolution> samples) {
+  private SqlSampleSolution findBestFittingSample(QueryType userStatement, List<SqlSampleSolution> samples) {
     SqlSampleSolution bestFitting = null;
     int bestDistance = Integer.MAX_VALUE;
 
@@ -106,17 +101,22 @@ public abstract class QueryCorrector<QueryType extends Statement> {
     return bestFitting;
   }
 
-  protected abstract TableComparisonResult compareUsedTables(QueryType parsedStatement,
+  @SuppressWarnings("unchecked")
+  private QueryType parseStatement(String statement) {
+    try {
+      return (QueryType) CCJSqlParserUtil.parse(statement);
+    } catch (JSQLParserException | ClassCastException e) {
+      return null;
+    }
+  }
+
+  protected abstract SqlCorrectionResult compareStatically(QueryType parsedUserStatement,
       QueryType parsedSampleStatement);
 
-  protected void deleteDB(Connection connection, String slaveDB) {
+  protected void deleteDB(Connection connection, String slaveDB) throws SQLException {
     // TODO Auto-generated method stub
     long startTime = System.currentTimeMillis();
-    try {
-      connection.createStatement().executeUpdate("DROP DATABASE IF EXISTS " + slaveDB);
-    } catch (SQLException e) {
-      theLogger.error("Problems while dropping database " + slaveDB, e);
-    }
+    connection.createStatement().executeUpdate("DROP DATABASE IF EXISTS " + slaveDB);
     long timeTaken = System.currentTimeMillis() - startTime;
     theLogger.info("Successfully dropped database " + slaveDB + " in " + timeTaken + "ms");
   }
@@ -124,26 +124,26 @@ public abstract class QueryCorrector<QueryType extends Statement> {
   protected abstract SqlCorrectionResult executeQuery(QueryType userStatement, QueryType sampleStatement,
       Connection conn, String slaveDB);
 
-  protected void initializeDB(Connection connection, String slaveDB) {
+  protected void initializeDB(Connection connection, String slaveDB) throws SQLException {
     long startTime = System.currentTimeMillis();
-    try {
-      // Check if slave DB exists, if not, create
-      if(!databaseAlreadyExists(connection, slaveDB))
-        connection.createStatement().executeUpdate(CREATE_DB_DUMMY + slaveDB);
+    // Check if slave DB exists, if not, create
+    if(!databaseAlreadyExists(connection, slaveDB))
+      connection.createStatement().executeUpdate(CREATE_DB_DUMMY + slaveDB);
 
-      // Change db to users own db
-      connection.setCatalog(slaveDB);
+    // Change db to users own db
+    connection.setCatalog(slaveDB);
 
-      // Initialize DB with values
-      Path sqlScriptFile = Paths.get("modules/sql/conf/resources/phone.sql");
-      if(Files.exists(sqlScriptFile))
+    // Initialize DB with values
+    Path sqlScriptFile = Paths.get("modules/sql/conf/resources/phone.sql");
+    if(Files.exists(sqlScriptFile))
+      try {
         ScriptRunner.runScript(connection, Files.readAllLines(sqlScriptFile), false, false);
-      else
-        theLogger.error("Trying to initialize database with script " + sqlScriptFile + ", but there is no such file!");
+      } catch (IOException e) {
+        theLogger.error("Error reading Sql-Script " + sqlScriptFile, e);
+      }
+    else
+      theLogger.error("Trying to initialize database with script " + sqlScriptFile + ", but there is no such file!");
 
-    } catch (SQLException | IOException e) {
-      theLogger.error("Error while initializing database " + slaveDB, e);
-    }
     long timeTaken = System.currentTimeMillis() - startTime;
     theLogger.info("Successfully initialized the database " + slaveDB + " in " + timeTaken + "ms");
   }

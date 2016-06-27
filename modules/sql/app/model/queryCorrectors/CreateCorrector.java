@@ -5,9 +5,8 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import model.SqlCorrectionResult;
-import model.TableComparisonResult;
 import model.exercise.SqlExercise.SqlExType;
+import model.correctionResult.SqlCorrectionResult;
 import model.exercise.Success;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
 import play.Logger;
@@ -19,7 +18,7 @@ public class CreateCorrector extends QueryCorrector<CreateTable> {
   }
 
   @Override
-  protected TableComparisonResult compareUsedTables(CreateTable parsedStatement, CreateTable parsedSampleStatement) {
+  protected SqlCorrectionResult compareStatically(CreateTable parsedUserStatement, CreateTable parsedSampleStatement) {
     // TODO Auto-generated method stub
     return null;
   }

@@ -1,11 +1,7 @@
 @(user: model.user.User, exercise: model.exercise.SqlExercise, tables: List[model.SqlQueryResult])
 
 @main("SQL", user) {
-<style>
-#editor {
-	height: 200px;
-}
-</style>
+
 <script src="@controllers.routes.Assets.versioned("javascripts/ace/ace.js")"></script>
 <script src="@controllers.routes.Assets.versioned("javascripts/sqlProcessor.js")"></script>
 
@@ -40,7 +36,7 @@
 
 <div class="container">
 
-  <div class="row row-eq-height">
+  <div class="row">
 
     <div class="col-md-6">
       <div class="panel panel-default">
@@ -60,15 +56,19 @@
       <div class="panel panel-default">
         <div class="panel-heading">Query</div>
         <div class="panel-body">
-          <pre id="editor" class="form-control">select phonenumber from phone</pre>
+          <pre id="editor" class="form-control"></pre>
           <script type="text/javascript">
                       var editor = ace.edit("editor");
                       editor.setTheme("ace/theme/eclipse");
-                      editor.setFontSize("14px");
+                      editor.setFontSize("16px");
                       editor.getSession().setMode("ace/mode/sql");
                       editor.getSession().setTabSize(2);
                       editor.getSession().setUseSoftTabs(true);
                       editor.getSession().setUseWrapMode(true);
+                      editor.setOptions({
+                        minLines: 10,
+                        maxLines: 15
+                      });
                     </script>
         </div>
       </div>
@@ -115,15 +115,6 @@
         </table>
         </div>}
       </div>
-    </div>
-  </div>
-
-  <div class="panel panel-default">
-    <div class="panel-heading">Debug: Musterl&ouml;sungen + Fertige Query in Box!...</div>
-    <div class="panel-body">
-    @for(sample <- exercise.samples) {
-      <pre>@sample.sample</pre>
-    }
     </div>
   </div>
 

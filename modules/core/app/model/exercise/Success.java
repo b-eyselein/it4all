@@ -1,8 +1,8 @@
 package model.exercise;
 
 public enum Success {
-  
-  COMPLETE(2), PARTIALLY(1), NONE(0);
+
+  NONE(0), PARTIALLY(1), COMPLETE(2);
 
   private int points;
 
