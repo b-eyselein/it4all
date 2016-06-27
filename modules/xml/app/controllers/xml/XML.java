@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -52,6 +53,8 @@ public class XML extends Controller {
     User user = UserManagement.getCurrentUser();
     XmlExercise exercise = XmlExercise.finder.byId(exerciseId);
     
+    List<XMLError> elementResults;
+    
     String learnerSolution = extractLearnerSolutionFromRequest(request());
     Logger.info(learnerSolution);
     if(exercise.exerciseType == ExerciseType.XMLAgainstDTD) {
@@ -59,8 +62,12 @@ public class XML extends Controller {
           util.getSampleFileForExercise(EXERCISE_TYPE, exercise.referenceFileName).toString()) + "\n" + learnerSolution;
     }
     Path path2solution = saveSolutionForUser(user, learnerSolution, exercise);
-    
-    List<XMLError> elementResults = correctExercise(path2solution, user, exercise);
+    if(exercise.exerciseType == ExerciseType.XMLAgainstXSD && learnerSolution.contains("!DOCTYPE")) {
+      elementResults = new ArrayList<XMLError>();
+      elementResults.add(new XMLError("benutze kein DTD!", XmlErrorType.FATALERROR));
+    } else {
+      elementResults = correctExercise(path2solution, user, exercise);
+    }
     
     for(XMLError error: elementResults)
       Logger.debug(error.toString());
@@ -159,7 +166,6 @@ public class XML extends Controller {
     }
     return result;
   }
-
   
   private String generateFixedStart(XmlExercise exercise, String dtdPathString) {
     // + exercise.rootElementName +
