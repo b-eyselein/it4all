@@ -27,7 +27,7 @@ public class Bool extends Controller {
     bft = BoolescheFunktionenGenerator.neueBoolescheFunktion(2,3);
     double d = bft.getAnzahlVariablen();
     length = (int) (Math.pow(2.0, d));
-    return ok(boolquestion.render(parseFormel(bft.toString()), UserManagement.getCurrentUser(),
+    return ok(boolquestion.render(bft.toString(), UserManagement.getCurrentUser(),
         bft.getVariablenTabelle(), length, bft));
   }
 
@@ -44,7 +44,7 @@ public class Bool extends Controller {
     for(int i = 0; i < answer.length; i++) {
       answer[i] = "" + ansOld[i];
     }
-    return ok(boolsolution.render(UserManagement.getCurrentUser(), correct, parseFormel(bft.toString()),
+    return ok(boolsolution.render(UserManagement.getCurrentUser(), correct, bft.toString(),
         bft.getVariablenTabelle(), length, solutions, answer, exception_msg, bft));
   }
 
@@ -55,42 +55,5 @@ public class Bool extends Controller {
       solutions[i] = dynFormula.get("" + i + "");
     }
     return redirect(routes.Bool.indexSolution());
-  }
-
-  private String parseFormel(String formel) {
-    // String s = "";
-    // int i = 0;
-    // while(i < formel.length()) {
-    // if(i + 2 < formel.length() && formel.substring(i, i + 3).equals("XOR")) {
-    // s += "\u2295";
-    // i += 3;
-    // } else if(i + 2 < formel.length() && formel.substring(i, i +
-    // 3).equals("NOT")) {
-    // s += "\u00ac";
-    // i += 3;
-    // } else if(i + 2 < formel.length() && formel.substring(i, i +
-    // 3).equals("AND")) {
-    // s += "\u2227";
-    // i += 3;
-    // } else if(i + 1 < formel.length() && formel.substring(i, i +
-    // 2).equals("OR")) {
-    // s += "\u2228";
-    // i += 2;
-    // } else {
-    // s += formel.charAt(i);
-    // i++;
-    // }
-    // }
-    // return s;
-
-    // FIXME: Teste String.replace()!!
-    // @formatter:off
-    String parsedFormel = formel
-        .replaceAll("XOR", "\u2295")
-        .replaceAll("NOT", "\u00ac")
-        .replaceAll("AND", "\u2227")
-        .replaceAll("OR", "\u2228");
-    // @formatter:on
-    return parsedFormel;
   }
 }
