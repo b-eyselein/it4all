@@ -2,132 +2,94 @@
 @(user: model.user.User, var_names: Array[String], wahrheitstafel: Array[Array[Char]], spalten: Int, zeilen: Int)
 
 @main("Formel erstellen", user) {
-	<div class="container">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				Erstellen Sie die Formel zu folgender Wahrheitstafel:
-			</div>
-			<div class="panel-body">
-				<div class="col-sm-4">
-					<table class="table">
-						<thread align = "right">
-							<tr>
-								@for(v <- var_names){
-								<td>
-									@v
-								</td>
-								}
-								<td class="col-md-4">
-									Resultat
-								</td>
-							</tr>
-						</thread>
-						<tbody align = "left">
-						@for(i <- 0 until (zeilen)){
-							<tr>
-							@for(j <- 0 until (spalten)){
-								<td>@wahrheitstafel(j)(i)</td>
-								}
-							}
-						</tbody>
-					</table>
-				</div>
-				
-				<div>
-				<form role="form" action="@binary.routes.BoolFormelErstellen.addLearnerSolution" method="post">
-					<div class="form-group">
-						<input class="form-control" name="learnerSolution" placeholder="Ihre L&ouml;sung">
-					</div>
-					<button type="submit" class="btn btn-primary">Pr&uuml;fen</button>
-				</form>
-				</div>
-				
-				<div>
-					<br>
-					<div class="alert alert-info">
-						<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-						<h5>
-						<span class="glyphicon glyphicon-info-sign"></span>
-						<strong>Information</strong>
-						</h5>
-						<table>
-							<tr>
-								<td padding-bottom=10px>
-									Schreibe f&uuml;r &not; a:&nbsp;
-								</td>
-								<td>
-									<div class="well well-sm">not a</div>
-								</td>
-								<td>
-									&nbsp;oder&nbsp;
-								</td>
-								<td>
-									<div class="well well-sm">nicht a</div>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									Schreibe f&uuml;r a &and; b:&nbsp;
-								</td>
-								<td>
-									<div class="well well-sm">a and b</div>
-								</td>
-								<td>
-									&nbsp;oder&nbsp;
-								</td>
-								<td>
-									<div class="well well-sm">a und b</div>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									Schreibe f&uuml;r a &or; b:&nbsp;
-								</td>
-								<td>
-									<div class="well well-sm">a or b</div>
-								</td>
-								<td>
-									&nbsp;oder&nbsp;
-								</td>
-								<td>
-									<div class="well well-sm">a oder b</div>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									Schreibe f&uuml;r a &oplus; b:&nbsp;
-								</td>
-								<td>
-									<div class="well well-sm">a xor b</div>
-								</td>
-								<td>
-									&nbsp;oder&nbsp;
-								</td>
-								<td>
-									<div class="well well-sm">a xoder b</div>
-								</td>
-							</tr>
-						</table>
-						<table>
-							<tr>
-								<td>
-									Benutze Klammern um die Reihenfolge festzulegen, in der die Ausdr&uuml;cke ausgewertet werden. Beispiel: &nbsp;
-								</td>
-								<td>
-									<div class="well well-sm">not((a or b) and c)</div>
-								</td>
-								<td>
-									&nbsp;oder&nbsp;
-								</td>
-								<td>
-									<div class="well well-sm">nicht((a oder b) und c)</div>
-								</td>
-							</tr>
-						</table>
-						Gro&szlig;- und Kleinschreibung spielt keine Rolle.
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+<div class="container">
+  <div class="panel panel-default">
+    <div class="panel-heading">Erstellen Sie die Formel zu folgender Wahrheitstafel:</div>
+    <div class="panel-body">
+      <div class="col-md-4">
+        <table class="table">
+          <thead>
+            <tr>
+              @for(v <- var_names){
+              <td>@v</td> }
+              <td>z</td>
+            </tr>
+          </thead>
+          <tbody>
+          @for(i <- 0 until (zeilen)) {
+            <tr>
+            @for(j <- 0 until (spalten)) {
+              <td>@wahrheitstafel(j)(i)</td>
+            }
+          }
+          </tbody>
+        </table>
+      </div>
+      <div class="col-md-8">
+        <form role="form" class="form-horizontal" action="@binary.routes.BoolFormelErstellen.addLearnerSolution()" method="post">
+          <div class="form-group">
+            <label class="control-label col-xs-1" for="learnerSolution">z = </label>
+            <div class="col-xs-11">
+              <input class="form-control" name="learnerSolution" id="learnerSolution" placeholder="Ihre L&ouml;sung">
+            </div>
+          </div>
+          <div class="col-sm-12">
+            <button type="submit" class="btn btn-primary btn-block">Pr&uuml;fen</button>
+          </div>
+        </form>
+      </div>
+     </div>
+  </div>
+  
+    <div class="panel panel-info">
+      <div class="panel-heading"><span class="glyphicon glyphicon-info-sign"></span> Information</div>
+      <div class="panel-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th/>
+              <th>Englisches &Auml;quivalent</th>
+              <th/>
+              <th>Deutsches &Auml;quivalent</th>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Schreibe f&uuml;r <kbd>&not; a</kbd></td>
+              <td><code>not a</code></td>
+              <td>&nbsp;oder&nbsp;</td>
+              <td><code>nicht a</code></td>
+            </tr>
+            <tr>
+              <td>Schreibe f&uuml;r <kbd>a &and; b</kbd></td>
+              <td><code>a and b</code></td>
+              <td>&nbsp;oder&nbsp;</td>
+              <td><code>a und b</code></td>
+            </tr>
+            <tr>
+              <td>Schreibe f&uuml;r <kbd>a &or; b</kbd></td>
+              <td><code>a or b</code></td>
+              <td>&nbsp;oder&nbsp;</td>
+              <td><code>a oder b</code></td>
+            </tr>
+            <tr>
+              <td>Schreibe f&uuml;r <kbd>a &oplus; b</kbd></td>
+              <td><code>a xor b</code></td>
+              <td>&nbsp;oder&nbsp;</td>
+              <td><code>a xoder b</code></td>
+            </tr>
+            <tr>
+              <td>Klammere, um die Reihenfolge festzulegen, in der Ausdr&uuml;cke ausgewertet werden</td>
+              <td><code>not((a or b) and c)</code></td>
+              <td>&nbsp;oder&nbsp;</td>
+              <td><code>nicht((a oder b) und c)</code></td>
+            </tr>
+            <tr>
+              <td colspan="4">Gro&szlig;- und Kleinschreibung spielt keine Rolle.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+</div>
+</div>
 }
