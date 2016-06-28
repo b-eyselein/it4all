@@ -7,9 +7,11 @@ import model.boolescheAlgebra.BFTree.*;
 
 public class BoolescheFunktionParser {
   
-  // TODO: einzelne Methoden beim Parsen.
-  
-  /*
+  private static final TreeSet<Character> zeichensatz = new TreeSet<Character>(
+      Arrays.asList('0', '1', '(', ')', ' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
+          'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'));
+          
+  /**
    * ----------------------------------------------------------------
    * Gibt die Formel als Tree zurueck, der interpretiert werden kann.
    * ----------------------------------------------------------------
@@ -17,26 +19,14 @@ public class BoolescheFunktionParser {
   public static BoolescheFunktionTree getBFTree(String originalformel) throws IllegalArgumentException {
     String formel = originalformel.toLowerCase();
     
+    formel = substitution(formel);
+    
     // Pruefung auf fehlende Klammern
     pruefeKlammern(originalformel);
     
     // Pruefung auf ungueltige Zeichen
-    TreeSet<Character> zeichensatz = new TreeSet<Character>();
-    zeichensatz.addAll(Arrays.asList('0', '1', '(', ')', ' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
-        'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'));
-    for(int i = 0; i < formel.length(); i++) {
-      if(!zeichensatz.contains(formel.charAt(i))) {
-        /*
-        String iaexception = "illegal caracter \"" + formel.charAt(i) + "\" at:\n" + originalformel + "\n";
-        for(int j = 0; j < i; j++) {
-          iaexception += " ";
-        }
-        iaexception += "^";
-        */
-        String iaexception = "Deine L\u00f6sung enth\u00e4lt ein ung\u00fcltiges Zeichen: "+formel.charAt(i);
-        throw new IllegalArgumentException(iaexception);
-      }
-    }
+    pruefeZeichensatz(formel);
+    
     // Extrahierung der Variablen
     String variablen = formel.replaceAll("and", " ");
     variablen = variablen.replaceAll("xor", " ");
@@ -66,9 +56,60 @@ public class BoolescheFunktionParser {
     return new BoolescheFunktionTree(getNextKnoten(formel, bf_vars), bf_vars);
   }
   
-  /*
-   * ---------------------------´
-   * parst Teilstueck der Formel
+  /**
+   * ----------------------------------------------------------------
+   * Wie getBFTree(formel) nur mit uebergabe der Variablenliste.
+   * Gibt die Formel als Tree zurueck, der interpretiert werden kann.
+   * ----------------------------------------------------------------
+   */
+  public static BoolescheFunktionTree getBFTreeMitVars(String originalformel, String[] variablen)
+      throws IllegalArgumentException {
+    String formel = originalformel.toLowerCase();
+    
+    formel = substitution(formel);
+    
+    // Pruefung auf fehlende Klammern
+    pruefeKlammern(originalformel);
+    
+    // Pruefung auf ungueltige Zeichen
+    pruefeZeichensatz(formel);
+    
+    // Extrahierung der Variablen
+    String f_variablen = formel.replaceAll("and", " ");
+    f_variablen = f_variablen.replaceAll("xor", " ");
+    f_variablen = f_variablen.replaceAll("or", " ");
+    f_variablen = f_variablen.replaceAll("not", " ");
+    f_variablen = f_variablen.replaceAll("0", " ");
+    f_variablen = f_variablen.replaceAll("1", " ");
+    f_variablen = f_variablen.replace('(', ' ');
+    f_variablen = f_variablen.replace(')', ' ');
+    String[] splitf = f_variablen.split(" ");
+    
+    // Pruefung der Variablen
+    TreeSet<String> vars = new TreeSet<String>();
+    for(int i = 0; i < variablen.length; i++) {
+      vars.add(variablen[i]);
+    }
+    for(String s: splitf) {
+      if(!s.equals("") && !vars.contains(s)) {
+        throw new IllegalArgumentException("Die Formel enth\u00e4lt eine unbekannte Variable: " + s);
+      }
+    }
+    // Fehler falls keine Variablen vorhanden
+    if(vars.size() == 0) {
+      throw new IllegalArgumentException("Die Formel enth\u00e4lt keine Variablen: " + originalformel);
+    }
+    BF_Variable[] bf_vars = new BF_Variable[vars.size()];
+    int i_vars = 0;
+    for(String s: vars) {
+      bf_vars[i_vars] = new BF_Variable(s);
+      i_vars++;
+    }
+    return new BoolescheFunktionTree(getNextKnoten(formel, bf_vars), bf_vars);
+  }
+
+  /**
+   * ---------------------------´ parst Teilstueck der Formel
    * ---------------------------
    */
   private static BFKnoten getNextKnoten(String ausdruck, BF_Variable[] vars) throws IllegalArgumentException {
@@ -145,11 +186,16 @@ public class BoolescheFunktionParser {
       return new BF_1();
     }
     
-    throw new IllegalArgumentException("Der Ausdruck ist unvollst\u00e4ndig. M\u00f6glicherweise fehlt eine bei einem Operator eine Variable."); // TODO: Fehlerbeschreibung ergaenzen
+    throw new IllegalArgumentException(
+        "Der Ausdruck ist unvollst\u00e4ndig. M\u00f6glicherweise fehlt bei einem Operator eine Variable."); // TODO:
+                                                                                                             // Fehlerbeschreibung
+                                                                                                             // ergaenzen
   }
   
-  private static void pruefeKlammern(String formel) throws IllegalArgumentException {
- // Pruefung auf fehlende Klammern
+  /**
+   * Pruefung auf fehlende Klammern
+   */
+  private static boolean pruefeKlammern(String formel) throws IllegalArgumentException {
     int klammerauf = 0;
     for(int i = 0; i < formel.length(); i++) {
       if(formel.charAt(i) == '(') {
@@ -157,29 +203,37 @@ public class BoolescheFunktionParser {
       } else if(formel.charAt(i) == ')') {
         klammerauf--;
         if(klammerauf < 0) {
-          /*
-          String iaexception = "opening bracket is missing:\n" + formel + "\n";
-          for(int j = 0; j < i; j++) {
-            iaexception += " ";
-          }
-          iaexception += "^";
-          */
-          String iaexception = "Bei der Formel fehlt eine \u00f6ffnende Klammer: "+formel;
+          String iaexception = "Bei der Formel fehlt eine \u00f6ffnende Klammer: " + formel;
           throw new IllegalArgumentException(iaexception);
         }
       }
     }
     if(klammerauf > 0) {
-      /*
-      String iaexception = "closing bracket is missing:\n" + formel + "\n";
-      for(int j = 0; j < formel.length() - 1; j++) {
-        iaexception += " ";
-      }
-      iaexception += "^";
-      */
-      String iaexception = "Bei der Formel fehlt eine schlie\u00dfende Klammer: "+formel;
+      String iaexception = "Bei der Formel fehlt eine schlie\u00dfende Klammer: " + formel;
       throw new IllegalArgumentException(iaexception);
     }
+    return true;
+  }
+  
+  /**
+   * Pruefung auf ungueltige Zeichen
+   */
+  private static boolean pruefeZeichensatz(String formel) throws IllegalArgumentException {
+    for(int i = 0; i < formel.length(); i++) {
+      if(!zeichensatz.contains(formel.charAt(i))) {
+        String iaexception = "Deine L\u00f6sung enth\u00e4lt ein ung\u00fcltiges Zeichen: " + formel.charAt(i);
+        throw new IllegalArgumentException(iaexception);
+      }
+    }
+    return true;
+  }
+  
+  private static String substitution(String formel) {
+    formel = formel.replaceAll("xoder", "xor")
+                   .replaceAll("oder", "or")
+                   .replaceAll("und", "and")
+                   .replaceAll("nicht", "not");
+    return formel;
   }
   
 }

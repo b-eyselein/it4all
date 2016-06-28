@@ -1,12 +1,12 @@
 @* NArySolution Template File *@
 @(user: model.user.User, givenAnswer: String, numberType: String, number1: String, number2: String, correctAnswer: String, correct: Boolean)
-@main("HTML-Test", user) {
+@main("Addition", user) {
 	<div class="container">
 		<div class="panel panel-@if(correct){success}else{danger}">
 			<div class="panel-heading">
 					Addieren sie die folgenden @numberType:
-			@if(numberType.equals("Binärzahlen")) {
-			<em><p class="text-info .small">(Binärzahlen bitte in 8-Bit-Darstellung mit führenden Nullen angeben.)</p><em>
+			@if(numberType.equals("Bin\u00e4rzahlen")) {
+			<em><p class="text-info .small">(Bin&auml;rzahlen bitte in 8-Bit-Darstellung mit f&uuml;hrenden Nullen angeben.)</p><em>
 			}
 			</div>
 			<div class="panel-body">
@@ -19,7 +19,7 @@
 				</div>
 				<div class="row">
 					<div class="container">
-						<p>Ihre Lösung ist 
+						<p>Ihre L&ouml;sung ist 
 							@if(correct) {
 								richtig.</p>
 							} else {
@@ -28,7 +28,7 @@
 						}
 						&nbsp;<br>
 						<a href="@binary.routes.NAryAddition.index" class="btn btn-primary" role="button">
-							Nächste Aufgabe
+							N&auml;chste Aufgabe
 						</a>
 					</div>
 				</div>

@@ -20,11 +20,11 @@ import model.boolescheAlgebra.BFTree.*;
 public class BoolFormelErstellen extends Controller {
   
   @Inject
-  FormFactory factory;
-  BoolescheFunktionTree bft;
-  String learnerSolution;
-  int zeilen;
-  int spalten;
+  private FormFactory factory;
+  private BoolescheFunktionTree bft;
+  private String learnerSolution;
+  private int zeilen;
+  private int spalten;
   
   public Result addLearnerSolution() {
     DynamicForm dynFormula = factory.form().bindFromRequest();
@@ -32,23 +32,23 @@ public class BoolFormelErstellen extends Controller {
     return redirect(routes.BoolFormelErstellen.checkSolution());
   }
   
-  public Result index() {
-    bft = BoolescheFunktionenGenerator.neueBoolescheFunktion();
-    zeilen = (int) Math.pow(2.0, bft.getAnzahlVariablen());
-    spalten = bft.getAnzahlVariablen() + 1;
-    return ok(bool_formel_erstellen_q.render(UserManagement.getCurrentUser(), bft.getVariablen(),
-        bft.getWahrheitstafelChar(), spalten, zeilen));
-  }
-  
   public Result checkSolution() {
     String exception_msg = "";
     boolean correct = false;
     try {
-      correct = bft.compareBoolscheFormelTree(BoolescheFunktionParser.getBFTree(learnerSolution));
+      correct = bft.compareBoolscheFormelTree(BoolescheFunktionParser.getBFTreeMitVars(learnerSolution,bft.getVariablen()));
     } catch (IllegalArgumentException e) {
       exception_msg = e.getMessage();
     }
     return ok(bool_formel_erstellen_s.render(UserManagement.getCurrentUser(), learnerSolution, correct, exception_msg,
         bft.getVariablen(), bft.getWahrheitstafelChar(), spalten, zeilen));
+  }
+  
+  public Result index() {
+    bft = BoolescheFunktionenGenerator.neueBoolescheFunktion(2,3);
+    zeilen = (int) Math.pow(2.0, bft.getAnzahlVariablen());
+    spalten = bft.getAnzahlVariablen() + 1;
+    return ok(bool_formel_erstellen_q.render(UserManagement.getCurrentUser(), bft.getVariablen(),
+        bft.getWahrheitstafelChar(), spalten, zeilen));
   }
 }
