@@ -16,21 +16,23 @@ import model.boolescheAlgebra.BFTree.*;
 
 @Security.Authenticated(Secured.class)
 public class Bool extends Controller {
-  
+
   @Inject
   private FormFactory factory;
+  
+  // FIXME: Übergabe an Client!
   private BoolescheFunktionTree bft;
   private String[] solutions;
   private int length;
-
+  
   public Result index() {
-    bft = BoolescheFunktionenGenerator.neueBoolescheFunktion(2,3);
+    bft = BoolescheFunktionenGenerator.neueBoolescheFunktion(2, 3);
     double d = bft.getAnzahlVariablen();
     length = (int) (Math.pow(2.0, d));
-    return ok(boolquestion.render(bft.toString(), UserManagement.getCurrentUser(),
-        bft.getVariablenTabelle(), length, bft));
+    return ok(
+        boolquestion.render(bft.toString(), UserManagement.getCurrentUser(), bft.getVariablenTabelle(), length, bft));
   }
-
+  
   public Result indexSolution() {
     boolean correct = false;
     String exception_msg = "";
@@ -44,10 +46,10 @@ public class Bool extends Controller {
     for(int i = 0; i < answer.length; i++) {
       answer[i] = "" + ansOld[i];
     }
-    return ok(boolsolution.render(UserManagement.getCurrentUser(), correct, bft.toString(),
-        bft.getVariablenTabelle(), length, solutions, answer, exception_msg, bft));
+    return ok(boolsolution.render(UserManagement.getCurrentUser(), correct, bft.toString(), bft.getVariablenTabelle(),
+        length, solutions, answer, exception_msg, bft));
   }
-
+  
   public Result tableAdd() {
     solutions = new String[length];
     DynamicForm dynFormula = factory.form().bindFromRequest();
