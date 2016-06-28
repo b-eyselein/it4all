@@ -17,7 +17,7 @@ public class DTDXMLErrorHandler implements ErrorHandler {
   public void warning(SAXParseException exception) throws SAXException {
     if(exception.getSystemId().endsWith(".xml")) {
       if(!Output.contains(exception)) {
-        Output.add(new XMLError(exception.getMessage(), XmlErrorType.WARNING));
+        Output.add(new XMLError(XmlErrorType.WARNING.toString() ,exception.getMessage(), XmlErrorType.WARNING));
       }
       
     } else {
@@ -30,7 +30,7 @@ public class DTDXMLErrorHandler implements ErrorHandler {
   public void fatalError(SAXParseException exception) throws SAXException {
     if(exception.getSystemId().endsWith(".xml")) {
       if(!Output.contains(exception)) {
-        Output.add(new XMLError(exception.getMessage(), XmlErrorType.FATALERROR));
+        Output.add(new XMLError(XmlErrorType.FATALERROR.toString(), exception.getMessage(), XmlErrorType.FATALERROR));
         
       }
       
@@ -43,7 +43,7 @@ public class DTDXMLErrorHandler implements ErrorHandler {
   public void error(SAXParseException exception) throws SAXException {
     if(exception.getSystemId().endsWith(".xml")) {
       if(!Output.contains(exception)) {
-        Output.add(new XMLError(exception.getMessage(), XmlErrorType.ERROR));
+        Output.add(new XMLError(XmlErrorType.ERROR.toString(), exception.getMessage(), XmlErrorType.ERROR));
         
       }
       

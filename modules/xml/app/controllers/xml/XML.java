@@ -1,6 +1,10 @@
 package controllers.xml;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
@@ -12,6 +16,7 @@ import javax.inject.Inject;
 
 import model.XmlExercise;
 import controllers.core.UserManagement;
+import model.ExerciseType;
 import model.Secured;
 import model.Util;
 import model.XMLError;
@@ -49,6 +54,10 @@ public class XML extends Controller {
 
     String learnerSolution = extractLearnerSolutionFromRequest(request());
     Logger.info(learnerSolution);
+    if(exercise.exerciseType == ExerciseType.XMLAgainstDTD) {
+      learnerSolution = generateFixedStart(exercise,
+          util.getSampleFileForExercise(EXERCISE_TYPE, exercise.referenceFileName).toString()) + "\n" + learnerSolution;
+    }
     Path path2solution = saveSolutionForUser(user, learnerSolution, exercise);
 
     List<XMLError> elementResults = correctExercise(path2solution, user, exercise);
@@ -72,7 +81,7 @@ public class XML extends Controller {
     User user = UserManagement.getCurrentUser();
     String defaultOrOldSolution = STANDARD_XML;
     try {
-      Path oldSolutionPath = util.getSolFileForExerciseAndType(user, EXERCISE_TYPE, exerciseId,
+      Path oldSolutionPath = util.getSolFileForExercise(user, EXERCISE_TYPE, exerciseId,
           exercise.exerciseType.studentFileEnding);
       if(Files.exists(oldSolutionPath, LinkOption.NOFOLLOW_LINKS))
         defaultOrOldSolution = String.join("\n", Files.readAllLines(oldSolutionPath));
@@ -91,7 +100,22 @@ public class XML extends Controller {
       Logger.error(e.getMessage());
     }
 
-    return ok(xml.render(UserManagement.getCurrentUser(), exercise, referenceCode, defaultOrOldSolution));
+    String fixedStart = "";
+    if(exercise.exerciseType == ExerciseType.XMLAgainstDTD) {
+      fixedStart = generateFixedStart(exercise, exercise.referenceFileName);
+      if(defaultOrOldSolution.startsWith("<?xml")) {
+        // List<String> solutionList =
+        // Arrays.asList((defaultOrOldSolution.split("\n")));
+        // defaultOrOldSolution = String.join("\n",
+        // List.copyOfRange(solutionList, 2, solutionList.size()));
+        defaultOrOldSolution = defaultOrOldSolution.substring(defaultOrOldSolution.indexOf('\n') + 1);
+        defaultOrOldSolution = defaultOrOldSolution.substring(defaultOrOldSolution.indexOf('\n') + 1);
+
+      }
+
+    }
+
+    return ok(xml.render(UserManagement.getCurrentUser(), exercise, referenceCode, defaultOrOldSolution, fixedStart));
   }
 
   public Result index() {
@@ -112,9 +136,10 @@ public class XML extends Controller {
     default:
       return null;
     }
+    Logger.info("Reference File: " + referenceFile.toString());
 
     List<XMLError> result = null;
-    Logger.info(exercise.exerciseType.toString());
+    Logger.info("Exercise type: " + exercise.exerciseType.toString());
     try {
       result = XmlCorrector.correct(learnerSolution.toFile(), referenceFile.toFile(), exercise, user);
     } catch (IOException e) {
@@ -122,7 +147,7 @@ public class XML extends Controller {
     }
 
     if(result.isEmpty()) {
-      result.add(new XMLError(XmlErrorType.NONE, "Alles richtig!", ""));
+      result.add(new XMLError("Alles richtig!", "", XmlErrorType.NONE));
     }
     boolean malformed = false;
     for(XMLError el: result) {
@@ -130,18 +155,17 @@ public class XML extends Controller {
         malformed = true;
     }
     if(!result.isEmpty() && !malformed) {
-      result.add(new XMLError(XmlErrorType.NONE, "Die Eingabe ist wohlgeformt.", ""));
+      result.add(new XMLError("Die Eingabe ist wohlgeformt.", "", XmlErrorType.NONE));
     }
     return result;
   }
 
   private Path createCustomReferenceFileforUser(Path solutionPath, User user, XmlExercise exercise) {
-    Path result = util.getSolFileForExerciseAndType(user, EXERCISE_TYPE, "reference_for_" + exercise.id, "xml");
+    Path result = util.getSolFileForExercise(user, EXERCISE_TYPE, "reference_for_" + exercise.id + ".xml");
     String content = "";
     try {
-      content = "<?xml version=\"1.0\" ?>\n" + "<!DOCTYPE party SYSTEM \"" + solutionPath.toString() + "\">\n" + String
-          .join("\n", Files.readAllLines(util.getSampleFileForExercise(EXERCISE_TYPE, exercise.referenceFileName)))
-          + "\n";
+      content = generateFixedStart(exercise, solutionPath.toString()) + "\n" + String.join("\n",
+          Files.readAllLines(util.getSampleFileForExercise(EXERCISE_TYPE, exercise.referenceFileName))) + "\n";
 
       Files.write(result, Arrays.asList(content), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     } catch (IOException e) {
@@ -155,13 +179,20 @@ public class XML extends Controller {
     return request.body().asFormUrlEncoded().get(LEARNER_SOLUTION_VALUE)[0];
   }
 
+  private String generateFixedStart(XmlExercise exercise, String dtdPathString) {
+    // + exercise.rootElementName +
+    String rootElementName = exercise.referenceFileName.split("\\.")[0];
+    return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<!DOCTYPE " + rootElementName + " SYSTEM \""
+        + dtdPathString + "\">";
+  }
+
   private Path saveSolutionForUser(User user, String solution, XmlExercise exercise) {
     try {
       Path solDir = util.getSolDirForUserAndType(user, EXERCISE_TYPE);
       if(!Files.exists(solDir))
         Files.createDirectories(solDir);
       
-      Path saveTo = util.getSolFileForExerciseAndType(user, EXERCISE_TYPE, exercise.id,
+      Path saveTo = util.getSolFileForExercise(user, EXERCISE_TYPE, exercise.id,
           exercise.exerciseType.studentFileEnding);
       Files.write(saveTo, Arrays.asList(solution), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
       return saveTo;

@@ -1,61 +1,136 @@
 package controllers.sql;
 
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.inject.Inject;
 
-import model.Secured;
-import model.user.User;
 import controllers.core.UserManagement;
+import model.ScriptRunner;
+import model.Secured;
+import model.SqlCorrector;
+import model.SqlExercise;
+import model.SqlQueryResult;
+import model.user.User;
+import play.Logger;
+import play.data.DynamicForm;
+import play.data.FormFactory;
 import play.db.Database;
+import play.db.NamedDatabase;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security.Authenticated;
+import play.twirl.api.Html;
+import views.html.error;
 import views.html.sql;
+import views.html.sqlexercise;
 
 @Authenticated(Secured.class)
 public class SQL extends Controller {
   
   private static final String DB_BASENAME = "sql_";
+  private static final String CREATE_DB_DUMMY = "CREATE DATABASE IF NOT EXISTS ";
+  
+  private static final Logger.ALogger theLogger = Logger.of("sql");
   
   @Inject
-  // @NamedDatabase("sqltest")
-  Database db;
+  @NamedDatabase("sqltest")
+  // IMPORTANT: DO NOT USE "DEFAULT" DATABASE
+  private Database db;
   
-  public Result index() {
-    
+  @Inject
+  private FormFactory factory;
+  
+  public Result commit(int exerciseId) {
     User user = UserManagement.getCurrentUser();
+    SqlExercise exercise = SqlExercise.finder.byId(exerciseId);
     
-    String sqlStatement = "select * from task";
+    DynamicForm form = factory.form().bindFromRequest();
+    String editorContent = form.get("editorContent");
     
     try {
-      Connection connection = db.getConnection();
+      Connection conn = db.getConnection();
+      conn.setCatalog(DB_BASENAME + user.name);
+      boolean right = SqlCorrector.correct(editorContent, exercise, conn);
+      conn.close();
       
-      // Change db to users own db
-      connection.setCatalog(DB_BASENAME + user.name);
-      ResultSet resultSet = connection.createStatement().executeQuery(sqlStatement);
-      ResultSetMetaData metadata = resultSet.getMetaData();
-      
-      // Syso result of query
-      List<List<String>> result = new LinkedList<List<String>>();
-      
-      while(resultSet.next()) {
-        List<String> row = new LinkedList<String>();
-        for(int columnCount = 1; columnCount <= metadata.getColumnCount(); columnCount++)
-          row.add(resultSet.getObject(columnCount).toString());
-        result.add(row);
-      }
-      connection.close();
-      return ok(sql.render(result, UserManagement.getCurrentUser()));
-      
+      return ok(right + "");
     } catch (SQLException e) {
-      return badRequest("Fehler bei Verarbeitung: " + e.getMessage() + "!");
+      theLogger.error("Fehler bei Korrektur!", e);
+      return ok("Fehler!");
     }
     
   }
+  
+  public Result exercise(int exerciseId) {
+    User user = UserManagement.getCurrentUser();
+    SqlExercise exercise = SqlExercise.finder.byId(exerciseId);
+    
+    Connection connection = db.getConnection();
+    try {
+      connection.setCatalog(DB_BASENAME + user.name);
+      ResultSet set = connection.createStatement().executeQuery("SELECT * FROM phone");
+      SqlQueryResult resNew = new SqlQueryResult(set);
+      
+      connection.close();
+      return ok(sqlexercise.render(user, exercise, resNew));
+    } catch (SQLException e) {
+      theLogger.error("Fehler: ", e);
+      return badRequest(error.render(user, new Html("Fehler beim Auslesen der Tabellen!")));
+    }
+  }
+  
+  public Result index() {
+    User user = UserManagement.getCurrentUser();
+    try {
+      String slaveDB = DB_BASENAME + user.name;
+      Connection connection = db.getConnection();
+      
+      initializeDB(connection, slaveDB);
+      connection.close();
+      
+      return ok(sql.render(UserManagement.getCurrentUser(), SqlExercise.finder.all()));
+    } catch (SQLException e) {
+      return badRequest(error.render(user, new Html("Fehler bei Verarbeitung: " + e.getMessage() + "!")));
+    }
+  }
+  
+  private boolean databaseAlreadyExists(Connection connection, String slaveDB) throws SQLException {
+    ResultSet existingDBs = connection.createStatement().executeQuery("SHOW DATABASES");
+    while(existingDBs.next())
+      if(slaveDB.equals(existingDBs.getString(1)))
+        return true;
+    return false;
+  }
+  
+  private void initializeDB(Connection connection, String slaveDB) {
+    long startTime = System.currentTimeMillis();
+    try {
+      // Check if slave DB exists, if not, create
+      if(!databaseAlreadyExists(connection, slaveDB))
+        connection.createStatement().executeUpdate(CREATE_DB_DUMMY + slaveDB);
+      
+      // Change db to users own db
+      if(!connection.getCatalog().equals(slaveDB))
+        connection.setCatalog(slaveDB);
+      
+      // Initialize DB with values
+      Path sqlScriptFile = Paths.get("modules/sql/conf/resources/phone.sql");
+      if(Files.exists(sqlScriptFile))
+        ScriptRunner.runScript(connection, new FileReader(sqlScriptFile.toFile()), false, false);
+      else
+        theLogger.debug("There is no such file " + sqlScriptFile);
+      
+    } catch (SQLException | IOException e) {
+      theLogger.error("Error while initializing database " + slaveDB, e);
+    }
+    theLogger.debug("time initializing the db: " + (System.currentTimeMillis() - startTime) / 1000.);
+  }
+  
 }

@@ -3,49 +3,24 @@
 @main("XML-Test", user) {
 <div class="container-fluid">
 
-<div class="alert alert-success">Ihre L&ouml;sung wurde gespeichert. Sie k&ouml;nnen sich nun <a href="@controllers.core.routes.UserManagement.logout()">ausloggen</a>
-oder weitere <a href="@controllers.xml.routes.XML.index()">Aufgaben bearbeiten.</a></div>
+  <div class="alert alert-success">
+    Ihre L&ouml;sung wurde gespeichert. Sie k&ouml;nnen sich nun <a href="
+      @controllers.core.routes.UserManagement.logout()">ausloggen</a> oder weitere <a href="
+      @controllers.xml.routes.XML.index()">Aufgaben bearbeiten.</a>
+  </div>
 
-<div class="row row-eq-height">
-<div class="col-md-6">
-<div class="panel panel-default">
-<div class="panel-heading">Ihre L&ouml;sung</div>
-<div class="panel-body">
-<pre>@for(sol <- solution.split("\n")) {@sol
+
+      <div class="panel panel-default">
+        <div class="panel-heading">Ihre L&ouml;sung</div>
+        <div class="panel-body">
+          <pre>@for(sol <- solution.split("\n")) {@sol
 }</pre>
-</div>
-</div>
-</div>
+        </div>
+      </div>
+      
+    </div>
 
-<div class="col-md-6">
-<div class="panel panel-default">
-<div class="panel-heading">Korrektur</div>
-<div class="panel-body">
-@@for(result <- results) {
-@@if(result.getErrorType == model.XmlErrorType.NONE) {
-<div class="panel panel-default panel-success">
-<div class="panel-heading">Teilaufgabe @@result.getTask.key.id erfolgreich!<span class="pull-right">@@result.getPoints Punkt(e)</span></div>
-<div class="panel-body">@@result.getTask.taskDescription</div>
-</div>
-}
-@@XmlErrorType PARTIALLY?
-@@if(result.getErrorType == model.Success.PARTIALLY) {
-<div class="panel panel-default panel-warning">
-<div class="panel-heading">Teilaufgabe @@result.getTask.key.id nicht komplett erfolgreich!<span class="pull-right">@@result.getPoints Punkt(e)</span></div>
-<div class="panel-body">@@result.getTask.taskDescription</div>
-</div>
-}
-@@if(result.getErrorType != model.XmlErrorType.NONE) {
-<div class="panel panel-default panel-danger">
-<div class="panel-heading">Teilaufgabe @@result.getTask.key.id nicht erfolgreich!<span class="pull-right">@@result.getPoints Punkt(e)</span></div>
-<div class="panel-body">@@result.getTask.taskDescription</div>
-</div>
-}
-}
-</div>
-</div>
-</div>
-
+  </div>
 </div>
 </div>
 }

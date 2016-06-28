@@ -1,33 +1,70 @@
-@* TableThree Template File *@
-@(formula: String)(vars: Array[String])(user: model.user.User)(zeros: Array[Array[Char]])(length: Int)
+@* boolquestion Template File *@
+@(formula: String, user: model.user.User, zeros: Array[Array[Char]], length: Int, bft: model.boolescheAlgebra.BFTree.BoolescheFunktionTree)
 @main("Wertetabelle", user) {
-<form action="@binary.routes.Bool.tableAdd" method="post">
-<table class="table">
-	<thread align = "right">
-		<tr>
-			@for(v <- vars){
-			<td>
-				@v
-			</td>
-			}
-			<td>
-				@formula
-			</td>
-		</tr>
-	</thread>
-	<tbody align = "left">
-	@for(i <- 0 until (length)){
-		<tr>
-		@for(j <- 0 until (vars.length)){
-			<td>@zeros(j)(i)</td>
-			}
-			<td>
-				<input type="text" name = @i.toString size = 1>
-			</td>
-		}
-	</tbody>
-</table>
-
-	<input type = "submit" class="form-control">
-</form>
+<div class="container">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			F&uuml;llen Sie folgende Tabelle aus:
+		</div>
+		<div class="panel-body">
+			<form action="@binary.routes.Bool.tableAdd" method="post">
+				<table class="table">
+					<thread align = "right">
+						<tr>
+							@for(v <- bft.getVariablen()){
+							<td>
+								@v
+							</td>
+							}
+							<td class="col-md-10">
+								<style>
+									a.mytooltip:link {
+									    color: #333333;
+									    text-decoration: none;
+									}
+									a.mytooltip:visited {
+									    color: #333333;
+									    text-decoration: none;
+									}
+									a.mytooltip:hover {
+									    color: #333333;
+									    text-decoration: none;
+									}
+									a.mytooltip:active {
+									    color: #333333;
+									    text-decoration: none;
+									}
+									.tooltip-inner {
+ 									   max-width: 1000px;
+									}
+								</style>
+								<a class="mytooltip" href="#" data-toggle="tooltip" data-placement="right" title="@formula">
+									@Html(formula.replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;").intern())
+								</a>
+							</td>
+						</tr>
+					</thread>
+					<tbody align = "left">
+					@for(i <- 0 until (length)){
+						<tr>
+						@for(j <- 0 until (bft.getVariablen().length)){
+							<td>@zeros(j)(i)</td>
+							}
+							<td>
+								<input type="text" name="@i.toString" size="1" required>
+							</td>
+						}
+					</tbody>
+				</table>
+				
+				<button type="submit" class="btn btn-primary">Pr&uuml;fen</button>
+			</form>
+		</div>
+	</div>
+</div>
+<script>
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip(); 
+});
+</script>
 }

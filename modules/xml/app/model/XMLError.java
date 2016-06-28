@@ -2,43 +2,53 @@ package model;
 
 public class XMLError {
   
-  // FIXME: better use -1, since maybe line numbers in xml documents are counted
-  // starting from zero...
-  protected int line = 0;
-  protected String title;
+  protected int line = -1;
+  protected String title = "";
   protected String errorMessage;
-
+  
   protected XmlErrorType errorType;
-
-  // FIXME: use IllegalArgumentException instead of NullPointerException in all
-  // constuctors with message: has not to be declared to be thrown and fits use
-  // case better (checking of Arguments!)
-  public XMLError(int line, String errorMessage, XmlErrorType errorType) throws NullPointerException {
-    if(line <= 0 || errorMessage == null || errorType == null) {
-      throw new NullPointerException();
+  
+  public XMLError(int line, String errorMessage, XmlErrorType errorType) {
+    if(line < 0) {
+      throw new IllegalArgumentException("Linenumber has to be greater or equal 0");
+    }
+    if(errorMessage == null || errorType == null) {
+      throw new IllegalArgumentException("An XMLError has a message and a type");
     }
     this.line = line;
     this.errorMessage = errorMessage;
+    if(this.errorMessage.contains("cvc-elt.1.a: ")) {
+      this.errorMessage = this.errorMessage.replace("cvc-elt.1.a: ", "");
+    }
     this.errorType = errorType;
   }
-
-  public XMLError(String errorMessage, XmlErrorType errorType) throws NullPointerException {
+  
+  public XMLError(String errorMessage, XmlErrorType errorType) {
     if(errorMessage == null || errorType == null) {
-      throw new NullPointerException();
+      throw new IllegalArgumentException("An XMLError has a message and a type");
     }
     this.errorMessage = errorMessage;
+    if(this.errorMessage.contains("cvc-elt.1.a: ")) {
+      this.errorMessage = this.errorMessage.replace("cvc-elt.1.a: ", "");
+    }
     this.errorType = errorType;
   }
-
-  public XMLError(XmlErrorType errorType, String title, String errorMessage) {
+  
+  public XMLError(String title, String errorMessage, XmlErrorType errorType) {
+    if(title == null) {
+      throw new IllegalArgumentException("Title can not be null");
+    }
     if(errorMessage == null || errorType == null) {
-      throw new NullPointerException();
+      throw new IllegalArgumentException("An XMLError has a message and a type");
     }
     this.errorMessage = errorMessage;
+    if(this.errorMessage.contains("cvc-elt.1.a: ")) {
+      this.errorMessage = this.errorMessage.replace("cvc-elt.1.a: ", "");
+    }
     this.errorType = errorType;
     this.title = title;
   }
-
+  
   @Override
   public boolean equals(Object obj) {
     if(this == obj)
@@ -55,23 +65,23 @@ public class XMLError {
       return false;
     return true;
   }
-
+  
   public String getErrorMessage() {
     return errorMessage;
   }
-
+  
   public XmlErrorType getErrorType() {
     return errorType;
   }
-
+  
   public int getLine() {
     return line;
   }
-
+  
   public String getTitle() {
     return title;
   }
-
+  
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -79,26 +89,29 @@ public class XMLError {
     result = prime * result + ((errorMessage == null) ? 0 : errorMessage.hashCode());
     return result;
   }
-
+  
   public void setErrorMessage(String errorMessage) {
     this.errorMessage = errorMessage;
   }
-
+  
   public void setErrorType(XmlErrorType errorType) {
     this.errorType = errorType;
   }
-
+  
   public void setLine(int line) {
     this.line = line;
   }
-
+  
   public void setTitle(String title) {
     this.title = title;
   }
-
+  
   @Override
   public String toString() {
-    return (line != 0) ? errorType + ":\nZeile: " + line + "\nFehler: " + errorMessage + "\n"
-        : errorType + ":\nFehler: " + errorMessage + "\n";
+    if(errorType == XmlErrorType.NONE)
+      return errorType.toString();
+    else
+      return (line != -1) ? errorType + ":\nZeile: " + line + "\nFehler: " + errorMessage + "\n"
+          : errorType + ":\nFehler: " + errorMessage + "\n";
   }
 }

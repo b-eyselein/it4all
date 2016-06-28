@@ -2,10 +2,12 @@ package model;
 
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+
+import play.mvc.Results.Chunks.Out;
+
 import org.xml.sax.ErrorHandler;
 
 import java.util.List;
-
 
 public class SimpleXMLErrorHandler implements ErrorHandler {
   private List<XMLError> Output;
@@ -13,20 +15,32 @@ public class SimpleXMLErrorHandler implements ErrorHandler {
   public SimpleXMLErrorHandler(List<XMLError> output) {
     this.Output = output;
   }
-	
+
   @Override
   public void warning(SAXParseException exception) throws SAXException {
-    Output.add(new XMLError(exception.getLineNumber(), exception.getMessage(), XmlErrorType.WARNING));
+    if(exception.getLineNumber() > -1) {
+      Output.add(new XMLError(exception.getLineNumber(), exception.getMessage(), XmlErrorType.WARNING));
+    } else {
+      Output.add(new XMLError(XmlErrorType.WARNING.toString(), exception.getMessage(), XmlErrorType.WARNING));
+    }
   }
-  
+
   @Override
   public void fatalError(SAXParseException exception) throws SAXException {
-    Output.add(new XMLError(exception.getLineNumber(), exception.getMessage(), XmlErrorType.FATALERROR));
+    if(exception.getLineNumber() > -1) {
+      Output.add(new XMLError(exception.getLineNumber(), exception.getMessage(), XmlErrorType.FATALERROR));
+    } else {
+      Output.add(new XMLError(XmlErrorType.FATALERROR.toString(), exception.getMessage(), XmlErrorType.FATALERROR));
+    }
   }
-  
+
   @Override
   public void error(SAXParseException exception) throws SAXException {
-    Output.add(new XMLError(exception.getLineNumber(), exception.getMessage(), XmlErrorType.ERROR));
-    
+    if(exception.getLineNumber() > -1) {
+      Output.add(new XMLError(exception.getLineNumber(), exception.getMessage(), XmlErrorType.ERROR));
+    } else {
+      Output.add(new XMLError(XmlErrorType.ERROR.toString(), exception.getMessage(), XmlErrorType.ERROR));
+    }
+
   }
 }

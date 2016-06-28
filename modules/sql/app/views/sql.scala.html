@@ -1,13 +1,14 @@
-@(result: List[List[String]], user: model.user.User)
+@(user: model.user.User, exercises: List[model.SqlExercise])
 
 @main("SQL", user) {
-<table class="table table-striped">
-@for(row <- result) {
-<tr>
-@for(column <- row) {
-<td>@column</td>
-}
-</tr>
-}
-</table>
+  <div class="container">
+    <div class="panel panel-default">
+      <div class="panel-heading">Verf&uuml;gbare Aufgaben</div>
+      <div class="panel-body">
+      @for(exercise <- exercises) {
+    	<a href="@controllers.sql.routes.SQL.exercise(exercise.id)" class="btn btn-default btn-block">Aufgabe @exercise.id: @exercise.text</a>
+      }
+      </div>
+    </div>
+  </div>
 }

@@ -8,11 +8,13 @@ import model.Secured;
 import model.javascript.JsCorrector;
 import model.javascript.JsExercise;
 import model.javascript.JsTestResult;
+import model.user.User;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
 import play.twirl.api.Html;
+import views.html.error;
 import views.html.javascript.js;
 import views.html.javascript.jsoverview;
 import views.html.javascript.jscorrect;
@@ -34,11 +36,13 @@ public class JS extends Controller {
   }
 
   public Result exercise(int id) {
+    User user = UserManagement.getCurrentUser();
     JsExercise exercise = JsExercise.finder.byId(id);
 
     if(exercise == null)
-      return badRequest(new Html("<p>Diese Aufgabe existert leider nicht.</p><p>Zur&uuml;ck zur <a href=\""
-          + routes.JS.index() + "\">Startseite</a>.</p>"));
+      return badRequest(
+          error.render(user, new Html("<p>Diese Aufgabe existert leider nicht.</p><p>Zur&uuml;ck zur <a href=\""
+              + routes.JS.index() + "\">Startseite</a>.</p>")));
     
     return ok(js.render(UserManagement.getCurrentUser(), exercise));
 

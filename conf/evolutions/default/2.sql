@@ -18,9 +18,9 @@ insert into exercise (`type`, `id`, `title`, `exerciseText`, `file_name`, `defau
    	("spread", 5, "Planung Schullandheimaufenthalt", "Sie sind beauftragt, einen Schullandheimaufenthalt zu planen und die Kosten zu kalkulieren.", "Aufgabe_Schullandheim", "", "");
 	
 insert into xmlexercise (`id`, `title`, `exerciseType`, `referenceFileName`, `exerciseText`) values
-	(1, "Hello, XML", "XMLAgainstDTD", "party.dtd", "Erstellen Sie zu dieser DTD ein passendes XML-Dokument"),
+	(1, "Hello, XML", "XMLAgainstDTD", "part.dtd", "Erstellen Sie zu dieser DTD ein passendes XML-Dokument"),
 	(2, "Hello, XSD", "XMLAgainstXSD", "books.xsd", "Erstellen Sie zu diesem XML Schema ein passendes XML-Dokument"),
-	(3, "Hello, DTD", "DTDAgainstXML", "note.xml", "Erstellen Sie für dieses XML-Dokument eine passende DTD");
+	(3, "Hello, DTD", "DTDAgainstXML", "third.xml", "Erstellen Sie für dieses XML-Dokument eine passende DTD");
 
 insert into html_task (`exercise_id`, `task_id`, `taskDesc`, `xpath_query_name`, `attributes`, `defining_attribute`) values
 	(1, 1, "Erstellen Sie ein Formular auf der Seite. Als Aktion soll test und als Methode 'post' angegeben werden.",
@@ -80,7 +80,13 @@ insert into js_testvalue (`id`, `test_id`, `value`) values
 	(5, 3, 44), (6, 3, 43),
 	(7, 4, "'Hallo '"), (8, 4, "'Welt'"), (9, 4, "'!'"),
 	(10, 5, "'Test'"), (11, 5, "'Test'"), (12, 5, "'Test'");
-	
+
+# SQL
+
+insert into sql_exercise(`id`, `title`, `text`, `sample`) values
+	(1, "Alle Telefonnumern", "Geben Sie alle Telefonnummern aus!", "SELECT * FROM phone"),
+	(2, "TODO", "Geben Sie die Namen aller Personen aus, die eine Geschäftsnummer besitzen", "SELECT name FROM phone WHERE type=\'work\'");
+
 # --- !Downs
 
 SET FOREIGN_KEY_CHECKS = 0;

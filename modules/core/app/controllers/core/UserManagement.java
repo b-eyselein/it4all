@@ -84,7 +84,7 @@ public class UserManagement extends Controller {
       Path solutionDirectory = util.getSolDirForUser(newStudent);
       if(!Files.exists(solutionDirectory, LinkOption.NOFOLLOW_LINKS))
         try {
-          Files.createDirectory(solutionDirectory);
+          Files.createDirectories(solutionDirectory);
         } catch (IOException e) {
           Logger.error("Could not create solution directory for user " + userName, e);
         }

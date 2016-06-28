@@ -22,7 +22,7 @@ public class Solution extends Controller {
   private Util util;
 
   public Result site(User user, int exercise) {
-    Path file = util.getSolFileForExerciseAndType(user, EXERCISE_TYPE, exercise, EXERCISE_TYPE);
+    Path file = util.getSolFileForExercise(user, EXERCISE_TYPE, exercise, EXERCISE_TYPE);
     if(!Files.exists(file))
       return badRequest(error.render(user, new Html("Fehler: Datei nicht vorhanden!")));
     try {

@@ -16,7 +16,7 @@ import org.junit.Test;
  *
  */
 public class WrongTagFailTest {
-  
+
   /**
    * Test method for
    * {@link model.CorrectorXml#correctXMLAgainstDTD(java.io.File)}.
@@ -26,12 +26,19 @@ public class WrongTagFailTest {
     File file = new File("test/resources/partyWrongTag.xml");
     List<XMLError> out = XmlCorrector.correctXMLAgainstDTD(file);
     assertEquals("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), 2);
-    assertEquals("ERROR:" + "\n" + "Zeile: 4" + "\n" + "Fehler: " + "Element type \"guest\" must be declared.\n",
-        out.get(0).toString());
-    assertEquals("ERROR:" + "\n" + "Zeile: 15" + "\n" + "Fehler: "
-        + "The content of element type \"party\" must match \"(gast)*\".\n", out.get(1).toString());
+
+    XMLError firstError = out.get(0);
+    XMLError secondError = out.get(1);
+
+    assertEquals(XmlErrorType.ERROR, firstError.getErrorType());
+    assertEquals(4, firstError.getLine());
+    assertEquals("Element type \"guest\" must be declared.", firstError.getErrorMessage());
+
+    assertEquals(XmlErrorType.ERROR, secondError.getErrorType());
+    assertEquals(15, secondError.getLine());
+    assertEquals("The content of element type \"party\" must match \"(gast)*\".", secondError.getErrorMessage());
   }
-  
+
   /**
    * Test method for
    * {@link model.CorrectorXml#correctXMLAgainstXSD(java.io.File, java.io.File)}
@@ -39,14 +46,16 @@ public class WrongTagFailTest {
    */
   @Test
   public void testCorrectXMLAgainstXSD() {
-    File file = new File("test/resources/noteWrongTag.xml");
+    File xml = new File("test/resources/noteWrongTag.xml");
     File xsd = new File("test/resources/note.xsd");
     List<XMLError> out = null;
-    out = XmlCorrector.correctXMLAgainstXSD(xsd, file);
+    out = XmlCorrector.correctXMLAgainstXSD(xml, xsd);
     assertEquals("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), 1);
-    assertEquals(
-        "ERROR:" + "\n" + "Zeile: 5" + "\n" + "Fehler: "
-            + "cvc-complex-type.2.4.a: Invalid content was found starting with element 'sender'. One of '{from}' is expected.\n",
-        out.get(0).toString());
+
+    XMLError error = out.get(0);
+
+    assertEquals(XmlErrorType.ERROR, error.getErrorType());
+    assertEquals(5, error.getLine());
+    assertEquals("cvc-complex-type.2.4.a: Invalid content was found starting with element 'sender'. One of '{from}' is expected.", error.getErrorMessage());
   }
 }

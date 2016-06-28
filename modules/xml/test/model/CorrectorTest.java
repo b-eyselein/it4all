@@ -1,5 +1,8 @@
 package model;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.util.List;
 
@@ -22,8 +25,10 @@ public class CorrectorTest {
    */
   @Test
   public void testCorrectDTDAgainstXML() {
-    // FIXME: implement!
-    // fail("Not yet implemented");
+    File referenceFile = new File("test/resources/party.xml");
+    File solution = new File("test/resources/party.dtd");
+    List<XMLError> out = XmlCorrector.correctDTDAgainstXML(solution, referenceFile);
+    assertTrue(out.isEmpty());
   }
   
   /**
@@ -34,7 +39,7 @@ public class CorrectorTest {
   public void testCorrectXMLAgainstDTD() {
     File file = new File("test/resources/party.xml");
     List<XMLError> out = XmlCorrector.correctXMLAgainstDTD(file);
-    Assert.assertTrue(out.isEmpty());
+    assertTrue(out.isEmpty());
   }
   
   /**
@@ -47,9 +52,9 @@ public class CorrectorTest {
     File xml = new File("test/resources/note.xml");
     File xsd = new File("test/resources/note.xsd");
     List<XMLError> out = null;
-    out = XmlCorrector.correctXMLAgainstXSD(xsd, xml);
-    Assert.assertNotNull(out);
-    Assert.assertTrue(out.isEmpty());
+    out = XmlCorrector.correctXMLAgainstXSD(xml, xsd);
+    assertNotNull(out);
+    assertTrue(out.isEmpty());
   }
   
 }

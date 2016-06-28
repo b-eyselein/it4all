@@ -19,7 +19,7 @@ public class BF_XOR implements BFKnoten{
 	
 	@Override
 	public String toString() {
-		return "("+this.linkerK.toString()+" XOR "+this.rechterK.toString()+")";
+		return this.linkerK.toString()+" XOR "+this.rechterK.toString();
 	}
 
 	@Override

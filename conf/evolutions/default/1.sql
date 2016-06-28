@@ -87,6 +87,14 @@ create table js_testvalue (
   constraint pk_js_testvalue primary key (id)
 );
 
+create table sql_exercise (
+  id                            integer auto_increment not null,
+  title                         varchar(255),
+  text                          text,
+  sample                        varchar(255),
+  constraint pk_sql_exercise primary key (id)
+);
+
 create table users (
   name                          varchar(255) not null,
   constraint pk_users primary key (name)
@@ -162,6 +170,8 @@ drop table if exists html_task;
 drop table if exists js_test;
 
 drop table if exists js_testvalue;
+
+drop table if exists sql_exercise;
 
 drop table if exists users;
 
