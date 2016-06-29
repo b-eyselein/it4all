@@ -15,23 +15,23 @@ import views.html.naryadditionsolution;
 
 @Security.Authenticated(Secured.class)
 public class NAryAddition extends Controller {
-
+  
   @Inject
-  FormFactory factory;
-
+  private FormFactory factory;
+  
   public Result checkSolution() {
     DynamicForm dynFormula = factory.form().bindFromRequest();
-
+    
     String committedLearnerSolution = dynFormula.get("learnerSolution");
     String learnerSolution = new StringBuilder(committedLearnerSolution).reverse().toString().replaceAll("\\s", "");
     String[] questionString = dynFormula.get("question").split(",");
-
+    
     NAryAdditionQuestion question = new NAryAdditionQuestion(Integer.parseInt(questionString[0]),
         Integer.parseInt(questionString[1]), questionString[2], learnerSolution);
-
+    
     return ok(naryadditionsolution.render(UserManagement.getCurrentUser(), question));
   }
-
+  
   public Result index() {
     return ok(naryadditionquestion.render(UserManagement.getCurrentUser(), new NAryAdditionQuestion()));
   }
