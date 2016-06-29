@@ -17,7 +17,30 @@
 							</td>
 							}
 							<td class="col-md-10">
-								@formula
+								<style>
+									a.mytooltip:link {
+									    color: #333333;
+									    text-decoration: none;
+									}
+									a.mytooltip:visited {
+									    color: #333333;
+									    text-decoration: none;
+									}
+									a.mytooltip:hover {
+									    color: #333333;
+									    text-decoration: none;
+									}
+									a.mytooltip:active {
+									    color: #333333;
+									    text-decoration: none;
+									}
+									.tooltip-inner {
+ 									   max-width: 1000px;
+									}
+								</style>
+								<a class="mytooltip" href="#" data-toggle="tooltip" data-placement="right" title="@formula">
+									@Html(formula.replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;").intern())
+								</a>
 							</td>
 						</tr>
 					</thread>
@@ -28,7 +51,7 @@
 							<td>@zeros(j)(i)</td>
 							}
 							<td>
-								<input type="text" name = @i.toString size = 1>
+								<input type="text" name="@i.toString" size="1" required>
 							</td>
 						}
 					</tbody>
@@ -39,4 +62,9 @@
 		</div>
 	</div>
 </div>
+<script>
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip(); 
+});
+</script>
 }

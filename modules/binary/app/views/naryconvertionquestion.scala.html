@@ -1,23 +1,24 @@
 @* NAryV Template File *@
-@(user: model.user.User, fromNumberType: String, number: String, toNumberType: String)
+@(user: model.user.User, question: model.NAryNumbers.Questions.NAryConvertionQuestion)
 
 @main("Zahlen umformen", user) {
 	<div class="container">
 		<div class="panel panel-default">
-	<div class="panel-heading">
-	Wandeln Sie die @fromNumberType @number in eine @toNumberType um:
-	@if(toNumberType.equals("Bin\u00e4rzahl")) {
-	<em><p class="text-info .small">(Bin&auml;rzahlen bitte in 8-Bit-Darstellung mit f&uuml;hrenden Nullen angeben.)</p><em>
-	}
-	</div>
-	<div class="panel-body">
-	 <form role="form" action="@binary.routes.NAryConvertion.addLearnerSolution" method="post">
-			<div class="form-group">
-			<input class="form-control" name="learnerSolution" placeholder="Ihre L&ouml;sung">
+			<div class="panel-heading">
+				Wandeln Sie die @question.getFromNumberType() @question.getFromValue()<sub>@question.getBase()</sub> in eine @question.getToNumberType() um:
+				@if(question.getToNumberType().equals("Bin\u00e4rzahl")) {
+				<em><p class="text-info .small">(Bin\u00e4rzahlen bitte in 8-Bit-Darstellung mit f&uuml;hrenden Nullen angeben.)</p><em>
+				}
 			</div>
-			<button type="submit" class="btn btn-primary">Pr&uuml;fen</button>
-			</form>
-	</div>
-	</div>
+			<div class="panel-body">
+				<form role="form" action="@binary.routes.NAryConvertion.checkSolution" method="get">
+						<div class="form-group">
+							<input class="form-control" name="learnerSolution" placeholder="Ihre L&ouml;sung">
+							<input type="hidden" name="question" value=@question.toString()>
+						</div>
+						<button type="submit" class="btn btn-primary">Pr&uuml;fen</button>
+				</form>
+			</div>
+		</div>
 	</div>
 }

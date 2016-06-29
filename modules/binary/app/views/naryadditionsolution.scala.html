@@ -1,32 +1,32 @@
 @* NArySolution Template File *@
-@(user: model.user.User, givenAnswer: String, numberType: String, number1: String, number2: String, correctAnswer: String, correct: Boolean)
+@(user: model.user.User, question: model.NAryNumbers.Questions.NAryAdditionQuestion)
 @main("Addition", user) {
 	<div class="container">
-		<div class="panel panel-@if(correct){success}else{danger}">
+		<div class="panel panel-@if(question.checkSolution()){success}else{danger}">
 			<div class="panel-heading">
-					Addieren sie die folgenden @numberType:
-			@if(numberType.equals("Bin\u00e4rzahlen")) {
+			Addieren sie die folgenden @question.getNumberType():
+			@if(question.getNumberType().equals("Bin\u00e4rzahlen")) {
 			<em><p class="text-info .small">(Bin&auml;rzahlen bitte in 8-Bit-Darstellung mit f&uuml;hrenden Nullen angeben.)</p><em>
 			}
 			</div>
 			<div class="panel-body">
 				<div class="row">
 					<div class="col-sm-2">
-						<p class="text-right">@number1 &nbsp;&nbsp;</p>
-						<p class="text-right">+ @number2 &nbsp;&nbsp;</p>
-						<p class="text-right"><strong>= @givenAnswer &nbsp;&nbsp;</strong></p>
+						<p class="text-right">@question.getNumber1()<sub>@question.getBase()</sub>&nbsp;</p>
+						<p class="text-right">+ @question.getNumber2()<sub>@question.getBase()</sub>&nbsp;</p>
+						<p class="text-right"><strong>= @question.getLearnerSolution()<sub>@question.getBase()</sub>&nbsp;</strong></p>
 					</div>
 				</div>
 				<div class="row">
 					<div class="container">
 						<p>Ihre L&ouml;sung ist 
-							@if(correct) {
+							@if(question.checkSolution()) {
 								richtig.</p>
 							} else {
-						leider falsch. </p>
-						<p>Die richtige Antwort lautet @correctAnswer.</p>
-						}
-						&nbsp;<br>
+							leider falsch. </p>
+							<p>Die richtige Antwort lautet @question.getSum().toString().</p>
+							}
+							&nbsp;<br>
 						<a href="@binary.routes.NAryAddition.index" class="btn btn-primary" role="button">
 							N&auml;chste Aufgabe
 						</a>

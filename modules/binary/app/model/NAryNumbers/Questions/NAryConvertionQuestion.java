@@ -10,6 +10,7 @@ public class NAryConvertionQuestion {
 	  private String fromNumberType;
 	  private String toNumberType;
 	  private boolean toDecimalNumber;
+	  private String learnerSolution;
 	  
 	  public NAryConvertionQuestion() {
 		  Random generator = new Random();
@@ -45,6 +46,26 @@ public class NAryConvertionQuestion {
 		    }
 	  }
 	  
+	  public NAryConvertionQuestion(int value, String fromNumberType, String toNumberType, String learnerSolution) {
+		  this.fromNumberType =  fromNumberType;
+		  this.toNumberType =  fromNumberType;
+		  this.learnerSolution = learnerSolution;
+		  int base;
+		  if (toNumberType.equals("Dezimalzahl")) {
+			  toDecimalNumber = true;
+			  if (fromNumberType.equals("Binärzahl")) base = 2;
+			  else if (fromNumberType.equals("Oktalzahl")) base = 8;
+			  else base = 16;
+		  }
+		  else {
+			  toDecimalNumber = false;
+			  if (toNumberType.equals("Binärzahl")) base = 2;
+			  else if (toNumberType.equals("Oktalzahl")) base = 8;
+			  else base = 16;
+		  }
+		  number = new NAryNumber(value,base);
+	  }
+	  
 	  public String getToNumberType() {
 		  return toNumberType;
 	  }
@@ -61,5 +82,26 @@ public class NAryConvertionQuestion {
 	  public String getToValue() {
 		  if(toDecimalNumber) return number.toDec();
 		  else return number.toString();
+	  }
+	  
+	  public String getBase() {
+		  return ""+number.getBase();
+	  }
+	  
+	  public String getLearnerSolution() {
+		  return learnerSolution;
+	  }
+	  
+	  public void setLearnerSolution(String solution) {
+		  learnerSolution = solution;
+	  }
+	 
+	  public boolean checkSolution() {
+		  if(number.toString().equals(learnerSolution.toUpperCase())) return true;
+		  return false;
+	  }
+	  
+	  public String toString() {
+		  return number.getValue()+","+getFromNumberType()+","+getToNumberType();
 	  }
 }
