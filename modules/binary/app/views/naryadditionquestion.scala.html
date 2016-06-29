@@ -1,29 +1,41 @@
-@* NAryV Template File *@
-@(user: model.user.User, question: model.NAryNumbers.Questions.NAryAdditionQuestion)
+@(user: model.user.User, question: model.NAryNumbers.questions.NAryAdditionQuestion)
 
 @main("Addition", user) {
-	<div class="container">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-			Addieren sie die folgenden @question.getNumberType():
-			@if(question.getNumberType().equals("Bin\u00e4rzahlen")) {
-			<em><p class="text-info .small">(Bin&auml;rzahlen bitte in 8-Bit-Darstellung mit f&uuml;hrenden Nullen angeben.)</p><em>
-			}
-			</div>
-			<div class="panel-body">
-				<div class="col-sm-2">	
-					<p class="text-right">@question.getNumber1() <sub>@question.getBase()</sub>&nbsp;</p>
-					<p class="text-right">+ @question.getNumber2() <sub>@question.getBase()</sub>&nbsp;</p>
-					<form role="form" action="@binary.routes.NAryAddition.checkSolution()" method="get">
-						<div class="form-group">
-							<input style="direction: rtl;unicode-bidi: bidi-override;" class="form-control text-right" name="learnerSolution" placeholder="Ihre L&ouml;sung">
-							<input type="hidden" name="question" value=@question.toString()>
-						</div>
-						<button type="submit" class="btn btn-primary">Pr&uuml;fen</button>
-					</form>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+<style>
+.number-input {
+  direction: rtl;
+  unicode-bidi: bidi-override;
+}
+</style>
+
+<div class="container">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      Addieren sie die folgenden @question.getQuestionType().getPluralName():
+      @if(question.getQuestionType() == model.NAryNumbers.questions.NumberBase.BINARY) {
+      	<p><em class="text-info">(Bin&auml;rzahlen bitte in 8-Bit-Darstellung mit f&uuml;hrenden Nullen angeben.)</em></p>
+      } 
+    </div>
+    <div class="panel-body">
+      <div class="col-sm-4  col-sm-offset-3">
+        <p class="text-right">
+          @question.getFirstSummand()<sub>@question.getBase()</sub>&nbsp;
+        </p>
+        <p class="text-right">
+          + @question.getSecondSummand()<sub>@question.getBase()</sub>&nbsp;
+        </p>
+        <form role="form" action="@binary.routes.NAryAddition.checkSolution()" method="post">
+          <div class="form-group">
+            <input  class="number-input form-control text-right" name="learnerSolution" placeholder="Ihre L&ouml;sung" required>
+            <input hidden name="summand1" value="@question.getFirstSummand()">
+            <input hidden name="summand2" value="@question.getSecondSummand()">
+            <input type="number" hidden name="base" value="@question.getBase()">
+          </div>
+          <button type="submit" class="btn btn-primary">Pr&uuml;fen</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
 }

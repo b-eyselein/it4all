@@ -1,5 +1,5 @@
 @* NArySolution Template File *@
-@(user: model.user.User, question: model.NAryNumbers.Questions.NAryConvertionQuestion)
+@(user: model.user.User, question: model.NAryNumbers.questions.NAryConvertionQuestion)
 @main("Zahlen umformen", user) {
 	<div class="container">
 		<div class="panel panel-@if(question.checkSolution()){success}else{danger}">

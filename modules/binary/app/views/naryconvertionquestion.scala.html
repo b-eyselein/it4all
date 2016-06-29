@@ -1,24 +1,27 @@
-@* NAryV Template File *@
-@(user: model.user.User, question: model.NAryNumbers.Questions.NAryConvertionQuestion)
-
-@main("Zahlen umformen", user) {
-	<div class="container">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				Wandeln Sie die @question.getFromNumberType() @question.getFromValue()<sub>@question.getBase()</sub> in eine @question.getToNumberType() um:
-				@if(question.getToNumberType().equals("Bin\u00e4rzahl")) {
-				<em><p class="text-info .small">(Bin\u00e4rzahlen bitte in 8-Bit-Darstellung mit f&uuml;hrenden Nullen angeben.)</p><em>
-				}
-			</div>
-			<div class="panel-body">
-				<form role="form" action="@binary.routes.NAryConvertion.checkSolution" method="get">
-						<div class="form-group">
-							<input class="form-control" name="learnerSolution" placeholder="Ihre L&ouml;sung">
-							<input type="hidden" name="question" value=@question.toString()>
-						</div>
-						<button type="submit" class="btn btn-primary">Pr&uuml;fen</button>
-				</form>
-			</div>
-		</div>
-	</div>
+@(user: model.user.User, question: model.NAryNumbers.questions.NAryConvertionQuestion) @main("Zahlen umformen", user) {
+<div class="container">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      Wandeln Sie die @question.getFromNumberType().getSingularName()
+      <code>
+        @question.getFromValue()<sub>@question.getFromNumberType().getBase()</sub>
+      </code>
+      in eine @question.getToNumberType().getSingularName um:
+      @if(question.getToNumberType() == model.NAryNumbers.questions.NumberBase.BINARY) {
+      	<p><em class="text-info">(Bin&auml;rzahlen bitte in 8-Bit-Darstellung mit f&uuml;hrenden Nullen angeben.)</em></p>
+      } 
+    </div>
+    <div class="panel-body">
+      <form role="form" action="@binary.routes.NAryConvertion.checkSolution" method="post">
+        <div class="form-group">
+          <input class="form-control" name="learnerSolution" placeholder="Ihre L&ouml;sung" required>
+          <input hidden name="value" value="@question.getFromValue()">
+          <input type="number" hidden name="startingNB" value="@question.getFromNumberType().getBase()">
+          <input type="number" hidden name="targetNB" value="@question.getToNumberType().getBase()">
+        </div>
+        <button type="submit" class="btn btn-primary">Pr&uuml;fen</button>
+      </form>
+    </div>
+  </div>
+</div>
 }
