@@ -1,5 +1,9 @@
 package model.NAryNumbers;
 
+import java.util.LinkedList;
+
+import com.google.common.base.Strings;
+
 import model.NAryNumbers.questions.NumberBase;
 
 public class BinaryNumber extends NAryNumber {
@@ -23,20 +27,25 @@ public class BinaryNumber extends NAryNumber {
   }
 
   /**
-   * Returns a string of at least 8 digits (2 Bytes). Always fills with leading
-   * zeros up to the next Byte. Examples: 101 is represented as 00000101
-   * 110001111 is represented as 000110001111
+   * Returns a string of at least 8 digits (2 bytes) in groups of 4 digits.
+   * Always fills up to the next byte with leading zeros. Examples:
+   * <ul>
+   * <li>101 is represented as 0000 0101</li>
+   * <li>1111 is represented as 0000 1111</li>
+   * <li>1 0101 0001 as 0001 0101 0001</li>
+   * </ul>
    */
   @Override
   public String toString() {
     String result = super.toString();
-    int bytes = (int) Math.ceil((double) result.length() / 4);
-    if(bytes < 2)
-      bytes = 2;
-    int leadingZeros = bytes * 4 - result.length();
-    for(int i = 0; i < leadingZeros; i++) {
-      result = 0 + result;
-    }
+    int digits = 4 * Math.max(2, (int) Math.ceil((double) result.length() / 4));
+    result = Strings.padStart(result, digits, '0');
+
+    LinkedList<String> teilString = new LinkedList<>();
+    for(int i = 0; i < digits; i = i + 4)
+      teilString.add(result.substring(i, i + 4));
+    result = String.join(" ", teilString);
+
     return result;
   }
 }
