@@ -18,26 +18,18 @@ public class NAryConvertion extends Controller {
 
   @Inject
   FormFactory factory;
-  
-  // FIXME: Übergabe an Client!
-  NAryConvertionQuestion question;
-  String learnerSolution;
-
-  public Result addLearnerSolution() {
-    DynamicForm dynFormula = factory.form().bindFromRequest();
-    learnerSolution = dynFormula.get("learnerSolution");
-    return redirect(routes.NAryConvertion.checkSolution());
-  }
-
-  public Result checkSolution() {
-    return ok(naryconvertionsolution.render(UserManagement.getCurrentUser(), learnerSolution,
-        question.getFromNumberType(), question.getFromValue(), question.getToNumberType(), question.getToValue(),
-        question.getToValue().equals(learnerSolution)));
-  }
 
   public Result index() {
-    question = new NAryConvertionQuestion();
-    return ok(naryconvertionquestion.render(UserManagement.getCurrentUser(), question.getFromNumberType(),
-        question.getFromValue(), question.getToNumberType()));
+    return ok(naryconvertionquestion.render(UserManagement.getCurrentUser(),
+    		new NAryConvertionQuestion()));
+  }
+  
+  public Result checkSolution() {
+	DynamicForm dynFormula = factory.form().bindFromRequest();
+	String learnerSolution = dynFormula.get("learnerSolution").replaceAll("\\s","");
+	String[] questionString = dynFormula.get("question").split(",");
+    return ok(naryconvertionsolution.render(UserManagement.getCurrentUser(),
+    		new NAryConvertionQuestion(Integer.parseInt(questionString[0]), 
+    				questionString[1], questionString[2], learnerSolution)));
   }
 }

@@ -14,6 +14,7 @@ import views.html.naryadditionquestion;
 import views.html.naryadditionsolution;
 import model.NAryNumbers.*;
 import model.NAryNumbers.Questions.NAryAdditionQuestion;
+import model.NAryNumbers.Questions.NAryConvertionQuestion;
 
 @Security.Authenticated(Secured.class)
 public class NAryAddition extends Controller {
@@ -21,27 +22,18 @@ public class NAryAddition extends Controller {
   @Inject
   FormFactory factory;
   
-  NAryAdditionQuestion question;
-  
-  String learnerSolution;
-  
-  public Result addLearnerSolution() {
-    DynamicForm dynFormula = factory.form().bindFromRequest();
-    learnerSolution = new StringBuilder(dynFormula.get("learnerSolution")).reverse().toString();
-    return redirect(routes.NAryAddition.checkSolution());
-  }
-  
   public Result index() {
-    question = new NAryAdditionQuestion();
    	return ok(naryadditionquestion.render(UserManagement.getCurrentUser(),
-   			question.getNumber1(), question.getNumber2(), question.getNumberType()));
+   			new NAryAdditionQuestion()));
    	}
   
   public Result checkSolution() {
+	DynamicForm dynFormula = factory.form().bindFromRequest();
+	String learnerSolution = new StringBuilder(dynFormula.get("learnerSolution")).reverse().toString().replaceAll("\\s","");
+	String[] questionString = dynFormula.get("question").split(",");
 	return ok(naryadditionsolution.render(UserManagement.getCurrentUser(),
-			learnerSolution, question.getNumberType(),
-			question.getNumber1(), question.getNumber2(), question.getSum(),
-			question.getSum().equals(learnerSolution)));
+			new NAryAdditionQuestion(Integer.parseInt(questionString[0]), Integer.parseInt(questionString[1]),
+					questionString[2], learnerSolution)));
   }
 }
 

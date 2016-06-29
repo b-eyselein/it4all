@@ -10,8 +10,6 @@ POST  /boolformel    controllers.binary.BoolFormelErstellen.addLearnerSolution()
 
 GET   /naryconvertion    controllers.binary.NAryConvertion.index()
 GET   /naryconvertion/solution    controllers.binary.NAryConvertion.checkSolution()
-POST  /naryconvertion    controllers.binary.NAryConvertion.addLearnerSolution()
 
 GET   /naryaddition    controllers.binary.NAryAddition.index()
 GET   /naryaddition/solution    controllers.binary.NAryAddition.checkSolution()
-POST  /naryaddition    controllers.binary.NAryAddition.addLearnerSolution()

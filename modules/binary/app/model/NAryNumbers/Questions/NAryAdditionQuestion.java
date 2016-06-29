@@ -11,6 +11,7 @@ public class NAryAdditionQuestion {
   private NAryNumber number2;
   private NAryNumber sum;
   private String numberType;
+  private String learnerSolution;
 
   public NAryAdditionQuestion() {
     // Create two random numbers with random values that are at max 256 in sum
@@ -36,6 +37,24 @@ public class NAryAdditionQuestion {
       sum = BinaryNumber.nAryToBinary(sum);
     }
   }
+  
+  public NAryAdditionQuestion(int value1, int value2, String numberType, String learnerSolution) {
+	  this.learnerSolution = learnerSolution;
+	  if (numberType.equals("Oktalzalen")) {
+		  number1 = new NAryNumber(value1, 8);
+		  number2 = new NAryNumber(value2, 8);
+		  sum = NAryNumber.addNArys(number1, number2);
+	  }
+	  else if (numberType.equals("Hexdezimalzahlen")){
+		  number1 = new NAryNumber(value1, 16);
+		  number2 = new NAryNumber(value2, 16);
+		  sum = NAryNumber.addNArys(number1, number2);
+	  } else {
+		  number1 = new BinaryNumber(value1);
+		  number2 = new BinaryNumber(value2);
+		  sum = BinaryNumber.addNArys(number1, number2);
+	  }
+  }
 
   public String getNumber1() {
     return number1.toString();
@@ -51,5 +70,22 @@ public class NAryAdditionQuestion {
 
   public String getSum() {
     return sum.toString();
+  }
+  
+  public String getLearnerSolution() {
+	  return learnerSolution;
+  }
+  
+  public void setLearnerSolution(String solution) {
+	  learnerSolution = solution;
+  }
+  
+  public String getBase() {
+	  return ""+number1.getBase();
+  }
+  
+  public boolean checkSolution() {
+	  if(sum.toString().equals(learnerSolution.toUpperCase())) return true;
+	  return false;
   }
 }
