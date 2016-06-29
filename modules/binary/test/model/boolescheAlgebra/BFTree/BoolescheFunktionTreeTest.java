@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class BoolescheFunktionTreeTest {
-  
+
   @Test
   public void testBoolescheFunktionTree() {
     // fail("Not yet implemented");
@@ -32,9 +32,8 @@ public class BoolescheFunktionTreeTest {
 
     BoolescheFunktionTree tree2 = new BoolescheFunktionTree(or, a1, b1);
 
-    assertTrue(tree1.compareBoolscheFormelTree(tree2));
+    assertTrue("Bäume sollten gleich sein, sind es aber nicht!", tree1.compareBoolscheFormelTree(tree2));
 
-    fail("Not yet implemented");
   }
 
   @Test

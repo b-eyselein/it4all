@@ -1,8 +1,8 @@
-@* NArySolution Template File *@
 @(user: model.user.User, givenAnswer: String, correct: Boolean, exception_msg: String, var_names: Array[String], wahrheitstafel: Array[Array[Char]], spalten: Int, zeilen: Int)
+
 @main("Formel erstellen", user) {
 	<div class="container">
-		<div class="panel panel-@if(correct){success}else{danger}">
+		<div class="@if(correct) {panel panel-success} else {panel panel-danger}">
 			<div class="panel-heading">
 					Erstellen Sie die Formel zu folgender Wahrheitstafel:
 			</div>

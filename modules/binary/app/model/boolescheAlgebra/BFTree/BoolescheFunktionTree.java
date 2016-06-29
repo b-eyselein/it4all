@@ -37,6 +37,8 @@ public class BoolescheFunktionTree {
    */
   public boolean compareBoolscheFormelTree(BoolescheFunktionTree otherBFT) throws IllegalArgumentException {
     
+    // FIXME: number of variabes can be different [e. g. a == (a and b) or (a
+    // and not b)]
     if(this.getAnzahlVariablen() != otherBFT.getAnzahlVariablen()) {
       throw new IllegalArgumentException("Wrong number of vars. Expected " + this.getAnzahlVariablen() + " but was "
           + otherBFT.getAnzahlVariablen() + ".");
