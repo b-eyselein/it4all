@@ -16,10 +16,10 @@ public class Test_StringToNaAry
 		String str_hex_234_3 = "0xEA";
 		String str_hex_234_4 = "0XeA";
 		
-		NAryNumber hex_1 = NAryNumber.StringToNAry(str_hex_234_1,16);
-		NAryNumber hex_2 = NAryNumber.StringToNAry(str_hex_234_2,16);
-		NAryNumber hex_3 = NAryNumber.StringToNAry(str_hex_234_3,16);
-		NAryNumber hex_4 = NAryNumber.StringToNAry(str_hex_234_4,16);
+		NAryNumber hex_1 = NAryNumber.stringToNAry(str_hex_234_1,16);
+		NAryNumber hex_2 = NAryNumber.stringToNAry(str_hex_234_2,16);
+		NAryNumber hex_3 = NAryNumber.stringToNAry(str_hex_234_3,16);
+		NAryNumber hex_4 = NAryNumber.stringToNAry(str_hex_234_4,16);
 		NAryNumber hex_5 = NAryNumber.StringToNAry(str_hex_234_3);
 		NAryNumber hex_6 = NAryNumber.StringToNAry(str_hex_234_4);
 		
@@ -39,10 +39,10 @@ public class Test_StringToNaAry
 		String str_hex_234_3 = "-0xEA";
 		String str_hex_234_4 = "-0XeA";
 		
-		NAryNumber hex_1 = NAryNumber.StringToNAry(str_hex_234_1,16);
-		NAryNumber hex_2 = NAryNumber.StringToNAry(str_hex_234_2,16);
-		NAryNumber hex_3 = NAryNumber.StringToNAry(str_hex_234_3,16);
-		NAryNumber hex_4 = NAryNumber.StringToNAry(str_hex_234_4,16);
+		NAryNumber hex_1 = NAryNumber.stringToNAry(str_hex_234_1,16);
+		NAryNumber hex_2 = NAryNumber.stringToNAry(str_hex_234_2,16);
+		NAryNumber hex_3 = NAryNumber.stringToNAry(str_hex_234_3,16);
+		NAryNumber hex_4 = NAryNumber.stringToNAry(str_hex_234_4,16);
 		NAryNumber hex_5 = NAryNumber.StringToNAry(str_hex_234_3);
 		NAryNumber hex_6 = NAryNumber.StringToNAry(str_hex_234_4);
 		
@@ -58,7 +58,7 @@ public class Test_StringToNaAry
 	public void testWrongCharacter()
 	{
 		String str_hex_234_1 = "eaZ";
-		NAryNumber hex_1 = NAryNumber.StringToNAry(str_hex_234_1,16);
+		NAryNumber hex_1 = NAryNumber.stringToNAry(str_hex_234_1,16);
 	}
 	
 	@Test (expected = IllegalArgumentException.class)

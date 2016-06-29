@@ -9,15 +9,11 @@ import java.util.List;
 import org.junit.Test;
 
 /**
- *
- */
-
-/**
  * @author rav
  *
  */
 public class CorrectorTest {
-  
+
   /**
    * Test method for
    * {@link model.CorrectorXml#correctDTDAgainstXML(java.io.File)}.

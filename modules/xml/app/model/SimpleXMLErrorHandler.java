@@ -6,6 +6,10 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import org.xml.sax.ErrorHandler;
+
+import java.util.List;
+
 public class SimpleXMLErrorHandler implements ErrorHandler {
   private List<XMLError> Output;
   
@@ -39,5 +43,6 @@ public class SimpleXMLErrorHandler implements ErrorHandler {
     } else {
       Output.add(new XMLError(XmlErrorType.WARNING.toString(), exception.getMessage(), XmlErrorType.WARNING));
     }
+
   }
 }

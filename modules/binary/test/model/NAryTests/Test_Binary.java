@@ -16,10 +16,10 @@ public class Test_Binary
 		String bin_3 = "1000111001101";
 		String bin_4 = "0b10101";
 		
-		BinaryNumber bin_a = BinaryNumber.StringToBin(bin_1);
-		BinaryNumber bin_b = BinaryNumber.StringToBin(bin_2);
-		BinaryNumber bin_c = BinaryNumber.StringToBin(bin_3);
-		BinaryNumber bin_d = BinaryNumber.StringToBin(bin_4);
+		BinaryNumber bin_a = BinaryNumber.stringToBin(bin_1);
+		BinaryNumber bin_b = BinaryNumber.stringToBin(bin_2);
+		BinaryNumber bin_c = BinaryNumber.stringToBin(bin_3);
+		BinaryNumber bin_d = BinaryNumber.stringToBin(bin_4);
 		
 		// Tests the correct representation
 		assertEquals(bin_a.toString(),"00001101");

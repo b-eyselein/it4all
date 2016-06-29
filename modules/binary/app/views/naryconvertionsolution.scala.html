@@ -1,25 +1,20 @@
-@* NArySolution Template File *@
-@(user: model.user.User, question: model.NAryNumbers.Questions.NAryConvertionQuestion)
+@(user: model.user.User, question: model.NAryNumbers.questions.NAryConvertionQuestion)
+
 @main("Zahlen umformen", user) {
-	<div class="container">
-		<div class="panel panel-@if(question.checkSolution()){success}else{danger}">
-	<div class="panel-heading">
-	Wandeln Sie die @question.getFromNumberType() @question.getFromValue() in eine @question.getToNumberType() um:
-	@if(question.getToNumberType().equals("Bin\u00e4rzahl")) {
-	<em><p class="text-info .small">(Bin&auml;rzahlen bitte in 8-Bit-Darstellung mit f&uuml;hrenden Nullen angeben.)</p><em>
-	}
-	</div>
-	<div class="panel-body">
-		@question.getLearnerSolution() ist 
-			@if(question.checkSolution()) {
-				richtig.<br>
-			} else {
-				leider falsch. <br>
-				Die richtige Antwort lautet @question.getToValue().<br>
-			}
-			&nbsp;<br> 
-	 	<p><a href="@binary.routes.NAryConvertion.index" class="btn btn-primary" role="button">N&auml;chste Aufgabe</a></p>
-	</div>
-	</div>
-	</div>
+<div class="container">
+  <div class="@if(question.checkSolution()) {panel panel-success} else {panel panel-danger}">
+    <div class="panel-heading">
+      Wandeln Sie die @question.getFromNumberType() @question.getFromValue() in eine @question.getToNumberType() um:
+      @if(question.getToNumberType() == model.NAryNumbers.questions.NumberBase.BINARY) {
+      	<p><em class="text-info">(Bin&auml;rzahlen bitte in 8-Bit-Darstellung mit f&uuml;hrenden Nullen angeben.)</em></p>
+      } 
+    </div>
+    <div class="panel-body">
+      @question.getLearnerSolution() ist @if(question.checkSolution()) { richtig.<br> } else { leider falsch. <br>
+      Die richtige Antwort lautet @question.getToValue().<br> } &nbsp;<br>
+      <p>
+        <a href= @binary.routes.NAryConvertion.index" class="btn btn-primary" role="button">N&auml;chste Aufgabe</a></p>
+    </div>
+  </div>
+</div>
 }

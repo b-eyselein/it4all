@@ -4,7 +4,7 @@ import javax.inject.Inject;
 
 import controllers.core.UserManagement;
 import model.Secured;
-import model.NAryNumbers.Questions.NAryAdditionQuestion;
+import model.NAryNumbers.questions.NAryAdditionQuestion;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.mvc.Controller;
@@ -17,22 +17,27 @@ import views.html.naryadditionsolution;
 public class NAryAddition extends Controller {
 
   @Inject
-  FormFactory factory;
+  private FormFactory factory;
 
   public Result checkSolution() {
     DynamicForm dynFormula = factory.form().bindFromRequest();
 
+    // TODO: firstSummand, secondSummand are NAryNumbers!
+    String firstSummandInNAry = dynFormula.get("summand1");
+    String secondSummandInNAry = dynFormula.get("summand2");
+    int base = Integer.parseInt(dynFormula.get("base"));
+    
     String committedLearnerSolution = dynFormula.get("learnerSolution");
-    String learnerSolution = new StringBuilder(committedLearnerSolution).reverse().toString().replaceAll("\\s", "");
-    String[] questionString = dynFormula.get("question").split(",");
+    String learnerSolInNAry = new StringBuilder(committedLearnerSolution).reverse().toString().replaceAll("\\s", "");
 
-    NAryAdditionQuestion question = new NAryAdditionQuestion(Integer.parseInt(questionString[0]),
-        Integer.parseInt(questionString[1]), questionString[2], learnerSolution);
+    NAryAdditionQuestion question = new NAryAdditionQuestion(firstSummandInNAry, secondSummandInNAry, base,
+        learnerSolInNAry);
 
     return ok(naryadditionsolution.render(UserManagement.getCurrentUser(), question));
   }
 
   public Result index() {
-    return ok(naryadditionquestion.render(UserManagement.getCurrentUser(), new NAryAdditionQuestion()));
+    NAryAdditionQuestion question = NAryAdditionQuestion.generateNew();
+    return ok(naryadditionquestion.render(UserManagement.getCurrentUser(), question));
   }
 }
