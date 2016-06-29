@@ -115,11 +115,25 @@ public class BoolescheFunktionParser {
   private static BFKnoten getNextKnoten(String ausdruck, BF_Variable[] vars) throws IllegalArgumentException {
     // entfernt fuehrende und anhaengend Leerzeichen und Klammern
     ausdruck = ausdruck.trim();
-    while(ausdruck.startsWith("(") && ausdruck.endsWith(")")) {
-      ausdruck = ausdruck.substring(1, ausdruck.length() - 1).trim();
+    int klammer = 0;
+    boolean von_klammer_umschlossen = true;
+    while (ausdruck.startsWith("(") && ausdruck.endsWith(")") && von_klammer_umschlossen) {
+      for (int i = 0; i < ausdruck.length(); i++) {
+        if (ausdruck.charAt(i) == '(') {
+          klammer++;
+        } else if (ausdruck.charAt(i) == ')') {
+          klammer--;
+          if (klammer == 0 && i != ausdruck.length()-1) {
+            von_klammer_umschlossen = false;
+          }
+        }
+      }
+      if (von_klammer_umschlossen) {
+        ausdruck = ausdruck.substring(1, ausdruck.length()-1).trim();
+      }
     }
     // suche xor
-    int klammer = 0;
+    klammer = 0;
     for(int i = 0; i < ausdruck.length() - 2; i++) {
       if(ausdruck.charAt(i) == '(') {
         klammer++;
