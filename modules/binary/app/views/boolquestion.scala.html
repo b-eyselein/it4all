@@ -7,7 +7,7 @@
 			F&uuml;llen Sie folgende Tabelle aus:
 		</div>
 		<div class="panel-body">
-			<form action="@binary.routes.Bool.tableAdd" method="post">
+			<form action="@binary.routes.Bool.indexSolution" method="post">
 				<table class="table">
 					<thread align = "right">
 						<tr>
@@ -56,7 +56,7 @@
 						}
 					</tbody>
 				</table>
-				
+				<input type = "hidden" name="bft" @bft>
 				<button type="submit" class="btn btn-primary">Pr&uuml;fen</button>
 			</form>
 		</div>

@@ -1,8 +1,7 @@
 GET    /index                     controllers.binary.Binary.index()
 
 GET    /bool                      controllers.binary.Bool.index()
-GET    /bool/solution             controllers.binary.Bool.indexSolution()
-POST   /bool                      controllers.binary.Bool.tableAdd()
+POST   /bool/solution             controllers.binary.Bool.indexSolution()
 
 GET    /boolformel                controllers.binary.BoolFormelErstellen.index()
 GET    /boolformel/solution       controllers.binary.BoolFormelErstellen.checkSolution()

@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import controllers.core.UserManagement;
 import model.Secured;
 import play.data.DynamicForm;
+import play.data.Form;
 import play.data.FormFactory;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -21,10 +22,10 @@ public class Bool extends Controller {
   private FormFactory factory;
 
   // FIXME: Übergabe an Client!
-  BoolescheFunktionTree bft;
   String[] solutions;
   int length;
-
+  BoolescheFunktionTree bft;
+  
   public Result index() {
     bft = BoolescheFunktionenGenerator.neueBoolescheFunktion();
     double d = bft.getAnzahlVariablen();
@@ -34,6 +35,14 @@ public class Bool extends Controller {
   }
 
   public Result indexSolution() {
+    solutions = new String[length];
+    DynamicForm dynFormula = factory.form().bindFromRequest();
+    for(int i = 0; i < length; i++) {
+      solutions[i] = dynFormula.get("" + i + "");
+    }
+    //Form<BoolescheFunktionTree> bftForm = factory.form(BoolescheFunktionTree.class).bindFromRequest();
+    //return ok(""+bftForm.get().getAnzahlVariablen());
+    //BoolescheFunktionTree bft = bftForm.get();
     boolean correct = bft.compareStringArray(solutions);
     // FIXME: initialize with right value...
     String[] answer = new String[solutions.length];
@@ -43,14 +52,5 @@ public class Bool extends Controller {
     }
     return ok(boolsolution.render(UserManagement.getCurrentUser(), new Boolean(correct), bft.toString(),
         bft.getVariablenTabelle(), length, solutions, answer, "1", bft));
-  }
-
-  public Result tableAdd() {
-    solutions = new String[length];
-    DynamicForm dynFormula = factory.form().bindFromRequest();
-    for(int i = 0; i < length; i++) {
-      solutions[i] = dynFormula.get("" + i + "");
-    }
-    return redirect(routes.Bool.indexSolution());
   }
 }
