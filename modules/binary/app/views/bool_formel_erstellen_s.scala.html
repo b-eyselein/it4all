@@ -1,4 +1,4 @@
-@(user: model.user.User, givenAnswer: String, correct: Boolean, exception_msg: String, var_names: Array[String], wahrheitstafel: Array[Array[Char]], spalten: Int, zeilen: Int)
+@(user: model.user.User, givenAnswer: String, correct: Boolean, exception_msg: String, var_names: Array[String], wahrheitstafel: Array[Array[Char]], spalten: Int, zeilen: Int, dnf: String, knf: String)
 
 @main("Formel erstellen", user) {
 	<div class="container">
@@ -44,6 +44,11 @@
 								<p>@exception_msg</p>
 							}
 						&nbsp;<br>
+						<p>
+							Musterl&ouml;sungen:<br>
+							kanonische disjunktive Normalform: &nbsp; @dnf <br>
+							kanonische konjunktive Normalform: &nbsp; @knf <br>
+						</p>
 						<a href="@binary.routes.BoolFormelErstellen.index" class="btn btn-primary" role="button">
 							N&auml;chste Aufgabe
 						</a>

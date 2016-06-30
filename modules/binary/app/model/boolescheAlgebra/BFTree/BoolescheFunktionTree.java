@@ -328,4 +328,54 @@ public class BoolescheFunktionTree {
     }
   }
   
+  public String kanonischeDisjunktiveNormalform() {
+    String formel = "";
+    boolean[][] wahrheitstafel = this.getWahrheitstafelBoolean();
+    String[] variablen = this.getVariablen();
+    for (int i = 0; i<wahrheitstafel[0].length; i++) {
+      if (wahrheitstafel[this.getAnzahlVariablen()][i]) {
+        if (formel.length() != 0) {
+          formel += " OR ";
+        }
+        for (int j = 0; j<wahrheitstafel.length-1; j++) {
+          if (j != 0) {
+            formel += " AND ";
+          }
+          if (wahrheitstafel[j][i]) {
+            formel += variablen[j];
+          } else {
+            formel += "NOT "+variablen[j];
+          }
+        }
+      }
+    }
+    return formel;
+  }
+  
+  public String kanonischeKonjunktiveNormalform() {
+    String formel = "";
+    boolean[][] wahrheitstafel = this.getWahrheitstafelBoolean();
+    String[] variablen = this.getVariablen();
+    for (int i = 0; i<wahrheitstafel[0].length; i++) {
+      if (!wahrheitstafel[this.getAnzahlVariablen()][i]) {
+        if (formel.length() != 0) {
+          formel += " AND ";
+        }
+        formel += "(";
+        for (int j = 0; j<wahrheitstafel.length-1; j++) {
+          if (j != 0) {
+            formel += " OR ";
+          }
+          if (!wahrheitstafel[j][i]) {
+            formel += variablen[j];
+          } else {
+            formel += "NOT "+variablen[j];
+          }
+        }
+        formel += ")";
+      }
+    }
+    return formel;
+  }
+  
 }

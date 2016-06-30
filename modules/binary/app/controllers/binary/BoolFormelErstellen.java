@@ -44,7 +44,7 @@ public class BoolFormelErstellen extends Controller {
       exception_msg = e.getMessage();
     }
     return ok(bool_formel_erstellen_s.render(UserManagement.getCurrentUser(), learnerSolution, correct, exception_msg,
-        bft.getVariablen(), bft.getWahrheitstafelChar(), spalten, zeilen));
+        bft.getVariablen(), bft.getWahrheitstafelChar(), spalten, zeilen, bft.kanonischeDisjunktiveNormalform(), bft.kanonischeKonjunktiveNormalform()));
   }
 
   public Result index() {
