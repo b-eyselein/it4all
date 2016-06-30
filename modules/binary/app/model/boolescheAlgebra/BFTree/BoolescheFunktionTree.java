@@ -4,7 +4,19 @@ import java.util.List;
 
 public class BoolescheFunktionTree {
   
+  /**
+   * Gibt 1 oder 0 zum passenden Wahrheitswert zurueck.
+   */
+  private static char booleantochar(boolean b) {
+    if(b) {
+      return '1';
+    } else {
+      return '0';
+    }
+  }
+  
   private BFKnoten knoten;
+  
   private BF_Variable[] vars;
   
   public BoolescheFunktionTree(BFKnoten k, BF_Variable... v) {
@@ -309,42 +321,24 @@ public class BoolescheFunktionTree {
     return this.knoten.getWert();
   }
   
-  /**
-   * Gibt boolesche Funktion als Sting zurueck.
-   */
-  @Override
-  public String toString() {
-    return knoten.toString();
-  }
-  
-  /**
-   * Gibt 1 oder 0 zum passenden Wahrheitswert zurueck.
-   */
-  private char booleantochar(boolean b) {
-    if(b) {
-      return '1';
-    } else {
-      return '0';
-    }
-  }
-  
   public String kanonischeDisjunktiveNormalform() {
     String formel = "";
     boolean[][] wahrheitstafel = this.getWahrheitstafelBoolean();
     String[] variablen = this.getVariablen();
-    for (int i = 0; i<wahrheitstafel[0].length; i++) {
-      if (wahrheitstafel[this.getAnzahlVariablen()][i]) {
-        if (formel.length() != 0) {
+    for(int i = 0; i < wahrheitstafel[0].length; i++) {
+      // Nur "true"-Werte in der Tafel
+      if(wahrheitstafel[this.getAnzahlVariablen()][i]) {
+        if(formel.length() != 0) {
           formel += " OR ";
         }
-        for (int j = 0; j<wahrheitstafel.length-1; j++) {
-          if (j != 0) {
+        for(int j = 0; j < wahrheitstafel.length - 1; j++) {
+          if(j != 0) {
             formel += " AND ";
           }
-          if (wahrheitstafel[j][i]) {
+          if(wahrheitstafel[j][i]) {
             formel += variablen[j];
           } else {
-            formel += "NOT "+variablen[j];
+            formel += "NOT " + variablen[j];
           }
         }
       }
@@ -356,26 +350,35 @@ public class BoolescheFunktionTree {
     String formel = "";
     boolean[][] wahrheitstafel = this.getWahrheitstafelBoolean();
     String[] variablen = this.getVariablen();
-    for (int i = 0; i<wahrheitstafel[0].length; i++) {
-      if (!wahrheitstafel[this.getAnzahlVariablen()][i]) {
-        if (formel.length() != 0) {
+    for(int i = 0; i < wahrheitstafel[0].length; i++) {
+      // Nur "false"-Werte in der Tafel
+      if(!wahrheitstafel[this.getAnzahlVariablen()][i]) {
+        if(formel.length() != 0) {
           formel += " AND ";
         }
         formel += "(";
-        for (int j = 0; j<wahrheitstafel.length-1; j++) {
-          if (j != 0) {
+        for(int j = 0; j < wahrheitstafel.length - 1; j++) {
+          if(j != 0) {
             formel += " OR ";
           }
-          if (!wahrheitstafel[j][i]) {
+          if(!wahrheitstafel[j][i]) {
             formel += variablen[j];
           } else {
-            formel += "NOT "+variablen[j];
+            formel += "NOT " + variablen[j];
           }
         }
         formel += ")";
       }
     }
     return formel;
+  }
+  
+  /**
+   * Gibt boolesche Funktion als Sting zurueck.
+   */
+  @Override
+  public String toString() {
+    return knoten.toString();
   }
   
 }

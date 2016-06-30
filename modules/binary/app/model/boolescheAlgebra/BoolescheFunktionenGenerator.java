@@ -1,69 +1,54 @@
 package model.boolescheAlgebra;
 
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 import model.boolescheAlgebra.BFTree.*;
 
 public class BoolescheFunktionenGenerator {
-  
-  private final static char[] alphabet = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
+
+  private static final int MIN_VARS = 2;
+  private static final int MAX_VARS = 3;
+
+  private final static char[] ALPHABET = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
       'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
-      
+
   /**
-   * Liefert einen zufaelligen BoolescheFunktionTree mit 2 bis 4 Variablen.
+   * Liefert einen zufaelligen BoolescheFunktionTree mit MIN_VARS bis MAX_VARS
+   * Variablen.
    */
   public static BoolescheFunktionTree neueBoolescheFunktion() {
-    int vars = (int) Math.floor(Math.random() * 3 + 2);
-    ArrayList<BFKnoten> knoten = new ArrayList<BFKnoten>();
-    BF_Variable[] v = new BF_Variable[vars];
-    for(int i = 0; i < v.length; i++) {
-      v[i] = new BF_Variable("" + alphabet[i]);
-      knoten.add(v[i]);
-    }
-    for(int i = 0; i < (int) Math.floor(Math.random() * 6); i++) {
-      knoten.add(v[(int) Math.floor(Math.random() * v.length)]);
-    }
-    while(knoten.size() > 1) {
-      int indexA = (int) Math.floor(Math.random() * knoten.size());
-      BFKnoten knotenA = knoten.get(indexA);
-      knoten.remove(indexA);
-      int indexB = (int) Math.floor(Math.random() * knoten.size());
-      BFKnoten knotenB = knoten.get(indexB);
-      knoten.remove(indexB);
-      knoten.add(getRandomOperator(knotenA, knotenB));
-    }
-    BFKnoten k = knoten.get(0);
-    BoolescheFunktionTree bft = new BoolescheFunktionTree(k, v);
-    if (checkTautologie(bft)) {
-      return neueBoolescheFunktion();
-    } else {
-      return bft;
-    }
+    return neueBoolescheFunktion(MIN_VARS, MAX_VARS);
   }
-  
+
   /**
-   * Liefert einen zufaelligen BoolescheFunktionTree mit minVars bis maxVars Variablen. (maximale Anzahl ist zusaetzlich durch das Alphabet begrenzt)
+   * Liefert einen zufaelligen BoolescheFunktionTree mit minVars bis maxVars
+   * Variablen. (maximale Anzahl ist zusaetzlich durch das Alphabet begrenzt)
    */
   public static BoolescheFunktionTree neueBoolescheFunktion(int minVars, int maxVars) {
-    
-    if (minVars<1 || maxVars<1) {
-      throw new IllegalArgumentException("Die minimale Anzahl("+minVars+") und die maximale Anzahl("+maxVars+") der Variablen m\u00fcssen gr\u00f6\u00dfer als 0 sein.");
+    if(minVars < 1 || maxVars < 1)
+      throw new IllegalArgumentException("Die minimale Anzahl(" + minVars + ") und die maximale Anzahl(" + maxVars
+          + ") der Variablen m\u00fcssen gr\u00f6\u00dfer als 0 sein.");
+
+    if(minVars > maxVars)
+      throw new IllegalArgumentException("Die minimale Anzahl der Variablen(" + minVars
+          + ") muss gr\u00f6\u00dfer als die maximale Anzahl der Variablen(" + maxVars + ") sein.");
+
+    if(maxVars > ALPHABET.length)
+      throw new IllegalArgumentException("Die maximale Anzahl der Variablen(" + maxVars
+          + ") \u00fcbersteigt die Gr\u00f6\u00dfe des vordefinierten Alphabetes(" + ALPHABET.length + ").");
+
+    int numOfVariables = ThreadLocalRandom.current().nextInt(MIN_VARS, MAX_VARS + 1);
+
+    ArrayList<BFKnoten> knoten = new ArrayList<>();
+    BF_Variable[] variables = new BF_Variable[numOfVariables];
+    for(int i = 0; i < variables.length; i++) {
+      variables[i] = new BF_Variable("" + ALPHABET[i]);
+      knoten.add(variables[i]);
     }
-    if (minVars>maxVars) {
-      throw new IllegalArgumentException("die minimale Anzahl der Variablen("+minVars+") ist gr\u00f6\u00dfer als die maximale Anzahl der Variablen("+maxVars+").");
-    }
-    if (maxVars>alphabet.length) {
-      throw new IllegalArgumentException("die maximale Anzahl der Variablen("+maxVars+") \u00fcbersteigt die Gr\u00f6\u00dfe des vordefinierten Alphabetes("+alphabet.length+").");
-    }
-    int vars = (int) Math.floor(Math.random() * (maxVars-minVars+1) + minVars);
-    ArrayList<BFKnoten> knoten = new ArrayList<BFKnoten>();
-    BF_Variable[] v = new BF_Variable[vars];
-    for(int i = 0; i < v.length; i++) {
-      v[i] = new BF_Variable("" + alphabet[i]);
-      knoten.add(v[i]);
-    }
+
     for(int i = 0; i < (int) Math.floor(Math.random() * maxVars); i++) {
-      knoten.add(v[(int) Math.floor(Math.random() * v.length)]);
+      knoten.add(variables[(int) Math.floor(Math.random() * variables.length)]);
     }
     while(knoten.size() > 1) {
       int indexA = (int) Math.floor(Math.random() * knoten.size());
@@ -80,16 +65,40 @@ public class BoolescheFunktionenGenerator {
     } else {
       k = knoten.get(0);
     }
-    BoolescheFunktionTree bft = new BoolescheFunktionTree(k, v);
-    if (checkTautologie(bft)) {
+    BoolescheFunktionTree bft = new BoolescheFunktionTree(k, variables);
+    if(checkTautologie(bft)) {
       return neueBoolescheFunktion(minVars, maxVars);
     } else {
       return bft;
     }
   }
-  
+
   /**
-   *  40% AND; 40% OR; 20% XOR; zusaetzlich 33% NOT jeweils bei dem linken und rechten Knoten
+   * gibt true zurueck wenn bft immer wahr oder immer falsch ist (Tautologie
+   * oder Kontradiktion ist).
+   */
+  private static boolean checkTautologie(BoolescheFunktionTree bft) {
+    boolean b[] = bft.getWahrheitsVector();
+    boolean contains_true = false;
+    boolean contains_false = false;
+    for(int i = 0; i < b.length; i++) {
+      if(contains_true && contains_false) {
+        return false;
+      } else if(b[i] == true) {
+        contains_true = true;
+      } else if(b[i] == false) {
+        contains_false = true;
+      }
+    }
+    if(contains_true && contains_false) {
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * 40% AND; 40% OR; 20% XOR; zusaetzlich 33% NOT jeweils bei dem linken und
+   * rechten Knoten
    */
   private static BFKnoten getRandomOperator(BFKnoten ka, BFKnoten kb) {
     if((int) Math.floor(Math.random() * 3) == 2) {
@@ -109,27 +118,5 @@ public class BoolescheFunktionenGenerator {
     }
     return operator;
   }
-  
-  /**
-   * gibt true zurueck wenn bft immer wahr oder immer falsch ist (Tautologie oder Kontradiktion ist).
-   */
-  private static boolean checkTautologie(BoolescheFunktionTree bft) {
-    boolean b[] = bft.getWahrheitsVector();
-    boolean contains_true = false;
-    boolean contains_false = false;
-    for (int i = 0; i < b.length; i++) {
-      if (contains_true && contains_false) {
-        return false;
-      } else if (b[i] == true) {
-        contains_true = true;
-      } else if (b[i] == false) {
-        contains_false = true;
-      }
-    }
-    if (contains_true && contains_false) {
-      return false;
-    }
-    return true;
-  }
-  
+
 }

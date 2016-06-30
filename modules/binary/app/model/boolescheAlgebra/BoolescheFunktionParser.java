@@ -7,13 +7,13 @@ import model.boolescheAlgebra.BFTree.*;
 
 public class BoolescheFunktionParser {
   
-  private static final TreeSet<Character> zeichensatz = new TreeSet<Character>(
+  private static final TreeSet<Character> zeichensatz = new TreeSet<>(
       Arrays.asList('0', '1', '(', ')', ' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
           'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'));
-          
+  
   /**
-   * ----------------------------------------------------------------
-   * Gibt die Formel als Tree zurueck, der interpretiert werden kann.
+   * ---------------------------------------------------------------- Gibt die
+   * Formel als Tree zurueck, der interpretiert werden kann.
    * ----------------------------------------------------------------
    */
   public static BoolescheFunktionTree getBFTree(String originalformel) throws IllegalArgumentException {
@@ -37,7 +37,7 @@ public class BoolescheFunktionParser {
     variablen = variablen.replace('(', ' ');
     variablen = variablen.replace(')', ' ');
     String[] splitf = variablen.split(" ");
-    TreeSet<String> vars = new TreeSet<String>();
+    TreeSet<String> vars = new TreeSet<>();
     for(int i = 0; i < splitf.length; i++) {
       if(!splitf[i].equals("")) {
         vars.add(splitf[i]);
@@ -57,9 +57,9 @@ public class BoolescheFunktionParser {
   }
   
   /**
-   * ----------------------------------------------------------------
-   * Wie getBFTree(formel) nur mit uebergabe der Variablenliste.
-   * Gibt die Formel als Tree zurueck, der interpretiert werden kann.
+   * ---------------------------------------------------------------- Wie
+   * getBFTree(formel) nur mit uebergabe der Variablenliste. Gibt die Formel als
+   * Tree zurueck, der interpretiert werden kann.
    * ----------------------------------------------------------------
    */
   public static BoolescheFunktionTree getBFTreeMitVars(String originalformel, String[] variablen)
@@ -86,7 +86,7 @@ public class BoolescheFunktionParser {
     String[] splitf = f_variablen.split(" ");
     
     // Pruefung der Variablen
-    TreeSet<String> vars = new TreeSet<String>();
+    TreeSet<String> vars = new TreeSet<>();
     for(int i = 0; i < variablen.length; i++) {
       vars.add(variablen[i]);
     }
@@ -107,7 +107,7 @@ public class BoolescheFunktionParser {
     }
     return new BoolescheFunktionTree(getNextKnoten(formel, bf_vars), bf_vars);
   }
-
+  
   /**
    * ---------------------------´ parst Teilstueck der Formel
    * ---------------------------
@@ -117,19 +117,19 @@ public class BoolescheFunktionParser {
     ausdruck = ausdruck.trim();
     int klammer = 0;
     boolean von_klammer_umschlossen = true;
-    while (ausdruck.startsWith("(") && ausdruck.endsWith(")") && von_klammer_umschlossen) {
-      for (int i = 0; i < ausdruck.length(); i++) {
-        if (ausdruck.charAt(i) == '(') {
+    while(ausdruck.startsWith("(") && ausdruck.endsWith(")") && von_klammer_umschlossen) {
+      for(int i = 0; i < ausdruck.length(); i++) {
+        if(ausdruck.charAt(i) == '(') {
           klammer++;
-        } else if (ausdruck.charAt(i) == ')') {
+        } else if(ausdruck.charAt(i) == ')') {
           klammer--;
-          if (klammer == 0 && i != ausdruck.length()-1) {
+          if(klammer == 0 && i != ausdruck.length() - 1) {
             von_klammer_umschlossen = false;
           }
         }
       }
-      if (von_klammer_umschlossen) {
-        ausdruck = ausdruck.substring(1, ausdruck.length()-1).trim();
+      if(von_klammer_umschlossen) {
+        ausdruck = ausdruck.substring(1, ausdruck.length() - 1).trim();
       }
     }
     // suche xor
@@ -243,11 +243,13 @@ public class BoolescheFunktionParser {
   }
   
   private static String substitution(String formel) {
-    formel = formel.replaceAll("xoder", "xor")
-                   .replaceAll("oder", "or")
-                   .replaceAll("und", "and")
-                   .replaceAll("nicht", "not");
-    return formel;
+    // @formatter:off
+    return formel
+        .replaceAll("xoder", "xor")
+        .replaceAll("oder", "or")
+        .replaceAll("und", "and")
+        .replaceAll("nicht", "not");
+    // @formatter:on
   }
   
 }
