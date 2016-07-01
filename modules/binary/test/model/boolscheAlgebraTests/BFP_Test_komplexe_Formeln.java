@@ -11,7 +11,7 @@ public class BFP_Test_komplexe_Formeln {
 
 	@Test
 	public void test_lange_Formel() {
-		BoolescheFunktionTree t1 = BoolescheFunktionParser.getBFTree("a and b or a and c or b and not c");
+		BoolescheFunktionTree t1 = BoolescheFunktionParser.parse("a and b or a and c or b and not c");
 		boolean[] b = {false, false, true, false, false, true, true, true};
 		boolean[] vector = t1.getWahrheitsVector();
 		assertArrayEquals(b, vector);
@@ -22,7 +22,7 @@ public class BFP_Test_komplexe_Formeln {
 	@Test
 	public void test_Or_And1() {
 		
-		BoolescheFunktionTree t1 = BoolescheFunktionParser.getBFTree("a or b and c");
+		BoolescheFunktionTree t1 = BoolescheFunktionParser.parse("a or b and c");
 		boolean[] b = {false, true, false};
 		boolean wert = t1.getWert(b);
 		assertFalse(wert);
@@ -31,7 +31,7 @@ public class BFP_Test_komplexe_Formeln {
 	@Test
 	public void test_Or_And2() {
 		
-		BoolescheFunktionTree t1 = BoolescheFunktionParser.getBFTree("(a or b) and c");
+		BoolescheFunktionTree t1 = BoolescheFunktionParser.parse("(a or b) and c");
 		boolean[] b = {true, false, true};
 		boolean wert = t1.getWert(b);
 		assertTrue(wert);
@@ -40,7 +40,7 @@ public class BFP_Test_komplexe_Formeln {
 	@Test
 	public void test_Not_Or() {
 		
-		BoolescheFunktionTree t1 = BoolescheFunktionParser.getBFTree("not a or b");
+		BoolescheFunktionTree t1 = BoolescheFunktionParser.parse("not a or b");
 		boolean[] b = {true, false};
 		boolean wert = t1.getWert(b);
 		assertFalse(wert);
@@ -49,7 +49,7 @@ public class BFP_Test_komplexe_Formeln {
 	@Test
 	public void test_Not_And() {
 		
-		BoolescheFunktionTree t1 = BoolescheFunktionParser.getBFTree("not a and b");
+		BoolescheFunktionTree t1 = BoolescheFunktionParser.parse("not a and b");
 		boolean[] b = {true, false};
 		boolean wert = t1.getWert(b);
 		assertFalse(wert);
@@ -59,37 +59,37 @@ public class BFP_Test_komplexe_Formeln {
 	
 	@Test (expected = IllegalArgumentException.class)
 	public void testKlammerung1() {
-		BoolescheFunktionParser.getBFTree("(a and b");
+		BoolescheFunktionParser.parse("(a and b");
 	}
 	
 	@Test (expected = IllegalArgumentException.class)
 	public void testKlammerung2() {
-		BoolescheFunktionParser.getBFTree("a and b)");
+		BoolescheFunktionParser.parse("a and b)");
 	}
 	
 	@Test (expected = IllegalArgumentException.class)
 	public void testKlammerung3() {
-		BoolescheFunktionParser.getBFTree(")a and b(");
+		BoolescheFunktionParser.parse(")a and b(");
 	}
 	
 	@Test (expected = IllegalArgumentException.class)
 	public void testunvollstaendigerAusdruck1() {
-		BoolescheFunktionParser.getBFTree("a or");
+		BoolescheFunktionParser.parse("a or");
 	}
 	
 	@Test (expected = IllegalArgumentException.class)
 	public void testunvollstaendigerAusdruck2() {
-		BoolescheFunktionParser.getBFTree("a b");
+		BoolescheFunktionParser.parse("a b");
 	}
 	
 	@Test (expected = IllegalArgumentException.class)
 	public void testunvollstaendigerAusdruck3() {
-		BoolescheFunktionParser.getBFTree("a or ()");
+		BoolescheFunktionParser.parse("a or ()");
 	}
 	
 	@Test (expected = IllegalArgumentException.class)
 	public void testunvollstaendigerAusdruck4() {
-		BoolescheFunktionParser.getBFTree("a (or b)");
+		BoolescheFunktionParser.parse("a (or b)");
 	}
 	
 	/*

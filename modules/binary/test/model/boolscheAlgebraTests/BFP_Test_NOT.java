@@ -11,7 +11,7 @@ public class BFP_Test_NOT {
 
 	@Test
 	public void test_not_0() {
-		BoolescheFunktionTree t1 = BoolescheFunktionParser.getBFTree("not a");
+		BoolescheFunktionTree t1 = BoolescheFunktionParser.parse("not a");
 		boolean[] b = {false};
 		boolean wert = t1.getWert(b);
 		assertTrue(wert);
@@ -19,7 +19,7 @@ public class BFP_Test_NOT {
 	
 	@Test
 	public void test_not_1() {
-		BoolescheFunktionTree t1 = BoolescheFunktionParser.getBFTree("not a");
+		BoolescheFunktionTree t1 = BoolescheFunktionParser.parse("not a");
 		boolean[] b = {true};
 		boolean wert = t1.getWert(b);
 		assertFalse(wert);
@@ -28,7 +28,7 @@ public class BFP_Test_NOT {
 	// Test Vector
 	@Test
 	public void test_not_vector() {
-		BoolescheFunktionTree t1 = BoolescheFunktionParser.getBFTree("not a");
+		BoolescheFunktionTree t1 = BoolescheFunktionParser.parse("not a");
 		boolean[] b = {true, false};
 		boolean[] vector = t1.getWahrheitsVector();
 		assertArrayEquals(b, vector);;

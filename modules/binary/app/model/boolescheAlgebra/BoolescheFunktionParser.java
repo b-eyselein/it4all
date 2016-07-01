@@ -6,41 +6,34 @@ import java.util.TreeSet;
 import model.boolescheAlgebra.BFTree.*;
 
 public class BoolescheFunktionParser {
-  
+
   private static final TreeSet<Character> zeichensatz = new TreeSet<>(
       Arrays.asList('0', '1', '(', ')', ' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
           'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'));
-  
+
   /**
    * ---------------------------------------------------------------- Gibt die
    * Formel als Tree zurueck, der interpretiert werden kann.
    * ----------------------------------------------------------------
    */
-  public static BoolescheFunktionTree getBFTree(String originalformel) throws IllegalArgumentException {
+  public static BoolescheFunktionTree parse(String originalformel) throws IllegalArgumentException {
     String formel = originalformel.toLowerCase();
-    
-    formel = substitution(formel);
-    
+
+    formel = substituteGermanOperators(formel);
+
     // Pruefung auf fehlende Klammern
     pruefeKlammern(originalformel);
-    
+
     // Pruefung auf ungueltige Zeichen
     pruefeZeichensatz(formel);
-    
+
     // Extrahierung der Variablen
-    String variablen = formel.replaceAll("and", " ");
-    variablen = variablen.replaceAll("xor", " ");
-    variablen = variablen.replaceAll("or", " ");
-    variablen = variablen.replaceAll("not", " ");
-    variablen = variablen.replaceAll("0", " ");
-    variablen = variablen.replaceAll("1", " ");
-    variablen = variablen.replace('(', ' ');
-    variablen = variablen.replace(')', ' ');
-    String[] splitf = variablen.split(" ");
+    String[] extractedVariables = extractVariables(formel);
+
     TreeSet<String> vars = new TreeSet<>();
-    for(int i = 0; i < splitf.length; i++) {
-      if(!splitf[i].equals("")) {
-        vars.add(splitf[i]);
+    for(int i = 0; i < extractedVariables.length; i++) {
+      if(!extractedVariables[i].equals("")) {
+        vars.add(extractedVariables[i]);
       }
     }
     // Fehler falls keine Variablen vorhanden
@@ -55,42 +48,32 @@ public class BoolescheFunktionParser {
     }
     return new BoolescheFunktionTree(getNextKnoten(formel, bf_vars), bf_vars);
   }
-  
+
   /**
    * ---------------------------------------------------------------- Wie
-   * getBFTree(formel) nur mit uebergabe der Variablenliste. Gibt die Formel als
+   * parse(formel) nur mit uebergabe der Variablenliste. Gibt die Formel als
    * Tree zurueck, der interpretiert werden kann.
    * ----------------------------------------------------------------
    */
-  public static BoolescheFunktionTree getBFTreeMitVars(String originalformel, String[] variablen)
-      throws IllegalArgumentException {
+  public static BoolescheFunktionTree parse(String originalformel, String[] variablen) throws IllegalArgumentException {
     String formel = originalformel.toLowerCase();
-    
-    formel = substitution(formel);
-    
+
+    formel = substituteGermanOperators(formel);
+
     // Pruefung auf fehlende Klammern
     pruefeKlammern(originalformel);
-    
+
     // Pruefung auf ungueltige Zeichen
     pruefeZeichensatz(formel);
-    
-    // Extrahierung der Variablen
-    String f_variablen = formel.replaceAll("and", " ");
-    f_variablen = f_variablen.replaceAll("xor", " ");
-    f_variablen = f_variablen.replaceAll("or", " ");
-    f_variablen = f_variablen.replaceAll("not", " ");
-    f_variablen = f_variablen.replaceAll("0", " ");
-    f_variablen = f_variablen.replaceAll("1", " ");
-    f_variablen = f_variablen.replace('(', ' ');
-    f_variablen = f_variablen.replace(')', ' ');
-    String[] splitf = f_variablen.split(" ");
-    
+
+    String[] extractedVariables = extractVariables(formel);
+
     // Pruefung der Variablen
     TreeSet<String> vars = new TreeSet<>();
     for(int i = 0; i < variablen.length; i++) {
       vars.add(variablen[i]);
     }
-    for(String s: splitf) {
+    for(String s: extractedVariables) {
       if(!s.equals("") && !vars.contains(s)) {
         throw new IllegalArgumentException("Die Formel enth\u00e4lt eine unbekannte Variable: " + s);
       }
@@ -107,7 +90,22 @@ public class BoolescheFunktionParser {
     }
     return new BoolescheFunktionTree(getNextKnoten(formel, bf_vars), bf_vars);
   }
-  
+
+  private static String[] extractVariables(String formel) {
+    String variablen = formel
+        //@formatter:off
+        .replaceAll("and", " ")
+        .replaceAll("xor", " ")
+        .replaceAll("or", " ")
+        .replaceAll("not", " ")
+        .replaceAll("0", " ")
+        .replaceAll("1", " ")
+        .replaceAll("(", " ")
+        .replaceAll(")", " ");
+    // @formatter:on
+    return variablen.split(" ");
+  }
+
   /**
    * ---------------------------´ parst Teilstueck der Formel
    * ---------------------------
@@ -185,7 +183,7 @@ public class BoolescheFunktionParser {
       }
       return new BF_NOT(getNextKnoten(next, vars));
     }
-    
+
     // Variablen
     for(BF_Variable var: vars) {
       if(ausdruck.equals(var.toString())) {
@@ -199,13 +197,13 @@ public class BoolescheFunktionParser {
     if(ausdruck.equals("1")) {
       return new BF_1();
     }
-    
+
     throw new IllegalArgumentException(
         "Der Ausdruck ist unvollst\u00e4ndig. M\u00f6glicherweise fehlt bei einem Operator eine Variable."); // TODO:
                                                                                                              // Fehlerbeschreibung
                                                                                                              // ergaenzen
   }
-  
+
   /**
    * Pruefung auf fehlende Klammern
    */
@@ -228,7 +226,7 @@ public class BoolescheFunktionParser {
     }
     return true;
   }
-  
+
   /**
    * Pruefung auf ungueltige Zeichen
    */
@@ -241,8 +239,8 @@ public class BoolescheFunktionParser {
     }
     return true;
   }
-  
-  private static String substitution(String formel) {
+
+  private static String substituteGermanOperators(String formel) {
     // @formatter:off
     return formel
         .replaceAll("xoder", "xor")
@@ -251,5 +249,5 @@ public class BoolescheFunktionParser {
         .replaceAll("nicht", "not");
     // @formatter:on
   }
-  
+
 }

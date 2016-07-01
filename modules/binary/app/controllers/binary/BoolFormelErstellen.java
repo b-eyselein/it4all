@@ -39,7 +39,7 @@ public class BoolFormelErstellen extends Controller {
     boolean correct = false;
     try {
       correct = bft
-          .compareBoolscheFormelTree(BoolescheFunktionParser.getBFTreeMitVars(learnerSolution, bft.getVariablen()));
+          .compareBoolscheFormelTree(BoolescheFunktionParser.parse(learnerSolution, bft.getVariablen()));
     } catch (IllegalArgumentException e) {
       exception_msg = e.getMessage();
     }
