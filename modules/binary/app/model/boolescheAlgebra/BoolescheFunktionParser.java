@@ -6,30 +6,28 @@ import java.util.TreeSet;
 import model.boolescheAlgebra.BFTree.*;
 
 public class BoolescheFunktionParser {
-
+  
   private static final TreeSet<Character> zeichensatz = new TreeSet<>(
       Arrays.asList('0', '1', '(', ')', ' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
           'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'));
-
+          
   /**
-   * ---------------------------------------------------------------- Gibt die
-   * Formel als Tree zurueck, der interpretiert werden kann.
-   * ----------------------------------------------------------------
+   * Gibt die Formel als Tree zurueck, der interpretiert werden kann.
    */
   public static BoolescheFunktionTree parse(String originalformel) throws IllegalArgumentException {
     String formel = originalformel.toLowerCase();
-
+    
     formel = substituteGermanOperators(formel);
-
+    
     // Pruefung auf fehlende Klammern
     pruefeKlammern(originalformel);
-
+    
     // Pruefung auf ungueltige Zeichen
     pruefeZeichensatz(formel);
-
+    
     // Extrahierung der Variablen
     String[] extractedVariables = extractVariables(formel);
-
+    
     TreeSet<String> vars = new TreeSet<>();
     for(int i = 0; i < extractedVariables.length; i++) {
       if(!extractedVariables[i].equals("")) {
@@ -48,26 +46,24 @@ public class BoolescheFunktionParser {
     }
     return new BoolescheFunktionTree(getNextKnoten(formel, bf_vars), bf_vars);
   }
-
+  
   /**
-   * ---------------------------------------------------------------- Wie
-   * parse(formel) nur mit uebergabe der Variablenliste. Gibt die Formel als
+   * Wie parse(formel) nur mit uebergabe der Variablenliste. Gibt die Formel als
    * Tree zurueck, der interpretiert werden kann.
-   * ----------------------------------------------------------------
    */
   public static BoolescheFunktionTree parse(String originalformel, String[] variablen) throws IllegalArgumentException {
     String formel = originalformel.toLowerCase();
-
+    
     formel = substituteGermanOperators(formel);
-
+    
     // Pruefung auf fehlende Klammern
     pruefeKlammern(originalformel);
-
+    
     // Pruefung auf ungueltige Zeichen
     pruefeZeichensatz(formel);
-
+    
     String[] extractedVariables = extractVariables(formel);
-
+    
     // Pruefung der Variablen
     TreeSet<String> vars = new TreeSet<>();
     for(int i = 0; i < variablen.length; i++) {
@@ -90,7 +86,7 @@ public class BoolescheFunktionParser {
     }
     return new BoolescheFunktionTree(getNextKnoten(formel, bf_vars), bf_vars);
   }
-
+  
   private static String[] extractVariables(String formel) {
     String variablen = formel
         //@formatter:off
@@ -100,15 +96,14 @@ public class BoolescheFunktionParser {
         .replaceAll("not", " ")
         .replaceAll("0", " ")
         .replaceAll("1", " ")
-        .replaceAll("(", " ")
-        .replaceAll(")", " ");
-    // @formatter:on
+        .replaceAll("\\(", " ")
+        .replaceAll("\\)", " ");
+        // @formatter:on
     return variablen.split(" ");
   }
-
+  
   /**
-   * ---------------------------´ parst Teilstueck der Formel
-   * ---------------------------
+   * parst Teilstueck der Formel
    */
   private static BFKnoten getNextKnoten(String ausdruck, BF_Variable[] vars) throws IllegalArgumentException {
     // entfernt fuehrende und anhaengend Leerzeichen und Klammern
@@ -183,7 +178,7 @@ public class BoolescheFunktionParser {
       }
       return new BF_NOT(getNextKnoten(next, vars));
     }
-
+    
     // Variablen
     for(BF_Variable var: vars) {
       if(ausdruck.equals(var.toString())) {
@@ -197,13 +192,13 @@ public class BoolescheFunktionParser {
     if(ausdruck.equals("1")) {
       return new BF_1();
     }
-
+    
     throw new IllegalArgumentException(
         "Der Ausdruck ist unvollst\u00e4ndig. M\u00f6glicherweise fehlt bei einem Operator eine Variable."); // TODO:
                                                                                                              // Fehlerbeschreibung
                                                                                                              // ergaenzen
   }
-
+  
   /**
    * Pruefung auf fehlende Klammern
    */
@@ -226,7 +221,7 @@ public class BoolescheFunktionParser {
     }
     return true;
   }
-
+  
   /**
    * Pruefung auf ungueltige Zeichen
    */
@@ -239,7 +234,7 @@ public class BoolescheFunktionParser {
     }
     return true;
   }
-
+  
   private static String substituteGermanOperators(String formel) {
     // @formatter:off
     return formel
@@ -249,5 +244,5 @@ public class BoolescheFunktionParser {
         .replaceAll("nicht", "not");
     // @formatter:on
   }
-
+  
 }

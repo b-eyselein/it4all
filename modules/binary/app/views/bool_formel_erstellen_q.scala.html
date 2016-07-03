@@ -1,5 +1,5 @@
 @* Template File *@
-@(user: model.user.User, var_names: Array[String], wahrheitstafel: Array[Array[Char]], spalten: Int, zeilen: Int)
+@(user: model.user.User, var_names: Array[String], wahrheitstafel: Array[Array[Char]], spalten: Int, zeilen: Int, formel: String)
 
 @main("Formel erstellen", user) {
 <div class="container">
@@ -26,11 +26,12 @@
         </table>
       </div>
       <div class="col-md-8">
-        <form role="form" class="form-horizontal" action="@binary.routes.BoolFormelErstellen.addLearnerSolution()" method="post">
+        <form role="form" class="form-horizontal" action="@binary.routes.BoolFormelErstellen.checkSolution()" method="post">
           <div class="form-group">
             <label class="control-label col-xs-1" for="learnerSolution">z = </label>
             <div class="col-xs-11">
               <input class="form-control" name="learnerSolution" id="learnerSolution" placeholder="Ihre L&ouml;sung">
+              <input hidden name="boolformel" value="@formel">
             </div>
           </div>
           <div class="col-sm-12">
@@ -90,6 +91,5 @@
         </table>
       </div>
     </div>
-</div>
 </div>
 }
