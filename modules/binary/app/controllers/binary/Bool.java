@@ -20,37 +20,31 @@ public class Bool extends Controller {
 
   @Inject
   private FormFactory factory;
-
-  // FIXME: Übergabe an Client!
-  String[] solutions;
-  int length;
-  BoolescheFunktionTree bft;
   
   public Result index() {
-    bft = BoolescheFunktionenGenerator.neueBoolescheFunktion();
+    BoolescheFunktionTree bft = BoolescheFunktionenGenerator.neueBoolescheFunktion();
     double d = bft.getAnzahlVariablen();
-    length = (int) (Math.pow(2.0, d));
+    int length = (int) (Math.pow(2.0, d));
     return ok(
-        boolquestion.render(bft.toString(), UserManagement.getCurrentUser(), bft.getVariablenTabelle(), length, bft));
+        boolquestion.render(UserManagement.getCurrentUser(), bft.getVariablenTabelle(), length, bft));
   }
 
   public Result indexSolution() {
-    solutions = new String[length];
     DynamicForm dynFormula = factory.form().bindFromRequest();
+    BoolescheFunktionTree bft = BoolescheFunktionParser.parse(dynFormula.get("bft"));
+    double d = bft.getAnzahlVariablen();
+    int length = (int) (Math.pow(2.0, d));
+    String[] solutions = new String[length];
     for(int i = 0; i < length; i++) {
       solutions[i] = dynFormula.get("" + i + "");
     }
-    //Form<BoolescheFunktionTree> bftForm = factory.form(BoolescheFunktionTree.class).bindFromRequest();
-    //return ok(""+bftForm.get().getAnzahlVariablen());
-    //BoolescheFunktionTree bft = bftForm.get();
     boolean correct = bft.compareStringArray(solutions);
-    // FIXME: initialize with right value...
-    String[] answer = new String[solutions.length];
+    String[] answer = new String[length];
     char[] ansOld = bft.getWahrheitsVectorChar();
     for(int i = 0; i < answer.length; i++) {
       answer[i] = "" + ansOld[i];
     }
-    return ok(boolsolution.render(UserManagement.getCurrentUser(), new Boolean(correct), bft.toString(),
+    return ok(boolsolution.render(UserManagement.getCurrentUser(), new Boolean(correct),
         bft.getVariablenTabelle(), length, solutions, answer, "1", bft));
   }
 }
