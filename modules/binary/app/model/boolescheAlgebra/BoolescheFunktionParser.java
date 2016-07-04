@@ -90,6 +90,10 @@ public class BoolescheFunktionParser {
   private static String[] extractVariables(String formel) {
     String variablen = formel
         //@formatter:off
+        .replaceAll("nand", " ")
+        .replaceAll("nor", " ")
+        .replaceAll("equiv", " ")
+        .replaceAll("impl", " ")
         .replaceAll("and", " ")
         .replaceAll("xor", " ")
         .replaceAll("or", " ")
@@ -137,6 +141,35 @@ public class BoolescheFunktionParser {
         if(ausdruck.substring(i, i + 3).equals("xor")) {
           return new BF_XOR(getNextKnoten(ausdruck.substring(0, i), vars),
               getNextKnoten(ausdruck.substring(i + 3, ausdruck.length()), vars));
+        } else if(ausdruck.substring(i, i + 3).equals("nor")) {
+          return new BF_NOR(getNextKnoten(ausdruck.substring(0, i), vars),
+              getNextKnoten(ausdruck.substring(i + 3, ausdruck.length()), vars));
+        }
+        try {
+          if(ausdruck.substring(i, i + 4).equals("nand")) {
+            return new BF_NAND(getNextKnoten(ausdruck.substring(0, i), vars),
+                getNextKnoten(ausdruck.substring(i + 4, ausdruck.length()), vars));
+          } else if(ausdruck.substring(i, i + 5).equals("equiv")) {
+            return new BF_EQUIV(getNextKnoten(ausdruck.substring(0, i), vars),
+                getNextKnoten(ausdruck.substring(i + 5, ausdruck.length()), vars));
+          }
+        } catch (Exception e) {
+          
+        }
+      }
+    }
+    // suche implication
+    klammer = 0;
+    for(int i = 0; i < ausdruck.length() - 3; i++) {
+      if(ausdruck.charAt(i) == '(') {
+        klammer++;
+      } else if(ausdruck.charAt(i) == ')') {
+        klammer--;
+      }
+      if(klammer == 0) {
+        if(ausdruck.substring(i, i + 4).equals("impl")) {
+          return new BF_IMPL(getNextKnoten(ausdruck.substring(0, i), vars),
+              getNextKnoten(ausdruck.substring(i + 4, ausdruck.length()), vars));
         }
       }
     }
@@ -238,10 +271,13 @@ public class BoolescheFunktionParser {
   private static String substituteGermanOperators(String formel) {
     // @formatter:off
     return formel
+        .replaceAll("nund", "nand")
+        .replaceAll("noder", "nor")
         .replaceAll("xoder", "xor")
         .replaceAll("oder", "or")
         .replaceAll("und", "and")
-        .replaceAll("nicht", "not");
+        .replaceAll("nicht", "not")
+        .replaceAll("\u00e4quiv", "equiv");
     // @formatter:on
   }
   
