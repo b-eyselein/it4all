@@ -1,1 +1,4 @@
-GET		/index					controllers.sql.SQL.index()
+GET    /index                  controllers.sql.SQL.index()
+GET    /exercise/:exerciseId   controllers.sql.SQL.exercise(exerciseId: Int)
+PUT    /exercise/:exerciseId   controllers.sql.SQL.commit(exerciseId: Int)
+POST   /exercise/:exerciseId   controllers.sql.SQL.commit(exerciseId: Int)
