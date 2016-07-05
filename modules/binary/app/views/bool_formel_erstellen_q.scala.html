@@ -2,6 +2,26 @@
 @(user: model.user.User, var_names: Array[String], wahrheitstafel: Array[Array[Char]], spalten: Int, zeilen: Int, formel: String)
 
 @main("Formel erstellen", user) {
+<!-- CSS override -->
+<style>
+  code.mycode{
+    font-size:100%;
+    color:#2691c7;
+    background-color:#f2f7fa;
+  }
+  kbd.mykbd{
+    font-size:100%;
+  }
+  img.myicon{
+    margin: 2px;
+    border-width:1px;
+    border-style:solid;
+    border-color:#aaaaaa;
+    border-radius:3px;
+    width:16px;
+    height:16px;
+  }
+</style>
 <div class="container">
   <div class="panel panel-default">
     <div class="panel-heading">Erstellen Sie die Formel zu folgender Wahrheitstafel:</div>
@@ -42,80 +62,132 @@
      </div>
   </div>
   
-    <div class="panel panel-info">
-      <div class="panel-heading"><span class="glyphicon glyphicon-info-sign"></span> Information</div>
-      <div class="panel-body">
-        <table class="table">
-          <thead>
-            <tr>
-              <th/>
-              <th>Englisches &Auml;quivalent</th>
-              <th/>
-              <th>Deutsches &Auml;quivalent</th>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Schreibe f&uuml;r <kbd>&not; a</kbd></td>
-              <td><code>not a</code></td>
-              <td>&nbsp;oder&nbsp;</td>
-              <td><code>nicht a</code></td>
-            </tr>
-            <tr>
-              <td>Schreibe f&uuml;r <kbd>a &and; b</kbd></td>
-              <td><code>a and b</code></td>
-              <td>&nbsp;oder&nbsp;</td>
-              <td><code>a und b</code></td>
-            </tr>
-            <tr>
-              <td>Schreibe f&uuml;r <kbd>a &or; b</kbd></td>
-              <td><code>a or b</code></td>
-              <td>&nbsp;oder&nbsp;</td>
-              <td><code>a oder b</code></td>
-            </tr>
-            <tr>
-              <td>Schreibe f&uuml;r <kbd>a &oplus; b</kbd></td>
-              <td><code>a xor b</code></td>
-              <td>&nbsp;oder&nbsp;</td>
-              <td><code>a xoder b</code></td>
-            </tr>
-            
-            <tr>
-              <td>Schreibe f&uuml;r <kbd>a &#x22bc; b</kbd></td>
-              <td><code>a nand b</code></td>
-              <td>&nbsp;oder&nbsp;</td>
-              <td><code>a nund b</code></td>
-            </tr>
-            <tr>
-              <td>Schreibe f&uuml;r <kbd>a &#x22bd; b</kbd></td>
-              <td><code>a nor b</code></td>
-              <td>&nbsp;oder&nbsp;</td>
-              <td><code>a noder b</code></td>
-            </tr>
-            <tr>
-              <td>Schreibe f&uuml;r <kbd>a &hArr; b</kbd></td>
-              <td><code>a equiv b</code></td>
-              <td>&nbsp;oder&nbsp;</td>
-              <td><code>a &auml;quiv b</code></td>
-            </tr>
-            <tr>
-              <td>Schreibe f&uuml;r <kbd>a &rArr; b</kbd></td>
-              <td><code>a impl b</code></td>
-              <td>&nbsp;oder&nbsp;</td>
-              <td><code>a impl b</code></td>
-            </tr>
-            
-            <tr>
-              <td>Klammere, um die Reihenfolge festzulegen, in der Ausdr&uuml;cke ausgewertet werden</td>
-              <td><code>not((a or b) and c)</code></td>
-              <td>&nbsp;oder&nbsp;</td>
-              <td><code>nicht((a oder b) und c)</code></td>
-            </tr>
-            <tr>
-              <td colspan="4">Gro&szlig;- und Kleinschreibung spielt keine Rolle.</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+  <div class="panel panel-info">
+    <div class="panel-heading"><span class="glyphicon glyphicon-info-sign"></span> Information</div>
+    <div class="panel-body">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Standard Operatoren</th>
+            <th/>
+            <th>Englisches &Auml;quivalent</th>
+            <th/>
+            <th>Deutsches &Auml;quivalent</th>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Nicht</td>
+            <td>Schreibe f&uuml;r <kbd class="mykbd">&not; a</kbd></td>
+            <td><code class="mycode">not a</code></td>
+            <td>&nbsp;oder&nbsp;</td>
+            <td><code class="mycode">nicht a</code></td>
+          </tr>
+          <tr>
+            <td>Und</td>
+            <td>Schreibe f&uuml;r <kbd class="mykbd">a &and; b</kbd></td>
+            <td><code class="mycode">a and b</code></td>
+            <td>&nbsp;oder&nbsp;</td>
+            <td><code class="mycode">a und b</code></td>
+          </tr>
+          <tr>
+            <td>Oder</td>
+            <td>Schreibe f&uuml;r <kbd class="mykbd">a &or; b</kbd></td>
+            <td><code class="mycode">a or b</code></td>
+            <td>&nbsp;oder&nbsp;</td>
+            <td><code class="mycode">a oder b</code></td>
+          </tr>
+        </tbody>
+        <thead>
+          <tr>
+            <th>Spezielle Operatoren</th>
+            <th/>
+            <th>Englisches &Auml;quivalent</th>
+            <th/>
+            <th>Deutsches &Auml;quivalent</th>
+        </thead>
+        <tbody>
+          <tr>
+            <td>exklusives Oder</td>
+            <td>Schreibe f&uuml;r <kbd class="mykbd">a &oplus; b</kbd></td>
+            <td><code class="mycode">a xor b</code></td>
+            <td>&nbsp;oder&nbsp;</td>
+            <td><code class="mycode">a xoder b</code></td>
+          </tr>
+          <tr>
+            <td>Nicht Und</td>
+            <td>Schreibe f&uuml;r <kbd class="mykbd">a &#x22bc; b</kbd></td>
+            <td><code class="mycode">a nand b</code></td>
+            <td>&nbsp;oder&nbsp;</td>
+            <td><code class="mycode">a nund b</code></td>
+          </tr>
+          <tr>
+            <td>Nicht Oder</td>
+            <td>Schreibe f&uuml;r <kbd class="mykbd">a &#x22bd; b</kbd></td>
+            <td><code class="mycode">a nor b</code></td>
+            <td>&nbsp;oder&nbsp;</td>
+            <td><code class="mycode">a noder b</code></td>
+          </tr>
+          <tr>
+            <td>&Auml;quivalenz</td>
+            <td>Schreibe f&uuml;r <kbd class="mykbd">a &hArr; b</kbd></td>
+            <td><code class="mycode">a equiv b</code></td>
+            <td>&nbsp;oder&nbsp;</td>
+            <td><code class="mycode">a &auml;quiv b</code></td>
+          </tr>
+          <tr>
+            <td>Implikation</td>
+            <td>Schreibe f&uuml;r <kbd class="mykbd">a &rArr; b</kbd></td>
+            <td><code class="mycode">a impl b</code></td>
+            <td>&nbsp;oder&nbsp;</td>
+            <td><code class="mycode">a impl b</code></td>
+          </tr>
+        </tbody>
+        <thead>
+          <tr>
+            <th colspan="5">Regeln</th>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="5">Gro&szlig;- und Kleinschreibung spielt keine Rolle.</td>
+          </tr>
+          <tr>
+            <td colspan="2">Klammere, um die Reihenfolge festzulegen, in der Ausdr&uuml;cke ausgewertet werden.<br>(Eingeklammerte Ausdr&uuml;cke werden zuerst ausgewertet.)</td>
+            <td><code class="mycode">not((a or b) and c)</code></td>
+            <td>&nbsp;oder&nbsp;</td>
+            <td><code class="mycode">nicht((a oder b) und c)</code></td>
+          </tr>
+          <tr>
+            <td colspan="5">Die <a href="https://de.wikipedia.org/wiki/Operatorrangfolge">Operatorrangfolge<img src="https://wikipedia.org/static/favicon/wikipedia.ico" class="myicon"></a> ist folgenderma&szlig;en festgelegt:
+              <ol>
+                <li>Nicht</li>
+                <li>Und</li>
+                <li>Oder</li>
+                <li>Implikation</li>
+                <li>exklusives Oder, Nicht Und, Nicht Oder, &Auml;quivalenz</li>
+              </ol>
+              <table>
+                <tbody>
+                  <tr>
+                    <td colspan="4">Beispiele:&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td valign="top"><ul><li>Nach Rangfolge:&nbsp;</li></ul></td>
+                    <td valign="top"><code class="mycode">a xor b impl c or d and not e</code></td>
+                    <td valign="top">&nbsp;<b>&hArr;</b>&nbsp;</td>
+                    <td valign="top"><code class="mycode">(a xor(b impl(c or(d and(not e))))))</code></td>
+                  </tr>  
+                    <td valign="top"><ul><li>Gleichwertiger Rang: von Links nach rechts&nbsp;</li></ul></td>
+                    <td valign="top"><code class="mycode">a xor b nor c nand d equiv e</code></td>
+                    <td valign="top">&nbsp;<b>&hArr;</b>&nbsp;</td>
+                    <td valign="top"><code class="mycode">((((a xor b)nor c)nand d)equiv e)</code></td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
+  </div>
 </div>
 }
