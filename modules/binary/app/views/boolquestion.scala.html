@@ -1,5 +1,5 @@
 @* boolquestion Template File *@
-@(formula: String, user: model.user.User, zeros: Array[Array[Char]], length: Int, bft: model.boolescheAlgebra.BFTree.BoolescheFunktionTree)
+@(user: model.user.User, zeros: Array[Array[Char]], length: Int, bft: model.boolescheAlgebra.BFTree.BoolescheFunktionTree)
 @main("Wertetabelle", user) {
 <div class="container">
 	<div class="panel panel-default">
@@ -38,8 +38,8 @@
  									   max-width: 1000px;
 									}
 								</style>
-								<a class="mytooltip" href="#" data-toggle="tooltip" data-placement="right" title="@formula">
-									@Html(formula.replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;").intern())
+								<a class="mytooltip" href="#" data-toggle="tooltip" data-placement="right" title="@bft.toString()">
+									@Html(bft.toString().replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;").intern())
 								</a>
 							</td>
 						</tr>
@@ -56,7 +56,7 @@
 						}
 					</tbody>
 				</table>
-				<input type = "hidden" name="bft" @bft>
+				<input hidden name="bft" value="@bft.toString()">
 				<button type="submit" class="btn btn-primary">Pr&uuml;fen</button>
 			</form>
 		</div>
