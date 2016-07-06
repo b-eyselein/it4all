@@ -88,7 +88,7 @@ public class XML extends Controller {
     User user = UserManagement.getCurrentUser();
     String defaultOrOldSolution = STANDARD_XML;
     try {
-      Path oldSolutionPath = util.getSolFileForExerciseAndType(user, EXERCISE_TYPE, exerciseId,
+      Path oldSolutionPath = util.getSolFileForExercise(user, EXERCISE_TYPE, exerciseId,
           exercise.exerciseType.studentFileEnding);
       if(Files.exists(oldSolutionPath, LinkOption.NOFOLLOW_LINKS))
         defaultOrOldSolution = String.join("\n", Files.readAllLines(oldSolutionPath));
@@ -175,7 +175,7 @@ public class XML extends Controller {
   }
   
   private Path createCustomReferenceFileforUser(Path solutionPath, User user, XmlExercise exercise) {
-    Path result = util.getSolFileForExerciseAndType(user, EXERCISE_TYPE, "reference_for_" + exercise.id, "xml");
+    Path result = util.getSolFileForExercise(user, EXERCISE_TYPE, "reference_for_" + exercise.id + "." + "xml");
     String content = "";
     try {
       content = generateFixedStart(exercise, solutionPath.toString()) + "\n" + String.join("\n",
@@ -199,7 +199,7 @@ public class XML extends Controller {
       if(!Files.exists(solDir))
         Files.createDirectories(solDir);
       
-      Path saveTo = util.getSolFileForExerciseAndType(user, EXERCISE_TYPE, exercise.id,
+      Path saveTo = util.getSolFileForExercise(user, EXERCISE_TYPE, exercise.id,
           exercise.exerciseType.studentFileEnding);
       Files.write(saveTo, Arrays.asList(solution), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
       return saveTo;
