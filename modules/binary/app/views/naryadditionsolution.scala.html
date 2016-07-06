@@ -38,7 +38,10 @@
           <p>Ihre L&ouml;sung ist @if(question.checkSolution()) { richtig.</p>
           } else { leider falsch.
           </p>
-          <p>Die richtige Antwort lautet @question.getSum().toString().</p>
+          <p>Die richtige Antwort lautet
+          <span style="font-family: monospace">
+          @question.getSum().toString()<sub>@question.getQuestionType().getBase()</sub>.
+          </span></p>
           }&nbsp;<br>
           <a href="@binary.routes.NAryAddition.index" class="btn btn-primary" role="button">N&auml;chste Aufgabe</a>
         </div>

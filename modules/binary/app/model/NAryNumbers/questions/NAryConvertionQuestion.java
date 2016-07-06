@@ -54,11 +54,13 @@ public class NAryConvertionQuestion {
     else
       startingNumber = NAryNumber.stringToNAry(value, startingNumberBase);
 
-    if(targetNumberBase == NumberBase.BINARY)
-      targetNumber = new BinaryNumber(startingNumber.getValue());
-    else
-      targetNumber = new NAryNumber(startingNumber.getValue(), theTargetNB);
-    learnerSolution = NAryNumber.stringToNAry(theLearnerSolution, targetNumberBase);
+    if(targetNumberBase == NumberBase.BINARY){
+    	targetNumber = new BinaryNumber(startingNumber.getValue());
+    	learnerSolution = BinaryNumber.stringToBin(theLearnerSolution);
+    } else {
+    	targetNumber = new NAryNumber(startingNumber.getValue(), theTargetNB);
+        learnerSolution = NAryNumber.stringToNAry(theLearnerSolution, targetNumberBase);
+    }
   }
 
   public boolean checkSolution() {
