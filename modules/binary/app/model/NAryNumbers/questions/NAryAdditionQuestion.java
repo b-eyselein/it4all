@@ -52,7 +52,11 @@ public class NAryAdditionQuestion {
       summand_2 = NAryNumber.stringToNAry(secondSummandInNAry, questionType);
     }
     sum = NAryNumber.addNArys(summand_1, summand_2);
-    learnerSolution = NAryNumber.stringToNAry(theLearnerSolution, questionType);
+    if(questionType == NumberBase.BINARY) {
+    	learnerSolution = BinaryNumber.stringToBin(theLearnerSolution.replaceAll("\\s", ""));
+    } else {
+    	learnerSolution = NAryNumber.stringToNAry(theLearnerSolution, questionType);
+    }
   }
   
   public boolean checkSolution() {

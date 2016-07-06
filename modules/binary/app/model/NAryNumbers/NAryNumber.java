@@ -36,6 +36,9 @@ public class NAryNumber {
   public static NAryNumber stringToNAry(String input, NumberBase base) throws IllegalArgumentException {
     // Catch negative sign
     boolean neg = false;
+    
+    input = input.replaceAll("\\s", "");
+    
     if(input.toCharArray()[0] == '-') {
       neg = true;
       input = input.substring(1);

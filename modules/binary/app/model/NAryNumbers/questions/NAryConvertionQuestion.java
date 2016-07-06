@@ -20,23 +20,23 @@ public class NAryConvertionQuestion {
   }
 
   private NAryNumber startingNumber;
-  private NumberBase fromNumberBase;
+  private NumberBase startingNumberBase;
 
   private NAryNumber targetNumber;
-  private NumberBase toNumberBase;
+  private NumberBase targetNumberBase;
 
   private NAryNumber learnerSolution;
 
   public NAryConvertionQuestion(int value, NumberBase theStartingNB, NumberBase theTargetNB) {
-    fromNumberBase = theStartingNB;
-    toNumberBase = theTargetNB;
+    startingNumberBase = theStartingNB;
+    targetNumberBase = theTargetNB;
 
-    if(fromNumberBase == NumberBase.BINARY)
+    if(startingNumberBase == NumberBase.BINARY)
       startingNumber = new BinaryNumber(value);
     else
       startingNumber = new NAryNumber(value, theStartingNB);
 
-    if(toNumberBase == NumberBase.BINARY)
+    if(targetNumberBase == NumberBase.BINARY)
       targetNumber = new BinaryNumber(value);
     else
       targetNumber = new NAryNumber(value, theTargetNB);
@@ -46,19 +46,19 @@ public class NAryConvertionQuestion {
 
   public NAryConvertionQuestion(String value, NumberBase theStartingNB, NumberBase theTargetNB,
       String theLearnerSolution) {
-    fromNumberBase = theStartingNB;
-    toNumberBase = theTargetNB;
+    startingNumberBase = theStartingNB;
+    targetNumberBase = theTargetNB;
 
-    if(fromNumberBase == NumberBase.BINARY)
+    if(startingNumberBase == NumberBase.BINARY)
       startingNumber = BinaryNumber.stringToBin(value);
     else
-      startingNumber = NAryNumber.stringToNAry(value, fromNumberBase);
+      startingNumber = NAryNumber.stringToNAry(value, startingNumberBase);
 
-    if(toNumberBase == NumberBase.BINARY)
+    if(targetNumberBase == NumberBase.BINARY)
       targetNumber = new BinaryNumber(startingNumber.getValue());
     else
       targetNumber = new NAryNumber(startingNumber.getValue(), theTargetNB);
-    learnerSolution = NAryNumber.stringToNAry(theLearnerSolution, toNumberBase);
+    learnerSolution = NAryNumber.stringToNAry(theLearnerSolution, targetNumberBase);
   }
 
   public boolean checkSolution() {
@@ -66,7 +66,7 @@ public class NAryConvertionQuestion {
   }
 
   public NumberBase getFromNumberType() {
-    return fromNumberBase;
+    return startingNumberBase;
   }
 
   public NAryNumber getFromValue() {
@@ -78,7 +78,7 @@ public class NAryConvertionQuestion {
   }
 
   public NumberBase getToNumberType() {
-    return toNumberBase;
+    return targetNumberBase;
   }
 
   public NAryNumber getToValue() {
