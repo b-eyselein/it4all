@@ -31,7 +31,7 @@
           </p>
           <form role="form" action="@binary.routes.NAryAddition.checkSolution()" method="post">
             <div class="form-group">
-              <input pattern="@question.getQuestionType().getPattern()"  class="number-input form-control text-right" name="learnerSolution" placeholder="Ihre L&ouml;sung" required>
+              <input pattern="@question.getQuestionType().getPattern()" autocomplete="off" class="number-input form-control text-right" name="learnerSolution" placeholder="Ihre L&ouml;sung" required>
               <input hidden name="summand1" value="@question.getFirstSummand()">
               <input hidden name="summand2" value="@question.getSecondSummand()">
               <input type="number" hidden name="base" value="@question.getBase()">
