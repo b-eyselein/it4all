@@ -5,24 +5,21 @@
   <div class="@if(question.checkSolution()) {panel panel-success} else {panel panel-danger}">
     <div class="panel-heading">
       Wandeln Sie die @question.getFromNumberType().getSingularName()
-      <code>
+      <span style="font-family: monospace">
       	@question.getFromValue()<sub>@question.getFromNumberType().getBase()</sub>
-      </code>&nbsp;
-      in eine @question.getToNumberType().getSingularName() um:
+      </span>in eine @question.getToNumberType().getSingularName() um:
       @if(question.getToNumberType() == model.NAryNumbers.questions.NumberBase.BINARY) {
       	<p><em class="text-info">(Bin&auml;rzahlen bitte in 8-Bit-Darstellung mit f&uuml;hrenden Nullen angeben.)</em></p>
       } 
     </div>
     <div class="panel-body">
-      <code>
-      	@question.getLearnerSolution()<sub>@question.getToNumberType().getBase()</sub>
-      </code>
-       &nbsp;ist @if(question.checkSolution()) { richtig.<br> } else { leider falsch. <br>
+      <span style="font-family: monospace"> @question.getLearnerSolution()<sub>@question.getToNumberType().getBase()</sub></span>
+      ist @if(question.checkSolution()) {richtig.<br> } else {leider falsch. <br>
       Die richtige Antwort lautet
-      <code>
+      <span style="font-family: monospace">
       	@question.getToValue()<sub>@question.getToNumberType().getBase()</sub>
-      </code>
-       &nbsp;.<br> } &nbsp;<br>
+      </span>
+    	.<br> }<br>
       <p>
         <a href="@binary.routes.NAryConvertion.index" class="btn btn-primary" role="button">N&auml;chste Aufgabe</a></p>
     </div>

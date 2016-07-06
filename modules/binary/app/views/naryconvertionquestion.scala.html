@@ -5,10 +5,9 @@
   <div class="panel panel-default">
     <div class="panel-heading">
       Wandeln Sie die @question.getFromNumberType().getSingularName()
-      <code>
+      <span style="font-family: monospace">
         @question.getFromValue()<sub>@question.getFromNumberType().getBase()</sub>
-      </code>&nbsp;
-      in eine @question.getToNumberType().getSingularName um:
+      </span>in eine @question.getToNumberType().getSingularName um:
       @if(question.getToNumberType() == model.NAryNumbers.questions.NumberBase.BINARY) {
       	<p><em class="text-info">(Bin&auml;rzahlen bitte in 8-Bit-Darstellung mit f&uuml;hrenden Nullen angeben.)</em></p>
       } 
