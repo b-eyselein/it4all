@@ -20,16 +20,32 @@ public enum NumberBase {
   private String baseName;
   private String nameSingular;
   private String namePlural;
+  private String pattern;
 
   private NumberBase(int theBase, String theBaseName, String theNameSingular, String theNamePlural) {
     base = theBase;
     baseName = theBaseName;
     nameSingular = theNameSingular;
     namePlural = theNamePlural;
+    if(theBase == 2) {
+    	pattern = "[\\s0-1]*";
+    } else if (theBase == 8) {
+    	pattern = "[\\s0-7]*";
+    } else if (theBase == 10) {
+    	pattern = "[\\s0-9]*";
+    } else if (theBase == 16) {
+    	pattern = "[\\s0-9a-fA-F]*";
+    } else {
+    	pattern ="[\\s0-9a-vA-V]*";
+    }
   }
 
   public int getBase() {
     return base;
+  }
+  
+  public String getPattern() {
+	return pattern;
   }
   
   public String getPluralName() {

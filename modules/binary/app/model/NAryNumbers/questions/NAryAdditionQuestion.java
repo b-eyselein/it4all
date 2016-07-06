@@ -27,7 +27,7 @@ public class NAryAdditionQuestion {
   private NumberBase questionType;
   
   private NAryNumber learnerSolution;
-  
+    
   public NAryAdditionQuestion(int firstSummand, int secondSummand, NumberBase theQuestionType) {
     questionType = theQuestionType;
     if(questionType == NumberBase.BINARY) {

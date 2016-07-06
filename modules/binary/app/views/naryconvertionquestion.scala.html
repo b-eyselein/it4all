@@ -16,7 +16,7 @@
     <div class="panel-body">
       <form role="form" action="@binary.routes.NAryConvertion.checkSolution" method="post">
         <div class="form-group">
-          <input class="form-control" name="learnerSolution" placeholder="Ihre L&ouml;sung" required>
+          <input pattern="@question.getToNumberType().getPattern()" class="form-control" name="learnerSolution" placeholder="Ihre L&ouml;sung" required>
           <input hidden name="value" value="@question.getFromValue()">
           <input type="number" hidden name="startingNB" value="@question.getFromNumberType().getBase()">
           <input type="number" hidden name="targetNB" value="@question.getToNumberType().getBase()">
