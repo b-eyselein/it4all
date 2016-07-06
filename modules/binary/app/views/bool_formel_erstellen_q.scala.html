@@ -1,5 +1,5 @@
 @* Template File *@
-@(user: model.user.User, vars: Array[String], zvector: Array[String], wahrheitstafel: Array[Array[String]], spalten: Int, zeilen: Int, learnerSolution: String, correct: Boolean)
+@(user: model.user.User, vars: Array[String], zvector: Array[String], wahrheitstafel: Array[Array[String]], spalten: Int, zeilen: Int, learnerSolution: String, correct: Boolean, exception_msg: String)
 
 @main("Formel erstellen", user) {
 <!-- CSS override -->
@@ -23,7 +23,7 @@
   }
 </style>
 <div class="container">
-  <div class="panel panel-default">
+  <div class="@if(!correct && learnerSolution == null){panel panel-default} else {@if(correct){panel panel-success} else {panel panel-danger}}">
     <div class="panel-heading">Erstellen Sie die Formel zu folgender Wahrheitstafel:</div>
     <div class="panel-body">
       <div class="col-md-4">
@@ -51,10 +51,16 @@
           <div class="form-group">
             <label class="control-label col-xs-1" for="learnerSolution">z = </label>
             <div class="col-xs-11">
-              <input class="form-control" name="learnerSolution" id="learnerSolution" placeholder="Ihre L&ouml;sung">
+              <input class="form-control" name="learnerSolution" id="learnerSolution" placeholder="Ihre L&ouml;sung" @if(learnerSolution != ""){value="@learnerSolution"} >
               <input hidden name="vars" value="@vars(0)@for(i <- 1 until (vars.length)){,@vars(i)}">
               <input hidden name="zvector" value="@zvector(0)@for(i <- 1 until (zvector.length)){,@zvector(i)}">
             </div>
+            @if(exception_msg != "") {
+              Die Formel ist ung&uuml;ltig: @exception_msg
+            }
+            @if(correct) {
+              Deine Formel ist richtig!
+            }
           </div>
           <!-- <div class="col-sm-12"> -->
             <button type="submit" class="btn btn-primary btn-block">Pr&uuml;fen</button>

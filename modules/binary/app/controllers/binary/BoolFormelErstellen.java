@@ -51,6 +51,8 @@ public class BoolFormelErstellen extends Controller {
     String varString = dynFormula.get("vars");
     String zvectorString = dynFormula.get("zvector");
     String[] vars;
+    String exception_msg = "";
+    boolean correct = false;
     if (varString == null) {
       vars = getRandomVars(2,3);
     } else {
@@ -63,11 +65,19 @@ public class BoolFormelErstellen extends Controller {
       zvector = zvectorString.split(",");
       //throw new IllegalStateException(vars.length+" "+zvector.length); // TODO: remove
     }
-    
+    if (learnerSolution != null) {
+      try {
+        BoolescheFunktionTree bft = BoolescheFunktionParser.parse(learnerSolution, vars);
+        correct = bft.compareStringArray(zvector);
+      } catch (IllegalArgumentException iae) {
+        exception_msg = iae.getMessage();
+      }
+      
+    }
     int zeilen = (int) Math.pow(2.0, vars.length);
     int spalten = vars.length;
     return ok(bool_formel_erstellen_q.render(UserManagement.getCurrentUser(), vars, zvector,
-        getTabelle(vars.length), spalten, zeilen, learnerSolution, true));
+        getTabelle(vars.length), spalten, zeilen, learnerSolution, correct, exception_msg));
   }
   
   private String[] getRandomVector(int vars) {
