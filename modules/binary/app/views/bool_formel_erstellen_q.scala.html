@@ -1,5 +1,5 @@
 @* Template File *@
-@(user: model.user.User, var_names: Array[String], wahrheitstafel: Array[Array[Char]], spalten: Int, zeilen: Int, formel: String)
+@(user: model.user.User, vars: Array[String], zvector: Array[String], wahrheitstafel: Array[Array[String]], spalten: Int, zeilen: Int, learnerSolution: String, correct: Boolean)
 
 @main("Formel erstellen", user) {
 <!-- CSS override -->
@@ -30,7 +30,7 @@
         <table class="table">
           <thead>
             <tr>
-              @for(v <- var_names){
+              @for(v <- vars){
               <td>@v</td> }
               <td>z</td>
             </tr>
@@ -41,25 +41,39 @@
             @for(j <- 0 until (spalten)) {
               <td>@wahrheitstafel(j)(i)</td>
             }
+            <td>@zvector(i)</td>
           }
           </tbody>
         </table>
       </div>
       <div class="col-md-8">
-        <form role="form" class="form-horizontal" action="@binary.routes.BoolFormelErstellen.checkSolution()" method="post">
+        <form role="form" class="form-horizontal" action="@binary.routes.BoolFormelErstellen.index()" method="post">
           <div class="form-group">
             <label class="control-label col-xs-1" for="learnerSolution">z = </label>
             <div class="col-xs-11">
               <input class="form-control" name="learnerSolution" id="learnerSolution" placeholder="Ihre L&ouml;sung">
-              <input hidden name="boolformel" value="@formel">
+              <input hidden name="vars" value="@vars(0)@for(i <- 1 until (vars.length)){,@vars(i)}">
+              <input hidden name="zvector" value="@zvector(0)@for(i <- 1 until (zvector.length)){,@zvector(i)}">
             </div>
           </div>
-          <div class="col-sm-12">
+          <!-- <div class="col-sm-12"> -->
             <button type="submit" class="btn btn-primary btn-block">Pr&uuml;fen</button>
-          </div>
+          <!-- </div> -->
         </form>
+        <br>
+        @if(correct){
+        <form role="form" class="form-horizontal" action="@binary.routes.BoolFormelErstellen.index()" method="post">
+        	<button type="submit" class="btn btn-primary btn-block">n&auml;chste Aufgabe</button>
+        </form>
+        }else{	
+        <form role="form" class="form-horizontal" action="@binary.routes.BoolFormelErstellen.musterLoesung()" method="post">
+        	<input hidden name="vars" value="@vars(0)@for(i <- 1 until (vars.length)){,@vars(i)}">
+            <input hidden name="zvector" value="@zvector(0)@for(i <- 1 until (zvector.length)){,@zvector(i)}">
+        	<button type="submit" class="btn btn-primary btn-block">zeige Musterl&ouml;sung</button>
+        </form>
+        }
       </div>
-     </div>
+    </div>
   </div>
   
   <div class="panel panel-info">
@@ -176,7 +190,7 @@
                     <td valign="top">&nbsp;<b>&hArr;</b>&nbsp;</td>
                     <td valign="top"><code class="mycode">(a xor(b impl(c or(d and(not e))))))</code></td>
                   </tr>  
-                    <td valign="top"><ul><li>Gleichwertiger Rang: von Links nach rechts&nbsp;</li></ul></td>
+                    <td valign="top"><ul><li>Gleichwertiger Rang: von links nach rechts&nbsp;</li></ul></td>
                     <td valign="top"><code class="mycode">a xor b nor c nand d equiv e</code></td>
                     <td valign="top">&nbsp;<b>&hArr;</b>&nbsp;</td>
                     <td valign="top"><code class="mycode">((((a xor b)nor c)nand d)equiv e)</code></td>

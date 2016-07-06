@@ -1,6 +1,28 @@
 @* boolquestion Template File *@
 @(user: model.user.User, zeros: Array[Array[Char]], length: Int, bft: model.boolescheAlgebra.BFTree.BoolescheFunktionTree)
 @main("Wertetabelle", user) {
+<!-- CSS override -->
+<style>
+	a.mytooltip:link {
+	    color: #333333;
+	    text-decoration: none;
+	}
+	a.mytooltip:visited {
+	    color: #333333;
+	    text-decoration: none;
+	}
+	a.mytooltip:hover {
+	    color: #333333;
+	    text-decoration: none;
+	}
+	a.mytooltip:active {
+	    color: #333333;
+	    text-decoration: none;
+	}
+	.tooltip-inner {
+		   max-width: 1000px;
+	}
+</style>
 <div class="container">
 	<div class="panel panel-default">
 		<div class="panel-heading">
@@ -17,27 +39,7 @@
 							</td>
 							}
 							<td class="col-md-10">
-								<style>
-									a.mytooltip:link {
-									    color: #333333;
-									    text-decoration: none;
-									}
-									a.mytooltip:visited {
-									    color: #333333;
-									    text-decoration: none;
-									}
-									a.mytooltip:hover {
-									    color: #333333;
-									    text-decoration: none;
-									}
-									a.mytooltip:active {
-									    color: #333333;
-									    text-decoration: none;
-									}
-									.tooltip-inner {
- 									   max-width: 1000px;
-									}
-								</style>
+								
 								<a class="mytooltip" href="#" data-toggle="tooltip" data-placement="right" title="@bft.toString()">
 									@Html(bft.toString().replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;").intern())
 								</a>
@@ -62,6 +64,7 @@
 		</div>
 	</div>
 </div>
+<!-- Tooltip script -->
 <script>
 $(document).ready(function(){
     $('[data-toggle="tooltip"]').tooltip(); 
