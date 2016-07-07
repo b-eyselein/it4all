@@ -39,9 +39,8 @@
 							</td>
 							}
 							<td class="col-md-10">
-								
 								<a class="mytooltip" href="#" data-toggle="tooltip" data-placement="right" title="@bft.toString()">
-									@Html(bft.toString().replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;").intern())
+									@Html(bft.toString().replace("IMPL","&rArr;").replace("NOR","&#x22bd;").replace("NAND","&#x22bc;").replace("EQUIV","&hArr;").replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;"))
 								</a>
 							</td>
 						</tr>
@@ -53,7 +52,7 @@
 							<td>@zeros(j)(i)</td>
 							}
 							<td>
-								<input type="number" maxlength="1" min="0" max="1" step="1" name="@i.toString" size="1" required>
+								<input type="number" autocomplete="off" min="0" max="1" step="1" name="@i.toString" size="1" maxlength="1" required>
 							</td>
 						}
 					</tbody>

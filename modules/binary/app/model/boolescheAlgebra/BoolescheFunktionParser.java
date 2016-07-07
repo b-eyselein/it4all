@@ -131,29 +131,28 @@ public class BoolescheFunktionParser {
     }
     // suche xor
     klammer = 0;
-    for(int i = 0; i < ausdruck.length() - 2; i++) {
-      if(ausdruck.charAt(i) == '(') {
+    for(int i = ausdruck.length() - 1; i >= 0; i--) {
+      if(ausdruck.charAt(i) == ')') {
         klammer++;
-      } else if(ausdruck.charAt(i) == ')') {
+      } else if(ausdruck.charAt(i) == '(') {
         klammer--;
       }
       if(klammer == 0) {
-        if(ausdruck.substring(i, i + 3).equals("xor")) {
-          return new BF_XOR(getNextKnoten(ausdruck.substring(0, i), vars),
-              getNextKnoten(ausdruck.substring(i + 3, ausdruck.length()), vars));
-        } else if(ausdruck.substring(i, i + 3).equals("nor")) {
-          return new BF_NOR(getNextKnoten(ausdruck.substring(0, i), vars),
-              getNextKnoten(ausdruck.substring(i + 3, ausdruck.length()), vars));
-        }
         try {
-          if(ausdruck.substring(i, i + 4).equals("nand")) {
+          if(ausdruck.substring(i, i + 3).equals("xor")) {
+            return new BF_XOR(getNextKnoten(ausdruck.substring(0, i), vars),
+                getNextKnoten(ausdruck.substring(i + 3, ausdruck.length()), vars));
+          } else if(ausdruck.substring(i, i + 3).equals("nor")) {
+            return new BF_NOR(getNextKnoten(ausdruck.substring(0, i), vars),
+                getNextKnoten(ausdruck.substring(i + 3, ausdruck.length()), vars));
+          } else if(ausdruck.substring(i, i + 4).equals("nand")) {
             return new BF_NAND(getNextKnoten(ausdruck.substring(0, i), vars),
                 getNextKnoten(ausdruck.substring(i + 4, ausdruck.length()), vars));
           } else if(ausdruck.substring(i, i + 5).equals("equiv")) {
             return new BF_EQUIV(getNextKnoten(ausdruck.substring(0, i), vars),
                 getNextKnoten(ausdruck.substring(i + 5, ausdruck.length()), vars));
           }
-        } catch (Exception e) {
+        } catch (IndexOutOfBoundsException e) {
           
         }
       }
@@ -261,7 +260,7 @@ public class BoolescheFunktionParser {
   private static boolean pruefeZeichensatz(String formel) throws IllegalArgumentException {
     for(int i = 0; i < formel.length(); i++) {
       if(!zeichensatz.contains(formel.charAt(i))) {
-        String iaexception = "Deine L\u00f6sung enth\u00e4lt ein ung\u00fcltiges Zeichen: " + formel.charAt(i);
+        String iaexception = "Die Formel enth\u00e4lt ein ung\u00fcltiges Zeichen: " + formel.charAt(i);
         throw new IllegalArgumentException(iaexception);
       }
     }

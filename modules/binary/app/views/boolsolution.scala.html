@@ -32,11 +32,11 @@
 	Ausf&uuml;llen der Wertetabelle
 	</div>
 	<div class="panel-body">
-		Die Wertetabelle wurde
+		<p>Die Wertetabelle wurde
 			@if(correct) {
-				richtig ausgef&uuml;llt.
+				richtig ausgef&uuml;llt.</p>
 			} else {
-				leider falsch ausgef&uuml;llt. <BR> Die richtige L&ouml;sungen sieht folgenderma&szlig;en aus: <BR> 
+				leider falsch ausgef&uuml;llt. <br> Die richtige L&ouml;sungen sieht folgenderma&szlig;en aus:</p>
 				<table class="table">
 					<thread align = "right">
 						<tr>
@@ -47,7 +47,7 @@
 							}
 							<td class="col-md-10">
 								<a class="mytooltip" href="#" data-toggle="tooltip" data-placement="right" title="@bft.toString()">
-									@Html(bft.toString().replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;").intern())
+									@Html(bft.toString().replace("IMPL","&rArr;").replace("NOR","&#x22bd;").replace("NAND","&#x22bc;").replace("EQUIV","&hArr;").replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;"))
 								</a>
 							</td>
 						</tr>
@@ -65,7 +65,6 @@
 					</tbody>
 					</table>
 				}
-			<BR>
 	 	<p><a href="@binary.routes.Bool.index" class="btn btn-primary" role="button">N&auml;chste Aufgabe</a></p>
 	</div>
 	</div>

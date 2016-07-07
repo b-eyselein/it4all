@@ -91,11 +91,23 @@ public class BoolFormelErstellen extends Controller {
   }
   
   private String[] getRandomVector(int vars) {
+    int wert = 0;
+    boolean wahrenthalten = false;
+    boolean falschenthalten = false;
     String[] vector = new String[(int) Math.pow(2.0, vars)];
     for (int i = 0; i<vector.length; i++) {
-      vector[i] = "" +(int) Math.floor(Math.random()*2);
+      wert = (int) Math.floor(Math.random()*2);
+      if (wert == 1) {
+        wahrenthalten = true;
+      } else {
+        falschenthalten = true;
+      }
+      vector[i] = "" +wert;
     }
-    return vector;
+    if (wahrenthalten && falschenthalten) {
+      return vector;
+    }
+    return getRandomVector(vars);
   }
 
   private String[] getRandomVars(int min, int max) {

@@ -29,29 +29,37 @@
   <div class="@if(!correct && learnerSolution == null){panel panel-default} else {@if(correct){panel panel-success} else {panel panel-danger}}">
     <div class="panel-heading">Erstellen Sie die Formel zu folgender Wahrheitstafel:</div>
     <div class="panel-body">
-      <div class="col-md-4">
+      <div class="col-md-12">
         <table class="table">
+          @for(v <- vars){<col width="10%">}
+          <col width="10%">
+          @if(formel != null){<col width="10%"><col width="@{100-vars.length*10-20}%">
+          }else{
+          <col width="@{100-vars.length*10-10}%">
+          }
           <thread align = "right">
             <tr>
               @for(v <- vars){
-              <td>@v</td> }
-              <td>z</td>
-              @if(formel != null){<td>@Html(formel.replace("IMPL","&rArr;").replace("NOR","&#x22bd;").replace("NAND","&#x22bc;").replace("EQUIV","&hArr;").replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;"))</td>}
+              <td align="center"><b>@v</b></td> }
+              <td align="center"><b>z</b></td>
+              @if(formel != null){<td align="right">Ihre Formel:</td><td align="left"><p class="nomargin text-@if(correct){success}else{danger}">@Html(formel.replace("IMPL","&rArr;").replace("NOR","&#x22bd;").replace("NAND","&#x22bc;").replace("EQUIV","&hArr;").replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;"))</p></td>
+              }else{<td></td>}
             </tr>
           </thread>
           <tbody>
           @for(i <- 0 until (zeilen)) {
             <tr>
             @for(j <- 0 until (spalten)) {
-              <td>@wahrheitstafel(j)(i)</td>
+              <td align="center">@wahrheitstafel(j)(i)</td>
             }
-            <td>@zvector(i)</td>
-            @if(formelvector != null){<td><p class="nomargin text-@if(zvector(i) == formelvector(i)){success}else{danger}">@formelvector(i)</p></td>}
+            <td align="center">@zvector(i)</td>
+            @if(formelvector != null){<td></td><td align="left"><p class="nomargin text-@if(zvector(i) == formelvector(i)){success}else{danger}">@formelvector(i)</p></td>
+            }else{<td></td>}
           }
           </tbody>
         </table>
       </div>
-      <div class="col-md-8">
+      <div class="col-md-12">
         <form role="form" class="form-horizontal" action="@binary.routes.BoolFormelErstellen.index()" method="post">
           <div class="form-group">
             <label class="control-label col-xs-1" for="learnerSolution">z = </label>
@@ -62,6 +70,7 @@
             </div>
             
             <div class="col-md-12">
+            <div class="col-md-12">
             <br>
             @if(exception_msg != "") {
               <p class="text-danger">Die Formel ist ung&uuml;ltig: @exception_msg</p>
@@ -71,27 +80,29 @@
               }else{
                 @if(learnerSolution != null) {
                   <p class="text-danger">Die Wahrheitswerte Ihrer Formel stimmen nicht mit den gegebenen Wahrheitswerten &uuml;berein.</p>
-                }	
+                }
               }
             }
             </div>
+            </div>
           </div>
-          <!-- <div class="col-sm-12"> -->
+          <div class="col-sm-6">
             <button type="submit" class="btn btn-primary btn-block">Pr&uuml;fen</button>
-          <!-- </div> -->
+          </div>
         </form>
-        <br>
-        @if(correct){
-        <form role="form" class="form-horizontal" action="@binary.routes.BoolFormelErstellen.index()" method="post">
-        	<button type="submit" class="btn btn-primary btn-block">n&auml;chste Aufgabe</button>
-        </form>
-        }else{	
-        <form role="form" class="form-horizontal" action="@binary.routes.BoolFormelErstellen.musterLoesung()" method="post">
-        	<input hidden name="vars" value="@vars(0)@for(i <- 1 until (vars.length)){,@vars(i)}">
+        <div class="col-sm-6">
+          @if(correct){
+          <form role="form" class="form-horizontal" action="@binary.routes.BoolFormelErstellen.index()" method="post">
+            <button type="submit" class="btn btn-primary btn-block">n&auml;chste Aufgabe</button>
+          </form>
+          }else{
+          <form role="form" class="form-horizontal" action="@binary.routes.BoolFormelErstellen.musterLoesung()" method="post">
+            <input hidden name="vars" value="@vars(0)@for(i <- 1 until (vars.length)){,@vars(i)}">
             <input hidden name="zvector" value="@zvector(0)@for(i <- 1 until (zvector.length)){,@zvector(i)}">
-        	<button type="submit" class="btn btn-primary btn-block">zeige Musterl&ouml;sung</button>
-        </form>
-        }
+            <button type="submit" class="btn btn-primary btn-block">zeige Musterl&ouml;sung</button>
+          </form>
+          }
+        </div>
       </div>
     </div>
   </div>

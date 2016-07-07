@@ -39,11 +39,7 @@ public class Bool extends Controller {
       solutions[i] = dynFormula.get("" + i + "");
     }
     boolean correct = bft.compareStringArray(solutions);
-    String[] answer = new String[length];
-    char[] ansOld = bft.getWahrheitsVectorChar();
-    for(int i = 0; i < answer.length; i++) {
-      answer[i] = "" + ansOld[i];
-    }
+    String[] answer = bft.getWahrheitsVectorString();
     return ok(boolsolution.render(UserManagement.getCurrentUser(), new Boolean(correct),
         bft.getVariablenTabelle(), length, solutions, answer, "1", bft));
   }
