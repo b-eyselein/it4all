@@ -71,21 +71,23 @@ public class BoolFormelErstellen extends Controller {
       zvector = getRandomVector(vars.length);
     } else {
       zvector = zvectorString.split(",");
-      //throw new IllegalStateException(vars.length+" "+zvector.length); // TODO: remove
     }
+    int zeilen = (int) Math.pow(2.0, vars.length);
+    int spalten = vars.length;
+    String formel = null;
+    String[] formelvector = null;
     if (learnerSolution != null) {
       try {
         BoolescheFunktionTree bft = BoolescheFunktionParser.parse(learnerSolution, vars);
         correct = bft.compareStringArray(zvector);
+        formelvector = bft.getWahrheitsVectorString();
+        formel = bft.toString();
       } catch (IllegalArgumentException iae) {
         exception_msg = iae.getMessage();
       }
-      
     }
-    int zeilen = (int) Math.pow(2.0, vars.length);
-    int spalten = vars.length;
     return ok(bool_formel_erstellen_q.render(UserManagement.getCurrentUser(), vars, zvector,
-        getTabelle(vars.length), spalten, zeilen, learnerSolution, correct, exception_msg));
+        getTabelle(vars.length), spalten, zeilen, learnerSolution, correct, exception_msg, formel, formelvector));
   }
   
   private String[] getRandomVector(int vars) {

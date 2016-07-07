@@ -15,6 +15,17 @@ public class BoolescheFunktionTree {
     }
   }
   
+  /**
+   * Gibt 1 oder 0 zum passenden Wahrheitswert zurueck.
+   */
+  private static String booleantoString(boolean b) {
+    if(b) {
+      return "1";
+    } else {
+      return "0";
+    }
+  }
+  
   private BFKnoten knoten;
   
   private BF_Variable[] vars;
@@ -293,6 +304,28 @@ public class BoolescheFunktionTree {
     boolean[] zeile = new boolean[this.vars.length];
     for(int i = 0; i < Math.pow(2, vars.length); i++) {
       wvector[i] = booleantochar(this.getWert(zeile));
+      int k = vars.length - 1;
+      if(zeile[vars.length - 1]) {
+        while(k > 0 && zeile[k]) {
+          zeile[k] = false;
+          k--;
+        }
+        zeile[k] = true;
+      } else {
+        zeile[vars.length - 1] = true;
+      }
+    }
+    return wvector;
+  }
+  
+  /**
+   * gibt Vector mit den Werten als String des Ausdrucks zurueck
+   */
+  public String[] getWahrheitsVectorString() {
+    String[] wvector = new String[(int) Math.pow(2, this.vars.length)];
+    boolean[] zeile = new boolean[this.vars.length];
+    for(int i = 0; i < Math.pow(2, vars.length); i++) {
+      wvector[i] = booleantoString(this.getWert(zeile));
       int k = vars.length - 1;
       if(zeile[vars.length - 1]) {
         while(k > 0 && zeile[k]) {

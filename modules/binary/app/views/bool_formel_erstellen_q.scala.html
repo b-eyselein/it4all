@@ -1,5 +1,5 @@
 @* Template File *@
-@(user: model.user.User, vars: Array[String], zvector: Array[String], wahrheitstafel: Array[Array[String]], spalten: Int, zeilen: Int, learnerSolution: String, correct: Boolean, exception_msg: String)
+@(user: model.user.User, vars: Array[String], zvector: Array[String], wahrheitstafel: Array[Array[String]], spalten: Int, zeilen: Int, learnerSolution: String, correct: Boolean, exception_msg: String, formel: String, formelvector: Array[String])
 
 @main("Formel erstellen", user) {
 <!-- CSS override -->
@@ -13,13 +13,16 @@
     font-size:100%;
   }
   img.myicon{
-    margin: 2px;
+    margin:2px;
     border-width:1px;
     border-style:solid;
     border-color:#aaaaaa;
     border-radius:3px;
     width:16px;
     height:16px;
+  }
+  p.nomargin{
+    margin:0px;
   }
 </style>
 <div class="container">
@@ -33,6 +36,7 @@
               @for(v <- vars){
               <td>@v</td> }
               <td>z</td>
+              @if(formel != null){<td>@Html(formel.replace("IMPL","&rArr;").replace("NOR","&#x22bd;").replace("NAND","&#x22bc;").replace("EQUIV","&hArr;").replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;"))</td>}
             </tr>
           </thread>
           <tbody>
@@ -42,6 +46,7 @@
               <td>@wahrheitstafel(j)(i)</td>
             }
             <td>@zvector(i)</td>
+            @if(formelvector != null){<td><p class="nomargin text-@if(zvector(i) == formelvector(i)){success}else{danger}">@formelvector(i)</p></td>}
           }
           </tbody>
         </table>
