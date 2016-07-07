@@ -1,10 +1,32 @@
-@(user: model.user.User, givenAnswer: String, correct: Boolean, exception_msg: String, var_names: Array[String], wahrheitstafel: Array[Array[Char]], spalten: Int, zeilen: Int, dnf: String, knf: String)
+@(user: model.user.User, var_names: Array[String], zvector: Array[String], tabelle: Array[Array[String]], spalten: Int, zeilen: Int, dnf: String, knf: String)
 
 @main("Formel erstellen", user) {
+<!-- CSS override -->
+<style>
+	a.mytooltip:link {
+	    color: #333333;
+	    text-decoration: none;
+	}
+	a.mytooltip:visited {
+	    color: #333333;
+	    text-decoration: none;
+	}
+	a.mytooltip:hover {
+	    color: #333333;
+	    text-decoration: none;
+	}
+	a.mytooltip:active {
+	    color: #333333;
+	    text-decoration: none;
+	}
+	.tooltip-inner {
+		   max-width: 1000px;
+	}
+</style>
 	<div class="container">
-		<div class="@if(correct) {panel panel-success} else {panel panel-danger}">
+		<div class="panel panel-default">
 			<div class="panel-heading">
-					Erstellen Sie die Formel zu folgender Wahrheitstafel:
+				Musterl&ouml;sung:
 			</div>
 			<div class="panel-body">
 				<div class="row">
@@ -26,35 +48,39 @@
 							@for(i <- 0 until (zeilen)){
 								<tr>
 								@for(j <- 0 until (spalten)){
-									<td>@wahrheitstafel(j)(i)</td>
-									}
+									<td>@tabelle(j)(i)</td>
 								}
+								<td>@zvector(i)</td>
+							}
 							</tbody>
 						</table>
 					</div>
 				</div>
 				<div class="row">
 					<div class="container-fluid">
-						<p><strong>Ihre Antwort: @givenAnswer &nbsp;&nbsp;</strong></p>
-						<p>Ihre L&ouml;sung ist 
-							@if(correct) {
-								richtig.</p>
-							} else {
-								leider falsch. </p>
-								<p>@exception_msg</p>
-							}
-						&nbsp;<br>
 						<p>
 							Musterl&ouml;sungen:<br>
-							kanonische disjunktive Normalform: &nbsp; @dnf <br>
-							kanonische konjunktive Normalform: &nbsp; @knf <br>
+							kanonische disjunktive Normalform: &nbsp; 
+							<a class="mytooltip" href="#" data-toggle="tooltip" data-placement="right" title="@dnf.toString()">
+								@Html(dnf.toString().replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;").intern())
+							</a> <br>
+							kanonische konjunktive Normalform: &nbsp;
+							<a class="mytooltip" href="#" data-toggle="tooltip" data-placement="right" title="@knf.toString()">
+								@Html(knf.toString().replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;").intern())
+							</a> <br>
 						</p>
-						<a href="@binary.routes.BoolFormelErstellen.index" class="btn btn-primary" role="button">
-							N&auml;chste Aufgabe
-						</a>
+						<form role="form" class="form-horizontal" action="@binary.routes.BoolFormelErstellen.index()" method="post">
+        					<button type="submit" class="btn btn-primary btn-block">n&auml;chste Aufgabe</button>
+       					</form>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+<!-- Tooltip script -->
+<script>
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip(); 
+});
+</script>
 }

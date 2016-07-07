@@ -28,13 +28,13 @@
     <div class="panel-body">
       <div class="col-md-4">
         <table class="table">
-          <thead>
+          <thread align = "right">
             <tr>
               @for(v <- vars){
               <td>@v</td> }
               <td>z</td>
             </tr>
-          </thead>
+          </thread>
           <tbody>
           @for(i <- 0 until (zeilen)) {
             <tr>
@@ -51,16 +51,25 @@
           <div class="form-group">
             <label class="control-label col-xs-1" for="learnerSolution">z = </label>
             <div class="col-xs-11">
-              <input class="form-control" name="learnerSolution" id="learnerSolution" placeholder="Ihre L&ouml;sung" @if(learnerSolution != ""){value="@learnerSolution"} >
+              <input class="form-control" name="learnerSolution" id="learnerSolution" placeholder="Ihre L&ouml;sung" autocomplete="off" required @if(learnerSolution != ""){value="@learnerSolution"} >
               <input hidden name="vars" value="@vars(0)@for(i <- 1 until (vars.length)){,@vars(i)}">
               <input hidden name="zvector" value="@zvector(0)@for(i <- 1 until (zvector.length)){,@zvector(i)}">
             </div>
+            
+            <div class="col-md-12">
+            <br>
             @if(exception_msg != "") {
-              Die Formel ist ung&uuml;ltig: @exception_msg
+              <p class="text-danger">Die Formel ist ung&uuml;ltig: @exception_msg</p>
+            }else{
+              @if(correct) {
+                <p class="text-success">Ihre Formel ist richtig!</p>
+              }else{
+                @if(learnerSolution != null) {
+                  <p class="text-danger">Die Wahrheitswerte Ihrer Formel stimmen nicht mit den gegebenen Wahrheitswerten &uuml;berein.</p>
+                }	
+              }
             }
-            @if(correct) {
-              Deine Formel ist richtig!
-            }
+            </div>
           </div>
           <!-- <div class="col-sm-12"> -->
             <button type="submit" class="btn btn-primary btn-block">Pr&uuml;fen</button>

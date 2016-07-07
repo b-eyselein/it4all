@@ -227,7 +227,7 @@ public class BoolescheFunktionParser {
     }
     
     throw new IllegalArgumentException(
-        "Der Ausdruck ist unvollst\u00e4ndig. M\u00f6glicherweise fehlt bei einem Operator eine Variable."); // TODO:
+        "Der Ausdruck ist unvollst\u00e4ndig. Es fehlt ein Operator oder eine Variable."); // TODO:
                                                                                                              // Fehlerbeschreibung
                                                                                                              // ergaenzen
   }

@@ -27,22 +27,30 @@ public class BoolFormelErstellen extends Controller {
 
   public Result musterLoesung() {
     DynamicForm dynFormula = factory.form().bindFromRequest();
-    String learnerSolution = dynFormula.get("learnerSolution");
-    String formel = dynFormula.get("boolformel");
-    BoolescheFunktionTree bft = BoolescheFunktionParser.parse(formel);
+    String varString = dynFormula.get("vars");
+    String zvectorString = dynFormula.get("zvector");
+    String[] vars = varString.split(",");
+    String[] zvector = zvectorString.split(",");
     
-    int zeilen = (int) Math.pow(2.0, bft.getAnzahlVariablen());
-    int spalten = bft.getAnzahlVariablen() + 1;
+    int zeilen = (int) Math.pow(2.0, vars.length);
+    int spalten = vars.length;
     
-    String exception_msg = "";
-    boolean correct = false;
-    try {
-      correct = bft.compareBoolscheFormelTree(BoolescheFunktionParser.parse(learnerSolution, bft.getVariablen()));
-    } catch (IllegalArgumentException e) {
-      exception_msg = e.getMessage();
+    String[][] tabelle = getTabelle(vars.length);
+    boolean[][] wahrheitstafel = new boolean[spalten+1][zeilen];
+    for (int i = 0; i<zeilen; i++) {
+      for (int j = 0; j<spalten; j++) {
+        if (tabelle[j][i].equals("1")) {
+          wahrheitstafel[j][i] = true;
+        }
+      }
+      if (zvector[i].equals("1")) {
+        wahrheitstafel[spalten][i] = true;
+      }
     }
-    return ok(bool_formel_erstellen_s.render(UserManagement.getCurrentUser(), learnerSolution, correct, exception_msg,
-        bft.getVariablen(), bft.getWahrheitstafelChar(), spalten, zeilen, bft.kanonischeDisjunktiveNormalform(), bft.kanonischeKonjunktiveNormalform()));
+    String dnf = kanonischeDisjunktiveNormalform(vars,wahrheitstafel);
+    String knf = kanonischeKonjunktiveNormalform(vars,wahrheitstafel);
+    
+    return ok(bool_formel_erstellen_s.render(UserManagement.getCurrentUser(), vars, zvector, tabelle, spalten, zeilen, dnf, knf));
   }
 
   public Result index() {
@@ -109,42 +117,77 @@ public class BoolFormelErstellen extends Controller {
     return vars;
   }
   
-  public String[][] getTabelle(int vars) {
-    String[][] vtafel = new String[vars][(int) Math.pow(2.0, vars)];
-    char[] zeile = new char[vars];
+  public String[][] getTabelle(int anzvars) {
+    String[][] vtafel = new String[anzvars][(int) Math.pow(2.0, anzvars)];
+    char[] zeile = new char[anzvars];
     for(int i = 0; i < zeile.length; i++) {
       zeile[i] = '0';
     }
-    for(int i = 0; i < Math.pow(2, vars); i++) {
+    for(int i = 0; i < Math.pow(2, anzvars); i++) {
       for(int j = 0; j < zeile.length; j++) {
         vtafel[j][i] = ""+zeile[j];
       }
-      int k = vars - 1;
-      if(zeile[vars - 1] == '1') {
+      int k = anzvars - 1;
+      if(zeile[anzvars - 1] == '1') {
         while(k > 0 && zeile[k] == '1') {
           zeile[k] = '0';
           k--;
         }
         zeile[k] = '1';
       } else {
-        zeile[vars - 1] = '1';
+        zeile[anzvars - 1] = '1';
       }
     }
     return vtafel;
   }
   
-  /*
-  private String neueAufgabe() {
-    String aufgabe = "";
-    int anzVars = (int) Math.floor(2+Math.random()*2);
-    for (int i = 0; i<anzVars; i++) {
-      aufgabe += ALPHABET[i]+",";
-    }
-    aufgabe += ";";
-    int vsize = (int) Math.pow(2, anzVars);
-    for (int i = 0; i<vsize; i++) {
-      aufgabe += (int) Math.floor(Math.random()*2) +",";
-    }
-    return aufgabe;
-  }*/
+  public String kanonischeDisjunktiveNormalform(String[] variablen, boolean[][] wahrheitstafel) {
+	    String formel = "";
+	    for(int i = 0; i < wahrheitstafel[0].length; i++) {
+	      // Nur "true"-Werte in der Tafel
+	      if(wahrheitstafel[variablen.length][i]) {
+	        if(formel.length() != 0) {
+	          formel += " OR ";
+	        }
+	        for(int j = 0; j < wahrheitstafel.length - 1; j++) {
+	          if(j != 0) {
+	            formel += " AND ";
+	          }
+	          if(wahrheitstafel[j][i]) {
+	            formel += variablen[j];
+	          } else {
+	            formel += "NOT " + variablen[j];
+	          }
+	        }
+	      }
+	    }
+	    return formel;
+	  }
+	  
+	  public String kanonischeKonjunktiveNormalform(String[] variablen, boolean[][] wahrheitstafel) {
+	    String formel = "";
+	    for(int i = 0; i < wahrheitstafel[0].length; i++) {
+	      // Nur "false"-Werte in der Tafel
+	      if(!wahrheitstafel[variablen.length][i]) {
+	        if(formel.length() != 0) {
+	          formel += " AND ";
+	        }
+	        formel += "(";
+	        for(int j = 0; j < wahrheitstafel.length - 1; j++) {
+	          if(j != 0) {
+	            formel += " OR ";
+	          }
+	          if(!wahrheitstafel[j][i]) {
+	            formel += variablen[j];
+	          } else {
+	            formel += "NOT " + variablen[j];
+	          }
+	        }
+	        formel += ")";
+	      }
+	    }
+	    return formel;
+	  }
+  
+  
 }
