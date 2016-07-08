@@ -1,5 +1,5 @@
 @* boolquestion Template File *@
-@(user: model.user.User, zeros: Array[Array[Char]], length: Int, bft: model.boolescheAlgebra.BFTree.BoolescheFunktionTree)
+@(user: model.user.User, zeros: Array[Array[Char]], length: Int, formel: String, bft: model.boolescheAlgebra.BFTree.BoolescheFunktionTree)
 @main("Wertetabelle", user) {
 <!-- CSS override -->
 <style>
@@ -39,8 +39,8 @@
 							</td>
 							}
 							<td class="col-md-10">
-								<a class="mytooltip" href="#" data-toggle="tooltip" data-placement="right" title="@bft.toString()">
-									@Html(bft.toString().replace("IMPL","&rArr;").replace("NOR","&#x22bd;").replace("NAND","&#x22bc;").replace("EQUIV","&hArr;").replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;"))
+								<a class="mytooltip" href="#" data-toggle="tooltip" data-placement="right" title="@formel">
+									@Html(formel.replace("IMPL","&rArr;").replace("NOR","&#x22bd;").replace("NAND","&#x22bc;").replace("EQUIV","&hArr;").replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;"))
 								</a>
 							</td>
 						</tr>
@@ -57,7 +57,8 @@
 						}
 					</tbody>
 				</table>
-				<input hidden name="bft" value="@bft.toString()">
+				<input hidden name="bft" value="@formel">
+				<input hidden name="variablen" value="@for(v <- bft.getVariablen()){@v,}">
 				<button type="submit" class="btn btn-primary">Pr&uuml;fen</button>
 			</form>
 		</div>
