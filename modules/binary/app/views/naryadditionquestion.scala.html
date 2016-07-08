@@ -17,28 +17,26 @@
       } 
     </div>
     <div class="panel-body">
-      <div class="row">
-        <div class="col-sm-2">
-          <p class="text-right">
-          <span style="font-family: monospace">
-            @question.getFirstSummand()<sub>@question.getBase()</sub>&nbsp;
-          </span>
-          </p>
-          <p class="text-right">
-          <span style="font-family: monospace">
-            + @question.getSecondSummand()<sub>@question.getBase()</sub>&nbsp;
-          </span>
-          </p>
-          <form role="form" action="@binary.routes.NAryAddition.checkSolution()" method="post">
-            <div class="form-group">
-              <input pattern="@question.getQuestionType().getPattern()" autocomplete="off" class="number-input form-control text-right" name="learnerSolution" placeholder="Ihre L&ouml;sung" required>
-              <input hidden name="summand1" value="@question.getFirstSummand()">
-              <input hidden name="summand2" value="@question.getSecondSummand()">
-              <input hidden name="base" value="@question.getBase()" type="number">
-            </div>
-            <button type="submit" class="btn btn-primary">Pr&uuml;fen</button>
-          </form>
-        </div>
+      <div class="col-sm-4">
+        <p class="text-right">
+        <span style="font-family: monospace">
+          @question.getFirstSummand()<sub>@question.getBase()</sub>&nbsp;
+        </span>
+        </p>
+        <p class="text-right">
+        <span style="font-family: monospace">
+          + @question.getSecondSummand()<sub>@question.getBase()</sub>&nbsp;
+        </span>
+        </p>
+        <form role="form" action="@binary.routes.NAryAddition.checkSolution()" method="post">
+          <div class="form-group">
+            <input pattern="@question.getQuestionType().getPattern()" autocomplete="off" class="number-input form-control text-right" name="learnerSolution" placeholder="Ihre L&ouml;sung" required>
+            <input hidden name="summand1" value="@question.getFirstSummand()">
+            <input hidden name="summand2" value="@question.getSecondSummand()">
+            <input hidden name="base" value="@question.getBase()" type="number">
+          </div>
+          <button type="submit" class="btn btn-primary">Pr&uuml;fen</button>
+        </form>
       </div>
     </div>
   </div>
