@@ -1,32 +1,32 @@
-@(user: model.user.User, var_names: Array[String], zvector: Array[String], tabelle: Array[Array[String]], spalten: Int, zeilen: Int, dnf: String, knf: String)
+@(user: model.user.User, var_names: Array[String], zvector: Array[String], tabelle: Array[Array[String]], spalten: Int, zeilen: Int, dnf: String, s_dnf: String, knf: String, s_knf: String)
 
 @main("Formel erstellen", user) {
 <!-- CSS override -->
 <style>
 	a.mytooltip:link {
-	    color: #333333;
-	    text-decoration: none;
+	    color:#333333;
+	    text-decoration:none;
 	}
 	a.mytooltip:visited {
-	    color: #333333;
-	    text-decoration: none;
+	    color:#333333;
+	    text-decoration:none;
 	}
 	a.mytooltip:hover {
-	    color: #333333;
-	    text-decoration: none;
+	    color:#333333;
+	    text-decoration:none;
 	}
 	a.mytooltip:active {
-	    color: #333333;
-	    text-decoration: none;
+	    color:#333333;
+	    text-decoration:none;
 	}
 	.tooltip-inner {
-		   max-width: 1000px;
+		max-width:1000px;
 	}
 </style>
 	<div class="container">
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				Musterl&ouml;sung:
+				Musterl&ouml;sung
 			</div>
 			<div class="panel-body">
 				<div class="row">
@@ -36,11 +36,11 @@
 								<tr>
 									@for(v <- var_names){
 									<td>
-										@v
+										<b>@v</b>
 									</td>
 									}
 									<td class="col-md-4">
-										Resultat
+										<b>z</b>
 									</td>
 								</tr>
 							</thread>
@@ -59,14 +59,22 @@
 				<div class="row">
 					<div class="container-fluid">
 						<p>
-							Musterl&ouml;sungen:<br>
-							kanonische disjunktive Normalform: &nbsp; 
+							<b>Musterl&ouml;sungen f&uuml;r z:</b><br>
+							kanonische disjunktive Normalform: &nbsp;&nbsp;&nbsp;
 							<a class="mytooltip" href="#" data-toggle="tooltip" data-placement="right" title="@dnf.toString()">
 								@Html(dnf.toString().replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;").intern())
 							</a> <br>
-							kanonische konjunktive Normalform: &nbsp;
+							kurze disjunktive Normalform: &nbsp;&nbsp;&nbsp;
+							<a class="mytooltip" href="#" data-toggle="tooltip" data-placement="right" title="@s_dnf.toString()">
+								@Html(s_dnf.toString().replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;").intern())
+							</a> <br>
+							kanonische konjunktive Normalform: &nbsp;&nbsp;&nbsp;
 							<a class="mytooltip" href="#" data-toggle="tooltip" data-placement="right" title="@knf.toString()">
 								@Html(knf.toString().replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;").intern())
+							</a> <br>
+							kurze konjunktive Normalform: &nbsp;&nbsp;&nbsp;
+							<a class="mytooltip" href="#" data-toggle="tooltip" data-placement="right" title="@s_knf.toString()">
+								@Html(s_knf.toString().replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;").intern())
 							</a> <br>
 						</p>
 						<form role="form" class="form-horizontal" action="@binary.routes.BoolFormelErstellen.index()" method="post">
