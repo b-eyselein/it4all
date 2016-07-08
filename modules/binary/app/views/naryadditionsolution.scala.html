@@ -12,41 +12,36 @@
       }
     </div>
     <div class="panel-body">
-      <div class="row">
-        <div class="col-sm-2">
-          <p class="text-right">
-          <span style="font-family: monospace">
-            @question.getFirstSummand()<sub>@question.getBase()</sub>&nbsp;
-          </span>
-          </p>
-          <p class="text-right">
-          <span style="font-family: monospace">
-            + @question.getSecondSummand()<sub>@question.getBase()</sub>&nbsp;
-          </span>
-          </p>
-          <p class="text-right">
-          <span style="font-family: monospace">
-            <strong>
-            = @question.getLearnerSolution()<sub>@question.getBase()</sub>&nbsp;
-            </strong>
-          </span>
-          </p>
-        </div>
-      </div>
-      <div class="row">
-        <div class="container">
-          <p>Ihre L&ouml;sung ist @if(question.checkSolution()) { richtig.</p>
-          } else { leider falsch.
-          </p>
-          <p>Die richtige Antwort lautet
-          <span style="font-family: monospace">
-          @question.getSum().toString()<sub>@question.getQuestionType().getBase()</sub>.
-          </span></p>
-          }&nbsp;<br>
-          <a href="@binary.routes.NAryAddition.index" class="btn btn-primary" role="button">N&auml;chste Aufgabe</a>
-        </div>
-      </div>
-    </div>
+     <div class="col-sm-4">
+       <p class="text-right">
+       <span style="font-family: monospace">
+         @question.getFirstSummand()<sub>@question.getBase()</sub>&nbsp;
+       </span>
+       </p>
+       <p class="text-right">
+       <span style="font-family: monospace">
+         + @question.getSecondSummand()<sub>@question.getBase()</sub>&nbsp;
+       </span>
+       </p>
+       <p class="text-right">
+       <span style="font-family: monospace">
+         <strong>
+         = @question.getLearnerSolution()<sub>@question.getBase()</sub>&nbsp;
+         </strong>
+       </span>
+       </p>
+       <p>Ihre L&ouml;sung ist @if(question.checkSolution()) { richtig.</p>
+       } else { leider falsch.
+       </p>
+       <p>Die richtige Antwort lautet
+       <span style="font-family: monospace">
+       @question.getSum().toString()<sub>@question.getQuestionType().getBase()</sub>.
+       </span></p>
+       }&nbsp;<br>
+       <a href="@binary.routes.NAryAddition.index" class="btn btn-primary" role="button">N&auml;chste Aufgabe</a>
+     </div>
+  	</div>
+   </div>
   </div>
 </div>
 }
