@@ -355,6 +355,9 @@ public class BoolescheFunktionTree {
     return this.knoten.getWert();
   }
   
+  /**
+   * Gibt eine aequivalente Formel in kanonischer DNF als String zurueck
+   */
   public String kanonischeDisjunktiveNormalform() {
     String formel = "";
     boolean[][] wahrheitstafel = this.getWahrheitstafelBoolean();
@@ -380,6 +383,9 @@ public class BoolescheFunktionTree {
     return formel;
   }
   
+  /**
+   * Gibt eine aequivalente Formel in kanonischer KNF als String zurueck
+   */
   public String kanonischeKonjunktiveNormalform() {
     String formel = "";
     boolean[][] wahrheitstafel = this.getWahrheitstafelBoolean();
@@ -407,22 +413,25 @@ public class BoolescheFunktionTree {
     return formel;
   }
   
+  /**
+   * Gibt eine aequivalente Formel in vereinfachter DNF als String zurueck
+   */
   public String kurzeDisjunktiveNormalform() {
     String formel = "";
     String[] variablen = this.getVariablen();
     boolean[][] wahrheitstafel = this.getWahrheitstafelBoolean();
     // suche wahre Eintraege in der Wahrheitstafel
     TreeSet<String> neueAusdruecke = new TreeSet<String>();
-    for (int i = 0; i < wahrheitstafel[0].length; i++) {
-      if (wahrheitstafel[wahrheitstafel.length - 1][i]) {
+    for(int i = 0; i < wahrheitstafel[0].length; i++) {
+      if(wahrheitstafel[wahrheitstafel.length - 1][i]) {
         String neuerAusdruck = "";
-        for (int j = 0; j < wahrheitstafel.length - 1; j++) {
-          if (wahrheitstafel[j][i]) {
+        for(int j = 0; j < wahrheitstafel.length - 1; j++) {
+          if(wahrheitstafel[j][i]) {
             neuerAusdruck += variablen[j];
           } else {
             neuerAusdruck += "NOT " + variablen[j];
           }
-          if (j < wahrheitstafel.length - 2) {
+          if(j < wahrheitstafel.length - 2) {
             neuerAusdruck += ",";
           }
         }
@@ -435,64 +444,68 @@ public class BoolescheFunktionTree {
     do {
       kuerzereAusdruecke = new TreeSet<String>();
       benutzteAusdruecke = new TreeSet<String>();
-      for (String ausdruck1: neueAusdruecke) {
+      for(String ausdruck1: neueAusdruecke) {
         String[] ausdruecke1 = ausdruck1.split(",");
-        for (String ausdruck2: neueAusdruecke) {
+        for(String ausdruck2: neueAusdruecke) {
           String[] ausdruecke2 = ausdruck2.split(",");
           
           int gleich = 0;
           int verschieden = 0;
           String neuerausdruck = "";
-          for (int k = 0; k < ausdruecke1.length; k++) {
-            if (ausdruecke1[k].equals(ausdruecke2[k])) {
-              if (neuerausdruck.equals("")) {
+          for(int k = 0; k < ausdruecke1.length; k++) {
+            if(ausdruecke1[k].equals(ausdruecke2[k])) {
+              if(neuerausdruck.equals("")) {
                 neuerausdruck += ausdruecke1[k];
-              }else{
-                neuerausdruck += ","+ausdruecke1[k];
+              } else {
+                neuerausdruck += "," + ausdruecke1[k];
               }
               gleich++;
-            }else if (ausdruecke1[k].matches("NOT "+ausdruecke2[k]) || ausdruecke2[k].matches("NOT "+ausdruecke1[k])) {
+            } else if(ausdruecke1[k].matches("NOT " + ausdruecke2[k])
+                || ausdruecke2[k].matches("NOT " + ausdruecke1[k])) {
               verschieden++;
             }
           }
-          if (gleich == ausdruecke1.length - 1 && verschieden == 1) {
+          if(gleich == ausdruecke1.length - 1 && verschieden == 1) {
             kuerzereAusdruecke.add(neuerausdruck);
             benutzteAusdruecke.add(ausdruck1);
             benutzteAusdruecke.add(ausdruck2);
           }
         }
       }
-      for (String ausdruck1: neueAusdruecke) {
-        if (!benutzteAusdruecke.contains(ausdruck1)) {
-          if (formel.equals("")) {
+      for(String ausdruck1: neueAusdruecke) {
+        if(!benutzteAusdruecke.contains(ausdruck1)) {
+          if(formel.equals("")) {
             formel += ausdruck1;
           } else {
-            formel += " OR "+ausdruck1;
+            formel += " OR " + ausdruck1;
           }
         }
       }
       neueAusdruecke = kuerzereAusdruecke;
-    } while (!kuerzereAusdruecke.isEmpty());
+    } while(!kuerzereAusdruecke.isEmpty());
     formel = formel.replaceAll(",", " AND ");
     return formel;
   }
-
+  
+  /**
+   * Gibt eine aequivalente Formel in vereinfachter KNF als String zurueck
+   */
   public String kurzeKonjunktiveNormalform() {
     String formel = "";
     String[] variablen = this.getVariablen();
     boolean[][] wahrheitstafel = this.getWahrheitstafelBoolean();
     // suche wahre Eintraege in der Wahrheitstafel
     TreeSet<String> neueAusdruecke = new TreeSet<String>();
-    for (int i = 0; i < wahrheitstafel[0].length; i++) {
-      if (!wahrheitstafel[wahrheitstafel.length - 1][i]) {
+    for(int i = 0; i < wahrheitstafel[0].length; i++) {
+      if(!wahrheitstafel[wahrheitstafel.length - 1][i]) {
         String neuerAusdruck = "";
-        for (int j = 0; j < wahrheitstafel.length - 1; j++) {
-          if (!wahrheitstafel[j][i]) {
+        for(int j = 0; j < wahrheitstafel.length - 1; j++) {
+          if(!wahrheitstafel[j][i]) {
             neuerAusdruck += variablen[j];
           } else {
             neuerAusdruck += "NOT " + variablen[j];
           }
-          if (j < wahrheitstafel.length - 2) {
+          if(j < wahrheitstafel.length - 2) {
             neuerAusdruck += ",";
           }
         }
@@ -505,44 +518,45 @@ public class BoolescheFunktionTree {
     do {
       kuerzereAusdruecke = new TreeSet<String>();
       benutzteAusdruecke = new TreeSet<String>();
-      for (String ausdruck1: neueAusdruecke) {
+      for(String ausdruck1: neueAusdruecke) {
         String[] ausdruecke1 = ausdruck1.split(",");
-        for (String ausdruck2: neueAusdruecke) {
+        for(String ausdruck2: neueAusdruecke) {
           String[] ausdruecke2 = ausdruck2.split(",");
           
           int gleich = 0;
           int verschieden = 0;
           String neuerausdruck = "";
-          for (int k = 0; k < ausdruecke1.length; k++) {
-            if (ausdruecke1[k].equals(ausdruecke2[k])) {
-              if (neuerausdruck.equals("")) {
+          for(int k = 0; k < ausdruecke1.length; k++) {
+            if(ausdruecke1[k].equals(ausdruecke2[k])) {
+              if(neuerausdruck.equals("")) {
                 neuerausdruck += ausdruecke1[k];
-              }else{
-                neuerausdruck += ","+ausdruecke1[k];
+              } else {
+                neuerausdruck += "," + ausdruecke1[k];
               }
               gleich++;
-            }else if (ausdruecke1[k].matches("NOT "+ausdruecke2[k]) || ausdruecke2[k].matches("NOT "+ausdruecke1[k])) {
+            } else if(ausdruecke1[k].matches("NOT " + ausdruecke2[k])
+                || ausdruecke2[k].matches("NOT " + ausdruecke1[k])) {
               verschieden++;
             }
           }
-          if (gleich == ausdruecke1.length - 1 && verschieden == 1) {
+          if(gleich == ausdruecke1.length - 1 && verschieden == 1) {
             kuerzereAusdruecke.add(neuerausdruck);
             benutzteAusdruecke.add(ausdruck1);
             benutzteAusdruecke.add(ausdruck2);
           }
         }
       }
-      for (String ausdruck1: neueAusdruecke) {
-        if (!benutzteAusdruecke.contains(ausdruck1)) {
-          if (formel.equals("")) {
-            formel += "("+ausdruck1+")";
+      for(String ausdruck1: neueAusdruecke) {
+        if(!benutzteAusdruecke.contains(ausdruck1)) {
+          if(formel.equals("")) {
+            formel += "(" + ausdruck1 + ")";
           } else {
-            formel += " AND "+"("+ausdruck1+")";
+            formel += " AND " + "(" + ausdruck1 + ")";
           }
         }
       }
       neueAusdruecke = kuerzereAusdruecke;
-    } while (!kuerzereAusdruecke.isEmpty());
+    } while(!kuerzereAusdruecke.isEmpty());
     formel = formel.replaceAll(",", " OR ");
     return formel;
   }
