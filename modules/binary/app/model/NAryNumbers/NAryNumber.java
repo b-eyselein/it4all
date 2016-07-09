@@ -1,7 +1,8 @@
 package model.NAryNumbers;
 
-import model.NAryNumbers.questions.NumberBase;
-
+/**
+ * This class models an n-ary number up to base 32.
+ */
 public class NAryNumber {
   private static final char[] ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUV".toCharArray();
   
@@ -14,11 +15,16 @@ public class NAryNumber {
   protected static final String UNSIGNED_BIN_REGEX = "0b[a-v0-9]*";
   protected static final String SIGNED_BIN_REGEX = "-?" + UNSIGNED_BIN_REGEX;
   
-  // adds two given NAryNumbers
+  /**
+   * Adds two given n-ary numbers.
+   * @param number1 is the first summand.
+   * @param number2 is the second summand.
+   * @return a n-ary number that represents the sum of the two summands.
+   */
   public static NAryNumber addNArys(NAryNumber number1, NAryNumber number2) {
-    NAryNumber result = new NAryNumber(number1.getValue(), number2.getBase());
-    result.add(number2);
-    return result;
+    NumberBase base = number2.getBase();
+    int value = number1.getValue()+number2.getValue();
+    return new NAryNumber(value,base);
   }
   
   /**
@@ -77,6 +83,14 @@ public class NAryNumber {
     return new NAryNumber(value, base);
   }
   
+  /**
+   * Converts a given string that specifies the base into a n-ary number.
+   * @param input
+   *          String that represents the value of the number and specifies the base (0b for binary, 0o for octal, 0x for hexadecimal)
+   * @return Instance of NAryNumber with specified base and given value.
+   * @throws IllegalArgumentException
+   *           in case the base is not specified in the input string.
+   */
   public static NAryNumber StringToNAry(String input) throws IllegalArgumentException {
     if(input.toLowerCase().matches(SIGNED_HEX_REGEX))
       return stringToNAry(input, NumberBase.HEXADECIMAL);
@@ -91,10 +105,22 @@ public class NAryNumber {
         + "does not specify the base. It needs to start with 0b for binary, 0o for octal or 0x for hexadecimal numbers!");
   }
   
+  /**
+   * The base of the n-ary number.
+   */
   protected NumberBase base;
   
+  /**
+   * The value of the n-ary number.
+   */
   protected int value;
   
+  /**
+   * The standard constructor.
+   * @param value
+   * @param base
+   * @throws IllegalArgumentException in case the base is greater than 32.
+   */
   public NAryNumber(int value, NumberBase base) throws IllegalArgumentException {
     if(base.getBase() > 32)
       throw new IllegalArgumentException("NAryNumber supports only numbers up to base 32");
@@ -103,100 +129,106 @@ public class NAryNumber {
     this.value = value;
   }
   
+  /**
+   * The default constructor generating a NAryNumber of value 0 with the given base.
+   * @param base
+   * @throws IllegalArgumentException in case the base is greater than 32.
+   */
   public NAryNumber(NumberBase base) throws IllegalArgumentException {
     this(0, base);
   }
-  
-  public NAryNumber add(NAryNumber i) {
-    value += i.getValue();
-    return this;
+
+  /**
+   * Getter for the base.
+   * @return base of this instance.
+   */
+  public NumberBase getBase() {
+    return base;
   }
   
-  public NAryNumber div(NAryNumber i) {
-    value /= i.getValue();
-    return this;
+  /**
+   * Getter for the value.
+   * @return value of this instance.
+   */ 
+  public int getValue() {
+    return value;
   }
   
+  /**
+   * Setter for the value.
+   */ 
+  public void setValue(int value) {
+	    this.value = value;
+  }
+  
+  /**
+   * "Equal to" sign.
+   * @param i is another instance of an NAryNumber.
+   */
   public boolean equ(NAryNumber i) {
-    return value == i.getValue();
-  }
+	    return value == i.getValue();
+  }  
   
-  public boolean equals(NAryNumber i) {
-    return base == i.getBase() && value == i.getValue();
-  }
-  
-  @Override
-  public boolean equals(Object obj) {
-    if(obj == null || !(obj instanceof NAryNumber))
-      return false;
-    NAryNumber other = (NAryNumber) obj;
-    return value == other.value;
-  }
-  
+  /**
+   * "Greater than or equal to" sign.
+   * @param i is another instance of an NAryNumber.
+   */
   public boolean geq(NAryNumber i) {
     if(value >= i.getValue())
       return true;
     return false;
   }
   
-  public NumberBase getBase() {
-    return base;
-  }
-  
-  public int getValue() {
-    return value;
-  }
-  
+  /**
+   * "Greater than" sign.
+   * @param i is another instance of an NAryNumber.
+   */
   public boolean gtr(NAryNumber i) {
     if(value > i.getValue())
       return true;
     return false;
   }
   
-  @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + value;
-    return result;
-  }
-  
+  /**
+   * "Less than or equal to" sign.
+   * @param i is another instance of an NAryNumber.
+   */
   public boolean leq(NAryNumber i) {
     if(value <= i.getValue())
       return true;
     return false;
   }
   
+  /**
+   * "Less than" sign.
+   * @param i is another instance of an NAryNumber.
+   */
   public boolean lss(NAryNumber i) {
     if(value < i.getValue())
       return true;
     return false;
   }
   
-  public NAryNumber mul(NAryNumber i) {
-    value *= i.getValue();
-    return this;
-  }
-  
+  /**
+   * "Not equal to" sign.
+   * @param i is another instance of an NAryNumber.
+   */
   public boolean neq(NAryNumber i) {
     if(value != i.getValue())
       return true;
     return false;
   }
   
-  public void setValue(int value) {
-    this.value = value;
-  }
-  
-  public NAryNumber sub(NAryNumber i) {
-    value -= i.getValue();
-    return this;
-  }
-  
+  /**
+   * @return value of the number to a string in decimal representation.
+   */
   public String toDec() {
     return "" + value;
   }
   
+  /**
+   * @return value of the number into a string represented according to its base.
+   */
   @Override
   public String toString() {
     int absoluteValue = Math.abs(value);
@@ -204,7 +236,7 @@ public class NAryNumber {
     if(absoluteValue == 0)
       return "0";
     
-    // Umgekehrtes Hornerschema
+    // Reversed Horner's method
     String result = "";
     
     while(absoluteValue >= 1) {
@@ -217,5 +249,21 @@ public class NAryNumber {
     
     result = new StringBuffer(result).reverse().toString();
     return result;
+  }
+  
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + value;
+    return result;
+  }
+  
+  @Override
+  public boolean equals(Object obj) {
+    if(obj == null || !(obj instanceof NAryNumber))
+      return false;
+    NAryNumber other = (NAryNumber) obj;
+    return value == other.value;
   }
 }

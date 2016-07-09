@@ -3,25 +3,42 @@ package model.NAryNumbers;
 import java.util.LinkedList;
 
 import com.google.common.base.Strings;
-
-import model.NAryNumbers.questions.NumberBase;
-
+/**
+ * This class models a binary number extending the n-ary number. The key difference is the representation in byte-wise notation.
+ */
 public class BinaryNumber extends NAryNumber {
 
+  /**
+  * Converts a given n-ary number into a binary number.
+  * @param nAry instance of NAryNumber.
+  * @return instance of BinaryNumber with the value of the given number.
+  */
   public static BinaryNumber nAryToBinary(NAryNumber nAry) {
     return new BinaryNumber(nAry.getValue());
   }
-
+  
+  /**
+  * Converts a given n-ary number into a binary number.
+  * @param nAry instance of NAryNumber.
+  * @return instance of BinaryNumber with the value of the given number.
+  */
   public static BinaryNumber stringToBin(String input) throws IllegalArgumentException {
     if(input.toLowerCase().matches(UNSIGNED_BIN_REGEX))
       input = input.substring(2);
     return new BinaryNumber(NAryNumber.stringToNAry(input, NumberBase.BINARY).getValue());
   }
-
+  
+  /**
+   * The default constructor generating a binary number of value 0.
+   */
   public BinaryNumber() {
     super(0, NumberBase.BINARY);
   }
 
+  /**
+   * The standard constructor generating a binary number of the given value.
+   * @param value of the binary number.
+   */
   public BinaryNumber(int value) {
     super(value, NumberBase.BINARY);
   }

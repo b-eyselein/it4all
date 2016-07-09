@@ -1,4 +1,4 @@
-package model.NAryNumbers.questions;
+package model.NAryNumbers;
 
 public enum NumberBase {
 

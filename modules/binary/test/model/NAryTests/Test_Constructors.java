@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import model.NAryNumbers.NAryNumber;
-import model.NAryNumbers.questions.NumberBase;
+import model.NAryNumbers.NumberBase;
 
 public class Test_Constructors {
   

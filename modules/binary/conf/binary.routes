@@ -6,8 +6,8 @@ POST   /bool/solution             controllers.binary.Bool.indexSolution()
 POST   /boolformel                controllers.binary.BoolFormelErstellen.index()
 POST   /boolformel/solution       controllers.binary.BoolFormelErstellen.musterLoesung()
 
-GET    /naryconvertion            controllers.binary.NAryConvertion.index()
-POST   /naryconvertion/solution   controllers.binary.NAryConvertion.checkSolution()
+GET    /naryconversion            controllers.binary.NAryConversion.index()
+POST   /naryconversion/solution   controllers.binary.NAryConversion.checkSolution()
 
 GET    /naryaddition              controllers.binary.NAryAddition.index()
 POST   /naryaddition/solution     controllers.binary.NAryAddition.checkSolution()

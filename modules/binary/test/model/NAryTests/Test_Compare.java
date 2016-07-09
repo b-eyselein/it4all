@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import model.NAryNumbers.NAryNumber;
-import model.NAryNumbers.questions.NumberBase;
+import model.NAryNumbers.NumberBase;
 
 public class Test_Compare {
   

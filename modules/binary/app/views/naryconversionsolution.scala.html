@@ -1,4 +1,4 @@
-@(user: model.user.User, question: model.NAryNumbers.questions.NAryConvertionQuestion)
+@(user: model.user.User, question: model.NAryNumbers.questions.NAryConversionQuestion)
 
 @main("Zahlen umformen", user) {
 <div class="container">
@@ -8,7 +8,7 @@
       <span style="font-family: monospace">
       	@question.getFromValue()<sub>@question.getFromNumberType().getBase()</sub>
       </span>in eine @question.getToNumberType().getSingularName() um:
-      @if(question.getToNumberType() == model.NAryNumbers.questions.NumberBase.BINARY) {
+      @if(question.getToNumberType() == model.NAryNumbers.NumberBase.BINARY) {
       	<p><em class="text-info">(Bin&auml;rzahlen bitte in 8-Bit-Darstellung mit f&uuml;hrenden Nullen angeben.)</em></p>
       } 
     </div>
@@ -21,7 +21,7 @@
       </span>
     	.<br> }<br>
       <p>
-        <a href="@binary.routes.NAryConvertion.index" class="btn btn-primary" role="button">N&auml;chste Aufgabe</a></p>
+        <a href="@binary.routes.NAryConversion.index" class="btn btn-primary" role="button">N&auml;chste Aufgabe</a></p>
     </div>
   </div>
 </div>

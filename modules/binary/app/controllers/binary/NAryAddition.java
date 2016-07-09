@@ -13,12 +13,22 @@ import play.mvc.Security;
 import views.html.naryadditionquestion;
 import views.html.naryadditionsolution;
 
+/**
+ * This is the controller class for the NaryAddition section.
+ * ("Addition in anderen Zahlensystemen")
+ */
 @Security.Authenticated(Secured.class)
 public class NAryAddition extends Controller {
 
   @Inject
   private FormFactory factory;
 
+  /**
+   * Retrieves the learners solution from the HTML form,
+   * creates and updated addition question and
+   * redirects to the solution view.
+   * @return
+   */
   public Result checkSolution() {
     DynamicForm dynFormula = factory.form().bindFromRequest();
 
@@ -35,7 +45,12 @@ public class NAryAddition extends Controller {
 
     return ok(naryadditionsolution.render(UserManagement.getCurrentUser(), question));
   }
-
+  
+  /**
+   * Creates the index view.
+   * Creates a new addition question.
+   * @return
+   */
   public Result index() {
     NAryAdditionQuestion question = NAryAdditionQuestion.generateNew();
     return ok(naryadditionquestion.render(UserManagement.getCurrentUser(), question));
