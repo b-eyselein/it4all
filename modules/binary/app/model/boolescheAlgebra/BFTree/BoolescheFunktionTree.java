@@ -1,7 +1,11 @@
 package model.boolescheAlgebra.BFTree;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
+
+import model.boolescheAlgebra.BoolescheFunktionParser;
 
 public class BoolescheFunktionTree {
   
@@ -60,22 +64,29 @@ public class BoolescheFunktionTree {
    * Wirft Fehler wenn die Variablen nicht uebereinstimmen.
    */
   public boolean compareBoolscheFormelTree(BoolescheFunktionTree otherBFT) throws IllegalArgumentException {
-    
-    // FIXME: number of variabes can be different [e. g. a == (a and b) or (a
-    // and not b)]
+    BoolescheFunktionTree tree1 = this;
+    BoolescheFunktionTree tree2 = otherBFT;
+    TreeSet<String> thisVars = new TreeSet<String>(Arrays.asList(this.getVariablen()));
+    TreeSet<String> otherVars = new TreeSet<String>(Arrays.asList(otherBFT.getVariablen()));
+    boolean variablen_unterschied = false;
     if(this.getAnzahlVariablen() != otherBFT.getAnzahlVariablen()) {
-      throw new IllegalArgumentException("Wrong number of vars. Expected " + this.getAnzahlVariablen() + " but was "
-          + otherBFT.getAnzahlVariablen() + ".");
-    }
-    String[] thisVars = this.getVariablen();
-    String[] otherVars = otherBFT.getVariablen();
-    for(int i = 0; i < thisVars.length; i++) {
-      if(!thisVars[i].equals(otherVars[i])) {
-        throw new IllegalArgumentException("Diffrenent variables: " + thisVars[i] + " != " + otherVars[i] + ".");
+      variablen_unterschied = true;
+    } else {
+      for(String s: thisVars) {
+        if(!otherVars.contains(s)) {
+          variablen_unterschied = true;
+        }
       }
     }
-    boolean[] thisWahrheitsVector = this.getWahrheitsVector();
-    boolean[] otherWahrheitsVector = otherBFT.getWahrheitsVector();
+    if (variablen_unterschied) {
+      thisVars.addAll(otherVars);
+      String[] variablen = new String[thisVars.size()];
+      variablen = (String[]) thisVars.toArray(variablen);
+      tree1 = BoolescheFunktionParser.parse(tree1.toString(), variablen);
+      tree2 = BoolescheFunktionParser.parse(tree2.toString(), variablen);
+    }
+    boolean[] thisWahrheitsVector = tree1.getWahrheitsVector();
+    boolean[] otherWahrheitsVector = tree2.getWahrheitsVector();
     for(int i = 0; i < thisWahrheitsVector.length; i++) {
       if(thisWahrheitsVector[i] ^ otherWahrheitsVector[i]) {
         return false;

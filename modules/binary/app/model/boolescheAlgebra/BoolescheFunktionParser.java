@@ -87,6 +87,14 @@ public class BoolescheFunktionParser {
     return new BoolescheFunktionTree(getNextKnoten(formel, bf_vars), bf_vars);
   }
   
+  /**
+   * Liefert alle Variablen, die in der Formel enthalten sind. Kann leere
+   * Strings enthalten.
+   * 
+   * @param String
+   *          formel
+   * @return String[] variablen
+   */
   private static String[] extractVariables(String formel) {
     String variablen = formel
         //@formatter:off
@@ -153,7 +161,7 @@ public class BoolescheFunktionParser {
                 getNextKnoten(ausdruck.substring(i + 5, ausdruck.length()), vars));
           }
         } catch (IndexOutOfBoundsException e) {
-          
+        
         }
       }
     }
@@ -225,10 +233,26 @@ public class BoolescheFunktionParser {
       return new BF_1();
     }
     
+    if (ausdruck.equals("")) {
+      throw new IllegalArgumentException(
+          "Der Ausdruck ist unvollst\u00e4ndig. Es fehlt eine Variable.");
+    }
+    
+    int zu_viele_vars = 0;
+    for(BF_Variable var: vars) {
+      if(ausdruck.contains(var.toString())) {
+        zu_viele_vars++;
+      }
+    }
+    if (zu_viele_vars > 1) {
+      throw new IllegalArgumentException(
+          "Zwischen den Variablen \""+ausdruck+"\" fehlt ein Operator.");
+    }
+    
+    
+    
     throw new IllegalArgumentException(
-        "Der Ausdruck ist unvollst\u00e4ndig. Es fehlt ein Operator oder eine Variable."); // TODO:
-                                                                                                             // Fehlerbeschreibung
-                                                                                                             // ergaenzen
+        "Der Ausdruck ist unvollst\u00e4ndig. Es fehlt ein Operator oder eine Variable.");
   }
   
   /**
@@ -267,6 +291,13 @@ public class BoolescheFunktionParser {
     return true;
   }
   
+  /**
+   * Substituiert alle deutschen Operatoren durch aequivalente englische
+   * Operatoren.
+   * 
+   * @param formel
+   * @return formel
+   */
   private static String substituteGermanOperators(String formel) {
     // @formatter:off
     return formel
