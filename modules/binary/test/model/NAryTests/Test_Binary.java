@@ -1,9 +1,11 @@
 package model.NAryTests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
-import model.NAryNumbers.BinaryNumber;
+import model.NAryNumbers.NAryNumber;
+import model.NAryNumbers.NumberBase;
 
 public class Test_Binary {
   
@@ -14,10 +16,10 @@ public class Test_Binary {
     String bin_3 = "1000111001101";
     String bin_4 = "0b10101";
     
-    BinaryNumber bin_a = new BinaryNumber(bin_1);
-    BinaryNumber bin_b = new BinaryNumber(bin_2);
-    BinaryNumber bin_c = new BinaryNumber(bin_3);
-    BinaryNumber bin_d = new BinaryNumber(bin_4);
+    NAryNumber bin_a = new NAryNumber(bin_1, NumberBase.BINARY);
+    NAryNumber bin_b = new NAryNumber(bin_2, NumberBase.BINARY);
+    NAryNumber bin_c = new NAryNumber(bin_3, NumberBase.BINARY);
+    NAryNumber bin_d = new NAryNumber(bin_4, NumberBase.BINARY);
     
     // Tests the correct representation
     assertEquals(bin_a.toString(), "0000 1101");

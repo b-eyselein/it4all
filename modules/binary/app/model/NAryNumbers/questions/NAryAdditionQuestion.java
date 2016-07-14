@@ -2,7 +2,6 @@ package model.NAryNumbers.questions;
 
 import java.util.Random;
 
-import model.NAryNumbers.BinaryNumber;
 import model.NAryNumbers.NAryNumber;
 import model.NAryNumbers.NumberBase;
 
@@ -53,13 +52,8 @@ public class NAryAdditionQuestion {
    */
   public NAryAdditionQuestion(int theFirstSummand, int theSecondSummand, NumberBase theQuestionType) {
     questionType = theQuestionType;
-    if(questionType == NumberBase.BINARY) {
-      firstSummand = new BinaryNumber(theFirstSummand);
-      secondSummand = new BinaryNumber(theSecondSummand);
-    } else {
-      firstSummand = new NAryNumber(theFirstSummand, questionType);
-      secondSummand = new NAryNumber(theSecondSummand, questionType);
-    }
+    firstSummand = new NAryNumber(theFirstSummand, questionType);
+    secondSummand = new NAryNumber(theSecondSummand, questionType);
     sum = NAryNumber.addNArys(firstSummand, secondSummand);
     learnerSolution = new NAryNumber(questionType);
   }
@@ -79,19 +73,10 @@ public class NAryAdditionQuestion {
   public NAryAdditionQuestion(String firstSummandInNAry, String secondSummandInNAry, int base,
       String theLearnerSolution) {
     questionType = NumberBase.getByBase(base);
-    if(base == 2) {
-      firstSummand = new BinaryNumber(firstSummandInNAry);
-      secondSummand = new BinaryNumber(secondSummandInNAry);
-    } else {
-      firstSummand = new NAryNumber(firstSummandInNAry, questionType);
-      secondSummand = new NAryNumber(secondSummandInNAry, questionType);
-    }
+    firstSummand = new NAryNumber(firstSummandInNAry, questionType);
+    secondSummand = new NAryNumber(secondSummandInNAry, questionType);
     sum = NAryNumber.addNArys(firstSummand, secondSummand);
-    if(questionType == NumberBase.BINARY) {
-      learnerSolution = new BinaryNumber(theLearnerSolution.replaceAll("\\s", ""));
-    } else {
-      learnerSolution = new NAryNumber(theLearnerSolution, questionType);
-    }
+    learnerSolution = new NAryNumber(theLearnerSolution, questionType);
   }
   
   /**

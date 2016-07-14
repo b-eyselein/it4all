@@ -118,7 +118,7 @@ public class NAryNumber {
       return new NAryNumber(input, NumberBase.OCTAL);
     
     if(input.toLowerCase().matches(SIGNED_BIN_REGEX))
-      return new BinaryNumber(input);
+      return new NAryNumber(input, NumberBase.BINARY);
     
     throw new IllegalArgumentException("The input " + input
         + "does not specify the base. It needs to start with 0b for binary, 0o for octal or 0x for hexadecimal numbers!");

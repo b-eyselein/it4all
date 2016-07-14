@@ -2,7 +2,6 @@ package model.NAryNumbers.questions;
 
 import java.util.Random;
 
-import model.NAryNumbers.BinaryNumber;
 import model.NAryNumbers.NAryNumber;
 import model.NAryNumbers.NumberBase;
 
@@ -64,15 +63,9 @@ public class NAryConversionQuestion {
     startingNumberBase = theStartingNB;
     targetNumberBase = theTargetNB;
     
-    if(startingNumberBase == NumberBase.BINARY)
-      startingNumber = new BinaryNumber(value);
-    else
-      startingNumber = new NAryNumber(value, theStartingNB);
+    startingNumber = new NAryNumber(value, theStartingNB);
     
-    if(targetNumberBase == NumberBase.BINARY)
-      targetNumber = new BinaryNumber(value);
-    else
-      targetNumber = new NAryNumber(value, theTargetNB);
+    targetNumber = new NAryNumber(value, theTargetNB);
     
     learnerSolution = new NAryNumber(theTargetNB);
   }
@@ -95,18 +88,10 @@ public class NAryConversionQuestion {
     startingNumberBase = theStartingNB;
     targetNumberBase = theTargetNB;
     
-    if(startingNumberBase == NumberBase.BINARY)
-      startingNumber = new BinaryNumber(value);
-    else
-      startingNumber = new NAryNumber(value, startingNumberBase);
+    startingNumber = new NAryNumber(value, startingNumberBase);
     
-    if(targetNumberBase == NumberBase.BINARY) {
-      targetNumber = new BinaryNumber(startingNumber.getValue());
-      learnerSolution = new BinaryNumber(theLearnerSolution);
-    } else {
-      targetNumber = new NAryNumber(startingNumber.getValue(), theTargetNB);
-      learnerSolution = new NAryNumber(theLearnerSolution, targetNumberBase);
-    }
+    targetNumber = new NAryNumber(startingNumber.getValue(), theTargetNB);
+    learnerSolution = new NAryNumber(theLearnerSolution, targetNumberBase);
   }
   
   /**

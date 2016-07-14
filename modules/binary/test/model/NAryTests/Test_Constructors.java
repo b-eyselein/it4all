@@ -15,7 +15,7 @@ public class Test_Constructors {
     assertEquals(hex_234.toString(), "-EA");
     
     NAryNumber bin_234 = new NAryNumber(-234, NumberBase.BINARY);
-    assertEquals(bin_234.toString(), "-11101010");
+    assertEquals(bin_234.toString(), "-1110 1010");
   }
   
   @Test
@@ -37,8 +37,9 @@ public class Test_Constructors {
     NAryNumber oct_234 = new NAryNumber(234, NumberBase.OCTAL);
     assertEquals(hex_234.toString(), "EA");
     assertEquals(oct_234.toString(), "352");
-    assertEquals(bin_234.toString(), "11101010");
-    assertEquals(bin_127.toString(), "1111111");
+    // Padding!
+    assertEquals(bin_234.toString(), "1110 1010");
+    assertEquals(bin_127.toString(), "0111 1111");
   }
   
 }
