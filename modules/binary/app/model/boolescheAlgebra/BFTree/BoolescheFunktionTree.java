@@ -1,6 +1,5 @@
 package model.boolescheAlgebra.BFTree;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
@@ -78,7 +77,7 @@ public class BoolescheFunktionTree {
         }
       }
     }
-    if (variablen_unterschied) {
+    if(variablen_unterschied) {
       thisVars.addAll(otherVars);
       String[] variablen = new String[thisVars.size()];
       variablen = (String[]) thisVars.toArray(variablen);

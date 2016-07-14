@@ -1,48 +1,35 @@
 @(user: model.user.User, question: model.NAryNumbers.questions.NAryAdditionQuestion)
 
 @main("Addition", user) {
+<style>
+.number {
+  font-family: monospace;
+}
+</style>
+
 <div class="container">
   <div class=" @if(question.checkSolution()) {panel panel-success } else {panel panel-danger }">
     <div class="panel-heading">
       Addieren sie die folgenden @question.getQuestionType():
       @if(question.getQuestionType() == model.NAryNumbers.NumberBase.BINARY) {
-      <p>
-        <em class="text-info">(Bin&auml;rzahlen bitte in 8-Bit-Darstellung mit f&uuml;hrenden Nullen angeben.)</em>
-      </p>
+      <p><em class="text-info">(Bin&auml;rzahlen bitte in 8-Bit-Darstellung mit f&uuml;hrenden Nullen angeben.)</em></p>
       }
     </div>
     <div class="panel-body">
-     <div class="col-sm-4">
-       <p class="text-right">
-       <span style="font-family: monospace">
-         @question.getFirstSummand()<sub>@question.getBase()</sub>&nbsp;
-       </span>
-       </p>
-       <p class="text-right">
-       <span style="font-family: monospace">
-         + @question.getSecondSummand()<sub>@question.getBase()</sub>&nbsp;
-       </span>
-       </p>
-       <p class="text-right">
-       <span style="font-family: monospace">
-         <strong>
-         = @question.getLearnerSolution()<sub>@question.getBase()</sub>&nbsp;
-         </strong>
-       </span>
-       </p>
-       <p>Ihre L&ouml;sung ist @if(question.checkSolution()) { richtig.</p>
-       } else { leider falsch.
-       </p>
-       <p>Die richtige Antwort lautet
-       <span style="font-family: monospace">
-       @question.getSum().toString()<sub>@question.getQuestionType().getBase()</sub>.
-       </span></p>
-       }&nbsp;<br>
-       <a href="@binary.routes.NAryAddition.index" class="btn btn-primary" role="button">N&auml;chste Aufgabe</a>
+     <div class="col-sm-4 col-sm-offset-4">
+       <p class="text-right number">@question.getFirstSummand()<sub>@question.getBase()</sub>&nbsp;</p>
+       <p class="text-right number">+ @question.getSecondSummand()<sub>@question.getBase()</sub>&nbsp;</p>
+       <p class="text-right number"><strong>= @question.getLearnerSolution()<sub>@question.getBase()</sub>&nbsp;</strong></p>
+       @if(question.checkSolution()) {
+       <p>Ihre L&ouml;sung ist richtig.</p>
+       } else {
+       <p>Ihre L&ouml;sung ist leider falsch.</p>
+       <p>Die richtige Antwort lautet <span class="number">@question.getSum().toString()<sub>@question.getQuestionType().getBase()</sub>.</span></p>
+       }
+       <a href="@binary.routes.NAryAddition.newAdditionQuestion()" class="btn btn-primary" role="button">N&auml;chste Aufgabe</a>
      </div>
   	</div>
    </div>
   </div>
 </div>
 }
-

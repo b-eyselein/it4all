@@ -6,6 +6,9 @@
   direction: rtl;
   unicode-bidi: bidi-override;
 }
+.number {
+  font-family: monospace;
+}
 </style>
 
 <div class="container">
@@ -17,20 +20,13 @@
       } 
     </div>
     <div class="panel-body">
-      <div class="col-sm-4">
-        <p class="text-right">
-        <span style="font-family: monospace">
-          @question.getFirstSummand()<sub>@question.getBase()</sub>&nbsp;
-        </span>
-        </p>
-        <p class="text-right">
-        <span style="font-family: monospace">
-          + @question.getSecondSummand()<sub>@question.getBase()</sub>&nbsp;
-        </span>
-        </p>
+      <div class="col-sm-4 col-sm-offset-4">
+        <p class="text-right number">@question.getFirstSummand()<sub>@question.getBase()</sub>&nbsp;</p>
+        <p class="text-right number">+ @question.getSecondSummand()<sub>@question.getBase()</sub>&nbsp;</p>
         <form role="form" action="@binary.routes.NAryAddition.checkSolution()" method="post">
           <div class="form-group">
-            <input pattern="@question.getQuestionType().getPattern()" autocomplete="off" class="number-input form-control text-right" name="learnerSolution" placeholder="Ihre L&ouml;sung" required>
+            <input pattern="@question.getQuestionType().getPattern()" autocomplete="off"
+            class="number-input form-control text-right" name="learnerSolution" placeholder="Ihre L&ouml;sung" required>
             <input hidden name="summand1" value="@question.getFirstSummand()">
             <input hidden name="summand2" value="@question.getSecondSummand()">
             <input hidden name="base" value="@question.getBase()" type="number">
@@ -39,6 +35,7 @@
         </form>
       </div>
     </div>
+    <div class="panel-footer">Achtung: Die Eingabe der Ziffern erfolgt von rechts nach links!</div>
   </div>
 </div>
 </div>

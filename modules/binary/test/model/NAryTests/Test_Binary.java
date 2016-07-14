@@ -14,10 +14,10 @@ public class Test_Binary {
     String bin_3 = "1000111001101";
     String bin_4 = "0b10101";
     
-    BinaryNumber bin_a = BinaryNumber.stringToBin(bin_1);
-    BinaryNumber bin_b = BinaryNumber.stringToBin(bin_2);
-    BinaryNumber bin_c = BinaryNumber.stringToBin(bin_3);
-    BinaryNumber bin_d = BinaryNumber.stringToBin(bin_4);
+    BinaryNumber bin_a = new BinaryNumber(bin_1);
+    BinaryNumber bin_b = new BinaryNumber(bin_2);
+    BinaryNumber bin_c = new BinaryNumber(bin_3);
+    BinaryNumber bin_d = new BinaryNumber(bin_4);
     
     // Tests the correct representation
     assertEquals(bin_a.toString(), "0000 1101");

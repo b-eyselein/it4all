@@ -14,44 +14,42 @@ import views.html.naryadditionquestion;
 import views.html.naryadditionsolution;
 
 /**
- * This is the controller class for the NaryAddition section.
- * ("Addition in anderen Zahlensystemen")
+ * This is the controller class for the NaryAddition section. ("Addition in
+ * anderen Zahlensystemen")
  */
 @Security.Authenticated(Secured.class)
 public class NAryAddition extends Controller {
-
+  
   @Inject
   private FormFactory factory;
-
+  
   /**
-   * Retrieves the learners solution from the HTML form,
-   * creates and updated addition question and
-   * redirects to the solution view.
+   * Retrieves the learners solution from the HTML form, creates and updated
+   * addition question and redirects to the solution view.
+   * 
    * @return
    */
   public Result checkSolution() {
     DynamicForm dynFormula = factory.form().bindFromRequest();
-
-    // TODO: firstSummand, secondSummand are NAryNumbers!
-    String firstSummandInNAry = dynFormula.get("summand1");
-    String secondSummandInNAry = dynFormula.get("summand2");
+    
+    String firstSumNAry = dynFormula.get("summand1");
+    String secondSumNAry = dynFormula.get("summand2");
     int base = Integer.parseInt(dynFormula.get("base"));
     
     String committedLearnerSolution = dynFormula.get("learnerSolution");
+    // Replace all spaces, reverse to compensate input from right to left!
     String learnerSolInNAry = new StringBuilder(committedLearnerSolution).reverse().toString().replaceAll("\\s", "");
-
-    NAryAdditionQuestion question = new NAryAdditionQuestion(firstSummandInNAry, secondSummandInNAry, base,
-        learnerSolInNAry);
-
+    
+    NAryAdditionQuestion question = new NAryAdditionQuestion(firstSumNAry, secondSumNAry, base, learnerSolInNAry);
     return ok(naryadditionsolution.render(UserManagement.getCurrentUser(), question));
   }
   
   /**
-   * Creates the index view.
-   * Creates a new addition question.
+   * Creates the index view. Creates a new addition question.
+   * 
    * @return
    */
-  public Result index() {
+  public Result newAdditionQuestion() {
     NAryAdditionQuestion question = NAryAdditionQuestion.generateNew();
     return ok(naryadditionquestion.render(UserManagement.getCurrentUser(), question));
   }

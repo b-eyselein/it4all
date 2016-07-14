@@ -49,7 +49,7 @@ public class NAryConversion extends Controller {
    * Creates a new conversion question.
    * @return
    */
-  public Result index() {
+  public Result newConversionQuestion() {
     NAryConversionQuestion question = NAryConversionQuestion.generateNew();
     return ok(naryconversionquestion.render(UserManagement.getCurrentUser(), question));
   }
