@@ -7,7 +7,7 @@ public class NAryAdditionQuestion {
   
   /**
    * Generates a new addition question.
-   * 
+   *
    * @return instance of NAryAdditionQuestion.
    */
   public static NAryAdditionQuestion generateNew() {
@@ -24,29 +24,11 @@ public class NAryAdditionQuestion {
   
   private NAryNumber firstSummand;
   private NAryNumber secondSummand;
-  
-  /**
-   * Sum (result of the addition).
-   */
   private NAryNumber sum;
-  
-  /**
-   * Base of the numbers to add.
-   */
   private NumberBase questionType;
   
-  /**
-   * Optional learner solution submitted by the user.
-   */
   private NAryNumber learnerSolution;
   
-  /**
-   * Standard constructor.
-   * 
-   * @param theFirstSummand
-   * @param theSecondSummand
-   * @param theQuestionType
-   */
   public NAryAdditionQuestion(int theFirstSummand, int theSecondSummand, NumberBase theQuestionType) {
     questionType = theQuestionType;
     firstSummand = new NAryNumber(theFirstSummand, questionType);
@@ -57,7 +39,7 @@ public class NAryAdditionQuestion {
   
   /**
    * Constructor to use HTML form information (strings and integers).
-   * 
+   *
    * @param firstSummandInNAry
    *          is the string representation of the first summand.
    * @param secondSummandInNAry
@@ -78,7 +60,7 @@ public class NAryAdditionQuestion {
   
   /**
    * Checks the correctness of the learners solution.
-   * 
+   *
    * @return
    */
   public boolean checkSolution() {
@@ -87,7 +69,7 @@ public class NAryAdditionQuestion {
   
   /**
    * Getter for the base.
-   * 
+   *
    * @return integer representation of the NumberBase.
    */
   public int getBase() {
@@ -96,7 +78,7 @@ public class NAryAdditionQuestion {
   
   /**
    * Getter for the first summand.
-   * 
+   *
    * @return instance of NAryNumber.
    */
   public NAryNumber getFirstSummand() {
@@ -104,26 +86,8 @@ public class NAryAdditionQuestion {
   }
   
   /**
-   * Getter for the second summand.
-   * 
-   * @return instance of NAryNumber.
-   */
-  public NAryNumber getSecondSummand() {
-    return secondSummand;
-  }
-  
-  /**
-   * Getter for the addition result.
-   * 
-   * @return instance of NAryNumber.
-   */
-  public NAryNumber getSum() {
-    return sum;
-  }
-  
-  /**
    * Getter for the learner solution.
-   * 
+   *
    * @return instance of NAryNumber.
    */
   public NAryNumber getLearnerSolution() {
@@ -132,10 +96,28 @@ public class NAryAdditionQuestion {
   
   /**
    * Getter for the question type (NumberBase).
-   * 
+   *
    * @return the question's NumberBase.
    */
   public NumberBase getQuestionType() {
     return questionType;
+  }
+  
+  /**
+   * Getter for the second summand.
+   *
+   * @return instance of NAryNumber.
+   */
+  public NAryNumber getSecondSummand() {
+    return secondSummand;
+  }
+  
+  /**
+   * Getter for the addition result.
+   *
+   * @return instance of NAryNumber.
+   */
+  public NAryNumber getSum() {
+    return sum;
   }
 }
