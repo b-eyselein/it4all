@@ -1,9 +1,6 @@
-package model.NAryNumbers.questions;
+package model.NAryNumbers;
 
 import java.util.Random;
-
-import model.NAryNumbers.NAryNumber;
-import model.NAryNumbers.NumberBase;
 
 public class NAryAdditionQuestion {
   private static final Random GENERATOR = new Random();

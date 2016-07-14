@@ -4,8 +4,8 @@ import javax.inject.Inject;
 
 import controllers.core.UserManagement;
 import model.Secured;
+import model.NAryNumbers.NAryConversionQuestion;
 import model.NAryNumbers.NumberBase;
-import model.NAryNumbers.questions.NAryConversionQuestion;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.mvc.Controller;
