@@ -1,5 +1,3 @@
-@import model.exercise.SqlExercise.SqlExType
-
 @(user: model.user.User, scenarioes: List[model.exercise.SqlScenario])
 
 @main("SQL", user) {
@@ -10,7 +8,7 @@
     <div class="panel-body">
 
       <div class="panel-group" id="accordion">
-        @for(sqlExType <- SqlExType.values()) {
+        @for(sqlExType <- model.exercise.SqlExercise.SqlExType.values()) {
         <div class="panel panel-default">
           <div class="panel-heading">
             <h4 class="panel-title">
