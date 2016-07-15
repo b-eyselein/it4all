@@ -1,8 +1,11 @@
 package model.boolescheAlgebra.BFTree;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+
+import model.boolescheAlgebra.BFTree.BinaryOperator.And;
+import model.boolescheAlgebra.BFTree.BinaryOperator.Or;
 
 public class BoolescheFunktionTreeTest {
 
