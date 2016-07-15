@@ -1,5 +1,3 @@
-@import model.exercise.Success
-
 @(solution: String, results: List[model.html.result.ElementResult], user: model.user.User)
 
 @main("HTML-Test", user) {
@@ -26,14 +24,14 @@
       <div class="panel panel-default">
         <div class="panel-heading">Korrektur</div>
         <div class="panel-body">
-          @for(result <- results) { @if(result.getSuccess == Success.COMPLETE) {
+          @for(result <- results) { @if(result.getSuccess == model.exercise.Success.COMPLETE) {
           <div class="panel panel-default panel-success">
             <div class="panel-heading">
               Teilaufgabe @result.getTask.getId erfolgreich!<span class="pull-right">@result.getPoints Punkt(e)</span>
             </div>
             <div class="panel-body">@result.getTask.getDescription</div>
           </div>
-          } @if(result.getSuccess == Success.PARTIALLY) {
+          } @if(result.getSuccess == model.exercise.Success.PARTIALLY) {
           <div class="panel panel-default panel-warning">
             <div class="panel-heading">
               Teilaufgabe @result.getTask.getId nicht komplett erfolgreich!<span class="pull-right">@result.getPoints
@@ -41,7 +39,7 @@
             </div>
             <div class="panel-body">@result.getTask.getDescription</div>
           </div>
-          } @if(result.getSuccess == Success.NONE) {
+          } @if(result.getSuccess == model.exercise.Success.NONE) {
           <div class="panel panel-default panel-danger">
             <div class="panel-heading">
               Teilaufgabe @result.getTask.getId nicht erfolgreich!<span class="pull-right">@result.getPoints
