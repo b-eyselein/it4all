@@ -9,7 +9,7 @@
         @question.getFromValue()<sub>@question.getFromNumberType().getBase()</sub>
       </span>in eine @question.getToNumberType().getSingularName um:
       @if(question.getToNumberType() == model.NAryNumbers.NumberBase.BINARY) {
-      	<p><em class="text-info">(Bin&auml;rzahlen bitte in 8-Bit-Darstellung mit f&uuml;hrenden Nullen angeben.)</em></p>
+      	<br><em class="text-info">(Bin&auml;rzahlen bitte in 8-Bit-Darstellung mit f&uuml;hrenden Nullen angeben.)</em>
       } 
     </div>
     <div class="panel-body">
@@ -22,6 +22,15 @@
         </div>
         <button type="submit" class="btn btn-primary">Pr&uuml;fen</button>
       </form>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      Platz f&uuml;r Notizen<br>
+      <em class="text-info">Notizen werden f&uuml;r die Korrektur nicht beachtet.</em>
+    </div>
+    <div class="panel-body">
+      <textarea class="form-control" rows="20"></textarea>
     </div>
   </div>
 </div>
