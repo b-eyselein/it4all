@@ -31,9 +31,9 @@ public class BoolescheFunktionTree {
 
   private Node knoten;
 
-  private BF_Variable[] vars;
+  private Variable[] vars;
 
-  public BoolescheFunktionTree(Node k, BF_Variable... v) {
+  public BoolescheFunktionTree(Node k, Variable... v) {
     this.knoten = k;
     this.vars = v;
   }
@@ -231,7 +231,7 @@ public class BoolescheFunktionTree {
     String s = "\n ";
     int[] spaltenbreite = new int[this.vars.length + 1];
     int spalte = 0;
-    for(BF_Variable v: this.vars) {
+    for(Variable v: this.vars) {
       s += v.toString() + " | ";
       spaltenbreite[spalte] = s.length() - 2;
       spalte++;

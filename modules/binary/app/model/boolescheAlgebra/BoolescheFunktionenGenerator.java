@@ -3,7 +3,7 @@ package model.boolescheAlgebra;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
-import model.boolescheAlgebra.BFTree.BF_Variable;
+import model.boolescheAlgebra.BFTree.Variable;
 import model.boolescheAlgebra.BFTree.BinaryOperator.And;
 import model.boolescheAlgebra.BFTree.BinaryOperator.Or;
 import model.boolescheAlgebra.BFTree.BinaryOperator.Xor;
@@ -47,9 +47,9 @@ public class BoolescheFunktionenGenerator {
     int numOfVariables = ThreadLocalRandom.current().nextInt(MIN_VARS, MAX_VARS + 1);
     
     ArrayList<Node> knoten = new ArrayList<>();
-    BF_Variable[] variables = new BF_Variable[numOfVariables];
+    Variable[] variables = new Variable[numOfVariables];
     for(int i = 0; i < variables.length; i++) {
-      variables[i] = new BF_Variable("" + ALPHABET[i]);
+      variables[i] = new Variable("" + ALPHABET[i]);
       knoten.add(variables[i]);
     }
     

@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.TreeSet;
 
 import model.boolescheAlgebra.BFTree.Not;
-import model.boolescheAlgebra.BFTree.BF_Variable;
+import model.boolescheAlgebra.BFTree.Variable;
 import model.boolescheAlgebra.BFTree.BinaryOperator.And;
 import model.boolescheAlgebra.BFTree.BinaryOperator.Equivalent;
 import model.boolescheAlgebra.BFTree.BinaryOperator.Implication;
@@ -50,10 +50,10 @@ public class BoolescheFunktionParser {
     if(vars.size() == 0) {
       throw new IllegalArgumentException("Die Formel enth\u00e4lt keine Variablen: " + originalformel);
     }
-    BF_Variable[] bf_vars = new BF_Variable[vars.size()];
+    Variable[] bf_vars = new Variable[vars.size()];
     int i_vars = 0;
     for(String s: vars) {
-      bf_vars[i_vars] = new BF_Variable(s);
+      bf_vars[i_vars] = new Variable(s);
       i_vars++;
     }
     return new BoolescheFunktionTree(getNextKnoten(formel, bf_vars), bf_vars);
@@ -90,10 +90,10 @@ public class BoolescheFunktionParser {
     if(vars.size() == 0) {
       throw new IllegalArgumentException("Die Formel enth\u00e4lt keine Variablen: " + originalformel);
     }
-    BF_Variable[] bf_vars = new BF_Variable[vars.size()];
+    Variable[] bf_vars = new Variable[vars.size()];
     int i_vars = 0;
     for(String s: vars) {
-      bf_vars[i_vars] = new BF_Variable(s);
+      bf_vars[i_vars] = new Variable(s);
       i_vars++;
     }
     return new BoolescheFunktionTree(getNextKnoten(formel, bf_vars), bf_vars);
@@ -129,7 +129,7 @@ public class BoolescheFunktionParser {
   /**
    * parst Teilstueck der Formel
    */
-  private static Node getNextKnoten(String ausdruck, BF_Variable[] vars) throws IllegalArgumentException {
+  private static Node getNextKnoten(String ausdruck, Variable[] vars) throws IllegalArgumentException {
     // entfernt fuehrende und anhaengend Leerzeichen und Klammern
     ausdruck = ausdruck.trim();
     int klammer = 0;
@@ -232,7 +232,7 @@ public class BoolescheFunktionParser {
     }
 
     // Variablen
-    for(BF_Variable var: vars) {
+    for(Variable var: vars) {
       if(ausdruck.equals(var.toString())) {
         return var;
       }
@@ -250,7 +250,7 @@ public class BoolescheFunktionParser {
     }
 
     int zu_viele_vars = 0;
-    for(BF_Variable var: vars) {
+    for(Variable var: vars) {
       if(ausdruck.contains(var.toString())) {
         zu_viele_vars++;
       }

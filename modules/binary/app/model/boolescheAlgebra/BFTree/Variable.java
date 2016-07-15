@@ -1,11 +1,11 @@
 package model.boolescheAlgebra.BFTree;
 
-public class BF_Variable implements Node {
+public class Variable implements Node {
   
   private String name;
   private boolean wert;
   
-  public BF_Variable(String s) {
+  public Variable(String s) {
     this.name = s;
   }
   

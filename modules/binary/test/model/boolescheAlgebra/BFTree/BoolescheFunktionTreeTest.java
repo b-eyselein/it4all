@@ -21,7 +21,7 @@ public class BoolescheFunktionTreeTest {
    * Test that a == (a and b) or (a and not b)
    */
   public void testCompareBoolscheFormelTree() {
-    BF_Variable a1 = new BF_Variable("a"), b1 = new BF_Variable("b");
+    Variable a1 = new Variable("a"), b1 = new Variable("b");
     Not notb = new Not(b1);
 
     BoolescheFunktionTree tree1 = new BoolescheFunktionTree(a1, a1);
