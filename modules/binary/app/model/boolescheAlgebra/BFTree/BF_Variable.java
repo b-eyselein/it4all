@@ -1,34 +1,30 @@
 package model.boolescheAlgebra.BFTree;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class BF_Variable implements BFKnoten {
-	
-	private String name;
-	private boolean wert;
-	
-	public BF_Variable(String s) {
-		this.name = s;
-	}
-	
-	public void setWert(boolean b) {
-		this.wert = b;
-	}
-	
-	@Override
-	public boolean getWert() {
-		return this.wert;
-	}
-	
-	@Override
-	public String toString() {
-		return this.name;
-	}
-
-	@Override
-	public List<BoolescheFunktionTree> getTeilformeln(BF_Variable[] vars) {
-		return new ArrayList<BoolescheFunktionTree>();
-	}
-
+public class BF_Variable implements Node {
+  
+  private String name;
+  private boolean wert;
+  
+  public BF_Variable(String s) {
+    this.name = s;
+  }
+  
+  @Override
+  public boolean evaluate() {
+    return this.wert;
+  }
+  
+  @Override
+  public String getAsString(boolean needsParanthesis) {
+    return name;
+  }
+  
+  public void setWert(boolean newValue) {
+    wert = newValue;
+  }
+  
+  @Override
+  public String toString() {
+    return name;
+  }
 }

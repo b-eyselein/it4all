@@ -1,23 +1,20 @@
 package model.boolescheAlgebra.BFTree;
 
-import java.util.ArrayList;
-import java.util.List;
+public class BF_1 implements Node {
 
-public class BF_1 implements BFKnoten {
-	
-	@Override
-	public boolean getWert() {
-		return true;
-	}
-	
-	@Override
-	public String toString() {
-		return "1";
-	}
+  @Override
+  public boolean evaluate() {
+    return true;
+  }
 
-	@Override
-	public List<BoolescheFunktionTree> getTeilformeln(BF_Variable[] vars) {
-		return new ArrayList<BoolescheFunktionTree>();
-	}
+  @Override
+  public String getAsString(boolean needsParanthesis) {
+    return "1";
+  }
+
+  @Override
+  public String toString() {
+    return "1";
+  }
 
 }

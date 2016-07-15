@@ -1,49 +1,14 @@
 package model.boolescheAlgebra.BFTree;
 
-import java.util.List;
+public class BF_OR extends BinaryOperator {
 
-public class BF_OR implements BFKnoten {
-  
-  private BFKnoten linkerK;
-  private BFKnoten rechterK;
-  
-  public BF_OR(BFKnoten l, BFKnoten r) {
-    this.linkerK = l;
-    this.rechterK = r;
+  public BF_OR(Node l, Node r) {
+    super(l, r, "OR");
   }
-  
+
   @Override
-  public boolean getWert() {
-    return (this.linkerK.getWert() || this.rechterK.getWert());
+  public boolean evaluate() {
+    return (this.leftNode.evaluate() || this.rightNode.evaluate());
   }
-  
-  @Override
-  public String toString() {
-    String s;
-    if(this.linkerK.getClass() == BF_OR.class || this.linkerK.getClass() == BF_AND.class
-        || this.linkerK.getClass() == BF_Variable.class || this.linkerK.getClass() == BF_NOT.class
-        || this.linkerK.getClass() == BF_1.class || this.linkerK.getClass() == BF_0.class) {
-      s = "" + linkerK.toString() + " OR ";
-    } else {
-      s = "(" + linkerK.toString() + ") OR ";
-    }
-    if(this.rechterK.getClass() == BF_OR.class || this.rechterK.getClass() == BF_AND.class
-        || this.rechterK.getClass() == BF_Variable.class || this.rechterK.getClass() == BF_NOT.class
-        || this.rechterK.getClass() == BF_1.class || this.rechterK.getClass() == BF_0.class) {
-      s += rechterK.toString();
-    } else {
-      s += "(" + rechterK.toString() + ")";
-    }
-    return s;
-  }
-  
-  @Override
-  public List<BoolescheFunktionTree> getTeilformeln(BF_Variable[] vars) {
-    List<BoolescheFunktionTree> llist = this.linkerK.getTeilformeln(vars);
-    List<BoolescheFunktionTree> rlist = this.rechterK.getTeilformeln(vars);
-    llist.addAll(rlist);
-    llist.add(new BoolescheFunktionTree(this, vars));
-    return llist;
-  }
-  
+
 }

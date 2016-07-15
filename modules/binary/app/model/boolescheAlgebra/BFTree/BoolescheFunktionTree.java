@@ -1,13 +1,12 @@
 package model.boolescheAlgebra.BFTree;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.TreeSet;
 
 import model.boolescheAlgebra.BoolescheFunktionParser;
 
 public class BoolescheFunktionTree {
-  
+
   /**
    * Gibt 1 oder 0 zum passenden Wahrheitswert zurueck.
    */
@@ -18,7 +17,7 @@ public class BoolescheFunktionTree {
       return '0';
     }
   }
-  
+
   /**
    * Gibt 1 oder 0 zum passenden Wahrheitswert zurueck.
    */
@@ -29,16 +28,16 @@ public class BoolescheFunktionTree {
       return "0";
     }
   }
-  
-  private BFKnoten knoten;
-  
+
+  private Node knoten;
+
   private BF_Variable[] vars;
-  
-  public BoolescheFunktionTree(BFKnoten k, BF_Variable... v) {
+
+  public BoolescheFunktionTree(Node k, BF_Variable... v) {
     this.knoten = k;
     this.vars = v;
   }
-  
+
   /**
    * Vergleicht getWahrheitsVector() mit dem uebergebenen WahrheitsVector
    * (boolean-Array). Wirft Fehler wenn Vektoren (Arrays) unterschiedlich lang
@@ -57,7 +56,7 @@ public class BoolescheFunktionTree {
     }
     return true;
   }
-  
+
   /**
    * Vergeicht diesen BoolescheFunktionTree mit anderem BoolescheFunktionTree.
    * Wirft Fehler wenn die Variablen nicht uebereinstimmen.
@@ -65,8 +64,8 @@ public class BoolescheFunktionTree {
   public boolean compareBoolscheFormelTree(BoolescheFunktionTree otherBFT) throws IllegalArgumentException {
     BoolescheFunktionTree tree1 = this;
     BoolescheFunktionTree tree2 = otherBFT;
-    TreeSet<String> thisVars = new TreeSet<String>(Arrays.asList(this.getVariablen()));
-    TreeSet<String> otherVars = new TreeSet<String>(Arrays.asList(otherBFT.getVariablen()));
+    TreeSet<String> thisVars = new TreeSet<>(Arrays.asList(this.getVariablen()));
+    TreeSet<String> otherVars = new TreeSet<>(Arrays.asList(otherBFT.getVariablen()));
     boolean variablen_unterschied = false;
     if(this.getAnzahlVariablen() != otherBFT.getAnzahlVariablen()) {
       variablen_unterschied = true;
@@ -80,7 +79,7 @@ public class BoolescheFunktionTree {
     if(variablen_unterschied) {
       thisVars.addAll(otherVars);
       String[] variablen = new String[thisVars.size()];
-      variablen = (String[]) thisVars.toArray(variablen);
+      variablen = thisVars.toArray(variablen);
       tree1 = BoolescheFunktionParser.parse(tree1.toString(), variablen);
       tree2 = BoolescheFunktionParser.parse(tree2.toString(), variablen);
     }
@@ -93,7 +92,7 @@ public class BoolescheFunktionTree {
     }
     return true;
   }
-  
+
   /**
    * Vergleicht getWahrheitsVector() mit dem uebergebenen WahrheitsVector
    * (String-Array). Wirft Fehler wenn Vektoren (Arrays) unterschiedlich lang
@@ -122,22 +121,14 @@ public class BoolescheFunktionTree {
     }
     return true;
   }
-  
+
   /**
    * gibt Anzahl der Variablen zurueck
    */
   public int getAnzahlVariablen() {
     return vars.length;
   }
-  
-  /**
-   * gibt eine Liste der Teilfunktion zurueck einschliesslich sich selbst
-   */
-  public List<BoolescheFunktionTree> getTeilformeln() {
-    List<BoolescheFunktionTree> teilformeln = this.knoten.getTeilformeln(vars);
-    return teilformeln;
-  }
-  
+
   /**
    * gibt sortierten String-Array mit Namen der Variablen zurueck
    */
@@ -148,7 +139,7 @@ public class BoolescheFunktionTree {
     }
     return variablen;
   }
-  
+
   /**
    * gibt den Teil der Tabelle der die Belegungen der Variablen enthaelt als
    * Char-Array zurueck. char[Spalte][Zeile] mit '1' fur wahr und '0' fuer
@@ -177,7 +168,7 @@ public class BoolescheFunktionTree {
     }
     return vtafel;
   }
-  
+
   /**
    * Gibt Wahrheitstafel als bool Array zurueck. boolean[Spalte][Zeile] ;
    * Anzahl_der_Spalten = Anzahl_der_Variablen+1 ; Anzahl_der_Zeilen =
@@ -204,7 +195,7 @@ public class BoolescheFunktionTree {
     }
     return wtafel;
   }
-  
+
   /**
    * Gibt Wahrheitstafel als char Array zurueck. char[Spalte][Zeile] ;
    * Anzahl_der_Spalten = Anzahl_der_Variablen+1 ; Anzahl_der_Zeilen =
@@ -231,7 +222,7 @@ public class BoolescheFunktionTree {
     }
     return wtafel;
   }
-  
+
   /**
    * Gibt Wahrheitstafel mit Beschriftung als String zurueck. (geeignet fuer
    * Komandozeile)
@@ -284,7 +275,7 @@ public class BoolescheFunktionTree {
     }
     return s;
   }
-  
+
   /**
    * gibt Vector mit den Werten des Ausdrucks zurueck
    */
@@ -306,7 +297,7 @@ public class BoolescheFunktionTree {
     }
     return wvector;
   }
-  
+
   /**
    * gibt Vector mit den Werten als Char des Ausdrucks zurueck
    */
@@ -328,7 +319,7 @@ public class BoolescheFunktionTree {
     }
     return wvector;
   }
-  
+
   /**
    * gibt Vector mit den Werten als String des Ausdrucks zurueck
    */
@@ -350,7 +341,7 @@ public class BoolescheFunktionTree {
     }
     return wvector;
   }
-  
+
   /**
    * Gibt den Wahrheitswert der Funktion zu dem uebergebenen bool Array zurueck.
    */
@@ -362,9 +353,9 @@ public class BoolescheFunktionTree {
     for(int i = 0; i < this.vars.length; i++) {
       this.vars[i].setWert(b[i]);
     }
-    return this.knoten.getWert();
+    return this.knoten.evaluate();
   }
-  
+
   /**
    * Gibt eine aequivalente Formel in kanonischer DNF als String zurueck
    */
@@ -392,7 +383,7 @@ public class BoolescheFunktionTree {
     }
     return formel;
   }
-  
+
   /**
    * Gibt eine aequivalente Formel in kanonischer KNF als String zurueck
    */
@@ -422,7 +413,7 @@ public class BoolescheFunktionTree {
     }
     return formel;
   }
-  
+
   /**
    * Gibt eine aequivalente Formel in vereinfachter DNF als String zurueck
    */
@@ -431,7 +422,7 @@ public class BoolescheFunktionTree {
     String[] variablen = this.getVariablen();
     boolean[][] wahrheitstafel = this.getWahrheitstafelBoolean();
     // suche wahre Eintraege in der Wahrheitstafel
-    TreeSet<String> neueAusdruecke = new TreeSet<String>();
+    TreeSet<String> neueAusdruecke = new TreeSet<>();
     for(int i = 0; i < wahrheitstafel[0].length; i++) {
       if(wahrheitstafel[wahrheitstafel.length - 1][i]) {
         String neuerAusdruck = "";
@@ -449,16 +440,16 @@ public class BoolescheFunktionTree {
       }
     }
     // vergleiche alle Ausdruecke miteinander
-    TreeSet<String> kuerzereAusdruecke = new TreeSet<String>();
-    TreeSet<String> benutzteAusdruecke = new TreeSet<String>();
+    TreeSet<String> kuerzereAusdruecke = new TreeSet<>();
+    TreeSet<String> benutzteAusdruecke = new TreeSet<>();
     do {
-      kuerzereAusdruecke = new TreeSet<String>();
-      benutzteAusdruecke = new TreeSet<String>();
+      kuerzereAusdruecke = new TreeSet<>();
+      benutzteAusdruecke = new TreeSet<>();
       for(String ausdruck1: neueAusdruecke) {
         String[] ausdruecke1 = ausdruck1.split(",");
         for(String ausdruck2: neueAusdruecke) {
           String[] ausdruecke2 = ausdruck2.split(",");
-          
+
           int gleich = 0;
           int verschieden = 0;
           String neuerausdruck = "";
@@ -496,7 +487,7 @@ public class BoolescheFunktionTree {
     formel = formel.replaceAll(",", " AND ");
     return formel;
   }
-  
+
   /**
    * Gibt eine aequivalente Formel in vereinfachter KNF als String zurueck
    */
@@ -505,7 +496,7 @@ public class BoolescheFunktionTree {
     String[] variablen = this.getVariablen();
     boolean[][] wahrheitstafel = this.getWahrheitstafelBoolean();
     // suche wahre Eintraege in der Wahrheitstafel
-    TreeSet<String> neueAusdruecke = new TreeSet<String>();
+    TreeSet<String> neueAusdruecke = new TreeSet<>();
     for(int i = 0; i < wahrheitstafel[0].length; i++) {
       if(!wahrheitstafel[wahrheitstafel.length - 1][i]) {
         String neuerAusdruck = "";
@@ -523,16 +514,16 @@ public class BoolescheFunktionTree {
       }
     }
     // vergleiche alle Ausdruecke miteinander
-    TreeSet<String> kuerzereAusdruecke = new TreeSet<String>();
-    TreeSet<String> benutzteAusdruecke = new TreeSet<String>();
+    TreeSet<String> kuerzereAusdruecke = new TreeSet<>();
+    TreeSet<String> benutzteAusdruecke = new TreeSet<>();
     do {
-      kuerzereAusdruecke = new TreeSet<String>();
-      benutzteAusdruecke = new TreeSet<String>();
+      kuerzereAusdruecke = new TreeSet<>();
+      benutzteAusdruecke = new TreeSet<>();
       for(String ausdruck1: neueAusdruecke) {
         String[] ausdruecke1 = ausdruck1.split(",");
         for(String ausdruck2: neueAusdruecke) {
           String[] ausdruecke2 = ausdruck2.split(",");
-          
+
           int gleich = 0;
           int verschieden = 0;
           String neuerausdruck = "";
@@ -570,13 +561,13 @@ public class BoolescheFunktionTree {
     formel = formel.replaceAll(",", " OR ");
     return formel;
   }
-  
+
   /**
    * Gibt boolesche Funktion als Sting zurueck.
    */
   @Override
   public String toString() {
-    return knoten.toString();
+    return knoten.getAsString(false);
   }
-  
+
 }

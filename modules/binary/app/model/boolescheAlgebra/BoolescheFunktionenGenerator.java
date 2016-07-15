@@ -40,7 +40,7 @@ public class BoolescheFunktionenGenerator {
 
     int numOfVariables = ThreadLocalRandom.current().nextInt(MIN_VARS, MAX_VARS + 1);
 
-    ArrayList<BFKnoten> knoten = new ArrayList<>();
+    ArrayList<Node> knoten = new ArrayList<>();
     BF_Variable[] variables = new BF_Variable[numOfVariables];
     for(int i = 0; i < variables.length; i++) {
       variables[i] = new BF_Variable("" + ALPHABET[i]);
@@ -52,14 +52,14 @@ public class BoolescheFunktionenGenerator {
     }
     while(knoten.size() > 1) {
       int indexA = (int) Math.floor(Math.random() * knoten.size());
-      BFKnoten knotenA = knoten.get(indexA);
+      Node knotenA = knoten.get(indexA);
       knoten.remove(indexA);
       int indexB = (int) Math.floor(Math.random() * knoten.size());
-      BFKnoten knotenB = knoten.get(indexB);
+      Node knotenB = knoten.get(indexB);
       knoten.remove(indexB);
       knoten.add(getRandomOperator(knotenA, knotenB));
     }
-    BFKnoten k;
+    Node k;
     if((int) Math.floor(Math.random() * 4) == 1) {
       k = new BF_NOT(knoten.get(0));
     } else {
@@ -100,7 +100,7 @@ public class BoolescheFunktionenGenerator {
    * 40% AND; 40% OR; 20% XOR; zusaetzlich 33% NOT jeweils bei dem linken und
    * rechten Knoten
    */
-  private static BFKnoten getRandomOperator(BFKnoten ka, BFKnoten kb) {
+  private static Node getRandomOperator(Node ka, Node kb) {
     if((int) Math.floor(Math.random() * 3) == 2) {
       ka = new BF_NOT(ka);
     }
@@ -108,7 +108,7 @@ public class BoolescheFunktionenGenerator {
       kb = new BF_NOT(kb);
     }
     int temp_op = (int) Math.floor(Math.random() * 5);
-    BFKnoten operator;
+    Node operator;
     if(temp_op < 2) {
       operator = new BF_AND(ka, kb);
     } else if(temp_op < 4) {

@@ -117,7 +117,7 @@ public class BoolescheFunktionParser {
   /**
    * parst Teilstueck der Formel
    */
-  private static BFKnoten getNextKnoten(String ausdruck, BF_Variable[] vars) throws IllegalArgumentException {
+  private static Node getNextKnoten(String ausdruck, BF_Variable[] vars) throws IllegalArgumentException {
     // entfernt fuehrende und anhaengend Leerzeichen und Klammern
     ausdruck = ausdruck.trim();
     int klammer = 0;

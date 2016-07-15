@@ -1,47 +1,14 @@
 package model.boolescheAlgebra.BFTree;
 
-import java.util.List;
+public class BF_IMPL extends BinaryOperator {
 
-public class BF_IMPL implements BFKnoten {
-  
-  private BFKnoten linkerK;
-  private BFKnoten rechterK;
-  
-  public BF_IMPL(BFKnoten l, BFKnoten r) {
-    this.linkerK = l;
-    this.rechterK = r;
+  public BF_IMPL(Node l, Node r) {
+    super(l, r, "IMPL");
   }
-  
+
   @Override
-  public boolean getWert() {
-    return (!linkerK.getWert()) || rechterK.getWert();
+  public boolean evaluate() {
+    return (!leftNode.evaluate()) || rightNode.evaluate();
   }
-  
-  @Override
-  public String toString() {
-    String s;
-    if(this.linkerK.getClass() == BF_Variable.class || this.linkerK.getClass() == BF_NOT.class
-        || this.linkerK.getClass() == BF_1.class || this.linkerK.getClass() == BF_0.class) {
-      s = "" + linkerK.toString() + " IMPL ";
-    } else {
-      s = "(" + linkerK.toString() + ") IMPL ";
-    }
-    if(this.rechterK.getClass() == BF_Variable.class || this.rechterK.getClass() == BF_NOT.class
-        || this.rechterK.getClass() == BF_1.class || this.rechterK.getClass() == BF_0.class) {
-      s += rechterK.toString();
-    } else {
-      s += "(" + rechterK.toString() + ")";
-    }
-    return s;
-  }
-  
-  @Override
-  public List<BoolescheFunktionTree> getTeilformeln(BF_Variable[] vars) {
-    List<BoolescheFunktionTree> llist = this.linkerK.getTeilformeln(vars);
-    List<BoolescheFunktionTree> rlist = this.rechterK.getTeilformeln(vars);
-    llist.addAll(rlist);
-    llist.add(new BoolescheFunktionTree(this, vars));
-    return llist;
-  }
-  
+
 }
