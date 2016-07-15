@@ -14,53 +14,16 @@ import javax.inject.Inject;
 import controllers.core.UserManagement;
 import views.html.bool_formel_erstellen_q;
 import views.html.bool_formel_erstellen_s;
-import model.boolescheAlgebra.BoolescheFunktionParser;
-import model.boolescheAlgebra.BFTree.*;
+import model.boolescheAlgebra.CreationQuestion;
+import model.user.User;
 
 @Security.Authenticated(Secured.class)
 public class BoolFormelErstellen extends Controller {
   
-  private final static char[] ALPHABET = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
-      'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
-      
-  @Inject
-  private FormFactory factory;
-  
-  public Result musterLoesung() {
-    DynamicForm dynFormula = factory.form().bindFromRequest();
-    String varString = dynFormula.get("vars");
-    String zvectorString = dynFormula.get("zvector");
-    String[] vars = varString.split(",");
-    String[] zvector = zvectorString.split(",");
-    
-    int zeilen = (int) Math.pow(2.0, vars.length);
-    int spalten = vars.length;
-    
-    String[][] tabelle = getTabelle(vars.length);
-    boolean[][] wahrheitstafel = new boolean[spalten + 1][zeilen];
-    for(int i = 0; i < zeilen; i++) {
-      for(int j = 0; j < spalten; j++) {
-        if(tabelle[j][i].equals("1")) {
-          wahrheitstafel[j][i] = true;
-        }
-      }
-      if(zvector[i].equals("1")) {
-        wahrheitstafel[spalten][i] = true;
-      }
-    }
-    String dnf = kanonischeDisjunktiveNormalform(vars, wahrheitstafel);
-    String s_dnf = kurzeDisjunktiveNormalform(vars, wahrheitstafel);
-    String knf = kanonischeKonjunktiveNormalform(vars, wahrheitstafel);
-    String s_knf = kurzeKonjunktiveNormalform(vars, wahrheitstafel);
-    
-    return ok(bool_formel_erstellen_s.render(UserManagement.getCurrentUser(), vars, zvector, tabelle, spalten, zeilen,
-        dnf, s_dnf, knf, s_knf));
-  }
-  
   private static String kurzeDisjunktiveNormalform(String[] vars, boolean[][] wahrheitstafel) {
     String formel = "";
     // suche wahre Eintraege in der Wahrheitstafel
-    TreeSet<String> neueAusdruecke = new TreeSet<String>();
+    TreeSet<String> neueAusdruecke = new TreeSet<>();
     for(int i = 0; i < wahrheitstafel[0].length; i++) {
       if(wahrheitstafel[wahrheitstafel.length - 1][i]) {
         String neuerAusdruck = "";
@@ -78,11 +41,11 @@ public class BoolFormelErstellen extends Controller {
       }
     }
     // vergleiche alle Ausdruecke miteinander
-    TreeSet<String> kuerzereAusdruecke = new TreeSet<String>();
-    TreeSet<String> benutzteAusdruecke = new TreeSet<String>();
+    TreeSet<String> kuerzereAusdruecke = new TreeSet<>();
+    TreeSet<String> benutzteAusdruecke = new TreeSet<>();
     do {
-      kuerzereAusdruecke = new TreeSet<String>();
-      benutzteAusdruecke = new TreeSet<String>();
+      kuerzereAusdruecke = new TreeSet<>();
+      benutzteAusdruecke = new TreeSet<>();
       for(String ausdruck1: neueAusdruecke) {
         String[] ausdruecke1 = ausdruck1.split(",");
         for(String ausdruck2: neueAusdruecke) {
@@ -129,7 +92,7 @@ public class BoolFormelErstellen extends Controller {
   private static String kurzeKonjunktiveNormalform(String[] vars, boolean[][] wahrheitstafel) {
     String formel = "";
     // suche wahre Eintraege in der Wahrheitstafel
-    TreeSet<String> neueAusdruecke = new TreeSet<String>();
+    TreeSet<String> neueAusdruecke = new TreeSet<>();
     for(int i = 0; i < wahrheitstafel[0].length; i++) {
       if(!wahrheitstafel[wahrheitstafel.length - 1][i]) {
         String neuerAusdruck = "";
@@ -147,11 +110,11 @@ public class BoolFormelErstellen extends Controller {
       }
     }
     // vergleiche alle Ausdruecke miteinander
-    TreeSet<String> kuerzereAusdruecke = new TreeSet<String>();
-    TreeSet<String> benutzteAusdruecke = new TreeSet<String>();
+    TreeSet<String> kuerzereAusdruecke = new TreeSet<>();
+    TreeSet<String> benutzteAusdruecke = new TreeSet<>();
     do {
-      kuerzereAusdruecke = new TreeSet<String>();
-      benutzteAusdruecke = new TreeSet<String>();
+      kuerzereAusdruecke = new TreeSet<>();
+      benutzteAusdruecke = new TreeSet<>();
       for(String ausdruck1: neueAusdruecke) {
         String[] ausdruecke1 = ausdruck1.split(",");
         for(String ausdruck2: neueAusdruecke) {
@@ -195,86 +158,53 @@ public class BoolFormelErstellen extends Controller {
     return formel;
   }
   
+  @Inject
+  private FormFactory factory;
+  
+  public Result checkSolution() {
+    return ok("TODO!");
+  }
+  
   public Result index() {
+    // FIXME: DAFUQ?
+    User user = UserManagement.getCurrentUser();
+    CreationQuestion question = CreationQuestion.generateNew();
+    
+    return ok(bool_formel_erstellen_q.render(user, question));
+  }
+  
+  public Result musterLoesung() {
     DynamicForm dynFormula = factory.form().bindFromRequest();
-    String learnerSolution = dynFormula.get("learnerSolution");
     String varString = dynFormula.get("vars");
     String zvectorString = dynFormula.get("zvector");
-    String[] vars;
-    String exception_msg = "";
-    boolean correct = false;
-    if(varString == null) {
-      vars = getRandomVars(2, 3);
-    } else {
-      vars = varString.split(",");
-    }
-    String[] zvector = null;
-    if(zvectorString == null) {
-      zvector = getRandomVector(vars.length);
-    } else {
-      zvector = zvectorString.split(",");
-    }
+    String[] vars = varString.split(",");
+    String[] zvector = zvectorString.split(",");
+    
     int zeilen = (int) Math.pow(2.0, vars.length);
     int spalten = vars.length;
-    String formel = null;
-    String[] formelvector = null;
-    if(learnerSolution != null) {
-      try {
-        BoolescheFunktionTree bft = BoolescheFunktionParser.parse(learnerSolution, vars);
-        correct = bft.compareStringArray(zvector);
-        formelvector = bft.getWahrheitsVectorString();
-        formel = bft.toString();
-      } catch (IllegalArgumentException iae) {
-        exception_msg = iae.getMessage();
+    
+    String[][] tabelle = getTabelle(vars.length);
+    boolean[][] wahrheitstafel = new boolean[spalten + 1][zeilen];
+    for(int i = 0; i < zeilen; i++) {
+      for(int j = 0; j < spalten; j++) {
+        if(tabelle[j][i].equals("1")) {
+          wahrheitstafel[j][i] = true;
+        }
+      }
+      if(zvector[i].equals("1")) {
+        wahrheitstafel[spalten][i] = true;
       }
     }
-    return ok(bool_formel_erstellen_q.render(UserManagement.getCurrentUser(), vars, zvector, getTabelle(vars.length),
-        spalten, zeilen, learnerSolution, correct, exception_msg, formel, formelvector));
+    String dnf = kanonischeDisjunktiveNormalform(vars, wahrheitstafel);
+    String s_dnf = kurzeDisjunktiveNormalform(vars, wahrheitstafel);
+    String knf = kanonischeKonjunktiveNormalform(vars, wahrheitstafel);
+    String s_knf = kurzeKonjunktiveNormalform(vars, wahrheitstafel);
+    
+    return ok(bool_formel_erstellen_s.render(UserManagement.getCurrentUser(), vars, zvector, tabelle, spalten, zeilen,
+        dnf, s_dnf, knf, s_knf));
   }
   
-  private String[] getRandomVector(int vars) {
-    int wert = 0;
-    boolean wahrenthalten = false;
-    boolean falschenthalten = false;
-    String[] vector = new String[(int) Math.pow(2.0, vars)];
-    for(int i = 0; i < vector.length; i++) {
-      wert = (int) Math.floor(Math.random() * 2);
-      if(wert == 1) {
-        wahrenthalten = true;
-      } else {
-        falschenthalten = true;
-      }
-      vector[i] = "" + wert;
-    }
-    if(wahrenthalten && falschenthalten) {
-      return vector;
-    }
-    return getRandomVector(vars);
-  }
-  
-  private String[] getRandomVars(int min, int max) {
-    if(max < 1) {
-      throw new IllegalArgumentException("max have to be greater or equal 1, but it was " + max);
-    }
-    if(min < 1) {
-      throw new IllegalArgumentException("min have to be greater or equal 1, but it was " + min);
-    }
-    if(max < min) {
-      throw new IllegalArgumentException("min have to be smaller or equal max, min=" + min + "; max=" + max + ";");
-    }
-    if(max > ALPHABET.length) {
-      throw new IllegalArgumentException(
-          "the ALPHABET does not have enough letters to cover an amount of " + max + " variables");
-    }
-    int anzVars = (int) Math.floor(min + Math.random() * (max - min + 1));
-    String[] vars = new String[anzVars];
-    for(int i = 0; i < anzVars; i++) {
-      vars[i] = "" + ALPHABET[i];
-    }
-    return vars;
-  }
-  
-  public String[][] getTabelle(int anzvars) {
+  private String[][] getTabelle(int anzvars) {
     String[][] vtafel = new String[anzvars][(int) Math.pow(2.0, anzvars)];
     char[] zeile = new char[anzvars];
     for(int i = 0; i < zeile.length; i++) {
@@ -298,7 +228,7 @@ public class BoolFormelErstellen extends Controller {
     return vtafel;
   }
   
-  public String kanonischeDisjunktiveNormalform(String[] variablen, boolean[][] wahrheitstafel) {
+  private String kanonischeDisjunktiveNormalform(String[] variablen, boolean[][] wahrheitstafel) {
     String formel = "";
     for(int i = 0; i < wahrheitstafel[0].length; i++) {
       // Nur "true"-Werte in der Tafel
@@ -321,7 +251,7 @@ public class BoolFormelErstellen extends Controller {
     return formel;
   }
   
-  public String kanonischeKonjunktiveNormalform(String[] variablen, boolean[][] wahrheitstafel) {
+  private String kanonischeKonjunktiveNormalform(String[] variablen, boolean[][] wahrheitstafel) {
     String formel = "";
     for(int i = 0; i < wahrheitstafel[0].length; i++) {
       // Nur "false"-Werte in der Tafel

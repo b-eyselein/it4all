@@ -1,94 +1,70 @@
-@(user: model.user.User, var_names: Array[String], zvector: Array[String], tabelle: Array[Array[String]], spalten: Int, zeilen: Int, dnf: String, s_dnf: String, knf: String, s_knf: String)
+@(user: model.user.User, var_names: Array[String], zvector: Array[String], tabelle: Array[Array[String]], spalten: Int,
+zeilen: Int, dnf: String, s_dnf: String, knf: String, s_knf: String)
 
 @main("Formel erstellen", user) {
-<!-- CSS override -->
-<style>
-	a.mytooltip:link {
-	    color:#333333;
-	    text-decoration:none;
-	}
-	a.mytooltip:visited {
-	    color:#333333;
-	    text-decoration:none;
-	}
-	a.mytooltip:hover {
-	    color:#333333;
-	    text-decoration:none;
-	}
-	a.mytooltip:active {
-	    color:#333333;
-	    text-decoration:none;
-	}
-	.tooltip-inner {
-		max-width:1000px;
-	}
-</style>
-	<div class="container">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				Musterl&ouml;sung
-			</div>
-			<div class="panel-body">
-				<div class="row">
-					<div class="col-sm-4">
-						<table class="table">
-							<thread align = "right">
-								<tr>
-									@for(v <- var_names){
-									<td>
-										<b>@v</b>
-									</td>
-									}
-									<td class="col-md-4">
-										<b>z</b>
-									</td>
-								</tr>
-							</thread>
-							<tbody align = "left">
-							@for(i <- 0 until (zeilen)){
-								<tr>
-								@for(j <- 0 until (spalten)){
-									<td>@tabelle(j)(i)</td>
-								}
-								<td>@zvector(i)</td>
-							}
-							</tbody>
-						</table>
-					</div>
-				</div>
-				<div class="row">
-					<div class="container-fluid">
-						<p>
-							<b>Musterl&ouml;sungen f&uuml;r z:</b><br>
-							kanonische disjunktive Normalform: &nbsp;&nbsp;&nbsp;
-							<a class="mytooltip" href="#" data-toggle="tooltip" data-placement="right" title="@dnf.toString()">
-								@Html(dnf.toString().replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;").intern())
-							</a> <br>
-							kurze disjunktive Normalform: &nbsp;&nbsp;&nbsp;
-							<a class="mytooltip" href="#" data-toggle="tooltip" data-placement="right" title="@s_dnf.toString()">
-								@Html(s_dnf.toString().replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;").intern())
-							</a> <br>
-							kanonische konjunktive Normalform: &nbsp;&nbsp;&nbsp;
-							<a class="mytooltip" href="#" data-toggle="tooltip" data-placement="right" title="@knf.toString()">
-								@Html(knf.toString().replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;").intern())
-							</a> <br>
-							kurze konjunktive Normalform: &nbsp;&nbsp;&nbsp;
-							<a class="mytooltip" href="#" data-toggle="tooltip" data-placement="right" title="@s_knf.toString()">
-								@Html(s_knf.toString().replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;").intern())
-							</a> <br>
-						</p>
-						<form role="form" class="form-horizontal" action="@binary.routes.BoolFormelErstellen.index()" method="post">
-        					<button type="submit" class="btn btn-primary btn-block">n&auml;chste Aufgabe</button>
-       					</form>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+<div class="container">
+  <div class="panel panel-default">
+    <div class="panel-heading">Musterl&ouml;sung</div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-sm-4">
+          <table class="table">
+            <thread align="right">
+            <tr>
+              @for(v <- var_names){
+              <td><b>@v</b></td> }
+              <td class="col-md-4"><b>z</b></td>
+            </tr>
+            </thread>
+            <tbody align="left">
+              @for(i <- 0 until (zeilen)){
+              <tr>
+                @for(j <- 0 until (spalten)){
+                <td>@tabelle(j)(i)</td> }
+                <td>@zvector(i)</td> }
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row">
+        <div class="container-fluid">
+          <h3>Musterl&ouml;sungen f&uuml;r z:</h3>
+          <div class="row">
+            <div class="col-sm-3">Kanonische disjunktive Normalform:</div>
+            <div class="col-sm-9">
+              @Html(dnf.toString().replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;").intern())
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-3">Kanonische konjunktive Normalform:</div>
+            <div class="col-sm-9">
+              @Html(knf.toString().replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;").intern())
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-3">Kurze disjunktive Normalform:</div>
+            <div class="col-sm-9">
+              @Html(s_dnf.toString().replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;").intern())
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-3">Kurze konjunktive Normalform:</div>
+            <div class="col-sm-9">
+              @Html(s_knf.toString().replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;").intern())
+            </div>
+          </div>
+          <p>
+            <a class="btn btn-primary btn-block" href="@binary.routes.BoolFormelErstellen.index()">N&auml;chste Aufgabe</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <!-- Tooltip script -->
 <script>
-$(document).ready(function(){
-    $('[data-toggle="tooltip"]').tooltip(); 
-});
+  $(document).ready(function() {
+    $('[data-toggle="tooltip"]').tooltip();
+  });
 </script>
 }

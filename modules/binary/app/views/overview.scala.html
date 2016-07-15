@@ -1,43 +1,36 @@
 @(user: model.user.User)
 
 @main("Binary", user) {
-	<div class="container">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<strong>Boolesche Algebra</strong>
-			</div>
-			<div class="panel-body">
-				<p>
-					<a type="button" class="btn btn-default btn-block" href="@binary.routes.Bool.index">
-						Wahrheitstabellen ausf&uuml;llen
-					</a>
-				</p>
-				<p>
-					<form role="form" class="form-horizontal" action="@binary.routes.BoolFormelErstellen.index()" method="post">
-			        	<button type="submit" class="btn btn-default btn-block">Formel erstellen</button>
-			        </form>
-					@*<a type="button" class="btn btn-default btn-block" href="@binary.routes.BoolFormelErstellen.index">
-						Formel erstellen
-					</a>*@
-				</p>
-			</div>
-		</div>
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<strong>Zahlensysteme</strong>
-			</div>
-			<div class="panel-body">
-				<p>
-					<a type="button" class="btn btn-default btn-block" href="@binary.routes.NAryConversion.newConversionQuestion()">
-						Umwandeln zwischen verschiedenen Zahlensystemen.
-					</a>
-				</p>
-				<p>
-					<a type="button" class="btn btn-default btn-block" href="@binary.routes.NAryAddition.newAdditionQuestion">
-						Addition in anderen Zahlensystemen
-					</a>
-				</p>
-			</div>
-		</div>
-	</div>
+<div class="container">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <strong>Boolesche Algebra</strong>
+    </div>
+    <div class="panel-body">
+      <p>
+        <a type="button" class="btn btn-default btn-block" href=" @binary.routes.Bool.index()"> Wahrheitstabellen
+          ausf&uuml;llen </a>
+      </p>
+      <p>
+        <a type="button" class="btn btn-default btn-block" href=" @binary.routes.BoolFormelErstellen.index()">
+          Formel erstellen </a>
+      </p>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <strong>Zahlensysteme</strong>
+    </div>
+    <div class="panel-body">
+      <p>
+        <a type="button" class="btn btn-default btn-block" href=" @binary.routes.NAryConversion.newConversionQuestion()">
+          Umwandeln zwischen verschiedenen Zahlensystemen. </a>
+      </p>
+      <p>
+        <a type="button" class="btn btn-default btn-block" href=" @binary.routes.NAryAddition.newAdditionQuestion()">
+          Addition in anderen Zahlensystemen </a>
+      </p>
+    </div>
+  </div>
+</div>
 }

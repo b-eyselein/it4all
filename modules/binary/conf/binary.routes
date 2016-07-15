@@ -3,7 +3,8 @@ GET    /index                     controllers.binary.Binary.index()
 GET    /bool                      controllers.binary.Bool.index()
 POST   /bool/solution             controllers.binary.Bool.indexSolution()
 
-POST   /boolformel                controllers.binary.BoolFormelErstellen.index()
+GET    /boolformel                controllers.binary.BoolFormelErstellen.index()
+POST   /boolformel                controllers.binary.BoolFormelErstellen.checkSolution()
 POST   /boolformel/solution       controllers.binary.BoolFormelErstellen.musterLoesung()
 
 GET    /naryconversion            controllers.binary.NAryConversion.newConversionQuestion()
