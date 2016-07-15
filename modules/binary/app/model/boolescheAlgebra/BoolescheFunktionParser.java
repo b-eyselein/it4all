@@ -3,31 +3,43 @@ package model.boolescheAlgebra;
 import java.util.Arrays;
 import java.util.TreeSet;
 
-import model.boolescheAlgebra.BFTree.*;
+import model.boolescheAlgebra.BFTree.Not;
+import model.boolescheAlgebra.BFTree.BF_Variable;
+import model.boolescheAlgebra.BFTree.BinaryOperator.And;
+import model.boolescheAlgebra.BFTree.BinaryOperator.Equivalent;
+import model.boolescheAlgebra.BFTree.BinaryOperator.Implication;
+import model.boolescheAlgebra.BFTree.BinaryOperator.NAnd;
+import model.boolescheAlgebra.BFTree.BinaryOperator.NOr;
+import model.boolescheAlgebra.BFTree.BinaryOperator.Or;
+import model.boolescheAlgebra.BFTree.BinaryOperator.Xor;
+import model.boolescheAlgebra.BFTree.BoolescheFunktionTree;
+import model.boolescheAlgebra.BFTree.False;
+import model.boolescheAlgebra.BFTree.Node;
+import model.boolescheAlgebra.BFTree.True;
 
 public class BoolescheFunktionParser {
-  
+
   private static final TreeSet<Character> zeichensatz = new TreeSet<>(
       Arrays.asList('0', '1', '(', ')', ' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
           'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'));
-          
+
   /**
    * Gibt die Formel als Tree zurueck, der interpretiert werden kann.
    */
   public static BoolescheFunktionTree parse(String originalformel) throws IllegalArgumentException {
     String formel = originalformel.toLowerCase();
-    
+
     formel = substituteGermanOperators(formel);
-    
+
     // Pruefung auf fehlende Klammern
     pruefeKlammern(originalformel);
-    
+
     // Pruefung auf ungueltige Zeichen
     pruefeZeichensatz(formel);
-    
+
     // Extrahierung der Variablen
     String[] extractedVariables = extractVariables(formel);
-    
+
     TreeSet<String> vars = new TreeSet<>();
     for(int i = 0; i < extractedVariables.length; i++) {
       if(!extractedVariables[i].equals("")) {
@@ -46,24 +58,24 @@ public class BoolescheFunktionParser {
     }
     return new BoolescheFunktionTree(getNextKnoten(formel, bf_vars), bf_vars);
   }
-  
+
   /**
    * Wie parse(formel) nur mit uebergabe der Variablenliste. Gibt die Formel als
    * Tree zurueck, der interpretiert werden kann.
    */
   public static BoolescheFunktionTree parse(String originalformel, String[] variablen) throws IllegalArgumentException {
     String formel = originalformel.toLowerCase();
-    
+
     formel = substituteGermanOperators(formel);
-    
+
     // Pruefung auf fehlende Klammern
     pruefeKlammern(originalformel);
-    
+
     // Pruefung auf ungueltige Zeichen
     pruefeZeichensatz(formel);
-    
+
     String[] extractedVariables = extractVariables(formel);
-    
+
     // Pruefung der Variablen
     TreeSet<String> vars = new TreeSet<>();
     for(int i = 0; i < variablen.length; i++) {
@@ -86,11 +98,11 @@ public class BoolescheFunktionParser {
     }
     return new BoolescheFunktionTree(getNextKnoten(formel, bf_vars), bf_vars);
   }
-  
+
   /**
    * Liefert alle Variablen, die in der Formel enthalten sind. Kann leere
    * Strings enthalten.
-   * 
+   *
    * @param String
    *          formel
    * @return String[] variablen
@@ -113,7 +125,7 @@ public class BoolescheFunktionParser {
         // @formatter:on
     return variablen.split(" ");
   }
-  
+
   /**
    * parst Teilstueck der Formel
    */
@@ -148,20 +160,20 @@ public class BoolescheFunktionParser {
       if(klammer == 0) {
         try {
           if(ausdruck.substring(i, i + 3).equals("xor")) {
-            return new BF_XOR(getNextKnoten(ausdruck.substring(0, i), vars),
+            return new Xor(getNextKnoten(ausdruck.substring(0, i), vars),
                 getNextKnoten(ausdruck.substring(i + 3, ausdruck.length()), vars));
           } else if(ausdruck.substring(i, i + 3).equals("nor")) {
-            return new BF_NOR(getNextKnoten(ausdruck.substring(0, i), vars),
+            return new NOr(getNextKnoten(ausdruck.substring(0, i), vars),
                 getNextKnoten(ausdruck.substring(i + 3, ausdruck.length()), vars));
           } else if(ausdruck.substring(i, i + 4).equals("nand")) {
-            return new BF_NAND(getNextKnoten(ausdruck.substring(0, i), vars),
+            return new NAnd(getNextKnoten(ausdruck.substring(0, i), vars),
                 getNextKnoten(ausdruck.substring(i + 4, ausdruck.length()), vars));
           } else if(ausdruck.substring(i, i + 5).equals("equiv")) {
-            return new BF_EQUIV(getNextKnoten(ausdruck.substring(0, i), vars),
+            return new Equivalent(getNextKnoten(ausdruck.substring(0, i), vars),
                 getNextKnoten(ausdruck.substring(i + 5, ausdruck.length()), vars));
           }
         } catch (IndexOutOfBoundsException e) {
-        
+
         }
       }
     }
@@ -175,7 +187,7 @@ public class BoolescheFunktionParser {
       }
       if(klammer == 0) {
         if(ausdruck.substring(i, i + 4).equals("impl")) {
-          return new BF_IMPL(getNextKnoten(ausdruck.substring(0, i), vars),
+          return new Implication(getNextKnoten(ausdruck.substring(0, i), vars),
               getNextKnoten(ausdruck.substring(i + 4, ausdruck.length()), vars));
         }
       }
@@ -190,7 +202,7 @@ public class BoolescheFunktionParser {
       }
       if(klammer == 0) {
         if(ausdruck.substring(i, i + 2).equals("or")) {
-          return new BF_OR(getNextKnoten(ausdruck.substring(0, i), vars),
+          return new Or(getNextKnoten(ausdruck.substring(0, i), vars),
               getNextKnoten(ausdruck.substring(i + 2, ausdruck.length()), vars));
         }
       }
@@ -205,7 +217,7 @@ public class BoolescheFunktionParser {
       }
       if(klammer == 0) {
         if(ausdruck.substring(i, i + 3).equals("and")) {
-          return new BF_AND(getNextKnoten(ausdruck.substring(0, i), vars),
+          return new And(getNextKnoten(ausdruck.substring(0, i), vars),
               getNextKnoten(ausdruck.substring(i + 3, ausdruck.length()), vars));
         }
       }
@@ -216,9 +228,9 @@ public class BoolescheFunktionParser {
       if(next.equals("")) {
         throw new IllegalArgumentException("NOT-Ausdruck unfollst\u00e4ndig: " + ausdruck);
       }
-      return new BF_NOT(getNextKnoten(next, vars));
+      return new Not(getNextKnoten(next, vars));
     }
-    
+
     // Variablen
     for(BF_Variable var: vars) {
       if(ausdruck.equals(var.toString())) {
@@ -227,34 +239,30 @@ public class BoolescheFunktionParser {
     }
     // Konstanten
     if(ausdruck.equals("0")) {
-      return new BF_0();
+      return new False();
     }
     if(ausdruck.equals("1")) {
-      return new BF_1();
+      return new True();
     }
-    
-    if (ausdruck.equals("")) {
-      throw new IllegalArgumentException(
-          "Der Ausdruck ist unvollst\u00e4ndig. Es fehlt eine Variable.");
+
+    if(ausdruck.equals("")) {
+      throw new IllegalArgumentException("Der Ausdruck ist unvollst\u00e4ndig. Es fehlt eine Variable.");
     }
-    
+
     int zu_viele_vars = 0;
     for(BF_Variable var: vars) {
       if(ausdruck.contains(var.toString())) {
         zu_viele_vars++;
       }
     }
-    if (zu_viele_vars > 1) {
-      throw new IllegalArgumentException(
-          "Zwischen den Variablen \""+ausdruck+"\" fehlt ein Operator.");
+    if(zu_viele_vars > 1) {
+      throw new IllegalArgumentException("Zwischen den Variablen \"" + ausdruck + "\" fehlt ein Operator.");
     }
-    
-    
-    
+
     throw new IllegalArgumentException(
         "Der Ausdruck ist unvollst\u00e4ndig. Es fehlt ein Operator oder eine Variable.");
   }
-  
+
   /**
    * Pruefung auf fehlende Klammern
    */
@@ -277,7 +285,7 @@ public class BoolescheFunktionParser {
     }
     return true;
   }
-  
+
   /**
    * Pruefung auf ungueltige Zeichen
    */
@@ -290,11 +298,11 @@ public class BoolescheFunktionParser {
     }
     return true;
   }
-  
+
   /**
    * Substituiert alle deutschen Operatoren durch aequivalente englische
    * Operatoren.
-   * 
+   *
    * @param formel
    * @return formel
    */
@@ -310,5 +318,5 @@ public class BoolescheFunktionParser {
         .replaceAll("\u00e4quiv", "equiv");
     // @formatter:on
   }
-  
+
 }

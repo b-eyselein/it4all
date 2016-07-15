@@ -1,6 +1,6 @@
 package model.boolescheAlgebra.BFTree;
 
-public class BF_0 implements Node {
+public class False implements Node {
 
   @Override
   public boolean evaluate() {

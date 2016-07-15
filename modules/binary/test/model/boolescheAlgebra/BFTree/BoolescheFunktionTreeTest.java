@@ -22,13 +22,13 @@ public class BoolescheFunktionTreeTest {
    */
   public void testCompareBoolscheFormelTree() {
     BF_Variable a1 = new BF_Variable("a"), b1 = new BF_Variable("b");
-    BF_NOT notb = new BF_NOT(b1);
+    Not notb = new Not(b1);
 
     BoolescheFunktionTree tree1 = new BoolescheFunktionTree(a1, a1);
 
-    BF_AND and1 = new BF_AND(a1, b1);
-    BF_AND and2 = new BF_AND(a1, notb);
-    BF_OR or = new BF_OR(and1, and2);
+    And and1 = new And(a1, b1);
+    And and2 = new And(a1, notb);
+    Or or = new Or(and1, and2);
 
     BoolescheFunktionTree tree2 = new BoolescheFunktionTree(or, a1, b1);
 
