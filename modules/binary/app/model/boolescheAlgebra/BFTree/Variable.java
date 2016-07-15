@@ -1,30 +1,29 @@
 package model.boolescheAlgebra.BFTree;
 
 public class Variable implements Node {
-  
-  private String name;
-  private boolean wert;
-  
-  public Variable(String s) {
-    this.name = s;
+
+  private char name;
+
+  public Variable(char theName) {
+    this.name = theName;
   }
-  
+
   @Override
-  public boolean evaluate() {
-    return this.wert;
+  public boolean evaluate(Assignment assignment) {
+    return assignment.getAssignment(name);
   }
-  
+
   @Override
   public String getAsString(boolean needsParanthesis) {
+    return name + "";
+  }
+
+  public char getVariable() {
     return name;
   }
-  
-  public void setWert(boolean newValue) {
-    wert = newValue;
-  }
-  
+
   @Override
   public String toString() {
-    return name;
+    return name + "";
   }
 }

@@ -8,8 +8,8 @@ public abstract class BinaryOperator implements Node {
     }
 
     @Override
-    public boolean evaluate() {
-      return leftNode.evaluate() && rightNode.evaluate();
+    public boolean evaluate(Assignment assignment) {
+      return leftNode.evaluate(assignment) && rightNode.evaluate(assignment);
     }
   }
 
@@ -19,8 +19,8 @@ public abstract class BinaryOperator implements Node {
     }
 
     @Override
-    public boolean evaluate() {
-      return leftNode.evaluate() == rightNode.evaluate();
+    public boolean evaluate(Assignment assignment) {
+      return leftNode.evaluate(assignment) == rightNode.evaluate(assignment);
     }
   }
 
@@ -30,8 +30,8 @@ public abstract class BinaryOperator implements Node {
     }
 
     @Override
-    public boolean evaluate() {
-      return (!leftNode.evaluate()) || rightNode.evaluate();
+    public boolean evaluate(Assignment assignment) {
+      return (!leftNode.evaluate(assignment)) || rightNode.evaluate(assignment);
     }
   }
 
@@ -41,8 +41,8 @@ public abstract class BinaryOperator implements Node {
     }
 
     @Override
-    public boolean evaluate() {
-      return !(leftNode.evaluate() && rightNode.evaluate());
+    public boolean evaluate(Assignment assignment) {
+      return !(leftNode.evaluate(assignment) && rightNode.evaluate(assignment));
     }
   }
 
@@ -52,8 +52,8 @@ public abstract class BinaryOperator implements Node {
     }
 
     @Override
-    public boolean evaluate() {
-      return !(leftNode.evaluate() || rightNode.evaluate());
+    public boolean evaluate(Assignment assignment) {
+      return !(leftNode.evaluate(assignment) || rightNode.evaluate(assignment));
     }
   }
 
@@ -63,8 +63,8 @@ public abstract class BinaryOperator implements Node {
     }
 
     @Override
-    public boolean evaluate() {
-      return leftNode.evaluate() || rightNode.evaluate();
+    public boolean evaluate(Assignment assignment) {
+      return leftNode.evaluate(assignment) || rightNode.evaluate(assignment);
     }
   }
 
@@ -74,8 +74,8 @@ public abstract class BinaryOperator implements Node {
     }
 
     @Override
-    public boolean evaluate() {
-      return leftNode.evaluate() ^ rightNode.evaluate();
+    public boolean evaluate(Assignment assignment) {
+      return leftNode.evaluate(assignment) ^ rightNode.evaluate(assignment);
     }
   }
 

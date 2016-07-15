@@ -1,4 +1,3 @@
-@* boolsolution Template File *@
 @(user: model.user.User, correct: Boolean, zeros: Array[Array[Char]], length: Int, userInput: Array[String], answer: Array[String], exception_msg: String, bft: model.boolescheAlgebra.BFTree.BoolescheFunktionTree)
 @main("Wertetabelle-L\u00f6sung", user) {
 <!-- CSS override -->
@@ -47,7 +46,7 @@
 							}
 							<td class="col-md-10">
 								<a class="mytooltip" href="#" data-toggle="tooltip" data-placement="right" title="@bft.toString()">
-									@Html(bft.toString().replace("IMPL","&rArr;").replace("NOR","&#x22bd;").replace("NAND","&#x22bc;").replace("EQUIV","&hArr;").replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;"))
+									@Html(bft.getAsString().replace("IMPL","&rArr;").replace("NOR","&#x22bd;").replace("NAND","&#x22bc;").replace("EQUIV","&hArr;").replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;"))
 								</a>
 							</td>
 						</tr>
@@ -71,8 +70,8 @@
 	</div>
 <!-- Tooltip script -->
 <script>
-$(document).ready(function(){
-    $('[data-toggle="tooltip"]').tooltip(); 
-});
+  $(document).ready(function() {
+    $('[data-toggle="tooltip"]').tooltip();
+  });
 </script>
 }

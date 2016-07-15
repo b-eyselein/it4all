@@ -1,21 +1,21 @@
 package model.boolescheAlgebra.BFTree;
 
 public class Not implements Node {
-
+  
   private Node node;
-
+  
   public Not(Node k) {
-    this.node = k;
+    node = k;
   }
-
+  
   @Override
-  public boolean evaluate() {
-    return !(node.evaluate());
+  public boolean evaluate(Assignment assignment) {
+    return !node.evaluate(assignment);
   }
-
+  
   @Override
   public String getAsString(boolean needsParanthesis) {
     return "NOT " + node.getAsString(true);
   }
-
+  
 }

@@ -24,7 +24,7 @@ public class BoolescheFunktionTreeTest {
    * Test that a == (a and b) or (a and not b)
    */
   public void testCompareBoolscheFormelTree() {
-    Variable a1 = new Variable("a"), b1 = new Variable("b");
+    Variable a1 = new Variable('a'), b1 = new Variable('b');
     Not notb = new Not(b1);
 
     BoolescheFunktionTree tree1 = new BoolescheFunktionTree(a1, a1);
@@ -41,6 +41,11 @@ public class BoolescheFunktionTreeTest {
 
   @Test
   public void testCompareStringArray() {
+    // fail("Not yet implemented");
+  }
+
+  @Test
+  public void testEvaluate() {
     // fail("Not yet implemented");
   }
 
@@ -86,11 +91,6 @@ public class BoolescheFunktionTreeTest {
 
   @Test
   public void testGetWahrheitsVectorChar() {
-    // fail("Not yet implemented");
-  }
-
-  @Test
-  public void testGetWert() {
     // fail("Not yet implemented");
   }
 

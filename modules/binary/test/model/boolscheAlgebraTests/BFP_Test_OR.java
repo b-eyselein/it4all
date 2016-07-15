@@ -13,7 +13,7 @@ public class BFP_Test_OR {
 	public void test_0_or_0() {
 		BoolescheFunktionTree t1 = BoolescheFunktionParser.parse("a or b");
 		boolean[] b = {false , false};
-		boolean wert = t1.getWert(b);
+		boolean wert = t1.evaluate(b);
 		assertFalse(wert);
 	}
 	
@@ -21,7 +21,7 @@ public class BFP_Test_OR {
 	public void test_0_or_1() {
 		BoolescheFunktionTree t1 = BoolescheFunktionParser.parse("a or b");
 		boolean[] b = {false , true};
-		boolean wert = t1.getWert(b);
+		boolean wert = t1.evaluate(b);
 		assertTrue(wert);
 	}
 	
@@ -29,7 +29,7 @@ public class BFP_Test_OR {
 	public void test_1_or_0() {
 		BoolescheFunktionTree t1 = BoolescheFunktionParser.parse("a or b");
 		boolean[] b = {true , false};
-		boolean wert = t1.getWert(b);
+		boolean wert = t1.evaluate(b);
 		assertTrue(wert);
 	}
 	
@@ -37,7 +37,7 @@ public class BFP_Test_OR {
 	public void test_1_or_1() {
 		BoolescheFunktionTree t1 = BoolescheFunktionParser.parse("a or b");
 		boolean[] b = {true , true};
-		boolean wert = t1.getWert(b);
+		boolean wert = t1.evaluate(b);
 		assertTrue(wert);
 	}
 	

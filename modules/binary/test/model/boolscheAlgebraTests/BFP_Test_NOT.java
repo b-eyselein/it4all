@@ -13,7 +13,7 @@ public class BFP_Test_NOT {
 	public void test_not_0() {
 		BoolescheFunktionTree t1 = BoolescheFunktionParser.parse("not a");
 		boolean[] b = {false};
-		boolean wert = t1.getWert(b);
+		boolean wert = t1.evaluate(b);
 		assertTrue(wert);
 	}
 	
@@ -21,7 +21,7 @@ public class BFP_Test_NOT {
 	public void test_not_1() {
 		BoolescheFunktionTree t1 = BoolescheFunktionParser.parse("not a");
 		boolean[] b = {true};
-		boolean wert = t1.getWert(b);
+		boolean wert = t1.evaluate(b);
 		assertFalse(wert);
 	}
 	

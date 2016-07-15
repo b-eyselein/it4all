@@ -53,7 +53,7 @@ public class BoolescheFunktionParser {
     Variable[] bf_vars = new Variable[vars.size()];
     int i_vars = 0;
     for(String s: vars) {
-      bf_vars[i_vars] = new Variable(s);
+      bf_vars[i_vars] = new Variable(s.charAt(0));
       i_vars++;
     }
     return new BoolescheFunktionTree(getNextKnoten(formel, bf_vars), bf_vars);
@@ -93,7 +93,7 @@ public class BoolescheFunktionParser {
     Variable[] bf_vars = new Variable[vars.size()];
     int i_vars = 0;
     for(String s: vars) {
-      bf_vars[i_vars] = new Variable(s);
+      bf_vars[i_vars] = new Variable(s.charAt(0));
       i_vars++;
     }
     return new BoolescheFunktionTree(getNextKnoten(formel, bf_vars), bf_vars);

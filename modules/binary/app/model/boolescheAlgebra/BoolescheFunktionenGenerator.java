@@ -12,13 +12,13 @@ import model.boolescheAlgebra.BFTree.Node;
 import model.boolescheAlgebra.BFTree.Not;
 
 public class BoolescheFunktionenGenerator {
-  
+
   private static final int MIN_VARS = 2;
   private static final int MAX_VARS = 3;
-  
+
   private final static char[] ALPHABET = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
       'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
-  
+
   /**
    * Liefert einen zufaelligen BoolescheFunktionTree mit MIN_VARS bis MAX_VARS
    * Variablen.
@@ -26,7 +26,7 @@ public class BoolescheFunktionenGenerator {
   public static BoolescheFunktionTree neueBoolescheFunktion() {
     return neueBoolescheFunktion(MIN_VARS, MAX_VARS);
   }
-  
+
   /**
    * Liefert einen zufaelligen BoolescheFunktionTree mit minVars bis maxVars
    * Variablen. (maximale Anzahl ist zusaetzlich durch das Alphabet begrenzt)
@@ -35,24 +35,24 @@ public class BoolescheFunktionenGenerator {
     if(minVars < 1 || maxVars < 1)
       throw new IllegalArgumentException("Die minimale Anzahl(" + minVars + ") und die maximale Anzahl(" + maxVars
           + ") der Variablen m\u00fcssen gr\u00f6\u00dfer als 0 sein.");
-    
+
     if(minVars > maxVars)
       throw new IllegalArgumentException("Die minimale Anzahl der Variablen(" + minVars
           + ") muss gr\u00f6\u00dfer als die maximale Anzahl der Variablen(" + maxVars + ") sein.");
-    
+
     if(maxVars > ALPHABET.length)
       throw new IllegalArgumentException("Die maximale Anzahl der Variablen(" + maxVars
           + ") \u00fcbersteigt die Gr\u00f6\u00dfe des vordefinierten Alphabetes(" + ALPHABET.length + ").");
-    
+
     int numOfVariables = ThreadLocalRandom.current().nextInt(MIN_VARS, MAX_VARS + 1);
-    
+
     ArrayList<Node> knoten = new ArrayList<>();
     Variable[] variables = new Variable[numOfVariables];
     for(int i = 0; i < variables.length; i++) {
-      variables[i] = new Variable("" + ALPHABET[i]);
+      variables[i] = new Variable(ALPHABET[i]);
       knoten.add(variables[i]);
     }
-    
+
     for(int i = 0; i < (int) Math.floor(Math.random() * maxVars); i++) {
       knoten.add(variables[(int) Math.floor(Math.random() * variables.length)]);
     }
@@ -78,7 +78,7 @@ public class BoolescheFunktionenGenerator {
       return bft;
     }
   }
-  
+
   /**
    * gibt true zurueck wenn bft immer wahr oder immer falsch ist (Tautologie
    * oder Kontradiktion ist).
@@ -101,7 +101,7 @@ public class BoolescheFunktionenGenerator {
     }
     return true;
   }
-  
+
   /**
    * 40% AND; 40% OR; 20% XOR; zusaetzlich 33% NOT jeweils bei dem linken und
    * rechten Knoten
@@ -124,5 +124,5 @@ public class BoolescheFunktionenGenerator {
     }
     return operator;
   }
-  
+
 }
