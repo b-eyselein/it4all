@@ -1,73 +1,54 @@
-@(user: model.user.User, zeros: Array[Array[Char]], length: Int, formel: String, bft: model.boolescheAlgebra.BFTree.BoolescheFunktionTree)
+@(user: model.user.User, question: model.boolescheAlgebra.FilloutQuestion)
 
 @main("Wertetabelle", user) {
-<!-- CSS override -->
-<style>
-	a.mytooltip:link {
-	    color: #333333;
-	    text-decoration: none;
-	}
-	a.mytooltip:visited {
-	    color: #333333;
-	    text-decoration: none;
-	}
-	a.mytooltip:hover {
-	    color: #333333;
-	    text-decoration: none;
-	}
-	a.mytooltip:active {
-	    color: #333333;
-	    text-decoration: none;
-	}
-	.tooltip-inner {
-		   max-width: 1000px;
-	}
-</style>
+
 <div class="container">
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			F&uuml;llen Sie folgende Tabelle aus:
-		</div>
-		<div class="panel-body">
-			<form action="@binary.routes.Bool.indexSolution" method="post">
-				<table class="table">
-					<thread align = "right">
-						<tr>
-							@for(v <- bft.getVariablen()){
-							<td>
-								@v
-							</td>
-							}
-							<td class="col-md-10">
-								<a class="mytooltip" href="#" data-toggle="tooltip" data-placement="right" title="@formel">
-									@Html(formel.replace("IMPL","&rArr;").replace("NOR","&#x22bd;").replace("NAND","&#x22bc;").replace("EQUIV","&hArr;").replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;"))
-								</a>
-							</td>
-						</tr>
-					</thread>
-					<tbody align = "left">
-					@for(i <- 0 until (length)){
-						<tr>
-						@for(j <- 0 until (bft.getVariablen().length)){
-							<td>@zeros(j)(i)</td>
-							}
-							<td>
-								<input type="number" autocomplete="off" min="0" max="1" step="1" name="@i.toString" size="1" maxlength="1" required>
-							</td>
-						}
-					</tbody>
-				</table>
-				<input hidden name="bft" value="@formel">
-				<input hidden name="variablen" value="@for(v <- bft.getVariablen()){@v,}">
-				<button type="submit" class="btn btn-primary">Pr&uuml;fen</button>
-			</form>
-		</div>
-	</div>
+  <div class="panel panel-default">
+    <div class="panel-heading">F&uuml;llen Sie folgende Tabelle aus:</div>
+    <div class="panel-body">
+      <form action="@binary.routes.Bool.indexSolution" method="post">
+        <div class="row">  
+          <div class="col-sm-6 col-sm-offset-3">
+            <table class="table">
+              <thead>
+                <tr>
+                @for(v <- question.getVariables()) {
+                  <th>@v</th>
+                }
+                  <th><a class="mytooltip" href="#" data-toggle="tooltip" data-placement="right"
+                    title="@question.getFormulaAsString()">
+                      @question.getFormulaAsHtml()
+                  </a></th>
+                </tr>
+              </thead>
+              <tbody>
+              @for(assignment <- question.getAssignments()){
+                <tr>
+                @for(variable <- assignment.getVariables()) {
+                  <td>@assignment.getAssignmentAsChar(variable)</td>
+                }
+                  <td><input type="number" autocomplete="off" min="0" max="1" step="1" name="@@i.toString" size="1"
+                    maxlength="1" required></td>
+              }
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6 col-sm-offset-3">
+            <input hidden name="bft" value="@question.getFormulaAsString">
+            <input hidden name="variablen" value="@question.getJoinedVariables()">
+            <button type="submit" class="btn btn-primary">Pr&uuml;fen</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 <!-- Tooltip script -->
 <script>
-$(document).ready(function(){
-    $('[data-toggle="tooltip"]').tooltip(); 
-});
+  $(document).ready(function() {
+    $('[data-toggle="tooltip"]').tooltip();
+  });
 </script>
 }

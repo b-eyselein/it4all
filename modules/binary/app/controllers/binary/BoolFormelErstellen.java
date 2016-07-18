@@ -1,25 +1,23 @@
 package controllers.binary;
 
-import model.Secured;
-import play.data.DynamicForm;
-import play.data.FormFactory;
-import play.mvc.Controller;
-import play.mvc.Result;
-import play.mvc.Security;
-
 import java.util.TreeSet;
 
 import javax.inject.Inject;
 
 import controllers.core.UserManagement;
+import model.Secured;
+import model.boolescheAlgebra.CreationQuestion;
+import play.data.DynamicForm;
+import play.data.FormFactory;
+import play.mvc.Controller;
+import play.mvc.Result;
+import play.mvc.Security;
 import views.html.bool_formel_erstellen_q;
 import views.html.bool_formel_erstellen_s;
-import model.boolescheAlgebra.CreationQuestion;
-import model.user.User;
 
 @Security.Authenticated(Secured.class)
 public class BoolFormelErstellen extends Controller {
-  
+
   private static String kurzeDisjunktiveNormalform(String[] vars, boolean[][] wahrheitstafel) {
     String formel = "";
     // suche wahre Eintraege in der Wahrheitstafel
@@ -50,7 +48,7 @@ public class BoolFormelErstellen extends Controller {
         String[] ausdruecke1 = ausdruck1.split(",");
         for(String ausdruck2: neueAusdruecke) {
           String[] ausdruecke2 = ausdruck2.split(",");
-          
+
           int gleich = 0;
           int verschieden = 0;
           String neuerausdruck = "";
@@ -88,7 +86,7 @@ public class BoolFormelErstellen extends Controller {
     formel = formel.replaceAll(",", " AND ");
     return formel;
   }
-  
+
   private static String kurzeKonjunktiveNormalform(String[] vars, boolean[][] wahrheitstafel) {
     String formel = "";
     // suche wahre Eintraege in der Wahrheitstafel
@@ -119,7 +117,7 @@ public class BoolFormelErstellen extends Controller {
         String[] ausdruecke1 = ausdruck1.split(",");
         for(String ausdruck2: neueAusdruecke) {
           String[] ausdruecke2 = ausdruck2.split(",");
-          
+
           int gleich = 0;
           int verschieden = 0;
           String neuerausdruck = "";
@@ -157,32 +155,29 @@ public class BoolFormelErstellen extends Controller {
     formel = formel.replaceAll(",", " OR ");
     return formel;
   }
-  
+
   @Inject
   private FormFactory factory;
-  
+
   public Result checkSolution() {
     return ok("TODO!");
   }
-  
+
   public Result index() {
-    // FIXME: DAFUQ?
-    User user = UserManagement.getCurrentUser();
     CreationQuestion question = CreationQuestion.generateNew();
-    
-    return ok(bool_formel_erstellen_q.render(user, question));
+    return ok(bool_formel_erstellen_q.render(UserManagement.getCurrentUser(), question));
   }
-  
+
   public Result musterLoesung() {
     DynamicForm dynFormula = factory.form().bindFromRequest();
     String varString = dynFormula.get("vars");
     String zvectorString = dynFormula.get("zvector");
     String[] vars = varString.split(",");
     String[] zvector = zvectorString.split(",");
-    
+
     int zeilen = (int) Math.pow(2.0, vars.length);
     int spalten = vars.length;
-    
+
     String[][] tabelle = getTabelle(vars.length);
     boolean[][] wahrheitstafel = new boolean[spalten + 1][zeilen];
     for(int i = 0; i < zeilen; i++) {
@@ -199,11 +194,11 @@ public class BoolFormelErstellen extends Controller {
     String s_dnf = kurzeDisjunktiveNormalform(vars, wahrheitstafel);
     String knf = kanonischeKonjunktiveNormalform(vars, wahrheitstafel);
     String s_knf = kurzeKonjunktiveNormalform(vars, wahrheitstafel);
-    
+
     return ok(bool_formel_erstellen_s.render(UserManagement.getCurrentUser(), vars, zvector, tabelle, spalten, zeilen,
         dnf, s_dnf, knf, s_knf));
   }
-  
+
   private String[][] getTabelle(int anzvars) {
     String[][] vtafel = new String[anzvars][(int) Math.pow(2.0, anzvars)];
     char[] zeile = new char[anzvars];
@@ -227,7 +222,7 @@ public class BoolFormelErstellen extends Controller {
     }
     return vtafel;
   }
-  
+
   private String kanonischeDisjunktiveNormalform(String[] variablen, boolean[][] wahrheitstafel) {
     String formel = "";
     for(int i = 0; i < wahrheitstafel[0].length; i++) {
@@ -250,7 +245,7 @@ public class BoolFormelErstellen extends Controller {
     }
     return formel;
   }
-  
+
   private String kanonischeKonjunktiveNormalform(String[] variablen, boolean[][] wahrheitstafel) {
     String formel = "";
     for(int i = 0; i < wahrheitstafel[0].length; i++) {
@@ -275,5 +270,5 @@ public class BoolFormelErstellen extends Controller {
     }
     return formel;
   }
-  
+
 }

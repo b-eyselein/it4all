@@ -16,47 +16,33 @@ import model.boolescheAlgebra.BFTree.*;
 
 @Security.Authenticated(Secured.class)
 public class Bool extends Controller {
-
+  
   @Inject
   private FormFactory factory;
   
   public Result index() {
-    BoolescheFunktionTree bft = BoolescheFunktionenGenerator.neueBoolescheFunktion();
-    String formel = bft.toString();
-    if (formel.length() > 25) {
-      String alternative_formel_1 = bft.kurzeDisjunktiveNormalform();
-      String alternative_formel_2 = bft.kurzeKonjunktiveNormalform();
-      if (alternative_formel_1.length() < alternative_formel_2.length() && alternative_formel_1.length() < formel.length()) {
-        formel = alternative_formel_1;
-      } else if (alternative_formel_2.length() < alternative_formel_1.length() && alternative_formel_2.length() < formel.length()) {
-        formel = alternative_formel_2;
-      }
-    }
-    double d = bft.getAnzahlVariablen();
-    int length = (int) (Math.pow(2.0, d));
-    return ok(
-        boolquestion.render(UserManagement.getCurrentUser(), bft.getVariablenTabelle(), length, formel, bft));
+    FilloutQuestion question = FilloutQuestion.generateNew();
+    return ok(boolquestion.render(UserManagement.getCurrentUser(), question));
   }
-
+  
   public Result indexSolution() {
     DynamicForm dynFormula = factory.form().bindFromRequest();
     String varString = dynFormula.get("variablen");
-    if (varString.endsWith(",")) {
-      varString = varString.substring(0, varString.length()-1);
+    if(varString.endsWith(",")) {
+      varString = varString.substring(0, varString.length() - 1);
     }
-    BoolescheFunktionTree bft = BoolescheFunktionParser.parse(dynFormula.get("bft"),varString.split(","));
+    BoolescheFunktionTree bft = BoolescheFunktionParser.parse(dynFormula.get("bft"), varString.split(","));
     double d = bft.getAnzahlVariablen();
     int length = (int) (Math.pow(2.0, d));
     String[] solutions = new String[length];
     for(int i = 0; i < length; i++) {
       String wert = dynFormula.get("" + i + "");
-      solutions[i] = ""+wert.charAt(wert.length()-1);
+      solutions[i] = "" + wert.charAt(wert.length() - 1);
     }
     boolean correct = bft.compareStringArray(solutions);
     String[] answer = bft.getWahrheitsVectorString();
     
-    
-    return ok(boolsolution.render(UserManagement.getCurrentUser(), new Boolean(correct),
-        bft.getVariablenTabelle(), length, solutions, answer, "1", bft));
+    return ok(boolsolution.render(UserManagement.getCurrentUser(), new Boolean(correct), bft.getVariablenTabelle(),
+        length, solutions, answer, "1", bft));
   }
 }
