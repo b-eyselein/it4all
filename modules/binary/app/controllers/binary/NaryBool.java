@@ -4,9 +4,9 @@ import javax.inject.Inject;
 
 import controllers.core.UserManagement;
 import model.Secured;
-import model.NAryNumbers.NAryAdditionQuestion;
-import model.NAryNumbers.NAryConversionQuestion;
-import model.NAryNumbers.NumberBase;
+import model.nary.NAryAdditionQuestion;
+import model.nary.NAryConversionQuestion;
+import model.nary.NumberBase;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.mvc.Controller;

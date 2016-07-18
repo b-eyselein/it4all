@@ -6,7 +6,7 @@ import javax.inject.Inject;
 
 import controllers.core.UserManagement;
 import model.Secured;
-import model.boolescheAlgebra.CreationQuestion;
+import model.bool.CreationQuestion;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.mvc.Controller;

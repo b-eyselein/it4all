@@ -1,4 +1,4 @@
-@(user: model.user.User, question: model.NAryNumbers.NAryAdditionQuestion)
+@(user: model.user.User, question: model.nary.NAryAdditionQuestion)
 
 @main("Addition", user) {
 <style>
@@ -15,7 +15,7 @@
   <div class="panel panel-default">
     <div class="panel-heading">
       Addieren sie die folgenden @question.getQuestionType().getPluralName():
-      @if(question.getQuestionType() == model.NAryNumbers.NumberBase.BINARY) {
+      @if(question.getQuestionType() == model.nary.NumberBase.BINARY) {
       	<p><em class="text-info">(Bin&auml;rzahlen bitte in 8-Bit-Darstellung mit f&uuml;hrenden Nullen angeben.)</em></p>
       } 
     </div>

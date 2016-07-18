@@ -4,8 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import model.NAryNumbers.NAryNumber;
-import model.NAryNumbers.NumberBase;
+import model.nary.NAryNumber;
+import model.nary.NumberBase;
 
 public class Test_Binary {
   

@@ -4,6 +4,8 @@ import javax.inject.Inject;
 
 import controllers.core.UserManagement;
 import model.Secured;
+import model.bool.*;
+import model.bool.tree.*;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.mvc.Controller;
@@ -11,8 +13,6 @@ import play.mvc.Result;
 import play.mvc.Security;
 import views.html.boolquestion;
 import views.html.boolsolution;
-import model.boolescheAlgebra.*;
-import model.boolescheAlgebra.BFTree.*;
 
 @Security.Authenticated(Secured.class)
 public class Bool extends Controller {
@@ -23,9 +23,7 @@ public class Bool extends Controller {
   public Result indexSolution() {
     DynamicForm dynFormula = factory.form().bindFromRequest();
 
-    char[] variables = parseVariables(dynFormula.get("variablen"));
-
-    BoolescheFunktionTree bft = BoolescheFunktionParser.parse(dynFormula.get("bft"), variables);
+    BoolescheFunktionTree bft = BoolescheFunktionParser.parse(dynFormula.get("bft"));
     double d = bft.getAnzahlVariablen();
     int length = (int) (Math.pow(2.0, d));
     String[] solutions = new String[length];
@@ -45,16 +43,4 @@ public class Bool extends Controller {
     return ok(boolquestion.render(UserManagement.getCurrentUser(), question));
   }
 
-  private char[] parseVariables(String varString) {
-    if(varString.endsWith(","))
-      varString = varString.substring(0, varString.length() - 1);
-
-    String[] variablesAsString = varString.split(", ");
-    char[] variables = new char[variablesAsString.length];
-    int i = 0;
-    for(String v: variablesAsString)
-      variables[i] = v.charAt(0);
-
-    return variables;
-  }
 }
