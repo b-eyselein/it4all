@@ -10,22 +10,22 @@ import model.boolescheAlgebra.BFTree.Node;
 public class BoolescheFunktionParserTest {
   
   @Test
-  public void testParseNew() {
-    String formula = "((a xor b) nor c) and ((a and b) xor c)";
-    Node tree = BoolescheFunktionParser.parseNew(formula);
-    assertNotNull(tree);
-    assertEquals(tree.getAsString(false).toLowerCase(), formula);
-
-    String formula2 = "not c";
-    Node tree2 = BoolescheFunktionParser.parseNew(formula2);
-    assertNotNull(tree2);
-    assertEquals(tree2.getAsString(false).toLowerCase(), formula2);
-  }
+    public void testParseNode() {
+      String formula = "((a xor b) nor c) and ((a and b) xor c)";
+      Node tree = BoolescheFunktionParser.parseNode(formula);
+      assertNotNull(tree);
+      assertEquals(tree.getAsString(false).toLowerCase(), formula);
+  
+      String formula2 = "not c";
+      Node tree2 = BoolescheFunktionParser.parseNode(formula2);
+      assertNotNull(tree2);
+      assertEquals(tree2.getAsString(false).toLowerCase(), formula2);
+    }
   
   @Test(expected = IllegalArgumentException.class)
-  public void testParseNewWithError() {
-    String formula = "b andor c";
-    BoolescheFunktionParser.parseNew(formula);
-  }
+    public void testParseNodeWithError() {
+      String formula = "b andor c";
+      BoolescheFunktionParser.parseNode(formula);
+    }
   
 }
