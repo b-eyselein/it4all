@@ -1,6 +1,8 @@
 package model.bool.node;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
@@ -9,7 +11,7 @@ import model.bool.tree.Assignment;
 import model.bool.tree.BoolescheFunktionTree;
 
 public class TrueTest {
-  
+
   @Test
   public void testEvaluate() {
     BoolescheFunktionTree t1 = BoolescheFunktionParser.parse("1");
@@ -21,5 +23,16 @@ public class TrueTest {
     assignment.setAssignment('a', true);
     assertTrue(t1.evaluate(assignment));
   }
-  
+
+  @Test
+  public void testGetAsString() {
+    assertThat((new True()).getAsString(true), equalTo("1"));
+    assertThat((new True()).getAsString(false), equalTo("1"));
+  }
+
+  @Test
+  public void testToString() {
+    assertThat((new True()).toString(), equalTo("1"));
+  }
+
 }
