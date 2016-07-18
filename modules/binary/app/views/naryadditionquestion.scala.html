@@ -23,7 +23,7 @@
       <div class="col-sm-4 col-sm-offset-4">
         <p class="text-right number">@question.getFirstSummand()<sub>@question.getBase()</sub>&nbsp;</p>
         <p class="text-right number">+ @question.getSecondSummand()<sub>@question.getBase()</sub>&nbsp;</p>
-        <form role="form" action="@binary.routes.NAryAddition.checkSolution()" method="post">
+        <form role="form" action="@binary.routes.NAry.checkAdditionSolution()" method="post">
           <div class="form-group">
             <input pattern="@question.getQuestionType().getPattern()" autocomplete="off"
             class="number-input form-control text-right" name="learnerSolution" placeholder="Ihre L&ouml;sung" required>
