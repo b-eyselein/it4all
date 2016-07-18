@@ -174,10 +174,13 @@ public class BoolFormelErstellen extends Controller {
     String zvectorString = dynFormula.get("zvector");
     String[] vars = varString.split(",");
     String[] zvector = zvectorString.split(",");
-
+    
     int zeilen = (int) Math.pow(2.0, vars.length);
     int spalten = vars.length;
-
+    
+    // CreationQuestion question = new CreationQuestion(theVariables,
+    // theSolutions);
+    // List<Assignment> solution = question.
     String[][] tabelle = getTabelle(vars.length);
     boolean[][] wahrheitstafel = new boolean[spalten + 1][zeilen];
     for(int i = 0; i < zeilen; i++) {
@@ -194,7 +197,7 @@ public class BoolFormelErstellen extends Controller {
     String s_dnf = kurzeDisjunktiveNormalform(vars, wahrheitstafel);
     String knf = kanonischeKonjunktiveNormalform(vars, wahrheitstafel);
     String s_knf = kurzeKonjunktiveNormalform(vars, wahrheitstafel);
-
+    
     return ok(bool_formel_erstellen_s.render(UserManagement.getCurrentUser(), vars, zvector, tabelle, spalten, zeilen,
         dnf, s_dnf, knf, s_knf));
   }

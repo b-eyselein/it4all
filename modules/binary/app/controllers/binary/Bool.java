@@ -16,22 +16,16 @@ import model.boolescheAlgebra.BFTree.*;
 
 @Security.Authenticated(Secured.class)
 public class Bool extends Controller {
-  
+
   @Inject
   private FormFactory factory;
-  
-  public Result index() {
-    FilloutQuestion question = FilloutQuestion.generateNew();
-    return ok(boolquestion.render(UserManagement.getCurrentUser(), question));
-  }
-  
+
   public Result indexSolution() {
     DynamicForm dynFormula = factory.form().bindFromRequest();
-    String varString = dynFormula.get("variablen");
-    if(varString.endsWith(",")) {
-      varString = varString.substring(0, varString.length() - 1);
-    }
-    BoolescheFunktionTree bft = BoolescheFunktionParser.parse(dynFormula.get("bft"), varString.split(","));
+
+    char[] variables = parseVariables(dynFormula.get("variablen"));
+
+    BoolescheFunktionTree bft = BoolescheFunktionParser.parse(dynFormula.get("bft"), variables);
     double d = bft.getAnzahlVariablen();
     int length = (int) (Math.pow(2.0, d));
     String[] solutions = new String[length];
@@ -41,8 +35,26 @@ public class Bool extends Controller {
     }
     boolean correct = bft.compareStringArray(solutions);
     String[] answer = bft.getWahrheitsVectorString();
-    
+
     return ok(boolsolution.render(UserManagement.getCurrentUser(), new Boolean(correct), bft.getVariablenTabelle(),
         length, solutions, answer, "1", bft));
+  }
+
+  public Result newFilloutQuestion() {
+    FilloutQuestion question = FilloutQuestion.generateNew();
+    return ok(boolquestion.render(UserManagement.getCurrentUser(), question));
+  }
+
+  private char[] parseVariables(String varString) {
+    if(varString.endsWith(","))
+      varString = varString.substring(0, varString.length() - 1);
+
+    String[] variablesAsString = varString.split(", ");
+    char[] variables = new char[variablesAsString.length];
+    int i = 0;
+    for(String v: variablesAsString)
+      variables[i] = v.charAt(0);
+
+    return variables;
   }
 }

@@ -1,7 +1,10 @@
 package model.boolescheAlgebra.BFTree;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.TreeSet;
 
+import model.boolescheAlgebra.BooleanQuestion;
 import model.boolescheAlgebra.BoolescheFunktionParser;
 
 public class BoolescheFunktionTree {
@@ -84,8 +87,11 @@ public class BoolescheFunktionTree {
     }
     if(variablen_unterschied) {
       thisVars.addAll(otherVars);
-      String[] variablen = new String[thisVars.size()];
-      variablen = thisVars.toArray(variablen);
+      char[] variablen = new char[thisVars.size()];
+      int i = 0;
+      Iterator<Character> iter = thisVars.iterator();
+      while(iter.hasNext())
+        variablen[i++] = iter.next().charValue();
       tree1 = BoolescheFunktionParser.parse(tree1.getAsString(), variablen);
       tree2 = BoolescheFunktionParser.parse(tree2.getAsString(), variablen);
     }
@@ -128,10 +134,15 @@ public class BoolescheFunktionTree {
     return true;
   }
   
+  public boolean evaluate(Assignment assignment) {
+    return rootNode.evaluate(assignment);
+  }
+  
   /**
    * Gibt den Wahrheitswert der Funktion zu dem uebergebenen bool Array zurueck.
    */
   public boolean evaluate(boolean[] b) throws IllegalArgumentException {
+    // TODO: boolean[] to Assignment!
     if(b.length != this.vars.length) {
       throw new IllegalArgumentException("Wrong number of boolean values. Expected " + this.getAnzahlVariablen()
           + " elements but there were " + b.length + " elements.");
@@ -141,6 +152,12 @@ public class BoolescheFunktionTree {
       assignment.setAssignment(vars[i].getVariable(), b[i]);
     
     return rootNode.evaluate(assignment);
+  }
+
+  public List<Assignment> evaluateAll(List<Assignment> assignments) {
+    for(Assignment assignment: assignments)
+      assignment.setAssignment(BooleanQuestion.SOLUTION_VARIABLE, evaluate(assignment));
+    return assignments;
   }
   
   /**

@@ -1,73 +1,70 @@
-@(user: model.user.User, correct: Boolean, zeros: Array[Array[Char]], length: Int, userInput: Array[String], answer: Array[String], exception_msg: String, bft: model.boolescheAlgebra.BFTree.BoolescheFunktionTree)
+@(user: model.user.User, correct: Boolean, zeros: Array[Array[Char]], length: Int, userInput: Array[String], answer:
+Array[String], exception_msg: String, bft: model.boolescheAlgebra.BFTree.BoolescheFunktionTree)
 @main("Wertetabelle-L\u00f6sung", user) {
 <!-- CSS override -->
 <style>
-  a.mytooltip:link {
-    color: #333333;
-    text-decoration: none;
-  }
-  a.mytooltip:visited {
-    color: #333333;
-    text-decoration: none;
-  }
-  a.mytooltip:hover {
-    color: #333333;
-    text-decoration: none;
-  }
-  a.mytooltip:active {
-    color: #333333;
-    text-decoration: none;
-  }
-  .tooltip-inner {
-    max-width: 1000px;
-  }
-  p.nomargin{
-    margin:0px;
-  }
+a.mytooltip:link {
+	color: #333333;
+	text-decoration: none;
+}
+
+a.mytooltip:visited {
+	color: #333333;
+	text-decoration: none;
+}
+
+a.mytooltip:hover {
+	color: #333333;
+	text-decoration: none;
+}
+
+a.mytooltip:active {
+	color: #333333;
+	text-decoration: none;
+}
+
+.tooltip-inner {
+	max-width: 1000px;
+}
+
+p.nomargin {
+	margin: 0px;
+}
 </style>
-	<div class="container">
-		<div class="panel panel-@if(correct){success}else{danger}">
-	<div class="panel-heading">
-	Ausf&uuml;llen der Wertetabelle
-	</div>
-	<div class="panel-body">
-		<p>Die Wertetabelle wurde
-			@if(correct) {
-				richtig ausgef&uuml;llt.</p>
-			} else {
-				leider falsch ausgef&uuml;llt. <br> Die richtige L&ouml;sungen sieht folgenderma&szlig;en aus:</p>
-				<table class="table">
-					<thread align = "right">
-						<tr>
-							@for(v <- bft.getVariablen()){
-								<td>
-									@v
-								</td>
-							}
-							<td class="col-md-10">
-								<a class="mytooltip" href="#" data-toggle="tooltip" data-placement="right" title="@bft.toString()">
-									@Html(bft.getAsString().replace("IMPL","&rArr;").replace("NOR","&#x22bd;").replace("NAND","&#x22bc;").replace("EQUIV","&hArr;").replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;"))
-								</a>
-							</td>
-						</tr>
-					</thread>
-					<tbody align = "left">
-						@for(i <- 0 until (length)){
-							<tr>
-								@for(j <- 0 until (bft.getVariablen().length)){
-									<td>@zeros(j)(i)</td>
-								}
-							<td>
-								<p class="text-@if(userInput(i) == answer(i)){success}else{danger}">@answer(i)</p>
-							</td>
-						}
-					</tbody>
-					</table>
-				}
-	 	<p><a href="@binary.routes.Bool.index" class="btn btn-primary" role="button">N&auml;chste Aufgabe</a></p>
-	</div>
-	</div>
-	</div>
+<div class="container">
+  <div class="panel panel- @if(correct){success }else{danger }">
+    <div class="panel-heading">Ausf&uuml;llen der Wertetabelle</div>
+    <div class="panel-body">
+      <p>Die Wertetabelle wurde @if(correct) { richtig ausgef&uuml;llt.</p>
+      } else { leider falsch ausgef&uuml;llt. <br> Die richtige L&ouml;sungen sieht folgenderma&szlig;en aus:
+      </p>
+      <table class="table">
+        <thread align="right">
+        <tr>
+          @for(v <- bft.getVariablen()){
+          <td>@v</td> }
+          <td class="col-md-10"><a class="mytooltip" href="#" data-toggle="tooltip" data-placement="right" title="
+            @bft.toString()">
+              @Html(bft.getAsString().replace("IMPL","&rArr;").replace("NOR","&#x22bd;").replace("NAND","&#x22bc;").replace("EQUIV","&hArr;").replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;"))
+          </a></td>
+        </tr>
+        </thread>
+        <tbody align="left">
+          @for(i <- 0 until (length)){
+          <tr>
+            @for(j <- 0 until (bft.getVariablen().length)){
+            <td>@zeros(j)(i)</td> }
+            <td>
+              <p class="text- @if(userInput(i) == answer(i)){success }else{danger }">@answer(i)</p>
+            </td> }
+        </tbody>
+      </table>
+      }
+      <p>
+        <a href="@binary.routes.Bool.newFilloutQuestion()" class="btn btn-primary" role="button">N&auml;chste Aufgabe</a></p>
+    </div>
+  </div>
+</div>
 <!-- Tooltip script -->
 <script>
   $(document).ready(function() {
