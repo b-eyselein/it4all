@@ -15,19 +15,16 @@
                 @for(v <- question.getVariables()) {
                   <th>@v</th>
                 }
-                  <th><a class="mytooltip" href="#" data-toggle="tooltip" data-placement="right"
-                    title="@question.getFormulaAsString()">
-                      @question.getFormulaAsHtml()
-                  </a></th>
+                  <th>@question.getFormulaAsHtml()</th>
                 </tr>
               </thead>
               <tbody>
-              @for(assignment <- question.getAssignments()){
+              @for(i <- 0 until question.getAssignments().size()){
                 <tr>
-                @for(variable <- assignment.getVariables()) {
-                  <td>@assignment.getAssignmentAsChar(variable)</td>
+                @for(variable <- question.getAssignments().get(i).getVariables()) {
+                  <td>@question.getAssignments().get(i).getAssignmentAsChar(variable)</td>
                 }
-                  <td><input type="number" autocomplete="off" min="0" max="1" step="1" name="@@i.toString" size="1"
+                  <td><input type="number" autocomplete="off" min="0" max="1" step="1" name="sol_@i.toString" size="1"
                     maxlength="1" required></td>
               }
               </tbody>

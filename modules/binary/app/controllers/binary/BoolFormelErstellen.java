@@ -12,8 +12,8 @@ import play.data.FormFactory;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
-import views.html.bool_formel_erstellen_q;
-import views.html.bool_formel_erstellen_s;
+import views.html.boolcreatequestion;
+import views.html.boolcreatesolution;
 
 @Security.Authenticated(Secured.class)
 public class BoolFormelErstellen extends Controller {
@@ -165,7 +165,7 @@ public class BoolFormelErstellen extends Controller {
 
   public Result index() {
     CreationQuestion question = CreationQuestion.generateNew();
-    return ok(bool_formel_erstellen_q.render(UserManagement.getCurrentUser(), question));
+    return ok(boolcreatequestion.render(UserManagement.getCurrentUser(), question));
   }
 
   public Result musterLoesung() {
@@ -198,8 +198,8 @@ public class BoolFormelErstellen extends Controller {
     String knf = kanonischeKonjunktiveNormalform(vars, wahrheitstafel);
     String s_knf = kurzeKonjunktiveNormalform(vars, wahrheitstafel);
     
-    return ok(bool_formel_erstellen_s.render(UserManagement.getCurrentUser(), vars, zvector, tabelle, spalten, zeilen,
-        dnf, s_dnf, knf, s_knf));
+    return ok(boolcreatesolution.render(UserManagement.getCurrentUser(), vars, zvector, tabelle, spalten, zeilen, dnf,
+        s_dnf, knf, s_knf));
   }
 
   private String[][] getTabelle(int anzvars) {

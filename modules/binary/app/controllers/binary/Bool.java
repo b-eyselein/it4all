@@ -11,8 +11,8 @@ import play.data.FormFactory;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
-import views.html.boolquestion;
-import views.html.boolsolution;
+import views.html.boolfilloutquestion;
+import views.html.boolfilloutsolution;
 
 @Security.Authenticated(Secured.class)
 public class Bool extends Controller {
@@ -34,13 +34,13 @@ public class Bool extends Controller {
     boolean correct = bft.compareStringArray(solutions);
     String[] answer = bft.getWahrheitsVectorString();
 
-    return ok(boolsolution.render(UserManagement.getCurrentUser(), new Boolean(correct), bft.getVariablenTabelle(),
-        length, solutions, answer, "1", bft));
+    return ok(boolfilloutsolution.render(UserManagement.getCurrentUser(), new Boolean(correct),
+        bft.getVariablenTabelle(), length, solutions, answer, "1", bft));
   }
 
   public Result newFilloutQuestion() {
     FilloutQuestion question = FilloutQuestion.generateNew();
-    return ok(boolquestion.render(UserManagement.getCurrentUser(), question));
+    return ok(boolfilloutquestion.render(UserManagement.getCurrentUser(), question));
   }
 
 }

@@ -48,14 +48,15 @@ public class Assignment {
     if(variables.length == 0)
       throw new IllegalArgumentException("Cannot generate assignments for 0 variables!");
 
+    char variable = variables[0];
+
     if(variables.length == 1) {
       // Catch recursive case of 1 variable
-
       Assignment falseAssignment = new Assignment();
-      falseAssignment.setAssignment(variables[0], false);
+      falseAssignment.setAssignment(variable, false);
 
       Assignment trueAssignment = new Assignment();
-      trueAssignment.setAssignment(variables[0], true);
+      trueAssignment.setAssignment(variable, true);
 
       return Arrays.asList(falseAssignment, trueAssignment);
     }
@@ -64,12 +65,13 @@ public class Assignment {
     List<Assignment> trueAssignments = generateAllAssignments(Arrays.copyOfRange(variables, 1, variables.length));
 
     for(Assignment assignment: falseAssignments)
-      assignment.setAssignment(variables[0], false);
+      assignment.setAssignment(variable, false);
 
     for(Assignment assignment: trueAssignments)
-      assignment.setAssignment(variables[0], true);
+      assignment.setAssignment(variable, true);
 
-    ArrayList<Assignment> ret = new ArrayList<>(falseAssignments);
+    ArrayList<Assignment> ret = new ArrayList<>();
+    ret.addAll(falseAssignments);
     ret.addAll(trueAssignments);
     return ret;
   }
