@@ -11,26 +11,12 @@ import model.bool.node.Variable;
 
 public class BoolescheFunktionTree {
 
-  /**
-   * Gibt 1 oder 0 zum passenden Wahrheitswert zurueck.
-   */
   private static char booleantochar(boolean b) {
-    if(b) {
-      return '1';
-    } else {
-      return '0';
-    }
+    return b ? '1' : '0';
   }
 
-  /**
-   * Gibt 1 oder 0 zum passenden Wahrheitswert zurueck.
-   */
   private static String booleantoString(boolean b) {
-    if(b) {
-      return "1";
-    } else {
-      return "0";
-    }
+    return booleantochar(b) + "";
   }
 
   private Node rootNode;
@@ -155,7 +141,7 @@ public class BoolescheFunktionTree {
 
     return rootNode.evaluate(assignment);
   }
-  
+
   public List<Assignment> evaluateAll(List<Assignment> assignments) {
     for(Assignment assignment: assignments)
       assignment.setAssignment(BooleanQuestion.SOLUTION_VARIABLE, evaluate(assignment));
@@ -244,86 +230,6 @@ public class BoolescheFunktionTree {
   }
 
   /**
-   * Gibt Wahrheitstafel als char Array zurueck. char[Spalte][Zeile] ;
-   * Anzahl_der_Spalten = Anzahl_der_Variablen+1 ; Anzahl_der_Zeilen =
-   * 2^Anzahl_der_Variablen ;
-   */
-  public char[][] getWahrheitstafelChar() {
-    char[][] wtafel = new char[this.vars.length + 1][(int) Math.pow(2, this.vars.length)];
-    boolean[] zeile = new boolean[this.vars.length];
-    for(int i = 0; i < Math.pow(2, vars.length); i++) {
-      for(int j = 0; j < zeile.length; j++) {
-        wtafel[j][i] = booleantochar(zeile[j]);
-      }
-      wtafel[this.vars.length][i] = booleantochar(this.evaluate(zeile));
-      int k = vars.length - 1;
-      if(zeile[vars.length - 1]) {
-        while(k > 0 && zeile[k]) {
-          zeile[k] = false;
-          k--;
-        }
-        zeile[k] = true;
-      } else {
-        zeile[vars.length - 1] = true;
-      }
-    }
-    return wtafel;
-  }
-
-  /**
-   * Gibt Wahrheitstafel mit Beschriftung als String zurueck. (geeignet fuer
-   * Komandozeile)
-   */
-  public String getWahrheitstafelString() {
-    String s = "\n ";
-    int[] spaltenbreite = new int[this.vars.length + 1];
-    int spalte = 0;
-    for(Variable v: this.vars) {
-      s += v.toString() + " | ";
-      spaltenbreite[spalte] = s.length() - 2;
-      spalte++;
-    }
-    s += this.toString() + "\n";
-    spaltenbreite[spalte] = s.length() - 2;
-    while(spalte > 0) {
-      spaltenbreite[spalte] = spaltenbreite[spalte] - spaltenbreite[spalte - 1];
-      spalte--;
-    }
-    for(int i = 0; i < spaltenbreite.length; i++) {
-      for(int j = 0; j < spaltenbreite[i] - 1; j++) {
-        s += "-";
-      }
-      if(i < spaltenbreite.length - 1) {
-        s += "+";
-      } else {
-        s += "-\n";
-      }
-    }
-    boolean[] zeile = new boolean[this.vars.length];
-    for(int i = 0; i < Math.pow(2, vars.length); i++) {
-      for(int j = 0; j < zeile.length; j++) {
-        s += " " + booleantochar(zeile[j]);
-        for(int h = 2; h < spaltenbreite[j] - 1; h++) {
-          s += " ";
-        }
-        s += "|";
-      }
-      s += " " + booleantochar(this.evaluate(zeile)) + "\n";
-      int k = vars.length - 1;
-      if(zeile[vars.length - 1]) {
-        while(k > 0 && zeile[k]) {
-          zeile[k] = false;
-          k--;
-        }
-        zeile[k] = true;
-      } else {
-        zeile[vars.length - 1] = true;
-      }
-    }
-    return s;
-  }
-
-  /**
    * gibt Vector mit den Werten des Ausdrucks zurueck
    */
   public boolean[] getWahrheitsVector() {
@@ -331,28 +237,6 @@ public class BoolescheFunktionTree {
     boolean[] zeile = new boolean[this.vars.length];
     for(int i = 0; i < Math.pow(2, vars.length); i++) {
       wvector[i] = this.evaluate(zeile);
-      int k = vars.length - 1;
-      if(zeile[vars.length - 1]) {
-        while(k > 0 && zeile[k]) {
-          zeile[k] = false;
-          k--;
-        }
-        zeile[k] = true;
-      } else {
-        zeile[vars.length - 1] = true;
-      }
-    }
-    return wvector;
-  }
-
-  /**
-   * gibt Vector mit den Werten als Char des Ausdrucks zurueck
-   */
-  public char[] getWahrheitsVectorChar() {
-    char[] wvector = new char[(int) Math.pow(2, this.vars.length)];
-    boolean[] zeile = new boolean[this.vars.length];
-    for(int i = 0; i < Math.pow(2, vars.length); i++) {
-      wvector[i] = booleantochar(this.evaluate(zeile));
       int k = vars.length - 1;
       if(zeile[vars.length - 1]) {
         while(k > 0 && zeile[k]) {

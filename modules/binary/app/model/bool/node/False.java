@@ -1,5 +1,8 @@
 package model.bool.node;
 
+import java.util.Set;
+import java.util.TreeSet;
+
 import model.bool.tree.Assignment;
 
 public class False implements Node {
@@ -14,6 +17,11 @@ public class False implements Node {
     return "0";
   }
   
+  @Override
+  public Set<Character> getUsedVariables() {
+    return new TreeSet<>();
+  }
+
   @Override
   public String toString() {
     return "0";

@@ -1,5 +1,7 @@
 package model.bool.node;
 
+import java.util.Set;
+
 import model.bool.tree.Assignment;
 
 public class Not implements Node {
@@ -20,4 +22,8 @@ public class Not implements Node {
     return "NOT " + node.getAsString(true);
   }
   
+  @Override
+  public Set<Character> getUsedVariables() {
+    return node.getUsedVariables();
+  }
 }

@@ -2,6 +2,8 @@ package model.bool.tree;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -74,6 +76,15 @@ public class Assignment {
     ret.addAll(falseAssignments);
     ret.addAll(trueAssignments);
     return ret;
+  }
+
+  public static List<Assignment> generateAllAssignments(Collection<Character> usedVariables) {
+    char[] variables = new char[usedVariables.size()];
+    Iterator<Character> charIter = usedVariables.iterator();
+    int i = 0;
+    while(charIter.hasNext())
+      variables[i] = charIter.next();
+    return generateAllAssignments(variables);
   }
 
   private List<AssignmentItem> assignments = new LinkedList<>();
