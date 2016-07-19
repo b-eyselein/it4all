@@ -1,10 +1,31 @@
-@(user: model.user.User, question: model.bool.CreationQuestion)
-
-@main("Formel erstellen", user) {
+@(user: model.user.User, question: model.bool.CreationQuestion) @main("Formel erstellen", user) {
 <script>
-  function testSolution() {
-    alert("HALLO!");
-  }
+function testSolution() {
+  // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if(xhttp.readyState == 4 && xhttp.status == 200) {
+      alert(xhttp.responseText);
+    }
+  };
+
+  // AJAX-Objekt mit Daten fuellen, absenden
+  var parameters = extractParameters();
+  xhttp.open("PUT", "@controllers.binary.routes.NaryBool.checkBoolCreationSolution()", true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.setRequestHeader("Accept", "application/json");
+  xhttp.send(parameters);
+}
+
+
+function extractParameters() {
+  var usedVariables = document.getElementById("vars").value;
+  alert(usedVariables);
+
+  var learnerSolution = document.getElementById("learnerSolution").value;
+  var parameters = "learnerSolution=" + learnerSolution;
+  return paramters;
+}
 </script>
 
 <div class="container">
@@ -16,31 +37,32 @@
           <table class="table">
             <thead>
               <tr>
-              @for(variable <- question.getVariables()){
+              @for(variable <- question.getVariables()) {
                 <th class="text-center">@variable</th>
               }
-                <th  class="text-center">@question.getSolutionVariable()</th>
+                <th class="text-center">@question.getSolutionVariable()</th>
               </tr>
             </thead>
             <tbody>
-            @for(assignment <- question.getSolutions()) {
+              @for(i <- 0 until question.getSolutions().size()) {
               <tr>
-              @for(variable <- assignment.getVariables()) {
-                <td class="text-center">@assignment.getAssignmentAsChar(variable)</td>
+                @for(variable <- question.getSolutions().get(i).getVariables()) {
+                <td class="text-center" id="@variable@i">@question.getSolutions().get(i).getAssignmentAsChar(variable)</td>
+                }
+                <td class="text-center" id="z@i">@question.getSolutions().get(i).getAssignmentAsChar('z')</td>
               }
-            }
             </tbody>
           </table>
         </div>
       </div>
       <div>
-        <form action="@binary.routes.BoolFormelErstellen.musterLoesung()" method="post">
+        <form action= @binary.routes.NaryBool.checkBoolCreationSolution()" method="post">
           <div class="form-group">
             <label class="control-label col-xs-1" for="learnerSolution">z = </label>
             <div class="col-xs-11">
               <input class="form-control" name="learnerSolution" id="learnerSolution" placeholder="Ihre L&ouml;sung"
                 autocomplete="off" required>
-                <input hidden name="vars" value="@question.getVariables()">
+                <input hidden name="vars" id="vars" value="@question.getVariables()">
                 <input hidden name="zvector" value="@@zvector(0)@@for(i <- 1 until (zvector.length)){,  @@zvector(i)}">
             </div>
           </div>
@@ -51,11 +73,10 @@
             <button type="submit" class="btn btn-primary btn-block">zeige Musterl&ouml;sung</button> 
           </div>
           <div class="col-sm-12">
-            <a type="button" href="@binary.routes.BoolFormelErstellen.index()" class="btn btn-primary btn-block">N&auml;chste Aufgabe</a>
+            <a type="button" href="@binary.routes.NaryBool.newBoolCreationQuestion()" class="btn btn-primary btn-block">N&auml;chste Aufgabe</a>
           </div>
         </form>
       </div>
-    </div>
   </div>
 
   <div class="panel panel-info">

@@ -41,20 +41,8 @@ zeilen: Int, dnf: String, s_dnf: String, knf: String, s_knf: String)
               @Html(knf.toString().replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;").intern())
             </div>
           </div>
-          <div class="row">
-            <div class="col-sm-3">Kurze disjunktive Normalform:</div>
-            <div class="col-sm-9">
-              @Html(s_dnf.toString().replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;").intern())
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-sm-3">Kurze konjunktive Normalform:</div>
-            <div class="col-sm-9">
-              @Html(s_knf.toString().replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;").intern())
-            </div>
-          </div>
           <p>
-            <a class="btn btn-primary btn-block" href="@binary.routes.BoolFormelErstellen.index()">N&auml;chste Aufgabe</a>
+            <a class="btn btn-primary btn-block" href="@binary.routes.NaryBool.newBoolCreationQuestion()">N&auml;chste Aufgabe</a>
           </p>
         </div>
       </div>

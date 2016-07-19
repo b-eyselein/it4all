@@ -27,28 +27,14 @@ public class FilloutQuestion extends BooleanQuestion {
   public static FilloutQuestion generateNew() {
     // TODO: implement!
     BoolescheFunktionTree bft = BoolescheFunktionenGenerator.neueBoolescheFunktion();
-    String formel = bft.toString();
-
-    if(formel.length() > 25) {
-      String alternative_formel_1 = bft.kurzeDisjunktiveNormalform();
-      String alternative_formel_2 = bft.kurzeKonjunktiveNormalform();
-      if(alternative_formel_1.length() < alternative_formel_2.length()
-          && alternative_formel_1.length() < formel.length()) {
-        formel = alternative_formel_1;
-      } else if(alternative_formel_2.length() < alternative_formel_1.length()
-          && alternative_formel_2.length() < formel.length()) {
-        formel = alternative_formel_2;
-      }
-    }
-
     return new FilloutQuestion(bft.getVariablen(), bft);
   }
 
   private BoolescheFunktionTree formula;
   private List<Assignment> assignments;
 
-  public FilloutQuestion(char[] theVariables, BoolescheFunktionTree theFormulaTree) {
-    super(theVariables);
+  public FilloutQuestion(Character[] characters, BoolescheFunktionTree theFormulaTree) {
+    super(characters);
     formula = theFormulaTree;
     assignments = Assignment.generateAllAssignments(variables);
   }

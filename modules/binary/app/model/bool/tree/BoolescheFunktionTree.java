@@ -2,12 +2,13 @@ package model.bool.tree;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import model.bool.BooleanQuestion;
 import model.bool.BoolescheFunktionParser;
 import model.bool.node.Node;
-import model.bool.node.Variable;
 
 public class BoolescheFunktionTree {
 
@@ -20,12 +21,12 @@ public class BoolescheFunktionTree {
   }
 
   private Node rootNode;
+  private Character[] variables;
 
-  private Variable[] vars;
-
-  public BoolescheFunktionTree(Node k, Variable... v) {
-    this.rootNode = k;
-    this.vars = v;
+  public BoolescheFunktionTree(Node theRootNode) {
+    this.rootNode = theRootNode;
+    Set<Character> usedVariables = theRootNode.getUsedVariables();
+    variables = usedVariables.toArray(new Character[usedVariables.size()]);
   }
 
   /**
@@ -131,13 +132,13 @@ public class BoolescheFunktionTree {
    */
   public boolean evaluate(boolean[] b) throws IllegalArgumentException {
     // TODO: boolean[] to Assignment!
-    if(b.length != this.vars.length) {
+    if(b.length != this.variables.length) {
       throw new IllegalArgumentException("Wrong number of boolean values. Expected " + this.getAnzahlVariablen()
           + " elements but there were " + b.length + " elements.");
     }
     Assignment assignment = new Assignment();
-    for(int i = 0; i < this.vars.length; i++)
-      assignment.setAssignment(vars[i].getVariable(), b[i]);
+    for(int i = 0; i < this.variables.length; i++)
+      assignment.setAssignment(variables[i], b[i]);
 
     return rootNode.evaluate(assignment);
   }
@@ -152,7 +153,7 @@ public class BoolescheFunktionTree {
    * gibt Anzahl der Variablen zurueck
    */
   public int getAnzahlVariablen() {
-    return vars.length;
+    return variables.length;
   }
 
   /**
@@ -165,12 +166,8 @@ public class BoolescheFunktionTree {
   /**
    * gibt sortierten String-Array mit Namen der Variablen zurueck
    */
-  public char[] getVariablen() {
-    char[] variablen = new char[vars.length];
-    for(int i = 0; i < vars.length; i++) {
-      variablen[i] = vars[i].getVariable();
-    }
-    return variablen;
+  public Character[] getVariablen() {
+    return variables;
   }
 
   /**
@@ -179,24 +176,24 @@ public class BoolescheFunktionTree {
    * falsch
    */
   public char[][] getVariablenTabelle() {
-    char[][] vtafel = new char[this.vars.length][(int) Math.pow(2, this.vars.length)];
-    char[] zeile = new char[this.vars.length];
+    char[][] vtafel = new char[this.variables.length][(int) Math.pow(2, this.variables.length)];
+    char[] zeile = new char[this.variables.length];
     for(int i = 0; i < zeile.length; i++) {
       zeile[i] = '0';
     }
-    for(int i = 0; i < Math.pow(2, vars.length); i++) {
+    for(int i = 0; i < Math.pow(2, variables.length); i++) {
       for(int j = 0; j < zeile.length; j++) {
         vtafel[j][i] = zeile[j];
       }
-      int k = vars.length - 1;
-      if(zeile[vars.length - 1] == '1') {
+      int k = variables.length - 1;
+      if(zeile[variables.length - 1] == '1') {
         while(k > 0 && zeile[k] == '1') {
           zeile[k] = '0';
           k--;
         }
         zeile[k] = '1';
       } else {
-        zeile[vars.length - 1] = '1';
+        zeile[variables.length - 1] = '1';
       }
     }
     return vtafel;
@@ -208,22 +205,22 @@ public class BoolescheFunktionTree {
    * 2^Anzahl_der_Variablen ;
    */
   public boolean[][] getWahrheitstafelBoolean() {
-    boolean[][] wtafel = new boolean[this.vars.length + 1][(int) Math.pow(2, this.vars.length)];
-    boolean[] zeile = new boolean[this.vars.length];
-    for(int i = 0; i < Math.pow(2, vars.length); i++) {
+    boolean[][] wtafel = new boolean[this.variables.length + 1][(int) Math.pow(2, this.variables.length)];
+    boolean[] zeile = new boolean[this.variables.length];
+    for(int i = 0; i < Math.pow(2, variables.length); i++) {
       for(int j = 0; j < zeile.length; j++) {
         wtafel[j][i] = zeile[j];
       }
-      wtafel[this.vars.length][i] = this.evaluate(zeile);
-      int k = vars.length - 1;
-      if(zeile[vars.length - 1]) {
+      wtafel[this.variables.length][i] = this.evaluate(zeile);
+      int k = variables.length - 1;
+      if(zeile[variables.length - 1]) {
         while(k > 0 && zeile[k]) {
           zeile[k] = false;
           k--;
         }
         zeile[k] = true;
       } else {
-        zeile[vars.length - 1] = true;
+        zeile[variables.length - 1] = true;
       }
     }
     return wtafel;
@@ -233,19 +230,19 @@ public class BoolescheFunktionTree {
    * gibt Vector mit den Werten des Ausdrucks zurueck
    */
   public boolean[] getWahrheitsVector() {
-    boolean[] wvector = new boolean[(int) Math.pow(2, this.vars.length)];
-    boolean[] zeile = new boolean[this.vars.length];
-    for(int i = 0; i < Math.pow(2, vars.length); i++) {
+    boolean[] wvector = new boolean[(int) Math.pow(2, this.variables.length)];
+    boolean[] zeile = new boolean[this.variables.length];
+    for(int i = 0; i < Math.pow(2, variables.length); i++) {
       wvector[i] = this.evaluate(zeile);
-      int k = vars.length - 1;
-      if(zeile[vars.length - 1]) {
+      int k = variables.length - 1;
+      if(zeile[variables.length - 1]) {
         while(k > 0 && zeile[k]) {
           zeile[k] = false;
           k--;
         }
         zeile[k] = true;
       } else {
-        zeile[vars.length - 1] = true;
+        zeile[variables.length - 1] = true;
       }
     }
     return wvector;
@@ -255,19 +252,19 @@ public class BoolescheFunktionTree {
    * gibt Vector mit den Werten als String des Ausdrucks zurueck
    */
   public String[] getWahrheitsVectorString() {
-    String[] wvector = new String[(int) Math.pow(2, this.vars.length)];
-    boolean[] zeile = new boolean[this.vars.length];
-    for(int i = 0; i < Math.pow(2, vars.length); i++) {
+    String[] wvector = new String[(int) Math.pow(2, this.variables.length)];
+    boolean[] zeile = new boolean[this.variables.length];
+    for(int i = 0; i < Math.pow(2, variables.length); i++) {
       wvector[i] = booleantoString(this.evaluate(zeile));
-      int k = vars.length - 1;
-      if(zeile[vars.length - 1]) {
+      int k = variables.length - 1;
+      if(zeile[variables.length - 1]) {
         while(k > 0 && zeile[k]) {
           zeile[k] = false;
           k--;
         }
         zeile[k] = true;
       } else {
-        zeile[vars.length - 1] = true;
+        zeile[variables.length - 1] = true;
       }
     }
     return wvector;
@@ -279,7 +276,6 @@ public class BoolescheFunktionTree {
   public String kanonischeDisjunktiveNormalform() {
     String formel = "";
     boolean[][] wahrheitstafel = this.getWahrheitstafelBoolean();
-    char[] variablen = this.getVariablen();
     for(int i = 0; i < wahrheitstafel[0].length; i++) {
       // Nur "true"-Werte in der Tafel
       if(wahrheitstafel[this.getAnzahlVariablen()][i]) {
@@ -291,9 +287,9 @@ public class BoolescheFunktionTree {
             formel += " AND ";
           }
           if(wahrheitstafel[j][i]) {
-            formel += variablen[j];
+            formel += variables[j];
           } else {
-            formel += "NOT " + variablen[j];
+            formel += "NOT " + variables[j];
           }
         }
       }
@@ -306,8 +302,16 @@ public class BoolescheFunktionTree {
    */
   public String kanonischeKonjunktiveNormalform() {
     String formel = "";
+
+    List<Assignment> assignments = evaluateAll(Assignment.generateAllAssignments(variables));
+    System.out.println("Generated: " + assignments.size());
+    List<Assignment> positives = assignments.stream()
+        .filter(assignment -> assignment.getAssignment(BooleanQuestion.SOLUTION_VARIABLE)).collect(Collectors.toList());
+    System.out.println("Positives: " + positives.size());
+    for(Assignment p: positives)
+      System.out.println(p);
+
     boolean[][] wahrheitstafel = this.getWahrheitstafelBoolean();
-    char[] variablen = this.getVariablen();
     for(int i = 0; i < wahrheitstafel[0].length; i++) {
       // Nur "false"-Werte in der Tafel
       if(!wahrheitstafel[this.getAnzahlVariablen()][i]) {
@@ -320,162 +324,14 @@ public class BoolescheFunktionTree {
             formel += " OR ";
           }
           if(!wahrheitstafel[j][i]) {
-            formel += variablen[j];
+            formel += variables[j];
           } else {
-            formel += "NOT " + variablen[j];
+            formel += "NOT " + variables[j];
           }
         }
         formel += ")";
       }
     }
-    return formel;
-  }
-
-  /**
-   * Gibt eine aequivalente Formel in vereinfachter DNF als String zurueck
-   */
-  public String kurzeDisjunktiveNormalform() {
-    String formel = "";
-    char[] variablen = this.getVariablen();
-    boolean[][] wahrheitstafel = this.getWahrheitstafelBoolean();
-    // suche wahre Eintraege in der Wahrheitstafel
-    TreeSet<String> neueAusdruecke = new TreeSet<>();
-    for(int i = 0; i < wahrheitstafel[0].length; i++) {
-      if(wahrheitstafel[wahrheitstafel.length - 1][i]) {
-        String neuerAusdruck = "";
-        for(int j = 0; j < wahrheitstafel.length - 1; j++) {
-          if(wahrheitstafel[j][i]) {
-            neuerAusdruck += variablen[j];
-          } else {
-            neuerAusdruck += "NOT " + variablen[j];
-          }
-          if(j < wahrheitstafel.length - 2) {
-            neuerAusdruck += ",";
-          }
-        }
-        neueAusdruecke.add(neuerAusdruck);
-      }
-    }
-    // vergleiche alle Ausdruecke miteinander
-    TreeSet<String> kuerzereAusdruecke = new TreeSet<>();
-    TreeSet<String> benutzteAusdruecke = new TreeSet<>();
-    do {
-      kuerzereAusdruecke = new TreeSet<>();
-      benutzteAusdruecke = new TreeSet<>();
-      for(String ausdruck1: neueAusdruecke) {
-        String[] ausdruecke1 = ausdruck1.split(",");
-        for(String ausdruck2: neueAusdruecke) {
-          String[] ausdruecke2 = ausdruck2.split(",");
-
-          int gleich = 0;
-          int verschieden = 0;
-          String neuerausdruck = "";
-          for(int k = 0; k < ausdruecke1.length; k++) {
-            if(ausdruecke1[k].equals(ausdruecke2[k])) {
-              if(neuerausdruck.equals("")) {
-                neuerausdruck += ausdruecke1[k];
-              } else {
-                neuerausdruck += "," + ausdruecke1[k];
-              }
-              gleich++;
-            } else if(ausdruecke1[k].matches("NOT " + ausdruecke2[k])
-                || ausdruecke2[k].matches("NOT " + ausdruecke1[k])) {
-              verschieden++;
-            }
-          }
-          if(gleich == ausdruecke1.length - 1 && verschieden == 1) {
-            kuerzereAusdruecke.add(neuerausdruck);
-            benutzteAusdruecke.add(ausdruck1);
-            benutzteAusdruecke.add(ausdruck2);
-          }
-        }
-      }
-      for(String ausdruck1: neueAusdruecke) {
-        if(!benutzteAusdruecke.contains(ausdruck1)) {
-          if(formel.equals("")) {
-            formel += ausdruck1;
-          } else {
-            formel += " OR " + ausdruck1;
-          }
-        }
-      }
-      neueAusdruecke = kuerzereAusdruecke;
-    } while(!kuerzereAusdruecke.isEmpty());
-    formel = formel.replaceAll(",", " AND ");
-    return formel;
-  }
-
-  /**
-   * Gibt eine aequivalente Formel in vereinfachter KNF als String zurueck
-   */
-  public String kurzeKonjunktiveNormalform() {
-    String formel = "";
-    char[] variablen = this.getVariablen();
-    boolean[][] wahrheitstafel = this.getWahrheitstafelBoolean();
-    // suche wahre Eintraege in der Wahrheitstafel
-    TreeSet<String> neueAusdruecke = new TreeSet<>();
-    for(int i = 0; i < wahrheitstafel[0].length; i++) {
-      if(!wahrheitstafel[wahrheitstafel.length - 1][i]) {
-        String neuerAusdruck = "";
-        for(int j = 0; j < wahrheitstafel.length - 1; j++) {
-          if(!wahrheitstafel[j][i]) {
-            neuerAusdruck += variablen[j];
-          } else {
-            neuerAusdruck += "NOT " + variablen[j];
-          }
-          if(j < wahrheitstafel.length - 2) {
-            neuerAusdruck += ",";
-          }
-        }
-        neueAusdruecke.add(neuerAusdruck);
-      }
-    }
-    // vergleiche alle Ausdruecke miteinander
-    TreeSet<String> kuerzereAusdruecke = new TreeSet<>();
-    TreeSet<String> benutzteAusdruecke = new TreeSet<>();
-    do {
-      kuerzereAusdruecke = new TreeSet<>();
-      benutzteAusdruecke = new TreeSet<>();
-      for(String ausdruck1: neueAusdruecke) {
-        String[] ausdruecke1 = ausdruck1.split(",");
-        for(String ausdruck2: neueAusdruecke) {
-          String[] ausdruecke2 = ausdruck2.split(",");
-
-          int gleich = 0;
-          int verschieden = 0;
-          String neuerausdruck = "";
-          for(int k = 0; k < ausdruecke1.length; k++) {
-            if(ausdruecke1[k].equals(ausdruecke2[k])) {
-              if(neuerausdruck.equals("")) {
-                neuerausdruck += ausdruecke1[k];
-              } else {
-                neuerausdruck += "," + ausdruecke1[k];
-              }
-              gleich++;
-            } else if(ausdruecke1[k].matches("NOT " + ausdruecke2[k])
-                || ausdruecke2[k].matches("NOT " + ausdruecke1[k])) {
-              verschieden++;
-            }
-          }
-          if(gleich == ausdruecke1.length - 1 && verschieden == 1) {
-            kuerzereAusdruecke.add(neuerausdruck);
-            benutzteAusdruecke.add(ausdruck1);
-            benutzteAusdruecke.add(ausdruck2);
-          }
-        }
-      }
-      for(String ausdruck1: neueAusdruecke) {
-        if(!benutzteAusdruecke.contains(ausdruck1)) {
-          if(formel.equals("")) {
-            formel += "(" + ausdruck1 + ")";
-          } else {
-            formel += " AND " + "(" + ausdruck1 + ")";
-          }
-        }
-      }
-      neueAusdruecke = kuerzereAusdruecke;
-    } while(!kuerzereAusdruecke.isEmpty());
-    formel = formel.replaceAll(",", " OR ");
     return formel;
   }
 

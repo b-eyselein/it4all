@@ -13,7 +13,7 @@
       } 
     </div>
     <div class="panel-body">
-      <form role="form" action="@binary.routes.NaryBool.checkConversionSolution()" method="post">
+      <form role="form" action="@binary.routes.NaryBool.checkNaryConversionSolution()" method="post">
         <div class="form-group">
           <input pattern="@question.getToNumberType().getPattern()" autocomplete="off" class="form-control" name="learnerSolution" placeholder="Ihre L&ouml;sung" required>
           <input hidden name="value" value="@question.getFromValue()">

@@ -8,6 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import model.bool.BooleanQuestion;
+
 public class Assignment {
 
   private static class AssignmentItem {
@@ -46,7 +48,7 @@ public class Assignment {
    *          the variables to generate the assignments for
    * @return all assignments for this combination of variables
    */
-  public static List<Assignment> generateAllAssignments(char[] variables) {
+  public static List<Assignment> generateAllAssignments(Character[] variables) {
     if(variables.length == 0)
       throw new IllegalArgumentException("Cannot generate assignments for 0 variables!");
 
@@ -79,7 +81,7 @@ public class Assignment {
   }
 
   public static List<Assignment> generateAllAssignments(Collection<Character> usedVariables) {
-    char[] variables = new char[usedVariables.size()];
+    Character[] variables = new Character[usedVariables.size()];
     Iterator<Character> charIter = usedVariables.iterator();
     int i = 0;
     while(charIter.hasNext())
@@ -104,7 +106,8 @@ public class Assignment {
   }
 
   public List<Character> getVariables() {
-    return assignments.stream().map(a -> a.getVariable()).collect(Collectors.toList());
+    return assignments.stream().filter(a -> (a.getVariable() != BooleanQuestion.SOLUTION_VARIABLE))
+        .map(a -> a.getVariable()).collect(Collectors.toList());
   }
 
   public void setAssignment(char variable, boolean value) {

@@ -10,9 +10,9 @@ public abstract class BooleanQuestion {
   protected final static char[] ALPHABET = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
       'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
   
-  protected char[] variables;
+  protected Character[] variables;
   
-  public BooleanQuestion(char[] theVariabless) {
+  public BooleanQuestion(Character[] theVariabless) {
     variables = theVariabless;
   }
   
@@ -28,7 +28,7 @@ public abstract class BooleanQuestion {
     return (int) Math.pow(2, variables.length);
   }
   
-  public char[] getVariables() {
+  public Character[] getVariables() {
     return variables;
   }
 }

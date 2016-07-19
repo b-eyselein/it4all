@@ -1,6 +1,5 @@
 package model.bool;
 
-import java.util.Arrays;
 import java.util.List;
 
 import model.bool.tree.Assignment;
@@ -10,7 +9,9 @@ public class CreationQuestion extends BooleanQuestion {
   public static CreationQuestion generateNew() {
     // Get two or three variables a, b (and c)
     int anzVars = GENERATOR.nextInt(2) + 2;
-    char[] variables = Arrays.copyOf(ALPHABET, anzVars);
+    Character[] variables = new Character[anzVars];
+    for(int i = 0; i < anzVars; i++)
+      variables[i] = ALPHABET[i];
     
     // Generate random solutions for all assignments
     List<Assignment> assignments = Assignment.generateAllAssignments(variables);
@@ -23,7 +24,7 @@ public class CreationQuestion extends BooleanQuestion {
   
   private List<Assignment> solutions;
   
-  public CreationQuestion(char[] theVariables, List<Assignment> theSolutions) {
+  public CreationQuestion(Character[] theVariables, List<Assignment> theSolutions) {
     super(theVariables);
     solutions = theSolutions;
   }
