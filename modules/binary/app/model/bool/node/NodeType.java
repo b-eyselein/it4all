@@ -2,7 +2,8 @@ package model.bool.node;
 
 public enum NodeType {
   
-  AND("und"), OR("oder"), NOT("nicht"), NAND("nund"), NOR("noder"), XOR("xoder"), IMPL("impl"), EQUIV("equiv");
+  NOT("nicht", 1), AND("und", 2), OR("oder", 3), IMPL("impl", 5), NAND("nund", 5), NOR("noder", 5), XOR("xoder",
+      5), EQUIV("equiv", 5);
   
   public static NodeType get(String highestOperator) {
     for(NodeType type: values())
@@ -12,17 +13,23 @@ public enum NodeType {
   }
   
   private String germanOperator;
+  private int precedence;
   
-  private NodeType(String theGermanOperator) {
+  private NodeType(String theGermanOperator, int thePrecedence) {
     germanOperator = theGermanOperator;
+    precedence = thePrecedence;
   }
   
   public String getEnglishOperator() {
     return name().toLowerCase();
   }
-  
+
   public String getGermanOperator() {
     return germanOperator;
+  }
+  
+  public int getPrecende() {
+    return precedence;
   }
   
   public Node instantiate(Node... formulas) {

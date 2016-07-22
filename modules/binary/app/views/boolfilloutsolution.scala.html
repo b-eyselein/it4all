@@ -24,10 +24,10 @@
         @for(assignment <- question.getAssignments) {
           <tr>
           @for(variable <- question.getFormula().getVariables()) {
-            <td>@assignment.getAssignment(variable)</td>
+            <td>@assignment.asChar(variable)</td>
           }
-            <td class="@assignment.getColor()">@assignment.getAssignment('z')</td>
-            <td class="@assignment.getColor()">@assignment.getAssignment('y')</td>
+            <td class="@assignment.getColor()">@assignment.asChar('z')</td>
+            <td class="@assignment.getColor()">@assignment.asChar('y')</td>
           </tr>
         }
         </tbody>

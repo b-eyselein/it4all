@@ -24,6 +24,7 @@ public class BoolescheFunktionParser {
     String read = "";
 
     int highestOperatorPosition = -1;
+    NodeType highestOperatorType = null;
     String highestOperator = null;
 
     for(int i = 0; i < formula.length(); i++) {
@@ -37,10 +38,14 @@ public class BoolescheFunktionParser {
         break;
       case ' ':
         if(read.length() > 1 && parenthesisDepth == 0) {
-          // FIXME: Operatorpräzedenz!
-          // higheset operator found, ignore everything else
-          highestOperator = read;
-          highestOperatorPosition = i - highestOperator.length() - 1;
+          NodeType newOperatorType = NodeType.get(read);
+          if(highestOperator == null || highestOperatorType.getPrecende() < newOperatorType.getPrecende()) {
+            // FIXME: Operatorpräzedenz!
+            // higheset operator found, ignore everything else
+            highestOperator = read;
+            highestOperatorType = NodeType.get(highestOperator);
+            highestOperatorPosition = i - highestOperator.length() - 1;
+          }
         }
         read = "";
         break;

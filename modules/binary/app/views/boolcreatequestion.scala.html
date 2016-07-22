@@ -47,9 +47,9 @@ function extractParameters() {
               @for(i <- 0 until question.getSolutions().size()) {
               <tr>
                 @for(variable <- question.getSolutions().get(i).getVariables()) {
-                <td class="text-center" id="@variable@i">@question.getSolutions().get(i).getAssignmentAsChar(variable)</td>
+                <td class="text-center" id="@variable@i">@question.getSolutions().get(i).asChar(variable)</td>
                 }
-                <td class="text-center" id="z@i">@question.getSolutions().get(i).getAssignmentAsChar('z')</td>
+                <td class="text-center" id="z@i">@question.getSolutions().get(i).asChar('z')</td>
               }
             </tbody>
           </table>
