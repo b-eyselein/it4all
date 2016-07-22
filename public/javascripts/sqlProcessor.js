@@ -28,6 +28,7 @@ function processCorrection(correction) {
           + tableCompResult.unneccessaryTables + "</div>";
     }
   }
+  alert(elementsToAdd);
   
   var userResult = parsedCorr.userResult;
   var sampleResult = parsedCorr.sampleResult;

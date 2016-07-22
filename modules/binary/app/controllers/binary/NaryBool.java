@@ -4,9 +4,11 @@ import javax.inject.Inject;
 
 import controllers.core.UserManagement;
 import model.Secured;
+import model.bool.BooleanQuestion;
 import model.bool.BoolescheFunktionParser;
 import model.bool.CreationQuestion;
 import model.bool.FilloutQuestion;
+import model.bool.tree.Assignment;
 import model.bool.tree.BoolescheFunktionTree;
 import model.nary.NAryAdditionQuestion;
 import model.nary.NAryConversionQuestion;
@@ -27,10 +29,10 @@ import views.html.overview;
 
 @Security.Authenticated(Secured.class)
 public class NaryBool extends Controller {
-  
+
   @Inject
   private FormFactory factory;
-  
+
   public Result checkBoolCreationSolution() {
     DynamicForm dynForm = factory.form().bindFromRequest();
     String solution = dynForm.get("learnerSolution");
@@ -38,73 +40,73 @@ public class NaryBool extends Controller {
     System.out.println(solution);
     return ok("TODO!");
   }
-  
+
   public Result checkBoolFilloutSolution() {
     DynamicForm dynFormula = factory.form().bindFromRequest();
-    
-    BoolescheFunktionTree bft = BoolescheFunktionParser.parse(dynFormula.get("bft"));
-    double d = bft.getAnzahlVariablen();
-    int length = (int) (Math.pow(2.0, d));
-    String[] solutions = new String[length];
-    for(int i = 0; i < length; i++) {
-      String wert = dynFormula.get("" + i + "");
-      solutions[i] = "" + wert.charAt(wert.length() - 1);
+
+    char solVar = BooleanQuestion.SOLUTION_VARIABLE, learnerVal = BooleanQuestion.LEARNER_VARIABLE;
+
+    BoolescheFunktionTree bft = BoolescheFunktionParser.parse(dynFormula.get("formula"));
+
+    FilloutQuestion question = new FilloutQuestion(bft.getVariables(), bft);
+
+    for(Assignment assignment: question.getAssignments()) {
+      String wert = dynFormula.get(assignment.toString());
+      assignment.setAssignment(solVar, bft.evaluate(assignment));
+      assignment.setAssignment(learnerVal, wert.equals("1"));
     }
-    boolean correct = bft.compareStringArray(solutions);
-    String[] answer = bft.getWahrheitsVectorString();
-    
-    return ok(boolfilloutsolution.render(UserManagement.getCurrentUser(), new Boolean(correct),
-        bft.getVariablenTabelle(), length, solutions, answer, "1", bft));
+
+    return ok(boolfilloutsolution.render(UserManagement.getCurrentUser(), question));
   }
-  
+
   public Result checkNaryAdditionSolution() {
     DynamicForm dynFormula = factory.form().bindFromRequest();
-    
+
     String firstSumNAry = dynFormula.get("summand1");
     String secondSumNAry = dynFormula.get("summand2");
     int base = Integer.parseInt(dynFormula.get("base"));
-    
+
     String committedLearnerSolution = dynFormula.get("learnerSolution");
     // Replace all spaces, reverse to compensate input from right to left!
     String learnerSolInNAry = new StringBuilder(committedLearnerSolution).reverse().toString().replaceAll("\\s", "");
-    
+
     NAryAdditionQuestion question = new NAryAdditionQuestion(firstSumNAry, secondSumNAry, base, learnerSolInNAry);
     return ok(naryadditionsolution.render(UserManagement.getCurrentUser(), question));
   }
-  
+
   public Result checkNaryConversionSolution() {
     DynamicForm dynFormula = factory.form().bindFromRequest();
-    
+
     String learnerSolution = dynFormula.get("learnerSolution").replaceAll("\\s", "");
     String value = dynFormula.get("value");
     int startingNB = Integer.parseInt(dynFormula.get("startingNB"));
     int targetNB = Integer.parseInt(dynFormula.get("targetNB"));
-    
+
     NAryConversionQuestion question = new NAryConversionQuestion(value, NumberBase.getByBase(startingNB),
         NumberBase.getByBase(targetNB), learnerSolution);
-    
+
     return ok(naryconversionsolution.render(UserManagement.getCurrentUser(), question));
   }
-  
+
   public Result index() {
     return ok(overview.render(UserManagement.getCurrentUser()));
   }
-  
+
   public Result newBoolCreationQuestion() {
     CreationQuestion question = CreationQuestion.generateNew();
     return ok(boolcreatequestion.render(UserManagement.getCurrentUser(), question));
   }
-  
+
   public Result newBoolFilloutQuestion() {
     FilloutQuestion question = FilloutQuestion.generateNew();
     return ok(boolfilloutquestion.render(UserManagement.getCurrentUser(), question));
   }
-  
+
   public Result newNaryAdditionQuestion() {
     NAryAdditionQuestion question = NAryAdditionQuestion.generateNew();
     return ok(naryadditionquestion.render(UserManagement.getCurrentUser(), question));
   }
-  
+
   public Result newNaryConversionQuestion() {
     NAryConversionQuestion question = NAryConversionQuestion.generateNew();
     return ok(naryconversionquestion.render(UserManagement.getCurrentUser(), question));

@@ -19,12 +19,12 @@
                 </tr>
               </thead>
               <tbody>
-              @for(i <- 0 until question.getAssignments().size()){
+              @for(assignment <- question.getAssignments()) {
                 <tr>
-                @for(variable <- question.getAssignments().get(i).getVariables()) {
-                  <td>@question.getAssignments().get(i).getAssignmentAsChar(variable)</td>
+                @for(variable <- question.getFormula().getVariables()) {
+                  <td>@assignment.getAssignmentAsChar(variable)</td>
                 }
-                  <td><input type="number" autocomplete="off" min="0" max="1" step="1" name="sol_@i.toString" size="1"
+                  <td><input type="number" autocomplete="off" min="0" max="1" step="1" name="@assignment.toString" size="1"
                     maxlength="1" required></td>
               }
               </tbody>
@@ -33,7 +33,7 @@
         </div>
         <div class="row">
           <div class="col-sm-6 col-sm-offset-3">
-            <input hidden name="bft" value="@question.getFormulaAsString">
+            <input hidden name="formula" value="@question.getFormulaAsString()">
             <input hidden name="variablen" value="@question.getJoinedVariables()">
             <button type="submit" class="btn btn-primary">Pr&uuml;fen</button>
           </div>
