@@ -84,6 +84,10 @@ public class Assignment {
     assignments = new LinkedList<>(Arrays.asList(items));
   }
 
+  public char asChar(char Variable) {
+    return getAssignment(Variable) == true ? '1' : '0';
+  }
+
   public boolean assignmentIsSet(char variable) {
     return getAssignmentItem(variable) != null;
   }
@@ -96,10 +100,6 @@ public class Assignment {
       return false;
 
     return item.getValue();
-  }
-
-  public char asChar(char Variable) {
-    return getAssignment(Variable) == true ? '1' : '0';
   }
 
   public String getColor() {
@@ -126,7 +126,10 @@ public class Assignment {
 
   @Override
   public String toString() {
-    List<String> assignmentStrings = assignments.stream().map(a -> a.toString()).collect(Collectors.toList());
+    List<String> assignmentStrings = assignments.stream()
+        .filter(a -> (a.getVariable() != BooleanQuestion.SOLUTION_VARIABLE
+            && a.getVariable() != BooleanQuestion.LEARNER_VARIABLE))
+        .map(a -> a.toString()).collect(Collectors.toList());
     return String.join(",", assignmentStrings);
   }
 
