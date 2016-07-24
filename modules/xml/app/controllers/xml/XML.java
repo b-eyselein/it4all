@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -52,6 +53,8 @@ public class XML extends Controller {
     User user = UserManagement.getCurrentUser();
     XmlExercise exercise = XmlExercise.finder.byId(exerciseId);
     
+    List<XMLError> elementResults;
+    
     String learnerSolution = extractLearnerSolutionFromRequest(request());
     Logger.info(learnerSolution);
     if(exercise.exerciseType == ExerciseType.XMLAgainstDTD) {
@@ -59,8 +62,12 @@ public class XML extends Controller {
           util.getSampleFileForExercise(EXERCISE_TYPE, exercise.referenceFileName).toString()) + "\n" + learnerSolution;
     }
     Path path2solution = saveSolutionForUser(user, learnerSolution, exercise);
-    
-    List<XMLError> elementResults = correctExercise(path2solution, user, exercise);
+    if(exercise.exerciseType == ExerciseType.XMLAgainstXSD && learnerSolution.contains("!DOCTYPE")) {
+      elementResults = new ArrayList<XMLError>();
+      elementResults.add(new XMLError("benutze kein DTD!", XmlErrorType.FATALERROR));
+    } else {
+      elementResults = correctExercise(path2solution, user, exercise);
+    }
     
     for(XMLError error: elementResults)
       Logger.debug(error.toString());
@@ -81,7 +88,7 @@ public class XML extends Controller {
     User user = UserManagement.getCurrentUser();
     String defaultOrOldSolution = STANDARD_XML;
     try {
-      Path oldSolutionPath = util.getSolFileForExerciseAndType(user, EXERCISE_TYPE, exerciseId,
+      Path oldSolutionPath = util.getSolFileForExercise(user, EXERCISE_TYPE, exerciseId,
           exercise.exerciseType.studentFileEnding);
       if(Files.exists(oldSolutionPath, LinkOption.NOFOLLOW_LINKS))
         defaultOrOldSolution = String.join("\n", Files.readAllLines(oldSolutionPath));
@@ -159,7 +166,6 @@ public class XML extends Controller {
     }
     return result;
   }
-
   
   private String generateFixedStart(XmlExercise exercise, String dtdPathString) {
     // + exercise.rootElementName +
@@ -169,7 +175,7 @@ public class XML extends Controller {
   }
   
   private Path createCustomReferenceFileforUser(Path solutionPath, User user, XmlExercise exercise) {
-    Path result = util.getSolFileForExerciseAndType(user, EXERCISE_TYPE, "reference_for_" + exercise.id, "xml");
+    Path result = util.getSolFileForExercise(user, EXERCISE_TYPE, "reference_for_" + exercise.id + "." + "xml");
     String content = "";
     try {
       content = generateFixedStart(exercise, solutionPath.toString()) + "\n" + String.join("\n",
@@ -193,7 +199,7 @@ public class XML extends Controller {
       if(!Files.exists(solDir))
         Files.createDirectories(solDir);
       
-      Path saveTo = util.getSolFileForExerciseAndType(user, EXERCISE_TYPE, exercise.id,
+      Path saveTo = util.getSolFileForExercise(user, EXERCISE_TYPE, exercise.id,
           exercise.exerciseType.studentFileEnding);
       Files.write(saveTo, Arrays.asList(solution), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
       return saveTo;

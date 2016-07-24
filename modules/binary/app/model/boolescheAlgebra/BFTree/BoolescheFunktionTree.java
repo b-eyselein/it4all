@@ -33,7 +33,7 @@ public class BoolescheFunktionTree {
 	}
 	
 	/*
-	 * Gibt Wahrheitstafel mit Beschriftung als String zurueck.
+	 * Gibt Wahrheitstafel mit Beschriftung als String zurueck. (geeignet fuer Komandozeile)
 	 */
 	public String getWahrheitstafelString() {
 		String s = "\n ";
@@ -120,6 +120,31 @@ public class BoolescheFunktionTree {
 		return wtafel;
 	}
 	
+	 /*
+   * Gibt Wahrheitstafel als char Array zurueck. char[Spalte][Zeile] ; Anzahl_der_Spalten = Anzahl_der_Variablen+1 ; Anzahl_der_Zeilen = 2^Anzahl_der_Variablen ;
+   */
+  public char[][] getWahrheitstafelChar() {
+    char[][] wtafel = new char[this.vars.length+1][(int) Math.pow(2,this.vars.length)];
+    boolean[] zeile = new boolean[this.vars.length];
+    for (int i = 0; i<Math.pow(2, vars.length); i++) {
+      for (int j = 0; j<zeile.length; j++) {
+        wtafel[j][i] = booleantochar(zeile[j]);
+      }
+      wtafel[this.vars.length][i] = booleantochar(this.getWert(zeile));
+      int k = vars.length-1;
+      if (zeile[vars.length-1]) {
+        while (k > 0 && zeile[k]) {
+          zeile[k] = false;
+          k--;
+        }
+        zeile[k] = true;
+      } else {
+        zeile[vars.length-1] = true;
+      }
+    }
+    return wtafel;
+  }
+	
 	/*
 	 *  gibt den Teil der Tabelle der die Belegungen der Variablen enthaelt als Char-Array zurueck. char[Spalte][Zeile] mit '1' fur wahr und '0' fuer falsch
 	 */
@@ -188,6 +213,28 @@ public class BoolescheFunktionTree {
 	}
 	
 	/*
+   * gibt Vector mit den Werten als Char des Ausdrucks zurueck
+   */
+  public char[] getWahrheitsVectorChar() {
+    char[] wvector = new char[(int) Math.pow(2,this.vars.length)];
+    boolean[] zeile = new boolean[this.vars.length];
+    for (int i = 0; i<Math.pow(2, vars.length); i++) {
+      wvector[i] = booleantochar(this.getWert(zeile));
+      int k = vars.length-1;
+      if (zeile[vars.length-1]) {
+        while (k > 0 && zeile[k]) {
+          zeile[k] = false;
+          k--;
+        }
+        zeile[k] = true;
+      } else {
+        zeile[vars.length-1] = true;
+      }
+    }
+    return wvector;
+  }
+	
+	/*
 	 * gibt eine Liste der Teilfunktion zurueck einschliesslich sich selbst
 	 */
 	public List<BoolescheFunktionTree> getTeilformeln() {
@@ -201,7 +248,7 @@ public class BoolescheFunktionTree {
 	public boolean compareBoolscheFormelTree(BoolescheFunktionTree otherBFT) throws IllegalArgumentException {
 		
 		if (this.getAnzahlVariablen() != otherBFT.getAnzahlVariablen()) {
-			throw new IllegalArgumentException("Wrong number of vars. Exspected "+this.getAnzahlVariablen()+" but was "+otherBFT.getAnzahlVariablen()+".");
+			throw new IllegalArgumentException("Wrong number of vars. Expected "+this.getAnzahlVariablen()+" but was "+otherBFT.getAnzahlVariablen()+".");
 		}
 		String[] thisVars = this.getVariablen();
 		String[] otherVars = otherBFT.getVariablen();

@@ -4,6 +4,10 @@ GET	  /bool    controllers.binary.Bool.index()
 GET	  /bool/solution		controllers.binary.Bool.indexSolution()
 POST  /bool    controllers.binary.Bool.tableAdd()
 
+GET	  /boolformel    controllers.binary.BoolFormelErstellen.index()
+GET	  /boolformel/solution		controllers.binary.BoolFormelErstellen.checkSolution()
+POST  /boolformel    controllers.binary.BoolFormelErstellen.addLearnerSolution()
+
 GET   /naryconvertion    controllers.binary.NAryConvertion.index()
 GET   /naryconvertion/solution    controllers.binary.NAryConvertion.checkSolution()
 POST  /naryconvertion    controllers.binary.NAryConvertion.addLearnerSolution()

@@ -1,0 +1,47 @@
+@* Template File *@
+@(user: model.user.User, var_names: Array[String], wahrheitstafel: Array[Array[Char]], spalten: Int, zeilen: Int)
+
+@main("HTML-Test", user) {
+	<div class="container">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+			Erstellen Sie die Formel zu folgender Wahrheitstafel:
+			</div>
+			<div class="panel-body">
+				<div class="col-sm-4">
+					<table class="table">
+						<thread align = "right">
+							<tr>
+								@for(v <- var_names){
+								<td>
+									@v
+								</td>
+								}
+								<td>
+									Resultat
+								</td>
+							</tr>
+						</thread>
+						<tbody align = "left">
+						@for(i <- 0 until (zeilen)){
+							<tr>
+							@for(j <- 0 until (spalten)){
+								<td>@wahrheitstafel(j)(i)</td>
+								}
+							}
+						</tbody>
+					</table>
+					</div>
+					<div>
+					<form role="form" action="@binary.routes.BoolFormelErstellen.addLearnerSolution" method="post">
+						<div class="form-group">
+							<input class="form-control" name="learnerSolution" placeholder="Ihre L&ouml;sung">
+						</div>
+						<button type="submit" class="btn btn-primary">Pr&uuml;fen</button>
+					</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
