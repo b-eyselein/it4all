@@ -73,7 +73,7 @@ public class XmlCorrector {
     } catch (ParserConfigurationException e) {
     }
     
-    builder.setErrorHandler(new SimpleXMLErrorHandler(output));
+    builder.setErrorHandler(new XSDErrorHandler(output));
     
     try {
       builder.parse(studentSolutionXML);
