@@ -1,8 +1,8 @@
 @(user: model.user.User, exercise: model.javascript.JsExercise)
 
 @main("JavaScript-Test", user) {
-<script src=" @controllers.routes.Assets.versioned("javascripts/ace/ace.js")" type="text/javascript" charset="utf-8"></script>
-<script src=" @controllers.routes.Assets.versioned("javascripts/jsProcessor.js")" type="text/javascript" charset="utf-8"></script>
+<script src="@controllers.routes.Assets.versioned("javascripts/ace/ace.js")" type="text/javascript" charset="utf-8"></script>
+<script src="@controllers.routes.Assets.versioned("javascripts/jsProcessor.js")" type="text/javascript" charset="utf-8"></script>
 <script>
 function testSolution() {
 // AJAX-Objekt erstellen, Callback-Funktion bereitstellen

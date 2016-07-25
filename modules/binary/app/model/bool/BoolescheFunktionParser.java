@@ -8,25 +8,25 @@ import model.bool.node.Variable;
 import model.bool.tree.BoolescheFunktionTree;
 
 public class BoolescheFunktionParser {
-
+  
   public static BoolescheFunktionTree parse(String originalformel) throws IllegalArgumentException {
     return new BoolescheFunktionTree(parseNode(originalformel));
   }
-
+  
   public static Node parseNode(String formula) {
     formula = formula.toLowerCase();
     substituteGermanOperators(formula);
-
+    
     // remove outer parantheses like in (a or b)
     formula = trimAndRemoveParantheses(formula);
-
+    
     int parenthesisDepth = 0;
     String read = "";
-
+    
     int highestOperatorPosition = -1;
     NodeType highestOperatorType = null;
     String highestOperator = null;
-
+    
     for(int i = 0; i < formula.length(); i++) {
       char readChar = formula.charAt(i);
       switch(readChar) {
@@ -54,37 +54,37 @@ public class BoolescheFunktionParser {
         break;
       }
     }
-
+    
     if(highestOperator == null) {
       // Kein Operator ==> Variable!
+      if(formula.equals("1") || formula.equals("true"))
+        return new True();
+      else if(formula.equals("0") || formula.equals("false"))
+        return new False();
+
       if(formula.length() > 1)
         throw new IllegalArgumentException("Fehler: >>" + formula + "<<");
-
-      if(formula.equals("1"))
-        return new True();
-      else if(formula.equals("0"))
-        return new False();
       else
         return new Variable(formula.charAt(0));
     }
-
+    
     String rightFormula = formula.substring(highestOperatorPosition + highestOperator.length() + 2);
     if(highestOperator.equals("not")) {
       return NodeType.NOT.instantiate(parseNode(rightFormula));
     } else {
       String leftFormula = formula.substring(0, highestOperatorPosition);
       NodeType type = NodeType.get(highestOperator);
-
+      
       if(type == null)
         throw new IllegalArgumentException("No operator is defined for: " + highestOperator);
-
+      
       Node left = parseNode(leftFormula);
       Node right = parseNode(rightFormula);
-
+      
       return type.instantiate(left, right);
     }
   }
-
+  
   /**
    * Substituiert alle deutschen Operatoren durch aequivalente englische
    * Operatoren.
@@ -95,13 +95,13 @@ public class BoolescheFunktionParser {
     for(NodeType type: NodeType.values())
       formel = formel.replaceAll(type.getGermanOperator(), type.getEnglishOperator());
   }
-
+  
   private static String trimAndRemoveParantheses(String formula) {
     formula = formula.trim();
-
+    
     if(!formula.startsWith("(") && !formula.endsWith(")"))
       return formula;
-
+    
     int counter = 1;
     // Ignore but count first paranthesis
     for(int i = 1; i < formula.length(); i++) {
@@ -109,7 +109,7 @@ public class BoolescheFunktionParser {
         counter++;
       else if(formula.charAt(i) == ')')
         counter--;
-
+      
       if(counter == 0) {
         // Found matching bracket
         if(i == formula.length() - 1)
@@ -124,5 +124,5 @@ public class BoolescheFunktionParser {
     }
     return formula;
   }
-
+  
 }

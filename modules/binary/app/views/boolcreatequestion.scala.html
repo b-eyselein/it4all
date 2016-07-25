@@ -1,30 +1,32 @@
 @(user: model.user.User, question: model.bool.CreationQuestion)
 
 @main("Formel erstellen", user) {
-<script>
+<script type="text/javascript" src="@controllers.routes.Assets.versioned("javascripts/boolcreate.js")"></script>
+<script type="text/javascript">
 function testSolution() {
   // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if(xhttp.readyState == 4 && xhttp.status == 200) {
-      alert(xhttp.responseText);
+      processCorrection(xhttp.responseText);
     }
   };
-
+  
+  if(document.getElementById("learnerSolution").value === "") {
+    alert("Geben Sie bitte eine Formel ein!");
+    return;
+  }
+  
   // AJAX-Objekt mit Daten fuellen, absenden
   var parameters = extractParameters();
+  alert(parameters);
+  
   xhttp.open("PUT", "@controllers.binary.routes.NaryBool.checkBoolCreationSolution()", true);
   xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
   xhttp.setRequestHeader("Accept", "application/json");
   xhttp.send(parameters);
 }
 
-
-function extractParameters() {
-  var variables = document.getElementById("vars").value.split(",");
-  alert(variables.join("::"));
-  return "";
-}
 </script>
 
 <div class="container">
@@ -32,47 +34,52 @@ function extractParameters() {
     <div class="panel-heading">Erstellen Sie die Formel zu folgender Wahrheitstafel:</div>
     <div class="panel-body">
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-sm-6 col-sm-offset-3">
           <table class="table">
             <thead>
-              <tr>
+              <tr id="thead">
                 @for(variable <- question.getVariables()) {
                 <th class="text-center">@variable</th> }
                 <th class="text-center">@question.getSolutionVariable()</th>
               </tr>
             </thead>
             <tbody>
-              @for(i <- 0 until question.getSolutions().size()) {
-              <tr>
-                @for(variable <- question.getSolutions().get(i).getVariables()) {
-                <td class="text-center">@question.getSolutions().get(i).asChar(variable)</td> }
-                <td class="text-center">@question.getSolutions().get(i).asChar('z')</td> }
+              @for(assignment <- question.getSolutions()) {
+              <tr id="@assignment.toString()">
+                @for(variable <- question.getVariables()) {
+                <td class="text-center">@assignment.asChar(variable)</td> }
+                <td class="text-center">@assignment.asChar('z')</td> }
             </tbody>
           </table>
         </div>
       </div>
-      <div>
-        <form action="@binary.routes.NaryBool.checkBoolCreationSolution()" method="post">
+      
+      <div class="row">
+        <form role="form" class="form-horizontal" action="@binary.routes.NaryBool.checkBoolCreationSolution()" method="post">
           <div class="form-group">
             <label class="control-label col-xs-1" for="learnerSolution">z = </label>
             <div class="col-xs-11">
-            @for(assignment <- question.getSolutions()) {
-              <input name="@assignment.toString()" hidden value="z:@assignment.asChar('z')">
-            }
-              <input name="vars" id="vars" hidden value="@question.getJoinedVariables()">
               <input class="form-control" name="learnerSolution" id="learnerSolution" placeholder="Ihre L&ouml;sung"
                 autocomplete="off" required>
             </div>
           </div>
-          <div class="col-sm-6">
-            <button type="button" onclick="testSolution();" class="btn btn-primary btn-block">Pr&uuml;fen</button>
-          </div>
-          <div class="col-sm-6">
-            <button type="submit" class="btn btn-primary btn-block">zeige Musterl&ouml;sung</button>
-          </div>
-          <div class="col-sm-12">
-            <a type="button" href="@binary.routes.NaryBool.newBoolCreationQuestion()" class="btn btn-primary btn-block">N&auml;chste
+          <div class="form-group">
+            <div class="col-sm-4">
+              <button type="button" onclick="testSolution();" class="btn btn-primary btn-block">Pr&uuml;fen</button>
+            </div>
+            <div class="col-sm-4">
+              <button type="submit" class="btn btn-primary btn-block">zeige Musterl&ouml;sung</button>
+            </div>
+            <div class="col-sm-4">
+              <a type="button" href="@binary.routes.NaryBool.newBoolCreationQuestion()" class="btn btn-primary btn-block">N&auml;chste
               Aufgabe</a>
+            </div>
+          </div>
+          <div id="valueDiv">
+          @for(assignment <- question.getSolutions()) {
+            <input name="@assignment.toString()" hidden value="@assignment.asChar('z')">
+          }
+            <input name="vars" hidden value="@question.getJoinedVariables()">
           </div>
         </form>
       </div>
