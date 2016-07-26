@@ -11,8 +11,14 @@ function extractParameters() {
   return parameters;
 }
 
-function processCorrection(correction) {
-  alert(correction);
+function processCorrection(correctionAsJson) {
+  var completeCorrection = JSON.parse(correctionAsJson);
+  var correctionArray = completeCorrection.solutions;
   
-//  var jsonObject = JSON.parse(correction);
+  for(i = 0; i < correctionArray.length; i++) {
+    var correction = correctionArray[i];
+    var solutionCell = document.getElementById(correction.assignmentsForJson);
+    solutionCell.innerHTML = "<span class=\"" + correction.color + "\">" + correction.learnerValue + "</span>";
+  }
+  
 }

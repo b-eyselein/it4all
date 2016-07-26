@@ -1,5 +1,4 @@
-@(user: model.user.User, var_names: Array[String], zvector: Array[String], tabelle: Array[Array[String]], spalten: Int,
-zeilen: Int, dnf: String, s_dnf: String, knf: String, s_knf: String)
+@(user: model.user.User, question: model.bool.CreationQuestion)
 
 @main("Formel erstellen", user) {
 <div class="container">
@@ -7,21 +6,23 @@ zeilen: Int, dnf: String, s_dnf: String, knf: String, s_knf: String)
     <div class="panel-heading">Musterl&ouml;sung</div>
     <div class="panel-body">
       <div class="row">
-        <div class="col-sm-4">
+        <div class="container-fluid">
           <table class="table">
-            <thread align="right">
-            <tr>
-              @for(v <- var_names){
-              <td><b>@v</b></td> }
-              <td class="col-md-4"><b>z</b></td>
-            </tr>
-            </thread>
-            <tbody align="left">
-              @for(i <- 0 until (zeilen)){
+            <thead>
               <tr>
-                @for(j <- 0 until (spalten)){
-                <td>@tabelle(j)(i)</td> }
-                <td>@zvector(i)</td> }
+                @for(variable <- question.getVariables()) {
+                <th class="text-center">@variable</th> }
+                <th class="text-center">@question.getSolutionVariable()</th>
+                <th class="text-center" id="learnerFormula">Ihre L&ouml;sung</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for(assignment <- question.getSolutions()) {
+              <tr>
+                @for(variable <- question.getVariables()) {
+                <td class="text-center">@assignment.asChar(variable)</td> }
+                <td class="text-center">@assignment.asChar('z')</td>
+                <td class="text-center"><span class="@assignment.getColor()">@assignment.asChar('y')</span></td> }
             </tbody>
           </table>
         </div>
@@ -32,13 +33,13 @@ zeilen: Int, dnf: String, s_dnf: String, knf: String, s_knf: String)
           <div class="row">
             <div class="col-sm-3">Kanonische disjunktive Normalform:</div>
             <div class="col-sm-9">
-              @Html(dnf.toString().replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;").intern())
+              @question.getDisjunktiveNormalForm()
             </div>
           </div>
           <div class="row">
             <div class="col-sm-3">Kanonische konjunktive Normalform:</div>
             <div class="col-sm-9">
-              @Html(knf.toString().replace("NOT","&not;").replace("AND","&and;").replace("XOR","&oplus;").replace("OR","&or;").intern())
+              @question.getKonjunktiveNormalForm()
             </div>
           </div>
           <p>

@@ -1,6 +1,8 @@
 package model.bool;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import model.bool.tree.Assignment;
 
@@ -23,10 +25,52 @@ public class CreationQuestion extends BooleanQuestion {
   }
   
   private List<Assignment> solutions;
+  private String learnerSolution;
   
   public CreationQuestion(Character[] theVariables, List<Assignment> theSolutions) {
     super(theVariables);
     solutions = theSolutions;
+  }
+  
+  public CreationQuestion(Character[] theVariables, List<Assignment> theSolutions, String theLearnerSolution) {
+    this(theVariables, theSolutions);
+    learnerSolution = theLearnerSolution;
+  }
+  
+  public String getDisjunktiveNormalForm() {
+    // @formatter:off
+    List<String> formulas = solutions.stream()
+        // Take all positive assignments
+        .filter(as -> as.getAssignment(SOLUTION_VARIABLE))
+        .map(as -> {
+          List<String> vars = new LinkedList<>();
+          for(char variable: as.getVariables())
+            vars.add((as.getAssignment(variable) ? "NOT " : "") + variable);
+          return"("+ String.join(" AND ", vars) + ")";
+        })
+        .collect(Collectors.toList());
+    // @formatter:on
+    return String.join(" OR ", formulas);
+  }
+  
+  public String getKonjunktiveNormalForm() {
+    // @formatter:off
+    List<String> formulas = solutions.stream()
+        // take all negative assignments
+        .filter(as -> !as.getAssignment(SOLUTION_VARIABLE))
+        .map(as -> {
+          List<String> vars = new LinkedList<>();
+          for(char variable: as.getVariables())
+            vars.add((as.getAssignment(variable) ? "NOT " : "") + variable);
+          return"("+ String.join(" OR ", vars) + ")";
+        })
+        .collect(Collectors.toList());
+    // @formatter:on
+    return String.join(" AND ", formulas);
+  }
+  
+  public String getLearnerSolution() {
+    return learnerSolution;
   }
   
   public List<Assignment> getSolutions() {

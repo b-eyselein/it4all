@@ -113,13 +113,17 @@ public class Assignment {
       return "text-danger";
   }
   
+  public char getLearnerValue() {
+    return asChar('y');
+  }
+
   public List<Character> getVariables() {
     return assignments.stream()
         .filter(a -> (a.getVariable() != BooleanQuestion.SOLUTION_VARIABLE
             && a.getVariable() != BooleanQuestion.LEARNER_VARIABLE))
         .map(a -> a.getVariable()).collect(Collectors.toList());
   }
-
+  
   public void setAssignment(char variable, boolean value) {
     AssignmentItem item = getAssignmentItem(variable);
     if(item == null)

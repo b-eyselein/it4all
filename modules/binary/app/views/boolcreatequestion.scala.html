@@ -19,14 +19,11 @@ function testSolution() {
   
   // AJAX-Objekt mit Daten fuellen, absenden
   var parameters = extractParameters();
-  alert(parameters);
-  
   xhttp.open("PUT", "@controllers.binary.routes.NaryBool.checkBoolCreationSolution()", true);
   xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
   xhttp.setRequestHeader("Accept", "application/json");
   xhttp.send(parameters);
 }
-
 </script>
 
 <div class="container">
@@ -34,21 +31,23 @@ function testSolution() {
     <div class="panel-heading">Erstellen Sie die Formel zu folgender Wahrheitstafel:</div>
     <div class="panel-body">
       <div class="row">
-        <div class="col-sm-6 col-sm-offset-3">
+        <div class="container-fluid">
           <table class="table">
             <thead>
-              <tr id="thead">
+              <tr>
                 @for(variable <- question.getVariables()) {
                 <th class="text-center">@variable</th> }
                 <th class="text-center">@question.getSolutionVariable()</th>
+                <th class="text-center" id="learnerFormula">Ihre L&ouml;sung</th>
               </tr>
             </thead>
             <tbody>
               @for(assignment <- question.getSolutions()) {
-              <tr id="@assignment.toString()">
+              <tr>
                 @for(variable <- question.getVariables()) {
                 <td class="text-center">@assignment.asChar(variable)</td> }
-                <td class="text-center">@assignment.asChar('z')</td> }
+                <td class="text-center">@assignment.asChar('z')</td>
+                <td class="text-center" id="@assignment.toString()">--</td> }
             </tbody>
           </table>
         </div>
@@ -185,7 +184,8 @@ function testSolution() {
           <li>Beispiele:
             <ul>
               <li>Nach Rangfolge: <code>a xor b impl c or d and not e</code> &hArr; <code>a xor (b impl (c or (d and (not e))))))</code></li>
-              <li>Gleichwertiger Rang (links nach rechts): <code>a xor b nor c nand d equiv e</code> &hArr; <code>((((a xor b) nor c) nand d) equiv e)</code></li>
+              <li>Gleichwertiger Rang (links nach rechts): <code>a xor b nor c nand d equiv e</code> &hArr;
+              <code>((((a xor b) nor c) nand d) equiv e)</code></li>
             </ul>
           </li>
         </ul>
