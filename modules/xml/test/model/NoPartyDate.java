@@ -1,12 +1,12 @@
 package model;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 import java.io.File;
 import java.util.List;
 
 import org.junit.Test;
-
 
 public class NoPartyDate {
   
@@ -15,13 +15,12 @@ public class NoPartyDate {
     File referenceFile = new File("test/resources/partyNoDate.xml");
     File solution = new File("test/resources/partyNoDate.dtd");
     List<XMLError> out = XmlCorrector.correctDTDAgainstXML(solution, referenceFile);
-    assertEquals("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), 1);
-
+    assertThat("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), equalTo(1));
+    
     XMLError error = out.get(0);
-
-    assertEquals(XmlErrorType.ERROR, error.getErrorType());
-    assertEquals("Attribute \"datum\" must be declared for element type \"party\".", error.getErrorMessage());
-  
+    
+    assertThat(error.getErrorType(), equalTo(XmlErrorType.ERROR));
+    assertThat(error.getErrorMessage(), equalTo("Attribute \"datum\" must be declared for element type \"party\"."));
   }
   
 }

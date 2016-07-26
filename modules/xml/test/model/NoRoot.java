@@ -1,6 +1,7 @@
 package model;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 import java.io.File;
 import java.util.List;
@@ -25,18 +26,19 @@ public class NoRoot {
   public void testCorrectXMLAgainstDTD() {
     File file = new File("test/resources/partyNoRoot.xml");
     List<XMLError> out = XmlCorrector.correctXMLAgainstDTD(file);
-    assertEquals("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), 2);
+    assertThat("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), equalTo(2));
 
     XMLError error = out.get(0);
     XMLError fatalError = out.get(1);
 
-    assertEquals(XmlErrorType.ERROR, error.getErrorType());
-    assertEquals(3, error.getLine());
-    assertEquals("Document root element \"gast\", must match DOCTYPE root \"party\".", error.getErrorMessage());
+    assertThat(error.getErrorType(), equalTo(XmlErrorType.ERROR));
+    assertThat(error.getLine(), equalTo(1));
+    assertThat(error.getErrorMessage(), equalTo("Document root element \"gast\", must match DOCTYPE root \"party\"."));
 
-    assertEquals(XmlErrorType.FATALERROR, fatalError.getErrorType());
-    assertEquals(8, fatalError.getLine());
-    assertEquals("The markup in the document following the root element must be well-formed.", fatalError.getErrorMessage());
+    assertThat(fatalError.getErrorType(), equalTo(XmlErrorType.FATALERROR));
+    assertThat(fatalError.getLine(), equalTo(6));
+    assertThat(fatalError.getErrorMessage(),
+        equalTo("The markup in the document following the root element must be well-formed."));
   }
 
   /**
@@ -50,18 +52,19 @@ public class NoRoot {
     File xsd = new File("test/resources/note.xsd");
     List<XMLError> out = null;
     out = XmlCorrector.correctXMLAgainstXSD(xml, xsd);
-    assertEquals("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), 2);
+    assertThat("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), equalTo(2));
 
     XMLError error = out.get(0);
     XMLError fatalError = out.get(1);
 
-    assertEquals(XmlErrorType.ERROR, error.getErrorType());
-    assertEquals(2, error.getLine());
-    assertEquals("Cannot find the declaration of element 'to'.", error.getErrorMessage());
+    assertThat(error.getErrorType(), equalTo(XmlErrorType.ERROR));
+    assertThat(error.getLine(), equalTo(2));
+    assertThat(error.getErrorMessage(), equalTo("Cannot find the declaration of element 'to'."));
 
-    assertEquals(XmlErrorType.FATALERROR, fatalError.getErrorType());
-    assertEquals(3, fatalError.getLine());
-    assertEquals("The markup in the document following the root element must be well-formed.", fatalError.getErrorMessage());
+    assertThat(fatalError.getErrorType(), equalTo(XmlErrorType.FATALERROR));
+    assertThat(fatalError.getLine(), equalTo(3));
+    assertThat(fatalError.getErrorMessage(),
+        equalTo("The markup in the document following the root element must be well-formed."));
   }
 
 }
