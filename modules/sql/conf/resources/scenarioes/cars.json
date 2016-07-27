@@ -7,8 +7,11 @@
 				"id": 1,
 				"title": "TODO!",
 				"text": "TODO!",
-				"sampleSolution": [
-					"TODO"
+				"sampleSolutions": [
+					{
+						"id": 1,
+						"sample": "TODO!"
+					}
 				]
 			}
 		]

@@ -7,9 +7,15 @@
 				"id": 1,
 				"title": "Create todo",
 				"text": "Erstellen Sie das CREATE-Statement für die Tabelle users!",
-				"sampleSolution": [
-					"CREATE TABLE users (username varchar(20) PRIMARY KEY, firstname varchar(50), lastname varchar(50));",
-					"CREATE TABLE users (username varchar(20), firstname varchar(50), lastname varchar(50), PRIMARY KEY firstname;"
+				"sampleSolutions": [
+					{
+						"id": 1,
+						"sample": "CREATE TABLE users (username varchar(20) PRIMARY KEY, firstname varchar(50), lastname varchar(50));"
+					},
+					{
+						"id": 2,
+						"sample": "CREATE TABLE users (username varchar(20), firstname varchar(50), lastname varchar(50), PRIMARY KEY firstname;"
+					}
 				]
 			}
 		],
@@ -18,8 +24,11 @@
 				"id": 2,
 				"title": "Alle Telefonnumern",
 				"text": "Geben Sie alle Telefonnummern aus!",
-				"sampleSolution": [
-					"SELECT phonenumber FROM phone;"
+				"sampleSolutions": [
+					{
+						"id": 1,
+						"sample": "SELECT phonenumber FROM phone;"
+					}
 				]
 			},
 			{
@@ -27,9 +36,15 @@
 				"title": "Wer hat ein Geschäftshandy?",
 				"text": "Geben Sie die Vor- und Nachnamen aller Personen aus, die eine Geschäftsnummer besitzen",
 				"type": "SELECT",
-				"sampleSolution": [
-					"SELECT firstname, lastname FROM phone JOIN users ON phone.username = users.username WHERE phonetype = 'work';",
-					"SELECT lastname, firstname FROM phone p, users u WHERE u.username = p.username AND phonetype = 'work'"
+				"sampleSolutions": [
+					{
+						"id": 1,
+						"sample": "SELECT firstname, lastname FROM phone JOIN users ON phone.username = users.username WHERE phonetype = 'work';"
+					},
+					{
+						"id": 2,
+						"sample": "SELECT lastname, firstname FROM phone p, users u WHERE u.username = p.username AND phonetype = 'work'"
+					}
 				]
 			}
 		],
@@ -38,8 +53,11 @@
 				"id": 4,
 				"title": "Handy verloren...",
 				"text": "Martina Musterfrau (Nutzername f_martina) hat ein neues Handy mit der Nummer 2345 bekommen. Aktualisieren Sie den Eintrag!",
-				"sampleSolution": [
-					"UPDATE phone SET phonenumber = '2345' WHERE username = 'f_martina';"
+				"sampleSolutions": [
+					{
+						"id": 1,
+						"sample": "UPDATE phone SET phonenumber = '2345' WHERE username = 'f_martina';"
+					}
 				]
 			}
 		]

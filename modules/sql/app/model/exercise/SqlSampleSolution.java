@@ -23,10 +23,10 @@ public class SqlSampleSolution extends Model {
     public int exerciseId;
     public String scenarioName;
     
-    public SqlSampleSolutionKey(String theScenarioName, int theExerciseId, int theSampleId) {
+    public SqlSampleSolutionKey(int theSampleId, int theExerciseId, String theScenarioName) {
+      sampleId = theSampleId;
       exerciseId = theExerciseId;
       scenarioName = theScenarioName;
-      sampleId = theSampleId;
     }
     
     @Override
@@ -52,6 +52,8 @@ public class SqlSampleSolution extends Model {
     }
   }
   
+  public static final Finder<SqlSampleSolutionKey, SqlSampleSolution> finder = new Finder<>(SqlSampleSolution.class);
+  
   @EmbeddedId
   public SqlSampleSolutionKey key;
   
@@ -60,10 +62,15 @@ public class SqlSampleSolution extends Model {
   @ManyToOne
   // @formatter:off
   @JoinColumns({
-      @JoinColumn(name = "scenario_name", referencedColumnName = "scenario_name"),
-      @JoinColumn(name = "exercise_id", referencedColumnName = "id")
+      @JoinColumn(name = "scenario_name", referencedColumnName = "scenario_name", updatable = false, insertable = false),
+      @JoinColumn(name = "exercise_id", referencedColumnName = "id", updatable = false, insertable = false)
   })
   //@formatter:on
   public SqlExercise exercise;
-
+  
+  public SqlSampleSolution(SqlSampleSolutionKey theKey, String theSample) {
+    key = theKey;
+    sample = theSample;
+  }
+  
 }
