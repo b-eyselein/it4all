@@ -24,6 +24,54 @@ public class SqlStartUpChecker {
 
   private static Logger.ALogger theLogger = Logger.of("startup");
 
+  private static void handleExercise(String scenarioName, String exerciseType, JsonNode exerciseNode) {
+    SqlExerciseKey exerciseKey = new SqlExerciseKey(scenarioName, exerciseNode.get("id").asInt());
+    String title = exerciseNode.get("title").asText();
+    String text = exerciseNode.get("text").asText();
+    SqlExType type = SqlExType.getByName(exerciseType);
+
+    SqlExercise exercise = SqlExercise.finder.byId(exerciseKey);
+    if(exercise == null) {
+      // Create new Exercise in DB
+      exercise = new SqlExercise(exerciseKey, title, text, type);
+      exercise.save();
+    } else {
+      // TODO: Update exercise
+    }
+
+    // Sample solutions!
+    JsonNode sampleSolutionsNode = exerciseNode.get("sampleSolutions");
+    
+    if(sampleSolutionsNode == null || !sampleSolutionsNode.isArray())
+      throw new IllegalArgumentException("The exercise " + exercise.key.id + " in scenario " + scenarioName
+          + " does not have sample solutions or the solutions are not correctly specified as an array!");
+
+    for(final Iterator<JsonNode> solutionsIter = sampleSolutionsNode.elements(); solutionsIter.hasNext();) {
+      handleSampleSolution(scenarioName, exercise, solutionsIter.next());
+    }
+  }
+
+  private static void handleSampleSolution(String scenarioName, SqlExercise exercise, JsonNode sampleSolutionNode) {
+    JsonNode idNode = sampleSolutionNode.get("id"), sampleNode = sampleSolutionNode.get("sample");
+
+    if(idNode == null || sampleNode == null)
+      throw new IllegalArgumentException("The id or sample of a sample solution for exercise " + exercise.key.id
+          + " in scenario " + scenarioName + " is missing!");
+
+    if(!idNode.canConvertToInt())
+      throw new IllegalArgumentException("Node for id " + idNode.asText() + " should be an int!");
+
+    SqlSampleSolutionKey sampleKey = new SqlSampleSolutionKey(idNode.asInt(), exercise.key.id, scenarioName);
+
+    SqlSampleSolution sampleSolution = SqlSampleSolution.finder.byId(sampleKey);
+    if(sampleSolution == null) {
+      sampleSolution = new SqlSampleSolution(sampleKey, sampleNode.asText());
+      sampleSolution.save();
+    } else {
+      // TODO: Update sample solution!?!
+    }
+  }
+  
   private static void handleScenario(Path path) {
     String jsonAsString = "";
 
@@ -53,40 +101,7 @@ public class SqlStartUpChecker {
       JsonNode exercisesForType = exercises.get(exerciseType);
 
       for(final Iterator<JsonNode> exerciseIter = exercisesForType.elements(); exerciseIter.hasNext();) {
-        JsonNode exerciseNode = exerciseIter.next();
-
-        // FIXME: check, ob entsprechende Nodes vorhanden!?!
-        SqlExerciseKey exerciseKey = new SqlExerciseKey(scenarioName, exerciseNode.get("id").asInt());
-        String title = exerciseNode.get("title").asText();
-        String text = exerciseNode.get("text").asText();
-        SqlExType type = SqlExType.getByName(exerciseType);
-
-        SqlExercise exercise = SqlExercise.finder.byId(exerciseKey);
-        if(exercise == null) {
-          // Create new Exercise in DB
-          exercise = new SqlExercise(exerciseKey, title, text, type);
-          exercise.save();
-        } else {
-          // TODO: Update exercise
-        }
-
-        // FIXME: Sample solutions!
-        JsonNode sampleSolutionsNode = exerciseNode.get("sampleSolutions");
-        for(final Iterator<JsonNode> solutionsIter = sampleSolutionsNode.elements(); solutionsIter.hasNext();) {
-          JsonNode sampleSolutionNode = solutionsIter.next();
-          int id = sampleSolutionNode.get("id").asInt();
-          String sample = sampleSolutionNode.get("sample").asText();
-
-          SqlSampleSolutionKey sampleKey = new SqlSampleSolutionKey(id, exercise.key.id, scenarioName);
-
-          SqlSampleSolution sampleSolution = SqlSampleSolution.finder.byId(sampleKey);
-          if(sampleSolution == null) {
-            sampleSolution = new SqlSampleSolution(sampleKey, sample);
-            sampleSolution.save();
-          } else {
-            // TODO: Update sample solution!?!
-          }
-        }
+        handleExercise(scenarioName, exerciseType, exerciseIter.next());
 
       }
     }
@@ -107,7 +122,6 @@ public class SqlStartUpChecker {
     } catch (PersistenceException e) {
       theLogger.error("Failure: ", e);
     }
-
   }
 
   public SqlStartUpChecker() {
