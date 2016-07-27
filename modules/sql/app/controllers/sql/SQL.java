@@ -33,52 +33,54 @@ import views.html.sqloverview;
 
 @Authenticated(Secured.class)
 public class SQL extends Controller {
-  
+
   private static final String SHOW_ALL_TABLES = "SHOW TABLES";
-  
+
   @Inject
   @NamedDatabase("sqlmain")
   // IMPORTANT: DO NOT USE "DEFAULT" DATABASE
   private Database sql_main;
-  
+
   @Inject
   @NamedDatabase("sqlslave")
   private Database sql_slave;
-  
+
   @Inject
   private FormFactory factory;
-  
+
   public Result commit(String scenarioName, int exerciseId) {
     User user = UserManagement.getCurrentUser();
     SqlExercise exercise = SqlExercise.finder.byId(new SqlExerciseKey(scenarioName, exerciseId));
-    
+
     DynamicForm form = factory.form().bindFromRequest();
     String editorContent = form.get("editorContent");
-    
+
     try {
       Connection connection = sql_slave.getConnection();
-      
+
       SqlCorrectionResult result = SqlCorrector.correct(user, editorContent, exercise, connection);
-      
+
       connection.close();
-      
-      return ok(Json.prettyPrint(Json.toJson(result)));
+
+      // JsonNode ret = Json.toJson(result);
+      // System.out.println(Json.prettyPrint(ret));
+      return ok(Json.toJson(result));
     } catch (SQLException e) {
       return badRequest(error.render(user, new Html("Fehler bei Verarbeitung: " + e.getMessage() + "!")));
     }
-    
+
   }
-  
+
   public Result exercise(String scenarioName, int exerciseId) {
     User user = UserManagement.getCurrentUser();
     SqlExercise exercise = SqlExercise.finder.byId(new SqlExerciseKey(scenarioName, exerciseId));
-    
+
     Connection connection = sql_main.getConnection();
     try {
       List<SqlQueryResult> tables = new LinkedList<>();
       Statement statement = connection.createStatement();
       ResultSet existingDBs = statement.executeQuery(SHOW_ALL_TABLES);
-
+      
       while(existingDBs.next()) {
         String tableName = existingDBs.getString(1);
         Statement selectStatement = connection.createStatement();
@@ -86,7 +88,7 @@ public class SQL extends Controller {
         tables.add(new SqlQueryResult(tableResult, tableName));
         selectStatement.close();
       }
-
+      
       statement.close();
       connection.close();
       return ok(sqlexercise.render(user, exercise, tables));
@@ -95,9 +97,9 @@ public class SQL extends Controller {
       return badRequest(error.render(user, new Html("Fehler beim Auslesen der Tabellen!")));
     }
   }
-  
+
   public Result index() {
     return ok(sqloverview.render(UserManagement.getCurrentUser(), SqlScenario.finder.all()));
   }
-  
+
 }

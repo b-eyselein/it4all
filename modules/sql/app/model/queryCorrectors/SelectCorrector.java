@@ -73,32 +73,23 @@ public class SelectCorrector extends QueryCorrector<Select> {
   private List<String> getQueriedColumns(PlainSelect plainSelect) {
     return plainSelect.getSelectItems().stream().map(item -> item.toString()).collect(Collectors.toList());
   }
-  
-  private List<String> listDifference(List<String> a, List<String> b) {
-    List<String> ret = new LinkedList<>();
-    ret.addAll(a);
-    ret.removeAll(b);
-    return ret;
-  }
-  
+
   @Override
   protected SqlCorrectionResult compareStatically(Select parsedUserStatement, Select parsedSampleStatement) {
     Success success = Success.COMPLETE;
-    String message = "";
+    List<String> messages = new LinkedList<>();
     
     PlainSelect plainUserSelect = (PlainSelect) parsedUserStatement.getSelectBody();
     PlainSelect plainSampleSelect = (PlainSelect) parsedSampleStatement.getSelectBody();
     
     // 1. compare tables
     UsedTablesComparison tableComp = compareTables(plainUserSelect, plainSampleSelect);
-    message += tableComp.getMessage();
     // comparison has "lower" success than assumed at the moment
     if(success.compareTo(tableComp.getSuccess()) > 0)
       success = tableComp.getSuccess();
 
     // 2. compare queried elements
     UsedColumnsComparison columnComp = compareQueriedColumns(plainUserSelect, plainSampleSelect);
-    message += columnComp.getMessage();
     // comparison has "lower" success than assumed at the moment
     if(success.compareTo(columnComp.getSuccess()) > 0)
       success = columnComp.getSuccess();
@@ -108,7 +99,7 @@ public class SelectCorrector extends QueryCorrector<Select> {
     // TODO: 4. compare order by clause(s)
     
     // @formatter:off
-    return new SqlCorrectionResult(success, message)
+    return new SqlCorrectionResult(success, messages)
         .withTableComparisonResult(tableComp)
         .withColumnsComparisonResult(columnComp);
     // @formatter:on
@@ -128,18 +119,18 @@ public class SelectCorrector extends QueryCorrector<Select> {
       SqlQueryResult sampleResult = new SqlQueryResult(sampleResultSet, true);
       
       deleteDB(conn, slaveDB);
-      
+
+      // @formatter:off
       if(userResult.isIdentic(sampleResult))
         return new SqlCorrectionResult(Success.COMPLETE, "Resultate waren mit Resultaten der Musterlösung identisch.")
             .withExecutionResult(userResult, null);
       else
-        // @formatter:off
         return new SqlCorrectionResult(Success.NONE, "Resultate waren nicht identisch!").
             withExecutionResult(userResult, sampleResult);
-        // @formatter:on
     } catch (SQLException e) {
       return new SqlCorrectionResult(Success.NONE, "Es gab ein Problem beim Ausführen der Query: " + e.getMessage());
     }
+    // @formatter:on
   }
   
 }

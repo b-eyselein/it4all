@@ -8,14 +8,19 @@ function processCorrection(correction) {
   var elementsToAdd = "";
   if(parsedCorr.success === "COMPLETE") {
     resultPanel.className = "panel panel-success";
-    elementsToAdd += "<div class=\"alert alert-success\">" + parsedCorr.message + "</div>";
+    elementsToAdd += "<div class=\"alert alert-success\">";
   } else if(parsedCorr.success === "PARTIALLY") {
     resultPanel.className = "panel panel-warning";
-    elementsToAdd += "<div class=\"alert alert-warning\">" + parsedCorr.message + "</div>";
+    elementsToAdd += "<div class=\"alert alert-warning\">";
   } else {
     resultPanel.className = "panel panel-danger";
-    elementsToAdd += "<div class=\"alert alert-danger\">" + parsedCorr.message + "</div>";
+    elementsToAdd += "<div class=\"alert alert-danger\">";
   }
+  var messages = parsedCorr.messages;
+  for(i = 0; i < messages.length; i++) {
+    elementsToAdd += "<p>" + messages[i] + "</p>";
+  }
+  elementsToAdd += "</div>";
   
   var tableCompResult = parsedCorr.usedTablesComparison;
   if(tableCompResult !== null) {
@@ -28,7 +33,6 @@ function processCorrection(correction) {
           + tableCompResult.unneccessaryTables + "</div>";
     }
   }
-  alert(elementsToAdd);
   
   var userResult = parsedCorr.userResult;
   var sampleResult = parsedCorr.sampleResult;
