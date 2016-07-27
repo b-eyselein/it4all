@@ -44,21 +44,27 @@ public class SqlStartUpChecker {
     }
     
     JsonNode exercises = json.get("exercises");
-    for(final Iterator<JsonNode> exerciseIter = exercises.elements(); exerciseIter.hasNext();) {
-      JsonNode exerciseNode = exerciseIter.next();
+    for(final Iterator<String> typeIter = exercises.fieldNames(); typeIter.hasNext();) {
+      String exerciseType = typeIter.next();
+      JsonNode exercisesForType = exercises.get(exerciseType);
       
-      SqlExerciseKey exerciseKey = new SqlExerciseKey(scenarioName, exerciseNode.get("id").asInt());
-      String title = exerciseNode.get("title").asText();
-      String text = exerciseNode.get("text").asText();
-      SqlExType type = SqlExType.getByName(exerciseNode.get("type").asText());
-      
-      SqlExercise exercise = SqlExercise.finder.byId(exerciseKey);
-      if(exercise == null) {
-        // Create new Exercise in DB
-        exercise = new SqlExercise(exerciseKey, title, text, type);
-        exercise.save();
-      } else {
-        // TODO: Update exercise
+      for(final Iterator<JsonNode> exerciseIter = exercisesForType.elements(); exerciseIter.hasNext();) {
+        JsonNode exerciseNode = exerciseIter.next();
+        
+        // FIXME: check, ob entsprechende Nodes vorhanden!?!
+        SqlExerciseKey exerciseKey = new SqlExerciseKey(scenarioName, exerciseNode.get("id").asInt());
+        String title = exerciseNode.get("title").asText();
+        String text = exerciseNode.get("text").asText();
+        SqlExType type = SqlExType.getByName(exerciseType);
+        
+        SqlExercise exercise = SqlExercise.finder.byId(exerciseKey);
+        if(exercise == null) {
+          // Create new Exercise in DB
+          exercise = new SqlExercise(exerciseKey, title, text, type);
+          exercise.save();
+        } else {
+          // TODO: Update exercise
+        }
       }
     }
   }
@@ -71,10 +77,10 @@ public class SqlStartUpChecker {
       throw new RuntimeException("Path " + folder + " should be a directory!");
     
     try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(scenarioDir)) {
-      for(final Iterator<Path> it = directoryStream.iterator(); it.hasNext();) {
+      for(final Iterator<Path> it = directoryStream.iterator(); it.hasNext();)
         handleScenario(it.next());
-      }
-    } catch (IOException ex) {
+    } catch (NullPointerException | IOException e) {
+      theLogger.error("Failure: ", e);
     }
     
   }

@@ -1,51 +1,47 @@
 {
 	"shortName": "phone",
 	"longName": "Telefon- und Emailverzeichnis",
-	"exercises": 
-	[
-		{
-			"id": 1,
-			"title": "Create todo",
-			"text": "Erstellen Sie das CREATE-Statement für die Tabelle users!",
-			"type": "CREATE",
-			"sampleSolution": 
-			[
-				"CREATE TABLE users (\n\tusername varchar(20) primary key,\n\tfirstname varchar(50),\n\tlastname varchar(50)\n);"
-			]
-		},
-
-		{
-			"id": 2,
-			"title": "Alle Telefonnumern",
-			"text": "Geben Sie alle Telefonnummern aus!",
-			"type": "SELECT",
-			"sampleSolution": 
-			[
-				"SELECT phonenumber FROM phone;"
-			]
-		},
-
-		{
-			"id": 3,
-			"title": "Wer hat ein Geschäftshandy?",
-			"text": "Geben Sie die Vor- und Nachnamen aller Personen aus, die eine Geschäftsnummer besitzen",
-			"type": "SELECT",
-			"sampleSolution": 
-			[
-				"SELECT firstname, lastname FROM phone JOIN users ON phone.username = users.username WHERE phonetype = 'work';",
-				"SELECT lastname, firstname FROM phone p, users u WHERE u.username = p.username AND phonetype = 'work'"
-			]
-		},
-
-		{
-			"id": 4,
-			"title": "Handy verloren...",
-			"text": "Martina Musterfrau (Nutzername f_martina) hat ein neues Handy mit der Nummer 2345 bekommen. Aktualisieren Sie den Eintrag!",
-			"type": "UPDATE",
-			"sampleSolution": 
-			[
-				"UPDATE phone SET phonenumber = '2345' WHERE username = 'f_martina';"
-			]
-		}
-	]
+	"exercises": {
+		"CREATE": [
+			{
+				"id": 1,
+				"title": "Create todo",
+				"text": "Erstellen Sie das CREATE-Statement für die Tabelle users!",
+				"sampleSolution": [
+					"CREATE TABLE users (username varchar(20) PRIMARY KEY, firstname varchar(50), lastname varchar(50));",
+					"CREATE TABLE users (username varchar(20), firstname varchar(50), lastname varchar(50), PRIMARY KEY firstname;"
+				]
+			}
+		],
+		"SELECT": [
+			{
+				"id": 2,
+				"title": "Alle Telefonnumern",
+				"text": "Geben Sie alle Telefonnummern aus!",
+				"sampleSolution": [
+					"SELECT phonenumber FROM phone;"
+				]
+			},
+			{
+				"id": 3,
+				"title": "Wer hat ein Geschäftshandy?",
+				"text": "Geben Sie die Vor- und Nachnamen aller Personen aus, die eine Geschäftsnummer besitzen",
+				"type": "SELECT",
+				"sampleSolution": [
+					"SELECT firstname, lastname FROM phone JOIN users ON phone.username = users.username WHERE phonetype = 'work';",
+					"SELECT lastname, firstname FROM phone p, users u WHERE u.username = p.username AND phonetype = 'work'"
+				]
+			}
+		],
+		"UPDATE": [
+			{
+				"id": 4,
+				"title": "Handy verloren...",
+				"text": "Martina Musterfrau (Nutzername f_martina) hat ein neues Handy mit der Nummer 2345 bekommen. Aktualisieren Sie den Eintrag!",
+				"sampleSolution": [
+					"UPDATE phone SET phonenumber = '2345' WHERE username = 'f_martina';"
+				]
+			}
+		]
+	}
 }

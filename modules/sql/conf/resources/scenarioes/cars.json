@@ -1,8 +1,16 @@
 {
 	"shortName": "cars",
 	"longName": "Automobile",
-	"exercises": 
-	[
-		
-	]
+	"exercises": {
+		"SELECT": [
+			{
+				"id": 1,
+				"title": "TODO!",
+				"text": "TODO!",
+				"sampleSolution": [
+					"TODO"
+				]
+			}
+		]
+	}
 }
