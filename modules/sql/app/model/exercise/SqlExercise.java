@@ -24,10 +24,12 @@ public class SqlExercise extends Model {
 
     private static final long serialVersionUID = -670842276417613477L;
 
+    public static final Finder<SqlExerciseKey, SqlExercise> finder = new Finder<>(SqlExercise.class);
+
     public int id;
 
     public String scenarioName;
-
+    
     public SqlExerciseKey(String theScenarioName, int theExerciseId) {
       id = theExerciseId;
       scenarioName = theScenarioName;
@@ -54,6 +56,13 @@ public class SqlExercise extends Model {
 
   public enum SqlExType {
     CREATE, SELECT, UPDATE, INSERT, DELETE;
+
+    public static SqlExType getByName(String typeText) {
+      for(SqlExType type: values())
+        if(type.toString().equals(typeText))
+          return type;
+      return null;
+    }
   }
 
   public static Finder<SqlExerciseKey, SqlExercise> finder = new Finder<>(SqlExercise.class);
@@ -75,5 +84,12 @@ public class SqlExercise extends Model {
   @ManyToOne
   @JoinColumn(name = "scenario_name", insertable = false, updatable = false)
   public SqlScenario scenario;
+
+  public SqlExercise(SqlExerciseKey theKey, String theTitle, String theText, SqlExType theExType) {
+    key = theKey;
+    title = theTitle;
+    text = theText;
+    exType = theExType;
+  }
 
 }

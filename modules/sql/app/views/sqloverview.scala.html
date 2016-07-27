@@ -2,6 +2,9 @@
 
 @main("SQL", user) {
 <div class="container">
+  @if(scenarioes.isEmpty()) {
+  	<div class="alert alert-danger">Es sind momentan leider keine Szenarios verfügbar. Wenden Sie sich bitte an den Administrator!</div>
+  }
   @for(scenario <- scenarioes) {
   <div class="panel panel-default">
     <div class="panel-heading">Szenario "@scenario.longName": Verf&uuml;gbare Aufgaben</div>
@@ -12,12 +15,17 @@
         <div class="panel panel-default">
           <div class="panel-heading">
             <h4 class="panel-title">
-              <a data-toggle="collapse" data-parent="#accordion" href="#collapse_@sqlExType">@sqlExType.toString() - Aufgaben</a>
+              <a data-toggle="collapse" data-parent="#accordion" href="#collapse_@{scenario.shortName}_@sqlExType">@sqlExType - Aufgaben</a>
             </h4>
           </div>
-          <div id="collapse_@sqlExType" class="panel-collapse collapse">
+          <div id="collapse_@{scenario.shortName}_@sqlExType" class="panel-collapse collapse">
+          @if(scenario.getExercisesByType(sqlExType).isEmpty()) {
+          	<div class="container-fluid">
+              <div class="alert alert-warning">Für den Aufgabentype "@sqlExType" gibt es in diesem Szenario leider noch keine Aufgaben</div>
+            </div>
+          } else {
             <ul class="list-group">
-              @for(ex <- scenario.getExercises(sqlExType)) {
+              @for(ex <- scenario.getExercisesByType(sqlExType)) {
               <li class="list-group-item">
                 <a href="@controllers.sql.routes.SQL.exercise(ex.key.scenarioName, ex.key.id)" class="list-group-item">
                   Aufgabe @ex.key.id: @ex.text
@@ -25,6 +33,7 @@
               </li>
               }
             </ul>
+          }
           </div>
         </div>
         }

@@ -23,15 +23,23 @@ function processCorrection(correction) {
   elementsToAdd += "</div>";
   
   var tableCompResult = parsedCorr.usedTablesComparison;
-  if(tableCompResult !== null) {
-    if(tableCompResult.missingTables.length !== 0) {
-      elementsToAdd += "<div class=\"alert alert-danger\">Es fehlen folgende Tabellen: "
-          + tableCompResult.missingTables + "</div>";
-    }
-    if(tableCompResult.unneccessaryTables.length !== 0) {
-      elementsToAdd += "<div class=\"alert alert-warning\">Folgende Tabellen wurden unn&ouml;tigerweise benutzt: "
-          + tableCompResult.unneccessaryTables + "</div>";
-    }
+  if(tableCompResult.missingTables.length !== 0) {
+    elementsToAdd += "<div class=\"alert alert-danger\">Es fehlen folgende Tabellen: " + tableCompResult.missingTables
+        + "</div>";
+  }
+  if(tableCompResult.unneccessaryTables.length !== 0) {
+    elementsToAdd += "<div class=\"alert alert-warning\">Folgende Tabellen wurden unn&ouml;tigerweise benutzt: "
+        + tableCompResult.unneccessaryTables + "</div>";
+  }
+
+  var columnsCompResult = parsedCorr.usedColumnsComparison;
+  if(columnsCompResult.missingColumns.length !== 0) {
+    elementsToAdd += "<div class=\"alert alert-danger\">Es fehlen folgende Spalten: " + columnsCompResult.missingColumns
+        + "</div>";
+  }
+  if(columnsCompResult.wrongColumns.length !== 0) {
+    elementsToAdd += "<div class=\"alert alert-warning\">Folgende Spalten wurden unn&ouml;tigerweise benutzt: "
+        + columnsCompResult.wrongColumns + "</div>";
   }
   
   var userResult = parsedCorr.userResult;
