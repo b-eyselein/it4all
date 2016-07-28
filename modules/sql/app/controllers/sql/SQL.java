@@ -35,7 +35,8 @@ import views.html.sqloverview;
 public class SQL extends Controller {
   
   private static final String SHOW_ALL_TABLES = "SHOW TABLES";
-  
+  private static final String SELECT_ALL = "SELECT * FROM ";
+
   @Inject
   @NamedDatabase("sqlmain")
   // IMPORTANT: DO NOT USE "DEFAULT" DATABASE
@@ -79,8 +80,9 @@ public class SQL extends Controller {
     User user = UserManagement.getCurrentUser();
     SqlExercise exercise = SqlExercise.finder.byId(new SqlExerciseKey(scenarioName, exerciseId));
     
-    Connection connection = sql_main.getConnection();
     try {
+      Connection connection = sql_main.getConnection();
+      connection.setCatalog(scenarioName);
       List<SqlQueryResult> tables = new LinkedList<>();
       Statement statement = connection.createStatement();
       ResultSet existingDBs = statement.executeQuery(SHOW_ALL_TABLES);
@@ -88,7 +90,7 @@ public class SQL extends Controller {
       while(existingDBs.next()) {
         String tableName = existingDBs.getString(1);
         Statement selectStatement = connection.createStatement();
-        ResultSet tableResult = selectStatement.executeQuery("SELECT * FROM " + tableName);
+        ResultSet tableResult = selectStatement.executeQuery(SELECT_ALL + tableName);
         tables.add(new SqlQueryResult(tableResult, tableName));
         selectStatement.close();
       }

@@ -90,7 +90,6 @@ create table js_testvalue (
 create table sql_exercise (
   id                            integer not null,
   scenario_name                 varchar(255) not null,
-  title                         varchar(255),
   text                          text,
   ex_type                       varchar(6),
   constraint ck_sql_exercise_ex_type check (ex_type in ('CREATE','SELECT','UPDATE','INSERT','DELETE')),
@@ -108,6 +107,7 @@ create table sql_sample_solution (
 create table sql_scenario (
   short_name                    varchar(255) not null,
   long_name                     varchar(255),
+  script_file                   varchar(255),
   constraint pk_sql_scenario primary key (short_name)
 );
 

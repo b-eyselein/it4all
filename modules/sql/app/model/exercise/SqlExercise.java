@@ -27,9 +27,8 @@ public class SqlExercise extends Model {
     public static final Finder<SqlExerciseKey, SqlExercise> finder = new Finder<>(SqlExercise.class);
 
     public int id;
-
     public String scenarioName;
-    
+
     public SqlExerciseKey(String theScenarioName, int theExerciseId) {
       id = theExerciseId;
       scenarioName = theScenarioName;
@@ -70,8 +69,6 @@ public class SqlExercise extends Model {
   @EmbeddedId
   public SqlExerciseKey key;
 
-  public String title;
-
   @Column(columnDefinition = "text")
   public String text;
 
@@ -85,9 +82,8 @@ public class SqlExercise extends Model {
   @JoinColumn(name = "scenario_name", insertable = false, updatable = false)
   public SqlScenario scenario;
 
-  public SqlExercise(SqlExerciseKey theKey, String theTitle, String theText, SqlExType theExType) {
+  public SqlExercise(SqlExerciseKey theKey, String theText, SqlExType theExType) {
     key = theKey;
-    title = theTitle;
     text = theText;
     exType = theExType;
   }
