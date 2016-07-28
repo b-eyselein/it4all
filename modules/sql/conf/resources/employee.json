@@ -5,10 +5,10 @@
 	"exercises": {
 		"SELECT": {
 			"1": {
-				"text": "Wie viele Angestellte hat die Firma?",
+				"text": "Wie viele Angestellte hat die Firma? Benennen Sie das Ergebnis als 'Anzahl'",
 				"sampleSolutions": {
-					"1": "SELECT COUNT(*) FROM Employee",
-					"2": "SELECT COUNT(employeeOID) FROM Employee"
+					"1": "SELECT COUNT(*) AS Anzahl FROM Employee",
+					"2": "SELECT COUNT(employeeOID) AS Anzahl FROM Employee"
 				}
 			},
 			"2": {

@@ -24,26 +24,26 @@ import net.sf.jsqlparser.statement.Statement;
 import play.Logger;
 
 public abstract class QueryCorrector<QueryType extends Statement> {
-
+  
   private static final String DB_BASENAME = "sql_";
   private static final String CREATE_DB_DUMMY = "CREATE DATABASE IF NOT EXISTS ";
   private static final String SHOW_ALL_DBS = "SHOW DATABASES";
-
+  
   private static final Logger.ALogger theLogger = Logger.of("sql");
-
+  
   protected static List<String> listDifference(List<String> a, List<String> b) {
     List<String> ret = new LinkedList<>();
     ret.addAll(a);
     ret.removeAll(b);
     return ret;
   }
-
+  
   protected SqlExType exType;
-
+  
   public QueryCorrector(SqlExType theExType) {
     exType = theExType;
   }
-
+  
   /**
    * Steps taken:
    *
@@ -62,27 +62,27 @@ public abstract class QueryCorrector<QueryType extends Statement> {
     // Check if the right operator (SELECT/DELETE/UPDATE/...) was used
     if(exercise.exType != exType)
       return new SqlCorrectionResult(Success.NONE, "Es wurde das falsche Keyword verwendet!");
-
+    
     // Parse user statement to right QueryType
     QueryType parsedUserStatement = parseStatement(userStatement);
     if(parsedUserStatement == null)
       return new SqlCorrectionResult(Success.NONE, "Es gab einen Fehler beim Parsen der Musterlösung!");
-
+    
     // Get and parse best fitting sample solution
     SqlSampleSolution bestFitting = findBestFittingSample(parsedUserStatement, exercise.samples);
     QueryType parsedSampleStatement = parseStatement(bestFitting.sample);
     if(parsedSampleStatement == null)
       return new SqlCorrectionResult(Success.NONE, "Es gab einen Fehler beim Parsen der Musterlösung!");
-
+    
     // Compare queries statically
     SqlCorrectionResult staticComp = compareStatically(parsedUserStatement, parsedSampleStatement);
-
+    
     // Execute both queries, check if results match
     return executeQuery(parsedUserStatement, parsedSampleStatement, connection, DB_BASENAME + user.name,
         exercise.scenario.shortName).withTableComparisonResult(staticComp.getUsedTablesComparison())
             .withColumnsComparisonResult(staticComp.getUsedColumnsComparison());
   }
-
+  
   private boolean databaseAlreadyExists(Connection connection, String slaveDB) throws SQLException {
     ResultSet existingDBs = connection.createStatement().executeQuery(SHOW_ALL_DBS);
     while(existingDBs.next())
@@ -90,11 +90,11 @@ public abstract class QueryCorrector<QueryType extends Statement> {
         return true;
     return false;
   }
-
+  
   private SqlSampleSolution findBestFittingSample(QueryType userStatement, List<SqlSampleSolution> samples) {
     SqlSampleSolution bestFitting = null;
     int bestDistance = Integer.MAX_VALUE;
-
+    
     for(SqlSampleSolution sample: samples) {
       int newDistance = Levenshtein.levenshteinDistance(sample.sample, userStatement.toString());
       if(newDistance < bestDistance) {
@@ -104,7 +104,7 @@ public abstract class QueryCorrector<QueryType extends Statement> {
     }
     return bestFitting;
   }
-
+  
   @SuppressWarnings("unchecked")
   private QueryType parseStatement(String statement) {
     try {
@@ -113,10 +113,10 @@ public abstract class QueryCorrector<QueryType extends Statement> {
       return null;
     }
   }
-
+  
   protected abstract SqlCorrectionResult compareStatically(QueryType parsedUserStatement,
       QueryType parsedSampleStatement);
-
+  
   protected void deleteDB(Connection connection, String slaveDB) throws SQLException {
     // TODO Auto-generated method stub
     long startTime = System.currentTimeMillis();
@@ -124,19 +124,19 @@ public abstract class QueryCorrector<QueryType extends Statement> {
     long timeTaken = System.currentTimeMillis() - startTime;
     theLogger.info("Successfully dropped database " + slaveDB + " in " + timeTaken + "ms");
   }
-
+  
   protected abstract SqlCorrectionResult executeQuery(QueryType userStatement, QueryType sampleStatement,
       Connection conn, String slaveDB, String scenarioName);
-
+  
   protected void initializeDB(Connection connection, String slaveDB, String scenarioName) throws SQLException {
     long startTime = System.currentTimeMillis();
     // Check if slave DB exists, if not, create
     if(!databaseAlreadyExists(connection, slaveDB))
       connection.createStatement().executeUpdate(CREATE_DB_DUMMY + slaveDB);
-
+    
     // Change db to users own db
     connection.setCatalog(slaveDB);
-
+    
     // Initialize DB with values
     Path sqlScriptFile = Paths.get("modules/sql/conf/resources/" + scenarioName + ".sql");
     if(Files.exists(sqlScriptFile))
@@ -147,7 +147,7 @@ public abstract class QueryCorrector<QueryType extends Statement> {
       }
     else
       theLogger.error("Trying to initialize database with script " + sqlScriptFile + ", but there is no such file!");
-
+    
     long timeTaken = System.currentTimeMillis() - startTime;
     theLogger.info("Successfully initialized the database " + slaveDB + " in " + timeTaken + "ms");
   }

@@ -9,29 +9,29 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class SqlQueryResult {
-  
+
   private List<String> colNames;
-  
+
   // TODO: evtl. eigene Klasse?
   private List<List<String>> rows;
   private String tableName = "";
-  
+
   public SqlQueryResult(ResultSet resultSet) throws SQLException {
     this(resultSet, false);
   }
-  
+
   public SqlQueryResult(ResultSet resultSet, boolean sort) throws SQLException {
     ResultSetMetaData metaData = resultSet.getMetaData();
     int columnCount = metaData.getColumnCount();
-    
+
     colNames = new ArrayList<>(columnCount);
     for(int i = 1; i <= columnCount; i++)
       colNames.add(metaData.getColumnName(i));
-    
+
     if(sort)
       // Sort column names to ignore order
       Collections.sort(colNames);
-
+  
     rows = new LinkedList<>();
     while(resultSet.next()) {
       List<String> row = new ArrayList<>(columnCount);
@@ -39,41 +39,41 @@ public class SqlQueryResult {
         row.add(resultSet.getString(colNames.get(i - 1)));
       rows.add(row);
     }
-    
+
   }
-  
+
   public SqlQueryResult(ResultSet resultSet, String theTableName) throws SQLException {
     this(resultSet, false);
     tableName = theTableName;
   }
-  
+
   public int getColumnCount() {
     return colNames.size();
   }
-
+  
   public List<String> getColumnNames() {
     return colNames;
   }
-  
+
   public List<List<String>> getRows() {
     return rows;
   }
-  
+
   public String getTableName() {
     return tableName;
   }
-  
+
   public boolean isIdentic(SqlQueryResult other) {
     // FIXME: implement comparison!
-    
+
     // Check columnNames with order
     int columnCount = colNames.size();
     if(other.getColumnCount() != columnCount)
       return false;
     for(int i = 0; i < columnCount; i++)
-      if(!other.getColumnNames().get(i).equals(colNames.get(i)))
+      if(!other.getColumnNames().get(i).toLowerCase().equals(colNames.get(i).toLowerCase()))
         return false;
-
+      
     // Check rows
     int rowCount = rows.size();
     List<List<String>> otherRows = other.getRows();
@@ -88,8 +88,8 @@ public class SqlQueryResult {
         if(!otherRow.get(cellCounter).equals(thisRow.get(cellCounter)))
           return false;
     }
-    
+
     return true;
   }
-  
+
 }

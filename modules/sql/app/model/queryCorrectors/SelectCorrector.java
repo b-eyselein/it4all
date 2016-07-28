@@ -103,18 +103,13 @@ public class SelectCorrector extends QueryCorrector<Select> {
   protected SqlCorrectionResult executeQuery(Select userStatement, Select sampleStatement, Connection conn,
       String slaveDB, String scenarioName) {
     try {
-      // FIXME: run SELECT Statements on one database, since these statement do
-      // not change anything!
-      initializeDB(conn, slaveDB, scenarioName);
-      conn.setCatalog(slaveDB);
+      conn.setCatalog(scenarioName);
 
       ResultSet userResultSet = conn.createStatement().executeQuery(userStatement.toString());
       SqlQueryResult userResult = new SqlQueryResult(userResultSet, true);
 
       ResultSet sampleResultSet = conn.createStatement().executeQuery(sampleStatement.toString());
       SqlQueryResult sampleResult = new SqlQueryResult(sampleResultSet, true);
-
-      deleteDB(conn, slaveDB);
 
       // @formatter:off
       if(userResult.isIdentic(sampleResult))
