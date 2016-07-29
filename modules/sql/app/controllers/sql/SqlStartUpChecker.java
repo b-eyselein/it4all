@@ -27,7 +27,7 @@ import play.db.NamedDatabase;
 import play.libs.Json;
 
 public class SqlStartUpChecker {
-
+  
   private static Logger.ALogger theLogger = Logger.of("startup");
   
   private static final String SCENARIO_FOLDER = "modules/sql/conf/resources";
@@ -53,14 +53,13 @@ public class SqlStartUpChecker {
     
     String text = exerciseNode.get("text").asText();
     
-    if(exercise == null) {
+    if(exercise == null)
       // Create new Exercise in DB
-      exercise = new SqlExercise(exerciseKey, text, exerciseType);
-      exercise.save();
-    } else {
-      // TODO: Update exercise
-    }
+      exercise = new SqlExercise(exerciseKey);
+    // Update Text and ExerciseType, Key remains the same
     exercise.text = text;
+    exercise.exType = exerciseType;
+    exercise.save();
     
     // Sample solutions!
     JsonNode sampleSolutionsNode = exerciseNode.get("sampleSolutions");
@@ -82,12 +81,10 @@ public class SqlStartUpChecker {
     SqlSampleSolutionKey sampleKey = new SqlSampleSolutionKey(id, exercise.key.id, exercise.key.scenarioName);
     
     SqlSampleSolution sampleSolution = SqlSampleSolution.finder.byId(sampleKey);
-    if(sampleSolution == null) {
-      sampleSolution = new SqlSampleSolution(sampleKey, sampleSolutionText);
-      sampleSolution.save();
-    } else {
-      // TODO: Update sample solution!?!
-    }
+    if(sampleSolution == null)
+      sampleSolution = new SqlSampleSolution(sampleKey);
+    sampleSolution.sample = sampleSolutionText;
+    sampleSolution.save();
   }
   
   private void handleScenario(Path path) {

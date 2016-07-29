@@ -14,7 +14,8 @@
 			"2": {
 				"text": "Welche Angestelltennummer (employeeOID) hat Max Becker?",
 				"sampleSolutions": {
-					"1": "SELECT employeeOID FROM Employee WHERE name = \"Max Becker\""
+					"1": "SELECT employeeOID FROM Employee WHERE firstname = \"Max\" AND lastname = \"Becker\"",
+					"2": "SELECT employeeOID FROM Employee WHERE lastname = \"Becker\" AND firstname = \"Max\""
 				}
 			}
 		}
