@@ -8,20 +8,21 @@ import net.sf.jsqlparser.statement.create.table.CreateTable;
 import play.db.Database;
 
 public class CreateCorrector extends QueryCorrector<CreateTable> {
-  
+
   @Override
   protected SqlCorrectionResult compareStatically(CreateTable parsedUserStatement, CreateTable parsedSampleStatement) {
     // TODO Auto-generated method stub
     return null;
   }
-  
+
   @Override
   protected SqlCorrectionResult executeQuery(Database database, CreateTable parsedStatement,
       CreateTable parsedSampleStatement, String scenarioName) {
     
+    // TODO Auto-generated method stub
     // try {
     // connection.createStatement().executeQuery(statement);
-    
+
     // DatabaseMetaData dbmd = connection.getMetaData();
     // ResultSet tables = dbmd.getTables(connection.getCatalog(), null, null,
     // null);
@@ -33,9 +34,8 @@ public class CreateCorrector extends QueryCorrector<CreateTable> {
     // Ausführen der Query: " + e.getMessage());
     // }
     return null;
-    // TODO Auto-generated method stub
   }
-  
+
   @Override
   protected CreateTable parseStatement(String statement) throws SqlCorrectionException {
     try {
