@@ -1,66 +1,34 @@
 package model;
 
-import java.sql.Connection;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.List;
 
 import model.correctionResult.SqlCorrectionResult;
 import model.exercise.SqlExercise;
-import model.exercise.Success;
-import model.queryCorrectors.CreateCorrector;
-import model.queryCorrectors.DeleteCorrector;
+import model.exercise.SqlSampleSolution;
 import model.queryCorrectors.QueryCorrector;
-import model.queryCorrectors.SelectCorrector;
 import model.user.User;
-import net.sf.jsqlparser.JSQLParserException;
-import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
-import net.sf.jsqlparser.statement.create.table.CreateTable;
-import net.sf.jsqlparser.statement.delete.Delete;
-import net.sf.jsqlparser.statement.select.Select;
+import play.db.Database;
 
 public class SqlCorrector {
   
-  private static HashMap<String, QueryCorrector<? extends Statement>> correctors = new HashMap<>();
-  
-  static {
-    correctors.put(Select.class.getSimpleName(), new SelectCorrector());
-    correctors.put(Delete.class.getSimpleName(), new DeleteCorrector());
-    correctors.put(CreateTable.class.getSimpleName(), new CreateCorrector());
+  public static SqlCorrectionResult correct(Database database, User user, String userStatement, SqlExercise exercise) {
+    QueryCorrector<? extends Statement> corrector = exercise.exType.getCorrector();
+    String sampleStatement = findBestFittingSample(userStatement, exercise.samples);
+    return corrector.correct(database, userStatement, sampleStatement, exercise);
   }
   
-  /**
-   * This method parses the learners solution (an sql statement) and corrects it
-   * against a given exercise with one or more sample solutions. Part of the
-   * correction is an execution on a real sql database.
-   *
-   * @param statement
-   *          the learners solution, a sql statement
-   * @param exercise
-   *          the exercise with the sample solution
-   * @param connection
-   *          the connection to execute both of the queries on
-   * @return SqlCorrectionResult
-   */
-  public static SqlCorrectionResult correct(User user, String statement, SqlExercise exercise, Connection connection) {
+  private static String findBestFittingSample(String userStatement, List<SqlSampleSolution> samples) {
+    SqlSampleSolution bestFitting = null;
+    int bestDistance = Integer.MAX_VALUE;
     
-    Statement parsedStatement = null;
-    try {
-      parsedStatement = CCJSqlParserUtil.parse(statement);
-    } catch (JSQLParserException e) {
-      return new SqlCorrectionResult(Success.NONE,
-          Arrays.asList("Query konnte nicht geparst werden: " + e.getCause().getMessage()));
+    for(SqlSampleSolution sample: samples) {
+      int newDistance = Levenshtein.levenshteinDistance(sample.sample, userStatement);
+      if(newDistance < bestDistance) {
+        bestFitting = sample;
+        bestDistance = newDistance;
+      }
     }
-    
-    // Get matching Corrector to parsed Statement
-    // e. g. "Select" --> SelectCorrector) from correctors
-    QueryCorrector<? extends Statement> corrector = correctors.get(parsedStatement.getClass().getSimpleName());
-    if(corrector == null)
-      return new SqlCorrectionResult(Success.NONE, Arrays.asList("Query war vom Typ \""
-          + parsedStatement.getClass().getSimpleName() + "\", der nicht korrigiert werden kann!"));
-    
-    return corrector.correct(user, statement, exercise, connection);
-    
+    return bestFitting.sample;
   }
-  
 }

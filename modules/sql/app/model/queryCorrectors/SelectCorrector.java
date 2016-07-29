@@ -7,22 +7,24 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.inject.Singleton;
+
+import model.SqlCorrectionException;
 import model.SqlQueryResult;
 import model.correctionResult.SqlCorrectionResult;
 import model.correctionResult.UsedColumnsComparison;
 import model.correctionResult.UsedTablesComparison;
-import model.exercise.SqlExercise.SqlExType;
 import model.exercise.Success;
+import net.sf.jsqlparser.JSQLParserException;
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.Join;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
+import play.db.Database;
 
+@Singleton
 public class SelectCorrector extends QueryCorrector<Select> {
-
-  public SelectCorrector() {
-    super(SqlExType.SELECT);
-  }
 
   private UsedColumnsComparison compareQueriedColumns(PlainSelect plainUserSelect, PlainSelect plainSampleSelect) {
     List<String> userColumns = getQueriedColumns(plainUserSelect);
@@ -71,7 +73,8 @@ public class SelectCorrector extends QueryCorrector<Select> {
   }
 
   private List<String> getQueriedColumns(PlainSelect plainSelect) {
-    return plainSelect.getSelectItems().stream().map(item -> item.toString()).collect(Collectors.toList());
+    return plainSelect.getSelectItems().stream().map(item -> item.toString().toUpperCase())
+        .collect(Collectors.toList());
   }
 
   @Override
@@ -91,18 +94,19 @@ public class SelectCorrector extends QueryCorrector<Select> {
     // comparison has "lower" success than assumed at the moment
     if(success.compareTo(columnComp.getSuccess()) > 0)
       success = columnComp.getSuccess();
-      
+
     // @formatter:off
     return new SqlCorrectionResult(success, messages)
         .withTableComparisonResult(tableComp)
         .withColumnsComparisonResult(columnComp);
     // @formatter:on
   }
-  
+
   @Override
-  protected SqlCorrectionResult executeQuery(Select userStatement, Select sampleStatement, Connection conn,
-      String slaveDB, String scenarioName) {
+  protected SqlCorrectionResult executeQuery(Database database, Select userStatement, Select sampleStatement,
+      String scenarioName) {
     try {
+      Connection conn = database.getConnection();
       conn.setCatalog(scenarioName);
 
       ResultSet userResultSet = conn.createStatement().executeQuery(userStatement.toString());
@@ -110,6 +114,8 @@ public class SelectCorrector extends QueryCorrector<Select> {
 
       ResultSet sampleResultSet = conn.createStatement().executeQuery(sampleStatement.toString());
       SqlQueryResult sampleResult = new SqlQueryResult(sampleResultSet, true);
+      
+      conn.close();
 
       // @formatter:off
       if(userResult.isIdentic(sampleResult))
@@ -122,6 +128,17 @@ public class SelectCorrector extends QueryCorrector<Select> {
       return new SqlCorrectionResult(Success.NONE, "Es gab ein Problem beim Ausführen der Query: " + e.getMessage());
     }
     // @formatter:on
+  }
+
+  @Override
+  protected Select parseStatement(String statement) throws SqlCorrectionException {
+    try {
+      return (Select) CCJSqlParserUtil.parse(statement);
+    } catch (JSQLParserException e) {
+      throw new SqlCorrectionException("Es gab einen Fehler beim Parsen des folgenden Statements: " + statement);
+    } catch (ClassCastException e) {
+      throw new SqlCorrectionException("Das Statement war vom falschen Typ! Erwartet wurde SELECT!");
+    }
   }
 
 }
