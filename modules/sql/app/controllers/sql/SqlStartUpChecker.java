@@ -32,22 +32,8 @@ public class SqlStartUpChecker {
   
   private static final String SCENARIO_FOLDER = "modules/sql/conf/resources";
   
-  private Database sql_main;
-  
-  @Inject
-  public SqlStartUpChecker(@NamedDatabase("sqlmain") Database db) {
-    sql_main = db;
-    performStartUpCheck();
-  }
-  
-  private void createOrUpdateScenario(SqlScenario scenario, String shortName, String longName, String scriptFile) {
-    scenario.shortName = shortName;
-    scenario.longName = longName;
-    scenario.scriptFile = scriptFile;
-    scenario.save();
-  }
-  
-  private void handleExercise(SqlScenario scenario, int exerciseId, SqlExType exerciseType, JsonNode exerciseNode) {
+  private static void handleExercise(SqlScenario scenario, int exerciseId, SqlExType exerciseType,
+      JsonNode exerciseNode) {
     SqlExerciseKey exerciseKey = new SqlExerciseKey(scenario.shortName, exerciseId);
     SqlExercise exercise = SqlExercise.finder.byId(exerciseKey);
     
@@ -75,7 +61,7 @@ public class SqlStartUpChecker {
     }
   }
   
-  private void handleSampleSolution(String solutionId, SqlExercise exercise, String sampleSolutionText) {
+  private static void handleSampleSolution(String solutionId, SqlExercise exercise, String sampleSolutionText) {
     
     int id = Integer.parseInt(solutionId);
     SqlSampleSolutionKey sampleKey = new SqlSampleSolutionKey(id, exercise.key.id, exercise.key.scenarioName);
@@ -85,6 +71,14 @@ public class SqlStartUpChecker {
       sampleSolution = new SqlSampleSolution(sampleKey);
     sampleSolution.sample = sampleSolutionText;
     sampleSolution.save();
+  }
+  
+  private Database sql_main;
+  
+  @Inject
+  public SqlStartUpChecker(@NamedDatabase("sqlmain") Database db) {
+    sql_main = db;
+    performStartUpCheck();
   }
   
   private void handleScenario(Path path) {
@@ -109,7 +103,10 @@ public class SqlStartUpChecker {
     SqlScenario scenario = SqlScenario.finder.byId(shortName);
     if(scenario == null)
       scenario = new SqlScenario();
-    createOrUpdateScenario(scenario, shortName, longName, scriptFile);
+    scenario.shortName = shortName;
+    scenario.longName = longName;
+    scenario.scriptFile = scriptFile;
+    scenario.save();
     
     JsonNode exercises = json.get("exercises");
     for(final Iterator<String> exerciseTypesIter = exercises.fieldNames(); exerciseTypesIter.hasNext();) {

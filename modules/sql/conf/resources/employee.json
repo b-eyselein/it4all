@@ -17,6 +17,12 @@
 					"1": "SELECT employeeOID FROM Employee WHERE firstname = \"Max\" AND lastname = \"Becker\"",
 					"2": "SELECT employeeOID FROM Employee WHERE lastname = \"Becker\" AND firstname = \"Max\""
 				}
+			},
+			"3": {
+				"text": "Welche Emailadresse hat Max Becker für die Arbeit?",
+				"sampleSolutions": {
+					"1": "SELECT emailaddress FROM Employee emp, Emailaddress email WHERE emp.employeeOID = email.employeeOID AND firstname = \"Max\" AND lastname = \"Becker\""
+				}
 			}
 		}
 	}
