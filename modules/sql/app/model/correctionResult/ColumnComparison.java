@@ -6,13 +6,13 @@ import java.util.List;
 import model.exercise.EvaluationResult;
 import model.exercise.Success;
 
-public class UsedColumnsComparison extends EvaluationResult {
+public class ColumnComparison extends EvaluationResult {
   
   private List<String> missingColumns;
   
   private List<String> wrongColumns;
   
-  public UsedColumnsComparison(Success success, List<String> theMissingColumns, List<String> theWrongColumns) {
+  public ColumnComparison(Success success, List<String> theMissingColumns, List<String> theWrongColumns) {
     super(success);
     missingColumns = theMissingColumns;
     wrongColumns = theWrongColumns;

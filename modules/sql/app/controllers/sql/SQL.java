@@ -9,6 +9,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import controllers.core.UserManagement;
 import model.Secured;
 import model.SqlCorrector;
@@ -62,9 +64,9 @@ public class SQL extends Controller {
 
     SqlCorrectionResult result = SqlCorrector.correct(database, user, learnerSolution, exercise);
 
-    // JsonNode ret = Json.toJson(result);
-    // System.out.println(Json.prettyPrint(ret));
-    return ok(Json.toJson(result));
+    JsonNode ret = Json.toJson(result);
+    // Logger.debug("Result as Json:\n" + Json.prettyPrint(ret));
+    return ok(Json.toJson(ret));
   }
 
   public Result exercise(String scenarioName, int exerciseId) {

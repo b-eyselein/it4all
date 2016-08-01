@@ -6,13 +6,13 @@ import java.util.List;
 import model.exercise.EvaluationResult;
 import model.exercise.Success;
 
-public class UsedTablesComparison extends EvaluationResult {
+public class TableComparison extends EvaluationResult {
   
   private List<String> missingTables;
   
   private List<String> unneccessaryTables;
   
-  public UsedTablesComparison(Success success, List<String> theMissingTables, List<String> theUnneccessaryTables) {
+  public TableComparison(Success success, List<String> theMissingTables, List<String> theUnneccessaryTables) {
     super(success);
     missingTables = theMissingTables;
     unneccessaryTables = theUnneccessaryTables;

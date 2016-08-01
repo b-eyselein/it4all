@@ -11,20 +11,30 @@ public class SqlCorrectionResult extends EvaluationResult {
 
   private List<String> messages = new LinkedList<>();
   
-  private UsedTablesComparison tableComparisonResult = null;
-  private UsedColumnsComparison usedColumnsComparison = null;
+  private TableComparison tableComparison = null;
+  private ColumnComparison columnComparison = null;
   
   private SqlQueryResult userResult = null;
   private SqlQueryResult sampleResult = null;
 
+  public SqlCorrectionResult(Success theSuccess) {
+    super(theSuccess);
+  }
+  
   public SqlCorrectionResult(Success theSuccess, List<String> theMessages) {
     super(theSuccess);
     messages.addAll(theMessages);
   }
-  
+
   public SqlCorrectionResult(Success theSuccess, String aMessage) {
     super(theSuccess);
     messages.add(aMessage);
+  }
+  
+  public SqlCorrectionResult(Success theSuccess, ColumnComparison theColumnComparison, TableComparison theTableComparison) {
+    super(theSuccess);
+    columnComparison = theColumnComparison;
+    tableComparison = theTableComparison;
   }
   
   public List<String> getMessages() {
@@ -35,20 +45,20 @@ public class SqlCorrectionResult extends EvaluationResult {
     return sampleResult;
   }
 
-  public UsedColumnsComparison getUsedColumnsComparison() {
-    return usedColumnsComparison;
+  public ColumnComparison getColumnComparison() {
+    return columnComparison;
   }
 
-  public UsedTablesComparison getUsedTablesComparison() {
-    return tableComparisonResult;
+  public TableComparison getTableComparison() {
+    return tableComparison;
   }
 
   public SqlQueryResult getUserResult() {
     return userResult;
   }
   
-  public SqlCorrectionResult withColumnsComparisonResult(UsedColumnsComparison theUsedColumnsComparison) {
-    usedColumnsComparison = theUsedColumnsComparison;
+  public SqlCorrectionResult withColumnsComparisonResult(ColumnComparison theUsedColumnsComparison) {
+    columnComparison = theUsedColumnsComparison;
     return this;
   }
   
@@ -58,8 +68,8 @@ public class SqlCorrectionResult extends EvaluationResult {
     return this;
   }
 
-  public SqlCorrectionResult withTableComparisonResult(UsedTablesComparison theTableComparisonResult) {
-    tableComparisonResult = theTableComparisonResult;
+  public SqlCorrectionResult withTableComparisonResult(TableComparison theTableComparisonResult) {
+    tableComparison = theTableComparisonResult;
     return this;
   }
   

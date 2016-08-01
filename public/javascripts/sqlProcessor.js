@@ -1,4 +1,5 @@
 function processCorrection(correction) {
+  
   var parsedCorr = JSON.parse(correction);
   
   var resultPanel = document.getElementById("resultPanel");
@@ -22,7 +23,7 @@ function processCorrection(correction) {
   }
   elementsToAdd += "</div>";
   
-  var tableCompResult = parsedCorr.usedTablesComparison;
+  var tableCompResult = parsedCorr.tableComparison;
   if(tableCompResult.missingTables.length !== 0) {
     elementsToAdd += "<div class=\"alert alert-danger\">Es fehlen folgende Tabellen: " + tableCompResult.missingTables
         + "</div>";
@@ -32,7 +33,7 @@ function processCorrection(correction) {
         + tableCompResult.unneccessaryTables + "</div>";
   }
 
-  var columnsCompResult = parsedCorr.usedColumnsComparison;
+  var columnsCompResult = parsedCorr.columnComparison;
   if(columnsCompResult.missingColumns.length !== 0) {
     elementsToAdd += "<div class=\"alert alert-danger\">Es fehlen folgende Spalten: " + columnsCompResult.missingColumns
         + "</div>";
