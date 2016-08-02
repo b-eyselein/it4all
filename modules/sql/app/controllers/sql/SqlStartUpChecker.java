@@ -27,18 +27,21 @@ import play.db.NamedDatabase;
 import play.libs.Json;
 
 public class SqlStartUpChecker {
-  
+
   private static Logger.ALogger theLogger = Logger.of("startup");
-  
+
   private static final String SCENARIO_FOLDER = "modules/sql/conf/resources";
-  
+
   private static void handleExercise(SqlScenario scenario, int exerciseId, SqlExType exerciseType,
       JsonNode exerciseNode) {
     SqlExerciseKey exerciseKey = new SqlExerciseKey(scenario.shortName, exerciseId);
-    SqlExercise exercise = SqlExercise.finder.byId(exerciseKey);
-    
+
+    // TODO: REMOVE!
+    String exerciseTypeAsString = "SELECT";
+    SqlExercise exercise = scenario.getExercise(exerciseTypeAsString, exerciseId);
+
     String text = exerciseNode.get("text").asText();
-    
+
     if(exercise == null)
       // Create new Exercise in DB
       exercise = new SqlExercise(exerciseKey);
@@ -46,60 +49,60 @@ public class SqlStartUpChecker {
     exercise.text = text;
     exercise.exType = exerciseType;
     exercise.save();
-    
+
     // Sample solutions!
     JsonNode sampleSolutionsNode = exerciseNode.get("sampleSolutions");
-    
+
     if(sampleSolutionsNode == null)
       throw new IllegalArgumentException(
           "The exercise " + exercise.key.id + " in scenario " + scenario + " does not have sample solutions!");
-    
+
     for(final Iterator<String> solutionFieldIter = sampleSolutionsNode.fieldNames(); solutionFieldIter.hasNext();) {
       String solutionId = solutionFieldIter.next();
       JsonNode sampleSolution = sampleSolutionsNode.get(solutionId);
       handleSampleSolution(solutionId, exercise, sampleSolution.asText());
     }
   }
-  
+
   private static void handleSampleSolution(String solutionId, SqlExercise exercise, String sampleSolutionText) {
-    
+
     int id = Integer.parseInt(solutionId);
     SqlSampleSolutionKey sampleKey = new SqlSampleSolutionKey(id, exercise.key.id, exercise.key.scenarioName);
-    
+
     SqlSampleSolution sampleSolution = SqlSampleSolution.finder.byId(sampleKey);
     if(sampleSolution == null)
       sampleSolution = new SqlSampleSolution(sampleKey);
     sampleSolution.sample = sampleSolutionText;
     sampleSolution.save();
   }
-  
+
   private Database sql_main;
-  
+
   @Inject
   public SqlStartUpChecker(@NamedDatabase("sqlselectroot") Database db) {
     sql_main = db;
     performStartUpCheck();
   }
-  
+
   private void handleScenario(Path path) {
     String jsonAsString = "";
-    
+
     try {
       jsonAsString = String.join("\n", Files.readAllLines(path));
     } catch (IOException e) {
       theLogger.error("Error while reading file: " + path.toString(), e);
       return;
     }
-    
+
     if(jsonAsString.isEmpty())
       return;
-    
+
     JsonNode json = Json.parse(jsonAsString);
-    
+
     String shortName = json.get("shortName").asText();
     String longName = json.get("longName").asText();
     String scriptFile = json.get("scriptFile").asText();
-    
+
     SqlScenario scenario = SqlScenario.finder.byId(shortName);
     if(scenario == null)
       scenario = new SqlScenario();
@@ -107,22 +110,22 @@ public class SqlStartUpChecker {
     scenario.longName = longName;
     scenario.scriptFile = scriptFile;
     scenario.save();
-    
+
     JsonNode exercises = json.get("exercises");
     for(final Iterator<String> exerciseTypesIter = exercises.fieldNames(); exerciseTypesIter.hasNext();) {
       String exerciseTypeAsString = exerciseTypesIter.next();
       JsonNode exercisesForType = exercises.get(exerciseTypeAsString);
       SqlExType type = SqlExType.getByName(exerciseTypeAsString);
-      
+
       for(final Iterator<String> exerciseFieldIter = exercisesForType.fieldNames(); exerciseFieldIter.hasNext();) {
         String exerciseIdAsString = exerciseFieldIter.next();
         int exerciseId = Integer.parseInt(exerciseIdAsString);
         JsonNode exerciseNode = exercisesForType.get(exerciseIdAsString);
-        
+
         handleExercise(scenario, exerciseId, type, exerciseNode);
       }
     }
-    
+
     // FIXME: run script to create database
     Path scriptFilePath = Paths.get(SCENARIO_FOLDER, scenario.scriptFile);
     if(Files.exists(scriptFilePath)) {
@@ -142,13 +145,13 @@ public class SqlStartUpChecker {
       }
     }
   }
-  
+
   private void performStartUpCheck() {
     Path scenarioDir = Paths.get(SCENARIO_FOLDER);
-    
+
     if(!Files.isDirectory(scenarioDir))
       throw new RuntimeException("Path " + SCENARIO_FOLDER + " should be a directory!");
-    
+
     try {
       DirectoryStream<Path> directoryStream = Files.newDirectoryStream(scenarioDir);
       directoryStream.forEach(file -> {
@@ -160,5 +163,5 @@ public class SqlStartUpChecker {
       theLogger.error("Failure: ", e);
     }
   }
-  
+
 }

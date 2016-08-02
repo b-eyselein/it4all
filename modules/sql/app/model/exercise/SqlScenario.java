@@ -27,6 +27,13 @@ public class SqlScenario extends Model {
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "scenario")
   public List<SqlExercise> exercises;
   
+  public SqlExercise getExercise(String exerciseType, int exerciseId) {
+    for(SqlExercise exercise: exercises)
+      if(exercise.key.id == exerciseId)
+        return exercise;
+    return null;
+  }
+
   public List<SqlExercise> getExercisesByType(SqlExType exerciseType) {
     return exercises.stream().filter(exercise -> exercise.exType == exerciseType).collect(Collectors.toList());
   }
