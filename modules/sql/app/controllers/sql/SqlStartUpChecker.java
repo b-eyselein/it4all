@@ -76,7 +76,7 @@ public class SqlStartUpChecker {
   private Database sql_main;
   
   @Inject
-  public SqlStartUpChecker(@NamedDatabase("sqlmain") Database db) {
+  public SqlStartUpChecker(@NamedDatabase("sqlselectroot") Database db) {
     sql_main = db;
     performStartUpCheck();
   }
@@ -127,8 +127,13 @@ public class SqlStartUpChecker {
     Path scriptFilePath = Paths.get(SCENARIO_FOLDER, scenario.scriptFile);
     if(Files.exists(scriptFilePath)) {
       try {
+        Logger.debug("Running script " + scriptFilePath);
         Connection connection = sql_main.getConnection();
+        // Create database and grant rights to user
         connection.createStatement().executeUpdate("CREATE DATABASE IF NOT EXISTS " + scenario.shortName);
+        connection.createStatement().executeUpdate("GRANT ALL PRIVILEGES ON " + scenario.shortName + ".* TO "
+            + "'it4all'" + "@localhost IDENTIFIED BY 'c4aK3?bV';");
+        connection.createStatement().executeUpdate("FLUSH PRIVILEGES");
         connection.setCatalog(scenario.shortName);
         List<String> line = Files.readAllLines(scriptFilePath);
         ScriptRunner.runScript(connection, line, false, true);

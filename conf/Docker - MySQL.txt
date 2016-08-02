@@ -2,7 +2,7 @@ First db (it4all: Ebean):
 docker run --name mysql1 -e MYSQL_ROOT_PASSWORD=sT8aV#k7 -e MYSQL_DATABASE=it4all -e MYSQL_USER=it4all -e MYSQL_PASSWORD=c4aK3?bV -p 3306:3306 --restart=always -d mysql:5.7
 
 Second db (SQL-Select):
-docker run --name mysql2 -e MYSQL_ROOT_PASSWORD=XXXXXXXX -e MYSQL_DATABASE=it4all -e MYSQL_USER=it4all -e MYSQL_PASSWORD=c4aK3?bV -p 3307:3306 --restart=always -d mysql:5.7
+docker run --name mysql2 -e MYSQL_ROOT_PASSWORD=sT8aV#k7 -e MYSQL_DATABASE=it4all -e MYSQL_USER=it4all -e MYSQL_PASSWORD=c4aK3?bV -p 3307:3306 --restart=always -d mysql:5.7
 
 Third db (SQL-Other):
 docker run --name mysql3 -e MYSQL_ROOT_PASSWORD=sT8aV#k7 -e MYSQL_DATABASE=it4all -e MYSQL_USER=it4all -e MYSQL_PASSWORD=c4aK3?bV -p 3308:3306 --restart=always -d mysql:5.7
