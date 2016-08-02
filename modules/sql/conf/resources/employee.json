@@ -26,7 +26,7 @@
 			}
 		},
 		"CREATE": {
-			"4": {
+			"1": {
 				"text": "Erstellen Sie das CREATE TABLE-Skript für die Tabelle Employee!",
 				"sampleSolutions": {
 					"1": "CREATE TABLE Employee (employeeOID VARCHAR(20), firstname VARCHAR(50), lastname VARCHAR(50), chefOID VARCHAR(20), FOREIGN KEY (chefOID) REFERENCES Employee(employeeOID));"
@@ -34,7 +34,7 @@
 			}
 		},
 		"UPDATE": {
-			"5": {
+			"1": {
 				"text": "Der Angestellte mit der OID 8 arbeitet jetzt für den Angestellten mit der OID 3. Aktualisieren Sie die Datenbank!",
 				"sampleSolutions": {
 					"1": "UPDATE Employee SET chefOID = 3 WHERE employeeOID = 8"

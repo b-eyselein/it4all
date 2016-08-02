@@ -18,7 +18,6 @@ import model.SqlQueryResult;
 import model.correctionResult.SqlCorrectionResult;
 import model.exercise.SqlExercise;
 import model.exercise.SqlScenario;
-import model.exercise.SqlExercise.SqlExType;
 import model.user.User;
 import play.data.FormFactory;
 import play.db.Database;
@@ -64,7 +63,7 @@ public class SQL extends Controller {
     if(exercise == null)
       return badRequest("There is no such exercise!");
     
-    Database database = getDatabaseForExerciseType(exercise.exType);
+    Database database = getDatabaseForExerciseType(exerciseType);
 
     SqlCorrectionResult result = SqlCorrector.correct(database, user, learnerSolution, exercise);
 
@@ -111,8 +110,8 @@ public class SQL extends Controller {
     return ok(sqloverview.render(UserManagement.getCurrentUser(), SqlScenario.finder.all()));
   }
 
-  private Database getDatabaseForExerciseType(SqlExType exType) {
-    if(exType == SqlExType.SELECT)
+  private Database getDatabaseForExerciseType(String exerciseType) {
+    if(exerciseType.equals("SELECT"))
       return sql_select;
     return sql_other;
   }

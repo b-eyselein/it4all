@@ -11,7 +11,7 @@
     <div class="panel-body">
 
       <div class="panel-group" id="accordion">
-        @for(sqlExType <- model.exercise.SqlExercise.SqlExType.values()) {
+        @for(sqlExType <- scenario.getExerciseTypes()) {
         <div class="panel panel-default">
           <div class="panel-heading">
             <h4 class="panel-title">

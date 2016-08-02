@@ -1,7 +1,8 @@
 package model.exercise;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -9,8 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 import com.avaje.ebean.Model;
-
-import model.exercise.SqlExercise.SqlExType;
 
 @Entity
 public class SqlScenario extends Model {
@@ -25,17 +24,37 @@ public class SqlScenario extends Model {
   public String scriptFile;
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "scenario")
-  public List<SqlExercise> exercises;
+  public List<SelectExercise> selects;
   
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "scenario")
+  public List<UpdateExercise> updates;
+  
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "scenario")
+  public List<UpdateExercise> creates;
+
   public SqlExercise getExercise(String exerciseType, int exerciseId) {
-    for(SqlExercise exercise: exercises)
+    List<? extends SqlExercise> list = getExercisesByType(exerciseType);
+    for(SqlExercise exercise: list)
       if(exercise.key.id == exerciseId)
         return exercise;
     return null;
   }
 
-  public List<SqlExercise> getExercisesByType(SqlExType exerciseType) {
-    return exercises.stream().filter(exercise -> exercise.exType == exerciseType).collect(Collectors.toList());
+  public List<? extends SqlExercise> getExercisesByType(String type) {
+    switch(type) {
+    case "SELECT":
+      return selects;
+    case "UPDATE":
+      return updates;
+    case "CREATE":
+      return creates;
+    default:
+      return Collections.emptyList();
+    }
   }
-  
+
+  public List<String> getExerciseTypes() {
+    return Arrays.asList("CREATE", "SELECT", "UPDATE");
+  }
+
 }

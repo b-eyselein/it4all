@@ -98,9 +98,11 @@ delete from html_task;
 
 delete from xmlexercise;
 
-delete from sql_sample_solution;
+delete from select_exercise;
 
-delete from sql_exercise;
+delete from update_exercise;
+
+delete from create_exercise;
 
 delete from sql_scenario;
 

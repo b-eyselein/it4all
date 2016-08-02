@@ -7,25 +7,18 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 
 import com.avaje.ebean.Model;
 
-import model.queryCorrectors.CreateCorrector;
-import model.queryCorrectors.DeleteCorrector;
-import model.queryCorrectors.InsertCorrector;
 import model.queryCorrectors.QueryCorrector;
-import model.queryCorrectors.SelectCorrector;
-import model.queryCorrectors.UpdateCorrector;
 import net.sf.jsqlparser.statement.Statement;
 
-@Entity
-public class SqlExercise extends Model {
+@MappedSuperclass
+public abstract class SqlExercise extends Model {
 
   @Embeddable
   public static class SqlExerciseKey implements Serializable {
@@ -61,35 +54,6 @@ public class SqlExercise extends Model {
 
   }
 
-  public enum SqlExType {
-
-    // @formatter:off
-    CREATE(new CreateCorrector()),
-    SELECT(new SelectCorrector()),
-    UPDATE(new UpdateCorrector()),
-    INSERT(new InsertCorrector()),
-    DELETE(new DeleteCorrector());
-    // @formatter:on
-    
-    public static SqlExType getByName(String typeText) {
-      for(SqlExType type: values())
-        if(type.toString().equals(typeText))
-          return type;
-      return null;
-    }
-    
-    private QueryCorrector<? extends Statement, ?> corrector;
-
-    private SqlExType(QueryCorrector<? extends Statement, ?> theCorrector) {
-      corrector = theCorrector;
-    }
-
-    public QueryCorrector<? extends Statement, ?> getCorrector() {
-      return corrector;
-    }
-
-  }
-
   @EmbeddedId
   public SqlExerciseKey key;
 
@@ -99,9 +63,6 @@ public class SqlExercise extends Model {
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "exercise")
   public List<SqlSampleSolution> samples;
 
-  @Enumerated(EnumType.STRING)
-  public SqlExType exType;
-
   @ManyToOne
   @JoinColumn(name = "scenario_name", insertable = false, updatable = false)
   public SqlScenario scenario;
@@ -110,4 +71,6 @@ public class SqlExercise extends Model {
     key = theKey;
   }
 
+  public abstract QueryCorrector<? extends Statement, ?> getCorrector();
+  
 }
