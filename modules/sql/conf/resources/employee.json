@@ -6,39 +6,39 @@
 		"SELECT": {
 			"1": {
 				"text": "Wie viele Angestellte hat die Firma? Benennen Sie das Ergebnis als 'Anzahl'",
-				"sampleSolutions": {
-					"1": "SELECT COUNT(*) AS Anzahl FROM Employee",
-					"2": "SELECT COUNT(employeeOID) AS Anzahl FROM Employee"
-				}
+				"sampleSolutions": [
+					"SELECT COUNT(*) AS Anzahl FROM Employee",
+					"SELECT COUNT(employeeOID) AS Anzahl FROM Employee"
+				]
 			},
 			"2": {
 				"text": "Welche Angestelltennummer (employeeOID) hat Max Becker?",
-				"sampleSolutions": {
-					"1": "SELECT employeeOID FROM Employee WHERE firstname = \"Max\" AND lastname = \"Becker\"",
-					"2": "SELECT employeeOID FROM Employee WHERE lastname = \"Becker\" AND firstname = \"Max\""
-				}
+				"sampleSolutions": [
+					"SELECT employeeOID FROM Employee WHERE firstname = \"Max\" AND lastname = \"Becker\"",
+					"SELECT employeeOID FROM Employee WHERE lastname = \"Becker\" AND firstname = \"Max\""
+				]
 			},
 			"3": {
 				"text": "Welche Emailadresse hat Max Becker für die Arbeit?",
-				"sampleSolutions": {
-					"1": "SELECT emailaddress FROM Employee emp, Emailaddress email WHERE emp.employeeOID = email.employeeOID AND firstname = \"Max\" AND lastname = \"Becker\""
-				}
+				"sampleSolutions": [
+					"SELECT emailaddress FROM Employee emp, Emailaddress email WHERE emp.employeeOID = email.employeeOID AND firstname = \"Max\" AND lastname = \"Becker\""
+				]
 			}
 		},
 		"CREATE": {
 			"1": {
 				"text": "Erstellen Sie das CREATE TABLE-Skript für die Tabelle Employee!",
-				"sampleSolutions": {
-					"1": "CREATE TABLE Employee (employeeOID VARCHAR(20), firstname VARCHAR(50), lastname VARCHAR(50), chefOID VARCHAR(20), FOREIGN KEY (chefOID) REFERENCES Employee(employeeOID));"
-				}
+				"sampleSolutions": [
+					"CREATE TABLE Employee (employeeOID VARCHAR(20), firstname VARCHAR(50), lastname VARCHAR(50), chefOID VARCHAR(20), FOREIGN KEY (chefOID) REFERENCES Employee(employeeOID));"
+				]
 			}
 		},
 		"UPDATE": {
 			"1": {
 				"text": "Der Angestellte mit der OID 8 arbeitet jetzt für den Angestellten mit der OID 3. Aktualisieren Sie die Datenbank!",
-				"sampleSolutions": {
-					"1": "UPDATE Employee SET chefOID = 3 WHERE employeeOID = 8"
-				}
+				"sampleSolutions": [
+					"UPDATE Employee SET chefOID = 3 WHERE employeeOID = 8"
+				]
 			}
 		}
 	}
