@@ -35,7 +35,7 @@ public class SelectCorrector extends QueryCorrector<Select, PlainSelect> {
     
     TableComparison tableComparison = compareTables(plainUserSelect, plainSampleSelect);
     
-    ColumnComparison columnComparison = compareQueriedColumns(plainUserSelect, plainSampleSelect);
+    ColumnComparison columnComparison = compareColumns(plainUserSelect, plainSampleSelect);
 
     // comparison has "lower" success than assumed at the moment
     if(success.compareTo(tableComparison.getSuccess()) > 0)

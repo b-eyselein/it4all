@@ -16,6 +16,7 @@ create table create_exercise (
   id                            integer not null,
   scenario_name                 varchar(255) not null,
   text                          text,
+  samples                       text,
   constraint pk_create_exercise primary key (id,scenario_name)
 );
 
@@ -98,6 +99,7 @@ create table select_exercise (
   id                            integer not null,
   scenario_name                 varchar(255) not null,
   text                          text,
+  samples                       text,
   constraint pk_select_exercise primary key (id,scenario_name)
 );
 
@@ -112,6 +114,7 @@ create table update_exercise (
   id                            integer not null,
   scenario_name                 varchar(255) not null,
   text                          text,
+  samples                       text,
   constraint pk_update_exercise primary key (id,scenario_name)
 );
 

@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -20,8 +21,6 @@ import model.exercise.CreateExercise;
 import model.exercise.SelectExercise;
 import model.exercise.SqlExercise;
 import model.exercise.SqlExercise.SqlExerciseKey;
-import model.exercise.SqlSampleSolution;
-import model.exercise.SqlSampleSolution.SqlSampleSolutionKey;
 import model.exercise.SqlScenario;
 import model.exercise.UpdateExercise;
 import play.Logger;
@@ -60,7 +59,6 @@ public class SqlStartUpChecker {
     }
     // Update Text and ExerciseType, Key remains the same
     exercise.text = text;
-    exercise.save();
     
     // Sample solutions!
     JsonNode sampleSolutionsNode = exerciseNode.get("sampleSolutions");
@@ -69,22 +67,15 @@ public class SqlStartUpChecker {
       throw new IllegalArgumentException(
           "The exercise " + exercise.key.id + " in scenario " + scenario + " does not have sample solutions!");
     
+    List<String> samples = new LinkedList<>();
     for(final Iterator<String> solutionFieldIter = sampleSolutionsNode.fieldNames(); solutionFieldIter.hasNext();) {
       String solutionId = solutionFieldIter.next();
       JsonNode sampleSolution = sampleSolutionsNode.get(solutionId);
-      handleSampleSolution(solutionId, exercise, sampleSolution.asText());
+      samples.add(sampleSolution.asText());
     }
-  }
-  
-  private static void handleSampleSolution(String solutionId, SqlExercise exercise, String sampleSolutionText) {
-    int id = Integer.parseInt(solutionId);
-    SqlSampleSolutionKey sampleKey = new SqlSampleSolutionKey(id, exercise.key.id, exercise.key.scenarioName);
 
-    SqlSampleSolution sampleSolution = SqlSampleSolution.finder.byId(sampleKey);
-    if(sampleSolution == null)
-      sampleSolution = new SqlSampleSolution(sampleKey);
-    sampleSolution.sample = sampleSolutionText;
-    sampleSolution.save();
+    exercise.samples = String.join(SqlExercise.SAMPLE_JOIN_CHAR, samples);
+    exercise.save();
   }
   
   private Database sql_main;

@@ -21,7 +21,7 @@ public class UpdateCorrector extends QueryCorrector<Update, Update> {
     
     TableComparison tableComparison = compareTables(userQuery, sampleQuery);
     
-    ColumnComparison columnComparison = compareQueriedColumns(userQuery, sampleQuery);
+    ColumnComparison columnComparison = compareColumns(userQuery, sampleQuery);
     
     // comparison has "lower" success than assumed at the moment
     if(success.compareTo(tableComparison.getSuccess()) > 0)

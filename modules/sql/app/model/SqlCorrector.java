@@ -4,7 +4,6 @@ import java.util.List;
 
 import model.correctionResult.SqlCorrectionResult;
 import model.exercise.SqlExercise;
-import model.exercise.SqlSampleSolution;
 import model.queryCorrectors.QueryCorrector;
 import model.user.User;
 import net.sf.jsqlparser.statement.Statement;
@@ -14,16 +13,16 @@ public class SqlCorrector {
   
   public static SqlCorrectionResult correct(Database database, User user, String userStatement, SqlExercise exercise) {
     QueryCorrector<? extends Statement, ?> corrector = exercise.getCorrector();
-    String sampleStatement = findBestFittingSample(userStatement, exercise.samples).sample;
+    String sampleStatement = findBestFittingSample(userStatement, exercise.getSampleSolution());
     return corrector.correct(database, userStatement, sampleStatement, exercise);
   }
   
-  private static SqlSampleSolution findBestFittingSample(String userStatement, List<SqlSampleSolution> samples) {
-    SqlSampleSolution bestFitting = null;
+  private static String findBestFittingSample(String userStatement, List<String> samples) {
+    String bestFitting = null;
     int bestDistance = Integer.MAX_VALUE;
     
-    for(SqlSampleSolution sample: samples) {
-      int newDistance = Levenshtein.levenshteinDistance(sample.sample, userStatement);
+    for(String sample: samples) {
+      int newDistance = Levenshtein.levenshteinDistance(sample, userStatement);
       if(newDistance < bestDistance) {
         bestFitting = sample;
         bestDistance = newDistance;

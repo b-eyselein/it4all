@@ -1,16 +1,15 @@
 package model.exercise;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToMany;
 
 import com.avaje.ebean.Model;
 
@@ -24,8 +23,6 @@ public abstract class SqlExercise extends Model {
   public static class SqlExerciseKey implements Serializable {
 
     private static final long serialVersionUID = -670842276417613477L;
-
-    public static final Finder<SqlExerciseKey, SqlExercise> finder = new Finder<>(SqlExercise.class);
 
     public int id;
     public String scenarioName;
@@ -54,14 +51,16 @@ public abstract class SqlExercise extends Model {
 
   }
 
+  public static final String SAMPLE_JOIN_CHAR = "#";
+
   @EmbeddedId
   public SqlExerciseKey key;
 
   @Column(columnDefinition = "text")
   public String text;
 
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "exercise")
-  public List<SqlSampleSolution> samples;
+  @Column(columnDefinition = "text")
+  public String samples;
 
   @ManyToOne
   @JoinColumn(name = "scenario_name", insertable = false, updatable = false)
@@ -70,7 +69,11 @@ public abstract class SqlExercise extends Model {
   public SqlExercise(SqlExerciseKey theKey) {
     key = theKey;
   }
-
+  
   public abstract QueryCorrector<? extends Statement, ?> getCorrector();
+  
+  public List<String> getSampleSolution() {
+    return Arrays.asList(samples.split("#"));
+  }
   
 }
