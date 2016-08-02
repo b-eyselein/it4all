@@ -68,9 +68,8 @@ public class SqlStartUpChecker {
           "The exercise " + exercise.key.id + " in scenario " + scenario + " does not have sample solutions!");
     
     List<String> samples = new LinkedList<>();
-    for(final Iterator<String> solutionFieldIter = sampleSolutionsNode.fieldNames(); solutionFieldIter.hasNext();) {
-      String solutionId = solutionFieldIter.next();
-      JsonNode sampleSolution = sampleSolutionsNode.get(solutionId);
+    for(final Iterator<JsonNode> solutionFieldIter = sampleSolutionsNode.elements(); solutionFieldIter.hasNext();) {
+      JsonNode sampleSolution = solutionFieldIter.next();
       samples.add(sampleSolution.asText());
     }
 
