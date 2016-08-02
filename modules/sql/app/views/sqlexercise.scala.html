@@ -23,7 +23,7 @@
     
     // AJAX-Objekt mit Daten fuellen, absenden
     var parameters = "editorContent=" + encodeURIComponent(editorContent);
-    xhttp.open("PUT", "@controllers.sql.routes.SQL.commit(exercise.key.scenarioName, exercise.key.id)", true);
+    xhttp.open("PUT", "@controllers.sql.routes.SQL.commit(exercise.key.scenarioName, exercise.getType(), exercise.key.id)", true);
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhttp.setRequestHeader("Accept", "application/json");
     xhttp.send(parameters);

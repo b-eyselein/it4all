@@ -9,16 +9,21 @@ import net.sf.jsqlparser.statement.create.table.CreateTable;
 
 @Entity
 public class CreateExercise extends SqlExercise {
-  
-  private static final QueryCorrector<CreateTable, CreateTable> corrector = new CreateCorrector();
 
+  private static final QueryCorrector<CreateTable, CreateTable> corrector = new CreateCorrector();
+  
   public CreateExercise(SqlExerciseKey theKey) {
     super(theKey);
   }
-
+  
   @Override
   public QueryCorrector<? extends Statement, ?> getCorrector() {
     return corrector;
   }
-
+  
+  @Override
+  public String getType() {
+    return "CREATE";
+  }
+  
 }

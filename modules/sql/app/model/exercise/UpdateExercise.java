@@ -9,16 +9,21 @@ import net.sf.jsqlparser.statement.delete.Delete;
 
 @Entity
 public class UpdateExercise extends SqlExercise {
-
-  private static final QueryCorrector<Delete, Delete> corrector = new DeleteCorrector();
   
+  private static final QueryCorrector<Delete, Delete> corrector = new DeleteCorrector();
+
   public UpdateExercise(SqlExerciseKey theKey) {
     super(theKey);
   }
-
+  
   @Override
   public QueryCorrector<? extends Statement, ?> getCorrector() {
     return corrector;
   }
-
+  
+  @Override
+  public String getType() {
+    return "UPDATE";
+  }
+  
 }

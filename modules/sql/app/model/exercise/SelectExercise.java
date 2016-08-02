@@ -10,16 +10,21 @@ import net.sf.jsqlparser.statement.select.Select;
 
 @Entity
 public class SelectExercise extends SqlExercise {
-
+  
   private static final QueryCorrector<Select, PlainSelect> corrector = new SelectCorrector();
-
+  
   public SelectExercise(SqlExerciseKey theKey) {
     super(theKey);
   }
-
+  
   @Override
   public QueryCorrector<? extends Statement, ?> getCorrector() {
     return corrector;
   }
-
+  
+  @Override
+  public String getType() {
+    return "SELECT";
+  }
+  
 }

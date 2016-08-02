@@ -27,7 +27,7 @@
             <ul class="list-group">
               @for(ex <- scenario.getExercisesByType(sqlExType)) {
               <li class="list-group-item">
-                <a href="@controllers.sql.routes.SQL.exercise(ex.key.scenarioName, ex.key.id)" class="list-group-item">
+                <a href="@controllers.sql.routes.SQL.exercise(ex.key.scenarioName, ex.getType(), ex.key.id)" class="list-group-item">
                   Aufgabe @ex.key.id: @ex.text
                 </a>
               </li>

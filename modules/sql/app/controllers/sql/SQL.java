@@ -53,9 +53,8 @@ public class SQL extends Controller {
   @SuppressWarnings("unused")
   private SqlStartUpChecker checker;
 
-  public Result commit(String scenarioName, int exerciseId) {
+  public Result commit(String scenarioName, String exerciseType, int exerciseId) {
     User user = UserManagement.getCurrentUser();
-    String exerciseType = "SELECT";
     SqlScenario scenario = SqlScenario.finder.byId(scenarioName);
     SqlExercise exercise = scenario.getExercise(exerciseType, exerciseId);
     String learnerSolution = factory.form().bindFromRequest().get("editorContent");
@@ -72,10 +71,9 @@ public class SQL extends Controller {
     return ok(Json.toJson(ret));
   }
 
-  public Result exercise(String scenarioName, int exerciseId) {
+  public Result exercise(String scenarioName, String exerciseType, int exerciseId) {
     User user = UserManagement.getCurrentUser();
     // TODO: REMOVE!
-    String exerciseType = "SELECT";
     SqlScenario scenario = SqlScenario.finder.byId(scenarioName);
     SqlExercise exercise = scenario.getExercise(exerciseType, exerciseId);
     
