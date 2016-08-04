@@ -16,6 +16,7 @@ import play.mvc.Security;
 import play.twirl.api.Html;
 import views.html.error;
 import views.html.javascript.js;
+import views.html.javascript.jsweb;
 import views.html.javascript.jsoverview;
 import views.html.javascript.jscorrect;
 
@@ -47,9 +48,14 @@ public class JS extends Controller {
     return ok(js.render(UserManagement.getCurrentUser(), exercise));
 
   }
-
+  
   public Result index() {
     return ok(jsoverview.render(JsExercise.finder.all(), UserManagement.getCurrentUser()));
+  }
+
+  public Result webExercise(int id) {
+    User user = UserManagement.getCurrentUser();
+    return ok(jsweb.render(user));
   }
 
 }

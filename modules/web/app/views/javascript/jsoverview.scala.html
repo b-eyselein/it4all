@@ -7,8 +7,14 @@
     <div class="panel-heading">Korrektur mit Java-JSEngine Nashorn</div>
     <div class="panel-body">
     @for(exercise <- exercises) {
-      <a href= @web.routes.JS.exercise(exercise.id)" class="btn btn-default btn-block">Link zur Aufgabe @exercise.id: @exercise.title</a>
+      <a href="@web.routes.JS.exercise(exercise.id)" class="btn btn-default btn-block">Aufgabe @exercise.id: @exercise.title</a>
     }
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">Aufgaben mit Webbezug</div>
+    <div class="panel-body">
+      <a href="@web.routes.JS.webExercise(1)" class="btn btn-default btn-block">Aufgabe 1: ...</a>
     </div>
   </div>
 </div>

@@ -1,0 +1,77 @@
+@(user: model.user.User)
+
+@main("JavaScript-Test", user) {
+<script src="@controllers.routes.Assets.versioned("javascripts/ace/ace.js")" type="text/javascript" charset="utf-8"></script>
+<script src="@controllers.routes.Assets.versioned("javascripts/jsProcessor.js")" type="text/javascript" charset="utf-8"></script>
+<script>
+function testSolution() {
+// AJAX-Objekt erstellen, Callback-Funktion bereitstellen
+var xhttp = new XMLHttpRequest();
+xhttp.onreadystatechange = function() {
+if(xhttp.readyState == 4 && xhttp.status == 200) {
+processCorrection(xhttp.responseText);
+}
+};
+
+// AJAX-Objekt mit Daten fuellen, absenden
+var parameters = "editorContent=" + encodeURIComponent(editor.getValue());
+xhttp.open("POST", "todo", true);
+xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+xhttp.setRequestHeader("Accept", "application/json");
+xhttp.send(parameters);
+}
+</script>
+
+<div class="container-fluid">
+  <div class="panel panel-default">
+    <div class="panel-heading">Aufgabenstellung</div>
+    <div class="panel-body">Implementieren Sie die folgende Funktion <code>doSomething()</code>, der den folgenden Text ausblendet!</div>
+  </div>
+  <div class="row">
+    <div class="col-md-8">
+      <pre>
+&lt!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;Aufgabe&lt;/title&gt;
+  &lt;script type="text/javascript"&gt;</pre>
+      <div id="editor" class="form-control">function doSomething() {
+  
+}</div>
+      <script>
+document.getElementById('editor').style.fontSize = '14px';
+var editor = ace.edit("editor");
+editor.setTheme("ace/theme/eclipse");
+editor.getSession().setMode("ace/mode/javascript");
+editor.getSession().setTabSize(2);
+editor.getSession().setUseSoftTabs(true);
+editor.getSession().setUseWrapMode(true);
+editor.setOptions({
+  minLines: 15,
+  maxLines: 25
+});
+</script>
+    <pre>
+  &lt;script&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+  &lt;h3&gt;Blenden Sie diesen Text aus, wenn der Button gedrückt wird, und wieder ein, wenn er wieder gedrückt wird!&lt;/h3&gt;
+  &lt;input type="button" onclick="doSomething();" value="Blende den Text aus!"&gt;
+  &lt;p id="theText"&gt;Dies ist der Text zum Ausblenden&lt;/p&gt;
+&lt;/body&gt;
+&lt;html&gt;
+    </pre>
+    </div>
+    <div class="col-md-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">Korrektur</div>
+        <div class="panel-body" id="loesungsraum">Hier stehen bald die Korrekturwerte...</div>
+      </div>    
+    </div>
+  </div>
+  <p>
+    <button class="form-control" onclick="testSolution();">L&ouml;sung testen</button>
+  </p>
+</div>
+}
