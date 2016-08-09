@@ -22,3 +22,35 @@ function processCorrection(jsonResponseText) {
   }
   loesungsraum.innerHTML += toAdd;
 }
+
+function testTheWebSolution(url) {
+  // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if(xhttp.readyState == 4 && xhttp.status == 200) {
+      processCorrection(xhttp.responseText);
+    }
+  };
+  
+  // AJAX-Objekt mit Daten fuellen, absenden
+  var parameters = "editorContent=" + encodeURIComponent(editor.getValue());
+  xhttp.open("POST", url, true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.setRequestHeader("Accept", "application/json");
+  xhttp.send(parameters);
+}
+
+function updatePreview() {
+  var toWrite = unescapeHTML(document.getElementById("anterior").innerHTML);
+  toWrite += unescapeHTML(editor.getValue());
+  toWrite += unescapeHTML(document.getElementById("posterior").innerHTML);
+  
+  var theIFrame = document.getElementById("preview").contentWindow.document;
+  theIFrame.open();
+  theIFrame.write(toWrite);
+  theIFrame.close();
+}
+
+function unescapeHTML(escapedHTML) {
+  return escapedHTML.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+}
