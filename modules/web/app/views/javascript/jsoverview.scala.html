@@ -1,4 +1,4 @@
-@(exercises: List[model.javascript.JsExercise], user: model.user.User)
+@(user: model.user.User, exercises: List[model.javascript.JsExercise], webExercises: List[model.javascript.JsWebExercise])
 
 @main("JavaScript", user) {
 <div class="container">
@@ -14,7 +14,9 @@
   <div class="panel panel-default">
     <div class="panel-heading">Aufgaben mit Webbezug</div>
     <div class="panel-body">
-      <a href="@web.routes.JS.webExercise(1)" class="btn btn-default btn-block">Aufgabe 1: ...</a>
+    @for(webExercise <- webExercises) {
+      <a href="@web.routes.JS.exerciseWeb(webExercise.id)" class="btn btn-default btn-block">Aufgabe @webExercise.id: ...</a>
+    }
     </div>
   </div>
 </div>

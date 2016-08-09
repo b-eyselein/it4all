@@ -10,6 +10,10 @@ GET    /solution/:user/:exerciseId   controllers.web.Solution.site(user: model.u
 
 # JavaScript
 GET    /js/                          controllers.web.JS.index()
-GET    /js/web/:ex                   controllers.web.JS.webExercise(ex: Int)
+GET    /js/vorschau/:ex              controllers.web.JS.vorschau(ex: Int)
+
+GET    /js/web/:ex                   controllers.web.JS.exerciseWeb(ex: Int)
+POST   /js/web/:ex                   controllers.web.JS.commitWeb(ex: Int)
+
 GET    /js/:ex                       controllers.web.JS.exercise(ex: Int)
 POST   /js/:ex                       controllers.web.JS.commit(ex: Int)

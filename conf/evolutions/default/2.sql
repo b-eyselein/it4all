@@ -68,18 +68,20 @@ insert into css_task (`task_id`, `exercise_id`, `taskdesc`, `xpath_query_name`, 
 # JavaScript
 
 insert into js_test (`id`, `exercise_id`, `awaited_result`) values
-	(1, 3, 2),
-	(2, 3, 3),
-	(3, 3, 87),
-	(4, 4, "Hallo Welt!"),
-	(5, 4, "TestTestTest");
+	(1, 3, 2.0),
+	(2, 3, 3.0),
+	(3, 3, 87.0),
+	(4, 3, 597.0),
+	(5, 4, "Hallo Welt!"),
+	(6, 4, "TestTestTest");
 
 insert into js_testvalue (`id`, `test_id`, `value`) values
 	(1, 1, 1), (2, 1, 1),
 	(3, 2, 1), (4, 2, 2),
 	(5, 3, 44), (6, 3, 43),
-	(7, 4, '\'Hallo \''), (8, 4, "'Welt'"), (9, 4, "'!'"),
-	(10, 5, "'Test'"), (11, 5, "'Test'"), (12, 5, "'Test'");
+	(7, 4, "555.0"), (8, 4, "42.0"),
+	(9, 5, '\'Hallo \''), (10, 5, "'Welt'"), (11, 5, "'!'"),
+	(12, 6, "'Test'"), (13, 6, "'Test'"), (14, 6, "'Test'");
 
 
 # --- !Downs

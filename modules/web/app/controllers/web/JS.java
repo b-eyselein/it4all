@@ -1,14 +1,20 @@
 package controllers.web;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+
+import javax.inject.Inject;
 
 import controllers.core.UserManagement;
 import model.Secured;
 import model.javascript.JsCorrector;
 import model.javascript.JsExercise;
 import model.javascript.JsTestResult;
+import model.javascript.JsWebExercise;
 import model.user.User;
+import play.Logger;
+import play.data.DynamicForm;
+import play.data.FormFactory;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -22,10 +28,13 @@ import views.html.javascript.jscorrect;
 
 @Security.Authenticated(Secured.class)
 public class JS extends Controller {
-  
+
+  @Inject
+  private FormFactory factory;
+
   public Result commit(int exerciseId) {
-    Map<String, String[]> body = request().body().asFormUrlEncoded();
-    String learnerSolution = body.get("editorContent")[0];
+    DynamicForm form = factory.form().bindFromRequest();
+    String learnerSolution = form.get("editorContent");
 
     List<JsTestResult> testResults = JsCorrector.correct(JsExercise.finder.byId(exerciseId), learnerSolution);
 
@@ -36,6 +45,13 @@ public class JS extends Controller {
       return ok(jscorrect.render(learnerSolution, testResults, UserManagement.getCurrentUser()));
   }
 
+  public Result commitWeb(int exerciseId) {
+    DynamicForm form = factory.form().bindFromRequest();
+    String learnerSolution = form.get("editorContent");
+    Logger.debug(learnerSolution);
+    return ok("TODO!");
+  }
+
   public Result exercise(int id) {
     User user = UserManagement.getCurrentUser();
     JsExercise exercise = JsExercise.finder.byId(id);
@@ -44,18 +60,23 @@ public class JS extends Controller {
       return badRequest(
           error.render(user, new Html("<p>Diese Aufgabe existert leider nicht.</p><p>Zur&uuml;ck zur <a href=\""
               + routes.JS.index() + "\">Startseite</a>.</p>")));
-    
+
     return ok(js.render(UserManagement.getCurrentUser(), exercise));
 
   }
-  
-  public Result index() {
-    return ok(jsoverview.render(JsExercise.finder.all(), UserManagement.getCurrentUser()));
+
+  public Result exerciseWeb(int id) {
+    User user = UserManagement.getCurrentUser();
+    return ok(jsweb.render(user, new JsWebExercise()));
   }
 
-  public Result webExercise(int id) {
+  public Result index() {
     User user = UserManagement.getCurrentUser();
-    return ok(jsweb.render(user));
+    return ok(jsoverview.render(user, JsExercise.finder.all(), Arrays.asList(new JsWebExercise())));
+  }
+
+  public Result vorschau(int exerciseId) {
+    return ok((new JsWebExercise()).vorschau());
   }
 
 }
