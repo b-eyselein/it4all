@@ -1,16 +1,36 @@
+function testTheSolution(url) {
+  // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if(xhttp.readyState == 4 && xhttp.status == 200) {
+      processCorrection(xhttp.responseText);
+    }
+  };
+  
+  // AJAX-Objekt mit Daten fuellen, absenden
+  var parameters = "editorContent=" + encodeURIComponent(editor.getValue());
+  xhttp.open("PUT", url, true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.setRequestHeader("Accept", "application/json");
+  xhttp.send(parameters);
+}
+
+function prepareFormForSubmitting() {
+  document.getElementById("editorContent").value = editor.getValue();
+}
 function processCorrection(correction) {
   try {
     var newCorrection = JSON.parse(correction);
-
+    
     var numOfSuccessfulResults = 0;
-
+    
     for(i = 0; i < newCorrection.length; i++) {
       handleResult(newCorrection[i]);
       if(newCorrection[i].success === "COMPLETE") {
         numOfSuccessfulResults++;
       }
     }
-
+    
     var commitButton = document.getElementById("commit");
     commitButton.disabled = false;
     if(numOfSuccessfulResults == newCorrection.length) {
@@ -23,17 +43,29 @@ function processCorrection(correction) {
   } catch(err) {
     alert(err);
   }
-
+  
   // TODO: Evtl. Update Live-Ansicht in andere Funktion auslagern
   // --> andere Aktivierung (onclick Data-toggle?)
   var live = document.getElementById("live");
   live.src = live.src;
 }
 
+function updatePreview() {
+  var toWrite = unescapeHTML(editor.getValue());
+  var theIFrame = document.getElementById("preview").contentWindow.document;
+  theIFrame.open();
+  theIFrame.write(toWrite);
+  theIFrame.close();
+}
+
+function unescapeHTML(escapedHTML) {
+  return escapedHTML.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+}
+
 function handleResult(result) {
   var taskID = result.task.key.taskId;
   var taskDiv = document.getElementById("pan_task" + taskID);
-
+  
   if(result.success === "COMPLETE") {
     taskDiv.className = "panel panel-success";
     $("#task" + taskID).collapse('hide');
@@ -46,16 +78,16 @@ function handleResult(result) {
   } else {
     alert("Es gab einen Fehler!");
   }
-
+  
   var comDiv = document.getElementById("com_task" + taskID);
   comDiv.innerHTML = "";
-
+  
   if(result.success === "COMPLETE" || result.success === "PARTIALLY") {
     comDiv.innerHTML += "<div class=\"alert alert-success\">Element wurde gefunden!</div>";
   } else {
     comDiv.innerHTML += "<div class=\"alert alert-danger\">Element konnte nicht gefunden werden!</div>";
   }
-
+  
   for(attCount = 0; attCount < result.attributeResults.length; attCount++) {
     var attr = result.attributeResults[attCount];
     if(attr.success === "COMPLETE") {
@@ -72,7 +104,7 @@ function handleResult(result) {
           + attr.key + "\"</div>";
     }
   }
-
+  
   // TODO: childResults!
   for(childCount = 0; childCount < result.childResults.length; childCount++) {
     var childResult = result.childResults[childCount];
