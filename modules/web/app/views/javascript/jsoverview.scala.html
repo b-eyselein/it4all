@@ -15,7 +15,7 @@
     <div class="panel-heading">Aufgaben mit Webbezug</div>
     <div class="panel-body">
     @for(webExercise <- webExercises) {
-      <a href="@web.routes.JS.exerciseWeb(webExercise.id)" class="btn btn-default btn-block">Aufgabe @webExercise.id: ...</a>
+      <a href="@web.routes.JS.exerciseWeb(webExercise.id)" class="btn btn-default btn-block">Aufgabe @webExercise.id: @webExercise.title</a>
     }
     </div>
   </div>

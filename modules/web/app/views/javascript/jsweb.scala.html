@@ -7,6 +7,8 @@
 function testSolution() {
   testTheWebSolution("@web.routes.JS.exerciseWeb(exercise.id)");
 }
+
+window.onload = updatePreview;
 </script>
 
 <div class="container-fluid">
@@ -30,6 +32,8 @@ editor.setOptions({
   minLines: 15,
   maxLines: 25
 });
+
+editor.on("change", updatePreview);
 </script>
     <pre id="posterior">@exercise.posterior</pre>
     </div>
@@ -42,7 +46,7 @@ editor.setOptions({
           </div>
         </div>
         <div class="panel-footer">
-          <button class="btn btn-primary btn-block" onclick="updatePreview();">Vorschau aktualisieren</button>
+          <div class="alert alert-info">Die Vorschau wird bei &Auml;nderungen in der L&ouml;sung automatisch aktualisiert.</div>
         </div>
       </div>
     </div>
