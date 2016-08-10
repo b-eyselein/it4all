@@ -2,20 +2,16 @@
 
 @main(title, user) {
   <script src="@controllers.routes.Assets.versioned("javascripts/ace/ace.js")"></script>
-  @if(exType.equals("html")) {
   <script src="@controllers.routes.Assets.versioned("javascripts/htmlProcessor.js")"></script>
-  } else {
-  <script src="@controllers.routes.Assets.versioned("javascripts/cssProcessor.js")"></script>
-  }
   <script>
 function testSolution() {
-  testTheSolution("@controllers.web.routes.HTML.commit(exercise.id, exType)");
+  testTheSolution("@controllers.web.routes.HTML.commit(exercise.id, exType)", "@exType");
 }
     
 window.onload = updatePreview;
   </script>
 
-  <div class="container-fluid" style="font-size: 12px">
+  <div class="container-fluid">
     <form action="@web.routes.HTML.commit(exercise.id, exType)" method="post" onsubmit="prepareFormForSubmitting();">
       <div class="row">
         <div class="col-md-12">
@@ -81,17 +77,18 @@ window.onload = updatePreview;
 }</pre>
               <textarea hidden name="editorContent" id="editorContent"></textarea>
               <script type="text/javascript">
-    var editor = ace.edit("editor");
-    editor.setTheme("ace/theme/eclipse");
-    editor.getSession().setMode("ace/mode/html");
-    editor.getSession().setTabSize(2);
-    editor.getSession().setUseSoftTabs(true);
-    editor.getSession().setUseWrapMode(true);
-    editor.setOptions({
-      minLines: 25,
-      maxLines: 45
-    });
-    editor.on("change", updatePreview);
+document.getElementById('editor').style.fontSize = '14px';
+var editor = ace.edit("editor");
+editor.setTheme("ace/theme/eclipse");
+editor.getSession().setMode("ace/mode/html");
+editor.getSession().setTabSize(2);
+editor.getSession().setUseSoftTabs(true);
+editor.getSession().setUseWrapMode(true);
+editor.setOptions({
+  minLines: 25,
+  maxLines: 45
+});
+editor.on("change", updatePreview);
                 </script>
             </div>
           </div>
@@ -104,6 +101,9 @@ window.onload = updatePreview;
               <div class="embed-responsive embed-responsive-4by3">
                 <iframe class="embed-responsive-item" src="about:blank" id="preview"></iframe>
               </div>
+            </div>
+            <div class="panel-footer">
+              <div class="alert alert-info">Die Vorschau wird bei &Auml;nderungen in der L&ouml;sung automatisch aktualisiert.</div>
             </div>
           </div>
         </div>
