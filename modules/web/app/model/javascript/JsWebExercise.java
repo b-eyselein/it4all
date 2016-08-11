@@ -1,6 +1,7 @@
 package model.javascript;
 
-import play.twirl.api.Html;
+import java.util.ArrayList;
+import java.util.List;
 
 public class JsWebExercise {
   
@@ -8,7 +9,7 @@ public class JsWebExercise {
   
   public String title = "Klickzähler!";
   
-  public String text = "Implementieren Sie die folgende Funktion <code>blendeAus()</code>, die aufgerufen wird, wenn auf den Knopf gedrückt wird."
+  public String text = "Implementieren Sie die folgende Funktion <code>count()</code>, die aufgerufen wird, wenn auf den Knopf gedrückt wird."
       + " Sie soll den folgenden Text mit der id \"theText\" beim ersten Drücken ausblenden und beim erneuten Drücken wieder einblenden!";
   
   public String anterior = "<!DOCTYPE html>\n<html>\n<head>\n  <title>Aufgabe</title>\n  <script type=\"text/javascript\">";
@@ -20,8 +21,15 @@ public class JsWebExercise {
   
   public String declaration = "function count() {\n  \n}";
   
-  public Html vorschau() {
-    return new Html(anterior + declaration + posterior);
+  public List<JsWebTest> getTests() {
+    String actionElement = "//input[@type='button']";
+    String conditionElement = "//span[@id='counter']";
+    
+    List<JsWebTest> tests = new ArrayList<>(10);
+    for(int i = 0; i < 10; i++)
+      tests.add(new JsWebTest(conditionElement, i + "", (i + 1) + "", actionElement));
+    
+    return tests;
   }
   
 }

@@ -2,19 +2,26 @@ package model.javascript;
 
 import java.util.List;
 
-import javax.persistence.DiscriminatorValue;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.avaje.ebean.Model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import model.exercise.Exercise;
-
 @Entity
-@DiscriminatorValue(value = "js")
-public class JsExercise extends Exercise {
-  
-  public static Finder<Integer, JsExercise> finder = new Finder<Integer, JsExercise>(JsExercise.class);
+public class JsExercise extends Model {
+
+  public static Finder<Integer, JsExercise> finder = new Finder<>(JsExercise.class);
+
+  @Id
+  public int id;
+
+  public String title;
+
+  @Column(columnDefinition = "text")
+  public String text;
 
   public String defaultSolution;
 
@@ -23,10 +30,5 @@ public class JsExercise extends Exercise {
   @OneToMany(mappedBy = "exercise")
   @JsonManagedReference
   public List<JsTest> functionTests;
-
-  @Override
-  public int getMaxPoints() {
-    return 2;
-  }
 
 }

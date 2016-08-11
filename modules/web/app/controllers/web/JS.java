@@ -36,7 +36,7 @@ public class JS extends Controller {
 
   private static final String EXERCISE_TYPE = "js";
   private static final String FILE_TYPE = "html";
-  
+
   @Inject
   private Util util;
 
@@ -62,7 +62,8 @@ public class JS extends Controller {
     String learnerSolution = form.get("editorContent");
 
     JsWebExercise exercise = new JsWebExercise();
-    
+
+    // FIXME: save only real solution (learnerSolution)?
     String site = exercise.anterior + "\n" + learnerSolution + "\n" + exercise.posterior;
     try {
       saveSolutionForUser(user, site, exerciseId);
@@ -70,8 +71,8 @@ public class JS extends Controller {
       Logger.debug("Error while saving file ", e);
       return badRequest("Error while saving file!");
     }
-    
-    String solutionUrl = routes.Solution.site(user, exercise.id).absoluteURL(request());
+
+    String solutionUrl = routes.Solution.site(user, "js", exercise.id).absoluteURL(request());
     String result = JsCorrector.correctWeb(exercise, solutionUrl);
 
     Logger.debug(result);
@@ -104,10 +105,6 @@ public class JS extends Controller {
   public Result index() {
     User user = UserManagement.getCurrentUser();
     return ok(jsoverview.render(user, JsExercise.finder.all(), Arrays.asList(new JsWebExercise())));
-  }
-
-  public Result vorschau(int exerciseId) {
-    return ok((new JsWebExercise()).vorschau());
   }
 
   private void saveSolutionForUser(User user, String solution, int exercise) throws IOException {

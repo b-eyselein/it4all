@@ -36,8 +36,6 @@ create table exercise (
   title                         varchar(255),
   exercisetext                  text,
   file_name                     varchar(255),
-  default_solution              varchar(255),
-  function_name                 varchar(255),
   constraint pk_exercise primary key (id)
 );
 
@@ -79,6 +77,15 @@ create table html_task (
   defining_attribute            varchar(255),
   attributes                    varchar(255),
   constraint pk_html_task primary key (task_id,exercise_id)
+);
+
+create table js_exercise (
+  id                            integer auto_increment not null,
+  title                         varchar(255),
+  text                          text,
+  default_solution              varchar(255),
+  function_name                 varchar(255),
+  constraint pk_js_exercise primary key (id)
 );
 
 create table js_test (
@@ -151,7 +158,7 @@ create index ix_grading_exercise_id on grading (exercise_id);
 alter table html_task add constraint fk_html_task_exercise_id foreign key (exercise_id) references exercise (id) on delete restrict on update restrict;
 create index ix_html_task_exercise_id on html_task (exercise_id);
 
-alter table js_test add constraint fk_js_test_exercise_id foreign key (exercise_id) references exercise (id) on delete restrict on update restrict;
+alter table js_test add constraint fk_js_test_exercise_id foreign key (exercise_id) references js_exercise (id) on delete restrict on update restrict;
 create index ix_js_test_exercise_id on js_test (exercise_id);
 
 alter table js_testvalue add constraint fk_js_testvalue_test_id foreign key (test_id) references js_test (id) on delete restrict on update restrict;
@@ -209,6 +216,8 @@ drop table if exists feedback;
 drop table if exists grading;
 
 drop table if exists html_task;
+
+drop table if exists js_exercise;
 
 drop table if exists js_test;
 

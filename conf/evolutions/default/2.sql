@@ -2,19 +2,12 @@
 
 # HTML
 
-insert into exercise (`type`, `id`, `title`, `exerciseText`, `file_name`, `default_solution`, `function_name`) values
+insert into exercise (`type`, `id`, `title`, `exerciseText`, `file_name`) values
 	("html", 1, "Terminabsprache Werkstatt", "Ihre Firma für Webdesign ist von einer lokalen Werkstatt beauftragt worden, ein Kontaktformular für die Absprache eines Termins zu erstellen. Die Kunden sollen in einem Formular ihre Daten (Namen, Adresse, Automarke, Baujahr, …) sowie einen Datumswunsch angeben. Diese Daten werden an den Server gesendet und, falls der Termin möglich ist, in einer Datenbank gespeichert. Falls der Termin bereits besetzt ist, bekommt der Kunde eine Fehlermeldung angezeigt. Die Werkstatt kann nur Modelle der Marken Audi, Seat, Skoda und VW reparieren.
 	Ihre Firma beschließt, zuerst einen statischen Seitenprototyp mit verminderter Funktion zu erstellen. Benutzen Sie nur Html, um folgende Elemente zu erstellen. Versuchen Sie jedoch so viel Funktionalität wie möglich umzusetzen, indem Sie entsprechende Elemente bzw. Attribute von Html5 verwenden! Elemente, die mit einem „*“ markiert sind, sollen zur Formularabsendung eingegeben werden müssen. Benutzen Sie die in Klammern angegeben Namen für die Elemente! Erstellen Sie jedes Eingabefeld für das spätere Styling mit CSS jeweils eine eigene <div>-Umgebung!",
-	"", "", ""),
-
-	("js", 3, "Summen", "Implementieren Sie folgende Funktion 'sum', die zwei Zahlen entegennimmt und deren Summe zurückgibt.", "",
-	 "function sum(a, b) {\n  return 0;;\n}", "sum"),
+	""),
 	 
-	("js", 4, "Konkatenation von Strings", "Implementieren Sie die folgende Funktion 'concat', die drei beliebige Strings entgegennimmt
-	 und die Konkatenation der Strings zurückgibt.", "",
-	 "function concat(str1, str2, str3) {\n  return \"\";;\n}", "concat"),
-	 
-   	("spread", 5, "Planung Schullandheimaufenthalt", "Sie sind beauftragt, einen Schullandheimaufenthalt zu planen und die Kosten zu kalkulieren.", "Aufgabe_Schullandheim", "", "");
+   	("spread", 5, "Planung Schullandheimaufenthalt", "Sie sind beauftragt, einen Schullandheimaufenthalt zu planen und die Kosten zu kalkulieren.", "Aufgabe_Schullandheim");
 	
 insert into xmlexercise (`id`, `title`, `exerciseType`, `referenceFileName`, `exerciseText`) values
 	(1, "Hello, XML", "XMLAgainstDTD", "party.dtd", "Erstellen Sie zu dieser DTD ein passendes XML-Dokument"),
@@ -66,13 +59,21 @@ insert into css_task (`task_id`, `exercise_id`, `taskdesc`, `xpath_query_name`, 
 	
 # JavaScript
 
+insert into js_exercise (`id`, `title`, `text`, `default_solution`, `function_name`) values
+	(1, "Summen", "Implementieren Sie folgende Funktion 'sum', die zwei Zahlen entegennimmt und deren Summe zurückgibt.", 
+	 "function sum(a, b) {\n  return 0;;\n}", "sum"),
+	 
+	(2, "Konkatenation von Strings", "Implementieren Sie die folgende Funktion 'concat', die drei beliebige Strings entgegennimmt
+	 und die Konkatenation der Strings zurückgibt.", 
+	 "function concat(str1, str2, str3) {\n  return \"\";;\n}", "concat");
+
 insert into js_test (`id`, `exercise_id`, `awaited_result`) values
-	(1, 3, 2.0),
-	(2, 3, 3.0),
-	(3, 3, 87.0),
-	(4, 3, 597.0),
-	(5, 4, "Hallo Welt!"),
-	(6, 4, "TestTestTest");
+	(1, 1, 2.0),
+	(2, 1, 3.0),
+	(3, 1, 87.0),
+	(4, 1, 597.0),
+	(5, 2, "Hallo Welt!"),
+	(6, 2, "TestTestTest");
 
 insert into js_testvalue (`id`, `test_id`, `value`) values
 	(1, 1, 1), (2, 1, 1),
@@ -90,6 +91,8 @@ SET FOREIGN_KEY_CHECKS = 0;
 delete from js_testvalue;
 
 delete from js_test;
+
+delete from js_exercise;
 
 delete from childtask;
 

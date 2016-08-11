@@ -53,6 +53,7 @@ public class HtmlCorrector {
     
     grading.points = points;
     grading.save();
+    
   }
   
 }

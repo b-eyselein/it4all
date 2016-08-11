@@ -1,20 +1,19 @@
 # HTML & CSS
-GET    /html/                        controllers.web.HTML.index()
+GET    /html/                              controllers.web.HTML.index()
 
-GET    /html/:exerciseId/:type       controllers.web.HTML.exercise(exerciseId: Int, type: String)
+GET    /html/:exerciseId/:type             controllers.web.HTML.exercise(exerciseId: Int, type: String)
 
-PUT    /html/:exerciseId/:type       controllers.web.HTML.commit(exerciseId: Int, type: String)
-POST   /html/:exerciseId/:type       controllers.web.HTML.commit(exerciseId: Int, type: String)
+PUT    /html/:exerciseId/:type             controllers.web.HTML.commit(exerciseId: Int, type: String)
+POST   /html/:exerciseId/:type             controllers.web.HTML.commit(exerciseId: Int, type: String)
 
-GET    /solution/:user/:exerciseId   controllers.web.Solution.site(user: model.user.User, exerciseId: Int)
+GET    /solution/:user/:type/:exerciseId   controllers.web.Solution.site(user: model.user.User, type: String, exerciseId: Int)
 
 # JavaScript
-GET    /js/                          controllers.web.JS.index()
-GET    /js/vorschau/:ex              controllers.web.JS.vorschau(ex: Int)
+GET    /js/                                controllers.web.JS.index()
 
-GET    /js/web/:ex                   controllers.web.JS.exerciseWeb(ex: Int)
-PUT    /js/web/:ex                   controllers.web.JS.commitWeb(ex: Int)
-POST   /js/web/:ex                   controllers.web.JS.commitWeb(ex: Int)
+GET    /js/web/:ex                         controllers.web.JS.exerciseWeb(ex: Int)
+PUT    /js/web/:ex                         controllers.web.JS.commitWeb(ex: Int)
+POST   /js/web/:ex                         controllers.web.JS.commitWeb(ex: Int)
 
-GET    /js/:ex                       controllers.web.JS.exercise(ex: Int)
-POST   /js/:ex                       controllers.web.JS.commit(ex: Int)
+GET    /js/:ex                             controllers.web.JS.exercise(ex: Int)
+POST   /js/:ex                             controllers.web.JS.commit(ex: Int)

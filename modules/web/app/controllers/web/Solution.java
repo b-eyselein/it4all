@@ -17,14 +17,16 @@ import views.html.error;
 public class Solution extends Controller {
   
   private static final String FILE_TYPE = "html";
-
+  
   @Inject
   private Util util;
+  
+  public Result site(User user, String type, int exercise) {
+    Path file = util.getSolFileForExercise(user, type, exercise, FILE_TYPE);
 
-  public Result jsWebSolution(User user, int exerciseId) {
-    Path file = util.getSolFileForExercise(user, "html", exerciseId, FILE_TYPE);
     if(!Files.exists(file))
       return badRequest(error.render(user, new Html("Fehler: Datei nicht vorhanden!")));
+
     try {
       return ok(new Html(String.join("\n", Files.readAllLines(file))));
     } catch (IOException err) {
@@ -33,15 +35,4 @@ public class Solution extends Controller {
     }
   }
   
-  public Result site(User user, int exercise) {
-    Path file = util.getSolFileForExercise(user, "js", exercise, FILE_TYPE);
-    if(!Files.exists(file))
-      return badRequest(error.render(user, new Html("Fehler: Datei nicht vorhanden!")));
-    try {
-      return ok(new Html(String.join("\n", Files.readAllLines(file))));
-    } catch (IOException err) {
-      Logger.error("Fehler beim Lesen einer Html-Datei: " + file, err);
-      return badRequest(error.render(user, new Html("Fehler beim Lesen der Datei!")));
-    }
-  }
 }
