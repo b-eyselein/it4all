@@ -13,6 +13,7 @@ GET    /js/                          controllers.web.JS.index()
 GET    /js/vorschau/:ex              controllers.web.JS.vorschau(ex: Int)
 
 GET    /js/web/:ex                   controllers.web.JS.exerciseWeb(ex: Int)
+PUT    /js/web/:ex                   controllers.web.JS.commitWeb(ex: Int)
 POST   /js/web/:ex                   controllers.web.JS.commitWeb(ex: Int)
 
 GET    /js/:ex                       controllers.web.JS.exercise(ex: Int)
