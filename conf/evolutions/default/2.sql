@@ -59,7 +59,7 @@ insert into css_task (`task_id`, `exercise_id`, `taskdesc`, `xpath_query_name`, 
 	
 # JavaScript
 
-insert into js_exercise (`id`, `title`, `text`, `default_solution`, `function_name`) values
+insert into js_exercise (`id`, `title`, `text`, `declaration`, `function_name`) values
 	(1, "Summen", "Implementieren Sie folgende Funktion 'sum', die zwei Zahlen entegennimmt und deren Summe zurückgibt.", 
 	 "function sum(a, b) {\n  return 0;;\n}", "sum"),
 	 

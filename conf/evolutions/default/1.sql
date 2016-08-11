@@ -83,7 +83,7 @@ create table js_exercise (
   id                            integer auto_increment not null,
   title                         varchar(255),
   text                          text,
-  default_solution              varchar(255),
+  declaration                   varchar(255),
   function_name                 varchar(255),
   constraint pk_js_exercise primary key (id)
 );
