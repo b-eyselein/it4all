@@ -23,20 +23,20 @@ window.onload = updatePreview;
       <pre id="anterior">@exercise.anterior</pre>
       <div id="editor" class="form-control">@exercise.declaration</div>
       <script>
-document.getElementById('editor').style.fontSize = '16px';
-var editor = ace.edit("editor");
-editor.setTheme("ace/theme/eclipse");
-editor.getSession().setMode("ace/mode/javascript");
-editor.getSession().setTabSize(2);
-editor.getSession().setUseSoftTabs(true);
-editor.getSession().setUseWrapMode(true);
-editor.setOptions({
-  minLines: 15,
-  maxLines: 25
-});
-
-editor.on("change", updatePreview);
-</script>
+              document.getElementById('editor').style.fontSize = '16px';
+              var editor = ace.edit("editor");
+              editor.setTheme("ace/theme/eclipse");
+              editor.getSession().setMode("ace/mode/javascript");
+              editor.getSession().setTabSize(2);
+              editor.getSession().setUseSoftTabs(true);
+              editor.getSession().setUseWrapMode(true);
+              editor.setOptions({
+                minLines: 15,
+                maxLines: 25
+              });
+              
+              editor.on("change", updatePreview);
+            </script>
     <pre id="posterior">@exercise.posterior</pre>
     </div>
     <div class="col-md-4">

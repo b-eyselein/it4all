@@ -23,6 +23,23 @@ function processCorrection(jsonResponseText) {
   loesungsraum.innerHTML += toAdd;
 }
 
+function testTheSolution(url) {
+  // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if(xhttp.readyState == 4 && xhttp.status == 200) {
+      processCorrection(xhttp.responseText);
+    }
+  };
+  
+  // AJAX-Objekt mit Daten fuellen, absenden
+  var parameters = "editorContent=" + encodeURIComponent(editor.getValue());
+  xhttp.open("POST", url, true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.setRequestHeader("Accept", "application/json");
+  xhttp.send(parameters);
+}
+
 function processWebCorrection(jsonResponseText) {
   var tests = JSON.parse(jsonResponseText);
   var toAdd = "";
@@ -46,9 +63,12 @@ function processWebCorrection(jsonResponseText) {
     toAdd += "  <div id=\"col" + testCount + "\" class=\"panel-collapse collapse" + show + "\">";
     toAdd += "    <div class=\"panel-body\">";
     
-    toAdd += "      <div class=\"alert alert-" + preClazz + "\">Precondition: " + currentTest.precondition.description + "</div>";
-    toAdd += "      <div class=\"alert alert-" + actionClazz + "\">Action: " + currentTest.action.description + "</div>";
-    toAdd += "      <div class=\"alert alert-" + postClazz + "\">Postcondition: " + currentTest.postcondition.description + "</div>";
+    toAdd += "      <div class=\"alert alert-" + preClazz + "\">Precondition: " + currentTest.precondition.description
+        + "</div>";
+    toAdd += "      <div class=\"alert alert-" + actionClazz + "\">Action: " + currentTest.action.description
+        + "</div>";
+    toAdd += "      <div class=\"alert alert-" + postClazz + "\">Postcondition: "
+        + currentTest.postcondition.description + "</div>";
     
     toAdd += "    </div>";
     toAdd += "  </div>";
