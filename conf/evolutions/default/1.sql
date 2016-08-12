@@ -102,6 +102,16 @@ create table js_testvalue (
   constraint pk_js_testvalue primary key (id)
 );
 
+create table js_web_exercise (
+  id                            integer auto_increment not null,
+  title                         varchar(255),
+  text                          text,
+  anterior                      varchar(255),
+  posterior                     varchar(255),
+  declaration                   varchar(255),
+  constraint pk_js_web_exercise primary key (id)
+);
+
 create table select_exercise (
   id                            integer not null,
   scenario_name                 varchar(255) not null,
@@ -222,6 +232,8 @@ drop table if exists js_exercise;
 drop table if exists js_test;
 
 drop table if exists js_testvalue;
+
+drop table if exists js_web_exercise;
 
 drop table if exists select_exercise;
 

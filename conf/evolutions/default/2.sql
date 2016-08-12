@@ -83,10 +83,26 @@ insert into js_testvalue (`id`, `test_id`, `value`) values
 	(9, 5, '\'Hallo \''), (10, 5, "'Welt'"), (11, 5, "'!'"),
 	(12, 6, "'Test'"), (13, 6, "'Test'"), (14, 6, "'Test'");
 
+insert into js_web_exercise (`id`, `title`, `text`, `anterior`, `posterior`, `declaration` ) values
+	(1,
+	'Klickzähler',
+	'Implementieren Sie die folgende Funktion <code>count()</code>, die aufgerufen wird, wenn auf den Knopf gedrückt wird. Sie soll den folgenden Text mit der id \"theText\" beim ersten Drücken ausblenden und beim erneuten Drücken wieder einblenden!',
+	'<!DOCTYPE html>\n<html>\n<head>\n  <title>Aufgabe</title>\n  <script type=\"text/javascript\">',
+	'  </script>\n</head>\n\n<body>\n  <h3>Erhöhen Sie den Counter um 1, wenn der Button gedrückt wird!</h3>\n  <input type=\"button\" onclick=\"count()\" value=\"Push me!\">\n  <p>Count: <span id=\"counter\">0</span></p>\n</body>\n<html>',
+	'function count() {\n  \n}'),
+	
+	(2,
+	'Binärzahlen',
+	'Implementieren Sie die folgende Funktion <code>toBinary(number)</code>, die die übergebene Zahl in eine Binärzahl umwandelt und in das Ausgabefeld (span mit der id \"result\")schreibt!',
+	'<!DOCTYPE html>\n<html>\n<head>\n  <title>Binärzahlen</title>\n  <script type=\"text/javascript\">',
+	'  </script>\n</head>\n\n<body>\n  <h3>Geben Sie eine Zahl ein:</h3>\n  <p>Ihre Zahl: <input type=\"number\" id=\"theInput\" \n\t\tonchange=\"toBinary(parseInt(this.value))\"></p>\n  <p>Binärzahl: <span id=\"result\"></span>\n</body>\n<\html>',
+	'function toBinary(number) {\n  \n}');
 
 # --- !Downs
 
 SET FOREIGN_KEY_CHECKS = 0;
+
+delete from js_web_exercise;
 
 delete from js_testvalue;
 
