@@ -15,9 +15,11 @@ window.onload = updatePreview;
   <div class="panel panel-default">
     <div class="panel-heading">Aufgabenstellung</div>
     <div class="panel-body">@Html(exercise.text)</div>
+    <div class="panel-footer"><button class="form-control" onclick="testSolution();">L&ouml;sung testen</button></div>
   </div>
+  
   <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-4">
       <pre id="anterior">@exercise.anterior</pre>
       <div id="editor" class="form-control">@exercise.declaration</div>
       <script>
@@ -50,9 +52,16 @@ editor.on("change", updatePreview);
         </div>
       </div>
     </div>
+    
+    <div class="col-md-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">Tests</div>
+        <div class="panel-body" id="testsDiv">
+        </div>
+      </div>
+    </div>
+    
   </div>
-  <p>
-    <button class="form-control" onclick="testSolution();">L&ouml;sung testen</button>
-  </p>
+
 </div>
 }

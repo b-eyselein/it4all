@@ -1,64 +1,65 @@
 package model.javascript;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+
+import model.javascript.web.Action;
+import model.javascript.web.Action.ClickAction;
+import model.javascript.web.Condition;
 
 public class JsWebTest {
-
-  public static class ClickAction {
-    private String xpathQuery;
-
-    public ClickAction(String theXpathQuery) {
-      xpathQuery = theXpathQuery;
-    }
-
-    public void perform(WebDriver driver) {
-      driver.findElement(By.xpath(xpathQuery)).click();
-    }
-
-  }
-
-  public static class Condition {
-
-    private String xpathQuery;
-
-    private String innerHTML;
-
-    public Condition(String theXpathQuery, String theInnerHTML) {
-      xpathQuery = theXpathQuery;
-      innerHTML = theInnerHTML;
-    }
-
-    public boolean test(WebDriver driver) {
-      WebElement element = driver.findElement(By.xpath(xpathQuery));
-      return element != null && element.getText().equals(innerHTML);
-    }
-
-  }
-
+  
   private Condition precondition;
-
-  private ClickAction action;
-
+  private boolean preconditionSatisfied;
+  
+  private Action action;
+  private boolean actionPerformed;
+  
   private Condition postcondition;
-
+  private boolean postconditionSatisfied;
+  
   public JsWebTest(String conditionElement, String preCondition, String postCondition, String actionElement) {
     precondition = new Condition(conditionElement, preCondition);
     postcondition = new Condition(conditionElement, postCondition);
     action = new ClickAction(actionElement);
   }
-
-  public boolean test(WebDriver driver) {
-    if(!precondition.test(driver))
-      return false;
-
-    action.perform(driver);
-
-    if(!postcondition.test(driver))
-      return false;
-
-    return true;
+  
+  public Action getAction() {
+    return action;
+  }
+  
+  public boolean getActionPerformed() {
+    return actionPerformed;
+  }
+  
+  public Condition getPostcondition() {
+    return postcondition;
+  }
+  
+  public boolean getPostconditionSatisfied() {
+    return postconditionSatisfied;
+  }
+  
+  public Condition getPrecondition() {
+    return precondition;
+  }
+  
+  public boolean getPreconditionSatisfied() {
+    return preconditionSatisfied;
   }
 
+  public boolean getSuccessful() {
+    return preconditionSatisfied && actionPerformed && postconditionSatisfied;
+  }
+  
+  public void test(WebDriver driver) {
+    preconditionSatisfied = precondition.test(driver);
+    // TODO: Abbruch, wenn Bedingung nicht erfüllt?
+    // if(!preconditionSatisfied)
+    // return;
+    
+    actionPerformed = action.perform(driver);
+    
+    postconditionSatisfied = postcondition.test(driver);
+  }
+  
 }

@@ -9,6 +9,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import controllers.core.UserManagement;
 import model.Secured;
 import model.Util;
@@ -16,6 +18,7 @@ import model.javascript.JsCorrector;
 import model.javascript.JsExercise;
 import model.javascript.JsTestResult;
 import model.javascript.JsWebExercise;
+import model.javascript.JsWebTest;
 import model.user.User;
 import play.Logger;
 import play.data.DynamicForm;
@@ -73,12 +76,14 @@ public class JS extends Controller {
     }
 
     String solutionUrl = routes.Solution.site(user, "js", exercise.id).absoluteURL(request());
-    String result = JsCorrector.correctWeb(exercise, solutionUrl);
+    List<JsWebTest> result = JsCorrector.correctWeb(exercise, solutionUrl);
 
-    Logger.debug(result);
+    JsonNode json = Json.toJson(result);
+
+    Logger.debug(Json.prettyPrint(json));
 
     if(request().accepts("application/json"))
-      return ok(Json.toJson(result));
+      return ok(json);
     else
       // TODO: jscorrect --> Nur für Endkorrektur ?!?
       return ok("TODO!");

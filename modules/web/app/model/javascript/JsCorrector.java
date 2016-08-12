@@ -31,14 +31,13 @@ public class JsCorrector {
     
   }
   
-  public static String correctWeb(JsWebExercise exercise, String solutionUrl) {
+  public static List<JsWebTest> correctWeb(JsWebExercise exercise, String solutionUrl) {
     WebDriver driver = loadWebSite(solutionUrl);
-
-    for(JsWebTest test: exercise.getTests())
-      if(!test.test(driver))
-        return "Fehler bei einem Test!";
-      
-    return "correct...";
+    
+    List<JsWebTest> tests = exercise.getTests();
+    tests.forEach(test -> test.test(driver));
+    
+    return tests;
   }
   
   private static WebDriver loadWebSite(String solutionUrl) {
