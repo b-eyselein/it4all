@@ -5,20 +5,7 @@
 <script src="@controllers.routes.Assets.versioned("javascripts/jsProcessor.js")" type="text/javascript" charset="utf-8"></script>
 <script>
 function testSolution() {
-// AJAX-Objekt erstellen, Callback-Funktion bereitstellen
-var xhttp = new XMLHttpRequest();
-xhttp.onreadystatechange = function() {
-if(xhttp.readyState == 4 && xhttp.status == 200) {
-processCorrection(xhttp.responseText);
-}
-};
-
-// AJAX-Objekt mit Daten fuellen, absenden
-var parameters = "editorContent=" + encodeURIComponent(editor.getValue());
-xhttp.open("POST", "@controllers.web.routes.JS.commit(exercise.id)", true);
-xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-xhttp.setRequestHeader("Accept", "application/json");
-xhttp.send(parameters);
+  testTheSolution("@web.routes.JS.exerciseWeb(exercise.id)");
 }
 </script>
 
@@ -26,6 +13,7 @@ xhttp.send(parameters);
   <div class="panel panel-default">
     <div class="panel-heading">Aufgabenstellung</div>
     <div class="panel-body">@exercise.text</div>
+    <div class="panel-footer"><button class="form-control" onclick="testSolution();">L&ouml;sung testen</button></div>
   </div>
   <div class="row">
     <div class="col-md-6">
@@ -47,8 +35,5 @@ xhttp.send(parameters);
       </div>
     </div>
   </div>
-  <p>
-    <button class="form-control" onclick="testSolution();">L&ouml;sung testen</button>
-  </p>
 </div>
 }

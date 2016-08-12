@@ -46,9 +46,12 @@ function processWebCorrection(jsonResponseText) {
     toAdd += "  <div id=\"col" + testCount + "\" class=\"panel-collapse collapse" + show + "\">";
     toAdd += "    <div class=\"panel-body\">";
     
-    toAdd += "      <div class=\"alert alert-" + preClazz + "\">Precondition: " + currentTest.precondition.description + "</div>";
-    toAdd += "      <div class=\"alert alert-" + actionClazz + "\">Action: " + currentTest.action.description + "</div>";
-    toAdd += "      <div class=\"alert alert-" + postClazz + "\">Postcondition: " + currentTest.postcondition.description + "</div>";
+    toAdd += "      <div class=\"alert alert-" + preClazz + "\">Precondition: " + currentTest.precondition.description
+        + "</div>";
+    toAdd += "      <div class=\"alert alert-" + actionClazz + "\">Action: " + currentTest.action.description
+        + "</div>";
+    toAdd += "      <div class=\"alert alert-" + postClazz + "\">Postcondition: "
+        + currentTest.postcondition.description + "</div>";
     
     toAdd += "    </div>";
     toAdd += "  </div>";
@@ -59,12 +62,12 @@ function processWebCorrection(jsonResponseText) {
   testsDiv.innerHTML = toAdd;
 }
 
-function testTheWebSolution(url) {
+function testSolution(url) {
   // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if(xhttp.readyState == 4 && xhttp.status == 200) {
-      processWebCorrection(xhttp.responseText);
+      processCorrection(xhttp.responseText);
     }
   };
   
