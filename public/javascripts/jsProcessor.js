@@ -79,12 +79,12 @@ function processWebCorrection(jsonResponseText) {
   testsDiv.innerHTML = toAdd;
 }
 
-function testTheWebSolution(url) {
+function testSolution(url) {
   // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if(xhttp.readyState == 4 && xhttp.status == 200) {
-      processWebCorrection(xhttp.responseText);
+      processCorrection(xhttp.responseText);
     }
   };
   
