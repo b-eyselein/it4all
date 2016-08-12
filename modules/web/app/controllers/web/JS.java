@@ -9,8 +9,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import controllers.core.UserManagement;
 import model.Secured;
 import model.Util;
@@ -78,12 +76,8 @@ public class JS extends Controller {
     String solutionUrl = routes.Solution.site(user, "js", exercise.id).absoluteURL(request());
     List<JsWebTest> result = JsCorrector.correctWeb(exercise, solutionUrl);
 
-    JsonNode json = Json.toJson(result);
-
-    Logger.debug(Json.prettyPrint(json));
-
     if(request().accepts("application/json"))
-      return ok(json);
+      return ok(Json.toJson(result));
     else
       // TODO: jscorrect --> Nur für Endkorrektur ?!?
       return ok("TODO!");
