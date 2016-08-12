@@ -1,3 +1,20 @@
+function testTheSolution(url) {
+  // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if(xhttp.readyState == 4 && xhttp.status == 200) {
+      processCorrection(xhttp.responseText);
+    }
+  };
+  
+  // AJAX-Objekt mit Daten fuellen, absenden
+  var parameters = "editorContent=" + encodeURIComponent(editor.getValue());
+  xhttp.open("POST", url, true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.setRequestHeader("Accept", "application/json");
+  xhttp.send(parameters);
+}
+
 function processCorrection(jsonResponseText) {
   var loesungsraum = document.getElementById("loesungsraum");
   loesungsraum.innerHTML = "";
@@ -23,12 +40,12 @@ function processCorrection(jsonResponseText) {
   loesungsraum.innerHTML += toAdd;
 }
 
-function testTheSolution(url) {
+function testTheWebSolution(url) {
   // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if(xhttp.readyState == 4 && xhttp.status == 200) {
-      processCorrection(xhttp.responseText);
+      processWebCorrection(xhttp.responseText);
     }
   };
   
@@ -77,23 +94,6 @@ function processWebCorrection(jsonResponseText) {
   
   var testsDiv = document.getElementById("testsDiv");
   testsDiv.innerHTML = toAdd;
-}
-
-function testSolution(url) {
-  // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
-  var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if(xhttp.readyState == 4 && xhttp.status == 200) {
-      processCorrection(xhttp.responseText);
-    }
-  };
-  
-  // AJAX-Objekt mit Daten fuellen, absenden
-  var parameters = "editorContent=" + encodeURIComponent(editor.getValue());
-  xhttp.open("POST", url, true);
-  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-  xhttp.setRequestHeader("Accept", "application/json");
-  xhttp.send(parameters);
 }
 
 function updatePreview() {
