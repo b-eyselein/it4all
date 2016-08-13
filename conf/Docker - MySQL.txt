@@ -1,3 +1,6 @@
+// docker: Cannot connect to the Docker daemon. Is the docker daemon running on this host?.
+sudo usermod -aG docker $(whoami)
+
 First db (it4all: Ebean):
 docker run --name mysql1 -e MYSQL_ROOT_PASSWORD=sT8aV#k7 -e MYSQL_DATABASE=it4all -e MYSQL_USER=it4all -e MYSQL_PASSWORD=c4aK3?bV -p 3306:3306 --restart=always -d mysql:5.7
 
