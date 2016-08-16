@@ -96,7 +96,7 @@ insert into js_web_exercise (`id`, `title`, `text`, `anterior`, `posterior`, `de
 	'Binärzahlen',
 	'Implementieren Sie die folgende Funktion <code>toBinary(number)</code>, die die übergebene Zahl in eine Binärzahl umwandelt und in das Ausgabefeld (span mit der id \"result\") schreibt!',
 	'<!DOCTYPE html>\n<html>\n<head>\n  <title>Binärzahlen</title>\n  <script type=\"text/javascript\">',
-	'  </script>\n</head>\n\n<body>\n  <h3>Geben Sie eine Zahl ein:</h3>\n  <p>Ihre Zahl: <input type=\"number\" id=\"theInput\" \n\t\tonchange=\"toBinary(parseInt(this.value))\"></p>\n  <p>Binärzahl: <span id=\"result\"></span>\n</body>\n<\html>',
+	'  </script>\n</head>\n\n<body>\n  <h3>Geben Sie eine Zahl ein:</h3>\n  <p>Ihre Zahl: <input type=\"number\" id=\"theInput\" \n\t\tonchange=\"toBinary(parseInt(this.value))\"></p>\n  <p>Binärzahl: <span id=\"result\"></span></p>\n</body>\n<\html>',
 	'function toBinary(number) {\n  \n}');
 insert into requirement (`id`, `xpath_query`, `inner_html`) values
 	(1, "//span[@id='counter']", "0"),
@@ -105,7 +105,8 @@ insert into requirement (`id`, `xpath_query`, `inner_html`) values
 	(4, "//span[@id='counter']", "3"),
 	(5, "//span[@id='counter']", "4"),
 	(6, "//span[@id='counter']", "5"),
-	(7, "//span[@id='result']", "11");
+	(7, "//span[@id='result']", "11"),
+	(8, "//span[@id='result']", "1111111");
 	
 insert into js_web_test (`id`, `exercise_id`,  `precondition`, `postcondition`, `actiontype`, `action_element_as_string`, `other_action_features`) values
 	(1, 1, 1, 2, "CLICK", "//input[@type='button']", ""),
@@ -113,14 +114,14 @@ insert into js_web_test (`id`, `exercise_id`,  `precondition`, `postcondition`, 
 	(3, 1, 3, 4, "CLICK",  "//input[@type='button']", ""),
 	(4, 1, 4, 5, "CLICK",  "//input[@type='button']", ""),
 	(5, 1, 5, 6, "CLICK",  "//input[@type='button']", ""),
-	(6, 2, NULL, 7, "FILLOUT",  "//input[@id='theInput']", "3");
+	(6, 2, NULL, 7, "FILLOUT", "//input[@id='theInput']", "3"),
+	(7, 2, NULL, 8, "FILLOUT", "//input[@id='theInput']", "127");
 
 # --- !Downs
 
 SET FOREIGN_KEY_CHECKS = 0;
 
 delete from js_web_test;
-
 
 delete from requirement;
 

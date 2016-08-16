@@ -68,7 +68,7 @@ public class JsWebTest extends Model {
   }
 
   public boolean getSuccessful() {
-    return preconditionSatisfied && actionPerformed && postconditionSatisfied;
+    return (precondition == null || preconditionSatisfied) && actionPerformed && postconditionSatisfied;
   }
 
   public void test(WebDriver driver) {

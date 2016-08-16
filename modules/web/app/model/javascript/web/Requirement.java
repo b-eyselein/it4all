@@ -40,6 +40,7 @@ public class Requirement extends Model {
   
   public boolean test(WebDriver driver) {
     WebElement element = driver.findElement(By.xpath(xpathQuery));
+    
     boolean success = element != null && element.getText().equals(innerHTML);
     return success;
   }

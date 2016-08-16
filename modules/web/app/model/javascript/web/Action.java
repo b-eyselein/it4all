@@ -49,7 +49,7 @@ public abstract class Action {
     @Override
     public String getDescription() {
       // TODO Auto-generated method stub
-      return "Beschreibung FilloutAction!";
+      return "Schreibe \"" + keysToSend + "\" in Element mit XPath \"" + xpathQuery + "\"";
     }
 
     @Override
@@ -59,6 +59,9 @@ public abstract class Action {
         return false;
 
       element.sendKeys(keysToSend);
+
+      // TODO: click on other element to fire the onchange event...
+      driver.findElement(By.xpath("//body")).click();
 
       return true;
     }

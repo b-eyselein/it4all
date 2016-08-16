@@ -80,13 +80,16 @@ function processWebCorrection(jsonResponseText) {
     toAdd += "  <div id=\"col" + testCount + "\" class=\"panel-collapse collapse" + show + "\">";
     toAdd += "    <div class=\"panel-body\">";
     
-    toAdd += "      <div class=\"alert alert-" + preClazz + "\">Precondition: " + currentTest.precondition.description
-        + "</div>";
+    if(currentTest.precondition != null) {
+      toAdd += "      <div class=\"alert alert-" + preClazz + "\">Precondition: "
+          + currentTest.precondition.description + "</div>";
+    }
     toAdd += "      <div class=\"alert alert-" + actionClazz + "\">Action: " + currentTest.action.description
         + "</div>";
-    toAdd += "      <div class=\"alert alert-" + postClazz + "\">Postcondition: "
-        + currentTest.postcondition.description + "</div>";
-    
+    if(currentTest.postcondition != null) {
+      toAdd += "      <div class=\"alert alert-" + postClazz + "\">Postcondition: "
+          + currentTest.postcondition.description + "</div>";
+    }
     toAdd += "    </div>";
     toAdd += "  </div>";
     toAdd += "</div>";

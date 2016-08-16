@@ -9,7 +9,7 @@ object Common {
 
   val mysqlDependency = "mysql" % "mysql-connector-java" % "5.1.38"
 
-  val seleniumDep = "org.seleniumhq.selenium" % "selenium-java" % "2.53.0"
+  val seleniumDep = "org.seleniumhq.selenium" % "selenium-java" % "2.53.1"
   val htmlUnitDep = "org.seleniumhq.selenium" % "selenium-htmlunit-driver" % "2.52.0"
 
   val mockitoDep = "org.mockito" % "mockito-core" % "1.10.19"
