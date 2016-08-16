@@ -91,16 +91,38 @@ insert into js_web_exercise (`id`, `title`, `text`, `anterior`, `posterior`, `de
 	'  </script>\n</head>\n\n<body>\n  <h3>Erhöhen Sie den Counter um 1, wenn der Button gedrückt wird!</h3>\n  <input type=\"button\" onclick=\"count()\" value=\"Push me!\">\n  <p>Count: <span id=\"counter\">0</span></p>\n</body>\n<html>',
 	'function count() {\n  \n}'),
 	
+	
 	(2,
 	'Binärzahlen',
-	'Implementieren Sie die folgende Funktion <code>toBinary(number)</code>, die die übergebene Zahl in eine Binärzahl umwandelt und in das Ausgabefeld (span mit der id \"result\")schreibt!',
+	'Implementieren Sie die folgende Funktion <code>toBinary(number)</code>, die die übergebene Zahl in eine Binärzahl umwandelt und in das Ausgabefeld (span mit der id \"result\") schreibt!',
 	'<!DOCTYPE html>\n<html>\n<head>\n  <title>Binärzahlen</title>\n  <script type=\"text/javascript\">',
 	'  </script>\n</head>\n\n<body>\n  <h3>Geben Sie eine Zahl ein:</h3>\n  <p>Ihre Zahl: <input type=\"number\" id=\"theInput\" \n\t\tonchange=\"toBinary(parseInt(this.value))\"></p>\n  <p>Binärzahl: <span id=\"result\"></span>\n</body>\n<\html>',
 	'function toBinary(number) {\n  \n}');
+insert into requirement (`id`, `xpath_query`, `inner_html`) values
+	(1, "//span[@id='counter']", "0"),
+	(2, "//span[@id='counter']", "1"),
+	(3, "//span[@id='counter']", "2"),
+	(4, "//span[@id='counter']", "3"),
+	(5, "//span[@id='counter']", "4"),
+	(6, "//span[@id='counter']", "5"),
+	(7, "//span[@id='result']", "11");
+	
+insert into js_web_test (`id`, `exercise_id`,  `precondition`, `postcondition`, `actiontype`, `action_element_as_string`, `other_action_features`) values
+	(1, 1, 1, 2, "CLICK", "//input[@type='button']", ""),
+	(2, 1, 2, 3, "CLICK",  "//input[@type='button']", ""),
+	(3, 1, 3, 4, "CLICK",  "//input[@type='button']", ""),
+	(4, 1, 4, 5, "CLICK",  "//input[@type='button']", ""),
+	(5, 1, 5, 6, "CLICK",  "//input[@type='button']", ""),
+	(6, 2, NULL, 7, "FILLOUT",  "//input[@id='theInput']", "3");
 
 # --- !Downs
 
 SET FOREIGN_KEY_CHECKS = 0;
+
+delete from js_web_test;
+
+
+delete from requirement;
 
 delete from js_web_exercise;
 

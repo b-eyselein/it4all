@@ -11,10 +11,12 @@ import javax.script.ScriptException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
+import model.javascript.web.JsWebExercise;
+import model.javascript.web.JsWebTest;
 import play.Logger;
 
 public class JsCorrector {
-  
+
   public static List<JsTestResult> correct(JsExercise exercise, String learnerSolution) {
     ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
     try {
@@ -25,21 +27,21 @@ public class JsCorrector {
       Logger.error("Fehler beim Laden der Lernerlösung", e);
       return Collections.emptyList();
     }
-    
+
     // Evaluiere Lernerlösung mit Testwerten
     return exercise.functionTests.stream().map(test -> test.evaluate(engine)).collect(Collectors.toList());
-    
+
   }
-  
+
   public static List<JsWebTest> correctWeb(JsWebExercise exercise, String solutionUrl) {
     WebDriver driver = loadWebSite(solutionUrl);
-    
-    List<JsWebTest> tests = exercise.getTests();
+
+    List<JsWebTest> tests = exercise.tests;
     tests.forEach(test -> test.test(driver));
-    
+
     return tests;
   }
-  
+
   private static WebDriver loadWebSite(String solutionUrl) {
     WebDriver driver = new HtmlUnitDriver(true);
     driver.get(solutionUrl);
