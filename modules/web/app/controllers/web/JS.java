@@ -16,7 +16,7 @@ import model.javascript.JsCorrector;
 import model.javascript.JsExercise;
 import model.javascript.JsTestResult;
 import model.javascript.web.JsWebExercise;
-import model.javascript.web.JsWebTest;
+import model.javascript.web.JsWebTestResult;
 import model.user.User;
 import play.Logger;
 import play.data.DynamicForm;
@@ -72,7 +72,9 @@ public class JS extends Controller {
     }
     
     String solutionUrl = routes.Solution.site(user, "js", exercise.id).absoluteURL(request());
-    List<JsWebTest> result = JsCorrector.correctWeb(exercise, solutionUrl);
+    List<JsWebTestResult> result = JsCorrector.correctWeb(exercise, solutionUrl);
+
+    Logger.debug("Testresult:\n" + Json.prettyPrint(Json.toJson(result)));
     
     if(request().accepts("application/json"))
       return ok(Json.toJson(result));

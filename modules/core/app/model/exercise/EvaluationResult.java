@@ -1,11 +1,24 @@
 package model.exercise;
 
 public abstract class EvaluationResult {
-  
+
   protected Success success = Success.NONE;
 
   public EvaluationResult(Success theSuccess) {
     success = theSuccess;
+  }
+
+  public String getBSClass() {
+    switch(success) {
+    case COMPLETE:
+      return "success";
+    case PARTIALLY:
+      return "warning";
+    case NONE:
+      return "danger";
+    default:
+      return "info";
+    }
   }
 
   public int getPoints() {

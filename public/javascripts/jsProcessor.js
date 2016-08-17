@@ -58,37 +58,31 @@ function testTheWebSolution(url) {
 }
 
 function processWebCorrection(jsonResponseText) {
-  var tests = JSON.parse(jsonResponseText);
+  var results = JSON.parse(jsonResponseText);
   var toAdd = "";
   
-  for(testCount = 0; testCount < tests.length; testCount++) {
-    var currentTest = tests[testCount];
+  for(resultCount = 0; resultCount < results.length; resultCount++) {
+    var currentResult = results[resultCount];
     
-    var clazz = currentTest.successful ? "success" : "danger";
-    var show = currentTest.successful ? "" : " in";
-    var preClazz = currentTest.preconditionSatisfied ? "success" : "danger";
-    var actionClazz = currentTest.actionPerformed ? "success" : "danger";
-    var postClazz = currentTest.postconditionSatisfied ? "success" : "danger";
+    var show = currentResult.success == "COMPLETE" ? "" : " in";
+    // var preClazz = currentTest.preconditionSatisfied ? "success" : "danger";
+    // var actionClazz = currentTest.actionPerformed ? "success" : "danger";
+    // var postClazz = currentTest.postconditionSatisfied ? "success" :
+    // "danger";
     
-    toAdd += "<div class=\"panel panel-" + clazz + "\">";
+    toAdd += "<div class=\"panel panel-" + currentResult.bsclass + "\">";
     toAdd += "  <div class=\"panel-heading\">";
     toAdd += "    <h4 class=\"panel-title\">";
-    toAdd += "      <a data-toggle=\"collapse\" href=\"#col" + testCount + "\">Test " + (testCount + 1) + "</a>";
+    toAdd += "      <a data-toggle=\"collapse\" href=\"#col" + resultCount + "\">Test " + (resultCount + 1) + "</a>";
     toAdd += "    </h4>";
     toAdd += "  </div>";
     
-    toAdd += "  <div id=\"col" + testCount + "\" class=\"panel-collapse collapse" + show + "\">";
+    toAdd += "  <div id=\"col" + resultCount + "\" class=\"panel-collapse collapse" + show + "\">";
     toAdd += "    <div class=\"panel-body\">";
     
-    if(currentTest.precondition != null) {
-      toAdd += "      <div class=\"alert alert-" + preClazz + "\">Precondition: "
-          + currentTest.precondition.description + "</div>";
-    }
-    toAdd += "      <div class=\"alert alert-" + actionClazz + "\">Action: " + currentTest.action.description
-        + "</div>";
-    if(currentTest.postcondition != null) {
-      toAdd += "      <div class=\"alert alert-" + postClazz + "\">Postcondition: "
-          + currentTest.postcondition.description + "</div>";
+    for(messageCount = 0; messageCount < currentResult.messages.length; messageCount++) {
+      toAdd += "      <div class=\"alert alert-" + currentResult.bsclass + "\">" + currentResult.messages[messageCount]
+          + "</div>";
     }
     toAdd += "    </div>";
     toAdd += "  </div>";

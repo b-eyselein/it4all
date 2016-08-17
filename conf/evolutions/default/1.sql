@@ -106,8 +106,8 @@ create table js_web_exercise (
   id                            integer auto_increment not null,
   title                         varchar(255),
   text                          text,
-  anterior                      varchar(255),
-  posterior                     varchar(255),
+  anterior                      text,
+  posterior                     text,
   declaration                   varchar(255),
   constraint pk_js_web_exercise primary key (id)
 );
@@ -118,19 +118,14 @@ create table js_web_test (
   actiontype                    varchar(7),
   action_element_as_string      varchar(255),
   other_action_features         varchar(255),
-  precondition                  integer,
-  precondition_satisfied        tinyint(1) default 0,
-  action_performed              tinyint(1) default 0,
-  postcondition                 integer,
-  postcondition_satisfied       tinyint(1) default 0,
   constraint ck_js_web_test_actiontype check (actiontype in ('CLICK','FILLOUT')),
-  constraint uq_js_web_test_precondition unique (precondition),
-  constraint uq_js_web_test_postcondition unique (postcondition),
   constraint pk_js_web_test primary key (id)
 );
 
 create table requirement (
   id                            integer auto_increment not null,
+  pre_id                        integer,
+  post_id                       integer,
   xpath_query                   varchar(255),
   inner_html                    varchar(255),
   constraint pk_requirement primary key (id)
@@ -201,9 +196,11 @@ create index ix_js_testvalue_test_id on js_testvalue (test_id);
 alter table js_web_test add constraint fk_js_web_test_exercise_id foreign key (exercise_id) references js_web_exercise (id) on delete restrict on update restrict;
 create index ix_js_web_test_exercise_id on js_web_test (exercise_id);
 
-alter table js_web_test add constraint fk_js_web_test_precondition foreign key (precondition) references requirement (id) on delete restrict on update restrict;
+alter table requirement add constraint fk_requirement_pre_id foreign key (pre_id) references js_web_test (id) on delete restrict on update restrict;
+create index ix_requirement_pre_id on requirement (pre_id);
 
-alter table js_web_test add constraint fk_js_web_test_postcondition foreign key (postcondition) references requirement (id) on delete restrict on update restrict;
+alter table requirement add constraint fk_requirement_post_id foreign key (post_id) references js_web_test (id) on delete restrict on update restrict;
+create index ix_requirement_post_id on requirement (post_id);
 
 alter table select_exercise add constraint fk_select_exercise_scenario_name foreign key (scenario_name) references sql_scenario (short_name) on delete restrict on update restrict;
 create index ix_select_exercise_scenario_name on select_exercise (scenario_name);
@@ -241,9 +238,11 @@ drop index ix_js_testvalue_test_id on js_testvalue;
 alter table js_web_test drop foreign key fk_js_web_test_exercise_id;
 drop index ix_js_web_test_exercise_id on js_web_test;
 
-alter table js_web_test drop foreign key fk_js_web_test_precondition;
+alter table requirement drop foreign key fk_requirement_pre_id;
+drop index ix_requirement_pre_id on requirement;
 
-alter table js_web_test drop foreign key fk_js_web_test_postcondition;
+alter table requirement drop foreign key fk_requirement_post_id;
+drop index ix_requirement_post_id on requirement;
 
 alter table select_exercise drop foreign key fk_select_exercise_scenario_name;
 drop index ix_select_exercise_scenario_name on select_exercise;
