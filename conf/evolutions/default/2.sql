@@ -111,8 +111,9 @@ insert into js_web_test (`id`, `exercise_id`,  `actiontype`, `action_element_as_
 	(3, 1, "CLICK",  "//input[@type='button']", ""),
 	(4, 1, "CLICK",  "//input[@type='button']", ""),
 	(5, 1, "CLICK",  "//input[@type='button']", ""),
-	(6, 2, "FILLOUT", "//input[@id='theInput']", "3"),
-	(7, 2, "FILLOUT", "//input[@id='theInput']", "127");
+	(6, 2, "FILLOUT", "//input[@id='theInput']", "1"),
+	(7, 2, "FILLOUT", "//input[@id='theInput']", "2"),
+	(8, 2, "FILLOUT", "//input[@id='theInput']", "7");
 	
 insert into requirement (`id`, `pre_id`, `post_id`, `xpath_query`, `inner_html`) values
 	(1, 1, NULL,  "//span[@id='counter']", "0"),
@@ -121,8 +122,9 @@ insert into requirement (`id`, `pre_id`, `post_id`, `xpath_query`, `inner_html`)
 	(4, 4, 3, "//span[@id='counter']", "3"),
 	(5, 5, 4, "//span[@id='counter']", "4"),
 	(6, NULL, 5, "//span[@id='counter']", "5"),
-	(7, NULL, 6, "//span[@id='result']", "11"),
-	(8, NULL, 7, "//span[@id='result']", "1111111");
+	(7, NULL, 6, "//span[@id='result']", "1"),
+	(8, NULL, 7, "//span[@id='result']", "1100"),
+	(9, NULL, 8, "//span[@id='result']", "1111111");
 
 # --- !Downs
 
