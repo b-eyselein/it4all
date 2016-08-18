@@ -1,86 +1,62 @@
 package model.javascript.web;
 
+import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public abstract class Action {
-
+@Embeddable
+public class Action {
+  
   public static enum ActionType {
     CLICK, FILLOUT;
   }
-
-  public static class ClickAction extends Action {
-
-    private String xpathQuery;
-
-    public ClickAction(String theXpathQuery) {
-      xpathQuery = theXpathQuery;
-    }
-
-    @Override
-    public String getDescription() {
-      return "Klicke Element mit XPath \"" + xpathQuery + "\"";
-    }
-
-    @Override
-    public boolean perform(WebDriver driver) {
-      WebElement element = driver.findElement(By.xpath(xpathQuery));
-
-      if(element == null)
-        return false;
-
-      element.click();
-      return true;
-    }
-
+  
+  @Enumerated(EnumType.STRING)
+  public ActionType actiontype;
+  
+  public String xpathQuery;
+  public String keysToSend;
+  
+  public String getDescription() {
+    return "TODO!";
   }
-
-  public static class FillOutAction extends Action {
-
-    private String xpathQuery;
-    private String keysToSend;
-
-    public FillOutAction(String theXpathQuery, String theKeysToSend) {
-      xpathQuery = theXpathQuery;
-      keysToSend = theKeysToSend;
-    }
-
-    @Override
-    public String getDescription() {
-      // TODO Auto-generated method stub
-      return "Schreibe \"" + keysToSend + "\" in Element mit XPath \"" + xpathQuery + "\"";
-    }
-
-    @Override
-    public boolean perform(WebDriver driver) {
-      WebElement element = driver.findElement(By.xpath(xpathQuery));
-      if(element == null)
-        return false;
-
-      element.sendKeys(keysToSend);
-
-      // TODO: click on other element to fire the onchange event...
-      driver.findElement(By.xpath("//body")).click();
-
-      return true;
-    }
-
-  }
-
-  public static Action instantiate(ActionType actionType, String xpathQuery, String... otherFeatures) {
-    switch(actionType) {
+  
+  public boolean perform(WebDriver driver) {
+    switch(actiontype) {
     case CLICK:
-      return new ClickAction(xpathQuery);
+      return performClickAction(driver);
     case FILLOUT:
-      return new FillOutAction(xpathQuery, otherFeatures[0]);
+      return performFilloutAction(driver);
     default:
-      return null;
+      return false;
     }
   }
-
-  public abstract String getDescription();
-
-  public abstract boolean perform(WebDriver driver);
-
+  
+  private boolean performClickAction(WebDriver driver) {
+    WebElement element = driver.findElement(By.xpath(xpathQuery));
+    
+    if(element == null)
+      return false;
+    
+    element.click();
+    return true;
+  }
+  
+  private boolean performFilloutAction(WebDriver driver) {
+    WebElement element = driver.findElement(By.xpath(xpathQuery));
+    if(element == null)
+      return false;
+    
+    element.sendKeys(keysToSend);
+    
+    // TODO: click on other element to fire the onchange event...
+    driver.findElement(By.xpath("//body")).click();
+    
+    return true;
+  }
+  
 }

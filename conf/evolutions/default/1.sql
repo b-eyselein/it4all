@@ -116,8 +116,8 @@ create table js_web_test (
   id                            integer auto_increment not null,
   exercise_id                   integer,
   actiontype                    varchar(7),
-  action_element_as_string      varchar(255),
-  other_action_features         varchar(255),
+  xpath_query                   varchar(255),
+  keys_to_send                  varchar(255),
   constraint ck_js_web_test_actiontype check (actiontype in ('CLICK','FILLOUT')),
   constraint pk_js_web_test primary key (id)
 );

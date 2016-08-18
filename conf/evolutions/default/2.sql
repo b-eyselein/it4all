@@ -104,8 +104,8 @@ insert into js_web_exercise (`id`, `title`, `text`, `anterior`, `posterior`, `de
 	'<!DOCTYPE html>\n<html>\n<head>\n  <title>Vorspeisenwahl</title>\n  <script type="text/javascript">',
 	'  </script>\n</head>\n\n<body>\n  <h3>Wollen Sie eine Vorspeise</h3>\n  <form action=\"test\" method=\"post\">\n    <p><label for=\"yes\"><input type=\"radio\" id=\"yes\"\n      name=\"appetizer\" onclick=\"disableSelection(true)\" required>Ja\n    </label></p>\n    <p><label for=\"no\"><input type=\"radio\" id=\"no\"\n      name=\"appetizer\" onclick=\"disableSelection(false)\" required>Nein\n    </label></p>\n    <p><select id=\"appetizerchoice\">\n      <option value=\"\">Bitte w&auml;;hlen</option>\n      <option>Gemischter Salat</option>\n      <option>Tomate und Mozarella</option>\n      <option>Tomatensuppe</option>\n      <option>Spargelsuppe</option>\n    </select></p>\n    <p><input type=\"submit\" value=\"Wahl abschicken\"></p>\n  </form>\n</body>\n</html>',
 	'function disableSelection(wantsAppetizer) {\n  \n}');
-	
-insert into js_web_test (`id`, `exercise_id`,  `actiontype`, `action_element_as_string`, `other_action_features`) values
+
+insert into js_web_test (`id`, `exercise_id`,  `actiontype`, `xpath_query`, `keys_to_send`) values
 	(1, 1, "CLICK", "//input[@type='button']", ""),
 	(2, 1, "CLICK",  "//input[@type='button']", ""),
 	(3, 1, "CLICK",  "//input[@type='button']", ""),
