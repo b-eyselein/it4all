@@ -100,9 +100,9 @@ insert into js_web_exercise (`id`, `title`, `text`, `anterior`, `posterior`, `de
 	
 	(3,
 	'Vorspeisenwahl',
-	'Beschreibung...',
+	'Implementieren Sie die folgende Funktion <code>disableSelection(wantsAppetizer)</code>, die einen booleschen Wert übergeben bekomment, je nachdem, ob "Ja" (wahr) oder "Nein" (ausgewählt) wurde. Wenn keine Vorspeise gewünscht ist, soll das Auswahlfeld deaktiviert, die Wahl auf das erste Element ("Bitte wählen...") gesetzt werden und eine Eingabe nicht mehr verpflichtend sein. Wenn eine Vorspeise gewünscht ist, muss die Auswahl aktiviert werden und verpflichtend sein. Der Abschicken-Button ist nur der Vollständigkeit halber vorhanden und soll nicht geändert werden.',
 	'<!DOCTYPE html>\n<html>\n<head>\n  <title>Vorspeisenwahl</title>\n  <script type="text/javascript">',
-	'  </script>\n</head>\n\n<body>\n  <h3>Wollen Sie eine Vorspeise</h3>\n  <form action=\"test\" method=\"post\">\n    <p><label for=\"yes\"><input type=\"radio\" id=\"yes\"\n      name=\"appetizer\" onclick=\"disableSelection(true)\" required>Ja\n    </label></p>\n    <p><label for=\"no\"><input type=\"radio\" id=\"no\"\n      name=\"appetizer\" onclick=\"disableSelection(false)\" required>Nein\n    </label></p>\n    <p><select id=\"appetizerchoice\">\n      <option value=\"\">Bitte w&auml;;hlen</option>\n      <option>Gemischter Salat</option>\n      <option>Tomate und Mozarella</option>\n      <option>Tomatensuppe</option>\n      <option>Spargelsuppe</option>\n    </select></p>\n    <p><input type=\"submit\" value=\"Wahl abschicken\"></p>\n  </form>\n</body>\n</html>',
+	'  </script>\n</head>\n\n<body>\n  <h3>Wollen Sie eine Vorspeise?</h3>\n  <form action=\"test\" method=\"post\">\n    <p><label for=\"yes\"><input type=\"radio\" id=\"yes\"\n      name=\"appetizer\" onclick=\"disableSelection(true)\" required>Ja\n    </label></p>\n    <p><label for=\"no\"><input type=\"radio\" id=\"no\"\n      name=\"appetizer\" onclick=\"disableSelection(false)\" required>Nein\n    </label></p>\n    <p><select id=\"appetizerchoice\" required>\n      <option value=\"\">Bitte w&auml;;hlen</option>\n      <option>Gemischter Salat</option>\n      <option>Tomate und Mozarella</option>\n      <option>Tomatensuppe</option>\n      <option>Spargelsuppe</option>\n    </select></p>\n    <p><input type=\"submit\" value=\"Wahl abschicken\" disabled></p>\n  </form>\n</body>\n</html>',
 	'function disableSelection(wantsAppetizer) {\n  \n}');
 
 insert into js_web_test (`id`, `exercise_id`,  `actiontype`, `xpath_query`, `keys_to_send`) values
@@ -113,9 +113,10 @@ insert into js_web_test (`id`, `exercise_id`,  `actiontype`, `xpath_query`, `key
 	(5, 1, "CLICK",  "//input[@type='button']", ""),
 	(6, 2, "FILLOUT", "//input[@id='theInput']", "1"),
 	(7, 2, "FILLOUT", "//input[@id='theInput']", "2"),
-	(8, 2, "FILLOUT", "//input[@id='theInput']", "7");
+	(8, 2, "FILLOUT", "//input[@id='theInput']", "7"),
+	(9, 3, "CLICK", "//input[@id='yes']", "");
 	
-insert into requirement (`id`, `pre_id`, `post_id`, `xpath_query`, `inner_html`) values
+insert into conditions (`id`, `pre_id`, `post_id`, `xpath_query`, `to_evaluate`) values
 	(1, 1, NULL,  "//span[@id='counter']", "0"),
 	(2, 2, 1, "//span[@id='counter']", "1"),
 	(3, 3, 2, "//span[@id='counter']", "2"),
@@ -132,7 +133,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 
 delete from js_web_test;
 
-delete from requirement;
+delete from conditions;
 
 delete from js_web_exercise;
 

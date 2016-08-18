@@ -12,6 +12,15 @@ create table childtask (
   constraint pk_childtask primary key (id,task_id)
 );
 
+create table conditions (
+  id                            integer auto_increment not null,
+  pre_id                        integer,
+  post_id                       integer,
+  xpath_query                   varchar(255),
+  to_evaluate                   varchar(255),
+  constraint pk_conditions primary key (id)
+);
+
 create table create_exercise (
   id                            integer not null,
   scenario_name                 varchar(255) not null,
@@ -122,15 +131,6 @@ create table js_web_test (
   constraint pk_js_web_test primary key (id)
 );
 
-create table requirement (
-  id                            integer auto_increment not null,
-  pre_id                        integer,
-  post_id                       integer,
-  xpath_query                   varchar(255),
-  inner_html                    varchar(255),
-  constraint pk_requirement primary key (id)
-);
-
 create table select_exercise (
   id                            integer not null,
   scenario_name                 varchar(255) not null,
@@ -172,6 +172,12 @@ create table xmlexercise (
 alter table childtask add constraint fk_childtask_task foreign key (task_id,exercise_id) references html_task (task_id,exercise_id) on delete restrict on update restrict;
 create index ix_childtask_task on childtask (task_id,exercise_id);
 
+alter table conditions add constraint fk_conditions_pre_id foreign key (pre_id) references js_web_test (id) on delete restrict on update restrict;
+create index ix_conditions_pre_id on conditions (pre_id);
+
+alter table conditions add constraint fk_conditions_post_id foreign key (post_id) references js_web_test (id) on delete restrict on update restrict;
+create index ix_conditions_post_id on conditions (post_id);
+
 alter table create_exercise add constraint fk_create_exercise_scenario_name foreign key (scenario_name) references sql_scenario (short_name) on delete restrict on update restrict;
 create index ix_create_exercise_scenario_name on create_exercise (scenario_name);
 
@@ -196,12 +202,6 @@ create index ix_js_testvalue_test_id on js_testvalue (test_id);
 alter table js_web_test add constraint fk_js_web_test_exercise_id foreign key (exercise_id) references js_web_exercise (id) on delete restrict on update restrict;
 create index ix_js_web_test_exercise_id on js_web_test (exercise_id);
 
-alter table requirement add constraint fk_requirement_pre_id foreign key (pre_id) references js_web_test (id) on delete restrict on update restrict;
-create index ix_requirement_pre_id on requirement (pre_id);
-
-alter table requirement add constraint fk_requirement_post_id foreign key (post_id) references js_web_test (id) on delete restrict on update restrict;
-create index ix_requirement_post_id on requirement (post_id);
-
 alter table select_exercise add constraint fk_select_exercise_scenario_name foreign key (scenario_name) references sql_scenario (short_name) on delete restrict on update restrict;
 create index ix_select_exercise_scenario_name on select_exercise (scenario_name);
 
@@ -213,6 +213,12 @@ create index ix_update_exercise_scenario_name on update_exercise (scenario_name)
 
 alter table childtask drop foreign key fk_childtask_task;
 drop index ix_childtask_task on childtask;
+
+alter table conditions drop foreign key fk_conditions_pre_id;
+drop index ix_conditions_pre_id on conditions;
+
+alter table conditions drop foreign key fk_conditions_post_id;
+drop index ix_conditions_post_id on conditions;
 
 alter table create_exercise drop foreign key fk_create_exercise_scenario_name;
 drop index ix_create_exercise_scenario_name on create_exercise;
@@ -238,12 +244,6 @@ drop index ix_js_testvalue_test_id on js_testvalue;
 alter table js_web_test drop foreign key fk_js_web_test_exercise_id;
 drop index ix_js_web_test_exercise_id on js_web_test;
 
-alter table requirement drop foreign key fk_requirement_pre_id;
-drop index ix_requirement_pre_id on requirement;
-
-alter table requirement drop foreign key fk_requirement_post_id;
-drop index ix_requirement_post_id on requirement;
-
 alter table select_exercise drop foreign key fk_select_exercise_scenario_name;
 drop index ix_select_exercise_scenario_name on select_exercise;
 
@@ -251,6 +251,8 @@ alter table update_exercise drop foreign key fk_update_exercise_scenario_name;
 drop index ix_update_exercise_scenario_name on update_exercise;
 
 drop table if exists childtask;
+
+drop table if exists conditions;
 
 drop table if exists create_exercise;
 
@@ -273,8 +275,6 @@ drop table if exists js_testvalue;
 drop table if exists js_web_exercise;
 
 drop table if exists js_web_test;
-
-drop table if exists requirement;
 
 drop table if exists select_exercise;
 

@@ -19,48 +19,52 @@ import model.exercise.Success;
 
 @Entity
 public class JsWebTest extends Model {
-  
+
   @Id
   public int id;
-  
+
   @ManyToOne
   @JsonBackReference
   public JsWebExercise exercise;
-  
+
   @OneToMany(mappedBy = "pre")
   @JsonManagedReference
-  public List<Requirement> preconditions;
-  
+  public List<Condition> preconditions;
+
   @Embedded
   public Action action;
-  
+
   @OneToMany(mappedBy = "post")
   @JsonManagedReference
-  public List<Requirement> postconditions;
-  
+  public List<Condition> postconditions;
+
   public JsWebTestResult test(WebDriver driver) {
     List<String> messages = new LinkedList<>();
-    
+
     boolean preconditionsSatisfied = true;
-    for(Requirement precondition: preconditions)
+    for(Condition precondition: preconditions)
       preconditionsSatisfied = preconditionsSatisfied && precondition.test(driver);
     if(!preconditionsSatisfied)
       return new JsWebTestResult(this, Success.NONE, "Vorbedingung(en) konnten nicht verifiziert werden!");
-    messages.add("Vorbedingung(en) konnten erfolgreich verifizert werden.");
-    
+
+    if(preconditions.isEmpty())
+      messages.add("Es waren keine Vorbedingungen zu verifizieren.");
+    else
+      messages.add("Vorbedingung(en) konnten erfolgreich verifizert werden.");
+
     boolean actionPerformed = action == null || action.perform(driver);
     if(!actionPerformed)
       return new JsWebTestResult(this, Success.NONE, "Aktion konnte nicht ausgeführt werden!");
     messages.add("Aktion konnte erfolgreich ausgeführt werden.");
-    
+
     boolean postconditionSatisfied = true;
-    for(Requirement postcondition: postconditions)
+    for(Condition postcondition: postconditions)
       postconditionSatisfied = postconditionSatisfied && postcondition.test(driver);
     if(!postconditionSatisfied)
       return new JsWebTestResult(this, Success.NONE, "Nachbedingung(en) konnten nicht verifiziert werden!");
     messages.add("Nachbedingung(en) konnten erfolgreich verifiziert werden.");
-    
+
     return new JsWebTestResult(this, Success.COMPLETE, messages);
   }
-  
+
 }
