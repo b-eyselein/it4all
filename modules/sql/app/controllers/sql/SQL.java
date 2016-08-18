@@ -67,7 +67,6 @@ public class SQL extends Controller {
     SqlCorrectionResult result = SqlCorrector.correct(database, user, learnerSolution, exercise);
 
     JsonNode ret = Json.toJson(result);
-    // Logger.debug("Result as Json:\n" + Json.prettyPrint(ret));
     return ok(Json.toJson(ret));
   }
 

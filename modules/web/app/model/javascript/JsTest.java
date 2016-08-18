@@ -15,7 +15,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import model.exercise.Success;
-import play.Logger;
 import play.data.validation.Constraints.Required;
 
 @Entity
@@ -37,7 +36,6 @@ public class JsTest extends Model {
   
   public JsTestResult evaluate(ScriptEngine engine) {
     String toEvaluate = buildToEvaluate();
-    Logger.debug(toEvaluate);
     try {
       String realResult = engine.eval(toEvaluate).toString();
       if(realResult.equals(awaitedResult))

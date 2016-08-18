@@ -72,7 +72,7 @@ public class SqlStartUpChecker {
       JsonNode sampleSolution = solutionFieldIter.next();
       samples.add(sampleSolution.asText());
     }
-    
+
     exercise.samples = String.join(SqlExercise.SAMPLE_JOIN_CHAR, samples);
     exercise.save();
   }
@@ -130,7 +130,7 @@ public class SqlStartUpChecker {
     Path scriptFilePath = Paths.get(SCENARIO_FOLDER, scenario.scriptFile);
     if(Files.exists(scriptFilePath)) {
       try {
-        Logger.debug("Running script " + scriptFilePath);
+        Logger.info("Running script " + scriptFilePath);
         Connection connection = sql_main.getConnection();
         // Create database and grant rights to user
         connection.createStatement().executeUpdate("CREATE DATABASE IF NOT EXISTS " + scenario.shortName);
@@ -149,8 +149,10 @@ public class SqlStartUpChecker {
   private void performStartUpCheck() {
     Path scenarioDir = Paths.get(SCENARIO_FOLDER);
 
-    if(!Files.isDirectory(scenarioDir))
-      throw new RuntimeException("Path " + SCENARIO_FOLDER + " should be a directory!");
+    if(!Files.isDirectory(scenarioDir)) {
+      Logger.error("Path " + scenarioDir.toString() + " should be a directory!");
+      return;
+    }
 
     try {
       DirectoryStream<Path> directoryStream = Files.newDirectoryStream(scenarioDir);

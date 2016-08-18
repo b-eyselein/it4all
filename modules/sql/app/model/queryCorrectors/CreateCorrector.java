@@ -16,25 +16,11 @@ public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable> {
     // TODO Auto-generated method stub
     return null;
   }
-
+  
   @Override
   protected SqlCorrectionResult executeQuery(Database database, CreateTable parsedStatement,
       CreateTable parsedSampleStatement, String scenarioName) {
-
-    // TODO Auto-generated method stub
-    // try {
-    // connection.createStatement().executeQuery(statement);
     
-    // DatabaseMetaData dbmd = connection.getMetaData();
-    // ResultSet tables = dbmd.getTables(connection.getCatalog(), null, null,
-    // null);
-    // while(tables.next())
-    // Logger.debug(tables.getString(3));
-    // return new SqlCorrectionResult(Success.COMPLETE, "Passt?");
-    // } catch (SQLException e) {
-    // return new SqlCorrectionResult(Success.NONE, "Es gab ein Problem beim
-    // Ausführen der Query: " + e.getMessage());
-    // }
     return null;
   }
   
@@ -43,13 +29,13 @@ public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable> {
     // TODO Auto-generated method stub
     return null;
   }
-
+  
   @Override
   protected List<String> getTables(CreateTable userQuery) {
     // TODO Auto-generated method stub
     return null;
   }
-
+  
   @Override
   protected CreateTable parseStatement(String statement) throws SqlCorrectionException {
     try {
