@@ -71,7 +71,10 @@ public class JS extends Controller {
       return badRequest("Error while saving file!");
     }
     
-    String solutionUrl = routes.Solution.site(user, "js", exercise.id).absoluteURL(request());
+    String solutionUrl = "http://localhost:9000" + routes.Solution.site(user, "js", exercise.id).url();
+    
+    Logger.debug(solutionUrl);
+    
     List<JsWebTestResult> result = JsCorrector.correctWeb(exercise, solutionUrl);
     
     if(request().accepts("application/json"))
