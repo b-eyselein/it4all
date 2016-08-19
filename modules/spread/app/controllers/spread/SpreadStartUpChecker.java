@@ -15,19 +15,19 @@ import model.spread.ExcelExercise;
 import play.Logger;
 
 public class SpreadStartUpChecker {
-  
+
   private static Logger.ALogger theLogger = Logger.of("startup");
   private static final String EXERCISE_TYPE = "spread";
   private static final List<String> FILE_ENDINGS = Arrays.asList("xlsx", "ods");
-
+  
   private Util util;
-
+  
   @Inject
   public SpreadStartUpChecker(Util theUtil) {
     util = theUtil;
     performStartUpCheck();
   }
-
+  
   public void performStartUpCheck() {
     List<ExcelExercise> exercises = ExcelExercise.finder.all();
     if(exercises.size() == 0)
@@ -37,7 +37,7 @@ public class SpreadStartUpChecker {
         for(String fileEnding: FILE_ENDINGS)
           checkOrCreateSampleFile(exercise, fileEnding);
   }
-
+  
   private void checkOrCreateSampleFile(ExcelExercise exercise, String fileEnding) {
     Path sampleFileDirectory = util.getSampleDirForExercise(EXERCISE_TYPE);
     if(!Files.exists(sampleFileDirectory)) {
@@ -48,21 +48,20 @@ public class SpreadStartUpChecker {
             e);
       }
     }
-
+    
     Path sampleFile = util.getSampleFileForExercise(EXERCISE_TYPE, exercise.fileName + "_Muster." + fileEnding);
     if(Files.exists(sampleFile))
       return;
-    
+
     theLogger.warn("Die Lösungsdatei für Xml-Aufgabe " + exercise.id + " \"" + sampleFile
         + "\" existiert nicht! Versuche, Datei zu erstellen...");
-
-    Path providedFile = Paths.get("modules/" + EXERCISE_TYPE + "/conf/resources",
-        exercise.fileName + "_Muster." + fileEnding);
+    
+    Path providedFile = Paths.get("conf/resources", exercise.fileName + "_Muster." + fileEnding);
     if(!Files.exists(providedFile)) {
       theLogger.error("Konnte Datei nicht erstellen: Keine Lösungsdatei mitgeliefert in " + providedFile);
       return;
     }
-
+    
     try {
       Files.copy(providedFile, sampleFile, StandardCopyOption.REPLACE_EXISTING);
       theLogger.info("Die Lösungsdatei wurde erstellt.");
@@ -70,5 +69,5 @@ public class SpreadStartUpChecker {
       theLogger.error("Die Lösungsdatei konnte nicht erstellt werden!", e);
     }
   }
-
+  
 }
