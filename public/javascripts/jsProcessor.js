@@ -15,6 +15,10 @@ function testTheSolution(url) {
   xhttp.send(parameters);
 }
 
+function prepareFormForSubmitting() {
+  document.getElementById("editorContent").value = editor.getValue();
+}
+
 function processCorrection(jsonResponseText) {
   var loesungsraum = document.getElementById("loesungsraum");
   loesungsraum.innerHTML = "";

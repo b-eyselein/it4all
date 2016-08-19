@@ -12,56 +12,66 @@ window.onload = updatePreview;
 </script>
 
 <div class="container-fluid">
-  <div class="panel panel-default">
-    <div class="panel-heading">Aufgabenstellung</div>
-    <div class="panel-body">@Html(exercise.text)</div>
-    <div class="panel-footer"><button class="form-control" onclick="testSolution();">L&ouml;sung testen</button></div>
-  </div>
-  
-  <div class="row">
-    <div class="col-md-4">
-      <pre id="anterior">@exercise.anterior</pre>
-      <div id="editor" class="form-control">@oldSolution</div>
-      <script>
-              document.getElementById('editor').style.fontSize = '16px';
-              var editor = ace.edit("editor");
-              editor.setTheme("ace/theme/eclipse");
-              editor.getSession().setMode("ace/mode/javascript");
-              editor.getSession().setTabSize(2);
-              editor.getSession().setUseSoftTabs(true);
-              editor.getSession().setUseWrapMode(true);
-              editor.setOptions({
-                minLines: 10,
-                maxLines: 15
-              });
-              
-              editor.on("change", updatePreview);
-            </script>
-    <pre id="posterior">@exercise.posterior</pre>
-    </div>
-    <div class="col-md-4">
-      <div class="panel panel-default">
-        <div class="panel-heading">Vorschau</div>
-        <div class="panel-body">
-          <div class="embed-responsive embed-responsive-16by9">
-            <iframe class="embed-responsive-item" src="about:blank" id="preview"></iframe>
+  <form action="@controllers.web.routes.JS.commitWeb(exercise.id)" method="post" onsubmit="prepareFormForSubmitting();">
+    <div class="panel panel-default">
+      <div class="panel-heading">Aufgabenstellung</div>
+      <div class="panel-body">@Html(exercise.text)</div>
+      <div class="panel-footer">
+        <div class="btn-group btn-group-justified">
+          <div class="btn-group">
+            <button type="button" class="btn btn-primary" onclick="testSolution();">L&ouml;sung testen</button>
+          </div>
+          <div class="btn-group">
+            <button type="submit" class="btn btn-success" >L&ouml;sung abgeben</button>
           </div>
         </div>
-        <div class="panel-footer">
-          <div class="alert alert-info">Die Vorschau wird bei &Auml;nderungen in der L&ouml;sung automatisch aktualisiert.</div>
-        </div>
       </div>
     </div>
     
-    <div class="col-md-4">
-      <div class="panel panel-default">
-        <div class="panel-heading">Tests</div>
-        <div class="panel-body" id="testsDiv">
-        </div>
-      </div>
-    </div>
-    
-  </div>
+    <div class="row">
+      <div class="col-md-4">
+        <pre id="anterior">@exercise.anterior</pre>
+        <div id="editor" class="form-control">@oldSolution</div>
+        <script>
+document.getElementById('editor').style.fontSize = '16px';
+var editor = ace.edit("editor");
+editor.setTheme("ace/theme/eclipse");
+editor.getSession().setMode("ace/mode/javascript");
+editor.getSession().setTabSize(2);
+editor.getSession().setUseSoftTabs(true);
+editor.getSession().setUseWrapMode(true);
+editor.setOptions({
+  minLines: 10,
+  maxLines: 15
+});
 
+editor.on("change", updatePreview);
+        </script>
+      <pre id="posterior">@exercise.posterior</pre>
+      </div>
+      <div class="col-md-4">
+        <div class="panel panel-default">
+          <div class="panel-heading">Vorschau</div>
+          <div class="panel-body">
+            <div class="embed-responsive embed-responsive-16by9">
+              <iframe class="embed-responsive-item" src="about:blank" id="preview"></iframe>
+            </div>
+          </div>
+          <div class="panel-footer">
+            <div class="alert alert-info">Die Vorschau wird bei &Auml;nderungen in der L&ouml;sung automatisch aktualisiert.</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-4">
+        <div class="panel panel-default">
+          <div class="panel-heading">Tests</div>
+          <div class="panel-body" id="testsDiv">
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </form>
 </div>
 }

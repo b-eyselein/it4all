@@ -48,12 +48,13 @@ public class JS extends Controller {
     DynamicForm form = factory.form().bindFromRequest();
     String learnerSolution = form.get("editorContent");
     
-    List<JsTestResult> testResults = JsCorrector.correct(JsExercise.finder.byId(exerciseId), learnerSolution);
+    // FIXME: evt. Speichern der Lösung und Laden bei erneuter Bearbeitung?
     
-    if(request().accepts("application/json"))
+    List<JsTestResult> testResults = JsCorrector.correct(JsExercise.finder.byId(exerciseId), learnerSolution);
+
+    if(request().acceptedTypes().get(0).toString().equals("application/json"))
       return ok(Json.toJson(testResults));
     else
-      // TODO: jscorrect --> Nur für Endkorrektur ?!?
       return ok(jscorrect.render(learnerSolution, testResults, UserManagement.getCurrentUser()));
   }
   
@@ -73,15 +74,13 @@ public class JS extends Controller {
     
     String solutionUrl = "http://localhost:9000" + routes.Solution.site(user, "js", exercise.id).url();
     
-    Logger.debug(solutionUrl);
-    
     List<JsWebTestResult> result = JsCorrector.correctWeb(exercise, solutionUrl);
     
-    if(request().accepts("application/json"))
+    if(request().acceptedTypes().get(0).toString().equals("application/json"))
       return ok(Json.toJson(result));
     else
-      // TODO: jscorrect --> Nur für Endkorrektur ?!?
-      return ok("TODO!");
+      // FIXME: Implementierung Übersicht Endkorrektur Javascript Web!
+      return ok("Diese Seite muss noch erstellt werden!");
   }
   
   public Result exercise(int id) {
@@ -101,7 +100,6 @@ public class JS extends Controller {
     User user = UserManagement.getCurrentUser();
     JsWebExercise exercise = JsWebExercise.finder.byId(exerciseId);
     
-    // FIXME: load old solution!
     String oldSolution = exercise.declaration;
     try {
       Path file = util.getSolFileForExercise(user, "js", exerciseId, FILE_TYPE);
