@@ -45,12 +45,11 @@ public class SpreadStartUpChecker {
     try {
       fileContent = String.join("\n", Files.readAllLines(exerciseFile));
     } catch (IOException e) {
-      theLogger.debug("Could not read exercise file for Spread!", e);
+      theLogger.error("Could not read exercise file for Spread!", e);
       return;
     }
     
     JsonNode document = Json.parse(fileContent);
-    theLogger.debug("Dokument:\n" + Json.prettyPrint(document));
     
     for(final Iterator<JsonNode> exerciseNodes = document.elements(); exerciseNodes.hasNext();) {
       JsonNode exerciseNode = exerciseNodes.next();
