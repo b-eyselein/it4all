@@ -2,25 +2,44 @@
 
 @main("HTML-Test", user) {
 <div class="container">
-
-  <h2>&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h2>
+  <div class="page-header">
+    <h1>&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h1>
+  </div>
   @for(exercise <- exercises) {
   <div class="panel panel-default">
     <div class="panel-heading">
-      <a href="@controllers.spread.routes.Spread.exercise(exercise.id)">Aufgabe @exercise.id: @exercise.title</a>
+      <h1 class="panel-title">Aufgabe @exercise.id: @exercise.title</h1>
     </div>
     <div class="panel-body">
       @for(exerText <- exercise.text.split("\n")) {
       <p>@exerText</p>
       }
-    </div>
-    <div class="panel-footer">
+          
       <div class="btn-group btn-group-justified">
-        <a href="@spread.routes.Spread.downloadTemplate(exercise.id, "xlsx")" class="btn btn-primary" target="_blank">Download der Angabe für MS Excel</a>
-        <a href="@spread.routes.Spread.downloadTemplate(exercise.id, "ods")" class="btn btn-primary" target="_blank">Download der Angabe für OpenOffice Calc</a>
+        <a href="@spread.routes.Spread.downloadTemplate(exercise.id, "xlsx")" class="btn btn-default" target="_blank">Download der Angabe für MS Excel</a>
+        <a href="@spread.routes.Spread.downloadTemplate(exercise.id, "ods")" class="btn btn-default" target="_blank">Download der Angabe für OpenOffice Calc</a>
       </div>
+      
+      <hr />
+      
+      <form action="@spread.routes.Spread.upload(exercise.id)" method="post" enctype="multipart/form-data">
+        <h4>Upload f&uuml;r L&ouml;sung f&uuml;r Aufgabe @exercise.id</p>
+        
+        <div class="form-group">
+          <input type="file" class="form-control" name="solFile" required accept=".xlsx, .xlsm, .ods">
+        </div>
+        
+        <div class="btn-group btn-group-justified">
+          <div class="btn-group">
+            <button class="btn btn-primary" type="submit">L&ouml;sung korrigieren</button>
+          </div>
+        </div>
+      </form>
+
     </div>
   </div>
+  
+  <hr />
   }
 </div>
 }

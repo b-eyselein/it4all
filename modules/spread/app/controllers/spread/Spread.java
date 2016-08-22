@@ -23,7 +23,6 @@ import play.mvc.Result;
 import play.mvc.Security;
 import play.twirl.api.Html;
 import views.html.error;
-import views.html.excel.spreadexercise;
 import views.html.excel.excelcorrect;
 import views.html.excel.spreadoverview;
 import views.html.excel.spreadcorrectionerror;
@@ -74,17 +73,6 @@ public class Spread extends Controller {
       return badRequest("This file does not exist!");
     
     return ok(filePath.toFile());
-  }
-  
-  public Result exercise(int exerciseId) {
-    User user = UserManagement.getCurrentUser();
-    SpreadExercise exercise = SpreadExercise.finder.byId(exerciseId);
-    
-    if(exercise == null)
-      return badRequest(new Html("<p>Diese Aufgabe existert leider nicht.</p><p>Zur&uuml;ck zur <a href=\""
-          + routes.Spread.index() + "\">Startseite</a>.</p>"));
-    
-    return ok(spreadexercise.render(user, exercise));
   }
   
   public Result index() {
