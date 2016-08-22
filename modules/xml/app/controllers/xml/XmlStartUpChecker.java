@@ -37,12 +37,13 @@ public class XmlStartUpChecker {
 
   public void performStartUpCheck() {
     Path sampleDir = util.getSampleDirForExercise(EXERCISE_TYPE);
-    if(!Files.exists(sampleDir))
+    if(!Files.exists(sampleDir)) {
       try {
         Files.createDirectories(sampleDir);
       } catch (IOException e) {
         theLogger.error("Could not create directory for xml samples!", e);
       }
+    }
 
     List<XmlExercise> exercises = XmlExercise.finder.all();
     if(exercises.size() == 0)
