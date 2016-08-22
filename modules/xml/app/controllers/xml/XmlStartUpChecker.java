@@ -22,6 +22,9 @@ public class XmlStartUpChecker {
 
   private static Logger.ALogger theLogger = Logger.of("startup");
   private static final String EXERCISE_TYPE = "xml";
+
+  private static final String baseDir = "conf/resources/xml/";
+
   private Util util;
 
   @Inject
@@ -57,39 +60,50 @@ public class XmlStartUpChecker {
     theLogger.warn("Die Lösungsdatei für Xml-Aufgabe " + exercise.id + " \"" + sampleFile
         + "\" existiert nicht! Versuche, Datei zu erstellen...");
 
-    Path providedFile = Paths.get("conf/resources", exercise.referenceFileName);
-    if(Files.exists(providedFile))
-      try {
-        Files.copy(providedFile, sampleFile, StandardCopyOption.REPLACE_EXISTING);
-        theLogger.info("Die Lösungsdatei wurde erstellt.");
-      } catch (IOException e) {
-        theLogger.error("Die Lösungsdatei konnte nicht erstellt werden!", e);
-      }
-    else
+    Path providedFile = Paths.get(baseDir, exercise.referenceFileName);
+    if(!Files.exists(providedFile)) {
       theLogger.error("Konnte Datei nicht erstellen: Keine Lösungsdatei mitgeliefert...");
+      return;
+    }
+
+    try {
+      Files.copy(providedFile, sampleFile, StandardCopyOption.REPLACE_EXISTING);
+      theLogger.info("Die Lösungsdatei wurde erstellt.");
+    } catch (IOException e) {
+      theLogger.error("Die Lösungsdatei konnte nicht erstellt werden!", e);
+    }
   }
 
   private void testJsonCreation() {
-    String fileName = "conf/resources/exercises.json";
-    try {
-      String jsonAsString = String.join("\n", Files.readAllLines(Paths.get(fileName)));
-      JsonNode json = Json.parse(jsonAsString);
-      for(final Iterator<JsonNode> childNodes = json.elements(); childNodes.hasNext();) {
-        JsonNode node = childNodes.next();
-        XmlExercise newExercise = new XmlExercise();
-        newExercise.id = node.get("id").asInt();
-        newExercise.title = node.get("title").asText();
-        newExercise.exerciseType = XmlExType.valueOf(node.get("exerciseType").asText());
-        newExercise.referenceFileName = node.get("referenceFileName").asText();
-        newExercise.exerciseText = node.get("exerciseText").asText();
+    Path exercises = Paths.get(baseDir, "exercises.json");
 
-        // FIXME: Erstelle Aufgabe...
-        // theLogger.error(newExercise.id + ":\n\t" + newExercise.title + "\n\t"
-        // + newExercise.exerciseText + "\n\t"
-        // + newExercise.referenceFileName + "\n\t" + newExercise.exerciseType);
-      }
+    String jsonAsString = "";
+    try {
+      jsonAsString = String.join("\n", Files.readAllLines(exercises));
     } catch (IOException e) {
-      theLogger.error("Fehler beim Lesen aus der Datei " + fileName, e);
+      theLogger.error("Fehler beim Lesen aus der Datei " + exercises.toString(), e);
+    }
+
+    if(jsonAsString.isEmpty())
+      return;
+
+    JsonNode json = Json.parse(jsonAsString);
+    for(final Iterator<JsonNode> childNodes = json.elements(); childNodes.hasNext();) {
+      JsonNode node = childNodes.next();
+      int id = node.get("id").asInt();
+
+      XmlExercise exercise = XmlExercise.finder.byId(id);
+      if(exercise == null)
+        exercise = new XmlExercise();
+
+      exercise.id = id;
+      exercise.title = node.get("title").asText();
+      exercise.exerciseType = XmlExType.valueOf(node.get("exerciseType").asText());
+      exercise.referenceFileName = node.get("referenceFileName").asText();
+      exercise.exerciseText = node.get("exerciseText").asText();
+
+      exercise.save();
+
     }
   }
 
