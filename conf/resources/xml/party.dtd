@@ -4,4 +4,4 @@
 <!ATTLIST gast name CDATA #REQUIRED>
 <!ELEMENT getraenk (#PCDATA)>
 <!ELEMENT zustand EMPTY>
-<!ATTLIST zustand ledig CDATA #IMPLIED nuechtern CDATA #IMPLIED>
+<!ATTLIST zustand ledig CDATA #REQUIRED nuechtern CDATA #REQUIRED>

@@ -44,7 +44,6 @@ create table exercise (
   id                            integer auto_increment not null,
   title                         varchar(255),
   exercisetext                  text,
-  file_name                     varchar(255),
   constraint pk_exercise primary key (id)
 );
 
@@ -137,6 +136,15 @@ create table select_exercise (
   text                          text,
   samples                       text,
   constraint pk_select_exercise primary key (id,scenario_name)
+);
+
+create table spread_exercise (
+  id                            integer auto_increment not null,
+  title                         varchar(255),
+  text                          text,
+  sample_filename               varchar(255),
+  template_filename             varchar(255),
+  constraint pk_spread_exercise primary key (id)
 );
 
 create table sql_scenario (
@@ -277,6 +285,8 @@ drop table if exists js_web_exercise;
 drop table if exists js_web_test;
 
 drop table if exists select_exercise;
+
+drop table if exists spread_exercise;
 
 drop table if exists sql_scenario;
 

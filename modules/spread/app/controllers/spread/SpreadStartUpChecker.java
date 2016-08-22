@@ -6,17 +6,23 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import model.Util;
-import model.spread.ExcelExercise;
+import model.spread.SpreadExercise;
 import play.Logger;
+import play.libs.Json;
 
 public class SpreadStartUpChecker {
-
+  
   private static Logger.ALogger theLogger = Logger.of("startup");
+  
+  private static final String baseDir = "conf/resources/spread/";
   private static final String EXERCISE_TYPE = "spread";
   private static final List<String> FILE_ENDINGS = Arrays.asList("xlsx", "ods");
   
@@ -29,44 +35,80 @@ public class SpreadStartUpChecker {
   }
   
   public void performStartUpCheck() {
-    List<ExcelExercise> exercises = ExcelExercise.finder.all();
-    if(exercises.size() == 0)
-      theLogger.error("\t- No exercises found for Xml!");
-    else
-      for(ExcelExercise exercise: exercises)
-        for(String fileEnding: FILE_ENDINGS)
-          checkOrCreateSampleFile(exercise, fileEnding);
-  }
-  
-  private void checkOrCreateSampleFile(ExcelExercise exercise, String fileEnding) {
-    Path sampleFileDirectory = util.getSampleDirForExercise(EXERCISE_TYPE);
-    if(!Files.exists(sampleFileDirectory)) {
-      try {
-        Files.createDirectories(sampleFileDirectory);
-      } catch (IOException e) {
-        theLogger.error("Konnte das Verzeichnis für die Musterlösungen zu Aufgabe " + exercise.id + " nicht erstellen!",
-            e);
-      }
+    Path exerciseFile = Paths.get(baseDir, "exercises.json");
+    if(!Files.exists(exerciseFile)) {
+      theLogger.error("Exercise file for Spread not found!");
+      return;
     }
     
-    Path sampleFile = util.getSampleFileForExercise(EXERCISE_TYPE, exercise.fileName + "_Muster." + fileEnding);
-    if(Files.exists(sampleFile))
+    String fileContent = "";
+    try {
+      fileContent = String.join("\n", Files.readAllLines(exerciseFile));
+    } catch (IOException e) {
+      theLogger.debug("Could not read exercise file for Spread!", e);
       return;
-
-    theLogger.warn("Die Lösungsdatei für Xml-Aufgabe " + exercise.id + " \"" + sampleFile
-        + "\" existiert nicht! Versuche, Datei zu erstellen...");
+    }
     
-    Path providedFile = Paths.get("conf/resources", exercise.fileName + "_Muster." + fileEnding);
+    JsonNode document = Json.parse(fileContent);
+    theLogger.debug("Dokument:\n" + Json.prettyPrint(document));
+    
+    for(final Iterator<JsonNode> exerciseNodes = document.elements(); exerciseNodes.hasNext();) {
+      JsonNode exerciseNode = exerciseNodes.next();
+      int id = exerciseNode.get("id").asInt();
+      
+      SpreadExercise exercise = SpreadExercise.finder.byId(id);
+      if(exercise == null)
+        exercise = new SpreadExercise(id);
+      exercise.text = exerciseNode.get("text").asText();
+      exercise.title = exerciseNode.get("title").asText();
+      exercise.sampleFilename = exerciseNode.get("sampleFilename").asText();
+      exercise.templateFilename = exerciseNode.get("templateFilename").asText();
+      exercise.save();
+      
+      checkFiles(exercise);
+      
+    }
+    
+  }
+  
+  private void checkFile(SpreadExercise exercise, String fileName, String fileEnding) {
+    Path fileToCheck = util.getSampleFileForExercise(EXERCISE_TYPE, fileName + "." + fileEnding);
+    if(Files.exists(fileToCheck))
+      return;
+    
+    theLogger.warn("The file \"" + fileToCheck + "\" for spread exercise " + exercise.id
+        + " does not exist. Trying to create this file...");
+    
+    Path providedFile = Paths.get(baseDir, fileName + "." + fileEnding);
     if(!Files.exists(providedFile)) {
       theLogger.error("Konnte Datei nicht erstellen: Keine Lösungsdatei mitgeliefert in " + providedFile);
       return;
     }
     
     try {
-      Files.copy(providedFile, sampleFile, StandardCopyOption.REPLACE_EXISTING);
+      Files.copy(providedFile, fileToCheck, StandardCopyOption.REPLACE_EXISTING);
       theLogger.info("Die Lösungsdatei wurde erstellt.");
     } catch (IOException e) {
       theLogger.error("Die Lösungsdatei konnte nicht erstellt werden!", e);
+    }
+  }
+  
+  private void checkFiles(SpreadExercise exercise) {
+    // Make sure directory exists
+    Path sampleFileDirectory = util.getSampleDirForExerciseType(EXERCISE_TYPE);
+    if(!Files.exists(sampleFileDirectory)) {
+      try {
+        Files.createDirectories(sampleFileDirectory);
+      } catch (IOException e) {
+        theLogger.error("Could not create directory for sample files for spread exercise " + exercise.id + "!", e);
+        return;
+      }
+    }
+    
+    // Make sure files exist, copy to directory if not
+    for(String fileEnding: FILE_ENDINGS) {
+      checkFile(exercise, exercise.sampleFilename, fileEnding);
+      checkFile(exercise, exercise.templateFilename, fileEnding);
     }
   }
   

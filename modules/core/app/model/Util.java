@@ -14,7 +14,7 @@ import play.Logger;
 
 @Singleton
 public class Util {
-  
+
   private static final String SAMPLE_SUB_DIRECTORY = "samples";
   private static final String SOLUTIONS_SUB_DIRECTORY = "solutions";
   private static final Logger.ALogger theLogger = Logger.of("startup");
@@ -31,7 +31,7 @@ public class Util {
 
     if(Files.exists(rootDirForFiles))
       return;
-    
+
     theLogger.error("Folder for storing of samples and solutions does not exits. Trying to create it...");
     try {
       Files.createDirectories(rootDirForFiles);
@@ -52,12 +52,16 @@ public class Util {
     return rootDirForFiles;
   }
 
-  public Path getSampleDirForExercise(String exerciseType) {
+  public Path getSampleDirForExercise(String exerciseType, int exerciseId) {
+    return Paths.get(getSampleDirForExerciseType(exerciseType).toString(), exerciseId + "");
+  }
+
+  public Path getSampleDirForExerciseType(String exerciseType) {
     return Paths.get(rootDirForFiles.toString(), SAMPLE_SUB_DIRECTORY, exerciseType);
   }
 
   public Path getSampleFileForExercise(String exerciseType, String fileName) {
-    return Paths.get(getSampleDirForExercise(exerciseType).toString(), fileName);
+    return Paths.get(getSampleDirForExerciseType(exerciseType).toString(), fileName);
   }
 
   public Path getSolDirForUser(User user) {

@@ -11,7 +11,7 @@ import javax.inject.Inject;
 import controllers.core.UserManagement;
 import model.Secured;
 import model.Util;
-import model.spread.ExcelExercise;
+import model.spread.SpreadExercise;
 import model.spread.SpreadSheetCorrectionResult;
 import model.spread.SpreadSheetCorrector;
 import model.user.User;
@@ -23,13 +23,13 @@ import play.mvc.Result;
 import play.mvc.Security;
 import play.twirl.api.Html;
 import views.html.error;
-import views.html.excel.excel;
+import views.html.excel.spreadexercise;
 import views.html.excel.excelcorrect;
-import views.html.excel.exceloverview;
+import views.html.excel.spreadoverview;
 import views.html.excel.spreadcorrectionerror;
 
 @Security.Authenticated(Secured.class)
-public class Excel extends Controller {
+public class Spread extends Controller {
   
   private static final String EXERCISE_TYPE = "spread";
   private static final String BODY_SOL_FILE_NAME = "solFile";
@@ -43,63 +43,85 @@ public class Excel extends Controller {
   
   public Result download(int exerciseId, String typ) {
     User user = UserManagement.getCurrentUser();
-    ExcelExercise exercise = ExcelExercise.finder.byId(exerciseId);
+    SpreadExercise exercise = SpreadExercise.finder.byId(exerciseId);
     
-    Path dirForCorrectedFile = util.getSolDirForUserAndType(user, EXERCISE_TYPE);
-    File fileToDownload = Paths.get(dirForCorrectedFile.toString(), exercise.fileName + "_Korrektur." + typ).toFile();
+    if(exercise == null)
+      return badRequest("This exercise does not exist!");
     
-    if(!fileToDownload.exists())
+    Path fileToDownload = Paths.get(util.getSolDirForUserAndType(user, EXERCISE_TYPE).toString(),
+        exercise.templateFilename + "_Korrektur." + typ);
+    
+    if(!Files.exists(fileToDownload))
       return badRequest(
           error.render(user, new Html("<p>Die Korrigierte Datei existiert nicht!</p><p>Zur&uuml;ck zur <a href=\""
-              + routes.Excel.index() + "\">&Uuml;bersichtsseite</a></p>")));
+              + routes.Spread.index() + "\">&Uuml;bersichtsseite</a></p>")));
     
-    return ok(fileToDownload);
+    return ok(fileToDownload.toFile());
+  }
+  
+  public Result downloadTemplate(int exerciseId, String fileType) {
+    SpreadExercise exercise = SpreadExercise.finder.byId(exerciseId);
+    
+    if(exercise == null)
+      return badRequest("This exercise does not exist!");
+    
+    Path filePath = Paths.get(util.getSampleDirForExerciseType(EXERCISE_TYPE).toString(),
+        exercise.templateFilename + "." + fileType);
+    
+    Logger.debug(filePath.toString());
+    
+    if(!Files.exists(filePath))
+      return badRequest("This file does not exist!");
+    
+    return ok(filePath.toFile());
   }
   
   public Result exercise(int exerciseId) {
     User user = UserManagement.getCurrentUser();
-    ExcelExercise exercise = ExcelExercise.finder.byId(exerciseId);
+    SpreadExercise exercise = SpreadExercise.finder.byId(exerciseId);
     
     if(exercise == null)
       return badRequest(new Html("<p>Diese Aufgabe existert leider nicht.</p><p>Zur&uuml;ck zur <a href=\""
-          + routes.Excel.index() + "\">Startseite</a>.</p>"));
+          + routes.Spread.index() + "\">Startseite</a>.</p>"));
     
-    return ok(excel.render(user, exercise));
+    return ok(spreadexercise.render(user, exercise));
   }
   
   public Result index() {
-    return ok(exceloverview.render(ExcelExercise.finder.all(), UserManagement.getCurrentUser()));
+    return ok(spreadoverview.render(SpreadExercise.finder.all(), UserManagement.getCurrentUser()));
   }
   
   public Result upload(int exerciseId) {
     User user = UserManagement.getCurrentUser();
-    ExcelExercise exercise = ExcelExercise.finder.byId(exerciseId);
+    SpreadExercise exercise = SpreadExercise.finder.byId(exerciseId);
     
     // Extract solution from request
     MultipartFormData<File> body = request().body().asMultipartFormData();
     FilePart<File> uploadedFile = body.getFile(BODY_SOL_FILE_NAME);
     if(uploadedFile == null)
       return internalServerError(spreadcorrectionerror.render(user, "Datei konnte nicht hochgeladen werden!"));
+    Path pathToUploadedFile = uploadedFile.getFile().toPath();
+    
+    String fileExtension = SpreadSheetCorrector.getExtension(uploadedFile.getFilename());
     
     // Save solution
-    Path pathToUploadedFile = uploadedFile.getFile().toPath();
-    // FIXME: make sure fileName equals exercise.fileName for download purposes!
-    Path targetFilePath = util.getSolFileForExercise(user, EXERCISE_TYPE, uploadedFile.getFilename());
+    Path targetFilePath = util.getSolFileForExercise(user, EXERCISE_TYPE,
+        exercise.templateFilename + "." + fileExtension);
     boolean fileSuccessfullySaved = saveSolutionForUser(pathToUploadedFile, targetFilePath);
     if(!fileSuccessfullySaved)
       return internalServerError(spreadcorrectionerror.render(user, "Die Datei konnte nicht gespeichert werden!"));
     
     // Get paths to sample document
-    Path sampleDocumentDirectoryPath = util.getSampleDirForExercise(EXERCISE_TYPE);
-    Path sampleDocumentPath = Paths.get(sampleDocumentDirectoryPath.toString(),
-        exercise.fileName + "_Muster." + SpreadSheetCorrector.getExtension(targetFilePath));
+    Path sampleDocumentPath = Paths.get(util.getSampleDirForExerciseType(EXERCISE_TYPE).toString(),
+        exercise.sampleFilename + "." + fileExtension);
+    Logger.debug(sampleDocumentPath.toString());
     if(!Files.exists(sampleDocumentPath))
       return internalServerError(spreadcorrectionerror.render(user, "Die Musterdatei konnte nicht gefunden werden!"));
     
     SpreadSheetCorrectionResult result = SpreadSheetCorrector.correct(sampleDocumentPath, targetFilePath, false, false);
     
     if(result.isSuccess())
-      return ok(excelcorrect.render(user, result, exercise.id, SpreadSheetCorrector.getExtension(targetFilePath)));
+      return ok(excelcorrect.render(user, result, exercise.id, fileExtension));
     else
       return internalServerError(spreadcorrectionerror.render(user, result.getNotices().get(0)));
     

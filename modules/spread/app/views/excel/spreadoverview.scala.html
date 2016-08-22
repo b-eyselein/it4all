@@ -1,0 +1,26 @@
+@(exercises: List[model.spread.SpreadExercise], user: model.user.User)
+
+@main("HTML-Test", user) {
+<div class="container">
+
+  <h2>&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h2>
+  @for(exercise <- exercises) {
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <a href="@controllers.spread.routes.Spread.exercise(exercise.id)">Aufgabe @exercise.id: @exercise.title</a>
+    </div>
+    <div class="panel-body">
+      @for(exerText <- exercise.text.split("\n")) {
+      <p>@exerText</p>
+      }
+    </div>
+    <div class="panel-footer">
+      <div class="btn-group btn-group-justified">
+        <a href="@spread.routes.Spread.downloadTemplate(exercise.id, "xlsx")" class="btn btn-primary" target="_blank">Download der Angabe für MS Excel</a>
+        <a href="@spread.routes.Spread.downloadTemplate(exercise.id, "ods")" class="btn btn-primary" target="_blank">Download der Angabe für OpenOffice Calc</a>
+      </div>
+    </div>
+  </div>
+  }
+</div>
+}
