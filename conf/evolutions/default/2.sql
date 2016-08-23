@@ -13,7 +13,7 @@ insert into exercise (`type`, `id`, `title`, `exerciseText`) values
 	("html",
 	2,
 	"Lebenlauf Autor",
-	"Erstellen Sie einen Überblick über das Leben eines Autors");
+	"Erstellen Sie einen Steckbrief über das Leben des Autors Sir Arthur Conan Doyle. Dazu gehört eine Kurzbiographie und eine Übersicht über die berühmtesten Werke.");
 	
 insert into html_task (`exercise_id`, `task_id`, `taskDesc`, `xpath_query_name`, `attributes`, `defining_attribute`) values
 	(1, 1, "Erstellen Sie ein Formular auf der Seite. Als Aktion soll test und als Methode 'post' angegeben werden.",
@@ -22,30 +22,33 @@ insert into html_task (`exercise_id`, `task_id`, `taskDesc`, `xpath_query_name`,
 	(1, 2, "Geben Sie im Fomular eine <h1>-Überschrift mit passendem Text an", "//form//h1", "", ""),
 	
 	(1, 3, "Erstellen Sie ein Namensfeld* (name) für den kompletten Namen des Kunden.",
-	"//form/div//input", "type=text;;required=true", "name=name"),
+	"//form/div//input[@name='name']", "type=text;;required=true", ""),
 	
 	(1, 4, "Erstellen Sie ein Feld für die Emailadresse* (email) des Kunden.",
-	"//form/div//input", "type=email;;required=true", "name=email"),
+	"//form/div//input[@name='email']", "type=email;;required=true", ""),
 	
 	(1, 5, "Erstellen Sie ein Datumsfeld* (datum), um einen Wunschtermin angeben zu können. Die Vorgabe soll der 01.01.2016 sein.",
-	"//form/div//input", "type=date;;required=true;;value=2016-01-01", "name=datum"),
+	"//form/div//input[@name='datum']", "type=date;;required=true;;value=2016-01-01", ""),
 	
 	(1, 6, "Erstellen Sie ein Dropdownmenü* (marke), um eine der vier Automarken auswählen zu können.
 	 Geben Sie außerdem als erste Option 'Bitte wählen' mit einem leeren 'value'-Attribut an,
 	 damit Sie die 'required'-Option modellieren können.",
-	"//form/div//select", "required=true", "name=marke"),
+	"//form/div//select[@name='marke']", "required=true", ""),
 	 
 	(1, 7, "Erstellen Sie ein Eingabefeld* (jahr) für das Baujahr des Autos (1950 <= year <= 2016). Als Vorgabe soll 2000 eingestellt sein.",
-	"//form/div//input", "type=number;;required=true;;value=2000", "name=jahr"),
+	"//form/div//input[@name='jahr']", "type=number;;required=true;;value=2000", ""),
 	 
 	(1, 8, "Erstellen Sie eine Checkbox* (agb), um die AGBs der Seite zu akzeptieren",
-	"//form/div//input", "type=checkbox;;required=true", "name=agb"),
+	"//form/div//input[@name='agb']", "type=checkbox;;required=true", ""),
 	 
 	(1, 9, "Erstellen Sie eine Möglichkeit, das Formular abzusenden. Geben Sie als Wert 'Absenden' an.",
-	"//form/div//input", "value=Absenden", "type=submit"),
+	"//form/div//input[@type='submit']", "value=Absenden", ""),
 	
-	(2, 1, 'Erstellen Sie eine <h1>-Überschrift für die Seite. Diese soll in ein <div>-Element eingebettet sein. Der Inhalt soll "Sir Arthur Conan Doyle" lauten',
-	"//div/h1[text()[contains(., \'Sir Arthur Conan Doyle\')]]", "", "");
+	(2, 1, 'Erstellen Sie eine <h1>-Überschrift für die Seite. Diese soll in ein <div>-Element eingebettet sein. Der Inhalt soll "Sir Arthur Conan Doyle" lauten.',
+	"//div/h1[text()[contains(., \'Sir Arthur Conan Doyle\')]]", "", ""),
+	
+	(2, 2, 'Beschreibung',
+	"*", "", "");
 
 insert into childtask (`id`, `task_id`, `exercise_id`, `tagName`, `defining_attribute`) values
 	(1, 6, 1, "option", "value="),
