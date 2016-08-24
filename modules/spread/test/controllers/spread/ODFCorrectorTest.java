@@ -107,7 +107,7 @@ public class ODFCorrectorTest {
   
   @Test
   public void testCompareSheet() {
-    // FIXME: implement and test!
+    // TODO: implement and test!
     // fail("Not yet implemented");
   }
   
@@ -121,8 +121,8 @@ public class ODFCorrectorTest {
         equalTo(musterSheet.getCellByPosition("F8").getStringValue()));
     
     Table musterSheet4 = corrector.getSheetByIndex(muster, 4);
-    assertThat(corrector.getCellByPosition(musterSheet4, 10, 15).getStringValue(), equalTo(musterSheet4
-        .getCellByPosition(10, 15).getStringValue()));
+    assertThat(corrector.getCellByPosition(musterSheet4, 10, 15).getStringValue(),
+        equalTo(musterSheet4.getCellByPosition(10, 15).getStringValue()));
     muster.close();
   }
   
@@ -198,7 +198,7 @@ public class ODFCorrectorTest {
   
   @Test
   public void testSaveCorrectedSpreadsheet() {
-    // FIXME: implement and test!
+    // TODO: implement and test!
     // fail("Not yet implemented");
   }
   
