@@ -30,9 +30,36 @@ function testSolution() {
         <div class="panel panel-default">
           <div class="panel-heading">Test Driven Development</div>
           <div class="panel-body">
-            <p><input type="checkbox"> Definiere eigene Testdaten:</p>
-            <p><input><input><input><input></p>
-            <p><input type="button" value="Validiere neue Testdaten">
+            <div class="checkbox">
+              <label><input type="checkbox"> Definiere eigene Testdaten:</label>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Input 1</th>
+                  <th>Input 2</th>
+                  <th>Input 3</th>
+                  <th>Output</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <input class="form-control">
+                  </td>
+                  <td>
+                    <input class="form-control">
+                  </td>
+                  <td>
+                    <input class="form-control">
+                  </td>
+                  <td>
+                    <input class="form-control">
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <input type="button" class="btn btn-default" value="Validiere neue Testdaten">
           </div>
         </div>
       </div>
@@ -40,7 +67,20 @@ function testSolution() {
     <div class="row">
       <div class="col-md-6">
         <div class="panel panel-default">
-          <div id="editor" class="form-control" style="height: 500px;">@exercise.declaration</div>
+          <div class="panel-heading">
+            <div class="input-group">
+              <span class="input-group-addon">Schriftgr&ouml;&szlig;e: <span id="fontsize">16</span> px</span>
+              <div class="input-group-btn">
+                <button type="button" class="btn btn-default" onclick="changeFontsize(-2);">
+                  <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-default" onclick="changeFontsize(+2);">
+                  <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div id="editor" class="form-control">@exercise.declaration</div>
           <script>
 document.getElementById('editor').style.fontSize = '16px';
 var editor = ace.edit("editor");
