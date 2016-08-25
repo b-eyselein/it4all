@@ -15,5 +15,8 @@ GET    /js/web/:ex                         controllers.web.JS.exerciseWeb(ex: In
 PUT    /js/web/:ex                         controllers.web.JS.commitWeb(ex: Int)
 POST   /js/web/:ex                         controllers.web.JS.commitWeb(ex: Int)
 
+POST   /js/validate/:ex                    controllers.web.JS.validateTestData(ex: Int)
+
 GET    /js/:ex                             controllers.web.JS.exercise(ex: Int)
 POST   /js/:ex                             controllers.web.JS.commit(ex: Int)
+

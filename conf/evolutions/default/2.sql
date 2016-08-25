@@ -66,29 +66,21 @@ insert into css_task (`task_id`, `exercise_id`, `taskdesc`, `xpath_query_name`, 
 	
 # JavaScript
 
-insert into js_exercise (`id`, `title`, `text`, `declaration`, `function_name`) values
+insert into js_exercise (`id`, `title`, `text`, `declaration`, `function_name`, `sample_solution`, `input_count`) values
 	(1, "Summen", "Implementieren Sie folgende Funktion 'sum', die zwei Zahlen entegennimmt und deren Summe zurückgibt.", 
-	 "function sum(a, b) {\n  return 0;;\n}", "sum"),
+	 'function sum(a, b) {\n  return 0;;\n}', "sum", 'function sum(a, b) {\n return a + b;;\n}', 2),
 	 
 	(2, "Konkatenation von Strings", "Implementieren Sie die folgende Funktion 'concat', die drei beliebige Strings entgegennimmt
 	 und die Konkatenation der Strings zurückgibt.", 
-	 "function concat(str1, str2, str3) {\n  return \"\";;\n}", "concat");
+	 'function concat(str1, str2, str3) {\n  return \"\";;\n}', "concat", 'function concat(str1, str2, str3) {\n  return str1 + str2 + str3;;\n}', 3);
 
-insert into js_test (`id`, `exercise_id`, `awaited_result`) values
-	(1, 1, 2.0),
-	(2, 1, 3.0),
-	(3, 1, 87.0),
-	(4, 1, 597.0),
-	(5, 2, "Hallo Welt!"),
-	(6, 2, "TestTestTest");
-
-insert into js_testvalue (`id`, `test_id`, `value`) values
-	(1, 1, 1), (2, 1, 1),
-	(3, 2, 1), (4, 2, 2),
-	(5, 3, 44), (6, 3, 43),
-	(7, 4, "555.0"), (8, 4, "42.0"),
-	(9, 5, '\'Hallo \''), (10, 5, "'Welt'"), (11, 5, "'!'"),
-	(12, 6, "'Test'"), (13, 6, "'Test'"), (14, 6, "'Test'");
+insert into js_test (`id`, `exercise_id`, `testvalues`, `awaited_result`) values
+	(1, 1, '1#1', 2.0),
+	(2, 1, '1#2', 3.0),
+	(3, 1, '44#43', 87.0),
+	(4, 1, '555.0#42', 597.0),
+	(5, 2, '"Hallo "#"Welt"#"!"', 'Hallo Welt!'),
+	(6, 2, '"Test"#"Test"#"Test"', 'TestTestTest');
 
 insert into js_web_exercise (`id`, `title`, `text`, `anterior`, `posterior`, `declaration` ) values
 	(1,
@@ -143,8 +135,6 @@ delete from js_web_test;
 delete from conditions;
 
 delete from js_web_exercise;
-
-delete from js_testvalue;
 
 delete from js_test;
 

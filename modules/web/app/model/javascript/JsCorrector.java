@@ -46,6 +46,18 @@ public class JsCorrector {
     return results;
   }
 
+  public static void validateTestData(JsExercise exercise, List<TestData> testData) {
+    ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
+    try {
+      engine.eval(exercise.sampleSolution);
+      for(TestData data: testData)
+        data.setOk(engine.eval(exercise.buildToEvaluate(data.getInput())).toString().equals(data.getOutput()));
+
+    } catch (ScriptException e) {
+      Logger.error("Error while validating test data: ", e);
+    }
+  }
+
   private static WebDriver loadWebSite(String solutionUrl) {
     WebDriver driver = new HtmlUnitDriver(true);
     driver.get(solutionUrl);

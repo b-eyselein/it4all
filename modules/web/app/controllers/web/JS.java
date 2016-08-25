@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import model.Util;
 import model.javascript.JsCorrector;
 import model.javascript.JsExercise;
 import model.javascript.JsTestResult;
+import model.javascript.TestData;
 import model.javascript.web.JsWebExercise;
 import model.javascript.web.JsWebTestResult;
 import model.user.User;
@@ -51,7 +53,7 @@ public class JS extends Controller {
     // FIXME: evt. Speichern der Lösung und Laden bei erneuter Bearbeitung?
     
     List<JsTestResult> testResults = JsCorrector.correct(JsExercise.finder.byId(exerciseId), learnerSolution);
-
+    
     if(request().acceptedTypes().get(0).toString().equals("application/json"))
       return ok(Json.toJson(testResults));
     else
@@ -115,6 +117,31 @@ public class JS extends Controller {
   public Result index() {
     User user = UserManagement.getCurrentUser();
     return ok(jsoverview.render(user, JsExercise.finder.all(), JsWebExercise.finder.all()));
+  }
+  
+  public Result validateTestData(int exerciseId) {
+    JsExercise exercise = JsExercise.finder.byId(exerciseId);
+    if(exercise == null)
+      return badRequest();
+    
+    DynamicForm form = factory.form().bindFromRequest();
+    
+    int count = Integer.parseInt(form.get("count"));
+    int inputCount = Integer.parseInt(form.get("inputs"));
+    
+    List<TestData> testData = new ArrayList<>(count);
+    for(int i = 0; i < count; i++) {
+      List<String> input = new ArrayList<>(inputCount);
+      for(int j = 0; j < inputCount; j++) {
+        input.add(form.get("inp" + j + ":" + i));
+      }
+      String output = form.get("outp" + i);
+      testData.add(new TestData(i, input, output));
+    }
+    
+    JsCorrector.validateTestData(exercise, testData);
+    
+    return ok(Json.toJson(testData));
   }
   
   private void saveSolutionForUser(User user, String solution, int exercise) throws IOException {

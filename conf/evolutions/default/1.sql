@@ -93,21 +93,17 @@ create table js_exercise (
   text                          text,
   declaration                   varchar(255),
   function_name                 varchar(255),
+  sample_solution               varchar(255),
+  input_count                   integer,
   constraint pk_js_exercise primary key (id)
 );
 
 create table js_test (
   id                            integer auto_increment not null,
   awaited_result                varchar(255),
+  testvalues                    text,
   exercise_id                   integer,
   constraint pk_js_test primary key (id)
-);
-
-create table js_testvalue (
-  id                            integer auto_increment not null,
-  value                         varchar(255),
-  test_id                       integer,
-  constraint pk_js_testvalue primary key (id)
 );
 
 create table js_web_exercise (
@@ -204,9 +200,6 @@ create index ix_html_task_exercise_id on html_task (exercise_id);
 alter table js_test add constraint fk_js_test_exercise_id foreign key (exercise_id) references js_exercise (id) on delete restrict on update restrict;
 create index ix_js_test_exercise_id on js_test (exercise_id);
 
-alter table js_testvalue add constraint fk_js_testvalue_test_id foreign key (test_id) references js_test (id) on delete restrict on update restrict;
-create index ix_js_testvalue_test_id on js_testvalue (test_id);
-
 alter table js_web_test add constraint fk_js_web_test_exercise_id foreign key (exercise_id) references js_web_exercise (id) on delete restrict on update restrict;
 create index ix_js_web_test_exercise_id on js_web_test (exercise_id);
 
@@ -246,9 +239,6 @@ drop index ix_html_task_exercise_id on html_task;
 alter table js_test drop foreign key fk_js_test_exercise_id;
 drop index ix_js_test_exercise_id on js_test;
 
-alter table js_testvalue drop foreign key fk_js_testvalue_test_id;
-drop index ix_js_testvalue_test_id on js_testvalue;
-
 alter table js_web_test drop foreign key fk_js_web_test_exercise_id;
 drop index ix_js_web_test_exercise_id on js_web_test;
 
@@ -277,8 +267,6 @@ drop table if exists html_task;
 drop table if exists js_exercise;
 
 drop table if exists js_test;
-
-drop table if exists js_testvalue;
 
 drop table if exists js_web_exercise;
 

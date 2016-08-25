@@ -1,18 +1,17 @@
 package model.javascript;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
 import com.avaje.ebean.Model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import model.exercise.Success;
 import play.data.validation.Constraints.Required;
@@ -20,20 +19,21 @@ import play.data.validation.Constraints.Required;
 @Entity
 public class JsTest extends Model {
 
+  private static final String VALUES_SPLIT_CHAR = "#";
+
   @Id
   public int id;
-  
+
   @Required
   public String awaitedResult;
-  
-  @OneToMany(mappedBy = "test")
-  @JsonManagedReference
-  public List<JsTestvalue> values;
-  
+
+  @Column(columnDefinition = "text")
+  public String testvalues;
+
   @ManyToOne
   @JsonBackReference
   public JsExercise exercise;
-  
+
   public JsTestResult evaluate(ScriptEngine engine) {
     String toEvaluate = buildToEvaluate();
     try {
@@ -46,10 +46,13 @@ public class JsTest extends Model {
       return new JsTestResult(this, Success.NONE, toEvaluate, "");
     }
   }
-  
-  private String buildToEvaluate() {
-    List<String> valueList = values.stream().map(value -> value.value).collect(Collectors.toList());
-    return exercise.functionName + "(" + String.join(", ", valueList) + ");";
+
+  public List<String> getTestValues() {
+    return Arrays.asList(testvalues.split(VALUES_SPLIT_CHAR));
   }
-  
+
+  private String buildToEvaluate() {
+    return exercise.functionName + "(" + String.join(", ", getTestValues()) + ");";
+  }
+
 }

@@ -22,6 +22,85 @@ function changeFontsize(value) {
   fontsizeElement.innerHTML = fontsize;
 }
 
+function lessTestData() {
+  var table = document.getElementById("testDataTable");
+  
+  // Header, first data, button must remain
+  if(table.rows.length > 3) {
+    table.deleteRow(table.rows.length - 2);
+  }
+}
+
+function moreTestData(inputCount) {
+  var table = document.getElementById("testDataTable");
+  var newRow = table.insertRow(table.rows.length - 1);
+  // OutputCell!
+  for(var i = 0; i < inputCount + 1; i++) {
+    var cell = newRow.insertCell(i);
+    cell.innerHTML = "<input class=\"form-control\">";
+  }
+}
+
+function validateTestData(url) {
+  var table = document.getElementById("testDataTable");
+  
+  var testData = [];
+  
+  for(var i = 1; i < table.rows.length - 1; i++) {
+    var row = table.rows[i];
+    var data = {
+      input: [],
+      output: ""
+    };
+    for(var j = 0; j < row.cells.length - 1; j++) {
+      var cell = row.cells[j];
+      data.input.push(cell.childNodes[0].value);
+    }
+    data.output = row.cells[row.cells.length - 1].childNodes[0].value;
+    testData.push(data);
+  }
+  
+  // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if(xhttp.readyState == 4 && xhttp.status == 200) {
+      writeTestData(xhttp.responseText);
+    }
+  };
+  
+  // AJAX-Objekt mit Daten fuellen, absenden
+  var parameters = "";
+  parameters += "count=" + testData.length + "&inputs=" + testData[0].input.length;
+  for(var i = 0; i < testData.length; i++) {
+    var currentData = testData[i];
+    var theData = "";
+    for(var j = 0; j < currentData.input.length; j++) {
+      theData += "&inp" + j + ":" + i + "=" + currentData.input[j];
+    }
+    theData += "&outp" + i + "=" + currentData.output;
+    parameters += theData;
+  }
+  
+  xhttp.open("POST", url, true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.setRequestHeader("Accept", "application/json");
+  xhttp.send(parameters);
+}
+
+function writeTestData(responseText) {
+  var testData = JSON.parse(responseText);
+  var table = document.getElementById("testDataTable");
+  for(var i = 0; i < testData.length; i++) {
+    var data = testData[i];
+    var row = table.rows[parseInt(data.id) + 1];
+    if(data.ok) {
+      row.className = "success";
+    } else {
+      row.className = "danger";
+    }
+  }
+}
+
 function prepareFormForSubmitting() {
   document.getElementById("editorContent").value = editor.getValue();
 }
@@ -76,10 +155,6 @@ function processWebCorrection(jsonResponseText) {
     var currentResult = results[resultCount];
     
     var show = currentResult.success == "COMPLETE" ? "" : " in";
-    // var preClazz = currentTest.preconditionSatisfied ? "success" : "danger";
-    // var actionClazz = currentTest.actionPerformed ? "success" : "danger";
-    // var postClazz = currentTest.postconditionSatisfied ? "success" :
-    // "danger";
     
     toAdd += "<div class=\"panel panel-" + currentResult.bsclass + "\">";
     toAdd += "  <div class=\"panel-heading\">";
