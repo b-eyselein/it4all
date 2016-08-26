@@ -70,28 +70,8 @@ window.onload = updatePreview;
         </div>
         
         <div class="col-md-4">
-          <div class="panel panel-default">
-            <div class="panel-heading">Editor</div>
-            <div class="panel-body">
-              <pre id="editor" class="form-control">@for(sol <- oldSolution.split("\n")) {@sol
-}</pre>
-              <textarea hidden name="editorContent" id="editorContent"></textarea>
-              <script type="text/javascript">
-document.getElementById('editor').style.fontSize = '14px';
-var editor = ace.edit("editor");
-editor.setTheme("ace/theme/eclipse");
-editor.getSession().setMode("ace/mode/html");
-editor.getSession().setTabSize(2);
-editor.getSession().setUseSoftTabs(true);
-editor.getSession().setUseWrapMode(true);
-editor.setOptions({
-  minLines: 25,
-  maxLines: 45
-});
-editor.on("change", updatePreview);
-                </script>
-            </div>
-          </div>
+          @editor(oldSolution, "html", 25, 45)
+          <textarea hidden name="editorContent" id="editorContent"></textarea>
         </div>
         
         <div class="col-md-4">

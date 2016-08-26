@@ -15,13 +15,6 @@ function testTheSolution(url) {
   xhttp.send(parameters);
 }
 
-function changeFontsize(value) {
-  var fontsizeElement = document.getElementById('fontsize');
-  var fontsize = parseInt(fontsizeElement.innerHTML) + value;
-  document.getElementById('editor').style.fontSize = fontsize + 'px';
-  fontsizeElement.innerHTML = fontsize;
-}
-
 function lessTestData() {
   var table = document.getElementById("testDataTable");
   

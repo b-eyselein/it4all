@@ -1,7 +1,6 @@
 @(user: model.user.User, exercise: model.javascript.web.JsWebExercise, oldSolution: String)
 
 @main("JavaScript-Test", user) {
-<script src="@controllers.routes.Assets.versioned("javascripts/ace/ace.js")" type="text/javascript" charset="utf-8"></script>
 <script src="@controllers.routes.Assets.versioned("javascripts/jsProcessor.js")" type="text/javascript" charset="utf-8"></script>
 <script>
 function testSolution() {
@@ -31,23 +30,8 @@ window.onload = updatePreview;
     <div class="row">
       <div class="col-md-4">
         <pre id="anterior">@exercise.anterior</pre>
-        <div id="editor" class="form-control">@oldSolution</div>
-        <script>
-document.getElementById('editor').style.fontSize = '16px';
-var editor = ace.edit("editor");
-editor.setTheme("ace/theme/eclipse");
-editor.getSession().setMode("ace/mode/javascript");
-editor.getSession().setTabSize(2);
-editor.getSession().setUseSoftTabs(true);
-editor.getSession().setUseWrapMode(true);
-editor.setOptions({
-  minLines: 10,
-  maxLines: 15
-});
-
-editor.on("change", updatePreview);
-        </script>
-      <pre id="posterior">@exercise.posterior</pre>
+        @editor(oldSolution, "javascript", 10, 15)
+        <pre id="posterior">@exercise.posterior</pre>
       </div>
       <div class="col-md-4">
         <div class="panel panel-default">

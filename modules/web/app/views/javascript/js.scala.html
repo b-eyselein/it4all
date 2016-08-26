@@ -1,7 +1,6 @@
 @(user: model.user.User, exercise: model.javascript.JsExercise)
 
 @main("JavaScript-Test", user) {
-<script src=" @controllers.routes.Assets.versioned("javascripts/ace/ace.js")" type="text/javascript" charset="utf-8"></script>
 <script src=" @controllers.routes.Assets.versioned("javascripts/jsProcessor.js")" type="text/javascript" charset="utf-8"></script>
 <script>
 function testSolution() {
@@ -80,36 +79,7 @@ function testSolution() {
     <!-- Programmierfenster und Korrekturfenster -->
     <div class="row">
       <div class="col-md-6">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <div class="input-group">
-              <span class="input-group-addon">Schriftgr&ouml;&szlig;e: <span id="fontsize">16</span> px</span>
-              <div class="input-group-btn">
-                <button type="button" class="btn btn-default" onclick="changeFontsize(-2);">
-                  <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-                </button>
-                <button type="button" class="btn btn-default" onclick="changeFontsize(+2);">
-                  <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                </button>
-              </div>
-            </div>
-          </div>
-          <div id="editor" class="form-control">@exercise.declaration</div>
-          <script>
-document.getElementById('editor').style.fontSize = '16px';
-var editor = ace.edit("editor");
-editor.setTheme("ace/theme/eclipse");
-editor.getSession().setMode("ace/mode/javascript");
-editor.getSession().setTabSize(2);
-editor.getSession().setUseSoftTabs(true);
-editor.getSession().setUseWrapMode(true);
-editor.setOptions({
-  minLines: 15,
-  maxLines: 20
-});
-          </script>
-          <textarea hidden name="editorContent" id="editorContent"></textarea>
-        </div>
+        @editor(exercise.declaration, "javascript", 15, 20)
       </div>
       <div class="col-md-6">
         <div class="panel panel-default">
