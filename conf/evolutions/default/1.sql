@@ -95,14 +95,17 @@ create table js_exercise (
   function_name                 varchar(255),
   sample_solution               varchar(255),
   input_count                   integer,
+  returntype                    varchar(9),
+  constraint ck_js_exercise_returntype check (returntype in ('BOOLEAN','NUMBER','STRING','SYMBOL','UNDEFINED','NULL','OBJECT')),
   constraint pk_js_exercise primary key (id)
 );
 
 create table js_test (
   id                            integer auto_increment not null,
-  awaited_result                varchar(255),
-  testvalues                    text,
   exercise_id                   integer,
+  inputs                        text,
+  datatypes                     text,
+  output                        varchar(255),
   constraint pk_js_test primary key (id)
 );
 

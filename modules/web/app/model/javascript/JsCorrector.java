@@ -12,6 +12,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import model.exercise.Success;
+import model.javascript.JsExercise.JsDataType;
 import model.javascript.web.JsWebExercise;
 import model.javascript.web.JsWebTestResult;
 import play.Logger;
@@ -46,16 +47,44 @@ public class JsCorrector {
     return results;
   }
 
-  public static void validateTestData(JsExercise exercise, List<TestData> testData) {
+  public static boolean validateResult(JsDataType type, Object gottenResult, String awaitedResult) {
+    switch(type) {
+    // FIXME: implement!!!!!
+    case NUMBER:
+      return validateResult(Double.parseDouble(gottenResult.toString()), Double.parseDouble(awaitedResult));
+    case STRING:
+      return validateResult(gottenResult.toString(), awaitedResult);
+    default:
+      return false;
+    }
+
+  }
+
+  public static <T> boolean validateResult(T gottenResult, T awaitedResult) {
+    return gottenResult.equals(awaitedResult);
+  }
+
+  public static void validateTestData(JsExercise exercise, List<CommitedTestData> testData) {
     ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
     try {
       engine.eval(exercise.sampleSolution);
-      for(TestData data: testData)
-        data.setOk(engine.eval(exercise.buildToEvaluate(data.getInput())).toString().equals(data.getOutput()));
-
     } catch (ScriptException e) {
       Logger.error("Error while validating test data: ", e);
+      testData.forEach(data -> data.setOk(false));
+      return;
     }
+
+    testData.forEach(data -> {
+      try {
+        String toEvaluate = exercise.buildToEvaluate(data.getInput());
+        Object gottenResult = engine.eval(toEvaluate);
+
+        boolean validated = validateResult(exercise.returntype, gottenResult, data.getOutput());
+        data.setOk(validated);
+      } catch (ScriptException e) {
+        Logger.error("Error while validating test data: ", e);
+      }
+    });
   }
 
   private static WebDriver loadWebSite(String solutionUrl) {

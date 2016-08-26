@@ -41,6 +41,7 @@ function validateTestData(url) {
   
   for(var i = 1; i < table.rows.length - 1; i++) {
     var row = table.rows[i];
+    row.className = "";
     var data = {
       input: [],
       output: ""

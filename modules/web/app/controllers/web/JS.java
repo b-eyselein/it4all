@@ -16,7 +16,7 @@ import model.Util;
 import model.javascript.JsCorrector;
 import model.javascript.JsExercise;
 import model.javascript.JsTestResult;
-import model.javascript.TestData;
+import model.javascript.CommitedTestData;
 import model.javascript.web.JsWebExercise;
 import model.javascript.web.JsWebTestResult;
 import model.user.User;
@@ -47,6 +47,8 @@ public class JS extends Controller {
   private FormFactory factory;
   
   public Result commit(int exerciseId) {
+    User user = UserManagement.getCurrentUser();
+
     DynamicForm form = factory.form().bindFromRequest();
     String learnerSolution = form.get("editorContent");
     
@@ -57,7 +59,7 @@ public class JS extends Controller {
     if(request().acceptedTypes().get(0).toString().equals("application/json"))
       return ok(Json.toJson(testResults));
     else
-      return ok(jscorrect.render(learnerSolution, testResults, UserManagement.getCurrentUser()));
+      return ok(jscorrect.render(learnerSolution, testResults, user));
   }
   
   public Result commitWeb(int exerciseId) {
@@ -102,6 +104,11 @@ public class JS extends Controller {
     User user = UserManagement.getCurrentUser();
     JsWebExercise exercise = JsWebExercise.finder.byId(exerciseId);
     
+    if(exercise == null)
+      return badRequest(
+          error.render(user, new Html("<p>Diese Aufgabe existert leider nicht.</p><p>Zur&uuml;ck zur <a href=\""
+              + routes.JS.index() + "\">Startseite</a>.</p>")));
+    
     String oldSolution = exercise.declaration;
     try {
       Path file = util.getSolFileForExercise(user, "js", exerciseId, FILE_TYPE);
@@ -129,14 +136,14 @@ public class JS extends Controller {
     int count = Integer.parseInt(form.get("count"));
     int inputCount = Integer.parseInt(form.get("inputs"));
     
-    List<TestData> testData = new ArrayList<>(count);
+    List<CommitedTestData> testData = new ArrayList<>(count);
     for(int i = 0; i < count; i++) {
       List<String> input = new ArrayList<>(inputCount);
       for(int j = 0; j < inputCount; j++) {
         input.add(form.get("inp" + j + ":" + i));
       }
       String output = form.get("outp" + i);
-      testData.add(new TestData(i, input, output));
+      testData.add(new CommitedTestData(i, input, output));
     }
     
     JsCorrector.validateTestData(exercise, testData);
