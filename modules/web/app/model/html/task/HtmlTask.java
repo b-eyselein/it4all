@@ -21,26 +21,28 @@ import model.html.result.ElementResult;
 
 @Entity
 public class HtmlTask extends Task {
-  
+
   @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
   @JsonManagedReference
   @JsonIgnore
   public List<ChildTask> childTasks;
-  
+
   @Override
   public ElementResult evaluate(SearchContext searchContext) {
+    // FIXME: Zerlegung XpathQuery, um Element evtl. unabhängig von
+    // Elternelement zu suchen
     String xpathQuery = buildXPathQuery();
     List<WebElement> foundElements = searchContext.findElements(By.xpath(xpathQuery));
-    
+
     if(foundElements.isEmpty() || foundElements.size() > 1)
       return new ElementResult(this, Success.NONE);
-    
+
     // Nur noch ein passendes Element
     WebElement foundElement = foundElements.get(0);
-    
+
     List<ChildResult> evaluatedChildResults = evaluateAllChildResults(foundElement);
     List<AttributeResult> evaluatedAttributeResults = evaluateAllAttributeResults(foundElement);
-    
+
     if(Task.allResultsSuccessful(evaluatedAttributeResults) && Task.allResultsSuccessful(evaluatedChildResults))
       //@formatter:off
       return new ElementResult(this, Success.COMPLETE)
@@ -52,23 +54,23 @@ public class HtmlTask extends Task {
           .withChildResults(evaluatedChildResults);
       //@formatter:on
   }
-  
+
   @Override
   protected String buildXPathQuery() {
     String xpathQuery = xpathQueryName;
-    
+
     // Kein Attribut, wenn Tag eindeutig
     if(definingAttribute == null || definingAttribute.isEmpty())
       return xpathQuery;
-    
+
     String[] valueAndKey = definingAttribute.split(KEY_VALUE_CHARACTER);
     xpathQuery += "[@" + valueAndKey[0] + " = '" + valueAndKey[1] + "']";
     return xpathQuery;
   }
-  
+
   @Override
   protected List<ChildResult> getChildResults() {
     return childTasks.stream().map(childTask -> childTask.getChildResult()).collect(Collectors.toList());
   }
-  
+
 }
