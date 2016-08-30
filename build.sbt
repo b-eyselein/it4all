@@ -4,8 +4,8 @@ Common.settings
 
 lazy val root = (project in file("."))
 	.enablePlugins(PlayJava, PlayEbean)
-	.aggregate(binary, mindmap, spread, sql, web, xml)
-	.dependsOn(binary, mindmap, spread, sql, web, xml, core)
+	.aggregate(binary, mindmap, spread, sql, web, xml, uml)
+	.dependsOn(binary, mindmap, spread, sql, web, xml, uml, core)
 
 lazy val core: Project = (project in file("modules/core"))
 	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)

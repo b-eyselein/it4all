@@ -29,6 +29,9 @@ GET    /user           controllers.UserController.index()
 # Excel
 ->     /spread         spread.Routes
 
+# UML
+->     /uml            uml.Routes
+
 # Evaluation
 GET    /eval/          controllers.Evaluation.index()
 POST   /eval/submit    controllers.Evaluation.submit()
