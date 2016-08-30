@@ -34,6 +34,10 @@ lazy val binary = (project in file("modules/binary"))
 lazy val mindmap = (project in file("modules/mindmap"))
 	.enablePlugins(PlayJava)
 	.dependsOn(core)
+	
+lazy val uml = (project in file("modules/uml"))
+	.enablePlugins(PlayJava)
+	.dependsOn(core)
 
 // Used libraries from Maven Repository
 libraryDependencies ++= Seq(

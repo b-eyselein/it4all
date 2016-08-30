@@ -4,7 +4,7 @@ import Keys._
 object Common {
   val settings: Seq[Setting[_]] = Seq(
     organization := "is.informatik.uni-wuerzburg.de",
-    version := "0.8.0",
+    version := "0.9.0",
     scalaVersion := "2.11.7")
 
   val mysqlDependency = "mysql" % "mysql-connector-java" % "5.1.38"
