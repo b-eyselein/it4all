@@ -1,6 +1,9 @@
 package model.html.task;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
@@ -29,10 +32,26 @@ public class HtmlTask extends Task {
 
   @Override
   public ElementResult evaluate(SearchContext searchContext) {
-    // FIXME: Zerlegung XpathQuery, um Element evtl. unabhängig von
-    // Elternelement zu suchen
     String xpathQuery = buildXPathQuery();
     List<WebElement> foundElements = searchContext.findElements(By.xpath(xpathQuery));
+
+    Pattern p = Pattern.compile("//?[a-zA-Z]+/");
+    Matcher m = p.matcher(xpathQuery);
+    List<String> parentsMissing = new LinkedList<>();
+    while(foundElements.isEmpty() && m.find()) {
+      // TODO: remove /
+      String parentMissing = xpathQuery.substring(0, m.end() - 1);
+      while(parentMissing.startsWith("/"))
+        parentMissing = parentMissing.substring(1);
+      parentsMissing.add(parentMissing);
+
+      // Try to find element without parent element
+      xpathQuery = xpathQuery.substring(m.end() - 1);
+      foundElements = searchContext.findElements(By.xpath(xpathQuery));
+
+      // update Matcher with new, shorter string
+      m = p.matcher(xpathQuery);
+    }
 
     if(foundElements.isEmpty() || foundElements.size() > 1)
       return new ElementResult(this, Success.NONE);
@@ -43,15 +62,18 @@ public class HtmlTask extends Task {
     List<ChildResult> evaluatedChildResults = evaluateAllChildResults(foundElement);
     List<AttributeResult> evaluatedAttributeResults = evaluateAllAttributeResults(foundElement);
 
-    if(Task.allResultsSuccessful(evaluatedAttributeResults) && Task.allResultsSuccessful(evaluatedChildResults))
+    if(Task.allResultsSuccessful(evaluatedAttributeResults) && Task.allResultsSuccessful(evaluatedChildResults)
+        && parentsMissing.isEmpty())
       //@formatter:off
       return new ElementResult(this, Success.COMPLETE)
           .withAttributeResults(evaluatedAttributeResults)
-          .withChildResults(evaluatedChildResults);
+          .withChildResults(evaluatedChildResults)
+          .withParentsMissing(parentsMissing);
     else
       return new ElementResult(this, Success.PARTIALLY)
           .withAttributeResults(evaluatedAttributeResults)
-          .withChildResults(evaluatedChildResults);
+          .withChildResults(evaluatedChildResults)
+          .withParentsMissing(parentsMissing);
       //@formatter:on
   }
 

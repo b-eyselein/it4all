@@ -74,7 +74,7 @@ public class HTML extends Controller {
       elementResults = HtmlCorrector.correct(solutionUrl, HtmlExercise.finder.byId(exerciseId), user, type);
     else
       return badRequest(error.render(user, new Html("Der Korrekturtyp wurde nicht korrekt spezifiziert!")));
-
+    
     // Live-Abgabe, sende Resultat als Json
     if(request().acceptedTypes().get(0).toString().equals("application/json"))
       return ok(Json.toJson(elementResults));

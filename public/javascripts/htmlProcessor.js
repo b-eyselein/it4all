@@ -89,6 +89,10 @@ function handleHtmlResult(result) {
   
   if(result.success === "COMPLETE" || result.success === "PARTIALLY") {
     comDiv.innerHTML += "<div class=\"alert alert-success\">Element wurde gefunden!</div>";
+    if(result.parentsMissing !== null) {
+      comDiv.innerHTML += "<div class=\"alert alert-danger\">Element hat nicht die richtigen Elternelemente. Folgende fehlen: "
+          + result.parentsMissing.join(", ") + "</div>";
+    }
   } else {
     comDiv.innerHTML += "<div class=\"alert alert-danger\">Element konnte nicht gefunden werden!</div>";
   }
