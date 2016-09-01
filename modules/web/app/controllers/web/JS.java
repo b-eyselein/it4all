@@ -4,9 +4,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -16,6 +17,7 @@ import model.Util;
 import model.javascript.JsCorrector;
 import model.javascript.JsExercise;
 import model.javascript.JsTestResult;
+import model.javascript.JsExercise.JsDataType;
 import model.javascript.CommitedTestData;
 import model.javascript.web.JsWebExercise;
 import model.javascript.web.JsWebTestResult;
@@ -49,14 +51,22 @@ public class JS extends Controller {
   public Result commit(int exerciseId) {
     User user = UserManagement.getCurrentUser();
 
+    JsExercise exercise = JsExercise.finder.byId(exerciseId);
+    if(exercise == null)
+      return badRequest(new Html("<p>Diese Aufgabe existiert nicht!</p><p>Zur&uuml;ck zur Startseite</p>"));
+
+    // Read commited solution and custom test data from request
     DynamicForm form = factory.form().bindFromRequest();
+
     String learnerSolution = form.get("editorContent");
+    // FIXME: only extract testData if there is testData!
+    List<CommitedTestData> userTestData = extractAndValidateTestData(form, exercise);
+    // TODO: evtl. Anzeige aussortiertes TestDaten?
+    userTestData = userTestData.stream().filter(data -> data.isOk()).collect(Collectors.toList());
 
-    // FIXME: Eigene Testdaten der Studierenden!
+    // TODO: evt. Speichern der Lösung und Laden bei erneuter Bearbeitung?
 
-    // FIXME: evt. Speichern der Lösung und Laden bei erneuter Bearbeitung?
-
-    List<JsTestResult> testResults = JsCorrector.correct(JsExercise.finder.byId(exerciseId), learnerSolution);
+    List<JsTestResult> testResults = JsCorrector.correct(exercise, learnerSolution, userTestData);
 
     if(request().acceptedTypes().get(0).toString().equals("application/json"))
       return ok(Json.toJson(testResults));
@@ -134,23 +144,34 @@ public class JS extends Controller {
       return badRequest();
 
     DynamicForm form = factory.form().bindFromRequest();
+    List<CommitedTestData> testData = extractAndValidateTestData(form, exercise);
 
-    int count = Integer.parseInt(form.get("count"));
+    return ok(Json.toJson(testData));
+  }
+
+  private List<CommitedTestData> extractAndValidateTestData(DynamicForm form, JsExercise exercise) {
+    List<CommitedTestData> testData = new LinkedList<>();
+
+    int testCount = Integer.parseInt(form.get("count"));
     int inputCount = Integer.parseInt(form.get("inputs"));
 
-    List<CommitedTestData> testData = new ArrayList<>(count);
-    for(int i = 0; i < count; i++) {
-      List<String> input = new ArrayList<>(inputCount);
-      for(int j = 0; j < inputCount; j++) {
-        input.add(form.get("inp" + j + ":" + i));
+    for(int testCounter = 0; testCounter < testCount; testCounter++) {
+      List<String> theInput = new LinkedList<>();
+      for(int inputCounter = 0; inputCounter < inputCount; inputCounter++) {
+        String input = form.get("inp" + inputCounter + ":" + testCounter);
+
+        // FIXME: Inputtype STRING, NUMBER... ?
+        if(exercise.getInputTypes().get(inputCounter) == JsDataType.STRING)
+          input = "\"" + input + "\"";
+
+        theInput.add(input);
       }
-      String output = form.get("outp" + i);
-      testData.add(new CommitedTestData(i, input, output));
+      String theOutput = form.get("outp" + testCounter);
+      testData.add(new CommitedTestData(exercise, testCounter, theInput, theOutput));
     }
 
     JsCorrector.validateTestData(exercise, testData);
-
-    return ok(Json.toJson(testData));
+    return testData;
   }
 
   private void saveSolutionForUser(User user, String solution, int exercise) throws IOException {

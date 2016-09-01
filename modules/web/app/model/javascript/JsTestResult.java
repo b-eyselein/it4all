@@ -4,31 +4,31 @@ import model.exercise.EvaluationResult;
 import model.exercise.Success;
 
 public class JsTestResult extends EvaluationResult {
-
-  private JsTest test;
+  
+  private ITestData test;
   private String evaluated;
   private String realResult;
-
-  public JsTestResult(JsTest theTest, Success theSuccess, String theEvaluated, String theRealResult) {
+  
+  public JsTestResult(ITestData theTest, Success theSuccess, String theEvaluated, String theRealResult) {
     super(theSuccess);
     test = theTest;
     evaluated = theEvaluated;
     realResult = theRealResult;
   }
-
+  
   public String getAwaitedResult() {
-    return test.testData.output;
+    return test.getOutput();
   }
-
+  
   public String getEvaluated() {
     return evaluated;
   }
-
+  
   public String getRealResult() {
     return realResult;
   }
-
+  
   public boolean wasSuccessful() {
-    return realResult.equals(test.testData.output);
+    return realResult.equals(test.getOutput());
   }
 }

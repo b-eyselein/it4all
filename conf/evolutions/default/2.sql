@@ -65,33 +65,35 @@ insert into css_task (`task_id`, `exercise_id`, `taskdesc`, `xpath_query_name`, 
 
 	
 # JavaScript
-
-insert into js_exercise (`id`, `title`, `text`, `declaration`, `function_name`, `sample_solution`, `input_count`, `returntype`) values
+insert into js_exercise (`id`, `title`, `text`, `declaration`, `functionname`, `sample_solution`, `inputtypes`, `inputcount`, `returntype`) values
 	(1,
 	'Summen',
 	'Implementieren Sie folgende Funktion <code>sum(a, b)</code>, die zwei Zahlen entegennimmt und deren Summe zurückgibt.', 
 	'function sum(a, b) {\n  return 0;;\n}',
 	'sum',
 	'function sum(a, b) {\n return a + b;;\n}',
+	'NUMBER#NUMBER',
 	2,
 	'NUMBER'),
 	 
 	(2,
 	'Konkatenation von Strings',
 	'Implementieren Sie die folgende Funktion <code>concat(str1, str2, str3)</code>, die drei beliebige Strings entgegennimmt und die Konkatenation der Strings zurückgibt.', 
-	 'function concat(str1, str2, str3) {\n  return \"\";;\n}',
-	 'concat',
-	 'function concat(str1, str2, str3) {\n  return str1 + str2 + str3;;\n}',
-	 3,
-	 'STRING'),
+	'function concat(str1, str2, str3) {\n  return \"\";;\n}',
+	'concat',
+	'function concat(str1, str2, str3) {\n  return str1 + str2 + str3;;\n}',
+	'STRING#STRING#STRING',
+	3,
+	'STRING'),
 	 
-	 (3,
-	 'Größter gemeinsamer Teiler',
-	 'Implementieren Sie die folgende Funktion <code>ggt(a, b)</code>, die den größten gemeinsamen Teiler zweier Zahlen berechnet!',
-	 'function ggt(a, b) {\n  return 0;;\n}',
-	 'ggt',
-	 'function ggt(a, b) {\n  while(b != 0) {\n    var h = a % b;;\n    a = b;;\n    b = h;;\n  }\n  return a;;\n}',
-	 2,
+	(3,
+	'Größter gemeinsamer Teiler',
+	'Implementieren Sie die folgende Funktion <code>ggt(a, b)</code>, die den größten gemeinsamen Teiler zweier Zahlen berechnet!',
+	'function ggt(a, b) {\n  return 0;;\n}',
+	'ggt',
+	'function ggt(a, b) {\n  while(b != 0) {\n    var h = a % b;;\n    a = b;;\n    b = h;;\n  }\n  return a;;\n}',
+	'NUMBER#NUMBER',
+	2,
 	'NUMBER');
 
 insert into js_test (`id`, `exercise_id`, `inputs`, `datatypes`, `output`) values
@@ -99,8 +101,8 @@ insert into js_test (`id`, `exercise_id`, `inputs`, `datatypes`, `output`) value
 	(2, 1, '1#2', 'number#number', 3.0),
 	(3, 1, '44#43', 'number#number', 87.0),
 	(4, 1, '555.0#42', 'number#number', 597.0),
-	(5, 2, '"Hallo "#"Welt"#"!"', 'string#string', 'Hallo Welt!'),
-	(6, 2, '"Test"#"Test"#"Test"', 'string#string', 'TestTestTest'),
+	(5, 2, 'Hallo #Welt#!', 'string#string', 'Hallo Welt!'),
+	(6, 2, 'Test#Test#Test', 'string#string', 'TestTestTest'),
 	(7, 3, '12#4', 'number#number', 4);
 
 insert into js_web_exercise (`id`, `title`, `text`, `anterior`, `posterior`, `declaration`) values

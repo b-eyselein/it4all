@@ -39,10 +39,12 @@ function testSolution() {
             <div class="checkbox">
               <label><input type="checkbox" id="testData"> Definiere eigene Testdaten:</label>
             </div>
+            <input type="hidden" name="inputs" value="@exercise.inputcount">
+            <input type="hidden" name="count" value="1" id="count">
             <table class="table" id="testDataTable">
               <thead>
                 <tr>
-                @for(i <- 0 until exercise.inputCount) {
+                @for(i <- 0 until exercise.inputcount) {
                   <th>Input @{i + 1}</th>
                 }                  
                   <th>Output</th>
@@ -50,10 +52,10 @@ function testSolution() {
               </thead>
               <tbody>
                 <tr>
-                @for(i <- 0 until exercise.inputCount) {
-                  <td><input class="form-control"></td>
+                @for(i <- 0 until exercise.inputcount) {
+                  <td><input class="form-control" name="inp@{i}0"></td>
                 }
-                  <td><input class="form-control"></td>
+                  <td><input class="form-control" name="outp0"></td>
                 </tr>
               </tbody>
               <tfoot>
@@ -65,7 +67,7 @@ function testSolution() {
                         <button type="button" class="btn btn-default" onclick="lessTestData();">
                           <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
                         </button>
-                        <button type="button" class="btn btn-default" onclick="moreTestData(@exercise.inputCount);">
+                        <button type="button" class="btn btn-default" onclick="moreTestData(@exercise.inputcount);">
                           <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                         </button>
                       </div>

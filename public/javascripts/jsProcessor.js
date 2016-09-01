@@ -8,11 +8,29 @@ function testTheSolution(url) {
   };
   
   // AJAX-Objekt mit Daten fuellen, absenden
-  var parameters = "editorContent=" + encodeURIComponent(editor.getValue());
+  var parameters = getParameters();
   xhttp.open("POST", url, true);
   xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
   xhttp.setRequestHeader("Accept", "application/json");
   xhttp.send(parameters);
+}
+
+function getParameters() {
+  var parameters = "editorContent=" + encodeURIComponent(editor.getValue());
+  // FIXME: get testdata
+  var testData = getTestData();
+  parameters += "&count=" + testData.length + "&inputs=" + testData[0].input.length;
+  for(var i = 0; i < testData.length; i++) {
+    var currentData = testData[i];
+    var theData = "";
+    for(var j = 0; j < currentData.input.length; j++) {
+      theData += "&inp" + j + ":" + i + "=" + currentData.input[j];
+    }
+    theData += "&outp" + i + "=" + currentData.output;
+    parameters += theData;
+  }
+  
+  return parameters;
 }
 
 function lessTestData() {
@@ -22,26 +40,34 @@ function lessTestData() {
   if(table.rows.length > 3) {
     table.deleteRow(table.rows.length - 2);
   }
+  
+  var counter = document.getElementById("count");
+  counter.innerHTML = parseInt(counter.innerHTML) - 1;
 }
 
 function moreTestData(inputCount) {
   var table = document.getElementById("testDataTable");
-  var newRow = table.insertRow(table.rows.length - 1);
+  var testCount = table.rows.length - 1;
+  var newRow = table.insertRow(testCount);
   // OutputCell!
-  for(var i = 0; i < inputCount + 1; i++) {
+  for(var i = 0; i < inputCount; i++) {
     var cell = newRow.insertCell(i);
-    cell.innerHTML = "<input class=\"form-control\">";
+    console.log(name + "\n");
+    cell.innerHTML = "<input class=\"form-control\" name=\"" + name + "\">";
   }
+  var outputCell = newRow.insertCell(inputCount);
+  outputCell.innerHTML = "<input class=\"form-control\" name=\"outp" + (testCount - 1) + "\">";
+  
+  var counter = document.getElementById("count");
+  counter.innerHTML = parseInt(counter.innerHTML) + 1;
 }
 
-function validateTestData(url) {
+function getTestData() {
   var table = document.getElementById("testDataTable");
-  
   var testData = [];
   
   for(var i = 1; i < table.rows.length - 1; i++) {
     var row = table.rows[i];
-    row.className = "";
     var data = {
       input: [],
       output: ""
@@ -53,16 +79,16 @@ function validateTestData(url) {
     data.output = row.cells[row.cells.length - 1].childNodes[0].value;
     testData.push(data);
   }
+  return testData;
+}
+
+function validateTestData(url) {
+  var table = document.getElementById("testDataTable");
+  for(var i = 1; i < table.rows.lenth - 1; i++) {
+    table.rows[i].className = "";
+  }
   
-  // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
-  var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if(xhttp.readyState == 4 && xhttp.status == 200) {
-      writeTestData(xhttp.responseText);
-    }
-  };
-  
-  // AJAX-Objekt mit Daten fuellen, absenden
+  var testData = getTestData();
   var parameters = "";
   parameters += "count=" + testData.length + "&inputs=" + testData[0].input.length;
   for(var i = 0; i < testData.length; i++) {
@@ -75,6 +101,12 @@ function validateTestData(url) {
     parameters += theData;
   }
   
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if(xhttp.readyState == 4 && xhttp.status == 200) {
+      writeTestData(xhttp.responseText);
+    }
+  };
   xhttp.open("POST", url, true);
   xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
   xhttp.setRequestHeader("Accept", "application/json");
@@ -97,6 +129,7 @@ function writeTestData(responseText) {
 
 function prepareFormForSubmitting() {
   document.getElementById("editorContent").value = editor.getValue();
+  // FIXME: testdata!
 }
 
 function processCorrection(jsonResponseText) {

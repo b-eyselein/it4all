@@ -92,9 +92,10 @@ create table js_exercise (
   title                         varchar(255),
   text                          text,
   declaration                   varchar(255),
-  function_name                 varchar(255),
+  functionname                  varchar(255),
   sample_solution               varchar(255),
-  input_count                   integer,
+  inputtypes                    varchar(255),
+  inputcount                    integer,
   returntype                    varchar(9),
   constraint ck_js_exercise_returntype check (returntype in ('BOOLEAN','NUMBER','STRING','SYMBOL','UNDEFINED','NULL','OBJECT')),
   constraint pk_js_exercise primary key (id)

@@ -1,5 +1,6 @@
 package model.javascript;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,7 +22,7 @@ public class JsExercise extends Model {
   }
 
   public static Finder<Integer, JsExercise> finder = new Finder<>(JsExercise.class);
-  
+
   @Id
   public int id;
 
@@ -32,13 +33,14 @@ public class JsExercise extends Model {
 
   public String declaration;
 
-  public String functionName;
+  public String functionname;
 
   public String sampleSolution;
 
-  // FIXME: inputTypes!
-  public int inputCount;
-  
+  public String inputtypes;
+
+  public int inputcount;
+
   @Enumerated(EnumType.STRING)
   public JsDataType returntype;
 
@@ -46,9 +48,8 @@ public class JsExercise extends Model {
   @JsonManagedReference
   public List<JsTest> functionTests;
 
-  public String buildToEvaluate(List<String> input) {
-    return functionName + "(" + String.join(", ", input.stream().map(i -> "\"" + i + "\"").collect(Collectors.toList()))
-        + ")";
+  public List<JsDataType> getInputTypes() {
+    return Arrays.stream(inputtypes.split("#")).map(t -> JsDataType.valueOf(t)).collect(Collectors.toList());
   }
-  
+
 }
