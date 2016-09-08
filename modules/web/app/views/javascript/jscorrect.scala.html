@@ -1,4 +1,4 @@
- @(learnerSolution: String, testResults: List[model.javascript.JsTestResult], user: model.user.User)
+@(learnerSolution: String, testResults: List[model.exercise.EvaluationResult], user: model.user.User)
 
 @main("JavaScript: Korrektur", user) {
 <div class="container">
@@ -13,12 +13,9 @@
   <div class="panel panel-default">
     <div class="panel-heading">Testergebnisse</div>
     <div class="panel-body">
-      @for(testResult <- testResults) { @if(testResult.wasSuccessful()) {
-      <div class="alert alert-success">Test "@testResult.getEvaluated()" erfolgreich.</div>
-      } else {
-      <div class="alert alert-danger">Test @@testResult.getTest().id "@testResult.getEvaluated()" fehlgeschlagen.
-        Erwartet: "@testResult.getAwaitedResult()", bekommen: "@testResult.getRealResult()".</div>
-      } }
+      @for(testResult <- testResults) {
+      	@Html(testResult.getAsHtml)
+      }
     </div>
   </div>
 

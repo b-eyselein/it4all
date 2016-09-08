@@ -18,6 +18,12 @@ public class ColumnComparison extends EvaluationResult {
     wrongColumns = theWrongColumns;
   }
   
+  @Override
+  public String getAsHtml() {
+    // FIXME Auto-generated method stub
+    return null;
+  }
+  
   public List<String> getMessages() {
     List<String> ret = new LinkedList<>();
     if(!missingColumns.isEmpty())

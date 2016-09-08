@@ -97,9 +97,9 @@ insert into js_exercise (`id`, `title`, `text`, `declaration`, `functionname`, `
 	'NUMBER');
 
 insert into js_test (`id`, `exercise_id`, `inputs`, `datatypes`, `output`) values
-	(1, 1, '1#1', 'number#number', 2.0),
-	(2, 1, '1#2', 'number#number', 3.0),
-	(3, 1, '44#43', 'number#number', 87.0),
+	(1, 1, '1#1', 'number#number', 2),
+	(2, 1, '1#2', 'number#number', 3),
+	(3, 1, '44#43', 'number#number', 87),
 	(4, 1, '555.0#42', 'number#number', 597.0),
 	(5, 2, 'Hallo #Welt#!', 'string#string', 'Hallo Welt!'),
 	(6, 2, 'Test#Test#Test', 'string#string', 'TestTestTest'),

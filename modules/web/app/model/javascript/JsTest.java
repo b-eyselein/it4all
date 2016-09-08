@@ -7,13 +7,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.script.ScriptEngine;
-import javax.script.ScriptException;
 
 import com.avaje.ebean.Model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
-import model.exercise.Success;
 import model.javascript.JsExercise.JsDataType;
 
 @Entity
@@ -37,24 +34,6 @@ public class JsTest extends Model implements ITestData {
   public String output;
   
   @Override
-  public JsTestResult evaluate(ScriptEngine engine) {
-    String toEvaluate = buildToEvaluate();
-    String realResult = "";
-    
-    try {
-      realResult = engine.eval(toEvaluate).toString();
-    } catch (ScriptException | NullPointerException e) {
-      return new JsTestResult(this, Success.NONE, toEvaluate, "");
-    }
-    
-    boolean validated = JsCorrector.validateResult(exercise.returntype, realResult, output);
-    if(validated)
-      return new JsTestResult(this, Success.COMPLETE, toEvaluate, realResult);
-    else
-      return new JsTestResult(this, Success.PARTIALLY, toEvaluate, realResult);
-  }
-  
-  @Override
   public JsExercise getExercise() {
     return exercise;
   }
@@ -76,7 +55,7 @@ public class JsTest extends Model implements ITestData {
         toAdd = "\"" + toAdd + "\"";
       input.add(toAdd);
     }
-
+    
     return input;
   }
   

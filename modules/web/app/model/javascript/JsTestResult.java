@@ -5,19 +5,31 @@ import model.exercise.Success;
 
 public class JsTestResult extends EvaluationResult {
   
-  private ITestData test;
+  private String awaitedOutput;
   private String evaluated;
   private String realResult;
+  private boolean successful;
   
-  public JsTestResult(ITestData theTest, Success theSuccess, String theEvaluated, String theRealResult) {
+  public JsTestResult(String theAwaitedOutput, Success theSuccess, String theEvaluated, String theRealResult) {
     super(theSuccess);
-    test = theTest;
+    awaitedOutput = theAwaitedOutput;
     evaluated = theEvaluated;
     realResult = theRealResult;
+    successful = success == Success.COMPLETE;
+  }
+  
+  public String getAsHtml() {
+    String ret = "<div class=\"alert alert-" + (successful ? "success" : "danger") + "\">\n";
+    ret += "  <p>Test von <code>" + evaluated + "</code> war " + (successful ? "" : "nicht ") + "erfolgreich.<p>\n";
+    if(!successful)
+      ret += "  <p>Erwartet: " + awaitedOutput + ", bekommen: " + realResult + "</p>\n";
+    ret += "</div>";
+    
+    return ret;
   }
   
   public String getAwaitedResult() {
-    return test.getOutput();
+    return awaitedOutput;
   }
   
   public String getEvaluated() {
@@ -29,6 +41,6 @@ public class JsTestResult extends EvaluationResult {
   }
   
   public boolean wasSuccessful() {
-    return realResult.equals(test.getOutput());
+    return successful;
   }
 }

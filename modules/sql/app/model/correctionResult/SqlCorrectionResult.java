@@ -10,17 +10,24 @@ import model.exercise.Success;
 public class SqlCorrectionResult extends EvaluationResult {
 
   private List<String> messages = new LinkedList<>();
-  
+
   private TableComparison tableComparison = null;
   private ColumnComparison columnComparison = null;
-  
+
   private SqlQueryResult userResult = null;
   private SqlQueryResult sampleResult = null;
 
   public SqlCorrectionResult(Success theSuccess) {
     super(theSuccess);
   }
-  
+
+  public SqlCorrectionResult(Success theSuccess, ColumnComparison theColumnComparison,
+      TableComparison theTableComparison) {
+    super(theSuccess);
+    columnComparison = theColumnComparison;
+    tableComparison = theTableComparison;
+  }
+
   public SqlCorrectionResult(Success theSuccess, List<String> theMessages) {
     super(theSuccess);
     messages.addAll(theMessages);
@@ -30,23 +37,23 @@ public class SqlCorrectionResult extends EvaluationResult {
     super(theSuccess);
     messages.add(aMessage);
   }
-  
-  public SqlCorrectionResult(Success theSuccess, ColumnComparison theColumnComparison, TableComparison theTableComparison) {
-    super(theSuccess);
-    columnComparison = theColumnComparison;
-    tableComparison = theTableComparison;
+
+  @Override
+  public String getAsHtml() {
+    // FIXME Auto-generated method stub
+    return null;
   }
-  
+
+  public ColumnComparison getColumnComparison() {
+    return columnComparison;
+  }
+
   public List<String> getMessages() {
     return messages;
   }
 
   public SqlQueryResult getSampleResult() {
     return sampleResult;
-  }
-
-  public ColumnComparison getColumnComparison() {
-    return columnComparison;
   }
 
   public TableComparison getTableComparison() {
@@ -56,12 +63,12 @@ public class SqlCorrectionResult extends EvaluationResult {
   public SqlQueryResult getUserResult() {
     return userResult;
   }
-  
+
   public SqlCorrectionResult withColumnsComparisonResult(ColumnComparison theUsedColumnsComparison) {
     columnComparison = theUsedColumnsComparison;
     return this;
   }
-  
+
   public SqlCorrectionResult withExecutionResult(SqlQueryResult theUserResult, SqlQueryResult theSampleResult) {
     userResult = theUserResult;
     sampleResult = theSampleResult;
@@ -72,5 +79,5 @@ public class SqlCorrectionResult extends EvaluationResult {
     tableComparison = theTableComparisonResult;
     return this;
   }
-  
+
 }

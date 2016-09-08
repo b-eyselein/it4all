@@ -1,13 +1,15 @@
 package model.exercise;
 
 public abstract class EvaluationResult {
-
+  
   protected Success success = Success.NONE;
-
+  
   public EvaluationResult(Success theSuccess) {
     success = theSuccess;
   }
-
+  
+  public abstract String getAsHtml();
+  
   public String getBSClass() {
     switch(success) {
     case COMPLETE:
@@ -20,11 +22,11 @@ public abstract class EvaluationResult {
       return "info";
     }
   }
-
+  
   public int getPoints() {
     return success.getPoints();
   }
-
+  
   public Success getSuccess() {
     return success;
   }
@@ -34,5 +36,5 @@ public abstract class EvaluationResult {
       throw new IllegalArgumentException("Success kann nicht auf \"null\" gesetzt werden!");
     success = suc;
   }
-
+  
 }

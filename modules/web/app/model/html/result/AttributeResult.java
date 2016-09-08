@@ -34,6 +34,12 @@ public class AttributeResult extends EvaluationResult {
       success = Success.PARTIALLY;
   }
 
+  @Override
+  public String getAsHtml() {
+    // FIXME Auto-generated method stub
+    return null;
+  }
+
   public String getKey() {
     return key;
   }

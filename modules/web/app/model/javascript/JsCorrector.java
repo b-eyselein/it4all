@@ -12,7 +12,8 @@ import javax.script.ScriptException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
-import model.exercise.Success;
+import model.exercise.EvaluationFailed;
+import model.exercise.EvaluationResult;
 import model.javascript.JsExercise.JsDataType;
 import model.javascript.web.JsWebExercise;
 import model.javascript.web.JsWebTestResult;
@@ -20,27 +21,26 @@ import play.Logger;
 
 public class JsCorrector {
 
-  public static List<JsTestResult> correct(JsExercise exercise, String learnerSolution,
+  public static List<EvaluationResult> correct(JsExercise exercise, String learnerSolution,
       List<CommitedTestData> userTestData) {
     ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
+    
+    // Evaluate leaner solution
     try {
-      // Lese programmierte Lernerlösung ein
       engine.eval(learnerSolution);
     } catch (ScriptException e) {
-
-      // FIXME javax.script.ScriptException an Lerner! --> Syntaxfehler!
-      // TODO: Log Exception or submit to learner?
-      Logger.debug("Fehler:\n" + e.getLocalizedMessage());
-      Logger.error("Fehler beim Laden der Lernerlösung", e);
-      return Arrays.asList(new JsTestResult(exercise.functionTests.get(0), Success.NONE, "", ""));
+      // Syntax error in learner solution!
+      String message = "<div class=\"alert alert-danger\">";
+      message += "<p>Es gab einen Fehler beim Einlesen ihrer Lösung:</p>";
+      message += "<pre>" + String.join("</p><p>", Arrays.asList(e.getLocalizedMessage().split("\n"))) + "</pre>";
+      message += "</div>";
+      return Arrays.asList(new EvaluationFailed(message));
     }
-
-    // FIXME: Es gab einen Fehler beim Ausführen des Codes. Woher??
 
     List<ITestData> testData = new LinkedList<>();
     testData.addAll(exercise.functionTests);
     testData.addAll(userTestData);
-    
+
     return testData.stream().map(test -> test.evaluate(engine)).collect(Collectors.toList());
 
   }
