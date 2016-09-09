@@ -138,7 +138,7 @@ insert into js_web_test (`id`, `exercise_id`,  `actiontype`, `xpath_query`, `key
 	(8, 2, "FILLOUT", "//input[@id='theInput']", "7"),
 	(9, 3, "CLICK", "//input[@id='yes']", "");
 	
-insert into conditions (`id`, `pre_id`, `post_id`, `xpath_query`, `to_evaluate`) values
+insert into conditions (`id`, `pre_id`, `post_id`, `xpathquery`, `awaitedvalue`) values
 	(1, 1, NULL,  "//span[@id='counter']", "0"),
 	(2, 2, 1, "//span[@id='counter']", "1"),
 	(3, 3, 2, "//span[@id='counter']", "2"),

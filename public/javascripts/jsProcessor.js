@@ -47,7 +47,7 @@ function moreTestData(inputCount) {
 	var table = document.getElementById("testDataTable");
 	var testCount = table.rows.length - 1;
 	var newRow = table.insertRow(testCount);
-	
+
 	for (var i = 0; i < inputCount; i++) {
 		var cell = newRow.insertCell(i);
 		console.log(name + "\n");
@@ -131,7 +131,6 @@ function prepareFormForSubmitting() {
 
 function processCorrection(jsonResponseText) {
 	var loesungsraum = document.getElementById("loesungsraum");
-	loesungsraum.innerHTML = "";
 
 	var results = JSON.parse(jsonResponseText);
 	var toAdd = "";
@@ -139,7 +138,7 @@ function processCorrection(jsonResponseText) {
 	for (resultCounter = 0; resultCounter < results.length; resultCounter++) {
 		toAdd += results[resultCounter].asHtml;
 	}
-	loesungsraum.innerHTML += toAdd;
+	loesungsraum.innerHTML = toAdd;
 }
 
 function testTheWebSolution(url) {
@@ -162,35 +161,10 @@ function testTheWebSolution(url) {
 function processWebCorrection(jsonResponseText) {
 	var results = JSON.parse(jsonResponseText);
 	var toAdd = "";
-
 	for (resultCount = 0; resultCount < results.length; resultCount++) {
-		var currentResult = results[resultCount];
-
-		var show = currentResult.success == "COMPLETE" ? "" : " in";
-
-		toAdd += "<div class=\"panel panel-" + currentResult.bsclass + "\">";
-		toAdd += "  <div class=\"panel-heading\">";
-		toAdd += "    <h4 class=\"panel-title\">";
-		toAdd += "      <a data-toggle=\"collapse\" href=\"#col" + resultCount
-				+ "\">Test " + (resultCount + 1) + "</a>";
-		toAdd += "    </h4>";
-		toAdd += "  </div>";
-
-		toAdd += "  <div id=\"col" + resultCount
-				+ "\" class=\"panel-collapse collapse" + show + "\">";
-		toAdd += "    <div class=\"panel-body\">";
-
-		for (messageCount = 0; messageCount < currentResult.messages.length; messageCount++) {
-			toAdd += "      <div class=\"alert alert-" + currentResult.bsclass
-					+ "\">" + currentResult.messages[messageCount] + "</div>";
-		}
-		toAdd += "    </div>";
-		toAdd += "  </div>";
-		toAdd += "</div>";
+		toAdd += results[resultCount].asHtml;
 	}
-
-	var testsDiv = document.getElementById("testsDiv");
-	testsDiv.innerHTML = toAdd;
+	document.getElementById("testsDiv").innerHTML = toAdd;
 }
 
 function updatePreview() {

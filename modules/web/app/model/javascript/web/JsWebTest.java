@@ -1,7 +1,10 @@
 package model.javascript.web;
 
-import java.util.LinkedList;
+import static model.html.task.Task.allResultsSuccessful;
+
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -19,6 +22,11 @@ import model.exercise.Success;
 
 @Entity
 public class JsWebTest extends Model {
+
+  private static List<ConditionResult> evaluateConditions(WebDriver driver, List<Condition> conditions,
+      boolean isPrecondition) {
+    return conditions.stream().map(cond -> cond.test(driver, isPrecondition)).collect(Collectors.toList());
+  }
 
   @Id
   public int id;
@@ -39,32 +47,17 @@ public class JsWebTest extends Model {
   public List<Condition> postconditions;
 
   public JsWebTestResult test(WebDriver driver) {
-    List<String> messages = new LinkedList<>();
-
-    boolean preconditionsSatisfied = true;
-    for(Condition precondition: preconditions)
-      preconditionsSatisfied = preconditionsSatisfied && precondition.test(driver);
-    if(!preconditionsSatisfied)
-      return new JsWebTestResult(this, Success.NONE, "Vorbedingung(en) konnten nicht verifiziert werden!");
-
-    if(preconditions.isEmpty())
-      messages.add("Es waren keine Vorbedingungen zu verifizieren.");
-    else
-      messages.add("Vorbedingung(en) konnten erfolgreich verifizert werden.");
+    List<ConditionResult> preconditionsSatisfied = evaluateConditions(driver, preconditions, true);
 
     boolean actionPerformed = action == null || action.perform(driver);
-    if(!actionPerformed)
-      return new JsWebTestResult(this, Success.NONE, "Aktion konnte nicht ausgeführt werden!");
-    messages.add("Aktion konnte erfolgreich ausgeführt werden.");
 
-    boolean postconditionSatisfied = true;
-    for(Condition postcondition: postconditions)
-      postconditionSatisfied = postconditionSatisfied && postcondition.test(driver);
-    if(!postconditionSatisfied)
-      return new JsWebTestResult(this, Success.NONE, "Nachbedingung(en) konnten nicht verifiziert werden!");
-    messages.add("Nachbedingung(en) konnten erfolgreich verifiziert werden.");
+    List<ConditionResult> postconditionSatisfied = evaluateConditions(driver, postconditions, false);
 
-    return new JsWebTestResult(this, Success.COMPLETE, messages);
+    if(!allResultsSuccessful(preconditionsSatisfied) || !actionPerformed
+        || !allResultsSuccessful(postconditionSatisfied))
+      return new JsWebTestResult(this, Success.NONE, preconditionsSatisfied, postconditionSatisfied);
+
+    return new JsWebTestResult(this, Success.COMPLETE, preconditionsSatisfied, postconditionSatisfied);
   }
 
 }

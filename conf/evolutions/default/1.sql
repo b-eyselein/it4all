@@ -16,8 +16,8 @@ create table conditions (
   id                            integer auto_increment not null,
   pre_id                        integer,
   post_id                       integer,
-  xpath_query                   varchar(255),
-  to_evaluate                   varchar(255),
+  xpathquery                    varchar(255),
+  awaitedvalue                  varchar(255),
   constraint pk_conditions primary key (id)
 );
 

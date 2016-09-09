@@ -13,6 +13,8 @@ import org.openqa.selenium.WebElement;
 import com.avaje.ebean.Model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import model.exercise.Success;
+
 @Entity
 @Table(name = "conditions")
 public class Condition extends Model {
@@ -28,16 +30,22 @@ public class Condition extends Model {
   @ManyToOne(cascade = CascadeType.ALL)
   public JsWebTest post;
   
-  public String xpathQuery;
+  public String xpathquery;
   
-  public String toEvaluate;
+  public String awaitedvalue;
   
   public String getDescription() {
-    return "Element mit XPath \"" + xpathQuery + "\" sollte inneren Text \"" + toEvaluate + "\" haben";
+    return "Element mit XPath \"" + xpathquery + "\" sollte den Inhalt \"" + awaitedvalue + "\" haben";
   }
   
-  public boolean test(WebDriver driver) {
-    WebElement element = driver.findElement(By.xpath(xpathQuery));
-    return element != null && element.getText().equals(toEvaluate);
+  public ConditionResult test(WebDriver driver, boolean isPrecondition) {
+    WebElement element = driver.findElement(By.xpath(xpathquery));
+    
+    String gottenValue = element.getText();
+    
+    if(element == null || !gottenValue.equals(awaitedvalue))
+      return new ConditionResult(Success.NONE, this, gottenValue, isPrecondition);
+    
+    return new ConditionResult(Success.COMPLETE, this, gottenValue, isPrecondition);
   }
 }
