@@ -2,7 +2,6 @@ package model.javascript.web;
 
 import static model.html.task.Task.allResultsSuccessful;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
