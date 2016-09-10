@@ -1,76 +1,31 @@
-function processCorrection(correction) {
+function testTheSolution(url) {
+  var editorContent = editor.getValue();
   
+  // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if(xhttp.readyState == 4 && xhttp.status == 200) {
+      processCorrection(xhttp.responseText);
+    }
+  };
+  
+  // AJAX-Objekt mit Daten fuellen, absenden
+  var parameters = "editorContent=" + encodeURIComponent(editorContent);
+  xhttp.open("PUT", url, true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.setRequestHeader("Accept", "application/json");
+  xhttp.send(parameters);
+}
+
+function prepareFormForSubmitting() {
+  document.getElementById("editorContent").value = editor.getValue();
+}
+
+function processCorrection(correction) {
   var parsedCorr = JSON.parse(correction);
   
-  var resultPanel = document.getElementById("resultPanel");
-  resultPanel.hidden = false;
-  
-  var resultDiv = document.getElementById("resultDiv");
-  var elementsToAdd = "";
-  if(parsedCorr.success === "COMPLETE") {
-    resultPanel.className = "panel panel-success";
-    elementsToAdd += "<div class=\"alert alert-success\">";
-  } else if(parsedCorr.success === "PARTIALLY") {
-    resultPanel.className = "panel panel-warning";
-    elementsToAdd += "<div class=\"alert alert-warning\">";
-  } else {
-    resultPanel.className = "panel panel-danger";
-    elementsToAdd += "<div class=\"alert alert-danger\">";
-  }
-  var messages = parsedCorr.messages;
-  for(i = 0; i < messages.length; i++) {
-    elementsToAdd += "<p>" + messages[i] + "</p>";
-  }
-  elementsToAdd += "</div>";
-  
-  var tableCompResult = parsedCorr.tableComparison;
-  if(tableCompResult.missingTables.length !== 0) {
-    elementsToAdd += "<div class=\"alert alert-danger\">Es fehlen folgende Tabellen: " + tableCompResult.missingTables
-        + "</div>";
-  }
-  if(tableCompResult.unneccessaryTables.length !== 0) {
-    elementsToAdd += "<div class=\"alert alert-warning\">Folgende Tabellen wurden unn&ouml;tigerweise benutzt: "
-        + tableCompResult.unneccessaryTables + "</div>";
-  }
-
-  var columnsCompResult = parsedCorr.columnComparison;
-  if(columnsCompResult.missingColumns.length !== 0) {
-    elementsToAdd += "<div class=\"alert alert-danger\">Es fehlen folgende Spalten: " + columnsCompResult.missingColumns
-        + "</div>";
-  }
-  if(columnsCompResult.wrongColumns.length !== 0) {
-    elementsToAdd += "<div class=\"alert alert-warning\">Folgende Spalten wurden unn&ouml;tigerweise benutzt: "
-        + columnsCompResult.wrongColumns + "</div>";
-  }
-  
-  var userResult = parsedCorr.userResult;
-  var sampleResult = parsedCorr.sampleResult;
-  var width = 6;
-  if(userResult == null || sampleResult == null) {
-    width = 12;
-  }
-  if(userResult !== null) {
-    elementsToAdd += "<div class=\"col-md-" + width + "\">";
-    elementsToAdd += "<div class=\"panel panel-default\">";
-    elementsToAdd += "<div class=\"panel-heading\">Ihr Ergebnis</div>";
-    elementsToAdd += "<div class=\"panel-body\">";
-    elementsToAdd += sqlQueryResultToTable(userResult);
-    elementsToAdd += "</div>";
-    elementsToAdd += "</div>";
-    elementsToAdd += "</div>";
-  }
-  if(sampleResult !== null) {
-    elementsToAdd += "<div class=\"col-md-" + width + "\">";
-    elementsToAdd += "<div class=\"panel panel-default\">";
-    elementsToAdd += "<div class=\"panel-heading\">Musterlösung</div>";
-    elementsToAdd += "<div class=\"panel-body\">";
-    elementsToAdd += sqlQueryResultToTable(sampleResult);
-    elementsToAdd += "</div>";
-    elementsToAdd += "</div>";
-    elementsToAdd += "</div>";
-  }
-  
-  resultDiv.innerHTML = elementsToAdd;
+  document.getElementById("resultPanel").hidden = false;
+  document.getElementById("resultDiv").innerHTML = parsedCorr.asHtml;
 }
 
 function sqlQueryResultToTable(queryResult) {

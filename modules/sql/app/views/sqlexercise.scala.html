@@ -6,32 +6,9 @@
 <script src="@controllers.routes.Assets.versioned("javascripts/sqlProcessor.js")"></script>
 
 <script>
-  function testSolution() {
-    var editorContent = editor.getValue();
-    if(editorContent == "") {
-      alert("Geben Sie eine Query ein!");
-      return;
-    }
-    
-    // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-      if(xhttp.readyState == 4 && xhttp.status == 200) {
-        processCorrection(xhttp.responseText);
-      }
-    };
-    
-    // AJAX-Objekt mit Daten fuellen, absenden
-    var parameters = "editorContent=" + encodeURIComponent(editorContent);
-    xhttp.open("PUT", "@controllers.sql.routes.SQL.commit(exercise.key.scenarioName, exercise.getType(), exercise.key.id)", true);
-    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhttp.setRequestHeader("Accept", "application/json");
-    xhttp.send(parameters);
-  }
-
-  function prepareFormForSubmitting() {
-    document.getElementById("editorContent").value = editor.getValue();
-  }
+function testSolution() {
+  testTheSolution("@controllers.sql.routes.SQL.commit(exercise.key.scenarioName, exercise.getType(), exercise.key.id)");
+}
 </script>
 
 <div class="container">

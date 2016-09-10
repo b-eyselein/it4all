@@ -28,7 +28,7 @@ public abstract class QueryCorrector<QueryType extends Statement, ComparedType> 
       parsedUserStatement = parseStatement(userStatement);
       parsedSampleStatement = parseStatement(sampleStatement);
     } catch (SqlCorrectionException e) {
-      return new SqlCorrectionResult(Success.NONE, "Es gab einen Fehler beim Parsen der Musterlösung!");
+      return new SqlCorrectionResult(Success.NONE, e.getMessage());
     }
     
     // Compare queries statically
