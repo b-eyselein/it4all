@@ -18,18 +18,18 @@ public class UpdateCorrector extends QueryCorrector<Update, Update> {
   @Override
   protected SqlCorrectionResult compareStatically(Update userQuery, Update sampleQuery) {
     Success success = Success.COMPLETE;
-    
+
     TableComparison tableComparison = compareTables(userQuery, sampleQuery);
-    
+
     ColumnComparison columnComparison = compareColumns(userQuery, sampleQuery);
-    
+
     // comparison has "lower" success than assumed at the moment
     if(success.compareTo(tableComparison.getSuccess()) > 0)
       success = tableComparison.getSuccess();
     if(success.compareTo(columnComparison.getSuccess()) > 0)
       success = columnComparison.getSuccess();
 
-    return new SqlCorrectionResult(success, columnComparison, tableComparison);
+    return new SqlCorrectionResult(success, "TODO!", columnComparison, tableComparison);
   }
 
   @Override

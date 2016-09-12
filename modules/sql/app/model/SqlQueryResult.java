@@ -4,9 +4,9 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SqlQueryResult {
 
@@ -17,10 +17,6 @@ public class SqlQueryResult {
   private String tableName = "";
 
   public SqlQueryResult(ResultSet resultSet) throws SQLException {
-    this(resultSet, false);
-  }
-
-  public SqlQueryResult(ResultSet resultSet, boolean sort) throws SQLException {
     ResultSetMetaData metaData = resultSet.getMetaData();
     int columnCount = metaData.getColumnCount();
 
@@ -28,10 +24,6 @@ public class SqlQueryResult {
     for(int i = 1; i <= columnCount; i++)
       colNames.add(metaData.getColumnName(i));
 
-    if(sort)
-      // Sort column names to ignore order
-      Collections.sort(colNames);
-  
     rows = new LinkedList<>();
     while(resultSet.next()) {
       List<String> row = new ArrayList<>(columnCount);
@@ -43,14 +35,14 @@ public class SqlQueryResult {
   }
 
   public SqlQueryResult(ResultSet resultSet, String theTableName) throws SQLException {
-    this(resultSet, false);
+    this(resultSet);
     tableName = theTableName;
   }
 
   public int getColumnCount() {
     return colNames.size();
   }
-  
+
   public List<String> getColumnNames() {
     return colNames;
   }
@@ -64,7 +56,7 @@ public class SqlQueryResult {
   }
 
   public boolean isIdentic(SqlQueryResult other) {
-    // FIXME: implement comparison!
+    // FIXME: implement comparison: return (new?) subclass of EvaluationResult!
 
     // Check columnNames with order
     int columnCount = colNames.size();
@@ -73,7 +65,7 @@ public class SqlQueryResult {
     for(int i = 0; i < columnCount; i++)
       if(!other.getColumnNames().get(i).toLowerCase().equals(colNames.get(i).toLowerCase()))
         return false;
-      
+
     // Check rows
     int rowCount = rows.size();
     List<List<String>> otherRows = other.getRows();
@@ -90,6 +82,18 @@ public class SqlQueryResult {
     }
 
     return true;
+  }
+
+  public String toHtmlTable() {
+    String body = rows.stream().map(cells -> {
+      return cells.stream().collect(Collectors.joining("</td><td>", "<td>", "</td>"));
+    }).collect(Collectors.joining("</tr></td>", "<tr>", "</tr>"));
+
+    String table = "<div class=\"table-responsive\">";
+    table += "<table class=\"table table-bordered table-condensed\">";
+    table += "<thead><tr><th>" + String.join("</th><th>", colNames) + "</th></tr></thead>";
+    table += "<tbody>" + body + "</tbody></table></div>";
+    return table;
   }
 
 }

@@ -25,42 +25,42 @@ import play.db.Database;
 
 @Singleton
 public class SelectCorrector extends QueryCorrector<Select, PlainSelect> {
-
+  
   @Override
   protected SqlCorrectionResult compareStatically(Select parsedUserStatement, Select parsedSampleStatement) {
     Success success = Success.COMPLETE;
-
+    
     PlainSelect plainUserSelect = (PlainSelect) parsedUserStatement.getSelectBody();
     PlainSelect plainSampleSelect = (PlainSelect) parsedSampleStatement.getSelectBody();
-
+    
     TableComparison tableComparison = compareTables(plainUserSelect, plainSampleSelect);
-
+    
     ColumnComparison columnComparison = compareColumns(plainUserSelect, plainSampleSelect);
-
+    
     // comparison has "lower" success than assumed at the moment
     if(success.compareTo(tableComparison.getSuccess()) > 0)
       success = tableComparison.getSuccess();
     if(success.compareTo(columnComparison.getSuccess()) > 0)
       success = columnComparison.getSuccess();
-
-    return new SqlCorrectionResult(success, columnComparison, tableComparison);
+    
+    return new SqlCorrectionResult(success, "TODO!", columnComparison, tableComparison);
   }
-
+  
   @Override
   protected SqlCorrectionResult executeQuery(Database database, Select userStatement, Select sampleStatement,
       String scenarioName) {
     try {
       Connection conn = database.getConnection();
       conn.setCatalog(scenarioName);
-
+      
       ResultSet userResultSet = conn.createStatement().executeQuery(userStatement.toString());
-      SqlQueryResult userResult = new SqlQueryResult(userResultSet, true);
-
+      SqlQueryResult userResult = new SqlQueryResult(userResultSet);
+      
       ResultSet sampleResultSet = conn.createStatement().executeQuery(sampleStatement.toString());
-      SqlQueryResult sampleResult = new SqlQueryResult(sampleResultSet, true);
-
+      SqlQueryResult sampleResult = new SqlQueryResult(sampleResultSet);
+      
       conn.close();
-
+      
       // @formatter:off
       if(userResult.isIdentic(sampleResult))
         return new SqlCorrectionResult(Success.COMPLETE, "Resultate waren mit Resultaten der Musterlösung identisch.")
@@ -73,30 +73,30 @@ public class SelectCorrector extends QueryCorrector<Select, PlainSelect> {
     }
     // @formatter:on
   }
-
+  
   @Override
   protected List<String> getColumns(PlainSelect plainSelect) {
     return plainSelect.getSelectItems().stream().map(item -> item.toString().toUpperCase())
         .collect(Collectors.toList());
   }
-
+  
   @Override
   protected List<String> getTables(PlainSelect userQuery) {
     List<String> userFromItems = new LinkedList<>();
-
+    
     // Main table in Query
     if(userQuery.getFromItem() instanceof Table)
       userFromItems.add(((Table) userQuery.getFromItem()).getName());
-
+    
     // All joined tables
     if(userQuery.getJoins() != null)
       for(Join join: userQuery.getJoins())
         if(join.getRightItem() instanceof Table)
           userFromItems.add(((Table) join.getRightItem()).getName());
-
+        
     return userFromItems;
   }
-
+  
   @Override
   protected Select parseStatement(String statement) throws SqlCorrectionException {
     try {
@@ -108,5 +108,5 @@ public class SelectCorrector extends QueryCorrector<Select, PlainSelect> {
       throw new SqlCorrectionException("Das Statement war vom falschen Typ! Erwartet wurde SELECT!");
     }
   }
-
+  
 }

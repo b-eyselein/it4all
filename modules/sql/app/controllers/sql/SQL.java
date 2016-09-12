@@ -64,7 +64,7 @@ public class SQL extends Controller {
       return ok(Json.toJson(new EvaluationFailed("Sie haben eine leere Query abgegeben!")));
     
     if(exercise == null)
-      return badRequest("There is no such exercise!");
+      return badRequest(Json.toJson(new EvaluationFailed("There is no such exercise!")));
     
     Database database = getDatabaseForExerciseType(exerciseType);
     
