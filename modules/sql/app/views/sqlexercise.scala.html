@@ -11,11 +11,66 @@ function testSolution() {
 }
 </script>
 
-<div class="container">
+<div class="container-fluid">
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      Datenbankschema &amp; Tabelleninhalte
+    </div>
+    <div class="panel-body">
+    
+      <div class="btn-group btn-group-justified">
+        <div class="btn-group">
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#databaseSchema">Datenbankschema</button>
+        </div>
+        @for(table <- tables) {
+        <div class="btn-group">
+          <button type="button" class="btn btn-default" data-toggle="modal" data-target="#@table.getTableName()">@table.getTableName()</button>
+        </div>
+        }
+      </div>
+    
+      <div id="databaseSchema" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Datenbankschema</h4>
+            </div>
+            <div class="modal-body">
+              <img class="img-rounded img-responsive center-block" src="@routes.Assets.versioned("images/sql/" + exercise.scenario.shortName + ".png")" alt="Datenbankschema">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      @for(table <- tables) {
+      <div id="@table.getTableName()" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Datenbankschema</h4>
+            </div>
+            <div class="modal-body">
+              @Html(table.toHtmlTable())
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      }
+      
+    </div>
+  </div>
 
   <div class="row">
-
-    <div class="col-md-6">
+    <div class="col-md-4">
       <div class="panel panel-default">
         <div class="panel-heading">Aufgabe @exercise.key.id</div>
         <div class="panel-body">
@@ -27,70 +82,13 @@ function testSolution() {
             title="Noch nicht m&ouml;glich. Testen Sie ihre L&ouml;sung erst." value="L&ouml;sung abgeben">
         </div>
       </div>
-    </div>
-
-    <div class="col-md-6">
-      <div class="panel panel-default">
-        <div class="panel-heading">Query</div>
-        <div class="panel-body">
-          <pre id="editor" class="form-control"></pre>
-          <script type="text/javascript">
-                      var editor = ace.edit("editor");
-                      editor.setTheme("ace/theme/eclipse");
-                      editor.setFontSize("16px");
-                      editor.getSession().setMode("ace/mode/sql");
-                      editor.getSession().setTabSize(2);
-                      editor.getSession().setUseSoftTabs(true);
-                      editor.getSession().setUseWrapMode(true);
-                      editor.setOptions({
-                        minLines: 10,
-                        maxLines: 15
-                      });
-                    </script>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <div id="resultPanel" class="panel panel-default" hidden>
-    <div class="panel-heading">Ergebnisse</div>
-    <div id="resultDiv" class="panel-body">
       
+      @editor("", "sql", 10 ,15, false)
     </div>
-  </div>
-
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      Tabelleninhalte
-    </div>
-    <div class="panel-body">
-      <ul class="nav nav-tabs">
-        <li class="active"><a data-toggle="tab" href="#db_scheme">Datenbankschema</a></li>@for(result <- tables) {
-        <li><a data-toggle="tab" href="#@result.getTableName()">@result.getTableName()</a></li>}
-      </ul>
-
-      <div class="tab-content">
-        <div id="db_scheme" class="tab-pane fade in active">
-          <img class="img-rounded img-responsive center-block" src="@routes.Assets.versioned("images/sql/" + exercise.scenario.shortName + ".png")" alt="Datenbankschema">
-        </div>
-      
-      
-      @for(result <- tables) {
-        <div id="@result.getTableName()" class="tab-pane fade">
-        <table class="table table-responsive table-hover table-bordered">
-          <thead>
-            <tr>@for(colName <- result.getColumnNames()) {
-              <th>@colName</th>}
-            </tr>
-          </thead>
-          <tbody>@for(row <- result.getRows()) {
-            <tr>@for(cell <- row) {
-              <td>@cell</td>}
-            </tr>}
-          </tbody>
-        </table>
-        </div>}
+    <div class="col-md-8">
+      <div id="resultPanel" class="panel panel-default">
+        <div class="panel-heading">Ergebnisse</div>
+        <div id="resultDiv" class="panel-body">Testen Sie ihre L&ouml;sung, um Ergebnisse zu erhalten.</div>
       </div>
     </div>
   </div>

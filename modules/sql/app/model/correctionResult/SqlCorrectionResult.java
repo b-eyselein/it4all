@@ -2,7 +2,7 @@ package model.correctionResult;
 
 import model.SqlQueryResult;
 import model.exercise.EvaluationResult;
-import model.exercise.FeedbackType;
+import model.exercise.FeedbackLevel;
 import model.exercise.Success;
 
 public class SqlCorrectionResult extends EvaluationResult {
@@ -15,7 +15,7 @@ public class SqlCorrectionResult extends EvaluationResult {
   private SqlQueryResult userResult = null;
   private SqlQueryResult sampleResult = null;
 
-  private FeedbackType feedbackType = FeedbackType.FULL_FEEDBACK;
+  private FeedbackLevel feedbackLevel = FeedbackLevel.FULL_FEEDBACK;
 
   public SqlCorrectionResult(Success theSuccess) {
     super(theSuccess);
@@ -38,7 +38,7 @@ public class SqlCorrectionResult extends EvaluationResult {
   public String getAsHtml() {
     String ret = "<div class=\"alert alert-" + getBSClass() + "\"><p>" + message + "</p></div>";
 
-    if(feedbackType.compareTo(FeedbackType.FULL_FEEDBACK) >= 0) {
+    if(feedbackLevel.compareTo(FeedbackLevel.FULL_FEEDBACK) >= 0) {
       ret += tableComparison != null ? tableComparison.getAsHtml() : "";
       ret += columnComparison != null ? columnComparison.getAsHtml() : "";
     }
