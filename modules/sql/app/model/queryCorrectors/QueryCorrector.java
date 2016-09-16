@@ -6,7 +6,6 @@ import java.util.List;
 
 import model.SqlCorrectionException;
 import model.correctionResult.ColumnComparison;
-import model.correctionResult.SqlExecutionResult;
 import model.correctionResult.TableComparison;
 import model.exercise.EvaluationFailed;
 import model.exercise.EvaluationResult;
@@ -88,7 +87,7 @@ public abstract class QueryCorrector<QueryType extends Statement, ComparedType> 
     return new TableComparison(success, missingTables, wrongTables);
   }
 
-  protected abstract SqlExecutionResult executeQuery(Database database, QueryType userStatement,
+  protected abstract EvaluationResult executeQuery(Database database, QueryType userStatement,
       QueryType sampleStatement, SqlExercise exercise, FeedbackLevel feedbackLevel);
 
   protected abstract List<String> getColumns(ComparedType statement);

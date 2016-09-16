@@ -3,7 +3,6 @@ package model.queryCorrectors;
 import java.util.List;
 
 import model.SqlCorrectionException;
-import model.correctionResult.SqlExecutionResult;
 import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.SqlExercise;
@@ -22,7 +21,7 @@ public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable> {
   }
 
   @Override
-  protected SqlExecutionResult executeQuery(Database database, CreateTable parsedStatement,
+  protected EvaluationResult executeQuery(Database database, CreateTable parsedStatement,
       CreateTable parsedSampleStatement, SqlExercise exercise, FeedbackLevel feedbackLevel) {
 
     return null;

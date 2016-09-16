@@ -3,7 +3,6 @@ package model.queryCorrectors;
 import java.util.List;
 
 import model.SqlCorrectionException;
-import model.correctionResult.SqlExecutionResult;
 import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.SqlExercise;
@@ -16,19 +15,19 @@ public class InsertCorrector extends QueryCorrector<Insert, Insert> {
 
   @Override
   protected List<EvaluationResult>
-      
+
       compareStatically(Insert parsedUserStatement, Insert parsedSampleStatement, FeedbackLevel feedbackLevel) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  protected SqlExecutionResult executeQuery(Database database, Insert userStatement, Insert sampleStatement,
+  protected EvaluationResult executeQuery(Database database, Insert userStatement, Insert sampleStatement,
       SqlExercise exercise, FeedbackLevel feedbackLevel) {
     // TODO Auto-generated method stub
     return null;
   }
-  
+
   @Override
   protected List<String> getColumns(Insert statement) {
     // TODO Auto-generated method stub

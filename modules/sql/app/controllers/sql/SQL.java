@@ -28,7 +28,6 @@ import play.data.FormFactory;
 import play.db.Database;
 import play.db.NamedDatabase;
 import play.libs.Json;
-import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security.Authenticated;
@@ -49,7 +48,7 @@ public class SQL extends Controller {
   private Database sql_select;
 
   @Inject
-  @NamedDatabase("sqlotheruser")
+  @NamedDatabase("sqlotherroot")
   private Database sql_other;
 
   @Inject
