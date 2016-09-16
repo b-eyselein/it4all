@@ -78,7 +78,8 @@ function testSolution() {
           <div class="form-group"><label for="feedbackLevel">Gew&uuml;nschtes Feedback Level:</label>
             <select name="feedbackLevel" id="feedbackLevel" class="form-control">
             @for(feedbackLevel <- model.exercise.FeedbackLevel.values()) {
-            	<option value="@feedbackLevel">@feedbackLevel.getDescription()</option>
+            	<option value="@feedbackLevel" @if(feedbackLevel == model.exercise.FeedbackLevel.FULL_FEEDBACK) {selected}>
+              @feedbackLevel.getDescription()</option>
             }
             </select>
           </div>

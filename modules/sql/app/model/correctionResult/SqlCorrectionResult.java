@@ -91,22 +91,28 @@ public class SqlCorrectionResult extends EvaluationResult {
   }
 
   private String resultsAsHtml() {
-    // TODO: refactor!
     String ret = "";
-    ret += "<div class=\"row\">";
+    ret += "<div class=\"panel panel-" + getBSClass() + "\">";
+    ret += "<div class=\"panel-heading\">Vergleich ihrer L&ouml;sung mit der Musterl&ouml;sung</div>";
 
-    ret += "<div class=\"col-md-6\">";
-    ret += "<p>Ihre L&ouml;sung:</p>";
-    if(userResult == null)
-      ret += "Es gab einen Fehler bei der Ausf&uuml;hrung ihrer L&ouml;sung!";
-    else
-      ret += userResult.toHtmlTable();
-    ret += "</div>";
+    ret += "<div class=\"panel-body\">";
+    if(success == Success.COMPLETE) {
+      // Results are identical
+      ret += "<p>Ihre L&ouml;sung == Musterl&ouml;sung</p>" + userResult.toHtmlTable();
+    } else {
+      // Results are not identical
+      ret += "<div class=\"col-md-6\"><p>Ihre L&ouml;sung:</p>";
+      if(userResult == null)
+        ret += "Es gab einen Fehler bei der Ausf&uuml;hrung ihrer L&ouml;sung!";
+      else
+        ret += userResult.toHtmlTable();
+      ret += "</div>";
 
-    ret += "<div class=\"col-md-6\">";
-    ret += "<p>Musterl&ouml;sung:</p>";
-    if(sampleResult != null)
-      ret += sampleResult.toHtmlTable();
+      ret += "<div class=\"col-md-6\"><p>Musterl&ouml;sung:</p>";
+      if(sampleResult != null)
+        ret += sampleResult.toHtmlTable();
+      ret += "</div>";
+    }
     ret += "</div>";
 
     ret += "</div>";

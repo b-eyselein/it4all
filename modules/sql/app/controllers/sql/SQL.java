@@ -22,7 +22,6 @@ import model.exercise.SqlExercise;
 import model.exercise.SqlExerciseKey;
 import model.exercise.SqlScenario;
 import model.user.User;
-import play.Logger;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.db.Database;
@@ -66,8 +65,7 @@ public class SQL extends Controller {
     
     String learnerSolution = form.get("editorContent");
     FeedbackLevel feedbackLevel = FeedbackLevel.valueOf(form.get("feedbackLevel"));
-    Logger.debug(feedbackLevel.toString());
-
+    
     if(learnerSolution.isEmpty())
       return ok(Json.toJson(new EvaluationFailed("Sie haben eine leere Query abgegeben!")));
     
