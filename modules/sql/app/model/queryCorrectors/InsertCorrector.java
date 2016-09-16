@@ -3,8 +3,10 @@ package model.queryCorrectors;
 import java.util.List;
 
 import model.SqlCorrectionException;
-import model.correctionResult.SqlCorrectionResult;
+import model.correctionResult.SqlExecutionResult;
+import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
+import model.exercise.SqlExercise;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.insert.Insert;
@@ -13,15 +15,16 @@ import play.db.Database;
 public class InsertCorrector extends QueryCorrector<Insert, Insert> {
 
   @Override
-  protected SqlCorrectionResult compareStatically(Insert parsedUserStatement, Insert parsedSampleStatement,
-      FeedbackLevel feedbackLevel) {
+  protected List<EvaluationResult>
+      
+      compareStatically(Insert parsedUserStatement, Insert parsedSampleStatement, FeedbackLevel feedbackLevel) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  protected SqlCorrectionResult executeQuery(Database database, Insert userStatement, Insert sampleStatement,
-      String scenarioName, FeedbackLevel feedbackLevel) {
+  protected SqlExecutionResult executeQuery(Database database, Insert userStatement, Insert sampleStatement,
+      SqlExercise exercise, FeedbackLevel feedbackLevel) {
     // TODO Auto-generated method stub
     return null;
   }

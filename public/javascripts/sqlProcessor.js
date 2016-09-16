@@ -29,6 +29,10 @@ function prepareFormForSubmitting() {
 function processCorrection(correction) {
   var parsedCorr = JSON.parse(correction);
   
+  var toAdd = "";
+  for(var i = 0; i < parsedCorr.length; i++)
+    toAdd += parsedCorr[i].asHtml;
+  
   document.getElementById("resultPanel").hidden = false;
-  document.getElementById("resultDiv").innerHTML = parsedCorr.asHtml;
+  document.getElementById("resultDiv").innerHTML = toAdd;
 }

@@ -1,12 +1,15 @@
 package model.queryCorrectors;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 import model.SqlCorrectionException;
 import model.correctionResult.ColumnComparison;
-import model.correctionResult.SqlCorrectionResult;
+import model.correctionResult.SqlExecutionResult;
 import model.correctionResult.TableComparison;
+import model.exercise.EvaluationFailed;
+import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.SqlExercise;
 import model.exercise.Success;
@@ -15,35 +18,43 @@ import play.db.Database;
 
 public abstract class QueryCorrector<QueryType extends Statement, ComparedType> {
 
-  protected static List<String> listDifference(List<String> a, List<String> b) {
-    List<String> ret = new LinkedList<>();
-    ret.addAll(a);
+  protected static <T> List<T> listDifference(List<T> a, List<T> b) {
+    List<T> ret = new LinkedList<>(a);
     ret.removeAll(b);
     return ret;
   }
 
-  public SqlCorrectionResult correct(Database database, String userStatement, String sampleStatement,
-      SqlExercise exercise, FeedbackLevel feedbackLevel) {
+  @SafeVarargs
+  protected static <T extends Comparable<T>> T minimum(T... toCompare) {
+    if(toCompare.length == 0)
+      return null;
+    T min = toCompare[0];
+    for(T t: toCompare)
+      if(t.compareTo(min) < 0)
+        min = t;
+    return min;
+  }
+
+  public List<EvaluationResult> correct(Database database, String userStatement, String sampleStatement,
+      SqlExercise exercise, FeedbackLevel fbLevel) {
     QueryType parsedUserStatement, parsedSampleStatement;
     try {
       parsedUserStatement = parseStatement(userStatement);
       parsedSampleStatement = parseStatement(sampleStatement);
     } catch (SqlCorrectionException e) {
-      return new SqlCorrectionResult(Success.NONE, e.getMessage(), feedbackLevel);
+      return Arrays.asList(new EvaluationFailed(e.getMessage()));
     }
 
-    // Compare queries statically
-    SqlCorrectionResult staticComp = compareStatically(parsedUserStatement, parsedSampleStatement, feedbackLevel);
+    List<EvaluationResult> ret = new LinkedList<>();
+
+    if(fbLevel.compareTo(FeedbackLevel.FULL_FEEDBACK) >= 0)
+      // Compare queries statically
+      ret.addAll(compareStatically(parsedUserStatement, parsedSampleStatement, fbLevel));
 
     // Execute both queries, check if results match
-    SqlCorrectionResult executionResult = executeQuery(database, parsedUserStatement, parsedSampleStatement,
-        exercise.scenario.shortName, feedbackLevel);
+    ret.add(executeQuery(database, parsedUserStatement, parsedSampleStatement, exercise, fbLevel));
 
-    if(staticComp != null)
-      executionResult.withTableComparisonResult(staticComp.getTableComparison())
-          .withColumnsComparisonResult(staticComp.getColumnComparison());
-
-    return executionResult;
+    return ret;
   }
 
   protected final ColumnComparison compareColumns(ComparedType userQuery, ComparedType sampleQuery) {
@@ -60,7 +71,7 @@ public abstract class QueryCorrector<QueryType extends Statement, ComparedType> 
     return new ColumnComparison(success, missingColumns, wrongColumns);
   }
 
-  protected abstract SqlCorrectionResult compareStatically(QueryType parsedUserStatement,
+  protected abstract List<EvaluationResult> compareStatically(QueryType parsedUserStatement,
       QueryType parsedSampleStatement, FeedbackLevel feedbackLevel);
 
   protected TableComparison compareTables(ComparedType userQuery, ComparedType sampleQuery) {
@@ -79,8 +90,8 @@ public abstract class QueryCorrector<QueryType extends Statement, ComparedType> 
     return new TableComparison(success, missingTables, wrongTables);
   }
 
-  protected abstract SqlCorrectionResult executeQuery(Database database, QueryType userStatement,
-      QueryType sampleStatement, String scenarioName, FeedbackLevel feedbackLevel);
+  protected abstract SqlExecutionResult executeQuery(Database database, QueryType userStatement,
+      QueryType sampleStatement, SqlExercise exercise, FeedbackLevel feedbackLevel);
 
   protected abstract List<String> getColumns(ComparedType statement);
 

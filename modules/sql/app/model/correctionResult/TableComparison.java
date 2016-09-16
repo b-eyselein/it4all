@@ -1,6 +1,5 @@
 package model.correctionResult;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import model.exercise.EvaluationResult;
@@ -36,15 +35,6 @@ public class TableComparison extends EvaluationResult {
     ret += "</div>";
 
     ret += "</div>";
-    return ret;
-  }
-
-  public List<String> getMessages() {
-    List<String> ret = new LinkedList<>();
-    if(!missingTables.isEmpty())
-      ret.add("Es fehlen folgende Tabellen: " + missingTables);
-    if(!unneccessaryTables.isEmpty())
-      ret.add("Folgende Tabellen werden nicht benötigt: " + unneccessaryTables);
     return ret;
   }
 

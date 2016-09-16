@@ -15,13 +15,14 @@ import controllers.core.UserManagement;
 import model.Secured;
 import model.SqlCorrector;
 import model.SqlQueryResult;
-import model.correctionResult.SqlCorrectionResult;
 import model.exercise.EvaluationFailed;
+import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.SqlExercise;
 import model.exercise.SqlExerciseKey;
 import model.exercise.SqlScenario;
 import model.user.User;
+import play.Logger;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.db.Database;
@@ -74,10 +75,12 @@ public class SQL extends Controller {
     
     Database database = getDatabaseForExerciseType(exerciseType);
     
-    SqlCorrectionResult result = SqlCorrector.correct(database, user, learnerSolution, exercise, feedbackLevel);
+    List<EvaluationResult> result = SqlCorrector.correct(database, user, learnerSolution, exercise, feedbackLevel);
     
     JsonNode ret = Json.toJson(result);
     
+    Logger.debug(Json.prettyPrint(ret));
+
     return ok(Json.toJson(ret));
   }
   

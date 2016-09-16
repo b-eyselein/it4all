@@ -2,7 +2,7 @@ package model;
 
 import java.util.List;
 
-import model.correctionResult.SqlCorrectionResult;
+import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.SqlExercise;
 import model.queryCorrectors.QueryCorrector;
@@ -12,7 +12,7 @@ import play.db.Database;
 
 public class SqlCorrector {
 
-  public static SqlCorrectionResult correct(Database database, User user, String userStatement, SqlExercise exercise,
+  public static List<EvaluationResult> correct(Database database, User user, String userStatement, SqlExercise exercise,
       FeedbackLevel feedbackLevel) {
     QueryCorrector<? extends Statement, ?> corrector = exercise.getCorrector();
     String sampleStatement = findBestFittingSample(userStatement, exercise.getSampleSolution());

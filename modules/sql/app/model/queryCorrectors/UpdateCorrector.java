@@ -1,13 +1,16 @@
 package model.queryCorrectors;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import model.SqlCorrectionException;
 import model.correctionResult.ColumnComparison;
-import model.correctionResult.SqlCorrectionResult;
+import model.correctionResult.SqlExecutionResult;
 import model.correctionResult.TableComparison;
+import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
+import model.exercise.SqlExercise;
 import model.exercise.Success;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
@@ -17,7 +20,8 @@ import play.db.Database;
 public class UpdateCorrector extends QueryCorrector<Update, Update> {
   
   @Override
-  protected SqlCorrectionResult compareStatically(Update userQuery, Update sampleQuery, FeedbackLevel feedbackLevel) {
+  protected List<EvaluationResult> compareStatically(Update userQuery, Update sampleQuery,
+      FeedbackLevel feedbackLevel) {
     Success success = Success.COMPLETE;
     
     TableComparison tableComparison = compareTables(userQuery, sampleQuery);
@@ -30,15 +34,15 @@ public class UpdateCorrector extends QueryCorrector<Update, Update> {
     if(success.compareTo(columnComparison.getSuccess()) > 0)
       success = columnComparison.getSuccess();
     
-    return new SqlCorrectionResult(success, "TODO!", columnComparison, tableComparison, feedbackLevel);
+    return Arrays.asList(tableComparison, columnComparison);
   }
   
   @Override
-  protected SqlCorrectionResult executeQuery(Database database, Update userStatement, Update sampleStatement,
-      String scenarioName, FeedbackLevel feedbackLevel) {
+  protected SqlExecutionResult executeQuery(Database database, Update userStatement, Update sampleStatement,
+      SqlExercise exercise, FeedbackLevel feedbackLevel) {
     // TODO Auto-generated method stub
-    return new SqlCorrectionResult(Success.NONE, "Ausführungsvergleich der Statements muss noch implementiert werden!",
-        feedbackLevel);
+    return new SqlExecutionResult(Success.NONE, "Ausführungsvergleich der Statements muss noch implementiert werden!",
+        feedbackLevel, null, null);
   }
   
   @Override
