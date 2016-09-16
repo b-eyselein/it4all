@@ -75,6 +75,13 @@ function testSolution() {
         <div class="panel-heading">Aufgabe @exercise.key.id</div>
         <div class="panel-body">
           <p>@exercise.text</p>
+          <div class="form-group"><label for="feedbackLevel">Gew&uuml;nschtes Feedback Level:</label>
+            <select name="feedbackLevel" id="feedbackLevel" class="form-control">
+            @for(feedbackLevel <- model.exercise.FeedbackLevel.values()) {
+            	<option value="@feedbackLevel">@feedbackLevel.getDescription()</option>
+            }
+            </select>
+          </div>
         </div>
         <div class="panel-footer">
           <button type="button" class="btn btn-default btn-block" onclick="testSolution();">L&ouml;sung testen</button>
@@ -83,7 +90,7 @@ function testSolution() {
         </div>
       </div>
       
-      @editor("", "sql", 10 ,15, false)
+      @editor("select * from Employee", "sql", 10 ,15, false)
     </div>
     <div class="col-md-8">
       <div id="resultPanel" class="panel panel-default">

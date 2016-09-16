@@ -1,7 +1,4 @@
 function testTheSolution(url) {
-  var editorContent = editor.getValue();
-  
-  // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if(xhttp.readyState == 4 && xhttp.status == 200) {
@@ -9,12 +6,20 @@ function testTheSolution(url) {
     }
   };
   
-  // AJAX-Objekt mit Daten fuellen, absenden
-  var parameters = "editorContent=" + encodeURIComponent(editorContent);
   xhttp.open("PUT", url, true);
   xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
   xhttp.setRequestHeader("Accept", "application/json");
-  xhttp.send(parameters);
+  xhttp.send(getParameters());
+}
+
+function getParameters() {
+  var editorContent = editor.getValue();
+  var parameters = "editorContent=" + encodeURIComponent(editorContent);
+
+  var feedbackLevel = document.getElementById("feedbackLevel");
+  var realLevel = feedbackLevel.options[feedbackLevel.selectedIndex].value;
+  parameters += "&feedbackLevel=" + realLevel;
+  return parameters;
 }
 
 function prepareFormForSubmitting() {

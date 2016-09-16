@@ -4,6 +4,7 @@ import java.util.List;
 
 import model.SqlCorrectionException;
 import model.correctionResult.SqlCorrectionResult;
+import model.exercise.FeedbackLevel;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
@@ -12,14 +13,15 @@ import play.db.Database;
 public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable> {
   
   @Override
-  protected SqlCorrectionResult compareStatically(CreateTable parsedUserStatement, CreateTable parsedSampleStatement) {
+  protected SqlCorrectionResult compareStatically(CreateTable parsedUserStatement, CreateTable parsedSampleStatement,
+      FeedbackLevel feedbackLevel) {
     // TODO Auto-generated method stub
     return null;
   }
   
   @Override
   protected SqlCorrectionResult executeQuery(Database database, CreateTable parsedStatement,
-      CreateTable parsedSampleStatement, String scenarioName) {
+      CreateTable parsedSampleStatement, String scenarioName, FeedbackLevel feedbackLevel) {
     
     return null;
   }

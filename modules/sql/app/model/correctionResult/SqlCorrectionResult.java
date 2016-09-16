@@ -15,35 +15,41 @@ public class SqlCorrectionResult extends EvaluationResult {
   private SqlQueryResult userResult = null;
   private SqlQueryResult sampleResult = null;
 
-  private FeedbackLevel feedbackLevel = FeedbackLevel.FULL_FEEDBACK;
+  private FeedbackLevel feedbackLevel;
 
   public SqlCorrectionResult(Success theSuccess) {
     super(theSuccess);
   }
 
-  public SqlCorrectionResult(Success theSuccess, String theMessage) {
-    super(theSuccess);
-    message = theMessage;
-  }
-
   public SqlCorrectionResult(Success theSuccess, String theMessage, ColumnComparison theColumnComparison,
-      TableComparison theTableComparison) {
+      TableComparison theTableComparison, FeedbackLevel theFeedbackLevel) {
     super(theSuccess);
     message = theMessage;
     columnComparison = theColumnComparison;
     tableComparison = theTableComparison;
+    feedbackLevel = theFeedbackLevel;
+  }
+
+  public SqlCorrectionResult(Success theSuccess, String theMessage, FeedbackLevel theFeedbackLevel) {
+    super(theSuccess);
+    message = theMessage;
+    feedbackLevel = theFeedbackLevel;
   }
 
   @Override
   public String getAsHtml() {
-    String ret = "<div class=\"alert alert-" + getBSClass() + "\"><p>" + message + "</p></div>";
+    String ret = "<div class=\"alert alert-success\">Ihre Query wurde erfolgreich korrigiert.</div>";
+
+    if(feedbackLevel.compareTo(FeedbackLevel.MINIMAL_FEEDBACK) >= 0)
+      ret += "<div class=\"alert alert-" + getBSClass() + "\"><p>" + message + "</p></div>";
 
     if(feedbackLevel.compareTo(FeedbackLevel.FULL_FEEDBACK) >= 0) {
       ret += tableComparison != null ? tableComparison.getAsHtml() : "";
       ret += columnComparison != null ? columnComparison.getAsHtml() : "";
     }
 
-    ret += resultsAsHtml();
+    if(feedbackLevel.compareTo(FeedbackLevel.MEDIUM_FEEDBACK) >= 0)
+      ret += resultsAsHtml();
 
     return ret;
   }

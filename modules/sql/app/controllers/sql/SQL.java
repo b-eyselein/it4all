@@ -17,9 +17,13 @@ import model.SqlCorrector;
 import model.SqlQueryResult;
 import model.correctionResult.SqlCorrectionResult;
 import model.exercise.EvaluationFailed;
+import model.exercise.FeedbackLevel;
 import model.exercise.SqlExercise;
+import model.exercise.SqlExerciseKey;
 import model.exercise.SqlScenario;
 import model.user.User;
+import play.Logger;
+import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.db.Database;
 import play.db.NamedDatabase;
@@ -56,10 +60,14 @@ public class SQL extends Controller {
   
   public Result commit(String scenarioName, String exerciseType, int exerciseId) {
     User user = UserManagement.getCurrentUser();
-    SqlScenario scenario = SqlScenario.finder.byId(scenarioName);
-    SqlExercise exercise = scenario.getExercise(exerciseType, exerciseId);
-    String learnerSolution = factory.form().bindFromRequest().get("editorContent");
+    SqlExercise exercise = SqlExercise.finder.byId(new SqlExerciseKey(scenarioName, exerciseId));
     
+    DynamicForm form = factory.form().bindFromRequest();
+    
+    String learnerSolution = form.get("editorContent");
+    FeedbackLevel feedbackLevel = FeedbackLevel.valueOf(form.get("feedbackLevel"));
+    Logger.debug(feedbackLevel.toString());
+
     if(learnerSolution.isEmpty())
       return ok(Json.toJson(new EvaluationFailed("Sie haben eine leere Query abgegeben!")));
     
@@ -68,7 +76,7 @@ public class SQL extends Controller {
     
     Database database = getDatabaseForExerciseType(exerciseType);
     
-    SqlCorrectionResult result = SqlCorrector.correct(database, user, learnerSolution, exercise);
+    SqlCorrectionResult result = SqlCorrector.correct(database, user, learnerSolution, exercise, feedbackLevel);
     
     JsonNode ret = Json.toJson(result);
     

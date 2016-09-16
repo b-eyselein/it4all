@@ -21,14 +21,6 @@ create table conditions (
   constraint pk_conditions primary key (id)
 );
 
-create table create_exercise (
-  id                            integer not null,
-  scenario_name                 varchar(255) not null,
-  text                          text,
-  samples                       text,
-  constraint pk_create_exercise primary key (id,scenario_name)
-);
-
 create table css_task (
   task_id                       integer not null,
   exercise_id                   integer not null,
@@ -130,14 +122,6 @@ create table js_web_test (
   constraint pk_js_web_test primary key (id)
 );
 
-create table select_exercise (
-  id                            integer not null,
-  scenario_name                 varchar(255) not null,
-  text                          text,
-  samples                       text,
-  constraint pk_select_exercise primary key (id,scenario_name)
-);
-
 create table spread_exercise (
   id                            integer auto_increment not null,
   title                         varchar(255),
@@ -147,19 +131,20 @@ create table spread_exercise (
   constraint pk_spread_exercise primary key (id)
 );
 
+create table sql_exercise (
+  querytype                     varchar(31) not null,
+  id                            integer not null,
+  scenario_name                 varchar(255) not null,
+  text                          text,
+  samples                       text,
+  constraint pk_sql_exercise primary key (id,scenario_name)
+);
+
 create table sql_scenario (
   short_name                    varchar(255) not null,
   long_name                     varchar(255),
   script_file                   varchar(255),
   constraint pk_sql_scenario primary key (short_name)
-);
-
-create table update_exercise (
-  id                            integer not null,
-  scenario_name                 varchar(255) not null,
-  text                          text,
-  samples                       text,
-  constraint pk_update_exercise primary key (id,scenario_name)
 );
 
 create table users (
@@ -186,9 +171,6 @@ create index ix_conditions_pre_id on conditions (pre_id);
 alter table conditions add constraint fk_conditions_post_id foreign key (post_id) references js_web_test (id) on delete restrict on update restrict;
 create index ix_conditions_post_id on conditions (post_id);
 
-alter table create_exercise add constraint fk_create_exercise_scenario_name foreign key (scenario_name) references sql_scenario (short_name) on delete restrict on update restrict;
-create index ix_create_exercise_scenario_name on create_exercise (scenario_name);
-
 alter table css_task add constraint fk_css_task_exercise_id foreign key (exercise_id) references exercise (id) on delete restrict on update restrict;
 create index ix_css_task_exercise_id on css_task (exercise_id);
 
@@ -207,11 +189,8 @@ create index ix_js_test_exercise_id on js_test (exercise_id);
 alter table js_web_test add constraint fk_js_web_test_exercise_id foreign key (exercise_id) references js_web_exercise (id) on delete restrict on update restrict;
 create index ix_js_web_test_exercise_id on js_web_test (exercise_id);
 
-alter table select_exercise add constraint fk_select_exercise_scenario_name foreign key (scenario_name) references sql_scenario (short_name) on delete restrict on update restrict;
-create index ix_select_exercise_scenario_name on select_exercise (scenario_name);
-
-alter table update_exercise add constraint fk_update_exercise_scenario_name foreign key (scenario_name) references sql_scenario (short_name) on delete restrict on update restrict;
-create index ix_update_exercise_scenario_name on update_exercise (scenario_name);
+alter table sql_exercise add constraint fk_sql_exercise_scenario_name foreign key (scenario_name) references sql_scenario (short_name) on delete restrict on update restrict;
+create index ix_sql_exercise_scenario_name on sql_exercise (scenario_name);
 
 
 # --- !Downs
@@ -224,9 +203,6 @@ drop index ix_conditions_pre_id on conditions;
 
 alter table conditions drop foreign key fk_conditions_post_id;
 drop index ix_conditions_post_id on conditions;
-
-alter table create_exercise drop foreign key fk_create_exercise_scenario_name;
-drop index ix_create_exercise_scenario_name on create_exercise;
 
 alter table css_task drop foreign key fk_css_task_exercise_id;
 drop index ix_css_task_exercise_id on css_task;
@@ -246,17 +222,12 @@ drop index ix_js_test_exercise_id on js_test;
 alter table js_web_test drop foreign key fk_js_web_test_exercise_id;
 drop index ix_js_web_test_exercise_id on js_web_test;
 
-alter table select_exercise drop foreign key fk_select_exercise_scenario_name;
-drop index ix_select_exercise_scenario_name on select_exercise;
-
-alter table update_exercise drop foreign key fk_update_exercise_scenario_name;
-drop index ix_update_exercise_scenario_name on update_exercise;
+alter table sql_exercise drop foreign key fk_sql_exercise_scenario_name;
+drop index ix_sql_exercise_scenario_name on sql_exercise;
 
 drop table if exists childtask;
 
 drop table if exists conditions;
-
-drop table if exists create_exercise;
 
 drop table if exists css_task;
 
@@ -276,13 +247,11 @@ drop table if exists js_web_exercise;
 
 drop table if exists js_web_test;
 
-drop table if exists select_exercise;
-
 drop table if exists spread_exercise;
 
-drop table if exists sql_scenario;
+drop table if exists sql_exercise;
 
-drop table if exists update_exercise;
+drop table if exists sql_scenario;
 
 drop table if exists users;
 
