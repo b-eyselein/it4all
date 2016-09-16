@@ -82,9 +82,7 @@ public abstract class QueryCorrector<QueryType extends Statement, ComparedType> 
     List<String> missingTables = listDifference(sampleTableNames, userTableNames);
 
     Success success = Success.NONE;
-    if(missingTables.isEmpty())
-      success = Success.PARTIALLY;
-    if(wrongTables.isEmpty())
+    if(missingTables.isEmpty() && wrongTables.isEmpty())
       success = Success.COMPLETE;
 
     return new TableComparison(success, missingTables, wrongTables);

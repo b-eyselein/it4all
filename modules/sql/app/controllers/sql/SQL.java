@@ -22,7 +22,6 @@ import model.exercise.SqlExercise;
 import model.exercise.SqlExerciseKey;
 import model.exercise.SqlScenario;
 import model.user.User;
-import play.Logger;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.db.Database;
@@ -79,16 +78,12 @@ public class SQL extends Controller {
     
     JsonNode ret = Json.toJson(result);
     
-    Logger.debug(Json.prettyPrint(ret));
-
     return ok(Json.toJson(ret));
   }
   
   public Result exercise(String scenarioName, String exerciseType, int exerciseId) {
     User user = UserManagement.getCurrentUser();
-    // TODO: REMOVE!
-    SqlScenario scenario = SqlScenario.finder.byId(scenarioName);
-    SqlExercise exercise = scenario.getExercise(exerciseType, exerciseId);
+    SqlExercise exercise = SqlExercise.finder.byId(new SqlExerciseKey(scenarioName, exerciseId));
     
     if(exercise == null)
       return badRequest("There is no such exercise!");
