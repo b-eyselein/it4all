@@ -10,16 +10,18 @@ import net.sf.jsqlparser.statement.insert.Insert;
 @Entity
 @DiscriminatorValue("INSERT")
 public class InsertExercise extends SqlExercise {
-
+  
   private static final QueryCorrector<Insert, Insert, InsertExercise> corrector = new InsertCorrector();
+  
+  public String validation;
 
   public InsertExercise(SqlExerciseKey theKey) {
     super(theKey);
   }
-
+  
   @Override
   public QueryCorrector<Insert, Insert, InsertExercise> getCorrector() {
     return corrector;
   }
-
+  
 }

@@ -34,6 +34,7 @@ public abstract class QueryCorrector<QueryType extends Statement, ComparedType, 
     return min;
   }
 
+  @SuppressWarnings("unchecked")
   public List<EvaluationResult> correct(Database database, String userStatement, String sampleStatement,
       SqlExercise exercise, FeedbackLevel fbLevel) {
     QueryType parsedUserStatement, parsedSampleStatement;
@@ -43,7 +44,7 @@ public abstract class QueryCorrector<QueryType extends Statement, ComparedType, 
     } catch (SqlCorrectionException e) {
       return Arrays.asList(new EvaluationFailed(e.getMessage()));
     }
-
+    
     List<EvaluationResult> ret = new LinkedList<>();
 
     if(fbLevel.compareTo(FeedbackLevel.FULL_FEEDBACK) >= 0)
