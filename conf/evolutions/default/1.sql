@@ -137,6 +137,7 @@ create table sql_exercise (
   scenario_name                 varchar(255) not null,
   text                          text,
   samples                       text,
+  validation                    varchar(255),
   constraint pk_sql_exercise primary key (id,scenario_name)
 );
 

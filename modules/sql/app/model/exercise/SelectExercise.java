@@ -5,7 +5,6 @@ import javax.persistence.Entity;
 
 import model.queryCorrectors.QueryCorrector;
 import model.queryCorrectors.SelectCorrector;
-import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 
@@ -13,14 +12,14 @@ import net.sf.jsqlparser.statement.select.Select;
 @DiscriminatorValue("SELECT")
 public class SelectExercise extends SqlExercise {
 
-  private static final QueryCorrector<Select, PlainSelect> corrector = new SelectCorrector();
+  private static final QueryCorrector<Select, PlainSelect, SelectExercise> corrector = new SelectCorrector();
 
   public SelectExercise(SqlExerciseKey theKey) {
     super(theKey);
   }
 
   @Override
-  public QueryCorrector<? extends Statement, ?> getCorrector() {
+  public QueryCorrector<Select, PlainSelect, SelectExercise> getCorrector() {
     return corrector;
   }
 

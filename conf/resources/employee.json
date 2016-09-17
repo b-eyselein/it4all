@@ -38,7 +38,8 @@
 				"text": "Der Angestellte mit der OID 8 arbeitet jetzt für den Angestellten mit der OID 3. Aktualisieren Sie die Datenbank!",
 				"sampleSolutions": [
 					"UPDATE Employee SET chefOID = 3 WHERE employeeOID = 8"
-				]
+				],
+				"validation": "SELECT * FROM Employee"
 			}
 		}
 	}

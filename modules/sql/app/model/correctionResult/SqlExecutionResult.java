@@ -14,13 +14,13 @@ public class SqlExecutionResult extends EvaluationResult {
 
   private FeedbackLevel feedbackLevel;
 
-  public SqlExecutionResult(Success theSuccess, String theMessage, FeedbackLevel theFeedbackLevel,
-      SqlQueryResult theUserResult, SqlQueryResult theSampleResult) {
-    super(theSuccess);
-    message = theMessage;
+  public SqlExecutionResult(FeedbackLevel theFeedbackLevel, SqlQueryResult theUserResult,
+      SqlQueryResult theSampleResult) {
     feedbackLevel = theFeedbackLevel;
     userResult = theUserResult;
     sampleResult = theSampleResult;
+
+    analyze();
   }
 
   @Override
@@ -46,6 +46,21 @@ public class SqlExecutionResult extends EvaluationResult {
 
   public SqlQueryResult getUserResult() {
     return userResult;
+  }
+
+  private void analyze() {
+    if(userResult == null || sampleResult == null) {
+      message = "Es gab ein Problem beim Ausführen einer oder beider Queries!";
+      return;
+    }
+    // FIXME: implement!
+    if(userResult.isIdentic(sampleResult)) {
+      success = Success.COMPLETE;
+      message = "Resultat stimmt mit der Musterlösung überein.";
+    } else {
+      success = Success.NONE;
+      message = "Resultat stimmt nicht mit der Musterlösung überein!";
+    }
   }
 
   private String resultsAsHtml() {

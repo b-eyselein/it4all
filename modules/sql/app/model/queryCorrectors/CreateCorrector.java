@@ -3,42 +3,42 @@ package model.queryCorrectors;
 import java.util.List;
 
 import model.SqlCorrectionException;
+import model.exercise.CreateExercise;
 import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
-import model.exercise.SqlExercise;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
 import play.db.Database;
 
-public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable> {
-
+public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable, CreateExercise> {
+  
   @Override
   protected List<EvaluationResult> compareStatically(CreateTable parsedUserStatement, CreateTable parsedSampleStatement,
       FeedbackLevel feedbackLevel) {
     // TODO Auto-generated method stub
     return null;
   }
-
+  
   @Override
   protected EvaluationResult executeQuery(Database database, CreateTable parsedStatement,
-      CreateTable parsedSampleStatement, SqlExercise exercise, FeedbackLevel feedbackLevel) {
-
+      CreateTable parsedSampleStatement, CreateExercise exercise, FeedbackLevel feedbackLevel) {
+    
     return null;
   }
-
+  
   @Override
   protected List<String> getColumns(CreateTable statement) {
     // TODO Auto-generated method stub
     return null;
   }
-
+  
   @Override
   protected List<String> getTables(CreateTable userQuery) {
     // TODO Auto-generated method stub
     return null;
   }
-
+  
   @Override
   protected CreateTable parseStatement(String statement) throws SqlCorrectionException {
     try {

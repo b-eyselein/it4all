@@ -17,7 +17,7 @@ import model.correctionResult.SqlExecutionResult;
 import model.correctionResult.TableComparison;
 import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
-import model.exercise.SqlExercise;
+import model.exercise.SelectExercise;
 import model.exercise.Success;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
@@ -28,7 +28,7 @@ import net.sf.jsqlparser.statement.select.Select;
 import play.db.Database;
 
 @Singleton
-public class SelectCorrector extends QueryCorrector<Select, PlainSelect> {
+public class SelectCorrector extends QueryCorrector<Select, PlainSelect, SelectExercise> {
 
   @Override
   protected List<EvaluationResult> compareStatically(Select parsedUserStatement, Select parsedSampleStatement,
@@ -51,7 +51,7 @@ public class SelectCorrector extends QueryCorrector<Select, PlainSelect> {
 
   @Override
   protected EvaluationResult executeQuery(Database database, Select userStatement, Select sampleStatement,
-      SqlExercise exercise, FeedbackLevel feedbackLevel) {
+      SelectExercise exercise, FeedbackLevel feedbackLevel) {
     SqlQueryResult userResult = null, sampleResult = null;
 
     try {
@@ -66,19 +66,9 @@ public class SelectCorrector extends QueryCorrector<Select, PlainSelect> {
 
       conn.close();
     } catch (SQLException e) {
-      return new SqlExecutionResult(Success.NONE, "Es gab ein Problem beim Ausführen der Query: " + e.getMessage(),
-          feedbackLevel, null, null);
     }
 
-    String message = "Resultate waren nicht identisch!";
-    Success success = Success.NONE;
-
-    if(userResult.isIdentic(sampleResult)) {
-      message = "Resultate waren mit Resultaten der Musterlösung identisch.";
-      success = Success.COMPLETE;
-    }
-
-    return new SqlExecutionResult(success, message, feedbackLevel, userResult, sampleResult);
+    return new SqlExecutionResult(feedbackLevel, userResult, sampleResult);
 
   }
 

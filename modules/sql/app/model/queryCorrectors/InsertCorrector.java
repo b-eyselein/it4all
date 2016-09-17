@@ -5,41 +5,41 @@ import java.util.List;
 import model.SqlCorrectionException;
 import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
-import model.exercise.SqlExercise;
+import model.exercise.InsertExercise;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.insert.Insert;
 import play.db.Database;
 
-public class InsertCorrector extends QueryCorrector<Insert, Insert> {
-
+public class InsertCorrector extends QueryCorrector<Insert, Insert, InsertExercise> {
+  
   @Override
   protected List<EvaluationResult>
-
+      
       compareStatically(Insert parsedUserStatement, Insert parsedSampleStatement, FeedbackLevel feedbackLevel) {
     // TODO Auto-generated method stub
     return null;
   }
-
+  
   @Override
   protected EvaluationResult executeQuery(Database database, Insert userStatement, Insert sampleStatement,
-      SqlExercise exercise, FeedbackLevel feedbackLevel) {
+      InsertExercise exercise, FeedbackLevel feedbackLevel) {
     // TODO Auto-generated method stub
     return null;
   }
-
+  
   @Override
   protected List<String> getColumns(Insert statement) {
     // TODO Auto-generated method stub
     return null;
   }
-
+  
   @Override
   protected List<String> getTables(Insert userQuery) {
     // TODO Auto-generated method stub
     return null;
   }
-
+  
   @Override
   protected Insert parseStatement(String statement) throws SqlCorrectionException {
     try {
