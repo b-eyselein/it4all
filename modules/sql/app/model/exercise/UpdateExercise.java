@@ -12,7 +12,7 @@ import net.sf.jsqlparser.statement.update.Update;
 public class UpdateExercise extends SqlExercise {
 
   private static final QueryCorrector<Update, Update, UpdateExercise> corrector = new UpdateCorrector();
-  
+
   public String validation;
 
   public UpdateExercise(SqlExerciseKey theKey) {
@@ -22,11 +22,6 @@ public class UpdateExercise extends SqlExercise {
   @Override
   public QueryCorrector<Update, Update, UpdateExercise> getCorrector() {
     return corrector;
-  }
-
-  @Override
-  public String getType() {
-    return "UPDATE";
   }
 
 }

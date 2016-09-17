@@ -2,7 +2,7 @@
 
 @main("SQL", user) {
 <div class="container">
-  @if(scenarioes.isEmpty()) {
+  @if(scenarioes.isEmpty) {
   	<div class="alert alert-danger">Es sind momentan leider keine Szenarios verfügbar. Wenden Sie sich bitte an den Administrator!</div>
   }
   @for(scenario <- scenarioes) {
@@ -20,14 +20,14 @@
           </div>
           <div id="collapse_@{scenario.shortName}_@sqlExType" class="panel-collapse collapse">
           @if(scenario.getExercisesByType(sqlExType).isEmpty()) {
-          	<div class="container-fluid">
-              <div class="alert alert-warning">Für den Aufgabentype "@sqlExType" gibt es in diesem Szenario leider noch keine Aufgaben</div>
-            </div>
+            <ul class="list-group">
+              <li class="list-group-item"><a class="list-group-item">F&uuml;r diesen Aufgabentyp gibt es leider noch keine Aufgaben.</a></li>
+            </ul>
           } else {
             <ul class="list-group">
               @for(ex <- scenario.getExercisesByType(sqlExType)) {
               <li class="list-group-item">
-                <a href="@controllers.sql.routes.SQL.exercise(ex.key.scenarioName, ex.getType(), ex.key.id)" class="list-group-item">
+                <a href="@controllers.sql.routes.SQL.exercise(ex.key.scenarioName, ex.querytype, ex.key.id)" class="list-group-item">
                   Aufgabe @ex.key.id: @ex.text
                 </a>
               </li>

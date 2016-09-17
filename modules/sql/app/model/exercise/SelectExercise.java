@@ -23,9 +23,4 @@ public class SelectExercise extends SqlExercise {
     return corrector;
   }
 
-  @Override
-  public String getType() {
-    return "SELECT";
-  }
-
 }

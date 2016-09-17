@@ -1,8 +1,8 @@
 package model.exercise;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -18,43 +18,20 @@ public class SqlScenario extends Model {
 
   @Id
   public String shortName;
-  
+
   public String longName;
 
   public String scriptFile;
-  
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "scenario")
-  public List<SelectExercise> selects;
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "scenario")
-  public List<UpdateExercise> updates;
+  public List<SqlExercise> exercises;
 
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "scenario")
-  public List<CreateExercise> creates;
-  
-  public SqlExercise getExercise(String exerciseType, int exerciseId) {
-    List<? extends SqlExercise> list = getExercisesByType(exerciseType);
-    for(SqlExercise exercise: list)
-      if(exercise.key.id == exerciseId)
-        return exercise;
-    return null;
-  }
-  
   public List<? extends SqlExercise> getExercisesByType(String type) {
-    switch(type) {
-    case "SELECT":
-      return selects;
-    case "UPDATE":
-      return updates;
-    case "CREATE":
-      return creates;
-    default:
-      return Collections.emptyList();
-    }
+    return exercises.parallelStream().filter(ex -> ex.querytype.equals(type)).collect(Collectors.toList());
   }
-  
+
   public List<String> getExerciseTypes() {
-    return Arrays.asList("CREATE", "SELECT", "UPDATE");
+    return Arrays.asList("SELECT", "CREATE", "UPDATE", "DELETE");
   }
-  
+
 }

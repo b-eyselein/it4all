@@ -132,7 +132,7 @@ create table spread_exercise (
 );
 
 create table sql_exercise (
-  querytype                     varchar(31) not null,
+  querytype                     varchar(255),
   id                            integer not null,
   scenario_name                 varchar(255) not null,
   text                          text,

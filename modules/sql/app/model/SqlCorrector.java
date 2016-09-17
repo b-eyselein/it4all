@@ -15,7 +15,9 @@ public class SqlCorrector {
   public static List<EvaluationResult> correct(Database database, User user, String userStatement, SqlExercise exercise,
       FeedbackLevel feedbackLevel) {
     QueryCorrector<? extends Statement, ?, ? extends SqlExercise> corrector = exercise.getCorrector();
+
     String sampleStatement = findBestFittingSample(userStatement, exercise.getSampleSolution());
+
     return corrector.correct(database, userStatement, sampleStatement, exercise, feedbackLevel);
   }
 

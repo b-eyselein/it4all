@@ -22,9 +22,4 @@ public class DeleteExercise extends SqlExercise {
     return corrector;
   }
 
-  @Override
-  public String getType() {
-    return "DELETE";
-  }
-
 }

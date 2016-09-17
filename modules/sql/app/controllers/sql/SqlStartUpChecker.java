@@ -37,7 +37,7 @@ public class SqlStartUpChecker {
   private static void handleExercise(SqlScenario scenario, int exerciseId, String exerciseType, JsonNode exerciseNode) {
     SqlExerciseKey exerciseKey = new SqlExerciseKey(scenario.shortName, exerciseId);
 
-    SqlExercise exercise = scenario.getExercise(exerciseType, exerciseId);
+    SqlExercise exercise = SqlExercise.finder.byId(exerciseKey);
 
     String text = exerciseNode.get("text").asText();
 
