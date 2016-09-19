@@ -137,8 +137,8 @@ create table sql_exercise (
   scenario_name                 varchar(255) not null,
   text                          text,
   samples                       text,
-  validation                    varchar(255),
   tablename                     varchar(255),
+  validation                    varchar(255),
   constraint ck_sql_exercise_querytype check (querytype in ('SELECT','CREATE','UPDATE','DELETE','INSERT')),
   constraint pk_sql_exercise primary key (id,scenario_name)
 );

@@ -1,10 +1,12 @@
-package model.exercise;
+package model.exercise.update;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
-import model.queryCorrectors.DeleteCorrector;
+import model.exercise.SqlExercise;
+import model.exercise.SqlExerciseKey;
 import model.queryCorrectors.QueryCorrector;
+import model.queryCorrectors.update.DeleteCorrector;
 import net.sf.jsqlparser.statement.delete.Delete;
 
 @Entity

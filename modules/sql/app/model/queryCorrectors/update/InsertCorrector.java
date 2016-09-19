@@ -1,9 +1,10 @@
-package model.queryCorrectors;
+package model.queryCorrectors.update;
 
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,17 +17,19 @@ import model.exercise.EvaluationFailed;
 import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.Success;
-import model.exercise.UpdateExercise;
+import model.exercise.update.InsertExercise;
+import model.queryCorrectors.QueryCorrector;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.statement.update.Update;
+import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.statement.insert.Insert;
 import play.Logger;
 import play.db.Database;
 
-public class UpdateCorrector extends QueryCorrector<Update, Update, UpdateExercise> {
+public class InsertCorrector extends QueryCorrector<Insert, Insert, InsertExercise> {
 
   @Override
-  protected List<EvaluationResult> compareStatically(Update userQuery, Update sampleQuery,
+  protected List<EvaluationResult> compareStatically(Insert userQuery, Insert sampleQuery,
       FeedbackLevel feedbackLevel) {
     Success success = Success.COMPLETE;
 
@@ -44,13 +47,12 @@ public class UpdateCorrector extends QueryCorrector<Update, Update, UpdateExerci
   }
 
   @Override
-  protected EvaluationResult executeQuery(Database database, Update userStatement, Update sampleStatement,
-      UpdateExercise exercise, FeedbackLevel feedbackLevel) {
-
+  protected EvaluationResult executeQuery(Database database, Insert userStatement, Insert sampleStatement,
+      InsertExercise exercise, FeedbackLevel feedbackLevel) {
     try {
       Connection connection = database.getConnection();
       connection.setAutoCommit(false);
-      
+
       createDatabaseIfNotExists(connection, exercise.scenario.shortName,
           Paths.get("conf", "resources", exercise.scenario.scriptFile));
 
@@ -76,24 +78,26 @@ public class UpdateCorrector extends QueryCorrector<Update, Update, UpdateExerci
   }
 
   @Override
-  protected List<String> getColumns(Update statement) {
-    return statement.getColumns().stream().map(col -> col.getColumnName()).collect(Collectors.toList());
+  protected List<String> getColumns(Insert statement) {
+    List<Column> columns = statement.getColumns();
+    if(columns == null)
+      return Collections.emptyList();
+    return columns.stream().map(column -> column.getColumnName()).collect(Collectors.toList());
   }
 
   @Override
-  protected List<String> getTables(Update statement) {
-    return statement.getTables().stream().map(table -> table.getName()).collect(Collectors.toList());
+  protected List<String> getTables(Insert userQuery) {
+    return Arrays.asList(userQuery.getTable().getName());
   }
 
   @Override
-  protected Update parseStatement(String statement) throws SqlCorrectionException {
+  protected Insert parseStatement(String statement) throws SqlCorrectionException {
     try {
-      return (Update) CCJSqlParserUtil.parse(statement);
+      return (Insert) CCJSqlParserUtil.parse(statement);
     } catch (JSQLParserException e) {
       throw new SqlCorrectionException("Es gab einen Fehler beim Parsen des folgenden Statements: " + statement);
     } catch (ClassCastException e) {
-      throw new SqlCorrectionException("Das Statement war vom falschen Typ! Erwartet wurde UPDATE!");
+      throw new SqlCorrectionException("Das Statement war vom falschen Typ! Erwartet wurde INSERT!");
     }
   }
-
 }

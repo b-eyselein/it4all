@@ -1,4 +1,4 @@
-package model.queryCorrectors;
+package model.queryCorrectors.update;
 
 import java.nio.file.Paths;
 import java.sql.Connection;
@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import model.SqlCorrectionException;
 import model.SqlQueryResult;
@@ -16,19 +15,19 @@ import model.correctionResult.TableComparison;
 import model.exercise.EvaluationFailed;
 import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
-import model.exercise.InsertExercise;
 import model.exercise.Success;
+import model.exercise.update.DeleteExercise;
+import model.queryCorrectors.QueryCorrector;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.schema.Column;
-import net.sf.jsqlparser.statement.insert.Insert;
+import net.sf.jsqlparser.statement.delete.Delete;
 import play.Logger;
 import play.db.Database;
 
-public class InsertCorrector extends QueryCorrector<Insert, Insert, InsertExercise> {
-
+public class DeleteCorrector extends QueryCorrector<Delete, Delete, DeleteExercise> {
+  
   @Override
-  protected List<EvaluationResult> compareStatically(Insert userQuery, Insert sampleQuery,
+  protected List<EvaluationResult> compareStatically(Delete userQuery, Delete sampleQuery,
       FeedbackLevel feedbackLevel) {
     Success success = Success.COMPLETE;
 
@@ -46,8 +45,8 @@ public class InsertCorrector extends QueryCorrector<Insert, Insert, InsertExerci
   }
 
   @Override
-  protected EvaluationResult executeQuery(Database database, Insert userStatement, Insert sampleStatement,
-      InsertExercise exercise, FeedbackLevel feedbackLevel) {
+  protected EvaluationResult executeQuery(Database database, Delete userStatement, Delete sampleStatement,
+      DeleteExercise exercise, FeedbackLevel feedbackLevel) {
     try {
       Connection connection = database.getConnection();
       connection.setAutoCommit(false);
@@ -77,26 +76,23 @@ public class InsertCorrector extends QueryCorrector<Insert, Insert, InsertExerci
   }
 
   @Override
-  protected List<String> getColumns(Insert statement) {
-    List<Column> columns = statement.getColumns();
-    if(columns == null)
-      return Collections.emptyList();
-    return columns.stream().map(column -> column.getColumnName()).collect(Collectors.toList());
+  protected List<String> getColumns(Delete statement) {
+    return Collections.emptyList();
   }
 
   @Override
-  protected List<String> getTables(Insert userQuery) {
+  protected List<String> getTables(Delete userQuery) {
     return Arrays.asList(userQuery.getTable().getName());
   }
 
   @Override
-  protected Insert parseStatement(String statement) throws SqlCorrectionException {
+  protected Delete parseStatement(String statement) throws SqlCorrectionException {
     try {
-      return (Insert) CCJSqlParserUtil.parse(statement);
+      return (Delete) CCJSqlParserUtil.parse(statement);
     } catch (JSQLParserException e) {
       throw new SqlCorrectionException("Es gab einen Fehler beim Parsen des folgenden Statements: " + statement);
     } catch (ClassCastException e) {
-      throw new SqlCorrectionException("Das Statement war vom falschen Typ! Erwartet wurde INSERT!");
+      throw new SqlCorrectionException("Das Statement war vom falschen Typ! Erwartet wurde DELETE!");
     }
   }
 }

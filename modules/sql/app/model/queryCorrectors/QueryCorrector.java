@@ -50,7 +50,7 @@ public abstract class QueryCorrector<QueryType extends Statement, ComparedType, 
       parsedUserStatement = parseStatement(userStatement);
       parsedSampleStatement = parseStatement(sampleStatement);
     } catch (SqlCorrectionException e) {
-      return Arrays.asList(new EvaluationFailed(e.getMessage()));
+      return Arrays.asList(new EvaluationFailed(e.getMessage(), e.getCauseMessage()));
     }
     
     List<EvaluationResult> ret = new LinkedList<>();

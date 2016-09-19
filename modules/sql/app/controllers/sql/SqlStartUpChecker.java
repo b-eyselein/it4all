@@ -18,13 +18,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import model.ScriptRunner;
 import model.exercise.CreateExercise;
-import model.exercise.DeleteExercise;
-import model.exercise.InsertExercise;
 import model.exercise.SelectExercise;
 import model.exercise.SqlExercise;
 import model.exercise.SqlExerciseKey;
 import model.exercise.SqlScenario;
-import model.exercise.UpdateExercise;
+import model.exercise.update.DeleteExercise;
+import model.exercise.update.InsertExercise;
+import model.exercise.update.UpdateExercise;
 import play.Logger;
 import play.db.Database;
 import play.db.NamedDatabase;

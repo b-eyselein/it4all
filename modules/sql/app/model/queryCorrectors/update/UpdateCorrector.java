@@ -1,32 +1,33 @@
-package model.queryCorrectors;
+package model.queryCorrectors.update;
 
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import model.SqlCorrectionException;
 import model.SqlQueryResult;
 import model.correctionResult.ColumnComparison;
 import model.correctionResult.SqlExecutionResult;
 import model.correctionResult.TableComparison;
-import model.exercise.DeleteExercise;
 import model.exercise.EvaluationFailed;
 import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.Success;
+import model.exercise.update.UpdateExercise;
+import model.queryCorrectors.QueryCorrector;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.statement.delete.Delete;
+import net.sf.jsqlparser.statement.update.Update;
 import play.Logger;
 import play.db.Database;
 
-public class DeleteCorrector extends QueryCorrector<Delete, Delete, DeleteExercise> {
-  
+public class UpdateCorrector extends QueryCorrector<Update, Update, UpdateExercise> {
+
   @Override
-  protected List<EvaluationResult> compareStatically(Delete userQuery, Delete sampleQuery,
+  protected List<EvaluationResult> compareStatically(Update userQuery, Update sampleQuery,
       FeedbackLevel feedbackLevel) {
     Success success = Success.COMPLETE;
 
@@ -44,12 +45,13 @@ public class DeleteCorrector extends QueryCorrector<Delete, Delete, DeleteExerci
   }
 
   @Override
-  protected EvaluationResult executeQuery(Database database, Delete userStatement, Delete sampleStatement,
-      DeleteExercise exercise, FeedbackLevel feedbackLevel) {
+  protected EvaluationResult executeQuery(Database database, Update userStatement, Update sampleStatement,
+      UpdateExercise exercise, FeedbackLevel feedbackLevel) {
+
     try {
       Connection connection = database.getConnection();
       connection.setAutoCommit(false);
-
+      
       createDatabaseIfNotExists(connection, exercise.scenario.shortName,
           Paths.get("conf", "resources", exercise.scenario.scriptFile));
 
@@ -75,23 +77,24 @@ public class DeleteCorrector extends QueryCorrector<Delete, Delete, DeleteExerci
   }
 
   @Override
-  protected List<String> getColumns(Delete statement) {
-    return Collections.emptyList();
+  protected List<String> getColumns(Update statement) {
+    return statement.getColumns().stream().map(col -> col.getColumnName()).collect(Collectors.toList());
   }
 
   @Override
-  protected List<String> getTables(Delete userQuery) {
-    return Arrays.asList(userQuery.getTable().getName());
+  protected List<String> getTables(Update statement) {
+    return statement.getTables().stream().map(table -> table.getName()).collect(Collectors.toList());
   }
 
   @Override
-  protected Delete parseStatement(String statement) throws SqlCorrectionException {
+  protected Update parseStatement(String statement) throws SqlCorrectionException {
     try {
-      return (Delete) CCJSqlParserUtil.parse(statement);
+      return (Update) CCJSqlParserUtil.parse(statement);
     } catch (JSQLParserException e) {
       throw new SqlCorrectionException("Es gab einen Fehler beim Parsen des folgenden Statements: " + statement);
     } catch (ClassCastException e) {
-      throw new SqlCorrectionException("Das Statement war vom falschen Typ! Erwartet wurde DELETE!");
+      throw new SqlCorrectionException("Das Statement war vom falschen Typ! Erwartet wurde UPDATE!");
     }
   }
+
 }

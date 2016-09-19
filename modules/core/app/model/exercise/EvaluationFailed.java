@@ -1,17 +1,23 @@
 package model.exercise;
 
-public class EvaluationFailed extends EvaluationResult {
-  
-  private String message;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
-  public EvaluationFailed(String theMessage) {
+public class EvaluationFailed extends EvaluationResult {
+
+  private List<String> messages = new LinkedList<>();
+
+  public EvaluationFailed(String... aMessage) {
     super(Success.NONE);
-    message = theMessage;
+    for(String message: aMessage)
+      messages.add(message);
   }
 
   @Override
   public String getAsHtml() {
-    return "<div class=\"alert alert-danger\">" + message + "</div>";
+    return "<div class=\"alert alert-danger\">"
+        + messages.stream().collect(Collectors.joining("</p><p>", "<p>", "</p>")) + "</div>";
   }
-  
+
 }
