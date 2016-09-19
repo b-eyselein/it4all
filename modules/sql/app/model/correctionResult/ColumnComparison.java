@@ -20,11 +20,11 @@ public class ColumnComparison extends EvaluationResult {
   @Override
   public String getAsHtml() {
     String ret = "<div class=\"panel panel-" + getBSClass() + "\">";
-    ret += "<div class=\"panel-heading\">Vergleich der ausgegebenen Spalten</div>";
+    ret += "<div class=\"panel-heading\">Vergleich der Spalten</div>";
 
     ret += "<div class=\"panel-body\">";
     if(success == Success.COMPLETE) {
-      ret += "<p><span class=\"glyphicon glyphicon-ok\"></span> Es wurden die richtigen Spalten ausgegeben.</p>";
+      ret += "<p><span class=\"glyphicon glyphicon-ok\"></span> Es wurden die richtigen Spalten benutzt.</p>";
     } else {
       if(!missingColumns.isEmpty())
         ret += "<p>Es fehlen folgende Spalten:<ul><li>" + String.join("</li><li>", missingColumns) + "</li></ul></p>";

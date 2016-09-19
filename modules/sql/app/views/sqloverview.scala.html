@@ -11,7 +11,7 @@
     <div class="panel-body">
 
       <div class="panel-group" id="accordion">
-        @for(sqlExType <- scenario.getExerciseTypes()) {
+        @for(sqlExType <- model.exercise.SqlExerciseType.values()) {
         <div class="panel panel-default">
           <div class="panel-heading">
             <h4 class="panel-title">
@@ -27,7 +27,7 @@
             <ul class="list-group">
               @for(ex <- scenario.getExercisesByType(sqlExType)) {
               <li class="list-group-item">
-                <a href="@controllers.sql.routes.SQL.exercise(ex.key.scenarioName, ex.querytype, ex.key.id)" class="list-group-item">
+                <a href="@controllers.sql.routes.SQL.exercise(ex.key.scenarioName, ex.querytype.toString, ex.key.id)" class="list-group-item">
                   Aufgabe @ex.key.id: @ex.text
                 </a>
               </li>

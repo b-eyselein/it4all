@@ -1,6 +1,5 @@
 package model.exercise;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,12 +25,8 @@ public class SqlScenario extends Model {
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "scenario")
   public List<SqlExercise> exercises;
   
-  public List<? extends SqlExercise> getExercisesByType(String type) {
+  public List<? extends SqlExercise> getExercisesByType(SqlExerciseType type) {
     return exercises.parallelStream().filter(ex -> ex.querytype.equals(type)).collect(Collectors.toList());
-  }
-  
-  public List<String> getExerciseTypes() {
-    return Arrays.asList("SELECT", "CREATE", "UPDATE", "DELETE", "INSERT");
   }
   
 }

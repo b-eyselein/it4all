@@ -1,5 +1,6 @@
 package model.queryCorrectors;
 
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -23,7 +24,7 @@ import play.Logger;
 import play.db.Database;
 
 public class DeleteCorrector extends QueryCorrector<Delete, Delete, DeleteExercise> {
-
+  
   @Override
   protected List<EvaluationResult> compareStatically(Delete userQuery, Delete sampleQuery,
       FeedbackLevel feedbackLevel) {
@@ -49,14 +50,8 @@ public class DeleteCorrector extends QueryCorrector<Delete, Delete, DeleteExerci
       Connection connection = database.getConnection();
       connection.setAutoCommit(false);
 
-      // FIXME: Create database?
-      // Path script = Paths.get("conf", "resources",
-      // exercise.scenario.scriptFile);
-      // List<String> lines = Files.readAllLines(script);
-      // connection.createStatement().executeUpdate("CREATE DATABASE IF NOT
-      // EXISTS " + exercise.scenario.shortName);
-      // connection.setCatalog(exercise.scenario.shortName);
-      // ScriptRunner.runScript(connection, lines, false, true);
+      createDatabaseIfNotExists(connection, exercise.scenario.shortName,
+          Paths.get("conf", "resources", exercise.scenario.scriptFile));
 
       connection.createStatement().executeUpdate(userStatement.toString());
       SqlQueryResult userResult = new SqlQueryResult(connection.createStatement().executeQuery(exercise.validation));
