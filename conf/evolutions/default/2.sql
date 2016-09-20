@@ -119,21 +119,12 @@ delete from conditions;
 
 delete from js_web_exercise;
 
-delete from js_test;
-
-delete from js_exercise;
 
 delete from childtask;
 
 delete from css_task;
 
 delete from html_task;
-
-delete from xmlexercise;
-
-delete from sql_exercise;
-
-delete from sql_scenario;
 
 delete from exercise;
 
