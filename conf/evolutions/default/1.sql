@@ -94,11 +94,11 @@ create table js_exercise (
 );
 
 create table js_test (
-  id                            integer auto_increment not null,
-  exercise_id                   integer,
+  exercise_id                   integer not null,
+  test_id                       integer not null,
   inputs                        text,
   output                        varchar(255),
-  constraint pk_js_test primary key (id)
+  constraint pk_js_test primary key (exercise_id,test_id)
 );
 
 create table js_web_exercise (

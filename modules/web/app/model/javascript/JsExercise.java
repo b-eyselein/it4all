@@ -48,6 +48,10 @@ public class JsExercise extends Model {
   @JsonManagedReference
   public List<JsTest> functionTests;
 
+  public JsExercise(int theId) {
+    id = theId;
+  }
+
   public List<JsDataType> getInputTypes() {
     return Arrays.stream(inputtypes.split("#")).map(t -> JsDataType.valueOf(t)).collect(Collectors.toList());
   }
