@@ -97,7 +97,6 @@ create table js_test (
   id                            integer auto_increment not null,
   exercise_id                   integer,
   inputs                        text,
-  datatypes                     text,
   output                        varchar(255),
   constraint pk_js_test primary key (id)
 );

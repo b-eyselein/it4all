@@ -96,14 +96,14 @@ insert into js_exercise (`id`, `title`, `text`, `declaration`, `functionname`, `
 	2,
 	'NUMBER');
 
-insert into js_test (`id`, `exercise_id`, `inputs`, `datatypes`, `output`) values
-	(1, 1, '1#1', 'number#number', 2),
-	(2, 1, '1#2', 'number#number', 3),
-	(3, 1, '44#43', 'number#number', 87),
-	(4, 1, '555.0#42', 'number#number', 597.0),
-	(5, 2, 'Hallo #Welt#!', 'string#string', 'Hallo Welt!'),
-	(6, 2, 'Test#Test#Test', 'string#string', 'TestTestTest'),
-	(7, 3, '12#4', 'number#number', 4);
+insert into js_test (`id`, `exercise_id`, `inputs`, `output`) values
+	(1, 1, '1#1', 2),
+	(2, 1, '1#2', 3),
+	(3, 1, '44#43', 87),
+	(4, 1, '555.0#42', 597.0),
+	(5, 2, 'Hallo #Welt#!', 'Hallo Welt!'),
+	(6, 2, 'Test#Test#Test', 'TestTestTest'),
+	(7, 3, '12#4', 4);
 
 insert into js_web_exercise (`id`, `title`, `text`, `anterior`, `posterior`, `declaration`) values
 	(1,
