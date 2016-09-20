@@ -1,0 +1,41 @@
+{
+	"1": {
+		"title": "Summen",
+		"text": "Implementieren Sie folgende Funktion <code>sum(a, b)</code>, die zwei Zahlen entegennimmt und deren Summe zurückgibt.",
+		"declaration": "function sum(a, b) {\n  return 0;\n}",
+		"functionname": "sum",
+		"samplesolution": "function sum(a, b) {\n return a + b;\n}",
+		"inputtypes": "NUMBER#NUMBER",
+		"inputcount": 2,
+		"returntype": "NUMBER",
+		"tests": [
+			{
+				"input": [
+					1,
+					1
+				],
+				"output": 2
+			}
+		]
+	},
+	"2": {
+		"title": "Konkatenation von Strings",
+		"text": "Implementieren Sie die folgende Funktion <code>concat(str1, str2, str3)</code>, die drei beliebige Strings entgegennimmt und die Konkatenation der Strings zurückgibt.",
+		"declaration": "function concat(str1, str2, str3) {\n return \"\";\n}",
+		"functionname": "concat",
+		"samplesolution": "function concat(str1, str2, str3) {\n  return str1 + str2 + str3;;\n}",
+		"inputtypes": "STRING#STRING#STRING",
+		"inputcount": 3,
+		"returntype": "STRING"
+	},
+	"3": {
+		"title": "Größter gemeinsamer Teiler",
+		"text": "Implementieren Sie die folgende Funktion <code>ggt(a, b)</code>, die den größten gemeinsamen Teiler zweier Zahlen berechnet!",
+		"declaration": "'function ggt(a, b) {\n  return 0;\n}",
+		"functionname": "ggt",
+		"samplesolution": "function ggt(a, b) {\n  while(b != 0) {\n    var h = a % b;\n    a = b;\n    b = h;\n  }\n  return a;\n}",
+		"inputtypes": "NUMBER#NUMBER",
+		"inputcount": 2,
+		"returntype": "NUMBER"
+	}
+}
