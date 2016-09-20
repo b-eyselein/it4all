@@ -29,7 +29,7 @@
 			"4": {
 				"text": "Erstellen Sie das CREATE TABLE-Skript für die Tabelle Employee!",
 				"sampleSolutions": [
-					"CREATE TABLE Employee (employeeOID VARCHAR(20) PRIMARY KEY, firstname VARCHAR(50), lastname VARCHAR(50), username VARCHAR(20), chefOID VARCHAR(20), FOREIGN KEY (chefOID) REFERENCES Employee(employeeOID));"
+					"CREATE TABLE Employee (employeeOID INT PRIMARY KEY, firstname VARCHAR(50), lastname VARCHAR(50), username VARCHAR(20), chefOID VARCHAR(20), FOREIGN KEY (chefOID) REFERENCES Employee(employeeOID));"
 				]
 			}
 		},
