@@ -11,6 +11,9 @@ GET    /               controllers.Application.index()
 # User
 GET    /user           controllers.UserController.index()
 
+# Python Test
+GET    /python         controllers.Application.pythonTest()
+
 # Binary and Boolean
 ->     /binary         binary.Routes
 

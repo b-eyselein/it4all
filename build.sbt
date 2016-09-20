@@ -46,7 +46,10 @@ libraryDependencies ++= Seq(
 
   Common.mysqlDependency,
 
-  Common.mockitoDep
+  Common.mockitoDep,
+  
+  // Test Jython
+  "org.python" % "jython-standalone" % "2.7.0"
 
 )
 
