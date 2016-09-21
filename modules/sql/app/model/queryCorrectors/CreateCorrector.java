@@ -1,20 +1,19 @@
 package model.queryCorrectors;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import model.SqlCorrectionException;
 import model.correctionResult.create.ColumnDefinitionResult;
 import model.correctionResult.create.CreateResult;
 import model.exercise.CreateExercise;
-import model.exercise.EvaluationFailed;
 import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
+import model.exercise.GenericEvaluationResult;
 import model.exercise.Success;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
@@ -45,78 +44,55 @@ public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable, Cr
           return new ColumnDefinitionResult(Success.PARTIALLY, datatypeName, "Argument des Datentyps ("
               + userArgs.get(i) + ") ist nicht korrekt, erwartet wurde: (" + sampleArgs.get(i) + ")!");
     }
-    
+
     return new ColumnDefinitionResult(Success.COMPLETE, datatypeName, "Datentyp richtig spezifiziert.");
   }
 
-  private static ColumnDefinitionResult compareColumnDefinition(String datatypeName, ColumnDefinition userDef,
-      ColumnDefinition sampleDef) {
-    Logger.debug("Comparing defined columns " + userDef.getColumnName() + " :: " + sampleDef.getColumnName());
-
-    ColumnDefinitionResult datatypeComparison = compareColumnDataType(datatypeName, userDef.getColDataType(),
+  private static ColumnDefinitionResult compareColumnDefinition(ColumnDefinition userDef, ColumnDefinition sampleDef) {
+    ColumnDefinitionResult datatypeComparison = compareColumnDataType(userDef.getColumnName(), userDef.getColDataType(),
         sampleDef.getColDataType());
-    Logger.debug("\tDatatype comparison: " + datatypeComparison.getAsHtml());
-    return datatypeComparison;
-  }
 
-  private static Optional<ColumnDefinition> getColumnDef(List<ColumnDefinition> columnDefinitions, String columnName) {
-    return columnDefinitions.stream().filter(def -> def.getColumnName().equals(columnName)).findFirst();
+    // FIXME: compare columnspecstrings!
+    Logger.debug("ColumnSpecString for column " + userDef.getColumnName() + " :: " + userDef.getColumnSpecStrings());
+    return datatypeComparison;
   }
 
   @Override
   protected List<EvaluationResult> compareStatically(CreateTable userStatement, CreateTable sampleStatement,
       FeedbackLevel feedbackLevel) {
-
     List<ColumnDefinition> userDefs = userStatement.getColumnDefinitions();
     List<ColumnDefinition> sampleDefs = sampleStatement.getColumnDefinitions();
 
-    List<String> userDefColumns = getColumns(userStatement);
-    List<String> sampleDefColumns = getColumns(sampleStatement);
+    List<ColumnDefinitionResult> columnResults = new LinkedList<>();
 
-    List<String> missingColumns = listDifference(sampleDefColumns, userDefColumns);
-    List<String> unneccessaryColumns = listDifference(userDefColumns, sampleDefColumns);
-    List<String> definedColumns = listDifference(sampleDefColumns, missingColumns);
+    for(final Iterator<ColumnDefinition> userIter = userDefs.iterator(); userIter.hasNext();) {
+      ColumnDefinition userDef = userIter.next();
+      for(Iterator<ColumnDefinition> sampleIter = sampleDefs.iterator(); sampleIter.hasNext();) {
+        ColumnDefinition sampleDef = sampleIter.next();
+        if(userDef.getColumnName().equals(sampleDef.getColumnName())) {
+          columnResults.add(compareColumnDefinition(userDef, sampleDef));
+          userIter.remove();
+          sampleIter.remove();
+        }
+      }
+    }
 
-    List<ColumnDefinitionResult> columnResults = new ArrayList<>(definedColumns.size());
-
-    definedColumns.forEach(defCol -> {
-      Optional<ColumnDefinition> userDef = getColumnDef(userDefs, defCol);
-      Optional<ColumnDefinition> sampleDef = getColumnDef(sampleDefs, defCol);
-
-      if(userDef.isPresent() && sampleDef.isPresent())
-        columnResults.add(compareColumnDefinition(defCol, userDef.get(), sampleDef.get()));
-    });
-
-    // TODO Auto-generated method stub
-    return Arrays.asList(new CreateResult(columnResults, missingColumns, unneccessaryColumns));
+    // Remaining sampleDefs are missing, remaining userDefs are wrong
+    List<String> missingColumns = sampleDefs.stream().map(def -> def.getColumnName()).collect(Collectors.toList());
+    List<String> wrongColumns = userDefs.stream().map(def -> def.getColumnName()).collect(Collectors.toList());
+    return Arrays.asList(new CreateResult(columnResults, missingColumns, wrongColumns));
   }
 
   @Override
   protected EvaluationResult executeQuery(Database database, CreateTable parsedStatement,
       CreateTable parsedSampleStatement, CreateExercise exercise, FeedbackLevel feedbackLevel) {
-    try(Connection connection = database.getConnection()) {
-      connection.setCatalog(exercise.scenario.shortName);
-
-      // ResultSet resultSet = connection.createStatement().executeQuery("SHOW
-      // FIELDS FROM " + "Employee"); // exercise.tablename);
-      // ResultSetMetaData rsmd = resultSet.getMetaData();
-      // while(resultSet.next()) {
-      // for(int i = 1; i <= rsmd.getColumnCount(); i++) {
-      // System.out.print(resultSet.getString(i) + "\t\t");
-      // }
-      // System.out.println();
-      // }
-      connection.close();
-    } catch (SQLException e) {
-      Logger.error("Failure:", e);
-    }
-    return new EvaluationFailed("NOT YET IMPLEMENTED!");
+    // DO NOT EXECUTE QUERY!
+    return new GenericEvaluationResult(Success.COMPLETE, "Create-Statements werden nicht ausgeführt.");
   }
 
   @Override
   protected List<String> getColumns(CreateTable statement) {
-    return statement.getColumnDefinitions().stream().map(userDef -> userDef.getColumnName())
-        .collect(Collectors.toList());
+    return Collections.emptyList();
   }
 
   @Override
