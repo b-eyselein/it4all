@@ -48,7 +48,7 @@
 		"id": 3, 
 		"title": "Größter gemeinsamer Teiler", 
 		"text": "Implementieren Sie die folgende Funktion <code>ggt(a, b)</code>, die den größten gemeinsamen Teiler zweier Zahlen berechnet!", 
-		"declaration": "'function ggt(a, b) {\n  return 0;\n}", 
+		"declaration": "function ggt(a, b) {\n  return 0;\n}", 
 		"functionname": "ggt", 
 		"samplesolution": "function ggt(a, b) {\n  while(b != 0) {\n    var h = a % b;\n    a = b;\n    b = h;\n  }\n  return a;\n}", 
 		"inputtypes": "NUMBER#NUMBER", 

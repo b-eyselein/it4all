@@ -68,7 +68,7 @@ insert into css_task (`task_id`, `exercise_id`, `taskdesc`, `xpath_query_name`, 
 insert into js_web_exercise (`id`, `title`, `text`, `anterior`, `posterior`, `declaration`) values
 	(1,
 	'Klickzähler',
-	'Implementieren Sie die folgende Funktion <code>count()</code>, die aufgerufen wird, wenn auf den Knopf gedrückt wird. Sie soll den folgenden Text mit der id \"theText\" beim ersten Drücken ausblenden und beim erneuten Drücken wieder einblenden!',
+	'Implementieren Sie die folgende Funktion <code>count()</code>, die aufgerufen wird, wenn auf den Knopf gedrückt wird. Sie soll den Text aus dem Element mit der id \"counter\" auslesen und um 1 erhöhen!',
 	'<!DOCTYPE html>\n<html>\n<head>\n  <title>Aufgabe</title>\n  <script type=\"text/javascript\">',
 	'  </script>\n</head>\n\n<body>\n  <h3>Erhöhen Sie den Counter um 1, wenn der Button gedrückt wird!</h3>\n  <input type=\"button\" onclick=\"count()\" value=\"Push me!\">\n  <p>Count: <span id=\"counter\">0</span></p>\n</body>\n<html>',
 	'function count() {\n  \n}'),
