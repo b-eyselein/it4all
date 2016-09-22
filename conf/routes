@@ -12,7 +12,7 @@ GET    /               controllers.Application.index()
 GET    /user           controllers.UserController.index()
 
 # Python Test
-GET    /python         controllers.Application.pythonTest()
+->     /python         python.Routes
 
 # Binary and Boolean
 ->     /binary         binary.Routes

@@ -1,0 +1,31 @@
+@(user: model.user.User)
+
+@main("Python Test", user) {
+<script src="@controllers.routes.Assets.versioned("javascripts/ace/ace.js")"></script>
+<script src="@controllers.routes.Assets.versioned("javascripts/pythonProcessor.js")"></script>
+
+<script>
+function testSolution() {
+  testTheSolution("@controllers.python.routes.Python.commit()");
+}
+</script>
+
+
+
+<div class="container">
+
+  <div>
+    <input type="button" onclick="testSolution()" value="L&ouml;sung testen">
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      @editor("for i in range(7, 23):\n\tprint(i)", "python", 25, 45, false)
+    </div>
+    
+    <div class="col-md-6">
+      <pre id="resultPre">Todo: Ergebnisse</pre>
+    </div>
+  </div>
+</div>
+}

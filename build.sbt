@@ -4,12 +4,12 @@ Common.settings
 
 lazy val root = (project in file("."))
 	.enablePlugins(PlayJava, PlayEbean)
-	.aggregate(binary, mindmap, spread, sql, web, xml, uml)
-	.dependsOn(binary, mindmap, spread, sql, web, xml, uml, core)
+	.aggregate(binary, mindmap, spread, sql, web, xml, python, uml)
+	.dependsOn(binary, mindmap, spread, sql, web, xml, python, uml, core)
 
 lazy val core: Project = (project in file("modules/core"))
 	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
-	.settings(aggregateReverseRoutes := Seq(binary, mindmap, spread, sql, web, xml, root))
+	.settings(aggregateReverseRoutes := Seq(binary, mindmap, spread, sql, web, python, xml, root))
 
 lazy val web = (project in file("modules/web"))
 	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
@@ -34,7 +34,11 @@ lazy val binary = (project in file("modules/binary"))
 lazy val mindmap = (project in file("modules/mindmap"))
 	.enablePlugins(PlayJava)
 	.dependsOn(core)
-	
+
+lazy val python = (project in file("modules/python"))
+	.enablePlugins(PlayJava)
+	.dependsOn(core)
+
 lazy val uml = (project in file("modules/uml"))
 	.enablePlugins(PlayJava)
 	.dependsOn(core)
@@ -43,14 +47,7 @@ lazy val uml = (project in file("modules/uml"))
 libraryDependencies ++= Seq(
   javaJdbc,
   cache,
-
-  Common.mysqlDependency,
-
-  Common.mockitoDep,
-  
-  // Test Jython
-  "org.python" % "jython-standalone" % "2.7.0"
-
+  Common.mysqlDependency
 )
 
 // Injected for non-static Routes
