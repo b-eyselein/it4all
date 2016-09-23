@@ -18,7 +18,6 @@ import model.correctionResult.TableComparison;
 import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.SelectExercise;
-import model.exercise.Success;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Table;
@@ -29,73 +28,71 @@ import play.db.Database;
 
 @Singleton
 public class SelectCorrector extends QueryCorrector<Select, PlainSelect, SelectExercise> {
-
+  
   @Override
   protected List<EvaluationResult> compareStatically(Select parsedUserStatement, Select parsedSampleStatement,
       FeedbackLevel feedbackLevel) {
-    Success success = Success.COMPLETE;
-
+    
     PlainSelect plainUserSelect = (PlainSelect) parsedUserStatement.getSelectBody();
     PlainSelect plainSampleSelect = (PlainSelect) parsedSampleStatement.getSelectBody();
-
+    
     TableComparison tableComparison = compareTables(plainUserSelect, plainSampleSelect);
-
+    
     ColumnComparison columnComparison = compareColumns(plainUserSelect, plainSampleSelect);
-
-    // FIXME: compare where conditions!
-
-    success = minimum(tableComparison.getSuccess(), columnComparison.getSuccess(), success);
-
-    return Arrays.asList(tableComparison, columnComparison);
+    
+    WhereCorrector whereCorrector = new WhereCorrector();
+    EvaluationResult whereComparison = whereCorrector.correct(plainUserSelect.getWhere(), plainSampleSelect.getWhere());
+    
+    return Arrays.asList(tableComparison, columnComparison, whereComparison);
   }
-
+  
   @Override
   protected EvaluationResult executeQuery(Database database, Select userStatement, Select sampleStatement,
       SelectExercise exercise, FeedbackLevel feedbackLevel) {
     SqlQueryResult userResult = null, sampleResult = null;
-
+    
     try {
       Connection conn = database.getConnection();
       conn.setCatalog(exercise.scenario.shortName);
-
+      
       ResultSet userResultSet = conn.createStatement().executeQuery(userStatement.toString());
       userResult = new SqlQueryResult(userResultSet);
-
+      
       ResultSet sampleResultSet = conn.createStatement().executeQuery(sampleStatement.toString());
       sampleResult = new SqlQueryResult(sampleResultSet);
-
+      
       conn.close();
     } catch (SQLException e) {
     }
-
+    
     return new SqlExecutionResult(feedbackLevel, userResult, sampleResult);
-
+    
   }
-
+  
   @Override
   protected List<String> getColumns(PlainSelect plainSelect) {
     // FIXME: Why toUpperCase?
     return plainSelect.getSelectItems().stream().map(item -> item.toString().toUpperCase())
         .collect(Collectors.toList());
   }
-
+  
   @Override
   protected List<String> getTables(PlainSelect userQuery) {
     List<String> userFromItems = new LinkedList<>();
-
+    
     // Main table in Query
     if(userQuery.getFromItem() instanceof Table)
       userFromItems.add(((Table) userQuery.getFromItem()).getName());
-
+    
     // All joined tables
     if(userQuery.getJoins() != null)
       for(Join join: userQuery.getJoins())
         if(join.getRightItem() instanceof Table)
           userFromItems.add(((Table) join.getRightItem()).getName());
-
+        
     return userFromItems;
   }
-
+  
   @Override
   protected Select parseStatement(String statement) throws SqlCorrectionException {
     try {
@@ -107,5 +104,5 @@ public class SelectCorrector extends QueryCorrector<Select, PlainSelect, SelectE
       throw new SqlCorrectionException("Das Statement war vom falschen Typ! Erwartet wurde SELECT!");
     }
   }
-
+  
 }

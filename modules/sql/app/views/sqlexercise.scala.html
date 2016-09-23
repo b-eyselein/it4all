@@ -91,7 +91,7 @@ function testSolution() {
         </div>
       </div>
       
-      @editor("", "sql", 10 ,15, false)
+      @editor("select employeeOID\nfrom Employee\nwhere (firstname = 'Max' and lastname like 'Becker') or employeeOID = (0 + 1)", "sql", 10 ,15, false)
     </div>
     <div class="col-md-8">
       <div id="resultPanel" class="panel panel-default">

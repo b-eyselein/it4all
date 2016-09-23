@@ -47,11 +47,11 @@ public class UpdateCorrector extends QueryCorrector<Update, Update, UpdateExerci
   @Override
   protected EvaluationResult executeQuery(Database database, Update userStatement, Update sampleStatement,
       UpdateExercise exercise, FeedbackLevel feedbackLevel) {
-
     try {
       Connection connection = database.getConnection();
+      connection.setCatalog(exercise.scenario.shortName);
       connection.setAutoCommit(false);
-      
+
       createDatabaseIfNotExists(connection, exercise.scenario.shortName,
           Paths.get("conf", "resources", exercise.scenario.scriptFile));
 

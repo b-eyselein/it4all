@@ -1,63 +1,46 @@
 {
-	"shortName": "employee",
-	"longName": "Angestellte",
-	"scriptFile": "employee.sql",
+	"shortName": "employee", 
+	"longName": "Angestellte", 
+	"scriptFile": "employee.sql", 
 	"exercises": {
 		"SELECT": {
 			"1": {
-				"text": "Wie viele Angestellte hat die Firma? Benennen Sie das Ergebnis als 'Anzahl'",
-				"sampleSolutions": [
-					"SELECT COUNT(*) AS Anzahl FROM Employee",
-					"SELECT COUNT(employeeOID) AS Anzahl FROM Employee"
-				]
-			},
+				"text": "Wie viele Angestellte hat die Firma? Benennen Sie das Ergebnis als 'Anzahl'", 
+				"sampleSolutions": ["SELECT COUNT(*) AS Anzahl FROM Employee", "SELECT COUNT(employeeOID) AS Anzahl FROM Employee"]
+			}, 
 			"2": {
-				"text": "Welche Angestelltennummer (employeeOID) hat Max Becker?",
-				"sampleSolutions": [
-					"SELECT employeeOID FROM Employee WHERE firstname = \"Max\" AND lastname = \"Becker\"",
-					"SELECT employeeOID FROM Employee WHERE lastname = \"Becker\" AND firstname = \"Max\""
-				]
-			},
+				"text": "Welche Angestelltennummer (employeeOID) hat Max Becker?", 
+				"sampleSolutions": ["SELECT employeeOID FROM Employee WHERE firstname = 'Max' AND lastname = 'Becker'", "SELECT employeeOID FROM Employee WHERE lastname = 'Becker' AND firstname = 'Max'"]
+			}, 
 			"3": {
-				"text": "Welche Emailadresse hat Max Becker für die Arbeit?",
-				"sampleSolutions": [
-					"SELECT emailaddress FROM Employee emp, Emailaddress email WHERE emp.employeeOID = email.employeeOID AND firstname = \"Max\" AND lastname = \"Becker\""
-				]
+				"text": "Welche Emailadresse hat Max Becker für die Arbeit?", 
+				"sampleSolutions": ["SELECT emailaddress FROM Employee emp, Emailaddress email WHERE emp.employeeOID = email.employeeOID AND firstname = 'Max' AND lastname = 'Becker'"]
 			}
-		},
+		}, 
 		"CREATE": {
 			"4": {
-				"text": "Erstellen Sie das CREATE TABLE-Skript für die Tabelle Employee!",
-				"sampleSolutions": [
-					"CREATE TABLE Employee (employeeOID INT PRIMARY KEY, firstname VARCHAR(50), lastname VARCHAR(50), username VARCHAR(20), chefOID VARCHAR(20), FOREIGN KEY (chefOID) REFERENCES Employee(employeeOID));"
-				]
+				"text": "Erstellen Sie das CREATE TABLE-Skript für die Tabelle Employee!", 
+				"sampleSolutions": ["CREATE TABLE Employee (employeeOID INT PRIMARY KEY, firstname VARCHAR(50), lastname VARCHAR(50), username VARCHAR(20), chefOID VARCHAR(20), FOREIGN KEY (chefOID) REFERENCES Employee(employeeOID));"]
 			}
-		},
+		}, 
 		"UPDATE": {
 			"5": {
-				"text": "Der Angestellte mit der OID 8 arbeitet jetzt für den Angestellten mit der OID 3. Aktualisieren Sie die Datenbank!",
-				"sampleSolutions": [
-					"UPDATE Employee SET chefOID = 3 WHERE employeeOID = 8"
-				],
+				"text": "Der Angestellte mit der OID 8 arbeitet jetzt für den Angestellten mit der OID 3. Aktualisieren Sie die Datenbank!", 
+				"sampleSolutions": ["UPDATE Employee SET chefOID = 3 WHERE employeeOID = 8"], 
 				"validation": "SELECT * FROM Employee"
 			}
-		},
+		}, 
 		"DELETE": {
 			"6": {
-				"text": "Der Angestellte mit der OID 7 hat gekündigt. Löschen Sie ihn aus der Angestelltentabelle.",
-				"sampleSolutions": [
-					"DELETE FROM Employee WHERE employeeOID = 7"
-				],
+				"text": "Der Angestellte mit der OID 7 hat gekündigt. Löschen Sie ihn aus der Angestelltentabelle.", 
+				"sampleSolutions": ["DELETE FROM Employee WHERE employeeOID = 7"], 
 				"validation": "SELECT * FROM Employee"
 			}
-		},
+		}, 
 		"INSERT": {
 			"7": {
-				"text": "Es gibt eine neue Angestellte mit Namen Tina Sattler. Diese arbeitet für die Person mit der OID 2 und soll als OID 9 und als Nutzernamen tina_sattler bekommen.",
-				"sampleSolutions": [
-					"INSERT INTO Employee VALUES (9, \"Tina\", \"Sattler\", \"tina_sattler\", 2)",
-					"INSERT INTO Employee (`employeeOID`, `firstname`, `lastname`, `username`, `chefOID`) VALUES (9, \"Tina\", \"Sattler\", \"tina_sattler\", 2)"
-				],
+				"text": "Es gibt eine neue Angestellte mit Namen Tina Sattler. Diese arbeitet für die Person mit der OID 2 und soll als OID 9 und als Nutzernamen tina_sattler bekommen.", 
+				"sampleSolutions": ["INSERT INTO Employee VALUES (9, 'Tina', 'Sattler', 'tina_sattler', 2)", "INSERT INTO Employee (`employeeOID`, `firstname`, `lastname`, `username`, `chefOID`) VALUES (9, 'Tina', 'Sattler', 'tina_sattler', 2)"], 
 				"validation": "SELECT * FROM Employee"
 			}
 		}
