@@ -1,8 +1,10 @@
 package model.queryCorrectors;
 
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
+import model.Matcher;
 import model.exercise.EvaluationFailed;
 import model.exercise.EvaluationResult;
 import net.sf.jsqlparser.expression.AllComparisonExpression;
@@ -64,7 +66,6 @@ import net.sf.jsqlparser.expression.operators.relational.RegExpMatchOperator;
 import net.sf.jsqlparser.expression.operators.relational.RegExpMySQLOperator;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.SubSelect;
-import play.Logger;
 
 public class WhereCorrector implements ExpressionVisitor {
 
@@ -83,11 +84,22 @@ public class WhereCorrector implements ExpressionVisitor {
     userQueryAnalyzed = true;
     userExpression.accept(this);
 
-    Logger.debug(userEquals.toString());
-    Logger.debug(sampleEquals.toString());
+    Comparator<EqualsTo> comparator = new Comparator<EqualsTo>() {
 
-    Logger.debug(userLikes.toString());
-    Logger.debug(sampleLikes.toString());
+      @Override
+      public int compare(EqualsTo arg0, EqualsTo arg1) {
+        // TODO Auto-generated method stub
+        return arg0.getLeftExpression().toString().compareTo(arg1.getLeftExpression().toString());
+      }
+    };
+
+    Matcher<EqualsTo> equalsMatcher = new Matcher<EqualsTo>(userEquals, sampleEquals, comparator);
+
+    // Logger.debug(userEquals.toString());
+    // Logger.debug(sampleEquals.toString());
+    //
+    // Logger.debug(userLikes.toString());
+    // Logger.debug(sampleLikes.toString());
 
     return new EvaluationFailed("WHERE-Comparison has to be implemented first...");
   }
