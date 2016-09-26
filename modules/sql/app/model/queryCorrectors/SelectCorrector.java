@@ -18,6 +18,7 @@ import model.correctionResult.TableComparison;
 import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.SelectExercise;
+import model.queryCorrectors.where.WhereCorrector;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Table;

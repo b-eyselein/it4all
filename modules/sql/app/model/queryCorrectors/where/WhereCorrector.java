@@ -1,11 +1,8 @@
-package model.queryCorrectors;
+package model.queryCorrectors.where;
 
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-import model.Matcher;
-import model.Matcher.Match;
 import model.correctionResult.WhereComparison;
 import model.exercise.EvaluationResult;
 import model.exercise.Success;
@@ -72,41 +69,6 @@ import net.sf.jsqlparser.statement.select.SubSelect;
 
 public class WhereCorrector implements ExpressionVisitor {
   
-  public static class BinaryExpressionComparator implements Comparator<BinaryExpression> {
-    
-    /**
-     * take expression with column as comparison argument, if there is any. if
-     * both are columns, take alphabetically lesser
-     *
-     * @param expression
-     *
-     * @return
-     */
-    private static Expression getColumnToCompare(BinaryExpression expression) {
-      Expression leftExp = expression.getLeftExpression(), rightExp = expression.getRightExpression();
-      
-      if(!(rightExp instanceof Column))
-        return leftExp;
-      
-      if(!(leftExp instanceof Column))
-        return rightExp;
-      
-      // TODO: return alphabetically lesser
-      if(leftExp.toString().compareTo(rightExp.toString()) < 0)
-        return leftExp;
-      else
-        return rightExp;
-    }
-    
-    @Override
-    public int compare(BinaryExpression arg0, BinaryExpression arg1) {
-      String exp0 = getColumnToCompare(arg1).toString();
-      String exp1 = getColumnToCompare(arg1).toString();
-      return exp0.compareTo(exp1);
-    }
-    
-  }
-  
   private boolean userQueryAnalyzed = false;
   
   private List<BinaryExpression> userExpressions = new LinkedList<>();
@@ -117,20 +79,9 @@ public class WhereCorrector implements ExpressionVisitor {
     userQueryAnalyzed = true;
     userExpression.accept(this);
     
-    // @formatter:off
-    Matcher<BinaryExpression> matcher = new Matcher<BinaryExpression>()
-        .firstCollection(userExpressions)
-        .secondCollection(sampleExpressions)
-        .comparator(new BinaryExpressionComparator())
-        .matchedAction((arg1, arg2) -> {
-          // FIXME: compare second columns!?!
-          return new Match<>(arg1, arg2);
-        })
-        .filter(expression -> expression.getLeftExpression() instanceof Column
-            || expression.getRightExpression() instanceof Column)
-        .match();
-    // @formatter:on
-
+    BinaryExpressionMatcher matcher = new BinaryExpressionMatcher(userExpressions, sampleExpressions);
+    matcher.match();
+    
     return new WhereComparison(Success.NONE, matcher);
   }
   
