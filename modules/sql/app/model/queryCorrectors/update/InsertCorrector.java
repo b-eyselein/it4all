@@ -16,10 +16,10 @@ import model.correctionResult.TableComparison;
 import model.exercise.EvaluationFailed;
 import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
-import model.exercise.Success;
 import model.exercise.update.InsertExercise;
 import model.queryCorrectors.QueryCorrector;
 import net.sf.jsqlparser.JSQLParserException;
+import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.insert.Insert;
@@ -31,17 +31,10 @@ public class InsertCorrector extends QueryCorrector<Insert, Insert, InsertExerci
   @Override
   protected List<EvaluationResult> compareStatically(Insert userQuery, Insert sampleQuery,
       FeedbackLevel feedbackLevel) {
-    Success success = Success.COMPLETE;
     
     TableComparison tableComparison = compareTables(userQuery, sampleQuery);
     
     ColumnComparison columnComparison = compareColumns(userQuery, sampleQuery);
-    
-    // comparison has "lower" success than assumed at the moment
-    if(success.compareTo(tableComparison.getSuccess()) > 0)
-      success = tableComparison.getSuccess();
-    if(success.compareTo(columnComparison.getSuccess()) > 0)
-      success = columnComparison.getSuccess();
     
     return Arrays.asList(tableComparison, columnComparison);
   }
@@ -74,7 +67,8 @@ public class InsertCorrector extends QueryCorrector<Insert, Insert, InsertExerci
       // script file " + script);
     } catch (SQLException e) {
       Logger.error("There was an error while executing a sql statement: ", e);
-      return new EvaluationFailed("There was an error while executing a sql statement!");
+      return new EvaluationFailed(
+          "Es gab einen Fehler beim Ausführen eines Statements:<p><pre>" + e.getMessage() + "</pre></p>");
     }
   }
   
@@ -89,6 +83,12 @@ public class InsertCorrector extends QueryCorrector<Insert, Insert, InsertExerci
   @Override
   protected List<String> getTables(Insert userQuery) {
     return Arrays.asList(userQuery.getTable().getName());
+  }
+  
+  @Override
+  protected Expression getWhere(Insert query) {
+    return null;
+    
   }
   
   @Override

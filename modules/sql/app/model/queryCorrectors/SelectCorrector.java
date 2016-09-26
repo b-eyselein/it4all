@@ -15,11 +15,12 @@ import model.SqlQueryResult;
 import model.correctionResult.ColumnComparison;
 import model.correctionResult.SqlExecutionResult;
 import model.correctionResult.TableComparison;
+import model.exercise.EvaluationFailed;
 import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.SelectExercise;
-import model.queryCorrectors.where.WhereCorrector;
 import net.sf.jsqlparser.JSQLParserException;
+import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.Join;
@@ -41,10 +42,10 @@ public class SelectCorrector extends QueryCorrector<Select, PlainSelect, SelectE
     
     ColumnComparison columnComparison = compareColumns(plainUserSelect, plainSampleSelect);
     
-    WhereCorrector whereCorrector = new WhereCorrector();
-    EvaluationResult whereComparison = whereCorrector.correct(plainUserSelect.getWhere(), plainSampleSelect.getWhere());
+    EvaluationResult whereComparison = compareWheres(plainUserSelect, plainSampleSelect);
     
     return Arrays.asList(tableComparison, columnComparison, whereComparison);
+    
   }
   
   @Override
@@ -64,6 +65,8 @@ public class SelectCorrector extends QueryCorrector<Select, PlainSelect, SelectE
       
       conn.close();
     } catch (SQLException e) {
+      return new EvaluationFailed(
+          "Es gab einen Fehler beim Ausführen eines Statements:<p><pre>" + e.getMessage() + "</pre></p>");
     }
     
     return new SqlExecutionResult(feedbackLevel, userResult, sampleResult);
@@ -94,6 +97,11 @@ public class SelectCorrector extends QueryCorrector<Select, PlainSelect, SelectE
     return userFromItems;
   }
   
+  @Override
+  protected Expression getWhere(PlainSelect query) {
+    return query.getWhere();
+  }
+
   @Override
   protected Select parseStatement(String statement) throws SqlCorrectionException {
     try {

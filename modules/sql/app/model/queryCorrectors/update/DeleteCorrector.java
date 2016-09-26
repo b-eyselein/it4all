@@ -15,10 +15,10 @@ import model.correctionResult.TableComparison;
 import model.exercise.EvaluationFailed;
 import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
-import model.exercise.Success;
 import model.exercise.update.DeleteExercise;
 import model.queryCorrectors.QueryCorrector;
 import net.sf.jsqlparser.JSQLParserException;
+import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.delete.Delete;
 import play.Logger;
@@ -29,19 +29,14 @@ public class DeleteCorrector extends QueryCorrector<Delete, Delete, DeleteExerci
   @Override
   protected List<EvaluationResult> compareStatically(Delete userQuery, Delete sampleQuery,
       FeedbackLevel feedbackLevel) {
-    Success success = Success.COMPLETE;
     
     TableComparison tableComparison = compareTables(userQuery, sampleQuery);
     
     ColumnComparison columnComparison = compareColumns(userQuery, sampleQuery);
+
+    EvaluationResult whereComparison = compareWheres(userQuery, sampleQuery);
     
-    // comparison has "lower" success than assumed at the moment
-    if(success.compareTo(tableComparison.getSuccess()) > 0)
-      success = tableComparison.getSuccess();
-    if(success.compareTo(columnComparison.getSuccess()) > 0)
-      success = columnComparison.getSuccess();
-    
-    return Arrays.asList(tableComparison, columnComparison);
+    return Arrays.asList(tableComparison, columnComparison, whereComparison);
   }
   
   @Override
@@ -72,7 +67,8 @@ public class DeleteCorrector extends QueryCorrector<Delete, Delete, DeleteExerci
       // script file " + script);
     } catch (SQLException e) {
       Logger.error("There was an error while executing a sql statement: ", e);
-      return new EvaluationFailed("There was an error while executing a sql statement!");
+      return new EvaluationFailed(
+          "Es gab einen Fehler beim Ausführen eines Statements:<p><pre>" + e.getMessage() + "</pre></p>");
     }
   }
   
@@ -86,6 +82,11 @@ public class DeleteCorrector extends QueryCorrector<Delete, Delete, DeleteExerci
     return Arrays.asList(userQuery.getTable().getName());
   }
   
+  @Override
+  protected Expression getWhere(Delete query) {
+    return query.getWhere();
+  }
+
   @Override
   protected Delete parseStatement(String statement) throws SqlCorrectionException {
     try {

@@ -16,6 +16,7 @@ import model.exercise.FeedbackLevel;
 import model.exercise.GenericEvaluationResult;
 import model.exercise.Success;
 import net.sf.jsqlparser.JSQLParserException;
+import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.create.table.ColDataType;
 import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
@@ -98,6 +99,11 @@ public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable, Cr
   @Override
   protected List<String> getTables(CreateTable userQuery) {
     return Arrays.asList(userQuery.getTable().toString());
+  }
+
+  @Override
+  protected Expression getWhere(CreateTable query) {
+    return null;
   }
 
   @Override

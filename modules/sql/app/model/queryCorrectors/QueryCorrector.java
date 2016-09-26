@@ -17,8 +17,11 @@ import model.correctionResult.TableComparison;
 import model.exercise.EvaluationFailed;
 import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
+import model.exercise.GenericEvaluationResult;
 import model.exercise.SqlExercise;
 import model.exercise.Success;
+import model.queryCorrectors.where.WhereCorrector;
+import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.Statement;
 import play.Logger;
 import play.db.Database;
@@ -56,10 +59,8 @@ public abstract class QueryCorrector<QueryType extends Statement, ComparedType, 
     List<EvaluationResult> ret = new LinkedList<>();
 
     if(fbLevel.compareTo(FeedbackLevel.FULL_FEEDBACK) >= 0)
-      // Compare queries statically
       ret.addAll(compareStatically(parsedUserStatement, parsedSampleStatement, fbLevel));
-
-    // Execute both queries, check if results match
+    
     ret.add(executeQuery(database, parsedUserStatement, parsedSampleStatement, (ExerciseType) exercise, fbLevel));
 
     return ret;
@@ -96,6 +97,20 @@ public abstract class QueryCorrector<QueryType extends Statement, ComparedType, 
     return new TableComparison(success, missingTables, wrongTables);
   }
 
+  protected EvaluationResult compareWheres(ComparedType userQuery, ComparedType sampleQuery) {
+    Expression userWhere = getWhere(userQuery), sampleWhere = getWhere(sampleQuery);
+
+    if(userWhere == null && sampleWhere == null)
+      return new GenericEvaluationResult(Success.COMPLETE, "Es waren keine Bedingungen abzugeben");
+    else if(userWhere == null)
+      return new EvaluationFailed("In der Musterlösung sind Bedingungen!");
+    else if(sampleWhere == null)
+      return new EvaluationFailed("In der Musterlösungen waren keine Bedingungen angegeben!");
+
+    WhereCorrector whereCorrector = new WhereCorrector();
+    return whereCorrector.correct(userWhere, sampleWhere);
+  }
+
   protected void createDatabaseIfNotExists(Connection connection, String databaseName, Path scriptFile) {
     try(ResultSet tables = connection.getMetaData().getCatalogs()) {
       while(tables.next())
@@ -112,13 +127,15 @@ public abstract class QueryCorrector<QueryType extends Statement, ComparedType, 
       Logger.error("Error while initialising database " + databaseName, e);
     }
   }
-
+  
   protected abstract EvaluationResult executeQuery(Database database, QueryType userStatement,
       QueryType sampleStatement, ExerciseType exercise, FeedbackLevel feedbackLevel);
 
   protected abstract List<String> getColumns(ComparedType statement);
 
   protected abstract List<String> getTables(ComparedType userQuery);
+
+  protected abstract Expression getWhere(ComparedType query);
 
   protected abstract QueryType parseStatement(String statement) throws SqlCorrectionException;
 }
