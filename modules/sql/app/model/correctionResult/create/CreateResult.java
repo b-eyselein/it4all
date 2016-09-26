@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import model.exercise.EvaluationResult;
+import model.exercise.Success;
 
 public class CreateResult extends EvaluationResult {
   
@@ -13,6 +14,7 @@ public class CreateResult extends EvaluationResult {
 
   public CreateResult(List<ColumnDefinitionResult> theColumnResults, List<String> theNotDefinedColumns,
       List<String> theWrongColumns) {
+    super(Success.NONE);
     columnResults = theColumnResults;
     notDefinedColumns = theNotDefinedColumns;
     surplusColumns = theWrongColumns;

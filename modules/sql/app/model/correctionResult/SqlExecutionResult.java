@@ -16,6 +16,7 @@ public class SqlExecutionResult extends EvaluationResult {
 
   public SqlExecutionResult(FeedbackLevel theFeedbackLevel, SqlQueryResult theUserResult,
       SqlQueryResult theSampleResult) {
+    super(Success.NONE);
     feedbackLevel = theFeedbackLevel;
     userResult = theUserResult;
     sampleResult = theSampleResult;
