@@ -13,13 +13,7 @@ public abstract class StartUpChecker {
 
   protected static Logger.ALogger theLogger = Logger.of("startup");
 
-  public StartUpChecker() {
-    performStartUpCheck();
-  }
-
-  protected abstract void performStartUpCheck();
-
-  protected JsonNode readJsonFile(Path path) {
+  public static JsonNode readJsonFile(Path path) {
     try {
       String fileAsString = String.join("\n", Files.readAllLines(path));
       return Json.parse(fileAsString);
@@ -29,5 +23,11 @@ public abstract class StartUpChecker {
     return null;
 
   }
+
+  public StartUpChecker() {
+    performStartUpCheck();
+  }
+
+  protected abstract void performStartUpCheck();
 
 }

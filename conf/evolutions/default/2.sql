@@ -2,6 +2,9 @@
 
 # HTML
 
+insert into users values
+	("admin", "ADMIN");
+
 insert into exercise (`type`, `id`, `title`, `exerciseText`) values
 	("html",
 	1,

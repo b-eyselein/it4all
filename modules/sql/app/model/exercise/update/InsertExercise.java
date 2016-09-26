@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 
 import model.exercise.SqlExercise;
 import model.exercise.SqlExerciseKey;
+import model.exercise.SqlExerciseType;
 import model.queryCorrectors.QueryCorrector;
 import model.queryCorrectors.update.InsertCorrector;
 import net.sf.jsqlparser.statement.insert.Insert;
@@ -18,7 +19,7 @@ public class InsertExercise extends SqlExercise {
   public String validation;
 
   public InsertExercise(SqlExerciseKey theKey) {
-    super(theKey);
+    super(theKey, SqlExerciseType.INSERT);
   }
   
   @Override

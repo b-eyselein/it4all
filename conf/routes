@@ -11,6 +11,8 @@ GET    /               controllers.Application.index()
 # User
 GET    /user           controllers.UserController.index()
 
+GET    /admin          controllers.AdminController.index()
+
 # Python Test
 ->     /python         python.Routes
 

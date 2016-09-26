@@ -29,6 +29,10 @@
           <!-- <li><a href="/eval/@user.name">Evaluation Html</a></li> -->
         </ul>
         <ul class="nav navbar-nav navbar-right">
+        @if(user.role == model.user.Role.ADMIN) {
+          <li><a href="@controllers.routes.AdminController.index()"><span class="glyphicon glyphicon-cog"></span>
+              Administrator</a></li>
+          }
           <li><a href="@controllers.routes.UserController.index()"><span class="glyphicon glyphicon-user"></span>
               @user.name</a></li>
           <li><a href="@controllers.core.routes.UserManagement.logout()"><span

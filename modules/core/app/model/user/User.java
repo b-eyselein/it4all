@@ -3,6 +3,8 @@ package model.user;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -23,6 +25,9 @@ public class User extends Model implements PathBindable<User> {
 
   @Id
   public String name;
+  
+  @Enumerated(EnumType.STRING)
+  public Role role = Role.USER;
 
   @Override
   public User bind(String key, String name) {

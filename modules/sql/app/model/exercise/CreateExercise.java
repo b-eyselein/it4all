@@ -13,10 +13,8 @@ public class CreateExercise extends SqlExercise {
 
   private static final QueryCorrector<CreateTable, CreateTable, CreateExercise> corrector = new CreateCorrector();
 
-  public String tablename;
-  
   public CreateExercise(SqlExerciseKey theKey) {
-    super(theKey);
+    super(theKey, SqlExerciseType.CREATE);
   }
 
   @Override

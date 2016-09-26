@@ -136,7 +136,6 @@ create table sql_exercise (
   scenario_name                 varchar(255) not null,
   text                          text,
   samples                       text,
-  tablename                     varchar(255),
   validation                    varchar(255),
   constraint ck_sql_exercise_querytype check (querytype in ('SELECT','CREATE','UPDATE','DELETE','INSERT')),
   constraint pk_sql_exercise primary key (id,scenario_name)
@@ -151,6 +150,8 @@ create table sql_scenario (
 
 create table users (
   name                          varchar(255) not null,
+  role                          varchar(5),
+  constraint ck_users_role check (role in ('USER','ADMIN')),
   constraint pk_users primary key (name)
 );
 
