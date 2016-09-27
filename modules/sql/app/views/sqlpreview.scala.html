@@ -1,0 +1,30 @@
+@(user: model.user.User, scenarioResult: model.creation.ScenarioCreationResult)
+
+@main("SQL", user) {
+<div class="container-fluid">
+  <div class="page-header">
+    <h1>Erstellung oder Update eines Szenarios:</h1>
+  </div>
+  @Html(scenarioResult.getAsHtml())
+  <hr>
+  
+  <h2>Aufgaben</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Status</th>
+        <th>ID</th>
+        <th>Aufgabentyp</th>
+        <th>Aufgabentext</th>
+        <th>Musterl&ouml;sungen</th>
+      </tr>
+    </thead>
+    <tbody>
+    @for(creationResult <- scenarioResult.getExerciseResults()) {
+      @Html(creationResult.getAsHtml())
+    }
+    </tbody>
+  </table>
+  
+</div>
+}

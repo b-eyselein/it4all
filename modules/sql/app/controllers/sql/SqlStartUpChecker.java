@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 import javax.inject.Inject;
 import javax.persistence.PersistenceException;
 
-import model.SqlScenarioHandler;
+import model.creation.SqlScenarioHandler;
 import play.Logger;
 import play.db.Database;
 import play.db.NamedDatabase;
