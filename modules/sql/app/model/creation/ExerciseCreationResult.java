@@ -5,11 +5,11 @@ import model.exercise.CreationResultType;
 import model.exercise.SqlExercise;
 
 public class ExerciseCreationResult extends CreationResult<SqlExercise> {
-
+  
   public ExerciseCreationResult(CreationResultType theResultType, String theMessage, SqlExercise theExercise) {
     super(theResultType, theExercise, theMessage);
   }
-
+  
   @Override
   public String getAsHtml() {
     // TODO Auto-generated method stub
@@ -25,12 +25,15 @@ public class ExerciseCreationResult extends CreationResult<SqlExercise> {
     case NEW:
       ret += "<td>" + created.key.id + "</td>";
       ret += "<td>" + created.querytype + "</td>";
-      ret += "<td>" + created.text + "</td>";
-      ret += "<td><p>" + String.join("</p><p>", created.getSampleSolution()) + "</p></td>";
+      ret += "<td><input class=\"form-control\" value=\"" + created.text + "\"</td>";
+      ret += "<td>";
+      for(String sampleSol: created.getSampleSolution())
+        ret += "<p><input class=\"form-control\" value=\"" + sampleSol + "\"></p>";
+      ret += "</p></td>";
       break;
     }
     ret += "</div>";
     return ret;
   }
-
+  
 }
