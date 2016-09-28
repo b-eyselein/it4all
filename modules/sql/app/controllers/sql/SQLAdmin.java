@@ -14,16 +14,19 @@ import model.AdminSecured;
 import model.Util;
 import model.creation.ScenarioCreationResult;
 import model.creation.SqlScenarioHandler;
+import model.exercise.SqlScenario;
 import play.Logger;
+import play.data.DynamicForm;
+import play.data.FormFactory;
 import play.db.Database;
 import play.db.NamedDatabase;
 import play.mvc.Controller;
-import play.mvc.Result;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
+import play.mvc.Result;
 import play.mvc.Security.Authenticated;
-import views.html.sqlupload;
 import views.html.sqlpreview;
+import views.html.sqlupload;
 
 @Authenticated(AdminSecured.class)
 public class SQLAdmin extends Controller {
@@ -34,10 +37,26 @@ public class SQLAdmin extends Controller {
   private Util util;
 
   @Inject
+  private FormFactory factory;
+
+  @Inject
   @NamedDatabase("sqlotherroot")
   private Database sql_other;
 
   public Result create() {
+    DynamicForm form = factory.form().bindFromRequest();
+
+    String shortname = form.get("shortname");
+    String longname = form.get("longname");
+    String scriptfile = form.get("scriptfile");
+
+    SqlScenario newScenario = SqlScenario.finder.byId(shortname);
+    if(newScenario == null)
+      newScenario = new SqlScenario(shortname);
+    newScenario.longName = longname;
+    newScenario.scriptFile = scriptfile;
+    newScenario.save();
+
     return ok("This has still got to be implemented...");
   }
 

@@ -26,55 +26,55 @@ import play.Logger;
 import play.db.Database;
 
 public class SqlScenarioHandler {
-
+  
   private static Logger.ALogger theLogger = Logger.of("startup");
   private static final String SCENARIO_FOLDER = "conf/resources/sql";
-
+  
   public static ScenarioCreationResult handleScenario(Path path, Database database) {
-
+    
     JsonNode json = StartUpChecker.readJsonFile(path);
-
+    
     ScenarioCreationResult scenarioResult = readAndUpdateScenario(json);
-
+    
     if(scenarioResult.getResultType() == CreationResultType.FAILURE)
       return scenarioResult;
-
+    
     SqlScenario scenario = scenarioResult.getCreated();
-
+    
     JsonNode exerciseNodes = json.get("exercises");
-
+    
     if(exerciseNodes == null) {
       theLogger.debug("There were no exercises specified in file " + path);
       return scenarioResult;
     }
-
+    
     List<ExerciseCreationResult> readExercises = handleExercises(scenario, exerciseNodes);
     scenarioResult.addExerciseResults(readExercises);
-
+    
     // FIXME: run script to create database
     // runCreateScript(database, scenario);
-
+    
     return scenarioResult;
   }
-
+  
   private static List<ExerciseCreationResult> handleExercises(SqlScenario scenario, JsonNode exerciseNodes) {
     List<ExerciseCreationResult> exercises = new LinkedList<>();
-
+    
     for(final Iterator<String> exerciseTypesIter = exerciseNodes.fieldNames(); exerciseTypesIter.hasNext();) {
       String exerciseTypeAsString = exerciseTypesIter.next();
-
+      
       SqlExerciseType exerciseType = SqlExerciseType.valueOf(exerciseTypeAsString);
       if(exerciseType != null)
         exercises.addAll(handleExercisesForType(scenario, exerciseType, exerciseNodes.get(exerciseTypeAsString)));
     }
-
+    
     return exercises;
   }
-
+  
   private static List<ExerciseCreationResult> handleExercisesForType(SqlScenario scenario, SqlExerciseType exerciseType,
       JsonNode exercisesNodes) {
     List<ExerciseCreationResult> exercises = new LinkedList<>();
-
+    
     for(final Iterator<String> exerciseFieldIter = exercisesNodes.fieldNames(); exerciseFieldIter.hasNext();) {
       String exerciseIdAsString = exerciseFieldIter.next();
       int exerciseId = Integer.parseInt(exerciseIdAsString);
@@ -83,22 +83,22 @@ public class SqlScenarioHandler {
     }
     return exercises;
   }
-
+  
   private static ScenarioCreationResult readAndUpdateScenario(JsonNode json) {
     JsonNode shortNameNode = json.get("shortName");
     JsonNode longNameNode = json.get("longName");
     JsonNode scriptFileNode = json.get("scriptFile");
-
+    
     if(shortNameNode == null || longNameNode == null || scriptFileNode == null)
       return new ScenarioCreationResult(CreationResultType.FAILURE,
           "Einer oder mehrere der drei Knoten \"shortName\", \"longName\" und \"scriptFile\" "
               + "fehlen in der Definition des Szenarios!",
           null);
-
+    
     String shortName = shortNameNode.asText();
     String newLongName = longNameNode.asText();
     String newScriptFile = scriptFileNode.asText();
-
+    
     SqlScenario scenario = SqlScenario.finder.byId(shortName);
     if(scenario == null) {
       scenario = new SqlScenario(shortName);
@@ -106,30 +106,30 @@ public class SqlScenarioHandler {
       scenario.scriptFile = newScriptFile;
       return new ScenarioCreationResult(CreationResultType.NEW, "", scenario);
     }
-
+    
     CreationResultType resultType = CreationResultType.NOT_UPDATED;
     if(!scenario.longName.equals(newLongName) || !scenario.scriptFile.equals(newScriptFile))
       resultType = CreationResultType.TO_UPDATE;
-
+    
     scenario.longName = newLongName;
     scenario.scriptFile = newScriptFile;
-
+    
     return new ScenarioCreationResult(resultType, "", scenario);
   }
-
+  
   private static ExerciseCreationResult readExercise(SqlScenario scenario, int exerciseId, SqlExerciseType exerciseType,
       JsonNode exerciseNode) {
     SqlExerciseKey exerciseKey = new SqlExerciseKey(scenario.shortName, exerciseId);
     SqlExercise exercise = SqlExercise.finder.byId(exerciseKey);
-
+    
     // Update text and samples olutions, key and type remain the same
     JsonNode textNode = exerciseNode.get("text");
     JsonNode sampleSolutionsNode = exerciseNode.get("sampleSolutions");
-
+    
     if(textNode == null || sampleSolutionsNode == null)
       return new ExerciseCreationResult(CreationResultType.FAILURE,
-          "Einer der beiden Knoten \"text\" oder \"sampleSolutions\" fehlt!", null);
-
+          "Einer der beiden Knoten \"text\" oder \"sampleSolutions\" fehlt!", exerciseId, null);
+    
     String newText = textNode.asText(), newSamples = readSampleSolutions(sampleSolutionsNode);
     
     if(exercise == null) {
@@ -137,46 +137,46 @@ public class SqlScenarioHandler {
       exercise.text = newText;
       exercise.samples = newSamples;
       readExtra(exerciseType, exercise, exerciseNode);
-      return new ExerciseCreationResult(CreationResultType.NEW, "", exercise);
+      return new ExerciseCreationResult(CreationResultType.NEW, "", exerciseId, exercise);
     }
-
+    
     CreationResultType resultType = CreationResultType.NOT_UPDATED;
     if(!exercise.text.equals(newText) || !exercise.samples.equals(newSamples))
       resultType = CreationResultType.TO_UPDATE;
     exercise.text = newText;
     exercise.samples = newSamples;
-
+    
     boolean updated = readExtra(exerciseType, exercise, exerciseNode);
-
+    
     if(updated)
       resultType = CreationResultType.TO_UPDATE;
-
-    return new ExerciseCreationResult(resultType, "", exercise);
+    
+    return new ExerciseCreationResult(resultType, "", exerciseId, exercise);
   }
-
+  
   private static boolean readExtra(SqlExerciseType exerciseType, SqlExercise exercise, JsonNode exerciseNode) {
     JsonNode validationNode = exerciseNode.get("validation");
     if(validationNode == null)
       return false;
-
+    
     String newValidation = validationNode.asText();
-
+    
     switch(exerciseType) {
     case DELETE:
       DeleteExercise deleteEx = (DeleteExercise) exercise;
-      if(deleteEx.validation.equals(newValidation))
+      if(deleteEx.validation != null && deleteEx.validation.equals(newValidation))
         return false;
       deleteEx.validation = validationNode.asText();
       return true;
     case UPDATE:
       UpdateExercise updateEx = (UpdateExercise) exercise;
-      if(updateEx.validation.equals(newValidation))
+      if(updateEx.validation != null && updateEx.validation.equals(newValidation))
         return false;
       updateEx.validation = validationNode.asText();
       return true;
     case INSERT:
       InsertExercise insertEx = (InsertExercise) exercise;
-      if(insertEx.validation.equals(newValidation))
+      if(insertEx.validation != null && insertEx.validation.equals(newValidation))
         return false;
       insertEx.validation = validationNode.asText();
       return true;
@@ -184,13 +184,13 @@ public class SqlScenarioHandler {
       return false;
     }
   }
-
+  
   private static String readSampleSolutions(JsonNode sampleSolutions) {
     List<String> samples = new LinkedList<>();
     sampleSolutions.elements().forEachRemaining(el -> samples.add(el.asText()));
     return String.join(SqlExercise.SAMPLE_JOIN_CHAR, samples);
   }
-
+  
   @SuppressWarnings("unused")
   private static void runCreateScript(Database database, SqlScenario scenario) {
     Path scriptFilePath = Paths.get(SCENARIO_FOLDER, scenario.scriptFile);
@@ -204,7 +204,7 @@ public class SqlScenarioHandler {
             + "'it4all'@localhost IDENTIFIED BY 'c4aK3?bV';");
         connection.createStatement().executeUpdate("FLUSH PRIVILEGES");
         connection.setCatalog(scenario.shortName);
-
+        
         List<String> line = Files.readAllLines(scriptFilePath);
         ScriptRunner.runScript(connection, line, false, true);
         connection.close();
@@ -213,5 +213,5 @@ public class SqlScenarioHandler {
       }
     }
   }
-
+  
 }

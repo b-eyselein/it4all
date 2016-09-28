@@ -74,7 +74,7 @@ public abstract class SqlExercise extends Model {
 
   public abstract QueryCorrector<? extends Statement, ?, ? extends SqlExercise> getCorrector();
 
-  public List<String> getSampleSolution() {
+  public List<String> getSampleSolutions() {
     return Arrays.asList(samples.split("#"));
   }
 

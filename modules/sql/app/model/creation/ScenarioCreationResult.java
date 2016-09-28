@@ -8,21 +8,21 @@ import model.exercise.CreationResultType;
 import model.exercise.SqlScenario;
 
 public class ScenarioCreationResult extends CreationResult<SqlScenario> {
-  
+
   private List<ExerciseCreationResult> exerciseResults = new LinkedList<>();
-  
+
   public ScenarioCreationResult(CreationResultType theResultType, String theMessage, SqlScenario theScenario) {
     super(theResultType, theScenario, theMessage);
   }
-  
+
   public void addExerciseResult(ExerciseCreationResult exResult) {
     exerciseResults.add(exResult);
   }
-  
+
   public void addExerciseResults(List<ExerciseCreationResult> exResults) {
     exerciseResults.addAll(exResults);
   }
-  
+
   @Override
   public String getAsHtml() {
     String ret = "";
@@ -51,20 +51,36 @@ public class ScenarioCreationResult extends CreationResult<SqlScenario> {
       break;
     }
     return ret;
-    
+
   }
-  
+
   public List<ExerciseCreationResult> getExerciseResults() {
     return exerciseResults;
   }
-  
+
   private String getScenarioDescriptionAsHtml() {
     String ret = "<div class=\"panel panel-default\">";
     ret += "<div class=\"panel-heading\">Beschreibung des Szenarios</div>";
     ret += "<div class=\"panel-body\">";
-    ret += "<p>Kurzer Name des Szenarios: \"" + created.shortName + "\"</p>";
-    ret += "<p>Vollständiger Name des Szenarios: \"" + created.longName + "\"</p>";
-    ret += "<p>SQL-Skriptdatei des Szenarios: \"" + created.scriptFile + "\"</p>";
+
+    ret += "<div class=\"form-group\">";
+    ret += "<label for=\"shortname\" class=\"control-label col-sm-2\">Identifizierung des Szenarios:</label>";
+    ret += "<div class=\"col-sm-10\">";
+    ret += "<input class=\"form-control\" name=\"shortname\" id=\"shortname\" value=\"" + created.shortName + "\">";
+    ret += "</div></div>";
+
+    ret += "<div class=\"form-group\">";
+    ret += "<label for=\"longname\" class=\"control-label col-sm-2\">Vollständiger Name des Szenarios:</label>";
+    ret += "<div class=\"col-sm-10\">";
+    ret += "<input class=\"form-control\" name=\"longname\" id=\"longname\" value=\"" + created.longName + "\">";
+    ret += "</div></div>";
+
+    ret += "<div class=\"form-group\">";
+    ret += "<label for=\"scriptFile\" class=\"control-label col-sm-2\">SQL-Skriptdatei des Szenarios:</label>";
+    ret += "<div class=\"col-sm-10\">";
+    ret += "<input class=\"form-control\" name=\"scriptfile\" id=\"scriptfile\" value=\"" + created.scriptFile + "\">";
+    ret += "</div></div>";
+
     ret += "</div>";
     ret += "</div>";
     return ret;
