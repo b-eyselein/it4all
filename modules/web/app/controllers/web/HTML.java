@@ -11,7 +11,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import model.user.User;
 import controllers.core.UserManagement;
 import model.Secured;
 import model.Util;
@@ -19,6 +18,7 @@ import model.exercise.Grading;
 import model.html.HtmlCorrector;
 import model.html.HtmlExercise;
 import model.html.result.ElementResult;
+import model.user.User;
 import play.Logger;
 import play.data.DynamicForm;
 import play.data.FormFactory;
@@ -27,10 +27,11 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
 import play.twirl.api.Html;
+import views.html.error;
 import views.html.html.html;
 import views.html.html.htmlcorrect;
 import views.html.html.htmloverview;
-import views.html.*;
+import views.html.playground;
 
 @Security.Authenticated(Secured.class)
 public class HTML extends Controller {
@@ -42,7 +43,7 @@ public class HTML extends Controller {
   private static final String STANDARD_HTML_PLAYGROUND = "<!doctype html>\n<html>\n<head>\n"
       + "<style>\n/* Css-Anweisungen */\n\n</style>\n"
       + "<script type=\"text/javascript\">\n// Javascript-Code\n\n</script>\n"
-      + "</head>\n<body>\n<!-- Html-Elemente -->\n\n</body>\n</html>";
+      + "</head>\n<body>\n  <!-- Html-Elemente -->\n  \n</body>\n</html>";
   
   @Inject
   private Util util;
