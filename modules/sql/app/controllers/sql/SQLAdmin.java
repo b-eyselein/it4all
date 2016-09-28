@@ -6,19 +6,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.List;
 
 import javax.inject.Inject;
 
 import controllers.core.UserManagement;
 import model.AdminSecured;
 import model.Util;
-import model.creation.ExerciseCreationResult;
 import model.creation.ScenarioCreationResult;
 import model.creation.SqlScenarioHandler;
-import model.exercise.SqlExercise;
 import play.Logger;
-import play.data.FormFactory;
 import play.db.Database;
 import play.db.NamedDatabase;
 import play.mvc.Controller;
@@ -40,6 +36,10 @@ public class SQLAdmin extends Controller {
   @Inject
   @NamedDatabase("sqlotherroot")
   private Database sql_other;
+
+  public Result create() {
+    return ok("This has still got to be implemented...");
+  }
 
   public Result uploadFile() {
     // Extract solution from request

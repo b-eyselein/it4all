@@ -5,26 +5,28 @@
   <div class="page-header">
     <h1>Erstellung oder Update eines Szenarios:</h1>
   </div>
-  @Html(scenarioResult.getAsHtml())
-  <hr>
-  
-  <h2>Aufgaben</h2>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Status</th>
-        <th>ID</th>
-        <th>Aufgabentyp</th>
-        <th>Aufgabentext</th>
-        <th>Musterl&ouml;sungen</th>
-      </tr>
-    </thead>
-    <tbody>
-    @for(creationResult <- scenarioResult.getExerciseResults()) {
-      @Html(creationResult.getAsHtml())
-    }
-    </tbody>
-  </table>
-  
+  <form action="@controllers.sql.routes.SQLAdmin.create()" method="post">
+    @Html(scenarioResult.getAsHtml())
+    <input class="btn btn-primary btn-block" type="submit" value="Szenario und Aufgaben erstellen">
+    <hr>
+    
+    <h2>Aufgaben</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>ID</th>
+          <th>Aufgabentyp</th>
+          <th>Aufgabentext</th>
+          <th>Musterl&ouml;sungen</th>
+        </tr>
+      </thead>
+      <tbody>
+      @for(creationResult <- scenarioResult.getExerciseResults()) {
+        @Html(creationResult.getAsHtml())
+      }
+      </tbody>
+    </table>
+  </form>
 </div>
 }

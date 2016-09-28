@@ -10,12 +10,12 @@
     <div class="panel-heading">Szenario "@scenario.longName": Verf&uuml;gbare Aufgaben</div>
     <div class="panel-body">
 
-      <div class="panel-group" id="accordion">
+      <div class="panel-group" id="accordion_@scenario.shortName">
         @for(sqlExType <- model.exercise.SqlExerciseType.values()) {
         <div class="panel panel-default">
           <div class="panel-heading">
             <h4 class="panel-title">
-              <a data-toggle="collapse" data-parent="#accordion" href="#collapse_@{scenario.shortName}_@sqlExType">@sqlExType - Aufgaben</a>
+              <a data-toggle="collapse" data-parent="#accordion_@scenario.shortName" href="#collapse_@{scenario.shortName}_@sqlExType">@sqlExType - Aufgaben</a>
             </h4>
           </div>
           <div id="collapse_@{scenario.shortName}_@sqlExType" class="panel-collapse collapse">

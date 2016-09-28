@@ -1,5 +1,6 @@
 GET    /upload                                controllers.sql.SQLAdmin.uploadForm()
 POST   /upload                                controllers.sql.SQLAdmin.uploadFile()
+POST   /create                                controllers.sql.SQLAdmin.create()
 
 GET    /index                                 controllers.sql.SQL.index()
 GET    /:scenario/:exerciseType/:exerciseId   controllers.sql.SQL.exercise(scenario: String, exerciseType: String, exerciseId: Int)
