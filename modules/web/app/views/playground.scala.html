@@ -1,0 +1,64 @@
+@(user: model.user.User, template: String)
+
+@main("Web-Playground", user) {        
+<script src="@controllers.routes.Assets.versioned("javascripts/ace/ace.js")" type="text/javascript" charset="utf-8"></script>
+<script src="@controllers.routes.Assets.versioned("javascripts/acehelper.js")" type="text/javascript" charset="utf-8"></script>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">Editor</div>
+        <div class="panel-body">
+          
+          <!-- Start Editor -->
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <div class="input-group">
+                <span class="input-group-addon">Schriftgr&ouml;&szlig;e: <span id="fontsize">16</span> px
+                </span>
+                <div class="input-group-btn">
+                  <button type="button" class="btn btn-default" onclick="changeFontsize(-2);">
+                    <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                  </button>
+                  <button type="button" class="btn btn-default" onclick="changeFontsize(+2);">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div id="editor" class="form-control">@template</div>
+            <script>
+                          document.getElementById('editor').style.fontSize = '16px';
+                          var editor = ace.edit("editor");
+                          editor.setTheme("ace/theme/eclipse");
+                          editor.getSession().setMode("ace/mode/html");
+                          editor.getSession().setTabSize(2);
+                          editor.getSession().setUseSoftTabs(true);
+                          editor.getSession().setUseWrapMode(true);
+                          editor.setOptions({
+                            minLines: 40,
+                            maxLines: 50
+                          });
+                          editor.on("change", updatePlayground);
+                          updatePlayground();
+                        </script>
+          </div>
+          <!-- End Editor -->
+          
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">Vorschau</div>
+        <div class="panel-body">
+          <div class="embed-responsive embed-responsive-4by3">
+            <iframe class="embed-responsive-item" src="about:blank" id="preview"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+}

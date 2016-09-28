@@ -34,29 +34,33 @@ import views.html.*;
 
 @Security.Authenticated(Secured.class)
 public class HTML extends Controller {
-
+  
   private static final String LEARNER_SOLUTION_VALUE = "editorContent";
   private static final String FILE_TYPE = "html";
   private static final String EXERCISE_TYPE = "html";
   private static final String STANDARD_HTML = "<!doctype html>\n<html>\n\n<head>\n</head>\n\n<body>\n</body>\n\n</html>";
-
+  private static final String STANDARD_HTML_PLAYGROUND = "<!doctype html>\n<html>\n<head>\n"
+      + "<style>\n/* Css-Anweisungen */\n\n</style>\n"
+      + "<script type=\"text/javascript\">\n// Javascript-Code\n\n</script>\n"
+      + "</head>\n<body>\n<!-- Html-Elemente -->\n\n</body>\n</html>";
+  
   @Inject
   private Util util;
-
+  
   @Inject
   private FormFactory factory;
-
+  
   @Inject
   @SuppressWarnings("unused")
   private WebStartUpChecker checker;
-
+  
   public Result commit(int exerciseId, String type) {
     User user = UserManagement.getCurrentUser();
     HtmlExercise exercise = HtmlExercise.finder.byId(exerciseId);
-
+    
     if(exercise == null)
       return badRequest(error.render(user, new Html("There is no such exercise!")));
-
+    
     DynamicForm form = factory.form().bindFromRequest();
     String learnerSolution = form.get(LEARNER_SOLUTION_VALUE);
     try {
@@ -65,11 +69,11 @@ public class HTML extends Controller {
       Logger.error("Fehler beim Speichern einer Html-Loesungsdatei!", error);
       return badRequest("Es gab einen Fehler beim Speichern der Lösungsdatei!");
     }
-
+    
     String solutionUrl = "http://localhost:9000" + routes.Solution.site(user, "html", exercise.id).url();
-
+    
     List<ElementResult> elementResults = Collections.emptyList();
-
+    
     if(type.equals("html") || type.equals("css"))
       elementResults = HtmlCorrector.correct(solutionUrl, HtmlExercise.finder.byId(exerciseId), user, type);
     else
@@ -78,28 +82,28 @@ public class HTML extends Controller {
     // Live-Abgabe, sende Resultat als Json
     if(request().acceptedTypes().get(0).toString().equals("application/json"))
       return ok(Json.toJson(elementResults));
-
+    
     // Definitive Abgabe, zeige Seite
     return ok(htmlcorrect.render(learnerSolution, elementResults, UserManagement.getCurrentUser()));
   }
-
+  
   public Result exercise(int exerciseId, String type) {
     User user = UserManagement.getCurrentUser();
-
+    
     if(!type.equals("html") && !type.equals("css"))
       return badRequest(error.render(user, new Html("Der Aufgabentyp wurde nicht korrekt spezifiziert!")));
-
+    
     HtmlExercise exercise = HtmlExercise.finder.byId(exerciseId);
-
+    
     if(exercise == null)
       return badRequest(
           error.render(user, new Html("<p>Diese Aufgabe existert leider nicht.</p><p>Zur&uuml;ck zur <a href=\""
               + routes.HTML.index() + "\">Startseite</a>.</p>")));
-
+    
     if(type.equals("css") && !Grading.otherPartCompleted(exerciseId, user))
       return badRequest(error.render(user, new Html("Bearbeiten Sie zuerst den <a href=\""
           + routes.HTML.exercise(exerciseId, "html") + "\">Html-Teil der Aufgabe</a> komplett!")));
-
+    
     String defaultOrOldSolution = STANDARD_HTML;
     try {
       Path oldSolutionPath = util.getSolFileForExercise(user, EXERCISE_TYPE, exerciseId, FILE_TYPE);
@@ -108,19 +112,23 @@ public class HTML extends Controller {
     } catch (IOException e) {
       Logger.error(e.getMessage());
     }
-
+    
     return ok(html.render(user, exercise, type, defaultOrOldSolution, "Html-Korrektur"));
   }
-
+  
   public Result index() {
     return ok(htmloverview.render(HtmlExercise.finder.all(), UserManagement.getCurrentUser()));
   }
-
+  
+  public Result playground() {
+    return ok(playground.render(UserManagement.getCurrentUser(), STANDARD_HTML_PLAYGROUND));
+  }
+  
   private void saveSolutionForUser(User user, String solution, int exercise) throws IOException {
     Path solDir = util.getSolDirForUserAndType(user, EXERCISE_TYPE);
     if(!Files.exists(solDir))
       Files.createDirectories(solDir);
-
+    
     Path saveTo = util.getSolFileForExercise(user, EXERCISE_TYPE, exercise, FILE_TYPE);
     Files.write(saveTo, Arrays.asList(solution), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
   }

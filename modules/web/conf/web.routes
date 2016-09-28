@@ -1,3 +1,6 @@
+# Playground
+GET    /playground                         controllers.web.HTML.playground()
+
 # HTML & CSS
 GET    /html/                              controllers.web.HTML.index()
 

@@ -5,6 +5,10 @@
     <div class="page-header">
       <h1 class="page-title">&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h1>
     </div>
+    <div class="panel">
+      <a class="btn btn-primary btn-block" href="@controllers.web.routes.HTML.playground()">Web-Playground</a>
+    </div>
+    
     @for(exercise <- exercises) {
     <div class="panel panel-default">
       <div class="panel-heading">Aufgabe @exercise.id: @exercise.title</div>
@@ -31,5 +35,6 @@
       </div>
     </div>
     }
+    
   </div>
 }
