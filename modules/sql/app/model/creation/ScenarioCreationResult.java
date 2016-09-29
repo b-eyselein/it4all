@@ -32,6 +32,7 @@ public class ScenarioCreationResult extends CreationResult<SqlScenario> {
       ret += "<div class=\"panel-heading\">Fehler beim Einlesen des Szenarios:</div>";
       ret += "<div class=\"panel-body\">" + message + "</div>";
       ret += "</div>";
+      break;
     case NOT_UPDATED:
       ret = getScenarioDescriptionAsHtml();
       ret += "<div class=\"alert alert-" + getBSClass()

@@ -1,5 +1,6 @@
 package controllers.web;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
@@ -67,7 +68,13 @@ public class WebStartUpChecker extends StartUpChecker {
 
     // Js - normal exercises
     Path file = Paths.get(res, "javascript", "nashorn.json");
-    JsonNode content = readJsonFile(file);
+    JsonNode content = null;
+    try {
+      content = readJsonFile(file);
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
     if(content == null)
       return;
 

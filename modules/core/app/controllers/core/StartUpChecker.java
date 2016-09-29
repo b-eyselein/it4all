@@ -10,24 +10,17 @@ import play.Logger;
 import play.libs.Json;
 
 public abstract class StartUpChecker {
-
+  
   protected static Logger.ALogger theLogger = Logger.of("startup");
-
-  public static JsonNode readJsonFile(Path path) {
-    try {
-      String fileAsString = String.join("\n", Files.readAllLines(path));
-      return Json.parse(fileAsString);
-    } catch (IOException e) {
-      theLogger.error("Error while reading file " + path, e);
-    }
-    return null;
-
+  
+  public static JsonNode readJsonFile(Path path) throws IOException {
+    return Json.parse(String.join("\n", Files.readAllLines(path)));
   }
-
+  
   public StartUpChecker() {
     performStartUpCheck();
   }
-
+  
   protected abstract void performStartUpCheck();
-
+  
 }
