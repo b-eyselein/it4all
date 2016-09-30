@@ -29,7 +29,7 @@ public abstract class ChangeCorrector<QueryType extends Statement, ComparedType>
       createDatabaseIfNotExists(connection, exercise.scenario.shortName,
           Paths.get("conf", "resources", exercise.scenario.scriptFile));
 
-      String validation = getValidation(exercise);
+      String validation = exercise.validation;
 
       connection.createStatement().executeUpdate(userStatement.toString());
       SqlQueryResult userResult = new SqlQueryResult(connection.createStatement().executeQuery(validation));
@@ -47,7 +47,5 @@ public abstract class ChangeCorrector<QueryType extends Statement, ComparedType>
           "Es gab einen Fehler beim Ausführen eines Statements:<p><pre>" + e.getMessage() + "</pre></p>");
     }
   }
-
-  protected abstract String getValidation(SqlExercise exercise);
 
 }
