@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -14,10 +15,11 @@ import model.AdminSecured;
 import model.Util;
 import model.creation.ScenarioCreationResult;
 import model.creation.SqlScenarioHandler;
+import model.exercise.SqlExercise;
+import model.exercise.SqlExerciseKey;
+import model.exercise.SqlExerciseType;
 import model.exercise.SqlScenario;
 import play.Logger;
-import play.data.DynamicForm;
-import play.data.FormFactory;
 import play.db.Database;
 import play.db.NamedDatabase;
 import play.mvc.Controller;
@@ -33,22 +35,32 @@ public class SQLAdmin extends Controller {
 
   private static String BODY_FILE_NAME = "file";
 
-  @Inject
-  private Util util;
+  private static void readExercise(String scenarioName, int id, Map<String, String[]> data) {
+    SqlExerciseType exerciseType = SqlExerciseType.valueOf(data.get("ex" + id + "_type")[0]);
+
+    SqlExerciseKey key = new SqlExerciseKey(scenarioName, id);
+
+    SqlExercise exercise = SqlExercise.finder.byId(key);
+    if(exercise == null)
+      exercise = SqlExercise.instantiate(key, exerciseType);
+    exercise.samples = String.join("#", data.get("ex" + id + "_samples[]"));
+    exercise.text = data.get("ex" + id + "_text")[0];
+    exercise.save();
+  }
 
   @Inject
-  private FormFactory factory;
+  private Util util;
 
   @Inject
   @NamedDatabase("sqlotherroot")
   private Database sql_other;
 
   public Result create() {
-    DynamicForm form = factory.form().bindFromRequest();
+    Map<String, String[]> data = request().body().asFormUrlEncoded();
 
-    String shortname = form.get("shortname");
-    String longname = form.get("longname");
-    String scriptfile = form.get("scriptfile");
+    String shortname = data.get("shortname")[0];
+    String longname = data.get("longname")[0];
+    String scriptfile = data.get("scriptfile")[0];
 
     SqlScenario newScenario = SqlScenario.finder.byId(shortname);
     if(newScenario == null)
@@ -57,6 +69,14 @@ public class SQLAdmin extends Controller {
     newScenario.scriptFile = scriptfile;
     newScenario.save();
 
+    Logger.debug("Data: " + data);
+
+    String[] ids = data.get("id[]");
+    for(String id: ids) {
+      readExercise(shortname, Integer.parseInt(id), data);
+    }
+
+    // FIXME: render success!
     return ok("This has still got to be implemented...");
   }
 
