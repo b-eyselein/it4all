@@ -19,9 +19,6 @@ import model.exercise.SqlExercise;
 import model.exercise.SqlExerciseKey;
 import model.exercise.SqlExerciseType;
 import model.exercise.SqlScenario;
-import model.exercise.update.DeleteExercise;
-import model.exercise.update.InsertExercise;
-import model.exercise.update.UpdateExercise;
 import play.Logger;
 import play.db.Database;
 
@@ -138,7 +135,7 @@ public class SqlScenarioHandler {
     String newText = textNode.asText(), newSamples = readSampleSolutions(sampleSolutionsNode);
 
     if(exercise == null) {
-      exercise = SqlExercise.instantiate(exerciseKey, exerciseType);
+      exercise = new SqlExercise(exerciseKey, exerciseType);
       exercise.text = newText;
       exercise.samples = newSamples;
       readExtra(exerciseType, exercise, exerciseNode);
@@ -165,29 +162,11 @@ public class SqlScenarioHandler {
       return false;
 
     String newValidation = validationNode.asText();
-
-    switch(exerciseType) {
-    case DELETE:
-      DeleteExercise deleteEx = (DeleteExercise) exercise;
-      if(deleteEx.validation != null && deleteEx.validation.equals(newValidation))
-        return false;
-      deleteEx.validation = validationNode.asText();
-      return true;
-    case UPDATE:
-      UpdateExercise updateEx = (UpdateExercise) exercise;
-      if(updateEx.validation != null && updateEx.validation.equals(newValidation))
-        return false;
-      updateEx.validation = validationNode.asText();
-      return true;
-    case INSERT:
-      InsertExercise insertEx = (InsertExercise) exercise;
-      if(insertEx.validation != null && insertEx.validation.equals(newValidation))
-        return false;
-      insertEx.validation = validationNode.asText();
-      return true;
-    default:
+    if(exercise.validation != null && exercise.validation.equals(newValidation))
       return false;
-    }
+
+    exercise.validation = validationNode.asText();
+    return true;
   }
 
   private static String readSampleSolutions(JsonNode sampleSolutions) {

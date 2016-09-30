@@ -37,12 +37,12 @@ public class SQLAdmin extends Controller {
 
   private static void readExercise(String scenarioName, int id, Map<String, String[]> data) {
     SqlExerciseType exerciseType = SqlExerciseType.valueOf(data.get("ex" + id + "_type")[0]);
-
+    
     SqlExerciseKey key = new SqlExerciseKey(scenarioName, id);
-
+    
     SqlExercise exercise = SqlExercise.finder.byId(key);
     if(exercise == null)
-      exercise = SqlExercise.instantiate(key, exerciseType);
+      exercise = new SqlExercise(key, exerciseType);
     exercise.samples = String.join("#", data.get("ex" + id + "_samples[]"));
     exercise.text = data.get("ex" + id + "_text")[0];
     exercise.save();
