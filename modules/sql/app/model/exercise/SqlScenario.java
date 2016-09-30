@@ -30,7 +30,7 @@ public class SqlScenario extends Model {
   }
 
   public List<? extends SqlExercise> getExercisesByType(SqlExerciseType type) {
-    return exercises.parallelStream().filter(ex -> ex.querytype.equals(type)).collect(Collectors.toList());
+    return exercises.parallelStream().filter(ex -> ex.key.exercisetype.equals(type)).collect(Collectors.toList());
   }
 
 }

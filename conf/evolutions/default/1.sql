@@ -133,12 +133,12 @@ create table spread_exercise (
 create table sql_exercise (
   id                            integer not null,
   scenario_name                 varchar(255) not null,
-  querytype                     varchar(6),
+  exercisetype                  varchar(6) not null,
   text                          text,
   samples                       text,
   validation                    varchar(255),
-  constraint ck_sql_exercise_querytype check (querytype in ('SELECT','CREATE','UPDATE','DELETE','INSERT')),
-  constraint pk_sql_exercise primary key (id,scenario_name)
+  constraint ck_sql_exercise_exercisetype check (exercisetype in ('SELECT','CREATE','UPDATE','DELETE','INSERT')),
+  constraint pk_sql_exercise primary key (id,scenario_name,exercisetype)
 );
 
 create table sql_scenario (

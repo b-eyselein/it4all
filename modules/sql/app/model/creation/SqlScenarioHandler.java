@@ -121,7 +121,7 @@ public class SqlScenarioHandler {
 
   private static ExerciseCreationResult readExercise(SqlScenario scenario, int exerciseId, SqlExerciseType exerciseType,
       JsonNode exerciseNode) {
-    SqlExerciseKey exerciseKey = new SqlExerciseKey(scenario.shortName, exerciseId);
+    SqlExerciseKey exerciseKey = new SqlExerciseKey(scenario.shortName, exerciseId, exerciseType);
     SqlExercise exercise = SqlExercise.finder.byId(exerciseKey);
 
     // Update text and samples olutions, key and type remain the same
@@ -135,7 +135,7 @@ public class SqlScenarioHandler {
     String newText = textNode.asText(), newSamples = readSampleSolutions(sampleSolutionsNode);
 
     if(exercise == null) {
-      exercise = new SqlExercise(exerciseKey, exerciseType);
+      exercise = new SqlExercise(exerciseKey);
       exercise.text = newText;
       exercise.samples = newSamples;
       readExtra(exerciseType, exercise, exerciseNode);
