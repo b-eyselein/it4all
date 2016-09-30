@@ -31,9 +31,8 @@ public class BinaryExpressionComparator implements Comparator<BinaryExpression> 
   
   @Override
   public int compare(BinaryExpression arg0, BinaryExpression arg1) {
-    String exp0 = getColumnToCompare(arg1).toString();
+    String exp0 = getColumnToCompare(arg0).toString();
     String exp1 = getColumnToCompare(arg1).toString();
-    // FIXME: test!
     return exp0.compareTo(exp1);
   }
   
