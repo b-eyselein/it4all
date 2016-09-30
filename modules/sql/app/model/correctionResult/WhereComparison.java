@@ -12,21 +12,19 @@ import net.sf.jsqlparser.expression.BinaryExpression;
 public class WhereComparison extends EvaluationResult {
 
   private static Success analyze(Matcher<BinaryExpression> matcher) {
-    // FIXME: implement!
-    Success success = Success.NONE;
-    if(matcher.getNotMatchedInFirst().isEmpty() && matcher.getNotMatchedInSecond().isEmpty())
-      success = Success.PARTIALLY;
+    boolean allMatched = matcher.getNotMatchedInFirst().isEmpty() && matcher.getNotMatchedInSecond().isEmpty();
 
-    // FIXME: check matches + refactor!
     boolean matchesOk = true;
     for(Match<BinaryExpression> match: matcher.getMatches())
       if(match.getSuccess() != Success.COMPLETE)
         matchesOk = false;
 
-    if(matchesOk)
+    if(allMatched && matchesOk)
       return Success.COMPLETE;
-
-    return success;
+    else if(allMatched || matchesOk)
+      return Success.PARTIALLY;
+    else
+      return Success.NONE;
   }
 
   private List<Match<BinaryExpression>> matches;

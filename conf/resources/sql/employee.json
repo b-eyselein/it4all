@@ -15,6 +15,10 @@
 			"3": {
 				"text": "Welche Emailadresse hat Max Becker für die Arbeit?", 
 				"sampleSolutions": ["SELECT emailaddress FROM Employee, Emailaddress WHERE Employee.employeeOID = Emailaddress.employeeOID AND firstname = 'Max' AND lastname = 'Becker'", "SELECT emailaddress FROM Employee emp, Emailaddress email WHERE emp.employeeOID = email.employeeOID AND firstname = 'Max' AND lastname = 'Becker'"]
+			}, 
+			"4": {
+				"text": "Geben Sie die Nutzernamen aller Angestellten alphabetisch geordnet aus!", 
+				"sampleSolutions": ["SELECT username from Employee ORDER BY username"]
 			}
 		}, 
 		"CREATE": {

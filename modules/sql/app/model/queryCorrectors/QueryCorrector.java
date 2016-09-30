@@ -59,7 +59,7 @@ public abstract class QueryCorrector<QueryType extends Statement, ComparedType> 
 
     if(fbLevel.compareTo(FeedbackLevel.FULL_FEEDBACK) >= 0)
       ret.addAll(compareStatically(parsedUserStatement, parsedSampleStatement, fbLevel));
-    
+
     ret.add(executeQuery(database, parsedUserStatement, parsedSampleStatement, exercise, fbLevel));
 
     return ret;
@@ -68,6 +68,9 @@ public abstract class QueryCorrector<QueryType extends Statement, ComparedType> 
   protected final ColumnComparison compareColumns(ComparedType userQuery, ComparedType sampleQuery) {
     List<String> userColumns = getColumns(userQuery);
     List<String> sampleColumns = getColumns(sampleQuery);
+
+    // FIXME: keine Beachtung der Groß-/Kleinschreibung bei Vergleich! -->
+    // Verwendung core --> model.result.Matcher?
 
     List<String> wrongColumns = listDifference(userColumns, sampleColumns);
     List<String> missingColumns = listDifference(sampleColumns, userColumns);
@@ -126,7 +129,7 @@ public abstract class QueryCorrector<QueryType extends Statement, ComparedType> 
       Logger.error("Error while initialising database " + databaseName, e);
     }
   }
-  
+
   protected abstract EvaluationResult executeQuery(Database database, QueryType userStatement,
       QueryType sampleStatement, SqlExercise exercise, FeedbackLevel feedbackLevel);
 

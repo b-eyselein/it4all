@@ -27,6 +27,8 @@ public class SqlScenarioHandler {
   private static Logger.ALogger theLogger = Logger.of("startup");
   private static final String SCENARIO_FOLDER = "conf/resources/sql";
 
+  // FIXME: genauere Fehlermeldungen (auch auf Konsole --> Logger!)
+
   public static ScenarioCreationResult handleScenario(Path path, Database database) {
     JsonNode json = null;
     try {
