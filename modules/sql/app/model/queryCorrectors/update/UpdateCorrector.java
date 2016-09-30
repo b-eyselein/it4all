@@ -26,20 +26,20 @@ import play.Logger;
 import play.db.Database;
 
 public class UpdateCorrector extends QueryCorrector<Update, Update> {
-  
+
   @Override
   protected List<EvaluationResult> compareStatically(Update userQuery, Update sampleQuery,
       FeedbackLevel feedbackLevel) {
-    
+
     TableComparison tableComparison = compareTables(userQuery, sampleQuery);
-    
+
     ColumnComparison columnComparison = compareColumns(userQuery, sampleQuery);
-    
+
     EvaluationResult whereComparison = compareWheres(userQuery, sampleQuery);
-    
+
     return Arrays.asList(tableComparison, columnComparison, whereComparison);
   }
-  
+
   @Override
   protected EvaluationResult executeQuery(Database database, Update userStatement, Update sampleStatement,
       SqlExercise exercise, FeedbackLevel feedbackLevel) {
@@ -47,25 +47,25 @@ public class UpdateCorrector extends QueryCorrector<Update, Update> {
       Connection connection = database.getConnection();
       connection.setCatalog(exercise.scenario.shortName);
       connection.setAutoCommit(false);
-      
+
       createDatabaseIfNotExists(connection, exercise.scenario.shortName,
           Paths.get("conf", "resources", exercise.scenario.scriptFile));
-      
+
       // FIXME: remove cast!
       String validation = ((UpdateExercise) exercise).validation;
-      
+
       connection.createStatement().executeUpdate(userStatement.toString());
       SqlQueryResult userResult = new SqlQueryResult(connection.createStatement().executeQuery(validation));
       connection.rollback();
-      
+
       connection.createStatement().executeUpdate(sampleStatement.toString());
       SqlQueryResult sampleResult = new SqlQueryResult(connection.createStatement().executeQuery(validation));
       connection.rollback();
-      
+
       connection.close();
-      
+
       return new SqlExecutionResult(feedbackLevel, userResult, sampleResult);
-      
+
       // } catch (IOException e) {
       // return new EvaluationFailed("There was an error while reading the
       // script file " + script);
@@ -75,23 +75,22 @@ public class UpdateCorrector extends QueryCorrector<Update, Update> {
           "Es gab einen Fehler beim Ausführen eines Statements:<p><pre>" + e.getMessage() + "</pre></p>");
     }
   }
-  
+
   @Override
   protected List<String> getColumns(Update statement) {
     return statement.getColumns().stream().map(col -> col.getColumnName()).collect(Collectors.toList());
   }
-  
+
   @Override
   protected List<String> getTables(Update statement) {
     return statement.getTables().stream().map(table -> table.getName()).collect(Collectors.toList());
   }
-  
+
   @Override
   protected Expression getWhere(Update query) {
     return query.getWhere();
-    
   }
-  
+
   @Override
   protected Update parseStatement(String statement) throws SqlCorrectionException {
     try {
@@ -102,5 +101,5 @@ public class UpdateCorrector extends QueryCorrector<Update, Update> {
       throw new SqlCorrectionException("Das Statement war vom falschen Typ! Erwartet wurde UPDATE!");
     }
   }
-  
+
 }

@@ -28,18 +28,18 @@ import play.Logger;
 import play.db.Database;
 
 public class InsertCorrector extends QueryCorrector<Insert, Insert> {
-
+  
   @Override
   protected List<EvaluationResult> compareStatically(Insert userQuery, Insert sampleQuery,
       FeedbackLevel feedbackLevel) {
-
+    
     TableComparison tableComparison = compareTables(userQuery, sampleQuery);
-
+    
     ColumnComparison columnComparison = compareColumns(userQuery, sampleQuery);
-
+    
     return Arrays.asList(tableComparison, columnComparison);
   }
-
+  
   @Override
   protected EvaluationResult executeQuery(Database database, Insert userStatement, Insert sampleStatement,
       SqlExercise exercise, FeedbackLevel feedbackLevel) {
@@ -47,25 +47,25 @@ public class InsertCorrector extends QueryCorrector<Insert, Insert> {
       Connection connection = database.getConnection();
       connection.setCatalog(exercise.scenario.shortName);
       connection.setAutoCommit(false);
-
+      
       createDatabaseIfNotExists(connection, exercise.scenario.shortName,
           Paths.get("conf", "resources", exercise.scenario.scriptFile));
-
+      
       // FIXME: remove cast!
       String validation = ((InsertExercise) exercise).validation;
-
+      
       connection.createStatement().executeUpdate(userStatement.toString());
       SqlQueryResult userResult = new SqlQueryResult(connection.createStatement().executeQuery(validation));
       connection.rollback();
-
+      
       connection.createStatement().executeUpdate(sampleStatement.toString());
       SqlQueryResult sampleResult = new SqlQueryResult(connection.createStatement().executeQuery(validation));
       connection.rollback();
-
+      
       connection.close();
-
+      
       return new SqlExecutionResult(feedbackLevel, userResult, sampleResult);
-
+      
       // } catch (IOException e) {
       // return new EvaluationFailed("There was an error while reading the
       // script file " + script);
@@ -75,7 +75,7 @@ public class InsertCorrector extends QueryCorrector<Insert, Insert> {
           "Es gab einen Fehler beim Ausführen eines Statements:<p><pre>" + e.getMessage() + "</pre></p>");
     }
   }
-
+  
   @Override
   protected List<String> getColumns(Insert statement) {
     List<Column> columns = statement.getColumns();
@@ -83,18 +83,17 @@ public class InsertCorrector extends QueryCorrector<Insert, Insert> {
       return Collections.emptyList();
     return columns.stream().map(column -> column.getColumnName()).collect(Collectors.toList());
   }
-
+  
   @Override
   protected List<String> getTables(Insert userQuery) {
     return Arrays.asList(userQuery.getTable().getName());
   }
-
+  
   @Override
   protected Expression getWhere(Insert query) {
     return null;
-
   }
-
+  
   @Override
   protected Insert parseStatement(String statement) throws SqlCorrectionException {
     try {
