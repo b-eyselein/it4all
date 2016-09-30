@@ -10,26 +10,36 @@ import model.result.Matcher;
 import net.sf.jsqlparser.expression.BinaryExpression;
 
 public class WhereComparison extends EvaluationResult {
-  
+
   private static Success analyze(Matcher<BinaryExpression> matcher) {
     // FIXME: implement!
+    Success success = Success.NONE;
     if(matcher.getNotMatchedInFirst().isEmpty() && matcher.getNotMatchedInSecond().isEmpty())
-      return Success.PARTIALLY;
-    
-    return Success.NONE;
+      success = Success.PARTIALLY;
+
+    // FIXME: check matches + refactor!
+    boolean matchesOk = true;
+    for(Match<BinaryExpression> match: matcher.getMatches())
+      if(match.getSuccess() != Success.COMPLETE)
+        matchesOk = false;
+
+    if(matchesOk)
+      return Success.COMPLETE;
+
+    return success;
   }
-  
+
   private List<Match<BinaryExpression>> matches;
-  
+
   private List<BinaryExpression> notMatchedInUser, notMatchedInSample;
-  
-  public WhereComparison(Success none, Matcher<BinaryExpression> matcher) {
+
+  public WhereComparison(Matcher<BinaryExpression> matcher) {
     super(analyze(matcher));
     matches = matcher.getMatches();
     notMatchedInUser = matcher.getNotMatchedInFirst();
     notMatchedInSample = matcher.getNotMatchedInSecond();
   }
-  
+
   @Override
   public String getAsHtml() {
     // TODO Auto-generated method stub
@@ -39,24 +49,24 @@ public class WhereComparison extends EvaluationResult {
 
     for(Match<BinaryExpression> match: matches)
       ret += match.getAsHtml();
-    
+
     if(!notMatchedInUser.isEmpty()) {
       ret += "<div class=\"alert alert-warning\">Folgende Bedingungen ihrer Query konnten nicht in der Musterlösung gefunden werden:";
       ret += notMatchedInUser.stream().map(exp -> exp.toString())
           .collect(Collectors.joining("</li><li>", "<ul><li>", "</li></ul>"));
       ret += "</div>";
     }
-    
+
     if(!notMatchedInSample.isEmpty()) {
       ret += "<div class=\"alert alert-danger\">Folgende Bedingungen sind in der Musterlösung aber nicht in ihrer Lösung vorhanden:";
       ret += notMatchedInSample.stream().map(exp -> exp.toString())
           .collect(Collectors.joining("</li><li>", "<ul><li>", "</li></ul>"));
       ret += "</div>";
     }
-    
+
     ret += "</div>";
     ret += "</div>";
     return ret;
   }
-  
+
 }

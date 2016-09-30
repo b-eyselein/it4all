@@ -18,7 +18,7 @@ import model.correctionResult.TableComparison;
 import model.exercise.EvaluationFailed;
 import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
-import model.exercise.SelectExercise;
+import model.exercise.SqlExercise;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
@@ -29,7 +29,7 @@ import net.sf.jsqlparser.statement.select.Select;
 import play.db.Database;
 
 @Singleton
-public class SelectCorrector extends QueryCorrector<Select, PlainSelect, SelectExercise> {
+public class SelectCorrector extends QueryCorrector<Select, PlainSelect> {
   
   @Override
   protected List<EvaluationResult> compareStatically(Select parsedUserStatement, Select parsedSampleStatement,
@@ -50,7 +50,7 @@ public class SelectCorrector extends QueryCorrector<Select, PlainSelect, SelectE
   
   @Override
   protected EvaluationResult executeQuery(Database database, Select userStatement, Select sampleStatement,
-      SelectExercise exercise, FeedbackLevel feedbackLevel) {
+      SqlExercise exercise, FeedbackLevel feedbackLevel) {
     SqlQueryResult userResult = null, sampleResult = null;
     
     try {

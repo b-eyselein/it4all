@@ -15,6 +15,7 @@ import model.correctionResult.TableComparison;
 import model.exercise.EvaluationFailed;
 import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
+import model.exercise.SqlExercise;
 import model.exercise.update.UpdateExercise;
 import model.queryCorrectors.QueryCorrector;
 import net.sf.jsqlparser.JSQLParserException;
@@ -24,7 +25,7 @@ import net.sf.jsqlparser.statement.update.Update;
 import play.Logger;
 import play.db.Database;
 
-public class UpdateCorrector extends QueryCorrector<Update, Update, UpdateExercise> {
+public class UpdateCorrector extends QueryCorrector<Update, Update> {
   
   @Override
   protected List<EvaluationResult> compareStatically(Update userQuery, Update sampleQuery,
@@ -33,7 +34,7 @@ public class UpdateCorrector extends QueryCorrector<Update, Update, UpdateExerci
     TableComparison tableComparison = compareTables(userQuery, sampleQuery);
     
     ColumnComparison columnComparison = compareColumns(userQuery, sampleQuery);
-
+    
     EvaluationResult whereComparison = compareWheres(userQuery, sampleQuery);
     
     return Arrays.asList(tableComparison, columnComparison, whereComparison);
@@ -41,7 +42,7 @@ public class UpdateCorrector extends QueryCorrector<Update, Update, UpdateExerci
   
   @Override
   protected EvaluationResult executeQuery(Database database, Update userStatement, Update sampleStatement,
-      UpdateExercise exercise, FeedbackLevel feedbackLevel) {
+      SqlExercise exercise, FeedbackLevel feedbackLevel) {
     try {
       Connection connection = database.getConnection();
       connection.setCatalog(exercise.scenario.shortName);
@@ -50,12 +51,15 @@ public class UpdateCorrector extends QueryCorrector<Update, Update, UpdateExerci
       createDatabaseIfNotExists(connection, exercise.scenario.shortName,
           Paths.get("conf", "resources", exercise.scenario.scriptFile));
       
+      // FIXME: remove cast!
+      String validation = ((UpdateExercise) exercise).validation;
+      
       connection.createStatement().executeUpdate(userStatement.toString());
-      SqlQueryResult userResult = new SqlQueryResult(connection.createStatement().executeQuery(exercise.validation));
+      SqlQueryResult userResult = new SqlQueryResult(connection.createStatement().executeQuery(validation));
       connection.rollback();
       
       connection.createStatement().executeUpdate(sampleStatement.toString());
-      SqlQueryResult sampleResult = new SqlQueryResult(connection.createStatement().executeQuery(exercise.validation));
+      SqlQueryResult sampleResult = new SqlQueryResult(connection.createStatement().executeQuery(validation));
       connection.rollback();
       
       connection.close();

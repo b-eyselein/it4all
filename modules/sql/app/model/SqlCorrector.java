@@ -11,20 +11,20 @@ import net.sf.jsqlparser.statement.Statement;
 import play.db.Database;
 
 public class SqlCorrector {
-
+  
   public static List<EvaluationResult> correct(Database database, User user, String userStatement, SqlExercise exercise,
       FeedbackLevel feedbackLevel) {
-    QueryCorrector<? extends Statement, ?, ? extends SqlExercise> corrector = exercise.getCorrector();
-
+    QueryCorrector<? extends Statement, ?> corrector = exercise.getCorrector();
+    
     String sampleStatement = findBestFittingSample(userStatement, exercise.getSampleSolutions());
-
+    
     return corrector.correct(database, userStatement, sampleStatement, exercise, feedbackLevel);
   }
-
+  
   private static String findBestFittingSample(String userStatement, List<String> samples) {
     String bestFitting = null;
     int bestDistance = Integer.MAX_VALUE;
-
+    
     for(String sample: samples) {
       int newDistance = Levenshtein.levenshteinDistance(sample, userStatement);
       if(newDistance < bestDistance) {

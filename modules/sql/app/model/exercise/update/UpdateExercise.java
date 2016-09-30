@@ -13,18 +13,18 @@ import net.sf.jsqlparser.statement.update.Update;
 @Entity
 @DiscriminatorValue("UPDATE")
 public class UpdateExercise extends SqlExercise {
-  
-  private static final QueryCorrector<Update, Update, UpdateExercise> corrector = new UpdateCorrector();
-  
+
+  private static final QueryCorrector<Update, Update> corrector = new UpdateCorrector();
+
   public String validation;
-  
+
   public UpdateExercise(SqlExerciseKey theKey) {
     super(theKey, SqlExerciseType.UPDATE);
   }
-  
+
   @Override
-  public QueryCorrector<Update, Update, UpdateExercise> getCorrector() {
+  public QueryCorrector<Update, Update> getCorrector() {
     return corrector;
   }
-  
+
 }

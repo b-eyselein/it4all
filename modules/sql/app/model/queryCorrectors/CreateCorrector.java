@@ -10,10 +10,10 @@ import java.util.stream.Collectors;
 import model.SqlCorrectionException;
 import model.correctionResult.create.ColumnDefinitionResult;
 import model.correctionResult.create.CreateResult;
-import model.exercise.CreateExercise;
 import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.GenericEvaluationResult;
+import model.exercise.SqlExercise;
 import model.exercise.Success;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
@@ -24,8 +24,8 @@ import net.sf.jsqlparser.statement.create.table.CreateTable;
 import play.Logger;
 import play.db.Database;
 
-public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable, CreateExercise> {
-
+public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable> {
+  
   private static ColumnDefinitionResult compareColumnDataType(String datatypeName, ColDataType userType,
       ColDataType sampleType) {
     String userDataType = userType.getDataType().toUpperCase();
@@ -33,7 +33,7 @@ public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable, Cr
     if(!userDataType.equals(sampleDataType))
       return new ColumnDefinitionResult(Success.NONE, datatypeName,
           "Datentyp \"" + userDataType + "\" ist nicht korrekt, erwartet wurde \"" + sampleDataType + "\"!");
-
+    
     // FIXME: Compare argumentslist?
     List<String> userArgs = userType.getArgumentsStringList(), sampleArgs = sampleType.getArgumentsStringList();
     if(userArgs != null && sampleArgs != null) {
@@ -45,27 +45,27 @@ public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable, Cr
           return new ColumnDefinitionResult(Success.PARTIALLY, datatypeName, "Argument des Datentyps ("
               + userArgs.get(i) + ") ist nicht korrekt, erwartet wurde: (" + sampleArgs.get(i) + ")!");
     }
-
+    
     return new ColumnDefinitionResult(Success.COMPLETE, datatypeName, "Datentyp richtig spezifiziert.");
   }
-
+  
   private static ColumnDefinitionResult compareColumnDefinition(ColumnDefinition userDef, ColumnDefinition sampleDef) {
     ColumnDefinitionResult datatypeComparison = compareColumnDataType(userDef.getColumnName(), userDef.getColDataType(),
         sampleDef.getColDataType());
-
+    
     // FIXME: compare columnspecstrings!
     Logger.debug("ColumnSpecString for column " + userDef.getColumnName() + " :: " + userDef.getColumnSpecStrings());
     return datatypeComparison;
   }
-
+  
   @Override
   protected List<EvaluationResult> compareStatically(CreateTable userStatement, CreateTable sampleStatement,
       FeedbackLevel feedbackLevel) {
     List<ColumnDefinition> userDefs = userStatement.getColumnDefinitions();
     List<ColumnDefinition> sampleDefs = sampleStatement.getColumnDefinitions();
-
+    
     List<ColumnDefinitionResult> columnResults = new LinkedList<>();
-
+    
     for(final Iterator<ColumnDefinition> userIter = userDefs.iterator(); userIter.hasNext();) {
       ColumnDefinition userDef = userIter.next();
       for(Iterator<ColumnDefinition> sampleIter = sampleDefs.iterator(); sampleIter.hasNext();) {
@@ -77,35 +77,36 @@ public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable, Cr
         }
       }
     }
-
+    
     // Remaining sampleDefs are missing, remaining userDefs are wrong
     List<String> missingColumns = sampleDefs.stream().map(def -> def.getColumnName()).collect(Collectors.toList());
     List<String> wrongColumns = userDefs.stream().map(def -> def.getColumnName()).collect(Collectors.toList());
     return Arrays.asList(new CreateResult(columnResults, missingColumns, wrongColumns));
   }
-
+  
   @Override
-  protected EvaluationResult executeQuery(Database database, CreateTable parsedStatement,
-      CreateTable parsedSampleStatement, CreateExercise exercise, FeedbackLevel feedbackLevel) {
+  protected EvaluationResult executeQuery(Database database, CreateTable userStatement, CreateTable sampleStatement,
+      SqlExercise exercise, FeedbackLevel feedbackLevel) {
+    // TODO Auto-generated method stub
     // DO NOT EXECUTE QUERY!
     return new GenericEvaluationResult(Success.COMPLETE, "Create-Statements werden nicht ausgeführt.");
   }
-
+  
   @Override
   protected List<String> getColumns(CreateTable statement) {
     return Collections.emptyList();
   }
-
+  
   @Override
   protected List<String> getTables(CreateTable userQuery) {
     return Arrays.asList(userQuery.getTable().toString());
   }
-
+  
   @Override
   protected Expression getWhere(CreateTable query) {
     return null;
   }
-
+  
   @Override
   protected CreateTable parseStatement(String statement) throws SqlCorrectionException {
     try {

@@ -5,7 +5,6 @@ import java.util.List;
 
 import model.correctionResult.WhereComparison;
 import model.exercise.EvaluationResult;
-import model.exercise.Success;
 import net.sf.jsqlparser.expression.AllComparisonExpression;
 import net.sf.jsqlparser.expression.AnalyticExpression;
 import net.sf.jsqlparser.expression.AnyComparisonExpression;
@@ -82,7 +81,7 @@ public class WhereCorrector implements ExpressionVisitor {
     BinaryExpressionMatcher matcher = new BinaryExpressionMatcher(userExpressions, sampleExpressions);
     matcher.match();
     
-    return new WhereComparison(Success.NONE, matcher);
+    return new WhereComparison(matcher);
   }
   
   @Override

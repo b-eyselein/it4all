@@ -11,16 +11,16 @@ import net.sf.jsqlparser.statement.select.Select;
 @Entity
 @DiscriminatorValue("SELECT")
 public class SelectExercise extends SqlExercise {
-  
-  private static final QueryCorrector<Select, PlainSelect, SelectExercise> corrector = new SelectCorrector();
-  
+
+  private static final QueryCorrector<Select, PlainSelect> corrector = new SelectCorrector();
+
   public SelectExercise(SqlExerciseKey theKey) {
     super(theKey, SqlExerciseType.SELECT);
   }
-  
+
   @Override
-  public QueryCorrector<Select, PlainSelect, SelectExercise> getCorrector() {
+  public QueryCorrector<Select, PlainSelect> getCorrector() {
     return corrector;
   }
-  
+
 }

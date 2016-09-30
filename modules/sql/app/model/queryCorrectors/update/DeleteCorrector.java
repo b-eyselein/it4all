@@ -15,6 +15,7 @@ import model.correctionResult.TableComparison;
 import model.exercise.EvaluationFailed;
 import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
+import model.exercise.SqlExercise;
 import model.exercise.update.DeleteExercise;
 import model.queryCorrectors.QueryCorrector;
 import net.sf.jsqlparser.JSQLParserException;
@@ -24,24 +25,24 @@ import net.sf.jsqlparser.statement.delete.Delete;
 import play.Logger;
 import play.db.Database;
 
-public class DeleteCorrector extends QueryCorrector<Delete, Delete, DeleteExercise> {
+public class DeleteCorrector extends QueryCorrector<Delete, Delete> {
 
   @Override
   protected List<EvaluationResult> compareStatically(Delete userQuery, Delete sampleQuery,
       FeedbackLevel feedbackLevel) {
-    
+
     TableComparison tableComparison = compareTables(userQuery, sampleQuery);
-    
+
     ColumnComparison columnComparison = compareColumns(userQuery, sampleQuery);
 
     EvaluationResult whereComparison = compareWheres(userQuery, sampleQuery);
-    
+
     return Arrays.asList(tableComparison, columnComparison, whereComparison);
   }
-  
+
   @Override
   protected EvaluationResult executeQuery(Database database, Delete userStatement, Delete sampleStatement,
-      DeleteExercise exercise, FeedbackLevel feedbackLevel) {
+      SqlExercise exercise, FeedbackLevel feedbackLevel) {
     try {
       Connection connection = database.getConnection();
       connection.setCatalog(exercise.scenario.shortName);
@@ -50,12 +51,14 @@ public class DeleteCorrector extends QueryCorrector<Delete, Delete, DeleteExerci
       createDatabaseIfNotExists(connection, exercise.scenario.shortName,
           Paths.get("conf", "resources", exercise.scenario.scriptFile));
       
+      String validation = ((DeleteExercise) exercise).validation;
+      
       connection.createStatement().executeUpdate(userStatement.toString());
-      SqlQueryResult userResult = new SqlQueryResult(connection.createStatement().executeQuery(exercise.validation));
+      SqlQueryResult userResult = new SqlQueryResult(connection.createStatement().executeQuery(validation));
       connection.rollback();
       
       connection.createStatement().executeUpdate(sampleStatement.toString());
-      SqlQueryResult sampleResult = new SqlQueryResult(connection.createStatement().executeQuery(exercise.validation));
+      SqlQueryResult sampleResult = new SqlQueryResult(connection.createStatement().executeQuery(validation));
       connection.rollback();
       
       connection.close();
@@ -71,17 +74,17 @@ public class DeleteCorrector extends QueryCorrector<Delete, Delete, DeleteExerci
           "Es gab einen Fehler beim Ausführen eines Statements:<p><pre>" + e.getMessage() + "</pre></p>");
     }
   }
-  
+
   @Override
   protected List<String> getColumns(Delete statement) {
     return Collections.emptyList();
   }
-  
+
   @Override
   protected List<String> getTables(Delete userQuery) {
     return Arrays.asList(userQuery.getTable().getName());
   }
-  
+
   @Override
   protected Expression getWhere(Delete query) {
     return query.getWhere();
