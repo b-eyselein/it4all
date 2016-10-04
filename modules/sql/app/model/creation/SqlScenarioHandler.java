@@ -28,6 +28,8 @@ public class SqlScenarioHandler {
   private static final String SCENARIO_FOLDER = "conf/resources/sql";
 
   // FIXME: genauere Fehlermeldungen (auch auf Konsole --> Logger!)
+  // BEISPIEL: Aufgabe nicht erstellt, weil "text" oder "sampleSolutions"
+  // fehlt/falsch
 
   public static ScenarioCreationResult handleScenario(Path path, Database database) {
     JsonNode json = null;

@@ -13,6 +13,7 @@ import javax.inject.Singleton;
 
 import model.SqlCorrectionException;
 import model.SqlQueryResult;
+import model.correctionResult.GroupByComparison;
 import model.correctionResult.OrderByComparison;
 import model.correctionResult.SqlExecutionResult;
 import model.exercise.EvaluationFailed;
@@ -33,10 +34,17 @@ import play.db.Database;
 @Singleton
 public class SelectCorrector extends QueryCorrector<Select, PlainSelect> {
 
-  @SuppressWarnings("unused")
   private EvaluationResult compareGroupByElements(PlainSelect plainUserQuery, PlainSelect plainSampleQuery) {
-    // FIXME: implement compareGroupByElements()
-    return new EvaluationFailed("Vergleich der GROUP BY-Elemente muss noch implementiert werden!");
+    List<String> userElements = groupByElementsAsStrings(plainUserQuery);
+    List<String> sampleElements = groupByElementsAsStrings(plainSampleQuery);
+
+    if(userElements.isEmpty() && sampleElements.isEmpty())
+      return new GenericEvaluationResult(Success.COMPLETE, "Es waren keine Group By-Elemente anzugeben.");
+
+    List<String> wrong = listDifference(userElements, sampleElements);
+    List<String> missing = listDifference(sampleElements, userElements);
+
+    return new GroupByComparison(missing, wrong);
   }
 
   private EvaluationResult compareOrderByElements(PlainSelect plainUserQuery, PlainSelect plainSampleQuery) {
@@ -52,10 +60,19 @@ public class SelectCorrector extends QueryCorrector<Select, PlainSelect> {
     return new OrderByComparison(missing, wrong);
   }
 
+  private List<String> groupByElementsAsStrings(PlainSelect statement) {
+    if(statement.getGroupByColumnReferences() == null)
+      // TODO: behebe FIX!
+      return Collections.emptyList();
+  
+    return statement.getGroupByColumnReferences().stream().map(gb -> gb.toString()).collect(Collectors.toList());
+  }
+
   private List<String> orderByElementsAsStrings(PlainSelect statement) {
     if(statement.getOrderByElements() == null)
       // TODO: behebe FIX!
       return Collections.emptyList();
+  
     return statement.getOrderByElements().stream().map(el -> el.toString()).collect(Collectors.toList());
   }
 
@@ -73,12 +90,9 @@ public class SelectCorrector extends QueryCorrector<Select, PlainSelect> {
 
     EvaluationResult orderByComparison = compareOrderByElements(plainUserQuery, plainSampleQuery);
 
-    // FIXME: implement and use!
-    // EvaluationResult groupByComparison =
-    // compareGroupByElements(plainUserQuery, plainSampleQuery);
+    EvaluationResult groupByComparison = compareGroupByElements(plainUserQuery, plainSampleQuery);
 
-    return Arrays.asList(tableComparison, columnComparison, whereComparison, orderByComparison); // ,
-                                                                                                 // groupByComparison);
+    return Arrays.asList(tableComparison, columnComparison, whereComparison, orderByComparison, groupByComparison);
   }
 
   @Override
