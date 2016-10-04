@@ -4,22 +4,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import model.exercise.EvaluationResult;
-import model.exercise.Success;
+import model.result.Match;
+import model.result.MatchingResult;
+import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
 
-public class CreateResult extends EvaluationResult {
+public class CreateResult extends MatchingResult<ColumnDefinition> {
   
-  private List<ColumnDefinitionResult> columnResults;
-  private List<String> notDefinedColumns;
-  private List<String> surplusColumns;
-
-  public CreateResult(List<ColumnDefinitionResult> theColumnResults, List<String> theNotDefinedColumns,
-      List<String> theWrongColumns) {
-    super(Success.NONE);
-    columnResults = theColumnResults;
-    notDefinedColumns = theNotDefinedColumns;
-    surplusColumns = theWrongColumns;
+  private List<Match<ColumnDefinition>> columnResults;
+  private List<ColumnDefinition> notDefinedColumns;
+  private List<ColumnDefinition> surplusColumns;
+  
+  public CreateResult(List<Match<ColumnDefinition>> theMatches, List<ColumnDefinition> theNotMatchedInFirst,
+      List<ColumnDefinition> theNotMatchedInSecond) {
+    super(theMatches, theNotMatchedInFirst, theNotMatchedInSecond);
   }
-
+  
   @Override
   public String getAsHtml() {
     String ret = "<div class=\"panel panel-" + getBSClass() + "\">";
@@ -29,18 +28,20 @@ public class CreateResult extends EvaluationResult {
     ret += "<div class=\"panel-body\">";
     // Not defined columns
     if(!notDefinedColumns.isEmpty())
-      ret += "<div class=\"alert alert-danger\">Folgende Spalten wurden nicht definiert: "
-          + notDefinedColumns.stream().collect(Collectors.joining("</li><li>", "<ul><li>", "</li></ul>")) + "</div>";
+      ret += "<div class=\"alert alert-danger\">Folgende Spalten wurden nicht definiert: " + notDefinedColumns.stream()
+          .map(colDef -> colDef.toString()).collect(Collectors.joining("</li><li>", "<ul><li>", "</li></ul>"))
+          + "</div>";
     else
       ret += "<div class=\"alert alert-success\">Es wurden alle nötigen Spalten definiert.</div>";
     
     // Surplus columns
     if(!surplusColumns.isEmpty())
-      ret += "<div class=\"alert alert-danger\">Folgende überzähligen Spalten wurden definiert: "
-          + surplusColumns.stream().collect(Collectors.joining("</li><li>", "<ul><li>", "</li></ul>")) + "</div>";
+      ret += "<div class=\"alert alert-danger\">Folgende überzähligen Spalten wurden definiert: " + surplusColumns
+          .stream().map(colDef -> colDef.toString()).collect(Collectors.joining("</li><li>", "<ul><li>", "</li></ul>"))
+          + "</div>";
     else
       ret += "<div class=\"alert alert-success\">Es wurden keine überschüssigen Spalten definiert.</div>";
-
+    
     ret += "<hr>";
     
     // Columns with correct name
@@ -51,5 +52,5 @@ public class CreateResult extends EvaluationResult {
     ret += "</div>";
     return ret;
   }
-
+  
 }

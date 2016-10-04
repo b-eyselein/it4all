@@ -1,48 +1,33 @@
 package model.result;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
-public class Matcher<T> {
-
-  private Comparator<T> comparator;
+public abstract class Matcher<T> {
+  
+  private BiPredicate<T, T> equalsTest;
   private BiFunction<T, T, Match<T>> matchedAction;
   
-  private List<Match<T>> matches = new LinkedList<>();
-  private List<T> notMatchedInFirst, notMatchedInSecond;
+  private Predicate<T> filter = null;
   
-  private Predicate<T> filter;
-  
-  public Matcher(List<T> theFirstCollection, List<T> theSecondCollection) {
-    notMatchedInFirst = new ArrayList<>(theFirstCollection);
-    notMatchedInSecond = new ArrayList<>(theSecondCollection);
-  }
-
-  public List<Match<T>> getMatches() {
-    return matches;
+  public Matcher(BiPredicate<T, T> theEqualsTest, BiFunction<T, T, Match<T>> theMatchedAction) {
+    equalsTest = theEqualsTest;
+    matchedAction = theMatchedAction;
   }
   
-  public List<T> getNotMatchedInFirst() {
-    return notMatchedInFirst;
-  }
-  
-  public List<T> getNotMatchedInSecond() {
-    return notMatchedInSecond;
-  }
-  
-  public void match() {
-    for(Iterator<T> iter1 = notMatchedInFirst.iterator(); iter1.hasNext();) {
+  public MatchingResult<T> match(List<T> firstCollection, List<T> secondCollection) {
+    List<Match<T>> matches = new LinkedList<>();
+    for(Iterator<T> iter1 = firstCollection.iterator(); iter1.hasNext();) {
       T arg1 = iter1.next();
       
       if(filter != null && !filter.test(arg1))
         continue;
       
-      Iterator<T> iter2 = notMatchedInSecond.iterator();
+      Iterator<T> iter2 = secondCollection.iterator();
       boolean matched = false;
       
       while(iter2.hasNext() && !matched) {
@@ -51,7 +36,7 @@ public class Matcher<T> {
         if(filter != null && !filter.test(arg2))
           continue;
         
-        if(comparator.compare(arg1, arg2) == 0) {
+        if(equalsTest.test(arg1, arg2)) {
           matches.add(matchedAction.apply(arg1, arg2));
           iter1.remove();
           iter2.remove();
@@ -59,18 +44,15 @@ public class Matcher<T> {
         }
       }
     }
-  }
-  
-  public void setComparator(Comparator<T> theComparator) {
-    comparator = theComparator;
+    
+    return instantiateMatch(matches, firstCollection, secondCollection);
   }
   
   public void setFilter(Predicate<T> theFilter) {
     filter = theFilter;
   }
   
-  public void setMatchedAction(BiFunction<T, T, Match<T>> theMatchedAction) {
-    matchedAction = theMatchedAction;
-  }
+  protected abstract MatchingResult<T> instantiateMatch(List<Match<T>> matches, List<T> firstCollection,
+      List<T> secondCollection);
   
 }
