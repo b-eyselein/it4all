@@ -66,6 +66,8 @@ public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable> {
 
     List<ColumnDefinitionResult> columnResults = new LinkedList<>();
 
+    // FIXME: Use Matcher!
+
     for(final Iterator<ColumnDefinition> userIter = userDefs.iterator(); userIter.hasNext();) {
       ColumnDefinition userDef = userIter.next();
       for(Iterator<ColumnDefinition> sampleIter = sampleDefs.iterator(); sampleIter.hasNext();) {
