@@ -5,7 +5,7 @@
   <h3>Ihre Bewertungen:</h3>
   @for(grad <- gradings) {
   <div class="panel panel-default">
-    <div class="panel-body">@grad.exercise.id: @grad.points Punkte</div>
+    <div class="panel-body">@grad.exercise.id: @grad.points / @grad.exercise.getMaxPoints() Punkte</div>
   </div>
   }
 </div>
