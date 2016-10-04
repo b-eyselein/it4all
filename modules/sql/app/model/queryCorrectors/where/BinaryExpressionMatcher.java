@@ -4,9 +4,9 @@ import java.util.Comparator;
 import java.util.List;
 
 import model.correctionResult.WhereComparison;
-import model.result.Match;
-import model.result.Matcher;
-import model.result.MatchingResult;
+import model.matching.Match;
+import model.matching.Matcher;
+import model.matching.MatchingResult;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.schema.Column;
 

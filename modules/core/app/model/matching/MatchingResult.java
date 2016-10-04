@@ -1,4 +1,4 @@
-package model.result;
+package model.matching;
 
 import java.util.List;
 

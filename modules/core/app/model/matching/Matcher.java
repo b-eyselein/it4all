@@ -1,4 +1,4 @@
-package model.result;
+package model.matching;
 
 import java.util.Iterator;
 import java.util.LinkedList;

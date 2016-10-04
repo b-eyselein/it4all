@@ -1,4 +1,4 @@
-package model.result;
+package model.matching;
 
 import model.exercise.EvaluationResult;
 import model.exercise.Success;
