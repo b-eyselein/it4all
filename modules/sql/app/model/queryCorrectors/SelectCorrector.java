@@ -48,11 +48,11 @@ public class SelectCorrector extends QueryCorrector<Select, PlainSelect> {
   }
 
   private EvaluationResult compareOrderByElements(PlainSelect plainUserQuery, PlainSelect plainSampleQuery) {
+    if(plainUserQuery.getWhere() == null && plainSampleQuery.getWhere() == null)
+      return new GenericEvaluationResult(Success.COMPLETE, "Es waren keine Order By-Elemente anzugeben.");
+
     List<String> userElements = orderByElementsAsStrings(plainUserQuery);
     List<String> sampleElements = orderByElementsAsStrings(plainSampleQuery);
-
-    if(userElements.isEmpty() && sampleElements.isEmpty())
-      return new GenericEvaluationResult(Success.COMPLETE, "Es waren keine Order By-Elemente anzugeben.");
 
     List<String> wrong = listDifference(userElements, sampleElements);
     List<String> missing = listDifference(sampleElements, userElements);
@@ -64,7 +64,7 @@ public class SelectCorrector extends QueryCorrector<Select, PlainSelect> {
     if(statement.getGroupByColumnReferences() == null)
       // TODO: behebe FIX!
       return Collections.emptyList();
-  
+
     return statement.getGroupByColumnReferences().stream().map(gb -> gb.toString()).collect(Collectors.toList());
   }
 
@@ -72,7 +72,7 @@ public class SelectCorrector extends QueryCorrector<Select, PlainSelect> {
     if(statement.getOrderByElements() == null)
       // TODO: behebe FIX!
       return Collections.emptyList();
-  
+
     return statement.getOrderByElements().stream().map(el -> el.toString()).collect(Collectors.toList());
   }
 
