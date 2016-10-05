@@ -27,10 +27,10 @@ public class TableComparison extends EvaluationResult {
       ret += "<p><span class=\"glyphicon glyphicon-ok\"></span> Es wurden die richtigen Tabellen verwendet.</p>";
     else {
       if(!missingTables.isEmpty())
-        ret += "<p>Es fehlen folgende Tabellen:<ul><li>" + String.join("</li><li>", missingTables) + "</li></ul></p>";
+        ret += "<p>Es fehlen folgende Tabellen:" + concatListElements(missingTables) + "</p>";
       if(!unneccessaryTables.isEmpty())
-        ret += "<p>Folgende Tabellen wurden f&auml;lschlicherweise benutzt:<ul><li>"
-            + String.join("</li><li>", unneccessaryTables) + "</li></ul></p>";
+        ret += "<p>Folgende Tabellen wurden f&auml;lschlicherweise benutzt: " + concatListElements(unneccessaryTables)
+            + "</p>";
     }
     ret += "</div>";
 

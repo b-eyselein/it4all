@@ -26,7 +26,6 @@ public class GroupByComparison extends EvaluationResult {
 
   @Override
   public String getAsHtml() {
-    // TODO Auto-generated method stub
     String ret = "<div class=\"panel panel-" + getBSClass() + "\">";
     ret += "<div class=\"panel-heading\">Vergleich der Order By-Elemente</div>";
     ret += "<div class=\"panel-body\">";
@@ -35,12 +34,10 @@ public class GroupByComparison extends EvaluationResult {
       ret += "<p>Alle Order By-Elemente stimmen.</p>";
 
     if(!missing.isEmpty())
-      ret += "<p>Es fehlen folgende Group By-Elemente: <code>" + String.join("</code>, <code>", missing)
-          + "</code></p>";
+      ret += "<p>Es fehlen folgende Group By-Elemente: " + concatCodeElements(missing) + "</p>";
 
     if(!unnecessary.isEmpty())
-      ret += "<p>Folgende Group By-Elemente sind nicht nötig: <code>" + String.join("</code>, <code>", unnecessary)
-          + "</code></p>";
+      ret += "<p>Folgende Group By-Elemente sind nicht nötig: " + concatCodeElements(unnecessary) + "</p>";
 
     ret += "</div></div>";
     return ret;

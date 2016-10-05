@@ -35,12 +35,10 @@ public class OrderByComparison extends EvaluationResult {
       ret += "<p>Alle Order By-Elemente stimmen.</p>";
 
     if(!missing.isEmpty())
-      ret += "<p>Es fehlen folgende Order By-Elemente: <code>" + String.join("</code>, <code>", missing)
-          + "</code></p>";
+      ret += "<p>Es fehlen folgende Order By-Elemente: " + concatCodeElements(missing) + "</p>";
 
     if(!unnecessary.isEmpty())
-      ret += "<p>Folgende Order By-Elemente sind nicht nötig: <code>" + String.join("</code>, <code>", unnecessary)
-          + "</code></p>";
+      ret += "<p>Folgende Order By-Elemente sind nicht nötig: " + concatCodeElements(unnecessary) + "</p>";
 
     ret += "</div></div>";
     return ret;
