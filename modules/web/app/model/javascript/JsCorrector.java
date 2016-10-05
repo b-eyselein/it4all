@@ -24,17 +24,17 @@ public class JsCorrector {
   public static List<EvaluationResult> correct(JsExercise exercise, String learnerSolution,
       List<CommitedTestData> userTestData) {
     ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
-    
+
+    // FIXME: scriptcontext for console.log() ?!?
+
+    // FIXME: Musteroutput mit gegebener Musterlösung berechnen statt angeben?
+
     // Evaluate leaner solution
     try {
       engine.eval(learnerSolution);
     } catch (ScriptException e) {
-      // Syntax error in learner solution!
-      String message = "<div class=\"alert alert-danger\">";
-      message += "<p>Es gab einen Fehler beim Einlesen ihrer Lösung:</p>";
-      message += "<pre>" + String.join("</p><p>", Arrays.asList(e.getLocalizedMessage().split("\n"))) + "</pre>";
-      message += "</div>";
-      return Arrays.asList(new EvaluationFailed(message));
+      return Arrays.asList(new EvaluationFailed("Es gab einen Fehler beim Einlesen ihrer Lösung:",
+          "<pre>" + e.getLocalizedMessage() + "</pre>"));
     }
 
     List<ITestData> testData = new LinkedList<>();
@@ -59,6 +59,11 @@ public class JsCorrector {
       return validateResult(Double.parseDouble(gottenResult.toString()), Double.parseDouble(awaitedResult));
     case STRING:
       return validateResult(gottenResult.toString(), awaitedResult);
+    case BOOLEAN:
+    case NULL:
+    case OBJECT:
+    case SYMBOL:
+    case UNDEFINED:
     default:
       return false;
     }

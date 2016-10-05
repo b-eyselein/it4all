@@ -19,19 +19,19 @@ import net.sf.jsqlparser.statement.create.table.CreateTable;
 import play.db.Database;
 
 public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable> {
-
+  
+  private static ColumnDefinitionMatcher colDefMatcher = new ColumnDefinitionMatcher();
+  
   @Override
   protected List<EvaluationResult> compareStatically(CreateTable userStatement, CreateTable sampleStatement,
       FeedbackLevel feedbackLevel) {
     List<ColumnDefinition> userDefs = userStatement.getColumnDefinitions();
     List<ColumnDefinition> sampleDefs = sampleStatement.getColumnDefinitions();
-
-    ColumnDefinitionMatcher matcher = new ColumnDefinitionMatcher();
-    MatchingResult<ColumnDefinition> result = matcher.match(userDefs, sampleDefs);
-
+    
+    MatchingResult<ColumnDefinition> result = colDefMatcher.match(userDefs, sampleDefs);
     return Arrays.asList(result);
   }
-
+  
   @Override
   protected EvaluationResult executeQuery(Database database, CreateTable userStatement, CreateTable sampleStatement,
       SqlExercise exercise, FeedbackLevel feedbackLevel) {
@@ -39,22 +39,22 @@ public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable> {
     // DO NOT EXECUTE QUERY!
     return new GenericEvaluationResult(Success.COMPLETE, "Create-Statements werden nicht ausgeführt.");
   }
-
+  
   @Override
   protected List<String> getColumns(CreateTable statement) {
     return Collections.emptyList();
   }
-
+  
   @Override
   protected List<String> getTables(CreateTable userQuery) {
     return Arrays.asList(userQuery.getTable().toString());
   }
-
+  
   @Override
   protected Expression getWhere(CreateTable query) {
     return null;
   }
-
+  
   @Override
   protected CreateTable parseStatement(String statement) throws SqlCorrectionException {
     try {
