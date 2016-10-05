@@ -16,7 +16,7 @@ import model.html.result.ElementResult;
 
 @Entity
 public class CssTask extends Task {
-  
+
   @Override
   public ElementResult evaluate(SearchContext searchContext) {
     String xpathQuery = buildXPathQuery();
@@ -24,7 +24,7 @@ public class CssTask extends Task {
 
     if(foundElements.isEmpty())
       return new ElementResult(this, Success.NONE);
-    
+
     boolean allSuccesful = true;
     for(WebElement element: foundElements) {
       List<AttributeResult> evaluatedAttributeResults = evaluateAllAttributeResults(element);
@@ -45,7 +45,7 @@ public class CssTask extends Task {
     // Kein Attribut, wenn Tag eindeutig
     if(definingAttribute == null || definingAttribute.isEmpty())
       return xpathQuery;
-    
+
     String[] valueAndKey = definingAttribute.split(KEY_VALUE_CHARACTER);
     xpathQuery += "[@" + valueAndKey[0] + " = '" + valueAndKey[1] + "']";
     return xpathQuery;

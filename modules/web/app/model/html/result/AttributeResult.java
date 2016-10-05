@@ -7,16 +7,16 @@ import model.exercise.Success;
 import play.Logger;
 
 public class AttributeResult extends EvaluationResult {
-
+  
   private String key;
   private String value;
-
+  
   public AttributeResult(String attributeKey, String attributeValue) {
     super(Success.NONE);
     key = attributeKey;
     value = attributeValue;
   }
-
+  
   public void evaluate(WebElement element) {
     String foundValue = null;
     try {
@@ -28,24 +28,24 @@ public class AttributeResult extends EvaluationResult {
     }
     if(foundValue == null)
       success = Success.NONE;
-    else if(foundValue.equals(value))
+    else if(foundValue.contains(value))
       success = Success.COMPLETE;
     else
       success = Success.PARTIALLY;
   }
-
+  
   @Override
   public String getAsHtml() {
     // FIXME Auto-generated method stub
     return null;
   }
-
+  
   public String getKey() {
     return key;
   }
-
+  
   public String getValue() {
     return value;
   }
-
+  
 }

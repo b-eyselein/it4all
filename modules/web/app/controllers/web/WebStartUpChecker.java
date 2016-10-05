@@ -57,6 +57,8 @@ public class WebStartUpChecker extends StartUpChecker {
   protected void performStartUpCheck() {
     theLogger.info("Running startup checks for Web");
 
+    // FIXME: read Html + Css exercises from JSON-FILE?!?
+
     // Assert that there is at least one exercise for all types
     List<HtmlExercise> exercises = HtmlExercise.finder.all();
     if(exercises.size() == 0)

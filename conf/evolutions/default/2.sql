@@ -3,7 +3,8 @@
 # HTML
 
 insert into users values
-	("admin", "ADMIN");
+	("admin", "ADMIN")
+	on duplicate key update name = VALUES(name), role = VALUES(role);
 
 insert into exercise (`type`, `id`, `title`, `exerciseText`) values
 	("html",
@@ -61,11 +62,21 @@ insert into childtask (`id`, `task_id`, `exercise_id`, `tagName`, `defining_attr
  	(5, 6, 1, "option", "value=VW");
  	
 insert into css_task (`task_id`, `exercise_id`, `taskdesc`, `xpath_query_name`, `defining_attribute`, `attributes`) values
-	(1, 1, 'Binden Sie Bootstrap über folgenden Link ein: <link rel=\"stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css\">', 
-	"//link", "rel=stylesheet", "href=http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"),
-	(2, 1, "Geben Sie allen div-Elementen, die die einzelnen Inputs einschließen, die Klasse 'form-group'.", "//form/div", "", "class=form-group"),
-	(3, 1, "Verwenden Sie für alle Inputs außer der Checkbox für die AGB die Klasse form-control", "//form/div/input[not(contains(@type, 'checkbox'))]", "", "class=form-control");
-
+	(1, 1, 'Binden Sie Bootstrap über folgenden Link ein: <link rel="stylesheet" href="/assets/stylesheets/bootstrap.css">', 
+	'//link', '', 'rel=stylesheet;;href=/assets/stylesheets/bootstrap.css'),
+	
+	(2, 1, 'Geben Sie allen div-Elementen, die alle Inputs außer die Checkbox einschließen, die Klasse \'form-group\'.',
+	'//form/div[not(descendant::*[@type = \'checkbox\'])]', '', 'class=form-group'),
+	
+	(3, 1, 'Geben Sie dem div-Element, das die Checkbox einschließt, die Klasse "checkbox".',
+	'//form/div[descendant::*[@type = \'checkbox\']]', '', 'class=checkbox'),
+	
+	(4, 1, 'Verwenden Sie für alle Inputs außer der Checkbox für die AGB die Klasse "form-control".',
+	'//form/div/input[not(contains(@type, \'checkbox\'))]', '', 'class=form-control'),
+	
+	(5, 1, 'Geben Sie dem Select-Element auch die Klass \'form-control\'.',
+	'//select', '', 'class=form-control');
+	
 	
 # JavaScript
 insert into js_web_exercise (`id`, `title`, `text`, `anterior`, `posterior`, `declaration`) values
