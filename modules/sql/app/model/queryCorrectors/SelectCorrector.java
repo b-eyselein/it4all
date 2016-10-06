@@ -129,13 +129,12 @@ public class SelectCorrector extends QueryCorrector<Select, PlainSelect> {
   protected List<String> getTables(PlainSelect userQuery) {
     List<String> userFromItems = new LinkedList<>();
 
-    // FIXME: JOIN ON - Bedingung?
-
     // Main table in Query
     if(userQuery.getFromItem() instanceof Table)
       userFromItems.add(((Table) userQuery.getFromItem()).getName());
 
     // All joined tables
+    // FIXME: JOIN ON - Bedingung --> getOnExpression() als Bedingung?
     if(userQuery.getJoins() != null)
       for(Join join: userQuery.getJoins())
         if(join.getRightItem() instanceof Table)

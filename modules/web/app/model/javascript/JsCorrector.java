@@ -19,15 +19,13 @@ import model.javascript.web.JsWebExercise;
 import play.Logger;
 
 public class JsCorrector {
-  
+
   public static List<EvaluationResult> correct(JsExercise exercise, String learnerSolution,
       List<CommitedTestData> userTestData) {
     ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
-    
-    // FIXME: scriptcontext for console.log() ?!?
-    
-    // FIXME: Musteroutput mit gegebener Musterlösung berechnen statt angeben?
-    
+
+    // TODO: Musteroutput mit gegebener Musterlösung berechnen statt angeben?
+
     // Evaluate leaner solution
     try {
       engine.eval(learnerSolution);
@@ -35,23 +33,23 @@ public class JsCorrector {
       return Arrays.asList(new EvaluationFailed("Es gab einen Fehler beim Einlesen ihrer Lösung:",
           "<pre>" + e.getLocalizedMessage() + "</pre>"));
     }
-    
+
     List<ITestData> testData = new LinkedList<>();
     testData.addAll(exercise.functionTests);
     testData.addAll(userTestData);
-    
+
     return testData.stream().map(test -> test.evaluate(engine)).collect(Collectors.toList());
-    
+
   }
-  
+
   public static List<EvaluationResult> correctWeb(JsWebExercise exercise, String solutionUrl) {
     WebDriver driver = loadWebSite(solutionUrl);
-    
+
     List<EvaluationResult> results = exercise.tests.stream().map(test -> test.test(driver))
         .collect(Collectors.toList());
     return results;
   }
-  
+
   public static boolean validateResult(JsDataType type, Object gottenResult, String awaitedResult) {
     switch(type) {
     // FIXME: implement!!!!!
@@ -67,13 +65,13 @@ public class JsCorrector {
     default:
       return false;
     }
-    
+
   }
-  
+
   public static <T> boolean validateResult(T gottenResult, T awaitedResult) {
     return gottenResult.equals(awaitedResult);
   }
-  
+
   public static void validateTestData(JsExercise exercise, List<CommitedTestData> testData) {
     ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
     try {
@@ -83,12 +81,12 @@ public class JsCorrector {
       testData.forEach(data -> data.setOk(false));
       return;
     }
-    
+
     testData.forEach(data -> {
       try {
         String toEvaluate = data.buildToEvaluate();
         Object gottenResult = engine.eval(toEvaluate);
-        
+
         boolean validated = validateResult(exercise.returntype, gottenResult, data.getOutput());
         data.setOk(validated);
       } catch (ScriptException e) {
@@ -96,7 +94,7 @@ public class JsCorrector {
       }
     });
   }
-  
+
   private static WebDriver loadWebSite(String solutionUrl) {
     WebDriver driver = new HtmlUnitDriver(true);
     driver.get(solutionUrl);
