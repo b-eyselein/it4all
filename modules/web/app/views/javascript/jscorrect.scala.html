@@ -1,23 +1,33 @@
 @(learnerSolution: String, testResults: List[model.exercise.EvaluationResult], user: model.user.User)
 
 @main("JavaScript: Korrektur", user) {
-<div class="container">
+<div class="container-fluid">
 
-  <div class="panel panel-default">
-    <div class="panel-heading">Ihre L&ouml;sung</div>
-    <div class="panel-body">
-      <pre>@learnerSolution</pre>
+  <div class="row">
+  
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">Ihre L&ouml;sung</div>
+        <div class="panel-body">
+          <pre>@learnerSolution</pre>
+        </div>
+      </div>
     </div>
-  </div>
-
-  <div class="panel panel-default">
-    <div class="panel-heading">Testergebnisse</div>
-    <div class="panel-body">
-      @for(testResult <- testResults) {
-      	@Html(testResult.getAsHtml)
-      }
+    
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">Testergebnisse</div>
+        <div class="panel-body">
+        
+        @for(testResult <- testResults) {
+        	@Html(testResult.getAsHtml)
+        }
+        
+        </div>
+      </div>
     </div>
+    
   </div>
-
+  
 </div>
 }
