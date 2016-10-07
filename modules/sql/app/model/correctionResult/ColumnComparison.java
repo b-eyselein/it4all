@@ -20,6 +20,7 @@ public class ColumnComparison extends EvaluationResult {
 
   @Override
   public String getAsHtml() {
+    // FIXME: implement feedbackLevel!
     String ret = "<div class=\"panel panel-" + getBSClass() + "\">";
     ret += "<div class=\"panel-heading\">Vergleich der Spalten</div>";
 

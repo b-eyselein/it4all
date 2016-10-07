@@ -15,6 +15,7 @@ public abstract class EvaluationResult {
   }
 
   protected FeedbackLevel minimalFL;
+  protected FeedbackLevel requestedFL;
 
   protected Success success = Success.NONE;
 
@@ -41,7 +42,7 @@ public abstract class EvaluationResult {
   public FeedbackLevel getMinimalFeedbackLevel() {
     return minimalFL;
   }
-
+  
   public int getPoints() {
     return success.getPoints();
   }
@@ -54,6 +55,12 @@ public abstract class EvaluationResult {
     if(suc == null)
       throw new IllegalArgumentException("Success kann nicht auf \"null\" gesetzt werden!");
     success = suc;
+  }
+
+  protected FeedbackLevel getFLToUse() {
+    if(minimalFL.compareTo(requestedFL) < 0)
+      return minimalFL;
+    return requestedFL;
   }
 
 }

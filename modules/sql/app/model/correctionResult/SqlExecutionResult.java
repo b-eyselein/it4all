@@ -6,18 +6,17 @@ import model.exercise.FeedbackLevel;
 import model.exercise.Success;
 
 public class SqlExecutionResult extends EvaluationResult {
-
+  
+  // FIXME: implement feedbackLevel!
   private String message;
 
   private SqlQueryResult userResult;
   private SqlQueryResult sampleResult;
 
-  private FeedbackLevel feedbackLevel;
-
   public SqlExecutionResult(FeedbackLevel theFeedbackLevel, SqlQueryResult theUserResult,
       SqlQueryResult theSampleResult) {
     super(FeedbackLevel.MINIMAL_FEEDBACK, Success.NONE);
-    feedbackLevel = theFeedbackLevel;
+    requestedFL = theFeedbackLevel;
     userResult = theUserResult;
     sampleResult = theSampleResult;
 
@@ -28,10 +27,10 @@ public class SqlExecutionResult extends EvaluationResult {
   public String getAsHtml() {
     String ret = "<div class=\"alert alert-success\">Ihre Query wurde erfolgreich korrigiert.</div>";
 
-    if(feedbackLevel.compareTo(FeedbackLevel.MINIMAL_FEEDBACK) >= 0)
+    if(requestedFL.compareTo(FeedbackLevel.MINIMAL_FEEDBACK) >= 0)
       ret += "<div class=\"alert alert-" + getBSClass() + "\"><p>" + message + "</p></div>";
 
-    if(feedbackLevel.compareTo(FeedbackLevel.MEDIUM_FEEDBACK) >= 0)
+    if(requestedFL.compareTo(FeedbackLevel.MEDIUM_FEEDBACK) >= 0)
       ret += resultsAsHtml();
 
     return ret;

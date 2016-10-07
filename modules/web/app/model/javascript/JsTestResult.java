@@ -5,12 +5,13 @@ import model.exercise.FeedbackLevel;
 import model.exercise.Success;
 
 public class JsTestResult extends EvaluationResult {
-
+  
+  // FIXME: implement feedbackLevel!
   private String awaitedOutput;
   private String evaluated;
   private String realResult;
   private boolean successful;
-
+  
   public JsTestResult(String theAwaitedOutput, Success theSuccess, String theEvaluated, String theRealResult) {
     super(FeedbackLevel.MINIMAL_FEEDBACK, theSuccess);
     awaitedOutput = theAwaitedOutput;
@@ -18,7 +19,7 @@ public class JsTestResult extends EvaluationResult {
     realResult = theRealResult;
     successful = success == Success.COMPLETE;
   }
-
+  
   @Override
   public String getAsHtml() {
     String ret = "<div class=\"alert alert-" + (successful ? "success" : "danger") + "\">\n";
@@ -26,22 +27,22 @@ public class JsTestResult extends EvaluationResult {
     if(!successful)
       ret += "  <p>Erwartet: " + awaitedOutput + ", bekommen: " + realResult + "</p>\n";
     ret += "</div>";
-
+    
     return ret;
   }
-
+  
   public String getAwaitedResult() {
     return awaitedOutput;
   }
-
+  
   public String getEvaluated() {
     return evaluated;
   }
-
+  
   public String getRealResult() {
     return realResult;
   }
-
+  
   public boolean wasSuccessful() {
     return successful;
   }

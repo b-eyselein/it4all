@@ -25,12 +25,12 @@ function processCorrection(correction, type) {
     
     var numOfSuccessfulResults = 0;
     
+    var correctionDiv = document.getElementById("correction");
+    correctionDiv.innerHTML = "";
+    
     for(i = 0; i < newCorrection.length; i++) {
-      if(type == "html") {
-        handleHtmlResult(newCorrection[i]);
-      } else {
-        handleCssResult(newCorrection[i]);
-      }
+      // handleHtmlResult(newCorrection[i]);
+      correctionDiv.innerHTML += newCorrection[i].asHtml;
       if(newCorrection[i].success === "COMPLETE") {
         numOfSuccessfulResults++;
       }
@@ -65,110 +65,4 @@ function updatePreview() {
 
 function unescapeHTML(escapedHTML) {
   return escapedHTML.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
-}
-
-function handleHtmlResult(result) {
-  var taskID = result.task.key.taskId;
-  var taskDiv = document.getElementById("pan_task" + taskID);
-  
-  if(result.success === "COMPLETE") {
-    taskDiv.className = "panel panel-success";
-    $("#task" + taskID).collapse('hide');
-  } else if(result.success === "PARTIALLY") {
-    taskDiv.className = "panel panel-warning";
-    $("#task" + taskID).collapse('show');
-  } else if(result.success === "NONE") {
-    taskDiv.className = "panel panel-danger";
-    $("#task" + taskID).collapse('show');
-  } else {
-    alert("Es gab einen Fehler!");
-  }
-  
-  var comDiv = document.getElementById("com_task" + taskID);
-  comDiv.innerHTML = "";
-  
-  if(result.success === "COMPLETE" || result.success === "PARTIALLY") {
-    comDiv.innerHTML += "<div class=\"alert alert-success\">Element wurde gefunden!</div>";
-    if(result.parentsMissing !== null) {
-      comDiv.innerHTML += "<div class=\"alert alert-danger\">Element hat nicht die richtigen Elternelemente. Folgende fehlen: "
-          + result.parentsMissing.join(", ") + "</div>";
-    }
-  } else {
-    comDiv.innerHTML += "<div class=\"alert alert-danger\">Element konnte nicht gefunden werden!</div>";
-  }
-  
-  for(attCount = 0; attCount < result.attributeResults.length; attCount++) {
-    var attr = result.attributeResults[attCount];
-    if(attr.success === "COMPLETE") {
-      comDiv.innerHTML += "<div class=\"alert alert-success\">Attribut \"" + attr.key
-          + "\" hat den gesuchten Wert.</div>";
-    } else if(attr.success === "PARTIALLY") {
-      comDiv.innerHTML += "<div class=\"alert alert-danger\">Attribut \"" + attr.key
-          + "\" hat nicht den gesuchten Wert!</div>";
-    } else if(attr.success === "NONE") {
-      comDiv.innerHTML += "<div class=\"alert alert-danger\">Attribut \"" + attr.key
-          + "\" konnte nicht gefunden werden!</div>";
-    } else {
-      comDiv.innerHTML += "<div class=\"alert alert-warning\">Es gab einen Fehler beim Suchen des Attributes \""
-          + attr.key + "\"</div>";
-    }
-  }
-  
-  // TODO: childResults!
-  for(childCount = 0; childCount < result.childResults.length; childCount++) {
-    var childResult = result.childResults[childCount];
-    if(childResult.success === "COMPLETE") {
-      comDiv.innerHTML += "<div class=\"alert alert-success\">Kindelement \"" + childResult.key
-          + "\" hat den gesuchten Wert \"" + childResult.value + "\".</div>";
-    } else if(childResult.success === "PARTIALLY") {
-      comDiv.innerHTML += "<div class=\"alert alert-danger\">Kindelement \"" + childResult.key
-          + "\" hat nicht den gesuchten Wert \"" + childResult.value + "\"!</div>";
-    } else if(childResult.success === "NONE") {
-      comDiv.innerHTML += "<div class=\"alert alert-danger\">Kindelement \"" + childResult.key + "\" mit Wert \""
-          + childResult.value + "\" konnte nicht gefunden werden!</div>";
-    } else {
-      comDiv.innerHTML += "<div class=\"alert alert-warning\">Es gab einen Fehler beim Suchen des Kindelements \""
-          + childResult.key + "\"</div>";
-    }
-  }
-}
-
-function handleCssResult(result) {
-  var taskID = result.task.key.taskId;
-  var taskDiv = document.getElementById("pan_task" + taskID);
-  
-  if(result.success === "COMPLETE") {
-    taskDiv.className = "panel panel-success";
-    $("#task" + taskID).collapse('hide');
-  } else if(result.success === "PARTIALLY") {
-    taskDiv.className = "panel panel-warning";
-    $("#task" + taskID).collapse('show');
-  } else if(result.success === "NONE") {
-    taskDiv.className = "panel panel-danger";
-    $("#task" + taskID).collapse('show');
-  } else {
-    alert("Es gab einen Fehler!");
-  }
-  
-  var comDiv = document.getElementById("com_task" + taskID);
-  comDiv.innerHTML = "";
-  
-  if(result.success === "NONE") {
-    var newDiv = document.createElement("div");
-    newDiv.className = "alert alert-danger";
-    newDiv.innerHTML = "Es konnten keine entsprechenden Elemente gefunden werden! Haben Sie den Html-Teil der Aufgabe komplett bearbeitet?";
-    comDiv.appendChild(newDiv);
-  }
-  if(result.success === "PARTIALLY") {
-    var newDiv = document.createElement("div");
-    newDiv.className = "alert alert-warning";
-    newDiv.innerHTML = "Nicht alle Elemente haben die entsprechende Eigenschaft!";
-    comDiv.appendChild(newDiv);
-  }
-  if(result.success === "SUCCESS") {
-    var newDiv = document.createElement("div");
-    newDiv.className = "alert alert-success";
-    newDiv.innerHTML = "Alle Elemente haben die entsprechende Eigenschaft!";
-    comDiv.appendChild(newDiv);
-  }
 }

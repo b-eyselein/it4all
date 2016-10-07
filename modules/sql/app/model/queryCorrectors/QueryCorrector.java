@@ -54,13 +54,14 @@ public abstract class QueryCorrector<QueryType extends Statement, ComparedType> 
     } catch (SqlCorrectionException e) {
       return Arrays.asList(new EvaluationFailed(e.getMessage(), e.getCauseMessage()));
     }
-
+    
+    List<EvaluationResult> staticComps = compareStatically(parsedUserStatement, parsedSampleStatement, fbLevel);
+    EvaluationResult executionResult = executeQuery(database, parsedUserStatement, parsedSampleStatement, exercise,
+        fbLevel);
+    
     List<EvaluationResult> ret = new LinkedList<>();
-
-    if(fbLevel.compareTo(FeedbackLevel.FULL_FEEDBACK) >= 0)
-      ret.addAll(compareStatically(parsedUserStatement, parsedSampleStatement, fbLevel));
-
-    ret.add(executeQuery(database, parsedUserStatement, parsedSampleStatement, exercise, fbLevel));
+    ret.addAll(staticComps);
+    ret.add(executionResult);
 
     return ret;
   }

@@ -39,30 +39,14 @@ window.onload = updatePreview;
         <div class="col-md-4">
           <div class="panel panel-default">
             <div class="panel-heading">Teilaufgaben und Korrektur</div>
-            <div class="panel-body">
+            <div class="panel-body" id="correction">
             @if(exType.equals("html")) {
               @for(task <- exercise.tasks) {
-              <div id="pan_task@task.getId()" class="panel panel-default">
-                <div class="panel-heading" data-toggle="collapse" href="#task@task.getId()">
-                  @{task.getId()}. @task.taskDescription
-                  <span class="glyphicon glyphicon-chevron-down pull-right" id="chev@task.getId()"></span>
-                </div>
-                <div id="task@task.getId()" class="panel-collapse collapse">
-                  <div class="panel-body" id="com_task@task.getId()">TODO: Kommentar...</div>
-                </div>
-              </div>
+              <div class="well">@{task.getId()}. @task.taskDescription</div>
               }
             } else {
               @for(task <- exercise.cssTasks) {
-              <div id="pan_task@task.getId()" class="panel panel-default">
-                <div class="panel-heading" data-toggle="collapse" href="#task@task.getId()">
-                  @{task.getId()}. @task.taskDescription
-                  <span class="glyphicon glyphicon-chevron-down pull-right" id="chev@task.getId()"></span>
-                </div>
-                <div id="task@task.getId()" class="panel-collapse collapse">
-                  <div class="panel-body" id="com_task@task.getId()">TODO: Kommentar...</div>
-                </div>
-              </div>
+              <div class="well">@{task.getId()}. @task.taskDescription</div>
               }
             }
             </div>

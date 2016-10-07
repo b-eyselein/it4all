@@ -23,7 +23,7 @@ insert into html_task (`exercise_id`, `task_id`, `taskDesc`, `xpath_query_name`,
 	(1, 1, "Erstellen Sie ein Formular auf der Seite. Als Aktion soll test und als Methode 'post' angegeben werden. Alle anderen Elemente sollen sich in diesem Element befinden.",
 	"//form", "action=test;;method=post",  ""),
 
-	(1, 2, "Geben Sie im Fomular eine <h1>-Überschrift mit passendem Text an", "//form//h1", "", ""),
+	(1, 2, "Geben Sie im Fomular eine h1-Überschrift mit passendem Text an", "//form//h1", "", ""),
 	
 	(1, 3, "Erstellen Sie ein Namensfeld* (name) für den kompletten Namen des Kunden.",
 	"//form//div//input[@name='name']", "type=text;;required=true", ""),
@@ -39,7 +39,7 @@ insert into html_task (`exercise_id`, `task_id`, `taskDesc`, `xpath_query_name`,
 	 damit Sie die 'required'-Option modellieren können.",
 	"//form//div//select[@name='marke']", "required=true", ""),
 	 
-	(1, 7, "Erstellen Sie ein Eingabefeld* (jahr) für das Baujahr des Autos (1950 <= year <= 2016). Als Vorgabe soll 2000 eingestellt sein.",
+	(1, 7, "Erstellen Sie ein Eingabefeld* (jahr) für das Baujahr des Autos. Dies soll von 1950 bis einschließlich 2016 reichen. Als Vorgabe soll 2000 eingestellt sein.",
 	"//form//div//input[@type='number']", "name=jahr;;required=true;;value=2000", ""),
 	 
 	(1, 8, "Erstellen Sie eine Checkbox* (agb), um die AGBs der Seite zu akzeptieren",
