@@ -103,7 +103,8 @@ public abstract class QueryCorrector<QueryType extends Statement, ComparedType> 
     Expression userWhere = getWhere(userQuery), sampleWhere = getWhere(sampleQuery);
 
     if(userWhere == null && sampleWhere == null)
-      return new GenericEvaluationResult(Success.COMPLETE, "Es waren keine Bedingungen abzugeben");
+      return new GenericEvaluationResult(FeedbackLevel.MEDIUM_FEEDBACK, Success.COMPLETE,
+          "Es waren keine Bedingungen abzugeben");
     else if(userWhere == null)
       return new EvaluationFailed("In der Musterlösung sind Bedingungen!");
     else if(sampleWhere == null)

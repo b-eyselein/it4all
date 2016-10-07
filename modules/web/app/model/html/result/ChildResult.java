@@ -1,6 +1,7 @@
 package model.html.result;
 
 import model.exercise.EvaluationResult;
+import model.exercise.FeedbackLevel;
 import model.exercise.Success;
 import model.html.task.ChildTask;
 import model.html.task.HtmlTask;
@@ -18,7 +19,7 @@ public class ChildResult extends EvaluationResult {
   private String definingAttributeValue = "";
 
   public ChildResult(ChildTask theChildTask) {
-    super(Success.NONE);
+    super(FeedbackLevel.MEDIUM_FEEDBACK, Success.NONE);
     childTask = theChildTask;
 
     String[] keyAndValue = childTask.definingAttribute.split(HtmlTask.KEY_VALUE_CHARACTER);

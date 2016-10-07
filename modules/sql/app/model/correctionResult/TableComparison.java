@@ -3,6 +3,7 @@ package model.correctionResult;
 import java.util.List;
 
 import model.exercise.EvaluationResult;
+import model.exercise.FeedbackLevel;
 import model.exercise.Success;
 
 public class TableComparison extends EvaluationResult {
@@ -12,7 +13,7 @@ public class TableComparison extends EvaluationResult {
   private List<String> unneccessaryTables;
 
   public TableComparison(Success success, List<String> theMissingTables, List<String> theUnneccessaryTables) {
-    super(success);
+    super(FeedbackLevel.MINIMAL_FEEDBACK, success);
     missingTables = theMissingTables;
     unneccessaryTables = theUnneccessaryTables;
   }

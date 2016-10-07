@@ -2,33 +2,34 @@ package model.correctionResult.create;
 
 import java.util.List;
 
+import model.exercise.FeedbackLevel;
 import model.exercise.Success;
 import model.matching.Match;
 import net.sf.jsqlparser.statement.create.table.ColDataType;
 import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
 
 public class ColumnDefinitionMatch extends Match<ColumnDefinition> {
-
+  
   private Object datatypeName;
-
+  
   private Object message;
-
+  
   public ColumnDefinitionMatch(ColumnDefinition theArg1, ColumnDefinition theArg2) {
-    super(theArg1, theArg2);
+    super(FeedbackLevel.MEDIUM_FEEDBACK, theArg1, theArg2);
   }
-
+  
   @Override
   public void analyze() {
     datatypeName = arg1.getColumnName();
-
+    
     compareDataTypes(arg1.getColDataType(), arg2.getColDataType());
-
+    
     // TODO: compare columnspecstrings!
     // Logger.debug("ColumnSpecString for column " + userDef.getColumnName()
     // + "
     // :: " + userDef.getColumnSpecStrings());
   }
-
+  
   @Override
   public String getAsHtml() {
     String ret = "<div class=\"panel panel-" + getBSClass() + "\">";
@@ -37,18 +38,18 @@ public class ColumnDefinitionMatch extends Match<ColumnDefinition> {
     ret += "</div>";
     return ret;
   }
-
+  
   private void compareDataTypes(ColDataType userType, ColDataType sampleType) {
     String userDataType = userType.getDataType().toUpperCase();
     String sampleDataType = sampleType.getDataType().toUpperCase();
-
+    
     // Comparing datatype
     if(!userDataType.equals(sampleDataType)) {
       message = "Datentyp \"" + userDataType + "\" ist nicht korrekt, erwartet wurde \"" + sampleDataType + "\"!";
       success = Success.NONE;
       return;
     }
-
+    
     // TODO: Compare argumentslist?
     List<String> userArgs = userType.getArgumentsStringList(), sampleArgs = sampleType.getArgumentsStringList();
     if(userArgs == null && sampleArgs == null) {
@@ -56,7 +57,7 @@ public class ColumnDefinitionMatch extends Match<ColumnDefinition> {
       success = Success.COMPLETE;
       return;
     }
-
+    
     // TODO: Use matcher for arguments?
     if(userArgs.size() != sampleArgs.size()) {
       message = "Anzahl der Argumente stimmen nicht überein!";
@@ -71,9 +72,9 @@ public class ColumnDefinitionMatch extends Match<ColumnDefinition> {
         return;
       }
     }
-
+    
     message = "Datentyp richtig spezifiziert";
     success = Success.COMPLETE;
   }
-
+  
 }

@@ -3,6 +3,7 @@ package model.matching;
 import java.util.List;
 
 import model.exercise.EvaluationResult;
+import model.exercise.FeedbackLevel;
 import model.exercise.Success;
 
 public abstract class MatchingResult<T> extends EvaluationResult {
@@ -11,8 +12,9 @@ public abstract class MatchingResult<T> extends EvaluationResult {
   protected List<T> notMatchedInFirst;
   protected List<T> notMatchedInSecond;
   
-  public MatchingResult(List<Match<T>> theMatches, List<T> theNotMatchedInFirst, List<T> theNotMatchedInSecond) {
-    super(Success.NONE);
+  public MatchingResult(FeedbackLevel theMinimalFL, List<Match<T>> theMatches, List<T> theNotMatchedInFirst,
+      List<T> theNotMatchedInSecond) {
+    super(theMinimalFL, Success.NONE);
     matches = theMatches;
     notMatchedInFirst = theNotMatchedInFirst;
     notMatchedInSecond = theNotMatchedInSecond;

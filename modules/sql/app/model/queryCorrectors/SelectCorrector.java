@@ -39,7 +39,8 @@ public class SelectCorrector extends QueryCorrector<Select, PlainSelect> {
     List<String> sampleElements = groupByElementsAsStrings(plainSampleQuery);
 
     if(userElements.isEmpty() && sampleElements.isEmpty())
-      return new GenericEvaluationResult(Success.COMPLETE, "Es waren keine Group By-Elemente anzugeben.");
+      return new GenericEvaluationResult(FeedbackLevel.MEDIUM_FEEDBACK, Success.COMPLETE,
+          "Es waren keine Group By-Elemente anzugeben.");
 
     List<String> wrong = listDifference(userElements, sampleElements);
     List<String> missing = listDifference(sampleElements, userElements);
@@ -49,7 +50,8 @@ public class SelectCorrector extends QueryCorrector<Select, PlainSelect> {
 
   private EvaluationResult compareOrderByElements(PlainSelect plainUserQuery, PlainSelect plainSampleQuery) {
     if(plainUserQuery.getWhere() == null && plainSampleQuery.getWhere() == null)
-      return new GenericEvaluationResult(Success.COMPLETE, "Es waren keine Order By-Elemente anzugeben.");
+      return new GenericEvaluationResult(FeedbackLevel.MEDIUM_FEEDBACK, Success.COMPLETE,
+          "Es waren keine Order By-Elemente anzugeben.");
 
     List<String> userElements = orderByElementsAsStrings(plainUserQuery);
     List<String> sampleElements = orderByElementsAsStrings(plainSampleQuery);

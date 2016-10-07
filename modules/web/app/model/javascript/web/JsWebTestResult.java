@@ -3,6 +3,7 @@ package model.javascript.web;
 import java.util.List;
 
 import model.exercise.EvaluationResult;
+import model.exercise.FeedbackLevel;
 import model.exercise.Success;
 
 public class JsWebTestResult extends EvaluationResult {
@@ -13,7 +14,7 @@ public class JsWebTestResult extends EvaluationResult {
 
   public JsWebTestResult(JsWebTest theTest, Success theSuccess, List<ConditionResult> thePreconditionResults,
       List<ConditionResult> thePostconditionResults) {
-    super(theSuccess);
+    super(FeedbackLevel.MINIMAL_FEEDBACK, theSuccess);
     test = theTest;
     preconditionResults = thePreconditionResults;
     postconditionResults = thePostconditionResults;

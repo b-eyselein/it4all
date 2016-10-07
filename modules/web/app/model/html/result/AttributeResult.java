@@ -3,6 +3,7 @@ package model.html.result;
 import org.openqa.selenium.WebElement;
 
 import model.exercise.EvaluationResult;
+import model.exercise.FeedbackLevel;
 import model.exercise.Success;
 import play.Logger;
 
@@ -12,7 +13,7 @@ public class AttributeResult extends EvaluationResult {
   private String value;
   
   public AttributeResult(String attributeKey, String attributeValue) {
-    super(Success.NONE);
+    super(FeedbackLevel.MEDIUM_FEEDBACK, Success.NONE);
     key = attributeKey;
     value = attributeValue;
   }

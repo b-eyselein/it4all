@@ -4,6 +4,8 @@ import java.util.List;
 
 public abstract class EvaluationResult {
 
+  // FIXME: implement feedbackLevel!
+
   protected static String concatCodeElements(List<String> elements) {
     return "<code>" + String.join("</code>, <code>", elements) + "</code>";
   }
@@ -12,9 +14,12 @@ public abstract class EvaluationResult {
     return "<ul><li>" + String.join("</li><li>", elements) + "</li></ul>";
   }
 
+  protected FeedbackLevel minimalFL;
+
   protected Success success = Success.NONE;
 
-  public EvaluationResult(Success theSuccess) {
+  public EvaluationResult(FeedbackLevel theMinimalFL, Success theSuccess) {
+    minimalFL = theMinimalFL;
     success = theSuccess;
   }
 
@@ -31,6 +36,10 @@ public abstract class EvaluationResult {
     default:
       return "info";
     }
+  }
+
+  public FeedbackLevel getMinimalFeedbackLevel() {
+    return minimalFL;
   }
 
   public int getPoints() {

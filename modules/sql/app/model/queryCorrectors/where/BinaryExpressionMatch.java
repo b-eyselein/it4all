@@ -1,5 +1,6 @@
 package model.queryCorrectors.where;
 
+import model.exercise.FeedbackLevel;
 import model.exercise.Success;
 import model.matching.Match;
 import net.sf.jsqlparser.expression.BinaryExpression;
@@ -8,7 +9,7 @@ import net.sf.jsqlparser.expression.Expression;
 public class BinaryExpressionMatch extends Match<BinaryExpression> {
 
   public BinaryExpressionMatch(BinaryExpression theArg1, BinaryExpression theArg2) {
-    super(theArg1, theArg2);
+    super(FeedbackLevel.MEDIUM_FEEDBACK, theArg1, theArg2);
   }
 
   @Override

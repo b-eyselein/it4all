@@ -3,6 +3,7 @@ package model.correctionResult;
 import java.util.List;
 
 import model.exercise.EvaluationResult;
+import model.exercise.FeedbackLevel;
 import model.exercise.Success;
 
 public class GroupByComparison extends EvaluationResult {
@@ -19,7 +20,7 @@ public class GroupByComparison extends EvaluationResult {
   List<String> missing, unnecessary;
 
   public GroupByComparison(List<String> theMissing, List<String> theUnnecessary) {
-    super(analyze(theMissing, theUnnecessary));
+    super(FeedbackLevel.MEDIUM_FEEDBACK, analyze(theMissing, theUnnecessary));
     missing = theMissing;
     unnecessary = theUnnecessary;
   }
