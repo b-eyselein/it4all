@@ -125,6 +125,7 @@ public class SqlScenarioHandler {
 
   private static ExerciseCreationResult readExercise(SqlScenario scenario, int exerciseId, SqlExerciseType exerciseType,
       JsonNode exerciseNode) {
+    // FIXME: parse sample solutions to find errors?!?
     SqlExerciseKey exerciseKey = new SqlExerciseKey(scenario.shortName, exerciseId, exerciseType);
     SqlExercise exercise = SqlExercise.finder.byId(exerciseKey);
 
