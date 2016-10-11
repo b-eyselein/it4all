@@ -32,10 +32,11 @@ public class ColumnDefinitionMatch extends Match<ColumnDefinition> {
   
   @Override
   public String getAsHtml() {
-    String ret = "<div class=\"panel panel-" + getBSClass() + "\">";
+    String ret = "<div class=\"col-md-6\">";
+    ret += "<div class=\"panel panel-" + getBSClass() + "\">";
     ret += "<div class=\"panel-heading\">Vergleich für Spalte <code>" + datatypeName + "</code></div>";
     ret += "<div class=\"panel-body\">" + message + "</div>";
-    ret += "</div>";
+    ret += "</div></div>";
     return ret;
   }
   

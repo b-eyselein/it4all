@@ -21,22 +21,19 @@ public class TableComparison extends EvaluationResult {
   
   @Override
   public String getAsHtml() {
-    String ret = "<div class=\"panel panel-" + getBSClass() + "\">";
+    String ret = "<div class=\"col-md-6\">";
+    ret += "<div class=\"panel panel-" + getBSClass() + "\">";
     ret += "<div class=\"panel-heading\">Vergleich der verwendeten Tabellen</div>";
     
     ret += "<div class=\"panel-body\">";
     if(success == Success.COMPLETE)
       ret += "<p><span class=\"glyphicon glyphicon-ok\"></span> Es wurden die richtigen Tabellen verwendet.</p>";
-    else {
-      if(!missingTables.isEmpty())
-        ret += "<p>Es fehlen folgende Tabellen:" + concatListElements(missingTables) + "</p>";
-      if(!unneccessaryTables.isEmpty())
-        ret += "<p>Folgende Tabellen wurden f&auml;lschlicherweise benutzt: " + concatListElements(unneccessaryTables)
-            + "</p>";
-    }
-    ret += "</div>";
+    else
+      ret += "<p>Es fehlen folgende Tabellen:" + concatCodeElements(missingTables) + "</p>"
+          + "<p>Folgende Tabellen wurden f&auml;lschlicherweise benutzt: " + concatCodeElements(unneccessaryTables)
+          + "</p>";
     
-    ret += "</div>";
+    ret += "</div></div></div>";
     return ret;
   }
   

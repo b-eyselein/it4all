@@ -39,10 +39,11 @@ public class BinaryExpressionMatch extends Match<BinaryExpression> {
   @Override
   public String getAsHtml() {
     // TODO: genauere Beschreibung Resultat?!?
-    String ret = "<div class=\"alert alert-" + getBSClass() + "\">";
+    String ret = "<div class=\"col-md-6\">";
+    ret += "<div class=\"alert alert-" + getBSClass() + "\">";
     ret += "<p>Ihre Bedingung: <code>" + arg1 + "</code></p>";
     ret += "<p>Musterlösung: <code>" + arg2 + "</code></p>";
-    ret += "</div>";
+    ret += "</div></div>";
     return ret;
   }
 

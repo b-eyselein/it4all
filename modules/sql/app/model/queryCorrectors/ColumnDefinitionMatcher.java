@@ -4,13 +4,12 @@ import java.util.List;
 
 import model.correctionResult.create.ColumnDefinitionMatch;
 import model.correctionResult.create.CreateResult;
-import model.matching.Match;
 import model.matching.Matcher;
 import model.matching.MatchingResult;
 import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
 
-public class ColumnDefinitionMatcher extends Matcher<ColumnDefinition> {
-  
+public class ColumnDefinitionMatcher extends Matcher<ColumnDefinition, ColumnDefinitionMatch> {
+
   public ColumnDefinitionMatcher() {
     super(
         // Equals tester
@@ -18,10 +17,11 @@ public class ColumnDefinitionMatcher extends Matcher<ColumnDefinition> {
         // Matching Action
         (arg1, arg2) -> new ColumnDefinitionMatch(arg1, arg2));
   }
-  
+
   @Override
-  protected MatchingResult<ColumnDefinition> instantiateMatch(List<Match<ColumnDefinition>> matches,
-      List<ColumnDefinition> notMatchedInFirst, List<ColumnDefinition> notMatchedInSecond) {
+  protected MatchingResult<ColumnDefinition, ColumnDefinitionMatch> instantiateMatch(
+      List<ColumnDefinitionMatch> matches, List<ColumnDefinition> notMatchedInFirst,
+      List<ColumnDefinition> notMatchedInSecond) {
     return new CreateResult(matches, notMatchedInFirst, notMatchedInSecond);
   }
 }

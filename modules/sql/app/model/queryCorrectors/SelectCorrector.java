@@ -19,9 +19,7 @@ import model.correctionResult.SqlExecutionResult;
 import model.exercise.EvaluationFailed;
 import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
-import model.exercise.GenericEvaluationResult;
 import model.exercise.SqlExercise;
-import model.exercise.Success;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
@@ -38,10 +36,6 @@ public class SelectCorrector extends QueryCorrector<Select, PlainSelect> {
     List<String> userElements = groupByElementsAsStrings(plainUserQuery);
     List<String> sampleElements = groupByElementsAsStrings(plainSampleQuery);
 
-    if(userElements.isEmpty() && sampleElements.isEmpty())
-      return new GenericEvaluationResult(FeedbackLevel.MEDIUM_FEEDBACK, Success.COMPLETE,
-          "Es waren keine Group By-Elemente anzugeben.");
-
     List<String> wrong = listDifference(userElements, sampleElements);
     List<String> missing = listDifference(sampleElements, userElements);
 
@@ -49,10 +43,6 @@ public class SelectCorrector extends QueryCorrector<Select, PlainSelect> {
   }
 
   private EvaluationResult compareOrderByElements(PlainSelect plainUserQuery, PlainSelect plainSampleQuery) {
-    if(plainUserQuery.getWhere() == null && plainSampleQuery.getWhere() == null)
-      return new GenericEvaluationResult(FeedbackLevel.MEDIUM_FEEDBACK, Success.COMPLETE,
-          "Es waren keine Order By-Elemente anzugeben.");
-
     List<String> userElements = orderByElementsAsStrings(plainUserQuery);
     List<String> sampleElements = orderByElementsAsStrings(plainSampleQuery);
 
@@ -64,7 +54,7 @@ public class SelectCorrector extends QueryCorrector<Select, PlainSelect> {
 
   private List<String> groupByElementsAsStrings(PlainSelect statement) {
     if(statement.getGroupByColumnReferences() == null)
-      // TODO: behebe FIX!
+      // TODO: behebe FIX!?
       return Collections.emptyList();
 
     return statement.getGroupByColumnReferences().stream().map(gb -> gb.toString()).collect(Collectors.toList());
@@ -72,7 +62,7 @@ public class SelectCorrector extends QueryCorrector<Select, PlainSelect> {
 
   private List<String> orderByElementsAsStrings(PlainSelect statement) {
     if(statement.getOrderByElements() == null)
-      // TODO: behebe FIX!
+      // TODO: behebe FIX!?
       return Collections.emptyList();
 
     return statement.getOrderByElements().stream().map(el -> el.toString()).collect(Collectors.toList());
@@ -94,7 +84,7 @@ public class SelectCorrector extends QueryCorrector<Select, PlainSelect> {
 
     EvaluationResult groupByComparison = compareGroupByElements(plainUserQuery, plainSampleQuery);
 
-    return Arrays.asList(tableComparison, columnComparison, whereComparison, orderByComparison, groupByComparison);
+    return Arrays.asList(tableComparison, columnComparison, orderByComparison, groupByComparison, whereComparison);
   }
 
   @Override

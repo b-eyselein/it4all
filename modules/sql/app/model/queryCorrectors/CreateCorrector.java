@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import model.SqlCorrectionException;
+import model.correctionResult.create.ColumnDefinitionMatch;
 import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.GenericEvaluationResult;
@@ -28,7 +29,7 @@ public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable> {
     List<ColumnDefinition> userDefs = userStatement.getColumnDefinitions();
     List<ColumnDefinition> sampleDefs = sampleStatement.getColumnDefinitions();
 
-    MatchingResult<ColumnDefinition> result = colDefMatcher.match(userDefs, sampleDefs);
+    MatchingResult<ColumnDefinition, ColumnDefinitionMatch> result = colDefMatcher.match(userDefs, sampleDefs);
     return Arrays.asList(result);
   }
 
