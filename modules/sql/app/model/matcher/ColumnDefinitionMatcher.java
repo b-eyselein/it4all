@@ -1,9 +1,8 @@
-package model.queryCorrectors;
+package model.matcher;
 
 import java.util.List;
 
-import model.correctionResult.create.ColumnDefinitionMatch;
-import model.correctionResult.create.CreateResult;
+import model.correctionResult.CreateResult;
 import model.matching.Matcher;
 import model.matching.MatchingResult;
 import net.sf.jsqlparser.statement.create.table.ColumnDefinition;

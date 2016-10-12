@@ -19,7 +19,6 @@ import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.SqlExercise;
 import model.exercise.Success;
-import model.queryCorrectors.where.WhereCorrector;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.Statement;
 import play.Logger;
@@ -65,23 +64,8 @@ public abstract class QueryCorrector<QueryType extends Statement, ComparedType> 
     return ret;
   }
   
-  protected final ColumnComparison compareColumns(ComparedType userQuery, ComparedType sampleQuery) {
-    List<String> userColumns = getColumns(userQuery);
-    List<String> sampleColumns = getColumns(sampleQuery);
-    
-    // FIXME: keine Beachtung der Groß-/Kleinschreibung bei Vergleich! -->
-    // Verwendung core --> model.result.Matcher?
-    
-    List<String> wrongColumns = listDifference(userColumns, sampleColumns);
-    List<String> missingColumns = listDifference(sampleColumns, userColumns);
-    
-    Success success = Success.NONE;
-    if(wrongColumns.isEmpty() && missingColumns.isEmpty())
-      success = Success.COMPLETE;
-    
-    return new ColumnComparison(success, missingColumns, wrongColumns);
-  }
-  
+  protected abstract ColumnComparison compareColumns(ComparedType userQuery, ComparedType sampleQuery);
+
   protected abstract List<EvaluationResult> compareStatically(QueryType parsedUserStatement,
       QueryType parsedSampleStatement, FeedbackLevel feedbackLevel);
   
@@ -132,8 +116,6 @@ public abstract class QueryCorrector<QueryType extends Statement, ComparedType> 
   
   protected abstract EvaluationResult executeQuery(Database database, QueryType userStatement,
       QueryType sampleStatement, SqlExercise exercise, FeedbackLevel feedbackLevel);
-  
-  protected abstract List<String> getColumns(ComparedType statement);
   
   protected abstract List<String> getTables(ComparedType userQuery);
   

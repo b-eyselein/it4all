@@ -1,7 +1,6 @@
 package model.queryCorrectors.update;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import model.SqlCorrectionException;
@@ -15,35 +14,35 @@ import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.delete.Delete;
 
 public class DeleteCorrector extends ChangeCorrector<Delete, Delete> {
-
+  
+  @Override
+  protected ColumnComparison compareColumns(Delete userQuery, Delete sampleQuery) {
+    return null;
+  }
+  
   @Override
   protected List<EvaluationResult> compareStatically(Delete userQuery, Delete sampleQuery,
       FeedbackLevel feedbackLevel) {
-
+    
     TableComparison tableComparison = compareTables(userQuery, sampleQuery);
-
+    
     ColumnComparison columnComparison = compareColumns(userQuery, sampleQuery);
-
+    
     EvaluationResult whereComparison = compareWheres(userQuery, sampleQuery);
-
+    
     return Arrays.asList(tableComparison, columnComparison, whereComparison);
   }
-
-  @Override
-  protected List<String> getColumns(Delete statement) {
-    return Collections.emptyList();
-  }
-
+  
   @Override
   protected List<String> getTables(Delete userQuery) {
     return Arrays.asList(userQuery.getTable().getName());
   }
-
+  
   @Override
   protected Expression getWhere(Delete query) {
     return query.getWhere();
   }
-
+  
   @Override
   protected Delete parseStatement(String statement) throws SqlCorrectionException {
     try {

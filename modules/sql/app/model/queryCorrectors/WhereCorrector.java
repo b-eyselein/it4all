@@ -1,9 +1,11 @@
-package model.queryCorrectors.where;
+package model.queryCorrectors;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import model.exercise.EvaluationResult;
+import model.matcher.BinaryExpressionMatch;
+import model.matcher.BinaryExpressionMatcher;
 import model.matching.MatchingResult;
 import net.sf.jsqlparser.expression.AllComparisonExpression;
 import net.sf.jsqlparser.expression.AnalyticExpression;

@@ -1,16 +1,17 @@
 package model.queryCorrectors;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import model.SqlCorrectionException;
-import model.correctionResult.create.ColumnDefinitionMatch;
+import model.correctionResult.ColumnComparison;
 import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.GenericEvaluationResult;
 import model.exercise.SqlExercise;
 import model.exercise.Success;
+import model.matcher.ColumnDefinitionMatch;
+import model.matcher.ColumnDefinitionMatcher;
 import model.matching.MatchingResult;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
@@ -22,6 +23,12 @@ import play.db.Database;
 public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable> {
   
   private static ColumnDefinitionMatcher colDefMatcher = new ColumnDefinitionMatcher();
+  
+  @Override
+  protected ColumnComparison compareColumns(CreateTable userQuery, CreateTable sampleQuery) {
+    // No columns to compare...
+    return null;
+  }
   
   @Override
   protected List<EvaluationResult> compareStatically(CreateTable userStatement, CreateTable sampleStatement,
@@ -39,11 +46,6 @@ public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable> {
     // DO NOT EXECUTE QUERY!
     return new GenericEvaluationResult(FeedbackLevel.MINIMAL_FEEDBACK, Success.COMPLETE,
         "Create-Statements werden nicht ausgeführt.");
-  }
-  
-  @Override
-  protected List<String> getColumns(CreateTable statement) {
-    return Collections.emptyList();
   }
   
   @Override

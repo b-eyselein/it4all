@@ -1,10 +1,11 @@
-package model.correctionResult.create;
+package model.correctionResult;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
+import model.matcher.ColumnDefinitionMatch;
 import model.matching.MatchingResult;
 import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
 

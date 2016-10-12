@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import model.exercise.FeedbackLevel;
+import model.matcher.BinaryExpressionMatch;
 import model.matching.MatchingResult;
-import model.queryCorrectors.where.BinaryExpressionMatch;
 import net.sf.jsqlparser.expression.BinaryExpression;
 
 public class WhereComparison extends MatchingResult<BinaryExpression, BinaryExpressionMatch> {
