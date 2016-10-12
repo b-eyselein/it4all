@@ -6,7 +6,6 @@ import model.exercise.Success;
 
 public class JsTestResult extends EvaluationResult {
   
-  // FIXME: implement feedbackLevel!
   private String awaitedOutput;
   private String evaluated;
   private String realResult;
@@ -17,16 +16,19 @@ public class JsTestResult extends EvaluationResult {
     awaitedOutput = theAwaitedOutput;
     evaluated = theEvaluated;
     realResult = theRealResult;
+    requestedFL = FeedbackLevel.FULL_FEEDBACK;
     successful = success == Success.COMPLETE;
   }
   
   @Override
   public String getAsHtml() {
-    String ret = "<div class=\"alert alert-" + (successful ? "success" : "danger") + "\">\n";
+    // FIXME: implement feedbackLevel!
+    String ret = "<div class=\"col-md-6\">";
+    ret += "<div class=\"alert alert-" + (successful ? "success" : "danger") + "\">\n";
     ret += "  <p>Test von <code>" + evaluated + "</code> war " + (successful ? "" : "nicht ") + "erfolgreich.<p>\n";
-    if(!successful)
-      ret += "  <p>Erwartet: " + awaitedOutput + ", bekommen: " + realResult + "</p>\n";
-    ret += "</div>";
+    if(!successful && minimalFL.compareTo(this.requestedFL) < 1)
+      ret += "  <p>Erwartet: \"" + awaitedOutput + "\", bekommen: \"" + realResult + "\"</p>\n";
+    ret += "</div></div>";
     
     return ret;
   }
