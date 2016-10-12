@@ -31,9 +31,18 @@ import play.db.Database;
 @Singleton
 public class SelectCorrector extends QueryCorrector<Select, PlainSelect> {
   
+  private static <T> List<String> listAsStrings(List<T> list) {
+    if(list == null)
+      return Collections.emptyList();
+    return list.stream().map(t -> t.toString()).collect(Collectors.toList());
+  }
+  
   private EvaluationResult compareGroupByElements(PlainSelect plainUserQuery, PlainSelect plainSampleQuery) {
-    List<String> userElements = groupByElementsAsStrings(plainUserQuery);
-    List<String> sampleElements = groupByElementsAsStrings(plainSampleQuery);
+    if(plainUserQuery.getGroupByColumnReferences() == null && plainSampleQuery.getGroupByColumnReferences() == null)
+      return null;
+    
+    List<String> userElements = listAsStrings(plainUserQuery.getGroupByColumnReferences());
+    List<String> sampleElements = listAsStrings(plainSampleQuery.getGroupByColumnReferences());
     
     List<String> wrong = listDifference(userElements, sampleElements);
     List<String> missing = listDifference(sampleElements, userElements);
@@ -42,29 +51,16 @@ public class SelectCorrector extends QueryCorrector<Select, PlainSelect> {
   }
   
   private EvaluationResult compareOrderByElements(PlainSelect plainUserQuery, PlainSelect plainSampleQuery) {
-    List<String> userElements = orderByElementsAsStrings(plainUserQuery);
-    List<String> sampleElements = orderByElementsAsStrings(plainSampleQuery);
+    if(plainUserQuery.getOrderByElements() == null && plainSampleQuery.getOrderByElements() == null)
+      return null;
+    
+    List<String> userElements = listAsStrings(plainUserQuery.getOrderByElements());
+    List<String> sampleElements = listAsStrings(plainSampleQuery.getOrderByElements());
     
     List<String> wrong = listDifference(userElements, sampleElements);
     List<String> missing = listDifference(sampleElements, userElements);
     
     return new OrderByComparison(missing, wrong);
-  }
-  
-  private List<String> groupByElementsAsStrings(PlainSelect statement) {
-    if(statement.getGroupByColumnReferences() == null)
-      // TODO: behebe FIX!?
-      return Collections.emptyList();
-  
-    return statement.getGroupByColumnReferences().stream().map(gb -> gb.toString()).collect(Collectors.toList());
-  }
-  
-  private List<String> orderByElementsAsStrings(PlainSelect statement) {
-    if(statement.getOrderByElements() == null)
-      // TODO: behebe FIX!?
-      return Collections.emptyList();
-  
-    return statement.getOrderByElements().stream().map(el -> el.toString()).collect(Collectors.toList());
   }
   
   @Override
@@ -82,13 +78,16 @@ public class SelectCorrector extends QueryCorrector<Select, PlainSelect> {
     results.add(columnComparison);
     
     EvaluationResult whereComparison = compareWheres(plainUserQuery, plainSampleQuery);
-    results.add(whereComparison);
+    if(whereComparison != null)
+      results.add(whereComparison);
     
     EvaluationResult orderByComparison = compareOrderByElements(plainUserQuery, plainSampleQuery);
-    results.add(orderByComparison);
+    if(orderByComparison != null)
+      results.add(orderByComparison);
     
     EvaluationResult groupByComparison = compareGroupByElements(plainUserQuery, plainSampleQuery);
-    results.add(groupByComparison);
+    if(groupByComparison != null)
+      results.add(groupByComparison);
     
     return results;
   }
