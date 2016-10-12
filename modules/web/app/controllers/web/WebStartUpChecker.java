@@ -74,8 +74,7 @@ public class WebStartUpChecker extends StartUpChecker {
     try {
       content = readJsonFile(file);
     } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      theLogger.error("There was an error while reading the JSON-File " + file, e);
     }
     if(content == null)
       return;

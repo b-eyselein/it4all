@@ -29,7 +29,6 @@ class BinaryExpressionMatcher extends Matcher<BinaryExpression, BinaryExpression
   protected MatchingResult<BinaryExpression, BinaryExpressionMatch> instantiateMatch(
       List<BinaryExpressionMatch> matches, List<BinaryExpression> notMatchedInFirst,
       List<BinaryExpression> notMatchedInSecond) {
-    // TODO Auto-generated method stub
     return new WhereComparison(matches, notMatchedInFirst, notMatchedInSecond);
   }
 
