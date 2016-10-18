@@ -2,7 +2,6 @@ package model.bool.tree;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import model.bool.BooleanQuestion;
 import model.bool.node.Node;
@@ -14,7 +13,7 @@ public class BoolescheFunktionTree {
   }
   
   private static String booleantoString(boolean b) {
-    return booleantochar(b) + "";
+    return Character.toString(booleantochar(b));
   }
   
   private Node rootNode;
@@ -142,71 +141,6 @@ public class BoolescheFunktionTree {
       }
     }
     return wvector;
-  }
-  
-  /**
-   * Gibt eine aequivalente Formel in kanonischer DNF als String zurueck
-   */
-  public String kanonischeDisjunktiveNormalform() {
-    String formel = "";
-    boolean[][] wahrheitstafel = this.getWahrheitstafelBoolean();
-    for(int i = 0; i < wahrheitstafel[0].length; i++) {
-      // Nur "true"-Werte in der Tafel
-      if(wahrheitstafel[this.getAnzahlVariablen()][i]) {
-        if(formel.length() != 0) {
-          formel += " OR ";
-        }
-        for(int j = 0; j < wahrheitstafel.length - 1; j++) {
-          if(j != 0) {
-            formel += " AND ";
-          }
-          if(wahrheitstafel[j][i]) {
-            formel += variables[j];
-          } else {
-            formel += "NOT " + variables[j];
-          }
-        }
-      }
-    }
-    return formel;
-  }
-  
-  /**
-   * Gibt eine aequivalente Formel in kanonischer KNF als String zurueck
-   */
-  public String kanonischeKonjunktiveNormalform() {
-    String formel = "";
-    
-    List<Assignment> assignments = evaluateAll(Assignment.generateAllAssignments(variables));
-    System.out.println("Generated: " + assignments.size());
-    List<Assignment> positives = assignments.stream()
-        .filter(assignment -> assignment.getAssignment(BooleanQuestion.SOLUTION_VARIABLE)).collect(Collectors.toList());
-    System.out.println("Positives: " + positives.size());
-    for(Assignment p: positives)
-      System.out.println(p);
-    
-    boolean[][] wahrheitstafel = this.getWahrheitstafelBoolean();
-    for(int i = 0; i < wahrheitstafel[0].length; i++) {
-      // Nur "false"-Werte in der Tafel
-      if(!wahrheitstafel[this.getAnzahlVariablen()][i]) {
-        if(formel.length() != 0) {
-          formel += " AND ";
-        }
-        formel += "(";
-        for(int j = 0; j < wahrheitstafel.length - 1; j++) {
-          if(j != 0) {
-            formel += " OR ";
-          }
-          if(!wahrheitstafel[j][i]) {
-            formel += variables[j];
-          } else {
-            formel += "NOT " + variables[j];
-          }
-        }
-        formel += ")";
-      }
-    }
-    return formel;
   }
   
   @Override

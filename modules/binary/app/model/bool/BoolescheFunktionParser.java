@@ -12,7 +12,7 @@ public class BoolescheFunktionParser {
   public static BoolescheFunktionTree parse(String originalformel) throws IllegalArgumentException {
     return new BoolescheFunktionTree(parseNode(originalformel));
   }
-  
+
   public static Node parseNode(String formula) {
     formula = formula.toLowerCase();
     substituteGermanOperators(formula);
@@ -50,16 +50,16 @@ public class BoolescheFunktionParser {
         read = "";
         break;
       default:
-        read += readChar;
+        read += Character.toString(readChar);
         break;
       }
     }
     
     if(highestOperator == null) {
       // Kein Operator ==> Variable!
-      if(formula.equals("1") || formula.equals("true"))
+      if("1".equals(formula) || "true".equals(formula))
         return new True();
-      else if(formula.equals("0") || formula.equals("false"))
+      else if("0".equals(formula) || "false".equals(formula))
         return new False();
 
       if(formula.length() > 1)
@@ -69,7 +69,7 @@ public class BoolescheFunktionParser {
     }
     
     String rightFormula = formula.substring(highestOperatorPosition + highestOperator.length() + 2);
-    if(highestOperator.equals("not")) {
+    if("not".equals(highestOperator)) {
       return NodeType.NOT.instantiate(parseNode(rightFormula));
     } else {
       String leftFormula = formula.substring(0, highestOperatorPosition);
@@ -123,6 +123,10 @@ public class BoolescheFunktionParser {
       }
     }
     return formula;
+  }
+  
+  private BoolescheFunktionParser() {
+
   }
   
 }

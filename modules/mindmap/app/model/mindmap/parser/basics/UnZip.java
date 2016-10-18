@@ -3,7 +3,6 @@ package model.mindmap.parser.basics;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.zip.ZipEntry;
@@ -12,27 +11,6 @@ import java.util.zip.ZipInputStream;
 public class UnZip {
   
   private static final int BUFFER_SIZE = 4096;
-  
-  /**
-   * Extracts a zip entry (file entry)
-   * 
-   * @param zipIn
-   * @param filePath
-   * @throws IOException
-   */
-  private void extractFile(ZipInputStream zipIn, String filePath) {
-    try(BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath))) {
-      byte[] bytesIn = new byte[BUFFER_SIZE];
-      int read = 0;
-      while((read = zipIn.read(bytesIn)) != -1) {
-        bos.write(bytesIn, 0, read);
-      }
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
   
   public String unzip(String zipFilePath) {
     File f = new File(zipFilePath);
@@ -66,11 +44,28 @@ public class UnZip {
         zipIn.closeEntry();
         entry = zipIn.getNextEntry();
       }
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();
     }
     return destDirectory;
+  }
+  
+  /**
+   * Extracts a zip entry (file entry)
+   *
+   * @param zipIn
+   * @param filePath
+   * @throws IOException
+   */
+  private void extractFile(ZipInputStream zipIn, String filePath) {
+    try(BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath))) {
+      byte[] bytesIn = new byte[BUFFER_SIZE];
+      int read = 0;
+      while((read = zipIn.read(bytesIn)) != -1) {
+        bos.write(bytesIn, 0, read);
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 }

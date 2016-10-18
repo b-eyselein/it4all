@@ -143,7 +143,7 @@ public class NAryNumber {
           + "Only characters in range 0..9, a...v or A...V are allowed.");
 
     char[] coeffs = input.toCharArray();
-    int value = 0;
+    int theValue = 0;
     int length = input.length() - 1;
     int power = 0;
     for(int i = length; i >= 0; i--) {
@@ -152,13 +152,13 @@ public class NAryNumber {
             + Character.getNumericValue(coeffs[i]) + ", which is greater than the base " + base
             + ". \nOnly digits of value less than the given base are allowed.");
       }
-      value += Math.pow(base.getBase(), power) * Character.getNumericValue(coeffs[i]);
+      theValue += Math.pow(base.getBase(), power) * Character.getNumericValue(coeffs[i]);
       power++;
     }
     if(neg)
-      value *= -1;
+      theValue *= -1;
 
-    this.value = value;
+    this.value = theValue;
     this.base = base;
   }
 
@@ -267,7 +267,7 @@ public class NAryNumber {
    * @return value of the number to a string in decimal representation.
    */
   public String toDec() {
-    return "" + value;
+    return Integer.toString(value);
   }
 
   /**
@@ -311,7 +311,7 @@ public class NAryNumber {
     String result = "";
 
     while(absoluteValue >= 1) {
-      result += ALPHABET[absoluteValue % base.getBase()];
+      result += Character.toString(ALPHABET[absoluteValue % base.getBase()]);
       absoluteValue = absoluteValue / base.getBase();
     }
 

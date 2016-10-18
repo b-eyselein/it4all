@@ -74,18 +74,18 @@ public class Assignment {
     return ret;
   }
   
-  private List<AssignmentItem> assignments = new LinkedList<>();
-  
+  private List<AssignmentItem> assignments;
+
   public Assignment() {
-    
+    assignments = new LinkedList<>();
   }
-  
+
   private Assignment(AssignmentItem... items) {
     assignments = new LinkedList<>(Arrays.asList(items));
   }
   
   public char asChar(char Variable) {
-    return getAssignment(Variable) == true ? '1' : '0';
+    return getAssignment(Variable) ? '1' : '0';
   }
   
   public boolean assignmentIsSet(char variable) {
@@ -116,11 +116,11 @@ public class Assignment {
   public char getLearnerValue() {
     return asChar('y');
   }
-
+  
   public List<Character> getVariables() {
     return assignments.stream()
-        .filter(a -> (a.getVariable() != BooleanQuestion.SOLUTION_VARIABLE
-            && a.getVariable() != BooleanQuestion.LEARNER_VARIABLE))
+        .filter(a -> a.getVariable() != BooleanQuestion.SOLUTION_VARIABLE
+            && a.getVariable() != BooleanQuestion.LEARNER_VARIABLE)
         .map(a -> a.getVariable()).collect(Collectors.toList());
   }
   
@@ -135,8 +135,8 @@ public class Assignment {
   @Override
   public String toString() {
     List<String> assignmentStrings = assignments.stream()
-        .filter(a -> (a.getVariable() != BooleanQuestion.SOLUTION_VARIABLE
-            && a.getVariable() != BooleanQuestion.LEARNER_VARIABLE))
+        .filter(a -> a.getVariable() != BooleanQuestion.SOLUTION_VARIABLE
+            && a.getVariable() != BooleanQuestion.LEARNER_VARIABLE)
         .map(a -> a.toString()).collect(Collectors.toList());
     return String.join(",", assignmentStrings);
   }
