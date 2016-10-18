@@ -25,6 +25,8 @@ import model.html.result.ElementResult;
 @Entity
 public class HtmlTask extends Task {
 
+  private static Pattern pattern = Pattern.compile("//?[a-zA-Z]+/");
+
   @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
   @JsonManagedReference
   @JsonIgnore
@@ -32,11 +34,11 @@ public class HtmlTask extends Task {
 
   @Override
   public ElementResult evaluate(SearchContext searchContext) {
+    // FIXME: refactor complete method!
     String xpathQuery = buildXPathQuery();
     List<WebElement> foundElements = searchContext.findElements(By.xpath(xpathQuery));
 
-    Pattern p = Pattern.compile("//?[a-zA-Z]+/");
-    Matcher m = p.matcher(xpathQuery);
+    Matcher m = pattern.matcher(xpathQuery);
     List<String> parentsMissing = new LinkedList<>();
     while(foundElements.isEmpty() && m.find()) {
       // TODO: remove /
@@ -50,7 +52,7 @@ public class HtmlTask extends Task {
       foundElements = searchContext.findElements(By.xpath(xpathQuery));
 
       // update Matcher with new, shorter string
-      m = p.matcher(xpathQuery);
+      m = pattern.matcher(xpathQuery);
     }
 
     if(foundElements.isEmpty() || foundElements.size() > 1)
@@ -62,12 +64,12 @@ public class HtmlTask extends Task {
     List<ChildResult> evaluatedChildResults = evaluateAllChildResults(foundElement);
     List<AttributeResult> evaluatedAttributeResults = evaluateAllAttributeResults(foundElement);
 
-    ElementResult result = null;
+    Success success = Success.PARTIALLY;
     if(allResultsSuccessful(evaluatedAttributeResults) && allResultsSuccessful(evaluatedChildResults)
         && parentsMissing.isEmpty())
-      result = new ElementResult(this, Success.COMPLETE);
-    else
-      result = new ElementResult(this, Success.PARTIALLY);
+      success = Success.COMPLETE;
+
+    ElementResult result = new ElementResult(this, success);
 
     result.withAttributeResults(evaluatedAttributeResults);
     result.withChildResults(evaluatedChildResults);

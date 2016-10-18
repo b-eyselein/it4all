@@ -53,7 +53,7 @@ public class Util {
   }
 
   public Path getSampleDirForExercise(String exerciseType, int exerciseId) {
-    return Paths.get(getSampleDirForExerciseType(exerciseType).toString(), exerciseId + "");
+    return Paths.get(getSampleDirForExerciseType(exerciseType).toString(), Integer.toString(exerciseId));
   }
 
   public Path getSampleDirForExerciseType(String exerciseType) {
@@ -87,7 +87,7 @@ public class Util {
     if(os.indexOf("win") >= 0)
       return Paths.get(configuration.getString("rootDirWin"));
     // UNIX
-    else if(os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0 || os.indexOf("aix") > 0)
+    else if(os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0 || os.indexOf("aix") >= 0)
       return Paths.get(configuration.getString("rootDirLinux"));
     // OTHER OS, NEEDS CONFIGURATION
     else

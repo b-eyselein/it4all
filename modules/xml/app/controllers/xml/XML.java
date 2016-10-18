@@ -11,40 +11,43 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import model.XmlExercise;
+import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
-import model.XmlExercise.XmlExType;
 import model.Secured;
 import model.Util;
 import model.XMLError;
 import model.XmlCorrector;
 import model.XmlErrorType;
+import model.XmlExercise;
+import model.XmlExercise.XmlExType;
 import model.user.User;
 import play.Logger;
+import play.data.FormFactory;
 import play.libs.Json;
-import play.mvc.Controller;
 import play.mvc.Http.Request;
 import play.mvc.Result;
 import play.mvc.Security;
 import play.twirl.api.Html;
 import views.html.xml;
-import views.html.xmloverview;
 import views.html.xmlcorrect;
+import views.html.xmloverview;
 
 @Security.Authenticated(Secured.class)
-public class XML extends Controller {
+public class XML extends ExerciseController {
   
   private static final String EXERCISE_TYPE = "xml";
   private static final String LEARNER_SOLUTION_VALUE = "editorContent";
   private static final String STANDARD_XML = "";
   
-  @Inject
-  private Util util;
-  
-  @Inject
   @SuppressWarnings("unused")
   private XmlStartUpChecker checker;
   
+  @Inject
+  public XML(Util theUtil, FormFactory theFactory, XmlStartUpChecker theChecker) {
+    super(theUtil, theFactory);
+    checker = theChecker;
+  }
+
   public Result commit(int exerciseId) {
     User user = UserManagement.getCurrentUser();
     XmlExercise exercise = XmlExercise.finder.byId(exerciseId);
@@ -65,7 +68,7 @@ public class XML extends Controller {
       elementResults = correctExercise(path2solution, user, exercise);
     }
     
-    if(request().acceptedTypes().get(0).toString().equals("application/json"))
+    if(wantsJsonResponse())
       return ok(Json.toJson(elementResults));
     else
       return ok(xmlcorrect.render(learnerSolution, elementResults, UserManagement.getCurrentUser()));

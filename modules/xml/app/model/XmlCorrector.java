@@ -21,11 +21,11 @@ import org.xml.sax.SAXException;
 import model.user.User;
 
 public class XmlCorrector {
-  
+
   private static DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
   private static DocumentBuilder builder = null;
   private static SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-  
+
   public static List<XMLError> correct(File solutionFile, File referenceFile, XmlExercise exercise, User user)
       throws IOException {
     switch(exercise.exerciseType) {
@@ -41,57 +41,57 @@ public class XmlCorrector {
       return null;
     }
   }
-  
+
   public static List<XMLError> correctDTDAgainstXML(File studentenSolutionDTD, File referenceXML) {
-    
+
     List<XMLError> output = new LinkedList<>();
-    
+
     factory.setValidating(true);
     try {
       builder = factory.newDocumentBuilder();
     } catch (ParserConfigurationException e) {
     }
-    
+
     builder.setErrorHandler(new DTDXMLErrorHandler(output));
-    
+
     try {
       builder.parse(referenceXML);
     } catch (SAXException | IOException e) {
     }
-    
+
     return output;
-    
+
   }
-  
+
   public static List<XMLError> correctXMLAgainstDTD(File studentSolutionXML) {
-    
+
     List<XMLError> output = new LinkedList<>();
-    
+
     factory.setValidating(true);
     try {
       builder = factory.newDocumentBuilder();
     } catch (ParserConfigurationException e) {
     }
-    
+
     builder.setErrorHandler(new XSDErrorHandler(output));
-    
+
     try {
       builder.parse(studentSolutionXML);
     } catch (SAXException | IOException e) {
     } catch (NullPointerException e) {
       output.add(new XMLError("leere XML", XmlErrorType.FATALERROR));
     }
-    
+
     return output;
-    
+
   }
-  
+
   public static List<XMLError> correctXMLAgainstXSD(File studentSolutionXML, File xsd) {
-    
+
     List<XMLError> output = new LinkedList<>();
     Source xmlFile = new StreamSource(studentSolutionXML);
     Source xsdFile = new StreamSource(xsd);
-    
+
     Schema schema = null;
     try {
       schema = schemaFactory.newSchema(xsdFile);
@@ -100,19 +100,18 @@ public class XmlCorrector {
       // aufgetreten.", XmlErrorType.FATALERROR));
       // return output;
     }
-    
+
     if(schema == null)
       return Arrays.asList(new XMLError("Ihre Eingabedaten konnten nicht geladen werden!", XmlErrorType.FATALERROR));
-    
+
     Validator validator = schema.newValidator();
     validator.setErrorHandler(new SimpleXMLErrorHandler(output));
     try {
       validator.validate(xmlFile);
-    } catch (SAXException | IOException e) {
-    } catch (NullPointerException e) {
+    } catch (SAXException | IOException | NullPointerException e) {
       output.add(new XMLError("konnte XSD nicht validieren.", XmlErrorType.FATALERROR));
     }
-    
+
     return output;
   }
 }

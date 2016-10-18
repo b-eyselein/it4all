@@ -1,7 +1,5 @@
 package controllers.core;
 
-//import static controllers.core.Util.getSolDirForUser;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -29,8 +27,12 @@ public class UserManagement extends Controller {
     return User.finder.byId(session.get(SESSION_ID_FIELD));
   }
 
-  @Inject
   private Util util;
+
+  @Inject
+  public UserManagement(Util theUtil) {
+    util = theUtil;
+  }
 
   public Result authenticate() {
     Map<String, String[]> formValues = request().body().asFormUrlEncoded();

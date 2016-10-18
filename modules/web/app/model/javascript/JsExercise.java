@@ -21,7 +21,7 @@ public class JsExercise extends Model {
     BOOLEAN, NUMBER, STRING, SYMBOL, UNDEFINED, NULL, OBJECT;
   }
 
-  public static Finder<Integer, JsExercise> finder = new Finder<>(JsExercise.class);
+  public static final Finder<Integer, JsExercise> finder = new Finder<>(JsExercise.class);
 
   @Id
   public int id;
@@ -53,7 +53,7 @@ public class JsExercise extends Model {
   }
 
   public List<JsDataType> getInputTypes() {
-    return Arrays.stream(inputtypes.split("#")).map(t -> JsDataType.valueOf(t)).collect(Collectors.toList());
+    return Arrays.stream(inputtypes.split("#")).map(JsDataType::valueOf).collect(Collectors.toList());
   }
 
 }

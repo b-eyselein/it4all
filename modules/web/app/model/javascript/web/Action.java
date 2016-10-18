@@ -11,7 +11,7 @@ import org.openqa.selenium.WebElement;
 @Embeddable
 public class Action {
   
-  public static enum ActionType {
+  public enum ActionType {
     CLICK, FILLOUT;
   }
   
@@ -22,6 +22,7 @@ public class Action {
   public String keysToSend;
   
   public String getDescription() {
+    // FIXME: implement getDescription() for Action
     return "TODO!";
   }
   

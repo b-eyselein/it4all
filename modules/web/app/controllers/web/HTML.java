@@ -6,11 +6,11 @@ import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
 import model.Secured;
 import model.Util;
@@ -23,18 +23,17 @@ import play.Logger;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
-import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
 import play.twirl.api.Html;
 import views.html.error;
+import views.html.playground;
 import views.html.html.html;
 import views.html.html.htmlcorrect;
 import views.html.html.htmloverview;
-import views.html.playground;
 
 @Security.Authenticated(Secured.class)
-public class HTML extends Controller {
+public class HTML extends ExerciseController {
   
   private static final String LEARNER_SOLUTION_VALUE = "editorContent";
   private static final String FILE_TYPE = "html";
@@ -45,15 +44,14 @@ public class HTML extends Controller {
       + "<script type=\"text/javascript\">\n// Javascript-Code\n\n</script>\n"
       + "</head>\n<body>\n  <!-- Html-Elemente -->\n  \n</body>\n</html>";
   
-  @Inject
-  private Util util;
-  
-  @Inject
-  private FormFactory factory;
-  
-  @Inject
   @SuppressWarnings("unused")
   private WebStartUpChecker checker;
+  
+  @Inject
+  public HTML(Util theUtil, FormFactory theFactory, WebStartUpChecker theChecker) {
+    super(theUtil, theFactory);
+    checker = theChecker;
+  }
   
   public Result commit(int exerciseId, String type) {
     User user = UserManagement.getCurrentUser();
@@ -73,25 +71,22 @@ public class HTML extends Controller {
     
     String solutionUrl = "http://localhost:9000" + routes.Solution.site(user, "html", exercise.id).url();
     
-    List<ElementResult> elementResults = Collections.emptyList();
-    
-    if(type.equals("html") || type.equals("css"))
-      elementResults = HtmlCorrector.correct(solutionUrl, HtmlExercise.finder.byId(exerciseId), user, type);
-    else
+    if(!typeIsCorrect(type))
       return badRequest(error.render(user, new Html("Der Korrekturtyp wurde nicht korrekt spezifiziert!")));
     
-    // Live-Abgabe, sende Resultat als Json
-    if(request().acceptedTypes().get(0).toString().equals("application/json"))
-      return ok(Json.toJson(elementResults));
+    List<ElementResult> elementResults = HtmlCorrector.correct(solutionUrl, HtmlExercise.finder.byId(exerciseId), user,
+        type);
     
-    // Definitive Abgabe, zeige Seite
-    return ok(htmlcorrect.render(learnerSolution, elementResults, UserManagement.getCurrentUser()));
+    if(wantsJsonResponse())
+      return ok(Json.toJson(elementResults));
+    else
+      return ok(htmlcorrect.render(learnerSolution, elementResults, UserManagement.getCurrentUser()));
   }
   
   public Result exercise(int exerciseId, String type) {
     User user = UserManagement.getCurrentUser();
     
-    if(!type.equals("html") && !type.equals("css"))
+    if(!typeIsCorrect(type))
       return badRequest(error.render(user, new Html("Der Aufgabentyp wurde nicht korrekt spezifiziert!")));
     
     HtmlExercise exercise = HtmlExercise.finder.byId(exerciseId);
@@ -101,7 +96,7 @@ public class HTML extends Controller {
           error.render(user, new Html("<p>Diese Aufgabe existert leider nicht.</p><p>Zur&uuml;ck zur <a href=\""
               + routes.HTML.index() + "\">Startseite</a>.</p>")));
     
-    if(type.equals("css") && !Grading.otherPartCompleted(exerciseId, user))
+    if("css".equals(type) && !Grading.otherPartCompleted(exerciseId, user))
       return badRequest(error.render(user, new Html("Bearbeiten Sie zuerst den <a href=\""
           + routes.HTML.exercise(exerciseId, "html") + "\">Html-Teil der Aufgabe</a> komplett!")));
     
@@ -132,5 +127,9 @@ public class HTML extends Controller {
     
     Path saveTo = util.getSolFileForExercise(user, EXERCISE_TYPE, exercise, FILE_TYPE);
     Files.write(saveTo, Arrays.asList(solution), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+  }
+  
+  private boolean typeIsCorrect(String type) {
+    return "html".equals(type) || "css".equals(type);
   }
 }

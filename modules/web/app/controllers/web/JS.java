@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
 import model.Secured;
 import model.Util;
@@ -26,7 +27,6 @@ import play.Logger;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
-import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
 import play.twirl.api.Html;
@@ -37,7 +37,7 @@ import views.html.javascript.jsoverview;
 import views.html.javascript.jsweb;
 
 @Security.Authenticated(Secured.class)
-public class JS extends Controller {
+public class JS extends ExerciseController {
   
   private static final String EXERCISE_TYPE = "js";
   private static final String FILE_TYPE = "html";
@@ -67,7 +67,7 @@ public class JS extends Controller {
       String input = form.get("inp" + inputCounter + ":" + testCounter);
       
       if(input == null || input.isEmpty())
-        return null;
+        continue;
       
       // TODO: Inputtype STRING, NUMBER... ?
       if(dataTypes.get(inputCounter) == JsDataType.STRING)
@@ -77,18 +77,16 @@ public class JS extends Controller {
     }
     
     String output = form.get("outp" + testCounter);
-    if(output == null || output.isEmpty())
-      return null;
-    testData.add(output);
+    if(output != null && !output.isEmpty())
+      testData.add(output);
     
     return testData;
   }
   
   @Inject
-  private Util util;
-  
-  @Inject
-  private FormFactory factory;
+  public JS(Util theUtil, FormFactory theFactory) {
+    super(theUtil, theFactory);
+  }
   
   public Result commit(int exerciseId) {
     User user = UserManagement.getCurrentUser();
@@ -109,7 +107,7 @@ public class JS extends Controller {
     
     List<EvaluationResult> testResults = JsCorrector.correct(exercise, learnerSolution, userTestData);
     
-    if(request().acceptedTypes().get(0).toString().equals("application/json"))
+    if(wantsJsonResponse())
       return ok(Json.toJson(testResults));
     else
       return ok(jscorrect.render(learnerSolution, testResults, user));
@@ -133,7 +131,7 @@ public class JS extends Controller {
     
     List<EvaluationResult> testResults = JsCorrector.correctWeb(exercise, solutionUrl);
     
-    if(request().acceptedTypes().get(0).toString().equals("application/json"))
+    if(wantsJsonResponse())
       return ok(Json.toJson(testResults));
     else
       return ok(jscorrect.render(learnerSolution, testResults, user));

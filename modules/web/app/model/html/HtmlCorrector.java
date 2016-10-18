@@ -18,19 +18,24 @@ public class HtmlCorrector {
   public static List<ElementResult> correct(String solutionUrl, HtmlExercise exercise, User student, String type) {
     WebDriver driver = loadWebSite(solutionUrl);
 
-    List<? extends Task> tasks = Collections.emptyList();
-
-    if(type.equals("html"))
-      tasks = exercise.tasks;
-    else if(type.equals("css"))
-      tasks = exercise.cssTasks;
+    List<? extends Task> tasks = getTasksForType(exercise, type);
 
     List<ElementResult> result = tasks.stream().map(task -> task.evaluate(driver)).collect(Collectors.toList());
 
-    if(type.equals("html"))
+    if("html".equals(type))
       saveGrading(exercise, student, calculatePoints(result));
 
     return result;
+  }
+
+  private static List<? extends Task> getTasksForType(HtmlExercise exercise, String type) {
+    List<? extends Task> tasks = Collections.emptyList();
+
+    if("html".equals(type))
+      tasks = exercise.tasks;
+    else if("css".equals(type))
+      tasks = exercise.cssTasks;
+    return tasks;
   }
 
   private static int calculatePoints(List<ElementResult> result) {
