@@ -97,4 +97,8 @@ public class JsCorrector {
     driver.get(solutionUrl);
     return driver;
   }
+  
+  private JsCorrector() {
+    
+  }
 }
