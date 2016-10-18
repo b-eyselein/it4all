@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -88,14 +89,14 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
             items2.add(cf.formatAsString());
           }
           String cfDiff = HashSetHelper.getSheetCFDiff(items2, items1);
-          if(!cfDiff.equals("")) {
+          if(!cfDiff.isEmpty()) {
             message += "Bedingte Formatierung falsch.";
             message += " Der Bereich " + cfDiff + " ist falsch.\n";
           } else {
             String string1 = RegExpHelper.getExcelCFFormulaList(format1.toString());
             String string2 = RegExpHelper.getExcelCFFormulaList(format2.toString());
             String diff = HashSetHelper.getDiffOfTwoFormulas(string1, string2);
-            if(diff.equals("")) {
+            if(diff.isEmpty()) {
               message += "Bedingte Formatierung richtig.\n";
             } else {
               message += "Bedingte Formatierung falsch." + diff + "\n";
@@ -129,7 +130,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
         return "Keine Formel angegeben!";
       } else {
         String difference = HashSetHelper.getDiffOfTwoFormulas(masterCell.toString(), compareCell.toString());
-        if(difference.equals("")) {
+        if(difference.isEmpty()) {
           return "Formel richtig.";
         } else {
           return "Formel falsch. " + difference;
@@ -143,7 +144,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
   public String compareCellValues(XSSFCell masterCell, XSSFCell compareCell) {
     String masterCellValue = getStringValueOfCell(masterCell);
     String compareCellValue = getStringValueOfCell(compareCell);
-    if(compareCellValue.equals(""))
+    if(compareCellValue.isEmpty())
       return "Keinen Wert angegeben!";
     else if(masterCellValue.equals(compareCellValue))
       return "Wert richtig.";
@@ -213,7 +214,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
     }
     
     // Iterate over colored cells
-    ArrayList<XSSFCell> range = getColoredRange(sampleTable);
+    List<XSSFCell> range = getColoredRange(sampleTable);
     for(Cell cellMaster: range) {
       int rowIndex = cellMaster.getRowIndex();
       int columnIndex = cellMaster.getColumnIndex();
@@ -227,8 +228,8 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
           String equalCell = compareCellValues((XSSFCell) cellMaster, cellCompare);
           String equalFormula = compareCellFormulas((XSSFCell) cellMaster, cellCompare);
           setCellComment(cellCompare, equalCell + "\n" + equalFormula);
-          // TODO: ??
-          if(equalCell.equals("Wert richtig.") && equalFormula.equals("Formel richtig.")) {
+          // TODO: Use enum instead of Strings!??
+          if("Wert richtig.".equals(equalCell) && "Formel richtig.".equals(equalFormula)) {
             // Style green
             setCellStyle(cellCompare, compareTable.getWorkbook().createFont(), IndexedColors.GREEN.getIndex());
           } else {
@@ -250,8 +251,8 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
   }
   
   @Override
-  public ArrayList<XSSFCell> getColoredRange(Sheet master) {
-    ArrayList<XSSFCell> range = new ArrayList<>();
+  public List<XSSFCell> getColoredRange(Sheet master) {
+    List<XSSFCell> range = new ArrayList<>();
     for(Row row: master) {
       for(Cell cell: row) {
         Color foreground = cell.getCellStyle().getFillForegroundColorColor();

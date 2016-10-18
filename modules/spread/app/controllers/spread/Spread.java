@@ -8,6 +8,7 @@ import java.nio.file.StandardCopyOption;
 
 import javax.inject.Inject;
 
+import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
 import model.Secured;
 import model.Util;
@@ -16,7 +17,7 @@ import model.spread.SpreadSheetCorrectionResult;
 import model.spread.SpreadSheetCorrector;
 import model.user.User;
 import play.Logger;
-import play.mvc.Controller;
+import play.data.FormFactory;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
@@ -24,21 +25,24 @@ import play.mvc.Security;
 import play.twirl.api.Html;
 import views.html.error;
 import views.html.excel.excelcorrect;
-import views.html.excel.spreadoverview;
 import views.html.excel.spreadcorrectionerror;
+import views.html.excel.spreadoverview;
 
 @Security.Authenticated(Secured.class)
-public class Spread extends Controller {
+public class Spread extends ExerciseController {
   
   private static final String EXERCISE_TYPE = "spread";
+  
   private static final String BODY_SOL_FILE_NAME = "solFile";
-  
-  @Inject
-  private Util util;
-  
-  @Inject
+
   @SuppressWarnings("unused")
-  private SpreadStartUpChecker startUpChecker;
+  private SpreadStartUpChecker checker;
+  
+  @Inject
+  public Spread(Util theUtil, FormFactory theFactory, SpreadStartUpChecker theChecker) {
+    super(theUtil, theFactory);
+    checker = theChecker;
+  }
   
   public Result download(int exerciseId, String typ) {
     User user = UserManagement.getCurrentUser();

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.odftoolkit.odfdom.type.Color;
 import org.odftoolkit.simple.SpreadsheetDocument;
@@ -42,7 +43,7 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
       return "Keine Formel angegeben!";
     else {
       String diffOfTwoFormulas = HashSetHelper.getDiffOfTwoFormulas(masterFormula, compareFormula);
-      if(diffOfTwoFormulas.equals(""))
+      if(diffOfTwoFormulas.isEmpty())
         // TODO: can this happen?
         return "Formel richtig.";
       else
@@ -52,10 +53,11 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
 
   @Override
   public String compareCellValues(Cell masterCell, Cell compareCell) {
-    String masterValue = masterCell.getStringValue(), compareValue = compareCell.getStringValue();
+    String masterValue = masterCell.getStringValue();
+    String compareValue = compareCell.getStringValue();
     // FIXME: why substring from 0 to first newline?
-    if(compareValue.indexOf("\n") != -1)
-      compareValue = compareValue.substring(0, compareValue.indexOf("\n"));
+    if(compareValue.indexOf('\n') != -1)
+      compareValue = compareValue.substring(0, compareValue.indexOf('\n'));
     if(compareValue.isEmpty())
       return "Keinen Wert angegeben!";
     else if(masterValue.equals(compareValue))
@@ -72,7 +74,8 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
 
   @Override
   public String compareNumberOfChartsInDocument(SpreadsheetDocument compare, SpreadsheetDocument sample) {
-    int sampleCount = sample.getChartCount(), compareCount = compare.getChartCount();
+    int sampleCount = sample.getChartCount();
+    int compareCount = compare.getChartCount();
     if(sampleCount == 0)
       return "Es waren keine Diagramme zu erstellen.";
     else if(sampleCount != compareCount)
@@ -87,7 +90,7 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
       // NOTICE: Does not work in ODF Toolkit
     }
     // Iterate over colored cells
-    ArrayList<Cell> range = getColoredRange(sampleTable);
+    List<Cell> range = getColoredRange(sampleTable);
     for(Cell cellMaster: range) {
       int rowIndex = cellMaster.getRowIndex();
       int columnIndex = cellMaster.getColumnIndex();
@@ -96,15 +99,16 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
       if(cellCompare == null)
         // TODO: Fehler werfen? Kann das überhaupt passieren?
         return;
-      
+
       // Compare cell values
       String cellValueResult = compareCellValues(cellMaster, cellCompare);
       String cellFormulaResult = compareCellFormulas(cellMaster, cellCompare);
 
       setCellComment(cellCompare, cellValueResult + "\n" + cellFormulaResult);
 
-      if(cellValueResult.equals("Wert richtig.")
-          && (cellFormulaResult.isEmpty() || cellFormulaResult.equals("Formel richtig.")))
+      // FIXME: use enum instead of String!
+      if("Wert richtig.".equals(cellValueResult)
+          && (cellFormulaResult.isEmpty() || "Formel richtig.".equals(cellFormulaResult)))
         setCellStyle(cellCompare, new Font(FONT, FontStyle.BOLD, FONT_SIZE), Color.GREEN);
       // cellCompare.setFont(new Font(FONT, FontStyle.BOLD, FONT_SIZE,
       // Color.GREEN));
@@ -122,8 +126,8 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
 
   @Override
   @SuppressWarnings("deprecation")
-  public ArrayList<Cell> getColoredRange(Table master) {
-    ArrayList<Cell> range = new ArrayList<Cell>();
+  public List<Cell> getColoredRange(Table master) {
+    List<Cell> range = new ArrayList<>();
     for(int row = 0; row < MAXROW; row++) {
       for(int column = 0; column < MAXCOLUMN; column++) {
         Cell oCell = master.getRowByIndex(row).getCellByIndex(column);
