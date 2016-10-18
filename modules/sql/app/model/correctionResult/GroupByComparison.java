@@ -18,7 +18,8 @@ public class GroupByComparison extends EvaluationResult {
       return Success.NONE;
   }
 
-  List<String> missing, unnecessary;
+  List<String> missing;
+  List<String> unnecessary;
 
   public GroupByComparison(List<String> theMissing, List<String> theUnnecessary) {
     super(FeedbackLevel.MEDIUM_FEEDBACK, analyze(theMissing, theUnnecessary));

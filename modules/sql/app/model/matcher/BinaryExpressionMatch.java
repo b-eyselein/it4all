@@ -20,8 +20,11 @@ public class BinaryExpressionMatch extends Match<BinaryExpression> {
   
   @Override
   public void analyze() {
-    Expression arg1Left = arg1.getLeftExpression(), arg1Right = arg1.getRightExpression();
-    Expression arg2Left = arg2.getLeftExpression(), arg2Right = arg2.getRightExpression();
+    Expression arg1Left = arg1.getLeftExpression();
+    Expression arg1Right = arg1.getRightExpression();
+
+    Expression arg2Left = arg2.getLeftExpression();
+    Expression arg2Right = arg2.getRightExpression();
     
     Expression toMatch1 = arg1Left;
     Expression toMatch2 = arg2Left;

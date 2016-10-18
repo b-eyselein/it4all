@@ -14,7 +14,7 @@ public class ColumnDefinitionMatcher extends Matcher<ColumnDefinition, ColumnDef
         // Equals tester
         (arg0, arg1) -> arg0.getColumnName().equals(arg1.getColumnName()),
         // Matching Action
-        (arg1, arg2) -> new ColumnDefinitionMatch(arg1, arg2));
+        ColumnDefinitionMatch::new);
   }
 
   @Override

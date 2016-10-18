@@ -12,8 +12,9 @@ import play.Logger;
  * Tool to run database scripts
  */
 public class ScriptRunner {
-  
+
   private static final Logger.ALogger theLogger = Logger.of("sql");
+
   private static final String DELIMITER = ";";
   
   /**
@@ -31,23 +32,23 @@ public class ScriptRunner {
    */
   public static void runScript(Connection connection, List<String> lines, boolean autoCommit, boolean stopOnError)
       throws SQLException {
-    
+
     connection.setAutoCommit(autoCommit);
-    
+
     StringBuffer command = new StringBuffer();
     try {
       for(String line: lines) {
         String trimmedLine = line.trim();
-        
+
         if(trimmedLine.length() < 1 || trimmedLine.startsWith("//") || trimmedLine.startsWith("--"))
           // Comment or empty line - do nothing
           continue;
-      
+
         if(trimmedLine.endsWith(DELIMITER) || trimmedLine.equals(DELIMITER)) {
           // Statement ends, execute
           command.append(line.substring(0, line.lastIndexOf(DELIMITER)) + " ");
           Statement statement = connection.createStatement();
-          
+
           if(stopOnError) {
             statement.execute(command.toString());
           } else {
@@ -58,15 +59,15 @@ public class ScriptRunner {
               theLogger.error("Error executing: " + command, e);
             }
           }
-          
+
           if(autoCommit && !connection.getAutoCommit()) {
             connection.commit();
           }
-          
+
           command = new StringBuffer();
           statement.close();
           Thread.yield();
-
+          
         } else {
           command.append(line + " ");
         }
@@ -81,5 +82,9 @@ public class ScriptRunner {
       connection.rollback();
     }
   }
-  
+
+  private ScriptRunner() {
+
+  }
+
 }

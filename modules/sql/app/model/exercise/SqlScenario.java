@@ -13,7 +13,7 @@ import com.avaje.ebean.Model;
 @Entity
 public class SqlScenario extends Model {
 
-  public static Finder<String, SqlScenario> finder = new Finder<>(SqlScenario.class);
+  public static final Finder<String, SqlScenario> finder = new Finder<>(SqlScenario.class);
 
   @Id
   public String shortName;
@@ -29,7 +29,7 @@ public class SqlScenario extends Model {
     shortName = theShortName;
   }
 
-  public List<? extends SqlExercise> getExercisesByType(SqlExerciseType type) {
+  public List<SqlExercise> getExercisesByType(SqlExerciseType type) {
     return exercises.parallelStream().filter(ex -> ex.key.exercisetype.equals(type)).collect(Collectors.toList());
   }
 

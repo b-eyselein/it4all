@@ -45,7 +45,8 @@ public abstract class QueryCorrector<QueryType extends Statement, ComparedType> 
   
   public List<EvaluationResult> correct(Database database, String userStatement, String sampleStatement,
       SqlExercise exercise, FeedbackLevel fbLevel) {
-    QueryType parsedUserStatement, parsedSampleStatement;
+    QueryType parsedUserStatement;
+    QueryType parsedSampleStatement;
     try {
       parsedUserStatement = parseStatement(userStatement);
       parsedSampleStatement = parseStatement(sampleStatement);
@@ -84,7 +85,8 @@ public abstract class QueryCorrector<QueryType extends Statement, ComparedType> 
   }
   
   protected EvaluationResult compareWheres(ComparedType userQuery, ComparedType sampleQuery) {
-    Expression userWhere = getWhere(userQuery), sampleWhere = getWhere(sampleQuery);
+    Expression userWhere = getWhere(userQuery);
+    Expression sampleWhere = getWhere(sampleQuery);
     
     if(userWhere == null && sampleWhere == null)
       return null;

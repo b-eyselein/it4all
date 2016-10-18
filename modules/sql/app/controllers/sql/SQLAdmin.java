@@ -33,7 +33,7 @@ import views.html.sqlupload;
 @Authenticated(AdminSecured.class)
 public class SQLAdmin extends Controller {
 
-  private static String BODY_FILE_NAME = "file";
+  private static final String BODY_FILE_NAME = "file";
 
   private static void readExercise(String scenarioName, int id, Map<String, String[]> data) {
     SqlExerciseType exerciseType = SqlExerciseType.valueOf(data.get("ex" + id + "_type")[0]);
@@ -53,7 +53,7 @@ public class SQLAdmin extends Controller {
 
   @Inject
   @NamedDatabase("sqlotherroot")
-  private Database sql_other;
+  private Database sqlOther;
 
   public Result create() {
     Map<String, String[]> data = request().body().asFormUrlEncoded();
@@ -93,7 +93,7 @@ public class SQLAdmin extends Controller {
     saveUploadedFile(savingDir, pathToUploadedFile, saveTo);
 
     // TODO: return exercises!
-    ScenarioCreationResult scenarioResult = SqlScenarioHandler.handleScenario(saveTo, sql_other);
+    ScenarioCreationResult scenarioResult = SqlScenarioHandler.handleScenario(saveTo);
 
     return ok(sqlpreview.render(UserManagement.getCurrentUser(), scenarioResult));
   }

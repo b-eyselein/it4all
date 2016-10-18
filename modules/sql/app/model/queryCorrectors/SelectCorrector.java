@@ -119,7 +119,8 @@ public class SelectCorrector extends QueryCorrector<Select, PlainSelect> {
   @Override
   protected EvaluationResult executeQuery(Database database, Select userStatement, Select sampleStatement,
       SqlExercise exercise, FeedbackLevel feedbackLevel) {
-    SqlQueryResult userResult = null, sampleResult = null;
+    SqlQueryResult userResult = null;
+    SqlQueryResult sampleResult = null;
 
     try {
       Connection conn = database.getConnection();
@@ -163,7 +164,7 @@ public class SelectCorrector extends QueryCorrector<Select, PlainSelect> {
   protected Expression getWhere(PlainSelect query) {
     return query.getWhere();
   }
-  
+
   @Override
   protected Select parseStatement(String statement) throws SqlCorrectionException {
     try {

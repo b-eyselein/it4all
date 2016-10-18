@@ -12,10 +12,12 @@ import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
 import model.Secured;
 import model.SqlCorrector;
 import model.SqlQueryResult;
+import model.Util;
 import model.exercise.EvaluationFailed;
 import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
@@ -29,7 +31,6 @@ import play.data.FormFactory;
 import play.db.Database;
 import play.db.NamedDatabase;
 import play.libs.Json;
-import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security.Authenticated;
 import play.twirl.api.Html;
@@ -38,73 +39,74 @@ import views.html.sqlexercise;
 import views.html.sqloverview;
 
 @Authenticated(Secured.class)
-public class SQL extends Controller {
-
+public class SQL extends ExerciseController {
+  
   private static final String SHOW_ALL_TABLES = "SHOW TABLES";
+  
   private static final String SELECT_ALL = "SELECT * FROM ";
-
   @Inject
   @NamedDatabase("sqlselectuser")
   // IMPORTANT: DO NOT USE "DEFAULT" DATABASE
-  private Database sql_select;
-
+  private Database sqlSelect;
+  
   @Inject
   @NamedDatabase("sqlotherroot")
-  private Database sql_other;
-
-  @Inject
-  private FormFactory factory;
-
-  @Inject
+  private Database sqlOther;
+  
   @SuppressWarnings("unused")
   private SqlStartUpChecker checker;
-
+  
+  @Inject
+  public SQL(Util theUtil, FormFactory theFactory, SqlStartUpChecker theChecker) {
+    super(theUtil, theFactory);
+    checker = theChecker;
+  }
+  
   public Result commit(String scenarioName, String exerciseType, int exerciseId) {
-    User user = UserManagement.getCurrentUser();
-    
+
     SqlExerciseType type = SqlExerciseType.valueOf(exerciseType);
-    
+
     SqlExercise exercise = SqlExercise.finder.byId(new SqlExerciseKey(scenarioName, exerciseId, type));
-
+    
     DynamicForm form = factory.form().bindFromRequest();
-
+    
     String learnerSolution = form.get("editorContent");
     FeedbackLevel feedbackLevel = FeedbackLevel.valueOf(form.get("feedbackLevel"));
-
+    
     if(learnerSolution.isEmpty())
       return ok(Json.toJson(Arrays.asList(new EvaluationFailed("Sie haben eine leere Query abgegeben!"))));
-
+    
     if(exercise == null)
       return badRequest(Json.toJson(Arrays.asList(new EvaluationFailed("There is no such exercise!"))));
-
+    
     Database database = getDatabaseForExerciseType(exerciseType);
-
-    List<EvaluationResult> result = SqlCorrector.correct(database, user, learnerSolution, exercise, feedbackLevel);
-
+    
+    List<EvaluationResult> result = SqlCorrector.correct(database, learnerSolution, exercise, feedbackLevel);
+    
     JsonNode ret = Json.toJson(result);
-
+    
     // FIXME: Abgabe der Lösung!
-
+    
     return ok(Json.toJson(ret));
   }
-
+  
   public Result exercise(String scenarioName, String exerciseType, int exerciseId) {
     User user = UserManagement.getCurrentUser();
-
-    SqlExerciseType type = SqlExerciseType.valueOf(exerciseType);
     
-    SqlExercise exercise = SqlExercise.finder.byId(new SqlExerciseKey(scenarioName, exerciseId, type));
+    SqlExerciseType type = SqlExerciseType.valueOf(exerciseType);
 
+    SqlExercise exercise = SqlExercise.finder.byId(new SqlExerciseKey(scenarioName, exerciseId, type));
+    
     if(exercise == null)
       return badRequest("There is no such exercise!");
-
+    
     try {
-      Connection connection = sql_select.getConnection();
+      Connection connection = sqlSelect.getConnection();
       connection.setCatalog(scenarioName);
       List<SqlQueryResult> tables = new LinkedList<>();
       Statement statement = connection.createStatement();
       ResultSet existingDBs = statement.executeQuery(SHOW_ALL_TABLES);
-
+      
       while(existingDBs.next()) {
         String tableName = existingDBs.getString(1);
         Statement selectStatement = connection.createStatement();
@@ -112,7 +114,7 @@ public class SQL extends Controller {
         tables.add(new SqlQueryResult(tableResult, tableName));
         selectStatement.close();
       }
-
+      
       statement.close();
       connection.close();
       return ok(sqlexercise.render(user, exercise, tables));
@@ -121,15 +123,15 @@ public class SQL extends Controller {
       return badRequest(error.render(user, new Html("Fehler beim Auslesen der Tabellen!")));
     }
   }
-
+  
   public Result index() {
     return ok(sqloverview.render(UserManagement.getCurrentUser(), SqlScenario.finder.all()));
   }
-
+  
   private Database getDatabaseForExerciseType(String exerciseType) {
-    if(exerciseType.equals("SELECT"))
-      return sql_select;
-    return sql_other;
+    if("SELECT".equals(exerciseType))
+      return sqlSelect;
+    return sqlOther;
   }
-
+  
 }

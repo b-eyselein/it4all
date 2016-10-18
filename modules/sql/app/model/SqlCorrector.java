@@ -6,13 +6,12 @@ import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.SqlExercise;
 import model.queryCorrectors.QueryCorrector;
-import model.user.User;
 import net.sf.jsqlparser.statement.Statement;
 import play.db.Database;
 
 public class SqlCorrector {
   
-  public static List<EvaluationResult> correct(Database database, User user, String userStatement, SqlExercise exercise,
+  public static List<EvaluationResult> correct(Database database, String userStatement, SqlExercise exercise,
       FeedbackLevel feedbackLevel) {
     QueryCorrector<? extends Statement, ?> corrector = exercise.getCorrector();
     
@@ -33,5 +32,9 @@ public class SqlCorrector {
       }
     }
     return bestFitting;
+  }
+  
+  private SqlCorrector() {
+    
   }
 }
