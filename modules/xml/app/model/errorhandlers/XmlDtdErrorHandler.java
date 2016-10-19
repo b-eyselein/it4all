@@ -1,32 +1,27 @@
-package model;
+package model.errorhandlers;
 
-import java.util.List;
-
-import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-public class SimpleXMLErrorHandler implements ErrorHandler {
-  private List<XMLError> output;
+import model.XMLError;
+import model.XmlErrorType;
 
-  public SimpleXMLErrorHandler(List<XMLError> output) {
-    this.output = output;
-  }
-
+public class XmlDtdErrorHandler extends CorrectionErrorHandler {
+  
   @Override
   public void error(SAXParseException exception) throws SAXException {
     if(exception.getLineNumber() > -1) {
-      output.add(new XMLError(exception.getLineNumber(), exception.getMessage(), XmlErrorType.ERROR));
+      output.add(new XMLError(TITEL_TODO, exception.getMessage(), XmlErrorType.ERROR, exception.getLineNumber() - 2));
     } else {
       output.add(new XMLError(XmlErrorType.ERROR.toString(), exception.getMessage(), XmlErrorType.ERROR));
     }
-
   }
-
+  
   @Override
   public void fatalError(SAXParseException exception) throws SAXException {
     if(exception.getLineNumber() > -1) {
-      output.add(new XMLError(exception.getLineNumber(), exception.getMessage(), XmlErrorType.FATALERROR));
+      output.add(
+          new XMLError(TITEL_TODO, exception.getMessage(), XmlErrorType.FATALERROR, exception.getLineNumber() - 2));
     } else {
       output.add(new XMLError(XmlErrorType.FATALERROR.toString(), exception.getMessage(), XmlErrorType.FATALERROR));
     }
@@ -35,10 +30,10 @@ public class SimpleXMLErrorHandler implements ErrorHandler {
   @Override
   public void warning(SAXParseException exception) throws SAXException {
     if(exception.getLineNumber() > -1) {
-      output.add(new XMLError(exception.getLineNumber(), exception.getMessage(), XmlErrorType.WARNING));
+      output.add(new XMLError(TITEL_TODO, exception.getMessage(), XmlErrorType.WARNING, exception.getLineNumber() - 2));
     } else {
       output.add(new XMLError(XmlErrorType.WARNING.toString(), exception.getMessage(), XmlErrorType.WARNING));
     }
-
   }
+
 }

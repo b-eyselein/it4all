@@ -1,4 +1,4 @@
-package model.queryCorrectors;
+package model.querycorrectors;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,8 +12,8 @@ import java.util.List;
 
 import model.ScriptRunner;
 import model.SqlCorrectionException;
-import model.correctionResult.ColumnComparison;
-import model.correctionResult.TableComparison;
+import model.correctionresult.ColumnComparison;
+import model.correctionresult.TableComparison;
 import model.exercise.EvaluationFailed;
 import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
@@ -25,13 +25,13 @@ import play.Logger;
 import play.db.Database;
 
 public abstract class QueryCorrector<QueryType extends Statement, ComparedType> {
-  
+
   protected static <T> List<T> listDifference(List<T> a, List<T> b) {
     List<T> ret = new LinkedList<>(a);
     ret.removeAll(b);
     return ret;
   }
-  
+
   @SafeVarargs
   protected static <T extends Comparable<T>> T minimum(T... toCompare) {
     if(toCompare.length == 0)
@@ -53,52 +53,52 @@ public abstract class QueryCorrector<QueryType extends Statement, ComparedType> 
     } catch (SqlCorrectionException e) {
       return Arrays.asList(new EvaluationFailed(e.getMessage(), e.getCauseMessage()));
     }
-
+    
     List<EvaluationResult> staticComps = compareStatically(parsedUserStatement, parsedSampleStatement, fbLevel);
     EvaluationResult executionResult = executeQuery(database, parsedUserStatement, parsedSampleStatement, exercise,
         fbLevel);
-
+    
     List<EvaluationResult> ret = new LinkedList<>();
     ret.addAll(staticComps);
     ret.add(executionResult);
-    
+
     return ret;
   }
-  
-  protected abstract ColumnComparison compareColumns(ComparedType userQuery, ComparedType sampleQuery);
 
+  protected abstract ColumnComparison compareColumns(ComparedType userQuery, ComparedType sampleQuery);
+  
   protected abstract List<EvaluationResult> compareStatically(QueryType parsedUserStatement,
       QueryType parsedSampleStatement, FeedbackLevel feedbackLevel);
-  
+
   protected TableComparison compareTables(ComparedType userQuery, ComparedType sampleQuery) {
     List<String> userTableNames = getTables(userQuery);
     List<String> sampleTableNames = getTables(sampleQuery);
-    
+
     List<String> wrongTables = listDifference(userTableNames, sampleTableNames);
     List<String> missingTables = listDifference(sampleTableNames, userTableNames);
-    
+
     Success success = Success.NONE;
     if(missingTables.isEmpty() && wrongTables.isEmpty())
       success = Success.COMPLETE;
-    
+
     return new TableComparison(success, missingTables, wrongTables);
   }
-  
+
   protected EvaluationResult compareWheres(ComparedType userQuery, ComparedType sampleQuery) {
     Expression userWhere = getWhere(userQuery);
     Expression sampleWhere = getWhere(sampleQuery);
-    
+
     if(userWhere == null && sampleWhere == null)
       return null;
     else if(userWhere == null)
       return new EvaluationFailed("In der Musterlösung sind Bedingungen!");
     else if(sampleWhere == null)
       return new EvaluationFailed("In der Musterlösung waren keine Bedingungen angegeben!");
-    
+
     WhereCorrector whereCorrector = new WhereCorrector();
     return whereCorrector.correct(userWhere, sampleWhere);
   }
-  
+
   protected void createDatabaseIfNotExists(Connection connection, String databaseName, Path scriptFile) {
     try(ResultSet tables = connection.getMetaData().getCatalogs()) {
       while(tables.next())
@@ -106,7 +106,7 @@ public abstract class QueryCorrector<QueryType extends Statement, ComparedType> 
           // Database already exists
           return;
       tables.close();
-      
+
       List<String> lines = Files.readAllLines(scriptFile);
       connection.createStatement().executeUpdate("CREATE DATABASE IF NOT EXISTS " + databaseName);
       connection.setCatalog(databaseName);
@@ -115,13 +115,13 @@ public abstract class QueryCorrector<QueryType extends Statement, ComparedType> 
       Logger.error("Error while initialising database " + databaseName, e);
     }
   }
-  
+
   protected abstract EvaluationResult executeQuery(Database database, QueryType userStatement,
       QueryType sampleStatement, SqlExercise exercise, FeedbackLevel feedbackLevel);
-  
+
   protected abstract List<String> getTables(ComparedType userQuery);
-  
+
   protected abstract Expression getWhere(ComparedType query);
-  
+
   protected abstract QueryType parseStatement(String statement) throws SqlCorrectionException;
 }

@@ -12,11 +12,11 @@ import model.mindmap.parser.AbstractEvaluationParser;
 import model.mindmap.parser.ParserFactory;
 
 public class MultipleRoots {
-  
+
   // will be set from outside if gui program
   private MetaDataState mds = null;
   private Modus modus = null;
-  
+
   public void createMetaFromMap(String parserType, String solutionMapPath, String metaToCreatePath) throws Exception {
     RWExcel rwe = new RWExcel();
     AbstractEvaluationParser abstractEvaluationParser = ParserFactory.getEvaluationParser(parserType);
@@ -24,7 +24,7 @@ public class MultipleRoots {
     Util.applyMetaDataFromSolutionToInput(solutionRoots, new LinkedList<>());
     rwe.handleMetaData(metaToCreatePath, solutionRoots, MetaDataState.FROM_MINDMAP);
   }
-  
+
   public void evalMultiRootMapWithExcel(String parserType, String input, String solution, String result,
       String alteredSolution, String alteredInput, String metaData, String template) throws Exception {
     RWExcel rwe = new RWExcel();
@@ -56,71 +56,19 @@ public class MultipleRoots {
     abstractEvaluationParser.write(alteredSolution, solutionRoots, template);
     abstractEvaluationParser.write(alteredInput, inputRoots, template);
   }
-  
-  // private MetaDataState askUserForMetaDataState(String metaFilePath) {
-  // File metaFile = new File(metaFilePath);
-  // System.out.println("Press 1: Read from MindMap (reminder: for this your
-  // have to change the solution path; see main() method)");
-  // System.out.println("Press 2: Create empty Metafile");
-  // if(metaFile.exists() && !metaFile.isDirectory()) {
-  // System.out.println("Press 3: Read from Metafile");
-  // }
-  // BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-  // int in = -1;
-  // try {
-  // in = Integer.parseInt(br.readLine());
-  // } catch (NumberFormatException | IOException e) {
-  // e.printStackTrace();
-  // }
-  // switch(in) {
-  // case 1:
-  // return MetaDataState.FROM_MINDMAP;
-  // case 2:
-  // return MetaDataState.EMPTY;
-  // case 3:
-  // //currently it is the standard solution file from which is read
-  // return MetaDataState.FROM_METAFILE;
-  // default:
-  // System.out.println("Wrong input. Restart.");
-  // return null;
-  // }
-  // }
-  
-  // private Modus askUserForModus() {
-  // System.out.println("Press 1: Minimal modus (only colored results and
-  // points)");
-  // System.out.println("Press 2: Maximal modus (all available informations are
-  // displayed)");
-  // BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-  // int in = -1;
-  // try {
-  // in = Integer.parseInt(br.readLine());
-  // } catch (NumberFormatException | IOException e) {
-  // e.printStackTrace();
-  // }
-  // switch(in) {
-  // case 1:
-  // return Modus.MINIMAL;
-  // case 2:
-  // return Modus.MAXIMAL;
-  // default:
-  // System.out.println("wrong input. Restart.");
-  // return null;
-  // }
-  // }
-  
+
   public MetaDataState getMetaDataState() {
     return mds;
   }
-  
+
   public Modus getModus() {
     return modus;
   }
-  
+
   public void setMetaDataState(MetaDataState metaDataState) {
     this.mds = metaDataState;
   }
-  
+
   public void setModus(Modus modus) {
     this.modus = modus;
   }

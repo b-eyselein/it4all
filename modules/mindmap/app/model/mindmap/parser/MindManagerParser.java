@@ -17,20 +17,25 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import model.mindmap.basics.Image;
-import model.mindmap.basics.TreeNode;
-import model.mindmap.evaluation.enums.DifferenceResult;
-import model.mindmap.evaluation.enums.Modus;
-import model.mindmap.parser.basics.UnZip;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public class MindManagerParser extends AbstractEvaluationParser {
+import model.mindmap.basics.Image;
+import model.mindmap.basics.TreeNode;
+import model.mindmap.evaluation.enums.DifferenceResult;
+import model.mindmap.evaluation.enums.Modus;
+import model.mindmap.parser.basics.UnZip;
 
+public class MindManagerParser extends AbstractEvaluationParser {
+  
+  private int id;
+  
+  private int index = 0;
+  private Document doc;
+  
   private static void deleteDir(File folder) {
     if(folder.isDirectory()) {
       File[] list = folder.listFiles();
@@ -46,25 +51,18 @@ public class MindManagerParser extends AbstractEvaluationParser {
     }
     folder.delete();
   }
-
-  private int id;
-  private int index = 0;
-
-  private Document doc;
-
+  
   /**
    * @see {@link AbstractParser#read(File)}}
    */
   @Override
   public List<TreeNode> read(File file) throws Exception {
-    DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-    Document doc = dBuilder.parse(file);
-    doc.getDocumentElement().normalize();
-    List<TreeNode> listOfRoots = buildTree(doc);
-    return listOfRoots;
+    DocumentBuilder dBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+    Document docToRead = dBuilder.parse(file);
+    docToRead.getDocumentElement().normalize();
+    return buildTree(docToRead);
   }
-
+  
   /**
    * @see {@link AbstractParser#write(String, LinkedList, String)}}
    *
@@ -94,7 +92,7 @@ public class MindManagerParser extends AbstractEvaluationParser {
     transformer.transform(source, result);
     fso.close();
   }
-
+  
   private Element addNewTopic(Element parentElement) {
     Element topic = createAndAppend("ap:Topic", parentElement);
     topic.setAttribute("Dirty", "0000000000000001");
@@ -102,7 +100,7 @@ public class MindManagerParser extends AbstractEvaluationParser {
     topic.setAttribute("Gen", "0000000000000000");
     return topic;
   }
-
+  
   private String buildOptAndRatingPart(TreeNode treeNode) {
     String text = treeNode.getText();
     if(getModus() == Modus.MAXIMAL && treeNode.isOptional())
@@ -116,7 +114,7 @@ public class MindManagerParser extends AbstractEvaluationParser {
     }
     return text;
   }
-
+  
   private LinkedList<TreeNode> buildTree(Document doc) {
     LinkedList<TreeNode> listOfRoots = new LinkedList<>();
     // root element from DOM - NOT the root of the tree
@@ -133,7 +131,7 @@ public class MindManagerParser extends AbstractEvaluationParser {
     }
     return listOfRoots;
   }
-
+  
   private void buildTreeRecursive(Node aTopic, TreeNode parent, LinkedList<TreeNode> listOfRoots) {
     Element elTopic = (Element) aTopic;
     TreeNode treeNode = new TreeNode(elTopic.getAttribute("OId"));
@@ -177,20 +175,20 @@ public class MindManagerParser extends AbstractEvaluationParser {
       }
     }
   }
-
+  
   private Element createAndAppend(String toCreate, Element parent) {
     Element element = doc.createElement(toCreate);
     parent.appendChild(element);
     return element;
   }
-
+  
   private void createAttributesIndexHyperLink(Element hl, String path, boolean absolute) {
     createSharedAttributesHyperLink(hl, path, absolute);
     hl.setAttribute("HyperlinkId", createBase64Binary());
     hl.setAttribute("Index", String.valueOf(index));
     index++;
   }
-
+  
   private void createBackGround(Element topic, TreeNode treeNode) {
     if(treeNode.isMetaNode()) {
       return;
@@ -208,7 +206,7 @@ public class MindManagerParser extends AbstractEvaluationParser {
       }
     }
   }
-
+  
   private String createBase64Binary() {
     // (21 - digits of id) times "0" + id + "A=="
     String sID = String.valueOf(id);
@@ -222,7 +220,7 @@ public class MindManagerParser extends AbstractEvaluationParser {
     sb.append("A==");
     return sb.toString();
   }
-
+  
   // must be treated special because of the floatingTopics and OneTopic stuff
   private void createContent(List<TreeNode> rootList, Element rootElement) {
     // id = 0 is ap:Map
@@ -249,7 +247,7 @@ public class MindManagerParser extends AbstractEvaluationParser {
     createLinks(topic, mainRoot);
     // createTag(topic, mainRoot);
   }
-
+  
   private void createImage(Element topic, TreeNode treeNode) {
     if(treeNode.getImage() != null) {
       Element oneImage = createAndAppend("ap:OneImage", topic);
@@ -269,7 +267,7 @@ public class MindManagerParser extends AbstractEvaluationParser {
       imageSize.setAttribute("Dirty", "0000000000000001");
     }
   }
-
+  
   private void createLinks(Element topic, TreeNode treeNode) {
     if(isMultipleOutput()) {
       index = 0;
@@ -287,55 +285,55 @@ public class MindManagerParser extends AbstractEvaluationParser {
       createAttributesIndexHyperLink(hlMetaData, getAbsolutePath(getMetaData()), true);
     }
   }
-
+  
   private void createNote(Element topic, TreeNode treeNode) {
-    if(getModus() == Modus.MAXIMAL || treeNode.isMetaNode()) {
+    if(getModus() == Modus.MAXIMAL || treeNode.isMetaNode() && treeNode.getSynonyms().size() > 1
+        || treeNode.getDifferenceResult() == DifferenceResult.PARTIALLY_CORRECT
+        || treeNode.getDifferenceResult() == DifferenceResult.WRONG || treeNode.isMetaNode()) {
       // show all synonyms OR show correct solutions when its wrong/partially
       // correct OR
       // show notice if it is not a normal node
-      if(treeNode.getSynonyms().size() > 1 || treeNode.getDifferenceResult() == DifferenceResult.PARTIALLY_CORRECT
-          || treeNode.getDifferenceResult() == DifferenceResult.WRONG || treeNode.isMetaNode()) {
-        Element notesGroup = createAndAppend("ap:NotesGroup", topic);
-        Element notesXHtmlData = createAndAppend("ap:NotesXhtmlData", notesGroup);
-        notesXHtmlData.setAttribute("Dirty", "0000000000000001");
-        Element html = createAndAppend("html", notesXHtmlData);
-        html.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
-        // for line breaks
-        Element p = createAndAppend("p", html);
-        Element p2 = createAndAppend("p", html);
-        Element p3 = createAndAppend("p", html);
-        String plainText = "";
-        if(!treeNode.isSolution() && treeNode.getDifferenceResult() == DifferenceResult.PARTIALLY_CORRECT) {
-          p.setTextContent((treeNode.getDistancePercent() * 100) + "% correct");
-          p2.setTextContent("Correct solutions (with regex):");
-          for(String correct: treeNode.getCorrectSolutions()) {
-            plainText += correct + ";";
-          }
-        }
-        if(!treeNode.isSolution() && treeNode.getDifferenceResult() == DifferenceResult.WRONG) {
-          for(String correct: treeNode.getCorrectSolutions()) {
-            plainText += correct + ";";
-          }
-        }
-        for(String synonym: treeNode.getSynonyms()) {
-          if(synonym.equals(treeNode.getText())) {
-            continue;
-          }
-          plainText += synonym + ";";
-        }
-        p3.setTextContent(plainText);
-        if(plainText.length() > 200) {
-          notesXHtmlData.setAttribute("PreviewPlainText", plainText.substring(0, 199));
-        } else {
-          notesXHtmlData.setAttribute("PreviewPlainText", plainText);
-        }
-        if(plainText.isEmpty()) {
-          topic.removeChild(notesGroup);
+      Element notesGroup = createAndAppend("ap:NotesGroup", topic);
+      Element notesXHtmlData = createAndAppend("ap:NotesXhtmlData", notesGroup);
+      notesXHtmlData.setAttribute("Dirty", "0000000000000001");
+      Element html = createAndAppend("html", notesXHtmlData);
+      html.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
+      // for line breaks
+      Element p = createAndAppend("p", html);
+      Element p2 = createAndAppend("p", html);
+      Element p3 = createAndAppend("p", html);
+      String plainText = "";
+      if(!treeNode.isSolution() && treeNode.getDifferenceResult() == DifferenceResult.PARTIALLY_CORRECT) {
+        p.setTextContent((treeNode.getDistancePercent() * 100) + "% correct");
+        p2.setTextContent("Correct solutions (with regex):");
+        for(String correct: treeNode.getCorrectSolutions()) {
+          plainText += correct + ";";
         }
       }
+      if(!treeNode.isSolution() && treeNode.getDifferenceResult() == DifferenceResult.WRONG) {
+        for(String correct: treeNode.getCorrectSolutions()) {
+          plainText += correct + ";";
+        }
+      }
+      for(String synonym: treeNode.getSynonyms()) {
+        if(synonym.equals(treeNode.getText())) {
+          continue;
+        }
+        plainText += synonym + ";";
+      }
+      p3.setTextContent(plainText);
+      if(plainText.length() > 200) {
+        notesXHtmlData.setAttribute("PreviewPlainText", plainText.substring(0, 199));
+      } else {
+        notesXHtmlData.setAttribute("PreviewPlainText", plainText);
+      }
+      if(plainText.isEmpty()) {
+        topic.removeChild(notesGroup);
+      }
     }
+    
   }
-
+  
   // private void addBackGroundImage(Node styleNode) throws DOMException,
   // IOException {
   // Element style = (Element)styleNode;
@@ -350,7 +348,7 @@ public class MindManagerParser extends AbstractEvaluationParser {
   // base64.setAttribute("xsi:nil", "false");
   // base64.setTextContent(encodeToString("platzhalter"));
   // }
-
+  
   private void createOffset(Element topic, TreeNode treeNode) {
     if(treeNode.getxOffset() != 0.0 || treeNode.getyOffset() != 0.0) {
       Element offset = createAndAppend("ap:Offset", topic);
@@ -358,13 +356,13 @@ public class MindManagerParser extends AbstractEvaluationParser {
       offset.setAttribute("CY", String.valueOf(treeNode.getyOffset()));
     }
   }
-
+  
   private void createSharedAttributesHyperLink(Element hl, String path, boolean absolute) {
     hl.setAttribute("Dirty", "0000000000000001");
     hl.setAttribute("Url", "\"" + path + "\"");
     hl.setAttribute("Absolute", String.valueOf(absolute));
   }
-
+  
   private void createSubTopics(Element topic, TreeNode treeNode) {
     if(treeNode.getChildren().size() != 0) {
       Element subTopics = createAndAppend("ap:SubTopics", topic);
@@ -373,7 +371,7 @@ public class MindManagerParser extends AbstractEvaluationParser {
       }
     }
   }
-
+  
   private void createTextPart(Element topic, TreeNode treeNode) {
     // text
     Element text = createAndAppend("ap:Text", topic);
@@ -384,7 +382,7 @@ public class MindManagerParser extends AbstractEvaluationParser {
     // font
     createAndAppend("ap:Font", text);
   }
-
+  
   private String extractMetaData(TreeNode treeNode, String text) {
     String regexOptional = "\\[(\\?)\\]";
     String regexRating = "\\[([0-9]*(\\.[0-9]*)?)\\]";
@@ -403,7 +401,7 @@ public class MindManagerParser extends AbstractEvaluationParser {
     text = text.trim();
     return text;
   }
-
+  
   private void handleImage(Node nodeDOM, TreeNode treeNode) {
     LinkedList<Node> images = searchChildren(nodeDOM, "ap:Image");
     // this is only correct for one image per node BUT there is only one image
@@ -429,7 +427,7 @@ public class MindManagerParser extends AbstractEvaluationParser {
       treeNode.setImage(image);
     }
   }
-
+  
   private void handleNoteSynonyms(Node nodeDOM, TreeNode treeNode) {
     LinkedList<Node> notesXHtmlData = searchChildren(nodeDOM, "ap:NotesXhtmlData");
     String allSynonymsChain = "";
@@ -454,7 +452,7 @@ public class MindManagerParser extends AbstractEvaluationParser {
       }
     }
   }
-
+  
   private void handleOffset(Node nodeDOM, TreeNode treeNode) {
     Element elOffset = (Element) nodeDOM;
     String xOffset = elOffset.getAttribute("CX");
@@ -462,7 +460,7 @@ public class MindManagerParser extends AbstractEvaluationParser {
     treeNode.setxOffset(Double.valueOf(xOffset));
     treeNode.setyOffset(Double.valueOf(yOffset));
   }
-
+  
   private void handleTagSynonyms(Node nodeDOM, TreeNode treeNode) {
     LinkedList<Node> textLabelWithSynonyms = searchChildren(nodeDOM, "ap:TextLabel");
     for(Node textLabel: textLabelWithSynonyms) {
@@ -475,7 +473,7 @@ public class MindManagerParser extends AbstractEvaluationParser {
       }
     }
   }
-
+  
   private void handleText(Node nodeDOM, TreeNode treeNode) {
     Element elText = (Element) nodeDOM;
     String plainText = elText.getAttribute("PlainText");
@@ -484,7 +482,7 @@ public class MindManagerParser extends AbstractEvaluationParser {
     // the synonyms of a node text MUST contain the text itself
     treeNode.addSynonym(text);
   }
-
+  
   // private void createTag(Element topic, TreeNode treeNode) {
   // if(getModus() == Modus.MAXIMAL) {
   // if(treeNode.getSynonyms().size() > 1) {
@@ -504,7 +502,7 @@ public class MindManagerParser extends AbstractEvaluationParser {
   // }
   // }
   // }
-
+  
   private boolean isSearchedElement(Node nodeDOM, String toSearch) {
     if(nodeDOM != null && nodeDOM.getNodeType() == Node.ELEMENT_NODE) {
       Element el = (Element) nodeDOM;
@@ -514,13 +512,13 @@ public class MindManagerParser extends AbstractEvaluationParser {
     }
     return false;
   }
-
+  
   private void isTaskDescription(TreeNode treeNode) {
     if(treeNode.getText().startsWith("Arbeitsauftrag")) {
       treeNode.setMetaNode(true);
     }
   }
-
+  
   private void loadTemplateStyle(String templatePath, Element rootElement)
       throws ParserConfigurationException, SAXException, IOException {
     // unzip design file
@@ -540,7 +538,7 @@ public class MindManagerParser extends AbstractEvaluationParser {
     // delete unziped file
     deleteDir(new File(unzipedPath));
   }
-
+  
   private void recursiveTreeToContent(TreeNode treeNode, Element parentElement) {
     Element topic = addNewTopic(parentElement);
     // this is a recursive step
@@ -552,7 +550,7 @@ public class MindManagerParser extends AbstractEvaluationParser {
     createOffset(topic, treeNode);
     // createTag(topic, treeNode);
   }
-
+  
   private LinkedList<Node> searchChildren(Node node, String toSearch) {
     LinkedList<Node> list = new LinkedList<>();
     if(node.getNodeType() == Node.ELEMENT_NODE) {
@@ -566,7 +564,7 @@ public class MindManagerParser extends AbstractEvaluationParser {
     }
     return list;
   }
-
+  
   // private String encodeToString(String imagePath) throws IOException {
   // imagePath = "C:/Users/Magnus/Desktop/Test w img/test.jpg";
   // File imgFile = new File(imagePath);
@@ -576,7 +574,7 @@ public class MindManagerParser extends AbstractEvaluationParser {
   // String encoded = Base64.getEncoder().encodeToString(data.getData());
   // return encoded;
   // }
-
+  
   private void setRootElementAttributes(Element rootElement) {
     rootElement.setAttribute("Dirty", "0000000000000001");
     rootElement.setAttribute("OId", "000000000000000000000A==");

@@ -14,20 +14,20 @@ import org.odftoolkit.simple.table.Cell;
 import org.odftoolkit.simple.table.Table;
 
 public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Cell, Font, Color> {
-  
+
   // TODO: magic numbers...
   private static final int MAXROW = 80;
   private static final int MAXCOLUMN = 22;
-
+  
   private static final String COLOR_WHITE = "#FFFFFF";
   private static final String FONT = "Arial";
   private static final double FONT_SIZE = 10.;
-
+  
   @Override
   public void closeDocument(SpreadsheetDocument document) {
     document.close();
   }
-
+  
   @Override
   public String compareCellFormulas(Cell masterCell, Cell compareCell) {
     String masterFormula = masterCell.getFormula();
@@ -50,7 +50,7 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
         return "Formel falsch. " + diffOfTwoFormulas;
     }
   }
-
+  
   @Override
   public String compareCellValues(Cell masterCell, Cell compareCell) {
     String masterValue = masterCell.getStringValue();
@@ -65,13 +65,13 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
     else
       return "Wert falsch. Erwartet wurde '" + masterValue + "'.";
   }
-
+  
   @Override
   public String compareChartsInSheet(Table compareSheet, Table sampleSheet) {
     // FIXME: nicht von ODFToolkit unterstützt...
     return null;
   }
-
+  
   @Override
   public String compareNumberOfChartsInDocument(SpreadsheetDocument compare, SpreadsheetDocument sample) {
     int sampleCount = sample.getChartCount();
@@ -83,7 +83,7 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
     else
       return "Richtige Anzahl Diagramme gefunden.";
   }
-
+  
   @Override
   public void compareSheet(Table sampleTable, Table compareTable, boolean correctConditionalFormating) {
     if(correctConditionalFormating) {
@@ -95,17 +95,17 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
       int rowIndex = cellMaster.getRowIndex();
       int columnIndex = cellMaster.getColumnIndex();
       Cell cellCompare = compareTable.getCellByPosition(columnIndex, rowIndex);
-
+      
       if(cellCompare == null)
         // TODO: Fehler werfen? Kann das überhaupt passieren?
         return;
-
+    
       // Compare cell values
       String cellValueResult = compareCellValues(cellMaster, cellCompare);
       String cellFormulaResult = compareCellFormulas(cellMaster, cellCompare);
-
+      
       setCellComment(cellCompare, cellValueResult + "\n" + cellFormulaResult);
-
+      
       // FIXME: use enum instead of String!
       if("Wert richtig.".equals(cellValueResult)
           && (cellFormulaResult.isEmpty() || "Formel richtig.".equals(cellFormulaResult)))
@@ -118,12 +118,12 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
       // Color.RED));
     }
   }
-
+  
   @Override
   public Cell getCellByPosition(Table table, int column, int row) {
     return table.getCellByPosition(column, row);
   }
-
+  
   @Override
   @SuppressWarnings("deprecation")
   public List<Cell> getColoredRange(Table master) {
@@ -137,17 +137,17 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
     }
     return range;
   }
-
+  
   @Override
   public Table getSheetByIndex(SpreadsheetDocument document, int sheetIndex) {
     return document.getSheetByIndex(sheetIndex);
   }
-
+  
   @Override
   public int getSheetCount(SpreadsheetDocument document) {
     return document.getSheetCount();
   }
-
+  
   @Override
   public SpreadsheetDocument loadDocument(Path path) {
     try {
@@ -156,7 +156,7 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
       return null;
     }
   }
-
+  
   @Override
   public void saveCorrectedSpreadsheet(SpreadsheetDocument document, Path testPath) {
     // TODO userFolder: saveFolder!
@@ -176,18 +176,18 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
       System.out.println(e);
     }
   }
-
+  
   @Override
   public void setCellComment(Cell cell, String message) {
     if(message == null || message.isEmpty())
       return;
     cell.setNoteText(message);
   }
-
+  
   @Override
   public void setCellStyle(Cell cell, Font font, Color color) {
     font.setColor(color);
     cell.setFont(font);
   }
-
+  
 }

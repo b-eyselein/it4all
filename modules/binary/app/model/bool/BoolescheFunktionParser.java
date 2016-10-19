@@ -9,16 +9,16 @@ import model.bool.tree.BoolescheFunktionTree;
 
 public class BoolescheFunktionParser {
   
+  private BoolescheFunktionParser() {
+
+  }
+
   public static BoolescheFunktionTree parse(String originalformel) throws IllegalArgumentException {
     return new BoolescheFunktionTree(parseNode(originalformel));
   }
 
   public static Node parseNode(String formula) {
-    formula = formula.toLowerCase();
-    substituteGermanOperators(formula);
-    
-    // remove outer parantheses like in (a or b)
-    formula = trimAndRemoveParantheses(formula);
+    formula = prepareFormula(formula);
     
     int parenthesisDepth = 0;
     String read = "";
@@ -85,15 +85,26 @@ public class BoolescheFunktionParser {
     }
   }
   
+  private static String prepareFormula(String formula) {
+    formula = formula.toLowerCase();
+    formula = substituteGermanOperators(formula);
+    
+    // remove outer parantheses like in (a or b)
+    formula = trimAndRemoveParantheses(formula);
+    return formula;
+  }
+  
   /**
    * Substituiert alle deutschen Operatoren durch aequivalente englische
    * Operatoren.
    *
    * @return formel
    */
-  private static void substituteGermanOperators(String formel) {
+  private static String substituteGermanOperators(String formula) {
+    String newFormula = formula;
     for(NodeType type: NodeType.values())
-      formel = formel.replaceAll(type.getGermanOperator(), type.getEnglishOperator());
+      newFormula = newFormula.replaceAll(type.getGermanOperator(), type.getEnglishOperator());
+    return newFormula;
   }
   
   private static String trimAndRemoveParantheses(String formula) {
@@ -123,10 +134,6 @@ public class BoolescheFunktionParser {
       }
     }
     return formula;
-  }
-  
-  private BoolescheFunktionParser() {
-
   }
   
 }

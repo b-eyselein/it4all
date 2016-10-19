@@ -24,7 +24,6 @@ public class RWExcel {
   private int row;
   private int col;
   private int maxDepthTrees;
-
   private Util util = new Util();
 
   /**
@@ -110,12 +109,12 @@ public class RWExcel {
     FileInputStream fileInStream = new FileInputStream(new File(metaFilePath));
     HSSFWorkbook workbook = new HSSFWorkbook(fileInStream);
     HSSFSheet sheet = workbook.getSheetAt(0);
-    Iterator<Row> rowIterator = sheet.iterator();
+
     int synonymColumnNum = -1;
     boolean firstRow = true;
-    while(rowIterator.hasNext()) {
-      Row row = rowIterator.next();
-      Iterator<Cell> cellIterator = row.cellIterator();
+    for(Iterator<Row> rowIterator = sheet.iterator(); rowIterator.hasNext();) {
+      Row currentRow = rowIterator.next();
+      Iterator<Cell> cellIterator = currentRow.cellIterator();
       String key = null;
       TreeNode currentNode = null;
       LinkedList<String> synonymList = new LinkedList<>();
@@ -123,7 +122,7 @@ public class RWExcel {
       // this is necessary if not all data have a value by default
       if(firstRow) {
         // -2 because of zero counting start and last row is modus
-        synonymColumnNum = row.getLastCellNum() - 2;
+        synonymColumnNum = currentRow.getLastCellNum() - 2;
         firstRow = false;
       } else {
         if(cellIterator.hasNext()) {
@@ -132,7 +131,7 @@ public class RWExcel {
           key = cell.getStringCellValue();
           currentNode = getCurrentTreeNode(key, solutionRoots);
           // show in the specific cells if there is any input
-          Cell optionalCell = row.getCell(synonymColumnNum - 2);
+          Cell optionalCell = currentRow.getCell(synonymColumnNum - 2);
           if(optionalCell != null && optionalCell.getCellType() != Cell.CELL_TYPE_BLANK) {
             if("YES".equalsIgnoreCase(optionalCell.getStringCellValue())) {
               currentNode.setOptional(true);
@@ -140,17 +139,17 @@ public class RWExcel {
           } else {
             currentNode.setOptional(false);
           }
-          Cell ratingCell = row.getCell(synonymColumnNum - 1);
+          Cell ratingCell = currentRow.getCell(synonymColumnNum - 1);
           if(ratingCell != null && ratingCell.getCellType() != Cell.CELL_TYPE_BLANK) {
             currentNode.setMaxRating(ratingCell.getNumericCellValue());
           } else {
             currentNode.setMaxRating(0.0);
           }
-          Cell synCell = row.getCell(synonymColumnNum);
+          Cell synCell = currentRow.getCell(synonymColumnNum);
           if(synCell != null && synCell.getCellType() != Cell.CELL_TYPE_BLANK) {
             synonymList = parseSynonyms(synCell.getStringCellValue());
           }
-          Cell modusCell = row.getCell(synonymColumnNum + 1);
+          Cell modusCell = currentRow.getCell(synonymColumnNum + 1);
           if(modusCell != null && modusCell.getCellType() != Cell.CELL_TYPE_BLANK) {
             properties.setModus(Modus.valueOf(modusCell.getStringCellValue()));
           }
@@ -181,30 +180,31 @@ public class RWExcel {
     FileInputStream fileInStream = new FileInputStream(new File(metaPath));
     HSSFWorkbook workbook = new HSSFWorkbook(fileInStream);
     HSSFSheet sheet = workbook.getSheetAt(0);
-    Iterator<Row> rowIterator = sheet.iterator();
+
     int synonymColumnNum = -1;
     boolean firstRow = true;
     boolean secondRow = true;
-    while(rowIterator.hasNext()) {
-      Row row = rowIterator.next();
-      Iterator<Cell> cellIterator = row.cellIterator();
+
+    for(Iterator<Row> rowIterator = sheet.iterator(); rowIterator.hasNext();) {
+      Row currentRow = rowIterator.next();
+      Iterator<Cell> cellIterator = currentRow.cellIterator();
       if(firstRow) {
         // -2 because of zero counting start and last row is modus
-        synonymColumnNum = row.getLastCellNum() - 2;
+        synonymColumnNum = currentRow.getLastCellNum() - 2;
         firstRow = false;
       } else {
         if(cellIterator.hasNext()) {
-          Cell optionalCell = row.getCell(synonymColumnNum - 2);
+          Cell optionalCell = currentRow.getCell(synonymColumnNum - 2);
           if(optionalCell != null && optionalCell.getCellType() != Cell.CELL_TYPE_BLANK
               && !"YES".equalsIgnoreCase(optionalCell.getStringCellValue()))
             valid = false;
 
-          Cell ratingCell = row.getCell(synonymColumnNum - 1);
+          Cell ratingCell = currentRow.getCell(synonymColumnNum - 1);
           if(ratingCell != null && ratingCell.getCellType() != Cell.CELL_TYPE_BLANK) {
             // throws exception if string
             ratingCell.getNumericCellValue();
           }
-          Cell modusCell = row.getCell(synonymColumnNum + 1);
+          Cell modusCell = currentRow.getCell(synonymColumnNum + 1);
           if(secondRow) {
             secondRow = false;
             if(modusCell == null || modusCell.getCellType() == Cell.CELL_TYPE_BLANK
@@ -220,66 +220,6 @@ public class RWExcel {
     return valid;
 
   }
-
-  // private void readMetaFile(String metaFilePath, LinkedList<TreeNode>
-  // solutionRoots) throws IOException {
-  // resetCounter();
-  // FileInputStream fileInStream = new FileInputStream(new File(metaFilePath));
-  // HSSFWorkbook workbook = new HSSFWorkbook(fileInStream);
-  // HSSFSheet sheet = workbook.getSheetAt(0);
-  // Iterator<Row> rowIterator = sheet.iterator();
-  // int synonymColumnNum = -1;
-  // boolean firstRow = true;
-  // while(rowIterator.hasNext()) {
-  // Row row = rowIterator.next();
-  // Iterator<Cell> cellIterator = row.cellIterator();
-  // String key = null;
-  // TreeNode currentNode = null;
-  // LinkedList<String> synonymList = new LinkedList<String>();
-  // //first row allows to check in which columns the meta data are
-  // //this is necessary if not all data have a value by default
-  // if(firstRow) {
-  // //-2 because of zero counting start and last row is modus
-  // synonymColumnNum = row.getLastCellNum()-2;
-  // firstRow = false;
-  // }else{
-  // if(cellIterator.hasNext()) {
-  // //this gives me the text and therefore access to the node in the tree
-  // Cell cell = cellIterator.next();
-  // key = cell.getStringCellValue();
-  // currentNode = getCurrentTreeNode(key, solutionRoots);
-  // //show in the specific cells if there is any input
-  // Cell optionalCell = row.getCell(synonymColumnNum-2);
-  // if(optionalCell != null && optionalCell.getCellType() !=
-  // Cell.CELL_TYPE_BLANK) {
-  // if(optionalCell.getStringCellValue().toUpperCase().equals("YES")) {
-  // currentNode.setOptional(true);
-  // }
-  // }else{
-  // currentNode.setOptional(false);
-  // }
-  // Cell ratingCell = row.getCell(synonymColumnNum-1);
-  // if(ratingCell != null && ratingCell.getCellType() != Cell.CELL_TYPE_BLANK)
-  // {
-  // currentNode.setMaxRating(ratingCell.getNumericCellValue());
-  // }else{
-  // currentNode.setMaxRating(0.0);
-  // }
-  // Cell synCell = row.getCell(synonymColumnNum);
-  // if(synCell != null && synCell.getCellType() != Cell.CELL_TYPE_BLANK) {
-  // synonymList = parseSynonyms(synCell.getStringCellValue());
-  // }
-  // }
-  // }
-  // if(key != null) {
-  // //key must be added to list in every case
-  // synonymList.add(key);
-  // currentNode.setSynonyms(synonymList);
-  // }
-  // }
-  // fileInStream.close();
-  // workbook.close();
-  // }
 
   /**
    * Write a excel file which contains an overview of the achieved points per
@@ -475,20 +415,20 @@ public class RWExcel {
   }
 
   private void traverseEmptyMetaTree(Sheet excelSheet, TreeNode treeNode, int column) {
-    int col = column;
+    int colNumber = column;
     row++;
-    addLabel(excelSheet, col, row, treeNode.getText());
+    addLabel(excelSheet, colNumber, row, treeNode.getText());
     resetNodeValues(treeNode);
-    col++;
+    colNumber++;
     for(TreeNode child: treeNode.getChildren()) {
-      traverseEmptyMetaTree(excelSheet, child, col);
+      traverseEmptyMetaTree(excelSheet, child, colNumber);
     }
   }
 
   private void traverseMetaTree(Sheet excelSheet, TreeNode treeNode, int column) {
-    int col = column;
+    int colNumber = column;
     row++;
-    addLabel(excelSheet, col, row, treeNode.getText());
+    addLabel(excelSheet, colNumber, row, treeNode.getText());
     // only the first nodes highest in the hierarchy are set to "yes" if they
     // are optional
     if(treeNode.getParent() == null) {
@@ -516,22 +456,22 @@ public class RWExcel {
       synonyms = synonyms.substring(0, synonyms.length() - 1);
       addLabel(excelSheet, maxDepthTrees + 3, row, synonyms);
     }
-    col++;
+    colNumber++;
     for(TreeNode child: treeNode.getChildren()) {
-      traverseMetaTree(excelSheet, child, col);
+      traverseMetaTree(excelSheet, child, colNumber);
     }
   }
 
   private void traverseTree(Sheet excelSheet, TreeNode treeNode, int column) {
-    int col = column;
+    int colNumber = column;
     row++;
-    addLabel(excelSheet, col, row, treeNode.getText());
+    addLabel(excelSheet, colNumber, row, treeNode.getText());
     addLabel(excelSheet, maxDepthTrees + 1, row, treeNode.getDifferenceResult().toString());
     addLabel(excelSheet, maxDepthTrees + 2, row, treeNode.getMaxRating());
     addLabel(excelSheet, maxDepthTrees + 3, row, treeNode.getRealRating());
-    col++;
+    colNumber++;
     for(TreeNode child: treeNode.getChildren()) {
-      traverseTree(excelSheet, child, col);
+      traverseTree(excelSheet, child, colNumber);
     }
   }
 

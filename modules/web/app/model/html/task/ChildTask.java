@@ -20,34 +20,34 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @Entity
 @Table(name = "childtask")
 public class ChildTask extends Model {
-  
+
   @Embeddable
   public static class ChildTaskKey implements Serializable {
-    
+
     private static final long serialVersionUID = 7072289741394461703L;
-
+    
     public int id;
-
+    
     public int taskId;
-
+    
     @Override
     public boolean equals(Object other) {
       if(other == null || !(other instanceof ChildTaskKey))
         return false;
-      
+
       ChildTaskKey otherKey = (ChildTaskKey) other;
       return otherKey.id == id && otherKey.taskId == taskId;
     }
-
+    
     @Override
     public int hashCode() {
       return 1000 * taskId + id;
     }
   }
-
+  
   @EmbeddedId
   public ChildTaskKey key;
-
+  
   @ManyToOne
   // @formatter:off
   @JoinColumns({
@@ -57,12 +57,12 @@ public class ChildTask extends Model {
   //@formatter:on
   @JsonBackReference
   public HtmlTask task;
-
+  
   @Column(name = "tagName")
   public String tagName;
-
+  
   public String definingAttribute;
-
+  
   public ChildResult getChildResult() {
     return new ChildResult(this);
   }

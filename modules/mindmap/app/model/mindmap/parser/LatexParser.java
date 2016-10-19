@@ -16,8 +16,8 @@ import java.util.regex.Pattern;
 
 import model.mindmap.basics.TreeNode;
 
-public class LatexParser extends AbstractParser {
-
+public class LatexParser implements AbstractParser {
+  
   // regex: [^}] = all characters except } and *? reluctant quantifier searches
   // for zero or more times
   // has to be done this way or else there would be ordering issues
@@ -25,9 +25,9 @@ public class LatexParser extends AbstractParser {
       .compile("\\\\title\\{([^}]*?)\\}|" + "\\\\chapter\\{([^}]*?)\\}|\\\\section\\{([^}]*?)\\}|"
           + "\\\\subsection\\{([^}]*?)\\}|\\\\subsubsection\\{([^}]*?)\\}|"
           + "\\\\paragraph\\{([^}]*?)\\}|\\\\subparagraph\\{([^}]*?)\\}");
-
+  
   private int id = 0;
-
+  
   @Override
   public List<TreeNode> read(File file) throws IOException {
     int prevDepth = 1;
@@ -71,13 +71,13 @@ public class LatexParser extends AbstractParser {
     numerateOneTree(root, "");
     return Arrays.asList(root);
   }
-
+  
   @Override
   public void write(String filepath, List<TreeNode> listOfRoots, String preamblePath) throws IOException {
     // for this kind of application only taking one root makes sense
     TreeNode treeNode = listOfRoots.get(0);
     String title;
-    if(treeNode.getText().equals("")) {
+    if(treeNode.getText().isEmpty()) {
       title = "\\title{Insert title here}\n";
     } else {
       title = "\\title{" + treeNode.getText() + "}\n";
@@ -102,7 +102,7 @@ public class LatexParser extends AbstractParser {
     writer.append(sb);
     writer.close();
   }
-
+  
   private TreeNode buildTree(int depth, int prevDepth, TreeNode currentNode, String text) {
     if(depth <= prevDepth) {
       TreeNode parent;
@@ -118,31 +118,33 @@ public class LatexParser extends AbstractParser {
     currentNode = child;
     return currentNode;
   }
-
+  
   private void traverseTree(TreeNode node, StringBuilder sb, int depth) {
+    String chapterType;
     switch(depth) {
     case 2:
-      sb.append("\\chapter{" + node.getText() + "}\n\n");
+      chapterType = "chapter";
       break;
     case 3:
-      sb.append("\\section{" + node.getText() + "}\n\n");
+      chapterType = "section";
       break;
     case 4:
-      sb.append("\\subsection{" + node.getText() + "}\n\n");
+      chapterType = "subsection";
       break;
     case 5:
-      sb.append("\\subsubsection{" + node.getText() + "}\n\n");
+      chapterType = "subsubsection";
       break;
     case 6:
-      sb.append("\\paragraph{" + node.getText() + "}\n\n");
+      chapterType = "paragraph";
+      break;
+    default:
+      chapterType = "subparagraph";
       break;
     }
-    if(depth >= 7) {
-      sb.append("\\subparagraph{" + node.getText() + "}\n\n");
-    }
+    sb.append("\\" + chapterType + "{" + node.getText() + "}\n\n");
     for(TreeNode n: node.getChildren()) {
       traverseTree(n, sb, depth + 1);
     }
   }
-
+  
 }

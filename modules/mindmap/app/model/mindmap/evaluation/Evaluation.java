@@ -20,7 +20,11 @@ import model.mindmap.parser.AbstractParser;
 import model.mindmap.parser.ParserFactory;
 
 public class Evaluation {
-
+  
+  private Evaluation() {
+    
+  }
+  
   /**
    * Takes a mindmap in .xml or .xmmap file format and creates a latex .tex TOC
    * file based on the input file.
@@ -37,7 +41,7 @@ public class Evaluation {
   public static void craeteTOCMMtoLatex(String readPath, String writePath, String templatePath) {
     createTOC("MINDMANAGER", "LATEX", readPath, writePath, templatePath);
   }
-
+  
   /**
    * Takes a mindmap in .xml or .xmmap file format and creates a word .docx TOC
    * file based on the input file.
@@ -54,7 +58,7 @@ public class Evaluation {
   public static void craeteTOCMMtoWord(String readPath, String writePath, String templatePath) {
     createTOC("MINDMANAGER", "WORD", readPath, writePath, templatePath);
   }
-
+  
   /**
    * This method creates a table of content file in the specified file format
    * based on the input file and template file.
@@ -82,7 +86,7 @@ public class Evaluation {
       e.printStackTrace();
     }
   }
-
+  
   /**
    * This method performs the evaluation of a mindmap from a user in comparison
    * to a solution mindmap. In order to do this, several parameters are needed.
@@ -140,9 +144,5 @@ public class Evaluation {
     abstractEvaluationParser.setPathsForAlteredOutputs(result, metaData, alteredInput, alteredSolution);
     abstractEvaluationParser.write(alteredInput, inputRoots, template);
     abstractEvaluationParser.write(alteredSolution, solutionRoots, template);
-  }
-
-  private Evaluation() {
-
   }
 }

@@ -18,7 +18,7 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFStyles;
 import org.apache.xmlbeans.XmlException;
 
-public class WordParser extends AbstractParser {
+public class WordParser implements AbstractParser {
 
   private TreeNode currentNode = new TreeNode("0");
   private int id = 1;
@@ -32,11 +32,8 @@ public class WordParser extends AbstractParser {
     List<XWPFParagraph> paragraphList = xdoc.getParagraphs();
     for(XWPFParagraph paragraph: paragraphList) {
       int depth = Level.getDepth(paragraph.getStyle());
-      if(depth >= 0) {
-        if(!paragraph.getText().isEmpty()) {
-          buildTree(depth, paragraph.getText());
-        }
-      }
+      if(depth >= 0 && !paragraph.getText().isEmpty())
+        buildTree(depth, paragraph.getText());
     }
     numerateAllTrees(roots);
     xdoc.close();
@@ -49,7 +46,7 @@ public class WordParser extends AbstractParser {
     XWPFDocument template = new XWPFDocument(new FileInputStream(new File(templatePath)));
     XWPFDocument xdoc = new XWPFDocument();
     XWPFStyles newStyles = xdoc.createStyles();
-    // don't know how to set numbering in new .docx from template
+    // TODO: don't know how to set numbering in new .docx from template
     // XWPFNumbering numbering = xdoc.createNumbering();
     // template.getNumbering();
     newStyles.setStyles(template.getStyle());

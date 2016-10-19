@@ -7,13 +7,16 @@ public class Levenshtein {
   // TODO there should not be a limit in this class - the evaluation should be
   // made somewhere else
   private static final double MINIMAL_PERCENT = 0.8;
+  
+  private Levenshtein() {
 
-  // FIXME: use implementation is core if possible!
+  }
   
   public static boolean isPartiallyCorrect(TreeNode solNode, TreeNode inNode) {
+    // TODO: move to other class!
     double maxCorrectness = -1.0;
     for(String editSyn: solNode.getEditSynonyms()) {
-      int maxLength = 0;
+      int maxLength;
       if(editSyn.length() > inNode.getText().length()) {
         maxLength = editSyn.length();
       } else {
@@ -36,6 +39,7 @@ public class Levenshtein {
   // see
   // https://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Levenshtein_distance#Java
   public static int LevenshteinDistance(CharSequence lhs, CharSequence rhs) {
+    // FIXME: use implementation in core if possible!?!
     int len0 = lhs.length() + 1;
     int len1 = rhs.length() + 1;
     
@@ -76,10 +80,6 @@ public class Levenshtein {
     
     // the distance is the cost for transforming all letters in both strings
     return cost[len0 - 1];
-  }
-  
-  private Levenshtein() {
-
   }
   
 }

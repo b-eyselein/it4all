@@ -10,17 +10,17 @@ import play.Logger;
 import play.libs.Json;
 
 public abstract class StartUpChecker {
-  
+
   protected static Logger.ALogger theLogger = Logger.of("startup");
-  
-  public static JsonNode readJsonFile(Path path) throws IOException {
-    return Json.parse(String.join("\n", Files.readAllLines(path)));
-  }
-  
+
   public StartUpChecker() {
     performStartUpCheck();
   }
   
+  public static JsonNode readJsonFile(Path path) throws IOException {
+    return Json.parse(String.join("\n", Files.readAllLines(path)));
+  }
+
   protected abstract void performStartUpCheck();
-  
+
 }

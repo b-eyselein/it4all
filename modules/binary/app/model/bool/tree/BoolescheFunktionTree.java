@@ -7,28 +7,28 @@ import model.bool.BooleanQuestion;
 import model.bool.node.Node;
 
 public class BoolescheFunktionTree {
-  
-  private static char booleantochar(boolean b) {
-    return b ? '1' : '0';
-  }
-  
-  private static String booleantoString(boolean b) {
-    return Character.toString(booleantochar(b));
-  }
-  
+
   private Node rootNode;
+
   private Character[] variables;
-  
+
   public BoolescheFunktionTree(Node theRootNode) {
     this.rootNode = theRootNode;
     Set<Character> usedVariables = theRootNode.getUsedVariables();
     variables = usedVariables.toArray(new Character[usedVariables.size()]);
   }
-  
+  private static char booleantochar(boolean b) {
+    return b ? '1' : '0';
+  }
+
+  private static String booleantoString(boolean b) {
+    return Character.toString(booleantochar(b));
+  }
+
   public boolean evaluate(Assignment assignment) {
     return rootNode.evaluate(assignment);
   }
-  
+
   /**
    * Gibt den Wahrheitswert der Funktion zu dem uebergebenen bool Array zurueck.
    */
@@ -41,37 +41,37 @@ public class BoolescheFunktionTree {
     Assignment assignment = new Assignment();
     for(int i = 0; i < this.variables.length; i++)
       assignment.setAssignment(variables[i], b[i]);
-    
+
     return rootNode.evaluate(assignment);
   }
-  
+
   public List<Assignment> evaluateAll(List<Assignment> assignments) {
     for(Assignment assignment: assignments)
       assignment.setAssignment(BooleanQuestion.SOLUTION_VARIABLE, evaluate(assignment));
     return assignments;
   }
-  
+
   /**
    * gibt Anzahl der Variablen zurueck
    */
   public int getAnzahlVariablen() {
     return variables.length;
   }
-  
+
   /**
    * Gibt boolesche Funktion als Sting zurueck.
    */
   public String getAsString() {
     return rootNode.getAsString(false);
   }
-  
+
   /**
    * gibt sortierten String-Array mit Namen der Variablen zurueck
    */
   public Character[] getVariables() {
     return variables;
   }
-  
+
   /**
    * Gibt Wahrheitstafel als bool Array zurueck. boolean[Spalte][Zeile] ;
    * Anzahl_der_Spalten = Anzahl_der_Variablen+1 ; Anzahl_der_Zeilen =
@@ -98,7 +98,7 @@ public class BoolescheFunktionTree {
     }
     return wtafel;
   }
-  
+
   /**
    * gibt Vector mit den Werten des Ausdrucks zurueck
    */
@@ -120,7 +120,7 @@ public class BoolescheFunktionTree {
     }
     return wvector;
   }
-  
+
   /**
    * gibt Vector mit den Werten als String des Ausdrucks zurueck
    */
@@ -142,10 +142,10 @@ public class BoolescheFunktionTree {
     }
     return wvector;
   }
-  
+
   @Override
   public String toString() {
     return getAsString();
   }
-  
+
 }

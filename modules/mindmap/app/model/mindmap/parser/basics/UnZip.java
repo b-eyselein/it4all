@@ -16,16 +16,10 @@ public class UnZip {
     File f = new File(zipFilePath);
     String destDirectory = f.getParent() + "/" + (f.getName().replace(".", ""));
     File destDir = new File(destDirectory);
-    // if(destDir.exists()) {
-    // try {
-    // FileUtils.deleteDirectory(destDir);
-    // } catch (IOException e) {
-    // e.printStackTrace();
-    // }
-    // }
     if(!destDir.exists()) {
       destDir.mkdirs();
     }
+    
     // this try - catch MUST be here, don't throw it
     try(ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath))) {
       ZipEntry entry = zipIn.getNextEntry();

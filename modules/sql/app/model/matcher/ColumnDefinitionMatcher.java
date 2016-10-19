@@ -2,7 +2,7 @@ package model.matcher;
 
 import java.util.List;
 
-import model.correctionResult.CreateResult;
+import model.correctionresult.CreateResult;
 import model.matching.Matcher;
 import model.matching.MatchingResult;
 import net.sf.jsqlparser.statement.create.table.ColumnDefinition;

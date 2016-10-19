@@ -11,7 +11,11 @@ import java.util.regex.Pattern;
  *
  */
 public class RegExpHelper {
-  
+
+  private RegExpHelper() {
+
+  }
+
   public static String getCellFormulasDiff(String string1, String string2) {
     HashSet<String> al1 = RegExpHelper.getCellFormulasList(string1);
     HashSet<String> al2 = RegExpHelper.getCellFormulasList(string2);
@@ -21,7 +25,7 @@ public class RegExpHelper {
     else
       return diff.toString();
   }
-
+  
   public static String getCellOperatorsDiff(String string1, String string2) {
     HashSet<String> al1 = RegExpHelper.getCellOperatorsList(string1);
     HashSet<String> al2 = RegExpHelper.getCellOperatorsList(string2);
@@ -62,7 +66,7 @@ public class RegExpHelper {
     else
       return diff.toString();
   }
-  
+
   public static String getExcelChartTitle(String string) {
     String title = "";
     Pattern p = Pattern.compile("<a:t>(.*?)</a:t>");
@@ -72,7 +76,7 @@ public class RegExpHelper {
     }
     return title;
   }
-
+  
   public static boolean getPatternInString(String pattern, String string) {
     Pattern p = Pattern.compile(".*?(" + pattern + ").*?");
     Matcher m = p.matcher(string);
@@ -104,8 +108,8 @@ public class RegExpHelper {
   
   private static HashSet<String> getCellRangesList(String string) {
     Pattern p = Pattern.compile("([A-Z]+[0-9]+)");
-    string = string.replace("$", "");
-    Matcher m = p.matcher(string);
+    String newString = string.replace("$", "");
+    Matcher m = p.matcher(newString);
     HashSet<String> matches = new HashSet<>();
     while(m.find()) {
       matches.add(m.group(1));
@@ -123,10 +127,6 @@ public class RegExpHelper {
       matches.add(match);
     }
     return matches;
-  }
-  
-  private RegExpHelper() {
-
   }
   
 }

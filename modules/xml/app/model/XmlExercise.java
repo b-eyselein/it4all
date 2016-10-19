@@ -14,15 +14,19 @@ import com.avaje.ebean.Model;
 public class XmlExercise extends Model {
 
   public enum XmlExType {
-    XMLAgainstXSD("xml"), XMLAgainstDTD("xml"), XSDAgainstXML("xsd"), DTDAgainstXML("dtd");
+    XML_XSD("xml"), XML_DTD("xml"), XSD_XML("xsd"), DTD_XML("dtd");
     
-    public String studentFileEnding;
+    private String studentFileEnding;
     
     private XmlExType(String studentEnding) {
       this.studentFileEnding = studentEnding;
     }
+
+    public String getFileEnding() {
+      return studentFileEnding;
+    }
   }
-  
+
   public static final Finder<Integer, XmlExercise> finder = new Finder<>(XmlExercise.class);
   
   @Id

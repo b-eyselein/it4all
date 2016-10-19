@@ -12,12 +12,16 @@ import model.bool.node.Xor;
 import model.bool.tree.BoolescheFunktionTree;
 
 public class BoolescheFunktionenGenerator {
-  
+
   private static final int MIN_VARS = 2;
   private static final int MAX_VARS = 3;
-  
+
   private static final char[] ALPHABET = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
       'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+
+  private BoolescheFunktionenGenerator() {
+    
+  }
   
   /**
    * Liefert einen zufaelligen BoolescheFunktionTree mit MIN_VARS bis MAX_VARS
@@ -35,24 +39,24 @@ public class BoolescheFunktionenGenerator {
     if(minVars < 1 || maxVars < 1)
       throw new IllegalArgumentException("Die minimale Anzahl(" + minVars + ") und die maximale Anzahl(" + maxVars
           + ") der Variablen m\u00fcssen gr\u00f6\u00dfer als 0 sein.");
-    
+
     if(minVars > maxVars)
       throw new IllegalArgumentException("Die minimale Anzahl der Variablen(" + minVars
           + ") muss gr\u00f6\u00dfer als die maximale Anzahl der Variablen(" + maxVars + ") sein.");
-    
+
     if(maxVars > ALPHABET.length)
       throw new IllegalArgumentException("Die maximale Anzahl der Variablen(" + maxVars
           + ") \u00fcbersteigt die Gr\u00f6\u00dfe des vordefinierten Alphabetes(" + ALPHABET.length + ").");
-    
+
     int numOfVariables = ThreadLocalRandom.current().nextInt(MIN_VARS, MAX_VARS + 1);
-    
+
     ArrayList<Node> knoten = new ArrayList<>();
     Variable[] variables = new Variable[numOfVariables];
     for(int i = 0; i < variables.length; i++) {
       variables[i] = new Variable(ALPHABET[i]);
       knoten.add(variables[i]);
     }
-    
+
     for(int i = 0; i < (int) Math.floor(Math.random() * maxVars); i++) {
       knoten.add(variables[(int) Math.floor(Math.random() * variables.length)]);
     }
@@ -78,7 +82,7 @@ public class BoolescheFunktionenGenerator {
       return bft;
     }
   }
-  
+
   /**
    * gibt true zurueck wenn bft immer wahr oder immer falsch ist (Tautologie
    * oder Kontradiktion ist).
@@ -101,7 +105,7 @@ public class BoolescheFunktionenGenerator {
     }
     return true;
   }
-  
+
   /**
    * 40% AND; 40% OR; 20% XOR; zusaetzlich 33% NOT jeweils bei dem linken und
    * rechten Knoten
@@ -113,20 +117,16 @@ public class BoolescheFunktionenGenerator {
     if((int) Math.floor(Math.random() * 3) == 2) {
       kb = new Not(kb);
     }
-    int temp_op = (int) Math.floor(Math.random() * 5);
+    int tempOp = (int) Math.floor(Math.random() * 5);
     Node operator;
-    if(temp_op < 2) {
+    if(tempOp < 2) {
       operator = new And(ka, kb);
-    } else if(temp_op < 4) {
+    } else if(tempOp < 4) {
       operator = new Or(ka, kb);
     } else {
       operator = new Xor(ka, kb);
     }
     return operator;
   }
-  
-  private BoolescheFunktionenGenerator() {
 
-  }
-  
 }

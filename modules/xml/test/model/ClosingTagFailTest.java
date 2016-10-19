@@ -8,6 +8,8 @@ import java.util.List;
 
 import org.junit.Test;
 
+import model.exercise.EvaluationResult;
+
 /**
  *
  */
@@ -27,12 +29,12 @@ public class ClosingTagFailTest {
   @Test
   public void testCorrectXMLAgainstDTD() {
     File xml = new File("test/resources/partyNoClosingTag.xml");
-    List<XMLError> out = XmlCorrector.correctXMLAgainstDTD(xml);
+    List<EvaluationResult> out = XmlCorrector.correctXMLAgainstDTD(xml);
     
     assertNotNull(out);
     assertThat("Es sollte nur ein Fehler sein, es sind aber " + out.size() + " Fehler!", out.size(), equalTo(1));
     
-    XMLError error = out.get(0);
+    XMLError error = (XMLError) out.get(0);
     
     assertThat(error.errorType, equalTo(XmlErrorType.FATALERROR));
     assertThat(error.line, equalTo(6));
@@ -49,13 +51,12 @@ public class ClosingTagFailTest {
   public void testCorrectXMLAgainstXSD() {
     File xml = new File("test/resources/noteNoClosingTag.xml");
     File xsd = new File("test/resources/note.xsd");
-    List<XMLError> out = null;
-    out = XmlCorrector.correctXMLAgainstXSD(xml, xsd);
+    List<EvaluationResult> out = XmlCorrector.correctXMLAgainstXSD(xml, xsd);
     
     assertNotNull(out);
     assertThat("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), equalTo(1));
     
-    XMLError error = out.get(0);
+    XMLError error = (XMLError) out.get(0);
     
     assertThat(error.errorType, equalTo(XmlErrorType.FATALERROR));
     assertThat(error.line, equalTo(7));

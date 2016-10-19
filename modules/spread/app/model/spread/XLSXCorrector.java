@@ -46,8 +46,6 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
     if(cell.getCellType() != Cell.CELL_TYPE_FORMULA)
       return cell.toString();
     switch(cell.getCachedFormulaResultType()) {
-    case Cell.CELL_TYPE_BLANK:
-      return "";
     case Cell.CELL_TYPE_NUMERIC:
       return Double.toString(cell.getNumericCellValue());
     case Cell.CELL_TYPE_STRING:
@@ -56,7 +54,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
       return "";
     }
   }
-  
+
   protected static String compareSheetConditionalFormatting(Sheet master, Sheet compare) {
     String message = "";
     SheetConditionalFormatting scf1 = master.getSheetConditionalFormatting();

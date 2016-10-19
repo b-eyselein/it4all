@@ -5,7 +5,7 @@ import java.util.List;
 
 import model.mindmap.basics.TreeNode;
 
-public abstract class AbstractParser {
+public interface AbstractParser {
   
   /**
    * numbering of nodes in table of content style for all trees
@@ -13,7 +13,7 @@ public abstract class AbstractParser {
    * @param listOfRoots
    *          roots of trees
    */
-  public void numerateAllTrees(List<TreeNode> listOfRoots) {
+  public default void numerateAllTrees(List<TreeNode> listOfRoots) {
     for(TreeNode n: listOfRoots) {
       numerateOneTree(n, "");
     }
@@ -27,7 +27,7 @@ public abstract class AbstractParser {
    * @param number
    *          current numbering of a node
    */
-  public void numerateOneTree(TreeNode node, String number) {
+  public default void numerateOneTree(TreeNode node, String number) {
     int k = 1;
     for(TreeNode n: node.getChildren()) {
       String numeration = number;
@@ -48,7 +48,7 @@ public abstract class AbstractParser {
    * @param listOfRoots
    *          root nodes of the trees
    */
-  public void printAllTrees(List<TreeNode> listOfRoots) {
+  public default void printAllTrees(List<TreeNode> listOfRoots) {
     for(TreeNode n: listOfRoots) {
       System.out.println("NEW TREE:");
       printOneTree(n);
@@ -63,7 +63,7 @@ public abstract class AbstractParser {
    * @param node
    *          root of the tree
    */
-  public void printOneTree(TreeNode node) {
+  public default void printOneTree(TreeNode node) {
     if(node.getNumber().isEmpty()) {
       System.out.println(node.getText());
     } else {

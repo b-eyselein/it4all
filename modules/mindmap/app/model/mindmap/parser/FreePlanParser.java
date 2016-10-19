@@ -24,7 +24,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class FreePlanParser extends AbstractEvaluationParser {
-  
+
   @Override
   public List<TreeNode> read(File file) throws ParserConfigurationException, SAXException, IOException {
     DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -33,7 +33,7 @@ public class FreePlanParser extends AbstractEvaluationParser {
     doc.getDocumentElement().normalize();
     return buildTree(doc);
   }
-  
+
   // Note: templatePath not supported
   @Override
   public void write(String filepath, List<TreeNode> listOfRoots, String templatePath)
@@ -62,7 +62,7 @@ public class FreePlanParser extends AbstractEvaluationParser {
     DOMSource source = new DOMSource(doc);
     transformer.transform(source, result);
   }
-  
+
   private LinkedList<TreeNode> buildTree(Document doc) {
     // root element from DOM - NOT the root of the tree
     LinkedList<TreeNode> listOfRoots = new LinkedList<>();
@@ -84,7 +84,7 @@ public class FreePlanParser extends AbstractEvaluationParser {
     }
     return listOfRoots;
   }
-  
+
   // need flag firstLevel to decide if a free node is a free root node or a
   // child of a free root node
   private void buildTreeRecursive(Node nodeDOM, TreeNode treeNode, String number, LinkedList<TreeNode> listOfRoots,
@@ -94,29 +94,31 @@ public class FreePlanParser extends AbstractEvaluationParser {
     int k = 1;
     for(int i = 0; i < childNodesDOM.getLength(); i++) {
       Node node = childNodesDOM.item(i);
-      if(node.getNodeType() == Node.ELEMENT_NODE) {
-        Element elementChild = (Element) node;
-        if("node".equals(elementChild.getTagName())) {
-          if(isFreeNode(elementChild) && firstLevel) {
-            TreeNode newRoot = new TreeNode(elementChild.getAttribute("ID"));
-            newRoot.setText(elementChild.getAttribute("TEXT"));
-            listOfRoots.add(newRoot);
-            buildTreeRecursive(node, newRoot, "", listOfRoots, false);
-          } else {
-            String numeration = number;
-            if(number.length() == 0) {
-              numeration = Integer.toString(k);
-            } else {
-              numeration += "." + Integer.toString(k);
-            }
-            k++;
-            TreeNode newTreeNode = new TreeNode(elementChild.getAttribute("ID"), treeNode);
-            newTreeNode.setText(elementChild.getAttribute("TEXT"));
-            newTreeNode.setNumber(numeration);
-            treeNode.addChild(newTreeNode);
-            buildTreeRecursive(node, newTreeNode, numeration, listOfRoots, false);
-          }
+      if(node.getNodeType() != Node.ELEMENT_NODE)
+        continue;
+
+      Element elementChild = (Element) node;
+      if(!"node".equals(elementChild.getTagName()))
+        continue;
+      
+      if(isFreeNode(elementChild) && firstLevel) {
+        TreeNode newRoot = new TreeNode(elementChild.getAttribute("ID"));
+        newRoot.setText(elementChild.getAttribute("TEXT"));
+        listOfRoots.add(newRoot);
+        buildTreeRecursive(node, newRoot, "", listOfRoots, false);
+      } else {
+        String numeration = number;
+        if(number.length() == 0) {
+          numeration = Integer.toString(k);
+        } else {
+          numeration += "." + Integer.toString(k);
         }
+        k++;
+        TreeNode newTreeNode = new TreeNode(elementChild.getAttribute("ID"), treeNode);
+        newTreeNode.setText(elementChild.getAttribute("TEXT"));
+        newTreeNode.setNumber(numeration);
+        treeNode.addChild(newTreeNode);
+        buildTreeRecursive(node, newTreeNode, numeration, listOfRoots, false);
       }
     }
   }
@@ -132,9 +134,9 @@ public class FreePlanParser extends AbstractEvaluationParser {
       }
     }
     return false;
-    
+
   }
-  
+
   @SuppressWarnings("deprecation")
   private void writeFreeTree(TreeNode treeNode, Element element, Document doc) {
     // create <node> element
@@ -163,7 +165,7 @@ public class FreePlanParser extends AbstractEvaluationParser {
       writeFreeTree(tn, newNodeElement, doc);
     }
   }
-  
+
   @SuppressWarnings("deprecation")
   private Element writeMainTree(TreeNode treeNode, Element element, Document doc) {
     Element newElement = doc.createElement("node");

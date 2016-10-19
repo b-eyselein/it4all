@@ -1,32 +1,18 @@
 package model.mindmap.parser.basics;
 
 public class Level {
-  
+
+  private Level() {
+
+  }
+
   public static int getDepth(String level) {
-    switch(level) {
-    case ("Titel"):
+    if("Titel".equals(level))
       return 0;
-    case "berschrift1":
-      return 1;
-    case "berschrift2":
-      return 2;
-    case "berschrift3":
-      return 3;
-    case "berschrift4":
-      return 4;
-    case "berschrift5":
-      return 5;
-    case "berschrift6":
-      return 6;
-    case "berschrift7":
-      return 7;
-    case "berschrift8":
-      return 8;
-    case "berschrift9":
-      return 9;
-    default:
+    else if(level.startsWith("berschrift"))
+      return Integer.parseInt(Character.toString(level.charAt(level.length() - 1)));
+    else
       return -1;
-    }
   }
 
   public static String getLevelEnglish(int i) {
@@ -37,7 +23,7 @@ public class Level {
     else
       return null;
   }
-  
+
   public static String getLevelGerman(int i) {
     if(i == 0)
       return "Titel";
@@ -45,9 +31,5 @@ public class Level {
       return "berschrift" + Integer.toString(i);
     else
       return null;
-  }
-  
-  private Level() {
-
   }
 }

@@ -10,7 +10,11 @@ import model.mindmap.parser.MindManagerParser;
 import model.mindmap.parser.ParserFactory;
 
 public class Validation {
+  
+  private Validation() {
 
+  }
+  
   /**
    * The MindManager parser is used. Else @see
    * {@link #checkForMeta(String, String, String)}}
@@ -30,7 +34,7 @@ public class Validation {
       return false;
     }
   }
-
+  
   /**
    * This method checks if there is a existing meta file. If this is the case
    * the method returns true. If not, a new meta file will be created and the
@@ -57,7 +61,7 @@ public class Validation {
       return false;
     }
   }
-
+  
   /**
    * Validates the meta file which is given as file path. Even so this
    * validation was true, there might occur errors at evaluation.
@@ -77,7 +81,7 @@ public class Validation {
     }
     return valid;
   }
-
+  
   /**
    * Validates the mindmap which is given as file path. Even so this validation
    * was true, there might occur errors at evaluation.
@@ -95,9 +99,5 @@ public class Validation {
       return false;
     }
     return true;
-  }
-
-  private Validation() {
-    
   }
 }

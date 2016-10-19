@@ -1,7 +1,11 @@
 package model.mindmap.parser;
 
 public class ParserFactory {
-  
+
+  private ParserFactory() {
+    
+  }
+
   public static AbstractEvaluationParser getEvaluationParser(String parserType) {
     switch(parserType.toUpperCase()) {
     case "FREEPLANE":
@@ -26,9 +30,5 @@ public class ParserFactory {
     default:
       throw new IllegalArgumentException("Check your spelling.");
     }
-  }
-  
-  private ParserFactory() {
-
   }
 }
