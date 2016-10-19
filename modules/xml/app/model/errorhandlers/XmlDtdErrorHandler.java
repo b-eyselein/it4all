@@ -10,30 +10,29 @@ public class XmlDtdErrorHandler extends CorrectionErrorHandler {
   
   @Override
   public void error(SAXParseException exception) throws SAXException {
-    if(exception.getLineNumber() > -1) {
-      output.add(new XMLError(TITEL_TODO, exception.getMessage(), XmlErrorType.ERROR, exception.getLineNumber() - 2));
-    } else {
-      output.add(new XMLError(XmlErrorType.ERROR.toString(), exception.getMessage(), XmlErrorType.ERROR));
-    }
+    int lineNumber = -1;
+    if(exception.getLineNumber() > -1)
+      lineNumber = exception.getLineNumber() - 2;
+    
+    output.add(new XMLError(FAILURE, exception.getMessage(), XmlErrorType.ERROR, lineNumber));
   }
   
   @Override
   public void fatalError(SAXParseException exception) throws SAXException {
-    if(exception.getLineNumber() > -1) {
-      output.add(
-          new XMLError(TITEL_TODO, exception.getMessage(), XmlErrorType.FATALERROR, exception.getLineNumber() - 2));
-    } else {
-      output.add(new XMLError(XmlErrorType.FATALERROR.toString(), exception.getMessage(), XmlErrorType.FATALERROR));
-    }
+    int lineNumber = -1;
+    if(exception.getLineNumber() > -1)
+      lineNumber = exception.getLineNumber() - 2;
+    
+    output.add(new XMLError(FAILURE, exception.getMessage(), XmlErrorType.FATALERROR, lineNumber));
   }
-
+  
   @Override
   public void warning(SAXParseException exception) throws SAXException {
-    if(exception.getLineNumber() > -1) {
-      output.add(new XMLError(TITEL_TODO, exception.getMessage(), XmlErrorType.WARNING, exception.getLineNumber() - 2));
-    } else {
-      output.add(new XMLError(XmlErrorType.WARNING.toString(), exception.getMessage(), XmlErrorType.WARNING));
-    }
+    int lineNumber = -1;
+    if(exception.getLineNumber() > -1)
+      lineNumber = exception.getLineNumber() - 2;
+    
+    output.add(new XMLError(FAILURE, exception.getMessage(), XmlErrorType.WARNING, lineNumber));
   }
-
+  
 }

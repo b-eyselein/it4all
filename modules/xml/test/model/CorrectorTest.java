@@ -15,7 +15,7 @@ import model.exercise.EvaluationResult;
  *
  */
 public class CorrectorTest {
-  
+
   /**
    * Test method for
    * {@link model.CorrectorXml#correctDTDAgainstXML(java.io.File)}.
@@ -23,11 +23,10 @@ public class CorrectorTest {
   @Test
   public void testCorrectDTDAgainstXML() {
     File referenceFile = new File("test/resources/party.xml");
-    File solution = new File("test/resources/party.dtd");
-    List<EvaluationResult> out = XmlCorrector.correctDTDAgainstXML(solution, referenceFile);
+    List<EvaluationResult> out = XmlCorrector.correctDTDAgainstXML(referenceFile);
     assertTrue(out.isEmpty());
   }
-  
+
   /**
    * Test method for
    * {@link model.CorrectorXml#correctXMLAgainstDTD(java.io.File)}.
@@ -38,7 +37,7 @@ public class CorrectorTest {
     List<EvaluationResult> out = XmlCorrector.correctXMLAgainstDTD(file);
     assertTrue(out.isEmpty());
   }
-  
+
   /**
    * Test method for
    * {@link model.CorrectorXml#correctXMLAgainstXSD(java.io.File, java.io.File)}
@@ -52,5 +51,5 @@ public class CorrectorTest {
     assertNotNull(out);
     assertTrue(out.isEmpty());
   }
-  
+
 }

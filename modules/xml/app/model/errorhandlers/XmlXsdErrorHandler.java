@@ -11,7 +11,7 @@ public class XmlXsdErrorHandler extends CorrectionErrorHandler {
   @Override
   public void error(SAXParseException exception) throws SAXException {
     if(exception.getLineNumber() > -1) {
-      output.add(new XMLError(TITEL_TODO, exception.getMessage(), XmlErrorType.ERROR, exception.getLineNumber()));
+      output.add(new XMLError(FAILURE, exception.getMessage(), XmlErrorType.ERROR, exception.getLineNumber()));
     } else {
       output.add(new XMLError(XmlErrorType.ERROR.toString(), exception.getMessage(), XmlErrorType.ERROR));
     }
@@ -20,7 +20,7 @@ public class XmlXsdErrorHandler extends CorrectionErrorHandler {
   @Override
   public void fatalError(SAXParseException exception) throws SAXException {
     if(exception.getLineNumber() > -1) {
-      output.add(new XMLError(TITEL_TODO, exception.getMessage(), XmlErrorType.FATALERROR, exception.getLineNumber()));
+      output.add(new XMLError(FAILURE, exception.getMessage(), XmlErrorType.FATALERROR, exception.getLineNumber()));
     } else {
       output.add(new XMLError(XmlErrorType.FATALERROR.toString(), exception.getMessage(), XmlErrorType.FATALERROR));
     }
@@ -29,7 +29,7 @@ public class XmlXsdErrorHandler extends CorrectionErrorHandler {
   @Override
   public void warning(SAXParseException exception) throws SAXException {
     if(exception.getLineNumber() > -1) {
-      output.add(new XMLError(TITEL_TODO, exception.getMessage(), XmlErrorType.WARNING, exception.getLineNumber()));
+      output.add(new XMLError(FAILURE, exception.getMessage(), XmlErrorType.WARNING, exception.getLineNumber()));
     } else {
       output.add(new XMLError(XmlErrorType.WARNING.toString(), exception.getMessage(), XmlErrorType.WARNING));
     }

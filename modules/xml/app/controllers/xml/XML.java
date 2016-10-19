@@ -56,9 +56,11 @@ public class XML extends ExerciseController {
     String learnerSolution = form.get(LEARNER_SOLUTION_VALUE);
 
     if(exercise.exerciseType == XmlExType.XML_DTD) {
+      // FIXME: do not save fixed start with solution?!?
       learnerSolution = generateFixedStart(exercise,
           util.getSampleFileForExercise(EXERCISE_TYPE, exercise.referenceFileName).toString()) + "\n" + learnerSolution;
     }
+
     Path solutionPath = saveSolutionForUser(user, learnerSolution, exercise);
 
     List<EvaluationResult> elementResults;
@@ -92,15 +94,10 @@ public class XML extends ExerciseController {
     if(exercise.exerciseType == XmlExType.XML_DTD) {
       fixedStart = generateFixedStart(exercise, exercise.referenceFileName);
       if(defaultOrOldSolution.startsWith("<?xml")) {
-        // List<String> solutionList =
-        // Arrays.asList((defaultOrOldSolution.split("\n")));
-        // defaultOrOldSolution = String.join("\n",
-        // List.copyOfRange(solutionList, 2, solutionList.size()));
+        // Remove fixed start from old solution
         defaultOrOldSolution = defaultOrOldSolution.substring(defaultOrOldSolution.indexOf('\n') + 1);
         defaultOrOldSolution = defaultOrOldSolution.substring(defaultOrOldSolution.indexOf('\n') + 1);
-
       }
-
     }
 
     return ok(xml.render(UserManagement.getCurrentUser(), exercise, referenceCode, defaultOrOldSolution, fixedStart));

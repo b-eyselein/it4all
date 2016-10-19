@@ -10,17 +10,17 @@ public class DtdXmlErrorHandler extends CorrectionErrorHandler {
   
   @Override
   public void error(SAXParseException exception) throws SAXException {
-    output.add(new XMLError(TITEL_TODO, exception.getMessage(), XmlErrorType.ERROR, exception.getLineNumber()));
+    output.add(new XMLError(FAILURE, exception.getMessage(), XmlErrorType.ERROR, exception.getLineNumber()));
   }
   
   @Override
   public void fatalError(SAXParseException exception) throws SAXException {
-    output.add(new XMLError(TITEL_TODO, exception.getMessage(), XmlErrorType.FATALERROR, exception.getLineNumber()));
+    output.add(new XMLError(FAILURE, exception.getMessage(), XmlErrorType.FATALERROR, exception.getLineNumber()));
   }
   
   @Override
   public void warning(SAXParseException exception) throws SAXException {
-    output.add(new XMLError(TITEL_TODO, exception.getMessage(), XmlErrorType.WARNING, exception.getLineNumber()));
+    output.add(new XMLError(FAILURE, exception.getMessage(), XmlErrorType.WARNING, exception.getLineNumber()));
   }
 
 }
