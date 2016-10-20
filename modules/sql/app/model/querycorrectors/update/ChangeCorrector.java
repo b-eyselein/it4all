@@ -1,22 +1,39 @@
-package model.queryCorrectors.update;
+package model.querycorrectors.update;
 
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import model.SqlQueryResult;
-import model.correctionResult.SqlExecutionResult;
+import model.correctionresult.SqlExecutionResult;
 import model.exercise.EvaluationFailed;
 import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.SqlExercise;
-import model.queryCorrectors.QueryCorrector;
-import net.sf.jsqlparser.statement.Statement;
+import model.querycorrectors.QueryCorrector;
 import play.Logger;
 import play.db.Database;
 
-public abstract class ChangeCorrector<QueryType extends Statement, ComparedType>
+public abstract class ChangeCorrector<QueryType extends net.sf.jsqlparser.statement.Statement, ComparedType>
     extends QueryCorrector<QueryType, ComparedType> {
+
+  public SqlQueryResult runQuery(Connection connection, String query) {
+    try(Statement statement = connection.createStatement()) {
+      return new SqlQueryResult(statement.executeQuery(query));
+    } catch (SQLException e) {
+      Logger.error("There has been an error running an sql query: \"" + query + "\"", e);
+      return null;
+    }
+  }
+  
+  private void runUpdate(Connection connection, String query) {
+    try(Statement statement = connection.createStatement()) {
+      statement.executeUpdate(query);
+    } catch (SQLException e) {
+      Logger.error("There has been an error running an sql query: \"" + query + "\"", e);
+    }
+  }
 
   @Override
   protected EvaluationResult executeQuery(Database database, QueryType userStatement, QueryType sampleStatement,
@@ -31,12 +48,12 @@ public abstract class ChangeCorrector<QueryType extends Statement, ComparedType>
 
       String validation = exercise.validation;
 
-      connection.createStatement().executeUpdate(userStatement.toString());
-      SqlQueryResult userResult = new SqlQueryResult(connection.createStatement().executeQuery(validation));
+      runUpdate(connection, userStatement.toString());
+      SqlQueryResult userResult = runQuery(connection, validation);
       connection.rollback();
 
-      connection.createStatement().executeUpdate(sampleStatement.toString());
-      SqlQueryResult sampleResult = new SqlQueryResult(connection.createStatement().executeQuery(validation));
+      runUpdate(connection, sampleStatement.toString());
+      SqlQueryResult sampleResult = runQuery(connection, validation);
       connection.rollback();
 
       return new SqlExecutionResult(feedbackLevel, userResult, sampleResult);

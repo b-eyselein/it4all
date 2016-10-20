@@ -3,6 +3,19 @@ package model.exercise;
 import java.util.List;
 
 public abstract class EvaluationResult {
+
+  protected static final String DIV_END = "</div>";
+  
+  protected FeedbackLevel minimalFL;
+  
+  protected FeedbackLevel requestedFL;
+  
+  protected Success success = Success.NONE;
+
+  public EvaluationResult(FeedbackLevel theMinimalFL, Success theSuccess) {
+    minimalFL = theMinimalFL;
+    success = theSuccess;
+  }
   
   protected static String concatCodeElements(List<String> elements) {
     if(elements.isEmpty())
@@ -12,16 +25,6 @@ public abstract class EvaluationResult {
   
   protected static String concatListElements(List<String> elements) {
     return "<ul><li>" + String.join("</li><li>", elements) + "</li></ul>";
-  }
-  
-  protected FeedbackLevel minimalFL;
-  protected FeedbackLevel requestedFL;
-  
-  protected Success success = Success.NONE;
-  
-  public EvaluationResult(FeedbackLevel theMinimalFL, Success theSuccess) {
-    minimalFL = theMinimalFL;
-    success = theSuccess;
   }
   
   public abstract String getAsHtml();

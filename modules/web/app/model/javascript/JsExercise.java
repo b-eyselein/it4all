@@ -16,44 +16,44 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 public class JsExercise extends Model {
-
+  
   public enum JsDataType {
     BOOLEAN, NUMBER, STRING, SYMBOL, UNDEFINED, NULL, OBJECT;
   }
-
-  public static Finder<Integer, JsExercise> finder = new Finder<>(JsExercise.class);
-
+  
+  public static final Finder<Integer, JsExercise> finder = new Finder<>(JsExercise.class);
+  
   @Id
   public int id;
-
-  public String title;
-
+  
+  public String title;// NOSONAR
+  
   @Column(columnDefinition = "text")
   public String text;
-
-  public String declaration;
-
-  public String functionname;
-
-  public String sampleSolution;
-
-  public String inputtypes;
-
-  public int inputcount;
-
+  
+  public String declaration; // NOSONAR
+  
+  public String functionname; // NOSONAR
+  
+  public String sampleSolution; // NOSONAR
+  
+  public String inputtypes; // NOSONAR
+  
+  public int inputcount; // NOSONAR
+  
   @Enumerated(EnumType.STRING)
   public JsDataType returntype;
-
+  
   @OneToMany(mappedBy = "exercise")
   @JsonManagedReference
   public List<JsTest> functionTests;
-
+  
   public JsExercise(int theId) {
     id = theId;
   }
-
+  
   public List<JsDataType> getInputTypes() {
-    return Arrays.stream(inputtypes.split("#")).map(t -> JsDataType.valueOf(t)).collect(Collectors.toList());
+    return Arrays.stream(inputtypes.split("#")).map(JsDataType::valueOf).collect(Collectors.toList());
   }
-
+  
 }

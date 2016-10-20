@@ -1,4 +1,4 @@
-package model.correctionResult;
+package model.correctionresult;
 
 import java.util.List;
 
@@ -6,7 +6,17 @@ import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.Success;
 
-public class OrderByComparison extends EvaluationResult {
+public class GroupByComparison extends EvaluationResult {
+  
+  List<String> missing;
+  
+  List<String> unnecessary;
+  
+  public GroupByComparison(List<String> theMissing, List<String> theUnnecessary) {
+    super(FeedbackLevel.MEDIUM_FEEDBACK, analyze(theMissing, theUnnecessary));
+    missing = theMissing;
+    unnecessary = theUnnecessary;
+  }
   
   // FIXME: implement feedbackLevel!
   private static Success analyze(List<String> theMissing, List<String> theUnnecessary) {
@@ -18,14 +28,6 @@ public class OrderByComparison extends EvaluationResult {
       return Success.NONE;
   }
   
-  List<String> missing, unnecessary;
-  
-  public OrderByComparison(List<String> theMissing, List<String> theUnnecessary) {
-    super(FeedbackLevel.MEDIUM_FEEDBACK, analyze(theMissing, theUnnecessary));
-    missing = theMissing;
-    unnecessary = theUnnecessary;
-  }
-  
   @Override
   public String getAsHtml() {
     String ret = "<div class=\"col-md-6\">";
@@ -35,12 +37,9 @@ public class OrderByComparison extends EvaluationResult {
     
     if(missing.isEmpty() && unnecessary.isEmpty())
       ret += "<p>Alle Order By-Elemente stimmen.</p>";
-    
-    if(!missing.isEmpty())
-      ret += "<p>Es fehlen folgende Order By-Elemente: " + concatCodeElements(missing) + "</p>";
-    
-    if(!unnecessary.isEmpty())
-      ret += "<p>Folgende Order By-Elemente sind nicht nötig: " + concatCodeElements(unnecessary) + "</p>";
+    else
+      ret += "<p>Es fehlen folgende Group By-Elemente: " + concatCodeElements(missing) + "</p>"
+          + "<p>Folgende Group By-Elemente sind nicht nötig: " + concatCodeElements(unnecessary) + "</p>";
     
     ret += "</div></div></div>";
     return ret;

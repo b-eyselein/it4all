@@ -23,7 +23,7 @@ public class XmlStartUpChecker {
   private static Logger.ALogger theLogger = Logger.of("startup");
   private static final String EXERCISE_TYPE = "xml";
   
-  private static final String baseDir = "conf/resources/xml/";
+  private static final String BASE_DIR = "conf/resources/xml/";
   
   private Util util;
   
@@ -46,7 +46,7 @@ public class XmlStartUpChecker {
     }
     
     List<XmlExercise> exercises = XmlExercise.finder.all();
-    if(exercises.size() == 0)
+    if(exercises.isEmpty())
       theLogger.error("\t- No exercises found for Xml!");
     else
       for(XmlExercise exercise: exercises)
@@ -61,7 +61,7 @@ public class XmlStartUpChecker {
     theLogger.warn("Die Lösungsdatei für Xml-Aufgabe " + exercise.id + " \"" + sampleFile
         + "\" existiert nicht! Versuche, Datei zu erstellen...");
     
-    Path providedFile = Paths.get(baseDir, exercise.referenceFileName);
+    Path providedFile = Paths.get(BASE_DIR, exercise.referenceFileName);
     if(!Files.exists(providedFile)) {
       theLogger.error("Konnte Datei nicht erstellen: Keine Lösungsdatei mitgeliefert...");
       return;
@@ -76,7 +76,7 @@ public class XmlStartUpChecker {
   }
   
   private void testJsonCreation() {
-    Path exercises = Paths.get(baseDir, "exercises.json");
+    Path exercises = Paths.get(BASE_DIR, "exercises.json");
     
     String jsonAsString = "";
     try {

@@ -20,7 +20,7 @@ public class Variable implements Node {
   
   @Override
   public String getAsString(boolean needsParanthesis) {
-    return name + "";
+    return Character.toString(name);
   }
   
   @Override
@@ -36,6 +36,7 @@ public class Variable implements Node {
   
   @Override
   public String toString() {
-    return name + "";
+    return Character.toString(name);
   }
+  
 }

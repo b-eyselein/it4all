@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,13 +26,20 @@ import play.db.Database;
 public class SqlScenarioHandler {
 
   private static Logger.ALogger theLogger = Logger.of("startup");
+
   private static final String SCENARIO_FOLDER = "conf/resources/sql";
+  
+  private static final String CREATE_DUMMY = "CREATE DATABASE IF NOT EXISTS ";
+
+  private SqlScenarioHandler() {
+
+  }
 
   // FIXME: genauere Fehlermeldungen (auch auf Konsole --> Logger!)
   // BEISPIEL: Aufgabe nicht erstellt, weil "text" oder "sampleSolutions"
   // fehlt/falsch
 
-  public static ScenarioCreationResult handleScenario(Path path, Database database) {
+  public static ScenarioCreationResult handleScenario(Path path) {
     JsonNode json = null;
     try {
       json = StartUpChecker.readJsonFile(path);
@@ -61,6 +69,29 @@ public class SqlScenarioHandler {
     // runCreateScript(database, scenario);
 
     return scenarioResult;
+  }
+
+  private static void createDatabase(String databaseName, Connection connection) {
+    try(Statement createStatement = connection.createStatement()) {
+      createStatement.executeUpdate(CREATE_DUMMY + databaseName);
+    } catch (SQLException e) {
+      Logger.error("There has been an error running an sql script: \"" + CREATE_DUMMY + databaseName + "\"", e);
+    }
+  }
+
+  private static void flushPrivileges(Connection connection) throws SQLException {
+    Statement flushPrivileges = connection.createStatement();
+    flushPrivileges.executeUpdate("FLUSH PRIVILEGES");
+    flushPrivileges.close();
+  }
+
+  private static void grantRights(String databaseName, Connection connection) throws SQLException {
+    try(Statement grantStatement = connection.createStatement()) {
+      grantStatement.executeUpdate(
+          "GRANT ALL PRIVILEGES ON " + databaseName + ".* TO " + "'it4all'@localhost IDENTIFIED BY 'c4aK3?bV';");
+    } catch (SQLException e) {
+      Logger.error("There has been an error running an sql script: \"" + CREATE_DUMMY + databaseName + "\"", e);
+    }
   }
 
   private static List<ExerciseCreationResult> handleExercises(SqlScenario scenario, JsonNode exerciseNodes) {
@@ -137,13 +168,14 @@ public class SqlScenarioHandler {
       return new ExerciseCreationResult(CreationResultType.FAILURE,
           "Einer der beiden Knoten \"text\" oder \"sampleSolutions\" fehlt!", exerciseId, null);
 
-    String newText = textNode.asText(), newSamples = readSampleSolutions(sampleSolutionsNode);
+    String newText = textNode.asText();
+    String newSamples = readSampleSolutions(sampleSolutionsNode);
 
     if(exercise == null) {
       exercise = new SqlExercise(exerciseKey);
       exercise.text = newText;
       exercise.samples = newSamples;
-      readExtra(exerciseType, exercise, exerciseNode);
+      readExtra(exercise, exerciseNode);
       return new ExerciseCreationResult(CreationResultType.NEW, "", exerciseId, exercise);
     }
 
@@ -153,7 +185,7 @@ public class SqlScenarioHandler {
     exercise.text = newText;
     exercise.samples = newSamples;
 
-    boolean updated = readExtra(exerciseType, exercise, exerciseNode);
+    boolean updated = readExtra(exercise, exerciseNode);
 
     if(updated)
       resultType = CreationResultType.TO_UPDATE;
@@ -161,7 +193,7 @@ public class SqlScenarioHandler {
     return new ExerciseCreationResult(resultType, "", exerciseId, exercise);
   }
 
-  private static boolean readExtra(SqlExerciseType exerciseType, SqlExercise exercise, JsonNode exerciseNode) {
+  private static boolean readExtra(SqlExercise exercise, JsonNode exerciseNode) {
     JsonNode validationNode = exerciseNode.get("validation");
     if(validationNode == null)
       return false;
@@ -187,11 +219,15 @@ public class SqlScenarioHandler {
       try {
         Logger.info("Running script " + scriptFilePath);
         Connection connection = database.getConnection();
+
         // Create database and grant rights to user
-        connection.createStatement().executeUpdate("CREATE DATABASE IF NOT EXISTS " + scenario.shortName);
-        connection.createStatement().executeUpdate("GRANT ALL PRIVILEGES ON " + scenario.shortName + ".* TO "
-            + "'it4all'@localhost IDENTIFIED BY 'c4aK3?bV';");
-        connection.createStatement().executeUpdate("FLUSH PRIVILEGES");
+        createDatabase(scenario.shortName, connection);
+
+        // Grant rights to user and flush privileges
+        grantRights(scenario.shortName, connection);
+
+        flushPrivileges(connection);
+
         connection.setCatalog(scenario.shortName);
 
         List<String> line = Files.readAllLines(scriptFilePath);
@@ -201,6 +237,7 @@ public class SqlScenarioHandler {
         theLogger.error("Error while executing script file " + scriptFilePath.toString(), e);
       }
     }
+
   }
 
 }

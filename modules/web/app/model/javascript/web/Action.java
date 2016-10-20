@@ -11,17 +11,18 @@ import org.openqa.selenium.WebElement;
 @Embeddable
 public class Action {
   
-  public static enum ActionType {
+  public enum ActionType {
     CLICK, FILLOUT;
   }
   
   @Enumerated(EnumType.STRING)
   public ActionType actiontype;
   
-  public String xpathQuery;
-  public String keysToSend;
+  public String xpathQuery; // NOSONAR
+  public String keysToSend; // NOSONAR
   
   public String getDescription() {
+    // FIXME: implement getDescription() for Action
     return "TODO!";
   }
   

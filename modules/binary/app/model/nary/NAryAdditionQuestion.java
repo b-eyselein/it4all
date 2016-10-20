@@ -4,31 +4,14 @@ import java.util.Random;
 
 public class NAryAdditionQuestion {
   private static final Random GENERATOR = new Random();
-  
-  /**
-   * Generates a new addition question.
-   *
-   * @return instance of NAryAdditionQuestion.
-   */
-  public static NAryAdditionQuestion generateNew() {
-    // Exclude 0
-    int sum = GENERATOR.nextInt(255) + 1;
-    
-    int firstSummand = GENERATOR.nextInt(sum);
-    int secondSummand = sum - firstSummand;
-    
-    NumberBase questionType = NumberBase.values()[GENERATOR.nextInt(3)];
-    
-    return new NAryAdditionQuestion(firstSummand, secondSummand, questionType);
-  }
-  
+
   private NAryNumber firstSummand;
+  
   private NAryNumber secondSummand;
   private NAryNumber sum;
   private NumberBase questionType;
-  
   private NAryNumber learnerSolution;
-  
+
   public NAryAdditionQuestion(int theFirstSummand, int theSecondSummand, NumberBase theQuestionType) {
     questionType = theQuestionType;
     firstSummand = new NAryNumber(theFirstSummand, questionType);
@@ -36,7 +19,7 @@ public class NAryAdditionQuestion {
     sum = NAryNumber.addNArys(firstSummand, secondSummand);
     learnerSolution = new NAryNumber(questionType);
   }
-  
+
   /**
    * Constructor to use HTML form information (strings and integers).
    *
@@ -57,7 +40,24 @@ public class NAryAdditionQuestion {
     sum = NAryNumber.addNArys(firstSummand, secondSummand);
     learnerSolution = new NAryNumber(theLearnerSolution, questionType);
   }
-  
+
+  /**
+   * Generates a new addition question.
+   *
+   * @return instance of NAryAdditionQuestion.
+   */
+  public static NAryAdditionQuestion generateNew() {
+    // Exclude 0
+    int sum = GENERATOR.nextInt(255) + 1;
+
+    int firstSummand = GENERATOR.nextInt(sum);
+    int secondSummand = sum - firstSummand;
+
+    NumberBase questionType = NumberBase.values()[GENERATOR.nextInt(3)];
+
+    return new NAryAdditionQuestion(firstSummand, secondSummand, questionType);
+  }
+
   /**
    * Checks the correctness of the learners solution.
    *
@@ -66,7 +66,7 @@ public class NAryAdditionQuestion {
   public boolean checkSolution() {
     return sum.equals(learnerSolution);
   }
-  
+
   /**
    * Getter for the base.
    *
@@ -75,7 +75,7 @@ public class NAryAdditionQuestion {
   public int getBase() {
     return questionType.getBase();
   }
-  
+
   /**
    * Getter for the first summand.
    *
@@ -84,7 +84,7 @@ public class NAryAdditionQuestion {
   public NAryNumber getFirstSummand() {
     return firstSummand;
   }
-  
+
   /**
    * Getter for the learner solution.
    *
@@ -93,7 +93,7 @@ public class NAryAdditionQuestion {
   public NAryNumber getLearnerSolution() {
     return learnerSolution;
   }
-  
+
   /**
    * Getter for the question type (NumberBase).
    *
@@ -102,7 +102,7 @@ public class NAryAdditionQuestion {
   public NumberBase getQuestionType() {
     return questionType;
   }
-  
+
   /**
    * Getter for the second summand.
    *
@@ -111,7 +111,7 @@ public class NAryAdditionQuestion {
   public NAryNumber getSecondSummand() {
     return secondSummand;
   }
-  
+
   /**
    * Getter for the addition result.
    *

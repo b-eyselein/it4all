@@ -13,8 +13,6 @@ import model.creation.ExerciseCreationResult;
 import model.creation.ScenarioCreationResult;
 import model.creation.SqlScenarioHandler;
 import play.Logger;
-import play.db.Database;
-import play.db.NamedDatabase;
 
 public class SqlStartUpChecker {
 
@@ -22,14 +20,11 @@ public class SqlStartUpChecker {
 
   private static final String SCENARIO_FOLDER = "conf/resources/sql";
 
-  private Database sql_main;
-
   @Inject
-  public SqlStartUpChecker(@NamedDatabase("sqlselectroot") Database db) {
-    sql_main = db;
+  public SqlStartUpChecker() {
     performStartUpCheck();
   }
-
+  
   private void createScenario(ScenarioCreationResult result) {
     // TODO Auto-generated method stub
     result.getCreated().save();
@@ -49,7 +44,7 @@ public class SqlStartUpChecker {
     try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(scenarioDir)) {
       directoryStream.forEach(file -> {
         if(file.getFileName().toString().endsWith("json")) {
-          ScenarioCreationResult result = SqlScenarioHandler.handleScenario(file, sql_main);
+          ScenarioCreationResult result = SqlScenarioHandler.handleScenario(file);
           createScenario(result);
         }
       });

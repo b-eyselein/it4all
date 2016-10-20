@@ -5,26 +5,29 @@ import java.util.List;
 import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.SqlExercise;
-import model.queryCorrectors.QueryCorrector;
-import model.user.User;
+import model.querycorrectors.QueryCorrector;
 import net.sf.jsqlparser.statement.Statement;
 import play.db.Database;
 
 public class SqlCorrector {
   
-  public static List<EvaluationResult> correct(Database database, User user, String userStatement, SqlExercise exercise,
+  private SqlCorrector() {
+
+  }
+
+  public static List<EvaluationResult> correct(Database database, String userStatement, SqlExercise exercise,
       FeedbackLevel feedbackLevel) {
     QueryCorrector<? extends Statement, ?> corrector = exercise.getCorrector();
-    
+
     String sampleStatement = findBestFittingSample(userStatement, exercise.getSampleSolutions());
-    
+
     return corrector.correct(database, userStatement, sampleStatement, exercise, feedbackLevel);
   }
-  
+
   private static String findBestFittingSample(String userStatement, List<String> samples) {
     String bestFitting = null;
     int bestDistance = Integer.MAX_VALUE;
-    
+
     for(String sample: samples) {
       int newDistance = Levenshtein.levenshteinDistance(sample, userStatement);
       if(newDistance < bestDistance) {

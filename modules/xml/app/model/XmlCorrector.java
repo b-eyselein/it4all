@@ -3,7 +3,7 @@ package model;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.XMLConstants;
@@ -18,101 +18,97 @@ import javax.xml.validation.Validator;
 
 import org.xml.sax.SAXException;
 
-import model.user.User;
+import model.errorhandlers.CorrectionErrorHandler;
+import model.errorhandlers.DtdXmlErrorHandler;
+import model.errorhandlers.XmlXsdErrorHandler;
+import model.errorhandlers.XmlDtdErrorHandler;
+import model.exercise.EvaluationFailed;
+import model.exercise.EvaluationResult;
+import play.Logger;
 
 public class XmlCorrector {
   
   private static DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-  private static DocumentBuilder builder = null;
-  private static SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
   
-  public static List<XMLError> correct(File solutionFile, File referenceFile, XmlExercise exercise, User user)
-      throws IOException {
+  private XmlCorrector() {
+    
+  }
+  
+  public static List<EvaluationResult> correct(File solutionFile, File referenceFile, XmlExercise exercise) {
     switch(exercise.exerciseType) {
-    case XMLAgainstXSD:
+    case XML_XSD:
       return correctXMLAgainstXSD(solutionFile, referenceFile);
-    case XMLAgainstDTD:
+    case XML_DTD:
       return correctXMLAgainstDTD(solutionFile);
-    case DTDAgainstXML:
-      return correctDTDAgainstXML(solutionFile, referenceFile);
-    // case XSDAgainstXML:
-    // return correctXSDAgainstXML(solutionFile, referenceFile);
+    case DTD_XML:
+      return correctDTDAgainstXML(referenceFile);
+    case XSD_XML:
     default:
-      return null;
+      return Collections.emptyList();
     }
   }
   
-  public static List<XMLError> correctDTDAgainstXML(File studentenSolutionDTD, File referenceXML) {
-    
-    List<XMLError> output = new LinkedList<>();
-    
+  public static List<EvaluationResult> correctDTDAgainstXML(File referenceXML) {
+    CorrectionErrorHandler errorHandler = new DtdXmlErrorHandler();
     factory.setValidating(true);
     try {
-      builder = factory.newDocumentBuilder();
-    } catch (ParserConfigurationException e) {
-    }
-    
-    builder.setErrorHandler(new DTDXMLErrorHandler(output));
-    
-    try {
+      DocumentBuilder builder = factory.newDocumentBuilder();
+      builder.setErrorHandler(errorHandler);
       builder.parse(referenceXML);
-    } catch (SAXException | IOException e) {
+    } catch (ParserConfigurationException e) {
+      Logger.error("There was an error creating the Parser: ", e);
+      return Arrays.asList(new EvaluationFailed("Es gab einen Fehler beim Korrigieren ihrer Lösung."));
+    } catch (SAXException | IOException e) { // NOSONAR
+      // Errors are getting caught in error handler since they are made by
+      // learners
     }
-    
-    return output;
-    
+    return errorHandler.getErrors();
   }
   
-  public static List<XMLError> correctXMLAgainstDTD(File studentSolutionXML) {
-    
-    List<XMLError> output = new LinkedList<>();
-    
+  public static List<EvaluationResult> correctXMLAgainstDTD(File studentSolutionXML) {
+    CorrectionErrorHandler errorHandler = new XmlDtdErrorHandler();
     factory.setValidating(true);
     try {
-      builder = factory.newDocumentBuilder();
-    } catch (ParserConfigurationException e) {
-    }
-    
-    builder.setErrorHandler(new XSDErrorHandler(output));
-    
-    try {
+      DocumentBuilder builder = factory.newDocumentBuilder();
+      builder.setErrorHandler(errorHandler);
       builder.parse(studentSolutionXML);
-    } catch (SAXException | IOException e) {
-    } catch (NullPointerException e) {
-      output.add(new XMLError("leere XML", XmlErrorType.FATALERROR));
+    } catch (ParserConfigurationException e) {
+      Logger.error("There was an error creating the Parser: ", e);
+      return Arrays.asList(new EvaluationFailed("Es gab einen Fehler beim Korrigieren ihrer Lösung."));
+    } catch (SAXException | IOException e) { // NOSONAR
+      // Errors are getting caught in error handler since they are made by
+      // learners
     }
-    
-    return output;
-    
+    return errorHandler.getErrors();
   }
   
-  public static List<XMLError> correctXMLAgainstXSD(File studentSolutionXML, File xsd) {
-    
-    List<XMLError> output = new LinkedList<>();
+  public static List<EvaluationResult> correctXMLAgainstXSD(File studentSolutionXML, File xsd) {
     Source xmlFile = new StreamSource(studentSolutionXML);
     Source xsdFile = new StreamSource(xsd);
     
-    Schema schema = null;
-    try {
-      schema = schemaFactory.newSchema(xsdFile);
-    } catch (SAXException e) {
-      // output.add(new XMLError("Beim parsen der XML ist ein Fehler
-      // aufgetreten.", XmlErrorType.FATALERROR));
-      // return output;
-    }
+    CorrectionErrorHandler errorHandler = new XmlXsdErrorHandler();
     
-    if(schema == null)
-      return Arrays.asList(new XMLError("Ihre Eingabedaten konnten nicht geladen werden!", XmlErrorType.FATALERROR));
-    
-    Validator validator = schema.newValidator();
-    validator.setErrorHandler(new SimpleXMLErrorHandler(output));
     try {
+      SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+      Schema schema = schemaFactory.newSchema(xsdFile);
+      
+      if(schema == null)
+        return Arrays.asList(new XMLError("Fehler beim Laden ihrer Lösung!",
+            "Ihre Eingabedaten konnten nicht geladen werden!", XmlErrorType.FATALERROR));
+      
+      Validator validator = schema.newValidator();
+      validator.setErrorHandler(errorHandler);
       validator.validate(xmlFile);
-    } catch (SAXException | IOException e) {
+    } catch (SAXException | IOException e) { // NOSONAR
+      // Errors are getting caught in error handler since they are made by
+      // learners
     } catch (NullPointerException e) {
-      output.add(new XMLError("konnte XSD nicht validieren.", XmlErrorType.FATALERROR));
+      Logger.error("Could not validate XSD-File", e);
+      return Arrays.asList(
+          new XMLError("Fehler bei Validierung ihrer XSD", "Konnte XSD nicht validieren.", XmlErrorType.FATALERROR));
     }
     
-    return output;
+    return errorHandler.getErrors();
   }
+
 }

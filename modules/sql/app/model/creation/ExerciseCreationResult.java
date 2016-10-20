@@ -9,15 +9,13 @@ import model.exercise.SqlExerciseType;
 
 public class ExerciseCreationResult extends CreationResult<SqlExercise> {
 
-  private static String querytypeSelect(int exerciseId, SqlExerciseType querytype) {
-    String ret = "<select class=\"form-control\" name=\"ex" + exerciseId + "_type\">";
-    for(SqlExerciseType type: SqlExerciseType.values())
-      ret += "<option" + (type == querytype ? " selected" : "") + ">" + type.toString() + "</option>";
-    ret += "</select>";
-    return ret;
-  }
-
   private int id;
+
+  public ExerciseCreationResult(CreationResultType theResultType, String theMessage, int theExericseId,
+      SqlExercise theExercise) {
+    super(theResultType, theExercise, theMessage);
+    id = theExericseId;
+  }
 
   // TODO: use members instead of complete class?
   // private SqlExerciseType type;
@@ -25,10 +23,13 @@ public class ExerciseCreationResult extends CreationResult<SqlExercise> {
   // private List<String> samples;
   // private String validation;
 
-  public ExerciseCreationResult(CreationResultType theResultType, String theMessage, int theExericseId,
-      SqlExercise theExercise) {
-    super(theResultType, theExercise, theMessage);
-    id = theExericseId;
+  private static String querytypeSelect(int exerciseId, SqlExerciseType querytype) {
+    StringBuilder builder = new StringBuilder();
+    builder.append("<select class=\"form-control\" name=\"ex" + exerciseId + "_type\">");
+    for(SqlExerciseType type: SqlExerciseType.values())
+      builder.append("<option" + (type == querytype ? " selected" : "") + ">" + type.toString() + "</option>");
+    builder.append("</select>");
+    return builder.toString();
   }
 
   @Override
@@ -42,7 +43,7 @@ public class ExerciseCreationResult extends CreationResult<SqlExercise> {
     } else {
       // ExerciseId
       ret += "<td><input type=\"number\" name=\"id[]\" hidden value=\"" + id + "\">" + id + "</td>\n";
-      
+
       // Querytype
       ret += "<td>" + querytypeSelect(created.key.id, created.key.exercisetype) + "</td>\n";
 

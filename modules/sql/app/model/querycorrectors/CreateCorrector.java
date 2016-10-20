@@ -1,10 +1,10 @@
-package model.queryCorrectors;
+package model.querycorrectors;
 
 import java.util.Arrays;
 import java.util.List;
 
 import model.SqlCorrectionException;
-import model.correctionResult.ColumnComparison;
+import model.correctionresult.ColumnComparison;
 import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.GenericEvaluationResult;
@@ -72,7 +72,7 @@ public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable> {
       throw new SqlCorrectionException("Es gab einen Fehler beim Parsen des folgenden Statements:</p><p>" + statement,
           e);
     } catch (ClassCastException e) {
-      throw new SqlCorrectionException("Das Statement war vom falschen Typ! Erwartet wurde CREATE TABLE!");
+      throw new SqlCorrectionException("Das Statement war vom falschen Typ! Erwartet wurde CREATE TABLE!", e);
     }
   }
 }

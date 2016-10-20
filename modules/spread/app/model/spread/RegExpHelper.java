@@ -6,12 +6,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 
+ *
  * @author Stefan Olbrecht
  *
  */
 public class RegExpHelper {
-  
+
+  private RegExpHelper() {
+
+  }
+
   public static String getCellFormulasDiff(String string1, String string2) {
     HashSet<String> al1 = RegExpHelper.getCellFormulasList(string1);
     HashSet<String> al2 = RegExpHelper.getCellFormulasList(string2);
@@ -20,16 +24,6 @@ public class RegExpHelper {
       return "";
     else
       return diff.toString();
-  }
-  
-  private static HashSet<String> getCellFormulasList(String string) {
-    Pattern p = Pattern.compile("([A-Z]+)[(]");
-    Matcher m = p.matcher(string);
-    HashSet<String> matches = new HashSet<String>();
-    while(m.find()) {
-      matches.add(m.group(1));
-    }
-    return matches;
   }
   
   public static String getCellOperatorsDiff(String string1, String string2) {
@@ -42,16 +36,6 @@ public class RegExpHelper {
       return diff.toString();
   }
   
-  private static HashSet<String> getCellOperatorsList(String string) {
-    Pattern p = Pattern.compile("([+|-]|[*|/])");
-    Matcher m = p.matcher(string);
-    HashSet<String> matches = new HashSet<String>();
-    while(m.find()) {
-      matches.add(m.group(1));
-    }
-    return matches;
-  }
-  
   public static String getCellRangesDiff(String string1, String string2) {
     HashSet<String> al1 = RegExpHelper.getCellRangesList(string1);
     HashSet<String> al2 = RegExpHelper.getCellRangesList(string2);
@@ -60,17 +44,6 @@ public class RegExpHelper {
       return "";
     else
       return diff.toString();
-  }
-  
-  private static HashSet<String> getCellRangesList(String string) {
-    Pattern p = Pattern.compile("([A-Z]+[0-9]+)");
-    string = string.replace("$", "");
-    Matcher m = p.matcher(string);
-    HashSet<String> matches = new HashSet<String>();
-    while(m.find()) {
-      matches.add(m.group(1));
-    }
-    return matches;
   }
   
   public static String getExcelCFFormulaList(String string) {
@@ -93,19 +66,7 @@ public class RegExpHelper {
     else
       return diff.toString();
   }
-  
-  private static HashSet<String> getExcelChartRangesList(String name, String string) {
-    Pattern p = Pattern.compile("<c:f>" + name + "!(.*?)</c:f>");
-    Matcher m = p.matcher(string);
-    HashSet<String> matches = new HashSet<String>();
-    while(m.find()) {
-      String match = m.group(1);
-      match = match.replace("$", "");
-      matches.add(match);
-    }
-    return matches;
-  }
-  
+
   public static String getExcelChartTitle(String string) {
     String title = "";
     Pattern p = Pattern.compile("<a:t>(.*?)</a:t>");
@@ -123,6 +84,49 @@ public class RegExpHelper {
       return true;
     }
     return false;
+  }
+  
+  private static HashSet<String> getCellFormulasList(String string) {
+    Pattern p = Pattern.compile("([A-Z]+)[(]");
+    Matcher m = p.matcher(string);
+    HashSet<String> matches = new HashSet<>();
+    while(m.find()) {
+      matches.add(m.group(1));
+    }
+    return matches;
+  }
+  
+  private static HashSet<String> getCellOperatorsList(String string) {
+    Pattern p = Pattern.compile("([+|-]|[*|/])");
+    Matcher m = p.matcher(string);
+    HashSet<String> matches = new HashSet<>();
+    while(m.find()) {
+      matches.add(m.group(1));
+    }
+    return matches;
+  }
+  
+  private static HashSet<String> getCellRangesList(String string) {
+    Pattern p = Pattern.compile("([A-Z]+[0-9]+)");
+    String newString = string.replace("$", "");
+    Matcher m = p.matcher(newString);
+    HashSet<String> matches = new HashSet<>();
+    while(m.find()) {
+      matches.add(m.group(1));
+    }
+    return matches;
+  }
+  
+  private static HashSet<String> getExcelChartRangesList(String name, String string) {
+    Pattern p = Pattern.compile("<c:f>" + name + "!(.*?)</c:f>");
+    Matcher m = p.matcher(string);
+    HashSet<String> matches = new HashSet<>();
+    while(m.find()) {
+      String match = m.group(1);
+      match = match.replace("$", "");
+      matches.add(match);
+    }
+    return matches;
   }
   
 }

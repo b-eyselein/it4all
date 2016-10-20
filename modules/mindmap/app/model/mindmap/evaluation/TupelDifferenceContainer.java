@@ -1,33 +1,32 @@
 package model.mindmap.evaluation;
 
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class TupelDifferenceContainer {
 
-	private HashMap<String, LinkedList<Tuple>> mapMissing;
-	private HashMap<String, LinkedList<Tuple>> mapWrong;
-	private HashMap<String, LinkedList<Tuple>> mapPartiallyCorrect;
-	
-	public TupelDifferenceContainer(HashMap<String, LinkedList<Tuple>> mapMissing,
-			HashMap<String, LinkedList<Tuple>> mapWrong,
-			HashMap<String, LinkedList<Tuple>> mapPartiallyCorrect) {
-		super();
-		this.mapMissing = mapMissing;
-		this.mapWrong = mapWrong;
-		this.mapPartiallyCorrect = mapPartiallyCorrect;
-	}
+  private Map<String, List<Tuple>> mapMissing;
+  private Map<String, List<Tuple>> mapWrong;
+  private Map<String, List<Tuple>> mapPartiallyCorrect;
 
-	public HashMap<String, LinkedList<Tuple>> getMapMissing() {
-		return mapMissing;
-	}
+  public TupelDifferenceContainer(Map<String, List<Tuple>> mapMissing, Map<String, List<Tuple>> mapWrong,
+      Map<String, List<Tuple>> mapPartiallyCorrect) {
+    super();
+    this.mapMissing = mapMissing;
+    this.mapWrong = mapWrong;
+    this.mapPartiallyCorrect = mapPartiallyCorrect;
+  }
 
-	public HashMap<String, LinkedList<Tuple>> getMapWrong() {
-		return mapWrong;
-	}
+  public Map<String, List<Tuple>> getMapMissing() {
+    return mapMissing;
+  }
 
-	public HashMap<String, LinkedList<Tuple>> getMapPartiallyCorrect() {
-		return mapPartiallyCorrect;
-	}
-	
+  public Map<String, List<Tuple>> getMapPartiallyCorrect() {
+    return mapPartiallyCorrect;
+  }
+
+  public Map<String, List<Tuple>> getMapWrong() {
+    return mapWrong;
+  }
+
 }

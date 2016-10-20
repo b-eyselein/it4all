@@ -14,7 +14,12 @@ import play.Logger;
 public class ScriptRunner {
   
   private static final Logger.ALogger theLogger = Logger.of("sql");
+  
   private static final String DELIMITER = ";";
+
+  private ScriptRunner() {
+    
+  }
   
   /**
    * Runs an SQL script (read in using the Reader parameter) using the

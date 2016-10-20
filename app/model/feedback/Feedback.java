@@ -9,45 +9,38 @@ import com.avaje.ebean.Model;
 
 @Entity
 public class Feedback extends Model {
-  
-  public static Finder<Integer, Feedback> finder = new Finder<Integer, Feedback>(Feedback.class);
-  
-  @Id
-  public int id;
-  
-  public int sinnHtml;
-  public int sinnExcel;
-  
-  public int nutzenHtml;
-  public int nutzenExcel;
-  
-  public Note bedienungHtml;
-  public Note bedienungExcel;
-  
-  public Note feedbackHtml;
-  public Note feedbackExcel;
-  
-  public Note korrekturHtml;
-  public Note korrekturExcel;
-  
-  public String kommentarHtml;
-  public String kommentarExcel;
-  
+
   public enum Note {
     NO_FEEDBACK, SEHR_GUT, GUT, EHER_SCHLECHT, SCHLECHT;
   }
   
-  public static int getNutzenHtmlGesamt() {
-    return finder.all().stream().mapToInt(feedback -> feedback.nutzenHtml).sum();
-  }
+  public static final Finder<Integer, Feedback> finder = new Finder<>(Feedback.class);
   
-  public static int getSinnHtmlGesamt() {
-    return finder.all().stream().mapToInt(feedback -> {
-      if(feedback.sinnHtml > 0)
-        return feedback.sinnHtml;
-      else
-        return 0;
-    }).sum();
+  @Id
+  public int id;
+  public int sinnHtml; // NOSONAR
+  
+  public int sinnExcel; // NOSONAR
+  public int nutzenHtml; // NOSONAR
+  
+  public int nutzenExcel; // NOSONAR
+  public Note bedienungHtml; // NOSONAR
+  
+  public Note bedienungExcel; // NOSONAR
+  public Note feedbackHtml; // NOSONAR
+  
+  public Note feedbackExcel; // NOSONAR
+  public Note korrekturHtml; // NOSONAR
+  
+  public Note korrekturExcel; // NOSONAR
+  public String kommentarHtml; // NOSONAR
+  
+  public String kommentarExcel; // NOSONAR
+  
+  public static double getDurchschnittBedienungExcel() {
+    OptionalDouble ret = finder.all().stream().filter(feedback -> feedback.bedienungExcel != Note.NO_FEEDBACK)
+        .mapToInt(feedback -> feedback.bedienungExcel.ordinal()).average();
+    return ret.isPresent() ? ret.getAsDouble() : 0.;
   }
   
   public static double getDurchschnittBedienungHtml() {
@@ -56,9 +49,21 @@ public class Feedback extends Model {
     return ret.isPresent() ? ret.getAsDouble() : 0.;
   }
   
+  public static double getDurchschnittFeedbackExcel() {
+    OptionalDouble ret = finder.all().stream().filter(feedback -> feedback.feedbackExcel != Note.NO_FEEDBACK)
+        .mapToInt(feedback -> feedback.feedbackExcel.ordinal()).average();
+    return ret.isPresent() ? ret.getAsDouble() : 0.;
+  }
+  
   public static double getDurchschnittFeedbackHtml() {
     OptionalDouble ret = finder.all().stream().filter(feedback -> feedback.feedbackHtml != Note.NO_FEEDBACK)
         .mapToInt(feedback -> feedback.feedbackHtml.ordinal()).average();
+    return ret.isPresent() ? ret.getAsDouble() : 0.;
+  }
+  
+  public static double getDurchschnittKorrekturExcel() {
+    OptionalDouble ret = finder.all().stream().filter(feedback -> feedback.korrekturExcel != Note.NO_FEEDBACK)
+        .mapToInt(feedback -> feedback.korrekturExcel.ordinal()).average();
     return ret.isPresent() ? ret.getAsDouble() : 0.;
   }
   
@@ -72,6 +77,10 @@ public class Feedback extends Model {
     return finder.all().stream().mapToInt(feedback -> feedback.nutzenExcel).sum();
   }
   
+  public static int getNutzenHtmlGesamt() {
+    return finder.all().stream().mapToInt(feedback -> feedback.nutzenHtml).sum();
+  }
+  
   public static int getSinnExcelGesamt() {
     return finder.all().stream().mapToInt(feedback -> {
       if(feedback.sinnExcel > 0)
@@ -81,21 +90,12 @@ public class Feedback extends Model {
     }).sum();
   }
   
-  public static double getDurchschnittBedienungExcel() {
-    OptionalDouble ret = finder.all().stream().filter(feedback -> feedback.bedienungExcel != Note.NO_FEEDBACK)
-        .mapToInt(feedback -> feedback.bedienungExcel.ordinal()).average();
-    return ret.isPresent() ? ret.getAsDouble() : 0.;
-  }
-  
-  public static double getDurchschnittFeedbackExcel() {
-    OptionalDouble ret = finder.all().stream().filter(feedback -> feedback.feedbackExcel != Note.NO_FEEDBACK)
-        .mapToInt(feedback -> feedback.feedbackExcel.ordinal()).average();
-    return ret.isPresent() ? ret.getAsDouble() : 0.;
-  }
-  
-  public static double getDurchschnittKorrekturExcel() {
-    OptionalDouble ret = finder.all().stream().filter(feedback -> feedback.korrekturExcel != Note.NO_FEEDBACK)
-        .mapToInt(feedback -> feedback.korrekturExcel.ordinal()).average();
-    return ret.isPresent() ? ret.getAsDouble() : 0.;
+  public static int getSinnHtmlGesamt() {
+    return finder.all().stream().mapToInt(feedback -> {
+      if(feedback.sinnHtml > 0)
+        return feedback.sinnHtml;
+      else
+        return 0;
+    }).sum();
   }
 }

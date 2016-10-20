@@ -11,12 +11,12 @@ import javax.persistence.ManyToOne;
 
 import com.avaje.ebean.Model;
 
-import model.queryCorrectors.CreateCorrector;
-import model.queryCorrectors.QueryCorrector;
-import model.queryCorrectors.SelectCorrector;
-import model.queryCorrectors.update.DeleteCorrector;
-import model.queryCorrectors.update.InsertCorrector;
-import model.queryCorrectors.update.UpdateCorrector;
+import model.querycorrectors.CreateCorrector;
+import model.querycorrectors.QueryCorrector;
+import model.querycorrectors.SelectCorrector;
+import model.querycorrectors.update.DeleteCorrector;
+import model.querycorrectors.update.InsertCorrector;
+import model.querycorrectors.update.UpdateCorrector;
 import net.sf.jsqlparser.statement.Statement;
 
 @Entity
@@ -24,7 +24,7 @@ public class SqlExercise extends Model {
 
   public static final String SAMPLE_JOIN_CHAR = "#";
 
-  public static Finder<SqlExerciseKey, SqlExercise> finder = new Finder<>(SqlExercise.class);
+  public static final Finder<SqlExerciseKey, SqlExercise> finder = new Finder<>(SqlExercise.class);
 
   @EmbeddedId
   public SqlExerciseKey key;
@@ -34,7 +34,7 @@ public class SqlExercise extends Model {
 
   @Column(columnDefinition = "text")
   public String samples;
-
+  
   @ManyToOne
   @JoinColumn(name = "scenario_name", insertable = false, updatable = false)
   public SqlScenario scenario;

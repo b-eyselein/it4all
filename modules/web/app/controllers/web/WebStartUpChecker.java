@@ -16,16 +16,16 @@ import model.javascript.JsTest;
 import model.javascript.JsTestKey;
 
 public class WebStartUpChecker extends StartUpChecker {
-
+  
   private static String res = "conf/resources";
-
+  
   private static void handleJsExercise(JsonNode exerciseNode) {
     int id = exerciseNode.get("id").asInt();
     JsExercise exercise = JsExercise.finder.byId(id);
-
+    
     if(exercise == null)
       exercise = new JsExercise(id);
-
+    
     exercise.title = exerciseNode.get("title").asText();
     exercise.text = exerciseNode.get("text").asText();
     exercise.declaration = exerciseNode.get("declaration").asText();
@@ -35,39 +35,39 @@ public class WebStartUpChecker extends StartUpChecker {
     exercise.inputcount = exerciseNode.get("inputcount").asInt();
     exercise.returntype = JsDataType.valueOf(exerciseNode.get("returntype").asText());
     exercise.save();
-
+    
     for(final Iterator<JsonNode> testIter = exerciseNode.get("tests").elements(); testIter.hasNext();)
       handleTest(exercise, testIter.next());
   }
-
+  
   private static void handleTest(JsExercise exercise, JsonNode testNode) {
     int testId = testNode.get("id").asInt();
     JsTestKey key = new JsTestKey(exercise.id, testId);
     JsTest test = JsTest.finder.byId(key);
-
+    
     if(test == null)
       test = new JsTest(key);
-
+    
     test.inputs = testNode.get("input").asText();
     test.output = testNode.get("output").asText();
     test.save();
   }
-
+  
   @Override
   protected void performStartUpCheck() {
     theLogger.info("Running startup checks for Web");
-
+    
     // FIXME: read Html + Css exercises from JSON-FILE?!?
-
+    
     // Assert that there is at least one exercise for all types
     List<HtmlExercise> exercises = HtmlExercise.finder.all();
-    if(exercises.size() == 0)
+    if(exercises.isEmpty())
       theLogger.error("\t- No exercises found for Html!");
     else
       for(HtmlExercise exercise: exercises)
-        if(exercise.tasks.size() == 0)
+        if(exercise.tasks.isEmpty())
           theLogger.error("\t- Html-Aufgabe " + exercise.id + " hat keine Tasks!");
-
+        
     // Js - normal exercises
     Path file = Paths.get(res, "javascript", "nashorn.json");
     JsonNode content = null;
@@ -78,9 +78,9 @@ public class WebStartUpChecker extends StartUpChecker {
     }
     if(content == null)
       return;
-
+    
     for(final Iterator<JsonNode> iter = content.elements(); iter.hasNext();)
       handleJsExercise(iter.next());
   }
-
+  
 }

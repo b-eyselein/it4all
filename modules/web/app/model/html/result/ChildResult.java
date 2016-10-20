@@ -57,7 +57,7 @@ public class ChildResult extends EvaluationResult {
       ret += " konnte nicht gefunden werden!";
     }
 
-    ret += "</div>";
+    ret += DIV_END;
     return ret;
   }
 

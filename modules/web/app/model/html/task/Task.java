@@ -29,10 +29,6 @@ public abstract class Task {
 
   public static final String KEY_VALUE_CHARACTER = "=";
 
-  public static <T extends EvaluationResult> boolean allResultsSuccessful(List<T> results) {
-    return results.stream().mapToInt(result -> result.getSuccess() == Success.COMPLETE ? 0 : 1).sum() == 0;
-  }
-
   @EmbeddedId
   public TaskKey key;
 
@@ -48,10 +44,14 @@ public abstract class Task {
   @JsonIgnore
   public String xpathQueryName;
 
-  public String definingAttribute;
+  public String definingAttribute; // NOSONAR
 
   @JsonIgnore
   public String attributes;
+
+  public static <T extends EvaluationResult> boolean allResultsSuccessful(List<T> results) {
+    return results.stream().mapToInt(result -> result.getSuccess() == Success.COMPLETE ? 0 : 1).sum() == 0;
+  }
 
   public abstract ElementResult evaluate(SearchContext context);
 

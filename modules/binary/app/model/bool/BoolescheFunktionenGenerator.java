@@ -16,9 +16,13 @@ public class BoolescheFunktionenGenerator {
   private static final int MIN_VARS = 2;
   private static final int MAX_VARS = 3;
 
-  private final static char[] ALPHABET = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
+  private static final char[] ALPHABET = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
       'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
 
+  private BoolescheFunktionenGenerator() {
+    
+  }
+  
   /**
    * Liefert einen zufaelligen BoolescheFunktionTree mit MIN_VARS bis MAX_VARS
    * Variablen.
@@ -85,18 +89,18 @@ public class BoolescheFunktionenGenerator {
    */
   private static boolean checkTautologie(BoolescheFunktionTree bft) {
     boolean b[] = bft.getWahrheitsVector();
-    boolean contains_true = false;
-    boolean contains_false = false;
+    boolean containsTrue = false;
+    boolean containsFalse = false;
     for(int i = 0; i < b.length; i++) {
-      if(contains_true && contains_false) {
+      if(containsTrue && containsFalse) {
         return false;
-      } else if(b[i] == true) {
-        contains_true = true;
-      } else if(b[i] == false) {
-        contains_false = true;
+      } else if(b[i]) {
+        containsTrue = true;
+      } else if(!b[i]) {
+        containsFalse = true;
       }
     }
-    if(contains_true && contains_false) {
+    if(containsTrue && containsFalse) {
       return false;
     }
     return true;
@@ -113,11 +117,11 @@ public class BoolescheFunktionenGenerator {
     if((int) Math.floor(Math.random() * 3) == 2) {
       kb = new Not(kb);
     }
-    int temp_op = (int) Math.floor(Math.random() * 5);
+    int tempOp = (int) Math.floor(Math.random() * 5);
     Node operator;
-    if(temp_op < 2) {
+    if(tempOp < 2) {
       operator = new And(ka, kb);
-    } else if(temp_op < 4) {
+    } else if(tempOp < 4) {
       operator = new Or(ka, kb);
     } else {
       operator = new Xor(ka, kb);

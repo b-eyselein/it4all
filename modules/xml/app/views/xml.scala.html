@@ -29,7 +29,7 @@ function testSolution() {
 
     <div class="row">
       <div class="col-md-6">
-        @if(exercise.exerciseType.toString == "XMLAgainstDTD") {
+        @if(exercise.exerciseType == model.XmlExercise.XmlExType.XML_DTD) {
         <pre>@fixedStart</pre>
         }
         @editor(oldSolution, "xml", 25, 45, false)

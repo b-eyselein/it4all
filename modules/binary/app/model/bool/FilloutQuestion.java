@@ -23,41 +23,41 @@ public class FilloutQuestion extends BooleanQuestion {
       new SimpleEntry<>("XOR", "&oplus;"),
       new SimpleEntry<>("OR", "&or;"));
   // @formatter:on
-  
-  public static FilloutQuestion generateNew() {
-    // TODO: implement!
-    BoolescheFunktionTree bft = BoolescheFunktionenGenerator.neueBoolescheFunktion();
-    return new FilloutQuestion(bft.getVariables(), bft);
-  }
-  
+
   private BoolescheFunktionTree formula;
+
   private List<Assignment> assignments;
-  
   public FilloutQuestion(Character[] theVariables, BoolescheFunktionTree theFormulaTree) {
     super(theVariables);
     formula = theFormulaTree;
     assignments = Assignment.generateAllAssignments(variables);
   }
-  
+
+  public static FilloutQuestion generateNew() {
+    // TODO: implement!
+    BoolescheFunktionTree bft = BoolescheFunktionenGenerator.neueBoolescheFunktion();
+    return new FilloutQuestion(bft.getVariables(), bft);
+  }
+
   public List<Assignment> getAssignments() {
     return assignments;
   }
-
+  
   public BoolescheFunktionTree getFormula() {
     return formula;
   }
-  
+
   public Html getFormulaAsHtml() {
     String formulaAsHtml = formula.toString();
     for(SimpleEntry<String, String> replacer: replacers)
       formulaAsHtml = formulaAsHtml.replaceAll(replacer.getKey(), replacer.getValue());
     return new Html(formulaAsHtml);
   }
-  
+
   public String getFormulaAsString() {
     return formula.toString();
   }
-  
+
   public boolean isCorrect() {
     for(Assignment assignment: assignments)
       if(!assignment.assignmentIsSet(LEARNER_VARIABLE)
@@ -65,5 +65,5 @@ public class FilloutQuestion extends BooleanQuestion {
         return false;
     return true;
   }
-  
+
 }

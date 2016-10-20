@@ -1,6 +1,7 @@
 package controllers.sql;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -12,10 +13,12 @@ import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
 import model.Secured;
 import model.SqlCorrector;
 import model.SqlQueryResult;
+import model.Util;
 import model.exercise.EvaluationFailed;
 import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
@@ -24,46 +27,44 @@ import model.exercise.SqlExerciseKey;
 import model.exercise.SqlExerciseType;
 import model.exercise.SqlScenario;
 import model.user.User;
+import play.Logger;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.db.Database;
 import play.db.NamedDatabase;
 import play.libs.Json;
-import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security.Authenticated;
-import play.twirl.api.Html;
-import views.html.error;
 import views.html.sqlexercise;
 import views.html.sqloverview;
 
 @Authenticated(Secured.class)
-public class SQL extends Controller {
+public class SQL extends ExerciseController {
 
   private static final String SHOW_ALL_TABLES = "SHOW TABLES";
-  private static final String SELECT_ALL = "SELECT * FROM ";
 
-  @Inject
-  @NamedDatabase("sqlselectuser")
-  // IMPORTANT: DO NOT USE "DEFAULT" DATABASE
-  private Database sql_select;
+  private static final String SELECT_ALL = "SELECT * FROM ?";
 
-  @Inject
-  @NamedDatabase("sqlotherroot")
-  private Database sql_other;
+  private Database sqlSelect;
 
-  @Inject
-  private FormFactory factory;
+  private Database sqlOther;
 
-  @Inject
   @SuppressWarnings("unused")
   private SqlStartUpChecker checker;
 
+  @Inject
+  public SQL(Util theUtil, FormFactory theFactory, SqlStartUpChecker theChecker,
+      @NamedDatabase("sqlselectuser") Database theSqlSelect, @NamedDatabase("sqlotherroot") Database theSqlOther) {
+    super(theUtil, theFactory);
+    checker = theChecker;
+    sqlSelect = theSqlSelect;
+    sqlOther = theSqlOther;
+  }
+
   public Result commit(String scenarioName, String exerciseType, int exerciseId) {
-    User user = UserManagement.getCurrentUser();
-    
+
     SqlExerciseType type = SqlExerciseType.valueOf(exerciseType);
-    
+
     SqlExercise exercise = SqlExercise.finder.byId(new SqlExerciseKey(scenarioName, exerciseId, type));
 
     DynamicForm form = factory.form().bindFromRequest();
@@ -79,7 +80,7 @@ public class SQL extends Controller {
 
     Database database = getDatabaseForExerciseType(exerciseType);
 
-    List<EvaluationResult> result = SqlCorrector.correct(database, user, learnerSolution, exercise, feedbackLevel);
+    List<EvaluationResult> result = SqlCorrector.correct(database, learnerSolution, exercise, feedbackLevel);
 
     JsonNode ret = Json.toJson(result);
 
@@ -92,34 +93,16 @@ public class SQL extends Controller {
     User user = UserManagement.getCurrentUser();
 
     SqlExerciseType type = SqlExerciseType.valueOf(exerciseType);
-    
+
     SqlExercise exercise = SqlExercise.finder.byId(new SqlExerciseKey(scenarioName, exerciseId, type));
 
     if(exercise == null)
       return badRequest("There is no such exercise!");
 
-    try {
-      Connection connection = sql_select.getConnection();
-      connection.setCatalog(scenarioName);
-      List<SqlQueryResult> tables = new LinkedList<>();
-      Statement statement = connection.createStatement();
-      ResultSet existingDBs = statement.executeQuery(SHOW_ALL_TABLES);
+    List<SqlQueryResult> tables = readTablesInDatabase(scenarioName);
 
-      while(existingDBs.next()) {
-        String tableName = existingDBs.getString(1);
-        Statement selectStatement = connection.createStatement();
-        ResultSet tableResult = selectStatement.executeQuery(SELECT_ALL + tableName);
-        tables.add(new SqlQueryResult(tableResult, tableName));
-        selectStatement.close();
-      }
+    return ok(sqlexercise.render(user, exercise, tables));
 
-      statement.close();
-      connection.close();
-      return ok(sqlexercise.render(user, exercise, tables));
-    } catch (SQLException e) {
-      play.Logger.error("Es gab einen Fehler beim Auslesen der Tabellen!", e);
-      return badRequest(error.render(user, new Html("Fehler beim Auslesen der Tabellen!")));
-    }
   }
 
   public Result index() {
@@ -127,9 +110,52 @@ public class SQL extends Controller {
   }
 
   private Database getDatabaseForExerciseType(String exerciseType) {
-    if(exerciseType.equals("SELECT"))
-      return sql_select;
-    return sql_other;
+    if("SELECT".equals(exerciseType))
+      return sqlSelect;
+    return sqlOther;
+  }
+
+  private List<String> readExistingTables(Connection connection) {
+    List<String> tableNames = new LinkedList<>();
+    try(Statement statement = connection.createStatement();
+        ResultSet existingTables = statement.executeQuery(SHOW_ALL_TABLES)) {
+      while(existingTables.next())
+        tableNames.add(existingTables.getString(1));
+    } catch (SQLException e) {
+      Logger.error("There was an error reading the table names from a database", e);
+    }
+    return tableNames;
+  }
+
+  private SqlQueryResult readTableContent(Connection connection, String tableName) {
+    try(PreparedStatement selectStatement = connection.prepareStatement(SELECT_ALL);) {
+      selectStatement.setString(1, tableName);
+      ResultSet tableResult = selectStatement.executeQuery();
+      return new SqlQueryResult(tableResult, tableName);
+    } catch (SQLException e) {
+      Logger.error("There has been an error reading the data from the table " + tableName, e);
+      return null;
+    }
+  }
+
+  private List<SqlQueryResult> readTablesInDatabase(String databaseName) {
+    List<SqlQueryResult> tables = new LinkedList<>();
+
+    try(Connection connection = sqlSelect.getConnection()) {
+      connection.setCatalog(databaseName);
+
+      List<String> tableNames = readExistingTables(connection);
+
+      for(String tableName: tableNames) {
+        SqlQueryResult tableResult = readTableContent(connection, tableName);
+        tables.add(tableResult);
+      }
+
+    } catch (SQLException e) {
+      Logger.error("Es gab einen Fehler beim Auslesen der Tabellen!", e);
+    }
+
+    return tables;
   }
 
 }

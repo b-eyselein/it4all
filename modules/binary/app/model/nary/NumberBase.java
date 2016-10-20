@@ -9,24 +9,25 @@ public enum NumberBase {
   DECIMAL(      10,     "Dezimalsystem",      "Dezimalzahl",      "Dezimalzahlen",      "[\\s0-9]*");
   //@formatter:on
 
-  public static NumberBase getByBase(int base) {
-    for(NumberBase type: NumberBase.values())
-      if(type.base == base)
-        return type;
-    throw new IllegalArgumentException("There is NumberBase for base " + base);
-  }
-
   private int base;
-  private String systemName;
-  private String nameSingular, namePlural;
-  private String pattern;
 
+  private String systemName;
+  private String nameSingular;
+  private String namePlural;
+  private String pattern;
   private NumberBase(int theBase, String theBaseName, String theNameSingular, String theNamePlural, String thePattern) {
     base = theBase;
     systemName = theBaseName;
     nameSingular = theNameSingular;
     namePlural = theNamePlural;
     pattern = thePattern;
+  }
+
+  public static NumberBase getByBase(int base) {
+    for(NumberBase type: NumberBase.values())
+      if(type.base == base)
+        return type;
+    throw new IllegalArgumentException("There is NumberBase for base " + base);
   }
 
   public int getBase() {

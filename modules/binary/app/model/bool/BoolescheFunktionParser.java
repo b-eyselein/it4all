@@ -9,16 +9,16 @@ import model.bool.tree.BoolescheFunktionTree;
 
 public class BoolescheFunktionParser {
   
+  private BoolescheFunktionParser() {
+
+  }
+
   public static BoolescheFunktionTree parse(String originalformel) throws IllegalArgumentException {
     return new BoolescheFunktionTree(parseNode(originalformel));
   }
-  
+
   public static Node parseNode(String formula) {
-    formula = formula.toLowerCase();
-    substituteGermanOperators(formula);
-    
-    // remove outer parantheses like in (a or b)
-    formula = trimAndRemoveParantheses(formula);
+    formula = prepareFormula(formula);
     
     int parenthesisDepth = 0;
     String read = "";
@@ -50,16 +50,16 @@ public class BoolescheFunktionParser {
         read = "";
         break;
       default:
-        read += readChar;
+        read += Character.toString(readChar);
         break;
       }
     }
     
     if(highestOperator == null) {
       // Kein Operator ==> Variable!
-      if(formula.equals("1") || formula.equals("true"))
+      if("1".equals(formula) || "true".equals(formula))
         return new True();
-      else if(formula.equals("0") || formula.equals("false"))
+      else if("0".equals(formula) || "false".equals(formula))
         return new False();
 
       if(formula.length() > 1)
@@ -69,7 +69,7 @@ public class BoolescheFunktionParser {
     }
     
     String rightFormula = formula.substring(highestOperatorPosition + highestOperator.length() + 2);
-    if(highestOperator.equals("not")) {
+    if("not".equals(highestOperator)) {
       return NodeType.NOT.instantiate(parseNode(rightFormula));
     } else {
       String leftFormula = formula.substring(0, highestOperatorPosition);
@@ -85,15 +85,26 @@ public class BoolescheFunktionParser {
     }
   }
   
+  private static String prepareFormula(String formula) {
+    formula = formula.toLowerCase();
+    formula = substituteGermanOperators(formula);
+    
+    // remove outer parantheses like in (a or b)
+    formula = trimAndRemoveParantheses(formula);
+    return formula;
+  }
+  
   /**
    * Substituiert alle deutschen Operatoren durch aequivalente englische
    * Operatoren.
    *
    * @return formel
    */
-  private static void substituteGermanOperators(String formel) {
+  private static String substituteGermanOperators(String formula) {
+    String newFormula = formula;
     for(NodeType type: NodeType.values())
-      formel = formel.replaceAll(type.getGermanOperator(), type.getEnglishOperator());
+      newFormula = newFormula.replaceAll(type.getGermanOperator(), type.getEnglishOperator());
+    return newFormula;
   }
   
   private static String trimAndRemoveParantheses(String formula) {

@@ -7,7 +7,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
-//import com.avaje.ebean.Model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import model.exercise.Exercise;
@@ -18,7 +17,7 @@ import model.html.task.HtmlTask;
 @DiscriminatorValue(value = "html")
 public class HtmlExercise extends Exercise {
   
-  public static final Finder<Integer, HtmlExercise> finder = new Finder<Integer, HtmlExercise>(HtmlExercise.class);
+  public static final Finder<Integer, HtmlExercise> finder = new Finder<>(HtmlExercise.class);
 
   @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
   @JsonManagedReference

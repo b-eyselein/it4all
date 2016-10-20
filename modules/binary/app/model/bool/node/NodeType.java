@@ -1,33 +1,33 @@
 package model.bool.node;
 
 public enum NodeType {
-  
+
   NOT("nicht", 1), AND("und", 2), OR("oder", 3), IMPL("impl", 5), NAND("nund", 5), NOR("noder", 5), XOR("xoder",
       5), EQUIV("equiv", 5);
-  
+
+  private String germanOperator;
+
+  private int precedence;
+  private NodeType(String theGermanOperator, int thePrecedence) {
+    germanOperator = theGermanOperator;
+    precedence = thePrecedence;
+  }
+
   public static NodeType get(String highestOperator) {
     for(NodeType type: values())
       if(highestOperator.equals(type.getEnglishOperator()))
         return type;
     return null;
   }
-  
-  private String germanOperator;
-  private int precedence;
-  
-  private NodeType(String theGermanOperator, int thePrecedence) {
-    germanOperator = theGermanOperator;
-    precedence = thePrecedence;
-  }
-  
+
   public String getEnglishOperator() {
     return name().toLowerCase();
   }
-
+  
   public String getGermanOperator() {
     return germanOperator;
   }
-  
+
   public int getPrecende() {
     return precedence;
   }
@@ -54,5 +54,5 @@ public enum NodeType {
       throw new IllegalArgumentException("No Node instanstiated!");
     }
   }
-  
+
 }

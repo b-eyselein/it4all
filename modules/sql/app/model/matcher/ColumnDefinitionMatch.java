@@ -52,7 +52,8 @@ public class ColumnDefinitionMatch extends Match<ColumnDefinition> {
     }
     
     // TODO: Compare argumentslist?
-    List<String> userArgs = userType.getArgumentsStringList(), sampleArgs = sampleType.getArgumentsStringList();
+    List<String> userArgs = userType.getArgumentsStringList();
+    List<String> sampleArgs = sampleType.getArgumentsStringList();
     if(userArgs == null && sampleArgs == null) {
       message = "Datentyp richtig spezifiziert";
       success = Success.COMPLETE;

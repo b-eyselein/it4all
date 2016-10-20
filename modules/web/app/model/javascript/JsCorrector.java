@@ -20,6 +20,10 @@ import play.Logger;
 
 public class JsCorrector {
 
+  private JsCorrector() {
+
+  }
+
   public static List<EvaluationResult> correct(JsExercise exercise, String learnerSolution,
       List<CommitedTestData> userTestData) {
     ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
@@ -41,13 +45,10 @@ public class JsCorrector {
     return testData.stream().map(test -> test.evaluate(engine)).collect(Collectors.toList());
 
   }
-
+  
   public static List<EvaluationResult> correctWeb(JsWebExercise exercise, String solutionUrl) {
     WebDriver driver = loadWebSite(solutionUrl);
-
-    List<EvaluationResult> results = exercise.tests.stream().map(test -> test.test(driver))
-        .collect(Collectors.toList());
-    return results;
+    return exercise.tests.stream().map(test -> test.test(driver)).collect(Collectors.toList());
   }
 
   public static boolean validateResult(JsDataType type, Object gottenResult, String awaitedResult) {

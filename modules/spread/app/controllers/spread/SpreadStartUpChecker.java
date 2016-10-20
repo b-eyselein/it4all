@@ -22,7 +22,7 @@ public class SpreadStartUpChecker {
   
   private static Logger.ALogger theLogger = Logger.of("startup");
   
-  private static final String baseDir = "conf/resources/spread/";
+  private static final String BASE_DIR = "conf/resources/spread/";
   private static final String EXERCISE_TYPE = "spread";
   private static final List<String> FILE_ENDINGS = Arrays.asList("xlsx", "ods");
   
@@ -35,7 +35,7 @@ public class SpreadStartUpChecker {
   }
   
   public void performStartUpCheck() {
-    Path exerciseFile = Paths.get(baseDir, "exercises.json");
+    Path exerciseFile = Paths.get(BASE_DIR, "exercises.json");
     if(!Files.exists(exerciseFile)) {
       theLogger.error("Exercise file for Spread not found!");
       return;
@@ -78,7 +78,7 @@ public class SpreadStartUpChecker {
     theLogger.warn("The file \"" + fileToCheck + "\" for spread exercise " + exercise.id
         + " does not exist. Trying to create this file...");
     
-    Path providedFile = Paths.get(baseDir, fileName + "." + fileEnding);
+    Path providedFile = Paths.get(BASE_DIR, fileName + "." + fileEnding);
     if(!Files.exists(providedFile)) {
       theLogger.error("Konnte Datei nicht erstellen: Keine Lösungsdatei mitgeliefert in " + providedFile);
       return;

@@ -2,9 +2,9 @@ package model.spread;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 
 public abstract class SpreadCorrector<DocType, SheetType, CellType, FontType, ColorType> {
   
@@ -77,7 +77,7 @@ public abstract class SpreadCorrector<DocType, SheetType, CellType, FontType, Co
   
   public abstract CellType getCellByPosition(SheetType table, int row, int column);
   
-  public abstract ArrayList<CellType> getColoredRange(SheetType master);
+  public abstract List<CellType> getColoredRange(SheetType master);
   
   public abstract SheetType getSheetByIndex(DocType sampleDocument, int sheetIndex);
   

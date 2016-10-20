@@ -26,7 +26,9 @@ public class SqlQueryResult {
       if(object == null || !(object instanceof SqlCell))
         return false;
       SqlCell other = (SqlCell) object;
-      return (content == null && other.content == null) || content.equals(other.content);
+      if(content == null && other.content == null)
+        return true;
+      return content != null && other.content != null && content.equals(other.content);
     }
     
     public String getAsHtml() {
@@ -37,6 +39,14 @@ public class SqlQueryResult {
       return content;
     }
     
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((content == null) ? 0 : content.hashCode());
+      return result;
+    }
+    
     public void markAsDifferent() {
       different = true;
     }
@@ -45,7 +55,7 @@ public class SqlQueryResult {
   
   public static class SqlRow {
     
-    public Map<String, SqlCell> cells = new HashMap<>();
+    private Map<String, SqlCell> cells = new HashMap<>();
     
     public void addCell(String columnName, SqlCell cell) {
       cells.put(columnName, cell);
@@ -64,47 +74,6 @@ public class SqlQueryResult {
       return cells.size();
     }
     
-  }
-  
-  private static boolean checkCell(SqlCell firstCell, SqlCell secondCell) {
-    if((firstCell == null ^ secondCell == null) || !firstCell.equals(secondCell)) {
-      firstCell.markAsDifferent();
-      secondCell.markAsDifferent();
-      return false;
-    } else {
-      return true;
-    }
-  }
-  
-  private static boolean checkCells(SqlQueryResult first, SqlQueryResult second, List<String> columnNames) {
-    List<SqlRow> firstRows = first.getRows(), secondRows = second.getRows();
-    if(firstRows.size() != secondRows.size())
-      return false;
-    
-    int rowCount = firstRows.size();
-    boolean identic = true;
-    for(int rowCounter = 0; rowCounter < rowCount; rowCounter++) {
-      SqlRow firstRow = firstRows.get(rowCounter), secondRow = secondRows.get(rowCounter);
-      if(firstRow.size() != secondRow.size())
-        return false;
-      for(String colName: columnNames)
-        identic &= checkCell(firstRow.getSqlCell(colName), secondRow.getSqlCell(colName));
-    }
-    
-    return identic;
-  }
-  
-  private static boolean checkColumnNames(SqlQueryResult first, SqlQueryResult second) {
-    if(first.getColumnCount() != second.getColumnCount())
-      return false;
-    
-    int columnCount = first.getColumnCount();
-    List<String> firstColNames = first.getColumnNames(), secondColNames = second.getColumnNames();
-    for(int i = 0; i < columnCount; i++)
-      if(!firstColNames.get(i).toLowerCase().equals(secondColNames.get(i).toLowerCase()))
-        return false;
-      
-    return true;
   }
   
   private List<String> colNames;
@@ -137,6 +106,50 @@ public class SqlQueryResult {
   public SqlQueryResult(ResultSet resultSet, String theTableName) throws SQLException {
     this(resultSet);
     tableName = theTableName;
+  }
+  
+  private static boolean checkCell(SqlCell firstCell, SqlCell secondCell) {
+    if((firstCell == null ^ secondCell == null) || !firstCell.equals(secondCell)) {
+      firstCell.markAsDifferent();
+      secondCell.markAsDifferent();
+      return false;
+    } else {
+      return true;
+    }
+  }
+  
+  private static boolean checkCells(SqlQueryResult first, SqlQueryResult second, List<String> columnNames) {
+    List<SqlRow> firstRows = first.getRows();
+    List<SqlRow> secondRows = second.getRows();
+    if(firstRows.size() != secondRows.size())
+      return false;
+    
+    int rowCount = firstRows.size();
+    boolean identic = true;
+    for(int rowCounter = 0; rowCounter < rowCount; rowCounter++) {
+      SqlRow firstRow = firstRows.get(rowCounter);
+      SqlRow secondRow = secondRows.get(rowCounter);
+      if(firstRow.size() != secondRow.size())
+        return false;
+      for(String colName: columnNames)
+        identic &= checkCell(firstRow.getSqlCell(colName), secondRow.getSqlCell(colName));
+    }
+    
+    return identic;
+  }
+  
+  private static boolean checkColumnNames(SqlQueryResult first, SqlQueryResult second) {
+    if(first.getColumnCount() != second.getColumnCount())
+      return false;
+    
+    int columnCount = first.getColumnCount();
+    List<String> firstColNames = first.getColumnNames();
+    List<String> secondColNames = second.getColumnNames();
+    for(int i = 0; i < columnCount; i++)
+      if(!firstColNames.get(i).equalsIgnoreCase(secondColNames.get(i)))
+        return false;
+      
+    return true;
   }
   
   public int getColumnCount() {
