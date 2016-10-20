@@ -98,9 +98,8 @@ public class XmlCorrector {
       validator.setErrorHandler(errorHandler);
       validator.validate(xmlFile);
 
-    } catch (SAXException e) {
-      Logger.error("There has been an error correcting an xml file: " + xsdFile.toString(), e);
-    } catch (IOException | NullPointerException e) {
+    } catch (SAXException | IOException e) {
+    } catch (NullPointerException e) {
       Logger.error("Could not validate XSD-File", e);
       return Arrays.asList(
           new XMLError("Fehler bei Validierung ihrer XSD", "Konnte XSD nicht validieren.", XmlErrorType.FATALERROR));
