@@ -52,7 +52,7 @@ public class HTML extends ExerciseController {
     super(theUtil, theFactory);
     checker = theChecker;
   }
-  
+
   public Result commit(int exerciseId, String type) {
     User user = UserManagement.getCurrentUser();
     HtmlExercise exercise = HtmlExercise.finder.byId(exerciseId);
@@ -100,14 +100,7 @@ public class HTML extends ExerciseController {
       return badRequest(error.render(user, new Html("Bearbeiten Sie zuerst den <a href=\""
           + routes.HTML.exercise(exerciseId, "html") + "\">Html-Teil der Aufgabe</a> komplett!")));
 
-    String defaultOrOldSolution = STANDARD_HTML;
-    try {
-      Path oldSolutionPath = util.getSolFileForExercise(user, EXERCISE_TYPE, exerciseId, FILE_TYPE);
-      if(Files.exists(oldSolutionPath, LinkOption.NOFOLLOW_LINKS))
-        defaultOrOldSolution = String.join("\n", Files.readAllLines(oldSolutionPath));
-    } catch (IOException e) {
-      Logger.error(e.getMessage());
-    }
+    String defaultOrOldSolution = loadDefaultOrOldSolution(exerciseId, user);
 
     return ok(html.render(user, exercise, type, defaultOrOldSolution, "Html-Korrektur"));
   }
@@ -118,6 +111,18 @@ public class HTML extends ExerciseController {
 
   public Result playground() {
     return ok(playground.render(UserManagement.getCurrentUser(), STANDARD_HTML_PLAYGROUND));
+  }
+
+  private String loadDefaultOrOldSolution(int exerciseId, User user) {
+    Path oldSolutionPath = util.getSolFileForExercise(user, EXERCISE_TYPE, exerciseId, FILE_TYPE);
+    if(Files.exists(oldSolutionPath, LinkOption.NOFOLLOW_LINKS)) {
+      try {
+        return String.join("\n", Files.readAllLines(oldSolutionPath));
+      } catch (IOException e) {
+        Logger.error("There has been an error loading an old solution for Html:", e);
+      }
+    }
+    return STANDARD_HTML;
   }
 
   private void saveSolutionForUser(User user, String solution, int exercise) throws IOException {

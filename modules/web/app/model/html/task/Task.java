@@ -24,59 +24,59 @@ import model.html.result.ElementResult;
 
 @MappedSuperclass
 public abstract class Task {
-  
+
   public static final String MULTIPLE_ATTRIBUTES_SPLIT_CHARACTER = ";";
-  
+
   public static final String KEY_VALUE_CHARACTER = "=";
-  
+
   @EmbeddedId
   public TaskKey key;
-  
+
   @ManyToOne
   @JoinColumn(name = "exercise_id")
   @JsonBackReference
   public HtmlExercise exercise;
-  
+
   @Column(name = "taskDesc", columnDefinition = "text")
   @JsonIgnore
   public String taskDescription;
-  
+
   @JsonIgnore
   public String xpathQueryName;
-  
-  public String definingAttribute;
-  
+
+  public String definingAttribute; // NOSONAR
+
   @JsonIgnore
   public String attributes;
-  
+
   public static <T extends EvaluationResult> boolean allResultsSuccessful(List<T> results) {
     return results.stream().mapToInt(result -> result.getSuccess() == Success.COMPLETE ? 0 : 1).sum() == 0;
   }
-  
+
   public abstract ElementResult evaluate(SearchContext context);
-  
+
   public String getDescription() {
     return taskDescription;
   }
-  
+
   public int getId() {
     return key.taskId;
   }
-  
+
   protected abstract String buildXPathQuery();
-  
+
   protected List<AttributeResult> evaluateAllAttributeResults(WebElement foundElement) {
     List<AttributeResult> attributeResults = getAttributeResults();
     attributeResults.forEach(attributeResult -> attributeResult.evaluate(foundElement));
     return attributeResults;
   }
-  
+
   protected List<ChildResult> evaluateAllChildResults(WebElement foundElement) {
     List<ChildResult> childResults = getChildResults();
     childResults.forEach(childResult -> childResult.evaluate(foundElement));
     return childResults;
   }
-  
+
   protected List<AttributeResult> getAttributeResults() {
     List<AttributeResult> attributesToFind = new LinkedList<>();
     for(String attribute: attributes.split(MULTIPLE_ATTRIBUTES_SPLIT_CHARACTER)) {
@@ -87,6 +87,6 @@ public abstract class Task {
     }
     return attributesToFind;
   }
-  
+
   protected abstract List<ChildResult> getChildResults();
 }

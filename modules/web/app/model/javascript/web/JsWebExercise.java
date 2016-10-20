@@ -12,27 +12,27 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 public class JsWebExercise extends Model {
-  
+
   public static final Finder<Integer, JsWebExercise> finder = new Finder<>(JsWebExercise.class);
-  
+
   @Id
   public int id;
-  
-  public String title;
-  
+
+  public String title; // NOSONAR
+
   @Column(columnDefinition = "text")
   public String text;
-
+  
   @Column(columnDefinition = "text")
   public String anterior;
-
+  
   @Column(columnDefinition = "text")
   public String posterior;
-  
-  public String declaration;
-  
+
+  public String declaration; // NOSONAR
+
   @OneToMany(mappedBy = "exercise")
   @JsonManagedReference
   public List<JsWebTest> tests;
-  
+
 }

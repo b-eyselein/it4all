@@ -26,9 +26,9 @@ public class ChildTask extends Model {
 
     private static final long serialVersionUID = 7072289741394461703L;
     
-    public int id;
+    public int id; // NOSONAR
     
-    public int taskId;
+    public int taskId; // NOSONAR
     
     @Override
     public boolean equals(Object other) {
@@ -61,7 +61,7 @@ public class ChildTask extends Model {
   @Column(name = "tagName")
   public String tagName;
   
-  public String definingAttribute;
+  public String definingAttribute; // NOSONAR
   
   public ChildResult getChildResult() {
     return new ChildResult(this);

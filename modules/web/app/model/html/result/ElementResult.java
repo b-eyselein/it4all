@@ -23,38 +23,38 @@ public class ElementResult extends EvaluationResult {
   @Override
   public String getAsHtml() {
     // FIXME: implement feedbackLevel!
-    String ret = "<div class=\"panel panel-" + getBSClass() + "\">";
-    ret += "<div class=\"panel-heading\" data-toggle=\"collapse\" href=\"#task" + task.key.taskId + "\">"
-        + task.key.taskId + ". " + task.taskDescription + "</div>";
+    StringBuilder builder = new StringBuilder();
+    builder.append("<div class=\"panel panel-" + getBSClass() + "\">");
+    builder.append("<div class=\"panel-heading\" data-toggle=\"collapse\" href=\"#task" + task.key.taskId + "\">"
+        + task.key.taskId + ". " + task.taskDescription + DIV_END);
     
-    ret += "<div id=\"task" + task.key.taskId + "\" class=\"panel-collapse collapse "
-        + (success == Success.COMPLETE ? "" : "in") + "\">";
-    ret += "<div class=\"panel-body\">";
+    builder.append("<div id=\"task" + task.key.taskId + "\" class=\"panel-collapse collapse "
+        + (success == Success.COMPLETE ? "" : "in") + "\">");
+    builder.append("<div class=\"panel-body\">");
     
     // has element been found
     if(success == Success.COMPLETE || success == Success.PARTIALLY)
-      ret += "<div class=\"alert alert-success\">Element wurde gefunden!</div>";
+      builder.append("<div class=\"alert alert-success\">Element wurde gefunden!</div>");
     else
-      ret += "<div class=\"alert alert-danger\">Element konnte nicht gefunden werden!</div>";
+      builder.append("<div class=\"alert alert-danger\">Element konnte nicht gefunden werden!</div>");
     
     // Parent elements
     if(parentsMissing != null)
-      ret += "<div class=\"alert alert-danger\">Element hat nicht die richtigen Elternelemente. Folgende fehlen: "
-          + String.join(", ", parentsMissing) + "</div>";
+      builder
+          .append("<div class=\"alert alert-danger\">Element hat nicht die richtigen Elternelemente. Folgende fehlen: "
+              + String.join(", ", parentsMissing) + DIV_END);
     
     // Attribute Results
     for(AttributeResult attResult: attributeResults)
-      ret += attResult.getAsHtml();
+      builder.append(attResult.getAsHtml());
     
     // Child Results
     for(ChildResult childRes: childResults)
-      ret += childRes.getAsHtml();
+      builder.append(childRes.getAsHtml());
     
-    ret += "</div></div>";
+    builder.append(DIV_END + DIV_END + DIV_END);
     
-    ret += "</div>";
-    
-    return ret;
+    return builder.toString();
   }
   
   public List<AttributeResult> getAttributeResults() {

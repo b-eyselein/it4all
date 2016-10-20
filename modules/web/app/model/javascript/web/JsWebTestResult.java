@@ -24,26 +24,26 @@ public class JsWebTestResult extends EvaluationResult {
   public String getAsHtml() {
     // FIXME: implement feedbackLevel!
     // TODO: restyling? getAsHtml for JsWebTestReault
-    String toAdd = "<div class=\"panel panel-" + getBSClass() + "\">";
-    toAdd += "  <div class=\"panel-heading\">";
-    toAdd += "    <h4 class=\"panel-title\"><a data-toggle=\"collapse\" href=\"#col" + test.id + "\">Test " + (test.id)
-        + "</a></h4>";
-    toAdd += "  </div>";
     
-    toAdd += "  <div id=\"col" + test.id + "\" class=\"panel-collapse collapse"
-        + (success == Success.COMPLETE ? "" : " in") + "\">";
-    toAdd += "    <div class=\"panel-body\">";
+    StringBuilder builder = new StringBuilder();
+    
+    builder.append("<div class=\"panel panel-" + getBSClass() + "\">");
+
+    builder.append("<div class=\"panel-heading\"><h4 class=\"panel-title\"><a data-toggle=\"collapse\" href=\"#col"
+        + test.id + "\">Test " + (test.id) + "</a></h4>" + DIV_END);
+    
+    builder.append("  <div id=\"col" + test.id + "\" class=\"panel-collapse collapse"
+        + (success == Success.COMPLETE ? "" : " in") + "\">");
+    builder.append("    <div class=\"panel-body\">");
     
     for(ConditionResult result: preconditionResults)
-      toAdd += result.getAsHtml();
+      builder.append(result.getAsHtml());
     
     for(ConditionResult result: postconditionResults)
-      toAdd += result.getAsHtml();
+      builder.append(result.getAsHtml());
     
-    toAdd += "    </div>";
-    toAdd += "  </div>";
-    toAdd += "</div>";
-    return toAdd;
+    builder.append(DIV_END + DIV_END + DIV_END);
+    return builder.toString();
   }
   
   public void postCondResult(List<ConditionResult> thePostconditionResults) {

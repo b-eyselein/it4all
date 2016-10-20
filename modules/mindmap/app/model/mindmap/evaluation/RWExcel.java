@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import model.mindmap.basics.TreeNode;
 import model.mindmap.evaluation.enums.MetaDataState;
@@ -444,16 +445,8 @@ public class RWExcel {
       addLabel(excelSheet, maxDepthTrees + 2, row, treeNode.getMaxRating());
     }
     if(treeNode.getSynonyms().size() > 1) {
-      String synonyms = "";
-      for(int i = 0; i < treeNode.getSynonyms().size(); i++) {
-        // don't print this
-        if(treeNode.getSynonyms().get(i).equals(treeNode.getText())) {
-          continue;
-        }
-        synonyms += treeNode.getSynonyms().get(i) + ";";
-      }
-      // get rid of last ";"
-      synonyms = synonyms.substring(0, synonyms.length() - 1);
+      String synonyms = treeNode.getSynonyms().stream().filter(s -> !s.equals(treeNode.getText()))
+          .collect(Collectors.joining(";"));
       addLabel(excelSheet, maxDepthTrees + 3, row, synonyms);
     }
     colNumber++;

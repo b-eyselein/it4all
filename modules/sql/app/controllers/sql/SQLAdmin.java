@@ -20,8 +20,6 @@ import model.exercise.SqlExerciseKey;
 import model.exercise.SqlExerciseType;
 import model.exercise.SqlScenario;
 import play.Logger;
-import play.db.Database;
-import play.db.NamedDatabase;
 import play.mvc.Controller;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
@@ -35,12 +33,12 @@ public class SQLAdmin extends Controller {
   
   private static final String BODY_FILE_NAME = "file";
   
-  @Inject
   private Util util;
   
   @Inject
-  @NamedDatabase("sqlotherroot")
-  private Database sqlOther;
+  public SQLAdmin(Util theUtil) {
+    util = theUtil;
+  }
   
   private static void readExercise(String scenarioName, int id, Map<String, String[]> data) {
     SqlExerciseType exerciseType = SqlExerciseType.valueOf(data.get("ex" + id + "_type")[0]);
@@ -81,7 +79,6 @@ public class SQLAdmin extends Controller {
   }
   
   public Result uploadFile() {
-    // Extract solution from request
     MultipartFormData<File> body = request().body().asMultipartFormData();
     FilePart<File> uploadedFile = body.getFile(BODY_FILE_NAME);
     if(uploadedFile == null)
@@ -92,7 +89,6 @@ public class SQLAdmin extends Controller {
     Path saveTo = Paths.get(savingDir.toString(), uploadedFile.getFilename());
     saveUploadedFile(savingDir, pathToUploadedFile, saveTo);
     
-    // TODO: return exercises!
     ScenarioCreationResult scenarioResult = SqlScenarioHandler.handleScenario(saveTo);
     
     return ok(sqlpreview.render(UserManagement.getCurrentUser(), scenarioResult));

@@ -21,25 +21,25 @@ import net.sf.jsqlparser.statement.create.table.CreateTable;
 import play.db.Database;
 
 public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable> {
-
+  
   private static ColumnDefinitionMatcher colDefMatcher = new ColumnDefinitionMatcher();
-
+  
   @Override
   protected ColumnComparison compareColumns(CreateTable userQuery, CreateTable sampleQuery) {
     // No columns to compare...
     return null;
   }
-
+  
   @Override
   protected List<EvaluationResult> compareStatically(CreateTable userStatement, CreateTable sampleStatement,
       FeedbackLevel feedbackLevel) {
     List<ColumnDefinition> userDefs = userStatement.getColumnDefinitions();
     List<ColumnDefinition> sampleDefs = sampleStatement.getColumnDefinitions();
-
+    
     MatchingResult<ColumnDefinition, ColumnDefinitionMatch> result = colDefMatcher.match(userDefs, sampleDefs);
     return Arrays.asList(result);
   }
-
+  
   @Override
   protected EvaluationResult executeQuery(Database database, CreateTable userStatement, CreateTable sampleStatement,
       SqlExercise exercise, FeedbackLevel feedbackLevel) {
@@ -47,17 +47,17 @@ public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable> {
     return new GenericEvaluationResult(FeedbackLevel.MINIMAL_FEEDBACK, Success.COMPLETE,
         "Create-Statements werden nicht ausgeführt.");
   }
-
+  
   @Override
   protected List<String> getTables(CreateTable userQuery) {
     return Arrays.asList(userQuery.getTable().toString());
   }
-  
+
   @Override
   protected Expression getWhere(CreateTable query) {
     return null;
   }
-
+  
   @Override
   protected CreateTable parseStatement(String statement) throws SqlCorrectionException {
     try {
@@ -66,7 +66,7 @@ public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable> {
       throw new SqlCorrectionException("Es gab einen Fehler beim Parsen des folgenden Statements:</p><p>" + statement,
           e);
     } catch (ClassCastException e) {
-      throw new SqlCorrectionException("Das Statement war vom falschen Typ! Erwartet wurde CREATE TABLE!");
+      throw new SqlCorrectionException("Das Statement war vom falschen Typ! Erwartet wurde CREATE TABLE!", e);
     }
   }
 }

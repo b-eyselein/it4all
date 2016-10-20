@@ -5,13 +5,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import model.Levenshtein;
 import model.mindmap.basics.TreeNode;
 import model.mindmap.evaluation.enums.DifferenceResult;
 
 public class Util {
-  
+
+  private static final double MINIMAL_PERCENT = 0.8;
+
   private int treeDepth = 0;
-  
+
   /**
    * Copies the internal state of a TreeNode created from the solution to the
    * corresponding TreeNode from the user input. This can only happen if the
@@ -36,7 +39,7 @@ public class Util {
       traverseTreeAndSetMetaData(root, inputRoots);
     }
   }
-  
+
   /**
    * Adds to every node in the trees their respective state depending on the
    * results of @see {@link #getDifferenceTupel(HashMap, HashMap)}}
@@ -54,7 +57,7 @@ public class Util {
       traverseTreeAndSetResults(root, missingTuple, wrongTuple, partiallyCorrectTuple);
     }
   }
-  
+
   /**
    * This method creates parent-child tuple for all trees. Also all tuples
    * corresponding to the same tree are put in a HashMap. Key is the text of the
@@ -75,7 +78,7 @@ public class Util {
     }
     return map;
   }
-  
+
   /**
    * Checks for all nodes of the user input if it is possible to give some
    * feedback for nodes which are placed wrong by the user.
@@ -90,7 +93,7 @@ public class Util {
       traverseForFeedback(solutionRoots, rootInput);
     }
   }
-  
+
   /**
    * This method takes all tuples of one tree of the solution file and checks if
    * the corresponding tree of the user input file contains these tuples. For
@@ -166,7 +169,7 @@ public class Util {
     }
     return new TupelDifferenceContainer(mapMissingTuple, mapWrongTuple, mapPartiallyCorrect);
   }
-  
+
   /**
    * Calculate the sum of all points of nodes inside all trees.
    *
@@ -183,7 +186,7 @@ public class Util {
     }
     return pr;
   }
-  
+
   /**
    * Calculate the sum of all points of nodes inside a single tree.
    *
@@ -196,7 +199,7 @@ public class Util {
     traverseTreeAddPoints(root, pr);
     return pr;
   }
-  
+
   /**
    * Inserts a dummy node as root node of all roots of the given list. This
    * makes one tree out of many. This is used for TOC.
@@ -243,7 +246,7 @@ public class Util {
       traverseTreeAndSetRealPoints(root);
     }
   }
-  
+
   private static void addDivergentSolutions(Tuple solTupel, List<Tuple> listToCheck, List<Tuple> resultingList) {
     // must be done in any chase
     resultingList.add(solTupel);
@@ -257,14 +260,14 @@ public class Util {
       }
     }
   }
-  
+
   private static void buildTuple(List<Tuple> listOfTupel, TreeNode node) {
     for(TreeNode child: node.getChildren()) {
       listOfTupel.add(new Tuple(node, child));
       buildTuple(listOfTupel, child);
     }
   }
-  
+
   private static void checkIfApplyMetaData(TreeNode solNode, TreeNode inNode) {
     if(isSameNode(solNode, inNode)) {
       inNode.setOptional(solNode.isOptional());
@@ -274,7 +277,7 @@ public class Util {
       if(solNode.isMetaNode()) {
         inNode.setMetaNode(true);
       }
-    } else if(Levenshtein.isPartiallyCorrect(solNode, inNode)) {
+    } else if(isPartiallyCorrect(solNode, inNode)) {
       inNode.setOptional(solNode.isOptional());
       inNode.setRealRating(solNode.getRealRating());
       inNode.setMaxRating(solNode.getMaxRating());
@@ -283,16 +286,40 @@ public class Util {
       checkIfApplyMetaData(solNode, inChild);
     }
   }
-  
+
   private static void checkIfRealRoot(TreeNode treeNode) {
     if(treeNode.getText().startsWith("Arbeitsauftrag")) {
       treeNode.setMetaNode(true);
     }
   }
   
+  private static boolean isPartiallyCorrect(TreeNode solNode, TreeNode inNode) {
+    // TODO: move to other class!
+    double maxCorrectness = -1.0;
+    for(String editSyn: solNode.getEditSynonyms()) {
+      int maxLength;
+      if(editSyn.length() > inNode.getText().length()) {
+        maxLength = editSyn.length();
+      } else {
+        maxLength = inNode.getText().length();
+      }
+      int distance = Levenshtein.levenshteinDistance(editSyn, inNode.getText());
+      double correctPercentage = 1.0 - ((double) distance / (double) maxLength);
+      if(correctPercentage > maxCorrectness) {
+        maxCorrectness = correctPercentage;
+      }
+    }
+    if(maxCorrectness >= MINIMAL_PERCENT) {
+      solNode.setDistancePercent(maxCorrectness);
+      inNode.setDistancePercent(maxCorrectness);
+      return true;
+    }
+    return false;
+  }
+
   private static boolean isPartiallyCorrect(Tuple solTupel, Tuple inTupel) {
-    boolean firstPartiallyCorrect = Levenshtein.isPartiallyCorrect(solTupel.getFirstNode(), inTupel.getFirstNode());
-    boolean secondPartiallyCorrect = Levenshtein.isPartiallyCorrect(solTupel.getSecondNode(), inTupel.getSecondNode());
+    boolean firstPartiallyCorrect = isPartiallyCorrect(solTupel.getFirstNode(), inTupel.getFirstNode());
+    boolean secondPartiallyCorrect = isPartiallyCorrect(solTupel.getSecondNode(), inTupel.getSecondNode());
     boolean firstNodesEqual = isSameNode(solTupel.getFirstNode(), inTupel.getFirstNode());
     boolean secondNodesEqual = isSameNode(solTupel.getSecondNode(), inTupel.getSecondNode());
     // if both are partially correct or one is partially and one completely
@@ -311,7 +338,7 @@ public class Util {
     }
     return false;
   }
-  
+
   // checks for identity of synonyms and regex
   private static boolean isSameNode(TreeNode solNode, TreeNode inNode) {
     boolean isEqual = false;
@@ -322,7 +349,7 @@ public class Util {
     }
     return isEqual;
   }
-  
+
   // checks for identity of synonyms and regex for both nodes of the tuple
   private static boolean isSameTupel(Tuple solutionTupel, Tuple inputTupel) {
     boolean firstEqual = isSameNode(solutionTupel.getFirstNode(), inputTupel.getFirstNode());
@@ -332,7 +359,7 @@ public class Util {
     }
     return false;
   }
-  
+
   private static void setOptionalAndMarkAsSolution(TreeNode treeNode) {
     // make not optional if his parent was optional
     if(treeNode.getParent() != null && treeNode.getParent().isOptional()) {
@@ -344,7 +371,7 @@ public class Util {
       setOptionalAndMarkAsSolution(child);
     }
   }
-  
+
   private static void traverseAndCheckText(TreeNode treeNode, TreeNode inputNode) {
     if(isSameNode(treeNode, inputNode)) {
       String intro = "This node should be here: ";
@@ -364,7 +391,7 @@ public class Util {
       traverseAndCheckText(child, inputNode);
     }
   }
-  
+
   private static void traverseForFeedback(List<TreeNode> solutionRoots, TreeNode inputNode) {
     if(inputNode.getDifferenceResult() == DifferenceResult.WRONG) {
       for(TreeNode root: solutionRoots) {
@@ -375,7 +402,7 @@ public class Util {
       traverseForFeedback(solutionRoots, child);
     }
   }
-  
+
   private static void traverseTreeAddPoints(TreeNode treeNode, PointsResult pointsResult) {
     pointsResult.addToMaxPoints(treeNode.getMaxRating());
     pointsResult.addToRealPoints(treeNode.getRealRating());
@@ -383,7 +410,7 @@ public class Util {
       traverseTreeAddPoints(child, pointsResult);
     }
   }
-  
+
   private static void traverseTreeAndSetMetaData(TreeNode treeNode, List<TreeNode> inputRoots) {
     // find solution node in input if it exists and give same meta status
     for(TreeNode rootInput: inputRoots) {
@@ -393,7 +420,7 @@ public class Util {
       traverseTreeAndSetMetaData(child, inputRoots);
     }
   }
-  
+
   private static void traverseTreeAndSetRealPoints(TreeNode treeNode) {
     if(treeNode.getDifferenceResult() == DifferenceResult.CORRECT) {
       treeNode.setRealRating(treeNode.getMaxRating());
@@ -404,7 +431,7 @@ public class Util {
       traverseTreeAndSetRealPoints(child);
     }
   }
-  
+
   private static void traverseTreeAndSetResults(TreeNode treeNode, List<Tuple> missingTuple, List<Tuple> wrongTuple,
       List<Tuple> partiallyCorrectTuple) {
     if(treeNode.getParent() == null) {
@@ -435,7 +462,7 @@ public class Util {
       traverseTreeAndSetResults(child, missingTuple, wrongTuple, partiallyCorrectTuple);
     }
   }
-  
+
   public int getMaxDepthOfTrees(List<TreeNode> rootList) {
     int maxDepth = 0;
     for(TreeNode root: rootList) {
@@ -447,7 +474,7 @@ public class Util {
     }
     return maxDepth;
   }
-  
+
   private void traverseTreeForMaxDepth(TreeNode treeNode, int currentDepth) {
     if(currentDepth > treeDepth) {
       treeDepth = currentDepth;
