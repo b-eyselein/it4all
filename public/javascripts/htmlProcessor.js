@@ -28,7 +28,7 @@ function processCorrection(correction, type) {
     var correctionDiv = document.getElementById("correction");
     correctionDiv.innerHTML = "";
     
-    for(i = 0; i < newCorrection.length; i++) {
+    for(var i = 0; i < newCorrection.length; i++) {
       // handleHtmlResult(newCorrection[i]);
       correctionDiv.innerHTML += newCorrection[i].asHtml;
       if(newCorrection[i].success === "COMPLETE") {
@@ -46,7 +46,7 @@ function processCorrection(correction, type) {
       commitButton.className = "btn btn-warning";
     }
   } catch(err) {
-    alert(err);
+    console.log(err);
   }
   
   // TODO: Evtl. Update Live-Ansicht in andere Funktion auslagern
