@@ -54,7 +54,8 @@ public class XmlStartUpChecker {
   }
   
   private void checkOrCreateSampleFile(XmlExercise exercise) {
-    Path sampleFile = util.getSampleFileForExercise(EXERCISE_TYPE, exercise.referenceFileName);
+    Path sampleFile = Paths.get(util.getSampleFileForExercise(EXERCISE_TYPE, exercise.referenceFileName).toString()
+        + exercise.getReferenceFileEnding());
     if(Files.exists(sampleFile))
       return;
     
@@ -102,6 +103,7 @@ public class XmlStartUpChecker {
       exercise.exerciseType = XmlExType.valueOf(node.get("exerciseType").asText());
       exercise.referenceFileName = node.get("referenceFileName").asText();
       exercise.exerciseText = node.get("exerciseText").asText();
+      exercise.fixedStart = node.get("fixedStart").asText();
       
       exercise.save();
       

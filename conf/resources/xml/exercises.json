@@ -3,21 +3,24 @@
 		"id": 1, 
 		"title": "Ich veranstalte eine Party...", 
 		"exerciseType": "XML_DTD", 
-		"referenceFileName": "party.dtd", 
+		"fixedStart": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE party SYSTEM \"party.dtd\">", 
+		"referenceFileName": "party", 
 		"exerciseText": "Erstellen Sie zu dieser Document Type Definition ein passendes XML-Dokument!"
 	}, 
 	{
 		"id": 2, 
 		"title": "Ich lese ein Buch...", 
 		"exerciseType": "XML_XSD", 
-		"referenceFileName": "books.xsd", 
+		"fixedStart": "", 
+		"referenceFileName": "books", 
 		"exerciseText": "Erstellen Sie zu diesem XML Schema ein passendes XML-Dokument!"
 	}, 
 	{
 		"id": 3, 
 		"title": "Frühstück", 
 		"exerciseType": "DTD_XML", 
-		"referenceFileName": "breakfast.xml", 
+		"fixedStart": "", 
+		"referenceFileName": "breakfast", 
 		"exerciseText": "Erstellen Sie für dieses Dokument eine passende Document Type Definition!"
 	}
 ]
