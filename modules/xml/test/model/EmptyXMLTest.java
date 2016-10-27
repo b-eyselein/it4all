@@ -1,8 +1,10 @@
 package model;
 
-import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
-import java.io.File;
+import static org.junit.Assert.assertThat;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.junit.Test;
@@ -13,8 +15,8 @@ public class EmptyXMLTest {
 
   @Test
   public void emptyXmlAgainstXSD() {
-    File emptyXML = new File("test/resources/empty.xml");
-    File xsd = new File("test/resources/note.xsd");
+    Path emptyXML = Paths.get("test", "resources", "empty.xml");
+    Path xsd = Paths.get("test", "resources", "note.xsd");
     List<EvaluationResult> out = XmlCorrector.correctXMLAgainstXSD(emptyXML, xsd);
     assertThat("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), equalTo(1));
 
@@ -26,7 +28,7 @@ public class EmptyXMLTest {
 
   @Test
   public void xmlNoElement() {
-    File xml = new File("test/resources/xmlNoElement.xml");
+    Path xml = Paths.get("test", "resources", "xmlNoElement.xml");
     List<EvaluationResult> out = XmlCorrector.correctXMLAgainstDTD(xml);
     assertThat("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), equalTo(1));
 

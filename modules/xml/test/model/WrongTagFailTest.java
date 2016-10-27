@@ -1,9 +1,10 @@
 package model;
 
-import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.junit.Test;
@@ -26,7 +27,7 @@ public class WrongTagFailTest {
    */
   @Test
   public void testCorrectXMLAgainstDTD() {
-    File file = new File("test/resources/partyWrongTag.xml");
+    Path file = Paths.get("test", "resources", "partyWrongTag.xml");
     List<EvaluationResult> out = XmlCorrector.correctXMLAgainstDTD(file);
     assertThat("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), equalTo(2));
 
@@ -49,8 +50,8 @@ public class WrongTagFailTest {
    */
   @Test
   public void testCorrectXMLAgainstXSD() {
-    File xml = new File("test/resources/noteWrongTag.xml");
-    File xsd = new File("test/resources/note.xsd");
+    Path xml = Paths.get("test", "resources", "noteWrongTag.xml");
+    Path xsd = Paths.get("test", "resources", "note.xsd");
     List<EvaluationResult> out = XmlCorrector.correctXMLAgainstXSD(xml, xsd);
     assertThat("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), equalTo(1));
 

@@ -3,7 +3,8 @@ package model;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.junit.Test;
@@ -22,7 +23,7 @@ public class CorrectorTest {
    */
   @Test
   public void testCorrectDTDAgainstXML() {
-    File referenceFile = new File("test/resources/party.xml");
+    Path referenceFile = Paths.get("test", "resources", "party.xml");
     List<EvaluationResult> out = XmlCorrector.correctDTDAgainstXML(referenceFile);
     assertTrue(out.isEmpty());
   }
@@ -33,7 +34,7 @@ public class CorrectorTest {
    */
   @Test
   public void testCorrectXMLAgainstDTD() {
-    File file = new File("test/resources/party.xml");
+    Path file = Paths.get("test", "resources", "party.xml");
     List<EvaluationResult> out = XmlCorrector.correctXMLAgainstDTD(file);
     assertTrue(out.isEmpty());
   }
@@ -45,8 +46,8 @@ public class CorrectorTest {
    */
   @Test
   public void testCorrectXMLAgainstXSD() {
-    File xml = new File("test/resources/note.xml");
-    File xsd = new File("test/resources/note.xsd");
+    Path xml = Paths.get("test", "resources", "note.xml");
+    Path xsd = Paths.get("test", "resources", "note.xsd");
     List<EvaluationResult> out = XmlCorrector.correctXMLAgainstXSD(xml, xsd);
     assertNotNull(out);
     assertTrue(out.isEmpty());

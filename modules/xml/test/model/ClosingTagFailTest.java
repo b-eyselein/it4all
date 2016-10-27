@@ -1,9 +1,11 @@
 package model;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.hamcrest.CoreMatchers.equalTo;
-import java.io.File;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.junit.Test;
@@ -28,7 +30,7 @@ public class ClosingTagFailTest {
    */
   @Test
   public void testCorrectXMLAgainstDTD() {
-    File xml = new File("test/resources/partyNoClosingTag.xml");
+    Path xml = Paths.get("test", "resources", "partyNoClosingTag.xml");
     List<EvaluationResult> out = XmlCorrector.correctXMLAgainstDTD(xml);
     
     assertNotNull(out);
@@ -49,8 +51,8 @@ public class ClosingTagFailTest {
    */
   @Test
   public void testCorrectXMLAgainstXSD() {
-    File xml = new File("test/resources/noteNoClosingTag.xml");
-    File xsd = new File("test/resources/note.xsd");
+    Path xml = Paths.get("test", "resources", "noteNoClosingTag.xml");
+    Path xsd = Paths.get("test", "resources", "note.xsd");
     List<EvaluationResult> out = XmlCorrector.correctXMLAgainstXSD(xml, xsd);
     
     assertNotNull(out);
