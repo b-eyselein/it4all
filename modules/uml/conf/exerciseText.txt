@@ -1,0 +1,75 @@
+<p>
+              Die <span id="obj1" style="color: black" draggable="true" ondragstart="drag(event)">Firma</span> <span
+                id="obj2" style="color: black" draggable="true" ondragstart="drag(event)">Canikuji</span>, <span
+                id="obj3" style="color: black" draggable="true" ondragstart="drag(event)">Hersteller</span> des <span
+                id="obj4" style="color: black" draggable="true" ondragstart="drag(event)" data-baseform="Fotosystem">Fotosystems</span>
+              <span id="obj5" style="color: black" draggable="true" ondragstart="drag(event)">Ikonograf</span>, möchte
+              auf ihrer <span id="obj6" style="color: black" draggable="true" ondragstart="drag(event)">Webseite</span>
+              den <span id="obj7" style="color: black" draggable="true" ondragstart="drag(event)" data-baseform="Kunde">Kunden</span>
+              alle <span id="obj8" style="color: black" draggable="true" ondragstart="drag(event)"
+                data-baseform="Kombinationsmöglichkeit">Kombinationsmöglichkeiten</span> innerhalb des <span id="obj9"
+                style="color: black" draggable="true" ondragstart="drag(event)" data-baseform="Fotosystem">Fotosystems</span>
+              präsentieren. Im <span id="obj10" style="color: black" draggable="true" ondragstart="drag(event)"
+                data-baseform="Folgendes">Folgenden</span> wird das <span id="obj11" style="color: black"
+                draggable="true" ondragstart="drag(event)">Fotosystem</span> <span id="obj12" style="color: black"
+                draggable="true" ondragstart="drag(event)">Ikonograf</span> beschrieben:
+            </p>
+            <p>
+              Das <span id="obj13" style="color: black" draggable="true" ondragstart="drag(event)">Fotosystem</span>
+              umfasst fünf verschiedene <span id="obj14" style="color: black" draggable="true" ondragstart="drag(event)">Kameragehäuse</span>.
+              Von diesen fünf <span id="obj15" style="color: black" draggable="true" ondragstart="drag(event)"
+                data-baseform="Kameragehäuse">Kameragehäusen</span> sind zwei für den professionellen <span id="obj16"
+                style="color: black" draggable="true" ondragstart="drag(event)">Einsatz</span> und drei für den <span
+                id="obj17" style="color: black" draggable="true" ondragstart="drag(event)">Amateurbereich</span>
+              gedacht. Zu den fünf <span id="obj18" style="color: black" draggable="true" ondragstart="drag(event)"
+                data-baseform="Kameragehäuse">Kameragehäusen</span> gibt es insgesamt 20 verschiedene <span id="obj19"
+                style="color: black" draggable="true" ondragstart="drag(event)" data-baseform="Linse">Linsen</span>, die
+              sowohl an den <span id="obj20" style="color: black" draggable="true" ondragstart="drag(event)"
+                data-baseform="Profigehäuse">Profi-</span> als auch an den <span id="obj21" style="color: black"
+                draggable="true" ondragstart="drag(event)" data-baseform="Amateurgehäuse">Amateurkameragehäusen</span>
+              verwendet werden können. Unter den angebotenen <span id="obj22" style="color: black" draggable="true"
+                ondragstart="drag(event)" data-baseform="Linse">Linsen</span> befinden sich zwei <span id="obj23"
+                style="color: black" draggable="true" ondragstart="drag(event)">Telekonverter</span> sowie 18
+              unterschiedliche <span id="obj24" style="color: black" draggable="true" ondragstart="drag(event)"
+                data-baseform="Objektiv">Objektive</span>. Die <span id="obj25" style="color: black" draggable="true"
+                ondragstart="drag(event)">Telekonverter</span> lassen sich mit allen <span id="obj26"
+                style="color: black" draggable="true" ondragstart="drag(event)" data-baseform="Objektiv">Objektiven</span>
+              kombinieren. Zu jedem <span id="obj27" style="color: black" draggable="true" ondragstart="drag(event)">Objektiv</span>
+              gibt es eine passende <span id="obj28" style="color: black" draggable="true" ondragstart="drag(event)">Sonnenblende</span>;
+              zu beiden ist jeweils der <span id="obj29" style="color: black" draggable="true" ondragstart="drag(event)"
+                data-baseform="Durchmesser_Filtergewinde">Durchmesser des Filtergewindes</span> angegeben. Unter den <span
+                id="obj30" style="color: black" draggable="true" ondragstart="drag(event)" data-baseform="Objektiv">Objektiven</span>
+              werden <span id="obj31" style="color: black" draggable="true" ondragstart="drag(event)"
+                data-baseform="Festbrennweitenobjektiv">Festbrennweiten-</span> und <span id="obj32"
+                style="color: black" draggable="true" ondragstart="drag(event)" data-baseform="Zoomobjektiv">Zoomobjektive</span>
+              unterschieden. <span id="obj33" style="color: black" draggable="true" ondragstart="drag(event)"
+                data-baseform="Zoomobjektiv">Zoomobjektive</span> besitzen eine <span id="obj34" style="color: black"
+                draggable="true" ondragstart="drag(event)" data-baseform="Brennweite_minimal">minimale</span> und eine <span
+                id="obj35" style="color: black" draggable="true" ondragstart="drag(event)"
+                data-baseform="Brennweite_maximal">maximale Brennweite</span>, <span id="obj36" style="color: black"
+                draggable="true" ondragstart="drag(event)" data-baseform="Festbrennweitenobjektiv">Festbrennweitenobjektive</span>
+              hingegen nur eine <span id="obj37" style="color: black" draggable="true" ondragstart="drag(event)"
+                data-baseform="Brennweite">Brennweite</span>. Der <span id="obj38" style="color: black" draggable="true"
+                ondragstart="drag(event)">Wert</span> der <span id="obj39" style="color: black" draggable="true"
+                ondragstart="drag(event)">Brennweite</span> muss immer größer als 0 sein. Die <span id="obj40"
+                style="color: black" draggable="true" ondragstart="drag(event)" data-baseform="Brennweite_maximal">maximale
+                Brennweite</span> eines <span id="obj41" style="color: black" draggable="true" ondragstart="drag(event)"
+                data-baseform="Zoomobjektiv">Zoomobjektives</span> ist immer mindestens 5 mm größer als die <span
+                id="obj42" style="color: black" draggable="true" ondragstart="drag(event)"
+                data-baseform="Brennweite_minimal">minimale Brennweite </span> des <span id="obj43" style="color: black"
+                draggable="true" ondragstart="drag(event)" data-baseform="Zoomobjektiv">Zoomobjektives</span>. Bei den <span
+                id="obj44" style="color: black" draggable="true" ondragstart="drag(event)" data-baseform="Telekonverter">Telekonvertern</span>
+              ist der <span id="obj45" style="color: black" draggable="true" ondragstart="drag(event)">Verlängerungsfaktor</span>
+              angegeben. Weiterhin umfasst das <span id="obj46" style="color: black" draggable="true"
+                ondragstart="drag(event)">Fotosystem</span> <span id="obj47" style="color: black" draggable="true"
+                ondragstart="drag(event)" data-baseform="Blitz">Blitze</span>. Es gibt zwei <span id="obj48"
+                style="color: black" draggable="true" ondragstart="drag(event)" data-baseform="Profiblitz">Profiblitze</span>,
+              die nur an die <span id="obj49" style="color: black" draggable="true" ondragstart="drag(event)"
+                data-baseform="Profigehäuse">Profikameragehäuse</span> passen, und drei <span id="obj50"
+                style="color: black" draggable="true" ondragstart="drag(event)" data-baseform="Amateurblitz">Amateurblitze</span>,
+              die nur an die <span id="obj51" style="color: black" draggable="true" ondragstart="drag(event)"
+                data-baseform="Amateurgehäuse">Amateurkameragehäuse</span> passen. Ein <span id="obj52"
+                style="color: black" draggable="true" ondragstart="drag(event)">Profiblitz</span> kann beliebig viele <span
+                id="obj53" style="color: black" draggable="true" ondragstart="drag(event)" data-baseform="Blitz">Blitze</span>
+              steuern.
+            </p>
