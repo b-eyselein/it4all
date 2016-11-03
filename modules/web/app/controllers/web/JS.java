@@ -31,8 +31,8 @@ import play.mvc.Result;
 import play.mvc.Security;
 import play.twirl.api.Html;
 import views.html.error;
+import views.html.correction;
 import views.html.javascript.js;
-import views.html.javascript.jscorrect;
 import views.html.javascript.jsoverview;
 import views.html.javascript.jsweb;
 
@@ -49,6 +49,8 @@ public class JS extends ExerciseController {
   
   private static List<CommitedTestData> extractAndValidateTestData(DynamicForm form, JsExercise exercise) {
     List<CommitedTestData> testData = new LinkedList<>();
+
+    // FIXME: empty testData!
 
     int testCount = Integer.parseInt(form.get("count"));
     int inputCount = Integer.parseInt(form.get("inputs"));
@@ -110,7 +112,7 @@ public class JS extends ExerciseController {
     if(wantsJsonResponse())
       return ok(Json.toJson(testResults));
     else
-      return ok(jscorrect.render(learnerSolution, testResults, user));
+      return ok(correction.render("Javascript", learnerSolution, testResults, user));
   }
 
   public Result commitWeb(int exerciseId) {
@@ -134,7 +136,7 @@ public class JS extends ExerciseController {
     if(wantsJsonResponse())
       return ok(Json.toJson(testResults));
     else
-      return ok(jscorrect.render(learnerSolution, testResults, user));
+      return ok(correction.render("Javascript", learnerSolution, testResults, user));
   }
 
   public Result exercise(int id) {

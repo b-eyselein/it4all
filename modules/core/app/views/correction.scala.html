@@ -1,6 +1,6 @@
-@(solution: String, results: List[model.exercise.EvaluationResult], user: model.user.User)
+@(typ: String, learnerSolution: String, results: List[model.exercise.EvaluationResult], user: model.user.User)
 
-@main("HTML-Test", user) {
+@main(typ, user) {
 <div class="container-fluid">
 
   <div class="alert alert-success">
@@ -14,7 +14,7 @@
       <div class="panel panel-default">
         <div class="panel-heading">Ihre L&ouml;sung</div>
         <div class="panel-body">
-          <pre>@solution</pre>
+          <pre>@learnerSolution</pre>
         </div>
       </div>
     </div>

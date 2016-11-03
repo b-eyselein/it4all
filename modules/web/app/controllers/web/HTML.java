@@ -14,10 +14,10 @@ import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
 import model.Secured;
 import model.Util;
+import model.exercise.EvaluationResult;
 import model.exercise.Grading;
 import model.html.HtmlCorrector;
 import model.html.HtmlExercise;
-import model.html.result.ElementResult;
 import model.user.User;
 import play.Logger;
 import play.data.DynamicForm;
@@ -29,6 +29,7 @@ import play.twirl.api.Html;
 import views.html.error;
 import views.html.playground;
 import views.html.html.html;
+import views.html.correction;
 import views.html.html.htmlcorrect;
 import views.html.html.htmloverview;
 
@@ -74,13 +75,13 @@ public class HTML extends ExerciseController {
     if(!typeIsCorrect(type))
       return badRequest(error.render(user, new Html("Der Korrekturtyp wurde nicht korrekt spezifiziert!")));
 
-    List<ElementResult> elementResults = HtmlCorrector.correct(solutionUrl, HtmlExercise.finder.byId(exerciseId), user,
-        type);
+    List<EvaluationResult> elementResults = HtmlCorrector.correct(solutionUrl, HtmlExercise.finder.byId(exerciseId),
+        user, type);
 
     if(wantsJsonResponse())
       return ok(Json.toJson(elementResults));
     else
-      return ok(htmlcorrect.render(learnerSolution, elementResults, UserManagement.getCurrentUser()));
+      return ok(correction.render("HTML", learnerSolution, elementResults, UserManagement.getCurrentUser()));
   }
 
   public Result exercise(int exerciseId, String type) {
