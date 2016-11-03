@@ -5,13 +5,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
@@ -35,6 +32,7 @@ import play.db.NamedDatabase;
 import play.libs.Json;
 import play.mvc.Result;
 import play.mvc.Security.Authenticated;
+import views.html.correction;
 import views.html.sqlexercise;
 import views.html.sqloverview;
 
@@ -62,31 +60,29 @@ public class SQL extends ExerciseController {
   }
 
   public Result commit(String scenarioName, String exerciseType, int exerciseId) {
-
     SqlExerciseType type = SqlExerciseType.valueOf(exerciseType);
-
     SqlExercise exercise = SqlExercise.finder.byId(new SqlExerciseKey(scenarioName, exerciseId, type));
 
     DynamicForm form = factory.form().bindFromRequest();
-
     String learnerSolution = form.get("editorContent");
     FeedbackLevel feedbackLevel = FeedbackLevel.valueOf(form.get("feedbackLevel"));
-
-    if(learnerSolution.isEmpty())
-      return ok(Json.toJson(Arrays.asList(new EvaluationFailed("Sie haben eine leere Query abgegeben!"))));
-
-    if(exercise == null)
-      return badRequest(Json.toJson(Arrays.asList(new EvaluationFailed("There is no such exercise!"))));
+    
+    // FIXME: Speichern der Lösung?!?
 
     Database database = getDatabaseForExerciseType(exerciseType);
 
-    List<EvaluationResult> result = SqlCorrector.correct(database, learnerSolution, exercise, feedbackLevel);
+    List<EvaluationResult> result = new LinkedList<>();
+    if(learnerSolution.isEmpty())
+      result.add(new EvaluationFailed("Sie haben eine leere Query abgegeben!"));
+    else if(exercise == null)
+      result.add(new EvaluationFailed("Diese Aufgabe existiert nicht!"));
+    else
+      result = SqlCorrector.correct(database, learnerSolution, exercise, feedbackLevel);
 
-    JsonNode ret = Json.toJson(result);
-
-    // FIXME: Abgabe der Lösung!
-
-    return ok(Json.toJson(ret));
+    if(wantsJsonResponse())
+      return ok(Json.toJson(result));
+    else
+      return ok(correction.render("SQL", learnerSolution, result, UserManagement.getCurrentUser()));
   }
 
   public Result exercise(String scenarioName, String exerciseType, int exerciseId) {

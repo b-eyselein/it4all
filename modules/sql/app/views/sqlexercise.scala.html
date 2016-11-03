@@ -71,27 +71,29 @@ function testSolution() {
 
   <div class="row">
     <div class="col-md-4">
-      <div class="panel panel-default">
-        <div class="panel-heading">Aufgabe @exercise.key.id</div>
-        <div class="panel-body">
-          <p>@exercise.text</p>
-          <div class="form-group"><label for="feedbackLevel">Gew&uuml;nschtes Feedback Level:</label>
-            <select name="feedbackLevel" id="feedbackLevel" class="form-control">
-            @for(feedbackLevel <- model.exercise.FeedbackLevel.values()) {
-            	<option value="@feedbackLevel" @if(feedbackLevel == model.exercise.FeedbackLevel.FULL_FEEDBACK) {selected}>
-              @feedbackLevel.getDescription()</option>
-            }
-            </select>
+      <form action="@sql.routes.SQL.commit(exercise.key.scenarioName, exercise.key.exercisetype.toString(), exercise.key.id)" method="post" onsubmit="prepareFormForSubmitting();">
+        <div class="panel panel-default">
+          <div class="panel-heading">Aufgabe @exercise.key.id</div>
+          <div class="panel-body">
+            <p>@exercise.text</p>
+            <div class="form-group"><label for="feedbackLevel">Gew&uuml;nschtes Feedback Level:</label>
+              <select name="feedbackLevel" id="feedbackLevel" class="form-control">
+              @for(feedbackLevel <- model.exercise.FeedbackLevel.values()) {
+              	<option value="@feedbackLevel" @if(feedbackLevel == model.exercise.FeedbackLevel.FULL_FEEDBACK) {selected}>
+                @feedbackLevel.getDescription()</option>
+              }
+              </select>
+            </div>
+          </div>
+          <div class="panel-footer">
+            <button type="button" class="btn btn-default btn-block" onclick="testSolution();">L&ouml;sung testen</button>
+            <input type="submit" class="btn btn-default btn-block" value="L&ouml;sung abgeben">
           </div>
         </div>
-        <div class="panel-footer">
-          <button type="button" class="btn btn-default btn-block" onclick="testSolution();">L&ouml;sung testen</button>
-          <input type="submit" class="btn btn-default btn-block disabled" disabled id="commit"
-            title="Noch nicht m&ouml;glich. Testen Sie ihre L&ouml;sung erst." value="L&ouml;sung abgeben">
-        </div>
-      </div>
       
-      @editor("", "sql", 10 ,15, false)
+        @editor("", "sql", 10 ,15, false)
+        <textarea hidden name="editorContent" id="editorContent"></textarea>
+      </form>
     </div>
     <div class="col-md-8">
       <div id="resultPanel" class="panel panel-default">
