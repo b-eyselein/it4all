@@ -43,7 +43,7 @@ public class SQL extends ExerciseController {
 
   private static final String SHOW_ALL_TABLES = "SHOW TABLES";
 
-  private static final String SELECT_ALL = "SELECT * FROM ?";
+  private static final String SELECT_ALL = "SELECT * FROM ";
 
   private Database sqlSelect;
 
@@ -128,8 +128,7 @@ public class SQL extends ExerciseController {
   }
 
   private SqlQueryResult readTableContent(Connection connection, String tableName) {
-    try(PreparedStatement selectStatement = connection.prepareStatement(SELECT_ALL);) {
-      selectStatement.setString(1, tableName);
+    try(PreparedStatement selectStatement = connection.prepareStatement(SELECT_ALL + tableName);) {
       ResultSet tableResult = selectStatement.executeQuery();
       return new SqlQueryResult(tableResult, tableName);
     } catch (SQLException e) {
