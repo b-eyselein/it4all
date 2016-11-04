@@ -20,7 +20,6 @@ import model.exercise.Success;
 import model.html.HtmlExercise;
 import model.html.result.AttributeResult;
 import model.html.result.ChildResult;
-import model.html.result.ElementResult;
 
 @MappedSuperclass
 public abstract class Task {
@@ -55,7 +54,7 @@ public abstract class Task {
     return results.stream().mapToInt(result -> result.getSuccess() == Success.COMPLETE ? 0 : 1).sum() == 0;
   }
   
-  public abstract ElementResult evaluate(SearchContext context);
+  public abstract EvaluationResult evaluate(SearchContext context);
   
   public String getDescription() {
     return text;

@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import model.html.task.ChildTask;
 import model.html.task.CssTask;
 import model.html.task.HtmlTask;
+import model.html.task.Task;
 import model.html.task.TaskKey;
 import play.Logger;
 import play.libs.Json;
@@ -61,7 +62,7 @@ public class ExerciseReader {
     for(final Iterator<JsonNode> attributeNodesIter = attributesNode.elements(); attributeNodesIter.hasNext();)
       attributes.add(readAttribute(attributeNodesIter.next()));
 
-    return String.join("#", attributes);
+    return String.join(Task.MULTIPLE_ATTRIBUTES_SPLIT_CHARACTER, attributes);
   }
 
   private static List<ChildTask> readChildTasks(JsonNode childTasksNode) {

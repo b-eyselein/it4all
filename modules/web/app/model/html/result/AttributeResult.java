@@ -8,16 +8,16 @@ import model.exercise.Success;
 import play.Logger;
 
 public class AttributeResult extends EvaluationResult {
-  
+
   private String key;
   private String value;
-  
+
   public AttributeResult(String attributeKey, String attributeValue) {
     super(FeedbackLevel.MEDIUM_FEEDBACK, Success.NONE);
     key = attributeKey;
     value = attributeValue;
   }
-  
+
   public void evaluate(WebElement element) {
     String foundValue = null;
     try {
@@ -34,7 +34,7 @@ public class AttributeResult extends EvaluationResult {
     else
       success = Success.PARTIALLY;
   }
-  
+
   @Override
   public String getAsHtml() {
     // FIXME: implement feedbackLevel!
@@ -42,19 +42,19 @@ public class AttributeResult extends EvaluationResult {
     if(success == Success.COMPLETE)
       ret += " hat den gesuchten Wert.";
     else if(success == Success.PARTIALLY)
-      ret += " hat nicht den gesuchten Wert!";
+      ret += " hat nicht den gesuchten Wert \"" + value + "\"!";
     else if(success == Success.NONE)
       ret += " konnte nicht gefunden werden!";
     ret += DIV_END;
     return ret;
   }
-  
+
   public String getKey() {
     return key;
   }
-  
+
   public String getValue() {
     return value;
   }
-  
+
 }
