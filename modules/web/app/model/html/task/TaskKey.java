@@ -31,4 +31,5 @@ public class TaskKey implements Serializable {
   public int hashCode() {
     return 1000 * exerciseId + taskId;
   }
+  
 }

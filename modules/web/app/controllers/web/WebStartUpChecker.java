@@ -65,7 +65,7 @@ public class WebStartUpChecker extends StartUpChecker {
       theLogger.error("\t- No exercises found for Html!");
     else
       for(HtmlExercise exercise: exercises)
-        if(exercise.tasks.isEmpty())
+        if(exercise.htmlTasks.isEmpty())
           theLogger.error("\t- Html-Aufgabe " + exercise.id + " hat keine Tasks!");
         
     // Js - normal exercises

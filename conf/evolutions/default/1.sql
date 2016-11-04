@@ -24,19 +24,10 @@ create table conditions (
 create table css_task (
   task_id                       integer not null,
   exercise_id                   integer not null,
-  taskdesc                      text,
-  xpath_query_name              varchar(255),
-  defining_attribute            varchar(255),
+  text                          text,
+  xpath_query                   varchar(255),
   attributes                    varchar(255),
   constraint pk_css_task primary key (task_id,exercise_id)
-);
-
-create table exercise (
-  type                          varchar(10) not null,
-  id                            integer auto_increment not null,
-  title                         varchar(255),
-  exercisetext                  text,
-  constraint pk_exercise primary key (id)
 );
 
 create table feedback (
@@ -69,12 +60,18 @@ create table grading (
   constraint pk_grading primary key (user_name,exercise_id)
 );
 
+create table html_exercise (
+  id                            integer auto_increment not null,
+  text                          text,
+  title                         varchar(255),
+  constraint pk_html_exercise primary key (id)
+);
+
 create table html_task (
   task_id                       integer not null,
   exercise_id                   integer not null,
-  taskdesc                      text,
-  xpath_query_name              varchar(255),
-  defining_attribute            varchar(255),
+  text                          text,
+  xpath_query                   varchar(255),
   attributes                    varchar(255),
   constraint pk_html_task primary key (task_id,exercise_id)
 );
@@ -175,16 +172,13 @@ create index ix_conditions_pre_id on conditions (pre_id);
 alter table conditions add constraint fk_conditions_post_id foreign key (post_id) references js_web_test (id) on delete restrict on update restrict;
 create index ix_conditions_post_id on conditions (post_id);
 
-alter table css_task add constraint fk_css_task_exercise_id foreign key (exercise_id) references exercise (id) on delete restrict on update restrict;
+alter table css_task add constraint fk_css_task_exercise_id foreign key (exercise_id) references html_exercise (id) on delete restrict on update restrict;
 create index ix_css_task_exercise_id on css_task (exercise_id);
 
 alter table grading add constraint fk_grading_user_name foreign key (user_name) references users (name) on delete restrict on update restrict;
 create index ix_grading_user_name on grading (user_name);
 
-alter table grading add constraint fk_grading_exercise_id foreign key (exercise_id) references exercise (id) on delete restrict on update restrict;
-create index ix_grading_exercise_id on grading (exercise_id);
-
-alter table html_task add constraint fk_html_task_exercise_id foreign key (exercise_id) references exercise (id) on delete restrict on update restrict;
+alter table html_task add constraint fk_html_task_exercise_id foreign key (exercise_id) references html_exercise (id) on delete restrict on update restrict;
 create index ix_html_task_exercise_id on html_task (exercise_id);
 
 alter table js_test add constraint fk_js_test_exercise_id foreign key (exercise_id) references js_exercise (id) on delete restrict on update restrict;
@@ -214,9 +208,6 @@ drop index ix_css_task_exercise_id on css_task;
 alter table grading drop foreign key fk_grading_user_name;
 drop index ix_grading_user_name on grading;
 
-alter table grading drop foreign key fk_grading_exercise_id;
-drop index ix_grading_exercise_id on grading;
-
 alter table html_task drop foreign key fk_html_task_exercise_id;
 drop index ix_html_task_exercise_id on html_task;
 
@@ -235,11 +226,11 @@ drop table if exists conditions;
 
 drop table if exists css_task;
 
-drop table if exists exercise;
-
 drop table if exists feedback;
 
 drop table if exists grading;
+
+drop table if exists html_exercise;
 
 drop table if exists html_task;
 

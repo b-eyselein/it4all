@@ -18,7 +18,7 @@ window.onload = updatePreview;
           <div class="panel panel-default">
             <div class="panel-heading">Aufgabenstellung</div>
             <div class="panel-body">
-            @for(exerText <- exercise.exerciseText.split("\n")) {<div>@exerText</div>
+            @for(exerText <- exercise.text.split("\n")) {<p>@exerText</p>
             }
             </div>
             <div class="panel-footer">
@@ -41,12 +41,12 @@ window.onload = updatePreview;
             <div class="panel-heading">Teilaufgaben und Korrektur</div>
             <div class="panel-body" id="correction">
             @if(exType.equals("html")) {
-              @for(task <- exercise.tasks) {
-              <div class="well">@{task.getId()}. @task.taskDescription</div>
+              @for(task <- exercise.htmlTasks) {
+              <div class="well">@{task.getId()}. @task.text</div>
               }
             } else {
               @for(task <- exercise.cssTasks) {
-              <div class="well">@{task.getId()}. @task.taskDescription</div>
+              <div class="well">@{task.getId()}. @task.text</div>
               }
             }
             </div>

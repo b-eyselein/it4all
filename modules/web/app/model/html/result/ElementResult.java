@@ -26,7 +26,7 @@ public class ElementResult extends EvaluationResult {
     StringBuilder builder = new StringBuilder();
     builder.append("<div class=\"panel panel-" + getBSClass() + "\">");
     builder.append("<div class=\"panel-heading\" data-toggle=\"collapse\" href=\"#task" + task.key.taskId + "\">"
-        + task.key.taskId + ". " + task.taskDescription + DIV_END);
+        + task.key.taskId + ". " + task.text + DIV_END);
     
     builder.append("<div id=\"task" + task.key.taskId + "\" class=\"panel-collapse collapse "
         + (success == Success.COMPLETE ? "" : "in") + "\">");

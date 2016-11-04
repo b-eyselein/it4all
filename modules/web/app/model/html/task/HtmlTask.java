@@ -14,6 +14,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
 
+import com.avaje.ebean.Finder;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -24,20 +25,25 @@ import model.html.result.ElementResult;
 
 @Entity
 public class HtmlTask extends Task {
-  
+
   private static Pattern pattern = Pattern.compile("//?[a-zA-Z]+/");
-  
+
+  public static final Finder<TaskKey, HtmlTask> finder = new Finder<>(HtmlTask.class);
+
   @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
   @JsonManagedReference
   @JsonIgnore
   public List<ChildTask> childTasks;
-  
+
+  public HtmlTask(TaskKey theKey) {
+    super(theKey);
+  }
+
   @Override
   public ElementResult evaluate(SearchContext searchContext) {
     // FIXME: refactor complete method!
-    String xpathQuery = buildXPathQuery();
     List<WebElement> foundElements = searchContext.findElements(By.xpath(xpathQuery));
-    
+
     Matcher m = pattern.matcher(xpathQuery);
     List<String> parentsMissing = new LinkedList<>();
     while(foundElements.isEmpty() && m.find()) {
@@ -46,56 +52,50 @@ public class HtmlTask extends Task {
       while(parentMissing.startsWith("/"))
         parentMissing = parentMissing.substring(1);
       parentsMissing.add(parentMissing);
-      
+
       // Try to find element without parent element
       xpathQuery = xpathQuery.substring(m.end() - 1);
       foundElements = searchContext.findElements(By.xpath(xpathQuery));
-      
+
       // update Matcher with new, shorter string
       m = pattern.matcher(xpathQuery);
     }
-    
+
     if(foundElements.isEmpty() || foundElements.size() > 1)
       return new ElementResult(this, Success.NONE);
-    
+
     // Nur noch ein passendes Element
     WebElement foundElement = foundElements.get(0);
-    
+
     List<ChildResult> evaluatedChildResults = evaluateAllChildResults(foundElement);
     List<AttributeResult> evaluatedAttributeResults = evaluateAllAttributeResults(foundElement);
-    
+
     Success success = Success.PARTIALLY;
     if(allResultsSuccessful(evaluatedAttributeResults) && allResultsSuccessful(evaluatedChildResults)
         && parentsMissing.isEmpty())
       success = Success.COMPLETE;
-    
+
     ElementResult result = new ElementResult(this, success);
-    
+
     result.withAttributeResults(evaluatedAttributeResults);
     result.withChildResults(evaluatedChildResults);
-    
+
     if(!parentsMissing.isEmpty())
       result.withParentsMissing(parentsMissing);
-    
+
     return result;
   }
-  
+
   @Override
-  protected String buildXPathQuery() {
-    String xpathQuery = xpathQueryName;
-    
-    // Kein Attribut, wenn Tag eindeutig
-    if(definingAttribute == null || definingAttribute.isEmpty())
-      return xpathQuery;
-    
-    String[] valueAndKey = definingAttribute.split(KEY_VALUE_CHARACTER);
-    xpathQuery += "[@" + valueAndKey[0] + " = '" + valueAndKey[1] + "']";
-    return xpathQuery;
+  public String toString() {
+    // TODO: implement
+    return "(" + key.exerciseId + ", " + key.taskId + "): " + xpathQuery + " :: " + text + " :: "
+        + (attributes.isEmpty() ? " -- " : attributes);
   }
-  
+
   @Override
   protected List<ChildResult> getChildResults() {
     return childTasks.stream().map(childTask -> childTask.getChildResult()).collect(Collectors.toList());
   }
-  
+
 }

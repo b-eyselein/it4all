@@ -40,7 +40,7 @@ public class HtmlCorrector {
     List<? extends Task> tasks = Collections.emptyList();
 
     if("html".equals(type))
-      tasks = exercise.tasks;
+      tasks = exercise.htmlTasks;
     else if("css".equals(type))
       tasks = exercise.cssTasks;
     return tasks;

@@ -1,0 +1,143 @@
+{
+	"1": {
+		"title": "Listen in HTML", 
+		"text": "Erstellen Sie eine Liste in HTML, die die die Autohersteller Audi, BMW und Mercedes-Benz und Volkswagen enthält. Achten Sie dabei für die Korrektur auf eine korrekte Schreibweise der einzelnen Hersteller!", 
+		"tasks": [
+			{
+				"text": "Erstellen Sie eine passende h1-Überschrift, die das Wort \"Autohersteller\" enthält.", 
+				"xpath": "/html/body//h1[text()[contains(., 'Autohersteller')]]", 
+				"attributes": [
+					
+				], 
+				"childtasks": [
+					
+				]
+			}, 
+			{
+				"text": "Erstellen Sie eine ungeordnete Liste auf der Seite, die dann die einzelnen Hersteller enthalten wird.", 
+				"xpath": "/html/body//ul", 
+				"attributes": [
+					
+				], 
+				"childtasks": [
+					
+				]
+			}, 
+			{
+				"text": "Erstellen Sie das Listenelement für Audi.", 
+				"xpath": "/html/body//ul/li[text()[contains(., 'Audi')]]", 
+				"attributes": [
+					
+				], 
+				"childtasks": [
+					
+				]
+			}, 
+			{
+				"text": "Erstellen Sie das Listenelement für BMW.", 
+				"xpath": "/html/body//ul/li[text()[contains(., 'BMW')]]", 
+				"attributes": [
+					
+				], 
+				"childtasks": [
+					
+				]
+			}, 
+			{
+				"text": "Erstellen Sie das Listenelement für Mercedes-Benz.", 
+				"xpath": "/html/body//ul/li[text()[contains(., 'Mercedes-Benz')]]", 
+				"attributes": [
+					
+				], 
+				"childtasks": [
+					
+				]
+			}, 
+			{
+				"text": "Erstellen Sie das Listenelement für Volkswagen.", 
+				"xpath": "/html/body//ul/li[text()[contains(., 'Volkswagen')]]", 
+				"attributes": [
+					
+				], 
+				"childtasks": [
+					
+				]
+			}
+		], 
+		"cssTasks": [
+			{
+				"text": "Binden Sie Bootstrap über folgenden Link ein: \"<link rel=\"stylesheet\" href=\"/assets/stylesheets/bootstrap.css\">\"", 
+				"xpath": "/html/head//link", 
+				"attributes": [
+					{
+						"key": "rel", 
+						"value": "stylesheet"
+					}, 
+					{
+						"key": "href", 
+						"value": "/assets/stylesheets/bootstrap.css"
+					}
+				]
+			}, 
+			{
+				"text": "Geben Sie der Liste die Klasse \"list-group\".", 
+				"xpath": "/html/body//ul", 
+				"attributes": [
+					{
+						"key": "class", 
+						"value": "list-group"
+					}
+				]
+			}
+		]
+	}, 
+	"3": {
+		"title": "Hyperlinks und Bilder in HTML", 
+		"text": "Erstellen Sie ein Bild in HTML, das gleichzeitig ein Link ist.", 
+		"tasks": [
+			{
+				"text": "Erstellen Sie eine passende h1-Überschrift, die \"Ford Mustang\" enthält.", 
+				"xpath": "/html/body//h1[text()[contains(., 'Ford Mustang')]]", 
+				"attributes": [
+					
+				], 
+				"childtasks": [
+					
+				]
+			}, 
+			{
+				"text": "Erstellen Sie den Link auf der Seite, der auf Wikipedia verweist. Geben Sie als Ziel die URL 'https://de.wikipedia.org/wiki/Ford_Mustang' an.", 
+				"xpath": "/html/body//a", 
+				"attributes": [
+					{
+						"key": "href", 
+						"value": "https://de.wikipedia.org/wiki/Ford_Mustang"
+					}
+				], 
+				"childtasks": [
+					
+				]
+			}, 
+			{
+				"text": "Erstellen Sie im Link das Bild des Ford Mustang. Geben Sie als Quelle des Bildes die URL 'https://upload.wikimedia.org/wikipedia/commons/2/2d/1964_12_Ford_Mustang.jpg' und als alternative Beschreibung 'Ford Mustang' an.", 
+				"xpath": "/html/body//a/img", 
+				"attributes": [
+					{
+						"key": "src", 
+						"value": "https://upload.wikimedia.org/wikipedia/commons/2/2d/1964_12_Ford_Mustang.jpg"
+					}, 
+					{
+						"key": "alt", 
+						"value": "Ford Mustang"
+					}
+				], 
+				"childtasks": [
+					
+				]
+			}
+		], 
+		"cssTasks": [
+			
+		]
+	}
+}

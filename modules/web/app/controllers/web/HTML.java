@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
@@ -15,7 +16,7 @@ import controllers.core.UserManagement;
 import model.Secured;
 import model.Util;
 import model.exercise.EvaluationResult;
-import model.exercise.Grading;
+import model.html.ExerciseReader;
 import model.html.HtmlCorrector;
 import model.html.HtmlExercise;
 import model.user.User;
@@ -30,7 +31,6 @@ import views.html.error;
 import views.html.playground;
 import views.html.html.html;
 import views.html.correction;
-import views.html.html.htmlcorrect;
 import views.html.html.htmloverview;
 
 @Security.Authenticated(Secured.class)
@@ -45,6 +45,8 @@ public class HTML extends ExerciseController {
       + "<script type=\"text/javascript\">\n// Javascript-Code\n\n</script>\n"
       + "</head>\n<body>\n  <!-- Html-Elemente -->\n  \n</body>\n</html>";
 
+  private static final String EXERCISE_FOLDER = "conf/resources/html";
+  
   @SuppressWarnings("unused")
   private WebStartUpChecker checker;
 
@@ -52,6 +54,12 @@ public class HTML extends ExerciseController {
   public HTML(Util theUtil, FormFactory theFactory, WebStartUpChecker theChecker) {
     super(theUtil, theFactory);
     checker = theChecker;
+    
+    Path jsonFile = Paths.get(EXERCISE_FOLDER, "exercises.json");
+    List<HtmlExercise> exercises = ExerciseReader.readExercises(jsonFile);
+
+    for(HtmlExercise ex: exercises)
+      ex.save();
   }
 
   public Result commit(int exerciseId, String type) {
@@ -96,10 +104,13 @@ public class HTML extends ExerciseController {
       return badRequest(
           error.render(user, new Html("<p>Diese Aufgabe existert leider nicht.</p><p>Zur&uuml;ck zur <a href=\""
               + routes.HTML.index() + "\">Startseite</a>.</p>")));
-
-    if("css".equals(type) && !Grading.otherPartCompleted(exerciseId, user))
-      return badRequest(error.render(user, new Html("Bearbeiten Sie zuerst den <a href=\""
-          + routes.HTML.exercise(exerciseId, "html") + "\">Html-Teil der Aufgabe</a> komplett!")));
+      
+    // FIXME: find other way to test!
+    // if("css".equals(type) && !Grading.otherPartCompleted(exerciseId, user))
+    // return badRequest(error.render(user, new Html("Bearbeiten Sie zuerst den
+    // <a href=\""
+    // + routes.HTML.exercise(exerciseId, "html") + "\">Html-Teil der
+    // Aufgabe</a> komplett!")));
 
     String defaultOrOldSolution = loadDefaultOrOldSolution(exerciseId, user);
 
