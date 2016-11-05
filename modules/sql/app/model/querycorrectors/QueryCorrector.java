@@ -7,7 +7,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -48,23 +47,24 @@ public abstract class QueryCorrector<Q extends Statement, C> {
   
   public List<EvaluationResult> correct(Database database, String userStatement, String sampleStatement,
       SqlExercise exercise, FeedbackLevel fbLevel) {
+    List<EvaluationResult> ret = new LinkedList<>();
     Q parsedUserStatement;
     Q parsedSampleStatement;
     try {
       parsedUserStatement = parseStatement(userStatement);
       parsedSampleStatement = parseStatement(sampleStatement);
     } catch (SqlCorrectionException e) { // NOSONAR
-      return Arrays.asList(new EvaluationFailed(e.getMessage(), e.getCauseMessage()));
+      ret.add(new EvaluationFailed(e.getMessage(), e.getCauseMessage()));
+      return ret;
     }
-    
+
     List<EvaluationResult> staticComps = compareStatically(parsedUserStatement, parsedSampleStatement, fbLevel);
     EvaluationResult executionResult = executeQuery(database, parsedUserStatement, parsedSampleStatement, exercise,
         fbLevel);
-    
-    List<EvaluationResult> ret = new LinkedList<>();
+
     ret.addAll(staticComps);
     ret.add(executionResult);
-    
+
     return ret;
   }
   
@@ -78,8 +78,8 @@ public abstract class QueryCorrector<Q extends Statement, C> {
   
   protected abstract ColumnComparison compareColumns(C userQuery, C sampleQuery);
   
-  protected abstract List<EvaluationResult> compareStatically(Q parsedUserStatement,
-      Q parsedSampleStatement, FeedbackLevel feedbackLevel);
+  protected abstract List<EvaluationResult> compareStatically(Q parsedUserStatement, Q parsedSampleStatement,
+      FeedbackLevel feedbackLevel);
   
   protected TableComparison compareTables(C userQuery, C sampleQuery) {
     List<String> userTableNames = getTables(userQuery);
@@ -126,8 +126,8 @@ public abstract class QueryCorrector<Q extends Statement, C> {
     }
   }
   
-  protected abstract EvaluationResult executeQuery(Database database, Q userStatement,
-      Q sampleStatement, SqlExercise exercise, FeedbackLevel feedbackLevel);
+  protected abstract EvaluationResult executeQuery(Database database, Q userStatement, Q sampleStatement,
+      SqlExercise exercise, FeedbackLevel feedbackLevel);
   
   protected abstract List<String> getTables(C userQuery);
   

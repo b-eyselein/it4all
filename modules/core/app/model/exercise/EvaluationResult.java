@@ -1,9 +1,11 @@
 package model.exercise;
 
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 public abstract class EvaluationResult {
-
+  
   protected static final String DIV_END = "</div>";
   
   protected FeedbackLevel minimalFL;
@@ -11,10 +13,14 @@ public abstract class EvaluationResult {
   protected FeedbackLevel requestedFL;
   
   protected Success success = Success.NONE;
-
-  public EvaluationResult(FeedbackLevel theMinimalFL, Success theSuccess) {
+  
+  // FIXME: implement feedbackLevel!
+  protected List<String> messages = new LinkedList<>();
+  
+  public EvaluationResult(FeedbackLevel theMinimalFL, Success theSuccess, String... theMessages) {
     minimalFL = theMinimalFL;
     success = theSuccess;
+    Collections.addAll(messages, theMessages);
   }
   
   protected static String concatCodeElements(List<String> elements) {

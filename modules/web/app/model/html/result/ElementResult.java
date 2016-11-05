@@ -15,8 +15,8 @@ public class ElementResult extends EvaluationResult {
   private List<ChildResult> childResults = Collections.emptyList();
   private List<String> parentsMissing;
 
-  public ElementResult(Task theTask, Success theSuccess) {
-    super(FeedbackLevel.MINIMAL_FEEDBACK, theSuccess);
+  public ElementResult(Task theTask, Success theSuccess, String... theMessages) {
+    super(FeedbackLevel.MINIMAL_FEEDBACK, theSuccess, theMessages);
     task = theTask;
   }
 
@@ -27,33 +27,36 @@ public class ElementResult extends EvaluationResult {
     builder.append("<div class=\"panel panel-" + getBSClass() + "\">");
     builder.append("<div class=\"panel-heading\" data-toggle=\"collapse\" href=\"#task" + task.key.taskId + "\">"
         + task.key.taskId + ". " + task.text + DIV_END);
-
+    
     builder.append("<div id=\"task" + task.key.taskId + "\" class=\"panel-collapse collapse "
         + (success == Success.COMPLETE ? "" : "in") + "\">");
     builder.append("<div class=\"panel-body\">");
-
+    
     // has element been found
     if(success == Success.COMPLETE || success == Success.PARTIALLY)
       builder.append("<div class=\"alert alert-success\">Element wurde gefunden!</div>");
     else
-      builder.append("<div class=\"alert alert-danger\">Element konnte nicht gefunden werden!</div>");
-
+      // FIXME: join differently!
+      builder.append("<div class=\"alert alert-danger\">" + String.join(", ", messages) + "</div>");
+  
     // Parent elements
     if(parentsMissing != null)
       builder
           .append("<div class=\"alert alert-danger\">Element hat nicht die richtigen Elternelemente. Folgende fehlen: "
               + String.join(", ", parentsMissing) + DIV_END);
-
+    
     // Attribute Results
     for(AttributeResult attResult: attributeResults)
       builder.append(attResult.getAsHtml());
-
+    
     // Child Results
     for(ChildResult childRes: childResults)
       builder.append(childRes.getAsHtml());
-
+    
     builder.append(DIV_END + DIV_END + DIV_END);
-
+    
+    System.out.println(builder.toString());
+    
     return builder.toString();
   }
 
