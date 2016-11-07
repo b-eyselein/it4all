@@ -58,7 +58,8 @@ public abstract class Matcher<T, U extends Match<T>> {
     Iterator<T> iter2 = secondCollection.iterator();
 
     while(iter1.hasNext() && iter2.hasNext()) {
-      T arg1 = iter1.next(), arg2 = iter2.next();
+      T arg1 = iter1.next();
+      T arg2 = iter2.next();
       matches.add(matchedAction.apply(arg1, arg2));
       iter1.remove();
       iter2.remove();
