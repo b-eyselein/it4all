@@ -1,6 +1,5 @@
 package model.html.task;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -14,7 +13,6 @@ import com.avaje.ebean.Finder;
 import model.exercise.EvaluationResult;
 import model.exercise.Success;
 import model.html.result.AttributeResult;
-import model.html.result.ChildResult;
 import model.html.result.ElementResult;
 
 @Entity
@@ -48,11 +46,6 @@ public class CssTask extends Task {
 
     return new ElementResult(this, success).withAttributeResults(evaluatedAttributeResults);
 
-  }
-
-  @Override
-  protected List<ChildResult> getChildResults() {
-    return Collections.emptyList();
   }
 
 }

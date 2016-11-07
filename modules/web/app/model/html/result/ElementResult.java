@@ -12,7 +12,6 @@ public class ElementResult extends EvaluationResult {
 
   private Task task;
   private List<AttributeResult> attributeResults = Collections.emptyList();
-  private List<ChildResult> childResults = Collections.emptyList();
   private List<String> parentsMissing;
 
   public ElementResult(Task theTask, Success theSuccess, String... theMessages) {
@@ -49,23 +48,13 @@ public class ElementResult extends EvaluationResult {
     for(AttributeResult attResult: attributeResults)
       builder.append(attResult.getAsHtml());
     
-    // Child Results
-    for(ChildResult childRes: childResults)
-      builder.append(childRes.getAsHtml());
-    
     builder.append(DIV_END + DIV_END + DIV_END);
-    
-    System.out.println(builder.toString());
     
     return builder.toString();
   }
 
   public List<AttributeResult> getAttributeResults() {
     return attributeResults;
-  }
-
-  public List<ChildResult> getChildResults() {
-    return childResults;
   }
 
   public List<String> getParentsMissing() {
@@ -78,11 +67,6 @@ public class ElementResult extends EvaluationResult {
 
   public ElementResult withAttributeResults(List<AttributeResult> theAttributeResults) {
     attributeResults = theAttributeResults;
-    return this;
-  }
-
-  public ElementResult withChildResults(List<ChildResult> theChildResults) {
-    childResults = theChildResults;
     return this;
   }
 

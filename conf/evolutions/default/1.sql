@@ -3,15 +3,6 @@
 
 # --- !Ups
 
-create table childtask (
-  id                            integer not null,
-  task_id                       integer not null,
-  exercise_id                   integer,
-  tagname                       varchar(255),
-  defining_attribute            varchar(255),
-  constraint pk_childtask primary key (id,task_id)
-);
-
 create table conditions (
   id                            integer auto_increment not null,
   pre_id                        integer,
@@ -163,9 +154,6 @@ create table xmlexercise (
   constraint pk_xmlexercise primary key (id)
 );
 
-alter table childtask add constraint fk_childtask_task foreign key (task_id,exercise_id) references html_task (task_id,exercise_id) on delete restrict on update restrict;
-create index ix_childtask_task on childtask (task_id,exercise_id);
-
 alter table conditions add constraint fk_conditions_pre_id foreign key (pre_id) references js_web_test (id) on delete restrict on update restrict;
 create index ix_conditions_pre_id on conditions (pre_id);
 
@@ -193,9 +181,6 @@ create index ix_sql_exercise_scenario_name on sql_exercise (scenario_name);
 
 # --- !Downs
 
-alter table childtask drop foreign key fk_childtask_task;
-drop index ix_childtask_task on childtask;
-
 alter table conditions drop foreign key fk_conditions_pre_id;
 drop index ix_conditions_pre_id on conditions;
 
@@ -219,8 +204,6 @@ drop index ix_js_web_test_exercise_id on js_web_test;
 
 alter table sql_exercise drop foreign key fk_sql_exercise_scenario_name;
 drop index ix_sql_exercise_scenario_name on sql_exercise;
-
-drop table if exists childtask;
 
 drop table if exists conditions;
 

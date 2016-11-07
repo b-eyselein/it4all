@@ -10,7 +10,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import model.html.task.ChildTask;
 import model.html.task.CssTask;
 import model.html.task.HtmlTask;
 import model.html.task.Task;
@@ -65,12 +64,6 @@ public class ExerciseReader {
     return String.join(Task.MULTIPLE_ATTRIBUTES_SPLIT_CHARACTER, attributes);
   }
 
-  private static List<ChildTask> readChildTasks(JsonNode childTasksNode) {
-    // TODO Auto-generated method stub
-    List<ChildTask> tasks = new LinkedList<>();
-    return tasks;
-  }
-
   private static CssTask readCssTask(TaskKey taskKey, JsonNode cssTaskNode) {
     JsonNode textNode = cssTaskNode.get("text");
     JsonNode xpathNode = cssTaskNode.get("xpath");
@@ -121,7 +114,6 @@ public class ExerciseReader {
     JsonNode textNode = htmlTaskNode.get("text");
     JsonNode xpathNode = htmlTaskNode.get("xpath");
     JsonNode attributesNode = htmlTaskNode.get("attributes");
-    JsonNode childTasksNode = htmlTaskNode.get("childtasks");
 
     HtmlTask task = HtmlTask.finder.byId(key);
     if(task == null)
@@ -129,7 +121,6 @@ public class ExerciseReader {
 
     task.text = textNode.asText();
     task.xpathQuery = xpathNode.asText();
-    task.childTasks = readChildTasks(childTasksNode);
     task.attributes = readAttributes(attributesNode);
     return task;
   }

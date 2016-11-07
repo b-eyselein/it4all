@@ -8,18 +8,12 @@
 				"xpath": "/html/body//h1[text()[contains(., 'Autohersteller')]]", 
 				"attributes": [
 					
-				], 
-				"childtasks": [
-					
 				]
 			}, 
 			{
 				"text": "Erstellen Sie eine ungeordnete Liste auf der Seite, die dann die einzelnen Hersteller enthalten wird.", 
 				"xpath": "/html/body//ul", 
 				"attributes": [
-					
-				], 
-				"childtasks": [
 					
 				]
 			}, 
@@ -28,18 +22,12 @@
 				"xpath": "/html/body//ul/li[text()[contains(., 'Audi')]]", 
 				"attributes": [
 					
-				], 
-				"childtasks": [
-					
 				]
 			}, 
 			{
 				"text": "Erstellen Sie das Listenelement für BMW.", 
 				"xpath": "/html/body//ul/li[text()[contains(., 'BMW')]]", 
 				"attributes": [
-					
-				], 
-				"childtasks": [
 					
 				]
 			}, 
@@ -48,9 +36,6 @@
 				"xpath": "/html/body//ul/li[text()[contains(., 'Mercedes-Benz')]]", 
 				"attributes": [
 					
-				], 
-				"childtasks": [
-					
 				]
 			}, 
 			{
@@ -58,15 +43,12 @@
 				"xpath": "/html/body//ul/li[text()[contains(., 'Volkswagen')]]", 
 				"attributes": [
 					
-				], 
-				"childtasks": [
-					
 				]
 			}
 		], 
 		"cssTasks": [
 			{
-				"text": "Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL \"/assets/stylesheets/bootstrap.css\" zu finden.", 
+				"text": "Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL \"/assets/stylesheets/bootstrap.css\" zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut \"rel\"", 
 				"xpath": "/html/head//link", 
 				"attributes": [
 					{
@@ -140,9 +122,6 @@
 				"xpath": "/html/body//h1[text()[contains(., 'Ford Mustang')]]", 
 				"attributes": [
 					
-				], 
-				"childtasks": [
-					
 				]
 			}, 
 			{
@@ -153,13 +132,10 @@
 						"key": "href", 
 						"value": "https://de.wikipedia.org/wiki/Ford_Mustang"
 					}
-				], 
-				"childtasks": [
-					
 				]
 			}, 
 			{
-				"text": "Erstellen Sie im Link das Bild des Ford Mustang. Geben Sie als Quelle des Bildes die URL 'https://upload.wikimedia.org/wikipedia/commons/2/2d/1964_12_Ford_Mustang.jpg' und als alternative Beschreibung 'Ford Mustang' an.", 
+				"text": "Erstellen Sie im Link das Bild des Ford Mustang. Geben Sie als Quelle des Bildes die URL 'https://upload.wikimedia.org/wikipedia/commons/2/2d/1964_12_Ford_Mustang.jpg' und als alternative Beschreibung 'Ford Mustang' an. Geben Sie außerdem eine Breite von 250 und eine Höhe von 188 an, um das Bild zu skalieren.", 
 				"xpath": "/html/body//a/img", 
 				"attributes": [
 					{
@@ -169,15 +145,43 @@
 					{
 						"key": "alt", 
 						"value": "Ford Mustang"
+					}, 
+					{
+						"key": "width", 
+						"value": "250"
+					}, 
+					{
+						"key": "height", 
+						"value": "188"
 					}
-				], 
-				"childtasks": [
-					
 				]
 			}
 		], 
 		"cssTasks": [
-			
+			{
+				"text": "Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL \"/assets/stylesheets/bootstrap.css\" zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut \"rel\"", 
+				"xpath": "/html/head//link", 
+				"attributes": [
+					{
+						"key": "rel", 
+						"value": "stylesheet"
+					}, 
+					{
+						"key": "href", 
+						"value": "/assets/stylesheets/bootstrap.css"
+					}
+				]
+			}, 
+			{
+				"text": "Geben Sie dem Bild die Klasse \"img-rounded\".", 
+				"xpath": "/html/body//a/img", 
+				"attributes": [
+					{
+						"key": "class", 
+						"value": "img-rounded"
+					}
+				]
+			}
 		]
 	}
 }
