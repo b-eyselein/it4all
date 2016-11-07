@@ -62,8 +62,6 @@ delete from conditions;
 delete from js_web_exercise;
 
 
-delete from childtask;
-
 delete from css_task;
 
 delete from html_task;
