@@ -4,17 +4,20 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
-import javax.inject.Inject;
+import javax.inject.Inject; 
 
 import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
 import model.Util;
+import model.UmlExercise;
 import play.Logger;
 import play.data.FormFactory;
 import play.mvc.Result;
 import views.html.classselection;
 import views.html.diagramdrawing;
+import views.html.umloverview;
 
 public class UML extends ExerciseController {
   
@@ -43,7 +46,7 @@ public class UML extends ExerciseController {
   }
   
   public Result index() {
-    return ok("TODO!");
+    return ok(umloverview.render(Arrays.asList(new UmlExercise()),UserManagement.getCurrentUser()));
   }
   
 }
