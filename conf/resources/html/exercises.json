@@ -1,187 +1,251 @@
-{
-	"1": {
-		"title": "Listen in HTML", 
-		"text": "Erstellen Sie eine Liste in HTML, die die die Autohersteller Audi, BMW und Mercedes-Benz und Volkswagen enthält. Achten Sie dabei für die Korrektur auf eine korrekte Schreibweise der einzelnen Hersteller!", 
-		"tasks": [
-			{
-				"text": "Erstellen Sie eine passende h1-Überschrift, die das Wort \"Autohersteller\" enthält.", 
-				"xpath": "/html/body//h1[text()[contains(., 'Autohersteller')]]", 
-				"attributes": [
-					
-				]
-			}, 
-			{
-				"text": "Erstellen Sie eine ungeordnete Liste auf der Seite, die dann die einzelnen Hersteller enthalten wird.", 
-				"xpath": "/html/body//ul", 
-				"attributes": [
-					
-				]
-			}, 
-			{
-				"text": "Erstellen Sie das Listenelement für Audi.", 
-				"xpath": "/html/body//ul/li[text()[contains(., 'Audi')]]", 
-				"attributes": [
-					
-				]
-			}, 
-			{
-				"text": "Erstellen Sie das Listenelement für BMW.", 
-				"xpath": "/html/body//ul/li[text()[contains(., 'BMW')]]", 
-				"attributes": [
-					
-				]
-			}, 
-			{
-				"text": "Erstellen Sie das Listenelement für Mercedes-Benz.", 
-				"xpath": "/html/body//ul/li[text()[contains(., 'Mercedes-Benz')]]", 
-				"attributes": [
-					
-				]
-			}, 
-			{
-				"text": "Erstellen Sie das Listenelement für Volkswagen.", 
-				"xpath": "/html/body//ul/li[text()[contains(., 'Volkswagen')]]", 
-				"attributes": [
-					
-				]
-			}
-		], 
-		"cssTasks": [
-			{
-				"text": "Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL \"/assets/stylesheets/bootstrap.css\" zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut \"rel\"", 
-				"xpath": "/html/head//link", 
-				"attributes": [
-					{
-						"key": "rel", 
-						"value": "stylesheet"
-					}, 
-					{
-						"key": "href", 
-						"value": "/assets/stylesheets/bootstrap.css"
-					}
-				]
-			}, 
-			{
-				"text": "Geben Sie der Liste die Klasse \"list-group\".", 
-				"xpath": "/html/body//ul", 
-				"attributes": [
-					{
-						"key": "class", 
-						"value": "list-group"
-					}
-				]
-			}, 
-			{
-				"text": "Geben Sie dem Listenelement für Audi die Klasse \"list-group-item\".", 
-				"xpath": "/html/body//ul/li[text()[contains(., 'Audi')]]", 
-				"attributes": [
-					{
-						"key": "class", 
-						"value": "list-group-item"
-					}
-				]
-			}, 
-			{
-				"text": "Geben Sie das Listenelement für BMW die Klasse \"list-group-item\".", 
-				"xpath": "/html/body//ul/li[text()[contains(., 'BMW')]]", 
-				"attributes": [
-					{
-						"key": "class", 
-						"value": "list-group-item"
-					}
-				]
-			}, 
-			{
-				"text": "Geben Sie das Listenelement für Mercedes-Benz die Klasse \"list-group-item\".", 
-				"xpath": "/html/body//ul/li[text()[contains(., 'Mercedes-Benz')]]", 
-				"attributes": [
-					{
-						"key": "class", 
-						"value": "list-group-item"
-					}
-				]
-			}, 
-			{
-				"text": "Geben Sie das Listenelement für Volkswagen die Klasse \"list-group-item\".", 
-				"xpath": "/html/body//ul/li[text()[contains(., 'Volkswagen')]]", 
-				"attributes": [
-					{
-						"key": "class", 
-						"value": "list-group-item"
-					}
-				]
-			}
-		]
-	}, 
-	"3": {
-		"title": "Hyperlinks und Bilder in HTML", 
-		"text": "Erstellen Sie ein Bild in HTML, das gleichzeitig ein Link ist.", 
-		"tasks": [
-			{
-				"text": "Erstellen Sie eine passende h1-Überschrift, die \"Ford Mustang\" enthält.", 
-				"xpath": "/html/body//h1[text()[contains(., 'Ford Mustang')]]", 
-				"attributes": [
-					
-				]
-			}, 
-			{
-				"text": "Erstellen Sie den Link auf der Seite, der auf Wikipedia verweist. Geben Sie als Ziel die URL 'https://de.wikipedia.org/wiki/Ford_Mustang' an.", 
-				"xpath": "/html/body//a", 
-				"attributes": [
-					{
-						"key": "href", 
-						"value": "https://de.wikipedia.org/wiki/Ford_Mustang"
-					}
-				]
-			}, 
-			{
-				"text": "Erstellen Sie im Link das Bild des Ford Mustang. Geben Sie als Quelle des Bildes die URL 'https://upload.wikimedia.org/wikipedia/commons/2/2d/1964_12_Ford_Mustang.jpg' und als alternative Beschreibung 'Ford Mustang' an. Geben Sie außerdem eine Breite von 250 und eine Höhe von 188 an, um das Bild zu skalieren.", 
-				"xpath": "/html/body//a/img", 
-				"attributes": [
-					{
-						"key": "src", 
-						"value": "https://upload.wikimedia.org/wikipedia/commons/2/2d/1964_12_Ford_Mustang.jpg"
-					}, 
-					{
-						"key": "alt", 
-						"value": "Ford Mustang"
-					}, 
-					{
-						"key": "width", 
-						"value": "250"
-					}, 
-					{
-						"key": "height", 
-						"value": "188"
-					}
-				]
-			}
-		], 
-		"cssTasks": [
-			{
-				"text": "Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL \"/assets/stylesheets/bootstrap.css\" zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut \"rel\"", 
-				"xpath": "/html/head//link", 
-				"attributes": [
-					{
-						"key": "rel", 
-						"value": "stylesheet"
-					}, 
-					{
-						"key": "href", 
-						"value": "/assets/stylesheets/bootstrap.css"
-					}
-				]
-			}, 
-			{
-				"text": "Geben Sie dem Bild die Klasse \"img-rounded\".", 
-				"xpath": "/html/body//a/img", 
-				"attributes": [
-					{
-						"key": "class", 
-						"value": "img-rounded"
-					}
-				]
-			}
-		]
-	}
-}
+[{
+    "id": 1,
+    "title": "Listen in HTML",
+    "text": "Erstellen Sie eine Liste in HTML, die die die Autohersteller Audi, BMW und Mercedes-Benz und Volkswagen enthält. Achten Sie dabei für die Korrektur auf eine korrekte Schreibweise der einzelnen Hersteller!",
+    "htmlTasks": [{
+        "text": "Erstellen Sie eine passende h1-Überschrift, die das Wort \"Autohersteller\" enthält.",
+        "xpath": "/html/body//h1[text()[contains(., 'Autohersteller')]]",
+        "attributes": [
+
+        ]
+    }, {
+        "text": "Erstellen Sie eine ungeordnete Liste auf der Seite, die dann die einzelnen Hersteller enthalten wird.",
+        "xpath": "/html/body//ul",
+        "attributes": [
+
+        ]
+    }, {
+        "text": "Erstellen Sie das Listenelement für Audi.",
+        "xpath": "/html/body//ul/li[text()[contains(., 'Audi')]]",
+        "attributes": [
+
+        ]
+    }, {
+        "text": "Erstellen Sie das Listenelement für BMW.",
+        "xpath": "/html/body//ul/li[text()[contains(., 'BMW')]]",
+        "attributes": [
+
+        ]
+    }, {
+        "text": "Erstellen Sie das Listenelement für Mercedes-Benz.",
+        "xpath": "/html/body//ul/li[text()[contains(., 'Mercedes-Benz')]]",
+        "attributes": [
+
+        ]
+    }, {
+        "text": "Erstellen Sie das Listenelement für Volkswagen.",
+        "xpath": "/html/body//ul/li[text()[contains(., 'Volkswagen')]]",
+        "attributes": [
+
+        ]
+    }],
+    "cssTasks": [{
+        "text": "Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL \"/assets/stylesheets/bootstrap.css\" zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut \"rel\"",
+        "xpath": "/html/head//link",
+        "attributes": [{
+            "key": "rel",
+            "value": "stylesheet"
+        }, {
+            "key": "href",
+            "value": "/assets/stylesheets/bootstrap.css"
+        }]
+    }, {
+        "text": "Geben Sie der Liste die Klasse \"list-group\".",
+        "xpath": "/html/body//ul",
+        "attributes": [{
+            "key": "class",
+            "value": "list-group"
+        }]
+    }, {
+        "text": "Geben Sie dem Listenelement für Audi die Klasse \"list-group-item\".",
+        "xpath": "/html/body//ul/li[text()[contains(., 'Audi')]]",
+        "attributes": [{
+            "key": "class",
+            "value": "list-group-item"
+        }]
+    }, {
+        "text": "Geben Sie das Listenelement für BMW die Klasse \"list-group-item\".",
+        "xpath": "/html/body//ul/li[text()[contains(., 'BMW')]]",
+        "attributes": [{
+            "key": "class",
+            "value": "list-group-item"
+        }]
+    }, {
+        "text": "Geben Sie das Listenelement für Mercedes-Benz die Klasse \"list-group-item\".",
+        "xpath": "/html/body//ul/li[text()[contains(., 'Mercedes-Benz')]]",
+        "attributes": [{
+            "key": "class",
+            "value": "list-group-item"
+        }]
+    }, {
+        "text": "Geben Sie das Listenelement für Volkswagen die Klasse \"list-group-item\".",
+        "xpath": "/html/body//ul/li[text()[contains(., 'Volkswagen')]]",
+        "attributes": [{
+            "key": "class",
+            "value": "list-group-item"
+        }]
+    }],
+    "jsTasks": [
+
+    ]
+}, {
+    "id": 2,
+    "title": "Formulare in HTML",
+    "text": "Erstellen Sie ein Formular in HTML, mit dem sich ein neuer Nutzer registrieren kann!",
+    "htmlTasks": [{
+        "text": "Erstellen Sie das Formulartag. Als Methode soll \"post\" und als Aktion die URL \"test.php\" angegeben werden.",
+        "xpath": "/html/body//form",
+        "attributes": [{
+            "key": "method",
+            "value": "post"
+        }, {
+            "key": "action",
+            "value": "test.php"
+        }]
+    }, {
+        "text": "Erstellen Sie im Formular ein Eingabefeld mit Namen \"name\", in dem der Nutzer seinen Namen eingeben kann! Dieses Eingabefeld soll verpflichtend sein.",
+        "xpath": "/html/body//form//input[@name='name']",
+        "attributes": [{
+            "key": "required",
+            "value": "true"
+        }, {
+            "key": "type",
+            "value": "text"
+        }]
+    }, {
+        "text": "Erstellen Sie im Formular ein Eingabefeld mit ID und Namen \"email1\", in dem der Nutzer seine Emailadresse eingeben soll. Dieses Eingabefeld soll verpflichtend sein. Bei einer Änderung soll die Funktion \"checkEmails()\" aufgerufen werden.",
+        "xpath": "/html/body//form//input[@name='email1']",
+        "attributes": [{
+            "key": "required",
+            "value": "true"
+        }, {
+            "key": "type",
+            "value": "email"
+        }, {
+            "key": "id",
+            "value": "email1"
+        }, {
+            "key": "onchange",
+            "value": "checkEmails()"
+        }]
+    }, {
+        "text": "Erstellen Sie im Formular ein weiteres Email-Eingabefeld mit ID und Namen \"email2\", das zur Bestätigung der Emailadresse genutzt werden soll. Auch dieses Eingabefeld soll verpflichtend sein. Bei einer Änderung soll die Funktion \"checkEmails()\" aufgerufen werden.",
+        "xpath": "/html/body//form//input[@name='email2']",
+        "attributes": [{
+            "key": "required",
+            "value": "true"
+        }, {
+            "key": "type",
+            "value": "email"
+        }, {
+            "key": "id",
+            "value": "email2"
+        }, {
+            "key": "onchange",
+            "value": "checkEmails()"
+        }]
+    }, {
+        "text": "Erstellen Sie ein leeres p-Element mit id \"emailmsg\", um dem Nutzer später mittels Javascript mitteilen zu können, ob die Emails übereinstimmen!",
+        "xpath": "/html/body//form//p[@id='emailmsg']",
+        "attributes": [
+
+        ]
+    }, {
+        "text": "Erstellen Sie ein Eingabefeld mit Typ \"submit\", um das Formular abzuschicken. Geben Sie als Wert \"Registrieren\" an. Dieses Eingabefeld soll außerdem deaktiviert sein.",
+        "xpath": "/html/body//form//input[@type='submit']",
+        "attributes": [{
+            "key": "value",
+            "value": "Registrieren"
+        }, {
+            "key": "disabled",
+            "value": "true"
+        }]
+    }],
+    "cssTasks": [
+
+    ],
+    "jsTasks": [{
+        "text": "Implementieren Sie die Funktio checkEmails(), die überprüft, ob die beiden eingegebenen Emails übereinstimmen und bei einem Fehlschlag dieses Test \"false\" zurückgibt.",
+        "preconditions": [{
+            "xpath": "/html/body//form//input[@name='email1']",
+            "awaited": ""
+        }, {
+            "xpath": "/html/body//form//input[@name='email2']",
+            "awaited": ""
+        }, {
+            "xpath": "/html/body//form//p[@id='emailmsg']",
+            "awaited": ""
+        }, {
+            "xpath": "/html/body//form//input[@type='submit']",
+            "awaited": "",
+            "attributes": [{
+                "key": "disabled",
+                "value": "true"
+            }]
+        }],
+        "action": {
+            "actionType": "FILLOUT",
+            "xpath": "/html/body//form//input[@name='email1']",
+            "keysToSend": "testuser@example.com"
+        },
+        "postconditions": [{
+            "xpath": "/html/body//form//p[@id='emailmsg']",
+            "awaited": "Emails stimmen nicht überein!"
+        }]
+    }]
+}, {
+    "id": 3,
+    "title": "Hyperlinks und Bilder in HTML",
+    "text": "Erstellen Sie ein Bild in HTML, das gleichzeitig ein Link ist.",
+    "htmlTasks": [{
+        "text": "Erstellen Sie eine passende h1-Überschrift, die \"Ford Mustang\" enthält.",
+        "xpath": "/html/body//h1[text()[contains(., 'Ford Mustang')]]",
+        "attributes": [
+
+        ]
+    }, {
+        "text": "Erstellen Sie den Link auf der Seite, der auf Wikipedia verweist. Geben Sie als Ziel die URL 'https://de.wikipedia.org/wiki/Ford_Mustang' an.",
+        "xpath": "/html/body//a",
+        "attributes": [{
+            "key": "href",
+            "value": "https://de.wikipedia.org/wiki/Ford_Mustang"
+        }]
+    }, {
+        "text": "Erstellen Sie im Link das Bild des Ford Mustang. Geben Sie als Quelle des Bildes die URL 'https://upload.wikimedia.org/wikipedia/commons/2/2d/1964_12_Ford_Mustang.jpg' und als alternative Beschreibung 'Ford Mustang' an. Geben Sie außerdem eine Breite von 250 und eine Höhe von 188 an, um das Bild zu skalieren.",
+        "xpath": "/html/body//a/img",
+        "attributes": [{
+            "key": "src",
+            "value": "https://upload.wikimedia.org/wikipedia/commons/2/2d/1964_12_Ford_Mustang.jpg"
+        }, {
+            "key": "alt",
+            "value": "Ford Mustang"
+        }, {
+            "key": "width",
+            "value": "250"
+        }, {
+            "key": "height",
+            "value": "188"
+        }]
+    }],
+    "cssTasks": [{
+        "text": "Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL \"/assets/stylesheets/bootstrap.css\" zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut \"rel\"",
+        "xpath": "/html/head//link",
+        "attributes": [{
+            "key": "rel",
+            "value": "stylesheet"
+        }, {
+            "key": "href",
+            "value": "/assets/stylesheets/bootstrap.css"
+        }]
+    }, {
+        "text": "Geben Sie dem Bild die Klasse \"img-rounded\".",
+        "xpath": "/html/body//a/img",
+        "attributes": [{
+            "key": "class",
+            "value": "img-rounded"
+        }]
+    }],
+    "jsTasks": [
+
+    ]
+}]

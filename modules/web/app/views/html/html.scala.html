@@ -1,4 +1,4 @@
-@(user: model.user.User, exercise: model.html.HtmlExercise, exType: String, oldSolution: String, title: String)
+@(user: model.user.User, exercise: model.html.WebExercise, exType: String, oldSolution: String, title: String)
 
 @main(title, user) {
   <script src="@controllers.routes.Assets.versioned("javascripts/ace/ace.js")"></script>
@@ -40,15 +40,9 @@ window.onload = updatePreview;
           <div class="panel panel-default">
             <div class="panel-heading">Teilaufgaben und Korrektur</div>
             <div class="panel-body" id="correction">
-            @if(exType.equals("html")) {
-              @for(task <- exercise.htmlTasks) {
-              <div class="well">@{task.getId()}. @task.text</div>
+              @for(task <- exercise.getTasks(exType)) {
+              <div class="well">@{task.getId()}. @task.getDescription()</div>
               }
-            } else {
-              @for(task <- exercise.cssTasks) {
-              <div class="well">@{task.getId()}. @task.text</div>
-              }
-            }
             </div>
           </div>
         </div>

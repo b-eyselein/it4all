@@ -26,5 +26,8 @@ libraryDependencies ++= Seq(
   "org.apache.odftoolkit" % "odfdom-java" % "0.8.10-incubating",
   "org.apache.odftoolkit" % "simple-odf" % "0.8.1-incubating",
   "xerces" % "xercesImpl" % "2.9.1",
-  "xml-apis" % "xml-apis" % "1.3.04"
+  "xml-apis" % "xml-apis" % "1.3.04",
+  
+  // JSON Schema Validator
+  Common.jsonSchemaValidator
 )

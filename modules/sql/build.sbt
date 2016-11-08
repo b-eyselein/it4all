@@ -9,5 +9,8 @@ playEbeanModels in Compile := Seq("model.*")
 
 libraryDependencies ++= Seq(
   javaJdbc,
-  Common.jsqlParser
+  Common.jsqlParser,
+  
+  // JSON Schema Validator
+  Common.jsonSchemaValidator
 )

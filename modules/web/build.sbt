@@ -18,5 +18,8 @@ libraryDependencies ++= Seq(
   Common.htmlUnitDep,
 
   // Mockito for Testing
-  Common.mockitoDep
+  Common.mockitoDep,
+  
+  // JSON Schema Validator
+  Common.jsonSchemaValidator
 )

@@ -1,7 +1,5 @@
 package model.javascript.web;
 
-import static model.html.task.Task.allResultsSuccessful;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,6 +11,8 @@ import javax.persistence.OneToMany;
 
 import org.openqa.selenium.WebDriver;
 
+import static model.exercise.EvaluationResult.allResultsSuccessful;
+
 import com.avaje.ebean.Model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -21,11 +21,6 @@ import model.exercise.Success;
 
 @Entity
 public class JsWebTest extends Model {
-
-  private static List<ConditionResult> evaluateConditions(WebDriver driver, List<Condition> conditions,
-      boolean isPrecondition) {
-    return conditions.stream().map(cond -> cond.test(driver, isPrecondition)).collect(Collectors.toList());
-  }
 
   @Id
   public int id;
@@ -44,6 +39,11 @@ public class JsWebTest extends Model {
   @OneToMany(mappedBy = "post")
   @JsonManagedReference
   public List<Condition> postconditions;
+
+  private static List<ConditionResult> evaluateConditions(WebDriver driver, List<Condition> conditions,
+      boolean isPrecondition) {
+    return conditions.stream().map(cond -> cond.test(driver, isPrecondition)).collect(Collectors.toList());
+  }
 
   public JsWebTestResult test(WebDriver driver) {
     List<ConditionResult> preconditionsSatisfied = evaluateConditions(driver, preconditions, true);
