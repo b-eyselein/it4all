@@ -1,0 +1,43 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#", 
+	"type": "array", 
+	"items": {
+		"type": "object", 
+		"properties": {
+			"id": {
+				"type": "integer", 
+				"minimum": 1
+			}, 
+			"title": {
+				"type": "string"
+			}, 
+			"exerciseType": {
+				"enum": [
+					"DTD_XML", 
+					"XSD_XML", 
+					"XML_DTD", 
+					"XML_XSD"
+				]
+			}, 
+			"fixedStart": {
+				"type": "string"
+			}, 
+			"referenceFileName": {
+				"type": "string"
+			}, 
+			"exerciseText": {
+				"type": "string"
+			}
+		}, 
+		"required": [
+			"id", 
+			"title", 
+			"exerciseType", 
+			"fixedStart", 
+			"referenceFileName", 
+			"exerciseText"
+		]
+	}, 
+	"minItems": 1, 
+	"uniqueItems": true
+}

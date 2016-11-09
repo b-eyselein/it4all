@@ -1,0 +1,10 @@
+<!ELEMENT krankenhaus (arzt+)>
+<!ELEMENT arzt (name, termin+)>
+<!ATTLIST arzt id CDATA #REQUIRED>
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT termin (datum, uhrzeit, patient, beschreibung?)>
+<!ATTLIST termin art (untersuchung | behandlung | operation) #REQUIRED>
+<!ELEMENT datum (#PCDATA)>
+<!ELEMENT uhrzeit (#PCDATA)>
+<!ELEMENT patient (#PCDATA)>
+<!ELEMENT beschreibung (#PCDATA)>
