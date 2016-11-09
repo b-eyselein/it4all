@@ -1,8 +1,8 @@
 package model;
 
-import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.Success;
+import model.result.EvaluationResult;
 
 public class XMLError extends EvaluationResult {
   

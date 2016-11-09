@@ -3,26 +3,26 @@ package model.correctionresult;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
 import model.matcher.ColumnDefinitionMatch;
 import model.matching.MatchingResult;
+import model.result.EvaluationResult;
 import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
 
 public class CreateResult extends MatchingResult<ColumnDefinition, ColumnDefinitionMatch> {
-
+  
   public CreateResult(List<ColumnDefinitionMatch> theMatches, List<ColumnDefinition> theNotMatchedInFirst,
       List<ColumnDefinition> theNotMatchedInSecond) {
     super(FeedbackLevel.MINIMAL_FEEDBACK, theMatches, theNotMatchedInFirst, theNotMatchedInSecond);
   }
-  
+
   @Override
   public String getAsHtml() {
     String ret = "<div class=\"col-md-6\">";
     ret += "<div class=\"panel panel-" + getBSClass() + "\">";
-
+    
     ret += "<div class=\"panel-heading\">Vergleich der definierten Spalten</div>";
-
+    
     ret += "<div class=\"panel-body\">";
     // Not defined columns
     if(!notMatchedInSecond.isEmpty())
@@ -31,7 +31,7 @@ public class CreateResult extends MatchingResult<ColumnDefinition, ColumnDefinit
           + "</div>";
     else
       ret += "<div class=\"alert alert-success\">Es wurden alle nötigen Spalten definiert.</div>";
-
+    
     // Surplus columns
     if(!notMatchedInFirst.isEmpty())
       ret += "<div class=\"alert alert-danger\">Folgende überzähligen Spalten wurden definiert: "
@@ -40,15 +40,15 @@ public class CreateResult extends MatchingResult<ColumnDefinition, ColumnDefinit
           + "</div>";
     else
       ret += "<div class=\"alert alert-success\">Es wurden keine überschüssigen Spalten definiert.</div>";
-
+    
     ret += "<hr>";
-
+    
     // Columns with correct name
     for(EvaluationResult colRes: matches)
       ret += colRes.getAsHtml();
-
+    
     ret += "</div></div></div>";
     return ret;
   }
-
+  
 }

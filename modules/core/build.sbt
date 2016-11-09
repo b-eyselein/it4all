@@ -13,6 +13,9 @@ jacoco.settings
 libraryDependencies ++= Seq(
   javaJdbc,
   
-  Common.mockitoDep
+  Common.mockitoDep,
+  
+  // JSON Schema Validator
+  Common.jsonSchemaValidator
 )
 

@@ -30,10 +30,6 @@ function prepareFormForSubmitting() {
   document.getElementById("editorContent").value = editor.getValue();
 }
 
-function affirmFinalCommit() {
-  window.alert("Erfolgreich abgegeben!");
-}
-
 function testTheSolution(url) {
   // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
   var xhttp = new XMLHttpRequest();

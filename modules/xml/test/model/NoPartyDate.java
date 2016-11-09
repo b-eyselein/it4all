@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import model.exercise.EvaluationResult;
+import model.result.EvaluationResult;
 
 public class NoPartyDate {
 

@@ -2,22 +2,22 @@ package model.html.result;
 
 import org.openqa.selenium.WebElement;
 
-import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.Success;
+import model.result.EvaluationResult;
 import play.Logger;
 
 public class AttributeResult extends EvaluationResult {
-
+  
   private String key;
   private String value;
-
+  
   public AttributeResult(String attributeKey, String attributeValue) {
     super(FeedbackLevel.MEDIUM_FEEDBACK, Success.NONE);
     key = attributeKey;
     value = attributeValue;
   }
-
+  
   public void evaluate(WebElement element) {
     String foundValue = null;
     try {
@@ -34,7 +34,7 @@ public class AttributeResult extends EvaluationResult {
     else
       success = Success.PARTIALLY;
   }
-
+  
   @Override
   public String getAsHtml() {
     // FIXME: implement feedbackLevel!
@@ -48,13 +48,13 @@ public class AttributeResult extends EvaluationResult {
     ret += DIV_END;
     return ret;
   }
-
+  
   public String getKey() {
     return key;
   }
-
+  
   public String getValue() {
     return value;
   }
-
+  
 }

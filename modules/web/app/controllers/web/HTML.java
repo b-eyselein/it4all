@@ -15,10 +15,10 @@ import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
 import model.Secured;
 import model.Util;
-import model.exercise.EvaluationResult;
-import model.html.ExerciseReader;
+import model.html.HtmlExerciseReader;
 import model.html.HtmlCorrector;
 import model.html.HtmlExercise;
+import model.result.EvaluationResult;
 import model.user.User;
 import play.Logger;
 import play.data.DynamicForm;
@@ -56,7 +56,7 @@ public class HTML extends ExerciseController {
     checker = theChecker;
     
     Path jsonFile = Paths.get(EXERCISE_FOLDER, "exercises.json");
-    List<HtmlExercise> exercises = ExerciseReader.readExercises(jsonFile);
+    List<HtmlExercise> exercises = HtmlExerciseReader.readExercises(jsonFile);
 
     for(HtmlExercise ex: exercises)
       ex.save();

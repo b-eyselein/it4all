@@ -1,16 +1,16 @@
 package model.javascript;
 
-import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.Success;
+import model.result.EvaluationResult;
 
 public class JsTestResult extends EvaluationResult {
-  
+
   private String awaitedOutput;
   private String evaluated;
   private String realResult;
   private boolean successful;
-  
+
   public JsTestResult(String theAwaitedOutput, Success theSuccess, String theEvaluated, String theRealResult) {
     super(FeedbackLevel.MINIMAL_FEEDBACK, theSuccess);
     awaitedOutput = theAwaitedOutput;
@@ -19,7 +19,7 @@ public class JsTestResult extends EvaluationResult {
     requestedFL = FeedbackLevel.FULL_FEEDBACK;
     successful = success == Success.COMPLETE;
   }
-  
+
   @Override
   public String getAsHtml() {
     // FIXME: implement feedbackLevel!
@@ -29,22 +29,22 @@ public class JsTestResult extends EvaluationResult {
     if(!successful && minimalFL.compareTo(this.requestedFL) < 1)
       ret += "  <p>Erwartet: \"" + awaitedOutput + "\", bekommen: \"" + realResult + "\"</p>\n";
     ret += "</div></div>";
-    
+
     return ret;
   }
-  
+
   public String getAwaitedResult() {
     return awaitedOutput;
   }
-  
+
   public String getEvaluated() {
     return evaluated;
   }
-  
+
   public String getRealResult() {
     return realResult;
   }
-  
+
   public boolean wasSuccessful() {
     return successful;
   }

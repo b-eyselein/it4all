@@ -5,18 +5,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
-import model.XmlExercise.XmlExType;
 import model.Util;
 import model.XmlExercise;
+import model.XmlExerciseReader;
 import play.Logger;
-import play.libs.Json;
 
 public class XmlStartUpChecker {
   
@@ -32,7 +28,14 @@ public class XmlStartUpChecker {
     util = theUtil;
     performStartUpCheck();
     
-    testJsonCreation();
+    Path jsonPath = Paths.get(BASE_DIR, "exercises.json");
+    Path jsonSchemaPath = Paths.get(BASE_DIR, "exerciseSchema.json");
+
+    List<XmlExercise> exercises = (new XmlExerciseReader()).readExercises(jsonPath, jsonSchemaPath);
+    for(XmlExercise ex: exercises) {
+      ex.save();
+      checkOrCreateSampleFile(ex);
+    }
   }
   
   public void performStartUpCheck() {
@@ -62,7 +65,7 @@ public class XmlStartUpChecker {
     theLogger.warn("Die Lösungsdatei für Xml-Aufgabe " + exercise.id + " \"" + sampleFile
         + "\" existiert nicht! Versuche, Datei zu erstellen...");
     
-    Path providedFile = Paths.get(BASE_DIR, exercise.referenceFileName);
+    Path providedFile = Paths.get(BASE_DIR, exercise.referenceFileName + exercise.getReferenceFileEnding());
     if(!Files.exists(providedFile)) {
       theLogger.error("Konnte Datei nicht erstellen: Keine Lösungsdatei mitgeliefert...");
       return;
@@ -73,40 +76,6 @@ public class XmlStartUpChecker {
       theLogger.info("Die Lösungsdatei wurde erstellt.");
     } catch (IOException e) {
       theLogger.error("Die Lösungsdatei konnte nicht erstellt werden!", e);
-    }
-  }
-  
-  private void testJsonCreation() {
-    Path exercises = Paths.get(BASE_DIR, "exercises.json");
-    
-    String jsonAsString = "";
-    try {
-      jsonAsString = String.join("\n", Files.readAllLines(exercises));
-    } catch (IOException e) {
-      theLogger.error("Fehler beim Lesen aus der Datei " + exercises.toString(), e);
-    }
-    
-    if(jsonAsString.isEmpty())
-      return;
-    
-    JsonNode json = Json.parse(jsonAsString);
-    for(final Iterator<JsonNode> childNodes = json.elements(); childNodes.hasNext();) {
-      JsonNode node = childNodes.next();
-      int id = node.get("id").asInt();
-      
-      XmlExercise exercise = XmlExercise.finder.byId(id);
-      if(exercise == null)
-        exercise = new XmlExercise();
-      
-      exercise.id = id;
-      exercise.title = node.get("title").asText();
-      exercise.exerciseType = XmlExType.valueOf(node.get("exerciseType").asText());
-      exercise.referenceFileName = node.get("referenceFileName").asText();
-      exercise.exerciseText = node.get("exerciseText").asText();
-      exercise.fixedStart = node.get("fixedStart").asText();
-      
-      exercise.save();
-      
     }
   }
   

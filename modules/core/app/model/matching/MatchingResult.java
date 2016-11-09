@@ -2,9 +2,9 @@ package model.matching;
 
 import java.util.List;
 
-import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.Success;
+import model.result.EvaluationResult;
 
 public abstract class MatchingResult<T, U extends Match<T>> extends EvaluationResult {
   

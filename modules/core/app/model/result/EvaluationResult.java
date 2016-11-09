@@ -1,8 +1,11 @@
-package model.exercise;
+package model.result;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
+import model.exercise.FeedbackLevel;
+import model.exercise.Success;
 
 public abstract class EvaluationResult {
   

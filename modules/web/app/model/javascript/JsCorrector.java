@@ -12,10 +12,10 @@ import javax.script.ScriptException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
-import model.exercise.EvaluationFailed;
-import model.exercise.EvaluationResult;
 import model.javascript.JsExercise.JsDataType;
 import model.javascript.web.JsWebExercise;
+import model.result.EvaluationFailed;
+import model.result.EvaluationResult;
 import play.Logger;
 
 public class JsCorrector {

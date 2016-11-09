@@ -21,8 +21,8 @@ import model.errorhandlers.CorrectionErrorHandler;
 import model.errorhandlers.DtdXmlErrorHandler;
 import model.errorhandlers.XmlDtdErrorHandler;
 import model.errorhandlers.XmlXsdErrorHandler;
-import model.exercise.EvaluationFailed;
-import model.exercise.EvaluationResult;
+import model.result.EvaluationFailed;
+import model.result.EvaluationResult;
 import play.Logger;
 
 public class XmlCorrector {

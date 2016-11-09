@@ -21,7 +21,7 @@ import model.XmlCorrector;
 import model.XmlErrorType;
 import model.XmlExercise;
 import model.XmlExercise.XmlExType;
-import model.exercise.EvaluationResult;
+import model.result.EvaluationResult;
 import model.user.User;
 import play.Logger;
 import play.data.DynamicForm;

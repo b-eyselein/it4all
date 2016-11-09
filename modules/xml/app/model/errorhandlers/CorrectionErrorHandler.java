@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.xml.sax.ErrorHandler;
 
-import model.exercise.EvaluationResult;
+import model.result.EvaluationResult;
 
 public abstract class CorrectionErrorHandler implements ErrorHandler {
   

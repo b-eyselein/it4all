@@ -1,6 +1,9 @@
-package model.exercise;
+package model.result;
 
 import java.util.stream.Collectors;
+
+import model.exercise.FeedbackLevel;
+import model.exercise.Success;
 
 public class GenericEvaluationResult extends EvaluationResult {
 

@@ -1,4 +1,4 @@
-package model.exercise;
+package model.exercisereading;
 
 public abstract class CreationResult<T> {
   
