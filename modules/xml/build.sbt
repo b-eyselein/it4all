@@ -14,10 +14,7 @@ libraryDependencies ++= Seq(
   Common.seleniumDep,
 
   // Mockito for Testing
-  Common.mockitoDep,
-  
-  // JSON Schema Validator
-  Common.jsonSchemaValidator
+  Common.mockitoDep
 )
 
 // JaCoCo - siehe project/plugins.sbt

@@ -5,28 +5,24 @@ import java.util.LinkedList;
 import java.util.List;
 
 public abstract class EvaluationResult {
-
+  
   protected static final String DIV_END = "</div>";
-
+  
   protected FeedbackLevel minimalFL;
-
+  
   protected FeedbackLevel requestedFL;
-
+  
   protected Success success = Success.NONE;
-
+  
   // FIXME: implement feedbackLevel!
   protected List<String> messages = new LinkedList<>();
-
+  
   public EvaluationResult(FeedbackLevel theMinimalFL, Success theSuccess, String... theMessages) {
     minimalFL = theMinimalFL;
     success = theSuccess;
     Collections.addAll(messages, theMessages);
   }
-
-  public static <T extends EvaluationResult> boolean allResultsSuccessful(List<T> results) {
-    return results.stream().mapToInt(result -> result.getSuccess() == Success.COMPLETE ? 0 : 1).sum() == 0;
-  }
-
+  
   protected static String concatCodeElements(List<String> elements) {
     if(elements.isEmpty())
       return "--";
@@ -36,9 +32,9 @@ public abstract class EvaluationResult {
   protected static String concatListElements(List<String> elements) {
     return "<ul><li>" + String.join("</li><li>", elements) + "</li></ul>";
   }
-
+  
   public abstract String getAsHtml();
-
+  
   public String getBSClass() {
     switch(success) {
     case COMPLETE:
@@ -51,29 +47,29 @@ public abstract class EvaluationResult {
       return "info";
     }
   }
-
+  
   public FeedbackLevel getMinimalFeedbackLevel() {
     return minimalFL;
   }
-
+  
   public int getPoints() {
     return success.getPoints();
   }
-
+  
   public Success getSuccess() {
     return success;
   }
-
+  
   public void setSuccess(Success suc) {
     if(suc == null)
       throw new IllegalArgumentException("Success kann nicht auf \"null\" gesetzt werden!");
     success = suc;
   }
-
+  
   protected FeedbackLevel getFLToUse() {
     if(minimalFL.compareTo(requestedFL) < 0)
       return minimalFL;
     return requestedFL;
   }
-
+  
 }

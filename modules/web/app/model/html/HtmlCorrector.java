@@ -1,5 +1,6 @@
 package model.html;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,10 +19,10 @@ public class HtmlCorrector {
 
   }
 
-  public static List<EvaluationResult> correct(String solutionUrl, WebExercise exercise, User student, String type) {
+  public static List<EvaluationResult> correct(String solutionUrl, HtmlExercise exercise, User student, String type) {
     WebDriver driver = loadWebSite(solutionUrl);
 
-    List<? extends Task> tasks = exercise.getTasks(type);
+    List<? extends Task> tasks = getTasksForType(exercise, type);
 
     List<EvaluationResult> result = tasks.stream().map(task -> task.evaluate(driver)).collect(Collectors.toList());
 
@@ -35,13 +36,23 @@ public class HtmlCorrector {
     return result.stream().mapToInt(res -> res.getPoints()).sum();
   }
 
+  private static List<? extends Task> getTasksForType(HtmlExercise exercise, String type) {
+    List<? extends Task> tasks = Collections.emptyList();
+
+    if("html".equals(type))
+      tasks = exercise.htmlTasks;
+    else if("css".equals(type))
+      tasks = exercise.cssTasks;
+    return tasks;
+  }
+
   private static WebDriver loadWebSite(String solutionUrl) {
     WebDriver driver = new HtmlUnitDriver();
     driver.get(solutionUrl);
     return driver;
   }
 
-  private static void saveGrading(WebExercise exercise, User user, int points) {
+  private static void saveGrading(HtmlExercise exercise, User user, int points) {
     GradingKey gradingKey = new GradingKey(user.name, exercise.id);
     Grading grading = Grading.finder.byId(gradingKey);
 

@@ -9,7 +9,7 @@ import java.util.List;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import controllers.core.StartUpChecker;
-import model.html.WebExercise;
+import model.html.HtmlExercise;
 import model.javascript.JsExercise;
 import model.javascript.JsExercise.JsDataType;
 import model.javascript.JsTest;
@@ -60,11 +60,11 @@ public class WebStartUpChecker extends StartUpChecker {
     // FIXME: read Html + Css exercises from JSON-FILE?!?
     
     // Assert that there is at least one exercise for all types
-    List<WebExercise> exercises = WebExercise.finder.all();
+    List<HtmlExercise> exercises = HtmlExercise.finder.all();
     if(exercises.isEmpty())
       theLogger.error("\t- No exercises found for Html!");
     else
-      for(WebExercise exercise: exercises)
+      for(HtmlExercise exercise: exercises)
         if(exercise.htmlTasks.isEmpty())
           theLogger.error("\t- Html-Aufgabe " + exercise.id + " hat keine Tasks!");
         

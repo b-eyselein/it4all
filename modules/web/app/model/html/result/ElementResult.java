@@ -6,15 +6,15 @@ import java.util.List;
 import model.exercise.EvaluationResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.Success;
-import model.html.task.WebTask;
+import model.html.task.Task;
 
 public class ElementResult extends EvaluationResult {
 
-  private WebTask task;
+  private Task task;
   private List<AttributeResult> attributeResults = Collections.emptyList();
   private List<String> parentsMissing;
 
-  public ElementResult(WebTask theTask, Success theSuccess, String... theMessages) {
+  public ElementResult(Task theTask, Success theSuccess, String... theMessages) {
     super(FeedbackLevel.MINIMAL_FEEDBACK, theSuccess, theMessages);
     task = theTask;
   }
@@ -61,7 +61,7 @@ public class ElementResult extends EvaluationResult {
     return parentsMissing;
   }
 
-  public WebTask getTask() {
+  public Task getTask() {
     return task;
   }
 
