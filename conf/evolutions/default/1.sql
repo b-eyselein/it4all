@@ -35,12 +35,12 @@ create table feedback (
   korrektur_excel               integer,
   kommentar_html                varchar(255),
   kommentar_excel               varchar(255),
-  constraint ck_feedback_bedienung_html check (bedienung_html in (0,1,2,3,4)),
-  constraint ck_feedback_bedienung_excel check (bedienung_excel in (0,1,2,3,4)),
-  constraint ck_feedback_feedback_html check (feedback_html in (0,1,2,3,4)),
-  constraint ck_feedback_feedback_excel check (feedback_excel in (0,1,2,3,4)),
-  constraint ck_feedback_korrektur_html check (korrektur_html in (0,1,2,3,4)),
-  constraint ck_feedback_korrektur_excel check (korrektur_excel in (0,1,2,3,4)),
+  constraint ck_feedback_bedienung_html check ( bedienung_html in (0,1,2,3,4)),
+  constraint ck_feedback_bedienung_excel check ( bedienung_excel in (0,1,2,3,4)),
+  constraint ck_feedback_feedback_html check ( feedback_html in (0,1,2,3,4)),
+  constraint ck_feedback_feedback_excel check ( feedback_excel in (0,1,2,3,4)),
+  constraint ck_feedback_korrektur_html check ( korrektur_html in (0,1,2,3,4)),
+  constraint ck_feedback_korrektur_excel check ( korrektur_excel in (0,1,2,3,4)),
   constraint pk_feedback primary key (id)
 );
 
@@ -77,7 +77,7 @@ create table js_exercise (
   inputtypes                    varchar(255),
   inputcount                    integer,
   returntype                    varchar(9),
-  constraint ck_js_exercise_returntype check (returntype in ('BOOLEAN','NUMBER','STRING','SYMBOL','UNDEFINED','NULL','OBJECT')),
+  constraint ck_js_exercise_returntype check ( returntype in ('BOOLEAN','NUMBER','STRING','SYMBOL','UNDEFINED','NULL','OBJECT')),
   constraint pk_js_exercise primary key (id)
 );
 
@@ -105,7 +105,7 @@ create table js_web_test (
   actiontype                    varchar(7),
   xpath_query                   varchar(255),
   keys_to_send                  varchar(255),
-  constraint ck_js_web_test_actiontype check (actiontype in ('CLICK','FILLOUT')),
+  constraint ck_js_web_test_actiontype check ( actiontype in ('CLICK','FILLOUT')),
   constraint pk_js_web_test primary key (id)
 );
 
@@ -125,7 +125,7 @@ create table sql_exercise (
   text                          text,
   samples                       text,
   validation                    varchar(255),
-  constraint ck_sql_exercise_exercisetype check (exercisetype in ('SELECT','CREATE','UPDATE','DELETE','INSERT')),
+  constraint ck_sql_exercise_exercisetype check ( exercisetype in ('SELECT','CREATE','UPDATE','DELETE','INSERT')),
   constraint pk_sql_exercise primary key (id,scenario_name,exercisetype)
 );
 
@@ -139,7 +139,7 @@ create table sql_scenario (
 create table users (
   name                          varchar(255) not null,
   role                          varchar(5),
-  constraint ck_users_role check (role in ('USER','ADMIN')),
+  constraint ck_users_role check ( role in ('USER','ADMIN')),
   constraint pk_users primary key (name)
 );
 
@@ -150,7 +150,7 @@ create table xmlexercise (
   exercise_type                 varchar(7),
   referencefilename             varchar(100),
   exercisetext                  varchar(1000),
-  constraint ck_xmlexercise_exercise_type check (exercise_type in ('XML_XSD','XML_DTD','XSD_XML','DTD_XML')),
+  constraint ck_xmlexercise_exercise_type check ( exercise_type in ('XML_XSD','XML_DTD','XSD_XML','DTD_XML')),
   constraint pk_xmlexercise primary key (id)
 );
 
