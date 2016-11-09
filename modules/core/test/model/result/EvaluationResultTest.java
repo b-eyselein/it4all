@@ -7,11 +7,11 @@ import org.junit.Test;
 import model.exercise.Success;
 import model.result.EvaluationResult;
 
-i
-import model.exercise.FeedbackLevel;mport static org.hamcrest.CoreMatchers.equalTo;
+import model.exercise.FeedbackLevel;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 public class EvaluationResultTest {
-  
+
   // FIXME: implement feedbackLevel!
   @Test
   public void testCompletely() {
@@ -22,27 +22,27 @@ public class EvaluationResultTest {
         return null;
       }
     };
-
+    
     assertThat(result.getSuccess(), equalTo(Success.NONE));
     assertThat(result.getMinimalFeedbackLevel(), equalTo(FeedbackLevel.NO_FEEDBACK));
     assertThat(result.getPoints(), equalTo(0));
-
+    
     result.setSuccess(Success.PARTIALLY);
     assertThat(result.getSuccess(), equalTo(Success.PARTIALLY));
     assertThat(result.getMinimalFeedbackLevel(), equalTo(FeedbackLevel.NO_FEEDBACK));
     assertThat(result.getPoints(), equalTo(1));
-
+    
     result.setSuccess(Success.COMPLETE);
     assertThat(result.getSuccess(), equalTo(Success.COMPLETE));
     assertThat(result.getMinimalFeedbackLevel(), equalTo(FeedbackLevel.NO_FEEDBACK));
     assertThat(result.getPoints(), equalTo(2));
-
+    
     result.setSuccess(Success.NONE);
     assertThat(result.getSuccess(), equalTo(Success.NONE));
     assertThat(result.getMinimalFeedbackLevel(), equalTo(FeedbackLevel.NO_FEEDBACK));
     assertThat(result.getPoints(), equalTo(0));
   }
-
+  
   @Test(expected = IllegalArgumentException.class)
   public void testIllegalSuccess() {
     EvaluationResult result = new EvaluationResult(FeedbackLevel.NO_FEEDBACK, Success.NONE) {
@@ -52,8 +52,8 @@ public class EvaluationResultTest {
         return null;
       }
     };
-
+    
     result.setSuccess(null);
   }
-
+  
 }
