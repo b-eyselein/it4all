@@ -1,7 +1,6 @@
 package model.html;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
@@ -34,8 +33,8 @@ public class ExerciseReader {
     JsonNode exercisesNode;
 
     try {
-      exercisesNode = Json.parse(new FileInputStream(jsonFile.toFile()));
-    } catch (FileNotFoundException e) {
+      exercisesNode = Json.parse(String.join("\n", Files.readAllLines(jsonFile)));
+    } catch (IOException e) {
       Logger.error("There was an error reading the file " + jsonFile + ":", e);
       return exercises;
     }
