@@ -94,8 +94,8 @@ public class XmlCorrector {
       Schema schema = schemaFactory.newSchema(xsdFile);
 
       if(schema == null)
-        return Arrays.asList(new XMLError("Fehler beim Laden ihrer Lösung!",
-            "Ihre Eingabedaten konnten nicht geladen werden!", XmlErrorType.FATALERROR));
+        return Arrays
+            .asList(new XMLError("Ihre Eingabedaten konnten nicht geladen werden!", XmlErrorType.FATALERROR, -1));
 
       Validator validator = schema.newValidator();
       validator.setErrorHandler(errorHandler);
@@ -105,8 +105,7 @@ public class XmlCorrector {
       // learners
     } catch (NullPointerException e) {
       Logger.error("Could not validate XSD-File", e);
-      return Arrays.asList(
-          new XMLError("Fehler bei Validierung ihrer XSD", "Konnte XSD nicht validieren.", XmlErrorType.FATALERROR));
+      return Arrays.asList(new XMLError("Konnte XSD nicht validieren.", XmlErrorType.FATALERROR, -1));
     }
 
     return errorHandler.getErrors();

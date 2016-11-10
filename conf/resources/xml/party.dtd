@@ -1,7 +1,8 @@
-<!ELEMENT party (gast)*>
+<!ELEMENT party (gast+)>
 <!ATTLIST party datum CDATA #REQUIRED>
-<!ELEMENT gast (getraenk*, zustand?)>
+<!ELEMENT gast (getraenk+, zustand?)>
 <!ATTLIST gast name CDATA #REQUIRED>
 <!ELEMENT getraenk (#PCDATA)>
 <!ELEMENT zustand EMPTY>
-<!ATTLIST zustand ledig CDATA #REQUIRED nuechtern CDATA #REQUIRED>
+<!ATTLIST zustand	ledig CDATA #REQUIRED
+					nuechtern CDATA #REQUIRED>

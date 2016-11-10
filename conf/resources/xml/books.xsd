@@ -2,7 +2,7 @@
 	<xsd:element name="catalog">
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element name="book" minOccurs="0" maxOccurs="unbounded">
+				<xsd:element name="book" minOccurs="2" maxOccurs="unbounded">
 					<xsd:complexType>
 						<xsd:sequence>
 							<xsd:element name="author" type="xsd:string" />

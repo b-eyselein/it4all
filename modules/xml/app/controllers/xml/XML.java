@@ -93,6 +93,8 @@ public class XML extends ExerciseController {
     
     User user = UserManagement.getCurrentUser();
     
+    // FIXME: loading old solution does not work!
+
     String defaultOrOldSolution = loadOldSolution(exercise, user);
     String referenceCode = loadReferenceCode(exercise);
     
@@ -125,7 +127,7 @@ public class XML extends ExerciseController {
   private List<EvaluationResult> correctExercise(Path xml, Path grammar, XmlExercise exercise) {
     List<EvaluationResult> result = XmlCorrector.correct(xml, grammar, exercise);
     if(result.isEmpty())
-      return Arrays.asList(new XMLError("Alles richtig!", "", XmlErrorType.NONE));
+      return Arrays.asList(new XMLError("", XmlErrorType.NONE, -1));
     return result;
   }
   
