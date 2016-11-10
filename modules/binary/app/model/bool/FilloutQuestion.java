@@ -35,7 +35,7 @@ public class FilloutQuestion extends BooleanQuestion {
 
   public static FilloutQuestion generateNew() {
     // TODO: implement!
-    BoolescheFunktionTree bft = BoolescheFunktionenGenerator.neueBoolescheFunktion();
+    BoolescheFunktionTree bft = BoolescheFunktionenGenerator.generateRandomBooleanFunction();
     return new FilloutQuestion(bft.getVariables(), bft);
   }
 

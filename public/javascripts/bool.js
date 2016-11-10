@@ -11,6 +11,23 @@ function extractParameters() {
   return parameters;
 }
 
+function testTheSolution(url) {
+  // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if(xhttp.readyState == 4 && xhttp.status == 200) {
+      processCorrection(xhttp.responseText);
+    }
+  };
+  
+  // AJAX-Objekt mit Daten fuellen, absenden
+  var parameters = extractParameters();
+  xhttp.open("PUT", url, true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.setRequestHeader("Accept", "application/json");
+  xhttp.send(parameters);
+}
+
 function processCorrection(correctionAsJson) {
   var completeCorrection = JSON.parse(correctionAsJson);
   var correctionArray = completeCorrection.solutions;
