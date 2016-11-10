@@ -1,11 +1,5 @@
 # --- !Ups
 
-# HTML
-
-insert into users values
-	("admin", "ADMIN")
-	on duplicate key update name = VALUES(name), role = VALUES(role);
-
 # JavaScript
 insert into js_web_exercise (`id`, `title`, `text`, `anterior`, `posterior`, `declaration`) values
 	(1,
