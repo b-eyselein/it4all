@@ -1,5 +1,6 @@
 package model.html;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import model.exercise.Exercise;
 import model.html.task.CssTask;
 import model.html.task.HtmlTask;
+import model.html.task.Task;
 
 @Entity
 public class HtmlExercise extends Model implements Exercise {
@@ -49,6 +51,17 @@ public class HtmlExercise extends Model implements Exercise {
   @Override
   public int getMaxPoints() {
     return 2 * htmlTasks.size();
+  }
+  
+  public List<? extends Task> getTasks(String exType) {
+    switch(exType) {
+    case "html":
+      return htmlTasks;
+    case "css":
+      return cssTasks;
+    default:
+      return Collections.emptyList();
+    }
   }
   
   @Override

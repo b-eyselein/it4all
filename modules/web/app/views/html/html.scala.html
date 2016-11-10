@@ -40,14 +40,8 @@ window.onload = updatePreview;
           <div class="panel panel-default">
             <div class="panel-heading">Teilaufgaben und Korrektur</div>
             <div class="panel-body" id="correction">
-            @if(exType.equals("html")) {
-              @for(task <- exercise.htmlTasks) {
-              <div class="well">@{task.getId()}. @task.text</div>
-              }
-            } else {
-              @for(task <- exercise.cssTasks) {
-              <div class="well">@{task.getId()}. @task.text</div>
-              }
+            @for(task <- exercise.getTasks(exType)) {
+              <div class="panel panel-default"><div class="panel-body">@{task.getId()}. @task.text</div></div>
             }
             </div>
           </div>
