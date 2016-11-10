@@ -93,13 +93,11 @@ public class XML extends ExerciseController {
     
     User user = UserManagement.getCurrentUser();
     
-    // FIXME: loading old solution does not work!
-
     String defaultOrOldSolution = loadOldSolution(exercise, user);
     String referenceCode = loadReferenceCode(exercise);
     
     if(exercise.exerciseType == XmlExType.XML_DTD && defaultOrOldSolution.startsWith("<?xml")) {
-      // // FIXME: Remove fixed start from old solution
+      // FIXME: Remove fixed start from old solution
       defaultOrOldSolution = defaultOrOldSolution.substring(defaultOrOldSolution.indexOf('\n') + 1);
       defaultOrOldSolution = defaultOrOldSolution.substring(defaultOrOldSolution.indexOf('\n') + 1);
     }
@@ -132,12 +130,12 @@ public class XML extends ExerciseController {
   }
   
   private String loadOldSolution(XmlExercise exercise, User user) {
-    Path oldSolutionPath = util.getSolFileForExercise(user, EXERCISE_TYPE, exercise.referenceFileName,
-        exercise.exerciseType.getFileEnding());
+    // FIXME: behebe Hack!
+    Path oldSolutionPath = util.getSolFileForExercise(user, EXERCISE_TYPE,
+        exercise.id + "/" + exercise.referenceFileName + "." + exercise.exerciseType.getFileEnding());
     
     if(Files.exists(oldSolutionPath, LinkOption.NOFOLLOW_LINKS)) {
       try {
-        // FIXME: test on server!
         return String.join("\n", Files.readAllLines(oldSolutionPath));
       } catch (IOException e) {
         Logger.error("There has been an error reading a old solution:", e);
