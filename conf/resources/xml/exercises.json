@@ -9,11 +9,11 @@
 	}, 
 	{
 		"id": 2, 
-		"title": "Ich lese ein Buch...", 
-		"exerciseType": "XML_XSD", 
-		"fixedStart": "", 
-		"referenceFileName": "books", 
-		"exerciseText": "Erstellen Sie zu diesem XML Schema ein passendes XML-Dokument!"
+		"title": "Vorlesung", 
+		"exerciseType": "XML_DTD", 
+		"fixedStart": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE krankenhaus SYSTEM \"lecture.dtd\">", 
+		"referenceFileName": "lecture", 
+		"exerciseText": "Erstellen Sie zu dieser DTD ein passendes XML-Dokument"
 	}, 
 	{
 		"id": 3, 
@@ -30,5 +30,13 @@
 		"fixedStart": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE krankenhaus SYSTEM \"hospital.dtd\">", 
 		"referenceFileName": "hospital", 
 		"exerciseText": "Erstellen Sie zu dieser DTD ein passendes XML-Dokument"
+	}, 
+	{
+		"id": 5, 
+		"title": "Bibliothek", 
+		"exerciseType": "DTD_XML", 
+		"fixedStart": "", 
+		"referenceFileName": "bibliothek", 
+		"exerciseText": "Erstellen Sie für dieses Dokument eine passende Document Type Definition!"
 	}
 ]

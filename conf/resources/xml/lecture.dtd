@@ -1,0 +1,6 @@
+<!ELEMENT lecture (student+,lecturer+)>
+<!ELEMENT student (#PCDATA)>
+<!ATTLIST student name CDATA #REQUIRED birthday CDATA #REQUIRED>
+<!ELEMENT lecturer (name, birthday)>
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT birthday (#PCDATA)>
