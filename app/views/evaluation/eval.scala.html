@@ -1,279 +1,68 @@
-@(title: String)
+@(title: String, evaluatedTools: List[String])
 
 <!DOCTYPE html>
 
 <html lang="de">
 <head>
 <title>it4all: @title</title>
-<link rel="stylesheet" type="text/css" href="@routes.Assets.versioned("bootstrap/css/bootstrap.css")">
-<script type="text/javascript" src="@routes.Assets.versioned("javascripts/jquery-1.11.3.min.js")"></script>
-<script type="text/javascript" src="@routes.Assets.versioned("bootstrap/js/bootstrap.js")"></script>
-<link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
+<!-- Bootstrap: CSS, JQuery und BS-JS -->
+<link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/bootstrap.css")">
+<script src="@routes.Assets.versioned("javascripts/jquery.js")"></script>
+<script src="@routes.Assets.versioned("javascripts/bootstrap.js")"></script>
 </head>
 <body>
-  <div class="container-fluid">
-    <nav class="navbar navbar-inverse">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="/">it4all</a>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">it4all</a>
+      </div>
+  </nav>
+  <div class="container">
+    <div class="page-header">
+      <h1>Evaluation der Tools</h1>
+    </div>
+    <form action="/eval/submit" method="post" class="form-horizontal" role="form">
+      @for(evalPart <- evaluatedTools) {
+      <h2>Evaluation der @evalPart-Korrektur</h2>
+      
+      @for(todo <- Array("SINN", "NUTZEN")) {
+      <div class="form-group">
+        <label class="control-label col-sm-4" for="@todo.toLowerCase()-@evalPart.toLowerCase()">Finden Sie diese
+          Art der Korrektur sinnvoll?</label>
+        @for(answer <- model.feedback.YesNoMaybe.values()) {
+        <div class="col-sm-@answer.getWidth()">
+          <div class="radio">
+            <label><input type="radio" name="@todo.toLowerCase()-@evalPart.toLowerCase()" value="@answer.getValue()" @if(answer.isChecked) {checked}>@answer.getGerman()</label>
+          </div>
+        </div>
+        }
+      </div>
+      }
+
+      @for(evaluated <- model.feedback.Evaluated.values()) {
+      <div class="form-group">
+        <label class="control-label col-sm-4" for="@evaluated.toString().toLowerCase()-@evalPart.toLowerCase()">@evaluated.getQuestion():</label>
+        @for(note <- model.feedback.Marks.values()) {
+        <div class="col-sm-@note.getWidth()">
+          <div class="radio">
+            <label><input type="radio" name="@evaluated.toString().toLowerCase()-@evalPart.toLowerCase()" value="@note.getMark()">@note.getGerman()</label>
+          </div>
+        </div>
+        }
+      </div>
+      }
+      
+      <div class="form-group">
+        <label class="control-label col-sm-4" for="kommentar-@evalPart.toLowerCase()">Verbesserungsvorschläge:</label>
+        <div class="col-sm-8">
+          <textarea class="form-control" rows="5" name="kommentar-@evalPart.toLowerCase()" id=
+            @evalPart.toLowerCase()"   placeholder="Verbesserungsvorschläge"></textarea>
+          <p>Bitte beschr&auml;nken Sie sich auf 250 Zeichen.</p>
         </div>
       </div>
-    </nav>
-    <div class="container">
-      <form action="/eval/submit" method="post" class="form-horizontal" role="form">
-        <h3>
-          Bitte geben Sie an, wie Sie folgende Punkte für die <strong>Html</strong>-Korrektur bewerten:
-        </h3>
-
-        <div class="form-group">
-          <label class="control-label col-sm-4" for="sinn-html">Finden Sie diese Art der Korrektur sinnvoll?</label>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="sinn-html" value="1">Ja</label>
-            </div>
-          </div>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="sinn-html" value="0">Nein</label>
-            </div>
-          </div>
-          <div class="col-sm-4">
-            <div class="radio">
-              <label><input type="radio" name="sinn-html" value="-1" checked>Keine Angabe</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="control-label col-sm-4" for="nutzen-html">Haben Sie die Korrekturmöglichkeit genutzt?</label>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="nutzen-html" value="1">Ja</label>
-            </div>
-          </div>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="nutzen-html" value="0">Nein</label>
-            </div>
-          </div>
-          <div class="col-sm-4">
-            <div class="radio">
-              <label><input type="radio" name="nutzen-html" value="-1" checked>Keine Angabe</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="control-label col-sm-4" for="bedienung-html">Allgemeine Bedienung:</label>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="bedienung-html" value="1">Sehr gut</label>
-            </div>
-          </div>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="bedienung-html" value="2">Gut</label>
-            </div>
-          </div>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="bedienung-html" value="3">Eher schlecht</label>
-            </div>
-          </div>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="bedienung-html" value="4">Schlecht</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="control-label col-sm-4" for="feedback-html">Gestaltung des Feedbacks:</label>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="feedback-html" value="1">Sehr gut</label>
-            </div>
-          </div>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="feedback-html" value="2">Gut</label>
-            </div>
-          </div>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="feedback-html" value="3">Eher schlecht</label>
-            </div>
-          </div>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="feedback-html" value="4">Schlecht</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="control-label col-sm-4" for="korrektur-html">Fairness der Korrektur:</label>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="korrektur-html" value="1">Sehr gut</label>
-            </div>
-          </div>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="korrektur-html" value="2">Gut</label>
-            </div>
-          </div>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="korrektur-html" value="4">Eher schlecht</label>
-            </div>
-          </div>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="korrektur-html" value="4">Schlecht</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="control-label col-sm-4" for="kommentar-html">Verbesserungsvorschläge:</label>
-          <div class="col-sm-8">
-            <textarea class="form-control" rows="5" name="kommentar-html" id="kommentar-html"
-              placeholder="Verbesserungsvorschläge"></textarea>
-            <p>Bitte beschr&auml;nken Sie sich auf 250 Zeichen.</p>
-          </div>
-        </div>
-
-        <h3>
-          Bitte geben Sie an, wie Sie folgende Punkte für die <strong>Excel</strong>-Korrektur bewerten:
-        </h3>
-
-        <div class="form-group">
-          <label class="control-label col-sm-4" for="sinn-excel">Finden Sie diese Art der Korrektur sinnvoll?</label>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="sinn-excel" value="1">Ja</label>
-            </div>
-          </div>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="sinn-excel" value="0">Nein</label>
-            </div>
-          </div>
-          <div class="col-sm-4">
-            <div class="radio">
-              <label><input type="radio" name="sinn-excel" value="-1" checked>Keine Angabe</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="control-label col-sm-4" for="nutzen-excel">Haben Sie die Korrekturmöglichkeit genutzt?</label>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="nutzen-excel" value="1">Ja</label>
-            </div>
-          </div>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="nutzen-excel" value="0">Nein</label>
-            </div>
-          </div>
-          <div class="col-sm-4">
-            <div class="radio">
-              <label><input type="radio" name="nutzen-excel" value="-1" checked>Keine Angabe</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="control-label col-sm-4" for="bedienung-excel">Allgemeine Bedienung:</label>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="bedienung-excel" value="1">Sehr gut</label>
-            </div>
-          </div>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="bedienung-excel" value="2">Gut</label>
-            </div>
-          </div>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="bedienung-excel" value="3">Eher schlecht</label>
-            </div>
-          </div>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="bedienung-excel" value="4">Schlecht</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="control-label col-sm-4" for="feedback-excel">Gestaltung des Feedbacks:</label>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="feedback-excel" value="1">Sehr gut</label>
-            </div>
-          </div>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="feedback-excel" value="2">Gut</label>
-            </div>
-          </div>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="feedback-excel" value="3">Eher schlecht</label>
-            </div>
-          </div>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="feedback-excel" value="4">Schlecht</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="control-label col-sm-4" for="korrektur-excel">Fairness der Korrektur:</label>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="korrektur-excel" value="1">Sehr gut</label>
-            </div>
-          </div>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="korrektur-excel" value="2">Gut</label>
-            </div>
-          </div>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="korrektur-excel" value="4">Eher schlecht</label>
-            </div>
-          </div>
-          <div class="col-sm-2">
-            <div class="radio">
-              <label><input type="radio" name="korrektur-excel" value="4">Schlecht</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="control-label col-sm-4" for="kommentar-excel">Verbesserungsvorschläge:</label>
-          <div class="col-sm-8">
-            <textarea class="form-control" rows="5" name="kommentar-excel" id="kommentar-excel"
-              placeholder="Verbesserungsvorschläge"></textarea>
-            <p>Bitte beschr&auml;nken Sie sich auf 250 Zeichen.</p>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <div class="col-sm-offset-4 col-sm-8">
-            <button type="submit" class="btn btn-default">Submit</button>
-          </div>
-        </div>
-      </form>
-    </div>
+    }
+    <input type="submit" class="btn btn-primary" value="Evaluation absenden">
+    </form>
   </div>
 </body>
 </html>
