@@ -26,8 +26,8 @@
           @for(variable <- question.getFormula().getVariables()) {
             <td>@assignment.asChar(variable)</td>
           }
-            <td class="@assignment.getColor()">@assignment.asChar('z')</td>
-            <td class="@assignment.getColor()">@assignment.asChar('y')</td>
+            <td class="@assignment.getColor() text-@assignment.getColor()">@assignment.asChar('z')</td>
+            <td class="@assignment.getColor() text-@assignment.getColor()">@assignment.asChar('y')</td>
           </tr>
         }
         </tbody>
