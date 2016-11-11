@@ -35,7 +35,8 @@ function processCorrection(correctionAsJson) {
   for(var i = 0; i < correctionArray.length; i++) {
     var correction = correctionArray[i];
     var solutionCell = document.getElementById(correction.assignmentsForJson);
-    solutionCell.innerHTML = "<span class=\"" + correction.color + "\">" + correction.learnerValue + "</span>";
+    solutionCell.className = "text-center " + correction.color;
+    solutionCell.innerHTML = "<span class=\"text-" + correction.color + "\">" + correction.learnerValue + "</span>";
   }
   
 }

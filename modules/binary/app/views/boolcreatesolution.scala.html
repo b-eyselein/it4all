@@ -22,7 +22,7 @@
                 @for(variable <- question.getVariables()) {
                 <td class="text-center">@assignment.asChar(variable)</td> }
                 <td class="text-center">@assignment.asChar('z')</td>
-                <td class="text-center"><span class="@assignment.getColor()">@assignment.asChar('y')</span></td> }
+                <td class="text-center @assignment.getColor()"><span class="text-@assignment.getColor()">@assignment.asChar('y')</span></td> }
             </tbody>
           </table>
         </div>
