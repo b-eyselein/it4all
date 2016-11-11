@@ -16,6 +16,7 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.insert.Insert;
+import play.Logger;
 
 public class InsertCorrector extends ChangeCorrector<Insert, Insert> {
 
@@ -53,6 +54,9 @@ public class InsertCorrector extends ChangeCorrector<Insert, Insert> {
 
     ColumnComparison columnComparison = compareColumns(userQuery, sampleQuery);
 
+    // FIXME: correct inserted items!
+    Logger.debug(userQuery.getItemsList() + "");
+    
     return Arrays.asList(tableComparison, columnComparison);
   }
 
