@@ -130,15 +130,7 @@ function prepareFormForSubmitting() {
 }
 
 function processCorrection(jsonResponseText) {
-	var loesungsraum = document.getElementById("loesungsraum");
-
-	var results = JSON.parse(jsonResponseText);
-	var toAdd = "";
-
-	for (resultCounter = 0; resultCounter < results.length; resultCounter++) {
-		toAdd += results[resultCounter].asHtml;
-	}
-	loesungsraum.innerHTML = toAdd;
+	document.getElementById("loesungsraum").innerHTML = JSON.parse(jsonResponseText).asHtml;
 }
 
 function testTheWebSolution(url) {

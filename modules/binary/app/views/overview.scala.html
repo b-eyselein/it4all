@@ -1,33 +1,18 @@
 @(user: model.user.User)
 
-@main("Binary", user) {
+@main("Zahlensysteme", user) {
 <div class="container">
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <strong>Boolesche Algebra</strong>
-    </div>
-    <div class="panel-body">
-      <p>
-        <a type="button" class="btn btn-default btn-block" href="@binary.routes.NaryBool.newBoolFilloutQuestion()"> Wahrheitstabellen
-          ausf&uuml;llen </a>
-      </p>
-      <p>
-        <a type="button" class="btn btn-default btn-block" href="@binary.routes.NaryBool.newBoolCreationQuestion()">
-          Formel erstellen </a>
-      </p>
-    </div>
-  </div>
   <div class="panel panel-default">
     <div class="panel-heading">
       <strong>Zahlensysteme</strong>
     </div>
     <div class="panel-body">
       <p>
-        <a type="button" class="btn btn-default btn-block" href="@binary.routes.NaryBool.newNaryConversionQuestion()">
+        <a type="button" class="btn btn-default btn-block" href="@controllers.nary.routes.Nary.newNaryConversionQuestion()">
           Umwandeln zwischen verschiedenen Zahlensystemen. </a>
       </p>
       <p>
-        <a type="button" class="btn btn-default btn-block" href="@binary.routes.NaryBool.newNaryAdditionQuestion()">
+        <a type="button" class="btn btn-default btn-block" href="@controllers.nary.routes.Nary.newNaryAdditionQuestion()">
           Addition in anderen Zahlensystemen </a>
       </p>
     </div>

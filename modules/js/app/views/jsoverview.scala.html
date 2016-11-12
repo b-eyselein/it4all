@@ -1,0 +1,17 @@
+@(user: model.user.User, exercises: List[model.JsExercise])
+
+@main("JavaScript", user) {
+<div class="container">
+    <div class="page-header">
+      <h1 class="page-title">&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h1>
+    </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">Korrektur mit Java-JSEngine Nashorn</div>
+    <div class="panel-body">
+    @for(exercise <- exercises) {
+      <a href="@controllers.js.routes.JS.exercise(exercise.id)" class="btn btn-default btn-block">Aufgabe @exercise.id: @exercise.title</a>
+    }
+    </div>
+  </div>
+</div>
+}

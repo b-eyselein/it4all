@@ -21,6 +21,10 @@ GET    /admin          controllers.AdminController.index()
 # Web-Korrektur
 ->     /web            web.Routes
 
+# Javascript-Korrektur
+
+->     /js             js.Routes
+
 # SQL-Korrektur
 ->     /sql            sql.Routes
 

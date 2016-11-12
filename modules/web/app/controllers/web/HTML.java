@@ -15,13 +15,16 @@ import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
 import model.Secured;
 import model.Util;
-import model.html.HtmlExerciseReader;
+import model.html.WebExerciseReader;
 import model.logging.ExerciseCompletionEvent;
 import model.logging.ExerciseCorrectionEvent;
 import model.logging.ExerciseStartEvent;
 import model.html.HtmlCorrector;
 import model.html.WebExercise;
-import model.result.EvaluationResult;
+import model.html.WebExerciseIdentifier;
+import model.result.CompleteResult;
+import model.result.EvaluationFailed;
+import model.html.result.WebCorrectionResult;
 import model.user.User;
 import play.Logger;
 import play.data.DynamicForm;
@@ -35,9 +38,10 @@ import views.html.playground;
 import views.html.html.html;
 import views.html.correction;
 import views.html.html.htmloverview;
+import play.mvc.Http.Request;
 
 @Security.Authenticated(Secured.class)
-public class HTML extends ExerciseController<WebExercise> {
+public class HTML extends ExerciseController<WebExerciseIdentifier> {
 
   private static final String LEARNER_SOLUTION_VALUE = "editorContent";
   private static final String FILE_TYPE = "html";
@@ -59,7 +63,7 @@ public class HTML extends ExerciseController<WebExercise> {
     checker = theChecker;
 
     Path jsonFile = Paths.get(EXERCISE_FOLDER, "exercises.json");
-    List<WebExercise> exercises = HtmlExerciseReader.readExercises(jsonFile);
+    List<WebExercise> exercises = WebExerciseReader.readExercises(jsonFile);
 
     for(WebExercise ex: exercises)
       ex.save();
@@ -67,34 +71,19 @@ public class HTML extends ExerciseController<WebExercise> {
 
   public Result commit(int exerciseId, String type) {
     User user = UserManagement.getCurrentUser();
-    WebExercise exercise = WebExercise.finder.byId(exerciseId);
-
-    if(exercise == null)
-      return badRequest(error.render(user, new Html("There is no such exercise!")));
-
-    DynamicForm form = factory.form().bindFromRequest();
-    String learnerSolution = form.get(LEARNER_SOLUTION_VALUE);
-    try {
-      saveSolutionForUser(user, learnerSolution, exerciseId);
-    } catch (IOException error) {
-      Logger.error("Fehler beim Speichern einer Html-Loesungsdatei!", error);
-      return badRequest("Es gab einen Fehler beim Speichern der Lösungsdatei!");
-    }
-
-    String solutionUrl = "http://localhost:9000" + routes.Solution.site(user, "html", exercise.id).url();
-
+    
     if(!typeIsCorrect(type))
       return badRequest(error.render(user, new Html("Der Korrekturtyp wurde nicht korrekt spezifiziert!")));
 
-    List<EvaluationResult> elementResults = HtmlCorrector.correct(solutionUrl, WebExercise.finder.byId(exerciseId),
-        user, type);
+    CompleteResult result = correct(request(), user, new WebExerciseIdentifier(exerciseId, type));
 
     if(wantsJsonResponse()) {
-      log(user, new ExerciseCorrectionEvent(request(), elementResults));
-      return ok(Json.toJson(elementResults));
+      log(user, new ExerciseCorrectionEvent(request(), result));
+      return ok(Json.toJson(result));
     } else {
-      log(user, new ExerciseCompletionEvent(request(), elementResults));
-      return ok(correction.render("HTML", learnerSolution, elementResults, UserManagement.getCurrentUser()));
+      log(user, new ExerciseCompletionEvent(request(), result));
+      // FIXME: Umstellung correction template auf ein Resultat!
+      return ok(correction.render("HTML", result.getLearnerSolution(), result, UserManagement.getCurrentUser()));
     }
   }
 
@@ -158,8 +147,22 @@ public class HTML extends ExerciseController<WebExercise> {
     return "html".equals(type) || "css".equals(type);
   }
 
-  protected EvaluationResult correct(String learnerSolution, WebExercise exercise) {
-    // FIXME: implement!
-    return null;
+  @Override
+  protected CompleteResult correct(Request request, User user, WebExerciseIdentifier id) {
+    WebExercise exercise = WebExercise.finder.byId(id.getId());
+
+    DynamicForm form = factory.form().bindFromRequest();
+    String learnerSolution = form.get(LEARNER_SOLUTION_VALUE);
+    try {
+      saveSolutionForUser(user, learnerSolution, exercise.getId());
+    } catch (IOException error) {
+      Logger.error("Fehler beim Speichern einer Html-Loesungsdatei!", error);
+      return new WebCorrectionResult(learnerSolution, Arrays.asList(new EvaluationFailed(
+          "Es gab einen Fehler beim Speichern der Lösungsdatei. Daher konnte die Korrektur nicht durchgeführt werden!")));
+    }
+
+    String solutionUrl = "http://localhost:9000" + routes.Solution.site(user, "html", exercise.id).url();
+    
+    return HtmlCorrector.correct(learnerSolution, solutionUrl, exercise, user, id.getType());
   }
 }

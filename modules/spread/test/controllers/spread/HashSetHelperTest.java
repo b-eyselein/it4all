@@ -12,8 +12,8 @@ import java.util.Iterator;
 
 import org.junit.Test;
 
-import model.spread.HashSetHelper;
-import model.spread.RegExpHelper;
+import model.HashSetHelper;
+import model.RegExpHelper;
 
 public class HashSetHelperTest {
   

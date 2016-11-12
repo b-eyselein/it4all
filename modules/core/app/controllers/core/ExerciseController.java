@@ -1,19 +1,20 @@
 package controllers.core;
 
 import model.Util;
-import model.exercise.Exercise;
+import model.exercise.ExerciseIdentifier;
 import model.logging.WorkingEvent;
-import model.result.EvaluationResult;
+import model.result.CompleteResult;
 import model.user.User;
 import play.Logger;
 import play.data.FormFactory;
 import play.libs.Json;
 import play.mvc.Controller;
+import play.mvc.Http.Request;
 
-public abstract class ExerciseController<T extends Exercise> extends Controller {
+public abstract class ExerciseController<I extends ExerciseIdentifier> extends Controller {
 
   protected Util util;
-  
+
   protected FormFactory factory;
 
   public ExerciseController(Util theUtil, FormFactory theFactory) {
@@ -30,10 +31,10 @@ public abstract class ExerciseController<T extends Exercise> extends Controller 
     Logger.debug("ToLog:\n" + builder.toString());
   }
 
-  protected abstract EvaluationResult correct(String learnerSolution, T exercise);
+  protected abstract CompleteResult correct(Request request, User user, I identifier);
 
   protected boolean wantsJsonResponse() {
     return "application/json".equals(request().acceptedTypes().get(0).toString());
   }
-  
+
 }

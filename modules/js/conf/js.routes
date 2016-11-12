@@ -1,0 +1,6 @@
+# JavaScript
+GET    /               controllers.js.JS.index()
+POST   /validate/:ex   controllers.js.JS.validateTestData(ex: Int)
+
+GET    /:ex            controllers.js.JS.exercise(ex: Int)
+POST   /:ex            controllers.js.JS.commit(ex: Int)

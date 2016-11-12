@@ -1,25 +1,22 @@
 # Playground
 GET    /playground                         controllers.web.HTML.playground()
 
+# JavaScript
+GET    /js/                                controllers.web.JSWeb.index()
+
+GET    /js/:ex                         controllers.web.JSWeb.exerciseWeb(ex: Int)
+PUT    /js/:ex                         controllers.web.JSWeb.commitWeb(ex: Int)
+POST   /js/:ex                         controllers.web.JSWeb.commitWeb(ex: Int)
+
 # HTML & CSS
-GET    /html/                              controllers.web.HTML.index()
+GET    /                              controllers.web.HTML.index()
 
-GET    /html/:exerciseId/:type             controllers.web.HTML.exercise(exerciseId: Int, type: String)
+GET    /:exerciseId/:type             controllers.web.HTML.exercise(exerciseId: Int, type: String)
 
-PUT    /html/:exerciseId/:type             controllers.web.HTML.commit(exerciseId: Int, type: String)
-POST   /html/:exerciseId/:type             controllers.web.HTML.commit(exerciseId: Int, type: String)
+PUT    /:exerciseId/:type             controllers.web.HTML.commit(exerciseId: Int, type: String)
+POST   /:exerciseId/:type             controllers.web.HTML.commit(exerciseId: Int, type: String)
 
 GET    /solution/:user/:type/:exerciseId   controllers.web.Solution.site(user: model.user.User, type: String, exerciseId: Int)
 
-# JavaScript
-GET    /js/                                controllers.web.JS.index()
 
-GET    /js/web/:ex                         controllers.web.JS.exerciseWeb(ex: Int)
-PUT    /js/web/:ex                         controllers.web.JS.commitWeb(ex: Int)
-POST   /js/web/:ex                         controllers.web.JS.commitWeb(ex: Int)
-
-POST   /js/validate/:ex                    controllers.web.JS.validateTestData(ex: Int)
-
-GET    /js/:ex                             controllers.web.JS.exercise(ex: Int)
-POST   /js/:ex                             controllers.web.JS.commit(ex: Int)
 

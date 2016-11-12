@@ -18,7 +18,7 @@ import org.odftoolkit.simple.style.StyleTypeDefinitions.FontStyle;
 import org.odftoolkit.simple.table.Cell;
 import org.odftoolkit.simple.table.Table;
 
-import model.spread.ODFCorrector;
+import model.ODFCorrector;
 
 public class ODFCorrectorTest {
   

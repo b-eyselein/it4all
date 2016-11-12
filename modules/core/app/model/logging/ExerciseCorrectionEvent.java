@@ -1,7 +1,5 @@
 package model.logging;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import model.result.EvaluationResult;
@@ -9,11 +7,11 @@ import play.mvc.Http.Request;
 
 public class ExerciseCorrectionEvent extends WorkingEvent {
 
-  private List<EvaluationResult> results;
+  private EvaluationResult results;
 
-  public ExerciseCorrectionEvent(Request theRequest, List<EvaluationResult> theResults) {
+  public ExerciseCorrectionEvent(Request theRequest, EvaluationResult theResult) {
     super(EventType.EXERCISE_CORRECTION, theRequest);
-    results = theResults;
+    results = theResult;
   }
 
   @Override
@@ -23,7 +21,7 @@ public class ExerciseCorrectionEvent extends WorkingEvent {
   }
 
   @JsonIgnore
-  public List<EvaluationResult> getResults() {
+  public EvaluationResult getResult() {
     return results;
   }
 

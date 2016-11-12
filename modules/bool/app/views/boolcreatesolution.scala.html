@@ -1,0 +1,59 @@
+@(user: model.user.User, question: model.CreationQuestion)
+
+@main("Formel erstellen", user) {
+<div class="container">
+  <div class="panel panel-default">
+    <div class="panel-heading">Musterl&ouml;sung</div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="container-fluid">
+          <table class="table">
+            <thead>
+              <tr>
+                @for(variable <- question.getVariables()) {
+                <th class="text-center">@variable</th> }
+                <th class="text-center">@question.getSolutionVariable()</th>
+                <th class="text-center" id="learnerFormula">Ihre L&ouml;sung</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for(assignment <- question.getSolutions()) {
+              <tr>
+                @for(variable <- question.getVariables()) {
+                <td class="text-center">@assignment.asChar(variable)</td> }
+                <td class="text-center">@assignment.asChar('z')</td>
+                <td class="text-center @assignment.getColor()"><span class="text-@assignment.getColor()">@assignment.asChar('y')</span></td> }
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row">
+        <div class="container-fluid">
+          <h3>Musterl&ouml;sungen f&uuml;r z:</h3>
+          <div class="row">
+            <div class="col-sm-3">Kanonische disjunktive Normalform:</div>
+            <div class="col-sm-9">
+              @question.getDisjunktiveNormalForm()
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-3">Kanonische konjunktive Normalform:</div>
+            <div class="col-sm-9">
+              @question.getKonjunktiveNormalForm()
+            </div>
+          </div>
+          <p>
+            <a class="btn btn-primary btn-block" href="@controllers.bool.routes.Bool.newBoolCreationQuestion()">N&auml;chste Aufgabe</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Tooltip script -->
+<script>
+  $(document).ready(function() {
+    $('[data-toggle="tooltip"]').tooltip();
+  });
+</script>
+}

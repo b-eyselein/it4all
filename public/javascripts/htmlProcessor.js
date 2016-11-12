@@ -1,9 +1,9 @@
-function testTheSolution(url, type) {
+function testTheSolution(url) {
   // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if(xhttp.readyState == 4 && xhttp.status == 200) {
-      processCorrection(xhttp.responseText, type);
+      processCorrection(xhttp.responseText);
     }
   };
   
@@ -19,40 +19,22 @@ function prepareFormForSubmitting() {
   document.getElementById("editorContent").value = editor.getValue();
 }
 
-function processCorrection(correction, type) {
-  try {
-    var newCorrection = JSON.parse(correction);
-    
-    var numOfSuccessfulResults = 0;
-    
-    var correctionDiv = document.getElementById("correction");
-    correctionDiv.innerHTML = "";
-    
-    for(var i = 0; i < newCorrection.length; i++) {
-      // handleHtmlResult(newCorrection[i]);
-      correctionDiv.innerHTML += newCorrection[i].asHtml;
-      if(newCorrection[i].success === "COMPLETE") {
-        numOfSuccessfulResults++;
-      }
-    }
-    
-    var commitButton = document.getElementById("commit");
-    commitButton.disabled = false;
-    if(numOfSuccessfulResults == newCorrection.length) {
-      commitButton.title = "Sie k&ouml;nnen ihre L&ouml;sung abgeben.";
-      commitButton.className = "btn btn-success";
-    } else {
-      commitButton.title = "Sie k&ouml;nnen ihre L&ouml;sung abgeben, haben aber nicht alles richtig.";
-      commitButton.className = "btn btn-warning";
-    }
-  } catch(err) {
-    console.log(err);
-  }
+function processCorrection(correction) {
+  var newCorrection = JSON.parse(correction);
   
-  // TODO: Evtl. Update Live-Ansicht in andere Funktion auslagern
-  // --> andere Aktivierung (onclick Data-toggle?)
-  var live = document.getElementById("live");
-  live.src = live.src;
+  var correctionDiv = document.getElementById("correction");
+  correctionDiv.innerHTML = newCorrection.asHtml;
+  
+  var commitButton = document.getElementById("commit");
+  commitButton.disabled = false;
+  console.log(newCorrection.success);
+  if(newCorrection.success == "COMPLETE") {
+    commitButton.title = "Sie k&ouml;nnen ihre L&ouml;sung abgeben.";
+    commitButton.className = "btn btn-success";
+  } else {
+    commitButton.title = "Sie k&ouml;nnen ihre L&ouml;sung abgeben, haben aber nicht alles richtig.";
+    commitButton.className = "btn btn-warning";
+  }
 }
 
 function updatePreview() {

@@ -1,0 +1,98 @@
+@(user: model.user.User, exercise: model.JsExercise)
+
+@main("JavaScript-Test", user) {
+<script src=" @controllers.routes.Assets.versioned("javascripts/jsProcessor.js")" type="text/javascript" charset="utf-8"></script>
+<script>
+function testSolution() {
+  testTheSolution("@controllers.js.routes.JS.commit(exercise.id)");
+}
+</script>
+
+<div class="container-fluid">
+  <form action="@controllers.js.routes.JS.commit(exercise.id)" method="post" onsubmit="prepareFormForSubmitting();">
+  
+    <div class="row">
+      <div class="col-md-4">
+        <!-- Aufgabenstellung -->
+        <div class="panel panel-default">
+          <div class="panel-heading">Aufgabenstellung</div>
+          <div class="panel-body">@Html(exercise.text)</div>
+          <div class="panel-footer">
+            <div class="btn-group btn-group-justified">
+              <div class="btn-group">
+                <button type="button" class="btn btn-primary" onclick="testSolution();">L&ouml;sung testen</button>
+              </div>
+              <div class="btn-group">
+                <button type="submit" class="btn btn-success" >L&ouml;sung abgeben</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        @editor(exercise.declaration, "javascript", 10, 20, false)
+      </div>
+      
+      <div class="col-md-8">
+        <!-- Korrektur -->
+        <div class="panel panel-default">
+          <div class="panel-heading">Korrektur</div>
+          <div class="panel-body" id="loesungsraum">Hier stehen bald die Korrekturwerte...</div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="row col-md-12">      
+      <!-- Definition eigener Testdaten -->
+      <div class="panel panel-default">
+        <div class="panel-heading">Test Driven Development</div>
+        <div class="panel-body">
+          <div class="alert alert-info">Hier k&ouml;nnen Sie sich eigene Testdaten definieren, um die Funktion kennenzulernen und 
+          zus&auml;tzliche Testdaten zu nutzen. Diese können gegen eine Musterl&ouml;sung validiert werden.
+          Au&szlig;erdem werden Sie automatisch beim Testen der L&ouml;sung verwendet.
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+          </div>
+          <input type="hidden" name="inputs" value="@exercise.inputcount">
+          <input type="hidden" name="count" value="1" id="count">
+          <table class="table" id="testDataTable">
+            <thead>
+              <tr>
+              @for(i <- 0 until exercise.inputcount) {
+                <th>Input @{i + 1}</th>
+              }                  
+                <th>Output</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+              @for(i <- 0 until exercise.inputcount) {
+                <td><input class="form-control" name="inp@{i}0"></td>
+              }
+                <td><input class="form-control" name="outp0"></td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="4">
+                  <div class="input-group">
+                    <span class="input-group-addon">Neue Testdaten</span>
+                    <div class="input-group-btn">
+                      <button type="button" class="btn btn-default" onclick="lessTestData();">
+                        <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                      </button>
+                      <button type="button" class="btn btn-default" onclick="moreTestData(@exercise.inputcount);">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                      </button>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+          <input type="button" class="btn btn-default" onclick="validateTestData('@controllers.js.routes.JS.validateTestData(exercise.id)');" value="Validiere neue Testdaten">
+        </div>
+      </div>
+    </div>
+    
+  </form>
+</div>
+}

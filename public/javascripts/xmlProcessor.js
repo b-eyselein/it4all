@@ -1,23 +1,11 @@
 function processCorrection(correction) {
   var newResults = JSON.parse(correction);
   
-  var numOfSuccessfulResults = 0;
-  
-  var resultsContainer = document.getElementById("element_result_container");
-  
-  var toSet = "";
-  for(var i = 0; i < newResults.length; i++) {
-    toSet += newResults[i].asHtml;
-    if(newResults[i].errorType === "NONE") {
-      numOfSuccessfulResults++;
-    }
-  }
-  
-  resultsContainer.innerHTML = toSet;
+  document.getElementById("element_result_container").innerHTML = newResults.asHtml;
   
   var commitButton = document.getElementById("commit");
   commitButton.disabled = false;
-  if(numOfSuccessfulResults == newResults.length) {
+  if(newResults.success == "COMPLETE") {
     commitButton.title = "Sie k&ouml;nnen ihre L&ouml;sung abgeben.";
     commitButton.className = "btn btn-success";
   } else {

@@ -1,7 +1,5 @@
 package model.logging;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import model.result.EvaluationResult;
@@ -9,11 +7,11 @@ import play.mvc.Http.Request;
 
 public class ExerciseCompletionEvent extends WorkingEvent {
 
-  private List<EvaluationResult> results;
+  private EvaluationResult result;
 
-  public ExerciseCompletionEvent(Request theRequest, List<EvaluationResult> theResults) {
+  public ExerciseCompletionEvent(Request theRequest, EvaluationResult theResult) {
     super(EventType.EXERCISE_COMPLETION, theRequest);
-    results = theResults;
+    result = theResult;
   }
 
   @Override
@@ -23,7 +21,7 @@ public class ExerciseCompletionEvent extends WorkingEvent {
   }
   
   @JsonIgnore
-  public List<EvaluationResult> getResults() {
-    return results;
+  public EvaluationResult getResults() {
+    return result;
   }
 }

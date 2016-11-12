@@ -13,8 +13,8 @@ import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import model.SpreadExercise;
 import model.Util;
-import model.spread.SpreadExercise;
 import play.Logger;
 import play.libs.Json;
 
