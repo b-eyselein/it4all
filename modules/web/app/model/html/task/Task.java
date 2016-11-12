@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import model.exercise.Success;
-import model.html.HtmlExercise;
+import model.html.WebExercise;
 import model.html.result.AttributeResult;
 import model.result.EvaluationResult;
 
@@ -33,7 +33,7 @@ public abstract class Task {
   @ManyToOne
   @JoinColumn(name = "exercise_id", insertable = false, updatable = false)
   @JsonBackReference
-  public HtmlExercise exercise;
+  public WebExercise exercise;
   
   @Column(columnDefinition = "text")
   @JsonIgnore

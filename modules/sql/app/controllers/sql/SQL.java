@@ -37,7 +37,7 @@ import views.html.sqlexercise;
 import views.html.sqloverview;
 
 @Authenticated(Secured.class)
-public class SQL extends ExerciseController {
+public class SQL extends ExerciseController<SqlExercise> {
   
   private static final String SHOW_ALL_TABLES = "SHOW TABLES";
   
@@ -58,7 +58,7 @@ public class SQL extends ExerciseController {
     sqlSelect = theSqlSelect;
     sqlOther = theSqlOther;
   }
-  
+
   public Result commit(String scenarioName, String exerciseType, int exerciseId) {
     SqlExerciseType type = SqlExerciseType.valueOf(exerciseType);
     SqlExercise exercise = SqlExercise.finder.byId(new SqlExerciseKey(scenarioName, exerciseId, type));
@@ -151,6 +151,11 @@ public class SQL extends ExerciseController {
     }
     
     return tables;
+  }
+  
+  protected EvaluationResult correct(String learnerSolution, SqlExercise exercise) {
+    // FIXME: implement!
+    return null;
   }
   
 }

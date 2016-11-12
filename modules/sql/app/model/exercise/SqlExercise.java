@@ -20,7 +20,7 @@ import model.querycorrectors.update.UpdateCorrector;
 import net.sf.jsqlparser.statement.Statement;
 
 @Entity
-public class SqlExercise extends Model {
+public class SqlExercise extends Model implements Exercise {
 
   public static final String SAMPLE_JOIN_CHAR = "#";
 
@@ -62,8 +62,38 @@ public class SqlExercise extends Model {
     }
   }
 
+  @Override
+  public String getExerciseIdentifier() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  
+  @Override
+  public int getId() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+  
+  @Override
+  public int getMaxPoints() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+  
   public List<String> getSampleSolutions() {
     return Arrays.asList(samples.split("#"));
+  }
+  
+  @Override
+  public String getText() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  
+  @Override
+  public String getTitle() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

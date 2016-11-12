@@ -17,14 +17,14 @@ import model.html.task.TaskKey;
 import play.Logger;
 import play.libs.Json;
 
-public class HtmlExerciseReader extends ExerciseReader<HtmlExercise> {
+public class HtmlExerciseReader extends ExerciseReader<WebExercise> {
   
   private HtmlExerciseReader() {
     // FIXME: check all JsonNodes for null!
   }
   
-  public static List<HtmlExercise> readExercises(Path jsonFile) {
-    List<HtmlExercise> exercises = new LinkedList<>();
+  public static List<WebExercise> readExercises(Path jsonFile) {
+    List<WebExercise> exercises = new LinkedList<>();
     
     if(!Files.exists(jsonFile)) {
       Logger.error("The file " + jsonFile + " does not exist!");
@@ -92,7 +92,7 @@ public class HtmlExerciseReader extends ExerciseReader<HtmlExercise> {
     return tasks;
   }
   
-  private static HtmlExercise readExercise(int exerciseId, JsonNode exerciseNode) {
+  private static WebExercise readExercise(int exerciseId, JsonNode exerciseNode) {
     JsonNode titleNode = exerciseNode.get("title");
     JsonNode textNode = exerciseNode.get("text");
     JsonNode htmlTasksNode = exerciseNode.get("tasks");
@@ -101,9 +101,9 @@ public class HtmlExerciseReader extends ExerciseReader<HtmlExercise> {
     List<HtmlTask> htmlTasks = readHtmlTasks(htmlTasksNode, exerciseId);
     List<CssTask> cssTasks = readCssTasks(cssTasksNode, exerciseId);
     
-    HtmlExercise exercise = HtmlExercise.finder.byId(exerciseId);
+    WebExercise exercise = WebExercise.finder.byId(exerciseId);
     if(exercise == null)
-      exercise = new HtmlExercise(exerciseId);
+      exercise = new WebExercise(exerciseId);
     
     exercise.title = titleNode.asText();
     exercise.text = textNode.asText();
@@ -138,7 +138,7 @@ public class HtmlExerciseReader extends ExerciseReader<HtmlExercise> {
   }
   
   @Override
-  public List<HtmlExercise> readExercises(Path jsonFile, Path jsonSchemaFile) {
+  public List<WebExercise> readExercises(Path jsonFile, Path jsonSchemaFile) {
     // TODO Auto-generated method stub
     return null;
   }

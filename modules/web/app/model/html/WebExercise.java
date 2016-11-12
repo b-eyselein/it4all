@@ -19,40 +19,46 @@ import model.html.task.HtmlTask;
 import model.html.task.Task;
 
 @Entity
-public class HtmlExercise extends Model implements Exercise {
-  
-  public static final Finder<Integer, HtmlExercise> finder = new Finder<>(HtmlExercise.class);
-  
+public class WebExercise extends Model implements Exercise {
+
+  public static final Finder<Integer, WebExercise> finder = new Finder<>(WebExercise.class);
+
   @Id
   public int id;
-  
+
   @Column(columnDefinition = "text")
   public String text;
-  
+
   public String title; // NOSONAR
-  
+
   @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
   @JsonManagedReference
   public List<HtmlTask> htmlTasks;
-  
+
   @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
   @JsonManagedReference
   public List<CssTask> cssTasks;
-  
-  public HtmlExercise(int exerciseId) {
+
+  public WebExercise(int exerciseId) {
     id = exerciseId;
+  }
+  
+  @Override
+  public String getExerciseIdentifier() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
   @Override
   public int getId() {
     return id;
   }
-  
+
   @Override
   public int getMaxPoints() {
     return 2 * htmlTasks.size();
   }
-  
+
   public List<? extends Task> getTasks(String exType) {
     switch(exType) {
     case "html":
@@ -63,12 +69,12 @@ public class HtmlExercise extends Model implements Exercise {
       return Collections.emptyList();
     }
   }
-  
+
   @Override
   public String getText() {
     return text;
   }
-  
+
   @Override
   public String getTitle() {
     return title;
@@ -81,20 +87,20 @@ public class HtmlExercise extends Model implements Exercise {
     builder.append("\nID:\t\t" + id);
     builder.append("\nTitel:\t\t" + title);
     builder.append("\nText:\t\t" + text);
-    
+
     builder.append("\nTasks:\t\t");
     if(htmlTasks.isEmpty())
       builder.append("--");
     else
       builder.append(htmlTasks.stream().map(t -> t.toString()).collect(Collectors.joining(", \n")));
-    
+
     builder.append("\nCSS-Tasks:\t");
     if(cssTasks.isEmpty())
       builder.append("--");
     else
       builder.append(cssTasks.stream().map(t -> t.toString()).collect(Collectors.joining(", \n")));
-    
+
     return builder.toString();
   }
-  
+
 }

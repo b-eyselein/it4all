@@ -11,10 +11,12 @@ import javax.script.SimpleScriptContext;
 
 import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
+import model.PythonExercise;
 import model.Util;
 import model.exercise.FeedbackLevel;
 import model.exercise.Success;
 import model.result.EvaluationFailed;
+import model.result.EvaluationResult;
 import model.result.GenericEvaluationResult;
 import play.data.DynamicForm;
 import play.data.FormFactory;
@@ -22,7 +24,7 @@ import play.libs.Json;
 import play.mvc.Result;
 import views.html.python;
 
-public class Python extends ExerciseController {
+public class Python extends ExerciseController<PythonExercise> {
 
   @Inject
   public Python(Util theUtil, FormFactory theFactory) {
@@ -50,6 +52,11 @@ public class Python extends ExerciseController {
     return ok(Json.toJson(new GenericEvaluationResult(FeedbackLevel.MINIMAL_FEEDBACK, Success.NONE,
         "The result was: " + (result != null ? result : "null"),
         "The output was:\n" + context.getWriter().toString())));
+  }
+
+  public EvaluationResult correct(String learnerSolution, PythonExercise exercise) {
+    // FIXME: implement!
+    return null;
   }
 
   public Result index() {

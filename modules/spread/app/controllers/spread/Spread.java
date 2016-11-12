@@ -12,6 +12,7 @@ import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
 import model.Secured;
 import model.Util;
+import model.result.EvaluationResult;
 import model.spread.SpreadExercise;
 import model.spread.SpreadSheetCorrectionResult;
 import model.spread.SpreadSheetCorrector;
@@ -29,7 +30,7 @@ import views.html.excel.spreadcorrectionerror;
 import views.html.excel.spreadoverview;
 
 @Security.Authenticated(Secured.class)
-public class Spread extends ExerciseController {
+public class Spread extends ExerciseController<SpreadExercise> {
 
   private static final String EXERCISE_TYPE = "spread";
 
@@ -42,6 +43,11 @@ public class Spread extends ExerciseController {
   public Spread(Util theUtil, FormFactory theFactory, SpreadStartUpChecker theChecker) {
     super(theUtil, theFactory);
     checker = theChecker;
+  }
+
+  public EvaluationResult correct(String learnerSolution, SpreadExercise exercise) {
+    // FIXME: implement!
+    return null;
   }
   
   public Result download(int exerciseId, String typ) {
