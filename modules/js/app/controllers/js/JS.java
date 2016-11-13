@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -37,54 +38,48 @@ public class JS extends ExerciseController<model.JsExerciseIdentifier> {
   @Inject
   public JS(Util theUtil, FormFactory theFactory) {
     super(theUtil, theFactory);
-
+    
     // FIXME: implement and test!
     Path jsonFile = Paths.get(res, "exercises.json");
     Path jsonSchemaFile = Paths.get(res, "exerciseSchema.json");
     (new JsExerciseReader()).readExercises(jsonFile, jsonSchemaFile);
   }
-
+  
   private static List<CommitedTestData> extractAndValidateTestData(DynamicForm form, JsExercise exercise) {
     List<CommitedTestData> testData = new LinkedList<>();
-
+    
     // FIXME: empty testData!
-
+    
     int testCount = Integer.parseInt(form.get("count"));
     int inputCount = Integer.parseInt(form.get("inputs"));
-
+    
     List<JsDataType> dataTypes = exercise.getInputTypes();
-
-    for(int testCounter = 0; testCounter < testCount; testCounter++) {
-      List<String> theInput = readTestDataFromForm(form, dataTypes, inputCount, testCounter);
-      if(theInput != null)
-        testData.add(new CommitedTestData(exercise, testCounter, theInput));
-    }
-
+    
+    for(int testCounter = 0; testCounter < testCount; testCounter++)
+      testData.add(readTestDataFromForm(form, dataTypes, inputCount, testCounter, exercise));
+    
     JsCorrector.validateTestData(exercise, testData);
     return testData;
   }
   
-  private static List<String> readTestDataFromForm(DynamicForm form, List<JsDataType> dataTypes, int inputCount,
-      int testCounter) {
-    List<String> testData = new ArrayList<>(inputCount + 1);
+  private static CommitedTestData readTestDataFromForm(DynamicForm form, List<JsDataType> dataTypes, int inputCount,
+      int id, JsExercise exercise) {
+
+    List<String> inputs = new ArrayList<>(inputCount);
     for(int inputCounter = 0; inputCounter < inputCount; inputCounter++) {
-      String input = form.get("inp" + inputCounter + ":" + testCounter);
-      
-      if(input == null || input.isEmpty())
-        continue;
+      String input = form.get("inp" + inputCounter + ":" + id);
       
       // TODO: Inputtype STRING, NUMBER... ?
       if(dataTypes.get(inputCounter) == JsDataType.STRING)
         input = "\"" + input + "\"";
       
-      testData.add(input);
+      inputs.add(input);
     }
     
-    String output = form.get("outp" + testCounter);
-    if(output != null && !output.isEmpty())
-      testData.add(output);
+    String output = form.get("outp" + id);
     
-    return testData;
+    return new CommitedTestData(exercise, id, inputs, output);
+    
   }
   
   public Result commit(int exerciseId) {
@@ -99,7 +94,7 @@ public class JS extends ExerciseController<model.JsExerciseIdentifier> {
           // FIXME: Umstellung von Liste auf einzelnes resultat!
           correction.render("Javascript", testResults.getLearnerSolution(), testResults, user));
   }
-
+  
   public Result exercise(int id) {
     User user = UserManagement.getCurrentUser();
     JsExercise exercise = JsExercise.finder.byId(id);
@@ -112,7 +107,7 @@ public class JS extends ExerciseController<model.JsExerciseIdentifier> {
     return ok(js.render(UserManagement.getCurrentUser(), exercise));
     
   }
-
+  
   public Result index() {
     User user = UserManagement.getCurrentUser();
     return ok(jsoverview.render(user, JsExercise.finder.all()));
@@ -128,10 +123,21 @@ public class JS extends ExerciseController<model.JsExerciseIdentifier> {
     
     return ok(Json.toJson(testData));
   }
-
+  
   @Override
   protected CompleteResult correct(Request request, User user, JsExerciseIdentifier identifier) {
     // TODO Auto-generated method stub
-    return null;
+    JsExercise exercise = JsExercise.finder.byId(identifier.getId());
+    
+    // Read commited solution and custom test data from request
+    DynamicForm form = factory.form().bindFromRequest();
+    String learnerSolution = form.get("editorContent");
+    
+    List<CommitedTestData> userTestData = extractAndValidateTestData(form, exercise);
+    // TODO: evtl. Anzeige aussortiertes TestDaten?
+    userTestData = userTestData.stream().filter(data -> data.isOk()).collect(Collectors.toList());
+    // TODO: evt. Speichern der Lösung und Laden bei erneuter Bearbeitung?
+    
+    return JsCorrector.correct(exercise, learnerSolution, userTestData);
   }
 }

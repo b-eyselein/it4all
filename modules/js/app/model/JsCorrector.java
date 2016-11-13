@@ -39,7 +39,7 @@ public class JsCorrector {
     List<ITestData> testData = new LinkedList<>();
     testData.addAll(exercise.functionTests);
     testData.addAll(userTestData);
-    
+
     List<EvaluationResult> results = testData.stream().map(test -> test.evaluate(engine)).collect(Collectors.toList());
     return new JsCorrectionResult(learnerSolution, results);
 
@@ -49,6 +49,9 @@ public class JsCorrector {
     switch(type) {
     // FIXME: implement!!!!!
     case NUMBER:
+      if(gottenResult == null || awaitedResult == null || gottenResult.toString().isEmpty()
+          || awaitedResult.toString().isEmpty())
+        return false;
       return validateResult(Double.parseDouble(gottenResult.toString()), Double.parseDouble(awaitedResult));
     case STRING:
       return validateResult(gottenResult.toString(), awaitedResult);
