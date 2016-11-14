@@ -62,8 +62,7 @@ public class JsExercise extends Model implements Exercise {
 
   @Override
   public int getId() {
-    // TODO Auto-generated method stub
-    return 0;
+    return id;
   }
 
   public List<JsDataType> getInputTypes() {
@@ -78,14 +77,12 @@ public class JsExercise extends Model implements Exercise {
 
   @Override
   public String getText() {
-    // TODO Auto-generated method stub
-    return null;
+    return text;
   }
 
   @Override
   public String getTitle() {
-    // TODO Auto-generated method stub
-    return null;
+    return title;
   }
   
 }

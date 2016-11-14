@@ -1,4 +1,4 @@
-@(user: model.user.User, exercise: model.XmlExercise, referenceFile: String, oldSolution: String, fixedStart: String)
+@(user: model.user.User, exercise: model.XmlExercise, referenceFile: String, oldSolution: String)
 
 @main("XML-Test", user) {
 <script src="@controllers.routes.Assets.versioned("javascripts/xmlProcessor.js")"></script>
@@ -30,7 +30,7 @@ function testSolution() {
     <div class="row">
       <div class="col-md-6">
         @if(exercise.exerciseType == model.XmlExercise.XmlExType.XML_DTD) {
-        <pre>@fixedStart</pre>
+        <pre>@exercise.fixedStart</pre>
         }
         @editor(oldSolution, "xml", 15, 25, false)
       </div>
@@ -52,7 +52,7 @@ function testSolution() {
     <div class="col-md-12">
       <div class="panel panel-default">
         <div class="panel-heading">Bemerkungen</div>
-        <div id="element_result_container" class="panel-body"></div>
+        <div id="correction" class="panel-body"></div>
       </div>
     </div>
   </div>

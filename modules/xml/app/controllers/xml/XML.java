@@ -23,6 +23,7 @@ import model.XmlErrorType;
 import model.XmlExercise;
 import model.XmlExercise.XmlExType;
 import model.XmlExerciseIdentifier;
+import model.XmlExerciseReader;
 import model.result.CompleteResult;
 import model.result.EvaluationResult;
 import model.user.User;
@@ -41,19 +42,26 @@ import play.mvc.Http.Request;
 @Security.Authenticated(Secured.class)
 public class XML extends ExerciseController<XmlExerciseIdentifier> {
 
+  private static final String EXERCISE_FOLDER = "conf/resources/xml";
+  private static final Path JSON_FILE = Paths.get(EXERCISE_FOLDER, "exercises.json");
+  private static final Path JSON_SCHEMA_FILE = Paths.get(EXERCISE_FOLDER, "exerciseSchema.json");
+
   private static final String EXERCISE_TYPE = "xml";
   private static final String LEARNER_SOLUTION_VALUE = "editorContent";
   private static final String STANDARD_XML = "";
 
   private static final String SAVE_ERROR_MSG = "An error has occured while saving an xml file to ";
 
-  @SuppressWarnings("unused")
-  private XmlStartUpChecker checker;
-
   @Inject
-  public XML(Util theUtil, FormFactory theFactory, XmlStartUpChecker theChecker) {
+  public XML(Util theUtil, FormFactory theFactory) {
     super(theUtil, theFactory);
-    checker = theChecker;
+
+    XmlExerciseReader reader = new XmlExerciseReader();
+    List<XmlExercise> exercises = reader.readExercises(JSON_FILE, JSON_SCHEMA_FILE);
+    for(XmlExercise ex: exercises) {
+      ex.save();
+      reader.checkOrCreateSampleFile(util, ex);
+    }
   }
 
   public Result commit(int exerciseId) {
@@ -84,12 +92,11 @@ public class XML extends ExerciseController<XmlExerciseIdentifier> {
       defaultOrOldSolution = defaultOrOldSolution.substring(defaultOrOldSolution.indexOf('\n') + 1);
     }
 
-    return ok(xml.render(UserManagement.getCurrentUser(), exercise, referenceCode, defaultOrOldSolution,
-        exercise.fixedStart));
+    return ok(xml.render(UserManagement.getCurrentUser(), exercise, referenceCode, defaultOrOldSolution));
   }
 
   public Result index() {
-    return ok(xmloverview.render(XmlExercise.finder.all(), UserManagement.getCurrentUser()));
+    return ok(xmloverview.render(UserManagement.getCurrentUser(), XmlExercise.finder.all()));
   }
 
   private Path checkAndCreateSolDir(User user, int id) {
@@ -198,7 +205,7 @@ public class XML extends ExerciseController<XmlExerciseIdentifier> {
 
     DynamicForm form = factory.form().bindFromRequest();
     String learnerSolution = form.get(LEARNER_SOLUTION_VALUE);
-    
+
     if(exercise.exerciseType == XmlExType.XML_DTD) {
       // FIXME: do not save fixed start with solution?!?
       learnerSolution = exercise.fixedStart + "\n" + learnerSolution;

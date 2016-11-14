@@ -13,6 +13,7 @@ import model.JsExercise.JsDataType;
 import model.result.CompleteResult;
 import model.result.EvaluationFailed;
 import model.result.EvaluationResult;
+import model.result.JsCorrectionResult;
 import play.Logger;
 
 public class JsCorrector {

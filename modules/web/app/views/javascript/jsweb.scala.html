@@ -1,12 +1,11 @@
 @(user: model.user.User, exercise: model.javascript.JsWebExercise, oldSolution: String)
 
 @main("JavaScript-Test", user) {
-<script src="@controllers.routes.Assets.versioned("javascripts/jsProcessor.js")" type="text/javascript" charset="utf-8"></script>
+<script src="@controllers.routes.Assets.versioned("javascripts/jsProcessor.js")"></script>
 <script>
 function testSolution() {
   testTheWebSolution("@controllers.web.routes.JSWeb.exerciseWeb(exercise.id)");
 }
-
 window.onload = updatePreview;
 </script>
 

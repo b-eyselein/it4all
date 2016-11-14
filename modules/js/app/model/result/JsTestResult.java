@@ -1,4 +1,4 @@
-package model;
+package model.result;
 
 import model.exercise.FeedbackLevel;
 import model.exercise.Success;

@@ -6,6 +6,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
 import model.exercise.Success;
+import model.result.JsTestResult;
 
 public interface ITestData {
   

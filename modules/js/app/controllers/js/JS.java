@@ -31,7 +31,7 @@ import views.html.error;
 import views.html.js;
 import views.html.jsoverview;
 
-public class JS extends ExerciseController<model.JsExerciseIdentifier> {
+public class JS extends ExerciseController<JsExerciseIdentifier> {
 
   private static String res = "conf/resources/js";
 
@@ -42,6 +42,7 @@ public class JS extends ExerciseController<model.JsExerciseIdentifier> {
     // FIXME: implement and test!
     Path jsonFile = Paths.get(res, "exercises.json");
     Path jsonSchemaFile = Paths.get(res, "exerciseSchema.json");
+    
     List<JsExercise> exercises = (new JsExerciseReader()).readExercises(jsonFile, jsonSchemaFile);
     for(JsExercise ex: exercises)
       ex.save();

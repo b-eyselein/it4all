@@ -1,8 +1,5 @@
 package model.html;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,42 +11,9 @@ import model.html.task.CssTask;
 import model.html.task.HtmlTask;
 import model.html.task.Task;
 import model.html.task.TaskKey;
-import play.Logger;
-import play.libs.Json;
 
 public class WebExerciseReader extends ExerciseReader<WebExercise> {
-  
-  private WebExerciseReader() {
-    // FIXME: check all JsonNodes for null!
-  }
-  
-  public static List<WebExercise> readExercises(Path jsonFile) {
-    List<WebExercise> exercises = new LinkedList<>();
-    
-    if(!Files.exists(jsonFile)) {
-      Logger.error("The file " + jsonFile + " does not exist!");
-      return exercises;
-    }
-    
-    JsonNode exercisesNode;
-    
-    // FIXME: validate JSON-File!!!!!
 
-    try {
-      exercisesNode = Json.parse(String.join("\n", Files.readAllLines(jsonFile)));
-    } catch (IOException e) {
-      Logger.error("There was an error reading the file " + jsonFile + ":", e);
-      return exercises;
-    }
-    
-    for(final Iterator<String> idIter = exercisesNode.fieldNames(); idIter.hasNext();) {
-      String idAsStr = idIter.next();
-      exercises.add(readExercise(Integer.parseInt(idAsStr), exercisesNode.get(idAsStr)));
-    }
-    
-    return exercises;
-  }
-  
   private static String readAttribute(JsonNode attributeNode) {
     JsonNode keyNode = attributeNode.get("key");
     JsonNode valueNode = attributeNode.get("value");
@@ -91,27 +55,7 @@ public class WebExerciseReader extends ExerciseReader<WebExercise> {
     
     return tasks;
   }
-  
-  private static WebExercise readExercise(int exerciseId, JsonNode exerciseNode) {
-    JsonNode titleNode = exerciseNode.get("title");
-    JsonNode textNode = exerciseNode.get("text");
-    JsonNode htmlTasksNode = exerciseNode.get("tasks");
-    JsonNode cssTasksNode = exerciseNode.get("cssTasks");
-    
-    List<HtmlTask> htmlTasks = readHtmlTasks(htmlTasksNode, exerciseId);
-    List<CssTask> cssTasks = readCssTasks(cssTasksNode, exerciseId);
-    
-    WebExercise exercise = WebExercise.finder.byId(exerciseId);
-    if(exercise == null)
-      exercise = new WebExercise(exerciseId);
-    
-    exercise.title = titleNode.asText();
-    exercise.text = textNode.asText();
-    exercise.htmlTasks = htmlTasks;
-    exercise.cssTasks = cssTasks;
-    return exercise;
-  }
-  
+
   private static HtmlTask readHtmlTask(TaskKey key, JsonNode htmlTaskNode) {
     JsonNode textNode = htmlTaskNode.get("text");
     JsonNode xpathNode = htmlTaskNode.get("xpath");
@@ -136,11 +80,26 @@ public class WebExerciseReader extends ExerciseReader<WebExercise> {
     
     return tasks;
   }
-  
+
   @Override
-  public List<WebExercise> readExercises(Path jsonFile, Path jsonSchemaFile) {
-    // TODO Auto-generated method stub
-    return null;
+  protected WebExercise readExercise(JsonNode exerciseNode) {
+    JsonNode idNode = exerciseNode.get("id");
+    JsonNode titleNode = exerciseNode.get("title");
+    JsonNode textNode = exerciseNode.get("text");
+    JsonNode htmlTasksNode = exerciseNode.get("htmlTasks");
+    JsonNode cssTasksNode = exerciseNode.get("cssTasks");
+    
+    int exerciseId = idNode.asInt();
+    WebExercise exercise = WebExercise.finder.byId(exerciseId);
+    if(exercise == null)
+      exercise = new WebExercise(exerciseId);
+    
+    exercise.title = titleNode.asText();
+    exercise.text = textNode.asText();
+    exercise.htmlTasks = readHtmlTasks(htmlTasksNode, exerciseId);
+    exercise.cssTasks = readCssTasks(cssTasksNode, exerciseId);
+    
+    return exercise;
   }
   
 }

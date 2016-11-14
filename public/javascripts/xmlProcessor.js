@@ -1,7 +1,7 @@
 function processCorrection(correction) {
   var newResults = JSON.parse(correction);
   
-  document.getElementById("element_result_container").innerHTML = newResults.asHtml;
+  document.getElementById("correction").innerHTML = newResults.asHtml;
   
   var commitButton = document.getElementById("commit");
   commitButton.disabled = false;
@@ -18,19 +18,6 @@ function prepareFormForSubmitting() {
   document.getElementById("editorContent").value = editor.getValue();
 }
 
-function testTheSolution(url) {
-  // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
-  var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if(xhttp.readyState == 4 && xhttp.status == 200) {
-      processCorrection(xhttp.responseText);
-    }
-  };
-  
-  // AJAX-Objekt mit Daten fuellen, absenden
-  var parameters = "editorContent=" + encodeURIComponent(editor.getValue());
-  xhttp.open("PUT", url, true);
-  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-  xhttp.setRequestHeader("Accept", "application/json");
-  xhttp.send(parameters);
+function extractParameters() {
+  return "editorContent=" + encodeURIComponent(editor.getValue());
 }

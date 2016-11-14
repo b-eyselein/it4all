@@ -1,22 +1,9 @@
-function testTheSolution(url) {
-  // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
-  var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if(xhttp.readyState == 4 && xhttp.status == 200) {
-      processCorrection(xhttp.responseText);
-    }
-  };
-  
-  // AJAX-Objekt mit Daten fuellen, absenden
-  var parameters = "editorContent=" + encodeURIComponent(editor.getValue());
-  xhttp.open("PUT", url, true);
-  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-  xhttp.setRequestHeader("Accept", "application/json");
-  xhttp.send(parameters);
-}
-
 function prepareFormForSubmitting() {
   document.getElementById("editorContent").value = editor.getValue();
+}
+
+function extractParameters() {
+  return "editorContent=" + encodeURIComponent(editor.getValue());
 }
 
 function processCorrection(correction) {
@@ -27,7 +14,6 @@ function processCorrection(correction) {
   
   var commitButton = document.getElementById("commit");
   commitButton.disabled = false;
-  console.log(newCorrection.success);
   if(newCorrection.success == "COMPLETE") {
     commitButton.title = "Sie k&ouml;nnen ihre L&ouml;sung abgeben.";
     commitButton.className = "btn btn-success";
@@ -35,16 +21,4 @@ function processCorrection(correction) {
     commitButton.title = "Sie k&ouml;nnen ihre L&ouml;sung abgeben, haben aber nicht alles richtig.";
     commitButton.className = "btn btn-warning";
   }
-}
-
-function updatePreview() {
-  var toWrite = unescapeHTML(editor.getValue());
-  var theIFrame = document.getElementById("preview").contentWindow.document;
-  theIFrame.open();
-  theIFrame.write(toWrite);
-  theIFrame.close();
-}
-
-function unescapeHTML(escapedHTML) {
-  return escapedHTML.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
 }

@@ -1,5 +1,6 @@
-#XML
-GET    /exercises       controllers.xml.XML.index()
-GET    /exercises/:ex   controllers.xml.XML.exercise(ex: Int)
-PUT    /exercises/:ex   controllers.xml.XML.commit(ex: Int)
-POST   /exercises/:ex   controllers.xml.XML.commit(ex: Int)
+GET    /exercises   controllers.xml.XML.index()
+
+GET    /:ex         controllers.xml.XML.exercise(ex: Int)
+
+PUT    /:ex         controllers.xml.XML.commit(ex: Int)
+POST   /:ex         controllers.xml.XML.commit(ex: Int)

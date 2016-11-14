@@ -1,51 +1,13 @@
-@(user: model.user.User, template: String)
+@(user: model.user.User)
 
 @main("Web-Playground", user) {        
-<script src="@controllers.routes.Assets.versioned("javascripts/ace/ace.js")" type="text/javascript" charset="utf-8"></script>
-<script src="@controllers.routes.Assets.versioned("javascripts/acehelper.js")" type="text/javascript" charset="utf-8"></script>
-
 <div class="container-fluid">
   <div class="row">
     <div class="col-sm-6">
       <div class="panel panel-default">
         <div class="panel-heading">Editor</div>
         <div class="panel-body">
-          
-          <!-- Start Editor -->
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <div class="input-group">
-                <span class="input-group-addon">Schriftgr&ouml;&szlig;e: <span id="fontsize">16</span> px
-                </span>
-                <div class="input-group-btn">
-                  <button type="button" class="btn btn-default" onclick="changeFontsize(-2);">
-                    <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-                  </button>
-                  <button type="button" class="btn btn-default" onclick="changeFontsize(+2);">
-                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div id="editor" class="form-control">@template</div>
-            <script>
-                          document.getElementById('editor').style.fontSize = '16px';
-                          var editor = ace.edit("editor");
-                          editor.setTheme("ace/theme/eclipse");
-                          editor.getSession().setMode("ace/mode/html");
-                          editor.getSession().setTabSize(2);
-                          editor.getSession().setUseSoftTabs(true);
-                          editor.getSession().setUseWrapMode(true);
-                          editor.setOptions({
-                            minLines: 40,
-                            maxLines: 50
-                          });
-                          editor.on("change", updatePlayground);
-                          updatePlayground();
-                        </script>
-          </div>
-          <!-- End Editor -->
-          
+          @editor(controllers.web.HTML.STANDARD_HTML_PLAYGROUND, "html", 40, 50, true)
         </div>
       </div>
     </div>

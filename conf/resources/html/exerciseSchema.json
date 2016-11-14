@@ -1,0 +1,94 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#", 
+	"type": "array", 
+	"items": {
+		"type": "object", 
+		"properties": {
+			"id": {
+				"type": "integer", 
+				"minimum": 1
+			}, 
+			"title": {
+				"type": "string"
+			}, 
+			"text": {
+				"type": "string"
+			}, 
+			"htmlTasks": {
+				"type": "array", 
+				"items": {
+					"type": "object", 
+					"properties": {
+						"text": {
+							"type": "string"
+						}, 
+						"xpath": {
+							"type": "string"
+						}, 
+						"attributes": {
+							"type": "array", 
+							"items": {
+								"type": "object", 
+								"properties": {
+									"key": {
+										"type": "string"
+									}, 
+									"value": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}, 
+					"required": [
+						"text", 
+						"xpath", 
+						"attributes"
+					]
+				}
+			}, 
+			"cssTasks": {
+				"type": "array", 
+				"items": {
+					"type": "object", 
+					"properties": {
+						"text": {
+							"type": "string"
+						}, 
+						"xpath": {
+							"type": "string"
+						}, 
+						"attributes": {
+							"type": "array", 
+							"items": {
+								"type": "object", 
+								"properties": {
+									"key": {
+										"type": "string"
+									}, 
+									"value": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}, 
+					"required": [
+						"text", 
+						"xpath", 
+						"attributes"
+					]
+				}
+			}
+		}, 
+		"required": [
+			"id", 
+			"title", 
+			"text", 
+			"htmlTasks", 
+			"cssTasks"
+		]
+	}, 
+	"minItems": 1, 
+	"uniqueItems": true
+}
