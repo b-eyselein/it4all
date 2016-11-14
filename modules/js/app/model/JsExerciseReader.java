@@ -16,7 +16,7 @@ import play.libs.Json;
 
 public class JsExerciseReader extends ExerciseReader<JsExercise> {
 
-  private static void handleTest(JsExercise exercise, JsonNode testNode) {
+  private static JsTest handleTest(JsExercise exercise, JsonNode testNode) {
     int testId = testNode.get("id").asInt();
     JsTestKey key = new JsTestKey(exercise.id, testId);
     JsTest test = JsTest.finder.byId(key);
@@ -26,7 +26,7 @@ public class JsExerciseReader extends ExerciseReader<JsExercise> {
 
     test.inputs = testNode.get("input").asText();
     test.output = testNode.get("output").asText();
-    test.save();
+    return test;
   }
 
   private static JsExercise readJsExercise(JsonNode exerciseNode) {
@@ -46,7 +46,7 @@ public class JsExerciseReader extends ExerciseReader<JsExercise> {
     exercise.returntype = JsDataType.valueOf(exerciseNode.get("returntype").asText());
     
     for(final Iterator<JsonNode> testIter = exerciseNode.get("tests").elements(); testIter.hasNext();)
-      handleTest(exercise, testIter.next());
+      exercise.functionTests.add(handleTest(exercise, testIter.next()));
 
     return exercise;
   }
