@@ -1,6 +1,7 @@
 package model;
 
 import model.exercise.Exercise;
+import model.exercise.ExerciseIdentifier;
 
 public class UmlExercise implements Exercise {
 
@@ -9,15 +10,14 @@ public class UmlExercise implements Exercise {
   public String title = "title";
   
   @Override
-  public String getExerciseIdentifier() {
+  public ExerciseIdentifier getExerciseIdentifier() {
     // TODO Auto-generated method stub
     return null;
   }
   
   @Override
   public int getId() {
-    // TODO Auto-generated method stub
-    return 0;
+    return id;
   }
   
   @Override
@@ -28,14 +28,12 @@ public class UmlExercise implements Exercise {
   
   @Override
   public String getText() {
-    // TODO Auto-generated method stub
-    return null;
+    return exerciseText;
   }
   
   @Override
   public String getTitle() {
-    // TODO Auto-generated method stub
-    return null;
+    return title;
   }
   
 }

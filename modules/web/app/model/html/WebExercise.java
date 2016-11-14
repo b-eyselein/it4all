@@ -14,6 +14,7 @@ import com.avaje.ebean.Model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import model.exercise.Exercise;
+import model.exercise.ExerciseIdentifier;
 import model.html.task.CssTask;
 import model.html.task.HtmlTask;
 import model.html.task.Task;
@@ -44,7 +45,7 @@ public class WebExercise extends Model implements Exercise {
   }
   
   @Override
-  public String getExerciseIdentifier() {
+  public ExerciseIdentifier getExerciseIdentifier() {
     // TODO Auto-generated method stub
     return null;
   }

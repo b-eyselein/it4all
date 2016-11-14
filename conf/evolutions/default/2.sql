@@ -56,10 +56,4 @@ delete from conditions;
 delete from js_web_exercise;
 
 
-delete from css_task;
-
-delete from html_task;
-
-delete from html_exercise;
-
 SET FOREIGN_KEY_CHECKS = 1;

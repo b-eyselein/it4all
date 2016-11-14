@@ -39,7 +39,7 @@ public class SqlExercise extends Model implements Exercise {
   @JoinColumn(name = "scenario_name", insertable = false, updatable = false)
   public SqlScenario scenario;
 
-  public String validation;
+  public String validation; // NOSONAR
 
   public SqlExercise(SqlExerciseKey theKey) {
     key = theKey;
@@ -63,7 +63,7 @@ public class SqlExercise extends Model implements Exercise {
   }
 
   @Override
-  public String getExerciseIdentifier() {
+  public ExerciseIdentifier getExerciseIdentifier() {
     // TODO Auto-generated method stub
     return null;
   }

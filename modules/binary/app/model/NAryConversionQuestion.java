@@ -3,6 +3,7 @@ package model;
 import java.util.Random;
 
 public class NAryConversionQuestion {
+
   private static final Random GENERATOR = new Random();
 
   /**

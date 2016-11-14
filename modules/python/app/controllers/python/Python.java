@@ -11,7 +11,7 @@ import javax.script.SimpleScriptContext;
 
 import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
-import model.PythonExerciseIdentifier;
+import model.IntExerciseIdentifier;
 import model.Util;
 import model.exercise.FeedbackLevel;
 import model.exercise.Success;
@@ -26,7 +26,7 @@ import play.mvc.Http.Request;
 import play.mvc.Result;
 import views.html.python;
 
-public class Python extends ExerciseController<PythonExerciseIdentifier> {
+public class Python extends ExerciseController<IntExerciseIdentifier> {
 
   @Inject
   public Python(Util theUtil, FormFactory theFactory) {
@@ -61,7 +61,7 @@ public class Python extends ExerciseController<PythonExerciseIdentifier> {
   }
 
   @Override
-  protected CompleteResult correct(Request request, User user, PythonExerciseIdentifier exercise) {
+  protected CompleteResult correct(Request request, User user, IntExerciseIdentifier exercise) {
     // FIXME: implement!
     return null;
   }

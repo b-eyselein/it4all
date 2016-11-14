@@ -32,6 +32,7 @@ editor.setOptions({
 });
 @if(updatePrev) {
 editor.on("change", updatePreview);
+window.onload = updatePreview;
 }
     </script>
   <textarea hidden name="editorContent" id="editorContent"></textarea>

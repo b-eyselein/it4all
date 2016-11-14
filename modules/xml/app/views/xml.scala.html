@@ -1,15 +1,15 @@
-@(user: model.user.User, exercise: model.XmlExercise, referenceFile: String, oldSolution: String)
+@(user: model.user.User, exercise: model.XmlExercise, identifier: model.IntExerciseIdentifier, referenceFile: String, oldSolution: String)
 
 @main("XML-Test", user) {
 <script src="@controllers.routes.Assets.versioned("javascripts/xmlProcessor.js")"></script>
 <script>
 function testSolution() {
-	testTheSolution("@controllers.xml.routes.XML.commit(exercise.id)");
+	testTheSolution("@controllers.xml.routes.XML.commit(identifier)");
 }
 </script>
 
 <div class="container-fluid">
-  <form action= @controllers.xml.routes.XML.commit(exercise.id) method="post" onsubmit="prepareFormForSubmitting();">
+  <form action= @controllers.xml.routes.XML.commit(identifier) method="post" onsubmit="prepareFormForSubmitting();">
   
     <div class="panel panel-default">
       <div class="panel-heading">Aufgabenstellung</div>

@@ -143,15 +143,15 @@ create table web_exercise (
   constraint pk_web_exercise primary key (id)
 );
 
-create table xmlexercise (
+create table xml_exercise (
   id                            integer auto_increment not null,
   title                         varchar(255),
   fixed_start                   text,
   exercise_type                 varchar(7),
-  referencefilename             varchar(100),
-  exercisetext                  varchar(1000),
-  constraint ck_xmlexercise_exercise_type check (exercise_type in ('XML_XSD','XML_DTD','XSD_XML','DTD_XML')),
-  constraint pk_xmlexercise primary key (id)
+  reference_file_name           varchar(255),
+  exercise_text                 text,
+  constraint ck_xml_exercise_exercise_type check (exercise_type in ('XML_XSD','XML_DTD','XSD_XML','DTD_XML')),
+  constraint pk_xml_exercise primary key (id)
 );
 
 alter table conditions add constraint fk_conditions_pre_id foreign key (pre_id) references js_web_test (id) on delete restrict on update restrict;
@@ -233,5 +233,5 @@ drop table if exists users;
 
 drop table if exists web_exercise;
 
-drop table if exists xmlexercise;
+drop table if exists xml_exercise;
 

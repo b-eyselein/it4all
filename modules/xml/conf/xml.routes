@@ -1,6 +1,6 @@
 GET    /exercises   controllers.xml.XML.index()
 
-GET    /:ex         controllers.xml.XML.exercise(ex: Int)
+GET    /:exId       controllers.xml.XML.exercise(exId: model.IntExerciseIdentifier)
 
-PUT    /:ex         controllers.xml.XML.commit(ex: Int)
-POST   /:ex         controllers.xml.XML.commit(ex: Int)
+PUT    /:exId       controllers.xml.XML.commit(exId: model.IntExerciseIdentifier)
+POST   /:exId       controllers.xml.XML.commit(exId: model.IntExerciseIdentifier)

@@ -2,6 +2,7 @@ package model;
 
 import java.util.AbstractMap.SimpleEntry;
 
+import model.exercise.ExerciseIdentifier;
 import model.tree.Assignment;
 import model.tree.BoolescheFunktionTree;
 
@@ -45,7 +46,7 @@ public class FilloutQuestion extends BooleanQuestion {
   }
 
   @Override
-  public String getExerciseIdentifier() {
+  public ExerciseIdentifier getExerciseIdentifier() {
     // TODO Auto-generated method stub
     return null;
   }

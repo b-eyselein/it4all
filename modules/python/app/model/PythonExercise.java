@@ -1,15 +1,20 @@
 package model;
 
+import javax.persistence.Id;
+
 import com.avaje.ebean.Model;
 
 import model.exercise.Exercise;
+import model.exercise.ExerciseIdentifier;
 
 public class PythonExercise extends Model implements Exercise {
   
+  @Id
+  public int id;
+
   @Override
-  public String getExerciseIdentifier() {
-    // TODO Auto-generated method stub
-    return null;
+  public ExerciseIdentifier getExerciseIdentifier() {
+    return new IntExerciseIdentifier(id);
   }
   
   @Override

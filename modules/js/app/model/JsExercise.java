@@ -15,49 +15,49 @@ import com.avaje.ebean.Model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import model.exercise.Exercise;
+import model.exercise.ExerciseIdentifier;
 
 @Entity
 public class JsExercise extends Model implements Exercise {
-  
+
   public enum JsDataType {
     BOOLEAN, NUMBER, STRING, SYMBOL, UNDEFINED, NULL, OBJECT;
   }
-  
+
   public static final Finder<Integer, JsExercise> finder = new Finder<>(JsExercise.class);
-  
+
   @Id
   public int id;
-  
+
   public String title;// NOSONAR
-  
+
   @Column(columnDefinition = "text")
   public String text;
-  
+
   public String declaration; // NOSONAR
-  
+
   public String functionname; // NOSONAR
-  
+
   public String sampleSolution; // NOSONAR
-  
+
   public String inputtypes; // NOSONAR
-  
+
   public int inputcount; // NOSONAR
-  
+
   @Enumerated(EnumType.STRING)
   public JsDataType returntype;
-  
+
   @OneToMany(mappedBy = "exercise")
   @JsonManagedReference
   public List<JsTest> functionTests;
-  
+
   public JsExercise(int theId) {
     id = theId;
   }
-  
+
   @Override
-  public String getExerciseIdentifier() {
-    // TODO Auto-generated method stub
-    return null;
+  public ExerciseIdentifier getExerciseIdentifier() {
+    return new IntExerciseIdentifier(id);
   }
 
   @Override
@@ -84,5 +84,5 @@ public class JsExercise extends Model implements Exercise {
   public String getTitle() {
     return title;
   }
-  
+
 }

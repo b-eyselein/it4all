@@ -1,15 +1,15 @@
-@(user: model.user.User, exercise: model.JsExercise)
+@(user: model.user.User, exercise: model.JsExercise, identifier: model.IntExerciseIdentifier)
 
 @main("JavaScript-Test", user) {
-<script src=" @controllers.routes.Assets.versioned("javascripts/jsProcessor.js")" type="text/javascript" charset="utf-8"></script>
+<script src=" @controllers.routes.Assets.versioned("javascripts/jsProcessor.js")"></script>
 <script>
 function testSolution() {
-  testTheSolution("@controllers.js.routes.JS.commit(exercise.id)");
+  testTheSolution("@controllers.js.routes.JS.commit(identifier)");
 }
 </script>
 
 <div class="container-fluid">
-  <form action="@controllers.js.routes.JS.commit(exercise.id)" method="post" onsubmit="prepareFormForSubmitting();">
+  <form action="@controllers.js.routes.JS.commit(identifier)" method="post" onsubmit="prepareFormForSubmitting();">
   
     <div class="row">
       <div class="col-md-4">
@@ -88,7 +88,7 @@ function testSolution() {
               </tr>
             </tfoot>
           </table>
-          <input type="button" class="btn btn-default" onclick="validateTestData('@controllers.js.routes.JS.validateTestData(exercise.id)');" value="Validiere neue Testdaten">
+          <input type="button" class="btn btn-default" onclick="validateTestData('@controllers.js.routes.JS.validateTestData(identifier)');" value="Validiere neue Testdaten">
         </div>
       </div>
     </div>

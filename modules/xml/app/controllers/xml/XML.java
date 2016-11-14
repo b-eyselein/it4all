@@ -14,6 +14,7 @@ import javax.inject.Inject;
 
 import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
+import model.IntExerciseIdentifier;
 import model.Secured;
 import model.Util;
 import model.XMLError;
@@ -22,7 +23,6 @@ import model.XmlCorrector;
 import model.XmlErrorType;
 import model.XmlExercise;
 import model.XmlExercise.XmlExType;
-import model.XmlExerciseIdentifier;
 import model.XmlExerciseReader;
 import model.result.CompleteResult;
 import model.result.EvaluationResult;
@@ -40,7 +40,7 @@ import views.html.xmloverview;
 import play.mvc.Http.Request;
 
 @Security.Authenticated(Secured.class)
-public class XML extends ExerciseController<XmlExerciseIdentifier> {
+public class XML extends ExerciseController<IntExerciseIdentifier> {
 
   private static final String EXERCISE_FOLDER = "conf/resources/xml";
   private static final Path JSON_FILE = Paths.get(EXERCISE_FOLDER, "exercises.json");
@@ -64,18 +64,18 @@ public class XML extends ExerciseController<XmlExerciseIdentifier> {
     }
   }
 
-  public Result commit(int exerciseId) {
+  public Result commit(IntExerciseIdentifier identifier) {
     User user = UserManagement.getCurrentUser();
-    CompleteResult result = correct(request(), user, new XmlExerciseIdentifier(exerciseId));
-
+    CompleteResult result = correct(request(), user, identifier);
+    
     if(wantsJsonResponse())
       return ok(Json.toJson(result));
     else
       return ok(correction.render("XML", result.getLearnerSolution(), result, user));
   }
 
-  public Result exercise(int exerciseId) {
-    XmlExercise exercise = XmlExercise.finder.byId(exerciseId);
+  public Result exercise(IntExerciseIdentifier identifier) {
+    XmlExercise exercise = XmlExercise.finder.byId(identifier.id);
 
     if(exercise == null)
       return badRequest(new Html("<p>Diese Aufgabe existert leider nicht.</p><p>Zur&uuml;ck zur <a href=\""
@@ -92,7 +92,7 @@ public class XML extends ExerciseController<XmlExerciseIdentifier> {
       defaultOrOldSolution = defaultOrOldSolution.substring(defaultOrOldSolution.indexOf('\n') + 1);
     }
 
-    return ok(xml.render(UserManagement.getCurrentUser(), exercise, referenceCode, defaultOrOldSolution));
+    return ok(xml.render(UserManagement.getCurrentUser(), exercise, identifier, referenceCode, defaultOrOldSolution));
   }
 
   public Result index() {
@@ -199,9 +199,9 @@ public class XML extends ExerciseController<XmlExerciseIdentifier> {
   }
 
   @Override
-  protected CompleteResult correct(Request request, User user, XmlExerciseIdentifier identifier) {
+  protected CompleteResult correct(Request request, User user, IntExerciseIdentifier identifier) {
     // FIXME: implement!
-    XmlExercise exercise = XmlExercise.finder.byId(identifier.getId());
+    XmlExercise exercise = XmlExercise.finder.byId(identifier.id);
 
     DynamicForm form = factory.form().bindFromRequest();
     String learnerSolution = form.get(LEARNER_SOLUTION_VALUE);

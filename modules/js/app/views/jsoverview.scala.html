@@ -9,7 +9,7 @@
     <div class="panel-heading">Korrektur mit Java-JSEngine Nashorn</div>
     <div class="panel-body">
     @for(exercise <- exercises) {
-      <a href="@controllers.js.routes.JS.exercise(exercise.id)" class="btn btn-default btn-block">Aufgabe @exercise.id: @exercise.title</a>
+      <a href="@controllers.js.routes.JS.exercise(new model.IntExerciseIdentifier(exercise.id))" class="btn btn-default btn-block">Aufgabe @exercise.id: @exercise.title</a>
     }
     </div>
   </div>

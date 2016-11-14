@@ -2,6 +2,7 @@ package model.logging;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import model.exercise.ExerciseIdentifier;
 import model.result.EvaluationResult;
 import play.mvc.Http.Request;
 
@@ -15,7 +16,7 @@ public class ExerciseCompletionEvent extends WorkingEvent {
   }
 
   @Override
-  public String getExerciseIdentifier() {
+  public ExerciseIdentifier getExerciseIdentifier() {
     // TODO Auto-generated method stub
     return null;
   }
