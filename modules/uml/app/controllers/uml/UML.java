@@ -38,11 +38,11 @@ public class UML extends ExerciseController<IntExerciseIdentifier> {
     }
   }
   
-  public Result classSelection(int exerciseId) {
+  public Result classSelection(IntExerciseIdentifier identifier) {
     return ok(classselection.render(UserManagement.getCurrentUser()));
   }
 
-  public Result diagramDrawing(int exerciseId) {
+  public Result diagramDrawing(IntExerciseIdentifier identifier) {
     return ok(diagramdrawing.render(UserManagement.getCurrentUser(), getExerciseText()));
   }
 

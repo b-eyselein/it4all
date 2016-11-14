@@ -10,13 +10,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import model.XmlExercise.XmlExType;
 import model.exercisereading.ExerciseReader;
-import play.Logger;
 
 public class XmlExerciseReader extends ExerciseReader<XmlExercise> {
   
-  private static Logger.ALogger theLogger = Logger.of("startup");
   private static final String EXERCISE_TYPE = "xml";
-  
   private static final String BASE_DIR = "conf/resources/xml/";
   
   public void checkOrCreateSampleFile(Util util, XmlExercise exercise) {
@@ -26,20 +23,20 @@ public class XmlExerciseReader extends ExerciseReader<XmlExercise> {
     if(Files.exists(sampleFile))
       return;
     
-    theLogger.warn("Die Lösungsdatei für Xml-Aufgabe " + exercise.id + " \"" + sampleFile
+    READING_LOGGER.warn("Die Lösungsdatei für Xml-Aufgabe " + exercise.id + " \"" + sampleFile
         + "\" existiert nicht! Versuche, Datei zu erstellen...");
     
     Path providedFile = Paths.get(BASE_DIR, exercise.referenceFileName + exercise.getReferenceFileEnding());
     if(!Files.exists(providedFile)) {
-      theLogger.error("Konnte Datei nicht erstellen: Keine Lösungsdatei mitgeliefert...");
+      READING_LOGGER.error("Konnte Datei nicht erstellen: Keine Lösungsdatei mitgeliefert...");
       return;
     }
     
     try {
       Files.copy(providedFile, sampleFile, StandardCopyOption.REPLACE_EXISTING);
-      theLogger.info("Die Lösungsdatei wurde erstellt.");
+      READING_LOGGER.info("Die Lösungsdatei wurde erstellt.");
     } catch (IOException e) {
-      theLogger.error("Die Lösungsdatei konnte nicht erstellt werden!", e);
+      READING_LOGGER.error("Die Lösungsdatei konnte nicht erstellt werden!", e);
     }
   }
   
