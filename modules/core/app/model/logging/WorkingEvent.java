@@ -3,6 +3,7 @@ package model.logging;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+import model.exercise.Exercise;
 import model.exercise.ExerciseIdentifier;
 import play.mvc.Http.Request;
 
@@ -14,16 +15,18 @@ public abstract class WorkingEvent {
 
   private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss Z");
 
-  private EventType eventType;
-  private String uri;
-  private String method;
-  private ZonedDateTime dateTime;
+  protected EventType eventType;
+  protected String uri;
+  protected String method;
+  protected ZonedDateTime dateTime;
+  protected Exercise exercise;
 
-  public WorkingEvent(EventType theEventType, Request theRequest) {
+  public WorkingEvent(EventType theEventType, Request theRequest, Exercise theExercise) {
     eventType = theEventType;
     method = theRequest.method();
     uri = theRequest.uri();
     dateTime = ZonedDateTime.now();
+    exercise = theExercise;
   }
 
   public String getDateTime() {
@@ -34,7 +37,9 @@ public abstract class WorkingEvent {
     return eventType;
   }
 
-  public abstract ExerciseIdentifier getExerciseIdentifier();
+  public ExerciseIdentifier getExerciseIdentifier() {
+    return exercise.getExerciseIdentifier();
+  }
 
   public String getMethod() {
     return method;

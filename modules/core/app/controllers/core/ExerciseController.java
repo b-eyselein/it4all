@@ -23,12 +23,8 @@ public abstract class ExerciseController<I extends ExerciseIdentifier> extends C
   }
 
   public static void log(User user, WorkingEvent eventToLog) {
-    StringBuilder builder = new StringBuilder();
-
-    // User
-    builder.append(user.name + " - " + Json.prettyPrint(Json.toJson(eventToLog)));
-
-    Logger.debug("ToLog:\n" + builder.toString());
+    String toLog = user.name + " - " + Json.prettyPrint(Json.toJson(eventToLog));
+    Logger.debug("ToLog:\n" + toLog);
   }
 
   protected abstract CompleteResult correct(Request request, User user, I identifier);
