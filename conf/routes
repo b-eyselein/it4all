@@ -15,8 +15,11 @@ GET    /admin          controllers.AdminController.index()
 # Python Test
 ->     /python         python.Routes
 
-# Binary and Boolean
+# Zahlensysteme
 ->     /binary         binary.Routes
+
+# Boolesche Algebra
+->     /bool           bool.Routes
 
 # Web-Korrektur
 ->     /web            web.Routes

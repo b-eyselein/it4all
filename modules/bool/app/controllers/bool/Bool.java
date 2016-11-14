@@ -29,26 +29,26 @@ import views.html.boolcreatequestion;
 import views.html.boolcreatesolution;
 import views.html.boolfilloutquestion;
 import views.html.boolfilloutsolution;
-import views.html.overview;
+import views.html.booloverview;
 
 @Authenticated(Secured.class)
 public class Bool extends ExerciseController<BoolQuestionIdentifier> {
   private static final String FORM_VALUE = "learnerSolution";
-  
+
   @Inject
   public Bool(Util theUtil, FormFactory theFactory) {
     super(theUtil, theFactory);
   }
-  
+
   public Result checkBoolCreationSolution() {
     DynamicForm dynForm = factory.form().bindFromRequest();
     String learnerSolution = dynForm.get(FORM_VALUE);
-
+    
     List<Character> variables = Arrays.stream(dynForm.get("vars").split(", ")).map(var -> new Character(var.charAt(0)))
         .collect(Collectors.toList());
-
+    
     BoolescheFunktionTree formula = BoolescheFunktionParser.parse(learnerSolution);
-
+    
     List<Assignment> assignments = Assignment
         .generateAllAssignments(variables.toArray(new Character[variables.size()]));
     for(Assignment assignment: assignments) {
@@ -56,49 +56,49 @@ public class Bool extends ExerciseController<BoolQuestionIdentifier> {
       assignment.setAssignment(BooleanQuestion.SOLUTION_VARIABLE, value);
       assignment.setAssignment(BooleanQuestion.LEARNER_VARIABLE, formula.evaluate(assignment));
     }
-
+    
     CreationQuestion question = new CreationQuestion(variables.toArray(new Character[variables.size()]), assignments,
         formula.getAsString());
-
+    
     if(wantsJsonResponse())
       return ok(Json.toJson(question));
     else
       return ok(boolcreatesolution.render(UserManagement.getCurrentUser(), question));
   }
-  
+
   public Result checkBoolFilloutSolution() {
     DynamicForm dynFormula = factory.form().bindFromRequest();
-
+    
     char solVar = BooleanQuestion.SOLUTION_VARIABLE;
     char learnerVal = BooleanQuestion.LEARNER_VARIABLE;
-
+    
     String formula = dynFormula.get("formula");
     BoolescheFunktionTree bft = BoolescheFunktionParser.parse(formula);
     FilloutQuestion question = new FilloutQuestion(bft.getVariables(), bft);
-
+    
     for(Assignment assignment: question.getAssignments()) {
       String wert = dynFormula.get(assignment.toString());
       assignment.setAssignment(solVar, bft.evaluate(assignment));
       assignment.setAssignment(learnerVal, "1".equals(wert));
     }
-
+    
     return ok(boolfilloutsolution.render(UserManagement.getCurrentUser(), question));
   }
-
-  public Result index() {
-    return ok(overview.render(UserManagement.getCurrentUser()));
-  }
   
+  public Result index() {
+    return ok(booloverview.render(UserManagement.getCurrentUser()));
+  }
+
   public Result newBoolCreationQuestion() {
     CreationQuestion question = CreationQuestion.generateNew();
     return ok(boolcreatequestion.render(UserManagement.getCurrentUser(), question));
   }
-  
+
   public Result newBoolFilloutQuestion() {
     FilloutQuestion question = FilloutQuestion.generateNew();
     return ok(boolfilloutquestion.render(UserManagement.getCurrentUser(), question));
   }
-
+  
   @Override
   protected CompleteResult correct(Request request, User user, BoolQuestionIdentifier identifier) {
     // TODO Auto-generated method stub
