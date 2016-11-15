@@ -1,5 +1,7 @@
 package model.exercise;
 
-public interface ExerciseIdentifier {
+import play.mvc.PathBindable;
 
+public interface ExerciseIdentifier<T extends ExerciseIdentifier<T>> extends PathBindable<T> {
+  
 }

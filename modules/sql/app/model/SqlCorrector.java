@@ -14,25 +14,25 @@ import play.db.Database;
 public class SqlCorrector {
 
   private SqlCorrector() {
-    
+
   }
-  
+
   public static CompleteResult correct(Database database, String userStatement, SqlExercise exercise,
       FeedbackLevel feedbackLevel) {
     QueryCorrector<? extends Statement, ?> corrector = exercise.getCorrector();
-    
+
     String sampleStatement = findBestFittingSample(userStatement, exercise.getSampleSolutions());
-    
+
     List<EvaluationResult> results = corrector.correct(database, userStatement, sampleStatement, exercise,
         feedbackLevel);
-    
-    return new SqlCorrectionResult(/* TODO: learnerSolution */ "", results);
+
+    return new SqlCorrectionResult(userStatement, results);
   }
-  
+
   private static String findBestFittingSample(String userStatement, List<String> samples) {
     String bestFitting = null;
     int bestDistance = Integer.MAX_VALUE;
-    
+
     for(String sample: samples) {
       int newDistance = Levenshtein.levenshteinDistance(sample, userStatement);
       if(newDistance < bestDistance) {

@@ -18,9 +18,9 @@ public abstract class WorkingEvent {
   protected String uri;
   protected String method;
   protected ZonedDateTime dateTime;
-  protected ExerciseIdentifier exerciseIdentifier;
+  protected ExerciseIdentifier<?> exerciseIdentifier;
   
-  public WorkingEvent(EventType theEventType, Request theRequest, ExerciseIdentifier theExerciseIdentifier) {
+  public WorkingEvent(EventType theEventType, Request theRequest, ExerciseIdentifier<?> theExerciseIdentifier) {
     eventType = theEventType;
     method = theRequest.method();
     uri = theRequest.uri();
@@ -36,7 +36,7 @@ public abstract class WorkingEvent {
     return eventType;
   }
   
-  public ExerciseIdentifier getExerciseIdentifier() {
+  public ExerciseIdentifier<?> getExerciseIdentifier() {
     return exerciseIdentifier;
   }
   

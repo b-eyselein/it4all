@@ -29,8 +29,10 @@
 
 	<logger name="play" level="INFO" />
 	<logger name="application" level="DEBUG" />
+
 	<logger name="startup" level="DEBUG" />
-	<logger name="sql" level="DEBUG" />
+
+	<logger name="progress" level="DEBUG" />
 
 	<!-- Off these ones as they are annoying, and anyway we manage configuration 
 		ourselves -->

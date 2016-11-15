@@ -23,6 +23,9 @@ import model.exercise.SqlExercise;
 import model.exercise.SqlExerciseKey;
 import model.exercise.SqlExerciseType;
 import model.exercise.SqlScenario;
+import model.logging.ExerciseCompletionEvent;
+import model.logging.ExerciseCorrectionEvent;
+import model.logging.ExerciseStartEvent;
 import model.result.CompleteResult;
 import model.result.EvaluationFailed;
 import model.user.User;
@@ -61,32 +64,36 @@ public class SQL extends ExerciseController<SqlExerciseKey> {
     sqlSelect = theSqlSelect;
     sqlOther = theSqlOther;
   }
-  
+
   public Result commit(String scenarioName, String exerciseType, int exerciseId) {
     User user = UserManagement.getCurrentUser();
-    CompleteResult result = correct(request(), user,
-        new SqlExerciseKey(scenarioName, exerciseId, SqlExerciseType.valueOf(exerciseType)));
+    SqlExerciseKey key = new SqlExerciseKey(scenarioName, exerciseId, SqlExerciseType.valueOf(exerciseType));
+    CompleteResult result = correct(request(), user, key);
 
-    if(wantsJsonResponse())
+    if(wantsJsonResponse()) {
+      log(user, new ExerciseCorrectionEvent(request(), key, result));
       return ok(Json.toJson(result));
-    else
-      return ok(correction.render("SQL", result.getLearnerSolution(), result, user));
+    } else {
+      log(user, new ExerciseCompletionEvent(request(), key, result));
+      return ok(correction.render("SQL", result, user));
+    }
   }
 
   public Result exercise(String scenarioName, String exerciseType, int exerciseId) {
     User user = UserManagement.getCurrentUser();
 
     SqlExerciseType type = SqlExerciseType.valueOf(exerciseType);
-
-    SqlExercise exercise = SqlExercise.finder.byId(new SqlExerciseKey(scenarioName, exerciseId, type));
+    SqlExerciseKey key = new SqlExerciseKey(scenarioName, exerciseId, type);
+    SqlExercise exercise = SqlExercise.finder.byId(key);
 
     if(exercise == null)
       return badRequest("There is no such exercise!");
 
     List<SqlQueryResult> tables = readTablesInDatabase(scenarioName);
 
-    return ok(sqlexercise.render(user, exercise, tables));
+    log(user, new ExerciseStartEvent(request(), key));
 
+    return ok(sqlexercise.render(user, exercise, tables));
   }
 
   public Result index() {
@@ -145,21 +152,20 @@ public class SQL extends ExerciseController<SqlExerciseKey> {
   protected CompleteResult correct(Request request, User user, SqlExerciseKey identifier) {
     // FIXME: implement!
     SqlExercise exercise = SqlExercise.finder.byId(identifier);
-    
+
     DynamicForm form = factory.form().bindFromRequest();
     String learnerSolution = form.get("editorContent");
     FeedbackLevel feedbackLevel = FeedbackLevel.valueOf(form.get("feedbackLevel"));
-    
+
     // FIXME: Speichern der Lösung?!?
 
     Database database = getDatabaseForExerciseType(exercise.key.exercisetype);
-    
+
     if(learnerSolution.isEmpty())
       return new SqlCorrectionResult(learnerSolution,
           Arrays.asList(new EvaluationFailed("Sie haben eine leere Query abgegeben!")));
-    
-    return SqlCorrector.correct(database, learnerSolution, exercise, feedbackLevel);
 
+    return SqlCorrector.correct(database, learnerSolution, exercise, feedbackLevel);
   }
 
 }

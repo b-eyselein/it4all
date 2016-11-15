@@ -7,12 +7,13 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
 @Embeddable
-public class SqlExerciseKey implements Serializable, ExerciseIdentifier {
+public class SqlExerciseKey implements Serializable, ExerciseIdentifier<SqlExerciseKey> {
   
   private static final long serialVersionUID = -670842276417613477L;
   
-  public int id;
-  public String scenarioName;
+  public int id; // NOSONAR
+
+  public String scenarioName; // NOSONAR
   
   @Enumerated(EnumType.STRING)
   public SqlExerciseType exercisetype;
@@ -21,6 +22,12 @@ public class SqlExerciseKey implements Serializable, ExerciseIdentifier {
     id = theExerciseId;
     scenarioName = theScenarioName;
     exercisetype = theExerciseType;
+  }
+  
+  @Override
+  public SqlExerciseKey bind(String key, String txt) {
+    // TODO Auto-generated method stub
+    return null;
   }
   
   @Override
@@ -39,6 +46,18 @@ public class SqlExerciseKey implements Serializable, ExerciseIdentifier {
     result = prime * result + id;
     result = prime * result + ((scenarioName == null) ? 0 : scenarioName.hashCode());
     return result;
+  }
+  
+  @Override
+  public String javascriptUnbind() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  
+  @Override
+  public String unbind(String key) {
+    // TODO Auto-generated method stub
+    return null;
   }
   
 }
