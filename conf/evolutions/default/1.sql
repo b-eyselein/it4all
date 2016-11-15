@@ -86,9 +86,7 @@ create table js_web_exercise (
   id                            integer auto_increment not null,
   title                         varchar(255),
   text                          text,
-  anterior                      text,
-  posterior                     text,
-  declaration                   varchar(255),
+  declaration                   text,
   constraint pk_js_web_exercise primary key (id)
 );
 
