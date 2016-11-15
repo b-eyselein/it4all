@@ -15,30 +15,30 @@ import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
 import model.Secured;
 import model.Util;
-import model.html.WebExerciseReader;
-import model.logging.ExerciseCompletionEvent;
-import model.logging.ExerciseCorrectionEvent;
-import model.logging.ExerciseStartEvent;
 import model.html.HtmlCorrector;
 import model.html.WebExercise;
 import model.html.WebExerciseIdentifier;
+import model.html.WebExerciseReader;
+import model.html.result.WebCorrectionResult;
+import model.logging.ExerciseCompletionEvent;
+import model.logging.ExerciseCorrectionEvent;
+import model.logging.ExerciseStartEvent;
 import model.result.CompleteResult;
 import model.result.EvaluationFailed;
-import model.html.result.WebCorrectionResult;
 import model.user.User;
 import play.Logger;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
+import play.mvc.Http.Request;
 import play.mvc.Result;
 import play.mvc.Security;
 import play.twirl.api.Html;
+import views.html.correction;
 import views.html.error;
 import views.html.playground;
 import views.html.html.html;
-import views.html.correction;
 import views.html.html.htmloverview;
-import play.mvc.Http.Request;
 
 @Security.Authenticated(Secured.class)
 public class HTML extends ExerciseController<WebExerciseIdentifier> {
@@ -72,14 +72,14 @@ public class HTML extends ExerciseController<WebExerciseIdentifier> {
     if(!typeIsCorrect(type))
       return badRequest(error.render(user, new Html("Der Korrekturtyp wurde nicht korrekt spezifiziert!")));
     
-    CompleteResult result = correct(request(), user, new WebExerciseIdentifier(exerciseId, type));
-    WebExercise exercise = WebExercise.finder.byId(exerciseId);
+    WebExerciseIdentifier identifier = new WebExerciseIdentifier(exerciseId, type);
+    CompleteResult result = correct(request(), user, identifier);
     
     if(wantsJsonResponse()) {
-      log(user, new ExerciseCorrectionEvent(request(), exercise, result));
+      log(user, new ExerciseCorrectionEvent(request(), identifier, result));
       return ok(Json.toJson(result));
     } else {
-      log(user, new ExerciseCompletionEvent(request(), exercise, result));
+      log(user, new ExerciseCompletionEvent(request(), identifier, result));
       return ok(correction.render("HTML", result.getLearnerSolution(), result, UserManagement.getCurrentUser()));
     }
   }
@@ -108,7 +108,7 @@ public class HTML extends ExerciseController<WebExerciseIdentifier> {
     
     String defaultOrOldSolution = loadDefaultOrOldSolution(exerciseId, user);
     
-    log(user, new ExerciseStartEvent(request(), exercise));
+    log(user, new ExerciseStartEvent(request(), new WebExerciseIdentifier(exerciseId, type)));
     
     return ok(html.render(user, exercise, type, defaultOrOldSolution, "Html-Korrektur"));
   }

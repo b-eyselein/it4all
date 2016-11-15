@@ -8,7 +8,7 @@
   @for(webExercise <- webExercises) {
   <div class="panel panel-default">
     <div class="panel-heading">
-      <a href="@controllers.web.routes.JSWeb.exerciseWeb(webExercise.id)">Aufgabe @webExercise.id: @webExercise.title</a>
+      <a href="@controllers.web.routes.JSWeb.exercise(new model.IntExerciseIdentifier(webExercise.id))">Aufgabe @webExercise.id: @webExercise.title</a>
     </div>
     <div class="panel-body">@Html(webExercise.text)</div>
   </div>

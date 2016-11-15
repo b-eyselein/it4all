@@ -7,7 +7,6 @@ import javax.persistence.Id;
 import com.avaje.ebean.Model;
 
 import model.exercise.Exercise;
-import model.exercise.ExerciseIdentifier;
 
 @Entity
 public class SpreadExercise extends Model implements Exercise {
@@ -28,11 +27,6 @@ public class SpreadExercise extends Model implements Exercise {
 
   public SpreadExercise(int theId) {
     id = theId;
-  }
-
-  @Override
-  public ExerciseIdentifier getExerciseIdentifier() {
-    return new IntExerciseIdentifier(id);
   }
 
   @Override

@@ -1,14 +1,11 @@
 package model;
 
 import java.util.AbstractMap.SimpleEntry;
-
-import model.exercise.ExerciseIdentifier;
-import model.tree.Assignment;
-import model.tree.BoolescheFunktionTree;
-
 import java.util.Arrays;
 import java.util.List;
 
+import model.tree.Assignment;
+import model.tree.BoolescheFunktionTree;
 import play.twirl.api.Html;
 
 public class FilloutQuestion extends BooleanQuestion {
@@ -45,12 +42,6 @@ public class FilloutQuestion extends BooleanQuestion {
     return assignments;
   }
 
-  @Override
-  public ExerciseIdentifier getExerciseIdentifier() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-  
   public BoolescheFunktionTree getFormula() {
     return formula;
   }

@@ -5,18 +5,12 @@ import javax.persistence.Id;
 import com.avaje.ebean.Model;
 
 import model.exercise.Exercise;
-import model.exercise.ExerciseIdentifier;
 
 public class PythonExercise extends Model implements Exercise {
   
   @Id
   public int id;
 
-  @Override
-  public ExerciseIdentifier getExerciseIdentifier() {
-    return new IntExerciseIdentifier(id);
-  }
-  
   @Override
   public int getId() {
     // TODO Auto-generated method stub

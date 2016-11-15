@@ -17,9 +17,14 @@ import model.JsExercise;
 import model.JsExercise.JsDataType;
 import model.IntExerciseIdentifier;
 import model.JsExerciseReader;
+import model.JsTest;
 import model.Util;
+import model.logging.ExerciseCompletionEvent;
+import model.logging.ExerciseCorrectionEvent;
+import model.logging.ExerciseStartEvent;
 import model.result.CompleteResult;
 import model.user.User;
+import play.Logger;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
@@ -42,10 +47,13 @@ public class JS extends ExerciseController<IntExerciseIdentifier> {
     // FIXME: implement and test!
     Path jsonFile = Paths.get(res, "exercises.json");
     Path jsonSchemaFile = Paths.get(res, "exerciseSchema.json");
-
+    
     List<JsExercise> exercises = (new JsExerciseReader()).readExercises(jsonFile, jsonSchemaFile);
-    for(JsExercise ex: exercises)
+    for(JsExercise ex: exercises) {
       ex.save();
+      for(JsTest test: ex.functionTests)
+        test.save();
+    }
   }
   
   private static List<CommitedTestData> extractAndValidateTestData(DynamicForm form, JsExercise exercise) {
@@ -87,15 +95,18 @@ public class JS extends ExerciseController<IntExerciseIdentifier> {
   
   public Result commit(IntExerciseIdentifier identifier) {
     User user = UserManagement.getCurrentUser();
+
+    Logger.debug("Correcting " + identifier);
     
-    CompleteResult testResults = correct(request(), user, identifier);
+    CompleteResult result = correct(request(), user, identifier);
     
-    if(wantsJsonResponse())
-      return ok(Json.toJson(testResults));
-    else
-      return ok(
-          // FIXME: Umstellung von Liste auf einzelnes resultat!
-          correction.render("Javascript", testResults.getLearnerSolution(), testResults, user));
+    if(wantsJsonResponse()) {
+      log(user, new ExerciseCorrectionEvent(request(), identifier, result));
+      return ok(Json.toJson(result));
+    } else {
+      log(user, new ExerciseCompletionEvent(request(), identifier, result));
+      return ok(correction.render("Javascript", result.getLearnerSolution(), result, user));
+    }
   }
   
   public Result exercise(IntExerciseIdentifier identifier) {
@@ -107,8 +118,8 @@ public class JS extends ExerciseController<IntExerciseIdentifier> {
           error.render(user, new Html("<p>Diese Aufgabe existert leider nicht.</p><p>Zur&uuml;ck zur <a href=\""
               + routes.JS.index() + "\">Startseite</a>.</p>")));
     
+    log(user, new ExerciseStartEvent(request(), identifier));
     return ok(js.render(UserManagement.getCurrentUser(), exercise, identifier));
-    
   }
   
   public Result index() {

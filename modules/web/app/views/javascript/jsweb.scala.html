@@ -1,15 +1,15 @@
-@(user: model.user.User, exercise: model.javascript.JsWebExercise, oldSolution: String)
+@(user: model.user.User, exercise: model.javascript.JsWebExercise, identifier: model.IntExerciseIdentifier, oldSolution: String)
 
 @main("JavaScript-Test", user) {
 <script src="@controllers.routes.Assets.versioned("javascripts/jsProcessor.js")"></script>
 <script>
 function testSolution() {
-  testTheWebSolution("@controllers.web.routes.JSWeb.exerciseWeb(exercise.id)");
+  testTheWebSolution("@controllers.web.routes.JSWeb.exercise(identifier)");
 }
 </script>
 
 <div class="container-fluid">
-  <form action="@controllers.web.routes.JSWeb.commitWeb(exercise.id)" method="post" onsubmit="prepareFormForSubmitting();">
+  <form action="@controllers.web.routes.JSWeb.commit(identifier)" method="post" onsubmit="prepareFormForSubmitting();">
     <div class="panel panel-default">
       <div class="panel-heading">Aufgabenstellung</div>
       <div class="panel-body">@Html(exercise.text)</div>

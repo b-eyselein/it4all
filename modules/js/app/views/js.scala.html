@@ -1,7 +1,7 @@
 @(user: model.user.User, exercise: model.JsExercise, identifier: model.IntExerciseIdentifier)
 
 @main("JavaScript-Test", user) {
-<script src=" @controllers.routes.Assets.versioned("javascripts/jsProcessor.js")"></script>
+<script src="@controllers.routes.Assets.versioned("javascripts/jsProcessor.js")"></script>
 <script>
 function testSolution() {
   testTheSolution("@controllers.js.routes.JS.commit(identifier)");

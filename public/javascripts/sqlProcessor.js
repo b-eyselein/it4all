@@ -1,18 +1,4 @@
-function testTheSolution(url) {
-  var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if(xhttp.readyState == 4 && xhttp.status == 200) {
-      processCorrection(xhttp.responseText);
-    }
-  };
-  
-  xhttp.open("PUT", url, true);
-  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-  xhttp.setRequestHeader("Accept", "application/json");
-  xhttp.send(getParameters());
-}
-
-function getParameters() {
+function extractParameters() {
   var editorContent = editor.getValue();
   var parameters = "editorContent=" + encodeURIComponent(editorContent);
   
@@ -28,11 +14,6 @@ function prepareFormForSubmitting() {
 
 function processCorrection(correction) {
   var parsedCorr = JSON.parse(correction);
-  
-  var toAdd = "";
-  for(var i = 0; i < parsedCorr.length; i++)
-    toAdd += parsedCorr[i].asHtml;
-  
   document.getElementById("resultPanel").hidden = false;
-  document.getElementById("resultDiv").innerHTML = toAdd;
+  document.getElementById("resultDiv").innerHTML = parsedCorr.asHtml;
 }

@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import model.exercise.ExerciseIdentifier;
 import model.tree.Assignment;
 
 public class CreationQuestion extends BooleanQuestion {
@@ -53,12 +52,6 @@ public class CreationQuestion extends BooleanQuestion {
         .collect(Collectors.toList());
     // @formatter:on
     return String.join(" OR ", formulas);
-  }
-  
-  @Override
-  public ExerciseIdentifier getExerciseIdentifier() {
-    // TODO Auto-generated method stub
-    return null;
   }
   
   @Override

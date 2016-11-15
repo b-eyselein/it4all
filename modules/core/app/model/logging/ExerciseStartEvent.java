@@ -1,19 +1,12 @@
 package model.logging;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import model.exercise.Exercise;
+import model.exercise.ExerciseIdentifier;
 import play.mvc.Http.Request;
 
 public class ExerciseStartEvent extends WorkingEvent {
-  
-  public ExerciseStartEvent(Request theRequest, Exercise theExercise) {
-    super(EventType.EXERCISE_START, theRequest, theExercise);
+
+  public ExerciseStartEvent(Request theRequest, ExerciseIdentifier theExerciseIdentifier) {
+    super(EventType.EXERCISE_START, theRequest, theExerciseIdentifier);
   }
 
-  @JsonIgnore
-  public Exercise getExercise() {
-    return exercise;
-  }
-  
 }

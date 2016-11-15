@@ -9,7 +9,6 @@ import javax.persistence.Id;
 import com.avaje.ebean.Model;
 
 import model.exercise.Exercise;
-import model.exercise.ExerciseIdentifier;
 
 @Entity
 public class XmlExercise extends Model implements Exercise {
@@ -45,11 +44,6 @@ public class XmlExercise extends Model implements Exercise {
   
   @Column(columnDefinition = "text")
   public String exerciseText;
-  
-  @Override
-  public ExerciseIdentifier getExerciseIdentifier() {
-    return new IntExerciseIdentifier(id);
-  }
 
   public String getGrammarFileEnding() {
     switch(exerciseType) {

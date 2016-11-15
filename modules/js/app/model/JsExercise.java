@@ -15,7 +15,6 @@ import com.avaje.ebean.Model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import model.exercise.Exercise;
-import model.exercise.ExerciseIdentifier;
 
 @Entity
 public class JsExercise extends Model implements Exercise {
@@ -53,11 +52,6 @@ public class JsExercise extends Model implements Exercise {
 
   public JsExercise(int theId) {
     id = theId;
-  }
-
-  @Override
-  public ExerciseIdentifier getExerciseIdentifier() {
-    return new IntExerciseIdentifier(id);
   }
 
   @Override

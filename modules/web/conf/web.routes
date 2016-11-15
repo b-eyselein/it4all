@@ -4,17 +4,17 @@ GET    /playground                         controllers.web.HTML.playground()
 # JavaScript
 GET    /js/                                controllers.web.JSWeb.index()
 
-GET    /js/:ex                         controllers.web.JSWeb.exerciseWeb(ex: Int)
-PUT    /js/:ex                         controllers.web.JSWeb.commitWeb(ex: Int)
-POST   /js/:ex                         controllers.web.JSWeb.commitWeb(ex: Int)
+GET    /js/:exId                             controllers.web.JSWeb.exercise(exId: model.IntExerciseIdentifier)
+PUT    /js/:exId                             controllers.web.JSWeb.commit(exId: model.IntExerciseIdentifier)
+POST   /js/:exId                             controllers.web.JSWeb.commit(exId: model.IntExerciseIdentifier)
 
 # HTML & CSS
-GET    /                              controllers.web.HTML.index()
+GET    /                                   controllers.web.HTML.index()
 
-GET    /:exerciseId/:type             controllers.web.HTML.exercise(exerciseId: Int, type: String)
+GET    /:exerciseId/:type                  controllers.web.HTML.exercise(exerciseId: Int, type: String)
 
-PUT    /:exerciseId/:type             controllers.web.HTML.commit(exerciseId: Int, type: String)
-POST   /:exerciseId/:type             controllers.web.HTML.commit(exerciseId: Int, type: String)
+PUT    /:exerciseId/:type                  controllers.web.HTML.commit(exerciseId: Int, type: String)
+POST   /:exerciseId/:type                  controllers.web.HTML.commit(exerciseId: Int, type: String)
 
 GET    /solution/:user/:type/:exerciseId   controllers.web.Solution.site(user: model.user.User, type: String, exerciseId: Int)
 
