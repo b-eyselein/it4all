@@ -1,7 +1,3 @@
-function prepareFormForSubmitting() {
-  document.getElementById("editorContent").value = editor.getValue();
-}
-
 function extractParameters() {
   return "editorContent=" + encodeURIComponent(editor.getValue());
 }

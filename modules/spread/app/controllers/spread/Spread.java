@@ -81,7 +81,6 @@ public class Spread extends ExerciseController<IntExerciseIdentifier> {
     Path filePath = Paths.get(util.getSampleDirForExerciseType(EXERCISE_TYPE).toString(),
         exercise.templateFilename + "." + fileType);
     
-    Logger.debug(filePath.toString());
     
     if(!Files.exists(filePath))
       return badRequest("This file does not exist!");
@@ -116,7 +115,6 @@ public class Spread extends ExerciseController<IntExerciseIdentifier> {
     // Get paths to sample document
     Path sampleDocumentPath = Paths.get(util.getSampleDirForExerciseType(EXERCISE_TYPE).toString(),
         exercise.sampleFilename + "." + fileExtension);
-    Logger.debug(sampleDocumentPath.toString());
     if(!Files.exists(sampleDocumentPath))
       return internalServerError(spreadcorrectionerror.render(user, "Die Musterdatei konnte nicht gefunden werden!"));
     

@@ -105,38 +105,8 @@ function writeTestData(responseText) {
   }
 }
 
-function prepareFormForSubmitting() {
-  document.getElementById("editorContent").value = editor.getValue();
-}
-
 function processCorrection(jsonResponseText) {
   document.getElementById("loesungsraum").innerHTML = JSON.parse(jsonResponseText).asHtml;
-}
-
-function testTheWebSolution(url) {
-  // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
-  var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if(xhttp.readyState == 4 && xhttp.status == 200) {
-      processWebCorrection(xhttp.responseText);
-    }
-  };
-  
-  // AJAX-Objekt mit Daten fuellen, absenden
-  var parameters = "editorContent=" + encodeURIComponent(editor.getValue());
-  xhttp.open("POST", url, true);
-  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-  xhttp.setRequestHeader("Accept", "application/json");
-  xhttp.send(parameters);
-}
-
-function processWebCorrection(jsonResponseText) {
-  var results = JSON.parse(jsonResponseText);
-  var toAdd = "";
-  for(var resultCount = 0; resultCount < results.length; resultCount++) {
-    toAdd += results[resultCount].asHtml;
-  }
-  document.getElementById("testsDiv").innerHTML = toAdd;
 }
 
 function updatePreview() {

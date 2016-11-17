@@ -5,6 +5,10 @@ function changeFontsize(value) {
   fontsizeElement.innerHTML = fontsize;
 }
 
+function prepareFormForSubmitting() {
+  document.getElementById("editorContent").value = editor.getValue();
+}
+
 function testTheSolution(url) {
   // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
   var xhttp = new XMLHttpRequest();
@@ -21,7 +25,6 @@ function testTheSolution(url) {
   xhttp.setRequestHeader("Accept", "application/json");
   xhttp.send(parameters);
 }
-
 
 function updatePreview() {
   var toWrite = unescapeHTML(editor.getValue());

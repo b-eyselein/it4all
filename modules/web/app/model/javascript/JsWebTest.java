@@ -21,42 +21,42 @@ import model.exercise.Success;
 
 @Entity
 public class JsWebTest extends Model {
-  
+
   @Id
   public int id;
-  
+
   @ManyToOne
   @JsonBackReference
   public JsWebExercise exercise;
-  
+
   @OneToMany(mappedBy = "pre")
   @JsonManagedReference
   public List<Condition> preconditions;
-  
+
   @Embedded
   public Action action;
-  
+
   @OneToMany(mappedBy = "post")
   @JsonManagedReference
   public List<Condition> postconditions;
-  
+
   private static List<ConditionResult> evaluateConditions(WebDriver driver, List<Condition> conditions,
       boolean isPrecondition) {
     return conditions.stream().map(cond -> cond.test(driver, isPrecondition)).collect(Collectors.toList());
   }
-  
+
   public JsWebTestResult test(WebDriver driver) {
     List<ConditionResult> preconditionsSatisfied = evaluateConditions(driver, preconditions, true);
-    
+
     boolean actionPerformed = action == null || action.perform(driver);
-    
+
     List<ConditionResult> postconditionSatisfied = evaluateConditions(driver, postconditions, false);
-    
+
     if(!allResultsSuccessful(preconditionsSatisfied) || !actionPerformed
         || !allResultsSuccessful(postconditionSatisfied))
       return new JsWebTestResult(this, Success.NONE, preconditionsSatisfied, postconditionSatisfied);
-    
+
     return new JsWebTestResult(this, Success.COMPLETE, preconditionsSatisfied, postconditionSatisfied);
   }
-  
+
 }

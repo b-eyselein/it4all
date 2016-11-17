@@ -1,10 +1,10 @@
 @(user: model.user.User, exercise: model.javascript.JsWebExercise, identifier: model.IntExerciseIdentifier, oldSolution: String)
 
 @main("JavaScript-Test", user) {
-<script src="@controllers.routes.Assets.versioned("javascripts/jsProcessor.js")"></script>
+<script src="@controllers.routes.Assets.versioned("javascripts/jswebProcessor.js")"></script>
 <script>
 function testSolution() {
-  testTheWebSolution("@controllers.web.routes.JSWeb.exercise(identifier)");
+  testTheSolution("@controllers.web.routes.JSWeb.exercise(identifier)");
 }
 </script>
 
@@ -19,7 +19,7 @@ function testSolution() {
             <button type="button" class="btn btn-primary" onclick="testSolution();">L&ouml;sung testen</button>
           </div>
           <div class="btn-group">
-            <button type="submit" class="btn btn-success" >L&ouml;sung abgeben</button>
+            <button type="submit" class="btn btn-success">L&ouml;sung abgeben</button>
           </div>
         </div>
       </div>

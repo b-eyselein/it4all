@@ -117,6 +117,7 @@ public class JSWeb extends ExerciseController<IntExerciseIdentifier> {
     String solutionUrl = "http://localhost:9000" + routes.Solution.site(user, "js", exercise.id).url();
 
     List<EvaluationResult> testResults = JsCorrector.correctWeb(exercise, solutionUrl);
+    
     return new WebCorrectionResult(learnerSolution, testResults);
   }
 
