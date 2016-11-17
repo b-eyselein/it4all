@@ -22,10 +22,10 @@ public class AttributeResult extends EvaluationResult {
     String foundValue = null;
     try {
       foundValue = element.getAttribute(key);
-    } catch (NoSuchMethodError e) {
-      // TODO: Better solution! Catch NoSuchMethodError if attribute is not
-      // declared
-      Logger.error("Error while searching for attribute: ", e);
+    } catch (NoSuchMethodError e) { // NOSONAR
+      // FIXME: Better solution! NoSuchMethodError if attribute not declared
+      Logger.info("Error while searching for attribute in model.html.result.AttributeResult"
+          + ", line 28: NoSuchMethodError...");
     }
     if(foundValue == null)
       success = Success.NONE;
