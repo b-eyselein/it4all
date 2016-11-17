@@ -18,7 +18,7 @@ function testSolution() {
     <div class="panel-body">
       <div class="row">
         <div class="container-fluid">
-          <table class="table">
+          <table class="table table-condensed">
             <thead>
               <tr>
                 @for(variable <- question.getVariables()) {
@@ -39,7 +39,6 @@ function testSolution() {
         </div>
       </div>
       
-      <div class="row">
         <form role="form" class="form-horizontal" action="@controllers.bool.routes.Bool.checkBoolCreationSolution()" method="post">
           <div class="form-group">
             <label class="control-label col-xs-1" for="learnerSolution">z = </label>
@@ -60,14 +59,16 @@ function testSolution() {
               Aufgabe</a>
             </div>
           </div>
-          <div id="valueDiv">
+          <div id="valueDiv" hidden>
+          <!-- Save values for return -->
           @for(assignment <- question.getSolutions()) {
-            <input name="@assignment.toString()" hidden value="@assignment.asChar('z')">
+            <input name="@assignment.toString()" value="@assignment.asChar('z')">
           }
-            <input name="vars" hidden value="@question.getJoinedVariables()">
+            <input name="vars" value="@question.getJoinedVariables()">
           </div>
+          <div id="messageDiv"></div>
         </form>
-      </div>
+      
     </div>
   </div>
 
@@ -121,13 +122,13 @@ function testSolution() {
             <td><code class="mycode">a xoder b</code></td>
           </tr>
           <tr>
-            <td>Nicht Und</td>
+            <td>Negiertes Und</td>
             <td><kbd class="mykbd">a &#x22bc; b</kbd></td>
             <td><code class="mycode">a nand b</code></td>
             <td><code class="mycode">a nund b</code></td>
           </tr>
           <tr>
-            <td>Nicht Oder</td>
+            <td>Negiertes Oder</td>
             <td><kbd class="mykbd">a &#x22bd; b</kbd></td>
             <td><code class="mycode">a nor b</code></td>
             <td><code class="mycode">a noder b</code></td>

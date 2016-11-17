@@ -5,17 +5,18 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import model.BooleanParsingException;
 import model.BoolescheFunktionParser;
 import model.tree.Assignment;
 import model.tree.BoolescheFunktionTree;
 
 public class XorTest {
-  
+
   @Test
-  public void testEvaluate() {
+  public void testEvaluate() throws BooleanParsingException {
     BoolescheFunktionTree t1 = BoolescheFunktionParser.parse("a xor b");
     Assignment assignment = new Assignment();
-    
+
     // a = 0, b = 0
     assignment.setAssignment('a', false);
     assignment.setAssignment('b', false);
@@ -33,5 +34,5 @@ public class XorTest {
     assignment.setAssignment('a', false);
     assertTrue(t1.evaluate(assignment));
   }
-  
+
 }

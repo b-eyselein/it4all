@@ -30,13 +30,21 @@ function testTheSolution(url) {
 
 function processCorrection(correctionAsJson) {
   var completeCorrection = JSON.parse(correctionAsJson);
-  var correctionArray = completeCorrection.solutions;
   
-  for(var i = 0; i < correctionArray.length; i++) {
-    var correction = correctionArray[i];
-    var solutionCell = document.getElementById(correction.assignmentsForJson);
-    solutionCell.className = "text-center " + correction.color;
-    solutionCell.innerHTML = "<span class=\"text-" + correction.color + "\">" + correction.learnerValue + "</span>";
+  var messageDiv = document.getElementById("messageDiv");
+  messageDiv.innerHTML = "";
+  
+  if(completeCorrection.success === "NONE") {
+    messageDiv.innerHTML = "<div class=\"alert alert-danger\">" + completeCorrection.asHtml + "</div>";
+  } else {
+    var correctionArray = completeCorrection.solutions;
+    
+    for(var i = 0; i < correctionArray.length; i++) {
+      var correction = correctionArray[i];
+      var solutionCell = document.getElementById(correction.assignmentsForJson);
+      solutionCell.className = "text-center " + correction.color;
+      solutionCell.innerHTML = "<span class=\"text-" + correction.color + "\">" + correction.learnerValue + "</span>";
+    }
   }
   
 }

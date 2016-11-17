@@ -1,5 +1,6 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,24 +11,17 @@ public class CreationQuestion extends BooleanQuestion {
   
   private List<Assignment> solutions;
 
-  private String learnerSolution;
-
-  public CreationQuestion(Character[] theVariables, List<Assignment> theSolutions) {
+  public CreationQuestion(List<Character> theVariables, List<Assignment> theSolutions) {
     super(theVariables);
     solutions = theSolutions;
-  }
-  
-  public CreationQuestion(Character[] theVariables, List<Assignment> theSolutions, String theLearnerSolution) {
-    this(theVariables, theSolutions);
-    learnerSolution = theLearnerSolution;
   }
   
   public static CreationQuestion generateNew() {
     // Get two or three variables a, b (and c)
     int anzVars = GENERATOR.nextInt(2) + 2;
-    Character[] variables = new Character[anzVars];
+    List<Character> variables = new ArrayList<>(anzVars);
     for(int i = 0; i < anzVars; i++)
-      variables[i] = ALPHABET[i];
+      variables.add(ALPHABET[i]);
     
     // Generate random solutions for all assignments
     List<Assignment> assignments = Assignment.generateAllAssignments(variables);
@@ -76,10 +70,6 @@ public class CreationQuestion extends BooleanQuestion {
     return String.join(" AND ", formulas);
   }
   
-  public String getLearnerSolution() {
-    return learnerSolution;
-  }
-
   @Override
   public int getMaxPoints() {
     // TODO Auto-generated method stub

@@ -9,12 +9,15 @@ import javax.inject.Inject;
 import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
 import model.BoolQuestionIdentifier;
+import model.BooleanParsingException;
 import model.BooleanQuestion;
+import model.BooleanQuestionResult;
 import model.BoolescheFunktionParser;
 import model.CreationQuestion;
 import model.FilloutQuestion;
 import model.Secured;
 import model.Util;
+import model.exercise.Success;
 import model.result.CompleteResult;
 import model.tree.Assignment;
 import model.tree.BoolescheFunktionTree;
@@ -34,38 +37,46 @@ import views.html.booloverview;
 @Authenticated(Secured.class)
 public class Bool extends ExerciseController<BoolQuestionIdentifier> {
   private static final String FORM_VALUE = "learnerSolution";
-
+  
   @Inject
   public Bool(Util theUtil, FormFactory theFactory) {
     super(theUtil, theFactory);
   }
-
+  
   public Result checkBoolCreationSolution() {
     DynamicForm dynForm = factory.form().bindFromRequest();
     String learnerSolution = dynForm.get(FORM_VALUE);
-    
-    List<Character> variables = Arrays.stream(dynForm.get("vars").split(", ")).map(var -> new Character(var.charAt(0)))
-        .collect(Collectors.toList());
-    
-    BoolescheFunktionTree formula = BoolescheFunktionParser.parse(learnerSolution);
-    
-    List<Assignment> assignments = Assignment
-        .generateAllAssignments(variables.toArray(new Character[variables.size()]));
+
+    List<Character> variables = Arrays.stream(dynForm.get("vars").split(", "))
+        .map(var -> Character.valueOf(var.charAt(0))).collect(Collectors.toList());
+
+    List<Assignment> assignments = Assignment.generateAllAssignments(variables);
     for(Assignment assignment: assignments) {
       boolean value = "1".equals(dynForm.get(assignment.toString())) ? true : false;
       assignment.setAssignment(BooleanQuestion.SOLUTION_VARIABLE, value);
-      assignment.setAssignment(BooleanQuestion.LEARNER_VARIABLE, formula.evaluate(assignment));
     }
     
-    CreationQuestion question = new CreationQuestion(variables.toArray(new Character[variables.size()]), assignments,
-        formula.getAsString());
-    
-    if(wantsJsonResponse())
-      return ok(Json.toJson(question));
-    else
-      return ok(boolcreatesolution.render(UserManagement.getCurrentUser(), question));
-  }
+    CreationQuestion question = new CreationQuestion(variables, assignments);
 
+    try {
+      BoolescheFunktionTree formula = BoolescheFunktionParser.parse(learnerSolution);
+
+      for(Assignment assignment: question.getSolutions())
+        assignment.setAssignment(BooleanQuestion.LEARNER_VARIABLE, formula.evaluate(assignment));
+
+      BooleanQuestionResult result = new BooleanQuestionResult(Success.PARTIALLY, learnerSolution, question);
+      
+      if(wantsJsonResponse())
+        return ok(Json.toJson(result));
+      else
+        return ok(boolcreatesolution.render(UserManagement.getCurrentUser(), question));
+
+    } catch (BooleanParsingException e) {
+      // FIXME: Anzeige Parsing-fehler?
+      return ok(Json.toJson(new BooleanQuestionResult(Success.NONE, learnerSolution, question, e.getMessage())));
+    }
+  }
+  
   public Result checkBoolFilloutSolution() {
     DynamicForm dynFormula = factory.form().bindFromRequest();
     
@@ -73,7 +84,14 @@ public class Bool extends ExerciseController<BoolQuestionIdentifier> {
     char learnerVal = BooleanQuestion.LEARNER_VARIABLE;
     
     String formula = dynFormula.get("formula");
-    BoolescheFunktionTree bft = BoolescheFunktionParser.parse(formula);
+    BoolescheFunktionTree bft;
+    try {
+      bft = BoolescheFunktionParser.parse(formula);
+    } catch (BooleanParsingException e) {
+      // FIXME: implement return!
+      e.printStackTrace();
+      return badRequest();
+    }
     FilloutQuestion question = new FilloutQuestion(bft.getVariables(), bft);
     
     for(Assignment assignment: question.getAssignments()) {
@@ -88,12 +106,12 @@ public class Bool extends ExerciseController<BoolQuestionIdentifier> {
   public Result index() {
     return ok(booloverview.render(UserManagement.getCurrentUser()));
   }
-
+  
   public Result newBoolCreationQuestion() {
     CreationQuestion question = CreationQuestion.generateNew();
     return ok(boolcreatequestion.render(UserManagement.getCurrentUser(), question));
   }
-
+  
   public Result newBoolFilloutQuestion() {
     FilloutQuestion question = FilloutQuestion.generateNew();
     return ok(boolfilloutquestion.render(UserManagement.getCurrentUser(), question));
@@ -102,6 +120,7 @@ public class Bool extends ExerciseController<BoolQuestionIdentifier> {
   @Override
   protected CompleteResult correct(Request request, User user, BoolQuestionIdentifier identifier) {
     // TODO Auto-generated method stub
+    
     return null;
   }
 }

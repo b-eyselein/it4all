@@ -1,27 +1,26 @@
 package model;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.hamcrest.CoreMatchers.equalTo;
 
 import org.junit.Test;
 
-import model.BoolescheFunktionParser;
 import model.node.Node;
 import model.tree.BoolescheFunktionTree;
 
 public class BoolescheFunktionParserTest {
 
   @Test
-  public void testNew() {
+  public void testNew() throws BooleanParsingException {
     String formula = "true";
     BoolescheFunktionTree tree = BoolescheFunktionParser.parse(formula);
     assertThat(tree.toString(), equalTo("1"));
   }
 
   @Test
-  public void testParseNode() {
+  public void testParseNode() throws BooleanParsingException {
     String formula = "((a xor b) nor c) and ((a and b) xor c)";
     Node tree = BoolescheFunktionParser.parseNode(formula);
     assertNotNull(tree);
@@ -37,8 +36,8 @@ public class BoolescheFunktionParserTest {
     assertThat(tree3.toString(), equalTo(formula3));
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void testParseNodeWithError() {
+  @Test(expected = BooleanParsingException.class)
+  public void testParseNodeWithError() throws BooleanParsingException {
     String formula = "b andor c";
     BoolescheFunktionParser.parseNode(formula);
   }
