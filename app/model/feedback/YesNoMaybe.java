@@ -1,15 +1,13 @@
 package model.feedback;
 
 public enum YesNoMaybe {
-  YES(3, 1, "Ja", false), MAYBE(2, 0, "Keine Angabe", true), NO(3, -1, "Nein", false);
+  YES(1, "Ja", false), NO(0, "Nein", false), MAYBE(-1, "Keine Angabe", true);
 
   private String german;
-  private int width;
   private int value;
   private boolean checked;
 
-  private YesNoMaybe(int theWidth, int theValue, String theGerman, boolean isChecked) {
-    width = theWidth;
+  private YesNoMaybe(int theValue, String theGerman, boolean isChecked) {
     value = theValue;
     german = theGerman;
     checked = isChecked;
@@ -18,13 +16,9 @@ public enum YesNoMaybe {
   public String getGerman() {
     return german;
   }
-  
+
   public int getValue() {
     return value;
-  }
-
-  public int getWidth() {
-    return width;
   }
 
   public boolean isChecked() {

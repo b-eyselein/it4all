@@ -22,26 +22,21 @@ create table css_task (
 );
 
 create table feedback (
-  id                            integer auto_increment not null,
-  sinn_html                     integer,
-  sinn_excel                    integer,
-  nutzen_html                   integer,
-  nutzen_excel                  integer,
-  bedienung_html                integer,
-  bedienung_excel               integer,
-  feedback_html                 integer,
-  feedback_excel                integer,
-  korrektur_html                integer,
-  korrektur_excel               integer,
-  kommentar_html                varchar(255),
-  kommentar_excel               varchar(255),
-  constraint ck_feedback_bedienung_html check (bedienung_html in (0,1,2,3,4)),
-  constraint ck_feedback_bedienung_excel check (bedienung_excel in (0,1,2,3,4)),
-  constraint ck_feedback_feedback_html check (feedback_html in (0,1,2,3,4)),
-  constraint ck_feedback_feedback_excel check (feedback_excel in (0,1,2,3,4)),
-  constraint ck_feedback_korrektur_html check (korrektur_html in (0,1,2,3,4)),
-  constraint ck_feedback_korrektur_excel check (korrektur_excel in (0,1,2,3,4)),
-  constraint pk_feedback primary key (id)
+  user                          varchar(255) not null,
+  tool                          varchar(5) not null,
+  sense                         varchar(5),
+  used                          varchar(5),
+  usability                     varchar(9),
+  feedback                      varchar(9),
+  fairness                      varchar(9),
+  comment                       text,
+  constraint ck_feedback_tool check (tool in ('HTML','CSS','JSWEB','JS','SQL')),
+  constraint ck_feedback_sense check (sense in ('YES','NO','MAYBE')),
+  constraint ck_feedback_used check (used in ('YES','NO','MAYBE')),
+  constraint ck_feedback_usability check (usability in ('VERY_GOOD','GOOD','NEUTRAL','BAD','VERY_BAD','NO_MARK')),
+  constraint ck_feedback_feedback check (feedback in ('VERY_GOOD','GOOD','NEUTRAL','BAD','VERY_BAD','NO_MARK')),
+  constraint ck_feedback_fairness check (fairness in ('VERY_GOOD','GOOD','NEUTRAL','BAD','VERY_BAD','NO_MARK')),
+  constraint pk_feedback primary key (user,tool)
 );
 
 create table grading (

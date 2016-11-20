@@ -1,101 +1,121 @@
 package model.feedback;
 
-import java.util.OptionalDouble;
-
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 import com.avaje.ebean.Model;
+
+import play.twirl.api.Html;
 
 @Entity
 public class Feedback extends Model {
 
-  public enum Note {
-    NO_FEEDBACK, SEHR_GUT, GUT, EHER_SCHLECHT, SCHLECHT;
+  public enum EvaluatedTool {
+    HTML, CSS, JSWEB, JS, SQL;
+  }
+
+  public static final Finder<FeedbackKey, Feedback> finder = new Finder<>(Feedback.class);
+
+  private static final String DIV_START = "<div class=\"form-group\">\n";
+  private static final String DIV_END = "</div>\n</div>\n";
+  private static final String LABEL_END = "</label>\n";
+  
+  @EmbeddedId
+  public FeedbackKey key;
+
+  @Enumerated(EnumType.STRING)
+  public YesNoMaybe sense = YesNoMaybe.MAYBE;
+
+  @Enumerated(EnumType.STRING)
+  public YesNoMaybe used = YesNoMaybe.MAYBE;
+
+  @Enumerated(EnumType.STRING)
+  public Mark usability = Mark.NO_MARK;
+
+  @Enumerated(EnumType.STRING)
+  public Mark feedback = Mark.NO_MARK;
+
+  @Enumerated(EnumType.STRING)
+  public Mark fairness = Mark.NO_MARK;
+
+  @Column(columnDefinition = "text")
+  public String comment = "";
+
+  public Feedback(FeedbackKey theKey) {
+    key = theKey;
   }
   
-  public static final Finder<Integer, Feedback> finder = new Finder<>(Feedback.class);
-  
-  @Id
-  public int id;
-  public int sinnHtml; // NOSONAR
-  
-  public int sinnExcel; // NOSONAR
-  public int nutzenHtml; // NOSONAR
-  
-  public int nutzenExcel; // NOSONAR
-  public Note bedienungHtml; // NOSONAR
-  
-  public Note bedienungExcel; // NOSONAR
-  public Note feedbackHtml; // NOSONAR
-  
-  public Note feedbackExcel; // NOSONAR
-  public Note korrekturHtml; // NOSONAR
-  
-  public Note korrekturExcel; // NOSONAR
-  public String kommentarHtml; // NOSONAR
-  
-  public String kommentarExcel; // NOSONAR
-  
-  public static double getDurchschnittBedienungExcel() {
-    OptionalDouble ret = finder.all().stream().filter(feedback -> feedback.bedienungExcel != Note.NO_FEEDBACK)
-        .mapToInt(feedback -> feedback.bedienungExcel.ordinal()).average();
-    return ret.isPresent() ? ret.getAsDouble() : 0.;
+  private static String renderComment(String evaluatedTool, String currentComment) {
+    StringBuilder builder = new StringBuilder();
+    builder.append(DIV_START);
+    builder.append("<label class=\"control-label col-sm-4\" for=\"comment-" + evaluatedTool
+        + "\">Verbesserungsvorschläge:" + LABEL_END);
+
+    builder.append("<div class=\"col-sm-8\">\n");
+    builder.append("<textarea class=\"form-control\" rows=\"5\" name=\"comment-" + evaluatedTool + "\" id=\"comment-"
+        + evaluatedTool + "\"   placeholder=\"Verbesserungsvorschläge\">" + currentComment + "</textarea>\n");
+    builder.append("<p>Bitte beschr&auml;nken Sie sich auf 250 Zeichen.</p>\n");
+
+    builder.append(DIV_END);
+    return builder.toString();
   }
-  
-  public static double getDurchschnittBedienungHtml() {
-    OptionalDouble ret = finder.all().stream().filter(feedback -> feedback.bedienungHtml != Note.NO_FEEDBACK)
-        .mapToInt(feedback -> feedback.bedienungHtml.ordinal()).average();
-    return ret.isPresent() ? ret.getAsDouble() : 0.;
+
+  private static String renderMarked(String evaluatedAspect, String evaluatedTool, String question, Mark current) {
+    StringBuilder builder = new StringBuilder();
+    builder.append(DIV_START);
+    builder.append("<label class=\"control-label col-sm-4\">" + question + LABEL_END);
+
+    for(Mark note: model.feedback.Mark.values()) {
+      builder.append("<div class=\"col-sm-1\"><div class=\"radio\">\n");
+      builder.append("<label><input type=\"radio\" name=\"" + evaluatedAspect + "-" + evaluatedTool + "\" value=\""
+          + note + "\"" + (note == current ? " checked" : "") + ">" + note.getGerman() + LABEL_END);
+      builder.append(DIV_END);
+    }
+
+    builder.append("</div>\n");
+
+    return builder.toString();
   }
-  
-  public static double getDurchschnittFeedbackExcel() {
-    OptionalDouble ret = finder.all().stream().filter(feedback -> feedback.feedbackExcel != Note.NO_FEEDBACK)
-        .mapToInt(feedback -> feedback.feedbackExcel.ordinal()).average();
-    return ret.isPresent() ? ret.getAsDouble() : 0.;
+
+  private static String renderYesNoMaybe(String evaluatedAspect, String evaluatedTool, String question,
+      YesNoMaybe current) {
+    StringBuilder builder = new StringBuilder();
+    builder.append(DIV_START);
+    builder.append("<label class=\"control-label col-sm-4\">" + question + LABEL_END);
+
+    for(YesNoMaybe answer: YesNoMaybe.values()) {
+      builder.append("<div class=\"col-sm-2\"><div class=\"radio\">\n");
+      builder.append("<label><input type=\"radio\" name=\"" + evaluatedAspect + "-" + evaluatedTool + "\" value=\""
+          + answer + "\"" + (answer == current ? " checked" : "") + ">" + answer.getGerman() + LABEL_END);
+      builder.append(DIV_END);
+    }
+
+    builder.append("</div>\n");
+    return builder.toString();
   }
-  
-  public static double getDurchschnittFeedbackHtml() {
-    OptionalDouble ret = finder.all().stream().filter(feedback -> feedback.feedbackHtml != Note.NO_FEEDBACK)
-        .mapToInt(feedback -> feedback.feedbackHtml.ordinal()).average();
-    return ret.isPresent() ? ret.getAsDouble() : 0.;
+
+  public Html render() {
+    String evaluatedTool = key.tool.toString().toLowerCase();
+
+    StringBuilder builder = new StringBuilder();
+    builder.append("<h2>Evaluation der " + key.tool + "-Korrektur</h2>");
+
+    // Sinn, Nutzen
+    builder.append(renderYesNoMaybe("sense", evaluatedTool, "Finden Sie dieses Tool sinnvoll?", sense));
+    builder.append(renderYesNoMaybe("used", evaluatedTool, "Haben Sie dieses Tool genutzt?", used));
+
+    // Usability, Fairness und correction
+    builder.append(renderMarked("usability", evaluatedTool, "Allgemeine Bedienbarkeit", usability));
+    builder.append(renderMarked("feedback", evaluatedTool, "Gestaltung des Feedbacks", feedback));
+    builder.append(renderMarked("fairness", evaluatedTool, "Fairness der Evaluation", fairness));
+
+    // FIXME: Kommentar!
+    builder.append(renderComment(evaluatedTool, comment));
+
+    return new Html(builder.toString());
   }
-  
-  public static double getDurchschnittKorrekturExcel() {
-    OptionalDouble ret = finder.all().stream().filter(feedback -> feedback.korrekturExcel != Note.NO_FEEDBACK)
-        .mapToInt(feedback -> feedback.korrekturExcel.ordinal()).average();
-    return ret.isPresent() ? ret.getAsDouble() : 0.;
-  }
-  
-  public static double getDurchschnittKorrekturHtml() {
-    OptionalDouble ret = finder.all().stream().filter(feedback -> feedback.korrekturHtml != Note.NO_FEEDBACK)
-        .mapToInt(feedback -> feedback.korrekturHtml.ordinal()).average();
-    return ret.isPresent() ? ret.getAsDouble() : 0.;
-  }
-  
-  public static int getNutzenExcelGesamt() {
-    return finder.all().stream().mapToInt(feedback -> feedback.nutzenExcel).sum();
-  }
-  
-  public static int getNutzenHtmlGesamt() {
-    return finder.all().stream().mapToInt(feedback -> feedback.nutzenHtml).sum();
-  }
-  
-  public static int getSinnExcelGesamt() {
-    return finder.all().stream().mapToInt(feedback -> {
-      if(feedback.sinnExcel > 0)
-        return feedback.sinnExcel;
-      else
-        return 0;
-    }).sum();
-  }
-  
-  public static int getSinnHtmlGesamt() {
-    return finder.all().stream().mapToInt(feedback -> {
-      if(feedback.sinnHtml > 0)
-        return feedback.sinnHtml;
-      else
-        return 0;
-    }).sum();
-  }
+
 }
