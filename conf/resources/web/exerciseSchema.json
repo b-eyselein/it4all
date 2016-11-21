@@ -38,12 +38,14 @@
 									}
 								}
 							}
+						}, 
+						"content": {
+							"type": "string"
 						}
 					}, 
 					"required": [
 						"text", 
-						"xpath", 
-						"attributes"
+						"xpath"
 					]
 				}
 			}, 
@@ -75,8 +77,7 @@
 					}, 
 					"required": [
 						"text", 
-						"xpath", 
-						"attributes"
+						"xpath"
 					]
 				}
 			}

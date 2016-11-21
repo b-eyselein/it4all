@@ -52,6 +52,7 @@ create table html_task (
   text                          text,
   xpath_query                   varchar(255),
   attributes                    varchar(255),
+  text_content                  varchar(255),
   constraint pk_html_task primary key (task_id,exercise_id)
 );
 

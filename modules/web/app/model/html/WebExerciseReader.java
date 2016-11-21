@@ -13,17 +13,17 @@ import model.html.task.Task;
 import model.html.task.TaskKey;
 
 public class WebExerciseReader extends ExerciseReader<WebExercise> {
-
+  
   private static String readAttribute(JsonNode attributeNode) {
     JsonNode keyNode = attributeNode.get("key");
     JsonNode valueNode = attributeNode.get("value");
     
     return keyNode.asText() + "=" + valueNode.asText();
   }
-
+  
   private static String readAttributes(JsonNode attributesNode) {
     List<String> attributes = new LinkedList<>();
-
+    
     for(final Iterator<JsonNode> attributeNodesIter = attributesNode.elements(); attributeNodesIter.hasNext();)
       attributes.add(readAttribute(attributeNodesIter.next()));
     
@@ -55,11 +55,12 @@ public class WebExerciseReader extends ExerciseReader<WebExercise> {
     
     return tasks;
   }
-
+  
   private static HtmlTask readHtmlTask(TaskKey key, JsonNode htmlTaskNode) {
     JsonNode textNode = htmlTaskNode.get("text");
     JsonNode xpathNode = htmlTaskNode.get("xpath");
     JsonNode attributesNode = htmlTaskNode.get("attributes");
+    JsonNode contentNode = htmlTaskNode.get("content");
     
     HtmlTask task = HtmlTask.finder.byId(key);
     if(task == null)
@@ -67,7 +68,9 @@ public class WebExerciseReader extends ExerciseReader<WebExercise> {
     
     task.text = textNode.asText();
     task.xpathQuery = xpathNode.asText();
-    task.attributes = readAttributes(attributesNode);
+    task.attributes = attributesNode == null ? "" : readAttributes(attributesNode);
+    task.textContent = contentNode == null ? null : contentNode.asText();
+    
     return task;
   }
   
@@ -80,7 +83,7 @@ public class WebExerciseReader extends ExerciseReader<WebExercise> {
     
     return tasks;
   }
-
+  
   @Override
   protected WebExercise readExercise(JsonNode exerciseNode) {
     JsonNode idNode = exerciseNode.get("id");

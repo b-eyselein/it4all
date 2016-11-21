@@ -6,45 +6,31 @@
 		"htmlTasks": [
 			{
 				"text": "Erstellen Sie eine passende h1-Überschrift, die das Wort \"Autohersteller\" enthält.", 
-				"xpath": "/html/body//h1[text()[contains(., 'Autohersteller')]]", 
-				"attributes": [
-					
-				]
+				"xpath": "/html/body//h1[text()[contains(., 'Autohersteller')]]"
 			}, 
 			{
 				"text": "Erstellen Sie eine ungeordnete Liste auf der Seite, die dann die einzelnen Hersteller enthalten wird.", 
-				"xpath": "/html/body//ul", 
-				"attributes": [
-					
-				]
+				"xpath": "/html/body//ul"
 			}, 
 			{
 				"text": "Erstellen Sie das Listenelement für Audi.", 
-				"xpath": "/html/body//ul/li[text()[contains(., 'Audi')]]", 
-				"attributes": [
-					
-				]
+				"xpath": "/html/body//ul/li[1]", 
+				"content": "Audi"
 			}, 
 			{
 				"text": "Erstellen Sie das Listenelement für BMW.", 
-				"xpath": "/html/body//ul/li[text()[contains(., 'BMW')]]", 
-				"attributes": [
-					
-				]
+				"xpath": "/html/body//ul/li[2]", 
+				"content": "BMW"
 			}, 
 			{
 				"text": "Erstellen Sie das Listenelement für Mercedes-Benz.", 
-				"xpath": "/html/body//ul/li[text()[contains(., 'Mercedes-Benz')]]", 
-				"attributes": [
-					
-				]
+				"xpath": "/html/body//ul/li[3]", 
+				"content": "Mercedes-Benz"
 			}, 
 			{
 				"text": "Erstellen Sie das Listenelement für Volkswagen.", 
-				"xpath": "/html/body//ul/li[text()[contains(., 'Volkswagen')]]", 
-				"attributes": [
-					
-				]
+				"xpath": "/html/body//ul/li[4]", 
+				"content": "Volkswagen"
 			}
 		], 
 		"cssTasks": [
@@ -115,16 +101,83 @@
 		]
 	}, 
 	{
+		"id": 2, 
+		"title": "Tabllen in HTML", 
+		"text": "Erstellen Sie eine Tabelle in HTML!", 
+		"htmlTasks": [
+			{
+				"text": "Erstellen Sie das Grundtag für die Tabelle", 
+				"xpath": "/html/body//table"
+			}, 
+			{
+				"text": "Erstellen Sie die erste Zeile für die Überschriften", 
+				"xpath": "/html/body//table//tr[1]"
+			}, 
+			{
+				"text": "Erstellen Sie die erste Zelle für die Überschrift. Diese soll als Inhalt \"Jahr\" haben", 
+				"xpath": "html/body//table//tr[1]/th[1]", 
+				"content": "Jahr"
+			}, 
+			{
+				"text": "Erstellen Sie die zweite Zelle für die Überschrift. Diese soll als Inhalt \"Produktion\" haben", 
+				"xpath": "html/body//table//tr[1]/th[2]", 
+				"content": "Produktion"
+			}, 
+			{
+				"text": "Erstellen Sie die zweite Zeile in der Tabelle", 
+				"xpath": "/html/body//table//tr[2]"
+			}, 
+			{
+				"text": "Erstellen Sie die erste Zelle in der zweiten Zeile. Diese soll als Inhalt \"1900\" haben", 
+				"xpath": "html/body//table//tr[2]/td[1]", 
+				"content": "1900"
+			}, 
+			{
+				"text": "Erstellen Sie die zweite Zelle in der zweiten Zeile. Diese soll als Inhalt \"9504\" haben", 
+				"xpath": "html/body//table//tr[2]/td[2]", 
+				"content": "9504"
+			}, 
+			{
+				"text": "Erstellen Sie die dritte Zeile in der Tabelle", 
+				"xpath": "/html/body//table//tr[3]"
+			}, 
+			{
+				"text": "Erstellen Sie die erste Zelle in der dritten Zeile. Diese soll als Inhalt \"1950\" haben", 
+				"xpath": "html/body//table//tr[3]/td[1]", 
+				"content": "1950"
+			}, 
+			{
+				"text": "Erstellen Sie die zweite Zelle in der dritten Zeile. Diese soll als Inhalt \"10577426\" haben", 
+				"xpath": "html/body//table//tr[3]/td[2]", 
+				"content": "10577426"
+			}, 
+			{
+				"text": "Erstellen Sie die vierte Zeile in der Tabelle", 
+				"xpath": "/html/body//table//tr[4]"
+			}, 
+			{
+				"text": "Erstellen Sie die erste Zelle in der vierten Zeile. Diese soll als Inhalt \"2000\" haben", 
+				"xpath": "html/body//table//tr[4]/td[1]", 
+				"content": "2000"
+			}, 
+			{
+				"text": "Erstellen Sie die zweite Zelle in der vierten Zeile. Diese soll als Inhalt \"58374162\" haben", 
+				"xpath": "html/body//table//tr[4]/td[2]", 
+				"content": "58374162"
+			}
+		], 
+		"cssTasks": [
+			
+		]
+	}, 
+	{
 		"id": 3, 
 		"title": "Hyperlinks und Bilder in HTML", 
 		"text": "Erstellen Sie ein Bild in HTML, das gleichzeitig ein Link ist.", 
 		"htmlTasks": [
 			{
 				"text": "Erstellen Sie eine passende h1-Überschrift, die \"Ford Mustang\" enthält.", 
-				"xpath": "/html/body//h1[text()[contains(., 'Ford Mustang')]]", 
-				"attributes": [
-					
-				]
+				"xpath": "/html/body//h1[text()[contains(., 'Ford Mustang')]]"
 			}, 
 			{
 				"text": "Erstellen Sie den Link auf der Seite, der auf Wikipedia verweist. Geben Sie als Ziel die URL 'https://de.wikipedia.org/wiki/Ford_Mustang' an.", 
