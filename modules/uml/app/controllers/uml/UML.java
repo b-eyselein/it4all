@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 import javax.inject.Inject;
 
@@ -19,6 +20,7 @@ import play.mvc.Http.Request;
 import play.mvc.Result;
 import views.html.classselection;
 import views.html.diagramdrawing;
+import views.html.umloverview;
 
 public class UML extends ExerciseController<IntExerciseIdentifier> {
 
@@ -26,13 +28,13 @@ public class UML extends ExerciseController<IntExerciseIdentifier> {
   public UML(Util theUtil, FormFactory theFactory) {
     super(theUtil, theFactory);
   }
-
+  
   private static String getExerciseText() {
     try {
       Path file = Paths.get("modules/uml/conf/exerciseText.txt");
       Logger.debug(file.toAbsolutePath().toString());
       return String.join("\n", Files.readAllLines(file));
-
+      
     } catch (IOException e) {
       return "TODO!";
     }
@@ -45,15 +47,9 @@ public class UML extends ExerciseController<IntExerciseIdentifier> {
   public Result diagramDrawing(IntExerciseIdentifier identifier) {
     return ok(diagramdrawing.render(UserManagement.getCurrentUser(), getExerciseText()));
   }
-
+  
   public Result index() {
-    return ok("TODO!");
+    return ok(umloverview.render(Arrays.asList(new UmlExercise()),UserManagement.getCurrentUser()));
   }
-
-  @Override
-  protected CompleteResult correct(Request request, User user, IntExerciseIdentifier exercise) {
-    // TODO: implement
-    return null;
-  }
-
+  
 }
