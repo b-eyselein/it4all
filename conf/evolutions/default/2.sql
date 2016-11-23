@@ -43,5 +43,4 @@ delete from conditions;
 
 delete from js_web_exercise;
 
-
 SET FOREIGN_KEY_CHECKS = 1;
