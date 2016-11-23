@@ -71,7 +71,7 @@ public class JSWeb extends ExerciseController<IntExerciseIdentifier> {
     String oldSolution = exercise.declaration;
     try {
       Path file = util.getSolFileForExercise(user, "js", identifier.id, FILE_TYPE);
-      if(Files.exists(file))
+      if(file.toFile().exists())
         oldSolution = String.join("\n", Files.readAllLines(file));
     } catch (IOException e) {
       Logger.error("Error while loading old JsWeb solution: ", e);
@@ -89,7 +89,7 @@ public class JSWeb extends ExerciseController<IntExerciseIdentifier> {
 
   private void saveSolutionForUser(User user, String solution, int exercise) throws IOException {
     Path solDir = util.getSolDirForUserAndType(user, EXERCISE_TYPE);
-    if(!Files.exists(solDir))
+    if(!solDir.toFile().exists())
       Files.createDirectories(solDir);
 
     Path saveTo = util.getSolFileForExercise(user, EXERCISE_TYPE, exercise, FILE_TYPE);
