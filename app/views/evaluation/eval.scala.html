@@ -1,68 +1,15 @@
-@(title: String, evaluatedTools: List[String])
+@(user: model.user.User, toEvaluate: List[model.feedback.Feedback])
 
-<!DOCTYPE html>
-
-<html lang="de">
-<head>
-<title>it4all: @title</title>
-<!-- Bootstrap: CSS, JQuery und BS-JS -->
-<link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/bootstrap.css")">
-<script src="@routes.Assets.versioned("javascripts/jquery.js")"></script>
-<script src="@routes.Assets.versioned("javascripts/bootstrap.js")"></script>
-</head>
-<body>
-  <nav class="navbar navbar-default">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="/">it4all</a>
-      </div>
-  </nav>
-  <div class="container">
-    <div class="page-header">
-      <h1>Evaluation der Tools</h1>
-    </div>
-    <form action="/eval/submit" method="post" class="form-horizontal" role="form">
-      @for(evalPart <- evaluatedTools) {
-      <h2>Evaluation der @evalPart-Korrektur</h2>
-      
-      @for(todo <- Array("SINN", "NUTZEN")) {
-      <div class="form-group">
-        <label class="control-label col-sm-4" for="@todo.toLowerCase()-@evalPart.toLowerCase()">Finden Sie diese
-          Art der Korrektur sinnvoll?</label>
-        @for(answer <- model.feedback.YesNoMaybe.values()) {
-        <div class="col-sm-@answer.getWidth()">
-          <div class="radio">
-            <label><input type="radio" name="@todo.toLowerCase()-@evalPart.toLowerCase()" value="@answer.getValue()" @if(answer.isChecked) {checked}>@answer.getGerman()</label>
-          </div>
-        </div>
-        }
-      </div>
-      }
-
-      @for(evaluated <- model.feedback.Evaluated.values()) {
-      <div class="form-group">
-        <label class="control-label col-sm-4" for="@evaluated.toString().toLowerCase()-@evalPart.toLowerCase()">@evaluated.getQuestion():</label>
-        @for(note <- model.feedback.Marks.values()) {
-        <div class="col-sm-@note.getWidth()">
-          <div class="radio">
-            <label><input type="radio" name="@evaluated.toString().toLowerCase()-@evalPart.toLowerCase()" value="@note.getMark()">@note.getGerman()</label>
-          </div>
-        </div>
-        }
-      </div>
-      }
-      
-      <div class="form-group">
-        <label class="control-label col-sm-4" for="kommentar-@evalPart.toLowerCase()">Verbesserungsvorschläge:</label>
-        <div class="col-sm-8">
-          <textarea class="form-control" rows="5" name="kommentar-@evalPart.toLowerCase()" id=
-            @evalPart.toLowerCase()"   placeholder="Verbesserungsvorschläge"></textarea>
-          <p>Bitte beschr&auml;nken Sie sich auf 250 Zeichen.</p>
-        </div>
-      </div>
-    }
-    <input type="submit" class="btn btn-primary" value="Evaluation absenden">
-    </form>
+@main("Evaluation", user) {
+<div class="container">
+  <div class="page-header">
+    <h1>Evaluation der Tools</h1>
   </div>
-</body>
-</html>
+  <form action="@controllers.routes.Evaluation.submit()" method="post" class="form-horizontal">
+  @for(feedback <- toEvaluate) {
+  	@feedback.render()
+  }
+  <input type="submit" class="btn btn-primary" value="Evaluation absenden">
+  </form>
+</div>
+}

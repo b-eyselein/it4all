@@ -1,6 +1,13 @@
-<!ELEMENT lecture (student+,lecturer+)>
-<!ELEMENT student (#PCDATA)>
-<!ATTLIST student name CDATA #REQUIRED birthday CDATA #REQUIRED>
-<!ELEMENT lecturer (name, birthday)>
+<!ELEMENT lecture (lecturer+, dates+, student+)>
+
+<!ELEMENT lecturer (name)>
+<!ATTLIST lecturer title CDATA #REQUIRED>
+
+<!ELEMENT date (hours)>
+<!ATTLIST date weekay (mon | tue | wed | thu | fri | sat | sun)>
+
+<!ELEMENT student (name)>
+<!ATTLIST student matrikel CDATA #REQUIRED>
+
 <!ELEMENT name (#PCDATA)>
-<!ELEMENT birthday (#PCDATA)>
+<!ELEMENT hours (#PCDATA)>

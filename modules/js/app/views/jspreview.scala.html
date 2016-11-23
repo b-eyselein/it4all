@@ -1,0 +1,17 @@
+@(user: model.user.User, exercises: List[model.JsExercise])
+
+@main("SQL", user) {
+<div class="container">
+  <div class="page-header">
+    <h1>Erstellte Aufgaben:</h1>
+  </div>
+  @for(ex <- exercises) {
+  <div class="panel panel-default">
+    <div class="panel-heading">Aufgabe @ex.getId: @ex.title</div>
+    <div class="panel-body">
+      <p>@ex.getText()</p>
+    </div>
+  </div>
+  }
+</div>
+}

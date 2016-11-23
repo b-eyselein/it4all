@@ -1,0 +1,40 @@
+@(user: model.user.User, question: model.FilloutQuestion)
+
+@main("Wertetabelle-L&ouml;sung", user) {
+<div class="container">
+  <div @if(question.isCorrect()) {class="panel panel-success"} else {class="panel panel-danger"}>
+    <div class="panel-heading">Ausf&uuml;llen der Wertetabelle</div>
+    <div class="panel-body">
+    @if(question.isCorrect()) {
+      <p>Die Wertetabelle wurde richtig ausgef&uuml;llt.</p>
+    } else {
+      <p>Die Wertetabelle wurde leider falsch ausgef&uuml;llt. <br> Die richtige L&ouml;sungen sieht folgenderma&szlig;en aus:</p>
+    }
+      <table class="table">
+        <thead>
+        <tr>
+        @for(v <- question.getFormula().getVariables()){
+          <th>@v</th>
+        }
+          <th>@question.getFormulaAsHtml()</th>
+          <th>Ihre L&ouml;sung</th>
+        </tr>
+        </thead>
+        <tbody align="left">
+        @for(assignment <- question.getAssignments) {
+          <tr>
+          @for(variable <- question.getFormula().getVariables()) {
+            <td>@assignment.asChar(variable)</td>
+          }
+            <td class="@assignment.getColor() text-@assignment.getColor()">@assignment.asChar('z')</td>
+            <td class="@assignment.getColor() text-@assignment.getColor()">@assignment.asChar('y')</td>
+          </tr>
+        }
+        </tbody>
+      </table>
+      <p>
+        <a href="@controllers.bool.routes.Bool.newBoolFilloutQuestion()" class="btn btn-primary" role="button">N&auml;chste Aufgabe</a></p>
+    </div>
+  </div>
+</div>
+}

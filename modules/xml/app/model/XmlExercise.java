@@ -5,14 +5,12 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 import com.avaje.ebean.Model;
 
 import model.exercise.Exercise;
 
 @Entity
-@Table(name = "xmlexercise")
 public class XmlExercise extends Model implements Exercise {
   
   public enum XmlExType {
@@ -28,9 +26,9 @@ public class XmlExercise extends Model implements Exercise {
       return studentFileEnding;
     }
   }
-  
-  public static final Finder<Integer, XmlExercise> finder = new Finder<>(XmlExercise.class);
 
+  public static final Finder<Integer, XmlExercise> finder = new Finder<>(XmlExercise.class);
+  
   @Id
   public int id;
 
@@ -42,17 +40,10 @@ public class XmlExercise extends Model implements Exercise {
   @Enumerated(EnumType.STRING)
   public XmlExType exerciseType;
 
-  @Column(name = "referenceFileName", length = 100)
-  public String referenceFileName; // use with Util.getXmlReferenceFilePath
+  public String referenceFileName; // NOSONAR
 
-  @Column(name = "exerciseText", length = 1000)
+  @Column(columnDefinition = "text")
   public String exerciseText;
-
-  @Override
-  public String getExerciseIdentifier() {
-    // TODO Auto-generated method stub
-    return null;
-  }
   
   public String getGrammarFileEnding() {
     switch(exerciseType) {
@@ -66,7 +57,7 @@ public class XmlExercise extends Model implements Exercise {
       return null;
     }
   }
-
+  
   @Override
   public int getId() {
     return id;
@@ -96,7 +87,7 @@ public class XmlExercise extends Model implements Exercise {
   public String getText() {
     return exerciseText;
   }
-  
+
   @Override
   public String getTitle() {
     return title;

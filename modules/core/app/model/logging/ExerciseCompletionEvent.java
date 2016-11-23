@@ -1,29 +1,23 @@
 package model.logging;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import model.exercise.ExerciseIdentifier;
 import model.result.EvaluationResult;
 import play.mvc.Http.Request;
 
 public class ExerciseCompletionEvent extends WorkingEvent {
 
-  private List<EvaluationResult> results;
+  private EvaluationResult result;
 
-  public ExerciseCompletionEvent(Request theRequest, List<EvaluationResult> theResults) {
-    super(EventType.EXERCISE_COMPLETION, theRequest);
-    results = theResults;
-  }
-
-  @Override
-  public String getExerciseIdentifier() {
-    // TODO Auto-generated method stub
-    return null;
+  public ExerciseCompletionEvent(Request theRequest, ExerciseIdentifier<?> theExerciseIdentifier,
+      EvaluationResult theResult) {
+    super(EventType.EXERCISE_COMPLETION, theRequest, theExerciseIdentifier);
+    result = theResult;
   }
   
   @JsonIgnore
-  public List<EvaluationResult> getResults() {
-    return results;
+  public EvaluationResult getResults() {
+    return result;
   }
 }

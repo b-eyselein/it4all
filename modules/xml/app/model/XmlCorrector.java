@@ -59,7 +59,7 @@ public class XmlCorrector {
       Logger.error("There was an error creating the Parser: ", e);
       return Arrays.asList(new EvaluationFailed("Es gab einen Fehler beim Korrigieren ihrer Lösung."));
     } catch (SAXException | IOException e) { // NOSONAR
-      Logger.debug("Error:", e);
+      Logger.info("Error: SAXException while correcting XML");
       // Errors are getting caught in error handler since they are made by
       // learners
     }

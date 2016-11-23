@@ -1,4 +1,4 @@
-GET   /                     controllers.uml.UML.index()
+GET   /                       controllers.uml.UML.index()
 
-GET   /:id/classselection   controllers.uml.UML.classSelection(id: Int)
-GET   /:id/diagramdrawing   controllers.uml.UML.diagramDrawing(id: Int)
+GET   /:exId/classselection   controllers.uml.UML.classSelection(exId: model.IntExerciseIdentifier)
+GET   /:exId/diagramdrawing   controllers.uml.UML.diagramDrawing(exId: model.IntExerciseIdentifier)

@@ -11,20 +11,22 @@ import javax.script.SimpleScriptContext;
 
 import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
-import model.PythonExercise;
+import model.IntExerciseIdentifier;
 import model.Util;
 import model.exercise.FeedbackLevel;
 import model.exercise.Success;
+import model.result.CompleteResult;
 import model.result.EvaluationFailed;
-import model.result.EvaluationResult;
 import model.result.GenericEvaluationResult;
+import model.user.User;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
+import play.mvc.Http.Request;
 import play.mvc.Result;
 import views.html.python;
 
-public class Python extends ExerciseController<PythonExercise> {
+public class Python extends ExerciseController<IntExerciseIdentifier> {
 
   @Inject
   public Python(Util theUtil, FormFactory theFactory) {
@@ -54,13 +56,14 @@ public class Python extends ExerciseController<PythonExercise> {
         "The output was:\n" + context.getWriter().toString())));
   }
 
-  public EvaluationResult correct(String learnerSolution, PythonExercise exercise) {
-    // FIXME: implement!
-    return null;
-  }
-
   public Result index() {
     return ok(python.render(UserManagement.getCurrentUser()));
+  }
+
+  @Override
+  protected CompleteResult correct(Request request, User user, IntExerciseIdentifier exercise) {
+    // FIXME: implement!
+    return null;
   }
 
 }

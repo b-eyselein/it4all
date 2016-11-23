@@ -1,0 +1,12 @@
+@(user: model.user.User, evaluated: List[model.feedback.Feedback])
+
+@main("Evaluation", user) {
+<div class="container">
+  <div class="page-header">
+    <h1>Auswertung der Evaluation der Tools</h1>
+  </div>
+  @for(feedback <- evaluated) {
+  	@feedback.key
+  }
+</div>
+}

@@ -20,19 +20,22 @@
       <div>
         <ul class="nav navbar-nav">
           <li><a href="@controllers.web.routes.HTML.index()">Html &amp; Css</a></li>
-          <li><a href="@controllers.web.routes.JS.index">Javascript</a></li>
+          <li><a href="@controllers.web.routes.JSWeb.index">Javascript - Web</a></li>
+          <li><a href="@controllers.js.routes.JS.index">Javascript - Programmiersprache</a></li>
           <li><a href="@controllers.sql.routes.SQL.index()">SQL</a></li>
           <li><a href="@controllers.xml.routes.XML.index()">XML</a></li>
-          <li><a href="@controllers.binary.routes.NaryBool.index()">Binär &amp; Boole</a></li>
+          <li><a href="@controllers.nary.routes.Nary.index()">Zahlensysteme</a></li>
+          <li><a href="@controllers.bool.routes.Bool.index()">Boolesche Algebra</a></li>
           <li><a href="@controllers.spread.routes.Spread.index()">Tabellenkalkulation</a></li>
           <!-- <li><a href="@controllers.mindmap.routes.Mindmap.index()">MindMap</a></li> -->
-          <!-- <li><a href="/eval/@user.name">Evaluation Html</a></li> -->
         </ul>
         <ul class="nav navbar-nav navbar-right">
         @if(user.role == model.user.Role.ADMIN) {
           <li><a href="@controllers.routes.AdminController.index()"><span class="glyphicon glyphicon-cog"></span>
               Administrator</a></li>
           }
+          <li><a href="@controllers.routes.Evaluation.index()"><span class="glyphicon glyphicon-pencil"></span>
+              Evaluation</a></li>
           <li><a href="@controllers.routes.UserController.index()"><span class="glyphicon glyphicon-user"></span>
               @user.name</a></li>
           <li><a href="@controllers.core.routes.UserManagement.logout()"><span

@@ -1,17 +1,15 @@
-@(user: model.user.User, exercise: model.javascript.web.JsWebExercise, oldSolution: String)
+@(user: model.user.User, exercise: model.javascript.JsWebExercise, identifier: model.IntExerciseIdentifier, oldSolution: String)
 
 @main("JavaScript-Test", user) {
-<script src="@controllers.routes.Assets.versioned("javascripts/jsProcessor.js")" type="text/javascript" charset="utf-8"></script>
+<script src="@controllers.routes.Assets.versioned("javascripts/jswebProcessor.js")"></script>
 <script>
 function testSolution() {
-  testTheWebSolution("@web.routes.JS.exerciseWeb(exercise.id)");
+  testTheSolution("@controllers.web.routes.JSWeb.exercise(identifier)");
 }
-
-window.onload = updatePreview;
 </script>
 
 <div class="container-fluid">
-  <form action="@controllers.web.routes.JS.commitWeb(exercise.id)" method="post" onsubmit="prepareFormForSubmitting();">
+  <form action="@controllers.web.routes.JSWeb.commit(identifier)" method="post" onsubmit="prepareFormForSubmitting();">
     <div class="panel panel-default">
       <div class="panel-heading">Aufgabenstellung</div>
       <div class="panel-body">@Html(exercise.text)</div>
@@ -21,7 +19,7 @@ window.onload = updatePreview;
             <button type="button" class="btn btn-primary" onclick="testSolution();">L&ouml;sung testen</button>
           </div>
           <div class="btn-group">
-            <button type="submit" class="btn btn-success" >L&ouml;sung abgeben</button>
+            <button type="submit" class="btn btn-success">L&ouml;sung abgeben</button>
           </div>
         </div>
       </div>
@@ -29,9 +27,7 @@ window.onload = updatePreview;
     
     <div class="row">
       <div class="col-md-4">
-        <pre id="anterior">@exercise.anterior</pre>
-        @editor(oldSolution, "javascript", 10, 15, true)
-        <pre id="posterior">@exercise.posterior</pre>
+        @editor(oldSolution, "html", 25, 30, true)
       </div>
       <div class="col-md-4">
         <div class="panel panel-default">

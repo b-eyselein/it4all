@@ -1,0 +1,440 @@
+[
+	{
+		"id": 1,
+		"title": "Listen in HTML",
+		"text": "Erstellen Sie eine Liste in HTML, die die die Autohersteller Audi, BMW und Mercedes-Benz und Volkswagen enthält. Achten Sie dabei für die Korrektur auf eine korrekte Schreibweise der einzelnen Hersteller!",
+		"htmlTasks": 
+		[
+			{
+				"text": "Erstellen Sie eine passende h1-Überschrift, die das Wort \"Autohersteller\" enthält.",
+				"xpath": "/html/body//h1[text()[contains(., 'Autohersteller')]]"
+			},
+
+			{
+				"text": "Erstellen Sie eine ungeordnete Liste auf der Seite, die dann die einzelnen Hersteller enthalten wird.",
+				"xpath": "/html/body//ul"
+			},
+
+			{
+				"text": "Erstellen Sie das Listenelement für Audi.",
+				"xpath": "/html/body//ul/li[1]",
+				"content": "Audi"
+			},
+
+			{
+				"text": "Erstellen Sie das Listenelement für BMW.",
+				"xpath": "/html/body//ul/li[2]",
+				"content": "BMW"
+			},
+
+			{
+				"text": "Erstellen Sie das Listenelement für Mercedes-Benz.",
+				"xpath": "/html/body//ul/li[3]",
+				"content": "Mercedes-Benz"
+			},
+
+			{
+				"text": "Erstellen Sie das Listenelement für Volkswagen.",
+				"xpath": "/html/body//ul/li[4]",
+				"content": "Volkswagen"
+			}
+		],
+
+		"cssTasks": 
+		[
+			{
+				"text": "Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL \"/assets/stylesheets/bootstrap.css\" zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut \"rel\"",
+				"xpath": "/html/head//link",
+				"attributes": 
+				[
+					{
+						"key": "rel",
+						"value": "stylesheet"
+					},
+
+					{
+						"key": "href",
+						"value": "/assets/stylesheets/bootstrap.css"
+					}
+				]
+			},
+
+			{
+				"text": "Geben Sie der Liste die Klasse \"list-group\".",
+				"xpath": "/html/body//ul",
+				"attributes": 
+				[
+					{
+						"key": "class",
+						"value": "list-group"
+					}
+				]
+			},
+
+			{
+				"text": "Geben Sie dem Listenelement für Audi die Klasse \"list-group-item\".",
+				"xpath": "/html/body//ul/li[text()[contains(., 'Audi')]]",
+				"attributes": 
+				[
+					{
+						"key": "class",
+						"value": "list-group-item"
+					}
+				]
+			},
+
+			{
+				"text": "Geben Sie das Listenelement für BMW die Klasse \"list-group-item\".",
+				"xpath": "/html/body//ul/li[text()[contains(., 'BMW')]]",
+				"attributes": 
+				[
+					{
+						"key": "class",
+						"value": "list-group-item"
+					}
+				]
+			},
+
+			{
+				"text": "Geben Sie das Listenelement für Mercedes-Benz die Klasse \"list-group-item\".",
+				"xpath": "/html/body//ul/li[text()[contains(., 'Mercedes-Benz')]]",
+				"attributes": 
+				[
+					{
+						"key": "class",
+						"value": "list-group-item"
+					}
+				]
+			},
+
+			{
+				"text": "Geben Sie das Listenelement für Volkswagen die Klasse \"list-group-item\".",
+				"xpath": "/html/body//ul/li[text()[contains(., 'Volkswagen')]]",
+				"attributes": 
+				[
+					{
+						"key": "class",
+						"value": "list-group-item"
+					}
+				]
+			}
+		]
+	},
+
+	{
+		"id": 2,
+		"title": "Tabllen in HTML",
+		"text": "Erstellen Sie eine Tabelle in HTML!",
+		"htmlTasks": 
+		[
+			{
+				"text": "Erstellen Sie das Grundtag für die Tabelle",
+				"xpath": "/html/body//table"
+			},
+
+			{
+				"text": "Erstellen Sie die erste Zeile für die Überschriften",
+				"xpath": "/html/body//table//tr[1]"
+			},
+
+			{
+				"text": "Erstellen Sie die erste Zelle für die Überschrift. Diese soll als Inhalt \"Jahr\" haben",
+				"xpath": "html/body//table//tr[1]/th[1]",
+				"content": "Jahr"
+			},
+
+			{
+				"text": "Erstellen Sie die zweite Zelle für die Überschrift. Diese soll als Inhalt \"Produktion\" haben",
+				"xpath": "html/body//table//tr[1]/th[2]",
+				"content": "Produktion"
+			},
+
+			{
+				"text": "Erstellen Sie die zweite Zeile in der Tabelle",
+				"xpath": "/html/body//table//tr[2]"
+			},
+
+			{
+				"text": "Erstellen Sie die erste Zelle in der zweiten Zeile. Diese soll als Inhalt \"1900\" haben",
+				"xpath": "html/body//table//tr[2]/td[1]",
+				"content": "1900"
+			},
+
+			{
+				"text": "Erstellen Sie die zweite Zelle in der zweiten Zeile. Diese soll als Inhalt \"9504\" haben",
+				"xpath": "html/body//table//tr[2]/td[2]",
+				"content": "9504"
+			},
+
+			{
+				"text": "Erstellen Sie die dritte Zeile in der Tabelle",
+				"xpath": "/html/body//table//tr[3]"
+			},
+
+			{
+				"text": "Erstellen Sie die erste Zelle in der dritten Zeile. Diese soll als Inhalt \"1950\" haben",
+				"xpath": "html/body//table//tr[3]/td[1]",
+				"content": "1950"
+			},
+
+			{
+				"text": "Erstellen Sie die zweite Zelle in der dritten Zeile. Diese soll als Inhalt \"10577426\" haben",
+				"xpath": "html/body//table//tr[3]/td[2]",
+				"content": "10577426"
+			},
+
+			{
+				"text": "Erstellen Sie die vierte Zeile in der Tabelle",
+				"xpath": "/html/body//table//tr[4]"
+			},
+
+			{
+				"text": "Erstellen Sie die erste Zelle in der vierten Zeile. Diese soll als Inhalt \"2000\" haben",
+				"xpath": "html/body//table//tr[4]/td[1]",
+				"content": "2000"
+			},
+
+			{
+				"text": "Erstellen Sie die zweite Zelle in der vierten Zeile. Diese soll als Inhalt \"58374162\" haben",
+				"xpath": "html/body//table//tr[4]/td[2]",
+				"content": "58374162"
+			}
+		],
+
+		"cssTasks": 
+		[
+			{
+				"text": "Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL \"/assets/stylesheets/bootstrap.css\" zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut \"rel\"",
+				"xpath": "/html/head//link",
+				"attributes": 
+				[
+					{
+						"key": "rel",
+						"value": "stylesheet"
+					},
+
+					{
+						"key": "href",
+						"value": "/assets/stylesheets/bootstrap.css"
+					}
+				]
+			},
+
+			{
+				"text": "Geben Sie der Tabelle die Klassen \"table\" und \"table-striped\".",
+				"xpath": "html/body//table",
+				"attributes": 
+				[
+					{
+						"key": "class",
+						"value": "table table-striped"
+					}
+				]
+			}
+		]
+	},
+
+	{
+		"id": 3,
+		"title": "Hyperlinks und Bilder in HTML",
+		"text": "Erstellen Sie ein Bild in HTML, das gleichzeitig ein Link ist.",
+		"htmlTasks": 
+		[
+			{
+				"text": "Erstellen Sie eine passende h1-Überschrift, die \"Ford Mustang\" enthält.",
+				"xpath": "/html/body//h1[text()[contains(., 'Ford Mustang')]]"
+			},
+
+			{
+				"text": "Erstellen Sie den Link auf der Seite, der auf Wikipedia verweist. Geben Sie als Ziel die URL 'https://de.wikipedia.org/wiki/Ford_Mustang' an.",
+				"xpath": "/html/body//a",
+				"attributes": 
+				[
+					{
+						"key": "href",
+						"value": "https://de.wikipedia.org/wiki/Ford_Mustang"
+					}
+				]
+			},
+
+			{
+				"text": "Erstellen Sie im Link das Bild des Ford Mustang. Geben Sie als Quelle des Bildes die URL 'https://upload.wikimedia.org/wikipedia/commons/2/2d/1964_12_Ford_Mustang.jpg' und als alternative Beschreibung 'Ford Mustang' an. Geben Sie außerdem eine Breite von 250 und eine Höhe von 188 an, um das Bild zu skalieren.",
+				"xpath": "/html/body//a//img",
+				"attributes": 
+				[
+					{
+						"key": "src",
+						"value": "https://upload.wikimedia.org/wikipedia/commons/2/2d/1964_12_Ford_Mustang.jpg"
+					},
+
+					{
+						"key": "alt",
+						"value": "Ford Mustang"
+					},
+
+					{
+						"key": "width",
+						"value": "250"
+					},
+
+					{
+						"key": "height",
+						"value": "188"
+					}
+				]
+			}
+		],
+
+		"cssTasks": 
+		[
+			{
+				"text": "Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL \"/assets/stylesheets/bootstrap.css\" zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut \"rel\"",
+				"xpath": "/html/head//link",
+				"attributes": 
+				[
+					{
+						"key": "rel",
+						"value": "stylesheet"
+					},
+
+					{
+						"key": "href",
+						"value": "/assets/stylesheets/bootstrap.css"
+					}
+				]
+			},
+
+			{
+				"text": "Geben Sie dem Bild die Klasse \"img-rounded\".",
+				"xpath": "/html/body//a/img",
+				"attributes": 
+				[
+					{
+						"key": "class",
+						"value": "img-rounded"
+					}
+				]
+			}
+		]
+	},
+
+	{
+		"id": 4,
+		"title": "Login-Formular",
+		"text": "Erstellen Sie ein Login-Formular in HTML",
+		"htmlTasks": 
+		[
+			{
+				"text": "Erstellen Sie das Formular-Tag. Geben Sie für die Attribute \"action\" und \"method\" jeweils die Werte \"/test.php\" und \"post\" an.",
+				"xpath": "/html/body//form",
+				"attributes": 
+				[
+					{
+						"key": "action",
+						"value": "/test.php"
+					},
+
+					{
+						"key": "method",
+						"value": "post"
+					}
+				]
+			},
+
+			{
+				"text": "Erstellen Sie ein Feld zur Eingabe der Emailadresse. Benutzen Sie den in der Vorlesung gezeigten Typen und geben Sie dem Attribut \"name\" den Wert \"email\". Die Eingabe soll außerdem required sein.",
+				"xpath": "/html/body//form//input[@type='email']",
+				"attributes": 
+				[
+					{
+						"key": "name",
+						"value": "email"
+					},
+
+					{
+						"key": "required",
+						"value": "true"
+					}
+				]
+			},
+
+			{
+				"text": "Erstellen Sie ein Feld zur Eingabe des Passworts. Benutzen Sie den in der Vorlesung gezeigten Typen und geben Sie dem Attribut \"name\" den Wert \"passwort\". Die Eingabe soll außerdem verpflichtend sein.",
+				"xpath": "/html/body//form//input[@type='password']",
+				"attributes": 
+				[
+					{
+						"key": "name",
+						"value": "passwort"
+					},
+
+					{
+						"key": "required",
+						"value": "true"
+					}
+				]
+			},
+
+			{
+				"text": "Erstellen Sie einen Knopf (input), um das Formular abzusenden",
+				"xpath": "/html/body//form//input[@type='submit']"
+			}
+		],
+
+		"cssTasks": 
+		[
+			{
+				"text": "Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL \"/assets/stylesheets/bootstrap.css\" zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut \"rel\"",
+				"xpath": "/html/head//link",
+				"attributes": 
+				[
+					{
+						"key": "rel",
+						"value": "stylesheet"
+					},
+
+					{
+						"key": "href",
+						"value": "/assets/stylesheets/bootstrap.css"
+					}
+				]
+			},
+
+			{
+				"text": "Geben Sie dem Feld zur Eingabe der Emailadressedie Klasse \"from-control\".",
+				"xpath": "/html/body//form//input[@type='email']",
+				"attributes": 
+				[
+					{
+						"key": "class",
+						"value": "form-control"
+					}
+				]
+			},
+
+			{
+				"text": "Geben Sie dem Feld zur Eingabe des Passworts Klasse \"from-control\".",
+				"xpath": "/html/body//form//input[@type='password']",
+				"attributes": 
+				[
+					{
+						"key": "class",
+						"value": "form-control"
+					}
+				]
+			},
+
+			{
+				"text": "Geben Sie den Knopf zum Absenden des Formular die Klasse \"btn btn-default\"",
+				"xpath": "/html/body//form//input[@type='submit']",
+				"attributes": 
+				[
+					{
+						"key": "class",
+						"value": "btn btn-default"
+					}
+				]
+			}
+		]
+	}
+]

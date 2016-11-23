@@ -1,7 +1,7 @@
 @(template: String, mode: String, minLines: Int, maxLines: Int, updatePrev: Boolean)
 
-<script src="@controllers.routes.Assets.versioned("javascripts/ace/ace.js")" type="text/javascript" charset="utf-8"></script>
-<script src="@controllers.routes.Assets.versioned("javascripts/acehelper.js")" type="text/javascript" charset="utf-8"></script>
+<script src="@controllers.routes.Assets.versioned("javascripts/ace/ace.js")"></script>
+<script src="@controllers.routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
 <div class="panel panel-default">
   <div class="panel-heading">
     <div class="input-group">
@@ -32,6 +32,7 @@ editor.setOptions({
 });
 @if(updatePrev) {
 editor.on("change", updatePreview);
+window.onload = updatePreview;
 }
     </script>
   <textarea hidden name="editorContent" id="editorContent"></textarea>

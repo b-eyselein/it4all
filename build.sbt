@@ -4,12 +4,12 @@ Common.settings
 
 lazy val root = (project in file("."))
 	.enablePlugins(PlayJava, PlayEbean)
-	.aggregate(binary, mindmap, spread, sql, web, xml, python, uml)
-	.dependsOn(binary, mindmap, spread, sql, web, xml, python, uml, core)
+	.aggregate(binary, bool, js, mindmap, spread, sql, web, xml, python, uml)
+	.dependsOn(binary, bool, js, mindmap, spread, sql, web, xml, python, uml, core)
 
 lazy val core: Project = (project in file("modules/core"))
 	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
-	.settings(aggregateReverseRoutes := Seq(binary, mindmap, spread, sql, web, python, xml, root))
+	.settings(aggregateReverseRoutes := Seq(binary, bool, js, mindmap, spread, sql, web, python, xml, root))
 
 lazy val web = (project in file("modules/web"))
 	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
@@ -23,12 +23,20 @@ lazy val spread = (project in file("modules/spread"))
 	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
 	.dependsOn(core)
 
+lazy val js = (project in file("modules/js"))
+	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
+	.dependsOn(core)
+
 lazy val xml = (project in file("modules/xml"))
 	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
 	.dependsOn(core)
 
 lazy val binary = (project in file("modules/binary"))
-	.enablePlugins(PlayJava)
+	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
+	.dependsOn(core)
+	
+lazy val bool = (project in file("modules/bool"))
+	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
 	.dependsOn(core)
 
 lazy val mindmap = (project in file("modules/mindmap"))
@@ -40,7 +48,7 @@ lazy val python = (project in file("modules/python"))
 	.dependsOn(core)
 
 lazy val uml = (project in file("modules/uml"))
-	.enablePlugins(PlayJava)
+	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
 	.dependsOn(core)
 
 // Used libraries from Maven Repository

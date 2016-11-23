@@ -50,7 +50,10 @@ public abstract class Task {
   }
   
   public static <T extends EvaluationResult> boolean allResultsSuccessful(List<T> results) {
-    return results.stream().mapToInt(result -> result.getSuccess() == Success.COMPLETE ? 0 : 1).sum() == 0;
+    for(EvaluationResult res: results)
+      if(res.getSuccess() != Success.COMPLETE)
+        return false;
+    return true;
   }
   
   public abstract EvaluationResult evaluate(SearchContext context);

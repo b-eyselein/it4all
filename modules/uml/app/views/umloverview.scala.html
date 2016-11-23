@@ -1,0 +1,21 @@
+@(exercises: List[model.UmlExercise], user: model.user.User)
+
+@main("UML-Test", user) {
+<div class="container">
+  <div class="page-header">
+    <h1 class="page-title">&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h1>
+  </div>
+  @for(exercise <- exercises) {
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <a href=" @controllers.uml.routes.UML.classSelection(new model.IntExerciseIdentifier(exercise.id))">Aufgabe @exercise.id: @exercise.title</a>
+    </div>
+    <div class="panel-body">
+      @for(exerText <- exercise.exerciseText.split("\n")) {
+      <p>@exerText</p>
+      }
+    </div>
+  </div>
+  }
+</div>
+}

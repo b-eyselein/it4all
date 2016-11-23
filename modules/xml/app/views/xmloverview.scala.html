@@ -1,4 +1,4 @@
-@(exercises: List[model.XmlExercise], user: model.user.User)
+@(user: model.user.User, exercises: List[model.XmlExercise])
 
 @main("XML-Test", user) {
 <div class="container">
@@ -8,12 +8,10 @@
   @for(exercise <- exercises) {
   <div class="panel panel-default">
     <div class="panel-heading">
-      <a href=" @controllers.xml.routes.XML.exercise(exercise.id)">Aufgabe @exercise.id: @exercise.title</a>
+      <a href="@controllers.xml.routes.XML.exercise(new model.IntExerciseIdentifier(exercise.id))">Aufgabe @exercise.id: @exercise.title</a>
     </div>
     <div class="panel-body">
-      @for(exerText <- exercise.exerciseText.split("\n")) {
-      <p>@exerText</p>
-      }
+      <p>@exercise.exerciseText</p>
     </div>
   </div>
   }

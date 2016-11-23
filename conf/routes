@@ -15,11 +15,18 @@ GET    /admin          controllers.AdminController.index()
 # Python Test
 ->     /python         python.Routes
 
-# Binary and Boolean
+# Zahlensysteme
 ->     /binary         binary.Routes
+
+# Boolesche Algebra
+->     /bool           bool.Routes
 
 # Web-Korrektur
 ->     /web            web.Routes
+
+# Javascript-Korrektur
+
+->     /js             js.Routes
 
 # SQL-Korrektur
 ->     /sql            sql.Routes
@@ -39,6 +46,8 @@ GET    /admin          controllers.AdminController.index()
 # Evaluation
 GET    /eval/          controllers.Evaluation.index()
 POST   /eval/submit    controllers.Evaluation.submit()
+
+GET    /eval/stats     controllers.AdminController.stats()
 
 # Map static resources from the /public folder to the /assets URL path
 GET    /assets/*file   controllers.Assets.versioned(path="/public", file: Asset)

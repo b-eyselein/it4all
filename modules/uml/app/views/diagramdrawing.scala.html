@@ -21,14 +21,15 @@
             @Html(exerciseText)
           </div>
         </div>
-        <div class="col-md-8">
+        <div class="col-md-8" id="sizepaper">
           <div ondrop="drop(event)" ondragover="allowDrop(event)">
             <div style="border: 1px solid black" id="paper"></div>
-            <script type="text/javascript">
-					
+            <script type="text/javascript">			
 					//console.log("methoden: "+document.getElementsByClassName("uml-class-attrs-text"));
 					
-                    // TODO: Javascript-code möglichst auslagern!
+					var divWidth=document.getElementById("sizepaper").parentNode.offsetWidth;
+					var divHeight=document.getElementById("sizepaper").parentNode.offsetHeight;
+					console.log(divWidth+" "*divHeight);
                     var idList = new Array(); // Linkverbindungen
                     var graph = new joint.dia.Graph();
                     var uml = joint.shapes.uml;
@@ -36,7 +37,7 @@
 										
                     var paper = new joint.dia.Paper({
                         el: $('#paper'),
-                        width: 740,
+                        width: 805,
                         height: 700,
                         gridSize: 1,
                         model: graph
@@ -142,9 +143,7 @@
 										idList=[];
 									}
 
-								}
-							
-							
+								}						
 							}
                         }
 
@@ -177,8 +176,7 @@
 						document.getElementById(elem.id).value="on";
 						sel=elem.id;
 					}
-					
-										
+													
                     function link() {
 						if(document.getElementById(sel).value="on"){
 						var source_name = graph.getCell(idList[0]).attr('.uml-class-name-text/text');
@@ -248,9 +246,7 @@
                             }
 						}
                     }
-		
-					
-					
+						
                     function addClass(data) {
                         flugzeug: var flug = new uml.Class({
                             position: {
@@ -293,109 +289,7 @@
                         });
                         graph.addCell(flug);
                     }
-					
-					var flug = new uml.Class({
-                            position: {
-                                x: 100,
-                                y: 50
-                            },
-
-                            size: {
-                                width: 240,
-                                height: 100
-                            },
-                            name: 'Klasse1',
-							id: '1',
-                            // TODO: attributes and methods empty!
-                            attributes: [ 'attribut: date', 'adsfdsf: asdf' ],
-                            methods: [ /*"setDateOfBirth(dob: Date): Void", "getAgeAsDays(): Numeric"*/ ],
-                            attrs: {
-                                // TODO: set fill to white
-                                '.uml-class-name-rect': {
-                                    fill: '#ffffff',
-                                    /*   stroke: '#fff',
-                                      'stroke-width': 1 */
-                                },
-                                '.uml-class-attrs-rect, .uml-class-methods-rect': {
-                                    fill: '#ffffff',
-                                    /* stroke: '#fff',
-                                    'stroke-width': 1 */
-                                },
-                                '.uml-class-attrs-text': {
-                                    ref: '.uml-class-attrs-rect',
-                                    'ref-y': 0.5,
-                                    'y-alignment': 'middle'
-                                },
-                                '.uml-class-methods-text': {
-                                    ref: '.uml-class-methods-rect',
-                                    'ref-y': 0.5,
-                                    'y-alignment': 'middle'
-                                }
-
-                            }
-                        });
-						
-                        graph.addCell(flug);
-										var flug = new uml.Class({
-                            position: {
-                                x: 500,
-                                y: 400
-                            },
-
-                            size: {
-                                width: 240,
-                                height: 100
-                            },
-                            name: 'Klasse2',
-							id: '2',
-                            // TODO: attributes and methods empty!
-                            attributes: [ 'dob: date', 'adsfdsf: asdf' ],
-                            methods: [ "setDateOfBirth(dob: Date): Void", "getAgeAsDays(): Numeric" ],
-                            attrs: {
-                                // TODO: set fill to white
-                                '.uml-class-name-rect': {
-                                    fill: '#ffffff',
-                                    /*   stroke: '#fff',
-                                      'stroke-width': 1 */
-                                },
-                                '.uml-class-attrs-rect, .uml-class-methods-rect': {
-                                    fill: '#ffffff',
-                                    /* stroke: '#fff',
-                                    'stroke-width': 1 */
-                                },
-                                '.uml-class-attrs-text': {
-                                    ref: '.uml-class-attrs-rect',
-                                    'ref-y': 0.5,
-                                    'y-alignment': 'middle'
-                                },
-                                '.uml-class-methods-text': {
-                                    ref: '.uml-class-methods-rect',
-                                    'ref-y': 0.5,
-                                    'y-alignment': 'middle'
-                                }
-
-                            }
-                        });
-                        graph.addCell(flug);
-
-						            graph.addCell(new uml.Aggregation({
-                                        source: {  id: '1' },
-                                        target: {  id: '2' },
-										 labels: [{ position: 25, attrs: { text: { text: '1..n' } }},
-										         { position: -25, attrs: { text: { text: '0' } }}
-     ]
-                                    }));
-
-									/*
-console.log(graph.getCell('3'));	
-console.log("next: ");	
-console.log(graph.getCell('3').attr('.marker-target'));		
-console.log(graph.getCell('3').attributes.labels[0].attrs.text.text);	
-console.log(graph.getCell('2').attr('.uml-class-name-text/text'));
-*/
-
-
-
+                    			
 function getAttributes(){
 
 }

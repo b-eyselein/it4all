@@ -5,7 +5,7 @@
 		"exerciseType": "XML_DTD", 
 		"fixedStart": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE party SYSTEM \"party.dtd\">", 
 		"referenceFileName": "party", 
-		"exerciseText": "Erstellen Sie zu dieser Document Type Definition ein passendes XML-Dokument!"
+		"exerciseText": "Erstellen Sie zu dieser Document Type Definition ein passendes XML-Dokument."
 	}, 
 	{
 		"id": 2, 
@@ -13,7 +13,7 @@
 		"exerciseType": "XML_DTD", 
 		"fixedStart": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE lecture SYSTEM \"lecture.dtd\">", 
 		"referenceFileName": "lecture", 
-		"exerciseText": "Erstellen Sie zu dieser DTD ein passendes XML-Dokument"
+		"exerciseText": "Erstellen Sie zu dieser DTD ein passendes XML-Dokument."
 	}, 
 	{
 		"id": 3, 
@@ -21,7 +21,7 @@
 		"exerciseType": "DTD_XML", 
 		"fixedStart": "", 
 		"referenceFileName": "breakfast", 
-		"exerciseText": "Erstellen Sie für dieses Dokument eine passende Document Type Definition!"
+		"exerciseText": "Erstellen Sie für dieses Dokument eine passende Document Type Definition."
 	}, 
 	{
 		"id": 4, 
@@ -29,7 +29,7 @@
 		"exerciseType": "XML_DTD", 
 		"fixedStart": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE krankenhaus SYSTEM \"hospital.dtd\">", 
 		"referenceFileName": "hospital", 
-		"exerciseText": "Erstellen Sie zu dieser DTD ein passendes XML-Dokument"
+		"exerciseText": "Erstellen Sie zu dieser DTD ein passendes XML-Dokument."
 	}, 
 	{
 		"id": 5, 
@@ -37,6 +37,6 @@
 		"exerciseType": "DTD_XML", 
 		"fixedStart": "", 
 		"referenceFileName": "bibliothek", 
-		"exerciseText": "Erstellen Sie für dieses Dokument eine passende Document Type Definition!"
+		"exerciseText": "Erstellen Sie für dieses Dokument eine passende Document Type Definition."
 	}
 ]

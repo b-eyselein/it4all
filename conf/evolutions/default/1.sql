@@ -22,26 +22,21 @@ create table css_task (
 );
 
 create table feedback (
-  id                            integer auto_increment not null,
-  sinn_html                     integer,
-  sinn_excel                    integer,
-  nutzen_html                   integer,
-  nutzen_excel                  integer,
-  bedienung_html                integer,
-  bedienung_excel               integer,
-  feedback_html                 integer,
-  feedback_excel                integer,
-  korrektur_html                integer,
-  korrektur_excel               integer,
-  kommentar_html                varchar(255),
-  kommentar_excel               varchar(255),
-  constraint ck_feedback_bedienung_html check (bedienung_html in (0,1,2,3,4)),
-  constraint ck_feedback_bedienung_excel check (bedienung_excel in (0,1,2,3,4)),
-  constraint ck_feedback_feedback_html check (feedback_html in (0,1,2,3,4)),
-  constraint ck_feedback_feedback_excel check (feedback_excel in (0,1,2,3,4)),
-  constraint ck_feedback_korrektur_html check (korrektur_html in (0,1,2,3,4)),
-  constraint ck_feedback_korrektur_excel check (korrektur_excel in (0,1,2,3,4)),
-  constraint pk_feedback primary key (id)
+  user                          varchar(255) not null,
+  tool                          varchar(5) not null,
+  sense                         varchar(5),
+  used                          varchar(5),
+  usability                     varchar(9),
+  feedback                      varchar(9),
+  fairness                      varchar(9),
+  comment                       text,
+  constraint ck_feedback_tool check ( tool in ('HTML','CSS','JSWEB','JS','SQL')),
+  constraint ck_feedback_sense check ( sense in ('YES','NO','MAYBE')),
+  constraint ck_feedback_used check ( used in ('YES','NO','MAYBE')),
+  constraint ck_feedback_usability check ( usability in ('VERY_GOOD','GOOD','NEUTRAL','BAD','VERY_BAD','NO_MARK')),
+  constraint ck_feedback_feedback check ( feedback in ('VERY_GOOD','GOOD','NEUTRAL','BAD','VERY_BAD','NO_MARK')),
+  constraint ck_feedback_fairness check ( fairness in ('VERY_GOOD','GOOD','NEUTRAL','BAD','VERY_BAD','NO_MARK')),
+  constraint pk_feedback primary key (user,tool)
 );
 
 create table grading (
@@ -57,6 +52,7 @@ create table html_task (
   text                          text,
   xpath_query                   varchar(255),
   attributes                    varchar(255),
+  text_content                  varchar(255),
   constraint pk_html_task primary key (task_id,exercise_id)
 );
 
@@ -70,7 +66,7 @@ create table js_exercise (
   inputtypes                    varchar(255),
   inputcount                    integer,
   returntype                    varchar(9),
-  constraint ck_js_exercise_returntype check (returntype in ('BOOLEAN','NUMBER','STRING','SYMBOL','UNDEFINED','NULL','OBJECT')),
+  constraint ck_js_exercise_returntype check ( returntype in ('BOOLEAN','NUMBER','STRING','SYMBOL','UNDEFINED','NULL','OBJECT')),
   constraint pk_js_exercise primary key (id)
 );
 
@@ -86,9 +82,7 @@ create table js_web_exercise (
   id                            integer auto_increment not null,
   title                         varchar(255),
   text                          text,
-  anterior                      text,
-  posterior                     text,
-  declaration                   varchar(255),
+  declaration                   text,
   constraint pk_js_web_exercise primary key (id)
 );
 
@@ -98,7 +92,7 @@ create table js_web_test (
   actiontype                    varchar(7),
   xpath_query                   varchar(255),
   keys_to_send                  varchar(255),
-  constraint ck_js_web_test_actiontype check (actiontype in ('CLICK','FILLOUT')),
+  constraint ck_js_web_test_actiontype check ( actiontype in ('CLICK','FILLOUT')),
   constraint pk_js_web_test primary key (id)
 );
 
@@ -118,7 +112,7 @@ create table sql_exercise (
   text                          text,
   samples                       text,
   validation                    varchar(255),
-  constraint ck_sql_exercise_exercisetype check (exercisetype in ('SELECT','CREATE','UPDATE','DELETE','INSERT')),
+  constraint ck_sql_exercise_exercisetype check ( exercisetype in ('SELECT','CREATE','UPDATE','DELETE','INSERT')),
   constraint pk_sql_exercise primary key (id,scenario_name,exercisetype)
 );
 
@@ -132,7 +126,7 @@ create table sql_scenario (
 create table users (
   name                          varchar(255) not null,
   role                          varchar(5),
-  constraint ck_users_role check (role in ('USER','ADMIN')),
+  constraint ck_users_role check ( role in ('USER','ADMIN')),
   constraint pk_users primary key (name)
 );
 
@@ -143,15 +137,15 @@ create table web_exercise (
   constraint pk_web_exercise primary key (id)
 );
 
-create table xmlexercise (
+create table xml_exercise (
   id                            integer auto_increment not null,
   title                         varchar(255),
   fixed_start                   text,
   exercise_type                 varchar(7),
-  referencefilename             varchar(100),
-  exercisetext                  varchar(1000),
-  constraint ck_xmlexercise_exercise_type check (exercise_type in ('XML_XSD','XML_DTD','XSD_XML','DTD_XML')),
-  constraint pk_xmlexercise primary key (id)
+  reference_file_name           varchar(255),
+  exercise_text                 text,
+  constraint ck_xml_exercise_exercise_type check ( exercise_type in ('XML_XSD','XML_DTD','XSD_XML','DTD_XML')),
+  constraint pk_xml_exercise primary key (id)
 );
 
 alter table conditions add constraint fk_conditions_pre_id foreign key (pre_id) references js_web_test (id) on delete restrict on update restrict;
@@ -233,5 +227,5 @@ drop table if exists users;
 
 drop table if exists web_exercise;
 
-drop table if exists xmlexercise;
+drop table if exists xml_exercise;
 

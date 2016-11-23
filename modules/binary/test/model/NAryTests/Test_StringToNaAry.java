@@ -3,8 +3,8 @@ package model.NAryTests;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-import model.nary.NAryNumber;
-import model.nary.NumberBase;
+import model.NAryNumber;
+import model.NumberBase;
 
 public class Test_StringToNaAry {
   

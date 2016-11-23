@@ -1,14 +1,7 @@
-GET    /                 controllers.binary.NaryBool.index()
+GET    /                 controllers.nary.Nary.index()
 
-GET    /boolfillout      controllers.binary.NaryBool.newBoolFilloutQuestion()
-POST   /boolfillout      controllers.binary.NaryBool.checkBoolFilloutSolution()
+GET    /naryconversion   controllers.nary.Nary.newNaryConversionQuestion()
+POST   /naryconversion   controllers.nary.Nary.checkNaryConversionSolution()
 
-GET    /boolcreation     controllers.binary.NaryBool.newBoolCreationQuestion()
-PUT    /boolcreation     controllers.binary.NaryBool.checkBoolCreationSolution()
-POST   /boolcreation     controllers.binary.NaryBool.checkBoolCreationSolution()
-
-GET    /naryconversion   controllers.binary.NaryBool.newNaryConversionQuestion()
-POST   /naryconversion   controllers.binary.NaryBool.checkNaryConversionSolution()
-
-GET    /naryaddition     controllers.binary.NaryBool.newNaryAdditionQuestion()
-POST   /naryaddition     controllers.binary.NaryBool.checkNaryAdditionSolution()
+GET    /naryaddition     controllers.nary.Nary.newNaryAdditionQuestion()
+POST   /naryaddition     controllers.nary.Nary.checkNaryAdditionSolution()
