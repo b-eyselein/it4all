@@ -2,7 +2,29 @@
 
 @main("it4all: Administrator", user) {
 <div class="container">
-  <h3>TODO: IMPLEMENT!</h3>
-  <div class="alert alert-info"><a href="@controllers.sql.routes.SQLAdmin.uploadForm()">Neue SQL-Aufgaben erstellen</a></div>
+  <div class="page-header">
+    <h1>Erstellung neuer Aufgaben</h1>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">Einlesen der Aufgaben in <code>conf/resources/...</code></div>
+    <div class="panel-body">
+      <a href="@controllers.js.routes.JsAdmin.create()" type="button" class="btn btn-default btn-block">Javascript-Aufgaben</a>
+      <a href="@controllers.sql.routes.SQLAdmin.create()" type="button" class="btn btn-default btn-block">SQL-Aufgaben</a>
+      <a href="@controllers.spread.routes.SpreadAdmin.create()" type="button" class="btn btn-default btn-block">Tabellenkalulations-Aufgaben</a>
+      <a href="@controllers.web.routes.WebAdmin.create()" type="button" class="btn btn-default btn-block">Web-Aufgaben</a>
+      <a href="@controllers.xml.routes.XmlAdmin.create()" type="button" class="btn btn-default btn-block">Xml-Aufgaben</a>
+    </div>
+  </div>
+  
+  <div class="panel panel-default">
+    <div class="panel-heading">Upload neuer Aufgaben</div>
+    <div class="panel-body">
+      <a href="@controllers.js.routes.JsAdmin.uploadForm()" type="button" class="btn btn-default btn-block">Javascript-Aufgaben</a>
+      <a href="@controllers.sql.routes.SQLAdmin.uploadForm()" type="button" class="btn btn-default btn-block">SQL-Aufgaben</a>
+      <a href="@controllers.spread.routes.SpreadAdmin.uploadForm()" type="button" class="btn btn-default btn-block">Tabellenkalkulations-Aufgaben</a>
+      <a href="@controllers.web.routes.WebAdmin.uploadForm()" type="button" class="btn btn-default btn-block">Web-Aufgaben</a>
+      <a href="@controllers.xml.routes.XmlAdmin.uploadForm()" type="button" class="btn btn-default btn-block">Xml-Aufgaben</a>
+    </div>
+  </div>
 </div>
 }

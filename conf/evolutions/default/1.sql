@@ -30,12 +30,12 @@ create table feedback (
   feedback                      varchar(9),
   fairness                      varchar(9),
   comment                       text,
-  constraint ck_feedback_tool check (tool in ('HTML','CSS','JSWEB','JS','SQL')),
-  constraint ck_feedback_sense check (sense in ('YES','NO','MAYBE')),
-  constraint ck_feedback_used check (used in ('YES','NO','MAYBE')),
-  constraint ck_feedback_usability check (usability in ('VERY_GOOD','GOOD','NEUTRAL','BAD','VERY_BAD','NO_MARK')),
-  constraint ck_feedback_feedback check (feedback in ('VERY_GOOD','GOOD','NEUTRAL','BAD','VERY_BAD','NO_MARK')),
-  constraint ck_feedback_fairness check (fairness in ('VERY_GOOD','GOOD','NEUTRAL','BAD','VERY_BAD','NO_MARK')),
+  constraint ck_feedback_tool check ( tool in ('HTML','CSS','JSWEB','JS','SQL')),
+  constraint ck_feedback_sense check ( sense in ('YES','NO','MAYBE')),
+  constraint ck_feedback_used check ( used in ('YES','NO','MAYBE')),
+  constraint ck_feedback_usability check ( usability in ('VERY_GOOD','GOOD','NEUTRAL','BAD','VERY_BAD','NO_MARK')),
+  constraint ck_feedback_feedback check ( feedback in ('VERY_GOOD','GOOD','NEUTRAL','BAD','VERY_BAD','NO_MARK')),
+  constraint ck_feedback_fairness check ( fairness in ('VERY_GOOD','GOOD','NEUTRAL','BAD','VERY_BAD','NO_MARK')),
   constraint pk_feedback primary key (user,tool)
 );
 
@@ -66,7 +66,7 @@ create table js_exercise (
   inputtypes                    varchar(255),
   inputcount                    integer,
   returntype                    varchar(9),
-  constraint ck_js_exercise_returntype check (returntype in ('BOOLEAN','NUMBER','STRING','SYMBOL','UNDEFINED','NULL','OBJECT')),
+  constraint ck_js_exercise_returntype check ( returntype in ('BOOLEAN','NUMBER','STRING','SYMBOL','UNDEFINED','NULL','OBJECT')),
   constraint pk_js_exercise primary key (id)
 );
 
@@ -92,7 +92,7 @@ create table js_web_test (
   actiontype                    varchar(7),
   xpath_query                   varchar(255),
   keys_to_send                  varchar(255),
-  constraint ck_js_web_test_actiontype check (actiontype in ('CLICK','FILLOUT')),
+  constraint ck_js_web_test_actiontype check ( actiontype in ('CLICK','FILLOUT')),
   constraint pk_js_web_test primary key (id)
 );
 
@@ -112,7 +112,7 @@ create table sql_exercise (
   text                          text,
   samples                       text,
   validation                    varchar(255),
-  constraint ck_sql_exercise_exercisetype check (exercisetype in ('SELECT','CREATE','UPDATE','DELETE','INSERT')),
+  constraint ck_sql_exercise_exercisetype check ( exercisetype in ('SELECT','CREATE','UPDATE','DELETE','INSERT')),
   constraint pk_sql_exercise primary key (id,scenario_name,exercisetype)
 );
 
@@ -126,7 +126,7 @@ create table sql_scenario (
 create table users (
   name                          varchar(255) not null,
   role                          varchar(5),
-  constraint ck_users_role check (role in ('USER','ADMIN')),
+  constraint ck_users_role check ( role in ('USER','ADMIN')),
   constraint pk_users primary key (name)
 );
 
@@ -144,7 +144,7 @@ create table xml_exercise (
   exercise_type                 varchar(7),
   reference_file_name           varchar(255),
   exercise_text                 text,
-  constraint ck_xml_exercise_exercise_type check (exercise_type in ('XML_XSD','XML_DTD','XSD_XML','DTD_XML')),
+  constraint ck_xml_exercise_exercise_type check ( exercise_type in ('XML_XSD','XML_DTD','XSD_XML','DTD_XML')),
   constraint pk_xml_exercise primary key (id)
 );
 

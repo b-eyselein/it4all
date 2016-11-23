@@ -4,10 +4,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -18,7 +16,6 @@ import model.Util;
 import model.html.HtmlCorrector;
 import model.html.WebExercise;
 import model.html.WebExerciseIdentifier;
-import model.html.WebExerciseReader;
 import model.html.result.WebCorrectionResult;
 import model.logging.ExerciseCompletionEvent;
 import model.logging.ExerciseCorrectionEvent;
@@ -42,11 +39,7 @@ import views.html.html.htmloverview;
 
 @Security.Authenticated(Secured.class)
 public class HTML extends ExerciseController<WebExerciseIdentifier> {
-
-  private static final String EXERCISE_FOLDER = "conf/resources/web";
-  private static final Path JSON_FILE = Paths.get(EXERCISE_FOLDER, "exercises.json");
-  private static final Path JSON_SCHEMA_FILE = Paths.get(EXERCISE_FOLDER, "exerciseSchema.json");
-
+  
   private static final String LEARNER_SOLUTION_VALUE = "editorContent";
   private static final String FILE_TYPE = "html";
   private static final String EXERCISE_TYPE = "html";
@@ -60,10 +53,6 @@ public class HTML extends ExerciseController<WebExerciseIdentifier> {
   @Inject
   public HTML(Util theUtil, FormFactory theFactory) {
     super(theUtil, theFactory);
-
-    List<WebExercise> exercises = (new WebExerciseReader()).readExercises(JSON_FILE, JSON_SCHEMA_FILE);
-    for(WebExercise ex: exercises)
-      ex.save();
   }
 
   public Result commit(int exerciseId, String type) {

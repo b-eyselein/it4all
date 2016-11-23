@@ -1,12 +1,17 @@
+# creation of exercises
+GET    /upload                             controllers.web.WebAdmin.uploadForm()
+POST   /upload                             controllers.web.WebAdmin.uploadFile()
+GET    /create                             controllers.web.WebAdmin.create()
+
 # Playground
 GET    /playground                         controllers.web.HTML.playground()
 
 # JavaScript
 GET    /js/                                controllers.web.JSWeb.index()
 
-GET    /js/:exId                             controllers.web.JSWeb.exercise(exId: model.IntExerciseIdentifier)
-PUT    /js/:exId                             controllers.web.JSWeb.commit(exId: model.IntExerciseIdentifier)
-POST   /js/:exId                             controllers.web.JSWeb.commit(exId: model.IntExerciseIdentifier)
+GET    /js/:exId                           controllers.web.JSWeb.exercise(exId: model.IntExerciseIdentifier)
+PUT    /js/:exId                           controllers.web.JSWeb.commit(exId: model.IntExerciseIdentifier)
+POST   /js/:exId                           controllers.web.JSWeb.commit(exId: model.IntExerciseIdentifier)
 
 # HTML & CSS
 GET    /                                   controllers.web.HTML.index()

@@ -2,7 +2,6 @@ package model.html;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -72,29 +71,6 @@ public class WebExercise extends Model implements Exercise {
   @Override
   public String getTitle() {
     return title;
-  }
-  
-  @Override
-  public String toString() {
-    StringBuilder builder = new StringBuilder();
-    builder.append("HTML-Aufgabe " + id + ":");
-    builder.append("\nID:\t\t" + id);
-    builder.append("\nTitel:\t\t" + title);
-    builder.append("\nText:\t\t" + text);
-
-    builder.append("\nTasks:\t\t");
-    if(htmlTasks.isEmpty())
-      builder.append("--");
-    else
-      builder.append(htmlTasks.stream().map(t -> t.toString()).collect(Collectors.joining(", \n")));
-
-    builder.append("\nCSS-Tasks:\t");
-    if(cssTasks.isEmpty())
-      builder.append("--");
-    else
-      builder.append(cssTasks.stream().map(t -> t.toString()).collect(Collectors.joining(", \n")));
-
-    return builder.toString();
   }
 
 }

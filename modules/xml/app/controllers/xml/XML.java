@@ -2,7 +2,6 @@ package controllers.xml;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -23,7 +22,6 @@ import model.XmlCorrector;
 import model.XmlErrorType;
 import model.XmlExercise;
 import model.XmlExercise.XmlExType;
-import model.XmlExerciseReader;
 import model.logging.ExerciseCompletionEvent;
 import model.logging.ExerciseCorrectionEvent;
 import model.logging.ExerciseStartEvent;
@@ -45,10 +43,6 @@ import play.mvc.Http.Request;
 @Security.Authenticated(Secured.class)
 public class XML extends ExerciseController<IntExerciseIdentifier> {
   
-  private static final String EXERCISE_FOLDER = "conf/resources/xml";
-  private static final Path JSON_FILE = Paths.get(EXERCISE_FOLDER, "exercises.json");
-  private static final Path JSON_SCHEMA_FILE = Paths.get(EXERCISE_FOLDER, "exerciseSchema.json");
-  
   private static final String EXERCISE_TYPE = "xml";
   private static final String LEARNER_SOLUTION_VALUE = "editorContent";
   private static final String STANDARD_XML = "";
@@ -58,13 +52,6 @@ public class XML extends ExerciseController<IntExerciseIdentifier> {
   @Inject
   public XML(Util theUtil, FormFactory theFactory) {
     super(theUtil, theFactory);
-    
-    XmlExerciseReader reader = new XmlExerciseReader();
-    List<XmlExercise> exercises = reader.readExercises(JSON_FILE, JSON_SCHEMA_FILE);
-    for(XmlExercise ex: exercises) {
-      ex.save();
-      reader.checkOrCreateSampleFile(util, ex);
-    }
   }
   
   public Result commit(IntExerciseIdentifier identifier) {
@@ -109,7 +96,7 @@ public class XML extends ExerciseController<IntExerciseIdentifier> {
   
   private Path checkAndCreateSolDir(User user, int id) {
     Path dir = Paths.get(util.getSolDirForUserAndType(user, EXERCISE_TYPE).toString(), Integer.toString(id));
-    if(!Files.exists(dir))
+    if(!dir.toFile().exists())
       try {
         Files.createDirectories(dir);
       } catch (IOException e) {
@@ -131,7 +118,7 @@ public class XML extends ExerciseController<IntExerciseIdentifier> {
     Path oldSolutionPath = util.getSolFileForExercise(user, EXERCISE_TYPE,
         exercise.id + "/" + exercise.referenceFileName + "." + exercise.exerciseType.getFileEnding());
     
-    if(Files.exists(oldSolutionPath, LinkOption.NOFOLLOW_LINKS)) {
+    if(oldSolutionPath.toFile().exists()) {
       try {
         return String.join("\n", Files.readAllLines(oldSolutionPath));
       } catch (IOException e) {
@@ -146,7 +133,7 @@ public class XML extends ExerciseController<IntExerciseIdentifier> {
     Path referenceFilePath = Paths
         .get(util.getSampleFileForExercise(EXERCISE_TYPE, exercise.referenceFileName).toString()
             + exercise.getReferenceFileEnding());
-    if(Files.exists(referenceFilePath, LinkOption.NOFOLLOW_LINKS)) {
+    if(referenceFilePath.toFile().exists()) {
       try {
         return String.join("\n", Files.readAllLines(referenceFilePath));
       } catch (IOException e) {
