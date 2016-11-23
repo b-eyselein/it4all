@@ -13,7 +13,6 @@ import javax.inject.Inject;
 
 import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
-import model.Secured;
 import model.SqlCorrector;
 import model.SqlQueryResult;
 import model.Util;
@@ -36,13 +35,11 @@ import play.db.Database;
 import play.db.NamedDatabase;
 import play.libs.Json;
 import play.mvc.Result;
-import play.mvc.Security.Authenticated;
 import views.html.correction;
 import views.html.sqlexercise;
 import views.html.sqloverview;
 import play.mvc.Http.Request;
 
-@Authenticated(Secured.class)
 public class SQL extends ExerciseController<SqlExerciseKey> {
 
   private static final String SHOW_ALL_TABLES = "SHOW TABLES";

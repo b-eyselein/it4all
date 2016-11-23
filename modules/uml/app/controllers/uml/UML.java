@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
 import model.IntExerciseIdentifier;
+import model.UmlExercise;
 import model.Util;
 import model.result.CompleteResult;
 import model.user.User;
@@ -49,7 +50,13 @@ public class UML extends ExerciseController<IntExerciseIdentifier> {
   }
   
   public Result index() {
-    return ok(umloverview.render(Arrays.asList(new UmlExercise()),UserManagement.getCurrentUser()));
+    return ok(umloverview.render(Arrays.asList(new UmlExercise()), UserManagement.getCurrentUser()));
+  }
+  
+  @Override
+  protected CompleteResult correct(Request request, User user, IntExerciseIdentifier identifier) {
+    // TODO Auto-generated method stub
+    return null;
   }
   
 }

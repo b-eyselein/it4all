@@ -14,7 +14,6 @@ import javax.inject.Inject;
 import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
 import model.IntExerciseIdentifier;
-import model.Secured;
 import model.Util;
 import model.XMLError;
 import model.XmlCorrectionResult;
@@ -33,14 +32,12 @@ import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
 import play.mvc.Result;
-import play.mvc.Security;
 import play.twirl.api.Html;
 import views.html.xml;
 import views.html.correction;
 import views.html.xmloverview;
 import play.mvc.Http.Request;
 
-@Security.Authenticated(Secured.class)
 public class XML extends ExerciseController<IntExerciseIdentifier> {
   
   private static final String EXERCISE_TYPE = "xml";

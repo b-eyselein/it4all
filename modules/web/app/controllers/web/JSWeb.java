@@ -12,7 +12,6 @@ import javax.inject.Inject;
 import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
 import model.IntExerciseIdentifier;
-import model.Secured;
 import model.Util;
 import model.html.result.WebCorrectionResult;
 import model.javascript.JsCorrector;
@@ -30,14 +29,12 @@ import play.data.FormFactory;
 import play.libs.Json;
 import play.mvc.Http.Request;
 import play.mvc.Result;
-import play.mvc.Security;
 import play.twirl.api.Html;
 import views.html.correction;
 import views.html.error;
 import views.html.javascript.jsoverview;
 import views.html.javascript.jsweb;
 
-@Security.Authenticated(Secured.class)
 public class JSWeb extends ExerciseController<IntExerciseIdentifier> {
 
   private static final String EXERCISE_TYPE = "js";
