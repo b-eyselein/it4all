@@ -47,5 +47,7 @@ GET    /admin          controllers.AdminController.index()
 GET    /eval/          controllers.Evaluation.index()
 POST   /eval/submit    controllers.Evaluation.submit()
 
+GET    /eval/stats     controllers.AdminController.stats()
+
 # Map static resources from the /public folder to the /assets URL path
 GET    /assets/*file   controllers.Assets.versioned(path="/public", file: Asset)

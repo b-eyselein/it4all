@@ -1,34 +1,34 @@
 @(user: model.user.User, exercises: List[model.html.WebExercise])
 
 @main("HTML-Test", user) {
-  <div class="container">
-    <div class="page-header">
-      <h1 class="page-title">&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h1>
+<div class="container">
+  <div class="page-header">
+    <h1 class="page-title">&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h1>
+  </div>
+  <div class="panel panel-default">
+    <a class="btn btn-primary btn-block" href="@controllers.web.routes.HTML.playground()">Web-Playground</a>
+  </div>
+  
+  @for(exercise <- exercises) {
+  <div class="panel panel-default">
+    <div class="panel-heading">Aufgabe @exercise.id: @exercise.title</div>
+    <div class="panel-body">
+    @for(exerText <- exercise.text.split("\n")) {
+      <p>@exerText</p>
+    }
     </div>
-    <div class="panel">
-      <a class="btn btn-primary btn-block" href="@controllers.web.routes.HTML.playground()">Web-Playground</a>
-    </div>
-    
-    @for(exercise <- exercises) {
-    <div class="panel panel-default">
-      <div class="panel-heading">Aufgabe @exercise.id: @exercise.title</div>
-      <div class="panel-body">
-      @for(exerText <- exercise.text.split("\n")) {
-        <p>@exerText</p>
+    <div class="panel-footer">
+      <div class="btn-group btn-group-justified">
+      @if(exercise.htmlTasks.size() > 0) {
+        <a href="@web.routes.HTML.exercise(exercise.id, "html")" class="btn btn-primary" role="button">Html-Teil der Aufgabe</a>
+      }
+      @if(exercise.cssTasks.size() > 0) {
+        <a href="@web.routes.HTML.exercise(exercise.id, "css")" class="btn btn-primary" role="button">Css-Teil der Aufgabe</a>
       }
       </div>
-      <div class="panel-footer">
-        <div class="btn-group btn-group-justified">
-        @if(exercise.htmlTasks.size() > 0) {
-          <a href="@web.routes.HTML.exercise(exercise.id, "html")" class="btn btn-primary" role="button">Html-Teil der Aufgabe</a>
-        }
-        @if(exercise.cssTasks.size() > 0) {
-          <a href="@web.routes.HTML.exercise(exercise.id, "css")" class="btn btn-primary" role="button">Css-Teil der Aufgabe</a>
-        }
-        </div>
-      </div>
     </div>
-    }
-    
   </div>
+  }
+  
+</div>
 }
