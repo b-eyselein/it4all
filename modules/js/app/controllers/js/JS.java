@@ -24,7 +24,6 @@ import model.logging.ExerciseCorrectionEvent;
 import model.logging.ExerciseStartEvent;
 import model.result.CompleteResult;
 import model.user.User;
-import play.Logger;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
@@ -57,14 +56,14 @@ public class JS extends ExerciseController<IntExerciseIdentifier> {
   }
   
   private static List<CommitedTestData> extractAndValidateTestData(DynamicForm form, JsExercise exercise) {
-    List<CommitedTestData> testData = new LinkedList<>();
-    
     // FIXME: empty testData!
     
     int testCount = Integer.parseInt(form.get("count"));
     int inputCount = Integer.parseInt(form.get("inputs"));
     
     List<JsDataType> dataTypes = exercise.getInputTypes();
+
+    List<CommitedTestData> testData = new LinkedList<>();
     
     for(int testCounter = 0; testCounter < testCount; testCounter++)
       testData.add(readTestDataFromForm(form, dataTypes, inputCount, testCounter, exercise));
@@ -96,8 +95,6 @@ public class JS extends ExerciseController<IntExerciseIdentifier> {
   public Result commit(IntExerciseIdentifier identifier) {
     User user = UserManagement.getCurrentUser();
 
-    Logger.debug("Correcting " + identifier);
-    
     CompleteResult result = correct(request(), user, identifier);
     
     if(wantsJsonResponse()) {
