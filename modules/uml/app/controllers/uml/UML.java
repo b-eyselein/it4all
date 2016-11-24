@@ -18,6 +18,7 @@ import play.mvc.Result;
 import views.html.classselection;
 import views.html.diagramdrawing;
 import views.html.umloverview;
+import views.html.difficulty;
 
 public class UML extends ExerciseController {
   
@@ -48,5 +49,10 @@ public class UML extends ExerciseController {
   public Result index() {
     return ok(umloverview.render(Arrays.asList(new UmlExercise()),UserManagement.getCurrentUser()));
   }
+  
+  public Result diff(int exerciseId){
+	  return ok(difficulty.render(UserManagement.getCurrentUser()));
+  }
+  
   
 }

@@ -2,3 +2,4 @@ GET   /                     controllers.uml.UML.index()
 
 GET   /:id/classselection   controllers.uml.UML.classSelection(id: Int)
 GET   /:id/diagramdrawing   controllers.uml.UML.diagramDrawing(id: Int)
+GET   /:id/difficulty		controllers.uml.UML.diff(id: Int)
