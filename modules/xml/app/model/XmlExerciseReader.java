@@ -20,14 +20,14 @@ public class XmlExerciseReader extends ExerciseReader<XmlExercise> {
     // FIXME: test on clean instance without folder /var/lib/it4all...
     Path sampleFile = Paths.get(util.getSampleFileForExercise(EXERCISE_TYPE, exercise.referenceFileName).toString()
         + exercise.getReferenceFileEnding());
-    if(Files.exists(sampleFile))
+    if(sampleFile.toFile().exists())
       return;
     
     READING_LOGGER.warn("Die Lösungsdatei für Xml-Aufgabe " + exercise.id + " \"" + sampleFile
         + "\" existiert nicht! Versuche, Datei zu erstellen...");
     
     Path providedFile = Paths.get(BASE_DIR, exercise.referenceFileName + exercise.getReferenceFileEnding());
-    if(!Files.exists(providedFile)) {
+    if(!providedFile.toFile().exists()) {
       READING_LOGGER.error("Konnte Datei nicht erstellen: Keine Lösungsdatei mitgeliefert...");
       return;
     }
