@@ -117,5 +117,9 @@ public class Feedback extends Model {
 
     return new Html(builder.toString());
   }
+  
+  public EvaluatedTool theTool() {
+    return key.tool;
+  }
 
 }

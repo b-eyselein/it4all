@@ -3,51 +3,51 @@
 # ~~~~
 
 # Home page
-GET    /               controllers.Application.index()
+GET    /                  controllers.Application.index()
 
 # Userverwaltung
-->     /               core.Routes
+->     /                  core.Routes
 
 # User
-GET    /user           controllers.UserController.index()
-GET    /admin          controllers.AdminController.index()
+GET    /user              controllers.UserController.index()
+GET    /admin             controllers.AdminController.index()
 
 # Python Test
-->     /python         python.Routes
+->     /python            python.Routes
 
 # Zahlensysteme
-->     /binary         binary.Routes
+->     /binary            binary.Routes
 
 # Boolesche Algebra
-->     /bool           bool.Routes
+->     /bool              bool.Routes
 
 # Web-Korrektur
-->     /web            web.Routes
+->     /web               web.Routes
 
 # Javascript-Korrektur
 
-->     /js             js.Routes
+->     /js                js.Routes
 
 # SQL-Korrektur
-->     /sql            sql.Routes
+->     /sql               sql.Routes
 
 # Mindmap-Korrektur
-->     /mindmap        mindmap.Routes
+->     /mindmap           mindmap.Routes
 
 # XML
-->     /xml            xml.Routes
+->     /xml               xml.Routes
 
 # Excel
-->     /spread         spread.Routes
+->     /spread            spread.Routes
 
 # UML
-->     /uml            uml.Routes
+->     /uml               uml.Routes
 
 # Evaluation
-GET    /eval/          controllers.Evaluation.index()
-POST   /eval/submit    controllers.Evaluation.submit()
+GET    /eval/             controllers.Evaluation.index()
+POST   /eval/submit       controllers.Evaluation.submit()
 
-GET    /eval/stats     controllers.AdminController.stats()
+GET    /eval/evaluation   controllers.AdminController.evaluation()
 
 # Map static resources from the /public folder to the /assets URL path
-GET    /assets/*file   controllers.Assets.versioned(path="/public", file: Asset)
+GET    /assets/*file      controllers.Assets.versioned(path="/public", file: Asset)
