@@ -12,12 +12,12 @@ public class GenericEvaluationResult extends EvaluationResult {
     for(String m: theMessages)
       messages.add(m);
   }
-  
+
   @Override
   public String getAsHtml() {
     return "<div class=\"col-md-12\">" + messages.stream()
         .map(m -> "<div class=\"alert alert-" + getBSClass() + "\">" + m + "</div>").collect(Collectors.joining())
         + "</div>";
   }
-  
+
 }

@@ -36,7 +36,7 @@ public class SqlStartUpChecker {
   private void performStartUpCheck() {
     Path scenarioDir = Paths.get(SCENARIO_FOLDER);
 
-    if(!Files.isDirectory(scenarioDir)) {
+    if(!scenarioDir.toFile().isDirectory()) {
       Logger.error("Path " + scenarioDir.toString() + " should be a directory!");
       return;
     }
