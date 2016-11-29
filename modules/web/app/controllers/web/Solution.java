@@ -15,23 +15,23 @@ import play.twirl.api.Html;
 import views.html.error;
 
 public class Solution extends Controller {
-  
+
   private static final String FILE_TYPE = "html";
-  
+
   // @Inject
   private Util util;
-  
+
   @Inject
   public Solution(Util theUtil) {
     util = theUtil;
   }
-  
+
   public Result site(User user, String type, int exerciseId) {
     Path file = util.getSolFileForExercise(user, type, exerciseId, FILE_TYPE);
-    
-    if(!Files.exists(file))
+
+    if(!file.toFile().exists())
       return badRequest(error.render(user, new Html("Fehler: Datei nicht vorhanden!")));
-    
+
     try {
       return ok(new Html(String.join("\n", Files.readAllLines(file))));
     } catch (IOException err) {
@@ -39,5 +39,5 @@ public class Solution extends Controller {
       return badRequest(error.render(user, new Html("Fehler beim Lesen der Datei!")));
     }
   }
-  
+
 }
