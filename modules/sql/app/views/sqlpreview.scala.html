@@ -1,20 +1,17 @@
-@(user: model.user.User, scenarioResult: model.creation.ScenarioCreationResult)
+@(user: model.user.User, scenarioes: List[model.exercise.SqlScenario])
 
 @main("SQL", user) {
 <div class="container-fluid">
   <div class="page-header">
     <h1>Erstellung oder Update eines Szenarios:</h1>
   </div>
-  <form action="@controllers.sql.routes.SQLAdmin.create()" method="post" class="form-horizontal">
-    @Html(scenarioResult.getAsHtml())
-    <input class="btn btn-primary btn-block" type="submit" value="Szenario und Aufgaben erstellen">
-    <hr>
-    
-    <h2>Aufgaben</h2>
+  @for(scenario <- scenarioes) {
+  <div class="panel panel-default">
+    <div class="panel-heading">Szenario &quot;@scenario.longName&quot;</div>
+    <div class="panel-body">
     <table class="table table-condensed">
       <thead>
         <tr>
-          <th>Status</th>
           <th>ID</th>
           <th>Aufgabentyp</th>
           <th>Aufgabentext</th>
@@ -23,11 +20,19 @@
         </tr>
       </thead>
       <tbody>
-      @for(creationResult <- scenarioResult.getExerciseResults()) {
-        @Html(creationResult.getAsHtml())
+      @for(exercise <- scenario.exercises) {
+		<tr>
+		  <td>@exercise.key.id</td>
+		  <td>@exercise.key.exercisetype</td>
+		  <td>@exercise.text</td>
+		  <td>@exercise.getSampleSolutions()</td>
+		  <td>@exercise.validation</td>
+		</tr>        
       }
       </tbody>
     </table>
-  </form>
+	</div>
+  </div>
+  }
 </div>
 }

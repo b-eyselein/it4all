@@ -18,20 +18,27 @@ import play.mvc.Http.MultipartFormData.FilePart;
 import views.html.xmlpreview;
 import views.html.xmlupload;
 
-public class XmlAdmin extends AdminController {
-  
+public class XmlAdmin extends AdminController<XmlExercise, XmlExerciseReader> {
+
   @Inject
   public XmlAdmin(Util theUtil) {
-    super(theUtil, "xml");
+    super(theUtil, "xml", new XmlExerciseReader());
   }
 
   @Override
   public Result create() {
-    List<XmlExercise> exercises = (new XmlExerciseReader()).readExercises(jsonFile, jsonSchemaFile);
-    for(XmlExercise ex: exercises)
-      ex.save();
-
+    List<XmlExercise> exercises = exerciseReader.readStandardExercises();
+    saveExercises(exercises);
     return ok(xmlpreview.render(UserManagement.getCurrentUser(), exercises));
+  }
+
+  @Override
+  protected void saveExercises(List<XmlExercise> exercises) {
+    for(XmlExercise ex: exercises) {
+      // FIXME: Aufgabendateien!
+      ex.save();
+      exerciseReader.checkOrCreateSampleFile(util, ex);
+    }
   }
 
   @Override
@@ -47,9 +54,8 @@ public class XmlAdmin extends AdminController {
     Path jsonFile = Paths.get(savingDir.toString(), uploadedFile.getFilename());
     saveUploadedFile(savingDir, pathToUploadedFile, jsonFile);
 
-    List<XmlExercise> exercises = (new XmlExerciseReader()).readExercises(jsonFile, jsonSchemaFile);
-    for(XmlExercise ex: exercises)
-      ex.save();
+    List<XmlExercise> exercises = (new XmlExerciseReader()).readExercises(jsonFile);
+    saveExercises(exercises);
 
     return ok(xmlpreview.render(UserManagement.getCurrentUser(), exercises));
   }

@@ -3,70 +3,59 @@ package controllers.sql;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
+import java.util.List;
 
 import javax.inject.Inject;
 
 import controllers.core.AdminController;
 import controllers.core.UserManagement;
+import model.SqlExerciseReader;
 import model.Util;
-import model.creation.ScenarioCreationResult;
-import model.creation.SqlScenarioHandler;
 import model.exercise.SqlExercise;
-import model.exercise.SqlExerciseKey;
-import model.exercise.SqlExerciseType;
 import model.exercise.SqlScenario;
-import play.Logger;
+import play.db.Database;
+import play.db.NamedDatabase;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
 import views.html.sqlpreview;
 import views.html.sqlupload;
 
-public class SQLAdmin extends AdminController {
+public class SQLAdmin extends AdminController<SqlExercise, SqlExerciseReader> {
+
+  private Database sqlSelect;
+
+  private Database sqlOther;
 
   @Inject
-  public SQLAdmin(Util theUtil) {
-    super(theUtil, "sql");
-  }
-
-  private static void readExercise(String scenarioName, int id, Map<String, String[]> data) {
-    SqlExerciseType exerciseType = SqlExerciseType.valueOf(data.get("ex" + id + "_type")[0]);
-
-    SqlExerciseKey key = new SqlExerciseKey(scenarioName, id, exerciseType);
-
-    SqlExercise exercise = SqlExercise.finder.byId(key);
-    if(exercise == null)
-      exercise = new SqlExercise(key);
-    exercise.samples = String.join("#", data.get("ex" + id + "_samples[]"));
-    exercise.text = data.get("ex" + id + "_text")[0];
-    exercise.save();
+  public SQLAdmin(Util theUtil, @NamedDatabase("sqlselectroot") Database theSqlSelect,
+      @NamedDatabase("sqlotherroot") Database theSqlOther) {
+    super(theUtil, "sql", new SqlExerciseReader());
+    sqlSelect = theSqlSelect;
+    sqlOther = theSqlOther;
   }
 
   @Override
   public Result create() {
-    Map<String, String[]> data = request().body().asFormUrlEncoded();
+    List<SqlScenario> results = exerciseReader.readStandardScenarioes();
+    saveScenarioes(results);
+    return ok(sqlpreview.render(UserManagement.getCurrentUser(), results));
+  }
 
-    String shortname = data.get("shortname")[0];
-    String longname = data.get("longname")[0];
-    String scriptfile = data.get("scriptfile")[0];
+  @Override
+  protected void saveExercises(List<SqlExercise> exercises) {
+    for(SqlExercise ex: exercises)
+      ex.save();
+  }
 
-    SqlScenario newScenario = SqlScenario.finder.byId(shortname);
-    if(newScenario == null)
-      newScenario = new SqlScenario(shortname);
-    newScenario.longName = longname;
-    newScenario.scriptFile = scriptfile;
-    newScenario.save();
-
-    Logger.debug("Data: " + data);
-
-    String[] ids = data.get("id[]");
-    for(String id: ids) {
-      readExercise(shortname, Integer.parseInt(id), data);
+  private void saveScenarioes(List<SqlScenario> results) {
+    for(SqlScenario result: results) {
+      result.save();
+      // FIXME: run script to create database
+      exerciseReader.runCreateScript(sqlSelect, result);
+      exerciseReader.runCreateScript(sqlOther, result);
+      saveExercises(result.exercises);
     }
-
-    // FIXME: render success!
-    return ok("This has still got to be implemented...");
   }
 
   @Override
@@ -81,9 +70,9 @@ public class SQLAdmin extends AdminController {
     Path saveTo = Paths.get(savingDir.toString(), uploadedFile.getFilename());
     saveUploadedFile(savingDir, pathToUploadedFile, saveTo);
 
-    ScenarioCreationResult scenarioResult = SqlScenarioHandler.handleScenario(saveTo);
+    List<SqlScenario> results = exerciseReader.readScenarioes(saveTo);
 
-    return ok(sqlpreview.render(UserManagement.getCurrentUser(), scenarioResult));
+    return ok(sqlpreview.render(UserManagement.getCurrentUser(), results));
   }
 
   @Override

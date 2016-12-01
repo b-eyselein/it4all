@@ -1,7 +1,5 @@
 package controllers.js;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,8 +14,6 @@ import model.JsCorrector;
 import model.JsExercise;
 import model.JsExercise.JsDataType;
 import model.IntExerciseIdentifier;
-import model.JsExerciseReader;
-import model.JsTest;
 import model.Util;
 import model.logging.ExerciseCompletionEvent;
 import model.logging.ExerciseCorrectionEvent;
@@ -37,22 +33,9 @@ import views.html.jsoverview;
 
 public class JS extends ExerciseController<IntExerciseIdentifier> {
   
-  private static String res = "conf/resources/js";
-  
   @Inject
   public JS(Util theUtil, FormFactory theFactory) {
     super(theUtil, theFactory);
-    
-    // FIXME: implement and test!
-    Path jsonFile = Paths.get(res, "exercises.json");
-    Path jsonSchemaFile = Paths.get(res, "exerciseSchema.json");
-    
-    List<JsExercise> exercises = (new JsExerciseReader()).readExercises(jsonFile, jsonSchemaFile);
-    for(JsExercise ex: exercises) {
-      ex.save();
-      for(JsTest test: ex.functionTests)
-        test.save();
-    }
   }
   
   private static List<CommitedTestData> extractAndValidateTestData(DynamicForm form, JsExercise exercise) {
@@ -106,6 +89,25 @@ public class JS extends ExerciseController<IntExerciseIdentifier> {
     }
   }
   
+  @Override
+  protected CompleteResult correct(Request request, User user, IntExerciseIdentifier identifier) {
+    // FIXME: TEST!
+    JsExercise exercise = JsExercise.finder.byId(identifier.id);
+    
+    // FIXME: Time out der Ausführung
+    
+    // Read commited solution and custom test data from request
+    DynamicForm form = factory.form().bindFromRequest();
+    String learnerSolution = form.get("editorContent");
+    
+    List<CommitedTestData> userTestData = extractAndValidateTestData(form, exercise);
+    // TODO: evtl. Anzeige aussortiertes TestDaten?
+    userTestData = userTestData.stream().filter(data -> data.isOk()).collect(Collectors.toList());
+    // TODO: evt. Speichern der Lösung und Laden bei erneuter Bearbeitung?
+    
+    return JsCorrector.correct(exercise, learnerSolution, userTestData);
+  }
+  
   public Result exercise(IntExerciseIdentifier identifier) {
     User user = UserManagement.getCurrentUser();
     JsExercise exercise = JsExercise.finder.byId(identifier.id);
@@ -131,24 +133,5 @@ public class JS extends ExerciseController<IntExerciseIdentifier> {
     List<CommitedTestData> testData = extractAndValidateTestData(factory.form().bindFromRequest(), exercise);
     
     return ok(Json.toJson(testData));
-  }
-  
-  @Override
-  protected CompleteResult correct(Request request, User user, IntExerciseIdentifier identifier) {
-    // FIXME: TEST!
-    JsExercise exercise = JsExercise.finder.byId(identifier.id);
-    
-    // FIXME: Time out der Ausführung
-    
-    // Read commited solution and custom test data from request
-    DynamicForm form = factory.form().bindFromRequest();
-    String learnerSolution = form.get("editorContent");
-    
-    List<CommitedTestData> userTestData = extractAndValidateTestData(form, exercise);
-    // TODO: evtl. Anzeige aussortiertes TestDaten?
-    userTestData = userTestData.stream().filter(data -> data.isOk()).collect(Collectors.toList());
-    // TODO: evt. Speichern der Lösung und Laden bei erneuter Bearbeitung?
-    
-    return JsCorrector.correct(exercise, learnerSolution, userTestData);
   }
 }

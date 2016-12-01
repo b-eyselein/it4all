@@ -1,0 +1,165 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"type": "array",
+	"items": 
+	{
+		"type": "object",
+		"properties": 
+		{
+			"shortname": 
+			{
+				"type": "string"
+			},
+
+			"longname": 
+			{
+				"type": "string"
+			},
+
+			"scriptfile": 
+			{
+				"type": "string"
+			},
+
+			"exercises": 
+			{
+				"type": "object",
+				"properties": 
+				{
+					"SELECT": 
+					{
+						"type": "array",
+						"items": 
+						{
+							"type": "object",
+							"properties": 
+							{
+								"text": 
+								{
+									"type": "string"
+								},
+
+								"samplesolutions": 
+								{
+									"type": "array",
+									"items": 
+									{
+										
+									}
+								}
+							}
+						}
+					},
+
+					"CREATE": 
+					{
+						"type": "array",
+						"items": 
+						{
+							"type": "object",
+							"properties": 
+							{
+								"text": 
+								{
+									"type": "string"
+								},
+
+								"samplesolutions": 
+								{
+									"type": "array",
+									"items": 
+									{
+										
+									}
+								}
+							}
+						}
+					},
+
+					"UPDATE": 
+					{
+						"type": "array",
+						"items": 
+						{
+							"type": "object",
+							"properties": 
+							{
+								"text": 
+								{
+									"type": "string"
+								},
+
+								"samplesolutions": 
+								{
+									"type": "array",
+									"items": 
+									{
+										
+									}
+								}
+							}
+						}
+					},
+
+					"INSERT": 
+					{
+						"type": "array",
+						"items": 
+						{
+							"type": "object",
+							"properties": 
+							{
+								"text": 
+								{
+									"type": "string"
+								},
+
+								"samplesolutions": 
+								{
+									"type": "array",
+									"items": 
+									{
+										
+									}
+								}
+							}
+						}
+					},
+
+					"DELETE": 
+					{
+						"type": "array",
+						"items": 
+						{
+							"type": "object",
+							"properties": 
+							{
+								"text": 
+								{
+									"type": "string"
+								},
+
+								"samplesolutions": 
+								{
+									"type": "array",
+									"items": 
+									{
+										
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+
+		"required": 
+		[
+			"shortname"
+		]
+	},
+
+	"minItems": 1,
+	"uniqueItems": true
+}

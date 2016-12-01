@@ -14,13 +14,39 @@ import model.exercisereading.ExerciseReader;
 
 public class SpreadExerciseReader extends ExerciseReader<SpreadExercise> {
   
-  private static final String BASE_DIR = "conf/resources/spread/";
-  private static final String EXERCISE_TYPE = "spread";
   private static final List<String> FILE_ENDINGS = Arrays.asList("xlsx", "ods");
   
-  public static void checkFiles(Util util, SpreadExercise exercise) {
+  public SpreadExerciseReader() {
+    super("spread");
+  }
+  
+  private void checkFile(Util util, SpreadExercise exercise, String fileName, String fileEnding) {
+    createSampleDirectory(util);
+
+    Path fileToCheck = util.getSampleFileForExercise(exerciseType, fileName + "." + fileEnding);
+    if(fileToCheck.toFile().exists())
+      return;
+    
+    READING_LOGGER.warn("The file \"" + fileToCheck + "\" for spread exercise " + exercise.id
+        + " does not exist. Trying to create this file...");
+    
+    Path providedFile = Paths.get(BASE_DIR, exerciseType, fileName + "." + fileEnding);
+    if(!providedFile.toFile().exists()) {
+      READING_LOGGER.error("Konnte Datei nicht erstellen: Keine Lösungsdatei mitgeliefert in " + providedFile);
+      return;
+    }
+    
+    try {
+      Files.copy(providedFile, fileToCheck, StandardCopyOption.REPLACE_EXISTING);
+      READING_LOGGER.info("Die Lösungsdatei wurde erstellt.");
+    } catch (IOException e) {
+      READING_LOGGER.error("Die Lösungsdatei konnte nicht erstellt werden!", e);
+    }
+  }
+  
+  public void checkFiles(Util util, SpreadExercise exercise) {
     // Make sure directory exists
-    Path sampleFileDirectory = util.getSampleDirForExerciseType(EXERCISE_TYPE);
+    Path sampleFileDirectory = util.getSampleDirForExerciseType(exerciseType);
     if(!sampleFileDirectory.toFile().exists()) {
       try {
         Files.createDirectories(sampleFileDirectory);
@@ -34,28 +60,6 @@ public class SpreadExerciseReader extends ExerciseReader<SpreadExercise> {
     for(String fileEnding: FILE_ENDINGS) {
       checkFile(util, exercise, exercise.sampleFilename, fileEnding);
       checkFile(util, exercise, exercise.templateFilename, fileEnding);
-    }
-  }
-  
-  private static void checkFile(Util util, SpreadExercise exercise, String fileName, String fileEnding) {
-    Path fileToCheck = util.getSampleFileForExercise(EXERCISE_TYPE, fileName + "." + fileEnding);
-    if(fileToCheck.toFile().exists())
-      return;
-    
-    READING_LOGGER.warn("The file \"" + fileToCheck + "\" for spread exercise " + exercise.id
-        + " does not exist. Trying to create this file...");
-    
-    Path providedFile = Paths.get(BASE_DIR, fileName + "." + fileEnding);
-    if(!providedFile.toFile().exists()) {
-      READING_LOGGER.error("Konnte Datei nicht erstellen: Keine Lösungsdatei mitgeliefert in " + providedFile);
-      return;
-    }
-    
-    try {
-      Files.copy(providedFile, fileToCheck, StandardCopyOption.REPLACE_EXISTING);
-      READING_LOGGER.info("Die Lösungsdatei wurde erstellt.");
-    } catch (IOException e) {
-      READING_LOGGER.error("Die Lösungsdatei konnte nicht erstellt werden!", e);
     }
   }
   
@@ -76,7 +80,7 @@ public class SpreadExerciseReader extends ExerciseReader<SpreadExercise> {
     exercise.title = titleNode.asText();
     exercise.sampleFilename = sampleFileNode.asText();
     exercise.templateFilename = templateFileNode.asText();
-
+    
     return exercise;
   }
 }

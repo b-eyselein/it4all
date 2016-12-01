@@ -1,0 +1,155 @@
+[
+	{
+		"shortname": "employee",
+		"longname": "Angestellte",
+		"scriptfile": "employee.sql",
+		"exercises": 
+		{
+			"SELECT": 
+			[
+				{
+					"id": 1,
+					"text": "Wie viele Angestellte hat die Firma? Benennen Sie das Ergebnis als 'Anzahl'",
+					"samplesolutions": 
+					[
+						"SELECT COUNT(*) AS Anzahl FROM Employee",
+						"SELECT COUNT(employeeOID) AS Anzahl FROM Employee"
+					]
+				},
+
+				{
+					"id": 2,
+					"text": "Welche Angestelltennummer (employeeOID) hat Max Becker?",
+					"samplesolutions": 
+					[
+						"SELECT employeeOID FROM Employee WHERE firstname = 'Max' AND lastname = 'Becker'",
+						"SELECT employeeOID FROM Employee WHERE lastname = 'Becker' AND firstname = 'Max'"
+					]
+				},
+
+				{
+					"id": 3,
+					"text": "Welche Emailadresse hat Max Becker für die Arbeit?",
+					"samplesolutions": 
+					[
+						"SELECT emailaddress FROM Employee JOIN Emailaddress ON Employee.employeeOID = Emailaddress.employeeOID WHERE firstname = 'Max' AND lastname = 'Becker'",
+						"SELECT emailaddress FROM Employee, Emailaddress WHERE Employee.employeeOID = Emailaddress.employeeOID AND firstname = 'Max' AND lastname = 'Becker'",
+						"SELECT emailaddress FROM Employee emp, Emailaddress email WHERE emp.employeeOID = email.employeeOID AND firstname = 'Max' AND lastname = 'Becker'"
+					]
+				},
+
+				{
+					"id": 4,
+					"text": "Geben Sie die Nutzernamen aller Angestellten alphabetisch geordnet aus!",
+					"samplesolutions": 
+					[
+						"SELECT username from Employee ORDER BY username"
+					]
+				},
+
+				{
+					"id": 5,
+					"text": "Wie viele Untergebene hat jeder Chef? Geben Sie jeweils die EmployeeOID des Chefs und die Anzahl aus!",
+					"samplesolutions": 
+					[
+						"SELECT chefOID, count(employeeOID) FROM Employee WHERE chefOID IS NOT NULL GROUP BY chefOID"
+					]
+				}
+			],
+
+			"CREATE": 
+			[
+				{
+					"id": 1,
+					"text": "Erstellen Sie das CREATE TABLE-Skript für die Tabelle Employee!",
+					"samplesolutions": 
+					[
+						"CREATE TABLE Employee (employeeOID INT PRIMARY KEY, firstname VARCHAR(50), lastname VARCHAR(50), username VARCHAR(20), chefOID INT, FOREIGN KEY (chefOID) REFERENCES Employee(employeeOID));"
+					]
+				}
+			],
+
+			"UPDATE": 
+			[
+				{
+					"id": 1,
+					"text": "Der Angestellte mit der OID 8 arbeitet jetzt für den Angestellten mit der OID 3. Aktualisieren Sie die Datenbank!",
+					"samplesolutions": 
+					[
+						"UPDATE Employee SET chefOID = 3 WHERE employeeOID = 8"
+					],
+
+					"validation": "SELECT * FROM Employee"
+				}
+			],
+
+			"DELETE": 
+			[
+				{
+					"id": 1,
+					"text": "Der Angestellte mit der OID 7 hat gekündigt. Löschen Sie ihn aus der Angestelltentabelle.",
+					"samplesolutions": 
+					[
+						"DELETE FROM Employee WHERE employeeOID = 7"
+					],
+
+					"validation": "SELECT * FROM Employee"
+				}
+			],
+
+			"INSERT": 
+			[
+				{
+					"id": 1,
+					"text": "Es gibt eine neue Angestellte mit Namen Tina Sattler. Diese arbeitet für die Person mit der OID 2 und soll als OID 9 und als Nutzernamen tina_sattler bekommen.",
+					"samplesolutions": 
+					[
+						"INSERT INTO Employee VALUES (9, 'Tina', 'Sattler', 'tina_sattler', 2)",
+						"INSERT INTO Employee (`employeeOID`, `firstname`, `lastname`, `username`, `chefOID`) VALUES (9, 'Tina', 'Sattler', 'tina_sattler', 2)"
+					],
+
+					"validation": "SELECT * FROM Employee"
+				}
+			]
+		}
+	},
+
+	{
+		"shortname": "oldtimer",
+		"longname": "Oldtimerverzeichnis",
+		"scriptfile": " oldtimer.sql",
+		"exercises": 
+		{
+			"SELECT": 
+			[
+				{
+					"id": 1,
+					"text": "Bestimmen Sie die Namen aller Marken!",
+					"samplesolutions": 
+					[
+						"SELECT name FROM marke"
+					]
+				},
+
+				{
+					"id": 2,
+					"text": "Bestimmen Sie das Gründungsjahr der Marke BMW!",
+					"samplesolutions": 
+					[
+						"SELECT gruendung FROM marke WHERE name = 'BMW'",
+						"SELECT gruendung FROM marke WHERE marke.name = 'BMW'"
+					]
+				},
+
+				{
+					"id": 3,
+					"text": "Welche der Marken ist die älteste? Geben Sie nur den Namen aus!",
+					"samplesolutions": 
+					[
+						"SELECT name FROM marke ORDER BY gruendung ASC LIMIT 1"
+					]
+				}
+			]
+		}
+	}
+]

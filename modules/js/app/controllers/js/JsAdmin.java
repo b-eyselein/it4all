@@ -19,24 +19,27 @@ import play.mvc.Http.MultipartFormData.FilePart;
 import views.html.jspreview;
 import views.html.jsupload;
 
-public class JsAdmin extends AdminController {
+public class JsAdmin extends AdminController<JsExercise, JsExerciseReader> {
   
   @Inject
   public JsAdmin(Util theUtil) {
-    super(theUtil, "js");
+    super(theUtil, "js", new JsExerciseReader());
   }
   
   @Override
   public Result create() {
-    List<JsExercise> exercises = (new JsExerciseReader()).readExercises(jsonFile, jsonSchemaFile);
-
+    List<JsExercise> exercises = exerciseReader.readStandardExercises();
+    saveExercises(exercises);
+    return ok(jspreview.render(UserManagement.getCurrentUser(), exercises));
+  }
+  
+  @Override
+  protected void saveExercises(List<JsExercise> exercises) {
     for(JsExercise ex: exercises) {
       ex.save();
       for(JsTest test: ex.functionTests)
         test.save();
     }
-
-    return ok(jspreview.render(UserManagement.getCurrentUser(), exercises));
   }
   
   @Override
@@ -52,10 +55,8 @@ public class JsAdmin extends AdminController {
     Path jsonFile = Paths.get(savingDir.toString(), uploadedFile.getFilename());
     saveUploadedFile(savingDir, pathToUploadedFile, jsonFile);
     
-    List<JsExercise> exercises = (new JsExerciseReader()).readExercises(jsonFile, jsonSchemaFile);
-    for(JsExercise ex: exercises)
-      ex.save();
-    
+    List<JsExercise> exercises = exerciseReader.readExercises(jsonFile);
+    saveExercises(exercises);
     return ok(jspreview.render(UserManagement.getCurrentUser(), exercises));
   }
   

@@ -18,20 +18,25 @@ import play.mvc.Result;
 import views.html.webpreview;
 import views.html.webupload;
 
-public class WebAdmin extends AdminController {
+public class WebAdmin extends AdminController<WebExercise, WebExerciseReader> {
   
   @Inject
   public WebAdmin(Util theUtil) {
-    super(theUtil, "web");
+    super(theUtil, "web", new WebExerciseReader());
   }
 
   @Override
   public Result create() {
-    List<WebExercise> exercises = (new WebExerciseReader()).readExercises(jsonFile, jsonSchemaFile);
+    List<WebExercise> exercises = exerciseReader.readStandardExercises();
+    saveExercises(exercises);
+    return ok(webpreview.render(UserManagement.getCurrentUser(), exercises));
+  }
+
+  @Override
+  protected void saveExercises(List<WebExercise> exercises) {
+
     for(WebExercise ex: exercises)
       ex.save();
-
-    return ok(webpreview.render(UserManagement.getCurrentUser(), exercises));
   }
 
   @Override
@@ -47,10 +52,8 @@ public class WebAdmin extends AdminController {
     Path jsonFile = Paths.get(savingDir.toString(), uploadedFile.getFilename());
     saveUploadedFile(savingDir, pathToUploadedFile, jsonFile);
 
-    List<WebExercise> exercises = (new WebExerciseReader()).readExercises(jsonFile, jsonSchemaFile);
-    for(WebExercise ex: exercises)
-      ex.save();
-
+    List<WebExercise> exercises = exerciseReader.readExercises(jsonFile);
+    saveExercises(exercises);
     return ok(webpreview.render(UserManagement.getCurrentUser(), exercises));
   }
 

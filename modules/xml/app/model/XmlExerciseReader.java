@@ -13,12 +13,14 @@ import model.exercisereading.ExerciseReader;
 
 public class XmlExerciseReader extends ExerciseReader<XmlExercise> {
 
-  private static final String EXERCISE_TYPE = "xml";
-  private static final String BASE_DIR = "conf/resources/xml/";
+  public XmlExerciseReader() {
+    super("xml");
+  }
 
   public void checkOrCreateSampleFile(Util util, XmlExercise exercise) {
-    // FIXME: test on clean instance without folder /var/lib/it4all...
-    Path sampleFile = Paths.get(util.getSampleFileForExercise(EXERCISE_TYPE, exercise.referenceFileName).toString()
+    createSampleDirectory(util);
+
+    Path sampleFile = Paths.get(util.getSampleFileForExercise(exerciseType, exercise.referenceFileName).toString()
         + exercise.getReferenceFileEnding());
     if(sampleFile.toFile().exists())
       return;
@@ -26,8 +28,10 @@ public class XmlExerciseReader extends ExerciseReader<XmlExercise> {
     READING_LOGGER.warn("Die Lösungsdatei für Xml-Aufgabe " + exercise.id + " \"" + sampleFile
         + "\" existiert nicht! Versuche, Datei zu erstellen...");
 
-    Path providedFile = Paths.get(BASE_DIR, exercise.referenceFileName + exercise.getReferenceFileEnding());
-    if(!Files.exists(providedFile)) {
+    Path providedFile = Paths.get(BASE_DIR, exerciseType,
+        exercise.referenceFileName + exercise.getReferenceFileEnding());
+
+    if(!providedFile.toFile().exists()) {
       READING_LOGGER.error("Konnte Datei nicht erstellen: Keine Lösungsdatei mitgeliefert...");
       return;
     }
