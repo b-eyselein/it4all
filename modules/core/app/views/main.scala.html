@@ -27,7 +27,6 @@
           <li class="dropdown">
           	<a class="dropdown-toggle" data-toggle="dropdown" href="#">Web <span class="caret"></span></a>
 			<ul class="dropdown-menu">
-              <li><a href="@controllers.xml.routes.XML.index()">XML</a></li>
               <li><a href="@controllers.web.routes.HTML.index()">Html &amp; Css</a></li>
               <li><a href="@controllers.web.routes.JSWeb.index">Javascript</a></li>
             </ul>
@@ -41,6 +40,8 @@
           </li>
           
           <li><a href="@controllers.sql.routes.SQL.index()">SQL</a></li>
+          
+          <li><a href="@controllers.xml.routes.XML.index()">XML</a></li>
           
           <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Allgemeiner Teil <span class="caret"></span></a>
@@ -60,8 +61,16 @@
           }
           <li><a href="@controllers.routes.Evaluation.index()"><span class="glyphicon glyphicon-pencil"></span>
               Evaluation</a></li>
-          <li><a href="@controllers.routes.UserController.index()"><span class="glyphicon glyphicon-user"></span>
-              @user.name</a></li>
+              
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-user"></span>
+              @user.name <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="@controllers.routes.UserController.index()">Bewertungen</a></li>
+              <li><a href="@controllers.routes.UserController.preferences()">Präferenzen</a></li>
+          	</ul>
+          </li>
+          
           <li><a href="@controllers.core.routes.UserManagement.logout()"><span
               class="glyphicon glyphicon-log-out"></span> Logout</a></li>
         </ul>

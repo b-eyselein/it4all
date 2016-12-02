@@ -10,7 +10,8 @@ GET    /                  controllers.Application.index()
 
 # User
 GET    /user              controllers.UserController.index()
-POST   /options           controllers.UserController.saveOptions()
+GET    /preferences       controllers.UserController.preferences()
+POST   /preferences       controllers.UserController.saveOptions()
 
 # Admin
 GET    /admin             controllers.AdminController.index()

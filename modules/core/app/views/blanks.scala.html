@@ -1,0 +1,10 @@
+@(user: model.user.User, elements: List[model.blanks.BlankObject])
+
+@main("HTML-Test", user) {
+<div class="container">
+  <div class="page-header">
+    <h1>L&uuml;ckentext</h1>
+  </div>
+  <pre>@for(obj <- elements) {@obj.render()}</pre>
+</div>
+}

@@ -11,7 +11,8 @@ import play.data.FormFactory;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
-import views.html.user;
+import views.html.user.user;
+import views.html.user.preferences;
 
 @Security.Authenticated(Secured.class)
 public class UserController extends Controller {
@@ -24,8 +25,11 @@ public class UserController extends Controller {
   }
 
   public Result index() {
-    User theUser = UserManagement.getCurrentUser();
-    return ok(user.render("User", theUser, theUser.gradings));
+    return ok(user.render("User", UserManagement.getCurrentUser()));
+  }
+  
+  public Result preferences() {
+    return ok(preferences.render("Präferenzen", UserManagement.getCurrentUser()));
   }
 
   public Result saveOptions() {
