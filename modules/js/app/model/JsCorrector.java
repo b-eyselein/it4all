@@ -13,6 +13,7 @@ import model.JsExercise.JsDataType;
 import model.result.CompleteResult;
 import model.result.EvaluationFailed;
 import model.result.EvaluationResult;
+import model.user.Settings;
 import play.Logger;
 
 public class JsCorrector {
@@ -21,8 +22,8 @@ public class JsCorrector {
     
   }
   
-  public static CompleteResult correct(JsExercise exercise, String learnerSolution,
-      List<CommitedTestData> userTestData) {
+  public static CompleteResult correct(JsExercise exercise, String learnerSolution, List<CommitedTestData> userTestData,
+      Settings.TODO todo) {
     ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
     
     // TODO: Musteroutput mit gegebener Musterlösung berechnen statt angeben?
@@ -33,7 +34,8 @@ public class JsCorrector {
     } catch (ScriptException e) { // NOSONAR
       return new CompleteResult(learnerSolution,
           Arrays.asList(new EvaluationFailed("Es gab einen Fehler beim Einlesen ihrer Lösung:",
-              "<pre>" + e.getLocalizedMessage() + "</pre>")));
+              "<pre>" + e.getLocalizedMessage() + "</pre>")),
+          todo);
     }
     
     List<ITestData> testData = new LinkedList<>();
@@ -41,7 +43,7 @@ public class JsCorrector {
     testData.addAll(userTestData);
     
     List<EvaluationResult> results = testData.stream().map(test -> test.evaluate(engine)).collect(Collectors.toList());
-    return new CompleteResult(learnerSolution, results);
+    return new CompleteResult(learnerSolution, results, todo);
     
   }
   

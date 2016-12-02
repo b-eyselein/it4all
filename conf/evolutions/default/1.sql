@@ -126,7 +126,9 @@ create table sql_scenario (
 create table users (
   name                          varchar(255) not null,
   role                          varchar(5),
+  todo                          varchar(9),
   constraint ck_users_role check ( role in ('USER','ADMIN')),
+  constraint ck_users_todo check ( todo in ('SHOW','AGGREGATE','HIDE')),
   constraint pk_users primary key (name)
 );
 

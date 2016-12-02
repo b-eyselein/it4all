@@ -5,11 +5,31 @@
   <div class="page-header">
     <h1>Optionen</h1>
   </div>
-  <h3>Ihre Bewertungen:</h3>
+  
+  <form class="form-horizontal" action="@controllers.routes.UserController.saveOptions()" method="post">
+  
+    <fieldset class="form-group">
+      <legend>Bestandene Tests...</legend>
+      @for(todo <- model.user.Settings.TODO.values()) {
+      <div class="form-check">
+        <label class="form-check-label">
+          <input type="radio" class="form-check-input" name="posTests"
+          value="@todo" @if(todo == user.settings.todo) {checked}> @todo.getGerman()
+        </label>
+      </div>
+      }
+    </fieldset>
+    
+    <button type="submit" class="btn btn-default">Einstellungen speichern</button>    
+  </form>
+
+
+
+  @* <h3>Ihre Bewertungen:</h3>
   @for(grad <- gradings) {
   <div class="panel panel-default">
     <div class="panel-body">@@grad.exercise.id: @grad.points / @@grad.exercise.getMaxPoints() Punkte</div>
   </div>
-  }
+  } *@
 </div>
 }

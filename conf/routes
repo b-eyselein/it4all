@@ -10,6 +10,9 @@ GET    /                  controllers.Application.index()
 
 # User
 GET    /user              controllers.UserController.index()
+POST   /options           controllers.UserController.saveOptions()
+
+# Admin
 GET    /admin             controllers.AdminController.index()
 
 # Python Test
