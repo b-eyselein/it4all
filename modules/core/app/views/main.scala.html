@@ -15,18 +15,42 @@
   <nav class="navbar navbar-default">
     <div class="container-fluid">
       <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span> 
+      	</button>
         <a class="navbar-brand" href="/">it4all</a>
       </div>
-      <div>
+      <div class="collapse navbar-collapse" id="myNavbar">
         <ul class="nav navbar-nav">
-          <li><a href="@controllers.web.routes.HTML.index()">Html &amp; Css</a></li>
-          <li><a href="@controllers.web.routes.JSWeb.index">Javascript - Web</a></li>
-          <li><a href="@controllers.js.routes.JS.index">Javascript - Programmiersprache</a></li>
+          <li class="dropdown">
+          	<a class="dropdown-toggle" data-toggle="dropdown" href="#">Web <span class="caret"></span></a>
+			<ul class="dropdown-menu">
+              <li><a href="@controllers.xml.routes.XML.index()">XML</a></li>
+              <li><a href="@controllers.web.routes.HTML.index()">Html &amp; Css</a></li>
+              <li><a href="@controllers.web.routes.JSWeb.index">Javascript</a></li>
+            </ul>
+          </li>
+          
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Programmiersprachen <span class="caret"></span></a>
+   		    <ul class="dropdown-menu">
+   		      <li><a href="@controllers.js.routes.JS.index">Javascript</a></li>
+            </ul>
+          </li>
+          
           <li><a href="@controllers.sql.routes.SQL.index()">SQL</a></li>
-          <li><a href="@controllers.xml.routes.XML.index()">XML</a></li>
-          <li><a href="@controllers.nary.routes.Nary.index()">Zahlensysteme</a></li>
-          <li><a href="@controllers.bool.routes.Bool.index()">Boolesche Algebra</a></li>
-          <li><a href="@controllers.spread.routes.Spread.index()">Tabellenkalkulation</a></li>
+          
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Allgemeiner Teil <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="@controllers.nary.routes.Nary.index()">Zahlensysteme</a></li>
+              <li><a href="@controllers.bool.routes.Bool.index()">Boolesche Algebra</a></li>
+              <li><a href="@controllers.spread.routes.Spread.index()">Tabellenkalkulation</a></li>
+            </ul>
+          </li>
+
           <!-- <li><a href="@controllers.mindmap.routes.Mindmap.index()">MindMap</a></li> -->
         </ul>
         <ul class="nav navbar-nav navbar-right">
