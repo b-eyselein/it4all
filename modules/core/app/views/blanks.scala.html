@@ -1,10 +1,16 @@
-@(user: model.user.User, elements: List[model.blanks.BlankObject])
+@(user: model.user.User, exercise: model.blanks.BlanksExercise)
 
 @main("HTML-Test", user) {
+<script src="@routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
+<script src="@routes.Assets.versioned("javascripts/blanks.js")"></script>
+</script>
 <div class="container">
   <div class="page-header">
     <h1>L&uuml;ckentext</h1>
   </div>
-  <pre>@for(obj <- elements) {@obj.render()}</pre>
+  <form class="form-inline">
+    <pre>@exercise.render()</pre>
+  </form>
+  <button class="btn btn-default" onclick="testTheSolution('@controllers.xml.routes.XML.correctBlanks(exercise.getId())')">Eingaben testen...</button>
 </div>
 }

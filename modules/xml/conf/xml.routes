@@ -1,15 +1,16 @@
 # creation of exercises
-GET    /upload   controllers.xml.XmlAdmin.uploadForm()
-POST   /upload   controllers.xml.XmlAdmin.uploadFile()
-GET    /create   controllers.xml.XmlAdmin.create()
+GET    /upload         controllers.xml.XmlAdmin.uploadForm()
+POST   /upload         controllers.xml.XmlAdmin.uploadFile()
+GET    /create         controllers.xml.XmlAdmin.create()
 
 # Test blanks...
-GET    /blanks   controllers.xml.XML.testBlanks()
+GET    /blanks         controllers.xml.XML.testBlanks()
+PUT    /blanks/:exId   controllers.xml.XML.correctBlanks(exId: Int)
 
 # exercises
-GET    /         controllers.xml.XML.index()
+GET    /               controllers.xml.XML.index()
 
-GET    /:exId    controllers.xml.XML.exercise(exId: model.IntExerciseIdentifier)
+GET    /:exId          controllers.xml.XML.exercise(exId: model.IntExerciseIdentifier)
 
-PUT    /:exId    controllers.xml.XML.commit(exId: model.IntExerciseIdentifier)
-POST   /:exId    controllers.xml.XML.commit(exId: model.IntExerciseIdentifier)
+PUT    /:exId          controllers.xml.XML.commit(exId: model.IntExerciseIdentifier)
+POST   /:exId          controllers.xml.XML.commit(exId: model.IntExerciseIdentifier)

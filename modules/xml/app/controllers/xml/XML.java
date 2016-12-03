@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,9 +22,7 @@ import model.XmlCorrector;
 import model.XmlErrorType;
 import model.XmlExercise;
 import model.XmlExercise.XmlExType;
-import model.blanks.BlankInput;
-import model.blanks.BlankObject;
-import model.blanks.BlankText;
+import model.blanks.BlanksExercise;
 import model.logging.ExerciseCompletionEvent;
 import model.logging.ExerciseCorrectionEvent;
 import model.logging.ExerciseStartEvent;
@@ -108,6 +107,20 @@ public class XML extends ExerciseController<IntExerciseIdentifier> {
     List<EvaluationResult> elementResults = correctExercise(xml, grammar, exercise);
     
     return new XmlCorrectionResult(learnerSolution, elementResults);
+  }
+  
+  public Result correctBlanks(int id) {
+    DynamicForm form = factory.form().bindFromRequest();
+    int inputCount = Integer.parseInt(form.get("count"));
+    
+    List<String> inputs = new ArrayList<>(inputCount);
+    for(int count = 0; count < inputCount; count++)
+      inputs.add(form.get("inp" + count));
+    
+    BlanksExercise exercise = new BlanksExercise();
+    exercise.correct(inputs);
+    
+    return ok("test");
   }
   
   private List<EvaluationResult> correctExercise(Path xml, Path grammar, XmlExercise exercise) {
@@ -225,14 +238,7 @@ public class XML extends ExerciseController<IntExerciseIdentifier> {
   }
   
   public Result testBlanks() {
-    // @formatter:off
-    List<BlankObject> objects = Arrays.asList(
-        new BlankText("&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;\n&lt;!DOCTYPE root SYSTEM \"doctype.dtd\"&gt;\n"),
-        new BlankText("&lt;"), new BlankInput(4), new BlankText("&gt;\n"),
-        new BlankText("&lt;/"), new BlankInput(4), new BlankText("&gt;"));
-    // @formatter:on
-    
-    return ok(blanks.render(UserManagement.getCurrentUser(), objects));
+    return ok(blanks.render(UserManagement.getCurrentUser(), new BlanksExercise()));
   }
   
 }
