@@ -1,29 +1,30 @@
 package model.blanks;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import model.exercise.Exercise;
-import play.Logger;
+import model.exercise.Success;
 import play.twirl.api.Html;
 
 public class BlanksExercise implements Exercise {
 
-  // @formatter:off
-  private List<BlankObject> objects = Arrays.asList(
-      new BlankObject("&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;\n&lt;!DOCTYPE root SYSTEM \"doctype.dtd\"&gt;\n&lt;", 4, "&gt;", "root"),
-      new BlankObject("&lt;", 5, "&gt;", "/root"));
-  // @formatter:on
+  private List<BlankObject> objects = Arrays.asList(new BlankObject(1,
+      "&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;\n&lt;!DOCTYPE root SYSTEM \"doctype.dtd\"&gt;\n&lt;", 4, "&gt;",
+      "root"), new BlankObject(2, "&lt;", 5, "&gt;", "/root"));
 
-  public void correct(List<String> inputs) {
-    // TODO Auto-generated method stub
+  public List<Success> correct(List<String> inputs) {
     if(inputs.size() != objects.size())
       throw new IllegalArgumentException("Es waren zu viele oder zu wenige Input-Elemente!");
 
-    for(int i = 0; i < inputs.size(); i++) {
-      Logger.debug("Lernerlösung: >>" + inputs.get(i) + "<< :: Erwartet: >>" + objects.get(i).getSolution() + "<<");
-    }
+    List<Success> results = new ArrayList<>(inputs.size());
+
+    for(int i = 0; i < inputs.size(); i++)
+      results.add(inputs.get(i).equals(objects.get(i).getSolution()) ? Success.COMPLETE : Success.NONE);
+
+    return results;
   }
 
   @Override

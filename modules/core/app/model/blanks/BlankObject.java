@@ -2,12 +2,14 @@ package model.blanks;
 
 public class BlankObject {
 
+  private int id;
   private String preText;
   private int length;
   private String solution;
   private String postText;
 
-  public BlankObject(String thePreText, int theLength, String thePostText, String theSolution) {
+  public BlankObject(int theId, String thePreText, int theLength, String thePostText, String theSolution) {
+    id = theId;
     preText = thePreText;
     length = theLength;
     postText = thePostText;
@@ -23,7 +25,8 @@ public class BlankObject {
   }
 
   public String render() {
-    return preText + "<div class=\"form-group\"><input class=\"form-control\" type=\"text\" size=\"" + length
-        + "\" + maxlength=\"" + length + "\"></div>" + postText;
+    return preText + "<div class=\"form-group\"><input name=\"inp" + id + "\" id=\"inp" + id
+        + "\" class=\"form-control\" type=\"text\" size=\"" + length + "\" maxlength=\"" + length + "\"></div>"
+        + postText;
   }
 }
