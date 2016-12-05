@@ -19,19 +19,42 @@ import views.html.spreadpreview;
 import views.html.spreadupload;
 
 public class SpreadAdmin extends AdminController<SpreadExercise, SpreadExerciseReader> {
-  
+
   @Inject
   public SpreadAdmin(Util theUtil) {
     super(theUtil, "spread", new SpreadExerciseReader());
   }
-  
+
   @Override
-  public Result create() {
+  public Result readStandardExercises() {
     List<SpreadExercise> exercises = exerciseReader.readStandardExercises();
     saveExercises(exercises);
     return ok(spreadpreview.render(UserManagement.getCurrentUser(), exercises));
   }
-  
+
+  @Override
+  public Result uploadFile() {
+    MultipartFormData<File> body = request().body().asMultipartFormData();
+    FilePart<File> uploadedFile = body.getFile(BODY_FILE_NAME);
+    if(uploadedFile == null)
+      return badRequest("Fehler!");
+
+    Path pathToUploadedFile = uploadedFile.getFile().toPath();
+    Path savingDir = Paths.get(util.getRootSolDir().toString(), ADMIN_FOLDER, exerciseType);
+
+    Path jsonFile = Paths.get(savingDir.toString(), uploadedFile.getFilename());
+    saveUploadedFile(savingDir, pathToUploadedFile, jsonFile);
+
+    List<SpreadExercise> exercises = exerciseReader.readExercises(jsonFile);
+    saveExercises(exercises);
+    return ok(spreadpreview.render(UserManagement.getCurrentUser(), exercises));
+  }
+
+  @Override
+  public Result uploadForm() {
+    return ok(spreadupload.render(UserManagement.getCurrentUser()));
+  }
+
   @Override
   protected void saveExercises(List<SpreadExercise> exercises) {
     // FIXME: Dateien!
@@ -40,28 +63,5 @@ public class SpreadAdmin extends AdminController<SpreadExercise, SpreadExerciseR
       exerciseReader.checkFiles(util, ex);
     }
   }
-  
-  @Override
-  public Result uploadFile() {
-    MultipartFormData<File> body = request().body().asMultipartFormData();
-    FilePart<File> uploadedFile = body.getFile(BODY_FILE_NAME);
-    if(uploadedFile == null)
-      return badRequest("Fehler!");
-    
-    Path pathToUploadedFile = uploadedFile.getFile().toPath();
-    Path savingDir = Paths.get(util.getRootSolDir().toString(), ADMIN_FOLDER, exerciseType);
-    
-    Path jsonFile = Paths.get(savingDir.toString(), uploadedFile.getFilename());
-    saveUploadedFile(savingDir, pathToUploadedFile, jsonFile);
-    
-    List<SpreadExercise> exercises = exerciseReader.readExercises(jsonFile);
-    saveExercises(exercises);
-    return ok(spreadpreview.render(UserManagement.getCurrentUser(), exercises));
-  }
-  
-  @Override
-  public Result uploadForm() {
-    return ok(spreadupload.render(UserManagement.getCurrentUser()));
-  }
-  
+
 }

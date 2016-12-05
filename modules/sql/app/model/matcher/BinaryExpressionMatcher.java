@@ -17,7 +17,9 @@ public class BinaryExpressionMatcher extends Matcher<BinaryExpression, BinaryExp
     @Override
     public int compare(BinaryExpression arg0, BinaryExpression arg1) {
       // FIXME: ignore aliases of tables --> use only columnname?!?
-      return getColumnToCompare(arg0).toString().compareTo(getColumnToCompare(arg1).toString());
+      Expression exp1 = getColumnToCompare(arg0);
+      Expression exp2 = getColumnToCompare(arg1);
+      return exp1.toString().compareTo(exp2.toString());
     }
 
     private boolean compareLeftColumn(Expression leftExp, Expression rightExp) {

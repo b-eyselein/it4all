@@ -19,19 +19,43 @@ import views.html.xmlpreview;
 import views.html.xmlupload;
 
 public class XmlAdmin extends AdminController<XmlExercise, XmlExerciseReader> {
-
+  
   @Inject
   public XmlAdmin(Util theUtil) {
     super(theUtil, "xml", new XmlExerciseReader());
   }
-
+  
   @Override
-  public Result create() {
+  public Result readStandardExercises() {
     List<XmlExercise> exercises = exerciseReader.readStandardExercises();
     saveExercises(exercises);
     return ok(xmlpreview.render(UserManagement.getCurrentUser(), exercises));
   }
-
+  
+  @Override
+  public Result uploadFile() {
+    MultipartFormData<File> body = request().body().asMultipartFormData();
+    FilePart<File> uploadedFile = body.getFile(BODY_FILE_NAME);
+    if(uploadedFile == null)
+      return badRequest("Fehler!");
+    
+    Path pathToUploadedFile = uploadedFile.getFile().toPath();
+    Path savingDir = Paths.get(util.getRootSolDir().toString(), ADMIN_FOLDER, exerciseType);
+    
+    Path jsonFile = Paths.get(savingDir.toString(), uploadedFile.getFilename());
+    saveUploadedFile(savingDir, pathToUploadedFile, jsonFile);
+    
+    List<XmlExercise> exercises = (new XmlExerciseReader()).readExercises(jsonFile);
+    saveExercises(exercises);
+    
+    return ok(xmlpreview.render(UserManagement.getCurrentUser(), exercises));
+  }
+  
+  @Override
+  public Result uploadForm() {
+    return ok(xmlupload.render(UserManagement.getCurrentUser()));
+  }
+  
   @Override
   protected void saveExercises(List<XmlExercise> exercises) {
     for(XmlExercise ex: exercises) {
@@ -40,29 +64,5 @@ public class XmlAdmin extends AdminController<XmlExercise, XmlExerciseReader> {
       exerciseReader.checkOrCreateSampleFile(util, ex);
     }
   }
-
-  @Override
-  public Result uploadFile() {
-    MultipartFormData<File> body = request().body().asMultipartFormData();
-    FilePart<File> uploadedFile = body.getFile(BODY_FILE_NAME);
-    if(uploadedFile == null)
-      return badRequest("Fehler!");
-
-    Path pathToUploadedFile = uploadedFile.getFile().toPath();
-    Path savingDir = Paths.get(util.getRootSolDir().toString(), ADMIN_FOLDER, exerciseType);
-
-    Path jsonFile = Paths.get(savingDir.toString(), uploadedFile.getFilename());
-    saveUploadedFile(savingDir, pathToUploadedFile, jsonFile);
-
-    List<XmlExercise> exercises = (new XmlExerciseReader()).readExercises(jsonFile);
-    saveExercises(exercises);
-
-    return ok(xmlpreview.render(UserManagement.getCurrentUser(), exercises));
-  }
-
-  @Override
-  public Result uploadForm() {
-    return ok(xmlupload.render(UserManagement.getCurrentUser()));
-  }
-
+  
 }

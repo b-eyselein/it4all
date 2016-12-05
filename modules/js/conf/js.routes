@@ -1,7 +1,7 @@
 # creation of exercises
 GET    /upload           controllers.js.JsAdmin.uploadForm()
 POST   /upload           controllers.js.JsAdmin.uploadFile()
-GET    /create           controllers.js.JsAdmin.create()
+GET    /create           controllers.js.JsAdmin.readStandardExercises()
 
 # exercises
 GET    /                 controllers.js.JS.index()

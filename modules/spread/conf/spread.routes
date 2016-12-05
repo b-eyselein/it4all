@@ -1,7 +1,7 @@
 # creation of exercises
 GET    /upload                controllers.spread.SpreadAdmin.uploadForm()
 POST   /upload                controllers.spread.SpreadAdmin.uploadFile()
-GET    /create                controllers.spread.SpreadAdmin.create()
+GET    /create                controllers.spread.SpreadAdmin.readStandardExercises()
 
 # exercises
 GET    /                      controllers.spread.Spread.index()

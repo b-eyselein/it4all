@@ -19,47 +19,47 @@ import views.html.webpreview;
 import views.html.webupload;
 
 public class WebAdmin extends AdminController<WebExercise, WebExerciseReader> {
-  
+
   @Inject
   public WebAdmin(Util theUtil) {
     super(theUtil, "web", new WebExerciseReader());
   }
-
+  
   @Override
-  public Result create() {
+  public Result readStandardExercises() {
     List<WebExercise> exercises = exerciseReader.readStandardExercises();
     saveExercises(exercises);
     return ok(webpreview.render(UserManagement.getCurrentUser(), exercises));
   }
-
-  @Override
-  protected void saveExercises(List<WebExercise> exercises) {
-
-    for(WebExercise ex: exercises)
-      ex.save();
-  }
-
+  
   @Override
   public Result uploadFile() {
     MultipartFormData<File> body = request().body().asMultipartFormData();
     FilePart<File> uploadedFile = body.getFile(BODY_FILE_NAME);
     if(uploadedFile == null)
       return badRequest("Fehler!");
-
+    
     Path pathToUploadedFile = uploadedFile.getFile().toPath();
     Path savingDir = Paths.get(util.getRootSolDir().toString(), ADMIN_FOLDER, exerciseType);
-
+    
     Path jsonFile = Paths.get(savingDir.toString(), uploadedFile.getFilename());
     saveUploadedFile(savingDir, pathToUploadedFile, jsonFile);
-
+    
     List<WebExercise> exercises = exerciseReader.readExercises(jsonFile);
     saveExercises(exercises);
     return ok(webpreview.render(UserManagement.getCurrentUser(), exercises));
   }
-
+  
   @Override
   public Result uploadForm() {
     return ok(webupload.render(UserManagement.getCurrentUser()));
   }
-
+  
+  @Override
+  protected void saveExercises(List<WebExercise> exercises) {
+    
+    for(WebExercise ex: exercises)
+      ex.save();
+  }
+  
 }

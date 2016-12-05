@@ -109,31 +109,6 @@ public class SqlExerciseReader extends ExerciseReader<SqlExercise> {
     return String.join(SqlExercise.SAMPLE_JOIN_CHAR, samples);
   }
 
-  @Override
-  protected SqlExercise readExercise(JsonNode exerciseNode) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  private SqlScenario readScenario(JsonNode json) {
-    JsonNode shortNameNode = json.get("shortname");
-    JsonNode longNameNode = json.get("longname");
-    JsonNode scriptFileNode = json.get("scriptfile");
-    JsonNode exerciseNodes = json.get("exercises");
-
-    String shortName = shortNameNode.asText();
-
-    SqlScenario scenario = SqlScenario.finder.byId(shortName);
-    if(scenario == null)
-      scenario = new SqlScenario(shortName);
-
-    scenario.longName = longNameNode.asText();
-    scenario.scriptFile = scriptFileNode.asText();
-    scenario.exercises = readExercises(scenario, exerciseNodes);
-
-    return scenario;
-  }
-
   public List<SqlScenario> readScenarioes(Path jsonFile) {
     try {
       JsonNode json = Json.parse(String.join("\n", Files.readAllLines(jsonFile)));
@@ -189,6 +164,31 @@ public class SqlExerciseReader extends ExerciseReader<SqlExercise> {
       READING_LOGGER.error("Error while executing script file " + scriptFilePath.toString(), e);
     }
 
+  }
+
+  private SqlScenario readScenario(JsonNode json) {
+    JsonNode shortNameNode = json.get("shortname");
+    JsonNode longNameNode = json.get("longname");
+    JsonNode scriptFileNode = json.get("scriptfile");
+    JsonNode exerciseNodes = json.get("exercises");
+
+    String shortName = shortNameNode.asText();
+
+    SqlScenario scenario = SqlScenario.finder.byId(shortName);
+    if(scenario == null)
+      scenario = new SqlScenario(shortName);
+
+    scenario.longName = longNameNode.asText();
+    scenario.scriptFile = scriptFileNode.asText();
+    scenario.exercises = readExercises(scenario, exerciseNodes);
+
+    return scenario;
+  }
+
+  @Override
+  protected SqlExercise readExercise(JsonNode exerciseNode) {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

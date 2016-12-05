@@ -1,165 +1,172 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema#",
-	"type": "array",
-	"items": 
-	{
-		"type": "object",
-		"properties": 
-		{
-			"shortname": 
-			{
+	"$schema": "http://json-schema.org/draft-04/schema#", 
+	"type": "array", 
+	"items": {
+		"type": "object", 
+		"properties": {
+			"shortname": {
 				"type": "string"
-			},
-
-			"longname": 
-			{
+			}, 
+			"longname": {
 				"type": "string"
-			},
-
-			"scriptfile": 
-			{
+			}, 
+			"scriptfile": {
 				"type": "string"
-			},
-
-			"exercises": 
-			{
-				"type": "object",
-				"properties": 
-				{
-					"SELECT": 
-					{
-						"type": "array",
-						"items": 
-						{
-							"type": "object",
-							"properties": 
-							{
-								"text": 
-								{
+			}, 
+			"exercises": {
+				"type": "object", 
+				"properties": {
+					"SELECT": {
+						"type": "array", 
+						"items": {
+							"type": "object", 
+							"properties": {
+								"id": {
+									"type": "integer"
+								}, 
+								"text": {
 									"type": "string"
-								},
-
-								"samplesolutions": 
-								{
-									"type": "array",
-									"items": 
-									{
+								}, 
+								"samplesolutions": {
+									"type": "array", 
+									"items": {
 										
 									}
 								}
 							}
-						}
-					},
-
-					"CREATE": 
-					{
-						"type": "array",
-						"items": 
-						{
-							"type": "object",
-							"properties": 
-							{
-								"text": 
-								{
+						}, 
+						"required": [
+							"id", 
+							"text", 
+							"samplesolutions"
+						]
+					}, 
+					"CREATE": {
+						"type": "array", 
+						"items": {
+							"type": "object", 
+							"properties": {
+								"id": {
+									"type": "integer"
+								}, 
+								"text": {
 									"type": "string"
-								},
-
-								"samplesolutions": 
-								{
-									"type": "array",
-									"items": 
-									{
+								}, 
+								"samplesolutions": {
+									"type": "array", 
+									"items": {
 										
 									}
+								}, 
+								"validation": {
+									"type": "string"
 								}
 							}
-						}
-					},
-
-					"UPDATE": 
-					{
-						"type": "array",
-						"items": 
-						{
-							"type": "object",
-							"properties": 
-							{
-								"text": 
-								{
+						}, 
+						"required": [
+							"id", 
+							"text", 
+							"samplesolutions", 
+							"validation"
+						]
+					}, 
+					"UPDATE": {
+						"type": "array", 
+						"items": {
+							"type": "object", 
+							"properties": {
+								"id": {
+									"type": "integer"
+								}, 
+								"text": {
 									"type": "string"
-								},
-
-								"samplesolutions": 
-								{
-									"type": "array",
-									"items": 
-									{
+								}, 
+								"samplesolutions": {
+									"type": "array", 
+									"items": {
 										
 									}
-								}
-							}
-						}
-					},
-
-					"INSERT": 
-					{
-						"type": "array",
-						"items": 
-						{
-							"type": "object",
-							"properties": 
-							{
-								"text": 
-								{
+								}, 
+								"validation": {
 									"type": "string"
-								},
-
-								"samplesolutions": 
-								{
-									"type": "array",
-									"items": 
-									{
+								}
+							}, 
+							"required": [
+								"id", 
+								"text", 
+								"samplesolutions", 
+								"validation"
+							]
+						}
+					}, 
+					"INSERT": {
+						"type": "array", 
+						"items": {
+							"type": "object", 
+							"properties": {
+								"id": {
+									"type": "integer"
+								}, 
+								"text": {
+									"type": "string"
+								}, 
+								"samplesolutions": {
+									"type": "array", 
+									"items": {
 										
 									}
+								}, 
+								"validation": {
+									"type": "string"
 								}
 							}
-						}
-					},
-
-					"DELETE": 
-					{
-						"type": "array",
-						"items": 
-						{
-							"type": "object",
-							"properties": 
-							{
-								"text": 
-								{
+						}, 
+						"required": [
+							"id", 
+							"text", 
+							"samplesolutions", 
+							"validation"
+						]
+					}, 
+					"DELETE": {
+						"type": "array", 
+						"items": {
+							"type": "object", 
+							"properties": {
+								"id": {
+									"type": "integer"
+								}, 
+								"text": {
 									"type": "string"
-								},
-
-								"samplesolutions": 
-								{
-									"type": "array",
-									"items": 
-									{
+								}, 
+								"samplesolutions": {
+									"type": "array", 
+									"items": {
 										
 									}
+								}, 
+								"validation": {
+									"type": "string"
 								}
 							}
-						}
+						}, 
+						"required": [
+							"id", 
+							"text", 
+							"samplesolutions", 
+							"validation"
+						]
 					}
 				}
 			}
-		},
-
-		"required": 
-		[
-			"shortname"
+		}, 
+		"required": [
+			"shortname", 
+			"longname", 
+			"scriptfile", 
+			"exercises"
 		]
-	},
-
-	"minItems": 1,
+	}, 
+	"minItems": 1, 
 	"uniqueItems": true
 }

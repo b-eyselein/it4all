@@ -1,7 +1,7 @@
 # creation of exercises
 GET    /upload                             controllers.web.WebAdmin.uploadForm()
 POST   /upload                             controllers.web.WebAdmin.uploadFile()
-GET    /create                             controllers.web.WebAdmin.create()
+GET    /create                             controllers.web.WebAdmin.readStandardExercises()
 
 # Playground
 GET    /playground                         controllers.web.HTML.playground()

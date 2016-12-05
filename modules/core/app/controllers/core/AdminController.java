@@ -45,7 +45,7 @@ public abstract class AdminController<E extends Exercise, R extends ExerciseRead
   
   // FIXME: all following methods which return Result are more or less equal!
   
-  public abstract Result create();
+  public abstract Result readStandardExercises();
   
   protected abstract void saveExercises(List<E> exercises);
   

@@ -27,7 +27,7 @@ public class JsAdmin extends AdminController<JsExercise, JsExerciseReader> {
   }
   
   @Override
-  public Result create() {
+  public Result readStandardExercises() {
     List<JsExercise> exercises = exerciseReader.readStandardExercises();
     saveExercises(exercises);
     return ok(jspreview.render(UserManagement.getCurrentUser(), exercises));

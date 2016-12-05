@@ -1,7 +1,7 @@
 # creation of exercises
 GET    /upload         controllers.xml.XmlAdmin.uploadForm()
 POST   /upload         controllers.xml.XmlAdmin.uploadFile()
-GET    /create         controllers.xml.XmlAdmin.create()
+GET    /create         controllers.xml.XmlAdmin.readStandardExercises()
 
 # Test blanks...
 GET    /blanks         controllers.xml.XML.testBlanks()

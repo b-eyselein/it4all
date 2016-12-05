@@ -1,7 +1,7 @@
 # creation of exercises
 GET    /upload                                controllers.sql.SQLAdmin.uploadForm()
 POST   /upload                                controllers.sql.SQLAdmin.uploadFile()
-GET    /create                                controllers.sql.SQLAdmin.create()
+GET    /create                                controllers.sql.SQLAdmin.readStandardExercises()
 
 # exercises
 GET    /                                      controllers.sql.SQL.index()
