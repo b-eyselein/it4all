@@ -3,6 +3,7 @@ package controllers.xml;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -12,10 +13,11 @@ import controllers.core.UserManagement;
 import model.Util;
 import model.XmlExercise;
 import model.XmlExerciseReader;
+import model.exercise.Exercise;
 import play.mvc.Result;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
-import views.html.xmlpreview;
+import views.html.preview;
 import views.html.xmlupload;
 
 public class XmlAdmin extends AdminController<XmlExercise, XmlExerciseReader> {
@@ -29,7 +31,10 @@ public class XmlAdmin extends AdminController<XmlExercise, XmlExerciseReader> {
   public Result readStandardExercises() {
     List<XmlExercise> exercises = exerciseReader.readStandardExercises();
     saveExercises(exercises);
-    return ok(xmlpreview.render(UserManagement.getCurrentUser(), exercises));
+    
+    // TODO: Hack...
+    List<Exercise> theExes = new LinkedList<>(exercises);
+    return ok(preview.render(UserManagement.getCurrentUser(), theExes));
   }
   
   @Override
@@ -48,7 +53,9 @@ public class XmlAdmin extends AdminController<XmlExercise, XmlExerciseReader> {
     List<XmlExercise> exercises = (new XmlExerciseReader()).readExercises(jsonFile);
     saveExercises(exercises);
     
-    return ok(xmlpreview.render(UserManagement.getCurrentUser(), exercises));
+    // TODO: Hack...
+    List<Exercise> theExes = new LinkedList<>(exercises);
+    return ok(preview.render(UserManagement.getCurrentUser(), theExes));
   }
   
   @Override

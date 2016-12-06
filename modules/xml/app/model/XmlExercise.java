@@ -6,18 +6,16 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 
-import com.avaje.ebean.Model;
-
 import model.exercise.Exercise;
 
 @Entity
-public class XmlExercise extends Model implements Exercise {
+public class XmlExercise extends Exercise {
   
   public enum XmlExType {
     XML_XSD("xml"), XML_DTD("xml"), XSD_XML("xsd"), DTD_XML("dtd");
-
+    
     private String studentFileEnding;
-
+    
     private XmlExType(String studentEnding) {
       this.studentFileEnding = studentEnding;
     }
@@ -26,24 +24,21 @@ public class XmlExercise extends Model implements Exercise {
       return studentFileEnding;
     }
   }
-
+  
   public static final Finder<Integer, XmlExercise> finder = new Finder<>(XmlExercise.class);
   
   @Id
   public int id;
 
-  public String title; // NOSONAR
-
   @Column(columnDefinition = "text")
   public String fixedStart;
-
+  
   @Enumerated(EnumType.STRING)
   public XmlExType exerciseType;
-
+  
   public String referenceFileName; // NOSONAR
-
-  @Column(columnDefinition = "text")
-  public String exerciseText;
+  
+  public String text; // NOSONAR
   
   public String getGrammarFileEnding() {
     switch(exerciseType) {
@@ -62,13 +57,13 @@ public class XmlExercise extends Model implements Exercise {
   public int getId() {
     return id;
   }
-
+  
   @Override
   public int getMaxPoints() {
     // TODO Auto-generated method stub
     return 0;
   }
-
+  
   public String getReferenceFileEnding() {
     switch(exerciseType) {
     case DTD_XML:
@@ -82,15 +77,26 @@ public class XmlExercise extends Model implements Exercise {
       return null;
     }
   }
-
+  
   @Override
   public String getText() {
-    return exerciseText;
+    return text;
   }
-
+  
   @Override
-  public String getTitle() {
-    return title;
+  public String renderData() {
+    // TODO Auto-generated method stub
+    StringBuilder builder = new StringBuilder();
+    builder.append("<div class=\"col-md-6\">");
+    builder.append("<div class=\"panel panel-default\">");
+    builder.append("<div class=\"panel-heading\">Aufgabe " + getId() + ": " + getTitle() + DIV_END);
+    builder.append("<div class=\"panel-body\">");
+    builder.append("<p>Aufgabentext: " + text + "</p>");
+    builder.append("<p>Aufgabentyp: " + exerciseType + "</p>");
+    builder.append("<p>Dateiname: &quot;" + referenceFileName + "&quot;</p>");
+    builder.append("<p>Fixed Start: &quot;" + fixedStart + "&quot;</p>");
+    builder.append(DIV_END + DIV_END + DIV_END);
+    return builder.toString();
   }
-
+  
 }

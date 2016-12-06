@@ -11,13 +11,12 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import com.avaje.ebean.Model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import model.exercise.Exercise;
 
 @Entity
-public class JsExercise extends Model implements Exercise {
+public class JsExercise extends Exercise {
 
   public enum JsDataType {
     BOOLEAN, NUMBER, STRING, SYMBOL, UNDEFINED, NULL, OBJECT;
@@ -27,9 +26,7 @@ public class JsExercise extends Model implements Exercise {
 
   @Id
   public int id;
-
-  public String title;// NOSONAR
-
+  
   @Column(columnDefinition = "text")
   public String text;
 
@@ -73,10 +70,37 @@ public class JsExercise extends Model implements Exercise {
   public String getText() {
     return text;
   }
-
+  
   @Override
-  public String getTitle() {
-    return title;
+  public String renderData() {
+    // TODO Auto-generated method stub
+    StringBuilder builder = new StringBuilder();
+    builder.append("<div class=\"col-md-6\">");
+    builder.append("<div class=\"panel panel-default\">");
+    builder.append("<div class=\"panel-heading\">Aufgabe " + getId() + ": " + getTitle() + DIV_END);
+    builder.append("<div class=\"panel-body\">");
+    builder.append("<p>Aufgabentext: " + text + "</p>");
+
+    // Declaration and sample solution
+    builder.append("<div class=\"row\">");
+    builder.append("<div class=\"col-md-6\"><p>Angabe: <pre>" + declaration + "</pre></p>" + DIV_END);
+    builder.append("<div class=\"col-md-6\"><p>Musterlösung: <pre>" + sampleSolution + "</pre></p>" + DIV_END);
+    builder.append(DIV_END);
+
+    // Inputs and Output, Tests
+    builder.append("<table class=\"table\">");
+    builder.append("<thead><tr><th>Id</th>"
+        + getInputTypes().stream().map(JsDataType::toString)
+            .collect(Collectors.joining("</th><th>Input: ", "<th>Input: ", "</th>"))
+        + "<th>Output: " + returntype + "</th></tr></thead><tbody>");
+    for(JsTest test: functionTests)
+      builder.append("<tr><td>" + test.getId() + "</td>"
+          + test.getInput().stream().collect(Collectors.joining("</td><td>", "<td>", "</td>")) + "<td>"
+          + test.getOutput() + "</td></tr>");
+    builder.append("</tbody></table>");
+
+    builder.append(DIV_END + DIV_END + DIV_END);
+    return builder.toString();
   }
 
 }

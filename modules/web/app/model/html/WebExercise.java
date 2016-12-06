@@ -9,7 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import com.avaje.ebean.Model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import model.exercise.Exercise;
@@ -18,7 +17,7 @@ import model.html.task.HtmlTask;
 import model.html.task.Task;
 
 @Entity
-public class WebExercise extends Model implements Exercise {
+public class WebExercise extends Exercise {
 
   public static final Finder<Integer, WebExercise> finder = new Finder<>(WebExercise.class);
 
@@ -27,8 +26,6 @@ public class WebExercise extends Model implements Exercise {
 
   @Column(columnDefinition = "text")
   public String text;
-
-  public String title; // NOSONAR
 
   @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
   @JsonManagedReference
@@ -41,7 +38,7 @@ public class WebExercise extends Model implements Exercise {
   public WebExercise(int exerciseId) {
     id = exerciseId;
   }
-  
+
   @Override
   public int getId() {
     return id;
@@ -69,8 +66,25 @@ public class WebExercise extends Model implements Exercise {
   }
 
   @Override
-  public String getTitle() {
-    return title;
+  public String renderData() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("<div class=\"col-md-6\">");
+    builder.append("<div class=\"panel panel-default\">");
+    builder.append("<div class=\"panel-heading\">Aufgabe " + getId() + ": " + getTitle() + "</div>");
+    builder.append("<div class=\"panel-body\">");
+    builder.append("<p>Text: " + getText() + "</p>");
+
+    builder.append("<h2>HTML-Tasks</h2>");
+    for(Task task: htmlTasks)
+      builder.append("<p>" + task.getId() + ": " + task.getDescription() + "</p>");
+
+    builder.append("<h2>CSS-Tasks</h2>");
+    for(Task task: cssTasks)
+      builder.append("<p>" + task.getId() + ": " + task.getDescription() + "</p>");
+
+    builder.append(DIV_END + DIV_END + DIV_END);
+
+    return builder.toString();
   }
 
 }

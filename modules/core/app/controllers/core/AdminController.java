@@ -47,9 +47,9 @@ public abstract class AdminController<E extends Exercise, R extends ExerciseRead
   
   public abstract Result readStandardExercises();
   
-  protected abstract void saveExercises(List<E> exercises);
-  
   public abstract Result uploadFile();
   
   public abstract Result uploadForm();
+  
+  protected abstract void saveExercises(List<E> exercises);
 }

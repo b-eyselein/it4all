@@ -57,7 +57,7 @@ public class XmlExerciseReader extends ExerciseReader<XmlExercise> {
     exercise.title = node.get("title").asText();
     exercise.exerciseType = XmlExType.valueOf(node.get("exerciseType").asText());
     exercise.referenceFileName = node.get("referenceFileName").asText();
-    exercise.exerciseText = node.get("exerciseText").asText();
+    exercise.text = node.get("exerciseText").asText();
     exercise.fixedStart = node.get("fixedStart").asText();
     return exercise;
   }

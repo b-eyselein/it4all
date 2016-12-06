@@ -15,19 +15,16 @@
 				"input": "1#1", 
 				"output": 2
 			}, 
-
 			{
 				"id": 2, 
 				"input": "1#2", 
 				"output": 3
 			}, 
-
 			{
 				"id": 3, 
 				"input": "44#43", 
 				"output": 87
 			}, 
-
 			{
 				"id": 4, 
 				"input": "555.0#42", 
@@ -35,14 +32,13 @@
 			}
 		]
 	}, 
-
 	{
 		"id": 2, 
 		"title": "Konkatenation von Strings", 
 		"text": "Implementieren Sie die folgende Funktion <code>concat(str1, str2, str3)</code>, die drei beliebige Strings entgegennimmt und die Konkatenation der Strings zurückgibt.", 
 		"declaration": "function concat(str1, str2, str3) {\n return \"\";\n}", 
 		"functionname": "concat", 
-		"samplesolution": "function concat(str1, str2, str3) {\n  return str1 + str2 + str3;;\n}", 
+		"samplesolution": "function concat(str1, str2, str3) {\n  return str1 + str2 + str3;\n}", 
 		"inputtypes": "STRING#STRING#STRING", 
 		"inputcount": 3, 
 		"returntype": "STRING", 
@@ -52,7 +48,6 @@
 				"input": "Hallo #Welt#!", 
 				"output": "Hallo Welt!"
 			}, 
-
 			{
 				"id": 2, 
 				"input": "Test#Test#Test", 
@@ -60,7 +55,6 @@
 			}
 		]
 	}, 
-
 	{
 		"id": 3, 
 		"title": "Größter gemeinsamer Teiler", 
@@ -77,29 +71,25 @@
 				"input": "12#4", 
 				"output": 4
 			}, 
-
 			{
 				"id": 2, 
 				"input": "3#7", 
 				"output": 1
 			}, 
-
 			{
 				"id": 3, 
 				"input": "64#46", 
 				"output": 2
 			}, 
-
 			{
 				"id": 4, 
 				"input": "777#777", 
 				"output": 777
 			}, 
-
 			{
 				"id": 5, 
-				"input": "15#15", 
-				"output": 15
+				"input": "15#25", 
+				"output": 5
 			}
 		]
 	}

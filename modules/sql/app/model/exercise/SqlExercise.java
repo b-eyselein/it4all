@@ -9,8 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import com.avaje.ebean.Model;
-
 import model.querycorrectors.CreateCorrector;
 import model.querycorrectors.QueryCorrector;
 import model.querycorrectors.SelectCorrector;
@@ -20,7 +18,7 @@ import model.querycorrectors.update.UpdateCorrector;
 import net.sf.jsqlparser.statement.Statement;
 
 @Entity
-public class SqlExercise extends Model implements Exercise {
+public class SqlExercise extends Exercise {
   
   public static final String SAMPLE_JOIN_CHAR = "#";
   
@@ -83,9 +81,9 @@ public class SqlExercise extends Model implements Exercise {
     // TODO Auto-generated method stub
     return null;
   }
-
+  
   @Override
-  public String getTitle() {
+  public String renderData() {
     // TODO Auto-generated method stub
     return null;
   }

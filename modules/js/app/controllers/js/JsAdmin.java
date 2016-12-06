@@ -3,6 +3,7 @@ package controllers.js;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -16,7 +17,7 @@ import model.JsTest;
 import play.mvc.Result;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
-import views.html.jspreview;
+import views.html.preview;
 import views.html.jsupload;
 
 public class JsAdmin extends AdminController<JsExercise, JsExerciseReader> {
@@ -30,16 +31,7 @@ public class JsAdmin extends AdminController<JsExercise, JsExerciseReader> {
   public Result readStandardExercises() {
     List<JsExercise> exercises = exerciseReader.readStandardExercises();
     saveExercises(exercises);
-    return ok(jspreview.render(UserManagement.getCurrentUser(), exercises));
-  }
-  
-  @Override
-  protected void saveExercises(List<JsExercise> exercises) {
-    for(JsExercise ex: exercises) {
-      ex.save();
-      for(JsTest test: ex.functionTests)
-        test.save();
-    }
+    return ok(preview.render(UserManagement.getCurrentUser(), new LinkedList<>(exercises)));
   }
   
   @Override
@@ -57,12 +49,21 @@ public class JsAdmin extends AdminController<JsExercise, JsExerciseReader> {
     
     List<JsExercise> exercises = exerciseReader.readExercises(jsonFile);
     saveExercises(exercises);
-    return ok(jspreview.render(UserManagement.getCurrentUser(), exercises));
+    return ok(preview.render(UserManagement.getCurrentUser(), new LinkedList<>(exercises)));
   }
   
   @Override
   public Result uploadForm() {
     return ok(jsupload.render(UserManagement.getCurrentUser()));
+  }
+  
+  @Override
+  protected void saveExercises(List<JsExercise> exercises) {
+    for(JsExercise ex: exercises) {
+      ex.save();
+      for(JsTest test: ex.functionTests)
+        test.save();
+    }
   }
   
 }

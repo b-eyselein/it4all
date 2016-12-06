@@ -109,6 +109,7 @@ create table sql_exercise (
   id                            integer not null,
   scenario_name                 varchar(255) not null,
   exercisetype                  varchar(6) not null,
+  title                         varchar(255),
   text                          text,
   samples                       text,
   validation                    varchar(255),
@@ -134,8 +135,8 @@ create table users (
 
 create table web_exercise (
   id                            integer auto_increment not null,
-  text                          text,
   title                         varchar(255),
+  text                          text,
   constraint pk_web_exercise primary key (id)
 );
 
@@ -145,7 +146,7 @@ create table xml_exercise (
   fixed_start                   text,
   exercise_type                 varchar(7),
   reference_file_name           varchar(255),
-  exercise_text                 text,
+  text                          varchar(255),
   constraint ck_xml_exercise_exercise_type check ( exercise_type in ('XML_XSD','XML_DTD','XSD_XML','DTD_XML')),
   constraint pk_xml_exercise primary key (id)
 );

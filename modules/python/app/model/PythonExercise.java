@@ -2,11 +2,9 @@ package model;
 
 import javax.persistence.Id;
 
-import com.avaje.ebean.Model;
-
 import model.exercise.Exercise;
 
-public class PythonExercise extends Model implements Exercise {
+public class PythonExercise extends Exercise {
   
   @Id
   public int id;
@@ -30,7 +28,7 @@ public class PythonExercise extends Model implements Exercise {
   }
   
   @Override
-  public String getTitle() {
+  public String renderData() {
     // TODO Auto-generated method stub
     return null;
   }

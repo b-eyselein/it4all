@@ -3,6 +3,7 @@ package controllers.spread;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -15,7 +16,7 @@ import model.SpreadExerciseReader;
 import play.mvc.Result;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
-import views.html.spreadpreview;
+import views.html.preview;
 import views.html.spreadupload;
 
 public class SpreadAdmin extends AdminController<SpreadExercise, SpreadExerciseReader> {
@@ -29,7 +30,8 @@ public class SpreadAdmin extends AdminController<SpreadExercise, SpreadExerciseR
   public Result readStandardExercises() {
     List<SpreadExercise> exercises = exerciseReader.readStandardExercises();
     saveExercises(exercises);
-    return ok(spreadpreview.render(UserManagement.getCurrentUser(), exercises));
+
+    return ok(preview.render(UserManagement.getCurrentUser(), new LinkedList<>(exercises)));
   }
 
   @Override
@@ -47,7 +49,7 @@ public class SpreadAdmin extends AdminController<SpreadExercise, SpreadExerciseR
 
     List<SpreadExercise> exercises = exerciseReader.readExercises(jsonFile);
     saveExercises(exercises);
-    return ok(spreadpreview.render(UserManagement.getCurrentUser(), exercises));
+    return ok(preview.render(UserManagement.getCurrentUser(), new LinkedList<>(exercises)));
   }
 
   @Override
