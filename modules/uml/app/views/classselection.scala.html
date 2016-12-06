@@ -35,12 +35,41 @@
 
   function submit() {
     var exercisetext = document.getElementById("exercisetext");
-    var classes = exercisetext.getElementsByClassName("bg-info");
-    var methods = exercisetext.getElementsByClassName("bg-success");
-    var attributes = exercisetext.getElementsByClassName("bg-danger");
+    var cclasses = exercisetext.getElementsByClassName("bg-info");
+    var cmethods = exercisetext.getElementsByClassName("bg-success");
+    var cattributes = exercisetext.getElementsByClassName("bg-danger");
+    var classes=[];
+    for( i = 0; i <cclasses.length; i++){
+		classes.push(cclasses[i].innerText);
+    }
+    var methods=[];
+    for( i = 0; i <cmethods.length; i++){
+    	methods.push(cmethods[i].innerText);
+    }
+    var attributes=[];
+    for( i = 0; i <cattributes.length; i++){
+    	attributes.push(cattributes[i].innerText);
+    }
     console.log(classes);
     console.log(methods);
     console.log(attributes);
+
+    var json ="\{\"classes\":[";
+    for( i=0; i < classes.length-1; i++){
+    	json+="\""+classes[i]+"\""+",";
+    }
+    json+="\""+classes[classes.length-1]+"\""+"],";
+    json +="\"methods\":[";
+    for( i=0; i < methods.length-1; i++){
+    	json+="\""+methods[i]+"\""+",";
+    }
+    json+="\""+methods[methods.length-1]+"\""+"],";
+    json +="\"attributes\":[";
+    for( i=0; i < attributes.length-1; i++){
+    	json+="\""+attributes[i]+"\""+",";
+    }
+    json+="\""+attributes[attributes.length-1]+"\""+"]"+"\}";
+    console.log(json);
     
     var rightClasses = new Array();
     var wrongClasses = new Array(), doubleClasses = new Array();
@@ -86,7 +115,7 @@
           doubleAttributes.push(markedAttributes);
         } else {
           // Methode ist richtig markiert
-          rightAttributes.push(markedAttributes);
+          rightAttributes.push(markedAttributes) ;
         }
       } else {
         // Methode ist falsch markiert
@@ -113,8 +142,9 @@
     <div class="panel panel-default">
       <div class="panel-body">
         <div class="col-md-8">
-          In dieser Aufgabe sollen Sie die zu modellierenden Klassen und Methoden durch Anklicken der jeweiligen Wörter,
-          wobei <span style="color: red">rot</span> Klassen und <span style="color: green">grün</span> Methoden
+          In dieser Aufgabe sollen Sie die zu modellierenden Klassen,Methoden und Attribute durch Anklicken der jeweiligen Wörter,
+          wobei <span style="color: blue">blau</span> Klassen,<span style="color: green">grün</span> Methoden und 
+          <span style="color: red">rot</span> Attribute
           deklariert. Durch erneutes Anklicken können Sie zwischen den einzelnen Zuständen wechseln.
         </div>
         <div class="col-md-4">
