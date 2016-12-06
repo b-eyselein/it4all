@@ -102,7 +102,7 @@ public class JS extends ExerciseController<IntExerciseIdentifier> {
 
     List<CommitedTestData> userTestData = extractAndValidateTestData(form, exercise);
     // TODO: evtl. Anzeige aussortiertes TestDaten?
-    userTestData = userTestData.stream().filter(data -> data.isOk()).collect(Collectors.toList());
+    userTestData = userTestData.stream().filter(CommitedTestData::isOk).collect(Collectors.toList());
     // TODO: evt. Speichern der Lösung und Laden bei erneuter Bearbeitung?
 
     return JsCorrector.correct(exercise, learnerSolution, userTestData, user.settings.todo);
