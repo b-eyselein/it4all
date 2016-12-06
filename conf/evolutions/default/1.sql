@@ -113,6 +113,8 @@ create table sql_exercise (
   text                          text,
   samples                       text,
   validation                    varchar(255),
+  tags                          varchar(255),
+  hint                          varchar(255),
   constraint ck_sql_exercise_exercisetype check ( exercisetype in ('SELECT','CREATE','UPDATE','DELETE','INSERT')),
   constraint pk_sql_exercise primary key (id,scenario_name,exercisetype)
 );

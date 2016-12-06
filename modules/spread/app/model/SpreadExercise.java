@@ -14,8 +14,6 @@ public class SpreadExercise extends Exercise {
   @Id
   public int id;
 
-  public String title; // NOSONAR
-
   @Column(columnDefinition = "text")
   public String text;
 
@@ -41,11 +39,6 @@ public class SpreadExercise extends Exercise {
   @Override
   public String getText() {
     return text;
-  }
-
-  @Override
-  public String getTitle() {
-    return title;
   }
 
   @Override

@@ -3,7 +3,7 @@
 @main("SQL", user) {
 <div class="container">
   @if(scenarioes.isEmpty) {
-  	<div class="alert alert-danger">Es sind momentan leider keine Szenarios verfügbar. Wenden Sie sich bitte an den Administrator!</div>
+  	<div class="alert alert-danger">Es sind momentan leider keine Szenarios verf&uuml;gbar. Wenden Sie sich bitte an den Administrator!</div>
   }
   @for(scenario <- scenarioes) {
   <div class="panel panel-default">
@@ -28,8 +28,12 @@
               @for(ex <- scenario.getExercisesByType(sqlExType)) {
               <li class="list-group-item">
                 <a href="@controllers.sql.routes.SQL.exercise(ex.key.scenarioName, ex.key.exercisetype.toString, ex.key.id)" class="list-group-item">
-                  Aufgabe @ex.key.id: @ex.text
-                </a>
+              	  <div class="row">
+              	    <div class="col-sm-2 col-xs-4">@ex.getBadges()</div>
+              	    <div class="col-sm-2 col-xs-8">Aufgabe @ex.key.id:</div>
+              	    <div class="col-sm-8 col-xs-12">@ex.text</div>
+  				  </div>
+  				</a>
               </li>
               }
             </ul>

@@ -14,159 +14,61 @@
 				"type": "string"
 			}, 
 			"exercises": {
-				"type": "object", 
-				"properties": {
-					"SELECT": {
-						"type": "array", 
-						"items": {
-							"type": "object", 
-							"properties": {
-								"id": {
-									"type": "integer"
-								}, 
-								"text": {
-									"type": "string"
-								}, 
-								"samplesolutions": {
-									"type": "array", 
-									"items": {
-										
-									}
-								}
-							}
+				"type": "array", 
+				"items": {
+					"type": "object", 
+					"properties": {
+						"id": {
+							"type": "integer"
 						}, 
-						"required": [
-							"id", 
-							"text", 
-							"samplesolutions"
-						]
-					}, 
-					"CREATE": {
-						"type": "array", 
-						"items": {
-							"type": "object", 
-							"properties": {
-								"id": {
-									"type": "integer"
-								}, 
-								"text": {
-									"type": "string"
-								}, 
-								"samplesolutions": {
-									"type": "array", 
-									"items": {
-										
-									}
-								}, 
-								"validation": {
-									"type": "string"
-								}
-							}
-						}, 
-						"required": [
-							"id", 
-							"text", 
-							"samplesolutions", 
-							"validation"
-						]
-					}, 
-					"UPDATE": {
-						"type": "array", 
-						"items": {
-							"type": "object", 
-							"properties": {
-								"id": {
-									"type": "integer"
-								}, 
-								"text": {
-									"type": "string"
-								}, 
-								"samplesolutions": {
-									"type": "array", 
-									"items": {
-										
-									}
-								}, 
-								"validation": {
-									"type": "string"
-								}
-							}, 
-							"required": [
-								"id", 
-								"text", 
-								"samplesolutions", 
-								"validation"
+						"exercisetype": {
+							"enum": [
+								"CREATE", 
+								"SELECT", 
+								"UPDATE", 
+								"INSERT", 
+								"DELETE"
 							]
+						}, 
+						"text": {
+							"type": "string"
+						}, 
+						"hint": {
+							"type": "string"
+						}, 
+						"samplesolutions": {
+							"type": "array", 
+							"items": {
+								"type": "string"
+							}
+						}, 
+						"validation": {
+							"type": "string"
+						}, 
+						"tags": {
+							"type": "array", 
+							"items": {
+								"enum": [
+									"JOIN", 
+									"DOUBLE_JOIN", 
+									"TRIPLE_JOIN", 
+									"ORDER_BY", 
+									"GROUP_BY", 
+									"FUNCTION", 
+									"ALIAS", 
+									"LIMIT", 
+									"SUBSELECT"
+								]
+							}
 						}
-					}, 
-					"INSERT": {
-						"type": "array", 
-						"items": {
-							"type": "object", 
-							"properties": {
-								"id": {
-									"type": "integer"
-								}, 
-								"text": {
-									"type": "string"
-								}, 
-								"samplesolutions": {
-									"type": "array", 
-									"items": {
-										
-									}
-								}, 
-								"validation": {
-									"type": "string"
-								}
-							}
-						}, 
-						"required": [
-							"id", 
-							"text", 
-							"samplesolutions", 
-							"validation"
-						]
-					}, 
-					"DELETE": {
-						"type": "array", 
-						"items": {
-							"type": "object", 
-							"properties": {
-								"id": {
-									"type": "integer"
-								}, 
-								"text": {
-									"type": "string"
-								}, 
-								"samplesolutions": {
-									"type": "array", 
-									"items": {
-										
-									}
-								}, 
-								"validation": {
-									"type": "string"
-								}
-							}
-						}, 
-						"required": [
-							"id", 
-							"text", 
-							"samplesolutions", 
-							"validation"
-						]
 					}
-				}
+				}, 
+				"required": [
+					"id", 
+					"text", 
+					"samplesolutions"
+				]
 			}
-		}, 
-		"required": [
-			"shortname", 
-			"longname", 
-			"scriptfile", 
-			"exercises"
-		]
-	}, 
-	"minItems": 1, 
-	"uniqueItems": true
+		}
+	}
 }
