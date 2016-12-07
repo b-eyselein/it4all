@@ -511,7 +511,7 @@
 		"exercisetype": "DELETE", 
 		"text": "Löschen Sie alle Kunden, die nach dem Jahr 1995 geboren wurden.", 
 		"samplesolutions": [
-			"DELETE FROM customers WHERE birthday &gt; '1995-01-01'"
+			"DELETE FROM customers WHERE birthday > '1995-01-01'"
 		], 
 		"validation": "SELECT * FROM customers"
 	}, 
@@ -522,12 +522,15 @@
 		"samplesolutions": [
 			"DELETE FROM customers WHERE id NOT IN (SELECT customer_id FROM orders)"
 		], 
+		"tags": [
+			"SUBSELECT"
+		], 
 		"validation": "SELECT * FROM customers"
 	}, 
 	{
 		"id": 3, 
 		"exercisetype": "DELETE", 
-		"text": "Löschen Sie alle Bücher, die mehr als 8,50 Euro kosten und die Verlags-ID: '7' besitzen.", 
+		"text": "Löschen Sie alle Bücher, die mehr als 8,50 Euro kosten und die Verlags-ID 7 besitzen.", 
 		"samplesolutions": [
 			"DELETE FROM books WHERE price > 8.50 AND publisher_id = '7' "
 		], 
