@@ -66,19 +66,21 @@ public class SqlExerciseReader extends ExerciseReader<SqlExercise> {
     JsonNode tagsNode = exerciseNode.get("tags");
     JsonNode sampleSolutionsNode = exerciseNode.get("samplesolutions");
     JsonNode validationNode = exerciseNode.get("validation");
-
+    JsonNode hintNode = exerciseNode.get("hint");
+    
     SqlExerciseKey exerciseKey = new SqlExerciseKey(scenario.shortName, idNode.asInt(),
         SqlExerciseType.valueOf(exercisetypeNode.asText()));
-
+    
     SqlExercise exercise = SqlExercise.finder.byId(exerciseKey);
     if(exercise == null)
       exercise = new SqlExercise(exerciseKey);
-
+    
     exercise.text = textNode.asText();
     exercise.samples = readSampleSolutions(sampleSolutionsNode);
     exercise.validation = validationNode != null ? validationNode.asText() : "";
     exercise.tags = tagsNode != null ? readTags(tagsNode) : "";
-
+    exercise.hint = hintNode != null ? hintNode.asText() : "";
+    
     return exercise;
   }
 
@@ -101,31 +103,6 @@ public class SqlExerciseReader extends ExerciseReader<SqlExercise> {
     List<String> tags = new LinkedList<>();
     tagsNode.elements().forEachRemaining(el -> tags.add(el.asText()));
     return String.join(SqlExercise.SAMPLE_JOIN_CHAR, tags);
-  }
-
-  @Override
-  protected SqlExercise readExercise(JsonNode exerciseNode) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  private SqlScenario readScenario(JsonNode json) {
-    JsonNode shortNameNode = json.get("shortname");
-    JsonNode longNameNode = json.get("longname");
-    JsonNode scriptFileNode = json.get("scriptfile");
-    JsonNode exerciseNodes = json.get("exercises");
-
-    String shortName = shortNameNode.asText();
-
-    SqlScenario scenario = SqlScenario.finder.byId(shortName);
-    if(scenario == null)
-      scenario = new SqlScenario(shortName);
-
-    scenario.longName = longNameNode.asText();
-    scenario.scriptFile = scriptFileNode.asText();
-    scenario.exercises = readExercises(scenario, exerciseNodes);
-
-    return scenario;
   }
 
   public List<SqlScenario> readScenarioes(Path jsonFile) {
@@ -183,6 +160,31 @@ public class SqlExerciseReader extends ExerciseReader<SqlExercise> {
       READING_LOGGER.error("Error while executing script file " + scriptFilePath.toString(), e);
     }
 
+  }
+
+  private SqlScenario readScenario(JsonNode json) {
+    JsonNode shortNameNode = json.get("shortname");
+    JsonNode longNameNode = json.get("longname");
+    JsonNode scriptFileNode = json.get("scriptfile");
+    JsonNode exerciseNodes = json.get("exercises");
+
+    String shortName = shortNameNode.asText();
+
+    SqlScenario scenario = SqlScenario.finder.byId(shortName);
+    if(scenario == null)
+      scenario = new SqlScenario(shortName);
+
+    scenario.longName = longNameNode.asText();
+    scenario.scriptFile = scriptFileNode.asText();
+    scenario.exercises = readExercises(scenario, exerciseNodes);
+
+    return scenario;
+  }
+
+  @Override
+  protected SqlExercise readExercise(JsonNode exerciseNode) {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

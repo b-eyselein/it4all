@@ -22,16 +22,6 @@
 		]
 	}, 
 	{
-		"id": 113, 
-		"exercisetype": "SELECT", 
-		"text": "Geben Sie alle Email-Adressen der Kunden aus, die mit 'gmx.de' enden.", 
-		"hint": "Verwenden Sie für die Eingrenzung der Mailadresse den 'LIKE'-Operator.", 
-		"samplesolutions": [
-			"SELECT email FROM customers WHERE email LIKE '%gmx.de'", 
-			"SELECT email FROM customers WHERE email LIKE \"%gmx.de\""
-		]
-	}, 
-	{
 		"id": 114, 
 		"exercisetype": "SELECT", 
 		"text": "Wählen Sie alle Kunden aus, deren Nachname nur aus vier Buchstaben besteht. Geben Sie nur den Vornamen und Nachnamen aus. Die Datensätze sollen nach dem Nachnamen alphabetisch sortiert werden.", 
@@ -105,17 +95,6 @@
 		]
 	}, 
 	{
-		"id": 120, 
-		"exercisetype": "SELECT", 
-		"text": "Suchen Sie alle Titel jener Bücher deren Autor George Orwell ist. Ordnen Sie die Titel nach Erscheinungsjahr abwärts.", 
-		"samplesolutions": [
-			"SELECT title FROM books WHERE author='George Orwell' ORDER By year DESC"
-		], 
-		"tags": [
-			"ORDER_BY"
-		]
-	}, 
-	{
 		"id": 121, 
 		"exercisetype": "SELECT", 
 		"text": "Zeigen Sie sämtliche Datensätze der Bücher-Tabelle an und ordnen Sie diese nach Erscheinungsjahr abwärts.", 
@@ -147,31 +126,11 @@
 		]
 	}, 
 	{
-		"id": 124, 
-		"exercisetype": "SELECT", 
-		"text": "Zeigen sie Titel und Autor der drei teuersten Bücher an. Sortieren Sie die Einträge nach Preis abwärts.", 
-		"samplesolutions": [
-			"SELECT title, author FROM books ORDER BY price DESC LIMIT 3"
-		], 
-		"tags": [
-			"ORDER_BY", 
-			"LIMIT"
-		]
-	}, 
-	{
 		"id": 125, 
 		"exercisetype": "SELECT", 
 		"text": "Geben Sie alle Kunden aus, die vor dem Jahr 2000 geboren sind.", 
 		"samplesolutions": [
 			"SELECT * FROM customers WHERE birthday < '2000-01-01'"
-		]
-	}, 
-	{
-		"id": 126, 
-		"exercisetype": "SELECT", 
-		"text": "Wählen Sie alle Einträge zu Kunden aus, die im Jahr 1981 Geburtstag haben. Hinweis: Verwenden Sie hierfür den 'LIKE'-Operator", 
-		"samplesolutions": [
-			"SELECT * FROM customers WHERE birthday LIKE '1981-%'"
 		]
 	}, 
 	{

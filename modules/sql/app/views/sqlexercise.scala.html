@@ -71,11 +71,12 @@ function testSolution() {
 
   <div class="row">
     <div class="col-md-4">
-      <form action="@sql.routes.SQL.commit(exercise.key.scenarioName, exercise.key.exercisetype.toString(), exercise.key.id)" method="post" onsubmit="prepareFormForSubmitting();">
+      <form action="@controllers.sql.routes.SQL.commit(exercise.key.scenarioName, exercise.key.exercisetype.toString(), exercise.key.id)" method="post" onsubmit="prepareFormForSubmitting();">
         <div class="panel panel-default">
           <div class="panel-heading">Aufgabe @exercise.key.id</div>
           <div class="panel-body">
             <p>@exercise.text</p>
+            @if(!exercise.hint.isEmpty()) {<p><i>Hinweis:</i> @exercise.hint</p>}
             <div class="form-group"><label for="feedbackLevel">Gew&uuml;nschtes Feedback Level:</label>
               <select name="feedbackLevel" id="feedbackLevel" class="form-control">
               @for(feedbackLevel <- model.exercise.FeedbackLevel.values()) {
@@ -87,7 +88,8 @@ function testSolution() {
           </div>
           <div class="panel-footer">
             <button type="button" class="btn btn-default btn-block" onclick="testSolution();">L&ouml;sung testen</button>
-            <input type="submit" class="btn btn-default btn-block" value="L&ouml;sung abgeben">
+            <a type="button" class="btn btn-default btn-block" href="@controllers.sql.routes.SQL.exercise(exercise.key.scenarioName, exercise.key.exercisetype.toString, (exercise.key.id + 1))">Nächste Aufgabe</a>
+            @* <input type="submit" class="btn btn-default btn-block" value="L&ouml;sung abgeben"> *@
           </div>
         </div>
       

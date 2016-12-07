@@ -2,16 +2,20 @@
 
 @main("JavaScript", user) {
 <div class="container">
-    <div class="page-header">
-      <h1 class="page-title">&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h1>
-    </div>
-  <div class="panel panel-default">
-    <div class="panel-heading">Korrektur mit Java-JSEngine Nashorn</div>
-    <div class="panel-body">
-    @for(exercise <- exercises) {
-      <a href="@controllers.js.routes.JS.exercise(new model.IntExerciseIdentifier(exercise.id))" class="btn btn-default btn-block">Aufgabe @exercise.id: @exercise.title</a>
-    }
+  <div class="page-header">
+    <h1 class="page-title">&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h1>
+  </div>
+  @for(exercise <- exercises) {
+	<div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <a href="@controllers.js.routes.JS.exercise(new model.IntExerciseIdentifier(exercise.id))">Aufgabe @exercise.id: @exercise.title</a>
+      </div>
+      <div class="panel-body">
+        @Html(exercise.getText())
+      </div>
     </div>
   </div>
+  }
 </div>
 }

@@ -6,12 +6,14 @@
     <h1 class="page-title">&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h1>
   </div>
   @for(exercise <- exercises) {
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <a href="@controllers.xml.routes.XML.exercise(new model.IntExerciseIdentifier(exercise.id))">Aufgabe @exercise.id: @exercise.title</a>
-    </div>
-    <div class="panel-body">
-      <p>@exercise.text</p>
+  <div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <a href="@controllers.xml.routes.XML.exercise(new model.IntExerciseIdentifier(exercise.id))">Aufgabe @exercise.id: @exercise.title</a>
+      </div>
+      <div class="panel-body">
+        <p>@exercise.text</p>
+      </div>
     </div>
   </div>
   }

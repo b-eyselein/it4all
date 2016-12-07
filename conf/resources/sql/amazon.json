@@ -149,6 +149,50 @@
 				"tags": [
 					"JOIN"
 				]
+			}, 
+			{
+				"id": 16, 
+				"exercisetype": "SELECT", 
+				"text": "Geben Sie alle Email-Adressen der Kunden aus, die mit 'gmx.de' enden.", 
+				"hint": "Verwenden Sie für die Eingrenzung der Mailadresse den 'LIKE'-Operator.", 
+				"samplesolutions": [
+					"SELECT email FROM customers WHERE email LIKE '%gmx.de'", 
+					"SELECT email FROM customers WHERE email LIKE \"%gmx.de\""
+				]
+			}, 
+			{
+				"id": 17, 
+				"exercisetype": "SELECT", 
+				"text": "Suchen Sie alle Titel jener Bücher deren Autor George Orwell ist. Ordnen Sie die Titel nach Erscheinungsjahr abwärts.", 
+				"samplesolutions": [
+					"SELECT title FROM books join authors on books.author_id = authors.id WHERE first_name = 'George' AND family_name = 'Orwell' ORDER By year DESC", 
+					"SELECT title FROM books join authors on books.author_id = authors.id WHERE first_name = \"George\" AND family_name = \"Orwell\" ORDER By year DESC"
+				], 
+				"tags": [
+					"ORDER_BY", 
+					"JOIN"
+				]
+			}, 
+			{
+				"id": 18, 
+				"exercisetype": "SELECT", 
+				"text": "Zeigen sie Titel und Autor-ID der drei teuersten Bücher an. Sortieren Sie die Einträge nach Preis abwärts.", 
+				"samplesolutions": [
+					"SELECT title, author_id FROM books ORDER BY price DESC LIMIT 3"
+				], 
+				"tags": [
+					"ORDER_BY", 
+					"LIMIT"
+				]
+			}, 
+			{
+				"id": 19, 
+				"exercisetype": "SELECT", 
+				"text": "Wählen Sie alle Einträge zu Kunden aus, die im Jahr 1981 Geburtstag haben.", 
+				"hint": "Verwenden Sie den 'LIKE'-Operator zu Vergleich des Jahres", 
+				"samplesolutions": [
+					"SELECT * FROM customers WHERE birthday LIKE '1981-%'"
+				]
 			}
 		]
 	}
