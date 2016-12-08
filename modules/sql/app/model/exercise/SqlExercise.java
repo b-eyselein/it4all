@@ -106,4 +106,9 @@ public class SqlExercise extends Exercise {
     return null;
   }
 
+  public Html renderSampleSolutions() {
+    return new Html(getSampleSolutions().stream().collect(Collectors
+        .joining("</pre></div><div class=\"col-md-6\"><pre>", "<div class=\"col-md-6\"><pre>", "</pre></div>")));
+  }
+
 }

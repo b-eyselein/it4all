@@ -1,10 +1,11 @@
 # creation of exercises
-GET    /upload                                controllers.sql.SQLAdmin.uploadForm()
-POST   /upload                                controllers.sql.SQLAdmin.uploadFile()
-GET    /create                                controllers.sql.SQLAdmin.readStandardExercises()
+GET    /upload                    controllers.sql.SQLAdmin.uploadForm()
+POST   /upload                    controllers.sql.SQLAdmin.uploadFile()
+GET    /create                    controllers.sql.SQLAdmin.readStandardExercises()
 
 # exercises
-GET    /                                      controllers.sql.SQL.index()
-GET    /:scenario/:exerciseType/:exerciseId   controllers.sql.SQL.exercise(scenario: String, exerciseType: String, exerciseId: Int)
-PUT    /:scenario/:exerciseType/:exerciseId   controllers.sql.SQL.commit(scenario: String, exerciseType: String, exerciseId: Int)
-POST   /:scenario/:exerciseType/:exerciseId   controllers.sql.SQL.commit(scenario: String, exerciseType: String, exerciseId: Int)
+GET    /                          controllers.sql.SQL.index()
+GET    /:scenario/:exType         controllers.sql.SQL.scenario(scenario: String, exType: String, start: Int ?= 0)
+GET    /:scenario/:exType/:exId   controllers.sql.SQL.exercise(scenario: String, exType: String, exId: Int)
+PUT    /:scenario/:exType/:exId   controllers.sql.SQL.commit(scenario: String, exType: String, exId: Int)
+POST   /:scenario/:exType/:exId   controllers.sql.SQL.commit(scenario: String, exType: String, exId: Int)

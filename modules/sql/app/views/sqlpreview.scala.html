@@ -3,12 +3,16 @@
 @main("SQL", user) {
 <div class="container-fluid">
   <div class="page-header">
-    <h1>Erstellung oder Update eines Szenarios:</h1>
+    <h1>Folgende Aufgaben wurden erstellt:</h1>
   </div>
   @for(scenario <- scenarioes) {
   <div class="panel panel-default">
     <div class="panel-heading">Szenario &quot;@scenario.longName&quot;</div>
     <div class="panel-body">
+    
+    <!-- TODO: Szenariobeschreibung -->
+    <p>Szenariobeschreibung!</p>
+    
     <table class="table table-condensed">
       <thead>
         <tr>
@@ -26,7 +30,7 @@
 		  <td>@exercise.key.id</td>
 		  <td>@exercise.key.exercisetype</td>
 		  <td>@exercise.text</td>
-		  <td>@exercise.getSampleSolutions()</td>
+		  <td>@exercise.renderSampleSolutions()</td>
 		  <td>@exercise.validation</td>
 		  <td>@exercise.tags</td>
 		</tr>        

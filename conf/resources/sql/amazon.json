@@ -9,8 +9,8 @@
 				"exercisetype": "SELECT", 
 				"text": "Geben Sie alle Spalten der Autorentabelle aus!", 
 				"samplesolutions": [
-					"SELECT * FROM authors", 
-					"SELECT id, first_name, family_name, birthday FROM authors"
+					"SELECT *\n  FROM authors", 
+					"SELECT id, first_name, family_name, birthday\n  FROM authors"
 				]
 			}, 
 			{
@@ -18,7 +18,7 @@
 				"exercisetype": "SELECT", 
 				"text": "Geben Sie die Nachnamen aller Autoren aus!", 
 				"samplesolutions": [
-					"SELECT family_name FROM authors"
+					"SELECT family_name\n  FROM authors"
 				]
 			}, 
 			{
@@ -26,7 +26,7 @@
 				"exercisetype": "SELECT", 
 				"text": "Geben Sie die Namen aller Verlage aus!", 
 				"samplesolutions": [
-					"SELECT name FROM publishers"
+					"SELECT name\n  FROM publishers"
 				]
 			}, 
 			{
@@ -34,7 +34,7 @@
 				"exercisetype": "SELECT", 
 				"text": "Geben Sie die Vor- und Nachnamen aller Kunden aus!", 
 				"samplesolutions": [
-					"SELECT first_name, family_name FROM customers"
+					"SELECT first_name, family_name\n  FROM customers"
 				]
 			}, 
 			{
@@ -42,7 +42,7 @@
 				"exercisetype": "SELECT", 
 				"text": "Geben Sie für jedes Buch jeweils den Titel, das Erscheinungsjahr und die ISBN aus!", 
 				"samplesolutions": [
-					"SELECT title, year, isbn FROM books"
+					"SELECT title, year, isbn\n  FROM books"
 				]
 			}, 
 			{
@@ -50,8 +50,8 @@
 				"exercisetype": "SELECT", 
 				"text": "Bestimmen Sie den Titel des Buches mit der ISBN '978-3551354051' (ohne Anführungszeichen).", 
 				"samplesolutions": [
-					"SELECT title FROM books WHERE isbn = '978-3551354051'", 
-					"SELECT title FROM books WHERE isbn = \"978-3551354051\""
+					"SELECT title\n  FROM books\n  WHERE isbn = '978-3551354051'", 
+					"SELECT title\n  FROM books\n  WHERE isbn = \"978-3551354051\""
 				]
 			}, 
 			{
@@ -59,8 +59,8 @@
 				"exercisetype": "SELECT", 
 				"text": "Bestimmen Sie den Preis des Buches mit der ISBN '978-3551354068' (ohne Anführungszeichen).", 
 				"samplesolutions": [
-					"SELECT price FROM books WHERE isbn = '978-3551354068'", 
-					"SELECT price FROM books WHERE isbn = \"978-3551354068\""
+					"SELECT price\n  FROM books\n  WHERE isbn = '978-3551354068'", 
+					"SELECT price\n  FROM books\n  WHERE isbn = \"978-3551354068\""
 				]
 			}, 
 			{
@@ -68,7 +68,7 @@
 				"exercisetype": "SELECT", 
 				"text": "Bestimmen Sie den Vor- und Nachnamen des Autoren mit der ID 3", 
 				"samplesolutions": [
-					"SELECT first_name, family_name from authors where id = 3"
+					"SELECT first_name, family_name\n  FROM authors\n  WHERE id = 3"
 				]
 			}, 
 			{
@@ -76,8 +76,8 @@
 				"exercisetype": "SELECT", 
 				"text": "Bestimmen Sie die ID des Autoren des Buches 'Der kleine Prinz' (ohne Anführungszeichen).", 
 				"samplesolutions": [
-					"SELECT author_id FROM books WHERE title = 'Der kleine Prinz'", 
-					"SELECT author_id FROM books WHERE title = \"Der kleine Prinz\""
+					"SELECT author_id\n  FROM books\n  WHERE title = 'Der kleine Prinz'", 
+					"SELECT author_id\n  FROM books\n  WHERE title = \"Der kleine Prinz\""
 				]
 			}, 
 			{
@@ -85,8 +85,8 @@
 				"exercisetype": "SELECT", 
 				"text": "Bestimmen Sie den Namen des Verlages, der unter der Telefonnummer '+49 2402 / 806341' erreichbar ist.", 
 				"samplesolutions": [
-					"SELECT name FROM publishers WHERE phone = '+49 2402 / 806341'", 
-					"SELECT name FROM publishers WHERE phone = \"+49 2402 / 806341\""
+					"SELECT name\n  FROM publishers\n  WHERE phone = '+49 2402 / 806341'", 
+					"SELECT name\n  FROM publishers\n  WHERE phone = \"+49 2402 / 806341\""
 				]
 			}, 
 			{
@@ -94,7 +94,7 @@
 				"exercisetype": "SELECT", 
 				"text": "Ordnen Sie allen Büchern ihre jeweiligen Autoren zu. Geben Sie jeweils den Titel des Buches und den Nachnamen des Autoren aus!", 
 				"samplesolutions": [
-					"SELECT title, family_name FROM authors JOIN books ON authors.id = books.author_id"
+					"SELECT title, family_name\n  FROM authors\n    JOIN books ON authors.id = books.author_id"
 				], 
 				"tags": [
 					"JOIN"
@@ -106,10 +106,10 @@
 				"text": "Bestimmen Sie Titel und Preis aller Bücher, die im Carlsen-Verlag erschienen sind.", 
 				"hint": "Die Zuordnung von Verlag-Id zu Verlag-Name befindet sich in der Tabelle 'publishers'.", 
 				"samplesolutions": [
-					"SELECT title, price FROM books JOIN publishers ON publisher_id = publishers.id WHERE name = 'Carlsen'", 
-					"SELECT title, price FROM books JOIN publishers ON publisher_id = publishers.id WHERE name = \"Carlsen\"", 
-					"SELECT title, price FROM books JOIN publishers ON publisher_id = publishers.id WHERE publishers.name = 'Carlsen'", 
-					"SELECT title, price FROM books JOIN publishers ON publisher_id = publishers.id WHERE publishers.name = \"Carlsen\""
+					"SELECT title, price\n  FROM books\n    JOIN publishers ON publisher_id = publishers.id\n  WHERE name = 'Carlsen'", 
+					"SELECT title, price\n  FROM books\n    JOIN publishers ON publisher_id = publishers.id\n  WHERE name = \"Carlsen\"", 
+					"SELECT title, price\n  FROM books\n    JOIN publishers ON publisher_id = publishers.id\n  WHERE publishers.name = 'Carlsen'", 
+					"SELECT title, price\n  FROM books\n    JOIN publishers ON publisher_id = publishers.id\n  WHERE publishers.name = \"Carlsen\""
 				], 
 				"tags": [
 					"JOIN"
@@ -120,8 +120,8 @@
 				"exercisetype": "SELECT", 
 				"text": "Bestimmen Sie Titel und ISBN sämtlicher Bücher der Autorin 'Rowling' (ohne Anführungszeichen).", 
 				"samplesolutions": [
-					"SELECT title, isbn FROM books JOIN authors on books.author_id = authors.id WHERE family_name = 'Rowling'", 
-					"SELECT title, isbn FROM books JOIN authors on books.author_id = authors.id WHERE family_name = \"Rowling\""
+					"SELECT title, isbn\n  FROM books\n    JOIN authors on books.author_id = authors.id\n  WHERE family_name = 'Rowling'", 
+					"SELECT title, isbn\n  FROM books\n    JOIN authors on books.author_id = authors.id\n  WHERE family_name = \"Rowling\""
 				], 
 				"tags": [
 					"JOIN"
@@ -132,8 +132,8 @@
 				"exercisetype": "SELECT", 
 				"text": "Zeigen Sie die Werte aller Ratings an, die der Kunde mit der Email 'wilhard_1041@web.de' abgegeben hat", 
 				"samplesolutions": [
-					"SELECT rating FROM ratings JOIN customers ON ratings.customer_id = customers.id WHERE email = 'wilhard_1041@web.de'", 
-					"SELECT rating FROM ratings JOIN customers ON ratings.customer_id = customers.id WHERE email = \"wilhard_1041@web.de\""
+					"SELECT rating\n  FROM ratings\n    JOIN customers ON ratings.customer_id = customers.id\n  WHERE email = 'wilhard_1041@web.de'", 
+					"SELECT rating\n  FROM ratings\n    JOIN customers ON ratings.customer_id = customers.id\n  WHERE email = \"wilhard_1041@web.de\""
 				], 
 				"tags": [
 					"JOIN"
@@ -144,7 +144,7 @@
 				"exercisetype": "SELECT", 
 				"text": "Wie lautet der Nachname des Kunden, der die Bestellung mit der ID 5 aufgegeben hat?", 
 				"samplesolutions": [
-					"SELECT family_name FROM orders JOIN customers ON orders.customer_id = customers.id WHERE orders.id = 5"
+					"SELECT family_name\n  FROM orders\n    JOIN customers ON orders.customer_id = customers.id\n  WHERE orders.id = 5"
 				], 
 				"tags": [
 					"JOIN"
@@ -156,17 +156,17 @@
 				"text": "Geben Sie alle Email-Adressen der Kunden aus, die mit 'gmx.de' enden.", 
 				"hint": "Verwenden Sie für die Eingrenzung der Mailadresse den 'LIKE'-Operator.", 
 				"samplesolutions": [
-					"SELECT email FROM customers WHERE email LIKE '%gmx.de'", 
-					"SELECT email FROM customers WHERE email LIKE \"%gmx.de\""
+					"SELECT email\n  FROM customers\n  WHERE email LIKE '%gmx.de'", 
+					"SELECT email\n  FROM customers\n  WHERE email LIKE \"%gmx.de\""
 				]
 			}, 
 			{
 				"id": 17, 
 				"exercisetype": "SELECT", 
-				"text": "Suchen Sie alle Titel jener Bücher deren Autor George Orwell ist. Ordnen Sie die Titel nach Erscheinungsjahr abwärts.", 
+				"text": "Suchen Sie die Titel aller Bücher, deren Autor George Orwell ist. Ordnen Sie die Titel nach Erscheinungsjahr abwärts.", 
 				"samplesolutions": [
-					"SELECT title FROM books join authors on books.author_id = authors.id WHERE first_name = 'George' AND family_name = 'Orwell' ORDER By year DESC", 
-					"SELECT title FROM books join authors on books.author_id = authors.id WHERE first_name = \"George\" AND family_name = \"Orwell\" ORDER By year DESC"
+					"SELECT title\n  FROM books\n    JOIN authors on books.author_id = authors.id\n  WHERE first_name = 'George'\n  AND family_name = 'Orwell'\n  ORDER BY year DESC", 
+					"SELECT title\n  FROM books\n    JOIN authors on books.author_id = authors.id\n  WHERE first_name = \"George\"\n  AND family_name = \"Orwell\"\n  ORDER BY year DESC"
 				], 
 				"tags": [
 					"ORDER_BY", 
@@ -178,7 +178,7 @@
 				"exercisetype": "SELECT", 
 				"text": "Zeigen sie Titel und Autor-ID der drei teuersten Bücher an. Sortieren Sie die Einträge nach Preis abwärts.", 
 				"samplesolutions": [
-					"SELECT title, author_id FROM books ORDER BY price DESC LIMIT 3"
+					"SELECT title, author_id\n  FROM books\n  ORDER BY price DESC\n  LIMIT 3"
 				], 
 				"tags": [
 					"ORDER_BY", 
@@ -191,7 +191,44 @@
 				"text": "Wählen Sie alle Einträge zu Kunden aus, die im Jahr 1981 Geburtstag haben.", 
 				"hint": "Verwenden Sie den 'LIKE'-Operator zu Vergleich des Jahres", 
 				"samplesolutions": [
-					"SELECT * FROM customers WHERE birthday LIKE '1981-%'"
+					"SELECT *\n  FROM customers\n  WHERE birthday LIKE '1981-%'"
+				]
+			}, 
+			{
+				"id": 20, 
+				"exercisetype": "SELECT", 
+				"text": "Wie oft wurde das Buch 'Die Stadt in der Wüste' bewertet? Nennen Sie die Spalte 'Anzahl'.", 
+				"samplesolutions": [
+					"SELECT COUNT(rating) AS Anzahl\n  FROM ratings\n    JOIN books ON books.id = ratings.book_id\n  WHERE title = \"Die Stadt in der Wüste\"", 
+					"SELECT COUNT(rating) AS Anzahl\n  FROM ratings\n    JOIN books ON books.id = ratings.book_id\n  WHERE title = 'Die Stadt in der Wüste'"
+				], 
+				"tags": [
+					"FUNCTION", 
+					"JOIN"
+				]
+			}, 
+			{
+				"id": 21, 
+				"exercisetype": "SELECT", 
+				"text": "Wie lauten die Nachnamen der Kunden, die sich das Buch 'Harry Potter und der Orden des Phönix' wünschen?", 
+				"samplesolutions": [
+					"SELECT family_name\n  FROM customers\n    JOIN wishlists ON wishlists.customer_id = customers.id\n    JOIN books on wishlists.book_id = books.id\n  WHERE title = 'Harry Potter und der Orden des Phönix'", 
+					"SELECT family_name\n  FROM customers\n    JOIN wishlists ON wishlists.customer_id = customers.id\n    JOIN books on wishlists.book_id = books.id\n  WHERE title = \"Harry Potter und der Orden des Phönix\""
+				], 
+				"tags": [
+					"DOUBLE_JOIN"
+				]
+			}, 
+			{
+				"id": 22, 
+				"exercisetype": "SELECT", 
+				"text": "Bestimmen Sie Titel und Preis aller Bücher des Autors 'Tolkien', deren Preis unter 10€ liegt. Ordnen Sie die Einträge nach Erscheinungsjahr abwärts.", 
+				"samplesolutions": [
+					"SELECT title, price\n  FROM books\n  JOIN authors on book.author_id = authors.id\n  WHERE family_name = 'Tolkien'\n  AND price < 10\n  ORDER BY year DESC"
+				], 
+				"tags": [
+					"ORDER_BY", 
+					"JOIN"
 				]
 			}
 		]

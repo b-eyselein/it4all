@@ -38,6 +38,7 @@ import play.mvc.Result;
 import views.html.correction;
 import views.html.sqlexercise;
 import views.html.sqloverview;
+import views.html.sqlscenario;
 import play.mvc.Http.Request;
 
 public class SQL extends ExerciseController<SqlExerciseKey> {
@@ -91,6 +92,14 @@ public class SQL extends ExerciseController<SqlExerciseKey> {
   
   public Result index() {
     return ok(sqloverview.render(UserManagement.getCurrentUser(), SqlScenario.finder.all()));
+  }
+  
+  public Result scenario(String scenarioName, String exType, int start) {
+    SqlScenario scenario = SqlScenario.finder.byId(scenarioName);
+    if(scenario == null)
+      return redirect(controllers.sql.routes.SQL.index());
+    
+    return ok(sqlscenario.render(UserManagement.getCurrentUser(), scenario, SqlExerciseType.valueOf(exType), start));
   }
   
   private Database getDatabaseForExerciseType(SqlExerciseType exerciseType) {

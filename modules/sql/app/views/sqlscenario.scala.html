@@ -1,0 +1,48 @@
+@(user: model.user.User, scenario: model.exercise.SqlScenario, exType: model.exercise.SqlExerciseType, start: Int)
+
+@main("SQL", user) {
+<style>
+.btn {
+    white-space: normal;
+}
+</style>
+
+<div class="container">
+  <div class="page-header">
+    <h1>Szenario &quot;@scenario.longName&quot;: Aufgabentyp @exType</h1>
+  </div>
+  
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Bearbeitet</th>
+        <th>Tags</th>
+        <th>ID</th>
+        <th>Aufgabentext</th>
+      </tr>
+    </thead>
+    <tbody>
+    @for(ex <- scenario.getExercises(exType, start)) {
+      <tr>
+        <td>TODO</td>
+	    <td>@ex.getBadges()</td>
+	    <td>@ex.key.id:</td>
+  	    <td>
+          <a href="@controllers.sql.routes.SQL.exercise(ex.key.scenarioName, ex.key.exercisetype.toString, ex.key.id)"
+            class="btn btn-default btn-block">@ex.text</a>
+        </td>
+      </div>
+  }
+    </tbody>
+  </table>
+    
+  <hr>
+  
+  <div class="btn-group btn-group-justified">
+    <a type="button" href="@controllers.sql.routes.SQL.scenario(scenario.shortName, exType.toString(), Math.max(0, start - 10))"
+      class="btn btn-default">Zurück</a>
+    <a type="button" href="@controllers.sql.routes.SQL.scenario(scenario.shortName, exType.toString(), scenario.getBorder(exType, start))"
+      class="btn btn-default">Vorwärts</a>
+  </div>
+</div>
+}
