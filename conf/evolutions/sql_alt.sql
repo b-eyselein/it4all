@@ -1,6 +1,3 @@
-# --- !Ups
-
-# JavaScript
 insert into js_web_exercise (`id`, `title`, `text`, `declaration`) values
 	(1,
 	'Klickzähler',
@@ -32,15 +29,3 @@ insert into conditions (`id`, `pre_id`, `post_id`, `xpathquery`, `awaitedvalue`)
 	(7, NULL, 6, "//span[@id='result']", "1"),
 	(8, NULL, 7, "//span[@id='result']", "1100"),
 	(9, NULL, 8, "//span[@id='result']", "1111111");
-
-# --- !Downs
-
-SET FOREIGN_KEY_CHECKS = 0;
-
-delete from js_web_test;
-
-delete from conditions;
-
-delete from js_web_exercise;
-
-SET FOREIGN_KEY_CHECKS = 1;

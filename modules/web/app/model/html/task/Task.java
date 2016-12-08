@@ -12,6 +12,7 @@ import javax.persistence.MappedSuperclass;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
 
+import com.avaje.ebean.Model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -21,7 +22,7 @@ import model.html.result.AttributeResult;
 import model.result.EvaluationResult;
 
 @MappedSuperclass
-public abstract class Task {
+public abstract class Task extends Model {
   
   public static final String MULTIPLE_ATTRIBUTES_SPLIT_CHARACTER = ";";
   

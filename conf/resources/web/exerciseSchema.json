@@ -80,14 +80,45 @@
 						"xpath"
 					]
 				}
+			}, 
+			"jsTasks": {
+				"type": "array", 
+				"items": {
+					"type": "object", 
+					"properties": {
+						"text": {
+							"type": "string"
+						}, 
+						"xpath": {
+							"type": "string"
+						}, 
+						"attributes": {
+							"type": "array", 
+							"items": {
+								"type": "object", 
+								"properties": {
+									"key": {
+										"type": "string"
+									}, 
+									"value": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}, 
+					"required": [
+						"text", 
+						"xpath"
+					]
+				}
 			}
 		}, 
 		"required": [
 			"id", 
 			"title", 
 			"text", 
-			"htmlTasks", 
-			"cssTasks"
+			"htmlTasks"
 		]
 	}, 
 	"minItems": 1, 

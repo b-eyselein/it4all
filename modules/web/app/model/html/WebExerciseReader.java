@@ -1,5 +1,6 @@
 package model.html;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,6 +10,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import model.exercisereading.ExerciseReader;
 import model.html.task.CssTask;
 import model.html.task.HtmlTask;
+import model.html.task.JsWebTask;
 import model.html.task.Task;
 import model.html.task.TaskKey;
 
@@ -87,14 +89,42 @@ public class WebExerciseReader extends ExerciseReader<WebExercise> {
     
     return tasks;
   }
-
+  
+  private JsWebTask readJsTask(TaskKey taskKey, JsonNode jsTaskNode) {
+    JsonNode textNode = jsTaskNode.get("text");
+    JsonNode xpathNode = jsTaskNode.get("xpath");
+    JsonNode attributesNode = jsTaskNode.get("attributes");
+    
+    JsWebTask task = JsWebTask.finder.byId(taskKey);
+    if(task == null)
+      task = new JsWebTask(taskKey);
+    
+    task.text = textNode.asText();
+    task.xpathQuery = xpathNode.asText();
+    task.attributes = attributesNode == null ? "" : readAttributes(attributesNode);
+    
+    return task;
+  }
+  
+  private List<JsWebTask> readJsTasks(JsonNode jsTasksNode, int exerciseId) {
+    List<JsWebTask> tasks = new LinkedList<>();
+    
+    int taskId = 1;
+    for(final Iterator<JsonNode> taskNodeIter = jsTasksNode.elements(); taskNodeIter.hasNext();)
+      tasks.add(readJsTask(new TaskKey(taskId++, exerciseId), taskNodeIter.next()));
+    
+    return tasks;
+  }
+  
   @Override
   protected WebExercise readExercise(JsonNode exerciseNode) {
     JsonNode idNode = exerciseNode.get("id");
     JsonNode titleNode = exerciseNode.get("title");
     JsonNode textNode = exerciseNode.get("text");
+    
     JsonNode htmlTasksNode = exerciseNode.get("htmlTasks");
     JsonNode cssTasksNode = exerciseNode.get("cssTasks");
+    JsonNode jsTasksNode = exerciseNode.get("jsTasks");
     
     int exerciseId = idNode.asInt();
     WebExercise exercise = WebExercise.finder.byId(exerciseId);
@@ -104,7 +134,8 @@ public class WebExerciseReader extends ExerciseReader<WebExercise> {
     exercise.title = titleNode.asText();
     exercise.text = textNode.asText();
     exercise.htmlTasks = readHtmlTasks(htmlTasksNode, exerciseId);
-    exercise.cssTasks = readCssTasks(cssTasksNode, exerciseId);
+    exercise.cssTasks = cssTasksNode != null ? readCssTasks(cssTasksNode, exerciseId) : Collections.emptyList();
+    exercise.jsTasks = jsTasksNode != null ? readJsTasks(jsTasksNode, exerciseId) : Collections.emptyList();
     
     return exercise;
   }

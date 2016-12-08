@@ -25,6 +25,9 @@
       @if(exercise.cssTasks.size() > 0) {
         <a href="@web.routes.HTML.exercise(exercise.id, "css")" class="btn btn-primary" role="button">Css-Teil der Aufgabe</a>
       }
+      @if(exercise.jsTasks.size() > 0) {
+        <a href="@web.routes.HTML.exercise(exercise.id, "js")" class="btn btn-primary" role="button">Js-Teil der Aufgabe</a>
+      }
       </div>
     </div>
   </div>

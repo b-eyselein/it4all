@@ -9,8 +9,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
 
-import com.avaje.ebean.Finder;
-
 import model.exercise.Success;
 import model.html.result.AttributeResult;
 import model.html.result.ElementResult;

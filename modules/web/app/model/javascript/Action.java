@@ -5,7 +5,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
 
 @Embeddable
@@ -18,7 +18,7 @@ public class Action {
   @Enumerated(EnumType.STRING)
   public ActionType actiontype;
 
-  public String xpathQuery; // NOSONAR
+  public String actionXpathQuery; // NOSONAR
   public String keysToSend; // NOSONAR
 
   public String getDescription() {
@@ -26,19 +26,19 @@ public class Action {
     return "TODO!";
   }
 
-  public boolean perform(WebDriver driver) {
+  public boolean perform(SearchContext context) {
     switch(actiontype) {
     case CLICK:
-      return performClickAction(driver);
+      return performClickAction(context);
     case FILLOUT:
-      return performFilloutAction(driver);
+      return performFilloutAction(context);
     default:
       return false;
     }
   }
 
-  private boolean performClickAction(WebDriver driver) {
-    WebElement element = driver.findElement(By.xpath(xpathQuery));
+  private boolean performClickAction(SearchContext context) {
+    WebElement element = context.findElement(By.xpath(actionXpathQuery));
 
     if(element == null)
       return false;
@@ -48,15 +48,15 @@ public class Action {
     return true;
   }
 
-  private boolean performFilloutAction(WebDriver driver) {
-    WebElement element = driver.findElement(By.xpath(xpathQuery));
+  private boolean performFilloutAction(SearchContext context) {
+    WebElement element = context.findElement(By.xpath(actionXpathQuery));
     if(element == null)
       return false;
 
     element.sendKeys(keysToSend);
 
     // click on other element to fire the onchange event...
-    driver.findElement(By.xpath("//body")).click();
+    context.findElement(By.xpath("//body")).click();
 
     return true;
   }

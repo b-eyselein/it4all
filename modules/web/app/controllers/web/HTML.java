@@ -65,27 +65,8 @@ public class HTML extends ExerciseController<WebExerciseIdentifier> {
       return ok(Json.toJson(result));
     } else {
       log(user, new ExerciseCompletionEvent(request(), identifier, result));
-      return ok(correction.render("HTML", result, UserManagement.getCurrentUser()));
+      return ok(correction.render("Web", result, UserManagement.getCurrentUser()));
     }
-  }
-
-  @Override
-  protected CompleteResult correct(Request request, User user, WebExerciseIdentifier id) {
-    WebExercise exercise = WebExercise.finder.byId(id.getId());
-
-    DynamicForm form = factory.form().bindFromRequest();
-    String learnerSolution = form.get(LEARNER_SOLUTION_VALUE);
-    try {
-      saveSolutionForUser(user, learnerSolution, exercise.getId());
-    } catch (IOException error) {
-      Logger.error("Fehler beim Speichern einer Html-Loesungsdatei!", error);
-      return new WebCorrectionResult(learnerSolution, Arrays.asList(new EvaluationFailed(
-          "Es gab einen Fehler beim Speichern der Lösungsdatei. Daher konnte die Korrektur nicht durchgeführt werden!")));
-    }
-
-    String solutionUrl = "http://localhost:9000" + routes.Solution.site(user, "html", exercise.id).url();
-
-    return HtmlCorrector.correct(learnerSolution, solutionUrl, exercise, user, id.getType());
   }
 
   /**
@@ -121,6 +102,10 @@ public class HTML extends ExerciseController<WebExerciseIdentifier> {
     return ok(htmloverview.render(UserManagement.getCurrentUser(), WebExercise.finder.all()));
   }
 
+  public Result playground() {
+    return ok(playground.render(UserManagement.getCurrentUser()));
+  }
+
   private String loadDefaultOrOldSolution(int exerciseId, User user) {
     Path oldSolutionPath = util.getSolFileForExercise(user, EXERCISE_TYPE, exerciseId, FILE_TYPE);
     if(oldSolutionPath.toFile().exists()) {
@@ -133,10 +118,6 @@ public class HTML extends ExerciseController<WebExerciseIdentifier> {
     return STANDARD_HTML;
   }
 
-  public Result playground() {
-    return ok(playground.render(UserManagement.getCurrentUser()));
-  }
-
   private void saveSolutionForUser(User user, String solution, int exercise) throws IOException {
     Path solDir = util.getSolDirForUserAndType(user, EXERCISE_TYPE);
     if(!solDir.toFile().exists())
@@ -147,6 +128,25 @@ public class HTML extends ExerciseController<WebExerciseIdentifier> {
   }
 
   private boolean typeIsCorrect(String type) {
-    return "html".equals(type) || "css".equals(type);
+    return "html".equals(type) || "css".equals(type) || "js".equals(type);
+  }
+
+  @Override
+  protected CompleteResult correct(Request request, User user, WebExerciseIdentifier id) {
+    WebExercise exercise = WebExercise.finder.byId(id.getId());
+
+    DynamicForm form = factory.form().bindFromRequest();
+    String learnerSolution = form.get(LEARNER_SOLUTION_VALUE);
+    try {
+      saveSolutionForUser(user, learnerSolution, exercise.getId());
+    } catch (IOException error) {
+      Logger.error("Fehler beim Speichern einer Html-Loesungsdatei!", error);
+      return new WebCorrectionResult(learnerSolution, Arrays.asList(new EvaluationFailed(
+          "Es gab einen Fehler beim Speichern der Lösungsdatei. Daher konnte die Korrektur nicht durchgeführt werden!")));
+    }
+
+    String solutionUrl = "http://localhost:9000" + routes.Solution.site(user, "html", exercise.id).url();
+
+    return HtmlCorrector.correct(learnerSolution, solutionUrl, exercise, user, id.getType());
   }
 }
