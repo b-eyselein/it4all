@@ -177,18 +177,18 @@
 						sel=elem.id;
 					}
 													
-                    function link() {
-						if(document.getElementById(sel).value="on"){
-						var source_name = graph.getCell(idList[0]).attr('.uml-class-name-text/text');
-						var destin_name = graph.getCell(idList[1]).attr('.uml-class-name-text/text');
-						var source_mult = window.prompt("Bitte geben Sie die Multiplizität von "+source_name+" nach " + destin_name+" an.");
-						var destin_mult = window.prompt("Bitte geben Sie die Multiplizität von "+destin_name+" nach " + source_name+" an.");
-							switch (sel) {
-                                case '1':
-                                    graph.addCell(new uml.Composition({
-                                        source: {
-                                            id: idList[0]
-                                        },
+function link() {
+	if(document.getElementById(sel).value="on"){
+		var source_name = graph.getCell(idList[0]).attr('.uml-class-name-text/text');
+		var destin_name = graph.getCell(idList[1]).attr('.uml-class-name-text/text');
+		var source_mult = window.prompt("Bitte geben Sie die Multiplizität von "+source_name+" nach " + destin_name+" an.");
+		var destin_mult = window.prompt("Bitte geben Sie die Multiplizität von "+destin_name+" nach " + source_name+" an.");
+		switch (sel) {
+			case '1':
+				graph.addCell(new uml.Composition({
+					source: {
+					id: idList[0]
+					},
                                         target: {
                                             id: idList[1]
                                         },
@@ -243,11 +243,11 @@
 								default:
 								    idList = [];
                                     break;
-                            }
-						}
-                    }
+		}
+	}
+}
 						
-                    function addClass(data) {
+function addClass(data) {
                         flugzeug: var flug = new uml.Class({
                             position: {
                                 x: Math.random()*250,
@@ -290,10 +290,6 @@
                         graph.addCell(flug);
                     }
                     			
-function getAttributes(){
-
-}
-
 // Namen aller Klassen
 function getClasses(){
 	var classes=[];
@@ -303,6 +299,7 @@ function getClasses(){
 		}
 	}
 	return classes;
+	console.log("getClasses: "+ classes);
 }
 
 
@@ -325,7 +322,7 @@ function getAttributes(id){
 
 			}
 		}
-						console.log("text: "+text);
+						console.log("getAttributes: "+text);
 	}
 	return text;
 }
@@ -342,6 +339,7 @@ function getMethodes(id){
 }
 
 function send(){
+
 	var classes_meth=[];
 	var classesAttr=[];
 	var ids =getIds();
@@ -350,15 +348,8 @@ function send(){
 		var text = getAttributes(ids[i]);
 		classesAttr.push(text);
 	}
-	console.log(classesAttr);
-/*
-var asd= getIds();
-console.log("ids "+asd);	
-for (var i = 0; i < asd.length; i++){
-asd.push(getAttributes(ids[i]));
-}
-console.log(asd);	
-*/
+	console.log("send"+classesAttr);
+
 // Auflistung der Connections
 	var connections=[]; 
 	for(i=0; i<graph.getLinks().length; i++){
@@ -371,10 +362,112 @@ console.log(asd);
 		connections.push(text);
 		text="";
 	}
-	//console.log(connections);
-// Testszenario zum Vergleich mit Server
-	//var classes_correct=[data, data2, data3];
+	connections.sort();
+
+	var jsonConnections="\{\"connections\":\{\{";
+	jsonConnections=jsonConnections.substr(0,jsonConnections.length-1);
+	var agg = 0;
+	var com = 0;
+	var imp = 0;
+	var gen = 0;
+	for(i=0; i<connections.length; i++){
+		switch(connections[i].substr(4,3)){
+			case "Agg":
+				agg++;
+				break;
+			case "Com":
+				com++;	
+				break;
+			case "Imp":
+				imp++;
+				break;
+			case "Gen":
+				gen++;	
+				break;
+		}
+	}
+	if(agg == 0){
+		jsonConnections+="\"aggregation\":[],";
+	}else{
+		jsonConnections+="\"aggregation\":[";
+		for(i=0; i<agg;i++){
+		var split =connections[i].split("_");
+			jsonConnections+=	"\{\"start\":\""
+						+split[1]+
+					"\",\"target\":\""
+						+split[2]+
+					"\",\"mulstart\":\""
+						+split[3]+
+					"\",\"multarget\":\""
+						+split[4]+
+					"\"\},";
+		}
+		jsonConnections=jsonConnections.substr(0,jsonConnections.length-1)+"\],";
+	}
+	if(com == 0){
+		jsonConnections+="\"composition\":[],";
+	}else{
+		jsonConnections+="\"composition\":[";
+		for(i=0; i<com;i++){
+		var split =connections[i].split("_");
+			jsonConnections+=	"\{\"start\":\""
+						+split[1]+
+					"\",\"target\":\""
+						+split[2]+
+					"\",\"mulstart\":\""
+						+split[3]+
+					"\",\"multarget\":\""
+						+split[4]+
+					"\"\},";
+		}
+		jsonConnections=jsonConnections.substr(0,jsonConnections.length-1)+"\],";
+	}
+		if(imp == 0){
+		jsonConnections+="\"implementation\":[],";
+	}else{
+		jsonConnections+="\"implementation\":[";
+		for(i=0; i<imp;i++){
+		var split =connections[i].split("_");
+			jsonConnections+=	"\{\"start\":\""
+						+split[1]+
+					"\",\"target\":\""
+						+split[2]+
+					"\",\"mulstart\":\""
+						+split[3]+
+					"\",\"multarget\":\""
+						+split[4]+
+					"\"\},";
+		}
+		jsonConnections=jsonConnections.substr(0,jsonConnections.length-1)+"\],";
+	}
+	if(gen == 0){
+		jsonConnections+="\"generalization\":[]\{\{\}";
+		jsonConnections=jsonConnections.substr(0,jsonConnections.length-3)+"\}\}";
+	}else{
+		jsonConnections+="\"generalization\":[";
+		for(i=0; i<gen;i++){
+		var split =connections[i].split("_");
+			jsonConnections+=	"\{\"start\":\""
+						+split[1]+
+					"\",\"target\":\""
+						+split[2]+
+					"\",\"mulstart\":\""
+						+split[3]+
+					"\",\"multarget\":\""
+						+split[4]+
+					"\"\},";
+		}
+		jsonConnections=jsonConnections.substr(0,jsonConnections.length-1)+"\]\}\}";
+	}
+	
+	
+	console.log("connections via Text");
+	console.log(connections);
+	console.log("JSON-Connections");
+	console.log(jsonConnections);	
+
 }
+
 			
 					function loeschen(){
 						selectButton(document.getElementById(5));
@@ -396,14 +489,11 @@ console.log(asd);
 						selectButton(document.getElementById(9));
 					}
 					
-		
                 </script>
           </div>
-
         </div>
       </div>
     </div>
-
     <div class="panel-footer">
       <div class="btn-group">
         <button type="button" class="btn btn-default" value="off" id="1" onclick="selectButton(this);">Composition</button>

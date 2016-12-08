@@ -22,6 +22,7 @@ import play.mvc.Result;
 import views.html.classselection;
 import views.html.diagramdrawing;
 import views.html.umloverview;
+import views.html.difficulty;
 
 public class UML extends ExerciseController<IntExerciseIdentifier> {
 
@@ -58,5 +59,10 @@ public class UML extends ExerciseController<IntExerciseIdentifier> {
     // TODO Auto-generated method stub
     return null;
   }
+  
+  public Result diff(int exerciseId){
+	  return ok(difficulty.render(UserManagement.getCurrentUser()));
+  }
+  
   
 }

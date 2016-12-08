@@ -8,7 +8,7 @@
   @for(exercise <- exercises) {
   <div class="panel panel-default">
     <div class="panel-heading">
-      <a href=" @controllers.uml.routes.UML.classSelection(new model.IntExerciseIdentifier(exercise.id))">Aufgabe @exercise.id: @exercise.title</a>
+      <a href=" @controllers.uml.routes.UML.diff(exercise.id)">Aufgabe @exercise.id: @exercise.title</a>
     </div>
     <div class="panel-body">
       @for(exerText <- exercise.exerciseText.split("\n")) {

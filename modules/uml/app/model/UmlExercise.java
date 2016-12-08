@@ -4,8 +4,10 @@ import model.exercise.Exercise;
 
 public class UmlExercise extends Exercise {
   
-  public int id = 1;
-  public String exerciseText = "TODO!";
+  public int id =1;	
+  public String exerciseText = "Im folgenden Übungsszenario sollen Sie ein Klassendiagramm in UML erstellen!";
+  public String title  ="Foto";
+  public int diff = 0;
   
   @Override
   public int getId() {
