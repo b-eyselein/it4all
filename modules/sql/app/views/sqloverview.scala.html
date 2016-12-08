@@ -10,14 +10,17 @@
     Wenden Sie sich bitte an den Administrator!</div>
   } else {
     @for(scenario <- scenarioes) {
-      <h2>Szenario "@scenario.longName": Verf&uuml;gbare Aufgaben</h2>
-      <div class="btn-group btn-group-justified">
-        @for(exType <- model.exercise.SqlExerciseType.values()) {
-        <a href="@controllers.sql.routes.SQL.scenario(scenario.shortName, exType.toString())" class="btn btn-default"
-          @if(scenario.getExercisesByType(exType).isEmpty()) {disabled title="Zu diesem Typ gibt es leider noch keine Aufgaben"}>@exType</a>
-        }
+      <div class="panel panel-default">
+        <div class="panel-heading">Szenario "@scenario.longName": Verf&uuml;gbare Aufgabentypen</div>
+        <div class="panel-body">
+          <div class="btn-group btn-group-justified">
+            @for(exType <- model.exercise.SqlExerciseType.values()) {
+            <a href="@controllers.sql.routes.SQL.scenario(scenario.shortName, exType.toString())" class="btn btn-default"
+              @if(scenario.getExercisesByType(exType).isEmpty()) {disabled title="Zu diesem Typ gibt es leider noch keine Aufgaben"}>@exType</a>
+            }
+          </div>
+        </div>
       </div>
-      <hr>
     }
   }
 }

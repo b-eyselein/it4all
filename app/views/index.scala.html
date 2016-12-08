@@ -1,4 +1,4 @@
-@(student: model.user.User)
+@(student: model.user.User, isDev: Boolean)
 
 @main("HTML-Test", student) {
 <div class="container">
@@ -15,8 +15,12 @@
   <a type="button" class="btn btn-default btn-block" href="@controllers.nary.routes.Nary.index()">Zahlensysteme</a>
   <a type="button" class="btn btn-default btn-block" href="@controllers.bool.routes.Bool.index()">Boolesche Algebra</a>
   <a type="button" class="btn btn-default btn-block" href="@controllers.spread.routes.Spread.index()">Tabellenkalkuation</a>
-  <a type="button" class="btn btn-default btn-block" href="@controllers.uml.routes.UML.index()">UML</a>
-  <!-- <a type="button" class="btn btn-default btn-block" href="@controllers.mindmap.routes.Mindmap.index()">Mindmaps</a> -->
+  
+  @if(isDev) {
+  	<!-- Experimtal Correction tools only in development mode... -->
+    <a type="button" class="btn btn-default btn-block" href="@controllers.uml.routes.UML.index()">UML</a>
+    <a type="button" class="btn btn-default btn-block" href="@controllers.mindmap.routes.Mindmap.index()">Mindmaps</a>
+  }
 
 </div>
 }
