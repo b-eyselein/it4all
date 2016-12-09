@@ -6,7 +6,7 @@
     <h1 class="page-title">&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h1>
   </div>
   <div class="panel panel-default">
-    <a class="btn btn-primary btn-block" href="@controllers.web.routes.HTML.playground()">Web-Playground</a>
+    <a class="btn btn-primary btn-block" href="@controllers.web.routes.Web.playground()">Web-Playground</a>
   </div>
   
   @for(exercise <- exercises) {
@@ -20,13 +20,13 @@
     <div class="panel-footer">
       <div class="btn-group btn-group-justified">
       @if(exercise.htmlTasks.size() > 0) {
-        <a href="@web.routes.HTML.exercise(exercise.id, "html")" class="btn btn-primary" role="button">Html-Teil der Aufgabe</a>
+        <a href="@controllers.web.routes.Web.exercise(exercise.id, "html")" class="btn btn-primary" role="button">Html-Teil der Aufgabe</a>
       }
       @if(exercise.cssTasks.size() > 0) {
-        <a href="@web.routes.HTML.exercise(exercise.id, "css")" class="btn btn-primary" role="button">Css-Teil der Aufgabe</a>
+        <a href="@controllers.web.routes.Web.exercise(exercise.id, "css")" class="btn btn-primary" role="button">Css-Teil der Aufgabe</a>
       }
       @if(exercise.jsTasks.size() > 0) {
-        <a href="@web.routes.HTML.exercise(exercise.id, "js")" class="btn btn-primary" role="button">Js-Teil der Aufgabe</a>
+        <a href="@controllers.web.routes.Web.exercise(exercise.id, "js")" class="btn btn-primary" role="button">Js-Teil der Aufgabe</a>
       }
       </div>
     </div>

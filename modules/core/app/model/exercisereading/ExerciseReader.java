@@ -29,6 +29,8 @@ public abstract class ExerciseReader<T extends Exercise> {
 
   protected static final String BASE_DIR = "conf/resources";
 
+  protected static final String TEXT_NAME = "text";
+  
   protected String exerciseType;
 
   protected Path jsonFile;

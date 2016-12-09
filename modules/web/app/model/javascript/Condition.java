@@ -17,35 +17,50 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import model.exercise.Success;
 import model.html.task.JsWebTask;
+import play.Logger;
 
 @Entity
 @Table(name = "conditions")
 public class Condition extends Model {
   
+  public static final Finder<JsConditionKey, Condition> finder = new Finder<>(Condition.class);
+  
   @EmbeddedId
-  public JsConditionKey id;
+  public JsConditionKey key;
   
   @JsonBackReference
   @ManyToOne(cascade = CascadeType.ALL)
-  public JsWebTask pre;
-  
-  @JsonBackReference
-  @ManyToOne(cascade = CascadeType.ALL)
-  public JsWebTask post;
+  @JoinColumns({@JoinColumn(name = "task_id", referencedColumnName = "task_id", insertable = false, updatable = false),
+      @JoinColumn(name = "exercise_id", referencedColumnName = "exercise_id", insertable = false, updatable = false)})
+  public JsWebTask task;
   
   public String xpathquery; // NOSONAR
   
   public String awaitedvalue; // NOSONAR
   
+  public boolean isPrecond; // NOSONAR
+  
+  public Condition(JsConditionKey theKey) {
+    key = theKey;
+  }
+  
   public String getDescription() {
     return "Element mit XPath \"" + xpathquery + "\" sollte den Inhalt \"" + awaitedvalue + "\" haben";
   }
   
-  public ConditionResult test(SearchContext context, boolean isPrecondition) {
+  public boolean isPostcondition() {
+    return !isPrecond;
+  }
+  
+  public boolean isPrecondition() {
+    return isPrecond;
+  }
+  
+  public ConditionResult test(SearchContext context) {
     WebElement element = context.findElement(By.xpath(xpathquery));
     
     if(element == null)
-      return new ConditionResult(Success.NONE, this, "", isPrecondition);
+      return new ConditionResult(Success.NONE, this, "", isPrecond);
     
     String gottenValue = element.getText();
     
@@ -53,6 +68,8 @@ public class Condition extends Model {
     if(gottenValue.equals(awaitedvalue))
       success = Success.COMPLETE;
     
-    return new ConditionResult(success, this, gottenValue, isPrecondition);
+    Logger.debug(isPrecond + " :: " + gottenValue);
+    
+    return new ConditionResult(success, this, gottenValue, isPrecond);
   }
 }

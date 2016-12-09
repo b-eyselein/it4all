@@ -9,6 +9,7 @@ create table conditions (
   exercise_id                   integer not null,
   xpathquery                    varchar(255),
   awaitedvalue                  varchar(255),
+  is_precond                    tinyint(1) default 0,
   constraint pk_conditions primary key (id,task_id,exercise_id)
 );
 
@@ -78,14 +79,6 @@ create table js_test (
   constraint pk_js_test primary key (exercise_id,test_id)
 );
 
-create table js_web_exercise (
-  id                            integer auto_increment not null,
-  title                         varchar(255),
-  text                          text,
-  declaration                   text,
-  constraint pk_js_web_exercise primary key (id)
-);
-
 create table js_web_task (
   task_id                       integer not null,
   exercise_id                   integer not null,
@@ -142,6 +135,9 @@ create table web_exercise (
   id                            integer auto_increment not null,
   title                         varchar(255),
   text                          text,
+  html_text                     text,
+  css_text                      text,
+  js_text                       text,
   constraint pk_web_exercise primary key (id)
 );
 
@@ -156,11 +152,8 @@ create table xml_exercise (
   constraint pk_xml_exercise primary key (id)
 );
 
-alter table conditions add constraint fk_conditions_pre foreign key (task_id,exercise_id) references js_web_task (task_id,exercise_id) on delete restrict on update restrict;
-create index ix_conditions_pre on conditions (task_id,exercise_id);
-
-alter table conditions add constraint fk_conditions_post foreign key (task_id,exercise_id) references js_web_task (task_id,exercise_id) on delete restrict on update restrict;
-create index ix_conditions_post on conditions (task_id,exercise_id);
+alter table conditions add constraint fk_conditions_task foreign key (task_id,exercise_id) references js_web_task (task_id,exercise_id) on delete restrict on update restrict;
+create index ix_conditions_task on conditions (task_id,exercise_id);
 
 alter table css_task add constraint fk_css_task_exercise_id foreign key (exercise_id) references web_exercise (id) on delete restrict on update restrict;
 create index ix_css_task_exercise_id on css_task (exercise_id);
@@ -183,11 +176,8 @@ create index ix_sql_exercise_scenario_name on sql_exercise (scenario_name);
 
 # --- !Downs
 
-alter table conditions drop foreign key fk_conditions_pre;
-drop index ix_conditions_pre on conditions;
-
-alter table conditions drop foreign key fk_conditions_post;
-drop index ix_conditions_post on conditions;
+alter table conditions drop foreign key fk_conditions_task;
+drop index ix_conditions_task on conditions;
 
 alter table css_task drop foreign key fk_css_task_exercise_id;
 drop index ix_css_task_exercise_id on css_task;
@@ -220,8 +210,6 @@ drop table if exists html_task;
 drop table if exists js_exercise;
 
 drop table if exists js_test;
-
-drop table if exists js_web_exercise;
 
 drop table if exists js_web_task;
 

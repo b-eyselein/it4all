@@ -14,6 +14,15 @@
 			"text": {
 				"type": "string"
 			}, 
+			"htmlText": {
+				"type": "string"
+			}, 
+			"cssText": {
+				"type": "string"
+			}, 
+			"jsText": {
+				"type": "string"
+			}, 
 			"htmlTasks": {
 				"type": "array", 
 				"items": {
@@ -92,24 +101,59 @@
 						"xpath": {
 							"type": "string"
 						}, 
-						"attributes": {
+						"conditions": {
 							"type": "array", 
 							"items": {
 								"type": "object", 
 								"properties": {
-									"key": {
+									"id": {
+										"type": "integer"
+									}, 
+									"xpath": {
 										"type": "string"
 									}, 
-									"value": {
+									"awaitedValue": {
 										"type": "string"
+									}, 
+									"isPrecondition": {
+										"type": "boolean"
 									}
-								}
+								}, 
+								"required": [
+									"id", 
+									"xpath", 
+									"awaitedValue", 
+									"isPrecondition"
+								]
 							}
+						}, 
+						"action": {
+							"type": "object", 
+							"properties": {
+								"actionxpath": {
+									"type": "string"
+								}, 
+								"actiontype": {
+									"enum": [
+										"CLICK", 
+										"FILLOUT"
+									]
+								}, 
+								"keystosend": {
+									"type": "string"
+								}
+							}, 
+							"required": [
+								"actionxpath", 
+								"actiontype"
+							]
 						}
 					}, 
 					"required": [
 						"text", 
-						"xpath"
+						"xpath", 
+						"conditions", 
+						"action"
 					]
 				}
 			}

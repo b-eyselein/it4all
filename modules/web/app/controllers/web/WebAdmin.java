@@ -13,6 +13,8 @@ import controllers.core.UserManagement;
 import model.Util;
 import model.html.WebExercise;
 import model.html.WebExerciseReader;
+import model.html.task.JsWebTask;
+import model.javascript.Condition;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
@@ -20,7 +22,7 @@ import views.html.preview;
 import views.html.webupload;
 
 public class WebAdmin extends AdminController<WebExercise, WebExerciseReader> {
-  
+
   @Inject
   public WebAdmin(Util theUtil) {
     super(theUtil, "web", new WebExerciseReader());
@@ -59,8 +61,12 @@ public class WebAdmin extends AdminController<WebExercise, WebExerciseReader> {
   @Override
   protected void saveExercises(List<WebExercise> exercises) {
 
-    for(WebExercise ex: exercises)
+    for(WebExercise ex: exercises) {
       ex.save();
+      for(JsWebTask task: ex.jsTasks)
+        for(Condition cond: task.conditions)
+          cond.save();
+    }
   }
 
 }

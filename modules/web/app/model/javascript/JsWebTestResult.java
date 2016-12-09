@@ -12,13 +12,28 @@ public class JsWebTestResult extends EvaluationResult {
   private JsWebTask test;
   private List<ConditionResult> postconditionResults;
   private List<ConditionResult> preconditionResults;
+  private boolean actionPerformed;
 
-  public JsWebTestResult(JsWebTask theTest, Success theSuccess, List<ConditionResult> thePreconditionResults,
-      List<ConditionResult> thePostconditionResults) {
-    super(FeedbackLevel.MINIMAL_FEEDBACK, theSuccess);
+  public JsWebTestResult(JsWebTask theTest, List<ConditionResult> thePreResults, boolean theActionPerf,
+      List<ConditionResult> thePostResults) {
+    super(FeedbackLevel.MINIMAL_FEEDBACK, analyze(thePostResults, theActionPerf, thePostResults));
     test = theTest;
-    preconditionResults = thePreconditionResults;
-    postconditionResults = thePostconditionResults;
+    preconditionResults = thePreResults;
+    actionPerformed = theActionPerf;
+    postconditionResults = thePostResults;
+  }
+
+  public static <T extends EvaluationResult> boolean allResultsSuccessful(List<T> results) {
+    for(EvaluationResult res: results)
+      if(res.getSuccess() != Success.COMPLETE)
+        return false;
+    return true;
+  }
+
+  public static Success analyze(List<ConditionResult> preconds, boolean actionPerf, List<ConditionResult> postconds) {
+    if(allResultsSuccessful(preconds) && actionPerf && allResultsSuccessful(postconds))
+      return Success.COMPLETE;
+    return Success.NONE;
   }
 
   @Override
@@ -29,7 +44,7 @@ public class JsWebTestResult extends EvaluationResult {
     StringBuilder builder = new StringBuilder();
 
     builder.append("<div class=\"panel panel-" + getBSClass() + "\">");
-    
+
     builder.append("<div class=\"panel-heading\"><h4 class=\"panel-title\"><a data-toggle=\"collapse\" href=\"#col"
         + test.key.taskId + "\">Test " + (test.key.taskId) + "</a></h4>" + DIV_END);
 
@@ -39,6 +54,9 @@ public class JsWebTestResult extends EvaluationResult {
 
     for(ConditionResult result: preconditionResults)
       builder.append(result.getAsHtml());
+
+    builder.append("<div class=\"alert alert-" + (actionPerformed ? "success" : "danger") + "\">Aktion konnte "
+        + (actionPerformed ? "" : "nicht ") + " erfolgreich ausgeführt werden.</div>");
 
     for(ConditionResult result: postconditionResults)
       builder.append(result.getAsHtml());

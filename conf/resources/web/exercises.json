@@ -401,6 +401,9 @@
 		"id": 6, 
 		"title": "Klickzähler", 
 		"text": "Erstellen Sie einen Zähler, der die Klicks auf einen Button zählt!", 
+		"htmlText": "Erstellen Sie zunächst den Rumpf der Seite in HTML.", 
+		"cssText": "Styling...", 
+		"jsText": "Implementieren Sie nun die Funktion <code>imcrement()</code>, die aufgerufen wird, wenn auf den Knopf gedrückt wird. Sie soll den Inhalt (innerHTML) des Elementes mit der id \"theSpan\" auslesen und um 1 erhöhen. Sie können die Funktion <code>parseInt(str)</code> verwenden, um einen String in eine Ganzzahl umzuwandeln.", 
 		"htmlTasks": [
 			{
 				"text": "Erstellen Sie einen Button, auf den geklickt wird. Dieser soll als Text 'Klick mich' haben. Außerdem soll beim Klick die Funktion 'increment()' aufgerufen werden.", 
@@ -424,8 +427,48 @@
 		], 
 		"jsTasks": [
 			{
-				"text": "Implementieren Sie nun die Funktion <code>count()</code>, die aufgerufen wird, wenn auf den Knopf gedrückt wird. Sie soll den Inhalt (innerHTML) des Elementes mit der id \"counter\" auslesen und um 1 erhöhen. Sie können die Funktion <code>parseInt(str)</code> verwenden, um einen String in eine Ganzzahl umzuwandeln.", 
-				"xpath": ""
+				"text": "Erster Test", 
+				"xpath": "", 
+				"conditions": [
+					{
+						"id": 1, 
+						"xpath": "/html/body//span[@id='theSpan']", 
+						"isPrecondition": true, 
+						"awaitedValue": "0"
+					}, 
+					{
+						"id": 2, 
+						"xpath": "/html/body//span[@id='theSpan']", 
+						"isPrecondition": false, 
+						"awaitedValue": "1"
+					}
+				], 
+				"action": {
+					"actionxpath": "/html/body//button", 
+					"actiontype": "CLICK"
+				}
+			}, 
+			{
+				"text": "Test 2", 
+				"xpath": "", 
+				"conditions": [
+					{
+						"id": 1, 
+						"xpath": "/html/body//span[@id='theSpan']", 
+						"isPrecondition": true, 
+						"awaitedValue": "1"
+					}, 
+					{
+						"id": 2, 
+						"xpath": "/html/body//span[@id='theSpan']", 
+						"isPrecondition": false, 
+						"awaitedValue": "2"
+					}
+				], 
+				"action": {
+					"actionxpath": "/html/body//button", 
+					"actiontype": "CLICK"
+				}
 			}
 		]
 	}

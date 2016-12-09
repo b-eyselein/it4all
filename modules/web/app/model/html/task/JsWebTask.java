@@ -11,7 +11,6 @@ import org.openqa.selenium.SearchContext;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import model.exercise.Success;
 import model.javascript.Action;
 import model.javascript.Condition;
 import model.javascript.ConditionResult;
@@ -23,41 +22,37 @@ public class JsWebTask extends Task {
 
   public static final Finder<TaskKey, JsWebTask> finder = new Finder<>(JsWebTask.class);
 
-  @OneToMany(mappedBy = "pre")
+  @OneToMany(mappedBy = "task")
   @JsonManagedReference
-  public List<Condition> preconditions;
-  
+  public List<Condition> conditions;
+
   @Embedded
   public Action action;
-
-  @OneToMany(mappedBy = "post")
-  @JsonManagedReference
-  public List<Condition> postconditions;
 
   public JsWebTask(TaskKey theKey) {
     super(theKey);
   }
 
-  private static List<ConditionResult> evaluateConditions(SearchContext context, List<Condition> conditions,
-      boolean isPrecondition) {
-    return conditions.stream().map(cond -> cond.test(context, isPrecondition)).collect(Collectors.toList());
+  private static List<ConditionResult> evaluateConditions(SearchContext context, List<Condition> conditions) {
+    return conditions.stream().map(cond -> cond.test(context)).collect(Collectors.toList());
   }
 
   @Override
   public EvaluationResult evaluate(SearchContext context) {
-    List<ConditionResult> preconditionsSatisfied = evaluateConditions(context, preconditions, true);
-    
+    List<ConditionResult> preconditionsSatisfied = evaluateConditions(context, getPreconditions());
     boolean actionPerformed = action == null || action.perform(context);
+    List<ConditionResult> postconditionSatisfied = evaluateConditions(context, getPostConditions());
 
-    List<ConditionResult> postconditionSatisfied = evaluateConditions(context, postconditions, false);
-    
-    Success success = Success.NONE;
-    if(allResultsSuccessful(preconditionsSatisfied) && !actionPerformed
-        && !allResultsSuccessful(postconditionSatisfied))
-      success = Success.COMPLETE;
+    return new JsWebTestResult(this, preconditionsSatisfied, actionPerformed, postconditionSatisfied);
 
-    return new JsWebTestResult(this, success, preconditionsSatisfied, postconditionSatisfied);
+  }
 
+  private List<Condition> getPostConditions() {
+    return conditions.stream().filter(Condition::isPostcondition).collect(Collectors.toList());
+  }
+
+  private List<Condition> getPreconditions() {
+    return conditions.stream().filter(Condition::isPrecondition).collect(Collectors.toList());
   }
 
 }

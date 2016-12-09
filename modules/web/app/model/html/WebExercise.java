@@ -27,6 +27,15 @@ public class WebExercise extends Exercise {
   
   @Column(columnDefinition = "text")
   public String text;
+
+  @Column(columnDefinition = "text")
+  public String htmlText;
+
+  @Column(columnDefinition = "text")
+  public String cssText;
+
+  @Column(columnDefinition = "text")
+  public String jsText;
   
   @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
   @JsonManagedReference
