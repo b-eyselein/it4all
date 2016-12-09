@@ -1,4 +1,4 @@
-package model.html.task;
+package model.task;
 
 import java.util.Collections;
 import java.util.List;
@@ -11,8 +11,8 @@ import org.openqa.selenium.WebElement;
 
 import model.exercise.FeedbackLevel;
 import model.exercise.Success;
-import model.html.result.AttributeResult;
-import model.html.result.ElementResult;
+import model.result.AttributeResult;
+import model.result.ElementResult;
 import model.result.EvaluationResult;
 import model.result.GenericEvaluationResult;
 

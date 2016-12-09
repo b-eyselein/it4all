@@ -1,4 +1,4 @@
-package model.html.result;
+package model.result;
 
 import org.openqa.selenium.WebElement;
 

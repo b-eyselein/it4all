@@ -1,4 +1,4 @@
-package model.javascript;
+package model.task;
 
 import java.io.Serializable;
 

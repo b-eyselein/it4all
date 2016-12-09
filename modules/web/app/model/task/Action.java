@@ -1,4 +1,4 @@
-package model.javascript;
+package model.task;
 
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;

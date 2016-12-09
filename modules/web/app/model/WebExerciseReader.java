@@ -1,4 +1,4 @@
-package model.html;
+package model;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -8,15 +8,15 @@ import java.util.List;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import model.exercisereading.ExerciseReader;
-import model.html.task.CssTask;
-import model.html.task.HtmlTask;
-import model.html.task.JsWebTask;
-import model.html.task.Task;
-import model.html.task.TaskKey;
-import model.javascript.Action;
-import model.javascript.Action.ActionType;
-import model.javascript.Condition;
-import model.javascript.JsConditionKey;
+import model.task.CssTask;
+import model.task.HtmlTask;
+import model.task.JsWebTask;
+import model.task.Task;
+import model.task.TaskKey;
+import model.task.Action;
+import model.task.Action.ActionType;
+import model.task.Condition;
+import model.task.JsConditionKey;
 
 public class WebExerciseReader extends ExerciseReader<WebExercise> {
 

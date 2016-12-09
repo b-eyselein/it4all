@@ -427,7 +427,7 @@
 		], 
 		"jsTasks": [
 			{
-				"text": "Erster Test", 
+				"text": "Test 1", 
 				"xpath": "", 
 				"conditions": [
 					{
@@ -463,6 +463,50 @@
 						"xpath": "/html/body//span[@id='theSpan']", 
 						"isPrecondition": false, 
 						"awaitedValue": "2"
+					}
+				], 
+				"action": {
+					"actionxpath": "/html/body//button", 
+					"actiontype": "CLICK"
+				}
+			}, 
+			{
+				"text": "Test 3", 
+				"xpath": "", 
+				"conditions": [
+					{
+						"id": 1, 
+						"xpath": "/html/body//span[@id='theSpan']", 
+						"isPrecondition": true, 
+						"awaitedValue": "2"
+					}, 
+					{
+						"id": 2, 
+						"xpath": "/html/body//span[@id='theSpan']", 
+						"isPrecondition": false, 
+						"awaitedValue": "3"
+					}
+				], 
+				"action": {
+					"actionxpath": "/html/body//button", 
+					"actiontype": "CLICK"
+				}
+			}, 
+			{
+				"text": "Test 4", 
+				"xpath": "", 
+				"conditions": [
+					{
+						"id": 1, 
+						"xpath": "/html/body//span[@id='theSpan']", 
+						"isPrecondition": true, 
+						"awaitedValue": "3"
+					}, 
+					{
+						"id": 2, 
+						"xpath": "/html/body//span[@id='theSpan']", 
+						"isPrecondition": false, 
+						"awaitedValue": "4"
 					}
 				], 
 				"action": {

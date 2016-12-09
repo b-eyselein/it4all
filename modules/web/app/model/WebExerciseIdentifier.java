@@ -1,4 +1,4 @@
-package model.html;
+package model;
 
 import model.exercise.ExerciseIdentifier;
 

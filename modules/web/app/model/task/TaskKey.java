@@ -1,4 +1,4 @@
-package model.html.task;
+package model.task;
 
 import java.io.Serializable;
 

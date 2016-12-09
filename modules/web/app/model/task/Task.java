@@ -1,4 +1,4 @@
-package model.html.task;
+package model.task;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -16,9 +16,9 @@ import com.avaje.ebean.Model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import model.WebExercise;
 import model.exercise.Success;
-import model.html.WebExercise;
-import model.html.result.AttributeResult;
+import model.result.AttributeResult;
 import model.result.EvaluationResult;
 
 @MappedSuperclass

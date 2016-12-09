@@ -1,4 +1,4 @@
-package model.html.task;
+package model.task;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,11 +11,9 @@ import org.openqa.selenium.SearchContext;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import model.javascript.Action;
-import model.javascript.Condition;
-import model.javascript.ConditionResult;
-import model.javascript.JsWebTestResult;
+import model.result.ConditionResult;
 import model.result.EvaluationResult;
+import model.result.JsWebTestResult;
 
 @Entity
 public class JsWebTask extends Task {
