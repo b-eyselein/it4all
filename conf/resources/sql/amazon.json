@@ -165,7 +165,16 @@
 				"exercisetype": "SELECT", 
 				"text": "Geben Sie die Titel aller Bücher aus, die weniger als 10,00 € kosten.", 
 				"samplesolutions": [
-					"SELECT title FROM books WHERE price < 10"
+					"SELECT title FROM books WHERE price < 10", 
+					"SELECT title FROM books WHERE price < 10.00"
+				]
+			}, 
+			{
+				"id": 18, 
+				"exercisetype": "SELECT", 
+				"text": "Geben die die IDs aller Bücher aus, die sich Kunden wünschen. Achten Sie darauf, dass eine ID nur einmal vorkommt.", 
+				"samplesolutions": [
+					"SELECT DISTINCT book_id FROM wishlists"
 				]
 			}, 
 			{
@@ -180,18 +189,83 @@
 			{
 				"id": 20, 
 				"exercisetype": "SELECT", 
-				"text": "Wie oft wurde das Buch 'Die Stadt in der Wüste' bewertet? Nennen Sie die Spalte 'Anzahl'.", 
+				"text": "Geben Sie die Titel aller Bücher aus, die einen Bestand von weniger als 20.000 Exemplaren oder einen Preis über 14€ haben.", 
 				"samplesolutions": [
-					"SELECT COUNT(rating) AS Anzahl\n  FROM ratings\n    JOIN books ON books.id = ratings.book_id\n  WHERE title = \"Die Stadt in der Wüste\"", 
-					"SELECT COUNT(rating) AS Anzahl\n  FROM ratings\n    JOIN books ON books.id = ratings.book_id\n  WHERE title = 'Die Stadt in der Wüste'"
-				], 
-				"tags": [
-					"FUNCTION", 
-					"JOIN"
+					"SELECT title FROM books WHERE stock < 20000 OR price > 14.00", 
+					"SELECT title FROM books WHERE stock < 20000 OR price > 14"
 				]
 			}, 
 			{
 				"id": 21, 
+				"exercisetype": "SELECT", 
+				"text": "Wie oft wurde das Buch 'Die Stadt in der Wüste' bewertet? Nennen Sie die Spalte 'Anzahl'.", 
+				"samplesolutions": [
+					"SELECT COUNT(rating) AS Anzahl\n  FROM ratings\n    JOIN books ON books.id = ratings.book_id\n  WHERE title = \"Die Stadt in der Wüste\"", 
+					"SELECT COUNT(rating) AS Anzahl\n  FROM ratings\n    JOIN books ON books.id = ratings.book_id\n  WHERE title = 'Die Stadt in der Wüste'", 
+					"SELECT COUNT(*) AS Anzahl\n  FROM ratings\n    JOIN books ON books.id = ratings.book_id\n  WHERE title = \"Die Stadt in der Wüste\"", 
+					"SELECT COUNT(*) AS Anzahl\n  FROM ratings\n    JOIN books ON books.id = ratings.book_id\n  WHERE title = 'Die Stadt in der Wüste'"
+				], 
+				"tags": [
+					"FUNCTION", 
+					"JOIN", 
+					"ALIAS"
+				]
+			}, 
+			{
+				"id": 22, 
+				"exercisetype": "SELECT", 
+				"text": "Welche Durchschnittsbewertung bekam das Buch 'Die Stadt in der Wüste'? Nennen Sie die Spalte 'Durchschnitt'.", 
+				"samplesolutions": [
+					"SELECT AVG(rating) AS Durchschnitt\n  FROM ratings\n    JOIN books ON books.id = ratings.book_id\n  WHERE title = \"Die Stadt in der Wüste\"", 
+					"SELECT AVG(rating) AS Durchschnitt\n  FROM ratings\n    JOIN books ON books.id = ratings.book_id\n  WHERE title = 'Die Stadt in der Wüste'"
+				], 
+				"tags": [
+					"FUNCTION", 
+					"JOIN", 
+					"ALIAS"
+				]
+			}, 
+			{
+				"id": 23, 
+				"exercisetype": "SELECT", 
+				"text": "Wie hoch ist der Gesamtbestand an Harry Potter-Büchern? Nennen Sie die Spalte 'Gesamtbestand'.", 
+				"samplesolutions": [
+					"SELECT SUM(stock) AS Gesamtbestand\n  FROM books\n  WHERE title like 'Harry Potter%'", 
+					"SELECT SUM(stock) AS Gesamtbestand\n  FROM books\n  WHERE title like \"Harry Potter%\""
+				], 
+				"tags": [
+					"FUNCTION", 
+					"ALIAS"
+				]
+			}, 
+			{
+				"id": 24, 
+				"exercisetype": "SELECT", 
+				"text": "Geben Sie jeweils die schlechteste und beste Bewertung des Buches 'Harry Potter und der Halbblutprinz' aus. Nennen Sie die Spalten jeweils 'Schlechteste' und 'Beste'", 
+				"samplesolutions": [
+					"SELECT min(rating) AS Schlechteste, max(rating) AS Beste\n  FROM books\n    JOIN ratings ON books.id = ratings.book_id\n  WHERE title = 'Harry Potter und der Halbblutprinz'", 
+					"SELECT min(rating) AS Schlechteste, max(rating) AS Beste\n  FROM books\n    JOIN ratings ON books.id = ratings.book_id\n  WHERE title = \"Harry Potter und der Halbblutprinz\""
+				], 
+				"tags": [
+					"FUNCTION", 
+					"ALIAS", 
+					"JOIN"
+				]
+			}, 
+			{
+				"id": 25, 
+				"exercisetype": "SELECT", 
+				"text": "Wie hoch ist der durchschnittliche Bestand aller Bücher? Nennen Sie die Spalte 'Durchschnitt'", 
+				"samplesolutions": [
+					"SELECT AVG(stock) AS Durchschnitt\n  FROM books"
+				], 
+				"tags": [
+					"FUNCTION", 
+					"ALIAS"
+				]
+			}, 
+			{
+				"id": 26, 
 				"exercisetype": "SELECT", 
 				"text": "Wie lauten die Nachnamen der Kunden, die sich das Buch 'Harry Potter und der Orden des Phönix' wünschen?", 
 				"samplesolutions": [
@@ -200,18 +274,6 @@
 				], 
 				"tags": [
 					"DOUBLE_JOIN"
-				]
-			}, 
-			{
-				"id": 22, 
-				"exercisetype": "SELECT", 
-				"text": "Bestimmen Sie Titel und Preis aller Bücher des Autors 'Tolkien', deren Preis unter 10€ liegt. Ordnen Sie die Einträge nach Erscheinungsjahr abwärts.", 
-				"samplesolutions": [
-					"SELECT title, price\n  FROM books\n  JOIN authors on book.author_id = authors.id\n  WHERE family_name = 'Tolkien'\n  AND price < 10\n  ORDER BY year DESC"
-				], 
-				"tags": [
-					"ORDER_BY", 
-					"JOIN"
 				]
 			}, 
 			{
@@ -233,6 +295,98 @@
 				"text": "Zeigen sie Titel und Autor-ID der drei teuersten Bücher an. Sortieren Sie die Einträge nach Preis abwärts.", 
 				"samplesolutions": [
 					"SELECT title, author_id\n  FROM books\n  ORDER BY price DESC\n  LIMIT 3"
+				], 
+				"tags": [
+					"ORDER_BY", 
+					"LIMIT"
+				]
+			}, 
+			{
+				"id": 29, 
+				"exercisetype": "SELECT", 
+				"text": "Bestimmen Sie Titel und Preis aller Bücher des Autors 'Tolkien', deren Preis unter 10€ liegt. Ordnen Sie die Einträge nach Erscheinungsjahr abwärts.", 
+				"samplesolutions": [
+					"SELECT title, price\n  FROM books\n  JOIN authors on book.author_id = authors.id\n  WHERE family_name = 'Tolkien'\n  AND price < 10\n  ORDER BY year DESC"
+				], 
+				"tags": [
+					"ORDER_BY", 
+					"JOIN"
+				]
+			}, 
+			{
+				"id": 30, 
+				"exercisetype": "SELECT", 
+				"text": "Wählen Sie alle Bestellungen aus, die das Buch 'Harry Potter und der Halbblutprinz' enthalten. Geben Sie hierfür die Bestell-ID (Tabelle: 'orders') und die Bestellmenge (Tabelle: 'order_positions') aus.", 
+				"samplesolutions": [
+					"SELECT order_id, amount\n FROM orders\n    JOIN order_positions ON orders.id = order_id\n    JOIN books ON books.id = book_id\n    WHERE title = 'Harry Potter und der Halbblutprinz'", 
+					"SELECT order_id, amount\n FROM orders\n    JOIN order_positions ON orders.id = order_id\n    JOIN books ON books.id = book_id\n    WHERE title = \"Harry Potter und der Halbblutprinz\""
+				], 
+				"tags": [
+					"DOUBLE_JOIN"
+				]
+			}, 
+			{
+				"id": 31, 
+				"exercisetype": "SELECT", 
+				"text": "Geben Sie alle Email-Adressen der Kunden aus, die mit 'gmx.de ' oder mit 'gmail.com ' enden.", 
+				"samplesolutions": [
+					"SELECT email\n  FROM customers\n  WHERE email LIKE '%gmx.de'\n  OR email LIKE '%gmail.com'", 
+					"SELECT email\n  FROM customers\n  WHERE email LIKE \"%gmx.de\"\n  OR email LIKE \"%gmail.com\""
+				]
+			}, 
+			{
+				"id": 32, 
+				"exercisetype": "SELECT", 
+				"text": "Bestimmen Sie Titel und Preis aller Bücher des Autors 'Tolkien', deren Preis unter 10€ liegt. Ordnen Sie die Einträge nach Erscheinungsjahr abwärts.", 
+				"samplesolutions": [
+					"SELECT title, price\n  FROM books\n  WHERE author = 'Tolkien'\n  AND price < 10\n  ORDER BY year DESC", 
+					"SELECT title, price\n  FROM books\n  WHERE author = \"Tolkien\"\n  AND price < 10\n  ORDER BY year DESC"
+				], 
+				"tags": [
+					"ORDER_BY"
+				]
+			}, 
+			{
+				"id": 33, 
+				"exercisetype": "SELECT", 
+				"text": "Berechnen Sie die Anzahl der bestellten Bücher (Tabelle 'order_positions'), die zum Zeitpunkt des Kaufes weniger als fünf Euro gekostet haben. Geben Sie das Ergebnis unter dem Spaltenname 'Anzahl' aus.", 
+				"samplesolutions": [
+					"SELECT SUM(amount) AS Anzahl\n  FROM order_positions WHERE price < 5", 
+					"SELECT SUM(amount) AS Anzahl\n  FROM order_positions WHERE price < 5.00"
+				], 
+				"tags": [
+					"FUNCTION", 
+					"ALIAS"
+				]
+			}, 
+			{
+				"id": 34, 
+				"exercisetype": "SELECT", 
+				"text": "Erfassen Sie alle Autoren und den kumulierten Bestand ihrer Bücher. Ordnen Sie die Einträge nach kumulierten Bestand abwärts. Benennen Sie die Spalte des  kumulierten Bestandes 'stock_sum ' (ohne Anführungszeichen). Hinweise: Verwenden Sie den Sum-Operator und das Schlüsselwort AS.", 
+				"samplesolutions": [
+					"SELECT author, sum(stock) AS stock_sum\n  FROM books\n  GROUP BY author\n  ORDER BY stock_sum DESC"
+				], 
+				"tags": [
+					"FUNCTION", 
+					"GROUP_BY", 
+					"ORDER_BY"
+				]
+			}, 
+			{
+				"id": 35, 
+				"exercisetype": "SELECT", 
+				"text": "Wählen Sie alle Kunden aus, die im Februar Geburtstag haben und geben Sie den Vornamen, Nachnamen und das Geburtsdatum aus.", 
+				"hint": "Verwenden Sie für die Eingrenzung des Geburtsdatums den 'LIKE'-Operator.", 
+				"samplesolutions": [
+					"SELECT first_name, family_name, birthday\n  FROM customers\n WHERE birthday LIKE '%-02-%'"
+				]
+			}, 
+			{
+				"id": 36, 
+				"exercisetype": "SELECT", 
+				"text": "Geben Sie den Vornamen, Nachnamen und Geburtstag des jüngsten Kunden aus. Achten Sie darauf, dass sich die Spaltennamen nicht verändern.", 
+				"samplesolutions": [
+					"SELECT first_name, family_name, birthday\n  FROM customers\n  ORDER BY birthday DESC\n  LIMIT 1"
 				], 
 				"tags": [
 					"ORDER_BY", 

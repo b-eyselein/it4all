@@ -10,18 +10,6 @@
 		]
 	}, 
 	{
-		"id": 112, 
-		"exercisetype": "SELECT", 
-		"text": "Bestimmen Sie Titel und Preis aller Bücher des Autors 'J. R. R. Tolkien' (ohne Anführungszeichen), deren Preis unter 10€ liegt. Ordnen Sie die Einträge nach Erscheinungsjahr abwärts.", 
-		"samplesolutions": [
-			"SELECT title, price FROM books WHERE author = 'J. R. R. Tolkien' AND price < 10 ORDER BY year DESC", 
-			"SELECT title, price FROM books WHERE author = \"J. R. R. Tolkien\" AND price < 10 ORDER BY year DESC"
-		], 
-		"tags": [
-			"ORDER_BY"
-		]
-	}, 
-	{
 		"id": 114, 
 		"exercisetype": "SELECT", 
 		"text": "Wählen Sie alle Kunden aus, deren Nachname nur aus vier Buchstaben besteht. Geben Sie nur den Vornamen und Nachnamen aus. Die Datensätze sollen nach dem Nachnamen alphabetisch sortiert werden.", 
@@ -43,17 +31,6 @@
 		"tags": [
 			"JOIN", 
 			"ALIAS"
-		]
-	}, 
-	{
-		"id": 116, 
-		"exercisetype": "SELECT", 
-		"text": "Berechnen Sie die Anzahl der bestellten Bücher, die zum Zeitpunkt des Kaufes weniger als fünf Euro gekostet haben. Geben Sie das Ergebnis unter dem Spaltenname 'sum_books' aus.", 
-		"samplesolutions": [
-			"SELECT SUM(amount) AS sum_books FROM order_positions WHERE price < 5"
-		], 
-		"tags": [
-			"FUNCTION"
 		]
 	}, 
 	{
@@ -156,25 +133,6 @@
 			"FUNCTION", 
 			"JOIN", 
 			"GROUP_BY"
-		]
-	}, 
-	{
-		"id": 129, 
-		"exercisetype": "SELECT", 
-		"text": "Geben Sie alle Email-Adressen der Kunden aus, die mit 'gmx.de ' oder mit 'gmail.com ' enden.", 
-		"samplesolutions": [
-			"SELECT email FROM customers WHERE email LIKE '%gmx.de' OR  email LIKE '%gmail.com'"
-		]
-	}, 
-	{
-		"id": 130, 
-		"exercisetype": "SELECT", 
-		"text": "Wählen Sie alle Bestellungen aus, die das Buch 'Harry Potter und der Halbblutprinz ' enthalten. Geben Sie hierfür die Bestell-ID (Tabelle: 'orders') und die Bestellmenge (Tabelle: 'order_positions') aus.", 
-		"samplesolutions": [
-			"SELECT order_id, amount FROM orders JOIN order_positions ON orders.id = order_id JOIN books ON books.id = book_id WHERE title = 'Harry Potter und der Halbblutprinz '"
-		], 
-		"tags": [
-			"DOUBLE_JOIN"
 		]
 	}, 
 	{
@@ -368,19 +326,6 @@
 		]
 	}, 
 	{
-		"id": 149, 
-		"exercisetype": "SELECT", 
-		"text": "Erfassen Sie alle Autoren und den kumulierten Bestand ihrer Bücher. Ordnen Sie die Einträge nach kumulierten Bestand abwärts. Benennen Sie die Spalte des  kumulierten Bestandes 'stock_sum ' (ohne Anführungszeichen). Hinweise: Verwenden Sie den Sum-Operator und das Schlüsselwort AS.", 
-		"samplesolutions": [
-			"SELECT author, sum(stock) AS stock_sum FROM books GROUP BY author ORDER BY stock_sum DESC"
-		], 
-		"tags": [
-			"FUNCTION", 
-			"GROUP_BY", 
-			"ORDER_BY"
-		]
-	}, 
-	{
 		"id": 150, 
 		"exercisetype": "SELECT", 
 		"text": "Bestimmen Sie den potentiellen Umsatz des Buches 'Animal Farm ' (ohne Anführungszeichen). Nennen Sie diese Spalte 'revenue' (ohne Anführungszeichen).", 
@@ -388,27 +333,6 @@
 		"samplesolutions": [
 			"SELECT stock * price AS revenue FROM books WHERE title='Animal Farm'", 
 			"SELECT price * stock AS revenue FROM books WHERE title='Animal Farm'"
-		]
-	}, 
-	{
-		"id": 152, 
-		"exercisetype": "SELECT", 
-		"text": "Wählen Sie alle Kunden aus, die im Februar Geburtstag haben und geben Sie den Vornamen, Nachnamen und das Geburtsdatum aus.", 
-		"hint": "Verwenden Sie für die Eingrenzung des Geburtsdatums den 'LIKE'-Operator.", 
-		"samplesolutions": [
-			"SELECT first_name, family_name, birthday FROM customers WHERE birthday LIKE '%-02-%'"
-		]
-	}, 
-	{
-		"id": 153, 
-		"exercisetype": "SELECT", 
-		"text": "Geben Sie den Vornamen, Nachnamen und Geburtstag des jüngsten Kunden aus. Achten Sie darauf, dass sich die Spaltennamen nicht verändern.", 
-		"samplesolutions": [
-			"SELECT first_name, family_name, birthday FROM customers ORDER BY birthday DESC LIMIT 1"
-		], 
-		"tags": [
-			"ORDER_BY", 
-			"LIMIT"
 		]
 	}, 
 	{

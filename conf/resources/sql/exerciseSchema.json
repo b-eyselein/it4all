@@ -65,6 +65,7 @@
 				}, 
 				"required": [
 					"id", 
+					"exercisetype", 
 					"text", 
 					"samplesolutions"
 				]
