@@ -7,6 +7,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 
 import model.exercise.Exercise;
+import play.twirl.api.Html;
 
 @Entity
 public class XmlExercise extends Exercise {
@@ -23,13 +24,18 @@ public class XmlExercise extends Exercise {
     public String getFileEnding() {
       return studentFileEnding;
     }
+    
+    public Html getTag() {
+      return new Html("<span class=\"label label-default\">" + toString().replace("_", " gegen ") + "</span>");
+    }
+    
   }
   
   public static final Finder<Integer, XmlExercise> finder = new Finder<>(XmlExercise.class);
   
   @Id
   public int id;
-
+  
   @Column(columnDefinition = "text")
   public String fixedStart;
   
@@ -56,6 +62,10 @@ public class XmlExercise extends Exercise {
   @Override
   public int getId() {
     return id;
+  }
+  
+  public Html getTag() {
+    return exerciseType.getTag();
   }
   
   @Override
