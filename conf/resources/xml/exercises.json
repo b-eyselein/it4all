@@ -1,7 +1,7 @@
 [
 	{
 		"id": 1, 
-		"title": "Ich veranstalte eine Party...", 
+		"title": "Party", 
 		"exerciseType": "XML_DTD", 
 		"fixedStart": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE party SYSTEM \"party.dtd\">", 
 		"referenceFileName": "party", 

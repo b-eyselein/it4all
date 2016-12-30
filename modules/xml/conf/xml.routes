@@ -8,7 +8,7 @@ GET    /blanks         controllers.xml.XML.testBlanks()
 PUT    /blanks/:exId   controllers.xml.XML.correctBlanks(exId: Int)
 
 # exercises
-GET    /               controllers.xml.XML.index()
+GET    /               controllers.xml.XML.index(filter: String ?= "")
 
 GET    /:exId          controllers.xml.XML.exercise(exId: model.IntExerciseIdentifier)
 

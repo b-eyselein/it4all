@@ -1,5 +1,9 @@
 # --- !Ups
 
+insert into users values
+	("admin", "ADMIN", "SHOW")
+	on duplicate key update role = values(role);
+
 # JavaScript
 insert into js_web_exercise (`id`, `title`, `text`, `declaration`) values
 	(1,
