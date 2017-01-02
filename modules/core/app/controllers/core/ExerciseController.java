@@ -16,7 +16,7 @@ import play.mvc.Security.Authenticated;
 @Authenticated(Secured.class)
 public abstract class ExerciseController<I extends ExerciseIdentifier<?>> extends Controller {
 
-  private static final Logger.ALogger LOGGER = Logger.of("progress");
+  private static final Logger.ALogger PROGRESS_LOGGER = Logger.of("progress");
 
   protected Util util;
 
@@ -28,7 +28,7 @@ public abstract class ExerciseController<I extends ExerciseIdentifier<?>> extend
   }
 
   protected static void log(User user, WorkingEvent eventToLog) {
-    LOGGER.debug(user.name + " - " + Json.toJson(eventToLog));
+    PROGRESS_LOGGER.debug(user.name + " - " + Json.toJson(eventToLog));
   }
 
   protected abstract CompleteResult correct(Request request, User user, I identifier);
