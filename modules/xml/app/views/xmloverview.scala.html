@@ -1,50 +1,45 @@
-@(user: model.user.User, exercises: List[model.XmlExercise])
+@(user: model.user.User, exercises: List[model.XmlExercise], filters: List[model.XmlExercise.XmlExType])
 
 @main("XML-Test", user) {
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-md-2">
-      <div class="page-header">
-        <h1 class="page-title">Filter</h1>
-      </div>
-      <form class="form" method="get" action="@controllers.xml.routes.XML.index("")">
-        <fieldset>
-          <legend>Aufgabentyp</legend>
-          @for(tag <- model.XmlExercise.XmlExType.values()) {
-          <div class="form-group">
-            <label for=""><input type="checkbox" value="@tag" checked> @tag.getTag()</label>
-          </div>
-          }
-        </fieldset>
-      <input type="submit" value="Filter anwenden" class="btn btn-default">
-    </form>
-    </div>
-    
-    <div class="col-md-8">
-      <div class="page-header">
-        <h1 class="page-title">&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h1>
-      </div>
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Typ</th>
-            <th>Nummer</th>
-            <th>Titel</th>  
-          </tr>
-          </thead>
-          <tbody>
-            @for(exercise <- exercises) {
-            <tr>
-              <td>@exercise.getTag()</td>
-              <td>@exercise.id</td>
-              <td><a href="@controllers.xml.routes.XML.exercise(new model.IntExerciseIdentifier(exercise.id))" class="btn btn-default btn-block">@exercise.title</a></td>
-            </tr>
-            }
-          </tbody>
-        </table>  
-    </div>
-    
-    <div class="col-md-2"/>
+<div class="container">
+  <div class="page-header">
+    <h1 class="page-title">&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h1>
   </div>
+
+  <form class="form" method="get" action="@controllers.xml.routes.XML.index()">
+    <div class="panel panel-default">
+      <div class="panel-heading">Filter nach Aufgabentyp</div>
+      <div class="panel-body">
+        @for(tag <- model.XmlExercise.XmlExType.values()) {
+        <div class="col-sm-3 col-xs-6">
+          <label for=""><input type="checkbox" name="filter" value="@tag" @if(filters.contains(tag)){checked}> @tag.getTag()</label>
+        </div>
+        }
+      </div>
+      <div class="panel-footer">
+        <a href="@controllers.xml.routes.XML.index()" class="btn btn-default">Filter zurücksetzen</a>
+        <input type="submit" value="Filter anwenden" class="btn btn-default">
+      </div>
+    </div>
+  </form>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Typ</th>
+        <th>Nummer</th>
+        <th>Titel</th>  
+      </tr>
+      </thead>
+      <tbody>
+        @for(exercise <- exercises) {
+        <tr>
+          <td>@exercise.getTag()</td>
+          <td>@exercise.id</td>
+          <td><a href="@controllers.xml.routes.XML.exercise(new model.IntExerciseIdentifier(exercise.id))" class="btn btn-default btn-block">@exercise.title</a></td>
+        </tr>
+        }
+      </tbody>
+    </table>  
 </div>
 }
