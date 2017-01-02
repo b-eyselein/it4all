@@ -28,14 +28,15 @@ function testSolution() {
     </div>
 
     <div class="row">
-      <div class="col-md-6">
+      <div class="col-md-4">
         @if(exercise.exerciseType == model.XmlExercise.XmlExType.XML_DTD) {
         <pre>@exercise.fixedStart</pre>
         }
         @editor(oldSolution, "xml", 15, 25, false)
+        <textarea hidden name="editorContent" id="editorContent"></textarea>
       </div>
 
-      <div class="col-md-6">
+      <div class="col-md-4">
         <div class="panel panel-default">
           <div class="panel-heading">Referenzdatei</div>
           <div class="panel-body">
@@ -43,19 +44,15 @@ function testSolution() {
           </div>
         </div>
       </div>
-    </div>
-
-    <textarea hidden name="editorContent" id="editorContent"></textarea>
-  </form>
-
-  <div class="row">
-    <div class="col-md-12">
-      <div class="panel panel-default">
-        <div class="panel-heading">Bemerkungen</div>
-        <div id="correction" class="panel-body"></div>
+      
+      <div class="col-md-4">
+        <div class="panel panel-default">
+          <div class="panel-heading">Bemerkungen</div>
+          <div id="correction" class="panel-body"></div>
+        </div>
       </div>
     </div>
-  </div>
 
+  </form>
 </div>
 }
