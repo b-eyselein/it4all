@@ -6,24 +6,25 @@ import java.util.stream.Collectors;
 
 import model.exercise.FeedbackLevel;
 import model.exercise.Success;
-import model.user.Settings;
-import model.user.Settings.TODO;
+import model.user.User;
+import model.user.User.SHOW_HIDE_AGGREGATE;
 
 public class CompleteResult extends EvaluationResult {
 
   private List<EvaluationResult> results;
   private String leanerSolution;
 
-  private TODO todo;
+  private SHOW_HIDE_AGGREGATE todo;
 
   public CompleteResult(String theLearnerSolution, List<EvaluationResult> theResults) {
     super(FeedbackLevel.NO_FEEDBACK, analyzeResults(theResults));
     results = theResults;
     leanerSolution = theLearnerSolution;
-    todo = Settings.TODO.SHOW;
+    todo = SHOW_HIDE_AGGREGATE.SHOW;
   }
 
-  public CompleteResult(String theLearnerSolution, List<EvaluationResult> theResults, Settings.TODO theTodo) {
+  public CompleteResult(String theLearnerSolution, List<EvaluationResult> theResults,
+      User.SHOW_HIDE_AGGREGATE theTodo) {
     super(FeedbackLevel.NO_FEEDBACK, analyzeResults(theResults));
     results = theResults;
     leanerSolution = theLearnerSolution;
@@ -39,7 +40,7 @@ public class CompleteResult extends EvaluationResult {
 
   @Override
   public String getAsHtml() {
-    if(todo == Settings.TODO.SHOW)
+    if(todo == SHOW_HIDE_AGGREGATE.SHOW)
       return results.stream().map(EvaluationResult::getAsHtml).collect(Collectors.joining());
 
     Map<Success, List<EvaluationResult>> theResults = results.stream()
@@ -52,7 +53,7 @@ public class CompleteResult extends EvaluationResult {
           + " Tests erfolgreich bearbeitet.</div></div>";
 
     StringBuilder builder = new StringBuilder();
-    if(todo == Settings.TODO.AGGREGATE && positives != null)
+    if(todo == SHOW_HIDE_AGGREGATE.AGGREGATE && positives != null)
       // Positive Resultate zusammenfassen, falls AGGREGATE, ansonsten
       // ausblenden
       builder.append("<div class=\"col-md-12\"><div class=\"alert alert-success\">Sie haben " + positives.size()

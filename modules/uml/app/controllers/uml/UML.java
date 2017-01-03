@@ -8,6 +8,8 @@ import java.util.Arrays;
 
 import javax.inject.Inject;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
 import model.IntExerciseIdentifier;
@@ -16,7 +18,9 @@ import model.Util;
 import model.result.CompleteResult;
 import model.user.User;
 import play.Logger;
+import play.data.DynamicForm;
 import play.data.FormFactory;
+import play.libs.Json;
 import play.mvc.Http.Request;
 import play.mvc.Result;
 import views.html.classselection;
@@ -45,9 +49,24 @@ public class UML extends ExerciseController<IntExerciseIdentifier> {
   public Result classSelection(IntExerciseIdentifier identifier) {
     return ok(classselection.render(UserManagement.getCurrentUser()));
   }
+  
+  public Result correct() {
+    // Correct classes...
+    DynamicForm form = factory.form().bindFromRequest();
+    String classes = form.get("fname");
+    JsonNode node = Json.parse(classes);
+    node.get("classes");
+    Logger.debug(Json.prettyPrint(node));
+    
+    return ok("HALLO!");
+  }
 
   public Result diagramDrawing(IntExerciseIdentifier identifier) {
     return ok(diagramdrawing.render(UserManagement.getCurrentUser(), getExerciseText()));
+  }
+  
+  public Result diff(int exerciseId) {
+    return ok(difficulty.render(UserManagement.getCurrentUser()));
   }
   
   public Result index() {
@@ -59,10 +78,5 @@ public class UML extends ExerciseController<IntExerciseIdentifier> {
     // TODO Auto-generated method stub
     return null;
   }
-  
-  public Result diff(int exerciseId){
-	  return ok(difficulty.render(UserManagement.getCurrentUser()));
-  }
-  
-  
+
 }

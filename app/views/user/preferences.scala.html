@@ -10,11 +10,11 @@
   
     <fieldset class="form-group">
       <legend>Bestandene Tests...</legend>
-      @for(todo <- model.user.Settings.TODO.values()) {
+      @for(todo <- model.user.User.SHOW_HIDE_AGGREGATE.values()) {
       <div class="form-check">
         <label class="form-check-label">
           <input type="radio" class="form-check-input" name="posTests"
-          value="@todo" @if(todo == user.settings.todo) {checked}> @todo.getGerman()
+          value="@todo" @if(todo == user.todo) {checked}> @todo.getGerman()
         </label>
       </div>
       }

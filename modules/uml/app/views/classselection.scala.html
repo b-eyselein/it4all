@@ -34,8 +34,8 @@
     }
   }
 
-  function submit() {
-    var exercisetext = document.getElementById("exercisetext");
+  function extractParameters() {
+  var exercisetext = document.getElementById("exercisetext");
     var cclasses = exercisetext.getElementsByClassName("bg-info");
     var cmethods = exercisetext.getElementsByClassName("bg-success");
     var cattributes = exercisetext.getElementsByClassName("bg-danger");
@@ -71,71 +71,13 @@
     }
     json+="\""+attributes[attributes.length-1]+"\""+"]"+"\}";
     console.log(json);
-    testTheSolution(url);
     
-        
-    var rightClasses = new Array();
-    var wrongClasses = new Array(), doubleClasses = new Array();
-    for(i = 0; i < classes.length; i++) {
-      var markedClass = classes[i];
-      if(requiredClasses.indexOf(markedClass) >= 0 || optionalClasses.indexOf(markedClass) >= 0) {
-        if(rightClasses.indexOf(markedClass) >= 0) {
-          // Klasse doppelt markiert
-          doubleClasses.push(markedClass);
-        } else {
-          // Klasse ist richtig markiert
-          rightClasses.push(markedClass);
-        }
-      } else {
-        // Klasse ist falsch markiert
-        wrongClasses.push(markedClass);
-      }
-    }
-    var rightMethods = new Array();
-    var wrongMethods = new Array(), doubleMethods = new Array();
-    for(i = 0; i < methods.length; i++) {
-      var markedMethods = methods[i];
-      if(requiredMethods.indexOf(markedMethods) >= 0) {
-        if(rightMethods.indexOf(markedMethods) >= 0) {
-          // Methode doppelt markiert
-          doubleMethods.push(markedMethods);
-        } else {
-          // Methode ist richtig markiert
-          rightMethods.push(markedMethods);
-        }
-      } else {
-        // Methode ist falsch markiert
-        wrongMethods.push(markedMethods);
-      }
-    }
-    var rightAttributes = new Array();
-    var wrongAttributes = new Array(), doubleAttributes = new Array();
-    for(i = 0; i < attributes.length; i++) {
-      var markedAttributes = attributes[i];
-      if(requiredAttributes.indexOf(markedAttributes) >= 0) {
-        if(rightAttributes.indexOf(markedAttributes) >= 0) {
-          // Methode doppelt markiert
-          doubleAttributes.push(markedAttributes);
-        } else {
-          // Methode ist richtig markiert
-          rightAttributes.push(markedAttributes) ;
-        }
-      } else {
-        // Methode ist falsch markiert
-        wrongAttributes.push(markedAttributes);
-      }
+    return "fname=" + json;
     }
     
-    alert("Folgende Klassen waren richtig markiert:\n\t-" + rightClasses.join(",\n\t- ") + "\n\n"
-        + "Folgende Klassen waren falsch markiert:\n\t- " + wrongClasses.join(",\n\t- ") + "\n\n"
-        + "Folgende Klassen waren doppelt markiert:\n\t-" + doubleClasses.join(",\n\t- ") + "\n\n"
-        + "Folgende Methoden waren richtig markiert:\n\t-" + rightMethods.join(",\n\t- ") + "\n\n"
-        + "Folgende Methoden waren falsch markiert:\n\t- " + wrongMethods.join(",\n\t- ") + "\n\n"
-        + "Folgende Methoden waren doppelt markiert:\n\t-" + doubleMethods.join(",\n\t- ") + "\n\n"
-        + "Folgende Attribute waren richtig markiert:\n\t-" + rightAttributes.join(",\n\t- ") + "\n\n"
-        + "Folgende Attribute waren falsch markiert:\n\t- " + wrongAttributes.join(",\n\t- ") + "\n\n"
-        + "Folgende Attribute waren doppelt markiert:\n\t-" + doubleAttributes.join(",\n\t- "));
-  }
+    function processCorrection(text) {
+    console.log("Processing correction: "+ text);
+    }
 </script>
 
   <div class="container-fluid">
@@ -227,9 +169,23 @@
     </div>
 
     <div class="well">
-          <button onclick="submit()">
+      <div class="row">
+        <div class="col-md-4">
+          <b>Ausgewählte Klassen</b>
+        </div>
+        <div class="col-md-4">
+          <b>Ausgewählte Methoden</b>
+        </div>
+        <div class="col-md-4">
+          <button onclick="testTheSolution('@controllers.uml.routes.UML.correct()');">
             <b>Klassen verifizieren</b>
           </button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4" id="classList"></div>
+        <div class="col-md-4" id="methodList"></div>
+      </div>
     </div>
 
   </div>

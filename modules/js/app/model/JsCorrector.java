@@ -13,7 +13,7 @@ import model.JsExercise.JsDataType;
 import model.result.CompleteResult;
 import model.result.EvaluationFailed;
 import model.result.EvaluationResult;
-import model.user.Settings;
+import model.user.User;
 import play.Logger;
 
 public class JsCorrector {
@@ -23,7 +23,7 @@ public class JsCorrector {
   }
 
   public static CompleteResult correct(JsExercise exercise, String learnerSolution, List<CommitedTestData> userTestData,
-      Settings.TODO todo) {
+      User.SHOW_HIDE_AGGREGATE todo) {
     ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
 
     // TODO: Musteroutput mit gegebener Musterlösung berechnen statt angeben?
