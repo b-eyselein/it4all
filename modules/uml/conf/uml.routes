@@ -1,5 +1,8 @@
-GET   /                       controllers.uml.UML.index()
+GET    /                       controllers.uml.UML.index()
 
-GET   /:exId/classselection   controllers.uml.UML.classSelection(exId: model.IntExerciseIdentifier)
-GET   /:exId/diagramdrawing   controllers.uml.UML.diagramDrawing(exId: model.IntExerciseIdentifier)
-GET   /:id/difficulty         controllers.uml.UML.diff(id: Int)
+PUT    /correct                controllers.uml.UML.correct()
+POST   /correct                controllers.uml.UML.correct()
+
+GET    /:exId/classselection   controllers.uml.UML.classSelection(exId: model.IntExerciseIdentifier)
+GET    /:exId/diagramdrawing   controllers.uml.UML.diagramDrawing(exId: model.IntExerciseIdentifier)
+GET    /:id/difficulty         controllers.uml.UML.diff(id: Int)
