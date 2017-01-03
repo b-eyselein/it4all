@@ -24,7 +24,7 @@ public class XmlExerciseReader extends ExerciseReader<XmlExercise> {
         + exercise.getReferenceFileEnding());
     if(sampleFile.toFile().exists())
       return;
-
+    
     READING_LOGGER.warn("Die Lösungsdatei für Xml-Aufgabe " + exercise.id + " \"" + sampleFile
         + "\" existiert nicht! Versuche, Datei zu erstellen...");
 
@@ -35,7 +35,7 @@ public class XmlExerciseReader extends ExerciseReader<XmlExercise> {
       READING_LOGGER.error("Konnte Datei nicht erstellen: Keine Lösungsdatei mitgeliefert...");
       return;
     }
-
+    
     try {
       Files.copy(providedFile, sampleFile, StandardCopyOption.REPLACE_EXISTING);
       READING_LOGGER.info("Die Lösungsdatei wurde erstellt.");
@@ -43,16 +43,16 @@ public class XmlExerciseReader extends ExerciseReader<XmlExercise> {
       READING_LOGGER.error("Die Lösungsdatei konnte nicht erstellt werden!", e);
     }
   }
-
+  
   @Override
   protected XmlExercise readExercise(JsonNode node) {
     JsonNode idNode = node.get("id");
     int id = idNode.asInt();
-
+    
     XmlExercise exercise = XmlExercise.finder.byId(id);
     if(exercise == null)
       exercise = new XmlExercise();
-
+    
     exercise.id = id;
     exercise.title = node.get("title").asText();
     exercise.exerciseType = XmlExType.valueOf(node.get("exerciseType").asText());
@@ -61,5 +61,5 @@ public class XmlExerciseReader extends ExerciseReader<XmlExercise> {
     exercise.fixedStart = node.get("fixedStart").asText();
     return exercise;
   }
-
+  
 }

@@ -16,32 +16,32 @@ import views.html.user.preferences;
 
 @Security.Authenticated(Secured.class)
 public class UserController extends Controller {
-
+  
   private FormFactory factory;
-
+  
   @Inject
   public UserController(FormFactory theFactory) {
     factory = theFactory;
   }
-
+  
   public Result index() {
     return ok(user.render("User", UserManagement.getCurrentUser()));
   }
-  
+
   public Result preferences() {
     return ok(preferences.render("Präferenzen", UserManagement.getCurrentUser()));
   }
-
+  
   public Result saveOptions() {
     DynamicForm form = factory.form().bindFromRequest();
-
+    
     User user = UserManagement.getCurrentUser();
     user.settings.todo = Settings.TODO.valueOf(form.get("posTests"));
     user.save();
-
+    
     // FIXME: tell user that settings habe been saved!
-
-    return redirect(controllers.routes.UserController.index());
+    
+    return redirect(controllers.routes.UserController.preferences());
   }
-
+  
 }
