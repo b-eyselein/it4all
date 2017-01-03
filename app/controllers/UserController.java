@@ -5,7 +5,6 @@ import javax.inject.Inject;
 import controllers.core.UserManagement;
 import model.Secured;
 import model.user.User;
-import play.Logger;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.mvc.Controller;
@@ -30,7 +29,6 @@ public class UserController extends Controller {
   }
   
   public Result preferences() {
-    Logger.debug("While loading site: " + UserManagement.getCurrentUser().todo.toString());
     return ok(preferences.render("Präferenzen", UserManagement.getCurrentUser()));
   }
   
@@ -39,14 +37,7 @@ public class UserController extends Controller {
     
     User user = User.finder.byId(session().get(SESSION_ID_FIELD));
     user.setTodo(User.SHOW_HIDE_AGGREGATE.valueOf(form.get("posTests")));
-    
-    Logger.debug("Before saving:" + user.todo.toString());
-    
     user.save();
-    Logger.debug("After saving: " + user.todo.toString());
-    
-    user = User.finder.byId(session().get(SESSION_ID_FIELD));
-    Logger.debug("After reloading: " + user.todo.toString());
     
     // FIXME: tell user that settings habe been saved!
     

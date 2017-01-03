@@ -2,7 +2,6 @@ package controllers.core;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.util.Map;
 
@@ -91,7 +90,7 @@ public class UserManagement extends Controller {
       newStudent.name = userName;
       newStudent.save();
       Path solutionDirectory = util.getSolDirForUser(newStudent);
-      if(!Files.exists(solutionDirectory, LinkOption.NOFOLLOW_LINKS))
+      if(!solutionDirectory.toFile().exists())
         try {
           Files.createDirectories(solutionDirectory);
         } catch (IOException e) {
