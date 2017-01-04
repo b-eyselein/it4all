@@ -2,11 +2,11 @@ package model;
 
 import model.programming.ITestData;
 
-public interface JsTestData extends ITestData<JsExercise> {
-  
+public interface JsTestData extends ITestData {
+
   @Override
-  public default String buildToEvaluate() {
-    return getExercise().functionname + "(" + String.join(", ", getInput()) + ");";
+  public default String buildToEvaluate(String functionname) {
+    return functionname + "(" + String.join(", ", getInput()) + ");";
   }
-  
+
 }

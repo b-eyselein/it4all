@@ -64,8 +64,8 @@ create table js_exercise (
   declaration                   varchar(255),
   functionname                  varchar(255),
   sample_solution               varchar(255),
-  inputtypes                    varchar(255),
   inputcount                    integer,
+  inputtypes                    varchar(255),
   returntype                    varchar(9),
   constraint ck_js_exercise_returntype check ( returntype in ('BOOLEAN','NUMBER','STRING','SYMBOL','UNDEFINED','NULL','OBJECT')),
   constraint pk_js_exercise primary key (id)
@@ -99,7 +99,6 @@ create table python_exercise (
   declaration                   varchar(255),
   functionname                  varchar(255),
   sample_solution               varchar(255),
-  inputtypes                    varchar(255),
   inputcount                    integer,
   constraint pk_python_exercise primary key (id)
 );

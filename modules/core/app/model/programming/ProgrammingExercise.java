@@ -1,23 +1,53 @@
 package model.programming;
 
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+
 import model.IntExerciseIdentifier;
+import model.exercise.Exercise;
 
-public interface ProgrammingExercise {
+@MappedSuperclass
+public abstract class ProgrammingExercise<I extends ITestData> extends Exercise {
   
-  public String getDeclaration();
+  @Id
+  public int id;
   
-  public IntExerciseIdentifier getExerciseIdentifier();
+  @Column(columnDefinition = "text")
+  public String text;
   
-  public int getInputcount();
+  public String declaration; // NOSONAR
   
-  public String getLanguage();
-
-  public String getSampleSolution();
+  public String functionname; // NOSONAR
   
-  public String getTestdataValidationUrl();
-
-  public String getTestingUrl();
+  public String sampleSolution; // NOSONAR
   
-  public String getText();
+  public int inputcount; // NOSONAR
+  
+  public abstract IntExerciseIdentifier getExerciseIdentifier();
+  
+  public abstract List<I> getFunctionTests();
+  
+  @Override
+  public int getId() {
+    return id;
+  }
+  
+  public int getInputcount() {
+    return inputcount;
+  }
+  
+  public abstract String getLanguage();
+  
+  public abstract String getTestdataValidationUrl();
+  
+  public abstract String getTestingUrl();
+  
+  @Override
+  public String getText() {
+    return text;
+  }
   
 }

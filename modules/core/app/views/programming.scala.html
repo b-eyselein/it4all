@@ -1,4 +1,4 @@
-@(user: model.user.User, exercise: model.programming.ProgrammingExercise)
+@(user: model.user.User, exercise: model.programming.ProgrammingExercise[_ <: model.programming.ITestData])
 
 @main("Programmiersprachen Test", user) {
 <script src="@controllers.routes.Assets.versioned("javascripts/programming.js")"></script>
@@ -25,7 +25,7 @@
           </div>
         </div>
         
-        @editor(exercise.getDeclaration(), exercise.getLanguage(), 10, 20, false)
+        @editor(exercise.declaration, exercise.getLanguage(), 10, 20, false)
       </div>
       
       <div class="col-md-8">
