@@ -2,7 +2,7 @@ package model;
 
 import java.util.List;
 
-public class CommitedTestData implements ITestData {
+public class CommitedTestData implements JsTestData {
   
   private int id;
   private JsExercise exercise;

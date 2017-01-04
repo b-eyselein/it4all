@@ -33,6 +33,8 @@ import views.html.jsoverview;
 
 public class JS extends ExerciseController<IntExerciseIdentifier> {
   
+  private static final JsCorrector CORRECTOR = new JsCorrector();
+
   @Inject
   public JS(Util theUtil, FormFactory theFactory) {
     super(theUtil, theFactory);
@@ -51,7 +53,7 @@ public class JS extends ExerciseController<IntExerciseIdentifier> {
     for(int testCounter = 0; testCounter < testCount; testCounter++)
       testData.add(readTestDataFromForm(form, dataTypes, inputCount, testCounter, exercise));
     
-    JsCorrector.validateTestData(exercise, testData);
+    CORRECTOR.validateTestData(exercise, testData);
     return testData;
   }
   
@@ -132,6 +134,6 @@ public class JS extends ExerciseController<IntExerciseIdentifier> {
     userTestData = userTestData.stream().filter(CommitedTestData::isOk).collect(Collectors.toList());
     // TODO: evt. Speichern der Lösung und Laden bei erneuter Bearbeitung?
     
-    return JsCorrector.correct(exercise, learnerSolution, userTestData, user.todo);
+    return CORRECTOR.correct(exercise, learnerSolution, userTestData, user.todo);
   }
 }

@@ -15,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import model.JsExercise.JsDataType;
 
 @Entity
-public class JsTest extends Model implements ITestData {
+public class JsTest extends Model implements JsTestData {
 
   private static final String VALUES_SPLIT_CHAR = "#";
 

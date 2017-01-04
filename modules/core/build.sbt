@@ -5,7 +5,7 @@ Common.settings
 // Injected for non-static Routes
 routesGenerator := InjectedRoutesGenerator
 
-playEbeanModels in Compile := Seq("model.user.*", "model.exercise.*")
+playEbeanModels in Compile := Seq("model.user.*", "model.exercise.*", "model.programming.*")
 
 // JaCoCo - siehe project/plugins.sbt
 jacoco.settings
