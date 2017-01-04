@@ -9,29 +9,33 @@
     <a class="btn btn-primary btn-block" href="@controllers.web.routes.Web.playground()">Web-Playground</a>
   </div>
   
-  @for(exercise <- exercises) {
-  <div class="panel panel-default">
-    <div class="panel-heading">Aufgabe @exercise.id: @exercise.title</div>
-    <div class="panel-body">
-    @for(exerText <- exercise.text.split("\n")) {
-      <p>@exerText</p>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Aufgabe</th>
+        <th>Überschrift</th>
+        <th>HTML-Teil</th>
+        <th>CSS-Teil</th>
+        <th>JS-Teil</th>
+      </tr>
+    </thead>
+    <tbody>
+    @for(exercise <- exercises) {
+   	  <tr>
+        <td>@exercise.id</td>
+        <td>@exercise.title</td>
+        <td>@if(exercise.htmlTasks.size() > 0) {
+          <a href="@controllers.web.routes.Web.exercise(exercise.id, "html")" class="btn btn-primary btn-block" role="button">Html-Teil der Aufgabe</a>
+        }</td>
+        <td>@if(exercise.cssTasks.size() > 0) {
+          <a href="@controllers.web.routes.Web.exercise(exercise.id, "css")" class="btn btn-primary btn-block" role="button">Css-Teil der Aufgabe</a>
+        }</td>
+        <td>@if(exercise.jsTasks.size() > 0) {
+          <a href="@controllers.web.routes.Web.exercise(exercise.id, "js")" class="btn btn-primary btn-block" role="button">Js-Teil der Aufgabe</a>
+        }</td>
+      </tr>
     }
-    </div>
-    <div class="panel-footer">
-      <div class="btn-group btn-group-justified">
-      @if(exercise.htmlTasks.size() > 0) {
-        <a href="@controllers.web.routes.Web.exercise(exercise.id, "html")" class="btn btn-primary" role="button">Html-Teil der Aufgabe</a>
-      }
-      @if(exercise.cssTasks.size() > 0) {
-        <a href="@controllers.web.routes.Web.exercise(exercise.id, "css")" class="btn btn-primary" role="button">Css-Teil der Aufgabe</a>
-      }
-      @if(exercise.jsTasks.size() > 0) {
-        <a href="@controllers.web.routes.Web.exercise(exercise.id, "js")" class="btn btn-primary" role="button">Js-Teil der Aufgabe</a>
-      }
-      </div>
-    </div>
-  </div>
-  }
-  
+    </tbody>
+  </table>
 </div>
 }

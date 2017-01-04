@@ -5,17 +5,25 @@
   <div class="page-header">
     <h1 class="page-title">&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h1>
   </div>
-  @for(exercise <- exercises) {
-	<div class="col-md-6">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <a href="@controllers.js.routes.JS.exercise(new model.IntExerciseIdentifier(exercise.id))">Aufgabe @exercise.id: @exercise.title</a>
-      </div>
-      <div class="panel-body">
-        @Html(exercise.getText())
-      </div>
-    </div>
-  </div>
-  }
+  
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Nummer</th>
+        <th>Titel</th>
+        <th/>
+      </tr>
+    </thead>
+    <tbody>
+    @for(exercise <- exercises) {
+      <tr>
+        <td>@exercise.id</td>
+        <td>@exercise.title</td>
+        <td><a class="btn btn-primary btn-block" href="@controllers.js.routes.JS.exercise(new model.IntExerciseIdentifier(exercise.id))">Aufgabe bearbeiten</a></td>
+      </tr>
+    }
+    </tbody>
+  </table>
+  
 </div>
 }
