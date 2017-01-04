@@ -28,60 +28,60 @@ import play.mvc.Result;
 import play.twirl.api.Html;
 import views.html.correction;
 import views.html.error;
-import views.html.js;
+import views.html.programming;
 import views.html.jsoverview;
 
 public class JS extends ExerciseController<IntExerciseIdentifier> {
-  
-  private static final JsCorrector CORRECTOR = new JsCorrector();
 
+  private static final JsCorrector CORRECTOR = new JsCorrector();
+  
   @Inject
   public JS(Util theUtil, FormFactory theFactory) {
     super(theUtil, theFactory);
   }
-  
+
   private static List<CommitedTestData> extractAndValidateTestData(DynamicForm form, JsExercise exercise) {
     // FIXME: empty testData!
-    
+
     int testCount = Integer.parseInt(form.get("count"));
     int inputCount = Integer.parseInt(form.get("inputs"));
-    
-    List<JsDataType> dataTypes = exercise.getInputTypes();
 
-    List<CommitedTestData> testData = new LinkedList<>();
+    List<JsDataType> dataTypes = exercise.getInputTypes();
     
+    List<CommitedTestData> testData = new LinkedList<>();
+
     for(int testCounter = 0; testCounter < testCount; testCounter++)
       testData.add(readTestDataFromForm(form, dataTypes, inputCount, testCounter, exercise));
-    
+
     CORRECTOR.validateTestData(exercise, testData);
     return testData;
   }
-  
+
   private static CommitedTestData readTestDataFromForm(DynamicForm form, List<JsDataType> dataTypes, int inputCount,
       int id, JsExercise exercise) {
-    
+
     List<String> inputs = new ArrayList<>(inputCount);
     for(int inputCounter = 0; inputCounter < inputCount; inputCounter++) {
       String input = form.get("inp" + inputCounter + ":" + id);
-      
+
       // TODO: Inputtype STRING, NUMBER... ?
       if(dataTypes.get(inputCounter) == JsDataType.STRING)
         input = "\"" + input + "\"";
-      
+
       inputs.add(input);
     }
-    
+
     String output = form.get("outp" + id);
-    
+
     return new CommitedTestData(exercise, id, inputs, output);
-    
+
   }
-  
+
   public Result commit(IntExerciseIdentifier identifier) {
     User user = UserManagement.getCurrentUser();
-
-    CompleteResult result = correct(request(), user, identifier);
     
+    CompleteResult result = correct(request(), user, identifier);
+
     if(wantsJsonResponse()) {
       log(user, new ExerciseCorrectionEvent(request(), identifier, result));
       return ok(Json.toJson(result));
@@ -90,50 +90,50 @@ public class JS extends ExerciseController<IntExerciseIdentifier> {
       return ok(correction.render("Javascript", result, user));
     }
   }
-  
+
   public Result exercise(IntExerciseIdentifier identifier) {
     User user = UserManagement.getCurrentUser();
     JsExercise exercise = JsExercise.finder.byId(identifier.id);
-    
+
     if(exercise == null)
       return badRequest(
           error.render(user, new Html("<p>Diese Aufgabe existert leider nicht.</p><p>Zur&uuml;ck zur <a href=\""
               + routes.JS.index() + "\">Startseite</a>.</p>")));
-    
+
     log(user, new ExerciseStartEvent(request(), identifier));
-    return ok(js.render(UserManagement.getCurrentUser(), exercise, identifier));
+    return ok(programming.render(UserManagement.getCurrentUser(), exercise));
   }
-  
+
   public Result index() {
     return ok(jsoverview.render(UserManagement.getCurrentUser(), JsExercise.finder.all()));
   }
-  
+
   public Result validateTestData(IntExerciseIdentifier identifier) {
     JsExercise exercise = JsExercise.finder.byId(identifier.id);
     if(exercise == null)
       return badRequest();
-    
+
     List<CommitedTestData> testData = extractAndValidateTestData(factory.form().bindFromRequest(), exercise);
-    
+
     return ok(Json.toJson(testData));
   }
-  
+
   @Override
   protected CompleteResult correct(Request request, User user, IntExerciseIdentifier identifier) {
     // FIXME: TEST!
     JsExercise exercise = JsExercise.finder.byId(identifier.id);
-    
+
     // FIXME: Time out der Ausführung
-    
+
     // Read commited solution and custom test data from request
     DynamicForm form = factory.form().bindFromRequest();
     String learnerSolution = form.get("editorContent");
-    
+
     List<CommitedTestData> userTestData = extractAndValidateTestData(form, exercise);
     // TODO: evtl. Anzeige aussortiertes TestDaten?
     userTestData = userTestData.stream().filter(CommitedTestData::isOk).collect(Collectors.toList());
     // TODO: evt. Speichern der Lösung und Laden bei erneuter Bearbeitung?
-    
+
     return CORRECTOR.correct(exercise, learnerSolution, userTestData, user.todo);
   }
 }

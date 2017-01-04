@@ -14,9 +14,10 @@ import javax.persistence.OneToMany;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import model.exercise.Exercise;
+import model.programming.ProgrammingExercise;
 
 @Entity
-public class JsExercise extends Exercise {
+public class JsExercise extends Exercise implements ProgrammingExercise {
 
   public enum JsDataType {
     BOOLEAN, NUMBER, STRING, SYMBOL, UNDEFINED, NULL, OBJECT;
@@ -26,7 +27,7 @@ public class JsExercise extends Exercise {
 
   @Id
   public int id;
-  
+
   @Column(columnDefinition = "text")
   public String text;
 
@@ -52,12 +53,32 @@ public class JsExercise extends Exercise {
   }
 
   @Override
+  public String getDeclaration() {
+    return declaration;
+  }
+
+  @Override
+  public IntExerciseIdentifier getExerciseIdentifier() {
+    return new IntExerciseIdentifier(id);
+  }
+
+  @Override
   public int getId() {
     return id;
   }
 
+  @Override
+  public int getInputcount() {
+    return inputcount;
+  }
+
   public List<JsDataType> getInputTypes() {
     return Arrays.stream(inputtypes.split("#")).map(JsDataType::valueOf).collect(Collectors.toList());
+  }
+
+  @Override
+  public String getLanguage() {
+    return "javascript";
   }
 
   @Override
@@ -67,10 +88,25 @@ public class JsExercise extends Exercise {
   }
 
   @Override
+  public String getSampleSolution() {
+    return sampleSolution;
+  }
+
+  @Override
+  public String getTestdataValidationUrl() {
+    return controllers.js.routes.JS.validateTestData(getExerciseIdentifier()).url();
+  }
+
+  @Override
+  public String getTestingUrl() {
+    return controllers.js.routes.JS.commit(getExerciseIdentifier()).url();
+  }
+
+  @Override
   public String getText() {
     return text;
   }
-  
+
   @Override
   public String renderData() {
     // TODO Auto-generated method stub

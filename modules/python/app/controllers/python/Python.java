@@ -6,6 +6,7 @@ import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
 import model.IntExerciseIdentifier;
 import model.PythonCorrector;
+import model.PythonExercise;
 import model.Util;
 import model.exercise.FeedbackLevel;
 import model.exercise.Success;
@@ -19,7 +20,7 @@ import play.data.FormFactory;
 import play.libs.Json;
 import play.mvc.Http.Request;
 import play.mvc.Result;
-import views.html.python;
+import views.html.programming;
 
 public class Python extends ExerciseController<IntExerciseIdentifier> {
   
@@ -30,7 +31,7 @@ public class Python extends ExerciseController<IntExerciseIdentifier> {
     super(theUtil, theFactory);
   }
   
-  public Result commit() {
+  public Result commit(IntExerciseIdentifier identifier) {
     DynamicForm form = factory.form().bindFromRequest();
     String learnerSolution = form.get("editorContent");
 
@@ -44,7 +45,7 @@ public class Python extends ExerciseController<IntExerciseIdentifier> {
   }
   
   public Result index() {
-    return ok(python.render(UserManagement.getCurrentUser()));
+    return ok(programming.render(UserManagement.getCurrentUser(), new PythonExercise()));
   }
   
   @Override

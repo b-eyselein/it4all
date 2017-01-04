@@ -92,6 +92,13 @@ create table js_web_task (
   constraint pk_js_web_task primary key (task_id,exercise_id)
 );
 
+create table python_exercise (
+  id                            integer auto_increment not null,
+  title                         varchar(255),
+  text                          text,
+  constraint pk_python_exercise primary key (id)
+);
+
 create table spread_exercise (
   id                            integer auto_increment not null,
   title                         varchar(255),
@@ -212,6 +219,8 @@ drop table if exists js_exercise;
 drop table if exists js_test;
 
 drop table if exists js_web_task;
+
+drop table if exists python_exercise;
 
 drop table if exists spread_exercise;
 

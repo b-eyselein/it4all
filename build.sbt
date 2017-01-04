@@ -44,7 +44,7 @@ lazy val mindmap = (project in file("modules/mindmap"))
 	.dependsOn(core)
 
 lazy val python = (project in file("modules/python"))
-	.enablePlugins(PlayJava)
+	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
 	.dependsOn(core)
 
 lazy val uml = (project in file("modules/uml"))

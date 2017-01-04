@@ -1,5 +1,5 @@
-GET    /         controllers.python.Python.index()
+GET    /        controllers.python.Python.index()
 
-PUT    /commit   controllers.python.Python.commit()
-POST   /commit   controllers.python.Python.commit()
+PUT    /:exId   controllers.python.Python.commit(exId: model.IntExerciseIdentifier)
+POST   /:exId   controllers.python.Python.commit(exId: model.IntExerciseIdentifier)
 
