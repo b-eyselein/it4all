@@ -1,8 +1,14 @@
 package model;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+
+import com.avaje.ebean.Model.Finder;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import model.exercise.Exercise;
 import model.programming.ProgrammingExercise;
@@ -10,16 +16,31 @@ import model.programming.ProgrammingExercise;
 @Entity
 public class PythonExercise extends Exercise implements ProgrammingExercise {
 
+  public static final Finder<Integer, PythonExercise> finder = new Finder<>(PythonExercise.class);
+  
   @Id
   public int id;
 
   @Column(columnDefinition = "text")
   public String text;
   
+  public String declaration; // NOSONAR
+  
+  public String functionname; // NOSONAR
+  
+  public String sampleSolution; // NOSONAR
+  
+  public String inputtypes; // NOSONAR
+  
+  public int inputcount; // NOSONAR
+  
+  // @OneToMany(mappedBy = "exercise")
+  // @JsonManagedReference
+  // public List<PythonTest> functionTests;
+  
   @Override
   public String getDeclaration() {
-    // TODO Auto-generated method stub
-    return null;
+    return declaration;
   }
 
   @Override

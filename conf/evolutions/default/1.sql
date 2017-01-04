@@ -96,6 +96,11 @@ create table python_exercise (
   id                            integer auto_increment not null,
   title                         varchar(255),
   text                          text,
+  declaration                   varchar(255),
+  functionname                  varchar(255),
+  sample_solution               varchar(255),
+  inputtypes                    varchar(255),
+  inputcount                    integer,
   constraint pk_python_exercise primary key (id)
 );
 
