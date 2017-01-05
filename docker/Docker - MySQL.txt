@@ -9,3 +9,7 @@ docker run --name mysql2 -e MYSQL_ROOT_PASSWORD=sT8aV#k7 -e MYSQL_DATABASE=it4al
 
 Third db (SQL-Other):
 docker run --name mysql3 -e MYSQL_ROOT_PASSWORD=sT8aV#k7 -e MYSQL_DATABASE=it4all -p 3308:3306 --restart=always -d mysql:5.7
+
+Run on all databases (2 commands):
+GRANT ALL PRIVILEGES ON it4all.* TO 'it4all'@'%';
+FLUSH PRIVILEGES;
