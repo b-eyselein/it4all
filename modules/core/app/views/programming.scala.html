@@ -1,4 +1,4 @@
-@(user: model.user.User, exercise: model.programming.ProgrammingExercise[_ <: model.programming.ITestData])
+@(user: model.user.User, exercise: model.programming.ProgrammingExercise)
 
 @main("Programmiersprachen Test", user) {
 <script src="@controllers.routes.Assets.versioned("javascripts/programming.js")"></script>

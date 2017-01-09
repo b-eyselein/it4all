@@ -71,12 +71,12 @@ create table js_exercise (
   constraint pk_js_exercise primary key (id)
 );
 
-create table js_test (
+create table js_test_data (
   exercise_id                   integer not null,
   test_id                       integer not null,
   inputs                        text,
   output                        varchar(255),
-  constraint pk_js_test primary key (exercise_id,test_id)
+  constraint pk_js_test_data primary key (exercise_id,test_id)
 );
 
 create table js_web_task (
@@ -101,6 +101,14 @@ create table python_exercise (
   sample_solution               varchar(255),
   inputcount                    integer,
   constraint pk_python_exercise primary key (id)
+);
+
+create table python_test_data (
+  exercise_id                   integer not null,
+  test_id                       integer not null,
+  inputs                        text,
+  output                        varchar(255),
+  constraint pk_python_test_data primary key (exercise_id,test_id)
 );
 
 create table spread_exercise (
@@ -175,11 +183,14 @@ create index ix_grading_user_name on grading (user_name);
 alter table html_task add constraint fk_html_task_exercise_id foreign key (exercise_id) references web_exercise (id) on delete restrict on update restrict;
 create index ix_html_task_exercise_id on html_task (exercise_id);
 
-alter table js_test add constraint fk_js_test_exercise_id foreign key (exercise_id) references js_exercise (id) on delete restrict on update restrict;
-create index ix_js_test_exercise_id on js_test (exercise_id);
+alter table js_test_data add constraint fk_js_test_data_exercise_id foreign key (exercise_id) references js_exercise (id) on delete restrict on update restrict;
+create index ix_js_test_data_exercise_id on js_test_data (exercise_id);
 
 alter table js_web_task add constraint fk_js_web_task_exercise_id foreign key (exercise_id) references web_exercise (id) on delete restrict on update restrict;
 create index ix_js_web_task_exercise_id on js_web_task (exercise_id);
+
+alter table python_test_data add constraint fk_python_test_data_exercise_id foreign key (exercise_id) references python_exercise (id) on delete restrict on update restrict;
+create index ix_python_test_data_exercise_id on python_test_data (exercise_id);
 
 alter table sql_exercise add constraint fk_sql_exercise_scenario_name foreign key (scenario_name) references sql_scenario (short_name) on delete restrict on update restrict;
 create index ix_sql_exercise_scenario_name on sql_exercise (scenario_name);
@@ -199,11 +210,14 @@ drop index ix_grading_user_name on grading;
 alter table html_task drop foreign key fk_html_task_exercise_id;
 drop index ix_html_task_exercise_id on html_task;
 
-alter table js_test drop foreign key fk_js_test_exercise_id;
-drop index ix_js_test_exercise_id on js_test;
+alter table js_test_data drop foreign key fk_js_test_data_exercise_id;
+drop index ix_js_test_data_exercise_id on js_test_data;
 
 alter table js_web_task drop foreign key fk_js_web_task_exercise_id;
 drop index ix_js_web_task_exercise_id on js_web_task;
+
+alter table python_test_data drop foreign key fk_python_test_data_exercise_id;
+drop index ix_python_test_data_exercise_id on python_test_data;
 
 alter table sql_exercise drop foreign key fk_sql_exercise_scenario_name;
 drop index ix_sql_exercise_scenario_name on sql_exercise;
@@ -220,11 +234,13 @@ drop table if exists html_task;
 
 drop table if exists js_exercise;
 
-drop table if exists js_test;
+drop table if exists js_test_data;
 
 drop table if exists js_web_task;
 
 drop table if exists python_exercise;
+
+drop table if exists python_test_data;
 
 drop table if exists spread_exercise;
 

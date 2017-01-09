@@ -12,10 +12,11 @@ import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import model.programming.ITestData;
 import model.programming.ProgrammingExercise;
 
 @Entity
-public class JsExercise extends ProgrammingExercise<JsTestData> {
+public class JsExercise extends ProgrammingExercise {
 
   public enum JsDataType {
     BOOLEAN, NUMBER, STRING, SYMBOL, UNDEFINED, NULL, OBJECT;
@@ -30,7 +31,7 @@ public class JsExercise extends ProgrammingExercise<JsTestData> {
 
   @OneToMany(mappedBy = "exercise")
   @JsonManagedReference
-  public List<JsTest> functionTests;
+  public List<JsTestData> functionTests;
 
   public JsExercise(int theId) {
     id = theId;
@@ -42,7 +43,7 @@ public class JsExercise extends ProgrammingExercise<JsTestData> {
   }
 
   @Override
-  public List<JsTestData> getFunctionTests() {
+  public List<ITestData> getFunctionTests() {
     return new ArrayList<>(functionTests);
   }
 
@@ -93,7 +94,7 @@ public class JsExercise extends ProgrammingExercise<JsTestData> {
         + getInputTypes().stream().map(JsDataType::toString)
             .collect(Collectors.joining("</th><th>Input: ", "<th>Input: ", "</th>"))
         + "<th>Output: " + returntype + "</th></tr></thead><tbody>");
-    for(JsTest test: functionTests)
+    for(JsTestData test: functionTests)
       builder.append("<tr><td>" + test.getId() + "</td>"
           + test.getInput().stream().collect(Collectors.joining("</td><td>", "<td>", "</td>")) + "<td>"
           + test.getOutput() + "</td></tr>");

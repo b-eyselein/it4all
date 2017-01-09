@@ -1,27 +1,27 @@
-package model;
+package model.programming;
 
 import java.io.Serializable;
 
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class JsTestKey implements Serializable {
+public class TestDataKey implements Serializable {
 
   private static final long serialVersionUID = -7906767522614137149L;
 
   public int exerciseId; // NOSONAR
   public int testId; // NOSONAR
 
-  public JsTestKey(int theExerciseId, int theTestId) {
+  public TestDataKey(int theExerciseId, int theTestId) {
     exerciseId = theExerciseId;
     testId = theTestId;
   }
 
   @Override
   public boolean equals(Object obj) {
-    if(obj == null || !(obj instanceof JsTestKey))
+    if(obj == null || !(obj instanceof TestDataKey))
       return false;
-    JsTestKey other = (JsTestKey) obj;
+    TestDataKey other = (TestDataKey) obj;
     return testId == other.testId && exerciseId == other.exerciseId;
   }
 

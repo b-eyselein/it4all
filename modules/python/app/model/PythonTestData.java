@@ -1,41 +1,26 @@
 package model;
 
-import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
-import model.programming.ITestData;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
-public class PythonTestData implements ITestData {
+import model.programming.TestData;
+import model.programming.TestDataKey;
 
-  private List<String> inputs;
-  private String output;
-
-  public PythonTestData(List<String> theInputs, String theOutput) {
-    inputs = theInputs;
-    output = theOutput;
+@Entity
+public class PythonTestData extends TestData {
+  
+  public static final Finder<TestDataKey, PythonTestData> finder = new Finder<>(PythonTestData.class);
+  
+  @ManyToOne
+  @JoinColumn(name = "exercise_id", updatable = false, insertable = false)
+  @JsonBackReference
+  public PythonExercise exercise;
+  
+  public PythonTestData(TestDataKey theKey) {
+    super(theKey);
   }
-
-  @Override
-  public String buildToEvaluate(String functionname) {
-    // TODO Auto-generated method stub
-    return functionname + "(" + String.join(", ", inputs) + ")";
-  }
-
-  @Override
-  public int getId() {
-    // TODO Auto-generated method stub
-    return 1;
-  }
-
-  @Override
-  public List<String> getInput() {
-    // TODO Auto-generated method stub
-    return inputs;
-  }
-
-  @Override
-  public String getOutput() {
-    // TODO Auto-generated method stub
-    return output;
-  }
-
+  
 }

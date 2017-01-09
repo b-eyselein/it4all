@@ -1,8 +1,10 @@
-package model;
+package model.programming;
 
 import java.util.List;
 
-public class CommitedTestData implements JsTestData {
+import model.programming.ITestData;
+
+public class CommitedTestData implements ITestData {
   
   private int id;
   private List<String> input;

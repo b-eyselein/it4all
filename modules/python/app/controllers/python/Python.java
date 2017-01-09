@@ -23,20 +23,20 @@ import views.html.correction;
 import views.html.programming;
 
 public class Python extends ExerciseController<IntExerciseIdentifier> {
-
+  
   private static final PythonCorrector CORRECTOR = new PythonCorrector();
-
+  
   @Inject
   public Python(Util theUtil, FormFactory theFactory) {
     super(theUtil, theFactory);
   }
-
+  
   public Result commit(IntExerciseIdentifier identifier) {
-
+    
     User user = UserManagement.getCurrentUser();
     
     CompleteResult result = correct(request(), user, identifier);
-
+    
     if(wantsJsonResponse()) {
       log(user, new ExerciseCorrectionEvent(request(), identifier, result));
       return ok(Json.toJson(result));
@@ -59,11 +59,7 @@ public class Python extends ExerciseController<IntExerciseIdentifier> {
     // "The result was: " + result.getResult(), "The output was:\n" +
     // result.getOutput())));
   }
-
-  public Result index() {
-    return ok(programming.render(UserManagement.getCurrentUser(), new PythonExercise()));
-  }
-
+  
   @Override
   protected CompleteResult correct(Request request, User user, IntExerciseIdentifier identifier) {
     // FIXME: TEST!
@@ -74,7 +70,7 @@ public class Python extends ExerciseController<IntExerciseIdentifier> {
     // Read commited solution and custom test data from request
     DynamicForm form = factory.form().bindFromRequest();
     String learnerSolution = form.get("editorContent");
-
+    
     // List<CommitedTestData> userTestData = extractAndValidateTestData(form,
     // exercise);
     // TODO: evtl. Anzeige aussortiertes TestDaten?
@@ -84,5 +80,13 @@ public class Python extends ExerciseController<IntExerciseIdentifier> {
     
     return CORRECTOR.correct(exercise, learnerSolution, new ArrayList<>(/* userTestData */), user.todo);
   }
-
+  
+  public Result exercise(IntExerciseIdentifier identifier) {
+    return ok(programming.render(UserManagement.getCurrentUser(), PythonExercise.finder.byId(identifier.id)));
+  }
+  
+  public Result index() {
+    return ok(programming.render(UserManagement.getCurrentUser(), new PythonExercise()));
+  }
+  
 }

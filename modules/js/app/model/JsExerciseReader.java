@@ -8,33 +8,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import model.JsExercise.JsDataType;
 import model.exercisereading.ExerciseReader;
+import model.programming.TestDataKey;
 
 public class JsExerciseReader extends ExerciseReader<JsExercise> {
   
   public JsExerciseReader() {
     super("js");
-  }
-  
-  private JsTest readTest(int exerciseId, JsonNode testNode) {
-    int testId = testNode.get("id").asInt();
-    JsTestKey key = new JsTestKey(exerciseId, testId);
-    JsTest test = JsTest.finder.byId(key);
-    
-    if(test == null)
-      test = new JsTest(key);
-    
-    test.inputs = testNode.get("input").asText();
-    test.output = testNode.get("output").asText();
-    return test;
-  }
-  
-  private List<JsTest> readTests(int exerciseId, JsonNode testsNode) {
-    List<JsTest> tests = new LinkedList<>();
-    
-    for(final Iterator<JsonNode> testIter = testsNode.elements(); testIter.hasNext();)
-      tests.add(readTest(exerciseId, testIter.next()));
-    
-    return tests;
   }
   
   @Override
@@ -56,6 +35,28 @@ public class JsExerciseReader extends ExerciseReader<JsExercise> {
     exercise.functionTests = readTests(exercise.getId(), exerciseNode.get("tests"));
     
     return exercise;
+  }
+  
+  private JsTestData readTest(int exerciseId, JsonNode testNode) {
+    int testId = testNode.get("id").asInt();
+    TestDataKey key = new TestDataKey(exerciseId, testId);
+    JsTestData test = JsTestData.finder.byId(key);
+    
+    if(test == null)
+      test = new JsTestData(key);
+    
+    test.inputs = testNode.get("input").asText();
+    test.output = testNode.get("output").asText();
+    return test;
+  }
+  
+  private List<JsTestData> readTests(int exerciseId, JsonNode testsNode) {
+    List<JsTestData> tests = new LinkedList<>();
+    
+    for(final Iterator<JsonNode> testIter = testsNode.elements(); testIter.hasNext();)
+      tests.add(readTest(exerciseId, testIter.next()));
+    
+    return tests;
   }
   
 }
