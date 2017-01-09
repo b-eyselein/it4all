@@ -1,9 +1,17 @@
 package model.programming;
 
-public interface IExecutionResult {
+import model.exercise.FeedbackLevel;
+import model.exercise.Success;
+import model.result.EvaluationResult;
 
-  public String getOutput();
+public abstract class IExecutionResult extends EvaluationResult {
 
-  public Object getResult();
+  public IExecutionResult(FeedbackLevel theMinimalFL, Success theSuccess, String... theMessages) {
+    super(theMinimalFL, theSuccess, theMessages);
+  }
+  
+  public abstract String getOutput();
+
+  public abstract Object getResult();
 
 }

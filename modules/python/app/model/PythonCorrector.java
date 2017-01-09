@@ -14,9 +14,10 @@ public class PythonCorrector extends ProgLangCorrector<PythonTestData, PythonExe
 
   @Override
   protected EvaluationResult validateResult(PythonExercise exercise, PythonTestData testData, String toEvaluate,
-      Object realResult, Object awaitedResult) {
+      Object realResult, Object awaitedResult, String output) {
     // TODO Auto-generated method stub
-    return new GenericEvaluationResult(FeedbackLevel.MINIMAL_FEEDBACK, Success.NONE, "This is a result...");
+    return new GenericEvaluationResult(FeedbackLevel.MINIMAL_FEEDBACK, Success.NONE, "Awaited: " + awaitedResult,
+        "Gotten: " + realResult);
   }
 
 }
