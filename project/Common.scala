@@ -14,7 +14,5 @@ object Common {
 
   val mockitoDep = "org.mockito" % "mockito-core" % "1.10.19"
   
-  var jsqlParser = "com.github.jsqlparser" % "jsqlparser" % "0.9.5"
-  
   var jsonSchemaValidator = "com.github.fge" % "json-schema-validator" % "2.2.6"
 }

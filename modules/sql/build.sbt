@@ -9,5 +9,7 @@ playEbeanModels in Compile := Seq("model.*")
 
 libraryDependencies ++= Seq(
   javaJdbc,
-  Common.jsqlParser
+  
+  // JSQL-Parser
+  "com.github.jsqlparser" % "jsqlparser" % "0.9.6"
 )
