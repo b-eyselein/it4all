@@ -76,7 +76,7 @@ public class XML extends ExerciseController<IntExerciseIdentifier> {
     for(int count = 0; count < inputCount; count++)
       inputs.add(form.get("inp" + count));
 
-    BlanksExercise exercise = new BlanksExercise();
+    BlanksExercise exercise = new BlanksExercise(1);
     List<Success> results = exercise.correct(inputs);
 
     return ok(Json.toJson(results));
@@ -113,7 +113,7 @@ public class XML extends ExerciseController<IntExerciseIdentifier> {
   }
 
   public Result testBlanks() {
-    return ok(blanks.render(UserManagement.getCurrentUser(), new BlanksExercise()));
+    return ok(blanks.render(UserManagement.getCurrentUser(), new BlanksExercise(1)));
   }
 
   private Path checkAndCreateSolDir(User user, int id) {

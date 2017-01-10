@@ -5,7 +5,7 @@
 		"scriptfile": "employee.sql", 
 		"exercises": [
 			{
-				"id": 1, 
+				"id": 101, 
 				"exercisetype": "SELECT", 
 				"text": "Wie viele Angestellte hat die Firma? Benennen Sie das Ergebnis als 'Anzahl'", 
 				"samplesolutions": [
@@ -14,7 +14,7 @@
 				]
 			}, 
 			{
-				"id": 2, 
+				"id": 102, 
 				"exercisetype": "SELECT", 
 				"text": "Welche Angestelltennummer (employeeOID) hat Max Becker?", 
 				"samplesolutions": [
@@ -23,7 +23,7 @@
 				]
 			}, 
 			{
-				"id": 3, 
+				"id": 103, 
 				"exercisetype": "SELECT", 
 				"text": "Welche Emailadresse hat Max Becker für die Arbeit?", 
 				"samplesolutions": [
@@ -33,7 +33,7 @@
 				]
 			}, 
 			{
-				"id": 4, 
+				"id": 104, 
 				"exercisetype": "SELECT", 
 				"text": "Geben Sie die Nutzernamen aller Angestellten alphabetisch geordnet aus!", 
 				"samplesolutions": [
@@ -41,7 +41,7 @@
 				]
 			}, 
 			{
-				"id": 5, 
+				"id": 105, 
 				"exercisetype": "SELECT", 
 				"text": "Wie viele Untergebene hat jeder Chef? Geben Sie jeweils die EmployeeOID des Chefs und die Anzahl aus!", 
 				"samplesolutions": [
@@ -49,7 +49,7 @@
 				]
 			}, 
 			{
-				"id": 1, 
+				"id": 106, 
 				"exercisetype": "CREATE", 
 				"text": "Erstellen Sie das CREATE TABLE-Skript für die Tabelle Employee!", 
 				"samplesolutions": [
@@ -57,7 +57,7 @@
 				]
 			}, 
 			{
-				"id": 1, 
+				"id": 107, 
 				"exercisetype": "UPDATE", 
 				"text": "Der Angestellte mit der OID 8 arbeitet jetzt für den Angestellten mit der OID 3. Aktualisieren Sie die Datenbank!", 
 				"samplesolutions": [
@@ -66,7 +66,7 @@
 				"validation": "SELECT * FROM Employee"
 			}, 
 			{
-				"id": 1, 
+				"id": 108, 
 				"exercisetype": "DELETE", 
 				"text": "Der Angestellte mit der OID 7 hat gekündigt. Löschen Sie ihn aus der Angestelltentabelle.", 
 				"samplesolutions": [
@@ -75,7 +75,7 @@
 				"validation": "SELECT * FROM Employee"
 			}, 
 			{
-				"id": 1, 
+				"id": 109, 
 				"exercisetype": "INSERT", 
 				"text": "Es gibt eine neue Angestellte mit Namen Tina Sattler. Diese arbeitet für die Person mit der OID 2 und soll als OID 9 und als Nutzernamen tina_sattler bekommen.", 
 				"samplesolutions": [
@@ -92,7 +92,7 @@
 		"scriptfile": " oldtimer.sql", 
 		"exercises": [
 			{
-				"id": 1, 
+				"id": 201, 
 				"exercisetype": "SELECT", 
 				"text": "Bestimmen Sie die Namen aller Marken!", 
 				"samplesolutions": [
@@ -100,7 +100,7 @@
 				]
 			}, 
 			{
-				"id": 2, 
+				"id": 202, 
 				"exercisetype": "SELECT", 
 				"text": "Bestimmen Sie das Gründungsjahr der Marke BMW!", 
 				"samplesolutions": [
@@ -109,7 +109,7 @@
 				]
 			}, 
 			{
-				"id": 3, 
+				"id": 203, 
 				"exercisetype": "SELECT", 
 				"text": "Welche der Marken ist die älteste? Geben Sie nur den Namen aus!", 
 				"samplesolutions": [

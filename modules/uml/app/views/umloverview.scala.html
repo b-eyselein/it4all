@@ -11,9 +11,7 @@
       <a href=" @controllers.uml.routes.UML.diff(exercise.id)">Aufgabe @exercise.id: @exercise.title</a>
     </div>
     <div class="panel-body">
-      @for(exerText <- exercise.exerciseText.split("\n")) {
-      <p>@exerText</p>
-      }
+      <p>@exercise.text</p>
     </div>
   </div>
   }

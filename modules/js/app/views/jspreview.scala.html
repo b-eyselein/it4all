@@ -7,9 +7,9 @@
   </div>
   @for(ex <- exercises) {
   <div class="panel panel-default">
-    <div class="panel-heading">Aufgabe @ex.getId: @ex.title</div>
+    <div class="panel-heading">Aufgabe @ex.id: @ex.title</div>
     <div class="panel-body">
-      <p>@ex.getText()</p>
+      <p>@ex.text</p>
     </div>
   </div>
   }

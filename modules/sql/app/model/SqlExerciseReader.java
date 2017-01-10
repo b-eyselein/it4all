@@ -15,7 +15,6 @@ import java.util.List;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import model.exercise.SqlExercise;
-import model.exercise.SqlExerciseKey;
 import model.exercise.SqlExerciseType;
 import model.exercise.SqlScenario;
 import model.exercisereading.ExerciseReader;
@@ -68,15 +67,16 @@ public class SqlExerciseReader extends ExerciseReader<SqlExercise> {
     JsonNode validationNode = exerciseNode.get("validation");
     JsonNode hintNode = exerciseNode.get("hint");
     
-    SqlExerciseKey exerciseKey = new SqlExerciseKey(scenario.shortName, idNode.asInt(),
-        SqlExerciseType.valueOf(exercisetypeNode.asText()));
+    int id = idNode.asInt();
     
-    SqlExercise exercise = SqlExercise.finder.byId(exerciseKey);
+    SqlExercise exercise = SqlExercise.finder.byId(id);
     if(exercise == null)
-      exercise = new SqlExercise(exerciseKey);
+      exercise = new SqlExercise(id);
     
     exercise.text = textNode.asText();
     exercise.samples = readSampleSolutions(sampleSolutionsNode);
+    exercise.exercisetype = SqlExerciseType.valueOf(exercisetypeNode.asText());
+    exercise.scenario = scenario;
     exercise.validation = validationNode != null ? validationNode.asText() : "";
     exercise.tags = tagsNode != null ? readTags(tagsNode) : "";
     exercise.hint = hintNode != null ? hintNode.asText() : "";

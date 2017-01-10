@@ -6,8 +6,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
@@ -22,41 +23,37 @@ import play.twirl.api.Html;
 
 @Entity
 public class SqlExercise extends Exercise {
-
+  
   public static final String SAMPLE_JOIN_CHAR = "#";
-
-  public static final Finder<SqlExerciseKey, SqlExercise> finder = new Finder<>(SqlExercise.class);
-
-  @EmbeddedId
-  public SqlExerciseKey key;
-
-  @Column(columnDefinition = "text")
-  public String text;
-
+  
+  public static final Finder<Integer, SqlExercise> finder = new Finder<>(SqlExercise.class);
+  
   @Column(columnDefinition = "text")
   public String samples;
 
+  @Enumerated(EnumType.STRING)
+  public SqlExerciseType exercisetype;
+
   @ManyToOne
-  @JoinColumn(name = "scenario_name", insertable = false, updatable = false)
+  @JoinColumn(name = "scenario_name")
   public SqlScenario scenario;
-
+  
   public String validation; // NOSONAR
-
+  
   public String tags; // NOSONAR
-
+  
   public String hint; // NOSONAR
-
-  public SqlExercise(SqlExerciseKey theKey) {
-    key = theKey;
+  
+  public SqlExercise(int theId) {
+    super(theId);
   }
-
+  
   public Html getBadges() {
-
     return new Html(getTags().stream().map(SqlTag::getButtonContent).collect(Collectors.joining()));
   }
-
+  
   public QueryCorrector<? extends Statement, ?> getCorrector() {
-    switch(key.exercisetype) {
+    switch(exercisetype) {
     case CREATE:
       return new CreateCorrector();
     case DELETE:
@@ -71,44 +68,27 @@ public class SqlExercise extends Exercise {
       return null;
     }
   }
-
-  @Override
-  public int getId() {
-    // TODO Auto-generated method stub
-    return 0;
-  }
-
-  @Override
-  public int getMaxPoints() {
-    // TODO Auto-generated method stub
-    return 0;
-  }
-
+  
   public List<String> getSampleSolutions() {
     return Arrays.asList(samples.split("#"));
   }
-
+  
   public List<SqlTag> getTags() {
     if(tags.isEmpty())
       return Collections.emptyList();
-
+    
     return Arrays.stream(tags.split(SAMPLE_JOIN_CHAR)).map(SqlTag::valueOf).collect(Collectors.toList());
   }
-
-  @Override
-  public String getText() {
-    return text;
-  }
-
+  
   @Override
   public String renderData() {
     // TODO Auto-generated method stub
     return null;
   }
-
+  
   public Html renderSampleSolutions() {
     return new Html(getSampleSolutions().stream().collect(Collectors
         .joining("</pre></div><div class=\"col-md-6\"><pre>", "<div class=\"col-md-6\"><pre>", "</pre></div>")));
   }
-
+  
 }

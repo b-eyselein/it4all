@@ -1,5 +1,7 @@
 package model.exercise;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
 import com.avaje.ebean.Model;
@@ -8,17 +10,17 @@ import com.avaje.ebean.Model;
 public abstract class Exercise extends Model {
 
   protected static final String DIV_END = "</div>";
+  
+  @Id
+  public int id;
 
   public String title; // NOSONAR
 
-  public abstract int getId();
+  @Column(columnDefinition = "text")
+  public String text;
 
-  public abstract int getMaxPoints();
-
-  public abstract String getText();
-
-  public String getTitle() {
-    return title;
+  public Exercise(int theId) {
+    id = theId;
   }
 
   public abstract String renderData();

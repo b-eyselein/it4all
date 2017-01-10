@@ -4,9 +4,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import model.exercise.Exercise;
-
-public abstract class BooleanQuestion extends Exercise {
+public abstract class BooleanQuestion {
 
   protected static final Random GENERATOR = new Random();
   protected static final char[] ALPHABET = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',

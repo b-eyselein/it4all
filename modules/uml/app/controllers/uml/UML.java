@@ -70,7 +70,8 @@ public class UML extends ExerciseController<IntExerciseIdentifier> {
   }
   
   public Result index() {
-    return ok(umloverview.render(Arrays.asList(new UmlExercise()), UserManagement.getCurrentUser()));
+    return ok(
+        umloverview.render(Arrays.asList(new UmlExercise(1), new UmlExercise(2)), UserManagement.getCurrentUser()));
   }
   
   @Override

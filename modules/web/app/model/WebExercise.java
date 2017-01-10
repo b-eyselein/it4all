@@ -6,7 +6,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -22,12 +21,6 @@ public class WebExercise extends Exercise {
 
   public static final Finder<Integer, WebExercise> finder = new Finder<>(WebExercise.class);
 
-  @Id
-  public int id;
-
-  @Column(columnDefinition = "text")
-  public String text;
-  
   @Column(columnDefinition = "text")
   public String htmlText;
   
@@ -49,20 +42,10 @@ public class WebExercise extends Exercise {
   @JsonManagedReference
   public List<JsWebTask> jsTasks;
 
-  public WebExercise(int exerciseId) {
-    id = exerciseId;
+  public WebExercise(int theId) {
+    super(theId);
   }
-
-  @Override
-  public int getId() {
-    return id;
-  }
-
-  @Override
-  public int getMaxPoints() {
-    return 2 * htmlTasks.size();
-  }
-
+  
   public List<? extends Task> getTasks(String exType) {
     switch(exType) {
     case "html":
@@ -77,18 +60,13 @@ public class WebExercise extends Exercise {
   }
 
   @Override
-  public String getText() {
-    return text;
-  }
-
-  @Override
   public String renderData() {
     StringBuilder builder = new StringBuilder();
     builder.append("<div class=\"col-md-6\">");
     builder.append("<div class=\"panel panel-default\">");
-    builder.append("<div class=\"panel-heading\">Aufgabe " + getId() + ": " + getTitle() + "</div>");
+    builder.append("<div class=\"panel-heading\">Aufgabe " + id + ": " + title + "</div>");
     builder.append("<div class=\"panel-body\">");
-    builder.append("<p>Text: " + getText() + "</p>");
+    builder.append("<p>Text: " + text + "</p>");
 
     builder.append("<h2>HTML-Tasks</h2>");
     for(Task task: htmlTasks)

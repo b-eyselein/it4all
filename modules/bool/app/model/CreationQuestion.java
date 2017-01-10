@@ -48,12 +48,6 @@ public class CreationQuestion extends BooleanQuestion {
     return String.join(" OR ", formulas);
   }
 
-  @Override
-  public int getId() {
-    // TODO Auto-generated method stub
-    return 0;
-  }
-
   public String getKonjunktiveNormalForm() {
     // @formatter:off
     List<String> formulas = solutions.stream()
@@ -70,12 +64,6 @@ public class CreationQuestion extends BooleanQuestion {
     return String.join(" AND ", formulas);
   }
 
-  @Override
-  public int getMaxPoints() {
-    // TODO Auto-generated method stub
-    return 0;
-  }
-  
   public List<Assignment> getSolutions() {
     return solutions;
   }
@@ -84,22 +72,4 @@ public class CreationQuestion extends BooleanQuestion {
     return SOLUTION_VARIABLE;
   }
   
-  @Override
-  public String getText() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-  
-  @Override
-  public String getTitle() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-  
-  @Override
-  public String renderData() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
 }

@@ -13,13 +13,13 @@ import javax.inject.Inject;
 
 import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
+import model.IntExerciseIdentifier;
 import model.SqlCorrector;
 import model.SqlQueryResult;
 import model.Util;
 import model.correctionresult.SqlCorrectionResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.SqlExercise;
-import model.exercise.SqlExerciseKey;
 import model.exercise.SqlExerciseType;
 import model.exercise.SqlScenario;
 import model.logging.ExerciseCompletionEvent;
@@ -41,7 +41,7 @@ import views.html.sqloverview;
 import views.html.sqlscenario;
 import play.mvc.Http.Request;
 
-public class SQL extends ExerciseController<SqlExerciseKey> {
+public class SQL extends ExerciseController<IntExerciseIdentifier> {
   
   private static final String SHOW_ALL_TABLES = "SHOW TABLES";
   
@@ -59,33 +59,30 @@ public class SQL extends ExerciseController<SqlExerciseKey> {
     sqlOther = theSqlOther;
   }
   
-  public Result commit(String scenarioName, String exerciseType, int exerciseId) {
+  public Result commit(int exerciseId) {
     User user = UserManagement.getCurrentUser();
-    SqlExerciseKey key = new SqlExerciseKey(scenarioName, exerciseId, SqlExerciseType.valueOf(exerciseType));
-    CompleteResult result = correct(request(), user, key);
+    CompleteResult result = correct(request(), user, new IntExerciseIdentifier(exerciseId));
     
     if(wantsJsonResponse()) {
-      log(user, new ExerciseCorrectionEvent(request(), key, result));
+      log(user, new ExerciseCorrectionEvent(request(), new IntExerciseIdentifier(exerciseId), result));
       return ok(Json.toJson(result));
     } else {
-      log(user, new ExerciseCompletionEvent(request(), key, result));
+      log(user, new ExerciseCompletionEvent(request(), new IntExerciseIdentifier(exerciseId), result));
       return ok(correction.render("SQL", result, user));
     }
   }
   
-  public Result exercise(String scenarioName, String exerciseType, int exerciseId) {
+  public Result exercise(int exerciseId) {
     User user = UserManagement.getCurrentUser();
     
-    SqlExerciseType type = SqlExerciseType.valueOf(exerciseType);
-    SqlExerciseKey key = new SqlExerciseKey(scenarioName, exerciseId, type);
-    SqlExercise exercise = SqlExercise.finder.byId(key);
+    SqlExercise exercise = SqlExercise.finder.byId(exerciseId);
     
     if(exercise == null)
       return redirect(controllers.sql.routes.SQL.index());
     
-    List<SqlQueryResult> tables = readTablesInDatabase(scenarioName);
+    List<SqlQueryResult> tables = readTablesInDatabase(exercise.scenario.shortName);
     
-    log(user, new ExerciseStartEvent(request(), key));
+    log(user, new ExerciseStartEvent(request(), new IntExerciseIdentifier(exerciseId)));
     
     return ok(sqlexercise.render(user, exercise, tables));
   }
@@ -151,8 +148,8 @@ public class SQL extends ExerciseController<SqlExerciseKey> {
   }
   
   @Override
-  protected CompleteResult correct(Request request, User user, SqlExerciseKey identifier) {
-    SqlExercise exercise = SqlExercise.finder.byId(identifier);
+  protected CompleteResult correct(Request request, User user, IntExerciseIdentifier identifier) {
+    SqlExercise exercise = SqlExercise.finder.byId(identifier.id);
     
     DynamicForm form = factory.form().bindFromRequest();
     String learnerSolution = form.get("editorContent");
@@ -160,7 +157,7 @@ public class SQL extends ExerciseController<SqlExerciseKey> {
     
     // FIXME: Speichern der Lösung?!?
     
-    Database database = getDatabaseForExerciseType(exercise.key.exercisetype);
+    Database database = getDatabaseForExerciseType(exercise.exercisetype);
     
     if(learnerSolution.isEmpty())
       return new SqlCorrectionResult(learnerSolution,

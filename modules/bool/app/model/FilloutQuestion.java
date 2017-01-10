@@ -56,43 +56,13 @@ public class FilloutQuestion extends BooleanQuestion {
   public String getFormulaAsString() {
     return formula.toString();
   }
-  
-  @Override
-  public int getId() {
-    // TODO Auto-generated method stub
-    return 0;
-  }
-  
-  @Override
-  public int getMaxPoints() {
-    // TODO Auto-generated method stub
-    return 0;
-  }
-  
-  @Override
-  public String getText() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-  
-  @Override
-  public String getTitle() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-  
+
   public boolean isCorrect() {
     for(Assignment assignment: assignments)
       if(!assignment.assignmentIsSet(LEARNER_VARIABLE)
           || assignment.getAssignment(LEARNER_VARIABLE) != assignment.getAssignment(SOLUTION_VARIABLE))
         return false;
     return true;
-  }
-  
-  @Override
-  public String renderData() {
-    // TODO Auto-generated method stub
-    return null;
   }
   
 }

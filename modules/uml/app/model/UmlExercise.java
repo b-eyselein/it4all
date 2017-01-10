@@ -3,26 +3,14 @@ package model;
 import model.exercise.Exercise;
 
 public class UmlExercise extends Exercise {
-  
-  public int id =1;	
-  public String exerciseText = "Im folgenden Übungsszenario sollen Sie ein Klassendiagramm in UML erstellen!";
-  public String title  ="Foto";
+
   public int diff = 0;
   
-  @Override
-  public int getId() {
-    return id;
-  }
-
-  @Override
-  public int getMaxPoints() {
-    // TODO Auto-generated method stub
-    return 0;
-  }
-
-  @Override
-  public String getText() {
-    return exerciseText;
+  public UmlExercise(int theId) {
+    super(theId);
+    title = "Der Titel";
+    text = "Dies ist der Aufgabentext";
+    // TODO Auto-generated constructor stub
   }
   
   @Override
@@ -30,5 +18,5 @@ public class UmlExercise extends Exercise {
     // TODO Auto-generated method stub
     return null;
   }
-
+  
 }

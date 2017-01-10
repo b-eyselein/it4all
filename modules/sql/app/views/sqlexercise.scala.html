@@ -5,12 +5,6 @@
 <script src="@controllers.routes.Assets.versioned("javascripts/ace/ace.js")"></script>
 <script src="@controllers.routes.Assets.versioned("javascripts/sqlProcessor.js")"></script>
 
-<script>
-function testSolution() {
-  testTheSolution("@controllers.sql.routes.SQL.commit(exercise.key.scenarioName, exercise.key.exercisetype.toString(), exercise.key.id)");
-}
-</script>
-
 <div class="container-fluid">
 
   <div class="panel panel-default">
@@ -38,7 +32,8 @@ function testSolution() {
               <h4 class="modal-title">Datenbankschema</h4>
             </div>
             <div class="modal-body">
-              <img class="img-rounded img-responsive center-block" src="@routes.Assets.versioned("images/sql/" + exercise.scenario.shortName + ".png")" alt="Datenbankschema">
+              <img class="img-rounded img-responsive center-block"
+              src="@routes.Assets.versioned("images/sql/" + exercise.scenario.shortName + ".png")" alt="Datenbankschema">
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -71,9 +66,9 @@ function testSolution() {
 
   <div class="row">
     <div class="col-md-4">
-      <form action="@controllers.sql.routes.SQL.commit(exercise.key.scenarioName, exercise.key.exercisetype.toString(), exercise.key.id)" method="post" onsubmit="prepareFormForSubmitting();">
+      <form action="@controllers.sql.routes.SQL.commit(exercise.id)" method="post" onsubmit="prepareFormForSubmitting();">
         <div class="panel panel-default">
-          <div class="panel-heading">Aufgabe @exercise.key.id</div>
+          <div class="panel-heading">Aufgabe @exercise.id</div>
           <div class="panel-body">
             <p>@exercise.text</p>
             @if(!exercise.hint.isEmpty()) {<p><i>Hinweis:</i> @exercise.hint</p>}
@@ -87,8 +82,9 @@ function testSolution() {
             </div>
           </div>
           <div class="panel-footer">
-            <button type="button" class="btn btn-default btn-block" onclick="testSolution();">L&ouml;sung testen</button>
-            <a type="button" class="btn btn-default btn-block" href="@controllers.sql.routes.SQL.exercise(exercise.key.scenarioName, exercise.key.exercisetype.toString, (exercise.key.id + 1))">Nächste Aufgabe</a>
+            <button type="button" class="btn btn-default btn-block"
+            onclick="testTheSolution("@controllers.sql.routes.SQL.commit(exercise.id)")">L&ouml;sung testen</button>
+            <a type="button" class="btn btn-default btn-block" href="@controllers.sql.routes.SQL.exercise(exercise.id + 1)">Nächste Aufgabe</a>
             @* <input type="submit" class="btn btn-default btn-block" value="L&ouml;sung abgeben"> *@
           </div>
         </div>
