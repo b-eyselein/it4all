@@ -14,13 +14,15 @@
       <p>@exercise.text</p>
           
       <div class="btn-group btn-group-justified">
-        <a href="@spread.routes.Spread.downloadTemplate(new model.IntExerciseIdentifier(exercise.id), "xlsx")" class="btn btn-default" target="_blank">Download der Angabe für MS Excel</a>
-        <a href="@spread.routes.Spread.downloadTemplate(new model.IntExerciseIdentifier(exercise.id), "ods")" class="btn btn-default" target="_blank">Download der Angabe für OpenOffice Calc</a>
+        <a href="@spread.routes.Spread.downloadTemplate(exercise.id, "xlsx")" class="btn btn-default"
+          target="_blank">Download der Angabe für MS Excel</a>
+        <a href="@spread.routes.Spread.downloadTemplate(exercise.id, "ods")" class="btn btn-default"
+          target="_blank">Download der Angabe für OpenOffice Calc</a>
       </div>
       
       <hr />
       
-      <form action="@spread.routes.Spread.upload(new model.IntExerciseIdentifier(exercise.id))" method="post" enctype="multipart/form-data">
+      <form action="@spread.routes.Spread.upload(exercise.id)" method="post" enctype="multipart/form-data">
         <h4>Upload f&uuml;r L&ouml;sung f&uuml;r Aufgabe @exercise.id</p>
         
         <div class="form-group">

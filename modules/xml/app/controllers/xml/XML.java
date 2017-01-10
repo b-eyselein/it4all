@@ -16,7 +16,6 @@ import javax.inject.Inject;
 
 import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
-import model.IntExerciseIdentifier;
 import model.Util;
 import model.XMLError;
 import model.XmlCorrector;
@@ -42,7 +41,7 @@ import views.html.xmloverview;
 import views.html.blanks;
 import play.mvc.Http.Request;
 
-public class XML extends ExerciseController<IntExerciseIdentifier> {
+public class XML extends ExerciseController {
 
   private static final String EXERCISE_TYPE = "xml";
   private static final String LEARNER_SOLUTION_VALUE = "editorContent";
@@ -55,17 +54,59 @@ public class XML extends ExerciseController<IntExerciseIdentifier> {
     super(theUtil, theFactory);
   }
 
-  public Result commit(IntExerciseIdentifier identifier) {
+  private Path checkAndCreateSolDir(User user, int id) {
+    Path dir = Paths.get(util.getSolDirForUserAndType(user, EXERCISE_TYPE).toString(), Integer.toString(id));
+    if(!dir.toFile().exists())
+      try {
+        Files.createDirectories(dir);
+      } catch (IOException e) {
+        Logger.error("There was an error while creating the directory for the xml solution " + dir, e);
+        return null;
+      }
+    return dir;
+  }
+
+  public Result commit(int id) {
     User user = UserManagement.getCurrentUser();
-    CompleteResult result = correct(request(), user, identifier);
+    CompleteResult result = correct(request(), user, id);
 
     if(wantsJsonResponse()) {
-      log(user, new ExerciseCorrectionEvent(request(), identifier, result));
+      log(user, new ExerciseCorrectionEvent(request(), id, result));
       return ok(Json.toJson(result));
     } else {
-      log(user, new ExerciseCompletionEvent(request(), identifier, result));
+      log(user, new ExerciseCompletionEvent(request(), id, result));
       return ok(correction.render("XML", result, user));
     }
+  }
+
+  @Override
+  protected CompleteResult correct(Request request, User user, int id) {
+    // FIXME: implement!
+    XmlExercise exercise = XmlExercise.finder.byId(id);
+
+    DynamicForm form = factory.form().bindFromRequest();
+    String learnerSolution = form.get(LEARNER_SOLUTION_VALUE);
+
+    if(exercise.exerciseType == XmlExType.XML_DTD) {
+      // FIXME: do not save fixed start with solution?!?
+      learnerSolution = exercise.fixedStart + "\n" + learnerSolution;
+    }
+
+    Path dir = checkAndCreateSolDir(user, exercise.id);
+
+    Path grammar;
+    Path xml;
+    if(exercise.exerciseType == XmlExType.DTD_XML || exercise.exerciseType == XmlExType.XSD_XML) {
+      grammar = saveGrammar(dir, learnerSolution, exercise);
+      xml = saveXML(dir, exercise);
+    } else {
+      grammar = saveGrammar(dir, exercise);
+      xml = saveXML(dir, learnerSolution, exercise);
+    }
+
+    List<EvaluationResult> elementResults = correctExercise(xml, grammar, exercise);
+
+    return new CompleteResult(learnerSolution, elementResults);
   }
 
   public Result correctBlanks(int id) {
@@ -82,8 +123,15 @@ public class XML extends ExerciseController<IntExerciseIdentifier> {
     return ok(Json.toJson(results));
   }
 
-  public Result exercise(IntExerciseIdentifier identifier) {
-    XmlExercise exercise = XmlExercise.finder.byId(identifier.id);
+  private List<EvaluationResult> correctExercise(Path xml, Path grammar, XmlExercise exercise) {
+    List<EvaluationResult> result = XmlCorrector.correct(xml, grammar, exercise);
+    if(result.isEmpty())
+      return Arrays.asList(new XMLError("", XmlErrorType.NONE, -1));
+    return result;
+  }
+
+  public Result exercise(int id) {
+    XmlExercise exercise = XmlExercise.finder.byId(id);
 
     if(exercise == null)
       return redirect(controllers.xml.routes.XML.index(Collections.emptyList()));
@@ -99,9 +147,9 @@ public class XML extends ExerciseController<IntExerciseIdentifier> {
       defaultOrOldSolution = defaultOrOldSolution.substring(defaultOrOldSolution.indexOf('\n') + 1);
     }
 
-    log(user, new ExerciseStartEvent(request(), identifier));
+    log(user, new ExerciseStartEvent(request(), id));
 
-    return ok(xml.render(UserManagement.getCurrentUser(), exercise, identifier, referenceCode, defaultOrOldSolution));
+    return ok(xml.render(UserManagement.getCurrentUser(), exercise, referenceCode, defaultOrOldSolution));
   }
 
   public Result index(List<String> filter) {
@@ -110,29 +158,6 @@ public class XML extends ExerciseController<IntExerciseIdentifier> {
     List<XmlExercise> exercises = XmlExercise.finder.all().stream().filter(ex -> filters.contains(ex.exerciseType))
         .collect(Collectors.toList());
     return ok(xmloverview.render(UserManagement.getCurrentUser(), exercises, filters));
-  }
-
-  public Result testBlanks() {
-    return ok(blanks.render(UserManagement.getCurrentUser(), new BlanksExercise(1)));
-  }
-
-  private Path checkAndCreateSolDir(User user, int id) {
-    Path dir = Paths.get(util.getSolDirForUserAndType(user, EXERCISE_TYPE).toString(), Integer.toString(id));
-    if(!dir.toFile().exists())
-      try {
-        Files.createDirectories(dir);
-      } catch (IOException e) {
-        Logger.error("There was an error while creating the directory for the xml solution " + dir, e);
-        return null;
-      }
-    return dir;
-  }
-
-  private List<EvaluationResult> correctExercise(Path xml, Path grammar, XmlExercise exercise) {
-    List<EvaluationResult> result = XmlCorrector.correct(xml, grammar, exercise);
-    if(result.isEmpty())
-      return Arrays.asList(new XMLError("", XmlErrorType.NONE, -1));
-    return result;
   }
 
   private String loadOldSolution(XmlExercise exercise, User user) {
@@ -215,34 +240,8 @@ public class XML extends ExerciseController<IntExerciseIdentifier> {
     }
   }
 
-  @Override
-  protected CompleteResult correct(Request request, User user, IntExerciseIdentifier identifier) {
-    // FIXME: implement!
-    XmlExercise exercise = XmlExercise.finder.byId(identifier.id);
-
-    DynamicForm form = factory.form().bindFromRequest();
-    String learnerSolution = form.get(LEARNER_SOLUTION_VALUE);
-
-    if(exercise.exerciseType == XmlExType.XML_DTD) {
-      // FIXME: do not save fixed start with solution?!?
-      learnerSolution = exercise.fixedStart + "\n" + learnerSolution;
-    }
-
-    Path dir = checkAndCreateSolDir(user, exercise.id);
-
-    Path grammar;
-    Path xml;
-    if(exercise.exerciseType == XmlExType.DTD_XML || exercise.exerciseType == XmlExType.XSD_XML) {
-      grammar = saveGrammar(dir, learnerSolution, exercise);
-      xml = saveXML(dir, exercise);
-    } else {
-      grammar = saveGrammar(dir, exercise);
-      xml = saveXML(dir, learnerSolution, exercise);
-    }
-
-    List<EvaluationResult> elementResults = correctExercise(xml, grammar, exercise);
-
-    return new CompleteResult(learnerSolution, elementResults);
+  public Result testBlanks() {
+    return ok(blanks.render(UserManagement.getCurrentUser(), new BlanksExercise(1)));
   }
 
 }

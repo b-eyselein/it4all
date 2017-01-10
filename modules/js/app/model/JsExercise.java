@@ -17,55 +17,50 @@ import model.programming.ProgrammingExercise;
 
 @Entity
 public class JsExercise extends ProgrammingExercise {
-  
+
   public enum JsDataType {
     BOOLEAN, NUMBER, STRING, SYMBOL, UNDEFINED, NULL, OBJECT;
   }
-  
+
   public static final Finder<Integer, JsExercise> finder = new Finder<>(JsExercise.class);
-  
+
   public String inputtypes; // NOSONAR
-  
+
   @Enumerated(EnumType.STRING)
   public JsDataType returntype;
-  
+
   @OneToMany(mappedBy = "exercise")
   @JsonManagedReference
   public List<JsTestData> functionTests;
-  
+
   public JsExercise(int theId) {
-    id = theId;
-  }
-  
-  @Override
-  public IntExerciseIdentifier getExerciseIdentifier() {
-    return new IntExerciseIdentifier(id);
+    super(theId);
   }
   
   @Override
   public List<ITestData> getFunctionTests() {
     return new ArrayList<>(functionTests);
   }
-  
+
   public List<JsDataType> getInputTypes() {
     return Arrays.stream(inputtypes.split("#")).map(JsDataType::valueOf).collect(Collectors.toList());
   }
-  
+
   @Override
   public String getLanguage() {
     return "javascript";
   }
-  
-  @Override
-  public String getTestdataValidationUrl() {
-    return controllers.js.routes.JS.validateTestData(getExerciseIdentifier()).url();
-  }
 
   @Override
-  public String getTestingUrl() {
-    return controllers.js.routes.JS.commit(getExerciseIdentifier()).url();
+  public String getTestdataValidationUrl() {
+    return controllers.js.routes.JS.validateTestData(id).url();
   }
   
+  @Override
+  public String getTestingUrl() {
+    return controllers.js.routes.JS.commit(id).url();
+  }
+
   @Override
   public String renderData() {
     // TODO Auto-generated method stub
@@ -75,13 +70,13 @@ public class JsExercise extends ProgrammingExercise {
     builder.append("<div class=\"panel-heading\">Aufgabe " + id + ": " + title + DIV_END);
     builder.append("<div class=\"panel-body\">");
     builder.append("<p>Aufgabentext: " + text + "</p>");
-    
+
     // Declaration and sample solution
     builder.append("<div class=\"row\">");
     builder.append("<div class=\"col-md-6\"><p>Angabe: <pre>" + declaration + "</pre></p>" + DIV_END);
     builder.append("<div class=\"col-md-6\"><p>Musterlösung: <pre>" + sampleSolution + "</pre></p>" + DIV_END);
     builder.append(DIV_END);
-    
+
     // Inputs and Output, Tests
     builder.append("<table class=\"table\">");
     builder.append("<thead><tr><th>Id</th>"
@@ -93,9 +88,9 @@ public class JsExercise extends ProgrammingExercise {
           + test.getInput().stream().collect(Collectors.joining("</td><td>", "<td>", "</td>")) + "<td>"
           + test.getOutput() + "</td></tr>");
     builder.append("</tbody></table>");
-    
+
     builder.append(DIV_END + DIV_END + DIV_END);
     return builder.toString();
   }
-  
+
 }

@@ -45,10 +45,10 @@ public class User extends Model implements PathBindable<User> {
   
   @Enumerated(EnumType.STRING)
   public SHOW_HIDE_AGGREGATE todo = SHOW_HIDE_AGGREGATE.SHOW;
-  
-  @OneToMany(mappedBy = "user")
-  public List<ExerciseResult<?>> results;
-  
+
+  // @OneToMany(mappedBy = "user")
+  // public List<ExerciseResult<?>> results;
+
   @Override
   public User bind(String key, String name) {
     User user = finder.byId(name);

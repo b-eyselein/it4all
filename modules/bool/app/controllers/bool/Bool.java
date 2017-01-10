@@ -8,7 +8,6 @@ import javax.inject.Inject;
 
 import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
-import model.BoolQuestionIdentifier;
 import model.BooleanParsingException;
 import model.BooleanQuestion;
 import model.BooleanQuestionResult;
@@ -32,7 +31,7 @@ import views.html.boolfilloutquestion;
 import views.html.boolfilloutsolution;
 import views.html.booloverview;
 
-public class Bool extends ExerciseController<BoolQuestionIdentifier> {
+public class Bool extends ExerciseController {
   private static final String FORM_VALUE = "learnerSolution";
   
   @Inject
@@ -101,6 +100,13 @@ public class Bool extends ExerciseController<BoolQuestionIdentifier> {
     return ok(boolfilloutsolution.render(UserManagement.getCurrentUser(), question));
   }
   
+  @Override
+  protected CompleteResult correct(Request request, User user, int id) {
+    // TODO Auto-generated method stub
+    
+    return null;
+  }
+  
   public Result index() {
     return ok(booloverview.render(UserManagement.getCurrentUser()));
   }
@@ -113,12 +119,5 @@ public class Bool extends ExerciseController<BoolQuestionIdentifier> {
   public Result newBoolFilloutQuestion() {
     FilloutQuestion question = FilloutQuestion.generateNew();
     return ok(boolfilloutquestion.render(UserManagement.getCurrentUser(), question));
-  }
-  
-  @Override
-  protected CompleteResult correct(Request request, User user, BoolQuestionIdentifier identifier) {
-    // TODO Auto-generated method stub
-    
-    return null;
   }
 }

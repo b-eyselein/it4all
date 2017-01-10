@@ -1,10 +1,10 @@
 # creation of exercises
-GET    /upload                controllers.spread.SpreadAdmin.uploadForm()
-POST   /upload                controllers.spread.SpreadAdmin.uploadFile()
-GET    /create                controllers.spread.SpreadAdmin.readStandardExercises()
+GET    /upload              controllers.spread.SpreadAdmin.uploadForm()
+POST   /upload              controllers.spread.SpreadAdmin.uploadFile()
+GET    /create              controllers.spread.SpreadAdmin.readStandardExercises()
 
 # exercises
-GET    /                      controllers.spread.Spread.index()
-POST   /:exId                 controllers.spread.Spread.upload(exId: model.IntExerciseIdentifier)
-GET    /:exId/:typ            controllers.spread.Spread.download(exId: model.IntExerciseIdentifier, typ: String)
-GET    /template/:exId/:typ   controllers.spread.Spread.downloadTemplate(exId: model.IntExerciseIdentifier, typ: String)
+GET    /                    controllers.spread.Spread.index()
+POST   /:id                 controllers.spread.Spread.upload(id: Int)
+GET    /:id/:typ            controllers.spread.Spread.download(id: Int, typ: String)
+GET    /template/:id/:typ   controllers.spread.Spread.downloadTemplate(id: Int, typ: String)

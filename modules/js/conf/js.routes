@@ -1,12 +1,12 @@
 # creation of exercises
-GET    /upload           controllers.js.JsAdmin.uploadForm()
-POST   /upload           controllers.js.JsAdmin.uploadFile()
-GET    /create           controllers.js.JsAdmin.readStandardExercises()
+GET    /upload         controllers.js.JsAdmin.uploadForm()
+POST   /upload         controllers.js.JsAdmin.uploadFile()
+GET    /create         controllers.js.JsAdmin.readStandardExercises()
 
 # exercises
-GET    /                 controllers.js.JS.index()
-POST   /validate/:exId   controllers.js.JS.validateTestData(exId: model.IntExerciseIdentifier)
+GET    /               controllers.js.JS.index()
+POST   /validate/:id   controllers.js.JS.validateTestData(id: Int)
 
-GET    /:exId            controllers.js.JS.exercise(exId: model.IntExerciseIdentifier)
-PUT    /:exId            controllers.js.JS.commit(exId: model.IntExerciseIdentifier)
-POST   /:exId            controllers.js.JS.commit(exId: model.IntExerciseIdentifier)
+GET    /:id            controllers.js.JS.exercise(id: Int)
+PUT    /:id            controllers.js.JS.commit(id: Int)
+POST   /:id            controllers.js.JS.commit(id: Int)

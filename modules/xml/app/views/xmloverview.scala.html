@@ -36,7 +36,7 @@
         <tr>
           <td>@exercise.getTag()</td>
           <td>@exercise.id</td>
-          <td><a href="@controllers.xml.routes.XML.exercise(new model.IntExerciseIdentifier(exercise.id))" class="btn btn-primary btn-block">@exercise.title</a></td>
+          <td><a href="@controllers.xml.routes.XML.exercise(exercise.id)" class="btn btn-primary btn-block">@exercise.title</a></td>
         </tr>
         }
       </tbody>

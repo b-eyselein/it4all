@@ -1,12 +1,12 @@
 # creation of exercises
-GET    /upload           controllers.python.PythonAdmin.uploadForm()
-POST   /upload           controllers.python.PythonAdmin.uploadFile()
-GET    /create           controllers.python.PythonAdmin.readStandardExercises()
+GET    /upload   controllers.python.PythonAdmin.uploadForm()
+POST   /upload   controllers.python.PythonAdmin.uploadFile()
+GET    /create   controllers.python.PythonAdmin.readStandardExercises()
 
 # exercises
-GET    /                 controllers.python.Python.index()
-# TODO: POST   /validate/:exId   controllers.python.Python.validateTestData(exId: model.IntExerciseIdentifier)
+GET    /         controllers.python.Python.index()
+# TODO: POST   /validate/:id   controllers.python.Python.validateTestData(id: Int)
 
-GET    /:exId            controllers.python.Python.exercise(exId: model.IntExerciseIdentifier)
-PUT    /:exId            controllers.python.Python.commit(exId: model.IntExerciseIdentifier)
-POST   /:exId            controllers.python.Python.commit(exId: model.IntExerciseIdentifier)
+GET    /:id      controllers.python.Python.exercise(id: Int)
+PUT    /:id      controllers.python.Python.commit(id: Int)
+POST   /:id      controllers.python.Python.commit(id: Int)

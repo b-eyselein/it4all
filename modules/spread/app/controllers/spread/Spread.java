@@ -10,7 +10,6 @@ import javax.inject.Inject;
 
 import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
-import model.IntExerciseIdentifier;
 import model.SpreadExercise;
 import model.SpreadSheetCorrectionResult;
 import model.SpreadSheetCorrector;
@@ -29,7 +28,7 @@ import views.html.excelcorrect;
 import views.html.spreadcorrectionerror;
 import views.html.spreadoverview;
 
-public class Spread extends ExerciseController<IntExerciseIdentifier> {
+public class Spread extends ExerciseController {
   
   private static final String EXERCISE_TYPE = "spread";
   private static final String BODY_SOL_FILE_NAME = "solFile";
@@ -39,9 +38,15 @@ public class Spread extends ExerciseController<IntExerciseIdentifier> {
     super(theUtil, theFactory);
   }
   
-  public Result download(IntExerciseIdentifier identifier, String typ) {
+  @Override
+  protected CompleteResult correct(Request request, User user, int id) {
+    // FIXME: implement!
+    return null;
+  }
+  
+  public Result download(int id, String typ) {
     User user = UserManagement.getCurrentUser();
-    SpreadExercise exercise = SpreadExercise.finder.byId(identifier.id);
+    SpreadExercise exercise = SpreadExercise.finder.byId(id);
     
     if(exercise == null)
       return badRequest("This exercise does not exist!");
@@ -57,8 +62,8 @@ public class Spread extends ExerciseController<IntExerciseIdentifier> {
     return ok(fileToDownload.toFile());
   }
   
-  public Result downloadTemplate(IntExerciseIdentifier identifier, String fileType) {
-    SpreadExercise exercise = SpreadExercise.finder.byId(identifier.id);
+  public Result downloadTemplate(int id, String fileType) {
+    SpreadExercise exercise = SpreadExercise.finder.byId(id);
     
     if(exercise == null)
       return badRequest("This exercise does not exist!");
@@ -76,9 +81,23 @@ public class Spread extends ExerciseController<IntExerciseIdentifier> {
     return ok(spreadoverview.render(UserManagement.getCurrentUser(), SpreadExercise.finder.all()));
   }
   
-  public Result upload(IntExerciseIdentifier identifier) {
+  private boolean saveSolutionForUser(Path uploadedSolution, Path targetFilePath) {
+    try {
+      Path solDirForExercise = targetFilePath.getParent();
+      if(!solDirForExercise.toFile().exists() && !solDirForExercise.toFile().isDirectory())
+        Files.createDirectories(solDirForExercise);
+      
+      Files.move(uploadedSolution, targetFilePath, StandardCopyOption.REPLACE_EXISTING);
+      return true;
+    } catch (Exception e) {
+      Logger.error("Fehler beim Speichern der Lösung!", e);
+      return false;
+    }
+  }
+  
+  public Result upload(int id) {
     User user = UserManagement.getCurrentUser();
-    SpreadExercise exercise = SpreadExercise.finder.byId(identifier.id);
+    SpreadExercise exercise = SpreadExercise.finder.byId(id);
     
     // Extract solution from request
     MultipartFormData<File> body = request().body().asMultipartFormData();
@@ -109,26 +128,6 @@ public class Spread extends ExerciseController<IntExerciseIdentifier> {
     else
       return internalServerError(spreadcorrectionerror.render(user, result.getNotices().get(0)));
     
-  }
-  
-  private boolean saveSolutionForUser(Path uploadedSolution, Path targetFilePath) {
-    try {
-      Path solDirForExercise = targetFilePath.getParent();
-      if(!solDirForExercise.toFile().exists() && !solDirForExercise.toFile().isDirectory())
-        Files.createDirectories(solDirForExercise);
-      
-      Files.move(uploadedSolution, targetFilePath, StandardCopyOption.REPLACE_EXISTING);
-      return true;
-    } catch (Exception e) {
-      Logger.error("Fehler beim Speichern der Lösung!", e);
-      return false;
-    }
-  }
-  
-  @Override
-  protected CompleteResult correct(Request request, User user, IntExerciseIdentifier exercise) {
-    // FIXME: implement!
-    return null;
   }
   
 }

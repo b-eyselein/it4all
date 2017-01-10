@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.persistence.MappedSuperclass;
 
-import model.IntExerciseIdentifier;
 import model.exercise.Exercise;
 
 @MappedSuperclass
@@ -21,8 +20,6 @@ public abstract class ProgrammingExercise extends Exercise {
   public ProgrammingExercise(int theId) {
     super(theId);
   }
-
-  public abstract IntExerciseIdentifier getExerciseIdentifier();
 
   public abstract List<ITestData> getFunctionTests();
 

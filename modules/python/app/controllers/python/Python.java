@@ -6,7 +6,6 @@ import javax.inject.Inject;
 
 import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
-import model.IntExerciseIdentifier;
 import model.PythonCorrector;
 import model.PythonExercise;
 import model.Util;
@@ -21,8 +20,9 @@ import play.mvc.Http.Request;
 import play.mvc.Result;
 import views.html.correction;
 import views.html.programming;
+import views.html.pythonoverview;
 
-public class Python extends ExerciseController<IntExerciseIdentifier> {
+public class Python extends ExerciseController {
   
   private static final PythonCorrector CORRECTOR = new PythonCorrector();
   
@@ -31,17 +31,17 @@ public class Python extends ExerciseController<IntExerciseIdentifier> {
     super(theUtil, theFactory);
   }
   
-  public Result commit(IntExerciseIdentifier identifier) {
+  public Result commit(int id) {
     
     User user = UserManagement.getCurrentUser();
     
-    CompleteResult result = correct(request(), user, identifier);
+    CompleteResult result = correct(request(), user, id);
     
     if(wantsJsonResponse()) {
-      log(user, new ExerciseCorrectionEvent(request(), identifier, result));
+      log(user, new ExerciseCorrectionEvent(request(), id, result));
       return ok(Json.toJson(result));
     } else {
-      log(user, new ExerciseCompletionEvent(request(), identifier, result));
+      log(user, new ExerciseCompletionEvent(request(), id, result));
       return ok(correction.render("Javascript", result, user));
     }
     
@@ -61,9 +61,9 @@ public class Python extends ExerciseController<IntExerciseIdentifier> {
   }
   
   @Override
-  protected CompleteResult correct(Request request, User user, IntExerciseIdentifier identifier) {
+  protected CompleteResult correct(Request request, User user, int id) {
     // FIXME: TEST!
-    PythonExercise exercise = new PythonExercise(); // PythonExercise.finder.byId(identifier.id);
+    PythonExercise exercise = new PythonExercise(id); // PythonExercise.finder.byId(identifier.id);
     
     // FIXME: Time out der Ausführung
     
@@ -81,12 +81,12 @@ public class Python extends ExerciseController<IntExerciseIdentifier> {
     return CORRECTOR.correct(exercise, learnerSolution, new ArrayList<>(/* userTestData */), user.todo);
   }
   
-  public Result exercise(IntExerciseIdentifier identifier) {
-    return ok(programming.render(UserManagement.getCurrentUser(), PythonExercise.finder.byId(identifier.id)));
+  public Result exercise(int id) {
+    return ok(programming.render(UserManagement.getCurrentUser(), PythonExercise.finder.byId(id)));
   }
   
   public Result index() {
-    return ok(programming.render(UserManagement.getCurrentUser(), new PythonExercise()));
+    return ok(pythonoverview.render(UserManagement.getCurrentUser(), PythonExercise.finder.all()));
   }
   
 }

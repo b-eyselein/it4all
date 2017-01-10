@@ -12,7 +12,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
-import model.IntExerciseIdentifier;
 import model.UmlExercise;
 import model.Util;
 import model.result.CompleteResult;
@@ -28,7 +27,7 @@ import views.html.diagramdrawing;
 import views.html.umloverview;
 import views.html.difficulty;
 
-public class UML extends ExerciseController<IntExerciseIdentifier> {
+public class UML extends ExerciseController {
 
   @Inject
   public UML(Util theUtil, FormFactory theFactory) {
@@ -46,7 +45,7 @@ public class UML extends ExerciseController<IntExerciseIdentifier> {
     }
   }
   
-  public Result classSelection(IntExerciseIdentifier identifier) {
+  public Result classSelection(int id) {
     return ok(classselection.render(UserManagement.getCurrentUser()));
   }
   
@@ -61,23 +60,23 @@ public class UML extends ExerciseController<IntExerciseIdentifier> {
     return ok("HALLO!");
   }
 
-  public Result diagramDrawing(IntExerciseIdentifier identifier) {
+  @Override
+  protected CompleteResult correct(Request request, User user, int id) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  
+  public Result diagramDrawing(int id) {
     return ok(diagramdrawing.render(UserManagement.getCurrentUser(), getExerciseText()));
   }
   
-  public Result diff(int exerciseId) {
+  public Result diff(int id) {
     return ok(difficulty.render(UserManagement.getCurrentUser()));
   }
   
   public Result index() {
     return ok(
         umloverview.render(Arrays.asList(new UmlExercise(1), new UmlExercise(2)), UserManagement.getCurrentUser()));
-  }
-  
-  @Override
-  protected CompleteResult correct(Request request, User user, IntExerciseIdentifier identifier) {
-    // TODO Auto-generated method stub
-    return null;
   }
 
 }
