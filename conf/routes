@@ -16,6 +16,9 @@ POST   /preferences       controllers.UserController.saveOptions()
 # Admin
 GET    /admin             controllers.AdminController.index()
 
+# Python Test
+->     /python            python.Routes
+
 # Zahlensysteme
 ->     /binary            binary.Routes
 
@@ -25,9 +28,9 @@ GET    /admin             controllers.AdminController.index()
 # Web-Korrektur
 ->     /web               web.Routes
 
-# Programmiersprachen-Korrektur
+# Javascript-Korrektur
 
-->     /prog              programming.Routes
+->     /js                js.Routes
 
 # SQL-Korrektur
 ->     /sql               sql.Routes
