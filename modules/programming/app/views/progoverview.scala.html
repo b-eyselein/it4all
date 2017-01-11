@@ -1,0 +1,30 @@
+@(user: model.user.User, exercises: List[model.ProgrammingExercise])
+
+@main("JavaScript", user) {
+<div class="container">
+  <div class="page-header">
+    <h1 class="page-title">&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h1>
+  </div>
+  
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Nummer</th>
+        <th>Titel</th>
+        <th/>
+      </tr>
+    </thead>
+    <tbody>
+    @for(exercise <- exercises) {
+      <tr>
+        <td>@exercise.id</td>
+        <td>@exercise.title</td>
+        <td><a class="btn btn-primary btn-block" href="@controllers.programming.routes.Programming.exercise(exercise.id)">
+        Aufgabe bearbeiten</a></td>
+      </tr>
+    }
+    </tbody>
+  </table>
+  
+</div>
+}

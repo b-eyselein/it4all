@@ -4,37 +4,13 @@ Common.settings
 
 lazy val root = (project in file("."))
 	.enablePlugins(PlayJava, PlayEbean)
-	.aggregate(binary, bool, js, mindmap, spread, sql, web, xml, python, uml)
-	.dependsOn(binary, bool, js, mindmap, spread, sql, web, xml, python, uml, core)
+	.aggregate(bool, mindmap, nary, programming, spread, sql, uml, web, xml)
+	.dependsOn(bool, mindmap, nary, programming, spread, sql, uml, web, xml, core)
 
 lazy val core: Project = (project in file("modules/core"))
 	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
-	.settings(aggregateReverseRoutes := Seq(binary, bool, js, mindmap, spread, sql, web, python, xml, root))
+	.settings(aggregateReverseRoutes := Seq(bool, mindmap, nary, programming, spread, sql, uml, web, xml, root))
 
-lazy val web = (project in file("modules/web"))
-	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
-	.dependsOn(core)
-
-lazy val sql = (project in file("modules/sql"))
-	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
-	.dependsOn(core)
-
-lazy val spread = (project in file("modules/spread"))
-	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
-	.dependsOn(core)
-
-lazy val js = (project in file("modules/js"))
-	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
-	.dependsOn(core)
-
-lazy val xml = (project in file("modules/xml"))
-	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
-	.dependsOn(core)
-
-lazy val binary = (project in file("modules/binary"))
-	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
-	.dependsOn(core)
-	
 lazy val bool = (project in file("modules/bool"))
 	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
 	.dependsOn(core)
@@ -43,14 +19,34 @@ lazy val mindmap = (project in file("modules/mindmap"))
 	.enablePlugins(PlayJava)
 	.dependsOn(core)
 
-lazy val python = (project in file("modules/python"))
+lazy val nary = (project in file("modules/nary"))
 	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
 	.dependsOn(core)
 
+lazy val programming = (project in file("modules/programming"))
+	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
+	.dependsOn(core)
+
+lazy val spread = (project in file("modules/spread"))
+	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
+	.dependsOn(core)
+
+lazy val sql = (project in file("modules/sql"))
+	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
+	.dependsOn(core)
+	
 lazy val uml = (project in file("modules/uml"))
 	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
 	.dependsOn(core)
+	
+lazy val web = (project in file("modules/web"))
+	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
+	.dependsOn(core)
 
+lazy val xml = (project in file("modules/xml"))
+	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
+	.dependsOn(core)
+	
 // Used libraries from Maven Repository
 libraryDependencies ++= Seq(
   javaJdbc,

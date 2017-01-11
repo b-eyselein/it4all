@@ -26,12 +26,13 @@
         <ul class="nav navbar-nav">
           <li><a href="@controllers.web.routes.Web.index()">Web</a></li>
           
-          <li class="dropdown">
+          <li><a href="@controllers.programming.routes.Programming.index()">Programmiersprachen</a></li>
+          @* <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Programmiersprachen <span class="caret"></span></a>
    		    <ul class="dropdown-menu">
    		      <li><a href="@controllers.js.routes.JS.index">Javascript</a></li>
             </ul>
-          </li>
+          </li> *@
           
           <li><a href="@controllers.sql.routes.SQL.index()">SQL</a></li>
           
@@ -61,7 +62,7 @@
               @user.name <span class="caret"></span></a>
             <ul class="dropdown-menu">
               <li><a href="@controllers.routes.UserController.index()">Bewertungen</a></li>
-              <li><a href="@controllers.routes.UserController.preferences()">Pr√§ferenzen</a></li>
+              <li><a href="@controllers.routes.UserController.preferences()">Pr‰ferenzen</a></li>
           	</ul>
           </li>
           
