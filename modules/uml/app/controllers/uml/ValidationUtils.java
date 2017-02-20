@@ -1,4 +1,4 @@
-package model;
+package controllers.uml;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;

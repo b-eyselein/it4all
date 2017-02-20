@@ -1,0 +1,124 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "connections": {
+      "type": "object",
+      "properties": {
+        "aggregation": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "start": {
+                "type": "string"
+              },
+              "target": {
+                "type": "string"
+              },
+              "mulstart": {
+                "type": "string"
+              },
+              "multarget": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "start",
+              "target",
+              "mulstart",
+              "multarget"
+            ]
+          }
+        },
+        "composition": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "start": {
+                "type": "string"
+              },
+              "target": {
+                "type": "string"
+              },
+              "mulstart": {
+                "type": "string"
+              },
+              "multarget": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "start",
+              "target",
+              "mulstart",
+              "multarget"
+            ]
+          }
+        },
+        "implementation": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "start": {
+                "type": "string"
+              },
+              "target": {
+                "type": "string"
+              },
+              "mulstart": {
+                "type": "string"
+              },
+              "multarget": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "start",
+              "target",
+              "mulstart",
+              "multarget"
+            ]
+          }
+        },
+        "generalization": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "start": {
+                "type": "string"
+              },
+              "target": {
+                "type": "string"
+              },
+              "mulstart": {
+                "type": "string"
+              },
+              "multarget": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "start",
+              "target",
+              "mulstart",
+              "multarget"
+            ]
+          }
+        }
+      },
+      "required": [
+        "aggregation",
+        "composition",
+        "implementation",
+        "generalization"
+      ]
+    }
+  },
+  "required": [
+    "connections"
+  ]
+}

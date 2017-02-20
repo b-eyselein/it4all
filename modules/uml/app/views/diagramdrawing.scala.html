@@ -1,0 +1,387 @@
+@(user: model.user.User, exerciseText: String)
+
+@main("UML", user) {
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/joint.css")">
+<link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/bootstrap.css")">
+<script src=" @controllers.routes.Assets.versioned("javascripts/uml/lodash.js")"></script>
+<script src=" @controllers.routes.Assets.versioned("javascripts/uml/backbone.js")"></script>
+<script src=" @controllers.routes.Assets.versioned("javascripts/uml/joint.js")"></script>
+<script src=" @controllers.routes.Assets.versioned("javascripts/uml/jquery.js")"></script>
+<script src=" @controllers.routes.Assets.versioned("javascripts/uml/jsonconverter.js")"></script>
+</head>
+<body>
+<div class="container-fluid">
+  <h2>UML Diagrammszenario</h2>
+  <div class="panel panel-default">
+    <div class="panel-heading">Erstellen Sie ein UML-Klassendiagramm basierend auf dem Aufgabentext. Sie k�nnen
+      neue Klassen erzeugen indem Sie das entsprechende Wort per Drag-and-Drop in die rechts angrenzende Zeichenfl�che
+      ziehen.</div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="panel panel-default" id="text">
+				@Html(exerciseText)
+          </div>
+        </div>
+        <div class="col-md-8" id="sizepaper">
+          <div ondrop="drop(event)" ondragover="allowDrop(event)">
+            <div style="border: 1px solid black" id="paper"></div>
+            <script type="text/javascript">
+        
+              
+					//console.log("methoden: "+document.getElementsByClassName("uml-class-attrs-text"));
+					var divWidth=document.getElementById("sizepaper").parentNode.offsetWidth;
+					var divTextWidth=document.getElementById("text").parentNode.offsetWidth;
+					var divHeight=document.getElementById("sizepaper").parentNode.offsetHeight;
+					console.log("Beite Hoehe: "+divWidth+" "+divHeight);
+                    var idList = new Array(); // Linkverbindungen
+                    var graph = new joint.dia.Graph();
+                    var uml = joint.shapes.uml;
+					var erd = joint.shapes.erd;
+										
+                    var paper = new joint.dia.Paper({
+                        el: $('#paper'),
+                        width: divWidth - divTextWidth,
+                        height: divHeight,
+                        gridSize: 1,
+                        model: graph
+                    });
+                    paper.on('cell:pointerclick',
+						//document.body.style.cursor = "copy"
+                        function(cellView, evt, x, y) {
+							//Klassen l�schen
+							if(document.getElementById(5).value == "on"){
+									idList.push(cellView.model.id);
+									graph.getCell(idList[0]).remove();
+									idList=[];
+							// Methoden hinzuf�gen
+							}else if(document.getElementById(6).value == "on"){
+									idList=[];
+									idList.push(cellView.model.id);
+									var input = window.prompt("Bitte geben sie die Methode an, welche hinzugf�gt werden soll");
+									var old = graph.getCell(idList[0]).attr('.uml-class-methods-text/text');
+									var arr = old.split("\n");
+									arr.push(input);
+									var text = "";
+									for (i = 0; i < arr.length-1; i++) { 
+										text += arr[i] + "\n";
+									}
+									text += arr[arr.length-1];
+									graph.getCell(idList[0]).attr('.uml-class-methods-text/text', text);
+									graph.getCell(idList[0]).attributes.methods.push(input);
+									idList=[];
+									// Attribute hinzuf�gen		
+							}else if(document.getElementById(7).value == "on"){		
+									idList=[];
+									idList.push(cellView.model.id);
+									var input = window.prompt("Bitte geben sie das Attribut an, welche hinzugf�gt werden soll");
+									var old = graph.getCell(idList[0]).attr('.uml-class-attrs-text/text');
+									//console.log(graph.getCell(idList[0]).attributes);
+									//console.log(graph.getCell(idList[0]).attributes.methods);
+									//console.log(graph.getCell(idList[0]).attributes.attributes);
+									//console.log(graph.getCell(idList[0]).attributes.name);
+									var arr = old.split("\n");
+									arr.push(input);
+									var text = "";
+									for (i = 0; i < arr.length-1; i++) { 
+										text += arr[i] + "\n";
+									}
+									text += arr[arr.length-1];
+									graph.getCell(idList[0]).attr('.uml-class-attrs-text/text', text);
+									graph.getCell(idList[0]).attributes.attributes.push(input);
+									idList=[];	
+							// Methoden entfernen		
+							}else if(document.getElementById(8).value == "on"){
+
+									idList=[];
+									idList.push(cellView.model.id);
+									var input = window.prompt("Bitte geben sie die Methode an, welche entfernt werden soll");
+									input= input-1;
+									console.log("input: "+input);
+									var old = graph.getCell(idList[0]).attr('.uml-class-methods-text/text');
+									var arr = old.split("\n");
+									console.log("Methoden: "+ old);
+									if(-1 < input && input <= arr.length-1 ){
+										arr.splice(input,1);
+										var text = "";
+										if(arr.length > 0){
+											for (i = 0; i < arr.length-1; i++) { 
+											text += arr[i] + "\n";
+											}
+											text += arr[arr.length-1];
+										}
+										graph.getCell(idList[0]).attr('.uml-class-methods-text/text', text);
+										graph.getCell(idList[0]).attributes.methods.splice(input,1);
+									}else{
+										window.alert("Index ist zu gro� oder zu klein");	
+									}
+							// Attribute entfernen		
+							}else if(document.getElementById(9).value == "on"){
+							idList=[];
+									idList.push(cellView.model.id);
+									var input = window.prompt("Bitte geben sie das Attribut an, welches entfernt werden soll");
+									input= input-1;
+									console.log("input: "+input);
+									var old = graph.getCell(idList[0]).attr('.uml-class-attrs-text/text');
+								
+									var arr = old.split("\n");
+									if(-1 < input & input <= arr.length-1 ){
+										arr.splice(input,1);
+										var text = "";
+										if(arr.length > 0){
+											for (i = 0; i < arr.length-1; i++) { 
+												text += arr[i] + "\n";
+											}
+											text += arr[arr.length-1];
+										}
+										graph.getCell(idList[0]).attr('.uml-class-attrs-text/text', text);
+										console.log(graph.getCell(idList[0]).attr('.uml-class-methods-text/text', text));
+										graph.getCell(idList[0]).attributes.attributes.splice(input,1);
+									}else{
+										window.alert("Index ist zu gro� oder zu klein");	
+									}
+							}else{
+								if (idList.length < 2) {
+									idList.push(cellView.model.id);
+								}
+								if (idList.length == 2) {
+									console.log("0: "+idList[0]+" 1: "+idList[1]);
+									if(idList[0]!=idList[1]){
+										link();
+									}else{
+										console.log("gleich");
+										idList=[];
+									}
+								}						
+							}
+                        }
+                    );
+					
+					function allowDrop(ev) {
+						ev.preventDefault();
+					}
+					function drag(ev) {
+						document.getElementById(5).value = "off";
+						if( ev.target.getAttribute('data-baseform') != null){
+							ev.dataTransfer.setData("text", ev.target.getAttribute('data-baseform'));
+						}else{
+							ev.dataTransfer.setData("text", ev.target.innerHTML);		
+						}
+					}
+					function drop(ev) {
+						ev.preventDefault();
+						var data = ev.dataTransfer.getData("text");
+						addClass(data);
+					}
+					
+					var sel;
+					function selectButton(elem){
+						for(i=1; i<10; i++){
+						document.getElementById(i).value="off";
+						}
+						document.getElementById(elem.id).value="on";
+						sel=elem.id;
+					}
+													
+function link() {
+	if(document.getElementById(sel).value="on"){
+		var source_name = graph.getCell(idList[0]).attr('.uml-class-name-text/text');
+		var destin_name = graph.getCell(idList[1]).attr('.uml-class-name-text/text');
+		var source_mult = window.prompt("Bitte geben Sie die Multiplizit�t von "+source_name+" nach " + destin_name+" an.");
+		var destin_mult = window.prompt("Bitte geben Sie die Multiplizit�t von "+destin_name+" nach " + source_name+" an.");
+		switch (sel) {
+			case '1':
+				graph.addCell(new uml.Composition({
+					source: {
+					id: idList[0]
+					},
+                                        target: {
+                                            id: idList[1]
+                                        },
+										labels: [{ position: 25, attrs: { text: { text: source_mult } }},
+										         { position: -25, attrs: { text: { text: destin_mult } }}
+									]
+                                    }));
+                                    idList = [];
+                                    break;
+                                case '2':
+                                    graph.addCell(new uml.Aggregation({
+                                        source: {
+                                            id: idList[0]
+                                        },
+                                        target: {
+                                            id: idList[1]
+                                        },
+										labels: [{ position: 25, attrs: { text: { text: source_mult } }},
+										         { position: -25, attrs: { text: { text: destin_mult } }}
+									]
+                                    }));
+                                    idList = [];
+                                    break;
+                                case '3':
+                                    graph.addCell(new uml.Implementation({
+                                        source: {
+                                            id: idList[0]
+                                        },
+                                        target: {
+                                            id: idList[1]
+                                       },
+										labels: [{ position: 25, attrs: { text: { text: source_mult } }},
+										         { position: -25, attrs: { text: { text: destin_mult } }}
+									]
+                                    }));
+                                    idList = [];
+                                    break;
+                                case '4':
+                                    graph.addCell(new uml.Generalization({
+                                        source: {
+                                            id: idList[0]
+                                        },
+                                        target: {
+                                            id: idList[1]
+                                        },
+										labels: [{ position: 25, attrs: { text: { text: source_mult } }},
+										         { position: -25, attrs: { text: { text: destin_mult } }}
+									]
+                                    }));
+                                    idList = [];
+                                    break;
+								default:
+								    idList = [];
+                                    break;
+		}
+	}
+}
+						
+function addClass(data) {
+                        flugzeug: var flug = new uml.Class({
+                            position: {
+                                x: Math.random()*250,
+                                y: Math.random()*250
+                            },
+                            size: {
+                                width: 280,
+                                height: 180
+                            },
+                            name: data,
+                            // TODO: attributes and methods empty!
+                            attributes: [ /*'dob: date'*/ ],
+                            methods: [ /*"setDateOfBirth(dob: Date): Void", "getAgeAsDays(): Numeric"*/ ],
+                            attrs: {
+                                // TODO: set fill to white
+                                '.uml-class-name-rect': {
+                                    fill: '#ffffff',
+                                    /*   stroke: '#fff',
+                                      'stroke-width': 1 */
+                                },
+                                '.uml-class-attrs-rect, .uml-class-methods-rect': {
+                                    fill: '#ffffff',
+                                    /* stroke: '#fff',
+                                    'stroke-width': 1 */
+                                },
+                                '.uml-class-attrs-text': {
+                                    ref: '.uml-class-attrs-rect',
+                                    'ref-y': 0.5,
+                                    'y-alignment': 'middle'
+                                },
+                                '.uml-class-methods-text': {
+                                    ref: '.uml-class-methods-rect',
+                                    'ref-y': 0.5,
+                                    'y-alignment': 'middle'
+                                }
+                            }
+                        });
+                        graph.addCell(flug);
+                    }
+                    			
+// Namen aller Klassen
+function getClasses(){
+	var classes=[];
+	for(i=0; i<graph.getCells().length; i++){
+		if(graph.getCells()[i]._previousAttributes.name != undefined){
+			classes.push(graph.getCells()[i]._previousAttributes.name);
+		}
+	}
+	return classes;
+	console.log("getClasses: "+ classes);
+}
+// Alle ids aller Zellen
+function getIds(){
+	var ids=[];
+	for(i=0; i<graph.getCells().length; i++){
+	 ids.push(graph.getCells()[i].id);
+	}
+	return ids;
+}
+function getAttributes(id){
+	var text ="";
+	if(graph.getCell(id).attributes.name != undefined){
+		var text=graph.getCell(id).attributes.name;
+		for(i=0; i < graph.getCell(id).attributes.attributes.length; i++){
+			if(graph.getCells()[i]._previousAttributes.name != undefined){
+				text+="_"+graph.getCell(id).attributes.attributes[i];
+			}
+		}
+						console.log("getAttributes: "+text);
+	}
+	return text;
+}
+function getMethodes(id){
+	var text=graph.getCell(id).attributes.name;
+	for(i=0; i < graph.getCell(id).attributes.methods.length; i++){
+		if(graph.getCells()[i]._previousAttributes.name != undefined){
+			text+="_"+graph.getCell(id).attributes.methods[i];
+		}
+	}
+	return text;
+}
+
+			
+					function loeschen(){
+						selectButton(document.getElementById(5));
+					}
+					
+					function addMeth(){
+						selectButton(document.getElementById(6));
+					}
+					
+					function addAttr(){
+						selectButton(document.getElementById(7));			
+					}
+					
+					function delMeth(){
+						selectButton(document.getElementById(8));
+					}
+					
+					function delAttr(){
+						selectButton(document.getElementById(9));
+					}
+					
+                </script>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel-footer">
+      <div class="btn-group">
+        <button type="button" class="btn btn-default" value="off" id="1" onclick="selectButton(this);">Composition</button>
+        <button type="button" class="btn btn-default" value="off" id="2" onclick="selectButton(this);">Aggregation</button>
+        <button type="button" class="btn btn-default" value="off" id="3" onclick="selectButton(this);">Implementation</button>
+        <button type="button" class="btn btn-default" value="off" id="4" onclick="selectButton(this);">Generalization</button>
+        <button type="button" class="btn btn-default" value="off" id="5" onclick="loeschen();">Klasse l�schen</button>
+        <button type="button" class="btn btn-default" value="off" id="6" onclick="addMeth();">Mehoden
+          hinzuf�gen</button>
+        <button type="button" class="btn btn-default" value="off" id="7" onclick="addAttr();">Attribute
+          hinzuf�gen</button>
+        <button type="button" class="btn btn-default" value="off" id="8" onclick="delMeth();">Mehoden entfernen</button>
+        <button type="button" class="btn btn-default" value="off" id="9" onclick="delAttr();">Attribute
+          entfernen</button>
+          <button type="button" class="btn btn-default" id="10" onclick="send();">Aufgabe verifizieren</button>
+      </div>
+    </div>
+  </div>
+</div>
+}
