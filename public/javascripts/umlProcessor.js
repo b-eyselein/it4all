@@ -26,6 +26,82 @@ function processCorrection(correction) {
   }
 }
 
+var requiredClasses = ["Fotosystem", "Kameragehäuse", "Profigehäuse", "Amateurgehäuse", "Linse", "Telekonverter",
+    "Objektiv", "Festbrennweitenobjektiv", "Zoomobjektiv", "Profiblitz", "Amateurblitz", "Sonnenblende"];
+var optionalClasses = ["Blitz"];
+var requiredMethods = ["Canikuji"];
+var requiredAttributes = ["green"];
+var classes = new Array();
+var methods = new Array();
+var attributes = new Array();
+
+function mark(span) {
+  switch (span.style.color){
+  case "black":
+    span.className = "bg-info";
+    span.style.color = "blue";
+    break;
+  case "blue":
+    span.className = "bg-success";
+    span.style.color = "green";
+    break;
+  case "green":
+    span.className = "bg-danger";
+    span.style.color = "red";
+    break;
+  case "red":
+    span.className = "";
+    span.style.color = "black";
+    break;
+  
+  }
+}
+
+function extractParameters() {
+  var exercisetext = document.getElementById("exercisetext");
+  var cclasses = exercisetext.getElementsByClassName("bg-info");
+  var cmethods = exercisetext.getElementsByClassName("bg-success");
+  var cattributes = exercisetext.getElementsByClassName("bg-danger");
+  var classes = [];
+  for(i = 0; i < cclasses.length; i++) {
+    classes.push(cclasses[i].innerText);
+  }
+  var methods = [];
+  for(i = 0; i < cmethods.length; i++) {
+    methods.push(cmethods[i].innerText);
+  }
+  var attributes = [];
+  for(i = 0; i < cattributes.length; i++) {
+    attributes.push(cattributes[i].innerText);
+  }
+  console.log(classes);
+  console.log(methods);
+  console.log(attributes);
+  
+  var json = "\{\"classes\":[";
+  for(i = 0; i < classes.length - 1; i++) {
+    json += "\"" + classes[i] + "\"" + ",";
+  }
+  json += "\"" + classes[classes.length - 1] + "\"" + "],";
+  json += "\"methods\":[";
+  for(i = 0; i < methods.length - 1; i++) {
+    json += "\"" + methods[i] + "\"" + ",";
+  }
+  json += "\"" + methods[methods.length - 1] + "\"" + "],";
+  json += "\"attributes\":[";
+  for(i = 0; i < attributes.length - 1; i++) {
+    json += "\"" + attributes[i] + "\"" + ",";
+  }
+  json += "\"" + attributes[attributes.length - 1] + "\"" + "]" + "\}";
+  console.log(json);
+  
+  return "fname=" + json;
+}
+
+function processCorrection(text) {
+  console.log("Processing correction: " + text);
+}
+
 function prepareFormForSubmitting() {
   document.getElementById("editorContent").value = editor.getValue();
 }
@@ -44,8 +120,10 @@ function testTheSolution(url) {
   };
   
   // AJAX-Objekt mit Daten fuellen, absenden
-  //var parameters = "editorContent=" + encodeURIComponent(editor.getValue());
-  var parameters =json;
+  // var parameters = "editorContent=" +
+  // encodeURIComponent(editor.getValue());
+  var json = "";
+  var parameters = json;
   xhttp.open("PUT", url, true);
   xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
   xhttp.setRequestHeader("Accept", "application/json");

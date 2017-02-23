@@ -23,12 +23,8 @@ import play.data.FormFactory;
 import play.libs.Json;
 import play.mvc.Http.Request;
 import play.mvc.Result;
-import views.html.classselection;
-import views.html.diagramdrawing;
-import views.html.umloverview;
-import views.html.difficulty;
 
-public class UML{
+public class UML extends ExerciseController {
 
   @Inject
   public UML(Util theUtil, FormFactory theFactory) {
@@ -193,15 +189,15 @@ public class UML{
   }
 
   public Result diagramDrawing(int exerciseId) {
-    return ok(diagramdrawing.render(UserManagement.getCurrentUser(), getExerciseText()));
+    return ok(views.html.diagramdrawing.render(UserManagement.getCurrentUser(), getExerciseText()));
   }
-  
+
   public Result diff(int exerciseId) {
-    return ok(difficulty.render(UserManagement.getCurrentUser()));
+    return ok(views.html.difficulty.render(UserManagement.getCurrentUser()));
   }
-  
+
   public Result index() {
-    return ok(views.html.umloverview.render(Arrays.asList(new UmlExercise()), UserManagement.getCurrentUser()));
+    return ok(views.html.umloverview.render(Arrays.asList(new UmlExercise(1)), UserManagement.getCurrentUser()));
   }
 
 }
