@@ -13,7 +13,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
-import model.IntExerciseIdentifier;
 import model.UmlExercise;
 import model.Util;
 import model.result.CompleteResult;
@@ -29,7 +28,7 @@ import views.html.diagramdrawing;
 import views.html.umloverview;
 import views.html.difficulty;
 
-public class UML extends ExerciseController<IntExerciseIdentifier> {
+public class UML{
 
   @Inject
   public UML(Util theUtil, FormFactory theFactory) {
@@ -47,7 +46,7 @@ public class UML extends ExerciseController<IntExerciseIdentifier> {
     }
   }
 
-  public Result classSelection(IntExerciseIdentifier identifier) {
+  public Result classSelection(int exerciseId) {
     return ok(views.html.classselection.render(UserManagement.getCurrentUser()));
   }
 
@@ -188,12 +187,12 @@ public class UML extends ExerciseController<IntExerciseIdentifier> {
   }
 
   @Override
-  protected CompleteResult correct(Request request, User user, IntExerciseIdentifier identifier) {
+  protected CompleteResult correct(Request request, User user, int exerciseId) {
     // TODO Auto-generated method stub
     return null;
   }
 
-  public Result diagramDrawing(IntExerciseIdentifier identifier) {
+  public Result diagramDrawing(int exerciseId) {
     return ok(diagramdrawing.render(UserManagement.getCurrentUser(), getExerciseText()));
   }
   
