@@ -1,5 +1,6 @@
 package controllers.uml;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,10 +22,14 @@ import play.Logger;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
+import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.Request;
+import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
 
 public class UML extends ExerciseController {
+	
+	private static final String FORM_VALUE = "learnerSolution";
 
   @Inject
   public UML(Util theUtil, FormFactory theFactory) {
@@ -46,13 +51,15 @@ public class UML extends ExerciseController {
     return ok(views.html.classselection.render(UserManagement.getCurrentUser()));
   }
 
-  public Result correct() {
+  public Result correct() {   
     // Correct classes...
     DynamicForm form = factory.form().bindFromRequest();
     String classes = form.get("fname");
-
-    if(classes == null || classes.isEmpty())
-      classes = "{\"classes\":[\"Canikuji\",\"Firma\"],\"methods\":[\"Hersteller\",\"Fotosystems\"],\"attributes\":[\"Ikonograf\",\"Webseite\"]}";
+   
+    
+    Logger.debug("classes: "+classes);
+    if(classes == null || classes.isEmpty())return badRequest("Keine Daten übertragen!");;
+//      classes = "{\"classes\":[\"Canikuji\",\"Firma\"],\"methods\":[\"Hersteller\",\"Fotosystems\"],\"attributes\":[\"Ikonograf\",\"Webseite\"]}";
 
     JsonNode node = Json.parse(classes);
     node.get("classes");
@@ -179,7 +186,7 @@ public class UML extends ExerciseController {
     json += "]}]}";
 
     Logger.debug(json);
-    return ok("ok");
+    return ok(json);
   }
 
   @Override

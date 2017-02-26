@@ -95,7 +95,7 @@ function extractParameters() {
   json += "\"" + attributes[attributes.length - 1] + "\"" + "]" + "\}";
   console.log(json);
   
-  return "fname=" + json;
+  return json;
 }
 
 function processCorrection(text) {
@@ -103,7 +103,8 @@ function processCorrection(text) {
 }
 
 function prepareFormForSubmitting() {
-  document.getElementById("editorContent").value = editor.getValue();
+  document.getElementById("learnerSolution").value = extractParameters();
+  console.log(document.getElementById("learnerSolution").value);
 }
 
 function affirmFinalCommit() {
