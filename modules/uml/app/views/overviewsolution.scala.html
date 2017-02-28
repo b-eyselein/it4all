@@ -1,16 +1,71 @@
-@(user: model.user.User, json: String)
+@(user: model.user.User, ue: model.UmlClassselection)
 
 @main("UML", user) {
-<!DOCTYPE html>
-<html lang="de">
-<head>
-<
-</head>
-<body>
-<div class="container-fluid">
-  <h2>UML Lösung</h2>
-          <div class="panel panel-default" id="text">
-				@Html(json)
-          </div>>
+<script src="@controllers.routes.Assets.versioned("javascripts/uml/classselection.js")"></script>
+<div class="container-fluid" align="center">
+<h1> Korrektur der Aufgabe</h1>
+<table class="table">
+  <tr>
+    <th colspan="3">Klassen</th>
+	<th colspan="3">Methoden</th>
+	<th colspan="3">Attribute</th>
+  </tr>
+  <tr>
+    <td class="success">korrekt</td>
+	<td class="danger">falsch</td>
+	<td class="info">fehlend</td>
+	<td class="success">korrekt</td>
+	<td class="danger">falsch</td>
+	<td class="info">fehlend</td>
+	<td class="success">korrekt</td>
+	<td class="danger">falsch</td>
+	<td class="info">fehlend</td>
+  </tr>
+  <tr>
+    <td>
+		<ul id="cl_corr">
+		</ul>
+	</td>
+	<td>
+		<ul id="cl_fals">
+		</ul>
+	</td>
+	    <td >
+		<ul id="cl_miss">
+		</ul>
+	</td>
+	<td>
+		<ul id="me_corr">
+		</ul>
+	<td>
+		<ul id="me_fals">
+		</ul>
+	</td>
+	<td>
+		<ul id="me_miss">
+		</ul>
+	</td>
+	<td>
+		<ul id="at_corr">
+		</ul>
+	<td>
+		<ul id="at_fals">
+		</ul>
+	</td>
+	<td>
+		<ul id="at_miss">
+		</ul>
+	</td>
+  </tr>
+</table>
 </div>
+<div>
+	<form action="/uml/correct" method="post" enctype="multipart/form-data" onsubmit="prepareFormForSubmitting();">
+    	<div class="form-group">
+      	<input type="hidden" value="" class="form-control" name="fname" id="learnerSolution" required>
+    	</div>
+   	 <button type="submit" class="btn btn-primary btn-block">Nächster Aufgabenteil</button>
+ 	</form> 
+</div>
+
 }
