@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
+import model.UmlClassselection;
 import model.UmlExercise;
 import model.Util;
 import model.result.CompleteResult;
@@ -55,12 +56,14 @@ public class UML extends ExerciseController {
     // Correct classes...
     DynamicForm form = factory.form().bindFromRequest();
     String classes = form.get("fname");
-   
-    
     Logger.debug("classes: "+classes);
     if(classes == null || classes.isEmpty())return badRequest("Keine Daten übertragen!");;
+    UmlClassselection ue = new UmlClassselection(classes);
+    
 //      classes = "{\"classes\":[\"Canikuji\",\"Firma\"],\"methods\":[\"Hersteller\",\"Fotosystems\"],\"attributes\":[\"Ikonograf\",\"Webseite\"]}";
 
+    
+   /*
     JsonNode node = Json.parse(classes);
     node.get("classes");
     Logger.debug(Json.prettyPrint(node));
@@ -172,8 +175,8 @@ public class UML extends ExerciseController {
     if(json.endsWith(",")) {
       json = json.substring(0, json.length() - 1);
     }
+    
     // optional
-    /*
      * json+="]}],\"optional\":[{\"classes\":["; for (String object:
      * al_classes_c) { json+=object+","; } if(json.endsWith(",")){
      * json=json.substring(0, json.length()-1); } json+="],\"methods\":["; for
@@ -182,11 +185,12 @@ public class UML extends ExerciseController {
      * json+="],\"attributes\":["; for (String object: al_attributes_c) {
      * json+=object+","; } if(json.endsWith(",")){ json=json.substring(0,
      * json.length()-1); }
-     */
+
     json += "]}]}";
 
     Logger.debug(json);
-    return ok(json);
+    */
+    return ok(views.html.overviewsolution.render(UserManagement.getCurrentUser(),ue));
   }
 
   @Override
