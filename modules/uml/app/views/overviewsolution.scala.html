@@ -1,9 +1,8 @@
 @(user: model.user.User, ue: model.UmlClassselection)
 
 @main("UML", user) {
-<script src="@controllers.routes.Assets.versioned("javascripts/uml/classselection.js")"></script>
 <div class="container-fluid" align="center">
-<h1> Korrektur der Aufgabe</h1>
+<h1> Korrektur der Aufgabe @ue.getTitleExercise()</h1>
 <table class="table">
   <tr>
     <th colspan="3">Klassen</th>
@@ -23,47 +22,37 @@
   </tr>
   <tr>
     <td>
-		<ul id="cl_corr">
-		</ul>
+		@ue.getClasses_c()
 	</td>
 	<td>
-		<ul id="cl_fals">
-		</ul>
+		@ue.getClasses_f()
 	</td>
-	    <td >
-		<ul id="cl_miss">
-		</ul>
+	<td >
+		@ue.getClasses_m()
 	</td>
 	<td>
-		<ul id="me_corr">
-		</ul>
-	<td>
-		<ul id="me_fals">
-		</ul>
+		@ue.getMethods_c()
 	</td>
 	<td>
-		<ul id="me_miss">
-		</ul>
+		@ue.getMethods_f()
 	</td>
 	<td>
-		<ul id="at_corr">
-		</ul>
-	<td>
-		<ul id="at_fals">
-		</ul>
+		@ue.getMethods_m()
 	</td>
 	<td>
-		<ul id="at_miss">
-		</ul>
+		@ue.getAttributes_c()
+	</td>
+	<td>
+		@ue.getAttributes_f()
+	</td>
+	<td>
+		@ue.getAttributes_m()
 	</td>
   </tr>
 </table>
 </div>
 <div>
-	<form action="/uml/correct" method="post" enctype="multipart/form-data" onsubmit="prepareFormForSubmitting();">
-    	<div class="form-group">
-      	<input type="hidden" value="" class="form-control" name="fname" id="learnerSolution" required>
-    	</div>
+	<form action="/uml/correct" method="post" enctype="multipart/form-data">
    	 <button type="submit" class="btn btn-primary btn-block">Nächster Aufgabenteil</button>
  	</form> 
 </div>
