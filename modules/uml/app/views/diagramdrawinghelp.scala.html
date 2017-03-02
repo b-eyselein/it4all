@@ -92,12 +92,29 @@
         <div class="col-md-8" id="sizepaper">
           <div ondrop="drop(event)" ondragover="allowDrop(event)">
             <div style="border: 1px solid black" id="paper"></div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel-footer">
+      <div class="btn-group">
+		<button type="button" class="btn btn-default" value="off" id="5" onclick="selectButton(this);">Standard</button>
+        <button type="button" class="btn btn-default" value="off" id="1" onclick="selectButton(this);">Composition</button>
+        <button type="button" class="btn btn-default" value="off" id="2" onclick="selectButton(this);">Aggregation</button>
+        <button type="button" class="btn btn-default" value="off" id="3" onclick="selectButton(this);">Implementation</button>
+        <button type="button" class="btn btn-default" value="off" id="4" onclick="selectButton(this);">Generalization</button>
+        <button type="button" class="btn btn-default" id="10" onclick="send();">Aufgabe verifizieren</button>
+      </div>
+    </div>
+  </div>
+</div>
             <script type="text/javascript">			
 					//console.log("methoden: "+document.getElementsByClassName("uml-class-attrs-text"));
 					var divWidth=document.getElementById("sizepaper").parentNode.offsetWidth;
 					var divTextWidth=document.getElementById("text").parentNode.offsetWidth;
 					var divHeight=document.getElementById("sizepaper").parentNode.offsetHeight;
-					console.log("Beite Hoehe: "+divWidth+" "+divHeight);
+					//console.log("Beite Hoehe: "+divWidth+" "+divHeight);
                     var idList = new Array(); // Linkverbindungen
                     var graph = new joint.dia.Graph();
                     var uml = joint.shapes.uml;
@@ -117,11 +134,11 @@
 									idList.push(cellView.model.id);
 								}
 								if (idList.length == 2) {
-									console.log("0: "+idList[0]+" 1: "+idList[1]);
+									//console.log("0: "+idList[0]+" 1: "+idList[1]);
 									if(idList[0]!=idList[1]){
 										link();
 									}else{
-										console.log("gleich");
+										//console.log("gleich");
 										idList=[];
 									}
 								}						
@@ -278,7 +295,7 @@ function getClasses(){
 		}
 	}
 	return classes;
-	console.log("getClasses: "+ classes);
+	//console.log("getClasses: "+ classes);
 }
 // Alle ids aller Zellen
 function getIds(){
@@ -297,7 +314,7 @@ function getAttributes(id){
 				text+="_"+graph.getCell(id).attributes.attributes[i];
 			}
 		}
-						console.log("getAttributes: "+text);
+						//console.log("getAttributes: "+text);
 	}
 	return text;
 }
@@ -311,21 +328,4 @@ function getMethodes(id){
 	return text;
 }
                 </script>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="panel-footer">
-      <div class="btn-group">
-		<button type="button" class="btn btn-default" value="off" id="5" onclick="selectButton(this);">Standard</button>
-        <button type="button" class="btn btn-default" value="off" id="1" onclick="selectButton(this);">Composition</button>
-        <button type="button" class="btn btn-default" value="off" id="2" onclick="selectButton(this);">Aggregation</button>
-        <button type="button" class="btn btn-default" value="off" id="3" onclick="selectButton(this);">Implementation</button>
-        <button type="button" class="btn btn-default" value="off" id="4" onclick="selectButton(this);">Generalization</button>
-        <button type="button" class="btn btn-default" id="10" onclick="send();">Aufgabe verifizieren</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 }

@@ -75,6 +75,10 @@ public class UML extends ExerciseController {
   public Result diff(int exerciseId) {
     return ok(views.html.difficulty.render(UserManagement.getCurrentUser()));
   }
+  
+  public Result diagramDrawingHelp(int exerciseId) {
+	    return ok(views.html.diagramdrawinghelp.render(UserManagement.getCurrentUser()));
+	  }
 
   public Result index() {
     return ok(views.html.umloverview.render(Arrays.asList(new UmlExercise(1)), UserManagement.getCurrentUser()));

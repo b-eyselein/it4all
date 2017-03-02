@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import play.Logger;
 import play.libs.Json;
 
-
 public class UmlClassselection {
 
   private String title;	
@@ -29,7 +28,7 @@ public class UmlClassselection {
     JsonNode node = Json.parse(input);
     node.get("classes");
     JsonNode node_c = Json.parse(
-        "{\"classes\":[\"Canikuji\",\"Firma\"],\"methods\":[\"Hersteller\",\"Fotosystems\"],\"attributes\":[\"Ikonograf\",\"Webseite\"]}");
+        "{\"classes\":[\"Telekonverter\",\"Profigehäuse\",\"Kameragehäuse\",\"Amateurgehäuse\",\"Profiblitz\",\"Objektiv\",\"Amateurblitz\",\"Sonnenblende\",\"Zoomobjektiv\",\"Festweitenobjektiv\"],\"methods\":[\"Hersteller\",\"Fotosystems\"],\"attributes\":[\"Ikonograf\",\"Webseite\"]}");
    // Logger.debug(Json.prettyPrint(node));
     //Logger.debug("getclasses: " + Json.prettyPrint(node.get("classes")));
     // Logger.debug("getmethods: " + Json.prettyPrint(node.get("methods")));
@@ -111,7 +110,7 @@ public class UmlClassselection {
     ArrayList<String> methods_f= new ArrayList<>();
     for(String object: al_methods) {
       if(!al_methods_c.contains(object)){
-          json += object + ",";
+          //json += object + ",";
           methods_f.add(object);
       }
     this.methods_f=methods_f;

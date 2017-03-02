@@ -1,9 +1,10 @@
-function extractParameters(){
+function send(){
 	var json = "\{\"classes\":[";
 	var ids =[];
 	for(i=0; i<graph.getCells().length; i++){
 		if(graph.getCells()[i].attributes.type == "uml.Class"){
 				 ids.push(graph.getCells()[i]);
+				 console.log("name: "+ids[i].attributes.name +" posx: "+ids[i].attributes.position.x+" posy: "+ids[i].attributes.position.y);
 				 json+="{\"name\":\""+ids[i].attributes.name+"\",\"methods\":[";
 				 var methods=ids[i].attributes.methods;
 				 for(j=0; j<methods.length;j++){
@@ -28,9 +29,10 @@ function extractParameters(){
 					 json=json.substr(0,json.length-1);
 				 }
 	json+="],";
+	console.log(json);
 
 				 // Zugriff auf Werte
-				// console.log(ids[i].attributes);
+				//console.log("name: "+ids[i].attributes.name +" posx: "+ids[i].attributes.position.x+" posy: "+ids[i].attributes.position.y);
 				// console.log(ids[i].attributes.name);
 				// console.log(ids[i].attributes.methods);
 				// console.log(ids[i].attributes.attributes);
@@ -48,27 +50,51 @@ function extractParameters(){
 		text="";
 	}
 	connections.sort();
+	console.log(connections);
 	var jsonConnections="\"connections\":\{\{";
 	jsonConnections=jsonConnections.substr(0,jsonConnections.length-1);
 	var agg = 0;
 	var com = 0;
 	var imp = 0;
 	var gen = 0;
+	var nor = 0;
 	for(i=0; i<connections.length; i++){
-		switch(connections[i].substr(4,3)){
-			case "Agg":
+		console.log(connections[i].substr(0,5));
+		switch(connections[i].substr(0,5)){
+			case "uml.A":
 				agg++;
 				break;
-			case "Com":
+			case "uml.C":
 				com++;	
 				break;
-			case "Imp":
+			case "uml.I":
 				imp++;
 				break;
-			case "Gen":
+			case "uml.G":
 				gen++;	
 				break;
+			case "link_":
+				nor++;	
+				break;
 		}
+	}
+	if(nor == 0){
+		jsonConnections+="\"standard\":[],";
+	}else{
+		jsonConnections+="\"standard\":[";
+		for(i=0; i<nor;i++){
+		var split =connections[i].split("_");
+			jsonConnections+=	"\{\"start\":\""
+						+split[1]+
+					"\",\"target\":\""
+						+split[2]+
+					"\",\"mulstart\":\""
+						+split[3]+
+					"\",\"multarget\":\""
+						+split[4]+
+					"\"\},";
+		}
+		jsonConnections=jsonConnections.substr(0,jsonConnections.length-1)+"\],";
 	}
 	if(agg == 0){
 		jsonConnections+="\"aggregation\":[],";
@@ -146,5 +172,4 @@ function extractParameters(){
 	
 	json+=jsonConnections;
 	console.log(json);
-    return "fname=" + json;
 }
