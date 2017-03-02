@@ -1,0 +1,331 @@
+@(user: model.user.User)
+
+@main("UML-Test", user) {
+<head>
+<link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/joint.css")">
+<link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/bootstrap.css")">
+<script src=" @controllers.routes.Assets.versioned("javascripts/uml/lodash.js")"></script>
+<script src=" @controllers.routes.Assets.versioned("javascripts/uml/backbone.js")"></script>
+<script src=" @controllers.routes.Assets.versioned("javascripts/uml/joint.js")"></script>
+<script src=" @controllers.routes.Assets.versioned("javascripts/uml/jquery.js")"></script>
+<script src=" @controllers.routes.Assets.versioned("javascripts/uml/jsonconverter.js")"></script>
+</head>
+<body>
+<div class="container-fluid">
+  <h2>UML Diagrammszenario</h2>
+  <div class="panel panel-default">
+    <div class="panel-heading">Vervollst�ndigen Sie das vorliegende UML-Klassendiagramm indem Sie die Beziehungen zwischen den Klassen modellieren.
+	W�hlen Sie zuerst die Art der Beziehung durch das Aktivieren des jeweiligen Buttons aus.
+	Anschlie�end klicken Sie auf zuerst auf den Namen der Klasse und klicken dann auf die andere Klasse.
+	Im folgendem Popup-Fenster sollen Sie nun die Multiplizit�ten zwischen den Klassen angeben.
+	Um bereits erstellte Beziehungen zu l�schen, hovern Sie mit der Maus �ber die Verbindung und klicken auf das erscheinende rote Kreuz.
+	Nachdem Sie alle Beziehungen modelliert haben, k�nnen Sie die Ausgabe mittels Buttons verifizieren.
+	
+	
+	</div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="panel panel-default" id="text">
+<p>
+                    Die
+                    <span id="obj1" style="color:black" draggable="true" ondragstart="drag(event)">Firma</span>
+                    <span id="obj2" style="color:black" draggable="true" ondragstart="drag(event)">Canikuji</span>,
+                    <span id="obj3" style="color:black" draggable="true" ondragstart="drag(event)">Hersteller</span> des
+                    <span id="obj4" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Fotosystem">Fotosystems</span>
+                    <span id="obj5" style="color:black" draggable="true" ondragstart="drag(event)">Ikonograf</span>, m�chte auf ihrer
+                    <span id="obj6" style="color:black" draggable="true" ondragstart="drag(event)">Webseite</span> den
+                    <span id="obj7" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Kunde">Kunden</span> alle
+                    <span id="obj8" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Kombinationsm�glichkeit">Kombinationsm�glichkeiten</span> innerhalb des
+                    <span id="obj9" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Fotosystem">Fotosystems</span> pr�sentieren. Im
+                    <span id="obj10" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Folgendes">Folgenden</span> wird das
+                    <span id="obj11" style="color:black" draggable="true" ondragstart="drag(event)">Fotosystem</span>
+                    <span id="obj12" style="color:black" draggable="true" ondragstart="drag(event)">Ikonograf</span> beschrieben:
+                </p>
+                <p>
+                    Das
+                    <span id="obj13" style="color:black" draggable="true" ondragstart="drag(event)">Fotosystem</span> umfasst f�nf verschiedene
+                    <span id="obj14" style="color:black" draggable="true" ondragstart="drag(event)">Kamerageh�use</span>. Von diesen f�nf
+                    <span id="obj15" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Kamerageh�use">Kamerageh�usen</span> sind zwei f�r den professionellen
+                    <span id="obj16" style="color:black" draggable="true" ondragstart="drag(event)">Einsatz</span> und drei f�r den
+                    <span id="obj17" style="color:black" draggable="true" ondragstart="drag(event)">Amateurbereich</span> gedacht. Zu den f�nf
+                    <span id="obj18" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Kamerageh�use">Kamerageh�usen</span> gibt es insgesamt 20 verschiedene
+                    <span id="obj19" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Linse">Linsen</span>, die sowohl an den
+                    <span id="obj20" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Profigeh�use">Profi-</span> als auch an den
+                    <span id="obj21" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Amateurgeh�use">Amateurkamerageh�usen</span> verwendet werden k�nnen. Unter den angebotenen
+                    <span id="obj22" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Linse">Linsen</span> befinden sich zwei
+                    <span id="obj23" style="color:black" draggable="true" ondragstart="drag(event)">Telekonverter</span> sowie 18 unterschiedliche
+                    <span id="obj24" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Objektiv">Objektive</span>. Die
+                    <span id="obj25" style="color:black" draggable="true" ondragstart="drag(event)">Telekonverter</span> lassen sich mit allen
+                    <span id="obj26" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Objektiv">Objektiven</span> kombinieren. Zu jedem
+                    <span id="obj27" style="color:black" draggable="true" ondragstart="drag(event)">Objektiv</span> gibt es eine passende
+                    <span id="obj28" style="color:black" draggable="true" ondragstart="drag(event)">Sonnenblende</span>; zu beiden ist jeweils der
+                    <span id="obj29" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Durchmesser_Filtergewinde">Durchmesser des Filtergewindes</span> angegeben. Unter den
+                    <span id="obj30" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Objektiv">Objektiven</span> werden
+                    <span id="obj31" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Festbrennweitenobjektiv">Festbrennweiten-</span> und
+                    <span id="obj32" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Zoomobjektiv">Zoomobjektive</span> unterschieden.
+                    <span id="obj33" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Zoomobjektiv">Zoomobjektive</span> besitzen eine
+                    <span id="obj34" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Brennweite_minimal">minimale</span> und eine
+                    <span id="obj35" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Brennweite_maximal">maximale Brennweite</span>,
+                    <span id="obj36" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Festbrennweitenobjektiv">Festbrennweitenobjektive</span> hingegen nur eine
+                    <span id="obj37" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Brennweite">Brennweite</span>. Der
+                    <span id="obj38" style="color:black" draggable="true" ondragstart="drag(event)">Wert</span> der
+                    <span id="obj39" style="color:black" draggable="true" ondragstart="drag(event)">Brennweite</span> muss immer gr��er als 0 sein. Die
+                    <span id="obj40" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Brennweite_maximal">maximale Brennweite</span> eines
+                    <span id="obj41" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Zoomobjektiv">Zoomobjektives</span> ist immer mindestens 5 mm gr��er als die
+                    <span id="obj42" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Brennweite_minimal">minimale Brennweite
+                    </span> des
+                    <span id="obj43" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Zoomobjektiv">Zoomobjektives</span>. Bei den
+                    <span id="obj44" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Telekonverter">Telekonvertern</span> ist der
+                    <span id="obj45" style="color:black" draggable="true" ondragstart="drag(event)">Verl�ngerungsfaktor</span> angegeben. Weiterhin umfasst das
+                    <span id="obj46" style="color:black" draggable="true" ondragstart="drag(event)">Fotosystem</span>
+                    <span id="obj47" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Blitz">Blitze</span>. Es gibt zwei
+                    <span id="obj48" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Profiblitz">Profiblitze</span>, die nur an die
+                    <span id="obj49" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Profigeh�use">Profikamerageh�use</span> passen, und drei
+                    <span id="obj50" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Amateurblitz">Amateurblitze</span>, die nur an die
+                    <span id="obj51" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Amateurgeh�use">Amateurkamerageh�use</span> passen. Ein
+                    <span id="obj52" style="color:black" draggable="true" ondragstart="drag(event)">Profiblitz</span> kann beliebig viele
+                    <span id="obj53" style="color:black" draggable="true" ondragstart="drag(event)" data-baseform="Blitz">Blitze</span> steuern.
+                </p>
+          </div>
+        </div>
+        <div class="col-md-8" id="sizepaper">
+          <div ondrop="drop(event)" ondragover="allowDrop(event)">
+            <div style="border: 1px solid black" id="paper"></div>
+            <script type="text/javascript">			
+					//console.log("methoden: "+document.getElementsByClassName("uml-class-attrs-text"));
+					var divWidth=document.getElementById("sizepaper").parentNode.offsetWidth;
+					var divTextWidth=document.getElementById("text").parentNode.offsetWidth;
+					var divHeight=document.getElementById("sizepaper").parentNode.offsetHeight;
+					console.log("Beite Hoehe: "+divWidth+" "+divHeight);
+                    var idList = new Array(); // Linkverbindungen
+                    var graph = new joint.dia.Graph();
+                    var uml = joint.shapes.uml;
+					var erd = joint.shapes.erd;
+										
+                    var paper = new joint.dia.Paper({
+                        el: $('#paper'),
+						width: 0.7*window.screen.availWidth,
+                        height: 0.7*window.screen.availHeight,
+                        gridSize: 1,
+                        model: graph
+                    });
+		
+                    paper.on('cell:pointerclick',
+                        function(cellView, evt, x, y) {
+								if (idList.length < 2) {
+									idList.push(cellView.model.id);
+								}
+								if (idList.length == 2) {
+									console.log("0: "+idList[0]+" 1: "+idList[1]);
+									if(idList[0]!=idList[1]){
+										link();
+									}else{
+										console.log("gleich");
+										idList=[];
+									}
+								}						
+							}
+                        
+                    );
+var sel;
+function selectButton(elem){
+	for(i=1; i<6; i++){
+	document.getElementById(i).value="off";
+	}
+	document.getElementById(elem.id).value="on";
+	sel=elem.id;
+}
+													
+function link() {
+	if(document.getElementById(sel).value="on"){
+		var source_name = graph.getCell(idList[0]).attr('.uml-class-name-text/text');
+		var destin_name = graph.getCell(idList[1]).attr('.uml-class-name-text/text');
+		var source_mult = window.prompt("Bitte geben Sie die Multiplizit�t von "+source_name+" nach " + destin_name+" an.");
+		var destin_mult = window.prompt("Bitte geben Sie die Multiplizit�t von "+destin_name+" nach " + source_name+" an.");
+		switch (sel) {
+			case '1':
+				graph.addCell(new uml.Composition({
+					source: {
+					id: idList[0]
+					},
+                                        target: {
+                                            id: idList[1]
+                                        },
+										labels: [{ position: 25, attrs: { text: { text: source_mult } }},
+										         { position: -25, attrs: { text: { text: destin_mult } }}
+									]
+                                    }));
+                                    idList = [];
+                                    break;
+                                case '2':
+                                    graph.addCell(new uml.Aggregation({
+                                        source: {
+                                            id: idList[0]
+                                        },
+                                        target: {
+                                            id: idList[1]
+                                        },
+										labels: [{ position: 25, attrs: { text: { text: source_mult } }},
+										         { position: -25, attrs: { text: { text: destin_mult } }}
+									]
+                                    }));
+                                    idList = [];
+                                    break;
+                                case '3':
+                                    graph.addCell(new uml.Implementation({
+                                        source: {
+                                            id: idList[0]
+                                        },
+                                        target: {
+                                            id: idList[1]
+                                       },
+										labels: [{ position: 25, attrs: { text: { text: source_mult } }},
+										         { position: -25, attrs: { text: { text: destin_mult } }}
+									]
+                                    }));
+                                    idList = [];
+                                    break;
+                                case '4':
+                                    graph.addCell(new uml.Generalization({
+                                        source: {
+                                            id: idList[0]
+                                        },
+                                        target: {
+                                            id: idList[1]
+                                        },
+										labels: [{ position: 25, attrs: { text: { text: source_mult } }},
+										         { position: -25, attrs: { text: { text: destin_mult } }}
+									]
+                                    }));
+                                    idList = [];
+                                    break;
+									
+								case '5':
+                                    graph.addCell(new joint.dia.Link({
+                                        source: {
+                                            id: idList[0]
+                                        },
+                                        target: {
+                                            id: idList[1]
+                                        },
+										labels: [{ position: 25, attrs: { text: { text: source_mult } }},
+										         { position: -25, attrs: { text: { text: destin_mult } }}
+									]
+                                    }));
+                                    idList = [];
+                                    break;
+								default:
+								    idList = [];
+                                    break;
+		}
+	}
+}
+
+function addClass(name,posx,posy,a1,a2,m1,m2) {
+                        flugzeug: var flug = new uml.Class({
+                            position: {
+                                x: posx,
+                                y: posy
+                            },
+                            size: {
+                                width: 140,
+                                height: 140
+                            },
+                            name: name,    
+                            attributes: [ a1,a2 ],
+                            methods: [ m1,m2 ],
+                            attrs: {
+                                '.uml-class-name-rect': {
+                                    fill: '#ffffff',
+                                },
+                                '.uml-class-attrs-rect, .uml-class-methods-rect': {
+                                    fill: '#ffffff',
+                                },
+                                '.uml-class-attrs-text': {
+                                    ref: '.uml-class-attrs-rect',
+                                    'ref-y': 0.5,
+                                    'y-alignment': 'bottom'
+                                },
+                                '.uml-class-methods-text': {
+                                    ref: '.uml-class-methods-rect',
+                                    'ref-y': 0.5,
+                                    'y-alignment': 'bottom'
+                                }
+                            }
+                        });
+                        graph.addCell(flug);
+                    }
+ var x = 485;
+ var y = 10; 
+addClass("Telekonverter",x,y,"Verl�ngerungsfaktor:Zahl","","","");
+addClass("Kamerageh�use",x,y+180,"","","","");
+addClass("Profigeh�use",x-300,y+180,"","","","");
+addClass("Profiblitz",x-300,y+360,"","","","");
+addClass("Amateurgeh�use",x+300,y+180,"","","","");
+addClass("Amateurblitz",x+300,y+360,"","","","");
+addClass("Objektiv",x,y+360,"Gewindedurchmesser:Zahl","","","");
+addClass("Sonnenblende",x-300,y+540,"Gewindedurchmesser:Zahl","","","");
+addClass("Festbrennweitenobjektiv",x+300,y+540,"Brennweite:Zahl","","","");
+addClass("Zoomobjektiv",x,y+540,"Brennweite_maximal:Zahl","Brennweite_minimal:Zahl","","");
+	
+// Namen aller Klassen
+function getClasses(){
+	var classes=[];
+	for(i=0; i<graph.getCells().length; i++){
+		if(graph.getCells()[i]._previousAttributes.name != undefined){
+			classes.push(graph.getCells()[i]._previousAttributes.name);
+		}
+	}
+	return classes;
+	console.log("getClasses: "+ classes);
+}
+// Alle ids aller Zellen
+function getIds(){
+	var ids=[];
+	for(i=0; i<graph.getCells().length; i++){
+	 ids.push(graph.getCells()[i].id);
+	}
+	return ids;
+}
+function getAttributes(id){
+	var text ="";
+	if(graph.getCell(id).attributes.name != undefined){
+		var text=graph.getCell(id).attributes.name;
+		for(i=0; i < graph.getCell(id).attributes.attributes.length; i++){
+			if(graph.getCells()[i]._previousAttributes.name != undefined){
+				text+="_"+graph.getCell(id).attributes.attributes[i];
+			}
+		}
+						console.log("getAttributes: "+text);
+	}
+	return text;
+}
+function getMethodes(id){
+	var text=graph.getCell(id).attributes.name;
+	for(i=0; i < graph.getCell(id).attributes.methods.length; i++){
+		if(graph.getCells()[i]._previousAttributes.name != undefined){
+			text+="_"+graph.getCell(id).attributes.methods[i];
+		}
+	}
+	return text;
+}
+                </script>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel-footer">
+      <div class="btn-group">
+		<button type="button" class="btn btn-default" value="off" id="5" onclick="selectButton(this);">Standard</button>
+        <button type="button" class="btn btn-default" value="off" id="1" onclick="selectButton(this);">Composition</button>
+        <button type="button" class="btn btn-default" value="off" id="2" onclick="selectButton(this);">Aggregation</button>
+        <button type="button" class="btn btn-default" value="off" id="3" onclick="selectButton(this);">Implementation</button>
+        <button type="button" class="btn btn-default" value="off" id="4" onclick="selectButton(this);">Generalization</button>
+        <button type="button" class="btn btn-default" id="10" onclick="send();">Aufgabe verifizieren</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+}
