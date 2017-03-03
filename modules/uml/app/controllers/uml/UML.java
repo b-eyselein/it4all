@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
 import model.UmlClassselection;
+import model.UmlDiagramdrawing;
 import model.UmlExercise;
 import model.Util;
 import model.result.CompleteResult;
@@ -53,15 +54,24 @@ public class UML extends ExerciseController {
   }
 
   public Result correct() {   
-    // Correct classes...
     DynamicForm form = factory.form().bindFromRequest();
     String classes = form.get("fname");
-    Logger.debug("classes: "+classes);
+    Logger.debug("correct(): "+classes);
     if(classes == null || classes.isEmpty())return badRequest("Keine Daten übertragen!");;
     UmlClassselection ue = new UmlClassselection(classes);
     return ok(views.html.overviewsolution.render(UserManagement.getCurrentUser(),ue));
   }
-
+  
+  public Result correctdiagramdrawinghelp() {   
+	    DynamicForm form = factory.form().bindFromRequest();
+	    String json = form.get("fname");
+	    Logger.debug("diagramdrawhinghelp(): "+json);
+	    if(json == null || json.isEmpty())return badRequest("Keine Daten übertragen!");;
+	    UmlDiagramdrawing ue =new UmlDiagramdrawing(json);
+	    return ok("jo");
+  }
+  
+  
   @Override
   protected CompleteResult correct(Request request, User user, int exerciseId) {
     // TODO Auto-generated method stub
@@ -77,8 +87,8 @@ public class UML extends ExerciseController {
   }
   
   public Result diagramDrawingHelp(int exerciseId) {
-	    return ok(views.html.diagramdrawinghelp.render(UserManagement.getCurrentUser()));
-	  }
+	  return ok(views.html.diagramdrawinghelp.render(UserManagement.getCurrentUser()));
+  }
 
   public Result index() {
     return ok(views.html.umloverview.render(Arrays.asList(new UmlExercise(1)), UserManagement.getCurrentUser()));

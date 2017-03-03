@@ -1,4 +1,4 @@
-function send(){
+function extractParameters(){
 	var json = "\{\"classes\":[";
 	var ids =[];
 	for(i=0; i<graph.getCells().length; i++){
@@ -171,5 +171,9 @@ function send(){
 	}
 	
 	json+=jsonConnections;
-	console.log(json);
+	return json;
 }
+function prepareFormForSubmitting() {
+	  document.getElementById("learnerSolution").value = extractParameters();
+	  console.log(document.getElementById("learnerSolution").value);
+	}
