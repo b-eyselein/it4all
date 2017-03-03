@@ -2,13 +2,15 @@
 
 @main("UML-Test", user) {
 <head>
-<link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/joint.css")">
+
 <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/bootstrap.css")">
 <script src=" @controllers.routes.Assets.versioned("javascripts/uml/lodash.js")"></script>
 <script src=" @controllers.routes.Assets.versioned("javascripts/uml/backbone.js")"></script>
-<script src=" @controllers.routes.Assets.versioned("javascripts/uml/joint.js")"></script>
 <script src=" @controllers.routes.Assets.versioned("javascripts/uml/jquery.js")"></script>
+<script src=" @controllers.routes.Assets.versioned("javascripts/uml/joint.js")"></script>
+<link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/joint.css")">
 <script src=" @controllers.routes.Assets.versioned("javascripts/uml/jsonconverter.js")"></script>
+
 </head>
 <body>
 <div class="container-fluid">
@@ -275,11 +277,11 @@ function addClass(name,posx,posy,a1,a2,m1,m2) {
                     }
  var x = 485;
  var y = 10; 
-//addClass("Telekonverter",x,y,"Verl&auml;ngerungsfaktor:Zahl","","","");
-//addClass("Kamerageh&auml;use",x,y+180,"","","","");
-//addClass("Profigeh&auml;use",x-300,y+180,"","","","");
+addClass("Telekonverter",x,y,"Verlängerungsfaktor:Zahl","","","");
+addClass("Kameragehäuse",x,y+180,"","","","");
+addClass("Profigehäuse",x-300,y+180,"","","","");
 addClass("Profiblitz",x-300,y+360,"","","","");
-//addClass("Amateurgeh&auml;use",x+300,y+180,"","","","");
+addClass("Amateurgehäuse",x+300,y+180,"","","","");
 addClass("Amateurblitz",x+300,y+360,"","","","");
 addClass("Objektiv",x,y+360,"Gewindedurchmesser:Zahl","","","");
 addClass("Sonnenblende",x-300,y+540,"Gewindedurchmesser:Zahl","","","");

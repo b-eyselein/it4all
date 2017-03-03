@@ -4,20 +4,22 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/joint.css")">
+
 <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/bootstrap.css")">
 <script src=" @controllers.routes.Assets.versioned("javascripts/uml/lodash.js")"></script>
 <script src=" @controllers.routes.Assets.versioned("javascripts/uml/backbone.js")"></script>
-<script src=" @controllers.routes.Assets.versioned("javascripts/uml/joint.js")"></script>
 <script src=" @controllers.routes.Assets.versioned("javascripts/uml/jquery.js")"></script>
+<script src=" @controllers.routes.Assets.versioned("javascripts/uml/joint.js")"></script>
+<link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/joint.css")">
 <script src=" @controllers.routes.Assets.versioned("javascripts/uml/jsonconverter.js")"></script>
+
 </head>
 <body>
 <div class="container-fluid">
   <h2>UML Diagrammszenario</h2>
   <div class="panel panel-default">
-    <div class="panel-heading">Erstellen Sie ein UML-Klassendiagramm basierend auf dem Aufgabentext. Sie k�nnen
-      neue Klassen erzeugen indem Sie das entsprechende Wort per Drag-and-Drop in die rechts angrenzende Zeichenfl�che
+    <div class="panel-heading">Erstellen Sie ein UML-Klassendiagramm basierend auf dem Aufgabentext. Sie k&ouml;nnen
+      neue Klassen erzeugen indem Sie das entsprechende Wort per Drag-and-Drop in die rechts angrenzende Zeichenfl&auml;che
       ziehen.</div>
     <div class="panel-body">
       <div class="row">
@@ -190,8 +192,8 @@ function link() {
 	if(document.getElementById(sel).value="on"){
 		var source_name = graph.getCell(idList[0]).attr('.uml-class-name-text/text');
 		var destin_name = graph.getCell(idList[1]).attr('.uml-class-name-text/text');
-		var source_mult = window.prompt("Bitte geben Sie die Multiplizit�t von "+source_name+" nach " + destin_name+" an.");
-		var destin_mult = window.prompt("Bitte geben Sie die Multiplizit�t von "+destin_name+" nach " + source_name+" an.");
+		var source_mult = window.prompt("Bitte geben Sie die Multiplizit&auml;t von "+source_name+" nach " + destin_name+" an.");
+		var destin_mult = window.prompt("Bitte geben Sie die Multiplizit&auml;t von "+destin_name+" nach " + source_name+" an.");
 		switch (sel) {
 			case '1':
 				graph.addCell(new uml.Composition({
@@ -371,7 +373,7 @@ function getMethodes(id){
         <button type="button" class="btn btn-default" value="off" id="2" onclick="selectButton(this);">Aggregation</button>
         <button type="button" class="btn btn-default" value="off" id="3" onclick="selectButton(this);">Implementation</button>
         <button type="button" class="btn btn-default" value="off" id="4" onclick="selectButton(this);">Generalization</button>
-        <button type="button" class="btn btn-default" value="off" id="5" onclick="loeschen();">Klasse l�schen</button>
+        <button type="button" class="btn btn-default" value="off" id="5" onclick="loeschen();">Klasse l&ouml;schen</button>
         <button type="button" class="btn btn-default" value="off" id="6" onclick="addMeth();">Mehoden
           hinzuf�gen</button>
         <button type="button" class="btn btn-default" value="off" id="7" onclick="addAttr();">Attribute
