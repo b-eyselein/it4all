@@ -26,7 +26,7 @@ public class UmlClassselection {
   public UmlClassselection(String input) {
 	setTitleExcercise("Foto");
     JsonNode node = Json.parse(input);
-    node.get("classes");
+    //node.get("classes");
     JsonNode node_c = Json.parse(
         "{\"classes\":[\"Telekonverter\",\"Profigehäuse\",\"Kameragehäuse\",\"Amateurgehäuse\",\"Profiblitz\",\"Objektiv\",\"Amateurblitz\",\"Sonnenblende\",\"Zoomobjektiv\",\"Festweitenobjektiv\"],\"methods\":[\"Hersteller\",\"Fotosystems\"],\"attributes\":[\"Ikonograf\",\"Webseite\"]}");
    // Logger.debug(Json.prettyPrint(node));
