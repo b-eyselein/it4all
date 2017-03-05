@@ -62,7 +62,7 @@ public class UML extends ExerciseController {
     return ok(views.html.overviewsolution.render(UserManagement.getCurrentUser(),ue));
   }
   
-  public Result correctdiagramdrawinghelp() {   
+  public Result correctdiagramdrawinghelp() throws IOException {   
 	    DynamicForm form = factory.form().bindFromRequest();
 	    String json = form.get("fname");
 	    Logger.debug("diagramdrawhinghelp(): "+json);
