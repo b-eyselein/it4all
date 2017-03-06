@@ -50,7 +50,7 @@ function extractParameters(){
 		text="";
 	}
 	connections.sort();
-	console.log(connections);
+	console.log("connections"+connections);
 	var jsonConnections="\"connections\":\{\{";
 	jsonConnections=jsonConnections.substr(0,jsonConnections.length-1);
 	var agg = 0;
@@ -59,7 +59,7 @@ function extractParameters(){
 	var gen = 0;
 	var nor = 0;
 	for(i=0; i<connections.length; i++){
-		console.log(connections[i].substr(0,5));
+		console.log("contype"+connections[i].substr(0,5));
 		switch(connections[i].substr(0,5)){
 			case "uml.A":
 				agg++;
@@ -82,7 +82,9 @@ function extractParameters(){
 		jsonConnections+="\"standard\":[],";
 	}else{
 		jsonConnections+="\"standard\":[";
+		console.log("start_nor");
 		for(i=0; i<nor;i++){
+			console.log(connections[i]+" i: "+i);
 		var split =connections[i].split("_");
 			jsonConnections+=	"\{\"start\":\""
 						+split[1]+
@@ -100,8 +102,10 @@ function extractParameters(){
 		jsonConnections+="\"aggregation\":[],";
 	}else{
 		jsonConnections+="\"aggregation\":[";
-		for(i=0; i<agg;i++){
+		for(i=nor; i<nor+agg;i++){
+		console.log("start_agg");
 		var split =connections[i].split("_");
+			console.log(connections[i]+" i: "+i);
 			jsonConnections+=	"\{\"start\":\""
 						+split[1]+
 					"\",\"target\":\""
@@ -118,7 +122,9 @@ function extractParameters(){
 		jsonConnections+="\"composition\":[],";
 	}else{
 		jsonConnections+="\"composition\":[";
-		for(i=0; i<com;i++){
+		for(i=nor+agg; i<nor+agg+com;i++){
+		console.log("start_com");
+			console.log(connections[i]+" i: "+i);
 		var split =connections[i].split("_");
 			jsonConnections+=	"\{\"start\":\""
 						+split[1]+
@@ -136,8 +142,10 @@ function extractParameters(){
 		jsonConnections+="\"implementation\":[],";
 	}else{
 		jsonConnections+="\"implementation\":[";
-		for(i=0; i<imp;i++){
+		console.log("start_imp");
+		for(i=nor+agg+com; i<nor+agg+com+imp;i++){
 		var split =connections[i].split("_");
+			console.log(connections[i]+" i: "+i);
 			jsonConnections+=	"\{\"start\":\""
 						+split[1]+
 					"\",\"target\":\""
@@ -155,8 +163,10 @@ function extractParameters(){
 		jsonConnections=jsonConnections.substr(0,jsonConnections.length-3)+"\}\}";
 	}else{
 		jsonConnections+="\"generalization\":[";
-		for(i=0; i<gen;i++){
+		console.log("start_gen");
+		for(i=nor+agg+com+imp; i<nor+agg+com+imp+gen;i++){
 		var split =connections[i].split("_");
+			console.log(connections[i]+" i: "+i);
 			jsonConnections+=	"\{\"start\":\""
 						+split[1]+
 					"\",\"target\":\""
@@ -171,9 +181,10 @@ function extractParameters(){
 	}
 	
 	json+=jsonConnections;
+	console.log(json);
 	return json;
 }
 function prepareFormForSubmitting() {
 	  document.getElementById("learnerSolution").value = extractParameters();
-	  console.log(document.getElementById("learnerSolution").value);
+	  console.log("learnersol: "+document.getElementById("learnerSolution").value);
 	}

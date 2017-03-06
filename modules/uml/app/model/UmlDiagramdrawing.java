@@ -18,19 +18,22 @@ public class UmlDiagramdrawing {
 	
 	public UmlDiagramdrawing(String input) throws IOException{
 		JsonNode node = Json.parse(input);
+		Logger.debug("input"+Json.prettyPrint(node));
 		//Solution
+		//JsonNode test = Json.parse("{\"classes\":[{\"name\":\"Telekonverter\",\"methods\":[\"\",\"\"],\"attributes\":[\"Verlängerungsfaktor:Zahl\",\"\"]},{\"name\":\"Kameragehäuse\",\"methods\":[\"\",\"\"],\"attributes\":[\"\",\"\"]},{\"name\":\"Profigehäuse\",\"methods\":[\"\",\"\"],\"attributes\":[\"\",\"\"]},{\"name\":\"Profiblitz\",\"methods\":[\"\",\"\"],\"attributes\":[\"\",\"\"]},{\"name\":\"Amateurgehäuse\",\"methods\":[\"\",\"\"],\"attributes\":[\"\",\"\"]},{\"name\":\"Amateurblitz\",\"methods\":[\"\",\"\"],\"attributes\":[\"\",\"\"]},{\"name\":\"Objektiv\",\"methods\":[\"\",\"\"],\"attributes\":[\"Gewindedurchmesser:Zahl\",\"\"]},{\"name\":\"Sonnenblende\",\"methods\":[\"\",\"\"],\"attributes\":[\"Gewindedurchmesser:Zahl\",\"\"]},{\"name\":\"Festbrennweitenobjektiv\",\"methods\":[\"\",\"\"],\"attributes\":[\"Brennweite:Zahl\",\"\"]},{\"name\":\"Zoomobjektiv\",\"methods\":[\"\",\"\"],\"attributes\":[\"Brennweite_maximal:Zahl\",\"Brennweite_minimal:Zahl\"]}],\"connections\":{\"standard\":[{\"start\":\"Zoomobjektiv123123123312\",\"target\":\"Objektiv\",\"mulstart\":\"wertwert\",\"multarget\":\"wert\"}],\"aggregation\":[{\"start\":\"Z2345435435435435\",\"target\":\"Objektiv\",\"mulstart\":\"wertwert\",\"multarget\":\"wert\"}],\"composition\":[{\"start\":\"Zoomobjektiv\",\"target\":\"Objektiv\",\"mulstart\":\"1234123432143214\",\"multarget\":\"wert\"}],\"implementation\":[],\"generalization\":[]}}");
 		JsonNode node_c = Json.parse("{\"classes\":[{\"name\":\"Telekonverter\",\"methods\":[\"\",\"\"],\"attributes\":[\"Verlängerungsfaktor:Zahl\",\"\"]},{\"name\":\"Kameragehäuse\",\"methods\":[\"\",\"\"],\"attributes\":[\"\",\"\"]},{\"name\":\"Profigehäuse\",\"methods\":[\"\",\"\"],\"attributes\":[\"\",\"\"]},{\"name\":\"Profiblitz\",\"methods\":[\"\",\"\"],\"attributes\":[\"\",\"\"]},{\"name\":\"Amateurgehäuse\",\"methods\":[\"\",\"\"],\"attributes\":[\"\",\"\"]},{\"name\":\"Amateurblitz\",\"methods\":[\"\",\"\"],\"attributes\":[\"\",\"\"]},{\"name\":\"Objektiv\",\"methods\":[\"\",\"\"],\"attributes\":[\"Gewindedurchmesser:Zahl\",\"\"]},{\"name\":\"Sonnenblende\",\"methods\":[\"\",\"\"],\"attributes\":[\"Gewindedurchmesser:Zahl\",\"\"]},{\"name\":\"Festbrennweitenobjektiv\",\"methods\":[\"\",\"\"],\"attributes\":[\"Brennweite:Zahl\",\"\"]},{\"name\":\"Zoomobjektiv\",\"methods\":[\"\",\"\"],\"attributes\":[\"Brennweite_maximal:Zahl\",\"Brennweite_minimal:Zahl\"]}],\"connections\":{\"standard\":[{\"start\":\"Amateurgehäuse\",\"target\":\"Amateurblitz\",\"mulstart\":\"1\",\"multarget\":\"1\"},{\"start\":\"Objektiv\",\"target\":\"Kameragehäuse\",\"mulstart\":\"1\",\"multarget\":\"1\"},{\"start\":\"Objektiv\",\"target\":\"Sonnenblende\",\"mulstart\":\"1\",\"multarget\":\"1\"},{\"start\":\"Profiblitz\",\"target\":\"Profigehäuse\",\"mulstart\":\"1\",\"multarget\":\"1\"},{\"start\":\"Telekonverter\",\"target\":\"Kameragehäuse\",\"mulstart\":\"1\",\"multarget\":\"1\"}],\"aggregation\":[],\"composition\":[],\"implementation\":[],\"generalization\":[{\"start\":\"Amateurgehäuse\",\"target\":\"Amateurblitz\",\"mulstart\":\"1\",\"multarget\":\"1\"},{\"start\":\"Objektiv\",\"target\":\"Kameragehäuse\",\"mulstart\":\"1\",\"multarget\":\"1\"},{\"start\":\"Objektiv\",\"target\":\"Sonnenblende\",\"mulstart\":\"1\",\"multarget\":\"1\"},{\"start\":\"Profiblitz\",\"target\":\"Profigehäuse\",\"mulstart\":\"1\",\"multarget\":\"1\"}]}}");
 		this.classes_user = convertClassesToObject(node);
 		this.classes_solution = convertClassesToObject(node_c);
 		this.connections_user = convertConnectionsToObject(node);
-		this.connections_user = convertConnectionsToObject(node_c);
+		//this.connections_solution = convertConnectionsToObject(node_c);
+		
 	}
 	
 	public ArrayList<UmlDiagramdrawing_Class> convertClassesToObject(JsonNode mainNode){
 		ArrayList<UmlDiagramdrawing_Class> classes = new ArrayList<>();
 		JsonNode node_classes = mainNode.get("classes");
 		if (node_classes.isArray()) {
-		    for (final JsonNode objNode : node_classes) {
+		    for (JsonNode objNode : node_classes) {
 		    	String name = objNode.get("name").toString();
 		    	String[] str_methods = objNode.get("methods").toString().substring(1, objNode.get("methods").toString().length() - 1)
 		    	        .split(",");
@@ -60,19 +63,21 @@ public class UmlDiagramdrawing {
 	
 	public ArrayList<UmlDiagramdrawing_Connection> convertConnectionypeForConnections(JsonNode type, String str_type){
 		ArrayList<UmlDiagramdrawing_Connection> connections = new ArrayList<>();
-		for(final JsonNode objNode : type){
+		for(JsonNode objNode : type){
 			String kind = str_type;
 			String start= objNode.get("start").toString();
 			String target= objNode.get("target").toString();
 			String mulstart= objNode.get("mulstart").toString();
 			String multarget= objNode.get("multarget").toString();			
 			connections.add(new UmlDiagramdrawing_Connection(kind, start, target, mulstart, multarget));
-			//Logger.debug("connection "+kind+" start: "+start+" target: "+target+" mulstart: "+mulstart+" multarget: "+multarget);
+			Logger.debug("connection "+kind+" start: "+start+" target: "+target+" mulstart: "+mulstart+" multarget: "+multarget);
 		}
 		return connections;
 	}
 	
-	
+	public ArrayList<UmlDiagramdrawing_Connection> getListConnectionsTypeSolution(int number){
+		return this.connections_solution.get(number);		
+	}
 	
 
 }
