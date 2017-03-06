@@ -2,12 +2,12 @@ package model;
 
 import java.util.ArrayList;
 
-public class UmlClassselection_Class {
+public class UmlDiagramdrawing_Class {
 	public String name;
 	public ArrayList<String> methods;
 	public ArrayList<String> attributes;
 	
-	public UmlClassselection_Class(String name, ArrayList<String> methods, ArrayList<String> attributes) {
+	public UmlDiagramdrawing_Class(String name, ArrayList<String> methods, ArrayList<String> attributes) {
 		this.name=name;
 		this.methods=methods;
 		this.attributes=attributes;
