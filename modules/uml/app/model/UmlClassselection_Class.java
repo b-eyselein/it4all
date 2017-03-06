@@ -1,12 +1,18 @@
 package model;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 
 public class UmlClassselection_Class {
 	public String name;
-	public String[] methods;
-	public String[] attributes;
+	public ArrayList<String> methods;
+	public ArrayList<String> attributes;
 	
+	public UmlClassselection_Class(String name, ArrayList<String> methods, ArrayList<String> attributes) {
+		this.name=name;
+		this.methods=methods;
+		this.attributes=attributes;
+	}
+
 	public String getName(){
 		return this.name;
 	}
@@ -15,22 +21,22 @@ public class UmlClassselection_Class {
 		this.name=name;
 	}
 	
-	public String[] getMethods(){
+	public ArrayList<String> getMethods(){
 		return this.methods;
 	}
 	
-	public void setMethods(String[] methods){
+	public void setMethods(ArrayList<String> methods){
 		this.methods=methods;
 	}
 	
-	public String[] getAttributes(){
+	public ArrayList<String> getAttributes(){
 		return this.attributes;
 	}
 	
-	public void setAttributes(String[] attributes){
+	public void setAttributes(ArrayList<String> attributes){
 		this.attributes=attributes;
 	}
-	
+	/*
 	public String getMethodsAsString(){
 		String[] s = this.methods;
 		Arrays.sort(s);
@@ -50,5 +56,5 @@ public class UmlClassselection_Class {
 		}
 		return ret;
 	}
-	
+*/	
 }
