@@ -7,16 +7,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import javax.inject.Inject;
-
 import com.fasterxml.jackson.databind.JsonNode;
-
 import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
 import model.UmlClassselection;
 import model.UmlDiagramdrawing;
 import model.UmlExercise;
+import model.UmlDiagramdrawing_Connection;
+import model.UmlDiagramdrawing_Class;
 import model.Util;
 import model.result.CompleteResult;
 import model.user.User;
@@ -68,7 +67,7 @@ public class UML extends ExerciseController {
 	    Logger.debug("diagramdrawhinghelp(): "+json);
 	    if(json == null || json.isEmpty())return badRequest("Keine Daten übertragen!");;
 	    UmlDiagramdrawing ue =new UmlDiagramdrawing(json);
-	    return ok("jo");
+	    return ok(views.html.umloverviewsolutionhelp.render(UserManagement.getCurrentUser(),ue));
   }
   
   

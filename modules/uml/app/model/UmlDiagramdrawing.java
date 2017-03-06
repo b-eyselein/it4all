@@ -3,6 +3,7 @@ package model;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import com.fasterxml.jackson.databind.JsonNode;
 import play.Logger;
 import model.UmlDiagramdrawing_Class;
@@ -20,13 +21,18 @@ public class UmlDiagramdrawing {
 		JsonNode node = Json.parse(input);
 		Logger.debug("input"+Json.prettyPrint(node));
 		//Solution
-		//JsonNode test = Json.parse("{\"classes\":[{\"name\":\"Telekonverter\",\"methods\":[\"\",\"\"],\"attributes\":[\"Verlängerungsfaktor:Zahl\",\"\"]},{\"name\":\"Kameragehäuse\",\"methods\":[\"\",\"\"],\"attributes\":[\"\",\"\"]},{\"name\":\"Profigehäuse\",\"methods\":[\"\",\"\"],\"attributes\":[\"\",\"\"]},{\"name\":\"Profiblitz\",\"methods\":[\"\",\"\"],\"attributes\":[\"\",\"\"]},{\"name\":\"Amateurgehäuse\",\"methods\":[\"\",\"\"],\"attributes\":[\"\",\"\"]},{\"name\":\"Amateurblitz\",\"methods\":[\"\",\"\"],\"attributes\":[\"\",\"\"]},{\"name\":\"Objektiv\",\"methods\":[\"\",\"\"],\"attributes\":[\"Gewindedurchmesser:Zahl\",\"\"]},{\"name\":\"Sonnenblende\",\"methods\":[\"\",\"\"],\"attributes\":[\"Gewindedurchmesser:Zahl\",\"\"]},{\"name\":\"Festbrennweitenobjektiv\",\"methods\":[\"\",\"\"],\"attributes\":[\"Brennweite:Zahl\",\"\"]},{\"name\":\"Zoomobjektiv\",\"methods\":[\"\",\"\"],\"attributes\":[\"Brennweite_maximal:Zahl\",\"Brennweite_minimal:Zahl\"]}],\"connections\":{\"standard\":[{\"start\":\"Zoomobjektiv123123123312\",\"target\":\"Objektiv\",\"mulstart\":\"wertwert\",\"multarget\":\"wert\"}],\"aggregation\":[{\"start\":\"Z2345435435435435\",\"target\":\"Objektiv\",\"mulstart\":\"wertwert\",\"multarget\":\"wert\"}],\"composition\":[{\"start\":\"Zoomobjektiv\",\"target\":\"Objektiv\",\"mulstart\":\"1234123432143214\",\"multarget\":\"wert\"}],\"implementation\":[],\"generalization\":[]}}");
 		JsonNode node_c = Json.parse("{\"classes\":[{\"name\":\"Telekonverter\",\"methods\":[\"\",\"\"],\"attributes\":[\"Verlängerungsfaktor:Zahl\",\"\"]},{\"name\":\"Kameragehäuse\",\"methods\":[\"\",\"\"],\"attributes\":[\"\",\"\"]},{\"name\":\"Profigehäuse\",\"methods\":[\"\",\"\"],\"attributes\":[\"\",\"\"]},{\"name\":\"Profiblitz\",\"methods\":[\"\",\"\"],\"attributes\":[\"\",\"\"]},{\"name\":\"Amateurgehäuse\",\"methods\":[\"\",\"\"],\"attributes\":[\"\",\"\"]},{\"name\":\"Amateurblitz\",\"methods\":[\"\",\"\"],\"attributes\":[\"\",\"\"]},{\"name\":\"Objektiv\",\"methods\":[\"\",\"\"],\"attributes\":[\"Gewindedurchmesser:Zahl\",\"\"]},{\"name\":\"Sonnenblende\",\"methods\":[\"\",\"\"],\"attributes\":[\"Gewindedurchmesser:Zahl\",\"\"]},{\"name\":\"Festbrennweitenobjektiv\",\"methods\":[\"\",\"\"],\"attributes\":[\"Brennweite:Zahl\",\"\"]},{\"name\":\"Zoomobjektiv\",\"methods\":[\"\",\"\"],\"attributes\":[\"Brennweite_maximal:Zahl\",\"Brennweite_minimal:Zahl\"]}],\"connections\":{\"standard\":[{\"start\":\"Amateurgehäuse\",\"target\":\"Amateurblitz\",\"mulstart\":\"1\",\"multarget\":\"1\"},{\"start\":\"Objektiv\",\"target\":\"Kameragehäuse\",\"mulstart\":\"1\",\"multarget\":\"1\"},{\"start\":\"Objektiv\",\"target\":\"Sonnenblende\",\"mulstart\":\"1\",\"multarget\":\"1\"},{\"start\":\"Profiblitz\",\"target\":\"Profigehäuse\",\"mulstart\":\"1\",\"multarget\":\"1\"},{\"start\":\"Telekonverter\",\"target\":\"Kameragehäuse\",\"mulstart\":\"1\",\"multarget\":\"1\"}],\"aggregation\":[],\"composition\":[],\"implementation\":[],\"generalization\":[{\"start\":\"Amateurgehäuse\",\"target\":\"Amateurblitz\",\"mulstart\":\"1\",\"multarget\":\"1\"},{\"start\":\"Objektiv\",\"target\":\"Kameragehäuse\",\"mulstart\":\"1\",\"multarget\":\"1\"},{\"start\":\"Objektiv\",\"target\":\"Sonnenblende\",\"mulstart\":\"1\",\"multarget\":\"1\"},{\"start\":\"Profiblitz\",\"target\":\"Profigehäuse\",\"mulstart\":\"1\",\"multarget\":\"1\"}]}}");
 		this.classes_user = convertClassesToObject(node);
 		this.classes_solution = convertClassesToObject(node_c);
 		this.connections_user = convertConnectionsToObject(node);
-		//this.connections_solution = convertConnectionsToObject(node_c);
-		
+		this.connections_solution = convertConnectionsToObject(node_c);
+		ArrayList<UmlDiagramdrawing_Connection> asdf = new ArrayList<>();
+		Logger.debug(""+this.classes_solution.size());
+		asdf = getListConnectionsTypeSolution(4);
+		for (Iterator iterator = asdf.iterator(); iterator.hasNext();) {
+			UmlDiagramdrawing_Connection ue = (UmlDiagramdrawing_Connection) iterator.next();
+			Logger.debug(ue.getType()+" "+ue.getStart()+" "+ue.getTarget());
+		}
 	}
 	
 	public ArrayList<UmlDiagramdrawing_Class> convertClassesToObject(JsonNode mainNode){
@@ -57,7 +63,6 @@ public class UmlDiagramdrawing {
 		for (int i = 0; i < types.length; i++) {
 			connections.add(convertConnectionypeForConnections(node_connectionType.get(types[i]),types[i]));
 		}
-		Logger.debug("connectionssize"+connections.size());
 		return connections;
 	}
 	
@@ -76,9 +81,9 @@ public class UmlDiagramdrawing {
 	}
 	
 	public ArrayList<UmlDiagramdrawing_Connection> getListConnectionsTypeSolution(int number){
-		return this.connections_solution.get(number);		
+		ArrayList<UmlDiagramdrawing_Connection> ret = new ArrayList<>();
+		ret =this.connections_solution.get(number);
+		return ret;		
 	}
-	
-
 }
 
