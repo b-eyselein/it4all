@@ -85,5 +85,15 @@ public class UmlDiagramdrawing {
 		ret =this.connections_solution.get(number);
 		return ret;		
 	}
+	
+	public int getConnectionSolutionListlength(){
+		return this.connections_solution.size();
+	}
+	
+	public int getConnectionUserListlength(){
+		return this.connections_user.size();
+	}
+	
+	
 }
 

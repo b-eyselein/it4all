@@ -2,7 +2,10 @@
 
 @main("UML-Test", user) {
 
-@ue.getListConnectionsTypeSolution(0).get(0).getType();
-@ue.getListConnectionsTypeSolution(0).get(0).getStart();
-@ue.getListConnectionsTypeSolution(0).get(0).getTarget();
+@for(i <- 0 to 9){	
+	@ue.getListConnectionsTypeSolution(0).get(i).getType();
+	@ue.getListConnectionsTypeSolution(0).get(i).getStart();
+	@ue.getListConnectionsTypeSolution(0).get(i).getTarget();
+	}
+
 }
