@@ -1,8 +1,8 @@
 @( user: model.user.User, ue: model.UmlDiagramdrawing )
 
 @main("UML-Test", user) {
-	
-<div>
+<h1> Korrektur der Aufgabe @ue.getTitleExercise()</h1>	
+<div class="panel-body">
 <div id="left">
  <table class="table">
   <tr>
@@ -37,6 +37,7 @@
   </tr>
 	}
 }
+</div>
 </table>
 </div>
 
@@ -78,6 +79,12 @@
 </div>
 </div>
 
+<div class="panel-footer">
+	 <form action="/uml" method="get" enctype="multipart/form-data">
+   	 <button type="submit" class="btn btn-primary btn-block">Zur Aufgabenübersicht</button>
+ 	</form> 
+</div>
+
 <style>
 #left {
 width: 50%;
@@ -88,6 +95,5 @@ width: 50%;
 float: right;
 }
 </style>
-	
 
 }

@@ -10,13 +10,14 @@ import model.UmlDiagramdrawing_Connection;
 import play.libs.Json;
 
 public class UmlDiagramdrawing {
-	
+	private String title;	
 	ArrayList<UmlDiagramdrawing_Class> classes_user;
 	ArrayList<UmlDiagramdrawing_Class> classes_solution;
 	ArrayList<ArrayList<UmlDiagramdrawing_Connection>> connections_user;
 	ArrayList<ArrayList<UmlDiagramdrawing_Connection>> connections_solution;
 	
 	public UmlDiagramdrawing(String input){
+		setTitleExcercise("Foto");
 		JsonNode node = Json.parse(input);
 		Logger.debug("input"+Json.prettyPrint(node));
 		//Solution
@@ -110,6 +111,15 @@ public class UmlDiagramdrawing {
 	public ArrayList<ArrayList<UmlDiagramdrawing_Connection>> getConnections_solution(){
 		return this.connections_solution;
 	}
+	
+	public void setTitleExcercise(String title){
+		this.title=title;
+	}
+	  
+	public String getTitleExercise(){
+		return title;
+	}
+	  
 	
 }
 
