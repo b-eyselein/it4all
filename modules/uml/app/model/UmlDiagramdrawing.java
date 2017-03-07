@@ -1,6 +1,5 @@
 package model;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -17,7 +16,7 @@ public class UmlDiagramdrawing {
 	ArrayList<ArrayList<UmlDiagramdrawing_Connection>> connections_user;
 	ArrayList<ArrayList<UmlDiagramdrawing_Connection>> connections_solution;
 	
-	public UmlDiagramdrawing(String input) throws IOException{
+	public UmlDiagramdrawing(String input){
 		JsonNode node = Json.parse(input);
 		Logger.debug("input"+Json.prettyPrint(node));
 		//Solution
@@ -61,12 +60,12 @@ public class UmlDiagramdrawing {
 		JsonNode node_connectionType = mainNode.get("connections");
 		String[] types = {"standard","aggregation","composition","implementation","generalization"};
 		for (int i = 0; i < types.length; i++) {
-			connections.add(convertConnectionypeForConnections(node_connectionType.get(types[i]),types[i]));
+			connections.add(convertConnectionTypeForConnections(node_connectionType.get(types[i]),types[i]));
 		}
 		return connections;
 	}
 	
-	public ArrayList<UmlDiagramdrawing_Connection> convertConnectionypeForConnections(JsonNode type, String str_type){
+	public ArrayList<UmlDiagramdrawing_Connection> convertConnectionTypeForConnections(JsonNode type, String str_type){
 		ArrayList<UmlDiagramdrawing_Connection> connections = new ArrayList<>();
 		for(JsonNode objNode : type){
 			String kind = str_type;
@@ -74,8 +73,8 @@ public class UmlDiagramdrawing {
 			String target= objNode.get("target").toString();
 			String mulstart= objNode.get("mulstart").toString();
 			String multarget= objNode.get("multarget").toString();			
-			connections.add(new UmlDiagramdrawing_Connection(kind, start, target, mulstart, multarget));
-			Logger.debug("connection "+kind+" start: "+start+" target: "+target+" mulstart: "+mulstart+" multarget: "+multarget);
+			connections.add(new UmlDiagramdrawing_Connection(kind.substring(0, 1).toUpperCase()+kind.substring(1), start, target, mulstart, multarget));
+			Logger.debug("connection "+kind.substring(0, 1).toUpperCase()+kind.substring(1)+" start: "+start+" target: "+target+" mulstart: "+mulstart+" multarget: "+multarget);
 		}
 		return connections;
 	}
@@ -86,14 +85,31 @@ public class UmlDiagramdrawing {
 		return ret;		
 	}
 	
-	public int getConnectionSolutionListlength(){
-		return this.connections_solution.size();
+	public ArrayList<UmlDiagramdrawing_Connection> getListConnectionsTypeUser(int number){
+		ArrayList<UmlDiagramdrawing_Connection> ret = new ArrayList<>();
+		ret =this.connections_user.get(number);
+		return ret;		
 	}
 	
-	public int getConnectionUserListlength(){
-		return this.connections_user.size();
+	public int getConnectionsLength(ArrayList<UmlDiagramdrawing_Connection> input){	
+		return input.size();
+	}
+
+	public ArrayList<UmlDiagramdrawing_Class> getClasses_user(){
+		return this.classes_user;
 	}
 	
+	public ArrayList<UmlDiagramdrawing_Class> getClasses_solution(){
+		return this.classes_solution;
+	}
+	
+	public ArrayList<ArrayList<UmlDiagramdrawing_Connection>> getConnections_user(){
+		return this.connections_user;
+	}	
+	
+	public ArrayList<ArrayList<UmlDiagramdrawing_Connection>> getConnections_solution(){
+		return this.connections_solution;
+	}
 	
 }
 
