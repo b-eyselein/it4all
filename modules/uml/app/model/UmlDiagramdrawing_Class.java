@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class UmlDiagramdrawing_Class {
 	public String name;
@@ -36,25 +37,25 @@ public class UmlDiagramdrawing_Class {
 	public void setAttributes(ArrayList<String> attributes){
 		this.attributes=attributes;
 	}
-	/*
+	
 	public String getMethodsAsString(){
-		String[] s = this.methods;
-		Arrays.sort(s);
 		String ret="";
-		for (int i = 0; i < s.length; i++) {
-			ret+=s[i]+"\n";
+		ArrayList<String> s = this.methods;
+		java.util.Collections.sort(s);
+		for (Iterator iterator = s.iterator(); iterator.hasNext();) {
+				ret += (String) iterator.next() +"\n";	
 		}
 		return ret;
 	}
 	
 	public String getAttributesAsString(){
-		String[] s = this.attributes;
-		Arrays.sort(s);
 		String ret="";
-		for (int i = 0; i < s.length; i++) {
-			ret+=s[i]+"\n";
+		ArrayList<String> s = this.attributes;
+		java.util.Collections.sort(s);
+		for (Iterator iterator = s.iterator(); iterator.hasNext();) {
+			ret += (String) iterator.next()+"\n";	
 		}
 		return ret;
 	}
-*/	
+
 }

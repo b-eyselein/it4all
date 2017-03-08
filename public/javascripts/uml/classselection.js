@@ -19,16 +19,16 @@
                     paper.on('cell:pointerclick',
     						//document.body.style.cursor = "copy"
                             function(cellView, evt, x, y) {
-    							//Klassen l�schen
+    							//Klassen l&ouml;schen
     							if(document.getElementById(5).value == "on"){
     									idList.push(cellView.model.id);
     									graph.getCell(idList[0]).remove();
     									idList=[];
-    							// Methoden hinzuf�gen
+    							// Methoden hinzuf&uuml;gen
     							}else if(document.getElementById(6).value == "on"){
     									idList=[];
     									idList.push(cellView.model.id);
-    									var input = window.prompt("Bitte geben sie die Methode an, welche hinzugf�gt werden soll");
+    									var input = window.prompt("Bitte geben sie die Methode an, welche hinzugf&uuml;gt werden soll");
     									var old = graph.getCell(idList[0]).attr('.uml-class-methods-text/text');
     									var arr = old.split("\n");
     									arr.push(input);
@@ -40,11 +40,11 @@
     									graph.getCell(idList[0]).attr('.uml-class-methods-text/text', text);
     									graph.getCell(idList[0]).attributes.methods.push(input);
     									idList=[];
-    									// Attribute hinzuf�gen		
+    									// Attribute hinzuf&uuml;gen		
     							}else if(document.getElementById(7).value == "on"){		
     									idList=[];
     									idList.push(cellView.model.id);
-    									var input = window.prompt("Bitte geben sie das Attribut an, welche hinzugf�gt werden soll");
+    									var input = window.prompt("Bitte geben sie das Attribut an, welche hinzugf&uuml;gt werden soll");
     									var old = graph.getCell(idList[0]).attr('.uml-class-attrs-text/text');
     									//console.log(graph.getCell(idList[0]).attributes);
     									//console.log(graph.getCell(idList[0]).attributes.methods);

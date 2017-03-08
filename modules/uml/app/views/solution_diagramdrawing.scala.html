@@ -7,36 +7,25 @@
 <div id="left">
  <table class="table">
   <tr>
-    <th colspan="5">Ihre Eingabe</th>
+    <th colspan="3">Ihre Eingabe</th>
   </tr>
   <tr>
-    <td>Beziehungstyp:</td>
-	<td >Start</td>
-	<td >Ziel</td>
-	<td >Start Multiziplität</td>
-	<td >Ziel Multiziplität</td>
+    <td>Klasse:</td>
+	<td >Methoden:</td>
+	<td >Attribute:</td>
   </tr>
-@for(j <- 0 to 4){
-@for(i <- 0 to ue.getConnectionsLength(ue.getListConnectionsTypeUser(j))-1){
-
+@for(i <- 0 to ue.getClassesLength(ue.getClasses_user())-1){
   <tr>
     <td>
-    @ue.getListConnectionsTypeUser(j).get(i).getType()
+    @ue.getClasses_user().get(i).getName()
 	</td>
 	<td>
-		@ue.getListConnectionsTypeUser(j).get(i).getStart()
+		@ue.getClasses_user().get(i).getMethodsAsString()
 	</td>
 	<td >
-    	@ue.getListConnectionsTypeUser(j).get(i).getTarget()
-	</td>
-	<td>
-		@ue.getListConnectionsTypeUser(j).get(i).getMulstart()
-	</td>
-	<td>
-		@ue.getListConnectionsTypeUser(j).get(i).getMultarget()
+    	@ue.getClasses_user().get(i).getAttributesAsString()
 	</td>
   </tr>
-	}
 }
 </div>
 </table>
@@ -45,44 +34,29 @@
 <div id="right">
  <table class="table">
   <tr>
-    <th colspan="5">Lösung</th>
+    <th colspan="3">Lösung</th>
   </tr>
   <tr>
-    <td>Beziehungstyp:</td>
-	<td >Start</td>
-	<td >Ziel</td>
-	<td >Start Multiziplität</td>
-	<td >Ziel Multiziplität</td>
+    <td>Klasse:</td>
+	<td >Methoden</td>
+	<td >Attribute</td>
   </tr>
-@for(j <- 0 to 4){
-@for(i <- 0 to ue.getConnectionsLength(ue.getListConnectionsTypeSolution(j))-1){
-
+@for(i <- 0 to ue.getClassesLength(ue.getClasses_solution())-1){
   <tr>
     <td>
-    @ue.getListConnectionsTypeSolution(j).get(i).getType()
+    @ue.getClasses_solution().get(i).getName()
 	</td>
 	<td>
-		@ue.getListConnectionsTypeSolution(j).get(i).getStart()
+	@ue.getClasses_solution().get(i).getMethodsAsString()
 	</td>
 	<td >
-    	@ue.getListConnectionsTypeSolution(j).get(i).getTarget()
-	</td>
-	<td>
-		@ue.getListConnectionsTypeSolution(j).get(i).getMulstart()
-	</td>
-	<td>
-		@ue.getListConnectionsTypeSolution(j).get(i).getMultarget()
+    @ue.getClasses_solution().get(i).getAttributesAsString()
 	</td>
   </tr>
-	}
 }
 </table>
 </div>
 </div>
-
-
-
-
 
 
 

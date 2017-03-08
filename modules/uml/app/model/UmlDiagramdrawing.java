@@ -55,7 +55,10 @@ public class UmlDiagramdrawing {
 		}
 		return classes;
 	}
-			
+	public int getClassesLength(ArrayList<UmlDiagramdrawing_Class> input){	
+		return input.size();
+	}
+	
 	public ArrayList<ArrayList<UmlDiagramdrawing_Connection>> convertConnectionsToObject(JsonNode mainNode){
 		ArrayList<ArrayList<UmlDiagramdrawing_Connection>> connections = new ArrayList<>();
 		JsonNode node_connectionType = mainNode.get("connections");
