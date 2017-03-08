@@ -2,9 +2,10 @@ function extractParameters(){
 	var json = "\{\"classes\":[";
 	var ids =[];
 	for(i=0; i<graph.getCells().length; i++){
+		console.log("graph.getcells-leng: "+graph.getCells().length);
 		if(graph.getCells()[i].attributes.type == "uml.Class"){
 				 ids.push(graph.getCells()[i]);
-				 console.log("name: "+ids[i].attributes.name +" posx: "+ids[i].attributes.position.x+" posy: "+ids[i].attributes.position.y);
+				 //console.log("name: "+ids[i].attributes.name +" posx: "+ids[i].attributes.position.x+" posy: "+ids[i].attributes.position.y);
 				 json+="{\"name\":\""+ids[i].attributes.name+"\",\"methods\":[";
 				 var methods=ids[i].attributes.methods;
 				 for(j=0; j<methods.length;j++){

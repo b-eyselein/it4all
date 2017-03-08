@@ -58,7 +58,7 @@ public class UML extends ExerciseController {
     Logger.debug("correct(): "+classes);
     if(classes == null || classes.isEmpty())return badRequest("Keine Daten übertragen!");;
     UmlClassselection ue = new UmlClassselection(classes);
-    return ok(views.html.overviewsolution.render(UserManagement.getCurrentUser(),ue));
+    return ok(views.html.solution_classselection.render(UserManagement.getCurrentUser(),ue));
   }
   
   public Result correctdiagramdrawinghelp() throws IOException {   
@@ -67,8 +67,17 @@ public class UML extends ExerciseController {
 	    Logger.debug("diagramdrawhinghelp(): "+json);
 	    if(json == null || json.isEmpty())return badRequest("Keine Daten übertragen!");;
 	    UmlDiagramdrawing ue =new UmlDiagramdrawing(json);
-	    return ok(views.html.umloverviewsolutionhelp.render(UserManagement.getCurrentUser(),ue));
+	    return ok(views.html.solution_diagramdrawinghelp.render(UserManagement.getCurrentUser(),ue));
   }
+  
+  public Result correctdiagramdrawing() throws IOException {   
+	    DynamicForm form = factory.form().bindFromRequest();
+	    String json = form.get("fname");
+	    Logger.debug("diagramdrawhinghelp(): "+json);
+	    if(json == null || json.isEmpty())return badRequest("Keine Daten übertragen!");;
+	    UmlDiagramdrawing ue =new UmlDiagramdrawing(json);
+	    return ok(views.html.solution_diagramdrawing.render(UserManagement.getCurrentUser(),ue));
+}
   
   
   @Override
@@ -78,7 +87,7 @@ public class UML extends ExerciseController {
   }
 
   public Result diagramDrawing(int exerciseId) {
-    return ok(views.html.diagramdrawing.render(UserManagement.getCurrentUser(), getExerciseText()));
+    return ok(views.html.diagramdrawing2.render(UserManagement.getCurrentUser(), getExerciseText()));
   }
 
   public Result diff(int exerciseId) {

@@ -7,7 +7,8 @@ POST   /correct                controllers.uml.UML.correct()
 PUT    /correctdiagramdrawinghelp                controllers.uml.UML.correctdiagramdrawinghelp()
 POST   /correctdiagramdrawinghelp               controllers.uml.UML.correctdiagramdrawinghelp()
 
-
+PUT    /correctdiagramdrawing               controllers.uml.UML.correctdiagramdrawing()
+POST   /correctdiagramdrawing              controllers.uml.UML.correctdiagramdrawing()
 
 GET    /:exId/classselection   controllers.uml.UML.classSelection(exId: Int)
 GET    /:exId/diagramdrawing   controllers.uml.UML.diagramDrawing(exId: Int)
