@@ -26,90 +26,62 @@
     									idList=[];
     							// Methoden hinzuf&uuml;gen
     							}else if(document.getElementById(6).value == "on"){
-    									idList=[];
-    									idList.push(cellView.model.id);
-    									var input = window.prompt("Bitte geben sie die Methode an, welche hinzugf&uuml;gt werden soll");
-    									var old = graph.getCell(idList[0]).attr('.uml-class-methods-text/text');
-    									var arr = old.split("\n");
-    									arr.push(input);
-    									var text = "";
-    									for (i = 0; i < arr.length-1; i++) { 
-    										text += arr[i] + "\n";
-    									}
-    									text += arr[arr.length-1];
-    									graph.getCell(idList[0]).attr('.uml-class-methods-text/text', text);
-    									graph.getCell(idList[0]).attributes.methods.push(input);
-    									idList=[];
+    								idList=[];
+									idList.push(cellView.model.id);
+									var input = window.prompt("Bitte geben sie die Methode an, welche hinzugf&uuml;gt werden soll");
+									graph.getCell(idList[0]).attributes.methods.push(input);
+									var met = graph.getCell(idList[0]).attributes.methods;
+									var text="";
+									for( val of met){
+										text+=val+"\n";
+									}
+									graph.getCell(idList[0]).attr('.uml-class-methods-text/text', text);
+									//console.log(graph.getCell(idList[0]).attributes.methods);
+									idList=[];		
     									// Attribute hinzuf&uuml;gen		
     							}else if(document.getElementById(7).value == "on"){		
-    									idList=[];
-    									idList.push(cellView.model.id);
-    									var input = window.prompt("Bitte geben sie das Attribut an, welche hinzugf&uuml;gt werden soll");
-    									var old = graph.getCell(idList[0]).attr('.uml-class-attrs-text/text');
-    									//console.log(graph.getCell(idList[0]).attributes);
-    									//console.log(graph.getCell(idList[0]).attributes.methods);
-    									//console.log(graph.getCell(idList[0]).attributes.attributes);
-    									//console.log(graph.getCell(idList[0]).attributes.name);
-    									var arr = old.split("\n");
-    									arr.push(input);
-    									var text = "";
-    									for (i = 0; i < arr.length-1; i++) { 
-    										text += arr[i] + "\n";
-    									}
-    									text += arr[arr.length-1];
-    									graph.getCell(idList[0]).attr('.uml-class-attrs-text/text', text);
-    									graph.getCell(idList[0]).attributes.attributes.push(input);
-    									idList=[];	
+    								idList=[];
+									idList.push(cellView.model.id);
+									var input = window.prompt("Bitte geben sie das Attribut an, welche hinzugfügt werden soll");
+									graph.getCell(idList[0]).attributes.attributes.push(input);
+									var met = graph.getCell(idList[0]).attributes.attributes;
+									var text="";
+									for( val of met){
+										text+=val+"\n";
+									}
+									graph.getCell(idList[0]).attr('.uml-class-attrs-text/text', text);
+									//console.log(graph.getCell(idList[0]).attributes.attributes);
+									idList=[];	
     							// Methoden entfernen		
     							}else if(document.getElementById(8).value == "on"){
-
-    									idList=[];
-    									idList.push(cellView.model.id);
-    									var input = window.prompt("Bitte geben sie die Methode an, welche entfernt werden soll");
-    									input= input-1;
-    									console.log("input: "+input);
-    									var old = graph.getCell(idList[0]).attr('.uml-class-methods-text/text');
-    									var arr = old.split("\n");
-    									console.log("Methoden: "+ old);
-    									if(-1 < input && input <= arr.length-1 ){
-    										arr.splice(input,1);
-    										var text = "";
-    										if(arr.length > 0){
-    											for (i = 0; i < arr.length-1; i++) { 
-    											text += arr[i] + "\n";
-    											}
-    											text += arr[arr.length-1];
-    										}
-    										graph.getCell(idList[0]).attr('.uml-class-methods-text/text', text);
-    										graph.getCell(idList[0]).attributes.methods.splice(input,1);
-    									}else{
-    										window.alert("Index ist zu gro� oder zu klein");	
-    									}
+           							idList=[];
+									idList.push(cellView.model.id);
+									var input = window.prompt("Bitte geben sie die Methode an, welches entfernt werden soll");
+									input-=1;
+									graph.getCell(idList[0]).attributes.methods.splice(input,1);
+									var met = graph.getCell(idList[0]).attributes.methods;
+									var text="";
+									for( val of met){
+										text+=val+"\n";
+									}
+									graph.getCell(idList[0]).attr('.uml-class-methods-text/text', text);
+									console.log(graph.getCell(idList[0]).attributes.methods);
+									idList=[];
     							// Attribute entfernen		
     							}else if(document.getElementById(9).value == "on"){
-    							idList=[];
-    									idList.push(cellView.model.id);
-    									var input = window.prompt("Bitte geben sie das Attribut an, welches entfernt werden soll");
-    									input= input-1;
-    									console.log("input: "+input);
-    									var old = graph.getCell(idList[0]).attr('.uml-class-attrs-text/text');
-    								
-    									var arr = old.split("\n");
-    									if(-1 < input & input <= arr.length-1 ){
-    										arr.splice(input,1);
-    										var text = "";
-    										if(arr.length > 0){
-    											for (i = 0; i < arr.length-1; i++) { 
-    												text += arr[i] + "\n";
-    											}
-    											text += arr[arr.length-1];
-    										}
-    										graph.getCell(idList[0]).attr('.uml-class-attrs-text/text', text);
-    										console.log(graph.getCell(idList[0]).attr('.uml-class-methods-text/text', text));
-    										graph.getCell(idList[0]).attributes.attributes.splice(input,1);
-    									}else{
-    										window.alert("Index ist zu gro� oder zu klein");	
-    									}
+        							idList=[];
+									idList.push(cellView.model.id);
+									var input = window.prompt("Bitte geben sie das Attribut an, welches entfernt werden soll");
+									input-=1;
+									graph.getCell(idList[0]).attributes.attributes.splice(input,1);
+									var met = graph.getCell(idList[0]).attributes.attributes;
+									var text="";
+									for( val of met){
+										text+=val+"\n";
+									}
+									graph.getCell(idList[0]).attr('.uml-class-attrs-text/text', text);
+									console.log(graph.getCell(idList[0]).attributes.attributes);
+									idList=[];
     							}else{
     								if (idList.length < 2) {
     									idList.push(cellView.model.id);
@@ -293,7 +265,10 @@ function addClass(data) {
                                 }
                             }
                         });
+						flug.attributes.attributes=[];
+						flug.attributes.methods=[];
                         graph.addCell(flug);
+                        
                     }
 /*
 function addClass(name,posx,posy,a1,a2,m1,m2) {

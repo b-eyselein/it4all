@@ -63,16 +63,28 @@ function extractParameters() {
   var cmethods = exercisetext.getElementsByClassName("bg-success");
   var cattributes = exercisetext.getElementsByClassName("bg-danger");
   var classes = [];
-  for(i = 0; i < cclasses.length; i++) {
-    classes.push(cclasses[i].innerText);
-  }
+  for(i = 0; i < cclasses.length; i++) {	  
+	  if( cclasses[i].getAttribute('data-baseform') != null){
+		  	classes.push(cclasses[i].getAttribute('data-baseform'));
+		}else{
+		    classes.push(cclasses[i].innerText);	
+		}
+	} 
   var methods = [];
   for(i = 0; i < cmethods.length; i++) {
-    methods.push(cmethods[i].innerText);
+	  if( cmethods[i].getAttribute('data-baseform') != null){
+		  	methods.push(cmethods[i].getAttribute('data-baseform'));
+		}else{
+			methods.push(cmethods[i].innerText);	
+		}
   }
   var attributes = [];
   for(i = 0; i < cattributes.length; i++) {
-    attributes.push(cattributes[i].innerText);
+	  if( cattributes[i].getAttribute('data-baseform') != null){
+		  attributes.push(cattributes[i].getAttribute('data-baseform'));
+		}else{
+			attributes.push(cattributes[i].innerText);	
+		}
   }
   console.log(classes);
   console.log(methods);
