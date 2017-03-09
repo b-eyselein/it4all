@@ -10,15 +10,13 @@
 <div id="left">
 <table class="table">
 <tr>
-	<th>Ihre Eingabe</th>
 	<th></th>
-	<th></th>
-	<th>Lösung</th>
+	<th>Werte</th>
+	<th colspan="2">Ihre Eingabe</th>
 </tr>
 @for(i <- 0 to ue.getClassesLength(ue.getClasses_user_c())-1){
   <tr>
- 	<td></td>
-    <td>@ue.getClasses_user_c().get(i).getName()</td>
+    <td colspan="2">@ue.getClasses_user_c().get(i).getName()</td>
     <td></td>
     <td></td>
   </tr>
@@ -41,32 +39,31 @@
 <div id="right">
 <table class="table">
 <tr>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td></td>
-	<td></td>
+	<th></th>
+	<th>Werte</th>
+	<th colspan="2">Lösung</th>
 </tr>
 @for(i <- 0 to ue.getClassesLength(ue.getClasses_solution_c())-1){
   <tr>
+    <td colspan="2">@ue.getClasses_solution_c().get(i).getName()</td>
     <td></td>
     <td></td>
   </tr>
   <tr>
+  	<td rowspan="2"></td>
     <td>Methoden:</td>
     <td>@ue.getClasses_solution_c().get(i).getMethodsAsString()</td>
+    <td></td>
   </tr>
   <tr>
     <td>Attribute:</td>
     <td>@ue.getClasses_solution_c().get(i).getAttributesAsString()</td>
+    <td></td>
+    <td></td>
   </tr>
 }    
 </table>
 </div>
-
-
-_____________________________________________________________________________________________
 
 <div id="left">
  <table class="table">
@@ -119,10 +116,6 @@ ________________________________________________________________________________
 }
 </table>
 </div>
-
-
-_____________________________________________________________________________________________
-
 
 
 <h2>Übersicht der Beziehungen zwischen den Klassen</h2>
@@ -217,6 +210,8 @@ float: left;
 width: 50%;
 float: right;
 }
+td{ height:10}
+table{ height:0.22*window.screen.availHeight}
 </style>
 
 }
