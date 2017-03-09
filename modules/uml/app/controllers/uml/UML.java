@@ -52,7 +52,7 @@ public class UML extends ExerciseController {
     return ok(views.html.classselection.render(UserManagement.getCurrentUser()));
   }
 
-  public Result correct() {   
+  public Result correctclassselection() {   
     DynamicForm form = factory.form().bindFromRequest();
     String classes = form.get("fname");
     Logger.debug("correct(): "+classes);
@@ -87,7 +87,7 @@ public class UML extends ExerciseController {
   }
 
   public Result diagramDrawing(int exerciseId) {
-    return ok(views.html.diagramdrawing2.render(UserManagement.getCurrentUser(), getExerciseText()));
+    return ok(views.html.diagramdrawing.render(UserManagement.getCurrentUser(), getExerciseText()));
   }
 
   public Result diff(int exerciseId) {

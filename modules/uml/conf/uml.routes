@@ -1,8 +1,8 @@
 GET    /                       controllers.uml.UML.index()
 
-GET    /correct                controllers.uml.UML.correct()
-PUT    /correct                controllers.uml.UML.correct()
-POST   /correct                controllers.uml.UML.correct()
+GET    /correct                controllers.uml.UML.correctclassselection()
+PUT    /correct                controllers.uml.UML.correctclassselection()
+POST   /correct                controllers.uml.UML.correctclassselection()
 
 PUT    /correctdiagramdrawinghelp                controllers.uml.UML.correctdiagramdrawinghelp()
 POST   /correctdiagramdrawinghelp               controllers.uml.UML.correctdiagramdrawinghelp()
