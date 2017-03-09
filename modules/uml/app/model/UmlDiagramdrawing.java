@@ -12,8 +12,9 @@ import play.libs.Json;
 public class UmlDiagramdrawing {
 	private String title;	
 	ArrayList<UmlDiagramdrawing_Class> classes_user;
+	ArrayList<UmlDiagramdrawing_Class> classes_user_c;
+	ArrayList<UmlDiagramdrawing_Class> classes_solution_c;
 	ArrayList<UmlDiagramdrawing_Class> classes_solution;
-	ArrayList<String> classes_correction;
 	ArrayList<ArrayList<UmlDiagramdrawing_Connection>> connections_user;
 	ArrayList<ArrayList<UmlDiagramdrawing_Connection>> connections_solution;
 	
@@ -35,6 +36,7 @@ public class UmlDiagramdrawing {
 			UmlDiagramdrawing_Connection ue = (UmlDiagramdrawing_Connection) iterator.next();
 			Logger.debug(ue.getType()+" "+ue.getStart()+" "+ue.getTarget());
 		}
+		makeSameClassesList(this.classes_user,this.classes_solution);
 	}
 	
 	public ArrayList<UmlDiagramdrawing_Class> convertClassesToObject(JsonNode mainNode){
@@ -105,9 +107,17 @@ public class UmlDiagramdrawing {
 		return this.classes_user;
 	}
 	
+	public ArrayList<UmlDiagramdrawing_Class> getClasses_user_c(){
+		return this.classes_user_c;
+	}
+	
 	public ArrayList<UmlDiagramdrawing_Class> getClasses_solution(){
 		return this.classes_solution;
 	}
+	
+	public ArrayList<UmlDiagramdrawing_Class> getClasses_solution_c(){
+		return this.classes_solution_c;
+	}	
 	
 	public ArrayList<ArrayList<UmlDiagramdrawing_Connection>> getConnections_user(){
 		return this.connections_user;
@@ -125,21 +135,41 @@ public class UmlDiagramdrawing {
 		return title;
 	}
 	  
-	public void getCorrectClassNames(ArrayList<UmlDiagramdrawing_Class> classes_user,ArrayList<UmlDiagramdrawing_Class> classes_solution){
-		ArrayList<String> correction = new ArrayList<>();
+	public void makeSameClassesList(ArrayList<UmlDiagramdrawing_Class> classes_user,ArrayList<UmlDiagramdrawing_Class> classes_solution){
+		ArrayList<UmlDiagramdrawing_Class> classes_user_c = new ArrayList<>();
+		ArrayList<UmlDiagramdrawing_Class> classes_solution_c = new ArrayList<>();
 		for (Iterator iterator = classes_user.iterator(); iterator.hasNext();) {
 			UmlDiagramdrawing_Class ue_user = (UmlDiagramdrawing_Class) iterator.next();
 			for (Iterator iterator2 = classes_solution.iterator(); iterator2.hasNext();) {
 				UmlDiagramdrawing_Class ue_solution = (UmlDiagramdrawing_Class) iterator2.next();
 				if(ue_user.getName().equals(ue_solution.getName())){
-					correction.add(ue_user.getName());
+					classes_user_c.add(ue_user);
+					classes_solution_c.add(ue_solution);
+					iterator.remove();
+					iterator2.remove();
 				}
 			}
 		}
-		this.classes_correction= correction;
+		this.classes_user_c= classes_user_c;
+		this.classes_solution_c = classes_solution_c;
 	}
 	
-	
+	/*
+	public int getIndexInSolutionListforName(String classname_user){
+		int i =0;
+		ArrayList<UmlDiagramdrawing_Class> list = new ArrayList<>();	
+		list=classes_solution;
+		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+			UmlDiagramdrawing_Class ue = (UmlDiagramdrawing_Class) iterator.next();
+			if(ue.getName().equals(classname_user)){
+				return i;
+			}else{
+				i++;
+			}
+		}
+		return -i;
+	}
+	*/
 	
 }
 
