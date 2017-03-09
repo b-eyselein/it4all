@@ -26,11 +26,6 @@ function processCorrection(correction) {
   }
 }
 
-var requiredClasses = ["Fotosystem", "Kameragehäuse", "Profigehäuse", "Amateurgehäuse", "Linse", "Telekonverter",
-    "Objektiv", "Festbrennweitenobjektiv", "Zoomobjektiv", "Profiblitz", "Amateurblitz", "Sonnenblende"];
-var optionalClasses = ["Blitz"];
-var requiredMethods = ["Canikuji"];
-var requiredAttributes = ["green"];
 var classes = new Array();
 var methods = new Array();
 var attributes = new Array();

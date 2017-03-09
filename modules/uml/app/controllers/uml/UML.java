@@ -55,7 +55,6 @@ public class UML extends ExerciseController {
   public Result correctclassselection() {   
     DynamicForm form = factory.form().bindFromRequest();
     String classes = form.get("fname");
-    Logger.debug("correct(): "+classes);
     if(classes == null || classes.isEmpty())return badRequest("Keine Daten übertragen!");;
     UmlClassselection ue = new UmlClassselection(classes);
     return ok(views.html.solution_classselection.render(UserManagement.getCurrentUser(),ue));
