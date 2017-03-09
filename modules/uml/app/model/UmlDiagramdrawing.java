@@ -13,8 +13,10 @@ public class UmlDiagramdrawing {
 	private String title;	
 	ArrayList<UmlDiagramdrawing_Class> classes_user;
 	ArrayList<UmlDiagramdrawing_Class> classes_solution;
+	ArrayList<String> classes_correction;
 	ArrayList<ArrayList<UmlDiagramdrawing_Connection>> connections_user;
 	ArrayList<ArrayList<UmlDiagramdrawing_Connection>> connections_solution;
+	
 	
 	public UmlDiagramdrawing(String input){
 		setTitleExcercise("Foto");
@@ -123,6 +125,21 @@ public class UmlDiagramdrawing {
 		return title;
 	}
 	  
+	public void getCorrectClassNames(ArrayList<UmlDiagramdrawing_Class> classes_user,ArrayList<UmlDiagramdrawing_Class> classes_solution){
+		ArrayList<String> correction = new ArrayList<>();
+		for (Iterator iterator = classes_user.iterator(); iterator.hasNext();) {
+			UmlDiagramdrawing_Class ue_user = (UmlDiagramdrawing_Class) iterator.next();
+			for (Iterator iterator2 = classes_solution.iterator(); iterator2.hasNext();) {
+				UmlDiagramdrawing_Class ue_solution = (UmlDiagramdrawing_Class) iterator2.next();
+				if(ue_user.getName().equals(ue_solution.getName())){
+					correction.add(ue_user.getName());
+				}
+			}
+		}
+		this.classes_correction= correction;
+	}
+	
+	
 	
 }
 

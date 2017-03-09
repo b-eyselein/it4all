@@ -57,5 +57,6 @@ public class UmlDiagramdrawing_Class {
 		}
 		return ret;
 	}
-
+	
 }
+
