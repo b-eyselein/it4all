@@ -153,6 +153,10 @@ public class UmlDiagramdrawing {
 		this.classes_user_c= classes_user_c;
 		this.classes_solution_c = classes_solution_c;
 	}
+		
+	public int getMaxLength(){
+		return Math.max(getClassesLength(getClasses_user())-1,getClassesLength(getClasses_solution())-1);
+	}
 	
 	/*
 	public int getIndexInSolutionListforName(String classname_user){
