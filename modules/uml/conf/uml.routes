@@ -1,16 +1,16 @@
-GET    /                       controllers.uml.UML.index()
+GET    /                            controllers.uml.UML.index()
 
-GET    /correct                controllers.uml.UML.correctclassselection()
-PUT    /correct                controllers.uml.UML.correctclassselection()
-POST   /correct                controllers.uml.UML.correctclassselection()
+GET    /correct                     controllers.uml.UML.correctclassselection()
+PUT    /correct                     controllers.uml.UML.correctclassselection()
+POST   /correct                     controllers.uml.UML.correctclassselection()
 
-PUT    /correctdiagramdrawinghelp                controllers.uml.UML.correctdiagramdrawinghelp()
-POST   /correctdiagramdrawinghelp               controllers.uml.UML.correctdiagramdrawinghelp()
+PUT    /correctdiagramdrawinghelp   controllers.uml.UML.correctdiagramdrawinghelp()
+POST   /correctdiagramdrawinghelp   controllers.uml.UML.correctdiagramdrawinghelp()
 
-PUT    /correctdiagramdrawing               controllers.uml.UML.correctdiagramdrawing()
-POST   /correctdiagramdrawing              controllers.uml.UML.correctdiagramdrawing()
+PUT    /correctdiagramdrawing       controllers.uml.UML.correctdiagramdrawing()
+POST   /correctdiagramdrawing       controllers.uml.UML.correctdiagramdrawing()
 
-GET    /:exId/classselection   controllers.uml.UML.classSelection(exId: Int)
-GET    /:exId/diagramdrawing   controllers.uml.UML.diagramDrawing(exId: Int)
-GET    /:exId/diagramdrawinghelp   controllers.uml.UML.diagramDrawingHelp(exId: Int)
-GET    /:id/difficulty         controllers.uml.UML.diff(id: Int)
+GET    /:exId/classselection        controllers.uml.UML.classSelection(exId: Int)
+GET    /:exId/diagramdrawing        controllers.uml.UML.diagramDrawing(exId: Int)
+GET    /:exId/diagramdrawinghelp    controllers.uml.UML.diagramDrawingHelp(exId: Int)
+GET    /:id/difficulty              controllers.uml.UML.diff(id: Int)
