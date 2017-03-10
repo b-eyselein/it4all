@@ -1,13 +1,16 @@
 package controllers.uml;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import javax.inject.Inject;
+import com.github.fge.jsonschema.main.JsonValidator;
 import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
+import model.JValidator;
 import model.UmlClassselection;
 import model.UmlDiagramdrawing;
 import model.UmlExercise;
@@ -40,14 +43,16 @@ public class UML extends ExerciseController {
     }
   }
 
-  private static String getSchema_Classselection() {
-	    try {
-	      Path file = Paths.get("modules/uml/conf/schema_classselection.json");
-	      Logger.debug("classselectionSchema"+String.join("\n", Files.readAllLines(file)));
-	      return String.join("\n", Files.readAllLines(file));
-	    } catch (IOException e) {
-	      return "TODO!";
-	    }
+  public static File getSchema_Classselection() {
+	      Path path = Paths.get("modules/uml/conf/schema_classselection.json");
+	      File file = new File(path.toAbsolutePath().toString());
+	      return file;
+	  }
+  
+  private static File getSchema_Diagramdrawing() {
+	      Path path = Paths.get("modules/uml/conf/schema_diagrammdrawing.json");
+	      File file = new File(path.toAbsolutePath().toString());
+	      return file;
 	  }
   
   public Result classSelection(int exerciseId) {
@@ -59,47 +64,40 @@ public class UML extends ExerciseController {
     // TODO Auto-generated method stub
     return null;
   }
-
+  
+  public Result correctdiagramdrawing() throws IOException {
+	    DynamicForm form = factory.form().bindFromRequest();
+	    String json = form.get("fname");
+	    Logger.debug("diagramdrawhinghelp(): " + json);
+	    if(json == null || json.isEmpty())
+	      return badRequest("Keine Daten übertragen!");
+	    JValidator jv = new JValidator();
+	    try{
+	    	if(!jv.validateJson(getSchema_Diagramdrawing(), new File(json))){
+		    	return badRequest("Die gesendeten Daten sind fehlerhaft!");
+	    	}
+	    }catch(com.github.fge.jsonschema.core.exceptions.ProcessingException e) {
+	        return badRequest("Die gesendeten Daten sind fehlerhaft!");
+	    }
+	    UmlDiagramdrawing ue = new UmlDiagramdrawing(json);
+	    return ok(views.html.solution_diagramdrawing.render(UserManagement.getCurrentUser(), ue));
+  }
+	        
   public Result correctclassselection() {
     DynamicForm form = factory.form().bindFromRequest();
     String classes = form.get("fname");
     if(classes == null || classes.isEmpty())
       return badRequest("Keine Daten übertragen!");
-    ;
     UmlClassselection ue = new UmlClassselection(classes);
     return ok(views.html.solution_classselection.render(UserManagement.getCurrentUser(), ue));
   }
-<<<<<<< HEAD
-  
+
   public Result correctdiagramdrawinghelp() throws IOException {   
 	    DynamicForm form = factory.form().bindFromRequest();
 	    String json = form.get("fname");
 	    if(json == null || json.isEmpty())return badRequest("Keine Daten übertragen!");;
 	    UmlDiagramdrawing ue =new UmlDiagramdrawing(json);
 	    return ok(views.html.solution_diagramdrawinghelp.render(UserManagement.getCurrentUser(),ue));
-=======
-
-  public Result correctdiagramdrawing() throws IOException {
-    DynamicForm form = factory.form().bindFromRequest();
-    String json = form.get("fname");
-    Logger.debug("diagramdrawhinghelp(): " + json);
-    if(json == null || json.isEmpty())
-      return badRequest("Keine Daten übertragen!");
-
-    UmlDiagramdrawing ue = new UmlDiagramdrawing(json);
-    return ok(views.html.solution_diagramdrawing.render(UserManagement.getCurrentUser(), ue));
->>>>>>> 26a30aabb8a4319960906687d28a354cd426e3ad
-  }
-
-  public Result correctdiagramdrawinghelp() throws IOException {
-    DynamicForm form = factory.form().bindFromRequest();
-    String json = form.get("fname");
-    Logger.debug("diagramdrawhinghelp(): " + json);
-    if(json == null || json.isEmpty())
-      return badRequest("Keine Daten übertragen!");
-    
-    UmlDiagramdrawing ue = new UmlDiagramdrawing(json);
-    return ok(views.html.solution_diagramdrawinghelp.render(UserManagement.getCurrentUser(), ue));
   }
 
   public Result diagramDrawing(int exerciseId) {

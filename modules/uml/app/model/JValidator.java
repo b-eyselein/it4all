@@ -6,7 +6,7 @@ import java.io.IOException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 
-public class JsonValidator {
+public class JValidator {
 
   public static String correctExercise(File jsonFile, int exerciseId) throws ProcessingException, IOException {
     File schemaFile = searchSchemaToExercise(jsonFile, exerciseId);
