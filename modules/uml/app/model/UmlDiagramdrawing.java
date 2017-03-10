@@ -29,10 +29,10 @@ public class UmlDiagramdrawing {
 		this.classes_solution = convertClassesToObject(node_c);
 		this.connections_user = convertConnectionsToObject(node);
 		this.connections_solution = convertConnectionsToObject(node_c);
-		ArrayList<UmlDiagramdrawing_Connection> asdf = new ArrayList<>();
+		ArrayList<UmlDiagramdrawing_Connection> list_c = new ArrayList<>();
 		Logger.debug(""+this.classes_solution.size());
-		asdf = getListConnectionsTypeSolution(4);
-		for (Iterator iterator = asdf.iterator(); iterator.hasNext();) {
+		list_c = getListConnectionsTypeSolution(4);
+		for (Iterator iterator = list_c.iterator(); iterator.hasNext();) {
 			UmlDiagramdrawing_Connection ue = (UmlDiagramdrawing_Connection) iterator.next();
 			Logger.debug(ue.getType()+" "+ue.getStart()+" "+ue.getTarget());
 		}

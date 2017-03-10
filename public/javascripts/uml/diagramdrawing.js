@@ -28,29 +28,33 @@
     							}else if(document.getElementById(6).value == "on"){
     								idList=[];
 									idList.push(cellView.model.id);
-									var input = window.prompt("Bitte geben sie die Methode an, welche hinzugf&uuml;gt werden soll");
-									graph.getCell(idList[0]).attributes.methods.push(input);
-									var met = graph.getCell(idList[0]).attributes.methods;
-									var text="";
-									for( val of met){
-										text+=val+"\n";
+									var input = window.prompt("Bitte geben sie die Methode an, welche hinzugefügt werden soll");
+									if(input != null){
+										graph.getCell(idList[0]).attributes.methods.push(input);
+										var met = graph.getCell(idList[0]).attributes.methods;
+										var text="";
+										for( val of met){
+											text+=val+"\n";
+										}
+										graph.getCell(idList[0]).attr('.uml-class-methods-text/text', text);
+										//console.log(graph.getCell(idList[0]).attributes.methods);		
 									}
-									graph.getCell(idList[0]).attr('.uml-class-methods-text/text', text);
-									//console.log(graph.getCell(idList[0]).attributes.methods);
 									idList=[];		
     									// Attribute hinzuf&uuml;gen		
     							}else if(document.getElementById(7).value == "on"){		
     								idList=[];
 									idList.push(cellView.model.id);
 									var input = window.prompt("Bitte geben sie das Attribut an, welche hinzugfügt werden soll");
-									graph.getCell(idList[0]).attributes.attributes.push(input);
-									var met = graph.getCell(idList[0]).attributes.attributes;
-									var text="";
-									for( val of met){
-										text+=val+"\n";
+									if(input != null){
+										graph.getCell(idList[0]).attributes.attributes.push(input);
+										var met = graph.getCell(idList[0]).attributes.attributes;
+										var text="";
+										for( val of met){
+											text+=val+"\n";
+										}
+										graph.getCell(idList[0]).attr('.uml-class-attrs-text/text', text);
+										//console.log(graph.getCell(idList[0]).attributes.attributes);
 									}
-									graph.getCell(idList[0]).attr('.uml-class-attrs-text/text', text);
-									//console.log(graph.getCell(idList[0]).attributes.attributes);
 									idList=[];	
     							// Methoden entfernen		
     							}else if(document.getElementById(8).value == "on"){

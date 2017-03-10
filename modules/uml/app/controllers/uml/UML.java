@@ -40,7 +40,7 @@ public class UML extends ExerciseController {
   private static String getExerciseText() {
     try {
       Path file = Paths.get("modules/uml/conf/exerciseText.txt");
-      Logger.debug(file.toAbsolutePath().toString());
+      //Logger.debug(file.toAbsolutePath().toString());
       return String.join("\n", Files.readAllLines(file));
 
     } catch (IOException e) {
@@ -48,6 +48,16 @@ public class UML extends ExerciseController {
     }
   }
 
+  private static String getSchema_Classselection() {
+	    try {
+	      Path file = Paths.get("modules/uml/conf/schema_classselection.json");
+	      Logger.debug("classselectionSchema"+String.join("\n", Files.readAllLines(file)));
+	      return String.join("\n", Files.readAllLines(file));
+	    } catch (IOException e) {
+	      return "TODO!";
+	    }
+	  }
+  
   public Result classSelection(int exerciseId) {
     return ok(views.html.classselection.render(UserManagement.getCurrentUser()));
   }
@@ -63,7 +73,6 @@ public class UML extends ExerciseController {
   public Result correctdiagramdrawinghelp() throws IOException {   
 	    DynamicForm form = factory.form().bindFromRequest();
 	    String json = form.get("fname");
-	    Logger.debug("diagramdrawhinghelp(): "+json);
 	    if(json == null || json.isEmpty())return badRequest("Keine Daten übertragen!");;
 	    UmlDiagramdrawing ue =new UmlDiagramdrawing(json);
 	    return ok(views.html.solution_diagramdrawinghelp.render(UserManagement.getCurrentUser(),ue));
