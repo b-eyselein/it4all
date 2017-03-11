@@ -1,206 +1,163 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.fasterxml.jackson.databind.JsonNode;
+
 import play.libs.Json;
 
 public class UmlClassselection {
   
+  private static final String MUSTER_SOLUTION = "{\"classes\":[\"Telekonverter\",\"Profigehäuse\",\"Kameragehäuse\",\"Amateurgehäuse\",\"Profiblitz\","
+      + "\"Objektiv\",\"Amateurblitz\",\"Sonnenblende\",\"Zoomobjektiv\",\"Festweitenobjektiv\"],"
+      + "\"methods\":[\"Hersteller\",\"Fotosystems\"]," + "\"attributes\":[\"Ikonograf\",\"Webseite\"]}";
+  
   private String title;
-  private ArrayList<String> classes_c;
-  private ArrayList<String> classes_f;
-  private ArrayList<String> classes_m;
-  private ArrayList<String> methods_c;
-  private ArrayList<String> methods_f;
-  private ArrayList<String> methods_m;
-  private ArrayList<String> attributes_c;
-  private ArrayList<String> attributes_f;
-  private ArrayList<String> attributes_m;
+  
+  // c == Correct, f == False, m == Missing
+  
+  private List<String> correctClasses;
+  private List<String> falseClasses;
+  private List<String> missingClasses;
+  
+  private List<String> correctMethods;
+  private List<String> wrongMethods;
+  private List<String> missingMethods;
+  
+  private List<String> correctAttributes;
+  private List<String> wrongAttributes;
+  private List<String> missingAttributes;
   
   public UmlClassselection(String input) {
     setTitleExcercise("Foto");
-    JsonNode node = Json.parse(input);
-    JsonNode node_c = Json.parse(
-        "{\"classes\":[\"Telekonverter\",\"Profigehäuse\",\"Kameragehäuse\",\"Amateurgehäuse\",\"Profiblitz\",\"Objektiv\",\"Amateurblitz\",\"Sonnenblende\",\"Zoomobjektiv\",\"Festweitenobjektiv\"],\"methods\":[\"Hersteller\",\"Fotosystems\"],\"attributes\":[\"Ikonograf\",\"Webseite\"]}");
-
+    
     // Init
-    String[] arr_classes = node.get("classes").toString().substring(1, node.get("classes").toString().length() - 1)
-        .split(",");
-    String[] arr_methods = node.get("methods").toString().substring(1, node.get("methods").toString().length() - 1)
-        .split(",");
-    String[] arr_attributes = node.get("attributes").toString()
-        .substring(1, node.get("attributes").toString().length() - 1).split(",");
-    String[] arr_classes_c = node_c.get("classes").toString()
-        .substring(1, node_c.get("classes").toString().length() - 1).split(",");
-    String[] arr_methods_c = node_c.get("methods").toString()
-        .substring(1, node_c.get("methods").toString().length() - 1).split(",");
-    String[] arr_attributes_c = node_c.get("attributes").toString()
-        .substring(1, node_c.get("attributes").toString().length() - 1).split(",");
-
-    // correct
-    ArrayList<String> al_classes = new ArrayList<>(Arrays.asList(arr_classes));
-    ArrayList<String> al_classes_c = new ArrayList<>(Arrays.asList(arr_classes_c));
-    ArrayList<String> classes_c = new ArrayList<>();
-
-    for(String object: al_classes) {
-      if(al_classes_c.contains(object)) {
-        classes_c.add(object);
+    JsonNode userJSON = Json.parse(input);
+    List<String> userClasses = parseJSONArray(userJSON.get("classes"));
+    List<String> userMethods = parseJSONArray(userJSON.get("methods"));
+    List<String> userAttributes = parseJSONArray(userJSON.get("attributes"));
+    
+    JsonNode solutionJSON = Json.parse(MUSTER_SOLUTION);
+    List<String> solutionClasses = parseJSONArray(solutionJSON.get("classes"));
+    List<String> solutionMethods = parseJSONArray(solutionJSON.get("methods"));
+    List<String> solutionAttributes = parseJSONArray(solutionJSON.get("attributes"));
+    
+    // correct ==> Unification of two lists...
+    correctClasses = unifyLists(userClasses, solutionClasses);
+    correctMethods = unifyLists(userMethods, solutionMethods);
+    correctAttributes = unifyLists(userAttributes, solutionAttributes);
+    
+    falseClasses = new LinkedList<>();
+    for(String object: userClasses) {
+      if(!solutionClasses.contains(object)) {
+        falseClasses.add(object);
       }
     }
-
-    this.classes_c = classes_c;
-    ArrayList<String> al_methods = new ArrayList<String>(Arrays.asList(arr_methods));
-    ArrayList<String> al_methods_c = new ArrayList<String>(Arrays.asList(arr_methods_c));
-    ArrayList<String> methods_c = new ArrayList<>();
-    for(String object: al_methods) {
-      if(al_methods_c.contains(object)) {
-        methods_c.add(object);
+    
+    wrongMethods = new LinkedList<>();
+    for(String object: userMethods) {
+      if(!solutionMethods.contains(object)) {
+        wrongMethods.add(object);
       }
     }
-    this.methods_c = methods_c;
-    ArrayList<String> al_attributes = new ArrayList<String>(Arrays.asList(arr_attributes));
-    ArrayList<String> al_attributes_c = new ArrayList<String>(Arrays.asList(arr_attributes_c));
-    ArrayList<String> attributes_c = new ArrayList<>();
-    for(String object: al_attributes) {
-      if(al_attributes_c.contains(object)) {
-        attributes_c.add(object);
+    
+    wrongAttributes = new LinkedList<>();
+    for(String object: userAttributes) {
+      if(!solutionAttributes.contains(object)) {
+        wrongAttributes.add(object);
       }
     }
-    this.attributes_c = attributes_c;
-    ArrayList<String> classes_f = new ArrayList<>();
-    for(String object: al_classes) {
-      if(!al_classes_c.contains(object)) {
-        classes_f.add(object);
-      }
-      this.classes_f = classes_f;
-    }
-    ArrayList<String> methods_f = new ArrayList<>();
-    for(String object: al_methods) {
-      if(!al_methods_c.contains(object)) {
-        methods_f.add(object);
-      }
-      this.methods_f = methods_f;
-    }
-    ArrayList<String> attributes_f = new ArrayList<>();
-    for(String object: al_attributes) {
-      if(!al_attributes_c.contains(object)) {
-        attributes_f.add(object);
-      }
-    }
-    this.attributes_f = attributes_f;
+    
     // missing
-    ArrayList<String> classes_m = new ArrayList<>();
-    for(String object: al_classes_c) {
-      if(!al_classes.contains(object)) {
-        classes_m.add(object);
+    missingClasses = new LinkedList<>();
+    for(String object: solutionClasses) {
+      if(!userClasses.contains(object)) {
+        missingClasses.add(object);
       }
     }
-    this.classes_m = classes_m;
-    ArrayList<String> methods_m = new ArrayList<>();
-    for(String object: al_methods_c) {
-      if(!al_methods.contains(object)) {
-        methods_m.add(object);
+    
+    missingMethods = new LinkedList<>();
+    for(String object: solutionMethods) {
+      if(!userMethods.contains(object)) {
+        missingMethods.add(object);
       }
     }
-    this.methods_m = methods_m;
-    ArrayList<String> attributes_m = new ArrayList<>();
-    for(String object: al_attributes_c) {
-      if(!al_attributes.contains(object)) {
-        attributes_m.add(object);
+    
+    missingAttributes = new LinkedList<>();
+    for(String object: solutionAttributes) {
+      if(!userAttributes.contains(object)) {
+        missingAttributes.add(object);
       }
     }
-    this.attributes_m = attributes_m;
   }
   
-  public String getAttributes_c() {
-    String ret = "";
-    Iterator<String> it = this.attributes_c.listIterator(0);
-    while(it.hasNext()) {
-      ret += it.next() + "\n";
-    }
+  public static String toHtmlList(List<String> contents) {
+    if(contents.isEmpty())
+      return "<ul><li>--</li></ul>";
+    
+    return contents.stream().map(c -> "<li>" + c + "</li>").collect(Collectors.joining("", "<ul>", "</ul>"));
+  }
+  
+  private static List<String> unifyLists(List<String> listOne, List<String> listTwo) {
+    List<String> ret = new LinkedList<>();
+    
+    for(String contentOne: listOne)
+      if(listTwo.contains(contentOne))
+        ret.add(contentOne);
+      
     return ret;
   }
   
-  public String getAttributes_f() {
-    String ret = "";
-    Iterator<String> it = this.attributes_f.listIterator(0);
-    while(it.hasNext()) {
-      ret += it.next() + "\n";
-    }
-    return ret;
+  public String getCorrectAttributes() {
+    return toHtmlList(correctAttributes);
   }
   
-  public String getAttributes_m() {
-    String ret = "";
-    Iterator<String> it = this.attributes_m.listIterator(0);
-    while(it.hasNext()) {
-      ret += it.next() + "\n";
-    }
-    return ret;
+  public String getCorrectClasses() {
+    return toHtmlList(correctClasses);
   }
   
-  public String getClasses_c() {
-    String ret = "";
-    Iterator<String> it = this.classes_c.listIterator(0);
-    while(it.hasNext()) {
-      ret += it.next() + "\n";
-    }
-    return ret;
+  public String getCorrectMethods() {
+    return toHtmlList(correctMethods);
   }
   
-  public String getClasses_f() {
-    String ret = "";
-    Iterator<String> it = this.classes_f.listIterator(0);
-    while(it.hasNext()) {
-      ret += it.next() + "\n";
-    }
-    return ret;
+  public String getMissingAttributes() {
+    return toHtmlList(missingAttributes);
   }
   
-  public String getClasses_m() {
-    String ret = "";
-    Iterator<String> it = this.classes_m.listIterator(0);
-    while(it.hasNext()) {
-      ret += it.next() + "\n";
-    }
-    return ret;
+  public String getMissingClasses() {
+    return toHtmlList(missingClasses);
   }
   
-  public String getMethods_c() {
-    String ret = "";
-    Iterator<String> it = this.methods_c.listIterator(0);
-    while(it.hasNext()) {
-      ret += it.next() + "\n";
-    }
-    return ret;
-  }
-  
-  public String getMethods_f() {
-    String ret = "";
-    Iterator<String> it = this.methods_f.listIterator(0);
-    while(it.hasNext()) {
-      ret += it.next() + "\n";
-    }
-    return ret;
-  }
-  
-  public String getMethods_m() {
-    String ret = "";
-    Iterator<String> it = this.methods_m.listIterator(0);
-    while(it.hasNext()) {
-      ret += it.next() + "\n";
-    }
-    return ret;
+  public String getMissingMethods() {
+    return toHtmlList(missingMethods);
   }
   
   public String getTitleExercise() {
     return title;
   }
   
-  public void setTitleExcercise(String title) {
-    this.title = title;
+  public String getWrongAttributes() {
+    return toHtmlList(wrongAttributes);
+  }
+  
+  public String getWrongClasses() {
+    return toHtmlList(falseClasses);
+  }
+  
+  public String getWrongMethods() {
+    return toHtmlList(wrongMethods);
+  }
+  
+  private List<String> parseJSONArray(JsonNode jsonArrayNode) {
+    List<String> ret = new LinkedList<>();
+    jsonArrayNode.forEach(el -> ret.add(el.asText()));
+    return ret;
+  }
+  
+  public void setTitleExcercise(String theTitle) {
+    title = theTitle;
   }
   
 }

@@ -5,13 +5,18 @@
   <div class="page-header">
     <h1 class="page-title">&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h1>
   </div>
+  <div class="alert alert-info">Neueinsteiger sollten die Variante mit Zwischenkorrektur verwenden, die die einzelnen Schritte der Erstellung eines Klassendiagrammes nach und nach durcharbeitet.</div>
   @for(exercise <- exercises) {
   <div class="panel panel-default">
-    <div class="panel-heading">
-      <a href=" @controllers.uml.routes.UML.diff(exercise.id)">Aufgabe @exercise.id: @exercise.title</a>
-    </div>
+    <div class="panel-heading">Aufgabe @exercise.id: @exercise.title</div>
     <div class="panel-body">
-      <p>@exercise.text</p>
+      <p>@if(exercise.text == null || exercise.text.isEmpty()) {TODO: Text der Aufgabe...} else {@exercise.text}</p>
+    </div>
+    <div class="panel-footer">
+      <div class="btn-group btn-group-justified">
+        <a href="@controllers.uml.routes.UML.classSelection(exercise.id)" class="btn btn-primary">Mit Zwischenkorrektur</a>
+        <a href="@controllers.uml.routes.UML.diagramDrawing(exercise.id)" class="btn btn-default">Freies Erstellen</a>
+      </div>
     </div>
   </div>
   }

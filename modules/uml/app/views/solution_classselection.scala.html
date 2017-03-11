@@ -1,60 +1,66 @@
 @(user: model.user.User, ue: model.UmlClassselection)
 
 @main("UML", user) {
-<div class="container-fluid" align="center">
-<h1> Korrektur der Aufgabe @ue.getTitleExercise()</h1>
-<table class="table">
-  <tr>
-    <th colspan="3">Klassen</th>
-	<th colspan="3">Methoden</th>
-	<th colspan="3">Attribute</th>
-  </tr>
-  <tr>
-    <td class="success">korrekt</td>
-	<td class="danger">falsch</td>
-	<td class="info">fehlend</td>
-	<td class="success">korrekt</td>
-	<td class="danger">falsch</td>
-	<td class="info">fehlend</td>
-	<td class="success">korrekt</td>
-	<td class="danger">falsch</td>
-	<td class="info">fehlend</td>
-  </tr>
-  <tr>
-    <td>
-		@ue.getClasses_c()
-	</td>
-	<td>
-		@ue.getClasses_f()
-	</td>
-	<td >
-		@ue.getClasses_m()
-	</td>
-	<td>
-		@ue.getMethods_c()
-	</td>
-	<td>
-		@ue.getMethods_f()
-	</td>
-	<td>
-		@ue.getMethods_m()
-	</td>
-	<td>
-		@ue.getAttributes_c()
-	</td>
-	<td>
-		@ue.getAttributes_f()
-	</td>
-	<td>
-		@ue.getAttributes_m()
-	</td>
-  </tr>
-</table>
-</div>
-<div>
-	<form action="/uml/1/diagramdrawinghelp" method="get" enctype="multipart/form-data">
-   	 <button type="submit" class="btn btn-primary btn-block">Nächster Aufgabenteil</button>
- 	</form> 
+<div class="container">
+  <h1>Korrektur der Aufgabe @ue.getTitleExercise()</h1>
+
+  <hr>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">Klassen</div>
+    <div class="panel-body">
+      <div class="col-xs-4">
+        <h4 class="bg-success text-center">Korrekt</h4>
+        @Html(ue.getCorrectClasses())
+      </div>
+      <div class="col-xs-4">
+        <h4 class="bg-danger text-center">Falsch</h4>
+        @Html(ue.getWrongClasses())
+      </div>
+      <div class="col-xs-4">
+        <h4 class="bg-warning text-center">Fehlend</h4>
+        @Html(ue.getMissingClasses())
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">Methoden</div>
+    <div class="panel-body">
+      <div class="col-xs-4">
+        <h4 class="bg-success text-center">Korrekt</h4>
+        @Html(ue.getCorrectMethods())
+      </div>
+      <div class="col-xs-4">
+        <h4 class="bg-danger text-center">Falsch</h4>
+        @Html(ue.getWrongMethods())
+      </div>
+      <div class="col-xs-4">
+        <h4 class="bg-warning text-center">Fehlend</h4>
+        @Html(ue.getMissingMethods())
+      </div>
+    </div>
+  </div>
+  
+  <div class="panel panel-default">
+    <div class="panel-heading">Attribute</div>
+    <div class="panel-body">
+      <div class="col-xs-4">
+        <h4 class="bg-success text-center">Korrekt</h4>
+        @Html(ue.getCorrectAttributes())
+      </div>
+      <div class="col-xs-4">
+        <h4 class="bg-danger text-center">Falsch</h4>
+        @Html(ue.getWrongAttributes())
+      </div>
+      <div class="col-xs-4">
+        <h4 class="bg-warning text-center">Fehlend</h4>
+        @Html(ue.getMissingAttributes())
+      </div>
+    </div>
+  </div>
+
+  <a href="/uml/1/diagramdrawinghelp" class="btn btn-primary btn-block">N&auml;chster Aufgabenteil</a>
 </div>
 
 }
