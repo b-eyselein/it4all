@@ -1,14 +1,18 @@
-@(user: model.user.User)
+@(user: model.user.User, exercise: model.UmlExercise)
 
 @main("UML-Test", user) {
 <head>
-<link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/bootstrap.css")">
-<script src=" @controllers.routes.Assets.versioned("javascripts/uml/lodash.js")"></script>
-<script src=" @controllers.routes.Assets.versioned("javascripts/uml/backbone.js")"></script>
-<script src=" @controllers.routes.Assets.versioned("javascripts/uml/jquery.js")"></script>
-<script src=" @controllers.routes.Assets.versioned("javascripts/uml/joint.js")"></script>
-<link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/joint.css")">
-<script src=" @controllers.routes.Assets.versioned("javascripts/uml/jsonconverter.js")"></script>
+
+  <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/bootstrap.css")">
+  
+  <script src=" @controllers.routes.Assets.versioned("javascripts/uml/lodash.js")"></script>
+  <script src=" @controllers.routes.Assets.versioned("javascripts/uml/backbone.js")"></script>
+  <script src=" @controllers.routes.Assets.versioned("javascripts/uml/jquery.js")"></script>
+  <script src=" @controllers.routes.Assets.versioned("javascripts/uml/joint.js")"></script>
+  <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/joint.css")">
+  
+  <script src=" @controllers.routes.Assets.versioned("javascripts/uml/jsonconverter.js")"></script>
+
 </head>
 <body>
 <div class="container-fluid">
@@ -103,7 +107,7 @@
         <button type="button" class="btn btn-default" value="off" id="2" onclick="selectButton(this);">Aggregation</button>
         <button type="button" class="btn btn-default" value="off" id="3" onclick="selectButton(this);">Implementation</button>
         <button type="button" class="btn btn-default" value="off" id="4" onclick="selectButton(this);">Generalization</button>
-        <form action="@controllers.uml.routes.UML.correctdiagramdrawinghelp()" method="post" enctype="multipart/form-data" onsubmit="prepareFormForSubmitting();">
+        <form action="@controllers.uml.routes.UML.correctDiagramDrawingWithHelp(exercise.id)" method="post" enctype="multipart/form-data" onsubmit="prepareFormForSubmitting();">
     		<div class="form-group">
       			<input type="hidden" value="" class="form-control" name="fname" id="learnerSolution" required>
     		</div>
@@ -114,5 +118,6 @@
     </div>
   </div>
 </div>
+<!-- FIXME: why behind here?!?!? -->
 <script src=" @controllers.routes.Assets.versioned("javascripts/uml/diagramdrawinghelp.js")"></script>
 }

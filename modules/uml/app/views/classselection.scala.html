@@ -1,4 +1,4 @@
-@(user: model.user.User)
+@(user: model.user.User, exercise: model.UmlExercise)
 
 @main("UML", user) {
 <script src="@controllers.routes.Assets.versioned("javascripts/umlProcessor.js")"></script>
@@ -25,7 +25,7 @@
       </div>
     </div>
     <div class="panel-footer">
-      <form action="@controllers.uml.routes.UML.correctclassselection()" method="post" enctype="multipart/form-data" onsubmit="prepareFormForSubmitting();">
+      <form action="@controllers.uml.routes.UML.correctClassSelection(exercise.id)" method="post" enctype="multipart/form-data" onsubmit="prepareFormForSubmitting();">
       	<input type="hidden" value="" class="form-control" name="fname" id="learnerSolution" required>
    	    <button type="submit" class="btn btn-primary btn-block">Klassen verifizieren</button>
  	  </form> 

@@ -1,13 +1,16 @@
-@(user: model.user.User, exerciseText: String)
+@(user: model.user.User, exercise: model.UmlExercise)
 
 @main("UML-Test", user) {
 <head>
 <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/bootstrap.css")">
+
 <script src=" @controllers.routes.Assets.versioned("javascripts/uml/lodash.js")"></script>
 <script src=" @controllers.routes.Assets.versioned("javascripts/uml/backbone.js")"></script>
 <script src=" @controllers.routes.Assets.versioned("javascripts/uml/jquery.js")"></script>
 <script src=" @controllers.routes.Assets.versioned("javascripts/uml/joint.js")"></script>
+
 <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/joint.css")">
+
 <script src=" @controllers.routes.Assets.versioned("javascripts/uml/jsonconverter.js")"></script>
 </head>
 <body>
@@ -48,7 +51,7 @@
       <div class="row">
         <div class="col-md-4">
           <div class="panel panel-default" id="text">
-			@Html(exerciseText)
+			@Html(exercise.text)
           </div>
         </div>
         <div class="col-md-8" id="sizepaper">
@@ -73,7 +76,7 @@
         <button type="button" class="btn btn-default" value="off" id="8" onclick="delMeth();">Mehode entfernen</button>
         <button type="button" class="btn btn-default" value="off" id="9" onclick="delAttr();">Attribut
           entfernen</button>
-        <form action="@controllers.uml.routes.UML.correctdiagramdrawing()" method="post" enctype="multipart/form-data" onsubmit="prepareFormForSubmitting();">
+        <form action="@controllers.uml.routes.UML.correctDiagramDrawing(exercise.id)" method="post" enctype="multipart/form-data" onsubmit="prepareFormForSubmitting();">
     		<div class="form-group">
       			<input type="hidden" value="" class="form-control" name="fname" id="learnerSolution" required>
     		</div>

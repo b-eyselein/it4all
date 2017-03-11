@@ -1,10 +1,10 @@
-@(user: model.user.User, ue: model.UmlClassselection)
+@(user: model.user.User, ue: model.result.UmlClassselection)
 
 @main("UML", user) {
 <div class="container">
-  <h1>Korrektur der Aufgabe @ue.getTitleExercise()</h1>
-
-  <hr>
+  <div class="page-header">
+    <h1>Korrektur der Aufgabe &quot;@ue.getTitle()&quot;</h1>
+  </div>
 
   <div class="panel panel-default">
     <div class="panel-heading">Klassen</div>
@@ -60,7 +60,7 @@
     </div>
   </div>
 
-  <a href="/uml/1/diagramdrawinghelp" class="btn btn-primary btn-block">N&auml;chster Aufgabenteil</a>
+  <a href="@controllers.uml.routes.UML.diagramDrawingWithHelp(ue.getExercise().id)" class="btn btn-primary btn-block">N&auml;chster Aufgabenteil</a>
 </div>
 
 }

@@ -1,4 +1,4 @@
-package model;
+package model.result;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -6,15 +6,14 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import model.UmlExercise;
 import play.libs.Json;
 
-public class UmlClassselection {
+public class UmlClassselection extends UmlResult {
   
   private static final String MUSTER_SOLUTION = "{\"classes\":[\"Telekonverter\",\"Profigehäuse\",\"Kameragehäuse\",\"Amateurgehäuse\",\"Profiblitz\","
       + "\"Objektiv\",\"Amateurblitz\",\"Sonnenblende\",\"Zoomobjektiv\",\"Festweitenobjektiv\"],"
       + "\"methods\":[\"Hersteller\",\"Fotosystems\"]," + "\"attributes\":[\"Ikonograf\",\"Webseite\"]}";
-  
-  private String title;
   
   // c == Correct, f == False, m == Missing
   
@@ -30,8 +29,8 @@ public class UmlClassselection {
   private List<String> wrongAttributes;
   private List<String> missingAttributes;
   
-  public UmlClassselection(String input) {
-    setTitleExcercise("Foto");
+  public UmlClassselection(UmlExercise exercise, String input) {
+    super(exercise, "Foto");
     
     // Init
     JsonNode userJSON = Json.parse(input);
@@ -134,10 +133,6 @@ public class UmlClassselection {
     return toHtmlList(missingMethods);
   }
   
-  public String getTitleExercise() {
-    return title;
-  }
-  
   public String getWrongAttributes() {
     return toHtmlList(wrongAttributes);
   }
@@ -148,16 +143,6 @@ public class UmlClassselection {
   
   public String getWrongMethods() {
     return toHtmlList(wrongMethods);
-  }
-  
-  private List<String> parseJSONArray(JsonNode jsonArrayNode) {
-    List<String> ret = new LinkedList<>();
-    jsonArrayNode.forEach(el -> ret.add(el.asText()));
-    return ret;
-  }
-  
-  public void setTitleExcercise(String theTitle) {
-    title = theTitle;
   }
   
 }

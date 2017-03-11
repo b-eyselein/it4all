@@ -1,16 +1,20 @@
-GET    /                            controllers.uml.UML.index()
+GET    /                                   controllers.uml.UML.index()
 
-GET    /correct                     controllers.uml.UML.correctclassselection()
-PUT    /correct                     controllers.uml.UML.correctclassselection()
-POST   /correct                     controllers.uml.UML.correctclassselection()
+# Choice of difficulty, not used anymore
+GET    /:id/difficulty                     controllers.uml.UML.diff(id: Int)
 
-PUT    /correctdiagramdrawinghelp   controllers.uml.UML.correctdiagramdrawinghelp()
-POST   /correctdiagramdrawinghelp   controllers.uml.UML.correctdiagramdrawinghelp()
+# Step 1: selection of classes
+GET    /classselection/:exId/              controllers.uml.UML.classSelection(exId: Int)
+PUT    /classselection/:exId/correct       controllers.uml.UML.correctClassSelection(exId: Int)
+POST   /classselection/:exId/correct       controllers.uml.UML.correctClassSelection(exId: Int)
 
-PUT    /correctdiagramdrawing       controllers.uml.UML.correctdiagramdrawing()
-POST   /correctdiagramdrawing       controllers.uml.UML.correctdiagramdrawing()
+# Step 2: finalization of diagram
+GET    /diagramdrawinghelp/:exId           controllers.uml.UML.diagramDrawingWithHelp(exId: Int)
+PUT    /diagramdrawinghelp/:exId/correct   controllers.uml.UML.correctDiagramDrawingWithHelp(exId: Int)
+POST   /diagramdrawinghelp/:exId/correct   controllers.uml.UML.correctDiagramDrawingWithHelp(exId: Int)
 
-GET    /:exId/classselection        controllers.uml.UML.classSelection(exId: Int)
-GET    /:exId/diagramdrawing        controllers.uml.UML.diagramDrawing(exId: Int)
-GET    /:exId/diagramdrawinghelp    controllers.uml.UML.diagramDrawingHelp(exId: Int)
-GET    /:id/difficulty              controllers.uml.UML.diff(id: Int)
+# Complete drawing of diagram without any help
+GET    /diagramdrawing/:exId               controllers.uml.UML.diagramDrawing(exId: Int)
+PUT    /diagramdrawing/:exId/correct       controllers.uml.UML.correctDiagramDrawing(exId: Int)
+POST   /diagramdrawing/:exId/correct       controllers.uml.UML.correctDiagramDrawing(exId: Int)
+
