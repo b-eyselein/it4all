@@ -35,7 +35,7 @@ public class UmlDiagramdrawing extends UmlResult {
   List<List<UmlConnection>> userConnections;
   List<List<UmlConnection>> solutionConnections;
 
-  public UmlDiagramdrawing(UmlExercise exercise, String input) {
+  public UmlDiagramdrawing(UmlExercise exercise, JsonNode node) {
     super(exercise, "Foto");
 
     String musterSolution = "";
@@ -47,7 +47,6 @@ public class UmlDiagramdrawing extends UmlResult {
     }
 
     // Solution
-    JsonNode node = Json.parse(input);
     Logger.debug("input" + Json.prettyPrint(node));
     userClasses = convertClassesToObject(node.get("classes"));
     userConnections = convertConnectionsToObject(node);

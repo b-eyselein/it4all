@@ -1,20 +1,17 @@
 GET    /                                   controllers.uml.UML.index()
 
-# Choice of difficulty, not used anymore
-GET    /:id/difficulty                     controllers.uml.UML.diff(id: Int)
-
 # Step 1: selection of classes
 GET    /classselection/:exId/              controllers.uml.UML.classSelection(exId: Int)
-PUT    /classselection/:exId/correct       controllers.uml.UML.correctClassSelection(exId: Int)
-POST   /classselection/:exId/correct       controllers.uml.UML.correctClassSelection(exId: Int)
+PUT    /correct/classselection/:exId       controllers.uml.UML.correctClassSelection(exId: Int)
+POST   /correct/classselection/:exId       controllers.uml.UML.correctClassSelection(exId: Int)
 
 # Step 2: finalization of diagram
 GET    /diagramdrawinghelp/:exId           controllers.uml.UML.diagramDrawingWithHelp(exId: Int)
-PUT    /diagramdrawinghelp/:exId/correct   controllers.uml.UML.correctDiagramDrawingWithHelp(exId: Int)
-POST   /diagramdrawinghelp/:exId/correct   controllers.uml.UML.correctDiagramDrawingWithHelp(exId: Int)
+PUT    /correct/diagramdrawinghelp/:exId   controllers.uml.UML.correctDiagramDrawingWithHelp(exId: Int)
+POST   /correct/diagramdrawinghelp/:exId   controllers.uml.UML.correctDiagramDrawingWithHelp(exId: Int)
 
 # Complete drawing of diagram without any help
 GET    /diagramdrawing/:exId               controllers.uml.UML.diagramDrawing(exId: Int)
-PUT    /diagramdrawing/:exId/correct       controllers.uml.UML.correctDiagramDrawing(exId: Int)
-POST   /diagramdrawing/:exId/correct       controllers.uml.UML.correctDiagramDrawing(exId: Int)
+PUT    /correct/diagramdrawing/:exId       controllers.uml.UML.correctDiagramDrawing(exId: Int)
+POST   /correct/diagramdrawing/:exId       controllers.uml.UML.correctDiagramDrawing(exId: Int)
 

@@ -1,101 +1,41 @@
-@(user: model.user.User, exercise: model.UmlExercise)
-
-@main("UML", user) {
+@(user: model.user.User, exercise: model.UmlExercise) @main("UML", user) {
+<link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/umlextra.css")">
 <script src="@controllers.routes.Assets.versioned("javascripts/umlProcessor.js")"></script>
-<div class="container-fluid">
-  <div class="panel panel-default">
-    <div class="panel-heading">Aufgabenstellung</div>
-    <div class="panel-body">
-      <p>
-        In dieser Aufgabe sollen Sie die zu modellierenden Klassen, Methoden und Attribute durch Anklicken der
-        jeweiligen Wörter, wobei <span style="color: blue">blau</span> Klassen, <span style="color: green">grün</span>
-        Methoden und <span style="color: red">rot</span> Attribute deklarieren. Durch erneutes Anklicken können Sie
-        zwischen den einzelnen Zuständen wechseln.
-      </p>
-      <div class="row">
-        <div class="col-xs-4">
-          <span class="bg-info" style="color: blue">Klassen</span>
-        </div>
-        <div class="col-xs-4">
-          <span class="bg-success" style="color: green">Methoden</span>
-        </div>
-        <div class="col-xs-4">
-          <span class="bg-danger" style="color: red">Attribute</span>
-        </div>
-      </div>
-    </div>
-    <div class="panel-footer">
-      <form action="@controllers.uml.routes.UML.correctClassSelection(exercise.id)" method="post" enctype="multipart/form-data" onsubmit="prepareFormForSubmitting();">
-      	<input type="hidden" value="" class="form-control" name="fname" id="learnerSolution" required>
-   	    <button type="submit" class="btn btn-primary btn-block">Klassen verifizieren</button>
- 	  </form> 
-    </div>
+
+<div class="container">
+  <div class="page-header">
+    <h1>Auswahl der Klassen</h1>
+  </div>
+  <div class="alert alert-info">
+    <b>Aufgabenstellung</b>: In dieser Aufgabe sollen Sie die zu modellierenden Klassen, Methoden und Attribute durch
+    Anklicken der jeweiligen Wörter, wobei <span style="color: blue">blau</span> Klassen, <span style="color: green">grün</span>
+    Methoden und <span style="color: red">rot</span> Attribute deklarieren. Durch erneutes Anklicken können Sie zwischen
+    den einzelnen Zuständen wechseln.
   </div>
 
   <div class="panel panel-default">
     <div class="panel-heading">Aufgabentext</div>
-    <div class="panel-body" id="exercisetext">
-      <p>
-        Die <span id="obj1" style="color: black" onclick="mark(this)">Firma</span> <span id="obj2" style="color: black"
-          onclick="mark(this)">Canikuji</span>, <span id="obj3" style="color: black" onclick="mark(this)">Hersteller</span>
-        des <span id="obj4" style="color: black" onclick="mark(this)" data-baseform="Fotosystem">Fotosystems</span> <span
-          id="obj5" style="color: black" onclick="mark(this)">Ikonograf</span>, m&ouml;chte auf ihrer <span id="obj6"
-          style="color: black" onclick="mark(this)">Webseite</span> den <span id="obj7" style="color: black"
-          onclick="mark(this)" data-baseform="Kunde">Kunden</span> alle <span id="obj8" style="color: black"
-          onclick="mark(this)" data-baseform="Kombinationsmöglichkeit">Kombinationsm&ouml;glichkeiten</span> innerhalb
-        des <span id="obj9" style="color: black" onclick="mark(this)" data-baseform="Fotosystem">Fotosystems</span>
-        pr&auml;sentieren. Im <span id="obj10" style="color: black" onclick="mark(this)" data-baseform="Folgendes">Folgenden</span>
-        wird das <span id="obj11" style="color: black" onclick="mark(this)">Fotosystem</span> <span id="obj12"
-          style="color: black" onclick="mark(this)">Ikonograf</span> beschrieben:
-      </p>
-      <p>
-        Das <span id="obj13" style="color: black" onclick="mark(this)">Fotosystem</span> umfasst f&uuml;nf verschiedene
-        <span id="obj14" style="color: black" onclick="mark(this)">Kamerageh&auml;use</span>. Von diesen f&uuml;nf <span
-          id="obj15" style="color: black" onclick="mark(this)" data-baseform="Kameragehäuse">Kamerageh&auml;usen</span>
-        sind zwei f&uuml;r den professionellen <span id="obj16" style="color: black" onclick="mark(this)">Einsatz</span>
-        und drei f&uuml;r den <span id="obj17" style="color: black" onclick="mark(this)">Amateurbereich</span> gedacht.
-        Zu den f&uuml;nf <span id="obj18" style="color: black" onclick="mark(this)" data-baseform="Kameragehäuse">Kamerageh&auml;usen</span>
-        gibt es insgesamt 20 verschiedene <span id="obj19" style="color: black" onclick="mark(this)"
-          data-baseform="Linse">Linsen</span>, die sowohl an den <span id="obj20" style="color: black"
-          onclick="mark(this)" data-baseform="Profigehäuse">Profi-</span> als auch an den <span id="obj21"
-          style="color: black" onclick="mark(this)" data-baseform="Amateurgehäuse">Amateurkamerageh&auml;usen</span>
-        verwendet werden k&ouml;nnen. Unter den angebotenen <span id="obj22" style="color: black" onclick="mark(this)"
-          data-baseform="Linse">Linsen</span> befinden sich zwei <span id="obj23" style="color: black"
-          onclick="mark(this)">Telekonverter</span> sowie 18 unterschiedliche <span id="obj24" style="color: black"
-          onclick="mark(this)" data-baseform="Objektiv">Objektive</span>. Die <span id="obj25" style="color: black"
-          onclick="mark(this)">Telekonverter</span> lassen sich mit allen <span id="obj26" style="color: black"
-          onclick="mark(this)" data-baseform="Objektiv">Objektiven</span> kombinieren. Zu jedem <span id="obj27"
-          style="color: black" onclick="mark(this)">Objektiv</span> gibt es eine passende <span id="obj28"
-          style="color: black" onclick="mark(this)">Sonnenblende</span>; zu beiden ist jeweils der <span id="obj29"
-          style="color: black" onclick="mark(this)" data-baseform="Durchmesser_Filtergewinde">Durchmesser des
-          Filtergewindes</span> angegeben. Unter den <span id="obj30" style="color: black" onclick="mark(this)"
-          data-baseform="Objektiv">Objektiven</span> werden <span id="obj31" style="color: black" onclick="mark(this)"
-          data-baseform="Festbrennweitenobjektiv">Festbrennweiten-</span> und <span id="obj32" style="color: black"
-          onclick="mark(this)" data-baseform="Zoomobjektiv">Zoomobjektive</span> unterschieden. <span id="obj33"
-          style="color: black" onclick="mark(this)" data-baseform="Zoomobjektiv">Zoomobjektive</span> besitzen eine <span
-          id="obj34" style="color: black" onclick="mark(this)" data-baseform="Brennweite_minimal">minimale</span> und
-        eine <span id="obj35" style="color: black" onclick="mark(this)" data-baseform="Brennweite_maximal">maximale
-          Brennweite</span>, <span id="obj36" style="color: black" onclick="mark(this)" data-baseform="Festbrennweitenobjektiv">Festbrennweitenobjektive</span>
-        hingegen nur eine <span id="obj37" style="color: black" onclick="mark(this)" data-baseform="Brennweite">Brennweite</span>.
-        Der <span id="obj38" style="color: black" onclick="mark(this)">Wert</span> der <span id="obj39"
-          style="color: black" onclick="mark(this)">Brennweite</span> muss immer gr&ouml;&szlig;er als 0 sein. Die <span
-          id="obj40" style="color: black" onclick="mark(this)" data-baseform="Brennweite_maximal">maximale
-          Brennweite</span> eines <span id="obj41" style="color: black" onclick="mark(this)" data-baseform="Zoomobjektiv">Zoomobjektives</span>
-        ist immer mindestens 5 mm gr&ouml;&szlig;er als die <span id="obj42" style="color: black" onclick="mark(this)"
-          data-baseform="Brennweite_minimal">minimale Brennweite </span> des <span id="obj43" style="color: black"
-          onclick="mark(this)" data-baseform="Zoomobjektiv">Zoomobjektives</span>. Bei den <span id="obj44"
-          style="color: black" onclick="mark(this)" data-baseform="Telekonverter">Telekonvertern</span> ist der <span
-          id="obj45" style="color: black" onclick="mark(this)">Verl&auml;ngerungsfaktor</span> angegeben. Weiterhin
-        umfasst das <span id="obj46" style="color: black" onclick="mark(this)">Fotosystem</span> <span id="obj47"
-          style="color: black" onclick="mark(this)" data-baseform="Blitz">Blitze</span>. Es gibt zwei <span id="obj48"
-          style="color: black" onclick="mark(this)" data-baseform="Profiblitz">Profiblitze</span>, die nur an die <span
-          id="obj49" style="color: black" onclick="mark(this)" data-baseform="Profigehäuse">Profikamerageh&auml;use</span>
-        passen, und drei <span id="obj50" style="color: black" onclick="mark(this)" data-baseform="Amateurblitz">Amateurblitze</span>,
-        die nur an die <span id="obj51" style="color: black" onclick="mark(this)" data-baseform="Amateurgehäuse">Amateurkamerageh&auml;use</span>
-        passen. Ein <span id="obj52" style="color: black" onclick="mark(this)">Profiblitz</span> kann beliebig viele <span
-          id="obj53" style="color: black" onclick="mark(this)" data-baseform="Blitz">Blitze</span> steuern.
-      </p>
+    <div class="panel-body" id="exercisetext">@Html(exercise.getExTextForClassSel())</div>
+    <div class="panel-footer">
+      <form action="@controllers.uml.routes.UML.correctClassSelection(exercise.id)" method="post"
+        enctype="multipart/form-data" onsubmit="prepareFormForSubmitting();">
+        <input type="hidden" value="" class="form-control" name="learnerSolution" id="learnerSolution" required>
+        <button type="submit" class="btn btn-primary btn-block">Klassen verifizieren</button>
+      </form>
     </div>
   </div>
+  
+  <div class="row">
+    <div class="col-xs-4">
+      <span class="bg-info" style="color: blue">Klassen</span>
+    </div>
+    <div class="col-xs-4">
+      <span class="bg-success" style="color: green">Methoden</span>
+    </div>
+    <div class="col-xs-4">
+      <span class="bg-danger" style="color: red">Attribute</span>
+    </div>
+  </div>
+  
 </div>
 }

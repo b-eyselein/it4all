@@ -1,17 +1,18 @@
 package controllers.uml;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+
 import javax.inject.Inject;
 
-import com.github.fge.jsonschema.core.exceptions.ProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
-import model.JValidator;
+import model.JsonWrapper;
 import model.UmlExercise;
 import model.Util;
 import model.result.CompleteResult;
@@ -21,28 +22,34 @@ import model.user.User;
 import play.Logger;
 import play.data.DynamicForm;
 import play.data.FormFactory;
+import play.libs.Json;
 import play.mvc.Http.Request;
 import play.mvc.Result;
 
 public class UML extends ExerciseController {
   
-  private static final String FORM_VALUE = "fname";
+  private static final String FORM_VALUE = "learnerSolution";
+  
+  private static final String NO_DATA = "Keine Daten übertragen!";
+  private static final String CORRUPT_DATA = "Die gesendeten Daten sind fehlerhaft!";
+  
+  private static final Path BASE_PATH = Paths.get("modules", "uml", "conf", "resources");
+  private static final Path CLASS_SELECTION_SCHEMA_PATH = Paths.get(BASE_PATH.toString(), "classSelSchema.json");
+  private static final Path DIAGRAM_DRAWING_SCHEMA_PATH = Paths.get(BASE_PATH.toString(), "diagDrawingSchema.json");
+  
+  private static JsonNode classSelSchemaNode;
+  private static JsonNode diagDrawSchemaNode;
   
   @Inject
   public UML(Util theUtil, FormFactory theFactory) {
     super(theUtil, theFactory);
-  }
-  
-  public static File getSchema_Classselection() {
-    Path path = Paths.get("modules/uml/conf/schema_classselection.json");
-    File file = new File(path.toAbsolutePath().toString());
-    return file;
-  }
-  
-  private static File getSchema_DiagramDrawing() {
-    Path path = Paths.get("modules/uml/conf/schema_diagrammdrawing.json");
-    File file = new File(path.toAbsolutePath().toString());
-    return file;
+    
+    try {
+      classSelSchemaNode = Json.parse(String.join("\n", Files.readAllLines(CLASS_SELECTION_SCHEMA_PATH)));
+      diagDrawSchemaNode = Json.parse(String.join("\n", Files.readAllLines(DIAGRAM_DRAWING_SCHEMA_PATH)));
+    } catch (IOException e) {
+      Logger.error("There has been an error parsing the schema files for UML:", e);
+    }
   }
   
   public Result classSelection(int exerciseId) {
@@ -56,49 +63,53 @@ public class UML extends ExerciseController {
   }
   
   public Result correctClassSelection(int exerciseId) {
-    UmlExercise exercise = new UmlExercise(exerciseId);
-    
     DynamicForm form = factory.form().bindFromRequest();
-    String classes = form.get(FORM_VALUE);
+    String jsonAsString = form.get(FORM_VALUE);
     
-    if(classes == null || classes.isEmpty())
-      return badRequest("Keine Daten übertragen!");
+    if(jsonAsString == null || jsonAsString.isEmpty())
+      return badRequest(NO_DATA);
     
-    UmlClassselection ue = new UmlClassselection(exercise, classes);
+    JsonNode sentJson = Json.parse(jsonAsString);
+    if(!JsonWrapper.validateJson(sentJson, classSelSchemaNode))
+      return badRequest(CORRUPT_DATA);
+    
+    UmlExercise exercise = new UmlExercise(exerciseId);
+    UmlClassselection ue = new UmlClassselection(exercise, sentJson);
+    
     return ok(views.html.solution_classselection.render(UserManagement.getCurrentUser(), ue));
   }
   
   public Result correctDiagramDrawing(int exerciseId) {
-    UmlExercise exercise = new UmlExercise(exerciseId);
-    
     DynamicForm form = factory.form().bindFromRequest();
-    String json = form.get(FORM_VALUE);
-    Logger.debug("diagramdrawhinghelp(): " + json);
+    String jsonAsString = form.get(FORM_VALUE);
     
-    if(json == null || json.isEmpty())
-      return badRequest("Keine Daten übertragen!");
+    if(jsonAsString == null || jsonAsString.isEmpty())
+      return badRequest(NO_DATA);
     
-    try {
-      if(!JValidator.validateJson(getSchema_DiagramDrawing(), new File(json))) {
-        return badRequest("Die gesendeten Daten sind fehlerhaft!");
-      }
-    } catch (ProcessingException | IOException e) {
-      return badRequest("Die gesendeten Daten sind fehlerhaft!");
-    }
-    UmlDiagramdrawing ue = new UmlDiagramdrawing(exercise, json);
+    JsonNode sentJson = Json.parse(jsonAsString);
+    if(!JsonWrapper.validateJson(sentJson, diagDrawSchemaNode))
+      return badRequest(CORRUPT_DATA);
+    
+    UmlExercise exercise = new UmlExercise(exerciseId);
+    UmlDiagramdrawing ue = new UmlDiagramdrawing(exercise, sentJson);
+    
     return ok(views.html.solution_diagramdrawing.render(UserManagement.getCurrentUser(), ue));
   }
   
   public Result correctDiagramDrawingWithHelp(int exerciseId) {
-    UmlExercise exercise = new UmlExercise(exerciseId);
-    
     DynamicForm form = factory.form().bindFromRequest();
-    String json = form.get(FORM_VALUE);
-
-    if(json == null || json.isEmpty())
-      return badRequest("Keine Daten übertragen!");
+    String jsonAsString = form.get(FORM_VALUE);
     
-    UmlDiagramdrawing ue = new UmlDiagramdrawing(exercise, json);
+    if(jsonAsString == null || jsonAsString.isEmpty())
+      return badRequest(NO_DATA);
+    
+    JsonNode sentJson = Json.parse(jsonAsString);
+    if(!JsonWrapper.validateJson(sentJson, diagDrawSchemaNode))
+      return badRequest(CORRUPT_DATA);
+    
+    UmlExercise exercise = new UmlExercise(exerciseId);
+    UmlDiagramdrawing ue = new UmlDiagramdrawing(exercise, sentJson);
+    
     return ok(views.html.solution_diagramdrawinghelp.render(UserManagement.getCurrentUser(), ue));
   }
   
@@ -108,10 +119,6 @@ public class UML extends ExerciseController {
   
   public Result diagramDrawingWithHelp(int exerciseId) {
     return ok(views.html.diagramdrawinghelp.render(UserManagement.getCurrentUser(), new UmlExercise(exerciseId)));
-  }
-  
-  public Result diff(int exerciseId) {
-    return ok(views.html.difficulty.render(UserManagement.getCurrentUser()));
   }
   
   public Result index() {

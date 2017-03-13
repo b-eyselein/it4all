@@ -26,29 +26,27 @@ function processCorrection(correction) {
   }
 }
 
-var classes = new Array();
-var methods = new Array();
-var attributes = new Array();
+var classes = [];
+var methods = [];
+var attributes = [];
 
 function mark(span) {
-  switch (span.style.color){
-  case "black":
-    span.className = "bg-info";
-    span.style.color = "blue";
+  switch (span.className){
+  case "nomen":
+    span.className = "nomen-blue bg-info";
     break;
-  case "blue":
-    span.className = "bg-success";
-    span.style.color = "green";
+  case "nomen-blue bg-info":
+    span.className = "nomen-green bg-success";
     break;
-  case "green":
-    span.className = "bg-danger";
-    span.style.color = "red";
+  case "nomen-green bg-success":
+    span.className = "nomen-red bg-danger";
     break;
-  case "red":
-    span.className = "";
-    span.style.color = "black";
+  case "nomen-red bg-danger":
+    span.className = "nomen";
     break;
-  
+  default:
+    span.className = "nomen";
+    break;
   }
 }
 
@@ -58,28 +56,28 @@ function extractParameters() {
   var cmethods = exercisetext.getElementsByClassName("bg-success");
   var cattributes = exercisetext.getElementsByClassName("bg-danger");
   var classes = [];
-  for(i = 0; i < cclasses.length; i++) {	  
-	  if( cclasses[i].getAttribute('data-baseform') != null){
-		  	classes.push(cclasses[i].getAttribute('data-baseform'));
-		}else{
-		    classes.push(cclasses[i].innerText);	
-		}
-	} 
+  for(i = 0; i < cclasses.length; i++) {
+    if(cclasses[i].getAttribute('data-baseform') != null) {
+      classes.push(cclasses[i].getAttribute('data-baseform'));
+    } else {
+      classes.push(cclasses[i].innerText);
+    }
+  }
   var methods = [];
   for(i = 0; i < cmethods.length; i++) {
-	  if( cmethods[i].getAttribute('data-baseform') != null){
-		  	methods.push(cmethods[i].getAttribute('data-baseform'));
-		}else{
-			methods.push(cmethods[i].innerText);	
-		}
+    if(cmethods[i].getAttribute('data-baseform') != null) {
+      methods.push(cmethods[i].getAttribute('data-baseform'));
+    } else {
+      methods.push(cmethods[i].innerText);
+    }
   }
   var attributes = [];
   for(i = 0; i < cattributes.length; i++) {
-	  if( cattributes[i].getAttribute('data-baseform') != null){
-		  attributes.push(cattributes[i].getAttribute('data-baseform'));
-		}else{
-			attributes.push(cattributes[i].innerText);	
-		}
+    if(cattributes[i].getAttribute('data-baseform') != null) {
+      attributes.push(cattributes[i].getAttribute('data-baseform'));
+    } else {
+      attributes.push(cattributes[i].innerText);
+    }
   }
   console.log(classes);
   console.log(methods);
