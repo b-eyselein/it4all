@@ -6,7 +6,13 @@
 
 <h2>Übersicht der Klassen, Attribute und Methoden</h2>
 
-<h4>Identische Klassenbezeichnungen</h4>
+<table class="table">
+  <tr>
+    <th colspan="3" class="bg-success text-center">Identische Klassennamen</th>
+  </tr>
+</table>
+<div>
+
 <div id="left">
 <table class="table">
 <tr>
@@ -16,7 +22,7 @@
 </tr>
 @for(i <- 0 to ue.getClassesLength(ue.getClasses_user_c())-1){
   <tr>
-    <td colspan="2">@ue.getClasses_user_c().get(i).getName()</td>
+    <td colspan="2" >@ue.getClasses_user_c().get(i).getName()</td>
     <td></td>
     <td></td>
   </tr>
@@ -45,7 +51,7 @@
 </tr>
 @for(i <- 0 to ue.getClassesLength(ue.getClasses_solution_c())-1){
   <tr>
-    <td colspan="2">@ue.getClasses_solution_c().get(i).getName()</td>
+    <td colspan="2" >@ue.getClasses_solution_c().get(i).getName()</td>
     <td></td>
     <td></td>
   </tr>
@@ -65,10 +71,10 @@
 </table>
 </div>
 
-<div id="left">
+<div id="left1">
  <table class="table">
   <tr>
-    <th colspan="3">falsche</th>
+    <th colspan="3" class="bg-danger text-center">falsche</th>
   </tr>
   <tr>
     <td>Klasse:</td>
@@ -91,10 +97,10 @@
 </table>
 </div>
 
-<div id="right">
+<div id="right1">
  <table class="table">
   <tr>
-    <th colspan="3">fehlende</th>
+    <th colspan="3" class="bg-warning text-center">fehlende</th>
   </tr>
   <tr>
     <td>Klasse:</td>
@@ -115,6 +121,9 @@
   </tr>
 }
 </table>
+</div>
+
+
 </div>
 
 

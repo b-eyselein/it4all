@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.inject.Inject;
@@ -65,7 +66,7 @@ public class UML extends ExerciseController {
   public Result correctClassSelection(int exerciseId) {
     DynamicForm form = factory.form().bindFromRequest();
     String jsonAsString = form.get(FORM_VALUE);
-    
+
     if(jsonAsString == null || jsonAsString.isEmpty())
       return badRequest(NO_DATA);
     
@@ -99,7 +100,7 @@ public class UML extends ExerciseController {
   public Result correctDiagramDrawingWithHelp(int exerciseId) {
     DynamicForm form = factory.form().bindFromRequest();
     String jsonAsString = form.get(FORM_VALUE);
-    
+    Logger.debug(jsonAsString);
     if(jsonAsString == null || jsonAsString.isEmpty())
       return badRequest(NO_DATA);
     

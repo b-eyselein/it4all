@@ -1,9 +1,12 @@
 package model.result;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import com.fasterxml.jackson.databind.JsonNode;
 
 import model.UmlExercise;
@@ -11,11 +14,10 @@ import play.libs.Json;
 
 public class UmlClassselection extends UmlResult {
 
-  // FIXME: get MUSTER_SOLUTION from Exercise!
-  private static final String MUSTER_SOLUTION = "{\"classes\":[\"Telekonverter\",\"Profigehäuse\",\"Kameragehäuse\",\"Amateurgehäuse\",\"Profiblitz\","
-      + "\"Objektiv\",\"Amateurblitz\",\"Sonnenblende\",\"Zoomobjektiv\",\"Festweitenobjektiv\"],"
-      + "\"methods\":[\"Hersteller\",\"Fotosystems\"]," + "\"attributes\":[\"Ikonograf\",\"Webseite\"]}";
 
+  private static final Path BASE_PATH = Paths.get("modules", "uml", "conf", "resources");
+  private static final Path MUSTER_SOLUTION = Paths.get(BASE_PATH.toString(), "mustersolution_classSel.json");
+  
   // c == Correct, f == False, m == Missing
 
   private List<String> correctClasses;
@@ -31,14 +33,22 @@ public class UmlClassselection extends UmlResult {
   private List<String> missingAttributes;
 
   public UmlClassselection(UmlExercise exercise, JsonNode userJSON) {
-    super(exercise, "Foto");
-
+    super(exercise, "Krankenhaus");
+    String musterSolution = "";
+    try {
+      musterSolution = String.join("\n", Files.readAllLines(MUSTER_SOLUTION));
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    
+    
     // Init
     List<String> userClasses = parseJSONArray(userJSON.get("classes"));
     List<String> userMethods = parseJSONArray(userJSON.get("methods"));
     List<String> userAttributes = parseJSONArray(userJSON.get("attributes"));
 
-    JsonNode solutionJSON = Json.parse(MUSTER_SOLUTION);
+    JsonNode solutionJSON = Json.parse(musterSolution);
     List<String> solutionClasses = parseJSONArray(solutionJSON.get("classes"));
     List<String> solutionMethods = parseJSONArray(solutionJSON.get("methods"));
     List<String> solutionAttributes = parseJSONArray(solutionJSON.get("attributes"));
@@ -93,8 +103,8 @@ public class UmlClassselection extends UmlResult {
   }
 
   public static String toHtmlList(List<String> contents) {
-    if(contents.isEmpty())
-      return "<ul><li>--</li></ul>";
+    if(contents.isEmpty() || contents.equals("undefined"))
+      return "";
 
     return contents.stream().map(c -> "<li>" + c + "</li>").collect(Collectors.joining("", "<ul>", "</ul>"));
   }

@@ -13,10 +13,9 @@ public class UmlExercise extends Exercise {
 
   public UmlExercise(int theId) {
     super(theId);
-    id = 1;
-    text = "Im folgenden Übungsszenario sollen Sie ein Klassendiagramm in UML erstellen!";
-    title = "Foto";
-    // TODO Auto-generated constructor stub
+    	    id = 1;
+    	    text = "Im folgenden Übungsszenario sollen Sie ein Klassendiagramm in UML mit dem Thema Krankenhaus erstellen!";
+    	    title = "Krankenhaus";
   }
 
   public String getExerciseText() {

@@ -17,7 +17,7 @@
 <div class="container-fluid">
   <h2>UML Diagrammszenario</h2>
   <div class="panel panel-default">
-    <div class="panel-heading">
+    <div class="alert alert-info">
     
     <h3>Erstellen Sie ein UML-Klassendiagramm, indem Sie die Beziehungen zwischen den Klassen modellieren.</h3>
     <p><b>Klassen erzeugen:</b> 
@@ -51,7 +51,7 @@
       <div class="row">
         <div class="col-md-4">
           <div class="panel panel-default" id="text">
-			@Html(exercise.text)
+			@Html(exercise.getExerciseText())
           </div>
         </div>
         <div class="col-md-8" id="sizepaper">
@@ -78,7 +78,7 @@
           entfernen</button>
         <form action="@controllers.uml.routes.UML.correctDiagramDrawing(exercise.id)" method="post" enctype="multipart/form-data" onsubmit="prepareFormForSubmitting();">
     		<div class="form-group">
-      			<input type="hidden" value="" class="form-control" name="fname" id="learnerSolution" required>
+      			<input type="hidden" value="" class="form-control" name="learnerSolution" id="learnerSolution" required>
     		</div>
    	 			<button type="submit" class="btn btn-primary btn-block">Aufgabe verifizieren</button>
  	 	</form> 

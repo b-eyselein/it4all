@@ -1,0 +1,22 @@
+{
+	"classes": [
+		"Person",
+		"Doktor",
+		"Rezept",
+		"Patient",
+		"Krankenschwester",
+		"Station",
+		"Medikament",
+		"Krankenhaus"
+	],
+	"methods": [
+		"verschreiben(Patient)",
+		"entlassen(Station)",
+		"aufnehmen(Station)"
+	],
+	"attributes": [
+		"Id",
+		"Name",
+		"Nummer"
+	]
+}

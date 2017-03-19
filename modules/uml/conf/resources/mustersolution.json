@@ -1,52 +1,45 @@
 {
 	"classes": [
 		{
-			"name": "Telekonverter", 
+			"name": "Person", 
 			"methods": [
 				
 			], 
 			"attributes": [
-				"Verlängerungsfaktor:Zahl"
+				"id:String",
+				"name:String"
 			]
 		}, 
 		{
-			"name": "Kameragehäuse", 
+			"name": "Doktor", 
 			"methods": [
-				
-			], 
-			"attributes": [
-				
-			]
-		}, 
-		{
-			"name": "Profigehäuse", 
-			"methods": [
-				
+				"verschreiben(Patient):void"
 			], 
 			"attributes": [
 				
 			]
 		}, 
 		{
-			"name": "Profiblitz", 
+			"name": "Patient", 
 			"methods": [
-				
+				"entlassen(Station):void",
+				"aufnehmen(Station):void"
 			], 
 			"attributes": [
 				
 			]
 		}, 
 		{
-			"name": "Amateurgehäuse", 
+			"name": "Rezept", 
 			"methods": [
 				
 			], 
 			"attributes": [
-				
+				"id:String"
 			]
 		}, 
 		{
-			"name": "Amateurblitz", 
+			"name": "Krankenschwester", 
 			"methods": [
 				
 			], 
@@ -55,109 +48,111 @@
 			]
 		}, 
 		{
-			"name": "Objektiv", 
+			"name": "Station", 
 			"methods": [
 				
 			], 
 			"attributes": [
-				"Gewindedurchmesser:Zahl"
+				"nummer:int"
 			]
 		}, 
 		{
-			"name": "Sonnenblende", 
+			"name": "Medikament", 
 			"methods": [
 				
 			], 
 			"attributes": [
-				"Gewindedurchmesser:Zahl"
+				"id:String",
+				"name:String"
 			]
 		}, 
 		{
-			"name": "Festbrennweitenobjektiv", 
+			"name": "Krankenhaus", 
 			"methods": [
 				
 			], 
 			"attributes": [
-				"Brennweite:Zahl"
-			]
-		}, 
-		{
-			"name": "Zoomobjektiv", 
-			"methods": [
-				
-			], 
-			"attributes": [
-				"Brennweite_maximal:Zahl", 
-				"Brennweite_minimal:Zahl"
+			
 			]
 		}
 	], 
 	"connections": {
 		"standard": [
 			{
-				"start": "Amateurgehäuse", 
-				"target": "Amateurblitz", 
+				"start": "Doktor", 
+				"target": "Rezept", 
 				"mulstart": "1", 
-				"multarget": "1"
+				"multarget": "*"
 			}, 
 			{
-				"start": "Objektiv", 
-				"target": "Kameragehäuse", 
+				"start": "Doktor", 
+				"target": "Patient", 
 				"mulstart": "1", 
-				"multarget": "1"
+				"multarget": "*"
 			}, 
 			{
-				"start": "Objektiv", 
-				"target": "Sonnenblende", 
+				"start": "Station", 
+				"target": "Patient", 
 				"mulstart": "1", 
-				"multarget": "1"
+				"multarget": "*"
 			}, 
 			{
-				"start": "Profiblitz", 
-				"target": "Profigehäuse", 
+				"start": "Station", 
+				"target": "Krankenschwester", 
 				"mulstart": "1", 
-				"multarget": "1"
+				"multarget": "*"
 			}, 
 			{
-				"start": "Telekonverter", 
-				"target": "Kameragehäuse", 
+				"start": "Station", 
+				"target": "Doktorant", 
 				"mulstart": "1", 
-				"multarget": "1"
-			}
+				"multarget": "*"
+			},
+			{
+				"start": "Patient", 
+				"target": "Rezept", 
+				"mulstart": "1", 
+				"multarget": "*"
+			},
+			{
+				"start": "Rezept", 
+				"target": "Medikament", 
+				"mulstart": "1", 
+				"multarget": "*"
+			}		
 		], 
 		"aggregation": [
 			
 		], 
 		"composition": [
-			
+						{
+				"start": "Station", 
+				"target": "Krankenhaus", 
+				"mulstart": "1", 
+				"multarget": "*"
+			}	
 		], 
 		"implementation": [
 			
 		], 
 		"generalization": [
 			{
-				"start": "Amateurgehäuse", 
-				"target": "Amateurblitz", 
-				"mulstart": "1", 
-				"multarget": "1"
+				"start": "Patient", 
+				"target": "Person", 
+				"mulstart": "", 
+				"multarget": ""
 			}, 
 			{
-				"start": "Objektiv", 
-				"target": "Kameragehäuse", 
-				"mulstart": "1", 
-				"multarget": "1"
+				"start": "Doktor", 
+				"target": "Person", 
+				"mulstart": "", 
+				"multarget": ""
 			}, 
 			{
-				"start": "Objektiv", 
-				"target": "Sonnenblende", 
-				"mulstart": "1", 
-				"multarget": "1"
-			}, 
-			{
-				"start": "Profiblitz", 
-				"target": "Profigehäuse", 
-				"mulstart": "1", 
-				"multarget": "1"
+				"start": "Krankenschwester", 
+				"target": "Person", 
+				"mulstart": "", 
+				"multarget": ""
 			}
 		]
 	}

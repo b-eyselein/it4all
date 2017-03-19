@@ -233,6 +233,22 @@ function addClass(name, posx, posy, a1, a2, m1, m2) {
   });
   graph.addCell(flug);
 }
+
+
+console.log(  "width: "+ 0.7 * window.screen.availWidth);
+console.log("height: "+0.7 * window.screen.availHeight);
+
+var x = 485;
+var y = 10;
+addClass("Person", x -300, y, "id:String", "name:String", "", "");
+addClass("Doktor", x -300, y +180, "", "", "verschreiben(Patient):void", "");
+addClass("Rezept", x, y+360, "id:String", "", "", "");
+addClass("Patient", x, y + 180, "", "", "entlassen(Station):void", "aufnehmen(Station):void");
+addClass("Krankenschwester", x+300, y, "", "", "", "");
+addClass("Station", x +300, y+180, "nummer:int", "", "", "");
+addClass("Medikament", x+300, y+360, "id:String", "name:String", "", "");
+addClass("Krankenhaus", x, y, "", "", "", "");
+/*
 var x = 485;
 var y = 10;
 addClass("Telekonverter", x, y, "Verlängerungsfaktor:Zahl", "", "", "");
@@ -245,6 +261,7 @@ addClass("Objektiv", x, y + 360, "Gewindedurchmesser:Zahl", "", "", "");
 addClass("Sonnenblende", x - 300, y + 540, "Gewindedurchmesser:Zahl", "", "", "");
 addClass("Festbrennweitenobjektiv", x + 300, y + 540, "Brennweite:Zahl", "", "", "");
 addClass("Zoomobjektiv", x, y + 540, "Brennweite_maximal:Zahl", "Brennweite_minimal:Zahl", "", "");
+*/
 
 // Namen aller Klassen
 function getClasses() {

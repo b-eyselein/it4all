@@ -36,7 +36,7 @@ public class UmlDiagramdrawing extends UmlResult {
   List<List<UmlConnection>> solutionConnections;
 
   public UmlDiagramdrawing(UmlExercise exercise, JsonNode node) {
-    super(exercise, "Foto");
+    super(exercise, "Krankenhaus");
 
     String musterSolution = "";
     try {
@@ -170,15 +170,4 @@ public class UmlDiagramdrawing extends UmlResult {
       }
     }
   }
-
-  /*
-   * public int getIndexInSolutionListforName(String classname_user){ int i =0;
-   * ArrayList<UmlDiagramdrawing_Class> list = new ArrayList<>();
-   * list=classes_solution; for (Iterator iterator = list.iterator();
-   * iterator.hasNext();) { UmlDiagramdrawing_Class ue =
-   * (UmlDiagramdrawing_Class) iterator.next();
-   * if(ue.getName().equals(classname_user)){ return i; }else{ i++; } } return
-   * -i; }
-   */
-
 }
