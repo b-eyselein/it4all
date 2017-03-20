@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import model.UmlExercise;
+import play.Logger;
 import play.libs.Json;
 
 public class UmlClassselection extends UmlResult {
@@ -103,7 +104,8 @@ public class UmlClassselection extends UmlResult {
   }
 
   public static String toHtmlList(List<String> contents) {
-    if(contents.isEmpty() || contents.equals("undefined"))
+	Logger.debug(contents.toString());
+    if(contents.isEmpty() || contents.contains("undefined"))
       return "";
 
     return contents.stream().map(c -> "<li>" + c + "</li>").collect(Collectors.joining("", "<ul>", "</ul>"));

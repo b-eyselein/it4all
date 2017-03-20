@@ -119,18 +119,19 @@
 				"target": "Medikament", 
 				"mulstart": "1", 
 				"multarget": "*"
-			}		
+			},
+			{
+				"start": "Krankenhaus", 
+				"target": "Station", 
+				"mulstart": "1", 
+				"multarget": "*"
+			}			
 		], 
 		"aggregation": [
 			
 		], 
 		"composition": [
-						{
-				"start": "Station", 
-				"target": "Krankenhaus", 
-				"mulstart": "1", 
-				"multarget": "*"
-			}	
+
 		], 
 		"implementation": [
 			
