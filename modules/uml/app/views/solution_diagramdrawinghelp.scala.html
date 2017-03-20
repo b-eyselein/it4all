@@ -9,11 +9,11 @@
     <th colspan="5">Ihre Eingabe</th>
   </tr>
   <tr>
-    <td>Beziehungstyp:</td>
-	<td >Start</td>
-	<td >Ziel</td>
-	<td >Start Multiziplität</td>
-	<td >Ziel Multiziplität</td>
+    <th>Beziehungstyp:</th>
+	<th >Start</th>
+	<th >Ziel</th>
+	<th >Start Multiziplität</th>
+	<th >Ziel Multiziplität</th>
   </tr>
 @for(j <- 0 to 4){
 @for(i <- 0 to ue.getConnectionsLength(ue.getListConnectionsTypeUser(j))-1){
@@ -47,11 +47,11 @@
     <th colspan="5">Lösung</th>
   </tr>
   <tr>
-    <td>Beziehungstyp:</td>
-	<td >Start</td>
-	<td >Ziel</td>
-	<td >Start Multiziplität</td>
-	<td >Ziel Multiziplität</td>
+    <th>Beziehungstyp:</th>
+	<th >Start</th>
+	<th >Ziel</th>
+	<th >Start Multiziplität</th>
+	<th >Ziel Multiziplität</th>
   </tr>
 @for(j <- 0 to 4){
 @for(i <- 0 to ue.getConnectionsLength(ue.getListConnectionsTypeSolution(j))-1){
@@ -93,6 +93,9 @@ float: left;
 #right {
 width: 50%;
 float: right;
+}
+h1 {
+    text-align: center;
 }
 </style>
 

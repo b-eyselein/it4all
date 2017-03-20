@@ -4,8 +4,6 @@
 	
 <h1> Korrektur der Aufgabe &quot;@ue.getTitle()&quot;</h1>	
 
-<h2>Übersicht der Klassen, Attribute und Methoden</h2>
-
 <table class="table">
   <tr>
     <th colspan="3" class="bg-success text-center">Identische Klassennamen</th>
@@ -16,8 +14,9 @@
 <div id="left">
 <table class="table">
 <tr>
+	
+	<th>Klassenname</th>
 	<th></th>
-	<th>Werte</th>
 	<th colspan="2">Ihre Eingabe</th>
 </tr>
 @for(i <- 0 to ue.getClassesLength(ue.getClasses_user_c())-1){
@@ -28,12 +27,12 @@
   </tr>
   <tr>
   	<td rowspan="2"></td>
-    <td>Methoden:</td>
+    <th>Methoden:</th>
     <td>@ue.getClasses_user_c().get(i).getMethodsAsString()</td>
     <td></td>
   </tr>
   <tr>
-    <td>Attribute:</td>
+    <th>Attribute:</th>
     <td>@ue.getClasses_user_c().get(i).getAttributesAsString()</td>
     <td></td>
     <td></td>
@@ -45,8 +44,8 @@
 <div id="right">
 <table class="table">
 <tr>
+	<th>Klassenname</th>
 	<th></th>
-	<th>Werte</th>
 	<th colspan="2">Lösung</th>
 </tr>
 @for(i <- 0 to ue.getClassesLength(ue.getClasses_solution_c())-1){
@@ -57,12 +56,12 @@
   </tr>
   <tr>
   	<td rowspan="2"></td>
-    <td>Methoden:</td>
+    <th>Methoden:</th>
     <td>@ue.getClasses_solution_c().get(i).getMethodsAsString()</td>
     <td></td>
   </tr>
   <tr>
-    <td>Attribute:</td>
+    <th>Attribute:</th>
     <td>@ue.getClasses_solution_c().get(i).getAttributesAsString()</td>
     <td></td>
     <td></td>
@@ -74,12 +73,12 @@
 <div id="left1">
  <table class="table">
   <tr>
-    <th colspan="3" class="bg-danger text-center">falsche</th>
+    <th colspan="3" class="bg-danger text-center">falsche Klassennamen</th>
   </tr>
   <tr>
-    <td>Klasse:</td>
-	<td >Methoden:</td>
-	<td >Attribute:</td>
+    <th>Klasse:</th>
+	<th >Methoden:</th>
+	<th >Attribute:</th>
   </tr>
 @for(i <- 0 to ue.getClassesLength(ue.getClasses_user())-1){
   <tr>
@@ -100,12 +99,12 @@
 <div id="right1">
  <table class="table">
   <tr>
-    <th colspan="3" class="bg-warning text-center">fehlende</th>
+    <th colspan="3" class="bg-warning text-center">fehlende Klassennamen</th>
   </tr>
   <tr>
-    <td>Klasse:</td>
-	<td >Methoden</td>
-	<td >Attribute</td>
+    <th>Klasse:</th>
+	<th >Methoden</th>
+	<th >Attribute</th>
   </tr>
 @for(i <- 0 to ue.getClassesLength(ue.getClasses_solution())-1){
   <tr>
@@ -135,11 +134,11 @@
     <th colspan="5">Ihre Eingabe</th>
   </tr>
   <tr>
-    <td>Beziehungstyp:</td>
-	<td >Start</td>
-	<td >Ziel</td>
-	<td >Start Multiziplität</td>
-	<td >Ziel Multiziplität</td>
+    <th>Beziehungstyp:</th>
+	<th >Start</th>
+	<th >Ziel</th>
+	<th >Start Multiziplität</th>
+	<th >Ziel Multiziplität</th>
   </tr>
 @for(j <- 0 to 4){
 @for(i <- 0 to ue.getConnectionsLength(ue.getListConnectionsTypeUser(j))-1){
@@ -173,11 +172,11 @@
     <th colspan="5">Lösung</th>
   </tr>
   <tr>
-    <td>Beziehungstyp:</td>
-	<td >Start</td>
-	<td >Ziel</td>
-	<td >Start Multiziplität</td>
-	<td >Ziel Multiziplität</td>
+    <th>Beziehungstyp:</th>
+	<th >Start</th>
+	<th >Ziel</th>
+	<th >Start Multiziplität</th>
+	<th >Ziel Multiziplität</th>
   </tr>
 @for(j <- 0 to 4){
 @for(i <- 0 to ue.getConnectionsLength(ue.getListConnectionsTypeSolution(j))-1){
@@ -205,6 +204,11 @@
 </div>
 
 
+
+
+
+
+
 <div class="panel-footer">
 	 <form action="/uml" method="get" enctype="multipart/form-data">
    	 <button type="submit" class="btn btn-primary btn-block">Zur Aufgabenübersicht</button>
@@ -220,7 +224,15 @@ width: 50%;
 float: right;
 }
 td{ height:10}
-table{ height:0.22*window.screen.availHeight}
+table{
+	height:0.22*window.screen.availHeight;
+	}
+h1 {
+    text-align: center;
+}
+h2 {
+    text-align: center;
+}
 </style>
 
 }
