@@ -23,20 +23,20 @@ import views.html.programming;
 import views.html.pythonoverview;
 
 public class Python extends ExerciseController {
-  
+
   private static final PythonCorrector CORRECTOR = new PythonCorrector();
-  
+
   @Inject
   public Python(Util theUtil, FormFactory theFactory) {
     super(theUtil, theFactory);
   }
-  
+
   public Result commit(int id) {
-    
+
     User user = UserManagement.getCurrentUser();
-    
+
     CompleteResult result = correct(request(), user, id);
-    
+
     if(wantsJsonResponse()) {
       log(user, new ExerciseCorrectionEvent(request(), id, result));
       return ok(Json.toJson(result));
@@ -44,7 +44,7 @@ public class Python extends ExerciseController {
       log(user, new ExerciseCompletionEvent(request(), id, result));
       return ok(correction.render("Javascript", result, user));
     }
-    
+
     // DynamicForm form = factory.form().bindFromRequest();
     // String learnerSolution = form.get("editorContent");
     //
@@ -59,34 +59,33 @@ public class Python extends ExerciseController {
     // "The result was: " + result.getResult(), "The output was:\n" +
     // result.getOutput())));
   }
-  
-  @Override
+
   protected CompleteResult correct(Request request, User user, int id) {
     // FIXME: TEST!
     PythonExercise exercise = new PythonExercise(id); // PythonExercise.finder.byId(identifier.id);
-    
+
     // FIXME: Time out der Ausführung
-    
+
     // Read commited solution and custom test data from request
     DynamicForm form = factory.form().bindFromRequest();
     String learnerSolution = form.get("editorContent");
-    
+
     // List<CommitedTestData> userTestData = extractAndValidateTestData(form,
     // exercise);
     // TODO: evtl. Anzeige aussortiertes TestDaten?
     // userTestData =
     // userTestData.stream().filter(CommitedTestData::isOk).collect(Collectors.toList());
     // TODO: evt. Speichern der Lösung und Laden bei erneuter Bearbeitung?
-    
+
     return CORRECTOR.correct(exercise, learnerSolution, new ArrayList<>(/* userTestData */), user.todo);
   }
-  
+
   public Result exercise(int id) {
     return ok(programming.render(UserManagement.getCurrentUser(), PythonExercise.finder.byId(id)));
   }
-  
+
   public Result index() {
     return ok(pythonoverview.render(UserManagement.getCurrentUser(), PythonExercise.finder.all()));
   }
-  
+
 }
