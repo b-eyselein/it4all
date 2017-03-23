@@ -5,19 +5,19 @@ import java.util.List;
 
 import org.xml.sax.ErrorHandler;
 
-import model.result.EvaluationResult;
+import model.XMLError;
 
 public abstract class CorrectionErrorHandler implements ErrorHandler {
   
   protected static final String FAILURE = "Fehler";
   
-  protected List<EvaluationResult> output;
+  protected List<XMLError> output;
   
   public CorrectionErrorHandler() {
     output = new LinkedList<>();
   }
   
-  public List<EvaluationResult> getErrors() {
+  public List<XMLError> getErrors() {
     return output;
   }
   

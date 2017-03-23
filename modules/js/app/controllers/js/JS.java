@@ -33,7 +33,7 @@ import views.html.jsoverview;
 public class JS extends ExerciseController {
 
   private static final JsCorrector CORRECTOR = new JsCorrector();
-  
+
   @Inject
   public JS(Util theUtil, FormFactory theFactory) {
     super(theUtil, theFactory);
@@ -46,7 +46,7 @@ public class JS extends ExerciseController {
     int inputCount = Integer.parseInt(form.get("inputs"));
 
     List<JsDataType> dataTypes = exercise.getInputTypes();
-    
+
     List<CommitedTestData> testData = new LinkedList<>();
 
     for(int testCounter = 0; testCounter < testCount; testCounter++)
@@ -77,7 +77,7 @@ public class JS extends ExerciseController {
 
   public Result commit(int id) {
     User user = UserManagement.getCurrentUser();
-    
+
     CompleteResult result = correct(request(), user, id);
 
     if(wantsJsonResponse()) {
@@ -89,7 +89,6 @@ public class JS extends ExerciseController {
     }
   }
 
-  @Override
   protected CompleteResult correct(Request request, User user, int id) {
     // FIXME: TEST!
     JsExercise exercise = JsExercise.finder.byId(id);

@@ -41,15 +41,15 @@ import views.html.sqlscenario;
 import play.mvc.Http.Request;
 
 public class SQL extends ExerciseController {
-  
+
   private static final String SHOW_ALL_TABLES = "SHOW TABLES";
-  
+
   private static final String SELECT_ALL = "SELECT * FROM ";
-  
+
   private Database sqlSelect;
-  
+
   private Database sqlOther;
-  
+
   @Inject
   public SQL(Util theUtil, FormFactory theFactory, @NamedDatabase("sqlselectroot") Database theSqlSelect,
       @NamedDatabase("sqlotherroot") Database theSqlOther) {
@@ -57,11 +57,11 @@ public class SQL extends ExerciseController {
     sqlSelect = theSqlSelect;
     sqlOther = theSqlOther;
   }
-  
+
   public Result commit(int id) {
     User user = UserManagement.getCurrentUser();
     CompleteResult result = correct(request(), user, id);
-    
+
     if(wantsJsonResponse()) {
       log(user, new ExerciseCorrectionEvent(request(), id, result));
       return ok(Json.toJson(result));
@@ -70,51 +70,50 @@ public class SQL extends ExerciseController {
       return ok(correction.render("SQL", result, user));
     }
   }
-  
-  @Override
+
   protected CompleteResult correct(Request request, User user, int id) {
     SqlExercise exercise = SqlExercise.finder.byId(id);
-    
+
     DynamicForm form = factory.form().bindFromRequest();
     String learnerSolution = form.get("editorContent");
     FeedbackLevel feedbackLevel = FeedbackLevel.valueOf(form.get("feedbackLevel"));
-    
+
     // FIXME: Speichern der Lösung?!?
-    
+
     Database database = getDatabaseForExerciseType(exercise.exercisetype);
-    
+
     if(learnerSolution.isEmpty())
       return new SqlCorrectionResult(learnerSolution,
           Arrays.asList(new EvaluationFailed("Sie haben eine leere Query abgegeben!")));
-    
+
     return SqlCorrector.correct(database, learnerSolution, exercise, feedbackLevel);
   }
-  
+
   public Result exercise(int id) {
     User user = UserManagement.getCurrentUser();
-    
+
     SqlExercise exercise = SqlExercise.finder.byId(id);
-    
+
     if(exercise == null)
       return redirect(controllers.sql.routes.SQL.index());
-    
+
     List<SqlQueryResult> tables = readTablesInDatabase(exercise.scenario.shortName);
-    
+
     log(user, new ExerciseStartEvent(request(), id));
-    
+
     return ok(sqlexercise.render(user, exercise, tables));
   }
-  
+
   private Database getDatabaseForExerciseType(SqlExerciseType exerciseType) {
     if(exerciseType == SqlExerciseType.SELECT)
       return sqlSelect;
     return sqlOther;
   }
-  
+
   public Result index() {
     return ok(sqloverview.render(UserManagement.getCurrentUser(), SqlScenario.finder.all()));
   }
-  
+
   private List<String> readExistingTables(Connection connection) {
     List<String> tableNames = new LinkedList<>();
     try(Statement statement = connection.createStatement();
@@ -126,7 +125,7 @@ public class SQL extends ExerciseController {
     }
     return tableNames;
   }
-  
+
   private SqlQueryResult readTableContent(Connection connection, String tableName) {
     try(PreparedStatement selectStatement = connection.prepareStatement(SELECT_ALL + tableName);) {
       ResultSet tableResult = selectStatement.executeQuery();
@@ -136,33 +135,33 @@ public class SQL extends ExerciseController {
       return null;
     }
   }
-  
+
   private List<SqlQueryResult> readTablesInDatabase(String databaseName) {
     List<SqlQueryResult> tables = new LinkedList<>();
-    
+
     try(Connection connection = sqlSelect.getConnection()) {
       connection.setCatalog(databaseName);
-      
+
       List<String> tableNames = readExistingTables(connection);
-      
+
       for(String tableName: tableNames) {
         SqlQueryResult tableResult = readTableContent(connection, tableName);
         tables.add(tableResult);
       }
-      
+
     } catch (SQLException e) {
       Logger.error("Es gab einen Fehler beim Auslesen der Tabellen!", e);
     }
-    
+
     return tables;
   }
-  
+
   public Result scenario(String scenarioName, String exType, int start) {
     SqlScenario scenario = SqlScenario.finder.byId(scenarioName);
     if(scenario == null)
       return redirect(controllers.sql.routes.SQL.index());
-    
+
     return ok(sqlscenario.render(UserManagement.getCurrentUser(), scenario, SqlExerciseType.valueOf(exType), start));
   }
-  
+
 }

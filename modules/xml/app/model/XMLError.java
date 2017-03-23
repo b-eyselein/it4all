@@ -1,7 +1,6 @@
 package model;
 
 import model.exercise.FeedbackLevel;
-import model.exercise.Success;
 import model.result.EvaluationResult;
 
 public class XMLError extends EvaluationResult {
@@ -11,37 +10,26 @@ public class XMLError extends EvaluationResult {
   protected XmlErrorType errorType;
 
   public XMLError(String theErrorMessage, XmlErrorType theErrorType, int theLine) {
-    super(FeedbackLevel.MINIMAL_FEEDBACK, getSuccessFromErrorType(theErrorType));
+    super(FeedbackLevel.MINIMAL_FEEDBACK, theErrorType.getSuccess());
     errorMessage = theErrorMessage;
     errorType = theErrorType;
     line = theLine;
   }
 
-  private static Success getSuccessFromErrorType(XmlErrorType errorType) {
-    switch(errorType) {
-    case NONE:
-      return Success.COMPLETE;
-    case WARNING:
-      return Success.PARTIALLY;
-    case FATALERROR:
-    case ERROR:
-    default:
-      return Success.NONE;
-    }
-  }
-
   @Override
   public String getAsHtml() {
-    StringBuilder builder = new StringBuilder();
-    builder.append("<div class=\"col-md-12\">");
-    builder.append("<div class=\"panel panel-" + getBSClass() + "\">");
-    builder.append(
-        "<div class=\"panel-heading\">" + errorType.getTitle() + (line != -1 ? " in Zeile " + line : "") + "</div>");
-
-    builder.append("<div class=\"panel-body\">" + errorMessage + "</div>");
-    builder.append("</div></div>");
-
-    return builder.toString();
+    throw new IllegalArgumentException("Cannot be used anymore!");
+    // StringBuilder builder = new StringBuilder();
+    // builder.append("<div class=\"col-md-12\">");
+    // builder.append("<div class=\"panel panel-" + getBSClass() + "\">");
+    // builder.append(
+    // "<div class=\"panel-heading\">" + errorType.getTitle() + (line != -1 ? "
+    // in Zeile " + line : "") + "</div>");
+    //
+    // builder.append("<div class=\"panel-body\">" + errorMessage + "</div>");
+    // builder.append("</div></div>");
+    //
+    // return builder.toString();
   }
 
   public String getErrorMessage() {
@@ -54,6 +42,10 @@ public class XMLError extends EvaluationResult {
 
   public int getLine() {
     return line;
+  }
+
+  public String getLineStr() {
+    return line != -1 ? " in Zeile " + line : "";
   }
 
   @Override

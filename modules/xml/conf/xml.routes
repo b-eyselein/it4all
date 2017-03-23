@@ -12,5 +12,5 @@ GET    /index        controllers.xml.XML.index(filter: java.util.List[String] ?=
 
 GET    /:id          controllers.xml.XML.exercise(id: Int)
 
-PUT    /:id          controllers.xml.XML.commit(id: Int)
+PUT    /:id          controllers.xml.XML.correctLive(id: Int)
 POST   /:id          controllers.xml.XML.commit(id: Int)

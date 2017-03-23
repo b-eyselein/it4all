@@ -72,7 +72,6 @@ public class Web extends ExerciseController {
     }
   }
 
-  @Override
   protected CompleteResult correct(Request request, User user, int id) {
     WebExercise exercise = WebExercise.finder.byId(id);
 
@@ -114,14 +113,14 @@ public class Web extends ExerciseController {
   public Result exercise(int id, String type) {
     User user = UserManagement.getCurrentUser();
     WebExercise exercise = WebExercise.finder.byId(id);
-    
+
     if(!typeIsCorrect(type) || exercise == null)
       return redirect(controllers.web.routes.Web.index());
-    
+
     String defaultOrOldSolution = loadDefaultOrOldSolution(id, user);
-    
+
     log(user, new ExerciseStartEvent(request(), id));
-    
+
     return ok(web.render(user, exercise, type, defaultOrOldSolution, "Html-Korrektur"));
   }
 
