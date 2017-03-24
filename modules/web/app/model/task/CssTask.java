@@ -12,7 +12,6 @@ import org.openqa.selenium.WebElement;
 import model.exercise.Success;
 import model.result.AttributeResult;
 import model.result.ElementResult;
-import model.result.EvaluationResult;
 
 @Entity
 public class CssTask extends Task {
@@ -24,7 +23,7 @@ public class CssTask extends Task {
   }
 
   @Override
-  public EvaluationResult evaluate(SearchContext searchContext) {
+  public ElementResult evaluate(SearchContext searchContext) {
     List<WebElement> foundElements = searchContext.findElements(By.xpath(xpathQuery));
 
     if(foundElements.isEmpty())

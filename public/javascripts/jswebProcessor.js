@@ -1,7 +1,11 @@
-function extractParameters() {
-return  "editorContent=" + encodeURIComponent(editor.getValue());
+function processCorrection(correction) {
+  document.getElementById("correction").innerHTML = correction;
 }
 
-function processCorrection(jsonResponseText) {
-  document.getElementById("testsDiv").innerHTML = JSON.parse(jsonResponseText).asHtml;
+function extractParameters() {
+  return "learnerSolution=" + encodeURIComponent(editor.getValue());
+}
+
+function prepareFormForSubmitting() {
+  document.getElementById("editorContent").value = editor.getValue();
 }

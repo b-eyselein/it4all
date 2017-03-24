@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,30 +18,17 @@ import controllers.core.ExerciseController;
 import controllers.core.UserManagement;
 import model.Util;
 import model.WebExercise;
-import model.task.Task;
-import model.logging.ExerciseCompletionEvent;
-import model.logging.ExerciseCorrectionEvent;
 import model.logging.ExerciseStartEvent;
-import model.result.CompleteResult;
-import model.result.EvaluationFailed;
-import model.result.EvaluationResult;
+import model.result.ElementResult;
 import model.user.User;
 import play.Logger;
 import play.data.DynamicForm;
 import play.data.FormFactory;
-import play.libs.Json;
-import play.mvc.Http.Request;
 import play.mvc.Result;
 import play.twirl.api.Html;
-import views.html.correction;
-import views.html.error;
-import views.html.playground;
-import views.html.web;
-import views.html.weboverview;
 
 public class Web extends ExerciseController {
 
-  private static final String LEARNER_SOLUTION_VALUE = "editorContent";
   private static final String FILE_TYPE = "html";
   private static final String EXERCISE_TYPE = "html";
   private static final String STANDARD_HTML = "<!doctype html>\n<html>\n\n<head>\n</head>\n\n<body>\n</body>\n\n</html>";
@@ -57,48 +45,24 @@ public class Web extends ExerciseController {
 
   public Result commit(int id, String type) {
     User user = UserManagement.getCurrentUser();
+    WebExercise exercise = WebExercise.finder.byId(id);
 
     if(!typeIsCorrect(type))
-      return badRequest(error.render(user, new Html("Der Korrekturtyp wurde nicht korrekt spezifiziert!")));
-
-    CompleteResult result = correct(request(), user, id);
-
-    if(wantsJsonResponse()) {
-      log(user, new ExerciseCorrectionEvent(request(), id, result));
-      return ok(Json.toJson(result));
-    } else {
-      log(user, new ExerciseCompletionEvent(request(), id, result));
-      return ok(correction.render("Web", result, UserManagement.getCurrentUser()));
-    }
-  }
-
-  protected CompleteResult correct(Request request, User user, int id) {
-    WebExercise exercise = WebExercise.finder.byId(id);
+      return badRequest(views.html.error.render(user, new Html("Der Korrekturtyp wurde nicht korrekt spezifiziert!")));
 
     DynamicForm form = factory.form().bindFromRequest();
     String learnerSolution = form.get(LEARNER_SOLUTION_VALUE);
-    try {
-      saveSolutionForUser(user, learnerSolution, exercise.id);
-    } catch (IOException error) {
-      Logger.error("Fehler beim Speichern einer Html-Loesungsdatei!", error);
-      return new CompleteResult(learnerSolution, Arrays.asList(new EvaluationFailed(
-          "Es gab einen Fehler beim Speichern der Lösungsdatei. Daher konnte die Korrektur nicht durchgeführt werden!")));
+
+    List<ElementResult> result = correct(learnerSolution, user, exercise);
+
+    if(wantsJsonResponse()) {
+      // log(user, new ExerciseCorrectionEvent(request(), id, result));
+      return ok(views.html.webresult.render(result));
+    } else {
+      // log(user, new ExerciseCompletionEvent(request(), id, result));
+      return ok(views.html.correction.render("Web", views.html.webresult.render(result), learnerSolution,
+          UserManagement.getCurrentUser()));
     }
-
-    String solutionUrl = "http://localhost:9000" + routes.Solution.site(user, "html", exercise.id).url();
-
-    WebDriver driver = new HtmlUnitDriver(true);
-    driver.get(solutionUrl);
-
-    // FIXME: TYPE!!!!!
-    List<? extends Task> tasks = exercise.getTasks("html");
-
-    List<EvaluationResult> results = tasks.stream().map(task -> task.evaluate(driver)).collect(Collectors.toList());
-
-    // if("html".equals(type))
-    // saveGrading(exercise, student, calculatePoints(results));
-
-    return new CompleteResult(learnerSolution, results);
   }
 
   /**
@@ -121,11 +85,15 @@ public class Web extends ExerciseController {
 
     log(user, new ExerciseStartEvent(request(), id));
 
-    return ok(web.render(user, exercise, type, defaultOrOldSolution, "Html-Korrektur"));
+    return ok(views.html.web.render(user, exercise, type, defaultOrOldSolution, "Html-Korrektur"));
   }
 
   public Result index() {
-    return ok(weboverview.render(UserManagement.getCurrentUser(), WebExercise.finder.all()));
+    return ok(views.html.weboverview.render(UserManagement.getCurrentUser(), WebExercise.finder.all()));
+  }
+
+  public Result playground() {
+    return ok(views.html.playground.render(UserManagement.getCurrentUser()));
   }
 
   private String loadDefaultOrOldSolution(int id, User user) {
@@ -138,10 +106,6 @@ public class Web extends ExerciseController {
       }
     }
     return STANDARD_HTML;
-  }
-
-  public Result playground() {
-    return ok(playground.render(UserManagement.getCurrentUser()));
   }
 
   private void saveSolutionForUser(User user, String solution, int exercise) throws IOException {
@@ -157,20 +121,20 @@ public class Web extends ExerciseController {
     return "html".equals(type) || "css".equals(type) || "js".equals(type);
   }
 
-  // private static int calculatePoints(List<EvaluationResult> result) {
-  // return result.stream().mapToInt(EvaluationResult::getPoints).sum();
-  // }
+  protected List<ElementResult> correct(String learnerSolution, User user, WebExercise exercise) {
+    try {
+      saveSolutionForUser(user, learnerSolution, exercise.id);
+    } catch (IOException error) {
+      Logger.error("Fehler beim Speichern einer Html-Loesungsdatei!", error);
+      return Collections.emptyList();
+    }
 
-  // private static void saveGrading(WebExercise exercise, User user, int
-  // points) {
-  // GradingKey gradingKey = new GradingKey(user.name, exercise.id);
-  // Grading grading = Grading.finder.byId(gradingKey);
-  //
-  // if(grading == null)
-  // grading = new Grading(gradingKey);
-  //
-  // grading.setPoints(points);
-  // grading.save();
-  // }
+    String solutionUrl = "http://localhost:9000" + routes.Solution.site(user, "html", exercise.id).url();
+
+    WebDriver driver = new HtmlUnitDriver(true);
+    driver.get(solutionUrl);
+
+    return exercise.htmlTasks.stream().map(task -> task.evaluate(driver)).collect(Collectors.toList());
+  }
 
 }

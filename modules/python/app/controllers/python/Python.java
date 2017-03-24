@@ -18,9 +18,7 @@ import play.data.FormFactory;
 import play.libs.Json;
 import play.mvc.Http.Request;
 import play.mvc.Result;
-import views.html.correction;
-import views.html.programming;
-import views.html.pythonoverview;
+import play.twirl.api.Html;
 
 public class Python extends ExerciseController {
 
@@ -42,7 +40,7 @@ public class Python extends ExerciseController {
       return ok(Json.toJson(result));
     } else {
       log(user, new ExerciseCompletionEvent(request(), id, result));
-      return ok(correction.render("Javascript", result, user));
+      return ok(views.html.correction.render("Python", new Html("TODO!"), result.getLearnerSolution(), user));
     }
 
     // DynamicForm form = factory.form().bindFromRequest();
@@ -58,6 +56,14 @@ public class Python extends ExerciseController {
     // GenericEvaluationResult(FeedbackLevel.MINIMAL_FEEDBACK, Success.NONE,
     // "The result was: " + result.getResult(), "The output was:\n" +
     // result.getOutput())));
+  }
+
+  public Result exercise(int id) {
+    return ok(views.html.programming.render(UserManagement.getCurrentUser(), PythonExercise.finder.byId(id)));
+  }
+
+  public Result index() {
+    return ok(views.html.pythonoverview.render(UserManagement.getCurrentUser(), PythonExercise.finder.all()));
   }
 
   protected CompleteResult correct(Request request, User user, int id) {
@@ -78,14 +84,6 @@ public class Python extends ExerciseController {
     // TODO: evt. Speichern der Lösung und Laden bei erneuter Bearbeitung?
 
     return CORRECTOR.correct(exercise, learnerSolution, new ArrayList<>(/* userTestData */), user.todo);
-  }
-
-  public Result exercise(int id) {
-    return ok(programming.render(UserManagement.getCurrentUser(), PythonExercise.finder.byId(id)));
-  }
-
-  public Result index() {
-    return ok(pythonoverview.render(UserManagement.getCurrentUser(), PythonExercise.finder.all()));
   }
 
 }

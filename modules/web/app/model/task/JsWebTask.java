@@ -12,7 +12,7 @@ import org.openqa.selenium.SearchContext;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import model.result.ConditionResult;
-import model.result.EvaluationResult;
+import model.result.ElementResult;
 import model.result.JsWebTestResult;
 
 @Entity
@@ -36,7 +36,7 @@ public class JsWebTask extends Task {
   }
 
   @Override
-  public EvaluationResult evaluate(SearchContext context) {
+  public ElementResult evaluate(SearchContext context) {
     List<ConditionResult> preconditionsSatisfied = evaluateConditions(context, getPreconditions());
     boolean actionPerformed = action == null || action.perform(context);
     List<ConditionResult> postconditionSatisfied = evaluateConditions(context, getPostConditions());

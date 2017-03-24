@@ -23,10 +23,10 @@ public class WebExercise extends Exercise {
 
   @Column(columnDefinition = "text")
   public String htmlText;
-  
+
   @Column(columnDefinition = "text")
   public String cssText;
-  
+
   @Column(columnDefinition = "text")
   public String jsText;
 
@@ -37,7 +37,7 @@ public class WebExercise extends Exercise {
   @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
   @JsonManagedReference
   public List<CssTask> cssTasks;
-  
+
   @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
   @JsonManagedReference
   public List<JsWebTask> jsTasks;
@@ -45,7 +45,7 @@ public class WebExercise extends Exercise {
   public WebExercise(int theId) {
     super(theId);
   }
-  
+
   public List<? extends Task> getTasks(String exType) {
     switch(exType) {
     case "html":

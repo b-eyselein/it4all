@@ -19,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import model.WebExercise;
 import model.exercise.Success;
 import model.result.AttributeResult;
+import model.result.ElementResult;
 import model.result.EvaluationResult;
 
 @MappedSuperclass
@@ -57,7 +58,7 @@ public abstract class Task extends Model {
     return true;
   }
   
-  public abstract EvaluationResult evaluate(SearchContext context);
+  public abstract ElementResult evaluate(SearchContext context);
   
   public String getDescription() {
     return text;

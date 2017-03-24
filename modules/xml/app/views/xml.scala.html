@@ -1,7 +1,7 @@
 @(user: model.user.User, exercise: model.XmlExercise, referenceFile: String, oldSolution: String)
 
 @main("XML-Test", user) {
-<script src="@controllers.routes.Assets.versioned("javascripts/xmlProcessor.js")"></script>
+<script src="@controllers.routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
 
 <div class="container-fluid">
   <form action= @controllers.xml.routes.XML.commit(exercise.id) method="post" onsubmit="prepareFormForSubmitting();">

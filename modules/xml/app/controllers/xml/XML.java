@@ -38,7 +38,6 @@ import play.mvc.Result;
 public class XML extends ExerciseController {
 
   private static final String EXERCISE_TYPE = "xml";
-  private static final String LEARNER_SOLUTION_VALUE = "editorContent";
 
   private static final String SAVE_ERROR_MSG = "An error has occured while saving an xml file to ";
 
@@ -46,7 +45,7 @@ public class XML extends ExerciseController {
   public XML(Util theUtil, FormFactory theFactory) {
     super(theUtil, theFactory);
   }
-  
+
   public Result commit(int id) {
     User user = UserManagement.getCurrentUser();
     XmlExercise exercise = XmlExercise.finder.byId(id);
@@ -59,7 +58,8 @@ public class XML extends ExerciseController {
 
     log(user, new ExerciseCompletionEvent(request(), id, result));
 
-    return ok(views.html.correction.render("XML", result, user));
+    return ok(
+        views.html.correction.render("XML", views.html.xmlresult.render(correctionResult), learnerSolution, user));
   }
 
   public Result correctBlanks(int id) {
@@ -87,7 +87,7 @@ public class XML extends ExerciseController {
 
     // log(user, new ExerciseCorrectionEvent(request(), id, result));
 
-    return ok(views.html.xmlliveresult.render(result));
+    return ok(views.html.xmlresult.render(result));
   }
 
   public Result exercise(int id) {
@@ -104,7 +104,7 @@ public class XML extends ExerciseController {
 
     return ok(views.html.xml.render(user, exercise, refCode, defOrOldSolution));
   }
-  
+
   public Result index(List<String> filter) {
     // @formatter:off
     List<XmlExType> filters = filter.isEmpty() ?

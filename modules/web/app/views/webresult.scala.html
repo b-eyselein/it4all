@@ -1,0 +1,33 @@
+@(results: List[model.result.ElementResult])
+
+@for(res <- results) {
+<div class="panel panel-@res.getBSClass()">
+  <div class="panel-heading" data-toggle="collapse" href="#task@res.getTask().key.taskId">@{res.getTask().key.taskId}. @res.getTask().text</div>
+    <div id="task@{res.getTask().key.taskId}" class="panel-collapse collapse " + (success == Success.COMPLETE ? "" : "in") + ">
+      <div class="panel-body">
+      
+      @if(res.getSuccess() == model.exercise.Success.COMPLETE || res.getSuccess() == model.exercise.Success.PARTIALLY) {
+        <div class="alert alert-success">Element wurde gefunden!</div>
+      } else {
+        <div class="alert alert-danger">
+        @for(m <- res.getMessages()) {
+          <p>@m</p>
+        }	
+        </div>
+      }
+
+      @if(res.getTextContentResult() != null) {
+  	    <div class="col-md-12">
+        @for(mes <- res.getTextContentResult.getMessages()) {
+          <div class="alert alert-@res.getTextContentResult().getBSClass()">@mes</div>
+        }
+      }
+      
+      @*
+    // Attribute Results
+    for(AttributeResult attResult: attributeResults)
+      builder.append(attResult.getAsHtml());*@
+    </div>
+  </div>
+</div>
+}

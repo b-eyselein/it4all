@@ -34,10 +34,7 @@ import play.db.Database;
 import play.db.NamedDatabase;
 import play.libs.Json;
 import play.mvc.Result;
-import views.html.correction;
-import views.html.sqlexercise;
-import views.html.sqloverview;
-import views.html.sqlscenario;
+import play.twirl.api.Html;
 import play.mvc.Http.Request;
 
 public class SQL extends ExerciseController {
@@ -67,26 +64,8 @@ public class SQL extends ExerciseController {
       return ok(Json.toJson(result));
     } else {
       log(user, new ExerciseCompletionEvent(request(), id, result));
-      return ok(correction.render("SQL", result, user));
+      return ok(views.html.correction.render("SQL", new Html("TODO!"), result.getLearnerSolution(), user));
     }
-  }
-
-  protected CompleteResult correct(Request request, User user, int id) {
-    SqlExercise exercise = SqlExercise.finder.byId(id);
-
-    DynamicForm form = factory.form().bindFromRequest();
-    String learnerSolution = form.get("editorContent");
-    FeedbackLevel feedbackLevel = FeedbackLevel.valueOf(form.get("feedbackLevel"));
-
-    // FIXME: Speichern der Lösung?!?
-
-    Database database = getDatabaseForExerciseType(exercise.exercisetype);
-
-    if(learnerSolution.isEmpty())
-      return new SqlCorrectionResult(learnerSolution,
-          Arrays.asList(new EvaluationFailed("Sie haben eine leere Query abgegeben!")));
-
-    return SqlCorrector.correct(database, learnerSolution, exercise, feedbackLevel);
   }
 
   public Result exercise(int id) {
@@ -101,17 +80,26 @@ public class SQL extends ExerciseController {
 
     log(user, new ExerciseStartEvent(request(), id));
 
-    return ok(sqlexercise.render(user, exercise, tables));
+    return ok(views.html.sqlexercise.render(user, exercise, tables));
+  }
+
+  public Result index() {
+    return ok(views.html.sqloverview.render(UserManagement.getCurrentUser(), SqlScenario.finder.all()));
+  }
+
+  public Result scenario(String scenarioName, String exType, int start) {
+    SqlScenario scenario = SqlScenario.finder.byId(scenarioName);
+    if(scenario == null)
+      return redirect(controllers.sql.routes.SQL.index());
+
+    return ok(views.html.sqlscenario.render(UserManagement.getCurrentUser(), scenario, SqlExerciseType.valueOf(exType),
+        start));
   }
 
   private Database getDatabaseForExerciseType(SqlExerciseType exerciseType) {
     if(exerciseType == SqlExerciseType.SELECT)
       return sqlSelect;
     return sqlOther;
-  }
-
-  public Result index() {
-    return ok(sqloverview.render(UserManagement.getCurrentUser(), SqlScenario.finder.all()));
   }
 
   private List<String> readExistingTables(Connection connection) {
@@ -156,12 +144,22 @@ public class SQL extends ExerciseController {
     return tables;
   }
 
-  public Result scenario(String scenarioName, String exType, int start) {
-    SqlScenario scenario = SqlScenario.finder.byId(scenarioName);
-    if(scenario == null)
-      return redirect(controllers.sql.routes.SQL.index());
+  protected CompleteResult correct(Request request, User user, int id) {
+    SqlExercise exercise = SqlExercise.finder.byId(id);
 
-    return ok(sqlscenario.render(UserManagement.getCurrentUser(), scenario, SqlExerciseType.valueOf(exType), start));
+    DynamicForm form = factory.form().bindFromRequest();
+    String learnerSolution = form.get("editorContent");
+    FeedbackLevel feedbackLevel = FeedbackLevel.valueOf(form.get("feedbackLevel"));
+
+    // FIXME: Speichern der Lösung?!?
+
+    Database database = getDatabaseForExerciseType(exercise.exercisetype);
+
+    if(learnerSolution.isEmpty())
+      return new SqlCorrectionResult(learnerSolution,
+          Arrays.asList(new EvaluationFailed("Sie haben eine leere Query abgegeben!")));
+
+    return SqlCorrector.correct(database, learnerSolution, exercise, feedbackLevel);
   }
 
 }

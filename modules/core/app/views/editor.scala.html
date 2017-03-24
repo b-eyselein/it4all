@@ -1,9 +1,9 @@
 @(template: String, mode: String, minLines: Int, maxLines: Int, updatePrev: Boolean)
 
 <script src="@controllers.routes.Assets.versioned("javascripts/ace/ace.js")"></script>
-<script src="@controllers.routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
 <div class="panel panel-default">
   <div class="panel-heading">
+  
     <div class="input-group">
       <span class="input-group-addon">Schriftgr&ouml;&szlig;e: <span id="fontsize">16</span> px
       </span>
@@ -16,6 +16,7 @@
         </button>
       </div>
     </div>
+    
   </div>
   <div id="editor" class="form-control">@template</div>
   <script>
@@ -34,6 +35,6 @@ editor.setOptions({
 editor.on("change", updatePreview);
 window.onload = updatePreview;
 }
-    </script>
-  <textarea hidden name="editorContent" id="editorContent"></textarea>
+  </script>
+  <textarea hidden name="learnerSolution" id="editorContent"></textarea>
 </div>
