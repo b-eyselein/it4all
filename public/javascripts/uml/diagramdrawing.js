@@ -1,4 +1,4 @@
-var divWidth = document.getElementById("sizepaper").parentNode.offsetWidth;
+var divWidth = document.getElementById("sizepaper").clientWidth;
 var divTextWidth = document.getElementById("text").parentNode.offsetWidth;
 var divHeight = document.getElementById("sizepaper").parentNode.offsetHeight;
 var idList = new Array(); // Linkverbindungen
@@ -6,11 +6,12 @@ var graph = new joint.dia.Graph();
 var uml = joint.shapes.uml;
 var erd = joint.shapes.erd;
 var sel;
-var max_entries_class = 3;	// Festlegen der maximalen Anzahl von Methoden bzw. Attributen
+var max_entries_class = 3;	// Festlegen der maximalen Anzahl von Methoden bzw.
+							// Attributen
 
 var paper = new joint.dia.Paper({
   el: $('#paper'),
-  width: 0.7 * window.screen.availWidth,
+  width: 0.625 * window.screen.availWidth,
   height: 0.7 * window.screen.availHeight,
   gridSize: 1,
   model: graph
@@ -329,40 +330,45 @@ function delAttr() {
 }
 
 function addClass(data) {
-  var newClass = new uml.Class({
-    position: {
-      x: Math.random() * 250,
-      y: Math.random() * 250
-    },
-    size: {
-      width: 140,
-      height: 140
-    },
-    name: data,
-    attributes: ["", ""],
-    methods: ["", ""],
-    attrs: {
-      '.uml-class-name-rect': {
-        fill: '#ffffff',
-      },
-      '.uml-class-attrs-rect, .uml-class-methods-rect': {
-        fill: '#ffffff',
-      },
-      '.uml-class-attrs-text': {
-        ref: '.uml-class-attrs-rect',
-        'ref-y': 0.5,
-        'y-alignment': 'middle'
-      },
-      '.uml-class-methods-text': {
-        ref: '.uml-class-methods-rect',
-        'ref-y': 0.5,
-        'y-alignment': 'middle'
-      }
-    }
-  });
+	console.log("data:"+data);
+	if(data.includes(" ")){
+		window.alert("Bitte einzelne Wörter zum Erstellen einer Klasse verwenden");
+	}else{
+		var newClass = new uml.Class({
+			position: {
+				x: Math.random() * 250,
+				y: Math.random() * 250
+			},
+			size: {
+				width: 140,
+				height: 140
+			},
+			name: data,
+			attributes: ["", ""],
+			methods: ["", ""],
+			attrs: {
+				'.uml-class-name-rect': {
+					fill: '#ffffff',
+				},
+     	'.uml-class-attrs-rect, .uml-class-methods-rect': {
+     		fill: '#ffffff',
+     	},
+     	'.uml-class-attrs-text': {
+     		ref: '.uml-class-attrs-rect',
+     		'ref-y': 0.5,
+     		'y-alignment': 'middle'
+     	},
+     	'.uml-class-methods-text': {
+     		ref: '.uml-class-methods-rect',
+     		'ref-y': 0.5,
+     		'y-alignment': 'middle'
+     	}
+			}
+		});
   newClass.attributes.attributes = [];
   newClass.attributes.methods = [];
   graph.addCell(newClass);
+	}
 
 }
 
