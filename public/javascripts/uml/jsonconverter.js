@@ -43,10 +43,10 @@ function extractParameters() {
   for (i = 0; i < graph.getLinks().length; i++) {
     //  typ_source-id-name_destin-id-name_source-mult_destin-mult
     var text = graph.getLinks()[i].attributes.type + "_" +
-      graph.getCell(graph.getLinks()[i].attributes.source.id).attr('.uml-class-name-text/text') + "_" +
-      graph.getCell(graph.getLinks()[i].attributes.target.id).attr('.uml-class-name-text/text') + "_" +
-      graph.getLinks()[i].attributes.labels["0"].attrs.text.text + "_" +
-      graph.getLinks()[i].attributes.labels[1].attrs.text.text;
+      graph.getCell(graph.getLinks()[i].attributes.source.id).attr('.uml-class-name-text/text').replace("_", " ") + "_" +
+      graph.getCell(graph.getLinks()[i].attributes.target.id).attr('.uml-class-name-text/text').replace("_", " ") + "_" +
+      graph.getLinks()[i].attributes.labels["0"].attrs.text.text.replace("_", " ") + "_" +
+      graph.getLinks()[i].attributes.labels[1].attrs.text.text.replace("_", " ");
     connections.push(text);
     text = "";
   }
@@ -187,6 +187,6 @@ function extractParameters() {
 }
 
 function prepareFormForSubmitting() {
-  document.getElementById("learnerSolution").value = extractParameters();
-  console.log("learnersol: " + document.getElementById("learnerSolution").value);
+		  document.getElementById("learnerSolution").value = extractParameters();
+		  console.log("learnersol: " + document.getElementById("learnerSolution").value);
 }

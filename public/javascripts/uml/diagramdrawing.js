@@ -5,6 +5,8 @@ var idList = new Array(); // Linkverbindungen
 var graph = new joint.dia.Graph();
 var uml = joint.shapes.uml;
 var erd = joint.shapes.erd;
+var sel;
+var max_entries_class = 3;	// Festlegen der maximalen Anzahl von Methoden bzw. Attributen
 
 var paper = new joint.dia.Paper({
   el: $('#paper'),
@@ -26,32 +28,40 @@ paper.on('cell:pointerclick',
     } else if (document.getElementById(6).value == "on") {
       idList = [];
       idList.push(cellView.model.id);
-      var input = window.prompt("Bitte geben sie die Methode an, welche hinzugefügt werden soll");
-      if (input != null) {
-        graph.getCell(idList[0]).attributes.methods.push(input);
-        var met = graph.getCell(idList[0]).attributes.methods;
-        var text = "";
-        for (var val of met) {
-          text += val + "\n";
-        }
-        graph.getCell(idList[0]).attr('.uml-class-methods-text/text', text);
-        // console.log(graph.getCell(idList[0]).attributes.methods);
+      if(graph.getCell(idList[0]).attributes.methods.length >= max_entries_class){
+    	  alert("Entfernen Sie zuerst einen Eintrag, bevor Sie weitere hinzufügen!");
+      }else{   
+          var input = window.prompt("Bitte geben sie die Methode an, welche hinzugefügt werden soll");
+          if (input != null) {
+            graph.getCell(idList[0]).attributes.methods.push(input);
+            var met = graph.getCell(idList[0]).attributes.methods;
+            var text = "";
+            for (var val of met) {
+              text += val + "\n";
+            }
+            graph.getCell(idList[0]).attr('.uml-class-methods-text/text', text);
+            // console.log(graph.getCell(idList[0]).attributes.methods);
+          }
       }
       idList = [];
       // Attribute hinzuf&uuml;gen
     } else if (document.getElementById(7).value == "on") {
       idList = [];
       idList.push(cellView.model.id);
-      var input = window.prompt("Bitte geben sie das Attribut an, welche hinzugfügt werden soll");
-      if (input != null) {
-        graph.getCell(idList[0]).attributes.attributes.push(input);
-        var met = graph.getCell(idList[0]).attributes.attributes;
-        var text = "";
-        for (val of met) {
-          text += val + "\n";
-        }
-        graph.getCell(idList[0]).attr('.uml-class-attrs-text/text', text);
-        // console.log(graph.getCell(idList[0]).attributes.attributes);
+      if(graph.getCell(idList[0]).attributes.attributes.length >= max_entries_class){
+    	  alert("Entfernen Sie zuerst einen Eintrag, bevor Sie weitere hinzufügen!");
+      }else{    	  
+    	  var input = window.prompt("Bitte geben sie das Attribut an, welche hinzugfügt werden soll");
+    	  if (input != null) {
+    		  graph.getCell(idList[0]).attributes.attributes.push(input);
+    		  var met = graph.getCell(idList[0]).attributes.attributes;
+    		  var text = "";
+    		  for (val of met) {
+    			  text += val + "\n";
+    		  }
+    		  graph.getCell(idList[0]).attr('.uml-class-attrs-text/text', text);
+    		  // console.log(graph.getCell(idList[0]).attributes.attributes);
+    	  }
       }
       idList = [];
       // Methoden entfernen
@@ -120,11 +130,8 @@ function drop(ev) {
   addClass(data);
 }
 
-var sel;
-
 function selectButton(elem) {
   for (i = 1; i < 11; i++) {
-    console.log("id: " + i);
     document.getElementById(i).value = "off";
   }
   document.getElementById(elem.id).value = "on";
