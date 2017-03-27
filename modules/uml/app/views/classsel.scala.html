@@ -1,4 +1,6 @@
-@(user: model.user.User, exercise: model.UmlExercise) @main("UML", user) {
+@(user: model.user.User, exercise: model.UmlExercise)
+
+@main("UML", user) {
 <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/umlextra.css")">
 <script src="@controllers.routes.Assets.versioned("javascripts/umlProcessor.js")"></script>
 

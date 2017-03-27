@@ -1,0 +1,71 @@
+@(user: model.user.User, exercise: model.UmlExercise)
+
+@main("UML-Test", user) {
+<script src=" @controllers.routes.Assets.versioned("javascripts/uml/lodash.js")"></script>
+<script src=" @controllers.routes.Assets.versioned("javascripts/uml/backbone.js")"></script>
+<!-- IMPORTANT: load JQuery here again?!? -->
+<script src=" @controllers.routes.Assets.versioned("javascripts/uml/jquery.js")"></script>
+<script src=" @controllers.routes.Assets.versioned("javascripts/uml/joint.js")"></script>
+<script src=" @controllers.routes.Assets.versioned("javascripts/uml/jsonconverter.js")"></script>
+<link href="@routes.Assets.versioned("stylesheets/joint.css")">
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-4">
+      <!-- Bearbeitungshinweise -->
+      <div class="alert alert-info">
+        <p>Vervollst&auml;ndigen Sie das vorliegende UML-Klassendiagramm, indem Sie die Beziehungen zwischen den Klassen modellieren.</p>
+        <ul>
+          <li>W&auml;hlen Sie zuerst die Art der Beziehung durch das Aktivieren des jeweiligen Buttons aus.</li>
+          <li>Anschlie&szlig;end klicken Sie auf zuerst auf den Namen der Klasse und klicken dann auf die andere Klasse.</li>
+          <li>Im folgendem Popup-Fenster sollen Sie nun die Multiplizit&auml;ten zwischen den Klassen angeben.</li>
+          <li>Um bereits erstellte Beziehungen zu l&ouml;schen, hovern Sie mit der Maus &uuml;ber die Verbindung und klicken auf das erscheinende rote Kreuz.</li>
+          <li>Nachdem Sie alle Beziehungen modelliert haben, k&ouml;nnen Sie die Ausgabe mittels Buttons verifizieren.</li>
+        </ul>
+      </div>
+      
+      <!-- Aufgabentext -->
+      <div class="panel panel-default" id="text">
+        <div class="panel-heading">Aufgabentext</div>
+        <div class="panel-body">@Html(exercise.getExerciseText())</div>
+      </div>
+      
+      <!-- Buttons -->
+      <div class="btn-group btn-group-justified">
+        <div class="btn-group">
+          <button type="button" class="btn btn-default" value="off" id="5" onclick="selectButton(this);">Standard</button>
+        </div>
+        <div class="btn-group">
+          <button type="button" class="btn btn-default" value="off" id="1" onclick="selectButton(this);">Composition</button>
+        </div>
+        <div class="btn-group">
+          <button type="button" class="btn btn-default" value="off" id="2" onclick="selectButton(this);">Aggregation</button>
+        </div>
+        <div class="btn-group">
+          <button type="button" class="btn btn-default" value="off" id="3" onclick="selectButton(this);">Implementation</button>
+        </div>
+        <div class="btn-group">
+          <button type="button" class="btn btn-default" value="off" id="4" onclick="selectButton(this);">Generalization</button>
+        </div>
+      </div>
+      
+      <!-- Aufgabe abgeben -->
+      <hr>
+      
+      <form action="@controllers.uml.routes.UML.correctDiagramDrawingWithHelp(exercise.id)" method="post" enctype="multipart/form-data" onsubmit="prepareFormForSubmitting();">
+        <button type="submit" class="btn btn-primary btn-block">Aufgabe verifizieren</button>
+        <input type="hidden" value="" class="form-control" name="learnerSolution" id="learnerSolution" required>
+      </form> 
+    </div>
+    <div class="col-md-8">
+      <div id="sizepaper">
+        <div ondrop="drop(event)" ondragover="allowDrop(event)">
+          <div style="border: 1px solid black" id="paper"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- FIXME: why behind here?!?!? -->
+<script src=" @controllers.routes.Assets.versioned("javascripts/uml/diagramdrawinghelp.js")"></script>
+}

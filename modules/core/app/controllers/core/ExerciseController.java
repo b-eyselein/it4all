@@ -30,6 +30,10 @@ public abstract class ExerciseController extends Controller {
     factory = theFactory;
   }
   
+  protected static User getUser() {
+    return UserManagement.getCurrentUser();
+  }
+
   protected static void log(User user, WorkingEvent eventToLog) {
     PROGRESS_LOGGER.debug(user.name + " - " + Json.toJson(eventToLog));
   }

@@ -112,10 +112,6 @@ function prepareFormForSubmitting() {
   console.log(document.getElementById("learnerSolution").value);
 }
 
-function affirmFinalCommit() {
-  window.alert("Erfolgreich abgegeben!");
-}
-
 function testTheSolution(url) {
   // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
   var xhttp = new XMLHttpRequest();

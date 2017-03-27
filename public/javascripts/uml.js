@@ -27,7 +27,7 @@ function selectButton(elem) {
 }
 
  function link() {
-  if(document.getElementById(sel).value = "on") {
+  if(document.getElementById(sel).value == "on") {
     switch (sel){
     case '1':
       graph.addCell(new uml.Composition({
