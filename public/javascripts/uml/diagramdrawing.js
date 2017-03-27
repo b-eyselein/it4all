@@ -111,6 +111,8 @@ paper.on('cell:pointerclick',
   }
 );
 
+
+
 function allowDrop(ev) {
   ev.preventDefault();
 }
@@ -129,6 +131,7 @@ function drop(ev) {
   var data = ev.dataTransfer.getData("text");
   addClass(data);
 }
+
 
 function selectButton(elem) {
   for (i = 1; i < 11; i++) {

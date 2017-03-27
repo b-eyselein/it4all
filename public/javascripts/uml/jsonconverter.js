@@ -190,3 +190,4 @@ function prepareFormForSubmitting() {
 		  document.getElementById("learnerSolution").value = extractParameters();
 		  console.log("learnersol: " + document.getElementById("learnerSolution").value);
 }
+
