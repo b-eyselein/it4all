@@ -10,8 +10,6 @@ import model.correctionresult.SqlExecutionResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.SqlExercise;
 import model.querycorrectors.QueryCorrector;
-import model.result.EvaluationFailed;
-import model.result.EvaluationResult;
 import play.Logger;
 import play.db.Database;
 
@@ -36,7 +34,7 @@ public abstract class ChangeCorrector<QueryType extends net.sf.jsqlparser.statem
   }
   
   @Override
-  protected EvaluationResult executeQuery(Database database, QueryType userStatement, QueryType sampleStatement,
+  protected SqlExecutionResult executeQuery(Database database, QueryType userStatement, QueryType sampleStatement,
       SqlExercise exercise, FeedbackLevel feedbackLevel) {
     try(Connection connection = database.getConnection()) {
       
@@ -60,8 +58,10 @@ public abstract class ChangeCorrector<QueryType extends net.sf.jsqlparser.statem
       
     } catch (SQLException e) {
       Logger.error("There was an error while executing a sql statement: ", e);
-      return new EvaluationFailed(
-          "Es gab einen Fehler beim Ausführen eines Statements:<p><pre>" + e.getMessage() + "</pre></p>");
+      // return new EvaluationFailed(
+      // "Es gab einen Fehler beim Ausführen eines Statements:<p><pre>" +
+      // e.getMessage() + "</pre></p>");
+      return null;
     }
   }
   

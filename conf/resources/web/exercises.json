@@ -406,7 +406,7 @@
 		"jsText": "Implementieren Sie nun die Funktion <code>imcrement()</code>, die aufgerufen wird, wenn auf den Knopf gedrückt wird. Sie soll den Inhalt (innerHTML) des Elementes mit der id \"theSpan\" auslesen und um 1 erhöhen. Sie können die Funktion <code>parseInt(str)</code> verwenden, um einen String in eine Ganzzahl umzuwandeln.", 
 		"htmlTasks": [
 			{
-				"text": "Erstellen Sie einen Button, auf den geklickt wird. Dieser soll als Text 'Klick mich' haben. Außerdem soll beim Klick die Funktion 'increment()' aufgerufen werden.", 
+				"text": "Erstellen Sie einen Button, auf den geklickt wird. Dieser soll als Text 'Klick mich!' haben. Außerdem soll beim Klick die Funktion 'increment()' aufgerufen werden.", 
 				"xpath": "/html/body//button", 
 				"content": "Klick mich!", 
 				"attributes": [

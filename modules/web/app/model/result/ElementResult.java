@@ -21,11 +21,6 @@ public class ElementResult extends EvaluationResult {
     textContentResult = theTextContentResult;
   }
 
-  @Override
-  public String getAsHtml() {
-    throw new IllegalArgumentException("Cannot be used anymore!");
-  }
-
   public List<AttributeResult> getAttributeResults() {
     return attributeResults;
   }

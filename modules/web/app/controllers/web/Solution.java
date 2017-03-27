@@ -30,13 +30,13 @@ public class Solution extends Controller {
     Path file = util.getSolFileForExercise(user, type, exerciseId, FILE_TYPE);
 
     if(!file.toFile().exists())
-      return badRequest(error.render(user, new Html("Fehler: Datei nicht vorhanden!")));
+      return badRequest(error.render(user, "Fehler: Datei nicht vorhanden!"));
 
     try {
       return ok(new Html(String.join("\n", Files.readAllLines(file))));
     } catch (IOException err) {
       Logger.error("Fehler beim Lesen einer Html-Datei: " + file, err);
-      return badRequest(error.render(user, new Html("Fehler beim Lesen der Datei!")));
+      return badRequest(error.render(user, "Fehler beim Lesen der Datei!"));
     }
   }
 

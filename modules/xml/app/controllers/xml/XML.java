@@ -9,7 +9,6 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,8 +25,8 @@ import model.XmlExercise.XmlExType;
 import model.blanks.BlanksExercise;
 import model.exercise.Success;
 import model.logging.ExerciseCompletionEvent;
+import model.logging.ExerciseCorrectionEvent;
 import model.logging.ExerciseStartEvent;
-import model.result.CompleteResult;
 import model.user.User;
 import play.Logger;
 import play.data.DynamicForm;
@@ -54,9 +53,8 @@ public class XML extends ExerciseController {
     String learnerSolution = form.get(LEARNER_SOLUTION_VALUE);
 
     List<XMLError> correctionResult = correct(learnerSolution, exercise, user);
-    CompleteResult result = new CompleteResult(learnerSolution, new LinkedList<>(correctionResult));
 
-    log(user, new ExerciseCompletionEvent(request(), id, result));
+    log(user, new ExerciseCompletionEvent(request(), id, correctionResult));
 
     return ok(
         views.html.correction.render("XML", views.html.xmlresult.render(correctionResult), learnerSolution, user));
@@ -84,8 +82,8 @@ public class XML extends ExerciseController {
     String learnerSolution = form.get(LEARNER_SOLUTION_VALUE);
 
     List<XMLError> result = correct(learnerSolution, exercise, user);
-
-    // log(user, new ExerciseCorrectionEvent(request(), id, result));
+    
+    log(user, new ExerciseCorrectionEvent(request(), id, result));
 
     return ok(views.html.xmlresult.render(result));
   }
@@ -124,7 +122,6 @@ public class XML extends ExerciseController {
   }
 
   private List<XMLError> correct(String learnerSolution, XmlExercise exercise, User user) {
-    // FIXME: implement!
     Path dir = checkAndCreateSolDir(user, EXERCISE_TYPE, exercise.id);
 
     Path grammar;

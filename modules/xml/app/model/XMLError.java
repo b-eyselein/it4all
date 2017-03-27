@@ -16,22 +16,6 @@ public class XMLError extends EvaluationResult {
     line = theLine;
   }
 
-  @Override
-  public String getAsHtml() {
-    throw new IllegalArgumentException("Cannot be used anymore!");
-    // StringBuilder builder = new StringBuilder();
-    // builder.append("<div class=\"col-md-12\">");
-    // builder.append("<div class=\"panel panel-" + getBSClass() + "\">");
-    // builder.append(
-    // "<div class=\"panel-heading\">" + errorType.getTitle() + (line != -1 ? "
-    // in Zeile " + line : "") + "</div>");
-    //
-    // builder.append("<div class=\"panel-body\">" + errorMessage + "</div>");
-    // builder.append("</div></div>");
-    //
-    // return builder.toString();
-  }
-
   public String getErrorMessage() {
     return errorMessage;
   }

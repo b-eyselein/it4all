@@ -3,7 +3,7 @@
  @for(res <- result) {
  <div class="col-md-12">
   <div class="panel panel-@res.getBSClass()">
-    <div class="panel-heading">@res.getErrorType().getTitle()@res.getLineStr()</div>
+    <div class="panel-heading">@res.getErrorType().getTitle() @res.getLineStr()</div>
     <div class="panel-body">@res.getErrorMessage()</div>
   </div>
 </div>

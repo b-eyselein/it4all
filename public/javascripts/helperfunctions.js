@@ -1,3 +1,6 @@
+const LEARNER_SOLUTION_VALUE = "learnerSolution";
+const CORRECTION_FIELD_VALUE = "correction";
+
 function changeFontsize(value) {
   var fontsizeElement = document.getElementById('fontsize');
   var fontsize = parseInt(fontsizeElement.innerHTML) + value;
@@ -6,15 +9,16 @@ function changeFontsize(value) {
 }
 
 function processCorrection(correction) {
-  document.getElementById("correction").innerHTML = correction;
+  document.getElementById(CORRECTION_FIELD_VALUE).innerHTML = correction;
 }
 
 function extractParameters() {
-  return "learnerSolution=" + encodeURIComponent(editor.getValue());
+  return LEARNER_SOLUTION_VALUE + "=" + encodeURIComponent(editor.getValue());
 }
 
 function prepareFormForSubmitting() {
-  document.getElementById("editorContent").value = editor.getValue();
+  console.log(editor.getValue());
+  document.getElementById(LEARNER_SOLUTION_VALUE).value = editor.getValue();
 }
 
 function testTheSolution(url) {

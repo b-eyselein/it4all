@@ -11,8 +11,8 @@ GET    /                           controllers.web.Web.index()
 
 GET    /:id/:type                  controllers.web.Web.exercise(id: Int, type: String)
 
-PUT    /:id/:type                  controllers.web.Web.commit(id: Int, type: String)
-POST   /:id/:type                  controllers.web.Web.commit(id: Int, type: String)
+PUT    /:id/:type                  controllers.web.Web.correctLive(id: Int, type: String)
+POST   /:id/:type                  controllers.web.Web.correct(id: Int, type: String)
 
 GET    /solution/:user/:type/:id   controllers.web.Solution.site(user: model.user.User, type: String, id: Int)
 

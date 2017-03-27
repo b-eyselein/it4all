@@ -20,7 +20,6 @@ import play.data.FormFactory;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
-import play.twirl.api.Html;
 
 public class Spread extends ExerciseController {
 
@@ -43,9 +42,9 @@ public class Spread extends ExerciseController {
         exercise.templateFilename + "_Korrektur." + typ);
 
     if(!fileToDownload.toFile().exists())
-      return badRequest(views.html.error.render(user,
-          new Html("<p>Die Korrigierte Datei existiert nicht!</p><p>Zur&uuml;ck zur <a href=\"" + routes.Spread.index()
-              + "\">&Uuml;bersichtsseite</a></p>")));
+      return badRequest(
+          views.html.error.render(user, "<p>Die Korrigierte Datei existiert nicht!</p><p>Zur&uuml;ck zur <a href=\""
+              + routes.Spread.index() + "\">&Uuml;bersichtsseite</a></p>"));
 
     return ok(fileToDownload.toFile());
   }
@@ -67,20 +66,6 @@ public class Spread extends ExerciseController {
 
   public Result index() {
     return ok(views.html.spreadoverview.render(UserManagement.getCurrentUser(), SpreadExercise.finder.all()));
-  }
-
-  private boolean saveSolutionForUser(Path uploadedSolution, Path targetFilePath) {
-    try {
-      Path solDirForExercise = targetFilePath.getParent();
-      if(!solDirForExercise.toFile().exists() && !solDirForExercise.toFile().isDirectory())
-        Files.createDirectories(solDirForExercise);
-
-      Files.move(uploadedSolution, targetFilePath, StandardCopyOption.REPLACE_EXISTING);
-      return true;
-    } catch (Exception e) {
-      Logger.error("Fehler beim Speichern der Lösung!", e);
-      return false;
-    }
   }
 
   public Result upload(int id) {
@@ -119,6 +104,20 @@ public class Spread extends ExerciseController {
     else
       return internalServerError(views.html.spreadcorrectionerror.render(user, result.getNotices().get(0)));
 
+  }
+
+  private boolean saveSolutionForUser(Path uploadedSolution, Path targetFilePath) {
+    try {
+      Path solDirForExercise = targetFilePath.getParent();
+      if(!solDirForExercise.toFile().exists() && !solDirForExercise.toFile().isDirectory())
+        Files.createDirectories(solDirForExercise);
+
+      Files.move(uploadedSolution, targetFilePath, StandardCopyOption.REPLACE_EXISTING);
+      return true;
+    } catch (Exception e) {
+      Logger.error("Fehler beim Speichern der Lösung!", e);
+      return false;
+    }
   }
 
 }

@@ -17,10 +17,6 @@ public class EvaluationResultTest {
   public void testCompletely() {
     EvaluationResult result = new EvaluationResult(FeedbackLevel.NO_FEEDBACK, Success.NONE) {
       // FIXME: implement feedbackLevel!
-      @Override
-      public String getAsHtml() {
-        return null;
-      }
     };
     
     assertThat(result.getSuccess(), equalTo(Success.NONE));
@@ -47,10 +43,6 @@ public class EvaluationResultTest {
   public void testIllegalSuccess() {
     EvaluationResult result = new EvaluationResult(FeedbackLevel.NO_FEEDBACK, Success.NONE) {
       // FIXME: implement feedbackLevel!
-      @Override
-      public String getAsHtml() {
-        return null;
-      }
     };
     
     result.setSuccess(null);

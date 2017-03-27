@@ -17,12 +17,12 @@ public class BinaryExpressionMatch extends Match<BinaryExpression> {
     return !(rightExp instanceof Column)
         || (leftExp instanceof Column && leftExp.toString().compareTo(rightExp.toString()) < 0);
   }
-  
+
   @Override
   public void analyze() {
     Expression arg1Left = arg1.getLeftExpression();
     Expression arg1Right = arg1.getRightExpression();
-    
+
     Expression arg2Left = arg2.getLeftExpression();
     Expression arg2Right = arg2.getRightExpression();
 
@@ -45,7 +45,6 @@ public class BinaryExpressionMatch extends Match<BinaryExpression> {
     }
   }
 
-  @Override
   public String getAsHtml() {
     // TODO: genauere Beschreibung Resultat?!?
     String ret = "<div class=\"col-md-6\">";

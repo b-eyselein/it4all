@@ -4,19 +4,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import model.SqlCorrectionException;
-import model.correctionresult.ColumnComparison;
+import model.correctionresult.ComparisonTwoListsOfStrings;
+import model.correctionresult.SqlExecutionResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.SqlExercise;
-import model.exercise.Success;
-import model.matcher.ColumnDefinitionMatch;
 import model.matcher.ColumnDefinitionMatcher;
-import model.matching.MatchingResult;
-import model.result.EvaluationResult;
-import model.result.GenericEvaluationResult;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
 import play.db.Database;
 
@@ -25,33 +20,30 @@ public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable> {
   private static ColumnDefinitionMatcher colDefMatcher = new ColumnDefinitionMatcher();
   
   @Override
-  protected ColumnComparison compareColumns(CreateTable userQuery, CreateTable sampleQuery) {
+  protected ComparisonTwoListsOfStrings compareColumns(CreateTable userQuery, CreateTable sampleQuery) {
     // No columns to compare...
     return null;
   }
   
   @Override
-  protected List<EvaluationResult> compareStatically(CreateTable userStatement, CreateTable sampleStatement,
-      FeedbackLevel feedbackLevel) {
-    // FIXME: compare name of created tables!
-    // userStatement.getTable()
-    
-    List<ColumnDefinition> userDefs = userStatement.getColumnDefinitions();
-    List<ColumnDefinition> sampleDefs = sampleStatement.getColumnDefinitions();
-    // FIXME: order of ColumnDefinitions?
-    MatchingResult<ColumnDefinition, ColumnDefinitionMatch> result = colDefMatcher.match(userDefs, sampleDefs);
-    
-    // FIXME: compare primary / foreign key constraints!
-    
-    return Arrays.asList(result);
+  protected ComparisonTwoListsOfStrings compareGroupByElements(CreateTable userQuery, CreateTable sampleQuery) {
+    return null;
   }
   
   @Override
-  protected EvaluationResult executeQuery(Database database, CreateTable userStatement, CreateTable sampleStatement,
+  protected ComparisonTwoListsOfStrings compareOrderByElements(CreateTable userQuery, CreateTable sampleQuery) {
+    return null;
+  }
+  
+  @Override
+  protected SqlExecutionResult executeQuery(Database database, CreateTable userStatement, CreateTable sampleStatement,
       SqlExercise exercise, FeedbackLevel feedbackLevel) {
-    // DO NOT EXECUTE QUERY!
-    return new GenericEvaluationResult(FeedbackLevel.MINIMAL_FEEDBACK, Success.COMPLETE,
-        "Create-Statements werden nicht ausgeführt.");
+    return null;
+  }
+  
+  @Override
+  protected CreateTable getPlainStatement(CreateTable query) {
+    return query;
   }
   
   @Override
@@ -68,10 +60,9 @@ public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable> {
   protected CreateTable parseStatement(String statement) throws SqlCorrectionException {
     try {
       return (CreateTable) CCJSqlParserUtil.parse(statement);
-    } catch (JSQLParserException e) {
-      throw new SqlCorrectionException("Es gab einen Fehler beim Parsen des folgenden Statements:</p><p>" + statement,
-          e);
-    } catch (ClassCastException e) {
+    } catch (JSQLParserException e) { // NOSONAR
+      throw new SqlCorrectionException("Es gab einen Fehler beim Parsen des folgenden Statements:" + statement, e);
+    } catch (ClassCastException e) { // NOSONAR
       throw new SqlCorrectionException("Das Statement war vom falschen Typ! Erwartet wurde CREATE TABLE!", e);
     }
   }

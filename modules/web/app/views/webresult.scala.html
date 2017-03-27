@@ -3,7 +3,7 @@
 @for(res <- results) {
 <div class="panel panel-@res.getBSClass()">
   <div class="panel-heading" data-toggle="collapse" href="#task@res.getTask().key.taskId">@{res.getTask().key.taskId}. @res.getTask().text</div>
-    <div id="task@{res.getTask().key.taskId}" class="panel-collapse collapse " + (success == Success.COMPLETE ? "" : "in") + ">
+    <div id="task@{res.getTask().key.taskId}" class="panel-collapse collapse @if(res.getSuccess() != model.exercise.Success.COMPLETE) {in}">
       <div class="panel-body">
       
       @if(res.getSuccess() == model.exercise.Success.COMPLETE || res.getSuccess() == model.exercise.Success.PARTIALLY) {
@@ -11,22 +11,24 @@
       } else {
         <div class="alert alert-danger">
         @for(m <- res.getMessages()) {
-          <p>@m</p>
+          <div>@m</div>
         }	
         </div>
       }
 
       @if(res.getTextContentResult() != null) {
-  	    <div class="col-md-12">
         @for(mes <- res.getTextContentResult.getMessages()) {
           <div class="alert alert-@res.getTextContentResult().getBSClass()">@mes</div>
         }
       }
       
-      @*
-    // Attribute Results
-    for(AttributeResult attResult: attributeResults)
-      builder.append(attResult.getAsHtml());*@
+      @for(attRes <- res.getAttributeResults()) {
+      	<div class="alert alert-@attRes.getBSClass()">Attribut "@attRes.getKey()"
+        @if(attRes.getSuccess() == model.exercise.Success.COMPLETE) { hat den gesuchten Wert.}
+        @if(attRes.getSuccess() == model.exercise.Success.PARTIALLY) { hat nicht den gesuchten Wert "@attRes.getValue()"!}
+        @if(attRes.getSuccess() == model.exercise.Success.NONE){ konnte nicht gefunden werden!}
+        </div>
+      }
     </div>
   </div>
 </div>

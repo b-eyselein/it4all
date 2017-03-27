@@ -1,6 +1,7 @@
 @(user: model.user.User, exercise: model.programming.ProgrammingExercise)
 
 @main("Programmiersprachen Test", user) {
+<script src="@controllers.routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
 <script src="@controllers.routes.Assets.versioned("javascripts/programming.js")"></script>
 
 <div class="container-fluid">
@@ -32,7 +33,7 @@
         <!-- Korrektur -->
         <div class="panel panel-default">
           <div class="panel-heading">Korrektur</div>
-          <div class="panel-body" id="loesungsraum">Hier stehen bald die Korrekturwerte...</div>
+          <div class="panel-body" id="correction">Hier stehen bald die Korrekturwerte...</div>
         </div>
       </div>
     </div>

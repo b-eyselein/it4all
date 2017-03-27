@@ -19,7 +19,8 @@ import views.html.overview;
 
 public class Nary extends ExerciseController {
 
-  private static final String FORM_VALUE = "learnerSolution";
+  private static final String SUMMAND = "summand";
+  private static final String BASE = "base";
 
   @Inject
   public Nary(Util theUtil, FormFactory theFactory) {
@@ -29,11 +30,11 @@ public class Nary extends ExerciseController {
   public Result checkNaryAdditionSolution() {
     DynamicForm dynFormula = factory.form().bindFromRequest();
 
-    String firstSumNAry = dynFormula.get("summand1");
-    String secondSumNAry = dynFormula.get("summand2");
-    int base = Integer.parseInt(dynFormula.get("base"));
+    String firstSumNAry = dynFormula.get(SUMMAND + "1");
+    String secondSumNAry = dynFormula.get(SUMMAND + "2");
+    int base = Integer.parseInt(dynFormula.get(BASE));
 
-    String committedLearnerSolution = dynFormula.get(FORM_VALUE);
+    String committedLearnerSolution = dynFormula.get(LEARNER_SOLUTION_VALUE);
     // Replace all spaces, reverse to compensate input from right to left!
     String learnerSolInNAry = new StringBuilder(committedLearnerSolution).reverse().toString().replaceAll("\\s", "");
 
@@ -44,7 +45,7 @@ public class Nary extends ExerciseController {
   public Result checkNaryConversionSolution() {
     DynamicForm dynFormula = factory.form().bindFromRequest();
 
-    String learnerSolution = dynFormula.get(FORM_VALUE).replaceAll("\\s", "");
+    String learnerSolution = dynFormula.get(LEARNER_SOLUTION_VALUE).replaceAll("\\s", "");
     String value = dynFormula.get("value");
     int startingNB = Integer.parseInt(dynFormula.get("startingNB"));
     int targetNB = Integer.parseInt(dynFormula.get("targetNB"));
@@ -54,7 +55,7 @@ public class Nary extends ExerciseController {
 
     return ok(naryconversionsolution.render(UserManagement.getCurrentUser(), question));
   }
-  
+
   public Result index() {
     return ok(overview.render(UserManagement.getCurrentUser()));
   }
