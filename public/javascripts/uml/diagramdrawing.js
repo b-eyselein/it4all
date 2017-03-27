@@ -1,14 +1,17 @@
-var divWidth = document.getElementById("sizepaper").parentNode.offsetWidth;
+var divWidth = document.getElementById("sizepaper").clientWidth;
 var divTextWidth = document.getElementById("text").parentNode.offsetWidth;
 var divHeight = document.getElementById("sizepaper").parentNode.offsetHeight;
 var idList = new Array(); // Linkverbindungen
 var graph = new joint.dia.Graph();
 var uml = joint.shapes.uml;
 var erd = joint.shapes.erd;
+var sel;
+var max_entries_class = 3;	// Festlegen der maximalen Anzahl von Methoden bzw.
+							// Attributen
 
 var paper = new joint.dia.Paper({
   el: $('#paper'),
-  width: 0.7 * window.screen.availWidth,
+  width: 0.625 * window.screen.availWidth,
   height: 0.7 * window.screen.availHeight,
   gridSize: 1,
   model: graph
@@ -26,32 +29,40 @@ paper.on('cell:pointerclick',
     } else if (document.getElementById(6).value == "on") {
       idList = [];
       idList.push(cellView.model.id);
-      var input = window.prompt("Bitte geben sie die Methode an, welche hinzugefügt werden soll");
-      if (input != null) {
-        graph.getCell(idList[0]).attributes.methods.push(input);
-        var met = graph.getCell(idList[0]).attributes.methods;
-        var text = "";
-        for (var val of met) {
-          text += val + "\n";
-        }
-        graph.getCell(idList[0]).attr('.uml-class-methods-text/text', text);
-        // console.log(graph.getCell(idList[0]).attributes.methods);
+      if(graph.getCell(idList[0]).attributes.methods.length >= max_entries_class){
+    	  alert("Entfernen Sie zuerst einen Eintrag, bevor Sie weitere hinzufügen!");
+      }else{   
+          var input = window.prompt("Bitte geben sie die Methode an, welche hinzugefügt werden soll");
+          if (input != null) {
+            graph.getCell(idList[0]).attributes.methods.push(input);
+            var met = graph.getCell(idList[0]).attributes.methods;
+            var text = "";
+            for (var val of met) {
+              text += val + "\n";
+            }
+            graph.getCell(idList[0]).attr('.uml-class-methods-text/text', text);
+            // console.log(graph.getCell(idList[0]).attributes.methods);
+          }
       }
       idList = [];
       // Attribute hinzuf&uuml;gen
     } else if (document.getElementById(7).value == "on") {
       idList = [];
       idList.push(cellView.model.id);
-      var input = window.prompt("Bitte geben sie das Attribut an, welche hinzugfügt werden soll");
-      if (input != null) {
-        graph.getCell(idList[0]).attributes.attributes.push(input);
-        var met = graph.getCell(idList[0]).attributes.attributes;
-        var text = "";
-        for (val of met) {
-          text += val + "\n";
-        }
-        graph.getCell(idList[0]).attr('.uml-class-attrs-text/text', text);
-        // console.log(graph.getCell(idList[0]).attributes.attributes);
+      if(graph.getCell(idList[0]).attributes.attributes.length >= max_entries_class){
+    	  alert("Entfernen Sie zuerst einen Eintrag, bevor Sie weitere hinzufügen!");
+      }else{    	  
+    	  var input = window.prompt("Bitte geben sie das Attribut an, welche hinzugfügt werden soll");
+    	  if (input != null) {
+    		  graph.getCell(idList[0]).attributes.attributes.push(input);
+    		  var met = graph.getCell(idList[0]).attributes.attributes;
+    		  var text = "";
+    		  for (val of met) {
+    			  text += val + "\n";
+    		  }
+    		  graph.getCell(idList[0]).attr('.uml-class-attrs-text/text', text);
+    		  // console.log(graph.getCell(idList[0]).attributes.attributes);
+    	  }
       }
       idList = [];
       // Methoden entfernen
@@ -101,6 +112,8 @@ paper.on('cell:pointerclick',
   }
 );
 
+
+
 function allowDrop(ev) {
   ev.preventDefault();
 }
@@ -120,11 +133,9 @@ function drop(ev) {
   addClass(data);
 }
 
-var sel;
 
 function selectButton(elem) {
   for (i = 1; i < 11; i++) {
-    console.log("id: " + i);
     document.getElementById(i).value = "off";
   }
   document.getElementById(elem.id).value = "on";
@@ -137,8 +148,14 @@ function link() {
     var destin_name = graph.getCell(idList[1]).attr('.uml-class-name-text/text');
     var source_mult = window.prompt("Bitte geben Sie die Multiplizität von " + source_name + " nach " + destin_name +
       " an.");
+    if(source_mult==null){
+    	source_mult="";
+    }
     var destin_mult = window.prompt("Bitte geben Sie die Multiplizität von " + destin_name + " nach " + source_name +
       " an.");
+    if(destin_mult==null){
+    	destin_mult="";
+    }
     switch (sel) {
 
     case '1':
@@ -313,40 +330,45 @@ function delAttr() {
 }
 
 function addClass(data) {
-  var newClass = new uml.Class({
-    position: {
-      x: Math.random() * 250,
-      y: Math.random() * 250
-    },
-    size: {
-      width: 140,
-      height: 140
-    },
-    name: data,
-    attributes: ["", ""],
-    methods: ["", ""],
-    attrs: {
-      '.uml-class-name-rect': {
-        fill: '#ffffff',
-      },
-      '.uml-class-attrs-rect, .uml-class-methods-rect': {
-        fill: '#ffffff',
-      },
-      '.uml-class-attrs-text': {
-        ref: '.uml-class-attrs-rect',
-        'ref-y': 0.5,
-        'y-alignment': 'middle'
-      },
-      '.uml-class-methods-text': {
-        ref: '.uml-class-methods-rect',
-        'ref-y': 0.5,
-        'y-alignment': 'middle'
-      }
-    }
-  });
+	console.log("data:"+data);
+	if(data.includes(" ")){
+		window.alert("Bitte einzelne Wörter zum Erstellen einer Klasse verwenden");
+	}else{
+		var newClass = new uml.Class({
+			position: {
+				x: Math.random() * 250,
+				y: Math.random() * 250
+			},
+			size: {
+				width: 140,
+				height: 140
+			},
+			name: data,
+			attributes: ["", ""],
+			methods: ["", ""],
+			attrs: {
+				'.uml-class-name-rect': {
+					fill: '#ffffff',
+				},
+     	'.uml-class-attrs-rect, .uml-class-methods-rect': {
+     		fill: '#ffffff',
+     	},
+     	'.uml-class-attrs-text': {
+     		ref: '.uml-class-attrs-rect',
+     		'ref-y': 0.5,
+     		'y-alignment': 'middle'
+     	},
+     	'.uml-class-methods-text': {
+     		ref: '.uml-class-methods-rect',
+     		'ref-y': 0.5,
+     		'y-alignment': 'middle'
+     	}
+			}
+		});
   newClass.attributes.attributes = [];
   newClass.attributes.methods = [];
   graph.addCell(newClass);
+	}
 
 }
 

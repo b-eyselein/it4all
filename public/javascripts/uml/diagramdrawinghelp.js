@@ -48,8 +48,14 @@ function link() {
     var destin_name = graph.getCell(idList[1]).attr('.uml-class-name-text/text');
     var source_mult = window.prompt("Bitte geben Sie die Multiplizität von " + source_name + " nach " + destin_name +
       " an.");
+    if(source_mult==null){
+    	source_mult="";
+    }
     var destin_mult = window.prompt("Bitte geben Sie die Multiplizität von " + destin_name + " nach " + source_name +
       " an.");
+    if(destin_mult==null){
+    	destin_mult="";
+    }
     switch (sel) {
       case '1':
         graph.addCell(new uml.Composition({
