@@ -69,7 +69,7 @@ paper.on('cell:pointerclick',
     } else if (document.getElementById(8).value == "on") {
       idList = [];
       idList.push(cellView.model.id);
-      var input = window.prompt("Bitte geben sie die Methode an, welches entfernt werden soll");
+      var input = window.prompt("Bitte geben Sie die STELLE der Methode an, welche entfernt werden soll");
       input -= 1;
       graph.getCell(idList[0]).attributes.methods.splice(input, 1);
       var met = graph.getCell(idList[0]).attributes.methods;
@@ -84,7 +84,7 @@ paper.on('cell:pointerclick',
     } else if (document.getElementById(9).value == "on") {
       idList = [];
       idList.push(cellView.model.id);
-      var input = window.prompt("Bitte geben sie das Attribut an, welches entfernt werden soll");
+      var input = window.prompt("Bitte geben Sie die STELLE des Attributes an, welches entfernt werden soll");
       input -= 1;
       graph.getCell(idList[0]).attributes.attributes.splice(input, 1);
       var met = graph.getCell(idList[0]).attributes.attributes;
