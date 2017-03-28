@@ -15,3 +15,5 @@ GET    /diagramdrawing/:exId               controllers.uml.UML.diagramDrawing(ex
 PUT    /correct/diagramdrawing/:exId       controllers.uml.UML.correctDiagramDrawing(exId: Int)
 POST   /correct/diagramdrawing/:exId       controllers.uml.UML.correctDiagramDrawing(exId: Int)
 
+# Test Matching of attrs and methods
+GET    /test                               controllers.uml.UML.test()

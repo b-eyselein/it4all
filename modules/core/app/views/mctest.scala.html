@@ -1,0 +1,21 @@
+@(user: model.user.User, question: List[String])
+
+@main("MC-Test", user) {
+<div class="container">
+  <div class="page-header">
+    <h1>MC-Test</h1>
+  </div>
+  @for(q <- question) {
+  <div class="panel panel-default">
+    <div class="panel-heading">@q</div>
+    <div class="panel-body">
+      <div class="btn-group btn-group-vertical">
+      @for(i <- 1 until 4) {
+        <div class="btn btn-default">Antwort @i...</div>
+      }      
+      </div>
+    </div>
+  </div>
+  }
+</div>
+}

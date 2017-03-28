@@ -14,15 +14,12 @@ import controllers.core.ExerciseController;
 import model.JsonWrapper;
 import model.UmlExercise;
 import model.Util;
-import model.result.CompleteResult;
 import model.result.UmlClassselection;
 import model.result.UmlDiagramdrawing;
-import model.user.User;
 import play.Logger;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
-import play.mvc.Http.Request;
 import play.mvc.Result;
 
 public class UML extends ExerciseController {
@@ -52,7 +49,7 @@ public class UML extends ExerciseController {
   }
   
   public Result classSelection(int exerciseId) {
-    return ok(views.html.classsel.render(getUser(), new UmlExercise(exerciseId)));
+    return ok(views.html.classsel.render(getUser(), UmlExercise.getExercise(exerciseId)));
   }
   
   public Result correctClassSelection(int exerciseId) {
@@ -66,7 +63,7 @@ public class UML extends ExerciseController {
     if(!JsonWrapper.validateJson(sentJson, classSelSchemaNode))
       return badRequest(CORRUPT_DATA);
     
-    UmlExercise exercise = new UmlExercise(exerciseId);
+    UmlExercise exercise = UmlExercise.getExercise(exerciseId);
     UmlClassselection ue = new UmlClassselection(exercise, sentJson);
     
     return ok(views.html.classselsol.render(getUser(), ue));
@@ -83,7 +80,7 @@ public class UML extends ExerciseController {
     if(!JsonWrapper.validateJson(sentJson, diagDrawSchemaNode))
       return badRequest(CORRUPT_DATA);
     
-    UmlExercise exercise = new UmlExercise(exerciseId);
+    UmlExercise exercise = UmlExercise.getExercise(exerciseId);
     UmlDiagramdrawing ue = new UmlDiagramdrawing(exercise, sentJson);
     
     return ok(views.html.diagdrawingsol.render(getUser(), ue));
@@ -100,22 +97,27 @@ public class UML extends ExerciseController {
     if(!JsonWrapper.validateJson(sentJson, diagDrawSchemaNode))
       return badRequest(CORRUPT_DATA);
     
-    UmlExercise exercise = new UmlExercise(exerciseId);
+    UmlExercise exercise = UmlExercise.getExercise(exerciseId);
     UmlDiagramdrawing ue = new UmlDiagramdrawing(exercise, sentJson);
     
     return ok(views.html.diagdrawinghelpsol.render(getUser(), ue));
   }
   
   public Result diagramDrawing(int exerciseId) {
-    return ok(views.html.diagdrawing.render(getUser(), new UmlExercise(exerciseId)));
+    return ok(views.html.diagdrawing.render(getUser(), UmlExercise.getExercise(exerciseId)));
   }
   
   public Result diagramDrawingWithHelp(int exerciseId) {
-    return ok(views.html.diagdrawinghelp.render(getUser(), new UmlExercise(exerciseId)));
+    return ok(views.html.diagdrawinghelp.render(getUser(), UmlExercise.getExercise(exerciseId)));
   }
   
   public Result index() {
-    return ok(views.html.umloverview.render(Arrays.asList(new UmlExercise(1)), getUser()));
+    return ok(views.html.umloverview.render(Arrays.asList(UmlExercise.getExercise(1), UmlExercise.getExercise(2)),
+        getUser()));
+  }
+  
+  public Result test() {
+    return ok(views.html.attrmethmatching.render(getUser()));
   }
   
 }

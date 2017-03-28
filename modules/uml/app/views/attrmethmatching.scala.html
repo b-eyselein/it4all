@@ -1,0 +1,33 @@
+@(user: model.user.User)
+
+@main("UML", user) {
+<div class="container-fluid">
+  <div class="col-md-4">
+    <div class="btn-group btn-group-vertical">
+    @for(i <- 1 until 10) {
+      <button class="btn btn-default">Attribut @i</button>
+    }
+    </div>
+    <div class="btn-group btn-group-vertical">
+    @for(i <- 1 until 10) {
+      <button class="btn btn-default">Methode @i</button>
+    }
+    </div>
+  </div>
+  
+  <div class="col-md-8">
+  @for(j <- 0 until 4) {
+    <div class="row">
+    @for(i <- 0 until 3) {
+      <div class="col-md-4">
+        <div class="panel panel-default">
+          <div class="panel-heading">Klasse @{j * 3 + i}</div>
+          <div class="panel-body">TODO...</div>
+        </div>
+      </div>
+    }
+    </div>
+  }
+  </div>
+</div>
+}
