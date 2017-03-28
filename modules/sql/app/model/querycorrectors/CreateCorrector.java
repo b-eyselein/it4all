@@ -8,7 +8,6 @@ import model.correctionresult.ComparisonTwoListsOfStrings;
 import model.correctionresult.SqlExecutionResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.SqlExercise;
-import model.matcher.ColumnDefinitionMatcher;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
@@ -16,8 +15,9 @@ import net.sf.jsqlparser.statement.create.table.CreateTable;
 import play.db.Database;
 
 public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable> {
-  
-  private static ColumnDefinitionMatcher colDefMatcher = new ColumnDefinitionMatcher();
+
+  // private static ColumnDefinitionMatcher colDefMatcher = new
+  // ColumnDefinitionMatcher();
   
   @Override
   protected ComparisonTwoListsOfStrings compareColumns(CreateTable userQuery, CreateTable sampleQuery) {
