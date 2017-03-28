@@ -13,3 +13,7 @@
 .nomen-red {
   color: red;
 }
+
+#paper {
+  border: 1px solid black;
+}

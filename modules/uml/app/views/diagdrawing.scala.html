@@ -1,4 +1,4 @@
-@(user: model.user.User, exercise: model.UmlExercise)
+@(user: model.user.User, exercise: model.UmlExercise, showHint: Boolean)
 
 @main("UML-Test", user) {
 <head>
@@ -10,11 +10,14 @@
 <script src=" @controllers.routes.Assets.versioned("javascripts/uml/joint.js")"></script>
 
 <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/joint.css")">
+<link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/umlextra.css")">
 
 <script src=" @controllers.routes.Assets.versioned("javascripts/uml/jsonconverter.js")"></script>
 </head>
 <body>
 <div class="container-fluid">
+
+@if(showHint) {
   <div class="alert alert-info alertalert-dismissable">
     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
     <h3>Bearbeitungshinweise</h3>
@@ -44,6 +47,7 @@
       </li>
     </ul>
   </div>
+}
   
   <div class="row">
     <div class="col-md-4">
@@ -58,15 +62,51 @@
         </div>
       </div>
       
-      <div class="row">
-        <div class="btn-group btn-group-vertical">
-          <button class="btn btn-default" value="off" id="10" onclick="selectButton(this);">Standard</button>
-          <button class="btn btn-default" value="off" id="1" onclick="selectButton(this);">Composition</button>
-          <button class="btn btn-default" value="off" id="2" onclick="selectButton(this);">Aggregation</button>
-          <button class="btn btn-default" value="off" id="3" onclick="selectButton(this);">Implementation</button>
-          <button class="btn btn-default" value="off" id="4" onclick="selectButton(this);">Generalization</button>
-          
-          <button class="btn btn-default" value="off" id="5" onclick="loeschen();">Klasse l&ouml;schen</button>
+      <div class="panel panel-default">
+        <div class="panel-heading">Ausgewählte Klassen</div>
+        <div class="panel-body" id="idListDiv"></div>
+      </div>
+      
+      <div>
+        <!-- Standard und Klasse löschen -->
+        <div class="btn-group btn-group-justified">
+          <div class="btn-group">
+            <button class="btn btn-default" value="off" onclick="createClass();">Klasse hinzuf&uuml;gen</button>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-default" value="off" id="5" onclick="selectDeleteClass();">Klasse l&ouml;schen</button>
+          </div>
+        </div>
+      </div>
+      
+      <hr>
+      
+      <div>
+        <!-- Aggregation und Komposition -->
+        <div class="btn-group btn-group-justified">
+          <div class="btn-group">
+            <button class="btn btn-default" value="off" id="10" data-linktype="association" onclick="selectButton(this);">Assoziation</button>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-default" value="off" id="1" data-linktype="composition" onclick="selectButton(this);">Composition</button>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-default" value="off" id="2" data-linktype="aggregation" onclick="selectButton(this);">Aggregation</button>
+          </div>
+        </div>
+      </div>
+      
+      <hr>
+      
+      <div>
+        <!-- Implementierung und Generalisierung -->
+        <div class="btn-group btn-group-justified">
+          <div class="btn-group">
+            <button class="btn btn-default" value="off" id="3" data-linktype="implementation" onclick="selectButton(this);">Implementation</button>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-default" value="off" id="4" data-linktype="generalization" onclick="selectButton(this);">Generalization</button>
+          </div>
         </div>
       </div>
       
@@ -76,10 +116,10 @@
         <!-- Methoden "+" und "-" -->
         <div class="btn-group btn-group-justified">
           <div class="btn-group">
-          <button class="btn btn-default" value="off" id="6" onclick="addMeth();">Mehode hinzuf&uuml;gen</button>
+            <button class="btn btn-default" value="off" id="6" onclick="addMeth();">Mehode hinzuf&uuml;gen</button>
           </div>
           <div class="btn-group">
-          <button class="btn btn-danger" value="off" id="8" onclick="delMeth();">Mehode entfernen</button>
+            <button class="btn btn-default" value="off" id="8" onclick="delMeth();">Mehode entfernen</button>
           </div>
         </div>
       </div>
@@ -93,7 +133,7 @@
             <button class="btn btn-default" value="off" id="7" onclick="addAttr();">Attribut hinzuf&uuml;gen</button>
           </div>
           <div class="btn-group">
-            <button class="btn btn-danger" value="off" id="9" onclick="delAttr();">Attribut entfernen</button>
+            <button class="btn btn-default" value="off" id="9" onclick="delAttr();">Attribut entfernen</button>
           </div>
         </div>
       </div>
@@ -101,9 +141,7 @@
     </div>
     
     <div class="col-md-8" id="sizepaper">
-      <div ondrop="drop(event)" ondragover="allowDrop(event)">
-        <div style="border: 1px solid black" id="paper"></div>
-      </div>
+      <div ondrop="drop(event)" ondragover="allowDrop(event)" id="paper"/>
     </div>
   </div>
 </div>

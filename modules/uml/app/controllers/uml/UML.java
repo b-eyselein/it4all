@@ -104,7 +104,8 @@ public class UML extends ExerciseController {
   }
   
   public Result diagramDrawing(int exerciseId) {
-    return ok(views.html.diagdrawing.render(getUser(), UmlExercise.getExercise(exerciseId)));
+    boolean showHint = false;
+    return ok(views.html.diagdrawing.render(getUser(), UmlExercise.getExercise(exerciseId), showHint));
   }
   
   public Result diagramDrawingWithHelp(int exerciseId) {

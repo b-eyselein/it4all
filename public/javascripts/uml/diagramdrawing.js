@@ -1,13 +1,16 @@
 var divWidth = document.getElementById("sizepaper").clientWidth;
 var divTextWidth = document.getElementById("text").parentNode.offsetWidth;
 var divHeight = document.getElementById("sizepaper").parentNode.offsetHeight;
-var idList = new Array(); // Linkverbindungen
+
+var idList = []; // Linkverbindungen
+
 var graph = new joint.dia.Graph();
 var uml = joint.shapes.uml;
 var erd = joint.shapes.erd;
 var sel;
-var max_entries_class = 3;	// Festlegen der maximalen Anzahl von Methoden bzw.
-							// Attributen
+
+// Festlegen der maximalen Anzahl von Methoden bzw. Attributen
+var max_entries_class = 3;
 
 var paper = new joint.dia.Paper({
   el: $('#paper'),
@@ -17,102 +20,93 @@ var paper = new joint.dia.Paper({
   model: graph
 });
 
-paper.on('cell:pointerclick',
-  // document.body.style.cursor = "copy"
-  function(cellView, evt, x, y) {
-    // Klassen l&ouml;schen
-    if (document.getElementById(5).value == "on") {
+paper.on('cell:pointerclick', paperCellOnClick);
+
+function paperCellOnClick(cellView, evt, x, y) {
+  var cellInGraph = graph.getCell(cellView.model.id);
+  
+  if(document.getElementById(5).value == "on") {
+    // Klassen loeschen
+    cellInGraph.remove();
+    
+    idList = [];
+    
+  } else if (document.getElementById(6).value == "on") {
+    // Methoden hinzufügen
+    
+    if(cellInGraph.attributes.methods.length >= max_entries_class) {
+      // Klasse hat bereits maximale Anzahl (3) an Methoden
+      alert("Entfernen Sie zuerst einen Eintrag, bevor Sie weitere hinzufügen!");
+      return;
+    }
+    
+    var method = window.prompt("Bitte geben sie die Methode an, welche hinzugefügt werden soll");
+    
+    if (method != null) {
+      cellInGraph.attributes.methods.push(method);
+      cellInGraph.attr('.uml-class-methods-text/text', cellInGraph.attributes.methods.join("\n"));
+    }
+    
+    idList = [];
+    
+  } else if(document.getElementById(7).value == "on") {
+    // Attribute hinzuf&uuml;gen
+    
+    if(cellInGraph.attributes.attributes.length >= max_entries_class){
+      // Klasse hat bereits maximale Anzahl (3) an Methoden
+      alert("Entfernen Sie zuerst einen Eintrag, bevor Sie weitere hinzufügen!");
+      return;
+    }
+    
+    var attribute = window.prompt("Bitte geben sie das Attribut an, welche hinzugfügt werden soll");
+    
+    if (attribute != null) {
+      cellInGraph.attributes.attributes.push(attribute);
+      cellInGraph.attr('.uml-class-attrs-text/text', cellInGraph.attributes.attributes.join("\n"));
+    }
+    idList = [];
+    
+  } else if (document.getElementById(8).value == "on") {
+    // Methoden entfernen
+    var methodToRemove = window.prompt("Bitte geben Sie die STELLE der Methode an, welche entfernt werden soll");
+    
+    methodToRemove -= 1;
+    cellInGraph.attributes.methods.splice(methodToRemove, 1);
+    
+    cellInGraph.attr('.uml-class-methods-text/text', cellInGraph.attributes.methods.join("\n"));
+    idList = [];
+    
+  } else if (document.getElementById(9).value == "on") {
+    // Attribute entfernen
+    var attributeToRemove = window.prompt("Bitte geben Sie die STELLE des Attributes an, welches entfernt werden soll");
+    
+    attributeToRemove -= 1;
+    cellInGraph.attributes.attributes.splice(attributeToRemove, 1);
+    
+    cellInGraph.attr('.uml-class-attrs-text/text', cellInGraph.attributes.attributes.join("\n"));
+    idList = [];
+    
+  } else {
+    if (idList.length < 2) {
       idList.push(cellView.model.id);
-      graph.getCell(idList[0]).remove();
-      idList = [];
-      // Methoden hinzuf&uuml;gen
-    } else if (document.getElementById(6).value == "on") {
-      idList = [];
-      idList.push(cellView.model.id);
-      if(graph.getCell(idList[0]).attributes.methods.length >= max_entries_class){
-    	  alert("Entfernen Sie zuerst einen Eintrag, bevor Sie weitere hinzufügen!");
-      }else{   
-          var input = window.prompt("Bitte geben sie die Methode an, welche hinzugefügt werden soll");
-          if (input != null) {
-            graph.getCell(idList[0]).attributes.methods.push(input);
-            var met = graph.getCell(idList[0]).attributes.methods;
-            var text = "";
-            for (var val of met) {
-              text += val + "\n";
-            }
-            graph.getCell(idList[0]).attr('.uml-class-methods-text/text', text);
-            // console.log(graph.getCell(idList[0]).attributes.methods);
-          }
-      }
-      idList = [];
-      // Attribute hinzuf&uuml;gen
-    } else if (document.getElementById(7).value == "on") {
-      idList = [];
-      idList.push(cellView.model.id);
-      if(graph.getCell(idList[0]).attributes.attributes.length >= max_entries_class){
-    	  alert("Entfernen Sie zuerst einen Eintrag, bevor Sie weitere hinzufügen!");
-      }else{    	  
-    	  var input = window.prompt("Bitte geben sie das Attribut an, welche hinzugfügt werden soll");
-    	  if (input != null) {
-    		  graph.getCell(idList[0]).attributes.attributes.push(input);
-    		  var met = graph.getCell(idList[0]).attributes.attributes;
-    		  var text = "";
-    		  for (val of met) {
-    			  text += val + "\n";
-    		  }
-    		  graph.getCell(idList[0]).attr('.uml-class-attrs-text/text', text);
-    		  // console.log(graph.getCell(idList[0]).attributes.attributes);
-    	  }
-      }
-      idList = [];
-      // Methoden entfernen
-    } else if (document.getElementById(8).value == "on") {
-      idList = [];
-      idList.push(cellView.model.id);
-      var input = window.prompt("Bitte geben Sie die STELLE der Methode an, welche entfernt werden soll");
-      input -= 1;
-      graph.getCell(idList[0]).attributes.methods.splice(input, 1);
-      var met = graph.getCell(idList[0]).attributes.methods;
-      var text = "";
-      for (val of met) {
-        text += val + "\n";
-      }
-      graph.getCell(idList[0]).attr('.uml-class-methods-text/text', text);
-      console.log(graph.getCell(idList[0]).attributes.methods);
-      idList = [];
-      // Attribute entfernen
-    } else if (document.getElementById(9).value == "on") {
-      idList = [];
-      idList.push(cellView.model.id);
-      var input = window.prompt("Bitte geben Sie die STELLE des Attributes an, welches entfernt werden soll");
-      input -= 1;
-      graph.getCell(idList[0]).attributes.attributes.splice(input, 1);
-      var met = graph.getCell(idList[0]).attributes.attributes;
-      var text = "";
-      for (val of met) {
-        text += val + "\n";
-      }
-      graph.getCell(idList[0]).attr('.uml-class-attrs-text/text', text);
-      console.log(graph.getCell(idList[0]).attributes.attributes);
-      idList = [];
-    } else {
-      if (idList.length < 2) {
-        idList.push(cellView.model.id);
-      }
-      if (idList.length == 2) {
-        console.log("0: " + idList[0] + " 1: " + idList[1]);
-        if (idList[0] != idList[1]) {
-          link();
-        } else {
-          console.log("gleich");
-          idList = [];
-        }
+    }
+    if (idList.length == 2) {
+      if (idList[0] != idList[1]) {
+        link();
+      } else {
+        console.log("gleich");
+        idList = [];
       }
     }
   }
-);
+  // FIXME: aktualisiere div...
+  if(idList && idList.size > 0) {
+    var selectedNodes = graph.getCell(idList).attributes.name;
+    document.getElementById("idListDiv").innerHTML = "<p>sel = " + sel + "</p><p>idList = [" + selectedNodes + "]</p>";
+  }
+}
 
-
+// Begin Drag-And-Drop-Functionality
 
 function allowDrop(ev) {
   ev.preventDefault();
@@ -120,11 +114,12 @@ function allowDrop(ev) {
 
 function drag(ev) {
   document.getElementById(5).value = "off";
+  
+  var className = ev.target.innerHTML;
   if (ev.target.getAttribute('data-baseform') != null) {
-    ev.dataTransfer.setData("text", ev.target.getAttribute('data-baseform'));
-  } else {
-    ev.dataTransfer.setData("text", ev.target.innerHTML);
+    className = ev.target.getAttribute('data-baseform');
   }
+  ev.dataTransfer.setData("text", className);
 }
 
 function drop(ev) {
@@ -133,183 +128,201 @@ function drop(ev) {
   addClass(data);
 }
 
+// End D&D-Functionality
 
 function selectButton(elem) {
-  for (i = 1; i < 11; i++) {
-    document.getElementById(i).value = "off";
+  for (let i = 1; i < 11; i++) {
+    // Deactivate all buttons
+    var button = document.getElementById(i);
+    button.value = "off";
+    button.className = "btn btn-default";
   }
-  document.getElementById(elem.id).value = "on";
+  elem.value = "on";
+  elem.className = "btn btn-primary";
   sel = elem.id;
 }
 
+function askMulitplicity(source, dest) {
+  var multiplicity = window.prompt("Bitte geben Sie die Multiplizität von " + source + " nach " + dest + " an.");
+  
+  if(multiplicity)
+    return multiplicity;
+  
+  return "";
+}
+
 function link() {
-  if (document.getElementById(sel).value == "on") {
-    var source_name = graph.getCell(idList[0]).attr('.uml-class-name-text/text');
-    var destin_name = graph.getCell(idList[1]).attr('.uml-class-name-text/text');
-    var source_mult = window.prompt("Bitte geben Sie die Multiplizität von " + source_name + " nach " + destin_name +
-      " an.");
-    if(source_mult==null){
-    	source_mult="";
-    }
-    var destin_mult = window.prompt("Bitte geben Sie die Multiplizität von " + destin_name + " nach " + source_name +
-      " an.");
-    if(destin_mult==null){
-    	destin_mult="";
-    }
-    switch (sel) {
+  if (document.getElementById(sel).value == "off") {
+    return;
+  }
+  var source_name = graph.getCell(idList[0]).attr('.uml-class-name-text/text');
+  var destin_name = graph.getCell(idList[1]).attr('.uml-class-name-text/text');
+  
+  var source_mult = askMulitplicity(source_name, destin_name);
+  var destin_mult = askMulitplicity(destin_name, source_name);
+  
+  switch (sel) {
+  case '1':
+      graph.addCell(new uml.Composition({
+        source: {
+          id: idList[0]
+        },
+        target: {
+          id: idList[1]
+        },
+        labels: [{
+            position: 25,
+            attrs: {
+              text: {
+                text: source_mult
+              }
+            }
+          },
+          {
+            position: -25,
+            attrs: {
+              text: {
+                text: destin_mult
+              }
+            }
+          }
+        ]
+      }));
+      idList = [];
+      break;
+      
+    case '2':
+      graph.addCell(new uml.Aggregation({
+        source: {
+          id: idList[0]
+        },
+        target: {
+          id: idList[1]
+        },
+        labels: [{
+            position: 25,
+            attrs: {
+              text: {
+                text: source_mult
+              }
+            }
+          },
+          {
+            position: -25,
+            attrs: {
+              text: {
+                text: destin_mult
+              }
+            }
+          }
+        ]
+      }));
+      idList = [];
+      break;
+      
+    case '3':
+      graph.addCell(new uml.Implementation({
+        source: {
+          id: idList[0]
+        },
+        target: {
+          id: idList[1]
+        },
+        labels: [{
+            position: 25,
+            attrs: {
+              text: {
+                text: source_mult
+              }
+            }
+          },
+          {
+            position: -25,
+            attrs: {
+              text: {
+                text: destin_mult
+              }
+            }
+          }
+        ]
+      }));
+      idList = [];
+      break;
+      
+    case '4':
+      graph.addCell(new uml.Generalization({
+        source: {
+          id: idList[0]
+        },
+        target: {
+          id: idList[1]
+        },
+        labels: [{
+            position: 25,
+            attrs: {
+              text: {
+                text: source_mult
+              }
+            }
+          },
+          {
+            position: -25,
+            attrs: {
+              text: {
+                text: destin_mult
+              }
+            }
+          }
+        ]
+      }));
+      idList = [];
+      break;
 
-    case '1':
-        graph.addCell(new uml.Composition({
-          source: {
-            id: idList[0]
-          },
-          target: {
-            id: idList[1]
-          },
-          labels: [{
-              position: 25,
-              attrs: {
-                text: {
-                  text: source_mult
-                }
-              }
-            },
-            {
-              position: -25,
-              attrs: {
-                text: {
-                  text: destin_mult
-                }
+    case '10':
+      graph.addCell(new joint.dia.Link({
+        source: {
+          id: idList[0]
+        },
+        target: {
+          id: idList[1]
+        },
+        labels: [{
+            position: 25,
+            attrs: {
+              text: {
+                text: source_mult
               }
             }
-          ]
-        }));
-        idList = [];
-        break;
-        
-      case '2':
-        graph.addCell(new uml.Aggregation({
-          source: {
-            id: idList[0]
           },
-          target: {
-            id: idList[1]
-          },
-          labels: [{
-              position: 25,
-              attrs: {
-                text: {
-                  text: source_mult
-                }
-              }
-            },
-            {
-              position: -25,
-              attrs: {
-                text: {
-                  text: destin_mult
-                }
+          {
+            position: -25,
+            attrs: {
+              text: {
+                text: destin_mult
               }
             }
-          ]
-        }));
-        idList = [];
-        break;
-        
-      case '3':
-        graph.addCell(new uml.Implementation({
-          source: {
-            id: idList[0]
-          },
-          target: {
-            id: idList[1]
-          },
-          labels: [{
-              position: 25,
-              attrs: {
-                text: {
-                  text: source_mult
-                }
-              }
-            },
-            {
-              position: -25,
-              attrs: {
-                text: {
-                  text: destin_mult
-                }
-              }
-            }
-          ]
-        }));
-        idList = [];
-        break;
-        
-      case '4':
-        graph.addCell(new uml.Generalization({
-          source: {
-            id: idList[0]
-          },
-          target: {
-            id: idList[1]
-          },
-          labels: [{
-              position: 25,
-              attrs: {
-                text: {
-                  text: source_mult
-                }
-              }
-            },
-            {
-              position: -25,
-              attrs: {
-                text: {
-                  text: destin_mult
-                }
-              }
-            }
-          ]
-        }));
-        idList = [];
-        break;
+          }
+        ]
+      }));
+      idList = [];
+      break;
+    default:
+      idList = [];
+      break;
+  }
+} // End function link()
 
-      case '10':
-        graph.addCell(new joint.dia.Link({
-          source: {
-            id: idList[0]
-          },
-          target: {
-            id: idList[1]
-          },
-          labels: [{
-              position: 25,
-              attrs: {
-                text: {
-                  text: source_mult
-                }
-              }
-            },
-            {
-              position: -25,
-              attrs: {
-                text: {
-                  text: destin_mult
-                }
-              }
-            }
-          ]
-        }));
-        idList = [];
-        break;
-      default:
-        idList = [];
-        break;
-    }
+function createClass() {
+  var className = window.prompt("Wie soll die neue Klasse heißen?");
+  
+  if(className) {
+    addClass(className);
+  } else {
+    alert("Der Name einer Klasse darf nicht leer sein!");
   }
 }
 
-function loeschen() {
+function selectDeleteClass() {
   selectButton(document.getElementById(5));
 }
 
@@ -329,27 +342,28 @@ function delAttr() {
   selectButton(document.getElementById(9));
 }
 
-function addClass(data) {
-	console.log("data:"+data);
-	if(data.includes(" ")){
+function addClass(className) {
+	if(className.includes(" ")) {
 		window.alert("Bitte einzelne Wörter zum Erstellen einer Klasse verwenden");
-	}else{
-		var newClass = new uml.Class({
-			position: {
-				x: Math.random() * 250,
-				y: Math.random() * 250
+		return;
+	}
+	
+	var newClass = new uml.Class({
+		position: {
+			x: Math.random() * 250,
+			y: Math.random() * 250
+		},
+		size: {
+			width: 140,
+			height: 140
+		},
+		name: className,
+		attributes: ["", ""],
+		methods: ["", ""],
+		attrs: {
+			'.uml-class-name-rect': {
+				fill: '#ffffff',
 			},
-			size: {
-				width: 140,
-				height: 140
-			},
-			name: data,
-			attributes: ["", ""],
-			methods: ["", ""],
-			attrs: {
-				'.uml-class-name-rect': {
-					fill: '#ffffff',
-				},
      	'.uml-class-attrs-rect, .uml-class-methods-rect': {
      		fill: '#ffffff',
      	},
@@ -363,13 +377,11 @@ function addClass(data) {
      		'ref-y': 0.5,
      		'y-alignment': 'middle'
      	}
-			}
-		});
+    }
+	});
   newClass.attributes.attributes = [];
   newClass.attributes.methods = [];
   graph.addCell(newClass);
-	}
-
 }
 
 // Namen aller Klassen
