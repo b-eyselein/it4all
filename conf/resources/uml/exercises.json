@@ -1,0 +1,12 @@
+[
+	{
+		"id": 1, 
+		"title": "Krankenhaus", 
+		"rawtext": "hospital_raw.txt"
+	}, 
+	{
+		"id": 2, 
+		"title": "Gärtner", 
+		"rawtext": "gardener_raw.txt"
+	}
+]

@@ -1,5 +1,10 @@
 GET    /                                   controllers.uml.UML.index()
 
+# creation of exercises
+GET    /upload                             controllers.uml.UmlAdmin.uploadForm()
+POST   /upload                             controllers.uml.UmlAdmin.uploadFile()
+GET    /create                             controllers.uml.UmlAdmin.readStandardExercises()
+
 # Step 1: selection of classes
 GET    /classselection/:exId/              controllers.uml.UML.classSelection(exId: Int)
 PUT    /correct/classselection/:exId       controllers.uml.UML.correctClassSelection(exId: Int)

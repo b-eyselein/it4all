@@ -1,63 +1,38 @@
 package model;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
 
 import model.exercise.Exercise;
 
+@Entity
 public class UmlExercise extends Exercise {
 
-  private static final Path BASE_PATH = Paths.get("modules", "uml", "conf", "resources");
+  public static final Finder<Integer, UmlExercise> finder = new Finder<>(UmlExercise.class);
+  
+  @Column(columnDefinition = "text")
+  public String classSelText;
 
-  private static List<UmlExercise> exercises = Arrays.asList(
-    // @formatter:off
-    new UmlExercise(1,
-        "Krankenhaus",
-        "Im folgenden Übungsszenario sollen Sie ein Klassendiagramm in UML mit dem Thema Krankenhaus erstellen!"),
-    new UmlExercise(2,
-        "Gärtner",
-        "TODO")
-    // @formatter:on
-  );
+  @Column(columnDefinition = "text")
+  public String diagDrawText;
+  
+  @Column(columnDefinition = "text")
+  public String diagDrawHelpText;
 
-  private String classSelText;
-  private String diagDrawHelpText;
-  private String /* TODO: change type... */ musterSolution;
-
-  public UmlExercise(int theId, String theRawText, String theTitle) {
+  public UmlExercise(int theId) {
     super(theId);
-    title = theTitle;
-    text = theRawText;
-  }
-
-  public static UmlExercise getExercise(int id) {
-    for(UmlExercise ex: exercises)
-      if(ex.id == id)
-        return ex;
-    return null;
-  }
-
-  public String getExerciseText() {
-    try {
-      return String.join("\n", Files.readAllLines(Paths.get(BASE_PATH.toString(), "dummyExerciseText.html")));
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      return "ERROR!!!";
-    }
   }
 
   public String getExTextForClassSel() {
-    // TODO: return classSelText;
-    try {
-      return String.join("\n", Files.readAllLines(Paths.get(BASE_PATH.toString(), "dummyExTextForClassSel.html")));
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      return "ERROR!!!";
-    }
+    return classSelText;
+  }
+
+  public String getExTextForDiagDraw() {
+    return diagDrawText;
+  }
+
+  public String getExTextForDiagDrawHelp() {
+    return diagDrawHelpText;
   }
 
   @Override

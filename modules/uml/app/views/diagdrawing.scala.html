@@ -53,7 +53,7 @@
     <div class="col-md-4">
       <div class="panel panel-default" id="text">
         <div class="panel-heading">Aufgabentext</div>
-        <div class="panel-body">@Html(exercise.getExerciseText())</div>
+        <div class="panel-body">@Html(exercise.getExTextForDiagDraw())</div>
         <div class="panel-footer">
           <form action="@controllers.uml.routes.UML.correctDiagramDrawing(exercise.id)" method="post" enctype="multipart/form-data" onsubmit="prepareFormForSubmitting();">
             <input type="hidden" value="" class="form-control" name="learnerSolution" id="learnerSolution" required>

@@ -146,6 +146,16 @@ create table sql_scenario (
   constraint pk_sql_scenario primary key (short_name)
 );
 
+create table uml_exercise (
+  id                            integer auto_increment not null,
+  title                         varchar(255),
+  text                          text,
+  class_sel_text                text,
+  diag_draw_text                text,
+  diag_draw_help_text           text,
+  constraint pk_uml_exercise primary key (id)
+);
+
 create table users (
   name                          varchar(255) not null,
   role                          varchar(5),
@@ -260,6 +270,8 @@ drop table if exists spread_exercise;
 drop table if exists sql_exercise;
 
 drop table if exists sql_scenario;
+
+drop table if exists uml_exercise;
 
 drop table if exists users;
 
