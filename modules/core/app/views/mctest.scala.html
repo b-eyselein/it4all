@@ -1,19 +1,24 @@
-@(user: model.user.User, question: List[String])
+@(user: model.user.User, questions: List[model.multchoice.MCQuestion])
+
+<script src="@routes.Assets.versioned("javascripts/multchoice.js")"></script>
 
 @main("MC-Test", user) {
 <div class="container">
   <div class="page-header">
     <h1>MC-Test</h1>
   </div>
-  @for(q <- question) {
+  @for(question <- questions) {
   <div class="panel panel-default">
-    <div class="panel-heading">@q</div>
+    <div class="panel-heading">@{question.getId()}. @question.getQuestion()</div>
     <div class="panel-body">
-      <div class="btn-group btn-group-vertical">
-      @for(i <- 1 until 4) {
-        <div class="btn btn-default">Antwort @i...</div>
-      }      
+    @for(i <- 0 until question.getAnswers().size()) {
+      <div class="col-md-3">
+        <button class="btn btn-block btn-default" id="@question.getId()_@i" data-selected="0" onclick="mark(this)">@{Character.toChars(97 + i)}) @question.getAnswers().get(i)</button>
       </div>
+    }      
+    </div>
+    <div class="panel-footer">
+      <button class="btn btn-block btn-default" onclick="control(@question.getId(), @question.getAnswers().size())">Kontrollieren</button>
     </div>
   </div>
   }
