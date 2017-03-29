@@ -2,8 +2,47 @@
 	{
 		"id": 1, 
 		"title": "Krankenhaus", 
-		"rawtext": "hospital_raw.txt", 
-		"mappings": "hospital_mappings.csv", 
+		"text": "Ein Krankenhaus besteht aus Stationen, mit einer eindeutigen Nummer. Jede Station hat einen oder mehrere Doktoren, Krankenschwestern und Patienten. Doktoren, Krankenschwestern und Patienten haben jeweils eine eindeutige Id und einen Namen. Ein Doktor kann dem Patienten ein Rezept mit einer eindeutigen Id verschreiben, das ein oder mehrere Medikamente beinhalten kann. Ein Medikament hat eine eindeutige Id und einen Namen. Ein Patient wiederum kann in einer Station aufgenommen bzw. entlassen werden.", 
+		"mappings": [
+			{
+				"key": "Stationen", 
+				"value": "Station"
+			}, 
+			{
+				"key": "Doktoren", 
+				"value": "Doktor"
+			}, 
+			{
+				"key": "Krankenschwestern", 
+				"value": "Krankenschwester"
+			}, 
+			{
+				"key": "Patienten", 
+				"value": "Patient"
+			}, 
+			{
+				"key": "Namen", 
+				"value": "Name"
+			}, 
+			{
+				"key": "Medikamente", 
+				"value": "Medikament"
+			}
+		], 
+		"methods": [
+			{
+				"key": "aufgenommen", 
+				"value": "aufnehmen(Station)"
+			}, 
+			{
+				"key": "verschreiben", 
+				"value": "verschreiben(Patient)"
+			}, 
+			{
+				"key": "entlassen", 
+				"value": "entlassen(Station)"
+			}
+		], 
 		"ignore": [
 			"Ein", 
 			"Jede"
@@ -12,8 +51,13 @@
 	{
 		"id": 2, 
 		"title": "Gärtner", 
-		"rawtext": "gardener_raw.txt", 
-		"mappings": "gardener_mappings.csv", 
+		"text": "gardener_raw.txt", 
+		"mappings": [
+			
+		], 
+		"methods": [
+			
+		], 
 		"ignore": [
 			
 		]

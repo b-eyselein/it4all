@@ -46,8 +46,8 @@ public class JsExerciseReader extends ExerciseReader<JsExercise> {
     if(exercise == null)
       exercise = new JsExercise(id);
 
-    exercise.title = exerciseNode.get("title").asText();
-    exercise.text = exerciseNode.get("text").asText();
+    exercise.title = exerciseNode.get(TITLE_NAME).asText();
+    exercise.text = exerciseNode.get(TEXT_NAME).asText();
     exercise.declaration = exerciseNode.get("declaration").asText();
     exercise.functionname = exerciseNode.get("functionname").asText();
     exercise.sampleSolution = exerciseNode.get("samplesolution").asText();

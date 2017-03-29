@@ -6,11 +6,11 @@ import java.util.List;
 
 import org.junit.Test;
 
-public class UmlExerciseTextParserTest {
+public class UmlExTextParserTest {
 
   @Test
     public void testReadSimpleReplacements() {
-      List<String> capWords = UmlExerciseTextParser.parseExText();
+      List<String> capWords = UmlExTextParser.parseExText();
   
       capWords.forEach(System.out::println);
   

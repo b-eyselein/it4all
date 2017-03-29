@@ -205,7 +205,7 @@ function link() {
   }
 }
 
-function addClass(name, posx, posy, a1, a2, m1, m2) {
+function addClass(name, posx, posy, theAttributes, theMethods) {
   flugzeug: var flug = new uml.Class({
     position: {
       x: posx,
@@ -216,8 +216,8 @@ function addClass(name, posx, posy, a1, a2, m1, m2) {
       height: 140
     },
     name: name,
-    attributes: [a1, a2],
-    methods: [m1, m2],
+    attributes: theAttributes,
+    methods: theMethods,
     attrs: {
       '.uml-class-name-rect': {
         fill: '#ffffff',
@@ -246,14 +246,6 @@ console.log("height: "+0.7 * window.screen.availHeight);
 
 var x = 485;
 var y = 10;
-addClass("Person", x -300, y, "id:String", "name:String", "", "");
-addClass("Doktor", x -300, y +180, "", "", "verschreiben(Patient):void", "");
-addClass("Rezept", x, y+360, "id:String", "", "", "");
-addClass("Patient", x, y + 180, "", "", "entlassen(Station):void", "aufnehmen(Station):void");
-addClass("Krankenschwester", x+300, y, "", "", "", "");
-addClass("Station", x +300, y+180, "nummer:int", "", "", "");
-addClass("Medikament", x+300, y+360, "id:String", "name:String", "", "");
-addClass("Krankenhaus", x, y, "", "", "", "");
 
 // Namen aller Klassen
 function getClasses() {

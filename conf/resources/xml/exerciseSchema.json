@@ -25,7 +25,7 @@
 			"referenceFileName": {
 				"type": "string"
 			}, 
-			"exerciseText": {
+			"text": {
 				"type": "string"
 			}
 		}, 
@@ -35,7 +35,7 @@
 			"exerciseType", 
 			"fixedStart", 
 			"referenceFileName", 
-			"exerciseText"
+			"text"
 		]
 	}, 
 	"minItems": 1, 

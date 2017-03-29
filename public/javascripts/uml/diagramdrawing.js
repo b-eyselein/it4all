@@ -279,31 +279,32 @@ function link() {
       break;
 
     case '10':
-      graph.addCell(new joint.dia.Link({
-        source: {
-          id: idList[0]
-        },
-        target: {
-          id: idList[1]
-        },
-        labels: [{
-            position: 25,
-            attrs: {
-              text: {
-                text: source_mult
-              }
-            }
+      var obj = {
+          source: {
+            id: idList[0]
           },
-          {
-            position: -25,
-            attrs: {
-              text: {
-                text: destin_mult
+          target: {
+            id: idList[1]
+          },
+          labels: [{
+              position: 25,
+              attrs: {
+                text: {
+                  text: source_mult
+                }
+              }
+            },
+            {
+              position: -25,
+              attrs: {
+                text: {
+                  text: destin_mult
+                }
               }
             }
-          }
-        ]
-      }));
+          ]
+        };
+      graph.addCell(new joint.dia.Link(obj));
       idList = [];
       break;
     default:

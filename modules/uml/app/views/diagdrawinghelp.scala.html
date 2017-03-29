@@ -1,18 +1,24 @@
-@(user: model.user.User, exercise: model.UmlExercise)
+@(user: model.user.User, exercise: model.UmlExercise, classes: List[String])
+
+@sqrt = @{Math.sqrt(classes.size())}
 
 @main("UML-Test", user) {
-<script src=" @controllers.routes.Assets.versioned("javascripts/uml/lodash.js")"></script>
-<script src=" @controllers.routes.Assets.versioned("javascripts/uml/backbone.js")"></script>
+<script src="@controllers.routes.Assets.versioned("javascripts/uml/lodash.js")"></script>
+<script src="@controllers.routes.Assets.versioned("javascripts/uml/backbone.js")"></script>
 <!-- IMPORTANT: load JQuery here again?!? -->
-<script src=" @controllers.routes.Assets.versioned("javascripts/uml/jquery.js")"></script>
-<script src=" @controllers.routes.Assets.versioned("javascripts/uml/joint.js")"></script>
-<script src=" @controllers.routes.Assets.versioned("javascripts/uml/jsonconverter.js")"></script>
-<link href="@routes.Assets.versioned("stylesheets/joint.css")">
+<script src="@controllers.routes.Assets.versioned("javascripts/uml/jquery.js")"></script>
+<script src="@controllers.routes.Assets.versioned("javascripts/uml/joint.js")"></script>
+<script src="@controllers.routes.Assets.versioned("javascripts/uml/jsonconverter.js")"></script>
+
+<link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/joint.css")">
+<link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/umlextra.css")">
 
 <script>
-@for(i <- 0 until 3) {
-Klasse_@i
+$(document).ready(function() {
+@for(i <- 0 until classes.size()) {
+addClass("@classes.get(i)", @{(i / sqrt) * 200 + 50}, @{(i % sqrt) * 200 + 50}, [], []); 
 }
+});
 </script>
 
 <div class="container-fluid">
@@ -65,9 +71,7 @@ Klasse_@i
     </div>
     <div class="col-md-8">
       <div id="sizepaper">
-        <div ondrop="drop(event)" ondragover="allowDrop(event)">
-          <div style="border: 1px solid black" id="paper"></div>
-        </div>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)" id="paper"/>
       </div>
     </div>
   </div>
