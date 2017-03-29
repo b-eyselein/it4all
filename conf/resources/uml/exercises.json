@@ -51,15 +51,83 @@
 	{
 		"id": 2, 
 		"title": "Gärtner", 
-		"text": "gardener_raw.txt", 
+		"text": "Sie sollen für den Gärtner ihres Vertrauens ein Programm zur Verwaltung der Produktion erstellen. In diesem soll jede Pflanze, die in einem der Gewächshäuser wächst, registriert werden. Jede Pflanze hat einen Typ, der die genaue Spezies angibt. Bei jeder Spezie soll die Möglichkeit gegeben sein, diese zu gießen. Dieser Typ wird durch einen einzigartigen Code spezifiziert. Außerdem wird der lateinische und deutsche Name des Typs gespeichert. Für jede Pflanze soll außerdem die Nummer des Gewächshauses und die Position (als Reihe und Spalte, da die Gewächshäuser jeweils in Koordinaten eingeteilt sind) gespeichert werden. Pflanzentypen werden in folgende Untertypen unterschieden: Bäume, Blumen und Nutzpflanzen. Für Bäume wird die durchschnittliche Höhe gespeichert, ob sie immergrün sind und der Gärtner soll in regelmäßigen Abständen den Baum stutzen kontrollieren. Für Blumen die Blütenfarbe vermerkt werden. Bei Nutzpflanzen wird der Beginn und das Ende der Erntezeit gespeichert und zwischen Obst und Gemüse unterschieden. Für Obst soll ersichtlich sein, ob ein Kern enthalten ist, für Gemüse, ob es zweijährig ist. Bei Blumen und Nutzpflanzen soll außerdem ein Hinweis gespeichert werden, wann die Pflanzen gegossen werden sollen.", 
 		"mappings": [
-			
+			{
+				"key": "Vertrauens", 
+				"value": "Vertrauen"
+			}, 
+			{
+				"key": "Gewächshäuser", 
+				"value": "Gewächshaus"
+			}, 
+			{
+				"key": "Spezies", 
+				"value": "Spezie"
+			}, 
+			{
+				"key": "Typs", 
+				"value": "Typ"
+			}, 
+			{
+				"key": "Koordinaten", 
+				"value": "Koordinate"
+			}, 
+			{
+				"key": "Pflanzentypen", 
+				"value": "Pflanzentyp"
+			},
+			{
+				"key": "Untertypen", 
+				"value": "Untertyp"
+			},
+			{
+				"key": "Bäume", 
+				"value": "Baum"
+			},
+			{
+				"key": "Blumen", 
+				"value": "Blume"
+			},
+			{
+				"key": "Nutzpflanzen", 
+				"value": "Nutzpflanze"
+			},
+			{
+				"key": "Blütenfarben", 
+				"value": "Blützenfarbe"
+			},
+			{
+				"key": "Pflanzen", 
+				"value": "Pflanze"
+			}
 		], 
 		"methods": [
-			
+			{
+				"key": "gießen", 
+				"value": "gießen(Pflanze)"
+			}, 
+			{
+				"key": "einpflanzen", 
+				"value": "einpflanzen(Pflanzentyp)"
+			}, 
+			{
+				"key": "ernten", 
+				"value": "ernten(Nutzpflanze)"
+			},
+						{
+				"key": "stutzen", 
+				"value": "stutzen(Baum)"
+			}
 		], 
 		"ignore": [
-			
+			"Sie", 
+			"Jede",
+			"In",
+			"Dieser",
+			"Außerdem",
+			"Für",
+			"Bei"
 		]
 	}
 ]
