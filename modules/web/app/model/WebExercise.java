@@ -59,26 +59,4 @@ public class WebExercise extends Exercise {
     }
   }
 
-  @Override
-  public String renderData() {
-    StringBuilder builder = new StringBuilder();
-    builder.append("<div class=\"col-md-6\">");
-    builder.append("<div class=\"panel panel-default\">");
-    builder.append("<div class=\"panel-heading\">Aufgabe " + id + ": " + title + "</div>");
-    builder.append("<div class=\"panel-body\">");
-    builder.append("<p>Text: " + text + "</p>");
-
-    builder.append("<h2>HTML-Tasks</h2>");
-    for(Task task: htmlTasks)
-      builder.append("<p>" + task.getId() + ": " + task.getDescription() + "</p>");
-
-    builder.append("<h2>CSS-Tasks</h2>");
-    for(Task task: cssTasks)
-      builder.append("<p>" + task.getId() + ": " + task.getDescription() + "</p>");
-
-    builder.append(DIV_END + DIV_END + DIV_END);
-
-    return builder.toString();
-  }
-
 }

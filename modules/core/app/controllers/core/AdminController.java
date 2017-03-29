@@ -10,6 +10,7 @@ import model.AdminSecured;
 import model.Util;
 import model.exercise.Exercise;
 import model.exercisereading.ExerciseReader;
+import model.user.User;
 import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -22,7 +23,7 @@ public abstract class AdminController<E extends Exercise, R extends ExerciseRead
   protected static final String ADMIN_FOLDER = "admin";
 
   protected R exerciseReader;
-  
+
   protected String exerciseType;
 
   protected Util util;
@@ -31,6 +32,10 @@ public abstract class AdminController<E extends Exercise, R extends ExerciseRead
     util = theUtil;
     exerciseType = theExerciseType;
     exerciseReader = theExerciseReader;
+  }
+
+  protected static User getUser() {
+    return UserManagement.getCurrentUser();
   }
 
   protected static void saveUploadedFile(Path savingDir, Path pathToUploadedFile, Path saveTo) {

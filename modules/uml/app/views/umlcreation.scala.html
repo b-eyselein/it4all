@@ -1,0 +1,11 @@
+@(exercises: List[model.UmlExercise])
+
+@for(ex <- exercises) {
+<div class="panel panel-default">
+  <div class="panel-heading">Aufgabe @ex.id: @ex.title</div>
+  <div class="panel-body">
+    <p><b>ClassSelText</b>:</p>
+    <p>@ex.classSelText</p>
+  </div>
+</div>
+}

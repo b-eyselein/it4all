@@ -3,21 +3,17 @@ package controllers.xml;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import controllers.core.AdminController;
-import controllers.core.UserManagement;
 import model.Util;
 import model.XmlExercise;
 import model.XmlExerciseReader;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
-import views.html.preview;
-import views.html.xmlupload;
 
 public class XmlAdmin extends AdminController<XmlExercise, XmlExerciseReader> {
 
@@ -31,7 +27,7 @@ public class XmlAdmin extends AdminController<XmlExercise, XmlExerciseReader> {
     List<XmlExercise> exercises = exerciseReader.readStandardExercises();
     saveExercises(exercises);
 
-    return ok(preview.render(UserManagement.getCurrentUser(), new LinkedList<>(exercises)));
+    return ok(views.html.preview.render(getUser(), views.html.xmlcreation.render(exercises)));
   }
 
   @Override
@@ -50,12 +46,12 @@ public class XmlAdmin extends AdminController<XmlExercise, XmlExerciseReader> {
     List<XmlExercise> exercises = (new XmlExerciseReader()).readExercises(jsonFile);
     saveExercises(exercises);
 
-    return ok(preview.render(UserManagement.getCurrentUser(), new LinkedList<>(exercises)));
+    return ok(views.html.preview.render(getUser(), views.html.xmlcreation.render(exercises)));
   }
 
   @Override
   public Result uploadForm() {
-    return ok(xmlupload.render(UserManagement.getCurrentUser()));
+    return ok(views.html.xmlupload.render(getUser()));
   }
 
   @Override

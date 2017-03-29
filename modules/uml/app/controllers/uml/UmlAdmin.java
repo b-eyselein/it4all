@@ -18,45 +18,45 @@ import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
 
 public class UmlAdmin extends AdminController<UmlExercise, UmlExerciseReader> {
-
+  
   @Inject
   public UmlAdmin(Util theUtil) {
     super(theUtil, "uml", new UmlExerciseReader());
   }
-
+  
   @Override
   public Result readStandardExercises() {
     List<UmlExercise> exercises = exerciseReader.readStandardExercises();
     saveExercises(exercises);
-
-    return ok(views.html.preview.render(UserManagement.getCurrentUser(), new LinkedList<>(exercises)));
+    
+    return ok(views.html.preview.render(getUser(), views.html.umlcreation.render(exercises)));
   }
-
+  
   @Override
   public Result uploadFile() {
     MultipartFormData<File> body = request().body().asMultipartFormData();
     FilePart<File> uploadedFile = body.getFile(BODY_FILE_NAME);
     if(uploadedFile == null)
       return badRequest("Fehler!");
-
+    
     Path pathToUploadedFile = uploadedFile.getFile().toPath();
     Path savingDir = Paths.get(util.getRootSolDir().toString(), ADMIN_FOLDER, exerciseType);
-
+    
     Path jsonFile = Paths.get(savingDir.toString(), uploadedFile.getFilename());
     saveUploadedFile(savingDir, pathToUploadedFile, jsonFile);
-
+    
     List<UmlExercise> exercises = (new UmlExerciseReader()).readExercises(jsonFile);
     saveExercises(exercises);
-
-    return ok(views.html.preview.render(UserManagement.getCurrentUser(), new LinkedList<>(exercises)));
+    
+    return ok(views.html.preview.render(getUser(), views.html.umlcreation.render(exercises)));
   }
-
+  
   @Override
   public Result uploadForm() {
     return ok("TODO!");
-    // return ok(views.html.umlupload.render(UserManagement.getCurrentUser()));
+    // return ok(views.html.umlupload.render(getUser()));
   }
-
+  
   @Override
   protected void saveExercises(List<UmlExercise> exercises) {
     for(UmlExercise ex: exercises) {
@@ -65,5 +65,5 @@ public class UmlAdmin extends AdminController<UmlExercise, UmlExerciseReader> {
       // exerciseReader.checkOrCreateSampleFile(util, ex);
     }
   }
-  
+
 }

@@ -1,0 +1,36 @@
+@(scenarioes: List[model.exercise.SqlScenario])
+
+@for(scenario <- scenarioes) {
+<div class="panel panel-default">
+  <div class="panel-heading">Szenario &quot;@scenario.longName&quot;</div>
+  <div class="panel-body">
+    <!-- TODO: Szenariobeschreibung -->
+    <p>Szenariobeschreibung!</p>
+    
+    <table class="table table-condensed">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Aufgabentyp</th>
+          <th>Aufgabentext</th>
+          <th>Musterl&ouml;sungen</th>
+          <th>Validierung</th>
+          <th>Tags</th>
+        </tr>
+      </thead>
+      <tbody>
+      @for(exercise <- scenario.exercises) {
+        <tr>
+          <td>@exercise.id</td>
+          <td>@exercise.exercisetype</td>
+          <td>@exercise.text</td>
+          <td>@exercise.renderSampleSolutions()</td>
+          <td>@exercise.validation</td>
+          <td>@exercise.tags</td>
+        </tr>        
+      }
+      </tbody>
+    </table>
+  </div>
+</div>
+}

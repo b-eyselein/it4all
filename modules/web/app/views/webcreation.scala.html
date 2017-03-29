@@ -1,0 +1,24 @@
+@(exercises: List[model.WebExercise])
+
+
+@for(ex <- exercises) {
+<div class="col-md-6">
+  <div class="panel panel-default">
+    <div class="panel-heading">Aufgabe @ex.id: @ex.title</div>
+    <div class="panel-body">
+      <p>Text: @ex.text</p>
+
+      <h2>HTML-Tasks</h2>
+      @for(task <- ex.htmlTasks) {
+      <p>@task.getId(): @task.getDescription()</p>
+      }
+
+      <h2>CSS-Tasks</h2>
+      @for(task <- ex.cssTasks) {
+      <p>@task.getId(): @task.getDescription()</p>
+      }
+      
+    </div>
+  </div>
+</div>
+}

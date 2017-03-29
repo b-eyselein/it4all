@@ -4,6 +4,10 @@
 <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/umlextra.css")">
 <script src="@controllers.routes.Assets.versioned("javascripts/umlProcessor.js")"></script>
 
+<script>
+var helpWithDoubles = true;
+</script>
+
 <div class="container" unselectable="on" onselectstart="return false;"  onmousedown="return false;">
   <div class="page-header">
     <h1>Auswahl der Klassen, Methoden und Attribute</h1>
@@ -20,22 +24,34 @@
     <div class="panel-body" id="exercisetext">@Html(exercise.getExTextForClassSel())</div>
     <div class="panel-footer">
       <form action="@controllers.uml.routes.UML.correctClassSelection(exercise.id)" method="post"
-        enctype="multipart/form-data" onsubmit="prepareFormForSubmitting();">
+        enctype="multipart/form-data" onsubmit="return prepareFormForSubmitting();">
         <input type="hidden" value="" class="form-control" name="learnerSolution" id="learnerSolution" required>
         <button type="submit" class="btn btn-primary btn-block">Klassen verifizieren</button>
       </form>
     </div>
   </div>
   
-  <div class="row">
-    <div class="col-xs-4">
-      <span class="bg-info" style="color: blue">Klassen</span>
-    </div>
-    <div class="col-xs-4">
-      <span class="bg-success" style="color: green">Methoden</span>
-    </div>
-    <div class="col-xs-4">
-      <span class="bg-danger" style="color: red">Attribute</span>
+  <div class="panel panel-default">
+    <div class="panel-heading">Gew&auml;hlt</div>
+    <div class="panel-body">
+      <div class="col-xs-4">
+        <h4 class="bg-info text-center">Klassen</h4>
+        <ul id="classesList">
+          <li>--</li>
+        </ul>
+      </div>
+      <div class="col-xs-4">
+        <h4 class="bg-success text-center">Methoden</h4>
+        <ul id="methodsList">
+          <li>--</li>
+        </ul>
+      </div>
+      <div class="col-xs-4">
+        <h4 class="bg-danger text-center">Attribute</h4>
+        <ul id="attributesList">
+          <li>--</li>
+        </ul>
+      </div>
     </div>
   </div>
   

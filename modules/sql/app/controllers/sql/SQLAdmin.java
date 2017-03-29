@@ -8,7 +8,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import controllers.core.AdminController;
-import controllers.core.UserManagement;
 import model.SqlExerciseReader;
 import model.Util;
 import model.exercise.SqlExercise;
@@ -18,15 +17,13 @@ import play.db.NamedDatabase;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
-import views.html.sqlpreview;
-import views.html.sqlupload;
 
 public class SQLAdmin extends AdminController<SqlExercise, SqlExerciseReader> {
-  
+
   private Database sqlSelect;
-  
+
   private Database sqlOther;
-  
+
   @Inject
   public SQLAdmin(Util theUtil, @NamedDatabase("sqlselectroot") Database theSqlSelect,
       @NamedDatabase("sqlotherroot") Database theSqlOther) {
@@ -34,38 +31,38 @@ public class SQLAdmin extends AdminController<SqlExercise, SqlExerciseReader> {
     sqlSelect = theSqlSelect;
     sqlOther = theSqlOther;
   }
-  
+
   @Override
   public Result readStandardExercises() {
     List<SqlScenario> results = exerciseReader.readStandardScenarioes();
     saveScenarioes(results);
-    return ok(sqlpreview.render(UserManagement.getCurrentUser(), results));
+    return ok(views.html.preview.render(getUser(), views.html.sqlcreation.render(results)));
   }
-  
+
   @Override
   public Result uploadFile() {
     MultipartFormData<File> body = request().body().asMultipartFormData();
     FilePart<File> uploadedFile = body.getFile(BODY_FILE_NAME);
     if(uploadedFile == null)
       return badRequest("Fehler!");
-    
+
     Path pathToUploadedFile = uploadedFile.getFile().toPath();
     Path savingDir = Paths.get(util.getRootSolDir().toString(), "admin", exerciseType);
     Path saveTo = Paths.get(savingDir.toString(), uploadedFile.getFilename());
     saveUploadedFile(savingDir, pathToUploadedFile, saveTo);
-    
-    List<SqlScenario> results = exerciseReader.readScenarioes(saveTo);
 
-    saveScenarioes(results);
+    List<SqlScenario> results = exerciseReader.readScenarioes(saveTo);
     
-    return ok(sqlpreview.render(UserManagement.getCurrentUser(), results));
+    saveScenarioes(results);
+
+    return ok(views.html.preview.render(getUser(), views.html.sqlcreation.render(results)));
   }
-  
+
   @Override
   public Result uploadForm() {
-    return ok(sqlupload.render(UserManagement.getCurrentUser()));
+    return ok(views.html.sqlupload.render(getUser()));
   }
-  
+
   private void saveScenarioes(List<SqlScenario> results) {
     for(SqlScenario result: results) {
       result.save();
@@ -75,11 +72,11 @@ public class SQLAdmin extends AdminController<SqlExercise, SqlExerciseReader> {
       saveExercises(result.exercises);
     }
   }
-  
+
   @Override
   protected void saveExercises(List<SqlExercise> exercises) {
     for(SqlExercise ex: exercises)
       ex.save();
   }
-  
+
 }

@@ -2,11 +2,20 @@
 	{
 		"id": 1, 
 		"title": "Krankenhaus", 
-		"rawtext": "hospital_raw.txt"
+		"rawtext": "hospital_raw.txt", 
+		"mappings": "hospital_mappings.csv", 
+		"ignore": [
+			"Ein", 
+			"Jede"
+		]
 	}, 
 	{
 		"id": 2, 
 		"title": "Gärtner", 
-		"rawtext": "gardener_raw.txt"
+		"rawtext": "gardener_raw.txt", 
+		"mappings": "gardener_mappings.csv", 
+		"ignore": [
+			
+		]
 	}
 ]

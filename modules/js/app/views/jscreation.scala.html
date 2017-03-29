@@ -1,0 +1,46 @@
+@(exercises: List[model.JsExercise])
+
+@for(ex <- exercises) {
+<div class="col-md-6">
+  <div class="panel panel-default">
+    <div class="panel-heading">Aufgabe @ex.id: @ex.title</div>
+	<div class="panel-body">
+      <p>Aufgabentext: @ex.text</p>");
+    
+      <!-- Declaration and sample solution -->
+ 	  <div class="row">
+        <div class="col-md-6">
+          <p>Angabe: <pre>@ex.declaration</pre></p>
+        </div>
+        <div class="col-md-6">
+          <p>Musterlösung: <pre>@ex.sampleSolution</pre></p>
+        </div>
+      </div>
+    
+      <!-- Inputs and Output, Tests -->
+	  <table class="table">
+        <thead>
+          <tr>
+            <th>Id</th>
+            @for(input <- ex.getInputTypes()) {
+            	(JsDataType::toString).collect(Collectors.joining("</th><th>Input: ", "<th>Input: ", "</th>"))
+            }
+        	<th>Output: @ex.returntype</th>
+          </tr>
+        </thead>
+        <tbody>
+        @for(test <- ex.functionTests) {
+          <tr>
+            <td>@test.getId()</td>
+            @for(inp <- test.getInput()) {
+          	<td>inp</td>
+            }
+            <td>@test.getOutput()</td>
+          </tr>
+        }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+}

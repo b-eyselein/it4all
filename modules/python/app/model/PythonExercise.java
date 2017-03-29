@@ -13,13 +13,13 @@ import model.programming.ProgrammingExercise;
 
 @Entity
 public class PythonExercise extends ProgrammingExercise {
-
+  
   public static final Finder<Integer, PythonExercise> finder = new Finder<>(PythonExercise.class);
-
+  
   @OneToMany(mappedBy = "exercise")
   @JsonManagedReference
   public List<PythonTestData> functionTests;
-
+  
   public PythonExercise(int theId) {
     super(theId);
     // Only for testing purposes! TODO: DELETE!
@@ -28,33 +28,27 @@ public class PythonExercise extends ProgrammingExercise {
     sampleSolution = "def sum(a, b):\n\treturn a + b";
     functionname = "sum";
   }
-
+  
   @Override
   public List<ITestData> getFunctionTests() {
     // TODO Auto-generated method stub
     return Collections.emptyList();
   }
-
+  
   @Override
   public String getLanguage() {
     return "python";
   }
-  
+
   @Override
   public String getTestdataValidationUrl() {
     // TODO Auto-generated method stub
     return null;
   }
-
+  
   @Override
   public String getTestingUrl() {
     return controllers.python.routes.Python.correctLive(id).url();
   }
-
-  @Override
-  public String renderData() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
+  
 }

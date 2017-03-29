@@ -23,11 +23,11 @@ import play.twirl.api.Html;
 
 @Entity
 public class SqlExercise extends Exercise {
-  
+
   public static final String SAMPLE_JOIN_CHAR = "#";
-  
+
   public static final Finder<Integer, SqlExercise> finder = new Finder<>(SqlExercise.class);
-  
+
   @Column(columnDefinition = "text")
   public String samples;
 
@@ -37,21 +37,21 @@ public class SqlExercise extends Exercise {
   @ManyToOne
   @JoinColumn(name = "scenario_name")
   public SqlScenario scenario;
-  
+
   public String validation; // NOSONAR
-  
+
   public String tags; // NOSONAR
-  
+
   public String hint; // NOSONAR
-  
+
   public SqlExercise(int theId) {
     super(theId);
   }
-  
+
   public Html getBadges() {
     return new Html(getTags().stream().map(SqlTag::getButtonContent).collect(Collectors.joining()));
   }
-  
+
   public QueryCorrector<? extends Statement, ?> getCorrector() {
     switch(exercisetype) {
     case CREATE:
@@ -68,27 +68,21 @@ public class SqlExercise extends Exercise {
       return null;
     }
   }
-  
+
   public List<String> getSampleSolutions() {
     return Arrays.asList(samples.split("#"));
   }
-  
+
   public List<SqlTag> getTags() {
     if(tags.isEmpty())
       return Collections.emptyList();
-    
+
     return Arrays.stream(tags.split(SAMPLE_JOIN_CHAR)).map(SqlTag::valueOf).collect(Collectors.toList());
   }
-  
-  @Override
-  public String renderData() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-  
+
   public Html renderSampleSolutions() {
     return new Html(getSampleSolutions().stream().collect(Collectors
         .joining("</pre></div><div class=\"col-md-6\"><pre>", "<div class=\"col-md-6\"><pre>", "</pre></div>")));
   }
-  
+
 }
