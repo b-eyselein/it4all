@@ -6,7 +6,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import model.Util;
-import model.multchoice.MCQuestion;
+import model.choicequestions.MCQuestion;
 import play.data.FormFactory;
 import play.mvc.Result;
 
