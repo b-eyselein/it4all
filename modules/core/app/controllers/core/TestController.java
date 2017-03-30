@@ -18,14 +18,16 @@ public class TestController extends ExerciseController {
         "Antwortmöglichkeit 1",
         "Antwortmöglichkeit 2",
         "Antwortmöglichkeit 3",
-        "Antwortmöglichkeit 4")),
+        "Antwortmöglichkeit 4"),
+        new int[]{1, 3}),
     new MCQuestion(2, "Frage ...", Arrays.asList(
         "Antwortmöglichkeit 1",
         "Antwortmöglichkeit 2",
         "Antwortmöglichkeit 3",
         "Antwortmöglichkeit 4",
         "Antwortmöglichkeit 5",
-        "Antwortmöglichkeit 6"))
+        "Antwortmöglichkeit 6"),
+        new int[]{2, 5})
   );
   // @formatter:on
 
