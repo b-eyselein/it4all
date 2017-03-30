@@ -1,0 +1,106 @@
+[
+	{
+		"id": 1, 
+		"title": "TODO...", 
+		"type": "MC", 
+		"text": "Bei dieser Frage sind die Antwortmöglichkeiten 1 und 3 korrekt.", 
+		"answers": [
+			{
+				"id": 1, 
+				"correctness": "CORRECT", 
+				"text": "TODO..."
+			}, 
+			{
+				"id": 2, 
+				"correctness": "WRONG", 
+				"text": "TODO..."
+			}, 
+			{
+				"id": 3, 
+				"correctness": "OPTIONAL", 
+				"text": "TODO..."
+			}, 
+			{
+				"id": 4, 
+				"correctness": "WRONG", 
+				"text": "TODO..."
+			}
+		]
+	}, 
+	{
+		"id": 2, 
+		"title": "TODO...", 
+		"type": "SC", 
+		"text": "Bei dieser Frage ist nur die Antwortmöglichkeit 2 korrekt.", 
+		"answers": [
+			{
+				"id": 1, 
+				"correctness": "WRONG", 
+				"text": "TODO..."
+			}, 
+			{
+				"id": 2, 
+				"correctness": "CORRECT", 
+				"text": "TODO..."
+			}, 
+			{
+				"id": 3, 
+				"correctness": "WRONG", 
+				"text": "TODO..."
+			}, 
+			{
+				"id": 4, 
+				"correctness": "WRONG", 
+				"text": "TODO..."
+			}, 
+			{
+				"id": 5, 
+				"correctness": "WRONG", 
+				"text": "TODO..."
+			}, 
+			{
+				"id": 6, 
+				"correctness": "WRONG", 
+				"text": "TODO..."
+			}
+		]
+	}, 
+	{
+		"id": 3, 
+		"title": "TODO...", 
+		"type": "MC", 
+		"text": "Bei dieser Frage sind die Antwortmöglichkeiten 3, 4 und 6 korrekt.", 
+		"answers": [
+			{
+				"id": 1, 
+				"correctness": "WRONG", 
+				"text": "TODO..."
+			}, 
+			{
+				"id": 2, 
+				"correctness": "WRONG", 
+				"text": "TODO..."
+			}, 
+			{
+				"id": 3, 
+				"correctness": "CORRECT", 
+				"text": "TODO..."
+			}, 
+			{
+				"id": 4, 
+				"correctness": "OPTIONAL", 
+				"text": "TODO..."
+			}, 
+			{
+				"id": 5, 
+				"correctness": "WRONG", 
+				"text": "TODO..."
+			}, 
+			{
+				"id": 6, 
+				"correctness": "CORRECT", 
+				"text": "TODO..."
+			}
+		]
+	}
+]

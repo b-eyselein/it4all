@@ -1,0 +1,13 @@
+@(questions: List[model.ChoiceQuestion])
+
+@for(q <- questions) {
+<div class="col-md-6">
+  <div class="panel panel-default">
+    <div class="panel-heading">Aufgabe @q.id: @q.title</div>
+    <div class="panel-body">
+      <p>Aufgabentext: @q.text</p>
+      <p>TODO: der Rest...
+    </div>
+  </div>
+</div>
+}

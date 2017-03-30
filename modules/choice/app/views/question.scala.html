@@ -1,0 +1,35 @@
+@(user: model.user.User, question: model.ChoiceQuestion)
+
+<script src="@routes.Assets.versioned("javascripts/choicequestions.js")"></script>
+
+@main("Auswahlfragen", user) {
+<div class="container">
+  <div class="page-header">
+    <h1>Auswahlfragen</h1>
+  </div>
+  
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div class="col-sm-6">
+        <h3>@{question.id}. Frage:</h3>
+        <p id="question" data-answers="@question.getAnswers().size()">@question.text</p>
+      </div>
+    
+      <div class="col-sm-6">
+        @for(ans <- question.getAnswers()) {
+        <!-- TODO: mark only one question if SCQuestion! -->
+        <button class="btn btn-block btn-default" id="ans_@ans.getId()" data-selected="0"
+        onclick="@if(question.isSingleChoice) {markSingle(this)} else {mark(this)};">@ans.getIdAsChar) @ans.getText()</button>
+        }      
+        <hr>
+        <button class="btn btn-block btn-primary" id="correct_@question.id"
+            onclick="control('@controllers.choice.routes.ChoiceController.correct(question.id)', @question.id)">
+            Kontrollieren</button>
+        <a class="btn btn-block btn-default" href="@controllers.choice.routes.ChoiceController.question(question.id + 1)">
+          Nächste Aufgabe</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+}

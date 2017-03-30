@@ -16,8 +16,12 @@ POST   /preferences       controllers.UserController.saveOptions()
 # Admin
 GET    /admin             controllers.AdminController.index()
 
-# Python Test
+# Python
 ->     /python            python.Routes
+
+# Choice
+->     /choice            choice.Routes
+
 
 # Zahlensysteme
 ->     /binary            binary.Routes

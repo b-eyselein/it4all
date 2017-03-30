@@ -1,0 +1,9 @@
+# creation of exercises
+GET    /upload       controllers.choice.ChoiceAdmin.uploadForm()
+POST   /upload       controllers.choice.ChoiceAdmin.uploadFile()
+GET    /create       controllers.choice.ChoiceAdmin.readStandardExercises()
+
+#
+GET    /choice       controllers.choice.ChoiceController.index()
+GET    /choice/:id   controllers.choice.ChoiceController.question(id: Int)
+PUT    /choice/:id   controllers.choice.ChoiceController.correct(id: Int)
