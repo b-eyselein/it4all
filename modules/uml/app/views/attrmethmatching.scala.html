@@ -1,28 +1,28 @@
-@(user: model.user.User)
+@(user: model.user.User, exercise: model.UmlExercise, solution: model.UmlSolution)
 
 @main("UML", user) {
 <div class="container-fluid">
   <div class="col-md-4">
     <div class="btn-group btn-group-vertical">
-    @for(i <- 1 until 10) {
-      <button class="btn btn-default">Attribut @i</button>
+    @for(i <- 0 until solution.getAttributes().size()) {
+      <button class="btn btn-default" draggable="true" ondragstart="drag(event)" id="a@{i}" >@solution.getEntryAttributes(i)</button>
     }
     </div>
     <div class="btn-group btn-group-vertical">
-    @for(i <- 1 until 10) {
-      <button class="btn btn-default">Methode @i</button>
+    @for(i <- 0 until solution.getMethods().size()) {
+      <span ondrop="drop(event)" ondragover="allowDrop(event)" class="btn btn-default" draggable="true" ondragstart="drag(event)" id="m@{i}">@solution.getEntryMethods(i)</span>
     }
     </div>
   </div>
   
   <div class="col-md-8">
-  @for(j <- 0 until 4) {
+  @for(j <-0 until 4) {
     <div class="row">
     @for(i <- 0 until 3) {
       <div class="col-md-4">
         <div class="panel panel-default">
-          <div class="panel-heading">Klasse @{j * 3 + i}</div>
-          <div class="panel-body">TODO...</div>
+          <div class="panel-heading" id="@{j*3+i}">@solution.getEntryClasses(1)</div>
+          <div class="panel-body" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
         </div>
       </div>
     }
@@ -30,4 +30,19 @@
   }
   </div>
 </div>
+<script>
+function allowDrop(ev) {
+    ev.preventDefault();
+}
+
+function drag(ev) {
+    ev.dataTransfer.setData("text", ev.target.id);
+}
+
+function drop(ev) {
+    ev.preventDefault();
+    var data = ev.dataTransfer.getData("text");
+    ev.target.appendChild(document.getElementById(data));
+}
+</script>
 }

@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import controllers.core.ExerciseController;
 import model.JsonWrapper;
 import model.UmlExercise;
+import model.UmlSolution;
 import model.Util;
 import model.result.UmlClassselection;
 import model.result.UmlDiagramdrawing;
@@ -118,7 +119,7 @@ public class UML extends ExerciseController {
   }
 
   public Result test() {
-    return ok(views.html.attrmethmatching.render(getUser()));
+    return ok(views.html.attrmethmatching.render(getUser(),UmlExercise.finder.byId(2),new UmlSolution()));
   }
 
 }
