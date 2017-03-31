@@ -37,7 +37,7 @@ public class ChoiceController extends ExerciseController {
     DynamicForm form = factory.form().bindFromRequest();
     List<Integer> selectedAnswers = parseAnswers(form.get("selected"));
     
-    ChoiceQuestion question = ChoiceQuestion.byId(id);
+    ChoiceQuestion question = ChoiceQuestion.finder.byId(id);
     
     ChoiceResult result = new ChoiceResult(selectedAnswers, question);
     
@@ -45,11 +45,11 @@ public class ChoiceController extends ExerciseController {
   }
   
   public Result index() {
-    return ok(views.html.choiceoverview.render(getUser(), ChoiceQuestion.all()));
+    return ok(views.html.choiceoverview.render(getUser(), ChoiceQuestion.finder.all()));
   }
   
   public Result question(int id) {
-    ChoiceQuestion question = ChoiceQuestion.byId(id);
+    ChoiceQuestion question = ChoiceQuestion.finder.byId(id);
     
     if(question == null)
       return redirect(controllers.choice.routes.ChoiceController.index());

@@ -5,7 +5,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import model.ChoiceAnswer.Correctness;
+import model.Correctness;
+import model.QuestionType;
 import model.exercisereading.ExerciseReader;
 
 public class ChoiceQuestionReader extends ExerciseReader<ChoiceQuestion> {
@@ -14,12 +15,14 @@ public class ChoiceQuestionReader extends ExerciseReader<ChoiceQuestion> {
     super("choice");
   }
 
-  private static MCQuestion readMCQuestion(int id, String title, String text, List<ChoiceAnswer> answers) {
-    MCQuestion question = MCQuestion.finder.byId(id);
+  private static ChoiceQuestion readChoiceQuestion(int id, QuestionType type, String title, String text,
+      List<ChoiceAnswer> answers) {
+    ChoiceQuestion question = ChoiceQuestion.finder.byId(id);
 
     if(question == null)
-      question = new MCQuestion(id);
+      question = new ChoiceQuestion(id);
 
+    question.questionType = type;
     question.title = title;
     question.text = text;
     question.answers = answers;
@@ -27,35 +30,27 @@ public class ChoiceQuestionReader extends ExerciseReader<ChoiceQuestion> {
     return question;
   }
 
-  private static SCQuestion readSCQuestion(int id, String title, String text, List<ChoiceAnswer> answers) {
-    SCQuestion question = SCQuestion.finder.byId(id);
-
-    if(question == null)
-      question = new SCQuestion(id);
-
-    question.title = title;
-    question.text = text;
-    question.answers = answers;
-
-    return question;
-  }
-
-  private ChoiceAnswer readAnswer(JsonNode answerNode) {
+  private ChoiceAnswer readAnswer(JsonNode answerNode, int questionId) {
     JsonNode idNode = answerNode.get(ID_NAME);
     JsonNode correctnessNode = answerNode.get("correctness");
     JsonNode textNode = answerNode.get(TEXT_NAME);
 
-    int id = idNode.asInt();
-    Correctness correctness = Correctness.valueOf(correctnessNode.asText());
-    String text = textNode.asText();
+    ChoiceAnswerKey key = new ChoiceAnswerKey(idNode.asInt(), questionId);
 
-    return new ChoiceAnswer(id, correctness, text);
+    ChoiceAnswer answer = ChoiceAnswer.finder.byId(key);
+    if(answer == null)
+      answer = new ChoiceAnswer(key);
+
+    answer.correctness = Correctness.valueOf(correctnessNode.asText());
+    answer.text = textNode.asText();
+
+    return answer;
   }
 
-  private List<ChoiceAnswer> readAnswers(JsonNode answersNode) {
+  private List<ChoiceAnswer> readAnswers(JsonNode answersNode, int questionId) {
     List<ChoiceAnswer> answers = new ArrayList<>(answersNode.size());
     for(JsonNode answerNode: answersNode)
-      answers.add(readAnswer(answerNode));
+      answers.add(readAnswer(answerNode, questionId));
     return answers;
   }
 
@@ -63,23 +58,19 @@ public class ChoiceQuestionReader extends ExerciseReader<ChoiceQuestion> {
   protected ChoiceQuestion readExercise(JsonNode exerciseNode) {
     JsonNode idNode = exerciseNode.get(ID_NAME);
     JsonNode typeNode = exerciseNode.get("type");
+
     JsonNode titleNode = exerciseNode.get(TITLE_NAME);
-    JsonNode questionNode = exerciseNode.get(TEXT_NAME);
+    JsonNode textNode = exerciseNode.get(TEXT_NAME);
     JsonNode answersNode = exerciseNode.get("answers");
-    
-    String type = typeNode.asText();
-    
+
+    QuestionType type = QuestionType.valueOf(typeNode.asText());
+
     int id = idNode.asInt();
     String title = titleNode.asText();
-    String question = questionNode.asText();
-    List<ChoiceAnswer> answers = readAnswers(answersNode);
+    String text = textNode.asText();
+    List<ChoiceAnswer> answers = readAnswers(answersNode, id);
 
-    if("MC".equals(type))
-      return readMCQuestion(id, title, question, answers);
-    else if("SC".equals(type))
-      return readSCQuestion(id, title, question, answers);
-    else
-      return null;
+    return readChoiceQuestion(id, type, title, text, answers);
   }
 
 }

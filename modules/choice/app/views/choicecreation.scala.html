@@ -6,7 +6,9 @@
     <div class="panel-heading">Aufgabe @q.id: @q.title</div>
     <div class="panel-body">
       <p>Aufgabentext: @q.text</p>
-      <p>TODO: der Rest...
+      @for(ans <- q.answers) {
+      	<p>ID: @ans.key.id, QID: @ans.key.choiceQuestionId</p>
+      }
     </div>
   </div>
 </div>

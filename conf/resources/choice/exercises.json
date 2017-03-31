@@ -2,35 +2,35 @@
 	{
 		"id": 1, 
 		"title": "TODO...", 
-		"type": "MC", 
-		"text": "Bei dieser Frage sind die Antwortmöglichkeiten 1 und 3 korrekt.", 
+		"type": "MULTIPLE", 
+		"text": "Welche dieser Aussagen über abstrakte Klassen sind korrekt?", 
 		"answers": [
 			{
 				"id": 1, 
-				"correctness": "CORRECT", 
-				"text": "TODO..."
+				"correctness": "WRONG", 
+				"text": "Sie dürfen keine Attribute oder Operationen aufweisen."
 			}, 
 			{
 				"id": 2, 
-				"correctness": "WRONG", 
-				"text": "TODO..."
+				"correctness": "CORRECT", 
+				"text": "Sie dürfen nicht direkt instanziiert werden."
 			}, 
 			{
 				"id": 3, 
-				"correctness": "OPTIONAL", 
-				"text": "TODO..."
+				"correctness": "CORRECT", 
+				"text": "Sie werden im Klassendiagramm mit dem Modifikator \"<<abstract>>\" oder in kursiver Schrift angegeben."
 			}, 
 			{
 				"id": 4, 
-				"correctness": "WRONG", 
-				"text": "TODO..."
+				"correctness": "OPTIONAL", 
+				"text": "Sie sind nur mit Subklassen sinnvoll."
 			}
 		]
 	}, 
 	{
 		"id": 2, 
 		"title": "TODO...", 
-		"type": "SC", 
+		"type": "SINGLE", 
 		"text": "Bei dieser Frage ist nur die Antwortmöglichkeit 2 korrekt.", 
 		"answers": [
 			{
@@ -68,7 +68,7 @@
 	{
 		"id": 3, 
 		"title": "TODO...", 
-		"type": "MC", 
+		"type": "MULTIPLE", 
 		"text": "Bei dieser Frage sind die Antwortmöglichkeiten 3, 4 und 6 korrekt.", 
 		"answers": [
 			{
@@ -99,6 +99,44 @@
 			{
 				"id": 6, 
 				"correctness": "CORRECT", 
+				"text": "TODO..."
+			}
+		]
+	}, 
+	{
+		"id": 4, 
+		"title": "TODO...", 
+		"type": "FILLOUT", 
+		"text": "Bei dieser Frage ist nur die Antwortmöglichkeit 2 korrekt.", 
+		"answers": [
+			{
+				"id": 1, 
+				"correctness": "WRONG", 
+				"text": "TODO..."
+			}, 
+			{
+				"id": 2, 
+				"correctness": "CORRECT", 
+				"text": "TODO..."
+			}, 
+			{
+				"id": 3, 
+				"correctness": "WRONG", 
+				"text": "TODO..."
+			}, 
+			{
+				"id": 4, 
+				"correctness": "WRONG", 
+				"text": "TODO..."
+			}, 
+			{
+				"id": 5, 
+				"correctness": "WRONG", 
+				"text": "TODO..."
+			}, 
+			{
+				"id": 6, 
+				"correctness": "WRONG", 
 				"text": "TODO..."
 			}
 		]

@@ -1,24 +1,21 @@
 const
-MARKED_CLASS_NAME = "btn btn-primary btn-block";
+MARKED_CLASS_NAME = "btn btn-block btn-primary";
 
 const
-UNMARKED_CLASS_NAME = "btn btn-default btn-block";
+UNMARKED_CLASS_NAME = "btn btn-block btn-default";
 
 function mark(button) {
-  if(button.className == MARKED_CLASS_NAME) {
-    button.className = UNMARKED_CLASS_NAME;
-    button.dataset.selected = 0;
-  } else {
-    button.className = MARKED_CLASS_NAME;
-    button.dataset.selected = 1;
-  }
+  button.className = (button.className == MARKED_CLASS_NAME) ? UNMARKED_CLASS_NAME : MARKED_CLASS_NAME;
+  button.dataset.selected = (parseInt(button.dataset.selected) + 1) % 2;
+}
+
+function getAnswerButtons() {
+  return document.getElementById("answerDiv").children;
 }
 
 function markSingle(button) {
   // Unmark all buttons
-  var numOfAnswers = document.getElementById("question").dataset.answers;
-  for(var i = 0; i < numOfAnswers; i++) {
-    var buttonToUnmark = getAnswerButton(i);
+  for(var buttonToUnmark of getAnswerButtons()) {
     buttonToUnmark.className = UNMARKED_CLASS_NAME;
     buttonToUnmark.dataset.selected = 0;
   }
@@ -28,12 +25,12 @@ function markSingle(button) {
   button.dataset.selected = 1;
 }
 
-function extractSelectedAnswers(id, numOfAnswers) {
+function extractSelectedAnswers() {
   var selectedAnswers = [];
-  
-  for(var i = 0; i < numOfAnswers; i++) {
-    if(getAnswerButton(i).dataset.selected == 1) {
-      selectedAnswers.push(i);
+
+  for(var button of getAnswerButtons()) {
+    if(button.dataset.selected == 1) {
+      selectedAnswers.push(button.id);
     }
   }
   
@@ -41,18 +38,15 @@ function extractSelectedAnswers(id, numOfAnswers) {
 }
 
 function getAnswerButton(num) {
-  return document.getElementById("ans_" + num);
+  return document.getElementById(num);
 }
 
 function colorButton(button, color) {
-  button.className = "btn btn-block " + color;
+  button.className = "btn btn-block btn-" + color;
 }
 
-function control(theUrl, id) {
-  var questionDiv = document.getElementById("question");
-  var numOfAnswers = questionDiv.dataset.answers;
-  
-  var selectedAnswers = extractSelectedAnswers(id, numOfAnswers);
+function control(theUrl) {
+  var selectedAnswers = extractSelectedAnswers();
   
   if(selectedAnswers.length == 0) {
     alert("Wählen Sie bitte eine Antwort aus!");
@@ -66,28 +60,29 @@ function control(theUrl, id) {
     async: true,
     success: function(response) {
       // Deactivate selection of answers
-      for(var i = 0; i < numOfAnswers; i++) {
-        getAnswerButton(i).onclick = "";
+      for(var button of getAnswerButtons()) {
+        button.onclick = "";
       }
+      
       // Deactivate control functionality
-      var correctionButton = document.getElementById("correct_" + id);
+      var correctionButton = document.getElementById("correct");
       correctionButton.onclick = "";
       correctionButton.className = "btn btn-block btn-default disabled";
       
-      // Mark correct, missing and wrong answers
+      // TODO: Mark correct, missing and wrong answers
       for(var corr of response.correct) {
         var button = getAnswerButton(corr);
-        colorButton(button, "btn-success");
+        colorButton(button, "success");
         button.title = "Diese Antwort war korrekt";
       }
       for(var miss of response.missing) {
         var button = getAnswerButton(miss);
-        colorButton(button, "btn-warning");
+        colorButton(button, "warning");
         button.title = "Diese Antwort war nicht ausgewählt, aber korrekt.";
       }
       for(var wro of response.wrong) {
         var button = getAnswerButton(wro);
-        colorButton(button, "btn-danger");
+        colorButton(button, "danger");
         button.title = "Diese Antwort war falsch.";
       }
     }

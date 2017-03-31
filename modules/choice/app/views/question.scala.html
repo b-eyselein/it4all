@@ -1,33 +1,52 @@
 @(user: model.user.User, question: model.ChoiceQuestion)
 
+@main("Auswahlfragen", user) {
 <script src="@routes.Assets.versioned("javascripts/choicequestions.js")"></script>
 
-@main("Auswahlfragen", user) {
+<style>
+.btn{
+    white-space:normal !important;
+    word-wrap:break-word; 
+}
+</style>
+
 <div class="container">
   <div class="page-header">
     <h1>Auswahlfragen</h1>
   </div>
   
   <div class="panel panel-default">
+    <div class="panel-heading">
+      @{question.id}. Frage:
+    </div>
     <div class="panel-body">
       <div class="col-sm-6">
-        <h3>@{question.id}. Frage:</h3>
-        <p id="question" data-answers="@question.getAnswers().size()">@question.text</p>
+        <p>@question.text</p>
       </div>
     
-      <div class="col-sm-6">
-        @for(ans <- question.getAnswers()) {
-        <!-- TODO: mark only one question if SCQuestion! -->
-        <button class="btn btn-block btn-default" id="ans_@ans.getId()" data-selected="0"
-        onclick="@if(question.isSingleChoice) {markSingle(this)} else {mark(this)};">@ans.getIdAsChar) @ans.getText()</button>
-        }      
-        <hr>
-        <button class="btn btn-block btn-primary" id="correct_@question.id"
-            onclick="control('@controllers.choice.routes.ChoiceController.correct(question.id)', @question.id)">
-            Kontrollieren</button>
-        <a class="btn btn-block btn-default" href="@controllers.choice.routes.ChoiceController.question(question.id + 1)">
-          Nächste Aufgabe</a>
+      <div class="col-sm-6" id="answerDiv">
+      @for(ans <- question.answers) {
+        @if(question.questionType == model.QuestionType.FILLOUT) {
+        <div class="form-group">
+          <label for="ans_@ans.key.id">@ans.key.id: <input id="@ans.key.id" class="form-control" placeholder="TODO!"></label>
+        </div>
+        } else {
+        <button class="btn btn-block btn-default" id="@ans.key.id" data-selected="0"
+          onclick="@if(question.questionType == model.QuestionType.SINGLE) {markSingle(this)} else{mark(this)};">
+          <div class="row">
+            <div class="col-sm-1">@ans.getIdAsChar) </div>
+            <div class="col-sm-11">@ans.text</div>
+          </div>
+        </button>
+        }
+      }
       </div>
+    </div>
+    <div class="panel-footer">  
+      <button class="btn btn-block btn-primary" id="correct"
+        onclick="control('@controllers.choice.routes.ChoiceController.correct(question.id)')">Kontrollieren</button>
+      <a class="btn btn-block btn-default" href="@controllers.choice.routes.ChoiceController.question(question.id + 1)">
+        Nächste Aufgabe</a>
     </div>
   </div>
 

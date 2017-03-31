@@ -1,39 +1,43 @@
 package model;
 
-public class ChoiceAnswer {
-  
-  public enum Correctness {
-    CORRECT, OPTIONAL, WRONG;
-  }
-  
-  private int id;
-  private Correctness correctness;
-  private String text;
-  
-  public ChoiceAnswer(int theId, Correctness theCorrectness, String theText) {
-    id = theId;
-    correctness = theCorrectness;
-    text = theText;
-  }
-  
-  public Correctness getCorrectness() {
-    return correctness;
-  }
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
-  public int getId() {
-    return id;
+import com.avaje.ebean.Model;
+
+@Entity
+public class ChoiceAnswer extends Model {
+
+  public static final Finder<ChoiceAnswerKey, ChoiceAnswer> finder = new Finder<>(ChoiceAnswer.class);
+  
+  @EmbeddedId
+  public ChoiceAnswerKey key;
+
+  @Enumerated(EnumType.STRING)
+  public Correctness correctness;
+
+  @Column(columnDefinition = "text")
+  public String text;
+
+  @ManyToOne
+  @JoinColumn(name = "choice_question_id", insertable = false, updatable = false)
+  public ChoiceQuestion question;
+
+  public ChoiceAnswer(ChoiceAnswerKey theKey) {
+    key = theKey;
   }
 
   public char getIdAsChar() {
-    return (char) ('a' + id);
+    return (char) ('a' + key.id - 1);
   }
-  
-  public String getText() {
-    return text;
-  }
-  
+
   public boolean isCorrect() {
     return correctness != Correctness.WRONG;
   }
-  
+
 }
