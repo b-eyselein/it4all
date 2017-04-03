@@ -2,19 +2,16 @@ package controllers;
 
 import javax.inject.Inject;
 
-import controllers.core.UserManagement;
+import controllers.core.AController;
 import model.Secured;
 import model.user.User;
 import play.data.DynamicForm;
 import play.data.FormFactory;
-import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
-import views.html.user.user;
-import views.html.user.preferences;
 
 @Security.Authenticated(Secured.class)
-public class UserController extends Controller {
+public class UserController extends AController {
   
   private static final String SESSION_ID_FIELD = "id";
   private FormFactory factory;
@@ -25,11 +22,11 @@ public class UserController extends Controller {
   }
   
   public Result index() {
-    return ok(user.render("User", UserManagement.getCurrentUser()));
+    return ok(views.html.user.user.render("User", getUser()));
   }
   
   public Result preferences() {
-    return ok(preferences.render("Präferenzen", UserManagement.getCurrentUser()));
+    return ok(views.html.user.preferences.render("Präferenzen", getUser()));
   }
   
   public Result saveOptions() {

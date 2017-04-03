@@ -17,7 +17,7 @@ import play.mvc.Result;
 import play.mvc.Security.Authenticated;
 
 @Authenticated(AdminSecured.class)
-public abstract class AdminController<E extends Exercise, R extends ExerciseReader<E>> extends Controller {
+public abstract class AdminController<E extends Exercise, R extends ExerciseReader<E>> extends AController {
 
   protected static final String BODY_FILE_NAME = "file";
   protected static final String ADMIN_FOLDER = "admin";
@@ -32,10 +32,6 @@ public abstract class AdminController<E extends Exercise, R extends ExerciseRead
     util = theUtil;
     exerciseType = theExerciseType;
     exerciseReader = theExerciseReader;
-  }
-
-  protected static User getUser() {
-    return UserManagement.getCurrentUser();
   }
 
   protected static void saveUploadedFile(Path savingDir, Path pathToUploadedFile, Path saveTo) {

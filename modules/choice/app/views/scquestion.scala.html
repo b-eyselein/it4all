@@ -1,0 +1,28 @@
+@(user: model.user.User, question: model.ChoiceQuestion)
+
+@main("Auswahlfragen", user) {
+<script src="@routes.Assets.versioned("javascripts/choicequestions.js")"></script>
+
+<div class="container">
+  <div class="page-header">
+    <h1>Auswahlfragen</h1>
+  </div>
+
+  <form class="form-horizontal" method="post" onclick="return check();"
+    action="@controllers.choice.routes.ChoiceController.correct(question.key.quizId, question.key.questionId)">
+    <div id="answerDiv">
+      @for(ans <- question.getShuffeledAnswers()) {
+      <div class="radio">
+        <label for="@ans.key.id"><input type="radio" name="ans" id="@ans.key.id" value="@ans.key.id">@ans.text</input></label>
+      </div>
+      }
+    </div>
+
+    <hr>
+
+    <input class="btn btn-block btn-primary" type="submit" value="Kontrollieren"> <a
+      class="btn btn-block btn-default" href="@controllers.choice.routes.ChoiceController.question(question.key.quizId, question.key.questionId + 1)">
+      Nächste Aufgabe</a>
+  </form>
+</div>
+}

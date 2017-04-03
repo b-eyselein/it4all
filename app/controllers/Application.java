@@ -2,25 +2,24 @@ package controllers;
 
 import javax.inject.Inject;
 
-import controllers.core.UserManagement;
-import model.Secured;
-import model.user.Role;
 import model.user.User;
+import model.user.Role;
+
+import controllers.core.AController;
+import model.Secured;
 import play.Environment;
-import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
-import views.html.index;
 
 @Security.Authenticated(Secured.class)
-public class Application extends Controller {
-
+public class Application extends AController {
+  
   private Environment environment;
-
+  
   @Inject
   public Application(Environment theEnvironment) {
     environment = theEnvironment;
-
+    
     if(environment.isDev()) {
       User admin = User.finder.byId("admin");
       if(admin == null)
@@ -29,11 +28,11 @@ public class Application extends Controller {
       admin.role = Role.ADMIN;
       admin.save();
     }
-
+    
   }
-
+  
   public Result index() {
-    return ok(index.render(UserManagement.getCurrentUser(), environment.isDev()));
+    return ok(views.html.index.render(getUser(), environment.isDev()));
   }
-
+  
 }

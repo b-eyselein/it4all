@@ -32,7 +32,7 @@ public class Spread extends ExerciseController {
   }
 
   public Result download(int id, String typ) {
-    User user = UserManagement.getCurrentUser();
+    User user = getUser();
     SpreadExercise exercise = SpreadExercise.finder.byId(id);
 
     if(exercise == null)
@@ -65,11 +65,11 @@ public class Spread extends ExerciseController {
   }
 
   public Result index() {
-    return ok(views.html.spreadoverview.render(UserManagement.getCurrentUser(), SpreadExercise.finder.all()));
+    return ok(views.html.spreadoverview.render(getUser(), SpreadExercise.finder.all()));
   }
 
   public Result upload(int id) {
-    User user = UserManagement.getCurrentUser();
+    User user = getUser();
     SpreadExercise exercise = SpreadExercise.finder.byId(id);
 
     // Extract solution from request

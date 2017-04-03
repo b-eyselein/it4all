@@ -3,7 +3,6 @@ package model;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import model.exercise.FeedbackLevel;
 import model.exercise.Success;
@@ -11,40 +10,47 @@ import model.result.EvaluationResult;
 
 public class ChoiceResult extends EvaluationResult {
 
-  private List<Integer> correct = new LinkedList<>();
-  private List<Integer> missing;
-  private List<Integer> wrong;
+  private ChoiceQuestion question;
 
-  public ChoiceResult(List<Integer> theSelAns, ChoiceQuestion question) {
+  private List<ChoiceAnswer> correct = new LinkedList<>();
+  private List<ChoiceAnswer> missing;
+  private List<ChoiceAnswer> wrong;
+
+  public ChoiceResult(List<ChoiceAnswer> theSelAns, ChoiceQuestion theQuestion) {
     super(FeedbackLevel.MINIMAL_FEEDBACK, Success.NONE);
-    success = analyze(new LinkedList<>(theSelAns), new LinkedList<>(question.getCorrectAnswers()));
+    question = theQuestion;
+    success = analyze(new LinkedList<>(theSelAns), new LinkedList<>(theQuestion.getCorrectAnswers()));
   }
 
-  public List<Integer> getCorrect() {
+  public List<ChoiceAnswer> getCorrect() {
     return correct;
   }
 
-  public List<Integer> getMissing() {
+  public List<ChoiceAnswer> getMissing() {
     return missing;
   }
 
-  public List<Integer> getWrong() {
+  public ChoiceQuestion getQuestion() {
+    return question;
+  }
+
+  public List<ChoiceAnswer> getWrong() {
     return wrong;
   }
 
-  private Success analyze(List<Integer> selAns, List<ChoiceAnswer> corrAns) {
-    for(Iterator<Integer> sel = selAns.iterator(); sel.hasNext();) {
-      Integer selectedAns = sel.next();
+  private Success analyze(List<ChoiceAnswer> selAns, List<ChoiceAnswer> corrAns) {
+    for(Iterator<ChoiceAnswer> sel = selAns.iterator(); sel.hasNext();) {
+      ChoiceAnswer selectedAns = sel.next();
       for(Iterator<ChoiceAnswer> corr = corrAns.iterator(); corr.hasNext();) {
         ChoiceAnswer correctAns = corr.next();
-        if(selectedAns.intValue() == correctAns.key.id) {
+        if(selectedAns.getId() == correctAns.getId()) {
           correct.add(selectedAns);
           sel.remove();
           corr.remove();
         }
       }
     }
-    missing = corrAns.stream().map(ans -> ans.key.id).collect(Collectors.toList());
+    missing = corrAns;
     wrong = selAns;
     return (missing.isEmpty() && wrong.isEmpty()) ? Success.COMPLETE : Success.NONE;
   }

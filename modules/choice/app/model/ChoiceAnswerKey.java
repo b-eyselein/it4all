@@ -6,30 +6,31 @@ import javax.persistence.Embeddable;
 
 @Embeddable
 public class ChoiceAnswerKey implements Serializable {
-  
+
   private static final long serialVersionUID = -654684351366843L;
-  
+
+  public int quizId; // NOSONAR
+  public int questionId; // NOSONAR
   public int id; // NOSONAR
 
-  public int choiceQuestionId; // NOSONAR
-  
-  public ChoiceAnswerKey(int theId, int theQuestionId) {
+  public ChoiceAnswerKey(int theQuizId, int theQuestionId, int theId) {
+    quizId = theQuizId;
+    questionId = theQuestionId;
     id = theId;
-    choiceQuestionId = theQuestionId;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if(!(obj instanceof ChoiceAnswerKey))
       return false;
 
     ChoiceAnswerKey other = (ChoiceAnswerKey) obj;
-    return id == other.id && choiceQuestionId == other.choiceQuestionId;
+    return quizId == other.quizId && questionId == other.questionId && id == other.id;
   }
-  
+
   @Override
   public int hashCode() {
-    return 1000 * choiceQuestionId + id;
+    return 1_000_000 * quizId + 1_000 * questionId + id;
   }
 
 }

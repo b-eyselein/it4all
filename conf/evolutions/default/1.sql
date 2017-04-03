@@ -3,32 +3,40 @@
 
 # --- !Ups
 
-create table choice_answer (
+create table choice_answers (
+  quiz_id                       integer not null,
+  question_id                   integer not null,
   id                            integer not null,
-  choice_question_id            integer not null,
   correctness                   varchar(8),
   text                          text,
-  constraint ck_choice_answer_correctness check ( correctness in ('CORRECT','OPTIONAL','WRONG')),
-  constraint pk_choice_answer primary key (id,choice_question_id)
+  constraint ck_choice_answers_correctness check ( correctness in ('CORRECT','OPTIONAL','WRONG')),
+  constraint pk_choice_answers primary key (quiz_id,question_id,id)
 );
 
 create table choice_question (
-  id                            integer auto_increment not null,
-  title                         varchar(255),
+  question_id                   integer not null,
+  quiz_id                       integer not null,
   text                          text,
   question_type                 varchar(8),
   constraint ck_choice_question_question_type check ( question_type in ('MULTIPLE','SINGLE','FILLOUT')),
-  constraint pk_choice_question primary key (id)
+  constraint pk_choice_question primary key (question_id,quiz_id)
+);
+
+create table choice_quiz (
+  id                            integer auto_increment not null,
+  title                         varchar(255),
+  text                          text,
+  constraint pk_choice_quiz primary key (id)
 );
 
 create table conditions (
-  id                            integer not null,
-  task_id                       integer not null,
   exercise_id                   integer not null,
+  task_id                       integer not null,
+  id                            integer not null,
   xpathquery                    varchar(255),
   awaitedvalue                  varchar(255),
   is_precond                    tinyint(1) default 0,
-  constraint pk_conditions primary key (id,task_id,exercise_id)
+  constraint pk_conditions primary key (exercise_id,task_id,id)
 );
 
 create table css_task (
@@ -204,8 +212,11 @@ create table xml_exercise (
   constraint pk_xml_exercise primary key (id)
 );
 
-alter table choice_answer add constraint fk_choice_answer_choice_question_id foreign key (choice_question_id) references choice_question (id) on delete restrict on update restrict;
-create index ix_choice_answer_choice_question_id on choice_answer (choice_question_id);
+alter table choice_answers add constraint fk_choice_answers_question foreign key (question_id,quiz_id) references choice_question (question_id,quiz_id) on delete restrict on update restrict;
+create index ix_choice_answers_question on choice_answers (question_id,quiz_id);
+
+alter table choice_question add constraint fk_choice_question_quiz_id foreign key (quiz_id) references choice_quiz (id) on delete restrict on update restrict;
+create index ix_choice_question_quiz_id on choice_question (quiz_id);
 
 alter table conditions add constraint fk_conditions_task foreign key (task_id,exercise_id) references js_web_task (task_id,exercise_id) on delete restrict on update restrict;
 create index ix_conditions_task on conditions (task_id,exercise_id);
@@ -237,8 +248,11 @@ create index ix_sql_exercise_scenario_name on sql_exercise (scenario_name);
 
 # --- !Downs
 
-alter table choice_answer drop foreign key fk_choice_answer_choice_question_id;
-drop index ix_choice_answer_choice_question_id on choice_answer;
+alter table choice_answers drop foreign key fk_choice_answers_question;
+drop index ix_choice_answers_question on choice_answers;
+
+alter table choice_question drop foreign key fk_choice_question_quiz_id;
+drop index ix_choice_question_quiz_id on choice_question;
 
 alter table conditions drop foreign key fk_conditions_task;
 drop index ix_conditions_task on conditions;
@@ -267,9 +281,11 @@ drop index ix_python_test_data_exercise_id on python_test_data;
 alter table sql_exercise drop foreign key fk_sql_exercise_scenario_name;
 drop index ix_sql_exercise_scenario_name on sql_exercise;
 
-drop table if exists choice_answer;
+drop table if exists choice_answers;
 
 drop table if exists choice_question;
+
+drop table if exists choice_quiz;
 
 drop table if exists conditions;
 

@@ -2,16 +2,22 @@ package model;
 
 import java.util.List;
 
-public class ChoiceQuiz {
-  
-  private List<ChoiceQuestion> questions;
-  
-  public ChoiceQuiz(List<ChoiceQuestion> theQuestions) {
-    questions = theQuestions;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+
+import model.exercise.Exercise;
+
+@Entity
+public class ChoiceQuiz extends Exercise {
+
+  public static final Finder<Integer, ChoiceQuiz> finder = new Finder<>(ChoiceQuiz.class);
+
+  @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL)
+  public List<ChoiceQuestion> questions;
+
+  public ChoiceQuiz(int theId) {
+    super(theId);
   }
-  
-  public List<ChoiceQuestion> getQuestions() {
-    return questions;
-  }
-  
+
 }

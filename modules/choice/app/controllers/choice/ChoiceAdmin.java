@@ -6,17 +6,20 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.persistence.RollbackException;
 
 import controllers.core.AdminController;
 import model.ChoiceAnswer;
 import model.ChoiceQuestion;
 import model.ChoiceQuestionReader;
+import model.ChoiceQuiz;
 import model.Util;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
+import play.Logger;
 import play.mvc.Result;
 
-public class ChoiceAdmin extends AdminController<ChoiceQuestion, ChoiceQuestionReader> {
+public class ChoiceAdmin extends AdminController<ChoiceQuiz, ChoiceQuestionReader> {
 
   @Inject
   public ChoiceAdmin(Util theUtil) {
@@ -25,7 +28,7 @@ public class ChoiceAdmin extends AdminController<ChoiceQuestion, ChoiceQuestionR
 
   @Override
   public Result readStandardExercises() {
-    List<ChoiceQuestion> exercises = exerciseReader.readStandardExercises();
+    List<ChoiceQuiz> exercises = exerciseReader.readStandardExercises();
     saveExercises(exercises);
     return ok(views.html.preview.render(getUser(), views.html.choicecreation.render(exercises)));
   }
@@ -43,7 +46,7 @@ public class ChoiceAdmin extends AdminController<ChoiceQuestion, ChoiceQuestionR
     Path jsonFile = Paths.get(savingDir.toString(), uploadedFile.getFilename());
     saveUploadedFile(savingDir, pathToUploadedFile, jsonFile);
 
-    List<ChoiceQuestion> exercises = exerciseReader.readExercises(jsonFile);
+    List<ChoiceQuiz> exercises = exerciseReader.readExercises(jsonFile);
     saveExercises(exercises);
     // return ok(views.html.preview.render(getUser(),
     // views.html.jscreation.render(exercises)));
@@ -58,11 +61,18 @@ public class ChoiceAdmin extends AdminController<ChoiceQuestion, ChoiceQuestionR
   }
 
   @Override
-  protected void saveExercises(List<ChoiceQuestion> questions) {
-    for(ChoiceQuestion question: questions) {
-      question.save();
-      for(ChoiceAnswer answer: question.answers)
-        answer.save();
+  protected void saveExercises(List<ChoiceQuiz> quizzes) {
+    try {
+      for(ChoiceQuiz quiz: quizzes) {
+        quiz.save();
+        for(ChoiceQuestion question: quiz.questions) {
+          question.save();
+          for(ChoiceAnswer answer: question.answers)
+            answer.save();
+        }
+      }
+    } catch (RollbackException e) {
+      Logger.error("FEHLER:", e);
     }
   }
 
