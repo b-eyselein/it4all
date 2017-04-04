@@ -5,6 +5,14 @@ GET    /create        controllers.choice.ChoiceAdmin.readStandardExercises()
 
 #
 GET    /              controllers.choice.ChoiceController.index()
-GET    /:quizId/:id   controllers.choice.ChoiceController.question(quizId: Int, id: Int)
 
-POST   /:quizId/:id   controllers.choice.ChoiceController.correct(quizId: Int, id: Int)
+GET    /quiz/:id      controllers.choice.ChoiceController.quiz(id: Int)
+
+GET    /newQuestion   controllers.choice.ChoiceController.newQuestionForm()
+POST   /newQuestion   controllers.choice.ChoiceController.newQuestion()
+
+GET    /notAssigned   controllers.choice.ChoiceController.notAssignedQuestions()
+
+GET    /:id           controllers.choice.ChoiceController.question(id: Int)
+
+POST   /:id           controllers.choice.ChoiceController.correct(id: Int)

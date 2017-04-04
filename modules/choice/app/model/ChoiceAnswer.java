@@ -7,14 +7,11 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 import com.avaje.ebean.Model;
 
 @Entity
-@Table(name = "choice_answers")
 public class ChoiceAnswer extends Model {
 
   public static final Finder<ChoiceAnswerKey, ChoiceAnswer> finder = new Finder<>(ChoiceAnswer.class);
@@ -23,9 +20,7 @@ public class ChoiceAnswer extends Model {
   public ChoiceAnswerKey key;
 
   @ManyToOne(cascade = CascadeType.ALL)
-  @JoinColumns({
-      @JoinColumn(name = "question_id", referencedColumnName = "question_id", insertable = false, updatable = false),
-      @JoinColumn(name = "quiz_id", referencedColumnName = "quiz_id", insertable = false, updatable = false)})
+  @JoinColumn(name = "question_id", referencedColumnName = "id", insertable = false, updatable = false)
   public ChoiceQuestion question;
 
   @Enumerated(EnumType.STRING)

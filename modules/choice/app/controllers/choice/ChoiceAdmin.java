@@ -14,25 +14,31 @@ import model.ChoiceQuestion;
 import model.ChoiceQuestionReader;
 import model.ChoiceQuiz;
 import model.Util;
+import play.Logger;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
-import play.Logger;
 import play.mvc.Result;
 
-public class ChoiceAdmin extends AdminController<ChoiceQuiz, ChoiceQuestionReader> {
+public class ChoiceAdmin extends AdminController<ChoiceQuestion, ChoiceQuestionReader> {
 
   @Inject
   public ChoiceAdmin(Util theUtil) {
     super(theUtil, "choice", new ChoiceQuestionReader());
   }
 
-  @Override
-  public Result readStandardExercises() {
-    List<ChoiceQuiz> exercises = exerciseReader.readStandardExercises();
-    saveExercises(exercises);
-    return ok(views.html.preview.render(getUser(), views.html.choicecreation.render(exercises)));
+  public Result assignQuestionsForm() {
+    List<ChoiceQuestion> questions = ChoiceQuestion.finder.all();
+    List<ChoiceQuiz> quizzes = ChoiceQuiz.finder.all();
+    return ok(views.html.assignQuestionsForm.render(getUser(), questions, quizzes));
   }
 
+  @Override
+  public Result readStandardExercises() {
+    List<ChoiceQuestion> exercises = exerciseReader.readStandardExercises();
+    saveExercises(exercises);
+    return ok(views.html.choicecreation.render(getUser(), exercises));
+  }
+  
   @Override
   public Result uploadFile() {
     MultipartFormData<File> body = request().body().asMultipartFormData();
@@ -46,7 +52,7 @@ public class ChoiceAdmin extends AdminController<ChoiceQuiz, ChoiceQuestionReade
     Path jsonFile = Paths.get(savingDir.toString(), uploadedFile.getFilename());
     saveUploadedFile(savingDir, pathToUploadedFile, jsonFile);
 
-    List<ChoiceQuiz> exercises = exerciseReader.readExercises(jsonFile);
+    List<ChoiceQuestion> exercises = exerciseReader.readExercises(jsonFile);
     saveExercises(exercises);
     // return ok(views.html.preview.render(getUser(),
     // views.html.jscreation.render(exercises)));
@@ -61,15 +67,12 @@ public class ChoiceAdmin extends AdminController<ChoiceQuiz, ChoiceQuestionReade
   }
 
   @Override
-  protected void saveExercises(List<ChoiceQuiz> quizzes) {
+  protected void saveExercises(List<ChoiceQuestion> questions) {
     try {
-      for(ChoiceQuiz quiz: quizzes) {
-        quiz.save();
-        for(ChoiceQuestion question: quiz.questions) {
-          question.save();
-          for(ChoiceAnswer answer: question.answers)
-            answer.save();
-        }
+      for(ChoiceQuestion question: questions) {
+        question.save();
+        for(ChoiceAnswer answer: question.answers)
+          answer.save();
       }
     } catch (RollbackException e) {
       Logger.error("FEHLER:", e);

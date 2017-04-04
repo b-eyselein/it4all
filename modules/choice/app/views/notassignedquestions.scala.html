@@ -1,0 +1,35 @@
+@(user: model.user.User, notAssignedQuestions: List[model.ChoiceQuestion])
+
+@main("Auswahlfragen", user) {
+<div class="container">
+  <div class="page-header">
+    <h1>Nicht zugeordnete Fragen</h1>
+  </div>
+@if(notAssignedQuestions.isEmpty()) {
+  <div class="alert alert-success">Alle Fragen sind mindestens einem Quiz zugeordnet.</div>
+} else {
+  <table class="table">
+    <thead>
+      <tr>
+        <td>ID</td>
+        <td>Autor</td>
+        <td>Titel</td>
+        <td>Text</td>
+        <td># Antworten</td>
+      </tr>
+    </thead>
+    <tbody>
+    @for(question <- notAssignedQuestions) {
+      <tr>
+        <td>@question.id</td>
+        <td>@question.author</td>
+        <td>@question.title</td>
+        <td>@question.text</td>
+        <td>@question.answers.size()</td>
+      </tr>
+    }    
+    </tbody>
+  </table>
+}
+</div>
+}

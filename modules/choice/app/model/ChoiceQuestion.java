@@ -6,31 +6,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
-import com.avaje.ebean.Model;
+import model.exercise.Exercise;
 
 @Entity
-public class ChoiceQuestion extends Model {
+public class ChoiceQuestion extends Exercise {
 
-  public static final Finder<ChoiceQuestionKey, ChoiceQuestion> finder = new Finder<>(ChoiceQuestion.class);
+  private static final int POINTS_DUMMY = 2;
 
-  @EmbeddedId
-  public ChoiceQuestionKey key;
+  public static final Finder<Integer, ChoiceQuestion> finder = new Finder<>(ChoiceQuestion.class);
 
-  @ManyToOne
-  @JoinColumn(name = "quiz_id", insertable = false, updatable = false)
-  public ChoiceQuiz quiz;
-
-  @Column(columnDefinition = "text")
-  public String text;
+  @ManyToMany
+  public List<ChoiceQuiz> quizzes;
 
   @Enumerated(EnumType.STRING)
   public QuestionType questionType;
@@ -38,9 +30,10 @@ public class ChoiceQuestion extends Model {
   @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
   public List<ChoiceAnswer> answers;
 
-  public ChoiceQuestion(ChoiceQuestionKey theKey) {
-    key = theKey;
+  public String author; // NOSONAR
 
+  public ChoiceQuestion(int theId) {
+    super(theId);
     // if(questionType == QuestionType.SINGLE &&
     // theAnswers.stream().filter(ChoiceAnswer::isCorrect).count() > 1)
     // throw new IllegalArgumentException("Only one answer can be correct!");
@@ -55,6 +48,11 @@ public class ChoiceQuestion extends Model {
 
   public List<ChoiceAnswer> getCorrectAnswers() {
     return answers.stream().filter(ChoiceAnswer::isCorrect).collect(Collectors.toList());
+  }
+
+  public int getPoints() {
+    // TODO!
+    return POINTS_DUMMY;
   }
 
   public List<ChoiceAnswer> getShuffeledAnswers() {

@@ -7,7 +7,7 @@
   </div>
   
   <form class="form-horizontal" method="post" onclick="return check();"
-    action="@controllers.choice.routes.ChoiceController.correct(question.key.quizId, question.key.questionId)">
+    action="@controllers.choice.routes.ChoiceController.correct(question.id)">
     <div id="answerDiv">
     @for(ans <- question.getShuffeledAnswers()) {
       <div class="checkbox">
@@ -20,7 +20,7 @@
 
     <input class="btn btn-block btn-primary" type="submit" value="Kontrollieren">
     
-    <a class="btn btn-block btn-default" href="@controllers.choice.routes.ChoiceController.question(question.key.quizId, question.key.questionId + 1)">
+    <a class="btn btn-block btn-default" href="@controllers.choice.routes.ChoiceController.question(question.id + 1)">
       Nächste Aufgabe</a>
   </form>
 </div>
