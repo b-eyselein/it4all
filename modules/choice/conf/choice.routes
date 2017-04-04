@@ -11,6 +11,8 @@ GET    /quiz/:id      controllers.choice.QuestionController.quiz(id: Int)
 GET    /newQuestion   controllers.choice.QuestionController.newQuestionForm()
 POST   /newQuestion   controllers.choice.QuestionController.newQuestion()
 
+GET    /all           controllers.choice.QuestionController.allQuestions()
+
 GET    /notAssigned   controllers.choice.QuestionController.notAssignedQuestions()
 
 GET    /:id           controllers.choice.QuestionController.question(id: Int)

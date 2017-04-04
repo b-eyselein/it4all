@@ -33,24 +33,28 @@ public class QuestionController extends ExerciseController {
     super(theUtil, theFactory);
   }
   
+  public Result allQuestions() {
+    return ok(views.html.questions.render(getUser(), Question.finder.all()));
+  }
+  
   public Result correct(int id) {
     User user = getUser();
-
+    
     QuestionUser questionUser = QuestionUser.finder.byId(user.name);
     if(questionUser == null)
       questionUser = new QuestionUser(user.name);
     questionUser.save();
-
+    
     Question question = Question.finder.byId(id);
     DynamicForm form = factory.form().bindFromRequest();
-
+    
     List<Answer> selectedAnswers = readSelAnswers(question, form);
     QuestionResult result = new QuestionResult(selectedAnswers, question);
-
+    
     int stars = Integer.parseInt(form.get("stars"));
     if(stars != -1)
       saveRating(user.name, question.id, stars);
-
+    
     switch(question.questionType) {
     case MULTIPLE:
       return ok(views.html.mcresult.render(getUser(), result));

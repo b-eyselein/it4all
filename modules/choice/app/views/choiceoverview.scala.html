@@ -12,7 +12,11 @@
   <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionController.quiz(quiz.id)">Quiz @quiz.title</a>
   }
 
-  <a class="btn btn-primary btn-block" href="@controllers.choice.routes.QuestionController.notAssignedQuestions()">Nicht zugeordnete Fragen</a>
+  <hr>
+
+  <a class="btn btn-primary btn-block" href="@controllers.choice.routes.QuestionController.allQuestions()">Alle Fragen</a>
+
+  <a class="btn btn-danger btn-block" href="@controllers.choice.routes.QuestionController.notAssignedQuestions()">Nicht zugeordnete Fragen</a>
 
   <a class="btn btn-warning btn-block" href="@controllers.choice.routes.QuestionController.newQuestionForm()">Neue Frage erstellen <sub><i>BETA!</i></sub></a>
 
