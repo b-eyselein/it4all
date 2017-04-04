@@ -1,4 +1,4 @@
-@(user: model.user.User, result: model.ChoiceResult)
+@(user: model.user.User, result: model.QuestionResult)
 
 @question = @{result.getQuestion()}
 
@@ -49,7 +49,7 @@
   <hr>
 
   <a class="btn btn-default btn-block"
-    href="@controllers.choice.routes.ChoiceController.question(question.id + 1)"> N&auml;chste Aufgabe</a>
+    href="@controllers.choice.routes.QuestionController.question(question.id + 1)"> N&auml;chste Aufgabe</a>
 
 </div>
 }

@@ -8,41 +8,41 @@ import model.exercise.FeedbackLevel;
 import model.exercise.Success;
 import model.result.EvaluationResult;
 
-public class ChoiceResult extends EvaluationResult {
+public class QuestionResult extends EvaluationResult {
 
-  private ChoiceQuestion question;
+  private Question question;
 
-  private List<ChoiceAnswer> correct = new LinkedList<>();
-  private List<ChoiceAnswer> missing;
-  private List<ChoiceAnswer> wrong;
+  private List<Answer> correct = new LinkedList<>();
+  private List<Answer> missing;
+  private List<Answer> wrong;
 
-  public ChoiceResult(List<ChoiceAnswer> theSelAns, ChoiceQuestion theQuestion) {
+  public QuestionResult(List<Answer> theSelAns, Question theQuestion) {
     super(FeedbackLevel.MINIMAL_FEEDBACK, Success.NONE);
     question = theQuestion;
     success = analyze(new LinkedList<>(theSelAns), new LinkedList<>(theQuestion.getCorrectAnswers()));
   }
 
-  public List<ChoiceAnswer> getCorrect() {
+  public List<Answer> getCorrect() {
     return correct;
   }
 
-  public List<ChoiceAnswer> getMissing() {
+  public List<Answer> getMissing() {
     return missing;
   }
 
-  public ChoiceQuestion getQuestion() {
+  public Question getQuestion() {
     return question;
   }
 
-  public List<ChoiceAnswer> getWrong() {
+  public List<Answer> getWrong() {
     return wrong;
   }
 
-  private Success analyze(List<ChoiceAnswer> selAns, List<ChoiceAnswer> corrAns) {
-    for(Iterator<ChoiceAnswer> sel = selAns.iterator(); sel.hasNext();) {
-      ChoiceAnswer selectedAns = sel.next();
-      for(Iterator<ChoiceAnswer> corr = corrAns.iterator(); corr.hasNext();) {
-        ChoiceAnswer correctAns = corr.next();
+  private Success analyze(List<Answer> selAns, List<Answer> corrAns) {
+    for(Iterator<Answer> sel = selAns.iterator(); sel.hasNext();) {
+      Answer selectedAns = sel.next();
+      for(Iterator<Answer> corr = corrAns.iterator(); corr.hasNext();) {
+        Answer correctAns = corr.next();
         if(selectedAns.getId() == correctAns.getId()) {
           correct.add(selectedAns);
           sel.remove();

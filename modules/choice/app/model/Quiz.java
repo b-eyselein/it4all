@@ -9,19 +9,19 @@ import javax.persistence.ManyToMany;
 import model.exercise.Exercise;
 
 @Entity
-public class ChoiceQuiz extends Exercise {
-  
-  public static final Finder<Integer, ChoiceQuiz> finder = new Finder<>(ChoiceQuiz.class);
-  
+public class Quiz extends Exercise {
+
+  public static final Finder<Integer, Quiz> finder = new Finder<>(Quiz.class);
+
   @ManyToMany(mappedBy = "quizzes", cascade = CascadeType.ALL)
-  public List<ChoiceQuestion> questions;
-  
-  public ChoiceQuiz(int theId) {
+  public List<Question> questions;
+
+  public Quiz(int theId) {
     super(theId);
   }
 
   public int getPoints() {
-    return questions.stream().mapToInt(ChoiceQuestion::getPoints).sum();
+    return questions.stream().mapToInt(Question::getPoints).sum();
   }
-  
+
 }

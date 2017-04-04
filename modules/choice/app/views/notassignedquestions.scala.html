@@ -1,4 +1,4 @@
-@(user: model.user.User, notAssignedQuestions: List[model.ChoiceQuestion])
+@(user: model.user.User, notAssignedQuestions: List[model.Question])
 
 @main("Auswahlfragen", user) {
 <div class="container">
@@ -11,11 +11,13 @@
   <table class="table">
     <thead>
       <tr>
-        <td>ID</td>
-        <td>Autor</td>
-        <td>Titel</td>
-        <td>Text</td>
-        <td># Antworten</td>
+        <th>ID</th>
+        <th>Autor</th>
+        <th>Titel</th>
+        <th>Text</th>
+        <th># Antworten</th>
+        <th>&Oslash; Bewertungen</th>
+        <th>Link</th>
       </tr>
     </thead>
     <tbody>
@@ -26,6 +28,8 @@
         <td>@question.title</td>
         <td>@question.text</td>
         <td>@question.answers.size()</td>
+        <td>@if(question.getAverageRating().isPresent()) {@question.getAverageRating().getAsDouble()} else {--}</td>
+        <td><a href="@controllers.choice.routes.QuestionController.question(question.id)">Frage @question.id</a>
       </tr>
     }    
     </tbody>

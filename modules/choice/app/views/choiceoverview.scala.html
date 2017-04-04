@@ -1,4 +1,4 @@
-@(user: model.user.User, quizzes: List[model.ChoiceQuiz])
+@(user: model.user.User, quizzes: List[model.Quiz])
 
 <script src="@routes.Assets.versioned("javascripts/choicequestions.js")"></script>
 
@@ -9,12 +9,12 @@
   </div>
 
   @for(quiz <- quizzes) {
-  <a class="btn btn-default btn-block" href="@controllers.choice.routes.ChoiceController.quiz(quiz.id)">Quiz @quiz.title</a>
+  <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionController.quiz(quiz.id)">Quiz @quiz.title</a>
   }
 
-  <a class="btn btn-primary btn-block" href="@controllers.choice.routes.ChoiceController.notAssignedQuestions()">Nicht zugeordnete Fragen</a>
+  <a class="btn btn-primary btn-block" href="@controllers.choice.routes.QuestionController.notAssignedQuestions()">Nicht zugeordnete Fragen</a>
 
-  <a class="btn btn-warning btn-block" href="@controllers.choice.routes.ChoiceController.newQuestionForm()">Neue Frage erstellen <sub><i>BETA!</i></sub></a>
+  <a class="btn btn-warning btn-block" href="@controllers.choice.routes.QuestionController.newQuestionForm()">Neue Frage erstellen <sub><i>BETA!</i></sub></a>
 
 </div>
 }

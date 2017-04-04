@@ -5,24 +5,24 @@ import java.io.Serializable;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class ChoiceAnswerKey implements Serializable {
+public class AnswerKey implements Serializable {
 
   private static final long serialVersionUID = -654684351366843L;
 
   public int questionId; // NOSONAR
   public int id; // NOSONAR
 
-  public ChoiceAnswerKey(int theQuestionId, int theId) {
+  public AnswerKey(int theQuestionId, int theId) {
     questionId = theQuestionId;
     id = theId;
   }
 
   @Override
   public boolean equals(Object obj) {
-    if(!(obj instanceof ChoiceAnswerKey))
+    if(!(obj instanceof AnswerKey))
       return false;
 
-    ChoiceAnswerKey other = (ChoiceAnswerKey) obj;
+    AnswerKey other = (AnswerKey) obj;
     return questionId == other.questionId && id == other.id;
   }
 

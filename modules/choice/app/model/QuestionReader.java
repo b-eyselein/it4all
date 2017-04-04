@@ -9,22 +9,22 @@ import model.Correctness;
 import model.QuestionType;
 import model.exercisereading.ExerciseReader;
 
-public class ChoiceQuestionReader extends ExerciseReader<ChoiceQuestion> {
+public class QuestionReader extends ExerciseReader<Question> {
   
-  public ChoiceQuestionReader() {
+  public QuestionReader() {
     super("choice");
   }
   
-  private ChoiceAnswer readAnswer(JsonNode answerNode, int questionId) {
+  private Answer readAnswer(JsonNode answerNode, int questionId) {
     JsonNode idNode = answerNode.get(ID_NAME);
     JsonNode correctnessNode = answerNode.get("correctness");
     JsonNode textNode = answerNode.get(TEXT_NAME);
     
-    ChoiceAnswerKey key = new ChoiceAnswerKey(questionId, idNode.asInt());
+    AnswerKey key = new AnswerKey(questionId, idNode.asInt());
     
-    ChoiceAnswer answer = ChoiceAnswer.finder.byId(key);
+    Answer answer = Answer.finder.byId(key);
     if(answer == null)
-      answer = new ChoiceAnswer(key);
+      answer = new Answer(key);
     
     answer.correctness = Correctness.valueOf(correctnessNode.asText());
     answer.text = textNode.asText();
@@ -32,8 +32,8 @@ public class ChoiceQuestionReader extends ExerciseReader<ChoiceQuestion> {
     return answer;
   }
   
-  private List<ChoiceAnswer> readAnswers(JsonNode answersNode, int questionId) {
-    List<ChoiceAnswer> answers = new ArrayList<>(answersNode.size());
+  private List<Answer> readAnswers(JsonNode answersNode, int questionId) {
+    List<Answer> answers = new ArrayList<>(answersNode.size());
     
     for(JsonNode answerNode: answersNode)
       answers.add(readAnswer(answerNode, questionId));
@@ -42,7 +42,7 @@ public class ChoiceQuestionReader extends ExerciseReader<ChoiceQuestion> {
   }
   
   @Override
-  protected ChoiceQuestion readExercise(JsonNode exerciseNode) {
+  protected Question readExercise(JsonNode exerciseNode) {
     JsonNode idNode = exerciseNode.get(ID_NAME);
     JsonNode titleNode = exerciseNode.get(TITLE_NAME);
     JsonNode textNode = exerciseNode.get(TEXT_NAME);
@@ -51,9 +51,9 @@ public class ChoiceQuestionReader extends ExerciseReader<ChoiceQuestion> {
     
     int id = idNode.asInt();
     
-    ChoiceQuestion question = ChoiceQuestion.finder.byId(id);
+    Question question = Question.finder.byId(id);
     if(question == null)
-      question = new ChoiceQuestion(id);
+      question = new Question(id);
     
     // TODO: name of author?
     question.author = "admin";
