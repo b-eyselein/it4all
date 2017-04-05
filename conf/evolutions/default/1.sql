@@ -3,32 +3,23 @@
 
 # --- !Ups
 
-create table choice_answer (
+create table answer (
+  question_id                   integer not null,
   id                            integer not null,
-  choice_question_id            integer not null,
   correctness                   varchar(8),
   text                          text,
-  constraint ck_choice_answer_correctness check ( correctness in ('CORRECT','OPTIONAL','WRONG')),
-  constraint pk_choice_answer primary key (id,choice_question_id)
-);
-
-create table choice_question (
-  id                            integer auto_increment not null,
-  title                         varchar(255),
-  text                          text,
-  question_type                 varchar(8),
-  constraint ck_choice_question_question_type check ( question_type in ('MULTIPLE','SINGLE','FILLOUT')),
-  constraint pk_choice_question primary key (id)
+  constraint ck_answer_correctness check ( correctness in ('CORRECT','OPTIONAL','WRONG')),
+  constraint pk_answer primary key (question_id,id)
 );
 
 create table conditions (
-  id                            integer not null,
-  task_id                       integer not null,
   exercise_id                   integer not null,
+  task_id                       integer not null,
+  id                            integer not null,
   xpathquery                    varchar(255),
   awaitedvalue                  varchar(255),
   is_precond                    tinyint(1) default 0,
-  constraint pk_conditions primary key (id,task_id,exercise_id)
+  constraint pk_conditions primary key (exercise_id,task_id,id)
 );
 
 create table css_task (
@@ -134,6 +125,41 @@ create table python_test_data (
   constraint pk_python_test_data primary key (exercise_id,test_id)
 );
 
+create table question (
+  id                            integer auto_increment not null,
+  title                         varchar(255),
+  text                          text,
+  question_type                 varchar(21),
+  author                        varchar(255),
+  constraint ck_question_question_type check ( question_type in ('MULTIPLE','SINGLE','FILLOUT_WITH_ORDER','FILLOUT_WITHOUT_ORDER')),
+  constraint pk_question primary key (id)
+);
+
+create table question_quiz (
+  question_id                   integer not null,
+  quiz_id                       integer not null,
+  constraint pk_question_quiz primary key (question_id,quiz_id)
+);
+
+create table question_rating (
+  question_id                   integer not null,
+  username                      varchar(255) not null,
+  rating                        integer,
+  constraint pk_question_rating primary key (question_id,username)
+);
+
+create table question_user (
+  name                          varchar(255) not null,
+  constraint pk_question_user primary key (name)
+);
+
+create table quiz (
+  id                            integer auto_increment not null,
+  title                         varchar(255),
+  text                          text,
+  constraint pk_quiz primary key (id)
+);
+
 create table spread_exercise (
   id                            integer auto_increment not null,
   title                         varchar(255),
@@ -204,8 +230,8 @@ create table xml_exercise (
   constraint pk_xml_exercise primary key (id)
 );
 
-alter table choice_answer add constraint fk_choice_answer_choice_question_id foreign key (choice_question_id) references choice_question (id) on delete restrict on update restrict;
-create index ix_choice_answer_choice_question_id on choice_answer (choice_question_id);
+alter table answer add constraint fk_answer_question_id foreign key (question_id) references question (id) on delete restrict on update restrict;
+create index ix_answer_question_id on answer (question_id);
 
 alter table conditions add constraint fk_conditions_task foreign key (task_id,exercise_id) references js_web_task (task_id,exercise_id) on delete restrict on update restrict;
 create index ix_conditions_task on conditions (task_id,exercise_id);
@@ -231,14 +257,26 @@ create index ix_js_web_task_exercise_id on js_web_task (exercise_id);
 alter table python_test_data add constraint fk_python_test_data_exercise_id foreign key (exercise_id) references python_exercise (id) on delete restrict on update restrict;
 create index ix_python_test_data_exercise_id on python_test_data (exercise_id);
 
+alter table question_quiz add constraint fk_question_quiz_question foreign key (question_id) references question (id) on delete restrict on update restrict;
+create index ix_question_quiz_question on question_quiz (question_id);
+
+alter table question_quiz add constraint fk_question_quiz_quiz foreign key (quiz_id) references quiz (id) on delete restrict on update restrict;
+create index ix_question_quiz_quiz on question_quiz (quiz_id);
+
+alter table question_rating add constraint fk_question_rating_question_id foreign key (question_id) references question (id) on delete restrict on update restrict;
+create index ix_question_rating_question_id on question_rating (question_id);
+
+alter table question_rating add constraint fk_question_rating_username foreign key (username) references question_user (name) on delete restrict on update restrict;
+create index ix_question_rating_username on question_rating (username);
+
 alter table sql_exercise add constraint fk_sql_exercise_scenario_name foreign key (scenario_name) references sql_scenario (short_name) on delete restrict on update restrict;
 create index ix_sql_exercise_scenario_name on sql_exercise (scenario_name);
 
 
 # --- !Downs
 
-alter table choice_answer drop foreign key fk_choice_answer_choice_question_id;
-drop index ix_choice_answer_choice_question_id on choice_answer;
+alter table answer drop foreign key fk_answer_question_id;
+drop index ix_answer_question_id on answer;
 
 alter table conditions drop foreign key fk_conditions_task;
 drop index ix_conditions_task on conditions;
@@ -264,12 +302,22 @@ drop index ix_js_web_task_exercise_id on js_web_task;
 alter table python_test_data drop foreign key fk_python_test_data_exercise_id;
 drop index ix_python_test_data_exercise_id on python_test_data;
 
+alter table question_quiz drop foreign key fk_question_quiz_question;
+drop index ix_question_quiz_question on question_quiz;
+
+alter table question_quiz drop foreign key fk_question_quiz_quiz;
+drop index ix_question_quiz_quiz on question_quiz;
+
+alter table question_rating drop foreign key fk_question_rating_question_id;
+drop index ix_question_rating_question_id on question_rating;
+
+alter table question_rating drop foreign key fk_question_rating_username;
+drop index ix_question_rating_username on question_rating;
+
 alter table sql_exercise drop foreign key fk_sql_exercise_scenario_name;
 drop index ix_sql_exercise_scenario_name on sql_exercise;
 
-drop table if exists choice_answer;
-
-drop table if exists choice_question;
+drop table if exists answer;
 
 drop table if exists conditions;
 
@@ -292,6 +340,16 @@ drop table if exists js_web_task;
 drop table if exists python_exercise;
 
 drop table if exists python_test_data;
+
+drop table if exists question;
+
+drop table if exists question_quiz;
+
+drop table if exists question_rating;
+
+drop table if exists question_user;
+
+drop table if exists quiz;
 
 drop table if exists spread_exercise;
 

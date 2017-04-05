@@ -12,14 +12,13 @@ import model.user.User;
 import play.Logger;
 import play.data.FormFactory;
 import play.libs.Json;
-import play.mvc.Controller;
 import play.mvc.Security.Authenticated;
 
 @Authenticated(Secured.class)
-public abstract class ExerciseController extends Controller {
+public abstract class ExerciseController extends AController {
   
   private static final Logger.ALogger PROGRESS_LOGGER = Logger.of("progress");
-
+  
   protected static final String LEARNER_SOLUTION_VALUE = "learnerSolution";
   
   protected Util util;
@@ -30,10 +29,6 @@ public abstract class ExerciseController extends Controller {
     factory = theFactory;
   }
   
-  protected static User getUser() {
-    return UserManagement.getCurrentUser();
-  }
-
   protected static void log(User user, WorkingEvent eventToLog) {
     PROGRESS_LOGGER.debug(user.name + " - " + Json.toJson(eventToLog));
   }

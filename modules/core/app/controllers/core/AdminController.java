@@ -10,34 +10,28 @@ import model.AdminSecured;
 import model.Util;
 import model.exercise.Exercise;
 import model.exercisereading.ExerciseReader;
-import model.user.User;
 import play.Logger;
-import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security.Authenticated;
 
 @Authenticated(AdminSecured.class)
-public abstract class AdminController<E extends Exercise, R extends ExerciseReader<E>> extends Controller {
-
+public abstract class AdminController<E extends Exercise, R extends ExerciseReader<E>> extends AController {
+  
   protected static final String BODY_FILE_NAME = "file";
   protected static final String ADMIN_FOLDER = "admin";
-
+  
   protected R exerciseReader;
-
+  
   protected String exerciseType;
-
+  
   protected Util util;
-
+  
   public AdminController(Util theUtil, String theExerciseType, R theExerciseReader) {
     util = theUtil;
     exerciseType = theExerciseType;
     exerciseReader = theExerciseReader;
   }
-
-  protected static User getUser() {
-    return UserManagement.getCurrentUser();
-  }
-
+  
   protected static void saveUploadedFile(Path savingDir, Path pathToUploadedFile, Path saveTo) {
     try {
       if(!savingDir.toFile().exists() && !savingDir.toFile().isDirectory())
@@ -47,14 +41,14 @@ public abstract class AdminController<E extends Exercise, R extends ExerciseRead
       Logger.error("Error while saving uploaded sql file!", e);
     }
   }
-
+  
   // FIXME: all following methods which return Result are more or less equal!
-
+  
   public abstract Result readStandardExercises();
-
+  
   public abstract Result uploadFile();
-
+  
   public abstract Result uploadForm();
-
+  
   protected abstract void saveExercises(List<E> exercises);
 }

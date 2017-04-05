@@ -1,15 +1,34 @@
-@(questions: List[model.ChoiceQuestion])
+@(user: model.user.User, questions: List[model.Question])
 
-@for(q <- questions) {
-<div class="col-md-6">
+@main("Auswahlfragen", user) {
+<div class="container">
+  @for(question <- questions) {
   <div class="panel panel-default">
-    <div class="panel-heading">Aufgabe @q.id: @q.title</div>
+    <div class="panel-heading">Aufgabe @question.id</div>
     <div class="panel-body">
-      <p>Aufgabentext: @q.text</p>
-      @for(ans <- q.answers) {
-      	<p>ID: @ans.key.id, QID: @ans.key.choiceQuestionId</p>
-      }
-    </div>
+      <p>Aufgabentext: @question.text</p>
+      <p>Typ: @question.questionType</p>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>QuestionId</th>
+            <th>ID</th>
+            <th>Korrekt</th>
+            <th>Text</th>
+          </tr>
+        </thead>
+        <tbody>
+        @for(ans <- question.answers) {
+          <tr>
+            <td>@ans.key.questionId</td>
+            <td>@ans.key.id</td>
+            <td>@ans.correctness</td>
+            <td>@ans.text</td>
+          </tr>
+        }
+      </tbody>
+    </table>
   </div>
+  }
 </div>
 }

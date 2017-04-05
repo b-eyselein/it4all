@@ -1,9 +1,20 @@
 # creation of exercises
-GET    /upload       controllers.choice.ChoiceAdmin.uploadForm()
-POST   /upload       controllers.choice.ChoiceAdmin.uploadFile()
-GET    /create       controllers.choice.ChoiceAdmin.readStandardExercises()
+GET    /upload        controllers.choice.QuestionAdmin.uploadForm()
+POST   /upload        controllers.choice.QuestionAdmin.uploadFile()
+GET    /create        controllers.choice.QuestionAdmin.readStandardExercises()
 
 #
-GET    /choice       controllers.choice.ChoiceController.index()
-GET    /choice/:id   controllers.choice.ChoiceController.question(id: Int)
-PUT    /choice/:id   controllers.choice.ChoiceController.correct(id: Int)
+GET    /              controllers.choice.QuestionController.index()
+
+GET    /quiz/:id      controllers.choice.QuestionController.quiz(id: Int)
+
+GET    /newQuestion   controllers.choice.QuestionController.newQuestionForm()
+POST   /newQuestion   controllers.choice.QuestionController.newQuestion()
+
+GET    /all           controllers.choice.QuestionController.allQuestions()
+
+GET    /notAssigned   controllers.choice.QuestionController.notAssignedQuestions()
+
+GET    /:id           controllers.choice.QuestionController.question(id: Int)
+
+POST   /:id           controllers.choice.QuestionController.correct(id: Int)

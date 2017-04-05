@@ -1,5 +1,6 @@
 package model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -11,12 +12,16 @@ import javax.persistence.ManyToOne;
 import com.avaje.ebean.Model;
 
 @Entity
-public class ChoiceAnswer extends Model {
+public class Answer extends Model {
 
-  public static final Finder<ChoiceAnswerKey, ChoiceAnswer> finder = new Finder<>(ChoiceAnswer.class);
-  
+  public static final Finder<AnswerKey, Answer> finder = new Finder<>(Answer.class);
+
   @EmbeddedId
-  public ChoiceAnswerKey key;
+  public AnswerKey key;
+
+  @ManyToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "question_id", referencedColumnName = "id", insertable = false, updatable = false)
+  public Question question;
 
   @Enumerated(EnumType.STRING)
   public Correctness correctness;
@@ -24,12 +29,12 @@ public class ChoiceAnswer extends Model {
   @Column(columnDefinition = "text")
   public String text;
 
-  @ManyToOne
-  @JoinColumn(name = "choice_question_id", insertable = false, updatable = false)
-  public ChoiceQuestion question;
-
-  public ChoiceAnswer(ChoiceAnswerKey theKey) {
+  public Answer(AnswerKey theKey) {
     key = theKey;
+  }
+
+  public int getId() {
+    return key.id;
   }
 
   public char getIdAsChar() {
@@ -38,6 +43,11 @@ public class ChoiceAnswer extends Model {
 
   public boolean isCorrect() {
     return correctness != Correctness.WRONG;
+  }
+
+  @Override
+  public String toString() {
+    return text;
   }
 
 }

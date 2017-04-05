@@ -6,30 +6,39 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.persistence.RollbackException;
 
 import controllers.core.AdminController;
-import model.ChoiceAnswer;
-import model.ChoiceQuestion;
-import model.ChoiceQuestionReader;
+import model.Answer;
+import model.Question;
+import model.QuestionReader;
+import model.Quiz;
 import model.Util;
+import play.Logger;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
 
-public class ChoiceAdmin extends AdminController<ChoiceQuestion, ChoiceQuestionReader> {
+public class QuestionAdmin extends AdminController<Question, QuestionReader> {
 
   @Inject
-  public ChoiceAdmin(Util theUtil) {
-    super(theUtil, "choice", new ChoiceQuestionReader());
+  public QuestionAdmin(Util theUtil) {
+    super(theUtil, "choice", new QuestionReader());
+  }
+
+  public Result assignQuestionsForm() {
+    List<Question> questions = Question.finder.all();
+    List<Quiz> quizzes = Quiz.finder.all();
+    return ok(views.html.assignQuestionsForm.render(getUser(), questions, quizzes));
   }
 
   @Override
   public Result readStandardExercises() {
-    List<ChoiceQuestion> exercises = exerciseReader.readStandardExercises();
+    List<Question> exercises = exerciseReader.readStandardExercises();
     saveExercises(exercises);
-    return ok(views.html.preview.render(getUser(), views.html.choicecreation.render(exercises)));
+    return ok(views.html.choicecreation.render(getUser(), exercises));
   }
-
+  
   @Override
   public Result uploadFile() {
     MultipartFormData<File> body = request().body().asMultipartFormData();
@@ -43,7 +52,7 @@ public class ChoiceAdmin extends AdminController<ChoiceQuestion, ChoiceQuestionR
     Path jsonFile = Paths.get(savingDir.toString(), uploadedFile.getFilename());
     saveUploadedFile(savingDir, pathToUploadedFile, jsonFile);
 
-    List<ChoiceQuestion> exercises = exerciseReader.readExercises(jsonFile);
+    List<Question> exercises = exerciseReader.readExercises(jsonFile);
     saveExercises(exercises);
     // return ok(views.html.preview.render(getUser(),
     // views.html.jscreation.render(exercises)));
@@ -58,11 +67,15 @@ public class ChoiceAdmin extends AdminController<ChoiceQuestion, ChoiceQuestionR
   }
 
   @Override
-  protected void saveExercises(List<ChoiceQuestion> questions) {
-    for(ChoiceQuestion question: questions) {
-      question.save();
-      for(ChoiceAnswer answer: question.answers)
-        answer.save();
+  protected void saveExercises(List<Question> questions) {
+    try {
+      for(Question question: questions) {
+        question.save();
+        for(Answer answer: question.answers)
+          answer.save();
+      }
+    } catch (RollbackException e) {
+      Logger.error("FEHLER:", e);
     }
   }
 

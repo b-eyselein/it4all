@@ -1,6 +1,7 @@
 package model;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -46,14 +47,14 @@ public class WebExercise extends Exercise {
     super(theId);
   }
 
-  public List<? extends Task> getTasks(String exType) {
+  public List<Task> getTasks(String exType) {
     switch(exType) {
     case "html":
-      return htmlTasks;
+      return new LinkedList<>(htmlTasks);
     case "css":
-      return cssTasks;
+      return new LinkedList<>(cssTasks);
     case "js":
-      return jsTasks;
+      return new LinkedList<>(jsTasks);
     default:
       return Collections.emptyList();
     }

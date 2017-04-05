@@ -1,23 +1,29 @@
 package controllers.mindmap;
 
-import controllers.core.UserManagement;
+import javax.inject.Inject;
+
+import controllers.core.ExerciseController;
 import model.Secured;
-import play.mvc.Controller;
+import model.Util;
+import play.data.FormFactory;
 import play.mvc.Result;
 import play.mvc.Security;
-import views.html.mindmapindex;
-import views.html.mindmapcorrect;
 
 @Security.Authenticated(Secured.class)
-public class Mindmap extends Controller {
+public class Mindmap extends ExerciseController {
   
+  @Inject
+  public Mindmap(Util theUtil, FormFactory theFactory) {
+    super(theUtil, theFactory);
+  }
+
   public Result index() {
-    return ok(mindmapindex.render(UserManagement.getCurrentUser()));
+    return ok(views.html.mindmapindex.render(getUser()));
   }
 
   public Result upload() {
     // TODO: getFile, correct and present for download!
-    return ok(mindmapcorrect.render(UserManagement.getCurrentUser()));
+    return ok(views.html.mindmapcorrect.render(getUser()));
   }
 
 }

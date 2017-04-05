@@ -1,0 +1,51 @@
+@(user: model.user.User, question: model.Question)
+
+@main("Auswahlfragen", user) {
+<script>
+function setStars(num) {
+  for(i = 1; i <= 5; i++) {
+    var newClassName = i <= num ? "glyphicon glyphicon-star" : "glyphicon glyphicon-star-empty";
+    document.getElementById("star" + i).className = newClassName;
+  }
+  document.getElementById("stars").value = num;
+}
+</script>
+<script src="@routes.Assets.versioned("javascripts/choicequestions.js")"></script>
+
+<div class="container">
+  <div class="page-header">
+    <h1>@question.title</h1>
+  </div>
+  
+  <form class="form-horizontal" method="post" action="@controllers.choice.routes.QuestionController.correct(question.id)">
+    <div id="answerDiv">
+    @for(ans <- question.answers) {
+      <div class="form-group">
+        <label class="control-label col-sm-1" for="ans_@ans.key.id">@ans.key.id:</label>
+        <div class="col-sm-11">
+          <input id="@ans.key.id" class="form-control" placeholder="TODO!">
+        </div>
+      </div>
+    }
+    </div>
+
+    <hr>
+    
+    <p>Bewertung:
+      @for(i <- 1 until 6) {
+      <button type="button" class="btn btn-default" onclick="setStars(@i);">
+        <span id="star@i" class="glyphicon glyphicon-star-empty"></span>  
+      </button>
+      }
+      <input type="number" hidden name="stars" id="stars" value="-1">
+    </p>
+
+    <hr>
+    
+    <input class="btn btn-block btn-primary" type="submit" value="Kontrollieren">
+    
+    <a class="btn btn-block btn-default" href="@controllers.choice.routes.QuestionController.question(question.id + 1)">
+      Nächste Aufgabe</a>
+  </form>
+</div>
+}
