@@ -10,12 +10,44 @@
   
   <hr>
   
-  <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionAdmin.readStandardExercises()">Standardaufgaben einlesen</a>
-  <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionAdmin.newQuizForm()">Neues Quiz erstellen</a>
-  <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionAdmin.assignQuestionsForm()">Fragen einem Quiz zuweisen</a>
-  <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionAdmin.exportQuestions()">Fragen als JSON exportieren</a>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">Import/Export von Aufgaben als JSON</div>
+        <div class="panel-body">
+          <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionAdmin.exportQuestions()">Fragen als JSON exportieren</a>
+          <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionAdmin.readStandardExercises()">Standardaufgaben einlesen</a>
+        </div>
+      </div>
+    </div>
   
-  <hr>
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">Verwaltung der Fragen</div>
+        <div class="panel-body">
+          <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionAdmin.questions()">Übersicht über alle Fragen</a>
+          <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionAdmin.notAssignedQuestions()">Nicht zugeordnete Fragen</a>
+          <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionAdmin.assignQuestionsForm()">Fragen einem Quiz zuweisen</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">Verwaltung der Quizzes</div>
+        <div class="panel-body">
+          <a class="btn btn-default btn-block" href="@@controllers.choice.routes.QuestionAdmin.quizzes()">Quizübersicht</a>
+          <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionAdmin.newQuizForm()">Neues Quiz erstellen</a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-6">
+    
+    </div>
+  </div>
   
   <div class="panel panel-default">
     <div class="panel-heading">Upload neuer Fragen als JSON-Datei</div>

@@ -10,6 +10,9 @@ GET    /admin         controllers.choice.QuestionAdmin.index()
 GET    /newQuiz       controllers.choice.QuestionAdmin.newQuizForm()
 POST   /newQuiz       controllers.choice.QuestionAdmin.newQuiz()
 
+
+GET    /questions     controllers.choice.QuestionAdmin.questions()
+GET    /notAssigned   controllers.choice.QuestionAdmin.notAssignedQuestions()
 GET    /assign        controllers.choice.QuestionAdmin.assignQuestionsForm()
 POST   /assign        controllers.choice.QuestionAdmin.assignQuestions()
 
@@ -22,9 +25,7 @@ GET    /quiz/:id      controllers.choice.QuestionController.quiz(id: Int)
 GET    /newQuestion   controllers.choice.QuestionController.newQuestionForm()
 POST   /newQuestion   controllers.choice.QuestionController.newQuestion()
 
-GET    /all           controllers.choice.QuestionController.allQuestions()
 
-GET    /notAssigned   controllers.choice.QuestionController.notAssignedQuestions()
 
 GET    /:id           controllers.choice.QuestionController.question(id: Int)
 

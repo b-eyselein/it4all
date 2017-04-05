@@ -32,10 +32,6 @@ public class QuestionController extends ExerciseController {
     super(theUtil, theFactory);
   }
   
-  public Result allQuestions() {
-    return ok(views.html.questions.render(getUser(), Question.finder.all()));
-  }
-  
   public Result correct(int id) {
     User user = getUser();
     
@@ -107,13 +103,6 @@ public class QuestionController extends ExerciseController {
   
   public Result newQuestionForm() {
     return ok(views.html.newquestionform.render(getUser()));
-  }
-  
-  public Result notAssignedQuestions() {
-    List<Question> notAssignedQuestions = Question.finder.all().stream().filter(q -> q.quizzes.isEmpty())
-        .collect(Collectors.toList());
-    
-    return ok(views.html.notassignedquestions.render(getUser(), notAssignedQuestions));
   }
   
   public Result question(int id) {
