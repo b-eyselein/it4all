@@ -6,8 +6,9 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import controllers.core.AController;
+import controllers.core.AbstractController;
 import model.Secured;
+import model.Util;
 import model.feedback.Feedback;
 import model.feedback.Feedback.EvaluatedTool;
 import model.feedback.FeedbackKey;
@@ -20,13 +21,11 @@ import play.mvc.Result;
 import play.mvc.Security.Authenticated;
 
 @Authenticated(Secured.class)
-public class Evaluation extends AController {
-
-  private FormFactory factory;
+public class Evaluation extends AbstractController {
 
   @Inject
-  public Evaluation(FormFactory theFactory) {
-    factory = theFactory;
+  public Evaluation(Util theUtil, FormFactory theFactory) {
+    super(theUtil, theFactory);
   }
 
   public Result index() {

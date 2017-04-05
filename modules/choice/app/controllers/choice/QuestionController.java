@@ -11,17 +11,16 @@ import javax.inject.Inject;
 import controllers.core.ExerciseController;
 import model.Answer;
 import model.AnswerKey;
+import model.Correctness;
 import model.Question;
 import model.QuestionRating;
 import model.QuestionRatingKey;
-import model.Quiz;
 import model.QuestionResult;
-import model.Correctness;
 import model.QuestionType;
 import model.QuestionUser;
+import model.Quiz;
 import model.Util;
 import model.user.User;
-import play.Logger;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.mvc.Result;
@@ -75,7 +74,7 @@ public class QuestionController extends ExerciseController {
   public Result newQuestion() {
     DynamicForm form = factory.form().bindFromRequest();
     
-    int id = findMinimalNotUsedId();
+    int id = findMinimalNotUsedId(Question.finder);
     
     Question question = new Question(id);
     question.title = form.get("title");
@@ -103,7 +102,7 @@ public class QuestionController extends ExerciseController {
     for(Answer answer: question.answers)
       answer.save();
     
-    return ok(views.html.choicecreation.render(getUser(), Arrays.asList(question)));
+    return ok(views.html.questionadmin.choiceCreation.render(getUser(), Arrays.asList(question)));
   }
   
   public Result newQuestionForm() {
@@ -138,20 +137,6 @@ public class QuestionController extends ExerciseController {
   
   public Result quiz(int id) {
     return ok(views.html.quiz.render(getUser(), Quiz.finder.byId(id)));
-  }
-  
-  private int findMinimalNotUsedId() {
-    // FIXME: this is probably a ugly hack...
-    List<Question> questions = Question.finder.order().asc("id").findList();
-    
-    if(questions.isEmpty())
-      return 1;
-    
-    for(int i = 0; i < questions.size() - 1; i++)
-      if(questions.get(i).id < questions.get(i + 1).id - 1)
-        return questions.get(i).id + 1;
-      
-    return questions.get(questions.size() - 1).id + 1;
   }
   
   private List<Answer> readSelAnswers(Question question, DynamicForm form) {

@@ -7,20 +7,21 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import controllers.core.AdminController;
+import controllers.core.AbstractAdminController;
 import model.PythonExercise;
 import model.PythonExerciseReader;
 import model.PythonTestData;
 import model.Util;
+import play.data.FormFactory;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
 
-public class PythonAdmin extends AdminController<PythonExercise, PythonExerciseReader> {
+public class PythonAdmin extends AbstractAdminController<PythonExercise, PythonExerciseReader> {
 
   @Inject
-  public PythonAdmin(Util theUtil) {
-    super(theUtil, "Python", new PythonExerciseReader());
+  public PythonAdmin(Util theUtil, FormFactory theFactory) {
+    super(theUtil, theFactory, "Python", new PythonExerciseReader());
   }
 
   @Override

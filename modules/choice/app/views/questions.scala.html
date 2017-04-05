@@ -3,7 +3,7 @@
 @main("Auswahlfragen", user) {
 <div class="container">
   <div class="page-header">
-    <h1>Nicht zugeordnete Fragen</h1>
+    <h1>Alle Fragen</h1>
   </div>
   <table class="table">
     <thead>
@@ -14,6 +14,7 @@
         <th>Text</th>
         <th># Antworten</th>
         <th>&Oslash; Bewertungen</th>
+        <th>Quizzes</th>
         <th>Link</th>
       </tr>
     </thead>
@@ -26,6 +27,7 @@
         <td>@question.text</td>
         <td>@question.answers.size()</td>
         <td>@if(question.getAverageRating().isPresent()) {@question.getAverageRating().getAsDouble()} else {--}</td>
+        <td>@String.join(", ", question.getQuizNames())</td>
         <td><a href="@controllers.choice.routes.QuestionController.question(question.id)">Frage @question.id</a>
       </tr>
     }    

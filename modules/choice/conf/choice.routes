@@ -3,6 +3,17 @@ GET    /upload        controllers.choice.QuestionAdmin.uploadForm()
 POST   /upload        controllers.choice.QuestionAdmin.uploadFile()
 GET    /create        controllers.choice.QuestionAdmin.readStandardExercises()
 
+GET    /jsonSchema    controllers.choice.QuestionAdmin.getJSONSchemaFile()
+GET    /export        controllers.choice.QuestionAdmin.exportQuestions()
+
+GET    /admin         controllers.choice.QuestionAdmin.index()
+GET    /newQuiz       controllers.choice.QuestionAdmin.newQuizForm()
+POST   /newQuiz       controllers.choice.QuestionAdmin.newQuiz()
+
+GET    /assign        controllers.choice.QuestionAdmin.assignQuestionsForm()
+POST   /assign        controllers.choice.QuestionAdmin.assignQuestions()
+
+
 #
 GET    /              controllers.choice.QuestionController.index()
 

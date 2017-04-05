@@ -11,17 +11,17 @@ import model.Util;
 import model.user.User;
 import play.Environment;
 import play.Logger;
+import play.data.FormFactory;
 import play.mvc.Result;
 import views.html.login;
 
-public class UserManagement extends AController {
+public class UserManagement extends AbstractController {
 
-  private Util util;
   private Environment env;
 
   @Inject
-  public UserManagement(Util theUtil, Environment theEnv) {
-    util = theUtil;
+  public UserManagement(Util theUtil, FormFactory theFactory, Environment theEnv) {
+    super(theUtil, theFactory);
     env = theEnv;
   }
 

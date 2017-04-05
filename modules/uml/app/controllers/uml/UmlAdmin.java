@@ -7,19 +7,20 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import controllers.core.AdminController;
+import controllers.core.AbstractAdminController;
 import model.UmlExercise;
 import model.UmlExerciseReader;
 import model.Util;
+import play.data.FormFactory;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
 
-public class UmlAdmin extends AdminController<UmlExercise, UmlExerciseReader> {
+public class UmlAdmin extends AbstractAdminController<UmlExercise, UmlExerciseReader> {
 
   @Inject
-  public UmlAdmin(Util theUtil) {
-    super(theUtil, "uml", new UmlExerciseReader());
+  public UmlAdmin(Util theUtil, FormFactory theFactory) {
+    super(theUtil, theFactory, "uml", new UmlExerciseReader());
   }
 
   @Override
@@ -63,5 +64,5 @@ public class UmlAdmin extends AdminController<UmlExercise, UmlExerciseReader> {
       // exerciseReader.checkOrCreateSampleFile(util, ex);
     }
   }
-  
+
 }

@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import com.avaje.ebean.Model;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 public class Answer extends Model {
@@ -19,6 +20,7 @@ public class Answer extends Model {
   @EmbeddedId
   public AnswerKey key;
 
+  @JsonBackReference
   @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "question_id", referencedColumnName = "id", insertable = false, updatable = false)
   public Question question;

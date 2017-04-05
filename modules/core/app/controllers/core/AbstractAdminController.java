@@ -11,11 +11,12 @@ import model.Util;
 import model.exercise.Exercise;
 import model.exercisereading.ExerciseReader;
 import play.Logger;
+import play.data.FormFactory;
 import play.mvc.Result;
 import play.mvc.Security.Authenticated;
 
 @Authenticated(AdminSecured.class)
-public abstract class AdminController<E extends Exercise, R extends ExerciseReader<E>> extends AController {
+public abstract class AbstractAdminController<E extends Exercise, R extends ExerciseReader<E>> extends AbstractController {
   
   protected static final String BODY_FILE_NAME = "file";
   protected static final String ADMIN_FOLDER = "admin";
@@ -24,10 +25,8 @@ public abstract class AdminController<E extends Exercise, R extends ExerciseRead
   
   protected String exerciseType;
   
-  protected Util util;
-  
-  public AdminController(Util theUtil, String theExerciseType, R theExerciseReader) {
-    util = theUtil;
+  public AbstractAdminController(Util theUtil, FormFactory theFactory, String theExerciseType, R theExerciseReader) {
+    super(theUtil, theFactory);
     exerciseType = theExerciseType;
     exerciseReader = theExerciseReader;
   }

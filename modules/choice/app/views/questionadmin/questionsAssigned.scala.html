@@ -1,0 +1,11 @@
+@(user: model.user.User, assignments: String)
+
+@main("Auswahlfragen", user) {
+<div class="container">
+  <div class="page-header">
+    <h1>Fragen wurden zugeordnet!?!</h1>
+  </div>
+  
+  <p>@assignments</p>
+</div>
+}
