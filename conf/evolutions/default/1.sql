@@ -131,6 +131,7 @@ create table question (
   text                          text,
   question_type                 varchar(21),
   author                        varchar(255),
+  max_points                    integer,
   constraint ck_question_question_type check ( question_type in ('MULTIPLE','SINGLE','FILLOUT_WITH_ORDER','FILLOUT_WITHOUT_ORDER')),
   constraint pk_question primary key (id)
 );

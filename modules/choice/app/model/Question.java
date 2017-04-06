@@ -13,7 +13,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
-import com.avaje.ebean.Model.Finder;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import model.exercise.Exercise;
@@ -21,9 +20,9 @@ import model.exercise.Exercise;
 @Entity
 public class Question extends Exercise {
   
-  private static final int POINTS_DUMMY = 2;
-  
-  public static final Finder<Integer, Question> finder = new Finder<>(Question.class);
+  // TODO: Exercise extends Model...
+  public static final com.avaje.ebean.Model.Finder<Integer, Question> finder = new com.avaje.ebean.Model.Finder<>(
+      Question.class);
   
   @JsonIgnore
   @ManyToMany
@@ -41,6 +40,8 @@ public class Question extends Exercise {
   
   public String author; // NOSONAR
   
+  public int maxPoints; // NOSONAR
+
   public Question(int theId) {
     super(theId);
     // if(questionType == QuestionType.SINGLE &&
@@ -63,11 +64,6 @@ public class Question extends Exercise {
     return answers.stream().filter(Answer::isCorrect).collect(Collectors.toList());
   }
   
-  public int getPoints() {
-    // TODO!
-    return POINTS_DUMMY;
-  }
-
   @JsonIgnore
   public List<String> getQuizNames() {
     return quizzes.stream().map(quiz -> quiz.title).collect(Collectors.toList());

@@ -6,14 +6,14 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 
-import com.avaje.ebean.Model.Finder;
-
 import model.exercise.Exercise;
 
 @Entity
 public class Quiz extends Exercise {
   
-  public static final Finder<Integer, Quiz> finder = new Finder<>(Quiz.class);
+  // TODO: Exercise extends Model...
+  public static final com.avaje.ebean.Model.Finder<Integer, Quiz> finder = new com.avaje.ebean.Model.Finder<>(
+      Quiz.class);
   
   @ManyToMany(mappedBy = "quizzes", cascade = CascadeType.ALL)
   public Set<Question> questions;
@@ -23,7 +23,7 @@ public class Quiz extends Exercise {
   }
   
   public int getPoints() {
-    return questions.stream().mapToInt(Question::getPoints).sum();
+    return questions.stream().mapToInt(q -> q.maxPoints).sum();
   }
   
 }
