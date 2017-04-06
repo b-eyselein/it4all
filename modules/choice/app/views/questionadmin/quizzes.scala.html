@@ -1,4 +1,4 @@
-@(user: model.user.User, questions: List[model.Question])
+@(user: model.user.User, quizzes: List[model.Quiz])
 
 @main("Auswahlfragen", user) {
 <div class="container">
@@ -19,16 +19,13 @@
       </tr>
     </thead>
     <tbody>
-    @for(question <- questions) {
+    @for(quiz <- quizzes) {
       <tr>
-        <td>@question.id</td>
-        <td>@question.author</td>
-        <td>@question.title</td>
-        <td>@question.text</td>
-        <td>@question.answers.size()</td>
-        <td>@if(question.getAverageRating().isPresent()) {@question.getAverageRating().getAsDouble()} else {--}</td>
-        <td>@String.join(", ", question.getQuizNames())</td>
-        <td><a href="@controllers.choice.routes.QuestionController.question(question.id)">Frage @question.id</a>
+        <td>@quiz.id</td>
+        <td>@quiz.title</td>
+        <td>@quiz.text</td>
+        <td>@quiz.questions.size()</td>
+        <td>@@if(quiz.getAverageRating().isPresent()) {@@quiz.getAverageRating().getAsDouble()} else {--}</td>
       </tr>
     }    
     </tbody>

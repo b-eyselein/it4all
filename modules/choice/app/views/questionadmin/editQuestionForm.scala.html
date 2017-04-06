@@ -1,0 +1,126 @@
+@(user: model.user.User, question: model.Question)
+
+@main("Auswahlfrage erstellen", user) {
+<script>
+  function onAnswerNumChange() {
+    var numOfActiveAnswers = parseInt(document.getElementById("numOfAnswers").value);
+    for(var i = 1; i <= numOfActiveAnswers; i++) {
+      // Activate inputs for answers 1 to numOfAnswers
+      var input = document.getElementById(i);
+      input.readOnly = "";
+      input.required = true;
+      input.className = "form-control";
+    }
+    for(var j = numOfActiveAnswers + 1; j <= 8; j++) {
+      // Deactivate other inputs
+      var input = document.getElementById(j);
+      input.readOnly = "readonly";
+      input.required = false;
+      input.className = "form-control disabled";
+    }
+  }
+
+  function changeCorrectness(number, value, button) {
+    // TODO: set correctness...
+    document.getElementById("correctness_" + number).value = value;
+    
+    for(var otherButton of button.parentNode.children) {
+      otherButton.className = "btn btn-default";
+    }
+    button.className = "btn btn-primary";
+  }
+
+  $(document).ready(function() {
+    onAnswerNumChange();
+  });
+</script>
+  
+<div class="container">
+  <div class="page-header">
+    <h1>Frage editieren</h1>
+  </div>
+  <form class="form-horizontal" method="post" action="@controllers.choice.routes.QuestionAdmin.editQuestion(question.id)">
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="title">Titel:</label>
+      <div class="col-sm-10">
+        <input class="form-control" id="title" name="title" placeholder="Alter Titel: '@question.title'" required value="@question.title">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="text">Text:</label>
+      <div class="col-sm-10"> 
+        <input class="form-control" id="text" name="text" placeholder="Alter Text: '@question.text'" required value="@question.text">
+      </div>
+    </div>
+  
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="type">Typ:</label>
+      <div class="col-sm-10">
+        @for(qType <- model.QuestionType.values()) {
+        <div class="radio">
+          <label for="@qType" title="@qType.getDescription()">
+            <input type="radio" name="type" id="@qType" value="@qType" @if(qType == question.questionType) {checked} required> @qType.getName
+          </label>
+        </div>
+        }
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="numOfAnswers">Anzahl Antworten:</label>
+      <div class="col-sm-10">
+        <input class="form-control" type="number" name="numOfAnswers" id="numOfAnswers"
+        onchange="onAnswerNumChange();" min="2" max="8" value="@question.answers.size()" required>
+      </div>
+    </div>
+
+    @for(answer <- question.answers) {
+    <div class="form-group">
+      <label class="control-label col-sm-2">@answer.key.id. Antwort:</label>
+      <div class="col-sm-10" id="answerDiv">
+        <div class="input-group">
+          <input hidden name="correctness_@answer.key.id" id="correctness_@answer.key.id" value="@answer.correctness">
+          <input class="form-control" name="@answer.key.id" id="@answer.key.id" placeholder="Alte Antwort: '@answer.text'" value="@answer.text">
+          <div class="input-group-btn">
+            @for(correctness <- model.Correctness.values()) {
+            <button type="button" onclick="changeCorrectness(@answer.key.id, '@correctness', this)" title="@correctness.getTitle()"
+            class="btn btn-@if(correctness == answer.correctness) {@correctness.getBSButtonColor()} else {default}">
+              <span class="@correctness.getBSGlyphicon()"></span>
+            </button>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+    
+    @* Fill up missing answers until 8 *@
+    @for(i <- question.answers.size() + 1 until 9) {
+    <div class="form-group">
+      <label class="control-label col-sm-2">@i. Antwort:</label>
+      <div class="col-sm-10" id="answerDiv">
+        <div class="input-group">
+          <input hidden name="correctness_@i" id="correctness_@i" value="WRONG">
+          <input class="form-control" name="@i" id="@i" placeholder="@{i}. Antwort">
+          <div class="input-group-btn">
+            @for(correctness <- model.Correctness.values()) {
+            <button type="button" onclick="changeCorrectness(@i, '@correctness', this)" title="@correctness.getTitle()"
+            class="btn btn-@if(correctness == model.Correctness.WRONG) {danger} else {default}">
+              <span class="@correctness.getBSGlyphicon()"></span>
+            </button>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+
+    <div class="form-group"> 
+      <div class="col-sm-offset-2 col-sm-10">
+        <button type="submit" class="btn btn-primary">Frage aktualisieren</button>
+      </div>
+    </div>
+  </form>
+</div>
+}

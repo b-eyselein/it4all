@@ -16,6 +16,8 @@ GET    /notAssigned   controllers.choice.QuestionAdmin.notAssignedQuestions()
 GET    /assign        controllers.choice.QuestionAdmin.assignQuestionsForm()
 POST   /assign        controllers.choice.QuestionAdmin.assignQuestions()
 
+GET    /edit/:id      controllers.choice.QuestionAdmin.editQuestionForm(id: Int)
+POST   /edit/:id      controllers.choice.QuestionAdmin.editQuestion(id: Int)
 
 #
 GET    /              controllers.choice.QuestionController.index()

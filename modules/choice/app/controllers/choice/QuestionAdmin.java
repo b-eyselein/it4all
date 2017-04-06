@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -16,8 +18,11 @@ import com.google.common.io.Files;
 
 import controllers.core.AbstractAdminController;
 import model.Answer;
+import model.AnswerKey;
+import model.Correctness;
 import model.Question;
 import model.QuestionReader;
+import model.QuestionType;
 import model.Quiz;
 import model.Util;
 import play.Logger;
@@ -61,9 +66,44 @@ public class QuestionAdmin extends AbstractAdminController<Question, QuestionRea
   }
 
   public Result assignQuestionsForm() {
-    List<Question> questions = Question.finder.all();
-    List<Quiz> quizzes = Quiz.finder.all();
-    return ok(views.html.questionadmin.assignQuestionsForm.render(getUser(), questions, quizzes));
+    return ok(views.html.questionadmin.assignQuestionsForm.render(getUser(), Question.finder.all(), Quiz.finder.all()));
+  }
+
+  public Result editQuestion(int id) {
+    DynamicForm form = factory.form().bindFromRequest();
+
+    Logger.debug("DATA:\n" + form.data());
+
+    Question question = Question.finder.byId(id);
+
+    question.title = form.get("title");
+    question.text = form.get("text");
+    question.author = getUser().name;
+    question.questionType = QuestionType.valueOf(form.get("type"));
+
+    int numOfAnswers = Integer.parseInt(form.get("numOfAnswers"));
+    question.answers = new ArrayList<>(numOfAnswers);
+
+    for(int count = 1; count <= numOfAnswers; count++) {
+      AnswerKey key = new AnswerKey(id, count);
+      Answer answer = Answer.finder.byId(key);
+      if(answer == null)
+        answer = new Answer(key);
+      answer.correctness = Correctness.valueOf(form.get("correctness_" + count));
+      answer.text = form.get(Integer.toString(count));
+
+      question.answers.add(answer);
+    }
+
+    question.save();
+    for(Answer answer: question.answers)
+      answer.save();
+
+    return ok(views.html.questionadmin.choiceCreation.render(getUser(), Arrays.asList(question)));
+  }
+
+  public Result editQuestionForm(int id) {
+    return ok(views.html.questionadmin.editQuestionForm.render(getUser(), Question.finder.byId(id)));
   }
 
   public Result exportQuestions() {
@@ -108,22 +148,22 @@ public class QuestionAdmin extends AbstractAdminController<Question, QuestionRea
 
     return ok(views.html.questionadmin.quizCreated.render(getUser(), quiz));
   }
-  
+
   public Result newQuizForm() {
     return ok(views.html.questionadmin.newQuizForm.render(getUser()));
   }
-  
+
   public Result notAssignedQuestions() {
     List<Question> notAssignedQuestions = Question.finder.all().stream().filter(q -> q.quizzes.isEmpty())
         .collect(Collectors.toList());
-    
+
     return ok(views.html.questionadmin.notassignedquestions.render(getUser(), notAssignedQuestions));
   }
 
   public Result questions() {
-    return ok(views.html.questions.render(getUser(), Question.finder.all()));
+    return ok(views.html.questionadmin.questions.render(getUser(), Question.finder.all()));
   }
-  
+
   public Result quizzes() {
     return ok(views.html.questionadmin.quizzes.render(getUser(), Quiz.finder.all()));
   }
