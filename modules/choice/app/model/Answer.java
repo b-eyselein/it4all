@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 
 import com.avaje.ebean.Model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Answer extends Model {
@@ -20,29 +21,27 @@ public class Answer extends Model {
   @EmbeddedId
   public AnswerKey key;
 
+  @Column(columnDefinition = "text")
+  public String text;
+  
+  @Enumerated(EnumType.STRING)
+  public Correctness correctness;
+
   @JsonBackReference
   @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "question_id", referencedColumnName = "id", insertable = false, updatable = false)
   public Question question;
 
-  @Enumerated(EnumType.STRING)
-  public Correctness correctness;
-
-  @Column(columnDefinition = "text")
-  public String text;
-
   public Answer(AnswerKey theKey) {
     key = theKey;
   }
 
-  public int getId() {
-    return key.id;
-  }
-
+  @JsonIgnore
   public char getIdAsChar() {
     return (char) ('a' + key.id - 1);
   }
-
+  
+  @JsonIgnore
   public boolean isCorrect() {
     return correctness != Correctness.WRONG;
   }

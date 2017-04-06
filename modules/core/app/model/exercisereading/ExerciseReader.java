@@ -4,12 +4,18 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.fge.jsonschema.core.exceptions.ProcessingException;
+import com.github.fge.jsonschema.core.report.ProcessingMessage;
+import com.github.fge.jsonschema.core.report.ProcessingReport;
 
 import model.JsonWrapper;
 import model.Util;
@@ -41,28 +47,31 @@ public abstract class ExerciseReader<T extends Exercise> {
     jsonSchemaFile = Paths.get(BASE_DIR, exerciseType, EX_SCHEMA_FILE_NAME);
   }
 
-  public List<T> readExercises(Path jsonFile) {
+  public AbstractReadingResult readExercises(Path jsonFile) {
     try {
       JsonNode json = Json.parse(String.join("\n", Files.readAllLines(jsonFile)));
       JsonNode jsonSchema = Json.parse(String.join("\n", Files.readAllLines(jsonSchemaFile)));
 
-      // Validate json with schema
-      if(!JsonWrapper.validateJson(json, jsonSchema))
-        return Collections.emptyList();
+      // Validate json with json schema
+      ProcessingReport report = JsonWrapper.validateJson(json, jsonSchema);
+      if(!report.isSuccess())
+        return new ReadingError(Json.prettyPrint(json),
+            StreamSupport.stream(report.spliterator(), false).collect(Collectors.toList()));
 
       List<T> exercises = new LinkedList<>();
 
       for(final Iterator<JsonNode> childNodes = json.elements(); childNodes.hasNext();)
         exercises.add(readExercise(childNodes.next()));
 
-      return exercises;
-    } catch (Exception e) {
-      Logger.error("Fehler beim Lesen aus der Datei " + jsonFile.toString() + " or " + jsonSchemaFile.toString(), e);
-      return Collections.emptyList();
+      return new ReadingResult<T>(Json.prettyPrint(json), exercises);
+    } catch (ProcessingException | IOException e) {
+      String error = "Fehler beim Lesen aus der Datei " + jsonFile.toString() + " or " + jsonSchemaFile.toString();
+      Logger.error(error, e);
+      return new ReadingError("", Collections.emptyList());
     }
   }
 
-  public List<T> readStandardExercises() {
+  public AbstractReadingResult readStandardExercises() {
     return readExercises(jsonFile);
   }
 

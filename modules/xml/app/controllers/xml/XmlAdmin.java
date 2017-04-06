@@ -11,6 +11,9 @@ import controllers.core.AbstractAdminController;
 import model.Util;
 import model.XmlExercise;
 import model.XmlExerciseReader;
+import model.exercisereading.AbstractReadingResult;
+import model.exercisereading.ReadingError;
+import model.exercisereading.ReadingResult;
 import play.data.FormFactory;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
@@ -25,10 +28,16 @@ public class XmlAdmin extends AbstractAdminController<XmlExercise, XmlExerciseRe
   
   @Override
   public Result readStandardExercises() {
-    List<XmlExercise> exercises = exerciseReader.readStandardExercises();
-    saveExercises(exercises);
+    AbstractReadingResult abstractResult = exerciseReader.readStandardExercises();
+
+    if(!abstractResult.isSuccess())
+      return badRequest(views.html.jsonReadingError.render(getUser(), (ReadingError) abstractResult));
+
+    @SuppressWarnings("unchecked")
+    ReadingResult<XmlExercise> result = (ReadingResult<XmlExercise>) abstractResult;
     
-    return ok(views.html.preview.render(getUser(), views.html.xmlcreation.render(exercises)));
+    saveExercises(result.getRead());
+    return ok(views.html.preview.render(getUser(), views.html.xmlcreation.render(result.getRead())));
   }
   
   @Override
@@ -43,11 +52,17 @@ public class XmlAdmin extends AbstractAdminController<XmlExercise, XmlExerciseRe
     
     Path jsonFile = Paths.get(savingDir.toString(), uploadedFile.getFilename());
     saveUploadedFile(savingDir, pathToUploadedFile, jsonFile);
+
+    AbstractReadingResult abstractResult = exerciseReader.readStandardExercises();
+
+    if(!abstractResult.isSuccess())
+      return badRequest(views.html.jsonReadingError.render(getUser(), (ReadingError) abstractResult));
+
+    @SuppressWarnings("unchecked")
+    ReadingResult<XmlExercise> result = (ReadingResult<XmlExercise>) abstractResult;
     
-    List<XmlExercise> exercises = (new XmlExerciseReader()).readExercises(jsonFile);
-    saveExercises(exercises);
-    
-    return ok(views.html.preview.render(getUser(), views.html.xmlcreation.render(exercises)));
+    saveExercises(result.getRead());
+    return ok(views.html.preview.render(getUser(), views.html.xmlcreation.render(result.getRead())));
   }
   
   @Override

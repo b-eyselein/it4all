@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 
 import model.exercise.SqlExercise;
 import model.exercise.SqlExerciseType;
@@ -111,7 +112,7 @@ public class SqlExerciseReader extends ExerciseReader<SqlExercise> {
       JsonNode jsonSchema = Json.parse(String.join("\n", Files.readAllLines(jsonSchemaFile)));
       
       // Validate json with schema
-      if(!JsonWrapper.validateJson(json, jsonSchema))
+      if(!JsonWrapper.validateJson(json, jsonSchema).isSuccess())
         return Collections.emptyList();
       
       List<SqlScenario> results = new LinkedList<>();
@@ -120,7 +121,7 @@ public class SqlExerciseReader extends ExerciseReader<SqlExercise> {
         results.add(readScenario(scenarioNodeIter.next()));
       
       return results;
-    } catch (IOException e) {
+    } catch (ProcessingException | IOException e) {
       Logger.error("Fehler beim Lesen aus der Datei " + jsonFile.toString() + " or " + jsonSchemaFile.toString(), e);
       return Collections.emptyList();
     }

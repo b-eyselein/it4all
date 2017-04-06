@@ -15,12 +15,12 @@ public class QuestionReader extends ExerciseReader<Question> {
     super("choice");
   }
 
-  private Answer readAnswer(JsonNode answerNode, int questionId) {
-    JsonNode idNode = answerNode.get(ID_NAME);
+  private Answer readAnswer(JsonNode answerNode) {
+    JsonNode keyNode = answerNode.get("key");
     JsonNode correctnessNode = answerNode.get("correctness");
     JsonNode textNode = answerNode.get(TEXT_NAME);
 
-    AnswerKey key = new AnswerKey(questionId, idNode.asInt());
+    AnswerKey key = readKey(keyNode);
 
     Answer answer = Answer.finder.byId(key);
     if(answer == null)
@@ -32,22 +32,30 @@ public class QuestionReader extends ExerciseReader<Question> {
     return answer;
   }
 
-  private List<Answer> readAnswers(JsonNode answersNode, int questionId) {
+  private List<Answer> readAnswers(JsonNode answersNode) {
     List<Answer> answers = new ArrayList<>(answersNode.size());
 
     for(JsonNode answerNode: answersNode)
-      answers.add(readAnswer(answerNode, questionId));
+      answers.add(readAnswer(answerNode));
 
     return answers;
+  }
+
+  private AnswerKey readKey(JsonNode keyNode) {
+    JsonNode idNode = keyNode.get(ID_NAME);
+    JsonNode questionIdNode = keyNode.get("questionId");
+
+    return new AnswerKey(questionIdNode.asInt(), idNode.asInt());
   }
 
   @Override
   protected Question readExercise(JsonNode exerciseNode) {
     JsonNode idNode = exerciseNode.get(ID_NAME);
     JsonNode titleNode = exerciseNode.get(TITLE_NAME);
-    JsonNode pointsNode = exerciseNode.get("points");
+    JsonNode authorNode = exerciseNode.get("author");
+    JsonNode pointsNode = exerciseNode.get("maxPoints");
     JsonNode textNode = exerciseNode.get(TEXT_NAME);
-    JsonNode typeNode = exerciseNode.get("type");
+    JsonNode questionTypeNode = exerciseNode.get("questionType");
     JsonNode answersNode = exerciseNode.get("answers");
 
     int id = idNode.asInt();
@@ -56,13 +64,12 @@ public class QuestionReader extends ExerciseReader<Question> {
     if(question == null)
       question = new Question(id);
 
-    // TODO: name of author?
-    question.author = "admin";
+    question.author = authorNode.asText();
     question.title = titleNode.asText();
     question.maxPoints = pointsNode.asInt();
     question.text = textNode.asText();
-    question.questionType = QuestionType.valueOf(typeNode.asText());
-    question.answers = readAnswers(answersNode, id);
+    question.questionType = QuestionType.valueOf(questionTypeNode.asText());
+    question.answers = readAnswers(answersNode);
 
     return question;
   }

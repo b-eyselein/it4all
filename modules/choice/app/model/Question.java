@@ -24,9 +24,9 @@ public class Question extends Exercise {
   public static final com.avaje.ebean.Model.Finder<Integer, Question> finder = new com.avaje.ebean.Model.Finder<>(
       Question.class);
   
-  @JsonIgnore
-  @ManyToMany
-  public List<Quiz> quizzes;
+  public String author; // NOSONAR
+  
+  public int maxPoints; // NOSONAR
   
   @Enumerated(EnumType.STRING)
   public QuestionType questionType;
@@ -35,31 +35,30 @@ public class Question extends Exercise {
   public List<Answer> answers;
   
   @JsonIgnore
+  @ManyToMany
+  public List<Quiz> quizzes;
+  
+  @JsonIgnore
   @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
   public List<QuestionRating> ratings;
   
-  public String author; // NOSONAR
-  
-  public int maxPoints; // NOSONAR
-
   public Question(int theId) {
     super(theId);
-    // if(questionType == QuestionType.SINGLE &&
-    // theAnswers.stream().filter(ChoiceAnswer::isCorrect).count() > 1)
-    // throw new IllegalArgumentException("Only one answer can be correct!");
   }
   
   public Answer getAnswer(int id) {
     for(Answer answer: answers)
-      if(answer.getId() == id)
+      if(answer.key.id == id)
         return answer;
     return null;
   }
   
+  @JsonIgnore
   public OptionalDouble getAverageRating() {
     return ratings.stream().mapToInt(rating -> rating.rating).average();
   }
   
+  @JsonIgnore
   public List<Answer> getCorrectAnswers() {
     return answers.stream().filter(Answer::isCorrect).collect(Collectors.toList());
   }

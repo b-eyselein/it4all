@@ -1,27 +1,41 @@
 [
 	{
 		"id": 1, 
+		"author": "bje40dc", 
+		"maxPoints": 2, 
 		"title": "Abstrakte Klassen in UML", 
-		"type": "MULTIPLE", 
+		"questionType": "MULTIPLE", 
 		"text": "Welche dieser Aussagen über abstrakte Klassen sind korrekt?", 
 		"answers": [
 			{
-				"id": 1, 
+				"key": {
+					"id": 1, 
+					"questionId": 1
+				}, 
 				"correctness": "WRONG", 
 				"text": "Sie dürfen keine Attribute oder Operationen aufweisen."
 			}, 
 			{
-				"id": 2, 
+				"key": {
+					"id": 2, 
+					"questionId": 1
+				}, 
 				"correctness": "CORRECT", 
 				"text": "Sie dürfen nicht direkt instanziiert werden."
 			}, 
 			{
-				"id": 3, 
+				"key": {
+					"id": 3, 
+					"questionId": 1
+				}, 
 				"correctness": "CORRECT", 
 				"text": "Sie werden im Klassendiagramm mit dem Modifikator \"<<abstract>>\" oder in kursiver Schrift angegeben."
 			}, 
 			{
-				"id": 4, 
+				"key": {
+					"id": 4, 
+					"questionId": 1
+				}, 
 				"correctness": "OPTIONAL", 
 				"text": "Sie sind nur mit Subklassen sinnvoll."
 			}
@@ -29,22 +43,33 @@
 	}, 
 	{
 		"id": 2, 
-		"title": "TODO...", 
-		"type": "SINGLE", 
+		"author": "bje40dc", 
+		"maxPoints": 1, 
+		"title": "Abgeleitete Attribute in UML-Klassendiagrammen", 
+		"questionType": "SINGLE", 
 		"text": "Welche dieser Aussagen über abgeleitete Attribute ist korrekt?", 
 		"answers": [
 			{
-				"id": 1, 
+				"key": {
+					"id": 1, 
+					"questionId": 2
+				}, 
 				"correctness": "WRONG", 
 				"text": "Sie werden im Klassendiagramm unterstrichen dargestellt."
 			}, 
 			{
-				"id": 2, 
+				"key": {
+					"id": 2, 
+					"questionId": 2
+				}, 
 				"correctness": "CORRECT", 
 				"text": "Sie werden aus anderen Attributen berechnet."
 			}, 
 			{
-				"id": 3, 
+				"key": {
+					"id": 3, 
+					"questionId": 2
+				}, 
 				"correctness": "WRONG", 
 				"text": "Sie haben für alle Instanzen der Klasse denselben Wert."
 			}
@@ -52,37 +77,57 @@
 	}, 
 	{
 		"id": 3, 
+		"author": "bje40dc", 
+		"maxPoints": 1, 
 		"title": "TODO...", 
-		"type": "FILLOUT_WITHOUT_ORDER", 
+		"questionType": "FILLOUT_WITHOUT_ORDER", 
 		"text": "Bei dieser Frage ist nur die Antwortmöglichkeit 2 korrekt.", 
 		"answers": [
 			{
-				"id": 1, 
+				"key": {
+					"id": 1, 
+					"questionId": 3
+				}, 
 				"correctness": "WRONG", 
 				"text": "TODO..."
 			}, 
 			{
-				"id": 2, 
+				"key": {
+					"id": 2, 
+					"questionId": 3
+				}, 
 				"correctness": "CORRECT", 
 				"text": "TODO..."
 			}, 
 			{
-				"id": 3, 
+				"key": {
+					"id": 3, 
+					"questionId": 3
+				}, 
 				"correctness": "WRONG", 
 				"text": "TODO..."
 			}, 
 			{
-				"id": 4, 
+				"key": {
+					"id": 4, 
+					"questionId": 3
+				}, 
 				"correctness": "WRONG", 
 				"text": "TODO..."
 			}, 
 			{
-				"id": 5, 
+				"key": {
+					"id": 5, 
+					"questionId": 3
+				}, 
 				"correctness": "WRONG", 
 				"text": "TODO..."
 			}, 
 			{
-				"id": 6, 
+				"key": {
+					"id": 6, 
+					"questionId": 3
+				}, 
 				"correctness": "WRONG", 
 				"text": "TODO..."
 			}
@@ -90,37 +135,57 @@
 	}, 
 	{
 		"id": 4, 
+		"author": "bje40dc", 
+		"maxPoints": 1, 
 		"title": "TODO...", 
-		"type": "FILLOUT_WITH_ORDER", 
+		"questionType": "FILLOUT_WITH_ORDER", 
 		"text": "Bei dieser Frage ist nur die Antwortmöglichkeit 2 korrekt.", 
 		"answers": [
 			{
-				"id": 1, 
+				"key": {
+					"id": 1, 
+					"questionId": 4
+				}, 
 				"correctness": "WRONG", 
 				"text": "TODO..."
 			}, 
 			{
-				"id": 2, 
+				"key": {
+					"id": 2, 
+					"questionId": 4
+				}, 
 				"correctness": "CORRECT", 
 				"text": "TODO..."
 			}, 
 			{
-				"id": 3, 
+				"key": {
+					"id": 3, 
+					"questionId": 4
+				}, 
 				"correctness": "WRONG", 
 				"text": "TODO..."
 			}, 
 			{
-				"id": 4, 
+				"key": {
+					"id": 4, 
+					"questionId": 4
+				}, 
 				"correctness": "WRONG", 
 				"text": "TODO..."
 			}, 
 			{
-				"id": 5, 
+				"key": {
+					"id": 5, 
+					"questionId": 4
+				}, 
 				"correctness": "WRONG", 
 				"text": "TODO..."
 			}, 
 			{
-				"id": 6, 
+				"key": {
+					"id": 6, 
+					"questionId": 4
+				}, 
 				"correctness": "WRONG", 
 				"text": "TODO..."
 			}
@@ -128,37 +193,57 @@
 	}, 
 	{
 		"id": 5, 
+		"author": "bje40dc", 
+		"maxPoints": 2, 
 		"title": "TODO...", 
-		"type": "MULTIPLE", 
+		"questionType": "MULTIPLE", 
 		"text": "Bei dieser Frage sind die Antwortmöglichkeiten 3, 4 und 6 korrekt.", 
 		"answers": [
 			{
-				"id": 1, 
+				"key": {
+					"id": 1, 
+					"questionId": 5
+				}, 
 				"correctness": "WRONG", 
 				"text": "TODO..."
 			}, 
 			{
-				"id": 2, 
+				"key": {
+					"id": 2, 
+					"questionId": 5
+				}, 
 				"correctness": "WRONG", 
 				"text": "TODO..."
 			}, 
 			{
-				"id": 3, 
+				"key": {
+					"id": 3, 
+					"questionId": 5
+				}, 
 				"correctness": "CORRECT", 
 				"text": "TODO..."
 			}, 
 			{
-				"id": 4, 
+				"key": {
+					"id": 4, 
+					"questionId": 5
+				}, 
 				"correctness": "OPTIONAL", 
 				"text": "TODO..."
 			}, 
 			{
-				"id": 5, 
+				"key": {
+					"id": 5, 
+					"questionId": 5
+				}, 
 				"correctness": "WRONG", 
 				"text": "TODO..."
 			}, 
 			{
-				"id": 6, 
+				"key": {
+					"id": 6, 
+					"questionId": 5
+				}, 
 				"correctness": "CORRECT", 
 				"text": "TODO..."
 			}

@@ -6,8 +6,8 @@
 create table answer (
   question_id                   integer not null,
   id                            integer not null,
-  correctness                   varchar(8),
   text                          text,
+  correctness                   varchar(8),
   constraint ck_answer_correctness check ( correctness in ('CORRECT','OPTIONAL','WRONG')),
   constraint pk_answer primary key (question_id,id)
 );
@@ -129,9 +129,9 @@ create table question (
   id                            integer auto_increment not null,
   title                         varchar(255),
   text                          text,
-  question_type                 varchar(21),
   author                        varchar(255),
   max_points                    integer,
+  question_type                 varchar(21),
   constraint ck_question_question_type check ( question_type in ('MULTIPLE','SINGLE','FILLOUT_WITH_ORDER','FILLOUT_WITHOUT_ORDER')),
   constraint pk_question primary key (id)
 );

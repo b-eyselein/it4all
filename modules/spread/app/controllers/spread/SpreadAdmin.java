@@ -11,6 +11,9 @@ import controllers.core.AbstractAdminController;
 import model.SpreadExercise;
 import model.SpreadExerciseReader;
 import model.Util;
+import model.exercisereading.AbstractReadingResult;
+import model.exercisereading.ReadingError;
+import model.exercisereading.ReadingResult;
 import play.data.FormFactory;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
@@ -25,10 +28,16 @@ public class SpreadAdmin extends AbstractAdminController<SpreadExercise, SpreadE
   
   @Override
   public Result readStandardExercises() {
-    List<SpreadExercise> exercises = exerciseReader.readStandardExercises();
-    saveExercises(exercises);
+    AbstractReadingResult abstractResult = exerciseReader.readStandardExercises();
+
+    if(!abstractResult.isSuccess())
+      return badRequest(views.html.jsonReadingError.render(getUser(), (ReadingError) abstractResult));
+
+    @SuppressWarnings("unchecked")
+    ReadingResult<SpreadExercise> result = (ReadingResult<SpreadExercise>) abstractResult;
     
-    return ok(views.html.preview.render(getUser(), views.html.spreadcreation.render(exercises)));
+    saveExercises(result.getRead());
+    return ok(views.html.preview.render(getUser(), views.html.spreadcreation.render(result.getRead())));
   }
   
   @Override
@@ -44,9 +53,16 @@ public class SpreadAdmin extends AbstractAdminController<SpreadExercise, SpreadE
     Path jsonFile = Paths.get(savingDir.toString(), uploadedFile.getFilename());
     saveUploadedFile(savingDir, pathToUploadedFile, jsonFile);
     
-    List<SpreadExercise> exercises = exerciseReader.readExercises(jsonFile);
-    saveExercises(exercises);
-    return ok(views.html.preview.render(getUser(), views.html.spreadcreation.render(exercises)));
+    AbstractReadingResult abstractResult = exerciseReader.readStandardExercises();
+    
+    if(!abstractResult.isSuccess())
+      return badRequest(views.html.jsonReadingError.render(getUser(), (ReadingError) abstractResult));
+    
+    @SuppressWarnings("unchecked")
+    ReadingResult<SpreadExercise> result = (ReadingResult<SpreadExercise>) abstractResult;
+
+    saveExercises(result.getRead());
+    return ok(views.html.preview.render(getUser(), views.html.spreadcreation.render(result.getRead())));
   }
   
   @Override
