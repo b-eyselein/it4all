@@ -1,0 +1,60 @@
+@(user: model.user.User, quiz: model.Quiz, questionId: Int)
+
+@question = @{quiz.questions.get(questionId)}
+@isMultiple = @{question.questionType == model.QuestionType.MULTIPLE}
+
+@main("Auswahlfragen", user) {
+<script src="@routes.Assets.versioned("javascripts/choicequestions.js")"></script>
+
+<div class="container">
+  <div class="page-header">
+    <h1>Quiz &quot;@quiz.title&quot;</h1>
+  </div>
+  
+  <ul class="pagination pagination-sm">
+  @for(i <- 0 until quiz.questions.size()) {
+    <li @if(i == questionId) {class="active"}><a href="@controllers.choice.routes.QuestionController.quizQuestion(quiz.id, i + 1)">@{i + 1}</a></li>
+  }
+  </ul>
+  
+  <h2>@question.text</h2>
+  
+  <form class="form-horizontal" method="post" action="@controllers.choice.routes.QuestionController.quizCorrection(quiz.id, question.id)">
+    <div id="answerDiv">
+    @for(ans <- question.getAnswersForTemplate()) {
+      <div class="@question.questionType.getDivClass()">
+        <label for="@ans.key.id">
+        
+          <input type="@question.questionType.getInputType()" name="@if(isMultiple) {@ans.key.id} else {ans}" id="@ans.key.id" @if(!isMultiple) {required}
+          value="@ans.key.id">@ans.text</input>
+        </label>
+      </div>
+    }
+    </div>
+    
+    <hr>
+    
+    <p>Bewertung:
+      @for(i <- 1 until 6) {
+      <button type="button" class="btn btn-default" onclick="setStars(@i);">
+        <span id="star@i" class="glyphicon glyphicon-star-empty"></span>  
+      </button>
+      }
+      <input type="number" hidden name="stars" id="stars" value="-1">
+    </p>
+    
+    <hr>
+
+    <input class="btn btn-block btn-primary" type="submit" value="Kontrollieren">
+    <ul class="pager">
+    @if(question.id - 1 > 0) {
+      <li class="previous"><a href="@controllers.choice.routes.QuestionController.quizQuestion(quiz.id, question.id - 1)">Vorherige Aufgabe</a></li>
+    }
+    @if(question.id < quiz.questions.size()) {
+      <li class="next"><a href="@controllers.choice.routes.QuestionController.quizQuestion(quiz.id, question.id + 1)">N&auml;chste Aufgabe</a></li>
+    }
+    </ul>
+      
+  </form>
+</div>
+}

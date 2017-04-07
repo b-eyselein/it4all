@@ -23,7 +23,7 @@ public abstract class AbstractController extends Controller {
     factory = theFactory;
   }
 
-  protected static User getUser() {
+  public static User getUser() {
     return User.finder.byId(getUsername());
   }
 

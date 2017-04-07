@@ -1,90 +1,38 @@
-const
-MARKED_CLASS_NAME = "btn btn-block btn-primary";
+const MAX_ANSWERS = 8;
+const MAX_START = 5
 
-const
-UNMARKED_CLASS_NAME = "btn btn-block btn-default";
-
-function mark(button) {
-  button.className = (button.className == MARKED_CLASS_NAME) ? UNMARKED_CLASS_NAME : MARKED_CLASS_NAME;
-  button.dataset.selected = (parseInt(button.dataset.selected) + 1) % 2;
-}
-
-function getAnswerButtons() {
-  return document.getElementById("answerDiv").children;
-}
-
-function markSingle(button) {
-  // Unmark all buttons
-  for(var buttonToUnmark of getAnswerButtons()) {
-    buttonToUnmark.className = UNMARKED_CLASS_NAME;
-    buttonToUnmark.dataset.selected = 0;
-  }
-  
-  // Mark button
-  button.className = MARKED_CLASS_NAME;
-  button.dataset.selected = 1;
-}
-
-function extractSelectedAnswers() {
-  var selectedAnswers = [];
-
-  for(var button of getAnswerButtons()) {
-    if(button.dataset.selected == 1) {
-      selectedAnswers.push(button.id);
+function onAnswerNumChange() {
+  var numOfActiveAnswers = parseInt(document.getElementById("numOfAnswers").value);
+  for(var i = 1; i <= MAX_ANSWERS ; i++) {
+    var input = document.getElementById(i);
+    if(i <= numOfActiveAnswers) {
+      // Activate inputs for answers 1 to numOfAnswers
+      input.readOnly = "";
+      input.required = true;
+      input.className = "form-control";
+    } else {
+      // Deactivate other inputs
+      input.readOnly = "readonly";
+      input.required = false;
+      input.className = "form-control disabled";
     }
   }
-  
-  return selectedAnswers;
 }
 
-function getAnswerButton(num) {
-  return document.getElementById(num);
-}
-
-function colorButton(button, color) {
-  button.className = "btn btn-block btn-" + color;
-}
-
-function control(theUrl) {
-  var selectedAnswers = extractSelectedAnswers();
-  
-  if(selectedAnswers.length == 0) {
-    alert("Wählen Sie bitte eine Antwort aus!");
-    return;
+function setStars(num) {
+  for(var i = 1; i <= MAX_START; i++) {
+    var newClassName = i <= num ? "glyphicon glyphicon-star" : "glyphicon glyphicon-star-empty";
+    document.getElementById("star" + i).className = newClassName;
   }
+  document.getElementById("stars").value = num;
+}
+
+function changeCorrectness(number, value, button) {
+  // TODO: set correctness...
+  document.getElementById("correctness_" + number).value = value;
   
-  $.ajax({
-    type: 'PUT',
-    url: theUrl,
-    data: "selected=" + JSON.stringify(selectedAnswers),
-    async: true,
-    success: function(response) {
-      // Deactivate selection of answers
-      for(var button of getAnswerButtons()) {
-        button.onclick = "";
-      }
-      
-      // Deactivate control functionality
-      var correctionButton = document.getElementById("correct");
-      correctionButton.onclick = "";
-      correctionButton.className = "btn btn-block btn-default disabled";
-      
-      // TODO: Mark correct, missing and wrong answers
-      for(var corr of response.correct) {
-        var button = getAnswerButton(corr);
-        colorButton(button, "success");
-        button.title = "Diese Antwort war korrekt";
-      }
-      for(var miss of response.missing) {
-        var button = getAnswerButton(miss);
-        colorButton(button, "warning");
-        button.title = "Diese Antwort war nicht ausgewählt, aber korrekt.";
-      }
-      for(var wro of response.wrong) {
-        var button = getAnswerButton(wro);
-        colorButton(button, "danger");
-        button.title = "Diese Antwort war falsch.";
-      }
-    }
-  });
+  for(var otherButton of button.parentNode.children) {
+    otherButton.className = "btn btn-default";
+  }
+  button.className = "btn btn-primary";
 }

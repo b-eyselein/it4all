@@ -1,69 +1,91 @@
 @(user: model.user.User)
 
+@notAssignedQuestions = @{model.Question.notAssignedQuestions()}
+
 @main("Auswahlfragen", user) {
 <div class="container">
   <div class="page-header">
     <h1>Auswahlfragen: Administratorbereich</h1>
   </div>
   
-  <div class="alert alert-info">Es gibt insgesamt @model.Question.finder.all().size() Fragen und @model.Quiz.finder.all().size() Quiz(ze)</div>
+  <div class="alert alert-info alert-dismissable">
+    <a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    Es gibt insgesamt @model.Question.finder.all().size() Fragen und @model.Quiz.finder.all().size() Quiz(ze)
+  </div>
+  
+  @if(!notAssignedQuestions.isEmpty()) {
+  <div class="alert alert-danger alert-dismissable">
+    <a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    Es gibt noch @notAssignedQuestions.size()
+    <a class="alert-link" href="@controllers.choice.routes.QuestionAdmin.notAssignedQuestions()">nicht zugeordnete Fragen</a>. Sie k&ouml;nnen Sie
+    <a class="alert-link" href="@controllers.choice.routes.QuestionAdmin.assignQuestionsForm()">hier</a> zuweisen.
+  </div>
+  }
+  
+  <div class="row">
+    <div class="col-md-6">
+      <h2>Verwaltung der Fragen</h2>
+      <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionController.questions()">Übersicht über alle Fragen</a>
+      <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionController.newQuestionForm()">Neue Frage erstellen</a>
+      
+      <hr>
+      
+      <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionAdmin.exportQuestions()">Fragen als JSON exportieren</a>
+      <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionAdmin.readStandardExercises()">Standardaufgaben einlesen</a>
+    </div>
+  
+    <div class="col-md-6">
+      <h2>Verwaltung der Quizzes</h2>
+      <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionController.quizzes()">Übersicht über alle Quizze</a>
+      <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionAdmin.newQuizForm()">Neues Quiz erstellen</a>
+      
+      <hr>
+      
+      <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionAdmin.exportQuizzes()">Quizze als JSON exportieren</a>
+      <a class="btn btn-default btn-block" href="@@controllers.choice.routes.QuestionAdmin.readStandardExercises()">Standardquizze? einlesen</a>
+    </div>
+  </div>
   
   <hr>
-  
+    
   <div class="row">
     <div class="col-md-6">
       <div class="panel panel-default">
-        <div class="panel-heading">Import/Export von Aufgaben als JSON</div>
+        <div class="panel-heading">Import von Fragen als JSON-Datei</div>
         <div class="panel-body">
-          <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionAdmin.exportQuestions()">Fragen als JSON exportieren</a>
-          <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionAdmin.readStandardExercises()">Standardaufgaben einlesen</a>
+          <div class="alert alert-info">Die Datei wird gegen diese
+          <a href="@controllers.choice.routes.QuestionAdmin.getJSONSchemaFile()" class="alert-link" target="_blank">JSON Schema-Datei</a>
+          geprüft. Im Erfolgsfall werden die Aufgaben ausgelesen und in der Datenbank gespeichert.</div>
+          <form action="@controllers.choice.routes.QuestionAdmin.uploadFile()" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+              <label for="file">Ihre Datei:</label>
+              <input type="file" class="form-control" name="file" id="file" accept=".json" required>
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+          </form>
         </div>
       </div>
     </div>
-  
+    
     <div class="col-md-6">
       <div class="panel panel-default">
-        <div class="panel-heading">Verwaltung der Fragen</div>
+        <div class="panel-heading">Import von Fragen als JSON-Datei</div>
         <div class="panel-body">
-          <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionAdmin.questions()">Übersicht über alle Fragen</a>
-          <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionAdmin.notAssignedQuestions()">Nicht zugeordnete Fragen</a>
-          <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionAdmin.assignQuestionsForm()">Fragen einem Quiz zuweisen</a>
+          <div class="alert alert-info">Die Datei wird gegen diese
+          <a href="@controllers.choice.routes.QuestionAdmin.getJSONSchemaFile()" class="alert-link" target="_blank">JSON Schema-Datei</a>
+          geprüft. Im Erfolgsfall werden die Aufgaben ausgelesen und in der Datenbank gespeichert.</div>
+          <form action="@controllers.choice.routes.QuestionAdmin.uploadFile()" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+              <label for="file">Ihre Datei:</label>
+              <input type="file" class="form-control" name="file" id="file" accept=".json" required>
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+          </form>
         </div>
       </div>
-    </div>
-  </div>
-  
-  <div class="row">
-    <div class="col-md-6">
-      <div class="panel panel-default">
-        <div class="panel-heading">Verwaltung der Quizzes</div>
-        <div class="panel-body">
-          <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionAdmin.quizzes()">Quizübersicht</a>
-          <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionAdmin.newQuizForm()">Neues Quiz erstellen</a>
-        </div>
-      </div>
-    </div>
-    
-    <div class="col-md-6">
     
     </div>
   </div>
   
-  <div class="panel panel-default">
-    <div class="panel-heading">Upload neuer Fragen als JSON-Datei</div>
-    <div class="panel-body">
-      <div class="alert alert-info">Die Datei wird gegen diese
-      <a href="@controllers.choice.routes.QuestionAdmin.getJSONSchemaFile()" class="alert-link" target="_blank">JSON Schema-Datei</a>
-      geprüft. Im Erfolgsfall werden die Aufgaben ausgelesen und in der Datenbank gespeichert.</div>
-      <form action="@controllers.choice.routes.QuestionAdmin.uploadFile()" method="post" enctype="multipart/form-data">
-        <div class="form-group">
-          <label for="file">Ihre Datei:</label>
-          <input type="file" class="form-control" name="file" id="file" accept=".json" required>
-        </div>
-        <button type="submit" class="btn btn-default">Submit</button>
-      </form>
-    </div>
-  </div>
-    
 </div>
 }

@@ -5,9 +5,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import model.Correctness;
-import model.QuestionType;
 import model.exercisereading.ExerciseReader;
+import play.libs.Json;
 
 public class QuestionReader extends ExerciseReader<Question> {
 
@@ -16,19 +15,14 @@ public class QuestionReader extends ExerciseReader<Question> {
   }
 
   private Answer readAnswer(JsonNode answerNode) {
-    JsonNode keyNode = answerNode.get("key");
-    JsonNode correctnessNode = answerNode.get("correctness");
-    JsonNode textNode = answerNode.get(TEXT_NAME);
-
-    AnswerKey key = readKey(keyNode);
+    AnswerKey key = Json.fromJson(answerNode.get(KEY_NAME), AnswerKey.class);
 
     Answer answer = Answer.finder.byId(key);
     if(answer == null)
-      answer = new Answer(key);
+      return Json.fromJson(answerNode, Answer.class);
 
-    answer.correctness = Correctness.valueOf(correctnessNode.asText());
-    answer.text = textNode.asText();
-
+    answer.correctness = Correctness.valueOf(answerNode.get("correctness").asText());
+    answer.text = answerNode.get(TEXT_NAME).asText();
     return answer;
   }
 
@@ -39,13 +33,6 @@ public class QuestionReader extends ExerciseReader<Question> {
       answers.add(readAnswer(answerNode));
 
     return answers;
-  }
-
-  private AnswerKey readKey(JsonNode keyNode) {
-    JsonNode idNode = keyNode.get(ID_NAME);
-    JsonNode questionIdNode = keyNode.get("questionId");
-
-    return new AnswerKey(questionIdNode.asInt(), idNode.asInt());
   }
 
   @Override

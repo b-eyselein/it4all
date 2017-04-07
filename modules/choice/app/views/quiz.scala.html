@@ -3,10 +3,35 @@
 @main("Auswahlfragen", user) {
 <div class="container">
   <div class="page-header">
-    <h1>Quiz @quiz.title</h1>
+    <h1>Quiz &quot;@quiz.title&quot;</h1>
   </div>
+
+  <section>
+    <h3>Allgemeine Informationen</h3>
   
-  <p>Ein Quiz mit @quiz.questions.size() Fragen</p>
-  <p>Maximale Punktzahl: @quiz.getPoints()</p>
+    <div class="row">
+      <div class="col-xs-6 text-right">Thema: </div>
+      <div class="col-xs-6">@quiz.theme</div>
+    </div>
+    <div class="row">
+      <div class="col-xs-6 text-right">Anzahl Fragen: </div>
+      <div class="col-xs-6">@quiz.questions.size()</div>
+    </div>
+    <div class="row">
+      <div class="col-xs-6 text-right">Maximal erreichbare Punktzahl: </div>
+      <div class="col-xs-6">@quiz.getMaxPoints() Punkte</div>
+    </div>
+  </section>
+  
+  <hr>
+  
+  <section>
+    <h3>TODO: Statistiken f&uuml;r User...</h3>
+  </section>
+  
+  <hr>
+  
+  <a class="btn btn-primary btn-block" href="@controllers.choice.routes.QuestionController.quizStart(quiz.id)">Quiz starten...</a>
+  
 </div>
 }

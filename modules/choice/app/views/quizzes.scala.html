@@ -14,12 +14,9 @@
     <thead>
       <tr>
         <th>ID</th>
-        <th>Autor</th>
         <th>Titel</th>
         <th>Text</th>
-        <th># Antworten</th>
-        <th>&Oslash; Bewertungen</th>
-        <th>Quizzes</th>
+        <th># Fragen</th>
         <th>Link</th>
       </tr>
     </thead>
@@ -30,7 +27,7 @@
         <td>@quiz.title</td>
         <td>@quiz.text</td>
         <td>@quiz.questions.size()</td>
-        <td>@@if(quiz.getAverageRating().isPresent()) {@@quiz.getAverageRating().getAsDouble()} else {--}</td>
+        <td><a href="@controllers.choice.routes.QuestionController.quiz(quiz.id)">Quiz @quiz.id</a></td>
       </tr>
     }    
     </tbody>

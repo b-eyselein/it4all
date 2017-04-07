@@ -1,10 +1,12 @@
 package model;
 
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import model.exercise.Exercise;
 
@@ -15,14 +17,18 @@ public class Quiz extends Exercise {
   public static final com.avaje.ebean.Model.Finder<Integer, Quiz> finder = new com.avaje.ebean.Model.Finder<>(
       Quiz.class);
   
+  public String theme; // NOSONAR
+  
+  @JsonIgnore
   @ManyToMany(mappedBy = "quizzes", cascade = CascadeType.ALL)
-  public Set<Question> questions;
+  public List<Question> questions;
   
   public Quiz(int theId) {
     super(theId);
   }
   
-  public int getPoints() {
+  @JsonIgnore
+  public int getMaxPoints() {
     return questions.stream().mapToInt(q -> q.maxPoints).sum();
   }
   

@@ -54,9 +54,20 @@
         </ul>
         <ul class="nav navbar-nav navbar-right">
         @if(user.role == model.user.Role.ADMIN) {
-          <li><a href="@controllers.routes.AdminController.index()"><span class="glyphicon glyphicon-cog"></span>
-              Administrator</a></li>
-          }
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="">
+              <span class="glyphicon glyphicon-cog"></span> Administrator <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="@controllers.choice.routes.QuestionAdmin.index()">Auswahlfragen</a></li>
+              
+              <li class="divider"></li>
+              
+              <li><a href="@controllers.routes.AdminController.index()">Allgemein</a></li>
+            </ul>
+          </li>
+        }
+        
           <li><a href="@controllers.routes.Evaluation.index()"><span class="glyphicon glyphicon-pencil"></span>
               Evaluation</a></li>
               
@@ -66,11 +77,14 @@
             <ul class="dropdown-menu">
               <li><a href="@controllers.routes.UserController.index()">Bewertungen</a></li>
               <li><a href="@controllers.routes.UserController.preferences()">Präferenzen</a></li>
+              
+              <li class="divider"></li>
+                  
+              <li><a href="@controllers.core.routes.UserManagement.logout()"><span
+                  class="glyphicon glyphicon-log-out"></span> Logout</a></li>
           	</ul>
           </li>
           
-          <li><a href="@controllers.core.routes.UserManagement.logout()"><span
-              class="glyphicon glyphicon-log-out"></span> Logout</a></li>
         </ul>
       </div>
     </div>

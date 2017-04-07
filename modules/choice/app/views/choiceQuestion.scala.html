@@ -1,6 +1,6 @@
 @(user: model.user.User, question: model.Question)
 
-
+@isSingle = @{question.questionType == model.QuestionType.SINGLE}
 
 @main("Auswahlfragen", user) {
 <script src="@routes.Assets.versioned("javascripts/choicequestions.js")"></script>
@@ -14,15 +14,15 @@
     <div id="answerDiv">
     @for(ans <- question.getAnswersForTemplate()) {
       <div class="@question.questionType.getDivClass()">
-        <label for="@ans.key.id" class="control-label col-sm-1">@ans.key.id:</label>
-        <div class="col-sm-11">
-          <input type="@question.questionType.getInputType()" name="@ans.key.id" id="@ans.key.id" class="form-control" placeholder="TODO!">
-          
-        </div>
+        <label for="@ans.key.id">
+        
+          <input type="@question.questionType.getInputType()" @if(isSingle) {name="ans"} else {name="@ans.key.id"} id="@ans.key.id" @if(isSingle) {required}>
+          @ans.text</input>
+        </label>
       </div>
     }
     </div>
-
+    
     <hr>
     
     <section>
@@ -36,9 +36,9 @@
         }
       </div>
     </section>
-
-    <hr>
     
+    <hr>
+
     <input class="btn btn-block btn-primary" type="submit" value="Kontrollieren">
     <a class="btn btn-block btn-default" href="@controllers.choice.routes.QuestionController.question(question.id + 1)"> Nächste Aufgabe</a>
   </form>
