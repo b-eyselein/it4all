@@ -12,17 +12,16 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import model.JsonWrapper;
+import model.Multiplicity;
 import model.UmlClass;
 import model.UmlConnection;
-import model.UmlConnection.UmlConnectionType;
+import model.UmlConnectionType;
 import model.UmlExercise;
 import play.Logger;
 import play.libs.Json;
 
 public class UmlDiagramdrawing extends UmlResult {
-  
-  private static final String[] CONNECTION_TYPES = {"standard", "aggregation", "composition", "implementation",
-      "generalization"};
   
   private static final Path MUSTER_SOLUTION_PATH = Paths.get("modules/uml/conf/resources/mustersolution.json");
   
@@ -36,7 +35,7 @@ public class UmlDiagramdrawing extends UmlResult {
   List<List<UmlConnection>> solutionConnections;
   
   public UmlDiagramdrawing(UmlExercise exercise, JsonNode node) {
-    super(exercise, "Krankenhaus");
+    super(exercise);
     
     String musterSolution = "";
     try {
@@ -71,10 +70,10 @@ public class UmlDiagramdrawing extends UmlResult {
     for(JsonNode objNode: classesNode) {
       String name = objNode.get("name").asText();
       
-      List<String> attributes = parseJSONArray(objNode.get("attributes"));
+      List<String> attributes = JsonWrapper.parseJsonArrayNode(objNode.get("attributes"));
       Collections.sort(attributes);
       
-      List<String> methods = parseJSONArray(objNode.get("methods"));
+      List<String> methods = JsonWrapper.parseJsonArrayNode(objNode.get("methods"));
       Collections.sort(methods);
       
       classes.add(new UmlClass(name, attributes, methods));
@@ -87,9 +86,13 @@ public class UmlDiagramdrawing extends UmlResult {
     List<List<UmlConnection>> connections = new ArrayList<>();
     JsonNode node_connectionType = mainNode.get("connections");
     
-    for(String type: CONNECTION_TYPES)
-      connections.add(convertConnectionTypeForConnections(node_connectionType.get(type),
-          UmlConnectionType.valueOf(type.toUpperCase())));
+    for(UmlConnectionType type: UmlConnectionType.values()) {
+      JsonNode typeNode = node_connectionType.get(type.toString());
+      
+      Logger.debug(typeNode.toString());
+
+      connections.add(convertConnectionTypeForConnections(typeNode, type));
+    }
     
     return connections;
   }
@@ -97,10 +100,12 @@ public class UmlDiagramdrawing extends UmlResult {
   public List<UmlConnection> convertConnectionTypeForConnections(JsonNode node, UmlConnectionType type) {
     ArrayList<UmlConnection> connections = new ArrayList<>();
     for(JsonNode objNode: node) {
+      
       String start = objNode.get("start").asText();
       String target = objNode.get("target").asText();
-      String mulstart = objNode.get("mulstart").asText();
-      String multarget = objNode.get("multarget").asText();
+      
+      Multiplicity mulstart = Multiplicity.getByRepresentant(objNode.get("mulstart").asText().charAt(0));
+      Multiplicity multarget = Multiplicity.getByRepresentant(objNode.get("multarget").asText().charAt(0));
       
       connections.add(new UmlConnection(type, start, target, mulstart, multarget));
       Logger.debug("connection " + type + " start: " + start + " target: " + target + " mulstart: " + mulstart

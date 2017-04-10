@@ -1,0 +1,89 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"type": "object",
+	"properties": {
+		"classes": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"methods": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
+					"attributes": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					}
+				}
+			},
+			"required": [
+				"name",
+				"methods",
+				"attributes"
+			]
+		},
+		"otherMethods": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		},
+		"otherAttributes": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		},
+		"connections": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"type": {
+						"enum": [
+							"AGGREGATION",
+							"ASSOCIATION",
+							"COMPOSITION",
+							"GENERALIZATION",
+							"IMPLEMENTATION",
+							"STANDARD"
+						]
+					},
+					"start": {
+						"type": "string"
+					},
+					"target": {
+						"type": "string"
+					},
+					"mulstart": {
+						"type": "string"
+					},
+					"multarget": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"type",
+					"start",
+					"target",
+					"mulstart",
+					"multarget"
+				]
+			}
+		}
+	},
+	"required": [
+		"classes",
+		"otherMethods",
+		"otherAttributes",
+		"connections"
+	]
+}

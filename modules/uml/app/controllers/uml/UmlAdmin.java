@@ -26,6 +26,10 @@ public class UmlAdmin extends AbstractAdminController<UmlExercise, UmlExerciseRe
     super(theUtil, theFactory, "uml", new UmlExerciseReader());
   }
   
+  public Result index() {
+    return ok(views.html.umlAdmin.umlAdmin.render(getUser()));
+  }
+  
   @Override
   public Result readStandardExercises() {
     AbstractReadingResult abstractResult = exerciseReader.readStandardExercises();
@@ -38,6 +42,15 @@ public class UmlAdmin extends AbstractAdminController<UmlExercise, UmlExerciseRe
 
     saveExercises(result.getRead());
     return ok(views.html.preview.render(getUser(), views.html.umlcreation.render(result.getRead())));
+  }
+  
+  @Override
+  protected void saveExercises(List<UmlExercise> exercises) {
+    for(UmlExercise ex: exercises) {
+      // FIXME: Aufgabendateien!
+      ex.save();
+      // exerciseReader.checkOrCreateSampleFile(util, ex);
+    }
   }
   
   @Override
@@ -69,15 +82,6 @@ public class UmlAdmin extends AbstractAdminController<UmlExercise, UmlExerciseRe
   public Result uploadForm() {
     return ok("TODO!");
     // return ok(views.html.umlupload.render(getUser()));
-  }
-  
-  @Override
-  protected void saveExercises(List<UmlExercise> exercises) {
-    for(UmlExercise ex: exercises) {
-      // FIXME: Aufgabendateien!
-      ex.save();
-      // exerciseReader.checkOrCreateSampleFile(util, ex);
-    }
   }
   
 }

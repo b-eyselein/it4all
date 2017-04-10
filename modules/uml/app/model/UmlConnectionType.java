@@ -1,0 +1,7 @@
+package model;
+
+public enum UmlConnectionType {
+
+  AGGREGATION, ASSOCIATION, COMPOSITION, GENERALIZATION, IMPLEMENTATION, STANDARD;
+
+}

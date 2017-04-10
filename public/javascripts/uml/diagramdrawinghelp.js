@@ -1,10 +1,18 @@
+const
+stdClassSize = 140;
+const
+colorWhite = '#ffffff';
+
 var divWidth = document.getElementById("sizepaper").parentNode.offsetWidth;
 var divTextWidth = document.getElementById("text").parentNode.offsetWidth;
 var divHeight = document.getElementById("sizepaper").parentNode.offsetHeight;
-var idList = new Array(); // Linkverbindungen
+
+var idList = []; // Linkverbindungen
+
+
 var graph = new joint.dia.Graph();
-var uml = joint.shapes.uml;
-var erd = joint.shapes.erd;
+
+var sel;
 
 var paper = new joint.dia.Paper({
   el: document.getElementById('paper'),
@@ -13,217 +21,120 @@ var paper = new joint.dia.Paper({
   gridSize: 1,
   model: graph
 });
+paper.on('cell:pointerclick', cellOnPointerClick);
 
-paper.on('cell:pointerclick',
-  function(cellView, evt, x, y) {
-    if (idList.length < 2) {
-      idList.push(cellView.model.id);
-    }
-    if (idList.length == 2) {
-      // console.log("0: "+idList[0]+" 1:
-      // "+idList[1]);
-      if (idList[0] != idList[1]) {
-        link();
-      } else {
-        // console.log("gleich");
-        idList = [];
-      }
-    }
+function cellOnPointerClick(cellView, evt, x, y) {
+  if(idList.length < 2) {
+    idList.push(cellView.model.id);
+    return;
   }
-);
-
-var sel;
+  if(idList[0] == idList[1]) {
+    console.error("You selected the same cell twice!");
+    idList = [];
+    return;
+  }
+  link();
+}
 
 function selectButton(elem) {
-  for (var i = 1; i < 6; i++) {
+  for(var i = 1; i < 6; i++) {
     document.getElementById(i).value = "off";
   }
   document.getElementById(elem.id).value = "on";
   sel = elem.id;
 }
 
-function link() {
-  if (document.getElementById(sel).value == "on") {
-    var source_name = graph.getCell(idList[0]).attr('.uml-class-name-text/text');
-    var destin_name = graph.getCell(idList[1]).attr('.uml-class-name-text/text');
-    var source_mult = window.prompt("Bitte geben Sie die Multiplizität von " + source_name + " nach " + destin_name +
-      " an.");
-    if(source_mult==null){
-    	source_mult="";
-    }
-    var destin_mult = window.prompt("Bitte geben Sie die Multiplizität von " + destin_name + " nach " + source_name +
-      " an.");
-    if(destin_mult==null){
-    	destin_mult="";
-    }
-    switch (sel) {
-      case '1':
-        graph.addCell(new uml.Composition({
-          source: {
-            id: idList[0]
-          },
-          target: {
-            id: idList[1]
-          },
-          labels: [{
-              position: 25,
-              attrs: {
-                text: {
-                  text: source_mult
-                }
-              }
-            },
-            {
-              position: -25,
-              attrs: {
-                text: {
-                  text: destin_mult
-                }
-              }
-            }
-          ]
-        }));
-        idList = [];
-        break;
-      case '2':
-        graph.addCell(new uml.Aggregation({
-          source: {
-            id: idList[0]
-          },
-          target: {
-            id: idList[1]
-          },
-          labels: [{
-              position: 25,
-              attrs: {
-                text: {
-                  text: source_mult
-                }
-              }
-            },
-            {
-              position: -25,
-              attrs: {
-                text: {
-                  text: destin_mult
-                }
-              }
-            }
-          ]
-        }));
-        idList = [];
-        break;
-      case '3':
-        graph.addCell(new uml.Implementation({
-          source: {
-            id: idList[0]
-          },
-          target: {
-            id: idList[1]
-          },
-          labels: [{
-              position: 25,
-              attrs: {
-                text: {
-                  text: source_mult
-                }
-              }
-            },
-            {
-              position: -25,
-              attrs: {
-                text: {
-                  text: destin_mult
-                }
-              }
-            }
-          ]
-        }));
-        idList = [];
-        break;
-      case '4':
-        graph.addCell(new uml.Generalization({
-          source: {
-            id: idList[0]
-          },
-          target: {
-            id: idList[1]
-          },
-          labels: [{
-              position: 25,
-              attrs: {
-                text: {
-                  text: source_mult
-                }
-              }
-            },
-            {
-              position: -25,
-              attrs: {
-                text: {
-                  text: destin_mult
-                }
-              }
-            }
-          ]
-        }));
-        idList = [];
-        break;
-
-      case '5':
-        graph.addCell(new joint.dia.Link({
-          source: {
-            id: idList[0]
-          },
-          target: {
-            id: idList[1]
-          },
-          labels: [{
-              position: 25,
-              attrs: {
-                text: {
-                  text: source_mult
-                }
-              }
-            },
-            {
-              position: -25,
-              attrs: {
-                text: {
-                  text: destin_mult
-                }
-              }
-            }
-          ]
-        }));
-        idList = [];
-        break;
-      default:
-        idList = [];
-        break;
-    }
-  }
+function askMulitplicity(source, dest) {
+  var multiplicity = window.prompt("Bitte geben Sie die Multiplizität von " + source + " nach " + dest + " an.");
+  
+  if(multiplicity)
+    return multiplicity;
+  
+  return "";
 }
 
-function addClass(name, posx, posy, theAttributes, theMethods) {
-  flugzeug: var flug = new uml.Class({
+function link() {
+  if(document.getElementById(sel).value == "off") {
+    return;
+  }
+  
+  var sourceId = idList[0];
+  var targetId = idList[1];
+  idList = [];
+  
+  var source_name = graph.getCell(sourceId).attr('.uml-class-name-text/text');
+  var destin_name = graph.getCell(targetId).attr('.uml-class-name-text/text');
+  
+  var source_mult = askMulitplicity(source_name, destin_name);
+  var destin_mult = askMulitplicity(destin_name, source_name);
+  
+  var members = {
+    source: {
+      id: sourceId
+    },
+    target: {
+      id: targetId
+    },
+    labels: [{
+      position: 25,
+      attrs: {
+        text: {
+          text: source_mult
+        }
+      }
+    }, {
+      position: -25,
+      attrs: {
+        text: {
+          text: destin_mult
+        }
+      }
+    }]
+  };
+  
+  var cellToAdd;
+  switch (sel){
+  case '1':
+    cellToAdd = new joint.shapes.uml.Composition(members);
+    break;
+  case '2':
+    cellToAdd = new joint.shapes.uml.Aggregation(members);
+    break;
+  case '3':
+    cellToAdd = new joint.shapes.uml.Implementation(members);
+    break;
+  case '4':
+    cellToAdd = new joint.shapes.uml.Generalization(members);
+    break;
+  case '5':
+    cellToAdd = new joint.dia.Link(members);
+    break;
+  default:
+    return;
+  }
+  
+  graph.addCell(cellToAdd);
+}
+
+function addClass(clazz) {
+  graph.addCell(new joint.shapes.uml.Class({
+    name: clazz.name,
+    attributes: clazz.attributes,
+    method: clazz.methods,
     position: {
-      x: posx,
-      y: posy
+      x: clazz.posX,
+      y: clazz.posY
     },
     size: {
-      width: 140,
-      height: 140
+      width: stdClassSize,
+      height: stdClassSize
     },
-    name: name,
-    attributes: theAttributes,
-    methods: theMethods,
     attrs: {
       '.uml-class-name-rect': {
-        fill: '#ffffff',
+        fill: colorWhite,
       },
       '.uml-class-attrs-rect, .uml-class-methods-rect': {
-        fill: '#ffffff',
+        fill: colorWhite,
       },
       '.uml-class-attrs-text': {
         ref: '.uml-class-attrs-rect',
@@ -236,58 +147,5 @@ function addClass(name, posx, posy, theAttributes, theMethods) {
         'y-alignment': 'bottom'
       }
     }
-  });
-  graph.addCell(flug);
-}
-
-
-console.log(  "width: "+ 0.7 * window.screen.availWidth);
-console.log("height: "+0.7 * window.screen.availHeight);
-
-var x = 485;
-var y = 10;
-
-// Namen aller Klassen
-function getClasses() {
-  var classes = [];
-  for (i = 0; i < graph.getCells().length; i++) {
-    if (graph.getCells()[i]._previousAttributes.name != undefined) {
-      classes.push(graph.getCells()[i]._previousAttributes.name);
-    }
-  }
-  return classes;
-  // console.log("getClasses: "+ classes);
-}
-
-// Alle ids aller Zellen
-function getIds() {
-  var ids = [];
-  for (i = 0; i < graph.getCells().length; i++) {
-    ids.push(graph.getCells()[i].id);
-  }
-  return ids;
-}
-
-function getAttributes(id) {
-  var text = "";
-  if (graph.getCell(id).attributes.name != undefined) {
-    var text = graph.getCell(id).attributes.name;
-    for (i = 0; i < graph.getCell(id).attributes.attributes.length; i++) {
-      if (graph.getCells()[i]._previousAttributes.name != undefined) {
-        text += "_" + graph.getCell(id).attributes.attributes[i];
-      }
-    }
-    // console.log("getAttributes: "+text);
-  }
-  return text;
-}
-
-function getMethodes(id) {
-  var text = graph.getCell(id).attributes.name;
-  for (i = 0; i < graph.getCell(id).attributes.methods.length; i++) {
-    if (graph.getCells()[i]._previousAttributes.name != undefined) {
-      text += "_" + graph.getCell(id).attributes.methods[i];
-    }
-  }
-  return text;
+  }));
 }

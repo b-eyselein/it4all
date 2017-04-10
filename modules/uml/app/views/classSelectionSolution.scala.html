@@ -1,9 +1,9 @@
-@(user: model.user.User, ue: model.result.UmlClassselection)
+@(user: model.user.User, result: model.result.ClassSelectionResult)
 
 @main("UML", user) {
 <div class="container">
   <div class="page-header">
-    <h1 class="text-center">Zwischenkorrektur der Aufgabe &quot;@ue.getTitle()&quot;</h1>
+    <h1>Zwischenkorrektur der Aufgabe &quot;@result.getExercise().title&quot;</h1>
   </div>
 
   <div class="panel panel-default">
@@ -11,15 +11,15 @@
     <div class="panel-body">
       <div class="col-xs-4">
         <h4 class="bg-success text-center">Korrekt</h4>
-        @Html(ue.getCorrectClasses())
+        @Html(result.getCorrectClasses())
       </div>
       <div class="col-xs-4">
         <h4 class="bg-danger text-center">Falsch</h4>
-        @Html(ue.getWrongClasses())
+        @Html(result.getWrongClasses())
       </div>
       <div class="col-xs-4">
         <h4 class="bg-warning text-center">Fehlend</h4>
-        @Html(ue.getMissingClasses())
+        @Html(result.getMissingClasses())
       </div>
     </div>
   </div>
@@ -29,15 +29,15 @@
     <div class="panel-body">
       <div class="col-xs-4">
         <h4 class="bg-success text-center">Korrekt</h4>
-        @Html(ue.getCorrectMethods())
+        @Html(result.getCorrectMethods())
       </div>
       <div class="col-xs-4">
         <h4 class="bg-danger text-center">Falsch</h4>
-        @Html(ue.getWrongMethods())
+        @Html(result.getWrongMethods())
       </div>
       <div class="col-xs-4">
         <h4 class="bg-warning text-center">Fehlend</h4>
-        @Html(ue.getMissingMethods())
+        @Html(result.getMissingMethods())
       </div>
     </div>
   </div>
@@ -47,19 +47,19 @@
     <div class="panel-body">
       <div class="col-xs-4">
         <h4 class="bg-success text-center">Korrekt</h4>
-        @Html(ue.getCorrectAttributes())
+        @Html(result.getCorrectAttributes())
       </div>
       <div class="col-xs-4">
         <h4 class="bg-danger text-center">Falsch</h4>
-        @Html(ue.getWrongAttributes())
+        @Html(result.getWrongAttributes())
       </div>
       <div class="col-xs-4">
         <h4 class="bg-warning text-center">Fehlend</h4>
-        @Html(ue.getMissingAttributes())
+        @Html(result.getMissingAttributes())
       </div>
     </div>
   </div>
 
-  <a href="@controllers.uml.routes.UML.diagramDrawingWithHelp(ue.getExercise().id)" class="btn btn-primary btn-block">N&auml;chster Aufgabenteil</a>
+  <a href="@controllers.uml.routes.UML.diagramDrawingWithHelp(result.getExercise().id)" class="btn btn-primary btn-block">N&auml;chster Aufgabenteil</a>
 </div>
 }

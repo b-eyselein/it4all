@@ -1,158 +1,158 @@
 {
 	"classes": [
 		{
-			"name": "Person", 
+			"name": "Person",
 			"methods": [
 				
-			], 
+			],
 			"attributes": [
 				"id:String",
 				"name:String"
 			]
-		}, 
+		},
 		{
-			"name": "Doktor", 
+			"name": "Doktor",
 			"methods": [
 				"verschreiben(Patient):void"
-			], 
+			],
 			"attributes": [
 				
 			]
-		}, 
+		},
 		{
-			"name": "Patient", 
+			"name": "Patient",
 			"methods": [
 				"entlassen(Station):void",
 				"aufnehmen(Station):void"
-			], 
+			],
 			"attributes": [
 				
 			]
-		}, 
+		},
 		{
-			"name": "Rezept", 
+			"name": "Rezept",
 			"methods": [
 				
-			], 
+			],
 			"attributes": [
 				"id:String"
 			]
-		}, 
+		},
 		{
-			"name": "Krankenschwester", 
+			"name": "Krankenschwester",
 			"methods": [
 				
-			], 
+			],
 			"attributes": [
 				
 			]
-		}, 
+		},
 		{
-			"name": "Station", 
+			"name": "Station",
 			"methods": [
 				
-			], 
+			],
 			"attributes": [
 				"nummer:int"
 			]
-		}, 
+		},
 		{
-			"name": "Medikament", 
+			"name": "Medikament",
 			"methods": [
 				
-			], 
+			],
 			"attributes": [
 				"id:String",
 				"name:String"
 			]
-		}, 
+		},
 		{
-			"name": "Krankenhaus", 
+			"name": "Krankenhaus",
 			"methods": [
 				
-			], 
+			],
 			"attributes": [
-			
+				
 			]
 		}
-	], 
+	],
 	"connections": {
 		"standard": [
 			{
-				"start": "Doktor", 
-				"target": "Rezept", 
-				"mulstart": "1", 
-				"multarget": "*"
-			}, 
-			{
-				"start": "Doktor", 
-				"target": "Patient", 
-				"mulstart": "1", 
-				"multarget": "*"
-			}, 
-			{
-				"start": "Station", 
-				"target": "Patient", 
-				"mulstart": "1", 
-				"multarget": "*"
-			}, 
-			{
-				"start": "Station", 
-				"target": "Krankenschwester", 
-				"mulstart": "1", 
-				"multarget": "*"
-			}, 
-			{
-				"start": "Station", 
-				"target": "Doktorant", 
-				"mulstart": "1", 
+				"start": "Doktor",
+				"target": "Rezept",
+				"mulstart": "1",
 				"multarget": "*"
 			},
 			{
-				"start": "Patient", 
-				"target": "Rezept", 
-				"mulstart": "1", 
+				"start": "Doktor",
+				"target": "Patient",
+				"mulstart": "1",
 				"multarget": "*"
 			},
 			{
-				"start": "Rezept", 
-				"target": "Medikament", 
-				"mulstart": "1", 
+				"start": "Station",
+				"target": "Patient",
+				"mulstart": "1",
 				"multarget": "*"
 			},
 			{
-				"start": "Krankenhaus", 
-				"target": "Station", 
-				"mulstart": "1", 
+				"start": "Station",
+				"target": "Krankenschwester",
+				"mulstart": "1",
 				"multarget": "*"
-			}			
-		], 
+			},
+			{
+				"start": "Station",
+				"target": "Doktorant",
+				"mulstart": "1",
+				"multarget": "*"
+			},
+			{
+				"start": "Patient",
+				"target": "Rezept",
+				"mulstart": "1",
+				"multarget": "*"
+			},
+			{
+				"start": "Rezept",
+				"target": "Medikament",
+				"mulstart": "1",
+				"multarget": "*"
+			},
+			{
+				"start": "Krankenhaus",
+				"target": "Station",
+				"mulstart": "1",
+				"multarget": "*"
+			}
+		],
 		"aggregation": [
 			
-		], 
+		],
 		"composition": [
-
-		], 
+			
+		],
 		"implementation": [
 			
-		], 
+		],
 		"generalization": [
 			{
-				"start": "Patient", 
-				"target": "Person", 
-				"mulstart": "", 
+				"start": "Patient",
+				"target": "Person",
+				"mulstart": "",
 				"multarget": ""
-			}, 
+			},
 			{
-				"start": "Doktor", 
-				"target": "Person", 
-				"mulstart": "", 
+				"start": "Doktor",
+				"target": "Person",
+				"mulstart": "",
 				"multarget": ""
-			}, 
+			},
 			{
-				"start": "Krankenschwester", 
-				"target": "Person", 
-				"mulstart": "", 
+				"start": "Krankenschwester",
+				"target": "Person",
+				"mulstart": "",
 				"multarget": ""
 			}
 		]

@@ -1,3 +1,8 @@
+const
+stdClassSize = 140;
+const
+colorWhite = '#ffffff';
+
 var divWidth = document.getElementById("sizepaper").clientWidth;
 var divTextWidth = document.getElementById("text").parentNode.offsetWidth;
 var divHeight = document.getElementById("sizepaper").parentNode.offsetHeight;
@@ -5,24 +10,22 @@ var divHeight = document.getElementById("sizepaper").parentNode.offsetHeight;
 var idList = []; // Linkverbindungen
 
 var graph = new joint.dia.Graph();
-var uml = joint.shapes.uml;
-var erd = joint.shapes.erd;
 var sel;
 
 // Festlegen der maximalen Anzahl von Methoden bzw. Attributen
 var max_entries_class = 3;
 
 var paper = new joint.dia.Paper({
-  el: $('#paper'),
+  el: document.getElementById('paper'),
   width: 0.625 * window.screen.availWidth,
   height: 0.7 * window.screen.availHeight,
   gridSize: 1,
   model: graph
 });
 
-paper.on('cell:pointerclick', paperCellOnClick);
+paper.on('cell:pointerclick', cellOnPointerClick());
 
-function paperCellOnClick(cellView, evt, x, y) {
+function cellOnPointerClick()(cellView, evt, x, y) {
   var cellInGraph = graph.getCell(cellView.model.id);
   
   if(document.getElementById(5).value == "on") {
@@ -163,7 +166,7 @@ function link() {
   
   switch (sel) {
   case '1':
-      graph.addCell(new uml.Composition({
+      graph.addCell(new joint.shapes.uml.Composition({
         source: {
           id: idList[0]
         },
@@ -192,7 +195,7 @@ function link() {
       break;
       
     case '2':
-      graph.addCell(new uml.Aggregation({
+      graph.addCell(new joint.shapes.uml.Aggregation({
         source: {
           id: idList[0]
         },
@@ -221,7 +224,7 @@ function link() {
       break;
       
     case '3':
-      graph.addCell(new uml.Implementation({
+      graph.addCell(new joint.shapes.uml.Implementation({
         source: {
           id: idList[0]
         },
@@ -250,7 +253,7 @@ function link() {
       break;
       
     case '4':
-      graph.addCell(new uml.Generalization({
+      graph.addCell(new joint.shapes.uml.Generalization({
         source: {
           id: idList[0]
         },
@@ -349,24 +352,24 @@ function addClass(className) {
 		return;
 	}
 	
-	var newClass = new uml.Class({
+	var newClass = new joint.shapes.uml.Class({
 		position: {
 			x: Math.random() * 250,
 			y: Math.random() * 250
 		},
 		size: {
-			width: 140,
-			height: 140
+			width: stdClassSize,
+			height: stdClassSize
 		},
 		name: className,
 		attributes: ["", ""],
 		methods: ["", ""],
 		attrs: {
 			'.uml-class-name-rect': {
-				fill: '#ffffff',
+				fill: colorWhite,
 			},
      	'.uml-class-attrs-rect, .uml-class-methods-rect': {
-     		fill: '#ffffff',
+     		fill: colorWhite,
      	},
      	'.uml-class-attrs-text': {
      		ref: '.uml-class-attrs-rect',
@@ -406,12 +409,12 @@ function getIds() {
 }
 
 function getAttributes(id) {
-  var text = "";
-  if (graph.getCell(id).attributes.name != undefined) {
-    var text = graph.getCell(id).attributes.name;
-    for (i = 0; i < graph.getCell(id).attributes.attributes.length; i++) {
+  var cell = graph.getCell(id);
+  if (cell.attributes.name != undefined) {
+    var text = cell.attributes.name;
+    for (i = 0; i < cell.attributes.attributes.length; i++) {
       if (graph.getCells()[i]._previousAttributes.name != undefined) {
-        text += "_" + graph.getCell(id).attributes.attributes[i];
+        text += "_" + cell.attributes.attributes[i];
       }
     }
     // console.log("getAttributes: "+text);

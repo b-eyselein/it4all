@@ -5,7 +5,12 @@
   <div class="page-header">
     <h1 class="page-title">&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h1>
   </div>
-  <div class="alert alert-info">Neueinsteiger sollten die Variante mit Zwischenkorrektur verwenden, die die einzelnen Schritte der Erstellung eines Klassendiagrammes nach und nach durcharbeitet.</div>
+  
+  <div class="alert alert-info alert-dismissable">
+    <a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    Neueinsteiger sollten die Variante mit Zwischenkorrektur verwenden, die die einzelnen Schritte der Erstellung eines Klassendiagrammes nach und nach durcharbeitet.
+  </div>
+  
   @for(exercise <- exercises) {
   <div class="panel panel-default">
     <div class="panel-heading">Aufgabe @exercise.id: @exercise.title</div>

@@ -1,6 +1,7 @@
-@(user: model.user.User, exercise: model.UmlExercise, classes: List[String])
+@(user: model.user.User, exercise: model.UmlExercise)
 
-@sqrt = @{Math.sqrt(classes.size())}
+@classes = @{exercise.getSolution().getClasses()}
+@sqrt = @{Math.round(Math.sqrt(classes.size()))}
 
 @main("UML-Test", user) {
 <script src="@controllers.routes.Assets.versioned("javascripts/uml/lodash.js")"></script>
@@ -14,18 +15,34 @@
 <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/umlextra.css")">
 
 <script>
+
+var defaultClasses = [
+@for(i <- 0 until classes.size()) {{
+		name: "@classes.get(i)",
+		attributes: [],
+		methods: [],
+		posX: @{(i / sqrt) * 300 + 50},
+		posY: @{(i % sqrt) * 200 + 50}
+},}
+]
+
 $(document).ready(function() {
-@for(i <- 0 until classes.size()) {
-addClass("@classes.get(i)", @{(i / sqrt) * 200 + 50}, @{(i % sqrt) * 200 + 50}, [], []); 
-}
+  for(clazz of defaultClasses) {
+    addClass(clazz);
+  }
 });
 </script>
 
 <div class="container-fluid">
+  <div class="page-header">
+    <h1>Modellierung der Beziehungen</h1>
+  </div>
+
   <div class="row">
     <div class="col-md-4">
       <!-- Bearbeitungshinweise -->
-      <div class="alert alert-info">
+      <div class="alert alert-info alert-dismissable">
+        <a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>
         <p>Vervollst&auml;ndigen Sie das vorliegende UML-Klassendiagramm, indem Sie die Beziehungen zwischen den Klassen modellieren.</p>
         <ul>
           <li>W&auml;hlen Sie zuerst die Art der Beziehung durch das Aktivieren des jeweiligen Buttons aus.</li>
@@ -36,13 +53,21 @@ addClass("@classes.get(i)", @{(i / sqrt) * 200 + 50}, @{(i % sqrt) * 200 + 50}, 
         </ul>
       </div>
       
-      <!-- Aufgabentext -->
+      <!-- Aufgabentext und -Abgabe -->
       <div class="panel panel-default" id="text">
         <div class="panel-heading">Aufgabentext</div>
         <div class="panel-body">@Html(exercise.getExTextForDiagDrawHelp())</div>
+        <div class="panel-footer">
+          <form action="@controllers.uml.routes.UML.correctDiagramDrawingWithHelp(exercise.id)" method="post"
+           onsubmit="return prepareFormForSubmitting();">
+            <button type="submit" class="btn btn-primary btn-block">Aufgabe verifizieren</button>
+            <input type="hidden" value="" class="form-control" name="learnerSolution" id="learnerSolution" required>
+          </form> 
+        </div>
       </div>
-      
-      <!-- Buttons -->
+    </div>
+    
+    <div class="col-md-8">
       <div class="btn-group btn-group-justified">
         <div class="btn-group">
           <button type="button" class="btn btn-default" value="off" id="5" onclick="selectButton(this);">Standard</button>
@@ -60,18 +85,9 @@ addClass("@classes.get(i)", @{(i / sqrt) * 200 + 50}, @{(i % sqrt) * 200 + 50}, 
           <button type="button" class="btn btn-default" value="off" id="4" onclick="selectButton(this);">Generalization</button>
         </div>
       </div>
-      
-      <!-- Aufgabe abgeben -->
-      <hr>
-      
-      <form action="@controllers.uml.routes.UML.correctDiagramDrawingWithHelp(exercise.id)" method="post" enctype="multipart/form-data" onsubmit="prepareFormForSubmitting();">
-        <button type="submit" class="btn btn-primary btn-block">Aufgabe verifizieren</button>
-        <input type="hidden" value="" class="form-control" name="learnerSolution" id="learnerSolution" required>
-      </form> 
-    </div>
-    <div class="col-md-8">
+    
       <div id="sizepaper">
-        <div ondrop="drop(event)" ondragover="allowDrop(event)" id="paper"/>
+        <div ondrop="drop(event)" ondragover="allowDrop(event)" id="paper"></div>
       </div>
     </div>
   </div>

@@ -4,21 +4,25 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import com.fasterxml.jackson.databind.JsonNode;
-import model.UmlExercise;
+
 import play.libs.Json;
 
 public class UmlSolution {
-	
-	private List<String> classes;
-	private List<String> methods;
-	private List<String> attributes;
-	private static final Path BASE_PATH = Paths.get("modules", "uml", "conf", "resources");
-	private static final Path MUSTER_SOLUTION = Paths.get(BASE_PATH.toString(), "mustersolution_classSel.json");
-	
-public UmlSolution(){
+
+  private static final Path BASE_PATH = Paths.get("modules", "uml", "conf", "resources");
+  private static final Path MUSTER_SOLUTION = Paths.get(BASE_PATH.toString(), "mustersolution_classSel.json");
+
+  private List<UmlClass> classes;
+
+  private List<String> otherMethods;
+  private List<String> otherAttributes;
+
+  public UmlSolution() {
     String musterSolution = "";
     try {
       musterSolution = String.join("\n", Files.readAllLines(MUSTER_SOLUTION));
@@ -26,46 +30,38 @@ public UmlSolution(){
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    JsonNode solutionJSON = Json.parse(musterSolution);
-    List<String> classes = parseJSONArray(solutionJSON.get("classes"));
-    List<String> methods = parseJSONArray(solutionJSON.get("methods"));
-    List<String> attributes = parseJSONArray(solutionJSON.get("attributes"));
-    this.classes=classes;
-    this.methods=methods;
-    this.attributes=attributes;
-}
 
-//doppelt...
-protected static List<String> parseJSONArray(JsonNode jsonArrayNode) {
-    List<String> ret = new LinkedList<>();
-    for(JsonNode jsonNode: jsonArrayNode)
-      ret.add(jsonNode.asText());
-    return ret;
+    JsonNode solutionJSON = Json.parse(musterSolution);
+
+    classes = JsonWrapper.parseJsonArrayNode(solutionJSON.get("classes")).stream()
+        .map(name -> new UmlClass(name, Collections.emptyList(), Collections.emptyList())).collect(Collectors.toList());
+
+    otherMethods = JsonWrapper.parseJsonArrayNode(solutionJSON.get("methods"));
+    otherAttributes = JsonWrapper.parseJsonArrayNode(solutionJSON.get("attributes"));
   }
 
-public List<String> getClasses(){
-	return this.classes;
-}
+  public List<String> getAttributes() {
+    return otherAttributes;
+  }
 
-public List<String> getMethods(){
-	return this.methods;
-}
+  public List<UmlClass> getClasses() {
+    return classes;
+  }
 
-public List<String> getAttributes(){
-	return this.attributes;
-}
-	
-public String getEntryClasses(int index){
-	return this.classes.get(index);
-}
-public String getEntryMethods(int index){
-	return this.methods.get(index);
-}
-public String getEntryAttributes(int index){
-	return this.attributes.get(index);
-}
+  public String getEntryAttributes(int index) {
+    return otherAttributes.get(index);
+  }
 
+  public UmlClass getEntryClasses(int index) {
+    return classes.get(index);
+  }
 
+  public String getEntryMethods(int index) {
+    return otherMethods.get(index);
+  }
 
+  public List<String> getMethods() {
+    return otherMethods;
+  }
 
 }

@@ -1,35 +1,31 @@
 package model;
 
 public class UmlConnection {
-
-  public enum UmlConnectionType {
-    
-    AGGREGATION, ASSOCIATION, COMPOSITION, GENERALIZATION, IMPLEMENTATION, STANDARD;
-  
-  }
   
   private UmlConnectionType type;
+
   private String start;
   private String target;
-  private String mulstart;
 
-  private String multarget;
-  
-  public UmlConnection(UmlConnectionType connType, String connStart, String connTarget, String connMulstart,
-      String connMultarget) {
-    type = connType;
-    
-    start = connStart;
-    target = connTarget;
-    mulstart = connMulstart;
-    multarget = connMultarget;
+  private Multiplicity mulstart;
+  private Multiplicity multarget;
+
+  public UmlConnection(UmlConnectionType theType, String theStart, String theTarget, Multiplicity theMulStart,
+      Multiplicity theMulTarget) {
+    type = theType;
+
+    start = theStart;
+    target = theTarget;
+
+    mulstart = theMulStart;
+    multarget = theMulTarget;
   }
 
-  public String getMulstart() {
+  public Multiplicity getMulstart() {
     return mulstart;
   }
 
-  public String getMultarget() {
+  public Multiplicity getMultarget() {
     return multarget;
   }
 

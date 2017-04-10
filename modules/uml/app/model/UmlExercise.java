@@ -8,7 +8,8 @@ import model.exercise.Exercise;
 @Entity
 public class UmlExercise extends Exercise {
 
-  public static final Finder<Integer, UmlExercise> finder = new Finder<>(UmlExercise.class);
+  public static final com.avaje.ebean.Model.Finder<Integer, UmlExercise> finder = new com.avaje.ebean.Model.Finder<>(
+      UmlExercise.class);
 
   @Column(columnDefinition = "text")
   public String classSelText;
@@ -33,6 +34,11 @@ public class UmlExercise extends Exercise {
 
   public String getExTextForDiagDrawHelp() {
     return diagDrawHelpText;
+  }
+
+  public UmlSolution getSolution() {
+    // FIXME: member of class!
+    return new UmlSolution();
   }
 
 }
