@@ -18,9 +18,11 @@ import model.correctionresult.ComparisonTwoListsOfStrings;
 import model.correctionresult.SqlExecutionResult;
 import model.correctionresult.SqlResult;
 import model.correctionresult.SqlResultBuilder;
-import model.correctionresult.WhereComparison;
 import model.exercise.FeedbackLevel;
 import model.exercise.SqlExercise;
+import model.matcher.BinaryExpressionMatch;
+import model.matching.MatchingResult;
+import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.Statement;
 import play.Logger;
@@ -40,6 +42,40 @@ public abstract class QueryCorrector<Q extends Statement, C> {
     List<T> ret = new LinkedList<>(a);
     ret.removeAll(b);
     return ret;
+  }
+
+  protected abstract ComparisonTwoListsOfStrings compareColumns(C userQuery, C sampleQuery);
+
+  protected abstract ComparisonTwoListsOfStrings compareGroupByElements(C userQuery, C sampleQuery);
+
+  protected abstract ComparisonTwoListsOfStrings compareOrderByElements(C userQuery, C sampleQuery);
+
+  protected ComparisonTwoListsOfStrings compareTables(C userQuery, C sampleQuery) {
+    List<String> userTableNames = getTables(userQuery);
+    List<String> sampleTableNames = getTables(sampleQuery);
+
+    List<String> wrongTables = listDifference(userTableNames, sampleTableNames);
+    List<String> missingTables = listDifference(sampleTableNames, userTableNames);
+
+    return new ComparisonTwoListsOfStrings("Tabellen", missingTables, wrongTables);
+  }
+
+  protected MatchingResult<BinaryExpression, BinaryExpressionMatch> compareWheres(C userQuery, C sampleQuery) {
+    Expression userWhere = getWhere(userQuery);
+    Expression sampleWhere = getWhere(sampleQuery);
+
+    if(userWhere == null && sampleWhere == null)
+      return null;
+    else if(userWhere == null)
+      // return new EvaluationFailed("In der Musterlösung sind Bedingungen!");
+      return null;
+    else if(sampleWhere == null)
+      // return new EvaluationFailed("In der Musterlösung waren keine
+      // Bedingungen angegeben!");
+      return null;
+
+    WhereCorrector whereCorrector = new WhereCorrector();
+    return whereCorrector.correct(userWhere, sampleWhere);
   }
 
   public SqlResult correct(Database database, String userStatement, String sampleStatement, SqlExercise exercise,
@@ -65,7 +101,7 @@ public abstract class QueryCorrector<Q extends Statement, C> {
 
     ComparisonTwoListsOfStrings groupByComparison = compareGroupByElements(plainUserQuery, plainSampleQuery);
 
-    WhereComparison whereComp = compareWheres(plainUserQuery, plainSampleQuery);
+    MatchingResult<BinaryExpression, BinaryExpressionMatch> whereComp = compareWheres(plainUserQuery, plainSampleQuery);
 
     SqlExecutionResult executionResult = executeQuery(database, parsedUserStatement, parsedSampleStatement, exercise,
         fbLevel);
@@ -88,40 +124,6 @@ public abstract class QueryCorrector<Q extends Statement, C> {
     createStatement.executeQuery();
     connection.setCatalog(databaseName);
     createStatement.close();
-  }
-
-  protected abstract ComparisonTwoListsOfStrings compareColumns(C userQuery, C sampleQuery);
-
-  protected abstract ComparisonTwoListsOfStrings compareGroupByElements(C userQuery, C sampleQuery);
-
-  protected abstract ComparisonTwoListsOfStrings compareOrderByElements(C userQuery, C sampleQuery);
-
-  protected ComparisonTwoListsOfStrings compareTables(C userQuery, C sampleQuery) {
-    List<String> userTableNames = getTables(userQuery);
-    List<String> sampleTableNames = getTables(sampleQuery);
-
-    List<String> wrongTables = listDifference(userTableNames, sampleTableNames);
-    List<String> missingTables = listDifference(sampleTableNames, userTableNames);
-
-    return new ComparisonTwoListsOfStrings("Tabellen", missingTables, wrongTables);
-  }
-
-  protected WhereComparison compareWheres(C userQuery, C sampleQuery) {
-    Expression userWhere = getWhere(userQuery);
-    Expression sampleWhere = getWhere(sampleQuery);
-
-    if(userWhere == null && sampleWhere == null)
-      return null;
-    else if(userWhere == null)
-      // return new EvaluationFailed("In der Musterlösung sind Bedingungen!");
-      return null;
-    else if(sampleWhere == null)
-      // return new EvaluationFailed("In der Musterlösung waren keine
-      // Bedingungen angegeben!");
-      return null;
-
-    WhereCorrector whereCorrector = new WhereCorrector();
-    return whereCorrector.correct(userWhere, sampleWhere);
   }
 
   protected void createDatabaseIfNotExists(Connection connection, String databaseName, Path scriptFile) {

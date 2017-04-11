@@ -7,20 +7,23 @@ import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
-public abstract class Matcher<T, U extends Match<T>, R extends MatchingResult<T, U>> {
+public abstract class Matcher<T, M extends Match<T>> {
 
   private BiPredicate<T, T> equalsTest;
-  private BiFunction<T, T, U> matchedAction;
+  private BiFunction<T, T, M> matchedAction;
 
   private Predicate<T> filter = null;
 
-  public Matcher(BiPredicate<T, T> theEqualsTest, BiFunction<T, T, U> theMatchedAction) {
+  public Matcher(BiPredicate<T, T> theEqualsTest, BiFunction<T, T, M> theMatchedAction) {
     equalsTest = theEqualsTest;
     matchedAction = theMatchedAction;
   }
 
-  public R match(List<T> firstCollection, List<T> secondCollection) {
-    List<U> matches = new LinkedList<>();
+  protected abstract MatchingResult<T, M> instantiateMatch(List<M> matches, List<T> firstCollection,
+      List<T> secondCollection);
+
+  public MatchingResult<T, M> match(List<T> firstCollection, List<T> secondCollection) {
+    List<M> matches = new LinkedList<>();
 
     // Copy lists to prevent change in real lists
     List<T> firstList = new LinkedList<>(firstCollection);
@@ -55,8 +58,8 @@ public abstract class Matcher<T, U extends Match<T>, R extends MatchingResult<T,
     return instantiateMatch(matches, firstList, secondList);
   }
 
-  public MatchingResult<T, U> matchInOrder(List<T> firstCollection, List<T> secondCollection) {
-    List<U> matches = new LinkedList<>();
+  public MatchingResult<T, M> matchInOrder(List<T> firstCollection, List<T> secondCollection) {
+    List<M> matches = new LinkedList<>();
 
     Iterator<T> iter1 = firstCollection.iterator();
     Iterator<T> iter2 = secondCollection.iterator();
@@ -75,7 +78,5 @@ public abstract class Matcher<T, U extends Match<T>, R extends MatchingResult<T,
   public void setFilter(Predicate<T> theFilter) {
     filter = theFilter;
   }
-
-  protected abstract R instantiateMatch(List<U> matches, List<T> firstCollection, List<T> secondCollection);
 
 }

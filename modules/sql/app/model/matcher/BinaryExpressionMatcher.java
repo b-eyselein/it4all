@@ -3,13 +3,13 @@ package model.matcher;
 import java.util.Comparator;
 import java.util.List;
 
-import model.correctionresult.WhereComparison;
 import model.matching.Matcher;
+import model.matching.MatchingResult;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.schema.Column;
 
-public class BinaryExpressionMatcher extends Matcher<BinaryExpression, BinaryExpressionMatch, WhereComparison> {
+public class BinaryExpressionMatcher extends Matcher<BinaryExpression, BinaryExpressionMatch> {
 
   private static Comparator<BinaryExpression> comparator = new Comparator<BinaryExpression>() {
 
@@ -46,9 +46,10 @@ public class BinaryExpressionMatcher extends Matcher<BinaryExpression, BinaryExp
   }
 
   @Override
-  protected WhereComparison instantiateMatch(List<BinaryExpressionMatch> matches,
-      List<BinaryExpression> notMatchedInFirst, List<BinaryExpression> notMatchedInSecond) {
-    return new WhereComparison(matches, notMatchedInFirst, notMatchedInSecond);
+  protected MatchingResult<BinaryExpression, BinaryExpressionMatch> instantiateMatch(
+      List<BinaryExpressionMatch> matches, List<BinaryExpression> notMatchedInFirst,
+      List<BinaryExpression> notMatchedInSecond) {
+    return new MatchingResult<>(matches, notMatchedInFirst, notMatchedInSecond);
   }
 
 }

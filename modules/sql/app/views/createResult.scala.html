@@ -1,0 +1,41 @@
+@(result: model.matching.MatchingResult[net.sf.jsqlparser.statement.create.table.ColumnDefinition, model.matcher.ColumnDefinitionMatch])
+
+<div class="col-md-6">
+  <div class="panel panel-@result.getBSClass()">
+    <div class="panel-heading">Vergleich der definierten Spalten</div>
+      <div class="panel-body">
+      
+      <!-- Not defined columns -->
+      @if(result.getMissing().isEmpty()) {
+        <div class="alert alert-success">Es wurden alle nötigen Spalten definiert.</div>
+        } else {
+        <div class="alert alert-danger">Folgende Spalten wurden nicht definiert: 
+          <ul>
+          @for(miss <- result.getMissing()) {
+          	<li>@miss</li>
+          }
+          </ul>
+        </div>
+      }
+      
+      
+      <!-- Surplus columns -->
+      @if(result.getWrong.isEmpty()) {
+      	<div class="alert alert-success">Es wurden keine überschüssigen Spalten definiert.</div>
+        } else {
+        <div class="alert alert-danger">Folgende überzähligen Spalten wurden definiert:
+          <ul>
+          @for(wrong <- result.getWrong()) {
+        	<li>@wrong</li>
+          }
+          </ul>
+        </div>
+      }
+    
+      <hr>
+    // Columns with correct name
+    // for(EvaluationResult colRes: matches)
+    // ret += colRes.getAsHtml();
+    </div>
+  </div>
+</div>

@@ -1,12 +1,16 @@
 package model.correctionresult;
 
+import model.matcher.BinaryExpressionMatch;
+import model.matching.MatchingResult;
+import net.sf.jsqlparser.expression.BinaryExpression;
+
 public class SqlResultBuilder {
 
   private ComparisonTwoListsOfStrings columnComparison;
 
   private ComparisonTwoListsOfStrings tableComparison;
 
-  private WhereComparison whereComparison;
+  private MatchingResult<BinaryExpression, BinaryExpressionMatch> whereComparison;
 
   private ComparisonTwoListsOfStrings orderByComparison;
 
@@ -51,7 +55,8 @@ public class SqlResultBuilder {
     return this;
   }
 
-  public SqlResultBuilder setWhereComparison(WhereComparison theWhereComparison) {
+  public SqlResultBuilder setWhereComparison(
+      MatchingResult<BinaryExpression, BinaryExpressionMatch> theWhereComparison) {
     whereComparison = theWhereComparison;
     return this;
   }

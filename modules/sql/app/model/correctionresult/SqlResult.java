@@ -5,7 +5,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import model.matcher.BinaryExpressionMatch;
+import model.matching.MatchingResult;
 import model.result.EvaluationResult;
+import net.sf.jsqlparser.expression.BinaryExpression;
 
 public class SqlResult {
   
@@ -17,13 +20,14 @@ public class SqlResult {
   
   private ComparisonTwoListsOfStrings groupByComparison;
   
-  private WhereComparison whereComparison;
+  private MatchingResult<BinaryExpression, BinaryExpressionMatch> whereComparison;
   
   private SqlExecutionResult executionResult;
   
   protected SqlResult(ComparisonTwoListsOfStrings theColumnComparison, ComparisonTwoListsOfStrings theTableComparison,
-      WhereComparison theWhereComparison, ComparisonTwoListsOfStrings theOrderByComparison,
-      ComparisonTwoListsOfStrings theGroupByComparison, SqlExecutionResult theExecutionResult) {
+      MatchingResult<BinaryExpression, BinaryExpressionMatch> theWhereComparison,
+      ComparisonTwoListsOfStrings theOrderByComparison, ComparisonTwoListsOfStrings theGroupByComparison,
+      SqlExecutionResult theExecutionResult) {
     columnComparison = theColumnComparison;
     tableComparison = theTableComparison;
     whereComparison = theWhereComparison;
@@ -63,7 +67,7 @@ public class SqlResult {
     return tableComparison;
   }
   
-  public WhereComparison getWhereComparison() {
+  public MatchingResult<BinaryExpression, BinaryExpressionMatch> getWhereComparison() {
     return whereComparison;
   }
   

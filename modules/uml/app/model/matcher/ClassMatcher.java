@@ -4,9 +4,10 @@ import java.util.List;
 
 import model.UmlClass;
 import model.matching.Matcher;
+import model.matching.MatchingResult;
 
-public class ClassMatcher extends Matcher<UmlClass, UmlClassMatch, ClassMatchingResult> {
-  
+public class ClassMatcher extends Matcher<UmlClass, UmlClassMatch> {
+
   public ClassMatcher() {
     super(
         // Test:
@@ -14,11 +15,11 @@ public class ClassMatcher extends Matcher<UmlClass, UmlClassMatch, ClassMatching
         // Match action:
         UmlClassMatch::new);
   }
-  
+
   @Override
-  protected ClassMatchingResult instantiateMatch(List<UmlClassMatch> matches, List<UmlClass> firstCollection,
-      List<UmlClass> secondCollection) {
-    return new ClassMatchingResult(matches, firstCollection, secondCollection);
+  protected MatchingResult<UmlClass, UmlClassMatch> instantiateMatch(List<UmlClassMatch> correct, List<UmlClass> wrong,
+      List<UmlClass> missing) {
+    return new MatchingResult<>(correct, wrong, missing);
   }
-  
+
 }
