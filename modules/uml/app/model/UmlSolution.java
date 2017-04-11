@@ -1,51 +1,31 @@
 package model;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
-import play.libs.Json;
-
 public class UmlSolution {
 
-  private static final Path BASE_PATH = Paths.get("modules", "uml", "conf", "resources");
-  private static final Path MUSTER_SOLUTION = Paths.get(BASE_PATH.toString(), "mustersolution_classSel.json");
+  public List<UmlClass> classes; // NOSONAR
 
-  private List<UmlClass> classes;
+  public List<String> otherAttributes; // NOSONAR
+  public List<String> otherMethods; // NOSONAR
 
-  private List<String> otherMethods;
-  private List<String> otherAttributes;
+  public List<UmlConnection> connections; // NOSONAR
 
-  public UmlSolution() {
-    String musterSolution = "";
-    try {
-      musterSolution = String.join("\n", Files.readAllLines(MUSTER_SOLUTION));
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-
-    JsonNode solutionJSON = Json.parse(musterSolution);
-
-    classes = JsonWrapper.parseJsonArrayNode(solutionJSON.get("classes")).stream()
-        .map(name -> new UmlClass(name, Collections.emptyList(), Collections.emptyList())).collect(Collectors.toList());
-
-    otherMethods = JsonWrapper.parseJsonArrayNode(solutionJSON.get("methods"));
-    otherAttributes = JsonWrapper.parseJsonArrayNode(solutionJSON.get("attributes"));
-  }
-
-  public List<String> getAttributes() {
+  public List<String> getOtherAttributes() {
     return otherAttributes;
   }
 
   public List<UmlClass> getClasses() {
     return classes;
+  }
+
+  public List<String> getClassNames() {
+    return classes.stream().map(UmlClass::getName).collect(Collectors.toList());
+  }
+
+  public List<UmlConnection> getConnections() {
+    return connections;
   }
 
   public String getEntryAttributes(int index) {
@@ -60,8 +40,23 @@ public class UmlSolution {
     return otherMethods.get(index);
   }
 
-  public List<String> getMethods() {
+  public List<String> getOtherMethods() {
     return otherMethods;
+  }
+  
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    
+    builder.append("Klassen: " + getClassNames());
+    builder.append("\n");
+    builder.append("Attribute: " + otherAttributes);
+    builder.append("\n");
+    builder.append("Methoden: " + otherMethods);
+    builder.append("\n");
+    builder.append("Verbindungen: " + connections);
+
+    return builder.toString();
   }
 
 }

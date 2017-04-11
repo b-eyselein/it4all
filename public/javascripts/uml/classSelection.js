@@ -6,7 +6,20 @@ var learnerSolution = {
 };
 
 function prepareFormForSubmitting() {
-  document.getElementById("learnerSolution").value = JSON.stringify(learnerSolution);
+  var solution = {
+      classes: [],
+      otherMethods: learnerSolution.otherMethods,
+      otherAttributes: learnerSolution.otherAttributes,
+      connections: []
+  };
+  for(var clazz of learnerSolution.classes) {
+    solution.classes.push({
+        name: clazz,
+        methods: [],
+        attributes: []
+    });
+  }
+  document.getElementById("learnerSolution").value = JSON.stringify(solution);
 }
 
 const
@@ -24,7 +37,7 @@ function mark(span) {
   case CLASS_NAME_EMPTY:
     // Add to classes
     span.className = CLASS_NAME_CLASS;
-    addClass(basenameOrDef);
+    learnerSolution.classes.push(basenameOrDef);
     break;
   case CLASS_NAME_CLASS:
     // Add to methods
@@ -36,12 +49,12 @@ function mark(span) {
     // Add to attributes
     span.className = CLASS_NAME_ATTRIBUTE;
     learnerSolution.otherAttributes.push(basenameOrDef);
-    learnerSolution.otherMethods.splice(learnerSolution.methods.indexOf(basenameOrDef), 1);
+    learnerSolution.otherMethods.splice(learnerSolution.otherMethods.indexOf(basenameOrDef), 1);
     break;
   case CLASS_NAME_ATTRIBUTE:
     // Clear
     span.className = CLASS_NAME_EMPTY;
-    learnerSolution.otherAttributes.splice(learnerSolution.attributes.indexOf(basenameOrDef), 1);
+    learnerSolution.otherAttributes.splice(learnerSolution.otherAttributes.indexOf(basenameOrDef), 1);
     break;
   default:
     span.className = CLASS_NAME_EMPTY;
@@ -55,14 +68,6 @@ function mark(span) {
   updateChosenDisplay();
 }
 
-function addClass(className) {
-  var newClass = {
-      name: className,
-      methods: [],
-      attributes: []
-  }
-  learnerSolution.classes.push(newClass);
-}
 
 function getBasenameOrDef(span) {
   return span.getAttribute('data-baseform') != null ? span.getAttribute('data-baseform') : span.innerText;
@@ -74,7 +79,7 @@ function markDoubles() {
 }
 
 function updateChosenDisplay() {
-  document.getElementById("classesList").innerHTML = asList(learnerSolution.classes.map(function(clazz) {return clazz.name;}));
+  document.getElementById("classesList").innerHTML = asList(learnerSolution.classes);
   document.getElementById("methodsList").innerHTML = asList(learnerSolution.otherMethods);
   document.getElementById("attributesList").innerHTML = asList(learnerSolution.otherAttributes);
 }

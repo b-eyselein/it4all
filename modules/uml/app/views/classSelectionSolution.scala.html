@@ -1,5 +1,9 @@
 @(user: model.user.User, result: model.result.ClassSelectionResult)
 
+@classResult = @{result.getClassResult()}
+@attributesResult = @{result.getAttributesResult()}
+@methodsResult = @{result.getMethodsResult()}
+
 @main("UML", user) {
 <div class="container">
   <div class="page-header">
@@ -9,35 +13,41 @@
   <div class="panel panel-default">
     <div class="panel-heading">Klassen</div>
     <div class="panel-body">
-      <div class="col-xs-4">
+      <div class="col-sm-4">
         <h4 class="bg-success text-center">Korrekt</h4>
-        @Html(result.getCorrectClasses())
+        <ul>
+        @if(classResult.getCorrect().isEmpty()) {
+          <li>--</li>
+        } else {
+          @for(corrClass <- classResult.getCorrect()) {
+          <li>@corrClass.getName()</li>
+          }
+        }
+        </ul>
       </div>
-      <div class="col-xs-4">
+      <div class="col-sm-4">
         <h4 class="bg-danger text-center">Falsch</h4>
-        @Html(result.getWrongClasses())
+        <ul>
+        @if(classResult.getWrong().isEmpty()) {
+          <li>--</li>
+        } else {
+          @for(wrongClass <- classResult.getWrong()) {
+          <li>@wrongClass.getName()</li>
+          }
+        }
+        </ul>
       </div>
-      <div class="col-xs-4">
+      <div class="col-sm-4">
         <h4 class="bg-warning text-center">Fehlend</h4>
-        @Html(result.getMissingClasses())
-      </div>
-    </div>
-  </div>
-
-  <div class="panel panel-default">
-    <div class="panel-heading">Methoden</div>
-    <div class="panel-body">
-      <div class="col-xs-4">
-        <h4 class="bg-success text-center">Korrekt</h4>
-        @Html(result.getCorrectMethods())
-      </div>
-      <div class="col-xs-4">
-        <h4 class="bg-danger text-center">Falsch</h4>
-        @Html(result.getWrongMethods())
-      </div>
-      <div class="col-xs-4">
-        <h4 class="bg-warning text-center">Fehlend</h4>
-        @Html(result.getMissingMethods())
+        <ul>
+        @if(classResult.getMissing().isEmpty()) {
+          <li>--</li>
+        } else {
+          @for(missClass <- classResult.getMissing()) {
+          <li>@missClass.getName()</li>
+          }
+        }
+        </ul>
       </div>
     </div>
   </div>
@@ -45,17 +55,83 @@
   <div class="panel panel-default">
     <div class="panel-heading">Attribute</div>
     <div class="panel-body">
-      <div class="col-xs-4">
+      <div class="col-sm-4">
         <h4 class="bg-success text-center">Korrekt</h4>
-        @Html(result.getCorrectAttributes())
+        <ul>
+        @if(attributesResult.getCorrect().isEmpty()) {
+          <li>--</li>
+        } else {
+          @for(corrAttr <- attributesResult.getCorrect()) {
+          <li>@corrAttr.toString()</li>
+          }
+        }
+        </ul>
       </div>
-      <div class="col-xs-4">
+      <div class="col-sm-4">
         <h4 class="bg-danger text-center">Falsch</h4>
-        @Html(result.getWrongAttributes())
+        <ul>
+        @if(attributesResult.getWrong().isEmpty()) {
+          <li>--</li>
+        } else {
+          @for(wrongAttr <- attributesResult.getWrong()) {
+          <li>@wrongAttr</li>
+          }
+        }
+        </ul>
       </div>
-      <div class="col-xs-4">
+      <div class="col-sm-4">
         <h4 class="bg-warning text-center">Fehlend</h4>
-        @Html(result.getMissingAttributes())
+        <ul>
+        @if(attributesResult.getMissing().isEmpty()) {
+          <li>--</li>
+        } else {
+          @for(missAttr <- attributesResult.getMissing()) {
+          <li>@missAttr</li>
+          }
+        }
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">Methoden</div>
+    <div class="panel-body">
+      <div class="col-sm-4">
+        <h4 class="bg-success text-center">Korrekt</h4>
+        <ul>
+        @if(methodsResult.getCorrect().isEmpty()) {
+          <li>--</li>
+        } else {
+          @for(corrMeth <- methodsResult.getCorrect()) {
+          <li>@corrMeth</li>
+          }
+        }
+        </ul>
+      </div>
+      <div class="col-sm-4">
+        <h4 class="bg-danger text-center">Falsch</h4>
+        <ul>
+        @if(methodsResult.getWrong().isEmpty()) {
+          <li>--</li>
+        } else {
+          @for(wrongMeth <- methodsResult.getWrong()) {
+          <li>@wrongMeth</li>
+          }
+        }
+        </ul>
+      </div>
+      <div class="col-sm-4">
+        <h4 class="bg-warning text-center">Fehlend</h4>
+        <ul>
+        @if(methodsResult.getMissing().isEmpty()) {
+          <li>--</li>
+        } else {
+          @for(missMeth <- methodsResult.getMissing()) {
+          <li>@missMeth</li>
+          }
+        }
+        </ul>
       </div>
     </div>
   </div>

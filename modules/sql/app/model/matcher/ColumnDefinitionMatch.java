@@ -10,9 +10,9 @@ import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
 
 public class ColumnDefinitionMatch extends Match<ColumnDefinition> {
 
-  private Object datatypeName;
+  private String datatypeName;
 
-  private Object message;
+  private String message;
 
   public ColumnDefinitionMatch(ColumnDefinition theArg1, ColumnDefinition theArg2) {
     super(FeedbackLevel.MEDIUM_FEEDBACK, theArg1, theArg2);

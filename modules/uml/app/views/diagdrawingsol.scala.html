@@ -1,8 +1,7 @@
-@( user: model.user.User, ue: model.result.UmlDiagramdrawing )
+@(user: model.user.User, result: model.result.DiagramDrawingResult)
 
 @main("UML-Test", user) {
-
-<h1> Korrektur der Aufgabe &quot;@ue.getExercise().title&quot;</h1>	
+<h1> Korrektur der Aufgabe &quot;@result.getExercise().title&quot;</h1>	
 
 <table class="table">
   <tr>
@@ -19,21 +18,21 @@
 	<th></th>
 	<th colspan="2">Ihre Eingabe</th>
 </tr>
-@for(i <- 0 to ue.getClassesLength(ue.getClasses_user_c())-1){
+@@for(i <- 0 to ue.getClassesLength(ue.getClasses_user_c())-1){
   <tr>
-    <td colspan="2" >@ue.getClasses_user_c().get(i).getName()</td>
+    <td colspan="2" >@@ue.getClasses_user_c().get(i).getName()</td>
     <td></td>
     <td></td>
   </tr>
   <tr>
   	<td rowspan="2"></td>
     <th>Methoden:</th>
-    <td>@ue.getClasses_user_c().get(i).getMethodsAsString()</td>
+    <td>@@ue.getClasses_user_c().get(i).getMethodsAsString()</td>
     <td></td>
   </tr>
   <tr>
     <th>Attribute:</th>
-    <td>@ue.getClasses_user_c().get(i).getAttributesAsString()</td>
+    <td>@@ue.getClasses_user_c().get(i).getAttributesAsString()</td>
     <td></td>
     <td></td>
   </tr>
@@ -48,21 +47,21 @@
 	<th></th>
 	<th colspan="2">Lösung</th>
 </tr>
-@for(i <- 0 to ue.getClassesLength(ue.getClasses_solution_c())-1){
+@@for(i <- 0 to ue.getClassesLength(ue.getClasses_solution_c())-1){
   <tr>
-    <td colspan="2" >@ue.getClasses_solution_c().get(i).getName()</td>
+    <td colspan="2" >@@ue.getClasses_solution_c().get(i).getName()</td>
     <td></td>
     <td></td>
   </tr>
   <tr>
   	<td rowspan="2"></td>
     <th>Methoden:</th>
-    <td>@ue.getClasses_solution_c().get(i).getMethodsAsString()</td>
+    <td>@@ue.getClasses_solution_c().get(i).getMethodsAsString()</td>
     <td></td>
   </tr>
   <tr>
     <th>Attribute:</th>
-    <td>@ue.getClasses_solution_c().get(i).getAttributesAsString()</td>
+    <td>@@ue.getClasses_solution_c().get(i).getAttributesAsString()</td>
     <td></td>
     <td></td>
   </tr>
@@ -80,16 +79,16 @@
 	<th >Methoden:</th>
 	<th >Attribute:</th>
   </tr>
-@for(i <- 0 to ue.getClassesLength(ue.getClasses_user())-1){
+@@for(i <- 0 to ue.getClassesLength(ue.getClasses_user())-1){
   <tr>
     <td>
-    @ue.getClasses_user().get(i).getName()
+    @@ue.getClasses_user().get(i).getName()
 	</td>
 	<td>
-		@ue.getClasses_user().get(i).getMethodsAsString()
+		@@ue.getClasses_user().get(i).getMethodsAsString()
 	</td>
 	<td >
-    	@ue.getClasses_user().get(i).getAttributesAsString()
+    	@@ue.getClasses_user().get(i).getAttributesAsString()
 	</td>
   </tr>
 }
@@ -106,16 +105,16 @@
 	<th >Methoden</th>
 	<th >Attribute</th>
   </tr>
-@for(i <- 0 to ue.getClassesLength(ue.getClasses_solution())-1){
+@@for(i <- 0 to ue.getClassesLength(ue.getClasses_solution())-1){
   <tr>
     <td>
-    @ue.getClasses_solution().get(i).getName()
+    @@ue.getClasses_solution().get(i).getName()
 	</td>
 	<td>
-	@ue.getClasses_solution().get(i).getMethodsAsString()
+	@@ue.getClasses_solution().get(i).getMethodsAsString()
 	</td>
 	<td >
-    @ue.getClasses_solution().get(i).getAttributesAsString()
+    @@ue.getClasses_solution().get(i).getAttributesAsString()
 	</td>
   </tr>
 }
@@ -140,24 +139,24 @@
 	<th >Start Multiziplität</th>
 	<th >Ziel Multiziplität</th>
   </tr>
-@for(j <- 0 to 4){
-@for(i <- 0 to ue.getConnectionsLength(ue.getListConnectionsTypeUser(j))-1){
+@@for(j <- 0 to 4){
+@@for(i <- 0 to ue.getConnectionsLength(ue.getListConnectionsTypeUser(j))-1){
 
   <tr>
     <td>
-    @ue.getListConnectionsTypeUser(j).get(i).getType()
+    @@ue.getListConnectionsTypeUser(j).get(i).getType()
 	</td>
 	<td>
-		@ue.getListConnectionsTypeUser(j).get(i).getStart()
+		@@ue.getListConnectionsTypeUser(j).get(i).getStart()
 	</td>
 	<td >
-    	@ue.getListConnectionsTypeUser(j).get(i).getTarget()
+    	@@ue.getListConnectionsTypeUser(j).get(i).getTarget()
 	</td>
 	<td>
-		@ue.getListConnectionsTypeUser(j).get(i).getMulstart()
+		@@ue.getListConnectionsTypeUser(j).get(i).getMulstart()
 	</td>
 	<td>
-		@ue.getListConnectionsTypeUser(j).get(i).getMultarget()
+		@@ue.getListConnectionsTypeUser(j).get(i).getMultarget()
 	</td>
   </tr>
 	}
@@ -178,24 +177,24 @@
 	<th >Start Multiziplität</th>
 	<th >Ziel Multiziplität</th>
   </tr>
-@for(j <- 0 to 4){
-@for(i <- 0 to ue.getConnectionsLength(ue.getListConnectionsTypeSolution(j))-1){
+@@for(j <- 0 to 4){
+@@for(i <- 0 to ue.getConnectionsLength(ue.getListConnectionsTypeSolution(j))-1){
 
   <tr>
     <td>
-    @ue.getListConnectionsTypeSolution(j).get(i).getType()
+    @@ue.getListConnectionsTypeSolution(j).get(i).getType()
 	</td>
 	<td>
-		@ue.getListConnectionsTypeSolution(j).get(i).getStart()
+		@@ue.getListConnectionsTypeSolution(j).get(i).getStart()
 	</td>
 	<td >
-    	@ue.getListConnectionsTypeSolution(j).get(i).getTarget()
+    	@@ue.getListConnectionsTypeSolution(j).get(i).getTarget()
 	</td>
 	<td>
-		@ue.getListConnectionsTypeSolution(j).get(i).getMulstart()
+		@@ue.getListConnectionsTypeSolution(j).get(i).getMulstart()
 	</td>
 	<td>
-		@ue.getListConnectionsTypeSolution(j).get(i).getMultarget()
+		@@ue.getListConnectionsTypeSolution(j).get(i).getMultarget()
 	</td>
   </tr>
 	}

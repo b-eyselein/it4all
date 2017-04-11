@@ -1,7 +1,7 @@
-@( user: model.user.User, ue: model.result.UmlDiagramdrawing )
+@(user: model.user.User, result: model.result.DiagramDrawingResult)
 
 @main("UML-Test", user) {
-<h1> Korrektur der Aufgabe &quot;@ue.getExercise().title&quot;</h1>	
+<h1> Korrektur der Aufgabe &quot;@result.getExercise().title&quot;</h1>	
 <div class="panel-body">
 <div id="left">
  <table class="table">
@@ -15,24 +15,24 @@
 	<th >Start Multiziplität</th>
 	<th >Ziel Multiziplität</th>
   </tr>
-@for(j <- 0 to 4){
-@for(i <- 0 to ue.getConnectionsLength(ue.getListConnectionsTypeUser(j))-1){
+@@for(j <- 0 to 4) {
+@@for(i <- 0 to ue.getConnectionsLength(ue.getListConnectionsTypeUser(j))-1) {
 
   <tr>
     <td>
-    @ue.getListConnectionsTypeUser(j).get(i).getType()
+    @@ue.getListConnectionsTypeUser(j).get(i).getType()
 	</td>
 	<td>
-		@ue.getListConnectionsTypeUser(j).get(i).getStart()
+		@@ue.getListConnectionsTypeUser(j).get(i).getStart()
 	</td>
 	<td >
-    	@ue.getListConnectionsTypeUser(j).get(i).getTarget()
+    	@@ue.getListConnectionsTypeUser(j).get(i).getTarget()
 	</td>
 	<td>
-		@ue.getListConnectionsTypeUser(j).get(i).getMulstart()
+		@@ue.getListConnectionsTypeUser(j).get(i).getMulstart()
 	</td>
 	<td>
-		@ue.getListConnectionsTypeUser(j).get(i).getMultarget()
+		@@ue.getListConnectionsTypeUser(j).get(i).getMultarget()
 	</td>
   </tr>
 	}
@@ -53,24 +53,24 @@
 	<th >Start Multiziplität</th>
 	<th >Ziel Multiziplität</th>
   </tr>
-@for(j <- 0 to 4){
-@for(i <- 0 to ue.getConnectionsLength(ue.getListConnectionsTypeSolution(j))-1){
+@@for(j <- 0 to 4){
+@@for(i <- 0 to ue.getConnectionsLength(ue.getListConnectionsTypeSolution(j))-1){
 
   <tr>
     <td>
-    @ue.getListConnectionsTypeSolution(j).get(i).getType()
+    @@ue.getListConnectionsTypeSolution(j).get(i).getType()
 	</td>
 	<td>
-		@ue.getListConnectionsTypeSolution(j).get(i).getStart()
+		@@ue.getListConnectionsTypeSolution(j).get(i).getStart()
 	</td>
 	<td >
-    	@ue.getListConnectionsTypeSolution(j).get(i).getTarget()
+    	@@ue.getListConnectionsTypeSolution(j).get(i).getTarget()
 	</td>
 	<td>
-		@ue.getListConnectionsTypeSolution(j).get(i).getMulstart()
+		@@ue.getListConnectionsTypeSolution(j).get(i).getMulstart()
 	</td>
 	<td>
-		@ue.getListConnectionsTypeSolution(j).get(i).getMultarget()
+		@@ue.getListConnectionsTypeSolution(j).get(i).getMultarget()
 	</td>
   </tr>
 	}

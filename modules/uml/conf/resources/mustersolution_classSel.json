@@ -1,22 +1,89 @@
 {
 	"classes": [
-		"Person",
-		"Doktor",
-		"Rezept",
-		"Patient",
-		"Krankenschwester",
-		"Station",
-		"Medikament",
-		"Krankenhaus"
-	],
-	"methods": [
-		"verschreiben(Patient)",
-		"entlassen(Station)",
+		{
+			"name": "Person", 
+			"methods": [
+				
+			], 
+			"attributes": [
+				
+			]
+		}, 
+		{
+			"name": "Doktor", 
+			"methods": [
+				
+			], 
+			"attributes": [
+				
+			]
+		}, 
+		{
+			"name": "Rezept", 
+			"methods": [
+				
+			], 
+			"attributes": [
+				
+			]
+		}, 
+		{
+			"name": "Patient", 
+			"methods": [
+				
+			], 
+			"attributes": [
+				
+			]
+		}, 
+		{
+			"name": "Krankenschwester", 
+			"methods": [
+				
+			], 
+			"attributes": [
+				
+			]
+		}, 
+		{
+			"name": "Station", 
+			"methods": [
+				
+			], 
+			"attributes": [
+				
+			]
+		}, 
+		{
+			"name": "Medikament", 
+			"methods": [
+				
+			], 
+			"attributes": [
+				
+			]
+		}, 
+		{
+			"name": "Krankenhaus", 
+			"methods": [
+				
+			], 
+			"attributes": [
+				
+			]
+		}
+	], 
+	"otherMethods": [
+		"verschreiben(Patient)", 
+		"entlassen(Station)", 
 		"aufnehmen(Station)"
-	],
-	"attributes": [
-		"Id",
-		"Name",
+	], 
+	"otherAttributes": [
+		"Id", 
+		"Name", 
 		"Nummer"
+	], 
+	"connections": [
+		
 	]
 }

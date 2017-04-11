@@ -10,16 +10,16 @@
         <div data-draggable="target" class="btn-group btn-group-vertical">
           <span>Attribute</span>
           <ol data-draggable="target">
-  	      @for(i <- 0 until solution.getAttributes().size()) {
-            <li data-draggable="item" class="btn btn-default" id="a@{i}">@solution.getEntryAttributes(i)</li>
+  	      @@for(i <- 0 until solution.getAttributes().size()) {
+            <li data-draggable="item" class="btn btn-default" id="a@@{i}">@@solution.getEntryAttributes(i)</li>
           }
     	  </ol>
         </div>
         <div data-draggable="target" class="btn-group btn-group-vertical">
           <span>Methoden</span>
           <ol>
-	      @for(i <- 0 until solution.getMethods().size()) {
-   	        <li data-draggable="item"  class="btn btn-default" id="m@{i}">@solution.getEntryMethods(i)</li>
+	      @@for(i <- 0 until solution.getMethods().size()) {
+   	        <li data-draggable="item"  class="btn btn-default" id="m@@{i}">@@solution.getEntryMethods(i)</li>
           }
           </ol>
         </div>
@@ -28,14 +28,14 @@
   </div>
 
   <div class="col-md-8">
-  @for(j <-0 until math.sqrt(cnr).toInt+1) {
+  @@for(j <-0 until math.sqrt(cnr).toInt+1) {
     <div class="row">
-    @for(i <- 0 until 3) {
-    	@if(j*3+i < cnr){
+    @@for(i <- 0 until 3) {
+    	@@if(j*3+i < cnr){
       <div class="col-md-4">
         <div class="panel panel-default">
-          <div class="panel-heading" id="@{j*3+i}">@solution.getEntryClasses(j*3+i)</div>
-          <div id="@{solution.getEntryClasses(j*3+i)}" data-draggable="target"  class="panel-body">
+          <div class="panel-heading" id="@@{j*3+i}">@@solution.getEntryClasses(j*3+i)</div>
+          <div id="@@{solution.getEntryClasses(j*3+i)}" data-draggable="target"  class="panel-body">
           </div>
         </div>
       </div>
@@ -47,7 +47,7 @@
 </div>
 
 <a href="www.google.de" class="btn btn-primary btn-block">N&auml;chster Aufgabenteil</a>
-<script src=" @controllers.routes.Assets.versioned("javascripts/uml/dragdrop.js")"></script>
+<script src=" @@controllers.routes.Assets.versioned("javascripts/uml/dragdrop.js")"></script>
 <div class="btn-group">
           <button type="button" class="btn btn-default" onclick="test();">test</button>
         </div>
@@ -55,7 +55,7 @@
 
 
 <script>
-var classnames= ["@@Html(String.join("\",\"",solution.getClasses()))"];
+var classnames= ["@@@@Html(String.join("\",\"",solution.getClasses()))"];
 function test(){
 	var obj=[];
 	for(classname of classnames){

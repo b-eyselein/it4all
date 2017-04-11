@@ -18,7 +18,7 @@ import model.UmlExercise;
 import model.UmlSolution;
 import model.Util;
 import model.result.ClassSelectionResult;
-import model.result.UmlDiagramdrawing;
+import model.result.DiagramDrawingResult;
 import play.Logger;
 import play.data.DynamicForm;
 import play.data.FormFactory;
@@ -80,7 +80,7 @@ public class UML extends ExerciseController {
   public Result correctDiagramDrawing(int exerciseId) {
     try {
       JsonNode sentJson = readAndValidateSolution(factory.form().bindFromRequest(), solutionSchemaNode);
-      UmlDiagramdrawing result = new UmlDiagramdrawing(UmlExercise.finder.byId(exerciseId), sentJson);
+      DiagramDrawingResult result = new DiagramDrawingResult(UmlExercise.finder.byId(exerciseId), sentJson);
       return ok(views.html.diagdrawingsol.render(getUser(), result));
     } catch (SolutionException e) {
       return badRequest(e.getMessage());
@@ -90,7 +90,7 @@ public class UML extends ExerciseController {
   public Result correctDiagramDrawingWithHelp(int exerciseId) {
     try {
       JsonNode sentJson = readAndValidateSolution(factory.form().bindFromRequest(), solutionSchemaNode);
-      UmlDiagramdrawing result = new UmlDiagramdrawing(UmlExercise.finder.byId(exerciseId), sentJson);
+      DiagramDrawingResult result = new DiagramDrawingResult(UmlExercise.finder.byId(exerciseId), sentJson);
       return ok(views.html.diagdrawinghelpsol.render(getUser(), result));
     } catch (SolutionException e) {
       return badRequest(e.getMessage());

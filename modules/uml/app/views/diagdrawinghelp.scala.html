@@ -9,16 +9,17 @@
 <!-- IMPORTANT: load JQuery here again?!? -->
 <script src="@controllers.routes.Assets.versioned("javascripts/uml/jquery.js")"></script>
 <script src="@controllers.routes.Assets.versioned("javascripts/uml/joint.js")"></script>
-<script src="@controllers.routes.Assets.versioned("javascripts/uml/jsonconverter.js")"></script>
 
 <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/joint.css")">
 <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/umlextra.css")">
+
+<!-- TODO on end of document: script "diagramdrawinghelp.js" -->
 
 <script>
 
 var defaultClasses = [
 @for(i <- 0 until classes.size()) {{
-		name: "@classes.get(i)",
+		name: "@classes.get(i).getName()",
 		attributes: [],
 		methods: [],
 		posX: @{(i / sqrt) * 300 + 50},
