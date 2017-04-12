@@ -1,77 +1,105 @@
-@(user: model.user.User, exercise: model.UmlExercise, showHint: Boolean)
+@(user: model.user.User, exercise: model.UmlExercise)
+
+
+
 
 @main("UML-Test", user) {
-<head>
-<link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/bootstrap.css")">
-
-<script src=" @controllers.routes.Assets.versioned("javascripts/uml/lodash.js")"></script>
-<script src=" @controllers.routes.Assets.versioned("javascripts/uml/backbone.js")"></script>
-<script src=" @controllers.routes.Assets.versioned("javascripts/uml/jquery.js")"></script>
-<script src=" @controllers.routes.Assets.versioned("javascripts/uml/joint.js")"></script>
+<script src="@controllers.routes.Assets.versioned("javascripts/uml/lodash.js")"></script>
+<script src="@controllers.routes.Assets.versioned("javascripts/uml/backbone.js")"></script>
+<!-- IMPORTANT: load JQuery here again?!? -->
+<script src="@controllers.routes.Assets.versioned("javascripts/uml/jquery.js")"></script>
+<script src="@controllers.routes.Assets.versioned("javascripts/uml/joint.js")"></script>
 
 <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/joint.css")">
 <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/umlextra.css")">
 
-<script src=" @controllers.routes.Assets.versioned("javascripts/uml/jsonconverter.js")"></script>
-</head>
-<body>
+
+
+<script>
+var defaultClasses = []
+
+
+
+
+
+
+
+
+</script>
+
 <div class="container-fluid">
 
-@if(showHint) {
-  <div class="alert alert-info alertalert-dismissable">
-    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-    <h3>Bearbeitungshinweise</h3>
-    <p>Erstellen Sie ein UML-Klassendiagramm, indem Sie die Beziehungen zwischen den Klassen, inklusive Methoden und Attributen, modellieren.</p>
-    <ul>
-      <li>
-        <b>Klassen erzeugen:</b> Mittels Drag-and-Drop können Sie Wörter aus dem Aufgabentext in die rechts liegende Zeichenfläche ziehen um Klassen zu erzeugen.
-      </li>
-      <li>
-        <b>Klassen verschieben:</b> Mittels gedrückter Maustaste können Sie die jeweilige Klasse verschieben.
-      </li>
-      <li>
-        <b>Klassen löschen:</b> Klicken Sie auf den Button "Klasse löschen" und anschließend auf die Klasse. Sämtliche Beziehungen werden ebenfalls entfernt.
-      </li>
-      <li>
-        <b>Hinzufügen von Methoden / Attributen:</b> Klicken Sie auf den Button "Methode hinzufügen" bzw. "Attribut hinzufügen" und anschließend auf die Klasse. Mittels Pop-up können Sie den gewünschten Wert eintragen und mit "OK" bestätigen.
-      </li>
-      <li>
-        <b>Entfernen von Methoden / Attributen:</b> Klicken Sie auf den Button "Methode entfernen" bzw. "Attribut entfernen" und anschließend auf die Klasse. Mittels Pop-up können Sie die Stelle angeben, welche entfernt werden soll.(Beispiel. Der Eintrag 2 löscht den zweiten Eintrag in der entsprechenden Aufzählung 
-      </li>
-      <li>
-        <b>Beziehungen zwischen Klassen erstellen:</b> W&auml;hlen Sie zuerst die Art der Beziehung (z.B. Standard), durch das Aktivieren des jeweiligen Buttons aus.
-  	Anschlie&szlig;end klicken Sie auf zuerst auf den Namen der Klasse und klicken dann auf die andere Klasse.
-  	Im folgendem Popup-Fenster sollen Sie nun die Multiplizit&auml;ten zwischen den Klassen angeben.
-  	Um bereits erstellte Beziehungen zu l&ouml;schen, hovern Sie mit der Maus &uuml;ber die Verbindung und klicken auf das erscheinende rote Kreuz.
-  	Nachdem Sie alle Beziehungen modelliert haben, k&ouml;nnen Sie die Ausgabe mittels Buttons verifizieren.
-      </li>
-    </ul>
-  </div>
-}
-  
   <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
+      <div class="page-header">
+        <h1>Freies Zeichnen</h1>
+      </div>
+      
       <div class="panel panel-default" id="text">
         <div class="panel-heading">Aufgabentext</div>
-        <div class="panel-body">@Html(exercise.getExTextForDiagDraw())</div>
-        <div class="panel-footer">
-          <form action="@controllers.uml.routes.UML.correctDiagramDrawing(exercise.id)" method="post" enctype="multipart/form-data" onsubmit="prepareFormForSubmitting();">
-            <input type="hidden" value="" class="form-control" name="learnerSolution" id="learnerSolution" required>
-            <input type="submit" class="btn btn-primary btn-block" value="Aufgabe verifizieren">
-          </form> 
+        <div class="panel-body">@Html(exercise.getExTextForDiagDrawHelp())</div>
+      </div>
+      
+      <div class="panel-group">
+        <div class="panel panel-info">
+          <div class="panel-heading">
+            <a data-toggle="collapse" href="#hints">Bearbeitungshinweise
+            <span class="glyphicon glyphicon-chevron-down pull-right"></span></a>
+          </div>
+          <div id="hints" class="panel-collapse collapse">
+            <div class="panel-body">
+              <p>Erstellen Sie ein UML-Klassendiagramm, indem Sie die Beziehungen zwischen den Klassen, inklusive Methoden und Attributen, modellieren.</p>
+              <ul>
+                <li>
+                  <b>Klassen erzeugen:</b> Mittels Drag-and-Drop können Sie Wörter aus dem Aufgabentext in die rechts liegende Zeichenfläche ziehen um Klassen zu erzeugen.
+                </li>
+                <li>
+                  <b>Klassen verschieben:</b> Mittels gedrückter Maustaste können Sie die jeweilige Klasse verschieben.
+                </li>
+                <li>
+                  <b>Klassen löschen:</b> Klicken Sie auf den Button "Klasse löschen" und anschließend auf die Klasse. Sämtliche Beziehungen werden ebenfalls entfernt.
+                </li>
+                <li>
+                  <b>Hinzufügen von Methoden / Attributen:</b> Klicken Sie auf den Button "Methode hinzufügen" bzw. "Attribut hinzufügen" und anschließend auf die Klasse. Mittels Pop-up können Sie den gewünschten Wert eintragen und mit "OK" bestätigen.
+                </li>
+                <li>
+                  <b>Entfernen von Methoden / Attributen:</b> Klicken Sie auf den Button "Methode entfernen" bzw. "Attribut entfernen" und anschließend auf die Klasse. Mittels Pop-up können Sie die Stelle angeben, welche entfernt werden soll.(Beispiel. Der Eintrag 2 löscht den zweiten Eintrag in der entsprechenden Aufzählung 
+                </li>
+                <li>
+                  <b>Beziehungen zwischen Klassen erstellen:</b> W&auml;hlen Sie zuerst die Art der Beziehung (z.B. Standard), durch das Aktivieren des jeweiligen Buttons aus.
+            	Anschlie&szlig;end klicken Sie auf zuerst auf den Namen der Klasse und klicken dann auf die andere Klasse.
+            	Im folgendem Popup-Fenster sollen Sie nun die Multiplizit&auml;ten zwischen den Klassen angeben.
+            	Um bereits erstellte Beziehungen zu l&ouml;schen, hovern Sie mit der Maus &uuml;ber die Verbindung und klicken auf das erscheinende rote Kreuz.
+            	Nachdem Sie alle Beziehungen modelliert haben, k&ouml;nnen Sie die Ausgabe mittels Buttons verifizieren.
+                </li>
+              </ul>
+              
+              <p>Gew&auml;hlt: <span id="idList">--</span></p>
+            </div>
+          </div>
         </div>
       </div>
       
-      <div class="panel panel-default">
-        <div class="panel-heading">Ausgewählte Klassen</div>
-        <div class="panel-body" id="idListDiv"></div>
-      </div>
+      <hr>
+      
+      <form action="@controllers.uml.routes.UML.correctDiagramDrawing(exercise.id)" method="post" enctype="multipart/form-data" onsubmit="prepareFormForSubmitting();">
+        <input type="hidden" value="" class="form-control" name="learnerSolution" id="learnerSolution" required>
+        <input type="submit" class="btn btn-primary btn-block" value="Aufgabe verifizieren">
+      </form> 
+      
+      <hr>
       
       <div>
         <!-- Standard und Klasse löschen -->
         <div class="btn-group btn-group-justified">
           <div class="btn-group">
             <button class="btn btn-default" value="off" onclick="createClass();">Klasse hinzuf&uuml;gen</button>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-default" value="off" onclick="createClass();">Interface hinzuf&uuml;gen</button>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-default" value="off" onclick="createClass();">Abstrakte Klasse hinzuf&uuml;gen</button>
           </div>
           <div class="btn-group">
             <button class="btn btn-default" value="off" id="5" onclick="selectDeleteClass();">Klasse l&ouml;schen</button>
@@ -140,7 +168,7 @@
       
     </div>
     
-    <div class="col-md-8" id="sizepaper">
+    <div class="col-md-6" id="sizepaper">
       <div ondrop="drop(event)" ondragover="allowDrop(event)" id="paper"/>
     </div>
   </div>

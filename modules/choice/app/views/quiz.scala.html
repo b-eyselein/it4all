@@ -29,9 +29,11 @@
     <h3>TODO: Statistiken f&uuml;r User...</h3>
   </section>
   
+  @if(quiz.questions.size() > 0) {
   <hr>
   
   <a class="btn btn-primary btn-block" href="@controllers.choice.routes.QuestionController.quizStart(quiz.id)">Quiz starten...</a>
+  }
   
 </div>
 }

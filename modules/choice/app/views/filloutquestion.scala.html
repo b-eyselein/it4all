@@ -1,10 +1,8 @@
 @(user: model.user.User, question: model.Question)
 
-
+@isSingle = @{question.questionType == model.QuestionType.SINGLE} @* Always false, for unification with choiceQuestion *@
 
 @main("Auswahlfragen", user) {
-<script src="@routes.Assets.versioned("javascripts/choicequestions.js")"></script>
-
 <div class="container">
   <div class="page-header">
     <h1>@question.text</h1>
@@ -16,7 +14,8 @@
       <div class="@question.questionType.getDivClass()">
         <label for="@ans.key.id" class="control-label col-sm-1">@ans.key.id:</label>
         <div class="col-sm-11">
-          <input type="@question.questionType.getInputType()" name="@ans.key.id" id="@ans.key.id" class="form-control" placeholder="TODO!">
+          <input type="@question.questionType.getInputType()" id="@ans.key.id"
+          name="@ans.key.id" class="form-control" placeholder="TODO!">
           
         </div>
       </div>
@@ -25,22 +24,7 @@
 
     <hr>
     
-    <section>
-      <h3>Wollen Sie die Frage bewerten?</h3>
-      <input type="number" hidden name="stars" id="stars" value="-1">
-      <div class="btn-group btn-group-justified">
-        @for(i <- 1 until 6) {
-    	  <div class="btn-group"><button type="button" class="btn btn-default" onclick="setStars(@i);">
-            <span id="star@i" class="glyphicon glyphicon-star-empty"></span>  
-          </button></div>
-        }
-      </div>
-    </section>
-
-    <hr>
-    
     <input class="btn btn-block btn-primary" type="submit" value="Kontrollieren">
-    <a class="btn btn-block btn-default" href="@controllers.choice.routes.QuestionController.question(question.id + 1)"> Nächste Aufgabe</a>
   </form>
 </div>
 }

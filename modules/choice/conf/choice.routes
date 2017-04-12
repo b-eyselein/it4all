@@ -33,6 +33,8 @@ GET    /notAssigned            controllers.choice.QuestionAdmin.notAssignedQuest
 GET    /assign                 controllers.choice.QuestionAdmin.assignQuestionsForm()
 POST   /assign                 controllers.choice.QuestionAdmin.assignQuestions()
 
+GET    /assign/:id             controllers.choice.QuestionAdmin.assignQuestionsSingleForm(id: Int)
+
 #
 GET    /                       controllers.choice.QuestionController.index()
 

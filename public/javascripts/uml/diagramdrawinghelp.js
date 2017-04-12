@@ -1,51 +1,98 @@
-const
-stdClassSize = 140;
-const
-colorWhite = '#ffffff';
+const STD_CLASS_SIZE = 140;
 
-var divWidth = document.getElementById("sizepaper").parentNode.offsetWidth;
-var divTextWidth = document.getElementById("text").parentNode.offsetWidth;
-var divHeight = document.getElementById("sizepaper").parentNode.offsetHeight;
+const WIDTH_PERCENTAGE = 0.45;
+const HEIGHT_PERCENTAGE = 0.7;
+
+const COLOR_WHITE = '#ffffff';
+
+const MAX_ENTRIES_PER_CLASS = 3;
 
 var idList = []; // Linkverbindungen
 
+var graph;
+var paper;
 
-var graph = new joint.dia.Graph();
+var sel = "POINTER";
 
-var sel;
+var learnerSolution = {
+  classes: [],
+  otherMethods: [/* remains empty in diagDrawingHelp */],
+  otherAttributes: [/* remains empty in diagDrawingHelp */],
+  connections: [/* remains empty in classSelectin */]
+};
 
-var paper = new joint.dia.Paper({
-  el: document.getElementById('paper'),
-  width: 0.7 * window.screen.availWidth,
-  height: 0.7 * window.screen.availHeight,
-  gridSize: 1,
-  model: graph
+$(document).ready(function() {
+  // Init Graph and Paper
+  graph  = new joint.dia.Graph(); // NOSONAR
+  paper = new joint.dia.Paper({
+    el: document.getElementById('paper'),
+    width: WIDTH_PERCENTAGE * window.screen.availWidth,
+    height:  HEIGHT_PERCENTAGE * window.screen.availHeight,
+    gridSize: 1,
+    model: graph
+  });
+  
+  // Set callback for click
+  paper.on('cell:pointerclick', cellOnPointerClick);
+  
+  // Draw all classes
+  for(var clazz of defaultClasses) { // NOSONAR
+    addClass(clazz);
+  }
 });
-paper.on('cell:pointerclick', cellOnPointerClick);
+  
+function cellOnPointerClick(cellView, evt, x, y) { // NOSONAR
+  if(sel == "POINTER") {
+    console.log(evt.toElement.getAttribute("class"));
+    switch(evt.toElement.getAttribute("class")) {
+    case "v-line":
+      // Auf Klassennamen geklickt
+    case "uml-class-name-rect":
+      var newName = prompt("Wie wollen Sie die Klasse benennen?");
+      if(newName)
+        alert("TODO: Nenne Klasse in \"" + newName + "\" um.");
+      break;
+    case "uml-class-attrs-rect":
+      console.log("Adding attribute...");
+      break;
+    case "uml-class-methods-rect":
+      console.log("Adding method...");
+      break;
+    default:
+      console.log("Doing nothing...");
+      break;
+    }
+    return;
+  }
+  var selected = cellView.model.id;
+  
+  
+  idList.push(selected);
+  updateIdList();
+  
+  if(idList.length == 2)
+    link();
+}
 
-function cellOnPointerClick(cellView, evt, x, y) {
-  if(idList.length < 2) {
-    idList.push(cellView.model.id);
-    return;
+function updateIdList() {
+  var idSpan = document.getElementById("idList");
+  var classNames = [];
+  for(var id of idList) {
+    classNames.push(graph.getCell(id).attr('.uml-class-name-text/text'));
   }
-  if(idList[0] == idList[1]) {
-    console.error("You selected the same cell twice!");
-    idList = [];
-    return;
-  }
-  link();
+  idSpan.innerHTML = classNames.join(", ");
 }
 
 function selectButton(elem) {
-  for(var i = 1; i < 6; i++) {
-    document.getElementById(i).value = "off";
+  for(var buttonGroup of document.getElementById("buttonsDiv").children) {
+    buttonGroup.children[0].className = "btn btn-default";
   }
-  document.getElementById(elem.id).value = "on";
-  sel = elem.id;
+  elem.className = "btn btn-primary";
+  sel = elem.dataset.conntype;
 }
 
 function askMulitplicity(source, dest) {
-  var multiplicity = window.prompt("Bitte geben Sie die Multiplizität von " + source + " nach " + dest + " an.");
+  var multiplicity = window.prompt("Bitte geben Sie die Multiplizität von " + source + " nach " + dest + " auf der Seite " + source + " an.");
   
   if(multiplicity)
     return multiplicity;
@@ -53,50 +100,55 @@ function askMulitplicity(source, dest) {
   return "";
 }
 
-var learnerSolution = {
-    classes: [],
-    otherMethods: [/* remains empty in diagDrawingHelp */],
-    otherAttributes: [/* remains empty in diagDrawingHelp */],
-    connections: [/* remains empty in classSelectin */]
-  };
+function prepareFormForSubmitting() {
+  var toSend = extractParameters();
+  document.getElementById("learnerSolution").value = toSend;
+}
 
-  function prepareFormForSubmitting() {
-    document.getElementById("learnerSolution").value = extractParameters();
-  }
-
-  function extractParameters() {
-    for (var cell of graph.getCells()) {
-      var clazz = {
-        name: cell.attributes.name,
-        methods: cell.attributes.methods,
-        attributes: cell.attributes.attributes
-      };
-      learnerSolution.classes.push(clazz);
-    }
-    
-    for (var conn of graph.getLinks()) {
-      var connection = {
-        type: conn.attributes.type,
-        source: graph.getCell(conn.attributes.source.id).attr('.uml-class-name-text/text'),
-        target: graph.getCell(conn.attributes.target.id).attr('.uml-class-name-text/text'),
-        mulStart: conn.attributes.labels[0].attrs.text.text,
-        mulTarget: conn.attributes.labels[1].attrs.text.text
-      }
-      learnerSolution.connections.push(connection);
-    }
-    
-    return JSON.stringify(learnerSolution, null, 2);
-  }
-
-
-function link() {
-  if(document.getElementById(sel).value == "off") {
-    return;
+function extractParameters() {
+  for (var cell of graph.getCells()) {
+    var clazz = {
+      name: cell.attributes.name,
+      methods: cell.attributes.methods,
+      attributes: cell.attributes.attributes
+    };
+    learnerSolution.classes.push(clazz);
   }
   
+  for (var conn of graph.getLinks()) {
+    var connection = {
+      type: getTypeName(conn.attributes.type),
+      source: graph.getCell(conn.attributes.source.id).attr('.uml-class-name-text/text'),
+      target: graph.getCell(conn.attributes.target.id).attr('.uml-class-name-text/text'),
+      mulstart: conn.attributes.labels[0].attrs.text.text,
+      multarget: conn.attributes.labels[1].attrs.text.text
+    }
+    learnerSolution.connections.push(connection);
+  }
+  
+  return JSON.stringify(learnerSolution, null, 2);
+}
+
+function getTypeName(type) {
+  switch(type) {
+  case "link":
+    return "ASSOCIATION";
+  case "uml.Aggregation":
+    return "AGGREGATION";
+  case "uml.Composition":
+    return "COMPOSITION";
+  case "uml.Implementation":
+    return "IMPLEMENTATION";
+  default:
+    return "ERROR!";
+  }
+}
+
+function link() {
   var sourceId = idList[0];
   var targetId = idList[1];
   idList = [];
+  updateIdList();
   
   var source_name = graph.getCell(sourceId).attr('.uml-class-name-text/text');
   var destin_name = graph.getCell(targetId).attr('.uml-class-name-text/text');
@@ -129,20 +181,17 @@ function link() {
   };
   
   var cellToAdd;
-  switch (sel){
-  case '1':
+  switch (sel) {
+  case 'COMPOSITION':
     cellToAdd = new joint.shapes.uml.Composition(members);
     break;
-  case '2':
+  case 'AGGREGATION':
     cellToAdd = new joint.shapes.uml.Aggregation(members);
     break;
-  case '3':
+  case 'IMPLEMENTATION':
     cellToAdd = new joint.shapes.uml.Implementation(members);
     break;
-  case '4':
-    cellToAdd = new joint.shapes.uml.Generalization(members);
-    break;
-  case '5':
+  case 'ASSOCIATION':
     cellToAdd = new joint.dia.Link(members);
     break;
   default:
@@ -162,15 +211,15 @@ function addClass(clazz) {
       y: clazz.posY
     },
     size: {
-      width: stdClassSize,
-      height: stdClassSize
+      width: STD_CLASS_SIZE,
+      height: STD_CLASS_SIZE
     },
     attrs: {
       '.uml-class-name-rect': {
-        fill: colorWhite,
+        fill: COLOR_WHITE,
       },
       '.uml-class-attrs-rect, .uml-class-methods-rect': {
-        fill: colorWhite,
+        fill: COLOR_WHITE,
       },
       '.uml-class-attrs-text': {
         ref: '.uml-class-attrs-rect',

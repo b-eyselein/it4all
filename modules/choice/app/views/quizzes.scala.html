@@ -1,14 +1,17 @@
 @(user: model.user.User, quizzes: List[model.Quiz])
 
+@isAdmin = @{user.role == model.user.Role.ADMIN}
+
 @main("Auswahlfragen", user) {
 <div class="container">
   <div class="page-header">
-    <h1>Quiz&uuml;bersicht</h1>
+    <h1>Alle Quizze</h1>
   </div>
   
   @if(quizzes.isEmpty()) {
   <div class="alert alert-info">Bisher gibt es keine Quizze. Sie k&ouml;nnen
-    <a class="alert-link" href="@controllers.choice.routes.QuestionAdmin.newQuizForm()">hier</a> eines erstellen.</div>
+    <a class="alert-link" href="@choice.routes.QuestionAdmin.newQuizForm()">hier</a> eines erstellen.
+    </div>
   } else {
   <table class="table">
     <thead>
@@ -17,17 +20,19 @@
         <th>Titel</th>
         <th>Text</th>
         <th># Fragen</th>
-        <th>Link</th>
+        @if(isAdmin) {<th/>}
       </tr>
     </thead>
     <tbody>
     @for(quiz <- quizzes) {
       <tr>
         <td>@quiz.id</td>
-        <td>@quiz.title</td>
+        <td><a href="@choice.routes.QuestionController.quiz(quiz.id)">@quiz.title</a></td>
         <td>@quiz.text</td>
         <td>@quiz.questions.size()</td>
-        <td><a href="@controllers.choice.routes.QuestionController.quiz(quiz.id)">Quiz @quiz.id</a></td>
+        @if(isAdmin) {
+        <td><a href="@choice.routes.QuestionAdmin.assignQuestionsSingleForm(quiz.id)">Fragen zuweisen...</a>
+        }
       </tr>
     }    
     </tbody>

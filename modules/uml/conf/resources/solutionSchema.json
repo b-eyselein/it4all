@@ -1,89 +1,97 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema#",
-	"type": "object",
+	"$schema": "http://json-schema.org/draft-04/schema#", 
+	"type": "object", 
 	"properties": {
 		"classes": {
-			"type": "array",
+			"type": "array", 
 			"items": {
-				"type": "object",
+				"type": "object", 
 				"properties": {
 					"name": {
 						"type": "string"
-					},
+					}, 
 					"methods": {
-						"type": "array",
+						"type": "array", 
 						"items": {
 							"type": "string"
 						}
-					},
+					}, 
 					"attributes": {
-						"type": "array",
+						"type": "array", 
 						"items": {
 							"type": "string"
 						}
 					}
 				}
-			},
+			}, 
 			"required": [
-				"name",
-				"methods",
+				"name", 
+				"methods", 
 				"attributes"
 			]
-		},
+		}, 
 		"otherMethods": {
-			"type": "array",
+			"type": "array", 
 			"items": {
 				"type": "string"
 			}
-		},
+		}, 
 		"otherAttributes": {
-			"type": "array",
+			"type": "array", 
 			"items": {
 				"type": "string"
 			}
-		},
+		}, 
 		"connections": {
-			"type": "array",
+			"type": "array", 
 			"items": {
-				"type": "object",
+				"type": "object", 
 				"properties": {
 					"type": {
 						"enum": [
-							"AGGREGATION",
-							"ASSOCIATION",
-							"COMPOSITION",
-							"GENERALIZATION",
-							"IMPLEMENTATION",
+							"AGGREGATION", 
+							"ASSOCIATION", 
+							"COMPOSITION", 
+							"GENERALIZATION", 
+							"IMPLEMENTATION", 
 							"STANDARD"
 						]
-					},
-					"start": {
+					}, 
+					"source": {
 						"type": "string"
-					},
+					}, 
 					"target": {
 						"type": "string"
-					},
+					}, 
 					"mulstart": {
-						"type": "string"
-					},
+						"enum": [
+							"1", 
+							"*", 
+							""
+						]
+					}, 
 					"multarget": {
-						"type": "string"
+						"enum": [
+							"1", 
+							"*", 
+							""
+						]
 					}
-				},
+				}, 
 				"required": [
-					"type",
-					"start",
-					"target",
-					"mulstart",
+					"type", 
+					"source", 
+					"target", 
+					"mulstart", 
 					"multarget"
 				]
 			}
 		}
-	},
+	}, 
 	"required": [
-		"classes",
-		"otherMethods",
-		"otherAttributes",
+		"classes", 
+		"otherMethods", 
+		"otherAttributes", 
 		"connections"
 	]
 }

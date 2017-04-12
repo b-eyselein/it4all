@@ -9,12 +9,18 @@
   </div>
 
   @for(quiz <- quizzes) {
-  <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionController.quiz(quiz.id)">Quiz @quiz.title</a>
+  <a class="btn btn-default btn-block" href="@choice.routes.QuestionController.quiz(quiz.id)">Quiz @quiz.title</a>
   }
 
   <hr>
-
-  <a class="btn btn-warning btn-block" href="@controllers.choice.routes.QuestionController.newQuestionForm()">Neue Frage erstellen <sub><i>BETA!</i></sub></a>
+  
+  <a class="btn btn-default btn-block" href="@choice.routes.QuestionController.questions()">Alle Fragen</a>
+  
+  <hr>
+  
+  <a class="btn btn-warning btn-block" href="@choice.routes.QuestionController.newQuestionForm()">
+  <span class="glyphicon glyphicon-new-window"></span> Neue Frage erstellen <sup><i>BETA!</i></sup>
+  </a>
 
 </div>
 }

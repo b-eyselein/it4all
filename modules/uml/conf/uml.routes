@@ -9,19 +9,19 @@ POST   /upload                             controllers.uml.UmlAdmin.uploadFile()
 GET    /create                             controllers.uml.UmlAdmin.readStandardExercises()
 
 # Step 1: selection of classes
-GET    /:exId/classselection               controllers.uml.UML.classSelection(exId: Int)
+GET    /:exId/classSelection               controllers.uml.UML.classSelection(exId: Int)
 PUT    /:exId/correct/classselection       controllers.uml.UML.correctClassSelection(exId: Int)
 POST   /:exId/correct/classselection       controllers.uml.UML.correctClassSelection(exId: Int)
 
 # Step 2: finalization of diagram
-GET    /:exId/diagramdrawinghelp           controllers.uml.UML.diagramDrawingWithHelp(exId: Int)
-PUT    /:exId/correct/diagramdrawinghelp   controllers.uml.UML.correctDiagramDrawingWithHelp(exId: Int)
-POST   /:exId/correct/diagramdrawinghelp   controllers.uml.UML.correctDiagramDrawingWithHelp(exId: Int)
+GET    /:exId/diagramDrawinghelp           controllers.uml.UML.diagramDrawingWithHelp(exId: Int)
+PUT    /:exId/correct/diagramDrawingHelp   controllers.uml.UML.correctDiagramDrawingWithHelp(exId: Int)
+POST   /:exId/correct/diagramDrawingHelp   controllers.uml.UML.correctDiagramDrawingWithHelp(exId: Int)
 
 # Complete drawing of diagram without any help
-GET    /:exId/diagramdrawing               controllers.uml.UML.diagramDrawing(exId: Int)
-PUT    /:exId/correct/diagramdrawing       controllers.uml.UML.correctDiagramDrawing(exId: Int)
-POST   /:exId/correct/diagramdrawing       controllers.uml.UML.correctDiagramDrawing(exId: Int)
+GET    /:exId/diagramDrawing               controllers.uml.UML.diagramDrawing(exId: Int)
+PUT    /:exId/correct/diagramDrawing       controllers.uml.UML.correctDiagramDrawing(exId: Int)
+POST   /:exId/correct/diagramDrawing       controllers.uml.UML.correctDiagramDrawing(exId: Int)
 
 # Test Matching of attrs and methods
 GET    /test                               controllers.uml.UML.test()

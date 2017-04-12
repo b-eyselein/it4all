@@ -3,8 +3,6 @@
 @isSingle = @{question.questionType == model.QuestionType.SINGLE}
 
 @main("Auswahlfragen", user) {
-<script src="@routes.Assets.versioned("javascripts/choicequestions.js")"></script>
-
 <div class="container">
   <div class="page-header">
     <h1>@question.text</h1>
@@ -16,31 +14,20 @@
       <div class="@question.questionType.getDivClass()">
         <label for="@ans.key.id">
         
-          <input type="@question.questionType.getInputType()" @if(isSingle) {name="ans"} else {name="@ans.key.id"} id="@ans.key.id" @if(isSingle) {required}>
-          @ans.text</input>
+          <input type="@question.questionType.getInputType()" id="@ans.key.id"
+          @if(isSingle) {name="ans" value="@ans.key.id"} else {name="@ans.key.id"}
+          @if(isSingle) {required}>
+          @ans.text
+          </input>
+        
         </label>
       </div>
     }
     </div>
     
     <hr>
-    
-    <section>
-      <h3>Wollen Sie die Frage bewerten?</h3>
-      <input type="number" hidden name="stars" id="stars" value="-1">
-      <div class="btn-group btn-group-justified">
-        @for(i <- 1 until 6) {
-    	  <div class="btn-group"><button type="button" class="btn btn-default" onclick="setStars(@i);">
-            <span id="star@i" class="glyphicon glyphicon-star-empty"></span>  
-          </button></div>
-        }
-      </div>
-    </section>
-    
-    <hr>
 
     <input class="btn btn-block btn-primary" type="submit" value="Kontrollieren">
-    <a class="btn btn-block btn-default" href="@controllers.choice.routes.QuestionController.question(question.id + 1)"> Nächste Aufgabe</a>
   </form>
 </div>
 }

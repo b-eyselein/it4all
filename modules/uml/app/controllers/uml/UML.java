@@ -45,21 +45,24 @@ public class UML extends ExerciseController {
 
   private static JsonNode readAndValidateSolution(DynamicForm form, JsonNode schemaNode) throws SolutionException {
     String jsonAsString = form.get(LEARNER_SOLUTION_VALUE);
-    
+
     if(jsonAsString == null || jsonAsString.isEmpty())
       throw new SolutionException("Keine Daten übertragen!");
-    
+
     JsonNode sentJson = Json.parse(jsonAsString);
+
+    Logger.debug(Json.prettyPrint(sentJson));
+
     try {
       ProcessingReport report = JsonWrapper.validateJson(sentJson, schemaNode);
       if(!report.isSuccess())
         throw new SolutionException("Gesendete Daten entsprechen nicht dem Schema:\n" + report.toString());
-      
+
     } catch (ProcessingException e) {
       Logger.debug("There has been an error correcting an UML class diagram", e);
       throw new SolutionException("Die gesendeten Daten sind fehlerhaft!");
     }
-    
+
     return sentJson;
   }
 
@@ -98,8 +101,7 @@ public class UML extends ExerciseController {
   }
 
   public Result diagramDrawing(int exerciseId) {
-    boolean showHint = false;
-    return ok(views.html.diagdrawing.render(getUser(), UmlExercise.finder.byId(exerciseId), showHint));
+    return ok(views.html.diagdrawing.render(getUser(), UmlExercise.finder.byId(exerciseId)));
   }
 
   public Result diagramDrawingWithHelp(int exerciseId) {

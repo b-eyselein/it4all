@@ -1,31 +1,47 @@
-const
-stdClassSize = 140;
-const
-colorWhite = '#ffffff';
+const STD_CLASS_SIZE = 140;
 
-var divWidth = document.getElementById("sizepaper").clientWidth;
-var divTextWidth = document.getElementById("text").parentNode.offsetWidth;
-var divHeight = document.getElementById("sizepaper").parentNode.offsetHeight;
+const WIDTH_PERCENTAGE = 0.45;
+const HEIGHT_PERCENTAGE = 0.7;
+
+const COLOR_WHITE = '#ffffff';
+
+const MAX_ENTRIES_PER_CLASS = 3;
 
 var idList = []; // Linkverbindungen
 
-var graph = new joint.dia.Graph();
-var sel;
+var graph;
+var paper;
 
-// Festlegen der maximalen Anzahl von Methoden bzw. Attributen
-var max_entries_class = 3;
+var sel = "POINTER";
 
-var paper = new joint.dia.Paper({
-  el: document.getElementById('paper'),
-  width: 0.625 * window.screen.availWidth,
-  height: 0.7 * window.screen.availHeight,
-  gridSize: 1,
-  model: graph
+var learnerSolution = {
+  classes: [],
+  otherMethods: [/* remains empty in diagDrawingHelp */],
+  otherAttributes: [/* remains empty in diagDrawingHelp */],
+  connections: [/* remains empty in classSelectin */]
+};
+
+$(document).ready(function() {
+  // Init Graph and Paper
+  graph  = new joint.dia.Graph(); // NOSONAR
+  paper = new joint.dia.Paper({
+    el: document.getElementById('paper'),
+    width: WIDTH_PERCENTAGE * window.screen.availWidth,
+    height:  HEIGHT_PERCENTAGE * window.screen.availHeight,
+    gridSize: 1,
+    model: graph
+  });
+  
+  // Set callback for click
+  paper.on('cell:pointerclick', cellOnPointerClick);
+  
+  // Draw all classes
+  for(var clazz of defaultClasses) { // NOSONAR
+    addClass(clazz);
+  }
 });
 
-paper.on('cell:pointerclick', cellOnPointerClick());
-
-function cellOnPointerClick()(cellView, evt, x, y) {
+function cellOnPointerClick(cellView, evt, x, y) {
   var cellInGraph = graph.getCell(cellView.model.id);
   
   if(document.getElementById(5).value == "on") {
@@ -37,7 +53,7 @@ function cellOnPointerClick()(cellView, evt, x, y) {
   } else if (document.getElementById(6).value == "on") {
     // Methoden hinzufügen
     
-    if(cellInGraph.attributes.methods.length >= max_entries_class) {
+    if(cellInGraph.attributes.methods.length >= MAX_ENTRIES_PER_CLASS) {
       // Klasse hat bereits maximale Anzahl (3) an Methoden
       alert("Entfernen Sie zuerst einen Eintrag, bevor Sie weitere hinzufügen!");
       return;
@@ -55,7 +71,7 @@ function cellOnPointerClick()(cellView, evt, x, y) {
   } else if(document.getElementById(7).value == "on") {
     // Attribute hinzuf&uuml;gen
     
-    if(cellInGraph.attributes.attributes.length >= max_entries_class){
+    if(cellInGraph.attributes.attributes.length >= MAX_ENTRIES_PER_CLASS){
       // Klasse hat bereits maximale Anzahl (3) an Methoden
       alert("Entfernen Sie zuerst einen Eintrag, bevor Sie weitere hinzufügen!");
       return;
@@ -105,7 +121,7 @@ function cellOnPointerClick()(cellView, evt, x, y) {
   // FIXME: aktualisiere div...
   if(idList && idList.size > 0) {
     var selectedNodes = graph.getCell(idList).attributes.name;
-    document.getElementById("idListDiv").innerHTML = "<p>sel = " + sel + "</p><p>idList = [" + selectedNodes + "]</p>";
+    document.getElementById("idList").innerHTML = "<p>sel = " + sel + "</p><p>idList = [" + selectedNodes + "]</p>";
   }
 }
 

@@ -1,3 +1,5 @@
+
+// In newQuestion / editQuestion
 const MAX_ANSWERS = 8;
 const MAX_START = 5
 
@@ -19,14 +21,6 @@ function onAnswerNumChange() {
   }
 }
 
-function setStars(num) {
-  for(var i = 1; i <= MAX_START; i++) {
-    var newClassName = i <= num ? "glyphicon glyphicon-star" : "glyphicon glyphicon-star-empty";
-    document.getElementById("star" + i).className = newClassName;
-  }
-  document.getElementById("stars").value = num;
-}
-
 function changeCorrectness(number, value, button) {
   // TODO: set correctness...
   document.getElementById("correctness_" + number).value = value;
@@ -35,4 +29,13 @@ function changeCorrectness(number, value, button) {
     otherButton.className = "btn btn-default";
   }
   button.className = "btn btn-primary";
+}
+
+// In questionResult
+function setStars(num) {
+  for(var i = 1; i <= MAX_START; i++) {
+    var newClassName = i <= num ? "glyphicon glyphicon-star" : "glyphicon glyphicon-star-empty";
+    document.getElementById("star" + i).className = newClassName;
+  }
+  document.getElementById("stars").value = num;
 }

@@ -1,6 +1,7 @@
 @(user: model.user.User)
 
 @notAssignedQuestions = @{model.Question.notAssignedQuestions()}
+@avgQuestionRating = @{model.Question.getCompleteAvgRating()}
 
 @main("Auswahlfragen", user) {
 <div class="container">
@@ -8,41 +9,53 @@
     <h1>Auswahlfragen: Administratorbereich</h1>
   </div>
   
-  <div class="alert alert-info alert-dismissable">
-    <a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-    Es gibt insgesamt @model.Question.finder.all().size() Fragen und @model.Quiz.finder.all().size() Quiz(ze)
-  </div>
+  <section>
+    <h2>Statistiken</h2>
+    <ul>
+      <li>
+        Es existieren @model.Question.finder.all().size() <a href="@choice.routes.QuestionController.questions()">Fragen</a>
+        <ul>
+        @if(!notAssignedQuestions.isEmpty()) {
+          <li>Es gibt noch @notAssignedQuestions.size()
+            <a href="@choice.routes.QuestionAdmin.notAssignedQuestions()">nicht zugeordnete Fragen</a>.
+            Sie k&ouml;nnen Sie <a href="@choice.routes.QuestionAdmin.assignQuestionsForm()">hier</a> zuweisen.
+          </li>
+        }
+        @if(avgQuestionRating.isPresent()) {
+          <li>Diese haben eine durchschnittliche Bewertung von @avgQuestionRating.getAsDouble()</li>
+        }
+        </ul>
+      </li>
+      <li>
+        Es existieren @model.Quiz.finder.all().size() <a href="@choice.routes.QuestionController.quizzes()">Quiz(ze)</a>
+      
+      </li>
+    </ul>
+  </section>
   
-  @if(!notAssignedQuestions.isEmpty()) {
-  <div class="alert alert-danger alert-dismissable">
-    <a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-    Es gibt noch @notAssignedQuestions.size()
-    <a class="alert-link" href="@controllers.choice.routes.QuestionAdmin.notAssignedQuestions()">nicht zugeordnete Fragen</a>. Sie k&ouml;nnen Sie
-    <a class="alert-link" href="@controllers.choice.routes.QuestionAdmin.assignQuestionsForm()">hier</a> zuweisen.
-  </div>
-  }
+
   
   <div class="row">
     <div class="col-md-6">
       <h2>Verwaltung der Fragen</h2>
-      <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionController.questions()">Übersicht über alle Fragen</a>
-      <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionController.newQuestionForm()">Neue Frage erstellen</a>
+      <a class="btn btn-default btn-block" href="@choice.routes.QuestionController.questions()">Übersicht über alle Fragen</a>
+      <a class="btn btn-default btn-block" href="@choice.routes.QuestionController.newQuestionForm()">Neue Frage erstellen</a>
       
       <hr>
       
-      <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionAdmin.exportQuestions()">Fragen als JSON exportieren</a>
-      <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionAdmin.readStandardExercises()">Standardaufgaben einlesen</a>
+      <a class="btn btn-default btn-block" href="@choice.routes.QuestionAdmin.exportQuestions()">Fragen als JSON exportieren</a>
+      <a class="btn btn-default btn-block" href="@choice.routes.QuestionAdmin.readStandardExercises()">Standardaufgaben einlesen</a>
     </div>
   
     <div class="col-md-6">
       <h2>Verwaltung der Quizzes</h2>
-      <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionController.quizzes()">Übersicht über alle Quizze</a>
-      <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionAdmin.newQuizForm()">Neues Quiz erstellen</a>
+      <a class="btn btn-default btn-block" href="@choice.routes.QuestionController.quizzes()">Übersicht über alle Quizze</a>
+      <a class="btn btn-default btn-block" href="@choice.routes.QuestionAdmin.newQuizForm()">Neues Quiz erstellen</a>
       
       <hr>
       
-      <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionAdmin.exportQuizzes()">Quizze als JSON exportieren</a>
-      <a class="btn btn-default btn-block" href="@@controllers.choice.routes.QuestionAdmin.readStandardExercises()">Standardquizze? einlesen</a>
+      <a class="btn btn-default btn-block" href="@choice.routes.QuestionAdmin.exportQuizzes()">Quizze als JSON exportieren</a>
+      <a class="btn btn-default btn-block" href="@@choice.routes.QuestionAdmin.readStandardExercises()">Standardquizze? einlesen</a>
     </div>
   </div>
   
@@ -54,9 +67,9 @@
         <div class="panel-heading">Import von Fragen als JSON-Datei</div>
         <div class="panel-body">
           <div class="alert alert-info">Die Datei wird gegen diese
-          <a href="@controllers.choice.routes.QuestionAdmin.getJSONSchemaFile()" class="alert-link" target="_blank">JSON Schema-Datei</a>
+          <a href="@choice.routes.QuestionAdmin.getJSONSchemaFile()" class="alert-link" target="_blank">JSON Schema-Datei</a>
           geprüft. Im Erfolgsfall werden die Aufgaben ausgelesen und in der Datenbank gespeichert.</div>
-          <form action="@controllers.choice.routes.QuestionAdmin.uploadFile()" method="post" enctype="multipart/form-data">
+          <form action="@choice.routes.QuestionAdmin.uploadFile()" method="post" enctype="multipart/form-data">
             <div class="form-group">
               <label for="file">Ihre Datei:</label>
               <input type="file" class="form-control" name="file" id="file" accept=".json" required>
@@ -72,9 +85,9 @@
         <div class="panel-heading">Import von Fragen als JSON-Datei</div>
         <div class="panel-body">
           <div class="alert alert-info">Die Datei wird gegen diese
-          <a href="@controllers.choice.routes.QuestionAdmin.getJSONSchemaFile()" class="alert-link" target="_blank">JSON Schema-Datei</a>
+          <a href="@choice.routes.QuestionAdmin.getJSONSchemaFile()" class="alert-link" target="_blank">JSON Schema-Datei</a>
           geprüft. Im Erfolgsfall werden die Aufgaben ausgelesen und in der Datenbank gespeichert.</div>
-          <form action="@controllers.choice.routes.QuestionAdmin.uploadFile()" method="post" enctype="multipart/form-data">
+          <form action="@choice.routes.QuestionAdmin.uploadFile()" method="post" enctype="multipart/form-data">
             <div class="form-group">
               <label for="file">Ihre Datei:</label>
               <input type="file" class="form-control" name="file" id="file" accept=".json" required>

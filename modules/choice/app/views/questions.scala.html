@@ -8,42 +8,67 @@
     <h1>Alle Fragen</h1>
   </div>
   
-  <table class="table">
+  @if(questions.isEmpty()) {
+  <div class="alert alert-info">Bisher gibt es keine Fragen. Sie k&ouml;nnen
+    <a class="alert-link" href="@controllers.choice.routes.QuestionController.newQuestionForm()">hier</a> eine erstellen.
+  </div>
+  } else {
+  <table class="table text-center">
     <thead>
       <tr>
         <th>ID</th>
+        <th/>
+        <th/>
         <th>Autor</th>
         <th>Titel</th>
-        <th>Type</th>
-        <th>Max. Punktzahl</th>
-        <th>Text</th>
+        <th>Typ</th>
         <th># Antworten</th>
-        @if(isAdmin) {<th>Editieren</th>}
-        <th>&Oslash; Bewertungen</th>
-        <th>Quizzes</th>
-        <th>Link</th>
+        <th>Max. Punktzahl</th>
+        <th>&Oslash; Bewertung</th>
       </tr>
     </thead>
     <tbody>
+    
     @for(question <- questions) {
       <tr>
         <td>@question.id</td>
-        <td>@question.author</td>
-        <td>@question.title</td>
-        <td>@question.questionType</td>
-        <td>@question.maxPoints</td>
-        <td>@question.text</td>
-        <td>@question.answers.size()</td>
-        @if(isAdmin) {<td>
+        <td>
+        @if(isAdmin || user.name.equals(question.author)) {
           <a href="@controllers.choice.routes.QuestionController.editQuestionForm(question.id)">
-            <span class="glyphicon glyphicon-edit"></span></a>
-        </td>}
-        <td>@if(question.getAverageRating().isPresent()) {@question.getAverageRating().getAsDouble()} else {--}</td>
-        <td>@String.join(", ", question.getQuizNames())</td>
-        <td><a href="@controllers.choice.routes.QuestionController.question(question.id)">Frage @question.id</a>
+            <span class="glyphicon glyphicon-edit"></span>
+          </a>
+        }
+        </td>
+        <td>
+        @if(isAdmin) {
+      	  <a href="">
+            <span class="glyphicon glyphicon-remove-circle"></span>
+          </a>
+      	}
+      	</td>
+        <td>
+        @if(isAdmin || user.name.equals(question.author)) {
+          @question.author
+        } else {
+          <span title="Keine ausreichende Berechtigung!" class="glyphicon glyphicon-question-sign"></span>
+        }
+        </td>
+        <td><a href="@controllers.choice.routes.QuestionController.question(question.id)">@question.title</a></td>
+        <td>@question.questionType</td>
+        <td>@question.answers.size()</td>
+        <td>@question.maxPoints</td>
+        <td>
+        @if(question.getAverageRating().isPresent()) {
+          @question.getAverageRating().getAsDouble()
+        } else {
+          <span title="Noch keine Bewertungen vorhanden">--</span>
+        }
+        </td>
       </tr>
-    }    
+    }
+    
     </tbody>
   </table>
+  }
 </div>
 }
