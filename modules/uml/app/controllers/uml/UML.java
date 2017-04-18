@@ -37,7 +37,7 @@ public class UML extends ExerciseController {
     super(theUtil, theFactory);
 
     try {
-      solutionSchemaNode = Json.parse(String.join("\n", Files.readAllLines(SOLUTION_SCHEMA_PATH)));
+      solutionSchemaNode = Json.parse(String.join("\n", Files.readAllLines(SOLUTION_SCHEMA_PATH))); // NOSONAR
     } catch (IOException e) {
       Logger.error("There has been an error parsing the schema files for UML:", e);
     }
@@ -75,7 +75,7 @@ public class UML extends ExerciseController {
       JsonNode sentJson = readAndValidateSolution(factory.form().bindFromRequest(), solutionSchemaNode);
       ClassSelectionResult result = new ClassSelectionResult(UmlExercise.finder.byId(exerciseId), sentJson);
       return ok(views.html.classSelectionSolution.render(getUser(), result));
-    } catch (SolutionException e) {
+    } catch (SolutionException e) { // NOSONAR
       return badRequest(e.getMessage());
     }
   }
@@ -85,7 +85,7 @@ public class UML extends ExerciseController {
       JsonNode sentJson = readAndValidateSolution(factory.form().bindFromRequest(), solutionSchemaNode);
       DiagramDrawingResult result = new DiagramDrawingResult(UmlExercise.finder.byId(exerciseId), sentJson);
       return ok(views.html.diagdrawingsol.render(getUser(), result));
-    } catch (SolutionException e) {
+    } catch (SolutionException e) { // NOSONAR
       return badRequest(e.getMessage());
     }
   }
@@ -95,7 +95,7 @@ public class UML extends ExerciseController {
       JsonNode sentJson = readAndValidateSolution(factory.form().bindFromRequest(), solutionSchemaNode);
       DiagramDrawingResult result = new DiagramDrawingResult(UmlExercise.finder.byId(exerciseId), sentJson);
       return ok(views.html.diagdrawinghelpsol.render(getUser(), result));
-    } catch (SolutionException e) {
+    } catch (SolutionException e) { // NOSONAR
       return badRequest(e.getMessage());
     }
   }

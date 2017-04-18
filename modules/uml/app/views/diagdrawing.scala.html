@@ -117,19 +117,17 @@ var canDelete = @{!getsHelp};
         </button>
       </div>
       
-      @*
       <div class="btn-group">
-        <button class="btn btn-default" onclick="backwards();" title="R&uuml;ckg&auml;ngig">
+        <button class="btn btn-default" onclick="backwards();" disabled title="R&uuml;ckg&auml;ngig">
           <span class="glyphicon glyphicon-arrow-left"></span>
         </button>
       </div>
       
       <div class="btn-group">
-        <button class="btn btn-default" onclick="forwards();" title="Vorw&auml;rts">
+        <button class="btn btn-default" onclick="forwards();" disabled title="Vorw&auml;rts">
           <span class="glyphicon glyphicon-arrow-right"></span>
         </button>
       </div>
-      *@
     
       <div class="btn-group">
         <button class="btn btn-default" data-conntype="CLASS" onclick="selectButton(this);" id="classButton"
@@ -188,14 +186,12 @@ var canDelete = @{!getsHelp};
           <span class="glyphicon glyphicon-download"></span> Exportieren
         </a>
       </div>
-
-      @*      
+      
       <div class="btn-group">
-        <button class="btn btn-default" onclick="importDiagram();">
+        <button class="btn btn-default" onclick="importDiagram();" disabled>
           <span class="glyphicon glyphicon-upload"></span> Importieren
         </button>
       </div>
-      *@
       
       <hr>
 
