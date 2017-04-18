@@ -101,11 +101,11 @@ public class UML extends ExerciseController {
   }
 
   public Result diagramDrawing(int exerciseId) {
-    return ok(views.html.diagdrawing.render(getUser(), UmlExercise.finder.byId(exerciseId)));
+    return ok(views.html.diagdrawing.render(getUser(), UmlExercise.finder.byId(exerciseId), false));
   }
 
   public Result diagramDrawingWithHelp(int exerciseId) {
-    return ok(views.html.diagdrawinghelp.render(getUser(), UmlExercise.finder.byId(exerciseId)));
+    return ok(views.html.diagdrawing.render(getUser(), UmlExercise.finder.byId(exerciseId), true));
   }
 
   public Result index() {
