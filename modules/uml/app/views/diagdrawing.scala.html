@@ -14,6 +14,8 @@
 
 <script>
 var defaultClasses = [@if(getsHelp) {@Html(exercise.getClassesForDiagDrawingHelp)}]
+
+var canDelete = @{!getsHelp};
 </script>
 
 <div class="container-fluid">
@@ -26,7 +28,13 @@ var defaultClasses = [@if(getsHelp) {@Html(exercise.getClassesForDiagDrawingHelp
       
       <div class="panel panel-default" id="text">
         <div class="panel-heading">Aufgabentext</div>
-        <div class="panel-body">@Html(exercise.getExTextForDiagDrawHelp())</div>
+        <div class="panel-body">
+        @if(getsHelp) {
+        @Html(exercise.getExTextForDiagDrawHelp())
+        } else {
+        @Html(exercise.getExTextForDiagDraw())
+        }
+        </div>
       </div>
       
       <div class="panel-group">
@@ -35,7 +43,7 @@ var defaultClasses = [@if(getsHelp) {@Html(exercise.getClassesForDiagDrawingHelp
             <a data-toggle="collapse" href="#hints">Bearbeitungshinweise
             <span class="glyphicon glyphicon-chevron-down pull-right"></span></a>
           </div>
-          <div id="hints" class="panel-collapse collapse in">
+          <div id="hints" class="panel-collapse collapse">
             <div class="panel-body">
             @if(getsHelp) {
               <p>Vervollst&auml;ndigen Sie das vorliegende UML-Klassendiagramm, indem Sie die Beziehungen zwischen den Klassen modellieren.</p>
@@ -74,11 +82,16 @@ var defaultClasses = [@if(getsHelp) {@Html(exercise.getClassesForDiagDrawingHelp
               </ul>
             }
               
-              <h2>DEBUG:</h2>
-              <p>Gew&auml;hlte Zellen: <span id="idList">--</span></p>
-              <p>Gew&auml;hlter Knopf: <span id="selType">POINTER</span></p>
             </div>
           </div>
+        </div>
+      </div>
+      
+      <div class="panel panel-default">
+        <div class="panel-heading">DEBUG:</div>
+        <div class="panel-body">
+          <p>Gew&auml;hlte Zellen: <span id="idList">--</span></p>
+          <p>Gew&auml;hlter Knopf: <span id="selType">POINTER</span></p>
         </div>
       </div>
       
@@ -119,21 +132,25 @@ var defaultClasses = [@if(getsHelp) {@Html(exercise.getClassesForDiagDrawingHelp
       *@
     
       <div class="btn-group">
-        <button class="btn btn-default" data-conntype="CLASS" onclick="selectButton(this);" id="classButton">
+        <button class="btn btn-default" data-conntype="CLASS" onclick="selectButton(this);" id="classButton"
+        @if(getsHelp) {disabled title="Es wurden bereits alle Klassen erstellt!"}>
           <span class="glyphicon glyphicon-menu-hamburger"></span> <span id="classType">Klasse</span>
         </button>
-        <button class="btn btn-default" data-toggle="dropdown">
+        <button class="btn btn-default" data-toggle="dropdown"
+        @if(getsHelp) {disabled title="Es wurden bereits alle Klassen erstellt!"}>
           <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="menu">
           <li>
-            <button class="btn btn-default" data-conntype="CLASS" onclick="selectClassType(this);">Klasse</button>
+            <a data-conntype="CLASS" onclick="selectClassType(this);">Klasse</a>
           </li>
+          <li class="divider"></li>
           <li>
-            <button class="btn btn-default" data-conntype="INTERFACE" onclick="selectClassType(this);">Interface</button>
+            <a data-conntype="INTERFACE" onclick="selectClassType(this);">Interface</a>
           </li>
+          <li class="divider"></li>
           <li>
-            <button class="btn btn-default" data-conntype="ABSTRACT" onclick="selectClassType(this);">Abstrakte Klasse</button>
+            <a data-conntype="ABSTRACT" onclick="selectClassType(this);">Abstrakte Klasse</a>
           </li>
         </ul>
       </div>
@@ -153,24 +170,26 @@ var defaultClasses = [@if(getsHelp) {@Html(exercise.getClassesForDiagDrawingHelp
         </button>
         <ul class="dropdown-menu" role="menu">
           <li>
-            <button class="btn btn-default" data-conntype="ASSOCIATION" onclick="selectAssocType(this);">Assoziation</button>
+            <a data-conntype="ASSOCIATION" onclick="selectAssocType(this);">Assoziation</a>
           </li>
+          <li class="divider"></li>
           <li>
-            <button class="btn btn-default" data-conntype="AGGREGATION" onclick="selectAssocType(this);">Aggregation</button>
+            <a data-conntype="AGGREGATION" onclick="selectAssocType(this);">Aggregation</a>
           </li>
+          <li class="divider"></li>
           <li>
-            <button class="btn btn-default" data-conntype="COMPOSITION" onclick="selectAssocType(this);">Komposition</button>
+            <a data-conntype="COMPOSITION" onclick="selectAssocType(this);">Komposition</a>
           </li>
         </ul>
       </div>
       
-      @*
       <div class="btn-group">
-        <button class="btn btn-default" onclick="exportDiagram();">
+        <a href="" id="a" class="btn btn-default" onclick="exportDiagram();">
           <span class="glyphicon glyphicon-download"></span> Exportieren
-        </button>
+        </a>
       </div>
-      
+
+      @*      
       <div class="btn-group">
         <button class="btn btn-default" onclick="importDiagram();">
           <span class="glyphicon glyphicon-upload"></span> Importieren

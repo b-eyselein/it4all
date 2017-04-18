@@ -33,7 +33,8 @@ $(document).ready(function() {
   });
   
   // Set callback for click on cells and blank paper
-  paper.on('cell:pointerclick', cellOnPointerClick);
+  paper.on('cell:pointerclick', cellOnLeftClick);
+  paper.on('cell:contextmenu', cellOnRightClick);
   paper.on('blank:pointerdown', blankOnPointerDown);
   
   // Draw all classes, empty if diagramdrawing - help
@@ -70,21 +71,6 @@ function updateIdList() {
   idSpan.innerHTML = classNames.join(", ");
 }
 
-function cellOnPointerClick(cellView, evt, x, y) {
-  if(evt.which == 1) {
-    // Left Click
-    cellOnLeftClick(cellView, evt, x, y);
-  } else if(evt.which == 2) {
-    // Mouse Wheel
-    cellOnMouseWheel();
-  } else if(evt.which == 3) {
-    // Right Click
-    cellOnRightClick(graph.getCell(cellView.model.id));
-  } else {
-    console.error(evt);
-  }
-}
-
 function cellOnLeftClick(cellView, evt, x, y) {
   switch(sel) {
   case "POINTER":
@@ -96,7 +82,12 @@ function cellOnLeftClick(cellView, evt, x, y) {
   case "AGGREGATION":
   case "COMPOSITION":
   case "IMPLEMENTATION":
-    idList.push(cellView.model.id);
+    var newId = cellView.model.id;
+    
+    if(idList.length == 0 || idList[0] != newId) {
+      idList.push(cellView.model.id);
+    }
+    
     if(idList.length == 2) {
       link(idList[0], idList[1]);
       idList = [];
@@ -117,12 +108,9 @@ function cellOnLeftClick(cellView, evt, x, y) {
   updateIdList();
 }
 
-function cellOnMouseWheel() {
-  // Do nothing for now...
-}
-
-function cellOnRightClick(cellInGraph) {
-  if(confirm("Wollen Sie die Klasse / das Interface " + cellInGraph.attr('.uml-class-attrs-text/text') + "wirklich löschen?")) {
+function cellOnRightClick(cellView, evt, x, y) {
+  var cellInGraph = graph.getCell(cellView.model.id);
+  if(canDelete && confirm("Wollen Sie die Klasse / das Interface " + cellInGraph.attr('.uml-class-attrs-text/text') + "wirklich löschen?")) {
     cellInGraph.remove();
   }
 }
@@ -136,40 +124,54 @@ function forwards() {
 }
 
 function selectClassType(button) {
-  selectButton(button);
+  unMarkButtons();
   
   var classButton = document.getElementById("classButton")
   classButton.className = "btn btn-primary";
   classButton.dataset.conntype = button.dataset.conntype;
   
+  sel = button.dataset.conntype;
+  document.getElementById("selType").innerHTML = sel;
+  
   document.getElementById("classType").textContent = button.textContent;
 }
 
 function selectAssocType(button) {
-  selectButton(button);
+  unMarkButtons();
   
   var assocButton = document.getElementById("assocButton");
   assocButton.className = "btn btn-primary";
   assocButton.dataset.conntype = button.dataset.conntype;
   
+  sel = button.dataset.conntype;
+  document.getElementById("selType").innerHTML = sel;
+  
   document.getElementById("assocType").textContent = button.textContent;
 }
 
 function selectButton(button) {
-  markButtons(button);
+  unMarkButtons();
+  button.className = "btn btn-primary";
+  
   sel = button.dataset.conntype;
   document.getElementById("selType").innerHTML = sel;
 }
 
-function markButtons(button) {
+function unMarkButtons() {
   for (var otherButton of document.getElementById("buttonsDiv").getElementsByTagName("button")) {
     otherButton.className = "btn btn-default";
   }
-  button.className = "btn btn-primary";
 }
 
 function exportDiagram() {
-  console.error("NOT IMPLEMENTED YET!");
+  var text = extractParametersAsJson();
+  
+  var a = document.getElementById("a");
+  var file = new Blob([text], {type: 'text/json'});
+  a.href = URL.createObjectURL(file);
+  a.download = 'export.json';
+  
+//  console.error("NOT IMPLEMENTED YET!");
 }
 
 function importDiagram() {
@@ -181,7 +183,7 @@ function askMulitplicity(source, dest) {
   return multiplicity ? multiplicity : "";
 }
 
-function extractParameters() {
+function extractParametersAsJson() {
   for (var cell of graph.getCells()) {
     var clazz = {
       name: cell.attributes.name,
@@ -229,9 +231,12 @@ function link(sourceId, targetId) {
   var source_name = graph.getCell(sourceId).attr('.uml-class-name-text/text');
   var destin_name = graph.getCell(targetId).attr('.uml-class-name-text/text');
   
-  var source_mult = askMulitplicity(source_name, destin_name);
-  var destin_mult = askMulitplicity(destin_name, source_name);
-
+  
+  if(sel != "IMPLEMENTATION") {
+    var source_mult = askMulitplicity(source_name, destin_name);
+    var destin_mult = askMulitplicity(destin_name, source_name);
+  }
+  
   var members = {
     source: { id: sourceId },
     target: { id: targetId },
@@ -322,7 +327,7 @@ function newClass(posX, posY) {
   });
 }
 
-// Begin Drag-And-Drop-Functionality
+// FIXME: Begin Drag-And-Drop-Functionality
 
 function allowDrop(ev) {
   ev.preventDefault();
