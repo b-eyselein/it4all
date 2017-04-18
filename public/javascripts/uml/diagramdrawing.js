@@ -125,29 +125,14 @@ function cellOnPointerClick(cellView, evt, x, y) {
   }
 }
 
-// Begin Drag-And-Drop-Functionality
-
-function allowDrop(ev) {
-  ev.preventDefault();
-}
-
-function drag(ev) {
-  document.getElementById(5).value = "off";
-  
-  var className = ev.target.innerHTML;
-  if (ev.target.getAttribute('data-baseform') != null) {
-    className = ev.target.getAttribute('data-baseform');
+function updateIdList() {
+  var idSpan = document.getElementById("idList");
+  var classNames = [];
+  for(var id of idList) {
+    classNames.push(graph.getCell(id).attr('.uml-class-name-text/text'));
   }
-  ev.dataTransfer.setData("text", className);
+  idSpan.innerHTML = classNames.join(", ");
 }
-
-function drop(ev) {
-  ev.preventDefault();
-  var data = ev.dataTransfer.getData("text");
-  addClass(data);
-}
-
-// End D&D-Functionality
 
 function selectButton(elem) {
   for (let i = 1; i < 11; i++) {
@@ -171,166 +156,62 @@ function askMulitplicity(source, dest) {
 }
 
 function link() {
-  if (document.getElementById(sel).value == "off") {
-    return;
-  }
-  var source_name = graph.getCell(idList[0]).attr('.uml-class-name-text/text');
-  var destin_name = graph.getCell(idList[1]).attr('.uml-class-name-text/text');
+  var sourceId = idList[0];
+  var targetId = idList[1];
+  
+  idList = [];
+  updateIdList();
+  
+  var source_name = graph.getCell(sourceId).attr('.uml-class-name-text/text');
+  var destin_name = graph.getCell(targetId).attr('.uml-class-name-text/text');
   
   var source_mult = askMulitplicity(source_name, destin_name);
   var destin_mult = askMulitplicity(destin_name, source_name);
-  
-  switch (sel) {
-  case '1':
-      graph.addCell(new joint.shapes.uml.Composition({
-        source: {
-          id: idList[0]
-        },
-        target: {
-          id: idList[1]
-        },
-        labels: [{
-            position: 25,
-            attrs: {
-              text: {
-                text: source_mult
-              }
-            }
-          },
-          {
-            position: -25,
-            attrs: {
-              text: {
-                text: destin_mult
-              }
-            }
-          }
-        ]
-      }));
-      idList = [];
-      break;
-      
-    case '2':
-      graph.addCell(new joint.shapes.uml.Aggregation({
-        source: {
-          id: idList[0]
-        },
-        target: {
-          id: idList[1]
-        },
-        labels: [{
-            position: 25,
-            attrs: {
-              text: {
-                text: source_mult
-              }
-            }
-          },
-          {
-            position: -25,
-            attrs: {
-              text: {
-                text: destin_mult
-              }
-            }
-          }
-        ]
-      }));
-      idList = [];
-      break;
-      
-    case '3':
-      graph.addCell(new joint.shapes.uml.Implementation({
-        source: {
-          id: idList[0]
-        },
-        target: {
-          id: idList[1]
-        },
-        labels: [{
-            position: 25,
-            attrs: {
-              text: {
-                text: source_mult
-              }
-            }
-          },
-          {
-            position: -25,
-            attrs: {
-              text: {
-                text: destin_mult
-              }
-            }
-          }
-        ]
-      }));
-      idList = [];
-      break;
-      
-    case '4':
-      graph.addCell(new joint.shapes.uml.Generalization({
-        source: {
-          id: idList[0]
-        },
-        target: {
-          id: idList[1]
-        },
-        labels: [{
-            position: 25,
-            attrs: {
-              text: {
-                text: source_mult
-              }
-            }
-          },
-          {
-            position: -25,
-            attrs: {
-              text: {
-                text: destin_mult
-              }
-            }
-          }
-        ]
-      }));
-      idList = [];
-      break;
 
-    case '10':
-      var obj = {
-          source: {
-            id: idList[0]
-          },
-          target: {
-            id: idList[1]
-          },
-          labels: [{
-              position: 25,
-              attrs: {
-                text: {
-                  text: source_mult
-                }
-              }
-            },
-            {
-              position: -25,
-              attrs: {
-                text: {
-                  text: destin_mult
-                }
-              }
-            }
-          ]
-        };
-      graph.addCell(new joint.dia.Link(obj));
-      idList = [];
-      break;
-    default:
-      idList = [];
-      break;
+  var members = {
+    source: {
+      id: sourceId
+    },
+    target: {
+      id: targetId
+    },
+    labels: [{
+      position: 25,
+      attrs: {
+        text: {
+          text: source_mult
+        }
+      }
+    }, {
+      position: -25,
+      attrs: {
+        text: {
+          text: destin_mult
+        }
+      }
+    }]
+  };
+  
+  var cellToAdd;
+  switch (sel) {
+  case 'COMPOSITION':
+    cellToAdd = new joint.shapes.uml.Composition(members);
+    break;
+  case 'AGGREGATION':
+    cellToAdd = new joint.shapes.uml.Aggregation(members);
+    break;
+  case 'IMPLEMENTATION':
+    cellToAdd = new joint.shapes.uml.Implementation(members);
+    break;
+  case 'ASSOCIATION':
+    cellToAdd = new joint.dia.Link(members);
+    break;
+  default:
+    return;
   }
-} // End function link()
+  
+  graph.addCell(cellToAdd);
+}
 
 function createClass() {
   var className = window.prompt("Wie soll die neue Klasse heißen?");
@@ -374,18 +255,18 @@ function addClass(className) {
 			y: Math.random() * 250
 		},
 		size: {
-			width: stdClassSize,
-			height: stdClassSize
+			width: STD_CLASS_SIZE,
+			height: STD_CLASS_SIZE
 		},
 		name: className,
 		attributes: ["", ""],
 		methods: ["", ""],
 		attrs: {
 			'.uml-class-name-rect': {
-				fill: colorWhite,
+				fill: COLOR_WHITE,
 			},
      	'.uml-class-attrs-rect, .uml-class-methods-rect': {
-     		fill: colorWhite,
+     		fill: COLOR_WHITE,
      	},
      	'.uml-class-attrs-text': {
      		ref: '.uml-class-attrs-rect',
@@ -404,46 +285,26 @@ function addClass(className) {
   graph.addCell(newClass);
 }
 
-// Namen aller Klassen
-function getClasses() {
-  var classes = [];
-  for (i = 0; i < graph.getCells().length; i++) {
-    if (graph.getCells()[i]._previousAttributes.name != undefined) {
-      classes.push(graph.getCells()[i]._previousAttributes.name);
-    }
-  }
-  return classes;
-  // console.log("getClasses: "+ classes);
-}
-// Alle ids aller Zellen
-function getIds() {
-  var ids = [];
-  for (i = 0; i < graph.getCells().length; i++) {
-    ids.push(graph.getCells()[i].id);
-  }
-  return ids;
+//Begin Drag-And-Drop-Functionality
+
+function allowDrop(ev) {
+  ev.preventDefault();
 }
 
-function getAttributes(id) {
-  var cell = graph.getCell(id);
-  if (cell.attributes.name != undefined) {
-    var text = cell.attributes.name;
-    for (i = 0; i < cell.attributes.attributes.length; i++) {
-      if (graph.getCells()[i]._previousAttributes.name != undefined) {
-        text += "_" + cell.attributes.attributes[i];
-      }
-    }
-    // console.log("getAttributes: "+text);
+function drag(ev) {
+  document.getElementById(5).value = "off";
+  
+  var className = ev.target.innerHTML;
+  if (ev.target.getAttribute('data-baseform') != null) {
+    className = ev.target.getAttribute('data-baseform');
   }
-  return text;
+  ev.dataTransfer.setData("text", className);
 }
 
-function getMethodes(id) {
-  var text = graph.getCell(id).attributes.name;
-  for (i = 0; i < graph.getCell(id).attributes.methods.length; i++) {
-    if (graph.getCells()[i]._previousAttributes.name != undefined) {
-      text += "_" + graph.getCell(id).attributes.methods[i];
-    }
-  }
-  return text;
+function drop(ev) {
+  ev.preventDefault();
+  var data = ev.dataTransfer.getData("text");
+  addClass(data);
 }
+
+// End D&D-Functionality

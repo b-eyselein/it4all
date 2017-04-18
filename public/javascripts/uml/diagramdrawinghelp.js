@@ -147,6 +147,7 @@ function getTypeName(type) {
 function link() {
   var sourceId = idList[0];
   var targetId = idList[1];
+  
   idList = [];
   updateIdList();
   
