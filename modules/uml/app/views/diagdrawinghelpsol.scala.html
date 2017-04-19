@@ -1,60 +1,103 @@
 @(user: model.user.User, result: model.result.DiagramDrawingResult)
 
-@correct = @{result.getAssociationResult().getCorrect()}
-@wrong = @{result.getAssociationResult().getWrong()}
-@missing = @{result.getAssociationResult().getMissing()}
-
 @main("UML-Test", user) {
 <div class="container">
   <div class="page-header">
     <h1> Korrektur der Aufgabe &quot;@result.getExercise().title&quot;</h1>	
   </div>
 
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Typ</th>
-        <th>Start</th>
-        <th>Ziel</th>
-        <th>Multiziplität</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <th colspan="4" class="text-center">Korrekt</th>
-      </tr>
-    @for(conn <- correct) {
-      <tr>
-        <td>@conn.getFirstArg().getType()</td>
-  	    <td>@conn.getFirstArg().getStart()</td>
-        <td>@conn.getFirstArg().getTarget()</td>
-        <td>@conn.getFirstArg().getMulstart() : @conn.getFirstArg().getMultarget()</td>
-      </tr>
-      }
-      <tr>
-        <th colspan="4" class="text-center">Falsch</th>
-      </tr>
-    @for(conn <- wrong) {
-      <tr>
-        <td>@conn.getType()</td>
-        <td>@conn.getStart()</td>
-        <td>@conn.getTarget()</td>
-        <td>@conn.getMulstart() : @conn.getMultarget()</td>
-      </tr>
-      }
-      <tr>
-        <th colspan="4" class="text-center">Fehlend</th>
-      </tr>
-    @for(conn <- missing) {
-      <tr>
-        <td>@conn.getType()</td>
-        <td>@conn.getStart()</td>
-        <td>@conn.getTarget()</td>
-        <td>@conn.getMulstart() : @conn.getMultarget()</td>
-      </tr>
-      }
-    </tbody>
-  </table>
+  <div class="row">
+    <div class="col-md-6">
+      <h1>Assoziationen</h1>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Typ</th>
+            <th>Start</th>
+            <th>Ziel</th>
+            <th>Multiziplität</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th colspan="4" class="text-center">Korrekt</th>
+          </tr>
+        @for(conn <- result.getAssociationResult().getCorrect()) {
+          <tr>
+            <td>@conn.getFirstArg().getType()</td>
+      	    <td>@conn.getFirstArg().getStart()</td>
+            <td>@conn.getFirstArg().getTarget()</td>
+            <td>@conn.getFirstArg().getMulstart() : @conn.getFirstArg().getMultarget()</td>
+          </tr>
+          }
+          <tr>
+            <th colspan="4" class="text-center">Falsch</th>
+          </tr>
+        @for(conn <- result.getAssociationResult().getWrong()) {
+          <tr>
+            <td>@conn.getType()</td>
+            <td>@conn.getStart()</td>
+            <td>@conn.getTarget()</td>
+            <td>@conn.getMulstart() : @conn.getMultarget()</td>
+          </tr>
+          }
+          <tr>
+            <th colspan="4" class="text-center">Fehlend</th>
+          </tr>
+        @for(conn <- result.getAssociationResult().getMissing()) {
+          <tr>
+            <td>@conn.getType()</td>
+            <td>@conn.getStart()</td>
+            <td>@conn.getTarget()</td>
+            <td>@conn.getMulstart() : @conn.getMultarget()</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="col-md-6">
+      <h1>Implementierungen</h1>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Start</th>
+            <th>Ziel</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th colspan="2" class="text-center">Korrekt</th>
+          </tr>
+        @for(conn <- result.getImplementationResult().getCorrect()) {
+          <tr>
+            <td>@conn.getFirstArg().getStart()</td>
+            <td>@conn.getFirstArg().getTarget()</td>
+          </tr>
+          }
+          <tr>
+            <th colspan="2" class="text-center">Falsch</th>
+          </tr>
+        @for(conn <-  result.getImplementationResult().getWrong()) {
+          <tr>
+            <td>@conn.getStart()</td>
+            <td>@conn.getTarget()</td>
+          </tr>
+          }
+          <tr>
+            <th colspan="2" class="text-center">Fehlend</th>
+          </tr>
+        @for(conn <-  result.getImplementationResult().getMissing()) {
+          <tr>
+            <td>@conn.getStart()</td>
+            <td>@conn.getTarget()</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    
+  </div>
   
   <a href="@uml.routes.UML.index()" class="btn btn-primary btn-block">Zur Aufgabenübersicht</a>
 </div>

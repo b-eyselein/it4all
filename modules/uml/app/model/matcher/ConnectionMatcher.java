@@ -7,15 +7,9 @@ public class ConnectionMatcher<T extends UmlConnection> extends Matcher<T> {
 
   public ConnectionMatcher() {
     super((conn1, conn2) -> {
-      String c1Start = conn1.getStart();
-      String c2Start = conn2.getStart();
-
-      String c1Target = conn1.getTarget();
-      String c2Target = conn2.getTarget();
-
-      System.out.println("(" + c1Start + " -> " + c1Target + ") :: (" + c2Start + " -> " + c2Target + ")");
-
-      return endsEqual(c1Start, c2Start) && endsEqual(c1Target, c2Target);
+      boolean pos1 = endsEqual(conn1.getStart(), conn2.getStart()) && endsEqual(conn1.getTarget(), conn2.getTarget());
+      boolean pos2 = endsEqual(conn1.getStart(), conn2.getTarget()) && endsEqual(conn1.getTarget(), conn2.getStart());
+      return pos1 || pos2;
     });
   }
 
