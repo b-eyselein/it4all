@@ -97,62 +97,62 @@
 			"target": "Person"
 		}
 	], 
-	"connections": [
+	"associations": [
 		{
 			"type": "ASSOCIATION", 
 			"start": "Doktor", 
 			"target": "Rezept", 
-			"mulstart": "1", 
-			"multarget": "*"
+			"mulstart": "SINGLE", 
+			"multarget": "UNBOUND"
 		}, 
 		{
 			"type": "ASSOCIATION", 
 			"start": "Doktor", 
 			"target": "Patient", 
-			"mulstart": "1", 
-			"multarget": "*"
+			"mulstart": "SINGLE", 
+			"multarget": "UNBOUND"
 		}, 
 		{
 			"type": "ASSOCIATION", 
 			"start": "Station", 
 			"target": "Patient", 
-			"mulstart": "1", 
-			"multarget": "*"
+			"mulstart": "SINGLE", 
+			"multarget": "UNBOUND"
 		}, 
 		{
 			"type": "ASSOCIATION", 
 			"start": "Station", 
 			"target": "Krankenschwester", 
-			"mulstart": "1", 
-			"multarget": "*"
+			"mulstart": "SINGLE", 
+			"multarget": "UNBOUND"
 		}, 
 		{
 			"type": "ASSOCIATION", 
 			"start": "Station", 
 			"target": "Doktor", 
-			"mulstart": "1", 
-			"multarget": "*"
+			"mulstart": "SINGLE", 
+			"multarget": "UNBOUND"
 		}, 
 		{
 			"type": "ASSOCIATION", 
 			"start": "Patient", 
 			"target": "Rezept", 
-			"mulstart": "1", 
-			"multarget": "*"
+			"mulstart": "SINGLE", 
+			"multarget": "UNBOUND"
 		}, 
 		{
 			"type": "ASSOCIATION", 
 			"start": "Rezept", 
 			"target": "Medikament", 
-			"mulstart": "1", 
-			"multarget": "*"
+			"mulstart": "SINGLE", 
+			"multarget": "UNBOUND"
 		}, 
 		{
 			"type": "COMPOSITION", 
 			"start": "Krankenhaus", 
 			"target": "Station", 
-			"mulstart": "1", 
-			"multarget": "*"
+			"mulstart": "SINGLE", 
+			"multarget": "UNBOUND"
 		}
 	]
 }

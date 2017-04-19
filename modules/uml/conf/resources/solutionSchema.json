@@ -50,16 +50,14 @@
 					}, 
 					"mulstart": {
 						"enum": [
-							"1", 
-							"*", 
-							""
+							"SINGLE", 
+							"UNBOUND"
 						]
 					}, 
 					"multarget": {
 						"enum": [
-							"1", 
-							"*", 
-							""
+							"SINGLE", 
+							"UNBOUND"
 						]
 					}
 				}, 

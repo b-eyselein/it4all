@@ -199,8 +199,8 @@ function extractParametersAsJson() {
         type: getTypeName(conn.attributes.type),
         source: graph.getCell(conn.attributes.source.id).attr('.uml-class-name-text/text'),
         target: graph.getCell(conn.attributes.target.id).attr('.uml-class-name-text/text'),
-        mulstart: conn.attributes.labels[0].attrs.text.text,
-        multarget: conn.attributes.labels[1].attrs.text.text
+        mulstart: getMultiplicity(conn.attributes.labels[0]),
+        multarget: getMultiplicity(conn.attributes.labels[1])
       };
     }),
     
@@ -217,6 +217,16 @@ function extractParametersAsJson() {
   };
   
   return JSON.stringify(learnerSolution, null, 2);
+}
+
+function getMultiplicity(label) {
+  if(label.attrs.text.text == "1") {
+    return "SINGLE";
+  } else if(label.attrs.text.text == "*") {
+    return "UNBOUND";
+  } else {
+    return "";
+  }
 }
 
 function getTypeName(type) {
