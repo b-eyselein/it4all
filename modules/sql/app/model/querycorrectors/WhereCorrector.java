@@ -3,7 +3,6 @@ package model.querycorrectors;
 import java.util.LinkedList;
 import java.util.List;
 
-import model.matcher.BinaryExpressionMatch;
 import model.matcher.BinaryExpressionMatcher;
 import model.matching.MatchingResult;
 import net.sf.jsqlparser.expression.AllComparisonExpression;
@@ -78,8 +77,7 @@ public class WhereCorrector implements ExpressionVisitor {
   
   private List<BinaryExpression> sampleExpressions = new LinkedList<>();
   
-  public MatchingResult<BinaryExpression, BinaryExpressionMatch> correct(Expression userExpression,
-      Expression sampleExpression) {
+  public MatchingResult<BinaryExpression> correct(Expression userExpression, Expression sampleExpression) {
     sampleExpression.accept(this);
     userQueryAnalyzed = true;
     userExpression.accept(this);

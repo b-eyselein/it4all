@@ -20,7 +20,6 @@ public class UmlExerciseReader extends ExerciseReader<UmlExercise> {
     JsonNode rawtextNode = exerciseNode.get(TEXT_NAME);
     JsonNode mappingsNode = exerciseNode.get("mappings");
     JsonNode ingoreNode = exerciseNode.get("ignore");
-    JsonNode methodsNode = exerciseNode.get("methods");
 
     int id = idNode.asInt();
     UmlExercise exercise = UmlExercise.finder.byId(id);
@@ -30,10 +29,9 @@ public class UmlExerciseReader extends ExerciseReader<UmlExercise> {
     String rawText = rawtextNode.asText();
 
     Map<String, String> mappings = JsonWrapper.readKeyValueMap(mappingsNode);
-    Map<String, String> methods = JsonWrapper.readKeyValueMap(methodsNode);
     List<String> toIgnore = JsonWrapper.parseJsonArrayNode(ingoreNode);
 
-    UmlExTextParser parser = new UmlExTextParser(rawText, mappings, methods, toIgnore);
+    UmlExTextParser parser = new UmlExTextParser(rawText, mappings, toIgnore);
 
     exercise.classSelText = parser.parseTextForClassSel();
     exercise.diagDrawHelpText = rawText;

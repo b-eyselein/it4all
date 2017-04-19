@@ -11,9 +11,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.fge.jsonschema.core.exceptions.ProcessingException;
+import com.github.fge.jsonschema.core.report.ProcessingReport;
 
 import model.exercise.SqlExercise;
 import model.exercise.SqlExerciseType;
@@ -107,24 +108,20 @@ public class SqlExerciseReader extends ExerciseReader<SqlExercise> {
   }
   
   public List<SqlScenario> readScenarioes(Path jsonFile) {
-    try {
-      JsonNode json = Json.parse(String.join("\n", Files.readAllLines(jsonFile)));
-      JsonNode jsonSchema = Json.parse(String.join("\n", Files.readAllLines(jsonSchemaFile)));
-      
-      // Validate json with schema
-      if(!JsonWrapper.validateJson(json, jsonSchema).isSuccess())
-        return Collections.emptyList();
-      
-      List<SqlScenario> results = new LinkedList<>();
-      
-      for(Iterator<JsonNode> scenarioNodeIter = json.elements(); scenarioNodeIter.hasNext();)
-        results.add(readScenario(scenarioNodeIter.next()));
-      
-      return results;
-    } catch (ProcessingException | IOException e) {
-      Logger.error("Fehler beim Lesen aus der Datei " + jsonFile.toString() + " or " + jsonSchemaFile.toString(), e);
+    JsonNode json = Json.parse(readFile(jsonFile));
+    JsonNode jsonSchema = Json.parse(readFile(jsonSchemaFile));
+    
+    // Validate json with schema
+    Optional<ProcessingReport> report = JsonWrapper.validateJson(json, jsonSchema);
+    if(!report.isPresent() || !report.get().isSuccess())
       return Collections.emptyList();
-    }
+    
+    List<SqlScenario> results = new LinkedList<>();
+    
+    for(Iterator<JsonNode> scenarioNodeIter = json.elements(); scenarioNodeIter.hasNext();)
+      results.add(readScenario(scenarioNodeIter.next()));
+    
+    return results;
   }
   
   public List<SqlScenario> readStandardScenarioes() {

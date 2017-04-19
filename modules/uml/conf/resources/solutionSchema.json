@@ -30,19 +30,7 @@
 				"attributes"
 			]
 		}, 
-		"otherMethods": {
-			"type": "array", 
-			"items": {
-				"type": "string"
-			}
-		}, 
-		"otherAttributes": {
-			"type": "array", 
-			"items": {
-				"type": "string"
-			}
-		}, 
-		"connections": {
+		"associations": {
 			"type": "array", 
 			"items": {
 				"type": "object", 
@@ -51,10 +39,7 @@
 						"enum": [
 							"AGGREGATION", 
 							"ASSOCIATION", 
-							"COMPOSITION", 
-							"GENERALIZATION", 
-							"IMPLEMENTATION", 
-							"STANDARD"
+							"COMPOSITION"
 						]
 					}, 
 					"source": {
@@ -86,12 +71,29 @@
 					"multarget"
 				]
 			}
+		}, 
+		"implementations": {
+			"type": "array", 
+			"items": {
+				"type": "object", 
+				"properties": {
+					"source": {
+						"type": "string"
+					}, 
+					"target": {
+						"type": "string"
+					}
+				}, 
+				"required": [
+					"source", 
+					"target"
+				]
+			}
 		}
 	}, 
 	"required": [
 		"classes", 
-		"otherMethods", 
-		"otherAttributes", 
-		"connections"
+		"associations", 
+		"implementations"
 	]
 }

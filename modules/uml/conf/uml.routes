@@ -8,6 +8,9 @@ GET    /upload                             controllers.uml.UmlAdmin.uploadForm()
 POST   /upload                             controllers.uml.UmlAdmin.uploadFile()
 GET    /create                             controllers.uml.UmlAdmin.readStandardExercises()
 
+GET    /newExercise                        controllers.uml.UmlAdmin.newExerciseForm()
+POST   /newExercise                        controllers.uml.UmlAdmin.newExercise()
+
 # Step 1: selection of classes
 GET    /:exId/classSelection               controllers.uml.UML.classSelection(exId: Int)
 PUT    /:exId/correct/classselection       controllers.uml.UML.correctClassSelection(exId: Int)

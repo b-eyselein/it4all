@@ -83,7 +83,76 @@
 		"Name", 
 		"Nummer"
 	], 
+	"implementations": [
+		{
+			"start": "Patient", 
+			"target": "Person"
+		}, 
+		{
+			"start": "Doktor", 
+			"target": "Person"
+		}, 
+		{
+			"start": "Krankenschwester", 
+			"target": "Person"
+		}
+	], 
 	"connections": [
-		
+		{
+			"type": "ASSOCIATION", 
+			"start": "Doktor", 
+			"target": "Rezept", 
+			"mulstart": "1", 
+			"multarget": "*"
+		}, 
+		{
+			"type": "ASSOCIATION", 
+			"start": "Doktor", 
+			"target": "Patient", 
+			"mulstart": "1", 
+			"multarget": "*"
+		}, 
+		{
+			"type": "ASSOCIATION", 
+			"start": "Station", 
+			"target": "Patient", 
+			"mulstart": "1", 
+			"multarget": "*"
+		}, 
+		{
+			"type": "ASSOCIATION", 
+			"start": "Station", 
+			"target": "Krankenschwester", 
+			"mulstart": "1", 
+			"multarget": "*"
+		}, 
+		{
+			"type": "ASSOCIATION", 
+			"start": "Station", 
+			"target": "Doktor", 
+			"mulstart": "1", 
+			"multarget": "*"
+		}, 
+		{
+			"type": "ASSOCIATION", 
+			"start": "Patient", 
+			"target": "Rezept", 
+			"mulstart": "1", 
+			"multarget": "*"
+		}, 
+		{
+			"type": "ASSOCIATION", 
+			"start": "Rezept", 
+			"target": "Medikament", 
+			"mulstart": "1", 
+			"multarget": "*"
+		}, 
+		{
+			"type": "COMPOSITION", 
+			"start": "Krankenhaus", 
+			"target": "Station", 
+			"mulstart": "1", 
+			"multarget": "*"
+		}
 	]
 }

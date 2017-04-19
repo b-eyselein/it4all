@@ -14,13 +14,6 @@ var paper;
 
 var sel = "POINTER";
 
-var learnerSolution = {
-  classes: [],
-  otherMethods: [/* remains empty in diagDrawingHelp */],
-  otherAttributes: [/* remains empty in diagDrawingHelp */],
-  connections: [/* remains empty in classSelectin */]
-};
-
 $(document).ready(function() {
   // Init Graph and Paper
   graph  = new joint.dia.Graph(); // NOSONAR
@@ -171,7 +164,7 @@ function exportDiagram() {
   a.href = URL.createObjectURL(file);
   a.download = 'export.json';
   
-//  console.error("NOT IMPLEMENTED YET!");
+// console.error("NOT IMPLEMENTED YET!");
 }
 
 function importDiagram() {
@@ -184,25 +177,44 @@ function askMulitplicity(source, dest) {
 }
 
 function extractParametersAsJson() {
-  for (var cell of graph.getCells()) {
-    var clazz = {
-      name: cell.attributes.name,
-      methods: cell.attributes.methods,
-      attributes: cell.attributes.attributes
-    };
-    learnerSolution.classes.push(clazz);
-  }
-  
-  for (var conn of graph.getLinks()) {
-    var connection = {
-      type: getTypeName(conn.attributes.type),
-      source: graph.getCell(conn.attributes.source.id).attr('.uml-class-name-text/text'),
-      target: graph.getCell(conn.attributes.target.id).attr('.uml-class-name-text/text'),
-      mulstart: conn.attributes.labels[0].attrs.text.text,
-      multarget: conn.attributes.labels[1].attrs.text.text
-    }
-    learnerSolution.connections.push(connection);
-  }
+  var learnerSolution = {
+    classes: graph.getCells()
+    .filter(function(cell) {
+      return cell.attributes.name != undefined;
+    })
+    .map(function(cell) {
+      return {
+        name: cell.attributes.name,
+        methods: cell.attributes.methods,
+        attributes: cell.attributes.attributes
+      };
+    }),
+    
+    associations: graph.getLinks()
+    .filter(function(conn) {
+      return conn.attributes.type != "uml.Implementation";
+    }) 
+    .map(function(conn) {
+      return {
+        type: getTypeName(conn.attributes.type),
+        source: graph.getCell(conn.attributes.source.id).attr('.uml-class-name-text/text'),
+        target: graph.getCell(conn.attributes.target.id).attr('.uml-class-name-text/text'),
+        mulstart: conn.attributes.labels[0].attrs.text.text,
+        multarget: conn.attributes.labels[1].attrs.text.text
+      };
+    }),
+    
+    implementations: graph.getLinks()
+    .filter(function(conn) {
+      return conn.attributes.type == "uml.Implementation";
+    }) 
+    .map(function(conn) {
+      return {
+        source: graph.getCell(conn.attributes.source.id).attr('.uml-class-name-text/text'),
+        target: graph.getCell(conn.attributes.target.id).attr('.uml-class-name-text/text'),
+      };
+    })
+  };
   
   return JSON.stringify(learnerSolution, null, 2);
 }
@@ -223,8 +235,7 @@ function getTypeName(type) {
 }
 
 function prepareFormForSubmitting() {
-  var toSend = extractParameters();
-  document.getElementById("learnerSolution").value = toSend;
+  document.getElementById("learnerSolution").value = extractParametersAsJson();
 }
 
 function link(sourceId, targetId) {

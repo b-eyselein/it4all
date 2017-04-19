@@ -2,36 +2,41 @@ package model.result;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import model.UmlAssociation;
 import model.UmlClass;
-import model.UmlConnection;
 import model.UmlExercise;
+import model.UmlImplementation;
 import model.UmlSolution;
-import model.matcher.UmlClassMatch;
-import model.matcher.UmlConnectionMatch;
 import model.matching.MatchingResult;
 import play.libs.Json;
 
 public class DiagramDrawingResult extends UmlResult {
 
-  private MatchingResult<UmlClass, UmlClassMatch> classResult;
-  private MatchingResult<UmlConnection, UmlConnectionMatch> connectionResult;
+  private MatchingResult<UmlClass> classResult;
+  private MatchingResult<UmlAssociation> associationResult;
+  private MatchingResult<UmlImplementation> implementationResult;
 
   public DiagramDrawingResult(UmlExercise exercise, JsonNode userJson) {
     super(exercise);
 
-    UmlSolution learnerSolution = Json.fromJson(userJson, UmlSolution.class);
-    UmlSolution musterSolution = exercise.getSolution();
+    UmlSolution learnerSol = Json.fromJson(userJson, UmlSolution.class);
+    UmlSolution musterSol = exercise.getSolution();
 
-    classResult = CLASS_MATCHER.match(learnerSolution.getClasses(), musterSolution.getClasses());
-    connectionResult = CONNECTION_MATCHER.match(learnerSolution.getConnections(), musterSolution.getConnections());
+    classResult = CLASS_MATCHER.match(learnerSol.classes, musterSol.classes);
+    associationResult = ASSOCIATION_MATCHER.match(learnerSol.associations, musterSol.associations);
+    implementationResult = IMPLEMENTATION_MATCHER.match(learnerSol.implementations, musterSol.implementations);
   }
 
-  public MatchingResult<UmlClass, UmlClassMatch> getClassResult() {
+  public MatchingResult<UmlAssociation> getAssociationResult() {
+    return associationResult;
+  }
+
+  public MatchingResult<UmlClass> getClassResult() {
     return classResult;
   }
 
-  public MatchingResult<UmlConnection, UmlConnectionMatch> getConnectionResult() {
-    return connectionResult;
+  public MatchingResult<UmlImplementation> getImplementationResult() {
+    return implementationResult;
   }
 
 }

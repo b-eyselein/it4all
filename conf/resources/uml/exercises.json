@@ -29,20 +29,6 @@
 				"value": "Medikament"
 			}
 		], 
-		"methods": [
-			{
-				"key": "aufgenommen", 
-				"value": "aufnehmen(Station)"
-			}, 
-			{
-				"key": "verschreiben", 
-				"value": "verschreiben(Patient)"
-			}, 
-			{
-				"key": "entlassen", 
-				"value": "entlassen(Station)"
-			}
-		], 
 		"ignore": [
 			"Ein", 
 			"Jede"
@@ -76,57 +62,39 @@
 			{
 				"key": "Pflanzentypen", 
 				"value": "Pflanzentyp"
-			},
+			}, 
 			{
 				"key": "Untertypen", 
 				"value": "Untertyp"
-			},
+			}, 
 			{
 				"key": "Bäume", 
 				"value": "Baum"
-			},
+			}, 
 			{
 				"key": "Blumen", 
 				"value": "Blume"
-			},
+			}, 
 			{
 				"key": "Nutzpflanzen", 
 				"value": "Nutzpflanze"
-			},
+			}, 
 			{
 				"key": "Blütenfarben", 
 				"value": "Blützenfarbe"
-			},
+			}, 
 			{
 				"key": "Pflanzen", 
 				"value": "Pflanze"
 			}
 		], 
-		"methods": [
-			{
-				"key": "gießen", 
-				"value": "gießen(Pflanze)"
-			}, 
-			{
-				"key": "einpflanzen", 
-				"value": "einpflanzen(Pflanzentyp)"
-			}, 
-			{
-				"key": "ernten", 
-				"value": "ernten(Nutzpflanze)"
-			},
-						{
-				"key": "stutzen", 
-				"value": "stutzen(Baum)"
-			}
-		], 
 		"ignore": [
 			"Sie", 
-			"Jede",
-			"In",
-			"Dieser",
-			"Außerdem",
-			"Für",
+			"Jede", 
+			"In", 
+			"Dieser", 
+			"Außerdem", 
+			"Für", 
 			"Bei"
 		]
 	}

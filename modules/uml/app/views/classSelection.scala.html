@@ -10,50 +10,53 @@
 
 <div class="container">
   <div class="page-header">
-    <h1>Auswahl der Klassen, Methoden und Attribute</h1>
-  </div>
-  
-  <div class="alert alert-info alert-dismissable">
-    <a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-    <b>Aufgabenstellung</b>:
-    <p>Im ersten Bearbeitungsschritt sollen Sie die zu modellierenden Klassen, Methoden und Attribute durch Markieren (per Anklicken)
-    der jeweiligen Wörter im Test auswählen. Dabei stehen die Farben <span style="color: blue">blau</span>,
-    <span style="color: green">grün</span> und <span style="color: red">rot</span> jeweils für Klassen, Methoden und Attribute.
-    Durch erneutes Anklicken können Sie zwischen den einzelnen Zuständen wechseln. Unten auf dieser Seite wird ihnen eine 
-    Liste ihere gew&auml;hlten Klassen angezeigt.</p>
+    <h1>Auswahl der Klassen</h1>
   </div>
 
-  <div class="panel panel-default">
-    <div class="panel-heading">Aufgabentext</div>
-    <div class="panel-body" id="exercisetext" unselectable="on" onselectstart="return false;" onmousedown="return false;">
-      @Html(exercise.getExTextForClassSel())
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <a data-toggle="collapse" href="#hints">Bearbeitungshinweise
+      <span class="glyphicon glyphicon-chevron-down pull-right"></span></a>
     </div>
-    <div class="panel-footer">
+    <div id="hints" class="panel-collapse collapse in">
+      <div class="panel-body">
+        <ul>
+          <li>In diesem ersten Bearbeitungsschritt sollen Sie die zu modellierenden Klassen durch Anklicken im Aufgabentext auswählen.</li>
+          <li>Durch erneutes Anklicken können Sie eine Klasse wieder abw&auml;hlen.</li>
+          <li>Auf der rechten Seite wird ihnen eine Liste ihrer gew&auml;hlten Klassen angezeigt.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row">
+  
+    <div class="col-md-8">
+      <div class="panel panel-default">
+        <div class="panel-heading">Aufgabentext</div>
+        <div class="panel-body" id="exercisetext" unselectable="on" onselectstart="return false;" onmousedown="return false;">
+          @Html(exercise.getExTextForClassSel())
+        </div>
+      </div>
+    
       <form action="@controllers.uml.routes.UML.correctClassSelection(exercise.id)" method="post"
         onsubmit="return prepareFormForSubmitting();">
         <input type="hidden" class="form-control" name="learnerSolution" id="learnerSolution" required>
         <button type="submit" class="btn btn-primary btn-block">Klassen verifizieren</button>
       </form>
     </div>
-  </div>
-  
-  <div class="panel panel-default">
-    <div class="panel-heading">Gew&auml;hlt</div>
-    <div class="panel-body">
-      <div class="col-sm-4">
-        <h4 class="bg-info text-center">Klassen</h4>
-        <ul id="classesList"><li>--</li></ul>
-      </div>
-      <div class="col-sm-4">
-        <h4 class="bg-success text-center">Methoden</h4>
-        <ul id="methodsList"><li>--</li></ul>
-      </div>
-      <div class="col-sm-4">
-        <h4 class="bg-danger text-center">Attribute</h4>
-        <ul id="attributesList"><li>--</li></ul>
+    
+    <div class="col-md-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">Gew&auml;hlte Klassen</div>
+        <div class="panel-body">
+          <ul id="classesList">
+            <li>--</li>
+          </ul>
+        </div>
       </div>
     </div>
-  </div>
-  
+    
+  </div>  
 </div>
 }

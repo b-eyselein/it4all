@@ -4,7 +4,9 @@ import java.util.List;
 
 import com.github.fge.jsonschema.core.report.ProcessingMessage;
 
-public class ReadingError extends AbstractReadingResult {
+import model.exercise.Exercise;
+
+public class ReadingError<T extends Exercise> extends AbstractReadingResult<T> {
   
   private List<ProcessingMessage> causes;
   

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
@@ -36,10 +37,12 @@ public class JsonWrapper {
     return ret;
   }
   
-  public static ProcessingReport validateJson(JsonNode exercisesNode, JsonNode exercisesSchemaNode)
-      throws ProcessingException {
-    return FACTORY.getJsonSchema(exercisesSchemaNode).validate(exercisesNode);
-    
+  public static Optional<ProcessingReport> validateJson(JsonNode exercisesNode, JsonNode exercisesSchemaNode) {
+    try {
+      return Optional.of(FACTORY.getJsonSchema(exercisesSchemaNode).validate(exercisesNode));
+    } catch (ProcessingException e) { // NOSONAR
+      return Optional.empty();
+    }
   }
   
 }

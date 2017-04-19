@@ -1,11 +1,6 @@
 @(exercises: List[model.UmlExercise])
 
-<style>
-.nomen {
-  color: blue;
-}
-</style>
-
+<link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/umlextra.css")">
 
 @for(ex <- exercises) {
 <div class="col-md-6">

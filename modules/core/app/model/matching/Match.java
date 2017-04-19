@@ -1,23 +1,14 @@
 package model.matching;
 
-import model.exercise.FeedbackLevel;
-import model.exercise.Success;
-import model.result.EvaluationResult;
+public class Match<T> {
 
-public abstract class Match<T> extends EvaluationResult {
-
-  // FIXME: implement feedbackLevel!
   protected T arg1;
   protected T arg2;
 
-  public Match(FeedbackLevel theMinimalFL, T theArg1, T theArg2) {
-    super(theMinimalFL, Success.NONE);
+  public Match(T theArg1, T theArg2) {
     arg1 = theArg1;
     arg2 = theArg2;
-    analyze();
   }
-
-  public abstract void analyze();
 
   public T getFirstArg() {
     return arg1;

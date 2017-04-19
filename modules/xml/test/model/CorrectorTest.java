@@ -9,8 +9,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import model.result.EvaluationResult;
-
 /**
  * @author rav
  *
@@ -24,7 +22,7 @@ public class CorrectorTest {
   @Test
   public void testCorrectDTDAgainstXML() {
     Path referenceFile = Paths.get("test", "resources", "party.xml");
-    List<EvaluationResult> out = XmlCorrector.correctDTDAgainstXML(referenceFile);
+    List<XMLError> out = XmlCorrector.correctDTDAgainstXML(referenceFile);
     assertTrue(out.isEmpty());
   }
 
@@ -35,7 +33,7 @@ public class CorrectorTest {
   @Test
   public void testCorrectXMLAgainstDTD() {
     Path file = Paths.get("test", "resources", "party.xml");
-    List<EvaluationResult> out = XmlCorrector.correctXMLAgainstDTD(file);
+    List<XMLError> out = XmlCorrector.correctXMLAgainstDTD(file);
     assertTrue(out.isEmpty());
   }
 
@@ -48,7 +46,7 @@ public class CorrectorTest {
   public void testCorrectXMLAgainstXSD() {
     Path xml = Paths.get("test", "resources", "note.xml");
     Path xsd = Paths.get("test", "resources", "note.xsd");
-    List<EvaluationResult> out = XmlCorrector.correctXMLAgainstXSD(xml, xsd);
+    List<XMLError> out = XmlCorrector.correctXMLAgainstXSD(xml, xsd);
     assertNotNull(out);
     assertTrue(out.isEmpty());
   }

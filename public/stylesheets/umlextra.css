@@ -1,18 +1,11 @@
-.nomen {
+.nonMarked {
+	color: black;
 }
 
-.nomen-green {
-  color: green;
-}
-
-.nomen-blue {
-  color: blue;
-}
-
-.nomen-red {
-  color: red;
+.marked {
+	color: blue;
 }
 
 #paper {
-  border: 1px solid black;
+	border: 1px solid black;
 }

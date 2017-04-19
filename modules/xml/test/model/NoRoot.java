@@ -9,8 +9,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import model.result.EvaluationResult;
-
 /**
  *
  */
@@ -28,11 +26,11 @@ public class NoRoot {
   @Test
   public void testCorrectXMLAgainstDTD() {
     Path file = Paths.get("test", "resources", "partyNoRoot.xml");
-    List<EvaluationResult> out = XmlCorrector.correctXMLAgainstDTD(file);
+    List<XMLError> out = XmlCorrector.correctXMLAgainstDTD(file);
     assertThat("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), equalTo(2));
 
-    XMLError error = (XMLError) out.get(0);
-    XMLError fatalError = (XMLError) out.get(1);
+    XMLError error = out.get(0);
+    XMLError fatalError = out.get(1);
 
     assertThat(error.getErrorType(), equalTo(XmlErrorType.ERROR));
     assertThat(error.getLine(), equalTo(1));
@@ -53,11 +51,11 @@ public class NoRoot {
   public void testCorrectXMLAgainstXSD() {
     Path xml = Paths.get("test", "resources", "noteNoRoot.xml");
     Path xsd = Paths.get("test", "resources", "note.xsd");
-    List<EvaluationResult> out = XmlCorrector.correctXMLAgainstXSD(xml, xsd);
+    List<XMLError> out = XmlCorrector.correctXMLAgainstXSD(xml, xsd);
     assertThat("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), equalTo(2));
 
-    XMLError error = (XMLError) out.get(0);
-    XMLError fatalError = (XMLError) out.get(1);
+    XMLError error = out.get(0);
+    XMLError fatalError = out.get(1);
 
     assertThat(error.getErrorType(), equalTo(XmlErrorType.ERROR));
     assertThat(error.getLine(), equalTo(2));

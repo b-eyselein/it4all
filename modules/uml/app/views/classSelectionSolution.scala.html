@@ -1,8 +1,6 @@
 @(user: model.user.User, result: model.result.ClassSelectionResult)
 
 @classResult = @{result.getClassResult()}
-@attributesResult = @{result.getAttributesResult()}
-@methodsResult = @{result.getMethodsResult()}
 
 @main("UML", user) {
 <div class="container">
@@ -20,7 +18,7 @@
           <li>--</li>
         } else {
           @for(corrClass <- classResult.getCorrect()) {
-          <li>@corrClass.getName()</li>
+          <li>@corrClass.getFirstArg().getName()</li>
           }
         }
         </ul>
@@ -52,90 +50,6 @@
     </div>
   </div>
   
-  <div class="panel panel-default">
-    <div class="panel-heading">Attribute</div>
-    <div class="panel-body">
-      <div class="col-sm-4">
-        <h4 class="bg-success text-center">Korrekt</h4>
-        <ul>
-        @if(attributesResult.getCorrect().isEmpty()) {
-          <li>--</li>
-        } else {
-          @for(corrAttr <- attributesResult.getCorrect()) {
-          <li>@corrAttr.toString()</li>
-          }
-        }
-        </ul>
-      </div>
-      <div class="col-sm-4">
-        <h4 class="bg-danger text-center">Falsch</h4>
-        <ul>
-        @if(attributesResult.getWrong().isEmpty()) {
-          <li>--</li>
-        } else {
-          @for(wrongAttr <- attributesResult.getWrong()) {
-          <li>@wrongAttr</li>
-          }
-        }
-        </ul>
-      </div>
-      <div class="col-sm-4">
-        <h4 class="bg-warning text-center">Fehlend</h4>
-        <ul>
-        @if(attributesResult.getMissing().isEmpty()) {
-          <li>--</li>
-        } else {
-          @for(missAttr <- attributesResult.getMissing()) {
-          <li>@missAttr</li>
-          }
-        }
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <div class="panel panel-default">
-    <div class="panel-heading">Methoden</div>
-    <div class="panel-body">
-      <div class="col-sm-4">
-        <h4 class="bg-success text-center">Korrekt</h4>
-        <ul>
-        @if(methodsResult.getCorrect().isEmpty()) {
-          <li>--</li>
-        } else {
-          @for(corrMeth <- methodsResult.getCorrect()) {
-          <li>@corrMeth</li>
-          }
-        }
-        </ul>
-      </div>
-      <div class="col-sm-4">
-        <h4 class="bg-danger text-center">Falsch</h4>
-        <ul>
-        @if(methodsResult.getWrong().isEmpty()) {
-          <li>--</li>
-        } else {
-          @for(wrongMeth <- methodsResult.getWrong()) {
-          <li>@wrongMeth</li>
-          }
-        }
-        </ul>
-      </div>
-      <div class="col-sm-4">
-        <h4 class="bg-warning text-center">Fehlend</h4>
-        <ul>
-        @if(methodsResult.getMissing().isEmpty()) {
-          <li>--</li>
-        } else {
-          @for(missMeth <- methodsResult.getMissing()) {
-          <li>@missMeth</li>
-          }
-        }
-        </ul>
-      </div>
-    </div>
-  </div>
-
   <a href="@controllers.uml.routes.UML.diagramDrawingWithHelp(result.getExercise().id)" class="btn btn-primary btn-block">N&auml;chster Aufgabenteil</a>
 </div>
 }

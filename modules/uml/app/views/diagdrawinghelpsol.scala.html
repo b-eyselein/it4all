@@ -1,102 +1,52 @@
 @(user: model.user.User, result: model.result.DiagramDrawingResult)
 
+@correct = @{result.getAssociationResult().getCorrect()}
+@wrong = @{result.getAssociationResult().getWrong()}
+@missing = @{result.getAssociationResult().getMissing()}
+
 @main("UML-Test", user) {
-<h1> Korrektur der Aufgabe &quot;@result.getExercise().title&quot;</h1>	
-<div class="panel-body">
-<div id="left">
- <table class="table">
-  <tr>
-    <th colspan="5">Ihre Eingabe</th>
-  </tr>
-  <tr>
-    <th>Beziehungstyp:</th>
-	<th >Start</th>
-	<th >Ziel</th>
-	<th >Start Multiziplität</th>
-	<th >Ziel Multiziplität</th>
-  </tr>
-@@for(j <- 0 to 4) {
-@@for(i <- 0 to ue.getConnectionsLength(ue.getListConnectionsTypeUser(j))-1) {
+<div class="container">
+  <div class="page-header">
+    <h1> Korrektur der Aufgabe &quot;@result.getExercise().title&quot;</h1>	
+  </div>
 
-  <tr>
-    <td>
-    @@ue.getListConnectionsTypeUser(j).get(i).getType()
-	</td>
-	<td>
-		@@ue.getListConnectionsTypeUser(j).get(i).getStart()
-	</td>
-	<td >
-    	@@ue.getListConnectionsTypeUser(j).get(i).getTarget()
-	</td>
-	<td>
-		@@ue.getListConnectionsTypeUser(j).get(i).getMulstart()
-	</td>
-	<td>
-		@@ue.getListConnectionsTypeUser(j).get(i).getMultarget()
-	</td>
-  </tr>
-	}
-}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Typ</th>
+        <th>Start</th>
+        <th>Ziel</th>
+        <th>Multiziplität</th>
+      </tr>
+    </thead>
+    <tbody>
+    @for(conn <- correct) {
+      <tr>
+        <td>@conn.getFirstArg().getType()</td>
+  	    <td>@conn.getFirstArg().getStart()</td>
+        <td>@conn.getFirstArg().getTarget()</td>
+        <td>@conn.getFirstArg().getMulstart() : @conn.getFirstArg().getMultarget()</td>
+      </tr>
+      }
+    @for(conn <- wrong) {
+      <tr>
+        <td>@conn.getType()</td>
+        <td>@conn.getStart()</td>
+        <td>@conn.getTarget()</td>
+        <td>@conn.getMulstart() : @conn.getMultarget()</td>
+      </tr>
+      }
+    @for(conn <- missing) {
+      <tr>
+        <td>@conn.getType()</td>
+        <td>@conn.getStart()</td>
+        <td>@conn.getTarget()</td>
+        <td>@conn.getMulstart() : @conn.getMultarget()</td>
+      </tr>
+      }
+    </tbody>
+  </table>
+  
+  <a href="@uml.routes.UML.index()" class="btn btn-primary btn-block">Zur Aufgabenübersicht</a>
 </div>
-</table>
-</div>
-
-<div id="right">
- <table class="table">
-  <tr>
-    <th colspan="5">Lösung</th>
-  </tr>
-  <tr>
-    <th>Beziehungstyp:</th>
-	<th >Start</th>
-	<th >Ziel</th>
-	<th >Start Multiziplität</th>
-	<th >Ziel Multiziplität</th>
-  </tr>
-@@for(j <- 0 to 4){
-@@for(i <- 0 to ue.getConnectionsLength(ue.getListConnectionsTypeSolution(j))-1){
-
-  <tr>
-    <td>
-    @@ue.getListConnectionsTypeSolution(j).get(i).getType()
-	</td>
-	<td>
-		@@ue.getListConnectionsTypeSolution(j).get(i).getStart()
-	</td>
-	<td >
-    	@@ue.getListConnectionsTypeSolution(j).get(i).getTarget()
-	</td>
-	<td>
-		@@ue.getListConnectionsTypeSolution(j).get(i).getMulstart()
-	</td>
-	<td>
-		@@ue.getListConnectionsTypeSolution(j).get(i).getMultarget()
-	</td>
-  </tr>
-	}
-}
-</table>
-</div>
-</div>
-
-<div class="panel-footer">
-	 <form action="/uml" method="get" enctype="multipart/form-data">
-   	 <button type="submit" class="btn btn-primary btn-block">Zur Aufgabenübersicht</button>
- 	</form> 
-</div>
-
-<style>
-#left {
-width: 50%;
-float: left;
-}
-#right {
-width: 50%;
-float: right;
-}
-h1 {
-    text-align: center;
-}
-</style>
-
 }

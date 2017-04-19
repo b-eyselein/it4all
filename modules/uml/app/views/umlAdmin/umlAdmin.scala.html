@@ -9,17 +9,17 @@
   <div class="alert alert-info alert-dismissable">
     <a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>
     Es gibt insgesamt @model.UmlExercise.finder.all().size() &Uuml;bungen. Sie k&ouml;nnen 
-    <a class="alert-link" href="@controllers.uml.routes.UmlAdmin.uploadForm()">hier</a> neue erstellen.
+    <a class="alert-link" href="@uml.routes.UmlAdmin.uploadForm()">hier</a> neue erstellen.
   </div>
   
   <h2>Verwaltung der Fragen</h2>
-  <a class="btn btn-default btn-block" href="@@controllers.choice.routes.QuestionController.questions()">Übersicht über alle Fragen</a>
-  <a class="btn btn-default btn-block" href="@@controllers.choice.routes.QuestionController.newQuestionForm()">Neue Frage erstellen</a>
+  <a class="btn btn-default btn-block" href="@@uml.routes.QuestionController.questions()">Übersicht über alle Fragen</a>
+  <a class="btn btn-default btn-block" href="@uml.routes.UmlAdmin.newExerciseForm()">Neue Aufgabe erstellen</a>
   
   <hr>
   
-  <a class="btn btn-default btn-block" href="@@controllers.choice.routes.QuestionAdmin.exportQuestions()">Fragen als JSON exportieren</a>
-  <a class="btn btn-default btn-block" href="@controllers.uml.routes.UmlAdmin.readStandardExercises()">Standardaufgaben einlesen</a>
+  <a class="btn btn-default btn-block" href="@@uml.routes.QuestionAdmin.exportQuestions()">Fragen als JSON exportieren</a>
+  <a class="btn btn-default btn-block" href="@uml.routes.UmlAdmin.readStandardExercises()">Standardaufgaben einlesen</a>
   
   <hr>
     
@@ -27,9 +27,9 @@
     <div class="panel-heading">Import von Fragen als JSON-Datei</div>
     <div class="panel-body">
       <div class="alert alert-info">Die Datei wird gegen diese
-      <a href="@@controllers.choice.routes.QuestionAdmin.getJSONSchemaFile()" class="alert-link" target="_blank">JSON Schema-Datei</a>
+      <a href="@@uml.routes.QuestionAdmin.getJSONSchemaFile()" class="alert-link" target="_blank">JSON Schema-Datei</a>
       geprüft. Im Erfolgsfall werden die Aufgaben ausgelesen und in der Datenbank gespeichert.</div>
-      <form action="@@controllers.choice.routes.QuestionAdmin.uploadFile()" method="post" enctype="multipart/form-data">
+      <form action="@@uml.routes.QuestionAdmin.uploadFile()" method="post" enctype="multipart/form-data">
         <div class="form-group">
           <label for="file">Ihre Datei:</label>
           <input type="file" class="form-control" name="file" id="file" accept=".json" required>
