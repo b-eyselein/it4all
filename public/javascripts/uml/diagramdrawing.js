@@ -197,8 +197,8 @@ function extractParametersAsJson() {
     .map(function(conn) {
       return {
         type: getTypeName(conn.attributes.type),
-        source: graph.getCell(conn.attributes.source.id).attr('.uml-class-name-text/text'),
-        target: graph.getCell(conn.attributes.target.id).attr('.uml-class-name-text/text'),
+        start: getClassNameFromCellId(conn.attributes.source.id),
+        target: getClassNameFromCellId(conn.attributes.target.id),
         mulstart: getMultiplicity(conn.attributes.labels[0]),
         multarget: getMultiplicity(conn.attributes.labels[1])
       };
@@ -210,8 +210,8 @@ function extractParametersAsJson() {
     }) 
     .map(function(conn) {
       return {
-        source: graph.getCell(conn.attributes.source.id).attr('.uml-class-name-text/text'),
-        target: graph.getCell(conn.attributes.target.id).attr('.uml-class-name-text/text'),
+        start: getClassNameFromCellId(conn.attributes.source.id),
+        target: getClassNameFromCellId(conn.attributes.target.id),
       };
     })
   };
@@ -219,14 +219,12 @@ function extractParametersAsJson() {
   return JSON.stringify(learnerSolution, null, 2);
 }
 
+function getClassNameFromCellId(id) {
+  return graph.getCell(id).attr('.uml-class-name-text/text');
+}
+
 function getMultiplicity(label) {
-  if(label.attrs.text.text == "1") {
-    return "SINGLE";
-  } else if(label.attrs.text.text == "*") {
-    return "UNBOUND";
-  } else {
-    return "";
-  }
+  return label.attrs.text.text == "1" ? "SINGLE" : "UNBOUND";
 }
 
 function getTypeName(type) {
@@ -245,7 +243,8 @@ function getTypeName(type) {
 }
 
 function prepareFormForSubmitting() {
-  document.getElementById("learnerSolution").value = extractParametersAsJson();
+  var toSend = extractParametersAsJson();
+  document.getElementById("learnerSolution").value = toSend;
 }
 
 function link(sourceId, targetId) {

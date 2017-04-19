@@ -73,16 +73,6 @@
 			]
 		}
 	], 
-	"otherMethods": [
-		"verschreiben(Patient)", 
-		"entlassen(Station)", 
-		"aufnehmen(Station)"
-	], 
-	"otherAttributes": [
-		"Id", 
-		"Name", 
-		"Nummer"
-	], 
 	"implementations": [
 		{
 			"start": "Patient", 

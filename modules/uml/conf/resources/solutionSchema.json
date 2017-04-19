@@ -42,7 +42,7 @@
 							"COMPOSITION"
 						]
 					}, 
-					"source": {
+					"start": {
 						"type": "string"
 					}, 
 					"target": {
@@ -63,7 +63,7 @@
 				}, 
 				"required": [
 					"type", 
-					"source", 
+					"start", 
 					"target", 
 					"mulstart", 
 					"multarget"
@@ -75,7 +75,7 @@
 			"items": {
 				"type": "object", 
 				"properties": {
-					"source": {
+					"start": {
 						"type": "string"
 					}, 
 					"target": {
@@ -83,7 +83,7 @@
 					}
 				}, 
 				"required": [
-					"source", 
+					"start", 
 					"target"
 				]
 			}

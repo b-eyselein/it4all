@@ -20,6 +20,9 @@
       </tr>
     </thead>
     <tbody>
+      <tr>
+        <th colspan="4" class="text-center">Korrekt</th>
+      </tr>
     @for(conn <- correct) {
       <tr>
         <td>@conn.getFirstArg().getType()</td>
@@ -28,6 +31,9 @@
         <td>@conn.getFirstArg().getMulstart() : @conn.getFirstArg().getMultarget()</td>
       </tr>
       }
+      <tr>
+        <th colspan="4" class="text-center">Falsch</th>
+      </tr>
     @for(conn <- wrong) {
       <tr>
         <td>@conn.getType()</td>
@@ -36,6 +42,9 @@
         <td>@conn.getMulstart() : @conn.getMultarget()</td>
       </tr>
       }
+      <tr>
+        <th colspan="4" class="text-center">Fehlend</th>
+      </tr>
     @for(conn <- missing) {
       <tr>
         <td>@conn.getType()</td>
