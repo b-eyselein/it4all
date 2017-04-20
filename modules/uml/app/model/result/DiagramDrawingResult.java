@@ -1,38 +1,35 @@
 package model.result;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
-import model.UmlAssociation;
-import model.UmlClass;
 import model.UmlExercise;
-import model.UmlImplementation;
 import model.UmlSolution;
+import model.matcher.AssociationMatcher;
+import model.matching.Matcher;
 import model.matching.MatchingResult;
-import play.libs.Json;
+import model.uml.UmlAssociation;
+import model.uml.UmlImplementation;
 
 public class DiagramDrawingResult extends UmlResult {
 
-  private MatchingResult<UmlClass> classResult;
+  private static final AssociationMatcher ASSOCIATION_MATCHER = new AssociationMatcher();
+  private static final Matcher<UmlImplementation> IMPLEMENTATION_MATCHER = new Matcher<>(UmlImplementation::equals);
+
   private MatchingResult<UmlAssociation> associationResult;
   private MatchingResult<UmlImplementation> implementationResult;
 
-  public DiagramDrawingResult(UmlExercise exercise, JsonNode userJson) {
+  public DiagramDrawingResult(UmlExercise exercise, UmlSolution learnerSol) {
     super(exercise);
 
-    UmlSolution learnerSol = Json.fromJson(userJson, UmlSolution.class);
     UmlSolution musterSol = exercise.getSolution();
 
-    classResult = CLASS_MATCHER.match(learnerSol.classes, musterSol.classes);
-    associationResult = ASSOCIATION_MATCHER.match(learnerSol.associations, musterSol.associations);
-    implementationResult = IMPLEMENTATION_MATCHER.match(learnerSol.implementations, musterSol.implementations);
+    classResult = CLASS_MATCHER.match(learnerSol.getClasses(), musterSol.getClasses());
+
+    associationResult = ASSOCIATION_MATCHER.match(learnerSol.getAssociations(), musterSol.getAssociations());
+    implementationResult = IMPLEMENTATION_MATCHER.match(learnerSol.getImplementations(),
+        musterSol.getImplementations());
   }
 
   public MatchingResult<UmlAssociation> getAssociationResult() {
     return associationResult;
-  }
-
-  public MatchingResult<UmlClass> getClassResult() {
-    return classResult;
   }
 
   public MatchingResult<UmlImplementation> getImplementationResult() {

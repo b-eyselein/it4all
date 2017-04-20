@@ -27,4 +27,4 @@ PUT    /:exId/correct/diagramDrawing       controllers.uml.UML.correctDiagramDra
 POST   /:exId/correct/diagramDrawing       controllers.uml.UML.correctDiagramDrawing(exId: Int)
 
 # Test Matching of attrs and methods
-GET    /test                               controllers.uml.UML.test()
+GET    /:exId/matching                     controllers.uml.UML.matching(exId: Int)

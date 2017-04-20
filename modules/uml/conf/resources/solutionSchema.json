@@ -35,7 +35,7 @@
 			"items": {
 				"type": "object", 
 				"properties": {
-					"type": {
+					"assocType": {
 						"enum": [
 							"AGGREGATION", 
 							"ASSOCIATION", 
@@ -43,30 +43,46 @@
 						]
 					}, 
 					"start": {
-						"type": "string"
-					}, 
-					"target": {
-						"type": "string"
-					}, 
-					"mulstart": {
-						"enum": [
-							"SINGLE", 
-							"UNBOUND"
+						"type": "object", 
+						"properties": {
+							"endName": {
+								"type": "string"
+							}, 
+							"multiplicity": {
+								"enum": [
+									"SINGLE", 
+									"UNBOUND"
+								]
+							}
+						}, 
+						"required": [
+							"endName", 
+							"multiplicity"
 						]
 					}, 
-					"multarget": {
-						"enum": [
-							"SINGLE", 
-							"UNBOUND"
+					"target": {
+						"type": "object", 
+						"properties": {
+							"endName": {
+								"type": "string"
+							}, 
+							"multiplicity": {
+								"enum": [
+									"SINGLE", 
+									"UNBOUND"
+								]
+							}
+						}, 
+						"required": [
+							"endName", 
+							"multiplicity"
 						]
 					}
 				}, 
 				"required": [
-					"type", 
+					"assocType", 
 					"start", 
-					"target", 
-					"mulstart", 
-					"multarget"
+					"target"
 				]
 			}
 		}, 
@@ -75,16 +91,16 @@
 			"items": {
 				"type": "object", 
 				"properties": {
-					"start": {
+					"subClass": {
 						"type": "string"
 					}, 
-					"target": {
+					"superClass": {
 						"type": "string"
 					}
 				}, 
 				"required": [
-					"start", 
-					"target"
+					"subClass", 
+					"superClass"
 				]
 			}
 		}

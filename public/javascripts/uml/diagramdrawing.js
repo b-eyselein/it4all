@@ -196,11 +196,15 @@ function extractParametersAsJson() {
     }) 
     .map(function(conn) {
       return {
-        type: getTypeName(conn.attributes.type),
-        start: getClassNameFromCellId(conn.attributes.source.id),
-        target: getClassNameFromCellId(conn.attributes.target.id),
-        mulstart: getMultiplicity(conn.attributes.labels[0]),
-        multarget: getMultiplicity(conn.attributes.labels[1])
+        assocType: getTypeName(conn.attributes.type),
+        start: {
+          endName: getClassNameFromCellId(conn.attributes.source.id),
+          multiplicity: getMultiplicity(conn.attributes.labels[0])
+        },
+        target:{
+          endName: getClassNameFromCellId(conn.attributes.target.id),
+          multiplicity: getMultiplicity(conn.attributes.labels[1])
+        }
       };
     }),
     
@@ -210,8 +214,8 @@ function extractParametersAsJson() {
     }) 
     .map(function(conn) {
       return {
-        start: getClassNameFromCellId(conn.attributes.source.id),
-        target: getClassNameFromCellId(conn.attributes.target.id),
+        subClass: getClassNameFromCellId(conn.attributes.source.id),
+        superClass: getClassNameFromCellId(conn.attributes.target.id),
       };
     })
   };

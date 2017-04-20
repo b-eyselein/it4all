@@ -1,96 +1,144 @@
 @(user: model.user.User, result: model.result.DiagramDrawingResult)
 
 @main("UML-Test", user) {
-<div class="container">
+<div class="container-fluid">
   <div class="page-header">
     <h1> Korrektur der Aufgabe &quot;@result.getExercise().title&quot;</h1>	
   </div>
 
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-8">
       <h1>Assoziationen</h1>
-      <table class="table">
+      <table class="table table-hover">
         <thead>
           <tr>
-            <th>Typ</th>
+            <th>Korrektheit</th>
+            <th class="text-center" colspan="2">Typ</th>
             <th>Start</th>
             <th>Ziel</th>
-            <th>Multiziplität</th>
+            <th class="text-center" colspan="2">Multiziplität</th>
           </tr>
+          <tr>
+            <th/>
+            <th>Lerner</th>
+            <th>Muster</th>
+            <th/>
+            <th/>
+            <th>Lerner</th>
+            <th>Muster</th>
         </thead>
+        
         <tbody>
           <tr>
-            <th colspan="4" class="text-center">Korrekt</th>
+            <th colspan="7" class="text-center">(Teilweise) Korrekt</th>
           </tr>
-        @for(conn <- result.getAssociationResult().getCorrect()) {
+        @for(corrAssoc <- result.getAssociationResult().getCorrect().asInstanceOf[List[model.matcher.UmlAssociationMatch]]) {
           <tr>
-            <td>@conn.getFirstArg().getType()</td>
-      	    <td>@conn.getFirstArg().getStart()</td>
-            <td>@conn.getFirstArg().getTarget()</td>
-            <td>@conn.getFirstArg().getMulstart() : @conn.getFirstArg().getMultarget()</td>
+            @if(corrAssoc.isCorrect()) {
+            <td class="success text-center"><span class="glyphicon glyphicon-ok"></span>
+            } else {
+            <td class="warning text-center"><span class="glyphicon glyphicon-remove"></span>
+            }
+            @if(corrAssoc.isAssocTypeEqual()) {
+            <td class="success text-center" colspan="2">@corrAssoc.getFirstArg().assocType.getName()</td>
+            } else {
+            <td class="danger">@corrAssoc.getFirstArg().assocType.getName()</td>
+            <td>@corrAssoc.getSecondArg().assocType.getName()</td>
+            }
+      	    <td>@corrAssoc.getFirstArg().start.endName</td>
+            <td>@corrAssoc.getFirstArg().target.endName</td>
+            @if(corrAssoc.areMultiplicitiesEqual()) {
+            <td class="success text-center" colspan="2">@corrAssoc.getCorrectMultiplicity()</td>
+            } else {
+            <td class="danger">@corrAssoc.getFirstArg().multsAsString()</td>
+            <td>@corrAssoc.getCorrectMultiplicity()</td>
+            }
           </tr>
           }
+          
+          <tr><td colspan="7">&nbsp;</td></tr>
+          
           <tr>
-            <th colspan="4" class="text-center">Falsch</th>
+            <th colspan="7" class="text-center">Falsch</th>
           </tr>
-        @for(conn <- result.getAssociationResult().getWrong()) {
+        @for(wrongAssoc <- result.getAssociationResult().getWrong()) {
           <tr>
-            <td>@conn.getType()</td>
-            <td>@conn.getStart()</td>
-            <td>@conn.getTarget()</td>
-            <td>@conn.getMulstart() : @conn.getMultarget()</td>
+            <td class="danger text-center"><span class="glyphicon glyphicon-remove" title="Falsch"></span></td>
+            <td>@wrongAssoc.assocType.getName()</td>
+            <td/>
+            <td>@wrongAssoc.start.endName</td>
+            <td>@wrongAssoc.target.endName</td>
+            <td>@wrongAssoc.start.multiplicity.getRepresentant() : @wrongAssoc.target.multiplicity.getRepresentant()</td>
+            <td/>
           </tr>
           }
+          
+          <tr><td colspan="7">&nbsp;</tr>
+          
           <tr>
-            <th colspan="4" class="text-center">Fehlend</th>
+            <th colspan="7" class="text-center">Fehlend</th>
           </tr>
-        @for(conn <- result.getAssociationResult().getMissing()) {
+          
+        @for(missingAssoc <- result.getAssociationResult().getMissing()) {
           <tr>
-            <td>@conn.getType()</td>
-            <td>@conn.getStart()</td>
-            <td>@conn.getTarget()</td>
-            <td>@conn.getMulstart() : @conn.getMultarget()</td>
+            <td class="warning text-center"><span class="glyphicon glyphicon-minus" title="Fehlend"></span></td>
+            <td/>
+            <td>@missingAssoc.assocType.getName()</td>
+            <td>@missingAssoc.start.endName</td>
+            <td>@missingAssoc.target.endName</td>
+            <td/>
+            <td>@missingAssoc.start.multiplicity.getRepresentant() : @missingAssoc.target.multiplicity.getRepresentant()</td>
           </tr>
           }
         </tbody>
       </table>
     </div>
     
-    <div class="col-md-6">
-      <h1>Implementierungen</h1>
-      <table class="table">
+    <div class="col-md-4">
+      <h1>Vererbungen</h1>
+      <table class="table table-hover">
         <thead>
           <tr>
-            <th>Start</th>
-            <th>Ziel</th>
+            <th>Korrektheit</th>
+            <th>Subklasse</th>
+            <th>Superklasse</th>
           </tr>
+          <tr><th colspan="3">&nbsp;</th></tr>
         </thead>
+        
         <tbody>
           <tr>
-            <th colspan="2" class="text-center">Korrekt</th>
+            <th colspan="3" class="text-center">Korrekt</th>
           </tr>
-        @for(conn <- result.getImplementationResult().getCorrect()) {
+        @for(correctImpl <- result.getImplementationResult().getCorrect()) {
           <tr>
-            <td>@conn.getFirstArg().getStart()</td>
-            <td>@conn.getFirstArg().getTarget()</td>
-          </tr>
-          }
-          <tr>
-            <th colspan="2" class="text-center">Falsch</th>
-          </tr>
-        @for(conn <-  result.getImplementationResult().getWrong()) {
-          <tr>
-            <td>@conn.getStart()</td>
-            <td>@conn.getTarget()</td>
+            <td class="success text-center"><span class="glyphicon glyphicon-ok"></span>
+            <td>@correctImpl.getFirstArg().subClass</td>
+            <td>@correctImpl.getFirstArg().superClass</td>
           </tr>
           }
+          
+          <tr><td colspan="3">&nbsp;</td></tr>
           <tr>
-            <th colspan="2" class="text-center">Fehlend</th>
+            <th colspan="3" class="text-center">Falsch</th>
           </tr>
-        @for(conn <-  result.getImplementationResult().getMissing()) {
+        @for(wrongImpl <- result.getImplementationResult().getWrong()) {
           <tr>
-            <td>@conn.getStart()</td>
-            <td>@conn.getTarget()</td>
+            <td class="danger text-center"><span class="glyphicon glyphicon-remove"></span>
+            <td>@wrongImpl.subClass</td>
+            <td>@wrongImpl.superClass</td>
+          </tr>
+          }
+          
+          <tr><td colspan="3">&nbsp;</td></tr>
+          <tr>
+            <th colspan="3" class="text-center">Fehlend</th>
+          </tr>
+        @for(missingImpl <- result.getImplementationResult().getMissing()) {
+          <tr>
+            <td class="warning text-center"><span class="glyphicon glyphicon-minus"></span>
+            <td>@missingImpl.subClass</td>
+            <td>@missingImpl.superClass</td>
           </tr>
           }
         </tbody>
@@ -99,6 +147,8 @@
     
   </div>
   
-  <a href="@uml.routes.UML.index()" class="btn btn-primary btn-block">Zur Aufgabenübersicht</a>
+  <hr>
+  
+  <a href="@uml.routes.UML.matching(result.getExercise.id)" class="btn btn-primary btn-block">Zum nächsten Aufgabenteil</a>
 </div>
 }

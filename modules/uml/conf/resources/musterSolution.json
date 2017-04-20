@@ -6,13 +6,14 @@
 				
 			], 
 			"attributes": [
-				
+				"id: String", 
+				"name: String"
 			]
 		}, 
 		{
 			"name": "Doktor", 
 			"methods": [
-				
+				"verschreiben(Patient): void"
 			], 
 			"attributes": [
 				
@@ -24,13 +25,14 @@
 				
 			], 
 			"attributes": [
-				
+				"id: String"
 			]
 		}, 
 		{
 			"name": "Patient", 
 			"methods": [
-				
+				"entlassen(Station): void", 
+				"aufnehmen(Station): void"
 			], 
 			"attributes": [
 				
@@ -51,7 +53,7 @@
 				
 			], 
 			"attributes": [
-				
+				"nummer: int"
 			]
 		}, 
 		{
@@ -60,7 +62,8 @@
 				
 			], 
 			"attributes": [
-				
+				"id: String", 
+				"name: String"
 			]
 		}, 
 		{
@@ -75,74 +78,106 @@
 	], 
 	"implementations": [
 		{
-			"start": "Patient", 
-			"target": "Person"
+			"subClass": "Patient", 
+			"superClass": "Person"
 		}, 
 		{
-			"start": "Doktor", 
-			"target": "Person"
+			"subClass": "Doktor", 
+			"superClass": "Person"
 		}, 
 		{
-			"start": "Krankenschwester", 
-			"target": "Person"
+			"subClass": "Krankenschwester", 
+			"superClass": "Person"
 		}
 	], 
 	"associations": [
 		{
-			"type": "ASSOCIATION", 
-			"start": "Doktor", 
-			"target": "Rezept", 
-			"mulstart": "SINGLE", 
-			"multarget": "UNBOUND"
+			"assocType": "ASSOCIATION", 
+			"start": {
+				"endName": "Doktor", 
+				"multiplicity": "SINGLE"
+			}, 
+			"target": {
+				"endName": "Rezept", 
+				"multiplicity": "UNBOUND"
+			}
 		}, 
 		{
-			"type": "ASSOCIATION", 
-			"start": "Doktor", 
-			"target": "Patient", 
-			"mulstart": "SINGLE", 
-			"multarget": "UNBOUND"
+			"assocType": "ASSOCIATION", 
+			"start": {
+				"endName": "Doktor", 
+				"multiplicity": "SINGLE"
+			}, 
+			"target": {
+				"endName": "Patient", 
+				"multiplicity": "UNBOUND"
+			}
 		}, 
 		{
-			"type": "ASSOCIATION", 
-			"start": "Station", 
-			"target": "Patient", 
-			"mulstart": "SINGLE", 
-			"multarget": "UNBOUND"
+			"assocType": "ASSOCIATION", 
+			"start": {
+				"endName": "Station", 
+				"multiplicity": "SINGLE"
+			}, 
+			"target": {
+				"endName": "Patient", 
+				"multiplicity": "UNBOUND"
+			}
 		}, 
 		{
-			"type": "ASSOCIATION", 
-			"start": "Station", 
-			"target": "Krankenschwester", 
-			"mulstart": "SINGLE", 
-			"multarget": "UNBOUND"
+			"assocType": "ASSOCIATION", 
+			"start": {
+				"endName": "Station", 
+				"multiplicity": "SINGLE"
+			}, 
+			"target": {
+				"endName": "Krankenschwester", 
+				"multiplicity": "UNBOUND"
+			}
 		}, 
 		{
-			"type": "ASSOCIATION", 
-			"start": "Station", 
-			"target": "Doktor", 
-			"mulstart": "SINGLE", 
-			"multarget": "UNBOUND"
+			"assocType": "ASSOCIATION", 
+			"start": {
+				"endName": "Station", 
+				"multiplicity": "SINGLE"
+			}, 
+			"target": {
+				"endName": "Doktor", 
+				"multiplicity": "UNBOUND"
+			}
 		}, 
 		{
-			"type": "ASSOCIATION", 
-			"start": "Patient", 
-			"target": "Rezept", 
-			"mulstart": "SINGLE", 
-			"multarget": "UNBOUND"
+			"assocType": "ASSOCIATION", 
+			"start": {
+				"endName": "Patient", 
+				"multiplicity": "SINGLE"
+			}, 
+			"target": {
+				"endName": "Rezept", 
+				"multiplicity": "UNBOUND"
+			}
 		}, 
 		{
-			"type": "ASSOCIATION", 
-			"start": "Rezept", 
-			"target": "Medikament", 
-			"mulstart": "SINGLE", 
-			"multarget": "UNBOUND"
+			"assocType": "ASSOCIATION", 
+			"start": {
+				"endName": "Rezept", 
+				"multiplicity": "SINGLE"
+			}, 
+			"target": {
+				"endName": "Medikament", 
+				"multiplicity": "UNBOUND"
+			}
 		}, 
 		{
-			"type": "COMPOSITION", 
-			"start": "Krankenhaus", 
-			"target": "Station", 
-			"mulstart": "SINGLE", 
-			"multarget": "UNBOUND"
+			"assocType": "COMPOSITION", 
+			"start": {
+				"endName": "Krankenhaus", 
+				"multiplicity": "SINGLE"
+			}, 
+			"target": {
+				"endName": "Station", 
+				"multiplicity": "UNBOUND"
+			}
 		}
 	]
 }

@@ -9,7 +9,7 @@ import java.util.function.Predicate;
 public class Matcher<T> {
   
   public static class StringEqualsMatcher extends Matcher<String> {
-
+    
     public StringEqualsMatcher() {
       super(String::equals);
     }
@@ -49,8 +49,7 @@ public class Matcher<T> {
           continue;
         
         if(equalsTest.test(arg1, arg2)) {
-          
-          matches.add(new Match<>(arg1, arg2));
+          instantiateMatch(matches, arg1, arg2);
           iter1.remove();
           iter2.remove();
           matched = true;
@@ -58,27 +57,14 @@ public class Matcher<T> {
       }
     }
     
-    return new MatchingResult<>(matches, firstCollection, secondCollection);
-  }
-  
-  public MatchingResult<T> matchInOrder(List<T> firstCollection, List<T> secondCollection) {
-    List<Match<T>> matches = new LinkedList<>();
-    
-    Iterator<T> iter1 = firstCollection.iterator();
-    Iterator<T> iter2 = secondCollection.iterator();
-    
-    while(iter1.hasNext() && iter2.hasNext()) {
-      T arg1 = iter1.next();
-      T arg2 = iter2.next();
-      matches.add(new Match<>(arg1, arg2));
-      iter1.remove();
-      iter2.remove();
-    }
-    
-    return new MatchingResult<>(matches, firstCollection, secondCollection);
+    return new MatchingResult<>(matches, firstList, secondList);
   }
   
   public void setFilter(Predicate<T> theFilter) {
     filter = theFilter;
+  }
+  
+  protected void instantiateMatch(List<Match<T>> matches, T arg1, T arg2) {
+    matches.add(new Match<>(arg1, arg2));
   }
 }

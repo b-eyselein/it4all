@@ -19,7 +19,6 @@ import model.Util;
 import model.result.ClassSelectionResult;
 import model.result.DiagramDrawingResult;
 import play.Logger;
-import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
 import play.mvc.Result;
@@ -29,26 +28,21 @@ public class UML extends ExerciseController {
   private static final Path BASE_PATH = Paths.get("modules", "uml", "conf", "resources");
   private static final Path SOLUTION_SCHEMA_PATH = Paths.get(BASE_PATH.toString(), "solutionSchema.json");
   
-  private static final String NO_DATA_ERROR_MSG = "Es wurden keine Daten übertragen!";
   private static final String ERROR_MSG = "Es gab einen Fehler bei der Validierung des Resultats!";
   
-  private static JsonNode solutionSchemaNode;
+  private JsonNode solutionSchemaNode;
   
   @Inject
   public UML(Util theUtil, FormFactory theFactory) {
     super(theUtil, theFactory);
     
     try {
-      solutionSchemaNode = Json.parse(String.join("\n", Files.readAllLines(SOLUTION_SCHEMA_PATH))); // NOSONAR
+      solutionSchemaNode = Json.parse(String.join("\n", Files.readAllLines(SOLUTION_SCHEMA_PATH)));
     } catch (IOException e) {
       Logger.error("There has been an error parsing the schema files for UML:", e);
     }
   }
   
-  private static Optional<String> readSolutionFromForm(DynamicForm form) {
-    return Optional.of(form.get(LEARNER_SOLUTION_VALUE));
-  }
-
   private static Optional<ProcessingReport> validateSolution(JsonNode sentJson, JsonNode schemaNode) {
     return JsonWrapper.validateJson(sentJson, schemaNode);
   }
@@ -58,65 +52,37 @@ public class UML extends ExerciseController {
   }
   
   public Result correctClassSelection(int exerciseId) {
-    Optional<String> learnerSolution = readSolutionFromForm(factory.form().bindFromRequest());
-
-    if(!learnerSolution.isPresent())
-      return badRequest(NO_DATA_ERROR_MSG);
-
-    JsonNode sentJson = Json.parse(learnerSolution.get());
-
-    Optional<ProcessingReport> report = validateSolution(sentJson, solutionSchemaNode);
-    
-    if(!report.isPresent())
-      return badRequest(ERROR_MSG);
-
-    if(!report.get().isSuccess())
-      return badRequest(report.get().toString());
-    
-    ClassSelectionResult result = new ClassSelectionResult(UmlExercise.finder.byId(exerciseId), sentJson);
-    return ok(views.html.classSelectionSolution.render(getUser(), result));
+    try {
+      ClassSelectionResult result = new ClassSelectionResult(UmlExercise.finder.byId(exerciseId),
+          readSolutionFromForm());
+      
+      return ok(views.html.classSelectionSolution.render(getUser(), result));
+    } catch (Exception e) {
+      return badRequest(e.getMessage());
+    }
   }
   
   public Result correctDiagramDrawing(int exerciseId) {
-    Optional<String> learnerSolution = readSolutionFromForm(factory.form().bindFromRequest());
-
-    if(!learnerSolution.isPresent())
-      return badRequest(NO_DATA_ERROR_MSG);
-
-    JsonNode sentJson = Json.parse(learnerSolution.get());
-
-    Optional<ProcessingReport> report = validateSolution(sentJson, solutionSchemaNode);
-    
-    if(!report.isPresent())
-      return badRequest(ERROR_MSG);
-
-    if(!report.get().isSuccess())
-      return badRequest(report.get().toString());
-    
-    DiagramDrawingResult result = new DiagramDrawingResult(UmlExercise.finder.byId(exerciseId), sentJson);
-    return ok(views.html.diagdrawingsol.render(getUser(), result));
+    try {
+      DiagramDrawingResult result = new DiagramDrawingResult(UmlExercise.finder.byId(exerciseId),
+          readSolutionFromForm());
+      
+      return ok(views.html.diagdrawingsol.render(getUser(), result));
+      
+    } catch (Exception e) {
+      return badRequest(e.getMessage());
+    }
   }
   
   public Result correctDiagramDrawingWithHelp(int exerciseId) {
-    Optional<String> learnerSolution = readSolutionFromForm(factory.form().bindFromRequest());
-    
-    if(!learnerSolution.isPresent())
-      return badRequest(NO_DATA_ERROR_MSG);
-
-    JsonNode sentJson = Json.parse(learnerSolution.get());
-
-    System.out.println(Json.prettyPrint(sentJson));
-
-    Optional<ProcessingReport> report = validateSolution(sentJson, solutionSchemaNode);
-    
-    if(!report.isPresent())
-      return badRequest(ERROR_MSG);
-
-    if(!report.get().isSuccess())
-      return badRequest(report.get().toString());
-    
-    DiagramDrawingResult result = new DiagramDrawingResult(UmlExercise.finder.byId(exerciseId), sentJson);
-    return ok(views.html.diagdrawinghelpsol.render(getUser(), result));
+    try {
+      DiagramDrawingResult result = new DiagramDrawingResult(UmlExercise.finder.byId(exerciseId),
+          readSolutionFromForm());
+      
+      return ok(views.html.diagdrawinghelpsol.render(getUser(), result));
+    } catch (Exception e) {
+      return badRequest(e.getMessage());
+    }
   }
   
   public Result diagramDrawing(int exerciseId) {
@@ -128,11 +94,29 @@ public class UML extends ExerciseController {
   }
   
   public Result index() {
-    return ok(views.html.umloverview.render(UmlExercise.finder.all(), getUser()));
+    return ok(views.html.umloverview.render(getUser(), UmlExercise.finder.all()));
   }
   
-  public Result test() {
-    return ok(views.html.attrmethmatching.render(getUser(), UmlExercise.finder.byId(2), new UmlSolution()));
+  public Result matching(int exerciseId) {
+    UmlExercise exercise = UmlExercise.finder.byId(exerciseId);
+    return ok(views.html.matching.render(getUser(), exercise, exercise.getSolution()));
+  }
+  
+  // FIXME: Type of Exception!
+  private UmlSolution readSolutionFromForm() throws Exception {
+    JsonNode sentJson = Json.parse(factory.form().bindFromRequest().get(LEARNER_SOLUTION_VALUE));
+    
+    Logger.debug(Json.prettyPrint(sentJson));
+    
+    Optional<ProcessingReport> report = validateSolution(sentJson, solutionSchemaNode);
+    
+    if(!report.isPresent())
+      throw new Exception(ERROR_MSG);
+    
+    if(!report.get().isSuccess())
+      throw new Exception(report.get().toString());
+    
+    return Json.fromJson(sentJson, UmlSolution.class);
   }
   
 }

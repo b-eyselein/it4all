@@ -1,4 +1,4 @@
-package model;
+package model.uml;
 
 public enum UmlAssociationType {
 
