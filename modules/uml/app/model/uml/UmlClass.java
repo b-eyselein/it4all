@@ -4,10 +4,6 @@ import java.util.List;
 
 public class UmlClass {
 
-  public enum UmlClassType {
-    NORMAL, ABSTRACT, INTERFACE;
-  }
-
   private UmlClassType classType;
 
   private String name;

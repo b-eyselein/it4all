@@ -57,11 +57,7 @@ function updateIdList() {
     return;
   }
   
-  var classNames = idList.map(function(id) {
-    return graph.getCell(id).attr('.uml-class-name-text/text');
-  });
-  
-  idSpan.innerHTML = classNames.join(", ");
+  idSpan.innerHTML = idList.map(getClassNameFromCellId).join(", ");
 }
 
 function cellOnLeftClick(cellView, evt, x, y) {
@@ -103,7 +99,7 @@ function cellOnLeftClick(cellView, evt, x, y) {
 
 function cellOnRightClick(cellView, evt, x, y) {
   var cellInGraph = graph.getCell(cellView.model.id);
-  if(canDelete && confirm("Wollen Sie die Klasse / das Interface " + cellInGraph.attr('.uml-class-attrs-text/text') + "wirklich löschen?")) {
+  if(canDelete && confirm("Wollen Sie die Klasse / das Interface " + cellInGraph.attributes.name + " wirklich löschen?")) {
     cellInGraph.remove();
   }
 }
@@ -158,13 +154,10 @@ function unMarkButtons() {
 
 function exportDiagram() {
   var text = extractParametersAsJson();
-  
   var a = document.getElementById("a");
   var file = new Blob([text], {type: 'text/json'});
   a.href = URL.createObjectURL(file);
   a.download = 'export.json';
-  
-// console.error("NOT IMPLEMENTED YET!");
 }
 
 function importDiagram() {
@@ -172,8 +165,8 @@ function importDiagram() {
 }
 
 function askMulitplicity(source, dest) {
-  var multiplicity = prompt("Bitte geben Sie die Multiplizität von " + source + " nach " + dest + " an.");
-  return multiplicity ? multiplicity : "";
+  var multiplicity = prompt("Bitte geben Sie die Multiplizität von " + source + " nach " + dest + " auf der Seite " + source + " an.");
+  return (multiplicity && multiplicity == "1") ? multiplicity : "*";
 }
 
 function extractParametersAsJson() {
@@ -197,14 +190,16 @@ function extractParametersAsJson() {
     .map(function(conn) {
       return {
         assocType: getTypeName(conn.attributes.type),
-        start: {
-          endName: getClassNameFromCellId(conn.attributes.source.id),
-          multiplicity: getMultiplicity(conn.attributes.labels[0])
-        },
-        target:{
-          endName: getClassNameFromCellId(conn.attributes.target.id),
-          multiplicity: getMultiplicity(conn.attributes.labels[1])
-        }
+        ends: [
+          {
+            endName: getClassNameFromCellId(conn.attributes.source.id),
+            multiplicity: getMultiplicity(conn.attributes.labels[0])
+          },
+          {
+            endName: getClassNameFromCellId(conn.attributes.target.id),
+            multiplicity: getMultiplicity(conn.attributes.labels[1])
+          }
+        ]
       };
     }),
     
@@ -224,7 +219,7 @@ function extractParametersAsJson() {
 }
 
 function getClassNameFromCellId(id) {
-  return graph.getCell(id).attr('.uml-class-name-text/text');
+  return graph.getCell(id).attributes.name;
 }
 
 function getMultiplicity(label) {
@@ -252,8 +247,8 @@ function prepareFormForSubmitting() {
 }
 
 function link(sourceId, targetId) {
-  var source_name = graph.getCell(sourceId).attr('.uml-class-name-text/text');
-  var destin_name = graph.getCell(targetId).attr('.uml-class-name-text/text');
+  var source_name = getClassNameFromCellId(sourceId);
+  var destin_name = getClassNameFromCellId(targetId);
   
   
   if(sel != "IMPLEMENTATION") {
@@ -318,36 +313,34 @@ function addClass(clazz) {
     }
   };
   
-  var classToAdd;
   switch(clazz.classType) {
   case "INTERFACE":
-    classToAdd = new joint.shapes.uml.Interface(content);
+    graph.addCell(new joint.shapes.uml.Interface(content));
     break;
   case "ABSTRACT":
-    classToAdd = new joint.shapes.uml.Abstract(content);
+    graph.addCell(new joint.shapes.uml.Abstract(content));
     break;
-  case "NORMAL":
-    classToAdd = new joint.shapes.uml.Class(content);
+  case "CLASS":
+    graph.addCell(new joint.shapes.uml.Class(content));
     break;
   default:
     return;
   }
-  graph.addCell(classToAdd);
 }
 
 function newClass(posX, posY) {
   var className = prompt("Wie soll die (abstrakte) Klasse / das Interface heißen?");
   
-  if(!className) {
+  if(!className || className.length == 0) {
     return;
   }
   
   addClass({
     // Replace all " " with "_"
     name: className.replace(/ /g, "_"),
+    classType: sel,
     attributes: [], methods: [],
     position: {x: posX, y: posY},
-    type: sel
   });
 }
 
@@ -358,8 +351,6 @@ function allowDrop(ev) {
 }
 
 function drag(ev) {
-  document.getElementById(5).value = "off";
-  
   var className = ev.target.innerHTML;
   if (ev.target.getAttribute('data-baseform') != null) {
     className = ev.target.getAttribute('data-baseform');
@@ -370,7 +361,14 @@ function drag(ev) {
 function drop(ev) {
   ev.preventDefault();
   var data = ev.dataTransfer.getData("text");
-  addClass(data);
+  addClass({
+    // Replace all " " with "_"
+    name: data,
+    classType: "CLASS",
+    attributes: [], methods: [],
+    // TODO: Position!
+    position: {x: 250, y: 250},
+  });
 }
 
 // End D&D-Functionality

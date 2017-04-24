@@ -9,7 +9,7 @@
 				"properties": {
 					"classType": {
 						"enum": [
-							"NORMAL",
+							"CLASS",
 							"ABSTRACT",
 							"INTERFACE"
 						]
@@ -49,47 +49,31 @@
 							"COMPOSITION"
 						]
 					},
-					"start": {
-						"type": "object",
-						"properties": {
-							"endName": {
-								"type": "string"
+					"ends": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"endName": {
+									"type": "string"
+								},
+								"multiplicity": {
+									"enum": [
+										"SINGLE",
+										"UNBOUND"
+									]
+								}
 							},
-							"multiplicity": {
-								"enum": [
-									"SINGLE",
-									"UNBOUND"
-								]
-							}
-						},
-						"required": [
-							"endName",
-							"multiplicity"
-						]
-					},
-					"target": {
-						"type": "object",
-						"properties": {
-							"endName": {
-								"type": "string"
-							},
-							"multiplicity": {
-								"enum": [
-									"SINGLE",
-									"UNBOUND"
-								]
-							}
-						},
-						"required": [
-							"endName",
-							"multiplicity"
-						]
+							"required": [
+								"endName",
+								"multiplicity"
+							]
+						}
 					}
 				},
 				"required": [
 					"assocType",
-					"start",
-					"target"
+					"ends"
 				]
 			}
 		},

@@ -26,9 +26,6 @@ public class UmlExercise extends Exercise {
   public String diagDrawText;
   
   @Column(columnDefinition = "text")
-  public String diagDrawHelpText;
-  
-  @Column(columnDefinition = "text")
   public String solution;
   
   public UmlExercise(int theId) {
@@ -59,10 +56,6 @@ public class UmlExercise extends Exercise {
   
   public String getExTextForDiagDraw() {
     return diagDrawText;
-  }
-  
-  public String getExTextForDiagDrawHelp() {
-    return diagDrawHelpText;
   }
   
   public UmlSolution getSolution() {

@@ -43,7 +43,7 @@
 					]
 				},
 				{
-					"classType": "NORMAL",
+					"classType": "CLASS",
 					"name": "Doktor",
 					"methods": [
 						"verschreiben(Patient): void"
@@ -53,7 +53,7 @@
 					]
 				},
 				{
-					"classType": "NORMAL",
+					"classType": "CLASS",
 					"name": "Rezept",
 					"methods": [
 						
@@ -63,7 +63,7 @@
 					]
 				},
 				{
-					"classType": "NORMAL",
+					"classType": "CLASS",
 					"name": "Patient",
 					"methods": [
 						"entlassen(Station): void",
@@ -74,7 +74,7 @@
 					]
 				},
 				{
-					"classType": "NORMAL",
+					"classType": "CLASS",
 					"name": "Krankenschwester",
 					"methods": [
 						
@@ -84,7 +84,7 @@
 					]
 				},
 				{
-					"classType": "NORMAL",
+					"classType": "CLASS",
 					"name": "Station",
 					"methods": [
 						
@@ -94,7 +94,7 @@
 					]
 				},
 				{
-					"classType": "NORMAL",
+					"classType": "CLASS",
 					"name": "Medikament",
 					"methods": [
 						
@@ -105,7 +105,7 @@
 					]
 				},
 				{
-					"classType": "NORMAL",
+					"classType": "CLASS",
 					"name": "Krankenhaus",
 					"methods": [
 						

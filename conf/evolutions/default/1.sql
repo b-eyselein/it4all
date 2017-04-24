@@ -198,7 +198,6 @@ create table uml_exercise (
   text                          text,
   class_sel_text                text,
   diag_draw_text                text,
-  diag_draw_help_text           text,
   solution                      text,
   constraint pk_uml_exercise primary key (id)
 );

@@ -30,9 +30,9 @@ var canDelete = @{!getsHelp};
         <div class="panel-heading">Aufgabentext</div>
         <div class="panel-body">
         @if(getsHelp) {
-        @Html(exercise.getExTextForDiagDrawHelp())
+          @exercise.text
         } else {
-        @Html(exercise.getExTextForDiagDraw())
+          @Html(exercise.getExTextForDiagDraw())
         }
         </div>
       </div>
@@ -139,17 +139,11 @@ var canDelete = @{!getsHelp};
           <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="menu">
+        @for(classType <- model.uml.UmlClassType.values()) {
           <li>
-            <a data-conntype="CLASS" onclick="selectClassType(this);">Klasse</a>
+            <a data-conntype="@classType" onclick="selectClassType(this);">@classType.getName()</a>
           </li>
-          <li class="divider"></li>
-          <li>
-            <a data-conntype="INTERFACE" onclick="selectClassType(this);">Interface</a>
-          </li>
-          <li class="divider"></li>
-          <li>
-            <a data-conntype="ABSTRACT" onclick="selectClassType(this);">Abstrakte Klasse</a>
-          </li>
+        }
         </ul>
       </div>
       

@@ -39,6 +39,13 @@
 						"items": {
 							"type": "object",
 							"properties": {
+								"classType": {
+									"enum": [
+										"CLASS",
+										"ABSTRACT",
+										"INTERFACE"
+									]
+								},
 								"name": {
 									"type": "string"
 								},
@@ -56,6 +63,7 @@
 								}
 							},
 							"required": [
+								"classType",
 								"name",
 								"methods",
 								"attributes"
