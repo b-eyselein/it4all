@@ -1,10 +1,13 @@
 package model;
 
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class UmlExTextParser {
   
@@ -18,10 +21,27 @@ public class UmlExTextParser {
   
   private Map<String, String> mappings;
   private List<String> toIgnore;
+  private List<String> simpleReplacements;
   
-  public UmlExTextParser(Map<String, String> theMappings, List<String> theToIgnore) {
+  private String rawText;
+  
+  public UmlExTextParser(String theRawText, Map<String, String> theMappings, List<String> theToIgnore) {
+    rawText = theRawText;
+    
     mappings = theMappings;
     toIgnore = theToIgnore;
+    
+    simpleReplacements = readReplacements();
+  }
+  
+  public static Collection<String> getCapitalizedWords(String rawText) {
+    Matcher matcher = CAP_WORDS.matcher(rawText);
+    
+    Set<String> capitalizedWords = new TreeSet<>();
+    while(matcher.find()) {
+      capitalizedWords.add(rawText.substring(matcher.start(), matcher.end()));
+    }
+    return capitalizedWords;
   }
   
   private static String replaceWithMappingSpan(String text, String key, String value, String function) {
@@ -30,11 +50,11 @@ public class UmlExTextParser {
         "<span class=\"" + CSS_CLASS_NAME + "\" " + function + " data-baseform=\"" + value + "\">" + key + "</span>");
   }
   
-  private String parseText(String rawText, String function) {
+  private String parseText(String function) {
     String newText = rawText;
     
-    for(Map.Entry<String, String> simpleRep: readReplacements(rawText).entrySet())
-      newText = replaceWithMappingSpan(newText, simpleRep.getKey(), simpleRep.getValue(), function);
+    for(String simpleRep: simpleReplacements)
+      newText = replaceWithMappingSpan(newText, simpleRep, simpleRep, function);
     
     for(Map.Entry<String, String> mapping: mappings.entrySet())
       newText = replaceWithMappingSpan(newText, mapping.getKey(), mapping.getValue(), function);
@@ -42,25 +62,17 @@ public class UmlExTextParser {
     return newText;
   }
   
-  public String parseTextForClassSel(String rawText) {
-    return parseText(rawText, CLASS_SELECTION_FUNCTION);
+  public String parseTextForClassSel() {
+    return parseText(CLASS_SELECTION_FUNCTION);
   }
   
-  public String parseTextForDiagDrawing(String rawText) {
-    return parseText(rawText, DIAG_DRAWING_FUNCTION);
+  public String parseTextForDiagDrawing() {
+    return parseText(DIAG_DRAWING_FUNCTION);
   }
   
-  private Map<String, String> readReplacements(String rawText) {
-    Matcher matcher = CAP_WORDS.matcher(rawText);
-    
-    Map<String, String> capitalizedWords = new HashMap<>();
-    while(matcher.find()) {
-      String key = rawText.substring(matcher.start(), matcher.end());
-      if(!mappings.keySet().contains(key) && !toIgnore.contains(key))
-        capitalizedWords.put(key, key);
-    }
-    
-    return capitalizedWords;
+  private List<String> readReplacements() {
+    return getCapitalizedWords(rawText).stream()
+        .filter(key -> !mappings.keySet().contains(key) && !toIgnore.contains(key)).collect(Collectors.toList());
   }
   
 }

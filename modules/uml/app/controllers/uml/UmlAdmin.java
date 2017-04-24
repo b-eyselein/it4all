@@ -3,13 +3,13 @@ package controllers.uml;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 import javax.inject.Inject;
-
-import com.google.common.collect.ImmutableMap;
 
 import controllers.core.AbstractAdminController;
 import model.UmlExTextParser;
@@ -26,110 +26,125 @@ import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
 
 public class UmlAdmin extends AbstractAdminController<UmlExercise, UmlExerciseReader> {
-  
-  // FIXME: entfernen!
-  // @formatter:off
-  private static final ImmutableMap<String, String> MAPPINGS = new ImmutableMap.Builder<String, String>()
-      .put("Krankenschwestern", "Krankenschwester")
-      .put("Doktoren", "Doktor")
-      .put("Stationen", "Station")
-      .put("Patienten", "Patient")
-      .put("Medikamente", "Medikament")
-      .build();
-  // @formatter:on
+
+  private static final String TITLE_NAME = "title";
 
   @Inject
   public UmlAdmin(Util theUtil, FormFactory theFactory) {
     super(theUtil, theFactory, "uml", new UmlExerciseReader());
   }
-  
+
   public Result index() {
     return ok(views.html.umlAdmin.umlAdmin.render(getUser()));
   }
-  
+
   public Result newExercise() {
     DynamicForm form = factory.form().bindFromRequest();
-    
-    String title = form.get("title");
+
+    String title = form.get(TITLE_NAME);
     String text = form.get("text");
-    
-    // @formatter:off
-    List<String> toIngore =
-        Arrays.stream(form.get("ignore").split(" "))
-        .filter(str -> str != null && !str.isEmpty())
-        .collect(Collectors.toList());
-    // @formatter:on
-    
+
+    Collection<String> capWords = UmlExTextParser.getCapitalizedWords(text);
+
+    List<String> toIgnore = new LinkedList<>();
+    Map<String, String> mappings = new HashMap<>();
+
+    for(String cap: capWords) {
+      switch(form.get(cap)) {
+      case "ignore":
+        toIgnore.add(cap);
+        break;
+      case "baseform":
+        mappings.put(cap, form.get(cap + "_baseform"));
+        break;
+      case "none":
+      default:
+        // Do nothing...
+        break;
+      }
+    }
+
     // FIXME: Search exercise with same title, override!
-    UmlExercise newExercise = UmlExercise.finder.where().eq("title", title).findUnique();
-    
+    UmlExercise newExercise = UmlExercise.finder.where().eq(TITLE_NAME, title).findUnique();
+
     if(newExercise == null)
       newExercise = new UmlExercise(findMinimalNotUsedId(UmlExercise.finder));
-    
-    UmlExTextParser parser = new UmlExTextParser(MAPPINGS, toIngore);
-    
+
+    UmlExTextParser parser = new UmlExTextParser(text, mappings, toIgnore);
+
     newExercise.title = title;
     newExercise.text = text;
-    
+
     // FIXME: texts!
-    newExercise.classSelText = parser.parseTextForClassSel(text);
-    newExercise.diagDrawText = parser.parseTextForDiagDrawing(text);
-    
-    newExercise.save();
-    
+    newExercise.classSelText = parser.parseTextForClassSel();
+    newExercise.diagDrawText = parser.parseTextForDiagDrawing();
+
+    // newExercise.save();
+
     return ok(views.html.umlAdmin.umlSingleCreation.render(getUser(), newExercise));
   }
-  
-  public Result newExerciseForm() {
-    return ok(views.html.umlAdmin.newExerciseForm.render(getUser()));
+
+  public Result newExerciseFormOne() {
+    return ok(views.html.umlAdmin.newExerciseFormOne.render(getUser()));
   }
-  
+
+  public Result newExerciseFormTwo() {
+    DynamicForm form = factory.form().bindFromRequest();
+
+    String title = form.get(TITLE_NAME);
+    String text = form.get("text");
+
+    Collection<String> capWords = UmlExTextParser.getCapitalizedWords(text);
+
+    return ok(views.html.umlAdmin.newExerciseFormTwo.render(getUser(), title, text, capWords));
+  }
+
   @Override
   public Result readStandardExercises() {
     AbstractReadingResult<UmlExercise> abstractResult = exerciseReader.readStandardExercises();
-    
+
     if(!abstractResult.isSuccess())
       return badRequest(views.html.jsonReadingError.render(getUser(), (ReadingError<UmlExercise>) abstractResult));
-    
+
     ReadingResult<UmlExercise> result = (ReadingResult<UmlExercise>) abstractResult;
-    
+
     saveExercises(result.getRead());
     return ok(views.html.preview.render(getUser(), views.html.umlcreation.render(result.getRead())));
   }
-  
+
   @Override
   protected void saveExercises(List<UmlExercise> exercises) {
     exercises.forEach(UmlExercise::save);
   }
-  
+
   @Override
   public Result uploadFile() {
     MultipartFormData<File> body = request().body().asMultipartFormData();
     FilePart<File> uploadedFile = body.getFile(BODY_FILE_NAME);
-    
+
     if(uploadedFile == null)
       return badRequest("Fehler!");
-    
+
     Path pathToUploadedFile = uploadedFile.getFile().toPath();
     Path savingDir = Paths.get(util.getRootSolDir().toString(), ADMIN_FOLDER, exerciseType);
-    
+
     Path jsonFile = Paths.get(savingDir.toString(), uploadedFile.getFilename());
     saveUploadedFile(savingDir, pathToUploadedFile, jsonFile);
-    
+
     AbstractReadingResult<UmlExercise> abstractResult = exerciseReader.readStandardExercises();
-    
+
     if(!abstractResult.isSuccess())
       return badRequest(views.html.jsonReadingError.render(getUser(), (ReadingError<UmlExercise>) abstractResult));
-    
+
     ReadingResult<UmlExercise> result = (ReadingResult<UmlExercise>) abstractResult;
-    
+
     saveExercises(result.getRead());
     return ok(views.html.preview.render(getUser(), views.html.umlcreation.render(result.getRead())));
   }
-  
+
   @Override
   public Result uploadForm() {
     return ok("TODO!");
   }
-  
+
 }

@@ -9,7 +9,8 @@ POST   /upload                             controllers.uml.UmlAdmin.uploadFile()
 
 GET    /create                             controllers.uml.UmlAdmin.readStandardExercises()
 
-GET    /newExercise                        controllers.uml.UmlAdmin.newExerciseForm()
+GET    /newExercise/form                   controllers.uml.UmlAdmin.newExerciseFormOne()
+POST   /newExercise/text                   controllers.uml.UmlAdmin.newExerciseFormTwo()
 POST   /newExercise                        controllers.uml.UmlAdmin.newExercise()
 
 # Step 1: selection of classes
