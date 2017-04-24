@@ -56,17 +56,17 @@
         @for(wrong <- classRes.getWrong()){
           <tr>
             <td class="danger text-center"><span class="glyphicon glyphicon-remove" title="Falsch"></span></td>
-            <td>@wrong.name</td>
+            <td>@wrong.getName()</td>
             <td>
               <ul class="list-group">
-              @for(attribute <- wrong.attributes) {
+              @for(attribute <- wrong.getAttributes()) {
                 <li class="list-group-item list-group-item-danger">@attribute</li>
               }
               </ul>
             </td>
             <td>
               <ul class="list-group">
-              @for(method <- wrong.methods) {
+              @for(method <- wrong.getMethods()) {
               	<li class="list-group-item list-group-item-danger">@method</li>
               }
               </ul>
@@ -76,17 +76,17 @@
         @for(missing <- result.getClassResult().getMissing()){
           <tr>
             <td class="warning text-center"><span class="glyphicon glyphicon-minus" title="Fehlend"></span></td>
-            <td>@missing.name</td>
+            <td>@missing.getName()</td>
             <td>
               <ul class="list-group">
-              @for(attribute <- missing.attributes) {
+              @for(attribute <- missing.getAttributes()) {
                 <li class="list-group-item list-group-item-warning">@attribute</li>
               }
               </ul>
             </td>
             <td>
               <ul class="list-group">
-              @for(method <- missing.methods) {
+              @for(method <- missing.getMethods()) {
               	<li class="list-group-item list-group-item-warning">@method</li>
               }
               </ul>

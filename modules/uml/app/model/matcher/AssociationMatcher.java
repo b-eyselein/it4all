@@ -5,7 +5,7 @@ import java.util.List;
 import model.matching.Match;
 import model.matching.Matcher;
 import model.uml.UmlAssociation;
-import model.uml.UmlAssociation.UmlAssociationEnd;
+import model.uml.UmlAssociationEnd;
 
 public class AssociationMatcher extends Matcher<UmlAssociation> {
 
@@ -14,15 +14,17 @@ public class AssociationMatcher extends Matcher<UmlAssociation> {
   }
 
   public static boolean endsCrossedEqual(UmlAssociation assoc1, UmlAssociation assoc2) {
-    return endsEqual(assoc1.start, assoc2.target) && endsEqual(assoc1.target, assoc2.start);
-  }
-
-  public static boolean endsParallelEqual(UmlAssociation assoc1, UmlAssociation assoc2) {
-    return endsEqual(assoc1.start, assoc2.start) && endsEqual(assoc1.target, assoc2.target);
+    return endsEqual(assoc1.getEnds().get(0), assoc2.getEnds().get(1))
+        && endsEqual(assoc1.getEnds().get(1), assoc2.getEnds().get(0));
   }
 
   private static boolean endsEqual(UmlAssociationEnd c1End, UmlAssociationEnd c2End) {
-    return c1End.endName.equals(c2End.endName);
+    return c1End.getEndName().equals(c2End.getEndName());
+  }
+
+  public static boolean endsParallelEqual(UmlAssociation assoc1, UmlAssociation assoc2) {
+    return endsEqual(assoc1.getEnds().get(0), assoc2.getEnds().get(0))
+        && endsEqual(assoc1.getEnds().get(1), assoc2.getEnds().get(1));
   }
 
   @Override

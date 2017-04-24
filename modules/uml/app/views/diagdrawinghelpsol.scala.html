@@ -40,13 +40,13 @@
             <td class="warning text-center"><span class="glyphicon glyphicon-remove"></span>
             }
             @if(corrAssoc.isAssocTypeEqual()) {
-            <td class="success text-center" colspan="2">@corrAssoc.getFirstArg().assocType.getName()</td>
+            <td class="success text-center" colspan="2">@corrAssoc.getFirstArg().getAssocType().getName()</td>
             } else {
-            <td class="danger">@corrAssoc.getFirstArg().assocType.getName()</td>
-            <td>@corrAssoc.getSecondArg().assocType.getName()</td>
+            <td class="danger">@corrAssoc.getFirstArg().getAssocType().getName()</td>
+            <td>@corrAssoc.getSecondArg().getAssocType().getName()</td>
             }
-      	    <td>@corrAssoc.getFirstArg().start.endName</td>
-            <td>@corrAssoc.getFirstArg().target.endName</td>
+      	    <td>@corrAssoc.getFirstArg().getEnds().get(0).getEndName()</td>
+            <td>@corrAssoc.getFirstArg().getEnds().get(1).getEndName()</td>
             @if(corrAssoc.areMultiplicitiesEqual()) {
             <td class="success text-center" colspan="2">@corrAssoc.getCorrectMultiplicity()</td>
             } else {
@@ -64,11 +64,11 @@
         @for(wrongAssoc <- result.getAssociationResult().getWrong()) {
           <tr>
             <td class="danger text-center"><span class="glyphicon glyphicon-remove" title="Falsch"></span></td>
-            <td>@wrongAssoc.assocType.getName()</td>
+            <td>@wrongAssoc.getAssocType().getName()</td>
             <td/>
-            <td>@wrongAssoc.start.endName</td>
-            <td>@wrongAssoc.target.endName</td>
-            <td>@wrongAssoc.start.multiplicity.getRepresentant() : @wrongAssoc.target.multiplicity.getRepresentant()</td>
+            <td>@wrongAssoc.getEnds().get(0).getEndName()</td>
+            <td>@wrongAssoc.getEnds().get(1).getEndName()</td>
+            <td>@wrongAssoc.getEnds().get(0).getMultiplicity().getRepresentant() : @wrongAssoc.getEnds().get(1).getMultiplicity().getRepresentant()</td>
             <td/>
           </tr>
           }
@@ -83,11 +83,11 @@
           <tr>
             <td class="warning text-center"><span class="glyphicon glyphicon-minus" title="Fehlend"></span></td>
             <td/>
-            <td>@missingAssoc.assocType.getName()</td>
-            <td>@missingAssoc.start.endName</td>
-            <td>@missingAssoc.target.endName</td>
+            <td>@missingAssoc.getAssocType().getName()</td>
+            <td>@missingAssoc.getEnds().get(0).getEndName()</td>
+            <td>@missingAssoc.getEnds().get(1).getEndName()</td>
             <td/>
-            <td>@missingAssoc.start.multiplicity.getRepresentant() : @missingAssoc.target.multiplicity.getRepresentant()</td>
+            <td>@missingAssoc.getEnds().get(0).getMultiplicity().getRepresentant() : @missingAssoc.getEnds().get(1).getMultiplicity().getRepresentant()</td>
           </tr>
           }
         </tbody>
@@ -113,8 +113,8 @@
         @for(correctImpl <- result.getImplementationResult().getCorrect()) {
           <tr>
             <td class="success text-center"><span class="glyphicon glyphicon-ok"></span>
-            <td>@correctImpl.getFirstArg().subClass</td>
-            <td>@correctImpl.getFirstArg().superClass</td>
+            <td>@correctImpl.getFirstArg().getSubClass()</td>
+            <td>@correctImpl.getFirstArg().getSuperClass()</td>
           </tr>
           }
           
@@ -125,8 +125,8 @@
         @for(wrongImpl <- result.getImplementationResult().getWrong()) {
           <tr>
             <td class="danger text-center"><span class="glyphicon glyphicon-remove"></span>
-            <td>@wrongImpl.subClass</td>
-            <td>@wrongImpl.superClass</td>
+            <td>@wrongImpl.getSubClass()</td>
+            <td>@wrongImpl.getSuperClass()</td>
           </tr>
           }
           
@@ -137,8 +137,8 @@
         @for(missingImpl <- result.getImplementationResult().getMissing()) {
           <tr>
             <td class="warning text-center"><span class="glyphicon glyphicon-minus"></span>
-            <td>@missingImpl.subClass</td>
-            <td>@missingImpl.superClass</td>
+            <td>@missingImpl.getSubClass()</td>
+            <td>@missingImpl.getSuperClass()</td>
           </tr>
           }
         </tbody>

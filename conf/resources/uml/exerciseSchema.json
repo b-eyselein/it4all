@@ -1,3 +1,146 @@
 {
-	
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"type": "array",
+	"items": {
+		"type": "object",
+		"properties": {
+			"id": {
+				"type": "integer"
+			},
+			"title": {
+				"type": "string"
+			},
+			"text": {
+				"type": "string"
+			},
+			"mappings": {
+				"type": "array",
+				"items": {
+					"type": "object",
+					"properties": {
+						"key": {
+							"type": "string"
+						},
+						"value": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"key",
+						"value"
+					]
+				}
+			},
+			"solution": {
+				"type": "object",
+				"properties": {
+					"classes": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"name": {
+									"type": "string"
+								},
+								"methods": {
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								},
+								"attributes": {
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								}
+							},
+							"required": [
+								"name",
+								"methods",
+								"attributes"
+							]
+						}
+					},
+					"implementations": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"subClass": {
+									"type": "string"
+								},
+								"superClass": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"subClass",
+								"superClass"
+							]
+						}
+					},
+					"associations": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"assocType": {
+									"enum": [
+										"ASSOCIATION",
+										"AGGREGATION",
+										"COMPOSITION"
+									]
+								},
+								"ends": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"endName": {
+												"type": "string"
+											},
+											"multiplicity": {
+												"enum": [
+													"SINGLE",
+													"UNBOUND"
+												]
+											}
+										},
+										"required": [
+											"endName",
+											"multiplicity"
+										]
+									}
+								}
+							},
+							"required": [
+								"assocType",
+								"ends"
+							]
+						}
+					}
+				},
+				"required": [
+					"classes",
+					"implementations",
+					"associations"
+				]
+			},
+			"ignore": {
+				"type": "array",
+				"items": {
+					"type": "string"
+				}
+			}
+		},
+		"required": [
+			"id",
+			"title",
+			"text",
+			"mappings",
+			"solution",
+			"ignore"
+		]
+	}
 }

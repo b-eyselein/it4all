@@ -85,6 +85,10 @@ public class UML extends ExerciseController {
     }
   }
   
+  public Result correctMatching(int exerciseId) {
+    return ok(views.html.matchingCorrection.render(getUser()));
+  }
+  
   public Result diagramDrawing(int exerciseId) {
     return ok(views.html.diagdrawing.render(getUser(), UmlExercise.finder.byId(exerciseId), false));
   }

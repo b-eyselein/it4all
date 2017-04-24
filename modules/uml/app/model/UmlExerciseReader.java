@@ -15,30 +15,26 @@ public class UmlExerciseReader extends ExerciseReader<UmlExercise> {
 
   @Override
   protected UmlExercise readExercise(JsonNode exerciseNode) {
-    JsonNode idNode = exerciseNode.get(ID_NAME);
-    JsonNode titleNode = exerciseNode.get(TITLE_NAME);
-    JsonNode rawtextNode = exerciseNode.get(TEXT_NAME);
-    JsonNode mappingsNode = exerciseNode.get("mappings");
-    JsonNode ingoreNode = exerciseNode.get("ignore");
-
-    int id = idNode.asInt();
+    int id = exerciseNode.get(ID_NAME).asInt();
     UmlExercise exercise = UmlExercise.finder.byId(id);
     if(exercise == null)
       exercise = new UmlExercise(id);
+    
+    String rawText = exerciseNode.get(TEXT_NAME).asText();
 
-    String rawText = rawtextNode.asText();
+    Map<String, String> mappings = JsonWrapper.readKeyValueMap(exerciseNode.get("mappings"));
+    List<String> toIgnore = JsonWrapper.parseJsonArrayNode(exerciseNode.get("ignore"));
 
-    Map<String, String> mappings = JsonWrapper.readKeyValueMap(mappingsNode);
-    List<String> toIgnore = JsonWrapper.parseJsonArrayNode(ingoreNode);
+    UmlExTextParser parser = new UmlExTextParser(mappings, toIgnore);
 
-    UmlExTextParser parser = new UmlExTextParser(rawText, mappings, toIgnore);
-
-    exercise.classSelText = parser.parseTextForClassSel();
+    exercise.classSelText = parser.parseTextForClassSel(rawText);
     exercise.diagDrawHelpText = rawText;
     exercise.diagDrawText = rawText;
     exercise.text = rawText;
-    exercise.title = titleNode.asText();
-
+    exercise.title = exerciseNode.get(TITLE_NAME).asText();
+    // Save solution as json in db
+    exercise.solution = exerciseNode.get("solution").toString();
+    
     return exercise;
   }
 

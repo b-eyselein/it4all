@@ -199,7 +199,13 @@ create table uml_exercise (
   class_sel_text                text,
   diag_draw_text                text,
   diag_draw_help_text           text,
+  solution                      text,
   constraint pk_uml_exercise primary key (id)
+);
+
+create table uml_implementation (
+  sub_class                     varchar(255),
+  super_class                   varchar(255)
 );
 
 create table users (
@@ -360,6 +366,8 @@ drop table if exists sql_exercise;
 drop table if exists sql_scenario;
 
 drop table if exists uml_exercise;
+
+drop table if exists uml_implementation;
 
 drop table if exists users;
 

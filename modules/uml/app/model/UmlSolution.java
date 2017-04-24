@@ -6,21 +6,26 @@ import java.util.stream.Collectors;
 import model.uml.UmlAssociation;
 import model.uml.UmlClass;
 import model.uml.UmlImplementation;
+import play.libs.Json;
 
 public class UmlSolution {
   
-  public List<UmlClass> classes; // NOSONAR
+  private List<UmlClass> classes;
   
-  public List<UmlAssociation> associations; // NOSONAR
+  private List<UmlAssociation> associations;
   
-  public List<UmlImplementation> implementations; // NOSONAR
+  private List<UmlImplementation> implementations;
+  
+  public static UmlSolution fromJson(String json) {
+    return Json.fromJson(Json.parse(json), UmlSolution.class);
+  }
   
   public List<String> getAllAttributes() {
     return classes.stream().map(UmlClass::getAttributes).flatMap(List::stream).collect(Collectors.toList());
   }
-
+  
   public List<String> getAllMethods() {
-    return classes.stream().map(UmlClass::getMethod).flatMap(List::stream).collect(Collectors.toList());
+    return classes.stream().map(UmlClass::getMethods).flatMap(List::stream).collect(Collectors.toList());
   }
   
   public List<UmlAssociation> getAssociations() {
@@ -31,25 +36,20 @@ public class UmlSolution {
     return classes;
   }
   
-  public List<String> getClassNames() {
-    return classes.stream().map(cl -> cl.name).collect(Collectors.toList());
-  }
-  
   public List<UmlImplementation> getImplementations() {
     return implementations;
   }
   
-  @Override
-  public String toString() {
-    StringBuilder builder = new StringBuilder();
-    
-    builder.append("Klassen: " + getClassNames());
-    builder.append("\n");
-    builder.append("Implementationen: " + implementations);
-    builder.append("\n");
-    builder.append("Verbindungen: " + associations);
-    
-    return builder.toString();
+  public void setAssociations(List<UmlAssociation> theAssociations) {
+    associations = theAssociations;
+  }
+  
+  public void setClasses(List<UmlClass> theClasses) {
+    classes = theClasses;
+  }
+  
+  public void setImplementations(List<UmlImplementation> theImplementations) {
+    implementations = theImplementations;
   }
   
 }

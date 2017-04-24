@@ -319,14 +319,14 @@ function addClass(clazz) {
   };
   
   var classToAdd;
-  switch(clazz.type) {
+  switch(clazz.classType) {
   case "INTERFACE":
     classToAdd = new joint.shapes.uml.Interface(content);
     break;
   case "ABSTRACT":
     classToAdd = new joint.shapes.uml.Abstract(content);
     break;
-  case "CLASS":
+  case "NORMAL":
     classToAdd = new joint.shapes.uml.Class(content);
     break;
   default:

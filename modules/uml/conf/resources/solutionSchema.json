@@ -1,113 +1,120 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema#", 
-	"type": "object", 
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"type": "object",
 	"properties": {
 		"classes": {
-			"type": "array", 
+			"type": "array",
 			"items": {
-				"type": "object", 
+				"type": "object",
 				"properties": {
+					"classType": {
+						"enum": [
+							"NORMAL",
+							"ABSTRACT",
+							"INTERFACE"
+						]
+					},
 					"name": {
 						"type": "string"
-					}, 
+					},
 					"methods": {
-						"type": "array", 
+						"type": "array",
 						"items": {
 							"type": "string"
 						}
-					}, 
+					},
 					"attributes": {
-						"type": "array", 
+						"type": "array",
 						"items": {
 							"type": "string"
 						}
 					}
 				}
-			}, 
+			},
 			"required": [
-				"name", 
-				"methods", 
+				"name",
+				"methods",
 				"attributes"
 			]
-		}, 
+		},
 		"associations": {
-			"type": "array", 
+			"type": "array",
 			"items": {
-				"type": "object", 
+				"type": "object",
 				"properties": {
 					"assocType": {
 						"enum": [
-							"AGGREGATION", 
-							"ASSOCIATION", 
+							"AGGREGATION",
+							"ASSOCIATION",
 							"COMPOSITION"
 						]
-					}, 
+					},
 					"start": {
-						"type": "object", 
+						"type": "object",
 						"properties": {
 							"endName": {
 								"type": "string"
-							}, 
+							},
 							"multiplicity": {
 								"enum": [
-									"SINGLE", 
+									"SINGLE",
 									"UNBOUND"
 								]
 							}
-						}, 
+						},
 						"required": [
-							"endName", 
+							"endName",
 							"multiplicity"
 						]
-					}, 
+					},
 					"target": {
-						"type": "object", 
+						"type": "object",
 						"properties": {
 							"endName": {
 								"type": "string"
-							}, 
+							},
 							"multiplicity": {
 								"enum": [
-									"SINGLE", 
+									"SINGLE",
 									"UNBOUND"
 								]
 							}
-						}, 
+						},
 						"required": [
-							"endName", 
+							"endName",
 							"multiplicity"
 						]
 					}
-				}, 
+				},
 				"required": [
-					"assocType", 
-					"start", 
+					"assocType",
+					"start",
 					"target"
 				]
 			}
-		}, 
+		},
 		"implementations": {
-			"type": "array", 
+			"type": "array",
 			"items": {
-				"type": "object", 
+				"type": "object",
 				"properties": {
 					"subClass": {
 						"type": "string"
-					}, 
+					},
 					"superClass": {
 						"type": "string"
 					}
-				}, 
+				},
 				"required": [
-					"subClass", 
+					"subClass",
 					"superClass"
 				]
 			}
 		}
-	}, 
+	},
 	"required": [
-		"classes", 
-		"associations", 
+		"classes",
+		"associations",
 		"implementations"
 	]
 }

@@ -66,12 +66,13 @@ public class UmlAdmin extends AbstractAdminController<UmlExercise, UmlExerciseRe
     if(newExercise == null)
       newExercise = new UmlExercise(findMinimalNotUsedId(UmlExercise.finder));
 
-    UmlExTextParser parser = new UmlExTextParser(text, MAPPINGS, toIngore);
+    UmlExTextParser parser = new UmlExTextParser(MAPPINGS, toIngore);
 
     newExercise.title = title;
     newExercise.text = text;
 
-    newExercise.classSelText = parser.parseTextForClassSel();
+    // FIXME: texts!
+    newExercise.classSelText = parser.parseTextForClassSel(text);
     newExercise.diagDrawText = text;
     newExercise.diagDrawHelpText = text;
 
@@ -95,6 +96,11 @@ public class UmlAdmin extends AbstractAdminController<UmlExercise, UmlExerciseRe
 
     saveExercises(result.getRead());
     return ok(views.html.preview.render(getUser(), views.html.umlcreation.render(result.getRead())));
+  }
+
+  @Override
+  protected void saveExercises(List<UmlExercise> exercises) {
+    exercises.forEach(UmlExercise::save);
   }
 
   @Override
@@ -125,11 +131,6 @@ public class UmlAdmin extends AbstractAdminController<UmlExercise, UmlExerciseRe
   @Override
   public Result uploadForm() {
     return ok("TODO!");
-  }
-
-  @Override
-  protected void saveExercises(List<UmlExercise> exercises) {
-    exercises.forEach(UmlExercise::save);
   }
 
 }

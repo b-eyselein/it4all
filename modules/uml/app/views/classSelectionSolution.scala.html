@@ -18,7 +18,7 @@
           <li>--</li>
         } else {
           @for(corrClass <- classResult.getCorrect()) {
-          <li>@corrClass.getFirstArg().name</li>
+          <li>@corrClass.getFirstArg().getName()</li>
           }
         }
         </ul>
@@ -30,7 +30,7 @@
           <li>--</li>
         } else {
           @for(wrongClass <- classResult.getWrong()) {
-          <li>@wrongClass.name</li>
+          <li>@wrongClass.getName()</li>
           }
         }
         </ul>
@@ -42,7 +42,7 @@
           <li>--</li>
         } else {
           @for(missClass <- classResult.getMissing()) {
-          <li>@missClass.name</li>
+          <li>@missClass.getName()</li>
           }
         }
         </ul>

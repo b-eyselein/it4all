@@ -15,8 +15,8 @@ public class UmlClassMatch extends Match<UmlClass> {
   public UmlClassMatch(UmlClass class1, UmlClass class2) {
     super(class1, class2);
     
-    attributesResult = MATCHER.match(class1.attributes, class2.attributes);
-    methodsResult = MATCHER.match(class1.methods, class2.methods);
+    attributesResult = MATCHER.match(class1.getAttributes(), class2.getAttributes());
+    methodsResult = MATCHER.match(class1.getMethods(), class2.getMethods());
   }
   
   public MatchingResult<String> getAttributesResult() {
@@ -24,7 +24,7 @@ public class UmlClassMatch extends Match<UmlClass> {
   }
   
   public String getClassName() {
-    return arg1.name;
+    return arg1.getName();
   }
   
   public MatchingResult<String> getMethodsResult() {

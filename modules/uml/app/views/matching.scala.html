@@ -55,7 +55,7 @@
     
   <hr>
   
-  <form action="..." method="post" onsubmit="prepareFormForSubmitting()">
+  <form method="post" onsubmit="prepareFormForSubmitting()" action="@uml.routes.UML.correctMatching(exercise.id)">
     <input hidden name="learnerSolution" id="learnerSolution">
     <button class="btn btn-primary btn-block">Aufgabenteil korrigieren</button>
   </form>

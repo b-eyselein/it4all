@@ -12,12 +12,10 @@ public class UmlExTextParser {
   private static final String FUNCTION = "onclick=\"select(this)\"";
   private static final Pattern CAP_WORDS = Pattern.compile("[A-Z][a-zäöüß]*");
 
-  private String rawText;
   private Map<String, String> mappings;
   private List<String> toIgnore;
 
-  public UmlExTextParser(String theRawText, Map<String, String> theMappings, List<String> theToIgnore) {
-    rawText = theRawText;
+  public UmlExTextParser(Map<String, String> theMappings, List<String> theToIgnore) {
     mappings = theMappings;
     toIgnore = theToIgnore;
   }
@@ -28,10 +26,10 @@ public class UmlExTextParser {
         "<span class=\"" + CSS_CLASS_NAME + "\" " + FUNCTION + " data-baseform=\"" + value + "\">" + key + "</span>");
   }
 
-  public String parseTextForClassSel() {
+  public String parseTextForClassSel(String rawText) {
     String newText = rawText;
 
-    for(Map.Entry<String, String> simpleRep: readReplacements().entrySet())
+    for(Map.Entry<String, String> simpleRep: readReplacements(rawText).entrySet())
       newText = replaceWithMappingSpan(newText, simpleRep.getKey(), simpleRep.getValue());
 
     for(Map.Entry<String, String> mapping: mappings.entrySet())
@@ -40,7 +38,7 @@ public class UmlExTextParser {
     return newText;
   }
 
-  private Map<String, String> readReplacements() {
+  private Map<String, String> readReplacements(String rawText) {
     Matcher matcher = CAP_WORDS.matcher(rawText);
 
     Map<String, String> capitalizedWords = new HashMap<>();

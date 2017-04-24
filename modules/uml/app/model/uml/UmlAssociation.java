@@ -1,27 +1,54 @@
 package model.uml;
 
+import java.util.List;
+
 public class UmlAssociation {
 
-  public static class UmlAssociationEnd {
+  private UmlAssociationType assocType;
 
-    public String endName;
-    public Multiplicity multiplicity;
+  private List<UmlAssociationEnd> ends;
 
+  public UmlAssociation() {
+    // Dummy constructor for Json.fromJson(...)
   }
 
-  public UmlAssociationType assocType;
+  public UmlAssociation(UmlAssociationType theAssocType, List<UmlAssociationEnd> theEnds) {
+    assocType = theAssocType;
+    ends = theEnds;
+  }
 
-  public UmlAssociationEnd start;
-  public UmlAssociationEnd target;
+  private static String multAsString(Multiplicity mul1, Multiplicity mul2) {
+    return mul1.getRepresentant() + " : " + mul2.getRepresentant();
+  }
+
+  public UmlAssociationType getAssocType() {
+    return assocType;
+  }
+
+  public List<UmlAssociationEnd> getEnds() {
+    return ends;
+  }
 
   public String multsAsString() {
-    return start.multiplicity.getRepresentant() + " : " + target.multiplicity.getRepresentant();
+    // FIXME: refactor...
+    return multAsString(ends.get(0).getMultiplicity(), ends.get(1).getMultiplicity());
   }
 
   public String multsAsString(boolean switchOrder) {
     if(switchOrder)
-      return target.multiplicity.getRepresentant() + " : " + start.multiplicity.getRepresentant();
+      return multAsString(ends.get(1).getMultiplicity(), ends.get(0).getMultiplicity());
     else
-      return start.multiplicity.getRepresentant() + " : " + target.multiplicity.getRepresentant();
+      return multAsString(ends.get(0).getMultiplicity(), ends.get(1).getMultiplicity());
+  }
+
+  public void setAssocType(UmlAssociationType theAssocType) {
+    assocType = theAssocType;
+  }
+
+  public void setEnds(List<UmlAssociationEnd> theEnds) {
+    if(theEnds.size() != 2)
+      throw new IllegalArgumentException("There are not 2 ends! Reality: " + theEnds.size());
+
+    ends = theEnds;
   }
 }
