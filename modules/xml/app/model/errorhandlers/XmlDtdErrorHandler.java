@@ -3,7 +3,7 @@ package model.errorhandlers;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import model.XMLError;
+import model.XmlError;
 import model.XmlErrorType;
 
 public class XmlDtdErrorHandler extends CorrectionErrorHandler {
@@ -14,7 +14,7 @@ public class XmlDtdErrorHandler extends CorrectionErrorHandler {
     if(exception.getLineNumber() > -1)
       lineNumber = exception.getLineNumber() - 2;
 
-    output.add(new XMLError(exception.getMessage(), XmlErrorType.ERROR, lineNumber));
+    output.add(new XmlError(exception.getMessage(), XmlErrorType.ERROR, lineNumber));
   }
 
   @Override
@@ -23,7 +23,7 @@ public class XmlDtdErrorHandler extends CorrectionErrorHandler {
     if(exception.getLineNumber() > -1)
       lineNumber = exception.getLineNumber() - 2;
 
-    output.add(new XMLError(exception.getMessage(), XmlErrorType.FATALERROR, lineNumber));
+    output.add(new XmlError(exception.getMessage(), XmlErrorType.FATALERROR, lineNumber));
   }
 
   @Override
@@ -32,7 +32,7 @@ public class XmlDtdErrorHandler extends CorrectionErrorHandler {
     if(exception.getLineNumber() > -1)
       lineNumber = exception.getLineNumber() - 2;
 
-    output.add(new XMLError(exception.getMessage(), XmlErrorType.WARNING, lineNumber));
+    output.add(new XmlError(exception.getMessage(), XmlErrorType.WARNING, lineNumber));
   }
 
 }

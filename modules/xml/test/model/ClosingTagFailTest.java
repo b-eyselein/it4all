@@ -29,12 +29,12 @@ public class ClosingTagFailTest {
   @Test
   public void testCorrectXMLAgainstDTD() {
     Path xml = Paths.get("test", "resources", "partyNoClosingTag.xml");
-    List<XMLError> out = XmlCorrector.correctXMLAgainstDTD(xml);
+    List<XmlError> out = XmlCorrector.correctXMLAgainstDTD(xml);
     
     assertNotNull(out);
     assertThat("Es sollte nur ein Fehler sein, es sind aber " + out.size() + " Fehler!", out.size(), equalTo(1));
     
-    XMLError error = out.get(0);
+    XmlError error = out.get(0);
     
     assertThat(error.errorType, equalTo(XmlErrorType.FATALERROR));
     assertThat(error.line, equalTo(6));
@@ -51,12 +51,12 @@ public class ClosingTagFailTest {
   public void testCorrectXMLAgainstXSD() {
     Path xml = Paths.get("test", "resources", "noteNoClosingTag.xml");
     Path xsd = Paths.get("test", "resources", "note.xsd");
-    List<XMLError> out = XmlCorrector.correctXMLAgainstXSD(xml, xsd);
+    List<XmlError> out = XmlCorrector.correctXMLAgainstXSD(xml, xsd);
     
     assertNotNull(out);
     assertThat("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), equalTo(1));
     
-    XMLError error = out.get(0);
+    XmlError error = out.get(0);
     
     assertThat(error.errorType, equalTo(XmlErrorType.FATALERROR));
     assertThat(error.line, equalTo(7));

@@ -15,10 +15,10 @@ public class EmptyXMLTest {
   public void emptyXmlAgainstXSD() {
     Path emptyXML = Paths.get("test", "resources", "empty.xml");
     Path xsd = Paths.get("test", "resources", "note.xsd");
-    List<XMLError> out = XmlCorrector.correctXMLAgainstXSD(emptyXML, xsd);
+    List<XmlError> out = XmlCorrector.correctXMLAgainstXSD(emptyXML, xsd);
     assertThat("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), equalTo(1));
 
-    XMLError error = out.get(0);
+    XmlError error = out.get(0);
 
     assertThat(error.getErrorType(), equalTo(XmlErrorType.FATALERROR));
     assertThat(error.getErrorMessage(), equalTo("Premature end of file."));
@@ -27,10 +27,10 @@ public class EmptyXMLTest {
   @Test
   public void xmlNoElement() {
     Path xml = Paths.get("test", "resources", "xmlNoElement.xml");
-    List<XMLError> out = XmlCorrector.correctXMLAgainstDTD(xml);
+    List<XmlError> out = XmlCorrector.correctXMLAgainstDTD(xml);
     assertThat("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), equalTo(1));
 
-    XMLError error = out.get(0);
+    XmlError error = out.get(0);
 
     assertThat(error.getErrorType(), equalTo(XmlErrorType.FATALERROR));
     assertThat(error.getErrorMessage(), equalTo("Premature end of file."));

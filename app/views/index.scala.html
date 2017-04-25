@@ -10,13 +10,19 @@
   <a type="button" class="btn btn-default btn-block" href="@controllers.web.routes.Web.index()">Web-Programmierung</a>
   <a type="button" class="btn btn-default btn-block" href="@controllers.js.routes.JS.index()">Javascript - Programmiersprache</a>
   <a type="button" class="btn btn-default btn-block" href="@controllers.sql.routes.SQL.index()">SQL</a>
-  <a type="button" class="btn btn-default btn-block" href="@controllers.xml.routes.XML.index()">XML</a>
+  <a type="button" class="btn btn-default btn-block" href="@controllers.xml.routes.Xml.index()">XML</a>
   <a type="button" class="btn btn-default btn-block" href="@controllers.nary.routes.Nary.index()">Zahlensysteme</a>
   <a type="button" class="btn btn-default btn-block" href="@controllers.bool.routes.Bool.index()">Boolesche Algebra</a>
   <a type="button" class="btn btn-default btn-block" href="@controllers.spread.routes.Spread.index()">Tabellenkalkuation</a>
+  
+  <hr>
+  
+  <h2>Beta-Versionen</h2>
   <a type="button" class="btn btn-default btn-block" href="@controllers.uml.routes.UML.index()">UML</a>
   
   @if(isDev) {
+  <hr>
+  
   <h2>Experimentell</h2>  	
   <!-- Experimtal Correction tools only in development mode... -->
   <a type="button" class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionController.index()">Auswahlfragen</a>

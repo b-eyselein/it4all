@@ -26,11 +26,11 @@ public class NoRoot {
   @Test
   public void testCorrectXMLAgainstDTD() {
     Path file = Paths.get("test", "resources", "partyNoRoot.xml");
-    List<XMLError> out = XmlCorrector.correctXMLAgainstDTD(file);
+    List<XmlError> out = XmlCorrector.correctXMLAgainstDTD(file);
     assertThat("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), equalTo(2));
 
-    XMLError error = out.get(0);
-    XMLError fatalError = out.get(1);
+    XmlError error = out.get(0);
+    XmlError fatalError = out.get(1);
 
     assertThat(error.getErrorType(), equalTo(XmlErrorType.ERROR));
     assertThat(error.getLine(), equalTo(1));
@@ -51,11 +51,11 @@ public class NoRoot {
   public void testCorrectXMLAgainstXSD() {
     Path xml = Paths.get("test", "resources", "noteNoRoot.xml");
     Path xsd = Paths.get("test", "resources", "note.xsd");
-    List<XMLError> out = XmlCorrector.correctXMLAgainstXSD(xml, xsd);
+    List<XmlError> out = XmlCorrector.correctXMLAgainstXSD(xml, xsd);
     assertThat("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), equalTo(2));
 
-    XMLError error = out.get(0);
-    XMLError fatalError = out.get(1);
+    XmlError error = out.get(0);
+    XmlError fatalError = out.get(1);
 
     assertThat(error.getErrorType(), equalTo(XmlErrorType.ERROR));
     assertThat(error.getLine(), equalTo(2));

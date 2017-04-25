@@ -3,13 +3,13 @@ package model;
 import model.exercise.FeedbackLevel;
 import model.result.EvaluationResult;
 
-public class XMLError extends EvaluationResult {
+public class XmlError extends EvaluationResult {
 
   protected int line = -1;
   protected String errorMessage;
   protected XmlErrorType errorType;
 
-  public XMLError(String theErrorMessage, XmlErrorType theErrorType, int theLine) {
+  public XmlError(String theErrorMessage, XmlErrorType theErrorType, int theLine) {
     super(FeedbackLevel.MINIMAL_FEEDBACK, theErrorType.getSuccess());
     errorMessage = theErrorMessage;
     errorType = theErrorType;

@@ -26,10 +26,10 @@ public class MissingTag {
   @Test
   public void testCorrectXMLAgainstDTD() {
     Path file = Paths.get("test", "resources", "partyMissingAttribute.xml");
-    List<XMLError> out = XmlCorrector.correctXMLAgainstDTD(file);
+    List<XmlError> out = XmlCorrector.correctXMLAgainstDTD(file);
     assertThat("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), equalTo(1));
     
-    XMLError error = out.get(0);
+    XmlError error = out.get(0);
     
     assertThat(error.getErrorType(), equalTo(XmlErrorType.ERROR));
     assertThat(error.getLine(), equalTo(7));
@@ -46,10 +46,10 @@ public class MissingTag {
   public void testCorrectXMLAgainstXSD() {
     Path xml = Paths.get("test", "resources", "noteMissingTag.xml");
     Path xsd = Paths.get("test", "resources", "note.xsd");
-    List<XMLError> out = XmlCorrector.correctXMLAgainstXSD(xml, xsd);
+    List<XmlError> out = XmlCorrector.correctXMLAgainstXSD(xml, xsd);
     assertThat("Sollte nur ein Fehler sein, aber sind " + out.size() + " Fehler!", out.size(), equalTo(1));
     
-    XMLError error = out.get(0);
+    XmlError error = out.get(0);
     
     assertThat(error.getErrorType(), equalTo(XmlErrorType.ERROR));
     assertThat(error.getLine(), equalTo(5));

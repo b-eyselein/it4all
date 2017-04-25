@@ -1,4 +1,4 @@
-@(user: model.user.User, exercises: List[model.XmlExercise], filters: List[model.XmlExercise.XmlExType])
+@(user: model.user.User, exercises: List[model.XmlExercise], filters: List[model.XmlExType])
 
 @main("XML-Test", user) {
 <div class="container">
@@ -6,18 +6,18 @@
     <h1 class="page-title">&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h1>
   </div>
 
-  <form class="form" method="get" action="@controllers.xml.routes.XML.index()">
+  <form class="form" method="get" action="@controllers.xml.routes.Xml.index()">
     <div class="panel panel-default">
       <div class="panel-heading">Filter nach Aufgabentyp</div>
       <div class="panel-body">
-        @for(tag <- model.XmlExercise.XmlExType.values()) {
+        @for(tag <- model.XmlExType.values()) {
         <div class="col-sm-3 col-xs-6">
           <label for=""><input type="checkbox" name="filter" value="@tag" @if(filters.contains(tag)){checked}> @tag.getTag()</label>
         </div>
         }
       </div>
       <div class="panel-footer">
-        <a href="@controllers.xml.routes.XML.index()" class="btn btn-default">Filter zurücksetzen</a>
+        <a href="@controllers.xml.routes.Xml.index()" class="btn btn-default">Filter zurücksetzen</a>
         <input type="submit" value="Filter anwenden" class="btn btn-default">
       </div>
     </div>
@@ -36,7 +36,7 @@
         <tr>
           <td>@exercise.getTag()</td>
           <td>@exercise.id</td>
-          <td><a href="@controllers.xml.routes.XML.exercise(exercise.id)" class="btn btn-primary btn-block">@exercise.title</a></td>
+          <td><a href="@controllers.xml.routes.Xml.exercise(exercise.id)" class="btn btn-primary btn-block">@exercise.title</a></td>
         </tr>
         }
       </tbody>

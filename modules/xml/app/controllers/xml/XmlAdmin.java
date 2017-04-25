@@ -20,56 +20,37 @@ import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
 
 public class XmlAdmin extends AbstractAdminController<XmlExercise, XmlExerciseReader> {
-  
+
   @Inject
   public XmlAdmin(Util theUtil, FormFactory theFactory) {
     super(theUtil, theFactory, "xml", new XmlExerciseReader());
   }
-  
+
+  public Result index() {
+    return ok(views.html.xmlAdmin.xmlAdmin.render(getUser()));
+  }
+
+  public Result newExercise() {
+    return ok("TODO!");
+  }
+
+  public Result newExerciseForm() {
+    return ok(views.html.xmlAdmin.newExerciseForm.render(getUser()));
+  }
+
   @Override
   public Result readStandardExercises() {
-    AbstractReadingResult abstractResult = exerciseReader.readStandardExercises();
+    AbstractReadingResult<XmlExercise> abstractResult = exerciseReader.readStandardExercises();
 
     if(!abstractResult.isSuccess())
-      return badRequest(views.html.jsonReadingError.render(getUser(), (ReadingError) abstractResult));
+      return badRequest(views.html.jsonReadingError.render(getUser(), (ReadingError<XmlExercise>) abstractResult));
 
-    @SuppressWarnings("unchecked")
     ReadingResult<XmlExercise> result = (ReadingResult<XmlExercise>) abstractResult;
-    
+
     saveExercises(result.getRead());
     return ok(views.html.preview.render(getUser(), views.html.xmlcreation.render(result.getRead())));
   }
-  
-  @Override
-  public Result uploadFile() {
-    MultipartFormData<File> body = request().body().asMultipartFormData();
-    FilePart<File> uploadedFile = body.getFile(BODY_FILE_NAME);
-    if(uploadedFile == null)
-      return badRequest("Fehler!");
-    
-    Path pathToUploadedFile = uploadedFile.getFile().toPath();
-    Path savingDir = Paths.get(util.getRootSolDir().toString(), ADMIN_FOLDER, exerciseType);
-    
-    Path jsonFile = Paths.get(savingDir.toString(), uploadedFile.getFilename());
-    saveUploadedFile(savingDir, pathToUploadedFile, jsonFile);
 
-    AbstractReadingResult abstractResult = exerciseReader.readStandardExercises();
-
-    if(!abstractResult.isSuccess())
-      return badRequest(views.html.jsonReadingError.render(getUser(), (ReadingError) abstractResult));
-
-    @SuppressWarnings("unchecked")
-    ReadingResult<XmlExercise> result = (ReadingResult<XmlExercise>) abstractResult;
-    
-    saveExercises(result.getRead());
-    return ok(views.html.preview.render(getUser(), views.html.xmlcreation.render(result.getRead())));
-  }
-  
-  @Override
-  public Result uploadForm() {
-    return ok(views.html.xmlupload.render(getUser()));
-  }
-  
   @Override
   protected void saveExercises(List<XmlExercise> exercises) {
     for(XmlExercise ex: exercises) {
@@ -78,5 +59,34 @@ public class XmlAdmin extends AbstractAdminController<XmlExercise, XmlExerciseRe
       exerciseReader.checkOrCreateSampleFile(util, ex);
     }
   }
-  
+
+  @Override
+  public Result uploadFile() {
+    MultipartFormData<File> body = request().body().asMultipartFormData();
+    FilePart<File> uploadedFile = body.getFile(BODY_FILE_NAME);
+    if(uploadedFile == null)
+      return badRequest("Fehler!");
+
+    Path pathToUploadedFile = uploadedFile.getFile().toPath();
+    Path savingDir = Paths.get(util.getRootSolDir().toString(), ADMIN_FOLDER, exerciseType);
+
+    Path jsonFile = Paths.get(savingDir.toString(), uploadedFile.getFilename());
+    saveUploadedFile(savingDir, pathToUploadedFile, jsonFile);
+
+    AbstractReadingResult<XmlExercise> abstractResult = exerciseReader.readStandardExercises();
+
+    if(!abstractResult.isSuccess())
+      return badRequest(views.html.jsonReadingError.render(getUser(), (ReadingError<XmlExercise>) abstractResult));
+
+    ReadingResult<XmlExercise> result = (ReadingResult<XmlExercise>) abstractResult;
+
+    saveExercises(result.getRead());
+    return ok(views.html.preview.render(getUser(), views.html.xmlcreation.render(result.getRead())));
+  }
+
+  @Override
+  public Result uploadForm() {
+    return ok(views.html.xmlupload.render(getUser()));
+  }
+
 }

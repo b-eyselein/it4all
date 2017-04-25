@@ -8,7 +8,6 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,11 +15,11 @@ import javax.inject.Inject;
 
 import controllers.core.ExerciseController;
 import model.Util;
-import model.XMLError;
 import model.XmlCorrector;
+import model.XmlError;
 import model.XmlErrorType;
 import model.XmlExercise;
-import model.XmlExercise.XmlExType;
+import model.XmlExType;
 import model.blanks.BlanksExercise;
 import model.exercise.Success;
 import model.logging.ExerciseCompletionEvent;
@@ -33,14 +32,14 @@ import play.data.FormFactory;
 import play.libs.Json;
 import play.mvc.Result;
 
-public class XML extends ExerciseController {
+public class Xml extends ExerciseController {
 
   private static final String EXERCISE_TYPE = "xml";
 
   private static final String SAVE_ERROR_MSG = "An error has occured while saving an xml file to ";
 
   @Inject
-  public XML(Util theUtil, FormFactory theFactory) {
+  public Xml(Util theUtil, FormFactory theFactory) {
     super(theUtil, theFactory);
   }
 
@@ -51,7 +50,7 @@ public class XML extends ExerciseController {
     DynamicForm form = factory.form().bindFromRequest();
     String learnerSolution = form.get(LEARNER_SOLUTION_VALUE);
 
-    List<XMLError> correctionResult = correct(learnerSolution, exercise, user);
+    List<XmlError> correctionResult = correct(learnerSolution, exercise, user);
 
     log(user, new ExerciseCompletionEvent(request(), id, correctionResult));
 
@@ -59,18 +58,32 @@ public class XML extends ExerciseController {
         views.html.correction.render("XML", views.html.xmlresult.render(correctionResult), learnerSolution, user));
   }
 
-  public Result correctBlanks(int id) {
-    DynamicForm form = factory.form().bindFromRequest();
-    int inputCount = Integer.parseInt(form.get("count"));
+  private List<XmlError> correct(String learnerSolution, XmlExercise exercise, User user) {
+    Path dir = checkAndCreateSolDir(user, EXERCISE_TYPE, exercise.id);
 
-    List<String> inputs = new ArrayList<>(inputCount);
-    for(int count = 0; count < inputCount; count++)
-      inputs.add(form.get("inp" + count));
+    Path grammar;
+    Path xml;
+    if(exercise.exerciseType == XmlExType.DTD_XML || exercise.exerciseType == XmlExType.XSD_XML) {
+      grammar = saveGrammar(dir, learnerSolution, exercise);
+      xml = saveXML(dir, exercise);
+    } else {
+      grammar = saveGrammar(dir, exercise);
+      xml = saveXML(dir, learnerSolution, exercise);
+    }
 
-    BlanksExercise exercise = new BlanksExercise(id);
-    List<Success> results = exercise.correct(inputs);
+    String xml = "";
+    String grammar = "";
 
-    return ok(Json.toJson(results));
+    return correctExercise(xml, grammar, exercise);
+  }
+
+  private List<XmlError> correctExercise(String xml, String grammar, XmlExercise exercise) {
+    List<XmlError> result = XmlCorrector.correct(xml, grammar, exercise);
+
+    if(result.isEmpty())
+      return Arrays.asList(new XmlError("", XmlErrorType.NONE, -1));
+
+    return result;
   }
 
   public Result correctLive(int id) {
@@ -80,8 +93,8 @@ public class XML extends ExerciseController {
     DynamicForm form = factory.form().bindFromRequest();
     String learnerSolution = form.get(LEARNER_SOLUTION_VALUE);
 
-    List<XMLError> result = correct(learnerSolution, exercise, user);
-    
+    List<XmlError> result = correct(learnerSolution, exercise, user);
+
     log(user, new ExerciseCorrectionEvent(request(), id, result));
 
     return ok(views.html.xmlresult.render(result));
@@ -91,15 +104,21 @@ public class XML extends ExerciseController {
     User user = getUser();
     XmlExercise exercise = XmlExercise.finder.byId(id);
 
-    if(exercise == null)
-      return redirect(controllers.xml.routes.XML.index(Collections.emptyList()));
-
     String defOrOldSolution = readDefOrOldSolution(user, exercise);
     String refCode = exercise.getReferenceCode(util);
 
     log(user, new ExerciseStartEvent(request(), id));
 
-    return ok(views.html.xml.render(user, exercise, refCode, defOrOldSolution));
+    return ok(views.html.xmlExercise.render(user, exercise, refCode, defOrOldSolution));
+  }
+
+  public Result exercises() {
+    return ok(views.html.xmlExercises.render(getUser(), XmlExercise.finder.all()));
+  }
+
+  private Path getOldSolPath(User user, XmlExercise exercise) {
+    return util.getSolFileForExercise(user, EXERCISE_TYPE,
+        exercise.id + "/" + exercise.referenceFileName + "." + exercise.getStudentFileEnding());
   }
 
   public Result index(List<String> filter) {
@@ -114,40 +133,6 @@ public class XML extends ExerciseController {
     // @formatter:on
 
     return ok(views.html.xmloverview.render(getUser(), exercises, filters));
-  }
-
-  public Result testBlanks() {
-    return ok(views.html.blanks.render(getUser(), new BlanksExercise(1)));
-  }
-
-  private List<XMLError> correct(String learnerSolution, XmlExercise exercise, User user) {
-    Path dir = checkAndCreateSolDir(user, EXERCISE_TYPE, exercise.id);
-
-    Path grammar;
-    Path xml;
-    if(exercise.exerciseType == XmlExType.DTD_XML || exercise.exerciseType == XmlExType.XSD_XML) {
-      grammar = saveGrammar(dir, learnerSolution, exercise);
-      xml = saveXML(dir, exercise);
-    } else {
-      grammar = saveGrammar(dir, exercise);
-      xml = saveXML(dir, learnerSolution, exercise);
-    }
-
-    return correctExercise(xml, grammar, exercise);
-  }
-
-  private List<XMLError> correctExercise(Path xml, Path grammar, XmlExercise exercise) {
-    List<XMLError> result = XmlCorrector.correct(xml, grammar, exercise);
-
-    if(result.isEmpty())
-      return Arrays.asList(new XMLError("", XmlErrorType.NONE, -1));
-
-    return result;
-  }
-
-  private Path getOldSolPath(User user, XmlExercise exercise) {
-    return util.getSolFileForExercise(user, EXERCISE_TYPE,
-        exercise.id + "/" + exercise.referenceFileName + "." + exercise.getStudentFileEnding());
   }
 
   private String readDefOrOldSolution(User user, XmlExercise exercise) {

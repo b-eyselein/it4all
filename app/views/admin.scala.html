@@ -6,9 +6,11 @@
     <h1>Administratorbereich</h1>
   </div>
   
-  <a class="btn btn-default btn-block" href="@controllers.choice.routes.QuestionAdmin.index()">Auswahlfragen</a>
+  <a class="btn btn-default btn-block" href="@choice.routes.QuestionAdmin.index()">Auswahlfragen</a>
   
-  <a class="btn btn-default btn-block" href="@controllers.uml.routes.UmlAdmin.index()">UML</a>
+  <a class="btn btn-default btn-block" href="@uml.routes.UmlAdmin.index()">UML</a>
+  
+  <a class="btn btn-default btn-block" href="@xml.routes.XmlAdmin.index()">XML</a>
   
   <hr>
   
@@ -19,12 +21,12 @@
       <div class="panel panel-default">
         <div class="panel-heading">Einlesen der Aufgaben in <code>conf/resources/...</code></div>
         <div class="panel-body">
-          <a href="@controllers.js.routes.JsAdmin.readStandardExercises()" type="button" class="btn btn-default btn-block">Javascript-Aufgaben</a>
-          <a href="@controllers.python.routes.PythonAdmin.readStandardExercises()" type="button" class="btn btn-default btn-block">Python-Aufgaben</a>
-          <a href="@controllers.sql.routes.SQLAdmin.readStandardExercises()" type="button" class="btn btn-default btn-block">SQL-Aufgaben</a>
-          <a href="@controllers.spread.routes.SpreadAdmin.readStandardExercises()" type="button" class="btn btn-default btn-block">Tabellenkalulations-Aufgaben</a>
-          <a href="@controllers.web.routes.WebAdmin.readStandardExercises()" type="button" class="btn btn-default btn-block">Web-Aufgaben</a>
-          <a href="@controllers.xml.routes.XmlAdmin.readStandardExercises()" type="button" class="btn btn-default btn-block">Xml-Aufgaben</a>
+          <a href="@js.routes.JsAdmin.readStandardExercises()" type="button" class="btn btn-default btn-block">Javascript-Aufgaben</a>
+          <a href="@python.routes.PythonAdmin.readStandardExercises()" type="button" class="btn btn-default btn-block">Python-Aufgaben</a>
+          <a href="@sql.routes.SQLAdmin.readStandardExercises()" type="button" class="btn btn-default btn-block">SQL-Aufgaben</a>
+          <a href="@spread.routes.SpreadAdmin.readStandardExercises()" type="button" class="btn btn-default btn-block">Tabellenkalulations-Aufgaben</a>
+          <a href="@web.routes.WebAdmin.readStandardExercises()" type="button" class="btn btn-default btn-block">Web-Aufgaben</a>
+          <a href="@xml.routes.XmlAdmin.readStandardExercises()" type="button" class="btn btn-default btn-block">Xml-Aufgaben</a>
         </div>
       </div>
     </div>
@@ -33,12 +35,12 @@
       <div class="panel panel-default">
         <div class="panel-heading">Upload neuer Aufgaben</div>
         <div class="panel-body">
-          <a href="@controllers.js.routes.JsAdmin.uploadForm()" type="button" class="btn btn-default btn-block">Javascript-Aufgaben</a>
-          <a href="@controllers.python.routes.PythonAdmin.uploadForm()" type="button" class="btn btn-default btn-block">Python-Aufgaben</a>
-          <a href="@controllers.sql.routes.SQLAdmin.uploadForm()" type="button" class="btn btn-default btn-block">SQL-Aufgaben</a>
-          <a href="@controllers.spread.routes.SpreadAdmin.uploadForm()" type="button" class="btn btn-default btn-block">Tabellenkalkulations-Aufgaben</a>
-          <a href="@controllers.web.routes.WebAdmin.uploadForm()" type="button" class="btn btn-default btn-block">Web-Aufgaben</a>
-          <a href="@controllers.xml.routes.XmlAdmin.uploadForm()" type="button" class="btn btn-default btn-block">Xml-Aufgaben</a>
+          <a href="@js.routes.JsAdmin.uploadForm()" type="button" class="btn btn-default btn-block">Javascript-Aufgaben</a>
+          <a href="@python.routes.PythonAdmin.uploadForm()" type="button" class="btn btn-default btn-block">Python-Aufgaben</a>
+          <a href="@sql.routes.SQLAdmin.uploadForm()" type="button" class="btn btn-default btn-block">SQL-Aufgaben</a>
+          <a href="@spread.routes.SpreadAdmin.uploadForm()" type="button" class="btn btn-default btn-block">Tabellenkalkulations-Aufgaben</a>
+          <a href="@web.routes.WebAdmin.uploadForm()" type="button" class="btn btn-default btn-block">Web-Aufgaben</a>
+          <a href="@xml.routes.XmlAdmin.uploadForm()" type="button" class="btn btn-default btn-block">Xml-Aufgaben</a>
         </div>
       </div>
     </div>

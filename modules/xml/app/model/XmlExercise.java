@@ -11,97 +11,61 @@ import javax.persistence.Enumerated;
 
 import model.exercise.Exercise;
 import play.Logger;
-import play.twirl.api.Html;
 
 @Entity
 public class XmlExercise extends Exercise {
-
-  public enum XmlExType {
-    // @formatter:off
-    XML_XSD("xml", "xsd", "xsd"),
-    XML_DTD("xml", "dtd", "dtd"),
-    XSD_XML("xsd", "xml", "xsd"),
-    DTD_XML("dtd", "xml", "dtd");
-    // @formatter:on
-
-    private String studFileEnding;
-    private String refFileEnding;
-    private String gramFileEnding;
-
-    private XmlExType(String studentEnding, String theRefFileEnding, String theGramFileEnding) {
-      studFileEnding = studentEnding;
-      refFileEnding = theRefFileEnding;
-      gramFileEnding = theGramFileEnding;
-    }
-
-    public String getGramFileEnding() {
-      return gramFileEnding;
-    }
-
-    public String getRefFileEnding() {
-      return refFileEnding;
-    }
-
-    public String getStudFileEnding() {
-      return studFileEnding;
-    }
-
-    public Html getTag() {
-      return new Html("<span class=\"label label-default\">" + toString().replace("_", " gegen ") + "</span>");
-    }
-
-  }
-
+  
   private static final String EX_TYPE = "xml";
-
-  public static final Finder<Integer, XmlExercise> finder = new Finder<>(XmlExercise.class);
-
+  
+  public static final com.avaje.ebean.Model.Finder<Integer, XmlExercise> finder = new com.avaje.ebean.Model.Finder<>(
+      XmlExercise.class);
+  
   @Column(columnDefinition = "text")
   public String fixedStart;
-
+  
   @Enumerated(EnumType.STRING)
   public XmlExType exerciseType;
-
+  
   public String referenceFileName; // NOSONAR
-
+  
   public XmlExercise(int theId) {
     super(theId);
   }
-
+  
   public String getGrammarFileEnding() {
     return exerciseType.getGramFileEnding();
   }
-
+  
   public String getReferenceCode(Util util) {
     Path referenceFilePath = getRefFilePath(util);
-
+    
     try {
       if(referenceFilePath.toFile().exists())
         return Util.readFileFromPath(referenceFilePath);
-
+      
     } catch (IOException e) {
       Logger.error("There has been an error reading the file", e);
     }
     return "FEHLER!";
   }
-
+  
   public String getReferenceFileEnding() {
     return exerciseType.getRefFileEnding();
   }
-
-  public String getStudentFileEnding() {
-    return exerciseType.getStudFileEnding();
-  }
-
-  public Html getTag() {
-    return exerciseType.getTag();
-  }
-
+  
   private Path getRefFilePath(Util util) {
     // @formatter:off
     return Paths
         .get(util.getSampleFileForExercise(EX_TYPE, referenceFileName).toString() + "." + getReferenceFileEnding());
     // @formatter:on
   }
-
+  
+  public String getStudentFileEnding() {
+    return exerciseType.getStudFileEnding();
+  }
+  
+  public String getTag() {
+    return exerciseType.getTag();
+  }
+  
 }
