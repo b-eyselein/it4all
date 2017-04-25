@@ -30,17 +30,19 @@ public class UML extends ExerciseController {
 
   private static final String ERROR_MSG = "Es gab einen Fehler bei der Validierung des Resultats!";
 
-  private JsonNode solutionSchemaNode;
+  static {
+    try {
+      SOLUTION_SCHEMA_NODE = Json.parse(String.join("\n", Files.readAllLines(SOLUTION_SCHEMA_PATH)));
+    } catch (IOException e) {
+      Logger.error("There has been an error parsing the schema files for UML:", e);
+    }
+  }
+
+  public static JsonNode SOLUTION_SCHEMA_NODE;
 
   @Inject
   public UML(Util theUtil, FormFactory theFactory) {
     super(theUtil, theFactory);
-
-    try {
-      solutionSchemaNode = Json.parse(String.join("\n", Files.readAllLines(SOLUTION_SCHEMA_PATH)));
-    } catch (IOException e) {
-      Logger.error("There has been an error parsing the schema files for UML:", e);
-    }
   }
 
   private static Optional<ProcessingReport> validateSolution(JsonNode sentJson, JsonNode schemaNode) {
@@ -110,7 +112,7 @@ public class UML extends ExerciseController {
   private UmlSolution readSolutionFromForm() throws Exception {
     JsonNode sentJson = Json.parse(factory.form().bindFromRequest().get(LEARNER_SOLUTION_VALUE));
 
-    Optional<ProcessingReport> report = validateSolution(sentJson, solutionSchemaNode);
+    Optional<ProcessingReport> report = validateSolution(sentJson, SOLUTION_SCHEMA_NODE);
 
     if(!report.isPresent())
       throw new Exception(ERROR_MSG);

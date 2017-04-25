@@ -9,9 +9,12 @@ POST   /upload                             controllers.uml.UmlAdmin.uploadFile()
 
 GET    /create                             controllers.uml.UmlAdmin.readStandardExercises()
 
-GET    /newExercise/form                   controllers.uml.UmlAdmin.newExerciseFormOne()
-POST   /newExercise/text                   controllers.uml.UmlAdmin.newExerciseFormTwo()
+GET    /newExercise/form                   controllers.uml.UmlAdmin.newExerciseStep1()
+POST   /newExercise/text                   controllers.uml.UmlAdmin.newExerciseStep2()
+POST   /newExercise/solution               controllers.uml.UmlAdmin.newExerciseStep3()
 POST   /newExercise                        controllers.uml.UmlAdmin.newExercise()
+
+PUT    /newExercise/checkSolution          controllers.uml.UmlAdmin.checkSolution()
 
 # Step 1: selection of classes
 GET    /:exId/classSelection               controllers.uml.UML.classSelection(exId: Int)
