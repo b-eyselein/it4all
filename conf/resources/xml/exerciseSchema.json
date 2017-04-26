@@ -20,10 +20,10 @@
 				]
 			}, 
 			"fixedStart": {
-				"type": "string"
-			}, 
-			"referenceFileName": {
-				"type": "string"
+				"type": "array", 
+				"items": {
+					"type": "string"
+				}
 			}, 
 			"text": {
 				"type": "string"
@@ -34,7 +34,6 @@
 			"title", 
 			"exerciseType", 
 			"fixedStart", 
-			"referenceFileName", 
 			"text"
 		]
 	}, 

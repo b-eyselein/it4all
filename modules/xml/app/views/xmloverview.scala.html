@@ -12,7 +12,7 @@
       <div class="panel-body">
         @for(tag <- model.XmlExType.values()) {
         <div class="col-sm-3 col-xs-6">
-          <label for=""><input type="checkbox" name="filter" value="@tag" @if(filters.contains(tag)){checked}> @tag.getTag()</label>
+          <label for=""><input type="checkbox" name="filter" value="@tag" @if(filters.contains(tag)){checked}> @Html(tag.getTag())</label>
         </div>
         }
       </div>
@@ -34,7 +34,7 @@
       <tbody>
         @for(exercise <- exercises) {
         <tr>
-          <td>@exercise.getTag()</td>
+          <td>@Html(exercise.getTag())</td>
           <td>@exercise.id</td>
           <td><a href="@controllers.xml.routes.Xml.exercise(exercise.id)" class="btn btn-primary btn-block">@exercise.title</a></td>
         </tr>

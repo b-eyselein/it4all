@@ -3,47 +3,30 @@
 @main("XML-Test", user) {
 <script src="@controllers.routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
 
-<div class="container-fluid">
-  <form action= @controllers.xml.routes.Xml.commit(exercise.id) method="post" onsubmit="prepareFormForSubmitting();">
-  
+<div class="container">
+  <div class="col-md-6">
     <div class="panel panel-default">
       <div class="panel-heading">Aufgabenstellung</div>
       <div class="panel-body">@exercise.text</div>
-      <div class="panel-footer">
-        <div class="btn-group btn-group-justified">
-          <div class="btn-group">
-            <button type="button" class="btn btn-primary"
-            onclick="testTheSolution('@controllers.xml.routes.Xml.correctLive(exercise.id)');">L&ouml;sung testen</button>
-          </div>
-          <div class="btn-group">
-            <input type="submit" class="btn btn-success" value="L&ouml;sung abgeben">
-          </div>
-        </div>
-      </div>
     </div>
-
-    <div class="row">
-      <div class="col-md-4">
-        @editor(oldSolution, "xml", 15, 25, false)
-      </div>
-
-      <div class="col-md-4">
-        <div class="panel panel-default">
-          <div class="panel-heading">Referenzdatei</div>
-          <div class="panel-body">
-            <pre>@referenceFile</pre>
-          </div>
-        </div>
-      </div>
-      
-      <div class="col-md-4">
-        <div class="panel panel-default">
-          <div class="panel-heading">Bemerkungen</div>
-          <div id="correction" class="panel-body"></div>
-        </div>
-      </div>
+  
+    <div class="panel panel-default">
+      <div class="panel-heading">Bemerkungen</div>
+      <div id="correction" class="panel-body"></div>
     </div>
-
+  </div>
+  
+  <div class="col-md-6">
+    @editor(oldSolution, "xml", 30, 50, false)
+  </div>
+  
+  <hr>
+  
+  <form action= @controllers.xml.routes.Xml.commit(exercise.id) method="post" onsubmit="prepareFormForSubmitting();">
+    <button type="button" class="btn btn-primary btn-block"
+      onclick="testTheSolution('@controllers.xml.routes.Xml.correctLive(exercise.id)');">L&ouml;sung testen</button>
+    <input type="submit" class="btn btn-success btn-block" value="L&ouml;sung abgeben">
   </form>
+  
 </div>
 }

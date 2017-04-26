@@ -16,61 +16,61 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import model.errorhandlers.CorrectionErrorHandler;
-import model.errorhandlers.DtdXmlErrorHandler;
 import model.errorhandlers.XmlDtdErrorHandler;
-import model.errorhandlers.XmlXsdErrorHandler;
 import play.Logger;
 
 public class XmlCorrector {
 
-  private static DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+  private static final DocumentBuilderFactory DOC_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
+  private static final SchemaFactory SCHEMA_FACTORY = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI); // NOSONAR
 
   private XmlCorrector() {
-
+    DOC_BUILDER_FACTORY.setValidating(true);
   }
 
-  public static List<XmlError> correct(String xml, String grammar, XmlExercise exercise) {
-    switch(exercise.exerciseType) {
+  public static List<XmlError> correct(String xml, String grammar, XmlExType exType) {
+    StringReader xmlReader = new StringReader(xml);
+    StringReader grammarReader = new StringReader(grammar);
+
+    switch(exType) {
     case XML_XSD:
-      return correctXMLAgainstXSD(xml, grammar, new XmlXsdErrorHandler());
+      return correctXMLAgainstXSD(xmlReader, grammarReader, new CorrectionErrorHandler());
     case XML_DTD:
-      return correctWithDTD(xml, new XmlDtdErrorHandler());
+      return correctWithDTD(xmlReader, new XmlDtdErrorHandler());
     case DTD_XML:
-      return correctWithDTD(xml, new DtdXmlErrorHandler());
+      return correctWithDTD(xmlReader, new CorrectionErrorHandler());
     case XSD_XML:
     default:
       return Collections.emptyList();
-    // return Arrays.asList(new EvaluationFailed("Dieser Aufgabentyp kann nicht
-    // korrigiert werden!"));
     }
 
   }
 
-  private static List<XmlError> correctWithDTD(String xml, CorrectionErrorHandler errorHandler) {
-    factory.setValidating(true);
+  private static List<XmlError> correctWithDTD(StringReader xml, CorrectionErrorHandler errorHandler) {
     try {
-      DocumentBuilder builder = factory.newDocumentBuilder();
+      DocumentBuilder builder = DOC_BUILDER_FACTORY.newDocumentBuilder();
       builder.setErrorHandler(errorHandler);
-      builder.parse(xml);
+      builder.parse(new InputSource(xml));
+
     } catch (ParserConfigurationException e) {
       Logger.error("There was an error creating the Parser: ", e);
-      return Collections.emptyList();
-    } catch (SAXException | IOException e) {
-      Logger.error("Error: SAXException while correcting XML");
+    } catch (SAXException | IOException e) { // NOSONAR
+      e.printStackTrace();
     }
     return errorHandler.getErrors();
   }
 
-  public static List<XmlError> correctXMLAgainstXSD(String xml, String grammar, CorrectionErrorHandler errorHandler) {
-    Source xmlFile = new StreamSource(new StringReader(xml));
-    Source xsdFile = new StreamSource(new StringReader(grammar));
+  private static List<XmlError> correctXMLAgainstXSD(StringReader xml, StringReader grammar,
+      CorrectionErrorHandler errorHandler) {
+    Source xmlFile = new StreamSource(xml);
+    Source xsdFile = new StreamSource(grammar);
 
     try {
-      SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-      Schema schema = schemaFactory.newSchema(xsdFile);
+      Schema schema = SCHEMA_FACTORY.newSchema(xsdFile);
 
       if(schema == null)
         return Arrays
