@@ -51,7 +51,7 @@ public class WebExerciseReader extends ExerciseReader<WebExercise> {
     JsonNode isPrecondNode = conditionNode.get("isPrecondition");
 
     condition.xpathQuery = xpathNode.asText();
-    condition.awaitedvalue = awaitedValueNode.asText();
+    condition.awaitedValue = awaitedValueNode.asText();
     condition.isPrecondition = isPrecondNode.asBoolean();
 
     return condition;
@@ -172,9 +172,9 @@ public class WebExerciseReader extends ExerciseReader<WebExercise> {
     exercise.title = titleNode.asText();
     exercise.text = String.join("", JsonWrapper.parseJsonArrayNode(textNode));
 
-    exercise.htmlText = htmlTextNode != null ? htmlTextNode.asText() : "";
-    exercise.cssText = cssTextNode != null ? cssTextNode.asText() : "";
-    exercise.jsText = jsTextNode != null ? jsTextNode.asText() : "";
+    exercise.htmlText = String.join("", JsonWrapper.parseJsonArrayNode(htmlTextNode));
+    exercise.cssText = String.join("", JsonWrapper.parseJsonArrayNode(cssTextNode));
+    exercise.jsText = String.join("", JsonWrapper.parseJsonArrayNode(jsTextNode));
 
     exercise.htmlTasks = htmlTasksNode != null ? readHtmlTasks(htmlTasksNode, exerciseId) : Collections.emptyList();
     exercise.cssTasks = cssTasksNode != null ? readCssTasks(cssTasksNode, exerciseId) : Collections.emptyList();

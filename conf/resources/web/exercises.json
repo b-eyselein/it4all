@@ -810,8 +810,9 @@
 					}
 				], 
 				"action": {
-					"actionxpath": "/html/body//button", 
-					"actiontype": "CLICK"
+					"actiontype": "CLICK", 
+					"actionXpathQuery": "/html/body//button", 
+					"keysToSend": null
 				}
 			}, 
 			{
@@ -847,8 +848,9 @@
 					}
 				], 
 				"action": {
-					"actionxpath": "/html/body//button", 
-					"actiontype": "CLICK"
+					"actiontype": "CLICK", 
+					"actionXpathQuery": "/html/body//button", 
+					"keysToSend": null
 				}
 			}, 
 			{
@@ -858,6 +860,9 @@
 				}, 
 				"text": "Test 3", 
 				"xpathQuery": "", 
+				"attributes": [
+					
+				], 
 				"conditions": [
 					{
 						"key": {
@@ -881,8 +886,9 @@
 					}
 				], 
 				"action": {
-					"actionxpath": "/html/body//button", 
-					"actiontype": "CLICK"
+					"actiontype": "CLICK", 
+					"actionXpathQuery": "/html/body//button", 
+					"keysToSend": null
 				}
 			}, 
 			{
@@ -892,6 +898,9 @@
 				}, 
 				"text": "Test 4", 
 				"xpathQuery": "", 
+				"attributes": [
+					
+				], 
 				"conditions": [
 					{
 						"key": {
@@ -915,8 +924,9 @@
 					}
 				], 
 				"action": {
-					"actionxpath": "/html/body//button", 
-					"actiontype": "CLICK"
+					"actiontype": "CLICK", 
+					"actionXpathQuery": "/html/body//button", 
+					"keysToSend": null
 				}
 			}
 		]

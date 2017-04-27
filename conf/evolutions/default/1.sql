@@ -17,8 +17,8 @@ create table conditions (
   task_id                       integer not null,
   condition_id                  integer not null,
   xpath_query                   varchar(255),
-  awaitedvalue                  varchar(255),
   is_precondition               tinyint(1) default 0,
+  awaited_value                 varchar(255),
   constraint pk_conditions primary key (exercise_id,task_id,condition_id)
 );
 

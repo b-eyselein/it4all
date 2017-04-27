@@ -14,6 +14,7 @@ import org.openqa.selenium.WebElement;
 
 import com.avaje.ebean.Model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import model.exercise.Success;
 import model.result.ConditionResult;
@@ -35,22 +36,25 @@ public class Condition extends Model {
 
   public String xpathQuery;
 
-  public String awaitedvalue;
-
   public boolean isPrecondition;
+
+  public String awaitedValue;
 
   public Condition(JsConditionKey theKey) {
     key = theKey;
   }
 
+  @JsonIgnore
   public String getDescription() {
-    return "Element mit XPath \"" + xpathQuery + "\" sollte den Inhalt \"" + awaitedvalue + "\" haben";
+    return "Element mit XPath \"" + xpathQuery + "\" sollte den Inhalt \"" + awaitedValue + "\" haben";
   }
 
+  @JsonIgnore
   public boolean isPostcondition() {
     return !isPrecondition;
   }
 
+  @JsonIgnore
   public boolean isPrecondition() {
     return isPrecondition;
   }
@@ -64,7 +68,7 @@ public class Condition extends Model {
     String gottenValue = element.getText();
 
     Success success = Success.NONE;
-    if(gottenValue.equals(awaitedvalue))
+    if(gottenValue.equals(awaitedValue))
       success = Success.COMPLETE;
 
     return new ConditionResult(success, this, gottenValue, isPrecondition);
