@@ -2,6 +2,7 @@ package model.result;
 
 import org.openqa.selenium.WebElement;
 
+import model.Attribute;
 import model.exercise.FeedbackLevel;
 import model.exercise.Success;
 import model.result.EvaluationResult;
@@ -9,19 +10,17 @@ import play.Logger;
 
 public class AttributeResult extends EvaluationResult {
 
-  private String key;
-  private String value;
+  private Attribute attribute;
 
-  public AttributeResult(String attributeKey, String attributeValue) {
+  public AttributeResult(Attribute theAttribute) {
     super(FeedbackLevel.MEDIUM_FEEDBACK, Success.NONE);
-    key = attributeKey;
-    value = attributeValue;
+    attribute = theAttribute;
   }
 
   public void evaluate(WebElement element) {
     String foundValue = null;
     try {
-      foundValue = element.getAttribute(key);
+      foundValue = element.getAttribute(attribute.key);
     } catch (NoSuchMethodError e) { // NOSONAR
       // FIXME: Better solution! NoSuchMethodError if attribute not declared
       Logger.info("Error while searching for attribute in model.html.result.AttributeResult"
@@ -29,7 +28,7 @@ public class AttributeResult extends EvaluationResult {
     }
     if(foundValue == null)
       success = Success.NONE;
-    else if(foundValue.contains(value))
+    else if(foundValue.contains(attribute.value))
       success = Success.COMPLETE;
     else
       success = Success.PARTIALLY;
@@ -37,11 +36,11 @@ public class AttributeResult extends EvaluationResult {
 
   public String getAsHtml() {
     // FIXME: implement feedbackLevel!
-    String ret = "<div class=\"alert alert-" + getBSClass() + "\">Attribut \"" + key + "\"";
+    String ret = "<div class=\"alert alert-" + getBSClass() + "\">Attribut \"" + attribute.key + "\"";
     if(success == Success.COMPLETE)
       ret += " hat den gesuchten Wert.";
     else if(success == Success.PARTIALLY)
-      ret += " hat nicht den gesuchten Wert \"" + value + "\"!";
+      ret += " hat nicht den gesuchten Wert \"" + attribute.value + "\"!";
     else if(success == Success.NONE)
       ret += " konnte nicht gefunden werden!";
     ret += DIV_END;
@@ -49,11 +48,11 @@ public class AttributeResult extends EvaluationResult {
   }
 
   public String getKey() {
-    return key;
+    return attribute.key;
   }
 
   public String getValue() {
-    return value;
+    return attribute.value;
   }
 
 }

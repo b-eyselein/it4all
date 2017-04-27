@@ -30,7 +30,7 @@
           
             <div id="correction">
             @for(task <- exercise.getTasks(exType)) {
-              <div class="panel panel-default"><div class="panel-body">@{task.getId()}. @task.text</div></div>
+              <div class="panel panel-default"><div class="panel-body">@{task.key.taskId}. @task.text</div></div>
             }
             </div>
           </div>

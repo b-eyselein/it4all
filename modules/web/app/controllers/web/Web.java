@@ -18,6 +18,9 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import controllers.core.ExerciseController;
 import model.Util;
 import model.WebExercise;
+import model.WebSolution;
+import model.WebSolutionKey;
+import model.WebUser;
 import model.logging.ExerciseCompletionEvent;
 import model.logging.ExerciseCorrectionEvent;
 import model.logging.ExerciseStartEvent;
@@ -30,8 +33,6 @@ import play.mvc.Result;
 
 public class Web extends ExerciseController {
 
-  private static final String FILE_TYPE = "html";
-  private static final String EXERCISE_TYPE = "html";
   private static final String STANDARD_HTML = "<!doctype html>\n<html>\n\n<head>\n</head>\n\n<body>\n</body>\n\n</html>";
 
   public static final String STANDARD_HTML_PLAYGROUND = "<!doctype html>\n<html>\n<head>\n"
@@ -39,9 +40,47 @@ public class Web extends ExerciseController {
       + "<script type=\"text/javascript\">\n// Javascript-Code\n\n</script>\n"
       + "</head>\n<body>\n  <!-- Html-Elemente -->\n  \n</body>\n</html>";
 
+  private static final List<String> ALLOWED_TYPES = Arrays.asList("html", "css", "js");
+
   @Inject
   public Web(Util theUtil, FormFactory theFactory) {
     super(theUtil, theFactory);
+  }
+
+  public static User getUser() {
+    User user = ExerciseController.getUser();
+
+    if(WebUser.finder.byId(user.name) == null)
+      // Make sure there is a corresponding entrance in other db...
+      new WebUser(user.name).save();
+
+    return user;
+  }
+
+  private static List<ElementResult> correct(String learnerSolution, String username, String type,
+      WebExercise exercise) {
+    saveSolution(learnerSolution, new WebSolutionKey(username, exercise.id));
+
+    String solutionUrl = "http://localhost:9000" + routes.Solution.site(username, exercise.id).url();
+
+    WebDriver driver = new HtmlUnitDriver(true);
+    driver.get(solutionUrl);
+
+    return exercise.getTasks(type).stream().map(task -> task.evaluate(driver)).collect(Collectors.toList());
+  }
+
+  private static void saveSolution(String learnerSolution, WebSolutionKey key) {
+    WebSolution solution = WebSolution.finder.byId(key);
+
+    if(solution == null)
+      solution = new WebSolution(key);
+
+    solution.solution = learnerSolution;
+    solution.save();
+  }
+
+  private static boolean typeIsCorrect(String type) {
+    return ALLOWED_TYPES.contains(type);
   }
 
   public Result correct(int id, String type) {
@@ -54,26 +93,10 @@ public class Web extends ExerciseController {
     DynamicForm form = factory.form().bindFromRequest();
     String learnerSolution = form.get(LEARNER_SOLUTION_VALUE);
 
-    List<ElementResult> result = correct(learnerSolution, user, type, exercise);
+    List<ElementResult> result = correct(learnerSolution, user.name, type, exercise);
 
     log(user, new ExerciseCompletionEvent(request(), id, new LinkedList<>(result)));
     return ok(views.html.correction.render("Web", views.html.webresult.render(result), learnerSolution, getUser()));
-  }
-
-  protected List<ElementResult> correct(String learnerSolution, User user, String type, WebExercise exercise) {
-    try {
-      saveSolutionForUser(user, learnerSolution, exercise.id);
-    } catch (IOException error) {
-      Logger.error("Fehler beim Speichern einer Html-Loesungsdatei!", error);
-      return Collections.emptyList();
-    }
-
-    String solutionUrl = "http://localhost:9000" + routes.Solution.site(user, "html", exercise.id).url();
-
-    WebDriver driver = new HtmlUnitDriver(true);
-    driver.get(solutionUrl);
-
-    return exercise.getTasks(type).stream().map(task -> task.evaluate(driver)).collect(Collectors.toList());
   }
 
   public Result correctLive(int id, String type) {
@@ -86,21 +109,12 @@ public class Web extends ExerciseController {
     DynamicForm form = factory.form().bindFromRequest();
     String learnerSolution = form.get(LEARNER_SOLUTION_VALUE);
 
-    List<ElementResult> result = correct(learnerSolution, user, type, exercise);
+    List<ElementResult> result = correct(learnerSolution, user.name, type, exercise);
 
     log(user, new ExerciseCorrectionEvent(request(), id, new LinkedList<>(result)));
     return ok(views.html.webresult.render(result));
   }
 
-  /**
-   * Render exercise with id exercise, use tasks "html" or "css"
-   *
-   * FIXME: überprüfen, ob nutzer bereits "html" komplett bearbeitet hat!
-   *
-   * @param exerciseId
-   * @param type
-   * @return
-   */
   public Result exercise(int id, String type) {
     User user = getUser();
     WebExercise exercise = WebExercise.finder.byId(id);
@@ -108,44 +122,25 @@ public class Web extends ExerciseController {
     if(!typeIsCorrect(type) || exercise == null)
       return redirect(controllers.web.routes.Web.index());
 
-    String defaultOrOldSolution = loadDefaultOrOldSolution(id, user);
+    WebSolutionKey key = new WebSolutionKey(user.name, id);
+    WebSolution sol = WebSolution.finder.byId(key);
+    String defaultOrOldSolution = sol == null ? STANDARD_HTML : sol.solution;
 
     log(user, new ExerciseStartEvent(request(), id));
 
     return ok(views.html.webExercise.render(user, exercise, type, defaultOrOldSolution, "Html-Korrektur"));
   }
 
+  public Result exercises() {
+    return ok(views.html.exercises.render(getUser(), WebExercise.finder.all()));
+  }
+
   public Result index() {
     return ok(views.html.weboverview.render(getUser(), WebExercise.finder.all()));
   }
 
-  private String loadDefaultOrOldSolution(int id, User user) {
-    Path oldSolutionPath = util.getSolFileForExercise(user, EXERCISE_TYPE, id, FILE_TYPE);
-    if(oldSolutionPath.toFile().exists()) {
-      try {
-        return String.join("\n", Files.readAllLines(oldSolutionPath));
-      } catch (IOException e) {
-        Logger.error("There has been an error loading an old solution for Html:", e);
-      }
-    }
-    return STANDARD_HTML;
-  }
-
   public Result playground() {
     return ok(views.html.playground.render(getUser()));
-  }
-
-  private void saveSolutionForUser(User user, String solution, int exercise) throws IOException {
-    Path solDir = util.getSolDirForUserAndType(user, EXERCISE_TYPE);
-    if(!solDir.toFile().exists())
-      Files.createDirectories(solDir);
-
-    Path saveTo = util.getSolFileForExercise(user, EXERCISE_TYPE, exercise, FILE_TYPE);
-    Files.write(saveTo, Arrays.asList(solution), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-  }
-
-  private boolean typeIsCorrect(String type) {
-    return "html".equals(type) || "css".equals(type) || "js".equals(type);
   }
 
 }

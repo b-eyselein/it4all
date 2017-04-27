@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import model.exercise.Exercise;
@@ -43,8 +44,24 @@ public class WebExercise extends Exercise {
   @JsonManagedReference
   public List<JsWebTask> jsTasks;
 
+  @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
+  @JsonIgnore
+  public List<WebSolution> solutions;
+
   public WebExercise(int theId) {
     super(theId);
+  }
+
+  public List<String> getCssText() {
+    return splitter.splitToList(cssText);
+  }
+
+  public List<String> getHtmlText() {
+    return splitter.splitToList(htmlText);
+  }
+
+  public List<String> getJsText() {
+    return splitter.splitToList(jsText);
   }
 
   public List<Task> getTasks(String exType) {

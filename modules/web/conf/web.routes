@@ -1,20 +1,26 @@
 # creation of exercises
-GET    /upload                     controllers.web.WebAdmin.uploadForm()
-POST   /upload                     controllers.web.WebAdmin.uploadFile()
-GET    /create                     controllers.web.WebAdmin.readStandardExercises()
+GET    /upload                   controllers.web.WebAdmin.uploadForm()
+POST   /upload                   controllers.web.WebAdmin.uploadFile()
+GET    /create                   controllers.web.WebAdmin.readStandardExercises()
 
 # playground
-GET    /playground                 controllers.web.Web.playground()
+GET    /playground               controllers.web.Web.playground()
+
+# admin
+GET    /admin/                   controllers.web.WebAdmin.index()
 
 # exercises
-GET    /                           controllers.web.Web.index()
+GET    /                         controllers.web.Web.index()
 
-GET    /:id/:type                  controllers.web.Web.exercise(id: Int, type: String)
+GET    /exercises                controllers.web.Web.exercises()
+GET    /exercises/export         controllers.web.WebAdmin.exportExercises()
 
-PUT    /:id/:type                  controllers.web.Web.correctLive(id: Int, type: String)
-POST   /:id/:type                  controllers.web.Web.correct(id: Int, type: String)
+GET    /:id/:type                controllers.web.Web.exercise(id: Int, type: String)
 
-GET    /solution/:user/:type/:id   controllers.web.Solution.site(user: model.user.User, type: String, id: Int)
+PUT    /:id/:type                controllers.web.Web.correctLive(id: Int, type: String)
+POST   /:id/:type                controllers.web.Web.correct(id: Int, type: String)
+
+GET    /solution/:username/:id   controllers.web.Solution.site(username: String, id: Int)
 
 
 

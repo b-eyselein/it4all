@@ -1,8 +1,10 @@
 package controllers.web;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -16,7 +18,9 @@ import model.exercisereading.ReadingError;
 import model.exercisereading.ReadingResult;
 import model.task.Condition;
 import model.task.JsWebTask;
+import play.api.libs.Files.TemporaryFile;
 import play.data.FormFactory;
+import play.libs.Json;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
@@ -26,6 +30,15 @@ public class WebAdmin extends AbstractAdminController<WebExercise, WebExerciseRe
   @Inject
   public WebAdmin(Util theUtil, FormFactory theFactory) {
     super(theUtil, theFactory, "web", new WebExerciseReader());
+  }
+
+  public Result exportExercises() {
+    String exported = Json.prettyPrint(Json.toJson(WebExercise.finder.all()));
+    return ok(views.html.export.render(getUser(), exported));
+  }
+
+  public Result index() {
+    return ok(views.html.webAdmin.index.render(getUser()));
   }
 
   @Override
@@ -38,7 +51,7 @@ public class WebAdmin extends AbstractAdminController<WebExercise, WebExerciseRe
     ReadingResult<WebExercise> result = (ReadingResult<WebExercise>) abstractResult;
 
     saveExercises(result.getRead());
-    return ok(views.html.preview.render(getUser(), views.html.webcreation.render(result.getRead())));
+    return ok(views.html.preview.render(getUser(), views.html.webAdmin.webcreation.render(result.getRead())));
   }
 
   @Override
@@ -62,12 +75,12 @@ public class WebAdmin extends AbstractAdminController<WebExercise, WebExerciseRe
     ReadingResult<WebExercise> result = (ReadingResult<WebExercise>) abstractResult;
 
     saveExercises(result.getRead());
-    return ok(views.html.preview.render(getUser(), views.html.webcreation.render(result.getRead())));
+    return ok(views.html.preview.render(getUser(), views.html.webAdmin.webcreation.render(result.getRead())));
   }
 
   @Override
   public Result uploadForm() {
-    return ok(views.html.webupload.render(getUser()));
+    return ok(views.html.webAdmin.webupload.render(getUser()));
   }
 
   @Override

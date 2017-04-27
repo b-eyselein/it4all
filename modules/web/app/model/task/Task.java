@@ -1,7 +1,7 @@
 package model.task;
 
-import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -14,8 +14,9 @@ import org.openqa.selenium.WebElement;
 
 import com.avaje.ebean.Model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.base.Splitter;
 
+import model.Attribute;
 import model.WebExercise;
 import model.exercise.Success;
 import model.result.AttributeResult;
@@ -24,11 +25,9 @@ import model.result.EvaluationResult;
 
 @MappedSuperclass
 public abstract class Task extends Model {
-  
-  public static final String MULTIPLE_ATTRIBUTES_SPLIT_CHARACTER = ";";
-  
-  public static final String KEY_VALUE_CHARACTER = "=";
-  
+
+  private static final Splitter SPLITTER = Splitter.on(";").omitEmptyStrings();
+
   @EmbeddedId
   public TaskKey key;
 
@@ -36,36 +35,29 @@ public abstract class Task extends Model {
   @JoinColumn(name = "exercise_id", insertable = false, updatable = false)
   @JsonBackReference
   public WebExercise exercise;
-  
+
   @Column(columnDefinition = "text")
-  @JsonIgnore
   public String text;
-  
-  @JsonIgnore
+
   public String xpathQuery;
-  
-  @JsonIgnore
+
   public String attributes;
-  
+
   public Task(TaskKey theKey) {
     key = theKey;
   }
-  
+
   public static <T extends EvaluationResult> boolean allResultsSuccessful(List<T> results) {
     for(EvaluationResult res: results)
       if(res.getSuccess() != Success.COMPLETE)
         return false;
     return true;
   }
-  
+
   public abstract ElementResult evaluate(SearchContext context);
-  
-  public String getDescription() {
-    return text;
-  }
-  
-  public int getId() {
-    return key.taskId;
+
+  public List<Attribute> getAttributes() {
+    return SPLITTER.splitToList(attributes).stream().map(Attribute::fromString).collect(Collectors.toList());
   }
 
   protected List<AttributeResult> evaluateAllAttributeResults(WebElement foundElement) {
@@ -75,14 +67,7 @@ public abstract class Task extends Model {
   }
   
   protected List<AttributeResult> getAttributeResults() {
-    List<AttributeResult> attributesToFind = new LinkedList<>();
-    for(String attribute: attributes.split(MULTIPLE_ATTRIBUTES_SPLIT_CHARACTER)) {
-      if(!attribute.isEmpty() && attribute.contains(KEY_VALUE_CHARACTER)) {
-        String[] valueAndKey = attribute.split(KEY_VALUE_CHARACTER);
-        attributesToFind.add(new AttributeResult(valueAndKey[0], valueAndKey[1]));
-      }
-    }
-    return attributesToFind;
+    return getAttributes().stream().map(AttributeResult::new).collect(Collectors.toList());
   }
-  
+
 }

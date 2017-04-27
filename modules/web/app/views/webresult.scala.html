@@ -2,18 +2,20 @@
 
 @for(res <- results) {
 <div class="panel panel-@res.getBSClass()">
-  <div class="panel-heading" data-toggle="collapse" href="#task@res.getTask().key.taskId">@{res.getTask().key.taskId}. @res.getTask().text</div>
-    <div id="task@{res.getTask().key.taskId}" class="panel-collapse collapse @if(res.getSuccess() != model.exercise.Success.COMPLETE) {in}">
-      <div class="panel-body">
-      
-      @if(res.getSuccess() == model.exercise.Success.COMPLETE || res.getSuccess() == model.exercise.Success.PARTIALLY) {
-        <div class="alert alert-success">Element wurde gefunden!</div>
-      } else {
+  <div class="panel-heading" data-toggle="collapse" href="#task@res.getTask().key.taskId">
+    @{res.getTask().key.taskId}. @res.getTask().text
+  </div>
+
+  <div id="task@{res.getTask().key.taskId}" class="panel-collapse collapse @if(res.getSuccess() != model.exercise.Success.COMPLETE) {in}">
+    <div class="panel-body">
+      @if(res.getSuccess() == model.exercise.Success.NONE) {
         <div class="alert alert-danger">
         @for(m <- res.getMessages()) {
           <div>@m</div>
-        }	
+        } 
         </div>
+      } else {
+        <div class="alert alert-success">Element wurde gefunden!</div>
       }
 
       @if(res.getTextContentResult() != null) {
