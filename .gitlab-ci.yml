@@ -4,5 +4,4 @@ stages:
 test:
     stage: test
     script:
-    - touch ~/test.txt
-    - pwd
+    - ./activator test
