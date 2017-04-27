@@ -34,19 +34,6 @@ public class AttributeResult extends EvaluationResult {
       success = Success.PARTIALLY;
   }
 
-  public String getAsHtml() {
-    // FIXME: implement feedbackLevel!
-    String ret = "<div class=\"alert alert-" + getBSClass() + "\">Attribut \"" + attribute.key + "\"";
-    if(success == Success.COMPLETE)
-      ret += " hat den gesuchten Wert.";
-    else if(success == Success.PARTIALLY)
-      ret += " hat nicht den gesuchten Wert \"" + attribute.value + "\"!";
-    else if(success == Success.NONE)
-      ret += " konnte nicht gefunden werden!";
-    ret += DIV_END;
-    return ret;
-  }
-
   public String getKey() {
     return attribute.key;
   }
