@@ -1,0 +1,114 @@
+@(user: model.user.User, question: model.Question, isEdit: Boolean)
+
+@main("Auswahlfrage erstellen", user) {
+<script src="@controllers.routes.Assets.versioned("javascripts/choicequestions.js")"></script>
+  
+<script>
+  $(document).ready(function() {
+    onAnswerNumChange();
+  });
+</script>
+
+<div class="container">
+  <div class="page-header">
+  @if(isEdit) {<h1>Frage editieren</h1>} else {<h1>Neue Frage erstellen</h1>}
+  </div>
+  
+  <form class="form-horizontal" method="post" action="@controllers.choice.routes.QuestionController.editQuestion(question.id)">
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="title">Titel:</label>
+      <div class="col-sm-10">
+        <input class="form-control" id="title" name="title" required
+        @if(isEdit) {placeholder="Alter Titel: '@question.title'" value="@question.title"
+        } else {placeholder="Titel der Frage, z. B. 'Assoziationen in UML'"}>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="text">Text:</label>
+      <div class="col-sm-10">
+        <input class="form-control" id="text" name="text" required
+        @if(isEdit) {placeholder="Alter Text: '@question.text'" value="@question.text"
+        } else {placeholder="Text der Frage"}>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="author">Autor:</label>
+      <div class="col-sm-10">
+        <input class="form-control" id="author" name="author" readonly required value="@if(isEdit) {@question.author} else {@user.name}">
+      </div>
+    </div>
+  
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="type">Typ:</label>
+      <div class="col-sm-10">
+        @for(qType <- model.QuestionType.values()) {
+        <div class="radio">
+          <label for="@qType" title="@qType.getDescription()">
+            <input type="radio" name="type" id="@qType" value="@qType" required @if(isEdit && qType == question.questionType) {checked}>
+             @qType.getName
+          </label>
+        </div>
+        }
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="numOfAnswers">Anzahl Antworten:</label>
+      <div class="col-sm-10">
+        <input class="form-control" type="number" name="numOfAnswers" id="numOfAnswers"
+        onchange="onAnswerNumChange();" min="2" max="8" value="@if(isEdit) {@question.answers.size()} else {4}" required>
+      </div>
+    </div>
+
+    @* comment... *@
+    @for(answer <- question.answers) {
+    <div class="form-group">
+      <label class="control-label col-sm-2">@answer.key.id. Antwort:</label>
+      <div class="col-sm-10" id="answerDiv">
+        <div class="input-group">
+          <input hidden name="correctness_@answer.key.id" id="correctness_@answer.key.id" value="@answer.correctness">
+          <input class="form-control" name="@answer.key.id" id="@answer.key.id" placeholder="Alte Antwort: '@answer.text'" value="@answer.text">
+          <div class="input-group-btn">
+            @for(correctness <- model.Correctness.values()) {
+            <button type="button" onclick="changeCorrectness(@answer.key.id, '@correctness', this)" title="@correctness.getTitle()"
+            class="btn btn-@if(correctness == answer.correctness) {@correctness.getBSButtonColor()} else {default}">
+              <span class="@correctness.getBSGlyphicon()"></span>
+            </button>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+    
+    @* Fill up missing answers until 8 *@
+    @for(i <- question.answers.size() + 1 until 9) {
+    <div class="form-group">
+      <label class="control-label col-sm-2">@i. Antwort:</label>
+      <div class="col-sm-10" id="answerDiv">
+        <div class="input-group">
+          <input hidden name="correctness_@i" id="correctness_@i" value="WRONG">
+          <input class="form-control" name="@i" id="@i" placeholder="@{i}. Antwort">
+          <div class="input-group-btn">
+            @for(correctness <- model.Correctness.values()) {
+            <button type="button" onclick="changeCorrectness(@i, '@correctness', this)" title="@correctness.getTitle()"
+            class="btn btn-@if(correctness == model.Correctness.WRONG) {danger} else {default}">
+              <span class="@correctness.getBSGlyphicon()"></span>
+            </button>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+
+    <div class="form-group"> 
+      <div class="col-sm-offset-2 col-sm-10">
+        <button type="submit" class="btn btn-primary">Frage aktualisieren</button>
+      </div>
+    </div>
+  </form>
+</div>
+}

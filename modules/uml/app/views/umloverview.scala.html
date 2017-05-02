@@ -1,19 +1,41 @@
-@(exercises: List[model.UmlExercise], user: model.user.User)
+@(user: model.user.User, exercises: List[model.UmlExercise])
 
 @main("UML-Test", user) {
 <div class="container">
   <div class="page-header">
     <h1 class="page-title">&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h1>
   </div>
-  @for(exercise <- exercises) {
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <a href=" @controllers.uml.routes.UML.diff(exercise.id)">Aufgabe @exercise.id: @exercise.title</a>
-    </div>
-    <div class="panel-body">
-      <p>@exercise.text</p>
-    </div>
+  
+  <div class="alert alert-info alert-dismissable">
+    <a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    Neueinsteiger sollten die Variante mit Zwischenkorrektur verwenden, die die einzelnen Schritte der Erstellung eines Klassendiagrammes nach und nach durcharbeitet.
   </div>
-  }
+  
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Titel</th>
+        <th/>
+        <th/>
+        <th>Bearbeitet</th>
+      </tr>
+    </thead>
+    <tbody>
+    @for(exercise <- exercises) {
+      <tr>
+        <td>@exercise.id</td>
+        <td>@exercise.title</td>
+        <td>
+          <a href="@controllers.uml.routes.UML.classSelection(exercise.id)" class="btn btn-primary btn-block">Mit Zwischenkorrektur</a>
+        </td>
+        <td>
+          <a href="@controllers.uml.routes.UML.diagramDrawing(exercise.id)" class="btn btn-default btn-block">Freies Erstellen</a>
+        </td>
+        <td>--</td>
+    }
+    </tbody>
+  </table>
+  
 </div>
 }

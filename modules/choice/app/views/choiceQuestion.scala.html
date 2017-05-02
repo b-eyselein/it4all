@@ -1,0 +1,33 @@
+@(user: model.user.User, question: model.Question)
+
+@isSingle = @{question.questionType == model.QuestionType.SINGLE}
+
+@main("Auswahlfragen", user) {
+<div class="container">
+  <div class="page-header">
+    <h1>@question.text</h1>
+  </div>
+  
+  <form class="form-horizontal" method="post" action="@controllers.choice.routes.QuestionController.correct(question.id)">
+    <div id="answerDiv">
+    @for(ans <- question.getAnswersForTemplate()) {
+      <div class="@question.questionType.getDivClass()">
+        <label for="@ans.key.id">
+        
+          <input type="@question.questionType.getInputType()" id="@ans.key.id"
+          @if(isSingle) {name="ans" value="@ans.key.id"} else {name="@ans.key.id"}
+          @if(isSingle) {required}>
+          @ans.text
+          </input>
+        
+        </label>
+      </div>
+    }
+    </div>
+    
+    <hr>
+
+    <input class="btn btn-block btn-primary" type="submit" value="Kontrollieren">
+  </form>
+</div>
+}

@@ -1,60 +1,40 @@
 package model.result;
 
-import org.openqa.selenium.WebElement;
-
+import model.Attribute;
 import model.exercise.FeedbackLevel;
 import model.exercise.Success;
-import model.result.EvaluationResult;
-import play.Logger;
 
 public class AttributeResult extends EvaluationResult {
+
+  private Attribute attribute;
   
-  private String key;
-  private String value;
-  
-  public AttributeResult(String attributeKey, String attributeValue) {
-    super(FeedbackLevel.MEDIUM_FEEDBACK, Success.NONE);
-    key = attributeKey;
-    value = attributeValue;
+  private String foundValue;
+
+  public AttributeResult(Attribute theAttribute, String theFoundValue) {
+    super(FeedbackLevel.MEDIUM_FEEDBACK, analyze(theFoundValue, theAttribute.value));
+    attribute = theAttribute;
+    foundValue = theFoundValue;
   }
-  
-  public void evaluate(WebElement element) {
-    String foundValue = null;
-    try {
-      foundValue = element.getAttribute(key);
-    } catch (NoSuchMethodError e) { // NOSONAR
-      // FIXME: Better solution! NoSuchMethodError if attribute not declared
-      Logger.info("Error while searching for attribute in model.html.result.AttributeResult"
-          + ", line 28: NoSuchMethodError...");
-    }
+
+  private static Success analyze(String foundValue, String awaitedValue) {
     if(foundValue == null)
-      success = Success.NONE;
-    else if(foundValue.contains(value))
-      success = Success.COMPLETE;
-    else
-      success = Success.PARTIALLY;
+      return Success.NONE;
+
+    if(!foundValue.contains(awaitedValue))
+      return Success.PARTIALLY;
+
+    return Success.COMPLETE;
   }
-  
-  @Override
-  public String getAsHtml() {
-    // FIXME: implement feedbackLevel!
-    String ret = "<div class=\"alert alert-" + getBSClass() + "\">Attribut \"" + key + "\"";
-    if(success == Success.COMPLETE)
-      ret += " hat den gesuchten Wert.";
-    else if(success == Success.PARTIALLY)
-      ret += " hat nicht den gesuchten Wert \"" + value + "\"!";
-    else if(success == Success.NONE)
-      ret += " konnte nicht gefunden werden!";
-    ret += DIV_END;
-    return ret;
+
+  public String getFoundValue() {
+    return foundValue;
   }
-  
+
   public String getKey() {
-    return key;
+    return attribute.key;
   }
-  
+
   public String getValue() {
-    return value;
+    return attribute.value;
   }
-  
 }

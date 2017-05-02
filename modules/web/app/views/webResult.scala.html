@@ -1,0 +1,43 @@
+@(results: List[model.result.ElementResult])
+
+
+@for(result <- results) {
+<div class="panel panel-@result.getBSClass()">
+  <div class="panel-heading" data-toggle="collapse" href="#task@result.getTask().key.taskId">
+    @{result.getTask().key.taskId}. @result.getTask().text
+  </div>
+
+  <div id="task@result.getTask().key.taskId" class="panel-collapse collapse @if(!result.isSuccessful()) {in}">
+    <div class="panel-body">
+    
+      @if(result.getSuccess() == model.exercise.Success.NONE) {
+        <div class="alert alert-danger">
+        @for(m <- result.getMessages()) {
+          <div>@m</div>
+        } 
+        </div>
+      } else {
+        <div class="alert alert-success">Element wurde gefunden!</div>
+      }
+
+      @if(result.getTextContentResult() != null) {
+        <div class="alert alert-@result.getTextContentResult().getBSClass()">
+        @if(result.getTextContentResult().getSuccess() == model.exercise.Success.COMPLETE) { hat den gesuchten Wert.}
+        @if(result.getTextContentResult().getSuccess() == model.exercise.Success.PARTIALLY) { hat nicht den gesuchten Wert
+         "@result.getTextContentResult().getAwaitedContent()" sondern "@result.getTextContentResult().getFoundContent()"!}
+        @if(result.getTextContentResult().getSuccess() == model.exercise.Success.NONE){ konnte nicht gefunden werden!}
+        </div>
+      }
+      
+      @for(attRes <- result.getAttributeResults()) {
+      	<div class="alert alert-@attRes.getBSClass()">Attribut "@attRes.getKey()"
+        @if(attRes.getSuccess() == model.exercise.Success.COMPLETE) { hat den gesuchten Wert.}
+        @if(attRes.getSuccess() == model.exercise.Success.PARTIALLY) { hat nicht den gesuchten Wert "@attRes.getValue()"
+        sondern "@attRes.getFoundValue()"!}
+        @if(attRes.getSuccess() == model.exercise.Success.NONE){ konnte nicht gefunden werden!}
+        </div>
+      }
+    </div>
+  </div>
+</div>
+}

@@ -4,79 +4,123 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.fge.jsonschema.core.report.ProcessingReport;
 
 import controllers.core.ExerciseController;
-import controllers.core.UserManagement;
+import model.JsonWrapper;
 import model.UmlExercise;
+import model.UmlSolution;
 import model.Util;
-import model.result.CompleteResult;
-import model.user.User;
+import model.result.ClassSelectionResult;
+import model.result.DiagramDrawingResult;
 import play.Logger;
-import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
-import play.mvc.Http.Request;
 import play.mvc.Result;
-import views.html.classselection;
-import views.html.diagramdrawing;
-import views.html.umloverview;
-import views.html.difficulty;
 
 public class UML extends ExerciseController {
+
+  private static final Path BASE_PATH = Paths.get("modules", "uml", "conf", "resources");
+  private static final Path SOLUTION_SCHEMA_PATH = Paths.get(BASE_PATH.toString(), "solutionSchema.json");
+
+  private static final String ERROR_MSG = "Es gab einen Fehler bei der Validierung des Resultats!";
+
+  static {
+    try {
+      SOLUTION_SCHEMA_NODE = Json.parse(String.join("\n", Files.readAllLines(SOLUTION_SCHEMA_PATH)));
+    } catch (IOException e) {
+      Logger.error("There has been an error parsing the schema files for UML:", e);
+    }
+  }
+
+  public static JsonNode SOLUTION_SCHEMA_NODE;
 
   @Inject
   public UML(Util theUtil, FormFactory theFactory) {
     super(theUtil, theFactory);
   }
-  
-  private static String getExerciseText() {
-    try {
-      Path file = Paths.get("modules/uml/conf/exerciseText.txt");
-      Logger.debug(file.toAbsolutePath().toString());
-      return String.join("\n", Files.readAllLines(file));
-      
-    } catch (IOException e) {
-      return "TODO!";
-    }
-  }
-  
-  public Result classSelection(int id) {
-    return ok(classselection.render(UserManagement.getCurrentUser()));
-  }
-  
-  public Result correct() {
-    // Correct classes...
-    DynamicForm form = factory.form().bindFromRequest();
-    String classes = form.get("fname");
-    JsonNode node = Json.parse(classes);
-    node.get("classes");
-    Logger.debug(Json.prettyPrint(node));
-    
-    return ok("HALLO!");
+
+  private static Optional<ProcessingReport> validateSolution(JsonNode sentJson, JsonNode schemaNode) {
+    return JsonWrapper.validateJson(sentJson, schemaNode);
   }
 
-  @Override
-  protected CompleteResult correct(Request request, User user, int id) {
-    // TODO Auto-generated method stub
-    return null;
+  public Result classSelection(int exerciseId) {
+    return ok(views.html.classSelection.render(getUser(), UmlExercise.finder.byId(exerciseId)));
   }
-  
-  public Result diagramDrawing(int id) {
-    return ok(diagramdrawing.render(UserManagement.getCurrentUser(), getExerciseText()));
+
+  public Result correctClassSelection(int exerciseId) {
+    try {
+      ClassSelectionResult result = new ClassSelectionResult(UmlExercise.finder.byId(exerciseId),
+          readSolutionFromForm());
+
+      return ok(views.html.classSelectionSolution.render(getUser(), result));
+    } catch (Exception e) {
+      return badRequest(e.getMessage());
+    }
   }
-  
-  public Result diff(int id) {
-    return ok(difficulty.render(UserManagement.getCurrentUser()));
+
+  public Result correctDiagramDrawing(int exerciseId) {
+    try {
+      DiagramDrawingResult result = new DiagramDrawingResult(UmlExercise.finder.byId(exerciseId),
+          readSolutionFromForm());
+
+      return ok(views.html.diagdrawingsol.render(getUser(), result));
+
+    } catch (Exception e) {
+      return badRequest(e.getMessage());
+    }
   }
-  
+
+  public Result correctDiagramDrawingWithHelp(int exerciseId) {
+    try {
+      DiagramDrawingResult result = new DiagramDrawingResult(UmlExercise.finder.byId(exerciseId),
+          readSolutionFromForm());
+
+      return ok(views.html.diagdrawinghelpsol.render(getUser(), result));
+    } catch (Exception e) {
+      return badRequest(e.getMessage());
+    }
+  }
+
+  public Result correctMatching(int exerciseId) {
+    return ok(views.html.matchingCorrection.render(getUser()));
+  }
+
+  public Result diagramDrawing(int exerciseId) {
+    return ok(views.html.diagdrawing.render(getUser(), UmlExercise.finder.byId(exerciseId), false));
+  }
+
+  public Result diagramDrawingWithHelp(int exerciseId) {
+    return ok(views.html.diagdrawing.render(getUser(), UmlExercise.finder.byId(exerciseId), true));
+  }
+
   public Result index() {
-    return ok(
-        umloverview.render(Arrays.asList(new UmlExercise(1), new UmlExercise(2)), UserManagement.getCurrentUser()));
+    return ok(views.html.umloverview.render(getUser(), UmlExercise.finder.all()));
+  }
+
+  public Result matching(int exerciseId) {
+    UmlExercise exercise = UmlExercise.finder.byId(exerciseId);
+    return ok(views.html.matching.render(getUser(), exercise, exercise.getSolution()));
+  }
+
+  // FIXME: Type of Exception!
+  private UmlSolution readSolutionFromForm() throws Exception {
+    JsonNode sentJson = Json.parse(factory.form().bindFromRequest().get(LEARNER_SOLUTION_VALUE));
+
+    Optional<ProcessingReport> report = validateSolution(sentJson, SOLUTION_SCHEMA_NODE);
+
+    if(!report.isPresent())
+      throw new Exception(ERROR_MSG);
+
+    if(!report.get().isSuccess())
+      throw new Exception(report.get().toString());
+
+    return Json.fromJson(sentJson, UmlSolution.class);
   }
 
 }

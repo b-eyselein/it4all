@@ -1,4 +1,4 @@
-@(typ: String, result: model.result.CompleteResult, user: model.user.User)
+@(typ: String, resultAsHtml: Html, learnerSolution: String, user: model.user.User)
 
 @main(typ, user) {
 <div class="container-fluid">
@@ -14,7 +14,7 @@
       <div class="panel panel-default">
         <div class="panel-heading">Ihre L&ouml;sung</div>
         <div class="panel-body">
-          <pre>@result.getLearnerSolution()</pre>
+          <pre>@learnerSolution</pre>
         </div>
       </div>
     </div>
@@ -22,7 +22,7 @@
     <div class="col-md-6">
       <div class="panel panel-default">
         <div class="panel-heading">Korrektur</div>
-        <div class="panel-body">@Html(result.getAsHtml())</div>
+        <div class="panel-body">@resultAsHtml</div>
       </div>
     </div>
 

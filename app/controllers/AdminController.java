@@ -5,32 +5,45 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import controllers.core.UserManagement;
-import model.AdminSecured;
+import javax.inject.Inject;
+
+import controllers.core.AbstractController;
+import model.Util;
 import model.feedback.Feedback;
 import model.feedback.Feedback.EvaluatedTool;
 import model.feedback.Mark;
 import model.feedback.YesNoMaybe;
-import play.mvc.Controller;
+import play.data.FormFactory;
 import play.mvc.Result;
-import play.mvc.Security;
-import views.html.admin;
-import views.html.evaluation.stats;
 
-@Security.Authenticated(AdminSecured.class)
-public class AdminController extends Controller {
-  
+public class AdminController extends AbstractController {
+
+  @Inject
+  public AdminController(Util theUtil, FormFactory theFactory) {
+    super(theUtil, theFactory);
+  }
+
   private static String renderMarks(String evaluated, Map<Mark, Long> marks) {
     return "<p>" + evaluated + ": " + marks.get(Mark.VERY_GOOD) + " Sehr gut, " + marks.get(Mark.GOOD) + " Gut, "
         + marks.get(Mark.NEUTRAL) + " Neutral, " + marks.get(Mark.BAD) + " Schlecht, " + marks.get(Mark.VERY_BAD)
         + " Sehr schlecht und " + marks.get(Mark.NO_MARK) + " Enthaltungen</p>";
   }
-  
+
   private static String renderYesNoMaybe(String evaluated, Map<YesNoMaybe, Long> marks) {
     return "<p>" + evaluated + ": " + marks.get(YesNoMaybe.YES) + " Ja, " + marks.get(YesNoMaybe.NO) + " Nein und "
         + marks.get(YesNoMaybe.MAYBE) + " Enthaltungen</p>";
   }
-  
+
+  public Result evaluation() {
+    String evaluation = evaluate(Feedback.finder.all());
+
+    return ok(views.html.evaluation.stats.render(getUser(), evaluation));
+  }
+
+  public Result index() {
+    return ok(views.html.admin.render(getUser()));
+  }
+
   private String evaluate(EvaluatedTool key, List<Feedback> feedbackForTool) {
     // TODO Auto-generated method stub
     StringBuilder builder = new StringBuilder();
@@ -71,7 +84,7 @@ public class AdminController extends Controller {
     builder.append("</div>");
     return builder.toString();
   }
-  
+
   private String evaluate(List<Feedback> all) {
     StringBuilder builder = new StringBuilder();
 
@@ -85,15 +98,5 @@ public class AdminController extends Controller {
 
     return builder.toString();
   }
-  
-  public Result evaluation() {
-    String evaluation = evaluate(Feedback.finder.all());
-    
-    return ok(stats.render(UserManagement.getCurrentUser(), evaluation));
-  }
-  
-  public Result index() {
-    return ok(admin.render(UserManagement.getCurrentUser()));
-  }
-  
+
 }

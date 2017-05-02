@@ -11,16 +11,16 @@ import play.Logger;
 /**
  * Tool to run database scripts
  */
-public class ScriptRunner {
-  
-  private static final Logger.ALogger theLogger = Logger.of("sql");
-  
+public final class ScriptRunner {
+
+  private static final Logger.ALogger THE_LOGGER = Logger.of("sql");
+
   private static final String DELIMITER = ";";
 
   private ScriptRunner() {
-    
+
   }
-  
+
   /**
    * Runs an SQL script (read in using the Reader parameter) using the
    * connection passed in
@@ -36,23 +36,23 @@ public class ScriptRunner {
    */
   public static void runScript(Connection connection, List<String> lines, boolean autoCommit, boolean stopOnError)
       throws SQLException {
-    
+
     connection.setAutoCommit(autoCommit);
-    
-    StringBuffer command = new StringBuffer();
+
+    StringBuilder command = new StringBuilder();
     try {
-      for(String line: lines) {
-        String trimmedLine = line.trim();
-        
-        if(trimmedLine.length() < 1 || trimmedLine.startsWith("//") || trimmedLine.startsWith("--"))
+      for(final String line: lines) {
+        final String trimmedLine = line.trim();
+
+        if(isEmptyOrCommentLine(trimmedLine))
           // Comment or empty line - do nothing
           continue;
-      
+
         if(trimmedLine.endsWith(DELIMITER) || trimmedLine.equals(DELIMITER)) {
           // Statement ends, execute
           command.append(line.substring(0, line.lastIndexOf(DELIMITER)) + " ");
           Statement statement = connection.createStatement();
-          
+
           if(stopOnError) {
             statement.execute(command.toString());
           } else {
@@ -60,15 +60,15 @@ public class ScriptRunner {
               statement.execute(command.toString());
             } catch (SQLException e) {
               e.fillInStackTrace();
-              theLogger.error("Error executing: " + command, e);
+              THE_LOGGER.error("Error executing: " + command, e);
             }
           }
-          
+
           if(autoCommit && !connection.getAutoCommit()) {
             connection.commit();
           }
-          
-          command = new StringBuffer();
+
+          command = new StringBuilder();
           statement.close();
           Thread.yield();
 
@@ -81,10 +81,14 @@ public class ScriptRunner {
       }
     } catch (SQLException e) {
       e.fillInStackTrace();
-      theLogger.error("Error executing: " + command, e);
+      THE_LOGGER.error("Error executing: " + command, e);
     } finally {
       connection.rollback();
     }
   }
-  
+
+  private static boolean isEmptyOrCommentLine(final String trimmedLine) {
+    return trimmedLine.isEmpty() || trimmedLine.startsWith("//") || trimmedLine.startsWith("--");
+  }
+
 }

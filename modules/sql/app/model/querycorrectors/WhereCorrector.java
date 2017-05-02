@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import model.matcher.BinaryExpressionMatcher;
-import model.result.EvaluationResult;
+import model.matching.MatchingResult;
 import net.sf.jsqlparser.expression.AllComparisonExpression;
 import net.sf.jsqlparser.expression.AnalyticExpression;
 import net.sf.jsqlparser.expression.AnyComparisonExpression;
@@ -70,24 +70,19 @@ import net.sf.jsqlparser.statement.select.SubSelect;
 
 public class WhereCorrector implements ExpressionVisitor {
   
-  private static BinaryExpressionMatcher binExMatcher = new BinaryExpressionMatcher();
+  private static final BinaryExpressionMatcher BIN_EX_MATCHER = new BinaryExpressionMatcher();
   
   private boolean userQueryAnalyzed = false;
   private List<BinaryExpression> userExpressions = new LinkedList<>();
   
   private List<BinaryExpression> sampleExpressions = new LinkedList<>();
   
-  public EvaluationResult correct(Expression userExpression, Expression sampleExpression) {
+  public MatchingResult<BinaryExpression> correct(Expression userExpression, Expression sampleExpression) {
     sampleExpression.accept(this);
     userQueryAnalyzed = true;
     userExpression.accept(this);
     
-    return binExMatcher.match(userExpressions, sampleExpressions);
-  }
-  
-  @Override
-  public void visit(DateTimeLiteralExpression dateTimeExpression) {
-    // Ignore this type of expression
+    return BIN_EX_MATCHER.match(userExpressions, sampleExpressions);
   }
   
   @Override
@@ -162,6 +157,11 @@ public class WhereCorrector implements ExpressionVisitor {
   
   @Override
   public void visit(Concat concat) {
+    // Ignore this type of expression
+  }
+  
+  @Override
+  public void visit(DateTimeLiteralExpression dateTimeExpression) {
     // Ignore this type of expression
   }
   
@@ -387,6 +387,11 @@ public class WhereCorrector implements ExpressionVisitor {
   }
   
   @Override
+  public void visit(TimeKeyExpression timeKeyExpression) {
+    // Ignore this type of expression
+  }
+  
+  @Override
   public void visit(TimestampValue timestampValue) {
     // Ignore this type of expression
   }
@@ -408,11 +413,6 @@ public class WhereCorrector implements ExpressionVisitor {
   
   @Override
   public void visit(WithinGroupExpression wgexpr) {
-    // Ignore this type of expression
-  }
-  
-  @Override
-  public void visit(TimeKeyExpression timeKeyExpression) {
     // Ignore this type of expression
   }
   

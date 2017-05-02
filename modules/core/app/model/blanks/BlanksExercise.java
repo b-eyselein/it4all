@@ -40,10 +40,4 @@ public class BlanksExercise extends Exercise {
     return new Html(objects.stream().map(BlankObject::render).collect(Collectors.joining("\n")));
   }
 
-  @Override
-  public String renderData() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
 }

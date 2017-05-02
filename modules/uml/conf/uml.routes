@@ -1,8 +1,33 @@
-GET    /                     controllers.uml.UML.index()
+GET    /                                   controllers.uml.UML.index()
 
-PUT    /correct              controllers.uml.UML.correct()
-POST   /correct              controllers.uml.UML.correct()
+# Administrator
+GET    /admin                              controllers.uml.UmlAdmin.index()
 
-GET    /classselection/:id   controllers.uml.UML.classSelection(id: Int)
-GET    /diagramdrawing/:id   controllers.uml.UML.diagramDrawing(id: Int)
-GET    /difficulty/:id       controllers.uml.UML.diff(id: Int)
+# creation of exercises
+GET    /upload                             controllers.uml.UmlAdmin.uploadForm()
+POST   /upload                             controllers.uml.UmlAdmin.uploadFile()
+
+GET    /create                             controllers.uml.UmlAdmin.readStandardExercises()
+
+GET    /newExercise/form                   controllers.uml.UmlAdmin.newExerciseStep1()
+POST   /newExercise/text                   controllers.uml.UmlAdmin.newExerciseStep2()
+POST   /newExercise/solution               controllers.uml.UmlAdmin.newExerciseStep3()
+POST   /newExercise                        controllers.uml.UmlAdmin.newExercise()
+
+PUT    /newExercise/checkSolution          controllers.uml.UmlAdmin.checkSolution()
+
+# Step 1: selection of classes
+GET    /:exId/classSelection               controllers.uml.UML.classSelection(exId: Int)
+POST   /:exId/correct/classselection       controllers.uml.UML.correctClassSelection(exId: Int)
+
+# Step 2: finalization of diagram
+GET    /:exId/diagramDrawinghelp           controllers.uml.UML.diagramDrawingWithHelp(exId: Int)
+POST   /:exId/correct/diagramDrawingHelp   controllers.uml.UML.correctDiagramDrawingWithHelp(exId: Int)
+
+# Complete drawing of diagram without any help
+GET    /:exId/diagramDrawing               controllers.uml.UML.diagramDrawing(exId: Int)
+POST   /:exId/correct/diagramDrawing       controllers.uml.UML.correctDiagramDrawing(exId: Int)
+
+# Test Matching of attrs and methods
+GET    /:exId/matching                     controllers.uml.UML.matching(exId: Int)
+POST   /:exId/correct/matching             controllers.uml.UML.correctMatching(exId: Int)

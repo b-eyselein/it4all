@@ -12,11 +12,11 @@ import org.openqa.selenium.SearchContext;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import model.result.ConditionResult;
-import model.result.EvaluationResult;
-import model.result.JsWebTestResult;
+import model.result.JsWebResult;
+import model.result.JsWebResultBuilder;
 
 @Entity
-public class JsWebTask extends Task {
+public class JsWebTask extends Task<JsWebResult> {
 
   public static final Finder<TaskKey, JsWebTask> finder = new Finder<>(JsWebTask.class);
 
@@ -36,13 +36,14 @@ public class JsWebTask extends Task {
   }
 
   @Override
-  public EvaluationResult evaluate(SearchContext context) {
-    List<ConditionResult> preconditionsSatisfied = evaluateConditions(context, getPreconditions());
-    boolean actionPerformed = action == null || action.perform(context);
-    List<ConditionResult> postconditionSatisfied = evaluateConditions(context, getPostConditions());
-
-    return new JsWebTestResult(this, preconditionsSatisfied, actionPerformed, postconditionSatisfied);
-
+  public JsWebResult evaluate(SearchContext context) {
+    // @formatter:off
+    return new JsWebResultBuilder(this)
+        .withPreResults(evaluateConditions(context, getPreconditions()))
+        .withActionPerformed(action == null || action.perform(context))
+        .withPostResults(evaluateConditions(context, getPostConditions()))
+        .build();
+    // @formatter:on
   }
 
   private List<Condition> getPostConditions() {

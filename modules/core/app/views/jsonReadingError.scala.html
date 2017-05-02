@@ -1,0 +1,29 @@
+@(user: model.user.User, readingError: model.exercisereading.ReadingError[_ <: model.exercise.Exercise])
+
+@main("Fehler beim Einlesen", user) {
+<div class="container-fluid">
+  <div class="page-header">
+    <h1>Fehler beim Einlesen einer JSON-Datei</h1>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">Eingelesenes Dokument</div>
+        <div class="panel-body">
+          <pre class="pre-scrollable">@readingError.getJson()</pre>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">Fehler</div>
+        <div class="panel-body">
+        @for(cause <- readingError.getCauses()) {
+          <pre>@cause</pre>
+        }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+}

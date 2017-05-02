@@ -1,15 +1,18 @@
 package model.exercise;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
 import com.avaje.ebean.Model;
+import com.google.common.base.Splitter;
 
 @MappedSuperclass
 public abstract class Exercise extends Model {
-
-  protected static final String DIV_END = "</div>";
+  
+  protected static Splitter splitter = Splitter.fixedLength(100).omitEmptyStrings();
   
   @Id
   public int id;
@@ -23,6 +26,8 @@ public abstract class Exercise extends Model {
     id = theId;
   }
 
-  public abstract String renderData();
-
+  public List<String> getText() {
+    return splitter.splitToList(text);
+  }
+  
 }

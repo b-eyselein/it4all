@@ -10,23 +10,18 @@ import org.openqa.selenium.WebElement;
 
 @Embeddable
 public class Action {
-  
+
   public enum ActionType {
     CLICK, FILLOUT;
   }
-  
+
   @Enumerated(EnumType.STRING)
   public ActionType actiontype;
-  
+
   public String actionXpathQuery; // NOSONAR
 
   public String keysToSend; // NOSONAR
-  
-  public String getDescription() {
-    // FIXME: implement getDescription() for Action
-    return "TODO!";
-  }
-  
+
   public boolean perform(SearchContext context) {
     switch(actiontype) {
     case CLICK:
@@ -37,28 +32,28 @@ public class Action {
       return false;
     }
   }
-  
+
   private boolean performClickAction(SearchContext context) {
     WebElement element = context.findElement(By.xpath(actionXpathQuery));
     if(element == null)
       return false;
-    
+
     element.click();
-    
+
     return true;
   }
-  
+
   private boolean performFilloutAction(SearchContext context) {
     WebElement element = context.findElement(By.xpath(actionXpathQuery));
     if(element == null)
       return false;
-    
+
     element.sendKeys(keysToSend);
-    
+
     // click on other element to fire the onchange event...
     context.findElement(By.xpath("//body")).click();
-    
+
     return true;
   }
-  
+
 }

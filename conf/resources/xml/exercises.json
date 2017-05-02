@@ -3,40 +3,57 @@
 		"id": 1, 
 		"title": "Party", 
 		"exerciseType": "XML_DTD", 
-		"fixedStart": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE party SYSTEM \"party.dtd\">", 
-		"referenceFileName": "party", 
-		"exerciseText": "Erstellen Sie zu dieser Document Type Definition ein passendes XML-Dokument."
+		"fixedStart": [
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>", 
+			"<!DOCTYPE party [", 
+			"  <!ELEMENT party (gast+)>", 
+			"  <!ATTLIST party datum CDATA #REQUIRED>", 
+			"  <!ELEMENT gast (getraenk+, zustand?)>", 
+			"  <!ATTLIST gast name CDATA #REQUIRED>", 
+			"  <!ELEMENT getraenk (#PCDATA)>", 
+			"  <!ELEMENT zustand EMPTY>", 
+			"  <!ATTLIST zustand ledig CDATA #REQUIRED", 
+			"                    nuechtern CDATA #REQUIRED>", 
+			"]>"
+		], 
+		"text": "Erstellen Sie zu dieser Document Type Definition ein passendes XML-Dokument."
 	}, 
 	{
 		"id": 2, 
 		"title": "Vorlesung", 
 		"exerciseType": "XML_DTD", 
-		"fixedStart": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE lecture SYSTEM \"lecture.dtd\">", 
-		"referenceFileName": "lecture", 
-		"exerciseText": "Erstellen Sie zu dieser DTD ein passendes XML-Dokument."
+		"fixedStart": [
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>", 
+			"<!DOCTYPE lecture SYSTEM \"lecture.dtd\">"
+		], 
+		"text": "Erstellen Sie zu dieser DTD ein passendes XML-Dokument."
 	}, 
 	{
 		"id": 3, 
 		"title": "Frühstück", 
 		"exerciseType": "DTD_XML", 
-		"fixedStart": "", 
-		"referenceFileName": "breakfast", 
-		"exerciseText": "Erstellen Sie für dieses Dokument eine passende Document Type Definition."
+		"fixedStart": [
+			
+		], 
+		"text": "Erstellen Sie für dieses Dokument eine passende Document Type Definition."
 	}, 
 	{
 		"id": 4, 
 		"title": "Krankenhaus", 
 		"exerciseType": "XML_DTD", 
-		"fixedStart": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE krankenhaus SYSTEM \"hospital.dtd\">", 
-		"referenceFileName": "hospital", 
-		"exerciseText": "Erstellen Sie zu dieser DTD ein passendes XML-Dokument."
+		"fixedStart": [
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>", 
+			"<!DOCTYPE krankenhaus SYSTEM \"hospital.dtd\">"
+		], 
+		"text": "Erstellen Sie zu dieser DTD ein passendes XML-Dokument."
 	}, 
 	{
 		"id": 5, 
 		"title": "Bibliothek", 
 		"exerciseType": "DTD_XML", 
-		"fixedStart": "", 
-		"referenceFileName": "bibliothek", 
-		"exerciseText": "Erstellen Sie für dieses Dokument eine passende Document Type Definition."
+		"fixedStart": [
+			
+		], 
+		"text": "Erstellen Sie für dieses Dokument eine passende Document Type Definition."
 	}
 ]

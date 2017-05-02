@@ -5,33 +5,53 @@
 		"type": "object", 
 		"properties": {
 			"id": {
-				"type": "integer", 
-				"minimum": 1
+				"type": "integer"
 			}, 
 			"title": {
 				"type": "string"
 			}, 
 			"text": {
-				"type": "string"
+				"type": "array", 
+				"items": {
+					"type": "string"
+				}
 			}, 
 			"htmlText": {
-				"type": "string"
-			}, 
-			"cssText": {
-				"type": "string"
+				"type": "array", 
+				"items": {
+					"type": "string"
+				}
 			}, 
 			"jsText": {
-				"type": "string"
+				"type": "array", 
+				"items": {
+					"type": "string"
+				}
 			}, 
 			"htmlTasks": {
 				"type": "array", 
 				"items": {
 					"type": "object", 
 					"properties": {
+						"key": {
+							"type": "object", 
+							"properties": {
+								"taskId": {
+									"type": "integer"
+								}, 
+								"exerciseId": {
+									"type": "integer"
+								}
+							}, 
+							"required": [
+								"taskId", 
+								"exerciseId"
+							]
+						}, 
 						"text": {
 							"type": "string"
 						}, 
-						"xpath": {
+						"xpathQuery": {
 							"type": "string"
 						}, 
 						"attributes": {
@@ -48,45 +68,19 @@
 								}
 							}
 						}, 
-						"content": {
-							"type": "string"
+						"textContent": {
+							"type": [
+								"string", 
+								"null"
+							]
 						}
 					}, 
 					"required": [
+						"key", 
 						"text", 
-						"xpath"
-					]
-				}
-			}, 
-			"cssTasks": {
-				"type": "array", 
-				"items": {
-					"type": "object", 
-					"properties": {
-						"text": {
-							"type": "string"
-						}, 
-						"xpath": {
-							"type": "string"
-						}, 
-						"attributes": {
-							"type": "array", 
-							"items": {
-								"type": "object", 
-								"properties": {
-									"key": {
-										"type": "string"
-									}, 
-									"value": {
-										"type": "string"
-									}
-								}
-							}
-						}
-					}, 
-					"required": [
-						"text", 
-						"xpath"
+						"xpathQuery", 
+						"attributes", 
+						"textContent"
 					]
 				}
 			}, 
@@ -95,10 +89,25 @@
 				"items": {
 					"type": "object", 
 					"properties": {
+						"key": {
+							"type": "object", 
+							"properties": {
+								"taskId": {
+									"type": "integer"
+								}, 
+								"exerciseId": {
+									"type": "integer"
+								}
+							}, 
+							"required": [
+								"taskId", 
+								"exerciseId"
+							]
+						}, 
 						"text": {
 							"type": "string"
 						}, 
-						"xpath": {
+						"xpathQuery": {
 							"type": "string"
 						}, 
 						"conditions": {
@@ -106,10 +115,26 @@
 							"items": {
 								"type": "object", 
 								"properties": {
-									"id": {
-										"type": "integer"
+									"key": {
+										"type": "object", 
+										"properties": {
+											"exerciseId": {
+												"type": "integer"
+											}, 
+											"taskId": {
+												"type": "integer"
+											}, 
+											"conditionId": {
+												"type": "integer"
+											}
+										}, 
+										"required": [
+											"exerciseId", 
+											"taskId", 
+											"conditionId"
+										]
 									}, 
-									"xpath": {
+									"xpathQuery": {
 										"type": "string"
 									}, 
 									"awaitedValue": {
@@ -120,8 +145,8 @@
 									}
 								}, 
 								"required": [
-									"id", 
-									"xpath", 
+									"key", 
+									"xpathQuery", 
 									"awaitedValue", 
 									"isPrecondition"
 								]
@@ -130,7 +155,7 @@
 						"action": {
 							"type": "object", 
 							"properties": {
-								"actionxpath": {
+								"actionXpathQuery": {
 									"type": "string"
 								}, 
 								"actiontype": {
@@ -144,14 +169,15 @@
 								}
 							}, 
 							"required": [
-								"actionxpath", 
+								"actionXpathQuery", 
 								"actiontype"
 							]
 						}
 					}, 
 					"required": [
+						"key", 
 						"text", 
-						"xpath", 
+						"xpathQuery", 
 						"conditions", 
 						"action"
 					]
@@ -162,7 +188,10 @@
 			"id", 
 			"title", 
 			"text", 
-			"htmlTasks"
+			"htmlText", 
+			"jsText", 
+			"htmlTasks", 
+			"jsTasks"
 		]
 	}, 
 	"minItems": 1, 

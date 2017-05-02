@@ -1,0 +1,104 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"type": "object",
+	"properties": {
+		"classes": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"classType": {
+						"enum": [
+							"CLASS",
+							"ABSTRACT",
+							"INTERFACE"
+						]
+					},
+					"name": {
+						"type": "string"
+					},
+					"methods": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
+					"attributes": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					}
+				}
+			},
+			"required": [
+				"name",
+				"methods",
+				"attributes"
+			]
+		},
+		"associations": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"assocType": {
+						"enum": [
+							"AGGREGATION",
+							"ASSOCIATION",
+							"COMPOSITION"
+						]
+					},
+					"ends": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"endName": {
+									"type": "string"
+								},
+								"multiplicity": {
+									"enum": [
+										"SINGLE",
+										"UNBOUND"
+									]
+								}
+							},
+							"required": [
+								"endName",
+								"multiplicity"
+							]
+						}
+					}
+				},
+				"required": [
+					"assocType",
+					"ends"
+				]
+			}
+		},
+		"implementations": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"subClass": {
+						"type": "string"
+					},
+					"superClass": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"subClass",
+					"superClass"
+				]
+			}
+		}
+	},
+	"required": [
+		"classes",
+		"associations",
+		"implementations"
+	]
+}

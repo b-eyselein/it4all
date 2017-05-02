@@ -1,0 +1,101 @@
+@(user: model.user.User, exercise: model.exercise.SqlExercise, tables: List[model.SqlQueryResult])
+
+@main("SQL", user) {
+<script src="@controllers.routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
+
+<div class="container-fluid">
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      Datenbankschema &amp; Tabelleninhalte
+    </div>
+    <div class="panel-body">
+    
+      <div class="btn-group btn-group-justified">
+        <div class="btn-group">
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#databaseSchema">Datenbankschema</button>
+        </div>
+        @for(table <- tables) {
+        <div class="btn-group">
+          <button type="button" class="btn btn-default" data-toggle="modal" data-target="#@table.getTableName()">@table.getTableName()</button>
+        </div>
+        }
+      </div>
+    
+      <div id="databaseSchema" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Datenbankschema</h4>
+            </div>
+            <div class="modal-body">
+              <img class="img-rounded img-responsive center-block"
+              src="@routes.Assets.versioned("images/sql/" + exercise.scenario.shortName + ".png")" alt="Datenbankschema">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      @for(table <- tables) {
+      <div id="@table.getTableName()" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Tabelle: @table.getTableName()</h4>
+            </div>
+            <div class="modal-body">
+              @Html(table.toHtmlTable())
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      }
+      
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4">
+      <form action="@controllers.sql.routes.SQL.correct(exercise.id)" method="post" onsubmit="prepareFormForSubmitting();">
+        <div class="panel panel-default">
+          <div class="panel-heading">Aufgabe @exercise.id</div>
+          <div class="panel-body">
+            <p>@exercise.text</p>
+            @if(!exercise.hint.isEmpty()) {<p><i>Hinweis:</i> @exercise.hint</p>}
+            <div class="form-group"><label for="feedbackLevel">Gew&uuml;nschtes Feedback Level:</label>
+              <select name="feedbackLevel" id="feedbackLevel" class="form-control">
+              @for(feedbackLevel <- model.exercise.FeedbackLevel.values()) {
+              	<option value="@feedbackLevel" @if(feedbackLevel == model.exercise.FeedbackLevel.FULL_FEEDBACK) {selected}>
+                @feedbackLevel.getDescription()</option>
+              }
+              </select>
+            </div>
+          </div>
+          <div class="panel-footer">
+            <button type="button" class="btn btn-default btn-block"
+            onclick="testTheSolution('@controllers.sql.routes.SQL.correctLive(exercise.id)')">L&ouml;sung testen</button>
+            <a type="button" class="btn btn-default btn-block" href="@controllers.sql.routes.SQL.exercise(exercise.id + 1)">Nächste Aufgabe</a>
+          </div>
+        </div>
+      
+        @editor("SELECT name, description\n  FROM Position, Jobtitle;", "sql", 10 ,15, false)
+      </form>
+    </div>
+    <div class="col-md-8">
+      <div id="resultPanel" class="panel panel-default">
+        <div class="panel-heading">Ergebnisse</div>
+        <div id="correction" class="panel-body">Testen Sie ihre L&ouml;sung, um Ergebnisse zu erhalten.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+}

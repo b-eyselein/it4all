@@ -4,10 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import model.SqlCorrectionException;
-import model.correctionresult.ColumnComparison;
-import model.correctionresult.TableComparison;
-import model.exercise.FeedbackLevel;
-import model.result.EvaluationResult;
+import model.correctionresult.ComparisonTwoListsOfStrings;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
@@ -16,21 +13,23 @@ import net.sf.jsqlparser.statement.delete.Delete;
 public class DeleteCorrector extends ChangeCorrector<Delete, Delete> {
 
   @Override
-  protected ColumnComparison compareColumns(Delete userQuery, Delete sampleQuery) {
+  protected ComparisonTwoListsOfStrings compareColumns(Delete userQuery, Delete sampleQuery) {
     return null;
   }
   
   @Override
-  protected List<EvaluationResult> compareStatically(Delete userQuery, Delete sampleQuery,
-      FeedbackLevel feedbackLevel) {
+  protected ComparisonTwoListsOfStrings compareGroupByElements(Delete userQuery, Delete sampleQuery) {
+    return null;
+  }
 
-    TableComparison tableComparison = compareTables(userQuery, sampleQuery);
-
-    ColumnComparison columnComparison = compareColumns(userQuery, sampleQuery);
-
-    EvaluationResult whereComparison = compareWheres(userQuery, sampleQuery);
-
-    return Arrays.asList(tableComparison, columnComparison, whereComparison);
+  @Override
+  protected ComparisonTwoListsOfStrings compareOrderByElements(Delete userQuery, Delete sampleQuery) {
+    return null;
+  }
+  
+  @Override
+  protected Delete getPlainStatement(Delete statement) {
+    return statement;
   }
 
   @Override
@@ -47,9 +46,9 @@ public class DeleteCorrector extends ChangeCorrector<Delete, Delete> {
   protected Delete parseStatement(String statement) throws SqlCorrectionException {
     try {
       return (Delete) CCJSqlParserUtil.parse(statement);
-    } catch (JSQLParserException e) {
+    } catch (JSQLParserException e) { // NOSONAR
       throw new SqlCorrectionException("Es gab einen Fehler beim Parsen des folgenden Statements: " + statement);
-    } catch (ClassCastException e) {
+    } catch (ClassCastException e) { // NOSONAR
       throw new SqlCorrectionException("Das Statement war vom falschen Typ! Erwartet wurde DELETE!");
     }
   }

@@ -1,0 +1,198 @@
+@(user: model.user.User, exercise: model.UmlExercise, getsHelp: Boolean)
+
+@main("UML-Test", user) {
+<script src="@controllers.routes.Assets.versioned("javascripts/uml/lodash.js")"></script>
+<script src="@controllers.routes.Assets.versioned("javascripts/uml/backbone.js")"></script>
+<!-- IMPORTANT: load JQuery here again?!? -->
+<script src="@controllers.routes.Assets.versioned("javascripts/uml/jquery.js")"></script>
+<script src="@controllers.routes.Assets.versioned("javascripts/uml/joint.js")"></script>
+
+<link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/joint.css")">
+<link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/uml.css")">
+
+<script src="@controllers.routes.Assets.versioned("javascripts/uml/diagramdrawing.js")"></script>
+
+<script>
+var defaultClasses = [@if(getsHelp) {@Html(exercise.getClassesForDiagDrawingHelp)}]
+
+var canDelete = @{!getsHelp};
+</script>
+
+<div class="container-fluid">
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="page-header">
+        <h1>@if(getsHelp) {Modellierung der Beziehungen} else {Freies Zeichnen}</h1>
+      </div>
+      
+      <div class="panel panel-default" id="text">
+        <div class="panel-heading">Aufgabentext</div>
+        <div class="panel-body">
+        @if(getsHelp) {
+          @exercise.text
+        } else {
+          @Html(exercise.getExTextForDiagDraw())
+        }
+        </div>
+      </div>
+      
+      <div class="panel-group">
+        <div class="panel panel-info">
+          <div class="panel-heading">
+            <a data-toggle="collapse" href="#hints">Bearbeitungshinweise
+            <span class="glyphicon glyphicon-chevron-down pull-right"></span></a>
+          </div>
+          <div id="hints" class="panel-collapse collapse in">
+            <div class="panel-body">
+            @if(getsHelp) {
+              <p>Vervollst&auml;ndigen Sie das vorliegende UML-Klassendiagramm weiter, indem Sie die Beziehungen zwischen den Klassen modellieren.</p>
+              <ul>
+                <li>W&auml;hlen Sie zuerst die Art der Beziehung durch das Aktivieren des jeweiligen Buttons aus.</li>
+                <li>Anschlie&szlig;end klicken Sie auf zuerst auf den Namen der Klasse und klicken dann auf die andere Klasse.</li>
+                <li>Im folgendem Popup-Fenster sollen Sie nun die Multiplizit&auml;ten zwischen den Klassen angeben.</li>
+                <li>Um bereits erstellte Beziehungen zu l&ouml;schen, hovern Sie mit der Maus &uuml;ber ihr und klicken auf das erscheinende rote Kreuz.</li>
+                <li>Nachdem Sie die Beziehungen, die Sie modellieren wollen, erstellt haben, k&ouml;nnen Sie die Ausgabe mittels Buttons verifizieren.</li>
+              </ul>
+            } else {
+              <p>Erstellen Sie ein UML-Klassendiagramm, indem Sie die Beziehungen zwischen den Klassen, inklusive Methoden und Attributen, modellieren.</p>
+              <ul>
+                <li>
+                  <b>Klassen erzeugen:</b> Mittels Drag-and-Drop können Sie Wörter aus dem Aufgabentext in die rechts liegende Zeichenfläche ziehen um Klassen zu erzeugen.
+                </li>
+                <li>
+                  <b>Klassen verschieben:</b> Mittels gedrückter Maustaste können Sie die jeweilige Klasse verschieben.
+                </li>
+                <li>
+                  <b>Klassen löschen:</b> Klicken Sie auf den Button "Klasse löschen" und anschließend auf die Klasse. Sämtliche Beziehungen werden ebenfalls entfernt.
+                </li>
+                <li>
+                  <b>Hinzufügen von Methoden / Attributen:</b> Klicken Sie auf den Button "Methode hinzufügen" bzw. "Attribut hinzufügen" und anschließend auf die Klasse. Mittels Pop-up können Sie den gewünschten Wert eintragen und mit "OK" bestätigen.
+                </li>
+                <li>
+                  <b>Entfernen von Methoden / Attributen:</b> Klicken Sie auf den Button "Methode entfernen" bzw. "Attribut entfernen" und anschließend auf die Klasse. Mittels Pop-up können Sie die Stelle angeben, welche entfernt werden soll.(Beispiel. Der Eintrag 2 löscht den zweiten Eintrag in der entsprechenden Aufzählung 
+                </li>
+                <li>
+                  <b>Beziehungen zwischen Klassen erstellen:</b> W&auml;hlen Sie zuerst die Art der Beziehung (z.B. Standard), durch das Aktivieren des jeweiligen Buttons aus.
+              Anschlie&szlig;end klicken Sie auf zuerst auf den Namen der Klasse und klicken dann auf die andere Klasse.
+              Im folgendem Popup-Fenster sollen Sie nun die Multiplizit&auml;ten zwischen den Klassen angeben.
+              Um bereits erstellte Beziehungen zu l&ouml;schen, hovern Sie mit der Maus &uuml;ber die Verbindung und klicken auf das erscheinende rote Kreuz.
+              Nachdem Sie alle Beziehungen modelliert haben, k&ouml;nnen Sie die Ausgabe mittels Buttons verifizieren.
+                </li>
+              </ul>
+            }
+              
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="panel panel-default">
+        <div class="panel-heading">DEBUG:</div>
+        <div class="panel-body">
+          <p>Gew&auml;hlte Zellen: <span id="idList">--</span></p>
+          <p>Gew&auml;hlter Knopf: <span id="selType">POINTER</span></p>
+        </div>
+      </div>
+      
+      <hr>
+      
+      <form method="post" onsubmit="return prepareFormForSubmitting();"
+      @if(getsHelp) {
+        action="@controllers.uml.routes.UML.correctDiagramDrawingWithHelp(exercise.id)"
+      } else {
+        action="@controllers.uml.routes.UML.correctDiagramDrawing(exercise.id)"
+      }>
+        <input type="hidden" value="" class="form-control" name="learnerSolution" id="learnerSolution" required>
+        <button class="btn btn-primary btn-block">Aufgabe verifizieren</button>
+      </form>
+      
+    </div>
+    
+    <div class="col-md-6" id="buttonsDiv">
+        
+      <div class="btn-group">
+        <button class="btn btn-primary" data-conntype="POINTER" onclick="selectButton(this);" title="Maus">
+          <span class="glyphicon glyphicon-screenshot"></span>
+        </button>
+      </div>
+      
+      <div class="btn-group">
+        <button class="btn btn-default" onclick="backwards();" disabled title="R&uuml;ckg&auml;ngig">
+          <span class="glyphicon glyphicon-arrow-left"></span>
+        </button>
+      </div>
+      
+      <div class="btn-group">
+        <button class="btn btn-default" onclick="forwards();" disabled title="Vorw&auml;rts">
+          <span class="glyphicon glyphicon-arrow-right"></span>
+        </button>
+      </div>
+    
+      <div class="btn-group">
+        <button class="btn btn-default" data-conntype="CLASS" onclick="selectButton(this);" id="classButton"
+        @if(getsHelp) {disabled title="Es wurden bereits alle Klassen erstellt!"}>
+          <span class="glyphicon glyphicon-menu-hamburger"></span> <span id="classType">Klasse</span>
+        </button>
+        <button class="btn btn-default" data-toggle="dropdown"
+        @if(getsHelp) {disabled title="Es wurden bereits alle Klassen erstellt!"}>
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+        @for(classType <- model.uml.UmlClassType.values()) {
+          <li>
+            <a data-conntype="@classType" onclick="selectClassType(this);">@classType.getName()</a>
+          </li>
+        }
+        </ul>
+      </div>
+      
+      <div class="btn-group">
+        <button class="btn btn-default"  data-conntype="IMPLEMENTATION" onclick="selectButton(this);">
+          <span class="glyphicon glyphicon-arrow-up"></span> Vererbung
+        </button>
+      </div>
+      
+      <div class="btn-group">
+        <button class="btn btn-default" data-conntype="ASSOCIATION" onclick="selectButton(this);" id="assocButton">
+          <span class="glyphicon glyphicon-resize-horizontal"></span> <span id="assocType">Assoziation</span>
+        </button>
+        <button class="btn btn-default" data-toggle="dropdown">
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+          <li>
+            <a data-conntype="ASSOCIATION" onclick="selectAssocType(this);">Assoziation</a>
+          </li>
+          <li class="divider"></li>
+          <li>
+            <a data-conntype="AGGREGATION" onclick="selectAssocType(this);">Aggregation</a>
+          </li>
+          <li class="divider"></li>
+          <li>
+            <a data-conntype="COMPOSITION" onclick="selectAssocType(this);">Komposition</a>
+          </li>
+        </ul>
+      </div>
+      
+      <div class="btn-group">
+        <a href="" id="a" class="btn btn-default" onclick="exportDiagram();">
+          <span class="glyphicon glyphicon-download"></span> Export
+        </a>
+      </div>
+      
+      <div class="btn-group">
+        <button class="btn btn-default" onclick="importDiagram();" disabled>
+          <span class="glyphicon glyphicon-upload"></span> Import
+        </button>
+      </div>
+      
+      <hr>
+
+      <div id="sizepaper">
+        <div ondrop="drop(event)" ondragover="allowDrop(event)" id="paper"></div>
+      </div>
+    </div>
+  </div>
+</div>
+}

@@ -6,33 +6,29 @@ import javax.persistence.Embeddable;
 
 @Embeddable
 public class JsConditionKey implements Serializable {
+  
+  private static final long serialVersionUID = -6543551468151L;
+  
+  public int exerciseId;
 
-  private static final long serialVersionUID = 1L;
+  public int taskId;
 
-  public int id; // NOSONAR
-
-  public int taskId; // NOSONAR
-
-  public int exerciseId; // NOSONAR
-
+  public int conditionId;
+  
   public JsConditionKey(int theId, int theTaskId, int theExerciseId) {
-    id = theId;
-    taskId = theTaskId;
     exerciseId = theExerciseId;
+    taskId = theTaskId;
+    conditionId = theId;
   }
-
+  
   @Override
-  public boolean equals(Object other) {
-    if(other == null || !(other instanceof JsConditionKey))
-      return false;
-
-    JsConditionKey otherKey = (JsConditionKey) other;
-    return otherKey.id == id && otherKey.taskId == taskId && otherKey.exerciseId == exerciseId;
+  public boolean equals(Object obj) {
+    return obj instanceof JsConditionKey && hashCode() == obj.hashCode();
   }
-
+  
   @Override
   public int hashCode() {
-    return 10_000 * exerciseId + 100 * taskId + id;
+    return 1_000_000 * exerciseId + 1_000 * taskId + conditionId;
   }
-
+  
 }

@@ -1,0 +1,26 @@
+@(result: model.correctionresult.SqlResult)
+
+<div class="row">
+  @for(listComp <- result.getListComparisons()) {
+  <!-- Columns, Tables, Order Bys, Group Bys-->
+  <div class="col-md-6">
+    <div class="panel panel-@listComp.getBSClass()">
+      <div class="panel-heading">Vergleich der @listComp.getName()</div>
+      <div class="panel-body">
+      @if(listComp.getSuccess() == model.exercise.Success.COMPLETE) {
+        <p><span class="glyphicon glyphicon-ok"></span> Es wurden die richtigen @listComp.getName() benutzt.</p>
+      } else {
+        @if(!listComp.getMissing().isEmpty()) {
+        <p>Es fehlen folgende @listComp.getName():
+          @Html(model.result.EvaluationResult.concatCodeElements(listComp.getMissing()))</p>
+        }
+        @if(!listComp.getWrong().isEmpty()) {
+        <p>Folgende @listComp.getName() wurden f&auml;lschlicherweise benutzt:
+          @Html(model.result.EvaluationResult.concatCodeElements(listComp.getWrong()))</p>
+        }
+      }
+      </div>
+    </div>
+  </div>
+  }
+</div>

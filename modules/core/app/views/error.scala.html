@@ -1,7 +1,7 @@
-@(user: model.user.User, notice: Html)
+@(user: model.user.User, notice: String)
 
 @main("HTML-Test", user) {
 <div class="container-fluid">
-  <div class="alert alert-danger">@notice</div>
+  <div class="alert alert-danger">@Html(notice)</div>
 </div>
 }

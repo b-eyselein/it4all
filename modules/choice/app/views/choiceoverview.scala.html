@@ -1,0 +1,26 @@
+@(user: model.user.User, quizzes: List[model.Quiz])
+
+<script src="@routes.Assets.versioned("javascripts/choicequestions.js")"></script>
+
+@main("Auswahlfragen", user) {
+<div class="container">
+  <div class="page-header">
+    <h1>Übersicht</h1>
+  </div>
+
+  @for(quiz <- quizzes) {
+  <a class="btn btn-default btn-block" href="@choice.routes.QuestionController.quiz(quiz.id)">Quiz @quiz.title</a>
+  }
+
+  <hr>
+  
+  <a class="btn btn-default btn-block" href="@choice.routes.QuestionController.questions()">Alle Fragen</a>
+  
+  <hr>
+  
+  <a class="btn btn-warning btn-block" href="@choice.routes.QuestionController.newQuestionForm()">
+  <span class="glyphicon glyphicon-new-window"></span> Neue Frage erstellen <sup><i>BETA!</i></sup>
+  </a>
+
+</div>
+}

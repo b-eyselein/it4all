@@ -1,0 +1,35 @@
+@(user: model.user.User)
+
+@main("UML: neue Aufgabe", user) {
+<div class="container">
+  <div class="page-header">
+    <h1>Erstellung einer neuen UML-Aufgabe</h1>
+  </div>
+  
+  <form class="form-horizontal" action="@uml.routes.UmlAdmin.newExerciseStep2()" method="post">
+  
+    <div class="form-group">
+      <label class="control-label col-sm-1" for="title">Titel:</label>
+      <div class="col-sm-11">
+        <input class="form-control" id="title" name="title" placeholder="Titel der Aufgabe" required>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label class="control-label col-sm-1" for="text">Text:</label>
+      <div class="col-sm-11"> 
+        <textarea class="form-control" rows="10" id="text" name="text" placeholder="Text der Aufgabe" required></textarea>
+      </div>
+    </div>
+    
+    <hr>
+    
+    <div class="form-group">
+      <div class="col-sm-12">
+        <button class="btn btn-primary btn-block">N&auml;chster Schritt: ...</button>
+      </div>
+    </div>
+  </form>
+  
+</div>
+}

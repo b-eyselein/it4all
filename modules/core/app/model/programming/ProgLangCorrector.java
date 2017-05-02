@@ -1,7 +1,6 @@
 package model.programming;
 
 import java.io.StringWriter;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -13,10 +12,6 @@ import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
 import model.exercise.Success;
-import model.result.CompleteResult;
-import model.result.EvaluationFailed;
-import model.result.EvaluationResult;
-import model.user.User;
 import play.Logger;
 
 public abstract class ProgLangCorrector<E extends ProgrammingExercise> {
@@ -32,8 +27,7 @@ public abstract class ProgLangCorrector<E extends ProgrammingExercise> {
     return gottenResult.equals(awaitedResult);
   }
 
-  public CompleteResult correct(E exercise, String learnerSolution, List<ITestData> userTestData,
-      User.SHOW_HIDE_AGGREGATE todo) {
+  public List<ExecutionResult> correct(E exercise, String learnerSolution, List<ITestData> userTestData) {
     ScriptEngine engine = MANAGER.getEngineByName(engineName);
 
     // TODO: Musteroutput mit gegebener Musterlösung berechnen statt angeben?
@@ -41,28 +35,17 @@ public abstract class ProgLangCorrector<E extends ProgrammingExercise> {
     // Evaluate leaner solution
     try {
       engine.eval(learnerSolution);
-    } catch (ScriptException e) { // NOSONAR
-      return new CompleteResult(learnerSolution,
-          Arrays.asList(new EvaluationFailed("Es gab einen Fehler beim Einlesen ihrer Lösung:",
-              "<pre>" + e.getLocalizedMessage() + "</pre>")),
-          todo);
+    } catch (ScriptException e) {
+      // return Arrays.asList(new EvaluationFailed("Es gab einen Fehler beim
+      // Einlesen ihrer Lösung:",
+      // "<pre>" + e.getLocalizedMessage() + "</pre>"));
     }
 
-    List<EvaluationResult> results = Stream.concat(exercise.getFunctionTests().stream(), userTestData.stream())
+    return Stream.concat(exercise.getFunctionTests().stream(), userTestData.stream())
         .map(test -> evaluate(exercise, test, engine)).collect(Collectors.toList());
-
-    return new CompleteResult(learnerSolution, results, todo);
   }
 
-  protected EvaluationResult evaluate(E exercise, ITestData testData, ScriptEngine engine) {
-    String toEvaluate = testData.buildToEvaluate(exercise.functionname);
-    IExecutionResult realResult = execute(toEvaluate, engine);
-
-    return validateResult(exercise, testData, toEvaluate, realResult.getResult(), testData.getOutput(),
-        "TODO: output...");
-  }
-
-  public IExecutionResult execute(String learnerSolution) {
+  public AExecutionResult execute(String learnerSolution) {
     ScriptEngine engine = MANAGER.getEngineByName(engineName);
 
     ScriptContext context = new SimpleScriptContext();
@@ -72,7 +55,7 @@ public abstract class ProgLangCorrector<E extends ProgrammingExercise> {
     return execute(learnerSolution, engine);
   }
 
-  private IExecutionResult execute(String learnerSolution, ScriptEngine engine) {
+  private AExecutionResult execute(String learnerSolution, ScriptEngine engine) {
     try {
       Object result = engine.eval(learnerSolution);
       // return new ExecutionResult(result,
@@ -82,11 +65,19 @@ public abstract class ProgLangCorrector<E extends ProgrammingExercise> {
     } catch (ScriptException e) {
       // Failure in script --> Return!
       Logger.debug("There has been an error in a script: " + e.getMessage(), e);
-      return new SyntaxError(e.getCause().toString());
+      return new SyntaxError(e.getCause().toString(), engine.getContext().getWriter().toString());
     }
   }
 
-  protected abstract EvaluationResult validateResult(E exercise, ITestData testData, String toEvaluate,
+  protected ExecutionResult evaluate(E exercise, ITestData testData, ScriptEngine engine) {
+    String toEvaluate = testData.buildToEvaluate(exercise.functionname);
+    AExecutionResult realResult = execute(toEvaluate, engine);
+
+    return validateResult(exercise, testData, toEvaluate, realResult.getResult(), testData.getOutput(),
+        "TODO: output...");
+  }
+
+  protected abstract ExecutionResult validateResult(E exercise, ITestData testData, String toEvaluate,
       Object realResult, Object awaitedResult, String output);
 
 }

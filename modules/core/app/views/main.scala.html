@@ -5,9 +5,10 @@
 
 <head>
 <title>it4all: @title</title>
-<!-- Bootstrap: CSS, JQuery und BS-JS -->
-<link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/bootstrap.css")">
+<!-- JQuery, Bootstrap (CSS und JS) -->
 <script src="@routes.Assets.versioned("javascripts/jquery.js")"></script>
+
+<link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/bootstrap.css")">
 <script src="@routes.Assets.versioned("javascripts/bootstrap.js")"></script>
 </head>
 
@@ -24,49 +25,69 @@
       </div>
       <div class="collapse navbar-collapse" id="myNavbar">
         <ul class="nav navbar-nav">
-          <li><a href="@controllers.web.routes.Web.index()">Web</a></li>
+          <li><a href="@web.routes.Web.index()">Web</a></li>
           
           <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Programmiersprachen <span class="caret"></span></a>
    		    <ul class="dropdown-menu">
-   		      <li><a href="@controllers.js.routes.JS.index">Javascript</a></li>
+   		      <li><a href="@js.routes.JS.index">Javascript</a></li>
             </ul>
           </li>
           
-          <li><a href="@controllers.sql.routes.SQL.index()">SQL</a></li>
+          <li><a href="@sql.routes.SQL.index()">SQL</a></li>
           
-          <li><a href="@controllers.xml.routes.XML.index()">XML</a></li>
+          <li><a href="@xml.routes.Xml.index()">XML</a></li>
+          
+          <li><a href="@uml.routes.UML.index()">UML<sup>BETA</sup></a></li>
+          
           
           <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Allgemeiner Teil <span class="caret"></span></a>
             <ul class="dropdown-menu">
-              <li><a href="@controllers.nary.routes.Nary.index()">Zahlensysteme</a></li>
-              <li><a href="@controllers.bool.routes.Bool.index()">Boolesche Algebra</a></li>
-              <li><a href="@controllers.spread.routes.Spread.index()">Tabellenkalkulation</a></li>
+              <li><a href="@nary.routes.Nary.index()">Zahlensysteme</a></li>
+              <li><a href="@bool.routes.Bool.index()">Boolesche Algebra</a></li>
+              <li><a href="@spread.routes.Spread.index()">Tabellenkalkulation</a></li>
             </ul>
           </li>
 
-          <!-- <li><a href="@controllers.mindmap.routes.Mindmap.index()">MindMap</a></li> -->
+          <!-- <li><a href="@mindmap.routes.Mindmap.index()">MindMap</a></li> -->
         </ul>
         <ul class="nav navbar-nav navbar-right">
         @if(user.role == model.user.Role.ADMIN) {
-          <li><a href="@controllers.routes.AdminController.index()"><span class="glyphicon glyphicon-cog"></span>
-              Administrator</a></li>
-          }
-          <li><a href="@controllers.routes.Evaluation.index()"><span class="glyphicon glyphicon-pencil"></span>
-              Evaluation</a></li>
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="">
+              <span class="glyphicon glyphicon-cog"></span> Administrator <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="@choice.routes.QuestionAdmin.index()">Auswahlfragen</a></li>
+              <li><a href="@uml.routes.UmlAdmin.index()">UML</a></li>
+              <li><a href="@xml.routes.XmlAdmin.index()">XML</a></li>
+              <li><a href="@web.routes.WebAdmin.index()">Web</a></li>
+              
+              <li class="divider"></li>
+              
+              <li><a href="@routes.AdminController.index()">Allgemein</a></li>
+            </ul>
+          </li>
+        }
+        
+          @*<li><a href="@routes.Evaluation.index()"><span class="glyphicon glyphicon-pencil"></span>
+              Evaluation</a></li>*@
               
           <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-user"></span>
               @user.name <span class="caret"></span></a>
             <ul class="dropdown-menu">
-              <li><a href="@controllers.routes.UserController.index()">Bewertungen</a></li>
-              <li><a href="@controllers.routes.UserController.preferences()">Präferenzen</a></li>
+              <li><a href="@routes.UserController.index()">Bewertungen</a></li>
+              <li><a href="@routes.UserController.preferences()">Präferenzen</a></li>
+              
+              <li class="divider"></li>
+                  
+              <li><a href="@core.routes.UserManagement.logout()"><span
+                  class="glyphicon glyphicon-log-out"></span> Logout</a></li>
           	</ul>
           </li>
           
-          <li><a href="@controllers.core.routes.UserManagement.logout()"><span
-              class="glyphicon glyphicon-log-out"></span> Logout</a></li>
         </ul>
       </div>
     </div>

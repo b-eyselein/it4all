@@ -36,7 +36,7 @@ public class JsExercise extends ProgrammingExercise {
   public JsExercise(int theId) {
     super(theId);
   }
-  
+
   @Override
   public List<ITestData> getFunctionTests() {
     return new ArrayList<>(functionTests);
@@ -55,42 +55,10 @@ public class JsExercise extends ProgrammingExercise {
   public String getTestdataValidationUrl() {
     return controllers.js.routes.JS.validateTestData(id).url();
   }
-  
+
   @Override
   public String getTestingUrl() {
-    return controllers.js.routes.JS.commit(id).url();
-  }
-
-  @Override
-  public String renderData() {
-    // TODO Auto-generated method stub
-    StringBuilder builder = new StringBuilder();
-    builder.append("<div class=\"col-md-6\">");
-    builder.append("<div class=\"panel panel-default\">");
-    builder.append("<div class=\"panel-heading\">Aufgabe " + id + ": " + title + DIV_END);
-    builder.append("<div class=\"panel-body\">");
-    builder.append("<p>Aufgabentext: " + text + "</p>");
-
-    // Declaration and sample solution
-    builder.append("<div class=\"row\">");
-    builder.append("<div class=\"col-md-6\"><p>Angabe: <pre>" + declaration + "</pre></p>" + DIV_END);
-    builder.append("<div class=\"col-md-6\"><p>Musterlösung: <pre>" + sampleSolution + "</pre></p>" + DIV_END);
-    builder.append(DIV_END);
-
-    // Inputs and Output, Tests
-    builder.append("<table class=\"table\">");
-    builder.append("<thead><tr><th>Id</th>"
-        + getInputTypes().stream().map(JsDataType::toString)
-            .collect(Collectors.joining("</th><th>Input: ", "<th>Input: ", "</th>"))
-        + "<th>Output: " + returntype + "</th></tr></thead><tbody>");
-    for(JsTestData test: functionTests)
-      builder.append("<tr><td>" + test.getId() + "</td>"
-          + test.getInput().stream().collect(Collectors.joining("</td><td>", "<td>", "</td>")) + "<td>"
-          + test.getOutput() + "</td></tr>");
-    builder.append("</tbody></table>");
-
-    builder.append(DIV_END + DIV_END + DIV_END);
-    return builder.toString();
+    return controllers.js.routes.JS.correctLive(id).url();
   }
 
 }

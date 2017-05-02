@@ -1,0 +1,76 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#", 
+	"id": "http://example.com/example.json", 
+	"type": "array", 
+	"items": {
+		"type": "object", 
+		"properties": {
+			"id": {
+				"type": "integer"
+			}, 
+			"title": {
+				"type": "string"
+			}, 
+			"text": {
+				"type": "string"
+			}, 
+			"author": {
+				"type": "string"
+			}, 
+			"maxPoints": {
+				"type": "integer"
+			}, 
+			"questionType": {
+				"enum": [
+					"MULTIPLE", 
+					"SINGLE", 
+					"FILLOUT_WITH_ORDER", 
+					"FILLOUT_WITHOUT_ORDER"
+				]
+			}, 
+			"answers": {
+				"type": "array", 
+				"items": {
+					"type": "object", 
+					"properties": {
+						"key": {
+							"type": "object", 
+							"properties": {
+								"id": {
+									"type": "integer"
+								}, 
+								"questionId": {
+									"type": "integer"
+								}
+							}
+						}, 
+						"text": {
+							"type": "string"
+						}, 
+						"correctness": {
+							"enum": [
+								"CORRECT", 
+								"OPTIONAL", 
+								"WRONG"
+							]
+						}
+					}, 
+					"required": [
+						"key", 
+						"text", 
+						"correctness"
+					]
+				}
+			}
+		}, 
+		"required": [
+			"id", 
+			"title", 
+			"text", 
+			"author", 
+			"maxPoints", 
+			"questionType", 
+			"answers"
+		]
+	}
+}

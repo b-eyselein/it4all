@@ -1,0 +1,59 @@
+@(user: model.user.User, exercise: model.UmlExercise)
+
+@main("UML", user) {
+<link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/uml.css")">
+<script src="@controllers.routes.Assets.versioned("javascripts/uml/uml.js")"></script>
+
+<div class="container">
+  <div class="page-header">
+    <h1>Auswahl der Klassen</h1>
+  </div>
+
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <a data-toggle="collapse" href="#hints">Bearbeitungshinweise
+      <span class="glyphicon glyphicon-chevron-down pull-right"></span></a>
+    </div>
+    <div id="hints" class="panel-collapse collapse in">
+      <div class="panel-body">
+        <ul>
+          <li>In diesem ersten Bearbeitungsschritt sollen Sie die zu modellierenden Klassen durch Anklicken im Aufgabentext auswählen.</li>
+          <li>Durch erneutes Anklicken können Sie eine Klasse wieder abw&auml;hlen.</li>
+          <li>Auf der rechten Seite wird ihnen eine Liste ihrer gew&auml;hlten Klassen angezeigt.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col-md-8">
+      <div class="panel panel-default">
+        <div class="panel-heading">Aufgabentext</div>
+        <div class="panel-body" id="exercisetext" unselectable="on" onselectstart="return false;" onmousedown="return false;">
+          @Html(exercise.getExTextForClassSel())
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">Gew&auml;hlte Klassen</div>
+        <div class="panel-body">
+          <ul id="classesList">
+            <li>--</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <hr>
+    
+  <form action="@controllers.uml.routes.UML.correctClassSelection(exercise.id)" method="post"
+    onsubmit="return prepareFormForSubmitting();">
+    <input type="hidden" class="form-control" name="learnerSolution" id="learnerSolution" required>
+    <button type="submit" class="btn btn-primary btn-block">Klassen verifizieren</button>
+  </form>
+  
+</div>
+}

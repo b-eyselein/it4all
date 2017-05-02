@@ -1,16 +1,19 @@
 # creation of exercises
-GET    /upload       controllers.xml.XmlAdmin.uploadForm()
-POST   /upload       controllers.xml.XmlAdmin.uploadFile()
-GET    /create       controllers.xml.XmlAdmin.readStandardExercises()
+GET    /upload        controllers.xml.XmlAdmin.uploadForm()
+POST   /upload        controllers.xml.XmlAdmin.uploadFile()
+GET    /create        controllers.xml.XmlAdmin.readStandardExercises()
 
-# Test blanks...
-GET    /blanks       controllers.xml.XML.testBlanks()
-PUT    /blanks/:id   controllers.xml.XML.correctBlanks(id: Int)
+GET    /admin         controllers.xml.XmlAdmin.index()
+
+GET    /exercises     controllers.xml.Xml.exercises()
+
+GET    /newExercise   controllers.xml.XmlAdmin.newExerciseForm()
+POST   /newExercise   controllers.xml.XmlAdmin.newExercise()
 
 # exercises
-GET    /index        controllers.xml.XML.index(filter: java.util.List[String] ?= java.util.Collections.emptyList())
+GET    /index         controllers.xml.Xml.index(filter: java.util.List[String] ?= java.util.Collections.emptyList())
 
-GET    /:id          controllers.xml.XML.exercise(id: Int)
+GET    /:id           controllers.xml.Xml.exercise(id: Int)
 
-PUT    /:id          controllers.xml.XML.commit(id: Int)
-POST   /:id          controllers.xml.XML.commit(id: Int)
+PUT    /:id           controllers.xml.Xml.correctLive(id: Int)
+POST   /:id           controllers.xml.Xml.commit(id: Int)

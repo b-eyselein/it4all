@@ -1,7 +1,7 @@
 package model.task;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.Entity;
 
@@ -9,61 +9,58 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
 
-import model.exercise.FeedbackLevel;
-import model.exercise.Success;
+import com.google.common.base.Splitter;
+
+import model.Attribute;
 import model.result.AttributeResult;
 import model.result.ElementResult;
-import model.result.EvaluationResult;
-import model.result.GenericEvaluationResult;
+import model.result.ElementResultBuilder;
+import model.result.TextContentResult;
 
 @Entity
-public class HtmlTask extends Task {
-
+public class HtmlTask extends Task<ElementResult> {
+  
+  private static final Splitter SPLITTER = Splitter.on(";").omitEmptyStrings();
+  
   public static final Finder<TaskKey, HtmlTask> finder = new Finder<>(HtmlTask.class);
-
-  public String textContent; // NOSONAR
-
+  
+  public String attributes;
+  
+  public String textContent;
+  
   public HtmlTask(TaskKey theKey) {
     super(theKey);
   }
-
-  private static Success evaluationCorrect(List<AttributeResult> attributeResults, EvaluationResult textResult) {
-    if(allResultsSuccessful(attributeResults) && (textResult == null || textResult.getSuccess() == Success.COMPLETE))
-      return Success.COMPLETE;
-    return Success.PARTIALLY;
-  }
-
+  
   @Override
-  public EvaluationResult evaluate(SearchContext searchContext) {
+  public ElementResult evaluate(SearchContext searchContext) {
     List<WebElement> foundElements = searchContext.findElements(By.xpath(xpathQuery));
 
     if(foundElements.isEmpty())
-      return new ElementResult(this, Success.NONE, Collections.emptyList(), null,
-          "Element konnte nicht gefunden werden!");
+      return new ElementResultBuilder(this).withMessage("Element konnte nicht gefunden werden!").build();
 
     if(foundElements.size() > 1)
-      return new ElementResult(this, Success.NONE, Collections.emptyList(), null,
-          "Element konnte nicht eindeutig identifiziert werden. Existiert das Element eventuell mehrfach?");
+      return new ElementResultBuilder(this)
+          .withMessage("Element konnte nicht eindeutig identifiziert werden. Existiert das Element eventuell mehrfach?")
+          .build();
 
-    // only one matching element left
     WebElement foundElement = foundElements.get(0);
 
-    // Check all attributes of element
-    List<AttributeResult> attributeResults = evaluateAllAttributeResults(foundElement);
-
-    // Check text content of element
-    EvaluationResult textResult = (textContent == null) ? null : checkTextContent(foundElement.getText());
-
-    return new ElementResult(this, evaluationCorrect(attributeResults, textResult), attributeResults, textResult);
+    // @formatter:off
+    return new ElementResultBuilder(this)
+        .withFoundElement(foundElement)
+        .withAttributeResults(evaluateAllAttributeResults(foundElement))
+        .withTextContentResult(textContent == null ? null : new TextContentResult(foundElement.getText(), textContent))
+        .build();
+    // @formatter:on
   }
-
-  private EvaluationResult checkTextContent(String foundText) {
-    // FIXME: GenericEvaluationResult renders a div with width...
-    boolean found = foundText.equals(textContent);
-    String messageText = "Textinhalt \"" + foundText + "\" stimmt" + (found ? " nicht" : "")
-        + " mit gewünschtem Inhalt \"" + textContent + "\" überein.";
-    return new GenericEvaluationResult(FeedbackLevel.MINIMAL_FEEDBACK, found ? Success.COMPLETE : Success.NONE,
-        messageText);
+  
+  public List<Attribute> getAttributes() {
+    return SPLITTER.splitToList(attributes).stream().map(Attribute::fromString).collect(Collectors.toList());
   }
-
+  
+  protected List<AttributeResult> evaluateAllAttributeResults(WebElement foundElement) {
+    return getAttributes().stream().map(attr -> attr.evaluate(foundElement)).collect(Collectors.toList());
+  }
+  
 }

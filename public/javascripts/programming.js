@@ -1,5 +1,5 @@
 function extractParameters() {
-  var parameters = "editorContent=" + encodeURIComponent(editor.getValue());
+  var parameters = LEARNER_SOLUTION_VALUE + "=" + encodeURIComponent(editor.getValue());
   var testData = getTestData();
   parameters += "&count=" + testData.length;
   parameters += "&inputs=" + testData[0].input.length;
@@ -103,10 +103,6 @@ function writeTestData(responseText) {
       row.className = "danger";
     }
   }
-}
-
-function processCorrection(jsonResponseText) {
-  document.getElementById("loesungsraum").innerHTML = JSON.parse(jsonResponseText).asHtml;
 }
 
 function updatePreview() {

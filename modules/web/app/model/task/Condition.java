@@ -14,6 +14,7 @@ import org.openqa.selenium.WebElement;
 
 import com.avaje.ebean.Model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import model.exercise.Success;
 import model.result.ConditionResult;
@@ -21,52 +22,55 @@ import model.result.ConditionResult;
 @Entity
 @Table(name = "conditions")
 public class Condition extends Model {
-
+  
   public static final Finder<JsConditionKey, Condition> finder = new Finder<>(Condition.class);
-
+  
   @EmbeddedId
   public JsConditionKey key;
-
-  @JsonBackReference
+  
   @ManyToOne(cascade = CascadeType.ALL)
+  @JsonBackReference
   @JoinColumns({@JoinColumn(name = "task_id", referencedColumnName = "task_id", insertable = false, updatable = false),
       @JoinColumn(name = "exercise_id", referencedColumnName = "exercise_id", insertable = false, updatable = false)})
   public JsWebTask task;
-
-  public String xpathquery; // NOSONAR
-
-  public String awaitedvalue; // NOSONAR
-
-  public boolean isPrecond; // NOSONAR
-
+  
+  public String xpathQuery;
+  
+  public boolean isPrecondition;
+  
+  public String awaitedValue;
+  
   public Condition(JsConditionKey theKey) {
     key = theKey;
   }
-
+  
+  @JsonIgnore
   public String getDescription() {
-    return "Element mit XPath \"" + xpathquery + "\" sollte den Inhalt \"" + awaitedvalue + "\" haben";
+    return "Element mit XPath \"" + xpathQuery + "\" sollte den Inhalt \"" + awaitedValue + "\" haben";
   }
-
+  
+  @JsonIgnore
   public boolean isPostcondition() {
-    return !isPrecond;
+    return !isPrecondition;
   }
-
+  
+  @JsonIgnore
   public boolean isPrecondition() {
-    return isPrecond;
+    return isPrecondition;
   }
-
+  
   public ConditionResult test(SearchContext context) {
-    WebElement element = context.findElement(By.xpath(xpathquery));
-
+    WebElement element = context.findElement(By.xpath(xpathQuery));
+    
     if(element == null)
-      return new ConditionResult(Success.NONE, this, "", isPrecond);
-
+      return new ConditionResult(Success.NONE, this, null, isPrecondition);
+    
     String gottenValue = element.getText();
-
+    
     Success success = Success.NONE;
-    if(gottenValue.equals(awaitedvalue))
+    if(gottenValue.equals(awaitedValue))
       success = Success.COMPLETE;
-
-    return new ConditionResult(success, this, gottenValue, isPrecond);
+    
+    return new ConditionResult(success, this, gottenValue, isPrecondition);
   }
 }

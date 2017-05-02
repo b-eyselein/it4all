@@ -1,0 +1,32 @@
+@(user: model.user.User, exercise: model.XmlExercise, referenceFile: String, oldSolution: String)
+
+@main("XML-Test", user) {
+<script src="@controllers.routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
+
+<div class="container">
+  <div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">Aufgabenstellung</div>
+      <div class="panel-body">@exercise.text</div>
+    </div>
+  
+    <div class="panel panel-default">
+      <div class="panel-heading">Bemerkungen</div>
+      <div id="correction" class="panel-body"></div>
+    </div>
+  </div>
+  
+  <div class="col-md-6">
+    @editor(oldSolution, "xml", 30, 50, false)
+  </div>
+  
+  <hr>
+  
+  <form action= @controllers.xml.routes.Xml.commit(exercise.id) method="post" onsubmit="prepareFormForSubmitting();">
+    <button type="button" class="btn btn-primary btn-block"
+      onclick="testTheSolution('@controllers.xml.routes.Xml.correctLive(exercise.id)');">L&ouml;sung testen</button>
+    <input type="submit" class="btn btn-success btn-block" value="L&ouml;sung abgeben">
+  </form>
+  
+</div>
+}

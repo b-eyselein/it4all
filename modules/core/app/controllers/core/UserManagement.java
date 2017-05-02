@@ -11,35 +11,24 @@ import model.Util;
 import model.user.User;
 import play.Environment;
 import play.Logger;
-import play.mvc.Controller;
-import play.mvc.Http;
+import play.data.FormFactory;
 import play.mvc.Result;
 import views.html.login;
 
-public class UserManagement extends Controller {
+public class UserManagement extends AbstractController {
 
-  public static final String SESSION_ID_FIELD = "id";
-
-  private Util util;
   private Environment env;
 
   @Inject
-  public UserManagement(Util theUtil, Environment theEnv) {
-    util = theUtil;
+  public UserManagement(Util theUtil, FormFactory theFactory, Environment theEnv) {
+    super(theUtil, theFactory);
     env = theEnv;
-  }
-
-  public static User getCurrentUser() {
-    Http.Session session = Http.Context.current().session();
-    if(session == null || session.get(SESSION_ID_FIELD) == null || session.get(SESSION_ID_FIELD).isEmpty())
-      throw new IllegalArgumentException("No user name was given!");
-    return User.finder.byId(session.get(SESSION_ID_FIELD));
   }
 
   public Result authenticate() {
     if(env.isProd())
       return redirect(controllers.core.routes.UserManagement.login());
-    
+
     Map<String, String[]> formValues = request().body().asFormUrlEncoded();
 
     String userName = formValues.get("name")[0];
@@ -65,7 +54,7 @@ public class UserManagement extends Controller {
   public Result fromWuecampus(String name) {
     if(name.isEmpty())
       return redirect(controllers.core.routes.UserManagement.login());
-    
+
     String passwort = "";
     User student = findOrCreateStudent(name, passwort);
     session().clear();

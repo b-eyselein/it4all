@@ -1,0 +1,55 @@
+@(user: model.user.User, result: model.result.ClassSelectionResult)
+
+@classResult = @{result.getClassResult()}
+
+@main("UML", user) {
+<div class="container">
+  <div class="page-header">
+    <h1>Zwischenkorrektur der Aufgabe &quot;@result.getExercise().title&quot;</h1>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">Klassen</div>
+    <div class="panel-body">
+      <div class="col-sm-4">
+        <h4 class="bg-success text-center">Korrekt</h4>
+        <ul>
+        @if(classResult.getCorrect().isEmpty()) {
+          <li>--</li>
+        } else {
+          @for(corrClass <- classResult.getCorrect()) {
+          <li>@corrClass.getFirstArg().getName()</li>
+          }
+        }
+        </ul>
+      </div>
+      <div class="col-sm-4">
+        <h4 class="bg-danger text-center">Falsch</h4>
+        <ul>
+        @if(classResult.getWrong().isEmpty()) {
+          <li>--</li>
+        } else {
+          @for(wrongClass <- classResult.getWrong()) {
+          <li>@wrongClass.getName()</li>
+          }
+        }
+        </ul>
+      </div>
+      <div class="col-sm-4">
+        <h4 class="bg-warning text-center">Fehlend</h4>
+        <ul>
+        @if(classResult.getMissing().isEmpty()) {
+          <li>--</li>
+        } else {
+          @for(missClass <- classResult.getMissing()) {
+          <li>@missClass.getName()</li>
+          }
+        }
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  <a href="@controllers.uml.routes.UML.diagramDrawingWithHelp(result.getExercise().id)" class="btn btn-primary btn-block">N&auml;chster Aufgabenteil</a>
+</div>
+}

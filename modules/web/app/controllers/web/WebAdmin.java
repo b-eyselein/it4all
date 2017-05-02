@@ -3,36 +3,52 @@ package controllers.web;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import controllers.core.AdminController;
-import controllers.core.UserManagement;
+import controllers.core.AbstractAdminController;
 import model.Util;
 import model.WebExercise;
 import model.WebExerciseReader;
-import model.task.JsWebTask;
+import model.exercisereading.AbstractReadingResult;
+import model.exercisereading.ReadingError;
+import model.exercisereading.ReadingResult;
 import model.task.Condition;
+import model.task.JsWebTask;
+import play.data.FormFactory;
+import play.libs.Json;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
-import views.html.preview;
-import views.html.webupload;
 
-public class WebAdmin extends AdminController<WebExercise, WebExerciseReader> {
+public class WebAdmin extends AbstractAdminController<WebExercise, WebExerciseReader> {
   
   @Inject
-  public WebAdmin(Util theUtil) {
-    super(theUtil, "web", new WebExerciseReader());
+  public WebAdmin(Util theUtil, FormFactory theFactory) {
+    super(theUtil, theFactory, "web", new WebExerciseReader());
+  }
+  
+  public Result exportExercises() {
+    String exported = Json.prettyPrint(Json.toJson(WebExercise.finder.all()));
+    return ok(views.html.export.render(getUser(), exported));
+  }
+  
+  public Result index() {
+    return ok(views.html.webAdmin.index.render(getUser()));
   }
   
   @Override
   public Result readStandardExercises() {
-    List<WebExercise> exercises = exerciseReader.readStandardExercises();
-    saveExercises(exercises);
-    return ok(preview.render(UserManagement.getCurrentUser(), new LinkedList<>(exercises)));
+    AbstractReadingResult<WebExercise> abstractResult = exerciseReader.readStandardExercises();
+    
+    if(!abstractResult.isSuccess())
+      return badRequest(views.html.jsonReadingError.render(getUser(), (ReadingError<WebExercise>) abstractResult));
+    
+    ReadingResult<WebExercise> result = (ReadingResult<WebExercise>) abstractResult;
+    
+    saveExercises(result.getRead());
+    return ok(views.html.preview.render(getUser(), views.html.webAdmin.webcreation.render(result.getRead())));
   }
   
   @Override
@@ -48,14 +64,20 @@ public class WebAdmin extends AdminController<WebExercise, WebExerciseReader> {
     Path jsonFile = Paths.get(savingDir.toString(), uploadedFile.getFilename());
     saveUploadedFile(savingDir, pathToUploadedFile, jsonFile);
     
-    List<WebExercise> exercises = exerciseReader.readExercises(jsonFile);
-    saveExercises(exercises);
-    return ok(preview.render(UserManagement.getCurrentUser(), new LinkedList<>(exercises)));
+    AbstractReadingResult<WebExercise> abstractResult = exerciseReader.readStandardExercises();
+    
+    if(!abstractResult.isSuccess())
+      return badRequest(views.html.jsonReadingError.render(getUser(), (ReadingError<WebExercise>) abstractResult));
+    
+    ReadingResult<WebExercise> result = (ReadingResult<WebExercise>) abstractResult;
+    
+    saveExercises(result.getRead());
+    return ok(views.html.preview.render(getUser(), views.html.webAdmin.webcreation.render(result.getRead())));
   }
   
   @Override
   public Result uploadForm() {
-    return ok(webupload.render(UserManagement.getCurrentUser()));
+    return ok(views.html.webAdmin.webupload.render(getUser()));
   }
   
   @Override

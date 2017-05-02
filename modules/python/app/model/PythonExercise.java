@@ -48,13 +48,7 @@ public class PythonExercise extends ProgrammingExercise {
   
   @Override
   public String getTestingUrl() {
-    return controllers.python.routes.Python.commit(id).url();
-  }
-  
-  @Override
-  public String renderData() {
-    // TODO Auto-generated method stub
-    return null;
+    return controllers.python.routes.Python.correctLive(id).url();
   }
   
 }

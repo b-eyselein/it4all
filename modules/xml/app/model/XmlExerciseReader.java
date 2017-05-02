@@ -8,7 +8,6 @@ import java.nio.file.StandardCopyOption;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import model.XmlExercise.XmlExType;
 import model.exercisereading.ExerciseReader;
 
 public class XmlExerciseReader extends ExerciseReader<XmlExercise> {
@@ -54,11 +53,10 @@ public class XmlExerciseReader extends ExerciseReader<XmlExercise> {
       exercise = new XmlExercise(id);
 
     exercise.id = id;
-    exercise.title = node.get("title").asText();
+    exercise.title = node.get(TITLE_NAME).asText();
     exercise.exerciseType = XmlExType.valueOf(node.get("exerciseType").asText());
-    exercise.referenceFileName = node.get("referenceFileName").asText();
-    exercise.text = node.get("exerciseText").asText();
-    exercise.fixedStart = node.get("fixedStart").asText();
+    exercise.text = node.get(TEXT_NAME).asText();
+    exercise.fixedStart = String.join("\n", JsonWrapper.parseJsonArrayNode(node.get("fixedStart")));
     return exercise;
   }
 

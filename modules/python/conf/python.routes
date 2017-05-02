@@ -8,5 +8,6 @@ GET    /         controllers.python.Python.index()
 # TODO: POST   /validate/:id   controllers.python.Python.validateTestData(id: Int)
 
 GET    /:id      controllers.python.Python.exercise(id: Int)
-PUT    /:id      controllers.python.Python.commit(id: Int)
-POST   /:id      controllers.python.Python.commit(id: Int)
+
+PUT    /:id      controllers.python.Python.correctLive(id: Int)
+POST   /:id      controllers.python.Python.correct(id: Int)

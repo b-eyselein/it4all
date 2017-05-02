@@ -1,39 +1,30 @@
 @(template: String, mode: String, minLines: Int, maxLines: Int, updatePrev: Boolean)
 
 <script src="@controllers.routes.Assets.versioned("javascripts/ace/ace.js")"></script>
-<script src="@controllers.routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
+<script>
+$(document).ready(function() {
+  initEditor("@mode", @minLines, @maxLines);
+  @if(updatePrev) {
+  editor.on("change", updatePreview);
+  updatePreview();
+  }
+});
+
+</script>
 <div class="panel panel-default">
   <div class="panel-heading">
-    <div class="input-group">
-      <span class="input-group-addon">Schriftgr&ouml;&szlig;e: <span id="fontsize">16</span> px
-      </span>
-      <div class="input-group-btn">
-        <button type="button" class="btn btn-default" onclick="changeFontsize(-2);">
-          <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-        </button>
-        <button type="button" class="btn btn-default" onclick="changeFontsize(+2);">
-          <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-        </button>
-      </div>
+  
+    <div class="btn-group">
+      <button type="button" class="btn btn-default" onclick="changeFontsize(-2);">
+        <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+      </button>
+      <span class="btn btn-default">Schriftgr&ouml;&szlig;e: <span id="fontsize">16</span> px</span>
+      <button type="button" class="btn btn-default" onclick="changeFontsize(+2);">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+      </button>
     </div>
+    
   </div>
   <div id="editor" class="form-control">@template</div>
-  <script>
-document.getElementById('editor').style.fontSize = '16px';
-var editor = ace.edit("editor");
-editor.setTheme("ace/theme/eclipse");
-editor.getSession().setMode("ace/mode/@mode");
-editor.getSession().setTabSize(2);
-editor.getSession().setUseSoftTabs(true);
-editor.getSession().setUseWrapMode(true);
-editor.setOptions({
-  minLines: @minLines,
-  maxLines: @maxLines
-});
-@if(updatePrev) {
-editor.on("change", updatePreview);
-window.onload = updatePreview;
-}
-    </script>
-  <textarea hidden name="editorContent" id="editorContent"></textarea>
+  <textarea hidden name="learnerSolution" id="learnerSolution"></textarea>
 </div>

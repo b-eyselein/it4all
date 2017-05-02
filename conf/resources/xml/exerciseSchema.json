@@ -20,12 +20,12 @@
 				]
 			}, 
 			"fixedStart": {
-				"type": "string"
+				"type": "array", 
+				"items": {
+					"type": "string"
+				}
 			}, 
-			"referenceFileName": {
-				"type": "string"
-			}, 
-			"exerciseText": {
+			"text": {
 				"type": "string"
 			}
 		}, 
@@ -34,8 +34,7 @@
 			"title", 
 			"exerciseType", 
 			"fixedStart", 
-			"referenceFileName", 
-			"exerciseText"
+			"text"
 		]
 	}, 
 	"minItems": 1, 
