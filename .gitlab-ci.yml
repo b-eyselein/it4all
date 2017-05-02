@@ -1,7 +1,7 @@
 stages:
 - test
 - build
-- deplay
+- deploy
 
 test:
     stage: test
@@ -16,9 +16,7 @@ build:
 deploy:
     stage: deploy
     script:
-    - echo TODO: deploy...
-    - ls .
-    - echo Deploment done...
+    - echo "TODO deployment"
     environment:
         name: prod-ls6
         url: www.it4all2.informatik.uni-wuerzburg.de
