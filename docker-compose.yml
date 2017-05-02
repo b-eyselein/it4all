@@ -1,0 +1,57 @@
+it4all:
+    image: beyselein/play
+    command: sbt run -Dconfig.resource=docker.conf
+    volumes_from:
+        - vc_it4all
+    volumes:
+        - ./:/app
+        - ~/.ivy2/:/home/developer/.ivy2/
+        - ~/.sbt/:/home/developer/.sbt/
+    links:
+        - mysql1:mysql1
+        - mysql2:mysql2
+        - mysql3:mysql3
+    ports:
+        # Host:Container
+        - 8000:9000
+    stdin_open: true
+    tty: true
+
+vc_it4all:
+    image: alpine:latest
+    command: echo "VC for it4all"
+    volumes:
+        - /data
+
+mysql1:
+    image: mysql:5.7
+    restart: always
+    ports:
+        - 3106:3306
+    environment:
+        - MYSQL_ROOT_PASSWORD=sT8aV#k7
+        - MYSQL_USER=it4all
+        - MYSQL_PASSWORD=sT8aV#k7
+        - MYSQL_DATABASE=it4all
+
+mysql2:
+    image: mysql:5.7
+    restart: always
+    ports:
+        - 3107:3306
+    environment:
+        - MYSQL_ROOT_PASSWORD=sT8aV#k7
+        - MYSQL_USER=it4all
+        - MYSQL_PASSWORD=sT8aV#k7
+        - MYSQL_DATABASE=sqlselect
+
+mysql3:
+    image: mysql:5.7
+    restart: always
+    ports:
+        - 3108:3306
+    environment:
+        - MYSQL_ROOT_PASSWORD=sT8aV#k7
+        - MYSQL_USER=it4all
+        - MYSQL_PASSWORD=sT8aV#k7
+        - MYSQL_DATABASE=sqlother
