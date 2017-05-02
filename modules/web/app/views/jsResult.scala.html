@@ -1,17 +1,15 @@
-@(results: List[model.result.ElementResult])
+@(results: List[model.result.JsWebResult])
 
-@for(result <- results.asInstanceOf[List[model.result.JsWebTestResult]]) {
+@for(result <- results) {
 <div class="panel panel-@result.getBSClass()">
-  <div class="panel-heading">
-    <h4 class="panel-title">
-      <a data-toggle="collapse" href="#col@result.getTask().key.taskId">Test @result.getTask().key.taskId</a>
-    </h4>
+  <div class="panel-heading" data-toggle="collapse" href="#task@result.getTask().key.taskId">
+    @{result.getTask().key.taskId}. @result.getTask().text
   </div>
     
-  <div id="col@result.getTask().key.taskId" class="panel-collapse collapse @if(result.getSuccess() != model.exercise.Success.COMPLETE) {in}">
+  <div id="task@result.getTask().key.taskId" class="panel-collapse collapse @if(result.getSuccess() != model.exercise.Success.COMPLETE) {in}">
     <div class="panel-body">
       
-    @for(conResult <- result.preconditionResults) {
+    @for(conResult <- result.getPreconditionResults()) {
     <div class="alert alert-@conResult.getBSClass()">
       <p>Vorbedingung konnte @if(conResult.getSuccess() != model.exercise.Success.COMPLETE) {nicht} verifiziert werden.</p>
       <p>@conResult.condition.getDescription()</p>
@@ -21,11 +19,11 @@
     </div>
     }
     
-    <div class="alert alert-@if(result.actionPerformed) {success} else {danger}">
-      Aktion konnte @if(!result.actionPerformed) {nicht} erfolgreich ausgeführt werden.
+    <div class="alert alert-@if(result.wasActionPerformed()) {success} else {danger}">
+      Aktion konnte @if(!result.wasActionPerformed()) {nicht} erfolgreich ausgeführt werden.
     </div>
     
-    @for(conResult <- result.postconditionResults) {
+    @for(conResult <- result.getPostconditionResults()) {
     <div class="alert alert-@conResult.getBSClass()">
       <p>Vorbedingung konnte @if(conResult.getSuccess() != model.exercise.Success.COMPLETE) {nicht} verifiziert werden.</p>
       <p>@conResult.condition.getDescription()</p>

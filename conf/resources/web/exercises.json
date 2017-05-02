@@ -10,9 +10,6 @@
 		"htmlText": [
 			
 		], 
-		"cssText": [
-			
-		], 
 		"jsText": [
 			
 		], 
@@ -34,10 +31,13 @@
 					"taskId": 2, 
 					"exerciseId": 1
 				}, 
-				"text": "Erstellen Sie eine ungeordnete Liste auf der Seite, die dann die einzelnen Hersteller enthalten wird.", 
+				"text": "Erstellen Sie eine ungeordnete Liste auf der Seite, die dann die einzelnen Hersteller enthalten wird. Geben Sie dieser Liste die Klasse \"list-group\".", 
 				"xpathQuery": "/html/body//ul", 
 				"attributes": [
-					
+					{
+						"key": "class", 
+						"value": "list-group"
+					}
 				], 
 				"textContent": null
 			}, 
@@ -46,10 +46,13 @@
 					"taskId": 3, 
 					"exerciseId": 1
 				}, 
-				"text": "Erstellen Sie das Listenelement für Audi.", 
+				"text": "Erstellen Sie das Listenelement für Audi. Geben Sie diesem Element die Klasse \"list-group-item\".", 
 				"xpathQuery": "/html/body//ul/li[1]", 
 				"attributes": [
-					
+					{
+						"key": "class", 
+						"value": "list-group-item"
+					}
 				], 
 				"textContent": "Audi"
 			}, 
@@ -58,10 +61,13 @@
 					"taskId": 4, 
 					"exerciseId": 1
 				}, 
-				"text": "Erstellen Sie das Listenelement für BMW.", 
+				"text": "Erstellen Sie das Listenelement für BMW. Geben Sie diesem Element die Klasse \"list-group-item\".", 
 				"xpathQuery": "/html/body//ul/li[2]", 
 				"attributes": [
-					
+					{
+						"key": "class", 
+						"value": "list-group-item"
+					}
 				], 
 				"textContent": "BMW"
 			}, 
@@ -70,10 +76,13 @@
 					"taskId": 5, 
 					"exerciseId": 1
 				}, 
-				"text": "Erstellen Sie das Listenelement für Mercedes-Benz.", 
+				"text": "Erstellen Sie das Listenelement für Mercedes-Benz. Geben Sie diesem Element die Klasse \"list-group-item\".", 
 				"xpathQuery": "/html/body//ul/li[3]", 
 				"attributes": [
-					
+					{
+						"key": "class", 
+						"value": "list-group-item"
+					}
 				], 
 				"textContent": "Mercedes-Benz"
 			}, 
@@ -82,18 +91,19 @@
 					"taskId": 6, 
 					"exerciseId": 1
 				}, 
-				"text": "Erstellen Sie das Listenelement für Volkswagen.", 
+				"text": "Erstellen Sie das Listenelement für Volkswagen. Geben Sie diesem Element die Klasse \"list-group-item\".", 
 				"xpathQuery": "/html/body//ul/li[4]", 
 				"attributes": [
-					
+					{
+						"key": "class", 
+						"value": "list-group-item"
+					}
 				], 
 				"textContent": "Volkswagen"
-			}
-		], 
-		"cssTasks": [
+			}, 
 			{
 				"key": {
-					"taskId": 1, 
+					"taskId": 7, 
 					"exerciseId": 1
 				}, 
 				"text": "Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL \"/assets/stylesheets/bootstrap.css\" zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut \"rel\"", 
@@ -107,77 +117,8 @@
 						"key": "href", 
 						"value": "/assets/stylesheets/bootstrap.css"
 					}
-				]
-			}, 
-			{
-				"key": {
-					"taskId": 2, 
-					"exerciseId": 1
-				}, 
-				"text": "Geben Sie der Liste die Klasse \"list-group\".", 
-				"xpathQuery": "/html/body//ul", 
-				"attributes": [
-					{
-						"key": "class", 
-						"value": "list-group"
-					}
-				]
-			}, 
-			{
-				"key": {
-					"taskId": 3, 
-					"exerciseId": 1
-				}, 
-				"text": "Geben Sie dem Listenelement für Audi die Klasse \"list-group-item\".", 
-				"xpathQuery": "/html/body//ul/li[text()[contains(., 'Audi')]]", 
-				"attributes": [
-					{
-						"key": "class", 
-						"value": "list-group-item"
-					}
-				]
-			}, 
-			{
-				"key": {
-					"taskId": 4, 
-					"exerciseId": 1
-				}, 
-				"text": "Geben Sie das Listenelement für BMW die Klasse \"list-group-item\".", 
-				"xpathQuery": "/html/body//ul/li[text()[contains(., 'BMW')]]", 
-				"attributes": [
-					{
-						"key": "class", 
-						"value": "list-group-item"
-					}
-				]
-			}, 
-			{
-				"key": {
-					"taskId": 5, 
-					"exerciseId": 1
-				}, 
-				"text": "Geben Sie das Listenelement für Mercedes-Benz die Klasse \"list-group-item\".", 
-				"xpathQuery": "/html/body//ul/li[text()[contains(., 'Mercedes-Benz')]]", 
-				"attributes": [
-					{
-						"key": "class", 
-						"value": "list-group-item"
-					}
-				]
-			}, 
-			{
-				"key": {
-					"taskId": 6, 
-					"exerciseId": 1
-				}, 
-				"text": "Geben Sie das Listenelement für Volkswagen die Klasse \"list-group-item\".", 
-				"xpathQuery": "/html/body//ul/li[text()[contains(., 'Volkswagen')]]", 
-				"attributes": [
-					{
-						"key": "class", 
-						"value": "list-group-item"
-					}
-				]
+				], 
+				"textContent": null
 			}
 		], 
 		"jsTasks": [
@@ -193,9 +134,6 @@
 		"htmlText": [
 			
 		], 
-		"cssText": [
-			
-		], 
 		"jsText": [
 			
 		], 
@@ -205,10 +143,13 @@
 					"taskId": 1, 
 					"exerciseId": 2
 				}, 
-				"text": "Erstellen Sie das Grundtag für die Tabelle", 
+				"text": "Erstellen Sie das Grundtag für die Tabelle Geben Sie der Tabelle die Klassen \"table\" und \"table-striped\".", 
 				"xpathQuery": "/html/body//table", 
 				"attributes": [
-					
+					{
+						"key": "class", 
+						"value": "table table-striped"
+					}
 				], 
 				"textContent": null
 			}, 
@@ -355,12 +296,10 @@
 					
 				], 
 				"textContent": "58374162"
-			}
-		], 
-		"cssTasks": [
+			}, 
 			{
 				"key": {
-					"taskId": 1, 
+					"taskId": 14, 
 					"exerciseId": 2
 				}, 
 				"text": "Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL \"/assets/stylesheets/bootstrap.css\" zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut \"rel\"", 
@@ -374,21 +313,8 @@
 						"key": "href", 
 						"value": "/assets/stylesheets/bootstrap.css"
 					}
-				]
-			}, 
-			{
-				"key": {
-					"taskId": 2, 
-					"exerciseId": 2
-				}, 
-				"text": "Geben Sie der Tabelle die Klassen \"table\" und \"table-striped\".", 
-				"xpathQuery": "html/body//table", 
-				"attributes": [
-					{
-						"key": "class", 
-						"value": "table table-striped"
-					}
-				]
+				], 
+				"textContent": null
 			}
 		], 
 		"jsTasks": [
@@ -402,9 +328,6 @@
 			"Erstellen Sie ein Bild in HTML, das gleichzeitig ein Link ist."
 		], 
 		"htmlText": [
-			
-		], 
-		"cssText": [
 			
 		], 
 		"jsText": [
@@ -428,12 +351,16 @@
 					"taskId": 2, 
 					"exerciseId": 3
 				}, 
-				"text": "Erstellen Sie den Link auf der Seite, der auf Wikipedia verweist. Geben Sie als Ziel die URL 'https://de.wikipedia.org/wiki/Ford_Mustang' an.", 
+				"text": "Erstellen Sie den Link auf der Seite, der auf Wikipedia verweist. Geben Sie als Ziel die URL 'https://de.wikipedia.org/wiki/Ford_Mustang' an. Geben Sie dem Bild die Klasse \"img-rounded\".", 
 				"xpathQuery": "/html/body//a", 
 				"attributes": [
 					{
 						"key": "href", 
 						"value": "https://de.wikipedia.org/wiki/Ford_Mustang"
+					}, 
+					{
+						"key": "class", 
+						"value": "img-rounded"
 					}
 				], 
 				"textContent": null
@@ -464,12 +391,10 @@
 					}
 				], 
 				"textContent": null
-			}
-		], 
-		"cssTasks": [
+			}, 
 			{
 				"key": {
-					"taskId": 1, 
+					"taskId": 4, 
 					"exerciseId": 3
 				}, 
 				"text": "Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL \"/assets/stylesheets/bootstrap.css\" zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut \"rel\"", 
@@ -483,21 +408,8 @@
 						"key": "href", 
 						"value": "/assets/stylesheets/bootstrap.css"
 					}
-				]
-			}, 
-			{
-				"key": {
-					"taskId": 2, 
-					"exerciseId": 3
-				}, 
-				"text": "Geben Sie dem Bild die Klasse \"img-rounded\".", 
-				"xpathQuery": "/html/body//a/img", 
-				"attributes": [
-					{
-						"key": "class", 
-						"value": "img-rounded"
-					}
-				]
+				], 
+				"textContent": null
 			}
 		], 
 		"jsTasks": [
@@ -511,9 +423,6 @@
 			"Erstellen Sie ein Login-Formular in HTML"
 		], 
 		"htmlText": [
-			
-		], 
-		"cssText": [
 			
 		], 
 		"jsText": [
@@ -544,7 +453,7 @@
 					"taskId": 2, 
 					"exerciseId": 4
 				}, 
-				"text": "Erstellen Sie ein Feld zur Eingabe der Emailadresse. Benutzen Sie den in der Vorlesung gezeigten Typen und geben Sie dem Attribut \"name\" den Wert \"email\". Die Eingabe soll außerdem required sein.", 
+				"text": "Erstellen Sie ein Feld zur Eingabe der Emailadresse. Benutzen Sie den in der Vorlesung gezeigten Typen und geben Sie dem Attribut \"name\" den Wert \"email\". Die Eingabe soll außerdem required sein. Geben Sie dem Feld zur Eingabe der Emailadressedie Klasse \"from-control\".", 
 				"xpathQuery": "/html/body//form//input[@type='email']", 
 				"attributes": [
 					{
@@ -554,6 +463,10 @@
 					{
 						"key": "required", 
 						"value": "true"
+					}, 
+					{
+						"key": "class", 
+						"value": "form-control"
 					}
 				], 
 				"textContent": null
@@ -563,7 +476,7 @@
 					"taskId": 3, 
 					"exerciseId": 4
 				}, 
-				"text": "Erstellen Sie ein Feld zur Eingabe des Passworts. Benutzen Sie den in der Vorlesung gezeigten Typen und geben Sie dem Attribut \"name\" den Wert \"passwort\". Die Eingabe soll außerdem verpflichtend sein.", 
+				"text": "Erstellen Sie ein Feld zur Eingabe des Passworts. Benutzen Sie den in der Vorlesung gezeigten Typen und geben Sie dem Attribut \"name\" den Wert \"passwort\". Die Eingabe soll außerdem verpflichtend sein. Geben Sie dem Feld zur Eingabe des Passworts Klasse \"from-control\".", 
 				"xpathQuery": "/html/body//form//input[@type='password']", 
 				"attributes": [
 					{
@@ -573,6 +486,10 @@
 					{
 						"key": "required", 
 						"value": "true"
+					}, 
+					{
+						"key": "class", 
+						"value": "form-control"
 					}
 				], 
 				"textContent": null
@@ -582,18 +499,19 @@
 					"taskId": 4, 
 					"exerciseId": 4
 				}, 
-				"text": "Erstellen Sie einen Knopf (input), um das Formular abzusenden", 
+				"text": "Erstellen Sie einen Knopf (input), um das Formular abzusenden. Geben Sie den Knopf zum Absenden des Formular die Klasse \"btn btn-default\"", 
 				"xpathQuery": "/html/body//form//input[@type='submit']", 
 				"attributes": [
-					
+					{
+						"key": "class", 
+						"value": "btn btn-default"
+					}
 				], 
 				"textContent": null
-			}
-		], 
-		"cssTasks": [
+			}, 
 			{
 				"key": {
-					"taskId": 1, 
+					"taskId": 5, 
 					"exerciseId": 4
 				}, 
 				"text": "Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL \"/assets/stylesheets/bootstrap.css\" zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut \"rel\"", 
@@ -607,49 +525,8 @@
 						"key": "href", 
 						"value": "/assets/stylesheets/bootstrap.css"
 					}
-				]
-			}, 
-			{
-				"key": {
-					"taskId": 2, 
-					"exerciseId": 4
-				}, 
-				"text": "Geben Sie dem Feld zur Eingabe der Emailadressedie Klasse \"from-control\".", 
-				"xpathQuery": "/html/body//form//input[@type='email']", 
-				"attributes": [
-					{
-						"key": "class", 
-						"value": "form-control"
-					}
-				]
-			}, 
-			{
-				"key": {
-					"taskId": 3, 
-					"exerciseId": 4
-				}, 
-				"text": "Geben Sie dem Feld zur Eingabe des Passworts Klasse \"from-control\".", 
-				"xpathQuery": "/html/body//form//input[@type='password']", 
-				"attributes": [
-					{
-						"key": "class", 
-						"value": "form-control"
-					}
-				]
-			}, 
-			{
-				"key": {
-					"taskId": 4, 
-					"exerciseId": 4
-				}, 
-				"text": "Geben Sie den Knopf zum Absenden des Formular die Klasse \"btn btn-default\"", 
-				"xpathQuery": "/html/body//form//input[@type='submit']", 
-				"attributes": [
-					{
-						"key": "class", 
-						"value": "btn btn-default"
-					}
-				]
+				], 
+				"textContent": null
 			}
 		], 
 		"jsTasks": [
@@ -663,9 +540,6 @@
 			
 		], 
 		"htmlText": [
-			
-		], 
-		"cssText": [
 			
 		], 
 		"jsText": [
@@ -719,9 +593,6 @@
 				"textContent": null
 			}
 		], 
-		"cssTasks": [
-			
-		], 
 		"jsTasks": [
 			
 		]
@@ -734,9 +605,6 @@
 		], 
 		"htmlText": [
 			"Erstellen Sie zunächst den Rumpf der Seite in HTML."
-		], 
-		"cssText": [
-			"Styling..."
 		], 
 		"jsText": [
 			"Implementieren Sie nun die Funktion <code>imcrement()</code>, die aufgerufen wird, wenn auf den Knop", 
@@ -773,9 +641,6 @@
 				"textContent": "0"
 			}
 		], 
-		"cssTasks": [
-			
-		], 
 		"jsTasks": [
 			{
 				"key": {
@@ -784,9 +649,6 @@
 				}, 
 				"text": "Test 1", 
 				"xpathQuery": "", 
-				"attributes": [
-					
-				], 
 				"conditions": [
 					{
 						"key": {
@@ -822,9 +684,6 @@
 				}, 
 				"text": "Test 2", 
 				"xpathQuery": "", 
-				"attributes": [
-					
-				], 
 				"conditions": [
 					{
 						"key": {
@@ -860,9 +719,6 @@
 				}, 
 				"text": "Test 3", 
 				"xpathQuery": "", 
-				"attributes": [
-					
-				], 
 				"conditions": [
 					{
 						"key": {
@@ -898,9 +754,6 @@
 				}, 
 				"text": "Test 4", 
 				"xpathQuery": "", 
-				"attributes": [
-					
-				], 
 				"conditions": [
 					{
 						"key": {

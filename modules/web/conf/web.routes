@@ -17,8 +17,11 @@ GET    /exercises/export         controllers.web.WebAdmin.exportExercises()
 
 GET    /:id/:type                controllers.web.Web.exercise(id: Int, type: String)
 
-PUT    /:id/:type                controllers.web.Web.correctLive(id: Int, type: String)
-POST   /:id/:type                controllers.web.Web.correct(id: Int, type: String)
+PUT    /web/:id                  controllers.web.Web.correctWebLive(id: Int)
+POST   /web/:id                  controllers.web.Web.correctWeb(id: Int)
+
+PUT    /js/:id                   controllers.web.Web.correctJsLive(id: Int)
+POST   /js/:id                   controllers.web.Web.correctJs(id: Int)
 
 GET    /solution/:username/:id   controllers.web.Solution.site(username: String, id: Int)
 

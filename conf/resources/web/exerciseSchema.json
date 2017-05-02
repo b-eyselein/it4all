@@ -22,12 +22,6 @@
 					"type": "string"
 				}
 			}, 
-			"cssText": {
-				"type": "array", 
-				"items": {
-					"type": "string"
-				}
-			}, 
 			"jsText": {
 				"type": "array", 
 				"items": {
@@ -39,6 +33,21 @@
 				"items": {
 					"type": "object", 
 					"properties": {
+						"key": {
+							"type": "object", 
+							"properties": {
+								"taskId": {
+									"type": "integer"
+								}, 
+								"exerciseId": {
+									"type": "integer"
+								}
+							}, 
+							"required": [
+								"taskId", 
+								"exerciseId"
+							]
+						}, 
 						"text": {
 							"type": "string"
 						}, 
@@ -59,45 +68,19 @@
 								}
 							}
 						}, 
-						"content": {
-							"type": "string"
+						"textContent": {
+							"type": [
+								"string", 
+								"null"
+							]
 						}
 					}, 
 					"required": [
+						"key", 
 						"text", 
-						"xpathQuery"
-					]
-				}
-			}, 
-			"cssTasks": {
-				"type": "array", 
-				"items": {
-					"type": "object", 
-					"properties": {
-						"text": {
-							"type": "string"
-						}, 
-						"xpathQuery": {
-							"type": "string"
-						}, 
-						"attributes": {
-							"type": "array", 
-							"items": {
-								"type": "object", 
-								"properties": {
-									"key": {
-										"type": "string"
-									}, 
-									"value": {
-										"type": "string"
-									}
-								}
-							}
-						}
-					}, 
-					"required": [
-						"text", 
-						"xpathQuery"
+						"xpathQuery", 
+						"attributes", 
+						"textContent"
 					]
 				}
 			}, 
@@ -106,6 +89,21 @@
 				"items": {
 					"type": "object", 
 					"properties": {
+						"key": {
+							"type": "object", 
+							"properties": {
+								"taskId": {
+									"type": "integer"
+								}, 
+								"exerciseId": {
+									"type": "integer"
+								}
+							}, 
+							"required": [
+								"taskId", 
+								"exerciseId"
+							]
+						}, 
 						"text": {
 							"type": "string"
 						}, 
@@ -191,10 +189,8 @@
 			"title", 
 			"text", 
 			"htmlText", 
-			"cssText", 
 			"jsText", 
 			"htmlTasks", 
-			"cssTasks", 
 			"jsTasks"
 		]
 	}, 

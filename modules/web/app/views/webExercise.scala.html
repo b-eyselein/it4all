@@ -4,44 +4,60 @@
 <script src="@controllers.routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
 
 <div class="container-fluid">
-  <form action="@controllers.web.routes.Web.correct(exercise.id, exType)" method="post" onsubmit="prepareFormForSubmitting();">
+  <form method="post" onsubmit="prepareFormForSubmitting();"
+  @if("html".equals(exType)) {
+	action="@controllers.web.routes.Web.correctWeb(exercise.id)"
+  } else {
+    action="@controllers.web.routes.Web.correctJs(exercise.id)"
+  }>
     <div class="row">
-      <div class="col-md-4">
-        <div class="panel panel-default">
-          <div class="panel-heading">Aufgabenstellung</div>
-          <div class="panel-body">
-            <div class="well"><p>@exercise.text</p>
-            @if(exType.equals("html")) {
-              <p>@exercise.htmlText</p>
+      <div class="col-md-4 col-sm-6">
+        
+        <h2>Aufgabenstellung</h2>
+        
+        <hr>
+
+        <p>@exercise.text</p>
+        @if(exType.equals("html")) {
+        <p>@exercise.htmlText</p>
+        } else {
+        <p>@Html(exercise.jsText)</p>
+        }
+        
+        <div class="btn-group btn-group-justified">
+          <div class="btn-group">
+            <button type="button" class="btn btn-primary"
+            @if("html".equals(exType)) {
+              onclick="testTheSolution('@controllers.web.routes.Web.correctWebLive(exercise.id)')"
             } else {
-              <p>@Html(exercise.jsText)</p>
-            }
-            </div>
-            <div class="btn-group btn-group-justified">
-              <div class="btn-group">
-              <button type="button" class="btn btn-primary" onclick="testTheSolution('@controllers.web.routes.Web.correctLive(exercise.id, exType)')">L&ouml;sung testen</button>
-              </div>
-              <div class="btn-group">
-                <input type="submit" class="btn btn-success" value="L&ouml;sung abgeben">
-              </div>
-            </div>
-          
-            <hr>
-          
-            <div id="correction">
-            @for(task <- exercise.getTasks(exType)) {
-              <div class="panel panel-default"><div class="panel-body">@{task.key.taskId}. @task.text</div></div>
-            }
-            </div>
+              onclick="testTheSolution('@controllers.web.routes.Web.correctJsLive(exercise.id)')"
+            }>L&ouml;sung testen</button>
           </div>
+          <div class="btn-group">
+            <input type="submit" class="btn btn-success" value="L&ouml;sung abgeben">
+          </div>
+        </div>
+      
+        <hr>
+      
+        <div id="correction">
+        @if("html".equals(exType)) {
+      	 @for(task <- exercise.htmlTasks) {
+          <div class="panel panel-default"><div class="panel-body">@{task.key.taskId}. @task.text</div></div>
+          }
+        } else {
+      	  @for(task <- exercise.jsTasks) {
+          <div class="panel panel-default"><div class="panel-body">@{task.key.taskId}. @task.text</div></div>
+          }
+        }
         </div>
       </div>
       
-      <div class="col-md-4">
+      <div class="col-md-4 col-sm-6">
         @editor(oldSolution, "html", 25, 45, true)
       </div>
       
-      <div class="col-md-4">
+      <div class="col-md-4 col-sm-12">
         <div class="panel panel-default">
           <div class="panel-heading">Live-Vorschau</div>
           <div class="panel-body">

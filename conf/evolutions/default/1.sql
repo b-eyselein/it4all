@@ -22,15 +22,6 @@ create table conditions (
   constraint pk_conditions primary key (exercise_id,task_id,condition_id)
 );
 
-create table css_task (
-  task_id                       integer not null,
-  exercise_id                   integer not null,
-  text                          text,
-  xpath_query                   varchar(255),
-  attributes                    varchar(255),
-  constraint pk_css_task primary key (task_id,exercise_id)
-);
-
 create table exercise_result (
   extype                        varchar(31) not null,
   user_name                     varchar(255)
@@ -98,7 +89,6 @@ create table js_web_task (
   exercise_id                   integer not null,
   text                          text,
   xpath_query                   varchar(255),
-  attributes                    varchar(255),
   actiontype                    varchar(7),
   action_xpath_query            varchar(255),
   keys_to_send                  varchar(255),
@@ -221,7 +211,6 @@ create table web_exercise (
   title                         varchar(255),
   text                          text,
   html_text                     text,
-  css_text                      text,
   js_text                       text,
   constraint pk_web_exercise primary key (id)
 );
@@ -255,9 +244,6 @@ create index ix_answer_question_id on answer (question_id);
 
 alter table conditions add constraint fk_conditions_task foreign key (task_id,exercise_id) references js_web_task (task_id,exercise_id) on delete restrict on update restrict;
 create index ix_conditions_task on conditions (task_id,exercise_id);
-
-alter table css_task add constraint fk_css_task_exercise_id foreign key (exercise_id) references web_exercise (id) on delete restrict on update restrict;
-create index ix_css_task_exercise_id on css_task (exercise_id);
 
 alter table exercise_result add constraint fk_exercise_result_user_name foreign key (user_name) references users (name) on delete restrict on update restrict;
 create index ix_exercise_result_user_name on exercise_result (user_name);
@@ -307,9 +293,6 @@ drop index ix_answer_question_id on answer;
 alter table conditions drop foreign key fk_conditions_task;
 drop index ix_conditions_task on conditions;
 
-alter table css_task drop foreign key fk_css_task_exercise_id;
-drop index ix_css_task_exercise_id on css_task;
-
 alter table exercise_result drop foreign key fk_exercise_result_user_name;
 drop index ix_exercise_result_user_name on exercise_result;
 
@@ -352,8 +335,6 @@ drop index ix_web_solution_exercise_id on web_solution;
 drop table if exists answer;
 
 drop table if exists conditions;
-
-drop table if exists css_task;
 
 drop table if exists exercise_result;
 

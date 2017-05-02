@@ -1,10 +1,16 @@
 @(user: model.user.User, exercises: List[model.WebExercise])
 
-@main("Web: Aufgaben", user) {
+@main("HTML-Test", user) {
 <div class="container">
   <div class="page-header">
-    <h1>Verf&uuml;gbare Aufgaben</h1>
+    <h1 class="page-title">&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h1>
   </div>
+  
+  <div class="panel panel-default">
+    <a class="btn btn-primary btn-block" href="@controllers.web.routes.Web.playground()">Web-Playground</a>
+  </div>
+  
+  <hr>
   
   <table class="table">
     <thead>
@@ -12,20 +18,16 @@
         <th>Aufgabe</th>
         <th>Überschrift</th>
         <th>HTML-Teil</th>
-        <th>CSS-Teil</th>
         <th>JS-Teil</th>
       </tr>
     </thead>
     <tbody>
     @for(exercise <- exercises) {
-      <tr>
+   	  <tr>
         <td>@exercise.id</td>
         <td>@exercise.title</td>
         <td>@if(exercise.htmlTasks.size() > 0) {
           <a href="@controllers.web.routes.Web.exercise(exercise.id, "html")" class="btn btn-primary btn-block">Html-Teil</a>}
-        </td>
-        <td>@if(exercise.cssTasks.size() > 0) {
-          <a href="@controllers.web.routes.Web.exercise(exercise.id, "css")" class="btn btn-primary btn-block">Css-Teil</a>}
         </td>
         <td>@if(exercise.jsTasks.size() > 0) {
           <a href="@controllers.web.routes.Web.exercise(exercise.id, "js")" class="btn btn-primary btn-block">Js-Teil</a>}
