@@ -1,3 +1,0 @@
-FROM beyselein/sbt
-
-RUN

@@ -1,0 +1,24 @@
+stages:
+- test
+- build
+- deploy
+
+test:
+    stage: test
+    script:
+    - ./activator test
+
+build:
+    stage: build
+    script:
+    - ./activator dist
+
+deploy:
+    stage: deploy
+    script:
+    - echo "TODO deployment"
+    environment:
+        name: prod-ls6
+        url: www.it4all2.informatik.uni-wuerzburg.de
+    only:
+    - master
