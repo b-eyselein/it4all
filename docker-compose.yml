@@ -12,10 +12,8 @@ it4all:
         - mysql2:mysql2
         - mysql3:mysql3
     ports:
-        # Host:Container
         - 8000:9000
-    stdin_open: true
-    tty: true
+    restart: always
 
 vc_it4all:
     image: alpine:latest
