@@ -20,56 +20,54 @@ import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
 
 public class SpreadAdmin extends AbstractAdminController<SpreadExercise, SpreadExerciseReader> {
-  
+
   @Inject
   public SpreadAdmin(Util theUtil, FormFactory theFactory) {
     super(theUtil, theFactory, "spread", new SpreadExerciseReader());
   }
-  
+
   @Override
   public Result readStandardExercises() {
-    AbstractReadingResult abstractResult = exerciseReader.readStandardExercises();
+    AbstractReadingResult<SpreadExercise> abstractResult = exerciseReader.readStandardExercises();
 
     if(!abstractResult.isSuccess())
-      return badRequest(views.html.jsonReadingError.render(getUser(), (ReadingError) abstractResult));
+      return badRequest(views.html.jsonReadingError.render(getUser(), (ReadingError<SpreadExercise>) abstractResult));
 
-    @SuppressWarnings("unchecked")
     ReadingResult<SpreadExercise> result = (ReadingResult<SpreadExercise>) abstractResult;
-    
+
     saveExercises(result.getRead());
     return ok(views.html.preview.render(getUser(), views.html.spreadcreation.render(result.getRead())));
   }
-  
+
   @Override
   public Result uploadFile() {
     MultipartFormData<File> body = request().body().asMultipartFormData();
     FilePart<File> uploadedFile = body.getFile(BODY_FILE_NAME);
     if(uploadedFile == null)
       return badRequest("Fehler!");
-    
+
     Path pathToUploadedFile = uploadedFile.getFile().toPath();
     Path savingDir = Paths.get(util.getRootSolDir().toString(), ADMIN_FOLDER, exerciseType);
-    
+
     Path jsonFile = Paths.get(savingDir.toString(), uploadedFile.getFilename());
     saveUploadedFile(savingDir, pathToUploadedFile, jsonFile);
-    
-    AbstractReadingResult abstractResult = exerciseReader.readStandardExercises();
-    
+
+    AbstractReadingResult<SpreadExercise> abstractResult = exerciseReader.readStandardExercises();
+
     if(!abstractResult.isSuccess())
-      return badRequest(views.html.jsonReadingError.render(getUser(), (ReadingError) abstractResult));
-    
-    @SuppressWarnings("unchecked")
+      return badRequest(views.html.jsonReadingError.render(getUser(), (ReadingError<SpreadExercise>) abstractResult));
+
     ReadingResult<SpreadExercise> result = (ReadingResult<SpreadExercise>) abstractResult;
 
     saveExercises(result.getRead());
     return ok(views.html.preview.render(getUser(), views.html.spreadcreation.render(result.getRead())));
   }
-  
+
   @Override
   public Result uploadForm() {
     return ok(views.html.spreadupload.render(getUser()));
   }
-  
+
   @Override
   protected void saveExercises(List<SpreadExercise> exercises) {
     // FIXME: Dateien!
@@ -78,5 +76,5 @@ public class SpreadAdmin extends AbstractAdminController<SpreadExercise, SpreadE
       exerciseReader.checkFiles(util, ex);
     }
   }
-  
+
 }

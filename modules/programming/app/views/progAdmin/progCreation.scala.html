@@ -1,0 +1,58 @@
+@(exercises: List[model.ProgExercise])
+
+@for(exercise <- exercises) {
+<div class="col-md-6">
+  <div class="panel panel-default">
+    <div class="panel-heading">Aufgabe @exercise.id: @exercise.title</div>
+    <div class="panel-body">
+      <p>Aufgabentext: @exercise.text</p>
+      
+      <p>Mögliche Lösungen</p>
+      
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Sprache</th>
+            <th>Angabe</th>
+            <th>L&ouml;sung</th>
+          </tr>
+        </thead>
+        <tbody>
+        @for(lang <- model.ProgLanguage.values()) {
+          <tr>
+            <td>@lang.getName()</td>
+            <td><pre>@model.ProgExercise.getDeclaration(lang, exercise.functionName, exercise.inputCount)</pre></td>
+            <td><pre>@exercise.getSampleSolution(lang)</pre></td>
+          </tr>
+        }
+        </tbody>
+      </table>
+      
+
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Id</th>
+            @for(input <- 0 until exercise.inputCount) {
+            <th>Input</th>
+            }
+    		<th>Output</th>
+          </tr>
+        </thead>
+        <tbody>
+        @for(testdata <- exercise.sampleTestData) {
+          <tr>
+            <td>@testdata.key.testId</td>
+            @for(input <- testdata.getInput()) {
+          	<td>@input</td>
+            }
+            <td>@testdata.output</td>
+          </tr>
+        }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+}

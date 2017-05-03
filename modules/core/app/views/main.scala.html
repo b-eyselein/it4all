@@ -27,12 +27,7 @@
         <ul class="nav navbar-nav">
           <li><a href="@web.routes.Web.index()">Web</a></li>
           
-          <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Programmiersprachen <span class="caret"></span></a>
-   		    <ul class="dropdown-menu">
-   		      <li><a href="@js.routes.JS.index">Javascript</a></li>
-            </ul>
-          </li>
+          <li><a href="@programming.routes.Programming.index">Programmierung</a></li>
           
           <li><a href="@sql.routes.SQL.index()">SQL</a></li>
           
@@ -60,9 +55,19 @@
             </a>
             <ul class="dropdown-menu">
               <li><a href="@choice.routes.QuestionAdmin.index()">Auswahlfragen</a></li>
+              
+              <li class="divider"></li>
+              
               <li><a href="@uml.routes.UmlAdmin.index()">UML</a></li>
-              <li><a href="@xml.routes.XmlAdmin.index()">XML</a></li>
+ 
+              <li class="divider"></li>
+             
+              <li><a href="@programming.routes.ProgAdmin.index()">Programmierung</a></li>
+ 
+              <li class="divider"></li>
+             
               <li><a href="@web.routes.WebAdmin.index()">Web</a></li>
+              <li><a href="@xml.routes.XmlAdmin.index()">XML</a></li>
               
               <li class="divider"></li>
               

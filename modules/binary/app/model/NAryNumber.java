@@ -9,26 +9,26 @@ import com.google.common.base.Strings;
  */
 public class NAryNumber {
   private static final char[] ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUV".toCharArray();
-  
+
   private static final String UNSIGNED_HEX_REGEX = "0x[a-v0-9]*";
   private static final String SIGNED_HEX_REGEX = "-?" + UNSIGNED_HEX_REGEX;
-  
+
   private static final String UNSIGNED_OCT_REGEX = "0o[a-v0-9]*";
   private static final String SIGNED_OCT_REGEX = "-?" + UNSIGNED_OCT_REGEX;
-  
+
   protected static final String UNSIGNED_BIN_REGEX = "0b[a-v0-9]*";
   protected static final String SIGNED_BIN_REGEX = "-?" + UNSIGNED_BIN_REGEX;
-  
+
   /**
    * The base of the n-ary number.
    */
   protected NumberBase base;
-  
+
   /**
    * The decimal value of the n-ary number.
    */
   protected int value;
-  
+
   /**
    * The standard constructor.
    *
@@ -40,11 +40,11 @@ public class NAryNumber {
   public NAryNumber(int value, NumberBase base) throws IllegalArgumentException {
     if(base.getBase() > 32)
       throw new IllegalArgumentException("NAryNumber supports only numbers up to base 32");
-    
+
     this.base = base;
     this.value = value;
   }
-  
+
   /**
    * The default constructor generating a NAryNumber of value 0 with the given
    * base.
@@ -56,7 +56,7 @@ public class NAryNumber {
   public NAryNumber(NumberBase base) throws IllegalArgumentException {
     this(0, base);
   }
-  
+
   /**
    * Converts a string with characters in range 0..9a...v or A...V with optional
    * prefix "0b", "0o" or "0x" into an instance of NAryNumber.
@@ -72,37 +72,37 @@ public class NAryNumber {
   public NAryNumber(String input, NumberBase base) {
     // Catch negative sign
     boolean neg = false;
-    
+
     input = input.replaceAll("\\s", "");
-    
+
     if(input.toCharArray()[0] == '-') {
       neg = true;
       input = input.substring(1);
     }
-    
+
     // Cut off prefixes
     if(input.toLowerCase().matches(UNSIGNED_HEX_REGEX))
       if(base.getBase() == 16)
         input = input.substring(2);
       else
         throw new IllegalArgumentException("Prefix " + UNSIGNED_HEX_REGEX + " must match " + input.substring(0, 2));
-      
+
     if(input.toLowerCase().matches(UNSIGNED_OCT_REGEX))
       if(base.getBase() == 8)
         input = input.substring(2);
       else
         throw new IllegalArgumentException("Prefix " + UNSIGNED_OCT_REGEX + " must match " + input.substring(0, 2));
-      
+
     if(input.toLowerCase().matches(UNSIGNED_BIN_REGEX))
       if(base.getBase() == 2)
         input = input.substring(2);
       else
         throw new IllegalArgumentException("Prefix " + UNSIGNED_BIN_REGEX + " must match " + input.substring(0, 2));
-      
+
     if(!input.matches("[a-vA-V0-9]*"))
       throw new IllegalArgumentException("The input string does contains unallowed characters. \n"
           + "Only characters in range 0..9, a...v or A...V are allowed.");
-    
+
     char[] coeffs = input.toCharArray();
     int theValue = 0;
     int length = input.length() - 1;
@@ -118,11 +118,11 @@ public class NAryNumber {
     }
     if(neg)
       theValue *= -1;
-    
+
     this.value = theValue;
     this.base = base;
   }
-  
+
   /**
    * Adds two given n-ary numbers.
    *
@@ -137,7 +137,7 @@ public class NAryNumber {
     int value = number1.getValue() + number2.getValue();
     return new NAryNumber(value, base);
   }
-  
+
   /**
    * Converts a given string that specifies the base into a n-ary number.
    *
@@ -151,17 +151,17 @@ public class NAryNumber {
   public static NAryNumber stringToNAry(String input) throws IllegalArgumentException {
     if(input.toLowerCase().matches(SIGNED_HEX_REGEX))
       return new NAryNumber(input, NumberBase.HEXADECIMAL);
-    
+
     if(input.toLowerCase().matches(SIGNED_OCT_REGEX))
       return new NAryNumber(input, NumberBase.OCTAL);
-    
+
     if(input.toLowerCase().matches(SIGNED_BIN_REGEX))
       return new NAryNumber(input, NumberBase.BINARY);
-    
+
     throw new IllegalArgumentException("The input " + input
         + "does not specify the base. It needs to start with 0b for binary, 0o for octal or 0x for hexadecimal numbers!");
   }
-  
+
   /**
    * "Equal to" sign.
    *
@@ -171,7 +171,7 @@ public class NAryNumber {
   public boolean equ(NAryNumber i) {
     return value == i.getValue();
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if(obj == null || !(obj instanceof NAryNumber))
@@ -179,7 +179,7 @@ public class NAryNumber {
     NAryNumber other = (NAryNumber) obj;
     return value == other.value;
   }
-  
+
   /**
    * "Greater than or equal to" sign.
    *
@@ -189,7 +189,7 @@ public class NAryNumber {
   public boolean geq(NAryNumber i) {
     return value >= i.getValue();
   }
-  
+
   /**
    * Getter for the base.
    *
@@ -198,7 +198,7 @@ public class NAryNumber {
   public NumberBase getBase() {
     return base;
   }
-  
+
   /**
    * Getter for the value.
    *
@@ -207,7 +207,7 @@ public class NAryNumber {
   public int getValue() {
     return value;
   }
-  
+
   /**
    * "Greater than" sign.
    *
@@ -217,7 +217,7 @@ public class NAryNumber {
   public boolean gtr(NAryNumber i) {
     return value > i.getValue();
   }
-  
+
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -225,7 +225,7 @@ public class NAryNumber {
     result = prime * result + value;
     return result;
   }
-  
+
   /**
    * "Less than or equal to" sign.
    *
@@ -235,7 +235,7 @@ public class NAryNumber {
   public boolean leq(NAryNumber i) {
     return value <= i.getValue();
   }
-  
+
   /**
    * "Less than" sign.
    *
@@ -245,7 +245,7 @@ public class NAryNumber {
   public boolean lss(NAryNumber i) {
     return value < i.getValue();
   }
-  
+
   /**
    * "Not equal to" sign.
    *
@@ -255,7 +255,7 @@ public class NAryNumber {
   public boolean neq(NAryNumber i) {
     return value != i.getValue();
   }
-  
+
   /**
    * Setter for the value.
    */
@@ -269,7 +269,7 @@ public class NAryNumber {
   public String toDec() {
     return Integer.toString(value);
   }
-  
+
   /**
    * @return value of the number into a string represented according to its
    *         base.
@@ -277,30 +277,30 @@ public class NAryNumber {
   @Override
   public String toString() {
     int absoluteValue = Math.abs(value);
-    
+
     if(absoluteValue == 0)
       return "0";
-    
+
     String result = reversedHornerScheme(absoluteValue);
-    
+
     if(base == NumberBase.BINARY) {
       // Pad with '0'
       int digits = 4 * Math.max(2, (int) Math.ceil((double) result.length() / 4));
       result = Strings.padStart(result, digits, '0');
-      
+
       // Group in blocks of four...
       LinkedList<String> teilString = new LinkedList<>();
       for(int i = 0; i < result.length(); i = i + 4)
         teilString.add(result.substring(i, i + 4));
       result = String.join(" ", teilString);
     }
-    
+
     if(value < 0)
       result = '-' + result;
-    
+
     return result;
   }
-  
+
   /**
    * Reversed Horner's method
    *
@@ -308,13 +308,14 @@ public class NAryNumber {
    * @return
    */
   private String reversedHornerScheme(int absoluteValue) {
-    String result = "";
-    
-    while(absoluteValue >= 1) {
-      result += Character.toString(ALPHABET[absoluteValue % base.getBase()]);
-      absoluteValue = absoluteValue / base.getBase();
+    int newValue = absoluteValue;
+    StringBuilder result = new StringBuilder();
+
+    while(newValue >= 1) {
+      result.append(Character.toString(ALPHABET[newValue % base.getBase()]));
+      newValue = newValue / base.getBase();
     }
-    
-    return new StringBuffer(result).reverse().toString();
+
+    return result.reverse().toString();
   }
 }

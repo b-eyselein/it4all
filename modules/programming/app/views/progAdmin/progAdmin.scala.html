@@ -1,19 +1,18 @@
 @(user: model.user.User)
 
-@main("XML: Administration", user) {
+@main("Programmierung: Administration", user) {
 <div class="container">
   <div class="page-header">
-    <h1>Administrator XML</h1>
+    <h1>Administrator Progammierung</h1>
   </div>
-  
-  <h2>Verwaltung der Fragen</h2>
-  <a class="btn btn-default btn-block" href="@xml.routes.Xml.exercises()">Übersicht über alle Fragen</a>
-  <a class="btn btn-default btn-block" href="@xml.routes.XmlAdmin.newExerciseForm()">Neue Aufgabe erstellen</a>
+
+  <h2>Verwaltung der Aufgaben</h2>
+  <a class="btn btn-default btn-block" href="@programming.routes.Programming.exercises()">Übersicht über alle Fragen</a>
   
   <hr>
   
-  <a class="btn btn-default btn-block" href="@@xml.routes.QuestionAdmin.exportQuestions()">Fragen als JSON exportieren</a>
-  <a class="btn btn-default btn-block" href="@xml.routes.XmlAdmin.readStandardExercises()">Standardaufgaben einlesen</a>
+  <a class="btn btn-default btn-block" href="@programming.routes.ProgAdmin.export()">Aufgaben als JSON exportieren</a>
+  <a class="btn btn-default btn-block" href="@programming.routes.ProgAdmin.readStandardExercises()">Standardaufgaben einlesen</a>
   
   <hr>
     
@@ -32,6 +31,6 @@
       </form>
     </div>
   </div>
-    
+
 </div>
 }

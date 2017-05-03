@@ -29,13 +29,13 @@ public class WebAdmin extends AbstractAdminController<WebExercise, WebExerciseRe
     super(theUtil, theFactory, "web", new WebExerciseReader());
   }
   
-  public Result exportExercises() {
+  public Result export() {
     String exported = Json.prettyPrint(Json.toJson(WebExercise.finder.all()));
     return ok(views.html.export.render(getUser(), exported));
   }
   
   public Result index() {
-    return ok(views.html.webAdmin.index.render(getUser()));
+    return ok(views.html.webAdmin.webAdmin.render(getUser()));
   }
   
   @Override

@@ -10,7 +10,6 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-digest" % "1.1.0")
 addSbtPlugin("com.typesafe.sbt" % "sbt-mocha" % "1.1.0")
 addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "4.0.0")
 
-
 // JaCoCo - Code Coverage
 addSbtPlugin("de.johoop" % "jacoco4sbt" % "2.1.6")
 

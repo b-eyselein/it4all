@@ -8,56 +8,35 @@ function extractParameters() {
     var currentData = testData[i];
     var theData = "";
     for(var j = 0; j < currentData.input.length; j++) {
-      theData += "&inp" + j + ":" + i + "=" + currentData.input[j];
+      theData += "&" + getInputName(inputCounter, testCounter) + "=" + currentData.input[j];
     }
-    theData += "&outp" + i + "=" + currentData.output;
+    theData += "&" + getOutputName(i) + "=" + currentData.output;
     parameters += theData;
   }
   
   return parameters;
 }
 
-function lessTestData() {
-  var table = document.getElementById("testDataTable");
-  
-  // Header, first data, button must remain
-  if(table.rows.length > 3) {
-    table.deleteRow(table.rows.length - 2);
-  }
+function getInputName(inputCounter, testCounter) {
+  return "inp_" + inputCounter + "_" + testCounter;
 }
 
-function moreTestData(inputCount) {
-  var table = document.getElementById("testDataTable");
-  var testCount = table.rows.length - 1;
-  var newRow = table.insertRow(testCount);
-  
-  for(var i = 0; i < inputCount; i++) {
-    var cell = newRow.insertCell(i);
-    cell.innerHTML = "<input class=\"form-control\" name=\"" + name + "\">";
-  }
-  var outputCell = newRow.insertCell(inputCount);
-  outputCell.innerHTML = "<input class=\"form-control\" name=\"outp" + (testCount - 1) + "\">";
-  
+function getOutputName(testCounter) {
+  return "outp_" + testCounter;
 }
 
 function getTestData() {
-  var table = document.getElementById("testDataTable");
-  var testData = [];
-  
-  for(var i = 1; i < table.rows.length - 1; i++) {
-    var row = table.rows[i];
-    var data = {
-      input: [],
-      output: ""
-    };
-    for(var j = 0; j < row.cells.length - 1; j++) {
-      var cell = row.cells[j];
-      data.input.push(cell.childNodes[0].value);
+  return [0, 1, 2, 3].map(function(testCounter) {
+    var inputs = [];
+    for(var inputCounter = 0; inputCounter < inputCount; inputCounter++) {
+      inputs.push(document.getElementById(getInputName(inputCounter, testCounter)).value);
     }
-    data.output = row.cells[row.cells.length - 1].childNodes[0].value;
-    testData.push(data);
-  }
-  return testData;
+    return {
+      test: testCounter,
+      input: inputs,
+      output: document.getElementById(getOutputName(testCounter)).value
+    };
+  });
 }
 
 function validateTestData(url) {
@@ -67,17 +46,12 @@ function validateTestData(url) {
   }
   
   var testData = getTestData();
-  var parameters = "";
-  parameters += "count=" + testData.length + "&inputs=" + testData[0].input.length;
-  for(var i = 0; i < testData.length; i++) {
-    var currentData = testData[i];
-    var theData = "";
-    for(var j = 0; j < currentData.input.length; j++) {
-      theData += "&inp" + j + ":" + i + "=" + currentData.input[j];
-    }
-    theData += "&outp" + i + "=" + currentData.output;
-    parameters += theData;
-  }
+  
+  var parameters = testData.map(function(data) {
+    return "outp_" + data.test + "=" + data.output;
+  }).join("&");
+  
+  console.log(parameters);
   
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
@@ -92,17 +66,17 @@ function validateTestData(url) {
 }
 
 function writeTestData(responseText) {
-  var testData = JSON.parse(responseText);
-  var table = document.getElementById("testDataTable");
-  for(var i = 0; i < testData.length; i++) {
-    var data = testData[i];
-    var row = table.rows[parseInt(data.id) + 1];
-    if(data.ok) {
-      row.className = "success";
-    } else {
-      row.className = "danger";
-    }
-  }
+  // var testData = JSON.parse(responseText);
+  // var table = document.getElementById("testDataTable");
+  // for(var i = 0; i < testData.length; i++) {
+  // var data = testData[i];
+  // var row = table.rows[parseInt(data.id) + 1];
+  // if(data.ok) {
+  // row.className = "success";
+  // } else {
+  // row.className = "danger";
+  // }
+  // }
 }
 
 function updatePreview() {

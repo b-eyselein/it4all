@@ -12,6 +12,15 @@ create table answer (
   constraint pk_answer primary key (question_id,id)
 );
 
+create table commited_test_data (
+  user_name                     varchar(255) not null,
+  exercise_id                   integer not null,
+  test_id                       integer not null,
+  inputs                        text,
+  output                        varchar(255),
+  constraint pk_commited_test_data primary key (user_name,exercise_id,test_id)
+);
+
 create table conditions (
   exercise_id                   integer not null,
   task_id                       integer not null,
@@ -62,28 +71,6 @@ create table html_task (
   constraint pk_html_task primary key (task_id,exercise_id)
 );
 
-create table js_exercise (
-  id                            integer auto_increment not null,
-  title                         varchar(255),
-  text                          text,
-  declaration                   varchar(255),
-  functionname                  varchar(255),
-  sample_solution               varchar(255),
-  inputcount                    integer,
-  inputtypes                    varchar(255),
-  returntype                    varchar(9),
-  constraint ck_js_exercise_returntype check ( returntype in ('BOOLEAN','NUMBER','STRING','SYMBOL','UNDEFINED','NULL','OBJECT')),
-  constraint pk_js_exercise primary key (id)
-);
-
-create table js_test_data (
-  exercise_id                   integer not null,
-  test_id                       integer not null,
-  inputs                        text,
-  output                        varchar(255),
-  constraint pk_js_test_data primary key (exercise_id,test_id)
-);
-
 create table js_web_task (
   task_id                       integer not null,
   exercise_id                   integer not null,
@@ -96,23 +83,20 @@ create table js_web_task (
   constraint pk_js_web_task primary key (task_id,exercise_id)
 );
 
-create table python_exercise (
+create table prog_exercise (
   id                            integer auto_increment not null,
   title                         varchar(255),
   text                          text,
-  declaration                   varchar(255),
-  functionname                  varchar(255),
-  sample_solution               varchar(255),
-  inputcount                    integer,
-  constraint pk_python_exercise primary key (id)
+  function_name                 varchar(255),
+  input_count                   integer,
+  python_sample                 varchar(255),
+  js_sample                     varchar(255),
+  constraint pk_prog_exercise primary key (id)
 );
 
-create table python_test_data (
-  exercise_id                   integer not null,
-  test_id                       integer not null,
-  inputs                        text,
-  output                        varchar(255),
-  constraint pk_python_test_data primary key (exercise_id,test_id)
+create table programming_user (
+  name                          varchar(255) not null,
+  constraint pk_programming_user primary key (name)
 );
 
 create table question (
@@ -150,6 +134,14 @@ create table quiz (
   text                          text,
   theme                         varchar(255),
   constraint pk_quiz primary key (id)
+);
+
+create table sample_test_data (
+  exercise_id                   integer not null,
+  test_id                       integer not null,
+  inputs                        text,
+  output                        varchar(255),
+  constraint pk_sample_test_data primary key (exercise_id,test_id)
 );
 
 create table spread_exercise (
@@ -242,6 +234,12 @@ create table xml_exercise (
 alter table answer add constraint fk_answer_question_id foreign key (question_id) references question (id) on delete restrict on update restrict;
 create index ix_answer_question_id on answer (question_id);
 
+alter table commited_test_data add constraint fk_commited_test_data_user_name foreign key (user_name) references programming_user (name) on delete restrict on update restrict;
+create index ix_commited_test_data_user_name on commited_test_data (user_name);
+
+alter table commited_test_data add constraint fk_commited_test_data_exercise_id foreign key (exercise_id) references prog_exercise (id) on delete restrict on update restrict;
+create index ix_commited_test_data_exercise_id on commited_test_data (exercise_id);
+
 alter table conditions add constraint fk_conditions_task foreign key (task_id,exercise_id) references js_web_task (task_id,exercise_id) on delete restrict on update restrict;
 create index ix_conditions_task on conditions (task_id,exercise_id);
 
@@ -254,14 +252,8 @@ create index ix_grading_user_name on grading (user_name);
 alter table html_task add constraint fk_html_task_exercise_id foreign key (exercise_id) references web_exercise (id) on delete restrict on update restrict;
 create index ix_html_task_exercise_id on html_task (exercise_id);
 
-alter table js_test_data add constraint fk_js_test_data_exercise_id foreign key (exercise_id) references js_exercise (id) on delete restrict on update restrict;
-create index ix_js_test_data_exercise_id on js_test_data (exercise_id);
-
 alter table js_web_task add constraint fk_js_web_task_exercise_id foreign key (exercise_id) references web_exercise (id) on delete restrict on update restrict;
 create index ix_js_web_task_exercise_id on js_web_task (exercise_id);
-
-alter table python_test_data add constraint fk_python_test_data_exercise_id foreign key (exercise_id) references python_exercise (id) on delete restrict on update restrict;
-create index ix_python_test_data_exercise_id on python_test_data (exercise_id);
 
 alter table question_quiz add constraint fk_question_quiz_question foreign key (question_id) references question (id) on delete restrict on update restrict;
 create index ix_question_quiz_question on question_quiz (question_id);
@@ -274,6 +266,9 @@ create index ix_question_rating_question_id on question_rating (question_id);
 
 alter table question_rating add constraint fk_question_rating_username foreign key (username) references question_user (name) on delete restrict on update restrict;
 create index ix_question_rating_username on question_rating (username);
+
+alter table sample_test_data add constraint fk_sample_test_data_exercise_id foreign key (exercise_id) references prog_exercise (id) on delete restrict on update restrict;
+create index ix_sample_test_data_exercise_id on sample_test_data (exercise_id);
 
 alter table sql_exercise add constraint fk_sql_exercise_scenario_name foreign key (scenario_name) references sql_scenario (short_name) on delete restrict on update restrict;
 create index ix_sql_exercise_scenario_name on sql_exercise (scenario_name);
@@ -290,6 +285,12 @@ create index ix_web_solution_exercise_id on web_solution (exercise_id);
 alter table answer drop foreign key fk_answer_question_id;
 drop index ix_answer_question_id on answer;
 
+alter table commited_test_data drop foreign key fk_commited_test_data_user_name;
+drop index ix_commited_test_data_user_name on commited_test_data;
+
+alter table commited_test_data drop foreign key fk_commited_test_data_exercise_id;
+drop index ix_commited_test_data_exercise_id on commited_test_data;
+
 alter table conditions drop foreign key fk_conditions_task;
 drop index ix_conditions_task on conditions;
 
@@ -302,14 +303,8 @@ drop index ix_grading_user_name on grading;
 alter table html_task drop foreign key fk_html_task_exercise_id;
 drop index ix_html_task_exercise_id on html_task;
 
-alter table js_test_data drop foreign key fk_js_test_data_exercise_id;
-drop index ix_js_test_data_exercise_id on js_test_data;
-
 alter table js_web_task drop foreign key fk_js_web_task_exercise_id;
 drop index ix_js_web_task_exercise_id on js_web_task;
-
-alter table python_test_data drop foreign key fk_python_test_data_exercise_id;
-drop index ix_python_test_data_exercise_id on python_test_data;
 
 alter table question_quiz drop foreign key fk_question_quiz_question;
 drop index ix_question_quiz_question on question_quiz;
@@ -323,6 +318,9 @@ drop index ix_question_rating_question_id on question_rating;
 alter table question_rating drop foreign key fk_question_rating_username;
 drop index ix_question_rating_username on question_rating;
 
+alter table sample_test_data drop foreign key fk_sample_test_data_exercise_id;
+drop index ix_sample_test_data_exercise_id on sample_test_data;
+
 alter table sql_exercise drop foreign key fk_sql_exercise_scenario_name;
 drop index ix_sql_exercise_scenario_name on sql_exercise;
 
@@ -334,6 +332,8 @@ drop index ix_web_solution_exercise_id on web_solution;
 
 drop table if exists answer;
 
+drop table if exists commited_test_data;
+
 drop table if exists conditions;
 
 drop table if exists exercise_result;
@@ -344,15 +344,11 @@ drop table if exists grading;
 
 drop table if exists html_task;
 
-drop table if exists js_exercise;
-
-drop table if exists js_test_data;
-
 drop table if exists js_web_task;
 
-drop table if exists python_exercise;
+drop table if exists prog_exercise;
 
-drop table if exists python_test_data;
+drop table if exists programming_user;
 
 drop table if exists question;
 
@@ -363,6 +359,8 @@ drop table if exists question_rating;
 drop table if exists question_user;
 
 drop table if exists quiz;
+
+drop table if exists sample_test_data;
 
 drop table if exists spread_exercise;
 

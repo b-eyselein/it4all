@@ -16,40 +16,25 @@ POST   /preferences       controllers.UserController.saveOptions()
 # Admin
 GET    /admin             controllers.AdminController.index()
 
-# Python
-->     /python            python.Routes
-
-# Choice
-->     /choice            choice.Routes
-
-
-# Zahlensysteme
 ->     /binary            binary.Routes
 
-# Boolesche Algebra
 ->     /bool              bool.Routes
 
-# Web-Korrektur
-->     /web               web.Routes
-
-# Javascript-Korrektur
-
-->     /js                js.Routes
-
-# SQL-Korrektur
-->     /sql               sql.Routes
-
-# Mindmap-Korrektur
 ->     /mindmap           mindmap.Routes
 
-# XML
-->     /xml               xml.Routes
+->     /question          question.Routes
 
-# Excel
+->     /prog              programming.Routes
+
 ->     /spread            spread.Routes
 
-# UML
+->     /sql               sql.Routes
+
 ->     /uml               uml.Routes
+
+->     /web               web.Routes
+
+->     /xml               xml.Routes
 
 # Evaluation
 GET    /eval/             controllers.Evaluation.index()

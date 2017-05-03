@@ -1,0 +1,77 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#", 
+	"type": "array", 
+	"items": {
+		"type": "object", 
+		"properties": {
+			"id": {
+				"type": "integer"
+			}, 
+			"title": {
+				"type": "string"
+			}, 
+			"text": {
+				"type": "string"
+			}, 
+			"functionName": {
+				"type": "string"
+			}, 
+			"jsSample": {
+				"type": "string"
+			}, 
+			"pythonSample": {
+				"type": "string"
+			}, 
+			"inputCount": {
+				"type": "integer"
+			}, 
+			"sampleTestData": {
+				"type": "array", 
+				"items": {
+					"type": "object", 
+					"properties": {
+						"key": {
+							"type": "object", 
+							"properties": {
+								"testId": {
+									"type": "integer"
+								}, 
+								"exerciseId": {
+									"type": "integer"
+								}
+							}, 
+							"required": [
+								"testId", 
+								"exerciseId"
+							], 
+							"additionalProperties": false
+						}, 
+						"input": {
+							"type": "string"
+						}, 
+						"output": {
+							
+						}
+					}, 
+					"required": [
+						"key", 
+						"input", 
+						"output"
+					], 
+					"additionalProperties": false
+				}
+			}
+		}, 
+		"required": [
+			"id", 
+			"title", 
+			"text", 
+			"functionName", 
+			"jsSample", 
+			"pythonSample", 
+			"inputCount", 
+			"sampleTestData"
+		], 
+		"additionalProperties": false
+	}
+}

@@ -13,7 +13,7 @@ GET    /admin/                   controllers.web.WebAdmin.index()
 GET    /                         controllers.web.Web.index()
 
 GET    /exercises                controllers.web.Web.exercises()
-GET    /exercises/export         controllers.web.WebAdmin.exportExercises()
+GET    /exercises/export         controllers.web.WebAdmin.export()
 
 GET    /:id/:type                controllers.web.Web.exercise(id: Int, type: String)
 
