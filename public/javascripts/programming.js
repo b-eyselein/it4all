@@ -29,7 +29,10 @@ function getTestData() {
   return [0, 1, 2, 3].map(function(testCounter) {
     var inputs = [];
     for(var inputCounter = 0; inputCounter < inputCount; inputCounter++) {
-      inputs.push(document.getElementById(getInputName(inputCounter, testCounter)).value);
+      inputs.push({
+        id: inputCounter,
+        value: document.getElementById(getInputName(inputCounter, testCounter)).value
+      });
     }
     return {
       test: testCounter,
@@ -48,7 +51,10 @@ function validateTestData(url) {
   var testData = getTestData();
   
   var parameters = testData.map(function(data) {
-    return "outp_" + data.test + "=" + data.output;
+    var inputs = data.input.map(function(input) {
+      return getInputName(input.id, data.test) + "=" + input.value;
+    }).join("&");
+    return inputs + "&" + getOutputName(data.test) + "=" + data.output;
   }).join("&");
   
   console.log(parameters);

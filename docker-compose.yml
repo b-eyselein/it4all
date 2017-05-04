@@ -1,22 +1,24 @@
 it4all:
     image: beyselein/play
-    command: sbt run -Dconfig.resource=docker.conf
+    command: bash #sbt # run -Dconfig.resource=docker.conf
     volumes_from:
         - vc_it4all
     volumes:
         - ./:/app
-        - ~/.ivy2/:/home/developer/.ivy2/
-        - ~/.sbt/:/home/developer/.sbt/
+        - ~/.ivy2/:/home/bjorn/.ivy2/
+        - ~/.sbt/:/home/bjorn/.sbt/
     links:
         - mysql1:mysql1
         - mysql2:mysql2
         - mysql3:mysql3
     ports:
         - 8000:9000
+    environment:
+        - USER=bjorn
     # Keep stdin open and tty on so server does not shut down...
     stdin_open: true
     tty: true
-    restart: always
+    #restart: always
 
 vc_it4all:
     image: alpine:latest

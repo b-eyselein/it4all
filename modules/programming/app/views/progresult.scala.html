@@ -1,0 +1,12 @@
+@(results: List[model.execution.ExecutionResult])
+
+@for(res <- results) {
+<div class="col-md-6">
+  <div class="alert alert-danger">@@res.getBSClass()">
+    <p>Test von <code>@res.getEvaluated()</code> war @@if(!res.wasSuccessful()) {nicht } erfolgreich.<p>
+    @@if(!res.wasSuccessful()) {
+    <p>Erwartet: "@@res.awaitedResult", bekommen: "@@res.getResult()"</p>
+    }
+  </div>
+</div>
+}
