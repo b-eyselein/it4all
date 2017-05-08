@@ -112,10 +112,9 @@ public abstract class ProgLangCorrector {
   }
 
   private ProgEvaluationResult validataTestData(CommitedTestData data, ScriptEngine engine) {
-    return null;
-    // String toEvaluate = buildToEvaluate(data.getExercise().functionName,
-    // data.getInput());
-    // return new ProgEvaluationResult(execute(toEvaluate, engine), data);
+    String funtionName = data.exercise.functionName;
+    String toEvaluate = buildToEvaluate(funtionName, data.getInput());
+    return new ProgEvaluationResult(execute(toEvaluate, engine), data);
   }
 
   protected EvaluationResult evaluate(ProgExercise exercise, ITestData testData, ScriptEngine engine) {

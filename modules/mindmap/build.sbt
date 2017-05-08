@@ -5,6 +5,9 @@ Common.settings
 // Injected for non-static Routes
 routesGenerator := InjectedRoutesGenerator
 
+// JaCoCo - siehe project/plugins.sbt
+jacoco.settings
+
 libraryDependencies ++= Seq(
   // Apache POI for Excel
   "org.apache.poi" % "poi" % "3.13",

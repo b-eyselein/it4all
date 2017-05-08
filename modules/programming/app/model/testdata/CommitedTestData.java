@@ -2,11 +2,14 @@ package model.testdata;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import model.ApprovalState;
 import model.ProgrammingUser;
 
 @Entity
@@ -22,14 +25,22 @@ public class CommitedTestData extends ITestData {
   @JsonBackReference
   public ProgrammingUser user;
 
+  @Enumerated(EnumType.STRING)
+  public ApprovalState approvalState;
+
   public CommitedTestData(CommitedTestDataKey theKey) {
     key = theKey;
   }
 
-  public CommitedTestData(String theUserName, int theExerciseId, int theTestId, String theInputs, String theOutput) {
-    this(new CommitedTestDataKey(theUserName, theExerciseId, theTestId));
+  public CommitedTestData(CommitedTestDataKey theKey, String theInputs, String theOutput) {
+    this(theKey);
     inputs = theInputs;
     output = theOutput;
+  }
+
+  @Override
+  public int getId() {
+    return key.testId;
   }
 
   @Override

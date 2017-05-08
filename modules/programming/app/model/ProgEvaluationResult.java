@@ -12,12 +12,6 @@ public class ProgEvaluationResult extends EvaluationResult {
   private AExecutionResult executionResult;
   private ITestData testData;
 
-  public ProgEvaluationResult(AExecutionResult theExecutionResult, ITestData theTestData) {
-    super(FeedbackLevel.NO_FEEDBACK, analyze(theExecutionResult, theTestData));
-    executionResult = theExecutionResult;
-    testData = theTestData;
-  }
-
   private static Success analyze(AExecutionResult executionResult, ITestData testData) {
     if(executionResult instanceof SyntaxError)
       return Success.NONE;
@@ -26,26 +20,42 @@ public class ProgEvaluationResult extends EvaluationResult {
   }
 
   protected static <T> boolean validateResult(T gottenResult, T awaitedResult) {
-    /*
-     * FIXME: validation of result is dependent on language! Example: numbers in
-     * js are floats...
-     */
+    // FIXME: validation of result is dependent on language! Example: numbers in
     return gottenResult.equals(awaitedResult);
   }
 
-  public String getAsHtml() {
-    // FIXME: Auto-generated method stub
-    boolean successful = success == Success.COMPLETE;
+  public ProgEvaluationResult(AExecutionResult theExecutionResult, ITestData theTestData) {
+    super(FeedbackLevel.NO_FEEDBACK, analyze(theExecutionResult, theTestData));
+    executionResult = theExecutionResult;
+    testData = theTestData;
+  }
 
-    StringBuilder builder = new StringBuilder();
-    builder.append("<div class=\"col-md-6\">\n");
-    builder.append("  <div class=\"alert alert-" + (successful ? "success" : "danger") + "\">\n");
-    builder.append("    <p>Test von <code>" + executionResult.getEvaluated() + "</code> war "
-        + (successful ? "" : "nicht ") + "erfolgreich.<p>\n");
-    builder.append("    <p>Erwartet: \"" + testData.output + "\"</p>\n");
-    builder.append("    <p>Ergebnis: \"" + executionResult.getResult() + "\"</p>\n");
-    builder.append("  " + DIV_END + "\n" + DIV_END + "");
-    return builder.toString();
+  public String getAsHtml() {
+    return "";
+    // FIXME: Auto-generated method stub
+    // boolean successful = success == Success.COMPLETE;
+    //
+    // StringBuilder builder = new StringBuilder();
+    // builder.append("<div class=\"col-md-6\">\n");
+    // builder.append(" <div class=\"alert alert-" + (successful ? "success" :
+    // "danger") + "\">\n");
+    // builder.append(" <p>Test von <code>" + executionResult.getEvaluated() +
+    // "</code> war "
+    // + (successful ? "" : "nicht ") + "erfolgreich.<p>\n");
+    // builder.append(" <p>Erwartet: \"" + testData.output + "\"</p>\n");
+    // builder.append(" <p>Ergebnis: \"" + executionResult.getResult() +
+    // "\"</p>\n");
+    // builder.append(" " + DIV_END + "\n" + DIV_END + "");
+    // return builder.toString();
+  }
+
+  public int getId() {
+    return testData.getId();
+  }
+
+  @Override
+  public String toString() {
+    return testData.toString() + ", " + executionResult.getResult();
   }
 
 }

@@ -16,21 +16,23 @@ import model.ProgExercise;
 
 @MappedSuperclass
 public abstract class ITestData extends Model {
-  
+
   public static final String VALUES_SPLIT_CHAR = "#";
-  
+
   @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "exercise_id", insertable = false, updatable = false)
   @JsonBackReference
   public ProgExercise exercise;
-  
+
   @Column(columnDefinition = "text")
   public String inputs;
 
   public String output;
-  
+
+  public abstract int getId();
+
   public List<String> getInput() {
     return Arrays.asList(inputs.split(VALUES_SPLIT_CHAR));
   }
-  
+
 }

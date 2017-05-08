@@ -57,8 +57,6 @@ function validateTestData(url) {
     return inputs + "&" + getOutputName(data.test) + "=" + data.output;
   }).join("&");
   
-  console.log(parameters);
-  
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if(xhttp.readyState == 4 && xhttp.status == 200) {
@@ -72,17 +70,9 @@ function validateTestData(url) {
 }
 
 function writeTestData(responseText) {
-  // var testData = JSON.parse(responseText);
-  // var table = document.getElementById("testDataTable");
-  // for(var i = 0; i < testData.length; i++) {
-  // var data = testData[i];
-  // var row = table.rows[parseInt(data.id) + 1];
-  // if(data.ok) {
-  // row.className = "success";
-  // } else {
-  // row.className = "danger";
-  // }
-  // }
+  for(var data of JSON.parse(responseText)) {
+    document.getElementById("tr_" + data.id).className = data.successful ? "success": "danger";
+  }
 }
 
 function updatePreview() {

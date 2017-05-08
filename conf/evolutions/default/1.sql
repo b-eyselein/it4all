@@ -18,6 +18,8 @@ create table commited_test_data (
   test_id                       integer not null,
   inputs                        text,
   output                        varchar(255),
+  approval_state                varchar(8),
+  constraint ck_commited_test_data_approval_state check ( approval_state in ('CREATED','SAVED','ACCEPTED','APPROVED')),
   constraint pk_commited_test_data primary key (user_name,exercise_id,test_id)
 );
 
