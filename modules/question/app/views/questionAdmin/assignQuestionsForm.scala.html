@@ -1,4 +1,4 @@
-@(user: model.user.User, questions: List[model.Question], quizzes: List[model.Quiz])
+@(user: model.user.User, questionList: List[model.question.Question], quizzes: List[model.Quiz])
 
 @main("Auswahlfragen", user) {
 <script>
@@ -12,7 +12,7 @@ function update(input) {
     <h1>Zuweisung der Fragen</h1>
   </div>
   
-  <form action="@controllers.choice.routes.QuestionAdmin.assignQuestions()" method="post">
+  <form action="@questions.routes.QuestionAdmin.assignQuestions()" method="post">
     <table class="table">
       <thead>
         <tr>
@@ -23,14 +23,14 @@ function update(input) {
         </tr>
       </thead>
       <tbody>
-      @for(question <- questions) {
+      @for(question <- questionList) {
         <tr>
           <th title="@question.text">@{question.id}. @question.title</th>
         @for(quiz <- quizzes) {
           <td>
-            <input type="checkbox" onchange="update(this);" @if(quiz.questions.contains(question)) {checked}
+            <input type="checkbox" onchange="update(this);" @@if(quiz.questions.contains(question)) {checked}
             name="@{quiz.id}_@question.id" id="@{quiz.id}_@{question.id}" value="on">
-            <input type="checkbox" hidden @if(!quiz.questions.contains(question)) {checked}
+            <input type="checkbox" hidden @@if(!quiz.questions.contains(question)) {checked}
             name="@{quiz.id}_@question.id" id="@{quiz.id}_@{question.id}_hidden" value="off">
           </td>
         }

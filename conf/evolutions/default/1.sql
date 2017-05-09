@@ -107,15 +107,13 @@ create table question (
   text                          text,
   author                        varchar(255),
   max_points                    integer,
-  question_type                 varchar(21),
-  constraint ck_question_question_type check ( question_type in ('MULTIPLE','SINGLE','FILLOUT_WITH_ORDER','FILLOUT_WITHOUT_ORDER')),
+  question_type                 varchar(8),
+  constraint ck_question_question_type check ( question_type in ('CHOICE','FILLOUT','FREETEXT')),
   constraint pk_question primary key (id)
 );
 
-create table question_quiz (
-  question_id                   integer not null,
-  quiz_id                       integer not null,
-  constraint pk_question_quiz primary key (question_id,quiz_id)
+create table question_answer (
+  user_name                     varchar(255)
 );
 
 create table question_rating (
@@ -257,11 +255,8 @@ create index ix_html_task_exercise_id on html_task (exercise_id);
 alter table js_web_task add constraint fk_js_web_task_exercise_id foreign key (exercise_id) references web_exercise (id) on delete restrict on update restrict;
 create index ix_js_web_task_exercise_id on js_web_task (exercise_id);
 
-alter table question_quiz add constraint fk_question_quiz_question foreign key (question_id) references question (id) on delete restrict on update restrict;
-create index ix_question_quiz_question on question_quiz (question_id);
-
-alter table question_quiz add constraint fk_question_quiz_quiz foreign key (quiz_id) references quiz (id) on delete restrict on update restrict;
-create index ix_question_quiz_quiz on question_quiz (quiz_id);
+alter table question_answer add constraint fk_question_answer_user_name foreign key (user_name) references question_user (name) on delete restrict on update restrict;
+create index ix_question_answer_user_name on question_answer (user_name);
 
 alter table question_rating add constraint fk_question_rating_question_id foreign key (question_id) references question (id) on delete restrict on update restrict;
 create index ix_question_rating_question_id on question_rating (question_id);
@@ -308,11 +303,8 @@ drop index ix_html_task_exercise_id on html_task;
 alter table js_web_task drop foreign key fk_js_web_task_exercise_id;
 drop index ix_js_web_task_exercise_id on js_web_task;
 
-alter table question_quiz drop foreign key fk_question_quiz_question;
-drop index ix_question_quiz_question on question_quiz;
-
-alter table question_quiz drop foreign key fk_question_quiz_quiz;
-drop index ix_question_quiz_quiz on question_quiz;
+alter table question_answer drop foreign key fk_question_answer_user_name;
+drop index ix_question_answer_user_name on question_answer;
 
 alter table question_rating drop foreign key fk_question_rating_question_id;
 drop index ix_question_rating_question_id on question_rating;
@@ -354,7 +346,7 @@ drop table if exists programming_user;
 
 drop table if exists question;
 
-drop table if exists question_quiz;
+drop table if exists question_answer;
 
 drop table if exists question_rating;
 

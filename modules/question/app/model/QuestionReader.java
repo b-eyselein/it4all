@@ -6,6 +6,10 @@ import java.util.List;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import model.exercisereading.ExerciseReader;
+import model.question.Answer;
+import model.question.AnswerKey;
+import model.question.Correctness;
+import model.question.Question;
 import play.libs.Json;
 
 public class QuestionReader extends ExerciseReader<Question> {
@@ -37,28 +41,29 @@ public class QuestionReader extends ExerciseReader<Question> {
 
   @Override
   protected Question readExercise(JsonNode exerciseNode) {
-    JsonNode idNode = exerciseNode.get(ID_NAME);
-    JsonNode titleNode = exerciseNode.get(TITLE_NAME);
-    JsonNode authorNode = exerciseNode.get("author");
-    JsonNode pointsNode = exerciseNode.get("maxPoints");
-    JsonNode textNode = exerciseNode.get(TEXT_NAME);
-    JsonNode questionTypeNode = exerciseNode.get("questionType");
-    JsonNode answersNode = exerciseNode.get("answers");
-
-    int id = idNode.asInt();
-
-    Question question = Question.finder.byId(id);
-    if(question == null)
-      question = new Question(id);
-
-    question.author = authorNode.asText();
-    question.title = titleNode.asText();
-    question.maxPoints = pointsNode.asInt();
-    question.text = textNode.asText();
-    question.questionType = QuestionType.valueOf(questionTypeNode.asText());
-    question.answers = readAnswers(answersNode);
-
-    return question;
+    // JsonNode idNode = exerciseNode.get(ID_NAME);
+    // JsonNode titleNode = exerciseNode.get(TITLE_NAME);
+    // JsonNode authorNode = exerciseNode.get("author");
+    // JsonNode pointsNode = exerciseNode.get("maxPoints");
+    // JsonNode textNode = exerciseNode.get(TEXT_NAME);
+    // JsonNode questionTypeNode = exerciseNode.get("questionType");
+    // JsonNode answersNode = exerciseNode.get("answers");
+    //
+    // int id = idNode.asInt();
+    //
+    // Question question = Question.finder.byId(id);
+    // if(question == null)
+    // question = new Question(id);
+    //
+    // question.author = authorNode.asText();
+    // question.title = titleNode.asText();
+    // question.maxPoints = pointsNode.asInt();
+    // question.text = textNode.asText();
+    // question.questionType = QuestionType.valueOf(questionTypeNode.asText());
+    // question.answers = readAnswers(answersNode);
+    //
+    // return question;
+    return null;
   }
 
 }

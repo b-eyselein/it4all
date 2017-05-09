@@ -1,4 +1,4 @@
-@(user: model.user.User, questions: List[model.Question])
+@(user: model.user.User, questions: List[model.question.Question])
 
 @main("Auswahlfragen", user) {
 <div class="container">
@@ -7,7 +7,6 @@
     <div class="panel-heading">Aufgabe @question.id</div>
     <div class="panel-body">
       <p>Aufgabentext: @question.text</p>
-      <p>Typ: @question.questionType</p>
       <table class="table">
         <thead>
           <tr>

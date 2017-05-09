@@ -8,9 +8,10 @@
     <h1>Alle Quizze</h1>
   </div>
   
+  @*
   @if(quizzes.isEmpty()) {
   <div class="alert alert-info">Bisher gibt es keine Quizze. Sie k&ouml;nnen
-    <a class="alert-link" href="@choice.routes.QuestionAdmin.newQuizForm()">hier</a> eines erstellen.
+    <a class="alert-link" href="@questions.routes.QuestionAdmin.newQuizForm()">hier</a> eines erstellen.
     </div>
   } else {
   <table class="table">
@@ -27,16 +28,18 @@
     @for(quiz <- quizzes) {
       <tr>
         <td>@quiz.id</td>
-        <td><a href="@choice.routes.QuestionController.quiz(quiz.id)">@quiz.title</a></td>
+        <td><a href="@questions.routes.QuestionController.quiz(quiz.id)">@quiz.title</a></td>
         <td>@quiz.text</td>
         <td>@quiz.questions.size()</td>
         @if(isAdmin) {
-        <td><a href="@choice.routes.QuestionAdmin.assignQuestionsSingleForm(quiz.id)">Fragen zuweisen...</a>
+        <td><a href="@questions.routes.QuestionAdmin.assignQuestionsSingleForm(quiz.id)">Fragen zuweisen...</a>
         }
       </tr>
     }    
     </tbody>
   </table>
   }
+  *@
+  
 </div>
 }

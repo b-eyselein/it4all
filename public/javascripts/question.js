@@ -1,23 +1,17 @@
-
 // In newQuestion / editQuestion
 const MAX_ANSWERS = 8;
 const MAX_START = 5
 
 function onAnswerNumChange() {
   var numOfActiveAnswers = parseInt(document.getElementById("numOfAnswers").value);
-  for(var i = 1; i <= MAX_ANSWERS ; i++) {
+  for(var i = 0; i < MAX_ANSWERS ; i++) {
     var input = document.getElementById(i);
-    if(i <= numOfActiveAnswers) {
-      // Activate inputs for answers 1 to numOfAnswers
-      input.readOnly = "";
-      input.required = true;
-      input.className = "form-control";
-    } else {
-      // Deactivate other inputs
-      input.readOnly = "readonly";
-      input.required = false;
-      input.className = "form-control disabled";
-    }
+    var answerActive = i < numOfActiveAnswers;
+
+    // Activate inputs for answers 1 to numOfAnswers
+    input.readOnly = answerActive ? "" : "readonly";
+    input.required = answerActive;
+    input.className = "form-control" + (answerActive ? "" : " disabled");
   }
 }
 

@@ -15,11 +15,11 @@
     </div>
     <div class="row">
       <div class="col-xs-6 text-right">Anzahl Fragen: </div>
-      <div class="col-xs-6">@quiz.questions.size()</div>
+      <div class="col-xs-6">@@quiz.questions.size()</div>
     </div>
     <div class="row">
       <div class="col-xs-6 text-right">Maximal erreichbare Punktzahl: </div>
-      <div class="col-xs-6">@quiz.getMaxPoints() Punkte</div>
+      <div class="col-xs-6">@@quiz.getMaxPoints() Punkte</div>
     </div>
   </section>
   
@@ -29,10 +29,10 @@
     <h3>TODO: Statistiken f&uuml;r User...</h3>
   </section>
   
-  @if(quiz.questions.size() > 0) {
+  @@if(quiz.questions.size() > 0) {
   <hr>
   
-  <a class="btn btn-primary btn-block" href="@controllers.choice.routes.QuestionController.quizStart(quiz.id)">Quiz starten...</a>
+  <a class="btn btn-primary btn-block" href="@questions.routes.QuestionController.quizStart(quiz.id)">Quiz starten...</a>
   }
   
 </div>

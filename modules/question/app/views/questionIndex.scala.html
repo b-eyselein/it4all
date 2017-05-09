@@ -9,16 +9,16 @@
   </div>
 
   @for(quiz <- quizzes) {
-  <a class="btn btn-default btn-block" href="@choice.routes.QuestionController.quiz(quiz.id)">Quiz @quiz.title</a>
+  <a class="btn btn-default btn-block" href="@questions.routes.QuestionController.quiz(quiz.id)">Quiz @quiz.title</a>
   }
 
   <hr>
   
-  <a class="btn btn-default btn-block" href="@choice.routes.QuestionController.questions()">Alle Fragen</a>
+  <a class="btn btn-default btn-block" href="@questions.routes.QuestionController.questions()">Alle Fragen</a>
   
   <hr>
   
-  <a class="btn btn-warning btn-block" href="@choice.routes.QuestionController.newQuestionForm()">
+  <a class="btn btn-warning btn-block" href="@questions.routes.QuestionController.newQuestionForm("")">
   <span class="glyphicon glyphicon-new-window"></span> Neue Frage erstellen <sup><i>BETA!</i></sup>
   </a>
 

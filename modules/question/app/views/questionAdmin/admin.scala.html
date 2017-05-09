@@ -1,0 +1,80 @@
+@(user: model.user.User)
+
+@import model.question._
+
+@notAssignedQuestions = @{java.util.Collections.emptyList()}@*Question.notAssignedQuestions()*@
+
+@main("Auswahlfragen", user) {
+<div class="container">
+  <div class="page-header">
+    <h1>Administrator Auswahlfragen</h1>
+  </div>
+  
+  <section id="statistics">
+    <h2>Statistiken</h2>
+    <ul>
+      <li>
+        Es existieren insgesamt <a href="@questions.routes.QuestionController.questions()">
+         @Question.finder.all().size() Fragen</a> in allen Kategorien, darunter
+        <ul>
+        @for(questionType <- QuestionType.values()) {
+          <li>@Question.finder.where().eq("question_type", questionType.toString()).findCount() @questionType.getName()n</li>
+        }
+          
+        @if(!notAssignedQuestions.isEmpty()) {
+          <li>Es gibt noch @notAssignedQuestions.size()
+            <a href="@questions.routes.QuestionAdmin.notAssignedQuestions()">nicht zugeordnete Fragen</a>.
+            Sie k&ouml;nnen Sie <a href="@questions.routes.QuestionAdmin.assignQuestionsForm()">hier</a> zuweisen.
+          </li>
+        }
+        </ul>
+      </li>
+      <li>Es existieren @model.Quiz.finder.all().size() <a href="@questions.routes.QuestionController.quizzes()">Quiz(ze)</a></li>
+    </ul>
+  </section>
+  
+  <hr>
+  
+  <section id="administration_questions">
+    <h2>Verwaltung der Fragen</h2>
+    
+    <a class="btn btn-default btn-block" href="@questions.routes.QuestionController.questions()">Übersicht über alle Fragen</a>
+    
+    &nbsp;
+    
+    <div class="btn-group btn-group-justified">
+    @for(questionType <- QuestionType.values()) {
+      <a class="btn btn-default" href="@questions.routes.QuestionController.newQuestionForm(questionType.toString())">
+        Neue @questionType.getName() erstellen
+      </a>
+    }
+    </div>
+    
+    &nbsp;
+    
+    <div class="btn-group btn-group-justified">
+      <a class="btn btn-default" href="@questions.routes.QuestionAdmin.exportQuestions()">Alle Fragen exportieren</a>
+      <a class="btn btn-default" href="@questions.routes.QuestionAdmin.importQuestions()">Neue Fragen importieren</a>
+    </div>
+  </section>
+
+  <hr>
+  
+  <section id="administration_quizzes">
+    <h2>Verwaltung der Quizzes</h2>
+
+    <a class="btn btn-default btn-block" href="@questions.routes.QuestionController.quizzes()">Übersicht über alle Quizze</a>
+    
+    &nbsp;
+    
+    <a class="btn btn-default btn-block" href="@questions.routes.QuestionAdmin.newQuizForm()">Neues Quiz erstellen</a>
+      
+    &nbsp;
+    
+    <div class="btn-group btn-group-justified">
+      <a class="btn btn-default btn-block" href="@questions.routes.QuestionAdmin.exportQuizzes()">Alle Quizze exportieren</a>
+      <a class="btn btn-default btn-block" href="@questions.routes.QuestionAdmin.importQuizzes()">Neue Quizze importieren</a>
+    </div>
+  </section>
+</div>
+}

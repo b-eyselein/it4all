@@ -1,4 +1,4 @@
-package model;
+package model.question;
 
 import java.io.Serializable;
 
@@ -9,8 +9,8 @@ public class AnswerKey implements Serializable {
 
   private static final long serialVersionUID = -654684351366843L;
 
-  public int questionId; // NOSONAR
-  public int id; // NOSONAR
+  public int questionId;
+  public int id;
 
   public AnswerKey(int theQuestionId, int theId) {
     questionId = theQuestionId;
@@ -19,11 +19,7 @@ public class AnswerKey implements Serializable {
 
   @Override
   public boolean equals(Object obj) {
-    if(!(obj instanceof AnswerKey))
-      return false;
-
-    AnswerKey other = (AnswerKey) obj;
-    return questionId == other.questionId && id == other.id;
+    return obj instanceof AnswerKey && hashCode() == obj.hashCode();
   }
 
   @Override

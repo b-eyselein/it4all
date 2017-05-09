@@ -1,0 +1,60 @@
+@(user: model.user.User, questionType: model.question.QuestionType)
+
+@import model.question.Correctness
+@import model.question.QuestionType
+
+@main(questionType.getName() + " erstellen", user) {
+<script src="@routes.Assets.versioned("javascripts/question.js")"></script>
+
+<script>
+  $(document).ready(function() {
+    onAnswerNumChange();
+  });
+</script>
+
+<div class="container">
+  <div class="page-header">
+    <h1>Neue @questionType.getName() erstellen</h1>
+  </div>
+
+  <form class="form-horizontal" method="post" action="@questions.routes.QuestionController.newQuestion(questionType.toString())">
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="title">Titel:</label>
+      <div class="col-sm-10">
+        <input class="form-control" id="title" name="title" required
+          placeholder="Titel der Frage, z. B. 'Assoziationen in UML'">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="text">Fragentext:</label>
+      <div class="col-sm-10">
+        <input class="form-control" id="text" name="text" required placeholder="Text der Frage">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="author">Autor:</label>
+      <div class="col-sm-10">
+        <input class="form-control" id="author" name="author" readonly required value="@user.name">
+      </div>
+    </div>
+    
+    @* Beginn Custom ... *@
+    
+    @questionType match {
+      case QuestionType.CHOICE => {@newChoiceFormPart()}
+      case QuestionType.FILLOUT	=> {@newFilloutFormPart()}
+      case QuestionType.FREETEXT => {}
+    }
+
+    @* End Custom ...*@
+
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <button type="submit" class="btn btn-primary">Frage erstellen</button>
+      </div>
+    </div>
+  </form>
+</div>
+}

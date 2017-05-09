@@ -1,7 +1,7 @@
-@(user: model.user.User, question: model.Question, isEdit: Boolean)
+@(user: model.user.User, question: model.question.Question, isEdit: Boolean)
 
 @main("Auswahlfrage erstellen", user) {
-<script src="@controllers.routes.Assets.versioned("javascripts/choicequestions.js")"></script>
+<script src="@routes.Assets.versioned("javascripts/choicequestions.js")"></script>
   
 <script>
   $(document).ready(function() {
@@ -14,56 +14,37 @@
   @if(isEdit) {<h1>Frage editieren</h1>} else {<h1>Neue Frage erstellen</h1>}
   </div>
   
-  <form class="form-horizontal" method="post" action="@controllers.choice.routes.QuestionController.editQuestion(question.id)">
+  <form class="form-horizontal" method="post" action="@questions.routes.QuestionController.editQuestion(question.id)">
     <div class="form-group">
       <label class="control-label col-sm-2" for="title">Titel:</label>
       <div class="col-sm-10">
-        <input class="form-control" id="title" name="title" required
-        @if(isEdit) {placeholder="Alter Titel: '@question.title'" value="@question.title"
-        } else {placeholder="Titel der Frage, z. B. 'Assoziationen in UML'"}>
+        <input class="form-control" id="title" name="title" required placeholder="Alter Titel: '@question.title'" value="@question.title">
       </div>
     </div>
 
     <div class="form-group">
       <label class="control-label col-sm-2" for="text">Text:</label>
       <div class="col-sm-10">
-        <input class="form-control" id="text" name="text" required
-        @if(isEdit) {placeholder="Alter Text: '@question.text'" value="@question.text"
-        } else {placeholder="Text der Frage"}>
+        <input class="form-control" id="text" name="text" required placeholder="Alter Text: '@question.text'" value="@question.text">
       </div>
     </div>
 
     <div class="form-group">
       <label class="control-label col-sm-2" for="author">Autor:</label>
       <div class="col-sm-10">
-        <input class="form-control" id="author" name="author" readonly required value="@if(isEdit) {@question.author} else {@user.name}">
+        <input class="form-control" id="author" name="author" readonly required value="@question.author">
       </div>
     </div>
   
     <div class="form-group">
-      <label class="control-label col-sm-2" for="type">Typ:</label>
-      <div class="col-sm-10">
-        @for(qType <- model.QuestionType.values()) {
-        <div class="radio">
-          <label for="@qType" title="@qType.getDescription()">
-            <input type="radio" name="type" id="@qType" value="@qType" required @if(isEdit && qType == question.questionType) {checked}>
-             @qType.getName
-          </label>
-        </div>
-        }
-      </div>
-    </div>
-
-    <div class="form-group">
       <label class="control-label col-sm-2" for="numOfAnswers">Anzahl Antworten:</label>
       <div class="col-sm-10">
         <input class="form-control" type="number" name="numOfAnswers" id="numOfAnswers"
-        onchange="onAnswerNumChange();" min="2" max="8" value="@if(isEdit) {@question.answers.size()} else {4}" required>
+        onchange="onAnswerNumChange();" min="2" max="8" value="@@question.answers.size()" required>
       </div>
     </div>
 
-    @* comment... *@
-    @for(answer <- question.answers) {
+    @*@for(answer <- question.answers) {
     <div class="form-group">
       <label class="control-label col-sm-2">@answer.key.id. Antwort:</label>
       <div class="col-sm-10" id="answerDiv">
@@ -81,10 +62,10 @@
         </div>
       </div>
     </div>
-    }
+    }*@
     
     @* Fill up missing answers until 8 *@
-    @for(i <- question.answers.size() + 1 until 9) {
+    @*@for(i <- question.answers.size() + 1 until 9) {
     <div class="form-group">
       <label class="control-label col-sm-2">@i. Antwort:</label>
       <div class="col-sm-10" id="answerDiv">
@@ -102,7 +83,7 @@
         </div>
       </div>
     </div>
-    }
+    }*@
 
     <div class="form-group"> 
       <div class="col-sm-offset-2 col-sm-10">

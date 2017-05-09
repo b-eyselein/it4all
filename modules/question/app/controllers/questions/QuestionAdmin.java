@@ -1,56 +1,56 @@
-package controllers.choice;
+package controllers.questions;
 
+import java.util.List;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Arrays;
+
+import javax.inject.Inject;
+
+import controllers.core.AbstractAdminController;
+import model.QuestionReader;
+import model.Util;
+import model.question.Question;
+import play.data.FormFactory;
+import play.mvc.Result;
+import play.libs.Json;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.persistence.RollbackException;
 
 import com.google.common.io.Files;
 
-import controllers.core.AbstractAdminController;
-import model.Answer;
-import model.Question;
-import model.QuestionReader;
 import model.Quiz;
-import model.Util;
 import model.exercisereading.AbstractReadingResult;
 import model.exercisereading.ReadingError;
 import model.exercisereading.ReadingResult;
-import play.Logger;
 import play.data.DynamicForm;
-import play.data.FormFactory;
-import play.libs.Json;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
-import play.mvc.Result;
 
 public class QuestionAdmin extends AbstractAdminController<Question, QuestionReader> {
   
   @Inject
   public QuestionAdmin(Util theUtil, FormFactory theFactory) {
-    super(theUtil, theFactory, "choice", new QuestionReader());
+    super(theUtil, theFactory, "question", new QuestionReader());
   }
   
   private static void assignQuestion(String keyAndValue, boolean addOrRemove) {
-    String[] quizAndQuestion = keyAndValue.split("_");
-    
-    Quiz quiz = Quiz.finder.byId(Integer.parseInt(quizAndQuestion[0]));
-    Question question = Question.finder.byId(Integer.parseInt(quizAndQuestion[1]));
-    
-    if(addOrRemove)
-      quiz.questions.add(question);
-    else
-      quiz.questions.remove(question);
-    
-    quiz.save();
+    // String[] quizAndQuestion = keyAndValue.split("_");
+    //
+    // Quiz quiz = Quiz.finder.byId(Integer.parseInt(quizAndQuestion[0]));
+    // Question question =
+    // Question.finder.byId(Integer.parseInt(quizAndQuestion[1]));
+    //
+    // if(addOrRemove)
+    // quiz.questions.add(question);
+    // else
+    // quiz.questions.remove(question);
+    //
+    // quiz.save();
   }
   
   public Result assignQuestions() {
@@ -61,16 +61,17 @@ public class QuestionAdmin extends AbstractAdminController<Question, QuestionRea
     for(Map.Entry<String, String> entry: assignments.entrySet())
       assignQuestion(entry.getKey(), "on".equals(entry.getValue()));
     
-    return ok(views.html.questionadmin.questionsAssigned.render(getUser(), assignments.toString()));
+    return ok(views.html.questionAdmin.questionsAssigned.render(getUser(), assignments.toString()));
   }
   
   public Result assignQuestionsForm() {
-    return ok(views.html.questionadmin.assignQuestionsForm.render(getUser(), Question.finder.all(), Quiz.finder.all()));
+    return ok(views.html.questionAdmin.assignQuestionsForm.render(getUser(),
+        /* Question.finder.all() */ Collections.emptyList(), Quiz.finder.all()));
   }
-
+  
   public Result assignQuestionsSingleForm(int id) {
-    return ok(views.html.questionadmin.assignQuestionsForm.render(getUser(), Question.finder.all(),
-        Arrays.asList(Quiz.finder.byId(id))));
+    return ok(views.html.questionAdmin.assignQuestionsForm.render(getUser(),
+        /* Question.finder.all() */ Collections.emptyList(), Arrays.asList(Quiz.finder.byId(id))));
   }
   
   public Result exportQuestions() {
@@ -100,11 +101,19 @@ public class QuestionAdmin extends AbstractAdminController<Question, QuestionRea
   }
   
   public Result getJSONSchemaFile() {
-    return ok(new File("conf/resources/choice/exerciseSchema.json"));
+    return ok(Paths.get("conf", "resources", "choice", "exerciseSchema.json").toFile());
+  }
+  
+  public Result importQuestions() {
+    return ok("TODO!");
+  }
+  
+  public Result importQuizzes() {
+    return ok("TODO!");
   }
   
   public Result index() {
-    return ok(views.html.questionadmin.questionAdmin.render(getUser()));
+    return ok(views.html.questionAdmin.admin.render(getUser()));
   }
   
   public Result newQuiz() {
@@ -127,15 +136,16 @@ public class QuestionAdmin extends AbstractAdminController<Question, QuestionRea
     quiz.text = form.get("text");
     quiz.save();
     
-    return ok(views.html.questionadmin.quizCreated.render(getUser(), quiz));
+    return ok(views.html.questionAdmin.quizCreated.render(getUser(), quiz));
   }
   
   public Result newQuizForm() {
-    return ok(views.html.questionadmin.newQuizForm.render(getUser()));
+    return ok(views.html.questionAdmin.newQuizForm.render(getUser()));
   }
   
   public Result notAssignedQuestions() {
-    return ok(views.html.questions.render(getUser(), Question.notAssignedQuestions()));
+    return ok(views.html.questionList.render(getUser(),
+        /* Question.notAssignedQuestions() */ Collections.emptyList()));
   }
   
   @Override
@@ -148,7 +158,7 @@ public class QuestionAdmin extends AbstractAdminController<Question, QuestionRea
     ReadingResult<Question> result = (ReadingResult<Question>) abstractResult;
     
     saveExercises(result.getRead());
-    return ok(views.html.questionadmin.choiceCreation.render(getUser(), result.getRead()));
+    return ok(views.html.questionAdmin.questionCreated.render(getUser(), result.getRead()));
   }
   
   @Override
@@ -172,7 +182,7 @@ public class QuestionAdmin extends AbstractAdminController<Question, QuestionRea
     ReadingResult<Question> result = (ReadingResult<Question>) abstractResult;
     
     saveExercises(result.getRead());
-    return ok(views.html.questionadmin.choiceCreation.render(getUser(), result.getRead()));
+    return ok(views.html.questionAdmin.questionCreated.render(getUser(), result.getRead()));
   }
   
   @Override
@@ -183,15 +193,15 @@ public class QuestionAdmin extends AbstractAdminController<Question, QuestionRea
   
   @Override
   protected void saveExercises(List<Question> questions) {
-    try {
-      for(Question question: questions) {
-        question.save();
-        for(Answer answer: question.answers)
-          answer.save();
-      }
-    } catch (RollbackException e) {
-      Logger.error("FEHLER:", e);
-    }
+    // try {
+    // for(Question question: questions) {
+    // question.save();
+    // for(Answer answer: question.answers)
+    // answer.save();
+    // }
+    // } catch (RollbackException e) {
+    // Logger.error("FEHLER:", e);
+    // }
   }
   
 }

@@ -1,49 +1,47 @@
 # creation of exercises
-GET    /upload                 controllers.choice.QuestionAdmin.uploadForm()
-POST   /upload                 controllers.choice.QuestionAdmin.uploadFile()
-GET    /create                 controllers.choice.QuestionAdmin.readStandardExercises()
+GET    /upload                 controllers.questions.QuestionAdmin.uploadForm()
+POST   /upload                 controllers.questions.QuestionAdmin.uploadFile()
+GET    /create                 controllers.questions.QuestionAdmin.readStandardExercises()
+
+GET    /                       controllers.questions.QuestionController.index()
 
 # Questions
-GET    /questions              controllers.choice.QuestionController.questions()
+GET    /questions              controllers.questions.QuestionController.questions()
 
-GET    /questions/new          controllers.choice.QuestionController.newQuestionForm()
-POST   /questions/new          controllers.choice.QuestionController.newQuestion()
+GET    /questions/jsonSchema   controllers.questions.QuestionAdmin.getJSONSchemaFile()
+GET    /questions/export       controllers.questions.QuestionAdmin.exportQuestions()
+GET    /questions/import       controllers.questions.QuestionAdmin.importQuestions()
 
-GET    /questions/edit/:id     controllers.choice.QuestionController.editQuestionForm(id: Int)
-POST   /questions/edit/:id     controllers.choice.QuestionController.editQuestion(id: Int)
+GET    /new/:type              controllers.questions.QuestionController.newQuestionForm(type: String)
+POST   /new/:type              controllers.questions.QuestionController.newQuestion(type: String)
 
-GET    /questions/jsonSchema   controllers.choice.QuestionAdmin.getJSONSchemaFile()
-GET    /questions/export       controllers.choice.QuestionAdmin.exportQuestions()
-GET    /questions/import       controllers.choice.QuestionAdmin.readStandardExercises()
+GET    /edit/:id               controllers.questions.QuestionController.editQuestionForm(id: Int)
+POST   /edit/:id               controllers.questions.QuestionController.editQuestion(id: Int)
+
+GET    /ans/:id                controllers.questions.QuestionController.question( id: Int)
+POST   /ans/:id                controllers.questions.QuestionController.questionResult( id: Int)
 
 # Quizzes
-GET    /quizzes                controllers.choice.QuestionController.quizzes()
+GET    /quizzes                controllers.questions.QuestionController.quizzes()
 
-GET    /quizzes/new            controllers.choice.QuestionAdmin.newQuizForm()
-POST   /quizzes/new            controllers.choice.QuestionAdmin.newQuiz()
+GET    /quizzes/new            controllers.questions.QuestionAdmin.newQuizForm()
+POST   /quizzes/new            controllers.questions.QuestionAdmin.newQuiz()
 
-GET    /quizzes/jsonSchema     controllers.choice.QuestionAdmin.getJSONSchemaFile()
-GET    /quizzes/export         controllers.choice.QuestionAdmin.exportQuizzes()
-#GET	/quizzes/import			controllers.choice.QuestionAdmin.importQuizzes()
-
-
-GET    /admin                  controllers.choice.QuestionAdmin.index()
-
-GET    /notAssigned            controllers.choice.QuestionAdmin.notAssignedQuestions()
-GET    /assign                 controllers.choice.QuestionAdmin.assignQuestionsForm()
-POST   /assign                 controllers.choice.QuestionAdmin.assignQuestions()
-
-GET    /assign/:id             controllers.choice.QuestionAdmin.assignQuestionsSingleForm(id: Int)
-
-#
-GET    /                       controllers.choice.QuestionController.index()
-
-GET    /quiz/:id               controllers.choice.QuestionController.quiz(id: Int)
-
-GET    /start/:quizId          controllers.choice.QuestionController.quizStart(quizId: Int)
-GET    /:quizId/:questionId    controllers.choice.QuestionController.quizQuestion(quizId: Int, questionId: Int)
-POST   /:quizId/:questionId    controllers.choice.QuestionController.quizCorrection(quizId: Int, questionId: Int)
+GET    /quizzes/jsonSchema     controllers.questions.QuestionAdmin.getJSONSchemaFile()
+GET    /quizzes/export         controllers.questions.QuestionAdmin.exportQuizzes()
+GET    /quizzes/import         controllers.questions.QuestionAdmin.importQuizzes()
 
 
-GET    /:id                    controllers.choice.QuestionController.question(id: Int)
-POST   /:id                    controllers.choice.QuestionController.correct(id: Int)
+GET    /admin                  controllers.questions.QuestionAdmin.index()
+
+GET    /notAssigned            controllers.questions.QuestionAdmin.notAssignedQuestions()
+GET    /assign                 controllers.questions.QuestionAdmin.assignQuestionsForm()
+POST   /assign                 controllers.questions.QuestionAdmin.assignQuestions()
+
+GET    /assign/:id             controllers.questions.QuestionAdmin.assignQuestionsSingleForm(id: Int)
+
+GET    /quiz/:id               controllers.questions.QuestionController.quiz(id: Int)
+
+GET    /start/:quizId          controllers.questions.QuestionController.quizStart(quizId: Int)
+GET    /:quizId/:questionId    controllers.questions.QuestionController.quizQuestion(quizId: Int, questionId: Int)
+POST   /:quizId/:questionId    controllers.questions.QuestionController.quizCorrection(quizId: Int, questionId: Int)

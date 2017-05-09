@@ -1,0 +1,31 @@
+@()
+
+@import model.question.Question
+
+<div class="form-group">
+  <label class="control-label col-sm-2" for="numOfAnswers">Anzahl Antworten:</label>
+  <div class="col-sm-10">
+    <input class="form-control" type="number" name="numOfAnswers" id="numOfAnswers" onchange="onAnswerNumChange();"
+      min="@Question.MIN_ANSWERS" max="@Question.MAX_ANSWERS" value="@Question.STD_ANSWERS" required>
+  </div>
+</div>
+
+@for(i <- 0 until Question.MAX_ANSWERS) {
+<div class="form-group">
+  <label class="control-label col-sm-2">@{i + 1}. Antwort:</label>
+  <div class="col-sm-10" id="answerDiv">
+    <div class="input-group">
+      <input name="correctness_@i" id="correctness_@i" hidden value="WRONG">
+      <input name="@i" id="@i" class="form-control" placeholder="@{i + 1}. Antwort">
+      <div class="input-group-btn">
+        @for(correctness <- model.question.Correctness.values()) {
+        <button type="button" onclick="changeCorrectness(@i, '@correctness', this)" title="@correctness.getTitle()"
+          class="btn btn-@if(correctness == model.question.Correctness.WRONG) {danger} else {default}">
+          <span class="@correctness.getBSGlyphicon()"></span>
+        </button>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+}
