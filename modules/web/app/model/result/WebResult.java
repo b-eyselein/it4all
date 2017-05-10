@@ -6,16 +6,16 @@ import model.exercise.FeedbackLevel;
 import model.exercise.Success;
 import model.task.Task;
 
-public abstract class WebResult<T extends WebResult<T>> extends EvaluationResult {
+public abstract class WebResult extends EvaluationResult {
 
-  protected Task<T> task;
+  protected Task<?> task;
 
-  public WebResult(Task<T> theTask, Success theSuccess, List<String> theMessages) {
+  public WebResult(Task<?> theTask, Success theSuccess, List<String> theMessages) {
     super(FeedbackLevel.MINIMAL_FEEDBACK, theSuccess, theMessages);
     task = theTask;
   }
   
-  public Task<T> getTask() {
+  public Task<?> getTask() {
     return task;
   }
 

@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import controllers.core.AbstractAdminController;
 import model.QuestionReader;
 import model.Util;
+import model.question.GivenAnswerQuestion;
 import model.question.Question;
 import play.data.FormFactory;
 import play.mvc.Result;
@@ -75,7 +76,7 @@ public class QuestionAdmin extends AbstractAdminController<Question, QuestionRea
   }
   
   public Result exportQuestions() {
-    String json = Json.prettyPrint(Json.toJson(Question.finder.all()));
+    String json = Json.prettyPrint(Json.toJson(GivenAnswerQuestion.finder.all()));
     
     try {
       File tempFile = new File("questions_export_" + LocalDateTime.now() + ".json");

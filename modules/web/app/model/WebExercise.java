@@ -42,11 +42,11 @@ public class WebExercise extends Exercise {
   }
   
   public List<String> getHtmlText() {
-    return splitter.splitToList(htmlText);
+    return SPLITTER.splitToList(htmlText);
   }
   
   public List<String> getJsText() {
-    return splitter.splitToList(jsText);
+    return SPLITTER.splitToList(jsText);
   }
   
 }

@@ -1,19 +1,12 @@
-@(user: model.user.User, question: model.question.Question)
+@(user: model.user.User, question: model.question.GivenAnswerQuestion, isChoice: Boolean)
 
-@import model.question._
-
-@main(question.questionType.getName(), user) {
+@main("Frage", user) {
 <div class="container">
-  <div class="page-header">
-    <h1>@question.questionType.getName()</h1>
-  </div>
-  
   <h2>@question.text</h2>
 
   <form class="form-horizontal" method="post" action="@questions.routes.QuestionController.questionResult(question.id)">
-
-@question.questionType match {
-  case QuestionType.CHOICE => {
+  
+  @if(isChoice) {
   	<div id="answerDiv">
     @for(ans <- question.getAnswersForTemplate()) {
       <div>
@@ -22,8 +15,7 @@
         </label>
       </div>
     }
-  }
-  case QuestionType.FILLOUT => {
+  } else {
   	<div id="answerDiv">
     @for(ans <- question.getAnswersForTemplate()) {
       <div class="form-group">
@@ -34,14 +26,6 @@
     }
     </div>
   }
-  case QuestionType.FREETEXT => {
-    <div class="form-group">
-      <div class="col-sm-12">
-        <textarea class="form-control" rows="20" placeholder="Freitextantwort..." required></textarea>
-      </div>
-    </div>
-  }
-}
     <hr>
 
     <input class="btn btn-block btn-primary" type="submit" value="Kontrollieren">

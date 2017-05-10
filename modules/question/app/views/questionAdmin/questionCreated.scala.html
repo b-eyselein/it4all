@@ -16,13 +16,13 @@
           </tr>
         </thead>
         <tbody>
-        @for(ans <- question.answers) {
+        @*@for(ans <- question.answers) {
           <tr>
             <td>@ans.key.id</td>
             <td>@ans.correctness</td>
             <td>@ans.text</td>
           </tr>
-        }
+        }*@
         </tbody>
       </table>
     </div>

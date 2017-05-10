@@ -1,9 +1,7 @@
 @(user: model.user.User, result: model.QuestionResult)
 
-@question = @{result.getQuestion()}
-
 @main("Auswahlfragen", user) {
-<script src="@routes.Assets.versioned("javascripts/choicequestions.js")"></script>
+<script src="@routes.Assets.versioned("javascripts/question.js")"></script>
 
 <div class="container">
   <div class="page-header">

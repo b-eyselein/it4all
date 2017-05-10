@@ -1,7 +1,5 @@
 @(user: model.user.User, quizzes: List[model.Quiz])
 
-<script src="@routes.Assets.versioned("javascripts/choicequestions.js")"></script>
-
 @main("Auswahlfragen", user) {
 <div class="container">
   <div class="page-header">
@@ -18,7 +16,7 @@
   
   <hr>
   
-  <a class="btn btn-warning btn-block" href="@questions.routes.QuestionController.newQuestionForm("")">
+  <a class="btn btn-warning btn-block" href="@questions.routes.QuestionController.newQuestionForm()">
   <span class="glyphicon glyphicon-new-window"></span> Neue Frage erstellen <sup><i>BETA!</i></sup>
   </a>
 

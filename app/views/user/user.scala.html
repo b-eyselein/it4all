@@ -5,10 +5,5 @@
   <div class="page-header">
     <h1>Ihre Bewertungen:</h1>
   </div>
-  @for(grad <- user.gradings) {
-  <div class="panel panel-default">
-    <div class="panel-body">@@grad.exercise.id: @grad.points / @@grad.exercise.getMaxPoints() Punkte</div>
-  </div>
-  }
 </div>
 }

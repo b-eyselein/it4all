@@ -60,10 +60,10 @@ public class SqlExerciseReader extends ExerciseReader<SqlExercise> {
   }
   
   private static SqlExercise readExercise(SqlScenario scenario, JsonNode exerciseNode) {
-    final JsonNode idNode = exerciseNode.get("id");
+    final JsonNode idNode = exerciseNode.get(StringConsts.ID_NAME);
     final JsonNode exercisetypeNode = exerciseNode.get("exercisetype");
     
-    final JsonNode textNode = exerciseNode.get(TEXT_NAME);
+    final JsonNode textNode = exerciseNode.get(StringConsts.TEXT_NAME);
     final JsonNode tagsNode = exerciseNode.get("tags");
     final JsonNode sampleSolutionsNode = exerciseNode.get("samplesolutions");
     final JsonNode validationNode = exerciseNode.get("validation");

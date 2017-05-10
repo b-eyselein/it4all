@@ -15,11 +15,10 @@
     <ul>
       <li>
         Es existieren insgesamt <a href="@questions.routes.QuestionController.questions()">
-         @Question.finder.all().size() Fragen</a> in allen Kategorien, darunter
+         @{GivenAnswerQuestion.finder.findCount() + FreetextQuestion.finder.findCount()} Fragen</a> in allen Kategorien, darunter
         <ul>
-        @for(questionType <- QuestionType.values()) {
-          <li>@Question.finder.where().eq("question_type", questionType.toString()).findCount() @questionType.getName()n</li>
-        }
+          <li>@GivenAnswerQuestion.finder.findCount() &quot;normale&quot; Fragen</li>
+          <li>@FreetextQuestion.finder.findCount() Freitextfragen</li>
           
         @if(!notAssignedQuestions.isEmpty()) {
           <li>Es gibt noch @notAssignedQuestions.size()
@@ -43,11 +42,8 @@
     &nbsp;
     
     <div class="btn-group btn-group-justified">
-    @for(questionType <- QuestionType.values()) {
-      <a class="btn btn-default" href="@questions.routes.QuestionController.newQuestionForm(questionType.toString())">
-        Neue @questionType.getName() erstellen
-      </a>
-    }
+      <a class="btn btn-default" href="@questions.routes.QuestionController.newQuestionForm()">Neue Frage erstellen</a>
+      <a class="btn btn-default" href="@questions.routes.QuestionController.newFreetextQuestionForm()">Neue Freitextfrage erstellen</a>
     </div>
     
     &nbsp;

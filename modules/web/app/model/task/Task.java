@@ -15,25 +15,25 @@ import model.WebExercise;
 import model.result.WebResult;
 
 @MappedSuperclass
-public abstract class Task<T extends WebResult<T>> extends Model {
-
+public abstract class Task<T extends WebResult> extends Model {
+  
   @EmbeddedId
   public TaskKey key;
-
+  
   @ManyToOne
   @JoinColumn(name = "exercise_id", insertable = false, updatable = false)
   @JsonBackReference
   public WebExercise exercise;
-
+  
   @Column(columnDefinition = "text")
   public String text;
-
+  
   public String xpathQuery;
-
+  
   public Task(TaskKey theKey) {
     key = theKey;
   }
-
+  
   public abstract T evaluate(SearchContext context);
-
+  
 }

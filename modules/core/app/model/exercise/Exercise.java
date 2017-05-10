@@ -12,12 +12,14 @@ import com.google.common.base.Splitter;
 @MappedSuperclass
 public abstract class Exercise extends Model {
   
-  protected static Splitter splitter = Splitter.fixedLength(100).omitEmptyStrings();
+  protected static final Splitter SPLITTER = Splitter.fixedLength(100).omitEmptyStrings();
   
   @Id
   public int id;
 
-  public String title; // NOSONAR
+  public String title;
+
+  public String author;
 
   @Column(columnDefinition = "text")
   public String text;
@@ -27,7 +29,7 @@ public abstract class Exercise extends Model {
   }
 
   public List<String> getText() {
-    return splitter.splitToList(text);
+    return SPLITTER.splitToList(text);
   }
   
 }

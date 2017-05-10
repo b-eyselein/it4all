@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.avaje.ebean.Model.Finder;
 
+import model.StringConsts;
 import model.Util;
 import model.exercise.Exercise;
 import model.user.User;
@@ -12,8 +13,6 @@ import play.mvc.Controller;
 import play.mvc.Http;
 
 public abstract class AbstractController extends Controller {
-
-  protected static final String SESSION_ID_FIELD = "id";
 
   protected Util util;
   protected FormFactory factory;
@@ -27,16 +26,7 @@ public abstract class AbstractController extends Controller {
     return User.finder.byId(getUsername());
   }
 
-  protected static String getUsername() {
-    Http.Session session = Http.Context.current().session();
-
-    if(session == null || session.get(SESSION_ID_FIELD) == null || session.get(SESSION_ID_FIELD).isEmpty())
-      throw new IllegalArgumentException("No user name was given!");
-
-    return session.get(SESSION_ID_FIELD);
-  }
-
-  protected <T extends Exercise> int findMinimalNotUsedId(Finder<Integer, T> finder) {
+  protected static <T extends Exercise> int findMinimalNotUsedId(Finder<Integer, T> finder) {
     // FIXME: this is probably a ugly hack...
     List<T> questions = finder.order().asc("id").findList();
 
@@ -48,6 +38,16 @@ public abstract class AbstractController extends Controller {
         return questions.get(i).id + 1;
 
     return questions.get(questions.size() - 1).id + 1;
+  }
+
+  protected static String getUsername() {
+    Http.Session session = Http.Context.current().session();
+
+    if(session == null || session.get(StringConsts.SESSION_ID_FIELD) == null
+        || session.get(StringConsts.SESSION_ID_FIELD).isEmpty())
+      throw new IllegalArgumentException("No user name was given!");
+
+    return session.get(StringConsts.SESSION_ID_FIELD);
   }
 
 }

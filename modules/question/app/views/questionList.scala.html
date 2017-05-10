@@ -10,7 +10,7 @@
   
   @if(questionList.isEmpty()) {
   <div class="alert alert-info">Bisher gibt es keine Fragen. Sie k&ouml;nnen
-    <a class="alert-link" href="@questions.routes.QuestionController.newQuestionForm("")">hier</a> eine erstellen.
+    <a class="alert-link" href="@questions.routes.QuestionController.newQuestionForm()">hier</a> eine erstellen.
   </div>
   } else {
   <table class="table text-center">
@@ -21,8 +21,6 @@
         <th/>
         <th>Autor</th>
         <th>Titel</th>
-        <th>Typ</th>
-        <th># Antworten</th>
         <th>Max. Punktzahl</th>
       </tr>
     </thead>
@@ -53,8 +51,6 @@
         }
         </td>
         <td><a href="@questions.routes.QuestionController.question(question.id)">@question.title</a></td>
-        <td>@question.questionType.getName()</td>
-        <td>@question.answers.size()</td>
         <td>@question.maxPoints</td>
       </tr>
     }

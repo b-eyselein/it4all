@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import controllers.core.AbstractController;
 import model.Secured;
+import model.StringConsts;
 import model.Util;
 import model.user.User;
 import play.data.DynamicForm;
@@ -30,7 +31,7 @@ public class UserController extends AbstractController {
   public Result saveOptions() {
     DynamicForm form = factory.form().bindFromRequest();
 
-    User user = User.finder.byId(session().get(SESSION_ID_FIELD));
+    User user = User.finder.byId(session().get(StringConsts.SESSION_ID_FIELD));
     user.setTodo(User.SHOW_HIDE_AGGREGATE.valueOf(form.get("posTests")));
     user.save();
 

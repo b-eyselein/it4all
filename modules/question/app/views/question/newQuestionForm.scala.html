@@ -1,9 +1,8 @@
-@(user: model.user.User, questionType: model.question.QuestionType)
+@(user: model.user.User, isChoice: Boolean)
 
-@import model.question.Correctness
-@import model.question.QuestionType
+@import model.question.GivenAnswerQuestion
 
-@main(questionType.getName() + " erstellen", user) {
+@main("Neue Frage erstellen", user) {
 <script src="@routes.Assets.versioned("javascripts/question.js")"></script>
 
 <script>
@@ -14,10 +13,10 @@
 
 <div class="container">
   <div class="page-header">
-    <h1>Neue @questionType.getName() erstellen</h1>
+    <h1>Neue Frage erstellen</h1>
   </div>
 
-  <form class="form-horizontal" method="post" action="@questions.routes.QuestionController.newQuestion(questionType.toString())">
+  <form class="form-horizontal" method="post" action="@questions.routes.QuestionController.newQuestion()">
     <div class="form-group">
       <label class="control-label col-sm-2" for="title">Titel:</label>
       <div class="col-sm-10">
@@ -40,15 +39,52 @@
       </div>
     </div>
     
-    @* Beginn Custom ... *@
-    
-    @questionType match {
-      case QuestionType.CHOICE => {@newChoiceFormPart()}
-      case QuestionType.FILLOUT	=> {@newFilloutFormPart()}
-      case QuestionType.FREETEXT => {}
+@if(isChoice) {
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="numOfAnswers">Anzahl Antworten:</label>
+      <div class="col-sm-10">
+        <input class="form-control" type="number" name="numOfAnswers" id="numOfAnswers" onchange="onAnswerNumChange();"
+          min="@GivenAnswerQuestion.MIN_ANSWERS" max="@GivenAnswerQuestion.MAX_ANSWERS" value="@GivenAnswerQuestion.STD_ANSWERS" required>
+      </div>
+    </div>
+  
+    @for(i <- 0 until GivenAnswerQuestion.MAX_ANSWERS) {
+    <div class="form-group">
+      <label class="control-label col-sm-2">@{i + 1}. Antwort:</label>
+      <div class="col-sm-10" id="answerDiv">
+        <div class="input-group">
+          <input name="correctness_@i" id="correctness_@i" hidden value="WRONG">
+          <input name="@i" id="@i" class="form-control" placeholder="@{i + 1}. Antwort">
+          <div class="input-group-btn">
+            @for(correctness <- model.question.Correctness.values()) {
+            <button type="button" onclick="changeCorrectness(@i, '@correctness', this)" title="@correctness.getTitle()"
+              class="btn btn-@if(correctness == model.question.Correctness.WRONG) {danger} else {default}">
+              <span class="@correctness.getBSGlyphicon()"></span>
+            </button>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
     }
-
-    @* End Custom ...*@
+} else {
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="numOfAnswers">Anzahl Antworten:</label>
+      <div class="col-sm-10">
+        <input class="form-control" type="number" name="numOfAnswers" id="numOfAnswers" onchange="onAnswerNumChange();"
+          min="@GivenAnswerQuestion.MIN_ANSWERS" max="@GivenAnswerQuestion.MAX_ANSWERS" value="@GivenAnswerQuestion.STD_ANSWERS" required>
+      </div>
+    </div>
+    
+    @for(i <- 0 until GivenAnswerQuestion.MAX_ANSWERS) {
+    <div class="form-group">
+      <label class="control-label col-sm-2">@{i + 1}. Antwort:</label>
+      <div class="col-sm-10" id="answerDiv">
+        <input class="form-control" name="@i" id="@i" placeholder="@{i + 1}. Antwort">
+      </div>
+    </div>
+    }
+}
 
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">

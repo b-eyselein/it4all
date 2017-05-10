@@ -65,9 +65,9 @@ public class SpreadExerciseReader extends ExerciseReader<SpreadExercise> {
 
   @Override
   protected SpreadExercise readExercise(JsonNode exerciseNode) {
-    JsonNode idNode = exerciseNode.get("id");
-    JsonNode textNode = exerciseNode.get(TEXT_NAME);
-    JsonNode titleNode = exerciseNode.get(TITLE_NAME);
+    JsonNode idNode = exerciseNode.get(StringConsts.ID_NAME);
+    JsonNode textNode = exerciseNode.get(StringConsts.TEXT_NAME);
+    JsonNode titleNode = exerciseNode.get(StringConsts.TITLE_NAME);
     JsonNode sampleFileNode = exerciseNode.get("sampleFilename");
     JsonNode templateFileNode = exerciseNode.get("templateFilename");
 

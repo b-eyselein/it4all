@@ -12,14 +12,20 @@ GET    /questions/jsonSchema   controllers.questions.QuestionAdmin.getJSONSchema
 GET    /questions/export       controllers.questions.QuestionAdmin.exportQuestions()
 GET    /questions/import       controllers.questions.QuestionAdmin.importQuestions()
 
-GET    /new/:type              controllers.questions.QuestionController.newQuestionForm(type: String)
-POST   /new/:type              controllers.questions.QuestionController.newQuestion(type: String)
+GET    /new                    controllers.questions.QuestionController.newQuestionForm()
+POST   /new                    controllers.questions.QuestionController.newQuestion()
 
 GET    /edit/:id               controllers.questions.QuestionController.editQuestionForm(id: Int)
 POST   /edit/:id               controllers.questions.QuestionController.editQuestion(id: Int)
 
-GET    /ans/:id                controllers.questions.QuestionController.question( id: Int)
-POST   /ans/:id                controllers.questions.QuestionController.questionResult( id: Int)
+GET    /freetext/new           controllers.questions.QuestionController.newFreetextQuestionForm()
+POST   /freetext/new           controllers.questions.QuestionController.newFreetextQuestion()
+
+GET    /freetext/:id           controllers.questions.QuestionController.freetextQuestion(id: Int)
+POST   /freetext/:id           controllers.questions.QuestionController.freetextQuestionResult(id: Int)
+
+GET    /answer/:id             controllers.questions.QuestionController.question( id: Int)
+POST   /answer/:id             controllers.questions.QuestionController.questionResult( id: Int)
 
 # Quizzes
 GET    /quizzes                controllers.questions.QuestionController.quizzes()

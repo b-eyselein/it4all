@@ -56,6 +56,31 @@ create table feedback (
   constraint pk_feedback primary key (user,tool)
 );
 
+create table freetext_answer (
+  username                      varchar(255) not null,
+  question_id                   integer not null,
+  answer                        text,
+  constraint pk_freetext_answer primary key (username,question_id)
+);
+
+create table freetext_question (
+  id                            integer auto_increment not null,
+  title                         varchar(255),
+  author                        varchar(255),
+  text                          text,
+  max_points                    integer,
+  constraint pk_freetext_question primary key (id)
+);
+
+create table given_answer_question (
+  id                            integer auto_increment not null,
+  title                         varchar(255),
+  author                        varchar(255),
+  text                          text,
+  max_points                    integer,
+  constraint pk_given_answer_question primary key (id)
+);
+
 create table grading (
   user_name                     varchar(255) not null,
   exercise_id                   integer not null,
@@ -88,6 +113,7 @@ create table js_web_task (
 create table prog_exercise (
   id                            integer auto_increment not null,
   title                         varchar(255),
+  author                        varchar(255),
   text                          text,
   function_name                 varchar(255),
   input_count                   integer,
@@ -99,21 +125,6 @@ create table prog_exercise (
 create table programming_user (
   name                          varchar(255) not null,
   constraint pk_programming_user primary key (name)
-);
-
-create table question (
-  id                            integer auto_increment not null,
-  title                         varchar(255),
-  text                          text,
-  author                        varchar(255),
-  max_points                    integer,
-  question_type                 varchar(8),
-  constraint ck_question_question_type check ( question_type in ('CHOICE','FILLOUT','FREETEXT')),
-  constraint pk_question primary key (id)
-);
-
-create table question_answer (
-  user_name                     varchar(255)
 );
 
 create table question_rating (
@@ -131,6 +142,7 @@ create table question_user (
 create table quiz (
   id                            integer auto_increment not null,
   title                         varchar(255),
+  author                        varchar(255),
   text                          text,
   theme                         varchar(255),
   constraint pk_quiz primary key (id)
@@ -147,6 +159,7 @@ create table sample_test_data (
 create table spread_exercise (
   id                            integer auto_increment not null,
   title                         varchar(255),
+  author                        varchar(255),
   text                          text,
   sample_filename               varchar(255),
   template_filename             varchar(255),
@@ -156,6 +169,7 @@ create table spread_exercise (
 create table sql_exercise (
   id                            integer auto_increment not null,
   title                         varchar(255),
+  author                        varchar(255),
   text                          text,
   samples                       text,
   exercisetype                  varchar(6),
@@ -177,6 +191,7 @@ create table sql_scenario (
 create table uml_exercise (
   id                            integer auto_increment not null,
   title                         varchar(255),
+  author                        varchar(255),
   text                          text,
   class_sel_text                text,
   diag_draw_text                text,
@@ -201,6 +216,7 @@ create table users (
 create table web_exercise (
   id                            integer auto_increment not null,
   title                         varchar(255),
+  author                        varchar(255),
   text                          text,
   html_text                     text,
   js_text                       text,
@@ -223,6 +239,7 @@ create table web_user (
 create table xml_exercise (
   id                            integer auto_increment not null,
   title                         varchar(255),
+  author                        varchar(255),
   text                          text,
   fixed_start                   text,
   exercise_type                 varchar(7),
@@ -231,7 +248,7 @@ create table xml_exercise (
   constraint pk_xml_exercise primary key (id)
 );
 
-alter table answer add constraint fk_answer_question_id foreign key (question_id) references question (id) on delete restrict on update restrict;
+alter table answer add constraint fk_answer_question_id foreign key (question_id) references given_answer_question (id) on delete restrict on update restrict;
 create index ix_answer_question_id on answer (question_id);
 
 alter table commited_test_data add constraint fk_commited_test_data_user_name foreign key (user_name) references programming_user (name) on delete restrict on update restrict;
@@ -246,6 +263,12 @@ create index ix_conditions_task on conditions (task_id,exercise_id);
 alter table exercise_result add constraint fk_exercise_result_user_name foreign key (user_name) references users (name) on delete restrict on update restrict;
 create index ix_exercise_result_user_name on exercise_result (user_name);
 
+alter table freetext_answer add constraint fk_freetext_answer_username foreign key (username) references question_user (name) on delete restrict on update restrict;
+create index ix_freetext_answer_username on freetext_answer (username);
+
+alter table freetext_answer add constraint fk_freetext_answer_question_id foreign key (question_id) references freetext_question (id) on delete restrict on update restrict;
+create index ix_freetext_answer_question_id on freetext_answer (question_id);
+
 alter table grading add constraint fk_grading_user_name foreign key (user_name) references users (name) on delete restrict on update restrict;
 create index ix_grading_user_name on grading (user_name);
 
@@ -255,10 +278,7 @@ create index ix_html_task_exercise_id on html_task (exercise_id);
 alter table js_web_task add constraint fk_js_web_task_exercise_id foreign key (exercise_id) references web_exercise (id) on delete restrict on update restrict;
 create index ix_js_web_task_exercise_id on js_web_task (exercise_id);
 
-alter table question_answer add constraint fk_question_answer_user_name foreign key (user_name) references question_user (name) on delete restrict on update restrict;
-create index ix_question_answer_user_name on question_answer (user_name);
-
-alter table question_rating add constraint fk_question_rating_question_id foreign key (question_id) references question (id) on delete restrict on update restrict;
+alter table question_rating add constraint fk_question_rating_question_id foreign key (question_id) references given_answer_question (id) on delete restrict on update restrict;
 create index ix_question_rating_question_id on question_rating (question_id);
 
 alter table question_rating add constraint fk_question_rating_username foreign key (username) references question_user (name) on delete restrict on update restrict;
@@ -294,6 +314,12 @@ drop index ix_conditions_task on conditions;
 alter table exercise_result drop foreign key fk_exercise_result_user_name;
 drop index ix_exercise_result_user_name on exercise_result;
 
+alter table freetext_answer drop foreign key fk_freetext_answer_username;
+drop index ix_freetext_answer_username on freetext_answer;
+
+alter table freetext_answer drop foreign key fk_freetext_answer_question_id;
+drop index ix_freetext_answer_question_id on freetext_answer;
+
 alter table grading drop foreign key fk_grading_user_name;
 drop index ix_grading_user_name on grading;
 
@@ -302,9 +328,6 @@ drop index ix_html_task_exercise_id on html_task;
 
 alter table js_web_task drop foreign key fk_js_web_task_exercise_id;
 drop index ix_js_web_task_exercise_id on js_web_task;
-
-alter table question_answer drop foreign key fk_question_answer_user_name;
-drop index ix_question_answer_user_name on question_answer;
 
 alter table question_rating drop foreign key fk_question_rating_question_id;
 drop index ix_question_rating_question_id on question_rating;
@@ -334,6 +357,12 @@ drop table if exists exercise_result;
 
 drop table if exists feedback;
 
+drop table if exists freetext_answer;
+
+drop table if exists freetext_question;
+
+drop table if exists given_answer_question;
+
 drop table if exists grading;
 
 drop table if exists html_task;
@@ -343,10 +372,6 @@ drop table if exists js_web_task;
 drop table if exists prog_exercise;
 
 drop table if exists programming_user;
-
-drop table if exists question;
-
-drop table if exists question_answer;
 
 drop table if exists question_rating;
 
