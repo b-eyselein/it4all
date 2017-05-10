@@ -33,11 +33,6 @@ create table conditions (
   constraint pk_conditions primary key (exercise_id,task_id,condition_id)
 );
 
-create table exercise_result (
-  extype                        varchar(31) not null,
-  user_name                     varchar(255)
-);
-
 create table feedback (
   user                          varchar(255) not null,
   tool                          varchar(5) not null,
@@ -79,13 +74,6 @@ create table given_answer_question (
   text                          text,
   max_points                    integer,
   constraint pk_given_answer_question primary key (id)
-);
-
-create table grading (
-  user_name                     varchar(255) not null,
-  exercise_id                   integer not null,
-  points                        integer,
-  constraint pk_grading primary key (user_name,exercise_id)
 );
 
 create table html_task (
@@ -260,17 +248,11 @@ create index ix_commited_test_data_exercise_id on commited_test_data (exercise_i
 alter table conditions add constraint fk_conditions_task foreign key (task_id,exercise_id) references js_web_task (task_id,exercise_id) on delete restrict on update restrict;
 create index ix_conditions_task on conditions (task_id,exercise_id);
 
-alter table exercise_result add constraint fk_exercise_result_user_name foreign key (user_name) references users (name) on delete restrict on update restrict;
-create index ix_exercise_result_user_name on exercise_result (user_name);
-
 alter table freetext_answer add constraint fk_freetext_answer_username foreign key (username) references question_user (name) on delete restrict on update restrict;
 create index ix_freetext_answer_username on freetext_answer (username);
 
 alter table freetext_answer add constraint fk_freetext_answer_question_id foreign key (question_id) references freetext_question (id) on delete restrict on update restrict;
 create index ix_freetext_answer_question_id on freetext_answer (question_id);
-
-alter table grading add constraint fk_grading_user_name foreign key (user_name) references users (name) on delete restrict on update restrict;
-create index ix_grading_user_name on grading (user_name);
 
 alter table html_task add constraint fk_html_task_exercise_id foreign key (exercise_id) references web_exercise (id) on delete restrict on update restrict;
 create index ix_html_task_exercise_id on html_task (exercise_id);
@@ -311,17 +293,11 @@ drop index ix_commited_test_data_exercise_id on commited_test_data;
 alter table conditions drop foreign key fk_conditions_task;
 drop index ix_conditions_task on conditions;
 
-alter table exercise_result drop foreign key fk_exercise_result_user_name;
-drop index ix_exercise_result_user_name on exercise_result;
-
 alter table freetext_answer drop foreign key fk_freetext_answer_username;
 drop index ix_freetext_answer_username on freetext_answer;
 
 alter table freetext_answer drop foreign key fk_freetext_answer_question_id;
 drop index ix_freetext_answer_question_id on freetext_answer;
-
-alter table grading drop foreign key fk_grading_user_name;
-drop index ix_grading_user_name on grading;
 
 alter table html_task drop foreign key fk_html_task_exercise_id;
 drop index ix_html_task_exercise_id on html_task;
@@ -353,8 +329,6 @@ drop table if exists commited_test_data;
 
 drop table if exists conditions;
 
-drop table if exists exercise_result;
-
 drop table if exists feedback;
 
 drop table if exists freetext_answer;
@@ -362,8 +336,6 @@ drop table if exists freetext_answer;
 drop table if exists freetext_question;
 
 drop table if exists given_answer_question;
-
-drop table if exists grading;
 
 drop table if exists html_task;
 

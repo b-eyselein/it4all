@@ -1,7 +1,6 @@
 package controllers.questions;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -33,11 +32,6 @@ public class QuestionController extends ExerciseController {
   private static final String ATTEMPT_FIELD = "attempt";
   private static final String QUIZ_ID_FIELD = "quizId";
   
-  @Inject
-  public QuestionController(Util theUtil, FormFactory theFactory) {
-    super(theUtil, theFactory);
-  }
-  
   public static User getUser() {
     User user = ExerciseController.getUser();
     
@@ -66,6 +60,11 @@ public class QuestionController extends ExerciseController {
   private static List<Answer> readSelAnswers(GivenAnswerQuestion question, DynamicForm form) {
     return question.answers.stream().filter(ans -> form.get(Integer.toString(ans.key.id)) != null)
         .collect(Collectors.toList());
+  }
+  
+  @Inject
+  public QuestionController(Util theUtil, FormFactory theFactory) {
+    super(theUtil, theFactory);
   }
   
   public Result editQuestion(int id) {
@@ -107,7 +106,7 @@ public class QuestionController extends ExerciseController {
     answer.answer = factory.form().bindFromRequest().get("answer");
     answer.save();
     
-    return ok(answer.answer);
+    return ok(views.html.freetextQuestionResult.render(getUser(), answer.answer));
   }
   
   public Result index() {
@@ -173,7 +172,7 @@ public class QuestionController extends ExerciseController {
     
     return ok(views.html.question.question.render(getUser(), question, isChoice));
   }
-  
+
   public Result questionResult(int id) {
     User user = getUser();
     GivenAnswerQuestion question = GivenAnswerQuestion.finder.byId(id);
@@ -185,7 +184,8 @@ public class QuestionController extends ExerciseController {
   }
   
   public Result questions() {
-    return ok(views.html.questionList.render(getUser(), Question.all()));
+    return ok(
+        views.html.questionList.render(getUser(), GivenAnswerQuestion.finder.all(), FreetextQuestion.finder.all()));
   }
   
   public Result quiz(int id) {
