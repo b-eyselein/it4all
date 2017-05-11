@@ -12,13 +12,29 @@ build:
     stage: build
     script:
     - ./activator dist
+    - cp target/universal/it4all-0.9.0.zip /home/gitlab-runner/artifacts/
 
-deploy:
+deploy_stage:
     stage: deploy
+    dependencies:
+    - build
     script:
-    - echo "TODO deployment"
+    - unzip -u /home/gitlab-runner/artifacts/it4all-0.9.0.zip -d /home/eyselein/dist/
+    - cd /home/eyselein/dist
+    - docker-compose up -d
+    environment:
+        name: stage-ls6
+        url: 132.187.15.170
+
+deploy_prod:
+    stage: deploy
+    dependencies:
+    - build
+    script:
+    - echo "TODO deployment prod"
     environment:
         name: prod-ls6
-        url: www.it4all2.informatik.uni-wuerzburg.de
+        url: 132.187.15.133 / www.it4all2.informatik.uni-wuerzburg.de
+    when: manual
     only:
     - master
