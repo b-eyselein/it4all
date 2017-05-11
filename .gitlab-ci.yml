@@ -12,13 +12,14 @@ build:
     stage: build
     script:
     - ./activator dist
+    - cp target/universal/it4all-0.9.0.zip /home/gitlab-runner/atrifacts/
 
 deploy_stage:
     stage: deploy
     dependencies:
     - build
     script:
-    - unzip target/universal/it4all-0.9.0.zip -d /home/bjorn/dist/
+    - unzip /home/gitlab-runner/atrifacts/it4all-0.9.0.zip -d /home/bjorn/dist/
     - cd /home/bjorn/dist
     - docker-compose up -d
     environment:
