@@ -30,4 +30,4 @@ deploy_prod:
         url: 132.187.15.133 / www.it4all2.informatik.uni-wuerzburg.de
     when: manual
     only:
-    -master
+    - master
