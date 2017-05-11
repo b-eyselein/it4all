@@ -7,7 +7,7 @@
 @main("Auswahlfragen", user) {
 <div class="container">
   <div class="page-header">
-    <h1>Administrator Auswahlfragen</h1>
+    <h1>Administrator allgemeine Fragen</h1>
   </div>
   
   <section id="statistics">
@@ -52,6 +52,11 @@
       <a class="btn btn-default" href="@questions.routes.QuestionAdmin.exportQuestions()">Alle Fragen exportieren</a>
       <a class="btn btn-default" href="@questions.routes.QuestionAdmin.importQuestions()">Neue Fragen importieren</a>
     </div>
+    
+    &nbsp;
+    
+    <a class="btn btn-primary btn-block" href="@questions.routes.QuestionAdmin.gradeFreetextAnswers()">Bewertung der Freitextfragen</a>
+    
   </section>
 
   <hr>

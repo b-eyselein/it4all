@@ -1,50 +1,55 @@
 # creation of exercises
-GET    /upload                 controllers.questions.QuestionAdmin.uploadForm()
-POST   /upload                 controllers.questions.QuestionAdmin.uploadFile()
-GET    /create                 controllers.questions.QuestionAdmin.readStandardExercises()
+GET    /upload                     controllers.questions.QuestionAdmin.uploadForm()
+POST   /upload                     controllers.questions.QuestionAdmin.uploadFile()
+GET    /create                     controllers.questions.QuestionAdmin.readStandardExercises()
 
-GET    /                       controllers.questions.QuestionController.index()
+GET    /                           controllers.questions.QuestionController.index()
 
 # Questions
-GET    /questions              controllers.questions.QuestionController.questions()
+GET    /questions                  controllers.questions.QuestionController.questions()
 
-GET    /questions/jsonSchema   controllers.questions.QuestionAdmin.getJSONSchemaFile()
-GET    /questions/export       controllers.questions.QuestionAdmin.exportQuestions()
-GET    /questions/import       controllers.questions.QuestionAdmin.importQuestions()
+GET    /questions/jsonSchema       controllers.questions.QuestionAdmin.getJSONSchemaFile()
+GET    /questions/export           controllers.questions.QuestionAdmin.exportQuestions()
+GET    /questions/import           controllers.questions.QuestionAdmin.importQuestions()
 
-GET    /new/:isFreetext        controllers.questions.QuestionController.newQuestionForm(isFreetext: Boolean)
-POST   /new/:isFreetext        controllers.questions.QuestionController.newQuestion(isFreetext: Boolean)
+GET    /new/:isFreetext            controllers.questions.QuestionController.newQuestionForm(isFreetext: Boolean)
+POST   /new/:isFreetext            controllers.questions.QuestionController.newQuestion(isFreetext: Boolean)
 
-GET    /edit/:id/:isFreetext   controllers.questions.QuestionController.editQuestionForm(id: Int, isFreetext: Boolean)
-POST   /edit/:id/:isFreetext   controllers.questions.QuestionController.editQuestion(id: Int, isFreetext: Boolean)
+GET    /edit/:id/:isFreetext       controllers.questions.QuestionController.editQuestionForm(id: Int, isFreetext: Boolean)
+POST   /edit/:id/:isFreetext       controllers.questions.QuestionController.editQuestion(id: Int, isFreetext: Boolean)
 
-GET    /freetext/:id           controllers.questions.QuestionController.freetextQuestion(id: Int)
-POST   /freetext/:id           controllers.questions.QuestionController.freetextQuestionResult(id: Int)
+GET    /freetext/grade             controllers.questions.QuestionAdmin.gradeFreetextAnswers()
+GET    /freetext/grade/:id/:user   controllers.questions.QuestionAdmin.gradeFreetextAnswer(id: Int, user: String)
 
-GET    /answer/:id             controllers.questions.QuestionController.question( id: Int)
-POST   /answer/:id             controllers.questions.QuestionController.questionResult( id: Int)
+GET    /freetext/:id               controllers.questions.QuestionController.freetextQuestion(id: Int)
+POST   /freetext/:id               controllers.questions.QuestionController.freetextQuestionResult(id: Int)
+
+
+
+GET    /answer/:id                 controllers.questions.QuestionController.question( id: Int)
+POST   /answer/:id                 controllers.questions.QuestionController.questionResult( id: Int)
 
 # Quizzes
-GET    /quizzes                controllers.questions.QuestionController.quizzes()
+GET    /quizzes                    controllers.questions.QuestionController.quizzes()
 
-GET    /quizzes/new            controllers.questions.QuestionAdmin.newQuizForm()
-POST   /quizzes/new            controllers.questions.QuestionAdmin.newQuiz()
+GET    /quizzes/new                controllers.questions.QuestionAdmin.newQuizForm()
+POST   /quizzes/new                controllers.questions.QuestionAdmin.newQuiz()
 
-GET    /quizzes/jsonSchema     controllers.questions.QuestionAdmin.getJSONSchemaFile()
-GET    /quizzes/export         controllers.questions.QuestionAdmin.exportQuizzes()
-GET    /quizzes/import         controllers.questions.QuestionAdmin.importQuizzes()
+GET    /quizzes/jsonSchema         controllers.questions.QuestionAdmin.getJSONSchemaFile()
+GET    /quizzes/export             controllers.questions.QuestionAdmin.exportQuizzes()
+GET    /quizzes/import             controllers.questions.QuestionAdmin.importQuizzes()
 
 
-GET    /admin                  controllers.questions.QuestionAdmin.index()
+GET    /admin                      controllers.questions.QuestionAdmin.index()
 
-GET    /notAssigned            controllers.questions.QuestionAdmin.notAssignedQuestions()
-GET    /assign                 controllers.questions.QuestionAdmin.assignQuestionsForm()
-POST   /assign                 controllers.questions.QuestionAdmin.assignQuestions()
+GET    /notAssigned                controllers.questions.QuestionAdmin.notAssignedQuestions()
+GET    /assign                     controllers.questions.QuestionAdmin.assignQuestionsForm()
+POST   /assign                     controllers.questions.QuestionAdmin.assignQuestions()
 
-GET    /assign/:id             controllers.questions.QuestionAdmin.assignQuestionsSingleForm(id: Int)
+GET    /assign/:id                 controllers.questions.QuestionAdmin.assignQuestionsSingleForm(id: Int)
 
-GET    /quiz/:id               controllers.questions.QuestionController.quiz(id: Int)
+GET    /quiz/:id                   controllers.questions.QuestionController.quiz(id: Int)
 
-GET    /start/:quizId          controllers.questions.QuestionController.quizStart(quizId: Int)
-GET    /:quizId/:questionId    controllers.questions.QuestionController.quizQuestion(quizId: Int, questionId: Int)
-POST   /:quizId/:questionId    controllers.questions.QuestionController.quizCorrection(quizId: Int, questionId: Int)
+GET    /start/:quizId              controllers.questions.QuestionController.quizStart(quizId: Int)
+GET    /:quizId/:questionId        controllers.questions.QuestionController.quizQuestion(quizId: Int, questionId: Int)
+POST   /:quizId/:questionId        controllers.questions.QuestionController.quizCorrection(quizId: Int, questionId: Int)

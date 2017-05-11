@@ -1,0 +1,28 @@
+@(user: model.user.User, answerList: List[model.FreetextAnswer])
+
+@main("Bewertung Freitextfragen", user) {
+<div class="container">
+  <div class="page-header">
+    <h1>Freitextantworten zur Bewertung</h1>
+  </div>
+  
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Nutzer</th>
+        <th>Frage</th>
+        <th>Link</th>
+      </tr>
+    </thead>
+    <tbody>
+    @for(ans <- answerList) {
+      <tr>
+        <td>@ans.user.name</td>
+        <td>@ans.question.id</td>
+        <td><a href="@questions.routes.QuestionAdmin.gradeFreetextAnswer(ans.question.id, ans.user.name)">Bewerten!</a></td>
+      </tr>
+    }
+    </tbody>
+  </table>
+</div>
+}
