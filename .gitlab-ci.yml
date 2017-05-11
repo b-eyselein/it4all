@@ -16,7 +16,9 @@ build:
 deploy_stage:
     stage: deploy
     script:
-    - echo "TODO deployment stage"
+    - unzip target/universal/it4all-0.9.0.zip -d /home/bjorn/dist/
+    - cd /home/bjorn/dist
+    - docker-compose up -d
     environment:
         name: stage-ls6
         url: 132.187.15.170
