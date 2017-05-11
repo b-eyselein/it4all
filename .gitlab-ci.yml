@@ -13,12 +13,21 @@ build:
     script:
     - ./activator dist
 
-deploy:
+deploy_stage:
     stage: deploy
     script:
-    - echo "TODO deployment"
+    - echo "TODO deployment stage"
+    environment:
+        name: stage-ls6
+        url: 132.187.15.170
+
+deploy_prod:
+    stage: deploy
+    script:
+    - echo "TODO deployment prod"
     environment:
         name: prod-ls6
-        url: www.it4all2.informatik.uni-wuerzburg.de
+        url: 132.187.15.133 / www.it4all2.informatik.uni-wuerzburg.de
+    when: manual
     only:
-    - master
+    -master
