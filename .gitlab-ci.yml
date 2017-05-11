@@ -15,6 +15,8 @@ build:
 
 deploy_stage:
     stage: deploy
+    dependencies:
+    - build
     script:
     - unzip target/universal/it4all-0.9.0.zip -d /home/bjorn/dist/
     - cd /home/bjorn/dist
@@ -25,6 +27,8 @@ deploy_stage:
 
 deploy_prod:
     stage: deploy
+    dependencies:
+    - build
     script:
     - echo "TODO deployment prod"
     environment:
