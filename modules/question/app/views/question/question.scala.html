@@ -2,7 +2,9 @@
 
 @main("Frage", user) {
 <div class="container">
-  <h2>@question.text</h2>
+  <div class="page-header">
+    <h1>@question.text</h1>
+  </div>
 
   <form class="form-horizontal" method="post" action="@questions.routes.QuestionController.questionResult(question.id)">
   

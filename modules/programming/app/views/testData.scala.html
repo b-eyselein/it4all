@@ -12,17 +12,19 @@ var inputCount = @exercise.inputCount;
     <h1>Definition von Testdaten</h1>
   </div>
   
-  <div class="alert alert-info alert-dismissable">
-    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-    Hier k&ouml;nnen Sie sich eigene Testdaten definieren, um die Funktion kennenzulernen und zus&auml;tzliche Testdaten zu nutzen. Diese k&ouml;nnen gegen eine Musterl&ouml;sung validiert werden. Au&szlig;erdem werden Sie automatisch beim Testen der L&ouml;sung verwendet.
-  </div>
-  
-  <div class="panel panel-info">
+  <div class="panel panel-success">
     <div class="panel-heading">Funktionsbeschreibung</div>
     <div class="panel-body">@Html(exercise.text)</div>
   </div>
   
-  <form class="form" action="@programming.routes.Programming.validateTestData(exercise.id)" method="post">
+  <div class="alert alert-info alert-dismissable">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    Hier k&ouml;nnen Sie sich eigene Testdaten definieren, um die Funktion kennenzulernen und zus&auml;tzliche Testdaten zu nutzen. 
+    Diese k&ouml;nnen gegen eine Musterl&ouml;sung validiert werden.
+    Au&szlig;erdem werden Sie automatisch beim Testen ihrer L&ouml;sung verwendet.
+  </div>
+  
+  <form class="form" action="@programming.routes.Prog.validateTestData(exercise.id)" method="post">
     <table class="table" id="testDataTable">
       <thead>
         <tr>
@@ -42,11 +44,14 @@ var inputCount = @exercise.inputCount;
         @for(inputCount <- 0 until exercise.inputCount) {
           <td>
             <input class="form-control" value="@old.getInput().get(inputCount)" name="inp_@{inputCount}_@old.key.testId" 
-            id="inp_@{inputCount}_@old.key.testId" placeholder="Test @old.key.testId: Input @inputCount" required>
+            id="inp_@{inputCount}_@old.key.testId" placeholder="Test @old.key.testId, Input @inputCount">
           </td>
         }
           <td/>
-          <td><input class="form-control" value="@old.output" name="outp_@old.key.testId" id="outp_@old.key.testId" placeholder="Test @old.key.testId: Output"></td>
+          <td>
+            <input class="form-control" value="@old.output" name="outp_@old.key.testId" id="outp_@old.key.testId"
+              placeholder="Test @old.key.testId, Output">
+            </td>
         </tr>
       }
       @for(testCount <- oldData.size() until 4) {
@@ -55,11 +60,11 @@ var inputCount = @exercise.inputCount;
         @for(inputCount <- 0 until exercise.inputCount) {
           <td>
             <input class="form-control" name="inp_@{inputCount}_@testCount" id="inp_@{inputCount}_@testCount"
-           placeholder="Test @testCount: Input @inputCount" required>
+           placeholder="Test @testCount, Input @inputCount">
          </td>
         }
           <td/>
-          <td><input class="form-control" name="outp_@testCount" id="outp_@testCount" placeholder="Test @testCount: Output"></td>
+          <td><input class="form-control" name="outp_@testCount" id="outp_@testCount" placeholder="Test @testCount, Output"></td>
         </tr>
       }
       </tbody>
@@ -67,7 +72,7 @@ var inputCount = @exercise.inputCount;
   
     <div class="btn-group btn-group-justified">
       <div class="btn-group">
-        <button type="button" class="btn btn-primary" onclick="validateTestData('@programming.routes.Programming.validateTestData(exercise.id)')">
+        <button type="button" class="btn btn-primary" onclick="validateTestData('@programming.routes.Prog.validateTestData(exercise.id)')">
           Testdaten validieren
         </button>
       </div>

@@ -32,6 +32,11 @@ public class QuestionController extends ExerciseController {
   private static final String ATTEMPT_FIELD = "attempt";
   private static final String QUIZ_ID_FIELD = "quizId";
   
+  @Inject
+  public QuestionController(Util theUtil, FormFactory theFactory) {
+    super(theUtil, theFactory);
+  }
+  
   public static User getUser() {
     User user = ExerciseController.getUser();
     
@@ -62,12 +67,7 @@ public class QuestionController extends ExerciseController {
         .collect(Collectors.toList());
   }
   
-  @Inject
-  public QuestionController(Util theUtil, FormFactory theFactory) {
-    super(theUtil, theFactory);
-  }
-  
-  public Result editQuestion(int id) {
+  public Result editQuestion(int id, boolean isFreetext) {
     // DynamicForm form = factory.form().bindFromRequest();
     
     Question question = null; // readQuestionFromForm(form,
@@ -79,9 +79,13 @@ public class QuestionController extends ExerciseController {
     return ok(views.html.questionAdmin.questionCreated.render(getUser(), Arrays.asList(question)));
   }
   
-  public Result editQuestionForm(int id) {
+  public Result editQuestionForm(int id, boolean isFreetext) {
     User user = getUser();
-    GivenAnswerQuestion question = GivenAnswerQuestion.finder.byId(id);
+    Question question;
+    if(isFreetext)
+      question = FreetextQuestion.finder.byId(id);
+    else
+      question = GivenAnswerQuestion.finder.byId(id);
     
     if(question.author.equals(user.name) || user.role == Role.ADMIN)
       return ok(views.html.editQuestionForm.render(user, question, true));
@@ -90,8 +94,10 @@ public class QuestionController extends ExerciseController {
   }
   
   public Result freetextQuestion(int id) {
+    User user = getUser();
     FreetextQuestion question = FreetextQuestion.finder.byId(id);
-    return ok(views.html.question.freetextQuestion.render(getUser(), question));
+    FreetextAnswer answer = FreetextAnswer.finder.byId(new FreetextAnswerKey(user.name, id));
+    return ok(views.html.question.freetextQuestion.render(user, question, answer));
   }
   
   public Result freetextQuestionResult(int id) {
@@ -103,60 +109,50 @@ public class QuestionController extends ExerciseController {
     if(answer == null)
       answer = new FreetextAnswer(key);
     
+    answer.question = FreetextQuestion.finder.byId(id);
     answer.answer = factory.form().bindFromRequest().get("answer");
     answer.save();
     
-    return ok(views.html.freetextQuestionResult.render(getUser(), answer.answer));
+    return ok(views.html.freetextQuestionResult.render(getUser(), answer));
   }
   
   public Result index() {
     return ok(views.html.questionIndex.render(getUser(), Quiz.finder.all()));
   }
   
-  public Result newFreetextQuestion() {
+  public Result newQuestion(boolean isFreetext) {
     DynamicForm form = factory.form().bindFromRequest();
     
     String title = form.get(StringConsts.TITLE_NAME);
     
-    FreetextQuestion question = FreetextQuestion.finder.where().eq(StringConsts.TITLE_NAME, title).findUnique();
-    if(question == null)
-      question = new FreetextQuestion(findMinimalNotUsedId(GivenAnswerQuestion.finder));
+    Question question;
+    
+    if(isFreetext) {
+      question = FreetextQuestion.finder.where().eq(StringConsts.TITLE_NAME, title).findUnique();
+      if(question == null)
+        question = new FreetextQuestion(findMinimalNotUsedId(GivenAnswerQuestion.finder));
+    } else {
+      question = GivenAnswerQuestion.finder.where().eq(StringConsts.TITLE_NAME, title).findUnique();
+      if(question == null)
+        question = new GivenAnswerQuestion(findMinimalNotUsedId(GivenAnswerQuestion.finder));
+
+      boolean isChoice = true; // TODO!
+      ((GivenAnswerQuestion) question).answers = readAnswersFromForm(form, question, isChoice);
+    }
     
     question.title = title;
     question.text = form.get(StringConsts.TEXT_NAME);
     question.author = form.get(StringConsts.AUTHOR_NAME);
-    question.save();
+    
+    question.saveInDb();
     
     return ok(views.html.questionAdmin.questionCreated.render(getUser(), Arrays.asList(question)));
   }
   
-  public Result newFreetextQuestionForm() {
-    return ok(views.html.question.newFreetextQuestionForm.render(getUser()));
-  }
-  
-  public Result newQuestion() {
-    DynamicForm form = factory.form().bindFromRequest();
+  public Result newQuestionForm(boolean isFreetext) {
+    if(isFreetext)
+      return ok(views.html.question.newFreetextQuestionForm.render(getUser()));
     
-    boolean isChoice = true; // TODO!
-    
-    String title = form.get(StringConsts.TITLE_NAME);
-    
-    GivenAnswerQuestion question = GivenAnswerQuestion.finder.where().eq(StringConsts.TITLE_NAME, title).findUnique();
-    if(question == null)
-      question = new GivenAnswerQuestion(findMinimalNotUsedId(GivenAnswerQuestion.finder));
-    
-    question.title = title;
-    question.text = form.get(StringConsts.TEXT_NAME);
-    question.author = form.get(StringConsts.AUTHOR_NAME);
-    question.answers = readAnswersFromForm(form, question, isChoice);
-    
-    question.save();
-    question.answers.forEach(Answer::save);
-    
-    return ok(views.html.questionAdmin.questionCreated.render(getUser(), Arrays.asList(question)));
-  }
-  
-  public Result newQuestionForm() {
     // TODO: Unterscheidung zwischen ausfuellen und ankreuzen!
     boolean isChoice = true;
     return ok(views.html.question.newQuestionForm.render(getUser(), isChoice));
@@ -172,20 +168,18 @@ public class QuestionController extends ExerciseController {
     
     return ok(views.html.question.question.render(getUser(), question, isChoice));
   }
-
+  
   public Result questionResult(int id) {
     User user = getUser();
     GivenAnswerQuestion question = GivenAnswerQuestion.finder.byId(id);
     DynamicForm form = factory.form().bindFromRequest();
     
     QuestionResult result = new QuestionResult(readSelAnswers(question, form), question);
-    return ok(views.html.questionResult.render(user, result));
-    
+    return ok(views.html.givenanswerQuestionResult.render(user, result));
   }
   
   public Result questions() {
-    return ok(
-        views.html.questionList.render(getUser(), GivenAnswerQuestion.finder.all(), FreetextQuestion.finder.all()));
+    return ok(views.html.questionList.render(getUser(), Question.all()));
   }
   
   public Result quiz(int id) {

@@ -19,8 +19,6 @@ import javax.xml.validation.Validator;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import model.errorhandlers.CorrectionErrorHandler;
-import model.errorhandlers.XmlDtdErrorHandler;
 import play.Logger;
 
 public class XmlCorrector {
@@ -40,7 +38,6 @@ public class XmlCorrector {
     case XML_XSD:
       return correctXMLAgainstXSD(xmlReader, grammarReader, new CorrectionErrorHandler());
     case XML_DTD:
-      return correctWithDTD(xmlReader, new XmlDtdErrorHandler());
     case DTD_XML:
       return correctWithDTD(xmlReader, new CorrectionErrorHandler());
     case XSD_XML:
@@ -59,7 +56,6 @@ public class XmlCorrector {
     } catch (ParserConfigurationException e) {
       Logger.error("There was an error creating the Parser: ", e);
     } catch (SAXException | IOException e) { // NOSONAR
-      e.printStackTrace();
     }
     return errorHandler.getErrors();
   }
@@ -74,7 +70,7 @@ public class XmlCorrector {
 
       if(schema == null)
         return Arrays
-            .asList(new XmlError("Ihre Eingabedaten konnten nicht geladen werden!", XmlErrorType.FATALERROR, -1));
+            .asList(new XmlError("Ihre Eingabedaten konnten nicht geladen werden!", -1, XmlErrorType.FATALERROR));
 
       Validator validator = schema.newValidator();
       validator.setErrorHandler(errorHandler);
@@ -84,7 +80,7 @@ public class XmlCorrector {
       // learners
     } catch (NullPointerException e) {
       Logger.error("Could not validate XSD-File", e);
-      return Arrays.asList(new XmlError("Konnte XSD nicht validieren.", XmlErrorType.FATALERROR, -1));
+      return Arrays.asList(new XmlError("Konnte XSD nicht validieren.", -1, XmlErrorType.FATALERROR));
     }
 
     return errorHandler.getErrors();

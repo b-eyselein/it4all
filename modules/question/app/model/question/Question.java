@@ -22,4 +22,10 @@ public abstract class Question extends Exercise {
         .collect(Collectors.toList());
   }
   
+  public abstract boolean isFreetext();
+  
+  public abstract void saveInDb();
+  
+  public abstract boolean userHasAnswered(String username);
+
 }

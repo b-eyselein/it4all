@@ -1,7 +1,7 @@
 @(user: model.user.User, exercise: model.XmlExercise, referenceFile: String, oldSolution: String)
 
 @main("XML-Test", user) {
-<script src="@controllers.routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
+<script src="@routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
 
 <div class="container">
   <div class="col-md-6">
@@ -22,9 +22,9 @@
   
   <hr>
   
-  <form action= @controllers.xml.routes.Xml.commit(exercise.id) method="post" onsubmit="prepareFormForSubmitting();">
+  <form action= @xml.routes.Xml.commit(exercise.id) method="post" onsubmit="prepareFormForSubmitting();">
     <button type="button" class="btn btn-primary btn-block"
-      onclick="testTheSolution('@controllers.xml.routes.Xml.correctLive(exercise.id)');">L&ouml;sung testen</button>
+      onclick="testTheSolution('@xml.routes.Xml.correctLive(exercise.id)');">L&ouml;sung testen</button>
     <input type="submit" class="btn btn-success btn-block" value="L&ouml;sung abgeben">
   </form>
   

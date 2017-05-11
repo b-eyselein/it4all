@@ -1,20 +1,22 @@
-@(user: model.user.User, question: model.question.FreetextQuestion)
+@(user: model.user.User, question: model.question.FreetextQuestion, oldAnswer: model.FreetextAnswer)
 
 @main("Frage", user) {
 <div class="container">
-  <h2>@question.text</h2>
-
+  <div class="page-header">
+    <h1>@question.text</h1>
+  </div>
+  
   <form class="form-horizontal" method="post" action="@questions.routes.QuestionController.freetextQuestionResult(question.id)">
   
     <div class="form-group">
       <div class="col-sm-12">
-        <textarea class="form-control" name="answer" rows="20" placeholder="Freitextantwort..." required></textarea>
+        <textarea class="form-control" name="answer" rows="20" placeholder="Freitextantwort..." required>@if(oldAnswer != null) {@oldAnswer.answer}</textarea>
       </div>
     </div>
     
     <hr>
 
-    <input class="btn btn-block btn-primary" type="submit" value="Kontrollieren">
+    <input class="btn btn-block btn-primary" type="submit" value="Antwort speichern">
   </form>
 </div>
 }

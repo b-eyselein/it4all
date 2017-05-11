@@ -20,7 +20,7 @@
         <td>@exercise.id</td>
         <td>@exercise.title</td>
         @for(lang <- model.ProgLanguage.values()) {
-        <td><a class="btn btn-primary btn-block" href="@programming.routes.Programming.exercise(exercise.id)">
+        <td><a class="btn btn-primary btn-block" href="@programming.routes.Prog.exercise(exercise.id)">
         Mit @lang.getName() bearbeiten</a></td>
         }
       </tr>

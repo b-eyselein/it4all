@@ -29,6 +29,9 @@ public class Xml extends ExerciseController {
 
   private static final String EXERCISE_TYPE = "xml";
 
+  public static final String STANDARD_XML_PLAYGROUND = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+      + "\n<!DOCTYPE root [\n\n]>\n";
+
   @Inject
   public Xml(Util theUtil, FormFactory theFactory) {
     super(theUtil, theFactory);
@@ -90,7 +93,17 @@ public class Xml extends ExerciseController {
         .collect(Collectors.toList());
     // @formatter:on
 
-    return ok(views.html.xmloverview.render(getUser(), exercises, filters));
+    return ok(views.html.xmlIndex.render(getUser(), exercises, filters));
+  }
+
+  public Result playground() {
+    return ok(views.html.xmlPlayground.render(getUser()));
+  }
+
+  public Result playgroundCorrection() {
+    List<XmlError> result = XmlCorrector.correct(factory.form().bindFromRequest().get(StringConsts.FORM_VALUE), "",
+        XmlExType.XML_DTD);
+    return ok(views.html.xmlresult.render(result));
   }
 
   private List<XmlError> correct(String learnerSolution, XmlExercise exercise) {
@@ -104,16 +117,7 @@ public class Xml extends ExerciseController {
       xml = learnerSolution;
     }
 
-    return correctExercise(xml, grammar, exercise);
-  }
-
-  private List<XmlError> correctExercise(String xml, String grammar, XmlExercise exercise) {
-    List<XmlError> result = XmlCorrector.correct(xml, grammar, exercise.exerciseType);
-
-    if(result.isEmpty())
-      return Arrays.asList(new XmlError("", XmlErrorType.NONE, -1));
-
-    return result;
+    return XmlCorrector.correct(xml, grammar, exercise.exerciseType);
   }
 
   private Path getOldSolPath(User user, XmlExercise exercise) {

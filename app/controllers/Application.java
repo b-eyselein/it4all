@@ -21,26 +21,10 @@ public class Application extends AbstractController {
   public Application(Util theUtil, FormFactory theFactory, Environment theEnvironment) {
     super(theUtil, theFactory);
     environment = theEnvironment;
-
-    if(environment.isDev()) {
-      // FIXME: create admin user with name "developer" if not exists
-      createAdmin("admin");
-      createAdmin("developer");
-    }
-
   }
 
   public Result index() {
     return ok(views.html.index.render(getUser(), environment.isDev()));
-  }
-
-  private void createAdmin(String name) {
-    User admin = User.finder.byId(name);
-    if(admin == null)
-      admin = new User();
-    admin.name = name;
-    admin.role = Role.ADMIN;
-    admin.save();
   }
 
 }

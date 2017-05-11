@@ -7,13 +7,13 @@ GET    /admin              controllers.programming.ProgAdmin.index()
 GET    /exercises/export   controllers.programming.ProgAdmin.export()
 
 
-GET    /                   controllers.programming.Programming.index()
-GET    /exercises          controllers.programming.Programming.exercises()
+GET    /                   controllers.programming.Prog.index()
+GET    /exercises          controllers.programming.Prog.exercises()
 
-GET    /testdata/:id       controllers.programming.Programming.testData(id: Int)
-POST   /validate/:id       controllers.programming.Programming.validateTestData(id: Int)
-PUT    /validate/:id       controllers.programming.Programming.validateTestData(id: Int)
+GET    /testdata/:id       controllers.programming.Prog.testData(id: Int)
+POST   /validate/:id       controllers.programming.Prog.validateTestData(id: Int)
+PUT    /validate/:id       controllers.programming.Prog.validateTestData(id: Int)
 
-GET    /exercise/:id       controllers.programming.Programming.exercise(id: Int)
-PUT    /exercise/:id       controllers.programming.Programming.commit(id: Int)
-POST   /exercise/:id       controllers.programming.Programming.commit(id: Int)
+GET    /exercise/:id       controllers.programming.Prog.exercise(id: Int)
+PUT    /exercise/:id       controllers.programming.Prog.commit(id: Int)
+POST   /exercise/:id       controllers.programming.Prog.commit(id: Int)

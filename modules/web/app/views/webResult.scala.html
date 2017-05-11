@@ -21,7 +21,7 @@
       }
 
       @if(result.getTextContentResult() != null) {
-        <div class="alert alert-@result.getTextContentResult().getBSClass()">
+        <div class="alert alert-@result.getTextContentResult().getBSClass()">Der Textinhalt
         @if(result.getTextContentResult().getSuccess() == model.exercise.Success.COMPLETE) { hat den gesuchten Wert.}
         @if(result.getTextContentResult().getSuccess() == model.exercise.Success.PARTIALLY) { hat nicht den gesuchten Wert
          "@result.getTextContentResult().getAwaitedContent()" sondern "@result.getTextContentResult().getFoundContent()"!}

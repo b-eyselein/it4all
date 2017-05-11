@@ -1,14 +1,14 @@
 @(user: model.user.User, exercise: model.WebExercise, exType: String, oldSolution: String, title: String)
 
 @main(title, user) {
-<script src="@controllers.routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
+<script src="@routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
 
 <div class="container-fluid">
   <form method="post" onsubmit="prepareFormForSubmitting();"
   @if("html".equals(exType)) {
-	action="@controllers.web.routes.Web.correctWeb(exercise.id)"
+	action="@web.routes.Web.correctWeb(exercise.id)"
   } else {
-    action="@controllers.web.routes.Web.correctJs(exercise.id)"
+    action="@web.routes.Web.correctJs(exercise.id)"
   }>
     <div class="row">
       <div class="col-md-4 col-sm-6">
@@ -28,9 +28,9 @@
           <div class="btn-group">
             <button type="button" class="btn btn-primary"
             @if("html".equals(exType)) {
-              onclick="testTheSolution('@controllers.web.routes.Web.correctWebLive(exercise.id)')"
+              onclick="testTheSolution('@web.routes.Web.correctWebLive(exercise.id)')"
             } else {
-              onclick="testTheSolution('@controllers.web.routes.Web.correctJsLive(exercise.id)')"
+              onclick="testTheSolution('@web.routes.Web.correctJsLive(exercise.id)')"
             }>L&ouml;sung testen</button>
           </div>
           <div class="btn-group">

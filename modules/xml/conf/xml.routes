@@ -5,6 +5,9 @@ GET    /create        controllers.xml.XmlAdmin.readStandardExercises()
 
 GET    /admin         controllers.xml.XmlAdmin.index()
 
+GET    /playground    controllers.xml.Xml.playground()
+PUT    /playground    controllers.xml.Xml.playgroundCorrection()
+
 GET    /exercises     controllers.xml.Xml.exercises()
 
 GET    /newExercise   controllers.xml.XmlAdmin.newExerciseForm()

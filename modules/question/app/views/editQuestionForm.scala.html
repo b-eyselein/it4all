@@ -14,7 +14,7 @@
   @if(isEdit) {<h1>Frage editieren</h1>} else {<h1>Neue Frage erstellen</h1>}
   </div>
   
-  <form class="form-horizontal" method="post" action="@questions.routes.QuestionController.editQuestion(question.id)">
+  <form class="form-horizontal" method="post" action="@questions.routes.QuestionController.editQuestion(question.id, question.isFreetext())">
     <div class="form-group">
       <label class="control-label col-sm-2" for="title">Titel:</label>
       <div class="col-sm-10">

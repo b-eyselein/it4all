@@ -1,12 +1,16 @@
-@(user: model.user.User, answer: String)
+@(user: model.user.User, answer: model.FreetextAnswer)
 
 @main("Freitextfrage: Antwort", user)  {
 <div class="container">
   <div class="page-header">
-    <h1>Freitextfrage: Antwort...</h1>
+    <h1>@answer.question.text</h1>
   </div>
   
-  <h2>Gegebene Antwort:</h2>
-  <pre>@answer</pre>
+  <pre>@answer.answer</pre>
+
+  <hr>
+
+  <div class="alert alert-info">Ihre Antwort wurde gespeichert und wird von einem Administrator bewertet werden. Sie k&ouml;nnen
+  nun <a class="alert-link" href="@questions.routes.QuestionController.questions()">weitere Fragen</a> beantworten.</div>
 </div>
 }

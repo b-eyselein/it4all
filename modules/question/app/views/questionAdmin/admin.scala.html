@@ -17,7 +17,7 @@
         Es existieren insgesamt <a href="@questions.routes.QuestionController.questions()">
          @{GivenAnswerQuestion.finder.findCount() + FreetextQuestion.finder.findCount()} Fragen</a> in allen Kategorien, darunter
         <ul>
-          <li>@GivenAnswerQuestion.finder.findCount() &quot;normale&quot; Fragen</li>
+          <li>@GivenAnswerQuestion.finder.findCount() Fragen mit gegebenen Antworten</li>
           <li>@FreetextQuestion.finder.findCount() Freitextfragen</li>
           
         @if(!notAssignedQuestions.isEmpty()) {
@@ -42,8 +42,8 @@
     &nbsp;
     
     <div class="btn-group btn-group-justified">
-      <a class="btn btn-default" href="@questions.routes.QuestionController.newQuestionForm()">Neue Frage erstellen</a>
-      <a class="btn btn-default" href="@questions.routes.QuestionController.newFreetextQuestionForm()">Neue Freitextfrage erstellen</a>
+      <a class="btn btn-default" href="@questions.routes.QuestionController.newQuestionForm(false)">Neue Frage erstellen</a>
+      <a class="btn btn-default" href="@questions.routes.QuestionController.newQuestionForm(true)">Neue Freitextfrage erstellen</a>
     </div>
     
     &nbsp;

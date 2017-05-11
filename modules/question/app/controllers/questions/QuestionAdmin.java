@@ -33,6 +33,11 @@ import play.mvc.Result;
 
 public class QuestionAdmin extends AbstractAdminController<Question, QuestionReader> {
 
+  @Inject
+  public QuestionAdmin(Util theUtil, FormFactory theFactory) {
+    super(theUtil, theFactory, "question", new QuestionReader());
+  }
+
   private static void assignQuestion(String keyAndValue, boolean addOrRemove) {
     // String[] quizAndQuestion = keyAndValue.split("_");
     //
@@ -46,11 +51,6 @@ public class QuestionAdmin extends AbstractAdminController<Question, QuestionRea
     // quiz.questions.remove(question);
     //
     // quiz.save();
-  }
-
-  @Inject
-  public QuestionAdmin(Util theUtil, FormFactory theFactory) {
-    super(theUtil, theFactory, "question", new QuestionReader());
   }
 
   public Result assignQuestions() {
@@ -145,7 +145,7 @@ public class QuestionAdmin extends AbstractAdminController<Question, QuestionRea
 
   public Result notAssignedQuestions() {
     return ok(views.html.questionList.render(getUser(),
-        /* Question.notAssignedQuestions() */ Collections.emptyList(), Collections.emptyList()));
+        /* Question.notAssignedQuestions() */ Question.all()));
   }
 
   @Override

@@ -15,7 +15,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class GivenAnswerQuestion extends Question {
 
   public static final int MIN_ANSWERS = 2;
-
   public static final int STD_ANSWERS = 4;
   public static final int MAX_ANSWERS = 8;
 
@@ -47,6 +46,23 @@ public class GivenAnswerQuestion extends Question {
   @JsonIgnore
   public List<Answer> getCorrectAnswers() {
     return answers.stream().filter(Answer::isCorrect).collect(Collectors.toList());
+  }
+
+  @Override
+  public boolean isFreetext() {
+    return false;
+  }
+
+  @Override
+  public void saveInDb() {
+    save();
+    answers.forEach(Answer::save);
+  }
+
+  @Override
+  public boolean userHasAnswered(String username) {
+    // TODO Auto-generated method stub
+    return false;
   }
 
 }

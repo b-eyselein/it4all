@@ -1,109 +1,62 @@
-@(user: model.user.User, gaQuestions: List[model.question.GivenAnswerQuestion], ftQuestions: List[model.question.FreetextQuestion])
+@(user: model.user.User, questionList: List[model.question.Question])
 
 @isAdmin = @{user.role == model.user.Role.ADMIN}
 
 @main("Auswahlfragen", user) {
-<div class="container-fluid">
+<div class="container">
   <div class="page-header">
     <h1>Alle Fragen</h1>
   </div>
   
-  <div class="row">
-    <div class="col-md-6">
-      <h2>Fragen mit gegebener Antwort</h2>
-      @if(gaQuestions.isEmpty()) {
-      <div class="alert alert-info">Bisher gibt es keine Fragen. Sie k&ouml;nnen
-        <a class="alert-link" href="@questions.routes.QuestionController.newQuestionForm()">hier</a> eine erstellen.
-      </div>
-      } else {
-      <table class="table text-center">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th/>
-            <th/>
-            <th>Autor</th>
-            <th>Titel</th>
-            <th>Max. Punktzahl</th>
-          </tr>
-        </thead>
-        <tbody>
-        
-        @for(question <- gaQuestions) {
-          <tr>
-            <td>@question.id</td>
-            @if(isAdmin || user.name.equals(question.author)) {
-          	<td>
-              <a href="@questions.routes.QuestionController.editQuestionForm(question.id)">
-                <span class="glyphicon glyphicon-edit"></span></a>
-            </td>
-            <td>
-              <a href="@@questions.routes.QuestionController.removeQuestion(question.id)">
-                <span class="glyphicon glyphicon-remove-circle"></span></a>
-            </td>
-            <td>@question.author</td>
-            } else {
-            <td/>
-            <td/>
-            <td><span title="Keine ausreichende Berechtigung!" class="glyphicon glyphicon-question-sign"></span></td>
-            }
-            <td><a href="@questions.routes.QuestionController.question(question.id)">@question.title</a></td>
-            <td>@question.maxPoints</td>
-          </tr>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th/>
+        <th/>
+        <th>Autor</th>
+        <th>Titel</th>
+        <th>Typ</th>
+        <th>Max. Punktzahl</th>
+        <th>Beantwortet</th>
+      </tr>
+    </thead>
+    <tbody>
+    
+    @for(question <- questionList) {
+      <tr>
+        <td>@question.id</td>
+        @if(isAdmin || user.name.equals(question.author)) {
+      	<td>
+          <a href="@questions.routes.QuestionController.editQuestionForm(question.id, question.isFreetext())" title="Frage editieren">
+            <span class="glyphicon glyphicon-edit"></span></a>
+        </td>
+        <td>
+          <a href="@@questions.routes.QuestionController.removeQuestion(question.id)" title="Frage l&ouml;schen">
+            <span class="glyphicon glyphicon-remove-circle"></span></a>
+        </td>
+        <td>@question.author</td>
+        } else {
+        <td/>
+        <td/>
+        <td><span title="Keine ausreichende Berechtigung!" class="glyphicon glyphicon-question-sign"></span></td>
         }
-        
-        </tbody>
-      </table>
-      }
-    </div>
-      
-    <div class="col-md-6">
-      <h2>Freitextfragen</h2>
-      @if(ftQuestions.isEmpty()) {
-      <div class="alert alert-info">Bisher gibt es keine Fragen. Sie k&ouml;nnen
-        <a class="alert-link" href="@questions.routes.QuestionController.newFreetextQuestionForm()">hier</a> eine erstellen.
-      </div>
-      } else {
-      <table class="table text-center">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th/>
-            <th/>
-            <th>Autor</th>
-            <th>Titel</th>
-            <th>Max. Punktzahl</th>
-          </tr>
-        </thead>
-        <tbody>
-        
-        @for(question <- ftQuestions) {
-          <tr>
-            <td>@question.id</td>
-            @if(isAdmin || user.name.equals(question.author)) {
-          	<td>
-              <a href="@questions.routes.QuestionController.editQuestionForm(question.id)">
-                <span class="glyphicon glyphicon-edit"></span></a>
-            </td>
-            <td>
-              <a href="@@questions.routes.QuestionController.removeQuestion(question.id)">
-                <span class="glyphicon glyphicon-remove-circle"></span></a>
-            </td>
-            <td>@question.author</td>
-            } else {
-            <td/>
-            <td/>
-            <td><span title="Keine ausreichende Berechtigung!" class="glyphicon glyphicon-question-sign"></span></td>
-            }
-            <td><a href="@questions.routes.QuestionController.freetextQuestion(question.id)">@question.title</a></td>
-            <td>@question.maxPoints</td>
-          </tr>
+        @if(question.isFreetext()) {
+        <td><a href="@questions.routes.QuestionController.freetextQuestion(question.id)">@question.title</a></td>
+        <td>Freitext</td>
+      	} else {
+      	<td><a href="@questions.routes.QuestionController.question(question.id)">@question.title</a></td>
+        <td>Gegebene Antworten</td>
         }
-        
-        </tbody>
-      </table>
-      }
-    </div>
-  </div>
+        <td>@question.maxPoints</td>
+        @if(question.userHasAnswered(user.name)) {
+      	<td><span class="glyphicon glyphicon-ok"></span></td>
+        } else {
+        <td><span class="glyphicon glyphicon-minus"></span></td>
+        }
+      </tr>
+    }
+    </tbody>
+  </table>
 </div>
 }

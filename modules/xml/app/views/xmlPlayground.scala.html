@@ -1,0 +1,25 @@
+@(user: model.user.User)
+
+@main("XML: Playground", user) {
+<script src="@routes.Assets.versioned("javascripts/helperfunctions.js")"></script>    
+<div class="container">
+  <div class="page-header">
+    <h1>XML: Playground</h1>
+  </div>
+  
+  <div class="row">
+    <div class="col-md-6">
+      @editor(controllers.xml.Xml.STANDARD_XML_PLAYGROUND, "xml", 25, 50, false)
+    </div>
+
+    <div class="col-md-6">
+      <div id="correction"></div>
+    </div>
+  </div>
+
+  <hr>
+  
+  <button onclick="testTheSolution('@xml.routes.Xml.playgroundCorrection()');"
+    class="btn btn-primary btn-block">Gegen DTD in Dokument testen...</button>
+</div>
+}
