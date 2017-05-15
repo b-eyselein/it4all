@@ -1,12 +1,23 @@
 # creation of exercises
-GET    /upload              controllers.sql.SQLAdmin.uploadForm()
-POST   /upload              controllers.sql.SQLAdmin.uploadFile()
-GET    /create              controllers.sql.SQLAdmin.readStandardExercises()
+GET    /upload                controllers.sql.SqlAdmin.uploadForm()
+POST   /upload                controllers.sql.SqlAdmin.uploadFile()
+
+GET    /jsonSchema            controllers.sql.SqlAdmin.getJSONSchemaFile()
+GET    /import                controllers.sql.SqlAdmin.importExercises()
+GET    /export                controllers.sql.SqlAdmin.exportExercises()
+
+GET    /admin                 controllers.sql.SqlAdmin.index()
+
+GET    /scenarioes            controllers.sql.Sql.scenarioes()
+GET    /scenarioes/new        controllers.sql.SqlAdmin.newScenarioForm()
+POST   /scenarioes/new        controllers.sql.SqlAdmin.newScenario()
+
+GET    /scenarioes/:id        controllers.sql.Sql.scenario(id: Int)
 
 # exercises
-GET    /                    controllers.sql.SQL.index()
-GET    /:scenario/:exType   controllers.sql.SQL.scenario(scenario: String, exType: String, start: Int ?= 0)
-GET    /:id                 controllers.sql.SQL.exercise(id: Int)
+GET    /                      controllers.sql.Sql.index()
+GET    /:scenarioId/:exType   controllers.sql.Sql.filteredScenario(scenarioId: Int, exType: String, start: Int ?= 0)
+GET    /:id                   controllers.sql.Sql.exercise(id: Int)
 
-PUT    /:id                 controllers.sql.SQL.correctLive(id: Int)
-POST   /:id                 controllers.sql.SQL.correct(id: Int)
+PUT    /:id                   controllers.sql.Sql.correctLive(id: Int)
+POST   /:id                   controllers.sql.Sql.correct(id: Int)

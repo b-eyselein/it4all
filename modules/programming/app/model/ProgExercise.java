@@ -72,4 +72,10 @@ public class ProgExercise extends Exercise {
     }
   }
 
+  @Override
+  public void saveInDB() {
+    save();
+    sampleTestData.forEach(SampleTestData::save);
+  }
+
 }

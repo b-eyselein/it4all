@@ -22,6 +22,7 @@ import model.UmlExTextParser;
 import model.UmlExercise;
 import model.UmlExerciseReader;
 import model.Util;
+import model.exercise.Exercise;
 import model.exercisereading.AbstractReadingResult;
 import model.exercisereading.ReadingError;
 import model.exercisereading.ReadingResult;
@@ -31,24 +32,25 @@ import play.libs.Json;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
+import play.twirl.api.Html;
 
 public class UmlAdmin extends AbstractAdminController<UmlExercise, UmlExerciseReader> {
   
   @Inject
   public UmlAdmin(Util theUtil, FormFactory theFactory) {
-    super(theUtil, theFactory, "uml", new UmlExerciseReader());
+    super(theUtil, theFactory, UmlExercise.finder, "uml", new UmlExerciseReader());
   }
   
   public Result checkSolution() {
     DynamicForm form = factory.form().bindFromRequest();
-
+    
     JsonNode solNode = null;
     try {
       solNode = Json.parse(form.get("solution"));
     } catch (Exception e) {
       return ok("error");
     }
-
+    
     Optional<ProcessingReport> report = JsonWrapper.validateJson(solNode, UML.SOLUTION_SCHEMA_NODE);
     
     if(!report.isPresent())
@@ -60,7 +62,7 @@ public class UmlAdmin extends AbstractAdminController<UmlExercise, UmlExerciseRe
   }
   
   public Result index() {
-    return ok(views.html.umlAdmin.umlAdmin.render(getUser()));
+    return ok(views.html.umlAdmin.index.render(getUser()));
   }
   
   public Result newExercise() {
@@ -69,10 +71,10 @@ public class UmlAdmin extends AbstractAdminController<UmlExercise, UmlExerciseRe
     String title = form.get(StringConsts.TITLE_NAME);
     
     // FIXME: Search exercise with same title, override!
-    UmlExercise newExercise = UmlExercise.finder.where().eq(StringConsts.TITLE_NAME, title).findUnique();
+    UmlExercise newExercise = finder.where().eq(StringConsts.TITLE_NAME, title).findUnique();
     
     if(newExercise == null)
-      newExercise = new UmlExercise(findMinimalNotUsedId(UmlExercise.finder));
+      newExercise = new UmlExercise(findMinimalNotUsedId(finder));
     
     newExercise.title = title;
     newExercise.text = form.get(StringConsts.TEXT_NAME);
@@ -142,16 +144,8 @@ public class UmlAdmin extends AbstractAdminController<UmlExercise, UmlExerciseRe
   }
   
   @Override
-  public Result readStandardExercises() {
-    AbstractReadingResult<UmlExercise> abstractResult = exerciseReader.readStandardExercises();
-    
-    if(!abstractResult.isSuccess())
-      return badRequest(views.html.jsonReadingError.render(getUser(), (ReadingError<UmlExercise>) abstractResult));
-    
-    ReadingResult<UmlExercise> result = (ReadingResult<UmlExercise>) abstractResult;
-    
-    saveExercises(result.getRead());
-    return ok(views.html.preview.render(getUser(), views.html.umlcreation.render(result.getRead())));
+  public Html renderCreated(List<UmlExercise> exercises) {
+    return views.html.umlCreation.render(exercises);
   }
   
   @Override
@@ -175,18 +169,13 @@ public class UmlAdmin extends AbstractAdminController<UmlExercise, UmlExerciseRe
     
     ReadingResult<UmlExercise> result = (ReadingResult<UmlExercise>) abstractResult;
     
-    saveExercises(result.getRead());
-    return ok(views.html.preview.render(getUser(), views.html.umlcreation.render(result.getRead())));
+    result.getRead().forEach(Exercise::saveInDB);
+    return ok(views.html.preview.render(getUser(), views.html.umlCreation.render(result.getRead())));
   }
   
   @Override
   public Result uploadForm() {
     return ok("TODO!");
-  }
-  
-  @Override
-  protected void saveExercises(List<UmlExercise> exercises) {
-    exercises.forEach(UmlExercise::save);
   }
   
 }

@@ -4,13 +4,19 @@
 	"items": {
 		"type": "object", 
 		"properties": {
-			"shortname": {
+			"id": {
+				"type": "integer"
+			}, 
+			"shortName": {
 				"type": "string"
 			}, 
-			"longname": {
+			"title": {
 				"type": "string"
 			}, 
-			"scriptfile": {
+			"text": {
+				"type": "string"
+			}, 
+			"scriptFile": {
 				"type": "string"
 			}, 
 			"exercises": {
@@ -21,7 +27,7 @@
 						"id": {
 							"type": "integer"
 						}, 
-						"exercisetype": {
+						"exerciseType": {
 							"enum": [
 								"CREATE", 
 								"SELECT", 
@@ -36,40 +42,78 @@
 						"hint": {
 							"type": "string"
 						}, 
-						"samplesolutions": {
+						"sampleSolutions": {
 							"type": "array", 
 							"items": {
-								"type": "string"
-							}
-						}, 
-						"validation": {
-							"type": "string"
-						}, 
-						"tags": {
-							"type": "array", 
-							"items": {
-								"enum": [
-									"JOIN", 
-									"DOUBLE_JOIN", 
-									"TRIPLE_JOIN", 
-									"ORDER_BY", 
-									"GROUP_BY", 
-									"FUNCTION", 
-									"ALIAS", 
-									"LIMIT", 
-									"SUBSELECT"
-								]
-							}
+								"type": "object", 
+								"properties": {
+									"key": {
+										"type": "object", 
+										"properties": {
+											"exerciseId": {
+												"type": "integer"
+											}, 
+											"sampleId": {
+												"type": "integer"
+											}
+										}, 
+										"required": [
+											"exerciseId", 
+											"sampleId"
+										]
+									}
+								}, 
+								"solution": {
+									"type": "array", 
+									"items": {
+										"type": "string"
+									}
+								}
+							}, 
+							"required": [
+								"key", 
+								"solution"
+							]
+						}
+					}, 
+					"validation": {
+						"type": "string"
+					}, 
+					"tags": {
+						"type": "array", 
+						"items": {
+							"enum": [
+								"JOIN", 
+								"DOUBLE_JOIN", 
+								"TRIPLE_JOIN", 
+								"ORDER_BY", 
+								"GROUP_BY", 
+								"FUNCTION", 
+								"ALIAS", 
+								"LIMIT", 
+								"SUBSELECT"
+							]
 						}
 					}
 				}, 
 				"required": [
 					"id", 
-					"exercisetype", 
+					"exerciseType", 
 					"text", 
-					"samplesolutions"
+					"hint", 
+					"sampleSolutions", 
+					"validation", 
+					"tags"
 				]
 			}
-		}
-	}
+		}, 
+		"required": [
+			"shortName", 
+			"title", 
+			"scriptFile", 
+			"exercises"
+		]
+	}, 
+	"minItems": 1, 
+	"maxItems": 1
 }

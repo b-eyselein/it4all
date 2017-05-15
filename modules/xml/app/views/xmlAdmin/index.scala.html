@@ -1,25 +1,19 @@
 @(user: model.user.User)
 
-@main("UML: Administration", user) {
+@main("XML: Administration", user) {
 <div class="container">
   <div class="page-header">
-    <h1>Administrator UML</h1>
-  </div>
-  
-  <div class="alert alert-info alert-dismissable">
-    <a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-    Es gibt insgesamt @model.UmlExercise.finder.all().size() &Uuml;bungen. Sie k&ouml;nnen 
-    <a class="alert-link" href="@uml.routes.UmlAdmin.uploadForm()">hier</a> neue erstellen.
+    <h1>Administrator XML</h1>
   </div>
   
   <h2>Verwaltung der Fragen</h2>
-  <a class="btn btn-default btn-block" href="@@uml.routes.QuestionController.questions()">Übersicht über alle Fragen</a>
-  <a class="btn btn-default btn-block" href="@uml.routes.UmlAdmin.newExerciseStep1()">Neue Aufgabe erstellen</a>
+  <a class="btn btn-default btn-block" href="@xml.routes.Xml.exercises()">Übersicht über alle Fragen</a>
+  <a class="btn btn-default btn-block" href="@xml.routes.XmlAdmin.newExerciseForm()">Neue Aufgabe erstellen</a>
   
   <hr>
   
-  <a class="btn btn-default btn-block" href="@@uml.routes.QuestionAdmin.exportQuestions()">Fragen als JSON exportieren</a>
-  <a class="btn btn-default btn-block" href="@uml.routes.UmlAdmin.readStandardExercises()">Standardaufgaben einlesen</a>
+  <a class="btn btn-default btn-block" href="@xml.routes.XmlAdmin.exportExercises()">Fragen als JSON exportieren</a>
+  <a class="btn btn-default btn-block" href="@xml.routes.XmlAdmin.importExercises()">Standardaufgaben einlesen</a>
   
   <hr>
     

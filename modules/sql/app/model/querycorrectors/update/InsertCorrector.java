@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import javax.inject.Singleton;
 
 import model.SqlCorrectionException;
-import model.correctionresult.ComparisonTwoListsOfStrings;
+import model.matching.MatchingResult;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
@@ -25,26 +25,17 @@ public class InsertCorrector extends ChangeCorrector<Insert, Insert> {
   }
   
   @Override
-  protected ComparisonTwoListsOfStrings compareColumns(Insert userQuery, Insert sampleQuery) {
-    // TODO Auto-generated method stub
-    // FIXME: keine Beachtung der Groß-/Kleinschreibung bei Vergleich! -->
-    // Verwendung core --> model.result.Matcher?
-    List<String> userColumns = getColumns(userQuery).stream().map(String::toUpperCase).collect(Collectors.toList());
-    List<String> sampleColumns = getColumns(sampleQuery).stream().map(String::toUpperCase).collect(Collectors.toList());
-    
-    List<String> wrongColumns = listDifference(userColumns, sampleColumns);
-    List<String> missingColumns = listDifference(sampleColumns, userColumns);
-    
-    return new ComparisonTwoListsOfStrings("Spalten", missingColumns, wrongColumns);
+  protected MatchingResult<String> compareColumns(Insert userQuery, Insert sampleQuery) {
+    return STRING_EQ_MATCHER.match("Spalten", getColumns(userQuery), getColumns(sampleQuery));
   }
   
   @Override
-  protected ComparisonTwoListsOfStrings compareGroupByElements(Insert userQuery, Insert sampleQuery) {
+  protected MatchingResult<String> compareGroupByElements(Insert userQuery, Insert sampleQuery) {
     return null;
   }
   
   @Override
-  protected ComparisonTwoListsOfStrings compareOrderByElements(Insert userQuery, Insert sampleQuery) {
+  protected MatchingResult<String> compareOrderByElements(Insert userQuery, Insert sampleQuery) {
     return null;
   }
   

@@ -1,7 +1,10 @@
 # creation of exercises
 GET    /upload        controllers.xml.XmlAdmin.uploadForm()
 POST   /upload        controllers.xml.XmlAdmin.uploadFile()
-GET    /create        controllers.xml.XmlAdmin.readStandardExercises()
+
+GET    /jsonSchema    controllers.xml.XmlAdmin.getJSONSchemaFile()
+GET    /import        controllers.xml.XmlAdmin.importExercises()
+GET    /export        controllers.xml.XmlAdmin.exportExercises()
 
 GET    /admin         controllers.xml.XmlAdmin.index()
 

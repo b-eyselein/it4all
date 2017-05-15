@@ -9,7 +9,7 @@
 
 <div class="container">
   <div class="page-header">
-    <h1>Szenario &quot;@scenario.longName&quot;: Aufgabentyp @exType</h1>
+    <h1>Szenario &quot;@scenario.title&quot;: Aufgabentyp @exType</h1>
   </div>
   
   <table class="table">
@@ -28,7 +28,7 @@
 	    <td>@ex.getBadges()</td>
 	    <td>@ex.id:</td>
   	    <td>
-          <a href="@controllers.sql.routes.SQL.exercise(ex.id)"
+          <a href="@sql.routes.Sql.exercise(ex.id)"
             class="btn btn-default btn-block">@ex.text</a>
         </td>
       </div>
@@ -39,9 +39,9 @@
   <hr>
   
   <div class="btn-group btn-group-justified">
-    <a type="button" href="@controllers.sql.routes.SQL.scenario(scenario.shortName, exType.toString(), Math.max(0, start - 10))"
+    <a type="button" href="@sql.routes.Sql.filteredScenario(scenario.id, exType.toString(), Math.max(0, start - 10))"
       class="btn btn-default">Zurück</a>
-    <a type="button" href="@controllers.sql.routes.SQL.scenario(scenario.shortName, exType.toString(), scenario.getBorder(exType, start))"
+    <a type="button" href="@sql.routes.Sql.filteredScenario(scenario.id, exType.toString(), scenario.getBorder(exType, start))"
       class="btn btn-default">Vorwärts</a>
   </div>
 </div>

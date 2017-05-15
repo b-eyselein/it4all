@@ -32,38 +32,38 @@ import play.db.Database;
 import play.db.NamedDatabase;
 import play.mvc.Result;
 
-public class SQL extends ExerciseController {
-
+public class Sql extends ExerciseController {
+  
   private static final String SHOW_ALL_TABLES = "SHOW TABLES";
-
+  
   private static final String SELECT_ALL = "SELECT * FROM ";
-
+  
   private static final String FEEDBACK_LEVEL_FORM_VALUE = "feedback";
   
   private Database sqlSelect;
-
+  
   private Database sqlOther;
-
+  
   @Inject
-  public SQL(Util theUtil, FormFactory theFactory, @NamedDatabase("sqlselectroot") Database theSqlSelect,
+  public Sql(Util theUtil, FormFactory theFactory, @NamedDatabase("sqlselectroot") Database theSqlSelect,
       @NamedDatabase("sqlotherroot") Database theSqlOther) {
     super(theUtil, theFactory);
     sqlSelect = theSqlSelect;
     sqlOther = theSqlOther;
   }
-
+  
   public Result correct(int id) {
     final User user = getUser();
     final SqlExercise exercise = SqlExercise.finder.byId(id);
-
+    
     DynamicForm form = factory.form().bindFromRequest();
     final String learnerSolution = form.get(StringConsts.FORM_VALUE);
     final String fbLevelAsString = form.get(FEEDBACK_LEVEL_FORM_VALUE);
-
+    
     FeedbackLevel feedbackLevel = FeedbackLevel.MINIMAL_FEEDBACK;
     if(fbLevelAsString != null && !fbLevelAsString.isEmpty())
       feedbackLevel = FeedbackLevel.valueOf(fbLevelAsString);
-
+    
     SqlResult result;
     try {
       result = correct(learnerSolution, exercise, feedbackLevel);
@@ -71,66 +71,75 @@ public class SQL extends ExerciseController {
       return ok(views.html.error.render(user,
           "<div class=\"alert alert-danger\">Sie haben eine leere L&ouml;sung abgegeben!</div>"));
     }
-
+    
     log(user, new ExerciseCompletionEvent(request(), id, result.getResults()));
     return ok(views.html.correction.render("SQL", views.html.sqlresult.render(result), learnerSolution, user));
   }
-
+  
   public Result correctLive(int id) {
     final User user = getUser();
     final SqlExercise exercise = SqlExercise.finder.byId(id);
-
+    
     DynamicForm form = factory.form().bindFromRequest();
     final String learnerSolution = form.get(StringConsts.FORM_VALUE);
     final String fbLevelAsString = form.get(FEEDBACK_LEVEL_FORM_VALUE);
-
+    
     FeedbackLevel feedbackLevel = FeedbackLevel.MINIMAL_FEEDBACK;
     if(fbLevelAsString != null && !fbLevelAsString.isEmpty())
       feedbackLevel = FeedbackLevel.valueOf(fbLevelAsString);
-
+    
     SqlResult result;
     try {
       result = correct(learnerSolution, exercise, feedbackLevel);
     } catch (EmptySolutionException e) { // NOSONAR
       return ok(views.html.correctionerror.render("Sie haben eine leere L&ouml;sung abgegeben!"));
     }
-
+    
     log(user, new ExerciseCorrectionEvent(request(), id, result.getResults()));
     return ok(views.html.sqlresult.render(result));
   }
-
+  
   public Result exercise(int id) {
     final User user = getUser();
-
+    
     SqlExercise exercise = SqlExercise.finder.byId(id);
-
+    
     if(exercise == null)
-      return redirect(controllers.sql.routes.SQL.index());
-
+      return redirect(controllers.sql.routes.Sql.index());
+    
     List<SqlQueryResult> tables = readTablesInDatabase(exercise.scenario.shortName);
-
+    
     log(user, new ExerciseStartEvent(request(), id));
-
+    
     return ok(views.html.sqlExercise.render(user, exercise, tables));
   }
-
+  
+  public Result filteredScenario(int id, String exType, int start) {
+    final SqlScenario scenario = SqlScenario.finder.byId(id);
+    
+    if(scenario == null)
+      return redirect(controllers.sql.routes.Sql.index());
+    
+    return ok(views.html.sqlscenario.render(getUser(), scenario, SqlExerciseType.valueOf(exType), start));
+  }
+  
   public Result index() {
     return ok(views.html.sqloverview.render(getUser(), SqlScenario.finder.all()));
   }
 
-  public Result scenario(String scenarioName, String exType, int start) {
-    final SqlScenario scenario = SqlScenario.finder.byId(scenarioName);
-
-    if(scenario == null)
-      return redirect(controllers.sql.routes.SQL.index());
-
-    return ok(views.html.sqlscenario.render(getUser(), scenario, SqlExerciseType.valueOf(exType), start));
+  public Result scenario(int id) {
+    final SqlScenario scenario = SqlScenario.finder.byId(id);
+    return ok(scenario.toString());
   }
-
+  
+  public Result scenarioes() {
+    return ok(views.html.scenarioes.render(getUser(), SqlScenario.finder.all()));
+  }
+  
   private Database getDatabaseForExerciseType(SqlExerciseType exerciseType) {
     return exerciseType == SqlExerciseType.SELECT ? sqlSelect : sqlOther;
   }
-
+  
   private List<String> readExistingTables(Connection connection) {
     final List<String> tableNames = new LinkedList<>();
     try(Statement statement = connection.createStatement();
@@ -142,7 +151,7 @@ public class SQL extends ExerciseController {
     }
     return tableNames;
   }
-
+  
   private SqlQueryResult readTableContent(Connection connection, String tableName) {
     try(PreparedStatement selectStatement = connection.prepareStatement(SELECT_ALL + tableName);) {
       final ResultSet tableResult = selectStatement.executeQuery();
@@ -152,38 +161,38 @@ public class SQL extends ExerciseController {
       return null;
     }
   }
-
+  
   private List<SqlQueryResult> readTablesInDatabase(String databaseName) {
     final List<SqlQueryResult> tables = new LinkedList<>();
-
+    
     try(Connection connection = sqlSelect.getConnection()) {
       connection.setCatalog(databaseName);
-
+      
       List<String> tableNames = readExistingTables(connection);
-
+      
       for(String tableName: tableNames) {
         final SqlQueryResult tableResult = readTableContent(connection, tableName);
         tables.add(tableResult);
       }
-
+      
     } catch (SQLException e) {
       Logger.error("Es gab einen Fehler beim Auslesen der Tabellen!", e);
     }
-
+    
     return tables;
   }
-
+  
   protected SqlResult correct(String learnerSolution, SqlExercise exercise, FeedbackLevel feedbackLevel)
       throws EmptySolutionException {
     // FIXME: Speichern der Lösung?!?
-
-    Database database = getDatabaseForExerciseType(exercise.exercisetype);
-
+    
+    Database database = getDatabaseForExerciseType(exercise.exerciseType);
+    
     // FIXME: empty solution!
     if(learnerSolution.isEmpty())
       throw new EmptySolutionException("Sie haben eine leere Query abgegeben!");
-
+    
     return SqlCorrector.correct(database, learnerSolution, exercise, feedbackLevel);
   }
-
+  
 }

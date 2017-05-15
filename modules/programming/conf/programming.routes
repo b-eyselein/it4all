@@ -1,19 +1,20 @@
 # creation of exercises
-GET    /upload             controllers.programming.ProgAdmin.uploadForm()
-POST   /upload             controllers.programming.ProgAdmin.uploadFile()
-GET    /create             controllers.programming.ProgAdmin.readStandardExercises()
+GET    /upload         controllers.programming.ProgAdmin.uploadForm()
+POST   /upload         controllers.programming.ProgAdmin.uploadFile()
 
-GET    /admin              controllers.programming.ProgAdmin.index()
-GET    /exercises/export   controllers.programming.ProgAdmin.export()
+GET    /jsonSchema     controllers.programming.ProgAdmin.getJSONSchemaFile()
+GET    /import         controllers.programming.ProgAdmin.importExercises()
+GET    /export         controllers.programming.ProgAdmin.exportExercises()
 
+GET    /admin          controllers.programming.ProgAdmin.index()
 
-GET    /                   controllers.programming.Prog.index()
-GET    /exercises          controllers.programming.Prog.exercises()
+GET    /               controllers.programming.Prog.index()
+GET    /exercises      controllers.programming.Prog.exercises()
 
-GET    /testdata/:id       controllers.programming.Prog.testData(id: Int)
-POST   /validate/:id       controllers.programming.Prog.validateTestData(id: Int)
-PUT    /validate/:id       controllers.programming.Prog.validateTestData(id: Int)
+GET    /testdata/:id   controllers.programming.Prog.testData(id: Int)
+POST   /validate/:id   controllers.programming.Prog.validateTestData(id: Int)
+PUT    /validate/:id   controllers.programming.Prog.validateTestData(id: Int)
 
-GET    /exercise/:id       controllers.programming.Prog.exercise(id: Int)
-PUT    /exercise/:id       controllers.programming.Prog.commit(id: Int)
-POST   /exercise/:id       controllers.programming.Prog.commit(id: Int)
+GET    /exercise/:id   controllers.programming.Prog.exercise(id: Int)
+PUT    /exercise/:id   controllers.programming.Prog.commit(id: Int)
+POST   /exercise/:id   controllers.programming.Prog.commit(id: Int)

@@ -7,14 +7,13 @@ import java.util.stream.Collectors;
 import javax.inject.Singleton;
 
 import model.SqlCorrectionException;
-import model.correctionresult.ComparisonTwoListsOfStrings;
+import model.matching.MatchingResult;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.update.Update;
-import play.Logger;
 
 @Singleton
 public class UpdateCorrector extends ChangeCorrector<Update, Update> {
@@ -26,30 +25,18 @@ public class UpdateCorrector extends ChangeCorrector<Update, Update> {
   }
 
   @Override
-  protected ComparisonTwoListsOfStrings compareColumns(Update userQuery, Update sampleQuery) {
-    // FIXME: keine Beachtung der Groß-/Kleinschreibung bei Vergleich! -->
-    // Verwendung core --> model.result.Matcher?
-    List<String> userColumns = getColumns(userQuery).stream().map(String::toUpperCase).collect(Collectors.toList());
-    List<String> sampleColumns = getColumns(sampleQuery).stream().map(String::toUpperCase).collect(Collectors.toList());
-    
-    // FIXME: correct set ... part of query!
-    for(Expression e: userQuery.getExpressions())
-      Logger.debug(e + "");
-    
-    List<String> wrongColumns = listDifference(userColumns, sampleColumns);
-    List<String> missingColumns = listDifference(sampleColumns, userColumns);
-    
-    return new ComparisonTwoListsOfStrings("Spalten", missingColumns, wrongColumns);
+  protected MatchingResult<String> compareColumns(Update userQuery, Update sampleQuery) {
+    return STRING_EQ_MATCHER.match("Spalten", getColumns(userQuery), getColumns(sampleQuery));
   }
 
   @Override
-  protected ComparisonTwoListsOfStrings compareGroupByElements(Update userQuery, Update sampleQuery) {
+  protected MatchingResult<String> compareGroupByElements(Update userQuery, Update sampleQuery) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  protected ComparisonTwoListsOfStrings compareOrderByElements(Update userQuery, Update sampleQuery) {
+  protected MatchingResult<String> compareOrderByElements(Update userQuery, Update sampleQuery) {
     // TODO Auto-generated method stub
     return null;
   }

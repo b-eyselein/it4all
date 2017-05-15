@@ -46,6 +46,11 @@ public class JsWebTask extends Task<JsWebResult> {
     // @formatter:on
   }
 
+  public void saveInDB() {
+    save();
+    conditions.forEach(Condition::save);
+  }
+
   private List<Condition> getPostConditions() {
     return conditions.stream().filter(Condition::isPostcondition).collect(Collectors.toList());
   }

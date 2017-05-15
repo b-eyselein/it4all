@@ -1,7 +1,10 @@
 # creation of exercises
 GET    /upload                   controllers.web.WebAdmin.uploadForm()
 POST   /upload                   controllers.web.WebAdmin.uploadFile()
-GET    /create                   controllers.web.WebAdmin.readStandardExercises()
+
+GET    /jsonSchema               controllers.web.WebAdmin.getJSONSchemaFile()
+GET    /import                   controllers.web.WebAdmin.importExercises()
+GET    /export                   controllers.web.WebAdmin.exportExercises()
 
 # playground
 GET    /playground               controllers.web.Web.playground()
@@ -13,7 +16,6 @@ GET    /admin/                   controllers.web.WebAdmin.index()
 GET    /                         controllers.web.Web.index()
 
 GET    /exercises                controllers.web.Web.exercises()
-GET    /exercises/export         controllers.web.WebAdmin.export()
 
 GET    /:id/:type                controllers.web.Web.exercise(id: Int, type: String)
 

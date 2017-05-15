@@ -14,10 +14,10 @@
       <div class="col-sm-4">
         <h4 class="bg-success text-center">Korrekt</h4>
         <ul>
-        @if(classResult.getCorrect().isEmpty()) {
+        @if(classResult.getMatches().isEmpty()) {
           <li>--</li>
         } else {
-          @for(corrClass <- classResult.getCorrect()) {
+          @for(corrClass <- classResult.getMatches()) {
           <li>@corrClass.getFirstArg().getName()</li>
           }
         }

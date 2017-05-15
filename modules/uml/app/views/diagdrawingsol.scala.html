@@ -21,13 +21,13 @@
           </tr>
         </thead>
         <tbody>
-        @for(correct <- classRes.getCorrect().asInstanceOf[List[model.matcher.UmlClassMatch]]){
+        @for(correct <- classRes.getMatches().asInstanceOf[List[model.matcher.UmlClassMatch]]){
           <tr>
             <td class="success text-center"><span class="glyphicon glyphicon-ok" title="Korrekt"></span></td>
             <td>@correct.getClassName()</td>
             <td>
               <ul class="list-group">
-              @for(correctAtt <- correct.getAttributesResult().getCorrect()) {
+              @for(correctAtt <- correct.getAttributesResult().getMatches()) {
                 <li class="list-group-item list-group-item-success" title="Dieses Attribut ist korrekt.">@correctAtt</li>
           	  }
               @for(wrongAtt <- correct.getAttributesResult().getWrong()) {
@@ -40,7 +40,7 @@
             </td>
             <td>
               <ul class="list-group">
-              @for(correctMethod <- correct.getMethodsResult().getCorrect()) {
+              @for(correctMethod <- correct.getMethodsResult().getMatches()) {
                 <li class="list-group-item list-group-item-success" title="Diese Methode ist korrekt.">@correctMethod</li>
           	  }
               @for(wrongMethod <- correct.getMethodsResult().getWrong()) {

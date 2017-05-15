@@ -1,7 +1,7 @@
 @(user: model.user.User, exercise: model.exercise.SqlExercise, tables: List[model.SqlQueryResult])
 
 @main("SQL", user) {
-<script src="@controllers.routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
+<script src="@routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
 
 <div class="container-fluid">
 
@@ -31,7 +31,7 @@
             </div>
             <div class="modal-body">
               <img class="img-rounded img-responsive center-block"
-              src="@routes.Assets.versioned("images/sql/" + exercise.scenario.shortName + ".png")" alt="Datenbankschema">
+              src="@routes.Assets.versioned("images/sql/" + exercise.scenario.getImageUrl())" alt="Datenbankschema">
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -64,7 +64,7 @@
 
   <div class="row">
     <div class="col-md-4">
-      <form action="@controllers.sql.routes.SQL.correct(exercise.id)" method="post" onsubmit="prepareFormForSubmitting();">
+      <form action="@sql.routes.Sql.correct(exercise.id)" method="post" onsubmit="prepareFormForSubmitting();">
         <div class="panel panel-default">
           <div class="panel-heading">Aufgabe @exercise.id</div>
           <div class="panel-body">
@@ -81,8 +81,8 @@
           </div>
           <div class="panel-footer">
             <button type="button" class="btn btn-default btn-block"
-            onclick="testTheSolution('@controllers.sql.routes.SQL.correctLive(exercise.id)')">L&ouml;sung testen</button>
-            <a type="button" class="btn btn-default btn-block" href="@controllers.sql.routes.SQL.exercise(exercise.id + 1)">Nächste Aufgabe</a>
+            onclick="testTheSolution('@sql.routes.Sql.correctLive(exercise.id)')">L&ouml;sung testen</button>
+            <a type="button" class="btn btn-default btn-block" href="@sql.routes.Sql.exercise(exercise.id + 1)">Nächste Aufgabe</a>
           </div>
         </div>
       

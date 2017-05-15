@@ -5,12 +5,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.persistence.Column;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import model.querycorrectors.CreateCorrector;
 import model.querycorrectors.QueryCorrector;
@@ -28,21 +32,23 @@ public class SqlExercise extends Exercise {
 
   public static final Finder<Integer, SqlExercise> finder = new Finder<>(SqlExercise.class);
 
-  @Column(columnDefinition = "text")
-  public String samples;
-
   @Enumerated(EnumType.STRING)
-  public SqlExerciseType exercisetype;
+  public SqlExerciseType exerciseType;
+
+  @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
+  @JsonManagedReference
+  public List<SqlSample> samples;
 
   @ManyToOne
   @JoinColumn(name = "scenario_name")
+  @JsonBackReference
   public SqlScenario scenario;
 
-  public String validation; // NOSONAR
+  public String validation;
 
-  public String tags; // NOSONAR
+  public String tags;
 
-  public String hint; // NOSONAR
+  public String hint;
 
   public SqlExercise(int theId) {
     super(theId);
@@ -53,7 +59,7 @@ public class SqlExercise extends Exercise {
   }
 
   public QueryCorrector<? extends Statement, ?> getCorrector() {
-    switch(exercisetype) {
+    switch(exerciseType) {
     case CREATE:
       return new CreateCorrector();
     case DELETE:
@@ -69,10 +75,6 @@ public class SqlExercise extends Exercise {
     }
   }
 
-  public List<String> getSampleSolutions() {
-    return Arrays.asList(samples.split("#"));
-  }
-
   public List<SqlTag> getTags() {
     if(tags.isEmpty())
       return Collections.emptyList();
@@ -80,9 +82,10 @@ public class SqlExercise extends Exercise {
     return Arrays.stream(tags.split(SAMPLE_JOIN_CHAR)).map(SqlTag::valueOf).collect(Collectors.toList());
   }
 
-  public Html renderSampleSolutions() {
-    return new Html(getSampleSolutions().stream().collect(Collectors
-        .joining("</pre></div><div class=\"col-md-6\"><pre>", "<div class=\"col-md-6\"><pre>", "</pre></div>")));
+  @Override
+  public void saveInDB() {
+    save();
+    samples.forEach(SqlSample::save);
   }
 
 }

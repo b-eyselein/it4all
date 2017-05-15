@@ -5,16 +5,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Singleton;
 
 import model.SqlCorrectionException;
 import model.SqlQueryResult;
-import model.correctionresult.ComparisonTwoListsOfStrings;
 import model.correctionresult.SqlExecutionResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.SqlExercise;
+import model.matching.MatchingResult;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
@@ -26,119 +25,99 @@ import play.db.Database;
 
 @Singleton
 public class SelectCorrector extends QueryCorrector<Select, PlainSelect> {
-  
+
   private List<String> getColumns(PlainSelect plainSelect) {
     return listAsStrings(plainSelect.getSelectItems());
   }
-  
+
   @Override
-  protected ComparisonTwoListsOfStrings compareColumns(PlainSelect userQuery, PlainSelect sampleQuery) {
-    // FIXME: keine Beachtung der Groß-/Kleinschreibung bei Vergleich! -->
-    // Verwendung core --> model.result.Matcher?
-    List<String> userColumns = getColumns(userQuery).stream().map(String::toUpperCase).collect(Collectors.toList());
-    List<String> sampleColumns = getColumns(sampleQuery).stream().map(String::toUpperCase).collect(Collectors.toList());
-    
-    List<String> wrongColumns = listDifference(userColumns, sampleColumns);
-    List<String> missingColumns = listDifference(sampleColumns, userColumns);
-    
-    return new ComparisonTwoListsOfStrings("Spalten", missingColumns, wrongColumns);
+  protected MatchingResult<String> compareColumns(PlainSelect userQuery, PlainSelect sampleQuery) {
+    return STRING_EQ_MATCHER.match("Spalten", getColumns(userQuery), getColumns(sampleQuery));
   }
-  
+
   @Override
-  protected ComparisonTwoListsOfStrings compareGroupByElements(PlainSelect plainUserQuery,
-      PlainSelect plainSampleQuery) {
+  protected MatchingResult<String> compareGroupByElements(PlainSelect plainUserQuery, PlainSelect plainSampleQuery) {
     if(plainUserQuery.getGroupByColumnReferences() == null && plainSampleQuery.getGroupByColumnReferences() == null)
       return null;
-    
-    List<String> userElements = listAsStrings(plainUserQuery.getGroupByColumnReferences());
-    List<String> sampleElements = listAsStrings(plainSampleQuery.getGroupByColumnReferences());
-    
-    List<String> wrong = listDifference(userElements, sampleElements);
-    List<String> missing = listDifference(sampleElements, userElements);
-    
-    return new ComparisonTwoListsOfStrings("Group By - Elemente", missing, wrong);
+
+    return STRING_EQ_MATCHER.match("Group By-Elemente", listAsStrings(plainUserQuery.getGroupByColumnReferences()),
+        listAsStrings(plainSampleQuery.getGroupByColumnReferences()));
   }
-  
+
   @Override
-  protected ComparisonTwoListsOfStrings compareOrderByElements(PlainSelect plainUserQuery,
-      PlainSelect plainSampleQuery) {
+  protected MatchingResult<String> compareOrderByElements(PlainSelect plainUserQuery, PlainSelect plainSampleQuery) {
     if(plainUserQuery.getOrderByElements() == null && plainSampleQuery.getOrderByElements() == null)
       return null;
-    
-    List<String> userElements = listAsStrings(plainUserQuery.getOrderByElements());
-    List<String> sampleElements = listAsStrings(plainSampleQuery.getOrderByElements());
-    
-    List<String> wrong = listDifference(userElements, sampleElements);
-    List<String> missing = listDifference(sampleElements, userElements);
-    
-    return new ComparisonTwoListsOfStrings("Order By - Elemente", missing, wrong);
+
+    return STRING_EQ_MATCHER.match("Order By-Elemente", listAsStrings(plainUserQuery.getOrderByElements()),
+        listAsStrings(plainSampleQuery.getOrderByElements()));
   }
-  
+
   @Override
   protected SqlExecutionResult executeQuery(Database database, Select userStatement, Select sampleStatement,
       SqlExercise exercise, FeedbackLevel feedbackLevel) {
     SqlQueryResult userResult = null;
     SqlQueryResult sampleResult = null;
-    
+
     try {
       Connection conn = database.getConnection();
       conn.setCatalog(exercise.scenario.shortName);
-      
+
       ResultSet userResultSet = conn.createStatement().executeQuery(userStatement.toString());
       userResult = new SqlQueryResult(userResultSet);
-      
+
       ResultSet sampleResultSet = conn.createStatement().executeQuery(sampleStatement.toString());
       sampleResult = new SqlQueryResult(sampleResultSet);
-      
+
       conn.close();
     } catch (SQLException e) {
       // return new EvaluationFailed("Es gab einen Fehler beim Ausführen eines
       // Statements:<p><pre>"
       // + e.getMessage() + "</pre></p>");
     }
-    
+
     return new SqlExecutionResult(feedbackLevel, userResult, sampleResult);
-    
+
   }
-  
+
   @Override
   protected PlainSelect getPlainStatement(Select query) {
     return (PlainSelect) query.getSelectBody();
   }
-  
+
   @Override
   protected List<String> getTables(PlainSelect userQuery) {
     List<String> userFromItems = new LinkedList<>();
-    
+
     // Main table in Query
     if(userQuery.getFromItem() instanceof Table)
       userFromItems.add(((Table) userQuery.getFromItem()).getName());
-      
+
     // All joined tables
     // FIXME: JOIN ON - Bedingung --> getOnExpression() als Bedingung?
     if(userQuery.getJoins() != null)
       for(Join join: userQuery.getJoins())
         if(join.getRightItem() instanceof Table)
           userFromItems.add(((Table) join.getRightItem()).getName());
-        
+
     return userFromItems;
   }
-  
+
   @Override
   protected Expression getWhere(PlainSelect query) {
     return query.getWhere();
   }
-  
+
   @Override
   protected Select parseStatement(String statement) throws SqlCorrectionException {
     try {
       return (Select) CCJSqlParserUtil.parse(statement);
     } catch (JSQLParserException e) {
       throw new SqlCorrectionException(
-          "Es gab folgenden Fehler beim Parsen ihres Statements: " + e.getCause().getMessage());
+          "Es gab folgenden Fehler beim Parsen ihres Statements: " + e.getCause().getMessage(), e);
     } catch (ClassCastException e) {
-      throw new SqlCorrectionException("Das Statement war vom falschen Typ! Erwartet wurde SELECT!");
+      throw new SqlCorrectionException("Das Statement war vom falschen Typ! Erwartet wurde SELECT!", e);
     }
   }
-  
+
 }

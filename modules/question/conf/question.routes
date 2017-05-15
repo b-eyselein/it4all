@@ -1,16 +1,16 @@
 # creation of exercises
 GET    /upload                     controllers.questions.QuestionAdmin.uploadForm()
 POST   /upload                     controllers.questions.QuestionAdmin.uploadFile()
-GET    /create                     controllers.questions.QuestionAdmin.readStandardExercises()
 
 GET    /                           controllers.questions.QuestionController.index()
 
 # Questions
+GET    /jsonSchema                 controllers.questions.QuestionAdmin.getJSONSchemaFile()
+GET    /export                     controllers.questions.QuestionAdmin.exportExercises()
+GET    /import                     controllers.questions.QuestionAdmin.importExercises()
+
 GET    /questions                  controllers.questions.QuestionController.questions()
 
-GET    /questions/jsonSchema       controllers.questions.QuestionAdmin.getJSONSchemaFile()
-GET    /questions/export           controllers.questions.QuestionAdmin.exportQuestions()
-GET    /questions/import           controllers.questions.QuestionAdmin.importQuestions()
 
 GET    /new/:isFreetext            controllers.questions.QuestionController.newQuestionForm(isFreetext: Boolean)
 POST   /new/:isFreetext            controllers.questions.QuestionController.newQuestion(isFreetext: Boolean)
@@ -25,7 +25,6 @@ GET    /freetext/:id               controllers.questions.QuestionController.free
 POST   /freetext/:id               controllers.questions.QuestionController.freetextQuestionResult(id: Int)
 
 
-
 GET    /answer/:id                 controllers.questions.QuestionController.question( id: Int)
 POST   /answer/:id                 controllers.questions.QuestionController.questionResult( id: Int)
 
@@ -35,9 +34,9 @@ GET    /quizzes                    controllers.questions.QuestionController.quiz
 GET    /quizzes/new                controllers.questions.QuestionAdmin.newQuizForm()
 POST   /quizzes/new                controllers.questions.QuestionAdmin.newQuiz()
 
-GET    /quizzes/jsonSchema         controllers.questions.QuestionAdmin.getJSONSchemaFile()
-GET    /quizzes/export             controllers.questions.QuestionAdmin.exportQuizzes()
-GET    /quizzes/import             controllers.questions.QuestionAdmin.importQuizzes()
+GET    /quizzes/jsonSchema         controllers.questions.QuizAdmin.getJSONSchemaFile()
+GET    /quizzes/export             controllers.questions.QuizAdmin.exportExercises()
+GET    /quizzes/import             controllers.questions.QuizAdmin.importExercises()
 
 
 GET    /admin                      controllers.questions.QuestionAdmin.index()

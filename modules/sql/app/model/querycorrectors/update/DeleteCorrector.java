@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import model.SqlCorrectionException;
-import model.correctionresult.ComparisonTwoListsOfStrings;
+import model.matching.MatchingResult;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
@@ -13,17 +13,17 @@ import net.sf.jsqlparser.statement.delete.Delete;
 public class DeleteCorrector extends ChangeCorrector<Delete, Delete> {
 
   @Override
-  protected ComparisonTwoListsOfStrings compareColumns(Delete userQuery, Delete sampleQuery) {
+  protected MatchingResult<String> compareColumns(Delete userQuery, Delete sampleQuery) {
     return null;
   }
   
   @Override
-  protected ComparisonTwoListsOfStrings compareGroupByElements(Delete userQuery, Delete sampleQuery) {
+  protected MatchingResult<String> compareGroupByElements(Delete userQuery, Delete sampleQuery) {
     return null;
   }
 
   @Override
-  protected ComparisonTwoListsOfStrings compareOrderByElements(Delete userQuery, Delete sampleQuery) {
+  protected MatchingResult<String> compareOrderByElements(Delete userQuery, Delete sampleQuery) {
     return null;
   }
   

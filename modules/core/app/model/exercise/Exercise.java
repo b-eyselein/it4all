@@ -11,9 +11,9 @@ import com.google.common.base.Splitter;
 
 @MappedSuperclass
 public abstract class Exercise extends Model {
-  
+
   protected static final Splitter SPLITTER = Splitter.fixedLength(100).omitEmptyStrings();
-  
+
   @Id
   public int id;
 
@@ -31,5 +31,7 @@ public abstract class Exercise extends Model {
   public List<String> getText() {
     return SPLITTER.splitToList(text);
   }
-  
+
+  public abstract void saveInDB();
+
 }

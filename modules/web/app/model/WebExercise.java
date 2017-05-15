@@ -16,37 +16,44 @@ import model.task.JsWebTask;
 
 @Entity
 public class WebExercise extends Exercise {
-  
+
   public static final Finder<Integer, WebExercise> finder = new Finder<>(WebExercise.class);
-  
+
   @Column(columnDefinition = "text")
   public String htmlText;
-  
+
   @Column(columnDefinition = "text")
   public String jsText;
-  
+
   @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
   @JsonManagedReference
   public List<HtmlTask> htmlTasks;
-  
+
   @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
   @JsonManagedReference
   public List<JsWebTask> jsTasks;
-  
+
   @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
   @JsonIgnore
   public List<WebSolution> solutions;
-  
+
   public WebExercise(int theId) {
     super(theId);
   }
-  
+
   public List<String> getHtmlText() {
     return SPLITTER.splitToList(htmlText);
   }
-  
+
   public List<String> getJsText() {
     return SPLITTER.splitToList(jsText);
   }
-  
+
+  @Override
+  public void saveInDB() {
+    save();
+    htmlTasks.forEach(HtmlTask::save);
+    jsTasks.forEach(JsWebTask::saveInDB);
+  }
+
 }

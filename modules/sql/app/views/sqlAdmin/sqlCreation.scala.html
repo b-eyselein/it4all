@@ -1,0 +1,60 @@
+@(scenario: model.exercise.SqlScenario)
+
+<!-- Szenariobeschreibung -->
+<div class="panel panel-default">
+  <div class="panel-heading">Szenariobeschreibung</div>
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-sm-2"><b>ID</b>: @scenario.id</div>
+      <div class="col-sm-2"><b>Titel</b>: @scenario.title</div>
+      <div class="col-sm-2"><b>Autor</b>: @scenario.author</div>
+      <div class="col-sm-3"><b>Tabellenname</b>: @scenario.shortName</div>
+      <div class="col-sm-3"><b>Skriptdatei</b>: @scenario.scriptFile</div>
+    </div>
+    <div class="row">
+      <div class="col-sm-4"><b>Beschreibung:</b></div>
+      <div class="col-sm-8">@scenario.text</div>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<a class="btn btn-primary btn-block" href="@sql.routes.SqlAdmin.index()">Zur&uuml;ck zur Administratorseite</a>
+
+<hr>
+
+<!-- Exercises -->
+@for((exercise, index) <- scenario.exercises.zipWithIndex) {
+@if(index % 3 == 0) {<div class="row">}
+  <div class="col-sm-6 col-md-4">
+    <div class="panel panel-default">
+      <div class="panel-heading">@{exercise.id}. @exercise.title</div>
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-sm-2"><b>Typ:</b></div>
+          <div class="col-sm-2">@exercise.exerciseType</div>
+          <div class="col-sm-2"><b>Autor:</b></div>
+          <div class="col-sm-2">@exercise.author</div>
+          <div class="col-sm-2"><b>Tags:</b></div>
+          <div class="col-sm-2">@exercise.tags</div>
+        </div>
+        <div class="row">
+          <div class="col-sm-4"><b>Validierung:</b></div>
+          <div class="col-sm-8">@exercise.validation</div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12"><b>Musterl&ouml;sungen:</b></div>
+        </div>
+        @for(sample <- exercise.samples) {
+        <div class="row">
+          <div class="col-sm-12">
+            <pre>@sample.sample</pre>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+@if(index % 3 == 2) {</div>}
+}

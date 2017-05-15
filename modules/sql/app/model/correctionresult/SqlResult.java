@@ -10,22 +10,22 @@ import model.result.EvaluationResult;
 import net.sf.jsqlparser.expression.BinaryExpression;
 
 public class SqlResult {
-  
-  private ComparisonTwoListsOfStrings columnComparison;
-  
-  private ComparisonTwoListsOfStrings tableComparison;
-  
-  private ComparisonTwoListsOfStrings orderByComparison;
-  
-  private ComparisonTwoListsOfStrings groupByComparison;
-  
+
+  private MatchingResult<String> columnComparison;
+
+  private MatchingResult<String> tableComparison;
+
+  private MatchingResult<String> orderByComparison;
+
+  private MatchingResult<String> groupByComparison;
+
   private MatchingResult<BinaryExpression> whereComparison;
-  
+
   private SqlExecutionResult executionResult;
-  
-  protected SqlResult(ComparisonTwoListsOfStrings theColumnComparison, ComparisonTwoListsOfStrings theTableComparison,
-      MatchingResult<BinaryExpression> theWhereComparison, ComparisonTwoListsOfStrings theOrderByComparison,
-      ComparisonTwoListsOfStrings theGroupByComparison, SqlExecutionResult theExecutionResult) {
+
+  protected SqlResult(MatchingResult<String> theColumnComparison, MatchingResult<String> theTableComparison,
+      MatchingResult<BinaryExpression> theWhereComparison, MatchingResult<String> theOrderByComparison,
+      MatchingResult<String> theGroupByComparison, SqlExecutionResult theExecutionResult) {
     columnComparison = theColumnComparison;
     tableComparison = theTableComparison;
     whereComparison = theWhereComparison;
@@ -33,40 +33,40 @@ public class SqlResult {
     groupByComparison = theGroupByComparison;
     executionResult = theExecutionResult;
   }
-  
-  public ComparisonTwoListsOfStrings getColumnComparison() {
+
+  public MatchingResult<String> getColumnComparison() {
     return columnComparison;
   }
-  
+
   public SqlExecutionResult getExecutionResult() {
     return executionResult;
   }
-  
-  public ComparisonTwoListsOfStrings getGroupByComparison() {
+
+  public MatchingResult<String> getGroupByComparison() {
     return groupByComparison;
   }
-  
-  public List<ComparisonTwoListsOfStrings> getListComparisons() {
-    ComparisonTwoListsOfStrings[] arr = {columnComparison, tableComparison, orderByComparison, groupByComparison};
-    return Arrays.stream(arr).filter(Objects::nonNull).collect(Collectors.toList());
+
+  public List<MatchingResult<String>> getListComparisons() {
+    return Arrays.asList(columnComparison, tableComparison, orderByComparison, groupByComparison).stream()
+        .filter(Objects::nonNull).collect(Collectors.toList());
   }
 
-  public ComparisonTwoListsOfStrings getOrderByComparison() {
+  public MatchingResult<String> getOrderByComparison() {
     return orderByComparison;
   }
-  
-  public List<? extends EvaluationResult> getResults() {
+
+  public List<EvaluationResult> getResults() {
     // TODO Auto-generated method stub
     return Arrays.asList(columnComparison, tableComparison, whereComparison, orderByComparison, groupByComparison,
         executionResult);
   }
-  
-  public ComparisonTwoListsOfStrings getTableComparison() {
+
+  public MatchingResult<String> getTableComparison() {
     return tableComparison;
   }
-  
+
   public MatchingResult<BinaryExpression> getWhereComparison() {
     return whereComparison;
   }
-  
+
 }

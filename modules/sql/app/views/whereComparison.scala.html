@@ -1,23 +1,28 @@
-    String ret = "<div class=\"col-md-12\">";
-    ret += "<div class=\"panel panel-" + getBSClass() + "\">";
-    ret += "<div class=\"panel-heading\">Vergleich der Bedingungen</div>";
-    ret += "<div class=\"panel-body\">";
+@()
+
+<div class="col-md-12">
+  <div class="panel panel-@@result.getBSClass()">
+    <div class="panel-heading">Vergleich der Bedingungen</div>
+    <div class="panel-body">
 
     for(BinaryExpressionMatch match: matches)
       ret += match.getAsHtml();
 
     if(!wrong.isEmpty()) {
-      ret += "<div class=\"col-md-12\">";
-      ret += "<div class=\"alert alert-warning\">Folgende Bedingungen ihrer Query konnten nicht in der Musterlösung gefunden werden:";
+    <div class="col-md-12">";
+    <div class="alert alert-warning">Folgende Bedingungen ihrer Query konnten nicht in der Musterlösung gefunden werden:";
       ret += concatElementsAsList(wrong);
-      ret += "</div></div>";
+    </div></div>";
     }
 
     if(!missing.isEmpty()) {
-      ret += "<div class=\"col-md-12\">";
-      ret += "<div class=\"alert alert-danger\">Folgende Bedingungen sind in der Musterlösung aber nicht in ihrer Lösung vorhanden:";
+    <div class="col-md-12">";
+    <div class="alert alert-danger">Folgende Bedingungen sind in der Musterlösung aber nicht in ihrer Lösung vorhanden:";
       ret += concatElementsAsList(missing);
-      ret += "</div></div>";
+    </div></div>";
     }
 
-    ret += "</div></div></div>";
+  
+    </div>
+  </div>
+</div>

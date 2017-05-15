@@ -82,7 +82,7 @@ public class WhereCorrector implements ExpressionVisitor {
     userQueryAnalyzed = true;
     userExpression.accept(this);
     
-    return BIN_EX_MATCHER.match(userExpressions, sampleExpressions);
+    return BIN_EX_MATCHER.match("Bedingungen", userExpressions, sampleExpressions);
   }
   
   @Override

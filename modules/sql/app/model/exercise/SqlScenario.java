@@ -5,31 +5,28 @@ import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import com.avaje.ebean.Model;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
-public class SqlScenario extends Model {
+public class SqlScenario extends Exercise {
 
-  public static final Finder<String, SqlScenario> finder = new Finder<>(SqlScenario.class);
+  public static final com.avaje.ebean.Model.Finder<Integer, SqlScenario> finder = new com.avaje.ebean.Model.Finder<>(
+      SqlScenario.class);
 
   public static final int STEP = 10;
 
-  @Id
   public String shortName;
 
-  public String longName; // NOSONAR
+  public String scriptFile;
 
-  public String scriptFile; // NOSONAR
-
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "scenario")
+  @OneToMany(mappedBy = "scenario", cascade = CascadeType.ALL)
+  @JsonManagedReference
   public List<SqlExercise> exercises;
 
-  public SqlScenario(String theShortName) {
-    super();
-    shortName = theShortName;
+  public SqlScenario(int theId) {
+    super(theId);
   }
 
   public int getBorder(SqlExerciseType exType, int start) {
@@ -42,7 +39,21 @@ public class SqlScenario extends Model {
   }
 
   public List<SqlExercise> getExercisesByType(SqlExerciseType type) {
-    return exercises.parallelStream().filter(ex -> ex.exercisetype.equals(type)).collect(Collectors.toList());
+    return exercises.parallelStream().filter(ex -> ex.exerciseType.equals(type)).collect(Collectors.toList());
+  }
+
+  public String getImageUrl() {
+    return shortName + ".png";
+  }
+
+  @Override
+  public void saveInDB() {
+    save();
+
+    // exerciseReader.runCreateScript(sqlSelect, scenario);
+    // exerciseReader.runCreateScript(sqlOther, scenario);
+
+    exercises.forEach(SqlExercise::saveInDB);
   }
 
 }

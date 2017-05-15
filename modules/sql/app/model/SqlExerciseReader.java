@@ -7,26 +7,30 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.fge.jsonschema.core.report.ProcessingReport;
 
 import model.exercise.SqlExercise;
 import model.exercise.SqlExerciseType;
+import model.exercise.SqlSample;
+import model.exercise.SqlSampleKey;
 import model.exercise.SqlScenario;
 import model.exercisereading.ExerciseReader;
 import play.Logger;
 import play.db.Database;
 import play.libs.Json;
 
-public class SqlExerciseReader extends ExerciseReader<SqlExercise> {
+public class SqlExerciseReader extends ExerciseReader<SqlScenario> {
   
-  private static final String CREATE_DUMMY = "CREATE DATABASE IF NOT EXISTS ";
+  private static final String SCRIPT_FILE = "scriptFile";
+  private static final String SHORT_NAME = "shortName";
+  private static final String EXERCISES_NAME = "exercises";
+  private static final String SOLUTION_NAME = "solution";
+  
+  private static final String CREATE_DUMMY = "CREATE DATABASE IF NOT EXISTS ?";
   
   public SqlExerciseReader() {
     super("sql");
@@ -40,10 +44,13 @@ public class SqlExerciseReader extends ExerciseReader<SqlExercise> {
     }
   }
   
-  private static void flushPrivileges(Connection connection) throws SQLException {
-    Statement flushPrivileges = connection.createStatement();
-    flushPrivileges.executeUpdate("FLUSH PRIVILEGES");
-    flushPrivileges.close();
+  private static void flushPrivileges(Connection connection) {
+    try(Statement flushPrivileges = connection.createStatement();) {
+      flushPrivileges.executeUpdate("FLUSH PRIVILEGES");
+      flushPrivileges.close();
+    } catch (SQLException e) {
+      
+    }
   }
   
   // FIXME: genauere Fehlermeldungen (auch auf Konsole --> Logger!)
@@ -60,28 +67,23 @@ public class SqlExerciseReader extends ExerciseReader<SqlExercise> {
   }
   
   private static SqlExercise readExercise(SqlScenario scenario, JsonNode exerciseNode) {
-    final JsonNode idNode = exerciseNode.get(StringConsts.ID_NAME);
-    final JsonNode exercisetypeNode = exerciseNode.get("exercisetype");
-    
-    final JsonNode textNode = exerciseNode.get(StringConsts.TEXT_NAME);
-    final JsonNode tagsNode = exerciseNode.get("tags");
-    final JsonNode sampleSolutionsNode = exerciseNode.get("samplesolutions");
-    final JsonNode validationNode = exerciseNode.get("validation");
-    final JsonNode hintNode = exerciseNode.get("hint");
-    
-    int id = idNode.asInt();
+    int id = exerciseNode.get(StringConsts.ID_NAME).asInt();
     
     SqlExercise exercise = SqlExercise.finder.byId(id);
     if(exercise == null)
       exercise = new SqlExercise(id);
     
-    exercise.text = textNode.asText();
-    exercise.samples = readSampleSolutions(sampleSolutionsNode);
-    exercise.exercisetype = SqlExerciseType.valueOf(exercisetypeNode.asText());
     exercise.scenario = scenario;
-    exercise.validation = validationNode != null ? validationNode.asText() : "";
-    exercise.tags = tagsNode == null ? "" : readTags(tagsNode);
-    exercise.hint = hintNode == null ? "" : hintNode.asText();
+    exercise.author = "admin";
+    exercise.exerciseType = SqlExerciseType.valueOf(exerciseNode.get("exerciseType").asText());
+    
+    exercise.text = exerciseNode.get(StringConsts.TEXT_NAME).asText();
+    exercise.samples = readSampleSolutions(exerciseNode.get("sampleSolutions"));
+    
+    exercise.validation = exerciseNode.get("validation").asText();
+    exercise.hint = exerciseNode.get("hint").asText();
+    
+    exercise.tags = readTags(exerciseNode.get("tags"));
     
     return exercise;
   }
@@ -95,38 +97,27 @@ public class SqlExerciseReader extends ExerciseReader<SqlExercise> {
     return exercises;
   }
   
-  private static String readSampleSolutions(JsonNode sampleSolutions) {
-    List<String> samples = new LinkedList<>();
-    sampleSolutions.elements().forEachRemaining(el -> samples.add(el.asText()));
-    return String.join(SqlExercise.SAMPLE_JOIN_CHAR, samples);
+  private static SqlSample readSampleSolution(JsonNode sampleSolNode) {
+    SqlSampleKey key = Json.fromJson(sampleSolNode.get(StringConsts.KEY_NAME), SqlSampleKey.class);
+    
+    SqlSample sample = SqlSample.finder.byId(key);
+    if(sample == null)
+      sample = new SqlSample(key);
+    
+    sample.sample = String.join("\n", JsonWrapper.parseJsonArrayNode(sampleSolNode.get(SOLUTION_NAME)));
+    return sample;
+  }
+  
+  private static List<SqlSample> readSampleSolutions(JsonNode sampleSolutions) {
+    List<SqlSample> samples = new LinkedList<>();
+    
+    for(Iterator<JsonNode> sampleSolIter = sampleSolutions.iterator(); sampleSolIter.hasNext();)
+      samples.add(readSampleSolution(sampleSolIter.next()));
+    return samples;
   }
   
   private static String readTags(JsonNode tagsNode) {
-    List<String> tags = new LinkedList<>();
-    tagsNode.elements().forEachRemaining(element -> tags.add(element.asText()));
-    return String.join(SqlExercise.SAMPLE_JOIN_CHAR, tags);
-  }
-  
-  public List<SqlScenario> readScenarioes(Path jsonFile) {
-    JsonNode json = Json.parse(readFile(jsonFile));
-    JsonNode jsonSchema = Json.parse(readFile(jsonSchemaFile));
-    
-    // Validate json with schema
-    Optional<ProcessingReport> report = JsonWrapper.validateJson(json, jsonSchema);
-    if(!report.isPresent() || !report.get().isSuccess())
-      return Collections.emptyList();
-    
-    List<SqlScenario> results = new LinkedList<>();
-    
-    for(Iterator<JsonNode> scenarioNodeIter = json.elements(); scenarioNodeIter.hasNext();)
-      results.add(readScenario(scenarioNodeIter.next()));
-    
-    return results;
-  }
-  
-  public List<SqlScenario> readStandardScenarioes() {
-    return readScenarioes(jsonFile);
-    
+    return String.join(SqlExercise.SAMPLE_JOIN_CHAR, JsonWrapper.parseJsonArrayNode(tagsNode));
   }
   
   // FIXME: Impelement, test and use!
@@ -160,29 +151,22 @@ public class SqlExerciseReader extends ExerciseReader<SqlExercise> {
     
   }
   
-  private SqlScenario readScenario(JsonNode json) {
-    JsonNode shortNameNode = json.get("shortname");
-    JsonNode longNameNode = json.get("longname");
-    JsonNode scriptFileNode = json.get("scriptfile");
-    JsonNode exerciseNodes = json.get("exercises");
+  @Override
+  protected SqlScenario readExercise(JsonNode exerciseNode) {
+    int id = exerciseNode.get(StringConsts.ID_NAME).asInt();
     
-    String shortName = shortNameNode.asText();
-    
-    SqlScenario scenario = SqlScenario.finder.byId(shortName);
+    SqlScenario scenario = SqlScenario.finder.byId(id);
     if(scenario == null)
-      scenario = new SqlScenario(shortName);
+      scenario = new SqlScenario(id);
     
-    scenario.longName = longNameNode.asText();
-    scenario.scriptFile = scriptFileNode.asText();
-    scenario.exercises = readExercises(scenario, exerciseNodes);
+    scenario.shortName = exerciseNode.get(SHORT_NAME).asText();
+    scenario.author = exerciseNode.get(StringConsts.AUTHOR_NAME).asText();
+    scenario.title = exerciseNode.get(StringConsts.TITLE_NAME).asText();
+    scenario.text = exerciseNode.get(StringConsts.TEXT_NAME).asText();
+    scenario.scriptFile = exerciseNode.get(SCRIPT_FILE).asText();
+    scenario.exercises = readExercises(scenario, exerciseNode.get(EXERCISES_NAME));
     
     return scenario;
-  }
-  
-  @Override
-  protected SqlExercise readExercise(JsonNode exerciseNode) {
-    // TODO Auto-generated method stub
-    return null;
   }
   
 }
