@@ -1,57 +1,53 @@
 it4all:
-    image: beyselein/play
-    command: bash
-    volumes_from:
-        - vc_it4all
-    volumes:
-        - ./:/app
-        - ~/.ivy2/:/home/bjorn/.ivy2/
-        - ~/.sbt/:/home/bjorn/.sbt/
-    links:
-        - mysql1:mysql1
-        - mysql2:mysql2
-        - mysql3:mysql3
-    ports:
-        - 8000:9000
-    # Keep stdin open and tty on so server does not shut down...
-    stdin_open: true
-    tty: true
-
+  build: .
+  command: bash
+  volumes_from:
+  - vc_it4all
+  volumes:
+  - ./:/app
+  - ~/.ivy2/:/home/playfr/.ivy2/
+  - ~/.sbt/:/home/playfr/.sbt/
+  - /var/run/docker.sock:/var/run/docker.sock
+  links:
+  - mysql1:mysql1
+  - mysql2:mysql2
+  - mysql3:mysql3
+  ports:
+  - 8000:9000
+  stdin_open: true
+  tty: true
 vc_it4all:
-    image: alpine:latest
-    command: echo "VC for it4all"
-    volumes:
-        - /data
-
+  image: alpine:3.5
+  command: echo "VC for it4all"
+  volumes:
+  - /data
 mysql1:
-    image: mysql:5.7
-    restart: always
-    ports:
-        - 3106:3306
-    environment:
-        - MYSQL_ROOT_PASSWORD=sT8aV#k7
-        - MYSQL_USER=it4all
-        - MYSQL_PASSWORD=sT8aV#k7
-        - MYSQL_DATABASE=it4all
-
+  image: mysql:5.7
+  restart: always
+  ports:
+  - 3106:3306
+  environment:
+  - MYSQL_ROOT_PASSWORD=sT8aV#k7
+  - MYSQL_USER=it4all
+  - MYSQL_PASSWORD=sT8aV#k7
+  - MYSQL_DATABASE=it4all
 mysql2:
-    image: mysql:5.7
-    restart: always
-    ports:
-        - 3107:3306
-    environment:
-        - MYSQL_ROOT_PASSWORD=sT8aV#k7
-        - MYSQL_USER=it4all
-        - MYSQL_PASSWORD=sT8aV#k7
-        - MYSQL_DATABASE=sqlselect
-
+  image: mysql:5.7
+  restart: always
+  ports:
+  - 3107:3306
+  environment:
+  - MYSQL_ROOT_PASSWORD=sT8aV#k7
+  - MYSQL_USER=it4all
+  - MYSQL_PASSWORD=sT8aV#k7
+  - MYSQL_DATABASE=sqlselect
 mysql3:
-    image: mysql:5.7
-    restart: always
-    ports:
-        - 3108:3306
-    environment:
-        - MYSQL_ROOT_PASSWORD=sT8aV#k7
-        - MYSQL_USER=it4all
-        - MYSQL_PASSWORD=sT8aV#k7
-        - MYSQL_DATABASE=sqlother
+  image: mysql:5.7
+  restart: always
+  ports:
+  - 3108:3306
+  environment:
+  - MYSQL_ROOT_PASSWORD=sT8aV#k7
+  - MYSQL_USER=it4all
+  - MYSQL_PASSWORD=sT8aV#k7
+  - MYSQL_DATABASE=sqlother
