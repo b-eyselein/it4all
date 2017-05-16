@@ -1,8 +1,10 @@
 package controllers.programming;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.inject.Inject;
 
@@ -12,6 +14,7 @@ import model.ProgEvaluationResult;
 import model.ProgExercise;
 import model.ProgLanguage;
 import model.ProgrammingUser;
+import model.StringConsts;
 import model.Util;
 import model.correctors.JsCorrector;
 import model.correctors.ProgLangCorrector;
@@ -20,8 +23,10 @@ import model.logging.ExerciseCompletionEvent;
 import model.logging.ExerciseCorrectionEvent;
 import model.logging.ExerciseStartEvent;
 import model.result.CompleteResult;
+import model.result.EvaluationResult;
 import model.testdata.CommitedTestData;
 import model.testdata.CommitedTestDataKey;
+import model.testdata.ITestData;
 import model.user.User;
 import play.data.DynamicForm;
 import play.data.FormFactory;
@@ -31,7 +36,7 @@ import play.mvc.Result;
 
 public class Prog extends ExerciseController {
 
-  private static final int TEST_COUNT = 4;
+  public static final int STD_TEST_DATA_COUNT = 2;
 
   private static final ProgLangCorrector JS_CORRECTOR = new JsCorrector();
   private static final ProgLangCorrector PYTHON_CORRECTOR = new PythonCorrector();
@@ -52,12 +57,9 @@ public class Prog extends ExerciseController {
   }
 
   private static List<CommitedTestData> extractTestData(DynamicForm form, String username, ProgExercise exercise) {
-    List<CommitedTestData> testData = new ArrayList<>(TEST_COUNT);
-
-    for(int testCounter = 0; testCounter < TEST_COUNT; testCounter++)
-      testData.add(readTestDataFromForm(form, username, testCounter, exercise));
-
-    return testData;
+    return IntStream.range(0, Integer.parseInt(form.get("testCount")))
+        .mapToObj(testCounter -> readTestDataFromForm(form, username, testCounter, exercise))
+        .collect(Collectors.toList());
   }
 
   private static ProgLangCorrector getProgLangCorrector(ProgLanguage lang) {
@@ -75,42 +77,49 @@ public class Prog extends ExerciseController {
     CommitedTestDataKey key = new CommitedTestDataKey(username, exercise.id, testId);
     CommitedTestData testdata = CommitedTestData.finder.byId(key);
 
-    List<String> inputs = new ArrayList<>(exercise.inputCount);
-    for(int inputCounter = 0; inputCounter < exercise.inputCount; inputCounter++)
-      inputs.add(form.get("inp_" + inputCounter + "_" + testId));
-
     if(testdata == null)
       testdata = new CommitedTestData(key);
 
     testdata.exercise = exercise;
-    testdata.inputs = String.join("#", inputs);
+    testdata.inputs = IntStream.range(0, exercise.inputCount)
+        .mapToObj(inputCounter -> form.get("inp_" + inputCounter + "_" + testId))
+        .collect(Collectors.joining(ITestData.VALUES_SPLIT_CHAR));
+
     testdata.output = form.get("outp_" + testId);
     testdata.approvalState = ApprovalState.CREATED;
 
     return testdata;
   }
 
-  public Result commit(int id) {
+  public Result correct(int id, String language) {
     User user = getUser();
 
     DynamicForm form = factory.form().bindFromRequest();
-    String learnerSolution = form.get("editorContent");
-    String language = form.get("language");
+    String learnerSolution = form.get(StringConsts.FORM_VALUE);
 
-    CompleteResult result = correct(ProgExercise.finder.byId(id), learnerSolution, ProgLanguage.valueOf(language));
+    List<ProgEvaluationResult> result = correct(user.name, ProgExercise.finder.byId(id), learnerSolution,
+        ProgLanguage.valueOf(language));
 
-    Request request = request();
-    if(wantsJsonResponse()) {
-      log(user, new ExerciseCorrectionEvent(request, id, result.getResults()));
-      return ok(Json.toJson(result));
-    } else {
-      log(user, new ExerciseCompletionEvent(request, id, result.getResults()));
-      return ok(views.html.correction.render("Programmiersprachen", new play.twirl.api.Html(result.toString()),
-          learnerSolution, user));
-    }
+    log(user, new ExerciseCompletionEvent(request(), id, result));
+    return ok(views.html.correction.render("Programmiersprachen", new play.twirl.api.Html(result.toString()),
+        learnerSolution, user));
   }
 
-  public Result exercise(int id) {
+  public Result correctLive(int id, String language) {
+    User user = getUser();
+
+    DynamicForm form = factory.form().bindFromRequest();
+    String learnerSolution = form.get(StringConsts.FORM_VALUE);
+
+    List<ProgEvaluationResult> result = correct(user.name, ProgExercise.finder.byId(id), learnerSolution,
+        ProgLanguage.valueOf(language));
+
+    log(user, new ExerciseCorrectionEvent(request(), id, result));
+    return ok(views.html.progResult.render(result));
+
+  }
+
+  public Result exercise(int id, String language) {
     User user = getUser();
     ProgExercise exercise = ProgExercise.finder.byId(id);
 
@@ -119,7 +128,7 @@ public class Prog extends ExerciseController {
 
     Request request = request();
     log(user, new ExerciseStartEvent(request, id));
-    return ok(views.html.progExercise.render(getUser(), exercise));
+    return ok(views.html.progExercise.render(getUser(), exercise, ProgLanguage.valueOf(language)));
   }
 
   public Result exercises() {
@@ -135,12 +144,8 @@ public class Prog extends ExerciseController {
     List<CommitedTestData> oldTestData = CommitedTestData.finder.where().eq("user_name", user.name).and()
         .eq("exercise_id", id).findList();
 
-    if(oldTestData == null || oldTestData.isEmpty())
-      oldTestData = Arrays.asList(new CommitedTestData(new CommitedTestDataKey(user.name, id, 0), "1#2", "3"),
-          new CommitedTestData(new CommitedTestDataKey(user.name, id, 1), "4#5", "6"),
-          new CommitedTestData(new CommitedTestDataKey(user.name, id, 2), "7#8", "15"));
-
-    return ok(views.html.testData.render(user, ProgExercise.finder.byId(id), oldTestData));
+    return ok(views.html.testData.render(user, ProgExercise.finder.byId(id),
+        oldTestData != null ? oldTestData : new LinkedList<>()));
   }
 
   public Result validateTestData(int id) {
@@ -149,26 +154,32 @@ public class Prog extends ExerciseController {
     DynamicForm form = factory.form().bindFromRequest();
 
     List<CommitedTestData> testData = extractTestData(form, user.name, exercise);
+    testData.forEach(CommitedTestData::save);
+
+    List<ProgEvaluationResult> validatedTestData = PYTHON_CORRECTOR.validateTestData(exercise, testData);
+
+    return ok(views.html.validatedTestData.render(user, exercise, validatedTestData));
+  }
+
+  public Result validateTestDataLive(int id) {
+    ProgExercise exercise = ProgExercise.finder.byId(id);
+    DynamicForm form = factory.form().bindFromRequest();
+
+    List<CommitedTestData> testData = extractTestData(form, getUser().name, exercise);
 
     List<ProgEvaluationResult> validatedTestData = PYTHON_CORRECTOR.validateTestData(exercise, testData);
 
     return ok(Json.toJson(validatedTestData));
   }
 
-  private CompleteResult correct(ProgExercise exercise, String learnerSolution, ProgLanguage lang) {
-    // // FIXME: TEST!
-
+  private List<ProgEvaluationResult> correct(String username, ProgExercise exercise, String learnerSolution,
+      ProgLanguage lang) {
     // FIXME: Time out der Ausführung
 
-    // List<CommitedTestData> userTestData = extractTestData(form, exercise);
-    // TODO: evtl. Anzeige aussortiertes TestDaten?
-    // userTestData =
-
-    // userTestData.stream().filter(CommitedTestData::isOk).collect(Collectors.toList());
-    // TODO: evt. Speichern der Lösung und Laden bei erneuter Bearbeitung?
+    List<CommitedTestData> userTestData = CommitedTestData.forUserAndExercise(username, exercise.id);
 
     ProgLangCorrector corrector = getProgLangCorrector(lang);
 
-    return corrector.correct(exercise, learnerSolution, new ArrayList<>(/* userTestData */));
+    return corrector.correct(exercise, learnerSolution, userTestData);
   }
 }

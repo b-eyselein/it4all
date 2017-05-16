@@ -1,45 +1,50 @@
-@(user: model.user.User, exercise: model.ProgExercise)
+@(user: model.user.User, exercise: model.ProgExercise, lang: model.ProgLanguage)
 
 @main("Programmiersprachen Test", user) {
 <script src="@routes.Assets.versioned("javascripts/programming.js")"></script>
 <script src="@routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
 
-<script>
-var language = "js"
-</script>
-
-<div class="container-fluid">
-  <form action="@programming.routes.Prog.commit(exercise.id)"
-   method="post" onsubmit="prepareFormForSubmitting();">
+<div class="container">
+  <form action="@programming.routes.Prog.correct(exercise.id, lang.toString())" method="post" onsubmit="prepareFormForSubmitting();">
   
     <div class="row">
-      <div class="col-md-4">
+      <div class="col-md-6">
         <!-- Aufgabenstellung und Editor -->
-        <div class="panel panel-default">
-          <div class="panel-heading">Aufgabenstellung</div>
-          <div class="panel-body">@Html(exercise.text)</div>
-          <div class="panel-footer">
-            <div class="btn-group btn-group-justified">
-              <div class="btn-group">
-                <button type="button" class="btn btn-primary"
-                onclick="testTheSolution('@programming.routes.Prog.commit(exercise.id)')">
-                L&ouml;sung testen</button>
-              </div>
-              <div class="btn-group">
-                <button type="submit" class="btn btn-success" >L&ouml;sung abgeben</button>
-              </div>
-            </div>
+        <div class="page-header">
+          <h1>Aufgabenstellung</h1>
+        </div>
+          
+        <p>@Html(exercise.text)</p>
+          
+        <hr>
+          
+        <div class="btn-group btn-group-justified">
+          <div class="btn-group">
+            <button type="button" class="btn btn-primary"
+              onclick="testTheSolution('@programming.routes.Prog.correctLive(exercise.id, lang.toString())')">
+            L&ouml;sung testen</button>
+          </div>
+          <div class="btn-group">
+            <button type="submit" class="btn btn-success" >L&ouml;sung abgeben</button>
           </div>
         </div>
         
-        @editor("", "js", 10, 20, false)
       </div>
       
-      <div class="col-md-8">
+      <div class="col-md-6">
+        @editor(exercise.getDeclaration(lang), lang.getAceName(), 15, 30, false)
+        <input hidden name="language" id="language" value="@lang">
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="row">      
+      <div class="col-md-12">
         <!-- Korrektur -->
         <div class="panel panel-default">
           <div class="panel-heading">Korrektur</div>
-          <div class="panel-body" id="loesungsraum">Hier stehen bald die Korrekturwerte...</div>
+          <div class="panel-body" id="correction">Hier stehen bald die Korrekturwerte...</div>
         </div>
       </div>
     </div>

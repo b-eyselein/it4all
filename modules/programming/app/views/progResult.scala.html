@@ -1,0 +1,13 @@
+@(results: List[model.ProgEvaluationResult])
+
+@for(res <- results) {
+<div class="col-md-6">
+  <div class="alert alert-@res.getBSClass()">
+    <p>Test von <code>@res.getExecutionResult().getEvaluated()</code> war @if(!res.isSuccessful()) {nicht } erfolgreich.<p>
+    @if(!res.isSuccessful()) {
+    <p>Erwartet: "@res.getAwaitedResult()"</p>
+    <p>Bekommen: "@res.getRealResult()"</p>
+    }
+  </div>
+</div>
+}

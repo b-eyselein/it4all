@@ -1,20 +1,11 @@
-function extractParameters() {
-  var parameters = LEARNER_SOLUTION_VALUE + "=" + encodeURIComponent(editor.getValue());
-  var testData = getTestData();
-  parameters += "&count=" + testData.length;
-  parameters += "&inputs=" + testData[0].input.length;
-  
-  for(var i = 0; i < testData.length; i++) {
-    var currentData = testData[i];
-    var theData = "";
-    for(var j = 0; j < currentData.input.length; j++) {
-      theData += "&" + getInputName(inputCounter, testCounter) + "=" + currentData.input[j];
-    }
-    theData += "&" + getOutputName(i) + "=" + currentData.output;
-    parameters += theData;
-  }
-  
-  return parameters;
+// Some helper functions...
+
+function getTestCount() {
+  return document.getElementById("testCount").value;
+}
+
+function getInputCount() {
+  return document.getElementById("inputCount").value;
 }
 
 function getInputName(inputCounter, testCounter) {
@@ -25,67 +16,75 @@ function getOutputName(testCounter) {
   return "outp_" + testCounter;
 }
 
+// Real functions
+
+function moreTestData() {
+  var testDataRows = document.getElementById("testDataRows");
+  var newTestId = getTestCount();
+  
+  var newRow = document.createElement("tr");
+  newRow.id = "tr_" + newTestId;
+  var newRowInner = "<td>" + newTestId + "</td>";
+  for(var ic = 0; ic < getInputCount(); ic++) {
+    newRowInner += "<td><input class=\"form-control\" " 
+      + "name=\"" + getInputName(ic, newTestId) + "\" " 
+      + "id=\"" + getInputName(ic, newTestId) + "\" "
+      + "placeholder=\"Test " + newTestId + ", Input " + ic + "\"></td>";
+  }
+  newRowInner += "<td><input class=\"form-control\" " 
+    + "name=\"" + getOutputName(newTestId) + "\" " 
+    + "id=\"" + getOutputName(newTestId) +  "\" " 
+    + "placeholder=\"Test " + newTestId + ", Output\"></td>";
+  
+  newRow.innerHTML = newRowInner;
+  
+  testDataRows.insertBefore(newRow, testDataRows.children[newTestId]);
+  document.getElementById("testCount").value = parseInt(newTestId) + 1;
+}
+
 function getTestData() {
-  return [0, 1, 2, 3].map(function(testCounter) {
+  var testData = [];
+  for(var testCounter = 0; testCounter < getTestCount(); testCounter++) {
     var inputs = [];
-    for(var inputCounter = 0; inputCounter < inputCount; inputCounter++) {
+    for(var inputCounter = 0; inputCounter < getInputCount(); inputCounter++) {
       inputs.push({
         id: inputCounter,
         value: document.getElementById(getInputName(inputCounter, testCounter)).value
       });
     }
-    return {
+    testData.push({
       test: testCounter,
       input: inputs,
       output: document.getElementById(getOutputName(testCounter)).value
-    };
-  });
+    });
+  }
+  return testData;
 }
 
-function validateTestData(url) {
+function validateTestData(theUrl) {
   var table = document.getElementById("testDataTable");
   for(var i = 1; i < table.rows.lenth - 1; i++) {
     table.rows[i].className = "";
   }
   
-  var testData = getTestData();
-  
-  var parameters = testData.map(function(data) {
+  var parameters = "testCount=" + getTestCount() + "&" + getTestData().map(function(data) {
     var inputs = data.input.map(function(input) {
       return getInputName(input.id, data.test) + "=" + input.value;
     }).join("&");
     return inputs + "&" + getOutputName(data.test) + "=" + data.output;
   }).join("&");
   
-  var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if(xhttp.readyState == 4 && xhttp.status == 200) {
-      writeTestData(xhttp.responseText);
+  $.ajax({
+    type: 'PUT',
+    url: theUrl,
+    data: parameters,
+    async: true,
+    success: function(response) {
+      for(var data of response) {
+        var row = document.getElementById("tr_" + data.id);
+        row.title = data.titleForValidation;
+        row.className = data.successful ? "success": "danger";
+      }
     }
-  };
-  xhttp.open("POST", url, true);
-  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-  xhttp.setRequestHeader("Accept", "application/json");
-  xhttp.send(parameters);
-}
-
-function writeTestData(responseText) {
-  for(var data of JSON.parse(responseText)) {
-    document.getElementById("tr_" + data.id).className = data.successful ? "success": "danger";
-  }
-}
-
-function updatePreview() {
-  var toWrite = unescapeHTML(document.getElementById("anterior").innerHTML);
-  toWrite += unescapeHTML(editor.getValue());
-  toWrite += unescapeHTML(document.getElementById("posterior").innerHTML);
-  
-  var theIFrame = document.getElementById("preview").contentWindow.document;
-  theIFrame.open();
-  theIFrame.write(toWrite);
-  theIFrame.close();
-}
-
-function unescapeHTML(escapedHTML) {
-  return escapedHTML.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+  });
 }

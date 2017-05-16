@@ -20,7 +20,10 @@
         <td>@exercise.id</td>
         <td>@exercise.title</td>
         <td><a class="btn btn-primary btn-block" href="@programming.routes.Prog.testData(exercise.id)">Testdaten erstellen</a>
-        <td><a class="btn btn-primary btn-block" href="@programming.routes.Prog.exercise(exercise.id)">Aufgabe bearbeiten</a></td>
+        @for(lang <- model.ProgLanguage.values()) {
+        <td><a class="btn btn-primary btn-block" href="@programming.routes.Prog.exercise(exercise.id, lang.toString())">
+        Mit @lang.getName() bearbeiten</a></td>
+        }
       </tr>
     }
     </tbody>

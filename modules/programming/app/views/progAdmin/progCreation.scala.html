@@ -21,7 +21,7 @@
         @for(lang <- model.ProgLanguage.values()) {
           <tr>
             <td>@lang.getName()</td>
-            <td><pre>@model.ProgExercise.getDeclaration(lang, exercise.functionName, exercise.inputCount)</pre></td>
+            <td><pre>@exercise.getDeclaration(lang)</pre></td>
             <td><pre>@exercise.getSampleSolution(lang)</pre></td>
           </tr>
         }

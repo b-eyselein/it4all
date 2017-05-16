@@ -1,5 +1,7 @@
 package model.testdata;
 
+import java.util.List;
+
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -36,6 +38,10 @@ public class CommitedTestData extends ITestData {
     this(theKey);
     inputs = theInputs;
     output = theOutput;
+  }
+
+  public static List<CommitedTestData> forUserAndExercise(String username, int exerciseId) {
+    return finder.where().eq("user_name", username).and().eq("exercise_id", exerciseId).findList();
   }
 
   @Override

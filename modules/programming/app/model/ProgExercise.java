@@ -39,18 +39,6 @@ public class ProgExercise extends Exercise {
     super(theId);
   }
 
-  public static String getDeclaration(ProgLanguage language, String function, int inputcount) {
-    // FIXME: move to ProgLanguage as abstract function!?!
-    switch(language) {
-    case JS:
-      return "function " + function + "(" + getArguments(inputcount) + ") {\n  return 0;\n}";
-    case PYTHON:
-      return "def " + function + "(" + getArguments(inputcount) + "):\n  return 0";
-    default:
-      return "not defined...";
-    }
-  }
-
   private static String getArguments(int argCount) {
     // @formatter:off
     return Stream.iterate((int) 'a', n -> n + 1)
@@ -59,6 +47,18 @@ public class ProgExercise extends Exercise {
         .limit(argCount)
         .collect(Collectors.joining(", "));
     // @formatter:on
+  }
+
+  public String getDeclaration(ProgLanguage language) {
+    // FIXME: move to ProgLanguage as abstract function!?!
+    switch(language) {
+    case JS:
+      return "function " + functionName + "(" + getArguments(inputCount) + ") {\n  return 0;\n}";
+    case PYTHON:
+      return "def " + functionName + "(" + getArguments(inputCount) + "):\n  return 0";
+    default:
+      return "not defined...";
+    }
   }
 
   public String getSampleSolution(ProgLanguage language) {

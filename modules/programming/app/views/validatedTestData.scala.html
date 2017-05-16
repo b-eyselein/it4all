@@ -1,0 +1,40 @@
+@(user: model.user.User, exercise: model.ProgExercise, validatedTestData: List[model.ProgEvaluationResult])
+
+@main("Programmierung: Validierte Testdaten", user) {
+<div class="container">
+  <div class="page-header">
+    <h1>Programmierung: Validierte Testdaten</h1>
+  </div>
+  
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        @for(inputCount <- 0 until exercise.inputCount) {
+        <th>Input @inputCount</th>
+        }
+        <th>Erwartetes Resultat</th>
+        <th>Reales Resultat</th>
+      </tr>
+    </thead>
+    <tbody>
+    @for(testData <- validatedTestData) {
+      <tr class="@if(testData.isSuccessful()) {success} else {danger}">
+        <td>@testData.getId()</td>
+        @for(input <- testData.getInput()) {
+        <td>@input</td>
+        }
+        <td>@testData.getAwaitedResult()</td>
+        <td>@testData.getRealResult()</td>
+      </tr>
+    }
+    </tbody>
+  </table>
+  
+  <hr>
+  
+  <a class="btn btn-primary btn-block"
+   href="@programming.routes.Prog.exercise(exercise.id, model.ProgLanguage.JS.toString())">Aufgabe mit Javascript bearbeiten</a>
+  
+</div>
+}
