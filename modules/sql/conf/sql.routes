@@ -7,6 +7,8 @@ GET    /import                controllers.sql.SqlAdmin.importExercises()
 GET    /export                controllers.sql.SqlAdmin.exportExercises()
 
 GET    /admin                 controllers.sql.SqlAdmin.index()
+GET    /admin/:id             controllers.sql.SqlAdmin.scenarioAdmin(id: Int)
+
 
 GET    /scenarioes            controllers.sql.Sql.scenarioes()
 GET    /scenarioes/new        controllers.sql.SqlAdmin.newScenarioForm()

@@ -1,0 +1,32 @@
+@(user: model.user.User, scenario: model.exercise.SqlScenario)
+
+@main("SQL: Administrator", user) {
+<div class="container">
+  <div class="page-header">
+    <h1>Administrator SQL: &quot;@scenario.title&quot;</h1>
+  </div>
+  
+    <section id="statistics">
+    <h2>Statistiken</h2>
+    <ul>
+      <li>
+        Dieses Szenario hat insgesamt @scenario.exercises.size() Aufgaben. Darunter
+        <ul>
+        @for(typ <- model.exercise.SqlExerciseType.values()) {
+          <li>@scenario.getExercisesByType(typ).size() Aufgaben des Type &quot;@typ&quot;</li>
+        }
+        </ul>
+      </li>
+    </ul>
+  </section>
+    
+  <hr>
+  
+  <section id="administration">
+    <h2>Verwaltung</h2>
+    <a class="btn btn-default btn-block" href="@@sql.routes.SqlAdmin.exportExercises()">Szenarien als JSON exportieren</a>
+    <a class="btn btn-default btn-block" href="@@sql.routes.SqlAdmin.importExercises()">Standardaufgaben einlesen</a>
+  </section>
+  
+</div>
+}

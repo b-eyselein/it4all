@@ -14,7 +14,7 @@
         <a href="@sql.routes.SqlAdmin.newScenarioForm()">hier</a> weitere anlegen.
         <ul>
         @for(scenario <- model.exercise.SqlScenario.finder.all()) {
-          <li>Das Szenario &quot;<a href="@sql.routes.Sql.scenario(scenario.id)">@scenario.title</a>&quot;
+          <li>Das Szenario &quot;<a href="@sql.routes.SqlAdmin.scenarioAdmin(scenario.id)">@scenario.title</a>&quot;
           hat @scenario.exercises.size() Aufgaben</li>
         }
         </ul>
