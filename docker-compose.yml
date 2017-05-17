@@ -5,8 +5,8 @@ it4all:
   - vc_it4all
   volumes:
   - ./:/app
-  - ~/.ivy2/:/home/playfr/.ivy2/
-  - ~/.sbt/:/home/playfr/.sbt/
+  - ~/.ivy2/:/home/bjorn/.ivy2/
+  - ~/.sbt/:/home/bjorn/.sbt/
   - /var/run/docker.sock:/var/run/docker.sock
   links:
   - mysql1:mysql1
@@ -26,11 +26,13 @@ mysql1:
   restart: always
   ports:
   - 3106:3306
+  volumes:
+  - ./sql_init/:/docker-entrypoint-initdb.d/
   environment:
   - MYSQL_ROOT_PASSWORD=sT8aV#k7
-  - MYSQL_USER=it4all
-  - MYSQL_PASSWORD=sT8aV#k7
-  - MYSQL_DATABASE=it4all
+  #- MYSQL_USER=it4all
+  #- MYSQL_PASSWORD=sT8aV#k7
+  #- MYSQL_DATABASE=it4all
 mysql2:
   image: mysql:5.7
   restart: always
