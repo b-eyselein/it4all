@@ -15,6 +15,12 @@ it4all is a correction framework for
 
 - Mindmap (MindManager)
 
+$ docker build -t play --build-arg USERNAME=$(whoami) .
+
+$ docker-compose up -d
+
+$ docker attach it4all_it4all_1
+
 ## Development and Testing
 
 Clone the repository on the [GitLab](https://gitlab2.informatik.uni-wuerzburg.de/bje40dc/it4all.git) of the institute of computer science of the university of Wuerzburg
