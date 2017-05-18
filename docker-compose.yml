@@ -9,7 +9,7 @@ it4all:
     - ~/.sbt/:/home/bjorn/.sbt/
     - /var/run/docker.sock:/var/run/docker.sock
     links:
-    - prog:prog
+    # - prog:prog
     - mysql1:mysql1
     - mysql2:mysql2
     - mysql3:mysql3
@@ -24,17 +24,17 @@ vc_it4all:
     volumes:
     - /data
   
-prog:
-    image: play
-    volumes:
-    - ./microservices/prog/:/app/
-    - ~/.ivy2/:/home/bjorn/.ivy2/
-    - ~/.sbt/:/home/bjorn/.sbt/
-    - /var/run/docker.sock:/var/run/docker.sock
-    ports:
-    - 8001:9000
-    stdin_open: true
-    tty: true
+# prog:
+    # image: play
+    # volumes:
+    # - ./microservices/prog/:/app/
+    # - ~/.ivy2/:/home/bjorn/.ivy2/
+    # - ~/.sbt/:/home/bjorn/.sbt/
+    # - /var/run/docker.sock:/var/run/docker.sock
+    # ports:
+    # - 8001:9000
+    # stdin_open: true
+    # tty: true
   
 mysql1:
     image: mysql:5.7
