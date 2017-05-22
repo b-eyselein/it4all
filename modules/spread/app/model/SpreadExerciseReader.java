@@ -41,7 +41,7 @@ public class SpreadExerciseReader extends ExerciseReader<SpreadExercise> {
 
   private void checkFile(Util util, SpreadExercise exercise, String fileName, String fileEnding) {
     createSampleDirectory(util);
-    
+
     Path fileToCheck = util.getSampleFileForExercise(exerciseType, fileName + "." + fileEnding);
     if(fileToCheck.toFile().exists())
       return;
@@ -65,21 +65,16 @@ public class SpreadExerciseReader extends ExerciseReader<SpreadExercise> {
 
   @Override
   protected SpreadExercise readExercise(JsonNode exerciseNode) {
-    JsonNode idNode = exerciseNode.get(StringConsts.ID_NAME);
-    JsonNode textNode = exerciseNode.get(StringConsts.TEXT_NAME);
-    JsonNode titleNode = exerciseNode.get(StringConsts.TITLE_NAME);
-    JsonNode sampleFileNode = exerciseNode.get("sampleFilename");
-    JsonNode templateFileNode = exerciseNode.get("templateFilename");
+    int id = exerciseNode.get(StringConsts.ID_NAME).asInt();
 
-    int id = idNode.asInt();
     SpreadExercise exercise = SpreadExercise.finder.byId(id);
     if(exercise == null)
       exercise = new SpreadExercise(id);
 
-    exercise.text = textNode.asText();
-    exercise.title = titleNode.asText();
-    exercise.sampleFilename = sampleFileNode.asText();
-    exercise.templateFilename = templateFileNode.asText();
+    exercise.text = exerciseNode.get(StringConsts.TEXT_NAME).asText();
+    exercise.title = exerciseNode.get(StringConsts.TITLE_NAME).asText();
+    exercise.sampleFilename = exerciseNode.get("sampleFilename").asText();
+    exercise.templateFilename = exerciseNode.get("templateFilename").asText();
 
     return exercise;
   }

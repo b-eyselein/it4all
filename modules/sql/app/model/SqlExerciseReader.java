@@ -7,9 +7,9 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -89,12 +89,9 @@ public class SqlExerciseReader extends ExerciseReader<SqlScenario> {
   }
   
   private static List<SqlExercise> readExercises(SqlScenario scenario, JsonNode exerciseNodes) {
-    final List<SqlExercise> exercises = new LinkedList<>();
+    return StreamSupport.stream(exerciseNodes.spliterator(), true)
+        .map(exerciseNode -> readExercise(scenario, exerciseNode)).collect(Collectors.toList());
     
-    for(final Iterator<JsonNode> exercisesIter = exerciseNodes.elements(); exercisesIter.hasNext();)
-      exercises.add(readExercise(scenario, exercisesIter.next()));
-    
-    return exercises;
   }
   
   private static SqlSample readSampleSolution(JsonNode sampleSolNode) {
@@ -109,11 +106,8 @@ public class SqlExerciseReader extends ExerciseReader<SqlScenario> {
   }
   
   private static List<SqlSample> readSampleSolutions(JsonNode sampleSolutions) {
-    List<SqlSample> samples = new LinkedList<>();
-    
-    for(Iterator<JsonNode> sampleSolIter = sampleSolutions.iterator(); sampleSolIter.hasNext();)
-      samples.add(readSampleSolution(sampleSolIter.next()));
-    return samples;
+    return StreamSupport.stream(sampleSolutions.spliterator(), true).map(SqlExerciseReader::readSampleSolution)
+        .collect(Collectors.toList());
   }
   
   private static String readTags(JsonNode tagsNode) {

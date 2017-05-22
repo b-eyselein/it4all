@@ -1,7 +1,8 @@
 package model;
 
-import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -16,10 +17,10 @@ public class ProgExerciseReader extends ExerciseReader<ProgExercise> {
     super("prog");
   }
 
-  private SampleTestData readTest(JsonNode testNode) {
+  private static SampleTestData readTest(JsonNode testNode) {
     SampleTestDataKey key = Json.fromJson(testNode.get(StringConsts.KEY_NAME), SampleTestDataKey.class);
+    
     SampleTestData test = SampleTestData.finder.byId(key);
-
     if(test == null)
       test = new SampleTestData(key);
 
@@ -29,18 +30,15 @@ public class ProgExerciseReader extends ExerciseReader<ProgExercise> {
   }
 
   private List<SampleTestData> readTests(JsonNode testsNode) {
-    List<SampleTestData> tests = new LinkedList<>();
-
-    testsNode.elements().forEachRemaining(testNode -> tests.add(readTest(testNode)));
-
-    return tests;
+    return StreamSupport.stream(testsNode.spliterator(), true).map(ProgExerciseReader::readTest)
+        .collect(Collectors.toList());
   }
 
   @Override
   protected ProgExercise readExercise(JsonNode exerciseNode) {
     int id = exerciseNode.get(StringConsts.ID_NAME).asInt();
-    ProgExercise exercise = ProgExercise.finder.byId(id);
 
+    ProgExercise exercise = ProgExercise.finder.byId(id);
     if(exercise == null)
       exercise = new ProgExercise(id);
 

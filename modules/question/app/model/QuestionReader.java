@@ -1,7 +1,8 @@
 package model;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -19,7 +20,7 @@ public class QuestionReader extends ExerciseReader<Question> {
     super("choice");
   }
 
-  private Answer readAnswer(JsonNode answerNode) {
+  private static Answer readAnswer(JsonNode answerNode) {
     AnswerKey key = Json.fromJson(answerNode.get(StringConsts.KEY_NAME), AnswerKey.class);
 
     Answer answer = Answer.finder.byId(key);
@@ -32,34 +33,23 @@ public class QuestionReader extends ExerciseReader<Question> {
   }
 
   private List<Answer> readAnswers(JsonNode answersNode) {
-    List<Answer> answers = new ArrayList<>(answersNode.size());
-
-    for(JsonNode answerNode: answersNode)
-      answers.add(readAnswer(answerNode));
-
-    return answers;
+    return StreamSupport.stream(answersNode.spliterator(), true).map(QuestionReader::readAnswer)
+        .collect(Collectors.toList());
   }
 
   @Override
   protected Question readExercise(JsonNode exerciseNode) {
-    JsonNode idNode = exerciseNode.get(StringConsts.ID_NAME);
-    JsonNode titleNode = exerciseNode.get(StringConsts.TITLE_NAME);
-    JsonNode authorNode = exerciseNode.get(StringConsts.AUTHOR_NAME);
-    JsonNode pointsNode = exerciseNode.get("maxPoints");
-    JsonNode textNode = exerciseNode.get(StringConsts.TEXT_NAME);
-    JsonNode answersNode = exerciseNode.get("answers");
-
-    int id = idNode.asInt();
+    int id = exerciseNode.get(StringConsts.ID_NAME).asInt();
 
     GivenAnswerQuestion question = GivenAnswerQuestion.finder.byId(id);
     if(question == null)
       question = new GivenAnswerQuestion(id);
 
-    question.author = authorNode.asText();
-    question.title = titleNode.asText();
-    question.maxPoints = pointsNode.asInt();
-    question.text = textNode.asText();
-    question.answers = readAnswers(answersNode);
+    question.author = exerciseNode.get(StringConsts.AUTHOR_NAME).asText();
+    question.title = exerciseNode.get(StringConsts.TITLE_NAME).asText();
+    question.maxPoints = exerciseNode.get("maxPoints").asInt();
+    question.text = exerciseNode.get(StringConsts.TEXT_NAME).asText();
+    question.answers = readAnswers(exerciseNode.get("answers"));
 
     return question;
   }
