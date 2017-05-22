@@ -13,6 +13,7 @@ import com.google.common.base.Splitter;
 public abstract class Exercise extends Model {
 
   protected static final Splitter SPLITTER = Splitter.fixedLength(100).omitEmptyStrings();
+  protected static final Splitter NEW_LINE_SPLITTER = Splitter.on("\n");
 
   @Id
   public int id;

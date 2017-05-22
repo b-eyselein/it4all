@@ -4,7 +4,7 @@
 <!ATTLIST lecturer title CDATA #REQUIRED>
 
 <!ELEMENT date (hours)>
-<!ATTLIST date weekay (mon | tue | wed | thu | fri | sat | sun)>
+<!ATTLIST date weekday (mon | tue | wed | thu | fri | sat | sun) #REQUIRED>
 
 <!ELEMENT student (name)>
 <!ATTLIST student matrikel CDATA #REQUIRED>

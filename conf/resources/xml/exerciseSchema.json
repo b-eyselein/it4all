@@ -26,6 +26,12 @@
 				}
 			}, 
 			"text": {
+				"type": "array", 
+				"items": {
+					"type": "string"
+				}
+			}, 
+			"referenceFileName": {
 				"type": "string"
 			}
 		}, 
@@ -34,9 +40,8 @@
 			"title", 
 			"exerciseType", 
 			"fixedStart", 
-			"text"
+			"text", 
+			"referenceFileName"
 		]
-	}, 
-	"minItems": 1, 
-	"uniqueItems": true
+	}
 }

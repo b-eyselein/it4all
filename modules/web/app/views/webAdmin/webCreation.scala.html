@@ -1,0 +1,28 @@
+@(exercises: List[model.WebExercise])
+
+<a class="btn btn-primary btn-block" href="@web.routes.WebAdmin.index()">Zur&uuml;ck zur Administratorseite</a>
+
+<hr>
+
+@for((ex, index) <- exercises.zipWithIndex) {
+@if(index % 2 == 0) {<div class="row">}
+  <div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">Aufgabe @ex.id: @ex.title</div>
+      <div class="panel-body">
+        <p>Text: @ex.text</p>
+  
+        <h2>HTML-Tasks</h2>
+        @for(task <- ex.htmlTasks) {
+        <p>@task.key.taskId: @task.text</p>
+        }
+  
+        <h2>JS-Tasks</h2>
+        @for(task <- ex.jsTasks) {
+        <p>@task.key.taskId: @task.text</p>
+        }
+      </div>
+    </div>
+  </div>
+@if(index % 2 == 1) {</div>}
+}

@@ -29,14 +29,16 @@ public abstract class ExerciseController extends AbstractController {
   
   protected Path checkAndCreateSolDir(User user, String exerciseType, int id) {
     Path dir = Paths.get(util.getSolDirForUserAndType(user, exerciseType).toString(), Integer.toString(id));
-    if(!dir.toFile().exists())
-      try {
-        Files.createDirectories(dir);
-      } catch (IOException e) {
-        Logger.error("There was an error while creating the directory for the xml solution " + dir, e);
-        return null;
-      }
-    return dir;
+
+    if(dir.toFile().exists())
+      return dir;
+    
+    try {
+      return Files.createDirectories(dir);
+    } catch (IOException e) {
+      Logger.error("There was an error while creating the directory for the xml solution " + dir, e);
+      return null;
+    }
   }
   
   protected boolean wantsJsonResponse() {

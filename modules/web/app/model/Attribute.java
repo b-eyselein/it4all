@@ -7,7 +7,6 @@ import org.openqa.selenium.WebElement;
 import com.google.common.base.Splitter;
 
 import model.result.AttributeResult;
-import play.Logger;
 
 public class Attribute {
   
@@ -41,9 +40,6 @@ public class Attribute {
       String foundValue = element.getAttribute(key);
       return new AttributeResult(this, foundValue);
     } catch (NoSuchMethodError e) { // NOSONAR
-      // FIXME: Better solution! NoSuchMethodError if attribute not declared
-      Logger.error("Error while searching for attribute in model.html.result.AttributeResult"
-          + ", line 28: NoSuchMethodError...");
       return new AttributeResult(this, null);
     }
   }

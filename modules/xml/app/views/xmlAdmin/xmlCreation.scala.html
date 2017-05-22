@@ -1,0 +1,35 @@
+@(exercises: List[model.XmlExercise])
+
+<a class="btn btn-primary btn-block" href="@xml.routes.XmlAdmin.index()">Zur&uuml;ck zur Administratorseite</a>
+
+<hr>
+
+@for((ex, index) <- exercises.zipWithIndex) {
+@if(index % 2 == 0) {<div class="row">}
+  <div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">Aufgabe @ex.id: @ex.title</div>
+      <div class="panel-body">
+        <table class="table">
+          <tr>
+            <th>Text</th>
+            <td>@ex.text</td>
+          </tr>
+          <tr>
+            <th>Aufgabentyp</th>
+            <td>@ex.exerciseType</td>
+          </tr>
+          <tr>
+            <th>Dateiname</th>
+            <td>&quot;@ex.referenceFileName&quot;</td>
+          </tr>
+          <tr>
+            <th>Fixed Start</th>
+            <td>@if(ex.fixedStart.isEmpty) {--} else {<pre>@ex.fixedStart</pre>}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+@if(index % 2 == 1) {</div>}
+}

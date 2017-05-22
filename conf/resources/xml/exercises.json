@@ -2,58 +2,69 @@
 	{
 		"id": 1, 
 		"title": "Party", 
-		"exerciseType": "XML_DTD", 
+		"author": "bje40dc", 
+		"text": [
+			"Erstellen Sie zu dieser DTD ein passendes XML-Dokument."
+		], 
 		"fixedStart": [
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>", 
-			"<!DOCTYPE party [", 
-			"  <!ELEMENT party (gast+)>", 
-			"  <!ATTLIST party datum CDATA #REQUIRED>", 
-			"  <!ELEMENT gast (getraenk+, zustand?)>", 
-			"  <!ATTLIST gast name CDATA #REQUIRED>", 
-			"  <!ELEMENT getraenk (#PCDATA)>", 
-			"  <!ELEMENT zustand EMPTY>", 
-			"  <!ATTLIST zustand ledig CDATA #REQUIRED", 
-			"                    nuechtern CDATA #REQUIRED>", 
-			"]>"
+			"<!DOCTYPE party SYSTEM \"party.dtd\">"
 		], 
-		"text": "Erstellen Sie zu dieser Document Type Definition ein passendes XML-Dokument."
+		"exerciseType": "XML_DTD", 
+		"referenceFileName": "party"
 	}, 
 	{
 		"id": 2, 
 		"title": "Vorlesung", 
-		"exerciseType": "XML_DTD", 
+		"author": "bje40dc", 
+		"text": [
+			"Erstellen Sie zu dieser DTD ein passendes XML-Dokument."
+		], 
 		"fixedStart": [
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>", 
 			"<!DOCTYPE lecture SYSTEM \"lecture.dtd\">"
 		], 
-		"text": "Erstellen Sie zu dieser DTD ein passendes XML-Dokument."
+		"exerciseType": "XML_DTD", 
+		"referenceFileName": "lecture"
 	}, 
 	{
 		"id": 3, 
-		"title": "Frühstück", 
-		"exerciseType": "DTD_XML", 
-		"fixedStart": [
-			
-		], 
-		"text": "Erstellen Sie für dieses Dokument eine passende Document Type Definition."
-	}, 
-	{
-		"id": 4, 
 		"title": "Krankenhaus", 
-		"exerciseType": "XML_DTD", 
+		"author": "bje40dc", 
+		"text": [
+			"Erstellen Sie zu dieser DTD ein passendes XML-Dokument."
+		], 
 		"fixedStart": [
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>", 
 			"<!DOCTYPE krankenhaus SYSTEM \"hospital.dtd\">"
 		], 
-		"text": "Erstellen Sie zu dieser DTD ein passendes XML-Dokument."
+		"exerciseType": "XML_DTD", 
+		"referenceFileName": "hospital"
+	}, 
+	{
+		"id": 4, 
+		"title": "Frühstück", 
+		"author": "bje40dc", 
+		"text": [
+			"Erstellen Sie für dieses XML-Dokument eine passende DTD."
+		], 
+		"fixedStart": [
+			""
+		], 
+		"exerciseType": "DTD_XML", 
+		"referenceFileName": "breakfast"
 	}, 
 	{
 		"id": 5, 
 		"title": "Bibliothek", 
-		"exerciseType": "DTD_XML", 
-		"fixedStart": [
-			
+		"author": "bje40dc", 
+		"text": [
+			"Erstellen Sie für dieses XML-Dokument eine passende DTD."
 		], 
-		"text": "Erstellen Sie für dieses Dokument eine passende Document Type Definition."
+		"fixedStart": [
+			""
+		], 
+		"exerciseType": "DTD_XML", 
+		"referenceFileName": "library"
 	}
 ]

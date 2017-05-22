@@ -1,8 +1,14 @@
 package controllers.xml;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,8 +19,12 @@ import model.StringConsts;
 import model.Util;
 import model.XmlCorrector;
 import model.XmlError;
+import model.XmlErrorType;
 import model.XmlExType;
 import model.XmlExercise;
+import model.blanks.BlanksExercise;
+import model.exercise.Success;
+import model.exercisereading.ExerciseReader;
 import model.logging.ExerciseCompletionEvent;
 import model.logging.ExerciseCorrectionEvent;
 import model.logging.ExerciseStartEvent;
@@ -31,38 +41,45 @@ public class Xml extends ExerciseController {
   public static final String STANDARD_XML_PLAYGROUND = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
       + "\n<!DOCTYPE root [\n\n]>\n";
   
+  private static final String SAVE_ERROR_MSG = "An error has occured while saving an xml file to ";
+  
   @Inject
   public Xml(Util theUtil, FormFactory theFactory) {
     super(theUtil, theFactory);
   }
   
-  public Result commit(int id) {
+  public Result correct(int id) {
     User user = getUser();
     XmlExercise exercise = XmlExercise.finder.byId(id);
     
     DynamicForm form = factory.form().bindFromRequest();
+    form.data().forEach((k, v) -> System.out.println(k + " --> " + v));
+    
     String learnerSolution = form.get(StringConsts.FORM_VALUE);
     
-    List<XmlError> correctionResult = correct(learnerSolution, exercise);
+    Logger.debug(learnerSolution);
+    
+    List<XmlError> correctionResult = correct(learnerSolution, exercise, user);
     
     log(user, new ExerciseCompletionEvent(request(), id, correctionResult));
     
     return ok(
-        views.html.correction.render("XML", views.html.xmlresult.render(correctionResult), learnerSolution, user));
+        views.html.correction.render("XML", views.html.xmlResult.render(correctionResult), learnerSolution, user));
   }
   
   public Result correctLive(int id) {
     User user = getUser();
     XmlExercise exercise = XmlExercise.finder.byId(id);
     
-    DynamicForm form = factory.form().bindFromRequest();
-    String learnerSolution = form.get(StringConsts.FORM_VALUE);
+    String learnerSolution = factory.form().bindFromRequest().get(StringConsts.FORM_VALUE);
     
-    List<XmlError> result = correct(learnerSolution, exercise);
+    Logger.debug(learnerSolution);
     
-    log(user, new ExerciseCorrectionEvent(request(), id, result));
+    List<XmlError> correctionResult = correct(learnerSolution, exercise, user);
     
-    return ok(views.html.xmlresult.render(result));
+    log(user, new ExerciseCorrectionEvent(request(), id, correctionResult));
+    
+    return ok(views.html.xmlResult.render(correctionResult));
   }
   
   public Result exercise(int id) {
@@ -70,7 +87,7 @@ public class Xml extends ExerciseController {
     XmlExercise exercise = XmlExercise.finder.byId(id);
     
     String defOrOldSolution = readDefOrOldSolution(user, exercise);
-    String refCode = exercise.getReferenceCode(util);
+    String refCode = exercise.getReferenceCode();
     
     log(user, new ExerciseStartEvent(request(), id));
     
@@ -102,21 +119,39 @@ public class Xml extends ExerciseController {
   public Result playgroundCorrection() {
     List<XmlError> result = XmlCorrector.correct(factory.form().bindFromRequest().get(StringConsts.FORM_VALUE), "",
         XmlExType.XML_DTD);
-    return ok(views.html.xmlresult.render(result));
+    return ok(views.html.xmlResult.render(result));
   }
   
-  private List<XmlError> correct(String learnerSolution, XmlExercise exercise) {
-    String grammar;
-    String xml;
-    if(exercise.exerciseType == XmlExType.DTD_XML || exercise.exerciseType == XmlExType.XSD_XML) {
-      grammar = learnerSolution;
-      xml = "";
-    } else {
-      grammar = "";
-      xml = learnerSolution;
-    }
+  // private List<XmlError> correct(String learnerSolution, XmlExercise
+  // exercise) {
+  // String grammar;
+  // String xml;
+  // if(exercise.exerciseType == XmlExType.DTD_XML || exercise.exerciseType ==
+  // XmlExType.XSD_XML) {
+  // grammar = learnerSolution;
+  // xml = "";
+  // } else {
+  // grammar = "";
+  // xml = learnerSolution;
+  // }
+  //
+  // return XmlCorrector.correct(xml, grammar, exercise.exerciseType);
+  // }
+  
+  private List<XmlError> correct(String learnerSolution, XmlExercise exercise, User user) {
+    Path dir = checkAndCreateSolDir(user, EXERCISE_TYPE, exercise.id);
     
-    return XmlCorrector.correct(xml, grammar, exercise.exerciseType);
+    Path grammar;
+    Path xml;
+    if(exercise.exerciseType == XmlExType.DTD_XML || exercise.exerciseType == XmlExType.XSD_XML) {
+      grammar = saveGrammar(dir, learnerSolution, exercise);
+      xml = saveXML(dir, exercise);
+    } else {
+      grammar = saveGrammar(dir, exercise);
+      xml = saveXML(dir, learnerSolution, exercise);
+    }
+
+    return XmlCorrector.correct(xml, grammar, exercise);
   }
   
   private Path getOldSolPath(User user, XmlExercise exercise) {
@@ -125,15 +160,61 @@ public class Xml extends ExerciseController {
   }
   
   private String readDefOrOldSolution(User user, XmlExercise exercise) {
-    String defOrOldSolution = exercise.fixedStart;
+    Path oldSolutionPath = getOldSolPath(user, exercise);
+    if(oldSolutionPath.toFile().exists())
+      return ExerciseReader.readFile(oldSolutionPath);
+    
+    return exercise.fixedStart;
+  }
+  
+  private Path saveGrammar(Path dir, String learnerSolution, XmlExercise exercise) {
+    Path grammar = Paths.get(dir.toString(), exercise.referenceFileName + exercise.getGrammarFileEnding());
     try {
-      Path oldSolutionPath = getOldSolPath(user, exercise);
-      if(oldSolutionPath.toFile().exists())
-        defOrOldSolution = Util.readFileFromPath(oldSolutionPath);
-    } catch (IOException e) {
-      Logger.error("There has been an error reading the file", e);
+      Files.write(grammar, Arrays.asList(learnerSolution.split("\n")), StandardOpenOption.CREATE,
+          StandardOpenOption.TRUNCATE_EXISTING);
+      return grammar;
+    } catch (IOException error) {
+      Logger.error("Fehler beim Speichern einer Xml-Loesungsdatei!", error);
+      return null;
     }
-    return defOrOldSolution;
+  }
+  
+  private Path saveGrammar(Path dir, XmlExercise exercise) {
+    Path target = Paths.get(dir.toString(), exercise.referenceFileName + "." + exercise.getGrammarFileEnding());
+    Path source = Paths.get(util.getSampleFileForExercise(EXERCISE_TYPE, exercise.referenceFileName).toString() + "."
+        + exercise.getGrammarFileEnding());
+    try {
+      Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
+      return target;
+    } catch (IOException error) {
+      Logger.error(SAVE_ERROR_MSG + target.toString(), error);
+      return null;
+    }
+  }
+  
+  private Path saveXML(Path dir, String learnerSolution, XmlExercise exercise) {
+    Path targetFile = Paths.get(dir.toString(), exercise.referenceFileName + ".xml");
+    try {
+      Files.write(targetFile, Arrays.asList(learnerSolution.split("\n")), StandardOpenOption.CREATE,
+          StandardOpenOption.TRUNCATE_EXISTING);
+      return targetFile;
+    } catch (IOException error) {
+      Logger.error(SAVE_ERROR_MSG + targetFile.toString(), error);
+      return null;
+    }
+  }
+  
+  private Path saveXML(Path dir, XmlExercise exercise) {
+    Path target = Paths.get(dir.toString(), exercise.referenceFileName + ".xml");
+    Path source = Paths
+        .get(util.getSampleFileForExercise(EXERCISE_TYPE, exercise.referenceFileName).toString() + ".xml");
+    try {
+      Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
+      return target;
+    } catch (IOException error) {
+      Logger.error(SAVE_ERROR_MSG + target.toString(), error);
+      return null;
+    }
   }
   
 }

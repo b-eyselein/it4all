@@ -22,7 +22,7 @@ vc_it4all:
     image: alpine:3.5
     command: echo "VC for it4all"
     volumes:
-    - /data
+    - volume_it4all:/data
   
 # prog:
     # image: play

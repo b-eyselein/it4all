@@ -16,19 +16,16 @@ public class XmlExerciseReader extends ExerciseReader<XmlExercise> {
     super("xml");
   }
 
-  public void checkOrCreateSampleFile(Util util, XmlExercise exercise) {
-    createSampleDirectory(util);
-
-    Path sampleFile = Paths.get(util.getSampleFileForExercise(exerciseType, exercise.referenceFileName).toString()
-        + exercise.getReferenceFileEnding());
-    if(sampleFile.toFile().exists())
+  public void checkOrCreateSampleFile(XmlExercise exercise) {
+    if(!baseTargetDir.toFile().exists() && !createSampleDirectory())
+      // error occured...
       return;
 
-    READING_LOGGER.warn("Die Lösungsdatei für Xml-Aufgabe " + exercise.id + " \"" + sampleFile
-        + "\" existiert nicht! Versuche, Datei zu erstellen...");
+    Path sampleFile = Paths.get(baseTargetDir.toString(),
+        exercise.referenceFileName + "." + exercise.getReferenceFileEnding());
 
     Path providedFile = Paths.get(BASE_DIR, exerciseType,
-        exercise.referenceFileName + exercise.getReferenceFileEnding());
+        exercise.referenceFileName + "." + exercise.getReferenceFileEnding());
 
     if(!providedFile.toFile().exists()) {
       READING_LOGGER.error("Konnte Datei nicht erstellen: Keine Lösungsdatei mitgeliefert...");
@@ -53,8 +50,10 @@ public class XmlExerciseReader extends ExerciseReader<XmlExercise> {
 
     exercise.id = id;
     exercise.title = node.get(StringConsts.TITLE_NAME).asText();
+    exercise.author = node.get(StringConsts.AUTHOR_NAME).asText();
     exercise.exerciseType = XmlExType.valueOf(node.get("exerciseType").asText());
-    exercise.text = node.get(StringConsts.TEXT_NAME).asText();
+    exercise.text = readTextArray(node.get(StringConsts.TEXT_NAME));
+    exercise.referenceFileName = node.get("referenceFileName").asText();
     exercise.fixedStart = String.join("\n", JsonWrapper.parseJsonArrayNode(node.get("fixedStart")));
 
     return exercise;

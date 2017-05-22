@@ -34,7 +34,7 @@ public class WebAdmin extends AbstractAdminController<WebExercise, WebExerciseRe
 
   @Override
   public Html renderCreated(List<WebExercise> created) {
-    return views.html.webAdmin.webcreation.render(created);
+    return views.html.webAdmin.webCreation.render(created);
   }
 
   @Override
@@ -58,7 +58,7 @@ public class WebAdmin extends AbstractAdminController<WebExercise, WebExerciseRe
     ReadingResult<WebExercise> result = (ReadingResult<WebExercise>) abstractResult;
 
     result.getRead().forEach(Exercise::saveInDB);
-    return ok(views.html.preview.render(getUser(), views.html.webAdmin.webcreation.render(result.getRead())));
+    return ok(views.html.preview.render(getUser(), views.html.webAdmin.webCreation.render(result.getRead())));
   }
 
   @Override

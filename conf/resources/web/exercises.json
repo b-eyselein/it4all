@@ -45,7 +45,7 @@
 						"value": "list-group"
 					}
 				], 
-				"textContent": "null"
+				"textContent": ""
 			}, 
 			{
 				"key": {
@@ -137,7 +137,7 @@
 						"value": "/assets/stylesheets/bootstrap.css"
 					}
 				], 
-				"textContent": "null"
+				"textContent": ""
 			}
 		], 
 		"jsTasks": [
@@ -174,7 +174,7 @@
 						"value": "table table-striped"
 					}
 				], 
-				"textContent": "null"
+				"textContent": ""
 			}, 
 			{
 				"key": {
@@ -188,7 +188,7 @@
 				"attributes": [
 					
 				], 
-				"textContent": "null"
+				"textContent": ""
 			}, 
 			{
 				"key": {
@@ -230,7 +230,7 @@
 				"attributes": [
 					
 				], 
-				"textContent": "null"
+				"textContent": ""
 			}, 
 			{
 				"key": {
@@ -272,7 +272,7 @@
 				"attributes": [
 					
 				], 
-				"textContent": "null"
+				"textContent": ""
 			}, 
 			{
 				"key": {
@@ -314,7 +314,7 @@
 				"attributes": [
 					
 				], 
-				"textContent": "null"
+				"textContent": ""
 			}, 
 			{
 				"key": {
@@ -364,7 +364,7 @@
 						"value": "/assets/stylesheets/bootstrap.css"
 					}
 				], 
-				"textContent": "null"
+				"textContent": ""
 			}
 		], 
 		"jsTasks": [
@@ -406,20 +406,16 @@
 				}, 
 				"text": [
 					"Erstellen Sie den Link auf der Seite, der auf Wikipedia verweist. Geben Sie als Ziel die URL 'https:", 
-					"//de.wikipedia.org/wiki/Ford_Mustang' an. Geben Sie dem Bild die Klasse \"img-rounded\"."
+					"//de.wikipedia.org/wiki/Ford_Mustang' an."
 				], 
 				"xpathQuery": "/html/body//a", 
 				"attributes": [
 					{
 						"key": "href", 
 						"value": "https://de.wikipedia.org/wiki/Ford_Mustang"
-					}, 
-					{
-						"key": "class", 
-						"value": "img-rounded"
 					}
 				], 
-				"textContent": "null"
+				"textContent": ""
 			}, 
 			{
 				"key": {
@@ -430,7 +426,7 @@
 					"Erstellen Sie im Link das Bild des Ford Mustang. Geben Sie als Quelle des Bildes die URL 'https://up", 
 					"load.wikimedia.org/wikipedia/commons/2/2d/1964_12_Ford_Mustang.jpg' und als alternative Beschreibung", 
 					" 'Ford Mustang' an. Geben Sie außerdem eine Breite von 250 und eine Höhe von 188 an, um das Bild zu ", 
-					"skalieren."
+					"skalieren. Geben Sie dem Bild die Klasse \"img-rounded\"."
 				], 
 				"xpathQuery": "/html/body//a//img", 
 				"attributes": [
@@ -449,9 +445,13 @@
 					{
 						"key": "height", 
 						"value": "188"
+					}, 
+					{
+						"key": "class", 
+						"value": "img-rounded"
 					}
 				], 
-				"textContent": "null"
+				"textContent": ""
 			}, 
 			{
 				"key": {
@@ -473,7 +473,7 @@
 						"value": "/assets/stylesheets/bootstrap.css"
 					}
 				], 
-				"textContent": "null"
+				"textContent": ""
 			}
 		], 
 		"jsTasks": [
@@ -514,7 +514,7 @@
 						"value": "post"
 					}
 				], 
-				"textContent": "null"
+				"textContent": ""
 			}, 
 			{
 				"key": {
@@ -541,7 +541,7 @@
 						"value": "form-control"
 					}
 				], 
-				"textContent": "null"
+				"textContent": ""
 			}, 
 			{
 				"key": {
@@ -568,7 +568,7 @@
 						"value": "form-control"
 					}
 				], 
-				"textContent": "null"
+				"textContent": ""
 			}, 
 			{
 				"key": {
@@ -586,7 +586,7 @@
 						"value": "btn btn-default"
 					}
 				], 
-				"textContent": "null"
+				"textContent": ""
 			}, 
 			{
 				"key": {
@@ -608,7 +608,7 @@
 						"value": "/assets/stylesheets/bootstrap.css"
 					}
 				], 
-				"textContent": "null"
+				"textContent": ""
 			}
 		], 
 		"jsTasks": [
@@ -683,7 +683,7 @@
 						"value": "https://upload.wikimedia.org/wikipedia/commons/c/cb/National_anthem_of_Germany_-_U.S._Army_1st_Armored_Division_Band.ogg"
 					}
 				], 
-				"textContent": "null"
+				"textContent": ""
 			}
 		], 
 		"jsTasks": [
