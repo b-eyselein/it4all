@@ -8,7 +8,6 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import model.StringConsts;
-import model.Util;
 import model.user.User;
 import play.Environment;
 import play.Logger;
@@ -79,7 +78,7 @@ public class UserManagement extends AbstractController {
       User newStudent = new User();
       newStudent.name = userName;
       newStudent.save();
-      Path solutionDirectory = getSolDirForUser(newStudent);
+      Path solutionDirectory = getSolDirForUser();
       if(!solutionDirectory.toFile().exists())
         try {
           Files.createDirectories(solutionDirectory);

@@ -14,18 +14,18 @@
         <th>Text</th>
         <th>Typ</th>
         <th>Fixed Start</th>
-        <th>Reference File Name</th>
+        <th>Referenzdateiname</th>
       </tr>
     </thead>
     <tbody>
-    @for(exercise <- exercises) {
+    @for(ex <- exercises) {
       <tr>
-        <td>@exercise.id</td>
-        <td>@exercise.title</td>
-        <td>@exercise.text</td>
-        <td>@exercise.exerciseType</td>
-        <td>@exercise.fixedStart</td>
-        <td>@exercise.referenceFileName</td>
+        <td>@ex.id</td>
+        <td>@ex.title</td>
+        <td>@ex.text</td>
+        <td>@ex.exerciseType</td>
+        <td>@if(ex.fixedStart.isEmpty()) {--} else {<pre>@ex.fixedStart</pre>}</td>
+        <td>@ex.referenceFileName</td>
       </tr>
     }
     </tbody>
