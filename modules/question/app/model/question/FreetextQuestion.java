@@ -33,11 +33,6 @@ public class FreetextQuestion extends Question {
   }
 
   @Override
-  public void saveInDB() {
-    save();
-  }
-
-  @Override
   public String toString() {
     return "Autor: " + author + ", Text: " + text + ", Titel: " + title;
   }

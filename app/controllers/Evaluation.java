@@ -8,7 +8,6 @@ import javax.inject.Inject;
 
 import controllers.core.AbstractController;
 import model.Secured;
-import model.Util;
 import model.feedback.Feedback;
 import model.feedback.Feedback.EvaluatedTool;
 import model.feedback.FeedbackKey;
@@ -24,8 +23,8 @@ import play.mvc.Security.Authenticated;
 public class Evaluation extends AbstractController {
 
   @Inject
-  public Evaluation(Util theUtil, FormFactory theFactory) {
-    super(theUtil, theFactory);
+  public Evaluation(FormFactory theFactory) {
+    super(theFactory, "eval");
   }
 
   public Result index() {

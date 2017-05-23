@@ -62,9 +62,4 @@ public class UmlExercise extends Exercise {
     return UmlSolution.fromJson(solution);
   }
 
-  @Override
-  public void saveInDB() {
-    save();
-  }
-
 }

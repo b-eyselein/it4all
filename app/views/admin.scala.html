@@ -6,6 +6,15 @@
     <h1>Administratorbereich</h1>
   </div>
   
+  <section id="statistics">
+    <h2>Statistiken</h2>
+    <ul>
+      <li>Es sind momentan @model.user.User.finder.findCount() Nutzer registriert.</li>
+    </ul>
+  </section>
+  
+  <hr>
+  
   <a class="btn btn-default btn-block" href="@questions.routes.QuestionAdmin.index()">Auswahlfragen</a>
   
   <a class="btn btn-default btn-block" href="@uml.routes.UmlAdmin.index()">UML</a>
@@ -14,7 +23,7 @@
   
   <a class="btn btn-default btn-block" href="@web.routes.WebAdmin.index()">Web</a>
   
-  <a class="btn btn-default btn-block" href="@sql.routes.SqlAdmin.index()">SQL
+  <a class="btn btn-default btn-block" href="@sql.routes.SqlAdmin.index()">SQL</a>
   
   <hr>
   

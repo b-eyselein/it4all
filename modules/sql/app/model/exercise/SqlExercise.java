@@ -82,10 +82,4 @@ public class SqlExercise extends Exercise {
     return Arrays.stream(tags.split(SAMPLE_JOIN_CHAR)).map(SqlTag::valueOf).collect(Collectors.toList());
   }
 
-  @Override
-  public void saveInDB() {
-    save();
-    samples.forEach(SqlSample::save);
-  }
-
 }

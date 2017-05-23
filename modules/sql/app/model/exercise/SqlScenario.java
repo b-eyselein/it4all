@@ -46,14 +46,4 @@ public class SqlScenario extends Exercise {
     return shortName + ".png";
   }
 
-  @Override
-  public void saveInDB() {
-    save();
-
-    // exerciseReader.runCreateScript(sqlSelect, scenario);
-    // exerciseReader.runCreateScript(sqlOther, scenario);
-
-    exercises.forEach(SqlExercise::saveInDB);
-  }
-
 }

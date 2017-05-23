@@ -32,6 +32,11 @@ public class QuestionReader extends ExerciseReader<Question> {
     return answer;
   }
 
+  @Override
+  public void saveExercise(Question exercise) {
+    exercise.saveInDb();
+  }
+
   private List<Answer> readAnswers(JsonNode answersNode) {
     return StreamSupport.stream(answersNode.spliterator(), true).map(QuestionReader::readAnswer)
         .collect(Collectors.toList());

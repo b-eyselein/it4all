@@ -11,7 +11,7 @@ GET    /jsonSchema                         controllers.uml.UmlAdmin.getJSONSchem
 GET    /import                             controllers.uml.UmlAdmin.importExercises()
 GET    /export                             controllers.uml.UmlAdmin.exportExercises()
 
-GET    /newExercise/form                   controllers.uml.UmlAdmin.newExerciseStep1()
+GET    /newExercise/form                   controllers.uml.UmlAdmin.newExerciseForm()
 POST   /newExercise/text                   controllers.uml.UmlAdmin.newExerciseStep2()
 POST   /newExercise/solution               controllers.uml.UmlAdmin.newExerciseStep3()
 POST   /newExercise                        controllers.uml.UmlAdmin.newExercise()

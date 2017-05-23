@@ -48,6 +48,10 @@
 	<logger name="progress" level="DEBUG">
 		<appender-ref ref="PROGRESS" />
 	</logger>
+	<logger name="startup" level="DEBUG">
+		<appender-ref ref="ASYNCFILE" />
+		<appender-ref ref="ASYNCSTDOUT" />
+	</logger>
 
 	<!-- Off these ones as they are annoying, and anyway we manage configuration 
 		ourselves -->

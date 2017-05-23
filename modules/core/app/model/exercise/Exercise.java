@@ -33,6 +33,4 @@ public abstract class Exercise extends Model {
     return SPLITTER.splitToList(text);
   }
 
-  public abstract void saveInDB();
-
 }

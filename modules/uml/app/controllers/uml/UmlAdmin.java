@@ -1,8 +1,5 @@
 package controllers.uml;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -21,24 +18,17 @@ import model.StringConsts;
 import model.UmlExTextParser;
 import model.UmlExercise;
 import model.UmlExerciseReader;
-import model.Util;
-import model.exercise.Exercise;
-import model.exercisereading.AbstractReadingResult;
-import model.exercisereading.ReadingError;
-import model.exercisereading.ReadingResult;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
-import play.mvc.Http.MultipartFormData;
-import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
 import play.twirl.api.Html;
 
 public class UmlAdmin extends AbstractAdminController<UmlExercise, UmlExerciseReader> {
 
   @Inject
-  public UmlAdmin(Util theUtil, FormFactory theFactory) {
-    super(theUtil, theFactory, UmlExercise.finder, "uml", new UmlExerciseReader());
+  public UmlAdmin(FormFactory theFactory) {
+    super(theFactory, UmlExercise.finder, "uml", new UmlExerciseReader());
   }
 
   public Result checkSolution() {
@@ -61,10 +51,12 @@ public class UmlAdmin extends AbstractAdminController<UmlExercise, UmlExerciseRe
       return ok(report.get().toString());
   }
 
+  @Override
   public Result index() {
     return ok(views.html.umlAdmin.index.render(getUser()));
   }
 
+  @Override
   public Result newExercise() {
     DynamicForm form = factory.form().bindFromRequest();
 
@@ -86,7 +78,8 @@ public class UmlAdmin extends AbstractAdminController<UmlExercise, UmlExerciseRe
     return ok(views.html.umlAdmin.newExerciseCreated.render(getUser(), newExercise));
   }
 
-  public Result newExerciseStep1() {
+  @Override
+  public Result newExerciseForm() {
     return ok(views.html.umlAdmin.newExerciseStep1Form.render(getUser()));
   }
 
@@ -145,31 +138,6 @@ public class UmlAdmin extends AbstractAdminController<UmlExercise, UmlExerciseRe
   @Override
   public Html renderCreated(List<UmlExercise> exercises) {
     return views.html.umlCreation.render(exercises);
-  }
-
-  @Override
-  public Result uploadFile() {
-    MultipartFormData<File> body = request().body().asMultipartFormData();
-    FilePart<File> uploadedFile = body.getFile(BODY_FILE_NAME);
-
-    if(uploadedFile == null)
-      return badRequest("Fehler!");
-
-    Path pathToUploadedFile = uploadedFile.getFile().toPath();
-    Path savingDir = Paths.get(util.getRootSolDir().toString(), ADMIN_FOLDER, exerciseType);
-
-    Path jsonFile = Paths.get(savingDir.toString(), uploadedFile.getFilename());
-    saveUploadedFile(savingDir, pathToUploadedFile, jsonFile);
-
-    AbstractReadingResult<UmlExercise> abstractResult = exerciseReader.readStandardExercises();
-
-    if(!abstractResult.isSuccess())
-      return badRequest(views.html.jsonReadingError.render(getUser(), (ReadingError<UmlExercise>) abstractResult));
-
-    ReadingResult<UmlExercise> result = (ReadingResult<UmlExercise>) abstractResult;
-
-    result.getRead().forEach(Exercise::saveInDB);
-    return ok(views.html.preview.render(getUser(), views.html.umlCreation.render(result.getRead())));
   }
 
   @Override

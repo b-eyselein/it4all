@@ -94,6 +94,13 @@ public class WebExerciseReader extends ExerciseReader<WebExercise> {
   }
 
   @Override
+  public void saveExercise(WebExercise exercise) {
+    exercise.save();
+    exercise.htmlTasks.forEach(HtmlTask::save);
+    exercise.jsTasks.forEach(JsWebTask::saveInDB);
+  }
+
+  @Override
   protected WebExercise readExercise(JsonNode exerciseNode) {
     int exerciseId = exerciseNode.get(StringConsts.ID_NAME).asInt();
 

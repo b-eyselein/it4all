@@ -3,8 +3,6 @@ package controllers.questions;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,25 +18,18 @@ import model.FreetextAnswer;
 import model.FreetextAnswerKey;
 import model.QuestionReader;
 import model.Quiz;
-import model.Util;
-import model.exercise.Exercise;
-import model.exercisereading.AbstractReadingResult;
-import model.exercisereading.ReadingError;
-import model.exercisereading.ReadingResult;
 import model.question.Question;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
-import play.mvc.Http.MultipartFormData;
-import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
 import play.twirl.api.Html;
 
 public class QuestionAdmin extends AbstractAdminController<Question, QuestionReader> {
 
   @Inject
-  public QuestionAdmin(Util theUtil, FormFactory theFactory) {
-    super(theUtil, theFactory, null, "question", new QuestionReader());
+  public QuestionAdmin(FormFactory theFactory) {
+    super(theFactory, null, "question", new QuestionReader());
   }
 
   private static void assignQuestion(String keyAndValue, boolean addOrRemove) {
@@ -103,35 +94,21 @@ public class QuestionAdmin extends AbstractAdminController<Question, QuestionRea
     return ok("TODO!");
   }
 
+  @Override
   public Result index() {
     return ok(views.html.questionAdmin.index.render(getUser()));
   }
 
-  public Result newQuiz() {
-    DynamicForm form = factory.form().bindFromRequest();
-
-    int id = findMinimalNotUsedId(Quiz.finder);
-    String title = form.get("title");
-
-    Quiz quiz;
-
-    // Is there another quiz with the same title?
-    List<Quiz> other = Quiz.finder.where().eq("title", title).findList();
-    if(!other.isEmpty())
-      quiz = other.get(0);
-    else
-      quiz = new Quiz(id);
-
-    quiz.title = title;
-    quiz.theme = form.get("theme");
-    quiz.text = form.get("text");
-    quiz.save();
-
-    return ok(views.html.questionAdmin.quizCreated.render(getUser(), quiz));
+  @Override
+  public Result newExercise() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
-  public Result newQuizForm() {
-    return ok(views.html.questionAdmin.newQuizForm.render(getUser()));
+  @Override
+  public Result newExerciseForm() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
   public Result notAssignedQuestions() {
@@ -142,30 +119,6 @@ public class QuestionAdmin extends AbstractAdminController<Question, QuestionRea
   @Override
   public Html renderCreated(List<Question> created) {
     return views.html.questionAdmin.questionCreated.render(getUser(), created);
-  }
-
-  @Override
-  public Result uploadFile() {
-    MultipartFormData<File> body = request().body().asMultipartFormData();
-    FilePart<File> uploadedFile = body.getFile(BODY_FILE_NAME);
-    if(uploadedFile == null)
-      return badRequest("Fehler!");
-
-    Path pathToUploadedFile = uploadedFile.getFile().toPath();
-    Path savingDir = Paths.get(util.getRootSolDir().toString(), ADMIN_FOLDER, exerciseType);
-
-    Path jsonFile = Paths.get(savingDir.toString(), uploadedFile.getFilename());
-    saveUploadedFile(savingDir, pathToUploadedFile, jsonFile);
-
-    AbstractReadingResult<Question> abstractResult = exerciseReader.readStandardExercises();
-
-    if(!abstractResult.isSuccess())
-      return badRequest(views.html.jsonReadingError.render(getUser(), (ReadingError<Question>) abstractResult));
-
-    ReadingResult<Question> result = (ReadingResult<Question>) abstractResult;
-
-    result.getRead().forEach(Exercise::saveInDB);
-    return ok(views.html.questionAdmin.questionCreated.render(getUser(), result.getRead()));
   }
 
   @Override

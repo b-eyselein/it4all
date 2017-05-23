@@ -14,6 +14,11 @@ public class UmlExerciseReader extends ExerciseReader<UmlExercise> {
   }
 
   @Override
+  public void saveExercise(UmlExercise exercise) {
+    exercise.save();
+  }
+
+  @Override
   protected UmlExercise readExercise(JsonNode exerciseNode) {
     int id = exerciseNode.get(StringConsts.ID_NAME).asInt();
 

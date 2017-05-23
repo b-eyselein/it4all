@@ -40,13 +40,8 @@ public class ProgExercise extends Exercise {
   }
 
   private static String getArguments(int argCount) {
-    // @formatter:off
-    return Stream.iterate((int) 'a', n -> n + 1)
-        .map(i -> (char) i.intValue())
-        .map(String::valueOf)
-        .limit(argCount)
+    return Stream.iterate((int) 'a', n -> n + 1).limit(argCount).map(i -> String.valueOf((char) i.intValue()))
         .collect(Collectors.joining(", "));
-    // @formatter:on
   }
 
   public String getDeclaration(ProgLanguage language) {
@@ -70,12 +65,6 @@ public class ProgExercise extends Exercise {
     default:
       return "not defined...";
     }
-  }
-
-  @Override
-  public void saveInDB() {
-    save();
-    sampleTestData.forEach(SampleTestData::save);
   }
 
 }

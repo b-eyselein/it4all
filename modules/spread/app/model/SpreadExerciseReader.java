@@ -11,6 +11,7 @@ import java.util.List;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import model.exercisereading.ExerciseReader;
+import play.Logger;
 
 public class SpreadExerciseReader extends ExerciseReader<SpreadExercise> {
   
@@ -20,47 +21,37 @@ public class SpreadExerciseReader extends ExerciseReader<SpreadExercise> {
     super("spread");
   }
   
-  public void checkFiles(Util util, SpreadExercise exercise) {
-    // Make sure directory exists
-    Path sampleFileDirectory = util.getSampleDirForExerciseType(exerciseType);
-    if(!sampleFileDirectory.toFile().exists()) {
-      try {
-        Files.createDirectories(sampleFileDirectory);
-      } catch (IOException e) {
-        READING_LOGGER.error("Could not create directory for sample files for spread exercise " + exercise.id + "!", e);
-        return;
-      }
-    }
-    
-    // Make sure files exist, copy to directory if not
-    for(String fileEnding: FILE_ENDINGS) {
-      checkFile(util, exercise, exercise.sampleFilename, fileEnding);
-      checkFile(util, exercise, exercise.templateFilename, fileEnding);
-    }
+  @Override
+  public void saveExercise(SpreadExercise exercise) {
+    exercise.save();
+    FILE_ENDINGS.forEach(fileEnding -> {
+      checkFile(exercise, exercise.sampleFilename, fileEnding);
+      checkFile(exercise, exercise.templateFilename, fileEnding);
+    });
   }
   
-  private void checkFile(Util util, SpreadExercise exercise, String fileName, String fileEnding) {
-    if(!baseTargetDir.toFile().exists() && !createSampleDirectory())
-      return;
+  protected String checkFile(SpreadExercise exercise, String fileName, String fileEnding) {
+    if(!baseTargetDir.toFile().exists() && !createDirectory(baseTargetDir))
+      // error occured...
+      return "Directory für Lösungsdateien (XML) " + baseTargetDir + "existiert nicht!";
     
-    Path fileToCheck = util.getSampleFileForExercise(exerciseType, fileName + "." + fileEnding);
-    if(fileToCheck.toFile().exists())
-      return;
+    String completeFilename = fileName + "." + fileEnding;
     
-    READING_LOGGER.warn("The file \"" + fileToCheck + "\" for spread exercise " + exercise.id
+    Path providedFile = Paths.get(baseDirForExType.toString(), completeFilename).toAbsolutePath();
+    Path targetPath = Paths.get(baseTargetDir.toString(), completeFilename).toAbsolutePath();
+    
+    if(!providedFile.toFile().exists())
+      return "Konnte Datei nicht erstellen: Keine Lösungsdatei mitgeliefert...";
+    
+    READING_LOGGER.warn("The file \"" + targetPath + "\" for " + exerciseType + " exercise " + exercise.id
         + " does not exist. Trying to create this file...");
     
-    Path providedFile = Paths.get(BASE_DIR, exerciseType, fileName + "." + fileEnding);
-    if(!providedFile.toFile().exists()) {
-      READING_LOGGER.error("Konnte Datei nicht erstellen: Keine Lösungsdatei mitgeliefert in " + providedFile);
-      return;
-    }
-    
     try {
-      Files.copy(providedFile, fileToCheck, StandardCopyOption.REPLACE_EXISTING);
-      READING_LOGGER.info("Die Lösungsdatei wurde erstellt.");
+      Files.copy(providedFile, targetPath, StandardCopyOption.REPLACE_EXISTING);
+      return "Die Lösungsdatei wurde erstellt.";
     } catch (IOException e) {
-      READING_LOGGER.error("Die Lösungsdatei konnte nicht erstellt werden!", e);
+      Logger.error("Fehler bei Erstellen von Musterlösung " + targetPath, e);
+      return "Die Lösungsdatei konnte nicht erstellt werden!";
     }
   }
   

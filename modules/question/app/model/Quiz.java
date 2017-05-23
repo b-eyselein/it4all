@@ -21,11 +21,6 @@ public class Quiz extends Exercise {
     super(theId);
   }
 
-  @Override
-  public void saveInDB() {
-    save();
-  }
-
   // @JsonIgnore
   // public int getMaxPoints() {
   // return questions.stream().mapToInt(q -> q.maxPoints).sum();

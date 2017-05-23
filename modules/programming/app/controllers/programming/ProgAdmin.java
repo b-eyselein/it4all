@@ -7,7 +7,6 @@ import javax.inject.Inject;
 import controllers.core.AbstractAdminController;
 import model.ProgExercise;
 import model.ProgExerciseReader;
-import model.Util;
 import play.data.FormFactory;
 import play.mvc.Result;
 import play.twirl.api.Html;
@@ -15,23 +14,30 @@ import play.twirl.api.Html;
 public class ProgAdmin extends AbstractAdminController<ProgExercise, ProgExerciseReader> {
   
   @Inject
-  public ProgAdmin(Util theUtil, FormFactory theFactory) {
-    super(theUtil, theFactory, ProgExercise.finder, "prog", new ProgExerciseReader());
+  public ProgAdmin(FormFactory theFactory) {
+    super(theFactory, ProgExercise.finder, "prog", new ProgExerciseReader());
   }
   
+  @Override
   public Result index() {
     return ok(views.html.progAdmin.index.render(getUser()));
   }
   
   @Override
-  public Html renderCreated(List<ProgExercise> exercises) {
-    return views.html.progAdmin.progCreation.render(exercises);
+  public Result newExercise() {
+    // TODO Auto-generated method stub
+    return null;
   }
   
   @Override
-  public Result uploadFile() {
+  public Result newExerciseForm() {
     // TODO Auto-generated method stub
-    return ok("TODO");
+    return null;
+  }
+  
+  @Override
+  public Html renderCreated(List<ProgExercise> exercises) {
+    return views.html.progAdmin.progCreation.render(exercises);
   }
   
   @Override

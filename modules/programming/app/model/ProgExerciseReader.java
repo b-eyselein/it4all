@@ -19,7 +19,7 @@ public class ProgExerciseReader extends ExerciseReader<ProgExercise> {
 
   private static SampleTestData readTest(JsonNode testNode) {
     SampleTestDataKey key = Json.fromJson(testNode.get(StringConsts.KEY_NAME), SampleTestDataKey.class);
-    
+
     SampleTestData test = SampleTestData.finder.byId(key);
     if(test == null)
       test = new SampleTestData(key);
@@ -27,6 +27,12 @@ public class ProgExerciseReader extends ExerciseReader<ProgExercise> {
     test.inputs = testNode.get("input").asText();
     test.output = testNode.get("output").asText();
     return test;
+  }
+
+  @Override
+  public void saveExercise(ProgExercise exercise) {
+    exercise.save();
+    exercise.sampleTestData.forEach(SampleTestData::save);
   }
 
   private List<SampleTestData> readTests(JsonNode testsNode) {

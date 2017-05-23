@@ -60,12 +60,6 @@ public class GivenAnswerQuestion extends Question {
   }
 
   @Override
-  public void saveInDB() {
-    save();
-    answers.forEach(Answer::save);
-  }
-
-  @Override
   public boolean userHasAnswered(String username) {
     // TODO Auto-generated method stub
     return false;

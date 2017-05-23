@@ -1,11 +1,12 @@
 package controllers.core;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import com.avaje.ebean.Model.Finder;
 
 import model.StringConsts;
-import model.Util;
 import model.exercise.Exercise;
 import model.user.User;
 import play.data.FormFactory;
@@ -14,12 +15,18 @@ import play.mvc.Http;
 
 public abstract class AbstractController extends Controller {
 
-  protected Util util;
+  protected static final String BASE_DATA_PATH = "/data"; // NOSONAR
+
+  protected static final String SAMPLE_SUB_DIRECTORY = "samples";
+  protected static final String SOLUTIONS_SUB_DIRECTORY = "solutions";
+
   protected FormFactory factory;
 
-  public AbstractController(Util theUtil, FormFactory theFactory) {
-    util = theUtil;
+  protected String exerciseType;
+
+  public AbstractController(FormFactory theFactory, String theExerciseType) {
     factory = theFactory;
+    exerciseType = theExerciseType;
   }
 
   public static User getUser() {
@@ -48,6 +55,14 @@ public abstract class AbstractController extends Controller {
       throw new IllegalArgumentException("No user name was given!");
 
     return session.get(StringConsts.SESSION_ID_FIELD);
+  }
+
+  public Path getSolDirForUser() {
+    return Paths.get(BASE_DATA_PATH, SOLUTIONS_SUB_DIRECTORY, getUsername());
+  }
+
+  protected Path getSampleDir() {
+    return Paths.get(BASE_DATA_PATH, SAMPLE_SUB_DIRECTORY, exerciseType);
   }
 
 }

@@ -49,11 +49,4 @@ public class WebExercise extends Exercise {
     return SPLITTER.splitToList(jsText);
   }
 
-  @Override
-  public void saveInDB() {
-    save();
-    htmlTasks.forEach(HtmlTask::save);
-    jsTasks.forEach(JsWebTask::saveInDB);
-  }
-
 }

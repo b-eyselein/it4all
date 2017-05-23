@@ -31,8 +31,8 @@ POST   /answer/:id                 controllers.questions.QuestionController.ques
 # Quizzes
 GET    /quizzes                    controllers.questions.QuestionController.quizzes()
 
-GET    /quizzes/new                controllers.questions.QuestionAdmin.newQuizForm()
-POST   /quizzes/new                controllers.questions.QuestionAdmin.newQuiz()
+GET    /quizzes/new                controllers.questions.QuizAdmin.newExerciseForm()
+POST   /quizzes/new                controllers.questions.QuizAdmin.newExercise()
 
 GET    /quizzes/jsonSchema         controllers.questions.QuizAdmin.getJSONSchemaFile()
 GET    /quizzes/export             controllers.questions.QuizAdmin.exportExercises()

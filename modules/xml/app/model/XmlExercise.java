@@ -67,10 +67,4 @@ public class XmlExercise extends Exercise {
     return exerciseType.getTag();
   }
   
-  @Override
-  public void saveInDB() {
-    save();
-    READER.checkOrCreateSampleFile(this);
-  }
-  
 }

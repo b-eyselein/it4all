@@ -39,8 +39,8 @@ public class Web extends ExerciseController {
   private static final List<String> ALLOWED_TYPES = Arrays.asList("html", "js");
 
   @Inject
-  public Web(Util theUtil, FormFactory theFactory) {
-    super(theUtil, theFactory);
+  public Web(FormFactory theFactory) {
+    super(theFactory, "web");
   }
 
   public static User getUser() {

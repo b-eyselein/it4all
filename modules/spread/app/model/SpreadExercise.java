@@ -17,10 +17,4 @@ public class SpreadExercise extends Exercise {
     super(theId);
   }
 
-  @Override
-  public void saveInDB() {
-    save();
-    // exerciseReader.checkFiles(util, ex);
-  }
-
 }

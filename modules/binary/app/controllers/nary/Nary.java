@@ -7,7 +7,6 @@ import model.NAryAdditionQuestion;
 import model.NAryConversionQuestion;
 import model.NumberBase;
 import model.StringConsts;
-import model.Util;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.mvc.Result;
@@ -18,8 +17,8 @@ public class Nary extends ExerciseController {
   private static final String BASE = "base";
 
   @Inject
-  public Nary(Util theUtil, FormFactory theFactory) {
-    super(theUtil, theFactory);
+  public Nary(FormFactory theFactory) {
+    super(theFactory, "nary");
   }
 
   public Result checkNaryAdditionSolution() {
