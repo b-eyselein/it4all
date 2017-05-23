@@ -17,7 +17,8 @@ import model.task.JsWebTask;
 @Entity
 public class WebExercise extends Exercise {
 
-  public static final Finder<Integer, WebExercise> finder = new Finder<>(WebExercise.class);
+  public static final com.avaje.ebean.Model.Finder<Integer, WebExercise> finder = new com.avaje.ebean.Model.Finder<>(
+      WebExercise.class);
 
   @Column(columnDefinition = "text")
   public String htmlText;
@@ -39,6 +40,16 @@ public class WebExercise extends Exercise {
 
   public WebExercise(int theId) {
     super(theId);
+  }
+
+  @JsonIgnore
+  public static long withHtmlPart() {
+    return finder.all().stream().filter(ex -> !ex.htmlTasks.isEmpty()).count();
+  }
+
+  @JsonIgnore
+  public static long withJsPart() {
+    return finder.all().stream().filter(ex -> !ex.jsTasks.isEmpty()).count();
   }
 
   public List<String> getHtmlText() {

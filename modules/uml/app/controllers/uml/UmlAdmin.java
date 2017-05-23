@@ -41,7 +41,7 @@ public class UmlAdmin extends AbstractAdminController<UmlExercise, UmlExerciseRe
       return ok("error");
     }
 
-    Optional<ProcessingReport> report = JsonWrapper.validateJson(solNode, UML.SOLUTION_SCHEMA_NODE);
+    Optional<ProcessingReport> report = JsonWrapper.validateJson(solNode, Uml.SOLUTION_SCHEMA_NODE);
 
     if(!report.isPresent())
       return ok("error");
@@ -52,30 +52,13 @@ public class UmlAdmin extends AbstractAdminController<UmlExercise, UmlExerciseRe
   }
 
   @Override
-  public Result index() {
-    return ok(views.html.umlAdmin.index.render(getUser()));
+  public UmlExercise getNew(int id) {
+    return new UmlExercise(id);
   }
 
   @Override
-  public Result newExercise() {
-    DynamicForm form = factory.form().bindFromRequest();
-
-    String title = form.get(StringConsts.TITLE_NAME);
-
-    // Search exercise with same title, override!
-    UmlExercise newExercise = finder.where().eq(StringConsts.TITLE_NAME, title).findUnique();
-    if(newExercise == null)
-      newExercise = new UmlExercise(findMinimalNotUsedId(finder));
-
-    newExercise.title = title;
-    newExercise.text = form.get(StringConsts.TEXT_NAME);
-    newExercise.classSelText = form.get("classSelText");
-    newExercise.diagDrawText = form.get("diagDrawText");
-    newExercise.solution = form.get("solution");
-
-    // newExercise.save();
-
-    return ok(views.html.umlAdmin.newExerciseCreated.render(getUser(), newExercise));
+  public Result index() {
+    return ok(views.html.umlAdmin.index.render(getUser()));
   }
 
   @Override
@@ -141,8 +124,13 @@ public class UmlAdmin extends AbstractAdminController<UmlExercise, UmlExerciseRe
   }
 
   @Override
-  public Result uploadForm() {
-    return ok("TODO!");
+  protected void initRemainingExFromForm(DynamicForm form, UmlExercise exercise) {
+    exercise.classSelText = form.get("classSelText");
+    exercise.diagDrawText = form.get("diagDrawText");
+    exercise.solution = form.get("solution");
+
+    // return ok(views.html.umlAdmin.newExerciseCreated.render(getUser(),
+    // newExercise));
   }
 
 }

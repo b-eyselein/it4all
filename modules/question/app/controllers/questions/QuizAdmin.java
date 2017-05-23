@@ -21,6 +21,11 @@ public class QuizAdmin extends AbstractAdminController<Quiz, QuizReader> {
   }
 
   @Override
+  public Quiz getNew(int id) {
+    return new Quiz(id);
+  }
+
+  @Override
   public Result index() {
     // TODO Auto-generated method stub
     return null;
@@ -62,9 +67,9 @@ public class QuizAdmin extends AbstractAdminController<Quiz, QuizReader> {
   }
 
   @Override
-  public Result uploadForm() {
+  protected void initRemainingExFromForm(DynamicForm form, Quiz exercise) {
     // TODO Auto-generated method stub
-    return null;
+
   }
 
 }

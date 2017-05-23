@@ -1,25 +1,24 @@
-# creation of exercises
-GET    /upload                controllers.sql.SqlAdmin.uploadForm()
-POST   /upload                controllers.sql.SqlAdmin.uploadFile()
+# Administrator
+GET    /admin            controllers.sql.SqlAdmin.index()
 
-GET    /jsonSchema            controllers.sql.SqlAdmin.getJSONSchemaFile()
-GET    /import                controllers.sql.SqlAdmin.importExercises()
-GET    /export                controllers.sql.SqlAdmin.exportExercises()
+GET    /jsonSchema       controllers.sql.SqlAdmin.getJSONSchemaFile()
+POST   /upload           controllers.sql.SqlAdmin.uploadFile()
 
-GET    /admin                 controllers.sql.SqlAdmin.index()
-GET    /admin/:id             controllers.sql.SqlAdmin.scenarioAdmin(id: Int)
+GET    /import           controllers.sql.SqlAdmin.importExercises()
+GET    /export           controllers.sql.SqlAdmin.exportExercises()
 
+GET    /admin/:id        controllers.sql.SqlAdmin.scenarioAdmin(id: Int)
 
-GET    /scenarioes            controllers.sql.Sql.scenarioes()
-GET    /scenarioes/new        controllers.sql.SqlAdmin.newScenarioForm()
-POST   /scenarioes/new        controllers.sql.SqlAdmin.newScenario()
+GET    /scenarioes       controllers.sql.Sql.scenarioes()
+GET    /scenarioes/new   controllers.sql.SqlAdmin.newScenarioForm()
+POST   /scenarioes/new   controllers.sql.SqlAdmin.newScenario()
 
-GET    /scenarioes/:id        controllers.sql.Sql.scenario(id: Int)
+GET    /scenarioes/:id   controllers.sql.Sql.scenario(id: Int)
 
-# exercises
-GET    /                      controllers.sql.Sql.index()
-GET    /:scenarioId/:exType   controllers.sql.Sql.filteredScenario(scenarioId: Int, exType: String, start: Int ?= 0)
-GET    /:id                   controllers.sql.Sql.exercise(id: Int)
+# All
+GET    /                 controllers.sql.Sql.index()
+GET    /:scId/:exType    controllers.sql.Sql.filteredScenario(scId: Int, exType: String, start: Int ?= 0)
+GET    /:id              controllers.sql.Sql.exercise(id: Int)
 
-PUT    /:id                   controllers.sql.Sql.correctLive(id: Int)
-POST   /:id                   controllers.sql.Sql.correct(id: Int)
+PUT    /:id              controllers.sql.Sql.correctLive(id: Int)
+POST   /:id              controllers.sql.Sql.correct(id: Int)

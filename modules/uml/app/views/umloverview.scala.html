@@ -8,7 +8,8 @@
   
   <div class="alert alert-info alert-dismissable">
     <a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-    Neueinsteiger sollten die Variante mit Zwischenkorrektur verwenden, die die einzelnen Schritte der Erstellung eines Klassendiagrammes nach und nach durcharbeitet.
+    Neueinsteiger sollten die Variante mit Zwischenkorrektur verwenden, die die einzelnen Schritte der Erstellung eines 
+    Klassendiagrammes nach und nach durcharbeitet.
   </div>
   
   <table class="table">
@@ -27,10 +28,10 @@
         <td>@exercise.id</td>
         <td>@exercise.title</td>
         <td>
-          <a href="@controllers.uml.routes.UML.classSelection(exercise.id)" class="btn btn-primary btn-block">Mit Zwischenkorrektur</a>
+          <a href="@uml.routes.Uml.classSelection(exercise.id)" class="btn btn-primary btn-block">Mit Zwischenkorrektur</a>
         </td>
         <td>
-          <a href="@*@controllers.uml.routes.UML.diagramDrawing(exercise.id)*@" disabled class="btn btn-default btn-block">Freies Erstellen</a>
+          <a href="@*@uml.routes.UML.diagramDrawing(exercise.id)*@" disabled class="btn btn-default btn-block">Freies Erstellen</a>
         </td>
         <td>--</td>
     }

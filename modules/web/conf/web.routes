@@ -1,31 +1,32 @@
-# creation of exercises
-GET    /upload                   controllers.web.WebAdmin.uploadForm()
-POST   /upload                   controllers.web.WebAdmin.uploadFile()
+# Administrator
+GET    /admin           controllers.web.WebAdmin.index()
 
-GET    /jsonSchema               controllers.web.WebAdmin.getJSONSchemaFile()
-GET    /import                   controllers.web.WebAdmin.importExercises()
-GET    /export                   controllers.web.WebAdmin.exportExercises()
+GET    /jsonSchema      controllers.web.WebAdmin.getJSONSchemaFile()
+POST   /upload          controllers.web.WebAdmin.uploadFile()
 
-# playground
-GET    /playground               controllers.web.Web.playground()
+GET    /import          controllers.web.WebAdmin.importExercises()
+GET    /export          controllers.web.WebAdmin.exportExercises()
 
-# admin
-GET    /admin/                   controllers.web.WebAdmin.index()
+GET    /new             controllers.web.WebAdmin.newExerciseForm()
+POST   /new             controllers.web.WebAdmin.newExercise()
 
-# exercises
-GET    /                         controllers.web.Web.index()
+# All
+GET    /                controllers.web.Web.index()
 
-GET    /exercises                controllers.web.Web.exercises()
+GET    /playground      controllers.web.Web.playground()
 
-GET    /:id/:type                controllers.web.Web.exercise(id: Int, type: String)
 
-PUT    /web/:id                  controllers.web.Web.correctWebLive(id: Int)
-POST   /web/:id                  controllers.web.Web.correctWeb(id: Int)
+GET    /exercises       controllers.web.Web.exercises()
 
-PUT    /js/:id                   controllers.web.Web.correctJsLive(id: Int)
-POST   /js/:id                   controllers.web.Web.correctJs(id: Int)
+GET    /:id/:type       controllers.web.Web.exercise(id: Int, type: String)
 
-GET    /solution/:username/:id   controllers.web.Solution.site(username: String, id: Int)
+PUT    /web/:id         controllers.web.Web.correctWebLive(id: Int)
+POST   /web/:id         controllers.web.Web.correctWeb(id: Int)
+
+PUT    /js/:id          controllers.web.Web.correctJsLive(id: Int)
+POST   /js/:id          controllers.web.Web.correctJs(id: Int)
+
+GET    /sol/:user/:id   controllers.web.Solution.site(user: String, id: Int)
 
 
 

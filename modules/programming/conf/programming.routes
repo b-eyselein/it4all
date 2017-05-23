@@ -1,13 +1,13 @@
-# creation of exercises
-GET    /upload               controllers.programming.ProgAdmin.uploadForm()
-POST   /upload               controllers.programming.ProgAdmin.uploadFile()
+# Administrator
+GET    /admin                controllers.programming.ProgAdmin.index()
 
 GET    /jsonSchema           controllers.programming.ProgAdmin.getJSONSchemaFile()
+POST   /upload               controllers.programming.ProgAdmin.uploadFile()
+
 GET    /import               controllers.programming.ProgAdmin.importExercises()
 GET    /export               controllers.programming.ProgAdmin.exportExercises()
 
-GET    /admin                controllers.programming.ProgAdmin.index()
-
+# All
 GET    /                     controllers.programming.Prog.index()
 GET    /exercises            controllers.programming.Prog.exercises()
 

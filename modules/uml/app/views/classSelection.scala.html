@@ -2,7 +2,7 @@
 
 @main("UML", user) {
 <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/uml.css")">
-<script src="@controllers.routes.Assets.versioned("javascripts/uml/uml.js")"></script>
+<script src="@routes.Assets.versioned("javascripts/uml/uml.js")"></script>
 
 <div class="container">
   <div class="page-header">
@@ -49,7 +49,7 @@
   
   <hr>
     
-  <form action="@controllers.uml.routes.UML.correctClassSelection(exercise.id)" method="post"
+  <form action="@uml.routes.Uml.correctClassSelection(exercise.id)" method="post"
     onsubmit="return prepareFormForSubmitting();">
     <input type="hidden" class="form-control" name="learnerSolution" id="learnerSolution" required>
     <button type="submit" class="btn btn-primary btn-block">Klassen verifizieren</button>

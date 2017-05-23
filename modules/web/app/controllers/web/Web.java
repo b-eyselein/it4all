@@ -12,7 +12,6 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import controllers.core.ExerciseController;
 import model.StringConsts;
-import model.Util;
 import model.WebExercise;
 import model.WebSolution;
 import model.WebSolutionKey;
@@ -29,7 +28,7 @@ import play.mvc.Result;
 
 public class Web extends ExerciseController {
 
-  private static final String STANDARD_HTML = "<!doctype html>\n<html>\n\n<head>\n</head>\n\n<body>\n</body>\n\n</html>";
+  public static final String STANDARD_HTML = "<!doctype html>\n<html>\n<head>\n  \n</head>\n<body>\n  \n</body>\n</html>";
 
   public static final String STANDARD_HTML_PLAYGROUND = "<!doctype html>\n<html>\n<head>\n"
       + "<style>\n/* Css-Anweisungen */\n\n</style>\n"

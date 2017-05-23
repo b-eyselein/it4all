@@ -1,16 +1,37 @@
-# creation of exercises
-GET    /upload                     controllers.questions.QuestionAdmin.uploadForm()
+# Administrator
+GET    /admin                      controllers.questions.QuestionAdmin.index()
+
+# Admin Questions
+GET    /jsonSchema                 controllers.questions.QuestionAdmin.getJSONSchemaFile()
 POST   /upload                     controllers.questions.QuestionAdmin.uploadFile()
 
-GET    /                           controllers.questions.QuestionController.index()
-
-# Questions
-GET    /jsonSchema                 controllers.questions.QuestionAdmin.getJSONSchemaFile()
 GET    /export                     controllers.questions.QuestionAdmin.exportExercises()
 GET    /import                     controllers.questions.QuestionAdmin.importExercises()
 
-GET    /questions                  controllers.questions.QuestionController.questions()
+GET    /freetext/grade             controllers.questions.QuestionAdmin.gradeFreetextAnswers()
+GET    /freetext/grade/:id/:user   controllers.questions.QuestionAdmin.gradeFreetextAnswer(id: Int, user: String)
 
+GET    /notAssigned                controllers.questions.QuestionAdmin.notAssignedQuestions()
+GET    /assign                     controllers.questions.QuestionAdmin.assignQuestionsForm()
+POST   /assign                     controllers.questions.QuestionAdmin.assignQuestions()
+
+GET    /assign/:id                 controllers.questions.QuestionAdmin.assignQuestionsSingleForm(id: Int)
+
+# Admin Quiz
+GET    /quizzes/jsonSchema         controllers.questions.QuizAdmin.getJSONSchemaFile()
+POST   /quizzes/upload             controllers.questions.QuizAdmin.uploadFile()
+
+GET    /quizzes/export             controllers.questions.QuizAdmin.exportExercises()
+GET    /quizzes/import             controllers.questions.QuizAdmin.importExercises()
+
+GET    /quizzes/new                controllers.questions.QuizAdmin.newExerciseForm()
+POST   /quizzes/new                controllers.questions.QuizAdmin.newExercise()
+
+
+# All
+GET    /                           controllers.questions.QuestionController.index()
+
+GET    /questions                  controllers.questions.QuestionController.questions()
 
 GET    /new/:isFreetext            controllers.questions.QuestionController.newQuestionForm(isFreetext: Boolean)
 POST   /new/:isFreetext            controllers.questions.QuestionController.newQuestion(isFreetext: Boolean)
@@ -18,8 +39,6 @@ POST   /new/:isFreetext            controllers.questions.QuestionController.newQ
 GET    /edit/:id/:isFreetext       controllers.questions.QuestionController.editQuestionForm(id: Int, isFreetext: Boolean)
 POST   /edit/:id/:isFreetext       controllers.questions.QuestionController.editQuestion(id: Int, isFreetext: Boolean)
 
-GET    /freetext/grade             controllers.questions.QuestionAdmin.gradeFreetextAnswers()
-GET    /freetext/grade/:id/:user   controllers.questions.QuestionAdmin.gradeFreetextAnswer(id: Int, user: String)
 
 GET    /freetext/:id               controllers.questions.QuestionController.freetextQuestion(id: Int)
 POST   /freetext/:id               controllers.questions.QuestionController.freetextQuestionResult(id: Int)
@@ -30,22 +49,6 @@ POST   /answer/:id                 controllers.questions.QuestionController.ques
 
 # Quizzes
 GET    /quizzes                    controllers.questions.QuestionController.quizzes()
-
-GET    /quizzes/new                controllers.questions.QuizAdmin.newExerciseForm()
-POST   /quizzes/new                controllers.questions.QuizAdmin.newExercise()
-
-GET    /quizzes/jsonSchema         controllers.questions.QuizAdmin.getJSONSchemaFile()
-GET    /quizzes/export             controllers.questions.QuizAdmin.exportExercises()
-GET    /quizzes/import             controllers.questions.QuizAdmin.importExercises()
-
-
-GET    /admin                      controllers.questions.QuestionAdmin.index()
-
-GET    /notAssigned                controllers.questions.QuestionAdmin.notAssignedQuestions()
-GET    /assign                     controllers.questions.QuestionAdmin.assignQuestionsForm()
-POST   /assign                     controllers.questions.QuestionAdmin.assignQuestions()
-
-GET    /assign/:id                 controllers.questions.QuestionAdmin.assignQuestionsSingleForm(id: Int)
 
 GET    /quiz/:id                   controllers.questions.QuestionController.quiz(id: Int)
 

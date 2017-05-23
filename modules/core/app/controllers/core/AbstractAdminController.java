@@ -6,17 +6,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.List;
 
 import com.avaje.ebean.Model.Finder;
 
 import model.AdminSecured;
+import model.StringConsts;
 import model.exercise.Exercise;
 import model.exercisereading.AbstractReadingResult;
 import model.exercisereading.ExerciseReader;
 import model.exercisereading.ReadingError;
 import model.exercisereading.ReadingResult;
 import play.Logger;
+import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
 import play.mvc.Http.MultipartFormData;
@@ -63,6 +66,8 @@ public abstract class AbstractAdminController<E extends Exercise, R extends Exer
     return ok(Paths.get(resourcesPath.toString(), "exerciseSchema.json").toFile());
   }
 
+  public abstract E getNew(int id);
+
   public Result importExercises() {
     AbstractReadingResult<E> abstractResult = exerciseReader.readStandardExercises();
 
@@ -77,7 +82,28 @@ public abstract class AbstractAdminController<E extends Exercise, R extends Exer
 
   public abstract Result index();
 
-  public abstract Result newExercise();
+  public E initFromForm(DynamicForm form) {
+    String title = form.get(StringConsts.TITLE_NAME);
+
+    E exercise = findByTitle(title);
+    if(exercise == null)
+      exercise = getNew(findMinimalNotUsedId(finder));
+
+    // TODO: evtl. author, title, text auslagern, da für alle Aufgaben gleich?
+    exercise.author = form.get(StringConsts.AUTHOR_NAME);
+    exercise.text = form.get(StringConsts.TEXT_NAME);
+    exercise.title = form.get(StringConsts.TITLE_NAME);
+
+    initRemainingExFromForm(form, exercise);
+
+    return exercise;
+  }
+  
+  public Result newExercise() {
+    E exercise = initFromForm(factory.form().bindFromRequest());
+    exerciseReader.saveExercise(exercise);
+    return ok(views.html.preview.render(getUser(), renderCreated(Arrays.asList(exercise))));
+  }
 
   public abstract Result newExerciseForm();
 
@@ -107,6 +133,10 @@ public abstract class AbstractAdminController<E extends Exercise, R extends Exer
     return ok(views.html.preview.render(getUser(), renderCreated(result.getRead())));
   }
 
-  public abstract Result uploadForm();
+  protected E findByTitle(String title) {
+    return finder.where().eq(StringConsts.TITLE_NAME, title).findUnique();
+  }
+
+  protected abstract void initRemainingExFromForm(DynamicForm form, E exercise);
 
 }

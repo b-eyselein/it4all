@@ -21,6 +21,11 @@ public class SqlAdmin extends AbstractAdminController<SqlScenario, SqlExerciseRe
   }
 
   @Override
+  public SqlScenario getNew(int id) {
+    return new SqlScenario(id);
+  }
+
+  @Override
   public Result index() {
     return ok(views.html.sqlAdmin.index.render(getUser()));
   }
@@ -68,8 +73,9 @@ public class SqlAdmin extends AbstractAdminController<SqlScenario, SqlExerciseRe
   }
 
   @Override
-  public Result uploadForm() {
-    return ok(views.html.sqlupload.render(getUser()));
+  protected void initRemainingExFromForm(DynamicForm form, SqlScenario exercise) {
+    // TODO Auto-generated method stub
+
   }
 
 }

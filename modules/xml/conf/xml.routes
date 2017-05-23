@@ -1,23 +1,22 @@
-# creation of exercises
-GET    /upload       controllers.xml.XmlAdmin.uploadForm()
-POST   /upload       controllers.xml.XmlAdmin.uploadFile()
+# Administrator
+GET    /admin        controllers.xml.XmlAdmin.index()
 
 GET    /jsonSchema   controllers.xml.XmlAdmin.getJSONSchemaFile()
+POST   /upload       controllers.xml.XmlAdmin.uploadFile()
+
 GET    /import       controllers.xml.XmlAdmin.importExercises()
 GET    /export       controllers.xml.XmlAdmin.exportExercises()
 
-GET    /admin        controllers.xml.XmlAdmin.index()
+GET    /new          controllers.xml.XmlAdmin.newExerciseForm()
+POST   /new          controllers.xml.XmlAdmin.newExercise()
+
+# All
+GET    /             controllers.xml.Xml.index(filter: java.util.List[String] ?= java.util.Collections.emptyList())
 
 GET    /playground   controllers.xml.Xml.playground()
 PUT    /playground   controllers.xml.Xml.playgroundCorrection()
 
 GET    /exercises    controllers.xml.Xml.exercises()
-
-GET    /new          controllers.xml.XmlAdmin.newExerciseForm()
-POST   /new          controllers.xml.XmlAdmin.newExercise()
-
-# exercises
-GET    /index        controllers.xml.Xml.index(filter: java.util.List[String] ?= java.util.Collections.emptyList())
 
 GET    /:id          controllers.xml.Xml.exercise(id: Int)
 

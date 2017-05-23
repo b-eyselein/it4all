@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import controllers.core.AbstractAdminController;
 import model.SpreadExercise;
 import model.SpreadExerciseReader;
+import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.mvc.Result;
 import play.twirl.api.Html;
@@ -16,6 +17,11 @@ public class SpreadAdmin extends AbstractAdminController<SpreadExercise, SpreadE
   @Inject
   public SpreadAdmin(FormFactory theFactory) {
     super(theFactory, SpreadExercise.finder, "spread", new SpreadExerciseReader());
+  }
+
+  @Override
+  public SpreadExercise getNew(int id) {
+    return new SpreadExercise(id);
   }
 
   @Override
@@ -42,8 +48,9 @@ public class SpreadAdmin extends AbstractAdminController<SpreadExercise, SpreadE
   }
 
   @Override
-  public Result uploadForm() {
-    return ok(views.html.spreadupload.render(getUser()));
+  protected void initRemainingExFromForm(DynamicForm form, SpreadExercise exercise) {
+    // TODO Auto-generated method stub
+
   }
 
 }

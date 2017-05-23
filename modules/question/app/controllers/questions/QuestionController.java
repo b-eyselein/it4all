@@ -14,7 +14,6 @@ import model.QuestionResult;
 import model.QuestionUser;
 import model.Quiz;
 import model.StringConsts;
-import model.Util;
 import model.question.Answer;
 import model.question.AnswerKey;
 import model.question.Correctness;

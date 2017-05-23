@@ -1,35 +1,35 @@
-GET    /                                   controllers.uml.UML.index()
-
 # Administrator
-GET    /admin                              controllers.uml.UmlAdmin.index()
+GET    /admin                           controllers.uml.UmlAdmin.index()
 
-# creation of exercises
-GET    /upload                             controllers.uml.UmlAdmin.uploadForm()
-POST   /upload                             controllers.uml.UmlAdmin.uploadFile()
+GET    /jsonSchema                      controllers.uml.UmlAdmin.getJSONSchemaFile()
+POST   /upload                          controllers.uml.UmlAdmin.uploadFile()
 
-GET    /jsonSchema                         controllers.uml.UmlAdmin.getJSONSchemaFile()
-GET    /import                             controllers.uml.UmlAdmin.importExercises()
-GET    /export                             controllers.uml.UmlAdmin.exportExercises()
+GET    /import                          controllers.uml.UmlAdmin.importExercises()
+GET    /export                          controllers.uml.UmlAdmin.exportExercises()
 
-GET    /newExercise/form                   controllers.uml.UmlAdmin.newExerciseForm()
-POST   /newExercise/text                   controllers.uml.UmlAdmin.newExerciseStep2()
-POST   /newExercise/solution               controllers.uml.UmlAdmin.newExerciseStep3()
-POST   /newExercise                        controllers.uml.UmlAdmin.newExercise()
+GET    /newEx/form                      controllers.uml.UmlAdmin.newExerciseForm()
+POST   /newEx/text                      controllers.uml.UmlAdmin.newExerciseStep2()
+POST   /newEx/solution                  controllers.uml.UmlAdmin.newExerciseStep3()
+POST   /newEx/create                    controllers.uml.UmlAdmin.newExercise()
 
-PUT    /newExercise/checkSolution          controllers.uml.UmlAdmin.checkSolution()
+PUT    /newEx/checkSolution             controllers.uml.UmlAdmin.checkSolution()
+
+# All
+GET    /                                controllers.uml.Uml.index()
+
 
 # Step 1: selection of classes
-GET    /:exId/classSelection               controllers.uml.UML.classSelection(exId: Int)
-POST   /:exId/correct/classselection       controllers.uml.UML.correctClassSelection(exId: Int)
+GET    /:exId/classSelection            controllers.uml.Uml.classSelection(exId: Int)
+POST   /:exId/corr/classselection       controllers.uml.Uml.correctClassSelection(exId: Int)
 
 # Step 2: finalization of diagram
-GET    /:exId/diagramDrawinghelp           controllers.uml.UML.diagramDrawingWithHelp(exId: Int)
-POST   /:exId/correct/diagramDrawingHelp   controllers.uml.UML.correctDiagramDrawingWithHelp(exId: Int)
+GET    /:exId/diagramDrawinghelp        controllers.uml.Uml.diagramDrawingWithHelp(exId: Int)
+POST   /:exId/corr/diagramDrawingHelp   controllers.uml.Uml.correctDiagramDrawingWithHelp(exId: Int)
 
 # Complete drawing of diagram without any help
-GET    /:exId/diagramDrawing               controllers.uml.UML.diagramDrawing(exId: Int)
-POST   /:exId/correct/diagramDrawing       controllers.uml.UML.correctDiagramDrawing(exId: Int)
+GET    /:exId/diagramDrawing            controllers.uml.Uml.diagramDrawing(exId: Int)
+POST   /:exId/corr/diagramDrawing       controllers.uml.Uml.correctDiagramDrawing(exId: Int)
 
 # Test Matching of attrs and methods
-GET    /:exId/matching                     controllers.uml.UML.matching(exId: Int)
-POST   /:exId/correct/matching             controllers.uml.UML.correctMatching(exId: Int)
+GET    /:exId/matching                  controllers.uml.Uml.matching(exId: Int)
+POST   /:exId/corr/matching             controllers.uml.Uml.correctMatching(exId: Int)
