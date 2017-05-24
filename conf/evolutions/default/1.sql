@@ -33,6 +33,20 @@ create table conditions (
   constraint pk_conditions primary key (exercise_id,task_id,condition_id)
 );
 
+create table course (
+  id                            integer auto_increment not null,
+  name                          varchar(255),
+  constraint pk_course primary key (id)
+);
+
+create table course_role (
+  user_name                     varchar(255) not null,
+  course_id                     integer not null,
+  role                          varchar(10),
+  constraint ck_course_role_role check ( role in ('USER','ADMIN','SUPERADMIN')),
+  constraint pk_course_role primary key (user_name,course_id)
+);
+
 create table feedback (
   user                          varchar(255) not null,
   tool                          varchar(5) not null,
@@ -96,6 +110,12 @@ create table js_web_task (
   keys_to_send                  varchar(255),
   constraint ck_js_web_task_actiontype check ( actiontype in ('CLICK','FILLOUT')),
   constraint pk_js_web_task primary key (task_id,exercise_id)
+);
+
+create table mapping (
+  key                           varchar(255),
+  mapped_to                     varchar(255),
+  exercise_id                   integer
 );
 
 create table prog_exercise (
@@ -203,9 +223,9 @@ create table uml_implementation (
 
 create table users (
   name                          varchar(255) not null,
-  role                          varchar(5),
+  std_role                      varchar(10),
   todo                          varchar(9),
-  constraint ck_users_role check ( role in ('USER','ADMIN')),
+  constraint ck_users_std_role check ( std_role in ('USER','ADMIN','SUPERADMIN')),
   constraint ck_users_todo check ( todo in ('SHOW','AGGREGATE','HIDE')),
   constraint pk_users primary key (name)
 );
@@ -257,6 +277,12 @@ create index ix_commited_test_data_exercise_id on commited_test_data (exercise_i
 alter table conditions add constraint fk_conditions_task foreign key (task_id,exercise_id) references js_web_task (task_id,exercise_id) on delete restrict on update restrict;
 create index ix_conditions_task on conditions (task_id,exercise_id);
 
+alter table course_role add constraint fk_course_role_user_name foreign key (user_name) references users (name) on delete restrict on update restrict;
+create index ix_course_role_user_name on course_role (user_name);
+
+alter table course_role add constraint fk_course_role_course_id foreign key (course_id) references course (id) on delete restrict on update restrict;
+create index ix_course_role_course_id on course_role (course_id);
+
 alter table freetext_answer add constraint fk_freetext_answer_username foreign key (username) references question_user (name) on delete restrict on update restrict;
 create index ix_freetext_answer_username on freetext_answer (username);
 
@@ -268,6 +294,9 @@ create index ix_html_task_exercise_id on html_task (exercise_id);
 
 alter table js_web_task add constraint fk_js_web_task_exercise_id foreign key (exercise_id) references web_exercise (id) on delete restrict on update restrict;
 create index ix_js_web_task_exercise_id on js_web_task (exercise_id);
+
+alter table mapping add constraint fk_mapping_exercise_id foreign key (exercise_id) references uml_exercise (id) on delete restrict on update restrict;
+create index ix_mapping_exercise_id on mapping (exercise_id);
 
 alter table question_rating add constraint fk_question_rating_question_id foreign key (question_id) references given_answer_question (id) on delete restrict on update restrict;
 create index ix_question_rating_question_id on question_rating (question_id);
@@ -305,6 +334,12 @@ drop index ix_commited_test_data_exercise_id on commited_test_data;
 alter table conditions drop foreign key fk_conditions_task;
 drop index ix_conditions_task on conditions;
 
+alter table course_role drop foreign key fk_course_role_user_name;
+drop index ix_course_role_user_name on course_role;
+
+alter table course_role drop foreign key fk_course_role_course_id;
+drop index ix_course_role_course_id on course_role;
+
 alter table freetext_answer drop foreign key fk_freetext_answer_username;
 drop index ix_freetext_answer_username on freetext_answer;
 
@@ -316,6 +351,9 @@ drop index ix_html_task_exercise_id on html_task;
 
 alter table js_web_task drop foreign key fk_js_web_task_exercise_id;
 drop index ix_js_web_task_exercise_id on js_web_task;
+
+alter table mapping drop foreign key fk_mapping_exercise_id;
+drop index ix_mapping_exercise_id on mapping;
 
 alter table question_rating drop foreign key fk_question_rating_question_id;
 drop index ix_question_rating_question_id on question_rating;
@@ -344,6 +382,10 @@ drop table if exists commited_test_data;
 
 drop table if exists conditions;
 
+drop table if exists course;
+
+drop table if exists course_role;
+
 drop table if exists feedback;
 
 drop table if exists freetext_answer;
@@ -355,6 +397,8 @@ drop table if exists given_answer_question;
 drop table if exists html_task;
 
 drop table if exists js_web_task;
+
+drop table if exists mapping;
 
 drop table if exists prog_exercise;
 

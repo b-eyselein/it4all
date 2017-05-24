@@ -12,6 +12,7 @@ import model.feedback.Feedback;
 import model.feedback.Feedback.EvaluatedTool;
 import model.feedback.Mark;
 import model.feedback.YesNoMaybe;
+import model.user.User;
 import play.data.FormFactory;
 import play.mvc.Result;
 
@@ -41,6 +42,10 @@ public class AdminController extends AbstractController {
   
   public Result index() {
     return ok(views.html.admin.render(getUser()));
+  }
+  
+  public Result users() {
+    return ok(views.html.users.render(getUser(), User.finder.all()));
   }
   
   private String evaluate(EvaluatedTool key, List<Feedback> feedbackForTool) {

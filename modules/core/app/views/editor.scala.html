@@ -1,6 +1,6 @@
 @(template: String, mode: String, minLines: Int, maxLines: Int, updatePrev: Boolean)
 
-<script src="@controllers.routes.Assets.versioned("javascripts/ace/ace.js")"></script>
+<script src="@routes.Assets.versioned("javascripts/ace/ace.js")"></script>
 <script>
 $(document).ready(function() {
   initEditor("@mode", @minLines, @maxLines);

@@ -7,7 +7,7 @@ import java.util.List;
 import com.avaje.ebean.Model.Finder;
 
 import model.StringConsts;
-import model.exercise.Exercise;
+import model.WithId;
 import model.user.User;
 import play.data.FormFactory;
 import play.mvc.Controller;
@@ -33,7 +33,7 @@ public abstract class AbstractController extends Controller {
     return User.finder.byId(getUsername());
   }
 
-  protected static <T extends Exercise> int findMinimalNotUsedId(Finder<Integer, T> finder) {
+  protected static <T extends WithId> int findMinimalNotUsedId(Finder<Integer, T> finder) {
     // FIXME: this is probably a ugly hack...
     List<T> questions = finder.order().asc("id").findList();
 
@@ -41,10 +41,10 @@ public abstract class AbstractController extends Controller {
       return 1;
 
     for(int i = 0; i < questions.size() - 1; i++)
-      if(questions.get(i).id < questions.get(i + 1).id - 1)
-        return questions.get(i).id + 1;
+      if(questions.get(i).getId() < questions.get(i + 1).getId() - 1)
+        return questions.get(i).getId() + 1;
 
-    return questions.get(questions.size() - 1).id + 1;
+    return questions.get(questions.size() - 1).getId() + 1;
   }
 
   protected static String getUsername() {
@@ -58,7 +58,11 @@ public abstract class AbstractController extends Controller {
   }
 
   public Path getSolDirForUser() {
-    return Paths.get(BASE_DATA_PATH, SOLUTIONS_SUB_DIRECTORY, getUsername());
+    return getSolDirForUser(getUsername());
+  }
+
+  public Path getSolDirForUser(String username) {
+    return Paths.get(BASE_DATA_PATH, SOLUTIONS_SUB_DIRECTORY, username);
   }
 
   protected Path getSampleDir() {

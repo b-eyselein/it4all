@@ -6,20 +6,29 @@
     <h1>Administrator UML</h1>
   </div>
   
-  <div class="alert alert-info alert-dismissable">
-    <a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-    Es gibt insgesamt @model.UmlExercise.finder.all().size() &Uuml;bungen.
-  </div>
-  
-  <h2>Verwaltung der Fragen</h2>
-  <a class="btn btn-default btn-block" href="@uml.routes.Uml.index()">Übersicht über alle Fragen</a>
-  <a class="btn btn-default btn-block" href="@uml.routes.UmlAdmin.newExerciseForm()">Neue Aufgabe erstellen</a>
-  
+  <section id="statistics">
+    <ul>
+      <li>Es gibt insgesamt @model.UmlExercise.finder.all().size() Aufgaben</li>
+    </ul>
+  </section>
+
   <hr>
-  
-  <a class="btn btn-default btn-block" href="@uml.routes.UmlAdmin.exportExercises()">Fragen als JSON exportieren</a>
-  <a class="btn btn-default btn-block" href="@uml.routes.UmlAdmin.importExercises()">Standardaufgaben einlesen</a>
-  
+
+  <section id="administration">  
+    <h2>Verwaltung der Fragen</h2>
+    <a class="btn btn-default btn-block" href="@uml.routes.Uml.index()">Übersicht über alle Fragen</a>
+    
+    &nbsp;
+    
+    <a class="btn btn-default btn-block" href="@uml.routes.UmlAdmin.newExerciseForm()">Neue Aufgabe erstellen</a>
+    
+    &nbsp;
+    
+    <div class="btn-group btn-group-justified">
+      <a class="btn btn-default btn-block" href="@uml.routes.UmlAdmin.exportExercises()">Fragen als JSON exportieren</a>
+      <a class="btn btn-default btn-block" href="@uml.routes.UmlAdmin.importExercises()">Standardaufgaben einlesen</a>
+    </div>
+  </section>
   <hr>
     
   <div class="panel panel-default">

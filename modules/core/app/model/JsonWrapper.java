@@ -1,10 +1,10 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
@@ -20,21 +20,12 @@ public class JsonWrapper {
   }
 
   public static List<String> parseJsonArrayNode(JsonNode node) {
-    List<String> ret = new ArrayList<>(node.size());
-
-    for(JsonNode str: node)
-      ret.add(str.asText());
-
-    return ret;
+    return StreamSupport.stream(node.spliterator(), true).map(JsonNode::asText).collect(Collectors.toList());
   }
 
   public static Map<String, String> readKeyValueMap(JsonNode methodsNode) {
-    Map<String, String> ret = new HashMap<>(methodsNode.size());
-
-    for(JsonNode n: methodsNode)
-      ret.put(n.get("key").asText(), n.get("value").asText());
-
-    return ret;
+    return StreamSupport.stream(methodsNode.spliterator(), true).collect(
+        Collectors.toMap(n -> n.get(StringConsts.KEY_NAME).asText(), n -> n.get(StringConsts.VALUE_NAME).asText()));
   }
 
   public static Optional<ProcessingReport> validateJson(JsonNode exercisesNode, JsonNode exercisesSchemaNode) {

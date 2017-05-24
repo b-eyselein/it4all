@@ -1,4 +1,4 @@
-<!ELEMENT lecture (lecturer+, dates+, student+)>
+<!ELEMENT lecture (lecturer+, date+, student+)>
 
 <!ELEMENT lecturer (name)>
 <!ATTLIST lecturer title CDATA #REQUIRED>

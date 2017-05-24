@@ -48,17 +48,13 @@
           <!-- <li><a href="@mindmap.routes.Mindmap.index()">MindMap</a></li> -->
         </ul>
         <ul class="nav navbar-nav navbar-right">
-        @if(user.role == model.user.Role.ADMIN) {
+        @if(user.isAdmin()) {
           <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="">
               <span class="glyphicon glyphicon-cog"></span> Administrator <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
               <li><a href="@questions.routes.QuestionAdmin.index()">Auswahlfragen</a></li>
-              
-              <li class="divider"></li>
-              
-              <li><a href="@uml.routes.UmlAdmin.index()">UML</a></li>
  
               <li class="divider"></li>
              
@@ -66,12 +62,16 @@
  
               <li class="divider"></li>
               
-              <li><a href="@sql.routes.SqlAdmin.index()">SQL</a></li>
+              <li><a href="@sql.routes.SqlAdmin.index()">Sql</a></li>
+              
+              <li class="divider"></li>
+              
+              <li><a href="@uml.routes.UmlAdmin.index()">Uml</a></li>
               
               <li class="divider"></li>
              
               <li><a href="@web.routes.WebAdmin.index()">Web</a></li>
-              <li><a href="@xml.routes.XmlAdmin.index()">XML</a></li>
+              <li><a href="@xml.routes.XmlAdmin.index()">Xml</a></li>
               
               <li class="divider"></li>
               
@@ -92,7 +92,7 @@
               
               <li class="divider"></li>
                   
-              <li><a href="@core.routes.UserManagement.logout()"><span
+              <li><a href="@core.routes.LoginController.logout()"><span
                   class="glyphicon glyphicon-log-out"></span> Logout</a></li>
           	</ul>
           </li>

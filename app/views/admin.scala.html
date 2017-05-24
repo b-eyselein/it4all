@@ -9,48 +9,36 @@
   <section id="statistics">
     <h2>Statistiken</h2>
     <ul>
-      <li>Es sind momentan @model.user.User.finder.findCount() Nutzer registriert.</li>
+      <li>Es sind momentan @model.user.User.finder.findCount() <a href="@routes.AdminController.users()">Nutzer</a> registriert</li>
+      <li>Es existieren @model.user.Course.finder.findCount() Kurse</li>
     </ul>
   </section>
   
   <hr>
-  
-  <a class="btn btn-default btn-block" href="@questions.routes.QuestionAdmin.index()">Auswahlfragen</a>
-  
-  <a class="btn btn-default btn-block" href="@uml.routes.UmlAdmin.index()">UML</a>
-  
-  <a class="btn btn-default btn-block" href="@xml.routes.XmlAdmin.index()">XML</a>
-  
-  <a class="btn btn-default btn-block" href="@web.routes.WebAdmin.index()">Web</a>
-  
-  <a class="btn btn-default btn-block" href="@sql.routes.SqlAdmin.index()">SQL</a>
-  
-  <hr>
-  
-  <h2>Erstellung neuer Aufgaben</h2>
-  
-  <div class="row">
-    <div class="col-md-6">
-      <div class="panel panel-default">
-        <div class="panel-heading">Einlesen der Aufgaben in <code>conf/resources/...</code></div>
-        <div class="panel-body">
-          <a href="@programming.routes.ProgAdmin.importExercises()" type="button" class="btn btn-default btn-block">Javascript-Aufgaben</a>
-          <a href="@spread.routes.SpreadAdmin.importExercises()" type="button" class="btn btn-default btn-block">Tabellenkalulations-Aufgaben</a>
-          <a href="@xml.routes.XmlAdmin.importExercises()" type="button" class="btn btn-default btn-block">Xml-Aufgaben</a>
-        </div>
-      </div>
-    </div>
+
+  <section id="administration">
+    <h2>Verwaltung</h2>
+    <div class="row">
+      <section class="col-md-6" id="exercises">
+        <h3>Aufgaben</h3>
     
-    <div class="col-md-6">  
-      <div class="panel panel-default">
-        <div class="panel-heading">Upload neuer Aufgaben</div>
-        <div class="panel-body">
-          <a href="@@programming.routes.ProgAdmin.uploadForm()" type="button" class="btn btn-default btn-block">Javascript-Aufgaben</a>
-          <a href="@@spread.routes.SpreadAdmin.uploadForm()" type="button" class="btn btn-default btn-block">Tabellenkalkulations-Aufgaben</a>
-          <a href="@@xml.routes.XmlAdmin.uploadForm()" type="button" class="btn btn-default btn-block">Xml-Aufgaben</a>
-        </div>
-      </div>
+        <a class="btn btn-default btn-block" href="@questions.routes.QuestionAdmin.index()">Auswahlfragen</a>
+        <a class="btn btn-default btn-block" href="@programming.routes.ProgAdmin.index()">Programmierung</a>
+        <a class="btn btn-default btn-block" href="@sql.routes.SqlAdmin.index()">Sql</a>
+        <a class="btn btn-default btn-block" href="@spread.routes.SpreadAdmin.index()">Tabellenkalkulation</a>
+        <a class="btn btn-default btn-block" href="@uml.routes.UmlAdmin.index()">Uml</a>
+        <a class="btn btn-default btn-block" href="@web.routes.WebAdmin.index()">Web</a>
+        <a class="btn btn-default btn-block" href="@xml.routes.XmlAdmin.index()">Xml</a>
+      </section>
+  
+      <section class="col-md-6" id="courses">
+        <h3>Kurse</h3>
+        <a class="btn btn-primary btn-block" href="@routes.CourseAdminController.newCourseForm()">Neuen Kurs erstellen</a>
+        @for(course <- model.user.Course.finder.all()) {
+    	  <a class="btn btn-default btn-block" href="@routes.CourseAdminController.course(course.id)">@course.name</a>
+        }
+      </section>
     </div>
-  </div>
+  </section>
 </div>
 }

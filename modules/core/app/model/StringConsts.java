@@ -10,9 +10,15 @@ public class StringConsts {
   public static final String TEXT_NAME = "text";
   public static final String TITLE_NAME = "title";
   public static final String AUTHOR_NAME = "author";
-  
+
   public static final String FORM_VALUE = "learnerSolution";
-  
+
+  public static final String NAME_NAME = "name";
+
+  public static final String PASSWORD_NAME = "passwort";
+
+  public static final String VALUE_NAME = "value";
+
   private StringConsts() {
 
   }

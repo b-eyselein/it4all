@@ -1,7 +1,5 @@
 @(user: model.user.User, questionList: List[model.question.Question])
 
-@isAdmin = @{user.role == model.user.Role.ADMIN}
-
 @main("Auswahlfragen", user) {
 <div class="container">
   <div class="page-header">
@@ -26,7 +24,7 @@
     @for(question <- questionList) {
       <tr>
         <td>@question.id</td>
-        @if(isAdmin || user.name.equals(question.author)) {
+        @if(user.isAdmin() || user.name.equals(question.author)) {
       	<td>
           <a href="@questions.routes.QuestionController.editQuestionForm(question.id, question.isFreetext())" title="Frage editieren">
             <span class="glyphicon glyphicon-edit"></span></a>

@@ -1,7 +1,5 @@
 @(user: model.user.User, quizzes: List[model.Quiz])
 
-@isAdmin = @{user.role == model.user.Role.ADMIN}
-
 @main("Auswahlfragen", user) {
 <div class="container">
   <div class="page-header">
@@ -21,7 +19,7 @@
         <th>Titel</th>
         <th>Text</th>
         <th># Fragen</th>
-        @if(isAdmin) {<th/>}
+        @if(user.isAdmin()) {<th/>}
       </tr>
     </thead>
     <tbody>
@@ -31,7 +29,7 @@
         <td><a href="@questions.routes.QuestionController.quiz(quiz.id)">@quiz.title</a></td>
         <td>@quiz.text</td>
         <td>@quiz.questions.size()</td>
-        @if(isAdmin) {
+        @if(user.isAdmin()) {
         <td><a href="@questions.routes.QuestionAdmin.assignQuestionsSingleForm(quiz.id)">Fragen zuweisen...</a>
         }
       </tr>

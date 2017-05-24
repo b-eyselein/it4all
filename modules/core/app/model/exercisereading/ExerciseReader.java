@@ -81,8 +81,9 @@ public abstract class ExerciseReader<T extends Exercise> {
       return new ReadingError<>(Json.prettyPrint(json),
           StreamSupport.stream(report.get().spliterator(), false).collect(Collectors.toList()));
     
-    List<T> exercises = StreamSupport.stream(json.spliterator(), false).map(ex -> readExercise(ex))
+    List<T> exercises = StreamSupport.stream(json.spliterator(), false).map(this::readExercise)
         .collect(Collectors.toList());
+
     return new ReadingResult<>(Json.prettyPrint(json), exercises);
   }
   

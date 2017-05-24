@@ -86,7 +86,7 @@ public class QuestionController extends ExerciseController {
     else
       question = GivenAnswerQuestion.finder.byId(id);
 
-    if(question.author.equals(user.name) || user.role == Role.ADMIN)
+    if(question.author.equals(user.name) || user.stdRole == Role.ADMIN)
       return ok(views.html.editQuestionForm.render(user, question, true));
 
     return redirect(routes.QuestionController.index());

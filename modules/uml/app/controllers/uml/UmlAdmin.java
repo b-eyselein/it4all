@@ -1,10 +1,8 @@
 package controllers.uml;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -14,6 +12,7 @@ import com.github.fge.jsonschema.core.report.ProcessingReport;
 
 import controllers.core.AbstractAdminController;
 import model.JsonWrapper;
+import model.Mapping;
 import model.StringConsts;
 import model.UmlExTextParser;
 import model.UmlExercise;
@@ -71,7 +70,7 @@ public class UmlAdmin extends AbstractAdminController<UmlExercise, UmlExerciseRe
 
     String text = form.get(StringConsts.TEXT_NAME);
 
-    UmlExTextParser parser = new UmlExTextParser(text, Collections.emptyMap(), Collections.emptyList());
+    UmlExTextParser parser = new UmlExTextParser(text, Collections.emptyList(), Collections.emptyList());
 
     // exercise does not get saved, so take maximum id
     UmlExercise exercise = new UmlExercise(Integer.MAX_VALUE);
@@ -89,7 +88,7 @@ public class UmlAdmin extends AbstractAdminController<UmlExercise, UmlExerciseRe
     String text = form.get(StringConsts.TEXT_NAME);
 
     List<String> toIgnore = new LinkedList<>();
-    Map<String, String> mappings = new HashMap<>();
+    List<Mapping> mappings = new LinkedList<>();
 
     for(String capWord: UmlExTextParser.getCapitalizedWords(text)) {
       switch(form.get(capWord)) {
@@ -97,7 +96,7 @@ public class UmlAdmin extends AbstractAdminController<UmlExercise, UmlExerciseRe
         toIgnore.add(capWord);
         break;
       case "baseform":
-        mappings.put(capWord, form.get(capWord + "_baseform"));
+        mappings.add(new Mapping(capWord, form.get(capWord + "_baseform")));
         break;
       case "none":
       default:

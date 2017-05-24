@@ -1,153 +1,156 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema#",
-	"type": "array",
+	"$schema": "http://json-schema.org/draft-04/schema#", 
+	"type": "array", 
 	"items": {
-		"type": "object",
+		"type": "object", 
 		"properties": {
 			"id": {
 				"type": "integer"
-			},
+			}, 
 			"title": {
 				"type": "string"
-			},
+			}, 
 			"text": {
-				"type": "string"
-			},
-			"mappings": {
-				"type": "array",
+				"type": "array", 
 				"items": {
-					"type": "object",
+					"type": "string"
+				}
+			}, 
+			"mappings": {
+				"type": "array", 
+				"items": {
+					"type": "object", 
 					"properties": {
 						"key": {
 							"type": "string"
-						},
+						}, 
 						"value": {
 							"type": "string"
 						}
-					},
+					}, 
 					"required": [
-						"key",
+						"key", 
 						"value"
 					]
 				}
-			},
+			}, 
 			"solution": {
-				"type": "object",
+				"type": "object", 
 				"properties": {
 					"classes": {
-						"type": "array",
+						"type": "array", 
 						"items": {
-							"type": "object",
+							"type": "object", 
 							"properties": {
 								"classType": {
 									"enum": [
-										"CLASS",
-										"ABSTRACT",
+										"CLASS", 
+										"ABSTRACT", 
 										"INTERFACE"
 									]
-								},
+								}, 
 								"name": {
 									"type": "string"
-								},
+								}, 
 								"methods": {
-									"type": "array",
+									"type": "array", 
 									"items": {
 										"type": "string"
 									}
-								},
+								}, 
 								"attributes": {
-									"type": "array",
+									"type": "array", 
 									"items": {
 										"type": "string"
 									}
 								}
-							},
+							}, 
 							"required": [
-								"classType",
-								"name",
-								"methods",
+								"classType", 
+								"name", 
+								"methods", 
 								"attributes"
 							]
 						}
-					},
+					}, 
 					"implementations": {
-						"type": "array",
+						"type": "array", 
 						"items": {
-							"type": "object",
+							"type": "object", 
 							"properties": {
 								"subClass": {
 									"type": "string"
-								},
+								}, 
 								"superClass": {
 									"type": "string"
 								}
-							},
+							}, 
 							"required": [
-								"subClass",
+								"subClass", 
 								"superClass"
 							]
 						}
-					},
+					}, 
 					"associations": {
-						"type": "array",
+						"type": "array", 
 						"items": {
-							"type": "object",
+							"type": "object", 
 							"properties": {
 								"assocType": {
 									"enum": [
-										"ASSOCIATION",
-										"AGGREGATION",
+										"ASSOCIATION", 
+										"AGGREGATION", 
 										"COMPOSITION"
 									]
-								},
+								}, 
 								"ends": {
-									"type": "array",
+									"type": "array", 
 									"items": {
-										"type": "object",
+										"type": "object", 
 										"properties": {
 											"endName": {
 												"type": "string"
-											},
+											}, 
 											"multiplicity": {
 												"enum": [
-													"SINGLE",
+													"SINGLE", 
 													"UNBOUND"
 												]
 											}
-										},
+										}, 
 										"required": [
-											"endName",
+											"endName", 
 											"multiplicity"
 										]
 									}
 								}
-							},
+							}, 
 							"required": [
-								"assocType",
+								"assocType", 
 								"ends"
 							]
 						}
 					}
-				},
+				}, 
 				"required": [
-					"classes",
-					"implementations",
+					"classes", 
+					"implementations", 
 					"associations"
 				]
-			},
+			}, 
 			"ignore": {
-				"type": "array",
+				"type": "array", 
 				"items": {
 					"type": "string"
 				}
 			}
-		},
+		}, 
 		"required": [
-			"id",
-			"title",
-			"text",
-			"mappings",
-			"solution",
+			"id", 
+			"title", 
+			"text", 
+			"mappings", 
+			"solution", 
 			"ignore"
 		]
 	}

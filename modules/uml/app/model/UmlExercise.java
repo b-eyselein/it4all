@@ -4,8 +4,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import model.exercise.Exercise;
 import model.uml.UmlClass;
@@ -20,18 +24,25 @@ public class UmlExercise extends Exercise {
       UmlExercise.class);
 
   @Column(columnDefinition = "text")
+  @JsonIgnore
   public String classSelText;
 
   @Column(columnDefinition = "text")
+  @JsonIgnore
   public String diagDrawText;
 
   @Column(columnDefinition = "text")
+  @JsonIgnore
   public String solution;
+
+  @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
+  public List<Mapping> mappings;
 
   public UmlExercise(int theId) {
     super(theId);
   }
 
+  @JsonIgnore
   public String getClassesForDiagDrawingHelp() {
     List<UmlClass> classes = getSolution().getClasses();
     long sqrt = Math.round(Math.sqrt(classes.size()));
@@ -50,14 +61,17 @@ public class UmlExercise extends Exercise {
     ).collect(Collectors.joining(",\n"));
   }
 
+  @JsonIgnore
   public String getExTextForClassSel() {
     return classSelText;
   }
 
+  @JsonIgnore
   public String getExTextForDiagDraw() {
     return diagDrawText;
   }
 
+  @JsonIgnore
   public UmlSolution getSolution() {
     return UmlSolution.fromJson(solution);
   }
