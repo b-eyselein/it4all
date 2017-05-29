@@ -49,7 +49,7 @@ public class UmlExTextParser {
   }
   
   private static Map<String, String> toMap(List<Mapping> theMappings) {
-    return theMappings.parallelStream().collect(Collectors.toMap(m -> m.key, m -> m.mappedTo));
+    return theMappings.parallelStream().collect(Collectors.toMap(m -> m.mappedKey, m -> m.mappedValue));
   }
   
   public List<String> getCapitalizedWords() {

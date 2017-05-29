@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -13,8 +15,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.avaje.ebean.Model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.google.common.base.Splitter;
 
 import model.querycorrectors.CreateCorrector;
 import model.querycorrectors.QueryCorrector;
@@ -23,14 +28,23 @@ import model.querycorrectors.update.DeleteCorrector;
 import model.querycorrectors.update.InsertCorrector;
 import model.querycorrectors.update.UpdateCorrector;
 import net.sf.jsqlparser.statement.Statement;
-import play.twirl.api.Html;
 
 @Entity
-public class SqlExercise extends Exercise {
+public class SqlExercise extends Model {
+
+  private static final Splitter SPLITTER = Splitter.fixedLength(100).omitEmptyStrings();
 
   public static final String SAMPLE_JOIN_CHAR = "#";
 
-  public static final Finder<Integer, SqlExercise> finder = new Finder<>(SqlExercise.class);
+  public static final Finder<SqlExerciseKey, SqlExercise> finder = new Finder<>(SqlExercise.class);
+
+  @EmbeddedId
+  public SqlExerciseKey key;
+
+  public String author;
+
+  @Column(columnDefinition = "text")
+  public String text;
 
   @Enumerated(EnumType.STRING)
   public SqlExerciseType exerciseType;
@@ -40,7 +54,7 @@ public class SqlExercise extends Exercise {
   public List<SqlSample> samples;
 
   @ManyToOne
-  @JoinColumn(name = "scenario_name")
+  @JoinColumn(name = "scenario_id", insertable = false, updatable = false)
   @JsonBackReference
   public SqlScenario scenario;
 
@@ -50,14 +64,16 @@ public class SqlExercise extends Exercise {
 
   public String hint;
 
-  public SqlExercise(int theId) {
-    super(theId);
+  public SqlExercise(SqlExerciseKey theKey) {
+    key = theKey;
   }
 
-  public Html getBadges() {
-    return new Html(getTags().stream().map(SqlTag::getButtonContent).collect(Collectors.joining()));
+  @JsonIgnore
+  public String getBadges() {
+    return getTags().stream().map(SqlTag::getButtonContent).collect(Collectors.joining());
   }
 
+  @JsonIgnore
   public QueryCorrector<? extends Statement, ?> getCorrector() {
     switch(exerciseType) {
     case CREATE:
@@ -80,6 +96,10 @@ public class SqlExercise extends Exercise {
       return Collections.emptyList();
 
     return Arrays.stream(tags.split(SAMPLE_JOIN_CHAR)).map(SqlTag::valueOf).collect(Collectors.toList());
+  }
+
+  public List<String> getText() {
+    return SPLITTER.splitToList(text);
   }
 
 }

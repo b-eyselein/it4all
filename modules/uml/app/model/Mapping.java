@@ -9,16 +9,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 @Entity
 public class Mapping extends Model {
 
-  public String key;
+  public String mappedKey;
 
-  public String mappedTo;
+  public String mappedValue;
 
   @ManyToOne
   public UmlExercise exercise;
 
   public Mapping(String theKey, String theMappedTo) {
-    key = theKey;
-    mappedTo = theMappedTo;
+    mappedKey = theKey;
+    mappedValue = theMappedTo;
   }
 
   public static Mapping fromJson(JsonNode node) {

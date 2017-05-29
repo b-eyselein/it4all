@@ -1,9 +1,11 @@
 @(user: model.user.User)
 
-@main("XML: Administration", user) {
+@title = @{"Administrator XML"}
+
+@main(title, user) {
 <div class="container">
   <div class="page-header">
-    <h1>Administrator: XML</h1>
+    <h1>@title</h1>
   </div>
   
   <section id="statistics">

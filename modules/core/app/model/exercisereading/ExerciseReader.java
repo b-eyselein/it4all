@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -25,8 +23,6 @@ public abstract class ExerciseReader<T extends Exercise> {
   
   protected static final Logger.ALogger READING_LOGGER = Logger.of("startup");
   
-  protected static final Path BASE_DIR = Paths.get("conf", "resources");
-  
   protected String exerciseType;
   
   protected Path baseDirForExType;
@@ -38,11 +34,20 @@ public abstract class ExerciseReader<T extends Exercise> {
   public ExerciseReader(String theExerciseType) {
     exerciseType = theExerciseType;
     
-    baseDirForExType = Paths.get(BASE_DIR.toString(), exerciseType);
+    baseDirForExType = Paths.get("conf", "resources", exerciseType);
     baseTargetDir = Paths.get("/data", "samples", exerciseType);
     
-    jsonFile = Paths.get(baseDirForExType.toString(), EX_FILE_NAME);
     jsonSchemaFile = Paths.get(baseDirForExType.toString(), EX_SCHEMA_FILE_NAME);
+  }
+  
+  public static boolean createDirectory(Path directory) {
+    try {
+      Files.createDirectories(directory);
+      return true;
+    } catch (IOException e) {
+      Logger.error("Error while creating sample file directory \"" + directory.toString() + "\"", e);
+      return false;
+    }
   }
   
   public static String readFile(Path file) {
@@ -53,42 +58,30 @@ public abstract class ExerciseReader<T extends Exercise> {
       return "";
     }
   }
-
-  protected static boolean createDirectory(Path directory) {
-    try {
-      Files.createDirectories(directory);
-      return true;
-    } catch (IOException e) {
-      Logger.error("Error while creating sample file directory \"" + directory.toString() + "\"", e);
-      return false;
-    }
-  }
   
-  protected static String readTextArray(JsonNode textArray) {
-    return String.join("", JsonWrapper.parseJsonArrayNode(textArray));
+  public Path getJsonSchemaFile() {
+    return jsonSchemaFile;
   }
   
   public AbstractReadingResult<T> readExercises(Path jsonFile) {
-    JsonNode json = Json.parse(readFile(jsonFile));
-    JsonNode jsonSchema = Json.parse(readFile(jsonSchemaFile));
+    String jsonAsString = readFile(jsonFile);
+    String jsonSchemaAsString = readFile(jsonSchemaFile);
+    
+    JsonNode json = Json.parse(jsonAsString);
     
     // Validate json with json schema
-    Optional<ProcessingReport> report = JsonWrapper.validateJson(json, jsonSchema);
-    if(!report.isPresent())
-      return new ReadingError<>(Json.prettyPrint(json), Collections.emptyList());
+    ProcessingReport report = JsonWrapper.validateJson(json, Json.parse(jsonSchemaAsString));
+    if(report == null || !report.isSuccess())
+      return new ReadingError<>(jsonAsString, jsonSchemaAsString, report);
     
-    if(!report.get().isSuccess())
-      return new ReadingError<>(Json.prettyPrint(json),
-          StreamSupport.stream(report.get().spliterator(), false).collect(Collectors.toList()));
-    
-    List<T> exercises = StreamSupport.stream(json.spliterator(), false).map(this::readExercise)
+    List<T> exercises = StreamSupport.stream(json.spliterator(), true).map(this::readExercise)
         .collect(Collectors.toList());
-
-    return new ReadingResult<>(Json.prettyPrint(json), exercises);
+    
+    return new ReadingResult<>(jsonAsString, jsonSchemaAsString, exercises);
   }
   
   public AbstractReadingResult<T> readStandardExercises() {
-    return readExercises(jsonFile);
+    return readExercises(Paths.get(baseDirForExType.toString(), EX_FILE_NAME));
   }
   
   public abstract void saveExercise(T exercise);

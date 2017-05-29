@@ -20,7 +20,7 @@ import model.result.TextContentResult;
 @Entity
 public class HtmlTask extends Task<ElementResult> {
   
-  private static final Splitter SPLITTER = Splitter.on(";").omitEmptyStrings();
+  private static final Splitter ATTR_SPLITTER = Splitter.on(";").omitEmptyStrings();
   
   public static final Finder<TaskKey, HtmlTask> finder = new Finder<>(HtmlTask.class);
   
@@ -56,7 +56,7 @@ public class HtmlTask extends Task<ElementResult> {
   }
   
   public List<Attribute> getAttributes() {
-    return SPLITTER.splitToList(attributes).stream().map(Attribute::fromString).collect(Collectors.toList());
+    return ATTR_SPLITTER.splitToList(attributes).stream().map(Attribute::fromString).collect(Collectors.toList());
   }
   
   protected List<AttributeResult> evaluateAllAttributeResults(WebElement foundElement) {

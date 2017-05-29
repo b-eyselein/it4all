@@ -14,7 +14,10 @@
 				"type": "string"
 			}, 
 			"text": {
-				"type": "string"
+				"type": "array", 
+				"items": {
+					"type": "string"
+				}
 			}, 
 			"scriptFile": {
 				"type": "string"
@@ -24,8 +27,29 @@
 				"items": {
 					"type": "object", 
 					"properties": {
-						"id": {
-							"type": "integer"
+						"key": {
+							"type": "object", 
+							"properties": {
+								"exerciseId": {
+									"type": "integer"
+								}, 
+								"scenarioId": {
+									"type": "integer"
+								}
+							}, 
+							"required": [
+								"exerciseId", 
+								"scenarioId"
+							]
+						}, 
+						"author": {
+							"type": "string"
+						}, 
+						"text": {
+							"type": "array", 
+							"items": {
+								"type": "string"
+							}
 						}, 
 						"exerciseType": {
 							"enum": [
@@ -36,13 +60,29 @@
 								"DELETE"
 							]
 						}, 
-						"text": {
-							"type": "string"
-						}, 
 						"hint": {
 							"type": "string"
 						}, 
-						"sampleSolutions": {
+						"validation": {
+							"type": "string"
+						}, 
+						"tags": {
+							"type": "array", 
+							"items": {
+								"enum": [
+									"JOIN", 
+									"DOUBLE_JOIN", 
+									"TRIPLE_JOIN", 
+									"ORDER_BY", 
+									"GROUP_BY", 
+									"FUNCTION", 
+									"ALIAS", 
+									"LIMIT", 
+									"SUBSELECT"
+								]
+							}
+						}, 
+						"samples": {
 							"type": "array", 
 							"items": {
 								"type": "object", 
@@ -50,6 +90,9 @@
 									"key": {
 										"type": "object", 
 										"properties": {
+											"scenarioId": {
+												"type": "integer"
+											}, 
 											"exerciseId": {
 												"type": "integer"
 											}, 
@@ -58,53 +101,35 @@
 											}
 										}, 
 										"required": [
+											"scenarioId", 
 											"exerciseId", 
 											"sampleId"
 										]
+									}, 
+									"sample": {
+										"type": "array", 
+										"items": {
+											"type": "string"
+										}
 									}
 								}, 
-								"solution": {
-									"type": "array", 
-									"items": {
-										"type": "string"
-									}
-								}
-							}, 
-							"required": [
-								"key", 
-								"solution"
-							]
+								"required": [
+									"key", 
+									"sample"
+								]
+							}
 						}
 					}, 
-					"validation": {
-						"type": "string"
-					}, 
-					"tags": {
-						"type": "array", 
-						"items": {
-							"enum": [
-								"JOIN", 
-								"DOUBLE_JOIN", 
-								"TRIPLE_JOIN", 
-								"ORDER_BY", 
-								"GROUP_BY", 
-								"FUNCTION", 
-								"ALIAS", 
-								"LIMIT", 
-								"SUBSELECT"
-							]
-						}
-					}
-				}, 
-				"required": [
-					"id", 
-					"exerciseType", 
-					"text", 
-					"hint", 
-					"sampleSolutions", 
-					"validation", 
-					"tags"
-				]
+					"required": [
+						"key", 
+						"exerciseType", 
+						"text", 
+						"hint", 
+						"samples", 
+						"validation", 
+						"tags"
+					]
+				}
 			}
 		}, 
 		"required": [

@@ -57,7 +57,7 @@ public class WebExerciseReader extends ExerciseReader<WebExercise> {
     if(task == null)
       task = new HtmlTask(key);
 
-    task.text = readTextArray(htmlTaskNode.get(StringConsts.TEXT_NAME));
+    task.text = JsonWrapper.readTextArray(htmlTaskNode.get(StringConsts.TEXT_NAME), "");
     task.xpathQuery = htmlTaskNode.get(XPATH_NAME).asText();
     task.attributes = readAttributes(htmlTaskNode.get(ATTRS_NAME));
     task.textContent = htmlTaskNode.get("textContent").asText();
@@ -80,7 +80,7 @@ public class WebExerciseReader extends ExerciseReader<WebExercise> {
     JsonNode actionNode = jsTaskNode.get("action");
     JsonNode conditionsNode = jsTaskNode.get("conditions");
 
-    task.text = readTextArray(jsTaskNode.get(StringConsts.TEXT_NAME));
+    task.text = JsonWrapper.readTextArray(jsTaskNode.get(StringConsts.TEXT_NAME), "");
     task.xpathQuery = jsTaskNode.get(XPATH_NAME).asText();
     task.action = actionNode != null ? Json.fromJson(actionNode, Action.class) : null;
     task.conditions = conditionsNode != null ? readConditions(conditionsNode) : Collections.emptyList();
@@ -109,13 +109,13 @@ public class WebExerciseReader extends ExerciseReader<WebExercise> {
       exercise = new WebExercise(exerciseId);
 
     exercise.title = exerciseNode.get(StringConsts.TITLE_NAME).asText();
-    exercise.text = readTextArray(exerciseNode.get(StringConsts.TEXT_NAME));
+    exercise.text = JsonWrapper.readTextArray(exerciseNode.get(StringConsts.TEXT_NAME), "");
     exercise.author = exerciseNode.get(StringConsts.AUTHOR_NAME).asText();
 
-    exercise.htmlText = readTextArray(exerciseNode.get("htmlText"));
+    exercise.htmlText = JsonWrapper.readTextArray(exerciseNode.get("htmlText"), "");
     exercise.htmlTasks = readHtmlTasks(exerciseNode.get("htmlTasks"));
 
-    exercise.jsText = readTextArray(exerciseNode.get("jsText"));
+    exercise.jsText = JsonWrapper.readTextArray(exerciseNode.get("jsText"), "");
     exercise.jsTasks = readJsTasks(exerciseNode.get("jsTasks"));
 
     return exercise;

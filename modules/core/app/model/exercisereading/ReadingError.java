@@ -1,22 +1,30 @@
 package model.exercisereading;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import com.github.fge.jsonschema.core.report.ProcessingMessage;
+import com.github.fge.jsonschema.core.report.ProcessingReport;
 
 import model.exercise.Exercise;
 
 public class ReadingError<T extends Exercise> extends AbstractReadingResult<T> {
   
-  private List<ProcessingMessage> causes;
+  private ProcessingReport report;
   
-  public ReadingError(String theJson, List<ProcessingMessage> theCauses) {
-    super(theJson);
-    causes = theCauses;
+  public ReadingError(String theJson, String theJsonSchema, ProcessingReport theReport) {
+    super(theJson, theJsonSchema);
+    report = theReport;
   }
   
-  public List<ProcessingMessage> getCauses() {
-    return causes;
+  public List<String> getErrors() {
+    return StreamSupport.stream(report.spliterator(), true).map(ProcessingMessage::toString)
+        .collect(Collectors.toList());
+  }
+  
+  public ProcessingReport getReport() {
+    return report;
   }
   
   @Override

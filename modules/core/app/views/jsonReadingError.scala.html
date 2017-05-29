@@ -18,7 +18,7 @@
       <div class="panel panel-default">
         <div class="panel-heading">Fehler</div>
         <div class="panel-body">
-        @for(cause <- readingError.getCauses()) {
+        @for(cause <- readingError.getErrors()) {
           <pre>@cause</pre>
         }
         </div>

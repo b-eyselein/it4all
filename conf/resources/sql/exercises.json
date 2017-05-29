@@ -2,56 +2,71 @@
 	{
 		"id": 1, 
 		"title": "Angestellte", 
-		"author": "admin", 
+		"author": "bje40dc", 
 		"text": [
-			
+			"Dieses Szenario beschreibt die Datenbank einer kleinen Firma."
 		], 
 		"shortName": "employee", 
 		"scriptFile": "employee.sql", 
 		"exercises": [
 			{
-				"id": 101, 
+				"key": {
+					"scenarioId": 1, 
+					"exerciseId": 1
+				}, 
+				"author": "bje40dc", 
+				"text": [
+					"Wie viele Angestellte hat die Firma? Benennen Sie das Ergebnis als 'Anzahl'"
+				], 
 				"exerciseType": "SELECT", 
-				"text": "Wie viele Angestellte hat die Firma? Benennen Sie das Ergebnis als 'Anzahl'", 
-				"sampleSolutions": [
+				"samples": [
 					{
 						"key": {
-							"exerciseId": 101, 
+							"scenarioId": 1, 
+							"exerciseId": 1, 
 							"sampleId": 1
 						}, 
-						"solution": [
+						"sample": [
 							"SELECT COUNT(*) AS Anzahl", 
 							"  FROM Employee"
 						]
 					}, 
 					{
 						"key": {
-							"exerciseId": 101, 
+							"scenarioId": 1, 
+							"exerciseId": 1, 
 							"sampleId": 2
 						}, 
-						"solution": [
+						"sample": [
 							"SELECT COUNT(employeeOID) AS Anzahl", 
 							"  FROM Employee"
 						]
 					}
 				], 
-				"hint": "", 
 				"validation": "", 
 				"tags": [
 					
-				]
+				], 
+				"hint": ""
 			}, 
 			{
-				"id": 102, 
+				"key": {
+					"scenarioId": 1, 
+					"exerciseId": 2
+				}, 
+				"author": "bje40dc", 
+				"text": [
+					"Welche Angestelltennummer (employeeOID) hat Max Becker?"
+				], 
 				"exerciseType": "SELECT", 
-				"text": "Welche Angestelltennummer (employeeOID) hat Max Becker?", 
-				"sampleSolutions": [
+				"samples": [
 					{
 						"key": {
-							"exerciseId": 102, 
+							"scenarioId": 1, 
+							"exerciseId": 2, 
 							"sampleId": 1
 						}, 
-						"solution": [
+						"sample": [
 							"SELECT employeeOID", 
 							"  FROM Employee", 
 							"  WHERE firstname = 'Max' AND lastname = 'Becker'"
@@ -59,33 +74,41 @@
 					}, 
 					{
 						"key": {
-							"exerciseId": 102, 
+							"scenarioId": 1, 
+							"exerciseId": 2, 
 							"sampleId": 2
 						}, 
-						"solution": [
+						"sample": [
 							"SELECT employeeOID", 
 							"  FROM Employee", 
 							"  WHERE lastname = 'Becker' AND firstname = 'Max'"
 						]
 					}
 				], 
-				"hint": "", 
 				"validation": "", 
 				"tags": [
 					
-				]
+				], 
+				"hint": ""
 			}, 
 			{
-				"id": 103, 
+				"key": {
+					"scenarioId": 1, 
+					"exerciseId": 3
+				}, 
+				"author": "bje40dc", 
+				"text": [
+					"Welche Emailadresse hat Max Becker für die Arbeit?"
+				], 
 				"exerciseType": "SELECT", 
-				"text": "Welche Emailadresse hat Max Becker für die Arbeit?", 
-				"sampleSolutions": [
+				"samples": [
 					{
 						"key": {
-							"exerciseId": 103, 
+							"scenarioId": 1, 
+							"exerciseId": 3, 
 							"sampleId": 1
 						}, 
-						"solution": [
+						"sample": [
 							"SELECT emailaddress", 
 							"  FROM Employee", 
 							"    JOIN Emailaddress ON Employee.employeeOID = Emailaddress.employeeOID", 
@@ -94,10 +117,11 @@
 					}, 
 					{
 						"key": {
-							"exerciseId": 103, 
+							"scenarioId": 1, 
+							"exerciseId": 3, 
 							"sampleId": 2
 						}, 
-						"solution": [
+						"sample": [
 							"SELECT emailaddress", 
 							"  FROM Employee, Emailaddress", 
 							"  WHERE Employee.employeeOID = Emailaddress.employeeOID", 
@@ -106,10 +130,11 @@
 					}, 
 					{
 						"key": {
-							"exerciseId": 103, 
+							"scenarioId": 1, 
+							"exerciseId": 3, 
 							"sampleId": 3
 						}, 
-						"solution": [
+						"sample": [
 							"SELECT emailaddress", 
 							"  FROM Employee emp, Emailaddress email", 
 							"  WHERE emp.employeeOID = email.employeeOID", 
@@ -117,46 +142,60 @@
 						]
 					}
 				], 
-				"hint": "", 
 				"validation": "", 
 				"tags": [
 					
-				]
+				], 
+				"hint": ""
 			}, 
 			{
-				"id": 104, 
+				"key": {
+					"scenarioId": 1, 
+					"exerciseId": 4
+				}, 
+				"author": "bje40dc", 
+				"text": [
+					"Geben Sie die Nutzernamen aller Angestellten alphabetisch geordnet aus!"
+				], 
 				"exerciseType": "SELECT", 
-				"text": "Geben Sie die Nutzernamen aller Angestellten alphabetisch geordnet aus!", 
-				"sampleSolutions": [
+				"samples": [
 					{
 						"key": {
-							"exerciseId": 104, 
+							"scenarioId": 1, 
+							"exerciseId": 4, 
 							"sampleId": 1
 						}, 
-						"solution": [
+						"sample": [
 							"SELECT username", 
 							"  FROM Employee", 
 							"  ORDER BY username"
 						]
 					}
 				], 
-				"hint": "", 
 				"validation": "", 
 				"tags": [
 					
-				]
+				], 
+				"hint": ""
 			}, 
 			{
-				"id": 105, 
+				"key": {
+					"scenarioId": 1, 
+					"exerciseId": 5
+				}, 
+				"author": "bje40dc", 
+				"text": [
+					"Wie viele Untergebene hat jeder Chef? Geben Sie jeweils die OID des Chefs und die Anzahl aus!"
+				], 
 				"exerciseType": "SELECT", 
-				"text": "Wie viele Untergebene hat jeder Chef? Geben Sie jeweils die EmployeeOID des Chefs und die Anzahl aus!", 
-				"sampleSolutions": [
+				"samples": [
 					{
 						"key": {
-							"exerciseId": 105, 
+							"scenarioId": 1, 
+							"exerciseId": 5, 
 							"sampleId": 1
 						}, 
-						"solution": [
+						"sample": [
 							"SELECT chefOID, count(employeeOID)", 
 							"  FROM Employee", 
 							"  WHERE chefOID IS NOT NULL", 
@@ -164,23 +203,30 @@
 						]
 					}
 				], 
-				"hint": "", 
 				"validation": "", 
 				"tags": [
 					
-				]
+				], 
+				"hint": ""
 			}, 
 			{
-				"id": 106, 
+				"key": {
+					"scenarioId": 1, 
+					"exerciseId": 6
+				}, 
+				"author": "bje40dc", 
+				"text": [
+					"Erstellen Sie das CREATE TABLE-Skript für die Tabelle Employee!"
+				], 
 				"exerciseType": "CREATE", 
-				"text": "Erstellen Sie das CREATE TABLE-Skript für die Tabelle Employee!", 
-				"sampleSolutions": [
+				"samples": [
 					{
 						"key": {
-							"exerciseId": 106, 
+							"scenarioId": 1, 
+							"exerciseId": 6, 
 							"sampleId": 1
 						}, 
-						"solution": [
+						"sample": [
 							"CREATE TABLE Employee (", 
 							"  employeeOID INT PRIMARY KEY,", 
 							"  firstname VARCHAR(50),", 
@@ -192,88 +238,112 @@
 						]
 					}
 				], 
-				"hint": "", 
 				"validation": "", 
 				"tags": [
 					
-				]
+				], 
+				"hint": ""
 			}, 
 			{
-				"id": 107, 
+				"key": {
+					"scenarioId": 1, 
+					"exerciseId": 7
+				}, 
+				"author": "bje40dc", 
+				"text": [
+					"Der Angestellte mit der OID 8 arbeitet jetzt für den Angestellten mit der OID 3. Aktualisieren Sie d", 
+					"ie Datenbank!"
+				], 
 				"exerciseType": "UPDATE", 
-				"text": "Der Angestellte mit der OID 8 arbeitet jetzt für den Angestellten mit der OID 3. Aktualisieren Sie die Datenbank!", 
-				"sampleSolutions": [
+				"samples": [
 					{
 						"key": {
-							"exerciseId": 107, 
+							"scenarioId": 1, 
+							"exerciseId": 7, 
 							"sampleId": 1
 						}, 
-						"solution": [
+						"sample": [
 							"UPDATE Employee", 
 							"  SET chefOID = 3", 
 							"  WHERE employeeOID = 8"
 						]
 					}
 				], 
-				"hint": "", 
+				"validation": "SELECT * FROM Employee", 
 				"tags": [
 					
 				], 
-				"validation": "SELECT * FROM Employee"
+				"hint": ""
 			}, 
 			{
-				"id": 108, 
+				"key": {
+					"scenarioId": 1, 
+					"exerciseId": 8
+				}, 
+				"author": "bje40dc", 
+				"text": [
+					"Der Angestellte mit der OID 7 hat gekündigt. Löschen Sie ihn aus der Angestelltentabelle."
+				], 
 				"exerciseType": "DELETE", 
-				"text": "Der Angestellte mit der OID 7 hat gekündigt. Löschen Sie ihn aus der Angestelltentabelle.", 
-				"sampleSolutions": [
+				"samples": [
 					{
 						"key": {
-							"exerciseId": 108, 
+							"scenarioId": 1, 
+							"exerciseId": 8, 
 							"sampleId": 1
 						}, 
-						"solution": [
+						"sample": [
 							"DELETE FROM Employee", 
 							"  WHERE employeeOID = 7"
 						]
 					}
 				], 
-				"hint": "", 
+				"validation": "SELECT * FROM Employee", 
 				"tags": [
 					
 				], 
-				"validation": "SELECT * FROM Employee"
+				"hint": ""
 			}, 
 			{
-				"id": 109, 
+				"key": {
+					"scenarioId": 1, 
+					"exerciseId": 9
+				}, 
+				"author": "bje40dc", 
+				"text": [
+					"Es gibt eine neue Angestellte mit Namen Tina Sattler. Diese arbeitet für die Person mit der OID 2 un", 
+					"d soll als OID 9 und als Nutzernamen tina_sattler bekommen."
+				], 
 				"exerciseType": "INSERT", 
-				"text": "Es gibt eine neue Angestellte mit Namen Tina Sattler. Diese arbeitet für die Person mit der OID 2 und soll als OID 9 und als Nutzernamen tina_sattler bekommen.", 
-				"sampleSolutions": [
+				"samples": [
 					{
 						"key": {
-							"exerciseId": 109, 
+							"scenarioId": 1, 
+							"exerciseId": 9, 
 							"sampleId": 1
 						}, 
-						"solution": [
+						"sample": [
 							"INSERT INTO Employee VALUES", 
 							"  (9, 'Tina', 'Sattler', 'tina_sattler', 2)"
 						]
 					}, 
 					{
 						"key": {
-							"exerciseId": 109, 
+							"scenarioId": 1, 
+							"exerciseId": 9, 
 							"sampleId": 2
 						}, 
-						"solution": [
+						"sample": [
 							"INSERT INTO Employee (`employeeOID`, `firstname`, `lastname`, `username`, `chefOID`) VALUES", 
 							"  (9, 'Tina', 'Sattler', 'tina_sattler', 2)"
 						]
 					}
 				], 
-				"hint": "", 
+				"validation": "SELECT * FROM Employee", 
 				"tags": [
 					
 				], 
-				"validation": "SELECT * FROM Employee"
+				"hint": ""
 			}
 		]
 	}

@@ -1,12 +1,6 @@
 @(user: model.user.User, scenario: model.exercise.SqlScenario, exType: model.exercise.SqlExerciseType, start: Int)
 
 @main("SQL", user) {
-<style>
-.btn {
-    white-space: normal;
-}
-</style>
-
 <div class="container">
   <div class="page-header">
     <h1>Szenario &quot;@scenario.title&quot;: Aufgabentyp @exType</h1>
@@ -26,9 +20,9 @@
       <tr>
         <!-- <td>TODO</td> -->
 	    <td>@ex.getBadges()</td>
-	    <td>@ex.id:</td>
+	    <td>@ex.key.exerciseId:</td>
   	    <td>
-          <a href="@sql.routes.Sql.exercise(ex.id)"
+          <a href="@sql.routes.Sql.exercise(scenario.id, ex.key.exerciseId)"
             class="btn btn-default btn-block">@ex.text</a>
         </td>
       </div>

@@ -64,9 +64,10 @@
 
   <div class="row">
     <div class="col-md-4">
-      <form action="@sql.routes.Sql.correct(exercise.id)" method="post" onsubmit="prepareFormForSubmitting();">
+      <form action="@sql.routes.Sql.correct(exercise.key.scenarioId, exercise.key.exerciseId)" method="post"
+      onsubmit="prepareFormForSubmitting();">
         <div class="panel panel-default">
-          <div class="panel-heading">Aufgabe @exercise.id</div>
+          <div class="panel-heading">Aufgabe @exercise.key.exerciseId</div>
           <div class="panel-body">
             <p>@exercise.text</p>
             @if(!exercise.hint.isEmpty()) {<p><i>Hinweis:</i> @exercise.hint</p>}
@@ -81,8 +82,10 @@
           </div>
           <div class="panel-footer">
             <button type="button" class="btn btn-default btn-block"
-            onclick="testTheSolution('@sql.routes.Sql.correctLive(exercise.id)')">L&ouml;sung testen</button>
-            <a type="button" class="btn btn-default btn-block" href="@sql.routes.Sql.exercise(exercise.id + 1)">Nächste Aufgabe</a>
+            onclick="testTheSolution('@sql.routes.Sql.correctLive(exercise.key.scenarioId, exercise.key.exerciseId)')">
+            L&ouml;sung testen</button>
+            <a type="button" class="btn btn-default btn-block"
+            href="@sql.routes.Sql.exercise(exercise.key.scenarioId, exercise.key.exerciseId + 1)">Nächste Aufgabe</a>
           </div>
         </div>
       

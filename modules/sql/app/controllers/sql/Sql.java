@@ -15,10 +15,10 @@ import model.EmptySolutionException;
 import model.SqlCorrector;
 import model.SqlQueryResult;
 import model.StringConsts;
-import model.Util;
 import model.correctionresult.SqlResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.SqlExercise;
+import model.exercise.SqlExerciseKey;
 import model.exercise.SqlExerciseType;
 import model.exercise.SqlScenario;
 import model.logging.ExerciseCompletionEvent;
@@ -52,9 +52,9 @@ public class Sql extends ExerciseController {
     sqlOther = theSqlOther;
   }
 
-  public Result correct(int id) {
+  public Result correct(int scenarioId, int exerciseId) {
     final User user = getUser();
-    final SqlExercise exercise = SqlExercise.finder.byId(id);
+    final SqlExercise exercise = SqlExercise.finder.byId(new SqlExerciseKey(scenarioId, exerciseId));
 
     DynamicForm form = factory.form().bindFromRequest();
     final String learnerSolution = form.get(StringConsts.FORM_VALUE);
@@ -72,13 +72,13 @@ public class Sql extends ExerciseController {
           "<div class=\"alert alert-danger\">Sie haben eine leere L&ouml;sung abgegeben!</div>"));
     }
 
-    log(user, new ExerciseCompletionEvent(request(), id, result.getResults()));
+    log(user, new ExerciseCompletionEvent(request(), exerciseId, result.getResults()));
     return ok(views.html.correction.render("SQL", views.html.sqlresult.render(result), learnerSolution, user));
   }
 
-  public Result correctLive(int id) {
+  public Result correctLive(int scenarioId, int exerciseId) {
     final User user = getUser();
-    final SqlExercise exercise = SqlExercise.finder.byId(id);
+    final SqlExercise exercise = SqlExercise.finder.byId(new SqlExerciseKey(scenarioId, exerciseId));
 
     DynamicForm form = factory.form().bindFromRequest();
     final String learnerSolution = form.get(StringConsts.FORM_VALUE);
@@ -95,21 +95,21 @@ public class Sql extends ExerciseController {
       return ok(views.html.correctionerror.render("Sie haben eine leere L&ouml;sung abgegeben!"));
     }
 
-    log(user, new ExerciseCorrectionEvent(request(), id, result.getResults()));
+    log(user, new ExerciseCorrectionEvent(request(), exerciseId, result.getResults()));
     return ok(views.html.sqlresult.render(result));
   }
 
-  public Result exercise(int id) {
+  public Result exercise(int scenarioId, int exerciseId) {
     final User user = getUser();
 
-    SqlExercise exercise = SqlExercise.finder.byId(id);
+    SqlExercise exercise = SqlExercise.finder.byId(new SqlExerciseKey(scenarioId, exerciseId));
 
     if(exercise == null)
       return redirect(controllers.sql.routes.Sql.index());
 
     List<SqlQueryResult> tables = readTablesInDatabase(exercise.scenario.shortName);
 
-    log(user, new ExerciseStartEvent(request(), id));
+    log(user, new ExerciseStartEvent(request(), exerciseId));
 
     return ok(views.html.sqlExercise.render(user, exercise, tables));
   }
@@ -124,12 +124,7 @@ public class Sql extends ExerciseController {
   }
 
   public Result index() {
-    return ok(views.html.sqloverview.render(getUser(), SqlScenario.finder.all()));
-  }
-
-  public Result scenario(int id) {
-    final SqlScenario scenario = SqlScenario.finder.byId(id);
-    return ok(scenario.toString());
+    return ok(views.html.sqlIndex.render(getUser(), SqlScenario.finder.all()));
   }
 
   public Result scenarioes() {

@@ -113,8 +113,8 @@ create table js_web_task (
 );
 
 create table mapping (
-  key                           varchar(255),
-  mapped_to                     varchar(255),
+  mapped_key                    varchar(255),
+  mapped_value                  varchar(255),
   exercise_id                   integer
 );
 
@@ -175,24 +175,24 @@ create table spread_exercise (
 );
 
 create table sql_exercise (
-  id                            integer auto_increment not null,
-  title                         varchar(255),
+  scenario_id                   integer not null,
+  exercise_id                   integer not null,
   author                        varchar(255),
   text                          text,
   exercise_type                 varchar(6),
-  scenario_name                 integer,
   validation                    varchar(255),
   tags                          varchar(255),
   hint                          varchar(255),
   constraint ck_sql_exercise_exercise_type check ( exercise_type in ('SELECT','CREATE','UPDATE','DELETE','INSERT')),
-  constraint pk_sql_exercise primary key (id)
+  constraint pk_sql_exercise primary key (scenario_id,exercise_id)
 );
 
 create table sql_sample (
+  scenario_id                   integer not null,
   exercise_id                   integer not null,
   sample_id                     integer not null,
   sample                        varchar(255),
-  constraint pk_sql_sample primary key (exercise_id,sample_id)
+  constraint pk_sql_sample primary key (scenario_id,exercise_id,sample_id)
 );
 
 create table sql_scenario (
@@ -307,11 +307,11 @@ create index ix_question_rating_username on question_rating (username);
 alter table sample_test_data add constraint fk_sample_test_data_exercise_id foreign key (exercise_id) references prog_exercise (id) on delete restrict on update restrict;
 create index ix_sample_test_data_exercise_id on sample_test_data (exercise_id);
 
-alter table sql_exercise add constraint fk_sql_exercise_scenario_name foreign key (scenario_name) references sql_scenario (id) on delete restrict on update restrict;
-create index ix_sql_exercise_scenario_name on sql_exercise (scenario_name);
+alter table sql_exercise add constraint fk_sql_exercise_scenario_id foreign key (scenario_id) references sql_scenario (id) on delete restrict on update restrict;
+create index ix_sql_exercise_scenario_id on sql_exercise (scenario_id);
 
-alter table sql_sample add constraint fk_sql_sample_exercise_id foreign key (exercise_id) references sql_exercise (id) on delete restrict on update restrict;
-create index ix_sql_sample_exercise_id on sql_sample (exercise_id);
+alter table sql_sample add constraint fk_sql_sample_exercise foreign key (scenario_id,exercise_id) references sql_exercise (scenario_id,exercise_id) on delete restrict on update restrict;
+create index ix_sql_sample_exercise on sql_sample (scenario_id,exercise_id);
 
 alter table web_solution add constraint fk_web_solution_user_name foreign key (user_name) references web_user (name) on delete restrict on update restrict;
 create index ix_web_solution_user_name on web_solution (user_name);
@@ -364,11 +364,11 @@ drop index ix_question_rating_username on question_rating;
 alter table sample_test_data drop foreign key fk_sample_test_data_exercise_id;
 drop index ix_sample_test_data_exercise_id on sample_test_data;
 
-alter table sql_exercise drop foreign key fk_sql_exercise_scenario_name;
-drop index ix_sql_exercise_scenario_name on sql_exercise;
+alter table sql_exercise drop foreign key fk_sql_exercise_scenario_id;
+drop index ix_sql_exercise_scenario_id on sql_exercise;
 
-alter table sql_sample drop foreign key fk_sql_sample_exercise_id;
-drop index ix_sql_sample_exercise_id on sql_sample;
+alter table sql_sample drop foreign key fk_sql_sample_exercise;
+drop index ix_sql_sample_exercise on sql_sample;
 
 alter table web_solution drop foreign key fk_web_solution_user_name;
 drop index ix_web_solution_user_name on web_solution;

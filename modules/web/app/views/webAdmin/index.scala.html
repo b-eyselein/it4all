@@ -1,9 +1,11 @@
 @(user: model.user.User)
 
-@main("Web: Administration", user) {
+@title = @{"Administrator Web"}
+
+@main(title, user) {
 <div class="container">
   <div class="page-header">
-    <h1>Administrator: Web</h1>
+    <h1>@title</h1>
   </div>
   
   <section id="statistics">

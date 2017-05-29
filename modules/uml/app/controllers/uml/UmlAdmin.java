@@ -33,21 +33,14 @@ public class UmlAdmin extends AbstractAdminController<UmlExercise, UmlExerciseRe
   public Result checkSolution() {
     DynamicForm form = factory.form().bindFromRequest();
 
-    JsonNode solNode = null;
-    try {
-      solNode = Json.parse(form.get("solution"));
-    } catch (Exception e) {
-      return ok("error");
-    }
+    JsonNode solNode = Json.parse(form.get(StringConsts.SOLUTION_NAME));
 
-    Optional<ProcessingReport> report = JsonWrapper.validateJson(solNode, Uml.SOLUTION_SCHEMA_NODE);
+    ProcessingReport report = JsonWrapper.validateJson(solNode, Uml.SOLUTION_SCHEMA_NODE);
 
-    if(!report.isPresent())
-      return ok("error");
-    else if(report.get().isSuccess())
+    if(report.isSuccess())
       return ok("ok");
-    else
-      return ok(report.get().toString());
+
+    return ok(report.toString());
   }
 
   @Override

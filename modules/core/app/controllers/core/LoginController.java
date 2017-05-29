@@ -33,7 +33,7 @@ public class LoginController extends AbstractController {
     
     DynamicForm form = factory.form().bindFromRequest();
     String userName = form.get(StringConsts.NAME_NAME);
-    String passwort = form.get(StringConsts.PASSWORD_NAME);
+    String passwort = form.get(StringConsts.PW_NAME);
     
     User user = findOrCreateStudent(userName, passwort);
     
