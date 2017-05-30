@@ -1,9 +1,9 @@
 package model.correctionresult;
 
-import model.SqlQueryResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.Success;
 import model.result.EvaluationResult;
+import model.sql.SqlQueryResult;
 
 public class SqlExecutionResult extends EvaluationResult {
   

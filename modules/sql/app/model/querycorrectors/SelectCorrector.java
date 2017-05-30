@@ -9,11 +9,11 @@ import java.util.List;
 import javax.inject.Singleton;
 
 import model.SqlCorrectionException;
-import model.SqlQueryResult;
 import model.correctionresult.SqlExecutionResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.SqlExercise;
 import model.matching.MatchingResult;
+import model.sql.SqlQueryResult;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;

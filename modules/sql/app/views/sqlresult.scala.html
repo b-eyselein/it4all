@@ -35,14 +35,14 @@
       <div class="panel-body">
       @if(execResult.isSuccessful()) {
       <p>Ihre L&ouml;sung == Musterl&ouml;sung</p>
-      <div>@execResult.getUserResult().toHtmlTable()</div>
+      <div>@resultTable.render(execResult.getUserResult())</div>
       } else {
       <div class="col-md-6">
         <p>Ihre L&ouml;sung:</p>
         @if(execResult.getUserResult() == null) {
           Es gab einen Fehler bei der Ausf&uuml;hrung ihrer L&ouml;sung!
         } else {
-          @execResult.getUserResult().toHtmlTable()
+          @resultTable.render(execResult.getUserResult())
         }
       </div>
       <div class="col-md-6">
@@ -50,7 +50,7 @@
         @if(execResult.getSampleResult() == null) {
           Es gab einen Fehler bei der Ausf&uuml;hrung der Musterl&ouml;sung!
         } else {
-          @execResult.getSampleResult().toHtmlTable()
+          @resultTable.render(execResult.getSampleResult())
         }
       </div>
       }

@@ -6,12 +6,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import model.SqlCorrectionException;
-import model.SqlQueryResult;
 import model.correctionresult.SqlExecutionResult;
 import model.exercise.FeedbackLevel;
 import model.exercise.SqlExercise;
 import model.matching.MatchingResult;
 import model.querycorrectors.QueryCorrector;
+import model.sql.SqlQueryResult;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import play.Logger;

@@ -116,6 +116,7 @@ public abstract class QueryCorrector<Q extends Statement, C> {
   }
 
   protected void createDatabaseIfNotExists(Connection connection, String databaseName, Path scriptFile) {
+    // FIXME: possible?
     try(ResultSet catalogs = connection.getMetaData().getCatalogs()) {
       while(catalogs.next())
         if(catalogs.getString(1).equals(databaseName))
@@ -125,7 +126,7 @@ public abstract class QueryCorrector<Q extends Statement, C> {
       List<String> lines = Files.readAllLines(scriptFile);
       createDatabase(connection, databaseName);
       connection.setCatalog(databaseName);
-      ScriptRunner.runScript(connection, lines, false, true);
+      ScriptRunner.runScript(connection, lines);
     } catch (SQLException | IOException e) {
       Logger.error("Error while initialising database " + databaseName, e);
     }
