@@ -26,11 +26,9 @@ import play.libs.Json;
 
 public class SqlScenarioReader extends ExerciseReader<SqlScenario> {
   
-  private static final String CREATE_DUMMY = "CREATE DATABASE IF NOT EXISTS ?";
-  
-  public SqlScenarioReader() {
-    super("sql");
-  }
+  private static final String CREATE_DUMMY = "CREATE DATABASE IF NOT EXISTS ";
+  private Database sqlSelect;
+  private Database sqlOther;
   
   private static void createDatabase(String databaseName, Connection connection) {
     try(Statement createStatement = connection.createStatement()) {
@@ -49,10 +47,6 @@ public class SqlScenarioReader extends ExerciseReader<SqlScenario> {
     }
   }
   
-  // FIXME: genauere Fehlermeldungen (auch auf Konsole --> Logger!)
-  // BEISPIEL: Aufgabe nicht erstellt, weil TEXT_NAME oder "sampleSolutions"
-  // fehlt/falsch
-  
   private static void grantRights(String databaseName, Connection connection) throws SQLException {
     try(Statement grantStatement = connection.createStatement()) {
       grantStatement.executeUpdate(
@@ -61,6 +55,10 @@ public class SqlScenarioReader extends ExerciseReader<SqlScenario> {
       Logger.error("There has been an error running an sql script: \"" + CREATE_DUMMY + databaseName + "\"", e);
     }
   }
+  
+  // FIXME: genauere Fehlermeldungen (auch auf Konsole --> Logger!)
+  // BEISPIEL: Aufgabe nicht erstellt, weil TEXT_NAME oder "sampleSolutions"
+  // fehlt/falsch
   
   private static SqlSample readSampleSolution(JsonNode sampleSolNode) {
     SqlSampleKey key = Json.fromJson(sampleSolNode.get(StringConsts.KEY_NAME), SqlSampleKey.class);
@@ -105,6 +103,12 @@ public class SqlScenarioReader extends ExerciseReader<SqlScenario> {
     
   }
   
+  public SqlScenarioReader(Database theSqlSelect, Database theSqlOther) {
+    super("sql");
+    sqlSelect = theSqlSelect;
+    sqlOther = theSqlOther;
+  }
+  
   // FIXME: Impelement, test and use!
   public void runCreateScript(Database database, SqlScenario scenario) {
     Path scriptFilePath = Paths.get(baseDirForExType.toString(), scenario.scriptFile);
@@ -140,8 +144,8 @@ public class SqlScenarioReader extends ExerciseReader<SqlScenario> {
   public void saveExercise(SqlScenario scenario) {
     scenario.save();
     
-    // runCreateScript(sqlSelect, scenario);
-    // runCreateScript(sqlOther, scenario);
+    runCreateScript(sqlSelect, scenario);
+    runCreateScript(sqlOther, scenario);
     
     scenario.exercises.forEach(ex -> {
       ex.save();
