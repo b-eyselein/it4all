@@ -2,32 +2,62 @@
 
 it4all is a correction framework for
 
-- Html
-- CSS
-- JavaScript
-- SQL (TODO)
-- PHP (TODO)
-
-- Spreadsheet
-
+- Html, CSS, JavaScript
+- SQL
+- Different Programming Languages (Python3, JavaScript, ...)
+- Uml Class Diagrams
+- Spreadsheets
   - MS Excel
   - Libre-, Openoffice Calc
-
 - Mindmap (MindManager)
+- Nary Numbers, Boolean Algebra
 
-$ docker build -t play --build-arg USERNAME=$(whoami) .
+## Versions
 
-$ docker-compose up -d
+There are two versions of it4all on [GitLab](https:/gitlab2.informatik.uni-wuerzburg.de):
+* [The development version](https://gitlab2.informatik.uni-wuerzburg.de/bje40dc/it4all.git)
+* [The distribution version](https://gitlab2.informatik.uni-wuerzburg.de/it4all/dist.git)
 
-$ docker attach it4all_it4all_1
+This is the development version.
 
-## Development and Testing
+## Development
 
-Clone the repository on the [GitLab](https://gitlab2.informatik.uni-wuerzburg.de/bje40dc/it4all.git) of the institute of computer science of the university of Wuerzburg
+### Prerequisites
+To develop it4all, you need to have installed the following programs (names of packages in Ubuntu in brackets):
 
-You can start the Play Framework Console with the command `activator`
+1. Git (git)
+2. Docker (docker.io)
+3. Docker-compose (docker-compose)
 
-### Common Commands for Play Framework Console
+### First start
+
+Clone the repository on the [GitLab](https://gitlab2.informatik.uni-wuerzburg.de/bje40dc/it4all.git) of the institute of computer science of the university of Wuerzburg:
+
+`$ git clone https://gitlab2.informatik.uni-wuerzburg.de/it4all.git`
+
+Build the image defined in the file 'Dockerfile':
+
+`$ docker build -t play --build-arg USERNAME=$(whoami) .`
+
+Set up all containers with docker-compose:
+
+`$ docker-compose up -d`
+
+Attach to the main it4all-Container:
+
+`$ docker attach it4all_it4all_1`
+
+Start the sbt/Play Framework - Console with
+
+`$ sbt`
+
+### Following starts
+
+Since the containers are all built and started, you can just restart the main container with (the options `-ai` stand for attach and interactive)
+
+`$ docker start -ai it4all_it4all_1`
+
+### Common Commands for the sbt/Play Framework - Console
 
 `reload` - Reload the complete Configuration of the Project
 
@@ -41,16 +71,10 @@ You can start the Play Framework Console with the command `activator`
 
 `run` - Start Application in **_Development_** mode
 
-`eclipse with-source=true skip-parents=false` - Generate the files needed for Eclipse IDE (with sources respectively with respect to parent Projects)
-
-### Prerequisites
-
-it4all needs a MySQL-Database called `it4all`. Username and Password have to be stored in the `conf/application.conf` - file. This project uses the **_evolutions_** of the Play Framework which generates SQL-Scripts after reloading the application in the browser.
-
-The correction for Html also saves files to your local hard drive. The paths to the folders can be found in the `conf/application.conf` Configuration file under `rootDirLinux` for linux- and unix-like systems respectively rootDirWin for Windows systems. Under Linux the folder has to be owned by the user starting the program (in development mode too).
+`eclipse` - Generate the files needed for Eclipse IDE (with sources respectively with respect to parent Projects)
 
 ### Eclipse IDE
 
-Start the Play Framework Console with `activator`. You can generate the files needed for the Eclipse IDE with the command `eclipse with-source=true skip-parents=false`. This also loads the sources and compiles all projects (including subprojects).
+You can generate the files needed for the Eclipse IDE in the sbt-Console with the command `eclipse`. This also loads the sources and compiles all projects (including subprojects).
 
-You can import the Eclipse Project with `Import` `-->` `Existing Projects into Workspace` (or `Import` `-->` `Git` `-->` `Projects from Git` `-->` `Existing local repository`). Make sure to select `Search for nested projects` to include all subprojects.
+You can import the Eclipse Project with `Import` `-->` `Existing Projects into Workspace`. Make sure to select `Search for nested projects` to include all subprojects.
