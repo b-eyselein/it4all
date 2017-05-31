@@ -13,6 +13,9 @@ jacoco.settings
 libraryDependencies ++= Seq(
   javaJdbc,
   
+  // Mybatis for ScriptRunner
+  "org.mybatis" % "mybatis" % "3.4.4",
+  
   // JSQL-Parser
-  "com.github.jsqlparser" % "jsqlparser" % "0.9.6"
+  "com.github.jsqlparser" % "jsqlparser" % "1.0"
 )

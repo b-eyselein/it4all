@@ -1,0 +1,22 @@
+@(whereComp: model.matching.MatchingResult[net.sf.jsqlparser.expression.BinaryExpression])
+
+<div class="panel panel-default">
+  <div class="panel-heading">Vergleich der Bedingungen</div>
+  <div class="panel-body">
+  @for(expression <- whereComp.getMatches()) {
+    <div class="col-md-6">
+      <div class="alert alert-success">Ihre Bedingung <code>@expression.getFirstArg()</code> stimmt mit der Musterlösung &uuml;berein.</div>
+    </div>
+  }
+  @for(missing <- whereComp.getMissing()) {
+  	<div class="col-md-6">
+      <div class="alert alert-danger">Die Bedingung <code>@missing</code> fehlt!</div>
+    </div>
+  }
+  @for(wrong <- whereComp.getWrong()) {
+  	<div class="col-md-6">
+      <div class="alert alert-danger">Die Bedingung <code>@wrong</code> ist falsch!</div>
+    </div>
+  }
+  </div>
+</div>

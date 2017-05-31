@@ -3,7 +3,6 @@ package model;
 import java.util.Collections;
 import java.util.List;
 
-import model.exercise.FeedbackLevel;
 import model.exercise.Success;
 import model.result.EvaluationResult;
 import model.tree.Assignment;
@@ -15,7 +14,7 @@ public class BooleanQuestionResult extends EvaluationResult {
 
   public BooleanQuestionResult(Success theSuccess, String theLearnerSolution, CreationQuestion theQuestion,
       String... theMessages) {
-    super(FeedbackLevel.MINIMAL_FEEDBACK, theSuccess, theMessages);
+    super(theSuccess, theMessages);
     learnerSolution = theLearnerSolution;
     question = theQuestion;
 
@@ -28,7 +27,7 @@ public class BooleanQuestionResult extends EvaluationResult {
   public String getLearnerSolution() {
     return learnerSolution;
   }
-  
+
   public CreationQuestion getQuestion() {
     return question;
   }

@@ -1,0 +1,21 @@
+@(listComp: model.matching.MatchingResult[String])
+
+<div class="col-md-6">
+  <div class="panel panel-@listComp.getBSClass()">
+    <div class="panel-heading">Vergleich der @listComp.getMatchName()</div>
+    <div class="panel-body">
+    @if(listComp.getSuccess() == model.exercise.Success.COMPLETE) {
+      <p><span class="glyphicon glyphicon-ok"></span> Es wurden die richtigen @listComp.getMatchName() benutzt.</p>
+    } else {
+      @if(!listComp.getMissing().isEmpty()) {
+      <p>Es fehlen folgende @listComp.getMatchName():
+        @Html(model.result.EvaluationResult.concatCodeElements(listComp.getMissing()))</p>
+      }
+      @if(!listComp.getWrong().isEmpty()) {
+      <p>Folgende @listComp.getMatchName() wurden f&auml;lschlicherweise benutzt:
+        @Html(model.result.EvaluationResult.concatCodeElements(listComp.getWrong()))</p>
+      }
+    }
+    </div>
+  </div>
+</div>

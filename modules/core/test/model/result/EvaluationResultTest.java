@@ -1,51 +1,31 @@
 package model.result;
 
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
 import model.exercise.Success;
-import model.result.EvaluationResult;
-
-import model.exercise.FeedbackLevel;
-import static org.hamcrest.CoreMatchers.equalTo;
 
 public class EvaluationResultTest {
 
-  // FIXME: implement feedbackLevel!
   @Test
   public void testCompletely() {
-    EvaluationResult result = new EvaluationResult(FeedbackLevel.NO_FEEDBACK, Success.NONE) {
-      // FIXME: implement feedbackLevel!
-    };
-    
-    assertThat(result.getSuccess(), equalTo(Success.NONE));
-    assertThat(result.getMinimalFeedbackLevel(), equalTo(FeedbackLevel.NO_FEEDBACK));
-    assertThat(result.getPoints(), equalTo(0));
-    
-    result.setSuccess(Success.PARTIALLY);
-    assertThat(result.getSuccess(), equalTo(Success.PARTIALLY));
-    assertThat(result.getMinimalFeedbackLevel(), equalTo(FeedbackLevel.NO_FEEDBACK));
-    assertThat(result.getPoints(), equalTo(1));
-    
-    result.setSuccess(Success.COMPLETE);
-    assertThat(result.getSuccess(), equalTo(Success.COMPLETE));
-    assertThat(result.getMinimalFeedbackLevel(), equalTo(FeedbackLevel.NO_FEEDBACK));
-    assertThat(result.getPoints(), equalTo(2));
-    
-    result.setSuccess(Success.NONE);
-    assertThat(result.getSuccess(), equalTo(Success.NONE));
-    assertThat(result.getMinimalFeedbackLevel(), equalTo(FeedbackLevel.NO_FEEDBACK));
-    assertThat(result.getPoints(), equalTo(0));
+    EvaluationResult failure = new EvaluationResult(Success.FAILURE);
+    assertThat(failure.getSuccess(), equalTo(Success.FAILURE));
+    assertThat(failure.getPoints(), equalTo(0));
+
+    EvaluationResult none = new EvaluationResult(Success.NONE);
+    assertThat(none.getSuccess(), equalTo(Success.NONE));
+    assertThat(none.getPoints(), equalTo(0));
+
+    EvaluationResult partially = new EvaluationResult(Success.PARTIALLY);
+    assertThat(partially.getSuccess(), equalTo(Success.PARTIALLY));
+    assertThat(partially.getPoints(), equalTo(1));
+
+    EvaluationResult complete = new EvaluationResult(Success.COMPLETE);
+    assertThat(complete.getSuccess(), equalTo(Success.COMPLETE));
+    assertThat(complete.getPoints(), equalTo(2));
   }
-  
-  @Test(expected = IllegalArgumentException.class)
-  public void testIllegalSuccess() {
-    EvaluationResult result = new EvaluationResult(FeedbackLevel.NO_FEEDBACK, Success.NONE) {
-      // FIXME: implement feedbackLevel!
-    };
-    
-    result.setSuccess(null);
-  }
-  
+
 }

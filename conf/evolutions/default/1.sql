@@ -180,7 +180,6 @@ create table sql_exercise (
   author                        varchar(255),
   text                          text,
   exercise_type                 varchar(6),
-  validation                    varchar(255),
   tags                          varchar(255),
   hint                          varchar(255),
   constraint ck_sql_exercise_exercise_type check ( exercise_type in ('SELECT','CREATE','UPDATE','DELETE','INSERT')),
@@ -203,6 +202,20 @@ create table sql_scenario (
   short_name                    varchar(255),
   script_file                   varchar(255),
   constraint pk_sql_scenario primary key (id)
+);
+
+create table sql_solution (
+  user_name                     varchar(255) not null,
+  scenario_id                   integer not null,
+  exercise_id                   integer not null,
+  sol                           text,
+  points                        integer,
+  constraint pk_sql_solution primary key (user_name,scenario_id,exercise_id)
+);
+
+create table sql_user (
+  name                          varchar(255) not null,
+  constraint pk_sql_user primary key (name)
 );
 
 create table uml_exercise (
@@ -243,7 +256,7 @@ create table web_exercise (
 create table web_solution (
   user_name                     varchar(255) not null,
   exercise_id                   integer not null,
-  solution                      text,
+  sol                           text,
   points                        integer,
   constraint pk_web_solution primary key (user_name,exercise_id)
 );
@@ -313,6 +326,12 @@ create index ix_sql_exercise_scenario_id on sql_exercise (scenario_id);
 alter table sql_sample add constraint fk_sql_sample_exercise foreign key (scenario_id,exercise_id) references sql_exercise (scenario_id,exercise_id) on delete restrict on update restrict;
 create index ix_sql_sample_exercise on sql_sample (scenario_id,exercise_id);
 
+alter table sql_solution add constraint fk_sql_solution_user_name foreign key (user_name) references sql_user (name) on delete restrict on update restrict;
+create index ix_sql_solution_user_name on sql_solution (user_name);
+
+alter table sql_solution add constraint fk_sql_solution_exercise foreign key (scenario_id,exercise_id) references sql_exercise (scenario_id,exercise_id) on delete restrict on update restrict;
+create index ix_sql_solution_exercise on sql_solution (scenario_id,exercise_id);
+
 alter table web_solution add constraint fk_web_solution_user_name foreign key (user_name) references web_user (name) on delete restrict on update restrict;
 create index ix_web_solution_user_name on web_solution (user_name);
 
@@ -370,6 +389,12 @@ drop index ix_sql_exercise_scenario_id on sql_exercise;
 alter table sql_sample drop foreign key fk_sql_sample_exercise;
 drop index ix_sql_sample_exercise on sql_sample;
 
+alter table sql_solution drop foreign key fk_sql_solution_user_name;
+drop index ix_sql_solution_user_name on sql_solution;
+
+alter table sql_solution drop foreign key fk_sql_solution_exercise;
+drop index ix_sql_solution_exercise on sql_solution;
+
 alter table web_solution drop foreign key fk_web_solution_user_name;
 drop index ix_web_solution_user_name on web_solution;
 
@@ -419,6 +444,10 @@ drop table if exists sql_exercise;
 drop table if exists sql_sample;
 
 drop table if exists sql_scenario;
+
+drop table if exists sql_solution;
+
+drop table if exists sql_user;
 
 drop table if exists uml_exercise;
 

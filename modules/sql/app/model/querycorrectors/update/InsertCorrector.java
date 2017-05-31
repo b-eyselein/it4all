@@ -7,33 +7,35 @@ import java.util.stream.Collectors;
 
 import javax.inject.Singleton;
 
-import model.matching.MatchingResult;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.insert.Insert;
 
 @Singleton
 public class InsertCorrector extends ChangeCorrector<Insert> {
-
-  private List<String> getColumns(Insert statement) {
-    List<Column> columns = statement.getColumns();
-    return (columns == null) ? Collections.emptyList()
-        : columns.stream().map(Column::getColumnName).collect(Collectors.toList());
+  
+  public InsertCorrector() {
+    super("INSERT", true, false);
   }
-
+  
   @Override
-  protected MatchingResult<String> compareColumns(Insert userQuery, Insert sampleQuery) {
-    return STRING_EQ_MATCHER.match("Spalten", getColumns(userQuery), getColumns(sampleQuery));
+  protected List<String> getColumns(Insert statement) {
+    List<Column> columns = statement.getColumns();
+    
+    if(columns == null)
+      return Collections.emptyList();
+    
+    return columns.stream().map(Column::getColumnName).collect(Collectors.toList());
   }
-
+  
   @Override
   protected List<String> getTables(Insert userQuery) {
     return Arrays.asList(userQuery.getTable().getName());
   }
-
+  
   @Override
   protected Expression getWhere(Insert query) {
-    return null;
+    throw new UnsupportedOperationException("A INSERT statement has no WHERE clauses!");
   }
-
+  
 }

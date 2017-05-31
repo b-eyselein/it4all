@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import javax.inject.Singleton;
 
-import model.matching.MatchingResult;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
@@ -15,15 +14,18 @@ import net.sf.jsqlparser.statement.update.Update;
 @Singleton
 public class UpdateCorrector extends ChangeCorrector<Update> {
 
-  private List<String> getColumns(Update statement) {
-    List<Column> columns = statement.getColumns();
-    return (columns == null) ? Collections.emptyList()
-        : columns.stream().map(Column::getColumnName).collect(Collectors.toList());
+  public UpdateCorrector() {
+    super("UPDATE", true, true);
   }
 
   @Override
-  protected MatchingResult<String> compareColumns(Update userQuery, Update sampleQuery) {
-    return STRING_EQ_MATCHER.match("Spalten", getColumns(userQuery), getColumns(sampleQuery));
+  protected List<String> getColumns(Update statement) {
+    List<Column> columns = statement.getColumns();
+    
+    if(columns == null)
+      return Collections.emptyList();
+
+    return columns.stream().map(Column::getColumnName).collect(Collectors.toList());
   }
 
   @Override

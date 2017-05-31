@@ -2,27 +2,26 @@ package model.result;
 
 import java.util.List;
 
-import model.exercise.FeedbackLevel;
 import model.exercise.Success;
 
 public class CompleteResult extends EvaluationResult {
-
+  
   private List<EvaluationResult> results;
   private String leanerSolution;
   
   public CompleteResult(String theLearnerSolution, List<EvaluationResult> theResults) {
-    super(FeedbackLevel.NO_FEEDBACK, analyzeResults(theResults));
+    super(analyzeResults(theResults));
     results = theResults;
     leanerSolution = theLearnerSolution;
   }
-
+  
   private static Success analyzeResults(List<EvaluationResult> theResults) {
     for(EvaluationResult res: theResults)
       if(res.getSuccess() != Success.COMPLETE)
         return Success.NONE;
     return Success.COMPLETE;
   }
-
+  
   // public String getAsHtml() {
   // if(todo == SHOW_HIDE_AGGREGATE.SHOW)
   // return
@@ -57,13 +56,13 @@ public class CompleteResult extends EvaluationResult {
   //
   // return builder.toString();
   // }
-
+  
   public String getLearnerSolution() {
     return leanerSolution;
   }
-
+  
   public List<EvaluationResult> getResults() {
     return results;
   }
-
+  
 }

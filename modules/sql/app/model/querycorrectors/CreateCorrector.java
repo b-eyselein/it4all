@@ -5,7 +5,6 @@ import java.util.List;
 
 import model.SqlCorrectionException;
 import model.correctionresult.SqlExecutionResult;
-import model.exercise.FeedbackLevel;
 import model.exercise.SqlExercise;
 import model.matching.MatchingResult;
 import net.sf.jsqlparser.JSQLParserException;
@@ -15,9 +14,14 @@ import net.sf.jsqlparser.statement.create.table.CreateTable;
 import play.db.Database;
 
 public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable> {
-  
+
   // private static ColumnDefinitionMatcher colDefMatcher = new
   // ColumnDefinitionMatcher();
+
+  public CreateCorrector(boolean theCompareColumns, boolean theCompareOrderBy, boolean theCompareGroupBy,
+      boolean theCompareWhere, boolean theExecute) {
+    super("CREATE TABLE", theCompareColumns, theCompareOrderBy, theCompareGroupBy, theCompareWhere, theExecute);
+  }
 
   @Override
   protected MatchingResult<String> compareColumns(CreateTable userQuery, CreateTable sampleQuery) {
@@ -37,7 +41,7 @@ public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable> {
 
   @Override
   protected SqlExecutionResult executeQuery(Database database, CreateTable userStatement, CreateTable sampleStatement,
-      SqlExercise exercise, FeedbackLevel feedbackLevel) {
+      SqlExercise exercise) {
     return null;
   }
 
@@ -56,14 +60,4 @@ public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable> {
     return null;
   }
 
-  @Override
-  protected CreateTable parseStatement(String statement) throws SqlCorrectionException {
-    try {
-      return (CreateTable) CCJSqlParserUtil.parse(statement);
-    } catch (JSQLParserException e) { // NOSONAR
-      throw new SqlCorrectionException("Es gab einen Fehler beim Parsen des folgenden Statements:" + statement, e);
-    } catch (ClassCastException e) { // NOSONAR
-      throw new SqlCorrectionException("Das Statement war vom falschen Typ! Erwartet wurde CREATE TABLE!", e);
-    }
-  }
 }

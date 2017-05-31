@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import model.exercise.FeedbackLevel;
 import model.exercise.Success;
 import model.question.Answer;
 import model.question.GivenAnswerQuestion;
@@ -20,7 +19,7 @@ public class QuestionResult extends EvaluationResult {
   private List<Answer> wrong;
   
   public QuestionResult(List<Answer> theSelAns, GivenAnswerQuestion theQuestion) {
-    super(FeedbackLevel.MINIMAL_FEEDBACK, Success.NONE);
+    super(Success.NONE);
     question = theQuestion;
     success = analyze(new LinkedList<>(theSelAns), new LinkedList<>(theQuestion.getCorrectAnswers()));
   }

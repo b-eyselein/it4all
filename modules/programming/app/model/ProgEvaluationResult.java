@@ -4,7 +4,6 @@ import java.util.List;
 
 import model.execution.AExecutionResult;
 import model.execution.SyntaxError;
-import model.exercise.FeedbackLevel;
 import model.exercise.Success;
 import model.result.EvaluationResult;
 import model.testdata.ITestData;
@@ -15,7 +14,7 @@ public class ProgEvaluationResult extends EvaluationResult {
   private ITestData testData;
 
   public ProgEvaluationResult(AExecutionResult theExecutionResult, ITestData theTestData) {
-    super(FeedbackLevel.NO_FEEDBACK, analyze(theExecutionResult, theTestData));
+    super(analyze(theExecutionResult, theTestData));
     executionResult = theExecutionResult;
     testData = theTestData;
   }

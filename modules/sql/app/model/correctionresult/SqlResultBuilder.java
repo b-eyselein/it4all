@@ -9,11 +9,11 @@ public class SqlResultBuilder {
   
   private MatchingResult<String> tableComparison;
   
-  private MatchingResult<BinaryExpression> whereComparison;
-  
   private MatchingResult<String> orderByComparison;
   
   private MatchingResult<String> groupByComparison;
+  
+  private MatchingResult<BinaryExpression> whereComparison;
   
   private SqlExecutionResult executionResult;
   
@@ -22,9 +22,9 @@ public class SqlResultBuilder {
     return new SqlResult(
         columnComparison,
         tableComparison,
-        whereComparison,
         orderByComparison,
         groupByComparison,
+        whereComparison,
         executionResult);
     // @formatter:on
   }

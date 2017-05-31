@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.google.common.base.Splitter;
 
+import model.SqlSolution;
 import model.querycorrectors.CreateCorrector;
 import model.querycorrectors.QueryCorrector;
 import model.querycorrectors.SelectCorrector;
@@ -53,12 +54,14 @@ public class SqlExercise extends Model {
   @JsonManagedReference
   public List<SqlSample> samples;
 
+  @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
+  @JsonManagedReference
+  public List<SqlSolution> solutions;
+
   @ManyToOne
   @JoinColumn(name = "scenario_id", insertable = false, updatable = false)
   @JsonBackReference
   public SqlScenario scenario;
-
-  public String validation;
 
   public String tags;
 

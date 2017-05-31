@@ -3,15 +3,21 @@ package model.querycorrectors.update;
 import java.util.Arrays;
 import java.util.List;
 
-import model.matching.MatchingResult;
+import javax.inject.Singleton;
+
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.delete.Delete;
 
+@Singleton
 public class DeleteCorrector extends ChangeCorrector<Delete> {
 
+  public DeleteCorrector() {
+    super("DELETE", false, true);
+  }
+
   @Override
-  protected MatchingResult<String> compareColumns(Delete userQuery, Delete sampleQuery) {
-    return null;
+  protected List<String> getColumns(Delete userQuery) {
+    throw new UnsupportedOperationException("A DELETE statement has no columns!");
   }
 
   @Override

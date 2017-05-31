@@ -26,7 +26,7 @@ POST   /web/:id         controllers.web.Web.correctWeb(id: Int)
 PUT    /js/:id          controllers.web.Web.correctJsLive(id: Int)
 POST   /js/:id          controllers.web.Web.correctJs(id: Int)
 
-GET    /sol/:user/:id   controllers.web.Solution.site(user: String, id: Int)
+GET    /sol/:user/:id   controllers.web.SolutionController.site(user: String, id: Int)
 
 
 

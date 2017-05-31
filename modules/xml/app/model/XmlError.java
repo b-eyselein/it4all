@@ -2,7 +2,6 @@ package model;
 
 import org.xml.sax.SAXParseException;
 
-import model.exercise.FeedbackLevel;
 import model.result.EvaluationResult;
 
 public class XmlError extends EvaluationResult {
@@ -17,7 +16,7 @@ public class XmlError extends EvaluationResult {
   }
 
   public XmlError(String theMessage, int lineNumber, XmlErrorType theErrorType) {
-    super(FeedbackLevel.MINIMAL_FEEDBACK, theErrorType.getSuccess());
+    super(theErrorType.getSuccess());
     line = lineNumber;
 
     errorType = theErrorType;

@@ -1,25 +1,27 @@
 package model.querycorrectors.update;
 
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
-import model.SqlCorrectionException;
 import model.correctionresult.SqlExecutionResult;
-import model.exercise.FeedbackLevel;
 import model.exercise.SqlExercise;
 import model.matching.MatchingResult;
 import model.querycorrectors.QueryCorrector;
 import model.sql.SqlQueryResult;
-import net.sf.jsqlparser.JSQLParserException;
-import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import play.Logger;
 import play.db.Database;
 
 public abstract class ChangeCorrector<QueryType extends net.sf.jsqlparser.statement.Statement>
     extends QueryCorrector<QueryType, QueryType> {
-  
+
+  private static final String VALIDATION_DUMMY = "SELECT * FROM ";
+
+  public ChangeCorrector(String theQueryType, boolean theCompareColumns, boolean theCompareWhere) {
+    super(theQueryType, theCompareColumns, false, false, theCompareWhere, true);
+  }
+
   public SqlQueryResult runQuery(Connection connection, String query) {
     try(Statement statement = connection.createStatement()) {
       return new SqlQueryResult(statement.executeQuery(query));
@@ -28,7 +30,7 @@ public abstract class ChangeCorrector<QueryType extends net.sf.jsqlparser.statem
       return null;
     }
   }
-  
+
   private void runUpdate(Connection connection, String query) {
     try(Statement statement = connection.createStatement()) {
       statement.executeUpdate(query);
@@ -36,40 +38,42 @@ public abstract class ChangeCorrector<QueryType extends net.sf.jsqlparser.statem
       Logger.error("There has been an error running an sql query: \"" + query + "\"", e);
     }
   }
-  
+
+  @Override
+  protected MatchingResult<String> compareColumns(QueryType userQuery, QueryType sampleQuery) {
+    return STRING_EQ_MATCHER.match("Spalten", getColumns(userQuery), getColumns(sampleQuery));
+  }
+
   @Override
   protected MatchingResult<String> compareGroupByElements(QueryType userQuery, QueryType sampleQuery) {
-    return null;
+    throw new UnsupportedOperationException("UPDATE / INSERT / DELETE statements do not have group by elements!");
   }
-  
+
   @Override
   protected MatchingResult<String> compareOrderByElements(QueryType userQuery, QueryType sampleQuery) {
-    return null;
+    throw new UnsupportedOperationException("UPDATE / INSERT / DELETE statements do not have order by elements!");
   }
-  
+
   @Override
   protected SqlExecutionResult executeQuery(Database database, QueryType userStatement, QueryType sampleStatement,
-      SqlExercise exercise, FeedbackLevel feedbackLevel) {
+      SqlExercise exercise) {
     try(Connection connection = database.getConnection()) {
-      
+
       connection.setCatalog(exercise.scenario.shortName);
       connection.setAutoCommit(false);
-      
-      createDatabaseIfNotExists(connection, exercise.scenario.shortName,
-          Paths.get("conf", "resources", exercise.scenario.scriptFile));
-      
-      String validation = exercise.validation;
-      
+
+      String validation = VALIDATION_DUMMY + getTables(sampleStatement).get(0);
+
       runUpdate(connection, userStatement.toString());
       SqlQueryResult userResult = runQuery(connection, validation);
       connection.rollback();
-      
+
       runUpdate(connection, sampleStatement.toString());
       SqlQueryResult sampleResult = runQuery(connection, validation);
       connection.rollback();
-      
-      return new SqlExecutionResult(feedbackLevel, userResult, sampleResult);
-      
+
+      return new SqlExecutionResult(userResult, sampleResult);
+
     } catch (SQLException e) {
       Logger.error("There was an error while executing a sql statement: ", e);
       // return new EvaluationFailed(
@@ -78,22 +82,12 @@ public abstract class ChangeCorrector<QueryType extends net.sf.jsqlparser.statem
       return null;
     }
   }
-  
+
+  protected abstract List<String> getColumns(QueryType userQuery);
+
   @Override
   protected QueryType getPlainStatement(QueryType query) {
     return query;
   }
-  
-  @SuppressWarnings("unchecked")
-  @Override
-  protected QueryType parseStatement(String statement) throws SqlCorrectionException {
-    try {
-      return (QueryType) CCJSqlParserUtil.parse(statement);
-    } catch (JSQLParserException e) { // NOSONAR
-      throw new SqlCorrectionException("Es gab einen Fehler beim Parsen des folgenden Statements: " + statement);
-    } catch (ClassCastException e) { // NOSONAR
-      throw new SqlCorrectionException("Das Statement war vom falschen Typ! Erwartet wurde INSERT!");
-    }
-  }
-  
+
 }

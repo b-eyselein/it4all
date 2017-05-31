@@ -1,10 +1,9 @@
 package model.querycorrectors;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import model.matcher.BinaryExpressionMatcher;
-import model.matching.MatchingResult;
 import net.sf.jsqlparser.expression.AllComparisonExpression;
 import net.sf.jsqlparser.expression.AnalyticExpression;
 import net.sf.jsqlparser.expression.AnyComparisonExpression;
@@ -26,6 +25,7 @@ import net.sf.jsqlparser.expression.JsonExpression;
 import net.sf.jsqlparser.expression.KeepExpression;
 import net.sf.jsqlparser.expression.LongValue;
 import net.sf.jsqlparser.expression.MySQLGroupConcat;
+import net.sf.jsqlparser.expression.NotExpression;
 import net.sf.jsqlparser.expression.NullValue;
 import net.sf.jsqlparser.expression.NumericBind;
 import net.sf.jsqlparser.expression.OracleHierarchicalExpression;
@@ -58,6 +58,7 @@ import net.sf.jsqlparser.expression.operators.relational.GreaterThan;
 import net.sf.jsqlparser.expression.operators.relational.GreaterThanEquals;
 import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.expression.operators.relational.IsNullExpression;
+import net.sf.jsqlparser.expression.operators.relational.JsonOperator;
 import net.sf.jsqlparser.expression.operators.relational.LikeExpression;
 import net.sf.jsqlparser.expression.operators.relational.Matches;
 import net.sf.jsqlparser.expression.operators.relational.MinorThan;
@@ -68,21 +69,21 @@ import net.sf.jsqlparser.expression.operators.relational.RegExpMySQLOperator;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.SubSelect;
 
-public class WhereCorrector implements ExpressionVisitor {
+public class ExpressionExtractor implements ExpressionVisitor {
   
-  private static final BinaryExpressionMatcher BIN_EX_MATCHER = new BinaryExpressionMatcher();
+  private List<BinaryExpression> singleExpressions = new LinkedList<>();
+  private Expression expression;
   
-  private boolean userQueryAnalyzed = false;
-  private List<BinaryExpression> userExpressions = new LinkedList<>();
+  public ExpressionExtractor(Expression theExpression) {
+    expression = theExpression;
+  }
   
-  private List<BinaryExpression> sampleExpressions = new LinkedList<>();
-  
-  public MatchingResult<BinaryExpression> correct(Expression userExpression, Expression sampleExpression) {
-    sampleExpression.accept(this);
-    userQueryAnalyzed = true;
-    userExpression.accept(this);
+  public List<BinaryExpression> extract() {
+    if(expression == null)
+      return Collections.emptyList();
     
-    return BIN_EX_MATCHER.match("Bedingungen", userExpressions, sampleExpressions);
+    expression.accept(this);
+    return singleExpressions;
   }
   
   @Override
@@ -118,26 +119,17 @@ public class WhereCorrector implements ExpressionVisitor {
   
   @Override
   public void visit(BitwiseAnd bitwiseAnd) {
-    if(userQueryAnalyzed)
-      userExpressions.add(bitwiseAnd);
-    else
-      sampleExpressions.add(bitwiseAnd);
+    singleExpressions.add(bitwiseAnd);
   }
   
   @Override
   public void visit(BitwiseOr bitwiseOr) {
-    if(userQueryAnalyzed)
-      userExpressions.add(bitwiseOr);
-    else
-      sampleExpressions.add(bitwiseOr);
+    singleExpressions.add(bitwiseOr);
   }
   
   @Override
   public void visit(BitwiseXor bitwiseXor) {
-    if(userQueryAnalyzed)
-      userExpressions.add(bitwiseXor);
-    else
-      sampleExpressions.add(bitwiseXor);
+    singleExpressions.add(bitwiseXor);
   }
   
   @Override
@@ -182,10 +174,7 @@ public class WhereCorrector implements ExpressionVisitor {
   
   @Override
   public void visit(EqualsTo equalsTo) {
-    if(userQueryAnalyzed)
-      userExpressions.add(equalsTo);
-    else
-      sampleExpressions.add(equalsTo);
+    singleExpressions.add(equalsTo);
   }
   
   @Override
@@ -205,18 +194,12 @@ public class WhereCorrector implements ExpressionVisitor {
   
   @Override
   public void visit(GreaterThan greaterThan) {
-    if(userQueryAnalyzed)
-      userExpressions.add(greaterThan);
-    else
-      sampleExpressions.add(greaterThan);
+    singleExpressions.add(greaterThan);
   }
   
   @Override
   public void visit(GreaterThanEquals greaterThanEquals) {
-    if(userQueryAnalyzed)
-      userExpressions.add(greaterThanEquals);
-    else
-      sampleExpressions.add(greaterThanEquals);
+    singleExpressions.add(greaterThanEquals);
   }
   
   @Override
@@ -255,16 +238,18 @@ public class WhereCorrector implements ExpressionVisitor {
   }
   
   @Override
+  public void visit(JsonOperator jsonOperator) {
+    // Ignore this type of expression
+  }
+  
+  @Override
   public void visit(KeepExpression aexpr) {
     // Ignore this type of expression
   }
   
   @Override
   public void visit(LikeExpression likeExpression) {
-    if(userQueryAnalyzed)
-      userExpressions.add(likeExpression);
-    else
-      sampleExpressions.add(likeExpression);
+    singleExpressions.add(likeExpression);
     
   }
   
@@ -275,26 +260,17 @@ public class WhereCorrector implements ExpressionVisitor {
   
   @Override
   public void visit(Matches matches) {
-    if(userQueryAnalyzed)
-      userExpressions.add(matches);
-    else
-      sampleExpressions.add(matches);
+    singleExpressions.add(matches);
   }
   
   @Override
   public void visit(MinorThan minorThan) {
-    if(userQueryAnalyzed)
-      userExpressions.add(minorThan);
-    else
-      sampleExpressions.add(minorThan);
+    singleExpressions.add(minorThan);
   }
   
   @Override
   public void visit(MinorThanEquals minorThanEquals) {
-    if(userQueryAnalyzed)
-      userExpressions.add(minorThanEquals);
-    else
-      sampleExpressions.add(minorThanEquals);
+    singleExpressions.add(minorThanEquals);
   }
   
   @Override
@@ -314,10 +290,12 @@ public class WhereCorrector implements ExpressionVisitor {
   
   @Override
   public void visit(NotEqualsTo notEqualsTo) {
-    if(userQueryAnalyzed)
-      userExpressions.add(notEqualsTo);
-    else
-      sampleExpressions.add(notEqualsTo);
+    singleExpressions.add(notEqualsTo);
+  }
+  
+  @Override
+  public void visit(NotExpression notExpression) {
+    // Ignore this type of expression
   }
   
   @Override
@@ -415,5 +393,4 @@ public class WhereCorrector implements ExpressionVisitor {
   public void visit(WithinGroupExpression wgexpr) {
     // Ignore this type of expression
   }
-  
 }
