@@ -3,7 +3,6 @@ package controllers.uml;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 import javax.inject.Inject;
 

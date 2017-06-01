@@ -1,12 +1,10 @@
 package controllers.web;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import controllers.core.AbstractAdminController;
-import model.StringConsts;
 import model.WebExercise;
 import model.WebExerciseReader;
 import play.data.DynamicForm;

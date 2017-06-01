@@ -77,7 +77,8 @@ public class SqlExercise extends Model {
   }
 
   @JsonIgnore
-  public QueryCorrector<? extends Statement, ?> getCorrector() {
+  public QueryCorrector<? extends Statement> getCorrector() {
+    // FIXME: different...
     switch(exerciseType) {
     case CREATE:
       return new CreateCorrector();

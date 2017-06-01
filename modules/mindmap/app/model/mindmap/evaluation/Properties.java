@@ -6,21 +6,7 @@ import model.mindmap.evaluation.enums.Modus;
 public class Properties {
   
   public enum ExportType {
-    
     MINDMANAGER, LATEX, WORD;
-    
-    public static final ExportType getExportType(String type) {
-      switch(type.toUpperCase()) {
-      case "MINDMANAGER":
-        return MINDMANAGER;
-      case "LATEX":
-        return LATEX;
-      case "WORD":
-        return WORD;
-      default:
-        return null;
-      }
-    }
   }
   
   private Modus modus = null;

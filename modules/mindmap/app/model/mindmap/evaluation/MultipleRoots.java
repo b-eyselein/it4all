@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import model.mindmap.basics.TreeNode;
+import model.mindmap.evaluation.enums.EvalParserType;
 import model.mindmap.evaluation.enums.MetaDataState;
 import model.mindmap.evaluation.enums.Modus;
 import model.mindmap.parser.AbstractEvaluationParser;
-import model.mindmap.parser.ParserFactory;
 
 public class MultipleRoots {
 
@@ -19,7 +19,7 @@ public class MultipleRoots {
 
   public void createMetaFromMap(String parserType, String solutionMapPath, String metaToCreatePath) throws Exception {
     RWExcel rwe = new RWExcel();
-    AbstractEvaluationParser abstractEvaluationParser = ParserFactory.getEvaluationParser(parserType);
+    AbstractEvaluationParser abstractEvaluationParser = EvalParserType.valueOf(parserType).getParser();
     List<TreeNode> solutionRoots = abstractEvaluationParser.read(new File(solutionMapPath));
     Util.applyMetaDataFromSolutionToInput(solutionRoots, new LinkedList<>());
     rwe.handleMetaData(metaToCreatePath, solutionRoots, MetaDataState.FROM_MINDMAP);
@@ -32,7 +32,7 @@ public class MultipleRoots {
     // from outside
     // mds = askUserForMetaDataState(metaData);
     // modus = askUserForModus();
-    AbstractEvaluationParser abstractEvaluationParser = ParserFactory.getEvaluationParser(parserType);
+    AbstractEvaluationParser abstractEvaluationParser = EvalParserType.valueOf(parserType).getParser();
     abstractEvaluationParser.setModus(modus);
     List<TreeNode> inputRoots = abstractEvaluationParser.read(new File(input));
     List<TreeNode> solutionRoots = abstractEvaluationParser.read(new File(solution));

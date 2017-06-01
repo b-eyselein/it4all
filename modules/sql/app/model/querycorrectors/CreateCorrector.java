@@ -3,24 +3,20 @@ package model.querycorrectors;
 import java.util.Arrays;
 import java.util.List;
 
-import model.SqlCorrectionException;
 import model.correctionresult.SqlExecutionResult;
 import model.exercise.SqlExercise;
 import model.matching.MatchingResult;
-import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
 import play.db.Database;
 
-public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable> {
+public class CreateCorrector extends QueryCorrector<CreateTable> {
 
   // private static ColumnDefinitionMatcher colDefMatcher = new
   // ColumnDefinitionMatcher();
 
-  public CreateCorrector(boolean theCompareColumns, boolean theCompareOrderBy, boolean theCompareGroupBy,
-      boolean theCompareWhere, boolean theExecute) {
-    super("CREATE TABLE", theCompareColumns, theCompareOrderBy, theCompareGroupBy, theCompareWhere, theExecute);
+  public CreateCorrector() {
+    super("CREATE TABLE", true, false, false, false, false);
   }
 
   @Override
@@ -43,11 +39,6 @@ public class CreateCorrector extends QueryCorrector<CreateTable, CreateTable> {
   protected SqlExecutionResult executeQuery(Database database, CreateTable userStatement, CreateTable sampleStatement,
       SqlExercise exercise) {
     return null;
-  }
-
-  @Override
-  protected CreateTable getPlainStatement(CreateTable query) {
-    return query;
   }
 
   @Override

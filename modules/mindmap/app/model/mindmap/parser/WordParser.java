@@ -7,9 +7,6 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import model.mindmap.basics.TreeNode;
-import model.mindmap.parser.basics.Level;
-
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -18,6 +15,10 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFStyles;
 import org.apache.xmlbeans.XmlException;
 
+import model.mindmap.basics.TreeNode;
+import model.mindmap.evaluation.ParsingException;
+import model.mindmap.parser.basics.Level;
+
 public class WordParser implements AbstractParser {
 
   private TreeNode currentNode = new TreeNode("0");
@@ -25,34 +26,44 @@ public class WordParser implements AbstractParser {
   private int currentDepth = 0;
 
   @Override
-  public List<TreeNode> read(File file) throws InvalidFormatException, IOException {
-    LinkedList<TreeNode> roots = new LinkedList<>();
-    roots.add(currentNode);
-    XWPFDocument xdoc = new XWPFDocument(OPCPackage.open(file));
-    List<XWPFParagraph> paragraphList = xdoc.getParagraphs();
-    for(XWPFParagraph paragraph: paragraphList) {
-      int depth = Level.getDepth(paragraph.getStyle());
-      if(depth >= 0 && !paragraph.getText().isEmpty())
-        buildTree(depth, paragraph.getText());
+  public List<TreeNode> read(File file) throws ParsingException {
+    try {
+      LinkedList<TreeNode> roots = new LinkedList<>();
+      roots.add(currentNode);
+      OPCPackage pack = OPCPackage.open(file);
+      XWPFDocument xdoc = new XWPFDocument(pack);
+      List<XWPFParagraph> paragraphList = xdoc.getParagraphs();
+      for(XWPFParagraph paragraph: paragraphList) {
+        int depth = Level.getDepth(paragraph.getStyle());
+        if(depth >= 0 && !paragraph.getText().isEmpty())
+          buildTree(depth, paragraph.getText());
+      }
+      numerateAllTrees(roots);
+      pack.close();
+      xdoc.close();
+      return roots;
+    } catch (InvalidFormatException | IOException e) {
+      throw new ParsingException(e);
     }
-    numerateAllTrees(roots);
-    xdoc.close();
-    return roots;
   }
 
   @Override
-  public void write(String filepath, List<TreeNode> rootList, String templatePath) throws IOException, XmlException {
-    TreeNode root = rootList.get(0);
-    XWPFDocument template = new XWPFDocument(new FileInputStream(new File(templatePath)));
-    XWPFDocument xdoc = new XWPFDocument();
-    XWPFStyles newStyles = xdoc.createStyles();
-    // TODO: don't know how to set numbering in new .docx from template
-    // XWPFNumbering numbering = xdoc.createNumbering();
-    // template.getNumbering();
-    newStyles.setStyles(template.getStyle());
-    createContent(xdoc, root, 0);
-    xdoc.write(new FileOutputStream(new File(filepath)));
-    template.close();
+  public void write(String filepath, List<TreeNode> rootList, String templatePath) throws ParsingException {
+    try {
+      TreeNode root = rootList.get(0);
+      XWPFDocument template = new XWPFDocument(new FileInputStream(new File(templatePath)));
+      XWPFDocument xdoc = new XWPFDocument();
+      XWPFStyles newStyles = xdoc.createStyles();
+      // TODO: don't know how to set numbering in new .docx from template
+      // XWPFNumbering numbering = xdoc.createNumbering();
+      // template.getNumbering();
+      newStyles.setStyles(template.getStyle());
+      createContent(xdoc, root, 0);
+      xdoc.write(new FileOutputStream(new File(filepath)));
+      template.close();
+    } catch (IOException | XmlException e) {
+      throw new ParsingException(e);
+    }
   }
 
   private void addStyledParagraphOfText(XWPFDocument xdoc, String styleDef, String text) {

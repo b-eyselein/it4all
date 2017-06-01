@@ -229,7 +229,7 @@ public class Util {
     }
     return rootList;
   }
-  
+
   /**
    * calculate the achieved points depending on the the results of
    *
@@ -292,18 +292,13 @@ public class Util {
       treeNode.setMetaNode(true);
     }
   }
-  
+
   private static boolean isPartiallyCorrect(TreeNode solNode, TreeNode inNode) {
     // TODO: move to other class!
     double maxCorrectness = -1.0;
     for(String editSyn: solNode.getEditSynonyms()) {
-      int maxLength;
-      if(editSyn.length() > inNode.getText().length()) {
-        maxLength = editSyn.length();
-      } else {
-        maxLength = inNode.getText().length();
-      }
-      int distance = Levenshtein.levenshteinDistance(editSyn, inNode.getText());
+      int maxLength = Math.max(editSyn.length(), inNode.getText().length());
+      int distance = Levenshtein.distance(editSyn, inNode.getText());
       double correctPercentage = 1.0 - ((double) distance / (double) maxLength);
       if(correctPercentage > maxCorrectness) {
         maxCorrectness = correctPercentage;
@@ -354,10 +349,7 @@ public class Util {
   private static boolean isSameTupel(Tuple solutionTupel, Tuple inputTupel) {
     boolean firstEqual = isSameNode(solutionTupel.getFirstNode(), inputTupel.getFirstNode());
     boolean secondEqual = isSameNode(solutionTupel.getSecondNode(), inputTupel.getSecondNode());
-    if(firstEqual && secondEqual) {
-      return true;
-    }
-    return false;
+    return firstEqual && secondEqual;
   }
 
   private static void setOptionalAndMarkAsSolution(TreeNode treeNode) {
@@ -475,13 +467,17 @@ public class Util {
     return maxDepth;
   }
 
-  private void traverseTreeForMaxDepth(TreeNode treeNode, int currentDepth) {
+  private int traverseTreeForMaxDepth(TreeNode treeNode, int currentDepth) {
     if(currentDepth > treeDepth) {
       treeDepth = currentDepth;
     }
+    int maxDepth = currentDepth;
     treeNode.setDepth(currentDepth);
     for(TreeNode child: treeNode.getChildren()) {
-      traverseTreeForMaxDepth(child, currentDepth + 1);
+      int childDepth = traverseTreeForMaxDepth(child, currentDepth + 1);
+      if(childDepth > maxDepth)
+        maxDepth = childDepth;
     }
+    return maxDepth;
   }
 }

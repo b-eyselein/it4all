@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import model.SqlCorrectionException;
+import model.StringConsts;
+import model.correction.CorrectionException;
 import model.correctionresult.SqlExecutionResult;
 import model.correctionresult.SqlResult;
 import model.correctionresult.SqlResultBuilder;
@@ -20,7 +22,7 @@ import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
 import play.db.Database;
 
-public abstract class QueryCorrector<Q extends Statement, C> {
+public abstract class QueryCorrector<Q extends Statement> {
   
   protected static final StringEqualsMatcher STRING_EQ_MATCHER = new StringEqualsMatcher();
   private static final BinaryExpressionMatcher BIN_EX_MATCHER = new BinaryExpressionMatcher();
@@ -50,17 +52,15 @@ public abstract class QueryCorrector<Q extends Statement, C> {
     return list.stream().map(T::toString).collect(Collectors.toList());
   }
   
-  public SqlResult correct(Database database, String userStatement, SqlSample sampleStatement, SqlExercise exercise)
-      throws SqlCorrectionException {
-    Q parsedUserStatement = parseStatement(userStatement);
-    Q parsedSampleStatement = parseStatement(sampleStatement.sample);
-    
-    C userQ = getPlainStatement(parsedUserStatement);
-    C sampleQ = getPlainStatement(parsedSampleStatement);
+  public SqlResult correct(Database database, String learnerSolution, SqlSample sampleStatement, SqlExercise exercise)
+      throws CorrectionException {
+    Q userQ = parseStatement(learnerSolution);
+    Q sampleQ = parseStatement(sampleStatement.sample);
     
     MatchingResult<String> columnComp = compareColumns ? compareColumns(userQ, sampleQ) : null;
     
-    MatchingResult<String> tableComp = STRING_EQ_MATCHER.match("Tabellen", getTables(userQ), getTables(sampleQ));
+    MatchingResult<String> tableComp = STRING_EQ_MATCHER.match(StringConsts.TABLES_NAME, getTables(userQ),
+        getTables(sampleQ));
     
     MatchingResult<String> orderByComparison = compareOrderBy ? compareOrderByElements(userQ, sampleQ) : null;
     
@@ -69,11 +69,18 @@ public abstract class QueryCorrector<Q extends Statement, C> {
     MatchingResult<BinaryExpression> whereComp = compareWhere
         ? BIN_EX_MATCHER.match("Bedingungen", getExpressions(userQ), getExpressions(sampleQ)) : null;
     
-    SqlExecutionResult executionResult = execute
-        ? executeQuery(database, parsedUserStatement, parsedSampleStatement, exercise) : null;
+    SqlExecutionResult executionResult = null;
+    if(execute) {
+      try {
+        executionResult = executeQuery(database, userQ, sampleQ, exercise);
+      } catch (CorrectionException e) {
+        throw e;
+      }
+    }
     
     // @formatter:off
     return new SqlResultBuilder()
+        .setLearnerSolution(learnerSolution)
         .setColumnComparison(columnComp)
         .setTableComparison(tableComp)
         .setGroupByComparison(groupByComparison)
@@ -84,24 +91,22 @@ public abstract class QueryCorrector<Q extends Statement, C> {
     // @formatter:on
   }
   
-  private List<BinaryExpression> getExpressions(C statement) {
+  private List<BinaryExpression> getExpressions(Q statement) {
     return new ExpressionExtractor(getWhere(statement)).extract();
   }
   
-  protected abstract MatchingResult<String> compareColumns(C userQuery, C sampleQuery);
+  protected abstract MatchingResult<String> compareColumns(Q userQuery, Q sampleQuery);
   
-  protected abstract MatchingResult<String> compareGroupByElements(C userQuery, C sampleQuery);
+  protected abstract MatchingResult<String> compareGroupByElements(Q userQuery, Q sampleQuery);
   
-  protected abstract MatchingResult<String> compareOrderByElements(C userQuery, C sampleQuery);
+  protected abstract MatchingResult<String> compareOrderByElements(Q userQuery, Q sampleQuery);
   
   protected abstract SqlExecutionResult executeQuery(Database database, Q userStatement, Q sampleStatement,
-      SqlExercise exercise);
+      SqlExercise exercise) throws CorrectionException;
   
-  protected abstract C getPlainStatement(Q query);
+  protected abstract List<String> getTables(Q userQuery);
   
-  protected abstract List<String> getTables(C userQuery);
-  
-  protected abstract Expression getWhere(C query);
+  protected abstract Expression getWhere(Q query);
   
   @SuppressWarnings("unchecked")
   protected Q parseStatement(String statement) throws SqlCorrectionException {

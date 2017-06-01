@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
+import model.StringConsts;
 import model.correctionresult.SqlExecutionResult;
 import model.exercise.SqlExercise;
 import model.matching.MatchingResult;
@@ -14,9 +15,7 @@ import play.Logger;
 import play.db.Database;
 
 public abstract class ChangeCorrector<QueryType extends net.sf.jsqlparser.statement.Statement>
-    extends QueryCorrector<QueryType, QueryType> {
-
-  private static final String VALIDATION_DUMMY = "SELECT * FROM ";
+    extends QueryCorrector<QueryType> {
 
   public ChangeCorrector(String theQueryType, boolean theCompareColumns, boolean theCompareWhere) {
     super(theQueryType, theCompareColumns, false, false, theCompareWhere, true);
@@ -62,7 +61,7 @@ public abstract class ChangeCorrector<QueryType extends net.sf.jsqlparser.statem
       connection.setCatalog(exercise.scenario.shortName);
       connection.setAutoCommit(false);
 
-      String validation = VALIDATION_DUMMY + getTables(sampleStatement).get(0);
+      String validation = StringConsts.SELECT_ALL_DUMMY + getTables(sampleStatement).get(0);
 
       runUpdate(connection, userStatement.toString());
       SqlQueryResult userResult = runQuery(connection, validation);
@@ -84,10 +83,5 @@ public abstract class ChangeCorrector<QueryType extends net.sf.jsqlparser.statem
   }
 
   protected abstract List<String> getColumns(QueryType userQuery);
-
-  @Override
-  protected QueryType getPlainStatement(QueryType query) {
-    return query;
-  }
 
 }

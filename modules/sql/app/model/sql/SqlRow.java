@@ -13,10 +13,6 @@ public class SqlRow {
     cells = theCells;
   }
 
-  // public void addCell(String columnName, SqlCell cell) {
-  // cells.put(columnName, cell);
-  // }
-
   public List<SqlCell> getCells(List<String> columnNames) {
     return columnNames.stream().map(cells::get).collect(Collectors.toList());
   }

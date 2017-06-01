@@ -4,20 +4,12 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-//import javax.xml.parsers.DocumentBuilder;
-//import javax.xml.parsers.DocumentBuilderFactory;
-//
-//import org.w3c.dom.Document;
-//import org.w3c.dom.Element;
-//import org.w3c.dom.Node;
-//import org.w3c.dom.NodeList;
-
 import model.mindmap.basics.TreeNode;
-//import evaluation.enums.MetaDataState;
-//import evaluation.enums.Modus;
+import model.mindmap.evaluation.enums.EvalParserType;
+import model.mindmap.evaluation.enums.ParserType;
 import model.mindmap.parser.AbstractEvaluationParser;
 import model.mindmap.parser.AbstractParser;
-import model.mindmap.parser.ParserFactory;
+import play.Logger;
 
 public class Evaluation {
   
@@ -77,13 +69,13 @@ public class Evaluation {
   public static void createTOC(String readParser, String writeParser, String readPath, String writePath,
       String templatePath) {
     try {
-      AbstractParser r = ParserFactory.getTOCParser(readParser);
+      AbstractParser r = ParserType.valueOf(readParser).getParser();
       List<TreeNode> listOfRoots = r.read(new File(readPath));
       listOfRoots = Util.mergeTrees(listOfRoots);
-      AbstractParser w = ParserFactory.getTOCParser(writeParser);
+      AbstractParser w = ParserType.valueOf(writeParser).getParser();
       w.write(writePath, listOfRoots, templatePath);
-    } catch (Exception e) {
-      e.printStackTrace();
+    } catch (ParsingException e) {
+      Logger.error("FEHLER: ", e);
     }
   }
   
@@ -122,7 +114,7 @@ public class Evaluation {
   public static void evaluate(String parserType, String input, String solution, String result, String alteredSolution,
       String alteredInput, String metaData, String template) throws Exception {
     RWExcel rwe = new RWExcel();
-    AbstractEvaluationParser abstractEvaluationParser = ParserFactory.getEvaluationParser(parserType);
+    AbstractEvaluationParser abstractEvaluationParser = EvalParserType.valueOf(parserType).getParser();
     List<TreeNode> inputRoots = abstractEvaluationParser.read(new File(input));
     List<TreeNode> solutionRoots = abstractEvaluationParser.read(new File(solution));
     // this must be called before handleMetaData()... //else there might be

@@ -15,52 +15,60 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import model.mindmap.basics.TreeNode;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import model.mindmap.basics.TreeNode;
+import model.mindmap.evaluation.ParsingException;
+
 public class FreePlanParser extends AbstractEvaluationParser {
 
   @Override
-  public List<TreeNode> read(File file) throws ParserConfigurationException, SAXException, IOException {
-    DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-    Document doc = dBuilder.parse(file);
-    doc.getDocumentElement().normalize();
-    return buildTree(doc);
+  public List<TreeNode> read(File file) throws ParsingException {
+    try {
+      DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+      Document doc = dBuilder.parse(file);
+      doc.getDocumentElement().normalize();
+      return buildTree(doc);
+    } catch (ParserConfigurationException | SAXException | IOException e) {
+      throw new ParsingException(e);
+    }
   }
 
   // Note: templatePath not supported
   @Override
-  public void write(String filepath, List<TreeNode> listOfRoots, String templatePath)
-      throws ParserConfigurationException, TransformerException {
-    DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-    // root element
-    Document doc = docBuilder.newDocument();
-    Element rootElement = doc.createElement("map");
-    doc.appendChild(rootElement);
-    rootElement.setAttribute("version", "freeplane 1.3.0");
-    // write main tree
-    TreeNode treeNode = listOfRoots.get(0);
-    Element mainTreeRootElement = writeMainTree(treeNode, rootElement, doc);
-    // write free trees
-    for(int i = 1; i < listOfRoots.size(); i++) {
-      writeFreeTree(listOfRoots.get(i), mainTreeRootElement, doc);
+  public void write(String filepath, List<TreeNode> listOfRoots, String templatePath) throws ParsingException {
+    try {
+      DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+      // root element
+      Document doc = docBuilder.newDocument();
+      Element rootElement = doc.createElement("map");
+      doc.appendChild(rootElement);
+      rootElement.setAttribute("version", "freeplane 1.3.0");
+      // write main tree
+      TreeNode treeNode = listOfRoots.get(0);
+      Element mainTreeRootElement = writeMainTree(treeNode, rootElement, doc);
+      // write free trees
+      for(int i = 1; i < listOfRoots.size(); i++) {
+        writeFreeTree(listOfRoots.get(i), mainTreeRootElement, doc);
+      }
+      // write the content into xml file
+      TransformerFactory transformerFactory = TransformerFactory.newInstance();
+      Transformer transformer = transformerFactory.newTransformer();
+      StreamResult result = new StreamResult(new File(filepath));
+      transformer.setOutputProperty(OutputKeys.ENCODING, "us-ascii");
+      transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+      transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+      DOMSource source = new DOMSource(doc);
+      transformer.transform(source, result);
+    } catch (ParserConfigurationException | TransformerException e) {
+      throw new ParsingException(e);
     }
-    // write the content into xml file
-    TransformerFactory transformerFactory = TransformerFactory.newInstance();
-    Transformer transformer = transformerFactory.newTransformer();
-    StreamResult result = new StreamResult(new File(filepath));
-    transformer.setOutputProperty(OutputKeys.ENCODING, "us-ascii");
-    transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-    transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-    DOMSource source = new DOMSource(doc);
-    transformer.transform(source, result);
   }
 
   private LinkedList<TreeNode> buildTree(Document doc) {
@@ -100,7 +108,7 @@ public class FreePlanParser extends AbstractEvaluationParser {
       Element elementChild = (Element) node;
       if(!"node".equals(elementChild.getTagName()))
         continue;
-      
+
       if(isFreeNode(elementChild) && firstLevel) {
         TreeNode newRoot = new TreeNode(elementChild.getAttribute("ID"));
         newRoot.setText(elementChild.getAttribute("TEXT"));
@@ -122,7 +130,7 @@ public class FreePlanParser extends AbstractEvaluationParser {
       }
     }
   }
-  
+
   private boolean isFreeNode(Element element) {
     NodeList childNodes = element.getChildNodes();
     for(int i = 0; i < childNodes.getLength(); i++) {
