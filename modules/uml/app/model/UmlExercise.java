@@ -4,10 +4,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -34,9 +32,9 @@ public class UmlExercise extends Exercise {
   @Column(columnDefinition = "text")
   @JsonIgnore
   public String solution;
-
-  @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
-  public List<Mapping> mappings;
+  
+  // @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
+  // public List<Mapping> mappings;
 
   public UmlExercise(int theId) {
     super(theId);
@@ -76,4 +74,9 @@ public class UmlExercise extends Exercise {
     return UmlSolution.fromJson(solution);
   }
 
+  @Override
+  public String toString() {
+    return "ID: " + id + ", Titel: " + title;
+  }
+  
 }

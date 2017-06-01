@@ -3,6 +3,7 @@ package model.mindmap.parser;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -74,7 +75,7 @@ public class MindManagerParser extends AbstractEvaluationParser {
    *
    */
   @Override
-  public void write(String filepath, List<TreeNode> rootList, String templatePath) throws ParsingException {
+  public void write(Path filepath, List<TreeNode> rootList, Path templatePath) throws ParsingException {
     try {
       DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -92,7 +93,7 @@ public class MindManagerParser extends AbstractEvaluationParser {
       // ATTENTION: this must be done like this, otherwise path will be treated
       // as
       // URL. Why o.o?
-      FileOutputStream fso = new FileOutputStream(new File(filepath));
+      FileOutputStream fso = new FileOutputStream(filepath.toFile());
       StreamResult result = new StreamResult(fso);
       transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
       transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -193,7 +194,7 @@ public class MindManagerParser extends AbstractEvaluationParser {
     return element;
   }
 
-  private void createAttributesIndexHyperLink(Element hl, String path, boolean absolute) {
+  private void createAttributesIndexHyperLink(Element hl, Path path, boolean absolute) {
     createSharedAttributesHyperLink(hl, path, absolute);
     hl.setAttribute("HyperlinkId", createBase64Binary());
     hl.setAttribute("Index", String.valueOf(index));
@@ -285,15 +286,15 @@ public class MindManagerParser extends AbstractEvaluationParser {
       Element hlSolutionOrInput = createAndAppend("ap:Hyperlink", topic);
       // solution must be linking to input and vice versa
       if(treeNode.isSolution()) {
-        createSharedAttributesHyperLink(hlSolutionOrInput, getAbsolutePath(getAlteredInput()), true);
+        createSharedAttributesHyperLink(hlSolutionOrInput, getAlteredInput().toAbsolutePath(), true);
       } else {
-        createSharedAttributesHyperLink(hlSolutionOrInput, getAbsolutePath(getAlteredSolution()), true);
+        createSharedAttributesHyperLink(hlSolutionOrInput, getAlteredSolution().toAbsolutePath(), true);
       }
       Element hyperlinkGroup = createAndAppend("ap:HyperlinkGroup", topic);
       Element hlResult = createAndAppend("ap:IndexedHyperlink", hyperlinkGroup);
       Element hlMetaData = createAndAppend("ap:IndexedHyperlink", hyperlinkGroup);
-      createAttributesIndexHyperLink(hlResult, getAbsolutePath(getResult()), true);
-      createAttributesIndexHyperLink(hlMetaData, getAbsolutePath(getMetaData()), true);
+      createAttributesIndexHyperLink(hlResult, getResult().toAbsolutePath(), true);
+      createAttributesIndexHyperLink(hlMetaData, getMetaData().toAbsolutePath(), true);
     }
   }
 
@@ -368,7 +369,7 @@ public class MindManagerParser extends AbstractEvaluationParser {
     }
   }
 
-  private void createSharedAttributesHyperLink(Element hl, String path, boolean absolute) {
+  private void createSharedAttributesHyperLink(Element hl, Path path, boolean absolute) {
     hl.setAttribute("Dirty", "0000000000000001");
     hl.setAttribute("Url", "\"" + path + "\"");
     hl.setAttribute("Absolute", String.valueOf(absolute));
@@ -530,7 +531,7 @@ public class MindManagerParser extends AbstractEvaluationParser {
     }
   }
 
-  private void loadTemplateStyle(String templatePath, Element rootElement)
+  private void loadTemplateStyle(Path templatePath, Element rootElement)
       throws ParserConfigurationException, SAXException, IOException {
     // unzip design file
     UnZip unzip = new UnZip();

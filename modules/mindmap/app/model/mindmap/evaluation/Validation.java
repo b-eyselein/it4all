@@ -1,7 +1,7 @@
 package model.mindmap.evaluation;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,11 +25,11 @@ public class Validation {
    * @return
    * @throws Exception
    */
-  public static boolean checkForMeta(String solutionPath, String metaFilePath) throws Exception {
-    if(new File(metaFilePath).exists())
+  public static boolean checkForMeta(Path solutionPath, Path metaFilePath) throws IOException, ParsingException {
+    if(metaFilePath.toFile().exists())
       return true;
 
-    List<TreeNode> solutionRoots = EvalParserType.MINDMANAGER.getParser().read(new File(solutionPath));
+    List<TreeNode> solutionRoots = EvalParserType.MINDMANAGER.getParser().read(solutionPath.toFile());
     Util.applyMetaDataFromSolutionToInput(solutionRoots, new LinkedList<>());
     (new RWExcel()).createEmptyMetaFile(metaFilePath, solutionRoots);
     return false;
@@ -51,11 +51,11 @@ public class Validation {
    *         file is created.
    * @throws Exception
    */
-  public static boolean checkForMeta(String parserType, String solutionPath, String metaFilePath) throws Exception {
-    if(new File(metaFilePath).exists())
+  public static boolean checkForMeta(String parserType, Path solutionPath, Path metaFilePath) throws Exception {
+    if(metaFilePath.toFile().exists())
       return true;
 
-    List<TreeNode> solutionRoots = EvalParserType.valueOf(parserType).getParser().read(new File(solutionPath));
+    List<TreeNode> solutionRoots = EvalParserType.valueOf(parserType).getParser().read(solutionPath.toFile());
     Util.applyMetaDataFromSolutionToInput(solutionRoots, new LinkedList<>());
     (new RWExcel()).createEmptyMetaFile(metaFilePath, solutionRoots);
     return false;
@@ -69,7 +69,7 @@ public class Validation {
    *          file path to meta file
    * @return true if validation was correct, else false
    */
-  public static boolean validateMeta(String metaPath) {
+  public static boolean validateMeta(Path metaPath) {
     try {
       return new RWExcel().validate(metaPath);
     } catch (IOException e) {
@@ -86,9 +86,9 @@ public class Validation {
    *          file path to mindmap
    * @return true if validation was correct, else false
    */
-  public static boolean validateMindMap(String mapPath) {
+  public static boolean validateMindMap(Path mapPath) {
     try {
-      new MindManagerParser().read(new File(mapPath));
+      new MindManagerParser().read(mapPath.toFile());
       return true;
     } catch (ParsingException e) {
       Logger.error("Error while validating mind map", e);

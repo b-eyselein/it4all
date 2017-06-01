@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -48,10 +49,10 @@ public class WordParser implements AbstractParser {
   }
 
   @Override
-  public void write(String filepath, List<TreeNode> rootList, String templatePath) throws ParsingException {
+  public void write(Path filepath, List<TreeNode> rootList, Path templatePath) throws ParsingException {
     try {
       TreeNode root = rootList.get(0);
-      XWPFDocument template = new XWPFDocument(new FileInputStream(new File(templatePath)));
+      XWPFDocument template = new XWPFDocument(new FileInputStream(templatePath.toFile()));
       XWPFDocument xdoc = new XWPFDocument();
       XWPFStyles newStyles = xdoc.createStyles();
       // TODO: don't know how to set numbering in new .docx from template
@@ -59,7 +60,7 @@ public class WordParser implements AbstractParser {
       // template.getNumbering();
       newStyles.setStyles(template.getStyle());
       createContent(xdoc, root, 0);
-      xdoc.write(new FileOutputStream(new File(filepath)));
+      xdoc.write(new FileOutputStream(filepath.toFile()));
       template.close();
     } catch (IOException | XmlException e) {
       throw new ParsingException(e);

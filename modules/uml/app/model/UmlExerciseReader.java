@@ -1,5 +1,6 @@
 package model;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -7,6 +8,7 @@ import java.util.stream.StreamSupport;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import model.exercisereading.ExerciseReader;
+import play.Logger;
 
 public class UmlExerciseReader extends ExerciseReader<UmlExercise> {
 
@@ -20,6 +22,7 @@ public class UmlExerciseReader extends ExerciseReader<UmlExercise> {
 
   @Override
   public void saveExercise(UmlExercise exercise) {
+    Logger.debug(exercise.toString());
     exercise.save();
   }
 
@@ -32,14 +35,14 @@ public class UmlExerciseReader extends ExerciseReader<UmlExercise> {
       exercise = new UmlExercise(id);
 
     String rawText = JsonWrapper.readTextArray(exerciseNode.get(StringConsts.TEXT_NAME), "");
-
-    exercise.mappings = readMappings(exerciseNode.get("mappings"));
+    
+    // exercise.mappings = readMappings(exerciseNode.get("mappings"));
 
     exercise.title = exerciseNode.get(StringConsts.TITLE_NAME).asText();
     exercise.text = rawText;
 
-    UmlExTextParser parser = new UmlExTextParser(rawText, exercise.mappings,
-        JsonWrapper.parseJsonArrayNode(exerciseNode.get("ignore")));
+    UmlExTextParser parser = new UmlExTextParser(rawText,
+        Collections.emptyList() /* exercise.mappings */, JsonWrapper.parseJsonArrayNode(exerciseNode.get("ignore")));
     exercise.classSelText = parser.parseTextForClassSel();
     exercise.diagDrawText = parser.parseTextForDiagDrawing();
 

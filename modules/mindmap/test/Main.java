@@ -1,4 +1,3 @@
-
 //import java.io.File;
 //import java.io.IOException;
 //import java.util.LinkedList;
@@ -25,7 +24,7 @@
 //import testing.Test;
 
 public class Main {
-  
+
   public static void main(String[] args) {
     // Test test = new Test();
     //
@@ -38,37 +37,7 @@ public class Main {
     // test.abstractXToX("mindmanager", "word",
     // "C:/Users/Magnus/Desktop/xTOx/SOLUTION.xml",
     // "C:/Users/Magnus/Desktop/xTOx/resultWord.docx", "word");
-    
-    // try {
-    // String solution = "Evaluation/Test_Task/SOLUTION.xml";
-    // String input = "Evaluation/Test_Task/TASK_DONE.xml";
-    // String meta = "Evaluation/Test_Task/META.xls";
-    // String template = "Evaluation/Test_Task/TEMPLATE.mmas";
-    //
-    // String result = "Evaluation/Test_Task/Results/RESULT.xls";
-    // String alteredSolution =
-    // "Evaluation/Test_Task/Results/ALTERED_SOLUTION.xml";
-    // String alteredInput = "Evaluation/Test_Task/Results/ALTERED_INPUT.xml";
-    //
-    // Validation.validateMindMap(solution);
-    // Validation.validateMindMap(input);
-    //
-    // //if false: stop here and let admin edit the meta file
-    // //afterwards continue here or start again
-    // Validation.checkForMeta(solution, meta);
-    // Validation.validateMeta(meta);
-    //
-    // System.out.println("Validation done.");
-    //
-    // Evaluation.evaluate("MINDMANAGER", input, solution, result,
-    // alteredSolution, alteredInput, meta, template);
-    //
-    // System.out.println("Evaluation done.");
-    //
-    // } catch (Exception e) {
-    // e.printStackTrace();
-    // }
-    
+
     // WordParser wp2 = new WordParser();
     // try {
     // LinkedList<TreeNode> asd = wp2.read(new
@@ -81,7 +50,7 @@ public class Main {
     // // TODO Auto-generated catch block
     // e.printStackTrace();
     // }
-    
+
     // file transformations
     // test.freePlanToFreePlane();
     // test.freePlaneToLatex();
@@ -99,7 +68,7 @@ public class Main {
     // test.wordToLatex();
     // test.wordToMindManager();
     // test.wordToWord();
-    
+
     // show difference between mind-maps
     // MindManager
     // test.evaluateMultipleRootMapsWithExcel("mindmanager",

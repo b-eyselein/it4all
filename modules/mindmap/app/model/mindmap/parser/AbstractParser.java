@@ -1,13 +1,14 @@
 package model.mindmap.parser;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 
 import model.mindmap.basics.TreeNode;
 import model.mindmap.evaluation.ParsingException;
 
 public interface AbstractParser {
-
+  
   /**
    * numbering of nodes in table of content style for all trees
    *
@@ -19,7 +20,7 @@ public interface AbstractParser {
       numerateOneTree(n, "");
     }
   }
-
+  
   /**
    * numbering of nodes in table of content style for one tree
    *
@@ -42,7 +43,7 @@ public interface AbstractParser {
       numerateOneTree(n, numeration);
     }
   }
-
+  
   /**
    * prints the text of all nodes for all trees
    *
@@ -57,7 +58,7 @@ public interface AbstractParser {
       System.out.println("");
     }
   }
-
+  
   /**
    * prints all nodes in the specific tree.
    *
@@ -74,7 +75,7 @@ public interface AbstractParser {
       printOneTree(n);
     }
   }
-
+  
   /**
    * This method reads a mindmap in xml or xmmap format and creates an internal
    * representation of the mindmap as tree structure. As consequence, if there
@@ -86,7 +87,7 @@ public interface AbstractParser {
    * @throws Exception
    */
   public abstract List<TreeNode> read(File file) throws ParsingException;
-
+  
   /**
    * This method creates from the internal representation (trees) a mindmap. The
    * creation is recursive for each trees.
@@ -100,5 +101,5 @@ public interface AbstractParser {
    *          the appearance of the mindmap
    * @throws Exception
    */
-  public abstract void write(String filepath, List<TreeNode> rootList, String templatePath) throws ParsingException;
+  public abstract void write(Path filepath, List<TreeNode> rootList, Path templatePath) throws ParsingException;
 }

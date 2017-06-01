@@ -5,23 +5,24 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class UnZip {
-  
+
   private static final int BUFFER_SIZE = 4096;
-  
-  public String unzip(String zipFilePath) {
-    File f = new File(zipFilePath);
+
+  public String unzip(Path zipFilePath) {
+    File f = zipFilePath.toFile();
     String destDirectory = f.getParent() + "/" + (f.getName().replace(".", ""));
     File destDir = new File(destDirectory);
     if(!destDir.exists()) {
       destDir.mkdirs();
     }
-    
+
     // this try - catch MUST be here, don't throw it
-    try(ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath))) {
+    try(ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath.toFile()))) {
       ZipEntry entry = zipIn.getNextEntry();
       while(entry != null) {
         String filePath = destDirectory + File.separator + entry.getName();
@@ -43,7 +44,7 @@ public class UnZip {
     }
     return destDirectory;
   }
-  
+
   /**
    * Extracts a zip entry (file entry)
    *

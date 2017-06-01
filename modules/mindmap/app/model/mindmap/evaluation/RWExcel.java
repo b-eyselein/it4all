@@ -1,9 +1,10 @@
 package model.mindmap.evaluation;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,6 +29,19 @@ public class RWExcel {
   private int maxDepthTrees;
   private Util util = new Util();
   
+  private static TreeNode traverseTree(String nodeTextToSearch, TreeNode currentNode) {
+    if(currentNode.getText().equals(nodeTextToSearch))
+      return currentNode;
+    
+    for(TreeNode child: currentNode.getChildren()) {
+      TreeNode res = traverseTree(nodeTextToSearch, child);
+      if(res != null) {
+        return res;
+      }
+    }
+    return null;
+  }
+  
   /**
    * Creates an empty meta file with the hierarchical structure of the trees and
    * place for synonyms and so on.
@@ -38,11 +52,11 @@ public class RWExcel {
    *          roots of solution trees
    * @throws IOException
    */
-  public void createEmptyMetaFile(String metaFilePath, List<TreeNode> solutionRoots) throws IOException {
+  public void createEmptyMetaFile(Path metaFilePath, List<TreeNode> solutionRoots) throws IOException {
     try(HSSFWorkbook workbook = new HSSFWorkbook()) {
       Sheet excelSheet = workbook.createSheet(META_DATA_NAME);
       createEmptyMetaContent(excelSheet, solutionRoots);
-      FileOutputStream fileOut = new FileOutputStream(metaFilePath);
+      FileOutputStream fileOut = new FileOutputStream(metaFilePath.toFile());
       workbook.write(fileOut);
       fileOut.close();
     } catch (IOException e) {
@@ -59,11 +73,11 @@ public class RWExcel {
    *          roots of the solution trees
    * @throws IOException
    */
-  public void createMetaFile(String metaFilePath, List<TreeNode> solutionRoots) throws IOException {
+  public void createMetaFile(Path metaFilePath, List<TreeNode> solutionRoots) throws IOException {
     try(Workbook workbook = new HSSFWorkbook()) {
       Sheet excelSheet = workbook.createSheet(META_DATA_NAME);
       createMetaContent(excelSheet, solutionRoots);
-      FileOutputStream fileOut = new FileOutputStream(metaFilePath);
+      FileOutputStream fileOut = new FileOutputStream(metaFilePath.toFile());
       workbook.write(fileOut);
       fileOut.close();
     } catch (IOException e) {
@@ -85,8 +99,7 @@ public class RWExcel {
    *          decides how the meta file is created or takes influence
    * @throws IOException
    */
-  public void handleMetaData(String metaFilePath, List<TreeNode> solutionRoots, MetaDataState state)
-      throws IOException {
+  public void handleMetaData(Path metaFilePath, List<TreeNode> solutionRoots, MetaDataState state) throws IOException {
     if(state == MetaDataState.EMPTY) {
       createEmptyMetaFile(metaFilePath, solutionRoots);
     } else if(state == MetaDataState.FROM_METAFILE) {
@@ -109,10 +122,10 @@ public class RWExcel {
    * @return properties which are necessary for the parser
    * @throws IOException
    */
-  public Properties readMetaFile(String metaFilePath, List<TreeNode> solutionRoots) throws IOException {
+  public Properties readMetaFile(Path metaFilePath, List<TreeNode> solutionRoots) throws IOException {
     resetCounter();
     Properties properties = new Properties();
-    FileInputStream fileInStream = new FileInputStream(new File(metaFilePath));
+    FileInputStream fileInStream = new FileInputStream(metaFilePath.toFile());
     
     try(HSSFWorkbook workbook = new HSSFWorkbook(fileInStream)) {
       Iterator<Row> rowIterator = workbook.getSheetAt(0).iterator();
@@ -139,41 +152,40 @@ public class RWExcel {
    * @return true if valid, else false
    * @throws IOException
    */
-  public boolean validate(String metaPath) throws IOException {
+  public boolean validate(Path metaPath) throws IOException {
     boolean valid = true;
     resetCounter();
-    FileInputStream fileInStream = new FileInputStream(new File(metaPath));
+    FileInputStream fileInStream = new FileInputStream(metaPath.toFile());
+    
     try(HSSFWorkbook workbook = new HSSFWorkbook(fileInStream)) {
       int synonymColumnNum = -1;
-      boolean firstRow = true;
       boolean secondRow = true;
       
-      for(Iterator<Row> rowIterator = workbook.getSheetAt(0).iterator(); rowIterator.hasNext();) {
+      Iterator<Row> rowIterator = workbook.getSheetAt(0).iterator();
+      Row firstRow = rowIterator.next();
+      synonymColumnNum = firstRow.getLastCellNum() - 2;
+      
+      while(rowIterator.hasNext()) {
         Row currentRow = rowIterator.next();
         Iterator<Cell> cellIterator = currentRow.cellIterator();
-        if(firstRow) {
-          // -2 because of zero counting start and last row is modus
-          synonymColumnNum = currentRow.getLastCellNum() - 2;
-          firstRow = false;
-        } else {
-          if(cellIterator.hasNext()) {
-            Cell optionalCell = currentRow.getCell(synonymColumnNum - 2);
-            if(optionalCell != null && optionalCell.getCellType() != Cell.CELL_TYPE_BLANK
-                && !"YES".equalsIgnoreCase(optionalCell.getStringCellValue()))
+        if(cellIterator.hasNext()) {
+          Cell optionalCell = currentRow.getCell(synonymColumnNum - 2);
+          if(optionalCell != null && optionalCell.getCellType() != Cell.CELL_TYPE_BLANK
+              && !"YES".equalsIgnoreCase(optionalCell.getStringCellValue()))
+            valid = false;
+          
+          Cell ratingCell = currentRow.getCell(synonymColumnNum - 1);
+          if(ratingCell != null && ratingCell.getCellType() != Cell.CELL_TYPE_BLANK) {
+            // throws exception if string
+            ratingCell.getNumericCellValue();
+          }
+          Cell modusCell = currentRow.getCell(synonymColumnNum + 1);
+          if(secondRow) {
+            secondRow = false;
+            if(modusCell == null || modusCell.getCellType() == Cell.CELL_TYPE_BLANK
+                || Modus.valueOf(modusCell.getStringCellValue()) == null) {
+              // FIXME: valid can not be true anymore, close and return
               valid = false;
-            
-            Cell ratingCell = currentRow.getCell(synonymColumnNum - 1);
-            if(ratingCell != null && ratingCell.getCellType() != Cell.CELL_TYPE_BLANK) {
-              // throws exception if string
-              ratingCell.getNumericCellValue();
-            }
-            Cell modusCell = currentRow.getCell(synonymColumnNum + 1);
-            if(secondRow) {
-              secondRow = false;
-              if(modusCell == null || modusCell.getCellType() == Cell.CELL_TYPE_BLANK
-                  || Modus.valueOf(modusCell.getStringCellValue()) == null) {
-                valid = false;
-              }
             }
           }
         }
@@ -201,15 +213,17 @@ public class RWExcel {
    *          solution roots
    * @throws IOException
    */
-  public void writeEvaluation(String outputFile, List<TreeNode> inputRoots, List<TreeNode> solutionRoots)
+  public void writeEvaluation(Path outputFile, List<TreeNode> inputRoots, List<TreeNode> solutionRoots)
       throws IOException {
-    HSSFWorkbook workbook = new HSSFWorkbook();
-    Sheet excelSheet = workbook.createSheet("Results");
-    createContent(excelSheet, inputRoots, solutionRoots);
-    FileOutputStream fileOut = new FileOutputStream(outputFile);
-    workbook.write(fileOut);
-    fileOut.close();
-    workbook.close();
+    try(HSSFWorkbook workbook = new HSSFWorkbook()) {
+      Sheet excelSheet = workbook.createSheet("Results");
+      createContent(excelSheet, inputRoots, solutionRoots);
+      FileOutputStream fileOut = new FileOutputStream(outputFile.toFile());
+      workbook.write(fileOut);
+      fileOut.close();
+    } catch (IOException e) {
+      throw e;
+    }
   }
   
   private void addLabel(Sheet excelSheet, int column, int row, Double val) {
@@ -319,14 +333,8 @@ public class RWExcel {
     return res;
   }
   
-  private LinkedList<String> parseSynonyms(String toParse) {
-    LinkedList<String> synonyms = new LinkedList<>();
-    String[] synArr = toParse.split(";");
-    for(String synonym: synArr) {
-      synonym = synonym.trim();
-      synonyms.add(synonym);
-    }
-    return synonyms;
+  private List<String> parseSynonyms(String toParse) {
+    return Arrays.stream(toParse.split(";")).map(String::trim).collect(Collectors.toList());
   }
   
   private void prepareForFilling(Sheet excelSheet, List<TreeNode> inputRoots, List<TreeNode> solutionRoots) {
@@ -341,7 +349,6 @@ public class RWExcel {
   private void readMetaFileRow(List<TreeNode> solutionRoots, Properties properties, int synonymColumnNum,
       Row currentRow) {
     Iterator<Cell> cellIterator = currentRow.cellIterator();
-    LinkedList<String> synonymList = new LinkedList<>();
     
     if(!cellIterator.hasNext())
       return;
@@ -365,6 +372,8 @@ public class RWExcel {
     } else {
       currentNode.setMaxRating(0.0);
     }
+    
+    List<String> synonymList = new LinkedList<>();
     Cell synCell = currentRow.getCell(synonymColumnNum);
     if(synCell != null && synCell.getCellType() != Cell.CELL_TYPE_BLANK) {
       synonymList = parseSynonyms(synCell.getStringCellValue());
@@ -465,30 +474,13 @@ public class RWExcel {
   }
   
   private void traverseTree(Sheet excelSheet, TreeNode treeNode, int column) {
-    int colNumber = column;
     row++;
-    addLabel(excelSheet, colNumber, row, treeNode.getText());
+    addLabel(excelSheet, column, row, treeNode.getText());
     addLabel(excelSheet, maxDepthTrees + 1, row, treeNode.getDifferenceResult().toString());
     addLabel(excelSheet, maxDepthTrees + 2, row, treeNode.getMaxRating());
     addLabel(excelSheet, maxDepthTrees + 3, row, treeNode.getRealRating());
-    colNumber++;
     for(TreeNode child: treeNode.getChildren()) {
-      traverseTree(excelSheet, child, colNumber);
+      traverseTree(excelSheet, child, column + 1);
     }
-  }
-  
-  private TreeNode traverseTree(String nodeTextToSearch, TreeNode currentNode) {
-    TreeNode res = null;
-    if(currentNode.getText().equals(nodeTextToSearch)) {
-      return currentNode;
-    } else {
-      for(TreeNode child: currentNode.getChildren()) {
-        res = traverseTree(nodeTextToSearch, child);
-        if(res != null) {
-          return res;
-        }
-      }
-    }
-    return res;
   }
 }

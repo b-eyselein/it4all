@@ -1,22 +1,22 @@
 package model.mindmap.evaluation;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
 import model.mindmap.basics.TreeNode;
-import model.mindmap.evaluation.enums.EvalParserType;
 import model.mindmap.evaluation.enums.ParserType;
 import model.mindmap.parser.AbstractEvaluationParser;
 import model.mindmap.parser.AbstractParser;
 import play.Logger;
 
 public class Evaluation {
-  
+
   private Evaluation() {
-    
+
   }
-  
+
   /**
    * Takes a mindmap in .xml or .xmmap file format and creates a latex .tex TOC
    * file based on the input file.
@@ -30,10 +30,10 @@ public class Evaluation {
    * @param templatePath
    *          template path
    */
-  public static void craeteTOCMMtoLatex(String readPath, String writePath, String templatePath) {
-    createTOC("MINDMANAGER", "LATEX", readPath, writePath, templatePath);
+  public static void craeteTOCMMtoLatex(Path readPath, Path writePath, Path templatePath) {
+    createTOC(ParserType.MINDMANAGER.getParser(), ParserType.LATEX.getParser(), readPath, writePath, templatePath);
   }
-  
+
   /**
    * Takes a mindmap in .xml or .xmmap file format and creates a word .docx TOC
    * file based on the input file.
@@ -47,10 +47,10 @@ public class Evaluation {
    * @param templatePath
    *          template path
    */
-  public static void craeteTOCMMtoWord(String readPath, String writePath, String templatePath) {
-    createTOC("MINDMANAGER", "WORD", readPath, writePath, templatePath);
+  public static void craeteTOCMMtoWord(Path readPath, Path writePath, Path templatePath) {
+    createTOC(ParserType.MINDMANAGER.getParser(), ParserType.WORD.getParser(), readPath, writePath, templatePath);
   }
-  
+
   /**
    * This method creates a table of content file in the specified file format
    * based on the input file and template file.
@@ -66,19 +66,17 @@ public class Evaluation {
    * @param templatePath
    *          template path
    */
-  public static void createTOC(String readParser, String writeParser, String readPath, String writePath,
-      String templatePath) {
+  public static void createTOC(AbstractParser readParser, AbstractParser writeParser, Path readPath, Path writePath,
+      Path templatePath) {
     try {
-      AbstractParser r = ParserType.valueOf(readParser).getParser();
-      List<TreeNode> listOfRoots = r.read(new File(readPath));
+      List<TreeNode> listOfRoots = readParser.read(readPath.toFile());
       listOfRoots = Util.mergeTrees(listOfRoots);
-      AbstractParser w = ParserType.valueOf(writeParser).getParser();
-      w.write(writePath, listOfRoots, templatePath);
+      writeParser.write(writePath, listOfRoots, templatePath);
     } catch (ParsingException e) {
       Logger.error("FEHLER: ", e);
     }
   }
-  
+
   /**
    * This method performs the evaluation of a mindmap from a user in comparison
    * to a solution mindmap. In order to do this, several parameters are needed.
@@ -111,12 +109,12 @@ public class Evaluation {
    *          the path where the template file is
    * @throws Exception
    */
-  public static void evaluate(String parserType, String input, String solution, String result, String alteredSolution,
-      String alteredInput, String metaData, String template) throws Exception {
+  public static void evaluate(AbstractEvaluationParser abstractEvaluationParser, Path input, Path solution, Path result,
+      Path alteredSolution, Path alteredInput, Path metaData, Path template) throws ParsingException, IOException {
+
     RWExcel rwe = new RWExcel();
-    AbstractEvaluationParser abstractEvaluationParser = EvalParserType.valueOf(parserType).getParser();
-    List<TreeNode> inputRoots = abstractEvaluationParser.read(new File(input));
-    List<TreeNode> solutionRoots = abstractEvaluationParser.read(new File(solution));
+    List<TreeNode> inputRoots = abstractEvaluationParser.read(input.toFile());
+    List<TreeNode> solutionRoots = abstractEvaluationParser.read(solution.toFile());
     // this must be called before handleMetaData()... //else there might be
     // redundant 'yes' in the meta file.
     Util.applyMetaDataFromSolutionToInput(solutionRoots, inputRoots);

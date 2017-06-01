@@ -2,6 +2,7 @@ package model.mindmap.parser;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -41,7 +42,7 @@ public class FreePlanParser extends AbstractEvaluationParser {
 
   // Note: templatePath not supported
   @Override
-  public void write(String filepath, List<TreeNode> listOfRoots, String templatePath) throws ParsingException {
+  public void write(Path filepath, List<TreeNode> listOfRoots, Path templatePath) throws ParsingException {
     try {
       DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -60,7 +61,7 @@ public class FreePlanParser extends AbstractEvaluationParser {
       // write the content into xml file
       TransformerFactory transformerFactory = TransformerFactory.newInstance();
       Transformer transformer = transformerFactory.newTransformer();
-      StreamResult result = new StreamResult(new File(filepath));
+      StreamResult result = new StreamResult(filepath.toFile());
       transformer.setOutputProperty(OutputKeys.ENCODING, "us-ascii");
       transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
       transformer.setOutputProperty(OutputKeys.INDENT, "yes");

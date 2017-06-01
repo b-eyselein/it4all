@@ -1,54 +1,49 @@
 package model.mindmap.parser;
 
-import java.io.File;
+import java.nio.file.Path;
 
 import model.mindmap.evaluation.Properties;
 import model.mindmap.evaluation.enums.Modus;
 
 public abstract class AbstractEvaluationParser implements AbstractParser {
-  
+
   private boolean multipleOutput = false;
-  
-  private String result;
-  private String metaData;
-  private String alteredInput;
-  private String alteredSolution;
-  
+
+  private Path result;
+  private Path metaData;
+  private Path alteredInput;
+  private Path alteredSolution;
+
   private Modus modus = null;
-  
-  public String getAbsolutePath(String relativePath) {
-    File file = new File(relativePath);
-    return file.getAbsolutePath();
-  }
-  
-  public String getAlteredInput() {
+
+  public Path getAlteredInput() {
     return alteredInput;
   }
-  
-  public String getAlteredSolution() {
+
+  public Path getAlteredSolution() {
     return alteredSolution;
   }
-  
-  public String getMetaData() {
+
+  public Path getMetaData() {
     return metaData;
   }
-  
+
   public Modus getModus() {
     return modus;
   }
-  
-  public String getResult() {
+
+  public Path getResult() {
     return result;
   }
-  
+
   public boolean isMultipleOutput() {
     return multipleOutput;
   }
-  
+
   public void setModus(Modus modus) {
     this.modus = modus;
   }
-  
+
   /**
    * With this method it is possible to set file paths from outside. This is
    * necessary because the paths are needed to create a mindmap.
@@ -62,14 +57,14 @@ public abstract class AbstractEvaluationParser implements AbstractParser {
    * @param alteredSolution
    *          file path to the saving location of the altered input mindmap
    */
-  public void setPathsForAlteredOutputs(String result, String metaData, String alteredInput, String alteredSolution) {
+  public void setPathsForAlteredOutputs(Path result, Path metaData, Path alteredInput, Path alteredSolution) {
     this.result = result;
     this.metaData = metaData;
     this.alteredInput = alteredInput;
     this.alteredSolution = alteredSolution;
     multipleOutput = true;
   }
-  
+
   /**
    * Properties change the content of the mindmap.
    *

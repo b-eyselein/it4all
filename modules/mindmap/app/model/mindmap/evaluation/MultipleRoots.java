@@ -1,6 +1,6 @@
 package model.mindmap.evaluation;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -17,16 +17,16 @@ public class MultipleRoots {
   private MetaDataState mds = null;
   private Modus modus = null;
 
-  public void createMetaFromMap(String parserType, String solutionMapPath, String metaToCreatePath) throws Exception {
+  public void createMetaFromMap(String parserType, Path solutionMapPath, Path metaToCreatePath) throws Exception {
     RWExcel rwe = new RWExcel();
     AbstractEvaluationParser abstractEvaluationParser = EvalParserType.valueOf(parserType).getParser();
-    List<TreeNode> solutionRoots = abstractEvaluationParser.read(new File(solutionMapPath));
+    List<TreeNode> solutionRoots = abstractEvaluationParser.read(solutionMapPath.toFile());
     Util.applyMetaDataFromSolutionToInput(solutionRoots, new LinkedList<>());
     rwe.handleMetaData(metaToCreatePath, solutionRoots, MetaDataState.FROM_MINDMAP);
   }
 
-  public void evalMultiRootMapWithExcel(String parserType, String input, String solution, String result,
-      String alteredSolution, String alteredInput, String metaData, String template) throws Exception {
+  public void evalMultiRootMapWithExcel(String parserType, Path input, Path solution, Path result, Path alteredSolution,
+      Path alteredInput, Path metaData, Path template) throws Exception {
     RWExcel rwe = new RWExcel();
     // must be uncommented to be a console program - else mds and modus are set
     // from outside
@@ -34,8 +34,8 @@ public class MultipleRoots {
     // modus = askUserForModus();
     AbstractEvaluationParser abstractEvaluationParser = EvalParserType.valueOf(parserType).getParser();
     abstractEvaluationParser.setModus(modus);
-    List<TreeNode> inputRoots = abstractEvaluationParser.read(new File(input));
-    List<TreeNode> solutionRoots = abstractEvaluationParser.read(new File(solution));
+    List<TreeNode> inputRoots = abstractEvaluationParser.read(input.toFile());
+    List<TreeNode> solutionRoots = abstractEvaluationParser.read(solution.toFile());
     // this must be called before handleMetaData()... //else there might be
     // redundant 'yes' in the meta file. (example: press = 1, Haustier = yes,
     // Dackel = yes)
