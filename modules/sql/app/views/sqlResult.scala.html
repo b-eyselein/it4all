@@ -1,9 +1,16 @@
-@(result: model.correctionresult.SqlResult)
+@(result: model.correctionresult.SqlResult[_])
 
 @execResult = @{result.getExecutionResult()}
 
 <div class="row">
-  <!-- Columns, Tables, Order Bys, Group Bys-->
+  <!-- Spalten -->
+  <div class="col-md-12">
+  @resultTemplates.columnComp.render(result.getColumnComparison())
+  </div>
+</div>
+
+<div class="row">
+  <!-- Tables, Order Bys, Group Bys-->
   @for(listComp <- result.getListComparisons()) {
     @resultTemplates.listCompResult.render(listComp)
   }

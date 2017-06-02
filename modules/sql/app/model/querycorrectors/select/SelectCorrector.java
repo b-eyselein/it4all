@@ -5,12 +5,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Singleton;
 
-import model.ColumnWrapper;
 import model.SqlCorrectionException;
+import model.StringConsts;
 import model.correction.CorrectionException;
 import model.correctionresult.SqlExecutionResult;
 import model.exercise.SqlExercise;
@@ -26,12 +25,14 @@ import net.sf.jsqlparser.statement.select.SelectItem;
 import play.db.Database;
 
 @Singleton
-public class SelectCorrector extends QueryCorrector<Select> {
-
+public class SelectCorrector extends QueryCorrector<Select, SelectItem> {
+  
+  private static final SelectColumnsMatcher COL_MATCHER = new SelectColumnsMatcher();
+  
   public SelectCorrector() {
-    super("SELECT", true, true, true, true, true);
+    super("SELECT");
   }
-
+  
   private SqlQueryResult executeStatement(Select select, Connection conn) throws SQLException {
     try(Statement statement = conn.createStatement()) {
       return new SqlQueryResult(statement.executeQuery(select.toString()));
@@ -39,75 +40,72 @@ public class SelectCorrector extends QueryCorrector<Select> {
       throw e;
     }
   }
-
+  
   @Override
-  protected MatchingResult<ColumnWrapper<?>> compareColumns(Select userQuery, Select sampleQuery) {
-    // TODO Auto-generated method stub
-    List<ColumnWrapper<SelectItem>> userItems = getColumns(userQuery);
-    return null;
+  protected MatchingResult<SelectItem> compareColumns(Select userQuery, Select sampleQuery) {
+    return COL_MATCHER.match(StringConsts.COLUMNS_NAME, getColumns(userQuery), getColumns(sampleQuery));
   }
-
+  
   @Override
   protected MatchingResult<String> compareGroupByElements(Select plainUserQuery, Select plainSampleQuery) {
     return STRING_EQ_MATCHER.match("Group By-Elemente",
         listAsStrings(((PlainSelect) plainUserQuery.getSelectBody()).getGroupByColumnReferences()),
         listAsStrings(((PlainSelect) plainSampleQuery.getSelectBody()).getGroupByColumnReferences()));
   }
-
+  
   @Override
   protected MatchingResult<String> compareOrderByElements(Select plainUserQuery, Select plainSampleQuery) {
     return STRING_EQ_MATCHER.match("Order By-Elemente",
         listAsStrings(((PlainSelect) plainUserQuery.getSelectBody()).getOrderByElements()),
         listAsStrings(((PlainSelect) plainSampleQuery.getSelectBody()).getOrderByElements()));
   }
-
+  
   @Override
   protected SqlExecutionResult executeQuery(Database database, Select userStatement, Select sampleStatement,
       SqlExercise exercise) throws CorrectionException {
     SqlQueryResult userResult = null;
     SqlQueryResult sampleResult = null;
-
+    
     try(Connection conn = database.getConnection()) {
       conn.setCatalog(exercise.scenario.shortName);
-
+      
       userResult = executeStatement(userStatement, conn);
-
+      
       sampleResult = executeStatement(sampleStatement, conn);
-
+      
       return new SqlExecutionResult(userResult, sampleResult);
     } catch (SQLException e) {
       e.fillInStackTrace();
       throw new SqlCorrectionException(userStatement.toString(), e.getMessage(), e);
     }
-
+    
   }
-
-  protected List<ColumnWrapper<SelectItem>> getColumns(Select select) {
-    return ((PlainSelect) select.getSelectBody()).getSelectItems().stream().map(ColumnWrapper<SelectItem>::new)
-        .collect(Collectors.toList());
+  
+  protected List<SelectItem> getColumns(Select select) {
+    return ((PlainSelect) select.getSelectBody()).getSelectItems();
   }
-
+  
   @Override
   protected List<String> getTables(Select select) {
     List<String> userFromItems = new LinkedList<>();
-
+    
     // Main table in Query
     if(((PlainSelect) select.getSelectBody()).getFromItem() instanceof Table)
       userFromItems.add(((Table) ((PlainSelect) select.getSelectBody()).getFromItem()).getName());
-
+      
     // All joined tables
     // FIXME: JOIN ON - Bedingung --> getOnExpression() als Bedingung?
     if(((PlainSelect) select.getSelectBody()).getJoins() != null)
       for(Join join: ((PlainSelect) select.getSelectBody()).getJoins())
         if(join.getRightItem() instanceof Table)
           userFromItems.add(((Table) join.getRightItem()).getName());
-
+        
     return userFromItems;
   }
-
+  
   @Override
   protected Expression getWhere(Select select) {
     return ((PlainSelect) select.getSelectBody()).getWhere();
   }
-
+  
 }

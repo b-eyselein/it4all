@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import model.ColumnWrapper;
 import model.SqlCorrectionException;
 import model.StringConsts;
 import model.correction.CorrectionException;
@@ -23,28 +22,15 @@ import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
 import play.db.Database;
 
-public abstract class QueryCorrector<Q extends Statement> {
+public abstract class QueryCorrector<Q extends Statement, ColumnType> {
 
   protected static final StringEqualsMatcher STRING_EQ_MATCHER = new StringEqualsMatcher();
   private static final BinaryExpressionMatcher BIN_EX_MATCHER = new BinaryExpressionMatcher();
 
   private String queryType;
 
-  private boolean compareColumns;
-  private boolean compareOrderBy;
-  private boolean compareGroupBy;
-  private boolean compareWhere;
-  private boolean execute;
-
-  public QueryCorrector(String theQueryType, boolean theCompareColumns, boolean theCompareOrderBy,
-      boolean theCompareGroupBy, boolean theCompareWhere, boolean theExecute) {
+  public QueryCorrector(String theQueryType) {
     queryType = theQueryType;
-
-    compareColumns = theCompareColumns;
-    compareOrderBy = theCompareOrderBy;
-    compareGroupBy = theCompareGroupBy;
-    compareWhere = theCompareWhere;
-    execute = theExecute;
   }
 
   protected static <T> List<String> listAsStrings(List<T> list) {
@@ -53,34 +39,32 @@ public abstract class QueryCorrector<Q extends Statement> {
     return list.stream().map(T::toString).collect(Collectors.toList());
   }
 
-  public SqlResult correct(Database database, String learnerSolution, SqlSample sampleStatement, SqlExercise exercise)
-      throws CorrectionException {
+  public SqlResult<ColumnType> correct(Database database, String learnerSolution, SqlSample sampleStatement,
+      SqlExercise exercise) throws CorrectionException {
     Q userQ = parseStatement(learnerSolution);
     Q sampleQ = parseStatement(sampleStatement.sample);
 
-    MatchingResult<ColumnWrapper<?>> columnComp = compareColumns ? compareColumns(userQ, sampleQ) : null;
+    MatchingResult<ColumnType> columnComp = compareColumns(userQ, sampleQ);
 
     MatchingResult<String> tableComp = STRING_EQ_MATCHER.match(StringConsts.TABLES_NAME, getTables(userQ),
         getTables(sampleQ));
 
-    MatchingResult<String> orderByComparison = compareOrderBy ? compareOrderByElements(userQ, sampleQ) : null;
+    MatchingResult<String> orderByComparison = compareOrderByElements(userQ, sampleQ);
 
-    MatchingResult<String> groupByComparison = compareGroupBy ? compareGroupByElements(userQ, sampleQ) : null;
+    MatchingResult<String> groupByComparison = compareGroupByElements(userQ, sampleQ);
 
-    MatchingResult<BinaryExpression> whereComp = compareWhere
-        ? BIN_EX_MATCHER.match(StringConsts.CONDITIONS_NAME, getExpressions(userQ), getExpressions(sampleQ)) : null;
+    MatchingResult<BinaryExpression> whereComp = BIN_EX_MATCHER.match(StringConsts.CONDITIONS_NAME,
+        getExpressions(userQ), getExpressions(sampleQ));
 
     SqlExecutionResult executionResult = null;
-    if(execute) {
-      try {
-        executionResult = executeQuery(database, userQ, sampleQ, exercise);
-      } catch (CorrectionException e) {
-        throw e;
-      }
+    try {
+      executionResult = executeQuery(database, userQ, sampleQ, exercise);
+    } catch (CorrectionException e) {
+      throw e;
     }
 
     // @formatter:off
-    return new SqlResultBuilder()
+    return new SqlResultBuilder<ColumnType>()
         .setLearnerSolution(learnerSolution)
         .setColumnComparison(columnComp)
         .setTableComparison(tableComp)
@@ -96,11 +80,7 @@ public abstract class QueryCorrector<Q extends Statement> {
     return new ExpressionExtractor(getWhere(statement)).extract();
   }
 
-  protected abstract MatchingResult<ColumnWrapper<?>> compareColumns(Q userQuery, Q sampleQuery);
-  // {
-  // return STRING_EQ_MATCHER.match(StringConsts.COLUMNS_NAME,
-  // getColumns(userQuery), getColumns(sampleQuery));
-  // }
+  protected abstract MatchingResult<ColumnType> compareColumns(Q userQuery, Q sampleQuery);
 
   protected abstract MatchingResult<String> compareGroupByElements(Q userQuery, Q sampleQuery);
 

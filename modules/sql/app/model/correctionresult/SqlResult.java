@@ -5,16 +5,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import model.ColumnWrapper;
 import model.matching.MatchingResult;
 import model.result.EvaluationResult;
 import net.sf.jsqlparser.expression.BinaryExpression;
 
-public class SqlResult {
+public class SqlResult<ColumnType> {
   
   private String learnerSolution;
   
-  private MatchingResult<ColumnWrapper<?>> columnComparison;
+  private MatchingResult<ColumnType> columnComparison;
   
   private MatchingResult<String> tableComparison;
   
@@ -29,7 +28,7 @@ public class SqlResult {
   // @formatter:off
   protected SqlResult(
       String theLearnerSolution,
-      MatchingResult<ColumnWrapper<?>> theColumnComparison,
+      MatchingResult<ColumnType> theColumnComparison,
       MatchingResult<String> theTableComparison,
       MatchingResult<String> theOrderByComparison,
       MatchingResult<String> theGroupByComparison,
@@ -49,7 +48,7 @@ public class SqlResult {
   }
   // @formatter:on
   
-  public MatchingResult<ColumnWrapper<?>> getColumnComparison() {
+  public MatchingResult<ColumnType> getColumnComparison() {
     return columnComparison;
   }
   

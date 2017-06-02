@@ -32,52 +32,52 @@ import net.sf.jsqlparser.statement.Statement;
 
 @Entity
 public class SqlExercise extends Model {
-
+  
   private static final Splitter SPLITTER = Splitter.fixedLength(100).omitEmptyStrings();
-
+  
   public static final String SAMPLE_JOIN_CHAR = "#";
-
+  
   public static final Finder<SqlExerciseKey, SqlExercise> finder = new Finder<>(SqlExercise.class);
-
+  
   @EmbeddedId
   public SqlExerciseKey key;
-
+  
   public String author;
-
+  
   @Column(columnDefinition = "text")
   public String text;
-
+  
   @Enumerated(EnumType.STRING)
   public SqlExerciseType exerciseType;
-
+  
   @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
   @JsonManagedReference
   public List<SqlSample> samples;
-
+  
   @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
   @JsonManagedReference
   public List<SqlSolution> solutions;
-
+  
   @ManyToOne
   @JoinColumn(name = "scenario_id", insertable = false, updatable = false)
   @JsonBackReference
   public SqlScenario scenario;
-
+  
   public String tags;
-
+  
   public String hint;
-
+  
   public SqlExercise(SqlExerciseKey theKey) {
     key = theKey;
   }
-
+  
   @JsonIgnore
   public String getBadges() {
     return getTags().stream().map(SqlTag::getButtonContent).collect(Collectors.joining());
   }
-
+  
   @JsonIgnore
-  public QueryCorrector<? extends Statement> getCorrector() {
+  public QueryCorrector<? extends Statement, ?> getCorrector() {
     // FIXME: different...
     switch(exerciseType) {
     case CREATE:
@@ -94,16 +94,16 @@ public class SqlExercise extends Model {
       return null;
     }
   }
-
+  
   public List<SqlTag> getTags() {
     if(tags.isEmpty())
       return Collections.emptyList();
-
+    
     return Arrays.stream(tags.split(SAMPLE_JOIN_CHAR)).map(SqlTag::valueOf).collect(Collectors.toList());
   }
-
+  
   public List<String> getText() {
     return SPLITTER.splitToList(text);
   }
-
+  
 }
