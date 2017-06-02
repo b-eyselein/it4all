@@ -21,61 +21,58 @@ import model.mindmap.evaluation.ParsingException;
 import model.mindmap.parser.basics.Level;
 
 public class WordParser implements AbstractParser {
-
+  
   private TreeNode currentNode = new TreeNode("0");
   private int id = 1;
   private int currentDepth = 0;
-
+  
   @Override
   public List<TreeNode> read(File file) throws ParsingException {
-    try {
+    try(OPCPackage pack = OPCPackage.open(file); XWPFDocument xdoc = new XWPFDocument(pack)) {
       LinkedList<TreeNode> roots = new LinkedList<>();
       roots.add(currentNode);
-      OPCPackage pack = OPCPackage.open(file);
-      XWPFDocument xdoc = new XWPFDocument(pack);
-      List<XWPFParagraph> paragraphList = xdoc.getParagraphs();
-      for(XWPFParagraph paragraph: paragraphList) {
+      
+      for(XWPFParagraph paragraph: xdoc.getParagraphs()) {
         int depth = Level.getDepth(paragraph.getStyle());
         if(depth >= 0 && !paragraph.getText().isEmpty())
           buildTree(depth, paragraph.getText());
       }
+      
       numerateAllTrees(roots);
-      pack.close();
-      xdoc.close();
       return roots;
     } catch (InvalidFormatException | IOException e) {
       throw new ParsingException(e);
     }
   }
-
+  
   @Override
   public void write(Path filepath, List<TreeNode> rootList, Path templatePath) throws ParsingException {
-    try {
-      TreeNode root = rootList.get(0);
-      XWPFDocument template = new XWPFDocument(new FileInputStream(templatePath.toFile()));
-      XWPFDocument xdoc = new XWPFDocument();
+    try(FileInputStream templateIS = new FileInputStream(templatePath.toFile());
+        XWPFDocument template = new XWPFDocument(templateIS);
+        XWPFDocument xdoc = new XWPFDocument();) {
+      
       XWPFStyles newStyles = xdoc.createStyles();
       // TODO: don't know how to set numbering in new .docx from template
       // XWPFNumbering numbering = xdoc.createNumbering();
       // template.getNumbering();
       newStyles.setStyles(template.getStyle());
-      createContent(xdoc, root, 0);
+      createContent(xdoc, rootList.get(0), 0);
       xdoc.write(new FileOutputStream(filepath.toFile()));
-      template.close();
     } catch (IOException | XmlException e) {
       throw new ParsingException(e);
     }
   }
-
+  
   private void addStyledParagraphOfText(XWPFDocument xdoc, String styleDef, String text) {
     if(text.isEmpty())
       return;
+
     XWPFParagraph paragraph = xdoc.createParagraph();
     paragraph.setStyle(styleDef);
     XWPFRun tmpRun = paragraph.createRun();
     tmpRun.setText(text);
   }
-
+  
   private void buildTree(int depth, String text) {
     if(depth == 0) {
       while(currentNode.getParent() != null) {
@@ -118,7 +115,7 @@ public class WordParser implements AbstractParser {
     }
     currentDepth = depth;
   }
-
+  
   private void createContent(XWPFDocument xdoc, TreeNode treeNode, int depth) {
     addStyledParagraphOfText(xdoc, Level.getLevelGerman(depth), treeNode.getText());
     for(TreeNode n: treeNode.getChildren()) {

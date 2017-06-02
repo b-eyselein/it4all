@@ -8,9 +8,9 @@ import javax.inject.Inject;
 
 import controllers.core.ExerciseController;
 import model.Secured;
-import model.mindmap.evaluation.Evaluation;
+import model.mindmap.Evaluation;
+import model.mindmap.Validation;
 import model.mindmap.evaluation.ParsingException;
-import model.mindmap.evaluation.Validation;
 import model.mindmap.evaluation.enums.EvalParserType;
 import play.data.FormFactory;
 import play.mvc.Result;

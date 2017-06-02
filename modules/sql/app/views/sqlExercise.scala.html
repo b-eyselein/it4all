@@ -71,6 +71,8 @@
           <div class="panel-body">
             <p>@exercise.text</p>
             @if(!exercise.hint.isEmpty()) {<p><i>Hinweis:</i> @exercise.hint</p>}
+            
+            @*
             <div class="form-group"><label for="feedbackLevel">Gew&uuml;nschtes Feedback Level:</label>
               <select name="feedbackLevel" id="feedbackLevel" class="form-control">
               @for(feedbackLevel <- model.exercise.FeedbackLevel.values()) {
@@ -79,13 +81,14 @@
               }
               </select>
             </div>
+            *@
+          
           </div>
           <div class="panel-footer">
             <button type="button" class="btn btn-default btn-block"
             onclick="testTheSolution('@sql.routes.Sql.correctLive(exercise.key.scenarioId, exercise.key.exerciseId)')">
             L&ouml;sung testen</button>
-            <a type="button" class="btn btn-default btn-block"
-            href="@sql.routes.Sql.exercise(exercise.key.scenarioId, exercise.key.exerciseId + 1)">Nächste Aufgabe</a>
+            <button class="btn btn-default btn-block">L&ouml;sung abgeben</button>
           </div>
         </div>
       

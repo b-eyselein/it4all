@@ -252,8 +252,7 @@ public class Util {
     resultingList.add(solTupel);
     // add the correct but from solution different answer to the existing ones
     // this has impact later on when the excel file is written
-    for(int i = 0; i < listToCheck.size(); i++) {
-      Tuple tmp = listToCheck.get(i);
+    for(Tuple tmp: listToCheck) {
       if(!solTupel.getFirstNode().getText().equals(tmp.getFirstNode().getText())
           || !solTupel.getSecondNode().getText().equals(tmp.getSecondNode().getText())) {
         resultingList.add(tmp);

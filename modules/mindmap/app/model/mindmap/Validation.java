@@ -1,4 +1,4 @@
-package model.mindmap.evaluation;
+package model.mindmap;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -6,6 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import model.mindmap.basics.TreeNode;
+import model.mindmap.evaluation.ParsingException;
+import model.mindmap.evaluation.RWExcel;
+import model.mindmap.evaluation.Util;
 import model.mindmap.evaluation.enums.EvalParserType;
 import model.mindmap.parser.MindManagerParser;
 import play.Logger;

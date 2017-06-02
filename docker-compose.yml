@@ -19,9 +19,9 @@ it4all:
   
 vc_it4all:
     image: alpine:3.5
-    command: echo "VC for it4all"
     volumes:
     - volume_it4all:/data
+    command: sh chown 1000:1000 /data
   
 dbit4all:
     image: mysql:5.7
@@ -29,7 +29,7 @@ dbit4all:
     ports:
     - 3106:3306
     volumes:
-    - ./sql_init/sql_main_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
+    - ./inits/sql_main_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
     environment:
     - MYSQL_ROOT_PASSWORD=sT8aV#k7
   
@@ -39,7 +39,7 @@ sqlselect:
     ports:
     - 3107:3306
     volumes:
-    - ./sql_init/sql_select_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
+    - ./inits/sql_select_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
     environment:
     - MYSQL_ROOT_PASSWORD=sT8aV#k7
   
@@ -49,7 +49,7 @@ sqlother:
     ports:
     - 3108:3306
     volumes:
-    - ./sql_init/sql_other_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
+    - ./inits/sql_other_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
     environment:
     - MYSQL_ROOT_PASSWORD=sT8aV#k7
     

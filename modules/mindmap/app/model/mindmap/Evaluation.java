@@ -1,4 +1,4 @@
-package model.mindmap.evaluation;
+package model.mindmap;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -6,6 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 import model.mindmap.basics.TreeNode;
+import model.mindmap.evaluation.ParsingException;
+import model.mindmap.evaluation.Properties;
+import model.mindmap.evaluation.RWExcel;
+import model.mindmap.evaluation.TupelDifferenceContainer;
+import model.mindmap.evaluation.Tuple;
+import model.mindmap.evaluation.Util;
 import model.mindmap.evaluation.enums.ParserType;
 import model.mindmap.parser.AbstractEvaluationParser;
 import model.mindmap.parser.AbstractParser;

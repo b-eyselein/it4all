@@ -19,7 +19,7 @@ import model.mindmap.basics.TreeNode;
 import model.mindmap.evaluation.ParsingException;
 
 public class LatexParser implements AbstractParser {
-
+  
   // regex: [^}] = all characters except } and *? reluctant quantifier searches
   // for zero or more times
   // has to be done this way or else there would be ordering issues
@@ -27,9 +27,9 @@ public class LatexParser implements AbstractParser {
       .compile("\\\\title\\{([^}]*?)\\}|" + "\\\\chapter\\{([^}]*?)\\}|\\\\section\\{([^}]*?)\\}|"
           + "\\\\subsection\\{([^}]*?)\\}|\\\\subsubsection\\{([^}]*?)\\}|"
           + "\\\\paragraph\\{([^}]*?)\\}|\\\\subparagraph\\{([^}]*?)\\}");
-
+  
   private int id = 0;
-
+  
   @Override
   public List<TreeNode> read(File file) throws ParsingException {
     try {
@@ -77,10 +77,11 @@ public class LatexParser implements AbstractParser {
       throw new ParsingException(e);
     }
   }
-
+  
   @Override
   public void write(Path filepath, List<TreeNode> listOfRoots, Path preamblePath) throws ParsingException {
-    try {
+    try(FileReader fileReader = new FileReader(preamblePath.toFile());
+        FileOutputStream fileOutputStream = new FileOutputStream(filepath.toFile())) {
       // for this kind of application only taking one root makes sense
       TreeNode treeNode = listOfRoots.get(0);
       String title;
@@ -90,7 +91,7 @@ public class LatexParser implements AbstractParser {
         title = "\\title{" + treeNode.getText() + "}\n";
       }
       StringBuilder preamble = new StringBuilder();
-      BufferedReader br = new BufferedReader(new FileReader(preamblePath.toFile()));
+      BufferedReader br = new BufferedReader(fileReader);
       for(String line; (line = br.readLine()) != null;) {
         preamble.append(line);
         preamble.append("\n");
@@ -104,14 +105,15 @@ public class LatexParser implements AbstractParser {
       sb.append(beginDocument);
       traverseTree(treeNode, sb, 1);
       sb.append(endDocument);
-      Writer writer = new OutputStreamWriter(new FileOutputStream(filepath.toFile()), "UTF-8");
+
+      Writer writer = new OutputStreamWriter(fileOutputStream, "UTF-8");
       writer.append(sb);
       writer.close();
     } catch (IOException e) {
       throw new ParsingException(e);
     }
   }
-
+  
   private TreeNode buildTree(int depth, int prevDepth, TreeNode currentNode, String text) {
     if(depth <= prevDepth) {
       TreeNode parent;
@@ -127,7 +129,7 @@ public class LatexParser implements AbstractParser {
     currentNode = child;
     return currentNode;
   }
-
+  
   private void traverseTree(TreeNode node, StringBuilder sb, int depth) {
     String chapterType;
     switch(depth) {
@@ -155,5 +157,5 @@ public class LatexParser implements AbstractParser {
       traverseTree(n, sb, depth + 1);
     }
   }
-
+  
 }
