@@ -38,6 +38,8 @@ import play.mvc.Result;
 
 public class Sql extends ExerciseController {
 
+  private static final String STANDARD_SQL = "";
+
   public Database sqlSelect;
   public Database sqlOther;
 
@@ -90,8 +92,6 @@ public class Sql extends ExerciseController {
   }
 
   private static List<SqlQueryResult> readTablesInDatabase(Database db, String databaseName) {
-    // FIXME: databaseName == null?
-    Logger.debug("DB-Name: " + databaseName);
     try(Connection connection = db.getConnection()) {
       connection.setCatalog(databaseName);
       return readExistingTables(connection).stream().map(tableName -> readTableContent(connection, tableName))
@@ -139,27 +139,28 @@ public class Sql extends ExerciseController {
 
       return ok(views.html.sqlResult.render(result));
     } catch (CorrectionException e) { // NOSONAR
-      return ok(views.html.correctionerror.render("Sie haben eine leere L&ouml;sung abgegeben!"));
+      return ok(views.html.correctionerror
+          .render("<p>Es gab einen Fehler bei der Korrektur:</p><pre>" + e.getMessage() + "</pre>"));
     }
   }
 
   public Result exercise(int scenarioId, int exerciseId) {
     User user = getUser();
 
-    // FIXME: why is exercise.scenario.shortName == null?
-
-    SqlExercise exercise = SqlExercise.finder.byId(new SqlExerciseKey(scenarioId, exerciseId));
+    SqlExerciseKey exKey = new SqlExerciseKey(scenarioId, exerciseId);
+    SqlExercise exercise = SqlExercise.finder.byId(exKey);
 
     if(exercise == null)
       return redirect(controllers.sql.routes.Sql.index());
 
-    Logger.debug(exercise.scenario.toString());
-
     List<SqlQueryResult> tables = readTablesInDatabase(sqlSelect, exercise.scenario.shortName);
+
+    SqlSolution oldSol = SqlSolution.finder.byId(new SqlSolutionKey(user.name, exKey));
+    String oldOrDefSol = oldSol == null ? STANDARD_SQL : oldSol.sol;
 
     log(user, new ExerciseStartEvent(request(), exerciseId));
 
-    return ok(views.html.sqlExercise.render(user, exercise, tables));
+    return ok(views.html.sqlExercise.render(user, exercise, oldOrDefSol, tables));
   }
 
   public Result filteredScenario(int id, String exType, int start) {
@@ -180,18 +181,20 @@ public class Sql extends ExerciseController {
   }
 
   private SqlResult correct(String userName, int scenarioId, int exerciseId) throws CorrectionException {
-    String learnerSolution = factory.form().bindFromRequest().get(StringConsts.FORM_VALUE);
+    String learnerSol = factory.form().bindFromRequest().get(StringConsts.FORM_VALUE);
+
+    Logger.debug(learnerSol);
+
     SqlExercise exercise = SqlExercise.finder.byId(new SqlExerciseKey(scenarioId, exerciseId));
 
-    saveSolution(userName, learnerSolution, exercise.key);
+    saveSolution(userName, learnerSol, exercise.key);
 
-    if(learnerSolution.isEmpty())
-      throw new EmptySolutionException(learnerSolution, StringConsts.EMPTY_SOLUTION);
+    if(learnerSol.isEmpty())
+      throw new EmptySolutionException(learnerSol, StringConsts.EMPTY_SOLUTION);
 
-    SqlSample sampleStatement = findBestFittingSample(learnerSolution, exercise.samples);
+    SqlSample sample = findBestFittingSample(learnerSol, exercise.samples);
 
-    return exercise.getCorrector().correct(getDBForExType(exercise.exerciseType), learnerSolution, sampleStatement,
-        exercise);
+    return exercise.getCorrector().correct(getDBForExType(exercise.exerciseType), learnerSol, sample, exercise);
   }
 
   private Database getDBForExType(SqlExerciseType exerciseType) {

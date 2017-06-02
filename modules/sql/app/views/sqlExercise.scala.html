@@ -1,4 +1,4 @@
-@(user: model.user.User, exercise: model.exercise.SqlExercise, tables: List[model.sql.SqlQueryResult])
+@(user: model.user.User, exercise: model.exercise.SqlExercise, oldOrDefSol: String, tables: List[model.sql.SqlQueryResult])
 
 @main("SQL", user) {
 <script src="@routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
@@ -89,7 +89,7 @@
           </div>
         </div>
       
-        @editor("SELECT name, description\n  FROM Position, Jobtitle;", "sql", 10 ,15, false)
+        @editor(oldOrDefSol, "sql", 10 ,15, false)
       </form>
     </div>
     <div class="col-md-8">

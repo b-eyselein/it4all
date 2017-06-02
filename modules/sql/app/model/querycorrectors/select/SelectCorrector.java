@@ -1,24 +1,28 @@
-package model.querycorrectors;
+package model.querycorrectors.select;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Singleton;
 
+import model.ColumnWrapper;
 import model.SqlCorrectionException;
 import model.correction.CorrectionException;
 import model.correctionresult.SqlExecutionResult;
 import model.exercise.SqlExercise;
 import model.matching.MatchingResult;
+import model.querycorrectors.QueryCorrector;
 import model.sql.SqlQueryResult;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.Join;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
+import net.sf.jsqlparser.statement.select.SelectItem;
 import play.db.Database;
 
 @Singleton
@@ -36,13 +40,11 @@ public class SelectCorrector extends QueryCorrector<Select> {
     }
   }
 
-  private List<String> getColumns(Select select) {
-    return listAsStrings(((PlainSelect) select.getSelectBody()).getSelectItems());
-  }
-
   @Override
-  protected MatchingResult<String> compareColumns(Select userQuery, Select sampleQuery) {
-    return STRING_EQ_MATCHER.match("Spalten", getColumns(userQuery), getColumns(sampleQuery));
+  protected MatchingResult<ColumnWrapper<?>> compareColumns(Select userQuery, Select sampleQuery) {
+    // TODO Auto-generated method stub
+    List<ColumnWrapper<SelectItem>> userItems = getColumns(userQuery);
+    return null;
   }
 
   @Override
@@ -74,9 +76,15 @@ public class SelectCorrector extends QueryCorrector<Select> {
 
       return new SqlExecutionResult(userResult, sampleResult);
     } catch (SQLException e) {
-      throw new SqlCorrectionException(userStatement.toString(), "", e);
+      e.fillInStackTrace();
+      throw new SqlCorrectionException(userStatement.toString(), e.getMessage(), e);
     }
 
+  }
+
+  protected List<ColumnWrapper<SelectItem>> getColumns(Select select) {
+    return ((PlainSelect) select.getSelectBody()).getSelectItems().stream().map(ColumnWrapper<SelectItem>::new)
+        .collect(Collectors.toList());
   }
 
   @Override

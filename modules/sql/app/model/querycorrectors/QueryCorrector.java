@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import model.ColumnWrapper;
 import model.SqlCorrectionException;
 import model.StringConsts;
 import model.correction.CorrectionException;
@@ -23,52 +24,52 @@ import net.sf.jsqlparser.statement.Statement;
 import play.db.Database;
 
 public abstract class QueryCorrector<Q extends Statement> {
-  
+
   protected static final StringEqualsMatcher STRING_EQ_MATCHER = new StringEqualsMatcher();
   private static final BinaryExpressionMatcher BIN_EX_MATCHER = new BinaryExpressionMatcher();
-  
+
   private String queryType;
-  
+
   private boolean compareColumns;
   private boolean compareOrderBy;
   private boolean compareGroupBy;
   private boolean compareWhere;
   private boolean execute;
-  
+
   public QueryCorrector(String theQueryType, boolean theCompareColumns, boolean theCompareOrderBy,
       boolean theCompareGroupBy, boolean theCompareWhere, boolean theExecute) {
     queryType = theQueryType;
-    
+
     compareColumns = theCompareColumns;
     compareOrderBy = theCompareOrderBy;
     compareGroupBy = theCompareGroupBy;
     compareWhere = theCompareWhere;
     execute = theExecute;
   }
-  
+
   protected static <T> List<String> listAsStrings(List<T> list) {
     if(list == null)
       return Collections.emptyList();
     return list.stream().map(T::toString).collect(Collectors.toList());
   }
-  
+
   public SqlResult correct(Database database, String learnerSolution, SqlSample sampleStatement, SqlExercise exercise)
       throws CorrectionException {
     Q userQ = parseStatement(learnerSolution);
     Q sampleQ = parseStatement(sampleStatement.sample);
-    
-    MatchingResult<String> columnComp = compareColumns ? compareColumns(userQ, sampleQ) : null;
-    
+
+    MatchingResult<ColumnWrapper<?>> columnComp = compareColumns ? compareColumns(userQ, sampleQ) : null;
+
     MatchingResult<String> tableComp = STRING_EQ_MATCHER.match(StringConsts.TABLES_NAME, getTables(userQ),
         getTables(sampleQ));
-    
+
     MatchingResult<String> orderByComparison = compareOrderBy ? compareOrderByElements(userQ, sampleQ) : null;
-    
+
     MatchingResult<String> groupByComparison = compareGroupBy ? compareGroupByElements(userQ, sampleQ) : null;
-    
+
     MatchingResult<BinaryExpression> whereComp = compareWhere
-        ? BIN_EX_MATCHER.match("Bedingungen", getExpressions(userQ), getExpressions(sampleQ)) : null;
-    
+        ? BIN_EX_MATCHER.match(StringConsts.CONDITIONS_NAME, getExpressions(userQ), getExpressions(sampleQ)) : null;
+
     SqlExecutionResult executionResult = null;
     if(execute) {
       try {
@@ -77,7 +78,7 @@ public abstract class QueryCorrector<Q extends Statement> {
         throw e;
       }
     }
-    
+
     // @formatter:off
     return new SqlResultBuilder()
         .setLearnerSolution(learnerSolution)
@@ -90,24 +91,28 @@ public abstract class QueryCorrector<Q extends Statement> {
         .build();
     // @formatter:on
   }
-  
+
   private List<BinaryExpression> getExpressions(Q statement) {
     return new ExpressionExtractor(getWhere(statement)).extract();
   }
-  
-  protected abstract MatchingResult<String> compareColumns(Q userQuery, Q sampleQuery);
-  
+
+  protected abstract MatchingResult<ColumnWrapper<?>> compareColumns(Q userQuery, Q sampleQuery);
+  // {
+  // return STRING_EQ_MATCHER.match(StringConsts.COLUMNS_NAME,
+  // getColumns(userQuery), getColumns(sampleQuery));
+  // }
+
   protected abstract MatchingResult<String> compareGroupByElements(Q userQuery, Q sampleQuery);
-  
+
   protected abstract MatchingResult<String> compareOrderByElements(Q userQuery, Q sampleQuery);
-  
+
   protected abstract SqlExecutionResult executeQuery(Database database, Q userStatement, Q sampleStatement,
       SqlExercise exercise) throws CorrectionException;
-  
+
   protected abstract List<String> getTables(Q userQuery);
-  
+
   protected abstract Expression getWhere(Q query);
-  
+
   @SuppressWarnings("unchecked")
   protected Q parseStatement(String statement) throws SqlCorrectionException {
     try {

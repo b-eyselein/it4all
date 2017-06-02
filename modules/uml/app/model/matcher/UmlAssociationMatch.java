@@ -11,15 +11,6 @@ public class UmlAssociationMatch extends Match<UmlAssociation> {
 
   public UmlAssociationMatch(UmlAssociation assoc1, UmlAssociation assoc2) {
     super(assoc1, assoc2);
-
-    assocTypeEqual = arg1.getAssocType() == arg2.getAssocType();
-
-    if(AssociationMatcher.endsParallelEqual(arg1, arg2))
-      multiplicitiesEqual = arg1.getEnds().get(0).getMultiplicity() == arg2.getEnds().get(0).getMultiplicity()
-          && arg1.getEnds().get(1).getMultiplicity() == arg2.getEnds().get(1).getMultiplicity();
-    else
-      multiplicitiesEqual = arg1.getEnds().get(0).getMultiplicity() == arg2.getEnds().get(1).getMultiplicity()
-          && arg1.getEnds().get(1).getMultiplicity() == arg2.getEnds().get(0).getMultiplicity();
   }
 
   public boolean areMultiplicitiesEqual() {
@@ -39,6 +30,20 @@ public class UmlAssociationMatch extends Match<UmlAssociation> {
 
   public boolean isCorrect() {
     return multiplicitiesEqual && assocTypeEqual;
+  }
+
+  @Override
+  protected boolean analyze(UmlAssociation assoc1, UmlAssociation assoc2) {
+    assocTypeEqual = arg1.getAssocType() == arg2.getAssocType();
+
+    if(AssociationMatcher.endsParallelEqual(arg1, arg2))
+      multiplicitiesEqual = arg1.getEnds().get(0).getMultiplicity() == arg2.getEnds().get(0).getMultiplicity()
+          && arg1.getEnds().get(1).getMultiplicity() == arg2.getEnds().get(1).getMultiplicity();
+    else
+      multiplicitiesEqual = arg1.getEnds().get(0).getMultiplicity() == arg2.getEnds().get(1).getMultiplicity()
+          && arg1.getEnds().get(1).getMultiplicity() == arg2.getEnds().get(0).getMultiplicity();
+
+    return assocTypeEqual && multiplicitiesEqual;
   }
 
 }

@@ -22,9 +22,9 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.google.common.base.Splitter;
 
 import model.SqlSolution;
-import model.querycorrectors.CreateCorrector;
 import model.querycorrectors.QueryCorrector;
-import model.querycorrectors.SelectCorrector;
+import model.querycorrectors.create.CreateCorrector;
+import model.querycorrectors.select.SelectCorrector;
 import model.querycorrectors.update.DeleteCorrector;
 import model.querycorrectors.update.InsertCorrector;
 import model.querycorrectors.update.UpdateCorrector;

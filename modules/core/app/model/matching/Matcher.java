@@ -49,7 +49,7 @@ public class Matcher<T> {
           continue;
 
         if(equalsTest.test(arg1, arg2)) {
-          instantiateMatch(matches, arg1, arg2);
+          matches.add(instantiateMatch(arg1, arg2));
           iter1.remove();
           iter2.remove();
           matched = true;
@@ -64,7 +64,7 @@ public class Matcher<T> {
     filter = theFilter;
   }
 
-  protected void instantiateMatch(List<Match<T>> matches, T arg1, T arg2) {
-    matches.add(new Match<>(arg1, arg2));
+  protected Match<T> instantiateMatch(T arg1, T arg2) {
+    return new GenericMatch<>(arg1, arg2);
   }
 }

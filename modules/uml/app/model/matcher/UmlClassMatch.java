@@ -15,8 +15,6 @@ public class UmlClassMatch extends Match<UmlClass> {
   public UmlClassMatch(UmlClass class1, UmlClass class2) {
     super(class1, class2);
 
-    attributesResult = MATCHER.match("Attribute", class1.getAttributes(), class2.getAttributes());
-    methodsResult = MATCHER.match("Methoden", class1.getMethods(), class2.getMethods());
   }
 
   public MatchingResult<String> getAttributesResult() {
@@ -29,6 +27,13 @@ public class UmlClassMatch extends Match<UmlClass> {
 
   public MatchingResult<String> getMethodsResult() {
     return methodsResult;
+  }
+
+  @Override
+  protected boolean analyze(UmlClass theArg1, UmlClass theArg2) {
+    attributesResult = MATCHER.match("Attribute", theArg1.getAttributes(), theArg2.getAttributes());
+    methodsResult = MATCHER.match("Methoden", theArg1.getMethods(), theArg2.getMethods());
+    return attributesResult.isSuccessful() && methodsResult.isSuccessful();
   }
 
 }

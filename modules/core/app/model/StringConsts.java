@@ -8,6 +8,10 @@ public abstract class StringConsts {
 
   public static final String BODY_FILE_NAME = "file";
 
+  public static final String COLUMNS_NAME = "Spalten";
+
+  public static final String CONDITIONS_NAME = "Bedingungen";
+
   public static final String EMPTY_SOLUTION = "Sie haben eine leere Lösung abgegeben!";
 
   public static final String EXERCISES_NAME = "exercises";

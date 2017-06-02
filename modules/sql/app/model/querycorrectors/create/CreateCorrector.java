@@ -1,11 +1,13 @@
-package model.querycorrectors;
+package model.querycorrectors.create;
 
 import java.util.Arrays;
 import java.util.List;
 
+import model.ColumnWrapper;
 import model.correctionresult.SqlExecutionResult;
 import model.exercise.SqlExercise;
 import model.matching.MatchingResult;
+import model.querycorrectors.QueryCorrector;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
 import play.db.Database;
@@ -20,8 +22,8 @@ public class CreateCorrector extends QueryCorrector<CreateTable> {
   }
 
   @Override
-  protected MatchingResult<String> compareColumns(CreateTable userQuery, CreateTable sampleQuery) {
-    // No columns to compare...
+  protected MatchingResult<ColumnWrapper<?>> compareColumns(CreateTable userQuery, CreateTable sampleQuery) {
+    // TODO Auto-generated method stub
     return null;
   }
 
@@ -34,6 +36,12 @@ public class CreateCorrector extends QueryCorrector<CreateTable> {
   protected MatchingResult<String> compareOrderByElements(CreateTable userQuery, CreateTable sampleQuery) {
     return null;
   }
+  
+  // @Override
+  // protected List<String> getColumns(CreateTable query) {
+  // // TODO Auto-generated method stub
+  // return null;
+  // }
 
   @Override
   protected SqlExecutionResult executeQuery(Database database, CreateTable userStatement, CreateTable sampleStatement,

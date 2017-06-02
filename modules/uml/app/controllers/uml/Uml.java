@@ -12,10 +12,11 @@ import com.github.fge.jsonschema.core.report.ProcessingReport;
 
 import controllers.core.ExerciseController;
 import model.JsonWrapper;
-import model.SolutionException;
 import model.StringConsts;
 import model.UmlExercise;
 import model.UmlSolution;
+import model.correction.CorrectionException;
+import model.correction.JsonValidationException;
 import model.result.ClassSelectionResult;
 import model.result.DiagramDrawingResult;
 import play.Logger;
@@ -55,7 +56,7 @@ public class Uml extends ExerciseController {
           readSolutionFromForm());
 
       return ok(views.html.classSelectionSolution.render(getUser(), result));
-    } catch (SolutionException e) {
+    } catch (CorrectionException e) {
       Logger.error(ERROR_MSG, e);
       return badRequest(e.getMessage());
     }
@@ -68,7 +69,7 @@ public class Uml extends ExerciseController {
 
       return ok(views.html.diagdrawingsol.render(getUser(), result));
 
-    } catch (SolutionException e) {
+    } catch (CorrectionException e) {
       Logger.error(ERROR_MSG, e);
       return badRequest(e.getMessage());
     }
@@ -80,7 +81,7 @@ public class Uml extends ExerciseController {
           readSolutionFromForm());
 
       return ok(views.html.diagdrawinghelpsol.render(getUser(), result));
-    } catch (SolutionException e) {
+    } catch (CorrectionException e) {
       Logger.error(ERROR_MSG, e);
       return badRequest(e.getMessage());
     }
@@ -107,14 +108,14 @@ public class Uml extends ExerciseController {
     return ok(views.html.matching.render(getUser(), exercise, exercise.getSolution()));
   }
 
-  private UmlSolution readSolutionFromForm() throws SolutionException {
+  private UmlSolution readSolutionFromForm() throws CorrectionException {
     JsonNode sentJson = Json.parse(factory.form().bindFromRequest().get(StringConsts.FORM_VALUE));
 
     ProcessingReport report = JsonWrapper.validateJson(sentJson, SOLUTION_SCHEMA_NODE);
     if(report.isSuccess())
-      throw new SolutionException(report.toString());
+      return Json.fromJson(sentJson, UmlSolution.class);
 
-    return Json.fromJson(sentJson, UmlSolution.class);
+    throw new JsonValidationException(Json.prettyPrint(sentJson), report.toString());
   }
 
 }

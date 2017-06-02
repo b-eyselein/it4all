@@ -1,7 +1,5 @@
 package model.matcher;
 
-import java.util.List;
-
 import model.matching.Match;
 import model.matching.Matcher;
 import model.uml.UmlAssociation;
@@ -18,18 +16,18 @@ public class AssociationMatcher extends Matcher<UmlAssociation> {
         && endsEqual(assoc1.getEnds().get(1), assoc2.getEnds().get(0));
   }
 
-  private static boolean endsEqual(UmlAssociationEnd c1End, UmlAssociationEnd c2End) {
-    return c1End.getEndName().equals(c2End.getEndName());
-  }
-
   public static boolean endsParallelEqual(UmlAssociation assoc1, UmlAssociation assoc2) {
     return endsEqual(assoc1.getEnds().get(0), assoc2.getEnds().get(0))
         && endsEqual(assoc1.getEnds().get(1), assoc2.getEnds().get(1));
   }
 
+  private static boolean endsEqual(UmlAssociationEnd c1End, UmlAssociationEnd c2End) {
+    return c1End.getEndName().equals(c2End.getEndName());
+  }
+
   @Override
-  protected void instantiateMatch(List<Match<UmlAssociation>> matches, UmlAssociation arg1, UmlAssociation arg2) {
-    matches.add(new UmlAssociationMatch(arg1, arg2));
+  protected Match<UmlAssociation> instantiateMatch(UmlAssociation arg1, UmlAssociation arg2) {
+    return new UmlAssociationMatch(arg1, arg2);
   }
 
 }

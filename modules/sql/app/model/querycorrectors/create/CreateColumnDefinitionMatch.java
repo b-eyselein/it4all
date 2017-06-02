@@ -1,4 +1,4 @@
-package model.matcher;
+package model.querycorrectors.create;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import model.matching.MatchingResult;
 import net.sf.jsqlparser.statement.create.table.ColDataType;
 import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
 
-public class ColumnDefinitionMatch extends Match<ColumnDefinition> {
+public class CreateColumnDefinitionMatch extends Match<ColumnDefinition> {
 
   private static final Matcher<String> STRING_EQ_MATCHER = new Matcher.StringEqualsMatcher();
 
@@ -18,20 +18,8 @@ public class ColumnDefinitionMatch extends Match<ColumnDefinition> {
 
   MatchingResult<String> argumentsResult;
 
-  public ColumnDefinitionMatch(ColumnDefinition theArg1, ColumnDefinition theArg2) {
+  public CreateColumnDefinitionMatch(ColumnDefinition theArg1, ColumnDefinition theArg2) {
     super(theArg1, theArg2);
-    analyze();
-  }
-
-  public void analyze() {
-    datatypeName = arg1.getColumnName();
-
-    message = compareDataTypes(arg1.getColDataType(), arg2.getColDataType());
-
-    // TODO: compare columnspecstrings!
-    // Logger.debug("ColumnSpecString for column " + userDef.getColumnName()
-    // + "
-    // :: " + userDef.getColumnSpecStrings());
   }
 
   public String getDatatypeName() {
@@ -60,6 +48,19 @@ public class ColumnDefinitionMatch extends Match<ColumnDefinition> {
     argumentsResult = STRING_EQ_MATCHER.match("Argumente der Datentyps", userArgs, sampleArgs);
 
     return "Datentyp richtig spezifiziert";
+  }
+
+  @Override
+  protected boolean analyze(ColumnDefinition theArg1, ColumnDefinition theArg2) {
+    datatypeName = theArg1.getColumnName();
+
+    message = compareDataTypes(theArg1.getColDataType(), theArg2.getColDataType());
+
+    // TODO: compare columnspecstrings!
+    // Logger.debug("ColumnSpecString for column " + userDef.getColumnName()
+    // + "
+    // :: " + userDef.getColumnSpecStrings());
+    return false;
   }
 
 }
