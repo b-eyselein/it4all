@@ -11,6 +11,7 @@ import org.openqa.selenium.WebElement;
 
 import com.google.common.base.Splitter;
 
+import io.ebean.Finder;
 import model.Attribute;
 import model.result.AttributeResult;
 import model.result.ElementResult;
@@ -19,19 +20,19 @@ import model.result.TextContentResult;
 
 @Entity
 public class HtmlTask extends Task<ElementResult> {
-  
+
   private static final Splitter ATTR_SPLITTER = Splitter.on(";").omitEmptyStrings();
-  
+
   public static final Finder<TaskKey, HtmlTask> finder = new Finder<>(HtmlTask.class);
-  
+
   public String attributes;
-  
+
   public String textContent;
-  
+
   public HtmlTask(TaskKey theKey) {
     super(theKey);
   }
-  
+
   @Override
   public ElementResult evaluate(SearchContext searchContext) {
     List<WebElement> foundElements = searchContext.findElements(By.xpath(xpathQuery));
@@ -54,13 +55,13 @@ public class HtmlTask extends Task<ElementResult> {
         .build();
     // @formatter:on
   }
-  
+
   public List<Attribute> getAttributes() {
     return ATTR_SPLITTER.splitToList(attributes).stream().map(Attribute::fromString).collect(Collectors.toList());
   }
-  
+
   protected List<AttributeResult> evaluateAllAttributeResults(WebElement foundElement) {
     return getAttributes().stream().map(attr -> attr.evaluate(foundElement)).collect(Collectors.toList());
   }
-  
+
 }

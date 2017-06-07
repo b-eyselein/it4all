@@ -10,7 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.avaje.ebean.Model;
+import io.ebean.Finder;
+import io.ebean.Model;
 
 @Entity
 @Table(name = "users")
@@ -44,12 +45,25 @@ public class User extends Model {
   @Enumerated(EnumType.STRING)
   public SHOW_HIDE_AGGREGATE todo = SHOW_HIDE_AGGREGATE.SHOW;
 
+  @Override
+  public boolean equals(Object obj) {
+    return obj instanceof User && ((User) obj).name.equals(name);
+  }
+
   public List<String> getCourseNames() {
     return courseRoles.parallelStream().map(cr -> cr.course.name).collect(Collectors.toList());
   }
 
   public List<Course> getCourses() {
     return courseRoles.parallelStream().map(cr -> cr.course).collect(Collectors.toList());
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((name == null) ? 0 : name.hashCode());
+    return result;
   }
 
   public boolean isAdmin() {

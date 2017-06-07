@@ -2,10 +2,10 @@ package controllers.core;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 
-import com.avaje.ebean.Model.Finder;
-
+import io.ebean.Finder;
 import model.StringConsts;
 import model.WithId;
 import model.user.User;
@@ -35,7 +35,9 @@ public abstract class AbstractController extends Controller {
 
   protected static <T extends WithId> int findMinimalNotUsedId(Finder<Integer, T> finder) {
     // FIXME: this is probably a ugly hack...
-    List<T> questions = finder.order().asc("id").findList();
+    List<T> questions = finder.all();
+
+    Collections.sort(questions);
 
     if(questions.isEmpty())
       return 1;

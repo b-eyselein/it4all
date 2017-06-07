@@ -11,10 +11,10 @@
   <section id="statistics">
     <h2>Statistiken</h2>
     <ul>
-      <li>Es existieren insgesamt @model.XmlExercise.finder.findCount() Augaben, davon
+      <li>Es existieren insgesamt @model.XmlExercise.finder.all().size() Augaben, davon
         <ul>
         @for(exType <- model.XmlExType.values()) {
-          <li>@model.XmlExercise.finder.where().eq("exerciseType", exType).findCount() Aufgaben vom Typ @exType</li>
+          <li>@model.XmlExercise.byType(exType).size() Aufgaben vom Typ @exType</li>
         }
         </ul>
       </li>

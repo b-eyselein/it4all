@@ -3,6 +3,7 @@ FROM docker:17.05-git
 MAINTAINER Bjoern Eyselein <bjoern.eyselein@gmail.com>
 
 ARG USERNAME
+ARG DOCKER_GID
 
 # Java
 ENV LANG C.UTF-8
@@ -40,8 +41,11 @@ RUN apk add --no-cache --update bash wget && mkdir -p "$SBT_HOME" && \
 # Play Framework specifics
 WORKDIR /app
 
-RUN addgroup $USERNAME && adduser -u 1000 -S -G $USERNAME $USERNAME && chown $USERNAME:$USERNAME /app
+RUN addgroup -g $DOCKER_GID docker
+RUN addgroup -g 1000 $USERNAME
+RUN adduser -u 1000 -S -G docker -G $USERNAME $USERNAME
+RUN chown $USERNAME:$USERNAME /app
 
-USER $USERNAME:$USERNAME
+USER $USERNAME:$DOCKER_GID
 
 EXPOSE 9000

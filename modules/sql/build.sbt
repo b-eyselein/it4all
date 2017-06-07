@@ -11,11 +11,5 @@ playEbeanModels in Compile := Seq("model.*")
 jacoco.settings
 
 libraryDependencies ++= Seq(
-  javaJdbc,
-  
-  // Mybatis for ScriptRunner
-  "org.mybatis" % "mybatis" % "3.4.4",
-  
-  // JSQL-Parser
-  "com.github.jsqlparser" % "jsqlparser" % "1.0"
+  javaJdbc, Common.mybatis, Common.jsqlparser
 )

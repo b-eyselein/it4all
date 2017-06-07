@@ -2,6 +2,7 @@ package model;
 
 import javax.persistence.Entity;
 
+import io.ebean.Finder;
 import model.exercise.Exercise;
 
 @Entity

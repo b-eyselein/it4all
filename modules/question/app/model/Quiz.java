@@ -2,14 +2,13 @@ package model;
 
 import javax.persistence.Entity;
 
+import io.ebean.Finder;
 import model.exercise.Exercise;
 
 @Entity
 public class Quiz extends Exercise {
 
-  // TODO: Exercise extends Model...
-  public static final com.avaje.ebean.Model.Finder<Integer, Quiz> finder = new com.avaje.ebean.Model.Finder<>(
-      Quiz.class);
+  public static final Finder<Integer, Quiz> finder = new Finder<>(Quiz.class);
 
   public String theme;
 

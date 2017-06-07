@@ -7,6 +7,11 @@ POST   /upload               controllers.programming.ProgAdmin.uploadFile()
 GET    /import               controllers.programming.ProgAdmin.importExercises()
 GET    /export               controllers.programming.ProgAdmin.exportExercises()
 
+GET    /new                  controllers.programming.ProgAdmin.newExerciseForm()
+POST   /new                  controllers.programming.ProgAdmin.newExercise()
+
+GET    /test                 controllers.programming.Prog.testDocker()
+
 # All
 GET    /                     controllers.programming.Prog.index()
 GET    /exercises            controllers.programming.Prog.exercises()

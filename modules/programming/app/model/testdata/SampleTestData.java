@@ -3,6 +3,8 @@ package model.testdata;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 
+import io.ebean.Finder;
+
 @Entity
 public class SampleTestData extends ITestData {
 

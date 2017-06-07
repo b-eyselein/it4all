@@ -3,8 +3,9 @@ package model;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
-import com.avaje.ebean.Model;
 import com.fasterxml.jackson.databind.JsonNode;
+
+import io.ebean.Model;
 
 @Entity
 public class Mapping extends Model {

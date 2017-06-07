@@ -10,6 +10,7 @@ import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import io.ebean.Finder;
 import model.exercise.Exercise;
 import model.testdata.CommitedTestData;
 import model.testdata.SampleTestData;

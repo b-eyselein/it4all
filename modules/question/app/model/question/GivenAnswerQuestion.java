@@ -11,6 +11,8 @@ import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import io.ebean.Finder;
+
 @Entity
 public class GivenAnswerQuestion extends Question {
 
@@ -18,9 +20,7 @@ public class GivenAnswerQuestion extends Question {
   public static final int STD_ANSWERS = 4;
   public static final int MAX_ANSWERS = 8;
 
-  // TODO: Exercise extends Model...
-  public static final com.avaje.ebean.Model.Finder<Integer, GivenAnswerQuestion> finder = new com.avaje.ebean.Model.Finder<>(
-      GivenAnswerQuestion.class);
+  public static final Finder<Integer, GivenAnswerQuestion> finder = new Finder<>(GivenAnswerQuestion.class);
 
   @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
   public List<Answer> answers;

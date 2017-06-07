@@ -8,9 +8,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 
-import com.avaje.ebean.Model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.google.common.base.Splitter;
+
+import io.ebean.Finder;
+import io.ebean.Model;
 
 @Entity
 public class SqlSample extends Model {

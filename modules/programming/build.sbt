@@ -9,8 +9,7 @@ playEbeanModels in Compile := Seq("model.*")
 
 
 libraryDependencies ++= Seq(
-  // Test Jython
-  "org.python" % "jython-standalone" % "2.7.1b3"
+  Common.dockerjava
 )
 
 // JaCoCo - siehe project/plugins.sbt

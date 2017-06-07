@@ -12,7 +12,7 @@
     <h2>Statistiken</h2>
     <ul>
       <li>
-        Es gibt insgesamt @model.exercise.SqlScenario.finder.findCount() Szenarien
+        Es gibt insgesamt @model.exercise.SqlScenario.finder.all().size() Szenarien
         <ul>
         @for(scenario <- model.exercise.SqlScenario.finder.all()) {
           <li>Das Szenario &quot;<a href="@sql.routes.SqlAdmin.scenarioAdmin(scenario.id)">@scenario.title</a>&quot;

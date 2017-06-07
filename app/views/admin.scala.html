@@ -9,8 +9,8 @@
   <section id="statistics">
     <h2>Statistiken</h2>
     <ul>
-      <li>Es sind momentan @model.user.User.finder.findCount() <a href="@routes.AdminController.users()">Nutzer</a> registriert</li>
-      <li>Es existieren @model.user.Course.finder.findCount() Kurse</li>
+      <li>Es sind momentan @model.user.User.finder.all().size() <a href="@routes.AdminController.users()">Nutzer</a> registriert</li>
+      <li>Es existieren @model.user.Course.finder.all().size() Kurse</li>
     </ul>
   </section>
   

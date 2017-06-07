@@ -1,6 +1,7 @@
 package model.testdata;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -11,8 +12,10 @@ import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import io.ebean.Finder;
 import model.ApprovalState;
 import model.ProgrammingUser;
+import model.user.User;
 
 @Entity
 public class CommitedTestData extends ITestData {
@@ -40,8 +43,9 @@ public class CommitedTestData extends ITestData {
     output = theOutput;
   }
 
-  public static List<CommitedTestData> forUserAndExercise(String username, int exerciseId) {
-    return finder.where().eq("user_name", username).and().eq("exercise_id", exerciseId).findList();
+  public static List<CommitedTestData> forUserAndExercise(User user, int exerciseId) {
+    return finder.all().stream().filter(td -> td.user.equals(user) && td.key.exerciseId == exerciseId)
+        .collect(Collectors.toList());
   }
 
   @Override

@@ -54,8 +54,8 @@ lazy val xml = (project in file("modules/xml"))
 // Used libraries from Maven Repository
 libraryDependencies ++= Seq(
   javaJdbc,
-  cache,
-  Common.mysqlDependency
+  Common.mysqlDependency,
+  guice
 )
 
 EclipseKeys.skipParents in ThisBuild := false

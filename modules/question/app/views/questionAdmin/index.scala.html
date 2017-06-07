@@ -15,10 +15,10 @@
     <ul>
       <li>
         Es existieren insgesamt <a href="@questions.routes.QuestionController.questions()">
-         @{GivenAnswerQuestion.finder.findCount() + FreetextQuestion.finder.findCount()} Fragen</a> in allen Kategorien, darunter
+         @{GivenAnswerQuestion.finder.all().size() + FreetextQuestion.finder.all().size()} Fragen</a> in allen Kategorien, darunter
         <ul>
-          <li>@GivenAnswerQuestion.finder.findCount() Fragen mit gegebenen Antworten</li>
-          <li>@FreetextQuestion.finder.findCount() Freitextfragen</li>
+          <li>@GivenAnswerQuestion.finder.all().size() Fragen mit gegebenen Antworten</li>
+          <li>@FreetextQuestion.finder.all().size() Freitextfragen</li>
           
         @if(!notAssignedQuestions.isEmpty()) {
           <li>Es gibt noch @notAssignedQuestions.size()

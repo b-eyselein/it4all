@@ -6,9 +6,9 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
-import com.avaje.ebean.Model;
 import com.google.common.base.Splitter;
 
+import io.ebean.Model;
 import model.WithId;
 
 @MappedSuperclass

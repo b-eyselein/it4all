@@ -127,11 +127,12 @@ public class QuestionController extends ExerciseController {
     Question question;
 
     if(isFreetext) {
-      question = FreetextQuestion.finder.where().eq(StringConsts.TITLE_NAME, title).findUnique();
+      question = FreetextQuestion.finder.all().stream().filter(ftq -> ftq.title.equals(title)).findAny().orElse(null);
       if(question == null)
         question = new FreetextQuestion(findMinimalNotUsedId(GivenAnswerQuestion.finder));
     } else {
-      question = GivenAnswerQuestion.finder.where().eq(StringConsts.TITLE_NAME, title).findUnique();
+      question = GivenAnswerQuestion.finder.all().stream().filter(gaq -> gaq.title.equals(title)).findAny()
+          .orElse(null);
       if(question == null)
         question = new GivenAnswerQuestion(findMinimalNotUsedId(GivenAnswerQuestion.finder));
 

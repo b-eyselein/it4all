@@ -7,7 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import com.avaje.ebean.Model;
+import io.ebean.Finder;
+import io.ebean.Model;
 
 @Entity
 public class WebUser extends Model {
@@ -16,7 +17,7 @@ public class WebUser extends Model {
 
   @Id
   public String name;
-  
+
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
   public List<WebSolution> solutions;
 

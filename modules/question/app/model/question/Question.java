@@ -27,5 +27,5 @@ public abstract class Question extends Exercise {
   public abstract void saveInDb();
 
   public abstract boolean userHasAnswered(String username);
-  
+
 }

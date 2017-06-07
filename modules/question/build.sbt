@@ -9,8 +9,3 @@ playEbeanModels in Compile := Seq("model.*")
 
 // JaCoCo - siehe project/plugins.sbt
 jacoco.settings
-
-libraryDependencies ++= Seq(
-  javaJdbc
-)
-

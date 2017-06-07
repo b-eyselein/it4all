@@ -1,12 +1,22 @@
 package model.sql;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import play.Logger;
+
 public class SqlCell {
 
-  private final String content;
+  private String content;
   private boolean different = false;
 
-  public SqlCell(String theContent) {
-    content = theContent;
+  public SqlCell(String colName, ResultSet resultSet) {
+    try {
+      content = resultSet.getString(colName);
+    } catch (SQLException e) {
+      Logger.error("There has been an SQL error:", e);
+      content = "";
+    }
   }
 
   @Override

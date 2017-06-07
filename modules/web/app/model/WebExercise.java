@@ -10,6 +10,7 @@ import javax.persistence.OneToMany;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import io.ebean.Finder;
 import model.exercise.Exercise;
 import model.task.HtmlTask;
 import model.task.JsWebTask;
@@ -17,8 +18,7 @@ import model.task.JsWebTask;
 @Entity
 public class WebExercise extends Exercise {
 
-  public static final com.avaje.ebean.Model.Finder<Integer, WebExercise> finder = new com.avaje.ebean.Model.Finder<>(
-      WebExercise.class);
+  public static final Finder<Integer, WebExercise> finder = new Finder<>(WebExercise.class);
 
   @Column(columnDefinition = "text")
   public String htmlText;

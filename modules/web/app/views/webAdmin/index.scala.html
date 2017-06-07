@@ -11,7 +11,7 @@
   <section id="statistics">
     <h2>Statistiken</h2>
     <ul>
-      <li>Es existieren insgesamt @model.WebExercise.finder.findCount() Aufgaben, davon
+      <li>Es existieren insgesamt @model.WebExercise.finder.all().size() Aufgaben, davon
         <ul>
           <li>@model.WebExercise.withHtmlPart() Aufgaben mit HTML-Teil</li>
           <li>@model.WebExercise.withJsPart() Aufgaben mit JS-Teil</li>

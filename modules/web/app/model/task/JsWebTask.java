@@ -11,6 +11,7 @@ import org.openqa.selenium.SearchContext;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import io.ebean.Finder;
 import model.result.ConditionResult;
 import model.result.JsWebResult;
 import model.result.JsWebResultBuilder;

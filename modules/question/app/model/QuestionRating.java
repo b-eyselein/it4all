@@ -5,8 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import com.avaje.ebean.Model;
-
+import io.ebean.Finder;
+import io.ebean.Model;
 import model.question.GivenAnswerQuestion;
 
 @Entity

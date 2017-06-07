@@ -2,7 +2,7 @@ package model.uml;
 
 import javax.persistence.Entity;
 
-import com.avaje.ebean.Model;
+import io.ebean.Model;
 
 @Entity
 public class UmlImplementation extends Model {

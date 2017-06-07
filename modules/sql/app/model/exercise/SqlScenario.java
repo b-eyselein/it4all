@@ -10,11 +10,12 @@ import javax.persistence.OneToMany;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import io.ebean.Finder;
+
 @Entity
 public class SqlScenario extends Exercise {
 
-  public static final com.avaje.ebean.Model.Finder<Integer, SqlScenario> finder = new com.avaje.ebean.Model.Finder<>(
-      SqlScenario.class);
+  public static final Finder<Integer, SqlScenario> finder = new Finder<>(SqlScenario.class);
 
   public static final int STEP = 10;
 

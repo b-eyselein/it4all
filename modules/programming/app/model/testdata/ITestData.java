@@ -9,9 +9,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
-import com.avaje.ebean.Model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import io.ebean.Model;
 import model.ProgExercise;
 
 @MappedSuperclass

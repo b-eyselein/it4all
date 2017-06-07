@@ -1,6 +1,7 @@
 package model;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,13 +10,13 @@ import javax.persistence.Enumerated;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import io.ebean.Finder;
 import model.exercise.Exercise;
 
 @Entity
 public class XmlExercise extends Exercise {
 
-  public static final com.avaje.ebean.Model.Finder<Integer, XmlExercise> finder = new com.avaje.ebean.Model.Finder<>(
-      XmlExercise.class);
+  public static final Finder<Integer, XmlExercise> finder = new Finder<>(XmlExercise.class);
 
   @Column(columnDefinition = "text")
   // FIXME: eventually generate?
@@ -28,6 +29,10 @@ public class XmlExercise extends Exercise {
 
   public XmlExercise(int theId) {
     super(theId);
+  }
+
+  public static List<XmlExercise> byType(XmlExType type) {
+    return finder.all().stream().filter(ex -> ex.exerciseType == type).collect(Collectors.toList());
   }
 
   public List<String> getFixedStart() {
@@ -53,5 +58,5 @@ public class XmlExercise extends Exercise {
   public String getTag() {
     return exerciseType.getTag();
   }
-
+  
 }

@@ -11,11 +11,6 @@ playEbeanModels in Compile := Seq("model.user.*", "model.exercise.*", "model.pro
 jacoco.settings
 
 libraryDependencies ++= Seq(
-  javaJdbc,
-  
-  Common.mockitoDep,
-  
-  // JSON Schema Validator
   Common.jsonSchemaValidator
 )
 

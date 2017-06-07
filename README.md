@@ -39,7 +39,7 @@ Clone the repository on the [GitLab](https://gitlab2.informatik.uni-wuerzburg.de
 
 Build the image defined in the file 'Dockerfile':
 
-`$ docker build -t play --build-arg USERNAME=$(whoami) .`
+`$ docker build -t play --build-arg USERNAME=$(whoami) --build-arg DOCKER_GIT=$(stat -c "%g" /var/run/docker.sock) .`
 
 Set up all containers with docker-compose:
 

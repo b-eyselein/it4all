@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import io.ebean.Finder;
 import model.exercise.Exercise;
 import model.uml.UmlClass;
 
@@ -18,8 +19,7 @@ public class UmlExercise extends Exercise {
   private static final int OFFSET = 50;
   private static final int GAP = 200;
 
-  public static final com.avaje.ebean.Model.Finder<Integer, UmlExercise> finder = new com.avaje.ebean.Model.Finder<>(
-      UmlExercise.class);
+  public static final Finder<Integer, UmlExercise> finder = new Finder<>(UmlExercise.class);
 
   @Column(columnDefinition = "text")
   @JsonIgnore
@@ -32,7 +32,7 @@ public class UmlExercise extends Exercise {
   @Column(columnDefinition = "text")
   @JsonIgnore
   public String solution;
-  
+
   // @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
   // public List<Mapping> mappings;
 
@@ -78,5 +78,5 @@ public class UmlExercise extends Exercise {
   public String toString() {
     return "ID: " + id + ", Titel: " + title;
   }
-  
+
 }
