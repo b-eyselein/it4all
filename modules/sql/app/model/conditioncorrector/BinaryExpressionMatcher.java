@@ -1,14 +1,13 @@
-package model.matcher;
+package model.conditioncorrector;
 
 import java.util.Comparator;
 
-import model.matching.Match;
 import model.matching.Matcher;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.schema.Column;
 
-public class BinaryExpressionMatcher extends Matcher<BinaryExpression> {
+public class BinaryExpressionMatcher extends Matcher<BinaryExpression, BinaryExpressionMatch> {
 
   private static Comparator<BinaryExpression> comparator = new Comparator<BinaryExpression>() {
 
@@ -40,7 +39,7 @@ public class BinaryExpressionMatcher extends Matcher<BinaryExpression> {
   }
 
   @Override
-  protected Match<BinaryExpression> instantiateMatch(BinaryExpression arg1, BinaryExpression arg2) {
+  protected BinaryExpressionMatch instantiateMatch(BinaryExpression arg1, BinaryExpression arg2) {
     return new BinaryExpressionMatch(arg1, arg2);
   }
 

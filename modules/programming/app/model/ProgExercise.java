@@ -1,8 +1,6 @@
 package model;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -28,6 +26,8 @@ public class ProgExercise extends Exercise {
 
   public String jsSample;
 
+  public String javaSample;
+
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "exercise")
   @JsonManagedReference
   public List<SampleTestData> sampleTestData;
@@ -40,28 +40,11 @@ public class ProgExercise extends Exercise {
     super(theId);
   }
 
-  private static String getArguments(int argCount) {
-    return Stream.iterate((int) 'a', n -> n + 1).limit(argCount).map(i -> String.valueOf((char) i.intValue()))
-        .collect(Collectors.joining(", "));
-  }
-
-  public String getDeclaration(ProgLanguage language) {
-    // FIXME: move to ProgLanguage as abstract function!?!
+  public String getSampleSolution(AvailableLanguages language) {
     switch(language) {
-    case JS:
-      return "function " + functionName + "(" + getArguments(inputCount) + ") {\n  return 0;\n}";
-    case PYTHON:
-      return "def " + functionName + "(" + getArguments(inputCount) + "):\n  return 0";
-    default:
-      return "not defined...";
-    }
-  }
-
-  public String getSampleSolution(ProgLanguage language) {
-    switch(language) {
-    case JS:
-      return jsSample;
-    case PYTHON:
+    case JAVA_8:
+      return javaSample;
+    case PYTHON_3:
       return pythonSample;
     default:
       return "not defined...";

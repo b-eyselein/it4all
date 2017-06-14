@@ -1,12 +1,12 @@
 package model.correctors;
 
-public class PythonCorrector extends ProgLangCorrector {
+public class JavaCorrector extends ProgLangCorrector {
 
   // @Override
   // public String buildToEvaluate(String functionname, List<String> inputs) {
-  // return functionname + "(" + String.join(", ", inputs) + ")";
+  // return functionname + "(" + String.join(", ", inputs) + ");";
   // }
-  
+
   @Override
   protected boolean validateResult(Object realResult, Object awaitedResult) {
     // TODO Auto-generated method stub

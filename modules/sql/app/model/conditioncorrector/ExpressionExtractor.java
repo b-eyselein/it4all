@@ -1,4 +1,4 @@
-package model.querycorrectors;
+package model.conditioncorrector;
 
 import java.util.Collections;
 import java.util.LinkedList;

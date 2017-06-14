@@ -25,7 +25,7 @@ public class QuestionRatingKey implements Serializable {
   
   @Override
   public int hashCode() {
-    return 1_000 * username.hashCode() + questionId;
+    return IntConsts.THOUSAND * username.hashCode() + questionId;
   }
   
 }

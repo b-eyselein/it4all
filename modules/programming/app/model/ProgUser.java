@@ -14,9 +14,9 @@ import io.ebean.Model;
 import model.testdata.CommitedTestData;
 
 @Entity
-public class ProgrammingUser extends Model {
+public class ProgUser extends Model {
 
-  public static final Finder<String, ProgrammingUser> finder = new Finder<>(ProgrammingUser.class);
+  public static final Finder<String, ProgUser> finder = new Finder<>(ProgUser.class);
 
   @Id
   public String name;
@@ -25,7 +25,7 @@ public class ProgrammingUser extends Model {
   @JsonManagedReference
   public List<CommitedTestData> commitedTestData;
 
-  public ProgrammingUser(String theName) {
+  public ProgUser(String theName) {
     name = theName;
   }
 

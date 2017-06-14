@@ -24,11 +24,11 @@ import io.ebean.Finder;
 import io.ebean.Model;
 import model.SqlSolution;
 import model.querycorrectors.QueryCorrector;
+import model.querycorrectors.change.DeleteCorrector;
+import model.querycorrectors.change.InsertCorrector;
+import model.querycorrectors.change.UpdateCorrector;
 import model.querycorrectors.create.CreateCorrector;
 import model.querycorrectors.select.SelectCorrector;
-import model.querycorrectors.update.DeleteCorrector;
-import model.querycorrectors.update.InsertCorrector;
-import model.querycorrectors.update.UpdateCorrector;
 import net.sf.jsqlparser.statement.Statement;
 
 @Entity

@@ -22,6 +22,8 @@ public abstract class StringConsts {
 
   public static final String KEY_NAME = "key";
 
+  public static final String LANGUAGE_NAME = "language";
+
   public static final String NAME_NAME = "name";
 
   public static final String PW_NAME = "passwort";
@@ -39,6 +41,8 @@ public abstract class StringConsts {
   public static final String SOLUTION_NAME = "solution";
 
   public static final String TABLES_NAME = "Tabellen";
+
+  public static final String TEST_COUNT_NAME = "testCount";
 
   public static final String TEXT_NAME = "text";
 

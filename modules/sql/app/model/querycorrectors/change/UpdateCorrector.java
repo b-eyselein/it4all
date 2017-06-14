@@ -1,4 +1,4 @@
-package model.querycorrectors.update;
+package model.querycorrectors.change;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import javax.inject.Singleton;
 
 import model.matching.MatchingResult;
+import model.querycorrectors.columnMatch.ColumnMatch;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
@@ -13,36 +14,25 @@ import net.sf.jsqlparser.statement.update.Update;
 
 @Singleton
 public class UpdateCorrector extends ChangeCorrector<Update> {
-
+  
   public UpdateCorrector() {
     super("UPDATE");
   }
-
-  // @Override
-  // protected List<String> getColumns(Update statement) {
-  // List<Column> columns = statement.getColumns();
-  //
-  // if(columns == null)
-  // return Collections.emptyList();
-  //
-  // return
-  // columns.stream().map(Column::getColumnName).collect(Collectors.toList());
-  // }
-
+  
   @Override
-  protected MatchingResult<Column> compareColumns(Update userQuery, Update sampleQuery) {
+  protected MatchingResult<Column, ColumnMatch<Column>> compareColumns(Update userQuery, Update sampleQuery) {
     // TODO Auto-generated method stub
     return null;
   }
-
+  
   @Override
   protected List<String> getTables(Update statement) {
     return statement.getTables().stream().map(Table::getName).collect(Collectors.toList());
   }
-
+  
   @Override
   protected Expression getWhere(Update query) {
     return query.getWhere();
   }
-
+  
 }

@@ -3,9 +3,9 @@ package controllers.core;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import model.Secured;
+import model.exercise.Exercise;
 import model.logging.WorkingEvent;
 import model.user.User;
 import play.Logger;
@@ -22,16 +22,12 @@ public abstract class ExerciseController extends AbstractController {
     super(theFactory, theExerciseType);
   }
 
-  protected static Path getSolFileForExercise(User user, String exerciseType, int exercise, String fileType) {
-    return Paths.get(BASE_DATA_PATH, SOLUTIONS_SUB_DIRECTORY, user.name, exerciseType, exercise + "." + fileType);
-  }
-
   protected static void log(User user, WorkingEvent eventToLog) {
     PROGRESS_LOGGER.debug(user.name + " - " + Json.toJson(eventToLog));
   }
 
-  protected Path checkAndCreateSolDir(User user, String exerciseType, int id) {
-    Path dir = Paths.get(getSolDirForUser().toString(), exerciseType, Integer.toString(id));
+  protected Path checkAndCreateSolDir(Exercise exercise) {
+    Path dir = getSolDirForExercise(exercise);
 
     if(dir.toFile().exists())
       return dir;

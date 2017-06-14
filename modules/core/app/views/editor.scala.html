@@ -1,15 +1,12 @@
 @(template: String, mode: String, minLines: Int, maxLines: Int, updatePrev: Boolean)
 
 <script src="@routes.Assets.versioned("javascripts/ace/ace.js")"></script>
+<script src="@routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
 <script>
-$(document).ready(function() {
-  initEditor("@mode", @minLines, @maxLines);
-  @if(updatePrev) {
-  editor.on("change", updatePreview);
-  updatePreview();
-  }
-});
-
+var theMode = "@mode";
+var theMinLines = @minLines;
+var theMaxLines = @maxLines;
+var theUpdatePrev = @updatePrev;
 </script>
 <div class="panel panel-default">
   <div class="panel-heading">
@@ -26,5 +23,5 @@ $(document).ready(function() {
     
   </div>
   <div id="editor" class="form-control">@template</div>
-  <textarea hidden name="learnerSolution" id="learnerSolution"></textarea>
+  <textarea hidden name="@model.StringConsts.FORM_VALUE" id="@model.StringConsts.FORM_VALUE" value="@template"></textarea>
 </div>

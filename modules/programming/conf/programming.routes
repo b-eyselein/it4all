@@ -1,25 +1,25 @@
 # Administrator
-GET    /admin                controllers.programming.ProgAdmin.index()
+GET    /admin           controllers.programming.ProgAdmin.index()
 
-GET    /jsonSchema           controllers.programming.ProgAdmin.getJSONSchemaFile()
-POST   /upload               controllers.programming.ProgAdmin.uploadFile()
+GET    /jsonSchema      controllers.programming.ProgAdmin.getJSONSchemaFile()
+POST   /upload          controllers.programming.ProgAdmin.uploadFile()
 
-GET    /import               controllers.programming.ProgAdmin.importExercises()
-GET    /export               controllers.programming.ProgAdmin.exportExercises()
+GET    /import          controllers.programming.ProgAdmin.importExercises()
+GET    /export          controllers.programming.ProgAdmin.exportExercises()
 
-GET    /new                  controllers.programming.ProgAdmin.newExerciseForm()
-POST   /new                  controllers.programming.ProgAdmin.newExercise()
-
-GET    /test                 controllers.programming.Prog.testDocker()
+GET    /new             controllers.programming.ProgAdmin.newExerciseForm()
+POST   /new             controllers.programming.ProgAdmin.newExercise()
 
 # All
-GET    /                     controllers.programming.Prog.index()
-GET    /exercises            controllers.programming.Prog.exercises()
+GET    /                controllers.programming.Prog.index()
+GET    /exercises       controllers.programming.Prog.exercises()
 
-GET    /testdata/:id         controllers.programming.Prog.testData(id: Int)
-POST   /validate/:id         controllers.programming.Prog.validateTestData(id: Int)
-PUT    /validate/:id         controllers.programming.Prog.validateTestDataLive(id: Int)
+GET    /testdata/:id    controllers.programming.Prog.testData(id: Int)
+POST   /validate/:id    controllers.programming.Prog.validateTestData(id: Int)
+PUT    /validate/:id    controllers.programming.Prog.validateTestDataLive(id: Int)
 
-GET    /exercise/:id/:lang   controllers.programming.Prog.exercise(id: Int, lang: String)
-PUT    /exercise/:id/:lang   controllers.programming.Prog.correctLive(id: Int, lang: String)
-POST   /exercise/:id/:lang   controllers.programming.Prog.correct(id: Int, lang: String)
+GET    /declaration     controllers.programming.Prog.getDeclaration(language: String ?= "")
+
+GET    /exercise/:id/   controllers.programming.Prog.exercise(id: Int)
+PUT    /exercise/:id    controllers.programming.Prog.correctLive(id: Int)
+POST   /exercise/:id    controllers.programming.Prog.correct(id: Int)

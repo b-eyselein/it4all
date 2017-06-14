@@ -1,4 +1,4 @@
-@(whereComp: model.matching.MatchingResult[net.sf.jsqlparser.expression.BinaryExpression])
+@(whereComp: model.matching.MatchingResult[net.sf.jsqlparser.expression.BinaryExpression, model.conditioncorrector.BinaryExpressionMatch])
 
 @matches = @{whereComp.getMatches()}
 @missings = @{whereComp.getMissing()}

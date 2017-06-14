@@ -127,12 +127,22 @@ create table prog_exercise (
   input_count                   integer,
   python_sample                 varchar(255),
   js_sample                     varchar(255),
+  java_sample                   varchar(255),
   constraint pk_prog_exercise primary key (id)
 );
 
-create table programming_user (
+create table prog_solution (
+  user_name                     varchar(255) not null,
+  exercise_id                   integer not null,
+  language                      integer not null,
+  sol                           text,
+  constraint ck_prog_solution_language check ( language in (0,1)),
+  constraint pk_prog_solution primary key (user_name,exercise_id,language)
+);
+
+create table prog_user (
   name                          varchar(255) not null,
-  constraint pk_programming_user primary key (name)
+  constraint pk_prog_user primary key (name)
 );
 
 create table question_rating (
@@ -281,7 +291,7 @@ create table xml_exercise (
 alter table answer add constraint fk_answer_question_id foreign key (question_id) references given_answer_question (id) on delete restrict on update restrict;
 create index ix_answer_question_id on answer (question_id);
 
-alter table commited_test_data add constraint fk_commited_test_data_user_name foreign key (user_name) references programming_user (name) on delete restrict on update restrict;
+alter table commited_test_data add constraint fk_commited_test_data_user_name foreign key (user_name) references prog_user (name) on delete restrict on update restrict;
 create index ix_commited_test_data_user_name on commited_test_data (user_name);
 
 alter table commited_test_data add constraint fk_commited_test_data_exercise_id foreign key (exercise_id) references prog_exercise (id) on delete restrict on update restrict;
@@ -310,6 +320,12 @@ create index ix_js_web_task_exercise_id on js_web_task (exercise_id);
 
 alter table mapping add constraint fk_mapping_exercise_id foreign key (exercise_id) references uml_exercise (id) on delete restrict on update restrict;
 create index ix_mapping_exercise_id on mapping (exercise_id);
+
+alter table prog_solution add constraint fk_prog_solution_user_name foreign key (user_name) references prog_user (name) on delete restrict on update restrict;
+create index ix_prog_solution_user_name on prog_solution (user_name);
+
+alter table prog_solution add constraint fk_prog_solution_exercise_id foreign key (exercise_id) references prog_exercise (id) on delete restrict on update restrict;
+create index ix_prog_solution_exercise_id on prog_solution (exercise_id);
 
 alter table question_rating add constraint fk_question_rating_question_id foreign key (question_id) references given_answer_question (id) on delete restrict on update restrict;
 create index ix_question_rating_question_id on question_rating (question_id);
@@ -374,6 +390,12 @@ drop index ix_js_web_task_exercise_id on js_web_task;
 alter table mapping drop foreign key fk_mapping_exercise_id;
 drop index ix_mapping_exercise_id on mapping;
 
+alter table prog_solution drop foreign key fk_prog_solution_user_name;
+drop index ix_prog_solution_user_name on prog_solution;
+
+alter table prog_solution drop foreign key fk_prog_solution_exercise_id;
+drop index ix_prog_solution_exercise_id on prog_solution;
+
 alter table question_rating drop foreign key fk_question_rating_question_id;
 drop index ix_question_rating_question_id on question_rating;
 
@@ -427,7 +449,9 @@ drop table if exists mapping;
 
 drop table if exists prog_exercise;
 
-drop table if exists programming_user;
+drop table if exists prog_solution;
+
+drop table if exists prog_user;
 
 drop table if exists question_rating;
 

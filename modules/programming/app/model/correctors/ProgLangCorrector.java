@@ -1,109 +1,72 @@
 package model.correctors;
 
-import java.io.StringWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.PosixFilePermission;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Set;
+import java.util.TreeSet;
 
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import javax.script.SimpleScriptContext;
+import com.google.common.base.Splitter;
 
+import model.AvailableLanguages;
+import model.DockerConnector;
 import model.ProgEvaluationResult;
-import model.ProgExercise;
-import model.ProgLanguage;
-import model.execution.AExecutionResult;
-import model.execution.ExecutionResult;
-import model.execution.SyntaxError;
-import model.testdata.CommitedTestData;
 import model.testdata.ITestData;
 import play.Logger;
 
 public abstract class ProgLangCorrector {
   
-  protected static final ScriptEngineManager MANAGER = new ScriptEngineManager();
-  private ProgLanguage language;
+  private static final Splitter NEWLINE_SPLITTER = Splitter.on("\n");
   
-  public ProgLangCorrector(ProgLanguage theLanguage) {
-    language = theLanguage;
+  private static final String PYTHON_SCRIPT_FILE = "sol.py";
+  
+  private static final String RESULT_FILE = "result.txt";
+  
+  private static final Set<PosixFilePermission> FILE_PERMS = new TreeSet<>(Arrays.asList(PosixFilePermission.OWNER_READ,
+      PosixFilePermission.OWNER_WRITE, PosixFilePermission.OWNER_EXECUTE));
+  
+  private static final DockerConnector DOCKER_CONNECTOR = new DockerConnector();
+  
+  private static void createFile(Path file, List<String> content) throws IOException {
+    if(file.toFile().exists())
+      Files.delete(file);
+    
+    Files.write(file, content, StandardOpenOption.CREATE);
+    Files.setPosixFilePermissions(file, FILE_PERMS);
   }
   
-  public abstract String buildToEvaluate(String functionname, List<String> inputs);
-  
-  public List<ProgEvaluationResult> correct(ProgExercise exercise, String learnerSolution,
-      List<CommitedTestData> userTestData) {
-    ScriptEngine engine = MANAGER.getEngineByName(language.getEngineName());
-    
-    // TODO: Musteroutput mit gegebener Musterlösung berechnen statt angeben?
-    
-    // Evaluate learner solution
-    try {
-      engine.eval(learnerSolution);
-    } catch (ScriptException e) { // NOSONAR
-      // return Arrays.asList(new EvaluationFailed("Es gab einen Fehler beim
-      // Einlesen ihrer Lösung:",
-      // "<pre>" + e.getLocalizedMessage() + "</pre>"));
-      return Collections.emptyList();
-    }
-    
-    return Stream.concat(exercise.sampleTestData.stream(), userTestData.stream())
-        .map(test -> evaluate(exercise, test, engine)).collect(Collectors.toList());
-  }
-  
-  // public IExecutionResult execute(String learnerSolution) {
-  //// ScriptEngine engine = MANAGER.getEngineByName(engineName);
-  ////
-  //// ScriptContext context = new SimpleScriptContext();
-  //// context.setWriter(new StringWriter());
-  //// engine.setContext(context);
-  ////
-  //// return execute(learnerSolution, engine);
+  // private static String getCommand() {
+  // return "#!/bin/bash\n" + "rm result.txt\n" + "cat testdata.txt | while read
+  // VAR do echo $VAR | python "
+  // + PYTHON_SCRIPT_FILE + "; done > " + RESULT_FILE;
   // }
   
-  public List<ProgEvaluationResult> validateTestData(ProgExercise exercise, List<CommitedTestData> testData) {
+  public List<ProgEvaluationResult> evaluate(String learnerSolution, List<ITestData> completeTestData, Path solDir) {
     try {
-      ScriptEngine engine = MANAGER.getEngineByName(language.getEngineName());
-      ScriptContext scriptContext = new SimpleScriptContext();
-      scriptContext.setWriter(new StringWriter());
-      engine.setContext(scriptContext);
+      createFile(Paths.get(solDir.toString(), PYTHON_SCRIPT_FILE), NEWLINE_SPLITTER.splitToList(learnerSolution));
       
-      // Learn sample solution
-      engine.eval(exercise.getSampleSolution(language));
+      Path shellScriptSource = Paths.get("conf", "resources", "prog", "python.sh");
+      Path shellScriptTarget = Paths.get("/data", "solutions", "developer", "prog", "1", "script.sh");
+      Files.copy(shellScriptSource, shellScriptTarget, StandardCopyOption.REPLACE_EXISTING);
       
-      // Validate test data
-      // FIXME: implement!
-      return testData.stream().map(data -> validataTestData(data, engine)).collect(Collectors.toList());
-    } catch (ScriptException e) {
-      Logger.debug("There has been an error validating test data:", e);
-      return Collections.emptyList();
+      String ret = DOCKER_CONNECTOR.runContainer(AvailableLanguages.getStdLang(), solDir, RESULT_FILE);
+      
+      Logger.debug("----------------------------------------------------------");
+      Logger.debug("Returned:");
+      Logger.debug(ret);
+      Logger.debug("----------------------------------------------------------");
+      
+    } catch (IOException e) {
+      Logger.error("Error ...", e);
     }
-  }
-  
-  private AExecutionResult execute(String learnerSolution, ScriptEngine engine) {
-    try {
-      Object result = engine.eval(learnerSolution);
-      return new ExecutionResult(learnerSolution, result != null ? result.toString() : "null",
-          engine.getContext().getWriter().toString());
-    } catch (ScriptException e) { // NOSONAR
-      return new SyntaxError(learnerSolution, e.getMessage(), engine.getContext().getWriter().toString());
-    }
-  }
-  
-  private ProgEvaluationResult validataTestData(CommitedTestData data, ScriptEngine engine) {
-    String toEvaluate = buildToEvaluate(data.exercise.functionName, data.getInput());
-    return new ProgEvaluationResult(execute(toEvaluate, engine), data);
-  }
-  
-  protected ProgEvaluationResult evaluate(ProgExercise exercise, ITestData testData, ScriptEngine engine) {
-    String toEvaluate = buildToEvaluate(exercise.functionName, testData.getInput());
-    AExecutionResult realResult = execute(toEvaluate, engine);
-    
-    return new ProgEvaluationResult(realResult, testData);
-    // return validateResult(realResult.getResult(),
-    // testData.getAwaitedResult());
+    return Collections.emptyList();
   }
   
   protected abstract boolean validateResult(Object realResult, Object awaitedResult);

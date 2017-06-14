@@ -1,4 +1,4 @@
-package model.matcher;
+package model.conditioncorrector;
 
 import model.matching.Match;
 import net.sf.jsqlparser.expression.BinaryExpression;

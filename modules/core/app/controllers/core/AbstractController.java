@@ -8,6 +8,7 @@ import java.util.List;
 import io.ebean.Finder;
 import model.StringConsts;
 import model.WithId;
+import model.exercise.Exercise;
 import model.user.User;
 import play.data.FormFactory;
 import play.mvc.Controller;
@@ -69,6 +70,22 @@ public abstract class AbstractController extends Controller {
 
   protected Path getSampleDir() {
     return Paths.get(BASE_DATA_PATH, SAMPLE_SUB_DIRECTORY, exerciseType);
+  }
+
+  protected Path getSampleDirForExercise(Exercise exercise) {
+    return Paths.get(getSampleDir().toString(), String.valueOf(exercise.id));
+  }
+
+  protected Path getSolDirForExercise(Exercise exercise) {
+    return Paths.get(getSolDirForUser().toString(), exerciseType, String.valueOf(exercise.id));
+  }
+
+  protected Path getSolFileForExercise(Exercise exercise, String fileExtension) {
+    return getSolFileForExercise(exercise, fileExtension);
+  }
+
+  protected Path getSolFileForExercise(Exercise exercise, String fileName, String fileExtension) {
+    return Paths.get(getSolDirForExercise(exercise).toString(), fileName + "." + fileExtension);
   }
 
 }

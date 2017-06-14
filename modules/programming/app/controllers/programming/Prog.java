@@ -1,21 +1,25 @@
 package controllers.programming;
 
+import java.nio.file.Path;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
 import controllers.core.ExerciseController;
 import model.ApprovalState;
-import model.DockerConnector;
+import model.AvailableLanguages;
+import model.ProgCorrectionException;
 import model.ProgEvaluationResult;
 import model.ProgExercise;
-import model.ProgLanguage;
-import model.ProgrammingUser;
+import model.ProgUser;
 import model.StringConsts;
-import model.correctors.JsCorrector;
+import model.correction.CorrectionException;
+import model.correctors.JavaCorrector;
 import model.correctors.ProgLangCorrector;
 import model.correctors.PythonCorrector;
 import model.logging.ExerciseCompletionEvent;
@@ -25,6 +29,7 @@ import model.testdata.CommitedTestData;
 import model.testdata.CommitedTestDataKey;
 import model.testdata.ITestData;
 import model.user.User;
+import play.Logger;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
@@ -35,9 +40,6 @@ public class Prog extends ExerciseController {
 
   public static final int STD_TEST_DATA_COUNT = 2;
 
-  private static final ProgLangCorrector JS_CORRECTOR = new JsCorrector();
-  private static final ProgLangCorrector PYTHON_CORRECTOR = new PythonCorrector();
-
   @Inject
   public Prog(FormFactory theFactory) {
     super(theFactory, "prog");
@@ -46,26 +48,26 @@ public class Prog extends ExerciseController {
   public static User getUser() {
     User user = ExerciseController.getUser();
 
-    if(ProgrammingUser.finder.byId(user.name) == null)
+    if(ProgUser.finder.byId(user.name) == null)
       // Make sure there is a corresponding entrance in other db...
-      new ProgrammingUser(user.name).save();
+      new ProgUser(user.name).save();
 
     return user;
   }
 
   private static List<CommitedTestData> extractTestData(DynamicForm form, String username, ProgExercise exercise) {
-    return IntStream.range(0, Integer.parseInt(form.get("testCount")))
+    return IntStream.range(0, Integer.parseInt(form.get(StringConsts.TEST_COUNT_NAME)))
         .mapToObj(testCounter -> readTestDataFromForm(form, username, testCounter, exercise))
         .collect(Collectors.toList());
   }
 
-  private static ProgLangCorrector getProgLangCorrector(ProgLanguage lang) {
-    switch(lang) {
-    case JS:
-      return JS_CORRECTOR;
-    case PYTHON:
+  private static ProgLangCorrector getCorrector(AvailableLanguages language) {
+    switch(language) {
+    case JAVA_8:
+      return new JavaCorrector();
+    case PYTHON_3:
     default:
-      return PYTHON_CORRECTOR;
+      return new PythonCorrector();
     }
   }
 
@@ -88,35 +90,47 @@ public class Prog extends ExerciseController {
     return testdata;
   }
 
-  public Result correct(int id, String language) {
+  public Result correct(int id) {
     User user = getUser();
 
     DynamicForm form = factory.form().bindFromRequest();
     String learnerSolution = form.get(StringConsts.FORM_VALUE);
+    String language = form.get(StringConsts.LANGUAGE_NAME);
 
-    List<ProgEvaluationResult> result = correct(user, ProgExercise.finder.byId(id), learnerSolution,
-        ProgLanguage.valueOf(language));
+    try {
+      List<ProgEvaluationResult> result = correct(user, ProgExercise.finder.byId(id), learnerSolution,
+          AvailableLanguages.valueOf(language));
 
-    log(user, new ExerciseCompletionEvent(request(), id, result));
-    return ok(views.html.correction.render("Programmiersprachen", new play.twirl.api.Html(result.toString()),
-        learnerSolution, user));
+      log(user, new ExerciseCompletionEvent(request(), id, result));
+      return ok(views.html.correction.render("Programmiersprachen", views.html.progResult.render(result),
+          learnerSolution, user));
+    } catch (CorrectionException e) {
+      Logger.error("Error while correcting programming", e);
+      return badRequest();
+    }
   }
 
-  public Result correctLive(int id, String language) {
+  public Result correctLive(int id) {
     User user = getUser();
 
     DynamicForm form = factory.form().bindFromRequest();
+
     String learnerSolution = form.get(StringConsts.FORM_VALUE);
+    String language = form.get(StringConsts.LANGUAGE_NAME);
 
-    List<ProgEvaluationResult> result = correct(user, ProgExercise.finder.byId(id), learnerSolution,
-        ProgLanguage.valueOf(language));
+    try {
+      List<ProgEvaluationResult> result = correct(user, ProgExercise.finder.byId(id), learnerSolution,
+          AvailableLanguages.valueOf(language));
 
-    log(user, new ExerciseCorrectionEvent(request(), id, result));
-    return ok(views.html.progResult.render(result));
-
+      log(user, new ExerciseCorrectionEvent(request(), id, result));
+      return ok(views.html.progResult.render(result));
+    } catch (CorrectionException e) {
+      Logger.error("Error while correcting programming live", e);
+      return badRequest();
+    }
   }
 
-  public Result exercise(int id, String language) {
+  public Result exercise(int id) {
     User user = getUser();
     ProgExercise exercise = ProgExercise.finder.byId(id);
 
@@ -125,11 +139,15 @@ public class Prog extends ExerciseController {
 
     Request request = request();
     log(user, new ExerciseStartEvent(request, id));
-    return ok(views.html.progExercise.render(getUser(), exercise, ProgLanguage.valueOf(language)));
+    return ok(views.html.progExercise.render(getUser(), exercise));
   }
 
   public Result exercises() {
     return ok(views.html.exercises.render(getUser(), ProgExercise.finder.all()));
+  }
+
+  public Result getDeclaration(String lang) {
+    return ok(AvailableLanguages.valueOf(lang).getDeclaration());
   }
 
   public Result index() {
@@ -144,20 +162,17 @@ public class Prog extends ExerciseController {
         oldTestData != null ? oldTestData : new LinkedList<>()));
   }
 
-  public Result testDocker() {
-    String ret = (new DockerConnector()).attachContainer();
-    return ok(ret);
-  }
-
   public Result validateTestData(int id) {
     User user = getUser();
     ProgExercise exercise = ProgExercise.finder.byId(id);
     DynamicForm form = factory.form().bindFromRequest();
+    AvailableLanguages language = AvailableLanguages.valueOf(form.get(StringConsts.LANGUAGE_NAME));
 
     List<CommitedTestData> testData = extractTestData(form, user.name, exercise);
     testData.forEach(CommitedTestData::save);
 
-    List<ProgEvaluationResult> validatedTestData = PYTHON_CORRECTOR.validateTestData(exercise, testData);
+    List<ProgEvaluationResult> validatedTestData = Collections.emptyList(); // getCorrector(language).validateTestData(exercise,
+                                                                            // testData);
 
     return ok(views.html.validatedTestData.render(user, exercise, validatedTestData));
   }
@@ -165,22 +180,33 @@ public class Prog extends ExerciseController {
   public Result validateTestDataLive(int id) {
     ProgExercise exercise = ProgExercise.finder.byId(id);
     DynamicForm form = factory.form().bindFromRequest();
+    AvailableLanguages language = AvailableLanguages.valueOf(form.get(StringConsts.LANGUAGE_NAME));
 
     List<CommitedTestData> testData = extractTestData(form, getUser().name, exercise);
 
-    List<ProgEvaluationResult> validatedTestData = PYTHON_CORRECTOR.validateTestData(exercise, testData);
+    List<ProgEvaluationResult> validatedTestData = Collections.emptyList(); // getCorrector(language).validateTestData(exercise,
+                                                                            // testData);
 
     return ok(Json.toJson(validatedTestData));
   }
 
   private List<ProgEvaluationResult> correct(User user, ProgExercise exercise, String learnerSolution,
-      ProgLanguage lang) {
+      AvailableLanguages lang) throws CorrectionException {
     // FIXME: Time out der Ausführung
+    try {
+      Logger.debug("Solution: " + learnerSolution);
 
-    List<CommitedTestData> userTestData = CommitedTestData.forUserAndExercise(user, exercise.id);
+      List<ITestData> completeTestData = Stream
+          .concat(exercise.sampleTestData.stream(), CommitedTestData.forUserAndExercise(user, exercise.id).stream())
+          .collect(Collectors.toList());
 
-    ProgLangCorrector corrector = getProgLangCorrector(lang);
+      ProgLangCorrector corrector = getCorrector(lang);
 
-    return corrector.correct(exercise, learnerSolution, userTestData);
+      Path solDir = checkAndCreateSolDir(exercise);
+
+      return corrector.evaluate(learnerSolution, completeTestData, solDir);
+    } catch (Exception e) {
+      throw new ProgCorrectionException(learnerSolution, "Error while correcting files", e);
+    }
   }
 }

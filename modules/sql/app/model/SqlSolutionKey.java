@@ -36,7 +36,7 @@ public class SqlSolutionKey implements Serializable {
 
   @Override
   public int hashCode() {
-    return 1_000_000 * userName.hashCode() + 1_000 * scenarioId + exerciseId;
+    return IntConsts.MILLION * userName.hashCode() + IntConsts.THOUSAND * scenarioId + exerciseId;
   }
 
 }

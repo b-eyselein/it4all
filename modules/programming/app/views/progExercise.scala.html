@@ -1,11 +1,29 @@
-@(user: model.user.User, exercise: model.ProgExercise, lang: model.ProgLanguage)
+@(user: model.user.User, exercise: model.ProgExercise)
+
+@stdLanguage = @{model.AvailableLanguages.getStdLang()}
 
 @main("Programmiersprachen Test", user) {
 <script src="@routes.Assets.versioned("javascripts/programming.js")"></script>
 <script src="@routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
 
+<script>
+function changeProgLanguage(select, theUrl) {
+  var language = select.value;
+  $.ajax({
+    type: 'GET',
+    url: theUrl,
+    data: "language=" + language,
+    async: true,
+    success: function(response) {
+      document.getElementById("language").value = language;
+      editor.setValue(response, 1000000);
+    }
+  });
+}
+</script>
+
 <div class="container">
-  <form action="@programming.routes.Prog.correct(exercise.id, lang.toString())" method="post" onsubmit="prepareFormForSubmitting();">
+  <form action="@programming.routes.Prog.correct(exercise.id)" method="post" onsubmit="prepareFormForSubmitting();">
   
     <div class="row">
       <div class="col-md-6">
@@ -17,11 +35,22 @@
         <p>@Html(exercise.text)</p>
           
         <hr>
-          
+        
+        <div class="input-group">
+          <span class="input-group-addon">Sprache</span>
+          <select class="form-control" onchange="changeProgLanguage(this, '@programming.routes.Prog.getDeclaration()');">
+          @for(language <- model.AvailableLanguages.values()) {
+          	<option value="@language" @if(language == stdLanguage) {selected}>@language.getName()</option>
+          }
+          </select>
+        </div>
+        
+        <hr>
+        
         <div class="btn-group btn-group-justified">
           <div class="btn-group">
             <button type="button" class="btn btn-primary"
-              onclick="testTheSolution('@programming.routes.Prog.correctLive(exercise.id, lang.toString())')">
+              onclick="testTheSolution('@programming.routes.Prog.correctLive(exercise.id)')">
             L&ouml;sung testen</button>
           </div>
           <div class="btn-group">
@@ -32,8 +61,8 @@
       </div>
       
       <div class="col-md-6">
-        @editor(exercise.getDeclaration(lang), lang.getAceName(), 15, 30, false)
-        <input hidden name="language" id="language" value="@lang">
+        @editor(stdLanguage.getDeclaration(), stdLanguage.getAceName(), 15, 30, false)
+        <input hidden name="@model.StringConsts.LANGUAGE_NAME" id="@model.StringConsts.LANGUAGE_NAME" value="@stdLanguage">
       </div>
     </div>
 

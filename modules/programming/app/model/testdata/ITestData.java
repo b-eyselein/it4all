@@ -29,10 +29,14 @@ public abstract class ITestData extends Model {
 
   public String output;
 
+  public String forFile() {
+    return String.join(" ", getInput());
+  }
+
   public abstract int getId();
 
   public List<String> getInput() {
     return Arrays.asList(inputs.split(VALUES_SPLIT_CHAR));
   }
-
+  
 }

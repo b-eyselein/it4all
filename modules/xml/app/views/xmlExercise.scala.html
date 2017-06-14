@@ -1,8 +1,6 @@
 @(user: model.user.User, exercise: model.XmlExercise, referenceFile: String, oldSolution: String)
 
 @main("XML-Test", user) {
-<script src="@routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
-
 <div class="container">
   <form action="@xml.routes.Xml.correct(exercise.id)" method="post" onsubmit="prepareFormForSubmitting();">
   
@@ -40,6 +38,5 @@
     <input type="submit" class="btn btn-success btn-block" value="L&ouml;sung abgeben">
   
   </form>
-  
 </div>
 }

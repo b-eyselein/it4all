@@ -1,15 +1,17 @@
-@(title: String, user: model.user.User)(content: Html)
+@(title: String, user: model.user.User, scripts: Html = Html(""))(content: Html)
 <!DOCTYPE html>
 
 <html lang="de">
 
 <head>
-<title>it4all: @title</title>
-<!-- JQuery, Bootstrap (CSS und JS) -->
-<script src="@routes.Assets.versioned("javascripts/jquery.js")"></script>
+  <title>it4all: @title</title>
+  <!-- JQuery, Bootstrap (CSS und JS) -->
+  <script src="@routes.Assets.versioned("javascripts/jquery.js")"></script>
 
-<link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/bootstrap.css")">
-<script src="@routes.Assets.versioned("javascripts/bootstrap.js")"></script>
+  <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/bootstrap.css")">
+  <script src="@routes.Assets.versioned("javascripts/bootstrap.js")"></script>
+  
+  @scripts
 </head>
 
 <body>

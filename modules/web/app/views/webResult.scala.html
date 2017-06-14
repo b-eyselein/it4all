@@ -1,6 +1,5 @@
 @(results: List[model.result.ElementResult])
 
-
 @for(result <- results) {
 <div class="panel panel-@result.getBSClass()">
   <div class="panel-heading" data-toggle="collapse" href="#task@result.getTask().key.taskId">

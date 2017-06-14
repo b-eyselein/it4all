@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import io.ebean.Finder;
 import model.ApprovalState;
-import model.ProgrammingUser;
+import model.ProgUser;
 import model.user.User;
 
 @Entity
@@ -28,7 +28,7 @@ public class CommitedTestData extends ITestData {
   @ManyToOne
   @JoinColumn(name = "user_name", insertable = false, updatable = false)
   @JsonBackReference
-  public ProgrammingUser user;
+  public ProgUser user;
 
   @Enumerated(EnumType.STRING)
   public ApprovalState approvalState;

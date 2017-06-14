@@ -1,54 +1,39 @@
 package model.correctionresult;
 
-import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
+import model.conditioncorrector.BinaryExpressionMatch;
+import model.matching.Match;
 import model.matching.MatchingResult;
+import model.querycorrectors.columnMatch.ColumnMatch;
 import model.result.EvaluationResult;
 import net.sf.jsqlparser.expression.BinaryExpression;
 
-public class SqlResult<ColumnType> {
+public class SqlResult<C> {
   
   private String learnerSolution;
   
-  private MatchingResult<ColumnType> columnComparison;
+  private MatchingResult<C, ColumnMatch<C>> columnComparison;
   
-  private MatchingResult<String> tableComparison;
+  private List<MatchingResult<String, Match<String>>> stringComparisons;
   
-  private MatchingResult<String> orderByComparison;
-  
-  private MatchingResult<String> groupByComparison;
-  
-  private MatchingResult<BinaryExpression> whereComparison;
+  private MatchingResult<BinaryExpression, BinaryExpressionMatch> whereComparison;
   
   private SqlExecutionResult executionResult;
   
-  // @formatter:off
-  protected SqlResult(
-      String theLearnerSolution,
-      MatchingResult<ColumnType> theColumnComparison,
-      MatchingResult<String> theTableComparison,
-      MatchingResult<String> theOrderByComparison,
-      MatchingResult<String> theGroupByComparison,
-
-      MatchingResult<BinaryExpression> theWhereComparison,
-
+  protected SqlResult(String theLearnerSolution, MatchingResult<C, ColumnMatch<C>> theColumnComparison,
+      List<MatchingResult<String, Match<String>>> theStringComparisons,
+      MatchingResult<BinaryExpression, BinaryExpressionMatch> theWhereComparison,
       SqlExecutionResult theExecutionResult) {
     learnerSolution = theLearnerSolution;
     columnComparison = theColumnComparison;
-    tableComparison = theTableComparison;
-    orderByComparison = theOrderByComparison;
-    groupByComparison = theGroupByComparison;
-
+    stringComparisons = theStringComparisons;
     whereComparison = theWhereComparison;
-
     executionResult = theExecutionResult;
   }
-  // @formatter:on
   
-  public MatchingResult<ColumnType> getColumnComparison() {
+  public MatchingResult<C, ColumnMatch<C>> getColumnComparison() {
     return columnComparison;
   }
   
@@ -56,33 +41,24 @@ public class SqlResult<ColumnType> {
     return executionResult;
   }
   
-  public MatchingResult<String> getGroupByComparison() {
-    return groupByComparison;
-  }
-  
   public String getLearnerSolution() {
     return learnerSolution;
   }
   
-  public List<MatchingResult<String>> getListComparisons() {
-    return Arrays.asList(/* columnComparison, */ tableComparison, orderByComparison, groupByComparison).stream()
-        .filter(Objects::nonNull).collect(Collectors.toList());
-  }
-  
-  public MatchingResult<String> getOrderByComparison() {
-    return orderByComparison;
+  public List<MatchingResult<String, Match<String>>> getListComparisons() {
+    return stringComparisons;
   }
   
   public List<EvaluationResult> getResults() {
-    return Arrays.asList(columnComparison, tableComparison, orderByComparison, groupByComparison, whereComparison,
-        executionResult);
+    List<EvaluationResult> ret = new LinkedList<>();
+    ret.add(columnComparison);
+    ret.add(whereComparison);
+    ret.add(executionResult);
+    ret.addAll(stringComparisons);
+    return ret;
   }
   
-  public MatchingResult<String> getTableComparison() {
-    return tableComparison;
-  }
-  
-  public MatchingResult<BinaryExpression> getWhereComparison() {
+  public MatchingResult<BinaryExpression, BinaryExpressionMatch> getWhereComparison() {
     return whereComparison;
   }
   

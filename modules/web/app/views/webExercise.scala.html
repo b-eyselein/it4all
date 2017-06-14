@@ -1,8 +1,6 @@
 @(user: model.user.User, exercise: model.WebExercise, exType: String, oldSolution: String, title: String)
 
 @main(title, user) {
-<script src="@routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
-
 <div class="container-fluid">
   <form method="post" onsubmit="prepareFormForSubmitting();"
   @if("html".equals(exType)) {

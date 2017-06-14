@@ -13,15 +13,13 @@
         <thead>
           <tr>
             <th>Sprache</th>
-            <th>Angabe</th>
             <th>L&ouml;sung</th>
           </tr>
         </thead>
         <tbody>
-        @for(lang <- model.ProgLanguage.values()) {
+        @for(lang <- model.AvailableLanguages.values()) {
           <tr>
             <td>@lang.getName()</td>
-            <td><pre>@exercise.getDeclaration(lang)</pre></td>
             <td><pre>@exercise.getSampleSolution(lang)</pre></td>
           </tr>
         }

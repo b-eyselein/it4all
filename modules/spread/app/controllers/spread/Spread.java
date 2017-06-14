@@ -79,15 +79,14 @@ public class Spread extends ExerciseController {
     String fileExtension = SpreadSheetCorrector.getExtension(uploadedFile.getFilename());
 
     // Save solution
-    Path targetFilePath = getSolFileForExercise(user, exerciseType, exercise.id,
-        exercise.templateFilename + "." + fileExtension);
+    Path targetFilePath = getSolFileForExercise(exercise, exercise.templateFilename + "." + fileExtension);
     boolean fileSuccessfullySaved = saveSolutionForUser(pathToUploadedFile, targetFilePath);
     if(!fileSuccessfullySaved)
       return internalServerError(
           views.html.spreadcorrectionerror.render(user, "Die Datei konnte nicht gespeichert werden!"));
 
     // Get paths to sample document
-    Path sampleDocumentPath = Paths.get(getSampleDir().toString(), exercise.sampleFilename + "." + fileExtension);
+    Path sampleDocumentPath = Paths.get(getSampleDir().toString(), exercise.sampleFilename, fileExtension);
     if(!sampleDocumentPath.toFile().exists())
       return internalServerError(
           views.html.spreadcorrectionerror.render(user, "Die Musterdatei konnte nicht gefunden werden!"));

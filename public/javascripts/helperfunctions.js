@@ -1,6 +1,3 @@
-const LEARNER_SOLUTION_VALUE = "learnerSolution";
-const CORRECTION_FIELD_VALUE = "#correction";
-
 function changeFontsize(value) {
   var fontsizeElement = document.getElementById('fontsize');
   var fontsize = parseInt(fontsizeElement.innerHTML) + value;
@@ -8,9 +5,22 @@ function changeFontsize(value) {
   fontsizeElement.innerHTML = fontsize;
 }
 
-function initEditor(theMode, theMinLines, theMaxLines) {
+$(document).ready(function() {
+  initEditor();
+  updateHiddenTextarea();
+  
+  if(theUpdatePrev) {
+    editor.on("change", updatePreview);
+    updatePreview();
+  }
+});
+
+function initEditor() {
   document.getElementById('editor').style.fontSize = '16px';
   editor = ace.edit("editor");
+  
+  editor.on("change", updateHiddenTextarea);
+  
   editor.setTheme("ace/theme/eclipse");
   editor.getSession().setMode("ace/mode/" + theMode);
   editor.getSession().setTabSize(2);
@@ -22,27 +32,35 @@ function initEditor(theMode, theMinLines, theMaxLines) {
   });
 }
 
+function updateHiddenTextarea() {
+  $("#learnerSolution").val(editor.getValue());
+}
+
 function processCorrection(correction) {
-  document.getElementById(CORRECTION_FIELD_VALUE).innerHTML = correction;
+  $("#correction").html(correction);
+}
+
+function toParam(input) {
+  return input.id + "=" + encodeURIComponent(input.value);
+}
+
+function paramFilter(input, element) {
+  return element.id && element.value;
 }
 
 function extractParameters() {
-  return LEARNER_SOLUTION_VALUE + "=" + encodeURIComponent(editor.getValue());
-}
-
-function prepareFormForSubmitting() {
-  document.getElementById(LEARNER_SOLUTION_VALUE).value = editor.getValue();
+  var inputs = $("form input, form textarea").filter(paramFilter);
+  return $.map(inputs, toParam).join("&");
 }
 
 function testTheSolution(theUrl) {
+  var theData = extractParameters();
   $.ajax({
     type: 'PUT',
     url: theUrl,
-    data: extractParameters(),
+    data: theData,
     async: true,
-    success: function(response) {
-      $(CORRECTION_FIELD_VALUE).html(response);
-    }
+    success: processCorrection
   });
 }
 
