@@ -5,7 +5,7 @@ object Common {
   val settings: Seq[Setting[_]] = Seq(
     organization := "is.informatik.uni-wuerzburg.de",
     version := "0.9.0",
-    scalaVersion := "2.12.0")
+    scalaVersion := "2.12.2")
 
   val mysqlDependency = "mysql" % "mysql-connector-java" % "6.0.6"
 

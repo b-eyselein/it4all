@@ -25,7 +25,6 @@ import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.RichTextString;
-//TODO: Umstellung auf XSSFROW!
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
@@ -45,40 +44,40 @@ import play.Logger;
  *
  */
 public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Font, Short> {
-
+  
   private static final String FORMULA_CORRECT = "Formel richtig.";
-
+  
   private static String compareConditionalFormattings(ConditionalFormatting format1, ConditionalFormatting format2) {
     if(format2 == null)
       return "";
-
+    
     if(format1.equals(format2))
       return "Bedingte Formatierung richtig.\n";
-
+    
     // Compare ranges reference
     String cfDiff = HashSetHelper.getSheetCFDiff(getFormatStrings(format2), getFormatStrings(format1));
     if(!cfDiff.isEmpty())
       return "Bedingte Formatierung falsch. Der Bereich " + cfDiff + " ist falsch.";
-
+    
     String string1 = RegExpHelper.getExcelCFFormulaList(format1.toString());
     String string2 = RegExpHelper.getExcelCFFormulaList(format2.toString());
     String diff = HashSetHelper.getDiffOfTwoFormulas(string1, string2);
-
+    
     if(diff.isEmpty())
       return "Bedingte Formatierung richtig.\n";
     else
       return "Bedingte Formatierung falsch." + diff + "\n";
   }
-
+  
   private static Set<String> getFormatStrings(ConditionalFormatting format) {
     return Arrays.stream(format.getFormattingRanges()).map(CellRangeAddress::formatAsString)
         .collect(Collectors.toSet());
   }
-
+  
   private static String getStringValueOfCell(Cell cell) {
     if(cell.getCellTypeEnum() != CellType.FORMULA)
       return cell.toString();
-
+    
     switch(cell.getCachedFormulaResultTypeEnum()) {
     case NUMERIC:
       return Double.toString(cell.getNumericCellValue());
@@ -88,30 +87,30 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
       return "";
     }
   }
-
+  
   protected static List<String> compareSheetConditionalFormatting(Sheet master, Sheet compare) {
     SheetConditionalFormatting scf1 = master.getSheetConditionalFormatting();
     SheetConditionalFormatting scf2 = compare.getSheetConditionalFormatting();
-
+    
     int count1 = scf1.getNumConditionalFormattings();
     int count2 = scf2.getNumConditionalFormattings();
-
+    
     if(count1 == 0)
       return Arrays.asList("Keine bedingten Formatierungen erwartet.");
-
+    
     if(count2 == 0)
       return Arrays.asList("Bedingte Formatierung falsch. Keine Bedingte Formatierung gefunden.");
-
+    
     if(count1 != count2)
       return Arrays.asList("Bedingte Formatierung falsch. Zu wenig Bedingte Formatierungen (Erwartet: " + count1
           + ", Gefunden: " + count2 + ").\n");
-
+    
     return IntStream.range(0, count1)
         .mapToObj(
             i -> compareConditionalFormattings(scf1.getConditionalFormattingAt(i), scf2.getConditionalFormattingAt(i)))
         .collect(Collectors.toList());
   }
-
+  
   @Override
   public void closeDocument(Workbook document) {
     try {
@@ -120,23 +119,23 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
       Logger.error("There has been an error closing a workbook", e);
     }
   }
-
+  
   @Override
   public String compareCellFormulas(XSSFCell masterCell, XSSFCell compareCell) {
     if(masterCell.getCellTypeEnum() != CellType.FORMULA)
       return "Es war keine Formel anzugeben.";
-
+    
     if(masterCell.toString().equals(compareCell.toString()))
       return FORMULA_CORRECT;
-
+    
     if(compareCell.getCellTypeEnum() != CellType.FORMULA)
       return "Keine Formel angegeben!";
-
+    
     String difference = HashSetHelper.getDiffOfTwoFormulas(masterCell.toString(), compareCell.toString());
     return difference.isEmpty() ? FORMULA_CORRECT : "Formel falsch. " + difference;
-
+    
   }
-
+  
   @Override
   public String compareCellValues(XSSFCell masterCell, XSSFCell compareCell) {
     String masterCellValue = getStringValueOfCell(masterCell);
@@ -148,28 +147,28 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
     else
       return "Wert falsch. Erwartet wurde '" + masterCellValue + "'.";
   }
-
+  
   @Override
   public String compareChartsInSheet(Sheet compareSheet, Sheet sampleSheet) {
     XSSFDrawing sampleDrawing = ((XSSFSheet) sampleSheet).createDrawingPatriarch();
     XSSFDrawing compareDrawing = ((XSSFSheet) compareSheet).createDrawingPatriarch();
     int sampleChartCount = sampleDrawing.getCharts().size();
     int compareChartCount = compareDrawing.getCharts().size();
-
+    
     if(sampleChartCount == 0)
       return "Es waren keine Diagramme zu erstellen.";
-
+    
     if(sampleChartCount != compareChartCount)
       return "Falsche Anzahl an Diagrammen im Sheet (Erwartet: " + sampleChartCount + ", Gefunden: " + compareChartCount
           + ").";
-
+    
     // TODO: refactor & test!
     List<String> messages = new LinkedList<>();
     for(int i = 0; i < sampleChartCount; i++) {
-
+      
       CTChart chartMaster = sampleDrawing.getCharts().get(i).getCTChart();
       CTChart chartCompare = compareDrawing.getCharts().get(i).getCTChart();
-
+      
       if(chartCompare == null)
         messages.add("Sheet konnte nicht geöffnet werden!");
       else {
@@ -193,55 +192,55 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
       }
     }
     return String.join("\n", messages);
-
+    
   }
-
+  
   @Override
   public String compareNumberOfChartsInDocument(Workbook compareDocument, Workbook sampleDocument) {
     // TODO: wird nur von ODFCorrector benutzt!
     return null;
   }
-
+  
   @Override
   public void compareSheet(Sheet sampleTable, Sheet compareTable, boolean conditionalFormating) {
-
+    
     // Compare conditional formatting
     if(conditionalFormating) {
       List<String> conditionalFormattingResult = compareSheetConditionalFormatting(sampleTable, compareTable);
       setCellComment((XSSFCell) compareTable.getRow(0).getCell(0), String.join("\n", conditionalFormattingResult));
     }
-
+    
     // Iterate over colored cells
     List<XSSFCell> range = getColoredRange(sampleTable);
     for(Cell cellMaster: range) {
       int rowIndex = cellMaster.getRowIndex();
       int columnIndex = cellMaster.getColumnIndex();
-
+      
       Row rowCompare = compareTable.getRow(rowIndex);
       if(rowCompare == null)
         continue;
-
+      
       XSSFCell cellCompare = (XSSFCell) rowCompare.getCell(columnIndex);
       if(cellCompare == null)
         continue;
-
+      
       // Create CellComparator
       cellCompare.setCellComment(null);
       // Compare cell values
       String equalCell = compareCellValues((XSSFCell) cellMaster, cellCompare);
       String equalFormula = compareCellFormulas((XSSFCell) cellMaster, cellCompare);
       setCellComment(cellCompare, equalCell + "\n" + equalFormula);
-
+      
       // TODO: Use enum instead of Strings!??
       short colorIndex = IndexedColors.RED.getIndex();
       if("Wert richtig.".equals(equalCell) && FORMULA_CORRECT.equals(equalFormula))
         setCellStyle(cellCompare, compareTable.getWorkbook().createFont(), IndexedColors.GREEN.getIndex());
-
+      
       setCellStyle(cellCompare, compareTable.getWorkbook().createFont(), colorIndex);
     }
-
+    
   }
-
+  
   @Override
   public XSSFCell getCellByPosition(Sheet table, int row, int column) {
     if(table.getRow(row) != null)
@@ -249,7 +248,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
     else
       return null;
   }
-
+  
   @Override
   public List<XSSFCell> getColoredRange(Sheet master) {
     List<XSSFCell> range = new ArrayList<>();
@@ -262,17 +261,17 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
     }
     return range;
   }
-
+  
   @Override
   public Sheet getSheetByIndex(Workbook document, int sheetIndex) {
     return document.getSheetAt(sheetIndex);
   }
-
+  
   @Override
   public int getSheetCount(Workbook document) {
     return document.getNumberOfSheets();
   }
-
+  
   @Override
   public Workbook loadDocument(Path path) {
     try {
@@ -282,7 +281,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
       return null;
     }
   }
-
+  
   @Override
   public void saveCorrectedSpreadsheet(Workbook compareDocument, Path testPath) {
     // @formatter:off
@@ -292,11 +291,11 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
         com.google.common.io.Files.getFileExtension(testPath.toString());
     Path savePath = Paths.get(testPath.getParent().toString(), fileNameNew);
     // @formatter:on
-
+    
     try {
       if(!savePath.getParent().toFile().exists())
         Files.createDirectories(savePath.getParent());
-
+      
       FileOutputStream fileOut = new FileOutputStream(savePath.toFile());
       compareDocument.write(fileOut);
       fileOut.close();
@@ -304,7 +303,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
       Logger.error("Fehler beim Speichern der korrigierten Datei!", e);
     }
   }
-
+  
   @Override
   public void setCellComment(XSSFCell cell, String message) {
     if(message == null || message.isEmpty())
@@ -312,7 +311,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
     // Remove comment if exists
     if(cell.getCellComment() != null)
       cell.removeCellComment();
-
+    
     // Create new drawing object
     XSSFDrawing drawing = cell.getSheet().createDrawingPatriarch();
     CreationHelper factory = cell.getSheet().getWorkbook().getCreationHelper();
@@ -330,11 +329,11 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
     // Set comment
     cell.setCellComment(comment);
   }
-
+  
   @Override
   public void setCellStyle(XSSFCell cell, Font font, Short color) {
     CellStyle style = cell.getSheet().getWorkbook().createCellStyle();
-
+    
     // TODO: BOLD or ITALIC?
     // if(bool)
     // font.setBold(true);
@@ -342,16 +341,16 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
     // font.setItalic(true);
     font.setColor(color);
     style.setFont(font);
-
+    
     style.setAlignment(cell.getCellStyle().getAlignmentEnum());
     style.setDataFormat(cell.getCellStyle().getDataFormat());
-
+    
     style.setBorderLeft(BorderStyle.MEDIUM);
     style.setBorderBottom(BorderStyle.MEDIUM);
     style.setBorderRight(BorderStyle.MEDIUM);
     style.setBorderTop(BorderStyle.MEDIUM);
-
+    
     cell.setCellStyle(style);
   }
-
+  
 }
