@@ -18,8 +18,8 @@ import net.sf.jsqlparser.schema.Column;
 import play.Logger;
 import play.db.Database;
 
-public abstract class ChangeCorrector<QueryType extends net.sf.jsqlparser.statement.Statement>
-    extends QueryCorrector<QueryType, Column> {
+public abstract class ChangeCorrector<Q extends net.sf.jsqlparser.statement.Statement>
+    extends QueryCorrector<Q, Column> {
   
   public ChangeCorrector(String theQueryType) {
     super(theQueryType);
@@ -43,7 +43,7 @@ public abstract class ChangeCorrector<QueryType extends net.sf.jsqlparser.statem
   }
   
   @Override
-  protected SqlExecutionResult executeQuery(Database database, QueryType userStatement, QueryType sampleStatement,
+  protected SqlExecutionResult executeQuery(Database database, Q userStatement, Q sampleStatement,
       SqlExercise exercise) {
     try(Connection connection = database.getConnection()) {
       
@@ -72,7 +72,7 @@ public abstract class ChangeCorrector<QueryType extends net.sf.jsqlparser.statem
   }
   
   @Override
-  protected List<MatchingResult<String, Match<String>>> makeStringComparisons(QueryType userQ, QueryType sampleQ) {
+  protected List<MatchingResult<String, Match<String>>> makeStringComparisons(Q userQ, Q sampleQ) {
     return Arrays
         .asList(Matcher.STRING_EQ_MATCHER.match(StringConsts.TABLES_NAME, getTables(userQ), getTables(sampleQ)));
   }

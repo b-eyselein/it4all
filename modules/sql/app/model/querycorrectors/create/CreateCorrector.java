@@ -9,7 +9,7 @@ import model.exercise.SqlExercise;
 import model.matching.Match;
 import model.matching.MatchingResult;
 import model.querycorrectors.QueryCorrector;
-import model.querycorrectors.columnMatch.ColumnMatch;
+import model.querycorrectors.columnmatch.ColumnMatch;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
 import net.sf.jsqlparser.statement.create.table.CreateTable;

@@ -18,7 +18,7 @@ import model.matching.Match;
 import model.matching.Matcher;
 import model.matching.MatchingResult;
 import model.querycorrectors.QueryCorrector;
-import model.querycorrectors.columnMatch.ColumnMatch;
+import model.querycorrectors.columnmatch.ColumnMatch;
 import model.sql.SqlQueryResult;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.schema.Table;

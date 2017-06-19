@@ -5,7 +5,7 @@ import java.util.List;
 import model.conditioncorrector.BinaryExpressionMatch;
 import model.matching.Match;
 import model.matching.MatchingResult;
-import model.querycorrectors.columnMatch.ColumnMatch;
+import model.querycorrectors.columnmatch.ColumnMatch;
 import net.sf.jsqlparser.expression.BinaryExpression;
 
 public class SqlResultBuilder<C> {

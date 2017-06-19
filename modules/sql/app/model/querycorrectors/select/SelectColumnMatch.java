@@ -1,6 +1,6 @@
 package model.querycorrectors.select;
 
-import model.querycorrectors.columnMatch.ColumnMatch;
+import model.querycorrectors.columnmatch.ColumnMatch;
 import net.sf.jsqlparser.expression.Alias;
 import net.sf.jsqlparser.statement.select.AllColumns;
 import net.sf.jsqlparser.statement.select.AllTableColumns;

@@ -1,7 +1,7 @@
 package model.querycorrectors.create;
 
-import model.querycorrectors.columnMatch.ColumnMatch;
-import model.querycorrectors.columnMatch.ColumnMatcher;
+import model.querycorrectors.columnmatch.ColumnMatch;
+import model.querycorrectors.columnmatch.ColumnMatcher;
 import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
 import play.Logger;
 

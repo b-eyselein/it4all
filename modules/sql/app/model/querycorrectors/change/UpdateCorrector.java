@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import javax.inject.Singleton;
 
 import model.matching.MatchingResult;
-import model.querycorrectors.columnMatch.ColumnMatch;
+import model.querycorrectors.columnmatch.ColumnMatch;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;

@@ -5,7 +5,7 @@ import java.util.List;
 import model.matching.Match;
 import model.matching.Matcher;
 import model.matching.MatchingResult;
-import model.querycorrectors.columnMatch.ColumnMatch;
+import model.querycorrectors.columnmatch.ColumnMatch;
 import net.sf.jsqlparser.statement.create.table.ColDataType;
 import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
 

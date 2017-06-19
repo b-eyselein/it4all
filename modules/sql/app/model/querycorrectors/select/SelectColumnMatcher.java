@@ -1,7 +1,7 @@
 package model.querycorrectors.select;
 
-import model.querycorrectors.columnMatch.ColumnMatch;
-import model.querycorrectors.columnMatch.ColumnMatcher;
+import model.querycorrectors.columnmatch.ColumnMatch;
+import model.querycorrectors.columnmatch.ColumnMatcher;
 import net.sf.jsqlparser.statement.select.AllColumns;
 import net.sf.jsqlparser.statement.select.AllTableColumns;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
