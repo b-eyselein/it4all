@@ -69,11 +69,11 @@ public class NAryNumber {
    * @throws IllegalArgumentException
    *           in case input contains wrong characters.
    */
-  public NAryNumber(String input, NumberBase base) {
+  public NAryNumber(String theInput, NumberBase base) {
     // Catch negative sign
     boolean neg = false;
 
-    input = input.replaceAll("\\s", "");
+    String input = theInput.replaceAll("\\s", "");
 
     if(input.toCharArray()[0] == '-') {
       neg = true;

@@ -25,7 +25,7 @@ public class RegExpHelper {
     else
       return diff.toString();
   }
-  
+
   public static String getCellOperatorsDiff(String string1, String string2) {
     HashSet<String> al1 = RegExpHelper.getCellOperatorsList(string1);
     HashSet<String> al2 = RegExpHelper.getCellOperatorsList(string2);
@@ -35,7 +35,7 @@ public class RegExpHelper {
     else
       return diff.toString();
   }
-  
+
   public static String getCellRangesDiff(String string1, String string2) {
     HashSet<String> al1 = RegExpHelper.getCellRangesList(string1);
     HashSet<String> al2 = RegExpHelper.getCellRangesList(string2);
@@ -45,7 +45,7 @@ public class RegExpHelper {
     else
       return diff.toString();
   }
-  
+
   public static String getExcelCFFormulaList(String string) {
     String cf = "";
     Pattern p = Pattern.compile("<main:formula>(.*?)</main:formula>");
@@ -56,7 +56,7 @@ public class RegExpHelper {
     }
     return cf;
   }
-  
+
   public static String getExcelChartRangesDiff(String name1, String string1, String name2, String string2) {
     HashSet<String> al1 = RegExpHelper.getExcelChartRangesList(name1, string1);
     HashSet<String> al2 = RegExpHelper.getExcelChartRangesList(name2, string2);
@@ -76,16 +76,12 @@ public class RegExpHelper {
     }
     return title;
   }
-  
+
   public static boolean getPatternInString(String pattern, String string) {
-    Pattern p = Pattern.compile(".*?(" + pattern + ").*?");
-    Matcher m = p.matcher(string);
-    if(m.find()) {
-      return true;
-    }
-    return false;
+    Matcher m = Pattern.compile(".*?(" + pattern + ").*?").matcher(string);
+    return m.find();
   }
-  
+
   private static HashSet<String> getCellFormulasList(String string) {
     Pattern p = Pattern.compile("([A-Z]+)[(]");
     Matcher m = p.matcher(string);
@@ -95,7 +91,7 @@ public class RegExpHelper {
     }
     return matches;
   }
-  
+
   private static HashSet<String> getCellOperatorsList(String string) {
     Pattern p = Pattern.compile("([+|-]|[*|/])");
     Matcher m = p.matcher(string);
@@ -105,7 +101,7 @@ public class RegExpHelper {
     }
     return matches;
   }
-  
+
   private static HashSet<String> getCellRangesList(String string) {
     Pattern p = Pattern.compile("([A-Z]+[0-9]+)");
     String newString = string.replace("$", "");
@@ -116,7 +112,7 @@ public class RegExpHelper {
     }
     return matches;
   }
-  
+
   private static HashSet<String> getExcelChartRangesList(String name, String string) {
     Pattern p = Pattern.compile("<c:f>" + name + "!(.*?)</c:f>");
     Matcher m = p.matcher(string);
@@ -128,5 +124,5 @@ public class RegExpHelper {
     }
     return matches;
   }
-  
+
 }

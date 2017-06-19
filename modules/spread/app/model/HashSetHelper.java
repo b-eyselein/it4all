@@ -10,11 +10,11 @@ import java.util.Set;
  *
  */
 public class HashSetHelper {
-  
+
   private HashSetHelper() {
-    
+
   }
-  
+
   /**
    * Computes all elements which are in the master Collection but which are not
    * in the compare Collection
@@ -31,34 +31,31 @@ public class HashSetHelper {
     diff.removeAll(compare);
     return diff;
   }
-  
+
   public static String getDiffOfTwoFormulas(String string1, String string2) {
     String message = "";
-    
+
     // Compare operators
     String operDiff = RegExpHelper.getCellOperatorsDiff(string1, string2);
-    if(operDiff != "")
+    if(!operDiff.isEmpty())
       message += "Ein Operator (" + operDiff + ") fehlt.";
-    
+
     // Compare ranges
     String rangeDiff = RegExpHelper.getCellRangesDiff(string1, string2);
-    if(rangeDiff != "")
+    if(!rangeDiff.isEmpty())
       message += "Der Bereich " + rangeDiff + " fehlt.";
-    
+
     // Compare formulas
     String formulaDiff = RegExpHelper.getCellFormulasDiff(string1, string2);
-    if(formulaDiff != "")
+    if(!formulaDiff.isEmpty())
       message += "Verwenden Sie " + formulaDiff + ".";
-    
+
     return message;
   }
-  
+
   public static String getSheetCFDiff(Set<String> hs1, Set<String> hs2) {
     Collection<String> difference = getDifferenceOfCollections(hs1, hs2);
-    if(difference.isEmpty())
-      return "";
-    else
-      return difference.toString();
+    return difference.isEmpty() ? "" : difference.toString();
   }
-  
+
 }
