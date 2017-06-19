@@ -14,13 +14,14 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.ConditionalFormatting;
 import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.RichTextString;
@@ -31,7 +32,6 @@ import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -76,13 +76,13 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
   }
 
   private static String getStringValueOfCell(Cell cell) {
-    if(cell.getCellType() != Cell.CELL_TYPE_FORMULA)
+    if(cell.getCellTypeEnum() != CellType.FORMULA)
       return cell.toString();
 
-    switch(cell.getCachedFormulaResultType()) {
-    case Cell.CELL_TYPE_NUMERIC:
+    switch(cell.getCachedFormulaResultTypeEnum()) {
+    case NUMERIC:
       return Double.toString(cell.getNumericCellValue());
-    case Cell.CELL_TYPE_STRING:
+    case STRING:
       return cell.getRichStringCellValue().toString();
     default:
       return "";
@@ -123,13 +123,13 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
 
   @Override
   public String compareCellFormulas(XSSFCell masterCell, XSSFCell compareCell) {
-    if(masterCell.getCellType() != Cell.CELL_TYPE_FORMULA)
+    if(masterCell.getCellTypeEnum() != CellType.FORMULA)
       return "Es war keine Formel anzugeben.";
 
     if(masterCell.toString().equals(compareCell.toString()))
       return FORMULA_CORRECT;
 
-    if(compareCell.getCellType() != Cell.CELL_TYPE_FORMULA)
+    if(compareCell.getCellTypeEnum() != CellType.FORMULA)
       return "Keine Formel angegeben!";
 
     String difference = HashSetHelper.getDiffOfTwoFormulas(masterCell.toString(), compareCell.toString());
@@ -314,7 +314,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
       cell.removeCellComment();
 
     // Create new drawing object
-    Drawing drawing = cell.getSheet().createDrawingPatriarch();
+    XSSFDrawing drawing = cell.getSheet().createDrawingPatriarch();
     CreationHelper factory = cell.getSheet().getWorkbook().getCreationHelper();
     // Create comment space
     ClientAnchor anchor = factory.createClientAnchor();
@@ -343,12 +343,14 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
     font.setColor(color);
     style.setFont(font);
 
-    style.setAlignment(cell.getCellStyle().getAlignment());
+    style.setAlignment(cell.getCellStyle().getAlignmentEnum());
     style.setDataFormat(cell.getCellStyle().getDataFormat());
-    style.setBorderLeft(XSSFCellStyle.BORDER_MEDIUM);
-    style.setBorderBottom(XSSFCellStyle.BORDER_MEDIUM);
-    style.setBorderRight(XSSFCellStyle.BORDER_MEDIUM);
-    style.setBorderTop(XSSFCellStyle.BORDER_MEDIUM);
+
+    style.setBorderLeft(BorderStyle.MEDIUM);
+    style.setBorderBottom(BorderStyle.MEDIUM);
+    style.setBorderRight(BorderStyle.MEDIUM);
+    style.setBorderTop(BorderStyle.MEDIUM);
+
     cell.setCellStyle(style);
   }
 

@@ -5,21 +5,21 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public abstract class SpreadCorrector<DocType, SheetType, CellType, FontType, ColorType> {
+public abstract class SpreadCorrector<D, S, C, F, ColorType> {
 
   protected static final String CORRECTION_ADD_STRING = "_Korrektur";
   
-  public abstract void closeDocument(DocType compareDocument);
+  public abstract void closeDocument(D compareDocument);
 
-  public abstract String compareCellFormulas(CellType masterCell, CellType compareCell);
+  public abstract String compareCellFormulas(C masterCell, C compareCell);
 
-  public abstract String compareCellValues(CellType masterCell, CellType compareCell);
+  public abstract String compareCellValues(C masterCell, C compareCell);
 
-  public abstract String compareChartsInSheet(SheetType compareSheet, SheetType sampleSheet);
+  public abstract String compareChartsInSheet(S compareSheet, S sampleSheet);
 
-  public abstract String compareNumberOfChartsInDocument(DocType compareDocument, DocType sampleDocument);
+  public abstract String compareNumberOfChartsInDocument(D compareDocument, D sampleDocument);
 
-  public abstract void compareSheet(SheetType sampleTable, SheetType compareTable, boolean conditionalFormating);
+  public abstract void compareSheet(S sampleTable, S compareTable, boolean conditionalFormating);
 
   public SpreadSheetCorrectionResult correct(Path samplePath, Path comparePath, boolean conditionalFormating,
       boolean compareCharts) {
@@ -32,12 +32,12 @@ public abstract class SpreadCorrector<DocType, SheetType, CellType, FontType, Co
       return new SpreadSheetCorrectionResult(false, Arrays.asList("Lösungsdatei ist nicht vorhanden!"));
     
     // Load document, if loading returns null, return Error
-    DocType sampleDocument = loadDocument(samplePath);
+    D sampleDocument = loadDocument(samplePath);
     if(sampleDocument == null)
       return new SpreadSheetCorrectionResult(false,
           Arrays.asList("Beim Laden der Musterdatei ist ein Fehler aufgetreten."));
 
-    DocType compareDocument = loadDocument(comparePath);
+    D compareDocument = loadDocument(comparePath);
     if(compareDocument == null)
       return new SpreadSheetCorrectionResult(false,
           Arrays.asList("Beim Laden der eingereichten Datei ist ein Fehler aufgetreten."));
@@ -57,8 +57,8 @@ public abstract class SpreadCorrector<DocType, SheetType, CellType, FontType, Co
     // Iterate over sheets
     int sheetCount = getSheetCount(sampleDocument);
     for(int sheetIndex = 0; sheetIndex < sheetCount; sheetIndex++) {
-      SheetType sampleTable = getSheetByIndex(sampleDocument, sheetIndex);
-      SheetType compareTable = getSheetByIndex(compareDocument, sheetIndex);
+      S sampleTable = getSheetByIndex(sampleDocument, sheetIndex);
+      S compareTable = getSheetByIndex(compareDocument, sheetIndex);
       if(compareTable == null || sampleTable == null)
         notices.add("Es gab einen Fehler beim Öffnen der " + (sheetCount + 1) + ". Tabelle!");
       else
@@ -76,13 +76,13 @@ public abstract class SpreadCorrector<DocType, SheetType, CellType, FontType, Co
       return new SpreadSheetCorrectionResult(false, notices);
   }
 
-  public abstract CellType getCellByPosition(SheetType table, int row, int column);
+  public abstract C getCellByPosition(S table, int row, int column);
 
-  public abstract List<CellType> getColoredRange(SheetType master);
+  public abstract List<C> getColoredRange(S master);
 
-  public abstract SheetType getSheetByIndex(DocType sampleDocument, int sheetIndex);
+  public abstract S getSheetByIndex(D sampleDocument, int sheetIndex);
 
-  public abstract int getSheetCount(DocType sampleDocument);
+  public abstract int getSheetCount(D sampleDocument);
 
   /**
    * Loads a document from a given path
@@ -91,12 +91,12 @@ public abstract class SpreadCorrector<DocType, SheetType, CellType, FontType, Co
    *          - path to the document
    * @return the document if there is a document that can be loaded, else null
    */
-  public abstract DocType loadDocument(Path musterPath);
+  public abstract D loadDocument(Path musterPath);
 
-  public abstract void saveCorrectedSpreadsheet(DocType compareDocument, Path testPath);
+  public abstract void saveCorrectedSpreadsheet(D compareDocument, Path testPath);
 
-  public abstract void setCellComment(CellType cell, String comment);
+  public abstract void setCellComment(C cell, String comment);
 
-  public abstract void setCellStyle(CellType cell, FontType font, ColorType color);
+  public abstract void setCellStyle(C cell, F font, ColorType color);
 
 }
