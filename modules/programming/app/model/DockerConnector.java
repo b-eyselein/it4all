@@ -1,6 +1,5 @@
 package model;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -8,7 +7,6 @@ import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import com.github.dockerjava.api.DockerClient;
-import com.github.dockerjava.api.exception.DockerClientException;
 import com.github.dockerjava.api.model.Bind;
 import com.github.dockerjava.api.model.Container;
 import com.github.dockerjava.api.model.Image;
@@ -89,35 +87,30 @@ public class DockerConnector {
   }
 
   public String runContainer(AvailableLanguages language, Path mountingDir, String resultFile) {
-    if(!checkImage(IMAGE_PYTHON)) // NOSONAR
-      return "FEHLER!";
-
-    String oldContainerID = getContainerID(CONTAINER_NAME);
-    if(oldContainerID != null) {
-      // DOCKER_CLIENT.stopContainerCmd(oldContainerID).exec();
-      DOCKER_CLIENT.removeContainerCmd(oldContainerID).exec();
-    }
-
-    String containerID = createContainer(language.getImageName(), mountingDir);
-
-    DOCKER_CLIENT.startContainerCmd(containerID).exec();
-
     try {
+      if(!checkImage(IMAGE_PYTHON)) // NOSONAR
+        return "FEHLER!";
+
+      String oldContainerID = getContainerID(CONTAINER_NAME);
+      if(oldContainerID != null) {
+        // DOCKER_CLIENT.stopContainerCmd(oldContainerID).exec();
+        DOCKER_CLIENT.removeContainerCmd(oldContainerID).exec();
+      }
+
+      String containerID = createContainer(language.getImageName(), mountingDir);
+
+      DOCKER_CLIENT.startContainerCmd(containerID).exec();
+
       int statusCode = DOCKER_CLIENT.waitContainerCmd(containerID).exec(new WaitContainerResultCallback())
           .awaitStatusCode(2, TimeUnit.SECONDS);
 
       Logger.debug(String.valueOf(statusCode));
-    } catch (DockerClientException e) {
 
-    }
+      DOCKER_CLIENT.stopContainerCmd(containerID).exec();
 
-    DOCKER_CLIENT.stopContainerCmd(containerID).exec();
-
-    try {
       return String.join("\n", Files.readAllLines(Paths.get(mountingDir.toString(), resultFile)));
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+    } catch (Exception e) {
+      Logger.error("There has been an error!", e);
       return "TODO!";
     }
   }

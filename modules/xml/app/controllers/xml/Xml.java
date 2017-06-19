@@ -50,8 +50,8 @@ public class Xml extends ExerciseController {
 
     log(user, new ExerciseCompletionEvent(request(), id, correctionResult));
 
-    return ok(
-        views.html.correction.render("XML", views.html.xmlResult.render(correctionResult), learnerSolution, user));
+    return ok(views.html.correction.render("XML", views.html.xmlResult.render(correctionResult), learnerSolution, user,
+        routes.Xml.exercises()));
   }
 
   public Result correctLive(int id) {
@@ -137,7 +137,7 @@ public class Xml extends ExerciseController {
     Path grammar = Paths.get(dir.toString(), exercise.referenceFileName + exercise.getGrammarFileEnding());
 
     try {
-      return Files.write(grammar, Arrays.asList(learnerSolution.split("\n")), StandardOpenOption.CREATE,
+      return Files.write(grammar, Arrays.asList(learnerSolution.split(StringConsts.NEWLINE)), StandardOpenOption.CREATE,
           StandardOpenOption.TRUNCATE_EXISTING);
     } catch (IOException error) {
       Logger.error("Fehler beim Speichern einer Xml-Loesungsdatei!", error);
@@ -163,8 +163,8 @@ public class Xml extends ExerciseController {
     Path targetFile = Paths.get(dir.toString(), exercise.referenceFileName + ".xml");
 
     try {
-      return Files.write(targetFile, Arrays.asList(learnerSolution.split("\n")), StandardOpenOption.CREATE,
-          StandardOpenOption.TRUNCATE_EXISTING);
+      return Files.write(targetFile, Arrays.asList(learnerSolution.split(StringConsts.NEWLINE)),
+          StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     } catch (IOException error) {
       Logger.error(SAVE_ERROR_MSG + targetFile.toString(), error);
       return null;

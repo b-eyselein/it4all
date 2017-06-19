@@ -70,325 +70,327 @@ import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.SubSelect;
 
 public class ExpressionExtractor implements ExpressionVisitor {
-  
+
   private List<BinaryExpression> singleExpressions = new LinkedList<>();
   private Expression expression;
-  
+
+  // FIXME: compare compelte tree with and, or ...
+
   public ExpressionExtractor(Expression theExpression) {
     expression = theExpression;
   }
-  
+
   public List<BinaryExpression> extract() {
     if(expression == null)
       return Collections.emptyList();
-    
+
     expression.accept(this);
     return singleExpressions;
   }
-  
+
   @Override
   public void visit(Addition addition) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(AllComparisonExpression allComparisonExpression) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(AnalyticExpression aexpr) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(AndExpression andExpression) {
     andExpression.getLeftExpression().accept(this);
     andExpression.getRightExpression().accept(this);
   }
-  
+
   @Override
   public void visit(AnyComparisonExpression anyComparisonExpression) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(Between between) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(BitwiseAnd bitwiseAnd) {
     singleExpressions.add(bitwiseAnd);
   }
-  
+
   @Override
   public void visit(BitwiseOr bitwiseOr) {
     singleExpressions.add(bitwiseOr);
   }
-  
+
   @Override
   public void visit(BitwiseXor bitwiseXor) {
     singleExpressions.add(bitwiseXor);
   }
-  
+
   @Override
   public void visit(CaseExpression caseExpression) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(CastExpression cast) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(Column tableColumn) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(Concat concat) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(DateTimeLiteralExpression dateTimeExpression) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(DateValue dateValue) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(Division division) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(DoubleValue doubleValue) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(EqualsTo equalsTo) {
     singleExpressions.add(equalsTo);
   }
-  
+
   @Override
   public void visit(ExistsExpression existsExpression) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(ExtractExpression eexpr) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(Function function) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(GreaterThan greaterThan) {
     singleExpressions.add(greaterThan);
   }
-  
+
   @Override
   public void visit(GreaterThanEquals greaterThanEquals) {
     singleExpressions.add(greaterThanEquals);
   }
-  
+
   @Override
   public void visit(HexValue hexValue) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(InExpression inExpression) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(IntervalExpression iexpr) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(IsNullExpression isNullExpression) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(JdbcNamedParameter jdbcNamedParameter) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(JdbcParameter jdbcParameter) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(JsonExpression jsonExpr) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(JsonOperator jsonOperator) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(KeepExpression aexpr) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(LikeExpression likeExpression) {
     singleExpressions.add(likeExpression);
-    
+
   }
-  
+
   @Override
   public void visit(LongValue longValue) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(Matches matches) {
     singleExpressions.add(matches);
   }
-  
+
   @Override
   public void visit(MinorThan minorThan) {
     singleExpressions.add(minorThan);
   }
-  
+
   @Override
   public void visit(MinorThanEquals minorThanEquals) {
     singleExpressions.add(minorThanEquals);
   }
-  
+
   @Override
   public void visit(Modulo modulo) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(Multiplication multiplication) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(MySQLGroupConcat groupConcat) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(NotEqualsTo notEqualsTo) {
     singleExpressions.add(notEqualsTo);
   }
-  
+
   @Override
   public void visit(NotExpression notExpression) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(NullValue nullValue) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(NumericBind bind) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(OracleHierarchicalExpression oexpr) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(OracleHint hint) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(OrExpression orExpression) {
     orExpression.getLeftExpression().accept(this);
     orExpression.getRightExpression().accept(this);
   }
-  
+
   @Override
   public void visit(Parenthesis parenthesis) {
     parenthesis.getExpression().accept(this);
   }
-  
+
   @Override
   public void visit(RegExpMatchOperator rexpr) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(RegExpMySQLOperator regExpMySQLOperator) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(RowConstructor rowConstructor) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(SignedExpression signedExpression) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(StringValue stringValue) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(SubSelect subSelect) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(Subtraction subtraction) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(TimeKeyExpression timeKeyExpression) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(TimestampValue timestampValue) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(TimeValue timeValue) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(UserVariable var) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(WhenClause whenClause) {
     // Ignore this type of expression
   }
-  
+
   @Override
   public void visit(WithinGroupExpression wgexpr) {
     // Ignore this type of expression

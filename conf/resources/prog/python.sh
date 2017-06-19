@@ -2,8 +2,7 @@
 
 index=0
 
-cat testdata.txt |
-while read testdata; do
+while read testdata < testdata.txt; do
 	
   # delete old result file if existing
   filename=res$index.txt;

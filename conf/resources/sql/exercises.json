@@ -80,7 +80,7 @@
 						"sample": [
 							"SELECT employeeOID", 
 							"  FROM Employee", 
-							"  WHERE lastname = 'Becker' AND firstname = 'Max'"
+							"  WHERE firstname = \"Max\" AND lastname = \"Becker\""
 						]
 					}
 				], 

@@ -59,8 +59,6 @@ libraryDependencies ++= Seq(
 )
 
 EclipseKeys.skipParents in ThisBuild := false
-EclipseKeys.withSource := true
-EclipseKeys.withJavadoc := true
 
 // Injected for non-static Routes
 routesGenerator := InjectedRoutesGenerator

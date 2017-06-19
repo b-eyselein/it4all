@@ -120,8 +120,8 @@ public class Sql extends ExerciseController {
 
       log(user, new ExerciseCompletionEvent(request(), exerciseId, result.getResults()));
 
-      return ok(
-          views.html.correction.render("SQL", views.html.sqlResult.render(result), result.getLearnerSolution(), user));
+      return ok(views.html.correction.render("SQL", views.html.sqlResult.render(result), result.getLearnerSolution(),
+          user, routes.Sql.index()));
     } catch (CorrectionException e) { // NOSONAR
       return ok(
           views.html.error.render(user, "<div class=\"alert alert-danger\">Es gab einen Fehler bei der Korrektur: <pre>"

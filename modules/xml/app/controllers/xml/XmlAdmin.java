@@ -11,7 +11,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import controllers.core.AbstractAdminController;
-import model.StringConsts;
 import model.XmlExType;
 import model.XmlExercise;
 import model.XmlExerciseReader;

@@ -26,6 +26,8 @@ public abstract class StringConsts {
 
   public static final String NAME_NAME = "name";
 
+  public static final String NEWLINE = "\n";
+
   public static final String PW_NAME = "passwort";
 
   public static final String SCRIPTFILE_NAME = "scriptFile";

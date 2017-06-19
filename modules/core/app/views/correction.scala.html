@@ -1,12 +1,14 @@
-@(typ: String, resultAsHtml: Html, learnerSolution: String, user: model.user.User)
+@(typ: String, resultAsHtml: Html, learnerSolution: String, user: model.user.User, nextUrl: play.api.mvc.Call)
 
 @main(typ, user) {
 <div class="container-fluid">
 
-  <div class="alert alert-success">
-    Ihre L&ouml;sung wurde gespeichert. Sie k&ouml;nnen sich nun <a href="
-      @core.routes.LoginController.logout()">ausloggen</a> oder weitere <a href="
-      @routes.Application.index()">Aufgaben bearbeiten.</a>
+  <div class="container">
+    <div class="alert alert-success">
+      Ihre L&ouml;sung wurde gespeichert. Sie k&ouml;nnen sich nun <a href="
+        @core.routes.LoginController.logout()">ausloggen</a> oder weitere <a href="@nextUrl"
+        @*routes.Application.index()"*@>Aufgaben bearbeiten.</a>
+    </div>
   </div>
 
   <div class="row row-eq-height">
