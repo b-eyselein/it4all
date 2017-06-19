@@ -12,6 +12,8 @@ it4all is a correction framework for
 - Mindmap (MindManager)
 - Nary Numbers, Boolean Algebra
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/1d60243593e347fc9ec6026bf8e7e465)](https://www.codacy.com/app/b.eyselein/it4all?utm_source=bje40dc@gitlab2.informatik.uni-wuerzburg.de&amp;utm_medium=referral&amp;utm_content=bje40dc/it4all&amp;utm_campaign=Badge_Grade)
+
 ## Versions
 
 There are two versions of it4all on [GitLab](https:/gitlab2.informatik.uni-wuerzburg.de):
