@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.ClientAnchor;
@@ -42,6 +43,8 @@ import play.Logger;
  */
 public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Font, Short> {
   
+  private static final String FORMULA_CORRECT = "Formel richtig.";
+  
   private static String getStringValueOfCell(Cell cell) {
     if(cell.getCellType() != Cell.CELL_TYPE_FORMULA)
       return cell.toString();
@@ -54,7 +57,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
       return "";
     }
   }
-
+  
   protected static String compareSheetConditionalFormatting(Sheet master, Sheet compare) {
     String message = "";
     SheetConditionalFormatting scf1 = master.getSheetConditionalFormatting();
@@ -69,7 +72,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
     if(count1 != count2)
       return "Bedingte Formatierung falsch. Zu wenig Bedingte Formatierungen (Erwartet: " + count1 + ", Gefunden: "
           + count2 + ").\n";
-
+    
     for(int i = 0; i < count1; i++) {
       ConditionalFormatting format1 = scf1.getConditionalFormattingAt(i);
       ConditionalFormatting format2 = scf2.getConditionalFormattingAt(i);
@@ -111,31 +114,24 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
     try {
       document.close();
     } catch (IOException e) {
-      e.printStackTrace();
+      Logger.error("There has been an error closing a workbook", e);
     }
   }
   
   @Override
   public String compareCellFormulas(XSSFCell masterCell, XSSFCell compareCell) {
-    // TODO Auto-generated method stub
     if(masterCell.getCellType() != Cell.CELL_TYPE_FORMULA)
       return "Es war keine Formel anzugeben.";
-
-    if(masterCell.toString().equals(compareCell.toString())) {
-      return "Formel richtig.";
-    } else {
-      if(compareCell.getCellType() != Cell.CELL_TYPE_FORMULA) {
-        return "Keine Formel angegeben!";
-      } else {
-        String difference = HashSetHelper.getDiffOfTwoFormulas(masterCell.toString(), compareCell.toString());
-        if(difference.isEmpty()) {
-          return "Formel richtig.";
-        } else {
-          return "Formel falsch. " + difference;
-        }
-      }
-    }
-    // return "Fehler!";
+    
+    if(masterCell.toString().equals(compareCell.toString()))
+      return FORMULA_CORRECT;
+    
+    if(compareCell.getCellType() != Cell.CELL_TYPE_FORMULA)
+      return "Keine Formel angegeben!";
+    
+    String difference = HashSetHelper.getDiffOfTwoFormulas(masterCell.toString(), compareCell.toString());
+    return difference.isEmpty() ? FORMULA_CORRECT : "Formel falsch. " + difference;
+    
   }
   
   @Override
@@ -159,40 +155,41 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
     
     if(sampleChartCount == 0)
       return "Es waren keine Diagramme zu erstellen.";
-
+    
     if(sampleChartCount != compareChartCount)
       return "Falsche Anzahl an Diagrammen im Sheet (Erwartet: " + sampleChartCount + ", Gefunden: " + compareChartCount
           + ").";
-
+    
     // TODO: refactor & test!
-    String message = "";
+    StringBuilder message = new StringBuilder();
     for(int i = 0; i < sampleChartCount; i++) {
+      
       CTChart chartMaster = sampleDrawing.getCharts().get(i).getCTChart();
       CTChart chartCompare = compareDrawing.getCharts().get(i).getCTChart();
+      
       if(chartCompare == null)
-        message += "Sheet konnte nicht geöffnet werden!";
+        message.append("Sheet konnte nicht geöffnet werden!");
       else {
-        message += "Diagramm falsch.";
+        message.append("Diagramm falsch.");
         String stringMaster = chartMaster.toString();
         String stringCompare = chartCompare.toString();
         // Compare Title
         String title1 = RegExpHelper.getExcelChartTitle(stringMaster);
         String title2 = RegExpHelper.getExcelChartTitle(stringCompare);
         if(!title1.equals(title2)) {
-          message += " Der Titel sollte " + title1 + " lauten.";
+          message.append(" Der Titel sollte " + title1 + " lauten.");
         } else {
           // Compare ranges
           String chDiff = RegExpHelper.getExcelChartRangesDiff(sampleSheet.getSheetName(), stringMaster,
               compareSheet.getSheetName(), stringCompare);
-          if(chDiff != "") {
-            message += " Folgende Bereiche sind falsch: " + chDiff;
-          } else {
-            message = "Diagramm(e) richtig.";
-          }
+          if(chDiff.isEmpty())
+            message.append("Diagramm(e) richtig.");
+          else
+            message.append(" Folgende Bereiche sind falsch: " + chDiff);
         }
       }
     }
-    return message;
+    return message.toString();
     
   }
   
@@ -204,7 +201,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
   
   @Override
   public void compareSheet(Sheet sampleTable, Sheet compareTable, boolean conditionalFormating) {
-
+    
     // Compare conditional formatting
     if(conditionalFormating) {
       String conditionalFormattingResult = compareSheetConditionalFormatting(sampleTable, compareTable);
@@ -216,6 +213,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
     for(Cell cellMaster: range) {
       int rowIndex = cellMaster.getRowIndex();
       int columnIndex = cellMaster.getColumnIndex();
+
       Row rowCompare = compareTable.getRow(rowIndex);
       if(rowCompare != null) {
         XSSFCell cellCompare = (XSSFCell) rowCompare.getCell(columnIndex);
@@ -227,7 +225,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
           String equalFormula = compareCellFormulas((XSSFCell) cellMaster, cellCompare);
           setCellComment(cellCompare, equalCell + "\n" + equalFormula);
           // TODO: Use enum instead of Strings!??
-          if("Wert richtig.".equals(equalCell) && "Formel richtig.".equals(equalFormula)) {
+          if("Wert richtig.".equals(equalCell) && FORMULA_CORRECT.equals(equalFormula)) {
             // Style green
             setCellStyle(cellCompare, compareTable.getWorkbook().createFont(), IndexedColors.GREEN.getIndex());
           } else {
@@ -276,7 +274,8 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
   public Workbook loadDocument(Path path) {
     try {
       return new XSSFWorkbook(path.toFile());
-    } catch (Exception e) {
+    } catch (IOException | InvalidFormatException e) {
+      Logger.error("There has been an error loading a XSSFWorkbook", e);
       return null;
     }
   }
@@ -292,9 +291,9 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
     // @formatter:on
     
     try {
-      if(!Files.exists(savePath.getParent()))
+      if(!savePath.getParent().toFile().exists())
         Files.createDirectories(savePath.getParent());
-
+      
       FileOutputStream fileOut = new FileOutputStream(savePath.toFile());
       compareDocument.write(fileOut);
       fileOut.close();
@@ -310,7 +309,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
     // Remove comment if exists
     if(cell.getCellComment() != null)
       cell.removeCellComment();
-
+    
     // Create new drawing object
     Drawing drawing = cell.getSheet().createDrawingPatriarch();
     CreationHelper factory = cell.getSheet().getWorkbook().getCreationHelper();
