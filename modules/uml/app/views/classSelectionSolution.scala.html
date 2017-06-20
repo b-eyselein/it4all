@@ -1,12 +1,24 @@
 @(user: model.user.User, result: model.result.ClassSelectionResult)
 
-@classResult = @{result.getClassResult()}
-
 @main("UML", user) {
 <div class="container">
   <div class="page-header">
     <h1>Zwischenkorrektur der Aufgabe &quot;@result.getExercise().title&quot;</h1>
   </div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th/>
+        <th>Nutzer</th>
+        <th>Muster</th>
+      </tr>
+    </thead>
+    <tbody>
+    @matchingResult.render(result.getClassResult())
+    </tbody>
+  </table>
+
 
   @*<div class="panel panel-default">
     <div class="panel-heading">Klassen</div>
