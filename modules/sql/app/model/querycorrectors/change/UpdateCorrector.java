@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import javax.inject.Singleton;
 
 import model.matching.MatchingResult;
+import model.querycorrectors.SqlResult;
 import model.querycorrectors.columnmatch.ColumnMatch;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.schema.Column;
@@ -26,13 +27,23 @@ public class UpdateCorrector extends ChangeCorrector<Update> {
   }
   
   @Override
-  protected List<String> getTables(Update statement) {
+  protected List<String> getTableNames(Update statement) {
     return statement.getTables().stream().map(Table::getName).collect(Collectors.toList());
   }
   
   @Override
+  protected List<Table> getTables(Update query) {
+    return query.getTables();
+  }
+
+  @Override
   protected Expression getWhere(Update query) {
     return query.getWhere();
+  }
+  
+  @Override
+  protected SqlResult<Update, Column> instantiateResult(String learnerSolution) {
+    return new UpdateResult(learnerSolution);
   }
   
 }

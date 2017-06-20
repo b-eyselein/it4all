@@ -24,7 +24,7 @@ public class MatchingResult<T, M extends Match<T>> extends EvaluationResult {
   
   protected static <T, M extends Match<T>> Success analyze(List<M> matches, List<T> wrong, List<T> missing) {
     boolean allMatched = wrong.isEmpty() && missing.isEmpty();
-    boolean matchesOk = matches.parallelStream().allMatch(M::isSuccessful);
+    boolean matchesOk = matches.stream().allMatch(M::isSuccessful);
     
     if(allMatched && matchesOk)
       return Success.COMPLETE;

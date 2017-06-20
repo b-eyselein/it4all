@@ -3,26 +3,27 @@ package model.querycorrectors.select;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Singleton;
 
 import model.SqlCorrectionException;
 import model.StringConsts;
 import model.correction.CorrectionException;
-import model.correctionresult.SqlExecutionResult;
 import model.exercise.SqlExercise;
 import model.matching.Match;
-import model.matching.Matcher;
 import model.matching.MatchingResult;
 import model.querycorrectors.QueryCorrector;
+import model.querycorrectors.SqlExecutionResult;
+import model.querycorrectors.SqlResult;
 import model.querycorrectors.columnmatch.ColumnMatch;
 import model.sql.SqlQueryResult;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.schema.Table;
-import net.sf.jsqlparser.statement.select.Join;
+import net.sf.jsqlparser.statement.select.OrderByElement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectItem;
@@ -30,13 +31,35 @@ import play.db.Database;
 
 @Singleton
 public class SelectCorrector extends QueryCorrector<Select, SelectItem> {
-
+  
   private static final SelectColumnMatcher COL_MATCHER = new SelectColumnMatcher();
-
+  
+  private static final GroupByMatcher GROUP_BY_MATCHER = new GroupByMatcher();
+  
+  private static final OrderByMatcher ORDER_BY_MATCHER = new OrderByMatcher();
+  
   public SelectCorrector() {
     super("SELECT");
   }
+  
+  protected static MatchingResult<Expression, Match<Expression>> compareGroupByElements(Select plainUserQuery,
+      Select plainSampleQuery) {
+    List<Expression> group1 = ((PlainSelect) plainUserQuery.getSelectBody()).getGroupByColumnReferences();
+    List<Expression> group2 = ((PlainSelect) plainSampleQuery.getSelectBody()).getGroupByColumnReferences();
 
+    return GROUP_BY_MATCHER.match(group1 != null ? group1 : Collections.emptyList(),
+        group2 != null ? group2 : Collections.emptyList());
+  }
+  
+  protected static MatchingResult<OrderByElement, OrderByMatch> compareOrderByElements(Select plainUserQuery,
+      Select plainSampleQuery) {
+    List<OrderByElement> order1 = ((PlainSelect) plainUserQuery.getSelectBody()).getOrderByElements();
+    List<OrderByElement> order2 = ((PlainSelect) plainSampleQuery.getSelectBody()).getOrderByElements();
+    
+    return ORDER_BY_MATCHER.match(order1 != null ? order1 : Collections.emptyList(),
+        order2 != null ? order2 : Collections.emptyList());
+  }
+  
   private SqlQueryResult executeStatement(Select select, Connection conn) throws SQLException {
     try(Statement statement = conn.createStatement()) {
       return new SqlQueryResult(statement.executeQuery(select.toString()));
@@ -44,79 +67,68 @@ public class SelectCorrector extends QueryCorrector<Select, SelectItem> {
       throw e;
     }
   }
-
+  
   @Override
   protected MatchingResult<SelectItem, ColumnMatch<SelectItem>> compareColumns(Select userQuery, Select sampleQuery) {
     return COL_MATCHER.match(StringConsts.COLUMNS_NAME, getColumns(userQuery), getColumns(sampleQuery));
   }
-
-  protected MatchingResult<String, Match<String>> compareGroupByElements(Select plainUserQuery,
-      Select plainSampleQuery) {
-    return Matcher.STRING_EQ_MATCHER.match("Group By-Elemente",
-        listAsStrings(((PlainSelect) plainUserQuery.getSelectBody()).getGroupByColumnReferences()),
-        listAsStrings(((PlainSelect) plainSampleQuery.getSelectBody()).getGroupByColumnReferences()));
-  }
-
-  protected MatchingResult<String, Match<String>> compareOrderByElements(Select plainUserQuery,
-      Select plainSampleQuery) {
-    return Matcher.STRING_EQ_MATCHER.match("Order By-Elemente",
-        listAsStrings(((PlainSelect) plainUserQuery.getSelectBody()).getOrderByElements()),
-        listAsStrings(((PlainSelect) plainSampleQuery.getSelectBody()).getOrderByElements()));
-  }
-
+  
   @Override
   protected SqlExecutionResult executeQuery(Database database, Select userStatement, Select sampleStatement,
       SqlExercise exercise) throws CorrectionException {
     SqlQueryResult userResult = null;
     SqlQueryResult sampleResult = null;
-
+    
     try(Connection conn = database.getConnection()) {
       conn.setCatalog(exercise.scenario.shortName);
-
+      
       userResult = executeStatement(userStatement, conn);
-
+      
       sampleResult = executeStatement(sampleStatement, conn);
-
+      
       return new SqlExecutionResult(userResult, sampleResult);
     } catch (SQLException e) {
       e.fillInStackTrace();
       throw new SqlCorrectionException(userStatement.toString(), e.getMessage(), e);
     }
-
+    
   }
-
+  
   protected List<SelectItem> getColumns(Select select) {
     return ((PlainSelect) select.getSelectBody()).getSelectItems();
   }
-
+  
   @Override
-  protected List<String> getTables(Select select) {
-    List<String> userFromItems = new LinkedList<>();
-
-    // Main table in Query
-    if(((PlainSelect) select.getSelectBody()).getFromItem() instanceof Table)
-      userFromItems.add(((Table) ((PlainSelect) select.getSelectBody()).getFromItem()).getName());
-
-    // All joined tables
-    // FIXME: JOIN ON - Bedingung --> getOnExpression() als Bedingung?
-    if(((PlainSelect) select.getSelectBody()).getJoins() != null)
-      for(Join join: ((PlainSelect) select.getSelectBody()).getJoins())
-        if(join.getRightItem() instanceof Table)
-          userFromItems.add(((Table) join.getRightItem()).getName());
-
-    return userFromItems;
+  protected List<String> getTableNames(Select select) {
+    return getTables(select).stream().map(Table::getName).collect(Collectors.toList());
   }
-
+  
+  @Override
+  protected List<Table> getTables(Select query) {
+    // FIXME: implement!
+    List<Table> tables = new LinkedList<>();
+    
+    PlainSelect plain = (PlainSelect) query.getSelectBody();
+    
+    if(plain.getFromItem() instanceof Table)
+      tables.add((Table) plain.getFromItem());
+    
+    if(plain.getJoins() != null)
+      plain.getJoins().stream().filter(join -> join.getRightItem() instanceof Table)
+          .forEach(join -> tables.add((Table) join.getRightItem()));
+    
+    return tables;
+    
+  }
+  
   @Override
   protected Expression getWhere(Select select) {
     return ((PlainSelect) select.getSelectBody()).getWhere();
   }
-
+  
   @Override
-  protected List<MatchingResult<String, Match<String>>> makeStringComparisons(Select userQ, Select sampleQ) {
-    return Arrays.asList(
-        Matcher.STRING_EQ_MATCHER.match(StringConsts.TABLES_NAME, getTables(userQ), getTables(sampleQ)),
-        compareGroupByElements(userQ, sampleQ), compareOrderByElements(userQ, sampleQ));
+  protected SqlResult<Select, SelectItem> instantiateResult(String learnerSolution) {
+    return new SelectResult(learnerSolution);
   }
-
+  
 }

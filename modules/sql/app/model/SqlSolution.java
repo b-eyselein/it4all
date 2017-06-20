@@ -4,7 +4,6 @@ import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -33,9 +32,8 @@ public class SqlSolution extends Model {
 
   @ManyToOne
   @JsonBackReference
-  @JoinColumns({
-      @JoinColumn(name = "scenario_id", referencedColumnName = "scenario_id", insertable = false, updatable = false),
-      @JoinColumn(name = "exercise_id", referencedColumnName = "exercise_id", insertable = false, updatable = false)})
+  @JoinColumn(name = "scenario_id", referencedColumnName = "scenario_id", insertable = false, updatable = false)
+  @JoinColumn(name = "exercise_id", referencedColumnName = "exercise_id", insertable = false, updatable = false)
   public SqlExercise exercise;
 
   public SqlSolution(SqlSolutionKey theKey) {

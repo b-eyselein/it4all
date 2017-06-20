@@ -2,6 +2,7 @@ package model.querycorrectors;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import model.SqlCorrectionException;
@@ -10,24 +11,21 @@ import model.conditioncorrector.BinaryExpressionMatch;
 import model.conditioncorrector.BinaryExpressionMatcher;
 import model.conditioncorrector.ExpressionExtractor;
 import model.correction.CorrectionException;
-import model.correctionresult.SqlExecutionResult;
-import model.correctionresult.SqlResult;
-import model.correctionresult.SqlResultBuilder;
 import model.exercise.SqlExercise;
 import model.exercise.SqlSample;
 import model.matching.Match;
+import model.matching.Matcher;
 import model.matching.MatchingResult;
 import model.querycorrectors.columnmatch.ColumnMatch;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
 import play.db.Database;
 
 public abstract class QueryCorrector<Q extends Statement, C> {
-  
-  private static final BinaryExpressionMatcher BIN_EX_MATCHER = new BinaryExpressionMatcher();
   
   private String queryType;
   
@@ -41,24 +39,31 @@ public abstract class QueryCorrector<Q extends Statement, C> {
     return list.stream().map(T::toString).collect(Collectors.toList());
   }
   
-  public SqlResult<C> correct(Database database, String learnerSolution, SqlSample sampleStatement,
+  public SqlResult<Q, C> correct(Database database, String learnerSolution, SqlSample sampleStatement,
       SqlExercise exercise) throws CorrectionException {
     Q userQ = parseStatement(learnerSolution);
     Q sampleQ = parseStatement(sampleStatement.sample);
     
-    return new SqlResultBuilder<C>(learnerSolution)
+    Map<String, String> userTableAliases = resolveAliases(userQ);
+    Map<String, String> sampleTableAliases = resolveAliases(sampleQ);
+    
+    return instantiateResult(learnerSolution)
+        
+        .setTableComparison(compareTables(userQ, sampleQ))
         
         .setColumnComparison(compareColumns(userQ, sampleQ))
         
-        .setStringComparisons(makeStringComparisons(userQ, sampleQ))
+        .setWhereComparison(compareWhereClauses(userQ, userTableAliases, sampleQ, sampleTableAliases))
         
-        .setWhereComparison(compareWhereClauses(userQ, sampleQ))
+        .setExecutionResult(executeQuery(database, userQ, sampleQ, exercise))
         
-        .setExecutionResult(executeQuery(database, userQ, sampleQ, exercise)).build();
+        .makeOtherComparisons(userQ, sampleQ);
   }
   
-  private MatchingResult<BinaryExpression, BinaryExpressionMatch> compareWhereClauses(Q userQ, Q sampleQ) {
-    return BIN_EX_MATCHER.match(StringConsts.CONDITIONS_NAME, getExpressions(userQ), getExpressions(sampleQ));
+  private MatchingResult<BinaryExpression, BinaryExpressionMatch> compareWhereClauses(Q userQ,
+      Map<String, String> userTableAliases, Q sampleQ, Map<String, String> sampleQueryAliases) {
+    BinaryExpressionMatcher binExMatcher = new BinaryExpressionMatcher(userTableAliases, sampleQueryAliases);
+    return binExMatcher.match(StringConsts.CONDITIONS_NAME, getExpressions(userQ), getExpressions(sampleQ));
   }
   
   private List<BinaryExpression> getExpressions(Q statement) {
@@ -67,14 +72,20 @@ public abstract class QueryCorrector<Q extends Statement, C> {
   
   protected abstract MatchingResult<C, ColumnMatch<C>> compareColumns(Q userQuery, Q sampleQuery);
   
+  protected MatchingResult<String, Match<String>> compareTables(Q userQ, Q sampleQ) {
+    return Matcher.STRING_EQ_MATCHER.match(StringConsts.TABLES_NAME, getTableNames(userQ), getTableNames(sampleQ));
+  }
+  
   protected abstract SqlExecutionResult executeQuery(Database database, Q userStatement, Q sampleStatement,
       SqlExercise exercise) throws CorrectionException;
   
-  protected abstract List<String> getTables(Q userQuery);
+  protected abstract List<String> getTableNames(Q query);
+  
+  protected abstract List<Table> getTables(Q query);
   
   protected abstract Expression getWhere(Q query);
   
-  protected abstract List<MatchingResult<String, Match<String>>> makeStringComparisons(Q userQ, Q sampleQ);
+  protected abstract SqlResult<Q, C> instantiateResult(String learnerSolution);
   
   @SuppressWarnings("unchecked")
   protected Q parseStatement(String statement) throws SqlCorrectionException {
@@ -86,5 +97,10 @@ public abstract class QueryCorrector<Q extends Statement, C> {
       throw new SqlCorrectionException(statement,
           "Das Statement war vom falschen Typ! Erwartet wurde " + queryType + "!", e);
     }
+  }
+  
+  protected Map<String, String> resolveAliases(Q query) {
+    return getTables(query).stream().filter(table -> table != null && table.getAlias() != null)
+        .collect(Collectors.toMap(table -> table.getAlias().getName(), Table::getName));
   }
 }

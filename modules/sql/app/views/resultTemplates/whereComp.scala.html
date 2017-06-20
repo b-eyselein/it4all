@@ -1,10 +1,10 @@
-@(whereComp: model.matching.MatchingResult[net.sf.jsqlparser.expression.BinaryExpression, model.conditioncorrector.BinaryExpressionMatch])
+@(whereComparison: model.matching.MatchingResult[net.sf.jsqlparser.expression.BinaryExpression, model.conditioncorrector.BinaryExpressionMatch])
 
-@matches = @{whereComp.getMatches()}
-@missings = @{whereComp.getMissing()}
-@wrongs = @{whereComp.getWrong()}
+@matches = @{whereComparison.getMatches()}
+@missings = @{whereComparison.getMissing()}
+@wrongs = @{whereComparison.getWrong()}
 
-<div class="panel panel-@whereComp.getBSClass()">
+<div class="panel panel-@whereComparison.getBSClass()">
   <div class="panel-heading">Vergleich der Bedingungen</div>
   <div class="panel-body">
     <div class="row">

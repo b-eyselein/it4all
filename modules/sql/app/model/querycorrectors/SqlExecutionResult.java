@@ -1,4 +1,4 @@
-package model.correctionresult;
+package model.querycorrectors;
 
 import model.exercise.Success;
 import model.result.EvaluationResult;

@@ -1,4 +1,4 @@
-@(result: model.correctionresult.SqlResult[_])
+@(result: model.querycorrectors.change.UpdateResult)
 
 @columnComp = @{result.getColumnComparison()}
 @execResult = @{result.getExecutionResult()}
@@ -11,7 +11,7 @@
       <div class="panel-body">
         <div class="row">
         @for(aMatch <- columnComp.getMatches()) {
-      	  <div class="col-md-6">
+          <div class="col-md-6">
             <div class="alert alert-@aMatch.getBSClass()">
               <p>Folgende Spalte konnten gematcht werden: @Html(aMatch.describe())</p>
             </div>
@@ -19,7 +19,7 @@
         }
         
         @for(missing <- columnComp.getMissing()) {
-      	  <div class="col-md-6">
+          <div class="col-md-6">
             <div class="alert alert-danger">
               Folgende Spalte fehlt: <code>@missing</code>
             </div>
@@ -27,7 +27,7 @@
         }
         
         @for(wrong <- columnComp.getWrong()) {
-      	  <div class="col-md-6">
+          <div class="col-md-6">
             <div class="alert alert-danger">
               Folgende Spalte ist falsch: <code>@wrong</code>
             </div>
@@ -39,13 +39,13 @@
   </div>
 </div>
 
-<div class="row">
+@*<div class="row">
   <!-- Tables, Order Bys, Group Bys-->
   @for(listComp <- result.getListComparisons()) {
-  	
+    
     @resultTemplates.listCompResult.render(listComp)
   }
-</div>
+</div>*@
 
 @resultTemplates.whereComp.render(result.getWhereComparison())
 
