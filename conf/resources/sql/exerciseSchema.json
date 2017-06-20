@@ -1,140 +1,143 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema#", 
-	"type": "array", 
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"type": "array",
 	"items": {
-		"type": "object", 
+		"type": "object",
 		"properties": {
 			"id": {
 				"type": "integer"
-			}, 
+			},
 			"shortName": {
 				"type": "string"
-			}, 
+			},
 			"title": {
 				"type": "string"
-			}, 
+			},
 			"text": {
-				"type": "array", 
+				"type": "array",
 				"items": {
 					"type": "string"
 				}
-			}, 
+			},
 			"scriptFile": {
 				"type": "string"
-			}, 
+			},
 			"exercises": {
-				"type": "array", 
+				"type": "array",
 				"items": {
-					"type": "object", 
+					"type": "object",
 					"properties": {
 						"key": {
-							"type": "object", 
+							"type": "object",
 							"properties": {
 								"exerciseId": {
 									"type": "integer"
-								}, 
+								},
 								"scenarioId": {
 									"type": "integer"
 								}
-							}, 
+							},
 							"required": [
-								"exerciseId", 
+								"exerciseId",
 								"scenarioId"
 							]
-						}, 
+						},
 						"author": {
 							"type": "string"
-						}, 
+						},
 						"text": {
-							"type": "array", 
+							"type": "array",
 							"items": {
 								"type": "string"
 							}
-						}, 
+						},
 						"exerciseType": {
 							"enum": [
-								"CREATE", 
-								"SELECT", 
-								"UPDATE", 
-								"INSERT", 
+								"CREATE",
+								"SELECT",
+								"UPDATE",
+								"INSERT",
 								"DELETE"
 							]
-						}, 
+						},
 						"hint": {
 							"type": "string"
-						}, 
+						},
 						"tags": {
-							"type": "array", 
+							"type": "array",
 							"items": {
 								"enum": [
-									"JOIN", 
-									"DOUBLE_JOIN", 
-									"TRIPLE_JOIN", 
-									"ORDER_BY", 
-									"GROUP_BY", 
-									"FUNCTION", 
-									"ALIAS", 
-									"LIMIT", 
+									"JOIN",
+									"DOUBLE_JOIN",
+									"TRIPLE_JOIN",
+									"ORDER_BY",
+									"GROUP_BY",
+									"FUNCTION",
+									"ALIAS",
+									"LIMIT",
 									"SUBSELECT"
 								]
 							}
-						}, 
+						},
 						"samples": {
-							"type": "array", 
+							"type": "array",
 							"items": {
-								"type": "object", 
+								"type": "object",
 								"properties": {
 									"key": {
-										"type": "object", 
+										"type": "object",
 										"properties": {
 											"scenarioId": {
 												"type": "integer"
-											}, 
+											},
 											"exerciseId": {
 												"type": "integer"
-											}, 
+											},
 											"sampleId": {
 												"type": "integer"
 											}
-										}, 
+										},
 										"required": [
-											"scenarioId", 
-											"exerciseId", 
+											"scenarioId",
+											"exerciseId",
 											"sampleId"
 										]
-									}, 
+									},
 									"sample": {
-										"type": "array", 
+										"type": "array",
 										"items": {
 											"type": "string"
 										}
 									}
-								}, 
+								},
 								"required": [
-									"key", 
+									"key",
 									"sample"
 								]
 							}
 						}
-					}, 
+					},
 					"required": [
-						"key", 
-						"exerciseType", 
-						"text", 
-						"hint", 
-						"samples", 
-						"tags"
+						"key",
+						"author",
+						"text",
+						"exerciseType",
+						"hint",
+						"tags",
+						"samples"
 					]
 				}
 			}
-		}, 
+		},
 		"required": [
-			"shortName", 
-			"title", 
-			"scriptFile", 
+			"id",
+			"shortName",
+			"title",
+			"text",
+			"scriptFile",
 			"exercises"
 		]
-	}, 
-	"minItems": 1, 
+	},
+	"minItems": 1,
 	"maxItems": 1
 }
