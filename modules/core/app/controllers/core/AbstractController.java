@@ -80,10 +80,6 @@ public abstract class AbstractController extends Controller {
     return Paths.get(getSolDirForUser().toString(), exerciseType, String.valueOf(exercise.id));
   }
 
-  protected Path getSolFileForExercise(Exercise exercise, String fileExtension) {
-    return getSolFileForExercise(exercise, fileExtension);
-  }
-
   protected Path getSolFileForExercise(Exercise exercise, String fileName, String fileExtension) {
     return Paths.get(getSolDirForExercise(exercise).toString(), fileName + "." + fileExtension);
   }
