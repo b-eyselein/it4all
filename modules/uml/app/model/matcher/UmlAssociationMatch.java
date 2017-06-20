@@ -1,7 +1,9 @@
 package model.matcher;
 
 import model.matching.Match;
+import model.matching.MatchType;
 import model.uml.UmlAssociation;
+import play.twirl.api.Html;
 
 public class UmlAssociationMatch extends Match<UmlAssociation> {
 
@@ -17,11 +19,17 @@ public class UmlAssociationMatch extends Match<UmlAssociation> {
     return multiplicitiesEqual;
   }
 
+  @Override
+  public Html describe() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
   public String getCorrectMultiplicity() {
     if(multiplicitiesEqual)
-      return arg1.multsAsString();
+      return userArg.multsAsString();
     else
-      return arg2.multsAsString(AssociationMatcher.endsCrossedEqual(arg1, arg2));
+      return sampleArg.multsAsString(AssociationMatcher.endsCrossedEqual(userArg, sampleArg));
   }
 
   public boolean isAssocTypeEqual() {
@@ -33,17 +41,20 @@ public class UmlAssociationMatch extends Match<UmlAssociation> {
   }
 
   @Override
-  protected boolean analyze(UmlAssociation assoc1, UmlAssociation assoc2) {
-    assocTypeEqual = arg1.getAssocType() == arg2.getAssocType();
+  protected MatchType analyze(UmlAssociation assoc1, UmlAssociation assoc2) {
+    assocTypeEqual = userArg.getAssocType() == sampleArg.getAssocType();
 
-    if(AssociationMatcher.endsParallelEqual(arg1, arg2))
-      multiplicitiesEqual = arg1.getEnds().get(0).getMultiplicity() == arg2.getEnds().get(0).getMultiplicity()
-          && arg1.getEnds().get(1).getMultiplicity() == arg2.getEnds().get(1).getMultiplicity();
+    if(AssociationMatcher.endsParallelEqual(userArg, sampleArg))
+      multiplicitiesEqual = userArg.getEnds().get(0).getMultiplicity() == sampleArg.getEnds().get(0).getMultiplicity()
+          && userArg.getEnds().get(1).getMultiplicity() == sampleArg.getEnds().get(1).getMultiplicity();
     else
-      multiplicitiesEqual = arg1.getEnds().get(0).getMultiplicity() == arg2.getEnds().get(1).getMultiplicity()
-          && arg1.getEnds().get(1).getMultiplicity() == arg2.getEnds().get(0).getMultiplicity();
+      multiplicitiesEqual = userArg.getEnds().get(0).getMultiplicity() == sampleArg.getEnds().get(1).getMultiplicity()
+          && userArg.getEnds().get(1).getMultiplicity() == sampleArg.getEnds().get(0).getMultiplicity();
 
-    return assocTypeEqual && multiplicitiesEqual;
+    if(assocTypeEqual && multiplicitiesEqual)
+      return MatchType.SUCCESSFUL_MATCH;
+    else
+      return MatchType.UNSUCCESSFUL_MATCH;
   }
 
 }

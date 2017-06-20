@@ -1,65 +1,59 @@
 package model.matching;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import model.exercise.Success;
 import model.result.EvaluationResult;
+import play.Logger;
 
 public class MatchingResult<T, M extends Match<T>> extends EvaluationResult {
-  
+
   protected String matchName;
-  
+
   protected List<M> matches;
-  protected List<T> wrong;
-  protected List<T> missing;
-  
-  public MatchingResult(String theMatchName, List<M> theMatches, List<T> theWrong, List<T> theMissing) {
-    super(analyze(theMatches, theWrong, theMissing));
+  protected List<M> wrong;
+  protected List<M> missing;
+
+  public MatchingResult(String theMatchName, List<M> allMatches) {
+    super(analyze(allMatches));
     matchName = theMatchName;
-    matches = theMatches;
-    wrong = theWrong;
-    missing = theMissing;
+    matches = allMatches;
   }
-  
-  protected static <T, M extends Match<T>> Success analyze(List<M> matches, List<T> wrong, List<T> missing) {
-    boolean allMatched = wrong.isEmpty() && missing.isEmpty();
-    boolean matchesOk = matches.stream().allMatch(M::isSuccessful);
-    
-    if(allMatched && matchesOk)
-      return Success.COMPLETE;
-    else if(allMatched || matchesOk)
-      return Success.PARTIALLY;
-    else
+
+  protected static <T, M extends Match<T>> Success analyze(List<M> matches) {
+    boolean wrongMatches = matches.parallelStream().anyMatch(m -> m.matchType == MatchType.ONLY_USER);
+    boolean missingMatches = matches.parallelStream().anyMatch(m -> m.matchType == MatchType.ONLY_SAMPLE);
+    boolean oneMatchNotOk = matches.parallelStream().anyMatch(m -> m.matchType == MatchType.UNSUCCESSFUL_MATCH);
+
+    if(wrongMatches || missingMatches)
       return Success.NONE;
+
+    if(oneMatchNotOk)
+      return Success.PARTIALLY;
+
+    return Success.COMPLETE;
   }
-  
+
+  public String getGlyphicon() {
+    Logger.debug(matchName + " (" + success + ") :: " + matches.size());
+    switch(success) {
+    case COMPLETE:
+      return "glyphicon glyphicon-ok";
+    case PARTIALLY:
+      return "glyphicon glyphicon-question-sign";
+    case NONE:
+    case FAILURE:
+    default:
+      return "glyphicon glyphicon-remove";
+    }
+  }
+
   public List<M> getMatches() {
     return matches;
   }
-  
+
   public String getMatchName() {
     return matchName;
   }
-  
-  public List<T> getMissing() {
-    return missing;
-  }
-  
-  public List<T> getWrong() {
-    return wrong;
-  }
-  
-  public MatchingResult<T, M> instantiate() {
-    return null;
-  }
-  
-  @Override
-  public String toString() {
-    StringBuilder builder = new StringBuilder();
-    builder.append("Korrekt: " + matches.stream().map(M::toString).collect(Collectors.toList()) + "\n");
-    builder.append("Fehlend: " + missing.stream().map(T::toString).collect(Collectors.toList()) + "\n");
-    builder.append("Falsch: " + wrong.stream().map(T::toString).collect(Collectors.toList()) + "\n");
-    return builder.toString();
-  }
+
 }

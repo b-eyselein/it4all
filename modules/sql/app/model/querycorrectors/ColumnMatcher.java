@@ -1,4 +1,4 @@
-package model.querycorrectors.columnmatch;
+package model.querycorrectors;
 
 import java.util.function.BiPredicate;
 

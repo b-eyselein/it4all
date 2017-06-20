@@ -1,0 +1,11 @@
+@(aMatch: model.matching.Match[_])
+
+<tr class="@aMatch.getBSClass()">
+  <td><span class="@aMatch.getMatchType()"></span></td>
+  <td>
+    <span class="@if(aMatch.isSuccessful()) {text-success} else {text-danger}">@aMatch.getUserArg()</span>
+  </td>
+  <td>
+    <span class="@if(aMatch.isSuccessful()) {text-success} else {text-danger}">@aMatch.getSampleArg()</span>
+  </td>
+</tr>

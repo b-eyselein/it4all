@@ -3,9 +3,9 @@ package model.matching;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public abstract class Matcher<T, M extends Match<T>> {
 
@@ -34,10 +34,10 @@ public abstract class Matcher<T, M extends Match<T>> {
 
   public MatchingResult<T, M> match(String matchName, List<T> firstCollection, List<T> secondCollection) {
     List<M> matches = new LinkedList<>();
-    
+
     // Copy lists to prevent change in real lists
-    List<T> firstList = new LinkedList<>(Objects.requireNonNull(firstCollection));
-    List<T> secondList = new LinkedList<>(Objects.requireNonNull(secondCollection));
+    List<T> firstList = new LinkedList<>(firstCollection);
+    List<T> secondList = new LinkedList<>(secondCollection);
 
     // FIXME: boolean for ordered matching?
 
@@ -65,7 +65,13 @@ public abstract class Matcher<T, M extends Match<T>> {
       }
     }
 
-    return new MatchingResult<>(matchName, matches, firstList, secondList);
+    List<M> wrong = firstList.stream().map(t -> instantiateMatch(t, null)).collect(Collectors.toList());
+    List<M> missing = secondList.stream().map(t -> instantiateMatch(null, t)).collect(Collectors.toList());
+
+    matches.addAll(wrong);
+    matches.addAll(missing);
+
+    return new MatchingResult<>(matchName, matches);
   }
 
   public void setFilter(Predicate<T> theFilter) {
@@ -73,4 +79,5 @@ public abstract class Matcher<T, M extends Match<T>> {
   }
 
   protected abstract M instantiateMatch(T arg1, T arg2);
+
 }

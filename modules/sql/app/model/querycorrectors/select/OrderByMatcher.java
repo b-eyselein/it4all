@@ -9,11 +9,7 @@ import net.sf.jsqlparser.statement.select.OrderByElement;
 public class OrderByMatcher extends Matcher<OrderByElement, OrderByMatch> {
 
   public OrderByMatcher() {
-    super((ob1, ob2) -> {
-      String column1 = ob1.getExpression().toString();
-      String column2 = ob2.getExpression().toString();
-      return column1.equals(column2) && (ob1.isAsc() == ob2.isAsc());
-    });
+    super((ob1, ob2) -> ob1.getExpression().toString().equals(ob2.getExpression().toString()));
   }
 
   public MatchingResult<OrderByElement, OrderByMatch> match(List<OrderByElement> orderByElements1,

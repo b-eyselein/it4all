@@ -1,7 +1,7 @@
 package model.querycorrectors.create;
 
-import model.querycorrectors.columnmatch.ColumnMatch;
-import model.querycorrectors.columnmatch.ColumnMatcher;
+import model.querycorrectors.ColumnMatch;
+import model.querycorrectors.ColumnMatcher;
 import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
 
 public class CreateColumnMatcher extends ColumnMatcher<ColumnDefinition> {

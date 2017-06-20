@@ -1,34 +1,48 @@
 package model.matching;
 
+import play.twirl.api.Html;
+
 public abstract class Match<T> {
-  
-  protected T arg1;
-  protected T arg2;
-  private boolean successful;
-  
-  public Match(T theArg1, T theArg2) {
-    arg1 = theArg1;
-    arg2 = theArg2;
-    
-    successful = analyze(theArg1, theArg2);
+
+  protected T userArg;
+  protected T sampleArg;
+
+  protected MatchType matchType;
+
+  public Match(T theUserArg, T theSampleArg) {
+    userArg = theUserArg;
+    sampleArg = theSampleArg;
+
+    if(theUserArg == null && theSampleArg != null)
+      matchType = MatchType.ONLY_SAMPLE;
+    else if(theUserArg != null && theSampleArg == null)
+      matchType = MatchType.ONLY_USER;
+    else
+      matchType = analyze(theUserArg, theSampleArg);
   }
 
+  public abstract Html describe();
+
   public String getBSClass() {
-    return successful ? "success" : "warning";
+    return matchType == MatchType.SUCCESSFUL_MATCH ? "success" : "warning";
   }
-  
-  public T getFirstArg() {
-    return arg1;
+
+  public MatchType getMatchType() {
+    return matchType;
   }
-  
-  public T getSecondArg() {
-    return arg2;
+
+  public T getSampleArg() {
+    return sampleArg;
+  }
+
+  public T getUserArg() {
+    return userArg;
   }
   
   public boolean isSuccessful() {
-    return successful;
+    return matchType == MatchType.SUCCESSFUL_MATCH;
   }
-  
-  protected abstract boolean analyze(T theArg1, T theArg2);
-  
+
+  protected abstract MatchType analyze(T theArg1, T theArg2);
+
 }

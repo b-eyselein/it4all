@@ -6,7 +6,7 @@
     <h1> Korrektur der Aufgabe &quot;@result.getExercise().title&quot;</h1>	
   </div>
 
-  <div class="row">
+  @*<div class="row">
     <div class="col-md-8">
       <h1>Assoziationen</h1>
       <table class="table table-hover">
@@ -40,17 +40,17 @@
             <td class="warning text-center"><span class="glyphicon glyphicon-remove"></span>
             }
             @if(corrAssoc.isAssocTypeEqual()) {
-            <td class="success text-center" colspan="2">@corrAssoc.getFirstArg().getAssocType().getName()</td>
+            <td class="success text-center" colspan="2">@corrAssoc.getUserArg().getAssocType().getName()</td>
             } else {
-            <td class="danger">@corrAssoc.getFirstArg().getAssocType().getName()</td>
-            <td>@corrAssoc.getSecondArg().getAssocType().getName()</td>
+            <td class="danger">@corrAssoc.getUserArg().getAssocType().getName()</td>
+            <td>@corrAssoc.getSampleArg().getAssocType().getName()</td>
             }
-      	    <td>@corrAssoc.getFirstArg().getEnds().get(0).getEndName()</td>
-            <td>@corrAssoc.getFirstArg().getEnds().get(1).getEndName()</td>
+      	    <td>@corrAssoc.getUserArg().getEnds().get(0).getEndName()</td>
+            <td>@corrAssoc.getUserArg().getEnds().get(1).getEndName()</td>
             @if(corrAssoc.areMultiplicitiesEqual()) {
             <td class="success text-center" colspan="2">@corrAssoc.getCorrectMultiplicity()</td>
             } else {
-            <td class="danger">@corrAssoc.getFirstArg().multsAsString()</td>
+            <td class="danger">@corrAssoc.getUserArg().multsAsString()</td>
             <td>@corrAssoc.getCorrectMultiplicity()</td>
             }
           </tr>
@@ -64,11 +64,11 @@
         @for(wrongAssoc <- result.getAssociationResult().getWrong()) {
           <tr>
             <td class="danger text-center"><span class="glyphicon glyphicon-remove" title="Falsch"></span></td>
-            <td>@wrongAssoc.getAssocType().getName()</td>
+            <td>@wrongAssoc.getUserArg().getAssocType().getName()</td>
             <td/>
-            <td>@wrongAssoc.getEnds().get(0).getEndName()</td>
-            <td>@wrongAssoc.getEnds().get(1).getEndName()</td>
-            <td>@wrongAssoc.getEnds().get(0).getMultiplicity().getRepresentant() : @wrongAssoc.getEnds().get(1).getMultiplicity().getRepresentant()</td>
+            <td>@wrongAssoc.getUserArg().getEnds().get(0).getEndName()</td>
+            <td>@wrongAssoc.getUserArg().getEnds().get(1).getEndName()</td>
+            <td>@wrongAssoc.getUserArg().getEnds().get(0).getMultiplicity().getRepresentant() : @wrongAssoc.getUserArg().getEnds().get(1).getMultiplicity().getRepresentant()</td>
             <td/>
           </tr>
           }
@@ -83,11 +83,11 @@
           <tr>
             <td class="warning text-center"><span class="glyphicon glyphicon-minus" title="Fehlend"></span></td>
             <td/>
-            <td>@missingAssoc.getAssocType().getName()</td>
-            <td>@missingAssoc.getEnds().get(0).getEndName()</td>
-            <td>@missingAssoc.getEnds().get(1).getEndName()</td>
+            <td>@missingAssoc.getSampleArg().getAssocType().getName()</td>
+            <td>@missingAssoc.getSampleArg().getEnds().get(0).getEndName()</td>
+            <td>@missingAssoc.getSampleArg().getEnds().get(1).getEndName()</td>
             <td/>
-            <td>@missingAssoc.getEnds().get(0).getMultiplicity().getRepresentant() : @missingAssoc.getEnds().get(1).getMultiplicity().getRepresentant()</td>
+            <td>@missingAssoc.getSampleArg().getEnds().get(0).getMultiplicity().getRepresentant() : @missingAssoc.getSampleArg().getEnds().get(1).getMultiplicity().getRepresentant()</td>
           </tr>
           }
         </tbody>
@@ -113,8 +113,8 @@
         @for(correctImpl <- result.getImplementationResult().getMatches()) {
           <tr>
             <td class="success text-center"><span class="glyphicon glyphicon-ok"></span>
-            <td>@correctImpl.getFirstArg().getSubClass()</td>
-            <td>@correctImpl.getFirstArg().getSuperClass()</td>
+            <td>@correctImpl.getUserArg().getSubClass()</td>
+            <td>@correctImpl.getUserArg().getSuperClass()</td>
           </tr>
           }
           
@@ -125,8 +125,8 @@
         @for(wrongImpl <- result.getImplementationResult().getWrong()) {
           <tr>
             <td class="danger text-center"><span class="glyphicon glyphicon-remove"></span>
-            <td>@wrongImpl.getSubClass()</td>
-            <td>@wrongImpl.getSuperClass()</td>
+            <td>@wrongImpl.getUserArg().getSubClass()</td>
+            <td>@wrongImpl.getUserArg().getSuperClass()</td>
           </tr>
           }
           
@@ -137,8 +137,8 @@
         @for(missingImpl <- result.getImplementationResult().getMissing()) {
           <tr>
             <td class="warning text-center"><span class="glyphicon glyphicon-minus"></span>
-            <td>@missingImpl.getSubClass()</td>
-            <td>@missingImpl.getSuperClass()</td>
+            <td>@missingImpl.getSampleArg().getSubClass()</td>
+            <td>@missingImpl.getSampleArg().getSuperClass()</td>
           </tr>
           }
         </tbody>
@@ -148,7 +148,7 @@
   </div>
   
   <hr>
-  
+  *@
   <a href="@uml.routes.Uml.matching(result.getExercise.id)" class="btn btn-primary btn-block">Zum nächsten Aufgabenteil</a>
 </div>
 }

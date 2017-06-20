@@ -1,0 +1,13 @@
+@(columnMatch: model.querycorrectors.ColumnMatch[_])
+
+<tr class="@columnMatch.getBSClass()">
+  <td><span class="@columnMatch.getMatchType()"></span></td>
+  <td>
+    <span class="@if(columnMatch.colNamesMatched()) {text-success} else {text-danger}">@columnMatch.getFirstColName()</span>
+    <span class="@if(columnMatch.aliasesMatched()) {text-success} else {text-danger}">@columnMatch.getFirstColAlias()</span>
+  </td>
+  <td>
+    <span class="@if(columnMatch.colNamesMatched()) {text-success} else {text-danger}">@columnMatch.getSecondColName()</span>
+    <span class="@if(columnMatch.aliasesMatched()) {text-success} else {text-danger}">@columnMatch.getSecondColAlias</span>
+  </td>
+</tr>

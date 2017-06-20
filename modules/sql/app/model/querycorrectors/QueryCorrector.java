@@ -16,7 +16,6 @@ import model.exercise.SqlSample;
 import model.matching.Match;
 import model.matching.Matcher;
 import model.matching.MatchingResult;
-import model.querycorrectors.columnmatch.ColumnMatch;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;

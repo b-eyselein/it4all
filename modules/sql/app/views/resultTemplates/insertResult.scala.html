@@ -3,7 +3,7 @@
 @columnComp = @{result.getColumnComparison()}
 @execResult = @{result.getExecutionResult()}
 
-<div class="row">
+@*<div class="row">
   <!-- Spalten -->
   <div class="col-md-12">
     <div class="panel panel-@columnComp.getBSClass()">
@@ -13,7 +13,7 @@
         @for(aMatch <- columnComp.getMatches()) {
           <div class="col-md-6">
             <div class="alert alert-@aMatch.getBSClass()">
-              <p>Folgende Spalte konnten gematcht werden: @Html(aMatch.describe())</p>
+              <p>Folgende Spalte konnten gematcht werden: @aMatch.describe()</p>
             </div>
           </div>
         }
@@ -38,16 +38,6 @@
     </div>
   </div>
 </div>
-
-@*<div class="row">
-  <!-- Tables, Order Bys, Group Bys-->
-  @for(listComp <- result.getListComparisons()) {
-    
-    @resultTemplates.listCompResult.render(listComp)
-  }
-</div>*@
-
-@resultTemplates.whereComp.render(result.getWhereComparison())
 
 <div class="row">
   <div class="col-md-12">
@@ -74,4 +64,4 @@
       </div>
     </div>
   </div>
-</div>
+</div>*@

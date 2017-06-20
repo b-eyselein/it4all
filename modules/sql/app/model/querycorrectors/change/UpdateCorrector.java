@@ -6,8 +6,8 @@ import java.util.stream.Collectors;
 import javax.inject.Singleton;
 
 import model.matching.MatchingResult;
+import model.querycorrectors.ColumnMatch;
 import model.querycorrectors.SqlResult;
-import model.querycorrectors.columnmatch.ColumnMatch;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;

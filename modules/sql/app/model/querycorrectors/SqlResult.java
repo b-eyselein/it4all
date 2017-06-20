@@ -6,7 +6,6 @@ import java.util.List;
 import model.conditioncorrector.BinaryExpressionMatch;
 import model.matching.Match;
 import model.matching.MatchingResult;
-import model.querycorrectors.columnmatch.ColumnMatch;
 import model.result.EvaluationResult;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.statement.Statement;

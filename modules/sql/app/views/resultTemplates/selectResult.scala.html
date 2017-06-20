@@ -1,91 +1,25 @@
 @(result: model.querycorrectors.select.SelectResult)
 
-@columnComp = @{result.getColumnComparison()}
 @execResult = @{result.getExecutionResult()}
-@groupComp = @{result.getGroupByComparison()}
-@orderComp = @{result.getOrderByComparison()}
 
-<div class="row">
-  <!-- Spalten -->
-  <div class="col-md-12">
-    <div class="panel panel-@columnComp.getBSClass()">
-      <div class="panel-heading">Vergleich der Spalten</div>
-      <div class="panel-body">
-        <div class="row">
-        @for(aMatch <- columnComp.getMatches()) {
-      	  <div class="col-md-6">
-            <div class="alert alert-@aMatch.getBSClass()">
-              <p>Folgende Spalte konnten gematcht werden: @Html(aMatch.describe())</p>
-            </div>
-          </div>
-        }
-        
-        @for(missing <- columnComp.getMissing()) {
-      	  <div class="col-md-6">
-            <div class="alert alert-danger">
-              Folgende Spalte fehlt: <code>@missing</code>
-            </div>
-          </div>
-        }
-        
-        @for(wrong <- columnComp.getWrong()) {
-      	  <div class="col-md-6">
-            <div class="alert alert-danger">
-              Folgende Spalte ist falsch: <code>@wrong</code>
-            </div>
-          </div>
-        }
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+<table class="table">
+  <thead>
+    <tr>
+      <th/>
+      <th>Nutzer</th>
+      <th>Muster</th>
+    </tr>
+  </thead>
+  <tbody>
+@matchingResult.render(result.getColumnComparison)
 
-<div class="row">
-  <!-- Order By, Group By -->
-  <div class="col-md-12">
-    <div class="panel panel-@orderComp.getBSClass()">
-      <div class="panel-heading">Vergleich der Order Bys</div>
-      <div class="panel-body">
-        <div class="row">
-        @for(aMatch <- orderComp.getMatches()) {
-          <div class="col-md-6">
-            <div class="alert alert-@aMatch.getBSClass()">
-              <p>Folgende Spalte konnten gematcht werden: @aMatch</p>
-            </div>
-          </div>
-        }
-        
-        @for(missing <- orderComp.getMissing()) {
-          <div class="col-md-6">
-            <div class="alert alert-danger">
-              Folgende Spalte fehlt: <code>@missing</code>
-            </div>
-          </div>
-        }
-        
-        @for(wrong <- orderComp.getWrong()) {
-          <div class="col-md-6">
-            <div class="alert alert-danger">
-              Folgende Spalte ist falsch: <code>@wrong</code>
-            </div>
-          </div>
-        }
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+@matchingResult.render(result.getWhereComparison())
 
-@*<div class="row">
-  <!-- Tables, Order Bys, Group Bys-->
-  @for(listComp <- result.getListComparisons()) {
-  	
-    @resultTemplates.listCompResult.render(listComp)
-  }
-</div>*@
+@matchingResult.render(result.getOrderByComparison())
 
-@resultTemplates.whereComp.render(result.getWhereComparison())
+@matchingResult.render(result.getGroupByComparison())
+  </tbody>
+</table>
 
 <div class="row">
   <div class="col-md-12">
