@@ -27,18 +27,18 @@ import play.db.Database;
 import play.libs.Json;
 
 public class SqlScenarioReader extends ExerciseReader<SqlScenario> {
-  
+
   private static final String CREATE_DUMMY = "CREATE DATABASE IF NOT EXISTS ";
-  
+
   private Database sqlSelect;
   private Database sqlOther;
-  
+
   public SqlScenarioReader(Database theSqlSelect, Database theSqlOther) {
     super("sql");
     sqlSelect = theSqlSelect;
     sqlOther = theSqlOther;
   }
-  
+
   private static void createDatabase(String databaseName, Connection connection) {
     try(Statement createStatement = connection.createStatement()) {
       createStatement.executeUpdate(CREATE_DUMMY + databaseName); // NOSONAR
@@ -47,101 +47,101 @@ public class SqlScenarioReader extends ExerciseReader<SqlScenario> {
       Logger.error("There has been an error running an sql script: \"" + CREATE_DUMMY + databaseName + "\"", e);
     }
   }
-  
+
   private static SqlSample readSampleSolution(JsonNode sampleSolNode) {
     SqlSampleKey key = Json.fromJson(sampleSolNode.get(StringConsts.KEY_NAME), SqlSampleKey.class);
-    
+
     SqlSample sample = SqlSample.finder.byId(key);
     if(sample == null)
       sample = new SqlSample(key);
-    
+
     sample.sample = JsonWrapper.readTextArray(sampleSolNode.get("sample"), "\n");
     return sample;
   }
-  
+
   private static List<SqlSample> readSampleSolutions(JsonNode sampleSolutions) {
     return StreamSupport.stream(sampleSolutions.spliterator(), true).map(SqlScenarioReader::readSampleSolution)
         .collect(Collectors.toList());
   }
-  
+
   private static SqlExercise readScenarioExercise(JsonNode exerciseNode) {
     SqlExerciseKey key = Json.fromJson(exerciseNode.get(StringConsts.KEY_NAME), SqlExerciseKey.class);
-    
+
     SqlExercise exercise = SqlExercise.finder.byId(key);
     if(exercise == null)
       exercise = new SqlExercise(key);
-    
+
     exercise.author = exerciseNode.get(StringConsts.AUTHOR_NAME).asText();
     exercise.exerciseType = SqlExerciseType.valueOf(exerciseNode.get("exerciseType").asText());
-    
+
     exercise.text = JsonWrapper.readTextArray(exerciseNode.get(StringConsts.TEXT_NAME), "");
     exercise.samples = readSampleSolutions(exerciseNode.get("samples"));
     exercise.hint = exerciseNode.get("hint").asText();
     exercise.tags = String.join(SqlExercise.SAMPLE_JOIN_CHAR, JsonWrapper.parseJsonArrayNode(exerciseNode.get("tags")));
-    
+
     return exercise;
   }
-  
+
   private static List<SqlExercise> readScenarioExercises(JsonNode exerciseNodes) {
     return StreamSupport.stream(exerciseNodes.spliterator(), true).map(SqlScenarioReader::readScenarioExercise)
         .collect(Collectors.toList());
-    
+
   }
-  
+
   public void runCreateScript(Database database, SqlScenario scenario) {
     Path scriptFilePath = Paths.get(baseDirForExType.toString(), scenario.scriptFile);
-    
+
     if(!scriptFilePath.toFile().exists()) {
       READING_LOGGER.error("Error while trying to read file " + scriptFilePath);
       return;
     }
-    
+
     try {
       Connection connection = database.getConnection();
-      
+
       createDatabase(scenario.shortName, connection);
-      
+
       ScriptRunner runner = new ScriptRunner(connection);
       runner.setLogWriter(null);
       runner.runScript(new FileReader(scriptFilePath.toFile()));
-      
+
       connection.close();
     } catch (IOException | SQLException e) {
       READING_LOGGER.error("Error while executing script file " + scriptFilePath.toString(), e);
     }
-    
+
   }
-  
+
   @Override
   public void saveExercise(SqlScenario scenario) {
     scenario.save();
-    
+
     runCreateScript(sqlSelect, scenario);
     runCreateScript(sqlOther, scenario);
-    
+
     scenario.exercises.forEach(ex -> {
       ex.save();
       ex.samples.forEach(SqlSample::save);
     });
   }
-  
+
   @Override
   protected SqlScenario readExercise(JsonNode exerciseNode) {
     int id = exerciseNode.get(StringConsts.ID_NAME).asInt();
-    
+
     SqlScenario scenario = SqlScenario.finder.byId(id);
     if(scenario == null)
       scenario = new SqlScenario(id);
-    
+
     scenario.author = exerciseNode.get(StringConsts.AUTHOR_NAME).asText();
     scenario.title = exerciseNode.get(StringConsts.TITLE_NAME).asText();
     scenario.text = JsonWrapper.readTextArray(exerciseNode.get(StringConsts.TEXT_NAME), "");
-    
+
     scenario.shortName = exerciseNode.get(StringConsts.SHORTNAME_NAME).asText();
     scenario.scriptFile = exerciseNode.get(StringConsts.SCRIPTFILE_NAME).asText();
     scenario.exercises = readScenarioExercises(exerciseNode.get(StringConsts.EXERCISES_NAME));
-    
+
     return scenario;
   }
-  
+
 }

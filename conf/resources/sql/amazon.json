@@ -685,16 +685,8 @@
 				},
 				"author": "bje40dc",
 				"text": [
-					{
-						"key": {
-							"scenarioId": 2,
-							"exerciseId": 1,
-							"sampleId": 1
-						},
-						"sample": [
-							"Welche Durchschnittsbewertung bekam das Buch 'Die Stadt in der Wüste'? Nennen Sie die Spalte 'Durchschnitt'."
-						]
-					}
+					"Welche Durchschnittsbewertung bekam das Buch 'Die Stadt in der Wüste'?",
+					" Nennen Sie die Spalte 'Durchschnitt'."
 				],
 				"exerciseType": "SELECT",
 				"samples": [

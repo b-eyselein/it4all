@@ -137,7 +137,5 @@
 			"scriptFile",
 			"exercises"
 		]
-	},
-	"minItems": 1,
-	"maxItems": 1
+	}
 }
