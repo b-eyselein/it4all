@@ -6,7 +6,7 @@ public class NAryAdditionQuestion {
   private static final Random GENERATOR = new Random();
 
   private NAryNumber firstSummand;
-  
+
   private NAryNumber secondSummand;
   private NAryNumber sum;
   private NumberBase questionType;
@@ -35,10 +35,10 @@ public class NAryAdditionQuestion {
   public NAryAdditionQuestion(String firstSummandInNAry, String secondSummandInNAry, int base,
       String theLearnerSolution) {
     questionType = NumberBase.getByBase(base);
-    firstSummand = new NAryNumber(firstSummandInNAry, questionType);
-    secondSummand = new NAryNumber(secondSummandInNAry, questionType);
+    firstSummand = NAryNumber.parse(firstSummandInNAry, questionType);
+    secondSummand = NAryNumber.parse(secondSummandInNAry, questionType);
     sum = NAryNumber.addNArys(firstSummand, secondSummand);
-    learnerSolution = new NAryNumber(theLearnerSolution, questionType);
+    learnerSolution = NAryNumber.parse(theLearnerSolution, questionType);
   }
 
   /**

@@ -15,7 +15,7 @@
     <div class="panel-body">
       <form role="form" action="@controllers.nary.routes.Nary.checkNaryConversionSolution()" method="post">
         <div class="form-group">
-          <input pattern="@question.getToNumberType().getPattern()" autocomplete="off" class="form-control" name="learnerSolution" placeholder="Ihre L&ouml;sung" required>
+          <input pattern="@question.getToNumberType().getHtmlPattern()" autocomplete="off" class="form-control" name="learnerSolution" placeholder="Ihre L&ouml;sung" required>
           <input hidden name="value" value="@question.getFromValue()">
           <input type="number" hidden name="startingNB" value="@question.getFromNumberType().getBase()">
           <input type="number" hidden name="targetNB" value="@question.getToNumberType().getBase()">
