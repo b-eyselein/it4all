@@ -19,7 +19,7 @@
     @for(ex <- scenario.getExercises(exType, start)) {
       <tr>
         <!-- <td>TODO</td> -->
-	    <td>@ex.getBadges()</td>
+	    <td>@Html(ex.getBadges())</td>
 	    <td>@ex.key.exerciseId:</td>
   	    <td>
           <a href="@sql.routes.Sql.exercise(scenario.id, ex.key.exerciseId)"

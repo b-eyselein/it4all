@@ -12,6 +12,21 @@ import model.tree.BoolescheFunktionTree;
 
 public class BoolescheFunktionParserTest {
 
+  @Test(expected = BooleanParsingException.class)
+  public void testKlammerung1() throws BooleanParsingException {
+    BoolescheFunktionParser.parse("(a and b");
+  }
+
+  @Test(expected = StringIndexOutOfBoundsException.class)
+  public void testKlammerung2() throws BooleanParsingException {
+    BoolescheFunktionParser.parse("a and b)");
+  }
+
+  @Test(expected = BooleanParsingException.class)
+  public void testKlammerung3() throws BooleanParsingException {
+    BoolescheFunktionParser.parse(")a and b(");
+  }
+
   @Test
   public void testNew() throws BooleanParsingException {
     String formula = "true";
@@ -30,7 +45,7 @@ public class BoolescheFunktionParserTest {
     Node tree2 = BoolescheFunktionParser.parseNode(formula2);
     assertNotNull(tree2);
     assertEquals(tree2.getAsString(false).toLowerCase(), formula2);
-    
+
     String formula3 = "b OR NOT (a OR b)";
     BoolescheFunktionTree tree3 = BoolescheFunktionParser.parse(formula3);
     assertThat(tree3.toString(), equalTo(formula3));
@@ -42,4 +57,23 @@ public class BoolescheFunktionParserTest {
     BoolescheFunktionParser.parseNode(formula);
   }
 
+  @Test(expected = BooleanParsingException.class)
+  public void testunvollstaendigerAusdruck1() throws BooleanParsingException {
+    BoolescheFunktionParser.parse("a or");
+  }
+
+  @Test(expected = BooleanParsingException.class)
+  public void testunvollstaendigerAusdruck2() throws BooleanParsingException {
+    BoolescheFunktionParser.parse("a b");
+  }
+
+  @Test(expected = StringIndexOutOfBoundsException.class)
+  public void testunvollstaendigerAusdruck3() throws BooleanParsingException {
+    BoolescheFunktionParser.parse("a or ()");
+  }
+
+  @Test(expected = BooleanParsingException.class)
+  public void testunvollstaendigerAusdruck4() throws BooleanParsingException {
+    BoolescheFunktionParser.parse("a (or b)");
+  }
 }

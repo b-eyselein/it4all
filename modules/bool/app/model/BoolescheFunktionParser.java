@@ -17,11 +17,11 @@ public class BoolescheFunktionParser {
     return new BoolescheFunktionTree(parseNode(originalformel));
   }
   
-  public static Node parseNode(String formula) throws BooleanParsingException {
-    formula = prepareFormula(formula);
+  public static Node parseNode(String formulaToParse) throws BooleanParsingException {
+    String formula = prepareFormula(formulaToParse);
     
     int parenthesisDepth = 0;
-    String read = "";
+    StringBuilder read = new StringBuilder();
     
     int highestOperatorPosition = -1;
     NodeType highestOperatorType = null;
@@ -38,20 +38,20 @@ public class BoolescheFunktionParser {
         break;
       case ' ':
         if(read.length() > 1 && parenthesisDepth == 0) {
-          NodeType newOperatorType = NodeType.get(read);
+          NodeType newOperatorType = NodeType.valueOf(highestOperator.toUpperCase());
           if(highestOperator == null || highestOperatorType == null
               || highestOperatorType.getPrecende() < newOperatorType.getPrecende()) {
             // FIXME: Operatorpräzedenz!
             // higheset operator found, ignore everything else
-            highestOperator = read;
-            highestOperatorType = NodeType.get(highestOperator);
+            highestOperator = read.toString();
+            highestOperatorType = NodeType.valueOf(highestOperator.toUpperCase());
             highestOperatorPosition = i - highestOperator.length() - 1;
           }
         }
-        read = "";
+        read = new StringBuilder();
         break;
       default:
-        read += Character.toString(readChar);
+        read.append(readChar);
         break;
       }
     }
@@ -70,29 +70,29 @@ public class BoolescheFunktionParser {
     }
     
     String rightFormula = formula.substring(highestOperatorPosition + highestOperator.length() + 2);
-    if("not".equals(highestOperator)) {
+
+    if("not".equals(highestOperator))
       return NodeType.NOT.instantiate(parseNode(rightFormula));
-    } else {
-      String leftFormula = formula.substring(0, highestOperatorPosition);
-      NodeType type = NodeType.get(highestOperator);
-      
-      if(type == null)
-        throw new BooleanParsingException("There is no operator defined.", highestOperator);
-      
-      Node left = parseNode(leftFormula);
-      Node right = parseNode(rightFormula);
-      
-      return type.instantiate(left, right);
-    }
+    
+    String leftFormula = formula.substring(0, highestOperatorPosition);
+    NodeType type = NodeType.valueOf(highestOperator.toUpperCase());
+    
+    if(type == null)
+      throw new BooleanParsingException("There is no operator defined.", highestOperator);
+    
+    Node left = parseNode(leftFormula);
+    Node right = parseNode(rightFormula);
+    
+    return type.instantiate(left, right);
   }
   
   private static String prepareFormula(String formula) {
-    formula = formula.toLowerCase();
-    formula = substituteGermanOperators(formula);
+    String newFormula = formula.toLowerCase();
+    newFormula = substituteGermanOperators(newFormula);
     
     // remove outer parantheses like in (a or b)
-    formula = trimAndRemoveParantheses(formula);
-    return formula;
+    newFormula = trimAndRemoveParantheses(newFormula);
+    return newFormula;
   }
   
   /**
@@ -108,8 +108,8 @@ public class BoolescheFunktionParser {
     return newFormula;
   }
   
-  private static String trimAndRemoveParantheses(String formula) {
-    formula = formula.trim();
+  private static String trimAndRemoveParantheses(String formulaToChange) {
+    String formula = formulaToChange.trim();
     
     if(!formula.startsWith("(") && !formula.endsWith(")"))
       return formula;
