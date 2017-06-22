@@ -1,6 +1,6 @@
 it4all:
     image: play
-    command: bash sbt run
+    command: bash ./start.sh
     volumes_from:
     - vc_it4all
     volumes:
@@ -9,62 +9,41 @@ it4all:
     - ~/.sbt/:/home/bjorn/.sbt/
     - /var/run/docker.sock:/var/run/docker.sock
     links:
-    # - prog:prog
-    - mysql1:mysql1
-    - mysql2:mysql2
-    - mysql3:mysql3
+    - dbit4all:dbit4all
+    - sqlselect:sqlselect
+    - sqlother:sqlother
     ports:
     - 8000:9000
     stdin_open: true
     tty: true
   
 vc_it4all:
-    image: alpine:3.5
-    command: echo "VC for it4all"
+    image:        alpine:3.5
     volumes:
-    - /data
+    - volume_it4all:/data
+    command:      sh chown 1000:1000 /data
   
-# prog:
-    # image: play
-    # volumes:
-    # - ./microservices/prog/:/app/
-    # - ~/.ivy2/:/home/bjorn/.ivy2/
-    # - ~/.sbt/:/home/bjorn/.sbt/
-    # - /var/run/docker.sock:/var/run/docker.sock
-    # ports:
-    # - 8001:9000
-    # stdin_open: true
-    # tty: true
-  
-mysql1:
-    image: mysql:5.7
-    restart: always
-    ports:
-    - 3106:3306
+dbit4all:
+    image:        mysql:5.7
+    restart:      always
     volumes:
-    - ./sql_init/:/docker-entrypoint-initdb.d/
+    - ./inits/sql_main_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
     environment:
     - MYSQL_ROOT_PASSWORD=sT8aV#k7
-  
-mysql2:
-    image: mysql:5.7
-    restart: always
-    ports:
-    - 3107:3306
+
+sqlselect:
+    image:        mysql:5.7
+    restart:      always
+    volumes:
+    - ./inits/sql_select_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
     environment:
     - MYSQL_ROOT_PASSWORD=sT8aV#k7
-    - MYSQL_USER=it4all
-    - MYSQL_PASSWORD=sT8aV#k7
-    - MYSQL_DATABASE=sqlselect
-  
-mysql3:
-    image: mysql:5.7
-    restart: always
-    ports:
-    - 3108:3306
+
+sqlother:
+    image:        mysql:5.7
+    restart:      always
+    volumes:
+    - ./inits/sql_other_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
     environment:
     - MYSQL_ROOT_PASSWORD=sT8aV#k7
-    - MYSQL_USER=it4all
-    - MYSQL_PASSWORD=sT8aV#k7
-    - MYSQL_DATABASE=sqlother
     

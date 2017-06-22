@@ -9,17 +9,17 @@ import java.util.stream.Collectors;
 import model.BooleanQuestion;
 
 public class Assignment {
-
+  
   private List<AssignmentItem> assignments;
-
+  
   public Assignment() {
     assignments = new LinkedList<>();
   }
-
+  
   private Assignment(AssignmentItem... items) {
     assignments = new LinkedList<>(Arrays.asList(items));
   }
-
+  
   /**
    * Generates all possible assignments for this combination of variables
    * recursively
@@ -31,71 +31,71 @@ public class Assignment {
   public static List<Assignment> generateAllAssignments(List<Character> variables) {
     if(variables.isEmpty())
       throw new IllegalArgumentException("Cannot generate assignments for 0 variables!");
-
+    
     char variable = variables.get(0);
-
+    
     if(variables.size() == 1) {
       // Catch recursive case of 1 variable
       Assignment falseAssignment = new Assignment(new AssignmentItem(variable, false));
       Assignment trueAssignment = new Assignment(new AssignmentItem(variable, true));
       return Arrays.asList(falseAssignment, trueAssignment);
     }
-
+    
     List<Assignment> falseAssignments = generateAllAssignments(variables.subList(1, variables.size()));
     List<Assignment> trueAssignments = generateAllAssignments(variables.subList(1, variables.size()));
-
+    
     for(Assignment assignment: falseAssignments)
       assignment.setAssignment(variable, false);
-
+    
     for(Assignment assignment: trueAssignments)
       assignment.setAssignment(variable, true);
-
+    
     ArrayList<Assignment> ret = new ArrayList<>();
     ret.addAll(falseAssignments);
     ret.addAll(trueAssignments);
     return ret;
   }
-
+  
   public char asChar(char variable) {
     return getAssignment(variable) ? '1' : '0';
   }
-
+  
   public boolean assignmentIsSet(char variable) {
     return getAssignmentItem(variable) != null;
   }
-
+  
   public boolean getAssignment(char variable) {
     AssignmentItem item = getAssignmentItem(variable);
-
+    
     if(item == null)
       // return false, if assignment is not defined
       return false;
-
+    
     return item.getValue();
   }
-
+  
   public String getAssignmentsForJson() {
     return toString();
   }
-
+  
   public String getColor() {
     if(getAssignment(BooleanQuestion.LEARNER_VARIABLE) == getAssignment(BooleanQuestion.SOLUTION_VARIABLE))
       return "success";
     else
       return "danger";
   }
-
+  
   public char getLearnerValue() {
     return asChar('y');
   }
-
+  
   public List<Character> getVariables() {
     return assignments.stream()
         .filter(a -> a.getVariable() != BooleanQuestion.SOLUTION_VARIABLE
             && a.getVariable() != BooleanQuestion.LEARNER_VARIABLE)
-        .map(a -> a.getVariable()).collect(Collectors.toList());
+        .map(AssignmentItem::getVariable).collect(Collectors.toList());
   }
-
+  
   public void setAssignment(char variable, boolean value) {
     AssignmentItem item = getAssignmentItem(variable);
     if(item == null)
@@ -103,21 +103,21 @@ public class Assignment {
     else
       item.setValue(value);
   }
-
+  
   @Override
   public String toString() {
     List<String> assignmentStrings = assignments.stream()
         .filter(a -> a.getVariable() != BooleanQuestion.SOLUTION_VARIABLE
             && a.getVariable() != BooleanQuestion.LEARNER_VARIABLE)
-        .map(a -> a.toString()).collect(Collectors.toList());
+        .map(AssignmentItem::toString).collect(Collectors.toList());
     return String.join(",", assignmentStrings);
   }
-
+  
   private AssignmentItem getAssignmentItem(char variable) {
     for(AssignmentItem item: assignments)
       if(item.getVariable() == variable)
         return item;
     return null;
   }
-
+  
 }
