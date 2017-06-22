@@ -10,43 +10,16 @@ import model.BooleanQuestion;
 
 public class Assignment {
 
-  private static class AssignmentItem {
-    private char variable;
-    private boolean value = false;
-    
-    public AssignmentItem(char theVariable, boolean theValue) {
-      variable = theVariable;
-      value = theValue;
-    }
-
-    public boolean getValue() {
-      return value;
-    }
-
-    public char getVariable() {
-      return variable;
-    }
-
-    public void setValue(boolean theValue) {
-      value = theValue;
-    }
-
-    @Override
-    public String toString() {
-      return variable + ":" + (value ? "1" : "0");
-    }
-  }
-
   private List<AssignmentItem> assignments;
 
   public Assignment() {
     assignments = new LinkedList<>();
   }
-  
+
   private Assignment(AssignmentItem... items) {
     assignments = new LinkedList<>(Arrays.asList(items));
   }
-  
+
   /**
    * Generates all possible assignments for this combination of variables
    * recursively
