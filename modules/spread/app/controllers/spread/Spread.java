@@ -12,6 +12,8 @@ import controllers.core.ExerciseController;
 import model.SpreadExercise;
 import model.SpreadSheetCorrectionResult;
 import model.SpreadSheetCorrector;
+import model.exercisereading.ExerciseReader;
+import model.logging.ExerciseStartEvent;
 import model.user.User;
 import play.Logger;
 import play.data.FormFactory;
@@ -26,6 +28,19 @@ public class Spread extends ExerciseController {
   @Inject
   public Spread(FormFactory theFactory) {
     super(theFactory, "spread");
+  }
+
+  public Result exercise(int id) {
+    User user = getUser();
+    SpreadExercise exercise = SpreadExercise.finder.byId(id);
+
+    log(user, new ExerciseStartEvent(request(), id));
+
+    return ok(views.html.spreadExercise.render(user, exercise));
+  }
+
+  public Result exercises() {
+    return ok(views.html.spreadExercises.render(getUser(), SpreadExercise.finder.all()));
   }
 
   public Result download(int id, String typ) {
@@ -79,14 +94,15 @@ public class Spread extends ExerciseController {
     String fileExtension = SpreadSheetCorrector.getExtension(uploadedFile.getFilename());
 
     // Save solution
-    Path targetFilePath = getSolFileForExercise(exercise, exercise.templateFilename + "." + fileExtension);
+    Path targetFilePath = getSolFileForExercise(exercise, exercise.templateFilename, fileExtension);
     boolean fileSuccessfullySaved = saveSolutionForUser(pathToUploadedFile, targetFilePath);
     if(!fileSuccessfullySaved)
       return internalServerError(
           views.html.spreadcorrectionerror.render(user, "Die Datei konnte nicht gespeichert werden!"));
 
     // Get paths to sample document
-    Path sampleDocumentPath = Paths.get(getSampleDir().toString(), exercise.sampleFilename, fileExtension);
+    Path sampleDocumentPath = Paths.get(getSampleDir().toString(), exercise.sampleFilename + "." + fileExtension);
+    Logger.debug("Pfad der Musterdatei: " + sampleDocumentPath);
     if(!sampleDocumentPath.toFile().exists())
       return internalServerError(
           views.html.spreadcorrectionerror.render(user, "Die Musterdatei konnte nicht gefunden werden!"));

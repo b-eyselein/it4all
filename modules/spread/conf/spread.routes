@@ -16,3 +16,7 @@ GET    /                controllers.spread.Spread.index()
 POST   /:id             controllers.spread.Spread.upload(id: Int)
 GET    /:id/:typ        controllers.spread.Spread.download(id: Int, typ: String)
 GET    /temp/:id/:typ   controllers.spread.Spread.downloadTemplate(id: Int, typ: String)
+
+GET    /exercises    controllers.spread.Spread.exercises()
+
+GET    /:id          controllers.spread.Spread.exercise(id: Int)

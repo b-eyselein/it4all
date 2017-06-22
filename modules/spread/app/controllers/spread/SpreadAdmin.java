@@ -26,8 +26,7 @@ public class SpreadAdmin extends AbstractAdminController<SpreadExercise, SpreadE
 
   @Override
   public Result index() {
-    // TODO Auto-generated method stub
-    return null;
+	  return ok(views.html.spreadAdmin.index.render(getUser()));
   }
 
   @Override

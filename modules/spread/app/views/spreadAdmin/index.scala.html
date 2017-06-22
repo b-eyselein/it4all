@@ -1,0 +1,65 @@
+@(user: model.user.User)
+
+@title = @{"Administrator Spread"}
+
+@main(title, user) {
+<div class="container">
+  <div class="page-header">
+    <h1>@title</h1>
+  </div>
+  
+  <section id="statistics">
+    <h2>Statistiken</h2>
+    <ul>
+      <li>Es existieren insgesamt @model.SpreadExercise.finder.all().size() Aufgaben
+      </li>
+    </ul>
+  </section>
+  
+  <hr>
+  
+  <section id="administration">
+    <h2>Verwaltung der Aufgaben</h2>
+    <a class="btn btn-default btn-block" href="@spread.routes.Spread.exercises()">Übersicht über alle Aufgaben</a>
+    
+    &nbsp;
+    
+    <a class="btn btn-default btn-block" href="@spread.routes.SpreadAdmin.newExerciseForm()">Neue Aufgabe erstellen</a>
+    
+    &nbsp;
+    
+    <div class="btn-group btn-group-justified">
+      <a class="btn btn-default" href="@spread.routes.SpreadAdmin.exportExercises()">Aufgaben als JSON exportieren</a>
+      <a class="btn btn-default" href="@spread.routes.SpreadAdmin.importExercises()">Standardaufgaben importieren</a>
+    </div>
+  </section>
+  
+  <hr>
+    
+  <div class="panel panel-default">
+    <div class="panel-heading">Import von Fragen als JSON-Datei</div>
+    <div class="panel-body">
+    
+      <div class="alert alert-info">
+        Die Datei wird gegen diese <a class="alert-link" target="_blank"
+        href="@spread.routes.SpreadAdmin.getJSONSchemaFile()">JSON Schema-Datei</a> geprüft.
+        Im Erfolgsfall werden die Aufgaben ausgelesen und in der Datenbank gespeichert.
+      </div>
+      
+      <form action="@spread.routes.SpreadAdmin.uploadFile()" method="post" enctype="multipart/form-data" class="form-horizontal">
+        <div class="form-group">
+          <label class="control-label col-sm-2" for="file">Ihre Datei:</label>
+          <div class="col-sm-10">
+            <input type="file" class="form-control" name="file" id="file" accept=".json" required>
+          </div>
+        </div>
+        
+        <hr>
+        
+        <button class="btn btn-primary btn-block">Datei hochladen</button>
+      </form>
+    </div>
+  </div>
+    
+</div>
+}
