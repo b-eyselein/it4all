@@ -2,6 +2,7 @@ package model.querycorrectors.create;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import model.exercise.SqlExercise;
 import model.matching.MatchingResult;
@@ -16,42 +17,42 @@ import net.sf.jsqlparser.statement.create.table.CreateTable;
 import play.db.Database;
 
 public class CreateCorrector extends QueryCorrector<CreateTable, ColumnDefinition> {
-
+  
   public CreateCorrector() {
     super("CREATE TABLE");
   }
-
+  
   @Override
   protected MatchingResult<ColumnDefinition, ColumnMatch<ColumnDefinition>> compareColumns(CreateTable userQuery,
-      CreateTable sampleQuery) {
+      Map<String, String> userTableAliases, CreateTable sampleQuery, Map<String, String> sampleTableAliases) {
     // TODO Auto-generated method stub
     return null;
   }
-
+  
   @Override
   protected SqlExecutionResult executeQuery(Database database, CreateTable userStatement, CreateTable sampleStatement,
       SqlExercise exercise) {
     return null;
   }
-
+  
   @Override
   protected List<String> getTableNames(CreateTable query) {
     return Arrays.asList(query.getTable().toString());
   }
-
+  
   @Override
   protected List<Table> getTables(CreateTable query) {
     return Arrays.asList(query.getTable());
   }
-
+  
   @Override
   protected Expression getWhere(CreateTable query) {
     return null;
   }
-
+  
   @Override
   protected SqlResult<CreateTable, ColumnDefinition> instantiateResult(String learnerSolution) {
     return new CreateResult(learnerSolution);
   }
-
+  
 }
