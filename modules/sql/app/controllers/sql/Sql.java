@@ -184,16 +184,19 @@ public class Sql extends ExerciseController {
   private SqlResult<? extends Statement, ?> correct(String userName, int scenarioId, int exerciseId)
       throws CorrectionException {
     String learnerSol = factory.form().bindFromRequest().get(StringConsts.FORM_VALUE);
-    
+
+    if(learnerSol == null || learnerSol.isEmpty())
+      throw new EmptySolutionException(learnerSol, "Sie haben eine leere Lösung abgegeben!");
+
     SqlExercise exercise = SqlExercise.finder.byId(new SqlExerciseKey(scenarioId, exerciseId));
-    
+
     saveSolution(userName, learnerSol, exercise.key);
-    
+
     if(learnerSol.isEmpty())
       throw new EmptySolutionException(learnerSol, StringConsts.EMPTY_SOLUTION);
-    
+
     SqlSample sample = findBestFittingSample(learnerSol, exercise.samples);
-    
+
     return exercise.getCorrector().correct(getDBForExType(exercise.exerciseType), learnerSol, sample, exercise);
   }
   

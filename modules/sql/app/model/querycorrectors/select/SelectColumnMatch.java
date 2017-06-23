@@ -24,7 +24,7 @@ public class SelectColumnMatch extends ColumnMatch<SelectItem> {
   private static String getAlias(SelectItem item) {
     if(item instanceof AllColumns || item instanceof AllTableColumns)
       return "";
-
+    
     Alias alias = ((SelectExpressionItem) item).getAlias();
     if(alias == null)
       return "";
@@ -34,10 +34,11 @@ public class SelectColumnMatch extends ColumnMatch<SelectItem> {
   private static String getColName(SelectItem item) {
     if(item instanceof AllColumns)
       return "*";
-    else if(item instanceof AllTableColumns)
+    
+    if(item instanceof AllTableColumns)
       return ((AllTableColumns) item).toString();
-    else
-      return ((SelectExpressionItem) item).getExpression().toString();
+    
+    return ((SelectExpressionItem) item).getExpression().toString();
   }
   
   @Override
@@ -52,22 +53,22 @@ public class SelectColumnMatch extends ColumnMatch<SelectItem> {
   
   @Override
   public String getFirstColAlias() {
-    return getAlias(userArg);
+    return userArg != null ? getAlias(userArg) : "";
   }
   
   @Override
   public String getFirstColName() {
-    return getColName(userArg);
+    return userArg != null ? getColName(userArg) : "--";
   }
   
   @Override
   public String getSecondColAlias() {
-    return getAlias(sampleArg);
+    return sampleArg != null ? getAlias(sampleArg) : "";
   }
   
   @Override
   public String getSecondColName() {
-    return getColName(sampleArg);
+    return sampleArg != null ? getColName(sampleArg) : "--";
   }
   
   @Override
