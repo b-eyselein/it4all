@@ -46,6 +46,20 @@ public class NaryNumberTest {
   }
 
   @Test
+  public void testAddNArys() {
+    NAryNumber n0_8 = new NAryNumber(NumberBase.OCTAL);
+    NAryNumber n234_2 = new NAryNumber(234, NumberBase.BINARY);
+    NAryNumber n234_8 = NAryNumber.addNArys(n234_2, n0_8);
+    assertThat(n234_8.getBase(), equalTo(NumberBase.OCTAL));
+    assertThat(n234_8.getValue(), equalTo(234));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testCharNotInNumberBase() {
+    NAryNumber.parse("2", NumberBase.BINARY);
+  }
+
+  @Test
   public void testConstructor() {
     TO_TEST.forEach((decimalvalue, baseAndToParse) -> {
       baseAndToParse.forEach((base, toParse) -> {
@@ -102,11 +116,36 @@ public class NaryNumberTest {
 
   @Test
   public void testToString() {
+    NAryNumber posZeroBinary = new NAryNumber(NumberBase.BINARY);
+    assertThat(posZeroBinary.toString(), equalTo("0000 0000"));
+    assertThat(posZeroBinary.toString(true), equalTo("0000 0000_2"));
+    NAryNumber negZeroBinary = new NAryNumber(-0, NumberBase.BINARY);
+    assertThat(negZeroBinary.toString(), equalTo("0000 0000"));
+    assertThat(negZeroBinary.toString(true), equalTo("0000 0000_2"));
+
+    NAryNumber posZeroOctal = new NAryNumber(NumberBase.OCTAL);
+    assertThat(posZeroOctal.toString(), equalTo("0"));
+    assertThat(posZeroOctal.toString(true), equalTo("0_8"));
+    NAryNumber negZeroOctal = new NAryNumber(-0, NumberBase.OCTAL);
+    assertThat(negZeroOctal.toString(), equalTo("0"));
+    assertThat(negZeroOctal.toString(true), equalTo("0_8"));
+
+    NAryNumber posZeroHexa = new NAryNumber(NumberBase.HEXADECIMAL);
+    assertThat(posZeroHexa.toString(), equalTo("0"));
+    assertThat(posZeroHexa.toString(true), equalTo("0_16"));
+    NAryNumber negZeroHexa = new NAryNumber(-0, NumberBase.HEXADECIMAL);
+    assertThat(negZeroHexa.toString(), equalTo("0"));
+    assertThat(negZeroHexa.toString(true), equalTo("0_16"));
+
     TO_TEST.forEach((decimalvalue, baseAndToParse) -> {
       baseAndToParse.forEach((base, toParse) -> {
-        NAryNumber nary = new NAryNumber(decimalvalue, base);
-        assertThat(nary.toString(), equalTo(toParse.toUpperCase()));
-        assertThat(nary.toString(true), equalTo(toParse.toUpperCase() + "_" + base.getBase()));
+        NAryNumber posNary = new NAryNumber(decimalvalue, base);
+        assertThat(posNary.toString(), equalTo(toParse.toUpperCase()));
+        assertThat(posNary.toString(true), equalTo(toParse.toUpperCase() + "_" + base.getBase()));
+
+        NAryNumber negNary = new NAryNumber(-decimalvalue, base);
+        assertThat(negNary.toString(), equalTo("-" + toParse.toUpperCase()));
+        assertThat(negNary.toString(true), equalTo("-" + toParse.toUpperCase() + "_" + base.getBase()));
       });
     });
   }

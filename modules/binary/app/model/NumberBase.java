@@ -3,23 +3,25 @@ package model;
 public enum NumberBase {
 
   // @formatter:off
-  BINARY      (2,   "Binär",        "0b", "0-1*"),
-  OCTAL       (8,   "Oktal",        "0o", "0-7"),
-  HEXADECIMAL (16,  "Hexadezimal",  "0x", "0-9a-fA-F"),
-  DECIMAL     (10,  "Dezimal",      "",   "1-9*");
+  BINARY      (2,   "Binär",        "0b", "0-1",          "0-1"),
+  OCTAL       (8,   "Oktal",        "0o", "1-7",        "0-7"),
+  HEXADECIMAL (16,  "Hexadezimal",  "0x", "1-9a-fA-F",  "0-9a-fA-F"),
+  DECIMAL     (10,  "Dezimal",      "",   "1-9",        "0-9");
   //@formatter:on
 
   private int base;
 
   private String systemName;
   private String mark;
-  private String regex;
+  private String regexStart;
+  private String regexRest;
 
-  private NumberBase(int theBase, String theBaseName, String theMark, String theRegex) {
+  private NumberBase(int theBase, String theBaseName, String theMark, String theRegexStart, String theRegexRest) {
     base = theBase;
     systemName = theBaseName;
     mark = theMark;
-    regex = theRegex;
+    regexStart = theRegexStart;
+    regexRest = theRegexRest;
   }
 
   public static NumberBase getByBase(int base) {
@@ -34,7 +36,7 @@ public enum NumberBase {
   }
 
   public String getHtmlPattern() {
-    return "[\\s" + regex + "]*";
+    return "[\\s" + regexStart + "][\\s" + regexRest + "]*";
   }
 
   public String getMark() {
@@ -46,7 +48,7 @@ public enum NumberBase {
   }
 
   public String getRegex() {
-    return "-?" + mark + "[" + regex + "][" + regex + "]*";
+    return "-?" + mark + "[" + regexStart + "][" + regexRest + "]*";
   }
 
   public String getSingularName() {
