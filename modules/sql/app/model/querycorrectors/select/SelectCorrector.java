@@ -48,6 +48,9 @@ public class SelectCorrector extends QueryCorrector<Select, SelectItem> {
     List<Expression> group1 = ((PlainSelect) plainUserQuery.getSelectBody()).getGroupByColumnReferences();
     List<Expression> group2 = ((PlainSelect) plainSampleQuery.getSelectBody()).getGroupByColumnReferences();
 
+    if(group1 == null && group2 == null)
+      return null;
+    
     return GROUP_BY_MATCHER.match(group1 != null ? group1 : Collections.emptyList(),
         group2 != null ? group2 : Collections.emptyList());
   }
@@ -56,6 +59,9 @@ public class SelectCorrector extends QueryCorrector<Select, SelectItem> {
       Select plainSampleQuery) {
     List<OrderByElement> order1 = ((PlainSelect) plainUserQuery.getSelectBody()).getOrderByElements();
     List<OrderByElement> order2 = ((PlainSelect) plainSampleQuery.getSelectBody()).getOrderByElements();
+
+    if(order1 == null && order2 == null)
+      return null;
 
     return ORDER_BY_MATCHER.match(order1 != null ? order1 : Collections.emptyList(),
         order2 != null ? order2 : Collections.emptyList());

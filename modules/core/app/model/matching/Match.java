@@ -21,7 +21,9 @@ public abstract class Match<T> {
       matchType = analyze(theUserArg, theSampleArg);
   }
 
-  public abstract Html describe();
+  public Html describe() {
+    return views.html.matchResult.render(this);
+  }
 
   public String getBSClass() {
     return matchType == MatchType.SUCCESSFUL_MATCH ? "success" : "warning";
@@ -38,7 +40,7 @@ public abstract class Match<T> {
   public T getUserArg() {
     return userArg;
   }
-  
+
   public boolean isSuccessful() {
     return matchType == MatchType.SUCCESSFUL_MATCH;
   }

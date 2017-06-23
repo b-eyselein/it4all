@@ -11,13 +11,25 @@
     </tr>
   </thead>
   <tbody>
-@matchingResult.render(result.getColumnComparison)
+  @if(result.getColumnComparison() != null) {
+    @matchingResult.render(result.getColumnComparison)
+  }
 
-@matchingResult.render(result.getWhereComparison())
+  @if(result.getTableComparison() != null) {
+    @matchingResult.render(result.getTableComparison())
+  }
 
-@matchingResult.render(result.getOrderByComparison())
+  @if(result.getWhereComparison() != null) {
+    @matchingResult.render(result.getWhereComparison())
+  }
 
-@matchingResult.render(result.getGroupByComparison())
+  @if(result.getOrderByComparison() != null) {
+    @matchingResult.render(result.getOrderByComparison())
+  }
+
+  @if(result.getGroupByComparison() != null) {
+    @matchingResult.render(result.getGroupByComparison())
+  }
   </tbody>
 </table>
 

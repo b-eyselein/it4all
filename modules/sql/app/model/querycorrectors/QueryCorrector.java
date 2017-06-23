@@ -61,8 +61,14 @@ public abstract class QueryCorrector<Q extends Statement, C> {
 
   private MatchingResult<BinaryExpression, BinaryExpressionMatch> compareWhereClauses(Q userQ,
       Map<String, String> userTableAliases, Q sampleQ, Map<String, String> sampleQueryAliases) {
+    List<BinaryExpression> userExps = getExpressions(userQ);
+    List<BinaryExpression> sampleExps = getExpressions(sampleQ);
+    
+    if(userExps.isEmpty() && sampleExps.isEmpty())
+      return null;
+    
     BinaryExpressionMatcher binExMatcher = new BinaryExpressionMatcher(userTableAliases, sampleQueryAliases);
-    return binExMatcher.match(StringConsts.CONDITIONS_NAME, getExpressions(userQ), getExpressions(sampleQ));
+    return binExMatcher.match(StringConsts.CONDITIONS_NAME, userExps, sampleExps);
   }
 
   private List<BinaryExpression> getExpressions(Q statement) {

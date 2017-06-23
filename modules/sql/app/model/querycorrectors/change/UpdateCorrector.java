@@ -45,7 +45,7 @@ public class UpdateCorrector extends ChangeCorrector<Update> {
 
   @Override
   protected SqlResult<Update, Column> instantiateResult(String learnerSolution) {
-    return new UpdateResult(learnerSolution);
+    return new ChangeResult<>(learnerSolution);
   }
 
 }

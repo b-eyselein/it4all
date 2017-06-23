@@ -1,6 +1,6 @@
 package model.querycorrectors;
 
-import java.util.LinkedList;
+import java.util.Arrays;
 import java.util.List;
 
 import model.conditioncorrector.BinaryExpressionMatch;
@@ -23,7 +23,7 @@ public abstract class SqlResult<Q extends Statement, C> {
 
   protected MatchingResult<String, Match<String>> tableComparison;
 
-  protected SqlResult(String theLearnerSolution) {
+  public SqlResult(String theLearnerSolution) {
     learnerSolution = theLearnerSolution;
   }
 
@@ -40,11 +40,11 @@ public abstract class SqlResult<Q extends Statement, C> {
   }
 
   public List<EvaluationResult> getResults() {
-    List<EvaluationResult> ret = new LinkedList<>();
-    ret.add(columnComparison);
-    ret.add(whereComparison);
-    ret.add(executionResult);
-    return ret;
+    return Arrays.asList(columnComparison, whereComparison, executionResult, tableComparison);
+  }
+
+  public MatchingResult<String, Match<String>> getTableComparison() {
+    return tableComparison;
   }
 
   public MatchingResult<BinaryExpression, BinaryExpressionMatch> getWhereComparison() {
@@ -69,7 +69,7 @@ public abstract class SqlResult<Q extends Statement, C> {
     tableComparison = theTableComparison;
     return this;
   }
-  
+
   public SqlResult<Q, C> setWhereComparison(
       MatchingResult<BinaryExpression, BinaryExpressionMatch> theWhereComparison) {
     whereComparison = theWhereComparison;

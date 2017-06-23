@@ -16,35 +16,35 @@ import net.sf.jsqlparser.statement.delete.Delete;
 
 @Singleton
 public class DeleteCorrector extends ChangeCorrector<Delete> {
-  
+
   public DeleteCorrector() {
     super("DELETE");
   }
-  
+
   @Override
   protected MatchingResult<Column, ColumnMatch<Column>> compareColumns(Delete userQuery,
       Map<String, String> userTableAliases, Delete sampleQuery, Map<String, String> sampleTableAliases) {
     return null;
   }
-  
+
   @Override
   protected List<String> getTableNames(Delete userQuery) {
     return Arrays.asList(userQuery.getTable().getName());
   }
-  
+
   @Override
   protected List<Table> getTables(Delete query) {
     return query.getTables();
   }
-  
+
   @Override
   protected Expression getWhere(Delete query) {
     return query.getWhere();
   }
-  
+
   @Override
   protected SqlResult<Delete, Column> instantiateResult(String learnerSolution) {
-    return new DeleteResult(learnerSolution);
+    return new ChangeResult<>(learnerSolution);
   }
-  
+
 }
