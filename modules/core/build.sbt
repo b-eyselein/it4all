@@ -7,10 +7,9 @@ routesGenerator := InjectedRoutesGenerator
 
 playEbeanModels in Compile := Seq("model.user.*", "model.exercise.*", "model.programming.*")
 
-// JaCoCo - siehe project/plugins.sbt
-jacoco.settings
-
 libraryDependencies ++= Seq(
   Common.jsonSchemaValidator
 )
 
+// JaCoCo - siehe project/plugins.sbt
+jacoco.settings

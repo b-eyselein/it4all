@@ -16,14 +16,15 @@ public class NAryConvResult extends NAryResult {
 
   private NAryNumber learnerSolution;
 
-  public NAryConvResult(NAryNumber value, NumberBase theStartingNB, NumberBase theTargetNB, String theLearnerSolution) {
+  protected NAryConvResult(NAryNumber value, NumberBase theStartingNB, NumberBase theTargetNB,
+      NAryNumber theLearnerSolution) {
     super(new NAryNumber(value.decimalValue, theTargetNB));
     startingNumberBase = theStartingNB;
     targetNumberBase = theTargetNB;
 
     startingNumber = value;
 
-    learnerSolution = NAryNumber.parse(theLearnerSolution, targetNumberBase);
+    learnerSolution = theLearnerSolution;
   }
 
   public static NAryConvResult parseFromForm(DynamicForm form) {
@@ -32,16 +33,18 @@ public class NAryConvResult extends NAryResult {
 
     NAryNumber value = NAryNumber.parse(form.get(VALUE), startingNB);
 
-    String learnerSolution = form.get(StringConsts.FORM_VALUE).replaceAll("\\s", "");
+    String learnerSolutionAsString = form.get(StringConsts.FORM_VALUE).replaceAll("\\s", "");
+    NAryNumber learnerSolution = NAryNumber.parse(learnerSolutionAsString, targetNB);
 
     return new NAryConvResult(value, startingNB, targetNB, learnerSolution);
   }
 
+  @Override
   public boolean checkSolution() {
     return targetNumber.equals(learnerSolution);
   }
 
-  public NumberBase getFromNumberType() {
+  public NumberBase getFromNumberBase() {
     return startingNumberBase;
   }
 
@@ -53,12 +56,8 @@ public class NAryConvResult extends NAryResult {
     return learnerSolution;
   }
 
-  public NumberBase getToNumberType() {
+  public NumberBase getToNumberBase() {
     return targetNumberBase;
-  }
-
-  public NAryNumber getToValue() {
-    return targetNumber;
   }
 
 }

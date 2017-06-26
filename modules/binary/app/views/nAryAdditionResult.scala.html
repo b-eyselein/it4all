@@ -7,7 +7,7 @@
   
 <div class="container">
   <div class="page-header">
-    <h1>@title von @result.getQuestionType().getPluralName()</h1>
+    <h1>@title von @result.getBase().getPluralName()</h1>
   </div>
   
   <div class="row">
@@ -16,7 +16,7 @@
       <div class="form-group">
         <div class="input-group">
           <input value="@result.getFirstSummand()" readonly class="form-control text-right">
-          <span class="input-group-addon"><sub>@result.getBase()</sub></span>
+          <span class="input-group-addon"><sub>@result.getBase().getBase()</sub></span>
         </div>  
       </div>        
        
@@ -24,7 +24,7 @@
         <div class="input-group">
           <span class="input-group-addon">+</span>
           <input value="@result.getSecondSummand()" readonly class="form-control text-right">
-          <span class="input-group-addon"><sub>@result.getBase()</sub></span>
+          <span class="input-group-addon"><sub>@result.getBase().getBase()</sub></span>
         </div>    
       </div>
       
@@ -33,7 +33,7 @@
       <div class="form-group">
         <div class="input-group">
           <input readonly value="@result.getLearnerSolution()" class="form-control text-right">
-          <span class="input-group-addon"><sub>@result.getBase()</sub></span>
+          <span class="input-group-addon"><sub>@result.getBase().getBase()</sub></span>
         </div>
       </div>
     
@@ -50,7 +50,9 @@
 } else {
   <div class="alert alert-danger text-center">
     <p><span class="glyphicon glyphicon-remove"></span> Ihre L&ouml;sung ist leider falsch.</p>
-    <p>Die richtige Antwort lautet <span class="number">@result.getTargetNumber().toString()<sub>@result.getQuestionType().getBase()</sub>.</span></p>
+    <p>
+      Die richtige Antwort lautet <span class="number">@result.getTargetNumber().toString()<sub>@result.getBase().getBase()</sub>.</span>
+    </p>
   </div>
 }
 

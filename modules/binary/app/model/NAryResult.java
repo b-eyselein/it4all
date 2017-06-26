@@ -8,8 +8,9 @@ public abstract class NAryResult {
     targetNumber = theTargetNumber;
   }
 
+  public abstract boolean checkSolution();
+
   public NAryNumber getTargetNumber() {
     return targetNumber;
   }
-
 }
