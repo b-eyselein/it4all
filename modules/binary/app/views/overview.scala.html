@@ -6,13 +6,18 @@
     <h1>Zahlensysteme</h1>
   </div>
   
-  <p>
-    <a type="button" class="btn btn-default btn-block" href="@controllers.nary.routes.Nary.newNaryConversionQuestion()">
-      Umwandeln zwischen verschiedenen Zahlensystemen</a>
-  </p>
-  <p>
-    <a type="button" class="btn btn-default btn-block" href="@controllers.nary.routes.Nary.newNaryAdditionQuestion()">
-      Addition in anderen Zahlensystemen</a>
-  </p>
+  <a type="button" class="btn btn-default btn-block" href="@nary.routes.Nary.newNaryConversionQuestion()">
+    Umwandeln zwischen verschiedenen Zahlensystemen</a>
+
+  &nbsp;
+
+  <a class="btn btn-default btn-block" href="@nary.routes.Nary.newTwoComplementQuestion()">
+    Zweierkomplement</a>
+
+  &nbsp;
+  
+  <a type="button" class="btn btn-default btn-block" href="@nary.routes.Nary.newNaryAdditionQuestion()">
+    Addition in anderen Zahlensystemen</a>
+  
 </div>
 }

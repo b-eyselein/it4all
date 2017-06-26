@@ -5,3 +5,6 @@ POST   /naryconversion   controllers.nary.Nary.checkNaryConversionSolution()
 
 GET    /naryaddition     controllers.nary.Nary.newNaryAdditionQuestion()
 POST   /naryaddition     controllers.nary.Nary.checkNaryAdditionSolution()
+
+GET    /twocomplement    controllers.nary.Nary.newTwoComplementQuestion()
+POST   /twocomplement    controllers.nary.Nary.checkTwoComplementSolution()
