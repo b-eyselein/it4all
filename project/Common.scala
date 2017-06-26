@@ -12,7 +12,7 @@ object Common {
   val seleniumDep = "org.seleniumhq.selenium" % "selenium-java" % "3.4.0"
   val htmlUnitDep = "org.seleniumhq.selenium" % "selenium-htmlunit-driver" % "2.52.0"
 
-  val mockitoDep = "org.mockito" % "mockito-core" % "2.8.9"
+  val mockitoDep = "org.mockito" % "mockito-core" % "2.8.47"
   
   val jsonSchemaValidator = "com.github.fge" % "json-schema-validator" % "2.2.6"
   

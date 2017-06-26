@@ -1,0 +1,63 @@
+@(user: model.user.User, firstSummand: model.NAryNumber, secondSummand: model.NAryNumber, base: model.NumberBase)
+
+@title = @{"Addition"}
+
+@main(title, user) {
+<div class="container">
+  <div class="page-header">
+    <h1>@title von @base.getPluralName()</h1>
+  </div>
+  
+  <div class="row">
+    <div class="col-sm-4 col-sm-offset-4">
+      
+      <form role="form" action="@nary.routes.Nary.checkNaryAdditionSolution()" method="post">
+         
+        <div class="form-group">
+          <div class="input-group">
+            <input value="@firstSummand" readonly class="form-control text-right" name="@model.NAryAddResult.SUMMAND_1">
+            <span class="input-group-addon"><sub>@base.getBase()</sub></span>
+          </div>  
+        </div>        
+         
+        <div class="form-group">
+          <div class="input-group">
+            <span class="input-group-addon">+</span>
+            <input value="@secondSummand" readonly class="form-control text-right" name="@model.NAryAddResult.SUMMAND_2">
+            <span class="input-group-addon"><sub>@base.getBase()</sub></span>
+          </div>    
+        </div>
+        
+        <hr>
+        
+        <div class="form-group">
+          <div class="input-group">
+            <input pattern="@base.getHtmlPattern()" autocomplete="off"
+              style="direction: rtl; unicode-bidi: bidi-override;" autofocus
+              class="form-control text-right" name="@model.StringConsts.FORM_VALUE" placeholder="Ihre L&ouml;sung" required>
+            <span class="input-group-addon"><sub>@base.getBase()</sub></span>
+          </div>
+        </div>
+        
+        <input hidden name="@model.NAryAddResult.BASE" value="@base">
+        
+        <button class="btn btn-primary btn-block">Pr&uuml;fen</button>
+      </form>
+      
+    </div>
+  </div>
+  
+  <hr>
+  
+  <div class="panel panel-info">
+    <div class="panel-heading">Hinweise</div>
+    <div class="panel-body">
+      <ul>
+        <li>Aufgrund der üblichen Addition von rechts nach links erfolgt die Eingabe der Zahlen umgekehrt von rechts nach links!</li>
+        <li>Bin&auml;rzahlen bitte in 8-Bit-Darstellung mit f&uuml;hrenden Nullen angeben.</em></p>
+      </ul>
+    </div>
+  </div>
+  
+</div>
+}

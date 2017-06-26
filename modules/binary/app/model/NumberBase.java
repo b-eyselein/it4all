@@ -24,13 +24,6 @@ public enum NumberBase {
     regexRest = theRegexRest;
   }
 
-  public static NumberBase getByBase(int base) {
-    for(NumberBase type: NumberBase.values())
-      if(type.base == base)
-        return type;
-    throw new IllegalArgumentException("There is NumberBase for base " + base);
-  }
-
   public int getBase() {
     return base;
   }
@@ -55,8 +48,7 @@ public enum NumberBase {
     return systemName + "zahl";
   }
 
-  @Override
-  public String toString() {
+  public String getSystemName() {
     return systemName + "system";
   }
 

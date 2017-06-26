@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 
 import model.SqlCorrectionException;
 import model.StringConsts;
-import model.conditioncorrector.BinaryExpressionMatcher;
 import model.conditioncorrector.ExpressionExtractor;
+import model.conditioncorrector.ExpressionMatcher;
 import model.conditioncorrector.ExtractedExpressions;
 import model.correction.CorrectionException;
 import model.exercise.SqlExercise;
@@ -17,7 +17,6 @@ import model.matching.Match;
 import model.matching.Matcher;
 import model.matching.MatchingResult;
 import net.sf.jsqlparser.JSQLParserException;
-import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Table;
@@ -56,7 +55,7 @@ public abstract class QueryCorrector<Q extends Statement, C> {
         
         .setExecutionResult(executeQuery(database, userQ, sampleQ, exercise))
         
-        .makeOtherComparisons(userQ, sampleQ);
+        .setOtherComparisons(makeOtherComparisons(userQ, sampleQ));
   }
   
   private MatchingResult<Expression, Match<Expression>> compareWhereClauses(Q userQ,
@@ -64,16 +63,11 @@ public abstract class QueryCorrector<Q extends Statement, C> {
     ExtractedExpressions userExps = getExpressions(userQ);
     ExtractedExpressions sampleExps = getExpressions(sampleQ);
     
-    List<BinaryExpression> userBinExps = userExps.getBinaryExpressions();
-    List<BinaryExpression> sampleBinExps = sampleExps.getBinaryExpressions();
-    
     if(userExps.isEmpty() && sampleExps.isEmpty())
       return null;
     
-    BinaryExpressionMatcher binExMatcher = new BinaryExpressionMatcher(userTableAliases, sampleQueryAliases);
-    // return binExMatcher.match(StringConsts.CONDITIONS_NAME, userBinExps,
-    // sampleBinExps);
-    throw new IllegalArgumentException("TO IMPLEMENT!");
+    ExpressionMatcher binExMatcher = new ExpressionMatcher(userTableAliases, sampleQueryAliases);
+    return binExMatcher.match(userExps, sampleExps);
   }
   
   private ExtractedExpressions getExpressions(Q statement) {
@@ -97,6 +91,9 @@ public abstract class QueryCorrector<Q extends Statement, C> {
   protected abstract Expression getWhere(Q query);
   
   protected abstract SqlResult<Q, C> instantiateResult(String learnerSolution);
+  
+  protected abstract List<MatchingResult<? extends Object, ? extends Match<? extends Object>>> makeOtherComparisons(
+      Q userQ, Q sampleQ);
   
   @SuppressWarnings("unchecked")
   protected Q parseStatement(String statement) throws SqlCorrectionException {

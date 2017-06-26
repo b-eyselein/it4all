@@ -44,7 +44,7 @@ public class DeleteCorrector extends ChangeCorrector<Delete> {
 
   @Override
   protected SqlResult<Delete, Column> instantiateResult(String learnerSolution) {
-    return new ChangeResult<>(learnerSolution);
+    return new SqlResult<>(learnerSolution);
   }
 
 }

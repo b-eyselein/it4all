@@ -1,4 +1,4 @@
-@(result: model.querycorrectors.change.ChangeResult[_])
+@(result: model.querycorrectors.SqlResult[_, _])
 
 @execResult = @{result.getExecutionResult()}
 
@@ -11,14 +11,21 @@
     </tr>
   </thead>
   <tbody>
-    @if(result.getColumnComparison() != null) {
-      @matchingResult.render(result.getColumnComparison())
-    }
-    
-    @if(result.getWhereComparison != null) {
-      @matchingResult.render(result.getWhereComparison())
-    }
+  @if(result.getColumnComparison() != null) {
+    @matchingResult.render(result.getColumnComparison)
+  }
 
+  @if(result.getTableComparison() != null) {
+    @matchingResult.render(result.getTableComparison())
+  }
+
+  @if(result.getWhereComparison() != null) {
+    @matchingResult.render(result.getWhereComparison())
+  }
+
+  @for(comp <- result.getOtherComparisons()) {
+    @matchingResult.render(comp)
+  }
     <tr class="active">
       <th colspan="3" class="text-@execResult.getBSClass() text-center">
         <span class="@execResult.getGlyphicon()"></span> Vergleich ihrer L&ouml;sung mit der Musterl&ouml;sung

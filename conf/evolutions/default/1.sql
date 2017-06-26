@@ -28,7 +28,7 @@ create table conditions (
   task_id                       integer not null,
   condition_id                  integer not null,
   xpath_query                   varchar(255),
-  is_precondition               tinyint(1) default 0,
+  is_precondition               tinyint(1) default 0 not null,
   awaited_value                 varchar(255),
   constraint pk_conditions primary key (exercise_id,task_id,condition_id)
 );
@@ -77,7 +77,7 @@ create table freetext_question (
   title                         varchar(255),
   author                        varchar(255),
   text                          text,
-  max_points                    integer,
+  max_points                    integer not null,
   constraint pk_freetext_question primary key (id)
 );
 
@@ -86,7 +86,7 @@ create table given_answer_question (
   title                         varchar(255),
   author                        varchar(255),
   text                          text,
-  max_points                    integer,
+  max_points                    integer not null,
   constraint pk_given_answer_question primary key (id)
 );
 
@@ -124,7 +124,7 @@ create table prog_exercise (
   author                        varchar(255),
   text                          text,
   function_name                 varchar(255),
-  input_count                   integer,
+  input_count                   integer not null,
   python_sample                 varchar(255),
   js_sample                     varchar(255),
   java_sample                   varchar(255),
@@ -148,7 +148,7 @@ create table prog_user (
 create table question_rating (
   question_id                   integer not null,
   username                      varchar(255) not null,
-  rating                        integer,
+  rating                        integer not null,
   constraint pk_question_rating primary key (question_id,username)
 );
 
@@ -219,7 +219,7 @@ create table sql_solution (
   scenario_id                   integer not null,
   exercise_id                   integer not null,
   sol                           text,
-  points                        integer,
+  points                        integer not null,
   constraint pk_sql_solution primary key (user_name,scenario_id,exercise_id)
 );
 
@@ -267,7 +267,7 @@ create table web_solution (
   user_name                     varchar(255) not null,
   exercise_id                   integer not null,
   sol                           text,
-  points                        integer,
+  points                        integer not null,
   constraint pk_web_solution primary key (user_name,exercise_id)
 );
 

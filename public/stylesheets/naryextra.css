@@ -1,0 +1,8 @@
+.number-input {
+  direction: rtl;
+  unicode-bidi: bidi-override;
+}
+
+.number {
+  font-family: monospace;
+}

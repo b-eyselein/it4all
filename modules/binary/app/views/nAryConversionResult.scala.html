@@ -1,0 +1,52 @@
+@(user: model.user.User, result: model.NAryConvResult)
+
+@title = @{"Zahlenumwandlung"}
+
+@main(title, user) {
+<script src="@routes.Assets.versioned("javascripts/snippets/followLinkOnEnter.js")"></script>
+  
+<div class="container">
+  <div class="page-header">
+    <h1>@title von @result.getFromNumberType().getSystemName() nach @result.getToNumberType().getSystemName()</h1>
+  </div>
+  
+  <div class="row">
+    <div class="col-sm-4 col-sm-offset-4">
+      
+      <div class="form-group">
+        <div class="input-group">
+          <input value="@result.getFromValue()" readonly class="form-control text-right" name="value">
+          <span class="input-group-addon"><sub>@result.getFromNumberType().getBase()</sub></span>
+        </div>  
+      </div>        
+      
+      <hr>
+      
+      <div class="form-group">
+        <div class="input-group">
+          <span class="input-group-addon">--></span>
+          <input readonly class="form-control text-right" value="@result.getLearnerSolution()">
+          <span class="input-group-addon"><sub>@result.getToNumberType().getBase()</sub></span>
+        </div>
+      </div>
+      
+      <a href="@nary.routes.Nary.newNaryConversionQuestion()" id="theLink" class="btn btn-primary btn-block">N&auml;chste Aufgabe</a>
+      
+    </div>
+  </div>
+  
+  <hr>
+  
+@if(result.checkSolution()) {
+  <div class="alert alert-success text-center">
+    <span class="glyphicon glyphicon-ok"></span> Ihre L&ouml;sung ist richtig.</div>
+} else {
+  <div class="alert alert-danger text-center">
+    <p><span class="glyphicon glyphicon-remove"></span> Ihre L&ouml;sung ist leider falsch.</p>
+    <p>Die richtige Antwort lautet <span class="number">@result.getTargetNumber().toString()<sub>@result.getToNumberType().getBase()</sub>.</span></p>
+  </div>
+}
+
+}
+
+
