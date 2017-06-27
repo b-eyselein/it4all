@@ -9,17 +9,12 @@ public class NAryResultTest {
   
   @Test
   public void test() {
-    NAryResult res = new NAryResult(new NAryNumber(NumberBase.OCTAL)) {
-
-      @Override
-      public boolean checkSolution() {
-        return false;
-      }
-
+    NAryResult res = new NAryResult(new NAryNumber(NumberBase.OCTAL), new NAryNumber(NumberBase.HEXADECIMAL)) {
+      
     };
     assertThat(res.getTargetNumber().getBase(), equalTo(NumberBase.OCTAL));
     assertThat(res.getTargetNumber().getValue(), equalTo(0));
-    assertThat(res.checkSolution(), equalTo(false));
+    assertThat(res.checkSolution(), equalTo(true));
   }
   
 }

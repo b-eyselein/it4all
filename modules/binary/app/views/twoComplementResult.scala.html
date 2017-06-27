@@ -1,4 +1,4 @@
-@(user: model.user.User, result: model.TwoCompResult)
+@(user: model.user.User, result: model.TwoCompResult, verbose: Boolean)
 
 @title = @{"Zweierkomplement"}
 
@@ -28,7 +28,7 @@
         </div>
       </div>
       
-      <a href="@nary.routes.Nary.newTwoComplementQuestion()" id="theLink" class="btn btn-primary btn-block">N&auml;chste Aufgabe</a>
+      <a href="@nary.routes.Nary.newTwoComplementQuestion(verbose)" id="theLink" class="btn btn-primary btn-block">N&auml;chste Aufgabe</a>
       
     </div>
   </div>

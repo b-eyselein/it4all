@@ -1,4 +1,4 @@
-@(user: model.user.User, value: Int)
+@(user: model.user.User, value: Int, verbose: Boolean)
 
 @title = @{"Zweierkomplement";}
 
@@ -11,7 +11,7 @@
   <div class="row">
     <div class="col-sm-4 col-sm-offset-4">
       
-      <form role="form" action="@nary.routes.Nary.checkTwoComplementSolution()" method="post">
+      <form role="form" action="@nary.routes.Nary.checkTwoComplementSolution(verbose)" method="post">
          
         <div class="form-group">
           <div class="input-group">

@@ -32,9 +32,9 @@ public class Nary extends ExerciseController {
     return ok(views.html.nAryConversionResult.render(getUser(), result));
   }
 
-  public Result checkTwoComplementSolution() {
+  public Result checkTwoComplementSolution(boolean verbose) {
     TwoCompResult result = TwoCompResult.parseFromForm(factory.form().bindFromRequest());
-    return ok(views.html.twoComplementResult.render(getUser(), result));
+    return ok(views.html.twoComplementResult.render(getUser(), result, verbose));
   }
 
   public Result index() {
@@ -69,9 +69,9 @@ public class Nary extends ExerciseController {
     return ok(views.html.nAryConversionQuestion.render(getUser(), value, fromNB, toNB, startingNumber));
   }
 
-  public Result newTwoComplementQuestion() {
+  public Result newTwoComplementQuestion(boolean verbose) {
     int value = GENERATOR.nextInt(256) - 128;
 
-    return ok(views.html.twoComplementQuestion.render(getUser(), value));
+    return ok(views.html.twoComplementQuestion.render(getUser(), value, verbose));
   }
 }
