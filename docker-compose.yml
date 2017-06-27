@@ -5,8 +5,8 @@ it4all:
     - vc_it4all
     volumes:
     - ./:/app/
-    - ~/.ivy2/:/home/bjorn/.ivy2/
-    - ~/.sbt/:/home/bjorn/.sbt/
+    - ~/.ivy2/:$HOME/.ivy2/
+    - ~/.sbt/:$HOME/.sbt/
     - /var/run/docker.sock:/var/run/docker.sock
     links:
     - dbit4all:dbit4all
