@@ -21,7 +21,7 @@ vc_it4all:
     image:        alpine:3.5
     volumes:
     - volume_it4all:/data
-    command:      sh chown 1000:1000 /data
+    command:      sh chown $UID:$UID /data
 
 dbit4all:
     image:        mysql:5.7
