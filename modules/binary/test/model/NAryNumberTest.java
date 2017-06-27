@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import com.google.common.collect.ImmutableMap;
 
-public class NaryNumberTest {
+public class NAryNumberTest {
 
   // @formatter:off
   private static final Map<Integer, Map<NumberBase, String>> TO_TEST =
@@ -35,6 +35,11 @@ public class NaryNumberTest {
 
   private static void checkBase(NAryNumber number, NumberBase base) {
     assertThat("Basis von " + number + " sollte " + base + " sein!", number.getBase(), equalTo(base));
+  }
+
+  private static void checkPaddedString(String toPad, String expected) {
+    assertThat("Expecting that padded binary string of " + toPad + " is " + expected, NAryNumber.padBinary(toPad),
+        equalTo(expected));
   }
 
   private static void checkParsingWithoutMark(Integer decValue, NumberBase base, String toParse) {
@@ -82,7 +87,15 @@ public class NaryNumberTest {
   }
 
   @Test
-  public void testParseTwoComplement() throws Exception {
+  public void testPadBinary() {
+    checkPaddedString("0", "0000 0000");
+    checkPaddedString("011010", "0001 1010");
+    checkPaddedString("00011010", "0001 1010");
+    checkPaddedString("0001 1010", "0001 1010");
+  }
+
+  @Test
+  public void testParseTwoComplement() {
     NAryNumber pos0 = NAryNumber.parseTwoComplement("0000 0000");
     checkBase(pos0, NumberBase.BINARY);
     checkValue(pos0, 0);
@@ -162,6 +175,14 @@ public class NaryNumberTest {
         assertThat(negNary.toString(true), equalTo("-" + toParse + "_" + base.getBase()));
       });
     });
+  }
+
+  @Test
+  public void testToTwoComplement() {
+    assertThat(new NAryNumber(0, NumberBase.BINARY).toTwoComp(), equalTo("0000 0000"));
+    assertThat(new NAryNumber(-26, NumberBase.BINARY).toTwoComp(), equalTo("1110 0110"));
+    assertThat(new NAryNumber(-127, NumberBase.BINARY).toTwoComp(), equalTo("1000 0001"));
+    assertThat(new NAryNumber(-140, NumberBase.BINARY).toTwoComp(), equalTo("0111 0100"));
   }
 
 }

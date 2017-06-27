@@ -33,7 +33,7 @@ public class Nary extends ExerciseController {
   }
 
   public Result checkTwoComplementSolution(boolean verbose) {
-    TwoCompResult result = TwoCompResult.parseFromForm(factory.form().bindFromRequest());
+    TwoCompResult result = TwoCompResult.parseFromForm(factory.form().bindFromRequest(), verbose);
     return ok(views.html.twoComplementResult.render(getUser(), result, verbose));
   }
 
@@ -70,8 +70,8 @@ public class Nary extends ExerciseController {
   }
 
   public Result newTwoComplementQuestion(boolean verbose) {
-    int value = -GENERATOR.nextInt(256);
-
+    // Max negative number in two complement: -128
+    int value = -GENERATOR.nextInt(129);
     return ok(views.html.twoComplementQuestion.render(getUser(), value, verbose));
   }
 }

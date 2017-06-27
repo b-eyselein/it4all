@@ -5,7 +5,7 @@ object Common {
   val settings: Seq[Setting[_]] = Seq(
     organization := "is.informatik.uni-wuerzburg.de",
     version := "0.9.0",
-    scalaVersion := "2.12.2",
+    scalaVersion := "2.11.11",
 
     libraryDependencies ++= Seq(
       // Mockito for Testing
