@@ -1,0 +1,10 @@
+GET    /                controllers.nary.Nary.index()
+
+GET    /naryconv        controllers.nary.Nary.newNaryConversionQuestion()
+POST   /naryconv        controllers.nary.Nary.checkNaryConversionSolution()
+
+GET    /naryadd         controllers.nary.Nary.newNaryAdditionQuestion()
+POST   /naryadd         controllers.nary.Nary.checkNaryAdditionSolution()
+
+GET    /twocomp/:verb   controllers.nary.Nary.newTwoComplementQuestion(verb: Boolean)
+POST   /twocomp/:verb   controllers.nary.Nary.checkTwoComplementSolution(verb: Boolean)

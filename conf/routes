@@ -20,7 +20,7 @@ GET    /eval/evaluation       controllers.AdminController.evaluation()
 GET    /users                 controllers.AdminController.users()
 
 # Tools
-->     /binary                binary.Routes
+->     /nary                  nary.Routes
 
 ->     /bool                  bool.Routes
 

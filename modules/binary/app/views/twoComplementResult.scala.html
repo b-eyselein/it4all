@@ -1,0 +1,60 @@
+@(user: model.user.User, result: model.TwoCompResult, verbose: Boolean)
+
+@title = @{"Zweierkomplement"}
+
+@main(title, user) {
+<div class="container">
+<div class="page-header">
+    <h1>@title von @result.getTargetNumber().getValue()</h1>
+  </div>
+  
+  <div class="row">
+    <div class="col-sm-4 col-sm-offset-4">
+      
+      <div class="form-group">
+        <div class="input-group">
+          <input value="@result.getTargetNumber().getValue()" readonly class="form-control text-right" >
+          <span class="input-group-addon"><sub>10</sub></span>
+        </div>  
+      </div>        
+      
+      <hr>
+      
+      <div class="form-group">
+        <div class="input-group">
+          <span class="input-group-addon">--></span>
+          <input class="form-control text-right" readonly value="@result.getLearnerSolution()">
+          <span class="input-group-addon"><sub>2</sub></span>
+        </div>
+      </div>
+      
+      <a href="@nary.routes.Nary.newTwoComplementQuestion(verbose)" id="theLink" class="btn btn-primary btn-block">N&auml;chste Aufgabe</a>
+      
+    </div>
+  </div>
+  
+  <hr>
+  
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      Platz f&uuml;r Notizen<br>
+      <em class="text-info">Notizen werden f&uuml;r die Korrektur nicht beachtet.</em>
+    </div>
+    <div class="panel-body">
+      <textarea class="form-control" rows="10"></textarea>
+    </div>
+  </div>
+  
+  <hr>
+  
+  <div class="panel panel-info">
+    <div class="panel-heading">Hinweise</div>
+    <div class="panel-body">
+      <ul>
+        <li>Bin&auml;rzahlen bitte in 8-Bit-Darstellung mit f&uuml;hrenden Nullen angeben.</em></p>
+      </ul>
+    </div>
+  </div>
+  
+</div>
+}

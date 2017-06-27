@@ -40,12 +40,12 @@ public class InsertCorrector extends ChangeCorrector<Insert> {
   
   @Override
   protected Expression getWhere(Insert query) {
-    throw new UnsupportedOperationException("A INSERT statement has no WHERE clauses!");
+    return null;
   }
   
   @Override
   protected SqlResult<Insert, Column> instantiateResult(String learnerSolution) {
-    return new InsertResult(learnerSolution);
+    return new SqlResult<>(learnerSolution);
   }
   
 }

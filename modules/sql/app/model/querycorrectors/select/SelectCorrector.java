@@ -3,6 +3,7 @@ package model.querycorrectors.select;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,6 +49,9 @@ public class SelectCorrector extends QueryCorrector<Select, SelectItem> {
     List<Expression> group1 = ((PlainSelect) plainUserQuery.getSelectBody()).getGroupByColumnReferences();
     List<Expression> group2 = ((PlainSelect) plainSampleQuery.getSelectBody()).getGroupByColumnReferences();
 
+    if(group1 == null && group2 == null)
+      return null;
+
     return GROUP_BY_MATCHER.match(group1 != null ? group1 : Collections.emptyList(),
         group2 != null ? group2 : Collections.emptyList());
   }
@@ -56,6 +60,9 @@ public class SelectCorrector extends QueryCorrector<Select, SelectItem> {
       Select plainSampleQuery) {
     List<OrderByElement> order1 = ((PlainSelect) plainUserQuery.getSelectBody()).getOrderByElements();
     List<OrderByElement> order2 = ((PlainSelect) plainSampleQuery.getSelectBody()).getOrderByElements();
+
+    if(order1 == null && order2 == null)
+      return null;
 
     return ORDER_BY_MATCHER.match(order1 != null ? order1 : Collections.emptyList(),
         order2 != null ? order2 : Collections.emptyList());
@@ -107,7 +114,6 @@ public class SelectCorrector extends QueryCorrector<Select, SelectItem> {
 
   @Override
   protected List<Table> getTables(Select query) {
-    // FIXME: implement!
     List<Table> tables = new LinkedList<>();
 
     PlainSelect plain = (PlainSelect) query.getSelectBody();
@@ -130,7 +136,15 @@ public class SelectCorrector extends QueryCorrector<Select, SelectItem> {
 
   @Override
   protected SqlResult<Select, SelectItem> instantiateResult(String learnerSolution) {
-    return new SelectResult(learnerSolution);
+    return new SqlResult<>(learnerSolution);
+  }
+
+  @Override
+  protected List<MatchingResult<? extends Object, ? extends Match<? extends Object>>> makeOtherComparisons(Select userQ,
+      Select sampleQ) {
+    MatchingResult<Expression, Match<Expression>> groupByComparison = compareGroupByElements(userQ, sampleQ);
+    MatchingResult<OrderByElement, OrderByMatch> orderByComparison = compareOrderByElements(userQ, sampleQ);
+    return Arrays.asList(groupByComparison, orderByComparison);
   }
 
 }

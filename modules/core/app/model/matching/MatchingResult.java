@@ -1,10 +1,11 @@
 package model.matching;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import model.exercise.Success;
 import model.result.EvaluationResult;
-import play.Logger;
 
 public class MatchingResult<T, M extends Match<T>> extends EvaluationResult {
 
@@ -20,6 +21,18 @@ public class MatchingResult<T, M extends Match<T>> extends EvaluationResult {
     matches = allMatches;
   }
 
+  public static <T, M extends Match<T>> MatchingResult<T, M> merge(MatchingResult<T, M> res1,
+      MatchingResult<T, M> res2) {
+
+    if(!res1.getMatchName().equals(res2.getMatchName()))
+      return null;
+
+    List<M> matches = Stream.concat(res1.getMatches().stream(), res2.getMatches().stream())
+        .collect(Collectors.toList());
+
+    return new MatchingResult<>(res1.getMatchName(), matches);
+  }
+
   protected static <T, M extends Match<T>> Success analyze(List<M> matches) {
     boolean wrongMatches = matches.parallelStream().anyMatch(m -> m.matchType == MatchType.ONLY_USER);
     boolean missingMatches = matches.parallelStream().anyMatch(m -> m.matchType == MatchType.ONLY_SAMPLE);
@@ -32,20 +45,6 @@ public class MatchingResult<T, M extends Match<T>> extends EvaluationResult {
       return Success.PARTIALLY;
 
     return Success.COMPLETE;
-  }
-
-  public String getGlyphicon() {
-    Logger.debug(matchName + " (" + success + ") :: " + matches.size());
-    switch(success) {
-    case COMPLETE:
-      return "glyphicon glyphicon-ok";
-    case PARTIALLY:
-      return "glyphicon glyphicon-question-sign";
-    case NONE:
-    case FAILURE:
-    default:
-      return "glyphicon glyphicon-remove";
-    }
   }
 
   public List<M> getMatches() {

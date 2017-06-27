@@ -1,7 +1,0 @@
-GET    /                 controllers.nary.Nary.index()
-
-GET    /naryconversion   controllers.nary.Nary.newNaryConversionQuestion()
-POST   /naryconversion   controllers.nary.Nary.checkNaryConversionSolution()
-
-GET    /naryaddition     controllers.nary.Nary.newNaryAdditionQuestion()
-POST   /naryaddition     controllers.nary.Nary.checkNaryAdditionSolution()

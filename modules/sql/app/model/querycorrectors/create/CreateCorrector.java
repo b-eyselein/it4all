@@ -1,10 +1,12 @@
 package model.querycorrectors.create;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import model.exercise.SqlExercise;
+import model.matching.Match;
 import model.matching.MatchingResult;
 import model.querycorrectors.ColumnMatch;
 import model.querycorrectors.QueryCorrector;
@@ -52,7 +54,13 @@ public class CreateCorrector extends QueryCorrector<CreateTable, ColumnDefinitio
   
   @Override
   protected SqlResult<CreateTable, ColumnDefinition> instantiateResult(String learnerSolution) {
-    return new CreateResult(learnerSolution);
+    return new SqlResult<>(learnerSolution);
+  }
+
+  @Override
+  protected List<MatchingResult<? extends Object, ? extends Match<? extends Object>>> makeOtherComparisons(
+      CreateTable userQ, CreateTable sampleQ) {
+    return Collections.emptyList();
   }
   
 }

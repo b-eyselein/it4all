@@ -89,10 +89,10 @@ public class SqlScenarioReader extends ExerciseReader<SqlScenario> {
   }
 
   public void runCreateScript(Database database, SqlScenario scenario) {
-    Path scriptFilePath = Paths.get(baseDirForExType.toString(), scenario.scriptFile);
+    Path scriptFilePath = Paths.get(baseDirForExType.toString(), scenario.scriptFile).toAbsolutePath();
 
     if(!scriptFilePath.toFile().exists()) {
-      READING_LOGGER.error("Error while trying to read file " + scriptFilePath);
+      READING_LOGGER.error("File " + scriptFilePath + " does not exist");
       return;
     }
 

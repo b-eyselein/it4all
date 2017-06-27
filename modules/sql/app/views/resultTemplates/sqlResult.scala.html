@@ -1,0 +1,52 @@
+@(result: model.querycorrectors.SqlResult[_, _])
+
+@execResult = @{result.getExecutionResult()}
+
+<table class="table">
+  <thead>
+    <tr>
+      <th/>
+      <th>Nutzer</th>
+      <th>Muster</th>
+    </tr>
+  </thead>
+  <tbody>
+  @if(result.getColumnComparison() != null) {
+    @matchingResult.render(result.getColumnComparison)
+  }
+
+  @if(result.getTableComparison() != null) {
+    @matchingResult.render(result.getTableComparison())
+  }
+
+  @if(result.getWhereComparison() != null) {
+    @matchingResult.render(result.getWhereComparison())
+  }
+
+  @for(comp <- result.getOtherComparisons()) {
+    @matchingResult.render(comp)
+  }
+    <tr class="active">
+      <th colspan="3" class="text-@execResult.getBSClass() text-center">
+        <span class="@execResult.getGlyphicon()"></span> Vergleich ihrer L&ouml;sung mit der Musterl&ouml;sung
+      </th>
+    </tr>
+    <tr class="@execResult.getBSClass()">
+      <td/>
+      <td>
+        @if(execResult.getUserResult() == null) {
+          Es gab einen Fehler bei der Ausf&uuml;hrung ihrer L&ouml;sung!
+        } else {
+          @resultTemplates.resultTable.render(execResult.getUserResult())
+        }
+      </td>
+      <td>
+        @if(execResult.getSampleResult() == null) {
+          Es gab einen Fehler bei der Ausf&uuml;hrung der Musterl&ouml;sung!
+        } else {
+          @resultTemplates.resultTable.render(execResult.getSampleResult())
+        }
+      </td>
+    </tr>
+  </tbody>
+</table>

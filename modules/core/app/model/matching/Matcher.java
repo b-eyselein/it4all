@@ -32,7 +32,8 @@ public abstract class Matcher<T, M extends Match<T>> {
     filter = theFilter;
   }
 
-  public MatchingResult<T, M> match(String matchName, List<T> firstCollection, List<T> secondCollection) {
+  public MatchingResult<T, M> match(String matchName, List<? extends T> firstCollection,
+      List<? extends T> secondCollection) {
     List<M> matches = new LinkedList<>();
 
     // Copy lists to prevent change in real lists

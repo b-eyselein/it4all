@@ -7,9 +7,9 @@ routesGenerator := InjectedRoutesGenerator
 
 playEbeanModels in Compile := Seq("model.*")
 
-// JaCoCo - siehe project/plugins.sbt
-jacoco.settings
-
 libraryDependencies ++= Seq(
   javaJdbc, Common.mybatis, Common.jsqlparser
 )
+
+// JaCoCo - siehe project/plugins.sbt
+jacoco.settings

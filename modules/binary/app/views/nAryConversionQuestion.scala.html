@@ -1,0 +1,67 @@
+@(user: model.user.User, value: Int, fromNB: model.NumberBase, toNB: model.NumberBase, startingNumber: model.NAryNumber)
+
+@title = @{"Zahlenumwandlung"}
+
+@main(title, user) {
+<div class="container">
+  <div class="page-header">
+    <h1>@title von @fromNB.getSystemName() nach @toNB.getSystemName()</h1>
+  </div>
+  
+  <div class="row">
+    <div class="col-sm-4 col-sm-offset-4">
+      
+      <form role="form" action="@nary.routes.Nary.checkNaryConversionSolution()" method="post">
+         
+        <div class="form-group">
+          <div class="input-group">
+            <input value="@startingNumber" readonly class="form-control text-right" name="@model.NAryResult.VALUE">
+            <span class="input-group-addon"><sub>@fromNB.getBase()</sub></span>
+          </div>  
+        </div>        
+        
+        <hr>
+        
+        <div class="form-group">
+          <div class="input-group">
+            <span class="input-group-addon">--></span>
+            <input pattern="@toNB.getHtmlPattern()" autocomplete="off" autofocus
+              class="form-control text-right" name="@model.StringConsts.FORM_VALUE" placeholder="Ihre L&ouml;sung" required>
+            <span class="input-group-addon"><sub>@toNB.getBase()</sub></span>
+          </div>
+        </div>
+        
+        <input hidden name="@model.NAryConvResult.STARTING_NB" value="@fromNB">
+        <input hidden name="@model.NAryConvResult.TARGET_NB" value="@toNB">
+        
+        <button class="btn btn-primary btn-block">Pr&uuml;fen</button>
+      </form>
+      
+    </div>
+  </div>
+  
+  <hr>
+  
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      Platz f&uuml;r Notizen<br>
+      <em class="text-info">Notizen werden f&uuml;r die Korrektur nicht beachtet.</em>
+    </div>
+    <div class="panel-body">
+      <textarea class="form-control" rows="10"></textarea>
+    </div>
+  </div>
+  
+  <hr>
+  
+  <div class="panel panel-info">
+    <div class="panel-heading">Hinweise</div>
+    <div class="panel-body">
+      <ul>
+        <li>Bin&auml;rzahlen bitte in 8-Bit-Darstellung mit f&uuml;hrenden Nullen angeben.</em></p>
+      </ul>
+    </div>
+  </div>
+  
+</div>
+}
