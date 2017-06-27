@@ -12,7 +12,6 @@ import controllers.core.ExerciseController;
 import model.SpreadExercise;
 import model.SpreadSheetCorrectionResult;
 import model.SpreadSheetCorrector;
-import model.exercisereading.ExerciseReader;
 import model.logging.ExerciseStartEvent;
 import model.user.User;
 import play.Logger;
@@ -52,7 +51,7 @@ public class Spread extends ExerciseController {
 
     Path fileToDownload = Paths.get(BASE_DATA_PATH, SOLUTIONS_SUB_DIRECTORY, exerciseType,
         exercise.templateFilename + "_Korrektur." + typ);
-
+    Logger.debug("Herunterladen von: " + fileToDownload);
     if(!fileToDownload.toFile().exists())
       return badRequest(
           views.html.error.render(user, "<p>Die Korrigierte Datei existiert nicht!</p><p>Zur&uuml;ck zur <a href=\""
@@ -90,12 +89,13 @@ public class Spread extends ExerciseController {
       return internalServerError(
           views.html.spreadcorrectionerror.render(user, "Datei konnte nicht hochgeladen werden!"));
     Path pathToUploadedFile = uploadedFile.getFile().toPath();
-
+    Logger.debug("Pfad der Abgabedatei: " + pathToUploadedFile);
     String fileExtension = SpreadSheetCorrector.getExtension(uploadedFile.getFilename());
 
     // Save solution
     Path targetFilePath = getSolFileForExercise(exercise, exercise.templateFilename, fileExtension);
     boolean fileSuccessfullySaved = saveSolutionForUser(pathToUploadedFile, targetFilePath);
+    Logger.debug("Verschieben nach: " + targetFilePath);
     if(!fileSuccessfullySaved)
       return internalServerError(
           views.html.spreadcorrectionerror.render(user, "Die Datei konnte nicht gespeichert werden!"));

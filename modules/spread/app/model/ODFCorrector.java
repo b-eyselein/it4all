@@ -13,6 +13,8 @@ import org.odftoolkit.simple.style.StyleTypeDefinitions.FontStyle;
 import org.odftoolkit.simple.table.Cell;
 import org.odftoolkit.simple.table.Table;
 
+import play.Logger;
+
 public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Cell, Font, Color> {
 
   // TODO: magic numbers...
@@ -159,7 +161,7 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
   
   @Override
   public void saveCorrectedSpreadsheet(SpreadsheetDocument document, Path testPath) {
-    // TODO userFolder: saveFolder!
+    // TODO userFolder: saveFolder! evtl FACTORY METHOD
     String userFolder = SpreadSheetCorrector.getUserFolder(testPath);
     String fileName = SpreadSheetCorrector.getFileName(testPath);
     try {
