@@ -13,7 +13,7 @@ public abstract class NAryResult {
   }
   
   public boolean checkSolution() {
-    return targetNumber.decimalValue == learnerSolution.decimalValue;
+    return targetNumber.getValue() == learnerSolution.getValue();
   }
   
   public NAryNumber getLearnerSolution() {

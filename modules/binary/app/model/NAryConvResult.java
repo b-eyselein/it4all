@@ -15,7 +15,7 @@ public class NAryConvResult extends NAryResult {
   
   protected NAryConvResult(NAryNumber value, NumberBase theStartingNB, NumberBase theTargetNB,
       NAryNumber theLearnerSolution) {
-    super(new NAryNumber(value.decimalValue, theTargetNB), theLearnerSolution);
+    super(new NAryNumber(value.getValue(), theTargetNB), theLearnerSolution);
     startingNumberBase = theStartingNB;
     targetNumberBase = theTargetNB;
     

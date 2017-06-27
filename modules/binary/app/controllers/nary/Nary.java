@@ -70,7 +70,7 @@ public class Nary extends ExerciseController {
   }
 
   public Result newTwoComplementQuestion(boolean verbose) {
-    int value = GENERATOR.nextInt(256) - 128;
+    int value = -GENERATOR.nextInt(256);
 
     return ok(views.html.twoComplementQuestion.render(getUser(), value, verbose));
   }
