@@ -58,6 +58,8 @@ libraryDependencies ++= Seq(
   guice
 )
 
+EclipseKeys.classpathTransformerFactories := Seq(ClasspathentryTransformer)
+
 EclipseKeys.skipParents in ThisBuild := false
 
 // Injected for non-static Routes

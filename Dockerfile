@@ -39,10 +39,10 @@ RUN apk add --no-cache --update bash wget && mkdir -p "$SBT_HOME" && \
 # Play Framework specifics
 WORKDIR /app
 
-RUN addgroup -g $DOCKER_GID docker
-RUN addgroup -g 1000 $USERNAME
-RUN adduser -u 1000 -S -G docker -G $USERNAME $USERNAME
-RUN chown $USERNAME:$USERNAME /app
+RUN addgroup -g $DOCKER_GID docker && \
+	addgroup -g 1000 $USERNAME && \
+	adduser -u 1000 -S -G docker -G $USERNAME $USERNAME && \
+	chown $USERNAME:$USERNAME /app
 
 USER $USERNAME:$DOCKER_GID
 

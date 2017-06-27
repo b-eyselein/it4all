@@ -5,17 +5,44 @@ import play.data.DynamicForm;
 public class TwoCompResult extends NAryResult {
 
   public static final String BINARY_ABS = "binaryAbs";
+  public static final String INVERTED_ABS = "inverted";
 
-  public static final String INVERTED = "inverted";
+  private String binaryAbs;
 
-  public TwoCompResult(NAryNumber theTargetNumber, NAryNumber theLearnerSolution) {
+  private String invertedAbs;
+
+  public TwoCompResult(NAryNumber theTargetNumber, NAryNumber theLearnerSolution, String theBinaryAbs,
+      String theInverted) {
     super(theTargetNumber, theLearnerSolution);
+    binaryAbs = theBinaryAbs;
+    invertedAbs = theInverted;
   }
 
   public static TwoCompResult parseFromForm(DynamicForm form) {
-    NAryNumber decNumber = new NAryNumber(Integer.parseInt(form.get(NAryResult.VALUE)), NumberBase.BINARY);
-    NAryNumber twoComplement = NAryNumber.parseTwoComplement(form.get(StringConsts.FORM_VALUE));
-    return new TwoCompResult(decNumber, twoComplement);
+    NAryNumber targetNumber = new NAryNumber(Integer.parseInt(form.get(NAryResult.VALUE)), NumberBase.BINARY);
+    NAryNumber learnerSolution = NAryNumber.parseTwoComplement(form.get(StringConsts.FORM_VALUE));
+
+    String binaryAbs = form.get(TwoCompResult.BINARY_ABS);
+    String invertedAbs = form.get(TwoCompResult.INVERTED_ABS);
+
+    return new TwoCompResult(targetNumber, learnerSolution, binaryAbs, invertedAbs);
+  }
+
+  public boolean binaryAbsCorrect() {
+    int binaryAbsValue = NAryNumber.parse(binaryAbs, NumberBase.BINARY).getValue();
+    return binaryAbsValue == Math.abs(targetNumber.getValue());
+  }
+
+  public String getBinaryAbs() {
+    return binaryAbs;
+  }
+
+  public String getInvertedAbs() {
+    return invertedAbs;
+  }
+
+  public boolean invertedAbsCorrect() {
+    return NAryNumber.invertDigits(binaryAbs).equals(invertedAbs);
   }
 
 }
