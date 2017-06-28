@@ -26,8 +26,9 @@ public class BoolescheFunktionParser {
     List<Token> tokens = tokenize(formulaToParse);
 
     // TODO: String to token...
+    List<Token> groupedTokens = groupTokens(tokens);
 
-    return buildTreeFromTokens(tokens);
+    return buildTreeFromTokens(groupedTokens);
   }
 
   public static Node parseNode(String formulaToParse) throws BooleanParsingException {
@@ -99,6 +100,11 @@ public class BoolescheFunktionParser {
     Node right = parseNode(rightFormula);
 
     return type.instantiate(left, right);
+  }
+
+  private static List<Token> groupTokens(List<Token> tokens) {
+    // TODO Auto-generated method stub
+    return null;
   }
 
   private static String prepareFormula(String formula) {

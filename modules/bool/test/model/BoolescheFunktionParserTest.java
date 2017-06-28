@@ -14,6 +14,7 @@ import org.junit.Test;
 import com.google.common.collect.ImmutableMap;
 
 import model.node.Node;
+import model.token.Token;
 import model.tree.BoolescheFunktionTree;
 
 public class BoolescheFunktionParserTest {
@@ -73,7 +74,7 @@ public class BoolescheFunktionParserTest {
   @Test
   public void testTokenize() {
     for(Map.Entry<String, String[]> formulaAndToken: FORMULAS_AND_TOKENS.entrySet()) {
-      List<String> tokens = BoolescheFunktionParser.tokenize(formulaAndToken.getKey());
+      List<Token> tokens = BoolescheFunktionParser.tokenize(formulaAndToken.getKey());
       assertThat(tokens.size(), equalTo(formulaAndToken.getValue().length));
       // FIXME: test if contains all...
       fail();
