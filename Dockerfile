@@ -2,11 +2,13 @@ FROM docker:17.05-git
 
 MAINTAINER Bjoern Eyselein <bjoern.eyselein@gmail.com>
 
-ARG USERNAME
-ARG DOCKER_GID
-
 # Java
-ENV LANG=C.UTF-8 JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk JAVA_VERSION=8u121 JAVA_ALPINE_VERSION=8.121.13-r0 SBT_VERSION=0.13.15 SBT_HOME=/usr/local/sbt
+ENV LANG=C.UTF-8 \
+	JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk \
+	JAVA_VERSION=8u121 \
+	JAVA_ALPINE_VERSION=8.121.13-r0 \
+	SBT_VERSION=0.13.15 \
+	SBT_HOME=/usr/local/sbt
 
 RUN { \
 		echo '#!/bin/sh'; \
@@ -30,12 +32,5 @@ RUN apk add --no-cache --update bash wget && mkdir -p "$SBT_HOME" && \
     
 # Play Framework specifics
 WORKDIR /app
-
-RUN addgroup -g $DOCKER_GID docker && \
-	addgroup -g 1000 $USERNAME && \
-	adduser -u 1000 -S -G docker -G $USERNAME $USERNAME && \
-	chown $USERNAME:$USERNAME /app
-
-USER $USERNAME:$DOCKER_GID
 
 EXPOSE 9000
