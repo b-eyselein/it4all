@@ -28,7 +28,7 @@ This is the development version.
 To develop it4all, you need to have installed the following programs (names of packages in Ubuntu in brackets):
 
 1. Git (git)
-2. Docker (docker.io)
+2. Docker (docker.io) (Do not forget to add yourself to group "docker" with `sudo usermod -aG docker $(whoami)` and log yourself out and in again)
 3. Docker-compose (docker-compose)
 
 ### First start
@@ -43,15 +43,13 @@ Set the Path variable "IVY_HOME" in your shell:
 
 `export IVY_HOME=~/.ivy2`
 
-or, to do so permanently, user
+or, to do so permanently, use
 
 `echo -e "\nexport IVY_HOME=~/.ivy2" >> ~/.profile`
 
 Build the image defined in the file 'Dockerfile':
 
-`expose $UID`
-
-`$ docker build -t play --build-arg USERNAME=$(whoami) --build-arg DOCKER_GID=$(stat -c "%g" /var/run/docker.sock) .`
+`$ docker build -t play .`
 
 Set up all containers with docker-compose:
 
