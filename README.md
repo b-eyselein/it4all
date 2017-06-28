@@ -39,17 +39,9 @@ Clone the repository on the [GitLab](https://gitlab2.informatik.uni-wuerzburg.de
 
 `$ cd it4all`
 
-Set the Path variable "IVY_HOME" in your shell:
-
-`export IVY_HOME=~/.ivy2`
-
-or, to do so permanently, use
+Set the Path variable "IVY_HOME" permanently in your shell:
 
 `echo -e "\nexport IVY_HOME=~/.ivy2" >> ~/.profile`
-
-Build the image defined in the file 'Dockerfile':
-
-`$ docker build -t play .`
 
 Set up all containers with docker-compose:
 

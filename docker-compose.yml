@@ -1,5 +1,5 @@
 it4all:
-    image:        play
+    image:        beyselein/play-dockerfile
     command:      bash
     volumes_from:
     - vc_it4all
