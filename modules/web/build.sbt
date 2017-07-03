@@ -18,3 +18,4 @@ libraryDependencies ++= Seq(
 // JaCoCo - siehe project/plugins.sbt
 jacoco.settings
 
+EclipseKeys.classpathTransformerFactories := Seq(ClasspathentryTransformer)

@@ -30,3 +30,5 @@ libraryDependencies ++= Seq(
   "xerces" % "xercesImpl" % "2.9.",
   "xml-apis" % "xml-apis" % "1.3.04"
 )
+
+EclipseKeys.classpathTransformerFactories := Seq(ClasspathentryTransformer)
