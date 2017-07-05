@@ -4,7 +4,7 @@ import model.tree.Assignment;
 
 public class And extends BinaryOperator {
 
-  public And(Node l, Node r) {
+  public And(BoolNode l, BoolNode r) {
     super(l, r, "AND");
   }
 

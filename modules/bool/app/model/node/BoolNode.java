@@ -4,7 +4,7 @@ import java.util.Set;
 
 import model.tree.Assignment;
 
-public interface Node {
+public interface BoolNode {
 
   /**
    * Evaluate this node recursively

@@ -26,7 +26,7 @@ public enum NodeType {
     return precedence;
   }
 
-  public Node instantiate(Node... formulas) {
+  public BoolNode instantiate(BoolNode... formulas) {
     switch(this) {
     case NOT:
       return new Not(formulas[0]);

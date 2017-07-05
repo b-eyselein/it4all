@@ -4,11 +4,11 @@ import java.util.Set;
 
 import model.tree.Assignment;
 
-public class Not implements Node {
+public class Not implements BoolNode {
   
-  private Node node;
+  private BoolNode node;
   
-  public Not(Node k) {
+  public Not(BoolNode k) {
     node = k;
   }
   

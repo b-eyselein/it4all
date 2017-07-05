@@ -4,7 +4,7 @@ import model.tree.Assignment;
 
 public class Equivalency extends BinaryOperator {
 
-  public Equivalency(Node l, Node r) {
+  public Equivalency(BoolNode l, BoolNode r) {
     super(l, r, "EQUIV");
   }
 

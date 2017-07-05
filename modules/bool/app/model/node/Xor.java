@@ -4,7 +4,7 @@ import model.tree.Assignment;
 
 public class Xor extends BinaryOperator {
   
-  public Xor(Node l, Node r) {
+  public Xor(BoolNode l, BoolNode r) {
     super(l, r, "XOR");
   }
 

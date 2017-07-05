@@ -4,7 +4,7 @@ import model.tree.Assignment;
 
 public class Implication extends BinaryOperator {
 
-  public Implication(Node l, Node r) {
+  public Implication(BoolNode l, BoolNode r) {
     super(l, r, "IMPL");
   }
 

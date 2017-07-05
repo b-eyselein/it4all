@@ -4,7 +4,7 @@ import model.tree.Assignment;
 
 public class Or extends BinaryOperator {
 
-  public Or(Node l, Node r) {
+  public Or(BoolNode l, BoolNode r) {
     super(l, r, "OR");
   }
 

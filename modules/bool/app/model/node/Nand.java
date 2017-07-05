@@ -4,7 +4,7 @@ import model.tree.Assignment;
 
 public class Nand extends BinaryOperator {
   
-  public Nand(Node l, Node r) {
+  public Nand(BoolNode l, BoolNode r) {
     super(l, r, "NAND");
   }
 

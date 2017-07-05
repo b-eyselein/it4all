@@ -17,8 +17,8 @@ import model.CreationQuestion;
 import model.FilloutQuestion;
 import model.StringConsts;
 import model.exercise.Success;
+import model.node.BoolNode;
 import model.tree.Assignment;
-import model.tree.BoolFormula;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
@@ -51,7 +51,7 @@ public class BoolController extends BaseController {
     CreationQuestion question = new CreationQuestion(variables, assignments);
     
     try {
-      BoolFormula formula = BoolescheFunktionParser.parse(learnerSolution);
+      BoolNode formula = BoolescheFunktionParser.parse(learnerSolution);
       
       for(Assignment assignment: question.getSolutions())
         assignment.setAssignment(BooleanQuestion.LEARNER_VARIABLE, formula.evaluate(assignment));
@@ -76,7 +76,7 @@ public class BoolController extends BaseController {
     String learnerFormula = form.get(StringConsts.FORM_VALUE);
     
     try {
-      BoolFormula formula = BoolescheFunktionParser.parse(learnerFormula);
+      BoolNode formula = BoolescheFunktionParser.parse(learnerFormula);
       
       FilloutQuestion question = new FilloutQuestion(formula);
       

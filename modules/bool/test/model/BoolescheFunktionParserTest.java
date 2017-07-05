@@ -13,7 +13,7 @@ import org.junit.Test;
 
 import com.google.common.collect.ImmutableMap;
 
-import model.node.Node;
+import model.node.BoolNode;
 import model.token.Token;
 import model.tree.BoolFormula;
 
@@ -51,12 +51,12 @@ public class BoolescheFunktionParserTest {
   @Test
   public void testParseNode() throws BooleanParsingException {
     String formula = "((a xor b) nor c) and ((a and b) xor c)";
-    Node tree = BoolescheFunktionParser.parseNode(formula);
+    BoolNode tree = BoolescheFunktionParser.parseNode(formula);
     assertNotNull(tree);
     assertEquals(tree.getAsString(false).toLowerCase(), formula);
 
     String formula2 = "not c";
-    Node tree2 = BoolescheFunktionParser.parseNode(formula2);
+    BoolNode tree2 = BoolescheFunktionParser.parseNode(formula2);
     assertNotNull(tree2);
     assertEquals(tree2.getAsString(false).toLowerCase(), formula2);
 

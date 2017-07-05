@@ -16,10 +16,6 @@ public class Assignment {
 
   private List<AssignmentItem> assignments;
 
-  public Assignment() {
-    assignments = new LinkedList<>();
-  }
-
   public Assignment(char var, boolean value) {
     this(new AssignmentItem(var, value));
   }
@@ -72,7 +68,7 @@ public class Assignment {
   public String getAssignmentsForJson() {
     return toString();
   }
-  
+
   public String getColor() {
     if(get(BooleanQuestion.LEARNER_VARIABLE) == get(BooleanQuestion.SOLUTION_VARIABLE))
       return "success";

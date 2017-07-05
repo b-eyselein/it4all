@@ -5,7 +5,7 @@ import java.util.TreeSet;
 
 import model.tree.Assignment;
 
-public class False implements Node {
+public class False implements BoolNode {
   
   @Override
   public boolean evaluate(Assignment assignment) {

@@ -5,7 +5,7 @@ import java.util.TreeSet;
 
 import model.tree.Assignment;
 
-public class Variable implements Node {
+public class Variable implements BoolNode {
   
   private char name;
   

@@ -2,14 +2,14 @@ package model.node;
 
 import java.util.Set;
 
-public abstract class BinaryOperator implements Node {
+public abstract class BinaryOperator implements BoolNode {
 
-  protected Node leftNode;
-  protected Node rightNode;
+  protected BoolNode leftNode;
+  protected BoolNode rightNode;
 
   protected String operator;
 
-  public BinaryOperator(Node theLeftNode, Node theRightNode, String theOperator) {
+  public BinaryOperator(BoolNode theLeftNode, BoolNode theRightNode, String theOperator) {
     leftNode = theLeftNode;
     rightNode = theRightNode;
     operator = theOperator;

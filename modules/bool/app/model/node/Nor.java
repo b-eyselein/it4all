@@ -4,7 +4,7 @@ import model.tree.Assignment;
 
 public class Nor extends BinaryOperator {
 
-  public Nor(Node l, Node r) {
+  public Nor(BoolNode l, BoolNode r) {
     super(l, r, "NOR");
   }
 
