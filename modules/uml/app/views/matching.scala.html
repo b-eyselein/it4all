@@ -17,7 +17,8 @@
             <div class="panel-heading">Attribute</div>
             <div class="panel-body">
             @for(attr <- solution.getAllAttributes()) {
-            	<button class="btn btn-default btn-block" id="@attr" data-typ="attr" draggable="true" ondragstart="drag(event)">@attr</button>
+            	<button class="btn btn-default btn-block" id="@attr" data-typ="attr" draggable="true"
+               ondragstart="drag(event)">@attr</button>
             }
             </div>
           </div>
@@ -28,7 +29,8 @@
             <div class="panel-heading">Methoden</div>
             <div class="panel-body">
             @for(method <- solution.getAllMethods()) {
-              <button class="btn btn-default btn-block" id="@method" data-typ="method" draggable="true" ondragstart="drag(event)">@method</button>
+              <button class="btn btn-default btn-block" id="@method" data-typ="method" draggable="true"
+               ondragstart="drag(event)">@method</button>
             }
             </div>
           </div>
@@ -55,7 +57,7 @@
     
   <hr>
   
-  <form method="post" onsubmit="prepareFormForSubmitting()" action="@uml.routes.Uml.correctMatching(exercise.id)">
+  <form method="post" onsubmit="prepareFormForSubmitting()" action="@uml.routes.UmlController.correctMatching(exercise.id)">
     <input hidden name="learnerSolution" id="learnerSolution">
     <button class="btn btn-primary btn-block">Aufgabenteil korrigieren</button>
   </form>

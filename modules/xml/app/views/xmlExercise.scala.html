@@ -2,7 +2,7 @@
 
 @main("XML-Test", user) {
 <div class="container">
-  <form action="@xml.routes.Xml.correct(exercise.id)" method="post" onsubmit="prepareFormForSubmitting();">
+  <form action="@xml.routes.XmlController.correct(exercise.id)" method="post" onsubmit="prepareFormForSubmitting();">
   
     <div class="row">
       <div class="col-md-6">
@@ -34,7 +34,7 @@
     <hr>
     
     <button type="button" class="btn btn-primary btn-block"
-      onclick="testTheSolution('@xml.routes.Xml.correctLive(exercise.id)');">L&ouml;sung testen</button>
+      onclick="testTheSolution('@xml.routes.XmlController.correctLive(exercise.id)');">L&ouml;sung testen</button>
     <input type="submit" class="btn btn-success btn-block" value="L&ouml;sung abgeben">
   
   </form>

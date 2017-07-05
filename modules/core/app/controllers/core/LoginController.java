@@ -14,15 +14,14 @@ import play.Logger;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.mvc.Result;
-import views.html.login;
 
-public class LoginController extends AbstractController {
+public class LoginController extends BaseController {
   
   private Environment env;
   
   @Inject
   public LoginController(FormFactory theFactory, Environment theEnv) {
-    super(theFactory, "user");
+    super(theFactory);
     env = theEnv;
   }
   
@@ -64,7 +63,7 @@ public class LoginController extends AbstractController {
   }
   
   public Result login() {
-    return ok(login.render());
+    return ok(views.html.login.render());
   }
   
   public Result logout() {

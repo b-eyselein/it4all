@@ -15,7 +15,7 @@ import com.google.common.collect.ImmutableMap;
 
 import model.node.Node;
 import model.token.Token;
-import model.tree.BoolescheFunktionTree;
+import model.tree.BoolFormula;
 
 public class BoolescheFunktionParserTest {
 
@@ -44,7 +44,7 @@ public class BoolescheFunktionParserTest {
   @Test
   public void testNew() throws BooleanParsingException {
     String formula = "true";
-    BoolescheFunktionTree tree = BoolescheFunktionParser.parse(formula);
+    BoolFormula tree = BoolescheFunktionParser.parse(formula);
     assertThat(tree.toString(), equalTo("1"));
   }
 
@@ -61,7 +61,7 @@ public class BoolescheFunktionParserTest {
     assertEquals(tree2.getAsString(false).toLowerCase(), formula2);
 
     String formula3 = "b OR NOT (a OR b)";
-    BoolescheFunktionTree tree3 = BoolescheFunktionParser.parse(formula3);
+    BoolFormula tree3 = BoolescheFunktionParser.parse(formula3);
     assertThat(tree3.toString(), equalTo(formula3));
   }
 

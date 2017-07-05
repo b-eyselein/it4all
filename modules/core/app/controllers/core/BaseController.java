@@ -8,13 +8,12 @@ import java.util.List;
 import io.ebean.Finder;
 import model.StringConsts;
 import model.WithId;
-import model.exercise.Exercise;
 import model.user.User;
 import play.data.FormFactory;
 import play.mvc.Controller;
 import play.mvc.Http;
 
-public abstract class AbstractController extends Controller {
+public abstract class BaseController extends Controller {
 
   protected static final String BASE_DATA_PATH = "/data"; // NOSONAR
 
@@ -23,11 +22,8 @@ public abstract class AbstractController extends Controller {
 
   protected FormFactory factory;
 
-  protected String exerciseType;
-
-  public AbstractController(FormFactory theFactory, String theExerciseType) {
+  public BaseController(FormFactory theFactory) {
     factory = theFactory;
-    exerciseType = theExerciseType;
   }
 
   public static User getUser() {
@@ -68,20 +64,8 @@ public abstract class AbstractController extends Controller {
     return Paths.get(BASE_DATA_PATH, SOLUTIONS_SUB_DIRECTORY, username);
   }
 
-  protected Path getSampleDir() {
-    return Paths.get(BASE_DATA_PATH, SAMPLE_SUB_DIRECTORY, exerciseType);
-  }
-
-  protected Path getSampleDirForExercise(Exercise exercise) {
-    return Paths.get(getSampleDir().toString(), String.valueOf(exercise.id));
-  }
-
-  protected Path getSolDirForExercise(Exercise exercise) {
-    return Paths.get(getSolDirForUser().toString(), exerciseType, String.valueOf(exercise.id));
-  }
-
-  protected Path getSolFileForExercise(Exercise exercise, String fileName, String fileExtension) {
-    return Paths.get(getSolDirForExercise(exercise).toString(), fileName + "." + fileExtension);
+  protected boolean wantsJsonResponse() {
+    return "application/json".equals(request().acceptedTypes().get(0).toString());
   }
 
 }

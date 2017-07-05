@@ -21,12 +21,14 @@ import model.logging.ExerciseCorrectionEvent;
 import model.logging.ExerciseStartEvent;
 import model.result.ElementResult;
 import model.result.JsWebResult;
+import model.result.WebResult;
 import model.user.User;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.mvc.Result;
+import play.twirl.api.Html;
 
-public class Web extends ExerciseController {
+public class WebController extends ExerciseController<WebExercise, WebResult<?>> {
 
   public static final String STANDARD_HTML = "<!doctype html>\n<html>\n<head>\n  \n</head>\n<body>\n  \n</body>\n</html>";
 
@@ -38,8 +40,8 @@ public class Web extends ExerciseController {
   private static final List<String> ALLOWED_TYPES = Arrays.asList("html", "js");
 
   @Inject
-  public Web(FormFactory theFactory) {
-    super(theFactory, "web");
+  public WebController(FormFactory theFactory) {
+    super(theFactory, "web", WebExercise.finder);
   }
 
   public static User getUser() {
@@ -94,7 +96,7 @@ public class Web extends ExerciseController {
 
     log(user, new ExerciseCompletionEvent(request(), id, new LinkedList<>(result)));
     return ok(views.html.correction.render("Web", views.html.jsResult.render(result), learnerSolution, user,
-        routes.Web.exercises()));
+        routes.WebController.exercises()));
   }
 
   public Result correctJsLive(int id) {
@@ -121,7 +123,7 @@ public class Web extends ExerciseController {
 
     log(user, new ExerciseCompletionEvent(request(), id, new LinkedList<>(result)));
     return ok(views.html.correction.render("Web", views.html.webResult.render(result), learnerSolution, user,
-        routes.Web.exercises()));
+        routes.WebController.exercises()));
   }
 
   public Result correctWebLive(int id) {
@@ -142,7 +144,7 @@ public class Web extends ExerciseController {
     User user = getUser();
 
     if(!ALLOWED_TYPES.contains(type))
-      return redirect(routes.Web.index());
+      return redirect(routes.WebController.index());
 
     log(user, new ExerciseStartEvent(request(), id));
 
@@ -160,6 +162,18 @@ public class Web extends ExerciseController {
 
   public Result playground() {
     return ok(views.html.webPlayground.render(getUser()));
+  }
+
+  @Override
+  protected List<WebResult<?>> correct(String learnerSolution, WebExercise exercise, User user) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  protected Html renderResult(List<WebResult<?>> correctionResult) {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

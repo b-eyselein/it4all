@@ -22,7 +22,7 @@
 	    <td>@Html(ex.getBadges())</td>
 	    <td>@ex.key.exerciseId:</td>
   	    <td>
-          <a href="@sql.routes.Sql.exercise(scenario.id, ex.key.exerciseId)"
+          <a href="@sql.routes.SqlController.exercise(scenario.id, ex.key.exerciseId)"
             class="btn btn-default btn-block">@ex.text</a>
         </td>
       </div>
@@ -33,9 +33,9 @@
   <hr>
   
   <div class="btn-group btn-group-justified">
-    <a type="button" href="@sql.routes.Sql.filteredScenario(scenario.id, exType.toString(), Math.max(0, start - 10))"
+    <a type="button" href="@sql.routes.SqlController.filteredScenario(scenario.id, exType.toString(), Math.max(0, start - 10))"
       class="btn btn-default">Zurück</a>
-    <a type="button" href="@sql.routes.Sql.filteredScenario(scenario.id, exType.toString(), scenario.getBorder(exType, start))"
+    <a type="button" href="@sql.routes.SqlController.filteredScenario(scenario.id, exType.toString(), scenario.getBorder(exType, start))"
       class="btn btn-default">Vorwärts</a>
   </div>
 </div>

@@ -10,7 +10,7 @@ import model.node.NodeType;
 import model.node.True;
 import model.node.Variable;
 import model.token.Token;
-import model.tree.BoolescheFunktionTree;
+import model.tree.BoolFormula;
 
 public class BoolescheFunktionParser {
 
@@ -18,8 +18,8 @@ public class BoolescheFunktionParser {
 
   }
 
-  public static BoolescheFunktionTree parse(String originalformel) throws BooleanParsingException {
-    return new BoolescheFunktionTree(parseNode(originalformel));
+  public static BoolFormula parse(String originalformel) throws BooleanParsingException {
+    return new BoolFormula(parseNode(originalformel));
   }
 
   public static Node parseNew(String formulaToParse) throws BooleanParsingException {

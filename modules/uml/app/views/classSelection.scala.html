@@ -49,7 +49,7 @@
   
   <hr>
     
-  <form action="@uml.routes.Uml.correctClassSelection(exercise.id)" method="post"
+  <form action="@uml.routes.UmlController.correctClassSelection(exercise.id)" method="post"
     onsubmit="return prepareFormForSubmitting();">
     <input type="hidden" class="form-control" name="learnerSolution" id="learnerSolution" required>
     <button type="submit" class="btn btn-primary btn-block">Klassen verifizieren</button>

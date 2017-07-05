@@ -1,6 +1,6 @@
-package model.correction;
+package model;
 
-public abstract class CorrectionException extends Exception {
+public class CorrectionException extends Exception {
 
   private static final long serialVersionUID = -639146851013219568L;
 
@@ -14,6 +14,10 @@ public abstract class CorrectionException extends Exception {
   public CorrectionException(String theLearnerSolution, String msg, Throwable cause) {
     super(msg, cause);
     learnerSolution = theLearnerSolution;
+  }
+
+  public CorrectionException(String msg, Throwable cause) {
+    this("", msg, cause);
   }
 
   public String getLearnerSolution() {

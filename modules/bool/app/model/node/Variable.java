@@ -15,7 +15,7 @@ public class Variable implements Node {
   
   @Override
   public boolean evaluate(Assignment assignment) {
-    return assignment.getAssignment(name);
+    return assignment.get(name);
   }
   
   @Override

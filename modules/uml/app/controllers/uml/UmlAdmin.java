@@ -23,65 +23,65 @@ import play.mvc.Result;
 import play.twirl.api.Html;
 
 public class UmlAdmin extends AbstractAdminController<UmlExercise, UmlExerciseReader> {
-  
+
   @Inject
   public UmlAdmin(FormFactory theFactory) {
     super(theFactory, UmlExercise.finder, "uml", new UmlExerciseReader());
   }
-  
+
   public Result checkSolution() {
     DynamicForm form = factory.form().bindFromRequest();
-    
+
     JsonNode solNode = Json.parse(form.get(StringConsts.SOLUTION_NAME));
-    
-    ProcessingReport report = JsonWrapper.validateJson(solNode, Uml.SOLUTION_SCHEMA_NODE);
-    
+
+    ProcessingReport report = JsonWrapper.validateJson(solNode, UmlController.SOLUTION_SCHEMA_NODE);
+
     if(report.isSuccess())
       return ok("ok");
-    
+
     return ok(report.toString());
   }
-  
+
   @Override
   public UmlExercise getNew(int id) {
     return new UmlExercise(id);
   }
-  
+
   @Override
   public Result index() {
     return ok(views.html.umlAdmin.index.render(getUser()));
   }
-  
+
   @Override
   public Result newExerciseForm() {
     return ok(views.html.umlAdmin.newExerciseStep1Form.render(getUser()));
   }
-  
+
   public Result newExerciseStep2() {
     DynamicForm form = factory.form().bindFromRequest();
-    
+
     String text = form.get(StringConsts.TEXT_NAME);
-    
+
     UmlExTextParser parser = new UmlExTextParser(text, Collections.emptyList(), Collections.emptyList());
-    
+
     // exercise does not get saved, so take maximum id
     UmlExercise exercise = new UmlExercise(Integer.MAX_VALUE);
     exercise.title = form.get(StringConsts.TITLE_NAME);
     exercise.text = text;
     exercise.classSelText = parser.parseTextForClassSel();
     exercise.diagDrawText = parser.parseTextForDiagDrawing();
-    
+
     return ok(views.html.umlAdmin.newExerciseStep2Form.render(getUser(), exercise, parser.getCapitalizedWords()));
   }
-  
+
   public Result newExerciseStep3() {
     DynamicForm form = factory.form().bindFromRequest();
-    
+
     String text = form.get(StringConsts.TEXT_NAME);
-    
+
     List<String> toIgnore = new LinkedList<>();
     List<Mapping> mappings = new LinkedList<>();
-    
+
     for(String capWord: UmlExTextParser.getCapitalizedWords(text)) {
       switch(form.get(capWord)) {
       case "ignore":
@@ -96,32 +96,32 @@ public class UmlAdmin extends AbstractAdminController<UmlExercise, UmlExerciseRe
         break;
       }
     }
-    
+
     UmlExTextParser parser = new UmlExTextParser(text, mappings, toIgnore);
-    
+
     // exercise does not get saved, so take maximum id
     UmlExercise exercise = new UmlExercise(Integer.MAX_VALUE);
     exercise.title = form.get(StringConsts.TITLE_NAME);
     exercise.text = text;
     exercise.classSelText = parser.parseTextForClassSel();
     exercise.diagDrawText = parser.parseTextForDiagDrawing();
-    
+
     return ok(views.html.umlAdmin.newExerciseStep3Form.render(getUser(), exercise));
   }
-  
+
   @Override
   public Html renderCreated(List<UmlExercise> exercises) {
     return views.html.umlCreation.render(exercises);
   }
-  
+
   @Override
   protected void initRemainingExFromForm(DynamicForm form, UmlExercise exercise) {
     exercise.classSelText = form.get("classSelText");
     exercise.diagDrawText = form.get("diagDrawText");
     exercise.solution = form.get("solution");
-    
+
     // return ok(views.html.umlAdmin.newExerciseCreated.render(getUser(),
     // newExercise));
   }
-  
+
 }

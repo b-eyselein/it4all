@@ -10,9 +10,9 @@ import model.node.Node;
 import model.node.Not;
 import model.node.Or;
 import model.node.Variable;
-import model.tree.BoolescheFunktionTree;
+import model.tree.BoolFormula;
 
-public class BoolescheFunktionenGenerator {
+public class BoolFormulaGenerator {
   
   private static ThreadLocalRandom random = ThreadLocalRandom.current();
   
@@ -24,11 +24,11 @@ public class BoolescheFunktionenGenerator {
   
   private static final String ALPHABET = "abcdefghijklmnopqrstuvwxyz";
   
-  private BoolescheFunktionenGenerator() {
+  private BoolFormulaGenerator() {
     
   }
   
-  public static BoolescheFunktionTree generateRandomBooleanFunction() {
+  public static BoolFormula generateRandom() {
     int depth = random.nextInt(MIN_DEPTH, MAX_DEPTH + 1);
     
     if(depth == 2) {
@@ -44,11 +44,11 @@ public class BoolescheFunktionenGenerator {
       Node rightChild = generateRandomOperator(takeRandomVariable(variables), takeRandomVariable(variables));
       
       Node rootNode = generateRandomOperator(leftChild, rightChild);
-      return new BoolescheFunktionTree(rootNode);
+      return new BoolFormula(rootNode);
     } else { // depth == 1
       List<Variable> variables = Arrays.asList(new Variable('a'), new Variable('b'));
       Node rootNode = generateRandomOperator(variables.get(0), variables.get(1));
-      return new BoolescheFunktionTree(rootNode);
+      return new BoolFormula(rootNode);
     }
   }
   

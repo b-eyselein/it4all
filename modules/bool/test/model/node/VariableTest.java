@@ -10,13 +10,13 @@ import org.junit.Test;
 import model.BooleanParsingException;
 import model.BoolescheFunktionParser;
 import model.tree.Assignment;
-import model.tree.BoolescheFunktionTree;
+import model.tree.BoolFormula;
 
 public class VariableTest {
   
   @Test
   public void testEvaluate() throws BooleanParsingException {
-    BoolescheFunktionTree t1 = BoolescheFunktionParser.parse("a");
+    BoolFormula t1 = BoolescheFunktionParser.parse("a");
     Assignment assignment = new Assignment();
     
     assignment.setAssignment('a', false);

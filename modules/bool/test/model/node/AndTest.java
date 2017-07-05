@@ -8,13 +8,13 @@ import org.junit.Test;
 import model.BooleanParsingException;
 import model.BoolescheFunktionParser;
 import model.tree.Assignment;
-import model.tree.BoolescheFunktionTree;
+import model.tree.BoolFormula;
 
 public class AndTest {
 
   @Test
   public void testEvaluate() throws BooleanParsingException {
-    BoolescheFunktionTree t1 = BoolescheFunktionParser.parse("a and b");
+    BoolFormula t1 = BoolescheFunktionParser.parse("a and b");
     Assignment assignment = new Assignment();
 
     // a = 0, b = 0

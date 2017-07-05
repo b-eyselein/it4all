@@ -11,20 +11,20 @@ GET    /new             controllers.web.WebAdmin.newExerciseForm()
 POST   /new             controllers.web.WebAdmin.newExercise()
 
 # All
-GET    /                controllers.web.Web.index()
+GET    /                controllers.web.WebController.index()
 
-GET    /playground      controllers.web.Web.playground()
+GET    /playground      controllers.web.WebController.playground()
 
 
-GET    /exercises       controllers.web.Web.exercises()
+GET    /exercises       controllers.web.WebController.exercises()
 
-GET    /:id/:type       controllers.web.Web.exercise(id: Int, type: String)
+GET    /:id/:type       controllers.web.WebController.exercise(id: Int, type: String)
 
-PUT    /web/:id         controllers.web.Web.correctWebLive(id: Int)
-POST   /web/:id         controllers.web.Web.correctWeb(id: Int)
+PUT    /web/:id         controllers.web.WebController.correctWebLive(id: Int)
+POST   /web/:id         controllers.web.WebController.correctWeb(id: Int)
 
-PUT    /js/:id          controllers.web.Web.correctJsLive(id: Int)
-POST   /js/:id          controllers.web.Web.correctJs(id: Int)
+PUT    /js/:id          controllers.web.WebController.correctJsLive(id: Int)
+POST   /js/:id          controllers.web.WebController.correctJs(id: Int)
 
 GET    /sol/:user/:id   controllers.web.SolutionController.site(user: String, id: Int)
 

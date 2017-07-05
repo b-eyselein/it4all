@@ -8,7 +8,7 @@ function testSolution() {
     alert("Geben Sie bitte eine Formel ein!");
     return;
   }
-  testTheSolution("@controllers.bool.routes.Bool.checkBoolCreationSolution()");
+  testTheSolution("@controllers.bool.routes.BoolController.checkBoolCreationSolution()");
 }
 </script>
 
@@ -39,7 +39,7 @@ function testSolution() {
         </div>
       </div>
       
-        <form role="form" class="form-horizontal" action="@controllers.bool.routes.Bool.checkBoolCreationSolution()" method="post">
+        <form class="form-horizontal" action="@controllers.bool.routes.BoolController.checkBoolCreationSolution()" method="post">
           <div class="form-group">
             <label class="control-label col-xs-1" for="learnerSolution">z = </label>
             <div class="col-xs-11">
@@ -55,8 +55,8 @@ function testSolution() {
               <button type="submit" class="btn btn-primary btn-block">zeige Musterl&ouml;sung</button>
             </div>
             <div class="col-sm-4">
-              <a type="button" href="@controllers.bool.routes.Bool.newBoolCreationQuestion()" class="btn btn-primary btn-block">N&auml;chste
-              Aufgabe</a>
+              <a href="@controllers.bool.routes.BoolController.newBoolCreationQuestion()"
+               class="btn btn-primary btn-block">N&auml;chste Aufgabe</a>
             </div>
           </div>
           <div id="valueDiv" hidden>

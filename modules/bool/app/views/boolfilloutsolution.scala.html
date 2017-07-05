@@ -16,7 +16,7 @@
         @for(v <- question.getFormula().getVariables()){
           <th>@v</th>
         }
-          <th>@question.getFormulaAsHtml()</th>
+          <th>@Html(question.getFormulaAsHtml())</th>
           <th>Ihre L&ouml;sung</th>
         </tr>
         </thead>
@@ -33,7 +33,8 @@
         </tbody>
       </table>
       <p>
-        <a href="@controllers.bool.routes.Bool.newBoolFilloutQuestion()" class="btn btn-primary" role="button">N&auml;chste Aufgabe</a></p>
+        <a href="@controllers.bool.routes.BoolController.newBoolFilloutQuestion()" class="btn btn-primary">N&auml;chste Aufgabe</a>
+      </p>
     </div>
   </div>
 </div>

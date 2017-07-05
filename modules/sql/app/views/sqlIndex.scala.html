@@ -27,8 +27,10 @@
           @for(exType <- exTypes) {
           <td>
           @scenario.getExercisesByType(exType).size() match {
-          	case 0 => {<button class="btn btn-default btn-block" disabled title="Zu diesem Typ gibt es leider noch keine Aufgaben">0 Aufgaben</a>}
-      	    case _ => {<a href="@sql.routes.Sql.filteredScenario(scenario.id, exType.toString())" class="btn btn-default btn-block">@exType</a>}
+          	case 0 => {<button class="btn btn-default btn-block" disabled
+             title="Zu diesem Typ gibt es leider noch keine Aufgaben">0 Aufgaben</a>}
+      	    case _ => {<a href="@sql.routes.SqlController.filteredScenario(scenario.id, exType.toString())"
+             class="btn btn-default btn-block">@exType</a>}
           }
           </td>
           }

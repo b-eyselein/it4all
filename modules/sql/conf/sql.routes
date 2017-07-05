@@ -9,14 +9,14 @@ GET    /export                   controllers.sql.SqlAdmin.exportExercises()
 
 GET    /admin/:id                controllers.sql.SqlAdmin.scenarioAdmin(id: Int)
 
-GET    /scenarioes               controllers.sql.Sql.scenarioes()
+GET    /scenarioes               controllers.sql.SqlController.scenarioes()
 GET    /scenarioes/new           controllers.sql.SqlAdmin.newExerciseForm()
 POST   /scenarioes/new           controllers.sql.SqlAdmin.newExercise()
 
 # All
-GET    /                         controllers.sql.Sql.index()
-GET    /scenario/:scId/:exType   controllers.sql.Sql.filteredScenario(scId: Int, exType: String, start: Int ?= 0)
-GET    /:scId/:id                controllers.sql.Sql.exercise(scId: Int, id: Int)
+GET    /                         controllers.sql.SqlController.index()
+GET    /scenario/:scId/:exType   controllers.sql.SqlController.filteredScenario(scId: Int, exType: String, start: Int ?= 0)
+GET    /:scId/:id                controllers.sql.SqlController.exercise(scId: Int, id: Int)
 
-PUT    /:scId/:id                controllers.sql.Sql.correctLive(scId: Int, id: Int)
-POST   /:scId/:id                controllers.sql.Sql.correct(scId: Int, id: Int)
+PUT    /:scId/:id                controllers.sql.SqlController.correctLive(scId: Int, id: Int)
+POST   /:scId/:id                controllers.sql.SqlController.correct(scId: Int, id: Int)

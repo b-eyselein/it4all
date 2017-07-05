@@ -1,12 +1,14 @@
 package controllers.bool;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import controllers.core.ExerciseController;
+import com.google.common.base.Splitter;
+
+import controllers.core.BaseController;
 import model.BooleanParsingException;
 import model.BooleanQuestion;
 import model.BooleanQuestionResult;
@@ -16,36 +18,40 @@ import model.FilloutQuestion;
 import model.StringConsts;
 import model.exercise.Success;
 import model.tree.Assignment;
-import model.tree.BoolescheFunktionTree;
+import model.tree.BoolFormula;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
 import play.mvc.Result;
 
-public class Bool extends ExerciseController {
+public class BoolController extends BaseController {
+  
+  private static final String ONE = "1";
+  
+  private static final Splitter COMMA_SPLITTER = Splitter.on(",");
   
   @Inject
-  public Bool(FormFactory theFactory) {
-    super(theFactory, "bool");
+  public BoolController(FormFactory theFactory) {
+    super(theFactory);
   }
   
   public Result checkBoolCreationSolution() {
     DynamicForm form = factory.form().bindFromRequest();
-    String learnerSolution = form.get(StringConsts.FORM_VALUE);
     
-    List<Character> variables = Arrays.stream(form.get("vars").split(", ")).map(var -> Character.valueOf(var.charAt(0)))
-        .collect(Collectors.toList());
+    String learnerSolution = form.get(StringConsts.FORM_VALUE);
+    String allVars = form.get("vars");
+    
+    Set<Character> variables = COMMA_SPLITTER.splitToList(allVars).stream().map(var -> Character.valueOf(var.charAt(0)))
+        .collect(Collectors.toSet());
     
     List<Assignment> assignments = Assignment.generateAllAssignments(variables);
-    assignments.forEach(assignment -> {
-      boolean value = "1".equals(form.get(assignment.toString())) ? true : false;
-      assignment.setAssignment(BooleanQuestion.SOLUTION_VARIABLE, value);
-    });
+    assignments.forEach(assignment -> assignment.setAssignment(BooleanQuestion.SOLUTION_VARIABLE,
+        ONE.equals(form.get(assignment.toString())) ? true : false));
     
     CreationQuestion question = new CreationQuestion(variables, assignments);
     
     try {
-      BoolescheFunktionTree formula = BoolescheFunktionParser.parse(learnerSolution);
+      BoolFormula formula = BoolescheFunktionParser.parse(learnerSolution);
       
       for(Assignment assignment: question.getSolutions())
         assignment.setAssignment(BooleanQuestion.LEARNER_VARIABLE, formula.evaluate(assignment));
@@ -65,29 +71,26 @@ public class Bool extends ExerciseController {
   }
   
   public Result checkBoolFilloutSolution() {
-    DynamicForm dynFormula = factory.form().bindFromRequest();
+    DynamicForm form = factory.form().bindFromRequest();
     
-    char solVar = BooleanQuestion.SOLUTION_VARIABLE;
-    char learnerVal = BooleanQuestion.LEARNER_VARIABLE;
+    String learnerFormula = form.get(StringConsts.FORM_VALUE);
     
-    String formula = dynFormula.get("formula");
-    BoolescheFunktionTree bft;
     try {
-      bft = BoolescheFunktionParser.parse(formula);
+      BoolFormula formula = BoolescheFunktionParser.parse(learnerFormula);
+      
+      FilloutQuestion question = new FilloutQuestion(formula);
+      
+      for(Assignment assignment: question.getAssignments()) {
+        assignment.setAssignment(BooleanQuestion.SOLUTION_VARIABLE, formula.evaluate(assignment));
+        assignment.setAssignment(BooleanQuestion.LEARNER_VARIABLE, ONE.equals(form.get(assignment.toString())));
+      }
+      
+      return ok(views.html.boolfilloutsolution.render(getUser(), question));
     } catch (BooleanParsingException e) {
       // FIXME: implement return!
       e.printStackTrace();
       return badRequest();
     }
-    FilloutQuestion question = new FilloutQuestion(bft.getVariables(), bft);
-    
-    for(Assignment assignment: question.getAssignments()) {
-      String wert = dynFormula.get(assignment.toString());
-      assignment.setAssignment(solVar, bft.evaluate(assignment));
-      assignment.setAssignment(learnerVal, "1".equals(wert));
-    }
-    
-    return ok(views.html.boolfilloutsolution.render(getUser(), question));
   }
   
   public Result index() {
@@ -95,12 +98,10 @@ public class Bool extends ExerciseController {
   }
   
   public Result newBoolCreationQuestion() {
-    CreationQuestion question = CreationQuestion.generateNew();
-    return ok(views.html.boolcreatequestion.render(getUser(), question));
+    return ok(views.html.boolcreatequestion.render(getUser(), CreationQuestion.generateNew()));
   }
   
   public Result newBoolFilloutQuestion() {
-    FilloutQuestion question = FilloutQuestion.generateNew();
-    return ok(views.html.boolfilloutquestion.render(getUser(), question));
+    return ok(views.html.boolfilloutquestion.render(getUser(), FilloutQuestion.generateNew()));
   }
 }

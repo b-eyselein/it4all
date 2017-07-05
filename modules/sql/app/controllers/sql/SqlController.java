@@ -11,14 +11,14 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import controllers.core.BaseExerciseController;
 import controllers.core.ExerciseController;
+import model.CorrectionException;
 import model.Levenshtein;
 import model.SqlSolution;
 import model.SqlSolutionKey;
 import model.SqlUser;
 import model.StringConsts;
-import model.correction.CorrectionException;
-import model.correction.EmptySolutionException;
 import model.exercise.SqlExercise;
 import model.exercise.SqlExerciseKey;
 import model.exercise.SqlExerciseType;
@@ -37,7 +37,7 @@ import play.db.Database;
 import play.db.NamedDatabase;
 import play.mvc.Result;
 
-public class Sql extends ExerciseController {
+public class SqlController extends BaseExerciseController {
   
   private static final String STANDARD_SQL = "";
   
@@ -45,7 +45,7 @@ public class Sql extends ExerciseController {
   private Database sqlOther;
   
   @Inject
-  public Sql(FormFactory theFactory, @NamedDatabase("sqlselectroot") Database theSqlSelect,
+  public SqlController(FormFactory theFactory, @NamedDatabase("sqlselectroot") Database theSqlSelect,
       @NamedDatabase("sqlotherroot") Database theSqlOther) {
     super(theFactory, "sql");
     sqlSelect = theSqlSelect;
@@ -121,8 +121,8 @@ public class Sql extends ExerciseController {
       
       log(user, new ExerciseCompletionEvent(request(), exerciseId, result.getResults()));
       
-      return ok(
-          views.html.correction.render("SQL", result.render(), result.getLearnerSolution(), user, routes.Sql.index()));
+      return ok(views.html.correction.render("SQL", result.render(), result.getLearnerSolution(), user,
+          routes.SqlController.index()));
     } catch (CorrectionException e) { // NOSONAR
       return ok(
           views.html.error.render(user, "<div class=\"alert alert-danger\">Es gab einen Fehler bei der Korrektur: <pre>"
@@ -133,11 +133,11 @@ public class Sql extends ExerciseController {
   public Result correctLive(int scenarioId, int exerciseId) {
     try {
       User user = getUser();
-
+      
       SqlResult<? extends Statement, ?> result = correct(user.name, scenarioId, exerciseId);
-
+      
       log(user, new ExerciseCorrectionEvent(request(), exerciseId, result.getResults()));
-
+      
       return ok(result.render());
     } catch (CorrectionException e) { // NOSONAR
       return ok(views.html.correctionerror
@@ -152,7 +152,7 @@ public class Sql extends ExerciseController {
     SqlExercise exercise = SqlExercise.finder.byId(exKey);
     
     if(exercise == null)
-      return redirect(controllers.sql.routes.Sql.index());
+      return redirect(controllers.sql.routes.SqlController.index());
     
     List<SqlQueryResult> tables = readTablesInDatabase(sqlSelect, exercise.scenario.shortName);
     
@@ -168,7 +168,7 @@ public class Sql extends ExerciseController {
     final SqlScenario scenario = SqlScenario.finder.byId(id);
     
     if(scenario == null)
-      return redirect(controllers.sql.routes.Sql.index());
+      return redirect(controllers.sql.routes.SqlController.index());
     
     return ok(views.html.sqlscenario.render(getUser(), scenario, SqlExerciseType.valueOf(exType), start));
   }
@@ -184,19 +184,16 @@ public class Sql extends ExerciseController {
   private SqlResult<? extends Statement, ?> correct(String userName, int scenarioId, int exerciseId)
       throws CorrectionException {
     String learnerSol = factory.form().bindFromRequest().get(StringConsts.FORM_VALUE);
-
+    
     if(learnerSol == null || learnerSol.isEmpty())
-      throw new EmptySolutionException(learnerSol, "Sie haben eine leere Lösung abgegeben!");
-
+      throw new CorrectionException(learnerSol, StringConsts.EMPTY_SOLUTION);
+    
     SqlExercise exercise = SqlExercise.finder.byId(new SqlExerciseKey(scenarioId, exerciseId));
-
+    
     saveSolution(userName, learnerSol, exercise.key);
-
-    if(learnerSol.isEmpty())
-      throw new EmptySolutionException(learnerSol, StringConsts.EMPTY_SOLUTION);
-
+    
     SqlSample sample = findBestFittingSample(learnerSol, exercise.samples);
-
+    
     return exercise.getCorrector().correct(getDBForExType(exercise.exerciseType), learnerSol, sample, exercise);
   }
   

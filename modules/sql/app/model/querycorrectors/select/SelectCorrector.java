@@ -12,9 +12,8 @@ import java.util.stream.Collectors;
 
 import javax.inject.Singleton;
 
-import model.SqlCorrectionException;
+import model.CorrectionException;
 import model.StringConsts;
-import model.correction.CorrectionException;
 import model.exercise.SqlExercise;
 import model.matching.Match;
 import model.matching.MatchingResult;
@@ -98,7 +97,7 @@ public class SelectCorrector extends QueryCorrector<Select, SelectItem> {
       return new SqlExecutionResult(userResult, sampleResult);
     } catch (SQLException e) {
       e.fillInStackTrace();
-      throw new SqlCorrectionException(userStatement.toString(), e.getMessage(), e);
+      throw new CorrectionException(userStatement.toString(), e.getMessage(), e);
     }
 
   }

@@ -1,8 +1,8 @@
-GET    /               controllers.bool.Bool.index()
+GET    /               controllers.bool.BoolController.index()
 
-GET    /boolfillout    controllers.bool.Bool.newBoolFilloutQuestion()
-POST   /boolfillout    controllers.bool.Bool.checkBoolFilloutSolution()
+GET    /boolfillout    controllers.bool.BoolController.newBoolFilloutQuestion()
+POST   /boolfillout    controllers.bool.BoolController.checkBoolFilloutSolution()
 
-GET    /boolcreation   controllers.bool.Bool.newBoolCreationQuestion()
-PUT    /boolcreation   controllers.bool.Bool.checkBoolCreationSolution()
-POST   /boolcreation   controllers.bool.Bool.checkBoolCreationSolution()
+GET    /boolcreation   controllers.bool.BoolController.newBoolCreationQuestion()
+PUT    /boolcreation   controllers.bool.BoolController.checkBoolCreationSolution()
+POST   /boolcreation   controllers.bool.BoolController.checkBoolCreationSolution()

@@ -13,11 +13,13 @@
     
       <div class="btn-group btn-group-justified">
         <div class="btn-group">
-          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#databaseSchema">Datenbankschema</button>
+          <button type="button" class="btn btn-primary" data-toggle="modal" 
+          data-target="#databaseSchema">Datenbankschema</button>
         </div>
         @for(table <- tables) {
         <div class="btn-group">
-          <button type="button" class="btn btn-default" data-toggle="modal" data-target="#@table.getTableName()">@table.getTableName()</button>
+          <button type="button" class="btn btn-default" data-toggle="modal" 
+          data-target="#@table.getTableName()">@table.getTableName()</button>
         </div>
         }
       </div>
@@ -64,7 +66,7 @@
 
   <div class="row">
     <div class="col-md-4">
-      <form action="@sql.routes.Sql.correct(exercise.key.scenarioId, exercise.key.exerciseId)" method="post"
+      <form action="@sql.routes.SqlController.correct(exercise.key.scenarioId, exercise.key.exerciseId)" method="post"
       onsubmit="prepareFormForSubmitting();">
         <div class="panel panel-default">
           <div class="panel-heading">Aufgabe @exercise.key.exerciseId</div>
@@ -86,7 +88,7 @@
           </div>
           <div class="panel-footer">
             <button type="button" class="btn btn-default btn-block"
-            onclick="testTheSolution('@sql.routes.Sql.correctLive(exercise.key.scenarioId, exercise.key.exerciseId)')">
+            onclick="testTheSolution('@sql.routes.SqlController.correctLive(exercise.key.scenarioId, exercise.key.exerciseId)')">
             L&ouml;sung testen</button>
             <button class="btn btn-default btn-block">L&ouml;sung abgeben</button>
           </div>

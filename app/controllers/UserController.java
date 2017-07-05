@@ -2,7 +2,7 @@ package controllers;
 
 import javax.inject.Inject;
 
-import controllers.core.AbstractController;
+import controllers.core.BaseController;
 import model.Secured;
 import model.StringConsts;
 import model.user.User;
@@ -12,11 +12,11 @@ import play.mvc.Result;
 import play.mvc.Security;
 
 @Security.Authenticated(Secured.class)
-public class UserController extends AbstractController {
+public class UserController extends BaseController {
   
   @Inject
   public UserController(FormFactory theFactory) {
-    super(theFactory, "user");
+    super(theFactory);
   }
   
   public Result index() {

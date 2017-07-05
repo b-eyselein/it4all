@@ -7,12 +7,12 @@
   </div>
   
   <div class="panel panel-default">
-    <a class="btn btn-primary btn-block" href="@xml.routes.Xml.playground()">Web-Playground</a>
+    <a class="btn btn-primary btn-block" href="@xml.routes.XmlController.playground()">Web-Playground</a>
   </div>
   
   <hr>
   
-  <form class="form" method="get" action="@xml.routes.Xml.index()">
+  <form class="form" method="get" action="@xml.routes.XmlController.index()">
     <div class="panel panel-default">
       <div class="panel-heading">Filter nach Aufgabentyp</div>
       <div class="panel-body">
@@ -23,7 +23,7 @@
         }
       </div>
       <div class="panel-footer">
-        <a href="@xml.routes.Xml.index()" class="btn btn-default">Filter zurücksetzen</a>
+        <a href="@xml.routes.XmlController.index()" class="btn btn-default">Filter zurücksetzen</a>
         <input type="submit" value="Filter anwenden" class="btn btn-default">
       </div>
     </div>
@@ -42,7 +42,7 @@
         <tr>
           <td>@Html(exercise.getTag())</td>
           <td>@exercise.id</td>
-          <td><a href="@xml.routes.Xml.exercise(exercise.id)" class="btn btn-primary btn-block">@exercise.title</a></td>
+          <td><a href="@xml.routes.XmlController.exercise(exercise.id)" class="btn btn-primary btn-block">@exercise.title</a></td>
         </tr>
         }
       </tbody>

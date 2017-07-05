@@ -11,14 +11,14 @@ GET    /new          controllers.xml.XmlAdmin.newExerciseForm()
 POST   /new          controllers.xml.XmlAdmin.newExercise()
 
 # All
-GET    /             controllers.xml.Xml.index(filter: java.util.List[String] ?= java.util.Collections.emptyList())
+GET    /             controllers.xml.XmlController.index(filter: java.util.List[String] ?= java.util.Collections.emptyList())
 
-GET    /playground   controllers.xml.Xml.playground()
-PUT    /playground   controllers.xml.Xml.playgroundCorrection()
+GET    /playground   controllers.xml.XmlController.playground()
+PUT    /playground   controllers.xml.XmlController.playgroundCorrection()
 
-GET    /exercises    controllers.xml.Xml.exercises()
+GET    /exercises    controllers.xml.XmlController.exercises()
 
-GET    /:id          controllers.xml.Xml.exercise(id: Int)
+GET    /:id          controllers.xml.XmlController.exercise(id: Int)
 
-PUT    /:id          controllers.xml.Xml.correctLive(id: Int)
-POST   /:id          controllers.xml.Xml.correct(id: Int)
+PUT    /:id          controllers.xml.XmlController.correctLive(id: Int)
+POST   /:id          controllers.xml.XmlController.correct(id: Int)

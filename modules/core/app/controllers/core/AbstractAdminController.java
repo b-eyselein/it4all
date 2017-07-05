@@ -28,17 +28,19 @@ import play.mvc.Security.Authenticated;
 import play.twirl.api.Html;
 
 @Authenticated(AdminSecured.class)
-public abstract class AbstractAdminController<E extends Exercise, R extends ExerciseReader<E>>
-    extends AbstractController {
+public abstract class AbstractAdminController<E extends Exercise, R extends ExerciseReader<E>> extends BaseController {
 
   protected Finder<Integer, E> finder;
 
   protected R exerciseReader;
 
+  protected String exerciseType;
+
   public AbstractAdminController(FormFactory theFactory, Finder<Integer, E> theFinder, String theExerciseType,
       R theExerciseReader) {
-    super(theFactory, theExerciseType);
+    super(theFactory);
     finder = theFinder;
+    exerciseType = theExerciseType;
     exerciseReader = theExerciseReader;
   }
 
@@ -131,6 +133,10 @@ public abstract class AbstractAdminController<E extends Exercise, R extends Exer
 
   protected E findByTitle(String title) {
     return finder.all().stream().filter(e -> title.equals(e.title)).findFirst().orElse(null);
+  }
+
+  protected Path getSampleDir() {
+    return Paths.get(BASE_DATA_PATH, SAMPLE_SUB_DIRECTORY, exerciseType);
   }
 
   protected abstract void initRemainingExFromForm(DynamicForm form, E exercise);

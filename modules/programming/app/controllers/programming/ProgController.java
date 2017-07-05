@@ -13,12 +13,11 @@ import javax.inject.Inject;
 import controllers.core.ExerciseController;
 import model.ApprovalState;
 import model.AvailableLanguages;
-import model.ProgCorrectionException;
+import model.CorrectionException;
 import model.ProgEvaluationResult;
 import model.ProgExercise;
 import model.ProgUser;
 import model.StringConsts;
-import model.correction.CorrectionException;
 import model.correctors.JavaCorrector;
 import model.correctors.ProgLangCorrector;
 import model.correctors.PythonCorrector;
@@ -35,14 +34,15 @@ import play.data.FormFactory;
 import play.libs.Json;
 import play.mvc.Http.Request;
 import play.mvc.Result;
+import play.twirl.api.Html;
 
-public class Prog extends ExerciseController {
+public class ProgController extends ExerciseController<ProgExercise, ProgEvaluationResult> {
   
   public static final int STD_TEST_DATA_COUNT = 2;
   
   @Inject
-  public Prog(FormFactory theFactory) {
-    super(theFactory, "prog");
+  public ProgController(FormFactory theFactory) {
+    super(theFactory, "prog", ProgExercise.finder);
   }
   
   public static User getUser() {
@@ -90,6 +90,7 @@ public class Prog extends ExerciseController {
     return testdata;
   }
   
+  @Override
   public Result correct(int id) {
     User user = getUser();
     
@@ -103,13 +104,14 @@ public class Prog extends ExerciseController {
       
       log(user, new ExerciseCompletionEvent(request(), id, result));
       return ok(views.html.correction.render("Programmiersprachen", views.html.progResult.render(result),
-          learnerSolution, user, routes.Prog.exercises()));
+          learnerSolution, user, routes.ProgController.exercises()));
     } catch (CorrectionException e) {
       Logger.error("Error while correcting programming", e);
       return badRequest();
     }
   }
   
+  @Override
   public Result correctLive(int id) {
     User user = getUser();
     
@@ -135,7 +137,7 @@ public class Prog extends ExerciseController {
     ProgExercise exercise = ProgExercise.finder.byId(id);
     
     if(exercise == null)
-      return redirect(routes.Prog.index());
+      return redirect(routes.ProgController.index());
     
     Request request = request();
     log(user, new ExerciseStartEvent(request, id));
@@ -206,7 +208,19 @@ public class Prog extends ExerciseController {
       
       return corrector.evaluate(learnerSolution, completeTestData, solDir);
     } catch (Exception e) {
-      throw new ProgCorrectionException(learnerSolution, "Error while correcting files", e);
+      throw new CorrectionException(learnerSolution, "Error while correcting files", e);
     }
+  }
+  
+  @Override
+  protected List<ProgEvaluationResult> correct(String learnerSolution, ProgExercise exercise, User user) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  
+  @Override
+  protected Html renderResult(List<ProgEvaluationResult> correctionResult) {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

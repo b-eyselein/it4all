@@ -11,15 +11,15 @@ GET    /new             controllers.programming.ProgAdmin.newExerciseForm()
 POST   /new             controllers.programming.ProgAdmin.newExercise()
 
 # All
-GET    /                controllers.programming.Prog.index()
-GET    /exercises       controllers.programming.Prog.exercises()
+GET    /                controllers.programming.ProgController.index()
+GET    /exercises       controllers.programming.ProgController.exercises()
 
-GET    /testdata/:id    controllers.programming.Prog.testData(id: Int)
-POST   /validate/:id    controllers.programming.Prog.validateTestData(id: Int)
-PUT    /validate/:id    controllers.programming.Prog.validateTestDataLive(id: Int)
+GET    /testdata/:id    controllers.programming.ProgController.testData(id: Int)
+POST   /validate/:id    controllers.programming.ProgController.validateTestData(id: Int)
+PUT    /validate/:id    controllers.programming.ProgController.validateTestDataLive(id: Int)
 
-GET    /declaration     controllers.programming.Prog.getDeclaration(language: String ?= "")
+GET    /declaration     controllers.programming.ProgController.getDeclaration(language: String ?= "")
 
-GET    /exercise/:id/   controllers.programming.Prog.exercise(id: Int)
-PUT    /exercise/:id    controllers.programming.Prog.correctLive(id: Int)
-POST   /exercise/:id    controllers.programming.Prog.correct(id: Int)
+GET    /exercise/:id/   controllers.programming.ProgController.exercise(id: Int)
+PUT    /exercise/:id    controllers.programming.ProgController.correctLive(id: Int)
+POST   /exercise/:id    controllers.programming.ProgController.correct(id: Int)

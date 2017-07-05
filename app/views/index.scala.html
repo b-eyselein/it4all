@@ -7,18 +7,18 @@
     <h1 class="">Verf&uuml;gbare Aufgabentypen</h1>
   </div>
   
-  <a type="button" class="btn btn-default btn-block" href="@web.routes.Web.index()">Web</a>
-  <a type="button" class="btn btn-default btn-block" href="@programming.routes.Prog.index()">Programmierung</a>
-  <a type="button" class="btn btn-default btn-block" href="@sql.routes.Sql.index()">SQL</a>
-  <a type="button" class="btn btn-default btn-block" href="@xml.routes.Xml.index()">XML</a>
-  <a type="button" class="btn btn-default btn-block" href="@nary.routes.Nary.index()">Zahlensysteme</a>
-  <a type="button" class="btn btn-default btn-block" href="@bool.routes.Bool.index()">Boolesche Algebra</a>
-  <a type="button" class="btn btn-default btn-block" href="@spread.routes.Spread.index()">Tabellenkalkuation</a>
+  <a type="button" class="btn btn-default btn-block" href="@web.routes.WebController.index()">Web</a>
+  <a type="button" class="btn btn-default btn-block" href="@programming.routes.ProgController.index()">Programmierung</a>
+  <a type="button" class="btn btn-default btn-block" href="@sql.routes.SqlController.index()">SQL</a>
+  <a type="button" class="btn btn-default btn-block" href="@xml.routes.XmlController.index()">XML</a>
+  <a type="button" class="btn btn-default btn-block" href="@nary.routes.NaryController.index()">Zahlensysteme</a>
+  <a type="button" class="btn btn-default btn-block" href="@bool.routes.BoolController.index()">Boolesche Algebra</a>
+  <a type="button" class="btn btn-default btn-block" href="@spread.routes.SpreadController.index()">Tabellenkalkuation</a>
   
   <hr>
   
   <h2>Alpha-Versionen</h2>
-  <a type="button" class="btn btn-default btn-block" href="@uml.routes.Uml.index()">UML</a>
+  <a type="button" class="btn btn-default btn-block" href="@uml.routes.UmlController.index()">UML</a>
   
   @if(isDev) {
   <hr>
@@ -26,7 +26,7 @@
   <h2>Experimentell</h2>  	
   <!-- Experimtal Correction tools only in development mode... -->
   <a type="button" class="btn btn-default btn-block" href="@questions.routes.QuestionController.index()">Auswahlfragen</a>
-  <a type="button" class="btn btn-default btn-block" href="@mindmap.routes.Mindmap.index()">Mindmaps</a>
+  <a type="button" class="btn btn-default btn-block" href="@mindmap.routes.MindmapController.index()">Mindmaps</a>
   }
 
 </div>

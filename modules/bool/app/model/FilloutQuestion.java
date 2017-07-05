@@ -1,68 +1,66 @@
 package model;
 
-import java.util.AbstractMap.SimpleEntry;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+
+import com.google.common.collect.ImmutableMap;
 
 import model.tree.Assignment;
-import model.tree.BoolescheFunktionTree;
-import play.twirl.api.Html;
+import model.tree.BoolFormula;
 
 public class FilloutQuestion extends BooleanQuestion {
-
+  
   // @formatter:off
-  private static final List<SimpleEntry<String, String>> replacers = Arrays.asList(
-      new SimpleEntry<>("IMPL", "&rArr;"),
-      new SimpleEntry<>("NOR", "&#x22bd;"),
-      new SimpleEntry<>("NAND", "&#x22bc;"),
-      new SimpleEntry<>("EQUIV", "&hArr;"),
-      new SimpleEntry<>("NOT", "&not;"),
-      new SimpleEntry<>("AND", "&and;"),
-      new SimpleEntry<>("XOR", "&oplus;"),
-      new SimpleEntry<>("OR", "&or;"));
+  private static final Map<String, String> HTML_REPLACERS = new ImmutableMap.Builder<String, String>()
+      .put("IMPL", "&rArr;")
+      .put("NOR", "&#x22bd;")
+      .put("NAND", "&#x22bc;")
+      .put("EQUIV", "&hArr;")
+      .put("NOT", "&not;")
+      .put("AND", "&and;")
+      .put("XOR", "&oplus;")
+      .put("OR", "&or;")
+      .build();
   // @formatter:on
   
-  private BoolescheFunktionTree formula;
+  private final BoolFormula formula;
   
-  private List<Assignment> assignments;
+  private final List<Assignment> assignments;
   
-  public FilloutQuestion(List<Character> theVariables, BoolescheFunktionTree theFormulaTree) {
-    super(theVariables);
+  public FilloutQuestion(BoolFormula theFormulaTree) {
+    super(theFormulaTree.getVariables());
     formula = theFormulaTree;
     assignments = Assignment.generateAllAssignments(variables);
   }
   
   public static FilloutQuestion generateNew() {
-    // TODO: implement!
-    BoolescheFunktionTree bft = BoolescheFunktionenGenerator.generateRandomBooleanFunction();
-    return new FilloutQuestion(bft.getVariables(), bft);
+    return new FilloutQuestion(BoolFormulaGenerator.generateRandom());
   }
   
   public List<Assignment> getAssignments() {
     return assignments;
   }
-
-  public BoolescheFunktionTree getFormula() {
+  
+  public BoolFormula getFormula() {
     return formula;
   }
   
-  public Html getFormulaAsHtml() {
+  public String getFormulaAsHtml() {
     String formulaAsHtml = formula.toString();
-    for(SimpleEntry<String, String> replacer: replacers)
+    
+    for(Map.Entry<String, String> replacer: HTML_REPLACERS.entrySet())
       formulaAsHtml = formulaAsHtml.replaceAll(replacer.getKey(), replacer.getValue());
-    return new Html(formulaAsHtml);
+    
+    return formulaAsHtml;
   }
   
   public String getFormulaAsString() {
     return formula.toString();
   }
-
+  
   public boolean isCorrect() {
-    for(Assignment assignment: assignments)
-      if(!assignment.assignmentIsSet(LEARNER_VARIABLE)
-          || assignment.getAssignment(LEARNER_VARIABLE) != assignment.getAssignment(SOLUTION_VARIABLE))
-        return false;
-    return true;
+    return assignments.parallelStream()
+        .allMatch(a -> a.isSet(LEARNER_VARIABLE) && a.get(LEARNER_VARIABLE) == a.get(SOLUTION_VARIABLE));
   }
   
 }

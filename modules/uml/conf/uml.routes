@@ -15,21 +15,21 @@ POST   /newEx/create                    controllers.uml.UmlAdmin.newExercise()
 PUT    /newEx/checkSolution             controllers.uml.UmlAdmin.checkSolution()
 
 # All
-GET    /                                controllers.uml.Uml.index()
+GET    /                                controllers.uml.UmlController.index()
 
 
 # Step 1: selection of classes
-GET    /:exId/classSelection            controllers.uml.Uml.classSelection(exId: Int)
-POST   /:exId/corr/classselection       controllers.uml.Uml.correctClassSelection(exId: Int)
+GET    /:exId/classSelection            controllers.uml.UmlController.classSelection(exId: Int)
+POST   /:exId/corr/classselection       controllers.uml.UmlController.correctClassSelection(exId: Int)
 
 # Step 2: finalization of diagram
-GET    /:exId/diagramDrawinghelp        controllers.uml.Uml.diagramDrawingWithHelp(exId: Int)
-POST   /:exId/corr/diagramDrawingHelp   controllers.uml.Uml.correctDiagramDrawingWithHelp(exId: Int)
+GET    /:exId/diagramDrawinghelp        controllers.uml.UmlController.diagramDrawingWithHelp(exId: Int)
+POST   /:exId/corr/diagramDrawingHelp   controllers.uml.UmlController.correctDiagramDrawingWithHelp(exId: Int)
 
 # Complete drawing of diagram without any help
-GET    /:exId/diagramDrawing            controllers.uml.Uml.diagramDrawing(exId: Int)
-POST   /:exId/corr/diagramDrawing       controllers.uml.Uml.correctDiagramDrawing(exId: Int)
+GET    /:exId/diagramDrawing            controllers.uml.UmlController.diagramDrawing(exId: Int)
+POST   /:exId/corr/diagramDrawing       controllers.uml.UmlController.correctDiagramDrawing(exId: Int)
 
 # Test Matching of attrs and methods
-GET    /:exId/matching                  controllers.uml.Uml.matching(exId: Int)
-POST   /:exId/corr/matching             controllers.uml.Uml.correctMatching(exId: Int)
+GET    /:exId/matching                  controllers.uml.UmlController.matching(exId: Int)
+POST   /:exId/corr/matching             controllers.uml.UmlController.correctMatching(exId: Int)

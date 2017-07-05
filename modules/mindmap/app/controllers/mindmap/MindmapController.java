@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 
 import javax.inject.Inject;
 
-import controllers.core.ExerciseController;
+import controllers.core.BaseController;
 import model.Secured;
 import model.mindmap.Evaluation;
 import model.mindmap.Validation;
@@ -17,7 +17,7 @@ import play.mvc.Result;
 import play.mvc.Security;
 
 @Security.Authenticated(Secured.class)
-public class Mindmap extends ExerciseController {
+public class MindmapController extends BaseController {
 
   private static final Path BASE_PATH = Paths.get("conf", "resources", "mindmap");
 
@@ -36,8 +36,8 @@ public class Mindmap extends ExerciseController {
   private static final Path ALT_SOLUTION_PATH = Paths.get(BASE_PATH.toString(), "alt_solution.xml");
 
   @Inject
-  public Mindmap(FormFactory theFactory) {
-    super(theFactory, "mindmap");
+  public MindmapController(FormFactory theFactory) {
+    super(theFactory);
   }
 
   public Result index() {

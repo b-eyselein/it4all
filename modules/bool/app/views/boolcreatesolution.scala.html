@@ -1,6 +1,13 @@
 @(user: model.user.User, question: model.CreationQuestion)
 
 @main("Formel erstellen", user) {
+<!-- Tooltip script -->
+<script>
+  $(document).ready(function() {
+    $('[data-toggle="tooltip"]').tooltip();
+  });
+</script>
+
 <div class="container">
   <div class="panel panel-default">
     <div class="panel-heading">Musterl&ouml;sung</div>
@@ -43,17 +50,12 @@
             </div>
           </div>
           <p>
-            <a class="btn btn-primary btn-block" href="@controllers.bool.routes.Bool.newBoolCreationQuestion()">N&auml;chste Aufgabe</a>
+            <a href="@controllers.bool.routes.BoolController.newBoolCreationQuestion()"
+            class="btn btn-primary btn-block">N&auml;chste Aufgabe</a>
           </p>
         </div>
       </div>
     </div>
   </div>
 </div>
-<!-- Tooltip script -->
-<script>
-  $(document).ready(function() {
-    $('[data-toggle="tooltip"]').tooltip();
-  });
-</script>
 }
