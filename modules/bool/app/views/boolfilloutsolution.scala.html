@@ -13,7 +13,7 @@
       <table class="table">
         <thead>
         <tr>
-        @for(v <- question.getFormula().getVariables()){
+        @for(v <- question.getFormula().getUsedVariables()){
           <th>@v</th>
         }
           <th>@Html(question.getFormulaAsHtml())</th>
@@ -23,7 +23,7 @@
         <tbody align="left">
         @for(assignment <- question.getAssignments) {
           <tr>
-          @for(variable <- question.getFormula().getVariables()) {
+          @for(variable <- question.getFormula().getUsedVariables()) {
             <td>@assignment.asChar(variable)</td>
           }
             <td class="@assignment.getColor() text-@assignment.getColor()">@assignment.asChar('z')</td>

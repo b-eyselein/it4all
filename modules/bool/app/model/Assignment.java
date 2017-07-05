@@ -1,27 +1,28 @@
-package model.tree;
+package model;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import model.BooleanQuestion;
-
 public class Assignment {
 
-  private List<AssignmentItem> assignments;
+  private Map<Character, Boolean> assignments = new HashMap<>();
 
   public Assignment(char var, boolean value) {
-    this(new AssignmentItem(var, value));
+    assignments.put(var, value);
   }
-
-  private Assignment(AssignmentItem... items) {
-    assignments = new LinkedList<>(Arrays.asList(items));
+  
+  public Assignment(Map<Character, Boolean> items) {
+    // Constructor for test, used with <b>IMMUTABLE</b>Map
+    assignments.putAll(items);
   }
 
   public static List<Assignment> generateAllAssignments(Collection<Character> variables) {
@@ -61,8 +62,7 @@ public class Assignment {
   }
 
   public boolean get(char variable) {
-    Optional<AssignmentItem> item = getOptAI(variable);
-    return (item.isPresent() && item.get().getValue());
+    return (assignments.containsKey(variable) && assignments.get(variable));
   }
 
   public String getAssignmentsForJson() {
@@ -81,38 +81,24 @@ public class Assignment {
   }
 
   public List<Character> getVariables() {
-    return assignments.stream()
-        .filter(a -> a.getVariable() != BooleanQuestion.SOLUTION_VARIABLE
-            && a.getVariable() != BooleanQuestion.LEARNER_VARIABLE)
-        .map(AssignmentItem::getVariable).collect(Collectors.toList());
+    return assignments.entrySet().stream()
+        .filter(a -> a.getKey() != BooleanQuestion.SOLUTION_VARIABLE && a.getKey() != BooleanQuestion.LEARNER_VARIABLE)
+        .map(Entry::getKey).collect(Collectors.toList());
   }
 
   public boolean isSet(char variable) {
-    return getAssignmentItem(variable) != null;
+    return assignments.get(variable) != null;
   }
 
   public void setAssignment(char variable, boolean value) {
-    AssignmentItem item = getAssignmentItem(variable);
-    if(item == null)
-      assignments.add(new AssignmentItem(variable, value));
-    else
-      item.setValue(value);
+    assignments.put(variable, value);
   }
 
   @Override
   public String toString() {
-    return assignments.stream()
-        .filter(a -> a.getVariable() != BooleanQuestion.SOLUTION_VARIABLE
-            && a.getVariable() != BooleanQuestion.LEARNER_VARIABLE)
-        .map(AssignmentItem::toString).collect(Collectors.joining(","));
-  }
-
-  private AssignmentItem getAssignmentItem(char variable) {
-    return getOptAI(variable).orElse(null);
-  }
-
-  private Optional<AssignmentItem> getOptAI(char variable) {
-    return assignments.stream().filter(item -> item.getVariable() == variable).findFirst();
+    return assignments.entrySet().stream()
+        .filter(a -> a.getKey() != BooleanQuestion.SOLUTION_VARIABLE && a.getKey() != BooleanQuestion.LEARNER_VARIABLE)
+        .map(entry -> entry.getKey() + ": " + entry.getValue()).collect(Collectors.joining(", "));
   }
 
 }

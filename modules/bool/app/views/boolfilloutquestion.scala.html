@@ -27,7 +27,7 @@
               <tbody>
               @for(assignment <- question.getAssignments()) {
                 <tr>
-                @for(variable <- question.getFormula().getVariables()) {
+                @for(variable <- question.getFormula().getUsedVariables()) {
                   <td class="text-center">@assignment.asChar(variable)</td>
                 }
                   <td class="text-center">

@@ -1,45 +1,46 @@
 package model.node;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import model.BooleanParsingException;
-import model.BoolescheFunktionParser;
-import model.tree.Assignment;
-import model.tree.BoolFormula;
+import model.CorrectionException;
 
-public class VariableTest {
-  
+public class VariableTest extends NodeTestBase {
+
+  private static final Variable A = new Variable('a');
+
+  private static final Variable B = new Variable('b');
+
   @Test
-  public void testEvaluate() throws BooleanParsingException {
-    BoolFormula t1 = BoolescheFunktionParser.parse("a");
-    Assignment assignment = new Assignment();
-    
-    assignment.setAssignment('a', false);
-    assertFalse(t1.evaluate(assignment));
-    
-    assignment.setAssignment('a', true);
-    assertTrue(t1.evaluate(assignment));
+  public void testEvaluate() throws CorrectionException {
+    evalute(A, FF, false);
+    evalute(B, FF, false);
+
+    evalute(A, FT, false);
+    evalute(B, FT, true);
+
+    evalute(A, TF, true);
+    evalute(B, TF, false);
+
+    evalute(A, TT, true);
+    evalute(B, TT, true);
   }
-  
+
   @Test
   public void testGetAsString() {
-    assertThat((new Variable('a')).getAsString(true), equalTo("a"));
-    assertThat((new Variable('a')).getAsString(false), equalTo("a"));
+    assertThat(A.getAsString(true), equalTo("a"));
+    assertThat(A.getAsString(false), equalTo("a"));
   }
-  
+
   @Test
   public void testGetVariable() {
-    Variable a = new Variable('a');
-    assertThat(a.getVariable(), equalTo('a'));
+    assertThat(A.getVariable(), equalTo('a'));
   }
-  
+
   @Test
   public void testToString() {
-    assertThat((new Variable('a')).toString(), equalTo("a"));
+    assertThat(A.toString(), equalTo("a"));
   }
 }

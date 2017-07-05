@@ -6,8 +6,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import model.tree.Assignment;
-
 public class CreationQuestion extends BooleanQuestion {
 
   private List<Assignment> solutions;

@@ -9,16 +9,16 @@ import javax.inject.Inject;
 import com.google.common.base.Splitter;
 
 import controllers.core.BaseController;
-import model.BooleanParsingException;
 import model.BooleanQuestion;
 import model.BooleanQuestionResult;
-import model.BoolescheFunktionParser;
+import model.Assignment;
+import model.BoolNodeParser;
+import model.CorrectionException;
 import model.CreationQuestion;
 import model.FilloutQuestion;
 import model.StringConsts;
 import model.exercise.Success;
 import model.node.BoolNode;
-import model.tree.Assignment;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
@@ -51,7 +51,7 @@ public class BoolController extends BaseController {
     CreationQuestion question = new CreationQuestion(variables, assignments);
     
     try {
-      BoolNode formula = BoolescheFunktionParser.parse(learnerSolution);
+      BoolNode formula = BoolNodeParser.parse(learnerSolution);
       
       for(Assignment assignment: question.getSolutions())
         assignment.setAssignment(BooleanQuestion.LEARNER_VARIABLE, formula.evaluate(assignment));
@@ -63,10 +63,10 @@ public class BoolController extends BaseController {
       else
         return ok(views.html.boolcreatesolution.render(getUser(), question));
       
-    } catch (BooleanParsingException e) {
+    } catch (CorrectionException e) {
       // FIXME: Anzeige Parsing-fehler?
       return ok(Json.toJson(new BooleanQuestionResult(Success.NONE, learnerSolution, question,
-          e.getMessage() + ": <code>" + e.getFormula() + "</code>")));
+          e.getMessage() /* + ": <code>" + e.getFormula() + "</code>" */)));
     }
   }
   
@@ -76,7 +76,7 @@ public class BoolController extends BaseController {
     String learnerFormula = form.get(StringConsts.FORM_VALUE);
     
     try {
-      BoolNode formula = BoolescheFunktionParser.parse(learnerFormula);
+      BoolNode formula = BoolNodeParser.parse(learnerFormula);
       
       FilloutQuestion question = new FilloutQuestion(formula);
       
@@ -86,7 +86,7 @@ public class BoolController extends BaseController {
       }
       
       return ok(views.html.boolfilloutsolution.render(getUser(), question));
-    } catch (BooleanParsingException e) {
+    } catch (CorrectionException e) {
       // FIXME: implement return!
       e.printStackTrace();
       return badRequest();

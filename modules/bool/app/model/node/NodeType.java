@@ -1,5 +1,13 @@
 package model.node;
 
+import model.node.BinaryOperator.And;
+import model.node.BinaryOperator.Equivalency;
+import model.node.BinaryOperator.Implication;
+import model.node.BinaryOperator.Nand;
+import model.node.BinaryOperator.Nor;
+import model.node.BinaryOperator.Or;
+import model.node.BinaryOperator.Xor;
+
 public enum NodeType {
 
   NOT("nicht", 1), AND("und", 2), OR("oder", 3), IMPL("impl", 5), NAND("nund", 5), NOR("noder", 5), XOR("xoder",
@@ -28,8 +36,6 @@ public enum NodeType {
 
   public BoolNode instantiate(BoolNode... formulas) {
     switch(this) {
-    case NOT:
-      return new Not(formulas[0]);
     case AND:
       return new And(formulas[0], formulas[1]);
     case OR:

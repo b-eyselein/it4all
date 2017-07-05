@@ -6,7 +6,6 @@ import java.util.Map;
 import com.google.common.collect.ImmutableMap;
 
 import model.node.BoolNode;
-import model.tree.Assignment;
 
 public class FilloutQuestion extends BooleanQuestion {
 

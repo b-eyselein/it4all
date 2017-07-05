@@ -2,29 +2,26 @@ package model.node;
 
 import java.util.Set;
 
-import model.tree.Assignment;
+import model.Assignment;
+import model.node.BinaryOperator.And;
+import model.node.BinaryOperator.Or;
 
 public interface BoolNode {
-
-  /**
-   * Evaluate this node recursively
-   *
-   * @param assignment
-   *
-   * @return
-   */
-  public boolean evaluate(Assignment assignment);
-
-  /**
-   * Returns the formula represented by this node as a string with optional
-   * parantheses
-   *
-   * @param needsParanthesis
-   *          - true, if there is a parent node
-   * @return Representation of this formula as String
-   */
-  public String getAsString(boolean needsParanthesis);
-
-  public Set<Character> getUsedVariables();
-
+  
+  public static BoolNode and(BoolNode left, BoolNode right) {
+    return new And(left, right);
+  }
+  
+  public static BoolNode or(BoolNode left, BoolNode right) {
+    return new Or(left, right);
+  }
+  
+  public abstract boolean evaluate(Assignment assignment);
+  
+  public abstract String getAsString(boolean needsParanthesis);
+  
+  public abstract Set<Character> getUsedVariables();
+  
+  public abstract BoolNode negate();
+  
 }

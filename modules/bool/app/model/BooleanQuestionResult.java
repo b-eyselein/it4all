@@ -5,7 +5,6 @@ import java.util.List;
 
 import model.exercise.Success;
 import model.result.EvaluationResult;
-import model.tree.Assignment;
 
 public class BooleanQuestionResult extends EvaluationResult {
 
