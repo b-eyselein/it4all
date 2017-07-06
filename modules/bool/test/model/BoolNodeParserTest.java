@@ -11,6 +11,15 @@ import model.node.BoolNode;
 
 public class BoolNodeParserTest {
 
+  private static void validateParsing(String formula) throws CorrectionException {
+    BoolNode tree = BoolNodeParser.parse(formula);
+
+    assertNotNull("Parsing of formula " + formula + "should not be null!", tree);
+
+    String parsedAsStr = tree.getAsString(false).toLowerCase();
+    assertEquals("Parsing " + parsedAsStr + "should be equal to " + formula, parsedAsStr, formula);
+  }
+
   @Test(expected = CorrectionException.class)
   public void testKlammerung1() throws CorrectionException {
     BoolNodeParser.parse("(a and b");
@@ -36,18 +45,13 @@ public class BoolNodeParserTest {
   @Test
   public void testParse() throws CorrectionException {
     String formula = "((a xor b) nor c) and ((a and b) xor c)";
-    BoolNode tree = BoolNodeParser.parse(formula);
-    assertNotNull(tree);
-    assertEquals(tree.getAsString(false).toLowerCase(), formula);
+    validateParsing(formula);
 
     String formula2 = "not c";
-    BoolNode tree2 = BoolNodeParser.parse(formula2);
-    assertNotNull(tree2);
-    assertEquals(tree2.getAsString(false).toLowerCase(), formula2);
+    validateParsing(formula2);
 
     String formula3 = "b OR NOT (a OR b)";
-    BoolNode tree3 = BoolNodeParser.parse(formula3);
-    assertThat(tree3.toString(), equalTo(formula3));
+    validateParsing(formula3);
   }
 
   @Test(expected = CorrectionException.class)

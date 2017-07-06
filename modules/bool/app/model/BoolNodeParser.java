@@ -98,7 +98,7 @@ public class BoolNodeParser {
     if(formula.length() == 1)
       return new Variable(formula.charAt(0));
     
-    throw new CorrectionException(formula, "Es gab einen Fehler beim Parsen ihrer Formel");
+    throw new CorrectionException(formula, "The subformula \"" + formula + "\" could not be identified!");
     
   }
   
