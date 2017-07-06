@@ -1,70 +1,22 @@
 @(user: model.user.User)
 
-@title = @{"Administrator XML"}
-
-@main(title, user) {
-<div class="container">
-  <div class="page-header">
-    <h1>@title</h1>
-  </div>
-  
-  <section id="statistics">
-    <h2>Statistiken</h2>
-    <ul>
-      <li>Es existieren insgesamt @model.XmlExercise.finder.all().size() Augaben, davon
-        <ul>
-        @for(exType <- model.XmlExType.values()) {
-          <li>@model.XmlExercise.byType(exType).size() Aufgaben vom Typ @exType</li>
-        }
-        </ul>
-      </li>
-    </ul>
-  </section>
-  
-  <hr>
-  
-  <section id="administration">
-    <h2>Verwaltung der Fragen</h2>
-    <a class="btn btn-default btn-block" href="@xml.routes.XmlController.exercises()">Übersicht über alle Aufgaben</a>
-    
-    &nbsp;
-    
-    <a class="btn btn-default btn-block" href="@xml.routes.XmlAdmin.newExerciseForm()">Neue Aufgabe erstellen</a>
-    
-    &nbsp;
-    
-    <div class="btn-group btn-group-justified">
-      <a class="btn btn-default" href="@xml.routes.XmlAdmin.exportExercises()">Aufgaben als JSON exportieren</a>
-      <a class="btn btn-default" href="@xml.routes.XmlAdmin.importExercises()">Standardaufgaben importieren</a>
-    </div>
-  </section>
-  
-  <hr>
-    
-  <div class="panel panel-default">
-    <div class="panel-heading">Import von Fragen als JSON-Datei</div>
-    <div class="panel-body">
-    
-      <div class="alert alert-info">
-        Die Datei wird gegen diese <a class="alert-link" target="_blank"
-        href="@xml.routes.XmlAdmin.getJSONSchemaFile()">JSON Schema-Datei</a> geprüft.
-        Im Erfolgsfall werden die Aufgaben ausgelesen und in der Datenbank gespeichert.
-      </div>
-      
-      <form action="@xml.routes.XmlAdmin.uploadFile()" method="post" enctype="multipart/form-data" class="form-horizontal">
-        <div class="form-group">
-          <label class="control-label col-sm-2" for="file">Ihre Datei:</label>
-          <div class="col-sm-10">
-            <input type="file" class="form-control" name="file" id="file" accept=".json" required>
-          </div>
-        </div>
-        
-        <hr>
-        
-        <button class="btn btn-primary btn-block">Datei hochladen</button>
-      </form>
-    </div>
-  </div>
-    
-</div>
+@statistics = {
+<li>Es existieren insgesamt @model.XmlExercise.finder.all().size() Augaben, davon
+  <ul>
+  @for(exType <- model.XmlExType.values()) {
+    <li>@model.XmlExercise.byType(exType).size() Aufgaben vom Typ @exType</li>
+  }
+  </ul>
+</li>
 }
+
+@calls = @{new model.AdminRoutesObject(
+  xml.routes.XmlController.exercises(),
+  xml.routes.XmlAdmin.newExerciseForm(),
+  xml.routes.XmlAdmin.exportExercises(),
+  xml.routes.XmlAdmin.importExercises(),
+  xml.routes.XmlAdmin.getJSONSchemaFile(),
+  xml.routes.XmlAdmin.uploadFile()
+)}
+
+@admin.adminMain(user, "Xml", statistics, calls) { }

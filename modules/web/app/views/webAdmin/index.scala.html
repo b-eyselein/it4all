@@ -1,67 +1,22 @@
 @(user: model.user.User)
 
-@title = @{"Administrator Web"}
-
-@main(title, user) {
-<div class="container">
-  <div class="page-header">
-    <h1>@title</h1>
-  </div>
+@statistics = {
+<li>Es existieren insgesamt @model.WebExercise.finder.all().size() Aufgaben, davon
+  <ul>
   
-  <section id="statistics">
-    <h2>Statistiken</h2>
-    <ul>
-      <li>Es existieren insgesamt @model.WebExercise.finder.all().size() Aufgaben, davon
-        <ul>
-          <li>@model.WebExercise.withHtmlPart() Aufgaben mit HTML-Teil</li>
-          <li>@model.WebExercise.withJsPart() Aufgaben mit JS-Teil</li>
-        </ul>
-      </li>
-    </ul>
-  </section>
-  
-  <section id="administration">
-    <h2>Verwaltung der Aufgaben</h2>
-    <a class="btn btn-default btn-block" href="@web.routes.WebController.exercises()">Übersicht über alle Aufgaben</a>
-    
-    &nbsp;
-    
-    <a class="btn btn-default btn-block" href="@web.routes.WebAdmin.newExerciseForm()">Neue Aufgabe erstellen</a>
-    
-    &nbsp;
-    
-    <div class="btn-group btn-group-justified">
-      <a class="btn btn-default" href="@web.routes.WebAdmin.exportExercises()">Aufgaben als JSON exportieren</a>
-      <a class="btn btn-default" href="@web.routes.WebAdmin.importExercises()">Standardaufgaben importieren</a>
-    </div>
-  </section>
-  
-  <hr>
-    
-  <div class="panel panel-default">
-    <div class="panel-heading">Import von Fragen als JSON-Datei</div>
-    <div class="panel-body">
-    
-      <div class="alert alert-info">
-        Die Datei wird gegen diese <a class="alert-link" target="_blank"
-        href="@web.routes.WebAdmin.getJSONSchemaFile()">JSON Schema-Datei</a> geprüft.
-        Im Erfolgsfall werden die Aufgaben ausgelesen und in der Datenbank gespeichert.
-      </div>
-      
-      <form action="@web.routes.WebAdmin.uploadFile()" method="post" enctype="multipart/form-data" class="form-horizontal">
-        <div class="form-group">
-          <label class="control-label col-sm-2" for="file">Ihre Datei:</label>
-          <div class="col-sm-10">
-            <input type="file" class="form-control" name="file" id="file" accept=".json" required>
-          </div>
-        </div>
-        
-        <hr>
-        
-        <button class="btn btn-primary btn-block">Datei hochladen</button>
-      </form>
-    </div>
-  </div>
-    
-</div>
+    <li>@model.WebExercise.withHtmlPart() Aufgaben mit HTML-Teil</li>
+    <li>@model.WebExercise.withJsPart() Aufgaben mit JS-Teil</li>
+  </ul>
+</li>
 }
+
+@calls = @{new model.AdminRoutesObject(
+  web.routes.WebController.exercises(),
+  web.routes.WebAdmin.newExerciseForm(),
+  web.routes.WebAdmin.exportExercises(),
+  web.routes.WebAdmin.importExercises(),
+  web.routes.WebAdmin.getJSONSchemaFile(),
+  web.routes.WebAdmin.uploadFile()
+)}
+
+@admin.adminMain(user, "Web", statistics, calls) { }
