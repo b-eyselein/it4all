@@ -1,5 +1,7 @@
 @(user: model.user.User, question: model.FilloutQuestion)
 
+@vars = @{question.getFormula().getUsedVariables()}
+
 @main("Wertetabelle", user) {
 <!-- Tooltip script -->
 <script>
@@ -9,45 +11,44 @@
 </script>
 
 <div class="container">
-  <div class="panel panel-default">
-    <div class="panel-heading">F&uuml;llen Sie folgende Tabelle aus:</div>
-    <div class="panel-body">
-      <form action="@bool.routes.BoolController.checkBoolFilloutSolution()" method="post">
-        <div class="row">  
-          <div class="col-sm-6 col-sm-offset-3">
-            <table class="table table-responsive" border="1">
-              <thead>
-                <tr>
-                @for(v <- question.getVariables()) {
-                  <th class="text-center">@v</th>
-                }
-                  <th class="text-center">@Html(question.getFormulaAsHtml())</th>
-                </tr>
-              </thead>
-              <tbody>
-              @for(assignment <- question.getAssignments()) {
-                <tr>
-                @for(variable <- question.getFormula().getUsedVariables()) {
-                  <td class="text-center">@assignment.asChar(variable)</td>
-                }
-                  <td class="text-center">
-                    <input type="number" autocomplete="off" min="0" max="1" step="1"
-                  name="@assignment.toString" size="1" maxlength="1" required>
-                  </td>
-                </tr>
-              }
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-6 col-sm-offset-3">
-            <input hidden name="@model.StringConsts.FORM_VALUE" value="@question.getFormulaAsString()">
-            <button type="submit" class="btn btn-primary">Pr&uuml;fen</button>
-          </div>
-        </div>
-      </form>
-    </div>
+  <div class="page-header">
+    <h1>Ausf&uuml;llen einer Wertetabelle</h1>
   </div>
+
+  <form action="@bool.routes.BoolController.checkBoolFilloutSolution()" method="post">
+    <div class="row">  
+      <div class="col-sm-6 col-sm-offset-3">
+        <table class="table table-responsive" border="1">
+          <thead>
+            <tr>
+            @for(v <- question.getVariables()) {
+              <th class="text-center">@v</th>
+            }
+              <th class="text-center">@Html(question.getFormulaAsHtml())</th>
+            </tr>
+          </thead>
+          <tbody>
+          @for(assignment <- question.getAssignments()) {
+            <tr>
+            @for(variable <- vars) {
+              <td class="text-center">@assignment.asChar(variable)</td>
+            }
+              <td class="text-center">
+                <input type="number" autocomplete="off" min="0" max="1" step="1"
+              name="@assignment.toString" size="1" maxlength="1" required>
+              </td>
+            </tr>
+          }
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-6 col-sm-offset-3">
+        <input hidden name="@model.StringConsts.FORM_VALUE" value="@question.getFormulaAsString()">
+        <button class="btn btn-primary btn-block">Pr&uuml;fen</button>
+      </div>
+    </div>
+  </form>
 </div>
 }

@@ -5,23 +5,12 @@ import java.util.TreeSet;
 
 import model.Assignment;
 
-public abstract class Constant implements BoolNode {
+public final class Constant implements BoolNode {
   
-  public static final Constant FALSE = new Constant(false) {
-    @Override
-    public BoolNode negate() {
-      return TRUE;
-    }
-  };
+  public static final Constant FALSE = new Constant(false);
+  public static final Constant TRUE = new Constant(true);
   
-  public static final Constant TRUE = new Constant(true) {
-    @Override
-    public BoolNode negate() {
-      return FALSE;
-    }
-  };
-  
-  private boolean value;
+  private final boolean value;
   
   private Constant(boolean theValue) {
     value = theValue;
@@ -37,13 +26,14 @@ public abstract class Constant implements BoolNode {
     return value ? "1" : "0";
   }
   
-  public Constant getInstance(boolean value) {
-    return value ? TRUE : FALSE;
-  }
-  
   @Override
   public Set<Character> getUsedVariables() {
     return new TreeSet<>();
+  }
+  
+  @Override
+  public BoolNode negate() {
+    return value ? FALSE : TRUE;
   }
   
   @Override

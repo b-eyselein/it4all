@@ -7,8 +7,8 @@ import model.Assignment;
 
 public class Variable implements BoolNode {
 
-  private boolean negated;
-  private char name;
+  private final boolean negated;
+  private final char name;
 
   public Variable(boolean isNegated, char theName) {
     negated = isNegated;

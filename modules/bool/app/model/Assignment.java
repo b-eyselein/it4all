@@ -19,7 +19,7 @@ public class Assignment {
   public Assignment(char var, boolean value) {
     assignments.put(var, value);
   }
-  
+
   public Assignment(Map<Character, Boolean> items) {
     // Constructor for test, used with <b>IMMUTABLE</b>Map
     assignments.putAll(items);

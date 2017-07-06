@@ -120,11 +120,11 @@ public abstract class BinaryOperator implements BoolNode {
     }
   }
   
-  protected BoolNode leftNode;
+  protected final BoolNode leftNode;
   
-  protected BoolNode rightNode;
+  protected final BoolNode rightNode;
   
-  protected String operator;
+  protected final String operator;
   
   protected BinaryOperator(BoolNode theLeftNode, BoolNode theRightNode, String theOperator) {
     leftNode = theLeftNode;

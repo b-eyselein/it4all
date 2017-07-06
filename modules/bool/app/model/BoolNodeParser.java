@@ -1,119 +1,115 @@
 package model;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import model.node.BoolNode;
 import model.node.Constant;
 import model.node.NodeType;
 import model.node.Variable;
-import model.token.Token;
 
 public class BoolNodeParser {
-
+  
+  private static class OperatorPosition {
+    
+    private final NodeType type;
+    private final int position;
+    
+    public OperatorPosition(NodeType theType, int thePosition) {
+      type = theType;
+      position = thePosition;
+    }
+    
+    public int getPosition() {
+      return position;
+    }
+    
+    public NodeType getType() {
+      return type;
+    }
+  }
+  
   private BoolNodeParser() {
-
+    
   }
-
-  public static BoolNode parse(String originalformel) throws CorrectionException {
-    return parseNode(originalformel);
-  }
-
-  public static BoolNode parseNew(String formulaToParse) throws CorrectionException {
-    List<Token> tokens = tokenize(formulaToParse);
-
-    // TODO: String to token...
-    List<Token> groupedTokens = groupTokens(tokens);
-
-    return buildTreeFromTokens(groupedTokens);
-  }
-
-  public static BoolNode parseNode(String formulaToParse) throws CorrectionException {
+  
+  public static BoolNode parse(String formulaToParse) throws CorrectionException {
     String formula = prepareFormula(formulaToParse);
-
+    
+    OperatorPosition highestOper = findHighestOperator(formula);
+    
+    if(highestOper == null)
+      return handleVarOrConst(formula);
+    
+    String rightFormula = formula.substring(highestOper.getPosition() + highestOper.getType().name().length() + 2);
+    String leftFormula = formula.substring(0, highestOper.getPosition());
+    
+    return highestOper.getType().instantiate(parse(leftFormula), parse(rightFormula));
+  }
+  
+  private static OperatorPosition findHighestOperator(String formula) throws CorrectionException {
     int parenthesisDepth = 0;
     StringBuilder read = new StringBuilder();
+    OperatorPosition highestOper = null;
+    
+    for(int i = 0; i < formula.length(); i++) {
+      char readChar = formula.charAt(i);
+      
+      switch(readChar) {
+      case '(':
+        parenthesisDepth++;
+        read = new StringBuilder();
+        break;
+      case ')':
+        parenthesisDepth--;
+        read = new StringBuilder();
+        break;
+      case ' ':
+        String toHandle = read.toString();
+        read = new StringBuilder();
+        
+        if(toHandle.isEmpty() || toHandle.length() < 2 || parenthesisDepth > 0)
+          break;
+        
+        NodeType newOperatorType;
 
-    int highestOperatorPosition = -1;
-    NodeType highestOperatorType = null;
-    String highestOperator = null;
-    try {
-      for(int i = 0; i < formula.length(); i++) {
-        char readChar = formula.charAt(i);
-        switch(readChar) {
-        case '(':
-          parenthesisDepth++;
-          break;
-        case ')':
-          parenthesisDepth--;
-          break;
-        case ' ':
-          if(read.length() > 1 && parenthesisDepth == 0) {
-            NodeType newOperatorType = highestOperator == null ? null : NodeType.valueOf(highestOperator.toUpperCase());
-            if(highestOperator == null || highestOperatorType == null
-                || highestOperatorType.getPrecende() < newOperatorType.getPrecende()) {
-              // FIXME: Operatorpräzedenz!
-              // higheset operator found, ignore everything else
-              highestOperator = read.toString();
-              highestOperatorType = NodeType.valueOf(highestOperator.toUpperCase());
-              highestOperatorPosition = i - highestOperator.length() - 1;
-            }
-          }
-          read = new StringBuilder();
-          break;
-        default:
-          read.append(readChar);
-          break;
+        try {
+          newOperatorType = NodeType.valueOf(toHandle.toUpperCase());
+        } catch (IllegalArgumentException e) {
+          throw new CorrectionException(formula,
+              "Could not identify operator \"" + toHandle + "\" at position " + i + " in formula " + formula, e);
         }
+
+        if(highestOper == null || highestOper.getType().getPrecende() < newOperatorType.getPrecende())
+          highestOper = new OperatorPosition(newOperatorType, i - newOperatorType.name().length());
+        break;
+      default:
+        read.append(readChar);
+        break;
       }
-    } catch (IllegalArgumentException e) {
-      throw new CorrectionException("", formulaToParse, e);
     }
-    if(highestOperator == null) {
-      // Kein Operator ==> Variable!
-      if("1".equals(formula) || "true".equals(formula))
-        return Constant.TRUE;
-      else if("0".equals(formula) || "false".equals(formula))
-        return Constant.FALSE;
-
-      if(formula.length() > 1)
-        throw new CorrectionException("Es gab einen Fehler beim Parsen ihrer Formel", formula);
-      else
-        return new Variable(false, formula.charAt(0));
-    }
-
-    String rightFormula = formula.substring(highestOperatorPosition + highestOperator.length() + 2);
-
-    // if("not".equals(highestOperator))
-    // return NodeType.NOT.instantiate(parseNode(rightFormula));
-
-    String leftFormula = formula.substring(0, highestOperatorPosition);
-    NodeType type = NodeType.valueOf(highestOperator.toUpperCase());
-
-    if(type == null)
-      throw new CorrectionException("There is no operator defined.", highestOperator);
-
-    BoolNode left = parseNode(leftFormula);
-    BoolNode right = parseNode(rightFormula);
-
-    return type.instantiate(left, right);
+    return highestOper;
   }
-
-  private static List<Token> groupTokens(List<Token> tokens) {
-    // TODO Auto-generated method stub
-    return null;
+  
+  private static BoolNode handleVarOrConst(String formula) throws CorrectionException {
+    if("1".equals(formula) || "true".equals(formula))
+      return Constant.TRUE;
+    
+    if("0".equals(formula) || "false".equals(formula))
+      return Constant.FALSE;
+    
+    if(formula.length() == 1)
+      return new Variable(formula.charAt(0));
+    
+    throw new CorrectionException(formula, "Es gab einen Fehler beim Parsen ihrer Formel");
+    
   }
-
+  
   private static String prepareFormula(String formula) {
-    String newFormula = formula.toLowerCase();
-    newFormula = substituteGermanOperators(newFormula);
-
+    String newFormula = substituteGermanOperators(formula.toLowerCase());
+    
     // remove outer parantheses like in (a or b)
     newFormula = trimAndRemoveParantheses(newFormula);
     return newFormula;
   }
-
+  
   /**
    * Substituiert alle deutschen Operatoren durch aequivalente englische
    * Operatoren.
@@ -126,13 +122,13 @@ public class BoolNodeParser {
       newFormula = newFormula.replaceAll(type.getGermanOperator(), type.getEnglishOperator());
     return newFormula;
   }
-
+  
   private static String trimAndRemoveParantheses(String formulaToChange) {
     String formula = formulaToChange.trim();
-
+    
     if(!formula.startsWith("(") && !formula.endsWith(")"))
       return formula;
-
+    
     int counter = 1;
     // Ignore but count first paranthesis
     for(int i = 1; i < formula.length(); i++) {
@@ -140,7 +136,7 @@ public class BoolNodeParser {
         counter++;
       else if(formula.charAt(i) == ')')
         counter--;
-
+      
       if(counter == 0) {
         // Found matching bracket
         if(i == formula.length() - 1)
@@ -155,40 +151,5 @@ public class BoolNodeParser {
     }
     return formula;
   }
-
-  protected static BoolNode buildTreeFromTokens(List<Token> tokens) {
-    for(Token token: tokens) {
-
-    }
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  protected static List<Token> tokenize(String formulaToParse) {
-    List<String> strs = new LinkedList<>();
-    StringBuilder read = new StringBuilder();
-    for(char c: formulaToParse.toCharArray()) {
-      switch(c) {
-      case '(':
-      case ')':
-        if(!read.toString().isEmpty())
-          strs.add(read.toString());
-        strs.add(String.valueOf(c));
-        read = new StringBuilder();
-        break;
-      case ' ':
-        strs.add(read.toString());
-        read = new StringBuilder();
-        break;
-      default:
-        read.append(c);
-        break;
-      }
-    }
-    if(!read.toString().isEmpty())
-      strs.add(read.toString());
-
-    return strs.stream().map(Token::toToken).collect(Collectors.toList());
-  }
-
+  
 }
