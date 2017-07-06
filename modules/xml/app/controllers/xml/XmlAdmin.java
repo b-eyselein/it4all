@@ -15,44 +15,50 @@ import model.XmlExType;
 import model.XmlExercise;
 import model.XmlExerciseReader;
 import play.Logger;
+import play.api.mvc.Call;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.mvc.Result;
 import play.twirl.api.Html;
 
 public class XmlAdmin extends AbstractAdminController<XmlExercise, XmlExerciseReader> {
-
+  
   @Inject
   public XmlAdmin(FormFactory theFactory) {
     super(theFactory, XmlExercise.finder, "xml", new XmlExerciseReader());
   }
-
+  
   @Override
   public XmlExercise getNew(int id) {
     return new XmlExercise(id);
   }
-
+  
   @Override
   public Result index() {
     return ok(views.html.xmlAdmin.index.render(getUser()));
   }
-
+  
   @Override
   public Result newExerciseForm() {
     return ok(views.html.xmlAdmin.newExerciseForm.render(getUser()));
   }
-
+  
   @Override
   public Html renderCreated(List<XmlExercise> exercises) {
     return views.html.xmlAdmin.xmlCreation.render(exercises);
   }
-
+  
+  @Override
+  protected Call getIndex() {
+    return controllers.xml.routes.XmlAdmin.index();
+  }
+  
   @Override
   protected void initRemainingExFromForm(DynamicForm form, XmlExercise exercise) {
     exercise.exerciseType = XmlExType.valueOf(form.get("exerciseType"));
     exercise.fixedStart = form.get("fixedStart");
     exercise.referenceFileName = form.get("referenceFileName");
-
+    
     List<String> referenceFileContent = Arrays.asList(form.get("referenceFileContent").split("\n"));
     Path referenceFilePath = Paths.get(getSampleDir().toString(),
         exercise.referenceFileName + "." + exercise.getReferenceFileEnding());
@@ -63,5 +69,5 @@ public class XmlAdmin extends AbstractAdminController<XmlExercise, XmlExerciseRe
       Logger.error("There has been an error creating a sample xml file", e);
     }
   }
-
+  
 }

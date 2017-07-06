@@ -18,6 +18,8 @@ POST   /assign                     controllers.questions.QuestionAdmin.assignQue
 GET    /assign/:id                 controllers.questions.QuestionAdmin.assignQuestionsSingleForm(id: Int)
 
 # Admin Quiz
+GET    /quizzes                    controllers.questions.QuizAdmin.index()
+
 GET    /quizzes/jsonSchema         controllers.questions.QuizAdmin.getJSONSchemaFile()
 POST   /quizzes/upload             controllers.questions.QuizAdmin.uploadFile()
 

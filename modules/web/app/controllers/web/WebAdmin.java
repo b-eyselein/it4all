@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import controllers.core.AbstractAdminController;
 import model.WebExercise;
 import model.WebExerciseReader;
+import play.api.mvc.Call;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.mvc.Result;
@@ -37,6 +38,11 @@ public class WebAdmin extends AbstractAdminController<WebExercise, WebExerciseRe
   @Override
   public Html renderCreated(List<WebExercise> created) {
     return views.html.webAdmin.webCreation.render(created);
+  }
+
+  @Override
+  protected Call getIndex() {
+    return controllers.web.routes.WebAdmin.index();
   }
 
   @Override

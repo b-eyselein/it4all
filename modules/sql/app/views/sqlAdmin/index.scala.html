@@ -1,63 +1,24 @@
 @(user: model.user.User)
 
-@title = @{"Administrator SQL"}
-
-@main(title, user) {
-<div class="container">
-  <div class="page-header">
-    <h1>@title</h1>
-  </div>
-  
-  <section id="statistics">
-    <h2>Statistiken</h2>
-    <ul>
-      <li>
-        Es gibt insgesamt @model.exercise.SqlScenario.finder.all().size() Szenarien
-        <ul>
-        @for(scenario <- model.exercise.SqlScenario.finder.all()) {
-          <li>Das Szenario &quot;<a href="@sql.routes.SqlAdmin.scenarioAdmin(scenario.id)">@scenario.title</a>&quot;
-          hat @scenario.exercises.size() Aufgaben</li>
-        }
-        </ul>
-      </li>
-    </ul>
-  </section>
-  
-  <hr>
-  
-  <section id="administration">
-    <h2>Verwaltung</h2>
-    <a class="btn btn-default btn-block" href="@sql.routes.SqlController.index()">Übersicht über alle Szenarien</a>
-    
-    &nbsp;
-    
-    <a class="btn btn-default btn-block" href="@sql.routes.SqlAdmin.newExerciseForm()">Neues Szenario erstellen</a>
-    
-    &nbsp;
-    
-    <div class="btn-group btn-group-justified">
-      <a class="btn btn-default btn-block" href="@sql.routes.SqlAdmin.exportExercises()">Szenarien als JSON exportieren</a>
-      <a class="btn btn-default btn-block" href="@sql.routes.SqlAdmin.importExercises()">Standardaufgaben einlesen</a>
-    </div>
-  </section>
-  
-  <hr>
-    
-  <div class="panel panel-default">
-    <div class="panel-heading">Import von Fragen als JSON-Datei</div>
-    <div class="panel-body">
-      <div class="alert alert-info">Die Datei wird gegen diese
-      <a href="@sql.routes.SqlAdmin.getJSONSchemaFile()" class="alert-link" target="_blank">JSON Schema-Datei</a>
-      geprüft. Im Erfolgsfall werden die Aufgaben ausgelesen und in der Datenbank gespeichert.</div>
-      <form action="@sql.routes.SqlAdmin.uploadFile()" method="post" enctype="multipart/form-data">
-        <div class="form-group">
-          <label for="file">Ihre Datei:</label>
-          <input type="file" class="form-control" name="file" id="file" accept=".json" required>
-        </div>
-        <button type="submit" class="btn btn-default">Submit</button>
-      </form>
-    </div>
-  </div>
-    
-</div>
+@statistics = {
+<li>
+  Es gibt insgesamt @model.exercise.SqlScenario.finder.all().size() Szenarien
+  <ul>
+  @for(scenario <- model.exercise.SqlScenario.finder.all()) {
+    <li>Das Szenario &quot;<a href="@sql.routes.SqlAdmin.scenarioAdmin(scenario.id)">@scenario.title</a>&quot;
+    hat @scenario.exercises.size() Aufgaben</li>
+  }
+  </ul>
+</li>
 }
+
+@calls = @{new model.AdminRoutesObject(
+  sql.routes.SqlController.index(),
+  sql.routes.SqlAdmin.newExerciseForm(),
+  sql.routes.SqlAdmin.exportExercises(),
+  sql.routes.SqlAdmin.importExercises(),
+  sql.routes.SqlAdmin.getJSONSchemaFile(),
+  sql.routes.SqlAdmin.uploadFile()
+)}
+
+@admin.adminMain(user, "Sql", statistics, calls) { }

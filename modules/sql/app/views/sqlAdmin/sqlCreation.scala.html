@@ -20,14 +20,10 @@
 
 <hr>
 
-<a class="btn btn-primary btn-block" href="@sql.routes.SqlAdmin.index()">Zur&uuml;ck zur Administratorseite</a>
-
-<hr>
-
 <!-- Exercises -->
 @for((exercise, index) <- scenario.exercises.zipWithIndex) {
-@if(index % 3 == 0) {<div class="row">}
-  <div class="col-sm-6 col-md-4">
+@if(index % 2 == 0) {<div class="row">}
+  <div class="col-sm-6">
     <div class="panel panel-default">
       <div class="panel-heading">@{exercise.key.exerciseId}. @exercise.text</div>
       <div class="panel-body">
@@ -52,5 +48,5 @@
       </div>
     </div>
   </div>
-@if(index % 3 == 2) {</div>}
+@if(index % 2 == 1) {</div>}
 }

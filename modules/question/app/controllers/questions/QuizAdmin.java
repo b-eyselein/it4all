@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import controllers.core.AbstractAdminController;
 import model.Quiz;
 import model.StringConsts;
+import play.api.mvc.Call;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.mvc.Result;
@@ -31,7 +32,7 @@ public class QuizAdmin extends AbstractAdminController<Quiz, QuizReader> {
     // TODO Auto-generated method stub
     return null;
   }
-  
+
   @Override
   public Result newExercise() {
     DynamicForm form = factory.form().bindFromRequest();
@@ -55,7 +56,7 @@ public class QuizAdmin extends AbstractAdminController<Quiz, QuizReader> {
     
     return ok(views.html.questionAdmin.quizCreated.render(getUser(), quiz));
   }
-  
+
   @Override
   public Result newExerciseForm() {
     return ok(views.html.questionAdmin.newQuizForm.render(getUser()));
@@ -65,6 +66,11 @@ public class QuizAdmin extends AbstractAdminController<Quiz, QuizReader> {
   public Html renderCreated(List<Quiz> created) {
     // TODO Auto-generated method stub
     return null;
+  }
+  
+  @Override
+  protected Call getIndex() {
+    return controllers.questions.routes.QuizAdmin.index();
   }
   
   @Override

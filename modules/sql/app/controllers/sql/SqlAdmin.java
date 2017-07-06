@@ -8,6 +8,7 @@ import controllers.core.AbstractAdminController;
 import model.SqlScenarioReader;
 import model.StringConsts;
 import model.exercise.SqlScenario;
+import play.api.mvc.Call;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.db.Database;
@@ -37,28 +38,12 @@ public class SqlAdmin extends AbstractAdminController<SqlScenario, SqlScenarioRe
   public Result index() {
     return ok(views.html.sqlAdmin.index.render(getUser()));
   }
-
-  @Override
-  public Result newExercise() {
-    DynamicForm form = factory.form().bindFromRequest();
-    SqlScenario scenario = new SqlScenario(findMinimalNotUsedId(finder));
-
-    scenario.author = form.get(StringConsts.AUTHOR_NAME);
-    scenario.scriptFile = form.get(StringConsts.SCRIPTFILE_NAME);
-    scenario.shortName = form.get(StringConsts.SHORTNAME_NAME);
-    scenario.text = form.get(StringConsts.TEXT_NAME);
-    scenario.title = form.get(StringConsts.TITLE_NAME);
-
-    exerciseReader.saveExercise(scenario);
-
-    return ok(views.html.preview.render(getUser(), views.html.sqlAdmin.sqlCreation.render(scenario)));
-  }
-
+  
   @Override
   public Result newExerciseForm() {
     return ok(views.html.sqlAdmin.newScenarioForm.render(getUser()));
   }
-
+  
   @Override
   public Html renderCreated(List<SqlScenario> created) {
     // Guaranteed to be always one scenario by json Schema!
@@ -70,9 +55,14 @@ public class SqlAdmin extends AbstractAdminController<SqlScenario, SqlScenarioRe
   }
 
   @Override
-  protected void initRemainingExFromForm(DynamicForm form, SqlScenario exercise) {
-    // TODO Auto-generated method stub
+  protected Call getIndex() {
+    return controllers.sql.routes.SqlAdmin.index();
+  }
 
+  @Override
+  protected void initRemainingExFromForm(DynamicForm form, SqlScenario exercise) {
+    exercise.scriptFile = form.get(StringConsts.SCRIPTFILE_NAME);
+    exercise.shortName = form.get(StringConsts.SHORTNAME_NAME);
   }
 
 }
