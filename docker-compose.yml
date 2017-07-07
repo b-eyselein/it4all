@@ -6,8 +6,8 @@ it4all:
     volumes:
     # TODO: set umask to 011 to get file permissions to 766?
     - ./:/app/
-    - ~/.ivy2/:$HOME/.ivy2/
-    - ~/.sbt/:$HOME/.sbt/
+    - ~/.ivy2/:/root/.ivy2/
+    - ~/.sbt/:/root/.sbt/
     - /var/run/docker.sock:/var/run/docker.sock
     links:
     - dbit4all:dbit4all
