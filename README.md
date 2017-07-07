@@ -14,14 +14,6 @@ it4all is a correction framework for
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/1d60243593e347fc9ec6026bf8e7e465)](https://www.codacy.com/app/b.eyselein/it4all?utm_source=bje40dc@gitlab2.informatik.uni-wuerzburg.de&amp;utm_medium=referral&amp;utm_content=bje40dc/it4all&amp;utm_campaign=Badge_Grade)
 
-## Versions
-
-There are two versions of it4all on [GitLab](https:/gitlab2.informatik.uni-wuerzburg.de):
-* [The development version](https://gitlab2.informatik.uni-wuerzburg.de/bje40dc/it4all.git)
-* [The distribution version](https://gitlab2.informatik.uni-wuerzburg.de/it4all/dist.git)
-
-This is the development version.
-
 ## Development
 
 ### Prerequisites
@@ -39,7 +31,7 @@ Clone the repository on the [GitLab](https://gitlab2.informatik.uni-wuerzburg.de
 
 `$ cd it4all`
 
-Set the Path variable "IVY_HOME" permanently in your shell:
+Set the Path variable "IVY_HOME" (permanently) in your shell:
 
 `echo -e "\nexport IVY_HOME=~/.ivy2" >> ~/.profile`
 
