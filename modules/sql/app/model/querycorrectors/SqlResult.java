@@ -41,6 +41,13 @@ public class SqlResult<Q extends Statement, C> {
     return learnerSolution;
   }
 
+  public List<MatchingResult<? extends Object, ? extends Match<? extends Object>>> getMatchingResults() {
+    List<MatchingResult<? extends Object, ? extends Match<? extends Object>>> ret = new LinkedList<>();
+    ret.addAll(Arrays.asList(columnComparison, tableComparison, whereComparison));
+    ret.addAll(otherComparisons);
+    return ret;
+  }
+
   public List<MatchingResult<? extends Object, ? extends Match<? extends Object>>> getOtherComparisons() {
     return otherComparisons;
   }
@@ -74,7 +81,7 @@ public class SqlResult<Q extends Statement, C> {
   public SqlResult<Q, C> setOtherComparisons(
       List<MatchingResult<? extends Object, ? extends Match<? extends Object>>> theOtherComparisons) {
     otherComparisons = theOtherComparisons;
-    return null;
+    return this;
   }
   
   public SqlResult<Q, C> setTableComparison(MatchingResult<String, Match<String>> theTableComparison) {
