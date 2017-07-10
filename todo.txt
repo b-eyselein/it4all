@@ -1,0 +1,14 @@
+TODO-Liste
+----------------------
+
+SQL
+	- testen
+	--> HiWis (Kevin, Julian?)
+
+	- evtl. Klärung mit Imgrund wg. Nutzung?
+
+Freitext- / Auswahlfragen
+	- Implementierung für Alex/SWT?
+
+Programmierung
+	- Mount-Points!
