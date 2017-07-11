@@ -65,31 +65,6 @@ create table feedback (
   constraint pk_feedback primary key (user,tool)
 );
 
-create table freetext_answer (
-  username                      varchar(255) not null,
-  question_id                   integer not null,
-  answer                        text,
-  constraint pk_freetext_answer primary key (username,question_id)
-);
-
-create table freetext_question (
-  id                            integer auto_increment not null,
-  title                         varchar(255),
-  author                        varchar(255),
-  text                          text,
-  max_points                    integer not null,
-  constraint pk_freetext_question primary key (id)
-);
-
-create table given_answer_question (
-  id                            integer auto_increment not null,
-  title                         varchar(255),
-  author                        varchar(255),
-  text                          text,
-  max_points                    integer not null,
-  constraint pk_given_answer_question primary key (id)
-);
-
 create table html_task (
   task_id                       integer not null,
   exercise_id                   integer not null,
@@ -143,6 +118,17 @@ create table prog_solution (
 create table prog_user (
   name                          varchar(255) not null,
   constraint pk_prog_user primary key (name)
+);
+
+create table question (
+  id                            integer auto_increment not null,
+  title                         varchar(255),
+  author                        varchar(255),
+  text                          text,
+  max_points                    integer not null,
+  question_type                 integer,
+  constraint ck_question_question_type check ( question_type in (0,1,2)),
+  constraint pk_question primary key (id)
 );
 
 create table question_rating (
@@ -253,6 +239,13 @@ create table users (
   constraint pk_users primary key (name)
 );
 
+create table user_answer (
+  username                      varchar(255) not null,
+  question_id                   integer not null,
+  text                          text,
+  constraint pk_user_answer primary key (username,question_id)
+);
+
 create table web_exercise (
   id                            integer auto_increment not null,
   title                         varchar(255),
@@ -288,7 +281,7 @@ create table xml_exercise (
   constraint pk_xml_exercise primary key (id)
 );
 
-alter table answer add constraint fk_answer_question_id foreign key (question_id) references given_answer_question (id) on delete restrict on update restrict;
+alter table answer add constraint fk_answer_question_id foreign key (question_id) references question (id) on delete restrict on update restrict;
 create index ix_answer_question_id on answer (question_id);
 
 alter table commited_test_data add constraint fk_commited_test_data_user_name foreign key (user_name) references prog_user (name) on delete restrict on update restrict;
@@ -306,12 +299,6 @@ create index ix_course_role_user_name on course_role (user_name);
 alter table course_role add constraint fk_course_role_course_id foreign key (course_id) references course (id) on delete restrict on update restrict;
 create index ix_course_role_course_id on course_role (course_id);
 
-alter table freetext_answer add constraint fk_freetext_answer_username foreign key (username) references question_user (name) on delete restrict on update restrict;
-create index ix_freetext_answer_username on freetext_answer (username);
-
-alter table freetext_answer add constraint fk_freetext_answer_question_id foreign key (question_id) references freetext_question (id) on delete restrict on update restrict;
-create index ix_freetext_answer_question_id on freetext_answer (question_id);
-
 alter table html_task add constraint fk_html_task_exercise_id foreign key (exercise_id) references web_exercise (id) on delete restrict on update restrict;
 create index ix_html_task_exercise_id on html_task (exercise_id);
 
@@ -327,7 +314,7 @@ create index ix_prog_solution_user_name on prog_solution (user_name);
 alter table prog_solution add constraint fk_prog_solution_exercise_id foreign key (exercise_id) references prog_exercise (id) on delete restrict on update restrict;
 create index ix_prog_solution_exercise_id on prog_solution (exercise_id);
 
-alter table question_rating add constraint fk_question_rating_question_id foreign key (question_id) references given_answer_question (id) on delete restrict on update restrict;
+alter table question_rating add constraint fk_question_rating_question_id foreign key (question_id) references question (id) on delete restrict on update restrict;
 create index ix_question_rating_question_id on question_rating (question_id);
 
 alter table question_rating add constraint fk_question_rating_username foreign key (username) references question_user (name) on delete restrict on update restrict;
@@ -347,6 +334,12 @@ create index ix_sql_solution_user_name on sql_solution (user_name);
 
 alter table sql_solution add constraint fk_sql_solution_exercise foreign key (scenario_id,exercise_id) references sql_exercise (scenario_id,exercise_id) on delete restrict on update restrict;
 create index ix_sql_solution_exercise on sql_solution (scenario_id,exercise_id);
+
+alter table user_answer add constraint fk_user_answer_username foreign key (username) references question_user (name) on delete restrict on update restrict;
+create index ix_user_answer_username on user_answer (username);
+
+alter table user_answer add constraint fk_user_answer_question_id foreign key (question_id) references question (id) on delete restrict on update restrict;
+create index ix_user_answer_question_id on user_answer (question_id);
 
 alter table web_solution add constraint fk_web_solution_user_name foreign key (user_name) references web_user (name) on delete restrict on update restrict;
 create index ix_web_solution_user_name on web_solution (user_name);
@@ -374,12 +367,6 @@ drop index ix_course_role_user_name on course_role;
 
 alter table course_role drop foreign key fk_course_role_course_id;
 drop index ix_course_role_course_id on course_role;
-
-alter table freetext_answer drop foreign key fk_freetext_answer_username;
-drop index ix_freetext_answer_username on freetext_answer;
-
-alter table freetext_answer drop foreign key fk_freetext_answer_question_id;
-drop index ix_freetext_answer_question_id on freetext_answer;
 
 alter table html_task drop foreign key fk_html_task_exercise_id;
 drop index ix_html_task_exercise_id on html_task;
@@ -417,6 +404,12 @@ drop index ix_sql_solution_user_name on sql_solution;
 alter table sql_solution drop foreign key fk_sql_solution_exercise;
 drop index ix_sql_solution_exercise on sql_solution;
 
+alter table user_answer drop foreign key fk_user_answer_username;
+drop index ix_user_answer_username on user_answer;
+
+alter table user_answer drop foreign key fk_user_answer_question_id;
+drop index ix_user_answer_question_id on user_answer;
+
 alter table web_solution drop foreign key fk_web_solution_user_name;
 drop index ix_web_solution_user_name on web_solution;
 
@@ -435,12 +428,6 @@ drop table if exists course_role;
 
 drop table if exists feedback;
 
-drop table if exists freetext_answer;
-
-drop table if exists freetext_question;
-
-drop table if exists given_answer_question;
-
 drop table if exists html_task;
 
 drop table if exists js_web_task;
@@ -452,6 +439,8 @@ drop table if exists prog_exercise;
 drop table if exists prog_solution;
 
 drop table if exists prog_user;
+
+drop table if exists question;
 
 drop table if exists question_rating;
 
@@ -478,6 +467,8 @@ drop table if exists uml_exercise;
 drop table if exists uml_implementation;
 
 drop table if exists users;
+
+drop table if exists user_answer;
 
 drop table if exists web_exercise;
 

@@ -1,0 +1,162 @@
+[
+	{
+		"id": 1,
+		"title": "Abstrakte Klassen in UML",
+		"author": "bje40dc",
+		"text": [
+			"Welche dieser Aussagen über abstrakte Klassen sind korrekt?"
+		],
+		"maxPoints": 2,
+		"questionType": "CHOICE",
+		"answers": [
+			{
+				"key": {
+					"questionId": 1,
+					"id": 1
+				},
+				"text": [
+					"Sie dürfen keine Attribute oder Operationen aufweisen."
+				],
+				"correctness": "WRONG"
+			},
+			{
+				"key": {
+					"questionId": 1,
+					"id": 2
+				},
+				"text": [
+					"Sie dürfen nicht direkt instanziiert werden."
+				],
+				"correctness": "CORRECT"
+			},
+			{
+				"key": {
+					"questionId": 1,
+					"id": 3
+				},
+				"text": [
+					"Sie werden im Klassendiagramm mit dem Modifikator \"<<abstract>>\" oder in kursiver Schrift angegeben."
+				],
+				"correctness": "CORRECT"
+			},
+			{
+				"key": {
+					"questionId": 1,
+					"id": 4
+				},
+				"text": [
+					"Sie sind nur mit Subklassen sinnvoll."
+				],
+				"correctness": "OPTIONAL"
+			}
+		]
+	},
+	{
+		"id": 2,
+		"title": "Abgeleitete Attribute in UML-Klassendiagrammen",
+		"author": "bje40dc",
+		"text": [
+			"Welche dieser Aussagen über abgeleitete Attribute ist korrekt?"
+		],
+		"maxPoints": 1,
+		"questionType": "CHOICE",
+		"answers": [
+			{
+				"key": {
+					"questionId": 2,
+					"id": 1
+				},
+				"text": [
+					"Sie werden im Klassendiagramm unterstrichen dargestellt."
+				],
+				"correctness": "WRONG"
+			},
+			{
+				"key": {
+					"questionId": 2,
+					"id": 2
+				},
+				"text": [
+					"Sie werden aus anderen Attributen berechnet."
+				],
+				"correctness": "CORRECT"
+			},
+			{
+				"key": {
+					"questionId": 2,
+					"id": 3
+				},
+				"text": [
+					"Sie haben für alle Instanzen der Klasse denselben Wert."
+				],
+				"correctness": "WRONG"
+			}
+		]
+	},
+	{
+		"id": 3,
+		"title": "Fremdschlüssel in Datenbanksystemen",
+		"author": "alg31dm",
+		"text": [
+			"Wofür werden Fremdschlüssel in Datenbanksystemen genutzt und welche Regeln gelten für sie?"
+		],
+		"maxPoints": 3,
+		"questionType": "FREETEXT",
+		"answers": [
+			{
+				"key": {
+					"questionId": 3,
+					"id": 1
+				},
+				"text": [
+					"Fremdschlüssel modellieren Assoziationen zwischen Tabellen."
+				],
+				"correctness": "CORRECT"
+			},
+			{
+				"key": {
+					"questionId": 3,
+					"id": 2
+				},
+				"text": [
+					"Sie müssen immer einen Wert besitzen (Entitätsintegrität)."
+				],
+				"correctness": "CORRECT"
+			},
+			{
+				"key": {
+					"questionId": 3,
+					"id": 3
+				},
+				"text": [
+					"Außerdem muss ein Wert, der als Fremdschlüssel vorkommt, immer auch als Primärschlüssel in der refer",
+					"enzierten Tabelle vorkommen (referentielle Integrität)."
+				],
+				"correctness": "CORRECT"
+			}
+		]
+	},
+	{
+		"id": 4,
+		"title": "Physisches Datenbanksystemen",
+		"author": "alg31dm",
+		"text": [
+			"Was wird mit einem physischen Datenmodell beschrieben?"
+		],
+		"maxPoints": 3,
+		"questionType": "FREETEXT",
+		"answers": [
+			{
+				"key": {
+					"questionId": 4,
+					"id": 1
+				},
+				"text": [
+					"Das physische Datenmodell stellt das interne Schema der Datenbank dar und beschreibt Tabellen mit ih",
+					"ren Spalten, sowie die Beziehungen zwischen Tabellen."
+				],
+				"correctness": "CORRECT"
+			}
+		]
+	}
+]

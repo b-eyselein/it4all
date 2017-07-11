@@ -8,15 +8,15 @@ import javax.persistence.ManyToOne;
 
 import io.ebean.Finder;
 import io.ebean.Model;
-import model.question.FreetextQuestion;
+import model.question.Question;
 
 @Entity
-public class FreetextAnswer extends Model {
+public class UserAnswer extends Model {
 
-  public static final Finder<FreetextAnswerKey, FreetextAnswer> finder = new Finder<>(FreetextAnswer.class);
+  public static final Finder<UserAnswerKey, UserAnswer> finder = new Finder<>(UserAnswer.class);
 
   @EmbeddedId
-  public FreetextAnswerKey key;
+  public UserAnswerKey key;
 
   @ManyToOne
   @JoinColumn(name = "username", insertable = false, updatable = false)
@@ -24,12 +24,12 @@ public class FreetextAnswer extends Model {
 
   @ManyToOne
   @JoinColumn(name = "question_id", insertable = false, updatable = false)
-  public FreetextQuestion question;
+  public Question question;
 
   @Column(columnDefinition = "text")
-  public String answer;
+  public String text;
 
-  public FreetextAnswer(FreetextAnswerKey theKey) {
+  public UserAnswer(UserAnswerKey theKey) {
     key = theKey;
   }
 

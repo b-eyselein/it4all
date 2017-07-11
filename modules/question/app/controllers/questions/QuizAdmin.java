@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import controllers.core.AbstractAdminController;
 import model.Quiz;
+import model.QuizReader;
 import model.StringConsts;
 import play.api.mvc.Call;
 import play.data.DynamicForm;

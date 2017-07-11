@@ -13,7 +13,7 @@
       <h4 class="bg-success text-center">Korrekt</h4>
       @for(correct <- result.getCorrect()) {
       <div class="panel panel-success">
-        <div class="panel-heading"><span class="glyphicon glyphicon-ok"></span> @correct.text</div>
+        <div class="panel-heading"><span class="glyphicon glyphicon-ok"></span> @correct.asText</div>
         <div class="panel-body">TODO: Erkl&auml;rung</div>
       </div>
       }
@@ -23,7 +23,7 @@
       <h4 class="bg-danger text-center">Falsch</h4>
       @for(wrong <- result.getWrong()) {
       <div class="panel panel-danger">
-        <div class="panel-heading"><span class="glyphicon glyphicon-remove"></span> @wrong.text</div>
+        <div class="panel-heading"><span class="glyphicon glyphicon-remove"></span> @wrong.asText</div>
         <div class="panel-body">TODO: Erkl&auml;rung</div>
       </div>
       }
@@ -33,7 +33,7 @@
       <h4 class="bg-warning text-center">Fehlend</h4>
       @for(missing <- result.getMissing()) {
       <div class="panel panel-warning">
-        <div class="panel-heading"><span class="glyphicon glyphicon-question-sign"></span> @missing.text</div>
+        <div class="panel-heading"><span class="glyphicon glyphicon-question-sign"></span> @missing.asText</div>
         <div class="panel-body">TODO: Erkl&auml;rung</div>
       </div>
       }

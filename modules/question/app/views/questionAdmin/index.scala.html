@@ -15,10 +15,8 @@
     <ul>
       <li>
         Es existieren insgesamt <a href="@questions.routes.QuestionController.questions()">
-         @{GivenAnswerQuestion.finder.all().size() + FreetextQuestion.finder.all().size()} Fragen</a> in allen Kategorien, darunter
+         @model.question.Question.finder.query().findCount() Fragen</a> in allen Kategorien
         <ul>
-          <li>@GivenAnswerQuestion.finder.all().size() Fragen mit gegebenen Antworten</li>
-          <li>@FreetextQuestion.finder.all().size() Freitextfragen</li>
           
         @if(!notAssignedQuestions.isEmpty()) {
           <li>Es gibt noch @notAssignedQuestions.size()

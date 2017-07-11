@@ -1,7 +1,5 @@
 @(user: model.user.User, isChoice: Boolean)
 
-@import model.question.GivenAnswerQuestion
-
 @main("Neue Frage erstellen", user) {
 <script src="@routes.Assets.versioned("javascripts/question.js")"></script>
 
@@ -44,11 +42,12 @@
       <label class="control-label col-sm-2" for="numOfAnswers">Anzahl Antworten:</label>
       <div class="col-sm-10">
         <input class="form-control" type="number" name="numOfAnswers" id="numOfAnswers" onchange="onAnswerNumChange();"
-          min="@GivenAnswerQuestion.MIN_ANSWERS" max="@GivenAnswerQuestion.MAX_ANSWERS" value="@GivenAnswerQuestion.STD_ANSWERS" required>
+          min="@model.question.Question.MIN_ANSWERS" max="@model.question.Question.MAX_ANSWERS"
+          value="@model.question.Question.STD_ANSWERS" required>
       </div>
     </div>
   
-    @for(i <- 0 until GivenAnswerQuestion.MAX_ANSWERS) {
+    @for(i <- 0 until model.question.Question.MAX_ANSWERS) {
     <div class="form-group">
       <label class="control-label col-sm-2">@{i + 1}. Antwort:</label>
       <div class="col-sm-10" id="answerDiv">
@@ -72,11 +71,12 @@
       <label class="control-label col-sm-2" for="numOfAnswers">Anzahl Antworten:</label>
       <div class="col-sm-10">
         <input class="form-control" type="number" name="numOfAnswers" id="numOfAnswers" onchange="onAnswerNumChange();"
-          min="@GivenAnswerQuestion.MIN_ANSWERS" max="@GivenAnswerQuestion.MAX_ANSWERS" value="@GivenAnswerQuestion.STD_ANSWERS" required>
+          min="@model.question.Question.MIN_ANSWERS" max="@model.question.Question.MAX_ANSWERS"
+          value="@model.question.Question.STD_ANSWERS" required>
       </div>
     </div>
     
-    @for(i <- 0 until GivenAnswerQuestion.MAX_ANSWERS) {
+    @for(i <- 0 until model.question.Question.MAX_ANSWERS) {
     <div class="form-group">
       <label class="control-label col-sm-2">@{i + 1}. Antwort:</label>
       <div class="col-sm-10" id="answerDiv">

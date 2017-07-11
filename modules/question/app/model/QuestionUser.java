@@ -20,9 +20,9 @@ public class QuestionUser extends Model {
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
   public List<QuestionRating> ratings;
-
+  
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-  public List<FreetextAnswer> answers;
+  public List<UserAnswer> answers;
 
   public QuestionUser(String theName) {
     name = theName;

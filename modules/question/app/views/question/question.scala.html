@@ -1,4 +1,4 @@
-@(user: model.user.User, question: model.question.GivenAnswerQuestion, isChoice: Boolean)
+@(user: model.user.User, question: model.question.Question, oldAnswer: model.UserAnswer)
 
 @main("Frage", user) {
 <div class="container">
@@ -8,26 +8,36 @@
 
   <form class="form-horizontal" method="post" action="@questions.routes.QuestionController.questionResult(question.id)">
   
-  @if(isChoice) {
-  	<div id="answerDiv">
-    @for(ans <- question.getAnswersForTemplate()) {
-      <div>
-        <label for="@ans.key.id">
-          <input type="checkbox" id="@ans.key.id" name="@ans.key.id"> @ans.text
+  
+    <div id="answerDiv">
+@question.questionType match {
+  case model.question.Question.QType.CHOICE => {
+	@for(ans <- question.getAnswersForTemplate()) {
+	    <div>
+    	  <label for="@ans.key.id">
+          <input type="checkbox" id="@ans.key.id" name="@ans.key.id"> @ans.asText</input>
         </label>
       </div>
     }
-  } else {
-  	<div id="answerDiv">
+  }
+  case model.question.Question.QType.FILLOUT => {
     @for(ans <- question.getAnswersForTemplate()) {
       <div class="form-group">
         <div class="col-sm-12">
-          <input id="@ans.key.id" name="@ans.key.id" class="form-control" placeholder="Antwort...">
+          <input id="@ans.key.id" name="@ans.key.id" class="form-control" placeholder="Antwort..."></input>
         </div>
       </div>
     }
+  }
+  case model.question.Question.QType.FREETEXT => {
+      <div class="form-group">
+        <div class="col-sm-12">
+        <textarea class="form-control" name="answer" rows="20"
+          placeholder="Freitextantwort..." required>@if(oldAnswer != null) {@oldAnswer.text}</textarea>
+      </div>
     </div>
   }
+}
     <hr>
 
     <input class="btn btn-block btn-primary" type="submit" value="Kontrollieren">

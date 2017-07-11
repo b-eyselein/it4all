@@ -6,55 +6,7 @@
     <h1>Alle Fragen</h1>
   </div>
   
-  <table class="table">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th/>
-        <th/>
-        <th>Autor</th>
-        <th>Titel</th>
-        <th>Typ</th>
-        <th>Max. Punktzahl</th>
-        <th>Beantwortet</th>
-      </tr>
-    </thead>
-    <tbody>
-    
-    @for(question <- questionList) {
-      <tr>
-        <td>@question.id</td>
-        @if(user.isAdmin() || user.name.equals(question.author)) {
-      	<td>
-          <a href="@questions.routes.QuestionController.editQuestionForm(question.id, question.isFreetext())" title="Frage editieren">
-            <span class="glyphicon glyphicon-edit"></span></a>
-        </td>
-        <td>
-          <a href="@@questions.routes.QuestionController.removeQuestion(question.id)" title="Frage l&ouml;schen">
-            <span class="glyphicon glyphicon-remove-circle"></span></a>
-        </td>
-        <td>@question.author</td>
-        } else {
-        <td/>
-        <td/>
-        <td><span title="Keine ausreichende Berechtigung!" class="glyphicon glyphicon-question-sign"></span></td>
-        }
-        @if(question.isFreetext()) {
-        <td><a href="@questions.routes.QuestionController.freetextQuestion(question.id)">@question.title</a></td>
-        <td>Freitext</td>
-      	} else {
-      	<td><a href="@questions.routes.QuestionController.question(question.id)">@question.title</a></td>
-        <td>Gegebene Antworten</td>
-        }
-        <td>@question.maxPoints</td>
-        @if(question.userHasAnswered(user.name)) {
-      	<td><span class="glyphicon glyphicon-ok"></span></td>
-        } else {
-        <td><span class="glyphicon glyphicon-minus"></span></td>
-        }
-      </tr>
-    }
-    </tbody>
-  </table>
+  @questionTable.render(user, questionList)
+  
 </div>
 }

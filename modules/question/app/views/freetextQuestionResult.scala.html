@@ -1,16 +1,27 @@
-@(user: model.user.User, answer: model.FreetextAnswer)
+@(user: model.user.User, question: model.question.Question, answer: model.UserAnswer)
 
 @main("Freitextfrage: Antwort", user)  {
 <div class="container">
   <div class="page-header">
-    <h1>@answer.question.text</h1>
+    <h1>@question.text</h1>
   </div>
   
-  <pre>@answer.answer</pre>
-
+  <div class="row">
+    <div class="col-md-6">
+      <pre>@answer.text</pre>
+    </div>
+    
+    <div class="col-md-6">
+    @for(ans <- question.answers) {
+      <p>@ans.text</p>
+    }
+    </div>
+  </div>
+  
   <hr>
 
   <div class="alert alert-info">Ihre Antwort wurde gespeichert und wird von einem Administrator bewertet werden. Sie k&ouml;nnen
   nun <a class="alert-link" href="@questions.routes.QuestionController.questions()">weitere Fragen</a> beantworten.</div>
+  
 </div>
 }

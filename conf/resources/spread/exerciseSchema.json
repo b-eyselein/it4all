@@ -12,7 +12,10 @@
 				"type": "string"
 			}, 
 			"text": {
-				"type": "string"
+				"type": "array", 
+				"items": {
+					"type": "string"
+				}
 			}, 
 			"sampleFileName": {
 				"type": "string"

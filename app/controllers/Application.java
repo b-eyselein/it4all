@@ -13,15 +13,15 @@ import play.mvc.Security;
 public class Application extends BaseController {
   
   private Environment environment;
-  
+
   @Inject
   public Application(FormFactory theFactory, Environment theEnvironment) {
     super(theFactory);
     environment = theEnvironment;
   }
-  
+
   public Result index() {
     return ok(views.html.index.render(getUser(), environment.isDev()));
   }
-  
+
 }

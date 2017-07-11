@@ -1,4 +1,4 @@
-@(user: model.user.User, quizzes: List[model.Quiz])
+@(user: model.user.User, questionList: List[model.question.Question], quizzes: List[model.Quiz])
 
 @main("Auswahlfragen", user) {
 <div class="container">
@@ -6,8 +6,8 @@
     <h1>Übersicht</h1>
   </div>
 
-  <a class="btn btn-default btn-block" href="@questions.routes.QuestionController.questions()">Alle Fragen</a>
-  
+  @questionTable.render(user, questionList)
+
   <hr>
   
   <div class="btn-group btn-group-justified">
