@@ -13,7 +13,7 @@ import model.task.Condition;
 import model.task.HtmlTask;
 import model.task.JsConditionKey;
 import model.task.JsWebTask;
-import model.task.TaskKey;
+import model.task.WebTaskKey;
 import play.libs.Json;
 
 public class WebExerciseReader extends ExerciseReader<WebExercise> {
@@ -51,7 +51,7 @@ public class WebExerciseReader extends ExerciseReader<WebExercise> {
   }
 
   private static HtmlTask readHtmlTask(JsonNode htmlTaskNode) {
-    TaskKey key = Json.fromJson(htmlTaskNode.get(StringConsts.KEY_NAME), TaskKey.class);
+    WebTaskKey key = Json.fromJson(htmlTaskNode.get(StringConsts.KEY_NAME), WebTaskKey.class);
 
     HtmlTask task = HtmlTask.finder.byId(key);
     if(task == null)
@@ -71,7 +71,7 @@ public class WebExerciseReader extends ExerciseReader<WebExercise> {
   }
 
   private static JsWebTask readJsTask(JsonNode jsTaskNode) {
-    TaskKey key = Json.fromJson(jsTaskNode.get(StringConsts.KEY_NAME), TaskKey.class);
+    WebTaskKey key = Json.fromJson(jsTaskNode.get(StringConsts.KEY_NAME), WebTaskKey.class);
 
     JsWebTask task = JsWebTask.finder.byId(key);
     if(task == null)

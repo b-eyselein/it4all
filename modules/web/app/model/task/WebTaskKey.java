@@ -5,7 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class TaskKey implements Serializable {
+public class WebTaskKey implements Serializable {
 
   private static final long serialVersionUID = 2816287031436265005L;
 
@@ -13,14 +13,14 @@ public class TaskKey implements Serializable {
 
   public int exerciseId;
 
-  public TaskKey(int theTaskId, int theExerciseId) {
+  public WebTaskKey(int theTaskId, int theExerciseId) {
     taskId = theTaskId;
     exerciseId = theExerciseId;
   }
 
   @Override
   public boolean equals(Object other) {
-    return other instanceof TaskKey && hashCode() == other.hashCode();
+    return other instanceof WebTaskKey && hashCode() == other.hashCode();
   }
 
   @Override

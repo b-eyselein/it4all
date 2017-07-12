@@ -1,40 +1,25 @@
-@(results: List[model.result.JsWebResult])
+@(result: model.result.JsWebResult)
 
-@for(result <- results) {
-<div class="panel panel-@result.getBSClass()">
-  <div class="panel-heading" data-toggle="collapse" href="#task@result.getTask().key.taskId">
-    @{result.getTask().key.taskId}. @result.getTask().text
-  </div>
-    
-  <div id="task@result.getTask().key.taskId" class="panel-collapse collapse @if(result.getSuccess() != model.exercise.Success.COMPLETE) {in}">
-    <div class="panel-body">
-      
-    @for(conResult <- result.getPreconditionResults()) {
-    <div class="alert alert-@conResult.getBSClass()">
-      <p>Vorbedingung konnte @if(conResult.getSuccess() != model.exercise.Success.COMPLETE) {nicht} verifiziert werden.</p>
-      <p>@conResult.condition.getDescription()</p>
-      @if(conResult.getSuccess() != model.exercise.Success.COMPLETE) {
-      <p>Element hatte aber folgenden Wert: @conResult.gottenValue</p>
-      }
-    </div>
-    }
-    
-    <div class="alert alert-@if(result.wasActionPerformed()) {success} else {danger}">
-      Aktion konnte @if(!result.wasActionPerformed()) {nicht} erfolgreich ausgeführt werden.
-    </div>
-    
-    @for(conResult <- result.getPostconditionResults()) {
-    <div class="alert alert-@conResult.getBSClass()">
-      <p>Vorbedingung konnte @if(conResult.getSuccess() != model.exercise.Success.COMPLETE) {nicht} verifiziert werden.</p>
-      <p>@conResult.condition.getDescription()</p>
-      @if(conResult.getSuccess() != model.exercise.Success.COMPLETE) {
-      <p>Element hatte aber folgenden Wert: @conResult.gottenValue</p>
-      }
-    </div>
-    }
-    
-    
-    </div>
-  </div>
+@for(conResult <- result.getPreconditionResults()) {
+<div class="alert alert-@conResult.getBSClass()">
+  <p>Vorbedingung konnte @if(conResult.getSuccess() != model.exercise.Success.COMPLETE) {nicht} verifiziert werden.</p>
+  <p>@conResult.condition.getDescription()</p>
+  @if(conResult.getSuccess() != model.exercise.Success.COMPLETE) {
+  <p>Element hatte aber folgenden Wert: @conResult.gottenValue</p>
+  }
+</div>
+}
+
+<div class="alert alert-@if(result.wasActionPerformed()) {success} else {danger}">
+  Aktion konnte @if(!result.wasActionPerformed()) {nicht} erfolgreich ausgeführt werden.
+</div>
+
+@for(conResult <- result.getPostconditionResults()) {
+<div class="alert alert-@conResult.getBSClass()">
+  <p>Vorbedingung konnte @if(conResult.getSuccess() != model.exercise.Success.COMPLETE) {nicht} verifiziert werden.</p>
+  <p>@conResult.condition.getDescription()</p>
+  @if(conResult.getSuccess() != model.exercise.Success.COMPLETE) {
+  <p>Element hatte aber folgenden Wert: @conResult.gottenValue</p>
+  }
 </div>
 }

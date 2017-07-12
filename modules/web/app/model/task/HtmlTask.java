@@ -14,27 +14,27 @@ import com.google.common.base.Splitter;
 import io.ebean.Finder;
 import model.Attribute;
 import model.result.AttributeResult;
-import model.result.ElementResult;
 import model.result.ElementResultBuilder;
 import model.result.TextContentResult;
+import model.result.WebResult;
 
 @Entity
-public class HtmlTask extends Task<ElementResult> {
+public class HtmlTask extends WebTask {
 
   private static final Splitter ATTR_SPLITTER = Splitter.on(";").omitEmptyStrings();
 
-  public static final Finder<TaskKey, HtmlTask> finder = new Finder<>(HtmlTask.class);
+  public static final Finder<WebTaskKey, HtmlTask> finder = new Finder<>(HtmlTask.class);
 
   public String attributes;
 
   public String textContent;
 
-  public HtmlTask(TaskKey theKey) {
+  public HtmlTask(WebTaskKey theKey) {
     super(theKey);
   }
 
   @Override
-  public ElementResult evaluate(SearchContext searchContext) {
+  public WebResult evaluate(SearchContext searchContext) {
     List<WebElement> foundElements = searchContext.findElements(By.xpath(xpathQuery));
 
     if(foundElements.isEmpty())

@@ -3,18 +3,18 @@ package model.result;
 import java.util.List;
 
 import model.exercise.Success;
-import model.task.Task;
+import model.task.WebTask;
 
-public abstract class WebResult<T extends WebResult<T>> extends EvaluationResult {
+public abstract class WebResult extends EvaluationResult {
 
-  protected Task<T> task;
+  protected WebTask task;
 
-  public WebResult(Task<T> theTask, Success theSuccess, List<String> theMessages) {
+  public WebResult(WebTask theTask, Success theSuccess, List<String> theMessages) {
     super(theSuccess, theMessages);
     task = theTask;
   }
 
-  public Task<T> getTask() {
+  public WebTask getTask() {
     return task;
   }
 

@@ -3,15 +3,15 @@ package model.result;
 import java.util.List;
 
 import model.exercise.Success;
-import model.task.Task;
+import model.task.WebTask;
 
-public class ElementResult extends WebResult<ElementResult> {
+public class ElementResult extends WebResult {
   
   protected List<AttributeResult> attributeResults;
   
   protected TextContentResult textContentResult;
   
-  ElementResult(Task<ElementResult> theTask, Success theSuccess, List<AttributeResult> theAttributeResults,
+  ElementResult(WebTask theTask, Success theSuccess, List<AttributeResult> theAttributeResults,
       TextContentResult theTextContentResult, List<String> theMessages) {
     super(theTask, theSuccess, theMessages);
     

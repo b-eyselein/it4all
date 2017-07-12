@@ -1,4 +1,4 @@
-@(results: List[model.result.ElementResult])
+@(results: List[model.result.WebResult])
 
 @for(result <- results) {
 <div class="panel panel-@result.getBSClass()">
@@ -9,33 +9,12 @@
   <div id="task@result.getTask().key.taskId" class="panel-collapse collapse @if(!result.isSuccessful()) {in}">
     <div class="panel-body">
     
-      @if(result.getSuccess() == model.exercise.Success.NONE) {
-        <div class="alert alert-danger">
-        @for(m <- result.getMessages()) {
-          <div>@m</div>
-        } 
-        </div>
-      } else {
-        <div class="alert alert-success">Element wurde gefunden!</div>
-      }
-
-      @if(result.getTextContentResult() != null) {
-        <div class="alert alert-@result.getTextContentResult().getBSClass()">Der Textinhalt
-        @if(result.getTextContentResult().getSuccess() == model.exercise.Success.COMPLETE) { hat den gesuchten Wert.}
-        @if(result.getTextContentResult().getSuccess() == model.exercise.Success.PARTIALLY) { hat nicht den gesuchten Wert
-         "@result.getTextContentResult().getAwaitedContent()" sondern "@result.getTextContentResult().getFoundContent()"!}
-        @if(result.getTextContentResult().getSuccess() == model.exercise.Success.NONE){ konnte nicht gefunden werden!}
-        </div>
-      }
+    @{result match {
+      case e: model.result.ElementResult => htmlResult.render(e)
+      case j: model.result.JsWebResult => jsResult.render(j)
+      case _ => ""	
+    }}
       
-      @for(attRes <- result.getAttributeResults()) {
-      	<div class="alert alert-@attRes.getBSClass()">Attribut "@attRes.getKey()"
-        @if(attRes.getSuccess() == model.exercise.Success.COMPLETE) { hat den gesuchten Wert.}
-        @if(attRes.getSuccess() == model.exercise.Success.PARTIALLY) { hat nicht den gesuchten Wert "@attRes.getValue()"
-        sondern "@attRes.getFoundValue()"!}
-        @if(attRes.getSuccess() == model.exercise.Success.NONE){ konnte nicht gefunden werden!}
-        </div>
-      }
     </div>
   </div>
 </div>

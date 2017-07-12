@@ -13,13 +13,13 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import io.ebean.Finder;
 import model.result.ConditionResult;
-import model.result.JsWebResult;
 import model.result.JsWebResultBuilder;
+import model.result.WebResult;
 
 @Entity
-public class JsWebTask extends Task<JsWebResult> {
+public class JsWebTask extends WebTask {
 
-  public static final Finder<TaskKey, JsWebTask> finder = new Finder<>(JsWebTask.class);
+  public static final Finder<WebTaskKey, JsWebTask> finder = new Finder<>(JsWebTask.class);
 
   @OneToMany(mappedBy = "task")
   @JsonManagedReference
@@ -28,7 +28,7 @@ public class JsWebTask extends Task<JsWebResult> {
   @Embedded
   public Action action;
 
-  public JsWebTask(TaskKey theKey) {
+  public JsWebTask(WebTaskKey theKey) {
     super(theKey);
   }
 
@@ -37,7 +37,7 @@ public class JsWebTask extends Task<JsWebResult> {
   }
 
   @Override
-  public JsWebResult evaluate(SearchContext context) {
+  public WebResult evaluate(SearchContext context) {
     // @formatter:off
     return new JsWebResultBuilder(this)
         .withPreResults(evaluateConditions(context, getPreconditions()))
