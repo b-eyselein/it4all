@@ -1,55 +1,73 @@
-it4all:
-    image:        beyselein/play-dockerfile
-    command:      bash
-    volumes_from:
-    - vc_it4all
-    volumes:
-    # TODO: set umask to 011 to get file permissions to 766?
-    - ./:/app/
-    - ~/.ivy2/:/root/.ivy2/
-    - ~/.sbt/:/root/.sbt/
-    - /var/run/docker.sock:/var/run/docker.sock
-    links:
-    - dbit4all:dbit4all
-    - sqlselect:sqlselect
-    - sqlother:sqlother
-    ports:
-    - 8000:9000
-    stdin_open:   true
-    tty:          true
+version: '2'
 
-vc_it4all:
-    image:        alpine:3.5
-    volumes:
-    - volume_it4all:/data
-    command:      sh chown $UID:$UID /data
+volumes:
+    volume_it4all:
 
-dbit4all:
-    image:        mysql:5.7
-    restart:      always
-    ports:
-    - 3106:3306
-    volumes:
-    - ./inits/sql_main_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
-    environment:
-    - MYSQL_ROOT_PASSWORD=sT8aV#k7
-
-sqlselect:
-    image:        mysql:5.7
-    restart:      always
-    ports:
-    - 3107:3306
-    volumes:
-    - ./inits/sql_select_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
-    environment:
-    - MYSQL_ROOT_PASSWORD=sT8aV#k7
-
-sqlother:
-    image:        mysql:5.7
-    restart:      always
-    ports:
-    - 3108:3306
-    volumes:
-    - ./inits/sql_other_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
-    environment:
-    - MYSQL_ROOT_PASSWORD=sT8aV#k7
+services:
+    proxy:
+        image:        nginx:alpine
+        command:      sh nginxstartup.sh
+        ports: 
+        - 80:80
+        - 443:443
+        links: 
+        - it4all:it4all
+        volumes:
+        - ./inits/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+        - ./inits/nginxstartup.sh:/nginxstartup.sh
+        stdin_open:   true
+        tty:          true
+        
+    it4all:
+        image:        beyselein/play-dockerfile
+        command:      bash
+        volumes_from:
+        - vc_it4all
+        volumes:
+        # TODO: set umask to 011 to get file permissions to 766?
+        - ./:/app/
+        - ~/.ivy2/:/root/.ivy2/
+        - ~/.sbt/:/root/.sbt/
+        - /var/run/docker.sock:/var/run/docker.sock
+        links:
+        - dbit4all:dbit4all
+        - sqlselect:sqlselect
+        - sqlother:sqlother
+        stdin_open:   true
+        tty:          true
+    
+    vc_it4all:
+        image:        alpine:3.5
+        volumes:
+        - volume_it4all:/data
+        command:      sh chown $UID:$UID /data
+    
+    dbit4all:
+        image:        mysql:5.7
+        restart:      always
+        ports:
+        - 3106:3306
+        volumes:
+        - ./inits/sql_main_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
+        environment:
+        - MYSQL_ROOT_PASSWORD=sT8aV#k7
+    
+    sqlselect:
+        image:        mysql:5.7
+        restart:      always
+        ports:
+        - 3107:3306
+        volumes:
+        - ./inits/sql_select_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
+        environment:
+        - MYSQL_ROOT_PASSWORD=sT8aV#k7
+    
+    sqlother:
+        image:        mysql:5.7
+        restart:      always
+        ports:
+        - 3108:3306
+        volumes:
+        - ./inits/sql_other_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
+        environment:
+        - MYSQL_ROOT_PASSWORD=sT8aV#k7
