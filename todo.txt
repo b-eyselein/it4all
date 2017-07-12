@@ -12,3 +12,5 @@ Freitext- / Auswahlfragen
 
 Programmierung
 	- Mount-Points!
+
+Apache/Nginx Server up front (with Docker...)
