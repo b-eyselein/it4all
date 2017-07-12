@@ -3,21 +3,7 @@ version: '2'
 volumes:
     volume_it4all:
 
-services:
-    proxy:
-        image:        nginx:alpine
-        command:      sh nginxstartup.sh
-        ports: 
-        - 80:80
-        - 443:443
-        links: 
-        - it4all:it4all
-        volumes:
-        - ./inits/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-        - ./inits/nginxstartup.sh:/nginxstartup.sh
-        stdin_open:   true
-        tty:          true
-        
+services:     
     it4all:
         image:        beyselein/play-dockerfile
         command:      bash
@@ -33,6 +19,8 @@ services:
         - dbit4all:dbit4all
         - sqlselect:sqlselect
         - sqlother:sqlother
+        ports:
+        - 8000:9000
         stdin_open:   true
         tty:          true
     
