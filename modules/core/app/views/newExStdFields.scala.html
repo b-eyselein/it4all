@@ -1,25 +1,28 @@
-@(user: model.user.User)
+@(user: model.user.User, textRows: Int)
 
 <fieldset>
   <legend>Standardangaben</legend>
   <div class="form-group">
-    <label class="control-label col-sm-2" for="title">Titel:</label>
+    <label class="control-label col-sm-2" for="@model.StringConsts.TITLE_NAME">Titel:</label>
     <div class="col-sm-10">
-      <input class="form-control" name="title" placeholder="Titel der Aufgabe" required>
+      <input class="form-control" name="@model.StringConsts.TITLE_NAME" id="@model.StringConsts.TITLE_NAME"
+      placeholder="Titel der Aufgabe" required>
     </div>
   </div>
   
   <div class="form-group">
-    <label class="control-label col-sm-2" for="text">Text:</label>
+    <label class="control-label col-sm-2" for="@model.StringConsts.AUTHOR_NAME">Autor:</label>
     <div class="col-sm-10"> 
-      <textarea class="form-control" rows="10" name="text" placeholder="Text der Aufgabe" required></textarea>
+      <input class="form-control" name="@model.StringConsts.AUTHOR_NAME" id="@model.StringConsts.AUTHOR_NAME" value="@user.name"
+      title="Dieser Wert kann nicht geändert werden." readonly required>
     </div>
   </div>
-      
+  
   <div class="form-group">
-    <label class="control-label col-sm-2" for="author">Autor:</label>
+    <label class="control-label col-sm-2" for="@model.StringConsts.TEXT_NAME">Text:</label>
     <div class="col-sm-10"> 
-      <input class="form-control" name="author" id="author" value="@user.name" title="Dieser Wert kann nicht geändert werden." readonly required>
+      <textarea class="form-control" rows="@textRows" name="@model.StringConsts.TEXT_NAME" id="@model.StringConsts.TEXT_NAME"
+      placeholder="Text der Aufgabe" required></textarea>
     </div>
   </div>
 </fieldset>

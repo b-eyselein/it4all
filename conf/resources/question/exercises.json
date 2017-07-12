@@ -7,7 +7,7 @@
 			"Welche dieser Aussagen über abstrakte Klassen sind korrekt?"
 		],
 		"maxPoints": 2,
-		"questionType": "CHOICE",
+		"exerciseType": "CHOICE",
 		"answers": [
 			{
 				"key": {
@@ -59,7 +59,7 @@
 			"Welche dieser Aussagen über abgeleitete Attribute ist korrekt?"
 		],
 		"maxPoints": 1,
-		"questionType": "CHOICE",
+		"exerciseType": "CHOICE",
 		"answers": [
 			{
 				"key": {
@@ -101,7 +101,7 @@
 			"Wofür werden Fremdschlüssel in Datenbanksystemen genutzt und welche Regeln gelten für sie?"
 		],
 		"maxPoints": 3,
-		"questionType": "FREETEXT",
+		"exerciseType": "FREETEXT",
 		"answers": [
 			{
 				"key": {
@@ -144,7 +144,7 @@
 			"Was wird mit einem physischen Datenmodell beschrieben?"
 		],
 		"maxPoints": 3,
-		"questionType": "FREETEXT",
+		"exerciseType": "FREETEXT",
 		"answers": [
 			{
 				"key": {

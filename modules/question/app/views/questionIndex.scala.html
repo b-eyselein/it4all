@@ -6,9 +6,10 @@
     <h1>Übersicht</h1>
   </div>
 
+@if(!questionList.isEmpty) {
   @questionTable.render(user, questionList)
-
   <hr>
+}
   
   <div class="btn-group btn-group-justified">
     <a class="btn btn-warning" href="@questions.routes.QuestionController.newQuestionForm(false)">

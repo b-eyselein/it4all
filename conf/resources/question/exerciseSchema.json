@@ -23,7 +23,7 @@
 			"maxPoints": {
 				"type": "integer"
 			},
-			"questionType": {
+			"exerciseType": {
 				"enum": [
 					"CHOICE",
 					"FILLOUT",
@@ -74,7 +74,7 @@
 			"author",
 			"text",
 			"maxPoints",
-			"questionType",
+			"exerciseType",
 			"answers"
 		]
 	}

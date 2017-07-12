@@ -4,9 +4,6 @@
     <thead>
       <tr>
         <th>ID</th>
-        <th/>
-        <th/>
-        <th>Autor</th>
         <th>Titel</th>
         <th>Typ</th>
         <th>Max. Punktzahl</th>
@@ -18,23 +15,14 @@
     @for(question <- questionList) {
       <tr>
         <td>@question.getId</td>
-        @if(user.isAdmin() || user.name.equals(question.getAuthor)) {
-        <td>
-          <a href="@questions.routes.QuestionController.editQuestionForm(question.getId)" title="Frage editieren">
-            <span class="glyphicon glyphicon-edit"></span></a>
-        </td>
-        <td>
-          <a href="@@questions.routes.QuestionController.removeQuestion(question.id)" title="Frage l&ouml;schen">
-            <span class="glyphicon glyphicon-remove-circle"></span></a>
-        </td>
-        <td>@question.getAuthor</td>
-        } else {
-        <td/>
-        <td/>
-        <td><span title="Keine ausreichende Berechtigung!" class="glyphicon glyphicon-question-sign"></span></td>
-        }
         <td><a href="@questions.routes.QuestionController.question(question.getId)">@question.getTitle</a></td>
-        @if(question.questionType == model.question.Question.QType.FREETEXT) {<td>Freitext</td>} else {<td>Gegebene Antworten</td>}
+      @{question.questionType match {
+        case model.question.Question.QType.FREETEXT => <td>Freitextfrage</td>
+        case model.question.Question.QType.CHOICE => <td>Multiple Choice-Frage</td>
+        case model.question.Question.QType.FILLOUT => <td></td>
+		case _ => <td>FEHLER!</td>
+      	}
+      }
         <td>@question.maxPoints</td>
         @if(question.userHasAnswered(user.name)) {
         <td><span class="glyphicon glyphicon-ok"></span></td>
