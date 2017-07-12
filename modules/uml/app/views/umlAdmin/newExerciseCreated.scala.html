@@ -9,7 +9,7 @@
 @main("UML: neue Aufgabe", user) {
 <div class="container">
   <div class="page-header">
-    <h1>Aufgabe @exercise.id: @exercise.title</h1>
+    <h1>Aufgabe @exercise.getId: @exercise.getTitle</h1>
   </div>
   
   <div class="row">
@@ -17,7 +17,7 @@
       <div class="panel panel-default">
         <div class="panel-heading">Text f&uuml;r Klassenwahl:</div>
         <div class="panel-body">
-          @exercise.classSelText
+          @exercise.getClassSelText
         </div>
       </div>
     </div>
@@ -26,7 +26,7 @@
       <div class="panel panel-default">
         <div class="panel-heading">Text f&uuml;r freies Zeichnen:</div>
         <div class="panel-body">
-          @exercise.diagDrawText
+          @exercise.getDiagDrawText
         </div>
       </div>
     </div>

@@ -16,6 +16,10 @@ public abstract class StringConsts {
 
   public static final String EXERCISES_NAME = "exercises";
 
+  public static final String EXERCISE_TYPE = "exerciseType";
+
+  public static final String FIXED_START = "fixedStart";
+
   public static final String FORM_VALUE = "learnerSolution";
 
   public static final String ID_NAME = "id";
@@ -24,11 +28,19 @@ public abstract class StringConsts {
 
   public static final String LANGUAGE_NAME = "language";
 
+  public static final String MAX_POINTS = "maxPoints";
+
   public static final String NAME_NAME = "name";
 
   public static final String NEWLINE = "\n";
 
   public static final String PW_NAME = "passwort";
+
+  public static final String REFERENCE_FILE_CONTENT = "referenceFileContent";
+
+  public static final String REFERENCE_FILE_NAME = "referenceFileName";
+
+  public static final String SAMPLE_FILENAME = "sampleFilename";
 
   public static final String SCRIPTFILE_NAME = "scriptFile";
 
@@ -44,9 +56,13 @@ public abstract class StringConsts {
 
   public static final String TABLES_NAME = "Tabellen";
 
+  public static final String TEMPALTE_FILENAME = "templateFilename";
+
   public static final String TEST_COUNT_NAME = "testCount";
 
   public static final String TEXT_NAME = "text";
+
+  public static final String THEME_NAME = "theme";
 
   public static final String TITLE_NAME = "title";
 

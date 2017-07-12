@@ -18,20 +18,20 @@ function update(input) {
         <tr>
           <th>Fragen-ID u. Text / Quiz</th>
         @for(quiz <- quizzes) {
-          <th>@quiz.title</th>
+          <th>@quiz.getTitle</th>
         }
         </tr>
       </thead>
       <tbody>
       @for(question <- questionList) {
         <tr>
-          <th title="@question.text">@{question.id}. @question.title</th>
+          <th title="@question.getText">@{question.getId}. @question.getTitle</th>
         @for(quiz <- quizzes) {
           <td>
             <input type="checkbox" onchange="update(this);" @@if(quiz.questions.contains(question)) {checked}
-            name="@{quiz.id}_@question.id" id="@{quiz.id}_@{question.id}" value="on">
+            name="@{quiz.getId}_@question.getId" id="@{quiz.getId}_@{question.getId}" value="on">
             <input type="checkbox" hidden @@if(!quiz.questions.contains(question)) {checked}
-            name="@{quiz.id}_@question.id" id="@{quiz.id}_@{question.id}_hidden" value="off">
+            name="@{quiz.getId}_@question.getId" id="@{quiz.getId}_@{question.getId}_hidden" value="off">
           </td>
         }
         </tr>

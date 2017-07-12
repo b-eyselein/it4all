@@ -28,9 +28,9 @@ var canDelete = @{!getsHelp};
         <div class="panel-heading">Aufgabentext</div>
         <div class="panel-body">
         @if(getsHelp) {
-          @exercise.text
+          @exercise.getText
         } else {
-          @Html(exercise.getExTextForDiagDraw())
+          @Html(exercise.getDiagDrawText)
         }
         </div>
       </div>
@@ -97,9 +97,9 @@ var canDelete = @{!getsHelp};
       
       <form method="post" onsubmit="return prepareFormForSubmitting();"
       @if(getsHelp) {
-        action="@uml.routes.UmlController.correctDiagramDrawingWithHelp(exercise.id)"
+        action="@uml.routes.UmlController.correctDiagramDrawingWithHelp(exercise.getId)"
       } else {
-        action="@uml.routes.UmlController.correctDiagramDrawing(exercise.id)"
+        action="@uml.routes.UmlController.correctDiagramDrawing(exercise.getId)"
       }>
         <input type="hidden" value="" class="form-control" name="learnerSolution" id="learnerSolution" required>
         <button class="btn btn-primary btn-block">Aufgabe verifizieren</button>

@@ -3,7 +3,7 @@
 @main("Auswahlfragen", user) {
 <div class="container">
   <div class="page-header">
-    <h1>Quiz &quot;@quiz.title&quot;</h1>
+    <h1>Quiz &quot;@quiz.getTitle&quot;</h1>
   </div>
 
   <section>
@@ -32,7 +32,7 @@
   @@if(quiz.questions.size() > 0) {
   <hr>
   
-  <a class="btn btn-primary btn-block" href="@questions.routes.QuestionController.quizStart(quiz.id)">Quiz starten...</a>
+  <a class="btn btn-primary btn-block" href="@questions.routes.QuestionController.quizStart(quiz.getId)">Quiz starten...</a>
   }
   
 </div>

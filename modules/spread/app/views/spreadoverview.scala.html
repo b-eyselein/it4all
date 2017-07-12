@@ -8,22 +8,22 @@
   @for(exercise <- exercises) {
   <div class="panel panel-default">
     <div class="panel-heading">
-      <h1 class="panel-title">Aufgabe @exercise.id: @exercise.title</h1>
+      <h1 class="panel-title">Aufgabe @exercise.getId: @exercise.getTitle</h1>
     </div>
     <div class="panel-body">
-      <p>@exercise.text</p>
+      <p>@exercise.getText</p>
           
       <div class="btn-group btn-group-justified">
-        <a href="@spread.routes.SpreadController.downloadTemplate(exercise.id, "xlsx")" class="btn btn-default"
+        <a href="@spread.routes.SpreadController.downloadTemplate(exercise.getId, "xlsx")" class="btn btn-default"
           target="_blank">Download der Angabe für MS Excel</a>
-        <a href="@spread.routes.SpreadController.downloadTemplate(exercise.id, "ods")" class="btn btn-default"
+        <a href="@spread.routes.SpreadController.downloadTemplate(exercise.getId, "ods")" class="btn btn-default"
           target="_blank">Download der Angabe für OpenOffice Calc</a>
       </div>
       
       <hr />
       
-      <form action="@spread.routes.SpreadController.upload(exercise.id)" method="post" enctype="multipart/form-data">
-        <h4>Upload f&uuml;r L&ouml;sung f&uuml;r Aufgabe @exercise.id</p>
+      <form action="@spread.routes.SpreadController.upload(exercise.getId)" method="post" enctype="multipart/form-data">
+        <h4>Upload f&uuml;r L&ouml;sung f&uuml;r Aufgabe @exercise.getId</p>
         
         <div class="form-group">
           <input type="file" class="form-control" name="solFile" required accept=".xlsx, .xlsm, .ods">

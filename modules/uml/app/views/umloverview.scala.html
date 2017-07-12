@@ -25,10 +25,10 @@
     <tbody>
     @for(exercise <- exercises) {
       <tr>
-        <td>@exercise.id</td>
-        <td>@exercise.title</td>
+        <td>@exercise.getId</td>
+        <td>@exercise.getTitle</td>
         <td>
-          <a href="@uml.routes.UmlController.classSelection(exercise.id)" 
+          <a href="@uml.routes.UmlController.classSelection(exercise.getId)" 
           class="btn btn-primary btn-block">Mit Zwischenkorrektur</a>
         </td>
         <td>

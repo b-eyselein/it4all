@@ -2,7 +2,7 @@
 
 @main(title, user) {
 <div class="container-fluid">
-  <form method="post" onsubmit="prepareFormForSubmitting();" action="@web.routes.WebController.correct(exercise.id, exType)">
+  <form method="post" onsubmit="prepareFormForSubmitting();" action="@web.routes.WebController.correct(exercise.getId, exType)">
     <div class="row">
       <div class="col-md-4 col-sm-6">
         
@@ -10,7 +10,7 @@
         
         <hr>
 
-        <p>@exercise.text</p>
+        <p>@exercise.getText</p>
         @if(exType.equals("html")) {
         <p>@exercise.htmlText</p>
         } else {
@@ -20,7 +20,7 @@
         <div class="btn-group btn-group-justified">
           <div class="btn-group">
             <button type="button" class="btn btn-primary"
-            onclick="testTheSolution('@web.routes.WebController.correctLive(exercise.id, exType)')">L&ouml;sung testen</button>
+            onclick="testTheSolution('@web.routes.WebController.correctLive(exercise.getId, exType)')">L&ouml;sung testen</button>
           </div>
           <div class="btn-group">
             <button class="btn btn-success">L&ouml;sung abgeben</button>

@@ -2,7 +2,7 @@
 
 @main("XML-Test", user) {
 <div class="container">
-  <form action="@xml.routes.XmlController.correct(exercise.id)" method="post" onsubmit="prepareFormForSubmitting();">
+  <form action="@xml.routes.XmlController.correct(exercise.getId)" method="post" onsubmit="prepareFormForSubmitting();">
   
     <div class="row">
       <div class="col-md-6">
@@ -10,7 +10,7 @@
           <h1>Aufgabenstellung</h2>
         </div>
   
-        @exercise.text
+        @exercise.getText
       
         <section id="refFileSection">
           <pre>@referenceFile</pre>
@@ -34,8 +34,8 @@
     <hr>
     
     <button type="button" class="btn btn-primary btn-block"
-      onclick="testTheSolution('@xml.routes.XmlController.correctLive(exercise.id)');">L&ouml;sung testen</button>
-    <input type="submit" class="btn btn-success btn-block" value="L&ouml;sung abgeben">
+      onclick="testTheSolution('@xml.routes.XmlController.correctLive(exercise.getId)');">L&ouml;sung testen</button>
+    <input class="btn btn-success btn-block" value="L&ouml;sung abgeben">
   
   </form>
 </div>

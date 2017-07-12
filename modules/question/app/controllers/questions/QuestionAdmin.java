@@ -15,7 +15,9 @@ import com.google.common.io.Files;
 
 import controllers.core.AbstractAdminController;
 import model.Quiz;
+import model.StringConsts;
 import model.question.Question;
+import model.question.Question.QType;
 import model.question.QuestionReader;
 import play.api.mvc.Call;
 import play.data.DynamicForm;
@@ -45,7 +47,7 @@ public class QuestionAdmin extends AbstractAdminController<Question, QuestionRea
     //
     // quiz.save();
   }
-
+  
   public Result assignQuestions() {
     DynamicForm form = factory.form().bindFromRequest();
     
@@ -56,7 +58,7 @@ public class QuestionAdmin extends AbstractAdminController<Question, QuestionRea
     
     return ok(views.html.questionAdmin.questionsAssigned.render(getUser(), assignments.toString()));
   }
-
+  
   public Result assignQuestionsForm() {
     return ok(views.html.questionAdmin.assignQuestionsForm.render(getUser(),
         /* Question.finder.all() */ Collections.emptyList(), Quiz.finder.all()));
@@ -78,11 +80,6 @@ public class QuestionAdmin extends AbstractAdminController<Question, QuestionRea
     } catch (IOException e) {
       return ok(json);
     }
-  }
-  
-  @Override
-  public Question getNew(int id) {
-    return null; // new Question(id);
   }
   
   public Result gradeFreetextAnswer(int id, String user) {
@@ -138,9 +135,10 @@ public class QuestionAdmin extends AbstractAdminController<Question, QuestionRea
   }
   
   @Override
-  protected void initRemainingExFromForm(DynamicForm form, Question exercise) {
-    // TODO Auto-generated method stub
-    
+  protected Question initRemainingExFromForm(int id, String title, String author, String text, DynamicForm form) {
+    int maxPoints = Integer.parseInt(form.get(StringConsts.MAX_POINTS));
+    Question.QType exerciseType = QType.valueOf(form.get(StringConsts.EXERCISE_TYPE));
+    return new Question(id, title, author, text, maxPoints, exerciseType, Collections.emptyList());
   }
   
 }

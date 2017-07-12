@@ -17,17 +17,19 @@
         <div class="col-sm-10">
         @for(exType <- model.XmlExType.values()) {
           <div class="radio">
-            <label><input type="radio" name="exerciseType" value="@exType" required> @Html(exType.getTag())</label>
+            <label><input type="radio" name="@model.StringConsts.EXERCISE_TYPE" value="@exType" required>
+              @Html(exType.getTag())</label>
           </div>
         }
         </div>
       </div>
       
       <div class="form-group">
-        <label class="control-label col-sm-2" for="fixedStart">Start:</label>
+        <label class="control-label col-sm-2" for="@model.StringConsts.FIXED_START">Start:</label>
         <div class="col-sm-10">
-          <textarea rows="5" class="form-control" name="fixedStart" 
-          placeholder="<?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot>&#10;<!DOCTYPE root SYSTEM path.dtd>" required></textarea>
+          <textarea rows="5" class="form-control" name="@model.StringConsts.FIXED_START" id="@model.StringConsts.FIXED_START" 
+          placeholder="<?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot>&#10;<!DOCTYPE root SYSTEM path.dtd>"
+          required></textarea>
         </div>
       </div>
     </fieldset>
@@ -36,9 +38,10 @@
       <legend>Referenzdatei</legend>
     
       <div class="form-group">
-        <label class="control-label col-sm-2" for="referenceFileName">Name:</label>
+        <label class="control-label col-sm-2" for="@model.StringConsts.REFERENCE_FILE_NAME">Name:</label>
         <div class="col-sm-8">
-          <input class="form-control" name="referenceFileName" placeholder="root" required>
+          <input class="form-control" name="@model.StringConsts.REFERENCE_FILE_NAME" id="@model.StringConsts.REFERENCE_FILE_NAME" 
+          placeholder="root" required>
         </div>
         <span class="col-sm-2">
           <input class="form-control" readonly value=".dtd/.xsd/.xml">

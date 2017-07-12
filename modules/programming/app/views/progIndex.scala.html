@@ -17,10 +17,12 @@
     <tbody>
     @for(exercise <- exercises) {
       <tr>
-        <td>@exercise.id</td>
-        <td>@exercise.title</td>
-        <td><a class="btn btn-primary btn-block" href="@programming.routes.ProgController.testData(exercise.id)">Testdaten erstellen</a>
-        <td><a class="btn btn-primary btn-block" href="@programming.routes.ProgController.exercise(exercise.id)">Aufgabe bearbeiten</a></td>
+        <td>@exercise.getId</td>
+        <td>@exercise.getTitle</td>
+        <td><a class="btn btn-primary btn-block"
+        href="@programming.routes.ProgController.testData(exercise.getId)">Testdaten erstellen</a>
+        <td><a class="btn btn-primary btn-block"
+        href="@programming.routes.ProgController.exercise(exercise.getId)">Aufgabe bearbeiten</a></td>
       </tr>
     }
     </tbody>

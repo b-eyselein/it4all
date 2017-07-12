@@ -18,13 +18,14 @@
       <div class="panel-body">
         @for(tag <- model.XmlExType.values()) {
         <div class="col-sm-3 col-xs-6">
-          <label for=""><input type="checkbox" name="filter" value="@tag" @if(filters.contains(tag)){checked}> @Html(tag.getTag())</label>
+          <label><input type="checkbox" name="filter" value="@tag" @if(filters.contains(tag)){checked}>
+          @Html(tag.getTag())</label>
         </div>
         }
       </div>
       <div class="panel-footer">
         <a href="@xml.routes.XmlController.index()" class="btn btn-default">Filter zurücksetzen</a>
-        <input type="submit" value="Filter anwenden" class="btn btn-default">
+        <input value="Filter anwenden" class="btn btn-default">
       </div>
     </div>
   </form>
@@ -41,8 +42,11 @@
         @for(exercise <- exercises) {
         <tr>
           <td>@Html(exercise.getTag())</td>
-          <td>@exercise.id</td>
-          <td><a href="@xml.routes.XmlController.exercise(exercise.id)" class="btn btn-primary btn-block">@exercise.title</a></td>
+          <td>@exercise.getId</td>
+          <td>
+            <a href="@xml.routes.XmlController.exercise(exercise.getId)" class="btn btn-primary btn-block">
+            @exercise.getTitle</a>
+          </td>
         </tr>
         }
       </tbody>

@@ -4,24 +4,24 @@
 @if(index % 2 == 0) {<div class="row">}
   <div class="col-md-6">
     <div class="panel panel-default">
-      <div class="panel-heading">Aufgabe @ex.id: @ex.title</div>
+      <div class="panel-heading">Aufgabe @ex.getId: @ex.getTitle</div>
       <div class="panel-body">
         <table class="table">
           <tr>
             <th>Text</th>
-            <td>@ex.text</td>
+            <td>@ex.getText</td>
           </tr>
           <tr>
             <th>Aufgabentyp</th>
-            <td>@ex.exerciseType</td>
+            <td>@ex.getExerciseType</td>
           </tr>
           <tr>
             <th>Dateiname</th>
-            <td>&quot;@ex.referenceFileName&quot;</td>
+            <td>&quot;@ex.getReferenceFileName&quot;</td>
           </tr>
           <tr>
             <th>Fixed Start</th>
-            <td>@if(ex.fixedStart.isEmpty) {--} else {<pre>@ex.fixedStart</pre>}</td>
+            <td><pre>@ex.getFixedStart</pre></td>
           </tr>
         </table>
       </div>

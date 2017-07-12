@@ -3,7 +3,7 @@
 @main("UML-Test", user) {
 <div class="container-fluid">
   <div class="page-header">
-    <h1> Korrektur der Aufgabe &quot;@result.getExercise().title&quot;</h1>	
+    <h1> Korrektur der Aufgabe &quot;@result.getExercise().getTitle&quot;</h1>	
   </div>
 
   @*<div class="row">
@@ -149,6 +149,6 @@
   
   <hr>
   *@
-  <a href="@uml.routes.UmlController.matching(result.getExercise.id)" class="btn btn-primary btn-block">Zum nächsten Aufgabenteil</a>
+  <a href="@uml.routes.UmlController.matching(result.getExercise.getId)" class="btn btn-primary btn-block">Zum nächsten Aufgabenteil</a>
 </div>
 }

@@ -16,16 +16,16 @@
   <form class="form-horizontal" action="@uml.routes.UmlAdmin.newExerciseStep3()" method="post">
   
     <div class="form-group">
-      <label class="control-label col-sm-1" for="title">Titel:</label>
+      <label class="control-label col-sm-1" for="@model.StringConsts.TITLE_NAME">Titel:</label>
       <div class="col-sm-11">
-        <input class="form-control" id="title" name="title" value="@exercise.title" readonly required>
+        <input class="form-control" id="@model.StringConsts.TITLE_NAME" name="@model.StringConsts.TITLE_NAME" value="@exercise.getTitle" readonly required>
       </div>
     </div>
     
     <div class="form-group">
-      <label class="control-label col-sm-1" for="text">Text:</label>
+      <label class="control-label col-sm-1" for="@model.StringConsts.TEXT_NAME">Text:</label>
       <div class="col-sm-11"> 
-        <textarea class="form-control" id="text" name="text" readonly required>@exercise.text</textarea>
+        <textarea class="form-control" id="@model.StringConsts.TEXT_NAME" name="@model.StringConsts.TEXT_NAME" readonly required>@exercise.getText</textarea>
       </div>
     </div>
     
@@ -34,7 +34,7 @@
     <div class="row">    
       <div class="col-sm-12">
         <h2>Bisheriger (annotierter) Aufgabentext</h2>
-        <div id="textDiv">@Html(exercise.classSelText)</div>
+        <div id="textDiv">@Html(exercise.getClassSelText)</div>
       </div>
     </div>
     

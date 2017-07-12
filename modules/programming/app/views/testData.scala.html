@@ -10,7 +10,7 @@
   
   <div class="panel panel-success">
     <div class="panel-heading">Funktionsbeschreibung</div>
-    <div class="panel-body">@Html(exercise.text)</div>
+    <div class="panel-body">@Html(exercise.getText)</div>
   </div>
   
   <div class="alert alert-info alert-dismissable">
@@ -20,9 +20,10 @@
     Au&szlig;erdem werden Sie automatisch beim Testen ihrer L&ouml;sung verwendet.
   </div>
   
-  <form class="form" action="@programming.routes.ProgController.validateTestData(exercise.id)" method="post">
+  <form class="form" action="@programming.routes.ProgController.validateTestData(exercise.getId)" method="post">
     <input hidden name="inputCount" id="inputCount" value="@exercise.inputCount">
-    <input hidden name="testCount" id="testCount" value="@Math.max(oldData.size(), controllers.programming.ProgController.STD_TEST_DATA_COUNT)">
+    <input hidden name="testCount" id="testCount"
+     value="@Math.max(oldData.size, controllers.programming.ProgController.STD_TEST_DATA_COUNT)">
     <table class="table" id="testDataTable">
       <thead>
         <tr>
@@ -50,7 +51,7 @@
           </td>
         </tr>
       }
-      @for(testCount <- oldData.size() until controllers.programming.ProgController.STD_TEST_DATA_COUNT) {
+      @for(testCount <- oldData.size until controllers.programming.ProgController.STD_TEST_DATA_COUNT) {
         <tr id="tr_@testCount">
           <td>@testCount</td>
         @for(inputCount <- 0 until exercise.inputCount) {
@@ -74,7 +75,8 @@
   
     <div class="btn-group btn-group-justified">
       <div class="btn-group">
-        <button type="button" class="btn btn-primary" onclick="validateTestData('@programming.routes.ProgController.validateTestDataLive(exercise.id)')">
+        <button type="button" class="btn btn-primary"
+        onclick="validateTestData('@programming.routes.ProgController.validateTestDataLive(exercise.getId)')">
           Testdaten validieren
         </button>
       </div>

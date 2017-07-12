@@ -43,7 +43,7 @@ public class SpreadExerciseReader extends ExerciseReader<SpreadExercise> {
     if(!providedFile.toFile().exists())
       return "Konnte Datei nicht erstellen: Keine Lösungsdatei mitgeliefert...";
     
-    READING_LOGGER.warn("The file \"" + targetPath + "\" for " + exerciseType + " exercise " + exercise.id
+    READING_LOGGER.warn("The file \"" + targetPath + "\" for " + exerciseType + " exercise " + exercise.getId()
         + " does not exist. Trying to create this file...");
     
     try {
@@ -58,15 +58,15 @@ public class SpreadExerciseReader extends ExerciseReader<SpreadExercise> {
   @Override
   protected SpreadExercise readExercise(JsonNode exerciseNode) {
     int id = exerciseNode.get(StringConsts.ID_NAME).asInt();
+    String title = exerciseNode.get(StringConsts.TITLE_NAME).asText();
+    String author = exerciseNode.get(StringConsts.AUTHOR_NAME).asText();
+    String text = exerciseNode.get(StringConsts.TEXT_NAME).asText();
+    String sampleFilename = exerciseNode.get(StringConsts.SAMPLE_FILENAME).asText();
+    String templateFilename = exerciseNode.get(StringConsts.TEMPALTE_FILENAME).asText();
     
     SpreadExercise exercise = SpreadExercise.finder.byId(id);
     if(exercise == null)
-      exercise = new SpreadExercise(id);
-    
-    exercise.text = exerciseNode.get(StringConsts.TEXT_NAME).asText();
-    exercise.title = exerciseNode.get(StringConsts.TITLE_NAME).asText();
-    exercise.sampleFilename = exerciseNode.get("sampleFilename").asText();
-    exercise.templateFilename = exerciseNode.get("templateFilename").asText();
+      return new SpreadExercise(id, title, author, text, sampleFilename, templateFilename);
     
     return exercise;
   }

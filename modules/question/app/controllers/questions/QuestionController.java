@@ -1,6 +1,7 @@
 package controllers.questions;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -47,9 +48,9 @@ public class QuestionController extends BaseExerciseController {
     return user;
   }
 
-  private static List<Answer> readAnswersFromForm(DynamicForm form, Question question, boolean isChoice) {
+  private static List<Answer> readAnswersFromForm(DynamicForm form, int questionId, boolean isChoice) {
     return IntStream.range(0, Question.MAX_ANSWERS).mapToObj(id -> {
-      AnswerKey key = new AnswerKey(question.id, id);
+      AnswerKey key = new AnswerKey(questionId, id);
 
       Answer answer = Answer.finder.byId(key);
       if(answer == null)
@@ -83,7 +84,7 @@ public class QuestionController extends BaseExerciseController {
     User user = getUser();
     Question question = Question.finder.byId(id);
 
-    if(question.author.equals(user.name) || user.stdRole == Role.ADMIN)
+    if(question.getAuthor().equals(user.name) || user.stdRole == Role.ADMIN)
       return ok(views.html.editQuestionForm.render(user, question, true));
 
     return redirect(routes.QuestionController.index(0));
@@ -98,26 +99,23 @@ public class QuestionController extends BaseExerciseController {
   public Result newQuestion(boolean isFreetext) {
     DynamicForm form = factory.form().bindFromRequest();
 
+    int id = findMinimalNotUsedId(Question.finder);
     String title = form.get(StringConsts.TITLE_NAME);
+    String author = form.get(StringConsts.AUTHOR_NAME);
+    String text = form.get(StringConsts.TEXT_NAME);
+    int maxPoints = Integer.parseInt(form.get(StringConsts.MAX_POINTS));
+    Question.QType exerciseType = Question.QType.valueOf(form.get(StringConsts.EXERCISE_TYPE));
 
-    Question question;
-
-    if(isFreetext) {
-      question = Question.finder.all().stream().filter(ftq -> ftq.title.equals(title)).findAny().orElse(null);
-      if(question == null)
-        question = new Question(findMinimalNotUsedId(Question.finder));
-    } else {
-      question = Question.finder.all().stream().filter(gaq -> gaq.title.equals(title)).findAny().orElse(null);
-      if(question == null)
-        question = new Question(findMinimalNotUsedId(Question.finder));
-
-      boolean isChoice = true; // TODO!
-      question.answers = readAnswersFromForm(form, question, isChoice);
+    boolean isChoice = false;
+    List<Answer> answers = Collections.emptyList();
+    if(!isFreetext) {
+      isChoice = true; // TODO!
+      answers = readAnswersFromForm(form, id, isChoice);
     }
 
-    question.title = title;
-    question.text = form.get(StringConsts.TEXT_NAME);
-    question.author = form.get(StringConsts.AUTHOR_NAME);
+    Question question = Question.finder.all().stream().filter(q -> q.getTitle().equals(title)).findAny().orElse(null);
+    if(question == null)
+      question = new Question(id, title, author, text, maxPoints, exerciseType, answers);
 
     question.saveInDb();
 

@@ -9,6 +9,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.ebean.Finder;
 import model.exercise.Exercise;
@@ -20,22 +21,36 @@ public class XmlExercise extends Exercise {
 
   @Column(columnDefinition = "text")
   // FIXME: eventually generate?
-  public String fixedStart;
+  private String fixedStart;
 
   @Enumerated(EnumType.STRING)
-  public XmlExType exerciseType;
+  private XmlExType exerciseType;
 
-  public String referenceFileName;
+  private String referenceFileName;
 
-  public XmlExercise(int theId) {
-    super(theId);
+  public XmlExercise(int theId, String theTitle, String theAuthor, String theText, String theFixedStart,
+      XmlExType theExerciseType, String theReferenceFileName) {
+    super(theId, theTitle, theAuthor, theText);
+
+    fixedStart = theFixedStart;
+    exerciseType = theExerciseType;
+    referenceFileName = theReferenceFileName;
   }
 
   public static List<XmlExercise> byType(XmlExType type) {
     return finder.all().stream().filter(ex -> ex.exerciseType == type).collect(Collectors.toList());
   }
 
-  public List<String> getFixedStart() {
+  public XmlExType getExerciseType() {
+    return exerciseType;
+  }
+
+  public String getFixedStart() {
+    return fixedStart.isEmpty() ? "--" : fixedStart;
+  }
+
+  @JsonProperty("fixedStart")
+  public List<String> getFixedStartForJson() {
     return NEW_LINE_SPLITTER.splitToList(fixedStart);
   }
 
@@ -49,6 +64,10 @@ public class XmlExercise extends Exercise {
     return exerciseType.getRefFileEnding();
   }
 
+  public String getReferenceFileName() {
+    return referenceFileName;
+  }
+
   @JsonIgnore
   public String getStudentFileEnding() {
     return exerciseType.getStudFileEnding();
@@ -58,5 +77,14 @@ public class XmlExercise extends Exercise {
   public String getTag() {
     return exerciseType.getTag();
   }
-  
+
+  public XmlExercise updateValues(int theId, String theTitle, String theAuthor, String theText, String theFixedStart,
+      XmlExType theExerciseType, String theReferenceFileName) {
+    super.updateValues(theId, theTitle, theAuthor, theText);
+    fixedStart = theFixedStart;
+    exerciseType = theExerciseType;
+    referenceFileName = theReferenceFileName;
+    return this;
+  }
+
 }

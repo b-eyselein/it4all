@@ -1,5 +1,6 @@
 package controllers.sql;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -30,20 +31,15 @@ public class SqlAdmin extends AbstractAdminController<SqlScenario, SqlScenarioRe
   }
 
   @Override
-  public SqlScenario getNew(int id) {
-    return new SqlScenario(id);
-  }
-
-  @Override
   public Result index() {
     return ok(views.html.sqlAdmin.index.render(getUser()));
   }
-  
+
   @Override
   public Result newExerciseForm() {
     return ok(views.html.sqlAdmin.newScenarioForm.render(getUser()));
   }
-  
+
   @Override
   public Html renderCreated(List<SqlScenario> created) {
     // Guaranteed to be always one scenario by json Schema!
@@ -60,9 +56,10 @@ public class SqlAdmin extends AbstractAdminController<SqlScenario, SqlScenarioRe
   }
 
   @Override
-  protected void initRemainingExFromForm(DynamicForm form, SqlScenario exercise) {
-    exercise.scriptFile = form.get(StringConsts.SCRIPTFILE_NAME);
-    exercise.shortName = form.get(StringConsts.SHORTNAME_NAME);
+  protected SqlScenario initRemainingExFromForm(int id, String title, String author, String text, DynamicForm form) {
+    String scriptFile = form.get(StringConsts.SCRIPTFILE_NAME);
+    String shortName = form.get(StringConsts.SHORTNAME_NAME);
+    return new SqlScenario(id, title, author, text, shortName, scriptFile, Collections.emptyList());
   }
 
 }

@@ -22,22 +22,23 @@ public class UmlExercise extends Exercise {
   public static final Finder<Integer, UmlExercise> finder = new Finder<>(UmlExercise.class);
 
   @Column(columnDefinition = "text")
-  @JsonIgnore
-  public String classSelText;
+  private String classSelText;
 
   @Column(columnDefinition = "text")
-  @JsonIgnore
-  public String diagDrawText;
+  private String diagDrawText;
 
   @Column(columnDefinition = "text")
-  @JsonIgnore
-  public String solution;
+  private String solution;
 
   // @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
   // public List<Mapping> mappings;
 
-  public UmlExercise(int theId) {
-    super(theId);
+  public UmlExercise(int theId, String theTitle, String theAuthor, String theText, String theClassSelText,
+      String theDiagDrawText, String theSolution) {
+    super(theId, theTitle, theAuthor, theText);
+    classSelText = theClassSelText;
+    diagDrawText = theDiagDrawText;
+    solution = theSolution;
   }
 
   @JsonIgnore
@@ -60,12 +61,12 @@ public class UmlExercise extends Exercise {
   }
 
   @JsonIgnore
-  public String getExTextForClassSel() {
+  public String getClassSelText() {
     return classSelText;
   }
 
   @JsonIgnore
-  public String getExTextForDiagDraw() {
+  public String getDiagDrawText() {
     return diagDrawText;
   }
 
@@ -74,9 +75,13 @@ public class UmlExercise extends Exercise {
     return UmlSolution.fromJson(solution);
   }
 
-  @Override
-  public String toString() {
-    return "ID: " + id + ", Titel: " + title;
+  public UmlExercise updateValues(int theId, String theTitle, String theAuthor, String theText, String theClassSelText,
+      String theDiagDrawText, String theSolution) {
+    super.updateValues(theId, theTitle, theAuthor, theText);
+    classSelText = theClassSelText;
+    diagDrawText = theDiagDrawText;
+    solution = theSolution;
+    return this;
   }
 
 }

@@ -24,13 +24,13 @@
     <tbody>
     @for(exercise <- exercises) {
    	  <tr>
-        <td>@exercise.id</td>
-        <td>@exercise.title</td>
+        <td>@exercise.getId</td>
+        <td>@exercise.getTitle</td>
         <td>@if(exercise.htmlTasks.size() > 0) {
-          <a href="@web.routes.WebController.exercise(exercise.id, "html")" class="btn btn-primary btn-block">Html-Teil</a>}
+          <a href="@web.routes.WebController.exercise(exercise.getId, "html")" class="btn btn-primary btn-block">Html-Teil</a>}
         </td>
         <td>@if(exercise.jsTasks.size() > 0) {
-          <a href="@web.routes.WebController.exercise(exercise.id, "js")" class="btn btn-primary btn-block">Js-Teil</a>}
+          <a href="@web.routes.WebController.exercise(exercise.getId, "js")" class="btn btn-primary btn-block">Js-Teil</a>}
         </td>
       </tr>
     }

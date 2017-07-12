@@ -1,7 +1,6 @@
 package controllers.questions;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -16,18 +15,13 @@ import play.mvc.Result;
 import play.twirl.api.Html;
 
 public class QuizAdmin extends AbstractAdminController<Quiz, QuizReader> {
-  
+
   @Inject
   public QuizAdmin(FormFactory theFactory, String theExerciseType) {
     super(theFactory, Quiz.finder, theExerciseType, new QuizReader());
     // TODO Auto-generated constructor stub
   }
-  
-  @Override
-  public Quiz getNew(int id) {
-    return new Quiz(id);
-  }
-  
+
   @Override
   public Result index() {
     // TODO Auto-generated method stub
@@ -37,24 +31,19 @@ public class QuizAdmin extends AbstractAdminController<Quiz, QuizReader> {
   @Override
   public Result newExercise() {
     DynamicForm form = factory.form().bindFromRequest();
-    
+
     int id = findMinimalNotUsedId(Quiz.finder);
     String title = form.get(StringConsts.TITLE_NAME);
-    
-    Quiz quiz;
-    
-    // Is there another quiz with the same title?
-    List<Quiz> other = Quiz.finder.all().stream().filter(q -> q.title.equals(title)).collect(Collectors.toList());
-    if(!other.isEmpty())
-      quiz = other.get(0);
-    else
-      quiz = new Quiz(id);
-    
-    quiz.title = title;
-    quiz.theme = form.get("theme");
-    quiz.text = form.get(StringConsts.TEXT_NAME);
+    String author = form.get(StringConsts.AUTHOR_NAME);
+    String text = form.get(StringConsts.TEXT_NAME);
+    String theme = form.get(StringConsts.THEME_NAME);
+
+    Quiz quiz = findByTitle(title);
+    if(quiz == null)
+      quiz = new Quiz(id, title, author, text, theme);
+
     quiz.save();
-    
+
     return ok(views.html.questionAdmin.quizCreated.render(getUser(), quiz));
   }
 
@@ -62,22 +51,22 @@ public class QuizAdmin extends AbstractAdminController<Quiz, QuizReader> {
   public Result newExerciseForm() {
     return ok(views.html.questionAdmin.newQuizForm.render(getUser()));
   }
-  
+
   @Override
   public Html renderCreated(List<Quiz> created) {
     // TODO Auto-generated method stub
     return null;
   }
-  
+
   @Override
   protected Call getIndex() {
     return controllers.questions.routes.QuizAdmin.index();
   }
-  
+
   @Override
-  protected void initRemainingExFromForm(DynamicForm form, Quiz exercise) {
-    // TODO Auto-generated method stub
-    
+  protected Quiz initRemainingExFromForm(int id, String title, String author, String text, DynamicForm form) {
+    String theme = form.get(StringConsts.THEME_NAME);
+    return new Quiz(id, title, author, text, theme);
   }
-  
+
 }

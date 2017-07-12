@@ -73,7 +73,7 @@ public class ProgController extends ExerciseController<ProgExercise, ProgEvaluat
   
   private static CommitedTestData readTestDataFromForm(DynamicForm form, String username, int testId,
       ProgExercise exercise) {
-    CommitedTestDataKey key = new CommitedTestDataKey(username, exercise.id, testId);
+    CommitedTestDataKey key = new CommitedTestDataKey(username, exercise.getId(), testId);
     CommitedTestData testdata = CommitedTestData.finder.byId(key);
     
     if(testdata == null)
@@ -198,9 +198,8 @@ public class ProgController extends ExerciseController<ProgExercise, ProgEvaluat
     try {
       Logger.debug("Solution: " + learnerSolution);
       
-      List<ITestData> completeTestData = Stream
-          .concat(exercise.sampleTestData.stream(), CommitedTestData.forUserAndExercise(user, exercise.id).stream())
-          .collect(Collectors.toList());
+      List<ITestData> completeTestData = Stream.concat(exercise.sampleTestData.stream(),
+          CommitedTestData.forUserAndExercise(user, exercise.getId()).stream()).collect(Collectors.toList());
       
       ProgLangCorrector corrector = getCorrector(lang);
       

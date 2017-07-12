@@ -102,23 +102,23 @@ public class WebExerciseReader extends ExerciseReader<WebExercise> {
 
   @Override
   protected WebExercise readExercise(JsonNode exerciseNode) {
-    int exerciseId = exerciseNode.get(StringConsts.ID_NAME).asInt();
+    int id = exerciseNode.get(StringConsts.ID_NAME).asInt();
+    
+    String title = exerciseNode.get(StringConsts.TITLE_NAME).asText();
+    String author = exerciseNode.get(StringConsts.AUTHOR_NAME).asText();
+    String text = JsonWrapper.readTextArray(exerciseNode.get(StringConsts.TEXT_NAME), "");
 
-    WebExercise exercise = WebExercise.finder.byId(exerciseId);
+    String htmlText = JsonWrapper.readTextArray(exerciseNode.get("htmlText"), "");
+    List<HtmlTask> htmlTasks = readHtmlTasks(exerciseNode.get("htmlTasks"));
+
+    String jsText = JsonWrapper.readTextArray(exerciseNode.get("jsText"), "");
+    List<JsWebTask> jsTasks = readJsTasks(exerciseNode.get("jsTasks"));
+    
+    WebExercise exercise = WebExercise.finder.byId(id);
     if(exercise == null)
-      exercise = new WebExercise(exerciseId);
-
-    exercise.title = exerciseNode.get(StringConsts.TITLE_NAME).asText();
-    exercise.text = JsonWrapper.readTextArray(exerciseNode.get(StringConsts.TEXT_NAME), "");
-    exercise.author = exerciseNode.get(StringConsts.AUTHOR_NAME).asText();
-
-    exercise.htmlText = JsonWrapper.readTextArray(exerciseNode.get("htmlText"), "");
-    exercise.htmlTasks = readHtmlTasks(exerciseNode.get("htmlTasks"));
-
-    exercise.jsText = JsonWrapper.readTextArray(exerciseNode.get("jsText"), "");
-    exercise.jsTasks = readJsTasks(exerciseNode.get("jsTasks"));
-
-    return exercise;
+      return new WebExercise(id, title, author, text, htmlText, htmlTasks, jsText, jsTasks);
+    else
+      return exercise.updateValues(id, title, author, text, htmlText, htmlTasks, jsText, jsTasks);
   }
 
 }

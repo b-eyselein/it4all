@@ -30,7 +30,7 @@
       <div class="panel panel-default">
         <div class="panel-heading">Aufgabentext</div>
         <div class="panel-body" id="exercisetext" unselectable="on" onselectstart="return false;" onmousedown="return false;">
-          @Html(exercise.getExTextForClassSel())
+          @Html(exercise.getClassSelText())
         </div>
       </div>
     </div>
@@ -49,10 +49,10 @@
   
   <hr>
     
-  <form action="@uml.routes.UmlController.correctClassSelection(exercise.id)" method="post"
+  <form action="@uml.routes.UmlController.correctClassSelection(exercise.getId)" method="post"
     onsubmit="return prepareFormForSubmitting();">
-    <input type="hidden" class="form-control" name="learnerSolution" id="learnerSolution" required>
-    <button type="submit" class="btn btn-primary btn-block">Klassen verifizieren</button>
+    <input type="hidden" class="form-control" name="@model.StringConsts.FORM_VALUE" id="@model.StringConsts.FORM_VALUE" required>
+    <button class="btn btn-primary btn-block">Klassen verifizieren</button>
   </form>
   
 </div>

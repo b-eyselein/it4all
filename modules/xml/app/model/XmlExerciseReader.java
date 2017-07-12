@@ -28,14 +28,13 @@ public class XmlExerciseReader extends ExerciseReader<XmlExercise> {
       // error occured...
       return "Directory für Lösungsdateien (XML) " + baseTargetDir + "existiert nicht!";
 
-    String filename = exercise.referenceFileName + "." + exercise.getReferenceFileEnding();
+    String filename = exercise.getReferenceFileName() + "." + exercise.getReferenceFileEnding();
 
     Path providedFile = Paths.get(baseDirForExType.toString(), filename).toAbsolutePath();
     Path targetPath = Paths.get(baseTargetDir.toString(), filename).toAbsolutePath();
 
-    if(!providedFile.toFile().exists()) {
+    if(!providedFile.toFile().exists())
       return "Konnte Datei nicht erstellen: Keine Lösungsdatei mitgeliefert...";
-    }
 
     try {
       Files.copy(providedFile, targetPath, StandardCopyOption.REPLACE_EXISTING);
@@ -50,19 +49,19 @@ public class XmlExerciseReader extends ExerciseReader<XmlExercise> {
   protected XmlExercise readExercise(JsonNode node) {
     int id = node.get(StringConsts.ID_NAME).asInt();
 
+    String title = node.get(StringConsts.TITLE_NAME).asText();
+    String author = node.get(StringConsts.AUTHOR_NAME).asText();
+    String text = JsonWrapper.readTextArray(node.get(StringConsts.TEXT_NAME), "");
+
+    String fixedStart = String.join("\n", JsonWrapper.parseJsonArrayNode(node.get(StringConsts.FIXED_START)));
+    XmlExType exerciseType = XmlExType.valueOf(node.get(StringConsts.EXERCISE_TYPE).asText());
+    String referenceFileName = node.get(StringConsts.REFERENCE_FILE_NAME).asText();
+
     XmlExercise exercise = XmlExercise.finder.byId(id);
     if(exercise == null)
-      exercise = new XmlExercise(id);
-
-    exercise.id = id;
-    exercise.title = node.get(StringConsts.TITLE_NAME).asText();
-    exercise.author = node.get(StringConsts.AUTHOR_NAME).asText();
-    exercise.exerciseType = XmlExType.valueOf(node.get("exerciseType").asText());
-    exercise.text = JsonWrapper.readTextArray(node.get(StringConsts.TEXT_NAME), "");
-    exercise.referenceFileName = node.get("referenceFileName").asText();
-    exercise.fixedStart = String.join("\n", JsonWrapper.parseJsonArrayNode(node.get("fixedStart")));
-
-    return exercise;
+      return new XmlExercise(id, title, author, text, fixedStart, exerciseType, referenceFileName);
+    else
+      return exercise.updateValues(id, title, author, text, fixedStart, exerciseType, referenceFileName);
   }
 
 }
