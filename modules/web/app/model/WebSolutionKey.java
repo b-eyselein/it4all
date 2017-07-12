@@ -6,15 +6,15 @@ import javax.persistence.Embeddable;
 
 @Embeddable
 public class WebSolutionKey implements Serializable {
-
+  
   private static final long serialVersionUID = 1640011527742075003L;
-
-  public String userName;
-
-  public int exerciseId;
-
+  
+  private String username;
+  
+  private int exerciseId;
+  
   public WebSolutionKey(String theUserName, int theExerciseId) {
-    userName = theUserName;
+    username = theUserName;
     exerciseId = theExerciseId;
   }
 
@@ -23,9 +23,17 @@ public class WebSolutionKey implements Serializable {
     return obj instanceof WebSolutionKey && hashCode() == obj.hashCode();
   }
 
+  public int getExerciseId() {
+    return exerciseId;
+  }
+  
+  public String getUsername() {
+    return username;
+  }
+  
   @Override
   public int hashCode() {
-    return IntConsts.THOUSAND * userName.hashCode() + exerciseId;
+    return IntConsts.THOUSAND * username.hashCode() + exerciseId;
   }
-
+  
 }

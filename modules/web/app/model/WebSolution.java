@@ -13,29 +13,29 @@ import io.ebean.Model;
 
 @Entity
 public class WebSolution extends Model {
-
+  
   public static final Finder<WebSolutionKey, WebSolution> finder = new Finder<>(WebSolution.class);
-
+  
   @EmbeddedId
   public WebSolutionKey key;
-
+  
   @Column(columnDefinition = "text")
   public String sol;
-
+  
   public int points;
-
+  
   @ManyToOne
   @JsonBackReference
   @JoinColumn(name = "user_name", insertable = false, updatable = false)
   public WebUser user;
-
+  
   @ManyToOne
   @JsonBackReference
   @JoinColumn(name = "exercise_id", insertable = false, updatable = false)
   public WebExercise exercise;
-
+  
   public WebSolution(WebSolutionKey theKey) {
     key = theKey;
   }
-
+  
 }

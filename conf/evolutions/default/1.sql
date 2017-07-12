@@ -257,11 +257,12 @@ create table web_exercise (
 );
 
 create table web_solution (
-  user_name                     varchar(255) not null,
+  username                      varchar(255) not null,
   exercise_id                   integer not null,
   sol                           text,
   points                        integer not null,
-  constraint pk_web_solution primary key (user_name,exercise_id)
+  user_name                     varchar(255),
+  constraint pk_web_solution primary key (username,exercise_id)
 );
 
 create table web_user (
@@ -341,11 +342,11 @@ create index ix_user_answer_username on user_answer (username);
 alter table user_answer add constraint fk_user_answer_question_id foreign key (question_id) references question (id) on delete restrict on update restrict;
 create index ix_user_answer_question_id on user_answer (question_id);
 
-alter table web_solution add constraint fk_web_solution_user_name foreign key (user_name) references web_user (name) on delete restrict on update restrict;
-create index ix_web_solution_user_name on web_solution (user_name);
-
 alter table web_solution add constraint fk_web_solution_exercise_id foreign key (exercise_id) references web_exercise (id) on delete restrict on update restrict;
 create index ix_web_solution_exercise_id on web_solution (exercise_id);
+
+alter table web_solution add constraint fk_web_solution_user_name foreign key (user_name) references web_user (name) on delete restrict on update restrict;
+create index ix_web_solution_user_name on web_solution (user_name);
 
 
 # --- !Downs
@@ -410,11 +411,11 @@ drop index ix_user_answer_username on user_answer;
 alter table user_answer drop foreign key fk_user_answer_question_id;
 drop index ix_user_answer_question_id on user_answer;
 
-alter table web_solution drop foreign key fk_web_solution_user_name;
-drop index ix_web_solution_user_name on web_solution;
-
 alter table web_solution drop foreign key fk_web_solution_exercise_id;
 drop index ix_web_solution_exercise_id on web_solution;
+
+alter table web_solution drop foreign key fk_web_solution_user_name;
+drop index ix_web_solution_user_name on web_solution;
 
 drop table if exists answer;
 
