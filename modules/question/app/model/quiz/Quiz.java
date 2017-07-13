@@ -20,8 +20,8 @@ public class Quiz extends ExerciseCollection<Question> {
   // @ManyToMany(mappedBy = "quizzes", cascade = CascadeType.ALL)
   // public List<Question> questions;
 
-  public Quiz(int theId, String theTitle, String theTheme) {
-    super(theId, theTitle);
+  public Quiz(int theId, String theTitle, String theAuthor, String theText, String theTheme) {
+    super(theId, theTitle, theAuthor, theText);
     theme = theTheme;
   }
 
