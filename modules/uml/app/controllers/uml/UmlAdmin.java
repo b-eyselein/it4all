@@ -27,7 +27,7 @@ public class UmlAdmin extends AbstractAdminController<UmlExercise, UmlExerciseRe
 
   @Inject
   public UmlAdmin(FormFactory theFactory) {
-    super(theFactory, UmlExercise.finder, "uml", new UmlExerciseReader());
+    super(theFactory, UmlExercise.finder, UmlExerciseReader.getInstance());
   }
 
   public Result checkSolution() {

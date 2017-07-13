@@ -13,8 +13,14 @@ import play.libs.Json;
 
 public class QuestionReader extends ExerciseReader<Question> {
   
-  public QuestionReader() {
+  private static final QuestionReader INSTANCE = new QuestionReader();
+
+  private QuestionReader() {
     super("question");
+  }
+
+  public static QuestionReader getInstance() {
+    return INSTANCE;
   }
   
   private static Answer readAnswer(JsonNode answerNode) {

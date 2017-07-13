@@ -9,7 +9,9 @@ lazy val root = (project in file("."))
 
 lazy val core: Project = (project in file("modules/core"))
 	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)
-	.settings(aggregateReverseRoutes := Seq(binary, bool, mindmap, programming, question, spread, sql, uml, web, xml, root))
+	.settings(
+		aggregateReverseRoutes := Seq(binary, bool, mindmap, programming, question, spread, sql, uml, web, xml, root)
+	)
 
 lazy val binary = (project in file("modules/binary"))
 	.enablePlugins(PlayJava, PlayEbean, PlayEnhancer)

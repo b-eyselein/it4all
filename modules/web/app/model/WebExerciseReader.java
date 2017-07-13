@@ -21,8 +21,14 @@ public class WebExerciseReader extends ExerciseReader<WebExercise> {
   private static final String XPATH_NAME = "xpathQuery";
   private static final String ATTRS_NAME = "attributes";
   
-  public WebExerciseReader() {
+  private static final WebExerciseReader INSTANCE = new WebExerciseReader();
+  
+  private WebExerciseReader() {
     super("web");
+  }
+  
+  public static WebExerciseReader getInstance() {
+    return INSTANCE;
   }
   
   private static String readAttributes(JsonNode attributesNode) {

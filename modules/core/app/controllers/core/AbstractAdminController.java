@@ -35,13 +35,9 @@ public abstract class AbstractAdminController<E extends WithId, R extends Exerci
 
   protected R exerciseReader;
 
-  protected String exerciseType;
-
-  public AbstractAdminController(FormFactory theFactory, Finder<Integer, E> theFinder, String theExerciseType,
-      R theExerciseReader) {
+  public AbstractAdminController(FormFactory theFactory, Finder<Integer, E> theFinder, R theExerciseReader) {
     super(theFactory);
     finder = theFinder;
-    exerciseType = theExerciseType;
     exerciseReader = theExerciseReader;
   }
 
@@ -65,7 +61,7 @@ public abstract class AbstractAdminController<E extends WithId, R extends Exerci
   public Result getJSONSchemaFile() {
     return ok(exerciseReader.getJsonSchemaFile().toFile());
   }
-  
+
   public Result importExercises() {
     AbstractReadingResult abstractResult = exerciseReader.readFromStandardFile();
 
@@ -83,7 +79,7 @@ public abstract class AbstractAdminController<E extends WithId, R extends Exerci
 
   public E initFromForm(DynamicForm form) {
     int id = findMinimalNotUsedId(finder);
-    
+
     String title = form.get(StringConsts.TITLE_NAME);
     String author = form.get(StringConsts.AUTHOR_NAME);
     String text = form.get(StringConsts.TEXT_NAME);
@@ -110,7 +106,7 @@ public abstract class AbstractAdminController<E extends WithId, R extends Exerci
       return badRequest("Fehler!");
 
     Path pathToUploadedFile = uploadedFile.getFile().toPath();
-    Path savingDir = Paths.get(BASE_DATA_PATH, StringConsts.ADMIN_FOLDER, exerciseType);
+    Path savingDir = Paths.get(BASE_DATA_PATH, StringConsts.ADMIN_FOLDER, exerciseReader.getExerciseType());
 
     Path jsonFile = Paths.get(savingDir.toString(), uploadedFile.getFilename());
     Path jsonTargetPath = saveUploadedFile(savingDir, pathToUploadedFile, jsonFile);
@@ -126,11 +122,11 @@ public abstract class AbstractAdminController<E extends WithId, R extends Exerci
     result.getRead().forEach(exerciseReader::saveRead);
     return ok(views.html.admin.preview.render(getUser(), renderCreated(result.getRead()), getIndex()));
   }
-  
+
   protected abstract Call getIndex();
 
   protected Path getSampleDir() {
-    return Paths.get(BASE_DATA_PATH, SAMPLE_SUB_DIRECTORY, exerciseType);
+    return Paths.get(BASE_DATA_PATH, SAMPLE_SUB_DIRECTORY, exerciseReader.getExerciseType());
   }
 
   protected abstract E initRemainingExFromForm(int id, String title, String author, String text, DynamicForm form);

@@ -13,8 +13,14 @@ import play.libs.Json;
 
 public class ProgExerciseReader extends ExerciseReader<ProgExercise> {
 
-  public ProgExerciseReader() {
+  private static final ProgExerciseReader INSTANCE = new ProgExerciseReader();
+
+  private ProgExerciseReader() {
     super("prog");
+  }
+
+  public static ProgExerciseReader getInstance() {
+    return INSTANCE;
   }
 
   private static SampleTestData readTest(JsonNode testNode) {
@@ -56,7 +62,7 @@ public class ProgExerciseReader extends ExerciseReader<ProgExercise> {
     String javaSample = exerciseNode.get("javaSample").asText();
 
     List<SampleTestData> sampleTestData = readTests(exerciseNode.get("sampleTestData"));
-    
+
     ProgExercise exercise = ProgExercise.finder.byId(id);
     if(exercise == null)
       return new ProgExercise(id, title, author, text, functionName, inputCount, pythonSample, jsSample, javaSample);

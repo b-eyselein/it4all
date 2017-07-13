@@ -1,4 +1,4 @@
-@(user: model.user.User, quiz: model.Quiz, questionId: Int)
+@(user: model.user.User, quiz: model.quiz.Quiz, questionId: Int)
 
 @question = @{null} @*quiz.questions.get(questionId)*@
 @*@isMultiple = @{question.questionType == model.question.QuestionType.MULTIPLE}*@

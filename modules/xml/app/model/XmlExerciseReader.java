@@ -13,8 +13,14 @@ import play.Logger;
 
 public class XmlExerciseReader extends ExerciseReader<XmlExercise> {
 
-  public XmlExerciseReader() {
+  private static final XmlExerciseReader INSTANCE = new XmlExerciseReader();
+
+  private XmlExerciseReader() {
     super("xml");
+  }
+
+  public static XmlExerciseReader getInstance() {
+    return INSTANCE;
   }
 
   @Override

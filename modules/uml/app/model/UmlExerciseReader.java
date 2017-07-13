@@ -12,8 +12,14 @@ import play.Logger;
 
 public class UmlExerciseReader extends ExerciseReader<UmlExercise> {
   
-  public UmlExerciseReader() {
+  private static final UmlExerciseReader INSTANCE = new UmlExerciseReader();
+  
+  private UmlExerciseReader() {
     super("uml");
+  }
+  
+  public static UmlExerciseReader getInstance() {
+    return INSTANCE;
   }
   
   public List<Mapping> readMappings(JsonNode mappingsNode) {

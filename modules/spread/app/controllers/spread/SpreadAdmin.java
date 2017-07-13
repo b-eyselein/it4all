@@ -18,7 +18,7 @@ public class SpreadAdmin extends AbstractAdminController<SpreadExercise, SpreadE
 
   @Inject
   public SpreadAdmin(FormFactory theFactory) {
-    super(theFactory, SpreadExercise.finder, "spread", new SpreadExerciseReader());
+    super(theFactory, SpreadExercise.finder, SpreadExerciseReader.getInstance());
   }
 
   @Override

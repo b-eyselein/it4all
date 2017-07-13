@@ -26,9 +26,9 @@ public class XmlAdmin extends AbstractAdminController<XmlExercise, XmlExerciseRe
 
   @Inject
   public XmlAdmin(FormFactory theFactory) {
-    super(theFactory, XmlExercise.finder, "xml", new XmlExerciseReader());
+    super(theFactory, XmlExercise.finder, XmlExerciseReader.getInstance());
   }
-  
+
   @Override
   public Result index() {
     return ok(views.html.xmlAdmin.index.render(getUser()));
@@ -56,7 +56,7 @@ public class XmlAdmin extends AbstractAdminController<XmlExercise, XmlExerciseRe
     String referenceFileName = form.get(StringConsts.REFERENCE_FILE_NAME);
 
     XmlExercise exercise = new XmlExercise(id, title, author, text, fixedStart, exerciseType, referenceFileName);
-    
+
     Path referenceFilePath = Paths.get(getSampleDir().toString(),
         exercise.getReferenceFileName() + "." + exercise.getReferenceFileEnding());
     List<String> referenceFileContent = Arrays
@@ -68,7 +68,7 @@ public class XmlAdmin extends AbstractAdminController<XmlExercise, XmlExerciseRe
     } catch (IOException e) {
       Logger.error("There has been an error creating a sample xml file", e);
     }
-    
+
     return exercise;
   }
 

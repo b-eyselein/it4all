@@ -17,18 +17,6 @@ POST   /assign                     controllers.questions.QuestionAdmin.assignQue
 
 GET    /assign/:id                 controllers.questions.QuestionAdmin.assignQuestionsSingleForm(id: Int)
 
-# Admin Quiz
-GET    /quizzes                    controllers.questions.QuizAdmin.index()
-
-GET    /quizzes/jsonSchema         controllers.questions.QuizAdmin.getJSONSchemaFile()
-POST   /quizzes/upload             controllers.questions.QuizAdmin.uploadFile()
-
-GET    /quizzes/export             controllers.questions.QuizAdmin.exportExercises()
-GET    /quizzes/import             controllers.questions.QuizAdmin.importExercises()
-
-GET    /quizzes/new                controllers.questions.QuizAdmin.newExerciseForm()
-POST   /quizzes/new                controllers.questions.QuizAdmin.newExercise()
-
 
 # All
 GET    /                           controllers.questions.QuestionController.index(start: Int ?= 0)
@@ -44,11 +32,25 @@ POST   /edit/:id                   controllers.questions.QuestionController.edit
 GET    /question/:id               controllers.questions.QuestionController.question(id: Int)
 POST   /question/:id               controllers.questions.QuestionController.questionResult( id: Int)
 
+
+# Admin Quiz
+GET    /quizzes                    controllers.questions.QuizAdmin.index()
+
+GET    /quizzes/jsonSchema         controllers.questions.QuizAdmin.getJSONSchemaFile()
+POST   /quizzes/upload             controllers.questions.QuizAdmin.uploadFile()
+
+GET    /quizzes/export             controllers.questions.QuizAdmin.exportExercises()
+GET    /quizzes/import             controllers.questions.QuizAdmin.importExercises()
+
+GET    /quizzes/new                controllers.questions.QuizAdmin.newExerciseForm()
+POST   /quizzes/new                controllers.questions.QuizAdmin.newExercise()
+
+
 # Quizzes
-GET    /quizzes                    controllers.questions.QuestionController.quizzes()
+GET    /quizzes                    controllers.questions.QuizController.quizzes()
 
-GET    /quiz/:id                   controllers.questions.QuestionController.quiz(id: Int)
+GET    /quiz/:id                   controllers.questions.QuizController.quiz(id: Int)
 
-GET    /start/:quizId              controllers.questions.QuestionController.quizStart(quizId: Int)
-GET    /:quizId/:questionId        controllers.questions.QuestionController.quizQuestion(quizId: Int, questionId: Int)
-POST   /:quizId/:questionId        controllers.questions.QuestionController.quizCorrection(quizId: Int, questionId: Int)
+GET    /start/:quizId              controllers.questions.QuizController.quizStart(quizId: Int)
+GET    /:quizId/:questionId        controllers.questions.QuizController.quizQuestion(quizId: Int, questionId: Int)
+POST   /:quizId/:questionId        controllers.questions.QuizController.quizCorrection(quizId: Int, questionId: Int)

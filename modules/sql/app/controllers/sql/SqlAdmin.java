@@ -25,7 +25,7 @@ public class SqlAdmin extends AbstractAdminController<SqlScenario, SqlScenarioRe
   @Inject
   public SqlAdmin(FormFactory theFactory, @NamedDatabase("sqlselectroot") Database theSqlSelect,
       @NamedDatabase("sqlotherroot") Database theSqlOther) {
-    super(theFactory, SqlScenario.finder, "sql", new SqlScenarioReader(theSqlSelect, theSqlOther));
+    super(theFactory, SqlScenario.finder, new SqlScenarioReader(theSqlSelect, theSqlOther));
     // sqlSelect = theSqlSelect;
     // sqlOther = theSqlOther;
   }

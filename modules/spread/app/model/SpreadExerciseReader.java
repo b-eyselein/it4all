@@ -17,8 +17,14 @@ public class SpreadExerciseReader extends ExerciseReader<SpreadExercise> {
   
   private static final List<String> FILE_ENDINGS = Arrays.asList("xlsx", "ods");
   
-  public SpreadExerciseReader() {
+  private static final SpreadExerciseReader INSTANCE = new SpreadExerciseReader();
+  
+  private SpreadExerciseReader() {
     super("spread");
+  }
+  
+  public static SpreadExerciseReader getInstance() {
+    return INSTANCE;
   }
   
   @Override
