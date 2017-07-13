@@ -1,29 +1,38 @@
 package model;
 
+import java.util.Collections;
+import java.util.List;
+
 import javax.persistence.Entity;
 
 import io.ebean.Finder;
-import model.exercise.Exercise;
+import model.exercise.ExerciseCollection;
+import model.question.Question;
 
 @Entity
-public class Quiz extends Exercise {
-
+public class Quiz extends ExerciseCollection<Question> {
+  
   public static final Finder<Integer, Quiz> finder = new Finder<>(Quiz.class);
-
-  public String theme;
-
+  
+  private String theme;
+  
   // @JsonIgnore
   // @ManyToMany(mappedBy = "quizzes", cascade = CascadeType.ALL)
   // public List<Question> questions;
-
-  public Quiz(int theId, String theTitle, String theAuthor, String theText, String theTheme) {
-    super(theId, theTitle, theAuthor, theText);
+  
+  public Quiz(int theId, String theTitle, String theTheme) {
+    super(theId, theTitle);
     theme = theTheme;
   }
-
-  // @JsonIgnore
-  // public int getMaxPoints() {
-  // return questions.stream().mapToInt(q -> q.maxPoints).sum();
-  // }
-
+  
+  @Override
+  public List<Question> getExercises() {
+    return Collections.emptyList();
+    // questions;
+  }
+  
+  public String getTheme() {
+    return theme;
+  }
+  
 }

@@ -146,8 +146,6 @@ create table question_user (
 create table quiz (
   id                            integer auto_increment not null,
   title                         varchar(255),
-  author                        varchar(255),
-  text                          text,
   theme                         varchar(255),
   constraint pk_quiz primary key (id)
 );

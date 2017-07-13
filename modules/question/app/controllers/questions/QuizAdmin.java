@@ -34,13 +34,11 @@ public class QuizAdmin extends AbstractAdminController<Quiz, QuizReader> {
 
     int id = findMinimalNotUsedId(Quiz.finder);
     String title = form.get(StringConsts.TITLE_NAME);
-    String author = form.get(StringConsts.AUTHOR_NAME);
-    String text = form.get(StringConsts.TEXT_NAME);
     String theme = form.get(StringConsts.THEME_NAME);
 
     Quiz quiz = finder.byId(id);
     if(quiz == null)
-      quiz = new Quiz(id, title, author, text, theme);
+      quiz = new Quiz(id, title, theme);
     else
       return badRequest("TODO!");
 
@@ -68,7 +66,7 @@ public class QuizAdmin extends AbstractAdminController<Quiz, QuizReader> {
   @Override
   protected Quiz initRemainingExFromForm(int id, String title, String author, String text, DynamicForm form) {
     String theme = form.get(StringConsts.THEME_NAME);
-    return new Quiz(id, title, author, text, theme);
+    return new Quiz(id, title, theme);
   }
 
 }
