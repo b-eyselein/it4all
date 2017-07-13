@@ -38,9 +38,11 @@ public class QuizAdmin extends AbstractAdminController<Quiz, QuizReader> {
     String text = form.get(StringConsts.TEXT_NAME);
     String theme = form.get(StringConsts.THEME_NAME);
 
-    Quiz quiz = findByTitle(title);
+    Quiz quiz = finder.byId(id);
     if(quiz == null)
       quiz = new Quiz(id, title, author, text, theme);
+    else
+      return badRequest("TODO!");
 
     quiz.save();
 

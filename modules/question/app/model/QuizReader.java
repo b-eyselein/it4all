@@ -11,14 +11,12 @@ public class QuizReader extends ExerciseReader<Quiz> {
   }
 
   @Override
-  public void saveExercise(Quiz exercise) {
-    // TODO Auto-generated method stub
+  public void saveRead(Quiz exercise) {
     exercise.save();
   }
 
   @Override
-  protected Quiz readExercise(JsonNode exerciseNode) {
-    // TODO Auto-generated method stub
+  protected Quiz read(JsonNode exerciseNode) {
     return null;
   }
 

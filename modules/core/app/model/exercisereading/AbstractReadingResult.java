@@ -1,8 +1,6 @@
 package model.exercisereading;
 
-import model.exercise.Exercise;
-
-public abstract class AbstractReadingResult<T extends Exercise> {
+public abstract class AbstractReadingResult {
 
   private String json;
   private String jsonSchema;

@@ -12,7 +12,7 @@ import java.util.List;
 import io.ebean.Finder;
 import model.AdminSecured;
 import model.StringConsts;
-import model.exercise.Exercise;
+import model.WithId;
 import model.exercisereading.AbstractReadingResult;
 import model.exercisereading.ExerciseReader;
 import model.exercisereading.ReadingError;
@@ -29,7 +29,7 @@ import play.mvc.Security.Authenticated;
 import play.twirl.api.Html;
 
 @Authenticated(AdminSecured.class)
-public abstract class AbstractAdminController<E extends Exercise, R extends ExerciseReader<E>> extends BaseController {
+public abstract class AbstractAdminController<E extends WithId, R extends ExerciseReader<E>> extends BaseController {
 
   protected Finder<Integer, E> finder;
 
@@ -67,14 +67,15 @@ public abstract class AbstractAdminController<E extends Exercise, R extends Exer
   }
   
   public Result importExercises() {
-    AbstractReadingResult<E> abstractResult = exerciseReader.readStandardExercises();
+    AbstractReadingResult abstractResult = exerciseReader.readFromStandardFile();
 
     if(!abstractResult.isSuccess())
-      return badRequest(views.html.jsonReadingError.render(getUser(), (ReadingError<E>) abstractResult));
+      return badRequest(views.html.jsonReadingError.render(getUser(), (ReadingError) abstractResult));
 
+    @SuppressWarnings("unchecked")
     ReadingResult<E> result = (ReadingResult<E>) abstractResult;
 
-    result.getRead().forEach(exerciseReader::saveExercise);
+    result.getRead().forEach(exerciseReader::saveRead);
     return ok(views.html.admin.preview.render(getUser(), renderCreated(result.getRead()), getIndex()));
   }
 
@@ -93,7 +94,7 @@ public abstract class AbstractAdminController<E extends Exercise, R extends Exer
 
   public Result newExercise() {
     E exercise = initFromForm(factory.form().bindFromRequest());
-    exerciseReader.saveExercise(exercise);
+    exerciseReader.saveRead(exercise);
     return ok(views.html.admin.preview.render(getUser(), renderCreated(Arrays.asList(exercise)), getIndex()));
   }
 
@@ -114,21 +115,18 @@ public abstract class AbstractAdminController<E extends Exercise, R extends Exer
     Path jsonFile = Paths.get(savingDir.toString(), uploadedFile.getFilename());
     Path jsonTargetPath = saveUploadedFile(savingDir, pathToUploadedFile, jsonFile);
 
-    AbstractReadingResult<E> abstractResult = exerciseReader.readExercises(jsonTargetPath);
+    AbstractReadingResult abstractResult = exerciseReader.readAllFromFile(jsonTargetPath);
 
     if(!abstractResult.isSuccess())
-      return badRequest(views.html.jsonReadingError.render(getUser(), (ReadingError<E>) abstractResult));
+      return badRequest(views.html.jsonReadingError.render(getUser(), (ReadingError) abstractResult));
 
+    @SuppressWarnings("unchecked")
     ReadingResult<E> result = (ReadingResult<E>) abstractResult;
 
-    result.getRead().forEach(exerciseReader::saveExercise);
+    result.getRead().forEach(exerciseReader::saveRead);
     return ok(views.html.admin.preview.render(getUser(), renderCreated(result.getRead()), getIndex()));
   }
-
-  protected E findByTitle(String title) {
-    return finder.all().stream().filter(e -> title.equals(e.getTitle())).findFirst().orElse(null);
-  }
-
+  
   protected abstract Call getIndex();
 
   protected Path getSampleDir() {

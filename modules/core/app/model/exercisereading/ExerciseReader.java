@@ -12,11 +12,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
 
 import model.JsonWrapper;
-import model.exercise.Exercise;
+import model.WithId;
 import play.Logger;
 import play.libs.Json;
 
-public abstract class ExerciseReader<T extends Exercise> {
+public abstract class ExerciseReader<T extends WithId> {
   
   private static final String EX_FILE_NAME = "exercises.json";
   private static final String EX_SCHEMA_FILE_NAME = "exerciseSchema.json";
@@ -63,7 +63,7 @@ public abstract class ExerciseReader<T extends Exercise> {
     return jsonSchemaFile;
   }
   
-  public AbstractReadingResult<T> readExercises(Path jsonFile) {
+  public AbstractReadingResult readAllFromFile(Path jsonFile) {
     String jsonAsString = readFile(jsonFile);
     String jsonSchemaAsString = readFile(jsonSchemaFile);
     
@@ -72,20 +72,19 @@ public abstract class ExerciseReader<T extends Exercise> {
     // Validate json with json schema
     ProcessingReport report = JsonWrapper.validateJson(json, Json.parse(jsonSchemaAsString));
     if(report == null || !report.isSuccess())
-      return new ReadingError<>(jsonAsString, jsonSchemaAsString, report);
+      return new ReadingError(jsonAsString, jsonSchemaAsString, report);
     
-    List<T> exercises = StreamSupport.stream(json.spliterator(), true).map(this::readExercise)
-        .collect(Collectors.toList());
+    List<T> exercises = StreamSupport.stream(json.spliterator(), true).map(this::read).collect(Collectors.toList());
     
     return new ReadingResult<>(jsonAsString, jsonSchemaAsString, exercises);
   }
   
-  public AbstractReadingResult<T> readStandardExercises() {
-    return readExercises(Paths.get(baseDirForExType.toString(), EX_FILE_NAME));
+  public AbstractReadingResult readFromStandardFile() {
+    return readAllFromFile(Paths.get(baseDirForExType.toString(), EX_FILE_NAME));
   }
   
-  public abstract void saveExercise(T exercise);
+  public abstract void saveRead(T exercise);
   
-  protected abstract T readExercise(JsonNode exerciseNode);
+  protected abstract T read(JsonNode exerciseNode);
   
 }

@@ -113,7 +113,7 @@ public class SqlScenarioReader extends ExerciseReader<SqlScenario> {
   }
   
   @Override
-  public void saveExercise(SqlScenario scenario) {
+  public void saveRead(SqlScenario scenario) {
     scenario.save();
     
     runCreateScript(sqlSelect, scenario);
@@ -126,7 +126,7 @@ public class SqlScenarioReader extends ExerciseReader<SqlScenario> {
   }
   
   @Override
-  protected SqlScenario readExercise(JsonNode exerciseNode) {
+  protected SqlScenario read(JsonNode exerciseNode) {
     int id = exerciseNode.get(StringConsts.ID_NAME).asInt();
     
     String author = exerciseNode.get(StringConsts.AUTHOR_NAME).asText();

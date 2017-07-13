@@ -22,7 +22,7 @@ public class SpreadExerciseReader extends ExerciseReader<SpreadExercise> {
   }
   
   @Override
-  public void saveExercise(SpreadExercise exercise) {
+  public void saveRead(SpreadExercise exercise) {
     exercise.save();
     FILE_ENDINGS.forEach(fileEnding -> {
       checkFile(exercise, exercise.sampleFilename, fileEnding);
@@ -56,7 +56,7 @@ public class SpreadExerciseReader extends ExerciseReader<SpreadExercise> {
   }
   
   @Override
-  protected SpreadExercise readExercise(JsonNode exerciseNode) {
+  protected SpreadExercise read(JsonNode exerciseNode) {
     int id = exerciseNode.get(StringConsts.ID_NAME).asInt();
     String title = exerciseNode.get(StringConsts.TITLE_NAME).asText();
     String author = exerciseNode.get(StringConsts.AUTHOR_NAME).asText();

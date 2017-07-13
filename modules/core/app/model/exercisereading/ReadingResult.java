@@ -2,9 +2,9 @@ package model.exercisereading;
 
 import java.util.List;
 
-import model.exercise.Exercise;
+import model.WithId;
 
-public class ReadingResult<T extends Exercise> extends AbstractReadingResult<T> {
+public class ReadingResult<T extends WithId> extends AbstractReadingResult {
 
   private List<T> read;
 

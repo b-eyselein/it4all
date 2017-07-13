@@ -18,7 +18,7 @@ public class XmlExerciseReader extends ExerciseReader<XmlExercise> {
   }
 
   @Override
-  public void saveExercise(XmlExercise exercise) {
+  public void saveRead(XmlExercise exercise) {
     exercise.save();
     Logger.debug(checkOrCreateSampleFile(exercise));
   }
@@ -46,7 +46,7 @@ public class XmlExerciseReader extends ExerciseReader<XmlExercise> {
   }
 
   @Override
-  protected XmlExercise readExercise(JsonNode node) {
+  protected XmlExercise read(JsonNode node) {
     int id = node.get(StringConsts.ID_NAME).asInt();
 
     String title = node.get(StringConsts.TITLE_NAME).asText();
