@@ -93,70 +93,522 @@
 			}
 		]
 	},
-	{
-		"id": 3,
-		"title": "Fremdschlüssel in Datenbanksystemen",
-		"author": "alg31dm",
-		"text": [
-			"Wofür werden Fremdschlüssel in Datenbanksystemen genutzt und welche Regeln gelten für sie?"
-		],
-		"maxPoints": 3,
-		"exerciseType": "FREETEXT",
-		"answers": [
-			{
-				"key": {
-					"questionId": 3,
-					"id": 1
+	[
+		{
+			"id": 10,
+			"title": "Fremdschlüssel in Datenbanksystemen",
+			"author": "alg81dm",
+			"text": [
+				"Wofür werden Fremdschlüssel in Datenbanksystemen genutzt und welche Regeln gelten für sie?"
+			],
+			"maxPoints": 2,
+			"answers": [
+				{
+					"key": {
+						"questionId": 10,
+						"id": 1
+					},
+					"text": [
+						"Fremdschlüssel modellieren Assoziationen zwischen Tabellen. Sie müssen immer einen Wert besitzen (En",
+						"titätsintegrität)."
+					],
+					"correctness": "CORRECT"
 				},
-				"text": [
-					"Fremdschlüssel modellieren Assoziationen zwischen Tabellen."
-				],
-				"correctness": "CORRECT"
-			},
-			{
-				"key": {
-					"questionId": 3,
-					"id": 2
+				{
+					"key": {
+						"questionId": 10,
+						"id": 2
+					},
+					"text": [
+						"Außerdem muss ein Wert, der als Fremdschlüssel vorkommt, immer auch als Primärschlüssel in der refer",
+						"enzierten Tabelle vorkommen (referentielle Integrität)."
+					],
+					"correctness": "CORRECT"
+				}
+			],
+			"exerciseType": "FREETEXT"
+		},
+		{
+			"id": 11,
+			"title": "Normalformen für Datenbanken.",
+			"author": "alg81dm",
+			"text": [
+				"Beschreiben Sie drei der fünf Normalformen für relationale Datenbanken."
+			],
+			"maxPoints": 3,
+			"answers": [
+				{
+					"key": {
+						"questionId": 11,
+						"id": 1
+					},
+					"text": [
+						"Erste Normalform: Alle Attributwerte sind atomar (d.h. elementarer Typ; keine Arrays, Listen, Mengen",
+						" oder ähnlicher)."
+					],
+					"correctness": "CORRECT"
 				},
-				"text": [
-					"Sie müssen immer einen Wert besitzen (Entitätsintegrität)."
-				],
-				"correctness": "CORRECT"
-			},
-			{
-				"key": {
-					"questionId": 3,
-					"id": 3
+				{
+					"key": {
+						"questionId": 11,
+						"id": 2
+					},
+					"text": [
+						"Zweite Normalform: Eine Relation enthält nur ein Thema: 1NF + funktionale Abhängigkeit der Nicht-Sch",
+						"lüssel-Attribute von allen Schlüsselattributen"
+					],
+					"correctness": "CORRECT"
 				},
-				"text": [
-					"Außerdem muss ein Wert, der als Fremdschlüssel vorkommt, immer auch als Primärschlüssel in der refer",
-					"enzierten Tabelle vorkommen (referentielle Integrität)."
-				],
-				"correctness": "CORRECT"
-			}
-		]
-	},
-	{
-		"id": 4,
-		"title": "Physisches Datenbanksystemen",
-		"author": "alg31dm",
-		"text": [
-			"Was wird mit einem physischen Datenmodell beschrieben?"
-		],
-		"maxPoints": 3,
-		"exerciseType": "FREETEXT",
-		"answers": [
-			{
-				"key": {
-					"questionId": 4,
-					"id": 1
+				{
+					"key": {
+						"questionId": 11,
+						"id": 3
+					},
+					"text": [
+						"Dritte Normalform: keine offensichtlichen Redundanzen: 2NF +  Nicht-Schlüsselattribute hängen nicht ",
+						"von anderen Nichtschlüsselattributen ab."
+					],
+					"correctness": "CORRECT"
 				},
-				"text": [
-					"Das physische Datenmodell stellt das interne Schema der Datenbank dar und beschreibt Tabellen mit ih",
-					"ren Spalten, sowie die Beziehungen zwischen Tabellen."
-				],
-				"correctness": "CORRECT"
-			}
-		]
-	}
+				{
+					"key": {
+						"questionId": 11,
+						"id": 4
+					},
+					"text": [
+						"Vierte Normalform:  keine Mehrfachthemen: nicht mehrere, voneinander unabhängige, 1:n-Beziehungen zu",
+						" einem Schlüsselwert"
+					],
+					"correctness": "CORRECT"
+				},
+				{
+					"key": {
+						"questionId": 11,
+						"id": 5
+					},
+					"text": [
+						"Fünfte Normalform:  nicht ohne Informationsverlust weiter in Relationen aufspaltbar"
+					],
+					"correctness": "CORRECT"
+				}
+			],
+			"exerciseType": "FREETEXT"
+		},
+		{
+			"id": 12,
+			"title": "Physisches Datenmodell",
+			"author": "alg81dm",
+			"text": [
+				"Was wird mit einem physischen Datenmodell beschrieben?"
+			],
+			"maxPoints": 1,
+			"answers": [
+				{
+					"key": {
+						"questionId": 12,
+						"id": 1
+					},
+					"text": [
+						"Das physische Datenmodell stellt das interne Schema der Datenbank dar und beschreibt Tabellen mit ih",
+						"ren Spalten, sowie die Beziehungen zwischen Tabellen."
+					],
+					"correctness": "CORRECT"
+				}
+			],
+			"exerciseType": "FREETEXT"
+		},
+		{
+			"id": 13,
+			"title": "Serverseitige Programmiersprachen",
+			"author": "alg81dm",
+			"text": [
+				"Nennen Sie eine serverseitige Programmiersprache und einen Anwendungsfall, in dem eine solche benöti",
+				"gt wird."
+			],
+			"maxPoints": 1,
+			"answers": [
+				{
+					"key": {
+						"questionId": 13,
+						"id": 1
+					},
+					"text": [
+						"Sprachen: z.B. PHP, Python, Java, Ruby, C++, C#, ..."
+					],
+					"correctness": "CORRECT"
+				},
+				{
+					"key": {
+						"questionId": 13,
+						"id": 2
+					},
+					"text": [
+						"Beispiele für Anwendungsfälle:"
+					],
+					"correctness": "CORRECT"
+				},
+				{
+					"key": {
+						"questionId": 13,
+						"id": 3
+					},
+					"text": [
+						"- Abspeicherung von Formulardaten"
+					],
+					"correctness": "CORRECT"
+				},
+				{
+					"key": {
+						"questionId": 13,
+						"id": 4
+					},
+					"text": [
+						"- Zugriff auf Datenbanken"
+					],
+					"correctness": "CORRECT"
+				},
+				{
+					"key": {
+						"questionId": 13,
+						"id": 5
+					},
+					"text": [
+						"- Generierung einer Webseite z.B. aufgrund einer Suchanfrage"
+					],
+					"correctness": "CORRECT"
+				}
+			],
+			"exerciseType": "FREETEXT"
+		},
+		{
+			"id": 14,
+			"title": "Aufwandsschätzung von Softwareprojekten",
+			"author": "alg81dm",
+			"text": [
+				"In der Vorlesung wurden zwei Verfahren zur Aufwandsschätzung von Softwareprojekten vorgestellt. Nenn",
+				"en Sie eines und beschreiben Sie es kurz."
+			],
+			"maxPoints": 2,
+			"answers": [
+				{
+					"key": {
+						"questionId": 14,
+						"id": 1
+					},
+					"text": [
+						"COCOMO: COnstructive COst MOdel, basierend auf geschätzter Programmgröße in Zeilen Code"
+					],
+					"correctness": "CORRECT"
+				},
+				{
+					"key": {
+						"questionId": 14,
+						"id": 2
+					},
+					"text": [
+						"Zuordnung zu einer Schwierigkeitsklasse auf Basis von vorherigen Erfahrungen"
+					],
+					"correctness": "CORRECT"
+				},
+				{
+					"key": {
+						"questionId": 14,
+						"id": 3
+					},
+					"text": [
+						"Modifizierung der geschätzten Kosten durch Projektmerkmale wie nötige Zuverlässigkeit, vorhandene To",
+						"ols, etc."
+					],
+					"correctness": "CORRECT"
+				},
+				{
+					"key": {
+						"questionId": 14,
+						"id": 4
+					},
+					"text": [
+					],
+					"correctness": "CORRECT"
+				},
+				{
+					"key": {
+						"questionId": 14,
+						"id": 5
+					},
+					"text": [
+						"Function Point Verfahren: basierend auf Umfang der Use-Cases (nicht Zeilen Code)"
+					],
+					"correctness": "CORRECT"
+				},
+				{
+					"key": {
+						"questionId": 14,
+						"id": 6
+					},
+					"text": [
+						"Zuordnung nach relevanten Daten (externe Ein- und Ausgaben / Abfragen, Interne Anwenderdaten, Extern",
+						"e Referenzdaten)"
+					],
+					"correctness": "CORRECT"
+				},
+				{
+					"key": {
+						"questionId": 14,
+						"id": 7
+					},
+					"text": [
+						"Bewertung der Komplexität der Daten"
+					],
+					"correctness": "CORRECT"
+				},
+				{
+					"key": {
+						"questionId": 14,
+						"id": 8
+					},
+					"text": [
+						"Modifizierung durch zusätzliche Einflussfaktoren."
+					],
+					"correctness": "CORRECT"
+				},
+				{
+					"key": {
+						"questionId": 14,
+						"id": 9
+					},
+					"text": [
+						"Normierung aufgrund von Erfahrungen mit früheren Projekten."
+					],
+					"correctness": "CORRECT"
+				}
+			],
+			"exerciseType": "FREETEXT"
+		},
+		{
+			"id": 15,
+			"title": "UML: abgeleitete Attribute",
+			"author": "alg81dm",
+			"text": [
+				"Welche Bedeutung hat in UML ein abgeleitetes Attribut und wie wird es dargestellt?"
+			],
+			"maxPoints": 1,
+			"answers": [
+				{
+					"key": {
+						"questionId": 15,
+						"id": 1
+					},
+					"text": [
+						"Der Wert eines abgeleiteten Attributs kann aus anderen vorhandenen Attributen berechnet werden."
+					],
+					"correctness": "CORRECT"
+				},
+				{
+					"key": {
+						"questionId": 15,
+						"id": 2
+					},
+					"text": [
+						"In UML wird ein abgeleitetes Attribut durch einen vorangestellen Schrägstrich markiert."
+					],
+					"correctness": "CORRECT"
+				}
+			],
+			"exerciseType": "FREETEXT"
+		},
+		{
+			"id": 16,
+			"title": "DTD und XML-Schema",
+			"author": "alg81dm",
+			"text": [
+				"Wozu werden DTD und XML-Schema genutzt? Nennen Sie je einen Vorteil von DTD und XML-Schema."
+			],
+			"maxPoints": 2,
+			"answers": [
+				{
+					"key": {
+						"questionId": 16,
+						"id": 1
+					},
+					"text": [
+						"DTD und XML-Schema dienen der Definition von XML-Grammatiken, beschreiben also Reihenfolge, Verschac",
+						"htelung, Anzahl und Typen von Elementen und Attributen."
+					],
+					"correctness": "CORRECT"
+				},
+				{
+					"key": {
+						"questionId": 16,
+						"id": 2
+					},
+					"text": [
+						"XML-Schema ist selbst ein XML-Format und erlaubt eine genauere Definition der Datentypen"
+					],
+					"correctness": "CORRECT"
+				},
+				{
+					"key": {
+						"questionId": 16,
+						"id": 3
+					},
+					"text": [
+						"DTD ist weniger komplex und kürzer."
+					],
+					"correctness": "CORRECT"
+				}
+			],
+			"exerciseType": "FREETEXT"
+		},
+		{
+			"id": 17,
+			"title": "UML und ER-Diagramme",
+			"author": "alg81dm",
+			"text": [
+				"Welche Vorteile hat ein UML-Klassendiagramm gegenüber einem Entity-Relationship-Diagramm?"
+			],
+			"maxPoints": 1,
+			"answers": [
+				{
+					"key": {
+						"questionId": 17,
+						"id": 1
+					},
+					"text": [
+						"Klassendiagramme sind kompakter und ausdrucksstärker."
+					],
+					"correctness": "CORRECT"
+				},
+				{
+					"key": {
+						"questionId": 17,
+						"id": 2
+					},
+					"text": [
+						"Außerdem fehlen in ER-Diagrammen dynamische Eigenschaften, deren Darstellung in UML standardisiert i",
+						"st."
+					],
+					"correctness": "CORRECT"
+				}
+			],
+			"exerciseType": "FREETEXT"
+		},
+		{
+			"id": 18,
+			"title": "Pflichtenheft",
+			"author": "alg81dm",
+			"text": [
+				"Welchen Zweck erfüllt das Pflichtenheft in einem Softwareprojekt?"
+			],
+			"maxPoints": 1,
+			"answers": [
+				{
+					"key": {
+						"questionId": 18,
+						"id": 1
+					},
+					"text": [
+						"Das Pflichtenheft legt die gewünschten Leistungen eines Programms, seine Rahmenbedingungen, verwalte",
+						"ten Datenmengen und Benutzerschnittstellen fest."
+					],
+					"correctness": "CORRECT"
+				},
+				{
+					"key": {
+						"questionId": 18,
+						"id": 2
+					},
+					"text": [
+						"Es dient der Aufwandsabschätzung sowie der vertraglichen Festlegung der Anforderungen an die Softwar",
+						"e."
+					],
+					"correctness": "CORRECT"
+				}
+			],
+			"exerciseType": "FREETEXT"
+		},
+		{
+			"id": 19,
+			"title": "Mediendateien in HTML",
+			"author": "alg81dm",
+			"text": [
+				"Wie unterscheidet sich in HTML die Quellenangabe bei der Einbindung von Audio- und Videodateien von ",
+				"der Einbindung von Grafiken?"
+			],
+			"maxPoints": 1,
+			"answers": [
+				{
+					"key": {
+						"questionId": 19,
+						"id": 1
+					},
+					"text": [
+						"Da die verschiedenen Browser unterschiedliche Videoformate unterstützen, können mehrere Quellen mit ",
+						"unterschiedlichem Typ angegeben werden, so dass der Browser selbst eine unterstützte Datei wählen ka",
+						"nn."
+					],
+					"correctness": "CORRECT"
+				}
+			],
+			"exerciseType": "FREETEXT"
+		},
+		{
+			"id": 20,
+			"title": "Vorteile von CSS",
+			"author": "alg81dm",
+			"text": [
+				"Die Angabe von Formatierungen ist bereits in HTML möglich, trotzdem wird bevorzugt CSS hierfür benuz",
+				"t. Begründen Sie dies."
+			],
+			"maxPoints": 1,
+			"answers": [
+				{
+					"key": {
+						"questionId": 20,
+						"id": 1
+					},
+					"text": [
+						"Durch die Verwendung von CSS trennt man die Struktur der Daten von ihrer Darstellung."
+					],
+					"correctness": "CORRECT"
+				},
+				{
+					"key": {
+						"questionId": 20,
+						"id": 2
+					},
+					"text": [
+						"Dies macht es einfacher, mehrere Seiten einheitlich zu formatieren und verschiedene Darstellungen fü",
+						"r verschiedene Endgeräte zu definieren (siehe z.B. Bootstrap)"
+					],
+					"correctness": "CORRECT"
+				}
+			],
+			"exerciseType": "FREETEXT"
+		},
+		{
+			"id": 21,
+			"title": "Javascript vs. serverseitige Programmiersprachen",
+			"author": "alg81dm",
+			"text": [
+				"Wann ist die Verwendung von Javascript anstelle einer serverseitigen Programmiersprache nötig?"
+			],
+			"maxPoints": 2,
+			"answers": [
+				{
+					"key": {
+						"questionId": 21,
+						"id": 1
+					},
+					"text": [
+						"Javascript ist dann notwendig, wenn auf der Clientseite etwas dynamisch dargestellt werden soll, als",
+						"o insbesondere für die Interaktivität der Oberfläche, z.B.  Animationen und interaktive Elemente Val",
+						"idierung von Formularen schon vor dem Abschicken (schnelleres Feedback für Benutzer, in HTML5 teilwe",
+						"ise ohne JS möglich) Ersetzen von Teilen der Seite, Clientseitiges Erzeugen von HTML"
+					],
+					"correctness": "CORRECT"
+				}
+			],
+			"exerciseType": "FREETEXT"
+		}
+	]
 ]
