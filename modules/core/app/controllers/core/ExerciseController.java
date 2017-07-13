@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 import io.ebean.Finder;
+import model.CorrectionException;
 import model.Secured;
 import model.StringConsts;
 import model.exercise.Exercise;
@@ -24,37 +25,43 @@ public abstract class ExerciseController<E extends Exercise, R extends Evaluatio
     extends BaseExerciseController {
 
   private final Finder<Integer, E> finder;
-  
+
   public ExerciseController(FormFactory theFactory, String theExerciseType, Finder<Integer, E> theFinder) {
     super(theFactory, theExerciseType);
     finder = theFinder;
   }
-  
+
   public Result correct(int id) {
     User user = getUser();
     E exercise = finder.byId(id);
-    
     String learnerSolution = factory.form().bindFromRequest().get(StringConsts.FORM_VALUE);
-    
-    List<R> correctionResult = correct(learnerSolution, exercise, user);
-    
-    log(user, new ExerciseCompletionEvent(request(), id, correctionResult));
-    
-    return ok(views.html.correction.render(exerciseType.toUpperCase(), renderResult(correctionResult), learnerSolution,
-        user, controllers.routes.Application.index()));
+
+    try {
+      List<R> correctionResult = correct(learnerSolution, exercise, user);
+
+      log(user, new ExerciseCompletionEvent(request(), id, correctionResult));
+
+      return ok(views.html.correction.render(exerciseType.toUpperCase(), renderResult(correctionResult),
+          learnerSolution, user, controllers.routes.Application.index()));
+    } catch (CorrectionException e) {
+      return badRequest("TODO!");
+    }
   }
 
   public Result correctLive(int id) {
     User user = getUser();
     E exercise = finder.byId(id);
-
     String learnerSolution = factory.form().bindFromRequest().get(StringConsts.FORM_VALUE);
 
-    List<R> correctionResult = correct(learnerSolution, exercise, user);
+    try {
+      List<R> correctionResult = correct(learnerSolution, exercise, user);
 
-    log(user, new ExerciseCorrectionEvent(request(), id, correctionResult));
+      log(user, new ExerciseCorrectionEvent(request(), id, correctionResult));
 
-    return ok(renderResult(correctionResult));
+      return ok(renderResult(correctionResult));
+    } catch (CorrectionException e) {
+      return badRequest("TODO!");
+    }
   }
 
   protected Path checkAndCreateSolDir(Exercise exercise) {
@@ -70,9 +77,9 @@ public abstract class ExerciseController<E extends Exercise, R extends Evaluatio
       return null;
     }
   }
-  
-  protected abstract List<R> correct(String learnerSolution, E exercise, User user);
-  
+
+  protected abstract List<R> correct(String learnerSolution, E exercise, User user) throws CorrectionException;
+
   protected abstract Html renderResult(List<R> correctionResult);
-  
+
 }

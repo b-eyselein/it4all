@@ -13,4 +13,6 @@ Freitext- / Auswahlfragen
 Programmierung
 	- Mount-Points!
 
-Apache/Nginx Server up front (with Docker...)
+Löschen der Aufgaben --> DELETE-Request by Admin allgemein!
+
+Implementierung LTI

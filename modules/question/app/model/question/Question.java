@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.ebean.Finder;
 import model.UserAnswer;
@@ -31,17 +32,19 @@ public class Question extends Exercise {
 
   public int maxPoints;
 
+  @JsonProperty("exerciseType")
   public QType questionType;
 
   @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
   public List<Answer> answers;
 
   @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+  @JsonIgnore
   public List<UserAnswer> givenAnswers;
 
   public Question(int theId, String theTitle, String theAuthor, String theText, int theMaxPoints, QType theQuestionType,
       List<Answer> theAnswers) {
-    super(theId, theText, theAuthor, theText);
+    super(theId, theTitle, theAuthor, theText);
     maxPoints = theMaxPoints;
     questionType = theQuestionType;
     answers = theAnswers;
