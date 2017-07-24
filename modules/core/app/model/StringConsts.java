@@ -24,6 +24,8 @@ public abstract class StringConsts {
 
   public static final String ID_NAME = "id";
 
+  public static final String INPUTS_NAME = "inputs";
+
   public static final String KEY_NAME = "key";
 
   public static final String LANGUAGE_NAME = "language";
@@ -39,6 +41,10 @@ public abstract class StringConsts {
   public static final String REFERENCE_FILE_CONTENT = "referenceFileContent";
 
   public static final String REFERENCE_FILE_NAME = "referenceFileName";
+
+  public static final String SAMPLE_NAME = "sample";
+
+  public static final String SAMPLES_NAME = "samples";
 
   public static final String SAMPLE_FILENAME = "sampleFilename";
 

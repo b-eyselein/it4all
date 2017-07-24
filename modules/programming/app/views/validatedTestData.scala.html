@@ -10,7 +10,7 @@
     <thead>
       <tr>
         <th>ID</th>
-        @for(inputCount <- 0 until exercise.inputCount) {
+        @for(inputCount <- 0 until exercise.getInputCount()) {
         <th>Input @inputCount</th>
         }
         <th>Erwartetes Resultat</th>

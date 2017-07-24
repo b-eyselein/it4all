@@ -100,10 +100,15 @@ create table prog_exercise (
   text                          text,
   function_name                 varchar(255),
   input_count                   integer not null,
-  python_sample                 varchar(255),
-  js_sample                     varchar(255),
-  java_sample                   varchar(255),
   constraint pk_prog_exercise primary key (id)
+);
+
+create table prog_sample (
+  exercise_id                   integer not null,
+  language                      integer not null,
+  sample                        varchar(255),
+  constraint ck_prog_sample_language check ( language in (0,1)),
+  constraint pk_prog_sample primary key (exercise_id,language)
 );
 
 create table prog_solution (
@@ -129,6 +134,12 @@ create table question (
   question_type                 integer,
   constraint ck_question_question_type check ( question_type in (0,1,2)),
   constraint pk_question primary key (id)
+);
+
+create table question_quiz (
+  question_id                   integer not null,
+  quiz_id                       integer not null,
+  constraint pk_question_quiz primary key (question_id,quiz_id)
 );
 
 create table question_rating (
@@ -309,11 +320,20 @@ create index ix_js_web_task_exercise_id on js_web_task (exercise_id);
 alter table mapping add constraint fk_mapping_exercise_id foreign key (exercise_id) references uml_exercise (id) on delete restrict on update restrict;
 create index ix_mapping_exercise_id on mapping (exercise_id);
 
+alter table prog_sample add constraint fk_prog_sample_exercise_id foreign key (exercise_id) references prog_exercise (id) on delete restrict on update restrict;
+create index ix_prog_sample_exercise_id on prog_sample (exercise_id);
+
 alter table prog_solution add constraint fk_prog_solution_user_name foreign key (user_name) references prog_user (name) on delete restrict on update restrict;
 create index ix_prog_solution_user_name on prog_solution (user_name);
 
 alter table prog_solution add constraint fk_prog_solution_exercise_id foreign key (exercise_id) references prog_exercise (id) on delete restrict on update restrict;
 create index ix_prog_solution_exercise_id on prog_solution (exercise_id);
+
+alter table question_quiz add constraint fk_question_quiz_question foreign key (question_id) references question (id) on delete restrict on update restrict;
+create index ix_question_quiz_question on question_quiz (question_id);
+
+alter table question_quiz add constraint fk_question_quiz_quiz foreign key (quiz_id) references quiz (id) on delete restrict on update restrict;
+create index ix_question_quiz_quiz on question_quiz (quiz_id);
 
 alter table question_rating add constraint fk_question_rating_question_id foreign key (question_id) references question (id) on delete restrict on update restrict;
 create index ix_question_rating_question_id on question_rating (question_id);
@@ -378,11 +398,20 @@ drop index ix_js_web_task_exercise_id on js_web_task;
 alter table mapping drop foreign key fk_mapping_exercise_id;
 drop index ix_mapping_exercise_id on mapping;
 
+alter table prog_sample drop foreign key fk_prog_sample_exercise_id;
+drop index ix_prog_sample_exercise_id on prog_sample;
+
 alter table prog_solution drop foreign key fk_prog_solution_user_name;
 drop index ix_prog_solution_user_name on prog_solution;
 
 alter table prog_solution drop foreign key fk_prog_solution_exercise_id;
 drop index ix_prog_solution_exercise_id on prog_solution;
+
+alter table question_quiz drop foreign key fk_question_quiz_question;
+drop index ix_question_quiz_question on question_quiz;
+
+alter table question_quiz drop foreign key fk_question_quiz_quiz;
+drop index ix_question_quiz_quiz on question_quiz;
 
 alter table question_rating drop foreign key fk_question_rating_question_id;
 drop index ix_question_rating_question_id on question_rating;
@@ -437,11 +466,15 @@ drop table if exists mapping;
 
 drop table if exists prog_exercise;
 
+drop table if exists prog_sample;
+
 drop table if exists prog_solution;
 
 drop table if exists prog_user;
 
 drop table if exists question;
+
+drop table if exists question_quiz;
 
 drop table if exists question_rating;
 

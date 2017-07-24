@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -16,31 +17,36 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ebean.Finder;
 import model.UserAnswer;
 import model.exercise.Exercise;
+import model.quiz.Quiz;
 
 @Entity
 public class Question extends Exercise {
-
+  
   public enum QType {
     CHOICE, FILLOUT, FREETEXT;
   }
-
+  
   public static final int MIN_ANSWERS = 2;
   public static final int STD_ANSWERS = 4;
   public static final int MAX_ANSWERS = 8;
-
+  
   public static final Finder<Integer, Question> finder = new Finder<>(Question.class);
-
+  
   public int maxPoints;
-
+  
   @JsonProperty("exerciseType")
   public QType questionType;
-
+  
   @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
   public List<Answer> answers;
-
+  
   @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
   @JsonIgnore
   public List<UserAnswer> givenAnswers;
+  
+  @ManyToMany
+  @JsonIgnore
+  public List<Quiz> quizzes;
 
   public Question(int theId, String theTitle, String theAuthor, String theText, int theMaxPoints, QType theQuestionType,
       List<Answer> theAnswers) {
@@ -50,29 +56,29 @@ public class Question extends Exercise {
     answers = theAnswers;
     givenAnswers = new LinkedList<>();
   }
-
+  
   @JsonIgnore
   public List<Answer> getAnswersForTemplate() {
     List<Answer> shuffeledAnswers = new ArrayList<>(answers);
     Collections.shuffle(shuffeledAnswers);
     return shuffeledAnswers;
   }
-
+  
   @JsonIgnore
   public List<Answer> getCorrectAnswers() {
     return answers.parallelStream().filter(Answer::isCorrect).collect(Collectors.toList());
   }
-
+  
   @JsonIgnore
   public boolean isFreetext() {
     return questionType == QType.FREETEXT;
   }
-
+  
   public void saveInDb() {
     save();
     answers.forEach(Answer::save);
   }
-
+  
   public Question updateValues(int theId, String theTitle, String theAuthor, String theText, int theMaxPoints,
       QType theQuestionType, List<Answer> theAnswers) {
     super.updateValues(theId, theTitle, theAuthor, theText);
@@ -81,9 +87,9 @@ public class Question extends Exercise {
     answers = theAnswers;
     return this;
   }
-  
+
   public boolean userHasAnswered(String username) {
     return false;
   }
-
+  
 }

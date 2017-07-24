@@ -21,14 +21,14 @@
   </div>
   
   <form class="form" action="@programming.routes.ProgController.validateTestData(exercise.getId)" method="post">
-    <input hidden name="inputCount" id="inputCount" value="@exercise.inputCount">
+    <input hidden name="inputCount" id="inputCount" value="@exercise.getInputCount()">
     <input hidden name="testCount" id="testCount"
      value="@Math.max(oldData.size, controllers.programming.ProgController.STD_TEST_DATA_COUNT)">
     <table class="table" id="testDataTable">
       <thead>
         <tr>
           <th>ID</th>
-        @for(i <- 0 until exercise.inputCount) {
+        @for(i <- 0 until exercise.getInputCount()) {
           <th>Input @{i + 1}</th>
         }
           <th>Output</th>
@@ -39,7 +39,7 @@
       @for(old <- oldData) {
         <tr id="tr_@old.getId()">
           <td>@old.key.testId</td>
-        @for(inputCount <- 0 until exercise.inputCount) {
+        @for(inputCount <- 0 until exercise.getInputCount()) {
           <td>
             <input class="form-control" value="@old.getInput().get(inputCount)" name="inp_@{inputCount}_@old.key.testId" 
             id="inp_@{inputCount}_@old.key.testId" placeholder="Test @old.key.testId, Input @inputCount">
@@ -54,7 +54,7 @@
       @for(testCount <- oldData.size until controllers.programming.ProgController.STD_TEST_DATA_COUNT) {
         <tr id="tr_@testCount">
           <td>@testCount</td>
-        @for(inputCount <- 0 until exercise.inputCount) {
+        @for(inputCount <- 0 until exercise.getInputCount()) {
           <td>
             <input class="form-control" name="inp_@{inputCount}_@testCount" id="inp_@{inputCount}_@testCount"
            placeholder="Test @testCount, Input @inputCount">

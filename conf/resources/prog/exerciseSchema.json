@@ -1,80 +1,111 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema#", 
-	"type": "array", 
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"type": "array",
 	"items": {
-		"type": "object", 
+		"type": "object",
 		"properties": {
 			"id": {
 				"type": "integer"
-			}, 
+			},
 			"title": {
 				"type": "string"
-			}, 
+			},
+			"author": {
+				"type": "string"
+			},
 			"text": {
-				"type": "array", 
+				"type": "array",
 				"items": {
 					"type": "string"
 				}
-			}, 
-			"functionName": {
-				"type": "string"
-			}, 
-			"jsSample": {
-				"type": "string"
-			}, 
-			"pythonSample": {
-				"type": "string"
-			}, 
+			},
 			"inputCount": {
 				"type": "integer"
-			}, 
-			"sampleTestData": {
-				"type": "array", 
+			},
+			"functionName": {
+				"type": "string"
+			},
+			"samples": {
+				"type": "array",
 				"items": {
-					"type": "object", 
+					"type": "object",
 					"properties": {
 						"key": {
-							"type": "object", 
+							"type": "object",
+							"properties": {
+								"exerciseId": {
+									"type": "integer"
+								},
+								"language": {
+									"enum": [
+										"PYTHON_3",
+										"JAVA"
+									]
+								}
+							},
+							"required": [
+								"exerciseId",
+								"language"
+							],
+							"additionalProperties": false
+						},
+						"sample": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"key",
+						"sample"
+					],
+					"additionalProperties": false
+				}
+			},
+			"sampleTestData": {
+				"type": "array",
+				"items": {
+					"type": "object",
+					"properties": {
+						"key": {
+							"type": "object",
 							"properties": {
 								"testId": {
 									"type": "integer"
-								}, 
+								},
 								"exerciseId": {
 									"type": "integer"
 								}
-							}, 
+							},
 							"required": [
-								"testId", 
+								"testId",
 								"exerciseId"
-							], 
+							],
 							"additionalProperties": false
-						}, 
-						"input": {
+						},
+						"inputs": {
 							"type": "string"
-						}, 
+						},
 						"output": {
-							
 						}
-					}, 
+					},
 					"required": [
-						"key", 
-						"input", 
+						"key",
+						"inputs",
 						"output"
-					], 
+					],
 					"additionalProperties": false
 				}
 			}
-		}, 
+		},
 		"required": [
-			"id", 
-			"title", 
-			"text", 
-			"functionName", 
-			"jsSample", 
-			"pythonSample", 
-			"inputCount", 
+			"id",
+			"title",
+			"author",
+			"text",
+			"functionName",
+			"inputCount",
+			"samples",
 			"sampleTestData"
-		], 
+		],
 		"additionalProperties": false
 	}
 }
