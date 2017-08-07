@@ -12,6 +12,8 @@ it4all is a correction framework for
 - Mindmap (MindManager)
 - Nary Numbers, Boolean Algebra
 
+[![build status](https://gitlab2.informatik.uni-wuerzburg.de/bje40dc/it4all/badges/master/build.svg)](https://gitlab2.informatik.uni-wuerzburg.de/bje40dc/it4all/commits/master)
+
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/1d60243593e347fc9ec6026bf8e7e465)](https://www.codacy.com/app/b.eyselein/it4all?utm_source=bje40dc@gitlab2.informatik.uni-wuerzburg.de&amp;utm_medium=referral&amp;utm_content=bje40dc/it4all&amp;utm_campaign=Badge_Grade)
 
 ## Versions
@@ -39,7 +41,17 @@ Clone the repository on the [GitLab](https://gitlab2.informatik.uni-wuerzburg.de
 
 `$ cd it4all`
 
+Set the Path variable "IVY_HOME" in your shell:
+
+`export IVY_HOME=~/.ivy2`
+
+or, to do so permanently, user
+
+`echo -e "\nexport IVY_HOME=~/.ivy2" >> ~/.profile`
+
 Build the image defined in the file 'Dockerfile':
+
+`expose $UID`
 
 `$ docker build -t play --build-arg USERNAME=$(whoami) --build-arg DOCKER_GID=$(stat -c "%g" /var/run/docker.sock) .`
 

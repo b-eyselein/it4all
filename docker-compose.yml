@@ -4,6 +4,7 @@ it4all:
     volumes_from:
     - vc_it4all
     volumes:
+    # TODO: set umask to 011 to get file permissions to 766?
     - ./:/app/
     - ~/.ivy2/:$HOME/.ivy2/
     - ~/.sbt/:$HOME/.sbt/

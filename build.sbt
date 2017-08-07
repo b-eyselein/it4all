@@ -58,7 +58,12 @@ libraryDependencies ++= Seq(
   guice
 )
 
+EclipseKeys.classpathTransformerFactories := Seq(ClasspathentryTransformer)
+
 EclipseKeys.skipParents in ThisBuild := false
+EclipseKeys.withSource := true
+EclipseKeys.withJavadoc := true
+
 
 // Injected for non-static Routes
 routesGenerator := InjectedRoutesGenerator

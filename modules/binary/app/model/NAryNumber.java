@@ -29,9 +29,26 @@ public class NAryNumber {
   }
 
   public static NAryNumber parseTwoComplement(String input) {
-    Integer num = Integer.valueOf(input, 2);
-    int value = (num > 32767) ? num - 65536 : num;
-    return new NAryNumber(value, NumberBase.BINARY);
+    String trimmedInput = input.trim().replaceAll("\\s", "");
+    
+    if(trimmedInput.charAt(0) != '1')
+      // Positive number...
+      return new NAryNumber(Integer.parseInt(trimmedInput, 2), NumberBase.BINARY);
+
+    String invertedInt = invertDigits(trimmedInput);
+
+    return new NAryNumber(-1 * (Integer.parseInt(invertedInt, 2) + 1), NumberBase.BINARY);
+  }
+
+  protected static String invertDigits(String binaryInt) {
+    return binaryInt.replace("0", "a").replace("1", "0").replace("a", "1");
+  }
+
+  protected static String padBinary(String binary) {
+    String ungrouped = binary.trim().replaceAll("\\s", "");
+    int padLength = 4 * Math.max(2, (int) Math.ceil((double) ungrouped.length() / 4));
+    String newResult = Strings.padStart(ungrouped, padLength, '0');
+    return String.join(" ", FOUR_SPLITTER.splitToList(newResult));
   }
 
   @Override
@@ -60,15 +77,18 @@ public class NAryNumber {
   public String toString(boolean withBase) {
     String result = Integer.toString(Math.abs(decimalValue), base.getBase());
 
-    if(base == NumberBase.BINARY) {
-      result = Strings.padStart(result, 4 * Math.max(2, (int) Math.ceil((double) result.length() / 4)), '0');
-      result = String.join(" ", FOUR_SPLITTER.splitToList(result));
-    }
+    if(base == NumberBase.BINARY)
+      result = padBinary(result);
 
     if(decimalValue < 0)
       result = '-' + result;
 
     return withBase ? result + "_" + base.getBase() : result;
+  }
+
+  public String toTwoComp() {
+    String binString = Integer.toBinaryString(decimalValue);
+    return padBinary(binString.substring(Math.max(0, binString.length() - 8)));
   }
 
 }
