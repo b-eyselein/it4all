@@ -15,6 +15,11 @@ import org.odftoolkit.simple.table.Table;
 
 import play.Logger;
 
+/**
+ * 
+ * @author Stefan Olbrecht
+ *
+ */
 public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Cell, Font, Color> {
 
   // TODO: magic numbers...
