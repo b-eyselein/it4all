@@ -8,7 +8,6 @@ import javax.inject.Singleton;
 
 import model.matching.MatchingResult;
 import model.querycorrectors.ColumnMatch;
-import model.querycorrectors.SqlResult;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
@@ -42,10 +41,5 @@ public class UpdateCorrector extends ChangeCorrector<Update> {
   protected Expression getWhere(Update query) {
     return query.getWhere();
   }
-
-  @Override
-  protected SqlResult<Update, Column> instantiateResult(String learnerSolution) {
-    return new SqlResult<>(learnerSolution);
-  }
-
+  
 }

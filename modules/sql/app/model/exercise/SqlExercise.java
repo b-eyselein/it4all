@@ -6,23 +6,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.google.common.base.Splitter;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import io.ebean.Finder;
-import io.ebean.Model;
+import model.SqlExerciseReader;
 import model.SqlSolution;
+import model.StringConsts;
+import model.exercisereading.ExerciseReader;
 import model.querycorrectors.QueryCorrector;
 import model.querycorrectors.change.DeleteCorrector;
 import model.querycorrectors.change.InsertCorrector;
@@ -32,51 +31,41 @@ import model.querycorrectors.select.SelectCorrector;
 import net.sf.jsqlparser.statement.Statement;
 
 @Entity
-public class SqlExercise extends Model {
-  
-  private static final Splitter SPLITTER = Splitter.fixedLength(100).omitEmptyStrings();
-  
+public class SqlExercise extends Exercise {
+
   public static final String SAMPLE_JOIN_CHAR = "#";
-  
-  public static final Finder<SqlExerciseKey, SqlExercise> finder = new Finder<>(SqlExercise.class);
-  
-  @EmbeddedId
-  public SqlExerciseKey key;
-  
-  public String author;
-  
-  @Column(columnDefinition = "text")
-  public String text;
-  
+
+  public static final Finder<Integer, SqlExercise> finder = new Finder<>(SqlExercise.class);
+
   @Enumerated(EnumType.STRING)
   public SqlExerciseType exerciseType;
-  
+
   @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
   @JsonManagedReference
   public List<SqlSample> samples;
-  
+
   @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
   @JsonIgnore
   public List<SqlSolution> solutions;
-  
+
   @ManyToOne
-  @JoinColumn(name = "scenario_id", insertable = false, updatable = false)
   @JsonBackReference
   public SqlScenario scenario;
-  
+
   public String tags;
-  
+
   public String hint;
-  
-  public SqlExercise(SqlExerciseKey theKey) {
-    key = theKey;
+
+  public SqlExercise(int theId, String theTitle, String theAuthor, String theText, SqlExerciseType theExerciseType) {
+    super(theId, theTitle, theAuthor, theText);
+    exerciseType = theExerciseType;
   }
-  
+
   @JsonIgnore
   public String getBadges() {
     return getTags().stream().map(SqlTag::getButtonContent).collect(Collectors.joining());
   }
-  
+
   @JsonIgnore
   public QueryCorrector<? extends Statement, ?> getCorrector() {
     // FIXME: different...
@@ -95,16 +84,25 @@ public class SqlExercise extends Model {
       return null;
     }
   }
-  
+
   public List<SqlTag> getTags() {
     if(tags.isEmpty())
       return Collections.emptyList();
-    
+
     return Arrays.stream(tags.split(SAMPLE_JOIN_CHAR)).map(SqlTag::valueOf).collect(Collectors.toList());
   }
-  
-  public List<String> getText() {
-    return SPLITTER.splitToList(text);
+
+  @Override
+  public void updateValues(int theId, String theTitle, String theAuthor, String theText, JsonNode exerciseNode) {
+    super.updateValues(theId, theTitle, theAuthor, theText);
+
+    exerciseType = SqlExerciseType.valueOf(exerciseNode.get(StringConsts.EXERCISE_TYPE).asText());
+
+    samples = ExerciseReader.readArray(exerciseNode.get(StringConsts.SAMPLES_NAME),
+        SqlExerciseReader::readSampleSolution);
+
+    hint = exerciseNode.get("hint").asText();
+    tags = String.join(SqlExercise.SAMPLE_JOIN_CHAR, ExerciseReader.parseJsonArrayNode(exerciseNode.get("tags")));
   }
-  
+
 }

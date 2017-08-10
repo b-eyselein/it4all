@@ -1,15 +1,17 @@
 package model.exercisereading;
 
+import io.ebean.Finder;
 import model.exercise.Exercise;
 import model.exercise.ExerciseCollection;
 
 public abstract class ExerciseCollectionReader<E extends Exercise, C extends ExerciseCollection<E>>
     extends ExerciseReader<C> {
 
-  private ExerciseReader<E> delegateReader;
+  protected ExerciseReader<E> delegateReader;
 
-  public ExerciseCollectionReader(ExerciseReader<E> theDelegateReader) {
-    super(theDelegateReader.getExerciseType());
+  public ExerciseCollectionReader(ExerciseReader<E> theDelegateReader, Finder<Integer, C> theFinder,
+      Class<?> theClassFor) {
+    super(theDelegateReader.getExerciseType(), theFinder, theClassFor);
     delegateReader = theDelegateReader;
   }
 

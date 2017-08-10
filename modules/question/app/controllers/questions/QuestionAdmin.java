@@ -13,20 +13,19 @@ import javax.inject.Inject;
 
 import com.google.common.io.Files;
 
-import controllers.core.AbstractAdminController;
+import controllers.core.AExerciseAdminController;
 import model.StringConsts;
 import model.question.Question;
 import model.question.Question.QType;
 import model.question.QuestionReader;
 import model.quiz.Quiz;
-import play.api.mvc.Call;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
 import play.mvc.Result;
 import play.twirl.api.Html;
 
-public class QuestionAdmin extends AbstractAdminController<Question, QuestionReader> {
+public class QuestionAdmin extends AExerciseAdminController<Question> {
 
   @Inject
   public QuestionAdmin(FormFactory theFactory) {
@@ -127,11 +126,6 @@ public class QuestionAdmin extends AbstractAdminController<Question, QuestionRea
   @Override
   public Html renderCreated(List<Question> created) {
     return views.html.questionAdmin.questionCreated.render(getUser(), created);
-  }
-
-  @Override
-  protected Call getIndex() {
-    return controllers.questions.routes.QuestionAdmin.index();
   }
 
   @Override

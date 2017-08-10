@@ -9,7 +9,6 @@ import io.ebean.Finder;
 import model.CorrectionException;
 import model.Secured;
 import model.StringConsts;
-import model.WithId;
 import model.exercise.Exercise;
 import model.logging.ExerciseCompletionEvent;
 import model.logging.ExerciseCorrectionEvent;
@@ -22,54 +21,60 @@ import play.mvc.Security.Authenticated;
 import play.twirl.api.Html;
 
 @Authenticated(Secured.class)
-public abstract class ExerciseController<E extends WithId, R extends EvaluationResult> extends BaseExerciseController {
-  
-  private final Finder<Integer, E> finder;
-  
+public abstract class ExerciseController<E extends Exercise, R extends EvaluationResult> extends BaseController {
+
+  protected final Finder<Integer, E> finder;
+  protected final String exerciseType;
+
   public ExerciseController(FormFactory theFactory, String theExerciseType, Finder<Integer, E> theFinder) {
-    super(theFactory, theExerciseType);
+    super(theFactory);
     finder = theFinder;
+    exerciseType = theExerciseType;
   }
-  
+
   public Result correct(int id) {
     User user = getUser();
     E exercise = finder.byId(id);
     String learnerSolution = factory.form().bindFromRequest().get(StringConsts.FORM_VALUE);
-    
+
     try {
       List<R> correctionResult = correct(learnerSolution, exercise, user);
-      
+
       log(user, new ExerciseCompletionEvent(request(), id, correctionResult));
-      
+
       return ok(views.html.correction.render(exerciseType.toUpperCase(), renderResult(correctionResult),
           learnerSolution, user, controllers.routes.Application.index()));
     } catch (CorrectionException e) {
       return badRequest("TODO!");
     }
   }
-  
+
   public Result correctLive(int id) {
     User user = getUser();
     E exercise = finder.byId(id);
     String learnerSolution = factory.form().bindFromRequest().get(StringConsts.FORM_VALUE);
-    
+
     try {
       List<R> correctionResult = correct(learnerSolution, exercise, user);
-      
+
       log(user, new ExerciseCorrectionEvent(request(), id, correctionResult));
-      
+
       return ok(renderResult(correctionResult));
     } catch (CorrectionException e) {
       return badRequest("TODO!");
     }
   }
-  
-  protected Path checkAndCreateSolDir(Exercise exercise) {
-    Path dir = getSolDirForExercise(exercise);
-    
+
+  public Path getSampleDir() {
+    return getSampleDir(exerciseType);
+  }
+
+  protected Path checkAndCreateSolDir(String username, Exercise exercise) {
+    Path dir = getSolDirForExercise(username, exerciseType, exercise);
+
     if(dir.toFile().exists())
       return dir;
-    
+
     try {
       return Files.createDirectories(dir);
     } catch (IOException e) {
@@ -77,9 +82,9 @@ public abstract class ExerciseController<E extends WithId, R extends EvaluationR
       return null;
     }
   }
-  
+
   protected abstract List<R> correct(String learnerSolution, E exercise, User user) throws CorrectionException;
-  
+
   protected abstract Html renderResult(List<R> correctionResult);
-  
+
 }

@@ -3,7 +3,11 @@ package model;
 public abstract class StringConsts {
 
   public static final String ADMIN_FOLDER = "admin";
+  
+  public static final String ANSWER_NAME = "answers";
 
+  public static final String ATTRS_NAME = "attributes";
+  
   public static final String AUTHOR_NAME = "author";
 
   public static final String BODY_FILE_NAME = "file";
@@ -13,6 +17,8 @@ public abstract class StringConsts {
   public static final String CONDITIONS_NAME = "Bedingungen";
 
   public static final String EMPTY_SOLUTION = "Sie haben eine leere Lösung abgegeben!";
+  
+  public static final String EX_FILE_NAME = "exercises.json";
 
   public static final String EXERCISES_NAME = "exercises";
 
@@ -73,6 +79,8 @@ public abstract class StringConsts {
   public static final String TITLE_NAME = "title";
 
   public static final String VALUE_NAME = "value";
+  
+  public static final String XPATH_NAME = "xpathQuery";
 
   private StringConsts() {
 

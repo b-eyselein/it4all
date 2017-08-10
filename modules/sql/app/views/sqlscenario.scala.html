@@ -20,10 +20,10 @@
       <tr>
         <!-- <td>TODO</td> -->
 	    <td>@Html(ex.getBadges())</td>
-	    <td>@ex.key.exerciseId:</td>
+	    <td>@ex.getId:</td>
   	    <td>
-          <a href="@sql.routes.SqlController.exercise(scenario.getId, ex.key.exerciseId)"
-            class="btn btn-default btn-block">@ex.text</a>
+          <a href="@sql.routes.SqlController.exercise(ex.getId)"
+            class="btn btn-default btn-block">@ex.getText</a>
         </td>
       </div>
   }

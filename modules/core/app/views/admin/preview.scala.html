@@ -1,14 +1,10 @@
-@(user: model.user.User, exercises: Html, adminSite: play.api.mvc.Call)
+@(user: model.user.User, exercises: Html)
 
 @main("Erstellte Aufgaben", user) {
 <div class="container">
   <div class="page-header">
     <h1>Erstellte Aufgaben:</h1>
   </div>
-  
-  <a class="btn btn-primary btn-block" href="@adminSite">Zur&uuml;ck zur Administratorseite</a>
-
-  <hr>
   
   @exercises
   

@@ -1,9 +1,0 @@
-# Login && Logout
-GET    /login          controllers.core.LoginController.login()
-POST   /authenticate   controllers.core.LoginController.authenticate()
-GET    /logout         controllers.core.LoginController.logout()
-GET    /direct         controllers.core.LoginController.fromWuecampus(name: String ?= "", courseId: Int ?= -1, courseName: String ?= "")
-
-# Test blanks...
-GET    /blanks         controllers.core.BlanksTestController.testBlanks()
-PUT    /blanks/:id     controllers.core.BlanksTestController.correctBlanks(id: Int)

@@ -5,18 +5,17 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import controllers.core.AbstractAdminController;
+import controllers.core.AExerciseAdminController;
 import model.ProgExercise;
 import model.ProgExerciseReader;
 import model.ProgSample;
 import model.testdata.SampleTestData;
-import play.api.mvc.Call;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.mvc.Result;
 import play.twirl.api.Html;
 
-public class ProgAdmin extends AbstractAdminController<ProgExercise, ProgExerciseReader> {
+public class ProgAdmin extends AExerciseAdminController<ProgExercise> {
 
   @Inject
   public ProgAdmin(FormFactory theFactory) {
@@ -44,12 +43,7 @@ public class ProgAdmin extends AbstractAdminController<ProgExercise, ProgExercis
   public Html renderCreated(List<ProgExercise> exercises) {
     return views.html.progAdmin.progCreation.render(exercises);
   }
-
-  @Override
-  protected Call getIndex() {
-    return controllers.programming.routes.ProgAdmin.index();
-  }
-
+  
   @Override
   protected ProgExercise initRemainingExFromForm(int id, String title, String author, String text, DynamicForm form) {
     String functionName = form.get("functionName");

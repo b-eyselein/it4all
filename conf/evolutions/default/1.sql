@@ -182,23 +182,23 @@ create table spread_exercise (
 );
 
 create table sql_exercise (
-  scenario_id                   integer not null,
-  exercise_id                   integer not null,
+  id                            integer auto_increment not null,
+  title                         varchar(255),
   author                        varchar(255),
   text                          text,
   exercise_type                 varchar(6),
+  scenario_id                   integer,
   tags                          varchar(255),
   hint                          varchar(255),
   constraint ck_sql_exercise_exercise_type check ( exercise_type in ('SELECT','CREATE','UPDATE','DELETE','INSERT')),
-  constraint pk_sql_exercise primary key (scenario_id,exercise_id)
+  constraint pk_sql_exercise primary key (id)
 );
 
 create table sql_sample (
-  scenario_id                   integer not null,
   exercise_id                   integer not null,
   sample_id                     integer not null,
   sample                        varchar(255),
-  constraint pk_sql_sample primary key (scenario_id,exercise_id,sample_id)
+  constraint pk_sql_sample primary key (exercise_id,sample_id)
 );
 
 create table sql_scenario (
@@ -213,11 +213,10 @@ create table sql_scenario (
 
 create table sql_solution (
   user_name                     varchar(255) not null,
-  scenario_id                   integer not null,
   exercise_id                   integer not null,
   sol                           text,
   points                        integer not null,
-  constraint pk_sql_solution primary key (user_name,scenario_id,exercise_id)
+  constraint pk_sql_solution primary key (user_name,exercise_id)
 );
 
 create table sql_user (
@@ -347,14 +346,14 @@ create index ix_sample_test_data_exercise_id on sample_test_data (exercise_id);
 alter table sql_exercise add constraint fk_sql_exercise_scenario_id foreign key (scenario_id) references sql_scenario (id) on delete restrict on update restrict;
 create index ix_sql_exercise_scenario_id on sql_exercise (scenario_id);
 
-alter table sql_sample add constraint fk_sql_sample_exercise foreign key (scenario_id,exercise_id) references sql_exercise (scenario_id,exercise_id) on delete restrict on update restrict;
-create index ix_sql_sample_exercise on sql_sample (scenario_id,exercise_id);
+alter table sql_sample add constraint fk_sql_sample_exercise_id foreign key (exercise_id) references sql_exercise (id) on delete restrict on update restrict;
+create index ix_sql_sample_exercise_id on sql_sample (exercise_id);
 
 alter table sql_solution add constraint fk_sql_solution_user_name foreign key (user_name) references sql_user (name) on delete restrict on update restrict;
 create index ix_sql_solution_user_name on sql_solution (user_name);
 
-alter table sql_solution add constraint fk_sql_solution_exercise foreign key (scenario_id,exercise_id) references sql_exercise (scenario_id,exercise_id) on delete restrict on update restrict;
-create index ix_sql_solution_exercise on sql_solution (scenario_id,exercise_id);
+alter table sql_solution add constraint fk_sql_solution_exercise_id foreign key (exercise_id) references sql_exercise (id) on delete restrict on update restrict;
+create index ix_sql_solution_exercise_id on sql_solution (exercise_id);
 
 alter table user_answer add constraint fk_user_answer_username foreign key (username) references question_user (name) on delete restrict on update restrict;
 create index ix_user_answer_username on user_answer (username);
@@ -425,14 +424,14 @@ drop index ix_sample_test_data_exercise_id on sample_test_data;
 alter table sql_exercise drop foreign key fk_sql_exercise_scenario_id;
 drop index ix_sql_exercise_scenario_id on sql_exercise;
 
-alter table sql_sample drop foreign key fk_sql_sample_exercise;
-drop index ix_sql_sample_exercise on sql_sample;
+alter table sql_sample drop foreign key fk_sql_sample_exercise_id;
+drop index ix_sql_sample_exercise_id on sql_sample;
 
 alter table sql_solution drop foreign key fk_sql_solution_user_name;
 drop index ix_sql_solution_user_name on sql_solution;
 
-alter table sql_solution drop foreign key fk_sql_solution_exercise;
-drop index ix_sql_solution_exercise on sql_solution;
+alter table sql_solution drop foreign key fk_sql_solution_exercise_id;
+drop index ix_sql_solution_exercise_id on sql_solution;
 
 alter table user_answer drop foreign key fk_user_answer_username;
 drop index ix_user_answer_username on user_answer;

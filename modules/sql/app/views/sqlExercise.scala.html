@@ -33,7 +33,7 @@
             </div>
             <div class="modal-body">
               <img class="img-rounded img-responsive center-block"
-              src="@routes.Assets.versioned("images/sql/" + exercise.scenario.getImageUrl())" alt="Datenbankschema">
+              src="@@routes.Assets.versioned("images/sql/" + exercise.scenario.getImageUrl())" alt="Datenbankschema">
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -66,12 +66,12 @@
 
   <div class="row">
     <div class="col-md-4">
-      <form action="@sql.routes.SqlController.correct(exercise.key.scenarioId, exercise.key.exerciseId)" method="post"
+      <form action="@sql.routes.SqlController.correct(exercise.getId)" method="post"
       onsubmit="prepareFormForSubmitting();">
         <div class="panel panel-default">
-          <div class="panel-heading">Aufgabe @exercise.key.exerciseId</div>
+          <div class="panel-heading">Aufgabe @exercise.getId</div>
           <div class="panel-body">
-            <p>@exercise.text</p>
+            <p>@exercise.getText</p>
             @if(!exercise.hint.isEmpty()) {<p><i>Hinweis:</i> @exercise.hint</p>}
             
             @*
@@ -88,7 +88,7 @@
           </div>
           <div class="panel-footer">
             <button type="button" class="btn btn-default btn-block"
-            onclick="testTheSolution('@sql.routes.SqlController.correctLive(exercise.key.scenarioId, exercise.key.exerciseId)')">
+            onclick="testTheSolution('@sql.routes.SqlController.correctLive(exercise.getId)')">
             L&ouml;sung testen</button>
             <button class="btn btn-default btn-block">L&ouml;sung abgeben</button>
           </div>

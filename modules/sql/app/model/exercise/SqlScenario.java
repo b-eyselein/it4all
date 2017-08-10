@@ -9,11 +9,13 @@ import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import io.ebean.Finder;
+import model.StringConsts;
 
 @Entity
-public class SqlScenario extends Exercise {
+public class SqlScenario extends ExerciseCollection<SqlExercise> {
   
   public static final Finder<Integer, SqlScenario> finder = new Finder<>(SqlScenario.class);
   
@@ -39,6 +41,12 @@ public class SqlScenario extends Exercise {
     return (Math.min(getExercisesByType(exType).size(), start + STEP) / STEP) * STEP;
   }
   
+  @Override
+  public List<SqlExercise> getExercises() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  
   public List<SqlExercise> getExercises(final SqlExerciseType type, final int start) {
     final List<SqlExercise> ex = getExercisesByType(type);
     return ex.subList(Math.max(start, 0), Math.min(start + STEP, ex.size()));
@@ -52,19 +60,22 @@ public class SqlScenario extends Exercise {
   public String getImageUrl() {
     return shortName + ".png";
   }
-  
+
   @Override
   public String toString() {
     return "ID: " + id + "Titel: " + title + ", Name: " + shortName + ", Skriptdatei: " + scriptFile;
   }
 
-  public SqlScenario updateValues(int id, String title, String author, String text, String theShortName,
-      String theScriptfile, List<SqlExercise> theExercises) {
-    super.updateValues(id, title, author, text);
-    shortName = theShortName;
-    scriptFile = theScriptfile;
-    exercises = theExercises;
-    return this;
+  @Override
+  public void updateValues(int theId, String theTitle, String theAuthor, String theText, JsonNode exerciseNode) {
+    super.updateValues(theId, theTitle, theAuthor, theText);
+    
+    shortName = exerciseNode.get(StringConsts.SHORTNAME_NAME).asText();
+    scriptFile = exerciseNode.get(StringConsts.SCRIPTFILE_NAME).asText();
+    
+    // JsonNode exesNode = exerciseNode.get(StringConsts.EXERCISES_NAME);
+    // List<SqlExercise> exercises = readArray(exesNode,
+    // delegateReader::readExercise);
   }
   
 }

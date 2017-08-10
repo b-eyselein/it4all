@@ -9,14 +9,15 @@ import java.util.List;
 import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
 
 import controllers.core.ExerciseController;
 import model.CorrectionException;
-import model.JsonWrapper;
 import model.StringConsts;
 import model.UmlExercise;
 import model.UmlSolution;
+import model.exercisereading.ExerciseReader;
 import model.result.ClassSelectionResult;
 import model.result.DiagramDrawingResult;
 import model.result.UmlResult;
@@ -113,12 +114,15 @@ public class UmlController extends ExerciseController<UmlExercise, UmlResult> {
   
   private UmlSolution readSolutionFromForm() throws CorrectionException {
     JsonNode sentJson = Json.parse(factory.form().bindFromRequest().get(StringConsts.FORM_VALUE));
-    
-    ProcessingReport report = JsonWrapper.validateJson(sentJson, SOLUTION_SCHEMA_NODE);
-    if(report.isSuccess())
-      return Json.fromJson(sentJson, UmlSolution.class);
-    
-    throw new CorrectionException(Json.prettyPrint(sentJson), report.toString());
+    try {
+      ProcessingReport report = ExerciseReader.validateJson(sentJson, SOLUTION_SCHEMA_NODE);
+      if(report.isSuccess())
+        return Json.fromJson(sentJson, UmlSolution.class);
+      
+      throw new CorrectionException(Json.prettyPrint(sentJson), report.toString());
+    } catch (ProcessingException e) {
+      throw new CorrectionException(Json.prettyPrint(sentJson), "TODO!");
+    }
   }
   
   @Override

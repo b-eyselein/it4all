@@ -4,17 +4,16 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import controllers.core.AbstractAdminController;
+import controllers.core.AExerciseAdminController;
 import model.SpreadExercise;
 import model.SpreadExerciseReader;
 import model.StringConsts;
-import play.api.mvc.Call;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.mvc.Result;
 import play.twirl.api.Html;
 
-public class SpreadAdmin extends AbstractAdminController<SpreadExercise, SpreadExerciseReader> {
+public class SpreadAdmin extends AExerciseAdminController<SpreadExercise> {
 
   @Inject
   public SpreadAdmin(FormFactory theFactory) {
@@ -42,12 +41,7 @@ public class SpreadAdmin extends AbstractAdminController<SpreadExercise, SpreadE
   public Html renderCreated(List<SpreadExercise> created) {
     return views.html.spreadcreation.render(created);
   }
-
-  @Override
-  protected Call getIndex() {
-    return controllers.spread.routes.SpreadAdmin.index();
-  }
-
+  
   @Override
   protected SpreadExercise initRemainingExFromForm(int id, String title, String author, String text, DynamicForm form) {
     String templateFilename = form.get(StringConsts.TEMPALTE_FILENAME);

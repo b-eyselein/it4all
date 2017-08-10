@@ -5,9 +5,6 @@
 # Home page
 GET    /                      controllers.Application.index()
 
-# Userverwaltung
-->     /                      core.Routes
-
 # User
 GET    /user                  controllers.UserController.index()
 GET    /preferences           controllers.UserController.preferences()
@@ -40,6 +37,10 @@ GET    /users                 controllers.AdminController.users()
 
 ->     /xml                   xml.Routes
 
+# Test blanks...
+GET    /blanks                controllers.BlanksTestController.testBlanks()
+PUT    /blanks/:id            controllers.BlanksTestController.correctBlanks(id: Int)
+
 # Courses
 GET    /courses/new           controllers.CourseAdminController.newCourseForm()
 POST   /courses/new           controllers.CourseAdminController.newCourse()
@@ -47,6 +48,11 @@ POST   /courses/new           controllers.CourseAdminController.newCourse()
 GET    /course/:id            controllers.CourseAdminController.course(id: Int)
 POST   /course/addAdmin/:id   controllers.CourseAdminController.addAdmin(id: Int)
 
+# Login && Logout
+GET    /login                 controllers.LoginController.login()
+POST   /authenticate          controllers.LoginController.authenticate()
+GET    /logout                controllers.LoginController.logout()
+GET    /direct                controllers.LoginController.fromWuecampus(name: String ?= "", courseId: Int ?= -1, courseName: String ?= "")
 
 # Evaluation
 GET    /eval/                 controllers.Evaluation.index()

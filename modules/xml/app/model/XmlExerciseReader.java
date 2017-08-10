@@ -16,7 +16,7 @@ public class XmlExerciseReader extends ExerciseReader<XmlExercise> {
   private static final XmlExerciseReader INSTANCE = new XmlExerciseReader();
 
   private XmlExerciseReader() {
-    super("xml");
+    super("xml", XmlExercise.finder, XmlExercise[].class);
   }
 
   public static XmlExerciseReader getInstance() {
@@ -36,7 +36,7 @@ public class XmlExerciseReader extends ExerciseReader<XmlExercise> {
 
     String filename = exercise.getReferenceFileName() + "." + exercise.getReferenceFileEnding();
 
-    Path providedFile = Paths.get(baseDirForExType.toString(), filename).toAbsolutePath();
+    Path providedFile = Paths.get("conf", "resources", exerciseType, filename).toAbsolutePath();
     Path targetPath = Paths.get(baseTargetDir.toString(), filename).toAbsolutePath();
 
     if(!providedFile.toFile().exists())
@@ -52,22 +52,12 @@ public class XmlExerciseReader extends ExerciseReader<XmlExercise> {
   }
 
   @Override
-  protected XmlExercise read(JsonNode node) {
-    int id = node.get(StringConsts.ID_NAME).asInt();
+  protected XmlExercise instantiateExercise(int id, String title, String author, String text, JsonNode exerciseNode) {
+    String fixedStart = readTextArray(exerciseNode.get(StringConsts.FIXED_START), "\n");
+    XmlExType exerciseType = XmlExType.valueOf(exerciseNode.get(StringConsts.EXERCISE_TYPE).asText());
+    String referenceFileName = exerciseNode.get(StringConsts.REFERENCE_FILE_NAME).asText();
 
-    String title = node.get(StringConsts.TITLE_NAME).asText();
-    String author = node.get(StringConsts.AUTHOR_NAME).asText();
-    String text = JsonWrapper.readTextArray(node.get(StringConsts.TEXT_NAME), "");
-
-    String fixedStart = String.join("\n", JsonWrapper.parseJsonArrayNode(node.get(StringConsts.FIXED_START)));
-    XmlExType exerciseType = XmlExType.valueOf(node.get(StringConsts.EXERCISE_TYPE).asText());
-    String referenceFileName = node.get(StringConsts.REFERENCE_FILE_NAME).asText();
-
-    XmlExercise exercise = XmlExercise.finder.byId(id);
-    if(exercise == null)
-      return new XmlExercise(id, title, author, text, fixedStart, exerciseType, referenceFileName);
-    else
-      return exercise.updateValues(id, title, author, text, fixedStart, exerciseType, referenceFileName);
+    return new XmlExercise(id, title, author, text, fixedStart, exerciseType, referenceFileName);
   }
 
 }

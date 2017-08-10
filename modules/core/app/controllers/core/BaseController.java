@@ -8,8 +8,12 @@ import java.util.List;
 import io.ebean.Finder;
 import model.StringConsts;
 import model.WithId;
+import model.exercise.Exercise;
+import model.logging.WorkingEvent;
 import model.user.User;
+import play.Logger;
 import play.data.FormFactory;
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Http;
 
@@ -20,10 +24,16 @@ public abstract class BaseController extends Controller {
   protected static final String SAMPLE_SUB_DIRECTORY = "samples";
   protected static final String SOLUTIONS_SUB_DIRECTORY = "solutions";
 
+  private static final Logger.ALogger PROGRESS_LOGGER = Logger.of("progress");
+
   protected FormFactory factory;
 
   public BaseController(FormFactory theFactory) {
     factory = theFactory;
+  }
+
+  public static Path getSolDirForUser(String username) {
+    return Paths.get(BASE_DATA_PATH, SOLUTIONS_SUB_DIRECTORY, username);
   }
 
   public static User getUser() {
@@ -46,6 +56,23 @@ public abstract class BaseController extends Controller {
     return questions.get(questions.size() - 1).getId() + 1;
   }
 
+  protected static Path getSampleDir(String exerciseType) {
+    return Paths.get(BASE_DATA_PATH, SAMPLE_SUB_DIRECTORY, exerciseType);
+  }
+
+  protected static Path getSampleDirForExercise(String exerciseType, Exercise exercise) {
+    return Paths.get(getSampleDir(exerciseType).toString(), String.valueOf(exercise.getId()));
+  }
+
+  protected static Path getSolDirForExercise(String username, String exerciseType, Exercise exercise) {
+    return Paths.get(getSolDirForUser(username).toString(), exerciseType, String.valueOf(exercise.getId()));
+  }
+
+  protected static Path getSolFileForExercise(String username, String exerciseType, Exercise exercise, String fileName,
+      String fileExtension) {
+    return Paths.get(getSolDirForExercise(username, exerciseType, exercise).toString(), fileName + "." + fileExtension);
+  }
+
   protected static String getUsername() {
     Http.Session session = Http.Context.current().session();
 
@@ -56,16 +83,12 @@ public abstract class BaseController extends Controller {
     return session.get(StringConsts.SESSION_ID_FIELD);
   }
 
+  protected static void log(User user, WorkingEvent eventToLog) {
+    PROGRESS_LOGGER.debug(user.name + " - " + Json.toJson(eventToLog));
+  }
+
   public Path getSolDirForUser() {
     return getSolDirForUser(getUsername());
-  }
-
-  public Path getSolDirForUser(String username) {
-    return Paths.get(BASE_DATA_PATH, SOLUTIONS_SUB_DIRECTORY, username);
-  }
-
-  protected boolean wantsJsonResponse() {
-    return "application/json".equals(request().acceptedTypes().get(0).toString());
   }
 
 }

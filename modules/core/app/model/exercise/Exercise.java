@@ -8,6 +8,8 @@ import javax.persistence.MappedSuperclass;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Splitter;
 
 import io.ebean.Model;
@@ -22,11 +24,14 @@ public abstract class Exercise extends Model implements WithId {
   @Id
   protected int id;
   
+  @JsonProperty(required = true)
   protected String title;
   
+  @JsonProperty(required = true)
   protected String author;
   
   @Column(columnDefinition = "text")
+  @JsonProperty(required = true)
   protected String text;
   
   public Exercise(int theId, String theTitle, String theAuthor, String theText) {
@@ -58,6 +63,8 @@ public abstract class Exercise extends Model implements WithId {
   public String getTitle() {
     return title;
   }
+  
+  public abstract void updateValues(int theId, String theTitle, String theAuthor, String theText, JsonNode other);
   
   protected void updateValues(int theId, String theTitle, String theAuthor, String theText) {
     id = theId;

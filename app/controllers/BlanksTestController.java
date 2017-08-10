@@ -1,10 +1,11 @@
-package controllers.core;
+package controllers;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import controllers.core.BaseController;
 import model.blanks.BlanksExercise;
 import model.exercise.Success;
 import play.data.DynamicForm;

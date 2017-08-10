@@ -8,8 +8,8 @@ import java.util.stream.IntStream;
 
 import javax.inject.Inject;
 
-import controllers.core.BaseExerciseController;
 import controllers.core.ExerciseController;
+import model.CorrectionException;
 import model.QuestionResult;
 import model.QuestionUser;
 import model.StringConsts;
@@ -25,14 +25,15 @@ import model.user.User;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.mvc.Result;
+import play.twirl.api.Html;
 
-public class QuestionController extends BaseExerciseController {
+public class QuestionController extends ExerciseController<Question, QuestionResult> {
   
   private static final int STEP = 10;
   
   @Inject
   public QuestionController(FormFactory theFactory) {
-    super(theFactory, "question");
+    super(theFactory, "question", Question.finder);
   }
   
   public static User getUser() {
@@ -167,6 +168,19 @@ public class QuestionController extends BaseExerciseController {
   
   public Result questions() {
     return ok(views.html.questionList.render(getUser(), Question.finder.all()));
+  }
+  
+  @Override
+  protected List<QuestionResult> correct(String learnerSolution, Question exercise, User user)
+      throws CorrectionException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  
+  @Override
+  protected Html renderResult(List<QuestionResult> correctionResult) {
+    // TODO Auto-generated method stub
+    return null;
   }
   
 }

@@ -15,28 +15,27 @@ import io.ebean.Model;
 
 @Entity
 public class SqlSample extends Model {
-
+  
   protected static final Splitter NEWLINE_SPLITTER = Splitter.on("\n");
-
+  
   public static final Finder<SqlSampleKey, SqlSample> finder = new Finder<>(SqlSample.class);
-
+  
   @EmbeddedId
   public SqlSampleKey key;
-
+  
   public String sample;
-
+  
   @ManyToOne
-  @JoinColumn(name = "scenario_id", referencedColumnName = "scenario_id", insertable = false, updatable = false)
-  @JoinColumn(name = "exercise_id", referencedColumnName = "exercise_id", insertable = false, updatable = false)
+  @JoinColumn(name = "exercise_id", insertable = false, updatable = false)
   @JsonBackReference
   public SqlExercise exercise;
-
+  
   public SqlSample(SqlSampleKey theKey) {
     key = theKey;
   }
-
+  
   public List<String> getSample() {
     return NEWLINE_SPLITTER.splitToList(sample);
   }
-
+  
 }

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,7 +12,6 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import controllers.core.BaseExerciseController;
 import controllers.core.ExerciseController;
 import model.CorrectionException;
 import model.Levenshtein;
@@ -20,24 +20,21 @@ import model.SqlSolutionKey;
 import model.SqlUser;
 import model.StringConsts;
 import model.exercise.SqlExercise;
-import model.exercise.SqlExerciseKey;
 import model.exercise.SqlExerciseType;
 import model.exercise.SqlSample;
 import model.exercise.SqlScenario;
-import model.logging.ExerciseCompletionEvent;
-import model.logging.ExerciseCorrectionEvent;
 import model.logging.ExerciseStartEvent;
 import model.querycorrectors.SqlResult;
 import model.sql.SqlQueryResult;
 import model.user.User;
-import net.sf.jsqlparser.statement.Statement;
 import play.Logger;
 import play.data.FormFactory;
 import play.db.Database;
 import play.db.NamedDatabase;
 import play.mvc.Result;
+import play.twirl.api.Html;
 
-public class SqlController extends BaseExerciseController {
+public class SqlController extends ExerciseController<SqlExercise, SqlResult> {
 
   private static final String STANDARD_SQL = "";
 
@@ -47,7 +44,7 @@ public class SqlController extends BaseExerciseController {
   @Inject
   public SqlController(FormFactory theFactory, @NamedDatabase("sqlselectroot") Database theSqlSelect,
       @NamedDatabase("sqlotherroot") Database theSqlOther) {
-    super(theFactory, "sql");
+    super(theFactory, "sql", SqlExercise.finder);
     sqlSelect = theSqlSelect;
     sqlOther = theSqlOther;
   }
@@ -103,8 +100,8 @@ public class SqlController extends BaseExerciseController {
     }
   }
 
-  private static void saveSolution(String userName, String learnerSolution, SqlExerciseKey exKey) {
-    SqlSolutionKey key = new SqlSolutionKey(userName, exKey);
+  private static void saveSolution(String userName, String learnerSolution, int id) {
+    SqlSolutionKey key = new SqlSolutionKey(userName, id);
 
     SqlSolution solution = SqlSolution.finder.byId(key);
     if(solution == null)
@@ -114,52 +111,24 @@ public class SqlController extends BaseExerciseController {
     solution.save();
   }
 
-  public Result correct(int scenarioId, int exerciseId) {
+  public Result exercise(int id) {
     User user = getUser();
-    try {
-      SqlResult<? extends Statement, ?> result = correct(user.name, scenarioId, exerciseId);
-
-      log(user, new ExerciseCompletionEvent(request(), exerciseId, result.getResults()));
-
-      return ok(views.html.correction.render("SQL", result.render(), result.getLearnerSolution(), user,
-          routes.SqlController.index()));
-    } catch (CorrectionException e) { // NOSONAR
-      Logger.error("FEHLER:", e);
-      return ok(views.html.error.render(user, e));
-    }
-  }
-
-  public Result correctLive(int scenarioId, int exerciseId) {
-    try {
-      User user = getUser();
-
-      SqlResult<? extends Statement, ?> result = correct(user.name, scenarioId, exerciseId);
-
-      log(user, new ExerciseCorrectionEvent(request(), exerciseId, result.getResults()));
-
-      return ok(result.render());
-    } catch (CorrectionException e) { // NOSONAR
-      return ok(views.html.correctionError.render(e));
-    }
-  }
-
-  public Result exercise(int scenarioId, int exerciseId) {
-    User user = getUser();
-
-    SqlExerciseKey exKey = new SqlExerciseKey(scenarioId, exerciseId);
-    SqlExercise exercise = SqlExercise.finder.byId(exKey);
-
+    
+    SqlExercise exercise = SqlExercise.finder.byId(id);
+    
     if(exercise == null)
       return redirect(controllers.sql.routes.SqlController.index());
-
-    List<SqlQueryResult> tables = readTablesInDatabase(sqlSelect, exercise.scenario.shortName);
-
-    SqlSolution oldSol = SqlSolution.finder.byId(new SqlSolutionKey(user.name, exKey));
+    
+    List<SqlQueryResult> tables = readTablesInDatabase(sqlSelect,
+        "" /* exercise.scenario.shortName */);
+    
+    SqlSolution oldSol = SqlSolution.finder.byId(new SqlSolutionKey(user.name, id));
     String oldOrDefSol = oldSol == null ? STANDARD_SQL : oldSol.sol;
-
-    log(user, new ExerciseStartEvent(request(), exerciseId));
-
+    
+    log(user, new ExerciseStartEvent(request(), id));
+    
     return ok(views.html.sqlExercise.render(user, exercise, oldOrDefSol, tables));
+
   }
 
   public Result filteredScenario(int id, String exType, int start) {
@@ -179,23 +148,29 @@ public class SqlController extends BaseExerciseController {
     return ok(views.html.scenarioes.render(getUser(), SqlScenario.finder.all()));
   }
 
-  private SqlResult<? extends Statement, ?> correct(String userName, int scenarioId, int exerciseId)
+  private Database getDBForExType(SqlExerciseType exerciseType) {
+    return exerciseType == SqlExerciseType.SELECT ? sqlSelect : sqlOther;
+  }
+
+  @Override
+  protected List<SqlResult> correct(String learnerSolution, SqlExercise exercise, User user)
       throws CorrectionException {
     String learnerSol = factory.form().bindFromRequest().get(StringConsts.FORM_VALUE);
 
     if(learnerSol == null || learnerSol.isEmpty())
       throw new CorrectionException(learnerSol, StringConsts.EMPTY_SOLUTION);
 
-    SqlExercise exercise = SqlExercise.finder.byId(new SqlExerciseKey(scenarioId, exerciseId));
-
-    saveSolution(userName, learnerSol, exercise.key);
+    saveSolution(user.name, learnerSol, exercise.getId());
 
     SqlSample sample = findBestFittingSample(learnerSol, exercise.samples);
 
-    return exercise.getCorrector().correct(getDBForExType(exercise.exerciseType), learnerSol, sample, exercise);
+    return Arrays
+        .asList(exercise.getCorrector().correct(getDBForExType(exercise.exerciseType), learnerSol, sample, exercise));
   }
 
-  private Database getDBForExType(SqlExerciseType exerciseType) {
-    return exerciseType == SqlExerciseType.SELECT ? sqlSelect : sqlOther;
+  @Override
+  protected Html renderResult(List<SqlResult> correctionResult) {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

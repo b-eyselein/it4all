@@ -13,22 +13,18 @@ public class SqlSolutionKey implements Serializable {
 
   public String userName;
 
-  public int scenarioId;
-
   public int exerciseId;
 
-  public SqlSolutionKey(String theUsername, int theScenarioId, int theExerciseId) {
+  public SqlSolutionKey(String theUsername, int theExerciseId) {
     userName = theUsername;
-    scenarioId = theScenarioId;
     exerciseId = theExerciseId;
   }
 
   public SqlSolutionKey(String theUsername, SqlExerciseKey exerciseKey) {
     userName = theUsername;
-    scenarioId = exerciseKey.scenarioId;
     exerciseId = exerciseKey.exerciseId;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     return obj instanceof SqlSolutionKey && hashCode() == obj.hashCode();
@@ -36,7 +32,7 @@ public class SqlSolutionKey implements Serializable {
 
   @Override
   public int hashCode() {
-    return IntConsts.MILLION * userName.hashCode() + IntConsts.THOUSAND * scenarioId + exerciseId;
+    return IntConsts.MILLION * userName.hashCode() + exerciseId;
   }
 
 }

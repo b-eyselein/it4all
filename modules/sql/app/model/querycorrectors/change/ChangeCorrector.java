@@ -13,6 +13,7 @@ import model.matching.Match;
 import model.matching.MatchingResult;
 import model.querycorrectors.QueryCorrector;
 import model.querycorrectors.SqlExecutionResult;
+import model.querycorrectors.SqlResult;
 import model.sql.SqlQueryResult;
 import net.sf.jsqlparser.schema.Column;
 import play.Logger;
@@ -71,6 +72,11 @@ public abstract class ChangeCorrector<Q extends net.sf.jsqlparser.statement.Stat
     } catch (SQLException e) {
       throw new CorrectionException(userStatement.toString(), "There has been an error running a statement", e);
     }
+  }
+
+  @Override
+  protected SqlResult<Column> instantiateResult(String learnerSolution) {
+    return new SqlResult<>(learnerSolution);
   }
 
   @Override

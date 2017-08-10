@@ -7,23 +7,23 @@ import java.util.List;
 import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
 
-import controllers.core.AbstractAdminController;
-import model.JsonWrapper;
+import controllers.core.AExerciseAdminController;
 import model.Mapping;
 import model.StringConsts;
 import model.UmlExTextParser;
 import model.UmlExercise;
 import model.UmlExerciseReader;
-import play.api.mvc.Call;
+import model.exercisereading.ExerciseReader;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
 import play.mvc.Result;
 import play.twirl.api.Html;
 
-public class UmlAdmin extends AbstractAdminController<UmlExercise, UmlExerciseReader> {
+public class UmlAdmin extends AExerciseAdminController<UmlExercise> {
 
   @Inject
   public UmlAdmin(FormFactory theFactory) {
@@ -34,13 +34,16 @@ public class UmlAdmin extends AbstractAdminController<UmlExercise, UmlExerciseRe
     DynamicForm form = factory.form().bindFromRequest();
 
     JsonNode solNode = Json.parse(form.get(StringConsts.SOLUTION_NAME));
+    try {
+      ProcessingReport report = ExerciseReader.validateJson(solNode, UmlController.SOLUTION_SCHEMA_NODE);
 
-    ProcessingReport report = JsonWrapper.validateJson(solNode, UmlController.SOLUTION_SCHEMA_NODE);
+      if(report.isSuccess())
+        return ok("ok");
 
-    if(report.isSuccess())
-      return ok("ok");
-
-    return ok(report.toString());
+      return ok(report.toString());
+    } catch (ProcessingException e) {
+      return badRequest("Fehler!");
+    }
   }
 
   @Override
@@ -111,11 +114,6 @@ public class UmlAdmin extends AbstractAdminController<UmlExercise, UmlExerciseRe
   @Override
   public Html renderCreated(List<UmlExercise> exercises) {
     return views.html.umlCreation.render(exercises);
-  }
-
-  @Override
-  protected Call getIndex() {
-    return controllers.uml.routes.UmlAdmin.index();
   }
 
   @Override

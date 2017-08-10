@@ -4,14 +4,14 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import model.exercise.Success;
 import model.matching.Match;
 import model.matching.MatchingResult;
 import model.result.EvaluationResult;
 import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.statement.Statement;
 import play.twirl.api.Html;
 
-public class SqlResult<Q extends Statement, C> {
+public class SqlResult<C> extends EvaluationResult {
   
   protected String learnerSolution;
   
@@ -26,6 +26,7 @@ public class SqlResult<Q extends Statement, C> {
   protected List<MatchingResult<? extends Object, ? extends Match<? extends Object>>> otherComparisons = new LinkedList<>();
 
   public SqlResult(String theLearnerSolution) {
+    super(Success.NONE);
     learnerSolution = theLearnerSolution;
   }
   
@@ -68,28 +69,28 @@ public class SqlResult<Q extends Statement, C> {
     return views.html.resultTemplates.sqlResult.render(this);
   }
   
-  public SqlResult<Q, C> setColumnComparison(MatchingResult<C, ColumnMatch<C>> theColumnComparison) {
+  public SqlResult<C> setColumnComparison(MatchingResult<C, ColumnMatch<C>> theColumnComparison) {
     columnComparison = theColumnComparison;
     return this;
   }
   
-  public SqlResult<Q, C> setExecutionResult(SqlExecutionResult theExecutionResult) {
+  public SqlResult<C> setExecutionResult(SqlExecutionResult theExecutionResult) {
     executionResult = theExecutionResult;
     return this;
   }
   
-  public SqlResult<Q, C> setOtherComparisons(
+  public SqlResult<C> setOtherComparisons(
       List<MatchingResult<? extends Object, ? extends Match<? extends Object>>> theOtherComparisons) {
     otherComparisons = theOtherComparisons;
     return this;
   }
   
-  public SqlResult<Q, C> setTableComparison(MatchingResult<String, Match<String>> theTableComparison) {
+  public SqlResult<C> setTableComparison(MatchingResult<String, Match<String>> theTableComparison) {
     tableComparison = theTableComparison;
     return this;
   }
 
-  public SqlResult<Q, C> setWhereComparison(MatchingResult<Expression, Match<Expression>> theWhereComparison) {
+  public SqlResult<C> setWhereComparison(MatchingResult<Expression, Match<Expression>> theWhereComparison) {
     whereComparison = theWhereComparison;
     return this;
   }

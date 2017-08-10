@@ -36,7 +36,7 @@ public abstract class QueryCorrector<Q extends Statement, C> {
     return list.stream().map(T::toString).collect(Collectors.toList());
   }
 
-  public SqlResult<Q, C> correct(Database database, String learnerSolution, SqlSample sampleStatement,
+  public SqlResult<C> correct(Database database, String learnerSolution, SqlSample sampleStatement,
       SqlExercise exercise) throws CorrectionException {
     Q userQ = parseStatement(learnerSolution);
     Q sampleQ = parseStatement(sampleStatement.sample);
@@ -89,7 +89,7 @@ public abstract class QueryCorrector<Q extends Statement, C> {
 
   protected abstract Expression getWhere(Q query);
 
-  protected abstract SqlResult<Q, C> instantiateResult(String learnerSolution);
+  protected abstract SqlResult<C> instantiateResult(String learnerSolution);
 
   protected abstract List<MatchingResult<? extends Object, ? extends Match<? extends Object>>> makeOtherComparisons(
       Q userQ, Q sampleQ);

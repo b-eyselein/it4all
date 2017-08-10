@@ -776,7 +776,7 @@
 				"action": {
 					"actiontype": "CLICK", 
 					"actionXpathQuery": "/html/body//button", 
-					"keysToSend": null
+					"keysToSend": ""
 				}
 			}, 
 			{
@@ -813,7 +813,7 @@
 				"action": {
 					"actiontype": "CLICK", 
 					"actionXpathQuery": "/html/body//button", 
-					"keysToSend": null
+					"keysToSend": ""
 				}
 			}, 
 			{
@@ -850,7 +850,7 @@
 				"action": {
 					"actiontype": "CLICK", 
 					"actionXpathQuery": "/html/body//button", 
-					"keysToSend": null
+					"keysToSend": ""
 				}
 			}, 
 			{
@@ -887,7 +887,7 @@
 				"action": {
 					"actiontype": "CLICK", 
 					"actionXpathQuery": "/html/body//button", 
-					"keysToSend": null
+					"keysToSend": ""
 				}
 			}
 		]

@@ -32,8 +32,7 @@ public class SqlSolution extends Model {
 
   @ManyToOne
   @JsonBackReference
-  @JoinColumn(name = "scenario_id", referencedColumnName = "scenario_id", insertable = false, updatable = false)
-  @JoinColumn(name = "exercise_id", referencedColumnName = "exercise_id", insertable = false, updatable = false)
+  @JoinColumn(name = "exercise_id", insertable = false, updatable = false)
   public SqlExercise exercise;
 
   public SqlSolution(SqlSolutionKey theKey) {

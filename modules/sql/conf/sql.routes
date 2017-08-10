@@ -1,22 +1,23 @@
 # Administrator
-GET    /admin                    controllers.sql.SqlAdmin.index()
+GET    /scenarioes/admin         controllers.sql.SqlExerciseAdmin.index()
+GET    /exercises/admin          controllers.sql.SqlScenarioAdmin.index()
 
-GET    /jsonSchema               controllers.sql.SqlAdmin.getJSONSchemaFile()
-POST   /upload                   controllers.sql.SqlAdmin.uploadFile()
+GET    /jsonSchema               controllers.sql.SqlExerciseAdmin.getJSONSchemaFile()
+POST   /upload                   controllers.sql.SqlExerciseAdmin.uploadFile()
 
-GET    /import                   controllers.sql.SqlAdmin.importExercises()
-GET    /export                   controllers.sql.SqlAdmin.exportExercises()
+GET    /import                   controllers.sql.SqlExerciseAdmin.importExercises()
+GET    /export                   controllers.sql.SqlExerciseAdmin.exportExercises()
 
-GET    /admin/:id                controllers.sql.SqlAdmin.scenarioAdmin(id: Int)
+GET    /admin/:id                controllers.sql.SqlExerciseAdmin.scenarioAdmin(id: Int)
 
 GET    /scenarioes               controllers.sql.SqlController.scenarioes()
-GET    /scenarioes/new           controllers.sql.SqlAdmin.newExerciseForm()
-POST   /scenarioes/new           controllers.sql.SqlAdmin.newExercise()
+GET    /scenarioes/new           controllers.sql.SqlExerciseAdmin.newExerciseForm()
+POST   /scenarioes/new           controllers.sql.SqlExerciseAdmin.newExercise()
 
 # All
 GET    /                         controllers.sql.SqlController.index()
 GET    /scenario/:scId/:exType   controllers.sql.SqlController.filteredScenario(scId: Int, exType: String, start: Int ?= 0)
-GET    /:scId/:id                controllers.sql.SqlController.exercise(scId: Int, id: Int)
+GET    /:id                      controllers.sql.SqlController.exercise(id: Int)
 
-PUT    /:scId/:id                controllers.sql.SqlController.correctLive(scId: Int, id: Int)
-POST   /:scId/:id                controllers.sql.SqlController.correct(scId: Int, id: Int)
+PUT    /:id                      controllers.sql.SqlController.correctLive(id: Int)
+POST   /:id                      controllers.sql.SqlController.correct(id: Int)

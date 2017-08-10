@@ -14,19 +14,19 @@ import model.exercisereading.ExerciseReader;
 import play.Logger;
 
 public class SpreadExerciseReader extends ExerciseReader<SpreadExercise> {
-  
+
   private static final List<String> FILE_ENDINGS = Arrays.asList("xlsx", "ods");
-  
+
   private static final SpreadExerciseReader INSTANCE = new SpreadExerciseReader();
-  
+
   private SpreadExerciseReader() {
-    super("spread");
+    super("spread", SpreadExercise.finder, SpreadExercise[].class);
   }
-  
+
   public static SpreadExerciseReader getInstance() {
     return INSTANCE;
   }
-  
+
   @Override
   public void saveRead(SpreadExercise exercise) {
     exercise.save();
@@ -35,23 +35,23 @@ public class SpreadExerciseReader extends ExerciseReader<SpreadExercise> {
       checkFile(exercise, exercise.templateFilename, fileEnding);
     });
   }
-  
+
   protected String checkFile(SpreadExercise exercise, String fileName, String fileEnding) {
     if(!baseTargetDir.toFile().exists() && !createDirectory(baseTargetDir))
       // error occured...
       return "Directory für Lösungsdateien (XML) " + baseTargetDir + "existiert nicht!";
-    
+
     String completeFilename = fileName + "." + fileEnding;
-    
-    Path providedFile = Paths.get(baseDirForExType.toString(), completeFilename).toAbsolutePath();
+
+    Path providedFile = Paths.get("conf", "resources", exerciseType, completeFilename).toAbsolutePath();
     Path targetPath = Paths.get(baseTargetDir.toString(), completeFilename).toAbsolutePath();
-    
+
     if(!providedFile.toFile().exists())
       return "Konnte Datei nicht erstellen: Keine Lösungsdatei mitgeliefert...";
-    
-    READING_LOGGER.warn("The file \"" + targetPath + "\" for " + exerciseType + " exercise " + exercise.getId()
+
+    Logger.warn("The file \"" + targetPath + "\" for " + exerciseType + " exercise " + exercise.getId()
         + " does not exist. Trying to create this file...");
-    
+
     try {
       Files.copy(providedFile, targetPath, StandardCopyOption.REPLACE_EXISTING);
       return "Die Lösungsdatei wurde erstellt.";
@@ -60,20 +60,14 @@ public class SpreadExerciseReader extends ExerciseReader<SpreadExercise> {
       return "Die Lösungsdatei konnte nicht erstellt werden!";
     }
   }
-  
+
   @Override
-  protected SpreadExercise read(JsonNode exerciseNode) {
-    int id = exerciseNode.get(StringConsts.ID_NAME).asInt();
-    String title = exerciseNode.get(StringConsts.TITLE_NAME).asText();
-    String author = exerciseNode.get(StringConsts.AUTHOR_NAME).asText();
-    String text = exerciseNode.get(StringConsts.TEXT_NAME).asText();
+  protected SpreadExercise instantiateExercise(int id, String title, String author, String text,
+      JsonNode exerciseNode) {
     String sampleFilename = exerciseNode.get(StringConsts.SAMPLE_FILENAME).asText();
     String templateFilename = exerciseNode.get(StringConsts.TEMPALTE_FILENAME).asText();
     
-    SpreadExercise exercise = SpreadExercise.finder.byId(id);
-    if(exercise == null)
-      return new SpreadExercise(id, title, author, text, sampleFilename, templateFilename);
-    
-    return exercise;
+    return new SpreadExercise(id, title, author, text, sampleFilename, templateFilename);
   }
+  
 }

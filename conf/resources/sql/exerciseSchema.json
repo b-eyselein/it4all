@@ -1,16 +1,73 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema#",
 	"type": "array",
 	"items": {
 		"type": "object",
+		"id": "urn:jsonschema:model:exercise:SqlExercise",
 		"properties": {
 			"id": {
 				"type": "integer"
 			},
-			"shortName": {
+			"title": {
 				"type": "string"
 			},
-			"title": {
+			"author": {
+				"type": "string"
+			},
+			"exerciseType": {
+				"type": "string",
+				"enum": [
+					"SELECT",
+					"CREATE",
+					"UPDATE",
+					"DELETE",
+					"INSERT"
+				]
+			},
+			"samples": {
+				"type": "array",
+				"items": {
+					"type": "object",
+					"id": "urn:jsonschema:model:exercise:SqlSample",
+					"properties": {
+						"key": {
+							"type": "object",
+							"id": "urn:jsonschema:model:exercise:SqlSampleKey",
+							"properties": {
+								"exerciseId": {
+									"type": "integer"
+								},
+								"sampleId": {
+									"type": "integer"
+								}
+							}
+						},
+						"sample": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						}
+					}
+				}
+			},
+			"tags": {
+				"type": "array",
+				"items": {
+					"type": "string",
+					"enum": [
+						"JOIN",
+						"DOUBLE_JOIN",
+						"TRIPLE_JOIN",
+						"ORDER_BY",
+						"GROUP_BY",
+						"FUNCTION",
+						"ALIAS",
+						"LIMIT",
+						"SUBSELECT"
+					]
+				}
+			},
+			"hint": {
 				"type": "string"
 			},
 			"text": {
@@ -18,124 +75,7 @@
 				"items": {
 					"type": "string"
 				}
-			},
-			"scriptFile": {
-				"type": "string"
-			},
-			"exercises": {
-				"type": "array",
-				"items": {
-					"type": "object",
-					"properties": {
-						"key": {
-							"type": "object",
-							"properties": {
-								"exerciseId": {
-									"type": "integer"
-								},
-								"scenarioId": {
-									"type": "integer"
-								}
-							},
-							"required": [
-								"exerciseId",
-								"scenarioId"
-							]
-						},
-						"author": {
-							"type": "string"
-						},
-						"text": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"exerciseType": {
-							"enum": [
-								"CREATE",
-								"SELECT",
-								"UPDATE",
-								"INSERT",
-								"DELETE"
-							]
-						},
-						"hint": {
-							"type": "string"
-						},
-						"tags": {
-							"type": "array",
-							"items": {
-								"enum": [
-									"JOIN",
-									"DOUBLE_JOIN",
-									"TRIPLE_JOIN",
-									"ORDER_BY",
-									"GROUP_BY",
-									"FUNCTION",
-									"ALIAS",
-									"LIMIT",
-									"SUBSELECT"
-								]
-							}
-						},
-						"samples": {
-							"type": "array",
-							"items": {
-								"type": "object",
-								"properties": {
-									"key": {
-										"type": "object",
-										"properties": {
-											"scenarioId": {
-												"type": "integer"
-											},
-											"exerciseId": {
-												"type": "integer"
-											},
-											"sampleId": {
-												"type": "integer"
-											}
-										},
-										"required": [
-											"scenarioId",
-											"exerciseId",
-											"sampleId"
-										]
-									},
-									"sample": {
-										"type": "array",
-										"items": {
-											"type": "string"
-										}
-									}
-								},
-								"required": [
-									"key",
-									"sample"
-								]
-							}
-						}
-					},
-					"required": [
-						"key",
-						"author",
-						"text",
-						"exerciseType",
-						"hint",
-						"tags",
-						"samples"
-					]
-				}
 			}
-		},
-		"required": [
-			"id",
-			"shortName",
-			"title",
-			"text",
-			"scriptFile",
-			"exercises"
-		]
+		}
 	}
 }

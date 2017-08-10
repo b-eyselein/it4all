@@ -4,17 +4,16 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import controllers.core.AbstractAdminController;
+import controllers.core.AExerciseAdminController;
 import model.StringConsts;
 import model.quiz.Quiz;
 import model.quiz.QuizReader;
-import play.api.mvc.Call;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.mvc.Result;
 import play.twirl.api.Html;
 
-public class QuizAdmin extends AbstractAdminController<Quiz, QuizReader> {
+public class QuizAdmin extends AExerciseAdminController<Quiz> {
 
   @Inject
   public QuizAdmin(FormFactory theFactory) {
@@ -56,11 +55,6 @@ public class QuizAdmin extends AbstractAdminController<Quiz, QuizReader> {
   public Html renderCreated(List<Quiz> created) {
     // TODO Auto-generated method stub
     return null;
-  }
-
-  @Override
-  protected Call getIndex() {
-    return controllers.questions.routes.QuizAdmin.index();
   }
 
   @Override
