@@ -20,7 +20,6 @@ import model.XmlExType;
 import model.XmlExercise;
 import model.XmlExerciseReader;
 import model.exercisereading.ExerciseReader;
-import model.logging.ExerciseStartEvent;
 import model.user.User;
 import play.Logger;
 import play.data.FormFactory;
@@ -37,17 +36,6 @@ public class XmlController extends ExerciseController<XmlExercise, XmlError> {
   @Inject
   public XmlController(FormFactory theFactory) {
     super(theFactory, "xml", XmlExercise.finder);
-  }
-  
-  public Result exercise(int id) {
-    User user = getUser();
-    XmlExercise exercise = XmlExercise.finder.byId(id);
-
-    String defOrOldSolution = readDefOrOldSolution(user.name, exercise);
-
-    log(user, new ExerciseStartEvent(request(), id));
-
-    return ok(views.html.xmlExercise.render(user, exercise, getReferenceCode(exercise), defOrOldSolution));
   }
   
   public Result exercises() {
@@ -157,6 +145,12 @@ public class XmlController extends ExerciseController<XmlExercise, XmlError> {
     }
     
     return XmlCorrector.correct(xml, grammar, exercise);
+  }
+  
+  @Override
+  protected Html renderExercise(User user, XmlExercise exercise) {
+    String defOrOldSolution = readDefOrOldSolution(user.name, exercise);
+    return views.html.xmlExercise.render(user, exercise, getReferenceCode(exercise), defOrOldSolution);
   }
   
   @Override

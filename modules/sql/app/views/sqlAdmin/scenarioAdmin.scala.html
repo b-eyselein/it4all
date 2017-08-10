@@ -10,10 +10,10 @@
     <h2>Statistiken</h2>
     <ul>
       <li>
-        Dieses Szenario hat insgesamt @scenario.exercises.size() Aufgaben. Darunter
+        Dieses Szenario hat insgesamt @scenario.getExercises.size Aufgaben. Darunter
         <ul>
-        @for(typ <- model.exercise.SqlExerciseType.values()) {
-          <li>@scenario.getExercisesByType(typ).size() Aufgaben des Type &quot;@typ&quot;</li>
+        @for(typ <- model.exercise.SqlExerciseType.values) {
+          <li>@scenario.getExercisesByType(typ).size Aufgaben des Type &quot;@typ&quot;</li>
         }
         </ul>
       </li>

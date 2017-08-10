@@ -15,7 +15,7 @@
     @for(question <- questionList) {
       <tr>
         <td>@question.getId</td>
-        <td><a href="@questions.routes.QuestionController.question(question.getId)">@question.getTitle</a></td>
+        <td><a href="@questions.routes.QuestionController.exercise(question.getId)">@question.getTitle</a></td>
       @{question.questionType match {
         case model.question.Question.QType.FREETEXT => <td>Freitextfrage</td>
         case model.question.Question.QType.CHOICE => <td>Multiple Choice-Frage</td>

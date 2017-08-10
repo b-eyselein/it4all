@@ -1,18 +1,18 @@
 # Administrator
-GET    /scenarioes/admin         controllers.sql.SqlExerciseAdmin.index()
+GET    /scenarioes/admin         controllers.sql.SqlScenarioAdmin.index()
 GET    /exercises/admin          controllers.sql.SqlScenarioAdmin.index()
 
-GET    /jsonSchema               controllers.sql.SqlExerciseAdmin.getJSONSchemaFile()
-POST   /upload                   controllers.sql.SqlExerciseAdmin.uploadFile()
+GET    /jsonSchema               controllers.sql.SqlScenarioAdmin.getJSONSchemaFile()
+POST   /upload                   controllers.sql.SqlScenarioAdmin.uploadFile()
 
-GET    /import                   controllers.sql.SqlExerciseAdmin.importExercises()
-GET    /export                   controllers.sql.SqlExerciseAdmin.exportExercises()
+GET    /import                   controllers.sql.SqlScenarioAdmin.importExercises()
+GET    /export                   controllers.sql.SqlScenarioAdmin.exportExercises()
 
-GET    /admin/:id                controllers.sql.SqlExerciseAdmin.scenarioAdmin(id: Int)
+GET    /admin/:id                controllers.sql.SqlScenarioAdmin.scenarioAdmin(id: Int)
 
 GET    /scenarioes               controllers.sql.SqlController.scenarioes()
-GET    /scenarioes/new           controllers.sql.SqlExerciseAdmin.newExerciseForm()
-POST   /scenarioes/new           controllers.sql.SqlExerciseAdmin.newExercise()
+GET    /scenarioes/new           controllers.sql.SqlScenarioAdmin.newExerciseForm()
+POST   /scenarioes/new           controllers.sql.SqlScenarioAdmin.newExercise()
 
 # All
 GET    /                         controllers.sql.SqlController.index()

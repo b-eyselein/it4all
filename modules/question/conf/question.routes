@@ -30,7 +30,7 @@ POST     /new/:isFreetext            controllers.questions.QuestionController.ne
 GET      /edit/:id                   controllers.questions.QuestionController.editQuestionForm(id: Int)
 POST     /edit/:id                   controllers.questions.QuestionController.editQuestion(id: Int)
 
-GET      /question/:id               controllers.questions.QuestionController.question(id: Int)
+GET      /question/:id               controllers.questions.QuestionController.exercise(id: Int)
 POST     /question/:id               controllers.questions.QuestionController.questionResult( id: Int)
 
 

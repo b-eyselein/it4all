@@ -10,10 +10,8 @@
 		"scriptFile": "employee.sql",
 		"exercises": [
 			{
-				"key": {
-					"scenarioId": 1,
-					"exerciseId": 1
-				},
+				"id": 1001,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Wie viele Angestellte hat die Firma? Benennen Sie das Ergebnis als 'Anzahl'"
@@ -22,8 +20,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 1,
-							"exerciseId": 1,
+							"exerciseId": 1001,
 							"sampleId": 1
 						},
 						"sample": [
@@ -33,8 +30,7 @@
 					},
 					{
 						"key": {
-							"scenarioId": 1,
-							"exerciseId": 1,
+							"exerciseId": 1001,
 							"sampleId": 2
 						},
 						"sample": [
@@ -48,10 +44,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 1,
-					"exerciseId": 2
-				},
+				"id": 1002,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Welche Angestelltennummer (employeeOID) hat Max Becker?"
@@ -60,8 +54,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 1,
-							"exerciseId": 2,
+							"exerciseId": 1002,
 							"sampleId": 1
 						},
 						"sample": [
@@ -77,10 +70,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 1,
-					"exerciseId": 3
-				},
+				"id": 1003,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Welche Emailadresse hat Max Becker für die Arbeit?"
@@ -89,8 +80,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 1,
-							"exerciseId": 3,
+							"exerciseId": 1003,
 							"sampleId": 1
 						},
 						"sample": [
@@ -102,8 +92,7 @@
 					},
 					{
 						"key": {
-							"scenarioId": 1,
-							"exerciseId": 3,
+							"exerciseId": 1003,
 							"sampleId": 2
 						},
 						"sample": [
@@ -115,8 +104,7 @@
 					},
 					{
 						"key": {
-							"scenarioId": 1,
-							"exerciseId": 3,
+							"exerciseId": 1003,
 							"sampleId": 3
 						},
 						"sample": [
@@ -132,10 +120,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 1,
-					"exerciseId": 4
-				},
+				"id": 1004,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Geben Sie die Nutzernamen aller Angestellten alphabetisch geordnet aus!"
@@ -144,8 +130,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 1,
-							"exerciseId": 4,
+							"exerciseId": 1004,
 							"sampleId": 1
 						},
 						"sample": [
@@ -160,10 +145,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 1,
-					"exerciseId": 5
-				},
+				"id": 1005,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Wie viele Untergebene hat jeder Chef? Geben Sie jeweils die OID des Chefs und die Anzahl aus!"
@@ -172,8 +155,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 1,
-							"exerciseId": 5,
+							"exerciseId": 1005,
 							"sampleId": 1
 						},
 						"sample": [
@@ -189,10 +171,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 1,
-					"exerciseId": 6
-				},
+				"id": 1006,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Erstellen Sie das CREATE TABLE-Skript für die Tabelle Employee!"
@@ -201,8 +181,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 1,
-							"exerciseId": 6,
+							"exerciseId": 1006,
 							"sampleId": 1
 						},
 						"sample": [
@@ -222,10 +201,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 1,
-					"exerciseId": 7
-				},
+				"id": 1007,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Der Angestellte mit der OID 8 arbeitet jetzt für den Angestellten mit der OID 3. Aktualisieren Sie d",
@@ -235,8 +212,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 1,
-							"exerciseId": 7,
+							"exerciseId": 1007,
 							"sampleId": 1
 						},
 						"sample": [
@@ -251,10 +227,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 1,
-					"exerciseId": 8
-				},
+				"id": 1008,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Der Angestellte mit der OID 7 hat gekündigt. Löschen Sie ihn aus der Angestelltentabelle."
@@ -263,8 +237,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 1,
-							"exerciseId": 8,
+							"exerciseId": 1008,
 							"sampleId": 1
 						},
 						"sample": [
@@ -278,10 +251,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 1,
-					"exerciseId": 9
-				},
+				"id": 1009,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Es gibt eine neue Angestellte mit Namen Tina Sattler. Diese arbeitet für die Person mit der OID 2 un",
@@ -291,8 +262,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 1,
-							"exerciseId": 9,
+							"exerciseId": 1009,
 							"sampleId": 1
 						},
 						"sample": [
@@ -302,8 +272,7 @@
 					},
 					{
 						"key": {
-							"scenarioId": 1,
-							"exerciseId": 9,
+							"exerciseId": 1009,
 							"sampleId": 2
 						},
 						"sample": [
@@ -328,10 +297,8 @@
 		"scriptFile": "amazon.sql",
 		"exercises": [
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 1
-				},
+				"id": 2001,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Geben Sie alle Spalten der Autorentabelle aus!"
@@ -340,8 +307,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 1,
+							"exerciseId": 2001,
 							"sampleId": 1
 						},
 						"sample": [
@@ -351,8 +317,7 @@
 					},
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 1,
+							"exerciseId": 2001,
 							"sampleId": 2
 						},
 						"sample": [
@@ -366,10 +331,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 2
-				},
+				"id": 2002,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Geben Sie die Nachnamen aller Autoren aus!"
@@ -378,9 +341,8 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 2,
-							"sampleId": 3
+							"exerciseId": 2002,
+							"sampleId": 1
 						},
 						"sample": [
 							"SELECT family_name",
@@ -393,10 +355,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 3
-				},
+				"id": 2003,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Geben Sie die Namen aller Verlage aus!"
@@ -405,9 +365,8 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 3,
-							"sampleId": 4
+							"exerciseId": 2003,
+							"sampleId": 1
 						},
 						"sample": [
 							"SELECT name",
@@ -420,10 +379,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 4
-				},
+				"id": 2004,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Geben Sie die Vor- und Nachnamen aller Kunden aus!"
@@ -432,8 +389,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 4,
+							"exerciseId": 2004,
 							"sampleId": 1
 						},
 						"sample": [
@@ -447,10 +403,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 5
-				},
+				"id": 2005,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Geben Sie für jedes Buch jeweils den Titel, das Erscheinungsjahr und die ISBN aus!"
@@ -459,8 +413,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 5,
+							"exerciseId": 2005,
 							"sampleId": 1
 						},
 						"sample": [
@@ -474,10 +427,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 6
-				},
+				"id": 2006,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Bestimmen Sie den Titel des Buches mit der ISBN '978-3551354051' (ohne Anführungszeichen)."
@@ -486,8 +437,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 6,
+							"exerciseId": 2006,
 							"sampleId": 1
 						},
 						"sample": [
@@ -502,10 +452,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 7
-				},
+				"id": 2007,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Bestimmen Sie den Preis des Buches mit der ISBN '978-3551354068' (ohne Anführungszeichen)."
@@ -514,8 +462,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 7,
+							"exerciseId": 2007,
 							"sampleId": 1
 						},
 						"sample": [
@@ -530,10 +477,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 8
-				},
+				"id": 2008,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Bestimmen Sie den Vor- und Nachnamen des Autoren mit der ID 3"
@@ -542,8 +487,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 8,
+							"exerciseId": 2008,
 							"sampleId": 1
 						},
 						"sample": [
@@ -558,10 +502,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 9
-				},
+				"id": 2009,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Bestimmen Sie die ID des Autoren des Buches 'Der kleine Prinz' (ohne Anführungszeichen)."
@@ -570,8 +512,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 9,
+							"exerciseId": 2009,
 							"sampleId": 1
 						},
 						"sample": [
@@ -586,10 +527,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 10
-				},
+				"id": 2010,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Bestimmen Sie den Namen des Verlages, der unter der Telefonnummer '+49 2402 / 806341' erreichbar ist",
@@ -599,8 +538,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 10,
+							"exerciseId": 2010,
 							"sampleId": 1
 						},
 						"sample": [
@@ -615,10 +553,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 11
-				},
+				"id": 2011,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Ordnen Sie allen Büchern ihre jeweiligen Autoren zu. Geben Sie jeweils den Titel des Buches und den ",
@@ -628,8 +564,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 11,
+							"exerciseId": 2011,
 							"sampleId": 1
 						},
 						"sample": [
@@ -645,10 +580,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 12
-				},
+				"id": 2012,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Bestimmen Sie Titel und Preis aller Bücher, die im Carlsen-Verlag erschienen sind."
@@ -657,8 +590,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 12,
+							"exerciseId": 2012,
 							"sampleId": 1
 						},
 						"sample": [
@@ -670,8 +602,7 @@
 					},
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 12,
+							"exerciseId": 2012,
 							"sampleId": 2
 						},
 						"sample": [
@@ -688,10 +619,8 @@
 				"hint": "Die Zuordnung von Verlag-Id zu Verlag-Name befindet sich in der Tabelle 'publishers'."
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 13
-				},
+				"id": 2013,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Bestimmen Sie Titel und ISBN sämtlicher Bücher der Autorin 'Rowling' (ohne Anführungszeichen)."
@@ -700,8 +629,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 13,
+							"exerciseId": 2013,
 							"sampleId": 1
 						},
 						"sample": [
@@ -713,8 +641,7 @@
 					},
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 13,
+							"exerciseId": 2013,
 							"sampleId": 2
 						},
 						"sample": [
@@ -731,10 +658,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 14
-				},
+				"id": 2014,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Zeigen Sie die Werte aller Ratings an, die der Kunde mit der Email 'wilhard_1041@web.de' abgegeben h",
@@ -744,8 +669,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 14,
+							"exerciseId": 2014,
 							"sampleId": 1
 						},
 						"sample": [
@@ -762,10 +686,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 15
-				},
+				"id": 2015,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Wie lautet der Nachname des Kunden, der die Bestellung mit der ID 5 aufgegeben hat?"
@@ -774,8 +696,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 15,
+							"exerciseId": 2015,
 							"sampleId": 1
 						},
 						"sample": [
@@ -792,10 +713,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 16
-				},
+				"id": 2016,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Geben Sie alle Email-Adressen der Kunden aus, die mit 'gmx.de' enden."
@@ -804,8 +723,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 16,
+							"exerciseId": 2016,
 							"sampleId": 1
 						},
 						"sample": [
@@ -820,10 +738,8 @@
 				"hint": "Verwenden Sie für die Eingrenzung der Mailadresse den 'LIKE'-Operator."
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 17
-				},
+				"id": 2017,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Geben Sie die Titel aller Bücher aus, die weniger als 10,00 € kosten."
@@ -832,8 +748,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 17,
+							"exerciseId": 2017,
 							"sampleId": 1
 						},
 						"sample": [
@@ -843,8 +758,7 @@
 					},
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 17,
+							"exerciseId": 2017,
 							"sampleId": 2
 						},
 						"sample": [
@@ -858,10 +772,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 18
-				},
+				"id": 2018,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Geben die die IDs aller Bücher aus, die sich Kunden wünschen. Achten Sie darauf, dass eine ID nur ei",
@@ -871,8 +783,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 18,
+							"exerciseId": 2018,
 							"sampleId": 1
 						},
 						"sample": [
@@ -886,10 +797,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 19
-				},
+				"id": 2019,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Wählen Sie alle Einträge zu Kunden aus, die im Jahr 1981 Geburtstag haben."
@@ -898,8 +807,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 19,
+							"exerciseId": 2019,
 							"sampleId": 1
 						},
 						"sample": [
@@ -914,10 +822,8 @@
 				"hint": "Verwenden Sie den 'LIKE'-Operator zu Vergleich des Jahres"
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 20
-				},
+				"id": 2020,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Geben Sie die Titel aller Bücher aus, die einen Bestand von weniger als 20.000 Exemplaren oder einen",
@@ -927,8 +833,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 20,
+							"exerciseId": 2020,
 							"sampleId": 1
 						},
 						"sample": [
@@ -940,8 +845,7 @@
 					},
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 20,
+							"exerciseId": 2020,
 							"sampleId": 2
 						},
 						"sample": [
@@ -957,10 +861,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 21
-				},
+				"id": 2021,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Wie oft wurde das Buch 'Die Stadt in der Wüste' bewertet? Nennen Sie die Spalte 'Anzahl'."
@@ -969,8 +871,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 21,
+							"exerciseId": 2021,
 							"sampleId": 1
 						},
 						"sample": [
@@ -982,8 +883,7 @@
 					},
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 21,
+							"exerciseId": 2021,
 							"sampleId": 2
 						},
 						"sample": [
@@ -1002,10 +902,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 22
-				},
+				"id": 2022,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Welche Durchschnittsbewertung bekam das Buch 'Die Stadt in der Wüste'? Nennen Sie die Spalte 'Durchs",
@@ -1015,8 +913,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 22,
+							"exerciseId": 2022,
 							"sampleId": 1
 						},
 						"sample": [
@@ -1028,8 +925,7 @@
 					},
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 22,
+							"exerciseId": 2022,
 							"sampleId": 2
 						},
 						"sample": [
@@ -1048,10 +944,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 23
-				},
+				"id": 2023,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Wie hoch ist der Gesamtbestand an Harry Potter-Büchern? Nennen Sie die Spalte 'Gesamtbestand'."
@@ -1060,8 +954,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 23,
+							"exerciseId": 2023,
 							"sampleId": 1
 						},
 						"sample": [
@@ -1078,10 +971,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 24
-				},
+				"id": 2024,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Geben Sie jeweils die schlechteste und beste Bewertung des Buches 'Harry Potter und der Halbblutprin",
@@ -1091,8 +982,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 24,
+							"exerciseId": 2024,
 							"sampleId": 1
 						},
 						"sample": [
@@ -1104,8 +994,7 @@
 					},
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 24,
+							"exerciseId": 2024,
 							"sampleId": 2
 						},
 						"sample": [
@@ -1124,10 +1013,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 25
-				},
+				"id": 25,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Wie hoch ist der durchschnittliche Bestand aller Bücher? Nennen Sie die Spalte 'Durchschnitt'"
@@ -1136,8 +1023,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 25,
+							"exerciseId": 2025,
 							"sampleId": 1
 						},
 						"sample": [
@@ -1153,10 +1039,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 26
-				},
+				"id": 2026,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Wie lauten die Nachnamen der Kunden, die sich das Buch 'Harry Potter und der Orden des Phönix' wünsc",
@@ -1166,8 +1050,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 26,
+							"exerciseId": 2026,
 							"sampleId": 1
 						},
 						"sample": [
@@ -1180,8 +1063,7 @@
 					},
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 26,
+							"exerciseId": 2026,
 							"sampleId": 2
 						},
 						"sample": [
@@ -1199,10 +1081,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 27
-				},
+				"id": 2027,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Suchen Sie die Titel aller Bücher, deren Autor George Orwell ist. Ordnen Sie die Titel nach Erschein",
@@ -1212,8 +1092,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 27,
+							"exerciseId": 2027,
 							"sampleId": 1
 						},
 						"sample": [
@@ -1233,10 +1112,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 28
-				},
+				"id": 2028,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Zeigen sie Titel und Autor-ID der drei teuersten Bücher an. Sortieren Sie die Einträge nach Preis ab",
@@ -1246,8 +1123,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 28,
+							"exerciseId": 2028,
 							"sampleId": 1
 						},
 						"sample": [
@@ -1265,10 +1141,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 29
-				},
+				"id": 2029,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Bestimmen Sie Titel und Preis aller Bücher des Autors 'Tolkien', deren Preis unter 10€ liegt. Ordnen",
@@ -1278,8 +1152,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 29,
+							"exerciseId": 2029,
 							"sampleId": 1
 						},
 						"sample": [
@@ -1299,10 +1172,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 30
-				},
+				"id": 2030,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Wählen Sie alle Bestellungen aus, die das Buch 'Harry Potter und der Halbblutprinz' enthalten. Geben",
@@ -1312,8 +1183,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 30,
+							"exerciseId": 2030,
 							"sampleId": 1
 						},
 						"sample": [
@@ -1331,10 +1201,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 31
-				},
+				"id": 2031,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Geben Sie alle Email-Adressen der Kunden aus, die mit 'gmx.de ' oder mit 'gmail.com ' enden."
@@ -1343,8 +1211,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 31,
+							"exerciseId": 2031,
 							"sampleId": 1
 						},
 						"sample": [
@@ -1360,10 +1227,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 32
-				},
+				"id": 2032,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Bestimmen Sie Titel und Preis aller Bücher des Autors 'Tolkien', deren Preis unter 10€ liegt. Ordnen",
@@ -1373,8 +1238,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 32,
+							"exerciseId": 2032,
 							"sampleId": 1
 						},
 						"sample": [
@@ -1392,10 +1256,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 33
-				},
+				"id": 2033,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Berechnen Sie die Anzahl der bestellten Bücher (Tabelle order_positions), die zum Zeitpunkt des Kauf",
@@ -1405,8 +1267,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 33,
+							"exerciseId": 2033,
 							"sampleId": 1
 						},
 						"sample": [
@@ -1416,8 +1277,7 @@
 					},
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 33,
+							"exerciseId": 2033,
 							"sampleId": 2
 						},
 						"sample": [
@@ -1433,10 +1293,8 @@
 				"hint": ""
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 34
-				},
+				"id": 2034,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Erfassen Sie alle Autoren und den kumulierten Bestand ihrer Bücher. Ordnen Sie die Einträge nach kum",
@@ -1447,8 +1305,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 34,
+							"exerciseId": 2034,
 							"sampleId": 1
 						},
 						"sample": [
@@ -1467,10 +1324,8 @@
 				"hint": "Verwenden Sie den Sum-Operator und das Schlüsselwort AS."
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 35
-				},
+				"id": 2035,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Wählen Sie alle Kunden aus, die im Februar Geburtstag haben und geben Sie den Vornamen, Nachnamen un",
@@ -1480,8 +1335,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 35,
+							"exerciseId": 2035,
 							"sampleId": 1
 						},
 						"sample": [
@@ -1496,10 +1350,8 @@
 				"hint": "Verwenden Sie für die Eingrenzung des Geburtsdatums den 'LIKE'-Operator."
 			},
 			{
-				"key": {
-					"scenarioId": 2,
-					"exerciseId": 36
-				},
+				"id": 2036,
+				"title": "TODO!",
 				"author": "bje40dc",
 				"text": [
 					"Geben Sie den Vornamen, Nachnamen und Geburtstag des jüngsten Kunden aus. Achten Sie darauf, dass si",
@@ -1509,8 +1361,7 @@
 				"samples": [
 					{
 						"key": {
-							"scenarioId": 2,
-							"exerciseId": 36,
+							"exerciseId": 2036,
 							"sampleId": 1
 						},
 						"sample": [

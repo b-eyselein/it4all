@@ -5,8 +5,8 @@
   Es gibt insgesamt @model.exercise.SqlScenario.finder.all().size() Szenarien
   <ul>
   @for(scenario <- model.exercise.SqlScenario.finder.all()) {
-    <li>Das Szenario &quot;<a href="@sql.routes.SqlExerciseAdmin.scenarioAdmin(scenario.getId)">@scenario.getTitle</a>&quot;
-    hat @scenario.exercises.size() Aufgaben</li>
+    <li>Das Szenario &quot;<a href="@sql.routes.SqlScenarioAdmin.scenarioAdmin(scenario.getId)">@scenario.getTitle</a>&quot;
+    hat @scenario.getExercises.size Aufgaben</li>
   }
   </ul>
 </li>
@@ -14,11 +14,11 @@
 
 @calls = @{new model.AdminRoutesObject(
   sql.routes.SqlController.index(),
-  sql.routes.SqlExerciseAdmin.newExerciseForm(),
-  sql.routes.SqlExerciseAdmin.exportExercises(),
-  sql.routes.SqlExerciseAdmin.importExercises(),
-  sql.routes.SqlExerciseAdmin.getJSONSchemaFile(),
-  sql.routes.SqlExerciseAdmin.uploadFile()
+  sql.routes.SqlScenarioAdmin.newExerciseForm(),
+  sql.routes.SqlScenarioAdmin.exportExercises(),
+  sql.routes.SqlScenarioAdmin.importExercises(),
+  sql.routes.SqlScenarioAdmin.getJSONSchemaFile(),
+  sql.routes.SqlScenarioAdmin.uploadFile()
 )}
 
 @admin.adminMain(user, "Sql", statistics, calls) { }

@@ -130,18 +130,6 @@ public class QuestionController extends ExerciseController<Question, QuestionRes
     return ok(views.html.question.newQuestionForm.render(getUser(), isChoice));
   }
   
-  public Result question(int id) {
-    User user = getUser();
-    Question question = Question.finder.byId(id);
-    
-    if(question == null)
-      return redirect(controllers.questions.routes.QuestionController.index(0));
-    
-    UserAnswer oldAnswer = UserAnswer.finder.byId(new UserAnswerKey(user.name, id));
-    
-    return ok(views.html.question.question.render(user, question, oldAnswer));
-  }
-  
   public Result questionResult(int id) {
     User user = getUser();
     Question question = Question.finder.byId(id);
@@ -175,6 +163,12 @@ public class QuestionController extends ExerciseController<Question, QuestionRes
       throws CorrectionException {
     // TODO Auto-generated method stub
     return null;
+  }
+  
+  @Override
+  protected Html renderExercise(User user, Question exercise) {
+    UserAnswer oldAnswer = UserAnswer.finder.byId(new UserAnswerKey(user.name, exercise.getId()));
+    return views.html.question.question.render(user, exercise, oldAnswer);
   }
   
   @Override

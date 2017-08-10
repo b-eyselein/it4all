@@ -12,6 +12,7 @@ import model.StringConsts;
 import model.exercise.Exercise;
 import model.logging.ExerciseCompletionEvent;
 import model.logging.ExerciseCorrectionEvent;
+import model.logging.ExerciseStartEvent;
 import model.result.EvaluationResult;
 import model.user.User;
 import play.Logger;
@@ -65,8 +66,16 @@ public abstract class ExerciseController<E extends Exercise, R extends Evaluatio
     }
   }
 
-  public Path getSampleDir() {
-    return getSampleDir(exerciseType);
+  public Result exercise(int id) {
+    User user = getUser();
+    E exercise = finder.byId(id);
+    
+    if(exercise == null)
+      return redirect(controllers.routes.Application.index());
+
+    log(user, new ExerciseStartEvent(request(), id));
+    
+    return ok(renderExercise(user, exercise));
   }
 
   protected Path checkAndCreateSolDir(String username, Exercise exercise) {
@@ -84,6 +93,12 @@ public abstract class ExerciseController<E extends Exercise, R extends Evaluatio
   }
 
   protected abstract List<R> correct(String learnerSolution, E exercise, User user) throws CorrectionException;
+
+  protected Path getSampleDir() {
+    return getSampleDir(exerciseType);
+  }
+
+  protected abstract Html renderExercise(User user, E exercise);
 
   protected abstract Html renderResult(List<R> correctionResult);
 

@@ -5,7 +5,7 @@ object Common {
   val settings: Seq[Setting[_]] = Seq(
     organization := "is.informatik.uni-wuerzburg.de",
     version := "0.9.0",
-    scalaVersion := "2.12.3",
+    scalaVersion := "2.11.11",
 
     libraryDependencies ++= Seq(Common.mockitoDep))
 
@@ -18,7 +18,7 @@ object Common {
 
   // Json Schema
   val jsonSchemaValidator = "com.github.fge" % "json-schema-validator" % "2.2.6"
-  val jsonSchemaGenerator = "com.kjetland" % "mbknor-jackson-jsonschema_2.12" % "1.0.24"
+  val jsonSchemaGenerator = "com.kjetland" % "mbknor-jackson-jsonschema_2.11" % "1.0.24"
 
   // Programming
   val dockerjava = "com.github.docker-java" % "docker-java" % "3.0.12"

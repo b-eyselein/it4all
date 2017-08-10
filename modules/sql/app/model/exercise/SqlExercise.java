@@ -15,6 +15,7 @@ import javax.persistence.OneToMany;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import io.ebean.Finder;
@@ -38,6 +39,7 @@ public class SqlExercise extends Exercise {
   public static final Finder<Integer, SqlExercise> finder = new Finder<>(SqlExercise.class);
 
   @Enumerated(EnumType.STRING)
+  @JsonProperty(required = true)
   public SqlExerciseType exerciseType;
 
   @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
@@ -52,8 +54,10 @@ public class SqlExercise extends Exercise {
   @JsonBackReference
   public SqlScenario scenario;
 
+  @JsonProperty(required = true)
   public String tags;
 
+  @JsonProperty(required = true)
   public String hint;
 
   public SqlExercise(int theId, String theTitle, String theAuthor, String theText, SqlExerciseType theExerciseType) {

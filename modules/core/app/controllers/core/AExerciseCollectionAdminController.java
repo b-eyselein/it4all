@@ -9,17 +9,12 @@ import play.data.FormFactory;
 import play.mvc.Security.Authenticated;
 
 @Authenticated(AdminSecured.class)
-public class AExerciseCollectionAdminController<E extends Exercise, C extends ExerciseCollection<E>>
-    extends BaseController {
-
-  protected Finder<Integer, C> finder;
-  protected ExerciseCollectionReader<E, C> exerciseReader;
+public abstract class AExerciseCollectionAdminController<E extends Exercise, C extends ExerciseCollection<E>>
+    extends AExerciseAdminController<C> {
   
   public AExerciseCollectionAdminController(FormFactory theFactory, Finder<Integer, C> theFinder,
       ExerciseCollectionReader<E, C> theExerciseReader) {
-    super(theFactory);
-    finder = theFinder;
-    exerciseReader = theExerciseReader;
+    super(theFactory, theFinder, theExerciseReader);
   }
   
 }

@@ -8,8 +8,8 @@
       <div class="col-sm-2"><b>ID</b>: @scenario.getId</div>
       <div class="col-sm-2"><b>Titel</b>: @scenario.getTitle</div>
       <div class="col-sm-2"><b>Autor</b>: @scenario.getAuthor</div>
-      <div class="col-sm-3"><b>Tabellenname</b>: @scenario.shortName</div>
-      <div class="col-sm-3"><b>Skriptdatei</b>: @scenario.scriptFile</div>
+      <div class="col-sm-3"><b>Tabellenname</b>: @scenario.getShortName</div>
+      <div class="col-sm-3"><b>Skriptdatei</b>: @scenario.getScriptFile</div>
     </div>
     <div class="row">
       <div class="col-sm-4"><b>Beschreibung:</b></div>
@@ -21,7 +21,7 @@
 <hr>
 
 <!-- Exercises -->
-@for((exercise, index) <- scenario.exercises.zipWithIndex) {
+@for((exercise, index) <- scenario.getExercises.zipWithIndex) {
 @if(index % 2 == 0) {<div class="row">}
   <div class="col-sm-6">
     <div class="panel panel-default">
