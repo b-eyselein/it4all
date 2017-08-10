@@ -17,28 +17,11 @@
   <hr>
 
   <section id="administration">
-    <h2>Verwaltung</h2>
-    <div class="row">
-      <section class="col-md-6" id="exercises">
-        <h3>Aufgaben</h3>
-    
-        <a class="btn btn-default btn-block" href="@questions.routes.QuestionAdmin.index()">Auswahlfragen</a>
-        <a class="btn btn-default btn-block" href="@programming.routes.ProgAdmin.index()">Programmierung</a>
-        <a class="btn btn-default btn-block" href="@sql.routes.SqlScenarioAdmin.index()">Sql</a>
-        <a class="btn btn-default btn-block" href="@spread.routes.SpreadAdmin.index()">Tabellenkalkulation</a>
-        <a class="btn btn-default btn-block" href="@uml.routes.UmlAdmin.index()">Uml</a>
-        <a class="btn btn-default btn-block" href="@web.routes.WebAdmin.index()">Web</a>
-        <a class="btn btn-default btn-block" href="@xml.routes.XmlAdmin.index()">Xml</a>
-      </section>
-  
-      <section class="col-md-6" id="courses">
-        <h3>Kurse</h3>
-        <a class="btn btn-primary btn-block" href="@routes.CourseAdminController.newCourseForm()">Neuen Kurs erstellen</a>
-        @for(course <- model.user.Course.finder.all()) {
-    	  <a class="btn btn-default btn-block" href="@routes.CourseAdminController.course(course.id)">@course.name</a>
-        }
-      </section>
-    </div>
+    <h2>Verwaltung der Kurse</h3>
+    <a class="btn btn-primary btn-block" href="@routes.CourseAdminController.newCourseForm()">Neuen Kurs erstellen</a>
+    @for(course <- model.user.Course.finder.all()) {
+	  <a class="btn btn-default btn-block" href="@routes.CourseAdminController.course(course.id)">@course.name</a>
+    }
   </section>
 </div>
 }

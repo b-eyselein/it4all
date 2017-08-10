@@ -138,6 +138,11 @@ public class UmlController extends ExerciseController<UmlExercise, UmlResult> {
   }
   
   @Override
+  protected Html renderExercises(User user, List<UmlExercise> exercises) {
+    return views.html.umloverview.render(user, exercises);
+  }
+
+  @Override
   protected Html renderResult(List<UmlResult> correctionResult) {
     // TODO Auto-generated method stub
     return null;

@@ -49,7 +49,7 @@ public abstract class ExerciseController<E extends Exercise, R extends Evaluatio
       return badRequest("TODO!");
     }
   }
-
+  
   public Result correctLive(int id) {
     User user = getUser();
     E exercise = finder.byId(id);
@@ -78,6 +78,10 @@ public abstract class ExerciseController<E extends Exercise, R extends Evaluatio
     return ok(renderExercise(user, exercise));
   }
 
+  public Result exercises() {
+    return ok(renderExercises(getUser(), finder.all()));
+  }
+
   protected Path checkAndCreateSolDir(String username, Exercise exercise) {
     Path dir = getSolDirForExercise(username, exerciseType, exercise);
 
@@ -99,6 +103,8 @@ public abstract class ExerciseController<E extends Exercise, R extends Evaluatio
   }
 
   protected abstract Html renderExercise(User user, E exercise);
+
+  protected abstract Html renderExercises(User user, List<E> exercises);
 
   protected abstract Html renderResult(List<R> correctionResult);
 

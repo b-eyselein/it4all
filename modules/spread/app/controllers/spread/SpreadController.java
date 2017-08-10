@@ -65,10 +65,6 @@ public class SpreadController extends ExerciseController<SpreadExercise, Evaluat
     return ok(filePath.toFile());
   }
 
-  public Result exercises() {
-    return ok(views.html.spreadExercises.render(getUser(), SpreadExercise.finder.all()));
-  }
-
   public Result index() {
     return ok(views.html.spreadoverview.render(getUser(), SpreadExercise.finder.all()));
   }
@@ -135,6 +131,11 @@ public class SpreadController extends ExerciseController<SpreadExercise, Evaluat
   @Override
   protected Html renderExercise(User user, SpreadExercise exercise) {
     return views.html.spreadExercise.render(user, exercise);
+  }
+
+  @Override
+  protected Html renderExercises(User user, List<SpreadExercise> exercises) {
+    return views.html.spreadExercises.render(user, exercises);
   }
 
   @Override

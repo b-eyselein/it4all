@@ -22,7 +22,7 @@ DELETE   /:questionId                controllers.questions.QuestionAdmin.deleteE
 # All
 GET      /                           controllers.questions.QuestionController.index(start: Int ?= 0)
 
-GET      /questions                  controllers.questions.QuestionController.questions()
+GET      /questions                  controllers.questions.QuestionController.exercises()
 
 GET      /new/:isFreetext            controllers.questions.QuestionController.newQuestionForm(isFreetext: Boolean)
 POST     /new/:isFreetext            controllers.questions.QuestionController.newQuestion(isFreetext: Boolean)

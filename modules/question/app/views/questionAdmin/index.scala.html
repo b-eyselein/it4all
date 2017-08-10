@@ -5,7 +5,7 @@
 
 @statistics = {
 <li>
-  Es existieren insgesamt <a href="@questions.routes.QuestionController.questions()">
+  Es existieren insgesamt <a href="@questions.routes.QuestionController.exercises()">
    @model.question.Question.finder.query().findCount() Fragen</a> in allen Kategorien
   <ul>
     
@@ -21,7 +21,7 @@
 }
 
 @calls = @{new model.AdminRoutesObject(
-  questions.routes.QuestionController.questions(),
+  questions.routes.QuestionController.exercises(),
   questions.routes.QuestionController.newQuestionForm(false),
   questions.routes.QuestionAdmin.exportExercises(),
   questions.routes.QuestionAdmin.importExercises(),

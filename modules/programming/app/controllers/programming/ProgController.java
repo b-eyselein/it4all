@@ -130,10 +130,6 @@ public class ProgController extends ExerciseController<ProgExercise, ProgEvaluat
     }
   }
 
-  public Result exercises() {
-    return ok(views.html.exercises.render(getUser(), ProgExercise.finder.all()));
-  }
-
   public Result getDeclaration(String lang) {
     return ok(AvailableLanguages.valueOf(lang).getDeclaration());
   }
@@ -206,6 +202,11 @@ public class ProgController extends ExerciseController<ProgExercise, ProgEvaluat
   @Override
   protected Html renderExercise(User user, ProgExercise exercise) {
     return views.html.progExercise.render(getUser(), exercise);
+  }
+
+  @Override
+  protected Html renderExercises(User user, List<ProgExercise> exercises) {
+    return views.html.exercises.render(user, exercises);
   }
 
   @Override
