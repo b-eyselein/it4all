@@ -1,16 +1,16 @@
 package model.querycorrectors;
 
-import java.util.function.BiPredicate;
-
 import model.matching.Matcher;
 
-public abstract class ColumnMatcher<C> extends Matcher<C, ColumnMatch<C>> {
+public class ColumnMatcher extends Matcher<ColumnWrapper, ColumnMatch> {
   
-  public ColumnMatcher(BiPredicate<C, C> theEqualsTest) {
-    super(theEqualsTest);
+  public ColumnMatcher() {
+    super((colWrapper1, colWrapper2) -> colWrapper1.canMatchOther(colWrapper2));
   }
   
   @Override
-  protected abstract ColumnMatch<C> instantiateMatch(C arg1, C arg2);
+  protected ColumnMatch instantiateMatch(ColumnWrapper arg1, ColumnWrapper arg2) {
+    return new ColumnMatch(arg1, arg2);
+  }
   
 }

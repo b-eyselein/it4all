@@ -1,15 +1,13 @@
 package model.querycorrectors.change;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Singleton;
 
-import model.matching.MatchingResult;
-import model.querycorrectors.ColumnMatch;
+import model.querycorrectors.ColumnWrapper;
 import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.insert.Insert;
 
@@ -21,10 +19,8 @@ public class InsertCorrector extends ChangeCorrector<Insert> {
   }
   
   @Override
-  protected MatchingResult<Column, ColumnMatch<Column>> compareColumns(Insert userQuery,
-      Map<String, String> userTableAliases, Insert sampleQuery, Map<String, String> sampleTableAliases) {
-    // TODO Auto-generated method stub
-    return null;
+  protected List<ColumnWrapper> getColumnWrappers(Insert query) {
+    return Collections.emptyList();
   }
   
   @Override

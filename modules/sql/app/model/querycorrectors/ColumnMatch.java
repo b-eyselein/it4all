@@ -4,13 +4,15 @@ import model.matching.Match;
 import model.matching.MatchType;
 import play.twirl.api.Html;
 
-public abstract class ColumnMatch<C> extends Match<C> {
+public class ColumnMatch extends Match<ColumnWrapper> {
   
-  public ColumnMatch(C theArg1, C theArg2) {
+  protected boolean hasAlias;
+
+  protected boolean restMatched;
+
+  public ColumnMatch(ColumnWrapper theArg1, ColumnWrapper theArg2) {
     super(theArg1, theArg2);
   }
-  
-  public abstract boolean restMatched();
   
   public boolean colNamesMatched() {
     return matchType == MatchType.SUCCESSFUL_MATCH || matchType == MatchType.UNSUCCESSFUL_MATCH;
@@ -21,14 +23,34 @@ public abstract class ColumnMatch<C> extends Match<C> {
     return views.html.resultTemplates.columnResult.render(this);
   }
   
-  public abstract String getFirstRest();
+  public String getFirstColName() {
+    return userArg.getColName();
+  }
   
-  public abstract String getFirstColName();
+  public String getFirstRest() {
+    return sampleArg.getRest();
+  }
   
-  public abstract String getSecondRest();
+  public String getSecondColName() {
+    return sampleArg.getColName();
+  }
   
-  public abstract String getSecondColName();
+  public String getSecondRest() {
+    return sampleArg.getRest();
+  }
   
-  public abstract boolean hasAlias();
+  public boolean hasAlias() {
+    return hasAlias;
+  }
+  
+  public boolean restMatched() {
+    return restMatched;
+  }
+  
+  @Override
+  protected MatchType analyze(ColumnWrapper theArg1, ColumnWrapper theArg2) {
+    // TODO Auto-generated method stub
+    return null;
+  }
   
 }

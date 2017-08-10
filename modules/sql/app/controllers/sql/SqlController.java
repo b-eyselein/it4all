@@ -165,7 +165,6 @@ public class SqlController extends ExerciseController<SqlExercise, SqlResult> {
   
   @Override
   protected Html renderResult(List<SqlResult> correctionResult) {
-    // TODO Auto-generated method stub
-    return null;
+    return views.html.resultTemplates.sqlResult.render(correctionResult.get(0));
   }
 }

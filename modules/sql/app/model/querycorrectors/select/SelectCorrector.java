@@ -7,20 +7,17 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.inject.Singleton;
 
 import model.CorrectionException;
-import model.StringConsts;
 import model.exercise.SqlExercise;
 import model.matching.Match;
 import model.matching.MatchingResult;
-import model.querycorrectors.ColumnMatch;
+import model.querycorrectors.ColumnWrapper;
 import model.querycorrectors.QueryCorrector;
 import model.querycorrectors.SqlExecutionResult;
-import model.querycorrectors.SqlResult;
 import model.sql.SqlQueryResult;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.schema.Table;
@@ -31,9 +28,7 @@ import net.sf.jsqlparser.statement.select.SelectItem;
 import play.db.Database;
 
 @Singleton
-public class SelectCorrector extends QueryCorrector<Select, SelectItem> {
-
-  private static final SelectColumnMatcher COL_MATCHER = new SelectColumnMatcher();
+public class SelectCorrector extends QueryCorrector<Select> {
 
   private static final GroupByMatcher GROUP_BY_MATCHER = new GroupByMatcher();
 
@@ -74,13 +69,7 @@ public class SelectCorrector extends QueryCorrector<Select, SelectItem> {
       throw new CorrectionException(select.toString(), "Es gab einen Fehler bei der Ausführung des Statements ", e);
     }
   }
-
-  @Override
-  protected MatchingResult<SelectItem, ColumnMatch<SelectItem>> compareColumns(Select userQuery,
-      Map<String, String> userTableAliases, Select sampleQuery, Map<String, String> sampleTableAliases) {
-    return COL_MATCHER.match(StringConsts.COLUMNS_NAME, getColumns(userQuery), getColumns(sampleQuery));
-  }
-
+  
   @Override
   protected SqlExecutionResult executeQuery(Database database, Select userStatement, Select sampleStatement,
       SqlExercise exercise) throws CorrectionException {
@@ -103,6 +92,12 @@ public class SelectCorrector extends QueryCorrector<Select, SelectItem> {
 
   protected List<SelectItem> getColumns(Select select) {
     return ((PlainSelect) select.getSelectBody()).getSelectItems();
+  }
+
+  @Override
+  protected List<ColumnWrapper> getColumnWrappers(Select query) {
+    return ((PlainSelect) query.getSelectBody()).getSelectItems().parallelStream().map(ColumnWrapper::wrap)
+        .collect(Collectors.toList());
   }
 
   @Override
@@ -130,11 +125,6 @@ public class SelectCorrector extends QueryCorrector<Select, SelectItem> {
   @Override
   protected Expression getWhere(Select select) {
     return ((PlainSelect) select.getSelectBody()).getWhere();
-  }
-
-  @Override
-  protected SqlResult<SelectItem> instantiateResult(String learnerSolution) {
-    return new SqlResult<>(learnerSolution);
   }
 
   @Override

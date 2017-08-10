@@ -11,11 +11,11 @@ import model.result.EvaluationResult;
 import net.sf.jsqlparser.expression.Expression;
 import play.twirl.api.Html;
 
-public class SqlResult<C> extends EvaluationResult {
+public class SqlResult extends EvaluationResult {
   
   protected String learnerSolution;
   
-  protected MatchingResult<C, ColumnMatch<C>> columnComparison;
+  protected MatchingResult<ColumnWrapper, ColumnMatch> columnComparison;
   
   protected MatchingResult<Expression, Match<Expression>> whereComparison;
   
@@ -30,7 +30,7 @@ public class SqlResult<C> extends EvaluationResult {
     learnerSolution = theLearnerSolution;
   }
   
-  public MatchingResult<C, ColumnMatch<C>> getColumnComparison() {
+  public MatchingResult<ColumnWrapper, ColumnMatch> getColumnComparison() {
     return columnComparison;
   }
   
@@ -69,28 +69,28 @@ public class SqlResult<C> extends EvaluationResult {
     return views.html.resultTemplates.sqlResult.render(this);
   }
   
-  public SqlResult<C> setColumnComparison(MatchingResult<C, ColumnMatch<C>> theColumnComparison) {
+  public SqlResult setColumnComparison(MatchingResult<ColumnWrapper, ColumnMatch> theColumnComparison) {
     columnComparison = theColumnComparison;
     return this;
   }
   
-  public SqlResult<C> setExecutionResult(SqlExecutionResult theExecutionResult) {
+  public SqlResult setExecutionResult(SqlExecutionResult theExecutionResult) {
     executionResult = theExecutionResult;
     return this;
   }
   
-  public SqlResult<C> setOtherComparisons(
+  public SqlResult setOtherComparisons(
       List<MatchingResult<? extends Object, ? extends Match<? extends Object>>> theOtherComparisons) {
     otherComparisons = theOtherComparisons;
     return this;
   }
   
-  public SqlResult<C> setTableComparison(MatchingResult<String, Match<String>> theTableComparison) {
+  public SqlResult setTableComparison(MatchingResult<String, Match<String>> theTableComparison) {
     tableComparison = theTableComparison;
     return this;
   }
 
-  public SqlResult<C> setWhereComparison(MatchingResult<Expression, Match<Expression>> theWhereComparison) {
+  public SqlResult setWhereComparison(MatchingResult<Expression, Match<Expression>> theWhereComparison) {
     whereComparison = theWhereComparison;
     return this;
   }
