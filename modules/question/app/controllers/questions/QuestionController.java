@@ -134,24 +134,24 @@ public class QuestionController extends ExerciseController<Question, QuestionRes
     User user = getUser();
     Question question = Question.finder.byId(id);
 
-    if(question.questionType == Question.QType.FREETEXT) {
-      UserAnswerKey key = new UserAnswerKey(user.name, id);
-      UserAnswer answer = UserAnswer.finder.byId(key);
-
-      if(answer == null)
-        answer = new UserAnswer(key);
-
-      answer.question = Question.finder.byId(id);
-      answer.text = factory.form().bindFromRequest().get("answer");
-      answer.save();
-
-      return ok(views.html.freetextQuestionResult.render(getUser(), question, answer));
-    } else {
+    if(question.questionType != Question.QType.FREETEXT) {
+      // FILLOUT or MULTIPLE CHOICE
       DynamicForm form = factory.form().bindFromRequest();
-
       QuestionResult result = new QuestionResult(readSelAnswers(question, form), question);
       return ok(views.html.givenanswerQuestionResult.render(user, result));
     }
+
+    UserAnswerKey key = new UserAnswerKey(user.name, id);
+    UserAnswer answer = UserAnswer.finder.byId(key);
+
+    if(answer == null)
+      answer = new UserAnswer(key);
+
+    answer.question = Question.finder.byId(id);
+    answer.text = factory.form().bindFromRequest().get("answer");
+    answer.save();
+
+    return ok(views.html.freetextQuestionResult.render(getUser(), question, answer));
   }
 
   @Override

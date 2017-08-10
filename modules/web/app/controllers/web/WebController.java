@@ -116,13 +116,15 @@ public class WebController extends ExerciseController<WebExercise, WebResult> {
   public Result exercise(int id, String type) {
     User user = getUser();
 
+    WebExercise exercise = WebExercise.finder.byId(id);
+    
+    log(user, new ExerciseStartEvent(request(), id));
+
     if(!ALLOWED_TYPES.contains(type))
       return redirect(routes.WebController.index());
 
-    log(user, new ExerciseStartEvent(request(), id));
-
-    return ok(views.html.webExercise.render(user, WebExercise.finder.byId(id), type,
-        SolutionController.getOldSolOrDefault(user.name, id), "Html-Korrektur"));
+    return ok(views.html.webExercise.render(user, exercise, type, SolutionController.getOldSolOrDefault(user.name, id),
+        "Html-Korrektur"));
   }
 
   public Result index() {
