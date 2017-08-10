@@ -4,6 +4,8 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.FilenameUtils;
+
 public class SpreadSheetCorrector {
   
   private static Map<String, SpreadCorrector<?, ?, ?, ?, ?>> correctors;
@@ -35,24 +37,19 @@ public class SpreadSheetCorrector {
   }
   
   public static String getExtension(Path path) {
-    // FIXME: use other method! --> Util?
     return getExtension(path.toString());
   }
   
   public static String getExtension(String path) {
-    // FIXME: use other method! --> Util?
-    return path.substring(path.lastIndexOf('.') + 1).trim().toLowerCase();
+    return FilenameUtils.getExtension(path);
   }
   
   public static String getFileName(Path path) {
-    // FIXME: use other method! --> Util?
-    return path.toString().substring(path.toAbsolutePath().toString().lastIndexOf('/'),
-        path.toAbsolutePath().toString().lastIndexOf('.'));
+    return FilenameUtils.getBaseName(path.toString());
   }
   
   public static String getUserFolder(Path path) {
-    // FIXME: use other method! --> Util?
-    return path.toString().substring(0, path.toAbsolutePath().toString().lastIndexOf('/'));
+    return FilenameUtils.getPathNoEndSeparator(path.toString());
   }
   
 }
