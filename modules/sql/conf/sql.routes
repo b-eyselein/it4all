@@ -5,8 +5,8 @@ GET    /exercises/admin          controllers.sql.SqlScenarioAdmin.index()
 GET    /jsonSchema               controllers.sql.SqlScenarioAdmin.getJSONSchemaFile()
 POST   /upload                   controllers.sql.SqlScenarioAdmin.uploadFile()
 
-GET    /import                   controllers.sql.SqlScenarioAdmin.importExercises()
-GET    /export                   controllers.sql.SqlScenarioAdmin.exportExercises()
+GET    /import                   controllers.sql.SqlScenarioAdmin.importExerciseCollections()
+GET    /export                   controllers.sql.SqlScenarioAdmin.exportExerciseCollections()
 
 GET    /admin/:id                controllers.sql.SqlScenarioAdmin.scenarioAdmin(id: Int)
 

@@ -5,10 +5,8 @@ import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
 
-import model.node.BoolNode;
-
 public class FilloutQuestion extends BooleanQuestion {
-
+  
   // @formatter:off
   private static final Map<String, String> HTML_REPLACERS = new ImmutableMap.Builder<String, String>()
       .put("IMPL", "&rArr;")
@@ -21,45 +19,45 @@ public class FilloutQuestion extends BooleanQuestion {
       .put("OR", "&or;")
       .build();
   // @formatter:on
-
-  private final BoolNode formula;
-
+  
+  private final ScalaNode formula;
+  
   private final List<Assignment> assignments;
-
-  public FilloutQuestion(BoolNode theFormulaTree) {
+  
+  public FilloutQuestion(ScalaNode theFormulaTree) {
     super(theFormulaTree.getUsedVariables());
     formula = theFormulaTree;
     assignments = Assignment.generateAllAssignments(variables);
   }
-
+  
   public static FilloutQuestion generateNew() {
     return new FilloutQuestion(BoolFormulaGenerator.generateRandom());
   }
-
+  
   public List<Assignment> getAssignments() {
     return assignments;
   }
-
-  public BoolNode getFormula() {
+  
+  public ScalaNode getFormula() {
     return formula;
   }
-
+  
   public String getFormulaAsHtml() {
     String formulaAsHtml = formula.toString();
-
+    
     for(Map.Entry<String, String> replacer: HTML_REPLACERS.entrySet())
       formulaAsHtml = formulaAsHtml.replaceAll(replacer.getKey(), replacer.getValue());
-
+    
     return formulaAsHtml;
   }
-
+  
   public String getFormulaAsString() {
     return formula.toString();
   }
-
+  
   public boolean isCorrect() {
     return assignments.parallelStream()
         .allMatch(a -> a.isSet(LEARNER_VARIABLE) && a.get(LEARNER_VARIABLE) == a.get(SOLUTION_VARIABLE));
   }
-
+  
 }

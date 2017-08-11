@@ -16,7 +16,6 @@ public class BooleanQuestionResult extends EvaluationResult {
     super(theSuccess, theMessages);
     learnerSolution = theLearnerSolution;
     question = theQuestion;
-
   }
 
   public String getAsHtml() {

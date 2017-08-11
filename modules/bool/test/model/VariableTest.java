@@ -1,11 +1,9 @@
-package model.node;
+package model;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
-
-import model.CorrectionException;
 
 public class VariableTest extends NodeTestBase {
 
@@ -41,6 +39,6 @@ public class VariableTest extends NodeTestBase {
 
   @Test
   public void testToString() {
-    assertThat(A.toString(), equalTo("a"));
+    assertThat(A.toString(), equalTo("Variable(a)"));
   }
 }

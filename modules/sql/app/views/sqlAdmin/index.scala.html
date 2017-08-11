@@ -12,13 +12,18 @@
 </li>
 }
 
-@calls = @{new model.AdminRoutesObject(
-  sql.routes.SqlController.index(),
-  sql.routes.SqlScenarioAdmin.newExerciseForm(),
-  sql.routes.SqlScenarioAdmin.exportExercises(),
-  sql.routes.SqlScenarioAdmin.importExercises(),
-  sql.routes.SqlScenarioAdmin.getJSONSchemaFile(),
-  sql.routes.SqlScenarioAdmin.uploadFile()
+@strs = @{scala.collection.Map(
+  "app" -> "Sql",
+  "pluralName" -> "Szenarien"
 )}
 
-@admin.adminMain(user, "Sql", statistics, calls) { }
+@calls = @{scala.collection.Map(
+  "index" -> sql.routes.SqlController.index(),
+  "newExerciseForm" -> sql.routes.SqlScenarioAdmin.newExerciseForm(),
+  "export" -> sql.routes.SqlScenarioAdmin.exportExerciseCollections(),
+  "import" -> sql.routes.SqlScenarioAdmin.importExerciseCollections(),
+  "jsonSchema" -> sql.routes.SqlScenarioAdmin.getJSONSchemaFile(),
+  "upload" -> sql.routes.SqlScenarioAdmin.uploadFile()
+)}
+
+@admin.collectionAdminMain(user, strs, statistics, calls) { }

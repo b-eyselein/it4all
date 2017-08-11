@@ -40,8 +40,8 @@ GET      /quizzes                    controllers.questions.QuizAdmin.index()
 GET      /quizzes/jsonSchema         controllers.questions.QuizAdmin.getJSONSchemaFile()
 POST     /quizzes/upload             controllers.questions.QuizAdmin.uploadFile()
 
-GET      /quizzes/export             controllers.questions.QuizAdmin.exportExercises()
-GET      /quizzes/import             controllers.questions.QuizAdmin.importExercises()
+GET      /quizzes/export             controllers.questions.QuizAdmin.exportExerciseCollections()
+GET      /quizzes/import             controllers.questions.QuizAdmin.importExerciseCollections()
 
 GET      /quizzes/new                controllers.questions.QuizAdmin.newExerciseForm()
 POST     /quizzes/new                controllers.questions.QuizAdmin.newExercise()

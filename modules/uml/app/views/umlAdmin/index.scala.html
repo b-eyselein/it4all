@@ -4,13 +4,18 @@
 <li>Es gibt insgesamt @model.UmlExercise.finder.all().size() Aufgaben</li>
 }
 
-@calls = @{new model.AdminRoutesObject(
-  uml.routes.UmlController.index(),
-  uml.routes.UmlAdmin.newExerciseForm(),
-  uml.routes.UmlAdmin.exportExercises(),
-  uml.routes.UmlAdmin.importExercises(),
-  uml.routes.UmlAdmin.getJSONSchemaFile(),
-  uml.routes.UmlAdmin.uploadFile()
+@strs = @{scala.collection.Map(
+  "app" -> "Uml",
+  "pluralName" -> "Aufgaben"
 )}
 
-@admin.adminMain(user, "Uml", statistics, calls) { }
+@calls = @{scala.collection.Map(
+  "index" ->   uml.routes.UmlController.index(),
+  "newExerciseForm" -> uml.routes.UmlAdmin.newExerciseForm(),
+  "export" -> uml.routes.UmlAdmin.exportExercises(),
+  "import" -> uml.routes.UmlAdmin.importExercises(),
+  "jsonSchema" -> uml.routes.UmlAdmin.getJSONSchemaFile(),
+  "upload" -> uml.routes.UmlAdmin.uploadFile()
+)}
+
+@admin.exerciseAdminMain(user, strs, statistics, calls) { }

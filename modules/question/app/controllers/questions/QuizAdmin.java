@@ -1,3 +1,4 @@
+
 package controllers.questions;
 
 import java.util.List;
@@ -14,12 +15,11 @@ import play.data.FormFactory;
 import play.mvc.Result;
 import play.twirl.api.Html;
 
-public class QuizAdmin extends AExerciseCollectionAdminController<Question, Quiz> { // NOSONAR
+public class QuizAdmin extends AExerciseCollectionAdminController<Question, Quiz> {
   
   @Inject
   public QuizAdmin(FormFactory theFactory) {
     super(theFactory, Quiz.finder, new QuizReader());
-    // TODO Auto-generated constructor stub
   }
   
   @Override
@@ -48,6 +48,11 @@ public class QuizAdmin extends AExerciseCollectionAdminController<Question, Quiz
   // }
   
   @Override
+  public Result newExerciseCollectionForm() {
+    return ok(views.html.questionAdmin.newQuizForm.render(getUser()));
+  }
+  
+  @Override
   public Result newExerciseForm() {
     return ok(views.html.questionAdmin.newQuizForm.render(getUser()));
   }
@@ -57,7 +62,7 @@ public class QuizAdmin extends AExerciseCollectionAdminController<Question, Quiz
     // TODO Auto-generated method stub
     return null;
   }
-  
+
   @Override
   protected Quiz initRemainingExFromForm(int id, String title, String author, String text, DynamicForm form) {
     String theme = form.get(StringConsts.THEME_NAME);

@@ -4,13 +4,18 @@
 <li>Es existieren insgesamt @model.ProgExercise.finder.all().size() Augaben</li>
 }
 
-@calls = @{new model.AdminRoutesObject(
-  programming.routes.ProgController.index(),
-  programming.routes.ProgAdmin.newExerciseForm(),
-  programming.routes.ProgAdmin.exportExercises(),
-  programming.routes.ProgAdmin.importExercises(),
-  programming.routes.ProgAdmin.getJSONSchemaFile(),
-  programming.routes.ProgAdmin.uploadFile()
+@strs = @{scala.collection.Map(
+  "app" -> "Programmierung",
+  "pluralName" -> "Aufgaben"
 )}
 
-@admin.adminMain(user, "Prog", statistics, calls) { }
+@calls = @{scala.collection.Map(
+  "index" -> programming.routes.ProgController.index(),
+  "newExerciseForm" -> programming.routes.ProgAdmin.newExerciseForm(),
+  "export" -> programming.routes.ProgAdmin.exportExercises(),
+  "import" -> programming.routes.ProgAdmin.importExercises(),
+  "jsonSchema" -> programming.routes.ProgAdmin.getJSONSchemaFile(),
+  "upload" -> programming.routes.ProgAdmin.uploadFile()
+)}
+
+@admin.exerciseAdminMain(user, strs, statistics, calls) { }

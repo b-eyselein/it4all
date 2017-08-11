@@ -10,13 +10,19 @@
 </li>
 }
 
-@calls = @{new model.AdminRoutesObject(
-  xml.routes.XmlController.exercises(),
-  xml.routes.XmlAdmin.newExerciseForm(),
-  xml.routes.XmlAdmin.exportExercises(),
-  xml.routes.XmlAdmin.importExercises(),
-  xml.routes.XmlAdmin.getJSONSchemaFile(),
-  xml.routes.XmlAdmin.uploadFile()
+@strs = @{scala.collection.Map(
+  "app" -> "Xml",
+  "pluralName" -> "Aufgaben"
 )}
 
-@admin.adminMain(user, "Xml", statistics, calls) { }
+@calls = @{scala.collection.Map(
+  "index" -> xml.routes.XmlController.exercises(),
+  "newExerciseForm" -> xml.routes.XmlAdmin.newExerciseForm(),
+  "export" -> xml.routes.XmlAdmin.exportExercises(),
+  "import" -> xml.routes.XmlAdmin.importExercises(),
+  "jsonSchema" -> xml.routes.XmlAdmin.getJSONSchemaFile(),
+  "upload" -> xml.routes.XmlAdmin.uploadFile()
+)}
+
+
+@admin.exerciseAdminMain(user, strs, statistics, calls) { }

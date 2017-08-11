@@ -20,13 +20,18 @@
 <li>Es existieren @model.quiz.Quiz.finder.all().size() <a href="@questions.routes.QuizController.quizzes()">Quiz(ze)</a></li>
 }
 
-@calls = @{new model.AdminRoutesObject(
-  questions.routes.QuestionController.exercises(),
-  questions.routes.QuestionController.newQuestionForm(false),
-  questions.routes.QuestionAdmin.exportExercises(),
-  questions.routes.QuestionAdmin.importExercises(),
-  questions.routes.QuestionAdmin.getJSONSchemaFile(),
-  questions.routes.QuestionAdmin.uploadFile()
+@strs = @{scala.collection.Map(
+  "app" -> "Fragen",
+  "pluralName" -> "Szenaren"
 )}
 
-@admin.adminMain(user, "Fragen", statistics, calls) { }
+@calls = @{scala.collection.Map(
+  "index" -> questions.routes.QuestionController.exercises(),
+  "newExerciseForm" -> questions.routes.QuestionController.newQuestionForm(false),
+  "export" -> questions.routes.QuestionAdmin.exportExercises(),
+  "import" -> questions.routes.QuestionAdmin.importExercises(),
+  "jsonSchema" -> questions.routes.QuestionAdmin.getJSONSchemaFile(),
+  "upload" -> questions.routes.QuestionAdmin.uploadFile()
+)}
+
+@admin.exerciseAdminMain(user, strs, statistics, calls) { }

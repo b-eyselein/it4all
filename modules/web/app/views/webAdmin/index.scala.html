@@ -10,13 +10,18 @@
 </li>
 }
 
-@calls = @{new model.AdminRoutesObject(
-  web.routes.WebController.exercises(),
-  web.routes.WebAdmin.newExerciseForm(),
-  web.routes.WebAdmin.exportExercises(),
-  web.routes.WebAdmin.importExercises(),
-  web.routes.WebAdmin.getJSONSchemaFile(),
-  web.routes.WebAdmin.uploadFile()
+@strs = @{scala.collection.Map(
+  "app" -> "Web",
+  "pluralName" -> "Aufgaben"
 )}
 
-@admin.adminMain(user, "Web", statistics, calls) { }
+@calls = @{scala.collection.Map(
+  "index" ->   web.routes.WebController.exercises(),
+  "newExerciseForm" -> web.routes.WebAdmin.newExerciseForm(),
+  "export" -> web.routes.WebAdmin.exportExercises(),
+  "import" -> web.routes.WebAdmin.importExercises(),
+  "jsonSchema" -> web.routes.WebAdmin.getJSONSchemaFile(),
+  "upload" -> web.routes.WebAdmin.uploadFile()
+)}
+
+@admin.exerciseAdminMain(user, strs, statistics, calls) { }

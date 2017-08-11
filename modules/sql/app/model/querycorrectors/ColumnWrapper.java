@@ -13,9 +13,9 @@ import net.sf.jsqlparser.statement.select.AllTableColumns;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 import net.sf.jsqlparser.statement.select.SelectItem;
 
-public abstract class ColumnWrapper {
+public interface ColumnWrapper {
 
-  private static class ChangeColumnWrapper extends ColumnWrapper {
+  static class ChangeColumnWrapper implements ColumnWrapper {
     private Column column;
 
     public ChangeColumnWrapper(Column theColumn) {
@@ -40,10 +40,9 @@ public abstract class ColumnWrapper {
     public MatchType matchOther(ChangeColumnWrapper other) {
       return MatchType.SUCCESSFUL_MATCH;
     }
-
   }
 
-  private static class CreateColumnWrapper extends ColumnWrapper {
+  static class CreateColumnWrapper implements ColumnWrapper {
     private ColumnDefinition columnDefinition;
 
     private String datatypeName;
@@ -80,7 +79,7 @@ public abstract class ColumnWrapper {
     public MatchType matchOther(CreateColumnWrapper other) {
       ColumnDefinition theArg1 = columnDefinition;
       ColumnDefinition theArg2 = other.columnDefinition;
-      
+
       datatypeName = columnDefinition.getColumnName();
 
       typesOk = compareDataTypes(theArg1.getColDataType(), theArg2.getColDataType());
@@ -111,10 +110,9 @@ public abstract class ColumnWrapper {
 
       // return "Datentyp richtig spezifiziert";
     }
-
   }
 
-  private static class SelectColumnWrapper extends ColumnWrapper {
+  static class SelectColumnWrapper implements ColumnWrapper {
 
     private SelectItem selectItem;
 
@@ -135,22 +133,17 @@ public abstract class ColumnWrapper {
     }
 
     public boolean canMatchOther(SelectColumnWrapper other) {
-      SelectItem selItem1 = selectItem;
-      SelectItem selItem2 = other.selectItem;
+      if(selectItem instanceof AllColumns)
+        return other.selectItem instanceof AllColumns;
 
-      if(selItem1 instanceof AllColumns) {
-        return selItem2 instanceof AllColumns;
+      if(selectItem instanceof AllTableColumns)
+        return other.selectItem instanceof AllTableColumns
+            && tableNamesEqual((AllTableColumns) selectItem, (AllTableColumns) other.selectItem);
 
-      } else if(selItem1 instanceof AllTableColumns) {
-        return selItem2 instanceof AllTableColumns
-            && tableNamesEqual((AllTableColumns) selItem1, (AllTableColumns) selItem2);
-
-      } else if(selItem1 instanceof SelectExpressionItem) {
-        return selItem2 instanceof SelectExpressionItem
-            && selectExprEqual((SelectExpressionItem) selItem1, (SelectExpressionItem) selItem2);
-      } else {
-        return false;
-      }
+      if(selectItem instanceof SelectExpressionItem)
+        return other.selectItem instanceof SelectExpressionItem
+            && selectExprEqual((SelectExpressionItem) selectItem, (SelectExpressionItem) other.selectItem);
+      return false;
     }
 
     @Override
@@ -174,18 +167,15 @@ public abstract class ColumnWrapper {
     }
 
     public MatchType matchOther(SelectColumnWrapper other) {
-      SelectItem theArg1 = selectItem;
-      SelectItem theArg2 = other.selectItem;
-
-      if((theArg1 instanceof AllColumns && theArg2 instanceof AllColumns)
-          || (theArg1 instanceof AllTableColumns && theArg2 instanceof AllTableColumns))
+      if((selectItem instanceof AllColumns && other.selectItem instanceof AllColumns)
+          || (selectItem instanceof AllTableColumns && other.selectItem instanceof AllTableColumns))
         return MatchType.SUCCESSFUL_MATCH;
 
-      if(!(theArg1 instanceof SelectExpressionItem) || !(theArg2 instanceof SelectExpressionItem))
+      if(!(selectItem instanceof SelectExpressionItem) || !(other.selectItem instanceof SelectExpressionItem))
         return MatchType.UNSUCCESSFUL_MATCH;
 
-      SelectExpressionItem selExpr1 = (SelectExpressionItem) theArg1;
-      SelectExpressionItem selExpr2 = (SelectExpressionItem) theArg2;
+      SelectExpressionItem selExpr1 = (SelectExpressionItem) selectItem;
+      SelectExpressionItem selExpr2 = (SelectExpressionItem) other.selectItem;
 
       boolean aliasesCompared = selExpr1.getAlias() != null || selExpr2.getAlias() != null;
 
@@ -209,7 +199,7 @@ public abstract class ColumnWrapper {
     return new SelectColumnWrapper(theSelectItem);
   }
 
-  public boolean canMatchOther(ColumnWrapper other) throws CorrectionException {
+  public default boolean canMatchOther(ColumnWrapper other) throws CorrectionException {
     if(this instanceof SelectColumnWrapper && other instanceof SelectColumnWrapper)
       return ((SelectColumnWrapper) this).canMatchOther((SelectColumnWrapper) other);
 
@@ -226,7 +216,7 @@ public abstract class ColumnWrapper {
 
   public abstract String getRest();
 
-  public MatchType match(ColumnWrapper other) throws CorrectionException {
+  public default MatchType match(ColumnWrapper other) throws CorrectionException {
     if(this instanceof SelectColumnWrapper && other instanceof SelectColumnWrapper)
       return ((SelectColumnWrapper) this).matchOther((SelectColumnWrapper) other);
 

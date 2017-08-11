@@ -9,7 +9,6 @@ import model.matching.Match;
 import model.matching.MatchingResult;
 import model.result.EvaluationResult;
 import net.sf.jsqlparser.expression.Expression;
-import play.twirl.api.Html;
 
 public class SqlResult extends EvaluationResult {
   
@@ -63,10 +62,6 @@ public class SqlResult extends EvaluationResult {
   
   public MatchingResult<Expression, Match<Expression>> getWhereComparison() {
     return whereComparison;
-  }
-  
-  public Html render() {
-    return views.html.resultTemplates.sqlResult.render(this);
   }
   
   public SqlResult setColumnComparison(MatchingResult<ColumnWrapper, ColumnMatch> theColumnComparison) {

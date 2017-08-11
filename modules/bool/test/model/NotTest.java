@@ -1,4 +1,4 @@
-package model.node;
+package model;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -9,7 +9,7 @@ import org.junit.Test;
 
 public class NotTest extends NodeTestBase {
 
-  private static final BoolNode NOT_A = new Not(A);
+  private static final ScalaNode NOT_A = ScalaNode.not(A);
 
   @Test
   public void testEvaluate() throws Exception {
