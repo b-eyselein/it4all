@@ -21,16 +21,16 @@ function testSolution() {
           <table class="table table-condensed">
             <thead>
               <tr>
-                @for(variable <- question.getVariables()) {
+                @for(variable <- question.variables) {
                 <th class="text-center">@variable</th> }
                 <th class="text-center">@question.getSolutionVariable()</th>
                 <th class="text-center" id="learnerFormula">Ihre L&ouml;sung</th>
               </tr>
             </thead>
             <tbody>
-              @for(assignment <- question.getSolutions()) {
+              @for(assignment <- question.solutions) {
               <tr>
-                @for(variable <- question.getVariables()) {
+                @for(variable <- question.variables) {
                 <td class="text-center">@assignment.asChar(variable)</td> }
                 <td class="text-center">@assignment.asChar('z')</td>
                 <td class="text-center" id="@assignment.toString()">--</td> }
@@ -61,7 +61,7 @@ function testSolution() {
           </div>
           <div id="valueDiv" hidden>
           <!-- Save values for return -->
-          @for(assignment <- question.getSolutions()) {
+          @for(assignment <- question.solutions) {
             <input name="@assignment.toString()" value="@assignment.asChar('z')">
           }
             <input name="vars" value="@question.getJoinedVariables()">

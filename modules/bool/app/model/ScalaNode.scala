@@ -1,14 +1,26 @@
 package model
 
+import scala.language.implicitConversions
+import scala.language.postfixOps
 import scala.collection.JavaConverters._
 
 sealed abstract class ScalaNode {
-  def getUsedVariables() = usedVariables asJava
-
   def evaluate(assignment: Assignment): Boolean
   def negate(): ScalaNode
   def getAsString(needsParans: Boolean): String
-  def usedVariables(): Set[Character]
+  def usedVariables(): Set[Variable]
+
+  def and(that: ScalaNode) = new AndScalaNode(this, that)
+  def or(that: ScalaNode) = new OrScalaNode(this, that)
+  def nand(that: ScalaNode) = new NAndScalaNode(this, that)
+  def nor(that: ScalaNode) = new NOrScalaNode(this, that)
+  def xor(that: ScalaNode) = new XOrScalaNode(this, that)
+  def impl(that: ScalaNode) = new Implication(this, that)
+  def equiv(that: ScalaNode) = new Equivalency(this, that)
+
+  def unary_-() = new NotScalaNode(this)
+
+  override def toString() = getAsString(false)
 }
 
 case class NotScalaNode(child: ScalaNode) extends ScalaNode {
@@ -17,22 +29,20 @@ case class NotScalaNode(child: ScalaNode) extends ScalaNode {
   override def negate() = child
 
   override def getAsString(needsParans: Boolean) = {
-    val inner = "NOT " + child.getAsString(needsParans)
+    val inner = "not " + child.getAsString(needsParans)
     if (needsParans) "(" + inner + ")" else inner
   }
   override def usedVariables = child usedVariables
 }
 
-case class Variable(variable: Character) extends ScalaNode {
-  def getVariable = variable
-
-  override def evaluate(assignment: Assignment) = assignment get variable
+case class Variable(variable: Char) extends ScalaNode {
+  override def evaluate(assignment: Assignment) = assignment get this
 
   override def negate() = ScalaNode.not(this)
 
-  override def getAsString(needsParans: Boolean) = variable toString
+  override def getAsString(needsParans: Boolean) = variable + ""
 
-  override def usedVariables = Set(variable)
+  override def usedVariables = Set(this)
 }
 
 case class Constant(value: Boolean) extends ScalaNode {
@@ -54,22 +64,25 @@ sealed abstract class BinaryScalaNode(operator: String, left: ScalaNode, right: 
   override def evaluate(assignment: Assignment) = eval.apply(left.evaluate(assignment), right.evaluate(assignment))
 
   override def negate() = this match {
-    case AndScalaNode(l, r) => ScalaNode.nand(l, r)
+    case AndScalaNode(l, r) => l nand r
 
-    case NAndScalaNode(l, r) => ScalaNode.and(l, r)
+    case NAndScalaNode(l, r) => l and r
 
-    case OrScalaNode(l, r) => ScalaNode.nor(l, r)
+    case OrScalaNode(l, r) => l nor r
 
-    case NOrScalaNode(l, r) => ScalaNode.or(l, r)
+    case NOrScalaNode(l, r) => l or r
 
-    case XOrScalaNode(l, r) => ScalaNode.equiv(l, r)
+    case XOrScalaNode(l, r) => l equiv r
 
-    case Equivalency(l, r) => ScalaNode.xor(l, r)
+    case Equivalency(l, r) => l xor r
 
-    case Implication(l, r) => ScalaNode.and(l, r.negate())
+    case Implication(l, r) => l and r.negate()
   }
 
-  override def getAsString(needsParans: Boolean) = left + operator + right
+  override def getAsString(needsParans: Boolean) = {
+    val inner = left.getAsString(needsParans) + " " + operator.toLowerCase + " " + right.getAsString(needsParans)
+    if (needsParans) "(" + inner + ")" else inner
+  }
 
   override def usedVariables = left.usedVariables ++ right.usedVariables
 }
@@ -90,30 +103,22 @@ case class Implication(l: ScalaNode, r: ScalaNode) extends BinaryScalaNode("IMPL
 
 object ScalaNode {
 
-  def and(l: ScalaNode, r: ScalaNode) = new AndScalaNode(l, r)
+  //  implicit def toScalaNode(char: Char): ScalaNode = toVariable(char)
 
-  def or(l: ScalaNode, r: ScalaNode) = new OrScalaNode(l, r)
-
-  def nand(l: ScalaNode, r: ScalaNode) = new NAndScalaNode(l, r)
-
-  def nor(l: ScalaNode, r: ScalaNode) = new NOrScalaNode(l, r)
-
-  def xor(l: ScalaNode, r: ScalaNode) = new XOrScalaNode(l, r)
-
-  def equiv(l: ScalaNode, r: ScalaNode) = new Equivalency(l, r)
-
-  def impl(l: ScalaNode, r: ScalaNode) = new Implication(l, r)
+  implicit def toVariable(char: Char) = new Variable(char)
 
   def not(child: ScalaNode) = new NotScalaNode(child)
+
+  def unary_-(child: ScalaNode) = new NotScalaNode(child)
 
   def variable(variable: Character) = new Variable(variable)
 
   def constant(value: Boolean) = if (value) TRUE else FALSE
 
-  def constant(value: String) = value match {
+  def constant(value: String): ScalaNode = value match {
     case "1" | "true" | "TRUE" => TRUE
     case "0" | "false" | "FALSE" => FALSE
-    case x if(x.length == 1) => variable(x charAt 0)
+    case x if (x.length == 1) => x charAt 0
     case _ => throw new CorrectionException(value, "The subformula \"" + value + "\" could not be identified!");
   }
 

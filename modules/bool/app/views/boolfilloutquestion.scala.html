@@ -1,7 +1,5 @@
 @(user: model.user.User, question: model.FilloutQuestion)
 
-@vars = @{question.getFormula().getUsedVariables()}
-
 @main("Wertetabelle", user) {
 <!-- Tooltip script -->
 <script>
@@ -21,16 +19,16 @@
         <table class="table table-responsive" border="1">
           <thead>
             <tr>
-            @for(v <- question.getVariables()) {
+            @for(v <- question.variables) {
               <th class="text-center">@v</th>
             }
               <th class="text-center">@Html(question.getFormulaAsHtml())</th>
             </tr>
           </thead>
           <tbody>
-          @for(assignment <- question.getAssignments()) {
+          @for(assignment <- question.assignments) {
             <tr>
-            @for(variable <- vars) {
+            @for(variable <- question.formula.usedVariables) {
               <td class="text-center">@assignment.asChar(variable)</td>
             }
               <td class="text-center">
