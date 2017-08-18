@@ -44,8 +44,6 @@ case class NAryNumber(decimalValue: Int = 0, base: NumberBase) {
 }
 
 object NAryNumber {
-  def addNArys(num1: NAryNumber, num2: NAryNumber) = new NAryNumber(num1.decimalValue + num2.decimalValue, num2.base)
-
   def parse(input: String, base: NumberBase): NAryNumber = {
     val value = Integer.parseInt(input.trim().replaceAll("\\s", ""), base.base)
     new NAryNumber(value, base)
