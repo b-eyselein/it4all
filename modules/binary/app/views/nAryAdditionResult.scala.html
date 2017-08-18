@@ -7,7 +7,7 @@
   
 <div class="container">
   <div class="page-header">
-    <h1>@title von @result.getBase().getPluralName()</h1>
+    <h1>@title von @result.base.pluralName</h1>
   </div>
   
   <div class="row">
@@ -15,16 +15,16 @@
       
       <div class="form-group">
         <div class="input-group">
-          <input value="@result.getFirstSummand()" readonly class="form-control text-right">
-          <span class="input-group-addon"><sub>@result.getBase().getBase()</sub></span>
+          <input value="@result.firstSummand" readonly class="form-control text-right">
+          <span class="input-group-addon"><sub>@result.base.base</sub></span>
         </div>  
       </div>        
        
       <div class="form-group">
         <div class="input-group">
           <span class="input-group-addon">+</span>
-          <input value="@result.getSecondSummand()" readonly class="form-control text-right">
-          <span class="input-group-addon"><sub>@result.getBase().getBase()</sub></span>
+          <input value="@result.secondSummand" readonly class="form-control text-right">
+          <span class="input-group-addon"><sub>@result.base.base</sub></span>
         </div>    
       </div>
       
@@ -32,8 +32,8 @@
       
       <div class="form-group">
         <div class="input-group">
-          <input readonly value="@result.getLearnerSolution()" class="form-control text-right">
-          <span class="input-group-addon"><sub>@result.getBase().getBase()</sub></span>
+          <input readonly value="@result.learnerSolution" class="form-control text-right">
+          <span class="input-group-addon"><sub>@result.base.base</sub></span>
         </div>
       </div>
     
@@ -53,7 +53,7 @@
     <p><span class="glyphicon glyphicon-remove"></span> Ihre L&ouml;sung ist leider falsch.</p>
     <p>
       Die richtige Antwort lautet 
-      <span class="number">@result.getTargetNumber().toString()<sub>@result.getBase().getBase()</sub>.</span>
+      <span class="number">@result.targetNumber.toString()<sub>@result.base.base</sub>.</span>
     </p>
   </div>
 }

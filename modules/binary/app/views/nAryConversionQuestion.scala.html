@@ -5,7 +5,7 @@
 @main(title, user) {
 <div class="container">
   <div class="page-header">
-    <h1>@title von @fromNB.getSystemName() nach @toNB.getSystemName()</h1>
+    <h1>@title von @fromNB.systemName nach @toNB.systemName</h1>
   </div>
   
   <div class="row">
@@ -15,8 +15,8 @@
          
         <div class="form-group">
           <div class="input-group">
-            <input value="@startingNumber" readonly class="form-control text-right" name="@model.NAryResult.VALUE">
-            <span class="input-group-addon"><sub>@fromNB.getBase()</sub></span>
+            <input value="@startingNumber" readonly class="form-control text-right" name="@model.NAryResult.VALUE_NAME">
+            <span class="input-group-addon"><sub>@fromNB.base</sub></span>
           </div>  
         </div>        
         
@@ -25,14 +25,14 @@
         <div class="form-group">
           <div class="input-group">
             <span class="input-group-addon">--></span>
-            <input pattern="@toNB.getHtmlPattern()" autocomplete="off" autofocus
+            <input pattern="@toNB.htmlPattern" autocomplete="off" autofocus
               class="form-control text-right" name="@model.StringConsts.FORM_VALUE" placeholder="Ihre L&ouml;sung" required>
-            <span class="input-group-addon"><sub>@toNB.getBase()</sub></span>
+            <span class="input-group-addon"><sub>@toNB.base</sub></span>
           </div>
         </div>
         
-        <input hidden name="@model.NAryConvResult.STARTING_NB" value="@fromNB">
-        <input hidden name="@model.NAryConvResult.TARGET_NB" value="@toNB">
+        <input hidden name="@model.NAryResult.STARTING_NB" value="@fromNB">
+        <input hidden name="@model.NAryResult.TARGET_NB" value="@toNB">
         
         <button class="btn btn-primary btn-block">Pr&uuml;fen</button>
       </form>

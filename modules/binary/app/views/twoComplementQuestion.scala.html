@@ -15,7 +15,7 @@
          
         <div class="form-group">
           <div class="input-group">
-            <input value="@value" readonly class="form-control text-right" name="@model.NAryResult.VALUE">
+            <input value="@value" readonly class="form-control text-right" name="@model.NAryResult.VALUE_NAME">
             <span class="input-group-addon"><sub>10</sub></span>
           </div>  
         </div>
@@ -29,8 +29,8 @@
           <div class="form-group">
             <div class="input-group">
               <span class="input-group-addon">--></span>
-              <input pattern="@model.NumberBase.BINARY.getHtmlPattern()" autocomplete="off" autofocus
-                class="form-control text-right" name="@model.TwoCompResult.BINARY_ABS" placeholder="Ihre L&ouml;sung" required>
+              <input pattern="@model.BINARY.htmlPattern" autocomplete="off" autofocus
+                class="form-control text-right" name="@model.NAryResult.BINARY_ABS" placeholder="Ihre L&ouml;sung" required>
               <span class="input-group-addon"><sub>2</sub></span>
             </div>
           </div>
@@ -42,8 +42,8 @@
           <div class="form-group">
             <div class="input-group">
               <span class="input-group-addon">--></span>
-              <input pattern="@model.NumberBase.BINARY.getHtmlPattern()" autocomplete="off" autofocus
-                class="form-control text-right" name="@model.TwoCompResult.INVERTED_ABS" placeholder="Ihre L&ouml;sung" required>
+              <input pattern="@model.BINARY.htmlPattern" autocomplete="off" autofocus
+                class="form-control text-right" name="@model.NAryResult.INVERTED_ABS" placeholder="Ihre L&ouml;sung" required>
               <span class="input-group-addon"><sub>2</sub></span>
             </div>
           </div>
@@ -56,7 +56,7 @@
           <div class="form-group">
             <div class="input-group">
               <span class="input-group-addon">--></span>
-              <input pattern="@model.NumberBase.BINARY.getHtmlPattern()" autocomplete="off" autofocus
+              <input pattern="@model.BINARY.htmlPattern" autocomplete="off" autofocus
                 class="form-control text-right" name="@model.StringConsts.FORM_VALUE" placeholder="Ihre L&ouml;sung" required>
               <span class="input-group-addon"><sub>2</sub></span>
             </div>

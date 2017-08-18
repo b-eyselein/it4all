@@ -13,7 +13,7 @@ class ScalaNodeParserTest {
     for (toParse <- representations) {
       val parsedOptional = ScalaNodeParser.parse(toParse)
 
-      assert(parsedOptional isDefined, "expected that parsing of \"" + toParse + "\" succeeds!")
+      assert(parsedOptional.isDefined, "expected that parsing of \"" + toParse + "\" succeeds!")
 
       assert(parsedOptional.get == expected, "expected that parsing of \"" + toParse + "\" is equal to " + expected)
     }
@@ -44,7 +44,7 @@ class ScalaNodeParserTest {
     testParse(a equiv b, "a equiv b", "(a equiv b)")
 
     testParse(a impl b, "a impl b", "(a impl b)")
-    
+
     assertThrows[IllegalArgumentException] {
       testParse(a, "a test b")
     }

@@ -9,7 +9,9 @@ import model.NAryAddResult;
 import model.NAryConvResult;
 import model.NAryNumber;
 import model.NumberBase;
+import model.NumberBase$;
 import model.TwoCompResult;
+import model.TwoCompResult$;
 import play.data.FormFactory;
 import play.mvc.Result;
 
@@ -33,7 +35,7 @@ public class NaryController extends BaseController {
   }
   
   public Result checkTwoComplementSolution(boolean verbose) {
-    TwoCompResult result = TwoCompResult.parseFromForm(factory.form().bindFromRequest(), verbose);
+    TwoCompResult result = TwoCompResult$.MODULE$.parseFromForm(factory.form().bindFromRequest(), verbose);
     return ok(views.html.twoComplementResult.render(getUser(), result, verbose));
   }
   
@@ -42,7 +44,7 @@ public class NaryController extends BaseController {
   }
   
   public Result newNaryAdditionQuestion() {
-    NumberBase base = NumberBase.values()[GENERATOR.nextInt(3)];
+    NumberBase base = NumberBase$.MODULE$.takeRandom();
     
     int sum = GENERATOR.nextInt(255) + 1;
     int firstSummand = GENERATOR.nextInt(sum);
@@ -61,8 +63,8 @@ public class NaryController extends BaseController {
     while(to == from)
       to = GENERATOR.nextInt(4);
     
-    NumberBase fromNB = NumberBase.values()[from];
-    NumberBase toNB = NumberBase.values()[to];
+    NumberBase fromNB = NumberBase$.MODULE$.takeRandom();
+    NumberBase toNB = NumberBase$.MODULE$.takeRandom();
     
     NAryNumber startingNumber = new NAryNumber(value, fromNB);
     

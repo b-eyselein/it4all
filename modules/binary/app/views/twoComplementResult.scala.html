@@ -7,7 +7,7 @@
 
 <div class="container">
   <div class="page-header">
-    <h1>@title von @result.getTargetNumber().getValue()</h1>
+    <h1>@title von @result.targetNumber.decimalValue</h1>
   </div>
    
   <div class="row">
@@ -17,7 +17,7 @@
     
         <div class="form-group">
           <div class="input-group">
-            <input value="@result.getTargetNumber().getValue()" readonly class="form-control text-right">
+            <input value="@result.targetNumber.decimalValue" readonly class="form-control text-right">
             <span class="input-group-addon"><sub>10</sub></span>
           </div>
         </div>
@@ -26,12 +26,12 @@
         
         @if(verbose) {
         <fieldset>
-          <legend>Bin&auml;rdarstellung von @Math.abs(result.getTargetNumber().getValue())</legend>
+          <legend>Bin&auml;rdarstellung von @Math.abs(result.targetNumber.decimalValue)</legend>
         
           <div class="form-group has-@if(result.binaryAbsCorrect()) {success} else {error}">
             <div class="input-group">
               <span class="input-group-addon">--></span>
-              <input class="form-control text-right" readonly value="@result.getBinaryAbs()">
+              <input class="form-control text-right" readonly value="@result.binaryAbs">
               <span class="input-group-addon"><sub>2</sub></span>
             </div>
           </div>
@@ -43,7 +43,7 @@
           <div class="form-group has-@if(result.invertedAbsCorrect()) {success} else {error}">
             <div class="input-group">
               <span class="input-group-addon">--></span>
-              <input class="form-control text-right" readonly value="@result.getInvertedAbs()">
+              <input class="form-control text-right" readonly value="@result.invertedAbs">
               <span class="input-group-addon"><sub>2</sub></span>
             </div>
           </div>
@@ -56,7 +56,7 @@
           <div class="form-group has-@if(result.checkSolution()) {success} else {error}">
             <div class="input-group">
               <span class="input-group-addon">--></span>
-              <input class="form-control text-right" readonly value="@result.getLearnerSolution().toTwoComp()">
+              <input class="form-control text-right" readonly value="@result.learnerSolution.toTwoComp">
               <span class="input-group-addon"><sub>2</sub></span>
             </div>
           </div>
