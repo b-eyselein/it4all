@@ -22,8 +22,7 @@ object BoolFormulaGenerator {
     if (depth < 2)
       return generateRandomOperator('a', 'b');
 
-    val count = randomBetween(MIN_VARS, MAX_VARS)
-    val variables = allVars take count
+    val variables = allVars take randomBetween(MIN_VARS, MAX_VARS)
 
     val leftChild = generateRandomOperator(takeRandom(variables), takeRandom(variables));
     val rightChild = generateRandomOperator(takeRandom(variables), takeRandom(variables));
@@ -42,11 +41,10 @@ object BoolFormulaGenerator {
    * </ul>
    */
   def generateRandomOperator(leftChild: ScalaNode, rightChild: ScalaNode): ScalaNode = {
-    if (RANDOM.nextInt(3) == 2) leftChild.negate();
+    val left = if (RANDOM.nextInt(3) == 2) leftChild.negate() else leftChild
+    val right = if (RANDOM.nextInt(3) == 2) rightChild.negate() else rightChild
 
-    if (RANDOM.nextInt(3) == 2) rightChild.negate();
-
-    if (RANDOM.nextBoolean()) leftChild and rightChild else leftChild or rightChild;
+    if (RANDOM.nextBoolean()) left and right else left or right
   }
 
   def takeRandom[A](variables: List[A]): A = variables(RANDOM.nextInt(variables.size))
