@@ -1,4 +1,4 @@
-@(user: model.user.User, firstSummand: model.NAryNumber, secondSummand: model.NAryNumber, base: model.NumberBase)
+@(user: model.user.User, firstSummand: model.nary.NAryNumber, secondSummand: model.nary.NAryNumber, base: model.nary.NumberBase)
 
 @title = @{"Addition"}
 
@@ -11,11 +11,11 @@
   <div class="row">
     <div class="col-sm-4 col-sm-offset-4">
       
-      <form role="form" action="@nary.routes.NaryController.checkNaryAdditionSolution()" method="post">
+      <form role="form" action="@routes.NaryController.checkNaryAdditionSolution()" method="post">
          
         <div class="form-group">
           <div class="input-group">
-            <input value="@firstSummand" readonly class="form-control text-right" name="@model.NAryResult.SUMMAND_1">
+            <input value="@firstSummand" readonly class="form-control text-right" name="@model.nary.NAryResult.SUMMAND_1">
             <span class="input-group-addon"><sub>@base.base</sub></span>
           </div>  
         </div>        
@@ -23,7 +23,7 @@
         <div class="form-group">
           <div class="input-group">
             <span class="input-group-addon">+</span>
-            <input value="@secondSummand" readonly class="form-control text-right" name="@model.NAryResult.SUMMAND_2">
+            <input value="@secondSummand" readonly class="form-control text-right" name="@model.nary.NAryResult.SUMMAND_2">
             <span class="input-group-addon"><sub>@base.base</sub></span>
           </div>    
         </div>
@@ -39,7 +39,7 @@
           </div>
         </div>
         
-        <input hidden name="@model.NAryResult.BASE_NAME" value="@base">
+        <input hidden name="@model.nary.NAryResult.BASE_NAME" value="@base">
         
         <button class="btn btn-primary btn-block">Pr&uuml;fen</button>
       </form>

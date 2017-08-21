@@ -17,7 +17,17 @@ GET    /eval/evaluation       controllers.AdminController.evaluation()
 GET    /users                 controllers.AdminController.users()
 
 # Tools
-->     /nary                  nary.Routes
+GET    /nary                  controllers.NaryController.index()
+
+GET    /nary/conv             controllers.NaryController.newNaryConversionQuestion()
+POST   /nary/conv             controllers.NaryController.checkNaryConversionSolution()
+
+GET    /nary/add              controllers.NaryController.newNaryAdditionQuestion()
+POST   /nary/add              controllers.NaryController.checkNaryAdditionSolution()
+
+GET    /nary/twocomp/:verb    controllers.NaryController.newTwoComplementQuestion(verb: Boolean)
+POST   /nary/twocomp/:verb    controllers.NaryController.checkTwoComplementSolution(verb: Boolean)
+
 
 ->     /bool                  bool.Routes
 

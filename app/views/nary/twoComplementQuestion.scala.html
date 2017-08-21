@@ -1,37 +1,36 @@
-@(user: model.user.User, result: model.TwoCompResult, verbose: Boolean)
+@(user: model.user.User, value: Int, verbose: Boolean)
 
-@title = @{"Zweierkomplement"}
+@title = @{"Zweierkomplement";}
 
 @main(title, user) {
-<script src="@routes.Assets.versioned("javascripts/snippets/followLinkOnEnter.js")"></script>
-
 <div class="container">
   <div class="page-header">
-    <h1>@title von @result.targetNumber.decimalValue</h1>
+    <h1>@title von @value</h1>
   </div>
-   
+  
   <div class="row">
     <div class="col-sm-6 col-sm-offset-3">
-    
-      <div>
-    
+      
+      <form role="form" action="@routes.NaryController.checkTwoComplementSolution(verbose)" method="post">
+         
         <div class="form-group">
           <div class="input-group">
-            <input value="@result.targetNumber.decimalValue" readonly class="form-control text-right">
+            <input value="@value" readonly class="form-control text-right" name="@model.nary.NAryResult.VALUE_NAME">
             <span class="input-group-addon"><sub>10</sub></span>
-          </div>
+          </div>  
         </div>
         
         <hr>
         
         @if(verbose) {
         <fieldset>
-          <legend>Bin&auml;rdarstellung von @Math.abs(result.targetNumber.decimalValue)</legend>
+          <legend>Bin&auml;rdarstellung von @Math.abs(value)</legend>
         
-          <div class="form-group has-@if(result.binaryAbsCorrect()) {success} else {error}">
+          <div class="form-group">
             <div class="input-group">
               <span class="input-group-addon">--></span>
-              <input class="form-control text-right" readonly value="@result.binaryAbs">
+              <input pattern="@model.nary.BINARY.htmlPattern" autocomplete="off" autofocus
+                class="form-control text-right" name="@model.nary.NAryResult.BINARY_ABS" placeholder="Ihre L&ouml;sung" required>
               <span class="input-group-addon"><sub>2</sub></span>
             </div>
           </div>
@@ -40,10 +39,11 @@
         <fieldset>
           <legend>Invertierung aller Bits</legend>
         
-          <div class="form-group has-@if(result.invertedAbsCorrect()) {success} else {error}">
+          <div class="form-group">
             <div class="input-group">
               <span class="input-group-addon">--></span>
-              <input class="form-control text-right" readonly value="@result.invertedAbs">
+              <input pattern="@model.nary.BINARY.htmlPattern" autocomplete="off" autofocus
+                class="form-control text-right" name="@model.nary.NAryResult.INVERTED_ABS" placeholder="Ihre L&ouml;sung" required>
               <span class="input-group-addon"><sub>2</sub></span>
             </div>
           </div>
@@ -51,23 +51,24 @@
         }
         
         <fieldset>
-          <legend>Zweierkomplement</legend>
-          
-          <div class="form-group has-@if(result.checkSolution()) {success} else {error}">
+   	      <legend>Zweierkomplement</legend>
+        	
+          <div class="form-group">
             <div class="input-group">
               <span class="input-group-addon">--></span>
-              <input class="form-control text-right" readonly value="@result.learnerSolution.toTwoComp">
+              <input pattern="@model.nary.BINARY.htmlPattern" autocomplete="off" autofocus
+                class="form-control text-right" name="@model.StringConsts.FORM_VALUE" placeholder="Ihre L&ouml;sung" required>
               <span class="input-group-addon"><sub>2</sub></span>
             </div>
           </div>
         </fieldset>
         
-        <a href="@nary.routes.NaryController.newTwoComplementQuestion(verbose)" id="theLink" 
-        class="btn btn-primary btn-block">N&auml;chste Aufgabe</a>
-      </div>
+        <button class="btn btn-primary btn-block">Pr&uuml;fen</button>
+      </form>
+      
     </div>
   </div>
-        
+  
   <hr>
   
   <div class="panel panel-default">

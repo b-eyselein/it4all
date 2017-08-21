@@ -4,18 +4,14 @@ Common.settings
 
 lazy val root = (project in file("."))
 	.enablePlugins(PlayJava, PlayEbean)
-	.aggregate(binary, bool, mindmap, programming, question, spread, sql, uml, web, xml)
-	.dependsOn(binary, bool, mindmap, programming, question, spread, sql, uml, web, xml, core)
+	.aggregate(bool, mindmap, programming, question, spread, sql, uml, web, xml)
+	.dependsOn(bool, mindmap, programming, question, spread, sql, uml, web, xml, core)
 
 lazy val core: Project = (project in file("modules/core"))
 	.enablePlugins(PlayJava, PlayScala, PlayEbean, PlayEnhancer)
 	.settings(
-		aggregateReverseRoutes := Seq(binary, bool, mindmap, programming, question, spread, sql, uml, web, xml, root)
+		aggregateReverseRoutes := Seq(bool, mindmap, programming, question, spread, sql, uml, web, xml, root)
 	)
-
-lazy val binary = (project in file("modules/binary"))
-	.enablePlugins(PlayJava, PlayScala, PlayEbean, PlayEnhancer)
-	.dependsOn(core)
 
 lazy val bool = (project in file("modules/bool"))
 	.enablePlugins(PlayJava, PlayScala, PlayEbean, PlayEnhancer)

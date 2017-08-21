@@ -1,4 +1,4 @@
-package model
+package model.nary
 
 import com.google.common.base.Splitter
 import com.google.common.base.Strings
@@ -8,33 +8,6 @@ case class NAryNumber(decimalValue: Int = 0, base: NumberBase) {
   val FOUR_SPLITTER = Splitter.fixedLength(4)
 
   def +(that: NAryNumber) = new NAryNumber(this.decimalValue + that.decimalValue, this.base)
-
-  //  @Override
-  //  def equals(obj Object) {
-  //    return obj instanceof NAryNumber && hashCode() == obj.hashCode()
-  //  }
-
-  //  @Override
-  //  public int hashCode() {
-  //    return decimalValue
-  //  }
-
-  //  @Override
-  //  public String toString() {
-  //    return toString(false)
-  //  }
-
-  //  public String toString(boolean withBase) {
-  //    String result = Integer.toString(Math.abs(decimalValue), base.getBase())
-  //
-  //    if(base == NumberBase.BINARY)
-  //      result = padBinary(result)
-  //
-  //    if(decimalValue < 0)
-  //      result = '-' + result
-  //
-  //    return withBase ? result + "_" + base.getBase() : result
-  //  }
 
   def toTwoComp(): String = {
     val binString = Integer.toBinaryString(decimalValue)

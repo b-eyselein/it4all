@@ -1,4 +1,4 @@
-package model
+package model.nary
 
 import scala.util.Random
 

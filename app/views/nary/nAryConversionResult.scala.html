@@ -1,4 +1,4 @@
-@(user: model.user.User, result: model.NAryConvResult)
+@(user: model.user.User, result: model.nary.NAryConvResult)
 
 @title = @{"Zahlenumwandlung"}
 
@@ -30,7 +30,7 @@
         </div>
       </div>
       
-      <a href="@nary.routes.NaryController.newNaryConversionQuestion()" id="theLink"
+      <a href="@routes.NaryController.newNaryConversionQuestion()" id="theLink"
        class="btn btn-primary btn-block">N&auml;chste Aufgabe</a>
       
     </div>

@@ -1,6 +1,7 @@
-package model;
+package model.nary
 
 import play.data.DynamicForm
+import model.StringConsts._
 
 sealed abstract class NAryResult(val targetNumber: NAryNumber, val learnerSolution: NAryNumber) {
 
@@ -23,17 +24,17 @@ case class TwoCompResult(targetNum: NAryNumber, learnerSol: NAryNumber, binaryAb
 
 object NAryResult {
   val ZERO = "0"
-  
-  val VALUE_NAME = "value";
-  
+
+  val VALUE_NAME = "value"
+
   val SUMMAND_1 = "summand1"
   val SUMMAND_2 = "summand2"
-  
+
   val BASE_NAME = "base"
-  
+
   val STARTING_NB = "startingNB"
   val TARGET_NB = "targetNB"
-  
+
   val BINARY_ABS = "binaryAbs"
   val INVERTED_ABS = "inverted"
 }
@@ -46,7 +47,7 @@ object NAryAddResult {
     val secondSummand = NAryNumber.parse(form.get(NAryResult.SUMMAND_2), base)
 
     // Replace all spaces, reverse to compensate input from right to left!
-    val learnerSolInNAry = form.get(StringConsts.FORM_VALUE).reverse.replaceAll("\\s", "")
+    val learnerSolInNAry = form.get(FORM_VALUE).reverse.replaceAll("\\s", "")
     val learnerSol = NAryNumber.parse(learnerSolInNAry, base)
 
     return new NAryAddResult(base, firstSummand, secondSummand, learnerSol)
@@ -60,7 +61,7 @@ object NAryConvResult {
 
     val startingValue = NAryNumber.parse(form.get(NAryResult.VALUE_NAME), startingNB)
 
-    val learnerSolutionAsString = form.get(StringConsts.FORM_VALUE).replaceAll("\\s", "")
+    val learnerSolutionAsString = form.get(FORM_VALUE).replaceAll("\\s", "")
     val learnerSolution = NAryNumber.parse(learnerSolutionAsString, targetNB)
 
     new NAryConvResult(startingValue, startingNB, targetNB, learnerSolution)
@@ -68,9 +69,9 @@ object NAryConvResult {
 }
 
 object TwoCompResult {
-  def parseFromForm(form: DynamicForm, isVerbose: Boolean): TwoCompResult =  {
+  def parseFromForm(form: DynamicForm, isVerbose: Boolean): TwoCompResult = {
     val targetNumber = new NAryNumber(Integer.parseInt(form.get(NAryResult.VALUE_NAME)), BINARY)
-    val learnerSolution = NAryNumber.parseTwoComplement(form.get(StringConsts.FORM_VALUE))
+    val learnerSolution = NAryNumber.parseTwoComplement(form.get(FORM_VALUE))
 
     val binaryAbs = if (isVerbose) form.get(NAryResult.BINARY_ABS) else NAryResult.ZERO
     val invertedAbs = if (isVerbose) form.get(NAryResult.INVERTED_ABS) else NAryResult.ZERO
