@@ -109,10 +109,10 @@ public class UmlExercise extends Exercise {
   public void updateValues(int theId, String theTitle, String theAuthor, String theText, JsonNode exerciseNode) {
     super.updateValues(theId, theTitle, theAuthor, theText);
     
-    List<Mapping> mappings = Collections.emptyList();
+    List<Mapping> theMappings = Collections.emptyList();
     List<String> ignore = ExerciseReader.parseJsonArrayNode(exerciseNode.get("ignore"));
     
-    UmlExTextParser parser = new UmlExTextParser(text, mappings, ignore);
+    UmlExTextParser parser = new UmlExTextParser(theText, theMappings, ignore);
     classSelText = parser.parseTextForClassSel();
     diagDrawText = parser.parseTextForDiagDrawing();
     
