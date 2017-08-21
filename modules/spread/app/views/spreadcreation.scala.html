@@ -1,14 +1,16 @@
 @(exercises: List[model.SpreadExercise])
 
+<a href="@spread.routes.SpreadAdmin.index()" class="btn btn-primary btn-block">Zur&uuml;ck zur Administratorseite</a>
+
+<hr>
+
 @for(ex <- exercises) {
-<div class="col-md-6">
-  <div class="panel panel-default">
-    <div class="panel-heading">Aufgabe @ex.getId: @ex.getTitle</div>
-    <div class="panel-body">
-      <p>Aufgabentext: @ex.getText</p>
-      <p>Vorlagendateiname: &quot;@ex.templateFilename&quot;</p>
-      <p>Musterdateiname: &quot;@ex.sampleFilename&quot;</p>
-    </div>
+<div class="panel panel-default">
+  <div class="panel-heading">Aufgabe @ex.getId: @ex.getTitle</div>
+  <div class="panel-body">
+    <p>Aufgabentext: @ex.getText</p>
+    <p>Vorlagendateiname: &quot;@ex.templateFilename&quot;</p>
+    <p>Musterdateiname: &quot;@ex.sampleFilename&quot;</p>
   </div>
 </div>
 }

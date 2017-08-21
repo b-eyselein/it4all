@@ -1,5 +1,9 @@
 @(user: model.user.User, quiz: model.quiz.Quiz)
 
+<a href="@questions.routes.QuizAdmin.index()" class="btn btn-primary btn-block">Zur&uuml;ck zur Administratorseite</a>
+
+<hr>
+
 @main("Auswahlfragen", user) {
 <div class="container">
   <div class="page-header">

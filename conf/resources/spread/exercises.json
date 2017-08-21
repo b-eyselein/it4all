@@ -1,16 +1,22 @@
 [
 	{
-		"id": 1, 
-		"title": "Planung Schullandheimaufenthalt", 
-		"text": "Sie sind beauftragt, einen Schullandheimaufenthalt zu planen und die Kosten zu kalkulieren.", 
-		"sampleFilename": "Aufgabe_Schullandheim_Muster", 
+		"id": 1,
+		"title": "Planung Schullandheimaufenthalt",
+		"author": "todo...",
+		"text": [
+			"Sie sind beauftragt, einen Schullandheimaufenthalt zu planen und die Kosten zu kalkulieren."
+		],
+		"sampleFilename": "Aufgabe_Schullandheim_Muster",
 		"templateFilename": "Aufgabe_Schullandheim"
-	}, 
+	},
 	{
-		"id": 2, 
-		"title": "Schriftlicher Leistungsnachweis", 
-		"text": "Sie haben einen schriftlichen Leistungsnachweis schreiben lassen und wollen diesen nun auswerten.", 
-		"sampleFilename": "Aufgabe_Schriftlicher_Leistungsnachweis_Muster", 
+		"id": 2,
+		"title": "Schriftlicher Leistungsnachweis",
+		"author": "todo...",
+		"text": [
+			"Sie haben einen schriftlichen Leistungsnachweis schreiben lassen und wollen diesen nun auswerten."
+		],
+		"sampleFilename": "Aufgabe_Schriftlicher_Leistungsnachweis_Muster",
 		"templateFilename": "Aufgabe_Schriftlicher_Leistungsnachweis"
 	}
 ]

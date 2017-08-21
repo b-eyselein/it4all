@@ -1,5 +1,9 @@
 @(exercises: List[model.XmlExercise])
 
+<a href="@xml.routes.XmlAdmin.index()" class="btn btn-primary btn-block">Zur&uuml;ck zur Administratorseite</a>
+
+<hr>
+
 @for((ex, index) <- exercises.zipWithIndex) {
 @if(index % 2 == 0) {<div class="row">}
   <div class="col-md-6">

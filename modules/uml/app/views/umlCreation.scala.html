@@ -1,25 +1,27 @@
 @(exercises: List[model.UmlExercise])
 
+<a href="@uml.routes.UmlAdmin.index()" class="btn btn-primary btn-block">Zur&uuml;ck zur Administratorseite</a>
+
+<hr>
+
 <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/uml.css")">
 
 @for(ex <- exercises) {
-<div class="col-md-6">
-  <div class="panel panel-default">
-    <div class="panel-heading">Aufgabe @ex.getId: @ex.getTitle</div>
-    <div class="panel-body">
-      <h3>Text f&uuml;r Klassenwahl:</h3>
-      <p>@Html(ex.getClassSelText)</p>
-      
-      <hr>
-      
-      <div class="panel-group">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <a data-toggle="collapse" href="#@ex.getId">Zugrundeliegendes Html</a>
-          </div>
-          <div id="@ex.getId" class="panel-collapse collapse">
-            <div class="panel-body">@ex.getClassSelText</div>
-          </div>
+<div class="panel panel-default">
+  <div class="panel-heading">Aufgabe @ex.getId: @ex.getTitle</div>
+  <div class="panel-body">
+    <h3>Text f&uuml;r Klassenwahl:</h3>
+    <p>@Html(ex.getClassSelText)</p>
+    
+    <hr>
+    
+    <div class="panel-group">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <a data-toggle="collapse" href="#@ex.getId">Zugrundeliegendes Html</a>
+        </div>
+        <div id="@ex.getId" class="panel-collapse collapse">
+          <div class="panel-body">@ex.getClassSelText</div>
         </div>
       </div>
     </div>

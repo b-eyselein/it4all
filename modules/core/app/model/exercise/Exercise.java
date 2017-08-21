@@ -20,6 +20,8 @@ public abstract class Exercise extends Model implements WithId {
   
   protected static final Splitter SPLITTER = Splitter.fixedLength(100).omitEmptyStrings();
   protected static final Splitter NEW_LINE_SPLITTER = Splitter.on("\n");
+
+  public static final String SPLIT_CHAR = "#";
   
   @Id
   protected int id;

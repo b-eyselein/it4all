@@ -1,14 +1,19 @@
 package model;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import io.ebean.Finder;
@@ -31,17 +36,22 @@ public class UmlExercise extends Exercise {
   private String diagDrawText;
   
   @Column(columnDefinition = "text")
+  @JsonIgnore
   private String solution;
   
-  // @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
-  // public List<Mapping> mappings;
+  @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
+  public List<Mapping> mappings;
+  
+  private String toIgnore;
   
   public UmlExercise(int theId, String theTitle, String theAuthor, String theText, String theClassSelText,
-      String theDiagDrawText, String theSolution) {
+      String theDiagDrawText, String theSolution, List<Mapping> theMappings, List<String> theToIngore) {
     super(theId, theTitle, theAuthor, theText);
     classSelText = theClassSelText;
     diagDrawText = theDiagDrawText;
     solution = theSolution;
+    mappings = theMappings;
+    toIgnore = String.join(SPLIT_CHAR, theToIngore);
   }
   
   @JsonIgnore
@@ -73,22 +83,41 @@ public class UmlExercise extends Exercise {
     return diagDrawText;
   }
   
+  @JsonGetter("ignore")
+  public List<String> getIgnored() {
+    return Arrays.asList(toIgnore.split("#"));
+  }
+  
   @JsonIgnore
   public UmlSolution getSolution() {
     return UmlSolution.fromJson(solution);
   }
   
+  @JsonGetter("solution")
+  public Object getSolutionAsJson() {
+    // Setter only for generation of json schema...
+    return solution;
+  }
+  
+  @JsonSetter("solution")
+  public void setSolution(Object theSolution) {
+    // Getter only for generation of json schema...
+    solution = theSolution.toString();
+  }
+  
   @Override
   public void updateValues(int theId, String theTitle, String theAuthor, String theText, JsonNode exerciseNode) {
     super.updateValues(theId, theTitle, theAuthor, theText);
-
-    UmlExTextParser parser = new UmlExTextParser(text,
-        Collections.emptyList() /* exercise.mappings */, ExerciseReader.parseJsonArrayNode(exerciseNode.get("ignore")));
+    
+    List<Mapping> mappings = Collections.emptyList();
+    List<String> ignore = ExerciseReader.parseJsonArrayNode(exerciseNode.get("ignore"));
+    
+    UmlExTextParser parser = new UmlExTextParser(text, mappings, ignore);
     classSelText = parser.parseTextForClassSel();
     diagDrawText = parser.parseTextForDiagDrawing();
     
     // Save solution as json in db
-    solution = exerciseNode.get(StringConsts.SOLUTION_NAME).asText();
+    solution = exerciseNode.get(StringConsts.SOLUTION_NAME).toString();
   }
   
 }

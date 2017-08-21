@@ -232,6 +232,7 @@ create table uml_exercise (
   class_sel_text                text,
   diag_draw_text                text,
   solution                      text,
+  to_ignore                     varchar(255),
   constraint pk_uml_exercise primary key (id)
 );
 

@@ -1,340 +1,323 @@
 [
 	{
-		"id": 1, 
-		"title": "Krankenhaus", 
-		"author": "bje40dc", 
+		"id": 1,
+		"title": "Krankenhaus",
+		"author": "bje40dc",
 		"text": [
-			"Ein Krankenhaus besteht aus Stationen, mit einer eindeutigen Nummer. Jede Station hat einen oder meh", 
-			"rere Doktoren, Krankenschwestern und Patienten. Jede Person hat jeweils eine eindeutige Id und einen", 
-			" Namen. Ein Doktor kann dem Patienten ein Rezept mit einer eindeutigen Id verschreiben, das ein oder", 
-			" mehrere Medikamente beinhalten kann. Ein Medikament hat eine eindeutige Id und einen Namen. Ein Pat", 
+			"Ein Krankenhaus besteht aus Stationen, mit einer eindeutigen Nummer. Jede Station hat einen oder meh",
+			"rere Doktoren, Krankenschwestern und Patienten. Jede Person hat jeweils eine eindeutige Id und einen",
+			" Namen. Ein Doktor kann dem Patienten ein Rezept mit einer eindeutigen Id verschreiben, das ein oder",
+			" mehrere Medikamente beinhalten kann. Ein Medikament hat eine eindeutige Id und einen Namen. Ein Pat",
 			"ient wiederum kann in einer Station aufgenommen bzw. entlassen werden."
-		], 
+		],
 		"mappings": [
 			{
-				"key": "Stationen", 
-				"value": "Station"
-			}, 
+				"mappedKey": "Stationen",
+				"mappedValue": "Station"
+			},
 			{
-				"key": "Doktoren", 
-				"value": "Doktor"
-			}, 
+				"mappedKey": "Doktoren",
+				"mappedValue": "Doktor"
+			},
 			{
-				"key": "Krankenschwestern", 
-				"value": "Krankenschwester"
-			}, 
+				"mappedKey": "Krankenschwestern",
+				"mappedValue": "Krankenschwester"
+			},
 			{
-				"key": "Patienten", 
-				"value": "Patient"
-			}, 
+				"mappedKey": "Patienten",
+				"mappedValue": "Patient"
+			},
 			{
-				"key": "Namen", 
-				"value": "Name"
-			}, 
+				"mappedKey": "Namen",
+				"mappedValue": "Name"
+			},
 			{
-				"key": "Medikamente", 
-				"value": "Medikament"
+				"mappedKey": "Medikamente",
+				"mappedValue": "Medikament"
 			}
-		], 
+		],
 		"solution": {
 			"classes": [
 				{
-					"classType": "ABSTRACT", 
-					"name": "Person", 
+					"classType": "ABSTRACT",
+					"name": "Person",
 					"methods": [
-						
-					], 
+					],
 					"attributes": [
-						"id: String", 
+						"id: String",
 						"name: String"
 					]
-				}, 
+				},
 				{
-					"classType": "CLASS", 
-					"name": "Doktor", 
+					"classType": "CLASS",
+					"name": "Doktor",
 					"methods": [
 						"verschreiben(Patient): void"
-					], 
+					],
 					"attributes": [
-						
 					]
-				}, 
+				},
 				{
-					"classType": "CLASS", 
-					"name": "Rezept", 
+					"classType": "CLASS",
+					"name": "Rezept",
 					"methods": [
-						
-					], 
+					],
 					"attributes": [
 						"id: String"
 					]
-				}, 
+				},
 				{
-					"classType": "CLASS", 
-					"name": "Patient", 
+					"classType": "CLASS",
+					"name": "Patient",
 					"methods": [
-						"entlassen(Station): void", 
+						"entlassen(Station): void",
 						"aufnehmen(Station): void"
-					], 
+					],
 					"attributes": [
-						
 					]
-				}, 
+				},
 				{
-					"classType": "CLASS", 
-					"name": "Krankenschwester", 
+					"classType": "CLASS",
+					"name": "Krankenschwester",
 					"methods": [
-						
-					], 
+					],
 					"attributes": [
-						
 					]
-				}, 
+				},
 				{
-					"classType": "CLASS", 
-					"name": "Station", 
+					"classType": "CLASS",
+					"name": "Station",
 					"methods": [
-						
-					], 
+					],
 					"attributes": [
 						"nummer: int"
 					]
-				}, 
+				},
 				{
-					"classType": "CLASS", 
-					"name": "Medikament", 
+					"classType": "CLASS",
+					"name": "Medikament",
 					"methods": [
-						
-					], 
+					],
 					"attributes": [
-						"id: String", 
+						"id: String",
 						"name: String"
 					]
-				}, 
+				},
 				{
-					"classType": "CLASS", 
-					"name": "Krankenhaus", 
+					"classType": "CLASS",
+					"name": "Krankenhaus",
 					"methods": [
-						
-					], 
+					],
 					"attributes": [
-						
 					]
 				}
-			], 
+			],
 			"implementations": [
 				{
-					"subClass": "Patient", 
+					"subClass": "Patient",
 					"superClass": "Person"
-				}, 
+				},
 				{
-					"subClass": "Doktor", 
+					"subClass": "Doktor",
 					"superClass": "Person"
-				}, 
+				},
 				{
-					"subClass": "Krankenschwester", 
+					"subClass": "Krankenschwester",
 					"superClass": "Person"
 				}
-			], 
+			],
 			"associations": [
 				{
-					"assocType": "ASSOCIATION", 
+					"assocType": "ASSOCIATION",
 					"ends": [
 						{
-							"endName": "Doktor", 
+							"endName": "Doktor",
 							"multiplicity": "SINGLE"
-						}, 
+						},
 						{
-							"endName": "Rezept", 
+							"endName": "Rezept",
 							"multiplicity": "UNBOUND"
 						}
 					]
-				}, 
+				},
 				{
-					"assocType": "ASSOCIATION", 
+					"assocType": "ASSOCIATION",
 					"ends": [
 						{
-							"endName": "Doktor", 
+							"endName": "Doktor",
 							"multiplicity": "SINGLE"
-						}, 
+						},
 						{
-							"endName": "Patient", 
+							"endName": "Patient",
 							"multiplicity": "UNBOUND"
 						}
 					]
-				}, 
+				},
 				{
-					"assocType": "ASSOCIATION", 
+					"assocType": "ASSOCIATION",
 					"ends": [
 						{
-							"endName": "Station", 
+							"endName": "Station",
 							"multiplicity": "SINGLE"
-						}, 
+						},
 						{
-							"endName": "Patient", 
+							"endName": "Patient",
 							"multiplicity": "UNBOUND"
 						}
 					]
-				}, 
+				},
 				{
-					"assocType": "ASSOCIATION", 
+					"assocType": "ASSOCIATION",
 					"ends": [
 						{
-							"endName": "Station", 
+							"endName": "Station",
 							"multiplicity": "SINGLE"
-						}, 
+						},
 						{
-							"endName": "Krankenschwester", 
+							"endName": "Krankenschwester",
 							"multiplicity": "UNBOUND"
 						}
 					]
-				}, 
+				},
 				{
-					"assocType": "ASSOCIATION", 
+					"assocType": "ASSOCIATION",
 					"ends": [
 						{
-							"endName": "Station", 
+							"endName": "Station",
 							"multiplicity": "SINGLE"
-						}, 
+						},
 						{
-							"endName": "Doktor", 
+							"endName": "Doktor",
 							"multiplicity": "UNBOUND"
 						}
 					]
-				}, 
+				},
 				{
-					"assocType": "ASSOCIATION", 
+					"assocType": "ASSOCIATION",
 					"ends": [
 						{
-							"endName": "Patient", 
+							"endName": "Patient",
 							"multiplicity": "SINGLE"
-						}, 
+						},
 						{
-							"endName": "Rezept", 
+							"endName": "Rezept",
 							"multiplicity": "UNBOUND"
 						}
 					]
-				}, 
+				},
 				{
-					"assocType": "ASSOCIATION", 
+					"assocType": "ASSOCIATION",
 					"ends": [
 						{
-							"endName": "Rezept", 
+							"endName": "Rezept",
 							"multiplicity": "SINGLE"
-						}, 
+						},
 						{
-							"endName": "Medikament", 
+							"endName": "Medikament",
 							"multiplicity": "UNBOUND"
 						}
 					]
-				}, 
+				},
 				{
-					"assocType": "COMPOSITION", 
+					"assocType": "COMPOSITION",
 					"ends": [
 						{
-							"endName": "Krankenhaus", 
+							"endName": "Krankenhaus",
 							"multiplicity": "SINGLE"
-						}, 
+						},
 						{
-							"endName": "Station", 
+							"endName": "Station",
 							"multiplicity": "UNBOUND"
 						}
 					]
 				}
 			]
-		}, 
+		},
 		"ignore": [
-			"Ein", 
+			"Ein",
 			"Jede"
 		]
-	}, 
+	},
 	{
-		"id": 2, 
-		"title": "Gärtner", 
-		"author": "bje40dc", 
+		"id": 2,
+		"title": "Gärtner",
+		"author": "bje40dc",
 		"text": [
-			"Sie sollen für den Gärtner ihres Vertrauens ein Programm zur Verwaltung der Produktion erstellen. In", 
-			" diesem soll jede Pflanze, die in einem der Gewächshäuser wächst, registriert werden. Jede Pflanze h", 
-			"at einen Typ, der die genaue Spezies angibt. Bei jeder Spezie soll die Möglichkeit gegeben sein, die", 
-			"se zu gießen. Dieser Typ wird durch einen einzigartigen Code spezifiziert. Außerdem wird der lateini", 
-			"sche und deutsche Name des Typs gespeichert. Für jede Pflanze soll außerdem die Nummer des Gewächsha", 
-			"uses und die Position (als Reihe und Spalte, da die Gewächshäuser jeweils in Koordinaten eingeteilt ", 
-			"sind) gespeichert werden. Pflanzentypen werden in folgende Untertypen unterschieden: Bäume, Blumen u", 
-			"nd Nutzpflanzen. Für Bäume wird die durchschnittliche Höhe gespeichert, ob sie immergrün sind und de", 
-			"r Gärtner soll in regelmäßigen Abständen den Baum stutzen kontrollieren. Für Blumen die Blütenfarbe ", 
-			"vermerkt werden. Bei Nutzpflanzen wird der Beginn und das Ende der Erntezeit gespeichert und zwische", 
-			"n Obst und Gemüse unterschieden. Für Obst soll ersichtlich sein, ob ein Kern enthalten ist, für Gemü", 
-			"se, ob es zweijährig ist. Bei Blumen und Nutzpflanzen soll außerdem ein Hinweis gespeichert werden, ", 
+			"Sie sollen für den Gärtner ihres Vertrauens ein Programm zur Verwaltung der Produktion erstellen. In",
+			" diesem soll jede Pflanze, die in einem der Gewächshäuser wächst, registriert werden. Jede Pflanze h",
+			"at einen Typ, der die genaue Spezies angibt. Bei jeder Spezie soll die Möglichkeit gegeben sein, die",
+			"se zu gießen. Dieser Typ wird durch einen einzigartigen Code spezifiziert. Außerdem wird der lateini",
+			"sche und deutsche Name des Typs gespeichert. Für jede Pflanze soll außerdem die Nummer des Gewächsha",
+			"uses und die Position (als Reihe und Spalte, da die Gewächshäuser jeweils in Koordinaten eingeteilt ",
+			"sind) gespeichert werden. Pflanzentypen werden in folgende Untertypen unterschieden: Bäume, Blumen u",
+			"nd Nutzpflanzen. Für Bäume wird die durchschnittliche Höhe gespeichert, ob sie immergrün sind und de",
+			"r Gärtner soll in regelmäßigen Abständen den Baum stutzen kontrollieren. Für Blumen die Blütenfarbe ",
+			"vermerkt werden. Bei Nutzpflanzen wird der Beginn und das Ende der Erntezeit gespeichert und zwische",
+			"n Obst und Gemüse unterschieden. Für Obst soll ersichtlich sein, ob ein Kern enthalten ist, für Gemü",
+			"se, ob es zweijährig ist. Bei Blumen und Nutzpflanzen soll außerdem ein Hinweis gespeichert werden, ",
 			"wann die Pflanzen gegossen werden sollen."
-		], 
+		],
 		"mappings": [
 			{
-				"key": "Vertrauens", 
-				"value": "Vertrauen"
-			}, 
+				"mappedKey": "Vertrauens",
+				"mappedValue": "Vertrauen"
+			},
 			{
-				"key": "Gewächshäuser", 
-				"value": "Gewächshaus"
-			}, 
+				"mappedKey": "Gewächshäuser",
+				"mappedValue": "Gewächshaus"
+			},
 			{
-				"key": "Spezies", 
-				"value": "Spezie"
-			}, 
+				"mappedKey": "Typs",
+				"mappedValue": "Typ"
+			},
 			{
-				"key": "Typs", 
-				"value": "Typ"
-			}, 
+				"mappedKey": "Koordinaten",
+				"mappedValue": "Koordinate"
+			},
 			{
-				"key": "Koordinaten", 
-				"value": "Koordinate"
-			}, 
+				"mappedKey": "Pflanzentypen",
+				"mappedValue": "Pflanzentyp"
+			},
 			{
-				"key": "Pflanzentypen", 
-				"value": "Pflanzentyp"
-			}, 
+				"mappedKey": "Untertypen",
+				"mappedValue": "Untertyp"
+			},
 			{
-				"key": "Untertypen", 
-				"value": "Untertyp"
-			}, 
+				"mappedKey": "Bäume",
+				"mappedValue": "Baum"
+			},
 			{
-				"key": "Bäume", 
-				"value": "Baum"
-			}, 
+				"mappedKey": "Blumen",
+				"mappedValue": "Blume"
+			},
 			{
-				"key": "Blumen", 
-				"value": "Blume"
-			}, 
+				"mappedKey": "Nutzpflanzen",
+				"mappedValue": "Nutzpflanze"
+			},
 			{
-				"key": "Nutzpflanzen", 
-				"value": "Nutzpflanze"
-			}, 
+				"mappedKey": "Blütenfarben",
+				"mappedValue": "Blützenfarbe"
+			},
 			{
-				"key": "Blütenfarben", 
-				"value": "Blützenfarbe"
-			}, 
-			{
-				"key": "Pflanzen", 
-				"value": "Pflanze"
+				"mappedKey": "Pflanzen",
+				"mappedValue": "Pflanze"
 			}
-		], 
+		],
 		"solution": {
 			"classes": [
-				
-			], 
+			],
 			"associations": [
-				
-			], 
+			],
 			"implementations": [
-				
 			]
-		}, 
+		},
 		"ignore": [
-			"Sie", 
-			"Jede", 
-			"In", 
-			"Dieser", 
-			"Außerdem", 
-			"Für", 
+			"Sie",
+			"Jede",
+			"In",
+			"Dieser",
+			"Außerdem",
+			"Für",
 			"Bei"
 		]
 	}

@@ -1,6 +1,10 @@
-@(user: model.user.User, questions: List[model.question.Question])
+@(user: model.user.User, questionList: List[model.question.Question])
 
-@for(question <- questions) {
+<a href="@questions.routes.QuestionAdmin.index()" class="btn btn-primary btn-block">Zur&uuml;ck zur Administratorseite</a>
+
+<hr>
+
+@for(question <- questionList) {
 <div class="panel panel-default">
   <div class="panel-heading">Aufgabe @question.getId</div>
   <div class="panel-body">

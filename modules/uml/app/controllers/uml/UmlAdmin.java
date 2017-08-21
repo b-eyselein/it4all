@@ -65,11 +65,15 @@ public class UmlAdmin extends AExerciseAdminController<UmlExercise> {
     String author = form.get(StringConsts.AUTHOR_NAME);
     String text = form.get(StringConsts.TEXT_NAME);
 
-    UmlExTextParser parser = new UmlExTextParser(text, Collections.emptyList(), Collections.emptyList());
+    List<Mapping> mappings = Collections.emptyList();
+    List<String> ignore = Collections.emptyList();
+
+    UmlExTextParser parser = new UmlExTextParser(text, mappings, ignore);
 
     String classSelText = parser.parseTextForClassSel();
     String diagDrawText = parser.parseTextForDiagDrawing();
-    UmlExercise exercise = new UmlExercise(id, title, author, text, classSelText, diagDrawText, "");
+
+    UmlExercise exercise = new UmlExercise(id, title, author, text, classSelText, diagDrawText, "", mappings, ignore);
 
     return ok(views.html.umlAdmin.newExerciseStep2Form.render(getUser(), exercise, parser.getCapitalizedWords()));
   }
@@ -106,7 +110,7 @@ public class UmlAdmin extends AExerciseAdminController<UmlExercise> {
     String classSelText = parser.parseTextForClassSel();
     String diagDrawText = parser.parseTextForDiagDrawing();
 
-    UmlExercise exercise = new UmlExercise(id, title, author, text, classSelText, diagDrawText, "");
+    UmlExercise exercise = new UmlExercise(id, title, author, text, classSelText, diagDrawText, "", mappings, toIgnore);
 
     return ok(views.html.umlAdmin.newExerciseStep3Form.render(getUser(), exercise));
   }
@@ -121,7 +125,8 @@ public class UmlAdmin extends AExerciseAdminController<UmlExercise> {
     String classSelText = form.get("classSelText");
     String diagDrawText = form.get("diagDrawText");
     String solution = form.get("solution");
-    return new UmlExercise(id, title, author, text, classSelText, diagDrawText, solution);
+    return new UmlExercise(id, title, author, text, classSelText, diagDrawText, solution, Collections.emptyList(),
+        Collections.emptyList());
   }
 
 }
