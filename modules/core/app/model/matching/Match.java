@@ -1,7 +1,5 @@
 package model.matching;
 
-import play.twirl.api.Html;
-
 public abstract class Match<T> {
   
   protected T userArg;
@@ -21,12 +19,25 @@ public abstract class Match<T> {
       matchType = analyze(theUserArg, theSampleArg);
   }
   
-  public Html describe() {
-    return views.html.matchResult.render(this);
-  }
-  
   public String getBSClass() {
     return matchType == MatchType.SUCCESSFUL_MATCH ? "success" : "warning";
+  }
+  
+  public String getExplanation() {
+    switch(matchType) {
+    case FAILURE:
+      return "Es ist ein Fehler aufgetreten.";
+    case ONLY_USER:
+      return "Angegeben, aber nicht in der Musterlösung vorhanden!";
+    case ONLY_SAMPLE:
+      return "Nur in der Musterlösung, nicht in der Lernerlösung vorhanden!";
+    case UNSUCCESSFUL_MATCH:
+      return "Fehler beim Abgleich.";
+    case SUCCESSFUL_MATCH:
+      return "Korrekt.";
+    default:
+      throw new IllegalArgumentException();
+    }
   }
   
   public MatchType getMatchType() {

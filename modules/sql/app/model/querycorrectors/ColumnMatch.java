@@ -20,8 +20,8 @@ public class ColumnMatch extends Match<ColumnWrapper> {
     return matchType == MatchType.SUCCESSFUL_MATCH || matchType == MatchType.UNSUCCESSFUL_MATCH;
   }
 
-  @Override
   public Html describe() {
+    // FIXME: todo...
     return views.html.resultTemplates.columnResult.render(this);
   }
 
