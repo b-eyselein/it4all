@@ -2,7 +2,10 @@ package model;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +54,6 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
     else {
       String diffOfTwoFormulas = HashSetHelper.getDiffOfTwoFormulas(masterFormula, compareFormula);
       if(diffOfTwoFormulas.isEmpty())
-        // TODO: can this happen?
         return "Formel richtig.";
       else
         return "Formel falsch. " + diffOfTwoFormulas;
@@ -165,22 +167,23 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
   }
   
   @Override
-  public void saveCorrectedSpreadsheet(SpreadsheetDocument document, Path testPath) {
-    // TODO userFolder: saveFolder! evtl FACTORY METHOD
-    String userFolder = SpreadSheetCorrector.getUserFolder(testPath);
-    String fileName = SpreadSheetCorrector.getFileName(testPath);
+  public void saveCorrectedSpreadsheet(SpreadsheetDocument compareDocument, Path testPath) {
+    // @formatter:off
+    String fileNameNew =
+        com.google.common.io.Files.getNameWithoutExtension(testPath.toString()) +
+        CORRECTION_ADD_STRING + "." +
+        com.google.common.io.Files.getFileExtension(testPath.toString());
+    Path savePath = Paths.get(testPath.getParent().toString(), fileNameNew);
+    // @formatter:on
     try {
-      // FIXME: use document.save(File file);
-      // File saveTo = new File("TODO");
-      File dir = new File(userFolder);
-      if(!dir.exists()) {
-        dir.mkdirs();
-      }
-      FileOutputStream fileOut = new FileOutputStream(userFolder + fileName + "_Korrektur.ods");
-      document.save(fileOut);
+      if(!savePath.getParent().toFile().exists())
+        Files.createDirectories(savePath.getParent());
+      
+      FileOutputStream fileOut = new FileOutputStream(savePath.toFile());
+      compareDocument.save(fileOut);
       fileOut.close();
     } catch (Exception e) {
-      System.out.println(e);
+      Logger.error("Fehler beim Speichern der korrigierten Datei!", e);
     }
   }
   

@@ -291,7 +291,6 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
         com.google.common.io.Files.getFileExtension(testPath.toString());
     Path savePath = Paths.get(testPath.getParent().toString(), fileNameNew);
     // @formatter:on
-    
     try {
       if(!savePath.getParent().toFile().exists())
         Files.createDirectories(savePath.getParent());

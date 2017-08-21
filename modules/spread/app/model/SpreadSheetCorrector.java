@@ -4,8 +4,6 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.io.FilenameUtils;
-
 public class SpreadSheetCorrector {
   
   private static Map<String, SpreadCorrector<?, ?, ?, ?, ?>> correctors;
@@ -26,7 +24,7 @@ public class SpreadSheetCorrector {
   public static SpreadSheetCorrectionResult correct(Path musterPath, Path testPath, boolean conditionalFormating,
       boolean charts) {
     
-    String fileExtension = getExtension(testPath);
+    String fileExtension = com.google.common.io.Files.getFileExtension(testPath.toString());
     
     SpreadCorrector<?, ?, ?, ?, ?> corrector = correctors.get(fileExtension);
     if(corrector == null)
@@ -34,22 +32,6 @@ public class SpreadSheetCorrector {
           "The filetype \"" + fileExtension + "\" is not supported. Could not start correction.");
     
     return corrector.correct(musterPath, testPath, conditionalFormating, charts);
-  }
-  
-  public static String getExtension(Path path) {
-    return getExtension(path.toString());
-  }
-  
-  public static String getExtension(String path) {
-    return FilenameUtils.getExtension(path);
-  }
-  
-  public static String getFileName(Path path) {
-    return FilenameUtils.getBaseName(path.toString());
-  }
-  
-  public static String getUserFolder(Path path) {
-    return FilenameUtils.getPathNoEndSeparator(path.toString());
   }
   
 }

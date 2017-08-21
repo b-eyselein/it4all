@@ -90,7 +90,7 @@ public class Spread extends ExerciseController {
           views.html.spreadcorrectionerror.render(user, "Datei konnte nicht hochgeladen werden!"));
     Path pathToUploadedFile = uploadedFile.getFile().toPath();
     Logger.debug("Pfad der Abgabedatei: " + pathToUploadedFile);
-    String fileExtension = SpreadSheetCorrector.getExtension(uploadedFile.getFilename());
+    String fileExtension = com.google.common.io.Files.getFileExtension(uploadedFile.getFilename());
 
     // Save solution
     Path targetFilePath = getSolFileForExercise(exercise, exercise.templateFilename, fileExtension);
