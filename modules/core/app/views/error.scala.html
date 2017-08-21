@@ -3,11 +3,8 @@
 @main("HTML-Test", user) {
 <div class="container">
   <div class="alert alert-danger">
-    <p>@exception.getMessage <code>@exception.getLearnerSolution</code>:</p>
-    
-    <hr>
-    
-    <pre>@exception.getCause.getMessage</pre> 
+    <p>Ihre L&ouml;sung: <code>@exception.getLearnerSolution</code></p>
+    <p>Fehlermeldung: @exception.getMessage</p>
   </div>
 </div>
 }

@@ -23,15 +23,27 @@ class BoolController @Inject() (factory: FormFactory, cc: ControllerComponents) 
   def checkBoolCreationSolution() = Action { request =>
     request.body.asFormUrlEncoded match {
       case None => BadRequest("TODO!")
-      case Some(data) => Ok(views.html.boolcreatesolution.render(getUser(request), checkCreationSolution(data)))
+      case Some(data) =>
+        try {
+          var result = checkCreationSolution(data)
+          Ok(views.html.boolcreatesolution.render(getUser(request), result))
+        } catch {
+          case ce: CorrectionException => Ok(views.html.error.render(getUser(request), ce))
+        }
     }
   }
 
   def checkBoolCreationSolutionLive() = Action { request =>
     request.body.asFormUrlEncoded match {
       case None => BadRequest("TODO!")
-      // FIXME: ugly, stupid, sh**ty hack!
-      case Some(data) => Ok(play.api.libs.json.Json.parse(play.libs.Json.toJson(checkCreationSolution(data)).toString()))
+      case Some(data) =>
+        try {
+          var result = checkCreationSolution(data)
+          // FIXME: ugly, stupid, sh**ty hack!
+          Ok(play.api.libs.json.Json.parse(play.libs.Json.toJson(result).toString()))
+        } catch {
+          case ce: CorrectionException => null
+        }
     }
   }
 
@@ -41,6 +53,11 @@ class BoolController @Inject() (factory: FormFactory, cc: ControllerComponents) 
       case None => throw new CorrectionException(learnerSolution, "Formula could not be parsed!")
       case Some(formula) =>
         val variables = data(VARS_NAME).mkString.split(",").map(variab => Variable(variab.charAt(0))).toList
+
+        // Check that formula only contains variables found in form
+        val wrongVars = formula.usedVariables.filter(!variables.contains(_))
+        if (!wrongVars.isEmpty)
+          throw new CorrectionException(learnerSolution, s"In ihrer Lösung wurde(n) die folgende(n) falsche(n) Variable(n) benutzt: '${wrongVars.mkString(", ")}'")
 
         val assignments = Assignment
           .generateAllAssignments(variables)
@@ -62,10 +79,10 @@ class BoolController @Inject() (factory: FormFactory, cc: ControllerComponents) 
 
         val formula = formulaOptional.get
 
-        val question = new FilloutQuestion(formula)
-
-        question.assignments.foreach(assignment =>
+        val assignments = Assignment.generateAllAssignments(formula.usedVariables.toList).map(assignment =>
           assignment + (LEA_VAR -> (ONE == data(assignment.toString).mkString(""))) + (SOL_VAR -> formula.evaluate(assignment)))
+
+        val question = new FilloutQuestion(formula, assignments)
 
         Ok(views.html.boolfilloutsolution.render(getUser(request), question))
     }

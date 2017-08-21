@@ -32,9 +32,7 @@ object CreationQuestion {
   }
 }
 
-case class FilloutQuestion(val formula: ScalaNode) extends BooleanQuestion(formula.usedVariables.toList) {
-  val assignments: List[Assignment] = Assignment.generateAllAssignments(formula.usedVariables.toList)
-
+case class FilloutQuestion(val formula: ScalaNode, assignments: List[Assignment]) extends BooleanQuestion(formula.usedVariables.toList) {
   def getFormulaAsHtml: String = {
     var formulaAsHtml = formulaAsString
     for ((key, value) <- FilloutQuestion.HTML_REPLACERS) formulaAsHtml = formulaAsHtml.replaceAll(key, value)
@@ -59,5 +57,8 @@ object FilloutQuestion {
     "XOR" -> "&oplus",
     "OR" -> "&or")
 
-  def generateNew() = new FilloutQuestion(BoolFormulaGenerator.generateRandom())
+  def generateNew() = {
+    val formula = BoolFormulaGenerator.generateRandom()
+    new FilloutQuestion(formula, Assignment.generateAllAssignments(formula.usedVariables.toList))
+  }
 }
