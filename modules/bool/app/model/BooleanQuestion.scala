@@ -1,18 +1,63 @@
-package model;
+package model
 
-import scala.util.Random;
+import model.ScalaNode._
+import scala.util.Random
 
-abstract class BooleanQuestion(val variables: List[Variable]) {
+abstract sealed class BooleanQuestion(val variables: List[Variable]) {
+  def joinedVariables = variables.mkString(",")
 
-  val GENERATOR = new Random()
-
-  def getJoinedVariables() = variables mkString (", ")
-
-  def getNumberOfLines() = scala.math.pow(2, variables.size).toInt
-
+  def numberOfLines = scala.math.pow(2, variables.size).toInt
 }
 
 object BooleanQuestion {
-  val SOLUTION_VARIABLE: Variable = 'z';
-  val LEARNER_VARIABLE: Variable = 'y';
+  def randomBetweenInclBounds(startIncl: Int, endIncl: Int) = startIncl + RANDOM.nextInt((endIncl - startIncl + 1))
+
+  val SOLUTION_VARIABLE: Variable = 'z'
+  val LEARNER_VARIABLE: Variable = 'y'
+
+  val RANDOM = new Random()
+}
+
+case class CreationQuestion(vars: List[Variable], val solutions: List[Assignment]) extends BooleanQuestion(vars)
+
+object CreationQuestion {
+  def generateNew(): CreationQuestion = {
+    val variables = ('a' to 'z').take(BooleanQuestion.randomBetweenInclBounds(2, 3)).map(toVariable(_)).toList
+
+    val assignments: List[Assignment] = Assignment
+      .generateAllAssignments(variables)
+      .map(as => as + (BooleanQuestion.SOLUTION_VARIABLE -> BooleanQuestion.RANDOM.nextBoolean()))
+
+    return new CreationQuestion(variables, assignments)
+  }
+}
+
+case class FilloutQuestion(val formula: ScalaNode) extends BooleanQuestion(formula.usedVariables.toList) {
+  val assignments: List[Assignment] = Assignment.generateAllAssignments(formula.usedVariables.toList)
+
+  def getFormulaAsHtml: String = {
+    var formulaAsHtml = formulaAsString
+    for ((key, value) <- FilloutQuestion.HTML_REPLACERS) formulaAsHtml = formulaAsHtml.replaceAll(key, value)
+    formulaAsHtml
+  }
+
+  def formulaAsString = formula.getAsString(false)
+
+  def isCorrect() = assignments.forall((a) => {
+    a.isSet(BooleanQuestion.LEARNER_VARIABLE) && a.get(BooleanQuestion.LEARNER_VARIABLE) == a.get(BooleanQuestion.SOLUTION_VARIABLE)
+  })
+}
+
+object FilloutQuestion {
+  val HTML_REPLACERS = Map(
+    "IMPL" -> "&rArr",
+    "NOR" -> "&#x22bd",
+    "NAND" -> "&#x22bc",
+    "EQUIV" -> "&hArr",
+    "NOT" -> "&not",
+    "AND" -> "&and",
+    "XOR" -> "&oplus",
+    "OR" -> "&or")
+
+  def generateNew() = new FilloutQuestion(BoolFormulaGenerator.generateRandom())
 }

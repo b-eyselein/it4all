@@ -35,14 +35,16 @@ case class NotScalaNode(child: ScalaNode) extends ScalaNode {
   override def usedVariables = child usedVariables
 }
 
-case class Variable(variable: Char) extends ScalaNode {
+case class Variable(variable: Char) extends ScalaNode with Ordered[Variable] {
   override def evaluate(assignment: Assignment) = assignment get this
 
   override def negate() = ScalaNode.not(this)
 
-  override def getAsString(needsParans: Boolean) = variable + ""
+  override def getAsString(needsParans: Boolean) = variable.toString()
 
   override def usedVariables = Set(this)
+
+  override def compare(that: Variable) = variable - that.variable
 }
 
 case class Constant(value: Boolean) extends ScalaNode {
@@ -80,7 +82,7 @@ sealed abstract class BinaryScalaNode(operator: String, left: ScalaNode, right: 
   }
 
   override def getAsString(needsParans: Boolean) = {
-    val inner = left.getAsString(needsParans) + " " + operator.toLowerCase + " " + right.getAsString(needsParans)
+    val inner = left.getAsString(left.isInstanceOf[BinaryScalaNode]) + " " + operator.toLowerCase + " " + right.getAsString(right.isInstanceOf[BinaryScalaNode])
     if (needsParans) "(" + inner + ")" else inner
   }
 

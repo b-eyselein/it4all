@@ -1,5 +1,7 @@
 @(user: model.user.User, question: model.FilloutQuestion)
 
+@vars = @{question.variables}
+
 @main("Wertetabelle-L&ouml;sung", user) {
 <div class="container">
   <div @if(question.isCorrect()) {class="panel panel-success"} else {class="panel panel-danger"}>
@@ -13,7 +15,7 @@
       <table class="table">
         <thead>
         <tr>
-        @for(v <- question.formula.usedVariables){
+        @for(v <- vars){
           <th>@v</th>
         }
           <th>@Html(question.getFormulaAsHtml)</th>
@@ -21,13 +23,13 @@
         </tr>
         </thead>
         <tbody align="left">
-        @for(assignment <- question.getAssignments) {
+        @for(assignment <- question.assignments) {
           <tr>
-          @for(variable <- question.formula.usedVariables) {
+          @for(variable <-vars) {
             <td>@assignment.asChar(variable)</td>
           }
-            <td class="@assignment.getColor() text-@assignment.getColor()">@assignment.asChar('z')</td>
-            <td class="@assignment.getColor() text-@assignment.getColor()">@assignment.asChar('y')</td>
+            <td class="@assignment.getColor text-@assignment.getColor">@assignment.asChar(model.BooleanQuestion.SOLUTION_VARIABLE)</td>
+            <td class="@assignment.getColor text-@assignment.getColor">@assignment.asChar(model.BooleanQuestion.LEARNER_VARIABLE)</td>
           </tr>
         }
         </tbody>

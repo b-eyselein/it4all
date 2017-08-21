@@ -5,5 +5,5 @@ PUT    /boolfillout    controllers.bool.BoolController.checkBoolFilloutSolution
 POST   /boolfillout    controllers.bool.BoolController.checkBoolFilloutSolution
 
 GET    /boolcreation   controllers.bool.BoolController.newBoolCreationQuestion
-PUT    /boolcreation   controllers.bool.BoolController.checkBoolCreationSolution
+PUT    /boolcreation   controllers.bool.BoolController.checkBoolCreationSolutionLive
 POST   /boolcreation   controllers.bool.BoolController.checkBoolCreationSolution

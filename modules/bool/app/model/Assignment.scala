@@ -4,25 +4,31 @@ import scala.collection.mutable.MapBuilder
 import scala.language.implicitConversions
 import model.ScalaNode._
 
-class Assignment(var assignments: Map[Variable, Boolean]) {
-  def apply(variable: Variable) = assignments(variable)
+class Assignment(assignments: Map[Variable, Boolean]) {
 
-  def asChar(variable: Variable): Char = if (get(variable)) '1' else '0'
+  val SOL_VAR = BooleanQuestion.SOLUTION_VARIABLE
+  val LEA_VAR = BooleanQuestion.LEARNER_VARIABLE
+
+  def asChar(variable: Variable) = if (get(variable)) '1' else '0'
 
   def get(variable: Variable) = assignments(variable)
 
-  def isCorrect = get(BooleanQuestion.LEARNER_VARIABLE) == get(BooleanQuestion.SOLUTION_VARIABLE)
+  def isCorrect = get(LEA_VAR) == get(SOL_VAR)
 
-  def getColor() = if (isCorrect) "success" else "danger";
+  def getColor = if (isCorrect) "success" else "danger";
 
-  def getLearnerValueAsChar = asChar(BooleanQuestion.LEARNER_VARIABLE)
+  def getLearnerValueAsChar = asChar(LEA_VAR)
 
-  def variables = assignments.keys
-    .filter(variable => variable != BooleanQuestion.SOLUTION_VARIABLE && variable != BooleanQuestion.LEARNER_VARIABLE)
+  def variables = assignments.keys.filter(variable => variable != SOL_VAR && variable != LEA_VAR)
 
   def isSet(variable: Variable) = assignments.isDefinedAt(variable)
 
-  def +(toAssign: (Variable, Boolean)) = { assignments = assignments + (toAssign._1 -> toAssign._2) }
+  override def toString = assignments
+    .filter(as => as._1 != LEA_VAR && as._1 != SOL_VAR)
+    .map(as => as._1 + ":" + (if (as._2) "1" else "0"))
+    .mkString(",")
+
+  def +(toAssign: (Variable, Boolean)) = new Assignment(assignments = assignments + (toAssign._1 -> toAssign._2))
 }
 
 object Assignment {
@@ -31,34 +37,23 @@ object Assignment {
   def apply(assigns: (Variable, Boolean)*) = new Assignment(assigns.toMap)
 
   def generateAllAssignments(variables: List[Variable]): List[Assignment] = {
-    variables match {
+    variables.sorted.reverse match {
       case Nil => List.empty
       case head :: Nil => List(Assignment(head -> false), Assignment(head -> true))
       case head :: tail => {
         val falseAssignments, trueAssignments = generateAllAssignments(tail)
-
-        falseAssignments.foreach { _ + (head -> false) }
-        trueAssignments.foreach { _ + (head -> true) }
-
-        falseAssignments ++ trueAssignments
+        falseAssignments.map(_ + (head -> false)) ++ trueAssignments.map(_ + (head -> true))
       }
     }
   }
 
-  def getDisjunktiveNormalForm(assignments: List[Assignment]): ScalaNode = assignments
-    .filter(as => as.get(BooleanQuestion.SOLUTION_VARIABLE))
-    .map {
-      as =>
-        as.variables.map(v => { if (as(v)) v else ScalaNode.not(v) })
-          .reduceLeft((v, restVs) => v and restVs)
+  def getNF(assignments: List[Assignment], takePos: Boolean, innerF: (ScalaNode, ScalaNode) => ScalaNode, outerF: (ScalaNode, ScalaNode) => ScalaNode) = assignments
+    .filter(takePos ^ _.get(BooleanQuestion.SOLUTION_VARIABLE))
+    .map(as => as.variables.map(v => if (takePos ^ as.get(v)) v else ScalaNode.not(v)).reduceLeft(innerF)) match {
+      case Nil => takePos
+      case l => l.reduceLeft(outerF)
     }
-    .reduceLeft((node, restNodes) => node or restNodes)
+  def getDisjunktiveNormalForm(assignments: List[Assignment]) = getNF(assignments, false, AndScalaNode(_, _), OrScalaNode(_, _))
 
-  def getKonjunktiveNormalForm(assignments: List[Assignment]) = assignments
-    .filter(as => !as.get(BooleanQuestion.SOLUTION_VARIABLE))
-    .map(as => {
-      as.variables.map(v => { if (as(v)) ScalaNode.not(v) else v })
-        .reduceLeft((v, restVs) => v or restVs)
-    }).reduceLeft((node, restNodes) => node and restNodes)
-
+  def getKonjunktiveNormalForm(assignments: List[Assignment]) = getNF(assignments, true, OrScalaNode(_, _), AndScalaNode(_, _))
 }

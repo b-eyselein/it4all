@@ -1,5 +1,7 @@
 @(user: model.user.User, question: model.FilloutQuestion)
 
+@vars = @{question.variables}
+
 @main("Wertetabelle", user) {
 <!-- Tooltip script -->
 <script>
@@ -22,13 +24,13 @@
             @for(v <- question.variables) {
               <th class="text-center">@v</th>
             }
-              <th class="text-center">@Html(question.getFormulaAsHtml())</th>
+              <th class="text-center">@Html(question.getFormulaAsHtml)</th>
             </tr>
           </thead>
           <tbody>
           @for(assignment <- question.assignments) {
             <tr>
-            @for(variable <- question.formula.usedVariables) {
+            @for(variable <- vars) {
               <td class="text-center">@assignment.asChar(variable)</td>
             }
               <td class="text-center">
@@ -43,7 +45,7 @@
     </div>
     <div class="row">
       <div class="col-sm-6 col-sm-offset-3">
-        <input hidden name="@model.StringConsts.FORM_VALUE" value="@question.getFormulaAsString()">
+        <input hidden name="@model.StringConsts.FORM_VALUE" value="@question.formulaAsString">
         <button class="btn btn-primary btn-block">Pr&uuml;fen</button>
       </div>
     </div>
