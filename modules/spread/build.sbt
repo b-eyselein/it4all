@@ -11,6 +11,9 @@ playEbeanModels in Compile := Seq("model.*")
 jacoco.settings
 
 libraryDependencies ++= Seq(
+  // org.apache.commons.*
+  "commons-io" % "commons-io" % "2.5",
+  
   // Apache POI for Excel
   "org.apache.poi" % "poi" % "3.16",
   "org.apache.poi" % "poi-excelant" % "3.16",
