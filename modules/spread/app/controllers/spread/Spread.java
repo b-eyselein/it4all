@@ -23,6 +23,7 @@ import play.mvc.Result;
 public class Spread extends ExerciseController {
 
   private static final String BODY_SOL_FILE_NAME = "solFile";
+  private static final String CORRECTION_ADD_STRING = "_Korrektur";
 
   @Inject
   public Spread(FormFactory theFactory) {
@@ -42,17 +43,16 @@ public class Spread extends ExerciseController {
     return ok(views.html.spreadExercises.render(getUser(), SpreadExercise.finder.all()));
   }
 
-  public Result download(int id, String typ) {
+  public Result download(int id, String extension) {
     User user = getUser();
     SpreadExercise exercise = SpreadExercise.finder.byId(id);
 
-    if(exercise == null)
+    if (exercise == null)
       return badRequest("This exercise does not exist!");
 
-    Path fileToDownload = Paths.get(BASE_DATA_PATH, SOLUTIONS_SUB_DIRECTORY, exerciseType,
-        exercise.templateFilename + "_Korrektur." + typ);
-    Logger.debug("Herunterladen von: " + fileToDownload);
-    if(!fileToDownload.toFile().exists())
+    Path fileToDownload = Paths.get(BASE_DATA_PATH, SOLUTIONS_SUB_DIRECTORY, user.name, exerciseType,
+        Integer.toString(exercise.id), exercise.templateFilename + CORRECTION_ADD_STRING + "." + extension);
+    if (!fileToDownload.toFile().exists())
       return badRequest(
           views.html.error.render(user, "<p>Die Korrigierte Datei existiert nicht!</p><p>Zur&uuml;ck zur <a href=\""
               + routes.Spread.index() + "\">&Uuml;bersichtsseite</a></p>"));
@@ -63,12 +63,12 @@ public class Spread extends ExerciseController {
   public Result downloadTemplate(int id, String fileType) {
     SpreadExercise exercise = SpreadExercise.finder.byId(id);
 
-    if(exercise == null)
+    if (exercise == null)
       return badRequest("This exercise does not exist!");
 
     Path filePath = Paths.get(getSampleDir().toString(), exercise.templateFilename + "." + fileType);
 
-    if(!filePath.toFile().exists())
+    if (!filePath.toFile().exists())
       return badRequest("This file does not exist!");
 
     return ok(filePath.toFile());
@@ -85,31 +85,28 @@ public class Spread extends ExerciseController {
     // Extract solution from request
     MultipartFormData<File> body = request().body().asMultipartFormData();
     FilePart<File> uploadedFile = body.getFile(BODY_SOL_FILE_NAME);
-    if(uploadedFile == null)
+    if (uploadedFile == null)
       return internalServerError(
           views.html.spreadcorrectionerror.render(user, "Datei konnte nicht hochgeladen werden!"));
     Path pathToUploadedFile = uploadedFile.getFile().toPath();
-    Logger.debug("Pfad der Abgabedatei: " + pathToUploadedFile);
     String fileExtension = com.google.common.io.Files.getFileExtension(uploadedFile.getFilename());
 
     // Save solution
     Path targetFilePath = getSolFileForExercise(exercise, exercise.templateFilename, fileExtension);
     boolean fileSuccessfullySaved = saveSolutionForUser(pathToUploadedFile, targetFilePath);
-    Logger.debug("Verschieben nach: " + targetFilePath);
-    if(!fileSuccessfullySaved)
+    if (!fileSuccessfullySaved)
       return internalServerError(
           views.html.spreadcorrectionerror.render(user, "Die Datei konnte nicht gespeichert werden!"));
 
     // Get paths to sample document
     Path sampleDocumentPath = Paths.get(getSampleDir().toString(), exercise.sampleFilename + "." + fileExtension);
-    Logger.debug("Pfad der Musterdatei: " + sampleDocumentPath);
-    if(!sampleDocumentPath.toFile().exists())
+    if (!sampleDocumentPath.toFile().exists())
       return internalServerError(
           views.html.spreadcorrectionerror.render(user, "Die Musterdatei konnte nicht gefunden werden!"));
 
     SpreadSheetCorrectionResult result = SpreadSheetCorrector.correct(sampleDocumentPath, targetFilePath, false, false);
 
-    if(result.isSuccess())
+    if (result.isSuccess())
       return ok(views.html.excelcorrect.render(user, result, exercise.id, fileExtension));
     else
       return internalServerError(views.html.spreadcorrectionerror.render(user, result.getNotices().get(0)));
@@ -119,8 +116,8 @@ public class Spread extends ExerciseController {
   private boolean saveSolutionForUser(Path uploadedSolution, Path targetFilePath) {
     try {
       Path solDirForExercise = targetFilePath.getParent();
-      if(!solDirForExercise.toFile().exists() && !solDirForExercise.toFile().isDirectory())
-        Files.createDirectories(solDirForExercise);
+      if (!solDirForExercise.toFile().exists() && !solDirForExercise.toFile().isDirectory())
+	Files.createDirectories(solDirForExercise);
 
       Files.move(uploadedSolution, targetFilePath, StandardCopyOption.REPLACE_EXISTING);
       return true;

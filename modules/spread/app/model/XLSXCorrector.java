@@ -294,7 +294,6 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
     try {
       if(!savePath.getParent().toFile().exists())
         Files.createDirectories(savePath.getParent());
-      
       FileOutputStream fileOut = new FileOutputStream(savePath.toFile());
       compareDocument.write(fileOut);
       fileOut.close();
