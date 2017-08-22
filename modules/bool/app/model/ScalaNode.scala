@@ -1,8 +1,6 @@
 package model
 
 import scala.language.implicitConversions
-import scala.language.postfixOps
-import scala.collection.JavaConverters._
 
 sealed abstract class ScalaNode {
   def evaluate(assignment: Assignment): Boolean
@@ -32,11 +30,11 @@ case class NotScalaNode(child: ScalaNode) extends ScalaNode {
     val inner = "not " + child.getAsString(needsParans)
     if (needsParans) "(" + inner + ")" else inner
   }
-  override def usedVariables = child usedVariables
+  override def usedVariables = child.usedVariables
 }
 
 case class Variable(variable: Char) extends ScalaNode with Ordered[Variable] {
-  override def evaluate(assignment: Assignment) = assignment get this
+  override def evaluate(assignment: Assignment) = assignment(this)
 
   override def negate() = ScalaNode.not(this)
 

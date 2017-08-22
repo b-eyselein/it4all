@@ -22,7 +22,7 @@ public abstract class SpreadCorrector<D, S, C, F, ColorType> {
   public abstract void compareSheet(S sampleTable, S compareTable, boolean conditionalFormating);
 
   public SpreadSheetCorrectionResult correct(Path samplePath, Path comparePath, boolean conditionalFormating,
-      boolean compareCharts) {
+      boolean compareCharts) throws CorrectionException {
     
     // Check if both documents exist as files
     if(!samplePath.toFile().exists())
@@ -91,7 +91,7 @@ public abstract class SpreadCorrector<D, S, C, F, ColorType> {
    *          - path to the document
    * @return the document if there is a document that can be loaded, else null
    */
-  public abstract D loadDocument(Path musterPath);
+  public abstract D loadDocument(Path musterPath) throws CorrectionException;
 
   public abstract void saveCorrectedSpreadsheet(D compareDocument, Path testPath);
 

@@ -6,6 +6,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -14,30 +16,51 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import model.CorrectionException;
 import model.XLSXCorrector;
 
 public class XLSXCorrectorTest {
 
-  private XLSXCorrector corrector = new XLSXCorrector();
-  private Path standardDocument = Paths.get("test/resources/spreadsheet/standard.xlsx");
+  private static final XLSXCorrector corrector = new XLSXCorrector();
 
-  private Path schullandheimDir = Paths.get("test/resources/spreadsheet/schullandheim");
-  private Path schullandheimMuster = Paths.get(schullandheimDir.toString(), "Aufgabe_Schullandheim_Muster.xlsx");
-  private Path schullandheimTeilLoesung = Paths.get(schullandheimDir.toString(), "Aufgabe_Schullandheim.xlsx");
+  private static final Path STD_DOC = Paths.get("test/resources/spreadsheet/standard.xlsx");
+
+  private static final Path TEST_DIR = Paths.get("test/resources/spreadsheet/schullandheim");
+  private static final Path TEST_MUSTER = Paths.get(TEST_DIR.toString(), "Aufgabe_Schullandheim_Muster.xlsx");
+  private static final Path TEST_SOLUTION = Paths.get(TEST_DIR.toString(), "Aufgabe_Schullandheim.xlsx");
+
+  private static final Path testMusterCopy = Paths.get(TEST_DIR.toString(), "testMusterCopy.xlsx");
+  private static final Path testSolutionCopy = Paths.get(TEST_DIR.toString(), "testSolutionCopy.xlsx");
+
+  @BeforeClass
+  public static void setUp() throws IOException {
+    // FIXME: copy all files...
+    Files.copy(TEST_MUSTER, testMusterCopy);
+    Files.copy(TEST_SOLUTION, testSolutionCopy);
+  }
+
+  @AfterClass
+  public static void tearDown() throws IOException {
+    // FIXME: delete all copied files...
+    Files.delete(testMusterCopy);
+    Files.delete(testSolutionCopy);
+  }
 
   @Test
-  public void testCloseDocument() {
-    Workbook document = corrector.loadDocument(schullandheimMuster);
+  public void testCloseDocument() throws CorrectionException {
+    Workbook document = corrector.loadDocument(testMusterCopy);
     assertNotNull(document);
     corrector.closeDocument(document);
   }
 
   @Test
-  public void testCompareCellFormulas() {
-    Workbook muster = corrector.loadDocument(schullandheimMuster);
-    Workbook teilLsg = corrector.loadDocument(schullandheimTeilLoesung);
+  public void testCompareCellFormulas() throws CorrectionException {
+    Workbook muster = corrector.loadDocument(testMusterCopy);
+    Workbook teilLsg = corrector.loadDocument(testSolutionCopy);
 
     XSSFCell musterCell = (XSSFCell) muster.getSheetAt(2).getRow(15).getCell(7);
     XSSFCell compareCell = (XSSFCell) teilLsg.getSheetAt(2).getRow(15).getCell(7);
@@ -61,9 +84,9 @@ public class XLSXCorrectorTest {
   }
 
   @Test
-  public void testCompareCellValues() {
-    Workbook muster = corrector.loadDocument(schullandheimMuster);
-    Workbook teilLsg = corrector.loadDocument(schullandheimTeilLoesung);
+  public void testCompareCellValues() throws CorrectionException {
+    Workbook muster = corrector.loadDocument(testMusterCopy);
+    Workbook teilLsg = corrector.loadDocument(testSolutionCopy);
 
     XSSFCell musterCell = (XSSFCell) muster.getSheetAt(2).getRow(15).getCell(7);
     XSSFCell compareCell = (XSSFCell) teilLsg.getSheetAt(2).getRow(15).getCell(7);
@@ -83,13 +106,13 @@ public class XLSXCorrectorTest {
   }
 
   @Test
-  public void testCompareChartsInSheet() {
+  public void testCompareChartsInSheet() throws CorrectionException {
 
-    Workbook muster = corrector.loadDocument(schullandheimMuster);
+    Workbook muster = corrector.loadDocument(testMusterCopy);
     assertThat(corrector.compareChartsInSheet(muster.getSheetAt(0), muster.getSheetAt(0)),
         equalTo("Es waren keine Diagramme zu erstellen."));
 
-    Workbook solution = corrector.loadDocument(schullandheimTeilLoesung);
+    Workbook solution = corrector.loadDocument(testSolutionCopy);
     assertThat(corrector.compareChartsInSheet(solution.getSheetAt(0), muster.getSheetAt(2)),
         equalTo("Falsche Anzahl an Diagrammen im Sheet (Erwartet: 2, Gefunden: 0)."));
 
@@ -100,8 +123,8 @@ public class XLSXCorrectorTest {
   }
 
   @Test
-  public void testCompareNumberOfChartsInDocument() {
-    Workbook document = corrector.loadDocument(standardDocument);
+  public void testCompareNumberOfChartsInDocument() throws CorrectionException {
+    Workbook document = corrector.loadDocument(STD_DOC);
     assertNull(corrector.compareNumberOfChartsInDocument(document, document));
   }
 
@@ -112,8 +135,8 @@ public class XLSXCorrectorTest {
   }
 
   @Test
-  public void testGetCellByPosition() {
-    Workbook muster = corrector.loadDocument(schullandheimMuster);
+  public void testGetCellByPosition() throws CorrectionException {
+    Workbook muster = corrector.loadDocument(testMusterCopy);
     Sheet musterSheet = corrector.getSheetByIndex(muster, 0);
     assertThat(corrector.getCellByPosition(musterSheet, 0, 0).toString(),
         equalTo(musterSheet.getRow(0).getCell(0).toString()));
@@ -127,8 +150,8 @@ public class XLSXCorrectorTest {
   }
 
   @Test
-  public void testGetColoredRange() {
-    Workbook muster = corrector.loadDocument(schullandheimMuster);
+  public void testGetColoredRange() throws CorrectionException {
+    Workbook muster = corrector.loadDocument(testMusterCopy);
     List<XSSFCell> coloredRange = corrector.getColoredRange(muster.getSheetAt(1));
     assertTrue(coloredRange.isEmpty());
 
@@ -148,13 +171,13 @@ public class XLSXCorrectorTest {
   }
 
   @Test
-  public void testGetSheetByIndex() {
-    Workbook document = corrector.loadDocument(standardDocument);
+  public void testGetSheetByIndex() throws CorrectionException {
+    Workbook document = corrector.loadDocument(STD_DOC);
     assertNotNull("Standarddokument konnte nicht geladen werden!", document);
     Sheet sheet = corrector.getSheetByIndex(document, 0);
     assertNotNull(sheet);
 
-    Workbook muster = corrector.loadDocument(schullandheimMuster);
+    Workbook muster = corrector.loadDocument(testMusterCopy);
     Sheet musterSheet = corrector.getSheetByIndex(muster, 0);
     assertNotNull(musterSheet);
     assertThat(musterSheet.getRow(0).getCell(0).toString(), equalTo("Verwalten und Auswerten von Daten"));
@@ -164,37 +187,37 @@ public class XLSXCorrectorTest {
   }
 
   @Test
-  public void testGetSheetCount() {
+  public void testGetSheetCount() throws CorrectionException {
     Workbook document = null;
 
-    document = corrector.loadDocument(standardDocument);
+    document = corrector.loadDocument(STD_DOC);
     assertNotNull("Standarddokument konnte nicht geladen werden!", document);
     assertThat(corrector.getSheetCount(document), equalTo(1));
 
-    document = corrector.loadDocument(schullandheimMuster);
+    document = corrector.loadDocument(testMusterCopy);
     assertThat(corrector.getSheetCount(document), equalTo(8));
 
-    document = corrector.loadDocument(schullandheimTeilLoesung);
+    document = corrector.loadDocument(testSolutionCopy);
     assertThat(corrector.getSheetCount(document), equalTo(8));
   }
 
   @Test
-  public void testLoadDocument() {
+  public void testLoadDocument() throws CorrectionException {
     Workbook document = null;
 
-    document = corrector.loadDocument(standardDocument);
+    document = corrector.loadDocument(STD_DOC);
     assertNotNull("Dokument standardDokument konnte nicht geladen werden!", document);
 
-    document = corrector.loadDocument(schullandheimMuster);
+    document = corrector.loadDocument(testMusterCopy);
     assertNotNull("Dokument schullandheimMuster konnte nicht geladen werden!", document);
 
-    document = corrector.loadDocument(schullandheimTeilLoesung);
+    document = corrector.loadDocument(testSolutionCopy);
     assertNotNull("Dokument schullandheimMuster konnte nicht geladen werden!", document);
   }
 
-  @Test
-  public void testLoadDocumentWithWrongPath() {
-    assertNull(corrector.loadDocument(Paths.get("")));
+  @Test(expected = CorrectionException.class)
+  public void testLoadDocumentWithWrongPath() throws CorrectionException {
+    corrector.loadDocument(Paths.get(""));
   }
 
   @Test
@@ -204,11 +227,11 @@ public class XLSXCorrectorTest {
   }
 
   @Test
-  public void testSetCellComment() {
+  public void testSetCellComment() throws CorrectionException {
     String message = "Dies ist eine Testnachricht!";
     String message2 = "Dies ist eine zweite  Testnachricht!";
 
-    Workbook document = corrector.loadDocument(standardDocument);
+    Workbook document = corrector.loadDocument(STD_DOC);
     XSSFCell cell = (XSSFCell) document.getSheetAt(0).getRow(0).getCell(0);
 
     assertNull(cell.getCellComment());

@@ -41,8 +41,8 @@ case class FilloutQuestion(val formula: ScalaNode, assignments: List[Assignment]
 
   def formulaAsString = formula.getAsString(false)
 
-  def isCorrect() = assignments.forall((a) => {
-    a.isSet(BooleanQuestion.LEARNER_VARIABLE) && a.get(BooleanQuestion.LEARNER_VARIABLE) == a.get(BooleanQuestion.SOLUTION_VARIABLE)
+  def isCorrect() = assignments.forall(as => {
+    as.isSet(BooleanQuestion.LEARNER_VARIABLE) && as(BooleanQuestion.LEARNER_VARIABLE) == as(BooleanQuestion.SOLUTION_VARIABLE)
   })
 }
 

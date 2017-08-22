@@ -9,11 +9,11 @@ class Assignment(assignments: Map[Variable, Boolean]) {
   val SOL_VAR = BooleanQuestion.SOLUTION_VARIABLE
   val LEA_VAR = BooleanQuestion.LEARNER_VARIABLE
 
-  def asChar(variable: Variable) = if (get(variable)) '1' else '0'
+  def asChar(variable: Variable) = if (apply(variable)) '1' else '0'
 
-  def get(variable: Variable) = assignments(variable)
+  def apply(variable: Variable) = assignments(variable)
 
-  def isCorrect = get(LEA_VAR) == get(SOL_VAR)
+  def isCorrect = apply(LEA_VAR) == apply(SOL_VAR)
 
   def getColor = if (isCorrect) "success" else "danger";
 
@@ -48,11 +48,12 @@ object Assignment {
   }
 
   def getNF(assignments: List[Assignment], takePos: Boolean, innerF: (ScalaNode, ScalaNode) => ScalaNode, outerF: (ScalaNode, ScalaNode) => ScalaNode) = assignments
-    .filter(takePos ^ _.get(BooleanQuestion.SOLUTION_VARIABLE))
-    .map(as => as.variables.map(v => if (takePos ^ as.get(v)) v else ScalaNode.not(v)).reduceLeft(innerF)) match {
+    .filter(takePos ^ _(BooleanQuestion.SOLUTION_VARIABLE))
+    .map(as => as.variables.map(v => if (takePos ^ as(v)) v else ScalaNode.not(v)).reduceLeft(innerF)) match {
       case Nil => takePos
       case l => l.reduceLeft(outerF)
     }
+  
   def getDisjunktiveNormalForm(assignments: List[Assignment]) = getNF(assignments, false, AndScalaNode(_, _), OrScalaNode(_, _))
 
   def getKonjunktiveNormalForm(assignments: List[Assignment]) = getNF(assignments, true, OrScalaNode(_, _), AndScalaNode(_, _))

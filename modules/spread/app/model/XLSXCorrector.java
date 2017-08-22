@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -273,12 +274,11 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
   }
   
   @Override
-  public Workbook loadDocument(Path path) {
+  public Workbook loadDocument(Path path) throws CorrectionException {
     try {
       return new XSSFWorkbook(path.toFile());
-    } catch (IOException | InvalidFormatException e) {
-      Logger.error("There has been an error loading a XSSFWorkbook", e);
-      return null;
+    } catch (IOException | InvalidFormatException | InvalidOperationException e) {
+      throw new CorrectionException("", "There has been an error loading a XSSFWorkbook", e);
     }
   }
   

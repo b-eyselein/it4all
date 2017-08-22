@@ -1,8 +1,6 @@
 package model
 
-import scala.language.postfixOps
 import scala.util.parsing.combinator._
-import java.util.Optional
 import ScalaNode._
 
 object ScalaNodeParser extends JavaTokenParsers {
@@ -38,7 +36,7 @@ object ScalaNodeParser extends JavaTokenParsers {
 
   private lazy val b_literal: Parser[ScalaNode] = ("1" | "true" | "TRUE") ^^ (x => TRUE) | ("0" | "false" | "FALSE") ^^ (x => FALSE)
 
-  private lazy val b_variable: Parser[Variable] = "[a-zA-Z]".r ^^ { _ charAt (0) toLower }
+  private lazy val b_variable: Parser[Variable] = "[a-zA-Z]".r ^^ { _.charAt (0).toLower }
 
   def parse(toParse: String): Option[ScalaNode] = parseAll(b_expression, toParse) match {
     case Success(result, input) => Some(result)

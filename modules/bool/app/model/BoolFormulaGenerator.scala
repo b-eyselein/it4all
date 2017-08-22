@@ -1,14 +1,13 @@
 package model;
 
 import model.ScalaNode._
-import scala.language.postfixOps
 import scala.util.Random
 
 object BoolFormulaGenerator {
 
   val RANDOM = new Random()
 
-  val allVars = 'a' to 'z' map toVariable toList
+  val allVars = ('a' to 'z').map(toVariable(_)).toList
 
   val MIN_VARS = 2
   val MAX_VARS = 3
