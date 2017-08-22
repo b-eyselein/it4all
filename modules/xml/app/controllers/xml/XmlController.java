@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import controllers.core.ExerciseController;
+import model.CorrectionException;
 import model.StringConsts;
 import model.XmlCorrector;
 import model.XmlError;
@@ -140,7 +141,11 @@ public class XmlController extends ExerciseController<XmlExercise, XmlError> {
       xml = saveXML(dir, learnerSolution, exercise);
     }
 
-    return XmlCorrector.correct(xml, grammar, exercise);
+    try {
+      return XmlCorrector.correct(xml, grammar, exercise);
+    } catch (CorrectionException e) {
+      return Arrays.asList(new XmlError(null, null));
+    }
   }
 
   @Override

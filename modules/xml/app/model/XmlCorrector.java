@@ -27,13 +27,13 @@ public class XmlCorrector {
   private static final DocumentBuilderFactory DOC_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
   private static final SchemaFactory SCHEMA_FACTORY = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI); // NOSONAR
 
-  private static DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+  private static final String PARSER_CREATION_ERROR = "There was an error creating the Parser: ";
 
   private XmlCorrector() {
     DOC_BUILDER_FACTORY.setValidating(true);
   }
 
-  public static List<XmlError> correct(Path xml, Path grammar, XmlExercise exercise) {
+  public static List<XmlError> correct(Path xml, Path grammar, XmlExercise exercise) throws CorrectionException {
     switch(exercise.getExerciseType()) {
     case XML_XSD:
       return correctXMLAgainstXSD(xml, grammar);
@@ -43,11 +43,8 @@ public class XmlCorrector {
       return correctDTDAgainstXML(xml);
     case XSD_XML:
     default:
-      return Collections.emptyList();
-    // return Arrays.asList(new EvaluationFailed("Dieser Aufgabentyp kann nicht
-    // korrigiert werden!"));
+      throw new CorrectionException("", "There has been an internal server error!");
     }
-
   }
 
   public static List<XmlError> correct(String xml, String grammar, XmlExType exType) {
@@ -67,18 +64,14 @@ public class XmlCorrector {
 
   }
 
-  public static List<XmlError> correctDTDAgainstXML(Path xml) {
+  public static List<XmlError> correctDTDAgainstXML(Path xml) throws CorrectionException {
     CorrectionErrorHandler errorHandler = new CorrectionErrorHandler();
-    factory.setValidating(true);
     try {
-      DocumentBuilder builder = factory.newDocumentBuilder();
+      DocumentBuilder builder = DOC_BUILDER_FACTORY.newDocumentBuilder();
       builder.setErrorHandler(errorHandler);
       builder.parse(xml.toFile());
     } catch (ParserConfigurationException e) {
-      Logger.error("There was an error creating the Parser: ", e);
-      return Collections.emptyList();
-      // return Arrays.asList(new EvaluationFailed("Es gab einen Fehler beim
-      // Korrigieren ihrer Lösung."));
+      throw new CorrectionException("", PARSER_CREATION_ERROR, e);
     } catch (SAXException | IOException e) { // NOSONAR
       Logger.info("Error: SAXException while correcting XML");
       // Errors are getting caught in error handler since they are made by
@@ -87,20 +80,16 @@ public class XmlCorrector {
     return errorHandler.getErrors();
   }
 
-  public static List<XmlError> correctXMLAgainstDTD(Path xml) {
+  public static List<XmlError> correctXMLAgainstDTD(Path xml) throws CorrectionException {
     CorrectionErrorHandler errorHandler = new CorrectionErrorHandler();
-    factory.setValidating(true);
     try {
-      DocumentBuilder builder = factory.newDocumentBuilder();
+      DocumentBuilder builder = DOC_BUILDER_FACTORY.newDocumentBuilder();
       builder.setErrorHandler(errorHandler);
       builder.parse(xml.toFile());
     } catch (ParserConfigurationException e) {
-      Logger.error("There was an error creating the Parser: ", e);
-      return Collections.emptyList();
-      // return Arrays.asList(new EvaluationFailed("Es gab einen Fehler beim
-      // Korrigieren ihrer Lösung."));
+      throw new CorrectionException("", PARSER_CREATION_ERROR, e);
     } catch (SAXException | IOException e) { // NOSONAR
-      // Errors are getting caught in error handler since they are made by
+      // Errors are getting caught in error handler since made by
       // learners
     }
     return errorHandler.getErrors();
@@ -124,8 +113,7 @@ public class XmlCorrector {
       validator.setErrorHandler(errorHandler);
       validator.validate(xmlFile);
     } catch (SAXException | IOException e) { // NOSONAR
-      // Errors are getting caught in error handler since they are made by
-      // learners
+      // Errors are getting caught in error handler since made by learners
     } catch (NullPointerException e) {
       Logger.error("Could not validate XSD-File", e);
       return Arrays.asList(new XmlError("Konnte XSD nicht validieren.", -1, XmlErrorType.FATALERROR));
@@ -139,10 +127,10 @@ public class XmlCorrector {
       DocumentBuilder builder = DOC_BUILDER_FACTORY.newDocumentBuilder();
       builder.setErrorHandler(errorHandler);
       builder.parse(new InputSource(xml));
-
     } catch (ParserConfigurationException e) {
-      Logger.error("There was an error creating the Parser: ", e);
+      Logger.error(PARSER_CREATION_ERROR, e);
     } catch (SAXException | IOException e) { // NOSONAR
+      // Errors are getting caught in error handler since made by learners
     }
     return errorHandler.getErrors();
   }
@@ -163,8 +151,7 @@ public class XmlCorrector {
       validator.setErrorHandler(errorHandler);
       validator.validate(xmlFile);
     } catch (SAXException | IOException e) { // NOSONAR
-      // Errors are getting caught in error handler since they are made by
-      // learners
+      // Errors are getting caught in error handler since made by learners
     } catch (NullPointerException e) {
       Logger.error("Could not validate XSD-File", e);
       return Arrays.asList(new XmlError("Konnte XSD nicht validieren.", -1, XmlErrorType.FATALERROR));
