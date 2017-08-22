@@ -14,6 +14,20 @@ case class NAryNumber(decimalValue: Int = 0, base: NumberBase) {
     NAryNumber.padBinary(binString.substring(Math.max(0, binString.length() - 8)))
   }
 
+  override def toString() = toString(false)
+
+  def toString(withBase: Boolean): String = {
+    var result = Integer.toString(Math.abs(decimalValue), base.base)
+
+    if (base == BINARY)
+      result = NAryNumber.padBinary(result)
+
+    if (decimalValue < 0)
+      result = '-' + result
+
+    if (withBase) result + "_" + base.base else result
+  }
+
 }
 
 object NAryNumber {
