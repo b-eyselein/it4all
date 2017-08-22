@@ -14,12 +14,12 @@ public class ExpressionMatcher extends Matcher<Expression, ExpressionMatch> {
         ExpressionMatch::new);
   }
   
-  public MatchingResult<Expression, ExpressionMatch> match(ExtractedExpressions userExps,
+  public MatchingResult<Expression, ExpressionMatch> matchExpressions(ExtractedExpressions userExps,
       ExtractedExpressions sampleExps) {
-    MatchingResult<Expression, ExpressionMatch> binMatch = super.match(userExps.getBinaryExpressions(),
+    MatchingResult<Expression, ExpressionMatch> binMatch = match(userExps.getBinaryExpressions(),
         sampleExps.getBinaryExpressions());
     
-    MatchingResult<Expression, ExpressionMatch> singleMatch = super.match(userExps.getOtherExpressions(),
+    MatchingResult<Expression, ExpressionMatch> singleMatch = match(userExps.getOtherExpressions(),
         sampleExps.getOtherExpressions());
     
     return MatchingResult.merge(binMatch, singleMatch);

@@ -75,7 +75,7 @@ public abstract class QueryCorrector<Q extends Statement> {
       return null;
     
     ExpressionMatcher binExMatcher = new ExpressionMatcher(userTableAliases, sampleQueryAliases);
-    return binExMatcher.match(userExps, sampleExps);
+    return binExMatcher.matchExpressions(userExps, sampleExps);
   }
   
   private ExtractedExpressions getExpressions(Q statement) {
