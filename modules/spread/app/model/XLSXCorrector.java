@@ -48,6 +48,32 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
   
   private static final String FORMULA_CORRECT = "Formel richtig.";
   
+  private static boolean compareChart(Sheet compareSheet, Sheet sampleSheet, List<String> messages, CTChart chartMaster,
+      CTChart chartCompare) throws CorrectionException {
+    if(chartCompare == null)
+      throw new CorrectionException("", "Sheet konnte nicht geöffnet werden!");
+    
+    String stringMaster = chartMaster.toString();
+    String stringCompare = chartCompare.toString();
+    // Compare Title
+    String title1 = RegExpHelper.getExcelChartTitle(stringMaster);
+    String title2 = RegExpHelper.getExcelChartTitle(stringCompare);
+    
+    if(!title1.equals(title2)) {
+      messages.add("Der Titel sollte " + title1 + " lauten.");
+      return false;
+    }
+    
+    // Compare ranges
+    String chDiff = RegExpHelper.getExcelChartRangesDiff(sampleSheet.getSheetName(), stringMaster,
+        compareSheet.getSheetName(), stringCompare);
+    if(!chDiff.isEmpty()) {
+      messages.add(" Folgende Bereiche sind falsch: " + chDiff);
+      return false;
+    }
+    return true;
+  }
+  
   private static String compareConditionalFormattings(ConditionalFormatting format1, ConditionalFormatting format2) {
     if(format2 == null)
       return "";
@@ -141,6 +167,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
   public String compareCellValues(XSSFCell masterCell, XSSFCell compareCell) {
     String masterCellValue = getStringValueOfCell(masterCell);
     String compareCellValue = getStringValueOfCell(compareCell);
+    
     if(compareCellValue.isEmpty())
       return "Keinen Wert angegeben!";
     else if(masterCellValue.equals(compareCellValue))
@@ -164,35 +191,23 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
           + ").";
     
     // TODO: refactor & test!
+    boolean allChartsCorrect = true;
     List<String> messages = new LinkedList<>();
     for(int i = 0; i < sampleChartCount; i++) {
       
       CTChart chartMaster = sampleDrawing.getCharts().get(i).getCTChart();
       CTChart chartCompare = compareDrawing.getCharts().get(i).getCTChart();
       
-      if(chartCompare == null)
-        messages.add("Sheet konnte nicht geöffnet werden!");
-      else {
-        messages.add("Diagramm falsch.");
-        String stringMaster = chartMaster.toString();
-        String stringCompare = chartCompare.toString();
-        // Compare Title
-        String title1 = RegExpHelper.getExcelChartTitle(stringMaster);
-        String title2 = RegExpHelper.getExcelChartTitle(stringCompare);
-        if(!title1.equals(title2)) {
-          messages.add(" Der Titel sollte " + title1 + " lauten.");
-        } else {
-          // Compare ranges
-          String chDiff = RegExpHelper.getExcelChartRangesDiff(sampleSheet.getSheetName(), stringMaster,
-              compareSheet.getSheetName(), stringCompare);
-          if(chDiff.isEmpty())
-            messages.add("Diagramm(e) richtig.");
-          else
-            messages.add(" Folgende Bereiche sind falsch: " + chDiff);
-        }
+      try {
+        allChartsCorrect &= compareChart(compareSheet, sampleSheet, messages, chartMaster, chartCompare);
+      } catch (CorrectionException e) {
+        return "Fehler beim Öffnen eines Charts!";
       }
     }
-    return String.join("\n", messages);
+    if(allChartsCorrect)
+      return "Diagramm(e) richtig.";
+    else
+      return String.join("\n", messages);
     
   }
   
