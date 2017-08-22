@@ -8,21 +8,24 @@ import java.util.stream.Collectors;
 import model.CorrectionException;
 import model.StringConsts;
 import model.conditioncorrector.ExpressionExtractor;
+import model.conditioncorrector.ExpressionMatch;
 import model.conditioncorrector.ExpressionMatcher;
 import model.conditioncorrector.ExtractedExpressions;
 import model.exercise.SqlExercise;
 import model.exercise.SqlSample;
 import model.matching.Match;
-import model.matching.Matcher;
 import model.matching.MatchingResult;
+import model.matching.StringEqualsMatcher;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
-import play.db.Database;
+import play.db.Database;;
 
 public abstract class QueryCorrector<Q extends Statement> {
+  
+  private static final StringEqualsMatcher TABLE_NAME_MATCHER = new StringEqualsMatcher(StringConsts.TABLES_NAME);
   
   private String queryType;
   
@@ -59,13 +62,12 @@ public abstract class QueryCorrector<Q extends Statement> {
   
   private MatchingResult<ColumnWrapper, ColumnMatch> compareColumns(Q userQuery, Map<String, String> userTableAliases,
       Q sampleQuery, Map<String, String> sampleTableAliases) {
-    return new ColumnMatcher().match(StringConsts.COLUMNS_NAME, getColumnWrappers(userQuery),
-        getColumnWrappers(sampleQuery));
-
+    return new ColumnMatcher().match(getColumnWrappers(userQuery), getColumnWrappers(sampleQuery));
+    
   }
   
-  private MatchingResult<Expression, Match<Expression>> compareWhereClauses(Q userQ,
-      Map<String, String> userTableAliases, Q sampleQ, Map<String, String> sampleQueryAliases) {
+  private MatchingResult<Expression, ExpressionMatch> compareWhereClauses(Q userQ, Map<String, String> userTableAliases,
+      Q sampleQ, Map<String, String> sampleQueryAliases) {
     ExtractedExpressions userExps = getExpressions(userQ);
     ExtractedExpressions sampleExps = getExpressions(sampleQ);
     
@@ -81,7 +83,7 @@ public abstract class QueryCorrector<Q extends Statement> {
   }
   
   protected MatchingResult<String, Match<String>> compareTables(Q userQ, Q sampleQ) {
-    return Matcher.STRING_EQ_MATCHER.match(StringConsts.TABLES_NAME, getTableNames(userQ), getTableNames(sampleQ));
+    return TABLE_NAME_MATCHER.match(getTableNames(userQ), getTableNames(sampleQ));
   }
   
   protected abstract SqlExecutionResult executeQuery(Database database, Q userStatement, Q sampleStatement,

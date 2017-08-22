@@ -2,9 +2,9 @@ package model.result;
 
 import model.UmlExercise;
 import model.exercise.Success;
-import model.matcher.UmlClassMatch;
 import model.matching.MatchingResult;
 import model.uml.UmlClass;
+import model.umlmatcher.UmlClassMatch;
 
 public abstract class UmlResult extends EvaluationResult {
 

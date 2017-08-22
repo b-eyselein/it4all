@@ -9,16 +9,15 @@ public enum MatchType {
   ONLY_USER("glyphicon glyphicon-remove"),
   ONLY_SAMPLE("glyphicon glyphicon-minus");
   // @formatter:on
-
+  
   private String glyphicon;
-
+  
   private MatchType(String theGlyphicon) {
     glyphicon = theGlyphicon;
   }
-
-  @Override
-  public String toString() {
+ 
+  public String getGlyphicon() {
     return glyphicon;
   }
-
+  
 }

@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import model.conditioncorrector.ExpressionMatch;
 import model.exercise.Success;
 import model.matching.Match;
 import model.matching.MatchingResult;
@@ -16,7 +17,7 @@ public class SqlResult extends EvaluationResult {
   
   protected MatchingResult<ColumnWrapper, ColumnMatch> columnComparison;
   
-  protected MatchingResult<Expression, Match<Expression>> whereComparison;
+  protected MatchingResult<Expression, ExpressionMatch> whereComparison;
   
   protected SqlExecutionResult executionResult;
   
@@ -60,7 +61,7 @@ public class SqlResult extends EvaluationResult {
     return tableComparison;
   }
   
-  public MatchingResult<Expression, Match<Expression>> getWhereComparison() {
+  public MatchingResult<Expression, ExpressionMatch> getWhereComparison() {
     return whereComparison;
   }
   
@@ -85,7 +86,7 @@ public class SqlResult extends EvaluationResult {
     return this;
   }
 
-  public SqlResult setWhereComparison(MatchingResult<Expression, Match<Expression>> theWhereComparison) {
+  public SqlResult setWhereComparison(MatchingResult<Expression, ExpressionMatch> theWhereComparison) {
     whereComparison = theWhereComparison;
     return this;
   }

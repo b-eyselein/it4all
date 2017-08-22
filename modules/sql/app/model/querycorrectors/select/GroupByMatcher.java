@@ -1,27 +1,22 @@
 package model.querycorrectors.select;
 
-import java.util.List;
+import java.util.function.BiPredicate;
 
 import model.matching.Match;
 import model.matching.Matcher;
-import model.matching.MatchingResult;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.schema.Column;
 
 public class GroupByMatcher extends Matcher<Expression, Match<Expression>> {
-
+  
+  private static final BiPredicate<Expression, Expression> GROUP_BY_TEST = (g1, g2) -> {
+    Column c1 = (Column) g1;
+    Column c2 = (Column) g2;
+    return c1.getColumnName().equals(c2.getColumnName());
+  };
+  
   public GroupByMatcher() {
-    super((g1, g2) -> ((Column) g1).getColumnName().equals(((Column) g2).getColumnName()));
+    super("Group By-Elemente", GROUP_BY_TEST, GroupByMatch::new);
   }
-
-  public MatchingResult<Expression, Match<Expression>> match(List<Expression> groupByColumnReferences1,
-      List<Expression> groupByColumnReferences2) {
-    return match("Group By-Elemente", groupByColumnReferences1, groupByColumnReferences2);
-  }
-
-  @Override
-  protected Match<Expression> instantiateMatch(Expression arg1, Expression arg2) {
-    return new GroupByMatch(arg1, arg2);
-  }
-
+  
 }

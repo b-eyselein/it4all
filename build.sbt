@@ -14,7 +14,7 @@ lazy val core: Project = (project in file("modules/core"))
 	)
 
 lazy val bool = (project in file("modules/bool"))
-	.enablePlugins(PlayScala)
+	.enablePlugins(PlayScala, PlayJava)
 	.dependsOn(core)
 
 lazy val mindmap = (project in file("modules/mindmap"))

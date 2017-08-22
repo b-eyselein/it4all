@@ -12,78 +12,58 @@
 
 <script>
 var defaultClasses = [@if(getsHelp) {@Html(exercise.getClassesForDiagDrawingHelp)}]
-
 var canDelete = @{!getsHelp};
 </script>
 
 <div class="container-fluid">
-
   <div class="row">
     <div class="col-md-6">
       <div class="page-header">
         <h1>@if(getsHelp) {Modellierung der Beziehungen} else {Freies Zeichnen}</h1>
       </div>
       
-      <div class="panel panel-default" id="text">
-        <div class="panel-heading">Aufgabentext</div>
-        <div class="panel-body">
-        @if(getsHelp) {
-          @exercise.getText
-        } else {
-          @Html(exercise.getDiagDrawText)
-        }
-        </div>
-      </div>
+      <h2 class="text-info"><i>Bearbeitungshinweise:</i></h2>
+      @if(getsHelp) {
+        <p>Vervollst&auml;ndigen Sie das vorliegende UML-Klassendiagramm weiter, indem Sie die Beziehungen zwischen den Klassen modellieren.</p>
+        <ul>
+          <li>W&auml;hlen Sie zuerst die Art der Beziehung durch das Aktivieren des jeweiligen Buttons aus.</li>
+          <li>Anschlie&szlig;end klicken Sie auf zuerst auf den Namen der Klasse und klicken dann auf die andere Klasse.</li>
+          <li>Im folgendem Popup-Fenster sollen Sie nun die Multiplizit&auml;ten zwischen den Klassen angeben.</li>
+          <li>Um bereits erstellte Beziehungen zu l&ouml;schen, hovern Sie mit der Maus &uuml;ber ihr und klicken auf das erscheinende rote Kreuz.</li>
+          <li>Nachdem Sie die Beziehungen, die Sie modellieren wollen, erstellt haben, k&ouml;nnen Sie die Ausgabe mittels Buttons verifizieren.</li>
+        </ul>
+      } else {
+        <p>Erstellen Sie ein UML-Klassendiagramm, indem Sie die Beziehungen zwischen den Klassen, inklusive Methoden und Attributen, modellieren.</p>
+        <ul>
+          <li>
+            <b>Klassen erzeugen:</b> Mittels Drag-and-Drop können Sie Wörter aus dem Aufgabentext in die rechts liegende Zeichenfläche ziehen um Klassen zu erzeugen.
+          </li>
+          <li>
+            <b>Klassen verschieben:</b> Mittels gedrückter Maustaste können Sie die jeweilige Klasse verschieben.
+          </li>
+          <li>
+            <b>Klassen löschen:</b> Klicken Sie auf den Button "Klasse löschen" und anschließend auf die Klasse. Sämtliche Beziehungen werden ebenfalls entfernt.
+          </li>
+          <li>
+            <b>Hinzufügen von Methoden / Attributen:</b> Klicken Sie auf den Button "Methode hinzufügen" bzw. "Attribut hinzufügen" und anschließend auf die Klasse. Mittels Pop-up können Sie den gewünschten Wert eintragen und mit "OK" bestätigen.
+          </li>
+          <li>
+            <b>Entfernen von Methoden / Attributen:</b> Klicken Sie auf den Button "Methode entfernen" bzw. "Attribut entfernen" und anschließend auf die Klasse. Mittels Pop-up können Sie die Stelle angeben, welche entfernt werden soll.(Beispiel. Der Eintrag 2 löscht den zweiten Eintrag in der entsprechenden Aufzählung 
+          </li>
+          <li>
+            <b>Beziehungen zwischen Klassen erstellen:</b> W&auml;hlen Sie zuerst die Art der Beziehung (z.B. Standard), durch das Aktivieren des jeweiligen Buttons aus.
+        Anschlie&szlig;end klicken Sie auf zuerst auf den Namen der Klasse und klicken dann auf die andere Klasse.
+        Im folgendem Popup-Fenster sollen Sie nun die Multiplizit&auml;ten zwischen den Klassen angeben.
+        Um bereits erstellte Beziehungen zu l&ouml;schen, hovern Sie mit der Maus &uuml;ber die Verbindung und klicken auf das erscheinende rote Kreuz.
+        Nachdem Sie alle Beziehungen modelliert haben, k&ouml;nnen Sie die Ausgabe mittels Buttons verifizieren.
+          </li>
+        </ul>
+      }
       
-      <div class="panel-group">
-        <div class="panel panel-info">
-          <div class="panel-heading">
-            <a data-toggle="collapse" href="#hints">Bearbeitungshinweise
-            <span class="glyphicon glyphicon-chevron-down pull-right"></span></a>
-          </div>
-          <div id="hints" class="panel-collapse collapse in">
-            <div class="panel-body">
-            @if(getsHelp) {
-              <p>Vervollst&auml;ndigen Sie das vorliegende UML-Klassendiagramm weiter, indem Sie die Beziehungen zwischen den Klassen modellieren.</p>
-              <ul>
-                <li>W&auml;hlen Sie zuerst die Art der Beziehung durch das Aktivieren des jeweiligen Buttons aus.</li>
-                <li>Anschlie&szlig;end klicken Sie auf zuerst auf den Namen der Klasse und klicken dann auf die andere Klasse.</li>
-                <li>Im folgendem Popup-Fenster sollen Sie nun die Multiplizit&auml;ten zwischen den Klassen angeben.</li>
-                <li>Um bereits erstellte Beziehungen zu l&ouml;schen, hovern Sie mit der Maus &uuml;ber ihr und klicken auf das erscheinende rote Kreuz.</li>
-                <li>Nachdem Sie die Beziehungen, die Sie modellieren wollen, erstellt haben, k&ouml;nnen Sie die Ausgabe mittels Buttons verifizieren.</li>
-              </ul>
-            } else {
-              <p>Erstellen Sie ein UML-Klassendiagramm, indem Sie die Beziehungen zwischen den Klassen, inklusive Methoden und Attributen, modellieren.</p>
-              <ul>
-                <li>
-                  <b>Klassen erzeugen:</b> Mittels Drag-and-Drop können Sie Wörter aus dem Aufgabentext in die rechts liegende Zeichenfläche ziehen um Klassen zu erzeugen.
-                </li>
-                <li>
-                  <b>Klassen verschieben:</b> Mittels gedrückter Maustaste können Sie die jeweilige Klasse verschieben.
-                </li>
-                <li>
-                  <b>Klassen löschen:</b> Klicken Sie auf den Button "Klasse löschen" und anschließend auf die Klasse. Sämtliche Beziehungen werden ebenfalls entfernt.
-                </li>
-                <li>
-                  <b>Hinzufügen von Methoden / Attributen:</b> Klicken Sie auf den Button "Methode hinzufügen" bzw. "Attribut hinzufügen" und anschließend auf die Klasse. Mittels Pop-up können Sie den gewünschten Wert eintragen und mit "OK" bestätigen.
-                </li>
-                <li>
-                  <b>Entfernen von Methoden / Attributen:</b> Klicken Sie auf den Button "Methode entfernen" bzw. "Attribut entfernen" und anschließend auf die Klasse. Mittels Pop-up können Sie die Stelle angeben, welche entfernt werden soll.(Beispiel. Der Eintrag 2 löscht den zweiten Eintrag in der entsprechenden Aufzählung 
-                </li>
-                <li>
-                  <b>Beziehungen zwischen Klassen erstellen:</b> W&auml;hlen Sie zuerst die Art der Beziehung (z.B. Standard), durch das Aktivieren des jeweiligen Buttons aus.
-              Anschlie&szlig;end klicken Sie auf zuerst auf den Namen der Klasse und klicken dann auf die andere Klasse.
-              Im folgendem Popup-Fenster sollen Sie nun die Multiplizit&auml;ten zwischen den Klassen angeben.
-              Um bereits erstellte Beziehungen zu l&ouml;schen, hovern Sie mit der Maus &uuml;ber die Verbindung und klicken auf das erscheinende rote Kreuz.
-              Nachdem Sie alle Beziehungen modelliert haben, k&ouml;nnen Sie die Ausgabe mittels Buttons verifizieren.
-                </li>
-              </ul>
-            }
-              
-            </div>
-          </div>
-        </div>
-      </div>
+      <hr>
+      
+      <h2>Aufgabentext</h2>
+      <div class="well">@if(getsHelp) { @exercise.getText } else { @Html(exercise.getDiagDrawText) }</div>
       
       <div class="panel panel-default">
         <div class="panel-heading">DEBUG:</div>
@@ -96,11 +76,8 @@ var canDelete = @{!getsHelp};
       <hr>
       
       <form method="post" onsubmit="return prepareFormForSubmitting();"
-      @if(getsHelp) {
-        action="@uml.routes.UmlController.correctDiagramDrawingWithHelp(exercise.getId)"
-      } else {
-        action="@uml.routes.UmlController.correctDiagramDrawing(exercise.getId)"
-      }>
+      @if(getsHelp) { action="@uml.routes.UmlController.correctDiagramDrawingWithHelp(exercise.getId)"
+  	  } else { action="@uml.routes.UmlController.correctDiagramDrawing(exercise.getId)" }>
         <input type="hidden" value="" class="form-control" name="learnerSolution" id="learnerSolution" required>
         <button class="btn btn-primary btn-block">Aufgabe verifizieren</button>
       </form>

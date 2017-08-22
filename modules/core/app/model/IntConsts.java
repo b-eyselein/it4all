@@ -8,6 +8,6 @@ public abstract class IntConsts {
 
   private IntConsts() {
 
-  };
+  }
 
 }

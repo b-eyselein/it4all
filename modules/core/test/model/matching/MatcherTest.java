@@ -8,7 +8,7 @@ public class MatcherTest {
   
   @Test
   public void testStringMatcher() {
-    Matcher.STRING_EQ_MATCHER.match("", Arrays.asList("First List"), Arrays.asList("Second List"));
+    new StringEqualsMatcher("TestString").match(Arrays.asList("First List"), Arrays.asList("Second List"));
   }
   
 }

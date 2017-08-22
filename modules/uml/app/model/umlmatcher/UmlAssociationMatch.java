@@ -1,4 +1,4 @@
-package model.matcher;
+package model.umlmatcher;
 
 import model.matching.Match;
 import model.matching.MatchType;
@@ -22,7 +22,7 @@ public class UmlAssociationMatch extends Match<UmlAssociation> {
     if(multiplicitiesEqual)
       return userArg.multsAsString();
     else
-      return sampleArg.multsAsString(AssociationMatcher.endsCrossedEqual(userArg, sampleArg));
+      return sampleArg.multsAsString(UmlAssociationMatcher.endsCrossedEqual(userArg, sampleArg));
   }
   
   public boolean isAssocTypeEqual() {
@@ -37,7 +37,7 @@ public class UmlAssociationMatch extends Match<UmlAssociation> {
   protected MatchType analyze(UmlAssociation assoc1, UmlAssociation assoc2) {
     assocTypeEqual = userArg.getAssocType() == sampleArg.getAssocType();
     
-    if(AssociationMatcher.endsParallelEqual(userArg, sampleArg))
+    if(UmlAssociationMatcher.endsParallelEqual(userArg, sampleArg))
       multiplicitiesEqual = userArg.getEnds().get(0).getMultiplicity() == sampleArg.getEnds().get(0).getMultiplicity()
           && userArg.getEnds().get(1).getMultiplicity() == sampleArg.getEnds().get(1).getMultiplicity();
     else

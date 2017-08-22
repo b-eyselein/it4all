@@ -1,4 +1,4 @@
-package model.matcher;
+package model.umlmatcher;
 
 import model.matching.Match;
 import model.matching.MatchType;

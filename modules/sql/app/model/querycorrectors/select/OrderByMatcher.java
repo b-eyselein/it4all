@@ -1,25 +1,21 @@
 package model.querycorrectors.select;
 
-import java.util.List;
+import java.util.function.BiPredicate;
 
 import model.matching.Matcher;
-import model.matching.MatchingResult;
+import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.OrderByElement;
 
 public class OrderByMatcher extends Matcher<OrderByElement, OrderByMatch> {
-
+  
+  private static final BiPredicate<OrderByElement, OrderByElement> ORDER_BY_TEST = (ob1, ob2) -> {
+    Expression exp1 = ob1.getExpression();
+    Expression exp2 = ob2.getExpression();
+    return exp1.toString().equals(exp2.toString());
+  };
+  
   public OrderByMatcher() {
-    super((ob1, ob2) -> ob1.getExpression().toString().equals(ob2.getExpression().toString()));
+    super("Order By-Elemente", ORDER_BY_TEST, OrderByMatch::new);
   }
-
-  public MatchingResult<OrderByElement, OrderByMatch> match(List<OrderByElement> orderByElements1,
-      List<OrderByElement> orderByElements2) {
-    return match("Order By-Elemente", orderByElements1, orderByElements2);
-  }
-
-  @Override
-  protected OrderByMatch instantiateMatch(OrderByElement arg1, OrderByElement arg2) {
-    return new OrderByMatch(arg1, arg2);
-  }
-
+  
 }
