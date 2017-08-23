@@ -7,7 +7,7 @@ import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.schema.Column;
 
-public class ExpressionBiPredicate implements BiPredicate<Expression, Expression> {
+class ExpressionBiPredicate implements BiPredicate<Expression, Expression> {
   
   private Map<String, String> userTableAliases;
   private Map<String, String> sampleTableAliases;

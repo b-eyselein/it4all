@@ -67,332 +67,266 @@ import net.sf.jsqlparser.expression.operators.relational.RegExpMatchOperator;
 import net.sf.jsqlparser.expression.operators.relational.RegExpMySQLOperator;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.SubSelect;
+import scala.collection.mutable.ListBuffer
 
-public class ExpressionExtractor implements ExpressionVisitor {
-  
-  private List<BinaryExpression> singleExpressions = new LinkedList<>();
-  private List<Expression> otherExpressions = new LinkedList<>();
+class ExpressionExtractor(expression: Expression) extends ExpressionVisitor {
 
-  private Expression expression;
-  
+  val singleExpressions: ListBuffer[BinaryExpression] = new ListBuffer()
+  val otherExpressions: ListBuffer[Expression] = new ListBuffer()
+
   // FIXME: compare compelte tree with and, or ...
-  
-  public ExpressionExtractor(Expression theExpression) {
-    expression = theExpression;
+
+  def extract: ExtractedExpressions = {
+    if (expression != null)
+      expression.accept(this)
+
+    new ExtractedExpressions(singleExpressions.toList, otherExpressions.toList)
   }
-  
-  public ExtractedExpressions extract() {
-    if(expression != null)
-      expression.accept(this);
-    
-    return new ExtractedExpressions(singleExpressions, otherExpressions);
-  }
-  
-  @Override
-  public void visit(Addition addition) {
+
+  override def visit(addition: Addition) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(AllComparisonExpression allComparisonExpression) {
+
+  override def visit(allComparisonExpression: AllComparisonExpression) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(AnalyticExpression aexpr) {
+
+  override def visit(aexpr: AnalyticExpression) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(AndExpression andExpression) {
-    andExpression.getLeftExpression().accept(this);
-    andExpression.getRightExpression().accept(this);
+
+  override def visit(andExpression: AndExpression) {
+    andExpression.getLeftExpression.accept(this)
+    andExpression.getRightExpression.accept(this)
   }
-  
-  @Override
-  public void visit(AnyComparisonExpression anyComparisonExpression) {
+
+  override def visit(anyComparisonExpression: AnyComparisonExpression) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(Between between) {
+
+  override def visit(between: Between) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(BitwiseAnd bitwiseAnd) {
-    singleExpressions.add(bitwiseAnd);
+
+  override def visit(bitwiseAnd: BitwiseAnd) {
+    singleExpressions += bitwiseAnd
   }
-  
-  @Override
-  public void visit(BitwiseOr bitwiseOr) {
-    singleExpressions.add(bitwiseOr);
+
+  override def visit(bitwiseOr: BitwiseOr) {
+    singleExpressions += bitwiseOr
   }
-  
-  @Override
-  public void visit(BitwiseXor bitwiseXor) {
-    singleExpressions.add(bitwiseXor);
+
+  override def visit(bitwiseXor: BitwiseXor) {
+    singleExpressions += bitwiseXor
   }
-  
-  @Override
-  public void visit(CaseExpression caseExpression) {
+
+  override def visit(caseExpression: CaseExpression) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(CastExpression cast) {
+
+  override def visit(cast: CastExpression) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(Column tableColumn) {
+
+  override def visit(tableColumn: Column) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(Concat concat) {
+
+  override def visit(concat: Concat) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(DateTimeLiteralExpression dateTimeExpression) {
+
+  override def visit(dateTimeExpression: DateTimeLiteralExpression) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(DateValue dateValue) {
+
+  override def visit(dateValue: DateValue) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(Division division) {
+
+  override def visit(division: Division) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(DoubleValue doubleValue) {
+
+  override def visit(doubleValue: DoubleValue) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(EqualsTo equalsTo) {
-    singleExpressions.add(equalsTo);
+
+  override def visit(equalsTo: EqualsTo) {
+    singleExpressions += equalsTo
   }
-  
-  @Override
-  public void visit(ExistsExpression existsExpression) {
+
+  override def visit(existsExpression: ExistsExpression) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(ExtractExpression eexpr) {
+
+  override def visit(extractExpression: ExtractExpression) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(Function function) {
+
+  override def visit(function: Function) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(GreaterThan greaterThan) {
-    singleExpressions.add(greaterThan);
+
+  override def visit(greaterThan: GreaterThan) {
+    singleExpressions += greaterThan
   }
-  
-  @Override
-  public void visit(GreaterThanEquals greaterThanEquals) {
-    singleExpressions.add(greaterThanEquals);
+
+  override def visit(greaterThanEquals: GreaterThanEquals) {
+    singleExpressions += greaterThanEquals
   }
-  
-  @Override
-  public void visit(HexValue hexValue) {
+
+  override def visit(hexValue: HexValue) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(InExpression inExpression) {
+
+  override def visit(inExpression: InExpression) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(IntervalExpression iexpr) {
+
+  override def visit(iexpr: IntervalExpression) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(IsNullExpression isNullExpression) {
-    otherExpressions.add(isNullExpression);
+
+  override def visit(isNullExpression: IsNullExpression) {
+    otherExpressions += isNullExpression
   }
-  
-  @Override
-  public void visit(JdbcNamedParameter jdbcNamedParameter) {
+
+  override def visit(jdbcNamedParameter: JdbcNamedParameter) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(JdbcParameter jdbcParameter) {
+
+  override def visit(jdbcParameter: JdbcParameter) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(JsonExpression jsonExpr) {
+
+  override def visit(jsonExpr: JsonExpression) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(JsonOperator jsonOperator) {
+
+  override def visit(jsonOperator: JsonOperator) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(KeepExpression aexpr) {
+
+  override def visit(aexpr: KeepExpression) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(LikeExpression likeExpression) {
-    singleExpressions.add(likeExpression);
-    
+
+  override def visit(likeExpression: LikeExpression) {
+    singleExpressions += likeExpression
+
   }
-  
-  @Override
-  public void visit(LongValue longValue) {
+
+  override def visit(longValue: LongValue) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(Matches matches) {
-    singleExpressions.add(matches);
+
+  override def visit(matches: Matches) {
+    singleExpressions += matches
   }
-  
-  @Override
-  public void visit(MinorThan minorThan) {
-    singleExpressions.add(minorThan);
+
+  override def visit(minorThan: MinorThan) {
+    singleExpressions += minorThan
   }
-  
-  @Override
-  public void visit(MinorThanEquals minorThanEquals) {
-    singleExpressions.add(minorThanEquals);
+
+  override def visit(minorThanEquals: MinorThanEquals) {
+    singleExpressions += minorThanEquals
   }
-  
-  @Override
-  public void visit(Modulo modulo) {
+
+  override def visit(modulo: Modulo) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(Multiplication multiplication) {
+
+  override def visit(multiplication: Multiplication) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(MySQLGroupConcat groupConcat) {
+
+  override def visit(groupConcat: MySQLGroupConcat) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(NotEqualsTo notEqualsTo) {
-    singleExpressions.add(notEqualsTo);
+
+  override def visit(notEqualsTo: NotEqualsTo) {
+    singleExpressions += notEqualsTo
   }
-  
-  @Override
-  public void visit(NotExpression notExpression) {
+
+  override def visit(notExpression: NotExpression) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(NullValue nullValue) {
+
+  override def visit(nullValue: NullValue) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(NumericBind bind) {
+
+  override def visit(bind: NumericBind) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(OracleHierarchicalExpression oexpr) {
+
+  override def visit(oexpr: OracleHierarchicalExpression) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(OracleHint hint) {
+
+  override def visit(hint: OracleHint) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(OrExpression orExpression) {
-    orExpression.getLeftExpression().accept(this);
-    orExpression.getRightExpression().accept(this);
+
+  override def visit(orExpression: OrExpression) {
+    orExpression.getLeftExpression.accept(this)
+    orExpression.getRightExpression.accept(this)
   }
-  
-  @Override
-  public void visit(Parenthesis parenthesis) {
-    parenthesis.getExpression().accept(this);
+
+  override def visit(parenthesis: Parenthesis) {
+    parenthesis.getExpression.accept(this)
   }
-  
-  @Override
-  public void visit(RegExpMatchOperator rexpr) {
+
+  override def visit(rexpr: RegExpMatchOperator) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(RegExpMySQLOperator regExpMySQLOperator) {
+
+  override def visit(regExpMySQLOperator: RegExpMySQLOperator) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(RowConstructor rowConstructor) {
+
+  override def visit(rowConstructor: RowConstructor) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(SignedExpression signedExpression) {
+
+  override def visit(signedExpression: SignedExpression) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(StringValue stringValue) {
+
+  override def visit(stringValue: StringValue) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(SubSelect subSelect) {
+
+  override def visit(subSelect: SubSelect) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(Subtraction subtraction) {
+
+  override def visit(subtraction: Subtraction) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(TimeKeyExpression timeKeyExpression) {
+
+  override def visit(timeKeyExpression: TimeKeyExpression) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(TimestampValue timestampValue) {
+
+  override def visit(timestampValue: TimestampValue) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(TimeValue timeValue) {
+
+  override def visit(timeValue: TimeValue) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(UserVariable var) {
+
+  override def visit(variable: UserVariable) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(WhenClause whenClause) {
+
+  override def visit(whenClause: WhenClause) {
     // Ignore this type of expression
   }
-  
-  @Override
-  public void visit(WithinGroupExpression wgexpr) {
+
+  override def visit(wgexpr: WithinGroupExpression) {
     // Ignore this type of expression
   }
 }

@@ -1,75 +1,73 @@
 package model.querycorrectors
 
-import scala.collection.JavaConverters._
+import scala.collection.JavaConverters.mapAsJavaMapConverter
+import scala.collection.JavaConverters.seqAsJavaListConverter
+
 import model.CorrectionException
 import model.StringConsts
 import model.conditioncorrector.ExpressionExtractor
-import model.conditioncorrector.ExpressionMatch
 import model.conditioncorrector.ExpressionMatcher
-import model.conditioncorrector.ExtractedExpressions
 import model.exercise.SqlExercise
 import model.exercise.SqlSample
-import model.matching.Match
-import model.matching.MatchingResult
+import model.matching.ScalaMatchingResult
 import model.matching.StringEqualsMatcher
 import net.sf.jsqlparser.JSQLParserException
 import net.sf.jsqlparser.expression.Expression
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.schema.Table
-import net.sf.jsqlparser.statement.Statement
 import play.db.Database
+import scala.util.Try
+import scala.util.Failure
+import scala.util.Success
+import model.matching.ScalaMatchingResult
+import model.matching.ScalaStringMatcher
 
-abstract class ScalaQueryCorrector[Q <: Statement](queryType: String) {
+abstract class ScalaQueryCorrector(queryType: String) {
 
-  val TABLE_NAME_MATCHER = new StringEqualsMatcher(StringConsts.TABLES_NAME)
+  type Q <: net.sf.jsqlparser.statement.Statement
 
-  def correct(database: Database, learnerSolution: String, sampleStatement: SqlSample, exercise: SqlExercise): SqlResult = {
+  type AliasMap = Map[String, String]
+
+  val TABLE_NAME_MATCHER = new ScalaStringMatcher(StringConsts.TABLES_NAME)
+
+  def correct(database: Database, learnerSolution: String, sampleStatement: SqlSample, exercise: SqlExercise): ScalaSqlResult = {
     val userQ = parseStatement(learnerSolution)
     val sampleQ = parseStatement(sampleStatement.sample)
 
-    val userTableAliases = resolveAliases(userQ)
-    val sampleTableAliases = resolveAliases(sampleQ)
+    val (userTAliases, sampleTAliases) = (resolveAliases(userQ), resolveAliases(sampleQ))
 
-    new SqlResult(learnerSolution)
-      .setTableComparison(compareTables(userQ, sampleQ))
-      .setColumnComparison(compareColumns(userQ, userTableAliases, sampleQ, sampleTableAliases))
-      .setWhereComparison(compareWhereClauses(userQ, userTableAliases, sampleQ, sampleTableAliases))
-      .setExecutionResult(executeQuery(database, userQ, sampleQ, exercise))
-      .setOtherComparisons(makeOtherComparisons(userQ, sampleQ).asJava)
+    new ScalaSqlResult(learnerSolution,
+      tableComparison = compareTables(userQ, sampleQ),
+      columnComparison = compareColumns(userQ, userTAliases, sampleQ, sampleTAliases),
+      whereComparison = compareWhereClauses(userQ, userTAliases, sampleQ, sampleTAliases),
+      executionResult = executeQuery(database, userQ, sampleQ, exercise) match {
+        case Success(executionResult) => executionResult
+        case Failure(cause) => throw new CorrectionException(learnerSolution, "Es gab einen Fehler bei der Ausführung des Statements ", cause)
+      },
+      otherComparisons = makeOtherComparisons(userQ, sampleQ))
   }
 
-  def compareColumns(userQuery: Q, userTableAliases: Map[String, String], sampleQuery: Q, sampleTableAliases: Map[String, String]) =
-    new ColumnMatcher().doMatch(getColumnWrappers(userQuery).asJava, getColumnWrappers(sampleQuery).asJava)
+  def compareColumns(userQ: Q, userTAliases: AliasMap, sampleQ: Q, sampleTAliases: AliasMap) =
+    new ColumnMatcher().doMatch(getColumnWrappers(userQ), getColumnWrappers(sampleQ))
 
-  def compareWhereClauses(userQ: Q, userTableAliases: Map[String, String], sampleQ: Q, sampleQueryAliases: Map[String, String]) = {
-    val userExps = getExpressions(userQ)
-    val sampleExps = getExpressions(sampleQ)
-
-    if (userExps.isEmpty() && sampleExps.isEmpty())
-      null
-
-    val binExMatcher = new ExpressionMatcher(userTableAliases.asJava, sampleQueryAliases.asJava)
-    binExMatcher.matchExpressions(userExps, sampleExps)
-  }
+  def compareWhereClauses(userQ: Q, userTAliases: AliasMap, sampleQ: Q, sampleTAliases: AliasMap) =
+    new ExpressionMatcher(userTAliases, sampleTAliases).matchExpressions(getExpressions(userQ), getExpressions(sampleQ))
 
   def getExpressions(statement: Q) = new ExpressionExtractor(getWhere(statement)).extract()
 
-  def compareTables(userQ: Q, sampleQ: Q) = TABLE_NAME_MATCHER.doMatch(getTableNames(userQ).asJava, getTableNames(sampleQ).asJava)
-  
-  def parseStatement(statement: String) = try {
-    CCJSqlParserUtil.parse(statement).asInstanceOf[Q]
-  } catch {
+  def compareTables(userQ: Q, sampleQ: Q) = TABLE_NAME_MATCHER.doMatch(getTableNames(userQ), getTableNames(sampleQ))
+
+  def parseStatement(statement: String) = try { CCJSqlParserUtil.parse(statement).asInstanceOf[Q] } catch {
     case e: JSQLParserException => throw new CorrectionException(statement, "Es gab einen Fehler beim Parsen des Statements: " + statement, e)
     case e: ClassCastException => throw new CorrectionException(statement, "Das Statement war vom falschen Typ! Erwartet wurde " + queryType + "!", e)
   }
 
-  def resolveAliases(query: Q): Map[String, String] = getTables(query)
-    .filter(table => table != null && table.getAlias() != null)
-    .map(t => t.getAlias().getName() -> t.getName).toMap
-  
-  def executeQuery(database: Database, userStatement: Q, sampleStatement: Q, exercise: SqlExercise): SqlExecutionResult
+  def resolveAliases(query: Q): AliasMap = getTables(query)
+    .filter(table => table != null && table.getAlias != null).map(t => t.getAlias.getName -> t.getName).toMap
 
-  def getColumnWrappers(query: Q): List[ColumnWrapper]
+  def executeQuery(database: Database, userStatement: Q, sampleStatement: Q, exercise: SqlExercise): Try[SqlExecutionResult]
+
+  def getColumnWrappers(query: Q): List[ScalaColumnWrapper]
 
   def getTableNames(query: Q): List[String]
 
@@ -77,7 +75,6 @@ abstract class ScalaQueryCorrector[Q <: Statement](queryType: String) {
 
   def getWhere(query: Q): Expression
 
-  def makeOtherComparisons(userQ: Q, sampleQ: Q): List[MatchingResult[_, _]]
-
+  def makeOtherComparisons(userQ: Q, sampleQ: Q): List[ScalaMatchingResult[_, _]]
 
 }

@@ -3,7 +3,7 @@ package model.matching
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ListBuffer
 
-abstract class ScalaMatcher[T, M <: ScalaMatch[T]](matchName: String, canMatch: (T, T) => Boolean, matchInstantiation: (Option[T], Option[T]) => M) {
+class ScalaMatcher[T, M <: ScalaMatch[T]](matchName: String, canMatch: (T, T) => Boolean, matchInstantiation: (Option[T], Option[T]) => M) {
 
   def doMatch(firstCollection: List[T], secondCollection: List[T]) = {
     val matches: ListBuffer[M] = ListBuffer.empty
