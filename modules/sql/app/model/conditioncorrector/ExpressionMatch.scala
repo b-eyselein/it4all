@@ -1,19 +1,12 @@
 package model.conditioncorrector;
 
-import model.matching.Match;
+import model.matching.ScalaMatch;
 import model.matching.MatchType;
 import net.sf.jsqlparser.expression.Expression;
 
-public class ExpressionMatch extends Match<Expression> {
+class ExpressionMatch(arg1: Option[Expression], arg2: Option[Expression]) extends ScalaMatch[Expression](arg1, arg2) {
 
-  public ExpressionMatch(Expression theArg1, Expression theArg2) {
-    super(theArg1, theArg2);
-  }
-
-  @Override
-  protected MatchType analyze(Expression theArg1, Expression theArg2) {
-    // FIXME: can only be successful match (see @ExpressionBiPredicate...)
-    return MatchType.SUCCESSFUL_MATCH;
-  }
+  // FIXME: can only be successful match (see @ExpressionBiPredicate...)
+  override val analyze(userArg: Expression, sampleArg: Expression) = MatchType.SUCCESSFUL_MATCH;
 
 }
