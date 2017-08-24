@@ -2,89 +2,24 @@ package model.conditioncorrector;
 
 import scala.collection.mutable.ListBuffer
 
-import net.sf.jsqlparser.expression.AllComparisonExpression
-import net.sf.jsqlparser.expression.AnalyticExpression
-import net.sf.jsqlparser.expression.AnyComparisonExpression
-import net.sf.jsqlparser.expression.BinaryExpression
-import net.sf.jsqlparser.expression.CaseExpression
-import net.sf.jsqlparser.expression.CastExpression
-import net.sf.jsqlparser.expression.DateTimeLiteralExpression
-import net.sf.jsqlparser.expression.DateValue
-import net.sf.jsqlparser.expression.DoubleValue
-import net.sf.jsqlparser.expression.Expression
-import net.sf.jsqlparser.expression.ExpressionVisitor
-import net.sf.jsqlparser.expression.ExtractExpression
-import net.sf.jsqlparser.expression.HexValue
-import net.sf.jsqlparser.expression.IntervalExpression
-import net.sf.jsqlparser.expression.JdbcNamedParameter
-import net.sf.jsqlparser.expression.JdbcParameter
-import net.sf.jsqlparser.expression.JsonExpression
-import net.sf.jsqlparser.expression.KeepExpression
-import net.sf.jsqlparser.expression.LongValue
-import net.sf.jsqlparser.expression.MySQLGroupConcat
-import net.sf.jsqlparser.expression.Function
-import net.sf.jsqlparser.expression.NotExpression
-import net.sf.jsqlparser.expression.NullValue
-import net.sf.jsqlparser.expression.NumericBind
-import net.sf.jsqlparser.expression.OracleHierarchicalExpression
-import net.sf.jsqlparser.expression.OracleHint
-import net.sf.jsqlparser.expression.Parenthesis
-import net.sf.jsqlparser.expression.RowConstructor
-import net.sf.jsqlparser.expression.SignedExpression
-import net.sf.jsqlparser.expression.StringValue
-import net.sf.jsqlparser.expression.TimeKeyExpression
-import net.sf.jsqlparser.expression.TimeValue
-import net.sf.jsqlparser.expression.TimestampValue
-import net.sf.jsqlparser.expression.UserVariable
-import net.sf.jsqlparser.expression.WhenClause
-import net.sf.jsqlparser.expression.WithinGroupExpression
-import net.sf.jsqlparser.expression.operators.arithmetic.Addition
-import net.sf.jsqlparser.expression.operators.arithmetic.BitwiseAnd
-import net.sf.jsqlparser.expression.operators.arithmetic.BitwiseOr
-import net.sf.jsqlparser.expression.operators.arithmetic.BitwiseXor
-import net.sf.jsqlparser.expression.operators.arithmetic.Concat
-import net.sf.jsqlparser.expression.operators.arithmetic.Division
-import net.sf.jsqlparser.expression.operators.arithmetic.Modulo
-import net.sf.jsqlparser.expression.operators.arithmetic.Multiplication
-import net.sf.jsqlparser.expression.operators.arithmetic.Subtraction
+import net.sf.jsqlparser.expression._
+import net.sf.jsqlparser.expression.operators.arithmetic._
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression
-import net.sf.jsqlparser.expression.operators.relational.Between
-import net.sf.jsqlparser.expression.operators.relational.EqualsTo
-import net.sf.jsqlparser.expression.operators.relational.ExistsExpression
-import net.sf.jsqlparser.expression.operators.relational.GreaterThan
-import net.sf.jsqlparser.expression.operators.relational.GreaterThanEquals
-import net.sf.jsqlparser.expression.operators.relational.InExpression
-import net.sf.jsqlparser.expression.operators.relational.IsNullExpression
-import net.sf.jsqlparser.expression.operators.relational.JsonOperator
-import net.sf.jsqlparser.expression.operators.relational.LikeExpression
-import net.sf.jsqlparser.expression.operators.relational.Matches
-import net.sf.jsqlparser.expression.operators.relational.MinorThan
-import net.sf.jsqlparser.expression.operators.relational.MinorThanEquals
-import net.sf.jsqlparser.expression.operators.relational.NotEqualsTo
-import net.sf.jsqlparser.expression.operators.relational.RegExpMatchOperator
-import net.sf.jsqlparser.expression.operators.relational.RegExpMySQLOperator
+import net.sf.jsqlparser.expression.operators.relational._
 import net.sf.jsqlparser.schema.Column
 import net.sf.jsqlparser.statement.select.SubSelect
 
-case class ExtractedExpressions(binaryExpressions: List[BinaryExpression], otherExpressions: List[Expression]) {
-
-  def isEmpty() = binaryExpressions.isEmpty && otherExpressions.isEmpty
-
-}
-
 class ExpressionExtractor(expression: Expression) extends ExpressionVisitor {
 
-  val singleExpressions: ListBuffer[BinaryExpression] = new ListBuffer()
-  val otherExpressions: ListBuffer[Expression] = new ListBuffer()
+  val binaryExpressions: ListBuffer[BinaryExpression] = new ListBuffer()
 
   // FIXME: compare compelte tree with and, or ...
 
-  def extract: ExtractedExpressions = {
+  lazy val extracted = {
     if (expression != null)
       expression.accept(this)
-
-    new ExtractedExpressions(singleExpressions.toList, otherExpressions.toList)
+    binaryExpressions.toList
   }
 
   override def visit(addition: Addition) = {}
@@ -102,11 +37,11 @@ class ExpressionExtractor(expression: Expression) extends ExpressionVisitor {
 
   override def visit(between: Between) = {}
 
-  override def visit(bitwiseAnd: BitwiseAnd) = singleExpressions += bitwiseAnd
+  override def visit(bitwiseAnd: BitwiseAnd) = binaryExpressions += bitwiseAnd
 
-  override def visit(bitwiseOr: BitwiseOr) = singleExpressions += bitwiseOr
+  override def visit(bitwiseOr: BitwiseOr) = binaryExpressions += bitwiseOr
 
-  override def visit(bitwiseXor: BitwiseXor) = singleExpressions += bitwiseXor
+  override def visit(bitwiseXor: BitwiseXor) = binaryExpressions += bitwiseXor
 
   override def visit(caseExpression: CaseExpression) = {}
 
@@ -124,7 +59,7 @@ class ExpressionExtractor(expression: Expression) extends ExpressionVisitor {
 
   override def visit(doubleValue: DoubleValue) = {}
 
-  override def visit(equalsTo: EqualsTo) = singleExpressions += equalsTo
+  override def visit(equalsTo: EqualsTo) = binaryExpressions += equalsTo
 
   override def visit(existsExpression: ExistsExpression) = {}
 
@@ -154,15 +89,15 @@ class ExpressionExtractor(expression: Expression) extends ExpressionVisitor {
 
   override def visit(aexpr: KeepExpression) = {}
 
-  override def visit(likeExpression: LikeExpression) = singleExpressions += likeExpression
+  override def visit(likeExpression: LikeExpression) = binaryExpressions += likeExpression
 
   override def visit(longValue: LongValue) = {}
 
-  override def visit(matches: Matches) = singleExpressions += matches
+  override def visit(matches: Matches) = binaryExpressions += matches
 
-  override def visit(minorThan: MinorThan) = singleExpressions += minorThan
+  override def visit(minorThan: MinorThan) = binaryExpressions += minorThan
 
-  override def visit(minorThanEquals: MinorThanEquals) = singleExpressions += minorThanEquals
+  override def visit(minorThanEquals: MinorThanEquals) = binaryExpressions += minorThanEquals
 
   override def visit(modulo: Modulo) = {}
 

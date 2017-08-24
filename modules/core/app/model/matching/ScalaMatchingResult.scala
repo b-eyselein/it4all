@@ -15,9 +15,6 @@ class ScalaMatchingResult[T, M <: ScalaMatch[T]](val matchName: String, val allM
 
 object ScalaMatchingResult {
 
-  def merge[T, M <: ScalaMatch[T]](mr1: ScalaMatchingResult[T, M], mr2: ScalaMatchingResult[T, M]) =
-    new ScalaMatchingResult[T, M](mr1.matchName, mr1.allMatches ++ mr2.allMatches)
-
   def analyze(allMatches: List[ScalaMatch[_]]): Success =
     if (allMatches.exists(_.matchType == MatchType.ONLY_USER) || allMatches.exists(_.matchType == MatchType.ONLY_SAMPLE))
       Success.NONE

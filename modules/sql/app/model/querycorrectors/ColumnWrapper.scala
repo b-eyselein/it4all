@@ -21,6 +21,8 @@ abstract sealed class ColumnWrapper {
 
   def getRest: String
 
+  def hasAlias: Boolean
+  
   def canMatch(that: ColumnWrapper) = (this, that) match {
     case (arg1: SelectColumnWrapper, arg2: SelectColumnWrapper) => arg1.canMatchOther(arg2)
     case (arg1: ChangeColumnWrapper, arg2: ChangeColumnWrapper) => arg1.canMatchOther(arg2)
@@ -53,6 +55,8 @@ case class ChangeColumnWrapper(col: Column) extends ColumnWrapper {
   override def getColName = col.getColumnName
 
   override val getRest = ""
+  
+  override def hasAlias = false
 
   override def toString = col.toString
 
@@ -78,6 +82,8 @@ case class CreateColumnWrapper(col: ColumnDefinition) extends ColumnWrapper {
   // FIXME: eventually compare aliases?
   def canMatchOther(that: CreateColumnWrapper) = getColName == that.getColName
 
+  override def hasAlias = false
+  
   override def getColName = col.getColumnName
 
   override def getRest = col.getColDataType.getDataType.toUpperCase
@@ -125,6 +131,8 @@ case class SelectColumnWrapper(col: SelectItem) extends ColumnWrapper {
 
   override type C = SelectItem
 
+  override def hasAlias = col.isInstanceOf[SelectExpressionItem] && col.asInstanceOf[SelectExpressionItem].getAlias != null
+  
   def compareAliases(alias1: Alias, alias2: Alias) = alias1 != null && alias2 != null && alias1.getName == alias2.getName
 
   def selectExprEqual(sei1: SelectExpressionItem, sei2: SelectExpressionItem) = sei1.getExpression.toString.equalsIgnoreCase(sei2.getExpression.toString)

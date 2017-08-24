@@ -7,7 +7,6 @@ import scala.util.Try
 import model.CorrectionException
 import model.StringConsts
 import model.conditioncorrector.ExpressionExtractor
-import model.conditioncorrector.ExpressionMatcher
 import model.exercise.SqlExercise
 import model.exercise.SqlExerciseType
 import model.exercise.SqlSample
@@ -20,6 +19,7 @@ import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.select.OrderByElement
 import play.db.Database
+import model.conditioncorrector.BinaryExpressionMatcher
 
 object ColumnMatcher extends ScalaMatcher[ColumnWrapper, ColumnMatch](model.StringConsts.COLUMNS_NAME, _.canMatch(_), new ColumnMatch(_, _))
 
@@ -58,9 +58,9 @@ abstract class QueryCorrector(queryType: String) {
     ColumnMatcher.doMatch(getColumnWrappers(userQ), getColumnWrappers(sampleQ))
 
   def compareWhereClauses(userQ: Q, userTAliases: AliasMap, sampleQ: Q, sampleTAliases: AliasMap) =
-    new ExpressionMatcher(userTAliases, sampleTAliases).matchExpressions(getExpressions(userQ), getExpressions(sampleQ))
+    new BinaryExpressionMatcher(userTAliases, sampleTAliases).doMatch(getExpressions(userQ), getExpressions(sampleQ))
 
-  def getExpressions(statement: Q) = new ExpressionExtractor(getWhere(statement)).extract
+  def getExpressions(statement: Q) = new ExpressionExtractor(getWhere(statement)).extracted
 
   def compareTables(userQ: Q, sampleQ: Q) = TABLE_NAME_MATCHER.doMatch(getTableNames(userQ), getTableNames(sampleQ))
 

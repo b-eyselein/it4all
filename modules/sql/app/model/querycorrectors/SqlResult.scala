@@ -1,6 +1,6 @@
 package model.querycorrectors;
 
-import model.conditioncorrector.ExpressionMatch;
+import model.conditioncorrector.BinaryExpressionMatch;
 import model.exercise.Success;
 import model.matching.ScalaMatch;
 import model.matching.ScalaMatchingResult;
@@ -8,11 +8,12 @@ import model.result.EvaluationResult;
 import net.sf.jsqlparser.expression.Expression;
 import model.sql.SqlQueryResult
 import net.sf.jsqlparser.statement.select.OrderByElement
+import net.sf.jsqlparser.expression.BinaryExpression
 
 case class SqlResult(learnerSolution: String,
   columnComparison: ScalaMatchingResult[ColumnWrapper, ColumnMatch],
   tableComparison: ScalaMatchingResult[String, ScalaMatch[String]],
-  whereComparison: ScalaMatchingResult[Expression, ExpressionMatch],
+  whereComparison: ScalaMatchingResult[BinaryExpression, BinaryExpressionMatch],
 
   executionResult: SqlExecutionResult,
 

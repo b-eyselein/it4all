@@ -9,7 +9,7 @@ import play.twirl.api.Html;
 
 case class ColumnMatch(userCol: Option[ColumnWrapper], sampleCol: Option[ColumnWrapper]) extends ScalaMatch[ColumnWrapper](userCol, sampleCol) {
 
-  val hasAlias: Boolean = false
+  val hasAlias: Boolean = userArg.get.hasAlias || sampleCol.get.hasAlias
 
   val restMatched: Boolean = false
 
@@ -37,6 +37,6 @@ case class ColumnMatch(userCol: Option[ColumnWrapper], sampleCol: Option[ColumnW
     		<span class={ if(restMatched) "text-success" else "text-danger" }>{ secondRest }</span>
   		</td>
     	<td>{ explanation }</td>
-		</tr>
+		</tr>.toString
 
 }
