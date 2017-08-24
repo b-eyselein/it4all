@@ -23,13 +23,6 @@ import model.SqlExerciseReader;
 import model.SqlSolution;
 import model.StringConsts;
 import model.exercisereading.ExerciseReader;
-import model.querycorrectors.QueryCorrector;
-import model.querycorrectors.change.DeleteCorrector;
-import model.querycorrectors.change.InsertCorrector;
-import model.querycorrectors.change.UpdateCorrector;
-import model.querycorrectors.create.CreateCorrector;
-import model.querycorrectors.select.SelectCorrector;
-import net.sf.jsqlparser.statement.Statement;
 
 @Entity
 public class SqlExercise extends Exercise {
@@ -68,25 +61,6 @@ public class SqlExercise extends Exercise {
   @JsonIgnore
   public String getBadges() {
     return getTags().stream().map(SqlTag::getButtonContent).collect(Collectors.joining());
-  }
-  
-  @JsonIgnore
-  public QueryCorrector<? extends Statement> getCorrector() {
-    // FIXME: different...
-    switch(exerciseType) {
-    case CREATE:
-      return new CreateCorrector();
-    case DELETE:
-      return new DeleteCorrector();
-    case INSERT:
-      return new InsertCorrector();
-    case SELECT:
-      return new SelectCorrector();
-    case UPDATE:
-      return new UpdateCorrector();
-    default:
-      return null;
-    }
   }
   
   public List<SqlTag> getTags() {

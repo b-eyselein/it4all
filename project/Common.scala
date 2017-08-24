@@ -9,9 +9,12 @@ object Common {
 
     libraryDependencies ++= Seq(Common.mockitoDep))
 
+  // Scalatest
+  val scalatest = "org.scalatest" % "scalatest_2.11" % "3.0.1" % "test"
+
   val mysqlDependency = "mysql" % "mysql-connector-java" % "6.0.6"
 
-  val seleniumDep = "org.seleniumhq.selenium" % "selenium-java" % "3.4.0"
+  val seleniumDep = "org.seleniumhq.selenium" % "selenium-java" % "3.5.2"
   val htmlUnitDep = "org.seleniumhq.selenium" % "selenium-htmlunit-driver" % "2.52.0"
 
   val mockitoDep = "org.mockito" % "mockito-core" % "2.8.47"
@@ -21,13 +24,13 @@ object Common {
   val jsonSchemaGenerator = "com.kjetland" % "mbknor-jackson-jsonschema_2.11" % "1.0.24"
 
   // Programming
-  val dockerjava = "com.github.docker-java" % "docker-java" % "3.0.12"
+  val dockerjava = "com.github.docker-java" % "docker-java" % "3.0.13"
 
   // SQL
   // Mybatis for ScriptRunner
-  val mybatis = "org.mybatis" % "mybatis" % "3.4.4"
+  val mybatis = "org.mybatis" % "mybatis" % "3.4.5"
 
   // JSQL-Parser
-  val jsqlparser = "com.github.jsqlparser" % "jsqlparser" % "1.0"
+  val jsqlparser = "com.github.jsqlparser" % "jsqlparser" % "1.1"
 
 }

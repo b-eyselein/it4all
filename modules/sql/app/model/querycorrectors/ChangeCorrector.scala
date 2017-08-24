@@ -8,40 +8,35 @@ import model.sql.SqlQueryResult
 import play.db.Database
 import scala.collection.JavaConverters._
 
-abstract class ScalaChangeCorrector(queryType: String) extends ScalaQueryCorrector(queryType) {
+abstract class ChangeCorrector(queryType: String) extends QueryCorrector(queryType) {
 
-  def runUpdate(connection: Connection, query: String) =
-    cleanly(connection.createStatement)(_.close)(statement => statement.executeUpdate(query))
+  def runUpdate(conn: Connection, query: String) = cleanly(conn.createStatement)(_.close)(s => s.executeUpdate(query))
 
-  def runValidationQuery(connection: Connection, query: String) =
-    cleanly(connection.createStatement())(_.close)(s => new SqlQueryResult(s.executeQuery(query)))
+  def runValidationQuery(conn: Connection, query: String) = cleanly(conn.createStatement)(_.close)(s => new SqlQueryResult(s.executeQuery(query)))
 
   def getResultSet(statement: Q, connection: Connection, validation: String) = {
-    runUpdate(connection, statement.toString())
+    runUpdate(connection, statement.toString)
     val result = runValidationQuery(connection, validation)
-    connection.rollback()
+    connection.rollback
     result
   }
 
   override def executeQuery(db: Database, userQ: Q, sampleQ: Q, exercise: SqlExercise) =
     cleanly(db.getConnection)(_.close)(connection => {
-      connection.setCatalog(exercise.scenario.getShortName())
+      connection.setCatalog(exercise.scenario.getShortName)
       connection.setAutoCommit(false)
 
       val validation = StringConsts.SELECT_ALL_DUMMY + getTableNames(sampleQ)(0)
 
-      val userResult = getResultSet(userQ, connection, validation)
-
-      val sampleResult = getResultSet(sampleQ, connection, validation)
-
-      new SqlExecutionResult(userResult.get, sampleResult.get)
+      new SqlExecutionResult(getResultSet(userQ, connection, validation).get, getResultSet(sampleQ, connection, validation).get)
     })
 
-  override def makeOtherComparisons(userQ: Q, sampleQ: Q) = List.empty
+  override def compareGroupByElements(plainUserQuery: Q, plainSampleQuery: Q) = None
 
+  override def compareOrderByElements(plainUserQuery: Q, plainSampleQuery: Q) = None
 }
 
-object ScalaInsertCorrector extends ScalaChangeCorrector("INSERT") {
+object InsertCorrector extends ChangeCorrector("INSERT") {
 
   type Q = net.sf.jsqlparser.statement.insert.Insert
 
@@ -54,7 +49,7 @@ object ScalaInsertCorrector extends ScalaChangeCorrector("INSERT") {
   override def getWhere(query: Q) = null
 }
 
-object ScalaDeleteCorrector extends ScalaChangeCorrector("DELETE") {
+object DeleteCorrector extends ChangeCorrector("DELETE") {
 
   type Q = net.sf.jsqlparser.statement.delete.Delete
 
@@ -64,19 +59,19 @@ object ScalaDeleteCorrector extends ScalaChangeCorrector("DELETE") {
 
   override def getTables(query: Q) = query.getTables.asScala.toList
 
-  override def getWhere(query: Q) = query.getWhere()
+  override def getWhere(query: Q) = query.getWhere
 }
 
-object ScalaUpdateCorrector extends ScalaChangeCorrector("UPDATE") {
+object UpdateCorrector extends ChangeCorrector("UPDATE") {
 
   type Q = net.sf.jsqlparser.statement.update.Update
 
-  override def getColumnWrappers(query: Q) = query.getColumns.asScala.map(ScalaColumnWrapper.wrap(_)).toList
+  override def getColumnWrappers(query: Q) = query.getColumns.asScala.map(ColumnWrapper.wrap(_)).toList
 
   override def getTableNames(query: Q) = query.getTables.asScala.map(_.getName).toList
 
-  override def getTables(query: Q) = query.getTables().asScala.toList
+  override def getTables(query: Q) = query.getTables.asScala.toList
 
-  override def getWhere(query: Q) = query.getWhere()
+  override def getWhere(query: Q) = query.getWhere
 
 }

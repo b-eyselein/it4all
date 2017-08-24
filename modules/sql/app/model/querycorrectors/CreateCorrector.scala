@@ -1,16 +1,13 @@
-package model.querycorrectors.create;
+package model.querycorrectors;
 
 import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.util.Try
 
 import model.exercise.SqlExercise
-import model.querycorrectors.ColumnWrapper
-import model.querycorrectors.ScalaQueryCorrector
-import model.querycorrectors.SqlExecutionResult
 import net.sf.jsqlparser.schema.Table
 import play.db.Database
 
-object ScalaCreateCorrector extends ScalaQueryCorrector("CREATE TABLE") {
+object CreateCorrector extends QueryCorrector("CREATE TABLE") {
 
   override type Q = net.sf.jsqlparser.statement.create.table.CreateTable
 
@@ -25,6 +22,8 @@ object ScalaCreateCorrector extends ScalaQueryCorrector("CREATE TABLE") {
 
   override def getWhere(query: Q) = null
 
-  override def makeOtherComparisons(userQ: Q, sampleQ: Q) = List.empty
+  override def compareGroupByElements(plainUserQuery: Q, plainSampleQuery: Q) = None
+
+  override def compareOrderByElements(plainUserQuery: Q, plainSampleQuery: Q) = None
 
 }

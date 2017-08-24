@@ -1,5 +1,7 @@
 package model.matching
 
+import play.twirl.api.Html
+
 abstract class ScalaMatch[T](val userArg: Option[T], val sampleArg: Option[T]) {
 
   val matchType = (userArg, sampleArg) match {
@@ -11,7 +13,7 @@ abstract class ScalaMatch[T](val userArg: Option[T], val sampleArg: Option[T]) {
 
   def getBSClass() = if (matchType == MatchType.SUCCESSFUL_MATCH) "success" else "warning"
 
-  def getExplanation() = matchType match {
+  def explanation = matchType match {
     case MatchType.FAILURE => "Es ist ein Fehler aufgetreten."
     case MatchType.ONLY_USER => "Angegeben, aber nicht in der Musterlösung vorhanden!"
     case MatchType.ONLY_SAMPLE => "Nur in der Musterlösung, nicht in der Lernerlösung vorhanden!"
@@ -22,6 +24,21 @@ abstract class ScalaMatch[T](val userArg: Option[T], val sampleArg: Option[T]) {
   def isSuccessful = matchType == MatchType.SUCCESSFUL_MATCH
 
   def analyze(arg1: T, arg2: T): MatchType
+
+  private def describeArg(arg: Option[T]) = if (arg.isDefined) arg.get.toString else ""
+
+  def describe() =
+    <tr class={ getBSClass }>
+    	<td><span class={ matchType.toString }></span></td>
+    	<td>
+     	  <span class={ if (isSuccessful) "text-success" else "text-danger" }>{ describeArg(userArg) }</span>
+    	</td>
+    	<td>
+     	  <span class={ if (isSuccessful) "text-success" else "text-danger" }>{ describeArg(sampleArg) }</span>
+    	</td>
+    	<td>{ explanation }</td>
+  	</tr>
+
 }
 
 class ScalaGenericMatch[T](userArg: Option[T], sampleArg: Option[T]) extends ScalaMatch[T](userArg, sampleArg) {
