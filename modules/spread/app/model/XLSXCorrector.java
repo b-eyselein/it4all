@@ -46,8 +46,6 @@ import play.Logger;
  */
 public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Font, Short> {
 
-  private static final String FORMULA_CORRECT = "Formel richtig.";
-
   private static boolean compareChart(Sheet compareSheet, Sheet sampleSheet, List<String> messages, CTChart chartMaster,
       CTChart chartCompare) throws CorrectionException {
     if (chartCompare == null)
@@ -143,23 +141,23 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
     try {
       document.close();
     } catch (IOException e) {
-      Logger.error("Beim Schließen des Dokuments ist ein Fehler aufgetreten.", e);
+      Logger.error(StringConsts.ERROR_CLOSE_FILE, e);
     }
   }
 
   @Override
   public String compareCellFormulas(XSSFCell masterCell, XSSFCell compareCell) {
     if (masterCell.getCellTypeEnum() != CellType.FORMULA)
-      return "Keine Formel notwendig.";
+      return StringConsts.COMMENT_FORMULA_FALSE;
 
     if (masterCell.toString().equals(compareCell.toString()))
-      return FORMULA_CORRECT;
+      return StringConsts.COMMENT_FORMULA_CORRECT;
 
     if (compareCell.getCellTypeEnum() != CellType.FORMULA)
-      return "Formel notwendig.";
+      return StringConsts.COMMENT_FORMULA_MISSING;
 
     String difference = HashSetHelper.getDiffOfTwoFormulas(masterCell.toString(), compareCell.toString());
-    return difference.isEmpty() ? FORMULA_CORRECT : "Formel falsch. " + difference;
+    return difference.isEmpty() ? StringConsts.COMMENT_FORMULA_CORRECT : String.format(StringConsts.COMMENT_FORMULA_INCORRECT_VAR, difference);
 
   }
 
@@ -247,7 +245,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
 
       // TODO: Use enum instead of Strings!??
       short colorIndex = IndexedColors.RED.getIndex();
-      if ("Wert richtig.".equals(equalCell) && FORMULA_CORRECT.equals(equalFormula))
+      if ("Wert richtig.".equals(equalCell) && StringConsts.COMMENT_FORMULA_CORRECT.equals(equalFormula))
 	setCellStyle(cellCompare, compareTable.getWorkbook().createFont(), IndexedColors.GREEN.getIndex());
 
       setCellStyle(cellCompare, compareTable.getWorkbook().createFont(), colorIndex);
@@ -291,15 +289,15 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
     try {
       return new XSSFWorkbook(path.toFile());
     } catch (IOException | InvalidFormatException | InvalidOperationException e) {
-      throw new CorrectionException("", "Beim Öffnen eines XLSX-Dokuments ist ein Fehler aufgetreten.", e);
+      throw new CorrectionException("", String.format(StringConsts.ERROR_LOAD_VAR, path.getFileName()), e);
     }
   }
 
   @Override
   public void saveCorrectedSpreadsheet(Workbook compareDocument, Path testPath) {
     // @formatter:off
-    String fileNameNew = com.google.common.io.Files.getNameWithoutExtension(testPath.toString()) + CORRECTION_ADD_STRING
-        + "." + com.google.common.io.Files.getFileExtension(testPath.toString());
+    String fileNameNew = com.google.common.io.Files.getNameWithoutExtension(testPath.toString())
+        + StringConsts.CORRECTION_ADD_STRING + "." + com.google.common.io.Files.getFileExtension(testPath.toString());
     Path savePath = Paths.get(testPath.getParent().toString(), fileNameNew);
     // @formatter:on
     try {
@@ -309,7 +307,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
       compareDocument.write(fileOut);
       fileOut.close();
     } catch (IOException e) {
-      Logger.error(ERROR_MESSAGE_SAVE, e);
+      Logger.error(StringConsts.ERROR_SAVE_FILE, e);
     }
   }
 

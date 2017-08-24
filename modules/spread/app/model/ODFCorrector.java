@@ -23,8 +23,6 @@ import play.Logger;
  */
 public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Cell, Font, Color> {
 
-  private static final String CORRECT_FORMULA = "Formel richtig.";
-
   private static final int MAXROW = 80;
   private static final int MAXCOLUMN = 22;
 
@@ -46,16 +44,16 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
       return "";
     else if (masterFormula.equals(compareFormula))
       // Formel richtig
-      return CORRECT_FORMULA;
+      return StringConsts.COMMENT_FORMULA_CORRECT;
     else if (compareFormula == null)
       // Keine Formel von Student angegeben
-      return "Formel notwendig.";
+      return StringConsts.COMMENT_FORMULA_MISSING;
     else {
       String diffOfTwoFormulas = HashSetHelper.getDiffOfTwoFormulas(masterFormula, compareFormula);
       if (diffOfTwoFormulas.isEmpty())
-	return CORRECT_FORMULA;
+	return StringConsts.COMMENT_FORMULA_CORRECT;
       else
-	return "Formel falsch. " + diffOfTwoFormulas;
+	return String.format(StringConsts.COMMENT_FORMULA_INCORRECT_VAR, diffOfTwoFormulas);
     }
   }
 
@@ -67,11 +65,11 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
     if (compareValue.indexOf('\n') != -1)
       compareValue = compareValue.substring(0, compareValue.indexOf('\n'));
     if (compareValue.isEmpty())
-      return "Kein Wert angegeben.";
+      return StringConsts.COMMENT_VALUE_MISSING;
     else if (masterValue.equals(compareValue))
-      return "Wert richtig.";
+      return StringConsts.COMMENT_VALUE_CORRECT;
     else
-      return "Wert falsch. Erwartet wurde '" + masterValue + "'.";
+      return String.format(StringConsts.COMMENT_VALUE_INCORRECT_VAR, masterValue);
   }
 
   @Override
@@ -115,8 +113,8 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
       setCellComment(cellCompare, cellValueResult + "\n" + cellFormulaResult);
 
       // FIXME: use enum instead of String!
-      if ("Wert richtig.".equals(cellValueResult)
-          && (cellFormulaResult.isEmpty() || CORRECT_FORMULA.equals(cellFormulaResult)))
+      if (StringConsts.COMMENT_VALUE_CORRECT.equals(cellValueResult)
+          && (cellFormulaResult.isEmpty() || StringConsts.COMMENT_FORMULA_CORRECT.equals(cellFormulaResult)))
 	setCellStyle(cellCompare, new Font(FONT, FontStyle.BOLD, FONT_SIZE), Color.GREEN);
       // cellCompare.setFont(new Font(FONT, FontStyle.BOLD, FONT_SIZE,
       // Color.GREEN));
@@ -161,14 +159,14 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
     try {
       return SpreadsheetDocument.loadDocument(path.toFile());
     } catch (Exception e) {
-      throw new CorrectionException("", "Beim Öffnen eines ODF-Dokuments ist ein Fehler aufgetreten.", e);
+      throw new CorrectionException("", String.format(StringConsts.ERROR_LOAD_VAR, path.getFileName()), e);
     }
   }
 
   @Override
   public void saveCorrectedSpreadsheet(SpreadsheetDocument compareDocument, Path testPath) {
     // @formatter:off
-    String fileNameNew = com.google.common.io.Files.getNameWithoutExtension(testPath.toString()) + CORRECTION_ADD_STRING
+    String fileNameNew = com.google.common.io.Files.getNameWithoutExtension(testPath.toString()) + StringConsts.CORRECTION_ADD_STRING
         + "." + com.google.common.io.Files.getFileExtension(testPath.toString());
     // @formatter:on
     Path savePath = Paths.get(testPath.getParent().toString(), fileNameNew);
@@ -180,7 +178,7 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
       compareDocument.save(fileOut);
       fileOut.close();
     } catch (Exception e) {
-      Logger.error(ERROR_MESSAGE_SAVE, e);
+      Logger.error(StringConsts.ERROR_SAVE_FILE, e);
     }
   }
 

@@ -7,9 +7,6 @@ import java.util.List;
 
 public abstract class SpreadCorrector<D, S, C, F, ColorType> {
 
-  protected static final String CORRECTION_ADD_STRING = "_Korrektur";
-  protected static final String ERROR_MESSAGE_SAVE = "Beim Speichern der korrigierten Datei ist ein Fehler aufgetreten.";
-
   public abstract void closeDocument(D compareDocument);
 
   public abstract String compareCellFormulas(C masterCell, C compareCell);
@@ -27,25 +24,22 @@ public abstract class SpreadCorrector<D, S, C, F, ColorType> {
 
     // Check if both documents exist as files
     if (!samplePath.toFile().exists())
-      return new SpreadSheetCorrectionResult(false, Arrays.asList("Die Musterdatei ist nicht vorhanden!"));
+      return new SpreadSheetCorrectionResult(false, Arrays.asList(StringConsts.ERROR_MISSING_SAMPLE));
 
     if (!comparePath.toFile().exists())
-      return new SpreadSheetCorrectionResult(false, Arrays.asList("Die Lösungsdatei ist nicht vorhanden!"));
+      return new SpreadSheetCorrectionResult(false, Arrays.asList(StringConsts.ERROR_MISSING_SOLUTION));
 
     // Load document, if loading returns null, return Error
     D sampleDocument = loadDocument(samplePath);
     if (sampleDocument == null)
-      return new SpreadSheetCorrectionResult(false,
-          Arrays.asList("Beim Laden der Musterdatei ist ein Fehler aufgetreten."));
+      return new SpreadSheetCorrectionResult(false, Arrays.asList(StringConsts.ERROR_LOAD_SAMPLE));
 
     D compareDocument = loadDocument(comparePath);
     if (compareDocument == null)
-      return new SpreadSheetCorrectionResult(false,
-          Arrays.asList("Beim Laden der eingereichten Datei ist ein Fehler aufgetreten."));
+      return new SpreadSheetCorrectionResult(false, Arrays.asList(StringConsts.ERROR_LOAD_SOLUTION));
 
     if (getSheetCount(sampleDocument) != getSheetCount(compareDocument))
-      return new SpreadSheetCorrectionResult(false, Arrays
-          .asList("Die Anzahl der Arbeitsblätter stimmt nicht überein. Haben Sie die richtige Datei hochgeladen?"));
+      return new SpreadSheetCorrectionResult(false, Arrays.asList(StringConsts.ERROR_WRONG_SHEET_NUM));
 
     if (compareCharts) {
       String message = compareNumberOfChartsInDocument(compareDocument, sampleDocument);
@@ -61,7 +55,7 @@ public abstract class SpreadCorrector<D, S, C, F, ColorType> {
       S sampleTable = getSheetByIndex(sampleDocument, sheetIndex);
       S compareTable = getSheetByIndex(compareDocument, sheetIndex);
       if (compareTable == null || sampleTable == null)
-	notices.add("Es gab einen Fehler beim Öffnen der " + (sheetCount + 1) + "ten Tabelle!");
+	notices.add(String.format(StringConsts.ERROR_LOAD_TABLE_VAR, (sheetCount + 1)));
       else
 	compareSheet(sampleTable, compareTable, conditionalFormating);
     }
@@ -72,7 +66,7 @@ public abstract class SpreadCorrector<D, S, C, F, ColorType> {
     closeDocument(sampleDocument);
 
     if (notices.isEmpty())
-      return new SpreadSheetCorrectionResult(true, Arrays.asList("Korrektur ist erfolgreich durchgelaufen."));
+      return new SpreadSheetCorrectionResult(true, Arrays.asList(StringConsts.SUCCESS_CORRECTION));
     else
       return new SpreadSheetCorrectionResult(false, notices);
   }
