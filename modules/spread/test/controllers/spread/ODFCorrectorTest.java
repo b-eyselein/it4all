@@ -20,6 +20,7 @@ import org.odftoolkit.simple.table.Table;
 
 import model.CorrectionException;
 import model.ODFCorrector;
+import model.StringConsts;
 
 public class ODFCorrectorTest {
 
@@ -49,7 +50,7 @@ public class ODFCorrectorTest {
 
     Cell musterCell = muster.getSheetByIndex(2).getCellByPosition(7, 15);
     Cell compareCell = teilLsg.getSheetByIndex(2).getCellByPosition(7, 15);
-    assertThat(corrector.compareCellFormulas(musterCell, compareCell), equalTo("Formel richtig."));
+    assertThat(corrector.compareCellFormulas(musterCell, compareCell), equalTo(StringConsts.COMMENT_FORMULA_CORRECT));
 
     // Wert in Muster null, Compare leer
     musterCell = muster.getSheetByIndex(3).getCellByPosition(3, 9);
@@ -59,13 +60,14 @@ public class ODFCorrectorTest {
     // Wert in Muster, Compare leer
     musterCell = muster.getSheetByIndex(3).getCellByPosition(5, 16);
     compareCell = teilLsg.getSheetByIndex(3).getCellByPosition(5, 16);
-    assertThat(corrector.compareCellFormulas(musterCell, compareCell), equalTo("Keine Formel angegeben!"));
+    assertThat(corrector.compareCellFormulas(musterCell, compareCell), equalTo(StringConsts.COMMENT_FORMULA_MISSING));
 
     // Wert in Muster, Compare leer
     musterCell = muster.getSheetByIndex(3).getCellByPosition(5, 19);
     compareCell = teilLsg.getSheetByIndex(3).getCellByPosition(5, 19);
     assertThat(corrector.compareCellFormulas(musterCell, compareCell),
-        equalTo("Formel falsch. Der Bereich [D20] fehlt."));
+        equalTo(String.format(StringConsts.COMMENT_FORMULA_INCORRECT_VAR,
+            String.format(StringConsts.COMMENT_RANGE_MISSING_VAR, "[D20]"))));
   }
 
   @Test
@@ -75,17 +77,17 @@ public class ODFCorrectorTest {
 
     Cell musterCell = muster.getSheetByIndex(2).getCellByPosition(7, 15);
     Cell compareCell = teilLsg.getSheetByIndex(2).getCellByPosition(7, 15);
-    assertThat(corrector.compareCellValues(musterCell, compareCell), equalTo("Wert richtig."));
+    assertThat(corrector.compareCellValues(musterCell, compareCell), equalTo(StringConsts.COMMENT_VALUE_CORRECT));
 
     // Wert in Muster, Compare leer
     musterCell = muster.getSheetByIndex(3).getCellByPosition(5, 16);
     compareCell = teilLsg.getSheetByIndex(3).getCellByPosition(5, 16);
-    assertThat(corrector.compareCellValues(musterCell, compareCell), equalTo("Keinen Wert angegeben!"));
+    assertThat(corrector.compareCellValues(musterCell, compareCell), equalTo(StringConsts.COMMENT_VALUE_MISSING));
 
     // Wert in Muster, Compare falsch
     musterCell = muster.getSheetByIndex(3).getCellByPosition(5, 19);
     compareCell = teilLsg.getSheetByIndex(3).getCellByPosition(5, 19);
-    assertThat(corrector.compareCellValues(musterCell, compareCell), equalTo("Wert falsch. Erwartet wurde '12,14 €'."));
+    assertThat(corrector.compareCellValues(musterCell, compareCell), equalTo(String.format(StringConsts.COMMENT_VALUE_INCORRECT_VAR, "12,14 €")));
 
   }
 
@@ -93,14 +95,14 @@ public class ODFCorrectorTest {
   public void testCompareNumberOfChartsInDocument() throws CorrectionException {
     SpreadsheetDocument muster = corrector.loadDocument(schullandheimMuster);
     assertThat(corrector.compareNumberOfChartsInDocument(muster, muster),
-        equalTo("Richtige Anzahl Diagramme gefunden."));
+        equalTo(StringConsts.COMMENT_CHART_NUM_CORRECT));
 
     SpreadsheetDocument solution = corrector.loadDocument(schullandheimTeilLoesung);
     assertThat(corrector.compareNumberOfChartsInDocument(solution, muster),
-        equalTo("Falsche Anzahl Diagramme im Dokument (erwartet: 2, gezählt: 0)."));
+        equalTo(String.format(StringConsts.COMMENT_CHART_NUM_INCORRECT_VAR, 2, 0)));
 
     assertThat(corrector.compareNumberOfChartsInDocument(solution, solution),
-        equalTo("Es waren keine Diagramme zu erstellen."));
+        equalTo(StringConsts.COMMENT_CHART_FALSE));
 
     muster.close();
     solution.close();

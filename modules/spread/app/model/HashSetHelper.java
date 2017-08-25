@@ -43,14 +43,14 @@ public class HashSetHelper {
     // Compare ranges
     String rangeDiff = RegExpHelper.getCellRangesDiff(string1, string2);
     if(!rangeDiff.isEmpty())
-      message += String.format(StringConsts.COMMENT_RANGE_MISSING_VAR, rangeDiff);
+      message += " " + String.format(StringConsts.COMMENT_RANGE_MISSING_VAR, rangeDiff);
 
     // Compare formulas
     String formulaDiff = RegExpHelper.getCellFormulasDiff(string1, string2);
     if(!formulaDiff.isEmpty())
-      message += String.format(StringConsts.COMMENT_FORMULA_HINT_VAR, formulaDiff);
+      message += " " + String.format(StringConsts.COMMENT_FORMULA_HINT_VAR, formulaDiff);
 
-    return message;
+    return message.trim();
   }
 
   public static String getSheetCFDiff(Set<String> hs1, Set<String> hs2) {

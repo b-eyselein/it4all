@@ -21,6 +21,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import model.CorrectionException;
+import model.StringConsts;
 import model.XLSXCorrector;
 
 public class XLSXCorrectorTest {
@@ -64,23 +65,24 @@ public class XLSXCorrectorTest {
 
     XSSFCell musterCell = (XSSFCell) muster.getSheetAt(2).getRow(15).getCell(7);
     XSSFCell compareCell = (XSSFCell) teilLsg.getSheetAt(2).getRow(15).getCell(7);
-    assertThat(corrector.compareCellFormulas(musterCell, compareCell), equalTo("Formel richtig."));
+    assertThat(corrector.compareCellFormulas(musterCell, compareCell), equalTo(StringConsts.COMMENT_FORMULA_CORRECT));
 
     // Kein Formel in Muster, Compare leer
     musterCell = (XSSFCell) muster.getSheetAt(3).getRow(16).getCell(1);
     compareCell = (XSSFCell) teilLsg.getSheetAt(3).getRow(16).getCell(1);
-    assertThat(corrector.compareCellFormulas(musterCell, compareCell), equalTo("Es war keine Formel anzugeben."));
+    assertThat(corrector.compareCellFormulas(musterCell, compareCell), equalTo(StringConsts.COMMENT_FORMULA_FALSE));
 
     // Wert in Muster, Compare leer
     musterCell = (XSSFCell) muster.getSheetAt(3).getRow(16).getCell(5);
     compareCell = (XSSFCell) teilLsg.getSheetAt(3).getRow(16).getCell(5);
-    assertThat(corrector.compareCellFormulas(musterCell, compareCell), equalTo("Keine Formel angegeben!"));
+    assertThat(corrector.compareCellFormulas(musterCell, compareCell), equalTo(StringConsts.COMMENT_FORMULA_MISSING));
 
     // Wert in Muster, Compare leer
     musterCell = (XSSFCell) muster.getSheetAt(3).getRow(19).getCell(5);
     compareCell = (XSSFCell) teilLsg.getSheetAt(3).getRow(19).getCell(5);
     assertThat(corrector.compareCellFormulas(musterCell, compareCell),
-        equalTo("Formel falsch. Der Bereich [D20] fehlt."));
+        equalTo(String.format(StringConsts.COMMENT_FORMULA_INCORRECT_VAR,
+            String.format(StringConsts.COMMENT_RANGE_MISSING_VAR, "[D20]"))));
   }
 
   @Test
@@ -90,19 +92,19 @@ public class XLSXCorrectorTest {
 
     XSSFCell musterCell = (XSSFCell) muster.getSheetAt(2).getRow(15).getCell(7);
     XSSFCell compareCell = (XSSFCell) teilLsg.getSheetAt(2).getRow(15).getCell(7);
-    assertThat(corrector.compareCellValues(musterCell, compareCell), equalTo("Wert richtig."));
+    assertThat(corrector.compareCellValues(musterCell, compareCell), equalTo(StringConsts.COMMENT_VALUE_CORRECT));
 
     // Wert in Muster, Compare leer
     musterCell = (XSSFCell) muster.getSheetAt(3).getRow(16).getCell(5);
     compareCell = (XSSFCell) teilLsg.getSheetAt(3).getRow(16).getCell(5);
-    assertThat(corrector.compareCellValues(musterCell, compareCell), equalTo("Keinen Wert angegeben!"));
+    assertThat(corrector.compareCellValues(musterCell, compareCell), equalTo(StringConsts.COMMENT_VALUE_MISSING));
 
     // Wert in Muster, Compare falsch
     musterCell = (XSSFCell) muster.getSheetAt(3).getRow(19).getCell(5);
     compareCell = (XSSFCell) teilLsg.getSheetAt(3).getRow(19).getCell(5);
     // TODO: Zahl schoener formatieren... 12.142857142857142
     assertThat(corrector.compareCellValues(musterCell, compareCell),
-        equalTo("Wert falsch. Erwartet wurde '12.142857142857142'."));
+        equalTo(String.format(StringConsts.COMMENT_VALUE_INCORRECT_VAR, 12.142857142857142)));
   }
 
   @Test
@@ -110,14 +112,14 @@ public class XLSXCorrectorTest {
 
     Workbook muster = corrector.loadDocument(testMusterCopy);
     assertThat(corrector.compareChartsInSheet(muster.getSheetAt(0), muster.getSheetAt(0)),
-        equalTo("Es waren keine Diagramme zu erstellen."));
+        equalTo(StringConsts.COMMENT_CHART_FALSE));
 
     Workbook solution = corrector.loadDocument(testSolutionCopy);
     assertThat(corrector.compareChartsInSheet(solution.getSheetAt(0), muster.getSheetAt(2)),
-        equalTo("Falsche Anzahl an Diagrammen im Sheet (Erwartet: 2, Gefunden: 0)."));
+        equalTo(String.format(StringConsts.COMMENT_CHART_NUM_INCORRECT_VAR, 2, 0)));
 
     assertThat(corrector.compareChartsInSheet(muster.getSheetAt(2), muster.getSheetAt(2)),
-        equalTo("Diagramm(e) richtig."));
+        equalTo(StringConsts.COMMENT_CHART_CORRECT));
     // TODO: Implement!
     // fail("Still things to implement!");
   }
@@ -157,7 +159,7 @@ public class XLSXCorrectorTest {
 
     coloredRange = corrector.getColoredRange(muster.getSheetAt(2));
     assertThat(coloredRange.size(), equalTo(28));
-    for(int i = 0; i < 25; i++) {
+    for (int i = 0; i < 25; i++) {
       Cell cell = coloredRange.get(i);
       assertThat(cell.getRowIndex(), equalTo(15 + i));
       assertThat(cell.getColumnIndex(), equalTo(7));

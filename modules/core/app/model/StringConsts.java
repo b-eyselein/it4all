@@ -31,8 +31,8 @@ public abstract class StringConsts {
   public static final String COMMENT_FORMULA_HINT_VAR = "Verwenden Sie die Funktion %s.";
   public static final String COMMENT_FORMULA_INCORRECT_VAR = "Formel falsch. %s";
   public static final String COMMENT_FORMULA_MISSING = "Formel notwendig.";
-  public static final String COMMENT_OPERATOR_MISSING_VAR = "Ein Operator (%s) fehlt.";
-  public static final String COMMENT_RANGE_MISSING_VAR = "Der Bereich (%s) fehlt.";
+  public static final String COMMENT_OPERATOR_MISSING_VAR = "Ein Operator %s fehlt.";
+  public static final String COMMENT_RANGE_MISSING_VAR = "Der Bereich %s fehlt.";
   public static final String COMMENT_SHEET_TITLE_INCORRECT_VAR = "Der Titel des Tabellenblatts sollte '%s' sein.";
   public static final String COMMENT_VALUE_CORRECT = "Wert richtig.";
   public static final String COMMENT_VALUE_INCORRECT_VAR = "Wert falsch. Erwartet wurde '%s'.";
