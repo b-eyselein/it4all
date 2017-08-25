@@ -3,6 +3,7 @@ package controllers;
 import javax.inject.Inject;
 
 import controllers.core.BaseController;
+import model.AdminSecured;
 import model.StringConsts;
 import model.user.Course;
 import model.user.CourseRole;
@@ -11,7 +12,9 @@ import model.user.Role;
 import model.user.User;
 import play.data.FormFactory;
 import play.mvc.Result;
+import play.mvc.Security.Authenticated;
 
+@Authenticated(AdminSecured.class)
 public class CourseAdminController extends BaseController {
 
   @Inject
@@ -20,6 +23,7 @@ public class CourseAdminController extends BaseController {
   }
 
   public Result addAdmin(int courseId) {
+    // FIXME: AJAX!
     String userName = factory.form().bindFromRequest().get(StringConsts.NAME_NAME);
 
     User user = User.finder.byId(userName);
@@ -38,10 +42,11 @@ public class CourseAdminController extends BaseController {
   }
 
   public Result course(int id) {
-    return ok(views.html.course.course.render(getUser(), Course.finder.byId(id)));
+    return ok(views.html.admin.course.render(getUser(), Course.finder.byId(id)));
   }
 
   public Result newCourse() {
+    // FIXME: AJAX!
     String courseName = factory.form().bindFromRequest().get(StringConsts.NAME_NAME);
 
     Course course = Course.finder.all().stream().filter(c -> c.name.equals(courseName)).findAny().orElse(null);
@@ -62,6 +67,6 @@ public class CourseAdminController extends BaseController {
   }
 
   public Result newCourseForm() {
-    return ok(views.html.course.newCourseForm.render(getUser()));
+    return ok(views.html.admin.newCourseForm.render(getUser()));
   }
 }

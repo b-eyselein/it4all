@@ -5,11 +5,30 @@
   <div class="page-header">
     <h1>Evaluation der Tools</h1>
   </div>
-  <form action="@controllers.routes.Evaluation.submit()" method="post" class="form-horizontal">
-  @for(feedback <- toEvaluate) {
-  	@feedback.render()
+  
+  <form action="@controllers.routes.Evaluation.submit" method="post" class="form-horizontal">
+  @for(feedback <- toEvaluate; evaledTool = feedback.key.tool.toString.toLowerCase) {
+    <fieldset>
+      <legend>Evaluation der @feedback.key.tool-Korrektur</legend>
+      @yesNoMaybe.render("sense", evaledTool, "Finden Sie dieses Tool sinnvoll?", feedback.sense)
+      @yesNoMaybe.render("used", evaledTool, "Haben Sie dieses Tool genutzt?", feedback.used)
+      
+      @marked.render("usability", evaledTool, "Allgemeine Bedienbarkeit", feedback.usability)
+      @marked.render("feedback", evaledTool, "Gestaltung des Feedbacks", feedback.feedback)
+      @marked.render("fairness", evaledTool, "Fairness der Evaluation", feedback.fairness)
+      
+      <div class="form-group">
+        <label class="control-label col-sm-4" for="comment-@evaledTool">Verbesserungsvorschläge:</label>
+      
+        <div class="col-sm-8">
+          <textarea class="form-control" rows="5" name="comment-@evaledTool" id="comment-@evaledTool"
+            placeholder="Verbesserungsvorschläge">@feedback.comment</textarea>
+          <p>Bitte beschr&aumlnken Sie Sich auf 250 Zeichen.</p>
+        </div>
+      </div>
+    </fieldset>
   }
-  <input type="submit" class="btn btn-primary" value="Evaluation absenden">
+    <button type="submit" class="btn btn-primary btn-block">Evaluation absenden</button>
   </form>
 </div>
 }

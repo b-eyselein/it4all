@@ -1,0 +1,14 @@
+@(evaluatedAspect: String, evaluatedTool: String, question: String, current: model.feedback.YesNoMaybe)
+
+<div class="form-group">
+  <label class="control-label col-sm-4">@question</label>
+  @for(answer <- model.feedback.YesNoMaybe.values) {
+  <div class="col-sm-2">
+    <div class="radio">
+      <label>
+        <input type="radio" name="@{evaluatedAspect + "-" + evaluatedTool}" value="@answer" @if(answer == current) { checked }>@answer.getGerman
+      </label>
+    </div>
+  </div>
+  }
+</div>

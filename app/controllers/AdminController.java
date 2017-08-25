@@ -15,7 +15,6 @@ import model.feedback.Mark;
 import model.feedback.YesNoMaybe;
 import model.user.Role;
 import model.user.User;
-import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
 import play.mvc.Result;
@@ -47,20 +46,18 @@ public class AdminController extends BaseController {
   }
   
   public Result index() {
-    return ok(views.html.adminPage.render(getUser()));
+    return ok(views.html.admin.adminPage.render(getUser()));
   }
   
   public Result users() {
-    return ok(views.html.users.render(getUser(), User.finder.all()));
+    return ok(views.html.admin.users.render(getUser(), User.finder.all()));
   }
   
-  public Result changeRole() {
+  public Result changeRole(String username) {
     if(getUser().stdRole != Role.SUPERADMIN)
       return forbidden("You do not have sufficient privileges to change roles!");
     
-    DynamicForm form = factory.form().bindFromRequest();
-    String username = form.get("username");
-    String newrole = form.get("newrole");
+    String newrole = factory.form().bindFromRequest().get("newrole");
     
     User userToChange = User.finder.byId(username);
     userToChange.stdRole = Role.valueOf(newrole);

@@ -2,16 +2,27 @@
 
 @main("Nutzerübersicht", user) {
 <script>
-roleChangeUrl = "@routes.AdminController.changeRole()"
-</script>
-<script>
 function updateBtn(username) {
   var sel = $("#sel_" + username);
   $("#btn_" + username).prop('disabled', sel.val() === sel.data("stdrole"));
 }
 
-function saveRole(username) {
-  var sel = $("#sel_" +username);
+function onSuccess(changedUser) {
+  $("#sel_" + changedUser.name).data('stdrole', changedUser.stdRole);
+  $("#btn_" + changedUser.name).prop('disabled', true);
+  $("#reply").append("<div class=\"alert alert-success alert-dismissable\">"
+      + "<a href=\"\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>"
+      + "<strong>" + changedUser.name + "</strong> hat jetzt die neue Rolle <strong>" + changedUser.stdRole + "</strong> statt " + oldRole +  "</div>");
+}
+
+function onError(jqXHR, textStatus, errorThrown) {
+  $("#reply").append("<div class=\"alert alert-danger alert-dismissable\">"
+          + "<a href=\"\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>"
+          + "<strong>" + jqXHR.responseText + "</strong></div>");
+}
+
+function saveRole(username, roleChangeUrl) {
+  var sel = $("#sel_" + username);
   var oldRole = sel.data('stdrole');
   $.ajax({
       type: "PUT",
@@ -20,18 +31,8 @@ function saveRole(username) {
           username: username,
           newrole: sel.val()
       },
-      success: function(changedUser) {
-        $("#sel_" + changedUser.name).data('stdrole', changedUser.stdRole);
-        $("#btn_" + changedUser.name).prop('disabled', true);
-        $("#reply").append("<div class=\"alert alert-success alert-dismissable\">"
-            + "<a href=\"\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>"
-            + "<strong>" + changedUser.name + "</strong> hat jetzt die neue Rolle <strong>" + changedUser.stdRole + "</strong> statt " + oldRole +  "</div>");
-      },
-      error: function(jqXHR, textStatus, errorThrown) {
-        $("#reply").append("<div class=\"alert alert-danger alert-dismissable\">"
-                + "<a href=\"\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>"
-                + "<strong>" + jqXHR.responseText + "</strong></div>");
-      }
+      success: onSuccess,
+      error: onError
   });
 }
 </script>
@@ -63,7 +64,9 @@ function saveRole(username) {
               }
             </select>
             <span class="input-group-btn">
-              <button class="btn btn-default" disabled id="btn_@user.name" onclick="saveRole('@user.name')"><span class="glyphicon glyphicon-upload"></span></button>
+              <button class="btn btn-default" disabled id="btn_@user.name" onclick="saveRole('@user.name', '@routes.AdminController.changeRole(user.name)')">
+                <span class="glyphicon glyphicon-upload"></span>
+              </button>
             </span>
           </div>
         </td>
