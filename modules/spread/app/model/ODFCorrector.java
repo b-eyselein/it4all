@@ -23,9 +23,6 @@ import play.Logger;
  */
 public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Cell, Font, Color> {
 
-  private static final String CORRECT_FORMULA = "Formel richtig.";
-
-  // TODO: magic numbers...
   private static final int MAXROW = 80;
   private static final int MAXCOLUMN = 22;
 
@@ -42,21 +39,21 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
   public String compareCellFormulas(Cell masterCell, Cell compareCell) {
     String masterFormula = masterCell.getFormula();
     String compareFormula = compareCell.getFormula();
-    if(masterFormula == null)
+    if (masterFormula == null)
       // Keine Formel zu vergleichen
       return "";
-    else if(masterFormula.equals(compareFormula))
+    else if (masterFormula.equals(compareFormula))
       // Formel richtig
-      return CORRECT_FORMULA;
-    else if(compareFormula == null)
+      return StringConsts.COMMENT_FORMULA_CORRECT;
+    else if (compareFormula == null)
       // Keine Formel von Student angegeben
-      return "Keine Formel angegeben!";
+      return StringConsts.COMMENT_FORMULA_MISSING;
     else {
       String diffOfTwoFormulas = HashSetHelper.getDiffOfTwoFormulas(masterFormula, compareFormula);
-      if(diffOfTwoFormulas.isEmpty())
-        return CORRECT_FORMULA;
+      if (diffOfTwoFormulas.isEmpty())
+	return StringConsts.COMMENT_FORMULA_CORRECT;
       else
-        return "Formel falsch. " + diffOfTwoFormulas;
+	return String.format(StringConsts.COMMENT_FORMULA_INCORRECT_VAR, diffOfTwoFormulas);
     }
   }
 
@@ -65,14 +62,14 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
     String masterValue = masterCell.getStringValue();
     String compareValue = compareCell.getStringValue();
     // FIXME: why substring from 0 to first newline?
-    if(compareValue.indexOf('\n') != -1)
+    if (compareValue.indexOf('\n') != -1)
       compareValue = compareValue.substring(0, compareValue.indexOf('\n'));
-    if(compareValue.isEmpty())
-      return "Keinen Wert angegeben!";
-    else if(masterValue.equals(compareValue))
-      return "Wert richtig.";
+    if (compareValue.isEmpty())
+      return StringConsts.COMMENT_VALUE_MISSING;
+    else if (masterValue.equals(compareValue))
+      return StringConsts.COMMENT_VALUE_CORRECT;
     else
-      return "Wert falsch. Erwartet wurde '" + masterValue + "'.";
+      return String.format(StringConsts.COMMENT_VALUE_INCORRECT_VAR, masterValue);
   }
 
   @Override
@@ -85,29 +82,29 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
   public String compareNumberOfChartsInDocument(SpreadsheetDocument compare, SpreadsheetDocument sample) {
     int sampleCount = sample.getChartCount();
     int compareCount = compare.getChartCount();
-    if(sampleCount == 0)
-      return "Es waren keine Diagramme zu erstellen.";
-    else if(sampleCount != compareCount)
-      return "Falsche Anzahl Diagramme im Dokument (erwartet: " + sampleCount + ", gezählt: " + compareCount + ").";
+    if (sampleCount == 0)
+      return "Es sollten keine Diagramme erstellt werden.";
+    else if (sampleCount != compareCount)
+      return "Falsche Anzahl Diagramme im Dokument (Erwartet: " + sampleCount + ", Gefunden: " + compareCount + ").";
     else
       return "Richtige Anzahl Diagramme gefunden.";
   }
 
   @Override
   public void compareSheet(Table sampleTable, Table compareTable, boolean correctConditionalFormating) {
-    if(correctConditionalFormating) {
+    if (correctConditionalFormating) {
       // NOTICE: Does not work in ODF Toolkit
     }
     // Iterate over colored cells
     List<Cell> range = getColoredRange(sampleTable);
-    for(Cell cellMaster: range) {
+    for (Cell cellMaster : range) {
       int rowIndex = cellMaster.getRowIndex();
       int columnIndex = cellMaster.getColumnIndex();
       Cell cellCompare = compareTable.getCellByPosition(columnIndex, rowIndex);
 
-      if(cellCompare == null)
-        // TODO: Fehler werfen? Kann das überhaupt passieren?
-        return;
+      if (cellCompare == null)
+	// TODO: Fehler werfen? Kann das überhaupt passieren?
+	return;
 
       // Compare cell values
       String cellValueResult = compareCellValues(cellMaster, cellCompare);
@@ -116,13 +113,13 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
       setCellComment(cellCompare, cellValueResult + "\n" + cellFormulaResult);
 
       // FIXME: use enum instead of String!
-      if("Wert richtig.".equals(cellValueResult)
-          && (cellFormulaResult.isEmpty() || CORRECT_FORMULA.equals(cellFormulaResult)))
-        setCellStyle(cellCompare, new Font(FONT, FontStyle.BOLD, FONT_SIZE), Color.GREEN);
+      if (StringConsts.COMMENT_VALUE_CORRECT.equals(cellValueResult)
+          && (cellFormulaResult.isEmpty() || StringConsts.COMMENT_FORMULA_CORRECT.equals(cellFormulaResult)))
+	setCellStyle(cellCompare, new Font(FONT, FontStyle.BOLD, FONT_SIZE), Color.GREEN);
       // cellCompare.setFont(new Font(FONT, FontStyle.BOLD, FONT_SIZE,
       // Color.GREEN));
       else
-        setCellStyle(cellCompare, new Font(FONT, FontStyle.ITALIC, FONT_SIZE), Color.RED);
+	setCellStyle(cellCompare, new Font(FONT, FontStyle.ITALIC, FONT_SIZE), Color.RED);
       // cellCompare.setFont(new Font(FONT, FontStyle.ITALIC, FONT_SIZE,
       // Color.RED));
     }
@@ -137,11 +134,11 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
   @SuppressWarnings("deprecation")
   public List<Cell> getColoredRange(Table master) {
     List<Cell> range = new ArrayList<>();
-    for(int row = 0; row < MAXROW; row++) {
-      for(int column = 0; column < MAXCOLUMN; column++) {
-        Cell oCell = master.getRowByIndex(row).getCellByIndex(column);
-        if(!oCell.getCellBackgroundColorString().equals(COLOR_WHITE))
-          range.add(oCell);
+    for (int row = 0; row < MAXROW; row++) {
+      for (int column = 0; column < MAXCOLUMN; column++) {
+	Cell oCell = master.getRowByIndex(row).getCellByIndex(column);
+	if (!oCell.getCellBackgroundColorString().equals(COLOR_WHITE))
+	  range.add(oCell);
       }
     }
     return range;
@@ -162,34 +159,32 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
     try {
       return SpreadsheetDocument.loadDocument(path.toFile());
     } catch (Exception e) {
-      throw new CorrectionException("", "There has been an error loading a ODF SpreadSheetDocument", e);
+      throw new CorrectionException("", String.format(StringConsts.ERROR_LOAD_VAR, path.getFileName()), e);
     }
   }
 
   @Override
   public void saveCorrectedSpreadsheet(SpreadsheetDocument compareDocument, Path testPath) {
     // @formatter:off
-    String fileNameNew =
-        com.google.common.io.Files.getNameWithoutExtension(testPath.toString()) +
-        CORRECTION_ADD_STRING + "." +
-        com.google.common.io.Files.getFileExtension(testPath.toString());
+    String fileNameNew = com.google.common.io.Files.getNameWithoutExtension(testPath.toString()) + StringConsts.CORRECTION_ADD_STRING
+        + "." + com.google.common.io.Files.getFileExtension(testPath.toString());
     // @formatter:on
     Path savePath = Paths.get(testPath.getParent().toString(), fileNameNew);
     try {
-      if(!savePath.getParent().toFile().exists())
-        Files.createDirectories(savePath.getParent());
+      if (!savePath.getParent().toFile().exists())
+	Files.createDirectories(savePath.getParent());
 
       FileOutputStream fileOut = new FileOutputStream(savePath.toFile());
       compareDocument.save(fileOut);
       fileOut.close();
     } catch (Exception e) {
-      Logger.error("Fehler beim Speichern der korrigierten Datei!", e);
+      Logger.error(StringConsts.ERROR_SAVE_FILE, e);
     }
   }
 
   @Override
   public void setCellComment(Cell cell, String message) {
-    if(message == null || message.isEmpty())
+    if (message == null || message.isEmpty())
       return;
     cell.setNoteText(message);
   }

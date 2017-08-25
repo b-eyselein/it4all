@@ -7,8 +7,6 @@ import java.util.List;
 
 public abstract class SpreadCorrector<D, S, C, F, ColorType> {
 
-  protected static final String CORRECTION_ADD_STRING = "_Korrektur";
-  
   public abstract void closeDocument(D compareDocument);
 
   public abstract String compareCellFormulas(C masterCell, C compareCell);
@@ -23,30 +21,27 @@ public abstract class SpreadCorrector<D, S, C, F, ColorType> {
 
   public SpreadSheetCorrectionResult correct(Path samplePath, Path comparePath, boolean conditionalFormating,
       boolean compareCharts) throws CorrectionException {
-    
+
     // Check if both documents exist as files
-    if(!samplePath.toFile().exists())
-      return new SpreadSheetCorrectionResult(false, Arrays.asList("Musterdatei ist nicht vorhanden!"));
-    
-    if(!comparePath.toFile().exists())
-      return new SpreadSheetCorrectionResult(false, Arrays.asList("Lösungsdatei ist nicht vorhanden!"));
-    
+    if (!samplePath.toFile().exists())
+      return new SpreadSheetCorrectionResult(false, Arrays.asList(StringConsts.ERROR_MISSING_SAMPLE));
+
+    if (!comparePath.toFile().exists())
+      return new SpreadSheetCorrectionResult(false, Arrays.asList(StringConsts.ERROR_MISSING_SOLUTION));
+
     // Load document, if loading returns null, return Error
     D sampleDocument = loadDocument(samplePath);
-    if(sampleDocument == null)
-      return new SpreadSheetCorrectionResult(false,
-          Arrays.asList("Beim Laden der Musterdatei ist ein Fehler aufgetreten."));
+    if (sampleDocument == null)
+      return new SpreadSheetCorrectionResult(false, Arrays.asList(StringConsts.ERROR_LOAD_SAMPLE));
 
     D compareDocument = loadDocument(comparePath);
-    if(compareDocument == null)
-      return new SpreadSheetCorrectionResult(false,
-          Arrays.asList("Beim Laden der eingereichten Datei ist ein Fehler aufgetreten."));
-    
-    if(getSheetCount(sampleDocument) != getSheetCount(compareDocument))
-      return new SpreadSheetCorrectionResult(false,
-          Arrays.asList("Anzahl an Arbeitsblättern stimmt nicht überein. Haben Sie die richtige Datei hochgeladen?"));
-    
-    if(compareCharts) {
+    if (compareDocument == null)
+      return new SpreadSheetCorrectionResult(false, Arrays.asList(StringConsts.ERROR_LOAD_SOLUTION));
+
+    if (getSheetCount(sampleDocument) != getSheetCount(compareDocument))
+      return new SpreadSheetCorrectionResult(false, Arrays.asList(StringConsts.ERROR_WRONG_SHEET_NUM));
+
+    if (compareCharts) {
       String message = compareNumberOfChartsInDocument(compareDocument, sampleDocument);
       // write message in Cell A0 on first Sheet
       setCellComment(getCellByPosition(getSheetByIndex(compareDocument, 0), 0, 0), message);
@@ -56,13 +51,13 @@ public abstract class SpreadCorrector<D, S, C, F, ColorType> {
 
     // Iterate over sheets
     int sheetCount = getSheetCount(sampleDocument);
-    for(int sheetIndex = 0; sheetIndex < sheetCount; sheetIndex++) {
+    for (int sheetIndex = 0; sheetIndex < sheetCount; sheetIndex++) {
       S sampleTable = getSheetByIndex(sampleDocument, sheetIndex);
       S compareTable = getSheetByIndex(compareDocument, sheetIndex);
-      if(compareTable == null || sampleTable == null)
-        notices.add("Es gab einen Fehler beim Öffnen der " + (sheetCount + 1) + ". Tabelle!");
+      if (compareTable == null || sampleTable == null)
+	notices.add(String.format(StringConsts.ERROR_LOAD_TABLE_VAR, (sheetCount + 1)));
       else
-        compareSheet(sampleTable, compareTable, conditionalFormating);
+	compareSheet(sampleTable, compareTable, conditionalFormating);
     }
 
     // Save and close workbooks
@@ -70,8 +65,8 @@ public abstract class SpreadCorrector<D, S, C, F, ColorType> {
     closeDocument(compareDocument);
     closeDocument(sampleDocument);
 
-    if(notices.isEmpty())
-      return new SpreadSheetCorrectionResult(true, Arrays.asList("Korrektur ist erfolgreicht durchgelaufen."));
+    if (notices.isEmpty())
+      return new SpreadSheetCorrectionResult(true, Arrays.asList(StringConsts.SUCCESS_CORRECTION));
     else
       return new SpreadSheetCorrectionResult(false, notices);
   }

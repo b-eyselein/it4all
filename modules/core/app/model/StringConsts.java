@@ -14,9 +14,29 @@ public abstract class StringConsts {
 
   public static final String COLUMNS_NAME = "Spalten";
 
+  public static final String COMMENT_FORMULA_CORRECT = "Formel richtig.";
+  public static final String COMMENT_FORMULA_FALSE = "Keine Formel notwendig.";
+  public static final String COMMENT_FORMULA_INCORRECT_VAR = "Formel falsch. (%s)";
+  public static final String COMMENT_FORMULA_MISSING = "Formel notwendig.";
+  public static final String COMMENT_VALUE_CORRECT = "Wert richtig.";
+  public static final String COMMENT_VALUE_INCORRECT_VAR = "Wert falsch. Erwartet wurde '%s'.";
+  public static final String COMMENT_VALUE_MISSING = "Kein Wert angegeben.";
+
   public static final String CONDITIONS_NAME = "Bedingungen";
 
+  public static final String CORRECTION_ADD_STRING = "_Korrektur";
+
   public static final String EMPTY_SOLUTION = "Sie haben eine leere Lösung abgegeben!";
+
+  public static final String ERROR_CLOSE_FILE = "Beim Schließen des Dokuments ist ein Fehler aufgetreten.";
+  public static final String ERROR_LOAD_VAR = "Beim Laden der Datei '%s' ist ein Fehler aufgetreten.";
+  public static final String ERROR_LOAD_SAMPLE = "Beim Laden der Musterdatei ist ein Fehler aufgetreten.";
+  public static final String ERROR_LOAD_SOLUTION = "Beim Laden der eingereichten Datei ist ein Fehler aufgetreten.";
+  public static final String ERROR_LOAD_TABLE_VAR = "Beim Öffnen der %dten Tabelle ist ein Fehler aufgetreten.";
+  public static final String ERROR_MISSING_SAMPLE = "Die Musterdatei ist nicht vorhanden.";
+  public static final String ERROR_MISSING_SOLUTION = "Die Lösungsdatei ist nicht vorhanden.";
+  public static final String ERROR_SAVE_FILE = "Beim Speichern der korrigierten Datei ist ein Fehler aufgetreten.";
+  public static final String ERROR_WRONG_SHEET_NUM = "Die Anzahl der Arbeitsblätter stimmt nicht überein. Haben Sie die richtige Datei hochgeladen?";
 
   public static final String EX_FILE_NAME = "exercises.json";
 
@@ -69,6 +89,8 @@ public abstract class StringConsts {
   public static final String SHOW_ALL_TABLES = "SHOW TABLES";
 
   public static final String SOLUTION_NAME = "solution";
+  
+  public static final String SUCCESS_CORRECTION = "Die Korrektur war erfolgreich.";
 
   public static final String TABLES_NAME = "Tabellen";
 
