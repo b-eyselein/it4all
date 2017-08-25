@@ -13,8 +13,6 @@ POST   /preferences              controllers.UserController.saveOptions()
 # Admin
 GET    /admin                    controllers.AdminController.index()
 
-GET    /eval/evaluation          controllers.AdminController.evaluation()
-
 GET    /users                    controllers.AdminController.users()
 PUT    /users/changeRole/:user   controllers.AdminController.changeRole(user: String)
 
@@ -67,8 +65,9 @@ GET    /logout                   controllers.LoginController.logout()
 GET    /direct                   controllers.LoginController.fromWuecampus(name: String ?= "", courseId: Int ?= -1, courseName: String ?= "")
 
 # Evaluation
-GET    /eval/                    controllers.Evaluation.index()
-POST   /eval/submit              controllers.Evaluation.submit()
+GET    /eval                     controllers.EvaluationController.index()
+POST   /eval                     controllers.EvaluationController.submit()
+GET    /eval/stats               controllers.AdminController.evaluation()
 
 
 # Map static resources from the /public folder to the /assets URL path

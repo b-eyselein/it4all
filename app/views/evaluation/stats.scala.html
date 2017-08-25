@@ -1,10 +1,48 @@
-@(user: model.user.User, evaluation: String)
+@import model.feedback._
+
+@(user: model.user.User, evaluationResult: List[FeedbackResult])
 
 @main("Evaluation", user) {
 <div class="container">
   <div class="page-header">
     <h1>Auswertung der Evaluation der Tools</h1>
   </div>
-  @Html(evaluation)
+  
+  
+  @for(res <- evaluationResult) {
+  <div>
+    <h2>@res.tool</h2>    
+    
+    <table class="table">
+      <thead>
+        <th>Frage</th>
+        <th>&empty; / #</th>
+        @for(mark <- Mark.values) {<th>@mark.getMark</th>
+        }
+      </thead>
+      <tbody>
+      @for(evaledAspect <- EvaluatedAspect.values; marks = res.get(evaledAspect)) {
+        <tr>
+          <td>@evaledAspect.getQuestion</td>
+          <td>@FeedbackResult.avg(marks) / @marks.size</div>
+          @for(mark <- Mark.values) {
+          <td>@marks.getOrElse(mark, 0)</td>
+          }
+        </tr>
+      }
+        <tr>
+          <td>Kommentare:</td>
+          <td>-- / @res.allComments.size</td>
+          <td colspan="@EvaluatedAspect.values.size">
+            <ul>
+            @for(comment <- res.allComments) {
+              <li>@comment</li>
+            }
+            </ul>  
+          </td>
+      </tbody>
+    </table>
+  </div>
+  }
 </div>
 }

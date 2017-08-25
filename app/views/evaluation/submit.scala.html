@@ -5,19 +5,34 @@
   <div class="page-header">
     <h1>Ihre Bewertungen</h1>
   </div>
-  <div class="alert alert-success">Ihre Bewertungen wurden gespeichert.</div>
-  @for(fb <- feedback) {
-  <div class="panel panel-default">
-    <div class="panel-heading">Ihre Bewertung f&uuml;r @fb.key.tool</div>
-    <div class="panel-body">
-      <p>Tool ist sinnvoll: @fb.sense.getGerman()</p>
-      <p>Tool genutzt: @fb.used.getGerman()</p>
-      <p>Allgemeine Bedienung: @fb.usability.getGerman()</p>
-      <p>Gestaltung des Feedbacks: @fb.feedback.getGerman()</p>
-      <p>Fairness der Korrektur: @fb.fairness.getGerman()</p>
-      <p>Kommentar: @fb.comment</p>
-    </div>
+  <div class="alert alert-success">
+    <p>Ihre Bewertungen wurden gespeichert und werden zu einem sp&auml;teren Zeitpunkt ausgewertet.</p>
+    <p>Sie k&ouml;nnen nun <a href="@routes.Application.index()" class="alert-link">zur Startseite</a> zur&uuml;ckkehren.</p>
   </div>
-  }
+  
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Frage</th>
+        @for(fb <- feedback) {<th>@fb.key.tool</th>
+        }
+      <tr>    
+    </thead>
+    <tbody>
+    @for(evaledAspect <- model.feedback.EvaluatedAspect.values) {
+      <tr>
+        <td>@evaledAspect.getQuestion</td>
+        @for(fb <- feedback) {
+      	<td>@fb.get(evaledAspect).display(evaledAspect)</td>
+        }
+      </tr>
+    }
+      <tr>
+        <td>Kommentare</td>
+        @for(fb <- feedback) {
+      	<td>@fb.comment</td>
+      	}
+    </tbody>
+  </table>
 </div>
 }

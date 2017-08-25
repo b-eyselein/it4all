@@ -1,29 +1,43 @@
 package model.feedback;
 
 public enum Mark {
-  VERY_GOOD(1, "Sehr gut", false), GOOD(2, "Gut", false), NEUTRAL(3, "Neutral", false), BAD(4, "Schlecht",
-      false), VERY_BAD(5, "Sehr schlecht", false), NO_MARK(-1, "Keine Angabe", true);
   
-  private int myMark;
-  private String german;
-  private boolean checked;
+  // @formatter:off
+  VERY_GOOD     (1),
+  GOOD          (2),
+  NEUTRAL       (3),
+  BAD           (4),
+  VERY_BAD      (5),
   
-  private Mark(int theMark, String inGerman, boolean isChecked) {
-    myMark = theMark;
-    german = inGerman;
-    checked = isChecked;
-  }
+  NO_MARK       (-1);
+  // @formatter:on
   
-  public String getGerman() {
-    return german;
+  private int value;
+  
+  private Mark(int theMark) {
+    value = theMark;
   }
   
   public int getMark() {
-    return myMark;
+    return value;
   }
   
-  public boolean isChecked() {
-    return checked;
+  public String display(EvaluatedAspect evaledAspect) {
+    switch(this) {
+    case VERY_GOOD:
+      return "Sehr " + evaledAspect.getPositive().toLowerCase();
+    case GOOD:
+      return evaledAspect.getPositive();
+    case NEUTRAL:
+      return evaledAspect.getNeutral();
+    case BAD:
+      return evaledAspect.getNegative();
+    case VERY_BAD:
+      return "Sehr " + evaledAspect.getNegative().toLowerCase();
+    case NO_MARK:
+    default:
+      return "Keine Angabe";
+    }
   }
   
 }

@@ -8,11 +8,11 @@ import javax.inject.Inject;
 
 import controllers.core.BaseController;
 import model.Secured;
+import model.feedback.EvaluatedAspect;
 import model.feedback.Feedback;
 import model.feedback.Feedback.EvaluatedTool;
 import model.feedback.FeedbackKey;
 import model.feedback.Mark;
-import model.feedback.YesNoMaybe;
 import model.user.User;
 import play.data.DynamicForm;
 import play.data.FormFactory;
@@ -20,10 +20,10 @@ import play.mvc.Result;
 import play.mvc.Security.Authenticated;
 
 @Authenticated(Secured.class)
-public class Evaluation extends BaseController {
+public class EvaluationController extends BaseController {
   
   @Inject
-  public Evaluation(FormFactory theFactory) {
+  public EvaluationController(FormFactory theFactory) {
     super(theFactory);
   }
   
@@ -62,15 +62,10 @@ public class Evaluation extends BaseController {
     
     String evaluatedTool = tool.toString().toLowerCase();
     
-    feedback.sense = YesNoMaybe.valueOf(form.get("sense-" + evaluatedTool));
-    
-    feedback.used = YesNoMaybe.valueOf(form.get("used-" + evaluatedTool));
-    
-    feedback.usability = Mark.valueOf(form.get("usability-" + evaluatedTool));
-    
-    feedback.feedback = Mark.valueOf(form.get("feedback-" + evaluatedTool));
-    
-    feedback.fairness = Mark.valueOf(form.get("fairness-" + evaluatedTool));
+    for(EvaluatedAspect evaledAspect: EvaluatedAspect.values()) {
+      feedback.set(evaledAspect, Mark
+          .valueOf(form.get(evaledAspect.toString().toLowerCase() + "-" + evaluatedTool.toLowerCase()).toUpperCase()));
+    }
     
     feedback.comment = form.get("comment-" + evaluatedTool);
     
