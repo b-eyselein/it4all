@@ -83,11 +83,11 @@ public class ODFCorrector extends SpreadCorrector<SpreadsheetDocument, Table, Ce
     int sampleCount = sample.getChartCount();
     int compareCount = compare.getChartCount();
     if (sampleCount == 0)
-      return "Es sollten keine Diagramme erstellt werden.";
+      return StringConsts.COMMENT_CHART_FALSE;
     else if (sampleCount != compareCount)
-      return "Falsche Anzahl Diagramme im Dokument (Erwartet: " + sampleCount + ", Gefunden: " + compareCount + ").";
+      return String.format(StringConsts.COMMENT_CHART_NUM_INCORRECT_VAR, sampleCount, compareCount);
     else
-      return "Richtige Anzahl Diagramme gefunden.";
+      return StringConsts.COMMENT_CHART_NUM_CORRECT;
   }
 
   @Override

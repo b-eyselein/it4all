@@ -14,10 +14,26 @@ public abstract class StringConsts {
 
   public static final String COLUMNS_NAME = "Spalten";
 
+  public static final String COMMENT_CHART_CORRECT = "Diagramm(e) richtig.";
+  public static final String COMMENT_CHART_FALSE = "Es sollten keine Diagramme erstellt werden.";
+  public static final String COMMENT_CHART_NUM_CORRECT = "Richtige Anzahl Diagramme gefunden.";
+  public static final String COMMENT_CHART_NUM_INCORRECT_VAR = "Falsche Anzahl Diagramme im Dokument (Erwartet: %d, Gefunden: %d).";
+  public static final String COMMENT_CHART_RANGE_INCORRECT_VAR = "Folgende Bereiche sind falsch: %s";
+  public static final String COMMENT_CONDITIONAL_FORMATTING_CORRECT = "Bedingte Formatierung richtig.";
+  public static final String COMMENT_CONDITIONAL_FORMATTING_DIFF_VAR = "(%s).";
+  public static final String COMMENT_CONDITIONAL_FORMATTING_INCORRECT = "Bedingte Formatierung falsch.";
+  public static final String COMMENT_CONDITIONAL_FORMATTING_NUM_FALSE = "Keine bedingte Formatierung notwendig.";
+  public static final String COMMENT_CONDITIONAL_FORMATTING_NUM_INCORRECT = "Bedingte Formatierung falsch. Keine bedingte Formatierung gefunden.";
+  public static final String COMMENT_CONDITIONAL_FORMATTING_NUM_INCORRECT_VAR = "Bedingte Formatierung falsch. Fehlende bedingte Formatierungen (Erwartet: %d, Gefunden: %d).";
+  public static final String COMMENT_CONDITIONAL_FORMATTING_RANGE_VAR = "Der Bereich [%s] ist falsch.";
   public static final String COMMENT_FORMULA_CORRECT = "Formel richtig.";
   public static final String COMMENT_FORMULA_FALSE = "Keine Formel notwendig.";
-  public static final String COMMENT_FORMULA_INCORRECT_VAR = "Formel falsch. (%s)";
+  public static final String COMMENT_FORMULA_HINT_VAR = "Verwenden Sie die Funktion %s.";
+  public static final String COMMENT_FORMULA_INCORRECT_VAR = "Formel falsch. %s";
   public static final String COMMENT_FORMULA_MISSING = "Formel notwendig.";
+  public static final String COMMENT_OPERATOR_MISSING_VAR = "Ein Operator (%s) fehlt.";
+  public static final String COMMENT_RANGE_MISSING_VAR = "Der Bereich (%s) fehlt.";
+  public static final String COMMENT_SHEET_TITLE_INCORRECT_VAR = "Der Titel des Tabellenblatts sollte '%s' sein.";
   public static final String COMMENT_VALUE_CORRECT = "Wert richtig.";
   public static final String COMMENT_VALUE_INCORRECT_VAR = "Wert falsch. Erwartet wurde '%s'.";
   public static final String COMMENT_VALUE_MISSING = "Kein Wert angegeben.";
@@ -29,10 +45,12 @@ public abstract class StringConsts {
   public static final String EMPTY_SOLUTION = "Sie haben eine leere Lösung abgegeben!";
 
   public static final String ERROR_CLOSE_FILE = "Beim Schließen des Dokuments ist ein Fehler aufgetreten.";
-  public static final String ERROR_LOAD_VAR = "Beim Laden der Datei '%s' ist ein Fehler aufgetreten.";
+  public static final String ERROR_LOAD_CHART = "Beim Öffnen eines Diagramms ist ein Fehler aufgetreten.";
   public static final String ERROR_LOAD_SAMPLE = "Beim Laden der Musterdatei ist ein Fehler aufgetreten.";
+  public static final String ERROR_LOAD_SHEET = "Beim Laden eines Tabellenblatts ist ein Fehler aufgetreten.";
   public static final String ERROR_LOAD_SOLUTION = "Beim Laden der eingereichten Datei ist ein Fehler aufgetreten.";
   public static final String ERROR_LOAD_TABLE_VAR = "Beim Öffnen der %dten Tabelle ist ein Fehler aufgetreten.";
+  public static final String ERROR_LOAD_VAR = "Beim Laden der Datei '%s' ist ein Fehler aufgetreten.";
   public static final String ERROR_MISSING_SAMPLE = "Die Musterdatei ist nicht vorhanden.";
   public static final String ERROR_MISSING_SOLUTION = "Die Lösungsdatei ist nicht vorhanden.";
   public static final String ERROR_SAVE_FILE = "Beim Speichern der korrigierten Datei ist ein Fehler aufgetreten.";
@@ -89,7 +107,7 @@ public abstract class StringConsts {
   public static final String SHOW_ALL_TABLES = "SHOW TABLES";
 
   public static final String SOLUTION_NAME = "solution";
-  
+
   public static final String SUCCESS_CORRECTION = "Die Korrektur war erfolgreich.";
 
   public static final String TABLES_NAME = "Tabellen";
