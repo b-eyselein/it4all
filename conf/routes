@@ -14,7 +14,9 @@ POST   /preferences           controllers.UserController.saveOptions()
 GET    /admin                 controllers.AdminController.index()
 
 GET    /eval/evaluation       controllers.AdminController.evaluation()
+
 GET    /users                 controllers.AdminController.users()
+PUT    /users/changeRole      controllers.AdminController.changeRole()
 
 # Tools
 GET    /nary                  controllers.NaryController.index()

@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import io.ebean.Finder;
 import io.ebean.Model;
 
@@ -40,6 +42,7 @@ public class User extends Model {
   public Role stdRole = Role.USER;
   
   @OneToMany(mappedBy = "user")
+  @JsonIgnore
   public List<CourseRole> courseRoles;
   
   @Enumerated(EnumType.STRING)
@@ -50,10 +53,12 @@ public class User extends Model {
     return obj instanceof User && ((User) obj).name.equals(name);
   }
   
+  @JsonIgnore
   public List<String> getCourseNames() {
     return courseRoles.parallelStream().map(cr -> cr.course.name).collect(Collectors.toList());
   }
   
+  @JsonIgnore
   public List<Course> getCourses() {
     return courseRoles.parallelStream().map(cr -> cr.course).collect(Collectors.toList());
   }
@@ -66,6 +71,7 @@ public class User extends Model {
     return result;
   }
   
+  @JsonIgnore
   public boolean isAdmin() {
     return stdRole.isAdminRole();
   }

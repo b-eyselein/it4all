@@ -8,14 +8,20 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import controllers.core.BaseController;
+import model.AdminSecured;
 import model.feedback.Feedback;
 import model.feedback.Feedback.EvaluatedTool;
 import model.feedback.Mark;
 import model.feedback.YesNoMaybe;
+import model.user.Role;
 import model.user.User;
+import play.data.DynamicForm;
 import play.data.FormFactory;
+import play.libs.Json;
 import play.mvc.Result;
+import play.mvc.Security.Authenticated;
 
+@Authenticated(AdminSecured.class)
 public class AdminController extends BaseController {
   
   @Inject
@@ -46,6 +52,21 @@ public class AdminController extends BaseController {
   
   public Result users() {
     return ok(views.html.users.render(getUser(), User.finder.all()));
+  }
+  
+  public Result changeRole() {
+    if(getUser().stdRole != Role.SUPERADMIN)
+      return forbidden("You do not have sufficient privileges to change roles!");
+    
+    DynamicForm form = factory.form().bindFromRequest();
+    String username = form.get("username");
+    String newrole = form.get("newrole");
+    
+    User userToChange = User.finder.byId(username);
+    userToChange.stdRole = Role.valueOf(newrole);
+    userToChange.save();
+    
+    return ok(Json.toJson(userToChange));
   }
   
   private String evaluate(EvaluatedTool key, List<Feedback> feedbackForTool) {
