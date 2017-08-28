@@ -40,6 +40,11 @@ public class SqlScenario extends ExerciseCollection<SqlExercise> {
     exercises = theExercises;
   }
 
+  @JsonIgnore
+  public int getNumOfSites() {
+    return exercises.size() / STEP + 1;
+  }
+  
   public int getBorder(SqlExerciseType exType, int start) {
     return (Math.min(getExercisesByType(exType).size(), start + STEP) / STEP) * STEP;
   }

@@ -29,14 +29,14 @@ case class ColumnMatch(userCol: Option[ColumnWrapper], sampleCol: Option[ColumnW
     <tr class={ getBSClass }>
   		<td><span class={ matchType.toString }></span></td>
   		<td>
-				<span class={ if(colNamesMatched) "text-success" else "text-danger" }>{ firstColName }</span>
-    		<span class={ if(restMatched) "text-success" else "text-danger" }>{ firstRest }</span>
+				<span class={ if (colNamesMatched) "text-success" else "text-danger" }>{ firstColName }</span>
+    		<span class={ if (restMatched) "text-success" else "text-danger" }>{ firstRest }</span>
   		</td>
  		  <td>
-   	 		<span class={ if(colNamesMatched) "text-success" else "text-danger" }>{ secondColName }</span>
-    		<span class={ if(restMatched) "text-success" else "text-danger" }>{ secondRest }</span>
+   	 		<span class={ if (colNamesMatched) "text-success" else "text-danger" }>{ secondColName }</span>
+    		<span class={ if (restMatched) "text-success" else "text-danger" }>{ secondRest }</span>
   		</td>
     	<td>{ explanation }</td>
-		</tr>.toString
+		</tr>
 
 }

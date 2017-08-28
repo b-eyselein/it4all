@@ -14,7 +14,6 @@ import org.apache.ibatis.jdbc.ScriptRunner;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import model.exercise.SqlExercise;
-import model.exercise.SqlSample;
 import model.exercise.SqlScenario;
 import model.exercisereading.ExerciseCollectionReader;
 import play.Logger;
@@ -73,10 +72,7 @@ public class SqlScenarioReader extends ExerciseCollectionReader<SqlExercise, Sql
     runCreateScript(sqlSelect, scenario);
     runCreateScript(sqlOther, scenario);
 
-    scenario.getExercises().forEach(ex -> {
-      ex.save();
-      ex.samples.forEach(SqlSample::save);
-    });
+    scenario.getExercises().forEach(delegateReader::saveRead);
   }
 
   @Override

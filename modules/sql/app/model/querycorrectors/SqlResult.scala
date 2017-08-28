@@ -22,8 +22,9 @@ case class SqlResult(learnerSolution: String,
     extends EvaluationResult(Success.NONE) {
 
   def getMatchingResults: List[ScalaMatchingResult[_, _ <: ScalaMatch[_]]] =
-    // Option only gets added if isDefined
     List(columnComparison, tableComparison, whereComparison) ++ groupByComparison ++ orderByComparison
+
+  def notEmptyMatchingResults = getMatchingResults.filter(!_.allMatches.isEmpty)
 
   def getResults = List(columnComparison, tableComparison, whereComparison, executionResult) ++ groupByComparison ++ orderByComparison
 }

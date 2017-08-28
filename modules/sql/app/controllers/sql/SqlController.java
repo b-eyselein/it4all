@@ -112,13 +112,23 @@ public class SqlController extends ExerciseController<SqlExercise, SqlResult> {
     solution.save();
   }
   
-  public Result filteredScenario(int id, String exType, int start) {
+  public Result filteredScenario(int id, String exType, int site) {
     final SqlScenario scenario = SqlScenario.finder.byId(id);
     
     if(scenario == null)
       return redirect(controllers.sql.routes.SqlController.index());
     
-    return ok(views.html.sqlscenario.render(getUser(), scenario, SqlExerciseType.valueOf(exType), start));
+    SqlExerciseType exerciseType = SqlExerciseType.valueOf(exType);
+    
+    if(site <= 0)
+      return redirect(controllers.sql.routes.SqlController.filteredScenario(id, exType, 1));
+    
+    int start = SqlScenario.STEP * (site - 1);
+    
+    List<SqlExercise> allByType = scenario.getExercisesByType(exerciseType);
+    List<SqlExercise> exercises = allByType.subList(start, Math.min(start + SqlScenario.STEP, allByType.size()));
+    
+    return ok(views.html.sqlScenario.render(getUser(), exercises, scenario, SqlExerciseType.valueOf(exType), site));
   }
   
   public Result index() {

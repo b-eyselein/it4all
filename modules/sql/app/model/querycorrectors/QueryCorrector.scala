@@ -69,8 +69,7 @@ abstract class QueryCorrector(queryType: String) {
     case e: ClassCastException => throw new CorrectionException(statement, "Das Statement war vom falschen Typ! Erwartet wurde " + queryType + "!", e)
   }
 
-  def resolveAliases(query: Q): AliasMap = getTables(query)
-    .filter(table => table != null && table.getAlias != null).map(t => t.getAlias.getName -> t.getName).toMap
+  def resolveAliases(query: Q) = getTables(query).filter(_.getAlias != null).map(t => t.getAlias.getName -> t.getName).toMap
 
   def executeQuery(database: Database, userStatement: Q, sampleStatement: Q, exercise: SqlExercise): Try[SqlExecutionResult]
 
@@ -89,6 +88,7 @@ abstract class QueryCorrector(queryType: String) {
 }
 
 object QueryCorrector {
+
   def getCorrector(exerciseType: SqlExerciseType) = exerciseType match {
     case SqlExerciseType.CREATE => CreateCorrector
     case SqlExerciseType.DELETE => DeleteCorrector
@@ -96,7 +96,6 @@ object QueryCorrector {
     case SqlExerciseType.SELECT => SelectCorrector
     case SqlExerciseType.UPDATE => UpdateCorrector
     case _ => throw new CorrectionException("", "")
-
   }
 
 }

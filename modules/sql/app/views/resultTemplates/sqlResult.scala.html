@@ -11,7 +11,7 @@
     </tr>
   </thead>
   <tbody>
-  @for(res <- result.getMatchingResults) { @res.describe  }
+  @for(res <- result.notEmptyMatchingResults) { @res.describe  }
   
   @if(execResult != null) {
     <tr class="active">

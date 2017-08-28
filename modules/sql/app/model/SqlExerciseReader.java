@@ -34,8 +34,8 @@ public class SqlExerciseReader extends ExerciseReader<SqlExercise> {
   
   @Override
   public void saveRead(SqlExercise exercise) {
-    // TODO Auto-generated method stub
-    
+    exercise.save();
+    exercise.samples.forEach(SqlSample::save);
   }
   
   @Override

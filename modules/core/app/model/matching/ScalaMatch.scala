@@ -1,6 +1,7 @@
 package model.matching
 
 import play.twirl.api.Html
+import scala.xml.Elem
 
 abstract class ScalaMatch[T](val userArg: Option[T], val sampleArg: Option[T]) {
 
@@ -27,7 +28,7 @@ abstract class ScalaMatch[T](val userArg: Option[T], val sampleArg: Option[T]) {
 
   private def describeArg(arg: Option[T]) = if (arg.isDefined) arg.get.toString else ""
 
-  def describe =
+  def describe = {
     <tr class={ getBSClass }>
     	<td><span class={ matchType.toString }></span></td>
     	<td>
@@ -37,7 +38,8 @@ abstract class ScalaMatch[T](val userArg: Option[T], val sampleArg: Option[T]) {
      	  <span class={ if (isSuccessful) "text-success" else "text-danger" }>{ describeArg(sampleArg) }</span>
     	</td>
     	<td>{ explanation }</td>
-  	</tr>.toString
+  	</tr>
+  }
 
 }
 

@@ -16,7 +16,7 @@ POST   /scenarioes/new           controllers.sql.SqlScenarioAdmin.newExercise()
 
 # All
 GET    /                         controllers.sql.SqlController.index()
-GET    /scenario/:scId/:exType   controllers.sql.SqlController.filteredScenario(scId: Int, exType: String, start: Int ?= 0)
+GET    /scenario/:scId/:exType   controllers.sql.SqlController.filteredScenario(scId: Int, exType: String, site: Int ?= 1)
 GET    /:id                      controllers.sql.SqlController.exercise(id: Int)
 
 PUT    /:id                      controllers.sql.SqlController.correctLive(id: Int)
