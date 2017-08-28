@@ -17,6 +17,7 @@ import model.result.EvaluationResult;
 import model.user.User;
 import play.Logger;
 import play.data.FormFactory;
+import play.libs.Json;
 import play.mvc.Result;
 import play.mvc.Security.Authenticated;
 import play.twirl.api.Html;
@@ -62,7 +63,7 @@ public abstract class ExerciseController<E extends Exercise, R extends Evaluatio
 
       return ok(renderResult(correctionResult));
     } catch (CorrectionException e) {
-      return badRequest("TODO!");
+      return badRequest(Json.toJson(e.getMessage()));
     }
   }
 

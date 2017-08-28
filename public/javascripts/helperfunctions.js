@@ -36,10 +36,6 @@ function updateHiddenTextarea() {
   $("#learnerSolution").val(editor.getValue());
 }
 
-function processCorrection(correction) {
-  $("#correction").html(correction);
-}
-
 function toParam(input) {
   return input.id + "=" + encodeURIComponent(input.value);
 }
@@ -54,13 +50,17 @@ function extractParameters() {
 }
 
 function testTheSolution(theUrl) {
-  var theData = extractParameters();
   $.ajax({
     type: 'PUT',
     url: theUrl,
-    data: theData,
+    data: extractParameters(),
     async: true,
-    success: processCorrection
+    success: function(correction) {
+      $("#correction").html(correction);
+    },
+    error: function(jqXHR, error, errorThrown) {
+      $("#correction").html("<div class=\"alert alert-danger\">" + jqXHR.responseJSON + "</div>");
+    }
   });
 }
 
