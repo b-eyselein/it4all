@@ -49,7 +49,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
   private static boolean compareChart(Sheet compareSheet, Sheet sampleSheet, List<String> messages, CTChart chartMaster,
       CTChart chartCompare) throws CorrectionException {
     if (chartCompare == null)
-      throw new CorrectionException("", "Das Tabellenblatt konnte nicht geöffnet werden.");
+      throw new CorrectionException("", StringConsts.ERROR_LOAD_SHEET);
 
     String stringMaster = chartMaster.toString();
     String stringCompare = chartCompare.toString();
@@ -58,7 +58,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
     String title2 = RegExpHelper.getExcelChartTitle(stringCompare);
 
     if (!title1.equals(title2)) {
-      messages.add("Der Titel sollte '" + title1 + "' sein.");
+      messages.add(String.format(StringConsts.COMMENT_SHEET_TITLE_INCORRECT_VAR, title1));
       return false;
     }
 
@@ -66,7 +66,7 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
     String chDiff = RegExpHelper.getExcelChartRangesDiff(sampleSheet.getSheetName(), stringMaster,
         compareSheet.getSheetName(), stringCompare);
     if (!chDiff.isEmpty()) {
-      messages.add(" Folgende Bereiche sind falsch: " + chDiff);
+      messages.add(" " + String.format(StringConsts.COMMENT_CHART_RANGE_INCORRECT_VAR, chDiff));
       return false;
     }
     return true;
@@ -77,21 +77,23 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
       return "";
 
     if (format1.equals(format2))
-      return "Bedingte Formatierung richtig.\n";
+      return StringConsts.COMMENT_CONDITIONAL_FORMATTING_CORRECT + "\n";
 
     // Compare ranges reference
     String cfDiff = HashSetHelper.getSheetCFDiff(getFormatStrings(format2), getFormatStrings(format1));
     if (!cfDiff.isEmpty())
-      return "Bedingte Formatierung falsch. Der Bereich [" + cfDiff + "] ist falsch.";
+      return StringConsts.COMMENT_CONDITIONAL_FORMATTING_INCORRECT + " "
+          + String.format(StringConsts.COMMENT_CONDITIONAL_FORMATTING_RANGE_VAR, cfDiff) + "\n";
 
     String string1 = RegExpHelper.getExcelCFFormulaList(format1.toString());
     String string2 = RegExpHelper.getExcelCFFormulaList(format2.toString());
     String diff = HashSetHelper.getDiffOfTwoFormulas(string1, string2);
 
     if (diff.isEmpty())
-      return "Bedingte Formatierung richtig.\n";
+      return StringConsts.COMMENT_CONDITIONAL_FORMATTING_CORRECT + "\n";
     else
-      return "Bedingte Formatierung falsch. (" + diff + ")\n";
+      return StringConsts.COMMENT_CONDITIONAL_FORMATTING_INCORRECT + " "
+          + String.format(StringConsts.COMMENT_CONDITIONAL_FORMATTING_DIFF_VAR, diff) + "\n";
   }
 
   private static Set<String> getFormatStrings(ConditionalFormatting format) {
@@ -121,14 +123,13 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
     int count2 = scf2.getNumConditionalFormattings();
 
     if (count1 == 0)
-      return Arrays.asList("Keine bedingte Formatierung erwartet.");
+      return Arrays.asList(StringConsts.COMMENT_CONDITIONAL_FORMATTING_NUM_FALSE);
 
     if (count2 == 0)
-      return Arrays.asList("Bedingte Formatierung falsch. Keine bedingte Formatierung gefunden.");
+      return Arrays.asList(StringConsts.COMMENT_CONDITIONAL_FORMATTING_NUM_INCORRECT);
 
     if (count1 != count2)
-      return Arrays.asList("Bedingte Formatierung falsch. Fehlende bedingte Formatierungen (Erwartet: " + count1
-          + ", Gefunden: " + count2 + ").\n");
+      return Arrays.asList(String.format(StringConsts.COMMENT_CONDITIONAL_FORMATTING_NUM_INCORRECT_VAR, count1, count2) + "\n");
 
     return IntStream.range(0, count1)
         .mapToObj(
@@ -157,7 +158,8 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
       return StringConsts.COMMENT_FORMULA_MISSING;
 
     String difference = HashSetHelper.getDiffOfTwoFormulas(masterCell.toString(), compareCell.toString());
-    return difference.isEmpty() ? StringConsts.COMMENT_FORMULA_CORRECT : String.format(StringConsts.COMMENT_FORMULA_INCORRECT_VAR, difference);
+    return difference.isEmpty() ? StringConsts.COMMENT_FORMULA_CORRECT
+        : String.format(StringConsts.COMMENT_FORMULA_INCORRECT_VAR, difference);
 
   }
 
@@ -167,11 +169,11 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
     String compareCellValue = getStringValueOfCell(compareCell);
 
     if (compareCellValue.isEmpty())
-      return "Wert fehlt.";
+      return StringConsts.COMMENT_VALUE_MISSING;
     else if (masterCellValue.equals(compareCellValue))
-      return "Wert richtig.";
+      return StringConsts.COMMENT_VALUE_CORRECT;
     else
-      return "Wert falsch. Erwartet wurde '" + masterCellValue + "'.";
+      return String.format(StringConsts.COMMENT_VALUE_INCORRECT_VAR, masterCellValue);
   }
 
   @Override
@@ -182,10 +184,9 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
     int compareChartCount = compareDrawing.getCharts().size();
 
     if (sampleChartCount == 0)
-      return "Es sollten keine Diagramme erstellt werden.";
+      return StringConsts.COMMENT_CHART_FALSE;
     else if (sampleChartCount != compareChartCount)
-      return "Falsche Anzahl Diagramme im Dokument (Erwartet: " + sampleChartCount + ", Vorhanden: " + compareChartCount
-          + ").";
+      return String.format(StringConsts.COMMENT_CHART_NUM_INCORRECT_VAR, sampleChartCount, compareChartCount);
     // TODO: refactor & test!
     boolean allChartsCorrect = true;
     List<String> messages = new LinkedList<>();
@@ -197,11 +198,11 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
       try {
 	allChartsCorrect &= compareChart(compareSheet, sampleSheet, messages, chartMaster, chartCompare);
       } catch (CorrectionException e) {
-	return "Beim Öffnen eines Diagramms ist ein Fehler aufgetreten.";
+	return StringConsts.ERROR_LOAD_CHART;
       }
     }
     if (allChartsCorrect)
-      return "Diagramm(e) richtig.";
+      return StringConsts.COMMENT_CHART_CORRECT;
     else
       return String.join("\n", messages);
 
@@ -245,7 +246,8 @@ public class XLSXCorrector extends SpreadCorrector<Workbook, Sheet, XSSFCell, Fo
 
       // TODO: Use enum instead of Strings!??
       short colorIndex = IndexedColors.RED.getIndex();
-      if ("Wert richtig.".equals(equalCell) && StringConsts.COMMENT_FORMULA_CORRECT.equals(equalFormula))
+      if (StringConsts.COMMENT_VALUE_CORRECT.equals(equalCell)
+          && StringConsts.COMMENT_FORMULA_CORRECT.equals(equalFormula))
 	setCellStyle(cellCompare, compareTable.getWorkbook().createFont(), IndexedColors.GREEN.getIndex());
 
       setCellStyle(cellCompare, compareTable.getWorkbook().createFont(), colorIndex);
