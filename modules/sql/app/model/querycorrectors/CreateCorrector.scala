@@ -6,10 +6,13 @@ import scala.util.Try
 import model.exercise.SqlExercise
 import net.sf.jsqlparser.schema.Table
 import play.db.Database
+import net.sf.jsqlparser.parser.CCJSqlParserUtil
+import model.CorrectionException
+import net.sf.jsqlparser.JSQLParserException
 
 object CreateCorrector extends QueryCorrector("CREATE TABLE") {
 
-  override type Q = net.sf.jsqlparser.statement.create.table.CreateTable
+  type Q = net.sf.jsqlparser.statement.create.table.CreateTable
 
   override def executeQuery(database: Database, userStatement: Q, sampleStatement: Q,
     exercise: SqlExercise): Try[SqlExecutionResult] = null
@@ -25,5 +28,15 @@ object CreateCorrector extends QueryCorrector("CREATE TABLE") {
   override def compareGroupByElements(plainUserQuery: Q, plainSampleQuery: Q) = None
 
   override def compareOrderByElements(plainUserQuery: Q, plainSampleQuery: Q) = None
+
+  def parseStatement(statement: String) = try {
+    val parsed = CCJSqlParserUtil.parse(statement)
+    parsed match {
+      case q: Q => q
+      case _ => throw new CorrectionException(statement, "Das Statement war vom falschen Typ! Erwartet wurde " + queryType + "!")
+    }
+  } catch {
+    case e: JSQLParserException => throw new CorrectionException(statement, "Es gab einen Fehler beim Parsen des Statements: " + statement, e)
+  }
 
 }

@@ -7,6 +7,9 @@ import model.exercise.SqlExercise
 import model.sql.SqlQueryResult
 import play.db.Database
 import scala.collection.JavaConverters._
+import net.sf.jsqlparser.parser.CCJSqlParserUtil
+import model.CorrectionException
+import net.sf.jsqlparser.JSQLParserException
 
 abstract class ChangeCorrector(queryType: String) extends QueryCorrector(queryType) {
 
@@ -47,6 +50,17 @@ object InsertCorrector extends ChangeCorrector("INSERT") {
   override def getTables(query: Q) = List(query.getTable)
 
   override def getWhere(query: Q) = null
+
+  def parseStatement(statement: String) = try {
+    val parsed = CCJSqlParserUtil.parse(statement)
+    parsed match {
+      case q: Q => q
+      case _ => throw new CorrectionException(statement, "Das Statement war vom falschen Typ! Erwartet wurde " + queryType + "!")
+    }
+  } catch {
+    case e: JSQLParserException => throw new CorrectionException(statement, "Es gab einen Fehler beim Parsen des Statements: " + statement, e)
+  }
+
 }
 
 object DeleteCorrector extends ChangeCorrector("DELETE") {
@@ -60,6 +74,17 @@ object DeleteCorrector extends ChangeCorrector("DELETE") {
   override def getTables(query: Q) = query.getTables.asScala.toList
 
   override def getWhere(query: Q) = query.getWhere
+
+  def parseStatement(statement: String) = try {
+    val parsed = CCJSqlParserUtil.parse(statement)
+    parsed match {
+      case q: Q => q
+      case _ => throw new CorrectionException(statement, "Das Statement war vom falschen Typ! Erwartet wurde " + queryType + "!")
+    }
+  } catch {
+    case e: JSQLParserException => throw new CorrectionException(statement, "Es gab einen Fehler beim Parsen des Statements: " + statement, e)
+  }
+
 }
 
 object UpdateCorrector extends ChangeCorrector("UPDATE") {
@@ -73,5 +98,15 @@ object UpdateCorrector extends ChangeCorrector("UPDATE") {
   override def getTables(query: Q) = query.getTables.asScala.toList
 
   override def getWhere(query: Q) = query.getWhere
+
+  def parseStatement(statement: String) = try {
+    val parsed = CCJSqlParserUtil.parse(statement)
+    parsed match {
+      case q: Q => q
+      case _ => throw new CorrectionException(statement, "Das Statement war vom falschen Typ! Erwartet wurde " + queryType + "!")
+    }
+  } catch {
+    case e: JSQLParserException => throw new CorrectionException(statement, "Es gab einen Fehler beim Parsen des Statements: " + statement, e)
+  }
 
 }

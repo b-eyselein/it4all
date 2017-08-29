@@ -23,7 +23,7 @@ import model.conditioncorrector.BinaryExpressionMatcher
 
 object ColumnMatcher extends ScalaMatcher[ColumnWrapper, ColumnMatch](model.StringConsts.COLUMNS_NAME, _.canMatch(_), new ColumnMatch(_, _))
 
-abstract class QueryCorrector(queryType: String) {
+abstract class QueryCorrector(val queryType: String) {
 
   type Q <: net.sf.jsqlparser.statement.Statement
 
@@ -45,7 +45,7 @@ abstract class QueryCorrector(queryType: String) {
 
     val executionResult = executeQuery(database, userQ, sampleQ, exercise) match {
       case Success(executionResult) => executionResult
-      case Failure(cause) => throw new CorrectionException(learnerSolution, "Es gab einen Fehler bei der Ausführung des Statements ", cause)
+      case Failure(cause) => throw new CorrectionException(learnerSolution, s"Es gab einen Fehler bei der Ausführung des Statements $userQ", cause)
     }
 
     val groupByComparison = compareGroupByElements(userQ, sampleQ)
@@ -64,10 +64,7 @@ abstract class QueryCorrector(queryType: String) {
 
   def compareTables(userQ: Q, sampleQ: Q) = TABLE_NAME_MATCHER.doMatch(getTableNames(userQ), getTableNames(sampleQ))
 
-  def parseStatement(statement: String) = try { CCJSqlParserUtil.parse(statement).asInstanceOf[Q] } catch {
-    case e: JSQLParserException => throw new CorrectionException(statement, "Es gab einen Fehler beim Parsen des Statements: " + statement, e)
-    case e: ClassCastException => throw new CorrectionException(statement, "Das Statement war vom falschen Typ! Erwartet wurde " + queryType + "!", e)
-  }
+  def parseStatement(statement: String): Q
 
   def resolveAliases(query: Q) = getTables(query).filter(_.getAlias != null).map(t => t.getAlias.getName -> t.getName).toMap
 

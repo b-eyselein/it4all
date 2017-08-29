@@ -20,6 +20,8 @@ import net.sf.jsqlparser.statement.select.SelectItem
 import play.db.Database
 import model.matching.ScalaMatchingResult
 import model.matching.MatchType
+import net.sf.jsqlparser.parser.CCJSqlParserUtil
+import net.sf.jsqlparser.JSQLParserException
 
 case class GroupByMatch(ua: Option[Expression], sa: Option[Expression]) extends ScalaMatch[Expression](ua, sa) {
   override def analyze(ua: Expression, sa: Expression) = MatchType.SUCCESSFUL_MATCH
@@ -37,7 +39,7 @@ object ORDER_BY_MATCHER extends ScalaMatcher[OrderByElement, OrderByMatch]("Orde
 
 object SelectCorrector extends QueryCorrector("SELECT") {
 
-  override type Q = net.sf.jsqlparser.statement.select.Select
+  type Q = net.sf.jsqlparser.statement.select.Select
 
   def executeStatement(select: String, conn: Connection) =
     cleanly(conn.createStatement)(_.close)(q => new SqlQueryResult(q.executeQuery(select))) match {
@@ -83,6 +85,15 @@ object SelectCorrector extends QueryCorrector("SELECT") {
   def groupByElements(query: Q) = {
     val javaGroupBys = query.getSelectBody.asInstanceOf[PlainSelect].getGroupByColumnReferences
     if (javaGroupBys == null) List.empty else javaGroupBys.asScala.toList
+  }
+
+  def parseStatement(statement: String) = try {
+    CCJSqlParserUtil.parse(statement) match {
+      case q: Q => q
+      case o => throw new CorrectionException(statement, s"Das Statement war vom falschen Typ ${o.getClass}! Erwartet wurde ein $queryType - Statement!")
+    }
+  } catch {
+    case e: JSQLParserException => throw new CorrectionException(statement, "Es gab einen Fehler beim Parsen des Statements: " + statement, e)
   }
 
 }
