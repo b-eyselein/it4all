@@ -103,8 +103,6 @@ case class Implication(l: ScalaNode, r: ScalaNode) extends BinaryScalaNode("IMPL
 
 object ScalaNode {
 
-  //  implicit def toScalaNode(char: Char): ScalaNode = toVariable(char)
-
   implicit def toVariable(char: Char) = new Variable(char)
 
   def not(child: ScalaNode) = new NotScalaNode(child)
