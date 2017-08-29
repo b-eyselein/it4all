@@ -12,9 +12,9 @@
 
         <p>@exercise.getText</p>
         @if(exType.equals("html")) {
-        <p>@exercise.htmlText</p>
+        <p>@exercise.getHtmlText</p>
         } else {
-        <p>@Html(exercise.jsText)</p>
+        <p>@Html(exercise.getJsText)</p>
         }
         
         <div class="btn-group btn-group-justified">
@@ -31,11 +31,11 @@
       
         <div id="correction">
         @if("html".equals(exType)) {
-      	 @for(task <- exercise.htmlTasks) {
+      	 @for(task <- exercise.getHtmlTasks) {
           <div class="panel panel-default"><div class="panel-body">@{task.key.taskId}. @task.text</div></div>
           }
         } else {
-      	  @for(task <- exercise.jsTasks) {
+      	  @for(task <- exercise.getJsTasks) {
           <div class="panel panel-default"><div class="panel-body">@{task.key.taskId}. @task.text</div></div>
           }
         }

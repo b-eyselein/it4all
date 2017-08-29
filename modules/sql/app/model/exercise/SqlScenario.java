@@ -10,10 +10,8 @@ import javax.persistence.OneToMany;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
 
 import io.ebean.Finder;
-import model.StringConsts;
 
 @Entity
 public class SqlScenario extends ExerciseCollection<SqlExercise> {
@@ -32,19 +30,10 @@ public class SqlScenario extends ExerciseCollection<SqlExercise> {
   @JsonManagedReference
   private List<SqlExercise> exercises;
 
-  public SqlScenario(int theId, String theTitle, String theAuthor, String theText, String theShortName,
-      String theScriptFile, List<SqlExercise> theExercises) {
-    super(theId, theTitle, theAuthor, theText);
-    shortName = theShortName;
-    scriptFile = theScriptFile;
-    exercises = theExercises;
+  public SqlScenario(int id) {
+    super(id);
   }
 
-  @JsonIgnore
-  public int getNumOfSites() {
-    return exercises.size() / STEP + 1;
-  }
-  
   public int getBorder(SqlExerciseType exType, int start) {
     return (Math.min(getExercisesByType(exType).size(), start + STEP) / STEP) * STEP;
   }
@@ -68,6 +57,11 @@ public class SqlScenario extends ExerciseCollection<SqlExercise> {
     return shortName + ".png";
   }
 
+  @JsonIgnore
+  public int getNumOfSites() {
+    return exercises.size() / STEP + 1;
+  }
+
   public String getScriptFile() {
     return scriptFile;
   }
@@ -76,21 +70,16 @@ public class SqlScenario extends ExerciseCollection<SqlExercise> {
     return shortName;
   }
 
-  @Override
-  public String toString() {
-    return "ID: " + id + "Titel: " + title + ", Name: " + shortName + ", Skriptdatei: " + scriptFile;
+  public void setExercises(List<SqlExercise> theExercises) {
+    exercises = theExercises;
   }
 
-  @Override
-  public void updateValues(int theId, String theTitle, String theAuthor, String theText, JsonNode exerciseNode) {
-    super.updateValues(theId, theTitle, theAuthor, theText);
+  public void setScriptFile(String theScriptFile) {
+    scriptFile = theScriptFile;
+  }
 
-    shortName = exerciseNode.get(StringConsts.SHORTNAME_NAME).asText();
-    scriptFile = exerciseNode.get(StringConsts.SCRIPTFILE_NAME).asText();
-
-    // JsonNode exesNode = exerciseNode.get(StringConsts.EXERCISES_NAME);
-    // List<SqlExercise> exercises = readArray(exesNode,
-    // delegateReader::readExercise);
+  public void setShortName(String theShortName) {
+    shortName = theShortName;
   }
 
 }

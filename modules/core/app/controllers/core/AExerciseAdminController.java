@@ -18,7 +18,6 @@ import model.exercisereading.ExerciseReader;
 import model.exercisereading.ReadingError;
 import model.exercisereading.ReadingResult;
 import play.Logger;
-import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
 import play.mvc.Http.MultipartFormData;
@@ -83,18 +82,8 @@ public abstract class AExerciseAdminController<E extends Exercise> extends BaseC
 
   public abstract Result index();
 
-  public E initFromForm(DynamicForm form) {
-    int id = findMinimalNotUsedId(finder);
-
-    String title = form.get(StringConsts.TITLE_NAME);
-    String author = form.get(StringConsts.AUTHOR_NAME);
-    String text = form.get(StringConsts.TEXT_NAME);
-
-    return initRemainingExFromForm(id, title, author, text, form);
-  }
-
   public Result newExercise() {
-    E exercise = initFromForm(factory.form().bindFromRequest());
+    E exercise = exerciseReader.initFromForm(factory.form().bindFromRequest());
     exerciseReader.saveRead(exercise);
     return ok(views.html.admin.preview.render(getUser(), renderCreated(Arrays.asList(exercise))));
   }
@@ -131,7 +120,5 @@ public abstract class AExerciseAdminController<E extends Exercise> extends BaseC
   protected Path getSampleDir() {
     return Paths.get(BASE_DATA_PATH, SAMPLE_SUB_DIRECTORY, exerciseReader.getExerciseType());
   }
-
-  protected abstract E initRemainingExFromForm(int id, String title, String author, String text, DynamicForm form);
 
 }

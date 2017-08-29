@@ -66,7 +66,7 @@ public class WebController extends ExerciseController<WebExercise, WebResult> {
     WebDriver driver = new HtmlUnitDriver(true);
     driver.get(solutionUrl);
 
-    List<WebTask> tasks = isJs ? new ArrayList<>(exercise.jsTasks) : new ArrayList<>(exercise.htmlTasks);
+    List<WebTask> tasks = isJs ? new ArrayList<>(exercise.getJsTasks()) : new ArrayList<>(exercise.getHtmlTasks());
     return tasks.stream().map(task -> task.evaluate(driver)).collect(Collectors.toList());
   }
 
@@ -117,7 +117,7 @@ public class WebController extends ExerciseController<WebExercise, WebResult> {
     User user = getUser();
 
     WebExercise exercise = WebExercise.finder.byId(id);
-    
+
     log(user, new ExerciseStartEvent(request(), id));
 
     if(!ALLOWED_TYPES.contains(type))

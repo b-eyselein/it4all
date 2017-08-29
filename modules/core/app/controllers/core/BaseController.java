@@ -2,12 +2,8 @@ package controllers.core;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.List;
 
-import io.ebean.Finder;
 import model.StringConsts;
-import model.WithId;
 import model.exercise.Exercise;
 import model.logging.WorkingEvent;
 import model.user.User;
@@ -32,32 +28,16 @@ public abstract class BaseController extends Controller {
     factory = theFactory;
   }
 
+  public static Path getSampleDir(String exerciseType) {
+    return Paths.get(BASE_DATA_PATH, SAMPLE_SUB_DIRECTORY, exerciseType);
+  }
+
   public static Path getSolDirForUser(String username) {
     return Paths.get(BASE_DATA_PATH, SOLUTIONS_SUB_DIRECTORY, username);
   }
 
   public static User getUser() {
     return User.finder.byId(getUsername());
-  }
-
-  protected static <T extends WithId> int findMinimalNotUsedId(Finder<Integer, T> finder) {
-    // FIXME: this is probably a ugly hack...
-    List<T> questions = finder.all();
-
-    Collections.sort(questions);
-
-    if(questions.isEmpty())
-      return 1;
-
-    for(int i = 0; i < questions.size() - 1; i++)
-      if(questions.get(i).getId() < questions.get(i + 1).getId() - 1)
-        return questions.get(i).getId() + 1;
-
-    return questions.get(questions.size() - 1).getId() + 1;
-  }
-
-  protected static Path getSampleDir(String exerciseType) {
-    return Paths.get(BASE_DATA_PATH, SAMPLE_SUB_DIRECTORY, exerciseType);
   }
 
   protected static Path getSampleDirForExercise(String exerciseType, Exercise exercise) {

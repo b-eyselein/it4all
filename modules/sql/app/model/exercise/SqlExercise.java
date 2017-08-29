@@ -16,13 +16,9 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
 
 import io.ebean.Finder;
-import model.SqlExerciseReader;
 import model.SqlSolution;
-import model.StringConsts;
-import model.exercisereading.ExerciseReader;
 
 @Entity
 public class SqlExercise extends Exercise {
@@ -53,9 +49,8 @@ public class SqlExercise extends Exercise {
   @JsonProperty(required = true)
   public String hint;
   
-  public SqlExercise(int theId, String theTitle, String theAuthor, String theText, SqlExerciseType theExerciseType) {
-    super(theId, theTitle, theAuthor, theText);
-    exerciseType = theExerciseType;
+  public SqlExercise(int id) {
+    super(id);
   }
   
   @JsonIgnore
@@ -68,19 +63,6 @@ public class SqlExercise extends Exercise {
       return Collections.emptyList();
     
     return Arrays.stream(tags.split(SAMPLE_JOIN_CHAR)).map(SqlTag::valueOf).collect(Collectors.toList());
-  }
-  
-  @Override
-  public void updateValues(int theId, String theTitle, String theAuthor, String theText, JsonNode exerciseNode) {
-    super.updateValues(theId, theTitle, theAuthor, theText);
-    
-    exerciseType = SqlExerciseType.valueOf(exerciseNode.get(StringConsts.EXERCISE_TYPE).asText());
-    
-    samples = ExerciseReader.readArray(exerciseNode.get(StringConsts.SAMPLES_NAME),
-        SqlExerciseReader::readSampleSolution);
-    
-    hint = exerciseNode.get("hint").asText();
-    tags = String.join(SqlExercise.SAMPLE_JOIN_CHAR, ExerciseReader.parseJsonArrayNode(exerciseNode.get("tags")));
   }
   
 }

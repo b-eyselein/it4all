@@ -13,12 +13,12 @@
         <p>Text: @ex.getText</p>
   
         <h2>HTML-Tasks</h2>
-        @for(task <- ex.htmlTasks) {
+        @for(task <- ex.getHtmlTasks) {
         <p>@task.key.taskId: @task.text</p>
         }
   
         <h2>JS-Tasks</h2>
-        @for(task <- ex.jsTasks) {
+        @for(task <- ex.getJsTasks) {
         <p>@task.key.taskId: @task.text</p>
         }
       </div>

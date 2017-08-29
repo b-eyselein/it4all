@@ -7,7 +7,6 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
 
 import org.apache.ibatis.jdbc.ScriptRunner;
 
@@ -17,6 +16,7 @@ import model.exercise.SqlExercise;
 import model.exercise.SqlScenario;
 import model.exercisereading.ExerciseCollectionReader;
 import play.Logger;
+import play.data.DynamicForm;
 import play.db.Database;
 
 public class SqlScenarioReader extends ExerciseCollectionReader<SqlExercise, SqlScenario> {
@@ -39,6 +39,12 @@ public class SqlScenarioReader extends ExerciseCollectionReader<SqlExercise, Sql
     } catch (SQLException e) {
       Logger.error("There has been an error running an sql script: \"" + CREATE_DUMMY + databaseName + "\"", e);
     }
+  }
+
+  @Override
+  public void initRemainingExFromForm(SqlScenario exercise, DynamicForm form) {
+    exercise.setShortName(form.get(StringConsts.SHORTNAME_NAME));
+    exercise.setScriptFile(form.get(StringConsts.SCRIPTFILE_NAME));
   }
 
   public void runCreateScript(Database database, SqlScenario scenario) {
@@ -76,14 +82,18 @@ public class SqlScenarioReader extends ExerciseCollectionReader<SqlExercise, Sql
   }
 
   @Override
-  protected SqlScenario instantiateExercise(int id, String title, String author, String text, JsonNode exerciseNode) {
-    String shortName = exerciseNode.get(StringConsts.SHORTNAME_NAME).asText();
-    String scriptFile = exerciseNode.get(StringConsts.SCRIPTFILE_NAME).asText();
-    
-    JsonNode exesNode = exerciseNode.get(StringConsts.EXERCISES_NAME);
-    List<SqlExercise> exercises = readArray(exesNode, delegateReader::readExercise);
-
-    return new SqlScenario(id, title, author, text, shortName, scriptFile, exercises);
+  protected SqlScenario instantiateExercise(int id) {
+    return new SqlScenario(id);
   }
-  
+
+  @Override
+  protected void updateExercise(SqlScenario exercise, JsonNode exerciseNode) {
+    exercise.setShortName(exerciseNode.get(StringConsts.SHORTNAME_NAME).asText());
+    exercise.setScriptFile(exerciseNode.get(StringConsts.SCRIPTFILE_NAME).asText());
+
+    // JsonNode exesNode = exerciseNode.get(StringConsts.EXERCISES_NAME);
+    // List<SqlExercise> exercises = readArray(exesNode,
+    // delegateReader::readExercise);
+  }
+
 }

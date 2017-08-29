@@ -1,7 +1,6 @@
 package controllers.questions;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -12,13 +11,13 @@ import controllers.core.ExerciseController;
 import model.CorrectionException;
 import model.QuestionResult;
 import model.QuestionUser;
-import model.StringConsts;
 import model.UserAnswer;
 import model.UserAnswerKey;
 import model.question.Answer;
 import model.question.AnswerKey;
 import model.question.Correctness;
 import model.question.Question;
+import model.question.QuestionReader;
 import model.quiz.Quiz;
 import model.user.Role;
 import model.user.User;
@@ -62,7 +61,7 @@ public class QuestionController extends ExerciseController<Question, QuestionRes
   }
 
   private static List<Answer> readSelAnswers(Question question, DynamicForm form) {
-    return question.answers.stream().filter(ans -> form.get(Integer.toString(ans.key.id)) != null)
+    return question.getAnswers().stream().filter(ans -> form.get(Integer.toString(ans.key.id)) != null)
         .collect(Collectors.toList());
   }
 
@@ -95,26 +94,7 @@ public class QuestionController extends ExerciseController<Question, QuestionRes
   }
 
   public Result newQuestion(boolean isFreetext) {
-    DynamicForm form = factory.form().bindFromRequest();
-
-    int id = findMinimalNotUsedId(Question.finder);
-    String title = form.get(StringConsts.TITLE_NAME);
-    String author = form.get(StringConsts.AUTHOR_NAME);
-    String text = form.get(StringConsts.TEXT_NAME);
-    String maxP = form.get(StringConsts.MAX_POINTS);
-    int maxPoints = maxP == null ? 0 : Integer.parseInt(maxP);
-    Question.QType exerciseType = Question.QType.valueOf(form.get(StringConsts.EXERCISE_TYPE));
-
-    boolean isChoice = false;
-    List<Answer> answers = Collections.emptyList();
-    if(!isFreetext) {
-      isChoice = true; // TODO!
-      answers = readAnswersFromForm(form, id, isChoice);
-    }
-
-    Question question = Question.finder.all().stream().filter(q -> q.getTitle().equals(title)).findAny().orElse(null);
-    if(question == null)
-      question = new Question(id, title, author, text, maxPoints, exerciseType, answers);
+    Question question = QuestionReader.getInstance().initFromForm(factory.form().bindFromRequest());
 
     question.saveInDb();
 
@@ -134,7 +114,7 @@ public class QuestionController extends ExerciseController<Question, QuestionRes
     User user = getUser();
     Question question = Question.finder.byId(id);
 
-    if(question.questionType != Question.QType.FREETEXT) {
+    if(question.getQuestionType() != Question.QType.FREETEXT) {
       // FILLOUT or MULTIPLE CHOICE
       DynamicForm form = factory.form().bindFromRequest();
       QuestionResult result = new QuestionResult(readSelAnswers(question, form), question);

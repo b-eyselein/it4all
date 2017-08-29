@@ -1244,7 +1244,8 @@
 						"sample": [
 							"SELECT title, price",
 							"  FROM books",
-							"  WHERE author = 'Tolkien'",
+							"    JOIN authors on authors.id = books.author_id",
+							"  WHERE authors.family_name = 'Tolkien'",
 							"  AND price < 10",
 							"  ORDER BY year DESC"
 						]

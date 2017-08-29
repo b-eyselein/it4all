@@ -2,8 +2,6 @@ package model;
 
 import javax.persistence.Entity;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import io.ebean.Finder;
 import model.exercise.Exercise;
 
@@ -12,23 +10,28 @@ public class SpreadExercise extends Exercise {
   
   public static final Finder<Integer, SpreadExercise> finder = new Finder<>(SpreadExercise.class);
   
-  public String sampleFilename;
+  private String sampleFilename;
   
-  public String templateFilename;
+  private String templateFilename;
   
-  public SpreadExercise(int theId, String theTitle, String theAuthor, String theText, String theSampleFilename,
-      String theTemplateFilename) {
-    super(theId, theTitle, theAuthor, theText);
-    sampleFilename = theSampleFilename;
-    templateFilename = theTemplateFilename;
+  public SpreadExercise(int id) {
+    super(id);
   }
   
-  @Override
-  public void updateValues(int theId, String theTitle, String theAuthor, String theText, JsonNode exerciseNode) {
-    super.updateValues(theId, theTitle, theAuthor, theText);
-    
-    sampleFilename = exerciseNode.get(StringConsts.SAMPLE_FILENAME).asText();
-    templateFilename = exerciseNode.get(StringConsts.TEMPALTE_FILENAME).asText();
+  public String getSampleFilename() {
+    return sampleFilename;
+  }
+  
+  public void setSampleFilename(String theSampleFilename) {
+    sampleFilename = theSampleFilename;
+  }
+  
+  public String getTemplateFilename() {
+    return templateFilename;
+  }
+  
+  public void setTemplateFilename(String theTemplateFilename) {
+    templateFilename = theTemplateFilename;
   }
   
 }

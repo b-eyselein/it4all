@@ -28,79 +28,80 @@
       </div>
       <div class="collapse navbar-collapse" id="myNavbar">
         <ul class="nav navbar-nav">
-          <li><a href="@web.routes.WebController.index()">Web</a></li>
+          <li><a href="@web.routes.WebController.index">Web</a></li>
           
           <li><a href="@programming.routes.ProgController.index">Programmierung</a></li>
           
-          <li><a href="@sql.routes.SqlController.index()">SQL</a></li>
+          <li><a href="@sql.routes.SqlController.index">SQL</a></li>
           
+          @* Xml not empty because of filters *@
           <li><a href="@xml.routes.XmlController.index()">XML</a></li>
           
-          <li><a href="@uml.routes.UmlController.index()">UML<sup>BETA</sup></a></li>
+          <li><a href="@uml.routes.UmlController.index">UML<sup>BETA</sup></a></li>
           
           <li><a href="@questions.routes.QuestionController.index(0)">Auswahlfragen<sup>BETA</sup></a></li>
           
           <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Allgemeiner Teil <span class="caret"></span></a>
             <ul class="dropdown-menu">
-              <li><a href="@routes.NaryController.index()">Zahlensysteme</a></li>
-              <li><a href="@bool.routes.BoolController.index()">Boolesche Algebra</a></li>
-              <li><a href="@spread.routes.SpreadController.index()">Tabellenkalkulation</a></li>
+              <li><a href="@routes.NaryController.index">Zahlensysteme</a></li>
+              <li><a href="@bool.routes.BoolController.index">Boolesche Algebra</a></li>
+              <li><a href="@spread.routes.SpreadController.index">Tabellenkalkulation</a></li>
             </ul>
           </li>
 
-          <!-- <li><a href="@mindmap.routes.MindmapController.index()">MindMap</a></li> -->
+          <!-- <li><a href="@mindmap.routes.MindmapController.index">MindMap</a></li> -->
         </ul>
         <ul class="nav navbar-nav navbar-right">
-        @if(user.isAdmin()) {
+        @if(user.isAdmin) {
           <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="">
               <span class="glyphicon glyphicon-cog"></span> Administrator <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
-              <li><a href="@questions.routes.QuestionAdmin.index()">Auswahlfragen</a></li>
+              <li><a href="@questions.routes.QuestionAdmin.index">Auswahlfragen</a></li>
  
               <li class="divider"></li>
              
-              <li><a href="@programming.routes.ProgAdmin.index()">Programmierung</a></li>
+              <li><a href="@programming.routes.ProgAdmin.index">Programmierung</a></li>
  
               <li class="divider"></li>
               
-              <li><a href="@sql.routes.SqlScenarioAdmin.index()">Sql</a></li>
+              <li><a href="@sql.routes.SqlScenarioAdmin.index">Sql</a></li>
               
               <li class="divider"></li>
               
-              <li><a href="@spread.routes.SpreadAdmin.index()">Tabellenkalkulation</a></li>
+              <li><a href="@spread.routes.SpreadAdmin.index">Tabellenkalkulation</a></li>
               
               <li class="divider"></li>
               
-              <li><a href="@uml.routes.UmlAdmin.index()">Uml</a></li>
+              <li><a href="@uml.routes.UmlAdmin.index">Uml</a></li>
               
               <li class="divider"></li>
              
-              <li><a href="@web.routes.WebAdmin.index()">Web</a></li>
-              <li><a href="@xml.routes.XmlAdmin.index()">Xml</a></li>
+              <li><a href="@web.routes.WebAdmin.index">Web</a></li>
+              <li><a href="@xml.routes.XmlAdmin.index">Xml</a></li>
               
               <li class="divider"></li>
               
-              <li><a href="@routes.AdminController.index()">Allgemein</a></li>
+              <li><a href="@routes.AdminController.index">Allgemein</a></li>
             </ul>
           </li>
         }
         
-          @*<li><a href="@routes.Evaluation.index()"><span class="glyphicon glyphicon-pencil"></span>
+          @*<li><a href="@routes.Evaluation.index"><span class="glyphicon glyphicon-pencil"></span>
               Evaluation</a></li>*@
               
           <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-user"></span>
               @user.name <span class="caret"></span></a>
             <ul class="dropdown-menu">
-              <li><a href="@routes.UserController.index()">Bewertungen</a></li>
-              <li><a href="@routes.UserController.preferences()">Präferenzen</a></li>
+              <li><a href="@routes.UserController.index">Bewertungen</a></li>
+              <li><a href="@routes.UserController.preferences">Präferenzen</a></li>
               
               <li class="divider"></li>
                   
-              <li><a href="@routes.LoginController.logout()"><span
+              <li><a href="@routes.LoginController.logout"><span
                   class="glyphicon glyphicon-log-out"></span> Logout</a></li>
           	</ul>
           </li>

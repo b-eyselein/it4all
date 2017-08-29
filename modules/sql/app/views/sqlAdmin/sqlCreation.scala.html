@@ -1,9 +1,10 @@
-@(scenario: model.exercise.SqlScenario)
+@(scenarioes: List[model.exercise.SqlScenario])
 
 <a href="@sql.routes.SqlScenarioAdmin.index()" class="btn btn-primary btn-block">Zur&uuml;ck zur Administratorseite</a>
 
 <hr>
 
+@for(scenario <- scenarioes) {
 <!-- Szenariobeschreibung -->
 <div class="panel panel-default">
   <div class="panel-heading">Szenariobeschreibung</div>
@@ -53,4 +54,5 @@
     </div>
   </div>
 @if(index % 2 == 1) {</div>}
+}
 }

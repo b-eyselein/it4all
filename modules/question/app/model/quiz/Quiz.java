@@ -1,6 +1,5 @@
 package model.quiz;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -8,7 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.JsonNode;
 
 import io.ebean.Finder;
 import model.exercise.ExerciseCollection;
@@ -23,28 +21,31 @@ public class Quiz extends ExerciseCollection<Question> {
 
   @JsonIgnore
   @ManyToMany(mappedBy = "quizzes", cascade = CascadeType.ALL)
-  public List<Question> questions;
+  private List<Question> questions;
 
-  public Quiz(int theId, String theTitle, String theAuthor, String theText, String theTheme) {
-    super(theId, theTitle, theAuthor, theText);
-    theme = theTheme;
+  public Quiz(int id) {
+    super(id);
   }
 
   @Override
   public List<Question> getExercises() {
-    return Collections.emptyList();
-    // questions;
+    return questions;
+  }
+
+  public List<Question> getQuestions() {
+    return questions;
   }
 
   public String getTheme() {
     return theme;
   }
 
-  @Override
-  public void updateValues(int theId, String theTitle, String theAuthor, String theText, JsonNode exerciseNode) {
-    super.updateValues(id, title, author, text);
+  public void setQuestions(List<Question> theQuestions) {
+    questions = theQuestions;
+  }
 
-    theme = exerciseNode.get("theme").asText();
+  public void setTheme(String theTheme) {
+    theme = theTheme;
   }
 
 }

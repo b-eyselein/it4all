@@ -14,9 +14,7 @@ import javax.inject.Inject;
 import com.google.common.io.Files;
 
 import controllers.core.AExerciseAdminController;
-import model.StringConsts;
 import model.question.Question;
-import model.question.Question.QType;
 import model.question.QuestionReader;
 import model.quiz.Quiz;
 import play.data.DynamicForm;
@@ -126,13 +124,6 @@ public class QuestionAdmin extends AExerciseAdminController<Question> {
   @Override
   public Html renderCreated(List<Question> created) {
     return views.html.questionAdmin.questionCreated.render(getUser(), created);
-  }
-
-  @Override
-  protected Question initRemainingExFromForm(int id, String title, String author, String text, DynamicForm form) {
-    int maxPoints = Integer.parseInt(form.get(StringConsts.MAX_POINTS));
-    Question.QType exerciseType = QType.valueOf(form.get(StringConsts.EXERCISE_TYPE));
-    return new Question(id, title, author, text, maxPoints, exerciseType, Collections.emptyList());
   }
 
 }

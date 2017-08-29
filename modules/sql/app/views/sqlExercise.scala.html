@@ -10,11 +10,16 @@
 
   <form action="@sql.routes.SqlController.correct(exercise.getId)" method="post">
     <p>@exercise.getText</p>
-    @if(!exercise.hint.isEmpty()) {<p><i>Hinweis:</i> @exercise.hint</p>}
+    @if(!exercise.hint.isEmpty()) {
+    <p>
+      <i>Hinweis:</i> @exercise.hint
+    </p>
+    }
 
     <div class="btn-group btn-group-justified">
       <div class="btn-group">
-        <button type="button" class="btn btn-default" onclick="testTheSolution('@sql.routes.SqlController.correctLive(exercise.getId)')">L&ouml;sung testen</button>
+        <button type="button" class="btn btn-default"
+          onclick="testTheSolution('@sql.routes.SqlController.correctLive(exercise.getId)')">L&ouml;sung testen</button>
       </div>
       <div class="btn-group">
         <button class="btn btn-primary">L&ouml;sung abgeben</button>
@@ -25,7 +30,7 @@
 
     <div class="row">
       <div class="col-md-4">@editor(oldOrDefSol, "sql", 10 ,15, false)</div>
-      
+
       <div class="col-md-8">
         <div id="resultPanel" class="panel panel-default">
           <div class="panel-heading">Ergebnisse</div>
@@ -35,21 +40,20 @@
     </div>
 
   </form>
-  
+
   <hr>
-  
-  
+
+
   <h2>Datenbankschema &amp; Tabelleninhalte</h2>
 
   <button type="button" class="btn btn-block btn-primary" data-toggle="modal" data-target="#databaseSchema">Datenbankschema</button>
 
   <hr>
-  
+
   <div class="btn-group btn-group-justified">
     @for(table <- tables) {
     <div class="btn-group">
-      <button type="button" class="btn btn-default" data-toggle="modal" 
-      data-target="#@table.getTableName()">@table.getTableName()</button>
+      <button type="button" class="btn btn-default" data-toggle="modal" data-target="#@table.getTableName()">@table.getTableName()</button>
     </div>
     }
   </div>
@@ -62,8 +66,8 @@
           <h4 class="modal-title">Datenbankschema</h4>
         </div>
         <div class="modal-body">
-          <img class="img-rounded img-responsive center-block"
-          src="@@routes.Assets.versioned("images/sql/" + exercise.scenario.getImageUrl())" alt="Datenbankschema">
+          <img class="img-rounded img-responsive center-block" src="@@routes.Assets.versioned("
+            images/sql/" + exercise.scenario.getImageUrl())" alt="Datenbankschema">
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -71,7 +75,7 @@
       </div>
     </div>
   </div>
-    
+
   @for(table <- tables) {
   <div id="@table.getTableName()" class="modal fade" role="dialog">
     <div class="modal-dialog modal-lg">
@@ -80,9 +84,7 @@
           <button type="button" class="close" data-dismiss="modal">&times;</button>
           <h4 class="modal-title">Tabelle: @table.getTableName()</h4>
         </div>
-        <div class="modal-body">
-          @resultTemplates.resultTable.render(table)
-        </div>
+        <div class="modal-body">@resultTemplates.resultTable.render(table)</div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
@@ -90,6 +92,6 @@
     </div>
   </div>
   }
-  
+
 </div>
 }

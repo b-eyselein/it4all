@@ -37,7 +37,7 @@ public class QuizController extends ExerciseCollectionController<Question, Quiz>
     // return ok(views.html.quizQuestionResult.render(user, quiz, result));
     return ok("TODO!");
   }
-  
+
   public Result quizQuestion(int quizId, int questionId) {
     return ok(views.html.quizQuestion.render(getUser(), Quiz.finder.byId(quizId), questionId - 1));
   }

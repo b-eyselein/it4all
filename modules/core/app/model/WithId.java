@@ -8,5 +8,5 @@ public interface WithId extends Comparable<WithId> {
   }
 
   public int getId();
-  
+
 }

@@ -1,12 +1,13 @@
 package model;
 
-import java.util.List;
+import java.util.Collections;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 import model.exercisereading.ExerciseReader;
 import model.testdata.SampleTestData;
 import model.testdata.SampleTestDataKey;
+import play.data.DynamicForm;
 import play.libs.Json;
 
 public class ProgExerciseReader extends ExerciseReader<ProgExercise> {
@@ -45,20 +46,32 @@ public class ProgExerciseReader extends ExerciseReader<ProgExercise> {
   }
 
   @Override
+  public void initRemainingExFromForm(ProgExercise exercise, DynamicForm form) {
+    exercise.setFunctionName(form.get("functionName"));
+    exercise.setInputCount(Integer.parseInt(form.get("inputCount")));
+
+    exercise.setSamples(Collections.emptyList());
+    exercise.setSampleTestData(Collections.emptyList());
+  }
+
+  @Override
   public void saveRead(ProgExercise exercise) {
     exercise.save();
     exercise.sampleTestData.forEach(SampleTestData::save);
   }
 
   @Override
-  protected ProgExercise instantiateExercise(int id, String title, String author, String text, JsonNode exerciseNode) {
-    String functionName = exerciseNode.get("functionName").asText();
-    int inputCount = exerciseNode.get("inputCount").asInt();
+  protected ProgExercise instantiateExercise(int id) {
+    return new ProgExercise(id);
+  }
 
-    List<ProgSample> samples = readArray(exerciseNode.get(StringConsts.SAMPLES_NAME), ProgExerciseReader::readSample);
-    List<SampleTestData> sampleTestData = readArray(exerciseNode.get("sampleTestData"), ProgExerciseReader::readTest);
+  @Override
+  protected void updateExercise(ProgExercise exercise, JsonNode exerciseNode) {
+    exercise.setFunctionName(exerciseNode.get("functionName").asText());
+    exercise.setInputCount(exerciseNode.get("inputCount").asInt());
 
-    return new ProgExercise(id, title, author, text, functionName, inputCount, samples, sampleTestData);
+    exercise.setSamples(readArray(exerciseNode.get(StringConsts.SAMPLES_NAME), ProgExerciseReader::readSample));
+    exercise.setSampleTestData(readArray(exerciseNode.get("sampleTestData"), ProgExerciseReader::readTest));
   }
 
 }

@@ -26,10 +26,10 @@
    	  <tr>
         <td>@exercise.getId</td>
         <td>@exercise.getTitle</td>
-        <td>@if(exercise.htmlTasks.size() > 0) {
+        <td>@if(exercise.getHtmlTasks.size() > 0) {
           <a href="@web.routes.WebController.exercise(exercise.getId, "html")" class="btn btn-primary btn-block">Html-Teil</a>}
         </td>
-        <td>@if(exercise.jsTasks.size() > 0) {
+        <td>@if(exercise.getJsTasks.size() > 0) {
           <a href="@web.routes.WebController.exercise(exercise.getId, "js")" class="btn btn-primary btn-block">Js-Teil</a>}
         </td>
       </tr>

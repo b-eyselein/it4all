@@ -9,7 +9,6 @@ import javax.persistence.MappedSuperclass;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Splitter;
 
 import io.ebean.Model;
@@ -20,7 +19,7 @@ public abstract class Exercise extends Model implements WithId {
   
   protected static final Splitter SPLITTER = Splitter.fixedLength(100).omitEmptyStrings();
   protected static final Splitter NEW_LINE_SPLITTER = Splitter.on("\n");
-
+  
   public static final String SPLIT_CHAR = "#";
   
   @Id
@@ -36,11 +35,8 @@ public abstract class Exercise extends Model implements WithId {
   @JsonProperty(required = true)
   protected String text;
   
-  public Exercise(int theId, String theTitle, String theAuthor, String theText) {
+  public Exercise(int theId) {
     id = theId;
-    title = theTitle;
-    author = theAuthor;
-    text = theText;
   }
   
   public String getAuthor() {
@@ -50,6 +46,18 @@ public abstract class Exercise extends Model implements WithId {
   @Override
   public int getId() {
     return id;
+  }
+  
+  public void setTitle(String theTitle) {
+    title = theTitle;
+  }
+  
+  public void setAuthor(String theAuthor) {
+    author = theAuthor;
+  }
+  
+  public void setText(String theText) {
+    text = theText;
   }
   
   @JsonIgnore
@@ -64,15 +72,6 @@ public abstract class Exercise extends Model implements WithId {
   
   public String getTitle() {
     return title;
-  }
-  
-  public abstract void updateValues(int theId, String theTitle, String theAuthor, String theText, JsonNode other);
-  
-  protected void updateValues(int theId, String theTitle, String theAuthor, String theText) {
-    id = theId;
-    title = theTitle;
-    author = theAuthor;
-    text = theText;
   }
   
 }

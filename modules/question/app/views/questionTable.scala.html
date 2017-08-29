@@ -16,14 +16,14 @@
       <tr>
         <td>@question.getId</td>
         <td><a href="@questions.routes.QuestionController.exercise(question.getId)">@question.getTitle</a></td>
-      @{question.questionType match {
+      @{question.getQuestionType match {
         case model.question.Question.QType.FREETEXT => <td>Freitextfrage</td>
         case model.question.Question.QType.CHOICE => <td>Multiple Choice-Frage</td>
         case model.question.Question.QType.FILLOUT => <td></td>
 		case _ => <td>FEHLER!</td>
       	}
       }
-        <td>@question.maxPoints</td>
+        <td>@question.getMaxPoints</td>
         @if(question.userHasAnswered(user.name)) {
         <td><span class="glyphicon glyphicon-ok"></span></td>
         } else {

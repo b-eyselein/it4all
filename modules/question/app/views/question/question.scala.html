@@ -10,7 +10,7 @@
   
   
     <div id="answerDiv">
-@question.questionType match {
+@question.getQuestionType match {
   case model.question.Question.QType.CHOICE => {
 	@for(ans <- question.getAnswersForTemplate()) {
 	    <div>
