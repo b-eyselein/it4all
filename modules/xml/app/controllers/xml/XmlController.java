@@ -41,7 +41,7 @@ public class XmlController extends ExerciseController<XmlExercise, XmlError> {
 
   public String getReferenceCode(XmlExercise exercise) {
     Path referenceFilePath = Paths.get(getSampleDir().toString(),
-        exercise.getReferenceFileName() + "." + exercise.getReferenceFileEnding());
+        exercise.getRootNode() + "." + exercise.getReferenceFileEnding());
     return referenceFilePath.toFile().exists() ? XmlExerciseReader.readFile(referenceFilePath) : "FEHLER!";
   }
 
@@ -70,13 +70,13 @@ public class XmlController extends ExerciseController<XmlExercise, XmlError> {
   }
 
   private String readDefOrOldSolution(String username, XmlExercise exercise) {
-    Path oldSolutionPath = getSolFileForExercise(username, exerciseType, exercise, exercise.getReferenceFileName(),
+    Path oldSolutionPath = getSolFileForExercise(username, exerciseType, exercise, exercise.getRootNode(),
         exercise.getStudentFileEnding());
     return oldSolutionPath.toFile().exists() ? ExerciseReader.readFile(oldSolutionPath) : exercise.getFixedStart();
   }
 
   private Path saveGrammar(Path dir, String learnerSolution, XmlExercise exercise) {
-    Path grammar = Paths.get(dir.toString(), exercise.getReferenceFileName() + exercise.getGrammarFileEnding());
+    Path grammar = Paths.get(dir.toString(), exercise.getRootNode() + exercise.getGrammarFileEnding());
 
     try {
       return Files.write(grammar, Arrays.asList(learnerSolution.split(StringConsts.NEWLINE)), StandardOpenOption.CREATE,
@@ -88,7 +88,7 @@ public class XmlController extends ExerciseController<XmlExercise, XmlError> {
   }
 
   private Path saveGrammar(Path dir, XmlExercise exercise) {
-    String filename = exercise.getReferenceFileName() + "." + exercise.getGrammarFileEnding();
+    String filename = exercise.getRootNode() + "." + exercise.getGrammarFileEnding();
 
     Path target = Paths.get(dir.toString(), filename);
     Path source = Paths.get(getSampleDir().toString(), filename);
@@ -102,7 +102,7 @@ public class XmlController extends ExerciseController<XmlExercise, XmlError> {
   }
 
   private Path saveXML(Path dir, String learnerSolution, XmlExercise exercise) {
-    Path targetFile = Paths.get(dir.toString(), exercise.getReferenceFileName() + ".xml");
+    Path targetFile = Paths.get(dir.toString(), exercise.getRootNode() + ".xml");
 
     try {
       return Files.write(targetFile, Arrays.asList(learnerSolution.split(StringConsts.NEWLINE)),
@@ -114,7 +114,7 @@ public class XmlController extends ExerciseController<XmlExercise, XmlError> {
   }
 
   private Path saveXML(Path dir, XmlExercise exercise) {
-    String filename = exercise.getReferenceFileName() + ".xml";
+    String filename = exercise.getRootNode() + ".xml";
 
     Path target = Paths.get(dir.toString(), filename);
     Path source = Paths.get(getSampleDir().toString(), filename);
@@ -152,11 +152,6 @@ public class XmlController extends ExerciseController<XmlExercise, XmlError> {
   protected Html renderExercise(User user, XmlExercise exercise) {
     String defOrOldSolution = readDefOrOldSolution(user.name, exercise);
     return views.html.xmlExercise.render(user, exercise, getReferenceCode(exercise), defOrOldSolution);
-  }
-
-  @Override
-  protected Html renderExercises(User user, List<XmlExercise> exercises) {
-    return views.html.xmlExercises.render(user, exercises);
   }
 
   @Override

@@ -8,16 +8,17 @@ import controllers.core.AExerciseCollectionAdminController;
 import model.SqlScenarioReader;
 import model.exercise.SqlExercise;
 import model.exercise.SqlScenario;
+import model.user.User;
 import play.data.FormFactory;
 import play.db.Database;
 import play.db.NamedDatabase;
 import play.mvc.Result;
 import play.twirl.api.Html;
 
-public class SqlScenarioAdmin extends AExerciseCollectionAdminController<SqlExercise, SqlScenario> {
+public class SqlAdmin extends AExerciseCollectionAdminController<SqlExercise, SqlScenario> {
 
   @Inject
-  public SqlScenarioAdmin(FormFactory theFactory, @NamedDatabase("sqlselectroot") Database theSqlSelect,
+  public SqlAdmin(FormFactory theFactory, @NamedDatabase("sqlselectroot") Database theSqlSelect,
       @NamedDatabase("sqlotherroot") Database theSqlOther) {
     super(theFactory, SqlScenario.finder, new SqlScenarioReader(theSqlSelect, theSqlOther));
   }
@@ -45,6 +46,12 @@ public class SqlScenarioAdmin extends AExerciseCollectionAdminController<SqlExer
 
   public Result scenarioAdmin(int id) {
     return ok(views.html.sqlAdmin.scenarioAdmin.render(getUser(), collectionFinder.byId(id)));
+  }
+
+  @Override
+  protected Html renderExerciseCollections(User user, List<SqlScenario> allCollections) {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

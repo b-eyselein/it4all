@@ -1,19 +1,21 @@
 # Administrator
-GET      /admin                      controllers.questions.QuestionAdmin.index()
+GET      /admin                      controllers.questions.QuestionAdmin.index
 
 # Admin Questions
-GET      /jsonSchema                 controllers.questions.QuestionAdmin.getJSONSchemaFile()
-POST     /upload                     controllers.questions.QuestionAdmin.uploadFile()
+GET      /jsonSchema                 controllers.questions.QuestionAdmin.getJSONSchemaFile
+POST     /upload                     controllers.questions.QuestionAdmin.uploadFile
 
-GET      /export                     controllers.questions.QuestionAdmin.exportExercises()
-GET      /import                     controllers.questions.QuestionAdmin.importExercises()
+GET      /export                     controllers.questions.QuestionAdmin.exportExercises
+GET      /import                     controllers.questions.QuestionAdmin.importExercises
 
-GET      /freetext/grade             controllers.questions.QuestionAdmin.gradeFreetextAnswers()
+GET      /questions                  controllers.questions.QuestionAdmin.exercises
+
+GET      /freetext/grade             controllers.questions.QuestionAdmin.gradeFreetextAnswers
 GET      /freetext/grade/:id/:user   controllers.questions.QuestionAdmin.gradeFreetextAnswer(id: Int, user: String)
 
-GET      /notAssigned                controllers.questions.QuestionAdmin.notAssignedQuestions()
-GET      /assign                     controllers.questions.QuestionAdmin.assignQuestionsForm()
-POST     /assign                     controllers.questions.QuestionAdmin.assignQuestions()
+GET      /notAssigned                controllers.questions.QuestionAdmin.notAssignedQuestions
+GET      /assign                     controllers.questions.QuestionAdmin.assignQuestionsForm
+POST     /assign                     controllers.questions.QuestionAdmin.assignQuestions
 
 GET      /assign/:id                 controllers.questions.QuestionAdmin.assignQuestionsSingleForm(id: Int)
 
@@ -22,7 +24,6 @@ DELETE   /:questionId                controllers.questions.QuestionAdmin.deleteE
 # All
 GET      /                           controllers.questions.QuestionController.index(start: Int ?= 0)
 
-GET      /questions                  controllers.questions.QuestionController.exercises()
 
 GET      /new/:isFreetext            controllers.questions.QuestionController.newQuestionForm(isFreetext: Boolean)
 POST     /new/:isFreetext            controllers.questions.QuestionController.newQuestion(isFreetext: Boolean)
@@ -35,20 +36,21 @@ POST     /question/:id               controllers.questions.QuestionController.qu
 
 
 # Admin Quiz
-GET      /quizzes                    controllers.questions.QuizAdmin.index()
+GET      /quizzes                    controllers.questions.QuizAdmin.index
 
-GET      /quizzes/jsonSchema         controllers.questions.QuizAdmin.getJSONSchemaFile()
-POST     /quizzes/upload             controllers.questions.QuizAdmin.uploadFile()
+GET      /quizzes/jsonSchema         controllers.questions.QuizAdmin.getJSONSchemaFile
+POST     /quizzes/upload             controllers.questions.QuizAdmin.uploadFile
 
-GET      /quizzes/export             controllers.questions.QuizAdmin.exportExerciseCollections()
-GET      /quizzes/import             controllers.questions.QuizAdmin.importExerciseCollections()
+GET      /quizzes/export             controllers.questions.QuizAdmin.exportExerciseCollections
+GET      /quizzes/import             controllers.questions.QuizAdmin.importExerciseCollections
 
-GET      /quizzes/new                controllers.questions.QuizAdmin.newExerciseForm()
-POST     /quizzes/new                controllers.questions.QuizAdmin.newExercise()
+GET      /quizzes                    controllers.questions.QuizAdmin.exerciseCollections
+POST     /quizzes                    controllers.questions.QuizAdmin.newExercise
+
+GET      /newQuizForm                controllers.questions.QuizAdmin.newExerciseForm
 
 
 # Quizzes
-GET      /quizzes                    controllers.questions.QuizController.quizzes()
 
 GET      /quiz/:id                   controllers.questions.QuizController.quiz(id: Int)
 

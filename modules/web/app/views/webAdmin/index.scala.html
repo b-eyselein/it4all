@@ -16,7 +16,7 @@
 )}
 
 @calls = @{scala.collection.Map(
-  "index" ->   web.routes.WebController.exercises(),
+  "index" ->   web.routes.WebAdmin.exercises(),
   "newExerciseForm" -> web.routes.WebAdmin.newExerciseForm(),
   "export" -> web.routes.WebAdmin.exportExercises(),
   "import" -> web.routes.WebAdmin.importExercises(),

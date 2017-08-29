@@ -1,21 +1,21 @@
 # Administrator
-GET    /scenarioes/admin         controllers.sql.SqlScenarioAdmin.index()
-GET    /exercises/admin          controllers.sql.SqlScenarioAdmin.index()
+GET    /scenarioes/admin         controllers.sql.SqlAdmin.index
+GET    /exercises/admin          controllers.sql.SqlAdmin.index
 
-GET    /jsonSchema               controllers.sql.SqlScenarioAdmin.getJSONSchemaFile()
-POST   /upload                   controllers.sql.SqlScenarioAdmin.uploadFile()
+GET    /jsonSchema               controllers.sql.SqlAdmin.getJSONSchemaFile
+POST   /upload                   controllers.sql.SqlAdmin.uploadFile
 
-GET    /import                   controllers.sql.SqlScenarioAdmin.importExerciseCollections()
-GET    /export                   controllers.sql.SqlScenarioAdmin.exportExerciseCollections()
+GET    /import                   controllers.sql.SqlAdmin.importExerciseCollections
+GET    /export                   controllers.sql.SqlAdmin.exportExerciseCollections
 
-GET    /admin/:id                controllers.sql.SqlScenarioAdmin.scenarioAdmin(id: Int)
+GET    /admin/:id                controllers.sql.SqlAdmin.scenarioAdmin(id: Int)
 
-GET    /scenarioes               controllers.sql.SqlController.scenarioes()
-GET    /scenarioes/new           controllers.sql.SqlScenarioAdmin.newExerciseForm()
-POST   /scenarioes/new           controllers.sql.SqlScenarioAdmin.newExercise()
+GET    /scenarioes               controllers.sql.SqlAdmin.exerciseCollections
+POST   /scenarioes               controllers.sql.SqlAdmin.newExercise
+GET    /newScenarioForm          controllers.sql.SqlAdmin.newExerciseForm
 
 # All
-GET    /                         controllers.sql.SqlController.index()
+GET    /                         controllers.sql.SqlController.index
 GET    /scenario/:scId/:exType   controllers.sql.SqlController.filteredScenario(scId: Int, exType: String, site: Int ?= 1)
 GET    /:id                      controllers.sql.SqlController.exercise(id: Int)
 

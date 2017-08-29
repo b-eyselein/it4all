@@ -1,0 +1,36 @@
+@(exercises: List[model.XmlExercise])
+
+<a href="@xml.routes.XmlAdmin.index()" class="btn btn-primary btn-block">Zur&uuml;ck zur Administratorseite</a>
+
+<hr>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Titel</th>
+      <th>Autor</th>
+      <th>Text</th>
+      <th>Typ</th>
+      <th>Wurzelknoten</th>
+    </tr>
+  </thead>
+  <tbody>
+  @for(exercise <- exercises) {
+    <tr>
+      <td>@exercise.getId</td>
+      <td>@exercise.getTitle</td>
+      <td>@exercise.getAuthor</td>
+      <td>@exercise.getText</td>
+      <td>@exercise.getExerciseType</td>
+      <td>@exercise.getRootNode</td>
+    </tr>
+    @if(!exercise.getFixedStart.isEmpty) {
+    <tr>
+      <td>Fixed Start:</td>
+      <td colspan="5"><pre>@exercise.getFixedStart</pre></td>
+    </tr>
+    }
+  }
+  </tbody>
+</table>

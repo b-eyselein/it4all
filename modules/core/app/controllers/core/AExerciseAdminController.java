@@ -17,6 +17,7 @@ import model.exercisereading.AbstractReadingResult;
 import model.exercisereading.ExerciseReader;
 import model.exercisereading.ReadingError;
 import model.exercisereading.ReadingResult;
+import model.user.User;
 import play.Logger;
 import play.data.FormFactory;
 import play.libs.Json;
@@ -53,10 +54,21 @@ public abstract class AExerciseAdminController<E extends Exercise> extends BaseC
   }
 
   public Result deleteExercise(int exerciseId) {
-    if(finder.byId(exerciseId).delete())
-      return ok("Aufgabe konnte gelöscht werden!");
+    E toDelete = finder.byId(exerciseId);
+
+    if(toDelete == null)
+      return badRequest(
+          String.format("Die Aufgabe mit ID %s existiert nicht und kann daher nicht gelöscht werden!", exerciseId));
+    
+    if(toDelete.delete())
+      return ok(String.format("Die Aufgabe mit der ID %s konnte erfolgreich gelöscht werden.", exerciseId));
     else
-      return badRequest("Konnte nicht gelöscht werden!");
+      return badRequest(
+          String.format("Es gab einen internen Fehler beim Löschen der Aufgabe mit der ID %s!", exerciseId));
+  }
+
+  public Result exercises() {
+    return ok(renderExercises(getUser(), finder.all()));
   }
 
   public Result exportExercises() {
@@ -90,8 +102,6 @@ public abstract class AExerciseAdminController<E extends Exercise> extends BaseC
 
   public abstract Result newExerciseForm();
 
-  public abstract Html renderCreated(List<E> created);
-
   public Result uploadFile() {
     MultipartFormData<File> body = request().body().asMultipartFormData();
     FilePart<File> uploadedFile = body.getFile(StringConsts.BODY_FILE_NAME);
@@ -120,5 +130,9 @@ public abstract class AExerciseAdminController<E extends Exercise> extends BaseC
   protected Path getSampleDir() {
     return Paths.get(BASE_DATA_PATH, SAMPLE_SUB_DIRECTORY, exerciseReader.getExerciseType());
   }
+
+  protected abstract Html renderCreated(List<E> created);
+
+  protected abstract Html renderExercises(User user, List<E> allExercises);
 
 }

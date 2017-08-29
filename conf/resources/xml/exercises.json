@@ -1,70 +1,52 @@
 [
 	{
-		"id": 1, 
-		"title": "Party", 
-		"author": "bje40dc", 
+		"id": 1,
+		"title": "Party",
+		"author": "bje40dc",
 		"text": [
 			"Erstellen Sie zu dieser DTD ein passendes XML-Dokument."
-		], 
-		"fixedStart": [
-			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>", 
-			"<!DOCTYPE party SYSTEM \"party.dtd\">"
-		], 
-		"exerciseType": "XML_DTD", 
-		"referenceFileName": "party"
-	}, 
+		],
+		"exerciseType": "XML_DTD",
+		"rootNode": "party"
+	},
 	{
-		"id": 2, 
-		"title": "Vorlesung", 
-		"author": "bje40dc", 
+		"id": 2,
+		"title": "Vorlesung",
+		"author": "bje40dc",
 		"text": [
 			"Erstellen Sie zu dieser DTD ein passendes XML-Dokument."
-		], 
-		"fixedStart": [
-			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>", 
-			"<!DOCTYPE lecture SYSTEM \"lecture.dtd\">"
-		], 
-		"exerciseType": "XML_DTD", 
-		"referenceFileName": "lecture"
-	}, 
+		],
+		"exerciseType": "XML_DTD",
+		"rootNode": "lecture"
+	},
 	{
-		"id": 3, 
-		"title": "Krankenhaus", 
-		"author": "bje40dc", 
+		"id": 3,
+		"title": "Krankenhaus",
+		"author": "bje40dc",
 		"text": [
 			"Erstellen Sie zu dieser DTD ein passendes XML-Dokument."
-		], 
-		"fixedStart": [
-			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>", 
-			"<!DOCTYPE krankenhaus SYSTEM \"hospital.dtd\">"
-		], 
-		"exerciseType": "XML_DTD", 
-		"referenceFileName": "hospital"
-	}, 
+		],
+		"exerciseType": "XML_DTD",
+		"rootNode": "hospital"
+	},
 	{
-		"id": 4, 
-		"title": "Frühstück", 
-		"author": "bje40dc", 
+		"id": 4,
+		"title": "Frühstück",
+		"author": "bje40dc",
 		"text": [
 			"Erstellen Sie für dieses XML-Dokument eine passende DTD."
-		], 
-		"fixedStart": [
-			""
-		], 
-		"exerciseType": "DTD_XML", 
-		"referenceFileName": "breakfast"
-	}, 
+		],
+		"exerciseType": "DTD_XML",
+		"rootNode": "breakfast"
+	},
 	{
-		"id": 5, 
-		"title": "Bibliothek", 
-		"author": "bje40dc", 
+		"id": 5,
+		"title": "Bibliothek",
+		"author": "bje40dc",
 		"text": [
 			"Erstellen Sie für dieses XML-Dokument eine passende DTD."
-		], 
-		"fixedStart": [
-			""
-		], 
-		"exerciseType": "DTD_XML", 
-		"referenceFileName": "library"
+		],
+		"exerciseType": "DTD_XML",
+		"rootNode": "library"
 	}
 ]

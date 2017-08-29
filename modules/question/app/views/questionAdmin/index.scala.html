@@ -1,23 +1,23 @@
 @(user: model.user.User)
 
 @import model.question._
-@notAssignedQuestions = @{java.util.Collections.emptyList()}@*Question.notAssignedQuestions()*@
+@notAssignedQuestions = @{java.util.Collections.emptyList}@*Question.notAssignedQuestions*@
 
 @statistics = {
 <li>
-  Es existieren insgesamt <a href="@questions.routes.QuestionController.exercises()">
-   @model.question.Question.finder.query().findCount() Fragen</a> in allen Kategorien
+  Es existieren insgesamt <a href="@questions.routes.QuestionAdmin.exercises">
+   @model.question.Question.finder.query.findCount Fragen</a> in allen Kategorien
   <ul>
     
-  @if(!notAssignedQuestions.isEmpty()) {
-    <li>Es gibt noch @notAssignedQuestions.size()
-      <a href="@questions.routes.QuestionAdmin.notAssignedQuestions()">nicht zugeordnete Fragen</a>.
-      Sie k&ouml;nnen Sie <a href="@questions.routes.QuestionAdmin.assignQuestionsForm()">hier</a> zuweisen.
+  @if(!notAssignedQuestions.isEmpty) {
+    <li>Es gibt noch @notAssignedQuestions.size
+      <a href="@questions.routes.QuestionAdmin.notAssignedQuestions">nicht zugeordnete Fragen</a>.
+      Sie k&ouml;nnen Sie <a href="@questions.routes.QuestionAdmin.assignQuestionsForm">hier</a> zuweisen.
     </li>
   }
   </ul>
 </li>
-<li>Es existieren @model.quiz.Quiz.finder.all().size() <a href="@questions.routes.QuizController.quizzes()">Quiz(ze)</a></li>
+<li>Es existieren @model.quiz.Quiz.finder.all.size <a href="@questions.routes.QuizAdmin.exerciseCollections">Quiz(ze)</a></li>
 }
 
 @strs = @{scala.collection.Map(
@@ -26,12 +26,12 @@
 )}
 
 @calls = @{scala.collection.Map(
-  "index" -> questions.routes.QuestionController.exercises(),
+  "index" -> questions.routes.QuestionAdmin.exercises,
   "newExerciseForm" -> questions.routes.QuestionController.newQuestionForm(false),
-  "export" -> questions.routes.QuestionAdmin.exportExercises(),
-  "import" -> questions.routes.QuestionAdmin.importExercises(),
-  "jsonSchema" -> questions.routes.QuestionAdmin.getJSONSchemaFile(),
-  "upload" -> questions.routes.QuestionAdmin.uploadFile()
+  "export" -> questions.routes.QuestionAdmin.exportExercises,
+  "import" -> questions.routes.QuestionAdmin.importExercises,
+  "jsonSchema" -> questions.routes.QuestionAdmin.getJSONSchemaFile,
+  "upload" -> questions.routes.QuestionAdmin.uploadFile
 )}
 
 @admin.exerciseAdminMain(user, strs, statistics, calls) { }

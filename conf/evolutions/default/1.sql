@@ -286,9 +286,8 @@ create table xml_exercise (
   title                         varchar(255),
   author                        varchar(255),
   text                          text,
-  fixed_start                   text,
   exercise_type                 varchar(7),
-  reference_file_name           varchar(255),
+  root_node                     varchar(255),
   constraint ck_xml_exercise_exercise_type check ( exercise_type in ('XML_XSD','XML_DTD','XSD_XML','DTD_XML')),
   constraint pk_xml_exercise primary key (id)
 );

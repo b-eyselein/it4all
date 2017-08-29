@@ -10,9 +10,9 @@
 )}
 
 @calls = @{scala.collection.Map(
-  "index" -> spread.routes.SpreadController.exercises(),
+  "index" -> spread.routes.SpreadAdmin.exercises(),
   "newExerciseForm" -> spread.routes.SpreadAdmin.newExerciseForm(),
-  "export" -> sql.routes.SqlScenarioAdmin.exportExerciseCollections(),
+  "export" -> spread.routes.SpreadAdmin.exportExercises(),
   "import" -> spread.routes.SpreadAdmin.importExercises(),
   "jsonSchema" -> spread.routes.SpreadAdmin.getJSONSchemaFile(),
   "upload" -> spread.routes.SpreadAdmin.uploadFile()

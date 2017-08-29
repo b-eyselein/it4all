@@ -3,7 +3,6 @@ package model;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -19,17 +18,12 @@ public class XmlExercise extends Exercise {
   
   public static final Finder<Integer, XmlExercise> finder = new Finder<>(XmlExercise.class);
   
-  // FIXME: eventually generate?
-  @Column(columnDefinition = "text")
-  @JsonProperty(required = true)
-  private String fixedStart;
-  
   @Enumerated(EnumType.STRING)
   @JsonProperty(required = true)
   private XmlExType exerciseType;
   
   @JsonProperty(required = true)
-  private String referenceFileName;
+  private String rootNode;
   
   public XmlExercise(int id) {
     super(id);
@@ -44,12 +38,11 @@ public class XmlExercise extends Exercise {
   }
   
   public String getFixedStart() {
-    return fixedStart.isEmpty() ? "--" : fixedStart;
-  }
-  
-  @JsonProperty("fixedStart")
-  public List<String> getFixedStartForJson() {
-    return NEW_LINE_SPLITTER.splitToList(fixedStart);
+    if(exerciseType != XmlExType.XML_DTD)
+      return "";
+    
+    return String.format("<?xml version=\"1.0\" encoding=\"UTF-8\"?>%n<!DOCTYPE %s SYSTEM \"%s.dtd\">", rootNode,
+        rootNode);
   }
   
   @JsonIgnore
@@ -62,8 +55,8 @@ public class XmlExercise extends Exercise {
     return exerciseType.getRefFileEnding();
   }
   
-  public String getReferenceFileName() {
-    return referenceFileName;
+  public String getRootNode() {
+    return rootNode;
   }
   
   @JsonIgnore
@@ -80,12 +73,8 @@ public class XmlExercise extends Exercise {
     exerciseType = theExerciseType;
   }
   
-  public void setReferenceFileName(String theReferenceFileName) {
-    referenceFileName = theReferenceFileName;
-  }
-  
-  public void setFixedStart(String theFixedStart) {
-    fixedStart = theFixedStart;
+  public void setRootNode(String theRootNode) {
+    rootNode = theRootNode;
   }
   
 }

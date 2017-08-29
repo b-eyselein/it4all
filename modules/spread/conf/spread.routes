@@ -1,22 +1,23 @@
 # Administrator
-GET    /admin           controllers.spread.SpreadAdmin.index()
+GET    /admin           controllers.spread.SpreadAdmin.index
 
-GET    /jsonSchema      controllers.spread.SpreadAdmin.getJSONSchemaFile()
-POST   /upload          controllers.spread.SpreadAdmin.uploadFile()
+GET    /jsonSchema      controllers.spread.SpreadAdmin.getJSONSchemaFile
+POST   /upload          controllers.spread.SpreadAdmin.uploadFile
 
-GET    /import          controllers.spread.SpreadAdmin.importExercises()
-GET    /export          controllers.spread.SpreadAdmin.exportExercises()
+GET    /import          controllers.spread.SpreadAdmin.importExercises
+GET    /export          controllers.spread.SpreadAdmin.exportExercises
 
-GET    /new             controllers.spread.SpreadAdmin.newExerciseForm()
-POST   /new             controllers.spread.SpreadAdmin.newExercise()
+GET    /exercises       controllers.spread.SpreadAdmin.exercises
+POST   /exercises       controllers.spread.SpreadAdmin.newExercise
+
+GET    /newExForm       controllers.spread.SpreadAdmin.newExerciseForm
 
 # All
-GET    /                controllers.spread.SpreadController.index()
+GET    /                controllers.spread.SpreadController.index
 
 POST   /:id             controllers.spread.SpreadController.upload(id: Int)
 GET    /:id/:typ        controllers.spread.SpreadController.download(id: Int, typ: String)
 GET    /temp/:id/:typ   controllers.spread.SpreadController.downloadTemplate(id: Int, typ: String)
 
-GET    /exercises       controllers.spread.SpreadController.exercises()
 
 GET    /:id             controllers.spread.SpreadController.exercise(id: Int)

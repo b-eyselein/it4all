@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import controllers.core.AExerciseAdminController;
 import model.SpreadExercise;
 import model.SpreadExerciseReader;
+import model.user.User;
 import play.data.FormFactory;
 import play.mvc.Result;
 import play.twirl.api.Html;
@@ -38,6 +39,12 @@ public class SpreadAdmin extends AExerciseAdminController<SpreadExercise> {
   @Override
   public Html renderCreated(List<SpreadExercise> created) {
     return views.html.spreadAdmin.spreadCreation.render(created);
+  }
+
+  @Override
+  protected Html renderExercises(User user, List<SpreadExercise> allExercises) {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

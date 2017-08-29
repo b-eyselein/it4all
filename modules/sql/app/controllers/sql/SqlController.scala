@@ -120,9 +120,9 @@ object SqlController {
 
   def readTableContent(connection: Connection, tableName: String): SqlQueryResult =
     cleanly(connection.prepareStatement(SELECT_ALL_DUMMY + tableName))(_.close)(result => new SqlQueryResult(result.executeQuery, tableName)) match {
-    case Success(result) => result
-    case Failure(_) => null
-  }
+      case Success(result) => result
+      case Failure(_) => null
+    }
 
   def readTablesInDatabase(db: Database, databaseName: String): List[SqlQueryResult] = cleanly(db.getConnection)(_.close)(connection => {
     connection.setCatalog(databaseName)

@@ -1,21 +1,23 @@
 # Administrator
-GET    /admin                    controllers.uml.UmlAdmin.index()
+GET    /admin                    controllers.uml.UmlAdmin.index
 
-GET    /jsonSchema               controllers.uml.UmlAdmin.getJSONSchemaFile()
-POST   /upload                   controllers.uml.UmlAdmin.uploadFile()
+GET    /jsonSchema               controllers.uml.UmlAdmin.getJSONSchemaFile
+POST   /upload                   controllers.uml.UmlAdmin.uploadFile
 
-GET    /import                   controllers.uml.UmlAdmin.importExercises()
-GET    /export                   controllers.uml.UmlAdmin.exportExercises()
+GET    /import                   controllers.uml.UmlAdmin.importExercises
+GET    /export                   controllers.uml.UmlAdmin.exportExercises
 
-GET    /newEx/form               controllers.uml.UmlAdmin.newExerciseForm()
-POST   /newEx/text               controllers.uml.UmlAdmin.newExerciseStep2()
-POST   /newEx/solution           controllers.uml.UmlAdmin.newExerciseStep3()
-POST   /newEx/create             controllers.uml.UmlAdmin.newExercise()
+GET    /exercises                controllers.uml.UmlAdmin.exercises
 
-PUT    /newEx/checkSolution      controllers.uml.UmlAdmin.checkSolution()
+GET    /newEx/form               controllers.uml.UmlAdmin.newExerciseForm
+POST   /newEx/text               controllers.uml.UmlAdmin.newExerciseStep2
+POST   /newEx/solution           controllers.uml.UmlAdmin.newExerciseStep3
+POST   /newEx/create             controllers.uml.UmlAdmin.newExercise
+
+PUT    /newEx/checkSolution      controllers.uml.UmlAdmin.checkSolution
 
 # All
-GET    /                         controllers.uml.UmlController.index()
+GET    /                         controllers.uml.UmlController.index
 
 
 # Step 1: selection of classes

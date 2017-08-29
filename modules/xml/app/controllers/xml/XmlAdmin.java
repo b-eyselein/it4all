@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import controllers.core.AExerciseAdminController;
 import model.XmlExercise;
 import model.XmlExerciseReader;
+import model.user.User;
 import play.data.FormFactory;
 import play.mvc.Result;
 import play.twirl.api.Html;
@@ -30,7 +31,12 @@ public class XmlAdmin extends AExerciseAdminController<XmlExercise> {
 
   @Override
   public Html renderCreated(List<XmlExercise> exercises) {
-    return views.html.xmlAdmin.xmlCreation.render(exercises);
+    return views.html.xmlAdmin.xmlExesTable.render(exercises);
+  }
+
+  @Override
+  protected Html renderExercises(User user, List<XmlExercise> allExercises) {
+    return views.html.xmlAdmin.xmlExercises.render(user, allExercises);
   }
 
 }

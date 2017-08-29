@@ -1,22 +1,22 @@
 # Administrator
-GET    /admin        controllers.xml.XmlAdmin.index()
+GET    /admin        controllers.xml.XmlAdmin.index
 
-GET    /jsonSchema   controllers.xml.XmlAdmin.getJSONSchemaFile()
-POST   /upload       controllers.xml.XmlAdmin.uploadFile()
+GET    /jsonSchema   controllers.xml.XmlAdmin.getJSONSchemaFile
+POST   /upload       controllers.xml.XmlAdmin.uploadFile
 
-GET    /import       controllers.xml.XmlAdmin.importExercises()
-GET    /export       controllers.xml.XmlAdmin.exportExercises()
+GET    /import       controllers.xml.XmlAdmin.importExercises
+GET    /export       controllers.xml.XmlAdmin.exportExercises
 
-GET    /new          controllers.xml.XmlAdmin.newExerciseForm()
-POST   /new          controllers.xml.XmlAdmin.newExercise()
+GET    /exercises    controllers.xml.XmlAdmin.exercises
+POST   /exercises    controllers.xml.XmlAdmin.newExercise
+
+GET    /newExForm    controllers.xml.XmlAdmin.newExerciseForm
 
 # All
-GET    /             controllers.xml.XmlController.index(filter: java.util.List[String] ?= java.util.Collections.emptyList())
+GET    /             controllers.xml.XmlController.index(filter: java.util.List[String] ?= java.util.Collections.emptyList( ))
 
-GET    /playground   controllers.xml.XmlController.playground()
-PUT    /playground   controllers.xml.XmlController.playgroundCorrection()
-
-GET    /exercises    controllers.xml.XmlController.exercises()
+GET    /playground   controllers.xml.XmlController.playground
+PUT    /playground   controllers.xml.XmlController.playgroundCorrection
 
 GET    /:id          controllers.xml.XmlController.exercise(id: Int)
 

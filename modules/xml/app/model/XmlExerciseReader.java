@@ -30,12 +30,11 @@ public class XmlExerciseReader extends ExerciseReader<XmlExercise> {
 
   @Override
   public void initRemainingExFromForm(XmlExercise exercise, DynamicForm form) {
-    exercise.setFixedStart(form.get(StringConsts.FIXED_START));
     exercise.setExerciseType(XmlExType.valueOf(form.get(StringConsts.EXERCISE_TYPE)));
-    exercise.setReferenceFileName(form.get(StringConsts.REFERENCE_FILE_NAME));
+    exercise.setRootNode(form.get(StringConsts.ROOT_NODE_NAME));
 
     Path referenceFilePath = Paths.get(BaseController.getSampleDir(this.exerciseType).toString(),
-        exercise.getReferenceFileName() + "." + exercise.getReferenceFileEnding());
+        exercise.getRootNode() + "." + exercise.getReferenceFileEnding());
     List<String> referenceFileContent = Arrays
         .asList(form.get(StringConsts.REFERENCE_FILE_CONTENT).split(StringConsts.NEWLINE));
 
@@ -58,7 +57,7 @@ public class XmlExerciseReader extends ExerciseReader<XmlExercise> {
       // error occured...
       return "Directory für Lösungsdateien (XML) " + baseTargetDir + "existiert nicht!";
 
-    String filename = exercise.getReferenceFileName() + "." + exercise.getReferenceFileEnding();
+    String filename = exercise.getRootNode() + "." + exercise.getReferenceFileEnding();
 
     Path providedFile = Paths.get("conf", "resources", exerciseType, filename).toAbsolutePath();
     Path targetPath = Paths.get(baseTargetDir.toString(), filename).toAbsolutePath();
@@ -82,9 +81,8 @@ public class XmlExerciseReader extends ExerciseReader<XmlExercise> {
 
   @Override
   protected void updateExercise(XmlExercise exercise, JsonNode exerciseNode) {
-    exercise.setFixedStart(readTextArray(exerciseNode.get(StringConsts.FIXED_START), "\n"));
     exercise.setExerciseType(XmlExType.valueOf(exerciseNode.get(StringConsts.EXERCISE_TYPE).asText()));
-    exercise.setReferenceFileName(exerciseNode.get(StringConsts.REFERENCE_FILE_NAME).asText());
+    exercise.setRootNode(exerciseNode.get(StringConsts.ROOT_NODE_NAME).asText());
   }
 
 }

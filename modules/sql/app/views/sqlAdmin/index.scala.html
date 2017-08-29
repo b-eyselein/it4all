@@ -5,7 +5,7 @@
   Es gibt insgesamt @model.exercise.SqlScenario.finder.all().size() Szenarien
   <ul>
   @for(scenario <- model.exercise.SqlScenario.finder.all()) {
-    <li>Das Szenario &quot;<a href="@sql.routes.SqlScenarioAdmin.scenarioAdmin(scenario.getId)">@scenario.getTitle</a>&quot;
+    <li>Das Szenario &quot;<a href="@sql.routes.SqlAdmin.scenarioAdmin(scenario.getId)">@scenario.getTitle</a>&quot;
     hat @scenario.getExercises.size Aufgaben</li>
   }
   </ul>
@@ -18,12 +18,12 @@
 )}
 
 @calls = @{scala.collection.Map(
-  "index" -> sql.routes.SqlController.index(),
-  "newExerciseForm" -> sql.routes.SqlScenarioAdmin.newExerciseForm(),
-  "export" -> sql.routes.SqlScenarioAdmin.exportExerciseCollections(),
-  "import" -> sql.routes.SqlScenarioAdmin.importExerciseCollections(),
-  "jsonSchema" -> sql.routes.SqlScenarioAdmin.getJSONSchemaFile(),
-  "upload" -> sql.routes.SqlScenarioAdmin.uploadFile()
+  "index" -> sql.routes.SqlAdmin.index(),
+  "newExerciseForm" -> sql.routes.SqlAdmin.newExerciseForm(),
+  "export" -> sql.routes.SqlAdmin.exportExerciseCollections(),
+  "import" -> sql.routes.SqlAdmin.importExerciseCollections(),
+  "jsonSchema" -> sql.routes.SqlAdmin.getJSONSchemaFile(),
+  "upload" -> sql.routes.SqlAdmin.uploadFile()
 )}
 
 @admin.collectionAdminMain(user, strs, statistics, calls) { }

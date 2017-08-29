@@ -148,11 +148,6 @@ public class QuestionController extends ExerciseController<Question, QuestionRes
   }
 
   @Override
-  protected Html renderExercises(User user, List<Question> exercises) {
-    return views.html.questionList.render(user, exercises);
-  }
-
-  @Override
   protected Html renderResult(List<QuestionResult> correctionResult) {
     // TODO Auto-generated method stub
     return null;

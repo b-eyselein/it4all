@@ -1,22 +1,22 @@
 # Administrator
-GET    /admin           controllers.web.WebAdmin.index()
+GET    /admin           controllers.web.WebAdmin.index
 
-GET    /jsonSchema      controllers.web.WebAdmin.getJSONSchemaFile()
-POST   /upload          controllers.web.WebAdmin.uploadFile()
+GET    /jsonSchema      controllers.web.WebAdmin.getJSONSchemaFile
+POST   /upload          controllers.web.WebAdmin.uploadFile
 
-GET    /import          controllers.web.WebAdmin.importExercises()
-GET    /export          controllers.web.WebAdmin.exportExercises()
+GET    /import          controllers.web.WebAdmin.importExercises
+GET    /export          controllers.web.WebAdmin.exportExercises
 
-GET    /new             controllers.web.WebAdmin.newExerciseForm()
-POST   /new             controllers.web.WebAdmin.newExercise()
+GET    /exercises       controllers.web.WebAdmin.exercises
+POST   /exercises       controllers.web.WebAdmin.newExercise
+
+GET    /newExForm       controllers.web.WebAdmin.newExerciseForm
 
 # All
-GET    /                controllers.web.WebController.index()
+GET    /                controllers.web.WebController.index
 
-GET    /playground      controllers.web.WebController.playground()
+GET    /playground      controllers.web.WebController.playground
 
-
-GET    /exercises       controllers.web.WebController.exercises()
 
 GET    /:id/:type       controllers.web.WebController.exercise(id: Int, type: String)
 
