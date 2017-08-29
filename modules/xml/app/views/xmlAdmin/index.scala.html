@@ -1,7 +1,7 @@
 @(user: model.user.User)
 
 @statistics = {
-<li>Es existieren insgesamt @model.XmlExercise.finder.all().size() Augaben, davon
+<li>Es existieren insgesamt @model.XmlExercise.finder.all().size() <a href="@xml.routes.XmlAdmin.exercises()">Aufgaben</a>, davon
   <ul>
   @for(exType <- model.XmlExType.values()) {
     <li>@model.XmlExercise.byType(exType).size() Aufgaben vom Typ @exType</li>

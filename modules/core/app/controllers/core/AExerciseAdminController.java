@@ -30,6 +30,29 @@ import play.twirl.api.Html;
 @Authenticated(AdminSecured.class)
 public abstract class AExerciseAdminController<E extends Exercise> extends BaseController {
 
+  private static class DeletionResult {
+    private int exerciseId;
+    private String message;
+
+    @SuppressWarnings("unused")
+    public int getExerciseId() {
+      return exerciseId;
+    }
+
+    @SuppressWarnings("unused")
+    public String getMessage() {
+      return message;
+    }
+
+    public void setExerciseId(int exerciseId) {
+      this.exerciseId = exerciseId;
+    }
+
+    public void setMessage(String message) {
+      this.message = message;
+    }
+  }
+
   protected final Finder<Integer, E> finder;
   protected final ExerciseReader<E> exerciseReader;
 
@@ -54,17 +77,24 @@ public abstract class AExerciseAdminController<E extends Exercise> extends BaseC
   }
 
   public Result deleteExercise(int exerciseId) {
+    DeletionResult result = new DeletionResult();
+    result.setExerciseId(exerciseId);
     E toDelete = finder.byId(exerciseId);
 
-    if(toDelete == null)
-      return badRequest(
+    if(toDelete == null) {
+      result.setMessage(
           String.format("Die Aufgabe mit ID %s existiert nicht und kann daher nicht gelöscht werden!", exerciseId));
-    
-    if(toDelete.delete())
-      return ok(String.format("Die Aufgabe mit der ID %s konnte erfolgreich gelöscht werden.", exerciseId));
-    else
-      return badRequest(
+      return badRequest(Json.toJson(result));
+    }
+
+    if(toDelete.delete()) {
+      result.setMessage(String.format("Die Aufgabe mit der ID %s konnte erfolgreich gelöscht werden.", exerciseId));
+      return ok(Json.toJson(result));
+    } else {
+      result.setMessage(
           String.format("Es gab einen internen Fehler beim Löschen der Aufgabe mit der ID %s!", exerciseId));
+      return badRequest(Json.toJson(result));
+    }
   }
 
   public Result exercises() {

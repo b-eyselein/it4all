@@ -4,10 +4,15 @@
 
 <hr>
 
+<script src="@routes.Assets.versioned("javascripts/admin.js")"></script>
+
+<div id="messages"></div>
+
 <table class="table">
   <thead>
     <tr>
       <th>ID</th>
+      <th>L&ouml;schen</th>
       <th>Titel</th>
       <th>Autor</th>
       <th>Text</th>
@@ -17,8 +22,11 @@
   </thead>
   <tbody>
   @for(exercise <- exercises) {
-    <tr>
+    <tr id="tr1_@exercise.getId">
       <td>@exercise.getId</td>
+      <td><button class="btn btn-default" onclick="deleteExercise('@xml.routes.XmlAdmin.deleteExercise(exercise.getId)')">
+          <span class="glyphicon glyphicon-remove"></span>
+      </button></td>
       <td>@exercise.getTitle</td>
       <td>@exercise.getAuthor</td>
       <td>@exercise.getText</td>
@@ -26,7 +34,7 @@
       <td>@exercise.getRootNode</td>
     </tr>
     @if(!exercise.getFixedStart.isEmpty) {
-    <tr>
+    <tr id="tr2_@exercise.getId">
       <td>Fixed Start:</td>
       <td colspan="5"><pre>@exercise.getFixedStart</pre></td>
     </tr>

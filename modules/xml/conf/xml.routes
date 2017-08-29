@@ -1,24 +1,23 @@
-# Administrator
-GET    /admin        controllers.xml.XmlAdmin.index
+GET      /                controllers.xml.XmlController.index(filter: java.util.List[String] ?= java.util.Collections.emptyList( ))
 
-GET    /jsonSchema   controllers.xml.XmlAdmin.getJSONSchemaFile
-POST   /upload       controllers.xml.XmlAdmin.uploadFile
+GET      /admin           controllers.xml.XmlAdmin.index
 
-GET    /import       controllers.xml.XmlAdmin.importExercises
-GET    /export       controllers.xml.XmlAdmin.exportExercises
+GET      /jsonSchema      controllers.xml.XmlAdmin.getJSONSchemaFile
+POST     /upload          controllers.xml.XmlAdmin.uploadFile
 
-GET    /exercises    controllers.xml.XmlAdmin.exercises
-POST   /exercises    controllers.xml.XmlAdmin.newExercise
+GET      /import          controllers.xml.XmlAdmin.importExercises
+GET      /export          controllers.xml.XmlAdmin.exportExercises
 
-GET    /newExForm    controllers.xml.XmlAdmin.newExerciseForm
+GET      /exercises       controllers.xml.XmlAdmin.exercises
+POST     /exercises       controllers.xml.XmlAdmin.newExercise
 
-# All
-GET    /             controllers.xml.XmlController.index(filter: java.util.List[String] ?= java.util.Collections.emptyList( ))
+GET      /exercises/:id   controllers.xml.XmlController.exercise(id: Int)
+PUT      /exercises/:id   controllers.xml.XmlController.correctLive(id: Int)
+POST     /exercises/:id   controllers.xml.XmlController.correct(id: Int)
+DELETE   /exercises/:id   controllers.xml.XmlAdmin.deleteExercise(id: Int)
 
-GET    /playground   controllers.xml.XmlController.playground
-PUT    /playground   controllers.xml.XmlController.playgroundCorrection
+GET      /newExForm       controllers.xml.XmlAdmin.newExerciseForm
 
-GET    /:id          controllers.xml.XmlController.exercise(id: Int)
+GET      /playground      controllers.xml.XmlController.playground
+PUT      /playground      controllers.xml.XmlController.playgroundCorrection
 
-PUT    /:id          controllers.xml.XmlController.correctLive(id: Int)
-POST   /:id          controllers.xml.XmlController.correct(id: Int)
