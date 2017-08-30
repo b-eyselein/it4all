@@ -1,0 +1,21 @@
+@(user: model.user.User)
+
+@strs = @{scala.collection.Map(
+	"pluralName" -> "EBNF-Aufgaben",
+	"app" -> "EBNF"
+)}
+
+@stats = {
+<p>TODO: Statistiken
+}
+
+@calls = @{scala.collection.Map(
+  "index" -> controllers.ebnf.routes.EBNFAdminController.exercises(),
+  "newExerciseForm" -> controllers.ebnf.routes.EBNFAdminController.newExerciseForm(),
+  "export" -> controllers.ebnf.routes.EBNFAdminController.exportExercises(),
+  "import" -> controllers.ebnf.routes.EBNFAdminController.importExercises(),
+  "jsonSchema" -> controllers.ebnf.routes.EBNFAdminController.getJSONSchemaFile(),
+  "upload" -> controllers.ebnf.routes.EBNFAdminController.uploadFile()
+)}
+
+@admin.exerciseAdminMain(user, strs, stats, calls) { }

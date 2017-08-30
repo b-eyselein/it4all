@@ -1,6 +1,4 @@
-@import model.ebnf._
-
-@(user: model.user.User, exercise: EBNFExercise)
+@(user: model.user.User, exercise: model.ebnf.EBNFExercise)
 
 @main("EBNF", user) {
 <script src="@routes.Assets.versioned("javascripts/ebnf.js")"></script>
@@ -15,7 +13,7 @@
   
   <hr>
   
-  <form class="form-horizontal" method="post" action="@routes.EBNFController.correct(exercise.getId)">
+  <form class="form-horizontal" method="post" action="@controllers.ebnf.routes.EBNFController.correct(exercise.getId)">
     <fieldset>
       <legend>Symbole und Variablen</legend>
       <div class="form-group">
@@ -31,7 +29,7 @@
       <div class="form-group">
         <label class="control-label col-sm-2" for="variables">Variablen</label>
         <div class="col-sm-10">
-          <input class="form-control" id="variables" name="variables" readonly value="@EBNFExercise.StartSymbol">
+          <input class="form-control" id="variables" name="variables" readonly value="@model.ebnf.EBNFExercise.StartSymbol">
         </div>
         <div class="col-sm-offset-2 col-sm-10">
           <span class="text-info">Die Variablen werden automatisch aus den Regeln extrahiert.</span>
@@ -41,7 +39,8 @@
       <div class="form-group">
         <label class="control-label col-sm-2" for="start">Startsymbol</label>
         <div class="col-sm-10">
-          <input class="form-control" onchange="changeStartSymbol()" id="start" name="start" readonly value="@EBNFExercise.StartSymbol">
+          <input class="form-control" onchange="changeStartSymbol()" id="start" name="start" readonly
+          value="@model.ebnf.EBNFExercise.StartSymbol">
         </div>
         <div class="col-sm-offset-2 col-sm-10">
           <span class="text-info">Die Startsymbol wird in der Aufgabe vorgegeben.</span>

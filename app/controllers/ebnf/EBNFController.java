@@ -1,4 +1,4 @@
-package controllers;
+package controllers.ebnf;
 
 import java.util.Arrays;
 import java.util.List;

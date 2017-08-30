@@ -11,12 +11,13 @@ GET      /export          controllers.xml.XmlAdmin.exportExercises
 GET      /exercises       controllers.xml.XmlAdmin.exercises
 POST     /exercises       controllers.xml.XmlAdmin.newExercise
 
+GET      /newExForm       controllers.xml.XmlAdmin.newExerciseForm
+
 GET      /exercises/:id   controllers.xml.XmlController.exercise(id: Int)
 PUT      /exercises/:id   controllers.xml.XmlController.correctLive(id: Int)
 POST     /exercises/:id   controllers.xml.XmlController.correct(id: Int)
 DELETE   /exercises/:id   controllers.xml.XmlAdmin.deleteExercise(id: Int)
 
-GET      /newExForm       controllers.xml.XmlAdmin.newExerciseForm
 
 GET      /playground      controllers.xml.XmlController.playground
 PUT      /playground      controllers.xml.XmlController.playgroundCorrection

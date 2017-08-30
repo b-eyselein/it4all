@@ -1,9 +1,5 @@
 package model.ebnf
 
-import java.util.Arrays
-import java.util.List
-import java.util.stream.Collectors
-
 import javax.persistence.Entity
 
 import com.fasterxml.jackson.annotation.JsonIgnore
@@ -14,7 +10,9 @@ import model.exercise.Exercise
 @Entity
 class EBNFExercise(i: Int) extends Exercise(i) {
 
-  val terminals = "1,0"
+  var terminals = "1,0"
+
+  def terminals_=(theTerminals: List[String]): Unit = terminals = theTerminals.mkString(",")
 
   def getTerminals() = terminals.split(",")
 
@@ -26,7 +24,7 @@ class EBNFExercise(i: Int) extends Exercise(i) {
 object EBNFExercise {
 
   val StartSymbol = "S"
-  
+
   val finder = new Finder[Integer, EBNFExercise](classOf[EBNFExercise])
 
 }

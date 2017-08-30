@@ -28,10 +28,24 @@ POST   /nary/add                 controllers.NaryController.checkNaryAdditionSol
 GET    /nary/twocomp/:verb       controllers.NaryController.newTwoComplementQuestion(verb: Boolean)
 POST   /nary/twocomp/:verb       controllers.NaryController.checkTwoComplementSolution(verb: Boolean)
 
-GET    /ebnf                     controllers.EBNFController.index
-GET    /ebnf/:id                 controllers.EBNFController.exercise(id: Int)
-PUT    /ebnf/:id                 controllers.EBNFController.correct(id: Int)
-POST   /ebnf/:id                 controllers.EBNFController.correctLive(id: Int)
+GET    /ebnf/admin               controllers.ebnf.EBNFAdminController.index
+
+GET    /ebnf/jsonSchema          controllers.ebnf.EBNFAdminController.getJSONSchemaFile
+POST   /ebnf/upload              controllers.ebnf.EBNFAdminController.uploadFile
+
+GET    /ebnf/import              controllers.ebnf.EBNFAdminController.importExercises
+GET    /ebnf/export              controllers.ebnf.EBNFAdminController.exportExercises
+
+GET    /ebnf/exercises           controllers.ebnf.EBNFAdminController.exercises
+POST   /ebnf/exercises           controllers.ebnf.EBNFAdminController.newExercise
+
+GET    /ebnf/newExForm           controllers.ebnf.EBNFAdminController.newExerciseForm
+
+
+GET    /ebnf                     controllers.ebnf.EBNFController.index
+GET    /ebnf/:id                 controllers.ebnf.EBNFController.exercise(id: Int)
+PUT    /ebnf/:id                 controllers.ebnf.EBNFController.correct(id: Int)
+POST   /ebnf/:id                 controllers.ebnf.EBNFController.correctLive(id: Int)
 
 ->     /bool                     bool.Routes
 
