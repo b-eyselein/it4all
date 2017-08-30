@@ -21,8 +21,10 @@ import model.XmlExType;
 import model.XmlExercise;
 import model.XmlExerciseReader;
 import model.exercisereading.ExerciseReader;
+import model.result.CompleteResult;
 import model.user.User;
 import play.Logger;
+import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.mvc.Result;
 import play.twirl.api.Html;
@@ -128,7 +130,8 @@ public class XmlController extends ExerciseController<XmlExercise, XmlError> {
   }
 
   @Override
-  protected List<XmlError> correct(String learnerSolution, XmlExercise exercise, User user) {
+  protected CompleteResult<XmlError> correct(DynamicForm form, XmlExercise exercise, User user) {
+    String learnerSolution = form.get(StringConsts.FORM_VALUE);
     Path dir = checkAndCreateSolDir(user.name, exercise);
 
     Path grammar;
@@ -141,11 +144,13 @@ public class XmlController extends ExerciseController<XmlExercise, XmlError> {
       xml = saveXML(dir, learnerSolution, exercise);
     }
 
+    List<XmlError> res;
     try {
-      return XmlCorrector.correct(xml, grammar, exercise);
+      res = XmlCorrector.correct(xml, grammar, exercise);
     } catch (CorrectionException e) {
-      return Arrays.asList(new XmlError(null, null));
+      res = Arrays.asList(new XmlError(null, null));
     }
+    return new CompleteResult<>(learnerSolution, res);
   }
 
   @Override
@@ -155,8 +160,8 @@ public class XmlController extends ExerciseController<XmlExercise, XmlError> {
   }
 
   @Override
-  protected Html renderResult(List<XmlError> correctionResult) {
-    return views.html.xmlResult.render(correctionResult);
+  protected Html renderResult(CompleteResult<XmlError> correctionResult) {
+    return views.html.xmlResult.render(correctionResult.getResults());
   }
 
 }

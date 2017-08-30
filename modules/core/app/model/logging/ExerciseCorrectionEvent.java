@@ -1,23 +1,21 @@
 package model.logging;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import model.result.EvaluationResult;
+import model.result.CompleteResult;
 import play.mvc.Http.Request;
 
 public class ExerciseCorrectionEvent extends WorkingEvent {
   
-  private List<? extends EvaluationResult> results;
+  private CompleteResult<?> results;
   
-  public ExerciseCorrectionEvent(Request theRequest, int id, List<? extends EvaluationResult> theResult) {
+  public ExerciseCorrectionEvent(Request theRequest, int id, CompleteResult<?> theResult) {
     super(EventType.EXERCISE_CORRECTION, theRequest, id);
     results = theResult;
   }
   
   @JsonIgnore
-  public List<? extends EvaluationResult> getResult() {
+  public CompleteResult<?> getResult() {
     return results;
   }
   

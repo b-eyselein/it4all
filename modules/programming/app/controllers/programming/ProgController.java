@@ -23,6 +23,7 @@ import model.correctors.ProgLangCorrector;
 import model.correctors.PythonCorrector;
 import model.logging.ExerciseCompletionEvent;
 import model.logging.ExerciseCorrectionEvent;
+import model.result.CompleteResult;
 import model.testdata.CommitedTestData;
 import model.testdata.CommitedTestDataKey;
 import model.testdata.ITestData;
@@ -97,11 +98,11 @@ public class ProgController extends ExerciseController<ProgExercise, ProgEvaluat
     String language = form.get(StringConsts.LANGUAGE_NAME);
     
     try {
-      List<ProgEvaluationResult> result = correct(user, ProgExercise.finder.byId(id), learnerSolution,
+      CompleteResult<ProgEvaluationResult> result = correct(user, ProgExercise.finder.byId(id), learnerSolution,
           AvailableLanguages.valueOf(language));
       
       log(user, new ExerciseCompletionEvent(request(), id, result));
-      return ok(views.html.correction.render("Programmiersprachen", views.html.progResult.render(result),
+      return ok(views.html.correction.render("Programmiersprachen", views.html.progResult.render(result.getResults()),
           learnerSolution, user, routes.ProgController.index()));
     } catch (CorrectionException e) {
       Logger.error("Error while correcting programming", e);
@@ -119,11 +120,11 @@ public class ProgController extends ExerciseController<ProgExercise, ProgEvaluat
     String language = form.get(StringConsts.LANGUAGE_NAME);
     
     try {
-      List<ProgEvaluationResult> result = correct(user, ProgExercise.finder.byId(id), learnerSolution,
+      CompleteResult<ProgEvaluationResult> result = correct(user, ProgExercise.finder.byId(id), learnerSolution,
           AvailableLanguages.valueOf(language));
       
       log(user, new ExerciseCorrectionEvent(request(), id, result));
-      return ok(views.html.progResult.render(result));
+      return ok(views.html.progResult.render(result.getResults()));
     } catch (CorrectionException e) {
       Logger.error("Error while correcting programming live", e);
       return badRequest();
@@ -174,7 +175,7 @@ public class ProgController extends ExerciseController<ProgExercise, ProgEvaluat
     return ok(Json.toJson(validatedTestData));
   }
   
-  private List<ProgEvaluationResult> correct(User user, ProgExercise exercise, String learnerSolution,
+  private CompleteResult<ProgEvaluationResult> correct(User user, ProgExercise exercise, String learnerSolution,
       AvailableLanguages lang) throws CorrectionException {
     // FIXME: Time out der Ausführung
     try {
@@ -187,14 +188,14 @@ public class ProgController extends ExerciseController<ProgExercise, ProgEvaluat
       
       Path solDir = checkAndCreateSolDir(user.name, exercise);
       
-      return corrector.evaluate(learnerSolution, completeTestData, solDir);
+      return new CompleteResult<>(learnerSolution, corrector.evaluate(learnerSolution, completeTestData, solDir));
     } catch (Exception e) {
       throw new CorrectionException(learnerSolution, "Error while correcting files", e);
     }
   }
   
   @Override
-  protected List<ProgEvaluationResult> correct(String learnerSolution, ProgExercise exercise, User user) {
+  protected CompleteResult<ProgEvaluationResult> correct(DynamicForm form, ProgExercise exercise, User user) {
     // TODO Auto-generated method stub
     return null;
   }
@@ -205,7 +206,7 @@ public class ProgController extends ExerciseController<ProgExercise, ProgEvaluat
   }
   
   @Override
-  protected Html renderResult(List<ProgEvaluationResult> correctionResult) {
+  protected Html renderResult(CompleteResult<ProgEvaluationResult> correctionResult) {
     // TODO Auto-generated method stub
     return null;
   }

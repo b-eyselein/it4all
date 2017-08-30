@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -14,9 +13,11 @@ import model.CorrectionException;
 import model.SpreadExercise;
 import model.SpreadSheetCorrectionResult;
 import model.SpreadSheetCorrector;
+import model.result.CompleteResult;
 import model.result.EvaluationResult;
 import model.user.User;
 import play.Logger;
+import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
@@ -120,7 +121,7 @@ public class SpreadController extends ExerciseController<SpreadExercise, Evaluat
   }
 
   @Override
-  protected List<EvaluationResult> correct(String learnerSolution, SpreadExercise exercise, User user)
+  protected CompleteResult<EvaluationResult> correct(DynamicForm form, SpreadExercise exercise, User user)
       throws CorrectionException {
     // TODO Auto-generated method stub
     return null;
@@ -132,7 +133,7 @@ public class SpreadController extends ExerciseController<SpreadExercise, Evaluat
   }
 
   @Override
-  protected Html renderResult(List<EvaluationResult> correctionResult) {
+  protected Html renderResult(CompleteResult<EvaluationResult> correctionResult) {
     // TODO Auto-generated method stub
     return null;
   }

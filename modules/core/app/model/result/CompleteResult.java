@@ -4,18 +4,18 @@ import java.util.List;
 
 import model.exercise.Success;
 
-public class CompleteResult extends EvaluationResult {
+public class CompleteResult<E extends EvaluationResult> extends EvaluationResult {
   
-  private List<EvaluationResult> results;
+  private List<E> results;
   private String leanerSolution;
   
-  public CompleteResult(String theLearnerSolution, List<EvaluationResult> theResults) {
+  public CompleteResult(String theLearnerSolution, List<E> theResults) {
     super(analyzeResults(theResults));
     results = theResults;
     leanerSolution = theLearnerSolution;
   }
   
-  private static Success analyzeResults(List<EvaluationResult> theResults) {
+  private static <T extends EvaluationResult> Success analyzeResults(List<T> theResults) {
     for(EvaluationResult res: theResults)
       if(res.getSuccess() != Success.COMPLETE)
         return Success.NONE;
@@ -57,11 +57,12 @@ public class CompleteResult extends EvaluationResult {
   // return builder.toString();
   // }
   
+  @Override
   public String getLearnerSolution() {
     return leanerSolution;
   }
   
-  public List<EvaluationResult> getResults() {
+  public List<E> getResults() {
     return results;
   }
   

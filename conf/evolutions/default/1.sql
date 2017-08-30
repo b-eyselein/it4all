@@ -47,6 +47,15 @@ create table course_role (
   constraint pk_course_role primary key (user_name,course_id)
 );
 
+create table ebnfexercise (
+  id                            integer auto_increment not null,
+  title                         varchar(255),
+  author                        varchar(255),
+  text                          text,
+  terminals                     varchar(255),
+  constraint pk_ebnfexercise primary key (id)
+);
+
 create table feedback (
   user                          varchar(255) not null,
   tool                          varchar(5) not null,
@@ -454,6 +463,8 @@ drop table if exists conditions;
 drop table if exists course;
 
 drop table if exists course_role;
+
+drop table if exists ebnfexercise;
 
 drop table if exists feedback;
 

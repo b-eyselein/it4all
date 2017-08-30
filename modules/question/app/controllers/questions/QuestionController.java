@@ -19,6 +19,7 @@ import model.question.Correctness;
 import model.question.Question;
 import model.question.QuestionReader;
 import model.quiz.Quiz;
+import model.result.CompleteResult;
 import model.user.Role;
 import model.user.User;
 import play.data.DynamicForm;
@@ -135,7 +136,7 @@ public class QuestionController extends ExerciseController<Question, QuestionRes
   }
 
   @Override
-  protected List<QuestionResult> correct(String learnerSolution, Question exercise, User user)
+  protected CompleteResult<QuestionResult> correct(DynamicForm form, Question exercise, User user)
       throws CorrectionException {
     // TODO Auto-generated method stub
     return null;
@@ -148,7 +149,7 @@ public class QuestionController extends ExerciseController<Question, QuestionRes
   }
 
   @Override
-  protected Html renderResult(List<QuestionResult> correctionResult) {
+  protected Html renderResult(CompleteResult<QuestionResult> correctionResult) {
     // TODO Auto-generated method stub
     return null;
   }

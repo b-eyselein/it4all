@@ -1,23 +1,21 @@
 package model.logging;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import model.result.EvaluationResult;
+import model.result.CompleteResult;
 import play.mvc.Http.Request;
 
 public class ExerciseCompletionEvent extends WorkingEvent {
   
-  private List<? extends EvaluationResult> result;
+  private CompleteResult<?> result;
   
-  public ExerciseCompletionEvent(Request theRequest, int id, List<? extends EvaluationResult> theResult) {
+  public ExerciseCompletionEvent(Request theRequest, int id, CompleteResult<?> theResult) {
     super(EventType.EXERCISE_COMPLETION, theRequest, id);
     result = theResult;
   }
   
   @JsonIgnore
-  public List<? extends EvaluationResult> getResults() {
+  public CompleteResult<?> getResults() {
     return result;
   }
 }

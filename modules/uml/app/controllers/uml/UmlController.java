@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -19,10 +18,12 @@ import model.UmlExercise;
 import model.UmlSolution;
 import model.exercisereading.ExerciseReader;
 import model.result.ClassSelectionResult;
+import model.result.CompleteResult;
 import model.result.DiagramDrawingResult;
 import model.result.UmlResult;
 import model.user.User;
 import play.Logger;
+import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
 import play.mvc.Result;
@@ -126,7 +127,7 @@ public class UmlController extends ExerciseController<UmlExercise, UmlResult> {
   }
   
   @Override
-  protected List<UmlResult> correct(String learnerSolution, UmlExercise exercise, User user) {
+  protected CompleteResult<UmlResult> correct(DynamicForm form, UmlExercise exercise, User user) {
     // TODO Auto-generated method stub
     return null;
   }
@@ -138,7 +139,7 @@ public class UmlController extends ExerciseController<UmlExercise, UmlResult> {
   }
   
   @Override
-  protected Html renderResult(List<UmlResult> correctionResult) {
+  protected Html renderResult(CompleteResult<UmlResult> correctionResult) {
     // TODO Auto-generated method stub
     return null;
   }

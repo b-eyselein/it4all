@@ -3,19 +3,19 @@ package controllers.core;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
 import io.ebean.Finder;
 import model.CorrectionException;
 import model.Secured;
-import model.StringConsts;
 import model.exercise.Exercise;
 import model.logging.ExerciseCompletionEvent;
 import model.logging.ExerciseCorrectionEvent;
 import model.logging.ExerciseStartEvent;
+import model.result.CompleteResult;
 import model.result.EvaluationResult;
 import model.user.User;
 import play.Logger;
+import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
 import play.mvc.Result;
@@ -35,29 +35,22 @@ public abstract class ExerciseController<E extends Exercise, R extends Evaluatio
   }
 
   public Result correct(int id) {
-    User user = getUser();
-    E exercise = finder.byId(id);
-    String learnerSolution = factory.form().bindFromRequest().get(StringConsts.FORM_VALUE);
-
     try {
-      List<R> correctionResult = correct(learnerSolution, exercise, user);
+      User user = getUser();
+      CompleteResult<R> correctionResult = correct(factory.form().bindFromRequest(), finder.byId(id), user);
 
       log(user, new ExerciseCompletionEvent(request(), id, correctionResult));
 
-      return ok(views.html.correction.render(exerciseType.toUpperCase(), renderResult(correctionResult),
-          learnerSolution, user, controllers.routes.Application.index()));
+      return ok(renderCorrectionResult(user, correctionResult));
     } catch (CorrectionException e) {
       return badRequest("TODO!");
     }
   }
 
   public Result correctLive(int id) {
-    User user = getUser();
-    E exercise = finder.byId(id);
-    String learnerSolution = factory.form().bindFromRequest().get(StringConsts.FORM_VALUE);
-
     try {
-      List<R> correctionResult = correct(learnerSolution, exercise, user);
+      User user = getUser();
+      CompleteResult<R> correctionResult = correct(factory.form().bindFromRequest(), finder.byId(id), user);
 
       log(user, new ExerciseCorrectionEvent(request(), id, correctionResult));
 
@@ -93,14 +86,19 @@ public abstract class ExerciseController<E extends Exercise, R extends Evaluatio
     }
   }
 
-  protected abstract List<R> correct(String learnerSolution, E exercise, User user) throws CorrectionException;
+  protected abstract CompleteResult<R> correct(DynamicForm form, E exercise, User user) throws CorrectionException;
 
   protected Path getSampleDir() {
     return getSampleDir(exerciseType);
   }
 
+  protected Html renderCorrectionResult(User user, CompleteResult<R> correctionResult) {
+    return views.html.correction.render(exerciseType.toUpperCase(), renderResult(correctionResult),
+        correctionResult.getLearnerSolution(), user, controllers.routes.Application.index());
+  }
+
   protected abstract Html renderExercise(User user, E exercise);
 
-  protected abstract Html renderResult(List<R> correctionResult);
+  protected abstract Html renderResult(CompleteResult<R> correctionResult);
 
 }
