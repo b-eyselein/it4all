@@ -32,7 +32,7 @@ object ScalaNodeParser extends JavaTokenParsers {
     case "(" ~ exp ~ ")" => exp
   })
 
-  private lazy val b_other_operator = "nand" | "nor" | "xor" | "equiv" | "impl"
+  private lazy val b_other_operator: Parser[String] = "nand" | "nor" | "xor" | "equiv" | "impl"
 
   private lazy val b_literal: Parser[ScalaNode] = ("1" | "true" | "TRUE") ^^ (x => TRUE) | ("0" | "false" | "FALSE") ^^ (x => FALSE)
 

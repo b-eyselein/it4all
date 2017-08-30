@@ -56,6 +56,8 @@ libraryDependencies ++= Seq(
   guice
 )
 
+scalacOptions ++= Seq("-feature")
+
 EclipseKeys.classpathTransformerFactories := Seq(ClasspathentryTransformer)
 
 EclipseKeys.skipParents in ThisBuild := false
