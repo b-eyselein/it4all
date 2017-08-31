@@ -55,4 +55,9 @@ object RuleParser extends JavaTokenParsers {
 
   def parseRules(rules: List[String]) = rules.map(parse(_))
 
+  def parseReplacement(repl: String) = parseAll(sequence, repl) match {
+    case Success(result, input) => result
+    case _ => throw new Exception("Fehler beim Parsen!")
+  }
+
 }
