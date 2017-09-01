@@ -1,5 +1,5 @@
 # Admin
-GET      /admin                    controllers.uml.UmlAdmin.index
+GET      /admin                    controllers.uml.UmlAdmin.adminIndex
 
 GET      /jsonSchema               controllers.uml.UmlAdmin.getJSONSchemaFile
 POST     /upload                   controllers.uml.UmlAdmin.uploadFile
@@ -18,8 +18,6 @@ DELETE   /exercises/:id            controllers.uml.UmlAdmin.deleteExercise(id: I
 GET      /newEx/form               controllers.uml.UmlAdmin.newExerciseForm
 POST     /newEx/text               controllers.uml.UmlAdmin.newExerciseStep2
 POST     /newEx/solution           controllers.uml.UmlAdmin.newExerciseStep3
-POST     /newEx/create             controllers.uml.UmlAdmin.index 
-#newExercise
 
 PUT      /newEx/checkSolution      controllers.uml.UmlAdmin.checkSolution
 

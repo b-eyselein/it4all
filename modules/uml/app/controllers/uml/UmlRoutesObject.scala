@@ -5,9 +5,19 @@ import controllers.uml.routes.UmlAdmin._
 
 object UmlRoutesObject extends RoutesObject {
 
-  val adminIndexRoute = index
+  val adminIndexRoute = adminIndex
 
   val exercisesRoutes = exercises
+  
+  val newExFormRoute = newExerciseForm
+
+  val exportExesRoute = exportExercises
+  
+  val importExesRoute = importExercises
+  
+  val jsonSchemaRoute = getJSONSchemaFile
+  
+  val uploadFileRoute = uploadFile
 
   override def editExerciseFormRoute(id: Int) = editExerciseForm(id)
 

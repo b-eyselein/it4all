@@ -1,6 +1,6 @@
 @(exercises: List[model.ProgExercise])
 
-<a href="@programming.routes.ProgAdmin.index()" class="btn btn-primary btn-block">Zur&uuml;ck zur Administratorseite</a>
+<a href="@programming.routes.ProgAdmin.adminIndex" class="btn btn-primary btn-block">Zur&uuml;ck zur Administratorseite</a>
 
 <hr>
 
@@ -20,9 +20,9 @@
         </tr>
       </thead>
       <tbody>
-      @for(lang <- model.AvailableLanguages.values()) {
+      @for(lang <- model.AvailableLanguages.values) {
         <tr>
-          <td>@lang.getName()</td>
+          <td>@lang.getName</td>
           <td><pre>@exercise.getSampleSolution(lang)</pre></td>
         </tr>
       }
@@ -35,7 +35,7 @@
       <thead>
         <tr>
           <th>Id</th>
-          @for(input <- 0 until exercise.getInputCount()) {
+          @for(input <- 0 until exercise.getInputCount) {
           <th>Input</th>
           }
   		<th>Output</th>
@@ -45,7 +45,7 @@
       @for(testdata <- exercise.sampleTestData) {
         <tr>
           <td>@testdata.key.testId</td>
-          @for(input <- testdata.getInput()) {
+          @for(input <- testdata.getInput) {
         	<td>@input</td>
           }
           <td>@testdata.output</td>

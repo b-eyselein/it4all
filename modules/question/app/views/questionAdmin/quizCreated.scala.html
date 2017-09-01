@@ -1,6 +1,6 @@
 @(user: model.user.User, quiz: model.quiz.Quiz)
 
-<a href="@questions.routes.QuizAdmin.index()" class="btn btn-primary btn-block">Zur&uuml;ck zur Administratorseite</a>
+<a href="@questions.routes.QuizAdmin.adminIndex" class="btn btn-primary btn-block">Zur&uuml;ck zur Administratorseite</a>
 
 <hr>
 
@@ -35,7 +35,7 @@
           </tr>
           <tr>
             <td># Fragen</td>
-            <td>@@quiz.questions.size()</td>
+            <td>@@quiz.questions.size</td>
           </tr>
         </tbody>
       </table>
@@ -43,7 +43,7 @@
   </div>
   
   <div class="alert alert-info">Sie k&ouml;nnen dem Quiz
-  <a href="@questions.routes.QuestionAdmin.assignQuestionsForm()" class="alert-link">hier</a> Fragen zuweisen.</div>
+  <a href="@questions.routes.QuestionAdmin.assignQuestionsForm" class="alert-link">hier</a> Fragen zuweisen.</div>
   
 </div>
 }

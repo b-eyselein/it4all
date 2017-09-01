@@ -1,7 +1,7 @@
 @(user: model.user.User)
 
 @statistics = {
-<li>Es gibt insgesamt @model.UmlExercise.finder.all().size() Aufgaben</li>
+<li>Es gibt insgesamt @model.UmlExercise.finder.all.size Aufgaben</li>
 }
 
 @strs = @{scala.collection.Map(
@@ -10,12 +10,13 @@
 )}
 
 @calls = @{scala.collection.Map(
-  "index" ->   uml.routes.UmlAdmin.index(),
-  "newExerciseForm" -> uml.routes.UmlAdmin.newExerciseForm(),
-  "export" -> uml.routes.UmlAdmin.exportExercises(),
-  "import" -> uml.routes.UmlAdmin.importExercises(),
-  "jsonSchema" -> uml.routes.UmlAdmin.getJSONSchemaFile(),
-  "upload" -> uml.routes.UmlAdmin.uploadFile()
+  "index" -> uml.routes.UmlAdmin.adminIndex,
+  "exercises" -> uml.routes.UmlAdmin.exercises,
+  "newExerciseForm" -> uml.routes.UmlAdmin.newExerciseForm,
+  "export" -> uml.routes.UmlAdmin.exportExercises,
+  "import" -> uml.routes.UmlAdmin.importExercises,
+  "jsonSchema" -> uml.routes.UmlAdmin.getJSONSchemaFile,
+  "upload" -> uml.routes.UmlAdmin.uploadFile
 )}
 
 @admin.exerciseAdminMain(user, strs, statistics, calls) { }

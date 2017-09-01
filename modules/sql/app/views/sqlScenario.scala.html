@@ -1,6 +1,5 @@
-@import model.exercise._
-
-@(user: model.user.User, exercises: List[SqlExercise], scenario: SqlScenario, exType:SqlExerciseType, currentSite: Int)
+@(user: model.user.User, exercises: List[model.exercise.SqlExercise], scenario: model.exercise.SqlScenario, exType: 
+  model.exercise.SqlExerciseType, currentSite: Int)
 
 @numOfSites = @{scenario.getNumOfSites}
 

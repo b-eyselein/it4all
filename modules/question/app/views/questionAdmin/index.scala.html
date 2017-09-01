@@ -26,7 +26,8 @@
 )}
 
 @calls = @{scala.collection.Map(
-  "index" -> questions.routes.QuestionAdmin.exercises,
+  "index" -> questions.routes.QuestionAdmin.adminIndex,
+  "exercises" -> questions.routes.QuestionAdmin.exercises,
   "newExerciseForm" -> questions.routes.QuestionController.newQuestionForm(false),
   "export" -> questions.routes.QuestionAdmin.exportExercises,
   "import" -> questions.routes.QuestionAdmin.importExercises,

@@ -1,7 +1,7 @@
 @(user: model.user.User)
 
 @statistics = {
-<li>Es existieren insgesamt @model.SpreadExercise.finder.all().size() Aufgaben</li>
+<li>Es existieren insgesamt @model.SpreadExercise.finder.all.size Aufgaben</li>
 }
 
 @strs = @{scala.collection.Map(
@@ -10,12 +10,13 @@
 )}
 
 @calls = @{scala.collection.Map(
-  "index" -> spread.routes.SpreadAdmin.exercises(),
-  "newExerciseForm" -> spread.routes.SpreadAdmin.newExerciseForm(),
-  "export" -> spread.routes.SpreadAdmin.exportExercises(),
-  "import" -> spread.routes.SpreadAdmin.importExercises(),
-  "jsonSchema" -> spread.routes.SpreadAdmin.getJSONSchemaFile(),
-  "upload" -> spread.routes.SpreadAdmin.uploadFile()
+  "index" -> spread.routes.SpreadAdmin.adminIndex,
+  "exercises" -> spread.routes.SpreadAdmin.exercises,
+  "newExerciseForm" -> spread.routes.SpreadAdmin.newExerciseForm,
+  "export" -> spread.routes.SpreadAdmin.exportExercises,
+  "import" -> spread.routes.SpreadAdmin.importExercises,
+  "jsonSchema" -> spread.routes.SpreadAdmin.getJSONSchemaFile,
+  "upload" -> spread.routes.SpreadAdmin.uploadFile
 )}
 
 @admin.exerciseAdminMain(user, strs, statistics, calls) { }

@@ -1,5 +1,5 @@
 # Administrator
-GET      /admin           controllers.programming.ProgAdmin.index
+GET      /admin           controllers.programming.ProgAdmin.adminIndex
 
 GET      /jsonSchema      controllers.programming.ProgAdmin.getJSONSchemaFile
 POST     /upload          controllers.programming.ProgAdmin.uploadFile

@@ -1,5 +1,5 @@
 # Admin
-GET      /admin                  controllers.xml.XmlAdmin.index
+GET      /admin                  controllers.xml.XmlAdmin.adminIndex
 
 GET      /jsonSchema             controllers.xml.XmlAdmin.getJSONSchemaFile
 POST     /upload                 controllers.xml.XmlAdmin.uploadFile

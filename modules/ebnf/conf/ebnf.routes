@@ -1,5 +1,5 @@
 # Admin
-GET      /admin           controllers.ebnf.EBNFAdmin.index
+GET      /admin           controllers.ebnf.EBNFAdmin.adminIndex
 
 GET      /jsonSchema      controllers.ebnf.EBNFAdmin.getJSONSchemaFile
 POST     /upload          controllers.ebnf.EBNFAdmin.uploadFile

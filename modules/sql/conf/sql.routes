@@ -1,21 +1,23 @@
 # Administrator
-GET      /scenarioes/admin         controllers.sql.SqlAdmin.index
-GET      /exercises/admin          controllers.sql.SqlAdmin.index
+GET      /scenarioes/admin         controllers.sql.SqlAdmin.adminIndex
 
 GET      /jsonSchema               controllers.sql.SqlAdmin.getJSONSchemaFile
 POST     /upload                   controllers.sql.SqlAdmin.uploadFile
 
-GET      /import                   controllers.sql.SqlAdmin.importExerciseCollections
-GET      /export                   controllers.sql.SqlAdmin.exportExerciseCollections
+GET      /scenarioes/import        controllers.sql.SqlAdmin.importExerciseCollections
+GET      /scenarioes/export        controllers.sql.SqlAdmin.exportExerciseCollections
 
 GET      /admin/:id                controllers.sql.SqlAdmin.scenarioAdmin(id: Int)
 
 GET      /scenarioes               controllers.sql.SqlAdmin.exerciseCollections
-POST     /scenarioes               controllers.sql.SqlAdmin.index
+POST     /scenarioes               controllers.sql.SqlAdmin.adminIndex
 #newExercise
 GET      /newScenarioForm          controllers.sql.SqlAdmin.newExerciseForm
 
 GET      /exercises                controllers.sql.SqlAdmin.exercises
+
+GET      /import                   controllers.sql.SqlAdmin.importExercises
+GET      /export                   controllers.sql.SqlAdmin.exportExercises
 
 GET      /exercises/:id            controllers.sql.SqlAdmin.editExerciseForm(id: Int)
 PUT      /exercises/:id            controllers.sql.SqlAdmin.editExercise(id: Int)

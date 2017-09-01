@@ -20,8 +20,8 @@ public class EBNFAdmin extends AExerciseAdminController<EBNFExercise> {
   }
   
   @Override
-  public Result index() {
-    return ok(views.html.ebnfAdmin.ebnfAdmin.render(getUser()));
+  public Result adminIndex() {
+    return ok(views.html.ebnfAdmin.index.render(getUser()));
   }
   
   protected Html renderCreated(List<EBNFExercise> exercises) {

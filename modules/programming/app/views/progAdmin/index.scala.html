@@ -10,7 +10,8 @@
 )}
 
 @calls = @{scala.collection.Map(
-  "index" -> programming.routes.ProgAdmin.index,
+  "index" -> programming.routes.ProgAdmin.adminIndex,
+  "exercises" -> programming.routes.ProgAdmin.exercises,
   "newExerciseForm" -> programming.routes.ProgAdmin.newExerciseForm,
   "export" -> programming.routes.ProgAdmin.exportExercises,
   "import" -> programming.routes.ProgAdmin.importExercises,

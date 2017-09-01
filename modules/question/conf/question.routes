@@ -1,5 +1,5 @@
 # Administrator
-GET      /admin                      controllers.questions.QuestionAdmin.index
+GET      /admin                      controllers.questions.QuestionAdmin.adminIndex
 
 # Admin Questions
 GET      /jsonSchema                 controllers.questions.QuestionAdmin.getJSONSchemaFile
@@ -19,13 +19,12 @@ POST     /assign                     controllers.questions.QuestionAdmin.assignQ
 
 GET      /assign/:id                 controllers.questions.QuestionAdmin.assignQuestionsSingleForm(id: Int)
 
+GET      /exercises/:id              controllers.questions.QuestionAdmin.editExerciseForm(id: Int)
+PUT      /exercises/:id              controllers.questions.QuestionAdmin.editExercise(id: Int)
+POST     /exercises/:id              controllers.questions.QuestionAdmin.editExercise(id: Int)
+DELETE   /exercises/:id              controllers.questions.QuestionAdmin.deleteExercise(id: Int)
 
-
-
-GET      /exercises/:id            controllers.questions.QuestionAdmin.editExerciseForm(id: Int)
-PUT      /exercises/:id            controllers.questions.QuestionAdmin.editExercise(id: Int)
-POST     /exercises/:id            controllers.questions.QuestionAdmin.editExercise(id: Int)
-DELETE   /exercises/:id            controllers.questions.QuestionAdmin.deleteExercise(id: Int)
+GET      /newQuestionForm            controllers.questions.QuestionAdmin.newExerciseForm
 
 # All
 GET      /                           controllers.questions.QuestionController.index(start: Int ?= 0)
@@ -42,7 +41,7 @@ POST     /question/:id               controllers.questions.QuestionController.qu
 
 
 # Admin Quiz
-GET      /quizzes                    controllers.questions.QuizAdmin.index
+GET      /quizzes                    controllers.questions.QuizAdmin.adminIndex
 
 GET      /quizzes/jsonSchema         controllers.questions.QuizAdmin.getJSONSchemaFile
 POST     /quizzes/upload             controllers.questions.QuizAdmin.uploadFile
@@ -51,7 +50,7 @@ GET      /quizzes/export             controllers.questions.QuizAdmin.exportExerc
 GET      /quizzes/import             controllers.questions.QuizAdmin.importExerciseCollections
 
 GET      /quizzes                    controllers.questions.QuizAdmin.exerciseCollections
-POST     /quizzes                    controllers.questions.QuizAdmin.index
+POST     /quizzes                    controllers.questions.QuizAdmin.adminIndex
 #newExercise
 
 GET      /newQuizForm                controllers.questions.QuizAdmin.newExerciseForm

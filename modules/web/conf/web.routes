@@ -1,5 +1,5 @@
 # Admin
-GET      /admin           controllers.web.WebAdmin.index
+GET      /admin           controllers.web.WebAdmin.adminIndex
 
 GET      /jsonSchema      controllers.web.WebAdmin.getJSONSchemaFile
 POST     /upload          controllers.web.WebAdmin.uploadFile

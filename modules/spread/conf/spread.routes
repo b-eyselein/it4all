@@ -1,5 +1,5 @@
 # Admin
-GET      /admin           controllers.spread.SpreadAdmin.index
+GET      /admin           controllers.spread.SpreadAdmin.adminIndex
 
 GET      /jsonSchema      controllers.spread.SpreadAdmin.getJSONSchemaFile
 POST     /upload          controllers.spread.SpreadAdmin.uploadFile
