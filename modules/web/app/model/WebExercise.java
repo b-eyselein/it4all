@@ -1,5 +1,6 @@
 package model;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -15,84 +16,99 @@ import io.ebean.Finder;
 import model.exercise.Exercise;
 import model.task.HtmlTask;
 import model.task.JsWebTask;
+import play.twirl.api.Html;
 
 @Entity
 public class WebExercise extends Exercise {
-  
+
   public static final Finder<Integer, WebExercise> finder = new Finder<>(WebExercise.class);
-  
+
   @Column(columnDefinition = "text")
   private String htmlText;
-  
+
   @Column(columnDefinition = "text")
   private String jsText;
-  
+
   @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
   @JsonManagedReference
   private List<HtmlTask> htmlTasks;
-  
+
   @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
   @JsonManagedReference
   private List<JsWebTask> jsTasks;
-  
+
   @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
   @JsonIgnore
   public List<WebSolution> solutions;
-  
-  public WebExercise(int id) {
-    super(id);
-  }
-  
+
   @JsonIgnore
   public static long withHtmlPart() {
     return finder.all().stream().filter(ex -> !ex.htmlTasks.isEmpty()).count();
   }
-  
+
   @JsonIgnore
   public static long withJsPart() {
     return finder.all().stream().filter(ex -> !ex.jsTasks.isEmpty()).count();
   }
-  
+
+  public WebExercise(int id) {
+    super(id);
+    htmlText = "";
+    jsText = "";
+  }
+
+  public List<HtmlTask> getHtmlTasks() {
+    return htmlTasks;
+  }
+
   public String getHtmlText() {
     return htmlText;
   }
-  
+
   @JsonProperty("htmlText")
   public List<String> getHtmlTextForJson() {
     return SPLITTER.splitToList(htmlText);
   }
-  
+
+  public List<JsWebTask> getJsTasks() {
+    return jsTasks;
+  }
+
   public String getJsText() {
     return jsText;
   }
-  
+
   @JsonProperty("jsText")
   public List<String> getJsTextForJson() {
     return SPLITTER.splitToList(jsText);
   }
-  
-  public void setHtmlText(String theHtmlText) {
-    htmlText = theHtmlText;
+
+  @Override
+  @JsonIgnore
+  public List<String> getRestHeaders() {
+    return Arrays.asList("Text Html", "# Tasks Html", "Text Js", "# Tasks Js");
   }
   
+  @Override
+  @JsonIgnore
+  public Html renderRest() {
+    return views.html.webAdmin.webExRest.render(this);
+  }
+
   public void setHtmlTasks(List<HtmlTask> theHtmlTasks) {
     htmlTasks = theHtmlTasks;
   }
-  
-  public void setJsText(String theJsText) {
-    jsText = theJsText;
+
+  public void setHtmlText(String theHtmlText) {
+    htmlText = theHtmlText;
   }
-  
+
   public void setJsTasks(List<JsWebTask> theJsTasks) {
     jsTasks = theJsTasks;
   }
-  
-  public List<HtmlTask> getHtmlTasks() {
-    return htmlTasks;
+
+  public void setJsText(String theJsText) {
+    jsText = theJsText;
   }
-  
-  public List<JsWebTask> getJsTasks() {
-    return jsTasks;
-  }
-  
+
 }

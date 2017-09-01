@@ -1,10 +1,10 @@
 @(user: model.user.User)
 
 @statistics = {
-<li>Es existieren insgesamt @model.XmlExercise.finder.all().size() <a href="@xml.routes.XmlAdmin.exercises()">Aufgaben</a>, davon
+<li>Es existieren insgesamt @model.XmlExercise.finder.all.size <a href="@xml.routes.XmlAdmin.exercises">Aufgaben</a>, davon
   <ul>
-  @for(exType <- model.XmlExType.values()) {
-    <li>@model.XmlExercise.byType(exType).size() Aufgaben vom Typ @exType</li>
+  @for(exType <- model.XmlExType.values) {
+    <li>@model.XmlExercise.byType(exType).size Aufgaben vom Typ @exType</li>
   }
   </ul>
 </li>
@@ -16,12 +16,12 @@
 )}
 
 @calls = @{scala.collection.Map(
-  "index" -> xml.routes.XmlAdmin.exercises(),
-  "newExerciseForm" -> xml.routes.XmlAdmin.newExerciseForm(),
-  "export" -> xml.routes.XmlAdmin.exportExercises(),
-  "import" -> xml.routes.XmlAdmin.importExercises(),
-  "jsonSchema" -> xml.routes.XmlAdmin.getJSONSchemaFile(),
-  "upload" -> xml.routes.XmlAdmin.uploadFile()
+  "index" -> xml.routes.XmlAdmin.exercises,
+  "newExerciseForm" -> xml.routes.XmlAdmin.newExerciseForm,
+  "export" -> xml.routes.XmlAdmin.exportExercises,
+  "import" -> xml.routes.XmlAdmin.importExercises,
+  "jsonSchema" -> xml.routes.XmlAdmin.getJSONSchemaFile,
+  "upload" -> xml.routes.XmlAdmin.uploadFile
 )}
 
 

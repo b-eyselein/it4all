@@ -5,9 +5,9 @@
 <script src="@controllers.routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
 <script src="@controllers.routes.Assets.versioned("javascripts/uml/exerciseCreation.js")"></script>
 <script>
-var url = "@uml.routes.UmlAdmin.checkSolution()";
+var url = "@uml.routes.UmlAdmin.checkSolution";
 
-$(document).ready(function() {
+$(document).ready(function {
   initEditor("json", 20, 50);
   editor.on("change", checkSolutionWithSchema);
 });
@@ -24,7 +24,7 @@ $(document).ready(function() {
     <h1>Erstellung einer neuen UML-Aufgabe</h1>
   </div>
   
-  <form class="form-horizontal" action="@uml.routes.UmlAdmin.newExercise()" method="post">
+  <form class="form-horizontal" action="@@uml.routes.UmlAdmin.newExercise" method="post">
   
     <div class="form-group">
       <label class="control-label col-sm-1" for="title">Titel:</label>

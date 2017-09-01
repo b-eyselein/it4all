@@ -18,7 +18,7 @@ public class QuizAdmin extends AExerciseCollectionAdminController<Question, Quiz
   
   @Inject
   public QuizAdmin(FormFactory theFactory) {
-    super(theFactory, Quiz.finder, new QuizReader());
+    super(theFactory, QuestionRoutesObject$.MODULE$, Question.finder, Quiz.finder, new QuizReader());
   }
   
   @Override
@@ -46,18 +46,54 @@ public class QuizAdmin extends AExerciseCollectionAdminController<Question, Quiz
   // return ok(views.html.questionAdmin.quizCreated.render(getUser(), quiz));
   // }
   
+  // @Override
+  // public Result newExerciseCollectionForm() {
+  // return ok(views.html.questionAdmin.newQuizForm.render(getUser()));
+  // }
+  //
+  // @Override
+  // public Result newExerciseForm() {
+  // return ok(views.html.questionAdmin.newQuizForm.render(getUser()));
+  // }
+  //
+  // @Override
+  // public Html renderCollectionCreated(List<Quiz> created) {
+  // // TODO Auto-generated method stub
+  // return null;
+  // }
+  
+  // @Override
+  // public Html renderCreated(List<Quiz> created) {
+  // // TODO Auto-generated method stub
+  // return null;
+  // }
+  //
+  // @Override
+  // protected Html renderCreated(List<Question> created) {
+  // // TODO Auto-generated method stub
+  // return null;
+  // }
+  //
+  // @Override
+  // protected Html renderCreated(List<Question> created) {
+  // // TODO Auto-generated method stub
+  // return null;
+  // }
+  
   @Override
-  public Result newExerciseCollectionForm() {
-    return ok(views.html.questionAdmin.newQuizForm.render(getUser()));
+  public Html renderCollectionCreated(List<Quiz> created) {
+    // TODO Auto-generated method stub
+    return null;
   }
   
   @Override
-  public Result newExerciseForm() {
-    return ok(views.html.questionAdmin.newQuizForm.render(getUser()));
+  protected Html renderExCollCreationForm(User user, Quiz quiz) {
+    // TODO Auto-generated method stub
+    return null;
   }
   
   @Override
-  public Html renderCreated(List<Quiz> created) {
+  protected Html renderExEditForm(User user, Question exercise, boolean isCreation) {
     // TODO Auto-generated method stub
     return null;
   }

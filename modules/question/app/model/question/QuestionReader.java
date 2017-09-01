@@ -11,10 +11,6 @@ public class QuestionReader extends ExerciseReader<Question> {
   
   private static final QuestionReader INSTANCE = new QuestionReader();
   
-  private QuestionReader() {
-    super("question", Question.finder, Question[].class);
-  }
-  
   public static QuestionReader getInstance() {
     return INSTANCE;
   }
@@ -31,6 +27,10 @@ public class QuestionReader extends ExerciseReader<Question> {
     return answer;
   }
   
+  private QuestionReader() {
+    super("question", Question.finder, Question[].class);
+  }
+  
   @Override
   public void initRemainingExFromForm(Question exercise, DynamicForm form) {
     exercise.setMaxPoints(Integer.parseInt(form.get(StringConsts.MAX_POINTS)));
@@ -40,8 +40,9 @@ public class QuestionReader extends ExerciseReader<Question> {
   }
   
   @Override
-  public void saveRead(Question exercise) {
-    exercise.saveInDb();
+  public void saveExercise(Question exercise) {
+    exercise.save();
+    exercise.getAnswers().forEach(Answer::save);
   }
   
   @Override

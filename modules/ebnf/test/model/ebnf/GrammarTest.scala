@@ -4,14 +4,11 @@ import org.junit.Test
 
 class GrammarTest {
 
-  implicit def string2TerminalSymbol(str: String) = new TerminalSymbol(str)
-  implicit def string2Variable(str: String) = new Variable(str)
-
-  val vars: List[Variable] = List("A", "B", "S")
+  val vars: List[Variable] = List(Variable("A"), Variable("B"), Variable("S"))
 
   @Test
   def test() {
-    val terminals: List[TerminalSymbol] = List("0", "1")
+    val terminals: List[TerminalSymbol] = List(TerminalSymbol("0"), TerminalSymbol("1"))
 
     val rules: List[Rule] = RuleParser.parseRules(List("S = A, B", "A = '0'", "B = '1'"))
 

@@ -1,12 +1,12 @@
  @(results: List[model.XmlError])
  
- @if(results.isEmpty()) {
+ @if(results.isEmpty) {
 <div class="alert alert-success">Es wurden keine Fehler gefunden.</div> 
  } else {
  @for(res <- results) {
-<div class="panel panel-@res.getBSClass()">
-  <div class="panel-heading">@res.getErrorType().getTitle() @res.getLineStr()</div>
-  <div class="panel-body">@res.getErrorMessage()</div>
+<div class="panel panel-@res.getBSClass">
+  <div class="panel-heading">@res.getErrorType.getTitle @res.getLineStr</div>
+  <div class="panel-body">@res.getErrorMessage</div>
 </div>
 }
 }

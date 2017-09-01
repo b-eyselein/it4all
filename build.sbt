@@ -3,18 +3,22 @@ name := """it4all"""
 Common.settings
 
 lazy val root = (project in file("."))
-	.enablePlugins(PlayJava, PlayEbean)
-	.aggregate(bool, mindmap, programming, question, spread, sql, uml, web, xml)
-	.dependsOn(bool, mindmap, programming, question, spread, sql, uml, web, xml, core)
+	.enablePlugins(PlayJava, PlayScala, PlayEbean, PlayEnhancer)
+	.aggregate(bool, ebnf, mindmap, programming, question, spread, sql, uml, web, xml)
+	.dependsOn(bool, ebnf, mindmap, programming, question, spread, sql, uml, web, xml, core)
 
 lazy val core: Project = (project in file("modules/core"))
 	.enablePlugins(PlayJava, PlayScala, PlayEbean, PlayEnhancer)
 	.settings(
-		aggregateReverseRoutes := Seq(bool, mindmap, programming, question, spread, sql, uml, web, xml, root)
+		aggregateReverseRoutes := Seq(bool, ebnf, mindmap, programming, question, spread, sql, uml, web, xml, root)
 	)
 
 lazy val bool = (project in file("modules/bool"))
 	.enablePlugins(PlayScala, PlayJava)
+	.dependsOn(core)
+
+lazy val ebnf = (project in file("modules/ebnf"))
+	.enablePlugins(PlayScala, PlayJava, PlayEbean, PlayEnhancer)
 	.dependsOn(core)
 
 lazy val mindmap = (project in file("modules/mindmap"))

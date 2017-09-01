@@ -20,7 +20,7 @@ public abstract class ExerciseCollectionReader<E extends Exercise, C extends Exe
   }
 
   @Override
-  public void saveRead(C exercise) {
+  public void saveExercise(C exercise) {
     exercise.save();
     exercise.getExercises().forEach(Exercise::save);
   }

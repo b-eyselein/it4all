@@ -1,4 +1,4 @@
-@(user: model.user.User)
+@(user: model.user.User, scenario: model.exercise.SqlScenario)
 
 @main("SQL: Neues Szenario anlegen", user) {
 <div class="container">
@@ -6,9 +6,9 @@
     <h1>Neues Szenario anlegen</h1>
   </div>
   
-  <form class="form-horizontal" action="@sql.routes.SqlAdmin.newExercise" method="post">
+  <form class="form-horizontal" action="@@sql.routes.SqlAdmin.newExercise" method="post">
     
-    @newExStdFields.render(user, 10)
+    @admin.exStdFields.render(user, scenario, 10)
     
     <div class="form-group">
       <label class="control-label col-sm-2" for="shortname">Kurzer Name:</label>

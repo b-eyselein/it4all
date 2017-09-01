@@ -1,4 +1,4 @@
-@(user: model.user.User)
+@(user: model.user.User, id: Int)
 
 @main("Neue Freitextfrage erstellen", user) {
 <div class="container">
@@ -8,7 +8,7 @@
 
   <form class="form-horizontal" method="post" action="@questions.routes.QuestionController.newQuestion(true)">
 
-    @newExStdFields.render(user, 3)
+    @admin.exStdFields.render(user, null, 3)
 
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">

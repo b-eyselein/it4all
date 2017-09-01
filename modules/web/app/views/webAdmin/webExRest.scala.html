@@ -1,0 +1,14 @@
+@(exercise: model.WebExercise)
+
+@displayText(text: String) = {
+  @if(text.length >= 80) {
+  	<td title="@text">@text.substring(0, 80)</td>
+  } else {
+  	<td>@text</td>
+  }
+}
+
+@displayText(exercise.getHtmlText)
+<td>@exercise.getHtmlTasks.size</td>
+@displayText(exercise.getJsText)
+<td>@exercise.getJsTasks.size</td>

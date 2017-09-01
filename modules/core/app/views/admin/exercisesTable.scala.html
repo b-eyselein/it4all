@@ -1,0 +1,56 @@
+@(exercises: List[_ <: model.exercise.Exercise], links: controllers.core.RoutesObject, changesAllowed: Boolean)
+
+<a href="@links.adminIndexRoute" class="btn btn-primary btn-block">Zur&uuml;ck zur Administratorseite</a>
+
+<hr>
+
+<script src="@routes.Assets.versioned("javascripts/admin.js")"></script>
+
+<div id="messages"></div>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Status</th>
+      @if(changesAllowed) {<th>Aktionen</th>}
+      <th>Titel</th>
+      <th>Autor</th>
+      <th>Text</th>
+      @for(otherHeader <- exercises(0).getRestHeaders) {
+      <th>@otherHeader</th>
+      }
+    </tr>
+  </thead>
+  <tbody>
+  @for(exercise <- exercises) {
+    <tr id="tr1_@exercise.getId">
+      <td>@exercise.getId</td>
+      <td>@exercise.getState</td>
+      @if(changesAllowed) {
+      <td>
+        <!-- Bearbeiten -->
+        <a href="@links.editExerciseFormRoute(exercise.getId)" class="btn btn-default" title="Aufgabe @exercise.getId bearbeiten">
+          <span class="glyphicon glyphicon-wrench"></span>
+        </a>
+        <!-- Löschen -->
+        <button class="btn btn-default" title="Aufgabe @exercise.getId l&ouml;schen"
+          onclick="deleteExercise('@xml.routes.XmlAdmin.deleteExercise(exercise.getId)')">
+          <span class="glyphicon glyphicon-remove"></span>
+        </button>
+      </td>
+      }
+      <td>@exercise.getTitle</td>
+      <td>@exercise.getAuthor</td>
+      @if(exercise.getText.length > 80) {
+      <td title="@exercise.getText">@exercise.getText.substring(0, 80) ...</td>
+      } else {
+      <td>@exercise.getText</td>
+      }
+      
+      @exercise.renderRest
+    
+    </tr>
+  }
+  </tbody>
+</table>

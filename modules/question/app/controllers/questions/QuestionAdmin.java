@@ -6,7 +6,6 @@ import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -26,11 +25,6 @@ import play.twirl.api.Html;
 
 public class QuestionAdmin extends AExerciseAdminController<Question> {
   
-  @Inject
-  public QuestionAdmin(FormFactory theFactory) {
-    super(theFactory, Question.finder, QuestionReader.getInstance());
-  }
-  
   private static void assignQuestion(String keyAndValue, boolean addOrRemove) {
     // String[] quizAndQuestion = keyAndValue.split("_");
     //
@@ -44,6 +38,11 @@ public class QuestionAdmin extends AExerciseAdminController<Question> {
     // quiz.questions.remove(question);
     //
     // quiz.save();
+  }
+  
+  @Inject
+  public QuestionAdmin(FormFactory theFactory) {
+    super(theFactory, QuestionRoutesObject$.MODULE$, Question.finder, QuestionReader.getInstance());
   }
   
   public Result assignQuestions() {
@@ -105,30 +104,13 @@ public class QuestionAdmin extends AExerciseAdminController<Question> {
     return ok(views.html.questionAdmin.index.render(getUser()));
   }
   
-  @Override
-  public Result newExercise() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-  
-  @Override
-  public Result newExerciseForm() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-  
   public Result notAssignedQuestions() {
     return ok(views.html.questionList.render(getUser(),
         /* Question.notAssignedQuestions() */ Question.finder.all()));
   }
   
   @Override
-  public Html renderCreated(List<Question> created) {
-    return views.html.questionAdmin.questionCreated.render(getUser(), created);
-  }
-  
-  @Override
-  protected Html renderExercises(User user, List<Question> allExercises) {
+  protected Html renderExEditForm(User user, Question exercise, boolean isCreation) {
     // TODO Auto-generated method stub
     return null;
   }

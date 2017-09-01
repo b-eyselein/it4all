@@ -80,11 +80,6 @@ public class Question extends Exercise {
     return questionType == QType.FREETEXT;
   }
 
-  public void saveInDb() {
-    save();
-    answers.forEach(Answer::save);
-  }
-
   public void setAnswers(List<Answer> theAnswers) {
     answers = theAnswers;
   }

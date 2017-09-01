@@ -87,7 +87,7 @@ public abstract class StringConsts {
   public static final String PW_NAME = "passwort";
 
   public static final String REFERENCE_FILE_CONTENT = "referenceFileContent";
-  
+
   public static final String ROOT_NODE_NAME = "rootNode";
 
   public static final String SAMPLE_NAME = "sample";
@@ -108,11 +108,15 @@ public abstract class StringConsts {
 
   public static final String SOLUTION_NAME = "solution";
 
+  public static final String STATE_NAME = "status";
+
   public static final String SUCCESS_CORRECTION = "Die Korrektur war erfolgreich.";
 
   public static final String TABLES_NAME = "Tabellen";
 
   public static final String TEMPALTE_FILENAME = "templateFilename";
+
+  public static final String TERMINALS = "terminals";
 
   public static final String TEST_COUNT_NAME = "testCount";
 

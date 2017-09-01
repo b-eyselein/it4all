@@ -1,5 +1,6 @@
 package model;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.ebean.Finder;
 import model.exercise.Exercise;
+import play.twirl.api.Html;
 
 @Entity
 public class XmlExercise extends Exercise {
@@ -25,12 +27,14 @@ public class XmlExercise extends Exercise {
   @JsonProperty(required = true)
   private String rootNode;
   
-  public XmlExercise(int id) {
-    super(id);
-  }
-  
   public static List<XmlExercise> byType(XmlExType type) {
     return finder.all().stream().filter(ex -> ex.exerciseType == type).collect(Collectors.toList());
+  }
+  
+  public XmlExercise(int id) {
+    super(id);
+    exerciseType = XmlExType.XML_DTD;
+    rootNode = "";
   }
   
   public XmlExType getExerciseType() {
@@ -55,6 +59,11 @@ public class XmlExercise extends Exercise {
     return exerciseType.getRefFileEnding();
   }
   
+  @Override
+  public List<String> getRestHeaders() {
+    return Arrays.asList("Typ", "Wurzelknoten");
+  }
+
   public String getRootNode() {
     return rootNode;
   }
@@ -67,6 +76,12 @@ public class XmlExercise extends Exercise {
   @JsonIgnore
   public String getTag() {
     return exerciseType.getTag();
+  }
+  
+  @Override
+  @JsonIgnore
+  public Html renderRest() {
+    return views.html.xmlAdmin.xmlExRest.render(this);
   }
   
   public void setExerciseType(XmlExType theExerciseType) {

@@ -52,7 +52,9 @@ create table ebnfexercise (
   title                         varchar(255),
   author                        varchar(255),
   text                          text,
+  state                         varchar(8),
   terminals                     varchar(255),
+  constraint ck_ebnfexercise_state check ( state in ('RESERVED','CREATED','APPROVED')),
   constraint pk_ebnfexercise primary key (id)
 );
 
@@ -107,8 +109,10 @@ create table prog_exercise (
   title                         varchar(255),
   author                        varchar(255),
   text                          text,
+  state                         varchar(8),
   function_name                 varchar(255),
   input_count                   integer not null,
+  constraint ck_prog_exercise_state check ( state in ('RESERVED','CREATED','APPROVED')),
   constraint pk_prog_exercise primary key (id)
 );
 
@@ -139,8 +143,10 @@ create table question (
   title                         varchar(255),
   author                        varchar(255),
   text                          text,
+  state                         varchar(8),
   max_points                    integer not null,
   question_type                 integer,
+  constraint ck_question_state check ( state in ('RESERVED','CREATED','APPROVED')),
   constraint ck_question_question_type check ( question_type in (0,1,2)),
   constraint pk_question primary key (id)
 );
@@ -168,7 +174,9 @@ create table quiz (
   title                         varchar(255),
   author                        varchar(255),
   text                          text,
+  state                         varchar(8),
   theme                         varchar(255),
+  constraint ck_quiz_state check ( state in ('RESERVED','CREATED','APPROVED')),
   constraint pk_quiz primary key (id)
 );
 
@@ -185,8 +193,10 @@ create table spread_exercise (
   title                         varchar(255),
   author                        varchar(255),
   text                          text,
+  state                         varchar(8),
   sample_filename               varchar(255),
   template_filename             varchar(255),
+  constraint ck_spread_exercise_state check ( state in ('RESERVED','CREATED','APPROVED')),
   constraint pk_spread_exercise primary key (id)
 );
 
@@ -195,10 +205,12 @@ create table sql_exercise (
   title                         varchar(255),
   author                        varchar(255),
   text                          text,
+  state                         varchar(8),
   exercise_type                 varchar(6),
   scenario_id                   integer,
   tags                          varchar(255),
   hint                          varchar(255),
+  constraint ck_sql_exercise_state check ( state in ('RESERVED','CREATED','APPROVED')),
   constraint ck_sql_exercise_exercise_type check ( exercise_type in ('SELECT','CREATE','UPDATE','DELETE','INSERT')),
   constraint pk_sql_exercise primary key (id)
 );
@@ -215,8 +227,10 @@ create table sql_scenario (
   title                         varchar(255),
   author                        varchar(255),
   text                          text,
+  state                         varchar(8),
   short_name                    varchar(255),
   script_file                   varchar(255),
+  constraint ck_sql_scenario_state check ( state in ('RESERVED','CREATED','APPROVED')),
   constraint pk_sql_scenario primary key (id)
 );
 
@@ -238,10 +252,12 @@ create table uml_exercise (
   title                         varchar(255),
   author                        varchar(255),
   text                          text,
+  state                         varchar(8),
   class_sel_text                text,
   diag_draw_text                text,
   solution                      text,
   to_ignore                     varchar(255),
+  constraint ck_uml_exercise_state check ( state in ('RESERVED','CREATED','APPROVED')),
   constraint pk_uml_exercise primary key (id)
 );
 
@@ -271,8 +287,10 @@ create table web_exercise (
   title                         varchar(255),
   author                        varchar(255),
   text                          text,
+  state                         varchar(8),
   html_text                     text,
   js_text                       text,
+  constraint ck_web_exercise_state check ( state in ('RESERVED','CREATED','APPROVED')),
   constraint pk_web_exercise primary key (id)
 );
 
@@ -295,8 +313,10 @@ create table xml_exercise (
   title                         varchar(255),
   author                        varchar(255),
   text                          text,
+  state                         varchar(8),
   exercise_type                 varchar(7),
   root_node                     varchar(255),
+  constraint ck_xml_exercise_state check ( state in ('RESERVED','CREATED','APPROVED')),
   constraint ck_xml_exercise_exercise_type check ( exercise_type in ('XML_XSD','XML_DTD','XSD_XML','DTD_XML')),
   constraint pk_xml_exercise primary key (id)
 );

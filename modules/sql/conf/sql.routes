@@ -1,23 +1,31 @@
 # Administrator
-GET    /scenarioes/admin         controllers.sql.SqlAdmin.index
-GET    /exercises/admin          controllers.sql.SqlAdmin.index
+GET      /scenarioes/admin         controllers.sql.SqlAdmin.index
+GET      /exercises/admin          controllers.sql.SqlAdmin.index
 
-GET    /jsonSchema               controllers.sql.SqlAdmin.getJSONSchemaFile
-POST   /upload                   controllers.sql.SqlAdmin.uploadFile
+GET      /jsonSchema               controllers.sql.SqlAdmin.getJSONSchemaFile
+POST     /upload                   controllers.sql.SqlAdmin.uploadFile
 
-GET    /import                   controllers.sql.SqlAdmin.importExerciseCollections
-GET    /export                   controllers.sql.SqlAdmin.exportExerciseCollections
+GET      /import                   controllers.sql.SqlAdmin.importExerciseCollections
+GET      /export                   controllers.sql.SqlAdmin.exportExerciseCollections
 
-GET    /admin/:id                controllers.sql.SqlAdmin.scenarioAdmin(id: Int)
+GET      /admin/:id                controllers.sql.SqlAdmin.scenarioAdmin(id: Int)
 
-GET    /scenarioes               controllers.sql.SqlAdmin.exerciseCollections
-POST   /scenarioes               controllers.sql.SqlAdmin.newExercise
-GET    /newScenarioForm          controllers.sql.SqlAdmin.newExerciseForm
+GET      /scenarioes               controllers.sql.SqlAdmin.exerciseCollections
+POST     /scenarioes               controllers.sql.SqlAdmin.index
+#newExercise
+GET      /newScenarioForm          controllers.sql.SqlAdmin.newExerciseForm
+
+GET      /exercises                controllers.sql.SqlAdmin.exercises
+
+GET      /exercises/:id            controllers.sql.SqlAdmin.editExerciseForm(id: Int)
+PUT      /exercises/:id            controllers.sql.SqlAdmin.editExercise(id: Int)
+POST     /exercises/:id            controllers.sql.SqlAdmin.editExercise(id: Int)
+DELETE   /exercises/:id            controllers.sql.SqlAdmin.deleteExercise(id: Int)
 
 # All
-GET    /                         controllers.sql.SqlController.index
-GET    /scenario/:scId/:exType   controllers.sql.SqlController.filteredScenario(scId: Int, exType: String, site: Int ?= 1)
-GET    /:id                      controllers.sql.SqlController.exercise(id: Int)
+GET      /                         controllers.sql.SqlController.index
+GET      /scenario/:scId/:exType   controllers.sql.SqlController.filteredScenario(scId: Int, exType: String, site: Int ?= 1)
+GET      /:id                      controllers.sql.SqlController.exercise(id: Int)
 
-PUT    /:id                      controllers.sql.SqlController.correctLive(id: Int)
-POST   /:id                      controllers.sql.SqlController.correct(id: Int)
+PUT      /:id                      controllers.sql.SqlController.correctLive(id: Int)
+POST     /:id                      controllers.sql.SqlController.correct(id: Int)

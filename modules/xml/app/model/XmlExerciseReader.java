@@ -17,27 +17,27 @@ import play.Logger;
 import play.data.DynamicForm;
 
 public class XmlExerciseReader extends ExerciseReader<XmlExercise> {
-
+  
   private static final XmlExerciseReader INSTANCE = new XmlExerciseReader();
-
-  private XmlExerciseReader() {
-    super("xml", XmlExercise.finder, XmlExercise[].class);
-  }
-
+  
   public static XmlExerciseReader getInstance() {
     return INSTANCE;
   }
-
+  
+  private XmlExerciseReader() {
+    super("xml", XmlExercise.finder, XmlExercise[].class);
+  }
+  
   @Override
   public void initRemainingExFromForm(XmlExercise exercise, DynamicForm form) {
     exercise.setExerciseType(XmlExType.valueOf(form.get(StringConsts.EXERCISE_TYPE)));
     exercise.setRootNode(form.get(StringConsts.ROOT_NODE_NAME));
-
+    
     Path referenceFilePath = Paths.get(BaseController.getSampleDir(this.exerciseType).toString(),
         exercise.getRootNode() + "." + exercise.getReferenceFileEnding());
     List<String> referenceFileContent = Arrays
         .asList(form.get(StringConsts.REFERENCE_FILE_CONTENT).split(StringConsts.NEWLINE));
-
+    
     try {
       Files.write(referenceFilePath, referenceFileContent, StandardOpenOption.CREATE,
           StandardOpenOption.TRUNCATE_EXISTING);
@@ -45,26 +45,26 @@ public class XmlExerciseReader extends ExerciseReader<XmlExercise> {
       Logger.error("There has been an error creating a sample xml file", e);
     }
   }
-
+  
   @Override
-  public void saveRead(XmlExercise exercise) {
+  public void saveExercise(XmlExercise exercise) {
     exercise.save();
     Logger.debug(checkOrCreateSampleFile(exercise));
   }
-
+  
   protected String checkOrCreateSampleFile(XmlExercise exercise) {
     if(!baseTargetDir.toFile().exists() && !createDirectory(baseTargetDir))
       // error occured...
       return "Directory für Lösungsdateien (XML) " + baseTargetDir + "existiert nicht!";
-
+    
     String filename = exercise.getRootNode() + "." + exercise.getReferenceFileEnding();
-
+    
     Path providedFile = Paths.get("conf", "resources", exerciseType, filename).toAbsolutePath();
     Path targetPath = Paths.get(baseTargetDir.toString(), filename).toAbsolutePath();
-
+    
     if(!providedFile.toFile().exists())
       return "Konnte Datei nicht erstellen: Keine Lösungsdatei mitgeliefert...";
-
+    
     try {
       Files.copy(providedFile, targetPath, StandardCopyOption.REPLACE_EXISTING);
       return "Die Lösungsdatei wurde erstellt.";
@@ -73,16 +73,16 @@ public class XmlExerciseReader extends ExerciseReader<XmlExercise> {
       return "Die Lösungsdatei konnte nicht erstellt werden!";
     }
   }
-
+  
   @Override
   protected XmlExercise instantiateExercise(int id) {
     return new XmlExercise(id);
   }
-
+  
   @Override
   protected void updateExercise(XmlExercise exercise, JsonNode exerciseNode) {
     exercise.setExerciseType(XmlExType.valueOf(exerciseNode.get(StringConsts.EXERCISE_TYPE).asText()));
     exercise.setRootNode(exerciseNode.get(StringConsts.ROOT_NODE_NAME).asText());
   }
-
+  
 }

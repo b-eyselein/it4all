@@ -19,7 +19,13 @@ POST     /assign                     controllers.questions.QuestionAdmin.assignQ
 
 GET      /assign/:id                 controllers.questions.QuestionAdmin.assignQuestionsSingleForm(id: Int)
 
-DELETE   /:questionId                controllers.questions.QuestionAdmin.deleteExercise(questionId: Int)
+
+
+
+GET      /exercises/:id            controllers.questions.QuestionAdmin.editExerciseForm(id: Int)
+PUT      /exercises/:id            controllers.questions.QuestionAdmin.editExercise(id: Int)
+POST     /exercises/:id            controllers.questions.QuestionAdmin.editExercise(id: Int)
+DELETE   /exercises/:id            controllers.questions.QuestionAdmin.deleteExercise(id: Int)
 
 # All
 GET      /                           controllers.questions.QuestionController.index(start: Int ?= 0)
@@ -45,7 +51,8 @@ GET      /quizzes/export             controllers.questions.QuizAdmin.exportExerc
 GET      /quizzes/import             controllers.questions.QuizAdmin.importExerciseCollections
 
 GET      /quizzes                    controllers.questions.QuizAdmin.exerciseCollections
-POST     /quizzes                    controllers.questions.QuizAdmin.newExercise
+POST     /quizzes                    controllers.questions.QuizAdmin.index
+#newExercise
 
 GET      /newQuizForm                controllers.questions.QuizAdmin.newExerciseForm
 

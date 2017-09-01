@@ -22,6 +22,7 @@ import io.ebean.Finder;
 import model.StringConsts;
 import model.WithId;
 import model.exercise.Exercise;
+import model.exercise.ExerciseState;
 import play.Logger;
 import play.data.DynamicForm;
 import play.libs.Json;
@@ -39,15 +40,6 @@ public abstract class ExerciseReader<E extends Exercise> {
   protected JsonNode jsonSchema;
   
   public Path baseTargetDir;
-  
-  public ExerciseReader(String theExerciseType, Finder<Integer, E> theFinder, Class<?> theClassFor) {
-    exerciseType = theExerciseType;
-    finder = theFinder;
-    
-    baseTargetDir = Paths.get("/data", "samples", exerciseType);
-    
-    jsonSchema = parseJsonSchema(theClassFor);
-  }
   
   public static boolean createDirectory(Path directory) {
     try {
@@ -101,6 +93,15 @@ public abstract class ExerciseReader<E extends Exercise> {
     return FACTORY.getJsonSchema(exercisesSchemaNode).validate(exercisesNode);
   }
   
+  public ExerciseReader(String theExerciseType, Finder<Integer, E> theFinder, Class<?> theClassFor) {
+    exerciseType = theExerciseType;
+    finder = theFinder;
+    
+    baseTargetDir = Paths.get("/data", "samples", exerciseType);
+    
+    jsonSchema = parseJsonSchema(theClassFor);
+  }
+  
   public String getExerciseType() {
     return exerciseType;
   }
@@ -113,8 +114,8 @@ public abstract class ExerciseReader<E extends Exercise> {
     return Optional.ofNullable(finder.byId(id)).orElse(instantiateExercise(id));
   }
   
-  public E initFromForm(DynamicForm form) {
-    E exercise = getOrInstantiateExercise(findMinimalNotUsedId(finder));
+  public E initFromForm(int id, DynamicForm form) {
+    E exercise = getOrInstantiateExercise(id);
     
     exercise.setTitle(form.get(StringConsts.TITLE_NAME));
     exercise.setAuthor(form.get(StringConsts.AUTHOR_NAME));
@@ -153,11 +154,10 @@ public abstract class ExerciseReader<E extends Exercise> {
   public E readExercise(JsonNode exerciseNode) {
     E exercise = getOrInstantiateExercise(exerciseNode.get(StringConsts.ID_NAME).asInt());
     
-    System.out.println(exercise.getId());
-
     exercise.setTitle(exerciseNode.get(StringConsts.TITLE_NAME).asText());
     exercise.setAuthor(exerciseNode.get(StringConsts.AUTHOR_NAME).asText());
     exercise.setText(readTextArray(exerciseNode.get(StringConsts.TEXT_NAME), ""));
+    exercise.setState(ExerciseState.CREATED);
     
     updateExercise(exercise, exerciseNode);
     
@@ -168,7 +168,7 @@ public abstract class ExerciseReader<E extends Exercise> {
     return readAllFromFile(Paths.get("conf", "resources", exerciseType, StringConsts.EX_FILE_NAME));
   }
   
-  public abstract void saveRead(E exercise);
+  public abstract void saveExercise(E exercise);
   
   protected abstract E instantiateExercise(int id);
   

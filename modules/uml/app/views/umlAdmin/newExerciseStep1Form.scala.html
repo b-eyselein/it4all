@@ -1,4 +1,4 @@
-@(user: model.user.User)
+@(user: model.user.User, exercise: model.UmlExercise)
 
 @main("UML: neue Aufgabe", user) {
 <div class="container">
@@ -8,7 +8,7 @@
   
   <form class="form-horizontal" action="@uml.routes.UmlAdmin.newExerciseStep2()" method="post">
   
-    @newExStdFields.render(user, 10)
+    @admin.exStdFields.render(user, exercise, 10)
     
     <hr>
     

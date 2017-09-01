@@ -1,7 +1,5 @@
 package controllers.uml;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -25,7 +23,7 @@ public class UmlAdmin extends AExerciseAdminController<UmlExercise> {
   
   @Inject
   public UmlAdmin(FormFactory theFactory) {
-    super(theFactory, UmlExercise.finder, UmlExerciseReader.getInstance());
+    super(theFactory, UmlRoutesObject$.MODULE$, UmlExercise.finder, UmlExerciseReader.getInstance());
   }
   
   public Result checkSolution() {
@@ -49,29 +47,19 @@ public class UmlAdmin extends AExerciseAdminController<UmlExercise> {
     return ok(views.html.umlAdmin.index.render(getUser()));
   }
   
-  @Override
-  public Result newExerciseForm() {
-    return ok(views.html.umlAdmin.newExerciseStep1Form.render(getUser()));
-  }
-  
   public Result newExerciseStep2() {
-    UmlExercise exercise = exerciseReader.initFromForm(factory.form().bindFromRequest());
+    UmlExercise exercise = exerciseReader.initFromForm(0, factory.form().bindFromRequest());
     UmlExTextParser parser = new UmlExTextParser(exercise.getText(), exercise.getMappings(), exercise.getToIgnore());
     return ok(views.html.umlAdmin.newExerciseStep2Form.render(getUser(), exercise, parser.getCapitalizedWords()));
   }
   
   public Result newExerciseStep3() {
-    UmlExercise exercise = exerciseReader.initFromForm(factory.form().bindFromRequest());
+    UmlExercise exercise = exerciseReader.initFromForm(0, factory.form().bindFromRequest());
     return ok(views.html.umlAdmin.newExerciseStep3Form.render(getUser(), exercise));
   }
   
   @Override
-  public Html renderCreated(List<UmlExercise> exercises) {
-    return views.html.umlCreation.render(exercises);
-  }
-  
-  @Override
-  protected Html renderExercises(User user, List<UmlExercise> allExercises) {
+  protected Html renderExEditForm(User user, UmlExercise exercise, boolean isCreation) {
     // TODO Auto-generated method stub
     return null;
   }

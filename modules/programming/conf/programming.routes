@@ -1,26 +1,31 @@
 # Administrator
-GET    /admin           controllers.programming.ProgAdmin.index
+GET      /admin           controllers.programming.ProgAdmin.index
 
-GET    /jsonSchema      controllers.programming.ProgAdmin.getJSONSchemaFile
-POST   /upload          controllers.programming.ProgAdmin.uploadFile
+GET      /jsonSchema      controllers.programming.ProgAdmin.getJSONSchemaFile
+POST     /upload          controllers.programming.ProgAdmin.uploadFile
 
-GET    /import          controllers.programming.ProgAdmin.importExercises
-GET    /export          controllers.programming.ProgAdmin.exportExercises
+GET      /import          controllers.programming.ProgAdmin.importExercises
+GET      /export          controllers.programming.ProgAdmin.exportExercises
 
-GET    /exercises       controllers.programming.ProgAdmin.exercises
-POST   /exercises       controllers.programming.ProgAdmin.newExercise
+GET      /exercises       controllers.programming.ProgAdmin.exercises
 
-GET    /newExForm       controllers.programming.ProgAdmin.newExerciseForm
+GET      /exercises/:id   controllers.programming.ProgAdmin.editExerciseForm(id: Int)
+PUT      /exercises/:id   controllers.programming.ProgAdmin.editExercise(id: Int)
+POST     /exercises/:id   controllers.programming.ProgAdmin.editExercise(id: Int)
+DELETE   /exercises/:id   controllers.programming.ProgAdmin.deleteExercise(id: Int)
+
+GET      /newExForm       controllers.programming.ProgAdmin.newExerciseForm
+
 
 # All
-GET    /                controllers.programming.ProgController.index
+GET      /                controllers.programming.ProgController.index
 
-GET    /testdata/:id    controllers.programming.ProgController.testData(id: Int)
-POST   /validate/:id    controllers.programming.ProgController.validateTestData(id: Int)
-PUT    /validate/:id    controllers.programming.ProgController.validateTestDataLive(id: Int)
+GET      /testdata/:id    controllers.programming.ProgController.testData(id: Int)
+POST     /validate/:id    controllers.programming.ProgController.validateTestData(id: Int)
+PUT      /validate/:id    controllers.programming.ProgController.validateTestDataLive(id: Int)
 
-GET    /declaration     controllers.programming.ProgController.getDeclaration(language: String ?= "")
+GET      /declaration     controllers.programming.ProgController.getDeclaration(language: String ?= "")
 
-GET    /exercise/:id/   controllers.programming.ProgController.exercise(id: Int)
-PUT    /exercise/:id    controllers.programming.ProgController.correctLive(id: Int)
-POST   /exercise/:id    controllers.programming.ProgController.correct(id: Int)
+GET      /exercise/:id/   controllers.programming.ProgController.exercise(id: Int)
+PUT      /exercise/:id    controllers.programming.ProgController.correctLive(id: Int)
+POST     /exercise/:id    controllers.programming.ProgController.correct(id: Int)

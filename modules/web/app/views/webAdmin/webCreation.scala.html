@@ -4,6 +4,30 @@
 
 <hr>
 
+<table class="table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Titel</th>
+      <th>Autor</th>
+      <th>Text</th>
+      <th>Aufgaben</th>
+    </tr>
+  </thead>
+  <tbody>
+  @for(exercise <- exercises) {
+  	<tr>
+      <td>@exercise.getId</td>
+      <td>@exercise.getTitle</td>
+      <td>@exercise.getAuthor</td>
+      <td>@if(exercise.getText.length > 100) { @exercise.getText.substring(0, 100) ... } else { @exercise.getText }</td>
+      <td>@@exercise.get
+    </tr>
+  }
+  </tbody>
+</table>
+
+
 @for((ex, index) <- exercises.zipWithIndex) {
 @if(index % 2 == 0) {<div class="row">}
   <div class="col-md-6">

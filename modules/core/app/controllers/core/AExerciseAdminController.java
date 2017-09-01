@@ -29,45 +29,40 @@ import play.twirl.api.Html;
 
 @Authenticated(AdminSecured.class)
 public abstract class AExerciseAdminController<E extends Exercise> extends BaseController {
-
+  
   private static class DeletionResult {
-    private int exerciseId;
+    private int id;
     private String message;
-
+    
     @SuppressWarnings("unused")
     public int getExerciseId() {
-      return exerciseId;
+      return id;
     }
-
+    
     @SuppressWarnings("unused")
     public String getMessage() {
       return message;
     }
-
-    public void setExerciseId(int exerciseId) {
-      this.exerciseId = exerciseId;
+    
+    public void setExerciseId(int id) {
+      this.id = id;
     }
-
+    
     public void setMessage(String message) {
       this.message = message;
     }
   }
-
+  
+  protected final RoutesObject routes;
+  
   protected final Finder<Integer, E> finder;
   protected final ExerciseReader<E> exerciseReader;
-
-  public AExerciseAdminController(FormFactory theFactory, Finder<Integer, E> theFinder,
-      ExerciseReader<E> theExerciseReader) {
-    super(theFactory);
-    finder = theFinder;
-    exerciseReader = theExerciseReader;
-  }
-
+  
   protected static Path saveUploadedFile(Path savingDir, Path pathToUploadedFile, Path saveTo) {
     if(!savingDir.toFile().exists() && !ExerciseReader.createDirectory(savingDir))
       // error occured...
       return null;
-
+    
     try {
       return Files.move(pathToUploadedFile, saveTo, StandardCopyOption.REPLACE_EXISTING);
     } catch (IOException e) {
@@ -75,94 +70,119 @@ public abstract class AExerciseAdminController<E extends Exercise> extends BaseC
       return null;
     }
   }
-
-  public Result deleteExercise(int exerciseId) {
+  
+  public AExerciseAdminController(FormFactory theFactory, RoutesObject theRoutes, Finder<Integer, E> theFinder,
+      ExerciseReader<E> theExerciseReader) {
+    super(theFactory);
+    routes = theRoutes;
+    finder = theFinder;
+    exerciseReader = theExerciseReader;
+  }
+  
+  public Result deleteExercise(int id) {
     DeletionResult result = new DeletionResult();
-    result.setExerciseId(exerciseId);
-    E toDelete = finder.byId(exerciseId);
-
+    result.setExerciseId(id);
+    E toDelete = finder.byId(id);
+    
     if(toDelete == null) {
-      result.setMessage(
-          String.format("Die Aufgabe mit ID %s existiert nicht und kann daher nicht gelöscht werden!", exerciseId));
+      result
+          .setMessage(String.format("Die Aufgabe mit ID %s existiert nicht und kann daher nicht gelöscht werden!", id));
       return badRequest(Json.toJson(result));
     }
-
+    
     if(toDelete.delete()) {
-      result.setMessage(String.format("Die Aufgabe mit der ID %s konnte erfolgreich gelöscht werden.", exerciseId));
+      result.setMessage(String.format("Die Aufgabe mit der ID %s konnte erfolgreich gelöscht werden.", id));
       return ok(Json.toJson(result));
     } else {
-      result.setMessage(
-          String.format("Es gab einen internen Fehler beim Löschen der Aufgabe mit der ID %s!", exerciseId));
+      result.setMessage(String.format("Es gab einen internen Fehler beim Löschen der Aufgabe mit der ID %s!", id));
       return badRequest(Json.toJson(result));
     }
   }
-
+  
+  public Result editExercise(int id) {
+    E exercise = exerciseReader.initFromForm(id, factory.form().bindFromRequest());
+    exerciseReader.saveExercise(exercise);
+    return ok(views.html.admin.preview.render(getUser(), renderExercises(Arrays.asList(exercise), false)));
+  }
+  
+  public Result editExerciseForm(int id) {
+    E exercise = finder.byId(id);
+    
+    if(exercise == null)
+      return badRequest("");
+    
+    return ok(renderExEditForm(getUser(), exercise, false));
+  }
+  
   public Result exercises() {
-    return ok(renderExercises(getUser(), finder.all()));
+    return ok(views.html.admin.exerciseList.render(getUser(), renderExercises(finder.all(), true)));
   }
-
+  
   public Result exportExercises() {
-    return ok(views.html.export.render(getUser(), Json.prettyPrint(Json.toJson(finder.all()))));
+    return ok(views.html.admin.export.render(getUser(), Json.prettyPrint(Json.toJson(finder.all()))));
   }
-
+  
   public Result getJSONSchemaFile() {
     return ok(Json.prettyPrint(exerciseReader.getJsonSchema()));
   }
-
+  
   public Result importExercises() {
     AbstractReadingResult abstractResult = exerciseReader.readFromStandardFile();
-
+    
     if(!abstractResult.isSuccess())
       return badRequest(views.html.jsonReadingError.render(getUser(), (ReadingError) abstractResult));
-
+    
     @SuppressWarnings("unchecked")
     ReadingResult<E> result = (ReadingResult<E>) abstractResult;
-
-    result.getRead().forEach(exerciseReader::saveRead);
-    return ok(views.html.admin.preview.render(getUser(), renderCreated(result.getRead())));
+    
+    result.getRead().forEach(exerciseReader::saveExercise);
+    return ok(views.html.admin.preview.render(getUser(), renderExercises(result.getRead(), false)));
   }
-
+  
   public abstract Result index();
-
-  public Result newExercise() {
-    E exercise = exerciseReader.initFromForm(factory.form().bindFromRequest());
-    exerciseReader.saveRead(exercise);
-    return ok(views.html.admin.preview.render(getUser(), renderCreated(Arrays.asList(exercise))));
+  
+  public Result newExerciseForm() {
+    int id = ExerciseReader.findMinimalNotUsedId(finder);
+    
+    E exercise = exerciseReader.getOrInstantiateExercise(id);
+    exerciseReader.saveExercise(exercise);
+    
+    return ok(renderExEditForm(getUser(), exercise, true));
   }
-
-  public abstract Result newExerciseForm();
-
+  
   public Result uploadFile() {
     MultipartFormData<File> body = request().body().asMultipartFormData();
     FilePart<File> uploadedFile = body.getFile(StringConsts.BODY_FILE_NAME);
-
+    
     if(uploadedFile == null)
       return badRequest("Fehler!");
-
+    
     Path pathToUploadedFile = uploadedFile.getFile().toPath();
     Path savingDir = Paths.get(BASE_DATA_PATH, StringConsts.ADMIN_FOLDER, exerciseReader.getExerciseType());
-
+    
     Path jsonFile = Paths.get(savingDir.toString(), uploadedFile.getFilename());
     Path jsonTargetPath = saveUploadedFile(savingDir, pathToUploadedFile, jsonFile);
-
+    
     AbstractReadingResult abstractResult = exerciseReader.readAllFromFile(jsonTargetPath);
-
+    
     if(!abstractResult.isSuccess())
       return badRequest(views.html.jsonReadingError.render(getUser(), (ReadingError) abstractResult));
-
+    
     @SuppressWarnings("unchecked")
     ReadingResult<E> result = (ReadingResult<E>) abstractResult;
-
-    result.getRead().forEach(exerciseReader::saveRead);
-    return ok(views.html.admin.preview.render(getUser(), renderCreated(result.getRead())));
+    
+    result.getRead().forEach(exerciseReader::saveExercise);
+    return ok(views.html.admin.preview.render(getUser(), renderExercises(result.getRead(), false)));
   }
-
+  
   protected Path getSampleDir() {
     return Paths.get(BASE_DATA_PATH, SAMPLE_SUB_DIRECTORY, exerciseReader.getExerciseType());
   }
-
-  protected abstract Html renderCreated(List<E> created);
-
-  protected abstract Html renderExercises(User user, List<E> allExercises);
-
+  
+  protected abstract Html renderExEditForm(User user, E exercise, boolean isCreation);
+  
+  protected Html renderExercises(List<E> exercises, boolean changesAllowed) {
+    return views.html.admin.exercisesTable.render(exercises, routes, changesAllowed);
+  }
+  
 }

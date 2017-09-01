@@ -26,12 +26,6 @@ public class SqlScenarioReader extends ExerciseCollectionReader<SqlExercise, Sql
   private Database sqlSelect;
   private Database sqlOther;
 
-  public SqlScenarioReader(Database theSqlSelect, Database theSqlOther) {
-    super(SqlExerciseReader.getInstance(), SqlScenario.finder, SqlScenario[].class);
-    sqlSelect = theSqlSelect;
-    sqlOther = theSqlOther;
-  }
-
   private static void createDatabase(String databaseName, Connection connection) {
     try(Statement createStatement = connection.createStatement()) {
       createStatement.executeUpdate(CREATE_DUMMY + databaseName); // NOSONAR
@@ -39,6 +33,12 @@ public class SqlScenarioReader extends ExerciseCollectionReader<SqlExercise, Sql
     } catch (SQLException e) {
       Logger.error("There has been an error running an sql script: \"" + CREATE_DUMMY + databaseName + "\"", e);
     }
+  }
+
+  public SqlScenarioReader(Database theSqlSelect, Database theSqlOther) {
+    super(SqlExerciseReader.getInstance(), SqlScenario.finder, SqlScenario[].class);
+    sqlSelect = theSqlSelect;
+    sqlOther = theSqlOther;
   }
 
   @Override
@@ -72,13 +72,13 @@ public class SqlScenarioReader extends ExerciseCollectionReader<SqlExercise, Sql
   }
 
   @Override
-  public void saveRead(SqlScenario scenario) {
+  public void saveExercise(SqlScenario scenario) {
     scenario.save();
 
     runCreateScript(sqlSelect, scenario);
     runCreateScript(sqlOther, scenario);
 
-    scenario.getExercises().forEach(delegateReader::saveRead);
+    scenario.getExercises().forEach(delegateReader::saveExercise);
   }
 
   @Override

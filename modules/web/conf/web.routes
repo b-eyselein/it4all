@@ -1,29 +1,33 @@
-# Administrator
-GET    /admin           controllers.web.WebAdmin.index
+# Admin
+GET      /admin           controllers.web.WebAdmin.index
 
-GET    /jsonSchema      controllers.web.WebAdmin.getJSONSchemaFile
-POST   /upload          controllers.web.WebAdmin.uploadFile
+GET      /jsonSchema      controllers.web.WebAdmin.getJSONSchemaFile
+POST     /upload          controllers.web.WebAdmin.uploadFile
 
-GET    /import          controllers.web.WebAdmin.importExercises
-GET    /export          controllers.web.WebAdmin.exportExercises
+GET      /import          controllers.web.WebAdmin.importExercises
+GET      /export          controllers.web.WebAdmin.exportExercises
 
-GET    /exercises       controllers.web.WebAdmin.exercises
-POST   /exercises       controllers.web.WebAdmin.newExercise
+GET      /exercises       controllers.web.WebAdmin.exercises
 
-GET    /newExForm       controllers.web.WebAdmin.newExerciseForm
+GET      /exercises/:id   controllers.web.WebAdmin.editExerciseForm(id: Int)
+PUT      /exercises/:id   controllers.web.WebAdmin.editExercise(id: Int)
+POST     /exercises/:id   controllers.web.WebAdmin.editExercise(id: Int)
+DELETE   /exercises/:id   controllers.web.WebAdmin.deleteExercise(id: Int)
 
-# All
-GET    /                controllers.web.WebController.index
+GET      /newExForm       controllers.web.WebAdmin.newExerciseForm
 
-GET    /playground      controllers.web.WebController.playground
+# User
+GET      /                controllers.web.WebController.index
+
+GET      /playground      controllers.web.WebController.playground
 
 
-GET    /:id/:type       controllers.web.WebController.exercise(id: Int, type: String)
+GET      /:id/:type       controllers.web.WebController.exercise(id: Int, type: String)
 
-PUT    /:id/:type       controllers.web.WebController.correctLive(id: Int, type: String)
-POST   /:id/:type       controllers.web.WebController.correct(id: Int, type: String)
+PUT      /:id/:type       controllers.web.WebController.correctLive(id: Int, type: String)
+POST     /:id/:type       controllers.web.WebController.correct(id: Int, type: String)
 
-GET    /sol/:user/:id   controllers.web.SolutionController.site(user: String, id: Int)
+GET      /sol/:user/:id   controllers.web.SolutionController.site(user: String, id: Int)
 
 
 

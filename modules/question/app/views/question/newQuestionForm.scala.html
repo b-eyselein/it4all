@@ -1,4 +1,4 @@
-@(user: model.user.User, isChoice: Boolean)
+@(user: model.user.User, id: Int, isChoice: Boolean)
 
 @main("Neue Frage erstellen", user) {
 <script src="@routes.Assets.versioned("javascripts/question.js")"></script>
@@ -16,7 +16,7 @@
 
   <form class="form-horizontal" method="post" action="@questions.routes.QuestionController.newQuestion(false)">
 
-    @newExStdFields.render(user, 3)
+    @admin.exStdFields.render(user, null, 3)
 
     
 @if(isChoice) {
