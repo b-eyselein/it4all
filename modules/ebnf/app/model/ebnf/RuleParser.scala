@@ -15,7 +15,7 @@ object RuleParser extends JavaTokenParsers {
 
   // Replacements
 
-  private lazy val sequence: Parser[Replacement] = alternative ~ rep(seqOperator ~ alternative) ^^ {
+  private lazy val sequence: Parser[Replacement] = alternative ~ rep(opt(seqOperator) ~ alternative) ^^ {
     case seq ~ Nil => seq
     case seq1 ~ seqs => new Sequence(seq1 :: seqs.map(_._2))
   }

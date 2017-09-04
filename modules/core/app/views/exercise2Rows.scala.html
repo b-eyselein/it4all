@@ -1,0 +1,67 @@
+@(user: model.user.User, routesObject: controllers.core.RoutesObject, exerciseOptions: model.exercise.ExerciseOptions, exercise: model.exercise.Exercise, exRest: Html, oldSolution: String)
+
+@scripts = {
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.7/ace.js"></script>
+<script src="@routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
+<script>
+var theMode = "@exerciseOptions.aceMode";
+var theMinLines = @exerciseOptions.minLines;
+var theMaxLines = @exerciseOptions.maxLines;
+var theUpdatePrev = @exerciseOptions.updatePrev;
+</script>
+}
+
+@main(exerciseOptions.tool, user, scripts) {
+<div class="container">
+  <form action="@routesObject.correctRoute(exercise.getId)" method="post">
+  
+    <div class="row">
+      <div class="col-md-6">
+        <div class="page-header">
+          <h1>Aufgabenstellung</h2>
+        </div>
+  
+        <p>@Html(exercise.getText)</p>
+      
+        <hr>
+      
+        @exRest
+      </div>
+      
+      <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+          
+            <div class="btn-group">
+              <button type="button" class="btn btn-default" onclick="changeFontsize(-2);">
+                <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+              </button>
+              <span class="btn btn-default">Schriftgr&ouml;&szlig;e: <span id="fontsize">16</span> px</span>
+              <button type="button" class="btn btn-default" onclick="changeFontsize(+2);">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+              </button>
+            </div>
+            
+          </div>
+          <div id="editor" class="form-control">@oldSolution</div>
+          <textarea hidden name="@model.StringConsts.FORM_VALUE" id="@model.StringConsts.FORM_VALUE" value="@oldSolution"></textarea>
+        </div>
+      </div>
+    </div>
+    
+    <hr>
+    
+    <section id="correctionDiv">
+      <h2>Bemerkungen</h2>
+      <div id="correction"></div>
+    </section>
+    
+    <hr>
+    
+    <button type="button" class="btn btn-primary btn-block"
+      onclick="testTheSolution('@routesObject.correctLiveRoute(exercise.getId)');">L&ouml;sung testen</button>
+    <button class="btn btn-success btn-block">L&ouml;sung abgeben</button>
+  
+  </form>
+</div>
+}

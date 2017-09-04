@@ -29,4 +29,9 @@ class RuleParserTest {
 
   }
 
+  @Test
+  def testParseReplacement = {
+    RuleParser.parseReplacement("'1' '0' '1' '0'")
+  }
+  
 }

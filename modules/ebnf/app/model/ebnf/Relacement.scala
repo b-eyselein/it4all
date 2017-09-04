@@ -10,7 +10,7 @@ abstract class UnaryReplacement(val child: Replacement, val operator: String) ex
 }
 
 case class Sequence(children: List[Replacement]) extends Replacement {
-  override def asString = children.mkString(s" ${Replacement.seqOperator}  ")
+  override def asString = children.mkString(Replacement.seqOperator + " ")
 }
 
 case class Alternative(children: List[Replacement]) extends Replacement {
@@ -28,11 +28,11 @@ case class Grouping(child: Replacement) extends Replacement {
 }
 
 case class VarReplacement(variable: Variable) extends Replacement {
-  override def asString = variable.name
+  override def asString = variable.toString
 }
 
 case class TerminalReplacement(terminal: TerminalSymbol) extends Replacement {
-  override def asString = terminal.name
+  override def asString = terminal.toString
 }
 
 object Replacement {

@@ -55,11 +55,6 @@ public class EvaluationResult {
     }
   }
 
-  public String getLearnerSolution() {
-    // FIXME: implement!
-    return "";
-  }
-
   public List<String> getMessages() {
     return messages;
   }

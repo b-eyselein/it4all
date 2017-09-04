@@ -54,6 +54,7 @@ function testTheSolution(theUrl) {
     type: 'PUT',
     url: theUrl,
     data: extractParameters(),
+    // FIXME: dataType: 'json',
     async: true,
     success: function(correction) {
       $("#correction").html(correction);

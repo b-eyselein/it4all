@@ -8,7 +8,10 @@
   }
 }
 
-@displayText(exercise.getHtmlText)
-<td>@exercise.getHtmlTasks.size</td>
-@displayText(exercise.getJsText)
-<td>@exercise.getJsTasks.size</td>
+<td>
+  <a href="@web.routes.WebAdmin.tasks(exercise.getId)">@exercise.getHtmlTasks.size / @exercise.getJsTasks.size</a>
+</td>
+
+@helperTemplates.stringLen(exercise.getHtmlText, 80)
+
+@helperTemplates.stringLen(exercise.getJsText, 80)

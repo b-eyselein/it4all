@@ -1,4 +1,4 @@
-@(typ: String, resultAsHtml: Html, learnerSolution: String, user: model.user.User, nextUrl: play.api.mvc.Call)
+@(typ: String, result: model.result.CompleteResult[_], resultAsHtml: Html, user: model.user.User, nextUrl: play.api.mvc.Call)
 
 @main(typ, user) {
 <div class="container-fluid">
@@ -13,9 +13,7 @@
     <div class="col-md-6">
       <div class="panel panel-default">
         <div class="panel-heading">Ihre L&ouml;sung</div>
-        <div class="panel-body">
-          <pre>@learnerSolution</pre>
-        </div>
+        <div class="panel-body">@result.renderLearnerSolution</div>
       </div>
     </div>
 

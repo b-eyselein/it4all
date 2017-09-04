@@ -1,0 +1,7 @@
+@(str: String, len: Int)
+
+@if(str.length >= len) {
+  <td title="@str">@str.substring(0, len) …</td>
+} else {
+  <td>@str</td>
+}

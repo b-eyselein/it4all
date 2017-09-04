@@ -1,0 +1,68 @@
+@(user: model.user.User, exercise: model.WebExercise)
+
+@main("", user) {
+<div class="container">
+  <div class="page-header">
+    <h1>Tasks Aufgabe @exercise.getId</h1>
+  </div>
+  
+  @if(!exercise.getHtmlTasks.isEmpty) {
+  <h2>Html-Tasks</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Text</th>
+        <th>XPath</th>
+        <th>Attribute</th>
+        <th>Text Content</th>
+      </tr>
+    </thead>
+    <tbody>
+    @for(task <- exercise.getHtmlTasks) {
+      <tr>
+        <td>@task.key.taskId</td>
+        <td>@task.text</td>
+        <td>@task.xpathQuery</td>
+        <td><ul>
+        @for(attr <- task.getAttributes.map(_.forDB)) {
+          <li>@attr</li>
+        }
+        </ul></td>
+        <td>@task.textContent</td>
+      </tr>
+    }
+    </tbody>
+  </table>
+  }
+  
+  <hr>
+  
+  @if(!exercise.getJsTasks.isEmpty) {
+  <h2>Js-Tasks</h2>
+    <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Text</th>
+        <th>XPath</th>
+        <th># Bedingungen</th>
+        <th>Aktion</th>
+      </tr>
+    </thead>
+    <tbody>
+    @for(task <- exercise.getJsTasks) {
+      <tr>
+        <td>@task.key.taskId</td>
+        <td>@task.text</td>
+        <td>@task.xpathQuery</td>
+        <td>@task.conditions.size</td>
+        <td>@task.action …</td>
+      </tr>
+    }
+    </tbody>
+  </table>
+  }
+  
+</div>
+}

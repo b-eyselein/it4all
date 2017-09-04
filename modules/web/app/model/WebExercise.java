@@ -41,6 +41,12 @@ public class WebExercise extends Exercise {
   @JsonIgnore
   public List<WebSolution> solutions;
 
+  public WebExercise(int id) {
+    super(id);
+    htmlText = "";
+    jsText = "";
+  }
+
   @JsonIgnore
   public static long withHtmlPart() {
     return finder.all().stream().filter(ex -> !ex.htmlTasks.isEmpty()).count();
@@ -49,12 +55,6 @@ public class WebExercise extends Exercise {
   @JsonIgnore
   public static long withJsPart() {
     return finder.all().stream().filter(ex -> !ex.jsTasks.isEmpty()).count();
-  }
-
-  public WebExercise(int id) {
-    super(id);
-    htmlText = "";
-    jsText = "";
   }
 
   public List<HtmlTask> getHtmlTasks() {
@@ -86,9 +86,9 @@ public class WebExercise extends Exercise {
   @Override
   @JsonIgnore
   public List<String> getRestHeaders() {
-    return Arrays.asList("Text Html", "# Tasks Html", "Text Js", "# Tasks Js");
+    return Arrays.asList("# Tasks Html / Js", "Text Html", "Text Js");
   }
-  
+
   @Override
   @JsonIgnore
   public Html renderRest() {

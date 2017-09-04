@@ -41,8 +41,8 @@ abstract class ScalaExerciseController[E <: Exercise, R <: EvaluationResult](cc:
     correctExercise(learnerSolution.sol, exercise, user) match {
       case Success(correctionResult) => {
         // log(user, new ExerciseCompletionEvent(request(), id, correctionResult))
-        Ok(views.html.correction.render(exerciseType.toUpperCase(), renderResult(correctionResult),
-          learnerSolution.sol, user, controllers.routes.Application.index()))
+        Ok(views.html.correction.render(exerciseType.toUpperCase(), null /*correctionResult*/, renderResult(correctionResult),
+          user, controllers.routes.Application.index()))
       }
       case Failure(_) => BadRequest("TODO!")
     }

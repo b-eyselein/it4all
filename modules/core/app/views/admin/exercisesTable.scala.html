@@ -42,11 +42,7 @@
       }
       <td>@exercise.getTitle</td>
       <td>@exercise.getAuthor</td>
-      @if(exercise.getText.length > 80) {
-      <td title="@exercise.getText">@exercise.getText.substring(0, 80) ...</td>
-      } else {
-      <td>@exercise.getText</td>
-      }
+      @helperTemplates.stringLen(exercise.getText, 80)
       
       @exercise.renderRest
     

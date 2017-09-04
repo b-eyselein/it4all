@@ -1,0 +1,30 @@
+@(exercise: model.ProgExercise)
+
+@stdLanguage = @{model.AvailableLanguages.getStdLang()}
+
+<script src="@routes.Assets.versioned("javascripts/programming.js")"></script>
+
+<script>
+function changeProgLanguage(select, theUrl) {
+  var language = select.value;
+  $.ajax({
+    type: 'GET',
+    url: theUrl,
+    data: "language=" + language,
+    async: true,
+    success: function(response) {
+      document.getElementById("language").value = language;
+      editor.setValue(response, 1000000);
+    }
+  });
+}
+</script>
+
+<div class="input-group">
+  <span class="input-group-addon">Sprache</span>
+  <select class="form-control" onchange="changeProgLanguage(this, '@programming.routes.ProgController.getDeclaration()');">
+  @for(language <- model.AvailableLanguages.values()) {
+  	<option value="@language" @if(language == stdLanguage) {selected}>@language.getName()</option>
+  }
+  </select>
+</div>

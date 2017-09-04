@@ -20,6 +20,6 @@ GET      /newExForm       controllers.ebnf.EBNFAdmin.newExerciseForm
 # User
 GET      /                controllers.ebnf.EBNFController.index
 GET      /:id             controllers.ebnf.EBNFController.exercise(id: Int)
-PUT      /:id             controllers.ebnf.EBNFController.correct(id: Int)
-POST     /:id             controllers.ebnf.EBNFController.correctLive(id: Int)
+PUT      /:id             controllers.ebnf.EBNFController.correctLive(id: Int)
+POST     /:id             controllers.ebnf.EBNFController.correct(id: Int)
 DELETE   /:id             controllers.ebnf.EBNFAdmin.deleteExercise(id: Int)

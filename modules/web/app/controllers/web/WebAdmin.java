@@ -11,20 +11,24 @@ import play.mvc.Result;
 import play.twirl.api.Html;
 
 public class WebAdmin extends AExerciseAdminController<WebExercise> {
-  
+
   @Inject
   public WebAdmin(FormFactory theFactory) {
     super(theFactory, WebRoutesObject$.MODULE$, WebExercise.finder, WebExerciseReader.getInstance());
   }
-  
+
   @Override
   public Result adminIndex() {
     return ok(views.html.webAdmin.index.render(getUser()));
   }
-  
+
+  public Result tasks(int exerciseId) {
+    return ok(views.html.webAdmin.tasks.render(getUser(), finder.byId(exerciseId)));
+  }
+
   @Override
   protected Html renderExEditForm(User user, WebExercise exercise, boolean isCreation) {
     return views.html.webAdmin.editExForm.render(user, exercise);
   }
-  
+
 }

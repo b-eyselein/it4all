@@ -36,33 +36,33 @@ public abstract class ExerciseController<E extends Exercise, R extends Evaluatio
 
   public Result correct(int id) {
     try {
-      User user = getUser();
-      CompleteResult<R> correctionResult = correct(factory.form().bindFromRequest(), finder.byId(id), user);
+      final User user = getUser();
+      final CompleteResult<R> correctionResult = correct(factory.form().bindFromRequest(), finder.byId(id), user);
 
       log(user, new ExerciseCompletionEvent(request(), id, correctionResult));
 
       return ok(renderCorrectionResult(user, correctionResult));
-    } catch (CorrectionException e) {
+    } catch (final CorrectionException e) {
       return badRequest("TODO!");
     }
   }
 
   public Result correctLive(int id) {
     try {
-      User user = getUser();
-      CompleteResult<R> correctionResult = correct(factory.form().bindFromRequest(), finder.byId(id), user);
+      final User user = getUser();
+      final CompleteResult<R> correctionResult = correct(factory.form().bindFromRequest(), finder.byId(id), user);
 
       log(user, new ExerciseCorrectionEvent(request(), id, correctionResult));
 
       return ok(renderResult(correctionResult));
-    } catch (CorrectionException e) {
+    } catch (final CorrectionException e) {
       return badRequest(Json.toJson(e.getMessage()));
     }
   }
 
   public Result exercise(int id) {
-    User user = getUser();
-    E exercise = finder.byId(id);
+    final User user = getUser();
+    final E exercise = finder.byId(id);
 
     if(exercise == null)
       return redirect(controllers.routes.Application.index());
@@ -73,14 +73,14 @@ public abstract class ExerciseController<E extends Exercise, R extends Evaluatio
   }
 
   protected Path checkAndCreateSolDir(String username, Exercise exercise) {
-    Path dir = getSolDirForExercise(username, exerciseType, exercise);
+    final Path dir = getSolDirForExercise(username, exerciseType, exercise);
 
     if(dir.toFile().exists())
       return dir;
 
     try {
       return Files.createDirectories(dir);
-    } catch (IOException e) {
+    } catch (final IOException e) {
       Logger.error("There was an error while creating the directory for an " + exerciseType + " solution: " + dir, e);
       return null;
     }
@@ -93,8 +93,8 @@ public abstract class ExerciseController<E extends Exercise, R extends Evaluatio
   }
 
   protected Html renderCorrectionResult(User user, CompleteResult<R> correctionResult) {
-    return views.html.correction.render(exerciseType.toUpperCase(), renderResult(correctionResult),
-        correctionResult.getLearnerSolution(), user, controllers.routes.Application.index());
+    return views.html.correction.render(exerciseType.toUpperCase(), correctionResult, renderResult(correctionResult),
+        user, controllers.routes.Application.index());
   }
 
   protected abstract Html renderExercise(User user, E exercise);

@@ -11,7 +11,7 @@ public class SolutionController extends Controller {
   public static final String STANDARD_HTML = "<!doctype html>\n<html>\n<head>\n  \n</head>\n<body>\n  \n</body>\n</html>";
 
   public static String getOldSolOrDefault(String userName, int exerciseId) {
-    WebSolution sol = WebSolution.finder.byId(new WebSolutionKey(userName, exerciseId));
+    final WebSolution sol = WebSolution.finder.byId(new WebSolutionKey(userName, exerciseId));
     return sol == null ? STANDARD_HTML : sol.sol;
   }
 
