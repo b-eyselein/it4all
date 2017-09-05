@@ -58,19 +58,6 @@ public abstract class AExerciseAdminController<E extends Exercise> extends BaseC
   protected final Finder<Integer, E> finder;
   protected final ExerciseReader<E> exerciseReader;
 
-  protected static Path saveUploadedFile(Path savingDir, Path pathToUploadedFile, Path saveTo) {
-    if(!savingDir.toFile().exists() && !ExerciseReader.createDirectory(savingDir))
-      // error occured...
-      return null;
-
-    try {
-      return Files.move(pathToUploadedFile, saveTo, StandardCopyOption.REPLACE_EXISTING);
-    } catch (IOException e) {
-      Logger.error("Error while saving uploaded sql file!", e);
-      return null;
-    }
-  }
-
   public AExerciseAdminController(FormFactory theFactory, RoutesObject theRoutes, Finder<Integer, E> theFinder,
       ExerciseReader<E> theExerciseReader) {
     super(theFactory);
@@ -79,10 +66,25 @@ public abstract class AExerciseAdminController<E extends Exercise> extends BaseC
     exerciseReader = theExerciseReader;
   }
 
+  protected static Path saveUploadedFile(Path savingDir, Path pathToUploadedFile, Path saveTo) {
+    if(!savingDir.toFile().exists() && !ExerciseReader.createDirectory(savingDir))
+      // error occured...
+      return null;
+
+    try {
+      return Files.move(pathToUploadedFile, saveTo, StandardCopyOption.REPLACE_EXISTING);
+    } catch (final IOException e) {
+      Logger.error("Error while saving uploaded sql file!", e);
+      return null;
+    }
+  }
+
+  public abstract Result adminIndex();
+
   public Result deleteExercise(int id) {
-    DeletionResult result = new DeletionResult();
+    final DeletionResult result = new DeletionResult();
     result.setExerciseId(id);
-    E toDelete = finder.byId(id);
+    final E toDelete = finder.byId(id);
 
     if(toDelete == null) {
       result
@@ -100,13 +102,13 @@ public abstract class AExerciseAdminController<E extends Exercise> extends BaseC
   }
 
   public Result editExercise(int id) {
-    E exercise = exerciseReader.initFromForm(id, factory.form().bindFromRequest());
+    final E exercise = exerciseReader.initFromForm(id, factory.form().bindFromRequest());
     exerciseReader.saveExercise(exercise);
     return ok(views.html.admin.preview.render(getUser(), renderExercises(Arrays.asList(exercise), false)));
   }
 
   public Result editExerciseForm(int id) {
-    E exercise = finder.byId(id);
+    final E exercise = finder.byId(id);
 
     if(exercise == null)
       return badRequest("");
@@ -127,52 +129,50 @@ public abstract class AExerciseAdminController<E extends Exercise> extends BaseC
   }
 
   public Result importExercises() {
-    AbstractReadingResult abstractResult = exerciseReader.readFromStandardFile();
+    final AbstractReadingResult abstractResult = exerciseReader.readFromStandardFile();
 
-    if(!abstractResult.isSuccess())
+    if(!(abstractResult instanceof ReadingResult<?>))
       return badRequest(views.html.jsonReadingError.render(getUser(), (ReadingError) abstractResult));
 
     @SuppressWarnings("unchecked")
-    ReadingResult<E> result = (ReadingResult<E>) abstractResult;
+    final ReadingResult<E> result = (ReadingResult<E>) abstractResult;
 
-    result.getRead().forEach(exerciseReader::saveExercise);
-    return ok(views.html.admin.preview.render(getUser(), renderExercises(result.getRead(), false)));
+    result.read().forEach(exerciseReader::saveExercise);
+    return ok(views.html.admin.preview.render(getUser(), renderExercises(result.read(), false)));
   }
 
-  public abstract Result adminIndex();
-
   public Result newExerciseForm() {
-    int id = ExerciseReader.findMinimalNotUsedId(finder);
+    final int id = ExerciseReader.findMinimalNotUsedId(finder);
 
-    E exercise = exerciseReader.getOrInstantiateExercise(id);
+    final E exercise = exerciseReader.getOrInstantiateExercise(id);
     exerciseReader.saveExercise(exercise);
 
     return ok(renderExEditForm(getUser(), exercise, true));
   }
 
   public Result uploadFile() {
-    MultipartFormData<File> body = request().body().asMultipartFormData();
-    FilePart<File> uploadedFile = body.getFile(StringConsts.BODY_FILE_NAME);
+    final MultipartFormData<File> body = request().body().asMultipartFormData();
+    final FilePart<File> uploadedFile = body.getFile(StringConsts.BODY_FILE_NAME);
 
     if(uploadedFile == null)
       return badRequest("Fehler!");
 
-    Path pathToUploadedFile = uploadedFile.getFile().toPath();
-    Path savingDir = Paths.get(BASE_DATA_PATH, StringConsts.ADMIN_FOLDER, exerciseReader.getExerciseType());
+    final Path pathToUploadedFile = uploadedFile.getFile().toPath();
+    final Path savingDir = Paths.get(BASE_DATA_PATH, StringConsts.ADMIN_FOLDER, exerciseReader.getExerciseType());
 
-    Path jsonFile = Paths.get(savingDir.toString(), uploadedFile.getFilename());
-    Path jsonTargetPath = saveUploadedFile(savingDir, pathToUploadedFile, jsonFile);
+    final Path jsonFile = Paths.get(savingDir.toString(), uploadedFile.getFilename());
+    final Path jsonTargetPath = saveUploadedFile(savingDir, pathToUploadedFile, jsonFile);
 
-    AbstractReadingResult abstractResult = exerciseReader.readAllFromFile(jsonTargetPath);
+    final AbstractReadingResult abstractResult = exerciseReader.readAllFromFile(jsonTargetPath);
 
-    if(!abstractResult.isSuccess())
+    if(!(abstractResult instanceof ReadingResult<?>))
       return badRequest(views.html.jsonReadingError.render(getUser(), (ReadingError) abstractResult));
 
     @SuppressWarnings("unchecked")
-    ReadingResult<E> result = (ReadingResult<E>) abstractResult;
+    final ReadingResult<E> result = (ReadingResult<E>) abstractResult;
 
-    result.getRead().forEach(exerciseReader::saveExercise);
-    return ok(views.html.admin.preview.render(getUser(), renderExercises(result.getRead(), false)));
+    result.read().forEach(exerciseReader::saveExercise);
+    return ok(views.html.admin.preview.render(getUser(), renderExercises(result.read(), false)));
   }
 
   protected Path getSampleDir() {

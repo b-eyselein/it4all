@@ -32,24 +32,11 @@ import play.twirl.api.Html;
 @Authenticated(AdminSecured.class)
 public abstract class AExerciseCollectionAdminController<E extends Exercise, C extends ExerciseCollection<E>>
     extends AExerciseAdminController<E> {
-  
+
   protected final Finder<Integer, C> collectionFinder;
-  
+
   protected final ExerciseReader<C> exerciseCollectionReader;
-  
-  protected static Path saveUploadedFile(Path savingDir, Path pathToUploadedFile, Path saveTo) {
-    if(!savingDir.toFile().exists() && !ExerciseReader.createDirectory(savingDir))
-      // error occured...
-      return null;
-    
-    try {
-      return Files.move(pathToUploadedFile, saveTo, StandardCopyOption.REPLACE_EXISTING);
-    } catch (IOException e) {
-      Logger.error("Error while saving uploaded sql file!", e);
-      return null;
-    }
-  }
-  
+
   public AExerciseCollectionAdminController(FormFactory theFactory, RoutesObject theRoutes,
       Finder<Integer, E> theExerciseFinder, Finder<Integer, C> theCollectionFinder,
       ExerciseCollectionReader<E, C> theExerciseReader) {
@@ -57,87 +44,101 @@ public abstract class AExerciseCollectionAdminController<E extends Exercise, C e
     collectionFinder = theCollectionFinder;
     exerciseCollectionReader = theExerciseReader;
   }
-  
+
+  protected static Path saveUploadedFile(Path savingDir, Path pathToUploadedFile, Path saveTo) {
+    if(!savingDir.toFile().exists() && !ExerciseReader.createDirectory(savingDir))
+      // error occured...
+      return null;
+
+    try {
+      return Files.move(pathToUploadedFile, saveTo, StandardCopyOption.REPLACE_EXISTING);
+    } catch (final IOException e) {
+      Logger.error("Error while saving uploaded sql file!", e);
+      return null;
+    }
+  }
+
   public Result deleteExerciseCollection(int exerciseId) {
     if(collectionFinder.byId(exerciseId).delete())
       return ok("Aufgabe konnte gelöscht werden!");
     else
       return badRequest("Konnte nicht gelöscht werden!");
   }
-  
+
   public Result exerciseCollections() {
     return ok(renderExerciseCollections(getUser(), collectionFinder.all()));
   }
-  
+
   public Result exportExerciseCollections() {
     return ok(views.html.admin.export.render(getUser(), Json.prettyPrint(Json.toJson(collectionFinder.all()))));
   }
-  
+
   @Override
   public Result getJSONSchemaFile() {
     return ok(Json.prettyPrint(exerciseCollectionReader.getJsonSchema()));
   }
-  
+
   public Result importExerciseCollections() {
-    AbstractReadingResult abstractResult = exerciseCollectionReader.readFromStandardFile();
-    
-    if(!abstractResult.isSuccess())
+    final AbstractReadingResult abstractResult = exerciseCollectionReader.readFromStandardFile();
+
+    if(!(abstractResult instanceof ReadingResult<?>))
       return badRequest(views.html.jsonReadingError.render(getUser(), (ReadingError) abstractResult));
-    
+
     @SuppressWarnings("unchecked")
-    ReadingResult<C> result = (ReadingResult<C>) abstractResult;
-    
-    result.getRead().forEach(exerciseCollectionReader::saveExercise);
-    return ok(views.html.admin.preview.render(getUser(), renderCollectionCreated(result.getRead())));
+    final ReadingResult<C> result = (ReadingResult<C>) abstractResult;
+
+    result.read().forEach(exerciseCollectionReader::saveExercise);
+    return ok(views.html.admin.preview.render(getUser(), renderCollectionCreated(result.read())));
   }
-  
+
   public Result newExerciseCollection(int collectionId) {
-    C exercise = exerciseCollectionReader.initFromForm(collectionId, factory.form().bindFromRequest());
+    final C exercise = exerciseCollectionReader.initFromForm(collectionId, factory.form().bindFromRequest());
     exerciseCollectionReader.saveExercise(exercise);
     return ok(views.html.admin.preview.render(getUser(), renderCollectionCreated(Arrays.asList(exercise))));
   }
-  
+
   public Result newExerciseCollectionForm() {
-    int id = ExerciseReader.findMinimalNotUsedId(collectionFinder);
-    C collection = collectionFinder.byId(id);
+    final int id = ExerciseReader.findMinimalNotUsedId(collectionFinder);
+    final C collection = collectionFinder.byId(id);
     return ok(renderExCollCreationForm(getUser(), collection));
   }
-  
+
   @Override
   public Result uploadFile() {
-    MultipartFormData<File> body = request().body().asMultipartFormData();
-    FilePart<File> uploadedFile = body.getFile(StringConsts.BODY_FILE_NAME);
-    
+    final MultipartFormData<File> body = request().body().asMultipartFormData();
+    final FilePart<File> uploadedFile = body.getFile(StringConsts.BODY_FILE_NAME);
+
     if(uploadedFile == null)
       return badRequest("Fehler!");
-    
-    Path pathToUploadedFile = uploadedFile.getFile().toPath();
-    Path savingDir = Paths.get(BASE_DATA_PATH, StringConsts.ADMIN_FOLDER, exerciseCollectionReader.getExerciseType());
-    
-    Path jsonFile = Paths.get(savingDir.toString(), uploadedFile.getFilename());
-    Path jsonTargetPath = saveUploadedFile(savingDir, pathToUploadedFile, jsonFile);
-    
-    AbstractReadingResult abstractResult = exerciseCollectionReader.readAllFromFile(jsonTargetPath);
-    
-    if(!abstractResult.isSuccess())
+
+    final Path pathToUploadedFile = uploadedFile.getFile().toPath();
+    final Path savingDir = Paths.get(BASE_DATA_PATH, StringConsts.ADMIN_FOLDER,
+        exerciseCollectionReader.getExerciseType());
+
+    final Path jsonFile = Paths.get(savingDir.toString(), uploadedFile.getFilename());
+    final Path jsonTargetPath = saveUploadedFile(savingDir, pathToUploadedFile, jsonFile);
+
+    final AbstractReadingResult abstractResult = exerciseCollectionReader.readAllFromFile(jsonTargetPath);
+
+    if(!(abstractResult instanceof ReadingResult<?>))
       return badRequest(views.html.jsonReadingError.render(getUser(), (ReadingError) abstractResult));
-    
+
     @SuppressWarnings("unchecked")
-    ReadingResult<C> result = (ReadingResult<C>) abstractResult;
-    
-    result.getRead().forEach(exerciseCollectionReader::saveExercise);
-    return ok(views.html.admin.preview.render(getUser(), renderCollectionCreated(result.getRead())));
+    final ReadingResult<C> result = (ReadingResult<C>) abstractResult;
+
+    result.read().forEach(exerciseCollectionReader::saveExercise);
+    return ok(views.html.admin.preview.render(getUser(), renderCollectionCreated(result.read())));
   }
-  
+
   @Override
   protected Path getSampleDir() {
     return Paths.get(BASE_DATA_PATH, SAMPLE_SUB_DIRECTORY, exerciseCollectionReader.getExerciseType());
   }
-  
+
   protected abstract Html renderCollectionCreated(List<C> created);
-  
+
   protected abstract Html renderExCollCreationForm(User user, C collection);
-  
+
   protected abstract Html renderExerciseCollections(User user, List<C> allCollections);
-  
+
 }

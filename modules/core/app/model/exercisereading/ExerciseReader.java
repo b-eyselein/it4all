@@ -41,11 +41,20 @@ public abstract class ExerciseReader<E extends Exercise> {
   
   public Path baseTargetDir;
   
+  public ExerciseReader(String theExerciseType, Finder<Integer, E> theFinder, Class<?> theClassFor) {
+    exerciseType = theExerciseType;
+    finder = theFinder;
+    
+    baseTargetDir = Paths.get("/data", "samples", exerciseType);
+    
+    jsonSchema = parseJsonSchema(theClassFor);
+  }
+  
   public static boolean createDirectory(Path directory) {
     try {
       Files.createDirectories(directory);
       return true;
-    } catch (IOException e) {
+    } catch (final IOException e) {
       Logger.error("Error while creating sample file directory \"" + directory.toString() + "\"", e);
       return false;
     }
@@ -53,7 +62,7 @@ public abstract class ExerciseReader<E extends Exercise> {
   
   public static <T extends WithId> int findMinimalNotUsedId(Finder<Integer, T> finder) {
     // FIXME: this is probably a ugly hack...
-    List<T> questions = finder.all();
+    final List<T> questions = finder.all();
     
     Collections.sort(questions);
     
@@ -78,7 +87,7 @@ public abstract class ExerciseReader<E extends Exercise> {
   public static String readFile(Path file) {
     try {
       return String.join("\n", Files.readAllLines(file));
-    } catch (IOException e) {
+    } catch (final IOException e) {
       Logger.error("Error while reading file " + file, e);
       return "";
     }
@@ -91,15 +100,6 @@ public abstract class ExerciseReader<E extends Exercise> {
   public static ProcessingReport validateJson(JsonNode exercisesNode, JsonNode exercisesSchemaNode)
       throws ProcessingException {
     return FACTORY.getJsonSchema(exercisesSchemaNode).validate(exercisesNode);
-  }
-  
-  public ExerciseReader(String theExerciseType, Finder<Integer, E> theFinder, Class<?> theClassFor) {
-    exerciseType = theExerciseType;
-    finder = theFinder;
-    
-    baseTargetDir = Paths.get("/data", "samples", exerciseType);
-    
-    jsonSchema = parseJsonSchema(theClassFor);
   }
   
   public String getExerciseType() {
@@ -115,7 +115,7 @@ public abstract class ExerciseReader<E extends Exercise> {
   }
   
   public E initFromForm(int id, DynamicForm form) {
-    E exercise = getOrInstantiateExercise(id);
+    final E exercise = getOrInstantiateExercise(id);
     
     exercise.setTitle(form.get(StringConsts.TITLE_NAME));
     exercise.setAuthor(form.get(StringConsts.AUTHOR_NAME));
@@ -133,26 +133,26 @@ public abstract class ExerciseReader<E extends Exercise> {
   }
   
   public AbstractReadingResult readAllFromFile(Path jsonFile) {
-    String jsonAsString = readFile(jsonFile);
-    JsonNode json = Json.parse(jsonAsString);
+    final String jsonAsString = readFile(jsonFile);
+    final JsonNode json = Json.parse(jsonAsString);
     
     // Validate json with json schema
     try {
-      ProcessingReport report = validateJson(json, jsonSchema);
+      final ProcessingReport report = validateJson(json, jsonSchema);
       if(!report.isSuccess())
         return new ReadingError(jsonAsString, Json.prettyPrint(jsonSchema), report);
-    } catch (ProcessingException e) {
-      return new ReadingError(jsonAsString, Json.prettyPrint(jsonSchema), e.getMessage());
+    } catch (final ProcessingException e) {
+      return new ReadingFailure(jsonAsString, Json.prettyPrint(jsonSchema), e);
     }
     
-    List<E> exercises = StreamSupport.stream(json.spliterator(), true).map(this::readExercise)
+    final List<E> exercises = StreamSupport.stream(json.spliterator(), true).map(this::readExercise)
         .collect(Collectors.toList());
     
     return new ReadingResult<>(jsonAsString, Json.prettyPrint(jsonSchema), exercises);
   }
   
   public E readExercise(JsonNode exerciseNode) {
-    E exercise = getOrInstantiateExercise(exerciseNode.get(StringConsts.ID_NAME).asInt());
+    final E exercise = getOrInstantiateExercise(exerciseNode.get(StringConsts.ID_NAME).asInt());
     
     exercise.setTitle(exerciseNode.get(StringConsts.TITLE_NAME).asText());
     exercise.setAuthor(exerciseNode.get(StringConsts.AUTHOR_NAME).asText());

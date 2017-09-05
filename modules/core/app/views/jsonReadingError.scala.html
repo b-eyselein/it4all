@@ -10,7 +10,7 @@
       <div class="panel panel-default">
         <div class="panel-heading">Eingelesenes Dokument</div>
         <div class="panel-body">
-          <pre class="pre-scrollable">@readingError.getJson()</pre>
+          <pre class="pre-scrollable">@readingError.json</pre>
         </div>
       </div>
     </div>
@@ -18,8 +18,8 @@
       <div class="panel panel-default">
         <div class="panel-heading">Fehler</div>
         <div class="panel-body">
-        @for(cause <- readingError.getErrors()) {
-          <pre>@cause</pre>
+        @@for(cause <- readingError.report) {
+          <pre>@@cause</pre>
         }
         </div>
       </div>

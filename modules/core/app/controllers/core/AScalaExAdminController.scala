@@ -34,6 +34,7 @@ import play.mvc.Http.MultipartFormData
 import play.mvc.Http.MultipartFormData.FilePart
 import play.twirl.api.Html
 import play.mvc.Security.Authenticated
+import model.exercisereading.ReadingFailure
 
 @Authenticated(classOf[AdminSecured])
 abstract class AScalaExAdminController[E <: Exercise] @Inject() (cc: ControllerComponents, routes: RoutesObject, finder: Finder[Integer, E], exerciseReader: ExerciseReader[E])
@@ -93,9 +94,10 @@ abstract class AScalaExAdminController[E <: Exercise] @Inject() (cc: ControllerC
   def importExercises = Action { request =>
     exerciseReader.readFromStandardFile match {
       case err: ReadingError => BadRequest(views.html.jsonReadingError.render(BaseController.getUser, err))
+      case fail: ReadingFailure => BadRequest(views.html.jsonReadingError.render(BaseController.getUser, null))
       case res: ReadingResult[E] =>
-        res.getRead.asScala.foreach(exerciseReader.saveExercise(_))
-        Ok(views.html.admin.preview.render(BaseController.getUser, renderExercises(res.getRead, false)))
+        res.read.asScala.foreach(exerciseReader.saveExercise(_))
+        Ok(views.html.admin.preview.render(BaseController.getUser, renderExercises(res.read, false)))
     }
   }
 
@@ -126,8 +128,8 @@ abstract class AScalaExAdminController[E <: Exercise] @Inject() (cc: ControllerC
     exerciseReader.readAllFromFile(jsonTargetPath) match {
       case err: ReadingError => BadRequest(views.html.jsonReadingError.render(BaseController.getUser, err))
       case res: ReadingResult[E] =>
-        res.getRead.asScala.foreach(exerciseReader.saveExercise(_))
-        Ok(views.html.admin.preview.render(BaseController.getUser, renderExercises(res.getRead, false)))
+        res.read.asScala.foreach(exerciseReader.saveExercise(_))
+        Ok(views.html.admin.preview.render(BaseController.getUser, renderExercises(res.read, false)))
     }
   }
 
