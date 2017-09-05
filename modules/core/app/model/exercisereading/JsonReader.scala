@@ -22,6 +22,8 @@ import model.JsonReadable
 import model.StringConsts.EX_FILE_NAME
 import model.StringConsts.ID_NAME
 import play.libs.Json
+import java.util.stream.Collectors
+import java.util.stream.StreamSupport
 
 abstract class JsonReader[R <: JsonReadable](val exerciseType: String, val finder: Finder[Integer, R], classFor: Class[_]) {
 
@@ -31,8 +33,12 @@ abstract class JsonReader[R <: JsonReadable](val exerciseType: String, val finde
     val id = node.get(ID_NAME).asInt
     val w = Option(finder.byId(id)).getOrElse(instantiateExercise(id));
 
+    update(w, node)
+
     w
   }
+
+  def update(toUpdate: R, node: JsonNode): Unit
 
   def save(toSave: R) = toSave.saveInDB()
 
@@ -56,6 +62,8 @@ abstract class JsonReader[R <: JsonReadable](val exerciseType: String, val finde
 }
 
 object JsonReader {
+
+  def readTextArray(textArray: JsonNode, joinChar: String) = textArray.iterator.asScala.map(_.asText).mkString(joinChar)
 
   def validateJson(json: JsonNode, jsonSchema: JsonNode): Try[ProcessingReport] = try {
     Success(JsonSchemaFactory.byDefault().getJsonSchema(jsonSchema).validate(json))

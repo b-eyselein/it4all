@@ -13,15 +13,14 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import controllers.core.ExerciseController;
+import model.CommonUtils$;
 import model.CorrectionException;
 import model.StringConsts;
 import model.XmlCorrector;
 import model.XmlError;
 import model.XmlExType;
 import model.XmlExercise;
-import model.XmlExerciseReader;
 import model.exercise.ExerciseOptions;
-import model.exercisereading.ExerciseReader;
 import model.result.CompleteResult;
 import model.user.User;
 import play.Logger;
@@ -47,7 +46,7 @@ public class XmlController extends ExerciseController<XmlExercise, XmlError> {
   public static String getReferenceCode(XmlExercise exercise) {
     final Path referenceFilePath = Paths.get(getSampleDir("xml").toString(),
         exercise.getRootNode() + "." + exercise.getReferenceFileEnding());
-    return referenceFilePath.toFile().exists() ? XmlExerciseReader.readFile(referenceFilePath) : "FEHLER!";
+    return referenceFilePath.toFile().exists() ? CommonUtils$.MODULE$.readFile(referenceFilePath) : "FEHLER!";
   }
 
   public Result index(List<String> filter) {
@@ -77,7 +76,8 @@ public class XmlController extends ExerciseController<XmlExercise, XmlError> {
   private String readDefOrOldSolution(String username, XmlExercise exercise) {
     final Path oldSolutionPath = getSolFileForExercise(username, exerciseType, exercise, exercise.getRootNode(),
         exercise.getStudentFileEnding());
-    return oldSolutionPath.toFile().exists() ? ExerciseReader.readFile(oldSolutionPath) : exercise.getFixedStart();
+    return oldSolutionPath.toFile().exists() ? CommonUtils$.MODULE$.readFile(oldSolutionPath)
+        : exercise.getFixedStart();
   }
 
   private Path saveGrammar(Path dir, String learnerSolution, XmlExercise exercise) {
