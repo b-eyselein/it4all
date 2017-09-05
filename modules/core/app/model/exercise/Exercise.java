@@ -15,73 +15,80 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Splitter;
 
 import io.ebean.Model;
-import model.WithId;
+import model.JsonReadable;
 import play.twirl.api.Html;
 
 @MappedSuperclass
-public abstract class Exercise extends Model implements WithId {
-
+public abstract class Exercise extends Model implements JsonReadable {
+  
   protected static final Splitter SPLITTER = Splitter.fixedLength(100).omitEmptyStrings();
-
+  
   protected static final Splitter NEW_LINE_SPLITTER = Splitter.on("\n");
-
+  
   public static final String SPLIT_CHAR = "#";
   
   @Id
-  protected int id;
-
+  public int id;
+  
+  @Column
   @JsonProperty(required = true)
-  protected String title;
-
+  public String title;
+  
+  @Column
   @JsonProperty(required = true)
-  protected String author;
-
+  public String author;
+  
   @Column(columnDefinition = "text")
   @JsonProperty(required = true)
-  protected String text;
-
+  public String text;
+  
+  @Column
   @Enumerated(EnumType.STRING)
-  protected ExerciseState state;
-
+  public ExerciseState state;
+  
   public Exercise(int theId) {
     id = theId;
     title = author = text = "";
     state = ExerciseState.RESERVED;
   }
-
+  
   public String getAuthor() {
     return author;
   }
-
-  @Override
+  
   public int getId() {
     return id;
   }
-
+  
   public List<String> getRestHeaders() {
     return Collections.emptyList();
   }
-
+  
   public ExerciseState getState() {
     return state;
   }
-
+  
   @JsonIgnore
   public String getText() {
     return text;
   }
-
+  
   @JsonGetter("text")
   public List<String> getTextForJson() {
     return SPLITTER.splitToList(text);
   }
-
+  
   public String getTitle() {
     return title;
   }
-
+  
   public Html renderRest() {
     return new Html("");
+  }
+
+  @Override
+  public void saveInDB() {
+    save();
   }
   
   public void setAuthor(String theAuthor) {
@@ -91,13 +98,13 @@ public abstract class Exercise extends Model implements WithId {
   public void setState(ExerciseState theState) {
     state = theState;
   }
-
+  
   public void setText(String theText) {
     text = theText;
   }
-
+  
   public void setTitle(String theTitle) {
     title = theTitle;
   }
-
+  
 }

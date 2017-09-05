@@ -1,27 +1,29 @@
 package model.exercisereading
 
-import java.nio.file.Path
-import model.WithId
-import play.data.DynamicForm
-import java.util.stream.Collectors
-import com.github.fge.jsonschema.core.exceptions.ProcessingException
-import java.util.stream.StreamSupport
-import com.fasterxml.jackson.databind.JsonNode
-import com.kjetland.jackson.jsonSchema.JsonSchemaGenerator
-import com.fasterxml.jackson.databind.ObjectMapper
-import scala.util.Failure
-import scala.util.Try
-import scala.util.Success
-import play.libs.Json
-import com.github.fge.jsonschema.main.JsonSchemaFactory
-import com.github.fge.jsonschema.core.report.ProcessingReport
 import java.nio.file.Files
-import scala.collection.JavaConverters._
-import model.StringConsts._
-import io.ebean.Finder
+import java.nio.file.Path
 import java.nio.file.Paths
 
-abstract class JsonReader[W <: WithId](val exerciseType: String, val finder: Finder[Integer, W], classFor: Class[_]) {
+import scala.collection.JavaConverters.asScalaIteratorConverter
+import scala.collection.JavaConverters.seqAsJavaListConverter
+import scala.util.Failure
+import scala.util.Success
+import scala.util.Try
+
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.github.fge.jsonschema.core.report.ProcessingReport
+import com.github.fge.jsonschema.main.JsonSchemaFactory
+import com.kjetland.jackson.jsonSchema.JsonSchemaGenerator
+
+import io.ebean.Finder
+import io.ebean.Model
+import model.JsonReadable
+import model.StringConsts.EX_FILE_NAME
+import model.StringConsts.ID_NAME
+import play.libs.Json
+
+abstract class JsonReader[R <: JsonReadable](val exerciseType: String, val finder: Finder[Integer, R], classFor: Class[_]) {
 
   val jsonSchema = new JsonSchemaGenerator(new ObjectMapper).generateJsonSchema(classFor)
 
@@ -32,9 +34,11 @@ abstract class JsonReader[W <: WithId](val exerciseType: String, val finder: Fin
     w
   }
 
+  def save(toSave: R) = toSave.saveInDB()
+
   def readFromStandardFile = readFromJsonFile(Paths.get("conf", "resources", exerciseType, EX_FILE_NAME))
 
-  def instantiateExercise(id: Int): W
+  def instantiateExercise(id: Int): R
 
   def readFromJsonFile(path: Path): AbstractReadingResult = {
     val jsonAsString = new String(Files.readAllBytes(path))

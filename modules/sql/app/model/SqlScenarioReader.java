@@ -27,7 +27,7 @@ public class SqlScenarioReader extends ExerciseCollectionReader<SqlExercise, Sql
   private final Database sqlOther;
   
   public SqlScenarioReader(Database theSqlSelect, Database theSqlOther) {
-    super("sql", SqlExerciseReader.getInstance(), SqlScenario.finder, SqlScenario[].class);
+    super("sql", SqlScenario.finder, SqlScenario[].class);
     sqlSelect = theSqlSelect;
     sqlOther = theSqlOther;
   }
@@ -77,13 +77,13 @@ public class SqlScenarioReader extends ExerciseCollectionReader<SqlExercise, Sql
   }
   
   @Override
-  public void saveExercise(SqlScenario scenario) {
+  public void save(SqlScenario scenario) {
     scenario.save();
     
     runCreateScript(sqlSelect, scenario);
     runCreateScript(sqlOther, scenario);
     
-    scenario.getExercises().forEach(delegateReader::saveExercise);
+    // scenario.getExercises().forEach(delegateReader::save);
   }
   
   protected void updateExercise(SqlScenario exercise, JsonNode exerciseNode) {

@@ -22,11 +22,6 @@ public abstract class ExerciseCollectionController<E extends Exercise, C extends
   }
 
   public Result exercises(int id) {
-    C exCollection = finder.byId(id);
-
-    for(E exercise: exCollection)
-      System.out.println(exercise);
-
     return ok("TODO!");
   }
 
