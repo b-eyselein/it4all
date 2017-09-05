@@ -20,18 +20,23 @@ public class SpreadExerciseReader extends ExerciseReader<SpreadExercise> {
 
   private static final SpreadExerciseReader INSTANCE = new SpreadExerciseReader();
 
-  public static SpreadExerciseReader getInstance() {
-    return INSTANCE;
-  }
-
   private SpreadExerciseReader() {
     super("spread", SpreadExercise.finder, SpreadExercise[].class);
+  }
+
+  public static SpreadExerciseReader getInstance() {
+    return INSTANCE;
   }
 
   @Override
   public void initRemainingExFromForm(SpreadExercise exercise, DynamicForm form) {
     exercise.setTemplateFilename(form.get(StringConsts.TEMPALTE_FILENAME));
     exercise.setSampleFilename(form.get(StringConsts.SAMPLE_FILENAME));
+  }
+
+  @Override
+  public SpreadExercise instantiateExercise(int id) {
+    return new SpreadExercise(id);
   }
 
   @Override
@@ -48,29 +53,24 @@ public class SpreadExerciseReader extends ExerciseReader<SpreadExercise> {
       // error occured...
       return "Directory für Lösungsdateien (XML) " + baseTargetDir + "existiert nicht!";
 
-    String completeFilename = fileName + "." + fileEnding;
+    final String completeFilename = fileName + "." + fileEnding;
 
-    Path providedFile = Paths.get("conf", "resources", exerciseType, completeFilename).toAbsolutePath();
-    Path targetPath = Paths.get(baseTargetDir.toString(), completeFilename).toAbsolutePath();
+    final Path providedFile = Paths.get("conf", "resources", exerciseType(), completeFilename).toAbsolutePath();
+    final Path targetPath = Paths.get(baseTargetDir.toString(), completeFilename).toAbsolutePath();
 
     if(!providedFile.toFile().exists())
       return "Konnte Datei nicht erstellen: Keine Lösungsdatei mitgeliefert...";
 
-    Logger.warn("The file \"" + targetPath + "\" for " + exerciseType + " exercise " + exercise.getId()
+    Logger.warn("The file \"" + targetPath + "\" for " + exerciseType() + " exercise " + exercise.getId()
         + " does not exist. Trying to create this file...");
 
     try {
       Files.copy(providedFile, targetPath, StandardCopyOption.REPLACE_EXISTING);
       return "Die Lösungsdatei wurde erstellt.";
-    } catch (IOException e) {
+    } catch (final IOException e) {
       Logger.error("Fehler bei Erstellen von Musterlösung " + targetPath, e);
       return "Die Lösungsdatei konnte nicht erstellt werden!";
     }
-  }
-
-  @Override
-  protected SpreadExercise instantiateExercise(int id) {
-    return new SpreadExercise(id);
   }
 
   @Override

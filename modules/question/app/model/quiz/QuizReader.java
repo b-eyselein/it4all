@@ -10,12 +10,16 @@ import play.data.DynamicForm;
 public class QuizReader extends ExerciseCollectionReader<Question, Quiz> {
 
   public QuizReader() {
-    super(QuestionReader.getInstance(), Quiz.finder, Quiz[].class);
+    super("question", QuestionReader.getInstance(), Quiz.finder, Quiz[].class);
+  }
+
+  public void initRemainingExFromForm(Quiz exercise, DynamicForm form) {
+    exercise.setTheme(form.get("theme"));
   }
 
   @Override
-  public void initRemainingExFromForm(Quiz exercise, DynamicForm form) {
-    exercise.setTheme(form.get("theme"));
+  public Quiz instantiateExercise(int id) {
+    return new Quiz(id);
   }
 
   @Override
@@ -23,12 +27,6 @@ public class QuizReader extends ExerciseCollectionReader<Question, Quiz> {
     exercise.save();
   }
 
-  @Override
-  protected Quiz instantiateExercise(int id) {
-    return new Quiz(id);
-  }
-
-  @Override
   protected void updateExercise(Quiz exercise, JsonNode exerciseNode) {
     exercise.setTheme(exerciseNode.get("theme").asText());
   }

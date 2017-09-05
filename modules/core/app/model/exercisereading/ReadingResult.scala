@@ -12,4 +12,4 @@ case class ReadingResult[T <: WithId](j: String, js: String, read: List[T]) exte
 
 case class ReadingError(j: String, js: String, report: ProcessingReport) extends AbstractReadingResult(j, js)
 
-case class ReadingFailure(j: String, js: String, error: ProcessingException) extends AbstractReadingResult(j, js)
+case class ReadingFailure(j: String, js: String, error: Throwable) extends AbstractReadingResult(j, js)

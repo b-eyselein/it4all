@@ -3,7 +3,6 @@ package controllers.uml;
 import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
 
 import controllers.core.AExerciseAdminController;
@@ -11,7 +10,7 @@ import model.StringConsts;
 import model.UmlExTextParser;
 import model.UmlExercise;
 import model.UmlExerciseReader;
-import model.exercisereading.ExerciseReader;
+import model.exercisereading.JsonReader$;
 import model.user.User;
 import play.data.DynamicForm;
 import play.data.FormFactory;
@@ -32,29 +31,26 @@ public class UmlAdmin extends AExerciseAdminController<UmlExercise> {
   }
 
   public Result checkSolution() {
-    DynamicForm form = factory.form().bindFromRequest();
+    final DynamicForm form = factory.form().bindFromRequest();
 
-    JsonNode solNode = Json.parse(form.get(StringConsts.SOLUTION_NAME));
-    try {
-      ProcessingReport report = ExerciseReader.validateJson(solNode, UmlController.SOLUTION_SCHEMA_NODE);
+    final JsonNode solNode = Json.parse(form.get(StringConsts.SOLUTION_NAME));
+    final ProcessingReport report = JsonReader$.MODULE$.validateJson(solNode, UmlController.SOLUTION_SCHEMA_NODE).get();
 
-      if(report.isSuccess())
-        return ok("ok");
+    if(report.isSuccess())
+      return ok("ok");
 
-      return ok(report.toString());
-    } catch (ProcessingException e) {
-      return badRequest("Fehler!");
-    }
+    return ok(report.toString());
   }
 
   public Result newExerciseStep2() {
-    UmlExercise exercise = exerciseReader.initFromForm(0, factory.form().bindFromRequest());
-    UmlExTextParser parser = new UmlExTextParser(exercise.getText(), exercise.getMappings(), exercise.getToIgnore());
+    final UmlExercise exercise = exerciseReader.initFromForm(0, factory.form().bindFromRequest());
+    final UmlExTextParser parser = new UmlExTextParser(exercise.getText(), exercise.getMappings(),
+        exercise.getToIgnore());
     return ok(views.html.umlAdmin.newExerciseStep2Form.render(getUser(), exercise, parser.getCapitalizedWords()));
   }
 
   public Result newExerciseStep3() {
-    UmlExercise exercise = exerciseReader.initFromForm(0, factory.form().bindFromRequest());
+    final UmlExercise exercise = exerciseReader.initFromForm(0, factory.form().bindFromRequest());
     return ok(views.html.umlAdmin.newExerciseStep3Form.render(getUser(), exercise));
   }
 

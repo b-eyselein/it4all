@@ -8,7 +8,7 @@
   
   <form class="form-horizontal" action="@@sql.routes.SqlAdmin.newExercise" method="post">
     
-    @admin.exStdFields.render(user, scenario, 10)
+    @admin.exStdFields.render(user, null, 10) @*scenario*@
     
     <div class="form-group">
       <label class="control-label col-sm-2" for="shortname">Kurzer Name:</label>

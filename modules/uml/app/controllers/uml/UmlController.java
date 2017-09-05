@@ -8,7 +8,6 @@ import java.nio.file.Paths;
 import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
 
 import controllers.core.ExerciseController;
@@ -16,7 +15,7 @@ import model.CorrectionException;
 import model.StringConsts;
 import model.UmlExercise;
 import model.UmlSolution;
-import model.exercisereading.ExerciseReader;
+import model.exercisereading.JsonReader$;
 import model.result.ClassSelectionResult;
 import model.result.CompleteResult;
 import model.result.DiagramDrawingResult;
@@ -45,7 +44,7 @@ public class UmlController extends ExerciseController<UmlExercise, UmlResult> {
   private static JsonNode initSolutionSchemaNode() {
     try {
       return Json.parse(String.join("\n", Files.readAllLines(SOLUTION_SCHEMA_PATH)));
-    } catch (IOException e) {
+    } catch (final IOException e) {
       Logger.error("There has been an error parsing the schema files for UML:", e);
       return null;
     }
@@ -57,11 +56,11 @@ public class UmlController extends ExerciseController<UmlExercise, UmlResult> {
   
   public Result correctClassSelection(int exerciseId) {
     try {
-      ClassSelectionResult result = new ClassSelectionResult(UmlExercise.finder.byId(exerciseId),
+      final ClassSelectionResult result = new ClassSelectionResult(UmlExercise.finder.byId(exerciseId),
           readSolutionFromForm());
       
       return ok(views.html.classSelectionSolution.render(getUser(), result));
-    } catch (CorrectionException e) {
+    } catch (final CorrectionException e) {
       Logger.error(ERROR_MSG, e);
       return badRequest(e.getMessage());
     }
@@ -69,12 +68,12 @@ public class UmlController extends ExerciseController<UmlExercise, UmlResult> {
   
   public Result correctDiagramDrawing(int exerciseId) {
     try {
-      DiagramDrawingResult result = new DiagramDrawingResult(UmlExercise.finder.byId(exerciseId),
+      final DiagramDrawingResult result = new DiagramDrawingResult(UmlExercise.finder.byId(exerciseId),
           readSolutionFromForm());
       
       return ok(views.html.diagdrawingsol.render(getUser(), result));
       
-    } catch (CorrectionException e) {
+    } catch (final CorrectionException e) {
       Logger.error(ERROR_MSG, e);
       return badRequest(e.getMessage());
     }
@@ -82,11 +81,11 @@ public class UmlController extends ExerciseController<UmlExercise, UmlResult> {
   
   public Result correctDiagramDrawingWithHelp(int exerciseId) {
     try {
-      DiagramDrawingResult result = new DiagramDrawingResult(UmlExercise.finder.byId(exerciseId),
+      final DiagramDrawingResult result = new DiagramDrawingResult(UmlExercise.finder.byId(exerciseId),
           readSolutionFromForm());
       
       return ok(views.html.diagdrawinghelpsol.render(getUser(), result));
-    } catch (CorrectionException e) {
+    } catch (final CorrectionException e) {
       Logger.error(ERROR_MSG, e);
       return badRequest(e.getMessage());
     }
@@ -109,21 +108,17 @@ public class UmlController extends ExerciseController<UmlExercise, UmlResult> {
   }
   
   public Result matching(int exerciseId) {
-    UmlExercise exercise = UmlExercise.finder.byId(exerciseId);
+    final UmlExercise exercise = UmlExercise.finder.byId(exerciseId);
     return ok(views.html.umlMatching.render(getUser(), exercise, exercise.getSolution()));
   }
   
   private UmlSolution readSolutionFromForm() throws CorrectionException {
-    JsonNode sentJson = Json.parse(factory.form().bindFromRequest().get(StringConsts.FORM_VALUE));
-    try {
-      ProcessingReport report = ExerciseReader.validateJson(sentJson, SOLUTION_SCHEMA_NODE);
-      if(report.isSuccess())
-        return Json.fromJson(sentJson, UmlSolution.class);
-      
-      throw new CorrectionException(Json.prettyPrint(sentJson), report.toString());
-    } catch (ProcessingException e) {
-      throw new CorrectionException(Json.prettyPrint(sentJson), "TODO!");
-    }
+    final JsonNode sentJson = Json.parse(factory.form().bindFromRequest().get(StringConsts.FORM_VALUE));
+    final ProcessingReport report = JsonReader$.MODULE$.validateJson(sentJson, SOLUTION_SCHEMA_NODE).get();
+    if(report.isSuccess())
+      return Json.fromJson(sentJson, UmlSolution.class);
+    
+    throw new CorrectionException(Json.prettyPrint(sentJson), report.toString());
   }
   
   @Override
