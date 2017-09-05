@@ -127,6 +127,7 @@ abstract class AScalaExAdminController[E <: Exercise] @Inject() (cc: ControllerC
 
     exerciseReader.readAllFromFile(jsonTargetPath) match {
       case err: ReadingError => BadRequest(views.html.jsonReadingError.render(BaseController.getUser, err))
+      case fail: ReadingFailure => BadRequest("TODO!")
       case res: ReadingResult[E] =>
         res.read.asScala.foreach(exerciseReader.saveExercise(_))
         Ok(views.html.admin.preview.render(BaseController.getUser, renderExercises(res.read, false)))
