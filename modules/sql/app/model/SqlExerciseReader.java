@@ -56,7 +56,7 @@ public class SqlExerciseReader extends ExerciseReader<SqlExercise> {
   }
 
   @Override
-  public void saveExercise(SqlExercise exercise) {
+  public void save(SqlExercise exercise) {
     exercise.save();
     exercise.samples.forEach(SqlSample::save);
   }
@@ -67,7 +67,7 @@ public class SqlExerciseReader extends ExerciseReader<SqlExercise> {
 
     exercise.samples = readArray(exerciseNode.get(StringConsts.SAMPLES_NAME), SqlExerciseReader::readSampleSolution);
     exercise.hint = exerciseNode.get("hint").asText();
-    exercise.tags = String.join(SqlExercise.SAMPLE_JOIN_CHAR, parseJsonArrayNode(exerciseNode.get("tags")));
+    exercise.tags = readTextArray(exerciseNode.get("tags"), SqlExercise.SAMPLE_JOIN_CHAR);
   }
 
 }

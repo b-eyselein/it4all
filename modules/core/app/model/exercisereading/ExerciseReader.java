@@ -14,8 +14,6 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kjetland.jackson.jsonSchema.JsonSchemaGenerator;
 
 import io.ebean.Finder;
 import model.JsonReadable;
@@ -24,8 +22,6 @@ import model.exercise.Exercise;
 import play.data.DynamicForm;
 
 public abstract class ExerciseReader<E extends Exercise> extends JsonReader<E> {
-
-  private static final JsonSchemaGenerator JSON_SCHEMA_GENERATOR = new JsonSchemaGenerator(new ObjectMapper());
 
   public Path baseTargetDir;
 
@@ -50,10 +46,6 @@ public abstract class ExerciseReader<E extends Exercise> extends JsonReader<E> {
     return exercises.get(exercises.size() - 1).getId() + 1;
   }
 
-  public static List<String> parseJsonArrayNode(JsonNode node) {
-    return StreamSupport.stream(node.spliterator(), true).map(JsonNode::asText).collect(Collectors.toList());
-  }
-
   public static <V> List<V> readArray(JsonNode arrayNode, Function<JsonNode, V> mappingFunction) {
     return StreamSupport.stream(arrayNode.spliterator(), true).map(mappingFunction).collect(Collectors.toList());
   }
@@ -75,12 +67,6 @@ public abstract class ExerciseReader<E extends Exercise> extends JsonReader<E> {
   }
 
   public abstract void initRemainingExFromForm(E exercise, DynamicForm form);
-
-  public JsonNode parseJsonSchema(Class<?> classFor) {
-    return JSON_SCHEMA_GENERATOR.generateJsonSchema(classFor);
-  }
-
-  public abstract void saveExercise(E exercise);
 
   public void update(E exercise, JsonNode node) {
     exercise.title = node.get(TITLE_NAME).asText();

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import scala.collection.JavaConverters._
 import model.exercisereading.ExerciseReader
 import play.data.DynamicForm
+import model.exercisereading.JsonReader
 
 class EBNFExerciseReader extends ExerciseReader[EBNFExercise]("ebnf", EBNFExercise.finder, classOf[Array[EBNFExercise]]) {
 
@@ -16,10 +17,8 @@ class EBNFExerciseReader extends ExerciseReader[EBNFExercise]("ebnf", EBNFExerci
 
   override def instantiateExercise(id: Int) = new EBNFExercise(id)
 
-  override def saveExercise(exercise: EBNFExercise) = exercise.save()
-
   override def updateExercise(exercise: EBNFExercise, jsonNode: JsonNode) = {
-    exercise.terminals = ExerciseReader.parseJsonArrayNode(jsonNode.get("terminals")).asScala.mkString(",")
+    exercise.terminals = JsonReader.readTextArray(jsonNode.get("terminals"), ",")
   }
 
 }
