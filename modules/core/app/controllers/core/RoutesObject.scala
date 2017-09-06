@@ -13,6 +13,8 @@ abstract class RoutesObject {
 
   // Admin
 
+  val restHeaders: List[String] = List.empty
+
   val adminIndexRoute: Call
 
   val exercisesRoutes: Call

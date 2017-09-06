@@ -15,6 +15,8 @@ object XmlRoutesObject extends RoutesObject {
 
   // Admin
 
+  override val restHeaders = List("Typ", "Wurzelknoten")
+
   val adminIndexRoute = adminIndex
 
   val exercisesRoutes = exercises

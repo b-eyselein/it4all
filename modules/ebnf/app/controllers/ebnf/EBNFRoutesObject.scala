@@ -5,18 +5,24 @@ import controllers.core.RoutesObject
 
 object EBNFRoutesObject extends RoutesObject {
 
+  // User
+  
+  // Admin
+
+  override val restHeaders = List("Terminalsymbole")
+  
   val adminIndexRoute = adminIndex
 
   val exercisesRoutes = exercises
-  
+
   val newExFormRoute = newExerciseForm
 
   val exportExesRoute = exportExercises
-  
+
   val importExesRoute = importExercises
-  
+
   val jsonSchemaRoute = getJSONSchemaFile
-  
+
   val uploadFileRoute = uploadFile
 
   override def editExerciseFormRoute(id: Int) = editExerciseForm(id)

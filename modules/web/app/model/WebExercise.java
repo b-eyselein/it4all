@@ -1,6 +1,5 @@
 package model;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -81,12 +80,6 @@ public class WebExercise extends Exercise {
   @JsonProperty("jsText")
   public List<String> getJsTextForJson() {
     return SPLITTER.splitToList(jsText);
-  }
-
-  @Override
-  @JsonIgnore
-  public List<String> getRestHeaders() {
-    return Arrays.asList("# Tasks Html / Js", "Text Html", "Text Js");
   }
 
   @Override

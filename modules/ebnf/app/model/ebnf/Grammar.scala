@@ -1,19 +1,25 @@
 package model.ebnf
 
-import scala.collection.JavaConverters._
+abstract class Symbol
 
-class Symbol(val name: String)
-
-case class TerminalSymbol(n: String) extends Symbol(n) {
-  override def toString = s"'$n'"
+case class Variable(variable: String) extends Symbol {
+  override def toString = variable
 }
 
-case class Variable(n: String) extends Symbol(n) {
-  override def toString = n
+case class Terminal(name: String) extends Symbol {
+  override def toString = s"'$name'"
 }
 
-case class Rule(left: Variable, right: Replacement) {
-  override def toString = s"$left = $right"
-}
+case class Grammar(terminals: List[Terminal], variables: List[Variable], startSymbol: Variable, rules: Map[Variable, Replacement]) {
 
-case class Grammar(terminals: List[TerminalSymbol], variables: List[Variable], startSymbol: Variable, rules: List[Rule]) 
+  val MaxDepth = 3
+
+  def deriveAll(): List[String] = {
+    val startReplacement = rules(startSymbol)
+    
+    println(startReplacement)
+    
+    List.empty
+  }
+
+}

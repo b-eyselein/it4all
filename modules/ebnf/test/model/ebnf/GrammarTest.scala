@@ -1,20 +1,25 @@
-package model.ebnf;
+package model.ebnf
 
 import org.junit.Test
 
 class GrammarTest {
 
-  val vars: List[Variable] = List(Variable("A"), Variable("B"), Variable("S"))
+  val terms = List(Terminal("0"), Terminal("1"))
+
+  val (s, a, b, c) = (Variable("S"), Variable("A"), Variable("B"), Variable("C"))
+
+  val (aRepl, bRepl, cRepl) = (VariableReplacement(a), VariableReplacement(b), VariableReplacement(c))
+  val (nul, one) = (TerminalReplacement(Terminal("0")), TerminalReplacement(Terminal("1")))
+
+  val rules: Map[Variable, Replacement] = Map(
+    s -> (aRepl | bRepl),
+
+    a -> (one ~ nul))
 
   @Test
-  def test() {
-    val terminals: List[TerminalSymbol] = List(TerminalSymbol("0"), TerminalSymbol("1"))
-
-    val rules: List[Rule] = RuleParser.parseRules(List("S = A, B", "A = '0'", "B = '1'"))
-
-    val grammar = new Grammar(terminals, vars, vars(2), rules)
-
-    assert(grammar.startSymbol == vars(2))
+  def testDeriveAll {
+    val gr = new Grammar(terms, List(s, a, b, c), s, rules)
+    gr.deriveAll()
   }
 
 }

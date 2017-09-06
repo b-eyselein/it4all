@@ -5,6 +5,12 @@ import controllers.core.RoutesObject
 
 object WebRoutesObject extends RoutesObject {
 
+  // User
+
+  // Admin
+
+  override val restHeaders = List("# Tasks Html / Js", "Text Html", "Text Js")
+
   val adminIndexRoute = adminIndex
 
   val exercisesRoutes = exercises

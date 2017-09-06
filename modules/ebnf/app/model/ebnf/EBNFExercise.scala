@@ -15,14 +15,12 @@ import play.twirl.api.Html
 class EBNFExercise(i: Int) extends Exercise(i) {
 
   @JsonProperty(required = true)
-  var terminals = "1,0"
+  var terminals = ""
 
   def getTerminals = terminals.split(",")
 
   @JsonIgnore
-  def getTerminalsForForm() = getTerminals.map("'" + _ + "'").mkString(" ")
-
-  override def getRestHeaders = List("Terminalsymbole").asJava
+  def getTerminalsForForm() = getTerminals.map(t => s"'$t'").mkString(" ")
 
   override def renderRest() = new Html(s"<td>$terminals</td>");
 

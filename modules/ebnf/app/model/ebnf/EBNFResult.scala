@@ -1,18 +1,18 @@
 package model.ebnf
 
-import model.result.EvaluationResult
+import scala.collection.JavaConverters.seqAsJavaListConverter
+
 import model.exercise.Success
 import model.result.CompleteResult
-
-import scala.collection.JavaConverters._
-
-case class EBNFResult(grammar: Grammar) extends EvaluationResult(EBNFResult.analyze(grammar)) {
-
-}
+import model.result.EvaluationResult
 
 case class EBNFCompleteResult(result: EBNFResult) extends CompleteResult[EBNFResult]("EBNF", List(result).asJava) {
 
   override def renderLearnerSolution = views.html.ebnfGrammar.render(result.grammar)
+
+}
+
+case class EBNFResult(grammar: Grammar) extends EvaluationResult(EBNFResult.analyze(grammar)) {
 
 }
 

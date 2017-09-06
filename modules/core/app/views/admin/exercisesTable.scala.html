@@ -17,7 +17,7 @@
       <th>Titel</th>
       <th>Autor</th>
       <th>Text</th>
-      @for(otherHeader <- exercises(0).getRestHeaders) {
+      @for(otherHeader <- links.restHeaders) {
       <th>@otherHeader</th>
       }
     </tr>
@@ -35,7 +35,7 @@
         </a>
         <!-- Löschen -->
         <button class="btn btn-default" title="Aufgabe @exercise.getId l&ouml;schen"
-          onclick="deleteExercise('@xml.routes.XmlAdmin.deleteExercise(exercise.getId)')">
+          onclick="deleteExercise('@links.deleteExerciseRoute(exercise.getId)')">
           <span class="glyphicon glyphicon-remove"></span>
         </button>
       </td>
