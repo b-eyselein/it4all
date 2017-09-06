@@ -17,14 +17,4 @@
   "pluralName" -> "Szenarien"
 )}
 
-@calls = @{scala.collection.Map(
-  "index" -> sql.routes.SqlAdmin.adminIndex,
-  "exercises" -> sql.routes.SqlAdmin.exercises,
-  "newExerciseForm" -> sql.routes.SqlAdmin.newExerciseForm,
-  "export" -> sql.routes.SqlAdmin.exportExerciseCollections,
-  "import" -> sql.routes.SqlAdmin.importExerciseCollections,
-  "jsonSchema" -> sql.routes.SqlAdmin.getJSONSchemaFile,
-  "upload" -> sql.routes.SqlAdmin.uploadFile
-)}
-
-@admin.collectionAdminMain(user, strs, statistics, calls) { }
+@admin.collectionAdminMain(user, strs, statistics, controllers.sql.SqlRoutesObject) { }

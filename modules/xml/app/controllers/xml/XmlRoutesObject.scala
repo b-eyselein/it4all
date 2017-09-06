@@ -1,9 +1,10 @@
 package controllers.xml
 
-import controllers.xml.routes.XmlController._
-import controllers.xml.routes.XmlAdmin._
 import controllers.core.RoutesObject
 import play.api.mvc.Call
+
+import controllers.xml.routes.XmlController._
+import controllers.xml.routes.XmlAdmin._
 
 object XmlRoutesObject extends RoutesObject {
 
@@ -17,19 +18,19 @@ object XmlRoutesObject extends RoutesObject {
 
   override val restHeaders = List("Typ", "Wurzelknoten")
 
-  val adminIndexRoute = adminIndex
+  override def adminIndexRoute = adminIndex
 
-  val exercisesRoutes = exercises
+  override def exercisesRoute = exercises
 
-  val newExFormRoute = newExerciseForm
+  override def newExFormRoute = newExerciseForm
 
-  val exportExesRoute = exportExercises
+  override def exportExesRoute = exportExercises
 
-  val importExesRoute = importExercises
+  override def importExesRoute = importExercises
 
-  val jsonSchemaRoute = getJSONSchemaFile
+  override def jsonSchemaRoute = getJSONSchemaFile
 
-  val uploadFileRoute = uploadFile
+  override def uploadFileRoute = uploadFile
 
   override def editExerciseFormRoute(id: Int) = editExerciseForm(id)
 

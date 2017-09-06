@@ -15,15 +15,4 @@
   "pluralName" -> "Aufgaben"
 )}
 
-@calls = @{scala.collection.Map(
-  "index" -> xml.routes.XmlAdmin.adminIndex,
-  "exercises" -> xml.routes.XmlAdmin.exercises,
-  "newExerciseForm" -> xml.routes.XmlAdmin.newExerciseForm,
-  "export" -> xml.routes.XmlAdmin.exportExercises,
-  "import" -> xml.routes.XmlAdmin.importExercises,
-  "jsonSchema" -> xml.routes.XmlAdmin.getJSONSchemaFile,
-  "upload" -> xml.routes.XmlAdmin.uploadFile
-)}
-
-
-@admin.exerciseAdminMain(user, strs, statistics, calls) { }
+@admin.exerciseAdminMain(user, strs, statistics, controllers.xml.XmlRoutesObject) { }

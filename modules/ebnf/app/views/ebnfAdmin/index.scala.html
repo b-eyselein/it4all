@@ -9,14 +9,4 @@
 <p>TODO: Statistiken
 }
 
-@calls = @{scala.collection.Map(
-  "index" -> ebnf.routes.EBNFAdmin.adminIndex,
-  "exercises" -> ebnf.routes.EBNFAdmin.exercises,
-  "newExerciseForm" -> ebnf.routes.EBNFAdmin.newExerciseForm,
-  "export" -> ebnf.routes.EBNFAdmin.exportExercises,
-  "import" -> ebnf.routes.EBNFAdmin.importExercises,
-  "jsonSchema" -> ebnf.routes.EBNFAdmin.getJSONSchemaFile,
-  "upload" -> ebnf.routes.EBNFAdmin.uploadFile
-)}
-
-@admin.exerciseAdminMain(user, strs, stats, calls) { }
+@admin.exerciseAdminMain(user, strs, stats, controllers.ebnf.EBNFRoutesObject) { }

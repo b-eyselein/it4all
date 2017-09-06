@@ -25,14 +25,4 @@
   "pluralName" -> "Szenaren"
 )}
 
-@calls = @{scala.collection.Map(
-  "index" -> questions.routes.QuestionAdmin.adminIndex,
-  "exercises" -> questions.routes.QuestionAdmin.exercises,
-  "newExerciseForm" -> questions.routes.QuestionController.newQuestionForm(false),
-  "export" -> questions.routes.QuestionAdmin.exportExercises,
-  "import" -> questions.routes.QuestionAdmin.importExercises,
-  "jsonSchema" -> questions.routes.QuestionAdmin.getJSONSchemaFile,
-  "upload" -> questions.routes.QuestionAdmin.uploadFile
-)}
-
-@admin.exerciseAdminMain(user, strs, statistics, calls) { }
+@admin.exerciseAdminMain(user, strs, statistics, controllers.questions.QuestionRoutesObject) { }

@@ -1,7 +1,6 @@
 package controllers.core
 
 import play.api.mvc.Call
-import controllers.ReverseAdminController
 
 abstract class RoutesObject {
 
@@ -15,19 +14,19 @@ abstract class RoutesObject {
 
   val restHeaders: List[String] = List.empty
 
-  val adminIndexRoute: Call
+  def adminIndexRoute: Call
 
-  val exercisesRoutes: Call
+  def exercisesRoute: Call
 
-  val newExFormRoute: Call
+  def newExFormRoute: Call
 
-  val exportExesRoute: Call
+  def exportExesRoute: Call
 
-  val importExesRoute: Call
+  def importExesRoute: Call
 
-  val jsonSchemaRoute: Call
+  def jsonSchemaRoute: Call
 
-  val uploadFileRoute: Call
+  def uploadFileRoute: Call
 
   def editExerciseFormRoute(id: Int): Call
 

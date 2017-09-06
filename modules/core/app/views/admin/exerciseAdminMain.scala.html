@@ -1,19 +1,19 @@
-@(user: model.user.User, strs: scala.collection.Map[String, String], statistics: Html, calls: scala.collection.Map[String, play.api.mvc.Call])(content: Html)
+@(user: model.user.User, strs: scala.collection.Map[String, String], statistics: Html, links: controllers.core.RoutesObject)(content: Html)
 
 @administration = {
 <h2>Verwaltung der @strs("pluralName")</h2>
-<a class="btn btn-default btn-block" href="@calls("exercises")">Übersicht über alle Aufgaben</a>
+<a class="btn btn-default btn-block" href="@links.exercisesRoute">Übersicht über alle Aufgaben</a>
 
 &nbsp;
 
-<a class="btn btn-default btn-block" href="@calls("newExerciseForm")">Neue Aufgabe erstellen</a>
+<a class="btn btn-default btn-block" href="@links.newExFormRoute">Neue Aufgabe erstellen</a>
 
 &nbsp;
 
 <div class="btn-group btn-group-justified">
-  <a class="btn btn-default" href="@calls("export")">Aufgaben als JSON exportieren</a>
-  <a class="btn btn-default" href="@calls("import")">Standardaufgaben importieren</a>
+  <a class="btn btn-default" href="@links.exportExesRoute">Aufgaben als JSON exportieren</a>
+  <a class="btn btn-default" href="@links.importExesRoute">Standardaufgaben importieren</a>
 </div>
 }
 
-@adminMain(user, strs, statistics, administration, calls) { }
+@adminMain(user, strs, statistics, administration, links) { }

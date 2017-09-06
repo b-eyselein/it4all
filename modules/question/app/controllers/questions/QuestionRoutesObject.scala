@@ -5,24 +5,24 @@ import controllers.core.RoutesObject
 
 object QuestionRoutesObject extends RoutesObject {
 
-  val adminIndexRoute = adminIndex
+  override def adminIndexRoute = adminIndex
 
-  val exercisesRoutes = exercises
-  
-  val newExFormRoute = newExerciseForm
+  override def exercisesRoute = exercises
 
-  val exportExesRoute = exportExercises
-  
-  val importExesRoute = importExercises
-  
-  val jsonSchemaRoute = getJSONSchemaFile
-  
-  val uploadFileRoute = uploadFile
+  override def newExFormRoute = newExerciseForm
+
+  override def exportExesRoute = exportExercises
+
+  override def importExesRoute = importExercises
+
+  override def jsonSchemaRoute = getJSONSchemaFile
+
+  override def uploadFileRoute = uploadFile
 
   override def editExerciseFormRoute(id: Int) = editExerciseForm(id)
 
   override def editExerciseRoute(id: Int) = editExercise(id)
 
   override def deleteExerciseRoute(id: Int) = deleteExercise(id)
-  
+
 }
