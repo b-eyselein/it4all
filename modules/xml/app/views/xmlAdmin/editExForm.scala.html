@@ -18,7 +18,7 @@
         @for(exType <- model.XmlExType.values) {
           <div class="radio-inline">
             <label><input type="radio" name="@model.StringConsts.EXERCISE_TYPE" value="@exType" 
-            @if(exercise.getExerciseType == exType) { checked } required>@Html(exType.getTag)</label>
+            @if(exercise.exerciseType == exType) { checked } required>@Html(exType.getTag)</label>
           </div>
         }
         </div>
@@ -28,7 +28,7 @@
         <label class="control-label col-sm-2" for="@model.StringConsts.ROOT_NODE_NAME">Wurzelknoten:</label>
         <div class="col-sm-10">
           <input class="form-control" name="@model.StringConsts.ROOT_NODE_NAME" id="@model.StringConsts.ROOT_NODE_NAME" 
-          value="@exercise.getRootNode" required>
+          value="@exercise.rootNode" required>
         </div>
       </div>
       

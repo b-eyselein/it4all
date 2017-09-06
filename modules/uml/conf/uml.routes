@@ -14,6 +14,8 @@ PUT      /exercises/:id            controllers.uml.UmlAdmin.editExercise(id: Int
 POST     /exercises/:id            controllers.uml.UmlAdmin.editExercise(id: Int)
 DELETE   /exercises/:id            controllers.uml.UmlAdmin.deleteExercise(id: Int)
 
+PUT      /exercise/:id/state       controllers.uml.UmlAdmin.changeExState(id: Int)
+
 
 GET      /newEx/form               controllers.uml.UmlAdmin.newExerciseForm
 POST     /newEx/text               controllers.uml.UmlAdmin.newExerciseStep2

@@ -14,6 +14,7 @@ import model.AdminSecured;
 import model.CommonUtils$;
 import model.StringConsts;
 import model.exercise.Exercise;
+import model.exercise.ExerciseState;
 import model.exercisereading.AbstractReadingResult;
 import model.exercisereading.ExerciseReader;
 import model.exercisereading.ReadingError;
@@ -30,29 +31,6 @@ import play.twirl.api.Html;
 
 @Authenticated(AdminSecured.class)
 public abstract class AExerciseAdminController<E extends Exercise> extends BaseController {
-
-  private static class DeletionResult {
-    private int id;
-    private String message;
-
-    @SuppressWarnings("unused")
-    public int getExerciseId() {
-      return id;
-    }
-
-    @SuppressWarnings("unused")
-    public String getMessage() {
-      return message;
-    }
-
-    public void setExerciseId(int id) {
-      this.id = id;
-    }
-
-    public void setMessage(String message) {
-      this.message = message;
-    }
-  }
 
   protected final RoutesObject routes;
 
@@ -82,23 +60,28 @@ public abstract class AExerciseAdminController<E extends Exercise> extends BaseC
 
   public abstract Result adminIndex();
 
-  public Result deleteExercise(int id) {
-    final DeletionResult result = new DeletionResult();
-    result.setExerciseId(id);
-    final E toDelete = finder.byId(id);
+  public Result changeExState(int id) {
+    final E exercise = finder.byId(id);
+    final ExerciseState newState = ExerciseState.valueOf(factory.form().bindFromRequest().get("state"));
 
+    exercise.state = newState;
+    exercise.save();
+
+    return ok(Json.parse("{\"id\": \"" + id + "\", \"newState\": \"" + exercise.state + "\"}"));
+  }
+
+  public Result deleteExercise(int id) {
+    final E toDelete = finder.byId(id);
     if(toDelete == null) {
-      result
-          .setMessage(String.format("Die Aufgabe mit ID %s existiert nicht und kann daher nicht gelöscht werden!", id));
-      return badRequest(Json.toJson(result));
+      return badRequest(Json.parse(
+          "{\"message\": \"Die Aufgabe mit ID " + id + " existiert nicht und kann daher nicht gelöscht werden!\""));
     }
 
     if(toDelete.delete()) {
-      result.setMessage(String.format("Die Aufgabe mit der ID %s konnte erfolgreich gelöscht werden.", id));
-      return ok(Json.toJson(result));
+      return ok(Json.parse("{\"id\": \"" + id + "\"}"));
     } else {
-      result.setMessage(String.format("Es gab einen internen Fehler beim Löschen der Aufgabe mit der ID %s!", id));
-      return badRequest(Json.toJson(result));
+      return badRequest(
+          Json.parse("{\"message\": \"Es gab einen internen Fehler beim Löschen der Aufgabe mit der ID " + id + "\""));
     }
   }
 

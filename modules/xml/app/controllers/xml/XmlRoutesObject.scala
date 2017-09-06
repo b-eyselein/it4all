@@ -32,6 +32,8 @@ object XmlRoutesObject extends RoutesObject {
 
   override def uploadFileRoute = uploadFile
 
+  override def changeExStateRoute(id: Int) = changeExState(id)
+
   override def editExerciseFormRoute(id: Int) = editExerciseForm(id)
 
   override def editExerciseRoute(id: Int) = editExercise(id)

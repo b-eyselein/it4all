@@ -24,6 +24,8 @@ PUT      /exercises/:id            controllers.sql.SqlAdmin.editExercise(id: Int
 POST     /exercises/:id            controllers.sql.SqlAdmin.editExercise(id: Int)
 DELETE   /exercises/:id            controllers.sql.SqlAdmin.deleteExercise(id: Int)
 
+PUT      /exercise/:id/state       controllers.sql.SqlAdmin.changeExState(id: Int)
+
 # All
 GET      /                         controllers.sql.SqlController.index
 GET      /scenario/:scId/:exType   controllers.sql.SqlController.filteredScenario(scId: Int, exType: String, site: Int ?= 1)

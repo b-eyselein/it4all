@@ -6,16 +6,16 @@ abstract class RoutesObject {
 
   // User
 
-  def correctLiveRoute(id: Int): Call = null
+  def correctLiveRoute(id: Int): Call
 
-  def correctRoute(id: Int): Call = null
+  def correctRoute(id: Int): Call
 
   // Admin
 
-  val restHeaders: List[String] = List.empty
+  val restHeaders: List[String]
 
   def adminIndexRoute: Call
-
+  
   def exercisesRoute: Call
 
   def newExFormRoute: Call
@@ -27,6 +27,8 @@ abstract class RoutesObject {
   def jsonSchemaRoute: Call
 
   def uploadFileRoute: Call
+  
+  def changeExStateRoute(id: Int): Call
 
   def editExerciseFormRoute(id: Int): Call
 

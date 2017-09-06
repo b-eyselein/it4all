@@ -7,6 +7,10 @@ object WebRoutesObject extends RoutesObject {
 
   // User
 
+  override def correctLiveRoute(id: Int) = null
+
+  override def correctRoute(id: Int) = null
+
   // Admin
 
   override val restHeaders = List("# Tasks Html / Js", "Text Html", "Text Js")
@@ -24,6 +28,8 @@ object WebRoutesObject extends RoutesObject {
   override def jsonSchemaRoute = getJSONSchemaFile
 
   override def uploadFileRoute = uploadFile
+
+  override def changeExStateRoute(id: Int) = changeExState(id)
 
   override def editExerciseFormRoute(id: Int) = editExerciseForm(id)
 

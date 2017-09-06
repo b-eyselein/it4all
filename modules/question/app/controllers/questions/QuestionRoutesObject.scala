@@ -5,6 +5,16 @@ import controllers.core.RoutesObject
 
 object QuestionRoutesObject extends RoutesObject {
 
+  // User
+
+  override def correctLiveRoute(id: Int) = null
+
+  override def correctRoute(id: Int) = null
+
+  // Admin
+  
+  override val restHeaders = List.empty
+
   override def adminIndexRoute = adminIndex
 
   override def exercisesRoute = exercises
@@ -18,6 +28,8 @@ object QuestionRoutesObject extends RoutesObject {
   override def jsonSchemaRoute = getJSONSchemaFile
 
   override def uploadFileRoute = uploadFile
+
+  override def changeExStateRoute(id: Int) = changeExState(id)
 
   override def editExerciseFormRoute(id: Int) = editExerciseForm(id)
 

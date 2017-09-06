@@ -24,6 +24,8 @@ PUT      /exercises/:id              controllers.questions.QuestionAdmin.editExe
 POST     /exercises/:id              controllers.questions.QuestionAdmin.editExercise(id: Int)
 DELETE   /exercises/:id              controllers.questions.QuestionAdmin.deleteExercise(id: Int)
 
+PUT      /exercise/:id/state         controllers.questions.QuestionAdmin.changeExState(id: Int)
+
 GET      /newQuestionForm            controllers.questions.QuestionAdmin.newExerciseForm
 
 # All

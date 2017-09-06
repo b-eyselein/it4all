@@ -1,33 +1,26 @@
 package controllers.programming;
 
-import java.nio.file.Path;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
 import controllers.core.ExerciseController;
 import model.ApprovalState;
 import model.AvailableLanguages;
-import model.CorrectionException;
 import model.ProgEvaluationResult;
 import model.ProgExercise;
 import model.ProgUser;
 import model.StringConsts;
-import model.correctors.JavaCorrector;
-import model.correctors.ProgLangCorrector;
-import model.correctors.PythonCorrector;
 import model.exercise.ExerciseOptions;
 import model.result.CompleteResult;
 import model.testdata.CommitedTestData;
 import model.testdata.CommitedTestDataKey;
 import model.testdata.ITestData;
 import model.user.User;
-import play.Logger;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
@@ -62,15 +55,16 @@ public class ProgController extends ExerciseController<ProgExercise, ProgEvaluat
         .collect(Collectors.toList());
   }
   
-  private static ProgLangCorrector getCorrector(AvailableLanguages language) {
-    switch(language) {
-    case JAVA_8:
-      return new JavaCorrector();
-    case PYTHON_3:
-    default:
-      return new PythonCorrector();
-    }
-  }
+  // private static ProgLangCorrector getCorrector(AvailableLanguages language)
+  // {
+  // switch(language) {
+  // case JAVA_8:
+  // return new JavaCorrector();
+  // case PYTHON_3:
+  // default:
+  // return new PythonCorrector();
+  // }
+  // }
   
   private static CommitedTestData readTestDataFromForm(DynamicForm form, String username, int testId,
       ProgExercise exercise) {
@@ -111,7 +105,8 @@ public class ProgController extends ExerciseController<ProgExercise, ProgEvaluat
     final User user = getUser();
     final ProgExercise exercise = ProgExercise.finder.byId(id);
     final DynamicForm form = factory.form().bindFromRequest();
-    final AvailableLanguages language = AvailableLanguages.valueOf(form.get(StringConsts.LANGUAGE_NAME));
+    // final AvailableLanguages language =
+    // AvailableLanguages.valueOf(form.get(StringConsts.LANGUAGE_NAME));
     
     final List<CommitedTestData> testData = extractTestData(form, user.name, exercise);
     testData.forEach(CommitedTestData::save);
@@ -123,11 +118,13 @@ public class ProgController extends ExerciseController<ProgExercise, ProgEvaluat
   }
   
   public Result validateTestDataLive(int id) {
-    final ProgExercise exercise = ProgExercise.finder.byId(id);
-    final DynamicForm form = factory.form().bindFromRequest();
-    final AvailableLanguages language = AvailableLanguages.valueOf(form.get(StringConsts.LANGUAGE_NAME));
-    
-    final List<CommitedTestData> testData = extractTestData(form, getUser().name, exercise);
+    // final ProgExercise exercise = ProgExercise.finder.byId(id);
+    // final DynamicForm form = factory.form().bindFromRequest();
+    // final AvailableLanguages language =
+    // AvailableLanguages.valueOf(form.get(StringConsts.LANGUAGE_NAME));
+
+    // final List<CommitedTestData> testData = extractTestData(form,
+    // getUser().name, exercise);
     
     final List<ProgEvaluationResult> validatedTestData = Collections.emptyList(); // getCorrector(language).validateTestData(exercise,
     // testData);
@@ -135,24 +132,29 @@ public class ProgController extends ExerciseController<ProgExercise, ProgEvaluat
     return ok(Json.toJson(validatedTestData));
   }
   
-  private CompleteResult<ProgEvaluationResult> correct(User user, ProgExercise exercise, String learnerSolution,
-      AvailableLanguages lang) throws CorrectionException {
-    // FIXME: Time out der Ausführung
-    try {
-      Logger.debug("Solution: " + learnerSolution);
-      
-      final List<ITestData> completeTestData = Stream.concat(exercise.sampleTestData.stream(),
-          CommitedTestData.forUserAndExercise(user, exercise.getId()).stream()).collect(Collectors.toList());
-      
-      final ProgLangCorrector corrector = getCorrector(lang);
-      
-      final Path solDir = checkAndCreateSolDir(user.name, exercise);
-      
-      return new CompleteResult<>(learnerSolution, corrector.evaluate(learnerSolution, completeTestData, solDir));
-    } catch (final Exception e) {
-      throw new CorrectionException(learnerSolution, "Error while correcting files", e);
-    }
-  }
+  // private CompleteResult<ProgEvaluationResult> correct(User user,
+  // ProgExercise exercise, String learnerSolution,
+  // AvailableLanguages lang) throws CorrectionException {
+  // // FIXME: Time out der Ausführung
+  // try {
+  // Logger.debug("Solution: " + learnerSolution);
+  //
+  // final List<ITestData> completeTestData =
+  // Stream.concat(exercise.sampleTestData.stream(),
+  // CommitedTestData.forUserAndExercise(user,
+  // exercise.getId()).stream()).collect(Collectors.toList());
+  //
+  // final ProgLangCorrector corrector = getCorrector(lang);
+  //
+  // final Path solDir = checkAndCreateSolDir(user.name, exercise);
+  //
+  // return new CompleteResult<>(learnerSolution,
+  // corrector.evaluate(learnerSolution, completeTestData, solDir));
+  // } catch (final Exception e) {
+  // throw new CorrectionException(learnerSolution, "Error while correcting
+  // files", e);
+  // }
+  // }
   
   @Override
   protected CompleteResult<ProgEvaluationResult> correct(DynamicForm form, ProgExercise exercise, User user) {

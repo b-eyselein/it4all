@@ -13,7 +13,7 @@
     <tr>
       <th>ID</th>
       <th>Status</th>
-      @if(changesAllowed) {<th>Aktionen</th>}
+      <th>Aktionen</th>
       <th>Titel</th>
       <th>Autor</th>
       <th>Text</th>
@@ -26,20 +26,34 @@
   @for(exercise <- exercises) {
     <tr id="tr1_@exercise.getId">
       <td>@exercise.getId</td>
-      <td>@exercise.getState</td>
+      <td>
       @if(changesAllowed) {
+      	<div class="input-group">
+          <select onchange="updateStateChangeButton(@exercise.id)" class="form-control" id="state_@exercise.id" data-val="@exercise.getState">
+          @for(exState <- model.exercise.ExerciseState.values) {
+            <option@if(exState == exercise.getState) { selected}>@exState</option>
+          }
+          </select>
+          <span class="input-group-btn">
+            <button class="btn btn-default" id="scb_@exercise.id" onclick="changeState('@links.changeExStateRoute(exercise.id)', @exercise.id)" disabled>
+            <span class="glyphicon glyphicon-upload"></span></button>
+          </span>
+        </div>
+      } else {
+        @exercise.getState
+      }
+      </td>
       <td>
         <!-- Bearbeiten -->
-        <a href="@links.editExerciseFormRoute(exercise.getId)" class="btn btn-default" title="Aufgabe @exercise.getId bearbeiten">
+        <a class="btn btn-default" title="Aufgabe @exercise.getId bearbeiten" id="edit_@exercise.getId"
+          @if(changesAllowed) {href="@links.editExerciseFormRoute(exercise.getId)"} else { disabled }>
           <span class="glyphicon glyphicon-wrench"></span>
         </a>
         <!-- Löschen -->
-        <button class="btn btn-default" title="Aufgabe @exercise.getId l&ouml;schen"
-          onclick="deleteExercise('@links.deleteExerciseRoute(exercise.getId)')">
+        <button class="btn btn-default" title="Aufgabe @exercise.getId l&ouml;schen" id="del_@exercise.getId" @if(changesAllowed) { onclick="deleteExercise('@links.deleteExerciseRoute(exercise.getId)')" } else { disabled }>
           <span class="glyphicon glyphicon-remove"></span>
         </button>
       </td>
-      }
       <td>@exercise.getTitle</td>
       <td>@exercise.getAuthor</td>
       @helperTemplates.stringLen(exercise.getText, 80)

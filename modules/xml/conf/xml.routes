@@ -1,28 +1,30 @@
 # Admin
-GET      /admin           controllers.xml.XmlAdmin.adminIndex
+GET      /admin                controllers.xml.XmlAdmin.adminIndex
 
-GET      /jsonSchema      controllers.xml.XmlAdmin.getJSONSchemaFile
-POST     /upload          controllers.xml.XmlAdmin.uploadFile
+GET      /jsonSchema           controllers.xml.XmlAdmin.getJSONSchemaFile
+POST     /upload               controllers.xml.XmlAdmin.uploadFile
 
-GET      /import          controllers.xml.XmlAdmin.importExercises
-GET      /export          controllers.xml.XmlAdmin.exportExercises
+GET      /import               controllers.xml.XmlAdmin.importExercises
+GET      /export               controllers.xml.XmlAdmin.exportExercises
 
-GET      /exercises       controllers.xml.XmlAdmin.exercises
+GET      /exercises            controllers.xml.XmlAdmin.exercises
 
-GET      /exercises/:id   controllers.xml.XmlAdmin.editExerciseForm(id: Int)
-PUT      /exercises/:id   controllers.xml.XmlAdmin.editExercise(id: Int)
-POST     /exercises/:id   controllers.xml.XmlAdmin.editExercise(id: Int)
-DELETE   /exercises/:id   controllers.xml.XmlAdmin.deleteExercise(id: Int)
+GET      /exercises/:id        controllers.xml.XmlAdmin.editExerciseForm(id: Int)
+PUT      /exercises/:id        controllers.xml.XmlAdmin.editExercise(id: Int)
+POST     /exercises/:id        controllers.xml.XmlAdmin.editExercise(id: Int)
+DELETE   /exercises/:id        controllers.xml.XmlAdmin.deleteExercise(id: Int)
 
-GET      /newExForm       controllers.xml.XmlAdmin.newExerciseForm
+PUT      /exercise/:id/state   controllers.xml.XmlAdmin.changeExState(id: Int)
+
+GET      /newExForm            controllers.xml.XmlAdmin.newExerciseForm
 
 # User
-GET      /                controllers.xml.XmlController.index(filter: java.util.List[String] ?= java.util.Collections.emptyList( ))
+GET      /                     controllers.xml.XmlController.index(filter: java.util.List[String] ?= java.util.Collections.emptyList( ))
 
-GET      /solve/:id       controllers.xml.XmlController.exercise(id: Int)
-PUT      /solve/:id       controllers.xml.XmlController.correctLive(id: Int)
-POST     /solve/:id       controllers.xml.XmlController.correct(id: Int)
+GET      /solve/:id            controllers.xml.XmlController.exercise(id: Int)
+PUT      /solve/:id            controllers.xml.XmlController.correctLive(id: Int)
+POST     /solve/:id            controllers.xml.XmlController.correct(id: Int)
 
 
-GET      /playground      controllers.xml.XmlController.playground
-PUT      /playground      controllers.xml.XmlController.playgroundCorrection
+GET      /playground           controllers.xml.XmlController.playground
+PUT      /playground           controllers.xml.XmlController.playgroundCorrection

@@ -1,31 +1,33 @@
 # Administrator
-GET      /admin           controllers.programming.ProgAdmin.adminIndex
+GET      /admin                controllers.programming.ProgAdmin.adminIndex
 
-GET      /jsonSchema      controllers.programming.ProgAdmin.getJSONSchemaFile
-POST     /upload          controllers.programming.ProgAdmin.uploadFile
+GET      /jsonSchema           controllers.programming.ProgAdmin.getJSONSchemaFile
+POST     /upload               controllers.programming.ProgAdmin.uploadFile
 
-GET      /import          controllers.programming.ProgAdmin.importExercises
-GET      /export          controllers.programming.ProgAdmin.exportExercises
+GET      /import               controllers.programming.ProgAdmin.importExercises
+GET      /export               controllers.programming.ProgAdmin.exportExercises
 
-GET      /exercises       controllers.programming.ProgAdmin.exercises
+GET      /exercises            controllers.programming.ProgAdmin.exercises
 
-GET      /exercises/:id   controllers.programming.ProgAdmin.editExerciseForm(id: Int)
-PUT      /exercises/:id   controllers.programming.ProgAdmin.editExercise(id: Int)
-POST     /exercises/:id   controllers.programming.ProgAdmin.editExercise(id: Int)
-DELETE   /exercises/:id   controllers.programming.ProgAdmin.deleteExercise(id: Int)
+GET      /exercises/:id        controllers.programming.ProgAdmin.editExerciseForm(id: Int)
+PUT      /exercises/:id        controllers.programming.ProgAdmin.editExercise(id: Int)
+POST     /exercises/:id        controllers.programming.ProgAdmin.editExercise(id: Int)
+DELETE   /exercises/:id        controllers.programming.ProgAdmin.deleteExercise(id: Int)
 
-GET      /newExForm       controllers.programming.ProgAdmin.newExerciseForm
+PUT      /exercise/:id/state   controllers.programming.ProgAdmin.changeExState(id: Int)
+
+GET      /newExForm            controllers.programming.ProgAdmin.newExerciseForm
 
 
 # All
-GET      /                controllers.programming.ProgController.index
+GET      /                     controllers.programming.ProgController.index
 
-GET      /testdata/:id    controllers.programming.ProgController.testData(id: Int)
-POST     /validate/:id    controllers.programming.ProgController.validateTestData(id: Int)
-PUT      /validate/:id    controllers.programming.ProgController.validateTestDataLive(id: Int)
+GET      /testdata/:id         controllers.programming.ProgController.testData(id: Int)
+POST     /validate/:id         controllers.programming.ProgController.validateTestData(id: Int)
+PUT      /validate/:id         controllers.programming.ProgController.validateTestDataLive(id: Int)
 
-GET      /declaration     controllers.programming.ProgController.getDeclaration(language: String ?= "")
+GET      /declaration          controllers.programming.ProgController.getDeclaration(language: String ?= "")
 
-GET      /exercise/:id/   controllers.programming.ProgController.exercise(id: Int)
-PUT      /exercise/:id    controllers.programming.ProgController.correctLive(id: Int)
-POST     /exercise/:id    controllers.programming.ProgController.correct(id: Int)
+GET      /exercise/:id/        controllers.programming.ProgController.exercise(id: Int)
+PUT      /exercise/:id         controllers.programming.ProgController.correctLive(id: Int)
+POST     /exercise/:id         controllers.programming.ProgController.correct(id: Int)

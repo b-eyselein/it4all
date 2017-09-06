@@ -14,6 +14,8 @@ PUT      /exercises/:id         controllers.web.WebAdmin.editExercise(id: Int)
 POST     /exercises/:id         controllers.web.WebAdmin.editExercise(id: Int)
 DELETE   /exercises/:id         controllers.web.WebAdmin.deleteExercise(id: Int)
 
+PUT      /exercise/:id/state    controllers.web.WebAdmin.changeExState(id: Int)
+
 
 GET      /exercises/:id/tasks   controllers.web.WebAdmin.tasks(id: Int)
 

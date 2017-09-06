@@ -13,6 +13,8 @@ object ProgRoutesObject extends RoutesObject {
   override def correctRoute(id: Int) = correct(id)
 
   // Admin
+  
+  override val restHeaders = List.empty
 
   override def adminIndexRoute = adminIndex
 
@@ -27,6 +29,8 @@ object ProgRoutesObject extends RoutesObject {
   override def jsonSchemaRoute = getJSONSchemaFile
 
   override def uploadFileRoute = uploadFile
+
+  override def changeExStateRoute(id: Int) = changeExState(id)
 
   override def editExerciseFormRoute(id: Int) = editExerciseForm(id)
 

@@ -3,6 +3,7 @@ package model;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -21,23 +22,18 @@ public class XmlExercise extends Exercise {
 
   @Enumerated(EnumType.STRING)
   @JsonProperty(required = true)
-  private XmlExType exerciseType;
+  public XmlExType exerciseType;
 
+  @Column
   @JsonProperty(required = true)
-  private String rootNode;
+  public String rootNode;
 
   public XmlExercise(int id) {
     super(id);
-    exerciseType = XmlExType.XML_DTD;
-    rootNode = "";
   }
 
   public static List<XmlExercise> byType(XmlExType type) {
     return finder.all().stream().filter(ex -> ex.exerciseType == type).collect(Collectors.toList());
-  }
-
-  public XmlExType getExerciseType() {
-    return exerciseType;
   }
 
   public String getFixedStart() {
@@ -58,10 +54,6 @@ public class XmlExercise extends Exercise {
     return exerciseType.getRefFileEnding();
   }
 
-  public String getRootNode() {
-    return rootNode;
-  }
-
   @JsonIgnore
   public String getStudentFileEnding() {
     return exerciseType.getStudFileEnding();
@@ -75,15 +67,7 @@ public class XmlExercise extends Exercise {
   @Override
   @JsonIgnore
   public Html renderRest() {
-    return views.html.xmlAdmin.xmlExRest.render(this);
-  }
-
-  public void setExerciseType(XmlExType theExerciseType) {
-    exerciseType = theExerciseType;
-  }
-
-  public void setRootNode(String theRootNode) {
-    rootNode = theRootNode;
+    return new Html("<td>" + exerciseType + "</td>\n<td>" + rootNode + "</td>");
   }
 
 }
