@@ -4,14 +4,21 @@ import play.twirl.api.Html;
 
 public interface Tag {
 
-  public String getButtonContent();
+  public default String cssClass() {
+    return "label label-primary";
+  }
 
-  public String getTitle();
+  public default String getButtonContent() {
+    return toString();
+  }
+
+  public default String getTitle() {
+    return toString();
+  }
 
   public default Html render() {
     return new Html(
-        "<span class=\"label label-default\" title=\"" + getTitle() + "\">" + getButtonContent() + "</span>");
-
+        String.format("<span class=\"%s\" title=\"%s\">%s</span>", cssClass(), getTitle(), getButtonContent()));
   }
 
 }
