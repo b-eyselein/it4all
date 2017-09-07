@@ -29,9 +29,9 @@
       <td>
       @if(changesAllowed) {
       	<div class="input-group">
-          <select onchange="updateStateChangeButton(@exercise.id)" class="form-control" id="state_@exercise.id" data-val="@exercise.getState">
+          <select onchange="updateStateChangeButton(@exercise.id)" class="form-control" id="state_@exercise.id" data-val="@exercise.state">
           @for(exState <- model.exercise.ExerciseState.values) {
-            <option@if(exState == exercise.getState) { selected}>@exState</option>
+            <option@if(exState == exercise.state) { selected}>@exState</option>
           }
           </select>
           <span class="input-group-btn">
@@ -40,7 +40,7 @@
           </span>
         </div>
       } else {
-        @exercise.getState
+        @exercise.state
       }
       </td>
       <td>

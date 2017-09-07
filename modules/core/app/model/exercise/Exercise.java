@@ -47,8 +47,6 @@ public abstract class Exercise extends Model implements JsonReadable {
 
   public Exercise(int theId) {
     id = theId;
-    title = author = text = "";
-    state = ExerciseState.RESERVED;
   }
 
   public String getAuthor() {
@@ -58,10 +56,6 @@ public abstract class Exercise extends Model implements JsonReadable {
   @Override
   public int getId() {
     return id;
-  }
-
-  public ExerciseState getState() {
-    return state;
   }
 
   @JsonIgnore
@@ -89,10 +83,6 @@ public abstract class Exercise extends Model implements JsonReadable {
 
   public void setAuthor(String theAuthor) {
     author = theAuthor;
-  }
-
-  public void setState(ExerciseState theState) {
-    state = theState;
   }
 
   public void setText(String theText) {
