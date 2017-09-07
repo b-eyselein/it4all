@@ -59,9 +59,9 @@ public abstract class ExerciseReader<E extends Exercise> extends JsonReader<E> {
   public E initFromForm(int id, DynamicForm form) {
     final E exercise = getOrInstantiateExercise(id);
 
-    exercise.setTitle(form.get(StringConsts.TITLE_NAME));
-    exercise.setAuthor(form.get(StringConsts.AUTHOR_NAME));
-    exercise.setText(form.get(StringConsts.TEXT_NAME));
+    exercise.title = form.get(StringConsts.TITLE_NAME);
+    exercise.author = form.get(StringConsts.AUTHOR_NAME);
+    exercise.text = form.get(StringConsts.TEXT_NAME);
 
     initRemainingExFromForm(exercise, form);
 
@@ -73,7 +73,7 @@ public abstract class ExerciseReader<E extends Exercise> extends JsonReader<E> {
   public void update(E exercise, JsonNode node) {
     exercise.title = node.get(TITLE_NAME).asText();
     exercise.author = node.get(AUTHOR_NAME).asText();
-    exercise.text = readTextArray(node.get(TEXT_NAME), "");
+    exercise.text = readAndJoinTextArray(node.get(TEXT_NAME), "");
 
     final JsonNode stateNode = node.get(STATE_NAME);
     exercise.state = stateNode != null ? ExerciseState.valueOf(stateNode.asText()) : ExerciseState.CREATED;

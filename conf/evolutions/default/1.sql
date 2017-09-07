@@ -98,12 +98,6 @@ create table js_web_task (
   constraint pk_js_web_task primary key (task_id,exercise_id)
 );
 
-create table mapping (
-  mapped_key                    varchar(255),
-  mapped_value                  varchar(255),
-  exercise_id                   integer
-);
-
 create table prog_exercise (
   id                            integer auto_increment not null,
   title                         varchar(255),
@@ -256,7 +250,8 @@ create table uml_exercise (
   class_sel_text                text,
   diag_draw_text                text,
   solution                      text,
-  to_ignore                     varchar(255),
+  mappings                      longtext,
+  ignore_words                  longtext,
   constraint ck_uml_exercise_state check ( state in ('RESERVED','CREATED','APPROVED')),
   constraint pk_uml_exercise primary key (id)
 );
@@ -345,9 +340,6 @@ create index ix_html_task_exercise_id on html_task (exercise_id);
 alter table js_web_task add constraint fk_js_web_task_exercise_id foreign key (exercise_id) references web_exercise (id) on delete restrict on update restrict;
 create index ix_js_web_task_exercise_id on js_web_task (exercise_id);
 
-alter table mapping add constraint fk_mapping_exercise_id foreign key (exercise_id) references uml_exercise (id) on delete restrict on update restrict;
-create index ix_mapping_exercise_id on mapping (exercise_id);
-
 alter table prog_sample add constraint fk_prog_sample_exercise_id foreign key (exercise_id) references prog_exercise (id) on delete restrict on update restrict;
 create index ix_prog_sample_exercise_id on prog_sample (exercise_id);
 
@@ -423,9 +415,6 @@ drop index ix_html_task_exercise_id on html_task;
 alter table js_web_task drop foreign key fk_js_web_task_exercise_id;
 drop index ix_js_web_task_exercise_id on js_web_task;
 
-alter table mapping drop foreign key fk_mapping_exercise_id;
-drop index ix_mapping_exercise_id on mapping;
-
 alter table prog_sample drop foreign key fk_prog_sample_exercise_id;
 drop index ix_prog_sample_exercise_id on prog_sample;
 
@@ -491,8 +480,6 @@ drop table if exists feedback;
 drop table if exists html_task;
 
 drop table if exists js_web_task;
-
-drop table if exists mapping;
 
 drop table if exists prog_exercise;
 

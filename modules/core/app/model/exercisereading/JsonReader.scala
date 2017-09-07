@@ -17,13 +17,12 @@ import com.github.fge.jsonschema.main.JsonSchemaFactory
 import com.kjetland.jackson.jsonSchema.JsonSchemaGenerator
 
 import io.ebean.Finder
-import io.ebean.Model
 import model.JsonReadable
 import model.StringConsts.EX_FILE_NAME
 import model.StringConsts.ID_NAME
+import model.StringConsts.KEY_NAME
+import model.StringConsts.VALUE_NAME
 import play.libs.Json
-import java.util.stream.Collectors
-import java.util.stream.StreamSupport
 
 abstract class JsonReader[R <: JsonReadable](val exerciseType: String, val finder: Finder[Integer, R], classFor: Class[_]) {
 
@@ -47,9 +46,10 @@ abstract class JsonReader[R <: JsonReadable](val exerciseType: String, val finde
   def instantiateExercise(id: Int): R
 
   def readFromJsonFile(path: Path): AbstractReadingResult = {
-    val jsonAsString = new String(Files.readAllBytes(path))
+    val jsonAsString = new String(Files.readAllBytes(path)).replace("\t", "  ")
+    val jsonSchemaAsString = Json.prettyPrint(jsonSchema).replace("\t", "  ")
+    
     val json = Json.parse(jsonAsString)
-    val jsonSchemaAsString = Json.prettyPrint(jsonSchema)
 
     JsonReader.validateJson(json, jsonSchema) match {
       case Failure(e) => new ReadingFailure(jsonAsString, jsonSchemaAsString, e)
@@ -63,8 +63,15 @@ abstract class JsonReader[R <: JsonReadable](val exerciseType: String, val finde
 
 object JsonReader {
 
-  def readTextArray(textArray: JsonNode, joinChar: String) = textArray.iterator.asScala.map(_.asText).mkString(joinChar)
+  def readMap(mapNode: JsonNode) =
+    mapNode.iterator.asScala.map(node => node.get(KEY_NAME).asText -> node.get(VALUE_NAME).asText).toMap
 
+  def readArray(arrayNode: JsonNode) = arrayNode.iterator.asScala.toList
+
+  def readTextArray(textArrayNode: JsonNode) = readArray(textArrayNode).map(_.asText)
+
+  def readAndJoinTextArray(textArrayNode: JsonNode, joinChar: String) = readTextArray(textArrayNode).mkString(joinChar)
+  
   def validateJson(json: JsonNode, jsonSchema: JsonNode): Try[ProcessingReport] = try {
     Success(JsonSchemaFactory.byDefault().getJsonSchema(jsonSchema).validate(json))
   } catch {

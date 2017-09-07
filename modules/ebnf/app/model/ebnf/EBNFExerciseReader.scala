@@ -18,7 +18,7 @@ class EBNFExerciseReader extends ExerciseReader[EBNFExercise]("ebnf", EBNFExerci
   override def instantiateExercise(id: Int) = new EBNFExercise(id)
 
   override def updateExercise(exercise: EBNFExercise, jsonNode: JsonNode) = {
-    exercise.terminals = JsonReader.readTextArray(jsonNode.get("terminals"), ",")
+    exercise.terminals = JsonReader.readAndJoinTextArray(jsonNode.get("terminals"), ",")
   }
 
 }

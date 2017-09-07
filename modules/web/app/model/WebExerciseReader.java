@@ -49,7 +49,7 @@ public class WebExerciseReader extends ExerciseReader<WebExercise> {
     if(task == null)
       task = new HtmlTask(key);
     
-    task.text = readTextArray(htmlTaskNode.get(StringConsts.TEXT_NAME), "");
+    task.text = readAndJoinTextArray(htmlTaskNode.get(StringConsts.TEXT_NAME), "");
     task.xpathQuery = htmlTaskNode.get(StringConsts.XPATH_NAME).asText();
     task.attributes = readAttributes(htmlTaskNode.get(StringConsts.ATTRS_NAME));
     task.textContent = htmlTaskNode.get("textContent").asText();
@@ -67,7 +67,7 @@ public class WebExerciseReader extends ExerciseReader<WebExercise> {
     final JsonNode actionNode = jsTaskNode.get("action");
     final JsonNode conditionsNode = jsTaskNode.get("conditions");
     
-    task.text = readTextArray(jsTaskNode.get(StringConsts.TEXT_NAME), "");
+    task.text = readAndJoinTextArray(jsTaskNode.get(StringConsts.TEXT_NAME), "");
     task.xpathQuery = jsTaskNode.get(StringConsts.XPATH_NAME).asText();
     task.action = actionNode != null ? Json.fromJson(actionNode, Action.class) : null;
     task.conditions = conditionsNode != null ? readArray(conditionsNode, WebExerciseReader::readCondition)
@@ -102,10 +102,10 @@ public class WebExerciseReader extends ExerciseReader<WebExercise> {
   
   @Override
   protected void updateExercise(WebExercise exercise, JsonNode exerciseNode) {
-    exercise.htmlText = readTextArray(exerciseNode.get("htmlText"), "");
+    exercise.htmlText = readAndJoinTextArray(exerciseNode.get("htmlText"), "");
     exercise.htmlTasks = readArray(exerciseNode.get("htmlTasks"), WebExerciseReader::readHtmlTask);
     
-    exercise.jsText = readTextArray(exerciseNode.get("jsText"), "");
+    exercise.jsText = readAndJoinTextArray(exerciseNode.get("jsText"), "");
     exercise.jsTasks = readArray(exerciseNode.get("jsTasks"), WebExerciseReader::readJsTask);
   }
   

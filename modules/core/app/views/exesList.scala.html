@@ -13,26 +13,20 @@
   @rest
   
   <div class="row">
-    <div class="col-sm-1"><h4>Id</h4></div>
-    <div class="col-sm-1"><h4>Tags</h4></div>
-    <div class="col-sm-2"><h4>Title</h4></div>
-    
-    <div class="col-sm-5"><h4>Text</h4></div>
-    
-    <div class="col-sm-3"><h4>Link(s)</h4></div>
+    <div class="col-sm-2"><h4>Id</h4></div>
+    <div class="col-sm-2"><h4>Tags</h4></div>
+    <div class="col-sm-3"><h4>Title</h4></div>
+    <div class="col-sm-5"><h4>Link(s)</h4></div>
   </div>
   
   <hr>
 
   @for(exercise <- exercises) {
   <div class="row">
-    <div class="col-sm-1">@exercise.id</div>
-    <div class="col-sm-1">@for(tag <- exercise.getTags) { @tag.render }</div>
-    <div class="col-sm-2">@exercise.title</div>
-    
-    <div class="col-sm-5 text-justify">@exercise.text</div>
-    
-    <div class="col-sm-3">
+    <div class="col-sm-2">@exercise.id</div>
+    <div class="col-sm-2">@for(tag <- exercise.getTags) { @tag.render }</div>
+    <div class="col-sm-3">@exercise.title</div>
+    <div class="col-sm-5">
       <div class="btn-group btn-group-justified">
       @for(exRoute <- links.exerciseRoutes(exercise.id)) {
         <a href="@exRoute._1" class="btn btn-primary">@exRoute._2</a>

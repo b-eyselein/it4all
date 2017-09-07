@@ -63,7 +63,7 @@ var canDelete = @{!getsHelp};
       <hr>
       
       <h2>Aufgabentext</h2>
-      <div class="well">@if(getsHelp) { @exercise.getText } else { @Html(exercise.getDiagDrawText) }</div>
+      <div class="well text-justify">@if(getsHelp) { @exercise.getText } else { @Html(exercise.diagDrawText) }</div>
       
       <div class="panel panel-default">
         <div class="panel-heading">DEBUG:</div>

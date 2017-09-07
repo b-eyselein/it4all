@@ -11,7 +11,7 @@
   <div class="panel-heading">Aufgabe @ex.getId: @ex.getTitle</div>
   <div class="panel-body">
     <h3>Text f&uuml;r Klassenwahl:</h3>
-    <p>@Html(ex.getClassSelText)</p>
+    <p class="text-justify">@Html(ex.classSelText)</p>
     
     <hr>
     
@@ -21,7 +21,7 @@
           <a data-toggle="collapse" href="#@ex.getId">Zugrundeliegendes Html</a>
         </div>
         <div id="@ex.getId" class="panel-collapse collapse">
-          <div class="panel-body">@ex.getClassSelText</div>
+          <div class="panel-body text-justify">@ex.classSelText</div>
         </div>
       </div>
     </div>

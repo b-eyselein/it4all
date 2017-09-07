@@ -12,28 +12,28 @@
 		],
 		"mappings": [
 			{
-				"mappedKey": "Stationen",
-				"mappedValue": "Station"
+				"key": "Stationen",
+				"value": "Station"
 			},
 			{
-				"mappedKey": "Doktoren",
-				"mappedValue": "Doktor"
+				"key": "Doktoren",
+				"value": "Doktor"
 			},
 			{
-				"mappedKey": "Krankenschwestern",
-				"mappedValue": "Krankenschwester"
+				"key": "Krankenschwestern",
+				"value": "Krankenschwester"
 			},
 			{
-				"mappedKey": "Patienten",
-				"mappedValue": "Patient"
+				"key": "Patienten",
+				"value": "Patient"
 			},
 			{
-				"mappedKey": "Namen",
-				"mappedValue": "Name"
+				"key": "Namen",
+				"value": "Name"
 			},
 			{
-				"mappedKey": "Medikamente",
-				"mappedValue": "Medikament"
+				"key": "Medikamente",
+				"value": "Medikament"
 			}
 		],
 		"solution": {
@@ -233,7 +233,7 @@
 				}
 			]
 		},
-		"ignore": [
+		"ignoreWords": [
 			"Ein",
 			"Jede"
 		]
@@ -259,48 +259,48 @@
 		],
 		"mappings": [
 			{
-				"mappedKey": "Vertrauens",
-				"mappedValue": "Vertrauen"
+				"key": "Vertrauens",
+				"value": "Vertrauen"
 			},
 			{
-				"mappedKey": "Gewächshäuser",
-				"mappedValue": "Gewächshaus"
+				"key": "Gewächshäuser",
+				"value": "Gewächshaus"
 			},
 			{
-				"mappedKey": "Typs",
-				"mappedValue": "Typ"
+				"key": "Typs",
+				"value": "Typ"
 			},
 			{
-				"mappedKey": "Koordinaten",
-				"mappedValue": "Koordinate"
+				"key": "Koordinaten",
+				"value": "Koordinate"
 			},
 			{
-				"mappedKey": "Pflanzentypen",
-				"mappedValue": "Pflanzentyp"
+				"key": "Pflanzentypen",
+				"value": "Pflanzentyp"
 			},
 			{
-				"mappedKey": "Untertypen",
-				"mappedValue": "Untertyp"
+				"key": "Untertypen",
+				"value": "Untertyp"
 			},
 			{
-				"mappedKey": "Bäume",
-				"mappedValue": "Baum"
+				"key": "Bäume",
+				"value": "Baum"
 			},
 			{
-				"mappedKey": "Blumen",
-				"mappedValue": "Blume"
+				"key": "Blumen",
+				"value": "Blume"
 			},
 			{
-				"mappedKey": "Nutzpflanzen",
-				"mappedValue": "Nutzpflanze"
+				"key": "Nutzpflanzen",
+				"value": "Nutzpflanze"
 			},
 			{
-				"mappedKey": "Blütenfarben",
-				"mappedValue": "Blützenfarbe"
+				"key": "Blütenfarben",
+				"value": "Blützenfarbe"
 			},
 			{
-				"mappedKey": "Pflanzen",
-				"mappedValue": "Pflanze"
+				"key": "Pflanzen",
+				"value": "Pflanze"
 			}
 		],
 		"solution": {
@@ -311,7 +311,7 @@
 			"implementations": [
 			]
 		},
-		"ignore": [
+		"ignoreWords": [
 			"Sie",
 			"Jede",
 			"In",

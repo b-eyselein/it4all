@@ -30,7 +30,7 @@ public class SqlExerciseReader extends ExerciseReader<SqlExercise> {
     if(sample == null)
       sample = new SqlSample(key);
 
-    sample.sample = readTextArray(sampleSolNode.get("sample"), "\n");
+    sample.sample = readAndJoinTextArray(sampleSolNode.get("sample"), "\n");
 
     Logger.debug(sample.sample);
 
@@ -67,7 +67,7 @@ public class SqlExerciseReader extends ExerciseReader<SqlExercise> {
 
     exercise.samples = readArray(exerciseNode.get(StringConsts.SAMPLES_NAME), SqlExerciseReader::readSampleSolution);
     exercise.hint = exerciseNode.get("hint").asText();
-    exercise.tags = readTextArray(exerciseNode.get("tags"), SqlExercise.SAMPLE_JOIN_CHAR);
+    exercise.tags = readAndJoinTextArray(exerciseNode.get("tags"), SqlExercise.SAMPLE_JOIN_CHAR);
   }
 
 }
