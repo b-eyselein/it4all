@@ -90,20 +90,20 @@ public class ProgController extends ExerciseController<ProgExercise, ProgEvaluat
   }
   
   public Result index() {
-    return ok(views.html.progIndex.render(getUser(), ProgExercise.finder.all()));
+    return ok(views.html.exesList.render(getUser(), finder.all(), new Html(""), ProgRoutesObject$.MODULE$));
   }
   
   public Result testData(int id) {
     final User user = getUser();
     final List<CommitedTestData> oldTestData = CommitedTestData.forUserAndExercise(user, id);
     
-    return ok(views.html.testData.render(user, ProgExercise.finder.byId(id),
-        oldTestData != null ? oldTestData : new LinkedList<>()));
+    return ok(
+        views.html.testData.render(user, finder.byId(id), oldTestData != null ? oldTestData : new LinkedList<>()));
   }
   
   public Result validateTestData(int id) {
     final User user = getUser();
-    final ProgExercise exercise = ProgExercise.finder.byId(id);
+    final ProgExercise exercise = finder.byId(id);
     final DynamicForm form = factory.form().bindFromRequest();
     // final AvailableLanguages language =
     // AvailableLanguages.valueOf(form.get(StringConsts.LANGUAGE_NAME));
@@ -118,7 +118,7 @@ public class ProgController extends ExerciseController<ProgExercise, ProgEvaluat
   }
   
   public Result validateTestDataLive(int id) {
-    // final ProgExercise exercise = ProgExercise.finder.byId(id);
+    // final ProgExercise exercise = finder.byId(id);
     // final DynamicForm form = factory.form().bindFromRequest();
     // final AvailableLanguages language =
     // AvailableLanguages.valueOf(form.get(StringConsts.LANGUAGE_NAME));

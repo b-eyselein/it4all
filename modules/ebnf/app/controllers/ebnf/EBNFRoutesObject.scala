@@ -1,11 +1,14 @@
 package controllers.ebnf
 
 import controllers.ebnf.routes.EBNFAdmin._
+import controllers.ebnf.routes.EBNFController._
 import controllers.core.RoutesObject
 
-object EBNFRoutesObject extends RoutesObject {
+object EBNFRoutesObject extends RoutesObject("EBNF") {
 
   // User
+
+  def exerciseRoute(id: Int) = exercise(id)
 
   override def correctLiveRoute(id: Int) = null
 

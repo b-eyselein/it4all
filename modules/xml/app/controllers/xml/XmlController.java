@@ -8,7 +8,6 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -49,18 +48,9 @@ public class XmlController extends ExerciseController<XmlExercise, XmlError> {
     return referenceFilePath.toFile().exists() ? CommonUtils$.MODULE$.readFile(referenceFilePath) : "FEHLER!";
   }
   
-  public Result index(List<String> filter) {
-    // @formatter:off
-    final List<XmlExType> filters = filter.isEmpty() ?
-        Arrays.asList(XmlExType.values()) :
-        filter.stream().map(XmlExType::valueOf).collect(Collectors.toList());
-
-    final List<XmlExercise> exercises = XmlExercise.finder.all().stream()
-        .filter(ex -> filters.contains(ex.exerciseType))
-        .collect(Collectors.toList());
-    // @formatter:on
-    
-    return ok(views.html.xmlIndex.render(getUser(), exercises, filters));
+  public Result index() {
+    return ok(views.html.exesList.render(getUser(), finder.all(), views.html.xmlExesListRest.render(),
+        XmlRoutesObject$.MODULE$));
   }
   
   public Result playground() {

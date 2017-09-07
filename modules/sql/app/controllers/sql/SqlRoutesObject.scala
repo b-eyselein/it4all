@@ -3,9 +3,11 @@ package controllers.sql
 import controllers.core.RoutesObject
 import controllers.sql.routes.SqlAdmin._
 
-object SqlRoutesObject extends RoutesObject {
+object SqlRoutesObject extends RoutesObject("Sql") {
 
   // User
+
+  def exerciseRoute(id: Int) = null
 
   override def correctLiveRoute(id: Int) = null
 

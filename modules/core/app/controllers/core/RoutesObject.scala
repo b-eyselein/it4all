@@ -2,10 +2,14 @@ package controllers.core
 
 import play.api.mvc.Call
 
-abstract class RoutesObject {
+abstract class RoutesObject(val exType: String) {
 
   // User
 
+  def exerciseRoute(id: Int): Call
+  
+  def exerciseRoutes(id: Int): List[(Call, String)] = List((exerciseRoute(id), "Aufgabe bearbeiten"))
+  
   def correctLiveRoute(id: Int): Call
 
   def correctRoute(id: Int): Call
@@ -15,7 +19,7 @@ abstract class RoutesObject {
   val restHeaders: List[String]
 
   def adminIndexRoute: Call
-  
+
   def exercisesRoute: Call
 
   def newExFormRoute: Call
@@ -27,7 +31,7 @@ abstract class RoutesObject {
   def jsonSchemaRoute: Call
 
   def uploadFileRoute: Call
-  
+
   def changeExStateRoute(id: Int): Call
 
   def editExerciseFormRoute(id: Int): Call

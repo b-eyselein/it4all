@@ -3,9 +3,11 @@ package controllers.uml
 import controllers.core.RoutesObject
 import controllers.uml.routes.UmlAdmin._
 
-object UmlRoutesObject extends RoutesObject {
+object UmlRoutesObject extends RoutesObject("Uml") {
 
   // User
+
+  def exerciseRoute(id: Int) = null
 
   override def correctLiveRoute(id: Int) = null
 

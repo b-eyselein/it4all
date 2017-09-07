@@ -4,16 +4,20 @@ import controllers.programming.routes.ProgController._
 import controllers.programming.routes.ProgAdmin._
 import controllers.core.RoutesObject
 
-object ProgRoutesObject extends RoutesObject {
+object ProgRoutesObject extends RoutesObject("Programmierung") {
 
   // User
+
+  override def exerciseRoute(id: Int) = exercise(id)
+
+  override def exerciseRoutes(id: Int) = List((testData(id), "Testdaten erstellen"), (exercise(id), "Aufgabe bearbeiten"))
 
   override def correctLiveRoute(id: Int) = correctLive(id)
 
   override def correctRoute(id: Int) = correct(id)
 
   // Admin
-  
+
   override val restHeaders = List.empty
 
   override def adminIndexRoute = adminIndex

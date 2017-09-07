@@ -19,7 +19,7 @@
   
   @for(ex <- exercises) {
   <div class="row">
-    <div class="col-md-1">@Html(ex.getBadges)</div>
+    <div class="col-md-1">@for(tag <- ex.getTags) { @tag.render }</div>
     <div class="col-md-1"><a href="@sql.routes.SqlController.exercise(ex.getId)" class="btn btn-default btn-block">@ex.getId</a></div>
     <div class="col-md-10">@ex.getText</div>
   </div>

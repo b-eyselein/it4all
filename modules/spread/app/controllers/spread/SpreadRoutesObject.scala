@@ -1,11 +1,14 @@
 package controllers.spread
 
 import controllers.spread.routes.SpreadAdmin._
+import controllers.spread.routes.SpreadController._
 import controllers.core.RoutesObject
 
-object SpreadRoutesObject extends RoutesObject {
+object SpreadRoutesObject extends RoutesObject("Tabellenkalkulation") {
 
   // User
+
+  def exerciseRoute(id: Int) = exercise(id)
 
   override def correctLiveRoute(id: Int) = null
 

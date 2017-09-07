@@ -22,47 +22,43 @@ import model.SqlSolution;
 
 @Entity
 public class SqlExercise extends Exercise {
-  
+
   public static final String SAMPLE_JOIN_CHAR = "#";
-  
+
   public static final Finder<Integer, SqlExercise> finder = new Finder<>(SqlExercise.class);
-  
+
   @Enumerated(EnumType.STRING)
   @JsonProperty(required = true)
   public SqlExerciseType exerciseType;
-  
+
   @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
   @JsonManagedReference
   public List<SqlSample> samples;
-  
+
   @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
   @JsonIgnore
   public List<SqlSolution> solutions;
-  
+
   @ManyToOne
   @JsonBackReference
   public SqlScenario scenario;
-  
+
   @JsonProperty(required = true)
   public String tags;
-  
+
   @JsonProperty(required = true)
   public String hint;
-  
+
   public SqlExercise(int id) {
     super(id);
   }
-  
-  @JsonIgnore
-  public String getBadges() {
-    return getTags().stream().map(SqlTag::getButtonContent).collect(Collectors.joining());
-  }
-  
+
+  @Override
   public List<SqlTag> getTags() {
     if(tags.isEmpty())
       return Collections.emptyList();
-    
+
     return Arrays.stream(tags.split(SAMPLE_JOIN_CHAR)).map(SqlTag::valueOf).collect(Collectors.toList());
   }
-  
+
 }

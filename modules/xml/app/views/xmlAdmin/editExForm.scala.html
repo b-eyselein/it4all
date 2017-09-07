@@ -18,7 +18,7 @@
         @for(exType <- model.XmlExType.values) {
           <div class="radio-inline">
             <label><input type="radio" name="@model.StringConsts.EXERCISE_TYPE" value="@exType" 
-            @if(exercise.exerciseType == exType) { checked } required>@Html(exType.getTag)</label>
+            @if(exercise.exerciseType == exType) { checked } required>@exType.render</label>
           </div>
         }
         </div>

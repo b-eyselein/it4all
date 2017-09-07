@@ -3,9 +3,11 @@ package controllers.questions
 import controllers.questions.routes.QuestionAdmin._
 import controllers.core.RoutesObject
 
-object QuestionRoutesObject extends RoutesObject {
+object QuestionRoutesObject extends RoutesObject("Auswahlfragen") {
 
   // User
+
+  def exerciseRoute(id: Int) = null // exercise(id)
 
   override def correctLiveRoute(id: Int) = null
 

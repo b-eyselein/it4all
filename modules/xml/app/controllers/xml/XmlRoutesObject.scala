@@ -6,10 +6,14 @@ import play.api.mvc.Call
 import controllers.xml.routes.XmlController._
 import controllers.xml.routes.XmlAdmin._
 
-object XmlRoutesObject extends RoutesObject {
+object XmlRoutesObject extends RoutesObject("Xml") {
 
   // User
 
+  override def exerciseRoute(id: Int) = exercise(id)
+
+  
+  
   override def correctLiveRoute(id: Int) = correctLive(id)
 
   override def correctRoute(id: Int) = correct(id)

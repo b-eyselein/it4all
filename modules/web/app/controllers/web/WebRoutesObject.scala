@@ -1,15 +1,20 @@
 package controllers.web
 
 import controllers.web.routes.WebAdmin._
+import controllers.web.routes.WebController._
 import controllers.core.RoutesObject
 
-object WebRoutesObject extends RoutesObject {
+object WebRoutesObject extends RoutesObject("Web") {
 
   // User
 
-  override def correctLiveRoute(id: Int) = null
+  override def exerciseRoute(id: Int) = null // exercise(id)
 
-  override def correctRoute(id: Int) = null
+  override def exerciseRoutes(id: Int) = List((exercise(id, "html"), "Html-Teil"), (exercise(id, "js"), "Js-Teil"))
+
+  override def correctLiveRoute(id: Int) = correctLive(id, "html")
+
+  override def correctRoute(id: Int) = correct(id, "html")
 
   // Admin
 

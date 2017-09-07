@@ -1,0 +1,38 @@
+@(user: model.user.User, exercises: List[_ <: model.exercise.Exercise], rest: Html, links: controllers.core.RoutesObject)
+
+@main(links.exType, user) {
+<div class="container">
+  <div class="page-header">
+    <h1 class="page-title">&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h1>
+  </div>
+  
+  @rest
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Tags</th>
+        <th>Titel</th>
+        <th>Text</th>
+        <th>Link(s)</th>
+      </tr>
+      </thead>
+      <tbody>
+        @for(exercise <- exercises) {
+        <tr>
+          <td>@exercise.id</td>
+          <td>@for(tag <- exercise.getTags) { @tag.render }</td>
+          <td>@exercise.title</td>
+          @helperTemplates.stringLen.render(exercise.text, 50)
+          <td>
+            @for(exRoute <- links.exerciseRoutes(exercise.id)) {
+              <a href="@exRoute._1" class="btn btn-primary">@exRoute._2</a>
+            }
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>  
+</div>
+}
