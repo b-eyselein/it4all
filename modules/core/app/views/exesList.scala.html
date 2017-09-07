@@ -5,9 +5,13 @@
   <div class="page-header">
     <h1 class="page-title">&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h1>
   </div>
-  
-  @rest
 
+@if(exercises.isEmpty) {
+  <div class="alert alert-danger">Es existieren bisher keine Aufgaben in der Kategorie @links.exType.
+  Wenden Sie Sich bitte an den Administrator.</div>
+} else {
+  @rest
+  
   <div class="row">
     <div class="col-sm-1"><h4>Id</h4></div>
     <div class="col-sm-1"><h4>Tags</h4></div>
@@ -19,7 +23,6 @@
   </div>
   
   <hr>
-
 
   @for(exercise <- exercises) {
   <div class="row">
@@ -40,5 +43,6 @@
   
   <hr>
   }
+}
 </div>
 }

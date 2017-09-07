@@ -1,10 +1,9 @@
 package model.task;
 
-import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -29,16 +28,19 @@ public class Condition extends Model {
   @EmbeddedId
   public JsConditionKey key;
 
-  @ManyToOne(cascade = CascadeType.ALL)
+  @ManyToOne
+  @JoinColumn(name = "task_id", referencedColumnName = "task_id", insertable = false, updatable = false)
+  @JoinColumn(name = "exercise_id", referencedColumnName = "exercise_id", insertable = false, updatable = false)
   @JsonBackReference
-  @JoinColumns({@JoinColumn(name = "task_id", referencedColumnName = "task_id", insertable = false, updatable = false),
-      @JoinColumn(name = "exercise_id", referencedColumnName = "exercise_id", insertable = false, updatable = false)})
   public JsWebTask task;
 
+  @Column
   public String xpathQuery;
 
+  @Column
   public boolean isPrecondition;
 
+  @Column
   public String awaitedValue;
 
   public Condition(JsConditionKey theKey) {
@@ -61,12 +63,12 @@ public class Condition extends Model {
   }
 
   public ConditionResult test(SearchContext context) {
-    WebElement element = context.findElement(By.xpath(xpathQuery));
+    final WebElement element = context.findElement(By.xpath(xpathQuery));
 
     if(element == null)
       return new ConditionResult(Success.NONE, this, null, isPrecondition);
 
-    String gottenValue = element.getText();
+    final String gottenValue = element.getText();
 
     Success success = Success.NONE;
     if(gottenValue.equals(awaitedValue))

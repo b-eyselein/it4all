@@ -3,6 +3,7 @@ package model.task;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 
 import org.openqa.selenium.By;
@@ -20,33 +21,35 @@ import model.result.WebResult;
 
 @Entity
 public class HtmlTask extends WebTask {
-
+  
   private static final Splitter ATTR_SPLITTER = Splitter.on(";").omitEmptyStrings();
-
+  
   public static final Finder<WebTaskKey, HtmlTask> finder = new Finder<>(HtmlTask.class);
-
+  
+  @Column
   public String attributes;
-
+  
+  @Column
   public String textContent;
-
+  
   public HtmlTask(WebTaskKey theKey) {
     super(theKey);
   }
-
+  
   @Override
   public WebResult evaluate(SearchContext searchContext) {
-    List<WebElement> foundElements = searchContext.findElements(By.xpath(xpathQuery));
-
+    final List<WebElement> foundElements = searchContext.findElements(By.xpath(xpathQuery));
+    
     if(foundElements.isEmpty())
       return new ElementResultBuilder(this).withMessage("Element konnte nicht gefunden werden!").build();
-
+    
     if(foundElements.size() > 1)
       return new ElementResultBuilder(this)
           .withMessage("Element konnte nicht eindeutig identifiziert werden. Existiert das Element eventuell mehrfach?")
           .build();
-
-    WebElement foundElement = foundElements.get(0);
-
+    
+    final WebElement foundElement = foundElements.get(0);
+    
     // @formatter:off
     return new ElementResultBuilder(this)
         .withFoundElement(foundElement)
@@ -55,13 +58,13 @@ public class HtmlTask extends WebTask {
         .build();
     // @formatter:on
   }
-
+  
   public List<Attribute> getAttributes() {
     return ATTR_SPLITTER.splitToList(attributes).stream().map(Attribute::fromString).collect(Collectors.toList());
   }
-
+  
   protected List<AttributeResult> evaluateAllAttributeResults(WebElement foundElement) {
     return getAttributes().stream().map(attr -> attr.evaluate(foundElement)).collect(Collectors.toList());
   }
-
+  
 }

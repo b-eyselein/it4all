@@ -19,30 +19,31 @@ import model.result.WebResult;
 
 @MappedSuperclass
 public abstract class WebTask extends Model {
-  
+
   protected static final Splitter SPLITTER = Splitter.fixedLength(100).omitEmptyStrings();
-  
+
   @EmbeddedId
   public WebTaskKey key;
-  
+
   @ManyToOne
   @JoinColumn(name = "exercise_id", insertable = false, updatable = false)
   @JsonBackReference
   public WebExercise exercise;
-  
+
   @Column(columnDefinition = "text")
   public String text;
-  
+
+  @Column
   public String xpathQuery;
-  
+
   public WebTask(WebTaskKey theKey) {
     key = theKey;
   }
-  
+
   public abstract WebResult evaluate(SearchContext context);
-  
+
   public List<String> getText() {
     return SPLITTER.splitToList(text);
   }
-  
+
 }
