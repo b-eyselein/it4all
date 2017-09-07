@@ -1,14 +1,17 @@
 package controllers.uml
 
-import controllers.core.RoutesObject
 import controllers.uml.routes.UmlAdmin._
+import controllers.uml.routes.UmlController._
+import controllers.core.RoutesObject
 
 object UmlRoutesObject extends RoutesObject("Uml") {
 
   // User
 
-  def exerciseRoute(id: Int) = null
+  override def exerciseRoute(id: Int) = null
 
+  override def exerciseRoutes(id: Int) =
+    List((classSelection(id), "Mit Zwischenkorrektur"), (diagramDrawing(id), "Freies Erstellen"))
   override def correctLiveRoute(id: Int) = null
 
   override def correctRoute(id: Int) = null
