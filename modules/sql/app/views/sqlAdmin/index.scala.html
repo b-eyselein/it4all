@@ -12,9 +12,4 @@
 </li>
 }
 
-@strs = @{scala.collection.Map(
-  "app" -> "Sql",
-  "pluralName" -> "Szenarien"
-)}
-
-@admin.collectionAdminMain(user, strs, statistics, controllers.sql.SqlRoutesObject) { }
+@admin.collectionAdminMain(user, statistics, controllers.sql.SqlRoutesObject) { }

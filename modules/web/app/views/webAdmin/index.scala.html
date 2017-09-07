@@ -9,10 +9,4 @@
   </ul>
 </li>
 }
-
-@strs = @{scala.collection.Map(
-  "app" -> "Web",
-  "pluralName" -> "Aufgaben"
-)}
-
-@admin.exerciseAdminMain(user, strs, statistics, controllers.web.WebRoutesObject) { }
+@admin.exerciseAdminMain(user, statistics, controllers.web.WebRoutesObject) { }

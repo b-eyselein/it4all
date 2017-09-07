@@ -1,7 +1,6 @@
-@(user: model.user.User, strs: scala.collection.Map[String, String], statistics: Html, administration: Html,
-	links: controllers.core.RoutesObject)(content: Html)
+@(user: model.user.User, statistics: Html, administration: Html, links: controllers.core.RoutesObject)(content: Html)
 
-@title = @{"Administrator " + strs("app")}
+@title = @{"Administrator " + links.exType}
 
 @main(title, user) {
 <div class="container">
@@ -27,7 +26,8 @@
   <section id="upload">
     <h2>Upload neuer Aufgaben</h2>
     <div class="alert alert-info">
-      Die Datei wird gegen diese <a class="alert-link" target="_blank" href="@links.jsonSchemaRoute">JSON Schema-Datei</a> geprüft.
+      Die Datei wird gegen diese <a class="alert-link" target="_blank" 
+      href="@links.jsonSchemaRoute">JSON Schema-Datei</a> geprüft.
       Im Erfolgsfall werden die Aufgaben ausgelesen und in der Datenbank gespeichert.
     </div>
     

@@ -2,14 +2,14 @@ package controllers.core
 
 import play.api.mvc.Call
 
-abstract class RoutesObject(val exType: String) {
+abstract class RoutesObject(val exType: String, val pluralName: String = "Aufgaben") {
 
   // User
 
   def exerciseRoute(id: Int): Call
-  
+
   def exerciseRoutes(id: Int): List[(Call, String)] = List((exerciseRoute(id), "Aufgabe bearbeiten"))
-  
+
   def correctLiveRoute(id: Int): Call
 
   def correctRoute(id: Int): Call

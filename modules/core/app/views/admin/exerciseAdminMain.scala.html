@@ -1,7 +1,7 @@
-@(user: model.user.User, strs: scala.collection.Map[String, String], statistics: Html, links: controllers.core.RoutesObject)(content: Html)
+@(user: model.user.User, statistics: Html, links: controllers.core.RoutesObject)(content: Html)
 
 @administration = {
-<h2>Verwaltung der @strs("pluralName")</h2>
+<h2>Verwaltung der @links.pluralName</h2>
 <a class="btn btn-default btn-block" href="@links.exercisesRoute">Übersicht über alle Aufgaben</a>
 
 &nbsp;
@@ -16,4 +16,4 @@
 </div>
 }
 
-@adminMain(user, strs, statistics, administration, links) { }
+@adminMain(user, statistics, administration, links) { }

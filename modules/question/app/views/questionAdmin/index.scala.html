@@ -20,9 +20,4 @@
 <li>Es existieren @model.quiz.Quiz.finder.all.size <a href="@questions.routes.QuizAdmin.exerciseCollections">Quiz(ze)</a></li>
 }
 
-@strs = @{scala.collection.Map(
-  "app" -> "Fragen",
-  "pluralName" -> "Szenaren"
-)}
-
-@admin.exerciseAdminMain(user, strs, statistics, controllers.questions.QuestionRoutesObject) { }
+@admin.exerciseAdminMain(user, statistics, controllers.questions.QuestionRoutesObject) { }

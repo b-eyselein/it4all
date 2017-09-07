@@ -10,9 +10,4 @@
 </li>
 }
 
-@strs = @{scala.collection.Map(
-  "app" -> "Xml",
-  "pluralName" -> "Aufgaben"
-)}
-
-@admin.exerciseAdminMain(user, strs, statistics, controllers.xml.XmlRoutesObject) { }
+@admin.exerciseAdminMain(user, statistics, controllers.xml.XmlRoutesObject) { }

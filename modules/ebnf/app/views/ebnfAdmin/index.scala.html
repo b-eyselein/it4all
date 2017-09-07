@@ -1,12 +1,7 @@
 @(user: model.user.User)
 
-@strs = @{scala.collection.Map(
-	"pluralName" -> "EBNF-Aufgaben",
-	"app" -> "EBNF"
-)}
-
 @stats = {
 <p>TODO: Statistiken
 }
 
-@admin.exerciseAdminMain(user, strs, stats, controllers.ebnf.EBNFRoutesObject) { }
+@admin.exerciseAdminMain(user, stats, controllers.ebnf.EBNFRoutesObject) { }
