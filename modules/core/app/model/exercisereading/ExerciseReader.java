@@ -76,9 +76,8 @@ public abstract class ExerciseReader<E extends Exercise> extends JsonReader<E> {
     exercise.text = readTextArray(node.get(TEXT_NAME), "");
 
     final JsonNode stateNode = node.get(STATE_NAME);
-    if(stateNode != null)
-      exercise.state = ExerciseState.valueOf(stateNode.asText());
-    
+    exercise.state = stateNode != null ? ExerciseState.valueOf(stateNode.asText()) : ExerciseState.CREATED;
+
     updateExercise(exercise, node);
   }
 

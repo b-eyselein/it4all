@@ -10,11 +10,11 @@
         
         <hr>
 
-        <p>@exercise.getText</p>
+        <p>@exercise.text</p>
         @if(exType.equals("html")) {
-        <p>@exercise.getHtmlText</p>
+        <p>@exercise.htmlText</p>
         } else {
-        <p>@Html(exercise.getJsText)</p>
+        <p>@Html(exercise.jsText)</p>
         }
         
         <div class="btn-group btn-group-justified">
@@ -31,11 +31,11 @@
       
         <div id="correction">
         @if("html".equals(exType)) {
-      	 @for(task <- exercise.getHtmlTasks) {
+      	 @for(task <- exercise.htmlTasks) {
           <div class="panel panel-default"><div class="panel-body">@{task.key.taskId}. @task.text</div></div>
           }
         } else {
-      	  @for(task <- exercise.getJsTasks) {
+      	  @for(task <- exercise.jsTasks) {
           <div class="panel panel-default"><div class="panel-body">@{task.key.taskId}. @task.text</div></div>
           }
         }

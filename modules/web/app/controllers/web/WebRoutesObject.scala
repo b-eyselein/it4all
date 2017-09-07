@@ -13,7 +13,7 @@ object WebRoutesObject extends RoutesObject {
 
   // Admin
 
-  override val restHeaders = List("# Tasks Html / Js", "Text Html", "Text Js")
+  override val restHeaders = List("# Tasks Html / Js", "Text Html / Js")
 
   override def adminIndexRoute = adminIndex
 

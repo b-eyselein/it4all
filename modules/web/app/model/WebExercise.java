@@ -19,89 +19,55 @@ import play.twirl.api.Html;
 
 @Entity
 public class WebExercise extends Exercise {
-
+  
   public static final Finder<Integer, WebExercise> finder = new Finder<>(WebExercise.class);
-
+  
   @Column(columnDefinition = "text")
-  private String htmlText;
-
+  public String htmlText;
+  
   @Column(columnDefinition = "text")
-  private String jsText;
-
+  public String jsText;
+  
   @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
   @JsonManagedReference
-  private List<HtmlTask> htmlTasks;
-
+  public List<HtmlTask> htmlTasks;
+  
   @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
   @JsonManagedReference
-  private List<JsWebTask> jsTasks;
-
+  public List<JsWebTask> jsTasks;
+  
   @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL)
   @JsonIgnore
   public List<WebSolution> solutions;
-
+  
   public WebExercise(int id) {
     super(id);
-    htmlText = "";
-    jsText = "";
   }
-
+  
   @JsonIgnore
   public static long withHtmlPart() {
     return finder.all().stream().filter(ex -> !ex.htmlTasks.isEmpty()).count();
   }
-
+  
   @JsonIgnore
   public static long withJsPart() {
     return finder.all().stream().filter(ex -> !ex.jsTasks.isEmpty()).count();
   }
-
-  public List<HtmlTask> getHtmlTasks() {
-    return htmlTasks;
-  }
-
-  public String getHtmlText() {
-    return htmlText;
-  }
-
+  
   @JsonProperty("htmlText")
   public List<String> getHtmlTextForJson() {
     return SPLITTER.splitToList(htmlText);
   }
-
-  public List<JsWebTask> getJsTasks() {
-    return jsTasks;
-  }
-
-  public String getJsText() {
-    return jsText;
-  }
-
+  
   @JsonProperty("jsText")
   public List<String> getJsTextForJson() {
     return SPLITTER.splitToList(jsText);
   }
-
+  
   @Override
   @JsonIgnore
   public Html renderRest() {
-    return views.html.webAdmin.webExRest.render(this);
+    return views.html.webAdmin.webExTableRest.render(this);
   }
-
-  public void setHtmlTasks(List<HtmlTask> theHtmlTasks) {
-    htmlTasks = theHtmlTasks;
-  }
-
-  public void setHtmlText(String theHtmlText) {
-    htmlText = theHtmlText;
-  }
-
-  public void setJsTasks(List<JsWebTask> theJsTasks) {
-    jsTasks = theJsTasks;
-  }
-
-  public void setJsText(String theJsText) {
-    jsText = theJsText;
-  }
-
+  
 }

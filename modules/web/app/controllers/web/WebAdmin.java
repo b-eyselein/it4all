@@ -22,8 +22,8 @@ public class WebAdmin extends AExerciseAdminController<WebExercise> {
     return ok(views.html.webAdmin.index.render(getUser()));
   }
 
-  public Result tasks(int exerciseId) {
-    return ok(views.html.webAdmin.tasks.render(getUser(), finder.byId(exerciseId)));
+  public Result exRest(int exerciseId) {
+    return ok(views.html.webAdmin.webExRest.render(getUser(), finder.byId(exerciseId)));
   }
 
   @Override
