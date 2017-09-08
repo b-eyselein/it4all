@@ -29,7 +29,7 @@ PUT      /exercise/:id/state         controllers.questions.QuestionAdmin.changeE
 GET      /newQuestionForm            controllers.questions.QuestionAdmin.newExerciseForm
 
 # All
-GET      /                           controllers.questions.QuestionController.index(start: Int ?= 0)
+GET      /                           controllers.questions.QuestionController.index(start: Int ?= 1)
 
 
 GET      /new/:isFreetext            controllers.questions.QuestionController.newQuestionForm(isFreetext: Boolean)

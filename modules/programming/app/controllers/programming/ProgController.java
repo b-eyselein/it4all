@@ -28,33 +28,47 @@ import play.mvc.Result;
 import play.twirl.api.Html;
 
 public class ProgController extends ExerciseController<ProgExercise, ProgEvaluationResult> {
-  
+
   private static final ExerciseOptions EX_OPTIONS = new ExerciseOptions("Programmierung",
       AvailableLanguages.getStdLang().getAceName(), 15, 30, false);
-  
+
   public static final int STD_TEST_DATA_COUNT = 2;
-  
-  @Inject
-  public ProgController(FormFactory theFactory) {
-    super(theFactory, "prog", ProgExercise.finder, ProgRoutesObject$.MODULE$);
-  }
-  
+
   public static User getUser() {
     final User user = ExerciseController.getUser();
-    
+
     if(ProgUser.finder.byId(user.name) == null)
       // Make sure there is a corresponding entrance in other db...
       new ProgUser(user.name).save();
-    
+
     return user;
   }
-  
+
   private static List<CommitedTestData> extractTestData(DynamicForm form, String username, ProgExercise exercise) {
     return IntStream.range(0, Integer.parseInt(form.get(StringConsts.TEST_COUNT_NAME)))
         .mapToObj(testCounter -> readTestDataFromForm(form, username, testCounter, exercise))
         .collect(Collectors.toList());
   }
-  
+
+  private static CommitedTestData readTestDataFromForm(DynamicForm form, String username, int testId,
+      ProgExercise exercise) {
+    final CommitedTestDataKey key = new CommitedTestDataKey(username, exercise.getId(), testId);
+    CommitedTestData testdata = CommitedTestData.finder.byId(key);
+
+    if(testdata == null)
+      testdata = new CommitedTestData(key);
+
+    testdata.exercise = exercise;
+    testdata.inputs = IntStream.range(0, exercise.getInputCount())
+        .mapToObj(inputCounter -> form.get("inp_" + inputCounter + "_" + testId))
+        .collect(Collectors.joining(ITestData.VALUES_SPLIT_CHAR));
+
+    testdata.output = form.get("outp_" + testId);
+    testdata.approvalState = ApprovalState.CREATED;
+
+    return testdata;
+  }
+
   // private static ProgLangCorrector getCorrector(AvailableLanguages language)
   // {
   // switch(language) {
@@ -65,58 +79,40 @@ public class ProgController extends ExerciseController<ProgExercise, ProgEvaluat
   // return new PythonCorrector();
   // }
   // }
-  
-  private static CommitedTestData readTestDataFromForm(DynamicForm form, String username, int testId,
-      ProgExercise exercise) {
-    final CommitedTestDataKey key = new CommitedTestDataKey(username, exercise.getId(), testId);
-    CommitedTestData testdata = CommitedTestData.finder.byId(key);
-    
-    if(testdata == null)
-      testdata = new CommitedTestData(key);
-    
-    testdata.exercise = exercise;
-    testdata.inputs = IntStream.range(0, exercise.getInputCount())
-        .mapToObj(inputCounter -> form.get("inp_" + inputCounter + "_" + testId))
-        .collect(Collectors.joining(ITestData.VALUES_SPLIT_CHAR));
-    
-    testdata.output = form.get("outp_" + testId);
-    testdata.approvalState = ApprovalState.CREATED;
-    
-    return testdata;
+
+  @Inject
+  public ProgController(FormFactory theFactory) {
+    super(theFactory, "prog", ProgExercise.finder, ProgRoutesObject$.MODULE$);
   }
-  
+
   public Result getDeclaration(String lang) {
     return ok(AvailableLanguages.valueOf(lang).getDeclaration());
   }
-  
-  public Result index() {
-    return ok(views.html.exesList.render(getUser(), finder.all(), new Html(""), ProgRoutesObject$.MODULE$));
-  }
-  
+
   public Result testData(int id) {
     final User user = getUser();
     final List<CommitedTestData> oldTestData = CommitedTestData.forUserAndExercise(user, id);
-    
+
     return ok(
         views.html.testData.render(user, finder.byId(id), oldTestData != null ? oldTestData : new LinkedList<>()));
   }
-  
+
   public Result validateTestData(int id) {
     final User user = getUser();
     final ProgExercise exercise = finder.byId(id);
     final DynamicForm form = factory.form().bindFromRequest();
     // final AvailableLanguages language =
     // AvailableLanguages.valueOf(form.get(StringConsts.LANGUAGE_NAME));
-    
+
     final List<CommitedTestData> testData = extractTestData(form, user.name, exercise);
     testData.forEach(CommitedTestData::save);
-    
+
     final List<ProgEvaluationResult> validatedTestData = Collections.emptyList(); // getCorrector(language).validateTestData(exercise,
     // testData);
-    
+
     return ok(views.html.validatedTestData.render(user, exercise, validatedTestData));
   }
-  
+
   public Result validateTestDataLive(int id) {
     // final ProgExercise exercise = finder.byId(id);
     // final DynamicForm form = factory.form().bindFromRequest();
@@ -125,13 +121,13 @@ public class ProgController extends ExerciseController<ProgExercise, ProgEvaluat
 
     // final List<CommitedTestData> testData = extractTestData(form,
     // getUser().name, exercise);
-    
+
     final List<ProgEvaluationResult> validatedTestData = Collections.emptyList(); // getCorrector(language).validateTestData(exercise,
     // testData);
-    
+
     return ok(Json.toJson(validatedTestData));
   }
-  
+
   // private CompleteResult<ProgEvaluationResult> correct(User user,
   // ProgExercise exercise, String learnerSolution,
   // AvailableLanguages lang) throws CorrectionException {
@@ -155,25 +151,25 @@ public class ProgController extends ExerciseController<ProgExercise, ProgEvaluat
   // files", e);
   // }
   // }
-  
+
   @Override
   protected CompleteResult<ProgEvaluationResult> correct(DynamicForm form, ProgExercise exercise, User user) {
     // TODO Auto-generated method stub
     return null;
   }
-  
+
   @Override
   protected Html renderExercise(User user, ProgExercise exercise) {
     return views.html.exercise2Rows.render(user, ProgRoutesObject$.MODULE$, EX_OPTIONS, exercise,
         views.html.progExRest.render(exercise), AvailableLanguages.getStdLang().getDeclaration());
   }
-  
+
   @Override
   protected Html renderExesListRest() {
     // TODO Auto-generated method stub
     return new Html("");
   }
-  
+
   @Override
   protected Html renderResult(CompleteResult<ProgEvaluationResult> correctionResult) {
     // TODO Auto-generated method stub

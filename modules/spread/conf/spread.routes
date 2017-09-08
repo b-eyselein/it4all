@@ -19,7 +19,7 @@ PUT      /exercise/:id/state   controllers.spread.SpreadAdmin.changeExState(id: 
 GET      /newExForm            controllers.spread.SpreadAdmin.newExerciseForm
 
 # User
-GET      /                     controllers.spread.SpreadController.index
+GET      /                     controllers.spread.SpreadController.index(page: Int ?= 1)
 
 POST     /:id                  controllers.spread.SpreadController.upload(id: Int)
 GET      /:id/:typ             controllers.spread.SpreadController.download(id: Int, typ: String)

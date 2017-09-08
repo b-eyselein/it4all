@@ -20,7 +20,7 @@ PUT      /exercise/:id/state   controllers.ebnf.EBNFAdmin.changeExState(id: Int)
 GET      /newExForm            controllers.ebnf.EBNFAdmin.newExerciseForm
 
 # User
-GET      /                     controllers.ebnf.EBNFController.index
+GET      /                     controllers.ebnf.EBNFController.index(page: Int ?= 1)
 GET      /:id                  controllers.ebnf.EBNFController.exercise(id: Int)
 PUT      /:id                  controllers.ebnf.EBNFController.correctLive(id: Int)
 POST     /:id                  controllers.ebnf.EBNFController.correct(id: Int)

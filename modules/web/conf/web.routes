@@ -22,7 +22,7 @@ GET      /exercises/:id/rest   controllers.web.WebAdmin.exRest(id: Int)
 GET      /newExForm            controllers.web.WebAdmin.newExerciseForm
 
 # User
-GET      /                     controllers.web.WebController.index
+GET      /                     controllers.web.WebController.index(page: Int ?= 1)
 
 GET      /playground           controllers.web.WebController.playground
 

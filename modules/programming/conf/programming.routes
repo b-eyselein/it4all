@@ -20,7 +20,7 @@ GET      /newExForm            controllers.programming.ProgAdmin.newExerciseForm
 
 
 # All
-GET      /                     controllers.programming.ProgController.index
+GET      /                     controllers.programming.ProgController.index(page: Int ?= 1)
 
 GET      /testdata/:id         controllers.programming.ProgController.testData(id: Int)
 POST     /validate/:id         controllers.programming.ProgController.validateTestData(id: Int)

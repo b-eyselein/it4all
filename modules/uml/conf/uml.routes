@@ -24,7 +24,7 @@ POST     /newEx/solution           controllers.uml.UmlAdmin.newExerciseStep3
 PUT      /newEx/checkSolution      controllers.uml.UmlAdmin.checkSolution
 
 # User
-GET      /                         controllers.uml.UmlController.index
+GET      /                         controllers.uml.UmlController.index(page: Int ?= 1)
 
 
 # Step 1: selection of classes

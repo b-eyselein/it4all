@@ -28,16 +28,16 @@
       </div>
       <div class="collapse navbar-collapse" id="myNavbar">
         <ul class="nav navbar-nav">
-          <li><a href="@web.routes.WebController.index">Web</a></li>
+          <li><a href="@web.routes.WebController.index()">Web</a></li>
           
-          <li><a href="@programming.routes.ProgController.index">Programmierung</a></li>
+          <li><a href="@programming.routes.ProgController.index()">Programmierung</a></li>
           
-          <li><a href="@sql.routes.SqlController.index">SQL</a></li>
+          <li><a href="@sql.routes.SqlController.index()">SQL</a></li>
           
           @* Xml not empty because of filters *@
           <li><a href="@xml.routes.XmlController.index()">XML</a></li>
           
-          <li><a href="@uml.routes.UmlController.index">UML<sup>BETA</sup></a></li>
+          <li><a href="@uml.routes.UmlController.index()">UML<sup>BETA</sup></a></li>
           
           <li><a href="@questions.routes.QuestionController.index(0)">Auswahlfragen<sup>BETA</sup></a></li>
           
@@ -46,7 +46,7 @@
             <ul class="dropdown-menu">
               <li><a href="@routes.NaryController.index">Zahlensysteme</a></li>
               <li><a href="@bool.routes.BoolController.index">Boolesche Algebra</a></li>
-              <li><a href="@spread.routes.SpreadController.index">Tabellenkalkulation</a></li>
+              <li><a href="@spread.routes.SpreadController.index()">Tabellenkalkulation</a></li>
             </ul>
           </li>
 
