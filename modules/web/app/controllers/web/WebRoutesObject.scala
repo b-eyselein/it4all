@@ -11,6 +11,8 @@ object WebRoutesObject extends RoutesObject("Web") {
   override def exerciseRoute(id: Int) = null // exercise(id)
 
   override def exerciseRoutes(id: Int) = List((exercise(id, "html"), "Html-Teil"), (exercise(id, "js"), "Js-Teil"))
+  
+  override def exesListRoute(id: Int) = exesListRoute(id)
 
   override def correctLiveRoute(id: Int) = correctLive(id, "html")
 

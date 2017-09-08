@@ -12,6 +12,8 @@ object UmlRoutesObject extends RoutesObject("Uml") {
 
   override def exerciseRoutes(id: Int) =
     List((classSelection(id), "Mit Zwischenkorrektur"), (diagramDrawing(id), "Freies Erstellen"))
+  override def exesListRoute(id: Int) = exesListRoute(id)
+  
   override def correctLiveRoute(id: Int) = null
 
   override def correctRoute(id: Int) = null

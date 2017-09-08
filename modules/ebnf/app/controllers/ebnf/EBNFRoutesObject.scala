@@ -9,6 +9,10 @@ object EBNFRoutesObject extends RoutesObject("EBNF") {
   // User
 
   def exerciseRoute(id: Int) = exercise(id)
+  
+  
+  
+  override def exesListRoute(id: Int) = exesListRoute(id)
 
   override def correctLiveRoute(id: Int) = null
 

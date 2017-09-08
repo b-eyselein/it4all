@@ -42,7 +42,7 @@ public class UmlController extends ExerciseController<UmlExercise, UmlResult> {
 
   @Inject
   public UmlController(FormFactory theFactory) {
-    super(theFactory, "uml", UmlExercise.finder);
+    super(theFactory, "uml", UmlExercise.finder, UmlRoutesObject$.MODULE$);
   }
   
   private static JsonNode initSolutionSchemaNode() {
@@ -132,6 +132,11 @@ public class UmlController extends ExerciseController<UmlExercise, UmlResult> {
   protected Html renderExercise(User user, UmlExercise exercise) {
     // TODO Auto-generated method stub
     return null;
+  }
+  
+  @Override
+  protected Html renderExesListRest() {
+    return EX_LIST_REST;
   }
   
   @Override

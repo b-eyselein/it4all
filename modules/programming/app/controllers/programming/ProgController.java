@@ -36,7 +36,7 @@ public class ProgController extends ExerciseController<ProgExercise, ProgEvaluat
   
   @Inject
   public ProgController(FormFactory theFactory) {
-    super(theFactory, "prog", ProgExercise.finder);
+    super(theFactory, "prog", ProgExercise.finder, ProgRoutesObject$.MODULE$);
   }
   
   public static User getUser() {
@@ -166,6 +166,12 @@ public class ProgController extends ExerciseController<ProgExercise, ProgEvaluat
   protected Html renderExercise(User user, ProgExercise exercise) {
     return views.html.exercise2Rows.render(user, ProgRoutesObject$.MODULE$, EX_OPTIONS, exercise,
         views.html.progExRest.render(exercise), AvailableLanguages.getStdLang().getDeclaration());
+  }
+  
+  @Override
+  protected Html renderExesListRest() {
+    // TODO Auto-generated method stub
+    return new Html("");
   }
   
   @Override

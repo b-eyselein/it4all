@@ -9,6 +9,10 @@ object QuestionRoutesObject extends RoutesObject("Auswahlfragen") {
 
   def exerciseRoute(id: Int) = null // exercise(id)
 
+  
+  
+  override def exesListRoute(id: Int) = exesListRoute(id)
+  
   override def correctLiveRoute(id: Int) = null
 
   override def correctRoute(id: Int) = null

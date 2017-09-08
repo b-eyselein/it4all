@@ -46,7 +46,7 @@ public class WebController extends ExerciseController<WebExercise, WebResult> {
   
   @Inject
   public WebController(FormFactory theFactory) {
-    super(theFactory, "web", WebExercise.finder);
+    super(theFactory, "web", WebExercise.finder, WebRoutesObject$.MODULE$);
   }
   
   public static User getUser() {
@@ -147,6 +147,12 @@ public class WebController extends ExerciseController<WebExercise, WebResult> {
   protected Html renderExercise(User user, WebExercise exercise) {
     // TODO Auto-generated method stub
     return null;
+  }
+  
+  @Override
+  protected Html renderExesListRest() {
+    // TODO Auto-generated method stub
+    return views.html.webExListRest.render();
   }
   
   @Override

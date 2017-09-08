@@ -9,6 +9,10 @@ object SqlRoutesObject extends RoutesObject("Sql") {
 
   def exerciseRoute(id: Int) = null
 
+  
+  
+  override def exesListRoute(id: Int) = exesListRoute(id)
+
   override def correctLiveRoute(id: Int) = null
 
   override def correctRoute(id: Int) = null

@@ -3,6 +3,7 @@ package controllers.core;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import io.ebean.Finder;
 import model.CorrectionException;
@@ -25,13 +26,19 @@ import play.twirl.api.Html;
 @Authenticated(Secured.class)
 public abstract class ExerciseController<E extends Exercise, R extends EvaluationResult> extends BaseController {
 
+  protected static final int STEP = 10;
+
   protected final Finder<Integer, E> finder;
   protected final String exerciseType;
 
-  public ExerciseController(FormFactory theFactory, String theExerciseType, Finder<Integer, E> theFinder) {
+  protected RoutesObject routesObject;
+
+  public ExerciseController(FormFactory theFactory, String theExerciseType, Finder<Integer, E> theFinder,
+      RoutesObject theRoutesObject) {
     super(theFactory);
     finder = theFinder;
     exerciseType = theExerciseType;
+    routesObject = theRoutesObject;
   }
 
   public Result correct(int id) {
@@ -72,6 +79,13 @@ public abstract class ExerciseController<E extends Exercise, R extends Evaluatio
     return ok(renderExercise(user, exercise));
   }
 
+  public Result index(int page) {
+    final List<E> allExes = finder.all();
+    final int pages = (allExes.size() / STEP) + 1;
+    final List<E> exes = allExes.subList((page * STEP) - 9, Math.min(page * STEP, allExes.size()));
+    return ok(views.html.exesList.render(getUser(), exes, renderExesListRest(), routesObject, pages));
+  }
+
   protected Path checkAndCreateSolDir(String username, Exercise exercise) {
     final Path dir = getSolDirForExercise(username, exerciseType, exercise);
 
@@ -89,7 +103,7 @@ public abstract class ExerciseController<E extends Exercise, R extends Evaluatio
   protected abstract CompleteResult<R> correct(DynamicForm form, E exercise, User user) throws CorrectionException;
 
   protected Path getSampleDir() {
-    return getSampleDir(exerciseType);
+    return getSampleDir(routesObject.exType());
   }
 
   protected Html renderCorrectionResult(User user, CompleteResult<R> correctionResult) {
@@ -98,6 +112,8 @@ public abstract class ExerciseController<E extends Exercise, R extends Evaluatio
   }
 
   protected abstract Html renderExercise(User user, E exercise);
+
+  protected abstract Html renderExesListRest();
 
   protected abstract Html renderResult(CompleteResult<R> correctionResult);
 

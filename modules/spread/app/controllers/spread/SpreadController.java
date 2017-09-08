@@ -31,17 +31,17 @@ public class SpreadController extends ExerciseController<SpreadExercise, Evaluat
 
   @Inject
   public SpreadController(FormFactory theFactory) {
-    super(theFactory, "spread", SpreadExercise.finder);
+    super(theFactory, "spread", SpreadExercise.finder, SpreadRoutesObject$.MODULE$);
   }
 
   public Result download(int id, String extension) {
-    User user = getUser();
-    SpreadExercise exercise = SpreadExercise.finder.byId(id);
+    final User user = getUser();
+    final SpreadExercise exercise = SpreadExercise.finder.byId(id);
 
     if(exercise == null)
       return badRequest("This exercise does not exist!");
 
-    Path fileToDownload = Paths.get(BASE_DATA_PATH, SOLUTIONS_SUB_DIRECTORY, user.name, exerciseType,
+    final Path fileToDownload = Paths.get(BASE_DATA_PATH, SOLUTIONS_SUB_DIRECTORY, user.name, exerciseType,
         Integer.toString(exercise.getId()), exercise.getTemplateFilename() + CORRECTION_ADD_STRING + "." + extension);
     if(!fileToDownload.toFile().exists())
       return redirect(routes.SpreadController.index());
@@ -50,12 +50,12 @@ public class SpreadController extends ExerciseController<SpreadExercise, Evaluat
   }
 
   public Result downloadTemplate(int id, String fileType) {
-    SpreadExercise exercise = SpreadExercise.finder.byId(id);
+    final SpreadExercise exercise = SpreadExercise.finder.byId(id);
 
     if(exercise == null)
       return badRequest("This exercise does not exist!");
 
-    Path filePath = Paths.get(getSampleDir().toString(), exercise.getTemplateFilename() + "." + fileType);
+    final Path filePath = Paths.get(getSampleDir().toString(), exercise.getTemplateFilename() + "." + fileType);
 
     if(!filePath.toFile().exists())
       return badRequest("This file does not exist!");
@@ -68,53 +68,54 @@ public class SpreadController extends ExerciseController<SpreadExercise, Evaluat
   }
 
   public Result upload(int id) {
-    User user = getUser();
-    SpreadExercise exercise = SpreadExercise.finder.byId(id);
+    final User user = getUser();
+    final SpreadExercise exercise = SpreadExercise.finder.byId(id);
 
     // Extract solution from request
-    MultipartFormData<File> body = request().body().asMultipartFormData();
-    FilePart<File> uploadedFile = body.getFile(BODY_SOL_FILE_NAME);
+    final MultipartFormData<File> body = request().body().asMultipartFormData();
+    final FilePart<File> uploadedFile = body.getFile(BODY_SOL_FILE_NAME);
     if(uploadedFile == null)
       return internalServerError(
           views.html.spreadcorrectionerror.render(user, "Datei konnte nicht hochgeladen werden!"));
-    Path pathToUploadedFile = uploadedFile.getFile().toPath();
-    String fileExtension = com.google.common.io.Files.getFileExtension(uploadedFile.getFilename());
+    final Path pathToUploadedFile = uploadedFile.getFile().toPath();
+    final String fileExtension = com.google.common.io.Files.getFileExtension(uploadedFile.getFilename());
 
     // Save solution
-    Path targetFilePath = getSolFileForExercise(user.name, exerciseType, exercise, exercise.getTemplateFilename(),
+    final Path targetFilePath = getSolFileForExercise(user.name, exerciseType, exercise, exercise.getTemplateFilename(),
         fileExtension);
-    boolean fileSuccessfullySaved = saveSolutionForUser(pathToUploadedFile, targetFilePath);
+    final boolean fileSuccessfullySaved = saveSolutionForUser(pathToUploadedFile, targetFilePath);
     if(!fileSuccessfullySaved)
       return internalServerError(
           views.html.spreadcorrectionerror.render(user, "Die Datei konnte nicht gespeichert werden!"));
 
     // Get paths to sample document
-    Path sampleDocumentPath = Paths.get(getSampleDir().toString(), exercise.getSampleFilename() + "." + fileExtension);
+    final Path sampleDocumentPath = Paths.get(getSampleDir().toString(),
+        exercise.getSampleFilename() + "." + fileExtension);
     if(!sampleDocumentPath.toFile().exists())
       return internalServerError(
           views.html.spreadcorrectionerror.render(user, "Die Musterdatei konnte nicht gefunden werden!"));
     try {
-      SpreadSheetCorrectionResult result = SpreadSheetCorrector.correct(sampleDocumentPath, targetFilePath, false,
+      final SpreadSheetCorrectionResult result = SpreadSheetCorrector.correct(sampleDocumentPath, targetFilePath, false,
           false);
 
       if(result.isSuccess())
         return ok(views.html.excelcorrect.render(user, result, exercise.getId(), fileExtension));
       else
         return internalServerError(views.html.spreadcorrectionerror.render(user, result.getNotices().get(0)));
-    } catch (CorrectionException e) {
+    } catch (final CorrectionException e) {
       return internalServerError(views.html.spreadcorrectionerror.render(user, e.getMessage()));
     }
   }
 
   private boolean saveSolutionForUser(Path uploadedSolution, Path targetFilePath) {
     try {
-      Path solDirForExercise = targetFilePath.getParent();
+      final Path solDirForExercise = targetFilePath.getParent();
       if(!solDirForExercise.toFile().exists() && !solDirForExercise.toFile().isDirectory())
         Files.createDirectories(solDirForExercise);
 
       Files.move(uploadedSolution, targetFilePath, StandardCopyOption.REPLACE_EXISTING);
       return true;
-    } catch (Exception e) {
+    } catch (final Exception e) {
       Logger.error("Fehler beim Speichern der Lösung!", e);
       return false;
     }
@@ -133,9 +134,15 @@ public class SpreadController extends ExerciseController<SpreadExercise, Evaluat
   }
 
   @Override
+  protected Html renderExesListRest() {
+    // TODO Auto-generated method stub
+    return new Html("");
+  }
+
+  @Override
   protected Html renderResult(CompleteResult<EvaluationResult> correctionResult) {
     // TODO Auto-generated method stub
-    return null;
+    return new Html("");
   }
 
 }

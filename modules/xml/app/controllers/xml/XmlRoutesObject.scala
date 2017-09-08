@@ -12,7 +12,9 @@ object XmlRoutesObject extends RoutesObject("Xml") {
 
   override def exerciseRoute(id: Int) = exercise(id)
 
+
   
+  def exesListRoute(id: Int) = exesListRoute(id)
   
   override def correctLiveRoute(id: Int) = correctLive(id)
 

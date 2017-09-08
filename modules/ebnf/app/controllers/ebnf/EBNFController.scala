@@ -24,12 +24,13 @@ import model.ebnf.EBNFResult
 import scala.collection.JavaConverters._
 
 @Authenticated(classOf[Secured])
-class EBNFController @Inject() (factory: FormFactory) extends ExerciseController[EBNFExercise, EBNFResult](factory, "ebnf", EBNFExercise.finder) {
+class EBNFController @Inject() (factory: FormFactory)
+    extends ExerciseController[EBNFExercise, EBNFResult](factory, "ebnf", EBNFExercise.finder, EBNFRoutesObject) {
 
-  def index(): Result = Results.ok(views.html.ebnfIndex.render(BaseController.getUser, finder.all()))
+  def index: Result = Results.ok(views.html.ebnfIndex.render(BaseController.getUser, finder.all))
 
   override def correct(form: DynamicForm, exercise: EBNFExercise, user: User) = {
-    //    val data = Controller.request().body().asFormUrlEncoded()
+    //    val data = Controller.request.body.asFormUrlEncoded
     //
     //    val terminals = data.get("terminals")(0).split(" ").map(str => new TerminalSymbol(str.replace("'", ""))).toList
     //    val variables = data.get("variables")(0).split(",").map(new Variable(_)).toList
@@ -52,5 +53,7 @@ class EBNFController @Inject() (factory: FormFactory) extends ExerciseController
   override def renderExercise(user: User, exercise: EBNFExercise) = views.html.ebnfExercise.render(user, exercise)
 
   override def renderResult(correctionResult: CompleteResult[EBNFResult]) = views.html.ebnfResult.render(correctionResult)
+
+  override def renderExesListRest = new Html("");
 
 }

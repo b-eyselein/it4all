@@ -11,6 +11,8 @@ object ProgRoutesObject extends RoutesObject("Programmierung") {
   override def exerciseRoute(id: Int) = exercise(id)
 
   override def exerciseRoutes(id: Int) = List((testData(id), "Testdaten erstellen"), (exercise(id), "Aufgabe bearbeiten"))
+  
+  override def exesListRoute(id: Int) = exesListRoute(id)
 
   override def correctLiveRoute(id: Int) = correctLive(id)
 

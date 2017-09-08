@@ -19,7 +19,7 @@ PUT      /exercise/:id/state   controllers.xml.XmlAdmin.changeExState(id: Int)
 GET      /newExForm            controllers.xml.XmlAdmin.newExerciseForm
 
 # User
-GET      /                     controllers.xml.XmlController.index
+GET      /                     controllers.xml.XmlController.index(page: Int ?= 0)
 
 GET      /solve/:id            controllers.xml.XmlController.exercise(id: Int)
 PUT      /solve/:id            controllers.xml.XmlController.correctLive(id: Int)

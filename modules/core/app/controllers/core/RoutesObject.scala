@@ -10,6 +10,8 @@ abstract class RoutesObject(val exType: String, val pluralName: String = "Aufgab
 
   def exerciseRoutes(id: Int): List[(Call, String)] = List((exerciseRoute(id), "Aufgabe bearbeiten"))
 
+  def exesListRoute(id: Int): Call
+  
   def correctLiveRoute(id: Int): Call
 
   def correctRoute(id: Int): Call
