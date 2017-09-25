@@ -4,7 +4,7 @@ import java.util.Random;
 
 import javax.inject.Inject;
 
-import controllers.core.BaseController;
+import controllers.core.ARandomExController;
 import model.nary.NAryAddResult;
 import model.nary.NAryConvResult;
 import model.nary.NAryNumber;
@@ -12,16 +12,18 @@ import model.nary.NumberBase;
 import model.nary.NumberBase$;
 import model.nary.TwoCompResult;
 import model.nary.TwoCompResult$;
+import model.user.User;
 import play.data.FormFactory;
 import play.mvc.Result;
+import play.twirl.api.Html;
 
-public class NaryController extends BaseController {
+public class NaryController extends ARandomExController {
 
   private static final Random GENERATOR = new Random();
 
   @Inject
   public NaryController(FormFactory theFactory) {
-    super(theFactory);
+    super(theFactory, NAryToolObject$.MODULE$);
   }
 
   public Result checkNaryAdditionSolution() {
@@ -37,10 +39,6 @@ public class NaryController extends BaseController {
   public Result checkTwoComplementSolution(boolean verbose) {
     TwoCompResult result = TwoCompResult$.MODULE$.parseFromForm(factory.form().bindFromRequest(), verbose);
     return ok(views.html.nary.twoComplementResult.render(getUser(), result, verbose));
-  }
-
-  public Result index() {
-    return ok(views.html.nary.overview.render(getUser()));
   }
 
   public Result newNaryAdditionQuestion() {
@@ -75,5 +73,9 @@ public class NaryController extends BaseController {
     // Max negative number in two complement: -128
     int value = -GENERATOR.nextInt(129);
     return ok(views.html.nary.twoComplementQuestion.render(getUser(), value, verbose));
+  }
+
+  public Html renderIndex(User user) {
+    return views.html.nary.overview.render(user);
   }
 }
