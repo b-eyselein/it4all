@@ -71,6 +71,10 @@ public class User extends Model {
     return result;
   }
   
+  public boolean hasRight(Role role) {
+    return role.compareTo(stdRole) <= 0;
+  }
+  
   @JsonIgnore
   public boolean isAdmin() {
     return stdRole.isAdminRole();

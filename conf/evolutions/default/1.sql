@@ -241,6 +241,12 @@ create table sql_user (
   constraint pk_sql_user primary key (name)
 );
 
+create table tipps (
+  id                            integer auto_increment not null,
+  str                           varchar(255),
+  constraint pk_tipps primary key (id)
+);
+
 create table uml_exercise (
   id                            integer auto_increment not null,
   title                         varchar(255),
@@ -512,6 +518,8 @@ drop table if exists sql_scenario;
 drop table if exists sql_solution;
 
 drop table if exists sql_user;
+
+drop table if exists tipps;
 
 drop table if exists uml_exercise;
 
