@@ -3,10 +3,10 @@ package controllers.web
 import controllers.web.routes.WebAdmin._
 import controllers.web.routes.WebController._
 
-import model.tools.ToolObject
+import model.tools.IdedExToolObject
 import model.tools.ToolState
 
-object WebToolObject extends ToolObject("Web", ToolState.LIVE) {
+object WebToolObject extends IdedExToolObject("Web", ToolState.LIVE) {
 
   // User
   
@@ -24,7 +24,7 @@ object WebToolObject extends ToolObject("Web", ToolState.LIVE) {
 
   // Admin
 
-  override val restHeaders = List("# Tasks Html / Js", "Text Html / Js")
+  val restHeaders = List("# Tasks Html / Js", "Text Html / Js")
 
   override def adminIndexRoute = adminIndex
 

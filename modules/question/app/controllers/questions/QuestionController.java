@@ -29,8 +29,6 @@ import play.twirl.api.Html;
 
 public class QuestionController extends ExerciseController<Question, QuestionResult> {
 
-  private static final int STEP = 10;
-
   @Inject
   public QuestionController(FormFactory theFactory) {
     super(theFactory, "question", Question.finder, QuestionToolObject$.MODULE$);

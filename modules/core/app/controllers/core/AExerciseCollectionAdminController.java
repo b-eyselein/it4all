@@ -19,7 +19,7 @@ import model.exercisereading.ExerciseCollectionReader;
 import model.exercisereading.ExerciseReader;
 import model.exercisereading.ReadingError;
 import model.exercisereading.ReadingResult;
-import model.tools.ToolObject;
+import model.tools.IdedExToolObject;
 import model.user.User;
 import play.Logger;
 import play.data.FormFactory;
@@ -38,7 +38,7 @@ public abstract class AExerciseCollectionAdminController<E extends Exercise, C e
   
   protected final ExerciseCollectionReader<E, C> exerciseCollectionReader;
   
-  public AExerciseCollectionAdminController(FormFactory theFactory, ToolObject theRoutes,
+  public AExerciseCollectionAdminController(FormFactory theFactory, IdedExToolObject theRoutes,
       Finder<Integer, E> theExerciseFinder, Finder<Integer, C> theCollectionFinder,
       ExerciseCollectionReader<E, C> theExerciseReader) {
     super(theFactory, theRoutes, theExerciseFinder,

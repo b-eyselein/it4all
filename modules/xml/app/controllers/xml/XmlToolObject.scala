@@ -5,9 +5,9 @@ import play.api.mvc.Call
 import controllers.xml.routes.XmlController._
 import controllers.xml.routes.XmlAdmin._
 import model.tools.ToolState
-import model.tools.ToolObject
+import model.tools.IdedExToolObject
 
-object XmlToolObject extends ToolObject("Xml", ToolState.LIVE) {
+object XmlToolObject extends IdedExToolObject("Xml", ToolState.LIVE) {
 
   // User
 
@@ -17,7 +17,7 @@ object XmlToolObject extends ToolObject("Xml", ToolState.LIVE) {
 
 
   
-  def exesListRoute(id: Int) = exesListRoute(id)
+  override def exesListRoute(id: Int) = exesListRoute(id)
   
   override def correctLiveRoute(id: Int) = correctLive(id)
 
@@ -25,7 +25,7 @@ object XmlToolObject extends ToolObject("Xml", ToolState.LIVE) {
 
   // Admin
 
-  override val restHeaders = List("Typ", "Wurzelknoten")
+  val restHeaders = List("Typ", "Wurzelknoten")
 
   override def adminIndexRoute = adminIndex
 

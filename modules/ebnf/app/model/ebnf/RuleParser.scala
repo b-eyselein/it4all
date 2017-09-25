@@ -2,6 +2,7 @@ package model.ebnf
 
 import scala.util.parsing.combinator.JavaTokenParsers
 import model.ebnf.Replacement._
+import model.CorrectionException
 
 object RuleParser extends JavaTokenParsers {
 
@@ -18,6 +19,7 @@ object RuleParser extends JavaTokenParsers {
     case rep ~ Some(Replacement.optOperator) => rep?
     case rep ~ Some(Replacement.repOperator) => rep*
     case rep ~ Some(Replacement.rep1Operator) => rep+
+    case rep ~ Some(t) => throw new CorrectionException("", s"Not awaited: $t")
   }
 
   private lazy val subterm = /*variable | terminalsymbol |*/ ("(" ~ sequence ~ ")" ^^ { grouping => Grouping(grouping._1._2) })

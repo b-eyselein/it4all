@@ -1,21 +1,20 @@
 package controllers.bool
 
-//import model.tools.ToolObject
+import model.tools.RandomExToolObject
+import model.tools.ToolState
 
-//import controllers.bool.BoolController._
-
-object BoolToolObject /* extends ToolObject("Boolesche Algebra") */ {
+object BoolToolObject extends RandomExToolObject("Boolesche Algebra", ToolState.LIVE) {
 
   // User
 
-//  override def indexCall = index()
-//
-//  override def exerciseRoute(id: Int) = exercise(id)
-//
-//  def exesListRoute(id: Int) = exesListRoute(id)
-//
-//  override def correctLiveRoute(id: Int) = correctLive(id)
-//
-//  override def correctRoute(id: Int) = correct(id)
+  override def indexCall = controllers.bool.routes.BoolController.index()
+
+  //  override def exerciseRoute(id: Int) = exercise(id)
+  //
+  //  def exesListRoute(id: Int) = exesListRoute(id)
+  //
+  //  override def correctLiveRoute(id: Int) = correctLive(id)
+  //
+  //  override def correctRoute(id: Int) = correct(id)
 
 }

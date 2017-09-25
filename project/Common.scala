@@ -5,11 +5,11 @@ object Common {
   val settings = Seq(
     organization := "is.informatik.uni-wuerzburg.de",
     version := "0.9.0",
-    scalaVersion := "2.11.11",
+    scalaVersion := "2.12.3",
     libraryDependencies ++= Seq(Common.mockitoDep))
 
   // Scalatest
-  val scalatest = "org.scalatest" % "scalatest_2.11" % "3.0.1" % "test"
+  val scalatest = "org.scalatest" %% "scalatest" % "3.0.1" % "test"
 
   val mysqlDependency = "mysql" % "mysql-connector-java" % "6.0.6"
 
@@ -20,7 +20,7 @@ object Common {
 
   // Json Schema
   val jsonSchemaValidator = "com.github.fge" % "json-schema-validator" % "2.2.6"
-  val jsonSchemaGenerator = "com.kjetland" % "mbknor-jackson-jsonschema_2.11" % "1.0.24"
+  val jsonSchemaGenerator = "com.kjetland" % "mbknor-jackson-jsonschema_2.12" % "1.0.24"
 
   // Programming
   val dockerjava = "com.github.docker-java" % "docker-java" % "3.0.13"

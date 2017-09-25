@@ -10,8 +10,16 @@ case class ToolGroup(name: String, tools: List[Tool])
 
 object ToolList {
 
-  var toolList: MutableList[ToolObject] = MutableList.empty
+  var randomExTools: MutableList[RandomExToolObject] = MutableList.empty
 
-  def register(tool: ToolObject) = toolList += tool
+  var idExTools: MutableList[IdedExToolObject] = MutableList.empty
+
+  def register(tool: ToolObject) = tool match {
+    case r: RandomExToolObject => randomExTools += r
+    case i: IdedExToolObject => idExTools += i
+    case _ => println(s"Error while registering tool object $tool")
+  }
+
+  def allTools = randomExTools ++ idExTools
 
 }

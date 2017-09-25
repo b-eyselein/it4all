@@ -2,16 +2,16 @@ package controllers.ebnf
 
 import controllers.ebnf.routes.EBNFAdmin._
 import controllers.ebnf.routes.EBNFController._
-import model.tools.ToolObject
+import model.tools.IdedExToolObject
 import model.tools.ToolState
 
-object EBNFToolObject extends ToolObject("EBNF", ToolState.ALPHA) {
+object EBNFToolObject extends IdedExToolObject("EBNF", ToolState.ALPHA) {
 
   // User
   
   override def indexCall = index()
 
-  def exerciseRoute(id: Int) = exercise(id)
+  override def exerciseRoute(id: Int) = exercise(id)
   
   
   
@@ -23,7 +23,7 @@ object EBNFToolObject extends ToolObject("EBNF", ToolState.ALPHA) {
 
   // Admin
 
-  override val restHeaders = List("Terminalsymbole")
+  val restHeaders = List("Terminalsymbole")
   
   override def adminIndexRoute = adminIndex
 

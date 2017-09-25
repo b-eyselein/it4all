@@ -3,9 +3,9 @@ package controllers.programming
 import controllers.programming.routes.ProgController._
 import controllers.programming.routes.ProgAdmin._
 import model.tools.ToolState
-import model.tools.ToolObject
+import model.tools.IdedExToolObject
 
-object ProgToolObject extends ToolObject("Programmierung", ToolState.LIVE) {
+object ProgToolObject extends IdedExToolObject("Programmierung", ToolState.LIVE) {
 
   // User
   
@@ -23,7 +23,7 @@ object ProgToolObject extends ToolObject("Programmierung", ToolState.LIVE) {
 
   // Admin
 
-  override val restHeaders = List.empty
+  val restHeaders = List.empty
 
   override def adminIndexRoute = adminIndex
 

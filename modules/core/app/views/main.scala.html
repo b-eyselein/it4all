@@ -28,7 +28,7 @@
       </div>
       <div class="collapse navbar-collapse" id="myNavbar">
         <ul class="nav navbar-nav">
-        @for(tool <- model.tools.ToolList.toolList) {
+        @for(tool <- model.tools.ToolList.allTools) {
           <li>
           	<a href="@tool.indexCall">@tool.exType @tool.state.getBadge</a>
       	  </li>
@@ -45,7 +45,6 @@
           </li>
       	}*@
 
-          <!-- <li><a href="@mindmap.routes.MindmapController.index">MindMap</a></li> -->
         </ul>
         <ul class="nav navbar-nav navbar-right">
         @if(user.isAdmin) {
@@ -55,9 +54,8 @@
             </a>
             <ul class="dropdown-menu">
             
-            @for(tool <- model.tools.ToolList.toolList) {
+            @for(tool <- model.tools.ToolList.idExTools) {
               <li><a href="@tool.adminIndexRoute">@tool.exType</a></li>
-              
               <li class="divider"></li>
             }
 

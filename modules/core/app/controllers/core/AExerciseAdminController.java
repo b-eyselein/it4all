@@ -19,7 +19,7 @@ import model.exercisereading.AbstractReadingResult;
 import model.exercisereading.ExerciseReader;
 import model.exercisereading.ReadingError;
 import model.exercisereading.ReadingResult;
-import model.tools.ToolObject;
+import model.tools.IdedExToolObject;
 import model.user.User;
 import play.Logger;
 import play.data.FormFactory;
@@ -33,12 +33,12 @@ import play.twirl.api.Html;
 @Authenticated(AdminSecured.class)
 public abstract class AExerciseAdminController<E extends Exercise> extends BaseController {
 
-  protected final ToolObject routes;
+  protected final IdedExToolObject routes;
 
   protected final Finder<Integer, E> finder;
   protected final ExerciseReader<E> exerciseReader;
 
-  public AExerciseAdminController(FormFactory theFactory, ToolObject theRoutes, Finder<Integer, E> theFinder,
+  public AExerciseAdminController(FormFactory theFactory, IdedExToolObject theRoutes, Finder<Integer, E> theFinder,
       ExerciseReader<E> theExerciseReader) {
     super(theFactory);
     routes = theRoutes;

@@ -1,17 +1,17 @@
 package controllers.sql
 
-import model.tools.ToolObject
+import model.tools.IdedExToolObject
 import model.tools.ToolState
 import controllers.sql.routes.SqlAdmin._
 import controllers.sql.routes.SqlController._
 
-object SqlToolObject extends ToolObject("Sql", ToolState.LIVE, pluralName = "Szenarien") {
+object SqlToolObject extends IdedExToolObject("Sql", ToolState.LIVE, pluralName = "Szenarien") {
 
   // User
 
   override def indexCall = index()
 
-  def exerciseRoute(id: Int) = null
+  override def exerciseRoute(id: Int) = null
 
   override def exesListRoute(id: Int) = exesListRoute(id)
 
@@ -21,8 +21,8 @@ object SqlToolObject extends ToolObject("Sql", ToolState.LIVE, pluralName = "Sze
 
   // Admin
 
-  override val restHeaders = List.empty
-
+  val restHeaders = List.empty
+  
   override def adminIndexRoute = adminIndex
 
   override def exercisesRoute = exercises

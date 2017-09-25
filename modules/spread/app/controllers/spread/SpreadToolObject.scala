@@ -3,9 +3,9 @@ package controllers.spread
 import controllers.spread.routes.SpreadAdmin._
 import controllers.spread.routes.SpreadController._
 import model.tools.ToolState
-import model.tools.ToolObject
+import model.tools.IdedExToolObject
 
-object SpreadToolObject extends ToolObject("Tabellenkalkulation", ToolState.LIVE) {
+object SpreadToolObject extends IdedExToolObject("Tabellenkalkulation", ToolState.LIVE) {
 
   // User
   
@@ -23,7 +23,7 @@ object SpreadToolObject extends ToolObject("Tabellenkalkulation", ToolState.LIVE
 
   // Admin
 
-  override val restHeaders = List.empty
+  val restHeaders = List.empty
 
   override def adminIndexRoute = adminIndex
 

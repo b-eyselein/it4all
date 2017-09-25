@@ -2,17 +2,20 @@ package model.tools
 
 import play.api.mvc.Call
 
-abstract class ToolObject(
-  val exType: String,
-  val state: ToolState = ToolState.ALPHA,
-  val decoration: String = null,
-  val pluralName: String = "Aufgaben") {
-
+abstract sealed class ToolObject(val exType: String, val state: ToolState, val decoration: String) {
+  
   ToolList.register(this)
 
-  // User
+  def indexCall: Call
+  
+}
 
-  def indexCall: Call = null
+abstract class RandomExToolObject(e: String, s: ToolState, d: String = null) extends ToolObject(e, s, d)
+
+abstract class IdedExToolObject(e: String, s: ToolState = ToolState.ALPHA, d: String = null,
+  val pluralName: String = "Aufgaben") extends ToolObject(e, s, d) {
+
+  // User
 
   def exerciseRoute(id: Int): Call
 
@@ -26,7 +29,7 @@ abstract class ToolObject(
 
   // Admin
 
-  val restHeaders: List[String]
+  def restHeaders: List[String]
 
   def adminIndexRoute: Call
 

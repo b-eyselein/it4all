@@ -4,11 +4,12 @@ import controllers.uml.routes.UmlAdmin._
 import controllers.uml.routes.UmlController._
 
 import model.tools.ToolState
-import model.tools.ToolObject
+import model.tools.IdedExToolObject
 
-object UmlToolObject extends ToolObject("Uml", ToolState.LIVE) {
+object UmlToolObject extends IdedExToolObject("Uml", ToolState.LIVE) {
 
   // User
+  
   override def indexCall = index()
 
   override def exerciseRoute(id: Int) = null
@@ -23,8 +24,8 @@ object UmlToolObject extends ToolObject("Uml", ToolState.LIVE) {
 
   // Admin
 
-  override val restHeaders = List.empty
-
+  val restHeaders = List.empty
+  
   override def adminIndexRoute = adminIndex
 
   override def exercisesRoute = exercises
