@@ -16,7 +16,7 @@ case class NAryConvResult(startingValue: NAryNumber, startingBase: NumberBase, t
   extends NAryResult(new NAryNumber(startingValue.decimalValue, targetBase), learnerSol)
 
 case class TwoCompResult(targetNum: NAryNumber, learnerSol: NAryNumber, binaryAbs: String, invertedAbs: String)
-    extends NAryResult(targetNum, learnerSol) {
+  extends NAryResult(targetNum, learnerSol) {
 
   def binaryAbsCorrect() = NAryNumber.parse(binaryAbs, BINARY).decimalValue == Math.abs(targetNumber.decimalValue)
   def invertedAbsCorrect() = NAryNumber.invertDigits(binaryAbs).equals(invertedAbs)
@@ -50,7 +50,7 @@ object NAryAddResult {
     val learnerSolInNAry = form.get(FORM_VALUE).reverse.replaceAll("\\s", "")
     val learnerSol = NAryNumber.parse(learnerSolInNAry, base)
 
-    return new NAryAddResult(base, firstSummand, secondSummand, learnerSol)
+    new NAryAddResult(base, firstSummand, secondSummand, learnerSol)
   }
 }
 

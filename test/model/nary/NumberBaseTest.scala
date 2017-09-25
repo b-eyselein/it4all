@@ -25,7 +25,7 @@ class NumberBaseTest {
 
   @Test
   def testGetPluralName() {
-    assertThat(BINARY.pluralName, equalTo("Binärzahlen"))
+    assertThat(BINARY.pluralName, equalTo("Binaerzahlen"))
     assertThat(OCTAL.pluralName, equalTo("Oktalzahlen"))
     assertThat(DECIMAL.pluralName, equalTo("Dezimalzahlen"))
     assertThat(HEXADECIMAL.pluralName, equalTo("Hexadezimalzahlen"))
@@ -41,7 +41,7 @@ class NumberBaseTest {
 
   @Test
   def testGetSingularName() {
-    assertThat(BINARY.singularName, equalTo("Binärzahl"))
+    assertThat(BINARY.singularName, equalTo("Binaerzahl"))
     assertThat(OCTAL.singularName, equalTo("Oktalzahl"))
     assertThat(DECIMAL.singularName, equalTo("Dezimalzahl"))
     assertThat(HEXADECIMAL.singularName, equalTo("Hexadezimalzahl"))
@@ -49,7 +49,7 @@ class NumberBaseTest {
 
   @Test
   def testGetSystemName() {
-    assertThat(BINARY.systemName, equalTo("Binärsystem"))
+    assertThat(BINARY.systemName, equalTo("Binaersystem"))
     assertThat(OCTAL.systemName, equalTo("Oktalsystem"))
     assertThat(DECIMAL.systemName, equalTo("Dezimalsystem"))
     assertThat(HEXADECIMAL.systemName, equalTo("Hexadezimalsystem"))

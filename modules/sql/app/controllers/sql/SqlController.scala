@@ -32,7 +32,7 @@ import play.db.Database
 import play.db.NamedDatabase
 
 class SqlController @Inject() (cc: ControllerComponents, @NamedDatabase("sqlselectroot") sqlSelect: Database, @NamedDatabase("sqlotherroot") sqlOther: Database)
-    extends ScalaExerciseController[SqlExercise, SqlResult](cc, "sql", SqlExercise.finder) {
+  extends ScalaExerciseController[SqlExercise, SqlResult](cc, "sql", SqlExercise.finder) {
 
   override def getUser(request: Request[AnyContent]): User = {
     val user = super.getUser(request)
@@ -79,7 +79,7 @@ class SqlController @Inject() (cc: ControllerComponents, @NamedDatabase("sqlsele
 
     val result = corrector.correct(db, learnerSolution, sample, exercise)
 
-    return Success(List(result))
+    Success(List(result))
   }
 
   override def renderExercise(user: User, exercise: SqlExercise) = {

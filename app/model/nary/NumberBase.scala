@@ -33,7 +33,7 @@ object NumberBase {
   }
 }
 
-case object BINARY extends NumberBase(2, "Binär", "0b", "0-1", "0-1")
+case object BINARY extends NumberBase(2, "Binaer", "0b", "0-1", "0-1")
 
 case object OCTAL extends NumberBase(8, "Oktal", "0o", "1-7", "0-7")
 

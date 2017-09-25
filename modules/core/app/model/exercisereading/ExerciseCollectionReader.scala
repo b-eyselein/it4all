@@ -5,14 +5,11 @@ import scala.collection.JavaConverters.asScalaBufferConverter
 import com.fasterxml.jackson.databind.JsonNode
 
 import io.ebean.Finder
-import model.StringConsts.AUTHOR_NAME
-import model.StringConsts.TEXT_NAME
-import model.StringConsts.TITLE_NAME
-import model.exercise.Exercise
-import model.exercise.ExerciseCollection
+import model.StringConsts.{ AUTHOR_NAME, TEXT_NAME, TITLE_NAME }
+import model.exercise.{ Exercise, ExerciseCollection }
 
 abstract class ExerciseCollectionReader[E <: Exercise, C <: ExerciseCollection[E]](et: String, f: Finder[Integer, C], cf: Class[_])
-    extends JsonReader[C](et, f, cf) {
+  extends JsonReader[C](et, f, cf) {
 
   override def save(collection: C) {
     collection.save()

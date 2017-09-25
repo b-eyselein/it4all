@@ -23,7 +23,3 @@ case class ScalaDiagramDrawingResult(exercise: UmlExercise, learnerSolution: Uml
 
   override val classResult = new UmlClassMatcher(true).doMatch(learnerSolution.getClasses(), musterSolution.getClasses())
 }
-
-object ScalaUmlResult {
-
-}

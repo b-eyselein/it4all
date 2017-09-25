@@ -41,11 +41,11 @@ object NAryNumber {
 
     if (trimmedInput.charAt(0) != '1')
       // Positive number...
-      return new NAryNumber(Integer.parseInt(trimmedInput, 2), BINARY)
-
-    val invertedInt = invertDigits(trimmedInput)
-
-    return new NAryNumber(-1 * (Integer.parseInt(invertedInt, 2) + 1), BINARY)
+      new NAryNumber(Integer.parseInt(trimmedInput, 2), BINARY)
+    else {
+      val invertedInt = invertDigits(trimmedInput)
+      new NAryNumber(-1 * (Integer.parseInt(invertedInt, 2) + 1), BINARY)
+    }
   }
 
   def invertDigits(binaryInt: String) = binaryInt.replace("0", "a").replace("1", "0").replace("a", "1")

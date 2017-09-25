@@ -28,7 +28,7 @@ object CreationQuestion {
       .generateAllAssignments(variables)
       .map(as => as + (BooleanQuestion.SOLUTION_VARIABLE -> BooleanQuestion.RANDOM.nextBoolean()))
 
-    return new CreationQuestion(variables, assignments)
+    new CreationQuestion(variables, assignments)
   }
 }
 

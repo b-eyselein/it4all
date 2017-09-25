@@ -3,8 +3,7 @@ package model.ebnf
 import scala.collection.JavaConverters.seqAsJavaListConverter
 
 import model.exercise.Success
-import model.result.CompleteResult
-import model.result.EvaluationResult
+import model.result.{ CompleteResult, EvaluationResult }
 
 case class EBNFCompleteResult(result: EBNFResult) extends CompleteResult[EBNFResult]("EBNF", List(result).asJava) {
 
@@ -12,9 +11,7 @@ case class EBNFCompleteResult(result: EBNFResult) extends CompleteResult[EBNFRes
 
 }
 
-case class EBNFResult(grammar: Grammar) extends EvaluationResult(EBNFResult.analyze(grammar)) {
-
-}
+case class EBNFResult(grammar: Grammar) extends EvaluationResult(EBNFResult.analyze(grammar))
 
 object EBNFResult {
 

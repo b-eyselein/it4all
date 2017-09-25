@@ -19,14 +19,15 @@ object BoolFormulaGenerator {
     val depth = randomBetween(MIN_DEPTH, MAX_DEPTH)
 
     if (depth < 2)
-      return generateRandomOperator('a', 'b');
+      generateRandomOperator('a', 'b');
+    else {
+      val variables = allVars.take(randomBetween(MIN_VARS, MAX_VARS))
 
-    val variables = allVars take randomBetween(MIN_VARS, MAX_VARS)
+      val leftChild = generateRandomOperator(takeRandom(variables), takeRandom(variables));
+      val rightChild = generateRandomOperator(takeRandom(variables), takeRandom(variables));
 
-    val leftChild = generateRandomOperator(takeRandom(variables), takeRandom(variables));
-    val rightChild = generateRandomOperator(takeRandom(variables), takeRandom(variables));
-
-    return generateRandomOperator(leftChild, rightChild);
+      generateRandomOperator(leftChild, rightChild);
+    }
   }
 
   /**
