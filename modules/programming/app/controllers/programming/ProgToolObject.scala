@@ -1,26 +1,29 @@
-package controllers.web
+package controllers.programming
 
-import controllers.web.routes.WebAdmin._
-import controllers.web.routes.WebController._
-import controllers.core.RoutesObject
+import controllers.programming.routes.ProgController._
+import model.tools.ToolState
+import controllers.programming.routes.ProgAdmin._
+import controllers.core.ToolObject
 
-object WebRoutesObject extends RoutesObject("Web") {
+object ProgToolObject extends ToolObject("Programmierung", ToolState.LIVE) {
 
   // User
+  
+  override def indexCall = index()
 
-  override def exerciseRoute(id: Int) = null // exercise(id)
+  override def exerciseRoute(id: Int) = exercise(id)
 
-  override def exerciseRoutes(id: Int) = List((exercise(id, "html"), "Html-Teil"), (exercise(id, "js"), "Js-Teil"))
+  override def exerciseRoutes(id: Int) = List((testData(id), "Testdaten erstellen"), (exercise(id), "Aufgabe bearbeiten"))
   
   override def exesListRoute(id: Int) = exesListRoute(id)
 
-  override def correctLiveRoute(id: Int) = correctLive(id, "html")
+  override def correctLiveRoute(id: Int) = correctLive(id)
 
-  override def correctRoute(id: Int) = correct(id, "html")
+  override def correctRoute(id: Int) = correct(id)
 
   // Admin
 
-  override val restHeaders = List("# Tasks Html / Js", "Text Html / Js")
+  override val restHeaders = List.empty
 
   override def adminIndexRoute = adminIndex
 

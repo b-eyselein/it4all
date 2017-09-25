@@ -25,7 +25,7 @@ import scala.collection.JavaConverters._
 
 @Authenticated(classOf[Secured])
 class EBNFController @Inject() (factory: FormFactory)
-    extends ExerciseController[EBNFExercise, EBNFResult](factory, "ebnf", EBNFExercise.finder, EBNFRoutesObject) {
+    extends ExerciseController[EBNFExercise, EBNFResult](factory, "ebnf", EBNFExercise.finder, EBNFToolObject) {
 
   def index: Result = Results.ok(views.html.ebnfIndex.render(BaseController.getUser, finder.all))
 

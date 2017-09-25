@@ -1,25 +1,29 @@
-package controllers.questions
+package controllers.web
 
-import controllers.questions.routes.QuestionAdmin._
-import controllers.core.RoutesObject
+import controllers.web.routes.WebAdmin._
+import controllers.web.routes.WebController._
+import controllers.core.ToolObject
+import model.tools.ToolState
 
-object QuestionRoutesObject extends RoutesObject("Auswahlfragen") {
+object WebToolObject extends ToolObject("Web", ToolState.LIVE) {
 
   // User
-
-  def exerciseRoute(id: Int) = null // exercise(id)
-
   
+  override def indexCall = index()
+
+  override def exerciseRoute(id: Int) = null // exercise(id)
+
+  override def exerciseRoutes(id: Int) = List((exercise(id, "html"), "Html-Teil"), (exercise(id, "js"), "Js-Teil"))
   
   override def exesListRoute(id: Int) = exesListRoute(id)
-  
-  override def correctLiveRoute(id: Int) = null
 
-  override def correctRoute(id: Int) = null
+  override def correctLiveRoute(id: Int) = correctLive(id, "html")
+
+  override def correctRoute(id: Int) = correct(id, "html")
 
   // Admin
-  
-  override val restHeaders = List.empty
+
+  override val restHeaders = List("# Tasks Html / Js", "Text Html / Js")
 
   override def adminIndexRoute = adminIndex
 

@@ -37,7 +37,7 @@ public abstract class AExerciseCollectionAdminController<E extends Exercise, C e
   
   protected final ExerciseCollectionReader<E, C> exerciseCollectionReader;
   
-  public AExerciseCollectionAdminController(FormFactory theFactory, RoutesObject theRoutes,
+  public AExerciseCollectionAdminController(FormFactory theFactory, ToolObject theRoutes,
       Finder<Integer, E> theExerciseFinder, Finder<Integer, C> theCollectionFinder,
       ExerciseCollectionReader<E, C> theExerciseReader) {
     super(theFactory, theRoutes, theExerciseFinder,

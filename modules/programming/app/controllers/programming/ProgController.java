@@ -82,7 +82,7 @@ public class ProgController extends ExerciseController<ProgExercise, ProgEvaluat
 
   @Inject
   public ProgController(FormFactory theFactory) {
-    super(theFactory, "prog", ProgExercise.finder, ProgRoutesObject$.MODULE$);
+    super(theFactory, "prog", ProgExercise.finder, ProgToolObject$.MODULE$);
   }
 
   public Result getDeclaration(String lang) {
@@ -160,7 +160,7 @@ public class ProgController extends ExerciseController<ProgExercise, ProgEvaluat
 
   @Override
   protected Html renderExercise(User user, ProgExercise exercise) {
-    return views.html.exercise2Rows.render(user, ProgRoutesObject$.MODULE$, EX_OPTIONS, exercise,
+    return views.html.exercise2Rows.render(user, routesObject, EX_OPTIONS, exercise,
         views.html.progExRest.render(exercise), AvailableLanguages.getStdLang().getDeclaration());
   }
 

@@ -1,17 +1,20 @@
-package controllers.uml
+package controllers.questions
 
-import controllers.uml.routes.UmlAdmin._
-import controllers.uml.routes.UmlController._
-import controllers.core.RoutesObject
+import controllers.questions.routes.QuestionAdmin._
+import controllers.questions.routes.QuestionController._
+import model.tools.ToolState
+import controllers.core.ToolObject
 
-object UmlRoutesObject extends RoutesObject("Uml") {
+object QuestionToolObject extends ToolObject("Auswahlfragen", ToolState.BETA) {
 
   // User
+  
+  override def indexCall = index()
 
-  override def exerciseRoute(id: Int) = null
+  def exerciseRoute(id: Int) = null // exercise(id)
 
-  override def exerciseRoutes(id: Int) =
-    List((classSelection(id), "Mit Zwischenkorrektur"), (diagramDrawing(id), "Freies Erstellen"))
+  
+  
   override def exesListRoute(id: Int) = exesListRoute(id)
   
   override def correctLiveRoute(id: Int) = null
@@ -19,7 +22,7 @@ object UmlRoutesObject extends RoutesObject("Uml") {
   override def correctRoute(id: Int) = null
 
   // Admin
-
+  
   override val restHeaders = List.empty
 
   override def adminIndexRoute = adminIndex

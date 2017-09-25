@@ -1,27 +1,29 @@
-package controllers.ebnf
+package controllers.uml
 
-import controllers.ebnf.routes.EBNFAdmin._
-import controllers.ebnf.routes.EBNFController._
-import controllers.core.RoutesObject
+import controllers.uml.routes.UmlAdmin._
+import model.tools.ToolState
+import controllers.uml.routes.UmlController._
+import controllers.core.ToolObject
 
-object EBNFRoutesObject extends RoutesObject("EBNF") {
+object UmlToolObject extends ToolObject("Uml", ToolState.LIVE) {
 
   // User
+  override def indexCall = index()
 
-  def exerciseRoute(id: Int) = exercise(id)
-  
-  
-  
+  override def exerciseRoute(id: Int) = null
+
+  override def exerciseRoutes(id: Int) =
+    List((classSelection(id), "Mit Zwischenkorrektur"), (diagramDrawing(id), "Freies Erstellen"))
   override def exesListRoute(id: Int) = exesListRoute(id)
-
+  
   override def correctLiveRoute(id: Int) = null
 
   override def correctRoute(id: Int) = null
 
   // Admin
 
-  override val restHeaders = List("Terminalsymbole")
-  
+  override val restHeaders = List.empty
+
   override def adminIndexRoute = adminIndex
 
   override def exercisesRoute = exercises

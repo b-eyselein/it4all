@@ -1,22 +1,23 @@
-package controllers.programming
+package controllers.sql
 
-import controllers.programming.routes.ProgController._
-import controllers.programming.routes.ProgAdmin._
-import controllers.core.RoutesObject
+import controllers.core.ToolObject
+import model.tools.ToolState
+import controllers.sql.routes.SqlAdmin._
+import controllers.sql.routes.SqlController._
 
-object ProgRoutesObject extends RoutesObject("Programmierung") {
+object SqlToolObject extends ToolObject("Sql", ToolState.LIVE, pluralName = "Szenarien") {
 
   // User
 
-  override def exerciseRoute(id: Int) = exercise(id)
+  override def indexCall = index()
 
-  override def exerciseRoutes(id: Int) = List((testData(id), "Testdaten erstellen"), (exercise(id), "Aufgabe bearbeiten"))
-  
+  def exerciseRoute(id: Int) = null
+
   override def exesListRoute(id: Int) = exesListRoute(id)
 
-  override def correctLiveRoute(id: Int) = correctLive(id)
+  override def correctLiveRoute(id: Int) = null
 
-  override def correctRoute(id: Int) = correct(id)
+  override def correctRoute(id: Int) = null
 
   // Admin
 

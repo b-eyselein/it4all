@@ -1,29 +1,30 @@
-package controllers.xml
+package controllers.ebnf
 
-import controllers.core.RoutesObject
-import play.api.mvc.Call
+import controllers.ebnf.routes.EBNFAdmin._
+import controllers.ebnf.routes.EBNFController._
+import controllers.core.ToolObject
+import model.tools.ToolState
 
-import controllers.xml.routes.XmlController._
-import controllers.xml.routes.XmlAdmin._
-
-object XmlRoutesObject extends RoutesObject("Xml") {
+object EBNFToolObject extends ToolObject("EBNF", ToolState.ALPHA) {
 
   // User
-
-  override def exerciseRoute(id: Int) = exercise(id)
-
-
   
-  def exesListRoute(id: Int) = exesListRoute(id)
-  
-  override def correctLiveRoute(id: Int) = correctLive(id)
+  override def indexCall = index()
 
-  override def correctRoute(id: Int) = correct(id)
+  def exerciseRoute(id: Int) = exercise(id)
+  
+  
+  
+  override def exesListRoute(id: Int) = exesListRoute(id)
+
+  override def correctLiveRoute(id: Int) = null
+
+  override def correctRoute(id: Int) = null
 
   // Admin
 
-  override val restHeaders = List("Typ", "Wurzelknoten")
-
+  override val restHeaders = List("Terminalsymbole")
+  
   override def adminIndexRoute = adminIndex
 
   override def exercisesRoute = exercises

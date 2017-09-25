@@ -1,17 +1,23 @@
 package controllers.core
 
 import play.api.mvc.Call
+import model.tools.ToolList
+import model.tools.ToolState
 
-abstract class RoutesObject(val exType: String, val pluralName: String = "Aufgaben") {
+abstract class ToolObject(val exType: String, val state: ToolState = ToolState.ALPHA, val decoration: String = null, val pluralName: String = "Aufgaben") {
+
+  ToolList.register(this)
 
   // User
+
+  def indexCall: Call = null
 
   def exerciseRoute(id: Int): Call
 
   def exerciseRoutes(id: Int): List[(Call, String)] = List((exerciseRoute(id), "Aufgabe bearbeiten"))
 
   def exesListRoute(id: Int): Call
-  
+
   def correctLiveRoute(id: Int): Call
 
   def correctRoute(id: Int): Call

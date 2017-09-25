@@ -22,7 +22,7 @@ public class UmlAdmin extends AExerciseAdminController<UmlExercise> {
   
   @Inject
   public UmlAdmin(FormFactory theFactory) {
-    super(theFactory, UmlRoutesObject$.MODULE$, UmlExercise.finder, UmlExerciseReader$.MODULE$);
+    super(theFactory, UmlToolObject$.MODULE$, UmlExercise.finder, UmlExerciseReader$.MODULE$);
   }
   
   @Override

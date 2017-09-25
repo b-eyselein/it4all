@@ -39,7 +39,7 @@ public class XmlController extends ExerciseController<XmlExercise, XmlError> {
 
   @Inject
   public XmlController(FormFactory theFactory) {
-    super(theFactory, "xml", XmlExercise.finder, XmlRoutesObject$.MODULE$);
+    super(theFactory, "xml", XmlExercise.finder, XmlToolObject$.MODULE$);
   }
 
   public static String getReferenceCode(XmlExercise exercise) {
@@ -144,7 +144,7 @@ public class XmlController extends ExerciseController<XmlExercise, XmlError> {
   @Override
   protected Html renderExercise(User user, XmlExercise exercise) {
     final String defOrOldSolution = readDefOrOldSolution(user.name, exercise);
-    return views.html.exercise2Rows.render(user, XmlRoutesObject$.MODULE$, EX_OPTIONS, exercise,
+    return views.html.exercise2Rows.render(user, routesObject, EX_OPTIONS, exercise,
         views.html.xmlExRest.render(exercise), defOrOldSolution);
   }
 

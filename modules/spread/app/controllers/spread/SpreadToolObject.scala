@@ -1,12 +1,15 @@
 package controllers.spread
 
 import controllers.spread.routes.SpreadAdmin._
+import model.tools.ToolState
 import controllers.spread.routes.SpreadController._
-import controllers.core.RoutesObject
+import controllers.core.ToolObject
 
-object SpreadRoutesObject extends RoutesObject("Tabellenkalkulation") {
+object SpreadToolObject extends ToolObject("Tabellenkalkulation", ToolState.LIVE) {
 
   // User
+  
+  override def indexCall = index()
 
   def exerciseRoute(id: Int) = exercise(id)
   

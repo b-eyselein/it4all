@@ -18,31 +18,22 @@
   
   <hr>
   
-  @for(ts <- controllers.tools.ToolState.values;
-  	if user.hasRight(ts.getRequiredRole);
-  	toolsForState = controllers.tools.ToolList.tools.filter(_.state == ts);
-  	if !toolsForState.isEmpty) {
-    <h2>@ts.getDescription</h2>
-    
-    @for(tools <- toolsForState.grouped(3)) {
-    <div class="row">
-      @for(tool <- tools) {
-      <a href="@tool.index">
-        <div class="col-md-4">
-          @tool.name
-          @if(tool.decoration != null) {
-          <br>
+  <h2>Verf&uuml;gbare Aufgabentypen</h2>
+@for(tools <- model.tools.ToolList.toolList.grouped(3)) {
+  <div class="row">
+  @for(tool <- tools) {
+    <div class="col-md-4">
+      <a class="btn btn-default btn-block" href="@tool.indexCall">
+        <span class="text-capitalize">@tool.exType</span>
+        @if(tool.decoration != null) {
           @tool.decoration
-          }
-        </div>
+        }
       </a>
-      }
     </div>
-    &nbsp;
-    }
-    
-    <hr>
   }
+  </div>
+  &nbsp;
+}
   
 </div>
 }

@@ -24,31 +24,26 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span> 
       	</button>
-        <a class="navbar-brand" href="/">it4all<sup>BETA</sup></a>
+        <a class="navbar-brand" href="@routes.Application.index">it4all<sup>BETA</sup></a>
       </div>
       <div class="collapse navbar-collapse" id="myNavbar">
         <ul class="nav navbar-nav">
-          <li><a href="@web.routes.WebController.index()">Web</a></li>
-          
-          <li><a href="@programming.routes.ProgController.index()">Programmierung</a></li>
-          
-          <li><a href="@sql.routes.SqlController.index()">SQL</a></li>
-          
-          @* Xml not empty because of filters *@
-          <li><a href="@xml.routes.XmlController.index()">XML</a></li>
-          
-          <li><a href="@uml.routes.UmlController.index()">UML<sup>BETA</sup></a></li>
-          
-          <li><a href="@questions.routes.QuestionController.index(0)">Auswahlfragen<sup>BETA</sup></a></li>
-          
+        @for(tool <- model.tools.ToolList.toolList) {
+          <li>
+          	<a href="@tool.indexCall">@tool.exType @tool.state.getBadge</a>
+      	  </li>
+        }
+        
+        @*for(toolGroup <- model.tools.ToolList.toolGroups) {
           <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Allgemeiner Teil <span class="caret"></span></a>
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">@toolGroup.name <span class="caret"></span></a>
             <ul class="dropdown-menu">
-              <li><a href="@routes.NaryController.index">Zahlensysteme</a></li>
-              <li><a href="@bool.routes.BoolController.index">Boolesche Algebra</a></li>
-              <li><a href="@spread.routes.SpreadController.index()">Tabellenkalkulation</a></li>
+            @for(tool <- toolGroup.tools) {
+              <li><a href="@tool.index">@tool.name</a></li>
+            }
             </ul>
           </li>
+      	}*@
 
           <!-- <li><a href="@mindmap.routes.MindmapController.index">MindMap</a></li> -->
         </ul>
@@ -61,29 +56,18 @@
             <ul class="dropdown-menu">
               <li><a href="@questions.routes.QuestionAdmin.adminIndex">Auswahlfragen</a></li>
  
-              <li class="divider"></li>
-              
               <li><a href="@ebnf.routes.EBNFAdmin.adminIndex">EBNF</a></li>
  
-              <li class="divider"></li>
-             
               <li><a href="@programming.routes.ProgAdmin.adminIndex">Programmierung</a></li>
  
-              <li class="divider"></li>
-              
               <li><a href="@sql.routes.SqlAdmin.adminIndex">Sql</a></li>
-              
-              <li class="divider"></li>
               
               <li><a href="@spread.routes.SpreadAdmin.adminIndex">Tabellenkalkulation</a></li>
               
-              <li class="divider"></li>
-              
               <li><a href="@uml.routes.UmlAdmin.adminIndex">Uml</a></li>
               
-              <li class="divider"></li>
-             
               <li><a href="@web.routes.WebAdmin.adminIndex">Web</a></li>
+
               <li><a href="@xml.routes.XmlAdmin.adminIndex">Xml</a></li>
               
               <li class="divider"></li>

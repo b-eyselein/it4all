@@ -1,25 +1,31 @@
-package controllers.sql
+package controllers.xml
 
-import controllers.core.RoutesObject
-import controllers.sql.routes.SqlAdmin._
+import controllers.core.ToolObject
+import play.api.mvc.Call
 
-object SqlRoutesObject extends RoutesObject("Sql") {
+import controllers.xml.routes.XmlController._
+import controllers.xml.routes.XmlAdmin._
+import model.tools.ToolState
+
+object XmlToolObject extends ToolObject("Xml", ToolState.LIVE) {
 
   // User
 
-  def exerciseRoute(id: Int) = null
+  override def indexCall = index()
+  
+  override def exerciseRoute(id: Int) = exercise(id)
+
 
   
+  def exesListRoute(id: Int) = exesListRoute(id)
   
-  override def exesListRoute(id: Int) = exesListRoute(id)
+  override def correctLiveRoute(id: Int) = correctLive(id)
 
-  override def correctLiveRoute(id: Int) = null
-
-  override def correctRoute(id: Int) = null
+  override def correctRoute(id: Int) = correct(id)
 
   // Admin
 
-  override val restHeaders = List.empty
+  override val restHeaders = List("Typ", "Wurzelknoten")
 
   override def adminIndexRoute = adminIndex
 

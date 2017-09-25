@@ -32,12 +32,12 @@ import play.twirl.api.Html;
 @Authenticated(AdminSecured.class)
 public abstract class AExerciseAdminController<E extends Exercise> extends BaseController {
 
-  protected final RoutesObject routes;
+  protected final ToolObject routes;
 
   protected final Finder<Integer, E> finder;
   protected final ExerciseReader<E> exerciseReader;
 
-  public AExerciseAdminController(FormFactory theFactory, RoutesObject theRoutes, Finder<Integer, E> theFinder,
+  public AExerciseAdminController(FormFactory theFactory, ToolObject theRoutes, Finder<Integer, E> theFinder,
       ExerciseReader<E> theExerciseReader) {
     super(theFactory);
     routes = theRoutes;

@@ -11,7 +11,7 @@ import play.mvc.Results
 import javax.inject.Inject
 
 class EBNFAdmin @Inject() (factory: FormFactory) extends
-AExerciseAdminController[EBNFExercise](factory, EBNFRoutesObject, EBNFExercise.finder, new EBNFExerciseReader()) {
+AExerciseAdminController[EBNFExercise](factory, EBNFToolObject, EBNFExercise.finder, new EBNFExerciseReader()) {
 
   override def adminIndex() =
     Results.ok(views.html.ebnfAdmin.index.render(BaseController.getUser()))
