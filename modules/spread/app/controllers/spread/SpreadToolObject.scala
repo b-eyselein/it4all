@@ -1,9 +1,9 @@
 package controllers.spread
 
 import controllers.spread.routes.SpreadAdmin._
-import model.tools.ToolState
 import controllers.spread.routes.SpreadController._
-import controllers.core.ToolObject
+import model.tools.ToolState
+import model.tools.ToolObject
 
 object SpreadToolObject extends ToolObject("Tabellenkalkulation", ToolState.LIVE) {
 

@@ -19,6 +19,7 @@ import model.exercisereading.AbstractReadingResult;
 import model.exercisereading.ExerciseReader;
 import model.exercisereading.ReadingError;
 import model.exercisereading.ReadingResult;
+import model.tools.ToolObject;
 import model.user.User;
 import play.Logger;
 import play.data.FormFactory;

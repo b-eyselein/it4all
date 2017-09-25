@@ -1,6 +1,6 @@
 package controllers.sql
 
-import controllers.core.ToolObject
+import model.tools.ToolObject
 import model.tools.ToolState
 import controllers.sql.routes.SqlAdmin._
 import controllers.sql.routes.SqlController._

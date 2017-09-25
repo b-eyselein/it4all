@@ -1,6 +1,6 @@
 package controllers.bool
 
-import controllers.core.ToolObject
+//import model.tools.ToolObject
 
 //import controllers.bool.BoolController._
 

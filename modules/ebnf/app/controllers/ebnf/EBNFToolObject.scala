@@ -2,7 +2,7 @@ package controllers.ebnf
 
 import controllers.ebnf.routes.EBNFAdmin._
 import controllers.ebnf.routes.EBNFController._
-import controllers.core.ToolObject
+import model.tools.ToolObject
 import model.tools.ToolState
 
 object EBNFToolObject extends ToolObject("EBNF", ToolState.ALPHA) {

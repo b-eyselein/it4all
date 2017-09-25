@@ -1,9 +1,10 @@
 package controllers.uml
 
 import controllers.uml.routes.UmlAdmin._
-import model.tools.ToolState
 import controllers.uml.routes.UmlController._
-import controllers.core.ToolObject
+
+import model.tools.ToolState
+import model.tools.ToolObject
 
 object UmlToolObject extends ToolObject("Uml", ToolState.LIVE) {
 

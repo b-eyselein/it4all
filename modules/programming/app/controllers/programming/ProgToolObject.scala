@@ -1,9 +1,9 @@
 package controllers.programming
 
 import controllers.programming.routes.ProgController._
-import model.tools.ToolState
 import controllers.programming.routes.ProgAdmin._
-import controllers.core.ToolObject
+import model.tools.ToolState
+import model.tools.ToolObject
 
 object ProgToolObject extends ToolObject("Programmierung", ToolState.LIVE) {
 

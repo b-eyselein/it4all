@@ -3,7 +3,7 @@ package controllers.questions
 import controllers.questions.routes.QuestionAdmin._
 import controllers.questions.routes.QuestionController._
 import model.tools.ToolState
-import controllers.core.ToolObject
+import model.tools.ToolObject
 
 object QuestionToolObject extends ToolObject("Auswahlfragen", ToolState.BETA) {
 

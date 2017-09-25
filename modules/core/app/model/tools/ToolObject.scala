@@ -1,10 +1,12 @@
-package controllers.core
+package model.tools
 
 import play.api.mvc.Call
-import model.tools.ToolList
-import model.tools.ToolState
 
-abstract class ToolObject(val exType: String, val state: ToolState = ToolState.ALPHA, val decoration: String = null, val pluralName: String = "Aufgaben") {
+abstract class ToolObject(
+  val exType: String,
+  val state: ToolState = ToolState.ALPHA,
+  val decoration: String = null,
+  val pluralName: String = "Aufgaben") {
 
   ToolList.register(this)
 

@@ -1,11 +1,11 @@
 package controllers.xml
 
-import controllers.core.ToolObject
 import play.api.mvc.Call
 
 import controllers.xml.routes.XmlController._
 import controllers.xml.routes.XmlAdmin._
 import model.tools.ToolState
+import model.tools.ToolObject
 
 object XmlToolObject extends ToolObject("Xml", ToolState.LIVE) {
 

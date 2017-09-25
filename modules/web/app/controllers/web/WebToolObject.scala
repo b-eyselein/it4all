@@ -2,7 +2,8 @@ package controllers.web
 
 import controllers.web.routes.WebAdmin._
 import controllers.web.routes.WebController._
-import controllers.core.ToolObject
+
+import model.tools.ToolObject
 import model.tools.ToolState
 
 object WebToolObject extends ToolObject("Web", ToolState.LIVE) {
