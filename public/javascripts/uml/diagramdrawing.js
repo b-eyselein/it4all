@@ -191,16 +191,14 @@ function extractParametersAsJson() {
     .map(function(conn) {
       return {
         assocType: getTypeName(conn.attributes.type),
-        ends: [
-          {
+        start: {
             endName: getClassNameFromCellId(conn.attributes.source.id),
             multiplicity: getMultiplicity(conn.attributes.labels[0])
-          },
-          {
+        },
+        end: {
             endName: getClassNameFromCellId(conn.attributes.target.id),
             multiplicity: getMultiplicity(conn.attributes.labels[1])
-          }
-        ]
+        }
       };
     }),
     
