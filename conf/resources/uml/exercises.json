@@ -129,107 +129,91 @@
 			"associations": [
 				{
 					"assocType": "ASSOCIATION",
-					"ends": [
-						{
-							"endName": "Doktor",
-							"multiplicity": "SINGLE"
-						},
-						{
-							"endName": "Rezept",
-							"multiplicity": "UNBOUND"
-						}
-					]
+					"start": {
+						"endName": "Doktor",
+						"multiplicity": "SINGLE"
+					},
+					"end": {
+						"endName": "Rezept",
+						"multiplicity": "UNBOUND"
+					}
 				},
 				{
 					"assocType": "ASSOCIATION",
-					"ends": [
-						{
-							"endName": "Doktor",
-							"multiplicity": "SINGLE"
-						},
-						{
-							"endName": "Patient",
-							"multiplicity": "UNBOUND"
-						}
-					]
+					"start": {
+						"endName": "Doktor",
+						"multiplicity": "SINGLE"
+					},
+					"end": {
+						"endName": "Patient",
+						"multiplicity": "UNBOUND"
+					}
 				},
 				{
 					"assocType": "ASSOCIATION",
-					"ends": [
-						{
-							"endName": "Station",
-							"multiplicity": "SINGLE"
-						},
-						{
-							"endName": "Patient",
-							"multiplicity": "UNBOUND"
-						}
-					]
+					"start": {
+						"endName": "Station",
+						"multiplicity": "SINGLE"
+					},
+					"end": {
+						"endName": "Patient",
+						"multiplicity": "UNBOUND"
+					}
 				},
 				{
 					"assocType": "ASSOCIATION",
-					"ends": [
-						{
-							"endName": "Station",
-							"multiplicity": "SINGLE"
-						},
-						{
-							"endName": "Krankenschwester",
-							"multiplicity": "UNBOUND"
-						}
-					]
+					"start": {
+						"endName": "Station",
+						"multiplicity": "SINGLE"
+					},
+					"end": {
+						"endName": "Krankenschwester",
+						"multiplicity": "UNBOUND"
+					}
 				},
 				{
 					"assocType": "ASSOCIATION",
-					"ends": [
-						{
-							"endName": "Station",
-							"multiplicity": "SINGLE"
-						},
-						{
-							"endName": "Doktor",
-							"multiplicity": "UNBOUND"
-						}
-					]
+					"start": {
+						"endName": "Station",
+						"multiplicity": "SINGLE"
+					},
+					"end": {
+						"endName": "Doktor",
+						"multiplicity": "UNBOUND"
+					}
 				},
 				{
 					"assocType": "ASSOCIATION",
-					"ends": [
-						{
-							"endName": "Patient",
-							"multiplicity": "SINGLE"
-						},
-						{
-							"endName": "Rezept",
-							"multiplicity": "UNBOUND"
-						}
-					]
+					"start": {
+						"endName": "Patient",
+						"multiplicity": "SINGLE"
+					},
+					"end": {
+						"endName": "Rezept",
+						"multiplicity": "UNBOUND"
+					}
 				},
 				{
 					"assocType": "ASSOCIATION",
-					"ends": [
-						{
-							"endName": "Rezept",
-							"multiplicity": "SINGLE"
-						},
-						{
-							"endName": "Medikament",
-							"multiplicity": "UNBOUND"
-						}
-					]
+					"start": {
+						"endName": "Rezept",
+						"multiplicity": "SINGLE"
+					},
+					"end": {
+						"endName": "Medikament",
+						"multiplicity": "UNBOUND"
+					}
 				},
 				{
 					"assocType": "COMPOSITION",
-					"ends": [
-						{
-							"endName": "Krankenhaus",
-							"multiplicity": "SINGLE"
-						},
-						{
-							"endName": "Station",
-							"multiplicity": "UNBOUND"
-						}
-					]
+					"start": {
+						"endName": "Krankenhaus",
+						"multiplicity": "SINGLE"
+					},
+					"end": {
+						"endName": "Station",
+						"multiplicity": "UNBOUND"
+					}
 				}
 			]
 		},

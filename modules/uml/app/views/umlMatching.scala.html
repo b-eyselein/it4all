@@ -16,19 +16,19 @@
           <div class="panel panel-default">
             <div class="panel-heading">Attribute</div>
             <div class="panel-body">
-            @for(attr <- solution.getAllAttributes()) {
+            @for(attr <- solution.allAttributes) {
             	<button class="btn btn-default btn-block" id="@attr" data-typ="attr" draggable="true"
                ondragstart="drag(event)">@attr</button>
             }
             </div>
           </div>
         </div>
-            
+
         <div class="col-sm-8">
           <div class="panel panel-default">
             <div class="panel-heading">Methoden</div>
             <div class="panel-body">
-            @for(method <- solution.getAllMethods()) {
+            @for(method <- solution.allMethods) {
               <button class="btn btn-default btn-block" id="@method" data-typ="method" draggable="true"
                ondragstart="drag(event)">@method</button>
             }
@@ -37,30 +37,30 @@
         </div>
       </div>
     </div>
-  
+
     <div class="col-md-8">
-    @for(clazz <-solution.getClasses()) {
+    @for(clazz <-solution.classes) {
       <div class="col-md-4">
-      
+
         <div class="panel panel-default">
-          <div class="panel-heading">@clazz.getName()</div>
+          <div class="panel-heading">@clazz.name</div>
           <div class="panel-body">
             <div class="attrs-div" ondrop="drop(event, 'attr')" ondragover="allowDrop(event)"></div>
             <div class="methods-div" ondrop="drop(event, 'method')" ondragover="allowDrop(event)"></div>
           </div>
         </div>
-        
+
       </div>
     }
     </div>
   </div>
-    
+
   <hr>
-  
-  <form method="post" onsubmit="prepareFormForSubmitting()" action="@uml.routes.UmlController.correctMatching(exercise.getId)">
+
+  <form method="post" onsubmit="prepareFormForSubmitting" action="@uml.routes.UmlController.correctMatching(exercise.getId)">
     <input hidden name="learnerSolution" id="learnerSolution">
     <button class="btn btn-primary btn-block">Aufgabenteil korrigieren</button>
   </form>
-  
+
 </div>
 }

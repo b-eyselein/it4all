@@ -1,158 +1,130 @@
-@(user: model.user.User, result: model.result.DiagramDrawingResult)
+@(user: model.user.User, result: model.DiagramDrawingResult)
 
 @main("UML-Test", user) {
-<div class="container-fluid">
+<div class="container">
   <div class="page-header">
-    <h1> Korrektur der Aufgabe &quot;@result.getExercise().getTitle&quot;</h1>	
+    <h1> Korrektur der Aufgabe &quot;@result.exercise.title&quot;</h1>	
   </div>
 
-  <div class="row">
-    <div class="col-md-8">
-      <h1>Assoziationen</h1>
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <th>Korrektheit</th>
-            <th class="text-center" colspan="2">Typ</th>
-            <th>Start</th>
-            <th>Ziel</th>
-            <th class="text-center" colspan="2">Multiziplität</th>
-          </tr>
-          <tr>
-            <th/>
-            <th>Lerner</th>
-            <th>Muster</th>
-            <th/>
-            <th/>
-            <th>Lerner</th>
-            <th>Muster</th>
-        </thead>
-        
-        <tbody>
-          <tr>
-            <th colspan="7" class="text-center">(Teilweise) Korrekt</th>
-          </tr>
-        @for(corrAssoc <- result.getAssociationResult().getMatches().asInstanceOf[List[model.umlmatcher.UmlAssociationMatch]]) {
-          <tr>
-            @if(corrAssoc.isCorrect()) {
-            <td class="success text-center"><span class="glyphicon glyphicon-ok"></span>
-            } else {
-            <td class="warning text-center"><span class="glyphicon glyphicon-remove"></span>
-            }
-            @if(corrAssoc.isAssocTypeEqual()) {
-            <td class="success text-center" colspan="2">@corrAssoc.getUserArg().getAssocType().getName()</td>
-            } else {
-            <td class="danger">@corrAssoc.getUserArg().getAssocType().getName()</td>
-            <td>@corrAssoc.getSampleArg().getAssocType().getName()</td>
-            }
-      	    <td>@corrAssoc.getUserArg().getEnds().get(0).getEndName()</td>
-            <td>@corrAssoc.getUserArg().getEnds().get(1).getEndName()</td>
-            @if(corrAssoc.areMultiplicitiesEqual()) {
-            <td class="success text-center" colspan="2">@corrAssoc.getCorrectMultiplicity()</td>
-            } else {
-            <td class="danger">@corrAssoc.getUserArg().multsAsString()</td>
-            <td>@corrAssoc.getCorrectMultiplicity()</td>
-            }
-          </tr>
-          }
-          @*
-          <tr><td colspan="7">&nbsp;</td></tr>
-          
-          <tr>
-            <th colspan="7" class="text-center">Falsch</th>
-          </tr>
-        @for(wrongAssoc <- result.getAssociationResult().getWrong()) {
-          <tr>
-            <td class="danger text-center"><span class="glyphicon glyphicon-remove" title="Falsch"></span></td>
-            <td>@wrongAssoc.getUserArg().getAssocType().getName()</td>
-            <td/>
-            <td>@wrongAssoc.getUserArg().getEnds().get(0).getEndName()</td>
-            <td>@wrongAssoc.getUserArg().getEnds().get(1).getEndName()</td>
-            <td>@wrongAssoc.getUserArg().getEnds().get(0).getMultiplicity().getRepresentant() : @wrongAssoc.getUserArg().getEnds().get(1).getMultiplicity().getRepresentant()</td>
-            <td/>
-          </tr>
-          }
-          
-          <tr><td colspan="7">&nbsp;</tr>
-          
-          <tr>
-            <th colspan="7" class="text-center">Fehlend</th>
-          </tr>
-          
-        @for(missingAssoc <- result.getAssociationResult().getMissing()) {
-          <tr>
-            <td class="warning text-center"><span class="glyphicon glyphicon-minus" title="Fehlend"></span></td>
-            <td/>
-            <td>@missingAssoc.getSampleArg().getAssocType().getName()</td>
-            <td>@missingAssoc.getSampleArg().getEnds().get(0).getEndName()</td>
-            <td>@missingAssoc.getSampleArg().getEnds().get(1).getEndName()</td>
-            <td/>
-            <td>@missingAssoc.getSampleArg().getEnds().get(0).getMultiplicity().getRepresentant() : @missingAssoc.getSampleArg().getEnds().get(1).getMultiplicity().getRepresentant()</td>
-          </tr>
-          }
-          *@
-          
-        </tbody>
-      </table>
-    </div>
+  <h1>Assoziationen</h1>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Korrektheit</th>
+        <th class="text-center" colspan="2">Typ</th>
+        <th>Start</th>
+        <th>Ziel</th>
+        <th class="text-center" colspan="2">Multiziplität</th>
+      </tr>
+      <tr>
+        <th/>
+        <th>Lerner</th>
+        <th>Muster</th>
+        <th/>
+        <th/>
+        <th>Lerner</th>
+        <th>Muster</th>
+    </thead>
     
-    <div class="col-md-4">
-      <h1>Vererbungen</h1>
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <th>Korrektheit</th>
-            <th>Subklasse</th>
-            <th>Superklasse</th>
-          </tr>
-          <tr><th colspan="3">&nbsp;</th></tr>
-        </thead>
-        
-        <tbody>
-          <tr>
-            <th colspan="3" class="text-center">Korrekt</th>
-          </tr>
-        @for(correctImpl <- result.getImplementationResult().getMatches()) {
-          <tr>
-            <td class="success text-center"><span class="glyphicon glyphicon-ok"></span>
-            <td>@correctImpl.getUserArg().getSubClass()</td>
-            <td>@correctImpl.getUserArg().getSuperClass()</td>
-          </tr>
-          }
-          
-          @*
-          <tr><td colspan="3">&nbsp;</td></tr>
-          <tr>
-            <th colspan="3" class="text-center">Falsch</th>
-          </tr>
-        @for(wrongImpl <- result.getImplementationResult().getWrong()) {
-          <tr>
-            <td class="danger text-center"><span class="glyphicon glyphicon-remove"></span>
-            <td>@wrongImpl.getUserArg().getSubClass()</td>
-            <td>@wrongImpl.getUserArg().getSuperClass()</td>
-          </tr>
-          }
-          
-          <tr><td colspan="3">&nbsp;</td></tr>
-          <tr>
-            <th colspan="3" class="text-center">Fehlend</th>
-          </tr>
-        @for(missingImpl <- result.getImplementationResult().getMissing()) {
-          <tr>
-            <td class="warning text-center"><span class="glyphicon glyphicon-minus"></span>
-            <td>@missingImpl.getSampleArg().getSubClass()</td>
-            <td>@missingImpl.getSampleArg().getSuperClass()</td>
-          </tr>
-          }
-          *@
-        </tbody>
-      </table>
-    </div>
+    <tbody>
+      <tr>
+        <th colspan="7" class="text-center">(Teilweise) Korrekt</th>
+      </tr>
+      
+      @for(assoc <- result.associationResult.allMatches) {
+        @assoc.describe
+      }
+    @*for(corrAssoc <- result.associationResult.allMatches.asInstanceOf[List[model.umlmatcher.UmlAssociationMatch]]) {
+      <tr>
+        @if(corrAssoc.isCorrect) {
+        <td class="success text-center"><span class="glyphicon glyphicon-ok"></span>
+        } else {
+        <td class="warning text-center"><span class="glyphicon glyphicon-remove"></span>
+        }
+        @if(corrAssoc.assocTypeEqual) {
+        <td class="success text-center" colspan="2">@corrAssoc.userArg.assocType</td>
+        } else {
+        <td class="danger">@corrAssoc.userArg.assocType</td>
+        <td>@corrAssoc.sampleArg.assocType</td>
+        }
+  	    <td>@corrAssoc.userArg.ends._1.endName</td>
+        <td>@corrAssoc.userArg.ends._2.endName</td>
+        @if(corrAssoc.areMultiplicitiesEqual) {
+        <td class="success text-center" colspan="2">@corrAssoc.correctMultiplicity</td>
+        } else {
+        <td class="danger">@corrAssoc.userArg.multsAsString</td>
+        <td>@corrAssoc.correctMultiplicity</td>
+        }
+      </tr>
+      }*@
+      
+      
+      @*
+      <tr><td colspan="7">&nbsp;</td></tr>
+      
+      <tr>
+        <th colspan="7" class="text-center">Falsch</th>
+      </tr>
+    @for(wrongAssoc <- result.associationResult.wrong) {
+      <tr>
+        <td class="danger text-center"><span class="glyphicon glyphicon-remove" title="Falsch"></span></td>
+        <td>@wrongAssoc.userArg.getAssocType.getName</td>
+        <td/>
+        <td>@wrongAssoc.userArg.ends._1.getEndName</td>
+        <td>@wrongAssoc.userArg.ends._2.getEndName</td>
+        <td>@wrongAssoc.userArg.ends._1.multiplicity.getRepresentant : @wrongAssoc.userArg.ends._2.multiplicity.getRepresentant</td>
+        <td/>
+      </tr>
+      }
+      
+      <tr><td colspan="7">&nbsp;</tr>
+      
+      <tr>
+        <th colspan="7" class="text-center">Fehlend</th>
+      </tr>
+      
+    @for(missingAssoc <- result.getAssociationResult.missing) {
+      <tr>
+        <td class="warning text-center"><span class="glyphicon glyphicon-minus" title="Fehlend"></span></td>
+        <td/>
+        <td>@missingAssoc.sampleArg.getAssocType.getName</td>
+        <td>@missingAssoc.sampleArg.ends._1.getEndName</td>
+        <td>@missingAssoc.sampleArg.ends._2.getEndName</td>
+        <td/>
+        <td>@missingAssoc.sampleArg.ends._1.multiplicity.getRepresentant : @missingAssoc.sampleArg.ends._2.multiplicity.getRepresentant</td>
+      </tr>
+      }
+      *@
+      
+    </tbody>
+  </table>
     
-  </div>
+  <h1>Vererbungen</h1>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Korrektheit</th>
+        <th colspan="2">Lerner</th>
+        <th colspan="2">Muster</th>
+      </tr>
+      <tr>
+        <th/>
+        <th>Subklasse</th>
+        <th>Superklasse</th>
+        <th>Subklasse</th>
+        <th>Superklasse</th>
+      </tr>
+    </thead>
+    
+    <tbody>
+      @for(impl <- result.implementationResult.allMatches) {
+        @impl.describe
+      }
+    </tbody>
+  </table>
   
   <hr>
   
-  <a href="@uml.routes.UmlController.matching(result.getExercise.getId)" class="btn btn-primary btn-block">Zum nächsten Aufgabenteil</a>
+  <a href="@uml.routes.UmlController.matching(result.exercise.id)" class="btn btn-primary btn-block">Zum nächsten Aufgabenteil</a>
 </div>
 }

@@ -26,19 +26,23 @@ abstract class ScalaMatch[T](val userArg: Option[T], val sampleArg: Option[T]) {
 
   def analyze(arg1: T, arg2: T): MatchType
 
-  private def describeArg(arg: Option[T]) = if (arg.isDefined) arg.get.toString else ""
+  protected def describeArg(arg: T) = arg.toString
 
   def describe = {
     <tr class={ getBSClass }>
-    	<td><span class={ matchType.toString }></span></td>
-    	<td>
-     	  <span class={ if (isSuccessful) "text-success" else "text-danger" }>{ describeArg(userArg) }</span>
-    	</td>
-    	<td>
-     	  <span class={ if (isSuccessful) "text-success" else "text-danger" }>{ describeArg(sampleArg) }</span>
-    	</td>
-    	<td>{ explanation }</td>
-  	</tr>
+      <td><span class={ matchType.toString }></span></td>
+      <td>
+        <span class={ if (isSuccessful) "text-success" else "text-danger" }>{
+          if (userArg.isDefined) describeArg(userArg.get) else ""
+        }</span>
+      </td>
+      <td>
+        <span class={ if (isSuccessful) "text-success" else "text-danger" }>{
+          if (sampleArg.isDefined) describeArg(sampleArg.get) else ""
+        }</span>
+      </td>
+      <td>{ explanation }</td>
+    </tr>
   }
 
 }

@@ -7,6 +7,7 @@ function prepareFormForSubmitting() {
     classes: chosenClasses.map(function(clazz) {
       return {
         name: clazz,
+        classType: "CLASS",
         methods: [],
         attributes: []
       };

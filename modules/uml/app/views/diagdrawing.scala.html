@@ -78,7 +78,7 @@ var canDelete = @{!getsHelp};
       <form method="post" onsubmit="return prepareFormForSubmitting();"
       @if(getsHelp) { action="@uml.routes.UmlController.correctDiagramDrawingWithHelp(exercise.getId)"
   	  } else { action="@uml.routes.UmlController.correctDiagramDrawing(exercise.getId)" }>
-        <input type="hidden" value="" class="form-control" name="learnerSolution" id="learnerSolution" required>
+        <input type="hidden" name="@model.StringConsts.FORM_VALUE" id="@model.StringConsts.FORM_VALUE" required>
         <button class="btn btn-primary btn-block">Aufgabe verifizieren</button>
       </form>
       
@@ -93,13 +93,13 @@ var canDelete = @{!getsHelp};
       </div>
       
       <div class="btn-group">
-        <button class="btn btn-default" onclick="backwards();" disabled title="R&uuml;ckg&auml;ngig">
+        <button class="btn btn-default" onclick="backwards;" disabled title="R&uuml;ckg&auml;ngig">
           <span class="glyphicon glyphicon-arrow-left"></span>
         </button>
       </div>
       
       <div class="btn-group">
-        <button class="btn btn-default" onclick="forwards();" disabled title="Vorw&auml;rts">
+        <button class="btn btn-default" onclick="forwards;" disabled title="Vorw&auml;rts">
           <span class="glyphicon glyphicon-arrow-right"></span>
         </button>
       </div>
@@ -114,11 +114,15 @@ var canDelete = @{!getsHelp};
           <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="menu">
-        @for(classType <- model.uml.UmlClassType.values()) {
           <li>
-            <a data-conntype="@classType" onclick="selectClassType(this);">@classType.getName()</a>
+            <a data-conntype="CLASS" onclick="selectClassType(this);">Klasse</a>
           </li>
-        }
+          <li>
+            <a data-conntype="ABSTRACTCLASS" onclick="selectClassType(this);">Abstrakte Klasse</a>
+          </li>
+          <li>
+            <a data-conntype="INTERFACE" onclick="selectClassType(this);">Interface</a>
+          </li>
         </ul>
       </div>
       
@@ -151,13 +155,13 @@ var canDelete = @{!getsHelp};
       </div>
       
       <div class="btn-group">
-        <a href="" id="a" class="btn btn-default" onclick="exportDiagram();">
+        <a href="" id="a" class="btn btn-default" onclick="exportDiagram;">
           <span class="glyphicon glyphicon-download"></span> Export
         </a>
       </div>
       
       <div class="btn-group">
-        <button class="btn btn-default" onclick="importDiagram();" disabled>
+        <button class="btn btn-default" onclick="importDiagram;" disabled>
           <span class="glyphicon glyphicon-upload"></span> Import
         </button>
       </div>

@@ -39,7 +39,7 @@ $(document).ready(function() {
 function blankOnPointerDown(evt, x, y) {
   switch(sel) {
   case "INTERFACE":
-  case "ABSTRACT":
+  case "ABSTRACTCLASS":
   case "CLASS":
     newClass(x, y);
     break;
@@ -50,14 +50,13 @@ function blankOnPointerDown(evt, x, y) {
 }
 
 function updateIdList() {
-  var idSpan = document.getElementById("idList");
+  var idSpan = $("#idList");
   
   if(idList.length == 0) {
-    idSpan.innerHTML = "--";
-    return;
+    idSpan.html("--");
+  } else {
+    idSpan.html(idList.map(getClassNameFromCellId).join(", "));
   }
-  
-  idSpan.innerHTML = idList.map(getClassNameFromCellId).join(", ");
 }
 
 function cellOnLeftClick(cellView, evt, x, y) {
@@ -84,7 +83,7 @@ function cellOnLeftClick(cellView, evt, x, y) {
     break;
     
   case "INTERFACE":
-  case "ABSTRACT":
+  case "ABSTRACTCLASS":
   case "CLASS":
     // Do nothing
     break;
@@ -176,8 +175,10 @@ function extractParametersAsJson() {
       return cell.attributes.name != undefined;
     })
     .map(function(cell) {
+      console.log(cell)
       return {
         name: cell.attributes.name,
+        classType: cell.attributes.type,
         methods: cell.attributes.methods,
         attributes: cell.attributes.attributes
       };
@@ -242,8 +243,7 @@ function getTypeName(type) {
 }
 
 function prepareFormForSubmitting() {
-  var toSend = extractParametersAsJson();
-  document.getElementById("learnerSolution").value = toSend;
+  $('#learnerSolution').val(extractParametersAsJson());
 }
 
 function link(sourceId, targetId) {
@@ -317,7 +317,7 @@ function addClass(clazz) {
   case "INTERFACE":
     graph.addCell(new joint.shapes.uml.Interface(content));
     break;
-  case "ABSTRACT":
+  case "ABSTRACTCLASS":
     graph.addCell(new joint.shapes.uml.Abstract(content));
     break;
   case "CLASS":

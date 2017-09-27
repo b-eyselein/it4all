@@ -262,11 +262,6 @@ create table uml_exercise (
   constraint pk_uml_exercise primary key (id)
 );
 
-create table uml_implementation (
-  sub_class                     varchar(255),
-  super_class                   varchar(255)
-);
-
 create table users (
   name                          varchar(255) not null,
   std_role                      varchar(10),
@@ -522,8 +517,6 @@ drop table if exists sql_user;
 drop table if exists tipps;
 
 drop table if exists uml_exercise;
-
-drop table if exists uml_implementation;
 
 drop table if exists users;
 

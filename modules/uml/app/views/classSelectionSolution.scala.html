@@ -1,9 +1,9 @@
-@(user: model.user.User, result: model.result.ClassSelectionResult)
+@(user: model.user.User, result: model.ClassSelectionResult)
 
 @main("UML", user) {
 <div class="container">
   <div class="page-header">
-    <h1>Zwischenkorrektur der Aufgabe &quot;@result.getExercise().getTitle&quot;</h1>
+    <h1>Zwischenkorrektur der Aufgabe &quot;@result.exercise.title&quot;</h1>
   </div>
 
   <table class="table">
@@ -16,12 +16,12 @@
       </tr>
     </thead>
     <tbody>
-    @matchingResult.render(result.getClassResult())
+    @result.classResult.describe
     </tbody>
   </table>
-  
+
   <hr>
-  
-  <a href="@uml.routes.UmlController.diagramDrawingWithHelp(result.getExercise().getId)" class="btn btn-primary btn-block">N&auml;chster Aufgabenteil</a>
+
+  <a href="@uml.routes.UmlController.diagramDrawingWithHelp(result.exercise.id)" class="btn btn-primary btn-block">N&auml;chster Aufgabenteil</a>
 </div>
 }

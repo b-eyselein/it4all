@@ -32,8 +32,6 @@ object UmlExerciseReader extends ExerciseReader[UmlExercise]("uml", UmlExercise.
 
     // Save solution as json in db
     exercise.solution = node.get(SOLUTION_NAME).toString;
-    
-    Logger.debug(exercise.solution);
   }
 
 }
