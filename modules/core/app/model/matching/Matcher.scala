@@ -2,23 +2,30 @@ package model.matching
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ListBuffer
-import model.result.EvaluationResult
+
 import model.exercise.Success
+import model.result.EvaluationResult
 
 class MatchingResult[T, M <: Match[T]](val matchName: String, val headings: List[String], val colWidth: Int, val allMatches: List[M])
   extends EvaluationResult(MatchingResult.analyze(allMatches))
 
 object MatchingResult {
-  def analyze(allMatches: List[Match[_]]): Success =
+  def analyze(allMatches: List[Match[_]]): Success = {
+    allMatches.map(_.matchType).distinct
     if (allMatches.exists(_.matchType == MatchType.ONLY_USER) || allMatches.exists(_.matchType == MatchType.ONLY_SAMPLE))
       Success.NONE
     else if (allMatches.exists(_.matchType == MatchType.UNSUCCESSFUL_MATCH))
       Success.PARTIALLY
     else
       Success.COMPLETE
+  }
 }
 
-class Matcher[T, M <: Match[T]](matchName: String, headings: List[String], canMatch: (T, T) => Boolean, matchInstantiation: (Option[T], Option[T]) => M) {
+class Matcher[T, M <: Match[T]](
+  matchName: String,
+  headings: List[String],
+  canMatch: (T, T) => Boolean,
+  matchInstantiation: (Option[T], Option[T], Int) => M) {
 
   val colWidth = headings.size
 
@@ -34,15 +41,15 @@ class Matcher[T, M <: Match[T]](matchName: String, headings: List[String], canMa
       for (arg2 <- secondList if !matched) {
         matched = canMatch.apply(arg1, arg2)
         if (matched) {
-          matches += matchInstantiation.apply(Some(arg1), Some(arg2))
+          matches += matchInstantiation.apply(Some(arg1), Some(arg2), headings.size)
           firstList -= arg1
           secondList -= arg2
         }
       }
     }
 
-    val wrong = firstList.map(t => matchInstantiation.apply(Some(t), None))
-    val missing = secondList.map(t => matchInstantiation.apply(None, Some(t)))
+    val wrong = firstList.map(t => matchInstantiation.apply(Some(t), None, headings.size))
+    val missing = secondList.map(t => matchInstantiation.apply(None, Some(t), headings.size))
 
     new MatchingResult[T, M](matchName, headings, colWidth, (matches ++ wrong ++ missing).toList)
   }
@@ -52,4 +59,8 @@ class Matcher[T, M <: Match[T]](matchName: String, headings: List[String], canMa
 
 }
 
-class StringMatcher(matchName: String) extends Matcher[String, Match[String]](matchName, List("String-Repraesentation"), _ == _, new ScalaGenericMatch[String](_, _))
+class StringMatcher(matchName: String) extends Matcher[String, Match[String]](
+  matchName,
+  List("String-Repraesentation"),
+  _ == _,
+  new Match[String](_, _, _))

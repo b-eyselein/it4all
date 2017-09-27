@@ -1,14 +1,12 @@
 package model.conditioncorrector
 
+import model.CorrectionException
 import model.StringConsts
-import model.matching.Matcher
-import net.sf.jsqlparser.expression.Expression
-import model.matching.MatchingResult
 import model.matching.Match
 import model.matching.MatchType
-import net.sf.jsqlparser.schema.Column
+import model.matching.Matcher
 import net.sf.jsqlparser.expression.BinaryExpression
-import model.CorrectionException
+import net.sf.jsqlparser.schema.Column
 
 object BinaryExpressionMatcher {
 
@@ -41,10 +39,10 @@ class BinaryExpressionMatcher(userTAliases: Map[String, String], sampleTAliases:
     StringConsts.CONDITIONS_NAME,
     List(""),
     BinaryExpressionMatcher.compareExpressions(_, userTAliases, _, sampleTAliases),
-    new BinaryExpressionMatch(_, _))
+    new BinaryExpressionMatch(_, _, _))
 
-class BinaryExpressionMatch(arg1: Option[BinaryExpression], arg2: Option[BinaryExpression])
-  extends Match[BinaryExpression](arg1, arg2) {
+class BinaryExpressionMatch(arg1: Option[BinaryExpression], arg2: Option[BinaryExpression], size: Int)
+  extends Match[BinaryExpression](arg1, arg2, size) {
 
   //  can only be successful match
   override def analyze(a1: BinaryExpression, a2: BinaryExpression) = MatchType.SUCCESSFUL_MATCH

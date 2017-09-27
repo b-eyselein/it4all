@@ -11,8 +11,8 @@ import model.UmlClass
 import model.matching.MatchingResult
 import play.twirl.api.Html
 
-case class UmlClassMatch(m1: Option[UmlClass], m2: Option[UmlClass], compareAttrsAndMethods: Boolean)
-  extends Match[UmlClass](m1, m2) {
+case class UmlClassMatch(m1: Option[UmlClass], m2: Option[UmlClass], s: Int, compareAttrsAndMethods: Boolean)
+  extends Match[UmlClass](m1, m2, s) {
 
   var attributesResult: MatchingResult[String, Match[String]] = null
   var methodsResult: MatchingResult[String, Match[String]] = null
@@ -29,12 +29,9 @@ case class UmlClassMatch(m1: Option[UmlClass], m2: Option[UmlClass], compareAttr
         MatchType.UNSUCCESSFUL_MATCH
   }
 
-  override def describeArg(arg: Option[UmlClass]) =
-    new Html(s"""
-<td colspan="1">
-  <span class="text-${if (isSuccessful) "success" else "danger"}">${if (arg.isDefined) arg.get.name else ""}</span>
-</td>""")
-  
+  override def describeArg(arg: UmlClass) =
+    new Html(s"""<td><span class="text-${if (isSuccessful) "success" else "danger"}">${arg.name}</span></td>""")
+
 }
 
 object UmlClassMatch {
@@ -46,4 +43,4 @@ class UmlClassMatcher(compareAttrsAndMethods: Boolean) extends Matcher[UmlClass,
   "Klassen",
   List("Klassenname"),
   (c1, c2) => c1.name == c2.name,
-  new UmlClassMatch(_, _, compareAttrsAndMethods)) 
+  new UmlClassMatch(_, _, _, compareAttrsAndMethods)) 

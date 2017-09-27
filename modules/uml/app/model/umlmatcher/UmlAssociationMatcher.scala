@@ -22,11 +22,12 @@ object UmlAssocMatcherHelper {
 
 object UmlAssociationMatcher extends Matcher[UmlAssociation, UmlAssociationMatch](
   "Assoziationen",
-  List("Start", "Ende", "Multiplizit\u00E4t"),
+  List("Typ", "Start", "Ende", "Multiplizit\u00E4t"),
   (assoc1, assoc2) => UmlAssocMatcherHelper.endsParallelEqual(assoc1, assoc2) || UmlAssocMatcherHelper.endsCrossedEqual(assoc1, assoc2),
-  new UmlAssociationMatch(_, _))
+  new UmlAssociationMatch(_, _, _))
 
-case class UmlAssociationMatch(a1: Option[UmlAssociation], a2: Option[UmlAssociation]) extends Match[UmlAssociation](a1, a2) {
+case class UmlAssociationMatch(a1: Option[UmlAssociation], a2: Option[UmlAssociation], s: Int)
+  extends Match[UmlAssociation](a1, a2, s) {
 
   var assocTypeEqual = false
   var multiplicitiesEqual = false
@@ -53,19 +54,13 @@ case class UmlAssociationMatch(a1: Option[UmlAssociation], a2: Option[UmlAssocia
 
   val isCorrect = multiplicitiesEqual && assocTypeEqual
 
-  override def describeArg(arg: Option[UmlAssociation]) = if (arg.isDefined)
-    new Html(s"""
-<td>
-  <span class="text-${if (isSuccessful) "success" else "danger"}">${arg.get.ends._1.endName}</span>
-</td>
-<td>
-  <span class="text-${if (isSuccessful) "success" else "danger"}">${arg.get.ends._2.endName}</span>
-</td>
+  override def describeArg(arg: UmlAssociation) = new Html(s"""
+<td><span class="text-${if (isSuccessful) "success" else "danger"}">${arg.assocType}</span></td>
+<td><span class="text-${if (isSuccessful) "success" else "danger"}">${arg.ends._1.endName}</span></td>
+<td><span class="text-${if (isSuccessful) "success" else "danger"}">${arg.ends._2.endName}</span></td>
 <td>
   <span class="text-${if (isSuccessful) "success" else "danger"}">
-    ${arg.get.ends._1.multiplicity.representant} : ${arg.get.ends._2.multiplicity.representant}
-  </span>
+  ${arg.ends._1.multiplicity.representant} : ${arg.ends._2.multiplicity.representant}</span>
 </td>""")
-  else new Html("<td/>" * 3)
 
 }

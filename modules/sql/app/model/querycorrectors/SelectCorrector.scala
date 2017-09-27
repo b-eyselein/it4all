@@ -23,11 +23,13 @@ import model.matching.MatchType
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.JSQLParserException
 
-case class GroupByMatch(ua: Option[Expression], sa: Option[Expression]) extends Match[Expression](ua, sa) {
+case class GroupByMatch(ua: Option[Expression], sa: Option[Expression], s: Int)
+  extends Match[Expression](ua, sa, s) {
   override def analyze(ua: Expression, sa: Expression) = MatchType.SUCCESSFUL_MATCH
 }
 
-case class OrderByMatch(ua: Option[OrderByElement], sa: Option[OrderByElement]) extends Match[OrderByElement](ua, sa) {
+case class OrderByMatch(ua: Option[OrderByElement], sa: Option[OrderByElement], s: Int)
+  extends Match[OrderByElement](ua, sa, s) {
   override def analyze(ua: OrderByElement, sa: OrderByElement) = MatchType.SUCCESSFUL_MATCH
 }
 
@@ -35,13 +37,13 @@ object GROUP_BY_MATCHER extends Matcher[Expression, GroupByMatch](
   "Group By Elemente",
   List("Group By Statement"),
   _.asInstanceOf[Column].getColumnName == _.asInstanceOf[Column].getColumnName,
-  new GroupByMatch(_, _))
+  new GroupByMatch(_, _, _))
 
 object ORDER_BY_MATCHER extends Matcher[OrderByElement, OrderByMatch](
   "Order By Elemente",
   List("Order By Statement"),
   _.getExpression.toString == _.getExpression.toString,
-  new OrderByMatch(_, _))
+  new OrderByMatch(_, _, _))
 
 object SelectCorrector extends QueryCorrector("SELECT") {
 

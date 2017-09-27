@@ -3,7 +3,7 @@ package model.matching
 import play.twirl.api.Html
 import scala.xml.Elem
 
-abstract class Match[T](val userArg: Option[T], val sampleArg: Option[T]) {
+class Match[T](val userArg: Option[T], val sampleArg: Option[T], val size: Int) {
 
   val matchType = (userArg, sampleArg) match {
     case (None, None) => throw new IllegalArgumentException("At least one arg of a match must not be None!")
@@ -24,24 +24,21 @@ abstract class Match[T](val userArg: Option[T], val sampleArg: Option[T]) {
 
   lazy val isSuccessful = matchType == MatchType.SUCCESSFUL_MATCH
 
-  def analyze(arg1: T, arg2: T): MatchType
+  def analyze(arg1: T, arg2: T): MatchType = MatchType.SUCCESSFUL_MATCH
 
-  def describeArg(arg: Option[T]): Html = if(arg.isDefined) 
-    new Html(s"""
+  def describeArg(arg: T): Html = new Html(s"""
 <td>
-  <span class="text-${if(isSuccessful) "success" else "danger"}>
-  ${arg.get.toString}</span>
+  <span class="text-${if (isSuccessful) "success" else "danger"}>${arg.toString}</span>
 </td>""")
-  else new Html("<td/>")
 
-  def describeUserArg = describeArg(userArg)
+  private def describeArgOption(arg: Option[T]) = arg match {
+    case Some(arg) => describeArg(arg)
+    case None => new Html("<td/>" * size)
+  }
 
-  def describeSampleArg = describeArg(sampleArg)
+  def describeUserArg = describeArgOption(userArg)
 
-}
-
-class ScalaGenericMatch[T](userArg: Option[T], sampleArg: Option[T]) extends Match[T](userArg, sampleArg) {
-
-  override def analyze(arg1: T, arg2: T) = MatchType.SUCCESSFUL_MATCH
+  def describeSampleArg = describeArgOption(sampleArg)
 
 }
+

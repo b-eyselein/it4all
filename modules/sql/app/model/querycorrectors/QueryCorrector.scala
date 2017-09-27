@@ -25,7 +25,7 @@ object ColumnMatcher extends Matcher[ColumnWrapper, ColumnMatch](
   model.StringConsts.COLUMNS_NAME,
   List("Spaltenname"),
   _.canMatch(_),
-  new ColumnMatch(_, _))
+  new ColumnMatch(_, _, _))
 
 abstract class QueryCorrector(val queryType: String) {
 
