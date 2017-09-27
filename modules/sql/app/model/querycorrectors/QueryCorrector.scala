@@ -10,9 +10,9 @@ import model.conditioncorrector.ExpressionExtractor
 import model.exercise.SqlExercise
 import model.exercise.SqlExerciseType
 import model.exercise.SqlSample
-import model.matching.ScalaMatcher
-import model.matching.ScalaMatchingResult
-import model.matching.ScalaStringMatcher
+import model.matching.Matcher
+import model.matching.MatchingResult
+import model.matching.StringMatcher
 import net.sf.jsqlparser.JSQLParserException
 import net.sf.jsqlparser.expression.Expression
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
@@ -21,7 +21,11 @@ import net.sf.jsqlparser.statement.select.OrderByElement
 import play.db.Database
 import model.conditioncorrector.BinaryExpressionMatcher
 
-object ColumnMatcher extends ScalaMatcher[ColumnWrapper, ColumnMatch](model.StringConsts.COLUMNS_NAME, _.canMatch(_), new ColumnMatch(_, _))
+object ColumnMatcher extends Matcher[ColumnWrapper, ColumnMatch](
+  model.StringConsts.COLUMNS_NAME,
+  List("Spaltenname"),
+  _.canMatch(_),
+  new ColumnMatch(_, _))
 
 abstract class QueryCorrector(val queryType: String) {
 
@@ -29,7 +33,7 @@ abstract class QueryCorrector(val queryType: String) {
 
   type AliasMap = Map[String, String]
 
-  val TABLE_NAME_MATCHER = new ScalaStringMatcher(StringConsts.TABLES_NAME)
+  val TABLE_NAME_MATCHER = new StringMatcher(StringConsts.TABLES_NAME)
 
   def correct(database: Database, learnerSolution: String, sampleStatement: SqlSample, exercise: SqlExercise) = {
     val userQ = parseStatement(learnerSolution)
@@ -78,9 +82,9 @@ abstract class QueryCorrector(val queryType: String) {
 
   def getWhere(query: Q): Expression
 
-  def compareGroupByElements(plainUserQuery: Q, plainSampleQuery: Q): Option[ScalaMatchingResult[Expression, GroupByMatch]]
+  def compareGroupByElements(plainUserQuery: Q, plainSampleQuery: Q): Option[MatchingResult[Expression, GroupByMatch]]
 
-  def compareOrderByElements(plainUserQuery: Q, plainSampleQuery: Q): Option[ScalaMatchingResult[OrderByElement, OrderByMatch]]
+  def compareOrderByElements(plainUserQuery: Q, plainSampleQuery: Q): Option[MatchingResult[OrderByElement, OrderByMatch]]
 
 }
 

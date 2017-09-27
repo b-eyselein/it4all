@@ -1,0 +1,16 @@
+@(aMatch: model.umlmatcher.UmlImplementationMatch, maxColWidth: Int)
+@*
+<td colspan="@{maxColWidth - 1}">
+  <span class=@if(aMatch.isSuccessful) {"text-success"} else {"text-danger"}>@aMatch.describeUserArg</span>
+</td>
+<td>
+  <span class=""></span>
+</td>
+
+<td colspan="@maxColWidth">
+  <span class=@if(aMatch.isSuccessful) {"text-success"} else {"text-danger"}>@aMatch.describeSampleArg</span>
+</td>
+<td>
+  <span class=""></span>
+</td>
+*@

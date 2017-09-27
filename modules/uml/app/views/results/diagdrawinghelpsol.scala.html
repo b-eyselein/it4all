@@ -1,0 +1,15 @@
+@(user: model.user.User, result: model.DiagramDrawingHelpResult)
+
+@main("UML-Test", user) {
+<div class="container">
+  <div class="page-header">
+    <h1> Korrektur der Aufgabe &quot;@result.exercise.title&quot;</h1>	
+  </div>
+
+  @matching.matchingResult.render(result.notEmptyMatchingResults)
+    
+  <hr>
+  
+  <a href="@uml.routes.UmlController.matching(result.exercise.id)" class="btn btn-primary btn-block">Zum nächsten Aufgabenteil</a>
+</div>
+}

@@ -1,13 +1,13 @@
 package model.querycorrectors;
 
 import model.CorrectionException;
-import model.matching.ScalaMatch;
+import model.matching.Match;
 
 import model.matching.MatchType;
 import play.Logger;
 import play.twirl.api.Html;
 
-case class ColumnMatch(userCol: Option[ColumnWrapper], sampleCol: Option[ColumnWrapper]) extends ScalaMatch[ColumnWrapper](userCol, sampleCol) {
+case class ColumnMatch(userCol: Option[ColumnWrapper], sampleCol: Option[ColumnWrapper]) extends Match[ColumnWrapper](userCol, sampleCol) {
 
   val hasAlias: Boolean = userArg.get.hasAlias || sampleCol.get.hasAlias
 
@@ -25,18 +25,18 @@ case class ColumnMatch(userCol: Option[ColumnWrapper], sampleCol: Option[ColumnW
 
   override def analyze(userArg: ColumnWrapper, sampleArg: ColumnWrapper) = userArg.doMatch(sampleArg)
 
-  override def describe =
-    <tr class={ getBSClass }>
-  		<td><span class={ matchType.toString }></span></td>
-  		<td>
-				<span class={ if (colNamesMatched) "text-success" else "text-danger" }>{ firstColName }</span>
-    		<span class={ if (restMatched) "text-success" else "text-danger" }>{ firstRest }</span>
-  		</td>
- 		  <td>
-   	 		<span class={ if (colNamesMatched) "text-success" else "text-danger" }>{ secondColName }</span>
-    		<span class={ if (restMatched) "text-success" else "text-danger" }>{ secondRest }</span>
-  		</td>
-    	<td>{ explanation }</td>
-		</tr>
+//  override def describe =
+//    <tr class={ getBSClass }>
+//  		<td><span class={ matchType.toString }></span></td>
+//  		<td>
+//				<span class={ if (colNamesMatched) "text-success" else "text-danger" }>{ firstColName }</span>
+//    		<span class={ if (restMatched) "text-success" else "text-danger" }>{ firstRest }</span>
+//  		</td>
+// 		  <td>
+//   	 		<span class={ if (colNamesMatched) "text-success" else "text-danger" }>{ secondColName }</span>
+//    		<span class={ if (restMatched) "text-success" else "text-danger" }>{ secondRest }</span>
+//  		</td>
+//    	<td>{ explanation }</td>
+//		</tr>
 
 }

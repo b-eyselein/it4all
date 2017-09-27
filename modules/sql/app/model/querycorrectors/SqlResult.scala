@@ -2,8 +2,8 @@ package model.querycorrectors;
 
 import model.conditioncorrector.BinaryExpressionMatch;
 import model.exercise.Success;
-import model.matching.ScalaMatch;
-import model.matching.ScalaMatchingResult;
+import model.matching.Match;
+import model.matching.MatchingResult;
 import model.result.EvaluationResult;
 import net.sf.jsqlparser.expression.Expression;
 import model.sql.SqlQueryResult
@@ -11,17 +11,17 @@ import net.sf.jsqlparser.statement.select.OrderByElement
 import net.sf.jsqlparser.expression.BinaryExpression
 
 case class SqlResult(learnerSolution: String,
-  columnComparison: ScalaMatchingResult[ColumnWrapper, ColumnMatch],
-  tableComparison: ScalaMatchingResult[String, ScalaMatch[String]],
-  whereComparison: ScalaMatchingResult[BinaryExpression, BinaryExpressionMatch],
+  columnComparison: MatchingResult[ColumnWrapper, ColumnMatch],
+  tableComparison: MatchingResult[String, Match[String]],
+  whereComparison: MatchingResult[BinaryExpression, BinaryExpressionMatch],
 
   executionResult: SqlExecutionResult,
 
-  groupByComparison: Option[ScalaMatchingResult[Expression, GroupByMatch]],
-  orderByComparison: Option[ScalaMatchingResult[OrderByElement, OrderByMatch]])
+  groupByComparison: Option[MatchingResult[Expression, GroupByMatch]],
+  orderByComparison: Option[MatchingResult[OrderByElement, OrderByMatch]])
     extends EvaluationResult(Success.NONE) {
 
-  def getMatchingResults: List[ScalaMatchingResult[_, _ <: ScalaMatch[_]]] =
+  def getMatchingResults: List[MatchingResult[_, _ <: Match[_]]] =
     List(columnComparison, tableComparison, whereComparison) ++ groupByComparison ++ orderByComparison
 
   def notEmptyMatchingResults = getMatchingResults.filter(!_.allMatches.isEmpty)

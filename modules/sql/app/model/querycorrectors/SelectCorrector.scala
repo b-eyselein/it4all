@@ -7,8 +7,8 @@ import scala.util.Try
 import model.CorrectionException
 import model.ScalaUtils.cleanly
 import model.exercise.SqlExercise
-import model.matching.ScalaMatch
-import model.matching.ScalaMatcher
+import model.matching.Match
+import model.matching.Matcher
 import scala.collection.JavaConverters._
 import model.sql.SqlQueryResult
 import net.sf.jsqlparser.expression.Expression
@@ -18,24 +18,30 @@ import net.sf.jsqlparser.statement.select.OrderByElement
 import net.sf.jsqlparser.statement.select.PlainSelect
 import net.sf.jsqlparser.statement.select.SelectItem
 import play.db.Database
-import model.matching.ScalaMatchingResult
+import model.matching.MatchingResult
 import model.matching.MatchType
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.JSQLParserException
 
-case class GroupByMatch(ua: Option[Expression], sa: Option[Expression]) extends ScalaMatch[Expression](ua, sa) {
+case class GroupByMatch(ua: Option[Expression], sa: Option[Expression]) extends Match[Expression](ua, sa) {
   override def analyze(ua: Expression, sa: Expression) = MatchType.SUCCESSFUL_MATCH
 }
 
-case class OrderByMatch(ua: Option[OrderByElement], sa: Option[OrderByElement]) extends ScalaMatch[OrderByElement](ua, sa) {
+case class OrderByMatch(ua: Option[OrderByElement], sa: Option[OrderByElement]) extends Match[OrderByElement](ua, sa) {
   override def analyze(ua: OrderByElement, sa: OrderByElement) = MatchType.SUCCESSFUL_MATCH
 }
 
-object GROUP_BY_MATCHER extends ScalaMatcher[Expression, GroupByMatch]("Group By Elemente",
-  _.asInstanceOf[Column].getColumnName == _.asInstanceOf[Column].getColumnName, new GroupByMatch(_, _))
+object GROUP_BY_MATCHER extends Matcher[Expression, GroupByMatch](
+  "Group By Elemente",
+  List("Group By Statement"),
+  _.asInstanceOf[Column].getColumnName == _.asInstanceOf[Column].getColumnName,
+  new GroupByMatch(_, _))
 
-object ORDER_BY_MATCHER extends ScalaMatcher[OrderByElement, OrderByMatch]("Order By Elemente",
-  _.getExpression.toString == _.getExpression.toString, new OrderByMatch(_, _))
+object ORDER_BY_MATCHER extends Matcher[OrderByElement, OrderByMatch](
+  "Order By Elemente",
+  List("Order By Statement"),
+  _.getExpression.toString == _.getExpression.toString,
+  new OrderByMatch(_, _))
 
 object SelectCorrector extends QueryCorrector("SELECT") {
 

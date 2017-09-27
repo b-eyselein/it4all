@@ -1,13 +1,14 @@
 package model.umlmatcher
 
-import model.matching.ScalaMatcher
+import model.matching.Matcher
 import model.UmlAssociation
 import model.UmlAssociationEnd
-import model.matching.ScalaMatch
+import model.matching.Match
 import model.matching.MatchType
 import model.Association
 import model.Composition
 import model.Aggregation
+import play.twirl.api.Html
 
 object UmlAssocMatcherHelper {
   def endsCrossedEqual(assoc1: UmlAssociation, assoc2: UmlAssociation) =
@@ -19,13 +20,13 @@ object UmlAssocMatcherHelper {
   def endsEqual(c1End: UmlAssociationEnd, c2End: UmlAssociationEnd) = c1End.endName == c2End.endName
 }
 
-object UmlAssociationMatcher
-  extends ScalaMatcher[UmlAssociation, UmlAssociationMatch](
-    "Assoziationen",
-    (assoc1, assoc2) => UmlAssocMatcherHelper.endsParallelEqual(assoc1, assoc2) || UmlAssocMatcherHelper.endsCrossedEqual(assoc1, assoc2),
-    new UmlAssociationMatch(_, _))
+object UmlAssociationMatcher extends Matcher[UmlAssociation, UmlAssociationMatch](
+  "Assoziationen",
+  List("Start", "Ende", "Multiplizit\u00E4t"),
+  (assoc1, assoc2) => UmlAssocMatcherHelper.endsParallelEqual(assoc1, assoc2) || UmlAssocMatcherHelper.endsCrossedEqual(assoc1, assoc2),
+  new UmlAssociationMatch(_, _))
 
-case class UmlAssociationMatch(a1: Option[UmlAssociation], a2: Option[UmlAssociation]) extends ScalaMatch[UmlAssociation](a1, a2) {
+case class UmlAssociationMatch(a1: Option[UmlAssociation], a2: Option[UmlAssociation]) extends Match[UmlAssociation](a1, a2) {
 
   var assocTypeEqual = false
   var multiplicitiesEqual = false
@@ -46,12 +47,25 @@ case class UmlAssociationMatch(a1: Option[UmlAssociation], a2: Option[UmlAssocia
       MatchType.UNSUCCESSFUL_MATCH
   }
 
-  override def describeArg(arg: UmlAssociation) = arg.ends.toString()
-  
   val correctMultiplicity = if (sampleArg.isDefined && userArg.isDefined)
     sampleArg.get.multsAsString(UmlAssocMatcherHelper.endsCrossedEqual(userArg.get, sampleArg.get))
   else ""
 
   val isCorrect = multiplicitiesEqual && assocTypeEqual
+
+  override def describeArg(arg: Option[UmlAssociation]) = if (arg.isDefined)
+    new Html(s"""
+<td>
+  <span class="text-${if (isSuccessful) "success" else "danger"}">${arg.get.ends._1.endName}</span>
+</td>
+<td>
+  <span class="text-${if (isSuccessful) "success" else "danger"}">${arg.get.ends._2.endName}</span>
+</td>
+<td>
+  <span class="text-${if (isSuccessful) "success" else "danger"}">
+    ${arg.get.ends._1.multiplicity.representant} : ${arg.get.ends._2.multiplicity.representant}
+  </span>
+</td>""")
+  else new Html("<td/>" * 3)
 
 }

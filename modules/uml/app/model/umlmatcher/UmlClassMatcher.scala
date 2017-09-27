@@ -1,42 +1,49 @@
 package model.umlmatcher;
 
-import model.matching.ScalaMatcher
+import model.matching.Matcher
 import model.UmlClass;
 import model.matching.MatchingResult
-import model.matching.ScalaMatch
-import model.matching.StringEqualsMatcher
+import model.matching.Match
 import model.matching.MatchType
 import model.matching.Match
-import model.matching.ScalaStringMatcher
+import model.matching.StringMatcher
 import model.UmlClass
-import model.matching.ScalaMatchingResult
+import model.matching.MatchingResult
+import play.twirl.api.Html
 
-case class UmlClassMatch(m1: Option[UmlClass], m2: Option[UmlClass], compareAttrsAndMehtods: Boolean)
-  extends ScalaMatch[UmlClass](m1, m2) {
+case class UmlClassMatch(m1: Option[UmlClass], m2: Option[UmlClass], compareAttrsAndMethods: Boolean)
+  extends Match[UmlClass](m1, m2) {
 
-  var attributesResult: ScalaMatchingResult[String, ScalaMatch[String]] = null
-  var methodsResult: ScalaMatchingResult[String, ScalaMatch[String]] = null
+  var attributesResult: MatchingResult[String, Match[String]] = null
+  var methodsResult: MatchingResult[String, Match[String]] = null
 
-  override def analyze(c1: UmlClass, c2: UmlClass) = {
-    attributesResult = UmlClassMatch.ATTRS_MATCHER.doMatch(c1.attributes, c2.attributes)
-    methodsResult = UmlClassMatch.METHODS_MATCHER.doMatch(c1.methods, c2.methods)
+  override def analyze(c1: UmlClass, c2: UmlClass) = compareAttrsAndMethods match {
+    case false => MatchType.SUCCESSFUL_MATCH
+    case true =>
+      attributesResult = UmlClassMatch.ATTRS_MATCHER.doMatch(c1.attributes, c2.attributes)
+      methodsResult = UmlClassMatch.METHODS_MATCHER.doMatch(c1.methods, c2.methods)
 
-    if (!compareAttrsAndMehtods || (attributesResult.isSuccessful() && methodsResult.isSuccessful()))
-      MatchType.SUCCESSFUL_MATCH
-    else
-      MatchType.UNSUCCESSFUL_MATCH
+      if (attributesResult.isSuccessful && methodsResult.isSuccessful)
+        MatchType.SUCCESSFUL_MATCH
+      else
+        MatchType.UNSUCCESSFUL_MATCH
   }
 
-  override def describeArg(arg: UmlClass) = arg.name
-
+  override def describeArg(arg: Option[UmlClass]) =
+    new Html(s"""
+<td colspan="1">
+  <span class="text-${if (isSuccessful) "success" else "danger"}">${if (arg.isDefined) arg.get.name else ""}</span>
+</td>""")
+  
 }
 
 object UmlClassMatch {
-  val ATTRS_MATCHER = new ScalaStringMatcher("Attribute")
-  val METHODS_MATCHER = new ScalaStringMatcher("Methoden")
+  val ATTRS_MATCHER = new StringMatcher("Attribute")
+  val METHODS_MATCHER = new StringMatcher("Methoden")
 }
 
-class UmlClassMatcher(compareAttrsAndMethods: Boolean) extends ScalaMatcher[UmlClass, UmlClassMatch](
+class UmlClassMatcher(compareAttrsAndMethods: Boolean) extends Matcher[UmlClass, UmlClassMatch](
   "Klassen",
+  List("Klassenname"),
   (c1, c2) => c1.name == c2.name,
   new UmlClassMatch(_, _, compareAttrsAndMethods)) 

@@ -22,4 +22,8 @@ object ScalaUtils {
     }
   }
 
+  def ggt(a: Int, b: Int): Int = if (b == 0) a else ggt(b, a & b)
+
+  def kgv(a: Int, b: Int): Int = (a * b) / ggt(a, b)
+
 }
