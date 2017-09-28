@@ -23,10 +23,8 @@ case class UmlClassMatch(m1: Option[UmlClass], m2: Option[UmlClass], s: Int, com
       attributesResult = UmlClassMatch.ATTRS_MATCHER.doMatch(c1.attributes, c2.attributes)
       methodsResult = UmlClassMatch.METHODS_MATCHER.doMatch(c1.methods, c2.methods)
 
-      if (attributesResult.isSuccessful && methodsResult.isSuccessful)
-        MatchType.SUCCESSFUL_MATCH
-      else
-        MatchType.UNSUCCESSFUL_MATCH
+      if (attributesResult.isSuccessful && methodsResult.isSuccessful) MatchType.SUCCESSFUL_MATCH
+      else MatchType.UNSUCCESSFUL_MATCH
   }
 
   override def describeArg(arg: UmlClass) =

@@ -1,6 +1,6 @@
 package model
 
-import scala.collection.JavaConverters._
+import scala.collection.JavaConverters.seqAsJavaListConverter
 
 // Types of classes
 
@@ -57,13 +57,13 @@ case class UmlAssociationEnd(endName: String, multiplicity: Multiplicity)
 
 // Types of associations
 
-sealed class UmlAssociationType(name: String)
+sealed class UmlAssociationType(val germanName: String, val name: String)
 
-case object Association extends UmlAssociationType("ASSOCIATION")
+case object Association extends UmlAssociationType("Assoziation", "ASSOCIATION")
 
-case object Aggregation extends UmlAssociationType("AGGREGATION")
+case object Aggregation extends UmlAssociationType("Aggregation", "AGGREGATION")
 
-case object Composition extends UmlAssociationType("COMPOSITION")
+case object Composition extends UmlAssociationType("Komposition", "COMPOSITION")
 
 object UmlAssociationType {
 
@@ -77,14 +77,4 @@ object UmlAssociationType {
 
 // Association
 
-case class UmlAssociation(val assocType: UmlAssociationType, val ends: (UmlAssociationEnd, UmlAssociationEnd)) {
-
-  def multsAsString(end1: UmlAssociationEnd, end2: UmlAssociationEnd) =
-    s"${ends._1.multiplicity.representant} : ${ends._2.multiplicity.representant}"
-
-  def multsAsString(switchOrder: Boolean = false): String = if (switchOrder)
-    multsAsString(ends._2, ends._1)
-  else
-    multsAsString(ends._1, ends._2)
-
-}
+case class UmlAssociation(val assocType: UmlAssociationType, val ends: (UmlAssociationEnd, UmlAssociationEnd)) 

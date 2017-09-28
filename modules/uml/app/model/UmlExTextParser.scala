@@ -1,7 +1,10 @@
 package model
 
 import java.util.regex.Pattern
-import scala.collection.JavaConverters._
+
+import scala.collection.JavaConverters.asScalaBufferConverter
+import scala.collection.JavaConverters.mapAsScalaMapConverter
+import scala.collection.JavaConverters.seqAsJavaListConverter
 
 class UmlExTextParser(rawText: String, theMappings: java.util.Map[String, String], theToIgnore: java.util.List[String]) {
 
@@ -12,26 +15,23 @@ class UmlExTextParser(rawText: String, theMappings: java.util.Map[String, String
   val simpleReplacements = capitalizedWords.filter(k => !mappings.isDefinedAt(k) && !toIgnore.contains(k))
 
   def getCapitalizedWords = capitalizedWords.toList.asJava
-  
+
   def replaceWithMappingSpan(text: String, key: String, value: String, function: String) = {
-    val matcher = Pattern.compile(key + """\b""".r).matcher(text)
+    val matcher = Pattern.compile(s"""$key\b""").matcher(text)
     matcher.replaceAll(
-      "<span class=\"" + UmlExTextParser.CssClassName + "\" " + function + " data-baseform=\"" + value + "\">" + key + "</span>")
+      s"""<span class="${UmlExTextParser.CssClassName}" $function data-baseform="$value">$key</span>""")
   }
 
-  def parseTextForClassSel() = parseText(UmlExTextParser.ClassSelectionFunction)
+  def parseTextForClassSel = parseText(UmlExTextParser.ClassSelectionFunction)
 
-  def parseTextForDiagDrawing() = parseText(UmlExTextParser.DiagramDrawingFunction)
+  def parseTextForDiagDrawing = parseText(UmlExTextParser.DiagramDrawingFunction)
 
   def parseText(function: String) = {
     var newText = rawText
-
     for (simpleRep <- simpleReplacements)
       newText = replaceWithMappingSpan(newText, simpleRep, simpleRep, function)
-
     for ((k, v) <- mappings)
       newText = replaceWithMappingSpan(newText, k, v, function)
-
     newText
   }
 

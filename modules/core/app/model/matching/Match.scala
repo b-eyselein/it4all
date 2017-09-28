@@ -5,7 +5,7 @@ import scala.xml.Elem
 
 class Match[T](val userArg: Option[T], val sampleArg: Option[T], val size: Int) {
 
-  val matchType = (userArg, sampleArg) match {
+  lazy val matchType = (userArg, sampleArg) match {
     case (None, None) => throw new IllegalArgumentException("At least one arg of a match must not be None!")
     case (None, Some(_)) => MatchType.ONLY_SAMPLE
     case (Some(_), None) => MatchType.ONLY_USER
@@ -14,13 +14,13 @@ class Match[T](val userArg: Option[T], val sampleArg: Option[T], val size: Int) 
 
   def getBSClass() = if (matchType == MatchType.SUCCESSFUL_MATCH) "success" else "warning"
 
-  def explanation = matchType match {
+  def explanation = List(matchType match {
     case MatchType.FAILURE => "Es ist ein Fehler aufgetreten."
-    case MatchType.ONLY_USER => "Angegeben, aber nicht in der Musterl\u00F6sung vorhanden!"
-    case MatchType.ONLY_SAMPLE => "Nur in der Musterlösung, nicht in der Lernerl\u00F6sung vorhanden!"
+    case MatchType.ONLY_USER => "Angabe ist falsch!"
+    case MatchType.ONLY_SAMPLE => "Angabe fehlt!"
     case MatchType.UNSUCCESSFUL_MATCH => "Fehler beim Abgleich."
     case MatchType.SUCCESSFUL_MATCH => "Korrekt."
-  }
+  })
 
   lazy val isSuccessful = matchType == MatchType.SUCCESSFUL_MATCH
 

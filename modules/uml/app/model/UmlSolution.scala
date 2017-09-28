@@ -80,8 +80,6 @@ object UmlSolution {
   def readFromForm(form: DynamicForm): java.util.Optional[UmlSolution] = {
     val sentJson = form.get(StringConsts.FORM_VALUE)
 
-//    println("Gesendet: " + sentJson)
-
     val report = JsonReader.validateJson(play.libs.Json.parse(sentJson), UmlController.SOLUTION_SCHEMA_NODE).get
 
     if (!report.isSuccess)

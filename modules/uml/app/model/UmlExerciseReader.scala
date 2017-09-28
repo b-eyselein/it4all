@@ -21,8 +21,6 @@ object UmlExerciseReader extends ExerciseReader[UmlExercise]("uml", UmlExercise.
   override def instantiateExercise(id: Int) = new UmlExercise(id)
 
   override def updateExercise(exercise: UmlExercise, node: JsonNode) {
-    val text = "";
-
     exercise.mappings = JsonReader.readMap(node.get(MAPPINGS_NAME)).asJava;
     exercise.ignoreWords = JsonReader.readTextArray(node.get(IGNORE_WORDS_NAME)).asJava;
 

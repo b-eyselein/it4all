@@ -39,7 +39,13 @@
     
     @aMatch.describeSampleArg
     
-    <td>@aMatch.explanation</td>
+    <td>
+      <ul>
+      @for(expl <- aMatch.explanation) {
+        <li>@expl</li>
+      }
+      </ul>
+  	</td>
   </tr>
   }
   </tbody>
