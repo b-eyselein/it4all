@@ -29,16 +29,15 @@ GET      /                         controllers.uml.UmlController.index(page: Int
 
 # Step 1: selection of classes
 GET      /classSelection/:id       controllers.uml.UmlController.classSelection(id: Int)
-POST     /classSelection/:id       controllers.uml.UmlController.correctClassSelection(id: Int)
 
 # Step 2: finalization of diagram
 GET      /diagramDrawingHelp/:id   controllers.uml.UmlController.diagramDrawingWithHelp(id: Int)
-POST     /diagramDrawingHelp/:id   controllers.uml.UmlController.correctDiagramDrawingWithHelp(id: Int)
 
 # Complete drawing of diagram without any help
 GET      /diagramDrawing/:id       controllers.uml.UmlController.diagramDrawing(id: Int)
-POST     /diagramDrawing/:id       controllers.uml.UmlController.correctDiagramDrawing(id: Int)
 
 # Test Matching of attrs and methods
 GET      /matching/:id             controllers.uml.UmlController.matching(id: Int)
-POST     /matching/:id             controllers.uml.UmlController.correctMatching(id: Int)
+
+
+POST     /:id/:part                controllers.uml.UmlController.correct(id: Int, part)

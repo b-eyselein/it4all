@@ -1,4 +1,6 @@
-@(user: model.user.User, exercise: model.UmlExercise, solution: model.UmlSolution)
+@(user: model.user.User, exercise: model.UmlExercise)
+
+@solution = @{exercise.getSolution}
 
 @main("UML", user) {
 <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/uml.css")">
@@ -57,7 +59,8 @@
 
   <hr>
 
-  <form method="post" onsubmit="prepareFormForSubmitting" action="@uml.routes.UmlController.correctMatching(exercise.getId)">
+  <form method="post" onsubmit="prepareFormForSubmitting"
+    action="@uml.routes.UmlController.correct(exercise.id, model.UmlExPart.ATTRS_METHS.toString)">
     <input hidden name="learnerSolution" id="learnerSolution">
     <button class="btn btn-primary btn-block">Aufgabenteil korrigieren</button>
   </form>

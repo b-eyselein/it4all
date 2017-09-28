@@ -1,13 +1,7 @@
 package model.umlmatcher
 
-import model.matching.Matcher
-import model.UmlAssociation
-import model.UmlAssociationEnd
-import model.matching.Match
-import model.matching.MatchType
-import model.Association
-import model.Composition
-import model.Aggregation
+import model.{ UmlAssociation, UmlAssociationEnd }
+import model.matching.{ Match, MatchType, Matcher }
 import play.twirl.api.Html
 
 object UmlAssocMatcherHelper {
@@ -76,13 +70,13 @@ case class UmlAssociationMatch(a1: Option[UmlAssociation], a2: Option[UmlAssocia
   }
 
   override def explanation = matchType match {
-    case MatchType.UNSUCCESSFUL_MATCH => {
+    case MatchType.UNSUCCESSFUL_MATCH ⇒ {
       val expls = scala.collection.mutable.ListBuffer.empty[String]
-      if(!multiplicitiesEqual) expls += "Multiplizitäten sind falsch."
-      if(!assocTypeEqual) expls += "Assoziationstyp ist falsch."
+      if (!multiplicitiesEqual) expls += "Multiplizitäten sind falsch."
+      if (!assocTypeEqual) expls += "Assoziationstyp ist falsch."
       expls.toList
     }
-    case _ => super.explanation
+    case _ ⇒ super.explanation
   }
 
 }

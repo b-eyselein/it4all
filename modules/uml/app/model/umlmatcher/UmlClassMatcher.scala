@@ -1,14 +1,7 @@
 package model.umlmatcher;
 
-import model.matching.Matcher
-import model.UmlClass;
-import model.matching.MatchingResult
-import model.matching.Match
-import model.matching.MatchType
-import model.matching.Match
-import model.matching.StringMatcher
 import model.UmlClass
-import model.matching.MatchingResult
+import model.matching.{ Match, MatchType, Matcher, MatchingResult, StringMatcher }
 import play.twirl.api.Html
 
 case class UmlClassMatch(m1: Option[UmlClass], m2: Option[UmlClass], s: Int, compareAttrsAndMethods: Boolean)
@@ -18,8 +11,8 @@ case class UmlClassMatch(m1: Option[UmlClass], m2: Option[UmlClass], s: Int, com
   var methodsResult: MatchingResult[String, Match[String]] = null
 
   override def analyze(c1: UmlClass, c2: UmlClass) = compareAttrsAndMethods match {
-    case false => MatchType.SUCCESSFUL_MATCH
-    case true =>
+    case false ⇒ MatchType.SUCCESSFUL_MATCH
+    case true ⇒
       attributesResult = UmlClassMatch.ATTRS_MATCHER.doMatch(c1.attributes, c2.attributes)
       methodsResult = UmlClassMatch.METHODS_MATCHER.doMatch(c1.methods, c2.methods)
 
@@ -40,5 +33,5 @@ object UmlClassMatch {
 class UmlClassMatcher(compareAttrsAndMethods: Boolean) extends Matcher[UmlClass, UmlClassMatch](
   "Klassen",
   List("Klassenname"),
-  (c1, c2) => c1.name == c2.name,
+  (c1, c2) ⇒ c1.name == c2.name,
   new UmlClassMatch(_, _, _, compareAttrsAndMethods)) 

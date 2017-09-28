@@ -1,10 +1,7 @@
 package model.umlmatcher;
 
-import model.matching.Matcher;
-import model.UmlImplementation;
-import model.matching.Match
-import model.matching.MatchType
-import scala.xml.Elem
+import model.UmlImplementation
+import model.matching.{ Match, MatchType, Matcher }
 import play.twirl.api.Html
 
 object UmlImplMatcherHelper {
@@ -33,10 +30,10 @@ class UmlImplementationMatch(i1: Option[UmlImplementation], i2: Option[UmlImplem
 <td><span class="text-${if (isSuccessful) "success" else "danger"}">${arg.superClass}</span></td>""")
 
   override def explanation = matchType match {
-    case MatchType.UNSUCCESSFUL_MATCH => List("Vererbungsrichtung falsch.")
-    case MatchType.ONLY_SAMPLE => List("Vererbungsbeziehung nicht erstellt.")
-    case MatchType.ONLY_USER => List("Vererbengsbeziehung ist falsch.")
-    case _ => super.explanation
+    case MatchType.UNSUCCESSFUL_MATCH ⇒ List("Vererbungsrichtung falsch.")
+    case MatchType.ONLY_SAMPLE        ⇒ List("Vererbungsbeziehung nicht erstellt.")
+    case MatchType.ONLY_USER          ⇒ List("Vererbengsbeziehung ist falsch.")
+    case _                            ⇒ super.explanation
   }
 
 }

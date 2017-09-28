@@ -1,14 +1,12 @@
 package model;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import scala.collection.JavaConverters.{mapAsJavaMapConverter, seqAsJavaListConverter}
 
-import model.exercisereading.ExerciseReader;
-import play.api.data.Mapping;
-import play.data.DynamicForm;
-import model.StringConsts._
-import scala.collection.JavaConverters._
-import model.exercisereading.JsonReader
-import play.Logger
+import com.fasterxml.jackson.databind.JsonNode
+
+import model.StringConsts.{IGNORE_WORDS_NAME, MAPPINGS_NAME, SOLUTION_NAME}
+import model.exercisereading.{ExerciseReader, JsonReader}
+import play.data.DynamicForm
 
 object UmlExerciseReader extends ExerciseReader[UmlExercise]("uml", UmlExercise.finder, classOf[Array[UmlExercise]]) {
 

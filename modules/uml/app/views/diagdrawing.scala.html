@@ -76,8 +76,8 @@ var canDelete = @{!getsHelp};
       <hr>
       
       <form method="post" onsubmit="return prepareFormForSubmitting();"
-      @if(getsHelp) { action="@uml.routes.UmlController.correctDiagramDrawingWithHelp(exercise.getId)"
-  	  } else { action="@uml.routes.UmlController.correctDiagramDrawing(exercise.getId)" }>
+      @if(getsHelp) { action="@uml.routes.UmlController.correct(exercise.id, model.UmlExPart.DIAG_DRAWING_HELP.toString)"
+  	  } else { action="@uml.routes.UmlController.correct(exercise.id, model.UmlExPart.DIAG_DRAWING.toString)" }>
         <input type="hidden" name="@model.StringConsts.FORM_VALUE" id="@model.StringConsts.FORM_VALUE" required>
         <button class="btn btn-primary btn-block">Aufgabe verifizieren</button>
       </form>

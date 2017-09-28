@@ -12,13 +12,11 @@ object XmlToolObject extends IdedExToolObject("Xml", ToolState.LIVE) {
   // User
 
   override def indexCall = index()
-  
+
   override def exerciseRoute(id: Int) = exercise(id)
 
-
-  
   override def exesListRoute(id: Int) = exesListRoute(id)
-  
+
   override def correctLiveRoute(id: Int) = correctLive(id)
 
   override def correctRoute(id: Int) = correct(id)
