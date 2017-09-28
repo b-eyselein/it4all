@@ -1,128 +1,14 @@
 @(user: model.user.User, result: model.DiagramDrawingResult)
 
-@classRes = @{result.classResult}
 
-@main("UML-Test", user) {
-<div class="container-fluid">
+@main("UML", user) {
+<div class="container">
   <div class="page-header">
-    <h1> Korrektur der Aufgabe &quot;@result.exercise.title&quot;</h1>
+    <h1>Zwischenkorrektur der Aufgabe &quot;@result.exercise.title&quot;</h1>	
   </div>
 
-  @*<div class="row">
-    <div class="col-md-6">
-      <h2>&Uuml;bersicht &uuml;ber die Klassen</h2>
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Korrekt</th>
-            <th>Klassenname</th>
-            <th>Attribute</th>
-            <th>Methoden</th>
-          </tr>
-        </thead>
-        <tbody>
-        @for(correct <- classRes.getMatches.asInstanceOf[List[model.matcher.UmlClassMatch]]){
-          <tr>
-            <td class="success text-center"><span class="glyphicon glyphicon-ok" title="Korrekt"></span></td>
-            <td>@correct.getClassName</td>
-            <td>
-              <ul class="list-group">
-              @for(correctAtt <- correct.getAttributesResult.getMatches) {
-                <li class="list-group-item list-group-item-success" title="Dieses Attribut ist korrekt.">@correctAtt</li>
-          	  }
-              @for(wrongAtt <- correct.getAttributesResult.getWrong) {
-                <li class="list-group-item list-group-item-danger" title="Dieses Attribut ist falsch!">@wrongAtt</li>
-          	  }
-              @for(missingAtt <- correct.getAttributesResult.getMissing) {
-                <li class="list-group-item list-group-item-warning" title="Dieses Attribut fehlt!">@missingAtt</li>
-          	  }
-              </ul>
-            </td>
-            <td>
-              <ul class="list-group">
-              @for(correctMethod <- correct.methodsResult.allMatches) {
-                <li class="list-group-item list-group-item-success" title="Diese Methode ist korrekt.">@correctMethod</li>
-          	  }
-              @for(wrongMethod <- correct.methodsResult.allWrong) {
-                <li class="list-group-item list-group-item-danger" title="Diese Methode ist falsch!">@wrongMethod</li>
-          	  }
-              @for(missingMethod <- correct.methodsResult.getMissing) {
-                <li class="list-group-item list-group-item-warning" title="Diesee Methode fehlt!">@missingMethod</li>
-          	  }
-              </ul>
-            </td>
-          </tr>
-        }
-        @for(wrong <- classRes.getWrong){
-          <tr>
-            <td class="danger text-center"><span class="glyphicon glyphicon-remove" title="Falsch"></span></td>
-            <td>@wrong.getUserArg.getName</td>
-            <td>
-              <ul class="list-group">
-              @for(attribute <- wrong.getUserArg.getAttributes) {
-                <li class="list-group-item list-group-item-danger">@attribute</li>
-              }
-              </ul>
-            </td>
-            <td>
-              <ul class="list-group">
-              @for(method <- wrong.getUserArg.getMethods) {
-              	<li class="list-group-item list-group-item-danger">@method</li>
-              }
-              </ul>
-            </td>
-          </tr>
-        }
-        @for(missing <- result.getClassResult.getMissing){
-          <tr>
-            <td class="warning text-center"><span class="glyphicon glyphicon-minus" title="Fehlend"></span></td>
-            <td>@missing.getSampleArg.getName</td>
-            <td>
-              <ul class="list-group">
-              @for(attribute <- missing.getSampleArg.getAttributes) {
-                <li class="list-group-item list-group-item-warning">@attribute</li>
-              }
-              </ul>
-            </td>
-            <td>
-              <ul class="list-group">
-              @for(method <- missing.getSampleArg.getMethods) {
-              	<li class="list-group-item list-group-item-warning">@method</li>
-              }
-              </ul>
-            </td>
-          </tr>
-        }
-        </tbody>
-      </table>
-    </div>*@
-
-    <div class="col-md-6">
-      <h2>Übersicht der Beziehungen zwischen den Klassen</h2>
-
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Beziehungstyp:</th>
-            <th>Start</th>
-            <th>Ziel</th>
-            <th>Multiziplität</th>
-          </tr>
-        </thead>
-        @@for(j <- 0 to 4){
-        @@for(i <- 0 to ue.getConnectionsLength(ue.getListConnectionsTypeUser(j))-1){
-        <tr>
-          <td>@@ue.getListConnectionsTypeUser(j).get(i).getType</td>
-          <td>@@ue.getListConnectionsTypeUser(j).get(i).getStart</td>
-          <td>@@ue.getListConnectionsTypeUser(j).get(i).getTarget</td>
-          <td>@@ue.getListConnectionsTypeUser(j).get(i).getMulstart : @@ue.getListConnectionsTypeUser(j).get(i).getMultarget</td>
-        </tr>
-        }
-      }
-      </table>
-    </div>
-  </div>
-
+  @matching.matchingResult.render(result.notEmptyMatchingResults)
+    
   <hr>
 
   <a href="@uml.routes.UmlController.index()" class="btn btn-primary btn-block">Zur Aufgabenübersicht</a>

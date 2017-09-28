@@ -1,4 +1,4 @@
-@(user: model.user.User, result: model.ClassSelectionResult)
+@(user: model.user.User, result: model.UmlResult)
 
 @main("UML", user) {
 <div class="container">
@@ -6,10 +6,11 @@
     <h1>Zwischenkorrektur der Aufgabe &quot;@result.exercise.title&quot;</h1>
   </div>
 
-  @matching.matchingResult.render(scala.collection.immutable.List(result.classResult))
+  @matching.matchingResult.render(result.notEmptyMatchingResults)
 
   <hr>
 
-  <a href="@uml.routes.UmlController.diagramDrawingWithHelp(result.exercise.id)" class="btn btn-primary btn-block">N&auml;chster Aufgabenteil</a>
+  <a href="@uml.routes.UmlController.diagramDrawingWithHelp(result.exercise.id)"
+  class="btn btn-primary btn-block">Zum n&auml;chsten Aufgabenteil</a>
 </div>
 }
