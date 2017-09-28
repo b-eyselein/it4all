@@ -46,6 +46,7 @@ class UmlController @Inject() (f: FormFactory)
           case UmlExPart.DIAG_DRAWING_HELP ⇒ (new DiagramDrawingHelpResult(exercise, sol), UmlExPart.ATTRS_METHS)
           case UmlExPart.DIAG_DRAWING      ⇒ (new DiagramDrawingResult(exercise, sol), UmlExPart.FINISHED)
           case UmlExPart.ATTRS_METHS       ⇒ (null, UmlExPart.FINISHED)
+          case UmlExPart.FINISHED          ⇒ (null, UmlExPart.FINISHED)
         }
         Results.ok(views.html.umlResult.render(user, result, nextPart))
       case None ⇒ Results.badRequest("There has been an error!")
@@ -73,16 +74,6 @@ object UmlController {
 
   val SolutionSchemaPath = Paths.get("conf", "resources", "uml", "solutionSchema.json")
 
-  val SolutionSchemaNode = UmlController.initSolutionSchemaNode.get
-
-  def initSolutionSchemaNode = {
-    try {
-      Some(Json.parse(String.join("\n", Files.readAllLines(SolutionSchemaPath))))
-    } catch {
-      case e: IOException ⇒
-        Logger.error("There has been an error parsing the schema files for UML:", e)
-        None
-    }
-  }
+  val SolutionSchemaNode = Json.parse(String.join("\n", Files.readAllLines(SolutionSchemaPath)))
 
 }
