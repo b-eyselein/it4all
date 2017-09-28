@@ -1,7 +1,7 @@
 package model.umlmatcher;
 
 import model.UmlImplementation
-import model.matching.{ Match, MatchType, Matcher }
+import model.matching.{Match, MatchType, Matcher}
 import play.twirl.api.Html
 
 object UmlImplMatcherHelper {

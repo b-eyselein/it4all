@@ -1,43 +1,30 @@
 # Admin
-GET      /admin                    controllers.uml.UmlAdmin.adminIndex
+GET      /admin                 controllers.uml.UmlAdmin.adminIndex
 
-GET      /jsonSchema               controllers.uml.UmlAdmin.getJSONSchemaFile
-POST     /upload                   controllers.uml.UmlAdmin.uploadFile
+GET      /jsonSchema            controllers.uml.UmlAdmin.getJSONSchemaFile
+POST     /upload                controllers.uml.UmlAdmin.uploadFile
 
-GET      /import                   controllers.uml.UmlAdmin.importExercises
-GET      /export                   controllers.uml.UmlAdmin.exportExercises
+GET      /import                controllers.uml.UmlAdmin.importExercises
+GET      /export                controllers.uml.UmlAdmin.exportExercises
 
-GET      /exercises                controllers.uml.UmlAdmin.exercises
+GET      /exercises             controllers.uml.UmlAdmin.exercises
 
-GET      /exercises/:id            controllers.uml.UmlAdmin.editExerciseForm(id: Int)
-PUT      /exercises/:id            controllers.uml.UmlAdmin.editExercise(id: Int)
-POST     /exercises/:id            controllers.uml.UmlAdmin.editExercise(id: Int)
-DELETE   /exercises/:id            controllers.uml.UmlAdmin.deleteExercise(id: Int)
+GET      /exercises/:id         controllers.uml.UmlAdmin.editExerciseForm(id: Int)
+PUT      /exercises/:id         controllers.uml.UmlAdmin.editExercise(id: Int)
+POST     /exercises/:id         controllers.uml.UmlAdmin.editExercise(id: Int)
+DELETE   /exercises/:id         controllers.uml.UmlAdmin.deleteExercise(id: Int)
 
-PUT      /exercise/:id/state       controllers.uml.UmlAdmin.changeExState(id: Int)
+PUT      /exercise/:id/state    controllers.uml.UmlAdmin.changeExState(id: Int)
 
 
-GET      /newEx/form               controllers.uml.UmlAdmin.newExerciseForm
-POST     /newEx/text               controllers.uml.UmlAdmin.newExerciseStep2
-POST     /newEx/solution           controllers.uml.UmlAdmin.newExerciseStep3
+GET      /newEx/form            controllers.uml.UmlAdmin.newExerciseForm
+POST     /newEx/text            controllers.uml.UmlAdmin.newExerciseStep2
+POST     /newEx/solution        controllers.uml.UmlAdmin.newExerciseStep3
 
-PUT      /newEx/checkSolution      controllers.uml.UmlAdmin.checkSolution
+PUT      /newEx/checkSolution   controllers.uml.UmlAdmin.checkSolution
 
 # User
-GET      /                         controllers.uml.UmlController.index(page: Int ?= 1)
+GET      /                      controllers.uml.UmlController.index(page: Int ?= 1)
 
-
-# Step 1: selection of classes
-GET      /classSelection/:id       controllers.uml.UmlController.classSelection(id: Int)
-
-# Step 2: finalization of diagram
-GET      /diagramDrawingHelp/:id   controllers.uml.UmlController.diagramDrawingWithHelp(id: Int)
-
-# Complete drawing of diagram without any help
-GET      /diagramDrawing/:id       controllers.uml.UmlController.diagramDrawing(id: Int)
-
-# Test Matching of attrs and methods
-GET      /matching/:id             controllers.uml.UmlController.matching(id: Int)
-
-
-POST     /:id/:part                controllers.uml.UmlController.correct(id: Int, part)
+GET      /:id/:part             controllers.uml.UmlController.exercise(id: Int, part)
+POST     /:id/:part             controllers.uml.UmlController.correct(id: Int, part)

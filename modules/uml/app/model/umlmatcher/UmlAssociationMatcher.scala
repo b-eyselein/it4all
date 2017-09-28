@@ -1,7 +1,7 @@
 package model.umlmatcher
 
-import model.{ UmlAssociation, UmlAssociationEnd }
-import model.matching.{ Match, MatchType, Matcher }
+import model.{UmlAssociation, UmlAssociationEnd}
+import model.matching.{Match, MatchType, Matcher}
 import play.twirl.api.Html
 
 object UmlAssocMatcherHelper {
@@ -26,10 +26,10 @@ object UmlAssociationMatcher extends Matcher[UmlAssociation, UmlAssociationMatch
 case class UmlAssociationMatch(a1: Option[UmlAssociation], a2: Option[UmlAssociation], s: Int)
   extends Match[UmlAssociation](a1, a2, s) {
 
-  var matched = false
-  var endsCrossed = false
-  var assocTypeEqual = false
-  var multiplicitiesEqual = false
+  var matched: Boolean = _
+  var endsCrossed: Boolean = _
+  var assocTypeEqual: Boolean = _
+  var multiplicitiesEqual: Boolean = _
 
   override def analyze(assoc1: UmlAssociation, assoc2: UmlAssociation) = {
     matched = true

@@ -5,27 +5,31 @@ import controllers.uml.routes.UmlController._
 
 import model.tools.ToolState
 import model.tools.IdedExToolObject
+import model.UmlExPart
 
 object UmlToolObject extends IdedExToolObject("Uml", ToolState.LIVE) {
 
   // User
-  
+
   override def indexCall = index()
 
-  override def exerciseRoute(id: Int) = null
+  override def exerciseRoute(id: Int) = ???
 
   override def exerciseRoutes(id: Int) =
-    List((classSelection(id), "Mit Zwischenkorrektur"), (diagramDrawing(id), "Freies Erstellen"))
-  override def exesListRoute(id: Int) = exesListRoute(id)
-  
-  override def correctLiveRoute(id: Int) = null
+    List(
+      (exercise(id, UmlExPart.CLASS_SELECTION.toString), "Mit Zwischenkorrektur"),
+      (exercise(id, UmlExPart.DIAG_DRAWING.toString), "Freies Erstellen"))
 
-  override def correctRoute(id: Int) = null
+  override def exesListRoute(id: Int) = exesListRoute(id)
+
+  override def correctLiveRoute(id: Int) = ???
+
+  override def correctRoute(id: Int) = ???
 
   // Admin
 
   val restHeaders = List.empty
-  
+
   override def adminIndexRoute = adminIndex
 
   override def exercisesRoute = exercises

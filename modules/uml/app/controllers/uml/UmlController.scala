@@ -19,44 +19,35 @@ class UmlController @Inject() (f: FormFactory)
 
   val ERROR_MSG = "Es gab einen Fehler bei der Validierung des Resultats!"
 
-  def classSelection(exerciseId: Int) =
-    Results.ok(views.html.classSelection.render(BaseController.getUser, finder.byId(exerciseId)))
+  def exercise(exerciseId: Int, partStr: String) = {
+    val user = BaseController.getUser
+    val exercise = finder.byId(exerciseId)
 
-  def diagramDrawing(exerciseId: Int) =
-    Results.ok(views.html.diagdrawing.render(BaseController.getUser, finder.byId(exerciseId), false))
-
-  def diagramDrawingWithHelp(exerciseId: Int) =
-    Results.ok(views.html.diagdrawing.render(BaseController.getUser, finder.byId(exerciseId), true))
-
-  def matching(exerciseId: Int) =
-    Results.ok(views.html.umlMatching.render(BaseController.getUser, finder.byId(exerciseId)))
+    Results.ok(UmlExPart.valueOf(partStr) match {
+      case UmlExPart.CLASS_SELECTION   ⇒ views.html.classSelection.render(user, exercise)
+      case UmlExPart.DIAG_DRAWING      ⇒ views.html.diagdrawing.render(user, exercise, false)
+      case UmlExPart.DIAG_DRAWING_HELP ⇒ views.html.diagdrawing.render(user, exercise, true)
+      case UmlExPart.ATTRS_METHS       ⇒ views.html.umlMatching.render(user, exercise)
+      case _                           ⇒ new Html("FEHLER!")
+    })
+  }
 
   def correct(exerciseId: Int, partStr: String): Result = {
     val exercise = finder.byId(exerciseId)
     val solOption = UmlSolution.readFromForm(factory.form().bindFromRequest())
+    val user = BaseController.getUser
 
     val part = UmlExPart.valueOf(partStr)
 
     solOption match {
       case Some(sol) ⇒
-        Results.ok(part match {
-          case UmlExPart.CLASS_SELECTION ⇒
-            val result = new ClassSelectionResult(exercise, sol)
-            views.html.results.classSelectionSolution.render(BaseController.getUser, result)
-
-          case UmlExPart.DIAG_DRAWING_HELP ⇒
-            val result = new DiagramDrawingHelpResult(exercise, sol)
-            views.html.results.diagdrawinghelpsol.render(BaseController.getUser, result)
-
-          case UmlExPart.DIAG_DRAWING ⇒
-            val result = new DiagramDrawingResult(exercise, sol)
-            views.html.results.diagdrawingsol.render(BaseController.getUser, result)
-
-          case UmlExPart.ATTRS_METHS ⇒
-            views.html.results.umlMatchingCorrection.render(BaseController.getUser)
-
-          case _ ⇒ new Html("TODO!")
-        })
+        val (result, nextPart) = part match {
+          case UmlExPart.CLASS_SELECTION   ⇒ (new ClassSelectionResult(exercise, sol), UmlExPart.DIAG_DRAWING_HELP)
+          case UmlExPart.DIAG_DRAWING_HELP ⇒ (new DiagramDrawingHelpResult(exercise, sol), UmlExPart.ATTRS_METHS)
+          case UmlExPart.DIAG_DRAWING      ⇒ (new DiagramDrawingResult(exercise, sol), UmlExPart.FINISHED)
+          case UmlExPart.ATTRS_METHS       ⇒ (null, UmlExPart.FINISHED)
+        }
+        Results.ok(views.html.umlResult.render(user, result, nextPart))
       case None ⇒ Results.badRequest("There has been an error!")
     }
   }
@@ -80,9 +71,9 @@ der Erstellung eines Klassendiagrammes nach und nach durcharbeitet.
 
 object UmlController {
 
-  val SolutionSchemaNode = UmlController.initSolutionSchemaNode.get
-
   val SolutionSchemaPath = Paths.get("conf", "resources", "uml", "solutionSchema.json")
+
+  val SolutionSchemaNode = UmlController.initSolutionSchemaNode.get
 
   def initSolutionSchemaNode = {
     try {
