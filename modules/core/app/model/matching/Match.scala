@@ -32,7 +32,7 @@ class Match[T](val userArg: Option[T], val sampleArg: Option[T], val size: Int) 
 
   private def describeArgOption(arg: Option[T]) = arg match {
     case Some(arg) ⇒ describeArg(arg)
-    case None      ⇒ new Html("<td/>" * size)
+    case None      ⇒ new Html("<td>&nbsp;</td>" * size)
   }
 
   def describeUserArg = describeArgOption(userArg)
