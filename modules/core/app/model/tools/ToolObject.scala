@@ -3,17 +3,21 @@ package model.tools
 import play.api.mvc.Call
 
 abstract sealed class ToolObject(val exType: String, val state: ToolState, val decoration: String) {
-  
+
   ToolList.register(this)
 
   def indexCall: Call
-  
+
 }
+
+// Random ex: Bool, Nary, ...
 
 abstract class RandomExToolObject(e: String, s: ToolState, d: String = null) extends ToolObject(e, s, d)
 
+// Exercises with single id: xml, spread, mindmap, ...
+
 abstract class IdedExToolObject(e: String, s: ToolState = ToolState.ALPHA, d: String = null,
-  val pluralName: String = "Aufgaben") extends ToolObject(e, s, d) {
+                                val pluralName: String = "Aufgaben") extends ToolObject(e, s, d) {
 
   // User
 
@@ -53,4 +57,23 @@ abstract class IdedExToolObject(e: String, s: ToolState = ToolState.ALPHA, d: St
 
   def deleteExerciseRoute(id: Int): Call
 
+}
+
+// Exercises with double id
+
+abstract class DoubleIdExToolObject(e: String, s: ToolState = ToolState.ALPHA, d: String = "", val pluralName: String = "Aufgaben")
+  extends ToolObject(e, s, d) {
+
+  // User
+
+  def exerciseRoute(id: Int, part: String): Call
+
+  def exerciseRoutes(id: Int, part: String): List[(Call, String)] = List((exerciseRoute(id, part), "Aufgabe bearbeiten"))
+
+  def exesListRoute(id: Int, part: String): Call
+
+  def correctLiveRoute(id: Int, part: String): Call
+
+  def correctRoute(id: Int, part: String): Call
+  
 }

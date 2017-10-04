@@ -1,6 +1,5 @@
 package controllers.uml
 
-import java.io.IOException
 import java.nio.file.{Files, Paths}
 
 import controllers.core.{BaseController, ExerciseController}
@@ -8,7 +7,6 @@ import javax.inject.Inject
 import model.{ClassSelectionResult, DiagramDrawingHelpResult, DiagramDrawingResult, UmlExPart, UmlExercise, UmlResult, UmlSolution}
 import model.result.CompleteResult
 import model.user.User
-import play.Logger
 import play.data.{DynamicForm, FormFactory}
 import play.libs.Json
 import play.mvc.{Result, Results}
@@ -53,7 +51,7 @@ class UmlController @Inject() (f: FormFactory)
     }
   }
 
-  override def correct(form: DynamicForm, exercise: UmlExercise, user: User) = //FIXME
+  override def correct(form: DynamicForm, exercise: UmlExercise, user: User) = //FIXME: not used...
     ???
 
   override def renderExercise(user: User, exercise: UmlExercise) = //FIXME

@@ -10,9 +10,9 @@ import play.data.DynamicForm
 
 case class UmlSolution(classes: List[UmlClass], associations: List[UmlAssociation], implementations: List[UmlImplementation]) {
 
-  def allAttributes = classes.flatMap(_.attributes)
+  def allAttributes = classes.flatMap(_.attributes).distinct
 
-  def allMethods = classes.flatMap(_.methods)
+  def allMethods = classes.flatMap(_.methods).distinct
 }
 
 object UmlSolution {
