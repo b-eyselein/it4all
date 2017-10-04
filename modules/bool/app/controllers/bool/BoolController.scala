@@ -82,8 +82,8 @@ class BoolController @Inject() (f: FormFactory) extends ARandomExController(f, B
 
   override def renderIndex(user: User) = views.html.booloverview.render(user)
 
-  def newBoolCreationQuestion() = ok(views.html.boolcreatequestion.render(BaseController.getUser(), CreationQuestion.generateNew()))
+  def newBoolCreationQuestion() = ok(views.html.boolcreatequestion.render(BaseController.getUser, CreationQuestion.generateNew()))
 
-  def newBoolFilloutQuestion() = ok(views.html.boolfilloutquestion.render(BaseController.getUser(), FilloutQuestion.generateNew()))
+  def newBoolFilloutQuestion() = ok(views.html.boolfilloutquestion.render(BaseController.getUser, FilloutQuestion.generateNew()))
 
 }

@@ -22,35 +22,35 @@ lazy val ebnf = (project in file("modules/ebnf"))
 	.dependsOn(core)
 
 lazy val mindmap = (project in file("modules/mindmap"))
-	.enablePlugins(PlayJava, PlayScala, PlayEbean, PlayEnhancer)
+	.enablePlugins( PlayScala, PlayJava,PlayEbean, PlayEnhancer)
 	.dependsOn(core)
 
 lazy val programming = (project in file("modules/programming"))
-	.enablePlugins(PlayJava, PlayScala, PlayEbean, PlayEnhancer)
+	.enablePlugins(PlayScala, PlayJava, PlayEbean, PlayEnhancer)
 	.dependsOn(core)
 
 lazy val question = (project in file("modules/question"))
-	.enablePlugins(PlayJava, PlayScala, PlayEbean, PlayEnhancer)
+	.enablePlugins(PlayScala, PlayJava, PlayEbean, PlayEnhancer)
 	.dependsOn(core)
 
 lazy val spread = (project in file("modules/spread"))
-	.enablePlugins(PlayJava, PlayScala, PlayEbean, PlayEnhancer)
+	.enablePlugins(PlayScala, PlayJava, PlayEbean, PlayEnhancer)
 	.dependsOn(core)
 
 lazy val sql = (project in file("modules/sql"))
-	.enablePlugins(PlayJava, PlayScala, PlayEbean, PlayEnhancer)
+	.enablePlugins(PlayScala, PlayJava, PlayEbean, PlayEnhancer)
 	.dependsOn(core)
 
 lazy val uml = (project in file("modules/uml"))
-	.enablePlugins(PlayJava, PlayScala, PlayEbean, PlayEnhancer)
+	.enablePlugins(PlayScala, PlayJava, PlayEbean, PlayEnhancer)
 	.dependsOn(core)
 
 lazy val web = (project in file("modules/web"))
-	.enablePlugins(PlayJava, PlayScala, PlayEbean, PlayEnhancer)
+	.enablePlugins(PlayScala, PlayJava, PlayEbean, PlayEnhancer)
 	.dependsOn(core)
 
 lazy val xml = (project in file("modules/xml"))
-	.enablePlugins(PlayJava, PlayScala, PlayEbean, PlayEnhancer)
+	.enablePlugins(PlayScala, PlayJava, PlayEbean, PlayEnhancer)
 	.dependsOn(core)
 
 // Used libraries from Maven Repository

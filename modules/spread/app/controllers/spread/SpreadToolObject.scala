@@ -3,9 +3,9 @@ package controllers.spread
 import controllers.spread.routes.SpreadAdmin._
 import controllers.spread.routes.SpreadController._
 import model.tools.ToolState
-import model.tools.IdedExToolObject
+import model.tools.IdExToolObject
 
-object SpreadToolObject extends IdedExToolObject("Tabellenkalkulation", ToolState.LIVE) {
+object SpreadToolObject extends IdExToolObject("Tabellenkalkulation", ToolState.LIVE) {
 
   // User
   

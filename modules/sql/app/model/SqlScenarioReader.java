@@ -47,7 +47,7 @@ public class SqlScenarioReader extends ExerciseCollectionReader<SqlExercise, Sql
   }
   
   @Override
-  public SqlScenario instantiateExercise(int id) {
+  public SqlScenario instantiate(int id) {
     return new SqlScenario(id);
   }
   
@@ -86,7 +86,7 @@ public class SqlScenarioReader extends ExerciseCollectionReader<SqlExercise, Sql
     // scenario.getExercises().forEach(delegateReader::save);
   }
   
-  protected void updateExercise(SqlScenario exercise, JsonNode exerciseNode) {
+  public void updateExercise(SqlScenario exercise, JsonNode exerciseNode) {
     exercise.setShortName(exerciseNode.get(StringConsts.SHORTNAME_NAME).asText());
     exercise.setScriptFile(exerciseNode.get(StringConsts.SCRIPTFILE_NAME).asText());
     

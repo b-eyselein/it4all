@@ -12,6 +12,7 @@ import play.libs.Json
 import play.mvc.{Result, Results}
 import play.mvc.Security.Authenticated
 import play.twirl.api.Html
+import model.tools.DoubleIdExToolObject
 
 @Authenticated(classOf[model.Secured])
 abstract class ExerciseCollectionController[E <: Exercise, C <: ExerciseCollection[E]](

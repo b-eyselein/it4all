@@ -51,7 +51,7 @@ public class SqlExerciseReader extends ExerciseReader<SqlExercise> {
   }
 
   @Override
-  public SqlExercise instantiateExercise(int id) {
+  public SqlExercise instantiate(int id) {
     return new SqlExercise(id);
   }
 
@@ -62,7 +62,7 @@ public class SqlExerciseReader extends ExerciseReader<SqlExercise> {
   }
 
   @Override
-  protected void updateExercise(SqlExercise exercise, JsonNode exerciseNode) {
+  public void updateExercise(SqlExercise exercise, JsonNode exerciseNode) {
     exercise.exerciseType = SqlExerciseType.valueOf(exerciseNode.get(StringConsts.EXERCISE_TYPE).asText());
 
     exercise.samples = readArray(exerciseNode.get(StringConsts.SAMPLES_NAME), SqlExerciseReader::readSampleSolution);

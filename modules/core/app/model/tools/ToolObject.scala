@@ -16,7 +16,7 @@ abstract class RandomExToolObject(e: String, s: ToolState, d: String = null) ext
 
 // Exercises with single id: xml, spread, mindmap, ...
 
-abstract class IdedExToolObject(e: String, s: ToolState = ToolState.ALPHA, d: String = null,
+abstract class IdExToolObject(e: String, s: ToolState = ToolState.ALPHA, d: String = null,
                                 val pluralName: String = "Aufgaben") extends ToolObject(e, s, d) {
 
   // User

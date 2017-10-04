@@ -8,7 +8,8 @@ import java.nio.file.StandardCopyOption;
 
 import javax.inject.Inject;
 
-import controllers.core.ExerciseController;
+import controllers.core.BaseController$;
+import controllers.core.IdExController;
 import model.CorrectionException;
 import model.SpreadExercise;
 import model.SpreadSheetCorrectionResult;
@@ -24,7 +25,7 @@ import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
 import play.twirl.api.Html;
 
-public class SpreadController extends ExerciseController<SpreadExercise, EvaluationResult> {
+public class SpreadController extends IdExController<SpreadExercise, EvaluationResult> {
 
   private static final String BODY_SOL_FILE_NAME = "solFile";
   private static final String CORRECTION_ADD_STRING = "_Korrektur";
@@ -34,6 +35,13 @@ public class SpreadController extends ExerciseController<SpreadExercise, Evaluat
     super(theFactory, "spread", SpreadExercise.finder, SpreadToolObject$.MODULE$);
   }
 
+  @Override
+  public scala.util.Try<CompleteResult<EvaluationResult>> correctEx(DynamicForm form, SpreadExercise exercise,
+      User user) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
   public Result download(int id, String extension) {
     final User user = getUser();
     final SpreadExercise exercise = SpreadExercise.finder.byId(id);
@@ -41,8 +49,9 @@ public class SpreadController extends ExerciseController<SpreadExercise, Evaluat
     if(exercise == null)
       return badRequest("This exercise does not exist!");
 
-    final Path fileToDownload = Paths.get(BASE_DATA_PATH, SOLUTIONS_SUB_DIRECTORY, user.name, exerciseType,
-        Integer.toString(exercise.getId()), exercise.getTemplateFilename() + CORRECTION_ADD_STRING + "." + extension);
+    final Path fileToDownload = Paths.get(BaseController$.MODULE$.BASE_DATA_PATH(),
+        BaseController$.MODULE$.SOLUTIONS_SUB_DIRECTORY(), user.name, exType(), Integer.toString(exercise.getId()),
+        exercise.getTemplateFilename() + CORRECTION_ADD_STRING + "." + extension);
     if(!fileToDownload.toFile().exists())
       return redirect(routes.SpreadController.index(0));
 
@@ -63,6 +72,23 @@ public class SpreadController extends ExerciseController<SpreadExercise, Evaluat
     return ok(filePath.toFile());
   }
 
+  @Override
+  public Html renderExercise(User user, SpreadExercise exercise) {
+    return views.html.spreadExercise.render(user, exercise);
+  }
+
+  @Override
+  public Html renderExesListRest() {
+    // TODO Auto-generated method stub
+    return new Html("");
+  }
+
+  @Override
+  public Html renderResult(CompleteResult<EvaluationResult> correctionResult) {
+    // TODO Auto-generated method stub
+    return new Html("");
+  }
+
   public Result upload(int id) {
     final User user = getUser();
     final SpreadExercise exercise = SpreadExercise.finder.byId(id);
@@ -77,7 +103,7 @@ public class SpreadController extends ExerciseController<SpreadExercise, Evaluat
     final String fileExtension = com.google.common.io.Files.getFileExtension(uploadedFile.getFilename());
 
     // Save solution
-    final Path targetFilePath = getSolFileForExercise(user.name, exerciseType, exercise, exercise.getTemplateFilename(),
+    final Path targetFilePath = getSolFileForExercise(user.name, exType(), exercise, exercise.getTemplateFilename(),
         fileExtension);
     final boolean fileSuccessfullySaved = saveSolutionForUser(pathToUploadedFile, targetFilePath);
     if(!fileSuccessfullySaved)
@@ -115,30 +141,6 @@ public class SpreadController extends ExerciseController<SpreadExercise, Evaluat
       Logger.error("Fehler beim Speichern der Lösung!", e);
       return false;
     }
-  }
-
-  @Override
-  protected CompleteResult<EvaluationResult> correct(DynamicForm form, SpreadExercise exercise, User user)
-      throws CorrectionException {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  protected Html renderExercise(User user, SpreadExercise exercise) {
-    return views.html.spreadExercise.render(user, exercise);
-  }
-
-  @Override
-  protected Html renderExesListRest() {
-    // TODO Auto-generated method stub
-    return new Html("");
-  }
-
-  @Override
-  protected Html renderResult(CompleteResult<EvaluationResult> correctionResult) {
-    // TODO Auto-generated method stub
-    return new Html("");
   }
 
 }

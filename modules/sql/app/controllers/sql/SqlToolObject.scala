@@ -1,11 +1,11 @@
 package controllers.sql
 
-import model.tools.IdedExToolObject
+import model.tools.IdExToolObject
 import model.tools.ToolState
 import controllers.sql.routes.SqlAdmin._
 import controllers.sql.routes.SqlController._
 
-object SqlToolObject extends IdedExToolObject("Sql", ToolState.LIVE, pluralName = "Szenarien") {
+object SqlToolObject extends IdExToolObject("Sql", ToolState.LIVE, pluralName = "Szenarien") {
 
   // User
 

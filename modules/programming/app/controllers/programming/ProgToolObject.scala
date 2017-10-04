@@ -3,9 +3,9 @@ package controllers.programming
 import controllers.programming.routes.ProgController._
 import controllers.programming.routes.ProgAdmin._
 import model.tools.ToolState
-import model.tools.IdedExToolObject
+import model.tools.IdExToolObject
 
-object ProgToolObject extends IdedExToolObject("Programmierung", ToolState.LIVE) {
+object ProgToolObject extends IdExToolObject("Programmierung", ToolState.LIVE) {
 
   // User
   

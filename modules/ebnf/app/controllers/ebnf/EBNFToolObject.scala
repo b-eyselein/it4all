@@ -2,10 +2,10 @@ package controllers.ebnf
 
 import controllers.ebnf.routes.EBNFAdmin._
 import controllers.ebnf.routes.EBNFController._
-import model.tools.IdedExToolObject
+import model.tools.IdExToolObject
 import model.tools.ToolState
 
-object EBNFToolObject extends IdedExToolObject("EBNF", ToolState.ALPHA) {
+object EBNFToolObject extends IdExToolObject("EBNF", ToolState.ALPHA) {
 
   // User
   

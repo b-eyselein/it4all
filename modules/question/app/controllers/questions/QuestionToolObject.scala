@@ -3,9 +3,9 @@ package controllers.questions
 import controllers.questions.routes.QuestionAdmin._
 import controllers.questions.routes.QuestionController._
 import model.tools.ToolState
-import model.tools.IdedExToolObject
+import model.tools.IdExToolObject
 
-object QuestionToolObject extends IdedExToolObject("Auswahlfragen", ToolState.BETA) {
+object QuestionToolObject extends IdExToolObject("Auswahlfragen", ToolState.BETA) {
 
   // User
   

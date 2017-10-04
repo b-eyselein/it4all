@@ -7,7 +7,6 @@ import model.SpreadExercise;
 import model.SpreadExerciseReader;
 import model.user.User;
 import play.data.FormFactory;
-import play.mvc.Result;
 import play.twirl.api.Html;
 
 public class SpreadAdmin extends AExerciseAdminController<SpreadExercise> {
@@ -18,12 +17,12 @@ public class SpreadAdmin extends AExerciseAdminController<SpreadExercise> {
   }
   
   @Override
-  public Result adminIndex() {
-    return ok(views.html.spreadAdmin.index.render(getUser()));
+  public Html renderAdminIndex(User user) {
+    return views.html.spreadAdmin.index.render(user);
   }
   
   @Override
-  protected Html renderExEditForm(User user, SpreadExercise exercise, boolean isCreation) {
+  public Html renderExEditForm(User user, SpreadExercise exercise, boolean isCreation) {
     // TODO Auto-generated method stub
     return null;
   }

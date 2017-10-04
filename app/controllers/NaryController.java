@@ -27,17 +27,17 @@ public class NaryController extends ARandomExController {
   }
 
   public Result checkNaryAdditionSolution() {
-    NAryAddResult result = NAryAddResult.parseFromForm(factory.form().bindFromRequest());
+    NAryAddResult result = NAryAddResult.parseFromForm(factory().form().bindFromRequest());
     return ok(views.html.nary.nAryAdditionResult.render(getUser(), result));
   }
 
   public Result checkNaryConversionSolution() {
-    NAryConvResult result = NAryConvResult.parseFromForm(factory.form().bindFromRequest());
+    NAryConvResult result = NAryConvResult.parseFromForm(factory().form().bindFromRequest());
     return ok(views.html.nary.nAryConversionResult.render(getUser(), result));
   }
 
   public Result checkTwoComplementSolution(boolean verbose) {
-    TwoCompResult result = TwoCompResult$.MODULE$.parseFromForm(factory.form().bindFromRequest(), verbose);
+    TwoCompResult result = TwoCompResult$.MODULE$.parseFromForm(factory().form().bindFromRequest(), verbose);
     return ok(views.html.nary.twoComplementResult.render(getUser(), result, verbose));
   }
 

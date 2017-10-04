@@ -21,12 +21,12 @@ import play.mvc.Security.Authenticated;
 
 @Authenticated(Secured.class)
 public class EvaluationController extends BaseController {
-  
+
   @Inject
   public EvaluationController(FormFactory theFactory) {
     super(theFactory);
   }
-  
+
   public Result index() {
     User user = getUser();
     List<Feedback> toEvaluate = Arrays.stream(Feedback.EvaluatedTool.values()).map(tool -> {
@@ -36,40 +36,40 @@ public class EvaluationController extends BaseController {
         feedback = new Feedback(key);
       return feedback;
     }).collect(Collectors.toList());
-    
+
     return ok(views.html.evaluation.eval.render(user, toEvaluate));
   }
-  
+
   public Result submit() {
     User user = getUser();
-    
-    DynamicForm form = factory.form().bindFromRequest();
-    
+
+    DynamicForm form = factory().form().bindFromRequest();
+
     List<Feedback> evaluation = Arrays.stream(EvaluatedTool.values()).map(tool -> readFeedback(user, form, tool))
         .collect(Collectors.toList());
-    
+
     for(Feedback f: evaluation)
       f.save();
-    
+
     return ok(views.html.evaluation.submit.render(user, evaluation));
   }
-  
+
   private Feedback readFeedback(User user, DynamicForm form, EvaluatedTool tool) {
     FeedbackKey key = new FeedbackKey(user.name, tool);
     Feedback feedback = Feedback.finder.byId(key);
     if(feedback == null)
       feedback = new Feedback(key);
-    
+
     String evaluatedTool = tool.toString().toLowerCase();
-    
+
     for(EvaluatedAspect evaledAspect: EvaluatedAspect.values()) {
       feedback.set(evaledAspect, Mark
           .valueOf(form.get(evaledAspect.toString().toLowerCase() + "-" + evaluatedTool.toLowerCase()).toUpperCase()));
     }
-    
+
     feedback.comment = form.get("comment-" + evaluatedTool);
-    
+
     return feedback;
   }
-  
+
 }

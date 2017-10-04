@@ -1,11 +1,11 @@
 package model;
 
-import scala.collection.JavaConverters.{mapAsJavaMapConverter, seqAsJavaListConverter}
+import scala.collection.JavaConverters.{ mapAsJavaMapConverter, seqAsJavaListConverter }
 
 import com.fasterxml.jackson.databind.JsonNode
 
-import model.StringConsts.{IGNORE_WORDS_NAME, MAPPINGS_NAME, SOLUTION_NAME}
-import model.exercisereading.{ExerciseReader, JsonReader}
+import model.StringConsts.{ IGNORE_WORDS_NAME, MAPPINGS_NAME, SOLUTION_NAME }
+import model.exercisereading.{ ExerciseReader, JsonReader }
 import play.data.DynamicForm
 
 object UmlExerciseReader extends ExerciseReader[UmlExercise]("uml", UmlExercise.finder, classOf[Array[UmlExercise]]) {
@@ -16,7 +16,7 @@ object UmlExerciseReader extends ExerciseReader[UmlExercise]("uml", UmlExercise.
     exercise.solution = form.get("solution");
   }
 
-  override def instantiateExercise(id: Int) = new UmlExercise(id)
+  override def instantiate(id: Int) = new UmlExercise(id)
 
   override def updateExercise(exercise: UmlExercise, node: JsonNode) {
     exercise.mappings = JsonReader.readMap(node.get(MAPPINGS_NAME)).asJava;

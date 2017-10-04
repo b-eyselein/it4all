@@ -3,10 +3,10 @@ package controllers.web
 import controllers.web.routes.WebAdmin._
 import controllers.web.routes.WebController._
 
-import model.tools.IdedExToolObject
+import model.tools.IdExToolObject
 import model.tools.ToolState
 
-object WebToolObject extends IdedExToolObject("Web", ToolState.LIVE) {
+object WebToolObject extends IdExToolObject("Web", ToolState.LIVE) {
 
   // User
   

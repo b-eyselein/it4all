@@ -4,12 +4,12 @@ GET      /scenarioes/admin         controllers.sql.SqlAdmin.adminIndex
 GET      /jsonSchema               controllers.sql.SqlAdmin.getJSONSchemaFile
 POST     /upload                   controllers.sql.SqlAdmin.uploadFile
 
-GET      /scenarioes/import        controllers.sql.SqlAdmin.importExerciseCollections
-GET      /scenarioes/export        controllers.sql.SqlAdmin.exportExerciseCollections
+GET      /scenarioes/import        controllers.sql.SqlAdmin.importExercises
+GET      /scenarioes/export        controllers.sql.SqlAdmin.exportExercises
 
 GET      /admin/:id                controllers.sql.SqlAdmin.scenarioAdmin(id: Int)
 
-GET      /scenarioes               controllers.sql.SqlAdmin.exerciseCollections
+GET      /scenarioes               controllers.sql.SqlAdmin.exercises
 POST     /scenarioes               controllers.sql.SqlAdmin.adminIndex
 #newExercise
 GET      /newScenarioForm          controllers.sql.SqlAdmin.newExerciseForm

@@ -1,13 +1,18 @@
 package model.exercisereading;
 
-import scala.collection.JavaConverters._
+import scala.collection.JavaConverters.{ asScalaIteratorConverter, seqAsJavaListConverter }
+
 import com.github.fge.jsonschema.core.report.ProcessingReport
-import com.github.fge.jsonschema.core.exceptions.ProcessingException
+
 import model.JsonReadable
 
 sealed abstract class AbstractReadingResult(val json: String, val jsonSchema: String)
 
-case class ReadingResult[R <: JsonReadable](j: String, js: String, read: java.util.List[R]) extends AbstractReadingResult(j, js)
+case class ReadingResult[R <: JsonReadable](j: String, js: String, read: List[R]) extends AbstractReadingResult(j, js) {
+
+  def javaRead = read.asJava
+
+}
 
 case class ReadingError(j: String, js: String, report: ProcessingReport) extends AbstractReadingResult(j, js) {
   def getCauses = report.iterator.asScala.map(_.toString)

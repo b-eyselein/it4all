@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import model.StringConsts;
 import model.exercisereading.ExerciseReader;
+import model.exercisereading.JsonReader;
 import play.data.DynamicForm;
 import play.libs.Json;
 
@@ -27,7 +28,7 @@ public class QuestionReader extends ExerciseReader<Question> {
       answer = new Answer(key);
 
     answer.correctness = Correctness.valueOf(answerNode.get("correctness").asText());
-    answer.text = readAndJoinTextArray(answerNode.get(StringConsts.TEXT_NAME), "");
+    answer.text = JsonReader.readAndJoinTextArray(answerNode.get(StringConsts.TEXT_NAME), "");
     return answer;
   }
 
@@ -40,7 +41,7 @@ public class QuestionReader extends ExerciseReader<Question> {
   }
 
   @Override
-  public Question instantiateExercise(int id) {
+  public Question instantiate(int id) {
     return new Question(id);
   }
 
@@ -51,10 +52,10 @@ public class QuestionReader extends ExerciseReader<Question> {
   }
 
   @Override
-  protected void updateExercise(Question exercise, JsonNode exerciseNode) {
+  public void updateExercise(Question exercise, JsonNode exerciseNode) {
     exercise.setMaxPoints(exerciseNode.get(StringConsts.MAX_POINTS).asInt());
     exercise.setQuestionType(Question.QType.valueOf(exerciseNode.get(StringConsts.EXERCISE_TYPE).asText()));
-    exercise.setAnswers(readArray(exerciseNode.get("answers"), QuestionReader::readAnswer));
+    exercise.setAnswers(ExerciseReader.readArray(exerciseNode.get("answers"), QuestionReader::readAnswer));
   }
 
 }

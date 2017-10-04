@@ -14,27 +14,27 @@ import play.libs.Json;
 import play.mvc.Result;
 
 public class BlanksTestController extends BaseController {
-
+  
   private static final BlanksExercise exercise = new BlanksExercise(1);
-
+  
   @Inject
   public BlanksTestController(FormFactory theFactory) {
     super(theFactory);
   }
-
+  
   public Result correctBlanks(int id) {
-    DynamicForm form = factory.form().bindFromRequest();
+    DynamicForm form = factory().form().bindFromRequest();
     int inputCount = Integer.parseInt(form.get("count"));
-
+    
     List<String> inputs = new ArrayList<>(inputCount);
     for(int count = 0; count < inputCount; count++)
       inputs.add(form.get("inp" + count));
-
+    
     List<Success> results = exercise.correct(inputs);
-
+    
     return ok(Json.toJson(results));
   }
-
+  
   public Result testBlanks() {
     return ok(views.html.blanks.render(getUser(), exercise));
   }

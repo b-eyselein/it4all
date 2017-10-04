@@ -3,11 +3,10 @@ package controllers.uml
 import controllers.uml.routes.UmlAdmin._
 import controllers.uml.routes.UmlController._
 
-import model.tools.ToolState
-import model.tools.IdedExToolObject
+import model.tools.{ToolState, IdExToolObject}
 import model.UmlExPart
 
-object UmlToolObject extends IdedExToolObject("Uml", ToolState.LIVE) {
+object UmlToolObject extends IdExToolObject("Uml", ToolState.LIVE) {
 
   // User
 

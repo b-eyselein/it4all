@@ -41,3 +41,4 @@ modules/web/.settings
 modules/web/.cache-main
 modules/web/.cache-tests
 
+/modules/

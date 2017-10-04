@@ -2,7 +2,7 @@ package controllers.uml
 
 import java.nio.file.{Files, Paths}
 
-import controllers.core.{BaseController, ExerciseController}
+import controllers.core.{BaseController, IdExController}
 import javax.inject.Inject
 import model.{ClassSelectionResult, DiagramDrawingHelpResult, DiagramDrawingResult, UmlExPart, UmlExercise, UmlResult, UmlSolution}
 import model.result.CompleteResult
@@ -12,8 +12,8 @@ import play.libs.Json
 import play.mvc.{Result, Results}
 import play.twirl.api.Html
 
-class UmlController @Inject() (f: FormFactory)
-  extends ExerciseController[UmlExercise, UmlResult](f, "uml", UmlExercise.finder, UmlToolObject) {
+class UmlController @Inject() (f: FormFactory) extends IdExController[UmlExercise, UmlResult](
+  f, "uml", UmlExercise.finder, UmlToolObject) {
 
   val ERROR_MSG = "Es gab einen Fehler bei der Validierung des Resultats!"
 
@@ -51,7 +51,7 @@ class UmlController @Inject() (f: FormFactory)
     }
   }
 
-  override def correct(form: DynamicForm, exercise: UmlExercise, user: User) = //FIXME: not used...
+  override def correctEx(form: DynamicForm, exercise: UmlExercise, user: User) = //FIXME: not used...
     ???
 
   override def renderExercise(user: User, exercise: UmlExercise) = //FIXME

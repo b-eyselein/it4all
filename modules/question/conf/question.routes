@@ -43,19 +43,19 @@ POST     /question/:id               controllers.questions.QuestionController.qu
 
 
 # Admin Quiz
-GET      /quizzes                    controllers.questions.QuizAdmin.adminIndex
+GET      /quizzes                    controllers.questions.QuestionAdmin.adminIndex
 
-GET      /quizzes/jsonSchema         controllers.questions.QuizAdmin.getJSONSchemaFile
-POST     /quizzes/upload             controllers.questions.QuizAdmin.uploadFile
+GET      /quizzes/jsonSchema         controllers.questions.QuestionAdmin.getJSONSchemaFile
+POST     /quizzes/upload             controllers.questions.QuestionAdmin.uploadFile
 
-GET      /quizzes/export             controllers.questions.QuizAdmin.exportExerciseCollections
-GET      /quizzes/import             controllers.questions.QuizAdmin.importExerciseCollections
+#GET      /quizzes/export             controllers.questions.QuestionAdmin.exportExerciseCollections
+#GET      /quizzes/import             controllers.questions.QuestionAdmin.importExerciseCollections
 
-GET      /quizzes                    controllers.questions.QuizAdmin.exerciseCollections
-POST     /quizzes                    controllers.questions.QuizAdmin.adminIndex
+GET      /quizzes                    controllers.questions.QuestionAdmin.exerciseCollections
+POST     /quizzes                    controllers.questions.QuestionAdmin.adminIndex
 #newExercise
 
-GET      /newQuizForm                controllers.questions.QuizAdmin.newExerciseForm
+GET      /newQuizForm                controllers.questions.QuestionAdmin.newExerciseCollectionForm
 
 
 # Quizzes

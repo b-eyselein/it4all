@@ -7,24 +7,23 @@ import model.ProgExercise;
 import model.ProgExerciseReader;
 import model.user.User;
 import play.data.FormFactory;
-import play.mvc.Result;
 import play.twirl.api.Html;
 
 public class ProgAdmin extends AExerciseAdminController<ProgExercise> {
-  
+
   @Inject
   public ProgAdmin(FormFactory theFactory) {
     super(theFactory, ProgToolObject$.MODULE$, ProgExercise.finder, ProgExerciseReader.getInstance());
   }
-  
+
   @Override
-  public Result adminIndex() {
-    return ok(views.html.progAdmin.index.render(getUser()));
+  public Html renderAdminIndex(User user) {
+    return views.html.progAdmin.index.render(user);
   }
-  
+
   @Override
-  protected Html renderExEditForm(User user, ProgExercise exercise, boolean isCreation) {
+  public Html renderExEditForm(User user, ProgExercise exercise, boolean isCreation) {
     return views.html.progAdmin.editExForm.render(user, exercise);
   }
-  
+
 }

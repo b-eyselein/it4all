@@ -5,9 +5,9 @@ import play.api.mvc.Call
 import controllers.xml.routes.XmlController._
 import controllers.xml.routes.XmlAdmin._
 import model.tools.ToolState
-import model.tools.IdedExToolObject
+import model.tools.IdExToolObject
 
-object XmlToolObject extends IdedExToolObject("Xml", ToolState.LIVE) {
+object XmlToolObject extends IdExToolObject("Xml", ToolState.LIVE) {
 
   // User
 

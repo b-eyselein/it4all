@@ -10,7 +10,7 @@ import javax.inject.Inject;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
-import controllers.core.ExerciseController;
+import controllers.core.IdExController;
 import model.StringConsts;
 import model.WebExercise;
 import model.WebSolution;
@@ -28,7 +28,7 @@ import play.data.FormFactory;
 import play.mvc.Result;
 import play.twirl.api.Html;
 
-public class WebController extends ExerciseController<WebExercise, WebResult> {
+public class WebController extends IdExController<WebExercise, WebResult> {
   
   public static final String HTML_TYPE = "html";
   public static final String JS_TYPE = "js";
@@ -50,7 +50,7 @@ public class WebController extends ExerciseController<WebExercise, WebResult> {
   }
   
   public static User getUser() {
-    final User user = ExerciseController.getUser();
+    final User user = IdExController.getUser();
     
     if(WebUser.finder.byId(user.name) == null)
       // Make sure there is a corresponding entrance in other db...
@@ -91,11 +91,17 @@ public class WebController extends ExerciseController<WebExercise, WebResult> {
     final User user = getUser();
     final WebExercise exercise = WebExercise.finder.byId(id);
     
-    final String learnerSolution = factory.form().bindFromRequest().get(StringConsts.FORM_VALUE);
+    final String learnerSolution = factory().form().bindFromRequest().get(StringConsts.FORM_VALUE);
     final CompleteResult<WebResult> result = correct(learnerSolution, exercise, user, isJS);
     log(user, new ExerciseCompletionEvent(request(), id, result));
     
     return ok(views.html.correction.render("Web", result, renderResult(result), user, routes.WebController.index(0)));
+  }
+  
+  @Override
+  public scala.util.Try<CompleteResult<WebResult>> correctEx(DynamicForm form, WebExercise exercise, User user) {
+    // TODO Auto-generated method stub
+    return null;
   }
   
   public Result correctLive(int id, String type) {
@@ -107,7 +113,7 @@ public class WebController extends ExerciseController<WebExercise, WebResult> {
     final User user = getUser();
     final WebExercise exercise = WebExercise.finder.byId(id);
     
-    final String learnerSolution = factory.form().bindFromRequest().get(StringConsts.FORM_VALUE);
+    final String learnerSolution = factory().form().bindFromRequest().get(StringConsts.FORM_VALUE);
     final CompleteResult<WebResult> result = correct(learnerSolution, exercise, user, isJS);
     log(user, new ExerciseCorrectionEvent(request(), id, result));
     
@@ -133,25 +139,19 @@ public class WebController extends ExerciseController<WebExercise, WebResult> {
   }
   
   @Override
-  protected CompleteResult<WebResult> correct(DynamicForm form, WebExercise exercise, User user) {
+  public Html renderExercise(User user, WebExercise exercise) {
     // TODO Auto-generated method stub
     return null;
   }
   
   @Override
-  protected Html renderExercise(User user, WebExercise exercise) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-  
-  @Override
-  protected Html renderExesListRest() {
+  public Html renderExesListRest() {
     // TODO Auto-generated method stub
     return views.html.webExListRest.render();
   }
   
   @Override
-  protected Html renderResult(CompleteResult<WebResult> correctionResult) {
+  public Html renderResult(CompleteResult<WebResult> correctionResult) {
     return views.html.webResult.render(correctionResult.getResults());
   }
   

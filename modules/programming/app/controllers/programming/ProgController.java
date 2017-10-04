@@ -8,7 +8,7 @@ import java.util.stream.IntStream;
 
 import javax.inject.Inject;
 
-import controllers.core.ExerciseController;
+import controllers.core.IdExController;
 import model.ApprovalState;
 import model.AvailableLanguages;
 import model.ProgEvaluationResult;
@@ -27,15 +27,20 @@ import play.libs.Json;
 import play.mvc.Result;
 import play.twirl.api.Html;
 
-public class ProgController extends ExerciseController<ProgExercise, ProgEvaluationResult> {
+public class ProgController extends IdExController<ProgExercise, ProgEvaluationResult> {
 
   private static final ExerciseOptions EX_OPTIONS = new ExerciseOptions("Programmierung",
       AvailableLanguages.getStdLang().getAceName(), 15, 30, false);
 
   public static final int STD_TEST_DATA_COUNT = 2;
 
+  @Inject
+  public ProgController(FormFactory theFactory) {
+    super(theFactory, "prog", ProgExercise.finder, ProgToolObject$.MODULE$);
+  }
+
   public static User getUser() {
-    final User user = ExerciseController.getUser();
+    final User user = IdExController.getUser();
 
     if(ProgUser.finder.byId(user.name) == null)
       // Make sure there is a corresponding entrance in other db...
@@ -49,6 +54,17 @@ public class ProgController extends ExerciseController<ProgExercise, ProgEvaluat
         .mapToObj(testCounter -> readTestDataFromForm(form, username, testCounter, exercise))
         .collect(Collectors.toList());
   }
+
+  // private static ProgLangCorrector getCorrector(AvailableLanguages language)
+  // {
+  // switch(language) {
+  // case JAVA_8:
+  // return new JavaCorrector();
+  // case PYTHON_3:
+  // default:
+  // return new PythonCorrector();
+  // }
+  // }
 
   private static CommitedTestData readTestDataFromForm(DynamicForm form, String username, int testId,
       ProgExercise exercise) {
@@ -69,63 +85,27 @@ public class ProgController extends ExerciseController<ProgExercise, ProgEvaluat
     return testdata;
   }
 
-  // private static ProgLangCorrector getCorrector(AvailableLanguages language)
-  // {
-  // switch(language) {
-  // case JAVA_8:
-  // return new JavaCorrector();
-  // case PYTHON_3:
-  // default:
-  // return new PythonCorrector();
-  // }
-  // }
-
-  @Inject
-  public ProgController(FormFactory theFactory) {
-    super(theFactory, "prog", ProgExercise.finder, ProgToolObject$.MODULE$);
+  @Override
+  public scala.util.Try<CompleteResult<ProgEvaluationResult>> correctEx(DynamicForm form, ProgExercise exercise,
+      User user) {
+    // TODO Auto-generated method stub
+    return null;
   }
 
   public Result getDeclaration(String lang) {
     return ok(AvailableLanguages.valueOf(lang).getDeclaration());
   }
 
-  public Result testData(int id) {
-    final User user = getUser();
-    final List<CommitedTestData> oldTestData = CommitedTestData.forUserAndExercise(user, id);
-
-    return ok(
-        views.html.testData.render(user, finder.byId(id), oldTestData != null ? oldTestData : new LinkedList<>()));
+  @Override
+  public Html renderExercise(User user, ProgExercise exercise) {
+    return views.html.exercise2Rows.render(user, toolObject(), EX_OPTIONS, exercise,
+        views.html.progExRest.render(exercise), AvailableLanguages.getStdLang().getDeclaration());
   }
 
-  public Result validateTestData(int id) {
-    final User user = getUser();
-    final ProgExercise exercise = finder.byId(id);
-    final DynamicForm form = factory.form().bindFromRequest();
-    // final AvailableLanguages language =
-    // AvailableLanguages.valueOf(form.get(StringConsts.LANGUAGE_NAME));
-
-    final List<CommitedTestData> testData = extractTestData(form, user.name, exercise);
-    testData.forEach(CommitedTestData::save);
-
-    final List<ProgEvaluationResult> validatedTestData = Collections.emptyList(); // getCorrector(language).validateTestData(exercise,
-    // testData);
-
-    return ok(views.html.validatedTestData.render(user, exercise, validatedTestData));
-  }
-
-  public Result validateTestDataLive(int id) {
-    // final ProgExercise exercise = finder.byId(id);
-    // final DynamicForm form = factory.form().bindFromRequest();
-    // final AvailableLanguages language =
-    // AvailableLanguages.valueOf(form.get(StringConsts.LANGUAGE_NAME));
-
-    // final List<CommitedTestData> testData = extractTestData(form,
-    // getUser().name, exercise);
-
-    final List<ProgEvaluationResult> validatedTestData = Collections.emptyList(); // getCorrector(language).validateTestData(exercise,
-    // testData);
-
-    return ok(Json.toJson(validatedTestData));
+  @Override
+  public Html renderExesListRest() {
+    // TODO Auto-generated method stub
+    return new Html("");
   }
 
   // private CompleteResult<ProgEvaluationResult> correct(User user,
@@ -153,26 +133,47 @@ public class ProgController extends ExerciseController<ProgExercise, ProgEvaluat
   // }
 
   @Override
-  protected CompleteResult<ProgEvaluationResult> correct(DynamicForm form, ProgExercise exercise, User user) {
+  public Html renderResult(CompleteResult<ProgEvaluationResult> correctionResult) {
     // TODO Auto-generated method stub
     return null;
   }
 
-  @Override
-  protected Html renderExercise(User user, ProgExercise exercise) {
-    return views.html.exercise2Rows.render(user, routesObject, EX_OPTIONS, exercise,
-        views.html.progExRest.render(exercise), AvailableLanguages.getStdLang().getDeclaration());
+  public Result testData(int id) {
+    final User user = getUser();
+    final List<CommitedTestData> oldTestData = CommitedTestData.forUserAndExercise(user, id);
+
+    return ok(
+        views.html.testData.render(user, finder().byId(id), oldTestData != null ? oldTestData : new LinkedList<>()));
   }
 
-  @Override
-  protected Html renderExesListRest() {
-    // TODO Auto-generated method stub
-    return new Html("");
+  public Result validateTestData(int id) {
+    final User user = getUser();
+    final ProgExercise exercise = finder().byId(id);
+    final DynamicForm form = factory().form().bindFromRequest();
+    // final AvailableLanguages language =
+    // AvailableLanguages.valueOf(form.get(StringConsts.LANGUAGE_NAME));
+
+    final List<CommitedTestData> testData = extractTestData(form, user.name, exercise);
+    testData.forEach(CommitedTestData::save);
+
+    final List<ProgEvaluationResult> validatedTestData = Collections.emptyList(); // getCorrector(language).validateTestData(exercise,
+    // testData);
+
+    return ok(views.html.validatedTestData.render(user, exercise, validatedTestData));
   }
 
-  @Override
-  protected Html renderResult(CompleteResult<ProgEvaluationResult> correctionResult) {
-    // TODO Auto-generated method stub
-    return null;
+  public Result validateTestDataLive(int id) {
+    // final ProgExercise exercise = finder.byId(id);
+    // final DynamicForm form = factory.form().bindFromRequest();
+    // final AvailableLanguages language =
+    // AvailableLanguages.valueOf(form.get(StringConsts.LANGUAGE_NAME));
+
+    // final List<CommitedTestData> testData = extractTestData(form,
+    // getUser().name, exercise);
+
+    final List<ProgEvaluationResult> validatedTestData = Collections.emptyList(); // getCorrector(language).validateTestData(exercise,
+    // testData);
+
+    return ok(Json.toJson(validatedTestData));
   }
 }

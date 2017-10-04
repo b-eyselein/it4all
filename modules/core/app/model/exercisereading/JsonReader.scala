@@ -1,27 +1,18 @@
 package model.exercisereading
 
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
+import java.nio.file.{ Files, Path, Paths }
 
-import scala.collection.JavaConverters.asScalaIteratorConverter
-import scala.collection.JavaConverters.seqAsJavaListConverter
-import scala.util.Failure
-import scala.util.Success
-import scala.util.Try
+import scala.collection.JavaConverters._
+import scala.util.{ Failure, Success, Try }
 
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.{ JsonNode, ObjectMapper }
 import com.github.fge.jsonschema.core.report.ProcessingReport
 import com.github.fge.jsonschema.main.JsonSchemaFactory
 import com.kjetland.jackson.jsonSchema.JsonSchemaGenerator
 
 import io.ebean.Finder
 import model.JsonReadable
-import model.StringConsts.EX_FILE_NAME
-import model.StringConsts.ID_NAME
-import model.StringConsts.KEY_NAME
-import model.StringConsts.VALUE_NAME
+import model.StringConsts.{ EX_FILE_NAME, ID_NAME, KEY_NAME, VALUE_NAME }
 import play.libs.Json
 
 abstract class JsonReader[R <: JsonReadable](val exerciseType: String, val finder: Finder[Integer, R], classFor: Class[_]) {
@@ -30,22 +21,24 @@ abstract class JsonReader[R <: JsonReadable](val exerciseType: String, val finde
 
   def read(node: JsonNode) = {
     val id = node.get(ID_NAME).asInt
-    val w = Option(finder.byId(id)).getOrElse(instantiateExercise(id));
+    val w = Option(finder.byId(id)).getOrElse(instantiate(id));
 
     update(w, node)
 
     w
   }
 
+  val StdFile = Paths.get("conf", "resources", exerciseType, EX_FILE_NAME)
+  
   def update(toUpdate: R, node: JsonNode): Unit
 
   def save(toSave: R) = toSave.saveInDB()
 
-  def readFromStandardFile = readFromJsonFile(Paths.get("conf", "resources", exerciseType, EX_FILE_NAME))
+  def readFromStandardFile = readFromJsonFile(StdFile)
 
-  def instantiateExercise(id: Int): R
+  def instantiate(id: Int): R
 
-  def readFromJsonFile(path: Path): AbstractReadingResult = {
+  def readFromJsonFile(path: Path = StdFile): AbstractReadingResult = {
     val jsonAsString = new String(Files.readAllBytes(path)).replace("\t", "  ")
     val jsonSchemaAsString = Json.prettyPrint(jsonSchema).replace("\t", "  ")
     
@@ -55,7 +48,7 @@ abstract class JsonReader[R <: JsonReadable](val exerciseType: String, val finde
       case Failure(e) => new ReadingFailure(jsonAsString, jsonSchemaAsString, e)
       case Success(report) =>
         if (!report.isSuccess()) new ReadingError(jsonAsString, jsonSchemaAsString, report)
-        else new ReadingResult(jsonAsString, jsonSchemaAsString, json.iterator.asScala.map(read(_)).toList.asJava)
+        else new ReadingResult(jsonAsString, jsonSchemaAsString, json.iterator.asScala.map(read(_)).toList)
     }
   }
 
