@@ -2,28 +2,24 @@ package controllers.sql
 
 import java.sql.Connection
 
-import scala.collection.JavaConverters.{asScalaBufferConverter, seqAsJavaListConverter}
+import scala.collection.JavaConverters.{ asScalaBufferConverter, seqAsJavaListConverter }
 import scala.collection.mutable.ListBuffer
-import scala.util.{Failure, Success, Try}
+import scala.util.{ Failure, Success }
 
-import controllers.core.{BaseController, IdExController}
+import controllers.core.{ BaseController, IdExController }
 import javax.inject.Inject
-import model.{SqlSolution, SqlSolutionKey, SqlUser}
+import model.{ SqlSolution, SqlSolutionKey, SqlUser, StringConsts }
 import model.Levenshtein
 import model.ScalaUtils.cleanly
-import model.StringConsts.{SELECT_ALL_DUMMY, SHOW_ALL_TABLES}
-import model.exercise.{SqlExercise, SqlExerciseType, SqlSample, SqlScenario}
-import model.querycorrectors.{QueryCorrector, SqlResult}
+import model.StringConsts.{ SELECT_ALL_DUMMY, SHOW_ALL_TABLES }
+import model.exercise.{ SqlExercise, SqlExerciseType, SqlSample, SqlScenario }
+import model.querycorrectors.QueryCorrector
+import model.result.{ CompleteResult, EvaluationResult }
 import model.sql.SqlQueryResult
 import model.user.User
-import play.api.mvc.{AnyContent, Request}
-import play.data.FormFactory
-import play.db.{Database, NamedDatabase}
+import play.data.{ DynamicForm, FormFactory }
+import play.db.{ Database, NamedDatabase }
 import play.mvc.Results
-import play.data.DynamicForm
-import model.result.CompleteResult
-import model.StringConsts
-import model.result.EvaluationResult
 
 class SqlController @Inject() (f: FormFactory, @NamedDatabase("sqlselectroot") sqlSelect: Database, @NamedDatabase("sqlotherroot") sqlOther: Database)
   extends IdExController[SqlExercise, EvaluationResult](f, "sql", SqlExercise.finder, SqlToolObject) {

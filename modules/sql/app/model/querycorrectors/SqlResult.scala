@@ -4,10 +4,10 @@ import scala.collection.JavaConverters.seqAsJavaListConverter
 
 import model.conditioncorrector.BinaryExpressionMatch
 import model.exercise.Success
-import model.matching.{Match, MatchingResult}
-import model.result.{CompleteResult, EvaluationResult}
+import model.matching.{ Match, MatchingResult }
+import model.result.{ CompleteResult, EvaluationResult }
 import model.sql.SqlQueryResult
-import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
+import net.sf.jsqlparser.expression.{ BinaryExpression, Expression }
 import net.sf.jsqlparser.statement.select.OrderByElement
 
 case class SqlResult(

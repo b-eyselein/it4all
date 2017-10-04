@@ -1,25 +1,15 @@
 package model.querycorrectors
 
-import scala.util.Failure
-import scala.util.Success
-import scala.util.Try
+import scala.util.{ Failure, Success, Try }
 
-import model.CorrectionException
-import model.StringConsts
-import model.conditioncorrector.ExpressionExtractor
-import model.exercise.SqlExercise
-import model.exercise.SqlExerciseType
-import model.exercise.SqlSample
-import model.matching.Matcher
-import model.matching.MatchingResult
-import model.matching.StringMatcher
-import net.sf.jsqlparser.JSQLParserException
+import model.{ CorrectionException, StringConsts }
+import model.conditioncorrector.{ BinaryExpressionMatcher, ExpressionExtractor }
+import model.exercise.{ SqlExercise, SqlExerciseType, SqlSample }
+import model.matching.{ Matcher, MatchingResult, StringMatcher }
 import net.sf.jsqlparser.expression.Expression
-import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.select.OrderByElement
 import play.db.Database
-import model.conditioncorrector.BinaryExpressionMatcher
 
 object ColumnMatcher extends Matcher[ColumnWrapper, ColumnMatch](
   model.StringConsts.COLUMNS_NAME,
