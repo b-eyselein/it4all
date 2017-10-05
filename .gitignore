@@ -18,27 +18,3 @@ dist
 .classpath
 .scala_dependencies
 bin
-
-# Modules
-# Core
-modules/core/.classpath
-modules/core/.project
-modules/core/.settings
-modules/core/.cache-main
-modules/core/.cache-tests
-
-# Mindmap
-modules/mindmap/.classpath
-modules/mindmap/.project
-modules/mindmap/.settings
-modules/mindmap/.cache-main
-modules/mindmap/.cache-tests
-
-# Web
-modules/web/.classpath
-modules/web/.project
-modules/web/.settings
-modules/web/.cache-main
-modules/web/.cache-tests
-
-/modules/
