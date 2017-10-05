@@ -20,6 +20,10 @@ abstract class ExerciseCollectionReader[E <: Exercise, C <: ExerciseCollection[E
     coll.title = node.get(TITLE_NAME).asText
     coll.author = node.get(AUTHOR_NAME).asText
     coll.text = JsonReader.readTextArray(node.get(TEXT_NAME)).mkString("")
+    
+    updateCollection(coll, node)
   }
+
+  def updateCollection(coll: C, node: JsonNode): Unit
 
 }

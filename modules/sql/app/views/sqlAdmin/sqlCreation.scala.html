@@ -10,15 +10,15 @@
   <div class="panel-heading">Szenariobeschreibung</div>
   <div class="panel-body">
     <div class="row">
-      <div class="col-sm-2"><b>ID</b>: @scenario.getId</div>
-      <div class="col-sm-2"><b>Titel</b>: @scenario.getTitle</div>
-      <div class="col-sm-2"><b>Autor</b>: @scenario.getAuthor</div>
-      <div class="col-sm-3"><b>Tabellenname</b>: @scenario.getShortName</div>
-      <div class="col-sm-3"><b>Skriptdatei</b>: @scenario.getScriptFile</div>
+      <div class="col-sm-2"><b>ID</b>: @scenario.id</div>
+      <div class="col-sm-2"><b>Titel</b>: @scenario.title</div>
+      <div class="col-sm-2"><b>Autor</b>: @scenario.author</div>
+      <div class="col-sm-3"><b>Tabellenname</b>: @scenario.shortName</div>
+      <div class="col-sm-3"><b>Skriptdatei</b>: @scenario.scriptFile</div>
     </div>
     <div class="row">
       <div class="col-sm-4"><b>Beschreibung:</b></div>
-      <div class="col-sm-8">@scenario.getText</div>
+      <div class="col-sm-8">@scenario.text</div>
     </div>
   </div>
 </div>
@@ -30,7 +30,7 @@
 @if(index % 2 == 0) {<div class="row">}
   <div class="col-sm-6">
     <div class="panel panel-default">
-      <div class="panel-heading">@{exercise.getId}. @exercise.getText</div>
+      <div class="panel-heading">@{exercise.getId}. @exercise.text</div>
       <div class="panel-body">
         <div class="row">
           <div class="col-sm-2"><b>Typ:</b></div>

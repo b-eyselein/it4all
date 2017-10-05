@@ -43,7 +43,7 @@ public class SqlExercise extends Exercise {
   @JsonBackReference
   public SqlScenario scenario;
 
-  @JsonProperty(required = true)
+  @JsonIgnore
   public String tags;
 
   @JsonProperty(required = true)
@@ -59,6 +59,11 @@ public class SqlExercise extends Exercise {
       return Collections.emptyList();
 
     return Arrays.stream(tags.split(SAMPLE_JOIN_CHAR)).map(SqlTag::valueOf).collect(Collectors.toList());
+  }
+
+  @JsonProperty(value = "tags", required = true)
+  public List<String> getTagsForJson() {
+    return Arrays.stream(tags.split(SAMPLE_JOIN_CHAR)).collect(Collectors.toList());
   }
 
 }

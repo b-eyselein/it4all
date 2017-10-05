@@ -74,7 +74,7 @@ class SqlController @Inject() (f: FormFactory, @NamedDatabase("sqlselectroot") s
   }
 
   override def renderExercise(user: User, exercise: SqlExercise) = {
-    val tables = SqlController.readTablesInDatabase(sqlSelect, exercise.scenario.getShortName())
+    val tables = SqlController.readTablesInDatabase(sqlSelect, exercise.scenario.shortName)
 
     val oldSol = SqlSolution.finder.byId(new SqlSolutionKey(user.name, exercise.getId()))
     val oldOrDefSol = if (oldSol == null) "" else oldSol.sol

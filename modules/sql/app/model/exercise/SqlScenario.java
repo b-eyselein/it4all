@@ -21,14 +21,14 @@ public class SqlScenario extends ExerciseCollection<SqlExercise> {
   public static final int STEP = 10;
 
   @JsonProperty(required = true)
-  private String shortName;
+  public String shortName;
 
   @JsonProperty(required = true)
-  private String scriptFile;
+  public String scriptFile;
 
   @OneToMany(mappedBy = "scenario", cascade = CascadeType.ALL)
   @JsonManagedReference
-  private List<SqlExercise> exercises;
+  public List<SqlExercise> exercises;
 
   public SqlScenario(int id) {
     super(id);
@@ -60,26 +60,6 @@ public class SqlScenario extends ExerciseCollection<SqlExercise> {
   @JsonIgnore
   public int getNumOfSites() {
     return exercises.size() / STEP + 1;
-  }
-
-  public String getScriptFile() {
-    return scriptFile;
-  }
-
-  public String getShortName() {
-    return shortName;
-  }
-
-  public void setExercises(List<SqlExercise> theExercises) {
-    exercises = theExercises;
-  }
-
-  public void setScriptFile(String theScriptFile) {
-    scriptFile = theScriptFile;
-  }
-
-  public void setShortName(String theShortName) {
-    shortName = theShortName;
   }
 
 }
