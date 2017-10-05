@@ -6,7 +6,8 @@ object Common {
     organization := "is.informatik.uni-wuerzburg.de",
     version := "0.9.0",
     scalaVersion := "2.12.3",
-    libraryDependencies ++= Seq(Common.mockitoDep))
+    libraryDependencies ++= Seq(Common.mockitoDep),
+    scalacOptions ++= Seq("-feature"))
 
   // Scalatest
   val scalatest = "org.scalatest" %% "scalatest" % "3.0.1" % "test"
