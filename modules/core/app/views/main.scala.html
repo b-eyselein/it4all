@@ -30,7 +30,7 @@
         <ul class="nav navbar-nav">
         @for(tool <- model.tools.ToolList.allTools) {
           <li>
-          	<a href="@tool.indexCall">@tool.exType @tool.state.getBadge</a>
+          	<a href="@tool.indexCall">@tool.toolname @tool.state.getBadge</a>
       	  </li>
         }
         

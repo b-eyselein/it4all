@@ -1,9 +1,9 @@
 package model
 
-import java.nio.file.{ Paths, StandardCopyOption, StandardOpenOption }
+import java.nio.file.{ Files, Paths, StandardOpenOption }
 
 import scala.collection.JavaConverters.seqAsJavaListConverter
-import scala.util.{ Failure, Success }
+import scala.util.{ Failure, Success, Try }
 
 import com.fasterxml.jackson.databind.JsonNode
 
@@ -14,34 +14,17 @@ import play.data.DynamicForm
 
 object XmlExerciseReader extends ExerciseReader[XmlExercise]("xml", XmlExercise.finder, classOf[Array[XmlExercise]]) {
 
-  def checkOrCreateSampleFile(exercise: XmlExercise) =
-    (!baseTargetDir.toFile.exists && !CommonUtils$.MODULE$.createDirectory(baseTargetDir)) match {
-      case true ⇒ Logger.debug("Directory für Lösungsdateien (XML) " + baseTargetDir + "existiert nicht!")
-      case false ⇒
-        val filename = exercise.rootNode + "." + exercise.getReferenceFileEnding
-        val providedFile = Paths.get("conf", "resources", exerciseType, filename).toAbsolutePath
-        val targetPath = Paths.get(baseTargetDir.toString, filename).toAbsolutePath
-
-        providedFile.toFile.exists match {
-          case false ⇒
-            Logger.debug("Konnte Datei nicht erstellen: Keine Lösungsdatei mitgeliefert...")
-          case true ⇒ CommonUtils.copyFile(providedFile, targetPath, StandardCopyOption.REPLACE_EXISTING) match {
-            case Success(path) ⇒ Logger.debug(s"Die Lösungsdatei $targetPath wurde erstellt.")
-            case Failure(e)    ⇒ Logger.error(s"Fehler bei Erstellen von Musterlösung $targetPath", e)
-          }
-        }
-    }
-
   override def initRemainingExFromForm(exercise: XmlExercise, form: DynamicForm) {
     exercise.exerciseType = XmlExType.valueOf(form.get(StringConsts.EXERCISE_TYPE))
     exercise.rootNode = form.get(StringConsts.ROOT_NODE_NAME)
 
     val referenceFilePath = Paths.get(
       BaseController.getSampleDir(exerciseType).toString,
-      exercise.rootNode + "." + exercise.getReferenceFileEnding)
+      exercise.rootNode + "." + exercise.getReferenceFileEnding
+    )
     val referenceFileContent = form.get(StringConsts.REFERENCE_FILE_CONTENT).split(StringConsts.NEWLINE).toList.asJava
 
-    CommonUtils.writeFile(referenceFilePath, referenceFileContent, StandardOpenOption.TRUNCATE_EXISTING) match {
+    Try(Files.write(referenceFilePath, referenceFileContent, StandardOpenOption.TRUNCATE_EXISTING)) match {
       case Success(_) ⇒ Unit
       case Failure(e) ⇒ Logger.error(s"Es gab einen Fehler beim Erstellen der Referenzdatei $referenceFilePath", e)
     }
@@ -51,7 +34,11 @@ object XmlExerciseReader extends ExerciseReader[XmlExercise]("xml", XmlExercise.
 
   override def save(exercise: XmlExercise) {
     exercise.save
-    checkOrCreateSampleFile(exercise)
+    val fileName = exercise.rootNode + "." + exercise.getReferenceFileEnding
+    checkOrCreateSampleFile(exercise, fileName) match {
+      case Failure(e) => Logger.error(s"An error has occured while saving the sample file $fileName", e)
+      case Success(s) => Logger.info(s"Solution file $fileName was created successfully")
+    }
   }
 
   override def updateExercise(exercise: XmlExercise, exerciseNode: JsonNode) {

@@ -4,8 +4,9 @@ import scala.collection.mutable.ListBuffer
 
 import org.xml.sax.{ ErrorHandler, SAXParseException }
 
-import model.result.EvaluationResult
 import model.exercise.Success
+import model.result.EvaluationResult
+import java.io.IOException
 
 abstract sealed class XmlError(val title: String, val errorMessage: String, val line: Int, s: Success)
   extends EvaluationResult(s) {
@@ -18,7 +19,7 @@ case class ErrorXmlError(e: SAXParseException) extends XmlError("Fehler", e.getM
 
 case class WarningXmlError(e: SAXParseException) extends XmlError("Warnung", e.getMessage, e.getLineNumber, Success.PARTIALLY)
 
-case class FailureXmlError(msg: String, error: Throwable = null) extends XmlError("Fehlschlag", msg, -1, Success.NONE)
+case class FailureXmlError(msg: String, error: IOException = null) extends XmlError("Fehlschlag", msg, -1, Success.NONE)
 
 class CorrectionErrorHandler extends ErrorHandler {
 

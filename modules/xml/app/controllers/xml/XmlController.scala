@@ -1,20 +1,19 @@
 package controllers.xml
 
-import java.nio.file.{ Path, Paths }
-import java.util.Arrays
+import java.nio.file.{ Files, Path, Paths, StandardCopyOption, StandardOpenOption }
 
-import scala.collection.JavaConverters._
-import scala.util.Success
+import scala.collection.JavaConverters.{ asScalaBufferConverter, seqAsJavaListConverter }
+import scala.util.Try
 
 import controllers.core.{ BaseController, IdExController }
 import javax.inject.Inject
-import model.{ CommonUtils, CorrectionException, StringConsts, XmlCorrector, XmlError, XmlExType, XmlExercise }
+import model.{ StringConsts, XmlCorrector, XmlError, XmlExType, XmlExercise }
+import model.CommonUtils.RicherTry
 import model.exercise.ExerciseOptions
 import model.result.CompleteResult
 import model.user.User
 import play.data.{ DynamicForm, FormFactory }
-import play.mvc.{ Result, Results }
-import model.FailureXmlError
+import play.mvc.Results
 import play.twirl.api.Html
 
 class XmlController @Inject() (f: FormFactory)
@@ -28,95 +27,70 @@ class XmlController @Inject() (f: FormFactory)
     val learnerSolution = form.get(StringConsts.FORM_VALUE)
     val dir = checkAndCreateSolDir(user.name, exercise)
 
-    val (grammar, xml) = exercise.exerciseType match {
-      case (XmlExType.DTD_XML | XmlExType.XSD_XML) ⇒ (saveGrammar(dir, learnerSolution, exercise), saveXML(dir, exercise))
-      case _                                       ⇒ (saveGrammar(dir, exercise), saveXML(dir, learnerSolution, exercise))
+    val (grammarTry, xmlTry) = exercise.exerciseType match {
+      case (XmlExType.DTD_XML | XmlExType.XSD_XML) => (
+        save(dir, exercise.rootNode + exercise.getGrammarFileEnding, learnerSolution),
+        copy(dir, exercise.rootNode + ".xml")
+      )
+      case _ => (
+        copy(dir, exercise.rootNode + "." + exercise.getGrammarFileEnding),
+        save(dir, exercise.rootNode + ".xml", learnerSolution)
+      )
     }
 
-    Success(new CompleteResult(learnerSolution, XmlCorrector.correct(xml, grammar, exercise).asJava))
+    grammarTry.zip(xmlTry).map({
+      case (grammar, xml) =>
+        new CompleteResult(learnerSolution, XmlCorrector.correct(xml, grammar, exercise).asJava)
+    })
   }
 
   def playground = Results.ok(views.html.xmlPlayground.render(BaseController.getUser))
 
-  def playgroundCorrection: Result = {
-    val result = new CompleteResult("", XmlCorrector.correct(
-      factory.form().bindFromRequest().get(StringConsts.FORM_VALUE), "", XmlExType.XML_DTD).asJava)
-    Results.ok(renderResult(result))
-  }
+  def playgroundCorrection = Results.ok(
+    renderResult(
+      new CompleteResult(
+        "",
+        XmlCorrector.correct(factory.form().bindFromRequest().get(StringConsts.FORM_VALUE), "", XmlExType.XML_DTD).asJava
+      )
+    )
+  )
 
-  override def renderExercise(user: User, exercise: XmlExercise) =
-    views.html.exercise2Rows.render(user, toolObject, EX_OPTIONS, exercise,
-                                    views.html.xmlExRest.render(exercise), readDefOrOldSolution(user.name, exercise))
+  override def renderExercise(user: User, exercise: XmlExercise) = views.html.exercise2Rows.render(
+    user, toolObject, EX_OPTIONS, exercise, views.html.xmlExRest.render(exercise), readDefOrOldSolution(user.name, exercise)
+  )
 
   override def renderExesListRest = views.html.xmlExesListRest.render
 
   override def renderResult(completeResult: CompleteResult[XmlError]) = completeResult.results.asScala.toList match {
-    case Nil ⇒ new Html("""<div class="alert alert-success">Es wurden keine Fehler gefunden.</div>""")
-    case results ⇒ new Html(results.map(res ⇒ s"""
+    case Nil => new Html("""<div class="alert alert-success">Es wurden keine Fehler gefunden.</div>""")
+    case results => new Html(results.map(res => s"""
 <div class="panel panel-${res.getBSClass}">
   <div class="panel-heading">${res.title} ${res.lineStr}</div>
   <div class="panel-body">${res.errorMessage}</div>
 </div>""").mkString("\n"))
   }
 
-  def readDefOrOldSolution(username: String, exercise: XmlExercise) = {
-    val oldSolutionPath = BaseController.getSolFileForExercise(username, exType, exercise, exercise.rootNode,
-                                                               exercise.getStudentFileEnding)
-    if (oldSolutionPath.toFile.exists) CommonUtils.readFile(oldSolutionPath).getOrElse(exercise.getFixedStart)
-    else exercise.getFixedStart
-  }
+  def readDefOrOldSolution(username: String, exercise: XmlExercise) = Try(
+    Files.readAllLines(
+      BaseController.getSolFileForExercise(username, exType, exercise, exercise.rootNode, exercise.getStudentFileEnding)
+    ).asScala.mkString("\n")
+  ).getOrElse(exercise.getFixedStart)
 
-  def saveGrammar(dir: Path, learnerSolution: String, exercise: XmlExercise) = {
-    //    final Path grammar = Paths.get(dir.toString(), exercise.rootNode + exercise.getGrammarFileEnding())
-    //
-    //    try {
-    //      return Files.write(grammar, Arrays.asList(learnerSolution.split(StringConsts.NEWLINE)), StandardOpenOption.CREATE,
-    //          StandardOpenOption.TRUNCATE_EXISTING)
-    //    } catch (final IOException error) {
-    //      Logger.error("Fehler beim Speichern einer Xml-Loesungsdatei!", error)
-    null
-    //    }
-  }
+  def copy(dir: Path, filename: String) = Try(
+    Files.copy(
+      Paths.get(getSampleDir.toString, filename),
+      Paths.get(dir.toString, filename),
+      StandardCopyOption.REPLACE_EXISTING
+    )
+  )
 
-  def saveGrammar(dir: Path, exercise: XmlExercise) = {
-    //    final String filename = exercise.rootNode + "." + exercise.getGrammarFileEnding()
-    //
-    //    final Path target = Paths.get(dir.toString(), filename)
-    //    final Path source = Paths.get(getSampleDir().toString(), filename)
-    //
-    //    try {
-    //      return Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING)
-    //    } catch (final IOException error) {
-    //      Logger.error(SAVE_ERROR_MSG + target.toString(), error)
-    null
-    //    }
-  }
-
-  def saveXML(dir: Path, learnerSolution: String, exercise: XmlExercise) = {
-    //    final Path targetFile = Paths.get(dir.toString(), exercise.rootNode + ".xml")
-    //
-    //    try {
-    //      return Files.write(targetFile, Arrays.asList(learnerSolution.split(StringConsts.NEWLINE)),
-    //          StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
-    //    } catch (final IOException error) {
-    //      Logger.error(SAVE_ERROR_MSG + targetFile.toString(), error)
-    null
-    //    }
-  }
-
-  def saveXML(dir: Path, exercise: XmlExercise) = {
-    //    final String filename = exercise.rootNode + ".xml"
-    //
-    //    final Path target = Paths.get(dir.toString(), filename)
-    //    final Path source = Paths.get(getSampleDir().toString(), filename)
-    //
-    //    try {
-    //      return Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING)
-    //    } catch (final IOException error) {
-    //      Logger.error(SAVE_ERROR_MSG + target.toString(), error)
-    null
-    //    }
-  }
+  def save(dir: Path, filename: String, learnerSolution: String) = Try(
+    Files.write(
+      Paths.get(dir.toString, filename),
+      learnerSolution.split(StringConsts.NEWLINE).toList.asJava,
+      StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING
+    )
+  )
 
 }
 
@@ -129,8 +103,9 @@ object XmlController {
 
   def getReferenceCode(exercise: XmlExercise) = {
     val referenceFilePath = Paths.get(
-      BaseController.getSampleDir("xml").toString, exercise.rootNode + "." + exercise.getReferenceFileEnding)
-    if (referenceFilePath.toFile.exists) CommonUtils.readFile(referenceFilePath) else "FEHLER!"
+      BaseController.getSampleDir("xml").toString, exercise.rootNode + "." + exercise.getReferenceFileEnding
+    )
+    Try(Files.readAllLines(referenceFilePath).asScala.mkString("\n")).getOrElse("FEHLER!")
   }
 
 }

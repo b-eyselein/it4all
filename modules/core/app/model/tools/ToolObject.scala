@@ -2,10 +2,12 @@ package model.tools
 
 import play.api.mvc.Call
 
-abstract sealed class ToolObject(val exType: String, val state: ToolState, val decoration: String) {
+abstract sealed class ToolObject(val toolname: String, val state: ToolState, val decoration: String) {
 
   ToolList.register(this)
 
+  val exType = toolname.toLowerCase
+  
   def indexCall: Call
 
 }

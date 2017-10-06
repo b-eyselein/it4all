@@ -10,35 +10,9 @@ import play.Logger
 
 object CommonUtils {
 
-  def createDirectory(directory: Path) = try {
-    Files.createDirectories(directory);
-    true;
-  } catch {
-    case e: IOException ⇒
-      Logger.error("Error while creating sample file directory \"" + directory.toString() + "\"", e);
-      false;
-  }
-
-  def readFile(path: Path): Try[String] = try {
-    Success(Files.readAllLines(path).asScala.mkString("\n"))
-  } catch {
-    case e: Throwable ⇒ Failure(e)
-  }
-
-  def copyFile(source: Path, target: Path, options: CopyOption): Try[Path] = {
-    try {
-      Success(Files.copy(source, target, options))
-    } catch {
-      case e: Throwable ⇒ Failure(e)
-    }
-  }
-
-  def writeFile(target: Path, content: java.util.List[String], openOption: OpenOption): Try[Path] = {
-    try {
-      Success(Files.write(target, content, openOption))
-    } catch {
-      case e: Throwable ⇒ Failure(e)
-    }
+  implicit class RicherTry[+T](wrapped: Try[T]) {
+    def zip[That](that: => Try[That]): Try[(T, That)] =
+      for (a <- wrapped; b <- that) yield (a, b)
   }
 
   def cleanly[A, B](resource: A)(cleanup: A ⇒ Unit)(doWork: A ⇒ B): Try[B] = {

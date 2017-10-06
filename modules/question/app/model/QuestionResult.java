@@ -20,7 +20,7 @@ public class QuestionResult extends EvaluationResult {
   public QuestionResult(List<Answer> theSelAns, Question theQuestion) {
     super(Success.NONE);
     question = theQuestion;
-    success = analyze(new LinkedList<>(theSelAns), new LinkedList<>(theQuestion.getCorrectAnswers()));
+    /* success = */ analyze(new LinkedList<>(theSelAns), new LinkedList<>(theQuestion.getCorrectAnswers()));
   }
 
   public List<Answer> getCorrect() {
