@@ -10,7 +10,6 @@ services:
         volumes_from:
         - vc_it4all
         volumes:
-        # TODO: set umask to 011 to get file permissions to 766?
         - ./:/app/
         - ~/.ivy2/:/root/.ivy2/
         - ~/.sbt/:/root/.sbt/
@@ -19,19 +18,22 @@ services:
         - dbit4all:dbit4all
         - sqlselect:sqlselect
         - sqlother:sqlother
+        expose:
+        - "9000"
+        - "9999"
         ports:
         - 8000:9000
         stdin_open:   true
         tty:          true
     
     vc_it4all:
-        image:        alpine:3.5
+        image:        alpine
         volumes:
         - volume_it4all:/data
-        command:      sh chown $UID:$UID /data
+        command:      sh chown 1000:1000 /data
     
     dbit4all:
-        image:        mysql:5.7
+        image:        mysql:8
         restart:      always
         ports:
         - 3106:3306
@@ -41,7 +43,7 @@ services:
         - MYSQL_ROOT_PASSWORD=sT8aV#k7
     
     sqlselect:
-        image:        mysql:5.7
+        image:        mysql:8
         restart:      always
         ports:
         - 3107:3306
@@ -51,7 +53,7 @@ services:
         - MYSQL_ROOT_PASSWORD=sT8aV#k7
     
     sqlother:
-        image:        mysql:5.7
+        image:        mysql:8
         restart:      always
         ports:
         - 3108:3306
