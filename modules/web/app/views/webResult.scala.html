@@ -1,12 +1,12 @@
 @(results: List[model.result.WebResult])
 
 @for(result <- results) {
-<div class="panel panel-@result.getBSClass()">
-  <div class="panel-heading" data-toggle="collapse" href="#task@result.getTask().key.taskId">
-    @{result.getTask().key.taskId}. @result.getTask().text
+<div class="panel panel-@result.getBSClass">
+  <div class="panel-heading" data-toggle="collapse" href="#task@result.getTask.key.taskId">
+    @{result.getTask.key.taskId}. @result.getTask.text
   </div>
 
-  <div id="task@result.getTask().key.taskId" class="panel-collapse collapse @if(!result.isSuccessful()) {in}">
+  <div id="task@result.getTask.key.taskId" class="panel-collapse collapse @if(!result.isSuccessful) {in}">
     <div class="panel-body">
     
     @{result match {

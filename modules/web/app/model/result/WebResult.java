@@ -9,9 +9,17 @@ public abstract class WebResult extends EvaluationResult {
 
   protected WebTask task;
 
+  // FIXME: are there really messages?
+  protected List<String> messages;
+
   public WebResult(WebTask theTask, Success theSuccess, List<String> theMessages) {
-    super(theSuccess, theMessages);
+    super(theSuccess);
     task = theTask;
+    messages = theMessages;
+  }
+
+  public List<String> getMessages() {
+    return messages;
   }
 
   public WebTask getTask() {

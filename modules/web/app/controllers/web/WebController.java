@@ -152,7 +152,7 @@ public class WebController extends IdExController<WebExercise, WebResult> {
   
   @Override
   public Html renderResult(CompleteResult<WebResult> correctionResult) {
-    return views.html.webResult.render(correctionResult.getResults());
+    return views.html.webResult.render(correctionResult.results());
   }
   
 }

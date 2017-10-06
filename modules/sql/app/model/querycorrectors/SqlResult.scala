@@ -11,7 +11,7 @@ import net.sf.jsqlparser.expression.{ BinaryExpression, Expression }
 import net.sf.jsqlparser.statement.select.OrderByElement
 
 case class SqlResult(
-  learnerSolution:  String,
+  l:                String,
   columnComparison: MatchingResult[ColumnWrapper, ColumnMatch],
   tableComparison:  MatchingResult[String, Match[String]],
   whereComparison:  MatchingResult[BinaryExpression, BinaryExpressionMatch],
@@ -21,7 +21,7 @@ case class SqlResult(
   groupByComparison: Option[MatchingResult[Expression, GroupByMatch]],
   orderByComparison: Option[MatchingResult[OrderByElement, OrderByMatch]])
   extends CompleteResult[EvaluationResult](
-    "Sql",
+    l,
     (List(columnComparison, tableComparison, whereComparison, executionResult)
       ++ groupByComparison
       ++ orderByComparison).asJava) {

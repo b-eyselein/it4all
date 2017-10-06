@@ -10,7 +10,7 @@
     <thead>
       <tr>
         <th>ID</th>
-        @for(inputCount <- 0 until exercise.getInputCount()) {
+        @for(inputCount <- 0 until exercise.getInputCount) {
         <th>Input @inputCount</th>
         }
         <th>Erwartetes Resultat</th>
@@ -19,13 +19,13 @@
     </thead>
     <tbody>
     @for(testData <- validatedTestData) {
-      <tr class="@if(testData.isSuccessful()) {success} else {danger}">
-        <td>@testData.getId()</td>
-        @for(input <- testData.getInput()) {
+      <tr class="@if(testData.isSuccessful) {success} else {danger}">
+        <td>@testData.getId</td>
+        @for(input <- testData.getInput) {
         <td>@input</td>
         }
-        <td>@testData.getAwaitedResult()</td>
-        <td>@testData.getRealResult()</td>
+        <td>@testData.getAwaitedResult</td>
+        <td>@testData.getRealResult</td>
       </tr>
     }
     </tbody>
