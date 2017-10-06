@@ -9,7 +9,10 @@ playEbeanModels in Compile := Seq("model.user.*", "model.exercise.*", "model.pro
 
 libraryDependencies ++= Seq(
   Common.jsonSchemaValidator,
-  Common.jsonSchemaGenerator
+  Common.jsonSchemaGenerator,
+  
+  "org.webjars" % "jquery" % "3.2.1",
+  "org.webjars" % "bootstrap" % "3.3.7-1"
 )
 
 // JaCoCo - siehe project/plugins.sbt
