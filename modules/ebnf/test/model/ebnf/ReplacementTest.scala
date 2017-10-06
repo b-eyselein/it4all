@@ -16,14 +16,14 @@ class ReplacementTest {
   def testAlternative = testReplacement(aRepl | bRepl, "A | B", List(List(aRepl), List(bRepl)))
 
   @Test
-  def testOption = testUnaryReplacement(aRepl?, aRepl, a.toString + "?", List(List.empty, List(aRepl)))
+  def testOption = testUnaryReplacement(aRepl.?, aRepl, a.toString + "?", List(List.empty, List(aRepl)))
 
   @Test
-  def testRepetition = testUnaryReplacement(aRepl*, aRepl, a.toString + "*",
+  def testRepetition = testUnaryReplacement(aRepl.*, aRepl, a.toString + "*",
     List(List.empty, List(aRepl), List(aRepl, aRepl), List(aRepl, aRepl, aRepl)))
 
   @Test
-  def testMin1Repetition = testUnaryReplacement(aRepl+, aRepl, a.toString + "+",
+  def testMin1Repetition = testUnaryReplacement(aRepl.+, aRepl, a.toString + "+",
     List(List(aRepl), List(aRepl, aRepl), List(aRepl, aRepl, aRepl)))
 
   @Test
