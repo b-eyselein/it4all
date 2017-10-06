@@ -38,7 +38,6 @@ object XmlCorrector {
       case XmlExType.XML_DTD ⇒ correctWithDTD(xmlReader, new CorrectionErrorHandler)
       case XmlExType.DTD_XML ⇒ correctWithDTD(xmlReader, new CorrectionErrorHandler)
       case XmlExType.XSD_XML ⇒ ???
-      case _                 ⇒ ???
     }
   }
 

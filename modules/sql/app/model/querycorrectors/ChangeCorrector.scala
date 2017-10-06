@@ -1,7 +1,7 @@
 package model.querycorrectors
 
 import java.sql.Connection
-import model.ScalaUtils.cleanly
+import model.CommonUtils.cleanly
 import model.StringConsts
 import model.exercise.SqlExercise
 import model.sql.SqlQueryResult

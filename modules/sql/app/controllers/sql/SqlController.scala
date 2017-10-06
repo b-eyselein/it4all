@@ -10,7 +10,7 @@ import controllers.core.{ BaseController, IdExController }
 import javax.inject.Inject
 import model.{ SqlSolution, SqlSolutionKey, SqlUser, StringConsts }
 import model.Levenshtein
-import model.ScalaUtils.cleanly
+import model.CommonUtils.cleanly
 import model.StringConsts.{ SELECT_ALL_DUMMY, SHOW_ALL_TABLES }
 import model.exercise.{ SqlExercise, SqlExerciseType, SqlSample, SqlScenario }
 import model.querycorrectors.QueryCorrector

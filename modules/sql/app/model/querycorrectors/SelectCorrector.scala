@@ -6,7 +6,7 @@ import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.util.{ Failure, Success, Try }
 
 import model.CorrectionException
-import model.ScalaUtils.cleanly
+import model.CommonUtils.cleanly
 import model.exercise.SqlExercise
 import model.matching.{ Match, MatchType, Matcher }
 import model.sql.SqlQueryResult

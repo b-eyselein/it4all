@@ -25,7 +25,7 @@ object XmlExerciseReader extends ExerciseReader[XmlExercise]("xml", XmlExercise.
         providedFile.toFile.exists match {
           case false ⇒
             Logger.debug("Konnte Datei nicht erstellen: Keine Lösungsdatei mitgeliefert...")
-          case true ⇒ ScalaUtils.copyFile(providedFile, targetPath, StandardCopyOption.REPLACE_EXISTING) match {
+          case true ⇒ CommonUtils.copyFile(providedFile, targetPath, StandardCopyOption.REPLACE_EXISTING) match {
             case Success(path) ⇒ Logger.debug(s"Die Lösungsdatei $targetPath wurde erstellt.")
             case Failure(e)    ⇒ Logger.error(s"Fehler bei Erstellen von Musterlösung $targetPath", e)
           }
@@ -41,7 +41,7 @@ object XmlExerciseReader extends ExerciseReader[XmlExercise]("xml", XmlExercise.
       exercise.rootNode + "." + exercise.getReferenceFileEnding)
     val referenceFileContent = form.get(StringConsts.REFERENCE_FILE_CONTENT).split(StringConsts.NEWLINE).toList.asJava
 
-    ScalaUtils.writeFile(referenceFilePath, referenceFileContent, StandardOpenOption.TRUNCATE_EXISTING) match {
+    CommonUtils.writeFile(referenceFilePath, referenceFileContent, StandardOpenOption.TRUNCATE_EXISTING) match {
       case Success(_) ⇒ Unit
       case Failure(e) ⇒ Logger.error(s"Es gab einen Fehler beim Erstellen der Referenzdatei $referenceFilePath", e)
     }

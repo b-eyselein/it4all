@@ -62,7 +62,8 @@ class XmlController @Inject() (f: FormFactory)
   def readDefOrOldSolution(username: String, exercise: XmlExercise) = {
     val oldSolutionPath = BaseController.getSolFileForExercise(username, exType, exercise, exercise.rootNode,
                                                                exercise.getStudentFileEnding)
-    if (oldSolutionPath.toFile.exists) CommonUtils.readFile(oldSolutionPath) else exercise.getFixedStart
+    if (oldSolutionPath.toFile.exists) CommonUtils.readFile(oldSolutionPath).getOrElse(exercise.getFixedStart)
+    else exercise.getFixedStart
   }
 
   def saveGrammar(dir: Path, learnerSolution: String, exercise: XmlExercise) = {

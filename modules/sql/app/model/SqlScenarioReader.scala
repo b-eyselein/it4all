@@ -20,7 +20,7 @@ class SqlScenarioReader(sqlSelect: Database, sqlOther: Database)
   val CREATE_DUMMY = "CREATE DATABASE IF NOT EXISTS "
 
   def createDatabase(databaseName: String, connection: Connection) {
-    ScalaUtils.cleanly(connection.createStatement)(_.close)(createStatement ⇒ {
+    CommonUtils.cleanly(connection.createStatement)(_.close)(createStatement ⇒ {
       try {
         createStatement.executeUpdate(CREATE_DUMMY + databaseName) // NOSONAR
         connection.setCatalog(databaseName)
