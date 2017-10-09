@@ -10,6 +10,8 @@ tmp
 dist
 .history
 
+# IntelliJ IDEA
+.idea/
 
 # Eclipse
 .settings
