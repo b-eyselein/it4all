@@ -22,7 +22,8 @@ import play.twirl.api.Html
 
 @Authenticated(classOf[model.AdminSecured])
 abstract class AExerciseAdminController[E <: Exercise](
-  f: FormFactory, val toolObject: IdExToolObject, val finder: Finder[Integer, E], val exerciseReader: ExerciseReader[E])
+  f: FormFactory, val toolObject: IdExToolObject, val finder: Finder[Integer, E], val exerciseReader: ExerciseReader[E]
+)
   extends BaseAdminController[E](f, exerciseReader) {
 
   def changeExState(id: Int) = {
@@ -39,13 +40,15 @@ abstract class AExerciseAdminController[E <: Exercise](
     val toDelete = finder.byId(id)
     if (toDelete == null) {
       Results.badRequest(Json.parse(
-        s"""{"message": "Die Aufgabe mit ID $id existiert nicht und kann daher nicht gelöscht werden!"""))
+        s"""{"message": "Die Aufgabe mit ID $id existiert nicht und kann daher nicht geloescht werden!"""
+      ))
     } else {
       if (toDelete.delete()) {
         Results.ok(Json.parse(s"""{"id": "$id"}"""))
       } else {
         Results.badRequest(
-          Json.parse("{\"message\": \"Es gab einen internen Fehler beim Löschen der Aufgabe mit der ID " + id + "\""))
+          Json.parse("{\"message\": \"Es gab einen internen Fehler beim Löschen der Aufgabe mit der ID " + id + "\"")
+        )
       }
     }
   }

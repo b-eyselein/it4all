@@ -1,6 +1,6 @@
 package model
 
-import java.io.{ FileReader, IOException }
+import java.io.FileReader
 import java.nio.file.Paths
 import java.sql.{ Connection, SQLException }
 
@@ -8,6 +8,7 @@ import org.apache.ibatis.jdbc.ScriptRunner
 
 import com.fasterxml.jackson.databind.JsonNode
 
+import model.CommonUtils.cleanly
 import model.exercise.{ SqlExercise, SqlScenario }
 import model.exercisereading.{ ExerciseCollectionReader, ExerciseReader }
 import play.Logger
@@ -15,17 +16,17 @@ import play.data.DynamicForm
 import play.db.Database
 
 class SqlScenarioReader(sqlSelect: Database, sqlOther: Database)
-    extends ExerciseCollectionReader[SqlExercise, SqlScenario]("sql", SqlScenario.finder, classOf[Array[SqlScenario]]) {
+  extends ExerciseCollectionReader[SqlExercise, SqlScenario]("sql", SqlScenario.finder, classOf[Array[SqlScenario]]) {
 
   val CREATE_DUMMY = "CREATE DATABASE IF NOT EXISTS "
 
   def createDatabase(databaseName: String, connection: Connection) {
-    CommonUtils.cleanly(connection.createStatement)(_.close)(createStatement ⇒ {
+    CommonUtils.cleanly(connection.createStatement)(_.close)(createStatement => {
       try {
         createStatement.executeUpdate(CREATE_DUMMY + databaseName) // NOSONAR
         connection.setCatalog(databaseName)
       } catch {
-        case e: SQLException ⇒ Logger.error(s"""There has been an error running an sql script: "$CREATE_DUMMY $databaseName"""", e)
+        case e: SQLException => Logger.error(s"""There has been an error running an sql script: "$CREATE_DUMMY $databaseName"""", e)
       }
     })
   }
@@ -42,26 +43,21 @@ class SqlScenarioReader(sqlSelect: Database, sqlOther: Database)
     println(scenario.scriptFile)
     val scriptFilePath = Paths.get("conf", "resources", exerciseType, scenario.scriptFile).toAbsolutePath
 
-    if (!scriptFilePath.toFile.exists) {
-      Logger.error("File " + scriptFilePath + " does not exist")
-      return
+    scriptFilePath.toFile.exists match {
+      case false => Logger.error("File " + scriptFilePath + " does not exist")
+      case true =>
+        cleanly(database.getConnection)(_.close)(connection => {
+          val connection = database.getConnection
+
+          createDatabase(scenario.shortName, connection)
+
+          val runner = new ScriptRunner(connection)
+          runner.setLogWriter(null)
+          runner.runScript(new FileReader(scriptFilePath.toFile))
+
+          connection.close
+        })
     }
-
-    try {
-      val connection = database.getConnection
-
-      createDatabase(scenario.shortName, connection)
-
-      val runner = new ScriptRunner(connection)
-      runner.setLogWriter(null)
-      runner.runScript(new FileReader(scriptFilePath.toFile))
-
-      connection.close
-    } catch {
-      case error: IOException  ⇒ Logger.error("Error while executing script file " + scriptFilePath.toString, error)
-      case error: SQLException ⇒ Logger.error("Error while executing script file " + scriptFilePath.toString, error)
-    }
-
   }
 
   override def save(scenario: SqlScenario) {

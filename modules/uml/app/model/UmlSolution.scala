@@ -24,7 +24,7 @@ object UmlSolution {
     val sqrt = Math.round(Math.sqrt(classes.size))
 
     classes.zipWithIndex.map {
-      case (clazz, i) ⇒ s"""
+      case (clazz, i) => s"""
 {
   name: "${clazz.name}",
   classType: "${clazz.classType.toString.toUpperCase}",
@@ -49,34 +49,34 @@ object UmlSolution {
     (JsPath \ "name").read[String] and
     (JsPath \ "attributes").read[List[String]] and
     (JsPath \ "methods").read[List[String]])(
-      (c, n, a, m) ⇒ UmlClass(UmlClassType.fromString(c), n, a, m))
+      (c, n, a, m) => UmlClass(UmlClassType.fromString(c), n, a, m))
 
   implicit lazy val umlAssocReads: Reads[UmlAssociation] = (
     (JsPath \ "assocType").read[String] and
     (JsPath \ "start").read[UmlAssociationEnd] and
     (JsPath \ "end").read[UmlAssociationEnd])(
-      (t, s, e) ⇒ UmlAssociation(UmlAssociationType.getByString(t), (s, e)))
+      (t, s, e) => UmlAssociation(UmlAssociationType.getByString(t), (s, e)))
 
   implicit lazy val endsReads: Reads[UmlAssociationEnd] = (
     (JsPath \ "endName").read[String] and
     (JsPath \ "multiplicity").read[String])(
-      (e, m) ⇒ UmlAssociationEnd(e, Multiplicity.getByString(m)))
+      (e, m) => UmlAssociationEnd(e, Multiplicity.getByString(m)))
 
   implicit lazy val umlImplReads: Reads[UmlImplementation] = (
     (JsPath \ "subClass").read[String] and
     (JsPath \ "superClass").read[String])(UmlImplementation(_, _))
 
   def fromJson(jsonAsStr: String) = Json.parse(jsonAsStr).validate[UmlSolution] match {
-    case s: JsSuccess[UmlSolution] ⇒ Some(s.get)
-    case e: JsError                ⇒ println(Json.prettyPrint(JsError.toJson(e))); None
+    case s: JsSuccess[UmlSolution] => Some(s.get)
+    case e: JsError                => println(Json.prettyPrint(JsError.toJson(e))); None
   }
 
   def readFromForm(form: DynamicForm) = {
     val sentJson = form.get(StringConsts.FORM_VALUE)
 
     JsonReader.validateJson(play.libs.Json.parse(sentJson), UmlController.SolutionSchemaNode) match {
-      case Success(_) ⇒ fromJson(sentJson)
-      case Failure(e) ⇒ None
+      case Success(_) => fromJson(sentJson)
+      case Failure(e) => None
     }
   }
 

@@ -5,8 +5,8 @@ import java.sql.Connection
 import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.util.{ Failure, Success, Try }
 
-import model.CorrectionException
 import model.CommonUtils.cleanly
+import model.CorrectionException
 import model.exercise.SqlExercise
 import model.matching.{ Match, MatchType, Matcher }
 import model.sql.SqlQueryResult
@@ -31,26 +31,28 @@ object GROUP_BY_MATCHER extends Matcher[Expression, GroupByMatch](
   "Group By Elemente",
   List("Group By Statement"),
   _.asInstanceOf[Column].getColumnName == _.asInstanceOf[Column].getColumnName,
-  new GroupByMatch(_, _, _))
+  new GroupByMatch(_, _, _)
+)
 
 object ORDER_BY_MATCHER extends Matcher[OrderByElement, OrderByMatch](
   "Order By Elemente",
   List("Order By Statement"),
   _.getExpression.toString == _.getExpression.toString,
-  new OrderByMatch(_, _, _))
+  new OrderByMatch(_, _, _)
+)
 
 object SelectCorrector extends QueryCorrector("SELECT") {
 
   type Q = net.sf.jsqlparser.statement.select.Select
 
   def executeStatement(select: String, conn: Connection) =
-    cleanly(conn.createStatement)(_.close)(q ⇒ new SqlQueryResult(q.executeQuery(select))) match {
-      case Success(queryResult) ⇒ queryResult
-      case Failure(e)           ⇒ throw new CorrectionException(select, s"Es gab einen Fehler bei der Ausführung des Statements '$select'", e)
+    cleanly(conn.createStatement)(_.close)(q => new SqlQueryResult(q.executeQuery(select))) match {
+      case Success(queryResult) => queryResult
+      case Failure(e)           => throw new CorrectionException(select, s"Es gab einen Fehler bei der Ausführung des Statements '$select'", e)
     }
 
   override def executeQuery(db: Database, userQ: Q, sampleQ: Q, exercise: SqlExercise): Try[SqlExecutionResult] =
-    cleanly(db.getConnection)(_.close)(conn ⇒ {
+    cleanly(db.getConnection)(_.close)(conn => {
       conn.setCatalog(exercise.scenario.shortName)
       new SqlExecutionResult(executeStatement(userQ.toString, conn), executeStatement(sampleQ.toString, conn))
     })
@@ -91,11 +93,11 @@ object SelectCorrector extends QueryCorrector("SELECT") {
 
   def parseStatement(statement: String) = try {
     CCJSqlParserUtil.parse(statement) match {
-      case q: Q ⇒ q
-      case o    ⇒ throw new CorrectionException(statement, s"Das Statement war vom falschen Typ ${o.getClass}! Erwartet wurde ein $queryType - Statement!")
+      case q: Q => q
+      case o    => throw new CorrectionException(statement, s"Das Statement war vom falschen Typ ${o.getClass}! Erwartet wurde ein $queryType - Statement!")
     }
   } catch {
-    case e: JSQLParserException ⇒ throw new CorrectionException(statement, "Es gab einen Fehler beim Parsen des Statements: " + statement, e)
+    case e: JSQLParserException => throw new CorrectionException(statement, "Es gab einen Fehler beim Parsen des Statements: " + statement, e)
   }
 
 }

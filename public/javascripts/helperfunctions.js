@@ -50,6 +50,7 @@ function extractParameters() {
 }
 
 function testTheSolution(theUrl) {
+  $('#testButton').prop('disabled', true);
   $.ajax({
     type: 'PUT',
     url: theUrl,
@@ -58,9 +59,11 @@ function testTheSolution(theUrl) {
     async: true,
     success: function(correction) {
       $("#correction").html(correction);
+      $('#testButton').prop('disabled', false);
     },
     error: function(jqXHR, error, errorThrown) {
       $("#correction").html("<div class=\"alert alert-danger\">" + jqXHR.responseJSON + "</div>");
+      $('#testButton').prop('disabled', false);
     }
   });
 }

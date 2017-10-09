@@ -17,7 +17,11 @@ class XmlAdmin @Inject() (f: FormFactory)
   def statistics = new Html(s"""
 <li>Es existieren insgesamt ${XmlExercise.finder.all.size} <a href="${controllers.xml.routes.XmlAdmin.exercises}">Aufgaben</a>, davon
   <ul>
-  ${XmlExercise.finder.all.asScala.groupBy(_.exerciseType).map(e => s"""<li>${e._2.size} Aufgaben von Typ ${e._1}""").mkString("\n")}
+  ${
+    XmlExercise.finder.all.asScala.groupBy(_.exerciseType).map({
+      case (exType, exes) => s"""<li>${exes.size} Aufgaben von Typ ${exType}"""
+    }).mkString("\n")
+  }
   </ul>
 </li>""")
 
