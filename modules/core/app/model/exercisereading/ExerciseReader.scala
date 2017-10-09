@@ -1,24 +1,18 @@
 package model.exercisereading
 
-import java.nio.file.Paths
+import java.nio.file.{ Files, Paths, StandardCopyOption }
 import java.util.Optional
 
 import scala.collection.JavaConverters.{ asScalaBufferConverter, asScalaIteratorConverter, seqAsJavaListConverter }
+import scala.util.Try
 
 import com.fasterxml.jackson.databind.JsonNode
 
 import io.ebean.Finder
-import model.{ JsonReadable, StringConsts }
+import model.JsonReadable
 import model.StringConsts.{ AUTHOR_NAME, STATE_NAME, TEXT_NAME, TITLE_NAME }
 import model.exercise.{ Exercise, ExerciseState }
 import play.data.DynamicForm
-import java.nio.file.StandardCopyOption
-import play.Logger
-import java.nio.file.Files
-import scala.util.Failure
-import scala.util.Try
-import scala.util.Success
-import java.nio.file.Path
 
 abstract class ExerciseReader[E <: Exercise](e: String, f: Finder[Integer, E], classFor: Class[_])
   extends JsonReader[E](e, f, classFor) {
@@ -30,9 +24,9 @@ abstract class ExerciseReader[E <: Exercise](e: String, f: Finder[Integer, E], c
   def initFromForm(id: Int, form: DynamicForm) = {
     val exercise = getOrInstantiateExercise(id)
 
-    exercise.title = form.get(StringConsts.TITLE_NAME)
-    exercise.author = form.get(StringConsts.AUTHOR_NAME)
-    exercise.text = form.get(StringConsts.TEXT_NAME)
+    exercise.title = form.get(TITLE_NAME)
+    exercise.author = form.get(AUTHOR_NAME)
+    exercise.text = form.get(TEXT_NAME)
 
     initRemainingExFromForm(exercise, form)
 
