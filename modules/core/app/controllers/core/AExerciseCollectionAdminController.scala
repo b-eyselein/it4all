@@ -37,9 +37,9 @@ abstract class AExerciseCollectionAdminController[E <: Exercise, C <: ExerciseCo
 
   def deleteExerciseCollection(collectionId: Int) = {
     if (finder.byId(collectionId).delete())
-      Results.ok("Aufgabe konnte gelöscht werden!")
+      Results.ok("Aufgabe konnte geloescht werden!")
     else
-      Results.badRequest("Konnte nicht gelöscht werden!")
+      Results.badRequest("Konnte nicht geloescht werden!")
   }
 
   def editExercise(exerciseId: Int): Result = ???

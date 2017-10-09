@@ -47,7 +47,7 @@ abstract class AExerciseAdminController[E <: Exercise](
         Results.ok(Json.parse(s"""{"id": "$id"}"""))
       } else {
         Results.badRequest(
-          Json.parse("{\"message\": \"Es gab einen internen Fehler beim Löschen der Aufgabe mit der ID " + id + "\"")
+          Json.parse(s"""{"message": "Es gab einen internen Fehler beim Loeschen der Aufgabe mit der ID $id}""")
         )
       }
     }
