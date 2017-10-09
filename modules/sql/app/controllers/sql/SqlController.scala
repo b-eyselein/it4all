@@ -95,34 +95,34 @@ class SqlController @Inject() (f: FormFactory, @NamedDatabase("sqlselectroot") s
 
 object SqlController {
   def findBestFittingSample(userSt: String, samples: List[SqlSample]) = {
-    samples.reduceLeft((samp1, samp2) ⇒
+    samples.reduceLeft((samp1, samp2) =>
       if (Levenshtein.distance(samp1.sample, userSt) < Levenshtein.distance(samp2.sample, userSt))
         samp1 else samp2)
   }
 
-  def readExistingTables(connection: Connection): List[String] = cleanly(connection.createStatement().executeQuery(SHOW_ALL_TABLES))(_.close)(existingTables ⇒ {
+  def readExistingTables(connection: Connection): List[String] = cleanly(connection.createStatement().executeQuery(SHOW_ALL_TABLES))(_.close)(existingTables => {
     var tableNames = new ListBuffer[String]()
     while (existingTables.next()) {
       tableNames += existingTables.getString(1)
     }
     tableNames.toList
   }) match {
-    case Success(list) ⇒ list
-    case Failure(_)    ⇒ List.empty
+    case Success(list) => list
+    case Failure(_)    => List.empty
   }
 
   def readTableContent(connection: Connection, tableName: String): SqlQueryResult =
-    cleanly(connection.prepareStatement(SELECT_ALL_DUMMY + tableName))(_.close)(result ⇒ new SqlQueryResult(result.executeQuery, tableName)) match {
-      case Success(result) ⇒ result
-      case Failure(_)      ⇒ null
+    cleanly(connection.prepareStatement(SELECT_ALL_DUMMY + tableName))(_.close)(result => new SqlQueryResult(result.executeQuery, tableName)) match {
+      case Success(result) => result
+      case Failure(_)      => null
     }
 
-  def readTablesInDatabase(db: Database, databaseName: String): List[SqlQueryResult] = cleanly(db.getConnection)(_.close)(connection ⇒ {
+  def readTablesInDatabase(db: Database, databaseName: String): List[SqlQueryResult] = cleanly(db.getConnection)(_.close)(connection => {
     connection.setCatalog(databaseName)
     readExistingTables(connection).map(readTableContent(connection, _))
   }) match {
-    case Success(queryResult) ⇒ queryResult
-    case Failure(_)           ⇒ List.empty
+    case Success(queryResult) => queryResult
+    case Failure(_)           => List.empty
   }
 
   def saveSolution(userName: String, learnerSolution: String, id: Int) {

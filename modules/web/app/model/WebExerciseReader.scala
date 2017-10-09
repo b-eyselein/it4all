@@ -2,10 +2,11 @@ package model
 
 import java.util.Collections
 
-import scala.collection.JavaConverters.{ asScalaIteratorConverter, seqAsJavaListConverter }
+import scala.collection.JavaConverters.asScalaIteratorConverter
 
 import com.fasterxml.jackson.databind.JsonNode
 
+import model.StringConsts._
 import model.exercisereading.{ ExerciseReader, JsonReader }
 import model.task.{ Action, Condition, HtmlTask, JsConditionKey, JsWebTask, WebTaskKey }
 import play.data.DynamicForm
@@ -14,45 +15,38 @@ import play.libs.Json
 object WebExerciseReader extends ExerciseReader[WebExercise]("web", WebExercise.finder, classOf[Array[WebExercise]]) {
 
   def readCondition(conditionNode: JsonNode): Condition = {
-    val key = Json.fromJson(conditionNode.get("key"), classOf[JsConditionKey])
+    val key = Json.fromJson(conditionNode.get(KEY_NAME), classOf[JsConditionKey])
+    val condition = Option(Condition.finder.byId(key)).getOrElse(new Condition(key))
 
-    Condition.finder.byId(key) match {
-      case condition if condition == null ⇒ return Json.fromJson(conditionNode, classOf[Condition])
-      case condition ⇒
-        condition.xpathQuery = conditionNode.get(StringConsts.XPATH_NAME).asText
-        condition.awaitedValue = conditionNode.get("awaitedValue").asText
-        condition.isPrecondition = conditionNode.get("isPrecondition").asBoolean
-        condition
-    }
+    condition.xpathQuery = conditionNode.get(XPATH_NAME).asText
+    condition.awaitedValue = conditionNode.get(AWAITED_VALUE_NAME).asText
+    condition.isPrecondition = conditionNode.get("isPrecondition").asBoolean
+
+    condition
   }
 
-  def readHtmlTask(htmlTaskNode: JsonNode): HtmlTask = {
-    val key = Json.fromJson(htmlTaskNode.get(StringConsts.KEY_NAME), classOf[WebTaskKey])
+  def readHtmlTask(htmlTaskNode: JsonNode) = {
+    val key = Json.fromJson(htmlTaskNode.get(KEY_NAME), classOf[WebTaskKey])
+    val task = Option(HtmlTask.finder.byId(key)).getOrElse(new HtmlTask(key))
 
-    var task = HtmlTask.finder.byId(key)
-    if (task == null)
-      task = new HtmlTask(key)
+    task.text = JsonReader.readAndJoinTextArray(htmlTaskNode.get(TEXT_NAME))
+    task.xpathQuery = htmlTaskNode.get(XPATH_NAME).asText
+    task.attributes = readAttributes(htmlTaskNode.get(ATTRS_NAME))
+    task.textContent = htmlTaskNode.get(TEXT_CONTENT_NAME).asText
 
-    task.text = JsonReader.readAndJoinTextArray(htmlTaskNode.get(StringConsts.TEXT_NAME), "")
-    task.xpathQuery = htmlTaskNode.get(StringConsts.XPATH_NAME).asText
-    task.attributes = readAttributes(htmlTaskNode.get(StringConsts.ATTRS_NAME))
-    task.textContent = htmlTaskNode.get("textContent").asText
-
-    return task
+    task
   }
 
-  def readJsTask(jsTaskNode: JsonNode): JsWebTask = {
-    val key = Json.fromJson(jsTaskNode.get(StringConsts.KEY_NAME), classOf[WebTaskKey])
+  def readJsTask(jsTaskNode: JsonNode) = {
+    val key = Json.fromJson(jsTaskNode.get(KEY_NAME), classOf[WebTaskKey])
 
-    var task = JsWebTask.finder.byId(key)
-    if (task == null)
-      task = new JsWebTask(key)
+    val task = Option(JsWebTask.finder.byId(key)).getOrElse(new JsWebTask(key))
 
     val actionNode = jsTaskNode.get("action")
     val conditionsNode = jsTaskNode.get("conditions")
 
-    task.text = JsonReader.readAndJoinTextArray(jsTaskNode.get(StringConsts.TEXT_NAME), "")
-    task.xpathQuery = jsTaskNode.get(StringConsts.XPATH_NAME).asText
+    task.text = JsonReader.readAndJoinTextArray(jsTaskNode.get(TEXT_NAME))
+    task.xpathQuery = jsTaskNode.get(XPATH_NAME).asText
 
     task.action = if (actionNode != null) Json.fromJson(actionNode, classOf[Action]) else null
 
@@ -62,15 +56,15 @@ object WebExerciseReader extends ExerciseReader[WebExercise]("web", WebExercise.
       else
         Collections.emptyList()
 
-    return task
+    task
   }
 
   def readAttributes(attributesNode: JsonNode) =
     attributesNode.iterator.asScala.map(Json.fromJson(_, classOf[Attribute])).map(_.forDB).mkString
 
   override def initRemainingExFromForm(exercise: WebExercise, form: DynamicForm) {
-    exercise.htmlText = form.get("htmlText")
-    exercise.jsText = form.get("jsText")
+    exercise.htmlText = form.get(HTML_TEXT_NAME)
+    exercise.jsText = form.get(JS_TEXT_NAME)
   }
 
   override def instantiate(id: Int) = new WebExercise(id)
@@ -82,10 +76,10 @@ object WebExerciseReader extends ExerciseReader[WebExercise]("web", WebExercise.
   }
 
   override def updateExercise(exercise: WebExercise, exerciseNode: JsonNode) {
-    exercise.htmlText = JsonReader.readAndJoinTextArray(exerciseNode.get("htmlText"), "")
+    exercise.htmlText = JsonReader.readAndJoinTextArray(exerciseNode.get(HTML_TEXT_NAME))
     exercise.htmlTasks = ExerciseReader.readArray(exerciseNode.get("htmlTasks"), readHtmlTask(_))
 
-    exercise.jsText = JsonReader.readAndJoinTextArray(exerciseNode.get("jsText"), "")
+    exercise.jsText = JsonReader.readAndJoinTextArray(exerciseNode.get(JS_TEXT_NAME))
     exercise.jsTasks = ExerciseReader.readArray(exerciseNode.get("jsTasks"), readJsTask(_))
   }
 

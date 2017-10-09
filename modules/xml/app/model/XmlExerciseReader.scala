@@ -25,8 +25,8 @@ object XmlExerciseReader extends ExerciseReader[XmlExercise]("xml", XmlExercise.
     val referenceFileContent = form.get(StringConsts.REFERENCE_FILE_CONTENT).split(StringConsts.NEWLINE).toList.asJava
 
     Try(Files.write(referenceFilePath, referenceFileContent, StandardOpenOption.TRUNCATE_EXISTING)) match {
-      case Success(_) ⇒ Unit
-      case Failure(e) ⇒ Logger.error(s"Es gab einen Fehler beim Erstellen der Referenzdatei $referenceFilePath", e)
+      case Success(_) => Unit
+      case Failure(e) => Logger.error(s"Es gab einen Fehler beim Erstellen der Referenzdatei $referenceFilePath", e)
     }
   }
 

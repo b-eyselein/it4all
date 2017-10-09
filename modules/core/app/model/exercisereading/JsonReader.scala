@@ -63,7 +63,7 @@ object JsonReader {
 
   def readTextArray(textArrayNode: JsonNode) = readArray(textArrayNode).map(_.asText)
 
-  def readAndJoinTextArray(textArrayNode: JsonNode, joinChar: String) = readTextArray(textArrayNode).mkString(joinChar)
+  def readAndJoinTextArray(textArrayNode: JsonNode, joinChar: String = "") = readTextArray(textArrayNode).mkString(joinChar)
   
   def validateJson(json: JsonNode, jsonSchema: JsonNode): Try[ProcessingReport] = try {
     Success(JsonSchemaFactory.byDefault().getJsonSchema(jsonSchema).validate(json))

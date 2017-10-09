@@ -58,8 +58,8 @@ abstract class AExerciseCollectionAdminController[E <: Exercise, C <: ExerciseCo
   def importExercises = processReadingResult(collectionReader.readFromJsonFile(), renderCollectionCreated(_, _))
 
   def editExerciseForm(id: Int) = finder.byId(id) match {
-    case exercise if exercise == null ⇒ Results.badRequest("")
-    case exercise                     ⇒ Results.ok(renderExEditForm(BaseController.getUser, exercise, false))
+    case exercise if exercise == null => Results.badRequest("")
+    case exercise                     => Results.ok(renderExEditForm(BaseController.getUser, exercise, false))
   }
 
   def newExerciseCollection(collectionId: Int) =  {

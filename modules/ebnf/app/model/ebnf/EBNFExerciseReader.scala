@@ -9,8 +9,8 @@ object EBNFExerciseReader extends ExerciseReader[EBNFExercise]("ebnf", EBNFExerc
 
   override def initRemainingExFromForm(exercise: EBNFExercise, form: DynamicForm) = {
     exercise.terminals = form.get("terminals") match {
-      case null ⇒ ""
-      case s    ⇒ s
+      case null => ""
+      case s    => s
     }
   }
 

@@ -29,11 +29,11 @@ abstract class IdExController[E <: Exercise, R <: EvaluationResult](
   def correct(id: Int) = {
     val user = BaseController.getUser
     correctEx(factory.form().bindFromRequest(), finder.byId(id), user) match {
-      case Success(correctionResult) ⇒
+      case Success(correctionResult) =>
         BaseController.log(user, new ExerciseCompletionEvent(Controller.request, id, correctionResult))
 
         Results.ok(renderCorrectionResult(user, correctionResult))
-      case Failure(error) ⇒
+      case Failure(error) =>
         val content = new Html(s"<pre>${error.getMessage}:\n${error.getStackTrace.mkString("\n")}</pre>")
         Results.badRequest(views.html.main.render("Fehler", user, new Html(""), content))
     }
@@ -42,11 +42,11 @@ abstract class IdExController[E <: Exercise, R <: EvaluationResult](
   def correctLive(id: Int) = {
     val user = BaseController.getUser
     correctEx(factory.form().bindFromRequest(), finder.byId(id), user) match {
-      case Success(correctionResult) ⇒
+      case Success(correctionResult) =>
         BaseController.log(user, new ExerciseCorrectionEvent(Controller.request, id, correctionResult))
 
         Results.ok(renderResult(correctionResult))
-      case Failure(error) ⇒
+      case Failure(error) =>
         Results.badRequest(Json.toJson(error.getMessage()))
     }
   }
@@ -54,11 +54,11 @@ abstract class IdExController[E <: Exercise, R <: EvaluationResult](
   def exercise(id: Int) = {
     val user = BaseController.getUser
     finder.byId(id) match {
-      case exercise if exercise != null ⇒
+      case exercise if exercise != null =>
         BaseController.log(user, new ExerciseStartEvent(Controller.request(), id))
 
         Results.ok(renderExercise(user, exercise))
-      case _ ⇒ Results.redirect(controllers.routes.Application.index())
+      case _ => Results.redirect(controllers.routes.Application.index())
     }
   }
 
@@ -74,12 +74,12 @@ abstract class IdExController[E <: Exercise, R <: EvaluationResult](
     val dir = BaseController.getSolDirForExercise(username, exType.toLowerCase, exercise)
 
     dir.toFile.exists match {
-      case true ⇒ dir
-      case false ⇒
+      case true => dir
+      case false =>
         try {
           Files.createDirectories(dir)
         } catch {
-          case e: IOException ⇒
+          case e: IOException =>
             Logger.error(s"There was an error while creating the directory for an $exType  solution: $dir", e)
             null
         }

@@ -25,11 +25,11 @@ abstract class ExerciseCollectionController[E <: Exercise, C <: ExerciseCollecti
     val user = BaseController.getUser
 
     correctPart(factory.form().bindFromRequest(), exFinder.byId(id), part, user) match {
-      case Success(result) ⇒
+      case Success(result) =>
         BaseController.log(user, new ExerciseCompletionEvent(null, id, result))
         Results.ok(renderCorrectionResult(user, result))
 
-      case Failure(error) ⇒ Results.badRequest("TODO!")
+      case Failure(error) => Results.badRequest("TODO!")
     }
   }
 
@@ -37,11 +37,11 @@ abstract class ExerciseCollectionController[E <: Exercise, C <: ExerciseCollecti
     val user = BaseController.getUser
 
     correctPart(factory.form().bindFromRequest(), exFinder.byId(id), part, user) match {
-      case Success(correctionResult) ⇒
+      case Success(correctionResult) =>
         BaseController.log(user, new ExerciseCorrectionEvent(null, id, correctionResult))
         Results.ok(renderResult(correctionResult))
 
-      case Failure(error) ⇒ Results.badRequest(Json.toJson(error.getMessage()))
+      case Failure(error) => Results.badRequest(Json.toJson(error.getMessage()))
     }
   }
 

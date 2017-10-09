@@ -26,27 +26,27 @@ abstract class BaseAdminController[E <: JsonReadable](f: FormFactory, exerciseRe
 
   def getJSONSchemaFile = Results.ok(Json.prettyPrint(exerciseReader.jsonSchema))
 
-  def processReadingResult(abstractResult: AbstractReadingResult, render: (java.util.List[E], Boolean) ⇒ Html) =
+  def processReadingResult(abstractResult: AbstractReadingResult, render: (java.util.List[E], Boolean) => Html) =
     abstractResult match {
-      case result: ReadingResult[E] ⇒
+      case result: ReadingResult[E] =>
         result.read.foreach(exerciseReader.save(_))
         Results.ok(views.html.admin.preview.render(BaseController.getUser, render(result.javaRead, false)))
-      case error: ReadingError ⇒
+      case error: ReadingError =>
         Results.badRequest(views.html.jsonReadingError.render(BaseController.getUser, error))
-      case failure: ReadingFailure ⇒ Results.badRequest("There has been an error...")
+      case failure: ReadingFailure => Results.badRequest("There has been an error...")
     }
 
-  def uploadFile(render: (java.util.List[E], Boolean) ⇒ Html): Result = {
+  def uploadFile(render: (java.util.List[E], Boolean) => Html): Result = {
     val body: MultipartFormData[File] = Controller.request.body().asMultipartFormData()
     body.getFile(StringConsts.BODY_FILE_NAME) match {
-      case n if n == null ⇒ Results.badRequest("Fehler!")
-      case uploadedFile ⇒
+      case n if n == null => Results.badRequest("Fehler!")
+      case uploadedFile =>
         val pathToUploadedFile = uploadedFile.getFile.toPath
 
         val jsonFile = Paths.get(savingDir.toString, uploadedFile.getFilename)
         BaseController.saveUploadedFile(savingDir, pathToUploadedFile, jsonFile) match {
-          case Success(jsonTargetPath) ⇒ processReadingResult(exerciseReader.readFromJsonFile(jsonTargetPath), render(_, _))
-          case Failure(error)          ⇒ Results.badRequest("There has been an error uploading your file...")
+          case Success(jsonTargetPath) => processReadingResult(exerciseReader.readFromJsonFile(jsonTargetPath), render(_, _))
+          case Failure(error)          => Results.badRequest("There has been an error uploading your file...")
         }
     }
   }

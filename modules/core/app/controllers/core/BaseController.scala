@@ -33,7 +33,7 @@ object BaseController {
         Files.createDirectories(savingDir)
       Success(Files.move(pathToUploadedFile, saveTo, StandardCopyOption.REPLACE_EXISTING))
     } catch {
-      case e: IOException ⇒ Failure(e)
+      case e: IOException => Failure(e)
     }
   }
 

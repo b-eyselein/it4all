@@ -30,7 +30,7 @@ abstract class AExerciseAdminController[E <: Exercise](
     val newState = ExerciseState.valueOf(factory.form().bindFromRequest().get("state"))
 
     exercise.state = newState
-    exercise.save()
+    exercise.save
 
     Results.ok(Json.parse(s"""{"id": "$id", "newState": "${exercise.state}"}"""))
   }
@@ -57,8 +57,8 @@ abstract class AExerciseAdminController[E <: Exercise](
   }
 
   def editExerciseForm(id: Int) = finder.byId(id) match {
-    case exercise if exercise == null ⇒ Results.badRequest("")
-    case exercise                     ⇒ Results.ok(renderExEditForm(BaseController.getUser, exercise, false))
+    case exercise if exercise == null => Results.badRequest("")
+    case exercise                     => Results.ok(renderExEditForm(BaseController.getUser, exercise, false))
   }
 
   def exercises =

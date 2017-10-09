@@ -10,6 +10,8 @@ public abstract class StringConsts {
   
   public static final String AUTHOR_NAME = "author";
   
+  public static final String AWAITED_VALUE_NAME = "awaitedValue";
+  
   public static final String BODY_FILE_NAME = "file";
   
   public static final String COLUMNS_NAME = "Spalten";
@@ -63,6 +65,8 @@ public abstract class StringConsts {
   public static final String EXERCISE_TYPE = "exerciseType";
   
   public static final String FORM_VALUE = "learnerSolution";
+
+  public static final String HTML_TEXT_NAME = "htmlText";
   
   public static final String ID_NAME = "id";
   
@@ -70,6 +74,8 @@ public abstract class StringConsts {
   
   public static final String INPUTS_NAME = "inputs";
   
+  public static final String JS_TEXT_NAME = "jsText";
+
   public static final String KEY_NAME = "key";
   
   public static final String LANGUAGE_NAME = "language";
@@ -121,6 +127,8 @@ public abstract class StringConsts {
   public static final String TEST_COUNT_NAME = "testCount";
   
   public static final String TEXT_NAME = "text";
+  
+  public static final String TEXT_CONTENT_NAME = "textContent";
   
   public static final String THEME_NAME = "theme";
   

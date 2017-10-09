@@ -21,7 +21,6 @@ class XmlAdmin @Inject() (f: FormFactory)
   </ul>
 </li>""")
 
-  override def renderExEditForm(user: User, exercise: XmlExercise, isCreation: Boolean) =
-    views.html.xmlAdmin.editExForm.render(user, exercise, isCreation)
+  override def renderExEditForm(u: User, e: XmlExercise, isCreation: Boolean) = views.html.editExForm.render(u, e, isCreation)
 
 }

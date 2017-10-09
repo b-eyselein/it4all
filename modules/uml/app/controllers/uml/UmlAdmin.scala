@@ -21,8 +21,8 @@ class UmlAdmin @Inject() (f: FormFactory)
 
     val solNode = Json.parse(form.get(StringConsts.SOLUTION_NAME))
     JsonReader.validateJson(solNode, UmlController.SolutionSchemaNode) match {
-      case Success(report) ⇒ Results.ok("ok...")
-      case Failure(_)      ⇒ Results.badRequest("FEHLER!")
+      case Success(report) => Results.ok("ok...")
+      case Failure(_)      => Results.badRequest("FEHLER!")
     }
   }
 

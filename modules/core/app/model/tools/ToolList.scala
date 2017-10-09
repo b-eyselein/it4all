@@ -15,9 +15,9 @@ object ToolList {
   var idExTools: MutableList[IdExToolObject] = MutableList.empty
 
   def register(tool: ToolObject) = tool match {
-    case r: RandomExToolObject ⇒ randomExTools += r
-    case i: IdExToolObject     ⇒ idExTools += i
-    case _                     ⇒ println(s"Error while registering tool object $tool")
+    case r: RandomExToolObject => randomExTools += r
+    case i: IdExToolObject     => idExTools += i
+    case _                     => println(s"Error while registering tool object $tool")
   }
 
   def allTools = randomExTools ++ idExTools
