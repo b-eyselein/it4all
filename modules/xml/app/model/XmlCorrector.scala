@@ -3,6 +3,7 @@ package model
 import java.io.{ IOException, StringReader }
 import java.nio.file.Path
 
+import scala.collection.JavaConverters.seqAsJavaListConverter
 import scala.language.implicitConversions
 
 import org.xml.sax.InputSource
@@ -34,6 +35,8 @@ object XmlCorrector {
     case (XmlExType.XML_DTD | XmlExType.DTD_XML) => correctDtdAndXml(xml)
   }
 
+  def correctJava(xml: Path, grammar: Path, exercise: XmlExercise) = correct(xml, grammar, exercise).asJava
+
   def correct(xml: String, grammar: String, exType: XmlExType) = {
     // FIXME: for Playground...
     val xmlReader = new StringReader(xml)
@@ -44,6 +47,8 @@ object XmlCorrector {
       case (XmlExType.XML_DTD | XmlExType.DTD_XML) => correctDtdAndXml(xmlReader)
     }
   }
+
+  def correctJava(xml: String, grammar: String, exType: XmlExType) = correct(xml, grammar, exType).asJava
 
   def recover(e: IOException) = {
     Logger.error("There has been an error correcting", e)

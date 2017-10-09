@@ -15,6 +15,7 @@ import model.user.User
 import play.data.{ DynamicForm, FormFactory }
 import play.mvc.Results
 import play.twirl.api.Html
+import play.twirl.api.HtmlFormat
 
 class XmlController @Inject() (f: FormFactory)
   extends IdExController[XmlExercise, XmlError](f, "xml", XmlExercise.finder, XmlToolObject) {
@@ -56,10 +57,19 @@ class XmlController @Inject() (f: FormFactory)
   )
 
   override def renderExercise(user: User, exercise: XmlExercise) = views.html.exercise2Rows.render(
-    user, toolObject, EX_OPTIONS, exercise, views.html.xmlExRest.render(exercise), readDefOrOldSolution(user.name, exercise)
+    user, toolObject, EX_OPTIONS, exercise, renderExRest(exercise), readDefOrOldSolution(user.name, exercise)
   )
 
-  override def renderExesListRest = views.html.xmlExesListRest.render
+  def renderExRest(exercise: XmlExercise) = new Html(s"""<section id="refFileSection">
+  <pre>${HtmlFormat.escape(XmlController.getReferenceCode(exercise))}</pre>
+</section>
+""")
+
+  override def renderExesListRest = new Html(s"""<div class="panel panel-default">
+  <a class="btn btn-primary btn-block" href="${controllers.xml.routes.XmlController.playground}">Xml-Playground</a>
+</div>
+
+<hr>""")
 
   override def renderResult(completeResult: CompleteResult[XmlError]) = completeResult.results.asScala.toList match {
     case Nil => new Html("""<div class="alert alert-success">Es wurden keine Fehler gefunden.</div>""")

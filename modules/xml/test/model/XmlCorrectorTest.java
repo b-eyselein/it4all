@@ -17,14 +17,11 @@ public class XmlCorrectorTest {
 
   private static final Path BASE = Paths.get("test", "resources");
 
-  private static void assertError(XmlError error, int expectedLine, XmlErrorType expectedType, String expectedMessage) {
-    assertThat("Fehler sollte in Zeile " + expectedLine + " sein, war aber in Zeile " + error.getLine(),
-        error.getLine(), equalTo(expectedLine));
+  private static void assertError(XmlError error, int expectedLine, String expectedMessage) {
+    assertThat("Fehler sollte in Zeile " + expectedLine + " sein, war aber in Zeile " + error.line(), error.line(),
+        equalTo(expectedLine));
 
-    assertThat("Typ des Fehlers sollte " + expectedType + " sein, war aber " + error.getErrorType(),
-        error.getErrorType(), equalTo(expectedType));
-
-    assertThat(error.getErrorMessage(), equalTo(expectedMessage));
+    assertThat(error.errorMessage(), equalTo(expectedMessage));
   }
 
   private static void assertErrorNum(int errorNum, int expectedErrors) {
@@ -44,21 +41,21 @@ public class XmlCorrectorTest {
   public void emptyXmlAgainstXSD() {
     Path xsd = Paths.get(BASE.toString(), "note.xsd");
 
-    List<XmlError> out = XmlCorrector.correct("", readFile(xsd), XmlExType.XML_XSD);
+    List<XmlError> out = XmlCorrector.correctJava("", readFile(xsd), XmlExType.XML_XSD);
 
     assertErrorNum(out.size(), 1);
-    assertError(out.get(0), -1, XmlErrorType.FATALERROR, "Premature end of file.");
+    assertError(out.get(0), -1, "Premature end of file.");
   }
 
   @Test
   public void testClosingTagMissingXmlDtd() {
     Path xml = Paths.get(BASE.toString(), "partyNoClosingTag.xml");
 
-    List<XmlError> out = XmlCorrector.correct(readFile(xml), "", XmlExType.XML_DTD);
+    List<XmlError> out = XmlCorrector.correctJava(readFile(xml), "", XmlExType.XML_DTD);
 
     assertNotNull(out);
     assertErrorNum(out.size(), 1);
-    assertError(out.get(0), 17, XmlErrorType.FATALERROR,
+    assertError(out.get(0), 17,
         "The element type \"getraenk\" must be terminated by the matching end-tag \"</getraenk>\".");
   }
 
@@ -67,12 +64,11 @@ public class XmlCorrectorTest {
     Path xml = Paths.get(BASE.toString(), "noteNoClosingTag.xml");
     Path xsd = Paths.get(BASE.toString(), "note.xsd");
 
-    List<XmlError> out = XmlCorrector.correct(readFile(xml), readFile(xsd), XmlExType.XML_XSD);
+    List<XmlError> out = XmlCorrector.correctJava(readFile(xml), readFile(xsd), XmlExType.XML_XSD);
 
     assertNotNull(out);
     assertErrorNum(out.size(), 1);
-    assertError(out.get(0), 7, XmlErrorType.FATALERROR,
-        "The element type \"to\" must be terminated by the matching end-tag \"</to>\".");
+    assertError(out.get(0), 7, "The element type \"to\" must be terminated by the matching end-tag \"</to>\".");
   }
 
   @Test
@@ -80,7 +76,7 @@ public class XmlCorrectorTest {
     Path referenceFile = Paths.get(BASE.toString(), "party.xml");
     Path grammar = Paths.get(BASE.toString(), "party.dtd");
 
-    List<XmlError> out = XmlCorrector.correct(readFile(referenceFile), readFile(grammar), XmlExType.XML_DTD);
+    List<XmlError> out = XmlCorrector.correctJava(readFile(referenceFile), readFile(grammar), XmlExType.XML_DTD);
 
     assertNotNull(out);
     assertTrue(out.isEmpty());
@@ -91,7 +87,7 @@ public class XmlCorrectorTest {
     Path file = Paths.get(BASE.toString(), "party.xml");
     Path grammar = Paths.get(BASE.toString(), "party.dtd");
 
-    List<XmlError> out = XmlCorrector.correct(readFile(file), readFile(grammar), XmlExType.XML_DTD);
+    List<XmlError> out = XmlCorrector.correctJava(readFile(file), readFile(grammar), XmlExType.XML_DTD);
 
     assertNotNull(out);
     assertTrue(out.isEmpty());
@@ -102,7 +98,7 @@ public class XmlCorrectorTest {
     Path xml = Paths.get(BASE.toString(), "note.xml");
     Path xsd = Paths.get(BASE.toString(), "note.xsd");
 
-    List<XmlError> out = XmlCorrector.correct(readFile(xml), readFile(xsd), XmlExType.XML_XSD);
+    List<XmlError> out = XmlCorrector.correctJava(readFile(xml), readFile(xsd), XmlExType.XML_XSD);
 
     assertNotNull(out);
     assertTrue(out.isEmpty());
@@ -112,7 +108,7 @@ public class XmlCorrectorTest {
   public void testMissingAttributeXmlDtd() {
     // Path file = Paths.get(BASE.toString(), "partyMissingAttribute.xml");
     //
-    // List<XmlError> out = XmlCorrector.correct(readFile(file), "",
+    // List<XmlError> out = XmlCorrector.correctJava(readFile(file), "",
     // XmlExType.XML_DTD);
     //
     // assertErrorNum(out.size(), 1);
@@ -126,10 +122,10 @@ public class XmlCorrectorTest {
     Path xml = Paths.get(BASE.toString(), "noteMissingTag.xml");
     Path xsd = Paths.get(BASE.toString(), "note.xsd");
 
-    List<XmlError> out = XmlCorrector.correct(readFile(xml), readFile(xsd), XmlExType.XML_XSD);
+    List<XmlError> out = XmlCorrector.correctJava(readFile(xml), readFile(xsd), XmlExType.XML_XSD);
 
     assertErrorNum(out.size(), 1);
-    assertError(out.get(0), 5, XmlErrorType.ERROR,
+    assertError(out.get(0), 5,
         "cvc-complex-type.2.4.a: Invalid content was found starting with element 'body'. One of '{heading}' is expected.");
   }
 
@@ -137,11 +133,10 @@ public class XmlCorrectorTest {
   public void testNoRootXmlDtd() {
     Path file = Paths.get(BASE.toString(), "partyNoRoot.xml");
 
-    List<XmlError> out = XmlCorrector.correct(readFile(file), "", XmlExType.XML_DTD);
+    List<XmlError> out = XmlCorrector.correctJava(readFile(file), "", XmlExType.XML_DTD);
 
     assertErrorNum(out.size(), 1);
-    assertError(out.get(0), 17, XmlErrorType.FATALERROR,
-        "The markup in the document following the root element must be well-formed.");
+    assertError(out.get(0), 17, "The markup in the document following the root element must be well-formed.");
   }
 
   @Test
@@ -149,19 +144,19 @@ public class XmlCorrectorTest {
     Path xml = Paths.get(BASE.toString(), "noteNoRoot.xml");
     Path xsd = Paths.get(BASE.toString(), "note.xsd");
 
-    List<XmlError> out = XmlCorrector.correct(readFile(xml), readFile(xsd), XmlExType.XML_XSD);
+    List<XmlError> out = XmlCorrector.correctJava(readFile(xml), readFile(xsd), XmlExType.XML_XSD);
 
     assertErrorNum(out.size(), 2);
-    assertError(out.get(0), 2, XmlErrorType.ERROR, "cvc-elt.1.a: Cannot find the declaration of element 'to'.");
-    assertError(out.get(1), 3, XmlErrorType.FATALERROR,
-        "The markup in the document following the root element must be well-formed.");
+    assertError(out.get(0), 2, "cvc-elt.1.a: Cannot find the declaration of element 'to'.");
+    assertError(out.get(1), 3, "The markup in the document following the root element must be well-formed.");
   }
 
   @Test
   public void testWrongAttributeDtdXml() {
     // Path referenceFile = Paths.get(BASE.toString(), "partyNoDate.xml");
     //
-    // List<XmlError> out = XmlCorrector.correct(readFile(referenceFile), "",
+    // List<XmlError> out = XmlCorrector.correctJava(readFile(referenceFile),
+    // "",
     // XmlExType.DTD_XML);
     //
     // assertErrorNum(out.size(), 1);
@@ -173,7 +168,7 @@ public class XmlCorrectorTest {
   public void testWrongTagXmlDtd() {
     // Path file = Paths.get(BASE.toString(), "partyWrongTag.xml");
     //
-    // List<XmlError> out = XmlCorrector.correct(readFile(file), "",
+    // List<XmlError> out = XmlCorrector.correctJava(readFile(file), "",
     // XmlExType.XML_DTD);
     //
     // assertErrorNum(out.size(), 2);
@@ -188,10 +183,10 @@ public class XmlCorrectorTest {
     Path xml = Paths.get(BASE.toString(), "noteWrongTag.xml");
     Path xsd = Paths.get(BASE.toString(), "note.xsd");
 
-    List<XmlError> out = XmlCorrector.correct(readFile(xml), readFile(xsd), XmlExType.XML_XSD);
+    List<XmlError> out = XmlCorrector.correctJava(readFile(xml), readFile(xsd), XmlExType.XML_XSD);
 
     assertErrorNum(out.size(), 1);
-    assertError(out.get(0), 11, XmlErrorType.ERROR,
+    assertError(out.get(0), 11,
         "cvc-complex-type.2.4.a: Invalid content was found starting with element 'sender'. One of '{from}' is expected.");
   }
 
@@ -199,9 +194,9 @@ public class XmlCorrectorTest {
   public void xmlNoElement() {
     String xml = readFile(Paths.get(BASE.toString(), "xmlNoElement.xml"));
 
-    List<XmlError> out = XmlCorrector.correct(xml, "", XmlExType.XML_DTD);
+    List<XmlError> out = XmlCorrector.correctJava(xml, "", XmlExType.XML_DTD);
 
     assertErrorNum(out.size(), 1);
-    assertError(out.get(0), -1, XmlErrorType.FATALERROR, "Premature end of file.");
+    assertError(out.get(0), -1, "Premature end of file.");
   }
 }
