@@ -1,12 +1,11 @@
 package model
 
-import model.exercise.Success
-import model.matching.{Match, MatchingResult}
-import model.result.EvaluationResult
-import model.umlmatcher.{UmlAssociationMatcher, UmlClassMatcher, UmlImplementationMatcher}
+import model.matching.{ Match, MatchingResult }
+import model.result.{ EvaluationResult, SuccessType }
+import model.umlmatcher.{ UmlAssociationMatcher, UmlClassMatcher, UmlImplementationMatcher }
 
 abstract sealed class UmlResult(val exercise: UmlExercise, val learnerSolution: UmlSolution)
-  extends EvaluationResult(Success.NONE) {
+  extends EvaluationResult(SuccessType.NONE) {
 
   val musterSolution = exercise.getSolution
 

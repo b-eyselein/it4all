@@ -44,12 +44,10 @@
       }
       </td>
       <td>
-        <!-- Bearbeiten -->
         <a class="btn btn-default" title="Aufgabe @exercise.getId bearbeiten" id="edit_@exercise.getId"
           @if(changesAllowed) {href="@links.editExerciseFormRoute(exercise.getId)"} else { disabled }>
           <span class="glyphicon glyphicon-wrench"></span>
         </a>
-        <!-- Löschen -->
         <button class="btn btn-default" title="Aufgabe @exercise.getId l&ouml;schen" id="del_@exercise.getId" @if(changesAllowed) { onclick="deleteExercise('@links.deleteExerciseRoute(exercise.getId)')" } else { disabled }>
           <span class="glyphicon glyphicon-remove"></span>
         </button>

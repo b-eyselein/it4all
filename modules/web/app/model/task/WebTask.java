@@ -8,14 +8,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
-import org.openqa.selenium.SearchContext;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.google.common.base.Splitter;
 
 import io.ebean.Model;
 import model.WebExercise;
-import model.result.WebResult;
 
 @MappedSuperclass
 public abstract class WebTask extends Model {
@@ -39,8 +36,6 @@ public abstract class WebTask extends Model {
   public WebTask(WebTaskKey theKey) {
     key = theKey;
   }
-
-  public abstract WebResult evaluate(SearchContext context);
 
   public List<String> getText() {
     return SPLITTER.splitToList(text);

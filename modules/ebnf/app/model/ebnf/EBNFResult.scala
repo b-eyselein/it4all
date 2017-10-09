@@ -2,8 +2,7 @@ package model.ebnf
 
 import scala.collection.JavaConverters.seqAsJavaListConverter
 
-import model.exercise.Success
-import model.result.{ CompleteResult, EvaluationResult }
+import model.result.{ CompleteResult, EvaluationResult, SuccessType }
 
 class EBNFCompleteResult(result: EBNFResult) extends CompleteResult[EBNFResult]("EBNF", List(result).asJava) {
 
@@ -15,6 +14,6 @@ case class EBNFResult(grammar: Grammar) extends EvaluationResult(EBNFResult.anal
 
 object EBNFResult {
 
-  def analyze(grammar: Grammar): Success = Success.NONE
+  def analyze(grammar: Grammar): SuccessType = SuccessType.NONE
 
 }

@@ -4,21 +4,20 @@ import java.util.List
 
 import scala.collection.JavaConverters.asScalaBufferConverter
 
-import model.exercise.Success
 import play.twirl.api.{ Html, HtmlFormat }
 
-class EvaluationResult(val success: Success = Success.NONE) {
+class EvaluationResult(val success: SuccessType = SuccessType.NONE) {
   val getBSClass = success.getColor
 
   def getGlyphicon = success match {
-    case Success.COMPLETE                 => "glyphicon glyphicon-ok"
-    case Success.PARTIALLY                => "glyphicon glyphicon-question-sign"
-    case (Success.NONE | Success.FAILURE) => "glyphicon glyphicon-remove"
+    case SuccessType.COMPLETE                     => "glyphicon glyphicon-ok"
+    case SuccessType.PARTIALLY                    => "glyphicon glyphicon-question-sign"
+    case (SuccessType.NONE | SuccessType.FAILURE) => "glyphicon glyphicon-remove"
   }
 
   def getPoints = success.getPoints
 
-  val isSuccessful = success == Success.COMPLETE
+  val isSuccessful = success == SuccessType.COMPLETE
 }
 
 class CompleteResult[E <: EvaluationResult](val learnerSolution: String, val results: List[E])
@@ -43,6 +42,6 @@ object EvaluationResult {
 
 object CompleteResult {
   def analyzeResults[T <: EvaluationResult](results: List[T]) =
-    if (EvaluationResult.allResultsSuccessful(results)) Success.NONE
-    else Success.COMPLETE
+    if (EvaluationResult.allResultsSuccessful(results)) SuccessType.NONE
+    else SuccessType.COMPLETE
 }

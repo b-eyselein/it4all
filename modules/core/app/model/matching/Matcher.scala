@@ -3,34 +3,35 @@ package model.matching
 import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.collection.mutable.ListBuffer
 
-import model.exercise.Success
-import model.result.EvaluationResult
+import model.result.{ EvaluationResult, SuccessType }
 
 class MatchingResult[T, M <: Match[T]](
-  val matchName: String,
-  val headings: List[String],
-  val colWidth: Int,
-  val allMatches: List[M])
+  val matchName:  String,
+  val headings:   List[String],
+  val colWidth:   Int,
+  val allMatches: List[M]
+)
   extends EvaluationResult(MatchingResult.analyze(allMatches))
 
 object MatchingResult {
-  def analyze(allMatches: List[Match[_]]): Success = {
+  def analyze(allMatches: List[Match[_]]) = {
     allMatches.map(_.matchType).distinct
     // FIXME: is it possible to user ... match {} ?!?
     if (allMatches.exists(_.matchType == MatchType.ONLY_USER) || allMatches.exists(_.matchType == MatchType.ONLY_SAMPLE))
-      Success.NONE
+      SuccessType.NONE
     else if (allMatches.exists(_.matchType == MatchType.UNSUCCESSFUL_MATCH))
-      Success.PARTIALLY
+      SuccessType.PARTIALLY
     else
-      Success.COMPLETE
+      SuccessType.COMPLETE
   }
 }
 
 class Matcher[T, M <: Match[T]](
-  matchName: String,
-  headings: List[String],
-  canMatch: (T, T) => Boolean,
-  matchInstantiation: (Option[T], Option[T], Int) => M) {
+  matchName:          String,
+  headings:           List[String],
+  canMatch:           (T, T) => Boolean,
+  matchInstantiation: (Option[T], Option[T], Int) => M
+) {
 
   val colWidth = headings.size
 
@@ -68,4 +69,5 @@ class StringMatcher(matchName: String) extends Matcher[String, Match[String]](
   matchName,
   List("String-Repraesentation"),
   _ == _,
-  new Match[String](_, _, _))
+  new Match[String](_, _, _)
+)

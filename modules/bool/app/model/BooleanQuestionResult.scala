@@ -1,9 +1,9 @@
 package model;
 
-import model.exercise.Success
+import model.result.SuccessType
 import model.result.EvaluationResult
 
-class BooleanQuestionResult(success: Success, val learnerSolution: String, val question: CreationQuestion)
+class BooleanQuestionResult(success: SuccessType, val learnerSolution: String, val question: CreationQuestion)
   extends EvaluationResult(success) {
 
   val assignments = question.solutions

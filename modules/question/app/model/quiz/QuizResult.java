@@ -1,12 +1,12 @@
 package model.quiz;
 
-import model.exercise.Success;
 import model.result.EvaluationResult;
+import model.result.SuccessType;
 
 public class QuizResult extends EvaluationResult {
-
-  public QuizResult(Success theSuccess) {
+  
+  public QuizResult(SuccessType theSuccess) {
     super(theSuccess);
   }
-
+  
 }

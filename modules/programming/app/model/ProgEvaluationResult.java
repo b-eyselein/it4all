@@ -4,8 +4,8 @@ import java.util.List;
 
 import model.execution.AExecutionResult;
 import model.execution.SyntaxError;
-import model.exercise.Success;
 import model.result.EvaluationResult;
+import model.result.SuccessType;
 import model.testdata.ITestData;
 
 public class ProgEvaluationResult extends EvaluationResult {
@@ -19,11 +19,11 @@ public class ProgEvaluationResult extends EvaluationResult {
     testData = theTestData;
   }
 
-  private static Success analyze(AExecutionResult executionResult, ITestData testData) {
+  private static SuccessType analyze(AExecutionResult executionResult, ITestData testData) {
     if(executionResult instanceof SyntaxError)
-      return Success.NONE;
+      return SuccessType.NONE;
 
-    return validateResult(executionResult.getResult(), testData.output) ? Success.COMPLETE : Success.NONE;
+    return validateResult(executionResult.getResult(), testData.output) ? SuccessType.COMPLETE : SuccessType.NONE;
   }
 
   protected static <T> boolean validateResult(T gottenResult, T awaitedResult) {
@@ -53,7 +53,7 @@ public class ProgEvaluationResult extends EvaluationResult {
 
   // public String getAsHtml() {
   // FIXME: Auto-generated method stub
-  // boolean successful = success == Success.COMPLETE;
+  // boolean successful = success == SuccessType.COMPLETE;
   //
   // StringBuilder builder = new StringBuilder();
   // builder.append("<div class=\"col-md-6\">\n");

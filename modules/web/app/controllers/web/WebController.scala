@@ -8,14 +8,15 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver
 
 import controllers.core.{ BaseController, IdExController }
 import javax.inject.Inject
-import model.{ StringConsts, WebExercise, WebSolution, WebSolutionKey, WebUser }
+import model.{ StringConsts, WebExercise, WebResult, WebSolution, WebSolutionKey, WebUser }
 import model.logging.{ ExerciseCompletionEvent, ExerciseStartEvent }
-import model.result.{ CompleteResult, WebResult }
+import model.result.CompleteResult
 import model.task.WebTask
 import model.user.User
 import play.data.{ DynamicForm, FormFactory }
 import play.mvc.{ Controller, Results }
 import play.twirl.api.Html
+import model.WebCorrector
 
 class WebController @Inject() (f: FormFactory) extends IdExController[WebExercise, WebResult](f, "web", WebExercise.finder, WebToolObject) {
 
@@ -50,7 +51,7 @@ class WebController @Inject() (f: FormFactory) extends IdExController[WebExercis
       case _         => Failure(null)
     }
 
-    tasksTry.map(tasks => new CompleteResult(learnerSolution, tasks.map(_.evaluate(driver)).asJava))
+    tasksTry.map(tasks => new CompleteResult(learnerSolution, tasks.map(WebCorrector.evaluate(_, driver)).asJava))
   }
 
   def saveSolution(learnerSolution: String, key: WebSolutionKey) = {

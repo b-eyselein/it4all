@@ -48,7 +48,7 @@ object SelectCorrector extends QueryCorrector("SELECT") {
   def executeStatement(select: String, conn: Connection) =
     cleanly(conn.createStatement)(_.close)(q => new SqlQueryResult(q.executeQuery(select))) match {
       case Success(queryResult) => queryResult
-      case Failure(e)           => throw new CorrectionException(select, s"Es gab einen Fehler bei der Ausführung des Statements '$select'", e)
+      case Failure(e)           => throw new CorrectionException(select, s"Es gab einen Fehler bei der Ausfuehrung des Statements '$select'", e)
     }
 
   override def executeQuery(db: Database, userQ: Q, sampleQ: Q, exercise: SqlExercise): Try[SqlExecutionResult] =

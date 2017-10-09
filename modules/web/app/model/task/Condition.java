@@ -7,17 +7,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.WebElement;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.ebean.Finder;
 import io.ebean.Model;
-import model.exercise.Success;
-import model.result.ConditionResult;
 
 @Entity
 @Table(name = "conditions")
@@ -62,18 +56,4 @@ public class Condition extends Model {
     return isPrecondition;
   }
 
-  public ConditionResult test(SearchContext context) {
-    final WebElement element = context.findElement(By.xpath(xpathQuery));
-
-    if(element == null)
-      return new ConditionResult(Success.NONE, this, null, isPrecondition);
-
-    final String gottenValue = element.getText();
-
-    Success success = Success.NONE;
-    if(gottenValue.equals(awaitedValue))
-      success = Success.COMPLETE;
-
-    return new ConditionResult(success, this, gottenValue, isPrecondition);
-  }
 }

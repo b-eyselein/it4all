@@ -3,9 +3,8 @@ package model.querycorrectors
 import scala.collection.JavaConverters.seqAsJavaListConverter
 
 import model.conditioncorrector.BinaryExpressionMatch
-import model.exercise.Success
 import model.matching.{ Match, MatchingResult }
-import model.result.{ CompleteResult, EvaluationResult }
+import model.result.{ CompleteResult, EvaluationResult, SuccessType }
 import model.sql.SqlQueryResult
 import net.sf.jsqlparser.expression.{ BinaryExpression, Expression }
 import net.sf.jsqlparser.statement.select.OrderByElement
@@ -19,12 +18,14 @@ case class SqlResult(
   executionResult: SqlExecutionResult,
 
   groupByComparison: Option[MatchingResult[Expression, GroupByMatch]],
-  orderByComparison: Option[MatchingResult[OrderByElement, OrderByMatch]])
+  orderByComparison: Option[MatchingResult[OrderByElement, OrderByMatch]]
+)
   extends CompleteResult[EvaluationResult](
     l,
     (List(columnComparison, tableComparison, whereComparison, executionResult)
       ++ groupByComparison
-      ++ orderByComparison).asJava) {
+      ++ orderByComparison).asJava
+  ) {
 
   def getMatchingResults: List[MatchingResult[_, _ <: Match[_]]] =
     List(columnComparison, tableComparison, whereComparison) ++ groupByComparison ++ orderByComparison
@@ -38,6 +39,6 @@ case class SqlExecutionResult(userResult: SqlQueryResult, sampleResult: SqlQuery
 object SqlExecutionResult {
   def analyze(userResult: SqlQueryResult, sampleResult: SqlQueryResult) =
     if (userResult == null || sampleResult == null)
-      Success.FAILURE
-    else if (!userResult.isIdentic(sampleResult)) Success.NONE else Success.COMPLETE
+      SuccessType.FAILURE
+    else if (!userResult.isIdentic(sampleResult)) SuccessType.NONE else SuccessType.COMPLETE
 }

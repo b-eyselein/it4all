@@ -1,25 +1,25 @@
 package model
 
+import java.io.IOException
+
 import scala.collection.mutable.ListBuffer
 
 import org.xml.sax.{ ErrorHandler, SAXParseException }
 
-import model.exercise.Success
-import model.result.EvaluationResult
-import java.io.IOException
+import model.result.{ EvaluationResult, SuccessType }
 
-abstract sealed class XmlError(val title: String, val errorMessage: String, val line: Int, s: Success)
+abstract sealed class XmlError(val title: String, val errorMessage: String, val line: Int, s: SuccessType)
   extends EvaluationResult(s) {
   val lineStr = if (line != -1) s" in Zeile $line" else ""
 }
 
-case class FatalXmlError(e: SAXParseException) extends XmlError("Fataler Fehler", e.getMessage, e.getLineNumber, Success.NONE)
+case class FatalXmlError(e: SAXParseException) extends XmlError("Fataler Fehler", e.getMessage, e.getLineNumber, SuccessType.NONE)
 
-case class ErrorXmlError(e: SAXParseException) extends XmlError("Fehler", e.getMessage, e.getLineNumber, Success.NONE)
+case class ErrorXmlError(e: SAXParseException) extends XmlError("Fehler", e.getMessage, e.getLineNumber, SuccessType.NONE)
 
-case class WarningXmlError(e: SAXParseException) extends XmlError("Warnung", e.getMessage, e.getLineNumber, Success.PARTIALLY)
+case class WarningXmlError(e: SAXParseException) extends XmlError("Warnung", e.getMessage, e.getLineNumber, SuccessType.PARTIALLY)
 
-case class FailureXmlError(msg: String, error: IOException = null) extends XmlError("Fehlschlag", msg, -1, Success.NONE)
+case class FailureXmlError(msg: String, error: IOException = null) extends XmlError("Fehlschlag", msg, -1, SuccessType.NONE)
 
 class CorrectionErrorHandler extends ErrorHandler {
 

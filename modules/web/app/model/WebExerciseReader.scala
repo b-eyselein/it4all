@@ -2,7 +2,7 @@ package model
 
 import java.util.Collections
 
-import scala.collection.JavaConverters.asScalaIteratorConverter
+import scala.collection.JavaConverters._
 
 import com.fasterxml.jackson.databind.JsonNode
 
@@ -59,8 +59,11 @@ object WebExerciseReader extends ExerciseReader[WebExercise]("web", WebExercise.
     task
   }
 
-  def readAttributes(attributesNode: JsonNode) =
-    attributesNode.iterator.asScala.map(Json.fromJson(_, classOf[Attribute])).map(_.forDB).mkString
+  def readAttribute(attrNode: JsonNode): Attribute = new Attribute(attrNode.get("key").asText, attrNode.get("value").asText)
+
+  def readAttributes(attributesNode: JsonNode): String = {
+    ExerciseReader.readArray(attributesNode, readAttribute(_)).asScala.map(_.forDB).mkString(HtmlTask.ATTRS_JOIN_STR)
+  }
 
   override def initRemainingExFromForm(exercise: WebExercise, form: DynamicForm) {
     exercise.htmlText = form.get(HTML_TEXT_NAME)

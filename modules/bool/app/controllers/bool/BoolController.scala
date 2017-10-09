@@ -1,17 +1,17 @@
 package controllers.bool
 
+import controllers.core.{ ARandomExController, BaseController }
 import javax.inject.Inject
-import controllers.core.ARandomExController
-import model._
-import model.StringConsts._
+import model.{ Assignment, BooleanQuestion, BooleanQuestionResult, CorrectionException, CreationQuestion, FilloutQuestion, ScalaNodeParser }
+import model.StringConsts.{ FORM_VALUE, VARS_NAME }
+import model.Variable
+import model.result.SuccessType
 import model.user.User
-import play.mvc.Results._
-import model.exercise.Success
-import play.data._
+import play.data.FormFactory
+import play.mvc.Results.{ badRequest, ok }
 import play.mvc.Security.Authenticated
-import controllers.core.BaseController
 
-@Authenticated(classOf[Secured])
+@Authenticated(classOf[model.Secured])
 class BoolController @Inject() (f: FormFactory) extends ARandomExController(f, BoolToolObject) {
 
   val ONE = "1"
@@ -51,14 +51,14 @@ class BoolController @Inject() (f: FormFactory) extends ARandomExController(f, B
         // Check that formula only contains variables found in form
         val wrongVars = formula.usedVariables.filter(!variables.contains(_))
         if (!wrongVars.isEmpty)
-          throw new CorrectionException(learnerSolution, s"In ihrer Lösung wurde(n) die folgende(n) falsche(n) Variable(n) benutzt: '${wrongVars.mkString(", ")}'")
+          throw new CorrectionException(learnerSolution, s"In ihrer Loesung wurde(n) die folgende(n) falsche(n) Variable(n) benutzt: '${wrongVars.mkString(", ")}'")
 
         val assignments = Assignment
           .generateAllAssignments(variables)
           .map(as => as + (LEA_VAR -> formula.evaluate(as)) + (SOL_VAR -> (data(as.toString()).mkString == ONE)))
 
         val question = new CreationQuestion(variables, assignments)
-        new BooleanQuestionResult(Success.PARTIALLY, learnerSolution, question)
+        new BooleanQuestionResult(SuccessType.PARTIALLY, learnerSolution, question)
     }
   }
 

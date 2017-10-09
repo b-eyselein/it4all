@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import model.exercise.Exercise;
-import model.exercise.Success;
+import model.result.SuccessType;
 import play.twirl.api.Html;
 
 public class BlanksExercise extends Exercise {
@@ -20,14 +20,14 @@ public class BlanksExercise extends Exercise {
         "&gt;", "root"), new BlankObject(2, "&lt;", 5, "&gt;", "/root"));
   }
 
-  public List<Success> correct(List<String> inputs) {
+  public List<SuccessType> correct(List<String> inputs) {
     if(inputs.size() != objects.size())
       throw new IllegalArgumentException("Es waren zu viele oder zu wenige Input-Elemente!");
 
-    final List<Success> results = new ArrayList<>(inputs.size());
+    final List<SuccessType> results = new ArrayList<>(inputs.size());
 
     for(int i = 0; i < inputs.size(); i++)
-      results.add(inputs.get(i).equals(objects.get(i).getSolution()) ? Success.COMPLETE : Success.NONE);
+      results.add(inputs.get(i).equals(objects.get(i).getSolution()) ? SuccessType.COMPLETE : SuccessType.NONE);
 
     return results;
   }
