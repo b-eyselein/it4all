@@ -1,50 +1,47 @@
 package controllers.spread
 
-import controllers.spread.routes.SpreadAdmin._
-import controllers.spread.routes.SpreadController._
-import model.tools.ToolState
-import model.tools.IdExToolObject
+import model.tools.{IdExToolObject, ToolState}
+import play.api.Configuration
+import play.mvc.Call
 
-object SpreadToolObject extends IdExToolObject("Tabellenkalkulation", ToolState.LIVE) {
+class SpreadToolObject(c: Configuration) extends IdExToolObject(c, "spread", "Tabellenkalkulation", ToolState.LIVE) {
 
   // User
-  
-  override def indexCall = index()
 
-  def exerciseRoute(id: Int) = exercise(id)
-  
-  
-  
-  override def exesListRoute(id: Int) = exesListRoute(id)
+  override def indexCall: Call = controllers.spread.routes.SpreadController.index()
 
-  override def correctLiveRoute(id: Int) = null
+  def exerciseRoute(id: Int): Call = controllers.spread.routes.SpreadController.exercise(id)
 
-  override def correctRoute(id: Int) = null
+  override def exesListRoute(id: Int): Call = ???
+
+  override def correctLiveRoute(id: Int): Call = ???
+
+  override def correctRoute(id: Int): Call = ???
 
   // Admin
 
-  val restHeaders = List.empty
+  val restHeaders: List[String] = List.empty
 
-  override def adminIndexRoute = adminIndex
+  override def adminIndexRoute: Call = controllers.spread.routes.SpreadAdmin.adminIndex()
 
-  override def exercisesRoute = exercises
+  override def exercisesRoute: Call = controllers.spread.routes.SpreadAdmin.exercises()
 
-  override def newExFormRoute = newExerciseForm
+  override def newExFormRoute: Call = controllers.spread.routes.SpreadAdmin.newExerciseForm()
 
-  override def exportExesRoute = exportExercises
+  override def exportExesRoute: Call = controllers.spread.routes.SpreadAdmin.exportExercises()
 
-  override def importExesRoute = importExercises
+  override def importExesRoute: Call = controllers.spread.routes.SpreadAdmin.importExercises()
 
-  override def jsonSchemaRoute = getJSONSchemaFile
+  override def jsonSchemaRoute: Call = controllers.spread.routes.SpreadAdmin.getJSONSchemaFile()
 
-  override def uploadFileRoute = uploadFile
+  override def uploadFileRoute: Call = controllers.spread.routes.SpreadAdmin.uploadFile()
 
-  override def changeExStateRoute(id: Int) = changeExState(id)
+  override def changeExStateRoute(id: Int): Call = controllers.spread.routes.SpreadAdmin.changeExState(id)
 
-  override def editExerciseFormRoute(id: Int) = editExerciseForm(id)
+  override def editExerciseFormRoute(id: Int): Call = controllers.spread.routes.SpreadAdmin.editExerciseForm(id)
 
-  override def editExerciseRoute(id: Int) = editExercise(id)
+  override def editExerciseRoute(id: Int): Call = controllers.spread.routes.SpreadAdmin.editExercise(id)
 
-  override def deleteExerciseRoute(id: Int) = deleteExercise(id)
+  override def deleteExerciseRoute(id: Int): Call = controllers.spread.routes.SpreadAdmin.deleteExercise(id)
 
 }

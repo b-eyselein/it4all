@@ -11,16 +11,15 @@ import model.user.CourseRole;
 import model.user.CourseRoleKey;
 import model.user.Role;
 import model.user.User;
+import play.api.Configuration;
 import play.data.FormFactory;
 import play.mvc.Result;
 import play.mvc.Security.Authenticated;
 
-@Authenticated(AdminSecured.class)
-public class CourseAdminController extends BaseController {
+@Authenticated(AdminSecured.class) public class CourseAdminController extends BaseController {
 
-  @Inject
-  public CourseAdminController(FormFactory theFactory) {
-    super(theFactory);
+  @Inject public CourseAdminController(Configuration c, FormFactory f) {
+    super(c, f);
   }
 
   public Result addAdmin(int courseId) {

@@ -18,6 +18,7 @@ import model.result.CompleteResult;
 import model.result.EvaluationResult;
 import model.user.User;
 import play.Logger;
+import play.api.Configuration;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.mvc.Http.MultipartFormData;
@@ -26,73 +27,69 @@ import play.mvc.Result;
 import play.twirl.api.Html;
 
 public class SpreadController extends IdExController<SpreadExercise, EvaluationResult> {
-  
+
   private static final String BODY_SOL_FILE_NAME = "solFile";
   private static final String CORRECTION_ADD_STRING = "_Korrektur";
-  
-  @Inject
-  public SpreadController(FormFactory theFactory) {
-    super(theFactory, "spread", SpreadExercise.finder, SpreadToolObject$.MODULE$);
+
+  @Inject public SpreadController(Configuration c, FormFactory f) {
+    super(c, f, "spread", SpreadExercise.finder, new SpreadToolObject(c));
   }
-  
-  @Override
-  public scala.util.Try<CompleteResult<EvaluationResult>> correctEx(DynamicForm form, SpreadExercise exercise,
+
+  @Override public scala.util.Try<CompleteResult<EvaluationResult>> correctEx(DynamicForm form, SpreadExercise exercise,
       User user) {
     // TODO Auto-generated method stub
     return null;
   }
-  
+
   public Result download(int id, String extension) {
     final User user = getUser();
     final SpreadExercise exercise = SpreadExercise.finder.byId(id);
-    
+
     if(exercise == null)
       return badRequest("This exercise does not exist!");
-    
-    final Path fileToDownload = Paths.get(BaseController$.MODULE$.BASE_DATA_PATH(),
-        BaseController$.MODULE$.SOLUTIONS_SUB_DIRECTORY(), user.name, exType(), Integer.toString(exercise.getId()),
-        exercise.getTemplateFilename() + CORRECTION_ADD_STRING + "." + extension);
+
+    final Path fileToDownload = Paths
+        .get(BASE_DATA_PATH(), BaseController$.MODULE$.SOLUTIONS_SUB_DIRECTORY(), user.name, exType(),
+            Integer.toString(exercise.getId()),
+            exercise.getTemplateFilename() + CORRECTION_ADD_STRING + "." + extension);
     if(!fileToDownload.toFile().exists())
       return redirect(routes.SpreadController.index(0));
-    
+
     return ok(fileToDownload.toFile());
   }
-  
+
   public Result downloadTemplate(int id, String fileType) {
     final SpreadExercise exercise = SpreadExercise.finder.byId(id);
-    
+
     if(exercise == null)
       return badRequest("This exercise does not exist!");
-    
+
     final Path filePath = Paths.get(getSampleDir().toString(), exercise.getTemplateFilename() + "." + fileType);
-    
+
     if(!filePath.toFile().exists())
       return badRequest("This file does not exist!");
-    
+
     return ok(filePath.toFile());
   }
-  
-  @Override
-  public Html renderExercise(User user, SpreadExercise exercise) {
+
+  @Override public Html renderExercise(User user, SpreadExercise exercise) {
     return views.html.spreadExercise.render(user, exercise);
   }
-  
-  @Override
-  public Html renderExesListRest() {
+
+  @Override public Html renderExesListRest() {
     // TODO Auto-generated method stub
     return new Html("");
   }
-  
-  @Override
-  public Html renderResult(CompleteResult<EvaluationResult> correctionResult) {
+
+  @Override public Html renderResult(CompleteResult<EvaluationResult> correctionResult) {
     // TODO Auto-generated method stub
     return new Html("");
   }
-  
+
   public Result upload(int id) {
     final User user = getUser();
     final SpreadExercise exercise = SpreadExercise.finder.byId(id);
-    
+
     // Extract solution from request
     final MultipartFormData<File> body = request().body().asMultipartFormData();
     final FilePart<File> uploadedFile = body.getFile(BODY_SOL_FILE_NAME);
@@ -101,7 +98,7 @@ public class SpreadController extends IdExController<SpreadExercise, EvaluationR
           views.html.spreadcorrectionerror.render(user, "Datei konnte nicht hochgeladen werden!"));
     final Path pathToUploadedFile = uploadedFile.getFile().toPath();
     final String fileExtension = com.google.common.io.Files.getFileExtension(uploadedFile.getFilename());
-    
+
     // Save solution
     final Path targetFilePath = getSolFileForExercise(user.name, exType(), exercise, exercise.getTemplateFilename(),
         fileExtension);
@@ -109,17 +106,17 @@ public class SpreadController extends IdExController<SpreadExercise, EvaluationR
     if(!fileSuccessfullySaved)
       return internalServerError(
           views.html.spreadcorrectionerror.render(user, "Die Datei konnte nicht gespeichert werden!"));
-    
+
     // Get paths to sample document
-    final Path sampleDocumentPath = Paths.get(getSampleDir().toString(),
-        exercise.getSampleFilename() + "." + fileExtension);
+    final Path sampleDocumentPath = Paths
+        .get(getSampleDir().toString(), exercise.getSampleFilename() + "." + fileExtension);
     if(!sampleDocumentPath.toFile().exists())
       return internalServerError(
           views.html.spreadcorrectionerror.render(user, "Die Musterdatei konnte nicht gefunden werden!"));
     try {
-      final SpreadSheetCorrectionResult result = SpreadSheetCorrector.correct(sampleDocumentPath, targetFilePath, false,
-          false);
-      
+      final SpreadSheetCorrectionResult result = SpreadSheetCorrector
+          .correct(sampleDocumentPath, targetFilePath, false, false);
+
       if(result.isSuccess())
         return ok(views.html.excelcorrect.render(user, result, exercise.getId(), fileExtension));
       else
@@ -128,13 +125,13 @@ public class SpreadController extends IdExController<SpreadExercise, EvaluationR
       return internalServerError(views.html.spreadcorrectionerror.render(user, e.getMessage()));
     }
   }
-  
+
   private boolean saveSolutionForUser(Path uploadedSolution, Path targetFilePath) {
     try {
       final Path solDirForExercise = targetFilePath.getParent();
       if(!solDirForExercise.toFile().exists() && !solDirForExercise.toFile().isDirectory())
         Files.createDirectories(solDirForExercise);
-      
+
       Files.move(uploadedSolution, targetFilePath, StandardCopyOption.REPLACE_EXISTING);
       return true;
     } catch (final Exception e) {
@@ -142,5 +139,5 @@ public class SpreadController extends IdExController<SpreadExercise, EvaluationR
       return false;
     }
   }
-  
+
 }

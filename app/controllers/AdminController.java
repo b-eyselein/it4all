@@ -11,17 +11,16 @@ import model.feedback.FeedbackResult;
 import model.feedback.FeedbackResult$;
 import model.user.Role;
 import model.user.User;
+import play.api.Configuration;
 import play.data.FormFactory;
 import play.libs.Json;
 import play.mvc.Result;
 import play.mvc.Security.Authenticated;
 
-@Authenticated(AdminSecured.class)
-public class AdminController extends BaseController {
+@Authenticated(AdminSecured.class) public class AdminController extends BaseController {
 
-  @Inject
-  public AdminController(FormFactory theFactory) {
-    super(theFactory);
+  @Inject public AdminController(Configuration c, FormFactory f) {
+    super(c, f);
   }
 
   public Result changeRole(String username) {

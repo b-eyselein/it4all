@@ -1,35 +1,25 @@
 package controllers.ebnf
 
-import controllers.core.BaseController
-import controllers.core.IdExController
 import javax.inject.Inject
-import model.Secured
-import model.ebnf.EBNFExercise
-import model.ebnf.Grammar
-import model.ebnf.RuleParser
-import model.ebnf.Variable
-import model.ebnf.EBNFCompleteResult
-import model.result.CompleteResult
-import model.result.EvaluationResult
-import model.user.User
-import play.data.DynamicForm
-import play.data.FormFactory
-import play.mvc.Controller
-import play.mvc.Result
-import play.mvc.Results
-import play.twirl.api.Html
-import play.mvc.Security.Authenticated
-import model.ebnf.EBNFResult
 
-import scala.collection.JavaConverters._
-import scala.util.Failure
+import controllers.core.IdExController
+import model.Secured
+import model.ebnf.{EBNFExercise, EBNFResult}
+import model.result.CompleteResult
+import model.user.User
+import play.api.Configuration
+import play.data.{DynamicForm, FormFactory}
+import play.mvc.Result
+import play.mvc.Security.Authenticated
+import play.twirl.api.Html
 
 @Authenticated(classOf[Secured])
-class EBNFController @Inject() (f: FormFactory)
-  extends IdExController[EBNFExercise, EBNFResult](f, "ebnf", EBNFExercise.finder, EBNFToolObject) {
+class EBNFController @Inject()(c: Configuration, f: FormFactory)
+  extends IdExController[EBNFExercise, EBNFResult](c, f, "ebnf", EBNFExercise.finder, EBNFToolObject) {
 
-  override def correctEx(form: DynamicForm, exercise: EBNFExercise, user: User) = // FIXME
+  override def correctEx(form: DynamicForm, exercise: EBNFExercise, user: User): Result = // FIXME
     ???
+
   //    val data = Controller.request.body.asFormUrlEncoded
   //
   //    val terminals = data.get("terminals")(0).split(" ").map(str => new TerminalSymbol(str.replace("'", ""))).toList
@@ -48,10 +38,10 @@ class EBNFController @Inject() (f: FormFactory)
   //
   //    new EBNFCompleteResult(new EBNFResult(grammar))
 
-  override def renderExercise(user: User, exercise: EBNFExercise) = views.html.ebnfExercise.render(user, exercise)
+  override def renderExercise(user: User, exercise: EBNFExercise): Html = views.html.ebnfExercise.render(user, exercise)
 
-  override def renderResult(correctionResult: CompleteResult[EBNFResult]) = views.html.ebnfResult.render(correctionResult)
+  override def renderResult(correctionResult: CompleteResult[EBNFResult]): Html = views.html.ebnfResult.render(correctionResult)
 
-  override def renderExesListRest = new Html("");
+  override def renderExesListRest = new Html("")
 
 }

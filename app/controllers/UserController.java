@@ -1,22 +1,21 @@
 package controllers;
 
-import javax.inject.Inject;
-
 import controllers.core.BaseController;
 import model.Secured;
 import model.StringConsts;
 import model.user.User;
+import play.api.Configuration;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.mvc.Result;
 import play.mvc.Security;
 
-@Security.Authenticated(Secured.class)
-public class UserController extends BaseController {
+import javax.inject.Inject;
 
-  @Inject
-  public UserController(FormFactory theFactory) {
-    super(theFactory);
+@Security.Authenticated(Secured.class) public class UserController extends BaseController {
+
+  @Inject public UserController(Configuration c, FormFactory f) {
+    super(c, f);
   }
 
   public Result index() {

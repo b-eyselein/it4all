@@ -1,50 +1,51 @@
 package controllers.programming
 
-import controllers.programming.routes.ProgController._
-import controllers.programming.routes.ProgAdmin._
-import model.tools.ToolState
-import model.tools.IdExToolObject
+import model.tools.{IdExToolObject, ToolState}
+import play.api.Configuration
+import play.api.mvc.Call
 
-object ProgToolObject extends IdExToolObject("Programmierung", ToolState.LIVE) {
+class ProgToolObject(c: Configuration) extends IdExToolObject(c, "prog", "Programmierung", ToolState.LIVE) {
 
   // User
-  
-  override def indexCall = index()
 
-  override def exerciseRoute(id: Int) = exercise(id)
+  override def indexCall: Call = controllers.programming.routes.ProgController.index()
 
-  override def exerciseRoutes(id: Int) = List((testData(id), "Testdaten erstellen"), (exercise(id), "Aufgabe bearbeiten"))
-  
-  override def exesListRoute(id: Int) = exesListRoute(id)
+  override def exerciseRoute(id: Int): Call = controllers.programming.routes.ProgController.exercise(id)
 
-  override def correctLiveRoute(id: Int) = correctLive(id)
+  override def exerciseRoutes(id: Int) = List(
+    (controllers.programming.routes.ProgController.testData(id), "Testdaten erstellen"),
+    (controllers.programming.routes.ProgController.exercise(id), "Aufgabe bearbeiten"))
 
-  override def correctRoute(id: Int) = correct(id)
+  override def exesListRoute(id: Int): Call = exesListRoute(id)
+
+  override def correctLiveRoute(id: Int): Call = controllers.programming.routes.ProgController.correctLive(id)
+
+  override def correctRoute(id: Int): Call = controllers.programming.routes.ProgController.correct(id)
 
   // Admin
 
-  val restHeaders = List.empty
+  val restHeaders: List[String] = List.empty
 
-  override def adminIndexRoute = adminIndex
+  override def adminIndexRoute: Call = controllers.programming.routes.ProgAdmin.adminIndex()
 
-  override def exercisesRoute = exercises
+  override def exercisesRoute: Call = controllers.programming.routes.ProgAdmin.exercises()
 
-  override def newExFormRoute = newExerciseForm
+  override def newExFormRoute: Call = controllers.programming.routes.ProgAdmin.newExerciseForm()
 
-  override def exportExesRoute = exportExercises
+  override def exportExesRoute: Call = controllers.programming.routes.ProgAdmin.exportExercises()
 
-  override def importExesRoute = importExercises
+  override def importExesRoute: Call = controllers.programming.routes.ProgAdmin.importExercises()
 
-  override def jsonSchemaRoute = getJSONSchemaFile
+  override def jsonSchemaRoute: Call = controllers.programming.routes.ProgAdmin.getJSONSchemaFile()
 
-  override def uploadFileRoute = uploadFile
+  override def uploadFileRoute: Call = controllers.programming.routes.ProgAdmin.uploadFile()
 
-  override def changeExStateRoute(id: Int) = changeExState(id)
+  override def changeExStateRoute(id: Int): Call = controllers.programming.routes.ProgAdmin.changeExState(id)
 
-  override def editExerciseFormRoute(id: Int) = editExerciseForm(id)
+  override def editExerciseFormRoute(id: Int): Call = controllers.programming.routes.ProgAdmin.editExerciseForm(id)
 
-  override def editExerciseRoute(id: Int) = editExercise(id)
+  override def editExerciseRoute(id: Int): Call = controllers.programming.routes.ProgAdmin.editExercise(id)
 
-  override def deleteExerciseRoute(id: Int) = deleteExercise(id)
+  override def deleteExerciseRoute(id: Int): Call = controllers.programming.routes.ProgAdmin.deleteExercise(id)
 
 }

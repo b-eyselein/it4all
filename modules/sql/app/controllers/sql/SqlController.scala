@@ -1,40 +1,41 @@
 package controllers.sql
 
 import java.sql.Connection
-
-import scala.collection.JavaConverters.{ asScalaBufferConverter, seqAsJavaListConverter }
-import scala.collection.mutable.ListBuffer
-import scala.util.{ Failure, Success }
-
-import controllers.core.{ BaseController, IdExController }
 import javax.inject.Inject
-import model.{ SqlSolution, SqlSolutionKey, SqlUser, StringConsts }
-import model.Levenshtein
+
+import controllers.core.{BaseController, IdExController}
 import model.CommonUtils.cleanly
-import model.StringConsts.{ SELECT_ALL_DUMMY, SHOW_ALL_TABLES }
-import model.exercise.{ SqlExercise, SqlExerciseType, SqlSample, SqlScenario }
-import model.querycorrectors.QueryCorrector
-import model.result.{ CompleteResult, EvaluationResult }
+import model.StringConsts.{SELECT_ALL_DUMMY, SHOW_ALL_TABLES}
+import model.exercise.{SqlExercise, SqlExerciseType, SqlSample, SqlScenario}
+import model.querycorrectors.{QueryCorrector, SqlResult}
+import model.result.{CompleteResult, EvaluationResult}
 import model.sql.SqlQueryResult
 import model.user.User
-import play.data.{ DynamicForm, FormFactory }
-import play.db.{ Database, NamedDatabase }
-import play.mvc.Results
+import model._
+import play.api.Configuration
+import play.data.{DynamicForm, FormFactory}
+import play.db.{Database, NamedDatabase}
+import play.mvc.{Result, Results}
+import play.twirl.api.Html
 
-class SqlController @Inject() (f: FormFactory, @NamedDatabase("sqlselectroot") sqlSelect: Database, @NamedDatabase("sqlotherroot") sqlOther: Database)
-  extends IdExController[SqlExercise, EvaluationResult](f, "sql", SqlExercise.finder, SqlToolObject) {
+import scala.collection.JavaConverters.{asScalaBufferConverter, seqAsJavaListConverter}
+import scala.collection.mutable.ListBuffer
+import scala.util.{Failure, Success, Try}
 
-  def getUser = {
-    val user = BaseController.getUser
+class SqlController @Inject()(c: Configuration, f: FormFactory, @NamedDatabase("sqlselectroot") sqlSelect: Database, @NamedDatabase("sqlotherroot") sqlOther: Database)
+  extends IdExController[SqlExercise, EvaluationResult](c, f, "sql", SqlExercise.finder, SqlToolObject) {
+
+  override def getUser: User = {
+    val user = super.getUser
 
     if (SqlUser.finder.byId(user.name) == null)
-      // Make sure there is a corresponding entrance in other db...
+    // Make sure there is a corresponding entrance in other db...
       new SqlUser(user.name).save()
 
     user
   }
 
-  def filteredScenario(id: Int, exType: String, site: Int) = {
+  def filteredScenario(id: Int, exType: String, site: Int): Result = {
     val scenario = SqlScenario.finder.byId(id)
 
     if (scenario == null)
@@ -53,13 +54,13 @@ class SqlController @Inject() (f: FormFactory, @NamedDatabase("sqlselectroot") s
     Results.ok(views.html.sqlScenario.render(getUser, exercises, scenario, SqlExerciseType.valueOf(exType), site))
   }
 
-  def index = Results.ok(views.html.sqlIndex.render(getUser, SqlScenario.finder.all()))
+  def index: Result = Results.ok(views.html.sqlIndex.render(getUser, SqlScenario.finder.all()))
 
-  def scenarioes = Results.ok(views.html.scenarioes.render(getUser, SqlScenario.finder.all()))
+  def scenarioes: Result = Results.ok(views.html.scenarioes.render(getUser, SqlScenario.finder.all()))
 
-  def getDBForExType(exerciseType: SqlExerciseType) = if (exerciseType == SqlExerciseType.SELECT) sqlSelect else sqlOther
+  def getDBForExType(exerciseType: SqlExerciseType): Database = if (exerciseType == SqlExerciseType.SELECT) sqlSelect else sqlOther
 
-  override def correctEx(form: DynamicForm, exercise: SqlExercise, user: User) = {
+  override def correctEx(form: DynamicForm, exercise: SqlExercise, user: User): Try[SqlResult] = {
     val learnerSolution = form.get(StringConsts.FORM_VALUE)
     SqlController.saveSolution(user.name, learnerSolution, exercise.getId())
 
@@ -68,12 +69,10 @@ class SqlController @Inject() (f: FormFactory, @NamedDatabase("sqlselectroot") s
     val corrector = QueryCorrector.getCorrector(exercise.exerciseType)
     val db = getDBForExType(exercise.exerciseType)
 
-    val result = corrector.correct(db, learnerSolution, sample, exercise)
-
-    Success(result)
+    Success(corrector.correct(db, learnerSolution, sample, exercise))
   }
 
-  override def renderExercise(user: User, exercise: SqlExercise) = {
+  override def renderExercise(user: User, exercise: SqlExercise): Html = {
     val tables = SqlController.readTablesInDatabase(sqlSelect, exercise.scenario.shortName)
 
     val oldSol = SqlSolution.finder.byId(new SqlSolutionKey(user.name, exercise.getId()))
@@ -85,16 +84,16 @@ class SqlController @Inject() (f: FormFactory, @NamedDatabase("sqlselectroot") s
   //  override def renderExercises(user: User, exercises: List[SqlExercise]) = //FIXME: implement
   //    ???
 
-  override def renderExesListRest = // FIXME: implement
+  override def renderExesListRest: Html = // FIXME: implement
     ???
 
-  override def renderResult(correctionResult: CompleteResult[EvaluationResult]) = //FIXME: implement
+  override def renderResult(correctionResult: CompleteResult[EvaluationResult]): Html = //FIXME: implement
     ???
 
 }
 
 object SqlController {
-  def findBestFittingSample(userSt: String, samples: List[SqlSample]) = {
+  def findBestFittingSample(userSt: String, samples: List[SqlSample]): SqlSample = {
     samples.reduceLeft((samp1, samp2) =>
       if (Levenshtein.distance(samp1.sample, userSt) < Levenshtein.distance(samp2.sample, userSt))
         samp1 else samp2)
@@ -108,13 +107,13 @@ object SqlController {
     tableNames.toList
   }) match {
     case Success(list) => list
-    case Failure(_)    => List.empty
+    case Failure(_) => List.empty
   }
 
   def readTableContent(connection: Connection, tableName: String): SqlQueryResult =
     cleanly(connection.prepareStatement(SELECT_ALL_DUMMY + tableName))(_.close)(result => new SqlQueryResult(result.executeQuery, tableName)) match {
       case Success(result) => result
-      case Failure(_)      => null
+      case Failure(_) => null
     }
 
   def readTablesInDatabase(db: Database, databaseName: String): List[SqlQueryResult] = cleanly(db.getConnection)(_.close)(connection => {
@@ -122,7 +121,7 @@ object SqlController {
     readExistingTables(connection).map(readTableContent(connection, _))
   }) match {
     case Success(queryResult) => queryResult
-    case Failure(_)           => List.empty
+    case Failure(_) => List.empty
   }
 
   def saveSolution(userName: String, learnerSolution: String, id: Int) {

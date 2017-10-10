@@ -1,50 +1,47 @@
 package controllers.questions
 
-import controllers.questions.routes.QuestionAdmin._
-import controllers.questions.routes.QuestionController._
-import model.tools.ToolState
-import model.tools.IdExToolObject
+import model.tools.{IdExToolObject, ToolState}
+import play.api.Configuration
+import play.api.mvc.Call
 
-object QuestionToolObject extends IdExToolObject("Auswahlfragen", ToolState.BETA) {
+class QuestionToolObject(c: Configuration) extends IdExToolObject(c, "question", "Auswahlfragen", ToolState.BETA) {
 
   // User
-  
-  override def indexCall = index()
 
-  def exerciseRoute(id: Int) = null // exercise(id)
+  override def indexCall: Call = controllers.questions.routes.QuestionController.index()
 
-  
-  
-  override def exesListRoute(id: Int) = exesListRoute(id)
-  
-  override def correctLiveRoute(id: Int) = null
+  def exerciseRoute(id: Int): Call = ???
 
-  override def correctRoute(id: Int) = null
+  override def exesListRoute(id: Int): Call = ???
+
+  override def correctLiveRoute(id: Int): Call = ???
+
+  override def correctRoute(id: Int): Call = ???
 
   // Admin
-  
-  val restHeaders = List.empty
 
-  override def adminIndexRoute = adminIndex
+  val restHeaders: List[String] = List.empty
 
-  override def exercisesRoute = exercises
+  override def adminIndexRoute: Call = controllers.questions.routes.QuestionAdmin.adminIndex()
 
-  override def newExFormRoute = newExerciseForm
+  override def exercisesRoute: Call = controllers.questions.routes.QuestionAdmin.exercises()
 
-  override def exportExesRoute = exportExercises
+  override def newExFormRoute: Call = controllers.questions.routes.QuestionAdmin.newExerciseForm()
 
-  override def importExesRoute = importExercises
+  override def exportExesRoute: Call = controllers.questions.routes.QuestionAdmin.exportExercises()
 
-  override def jsonSchemaRoute = getJSONSchemaFile
+  override def importExesRoute: Call = controllers.questions.routes.QuestionAdmin.importExercises()
 
-  override def uploadFileRoute = uploadFile
+  override def jsonSchemaRoute: Call = controllers.questions.routes.QuestionAdmin.getJSONSchemaFile()
 
-  override def changeExStateRoute(id: Int) = changeExState(id)
+  override def uploadFileRoute: Call = controllers.questions.routes.QuestionAdmin.uploadFile()
 
-  override def editExerciseFormRoute(id: Int) = editExerciseForm(id)
+  override def changeExStateRoute(id: Int): Call = controllers.questions.routes.QuestionAdmin.changeExState(id)
 
-  override def editExerciseRoute(id: Int) = editExercise(id)
+  override def editExerciseFormRoute(id: Int): Call = controllers.questions.routes.QuestionAdmin.editExerciseForm(id)
 
-  override def deleteExerciseRoute(id: Int) = deleteExercise(id)
+  override def editExerciseRoute(id: Int): Call = controllers.questions.routes.QuestionAdmin.editExercise(id)
+
+  override def deleteExerciseRoute(id: Int): Call = controllers.questions.routes.QuestionAdmin.deleteExercise(id)
 
 }

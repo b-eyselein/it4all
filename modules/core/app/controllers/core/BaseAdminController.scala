@@ -1,38 +1,42 @@
 package controllers.core
 
 import java.io.File
-import java.nio.file.Paths
+import java.nio.file.{Path, Paths}
 
-import scala.util.{ Failure, Success }
-
-import model.{ JsonReadable, StringConsts }
-import model.exercisereading.{ AbstractReadingResult, JsonReader, ReadingError, ReadingFailure, ReadingResult }
+import model.exercisereading._
+import model.user.User
+import model.{JsonReadable, StringConsts}
+import play.api.Configuration
 import play.data.FormFactory
 import play.libs.Json
-import play.mvc.{ Result, Results }
-import play.mvc.Controller
 import play.mvc.Http.MultipartFormData
+import play.mvc.{Controller, Result, Results}
 import play.twirl.api.Html
-import model.user.User
 
-abstract class BaseAdminController[E <: JsonReadable](f: FormFactory, exerciseReader: JsonReader[E])
-  extends BaseController(f) {
+import scala.util.{Failure, Success, Try}
 
-  val savingDir = Paths.get(BaseController.BASE_DATA_PATH, StringConsts.ADMIN_FOLDER, exerciseReader.exerciseType)
+abstract class BaseAdminController[E <: JsonReadable](c: Configuration, f: FormFactory, exerciseReader: JsonReader[E])
+  extends BaseController(c, f) {
 
-  def adminIndex = Results.ok(renderAdminIndex(BaseController.getUser))
+  val savingDir: Path = Paths.get(rootDir, StringConsts.ADMIN_FOLDER, exerciseReader.exerciseType)
+
+  def adminIndex: Result = Results.ok(renderAdminIndex(getUser))
 
   def renderAdminIndex(user: User): Html
 
-  def getJSONSchemaFile = Results.ok(Json.prettyPrint(exerciseReader.jsonSchema))
+  def getJSONSchemaFile: Result = Results.ok(Json.prettyPrint(exerciseReader.jsonSchema))
 
-  def processReadingResult(abstractResult: AbstractReadingResult, render: (java.util.List[E], Boolean) => Html) =
+  def processReadingResult(abstractResult: AbstractReadingResult, render: (java.util.List[E], Boolean) => Html): Result =
     abstractResult match {
       case result: ReadingResult[E] =>
-        result.read.foreach(exerciseReader.save(_))
-        Results.ok(views.html.admin.preview.render(BaseController.getUser, render(result.javaRead, false)))
+        result.read.foreach(exerciseReader.save)
+        val files: List[Try[Path]] = result.read.flatMap(exerciseReader.checkFiles)
+
+        files.foreach(println(_))
+
+        Results.ok(views.html.admin.preview.render(getUser, render(result.javaRead, false)))
       case error: ReadingError =>
-        Results.badRequest(views.html.jsonReadingError.render(BaseController.getUser, error))
+        Results.badRequest(views.html.jsonReadingError.render(getUser, error))
       case failure: ReadingFailure => Results.badRequest("There has been an error...")
     }
 
@@ -44,9 +48,9 @@ abstract class BaseAdminController[E <: JsonReadable](f: FormFactory, exerciseRe
         val pathToUploadedFile = uploadedFile.getFile.toPath
 
         val jsonFile = Paths.get(savingDir.toString, uploadedFile.getFilename)
-        BaseController.saveUploadedFile(savingDir, pathToUploadedFile, jsonFile) match {
+        saveUploadedFile(savingDir, pathToUploadedFile, jsonFile) match {
           case Success(jsonTargetPath) => processReadingResult(exerciseReader.readFromJsonFile(jsonTargetPath), render(_, _))
-          case Failure(error)          => Results.badRequest("There has been an error uploading your file...")
+          case Failure(error) => Results.badRequest("There has been an error uploading your file...")
         }
     }
   }

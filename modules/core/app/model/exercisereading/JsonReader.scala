@@ -1,21 +1,22 @@
 package model.exercisereading
 
-import java.nio.file.{ Files, Path, Paths }
+import java.nio.file.{Files, Path, Paths}
 
-import scala.collection.JavaConverters._
-import scala.util.{ Failure, Success, Try }
-
-import com.fasterxml.jackson.databind.{ JsonNode, ObjectMapper }
+import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
 import com.github.fge.jsonschema.core.report.ProcessingReport
 import com.github.fge.jsonschema.main.JsonSchemaFactory
 import com.kjetland.jackson.jsonSchema.JsonSchemaGenerator
-
 import io.ebean.Finder
 import model.JsonReadable
-import model.StringConsts.{ EX_FILE_NAME, ID_NAME, KEY_NAME, VALUE_NAME }
+import model.StringConsts.{EX_FILE_NAME, ID_NAME, KEY_NAME, VALUE_NAME}
 import play.libs.Json
 
+import scala.collection.JavaConverters._
+import scala.util.{Failure, Success, Try}
+
 abstract class JsonReader[R <: JsonReadable](val exerciseType: String, val finder: Finder[Integer, R], classFor: Class[_]) {
+
+  val baseTargetDir = Paths.get("/data", BaseController.SAMPLE_SUB_DIRECTORY, exerciseType)
 
   val jsonSchema = new JsonSchemaGenerator(new ObjectMapper).generateJsonSchema(classFor)
 
@@ -28,8 +29,8 @@ abstract class JsonReader[R <: JsonReadable](val exerciseType: String, val finde
     w
   }
 
-  val StdFile = Paths.get("conf", "resources", exerciseType, EX_FILE_NAME)
-  
+  val StdFile = Paths.get(resourcesFolder.toString, EX_FILE_NAME)
+
   def update(toUpdate: R, node: JsonNode): Unit
 
   def save(toSave: R) = toSave.saveInDB()
@@ -41,7 +42,7 @@ abstract class JsonReader[R <: JsonReadable](val exerciseType: String, val finde
   def readFromJsonFile(path: Path = StdFile): AbstractReadingResult = {
     val jsonAsString = new String(Files.readAllBytes(path)).replace("\t", "  ")
     val jsonSchemaAsString = Json.prettyPrint(jsonSchema).replace("\t", "  ")
-    
+
     val json = Json.parse(jsonAsString)
 
     JsonReader.validateJson(json, jsonSchema) match {
@@ -51,6 +52,8 @@ abstract class JsonReader[R <: JsonReadable](val exerciseType: String, val finde
         else new ReadingResult(jsonAsString, jsonSchemaAsString, json.iterator.asScala.map(read(_)).toList)
     }
   }
+
+  def checkFiles(r: R): List[Try[Path]] = List.empty
 
 }
 
@@ -64,7 +67,7 @@ object JsonReader {
   def readTextArray(textArrayNode: JsonNode) = readArray(textArrayNode).map(_.asText)
 
   def readAndJoinTextArray(textArrayNode: JsonNode, joinChar: String = "") = readTextArray(textArrayNode).mkString(joinChar)
-  
+
   def validateJson(json: JsonNode, jsonSchema: JsonNode): Try[ProcessingReport] = try {
     Success(JsonSchemaFactory.byDefault().getJsonSchema(jsonSchema).validate(json))
   } catch {

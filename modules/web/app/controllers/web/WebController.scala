@@ -1,24 +1,25 @@
 package controllers.web
 
-import scala.collection.JavaConverters.{ asScalaBufferConverter, seqAsJavaListConverter }
-import scala.collection.mutable.Buffer
-import scala.util.{ Failure, Success, Try }
-
-import org.openqa.selenium.htmlunit.HtmlUnitDriver
-
-import controllers.core.{ BaseController, IdExController }
 import javax.inject.Inject
-import model.{ StringConsts, WebExercise, WebResult, WebSolution, WebSolutionKey, WebUser }
-import model.logging.{ ExerciseCompletionEvent, ExerciseStartEvent }
+
+import controllers.core.IdExController
+import model.logging.{ExerciseCompletionEvent, ExerciseStartEvent}
 import model.result.CompleteResult
 import model.task.WebTask
 import model.user.User
-import play.data.{ DynamicForm, FormFactory }
-import play.mvc.{ Controller, Results }
+import model._
+import org.openqa.selenium.htmlunit.HtmlUnitDriver
+import play.api.Configuration
+import play.data.{DynamicForm, FormFactory}
+import play.mvc.{Controller, Result, Results}
 import play.twirl.api.Html
-import model.WebCorrector
 
-class WebController @Inject() (f: FormFactory) extends IdExController[WebExercise, WebResult](f, "web", WebExercise.finder, WebToolObject) {
+import scala.collection.JavaConverters.{asScalaBufferConverter, seqAsJavaListConverter}
+import scala.collection.mutable.Buffer
+import scala.util.{Failure, Success, Try}
+
+class WebController @Inject()(c: Configuration, f: FormFactory)
+  extends IdExController[WebExercise, WebResult](c, f, "web", WebExercise.finder, WebToolObject) {
 
   val HTML_TYPE = "html"
   val JS_TYPE = "js"
@@ -27,17 +28,17 @@ class WebController @Inject() (f: FormFactory) extends IdExController[WebExercis
 
   val ALLOWED_TYPES = List(HTML_TYPE, JS_TYPE)
 
-  def getUser: User = {
-    val user = BaseController.getUser
+  override def getUser: User = {
+    val user = getUser
 
     if (WebUser.finder.byId(user.name) == null)
-      // Make sure there is a corresponding entrance in other db...
+    // Make sure there is a corresponding entrance in other db...
       new WebUser(user.name).save()
 
     user
   }
 
-  def correctEx(learnerSolution: String, exercise: WebExercise, user: User, exType: String) = {
+  def correctEx(learnerSolution: String, exercise: WebExercise, user: User, exType: String): Try[CompleteResult[WebResult]] = {
     saveSolution(learnerSolution, new WebSolutionKey(user.name, exercise.id))
 
     val solutionUrl = BASE_URL + routes.SolutionController.site(user.name, exercise.getId).url
@@ -46,86 +47,88 @@ class WebController @Inject() (f: FormFactory) extends IdExController[WebExercis
     driver.get(solutionUrl)
 
     val tasksTry: Try[Buffer[_ <: WebTask]] = exType match {
-      case JS_TYPE   => Success(exercise.jsTasks.asScala)
+      case JS_TYPE => Success(exercise.jsTasks.asScala)
       case HTML_TYPE => Success(exercise.htmlTasks.asScala)
-      case _         => Failure(null)
+      case _ => Failure(null)
     }
 
     tasksTry.map(tasks => new CompleteResult(learnerSolution, tasks.map(WebCorrector.evaluate(_, driver)).asJava))
   }
 
-  def saveSolution(learnerSolution: String, key: WebSolutionKey) = {
+  def saveSolution(learnerSolution: String, key: WebSolutionKey): Unit = {
     val solution = Option(WebSolution.finder.byId(key)).getOrElse(new WebSolution(key))
 
     solution.sol = learnerSolution
-    solution.save
+    solution.save()
   }
 
-  def correct(id: Int, exType: String) = {
+  def correct(id: Int, exType: String): Result = {
     val user = getUser
     val learnerSolution = factory.form().bindFromRequest().get(StringConsts.FORM_VALUE)
 
     correctEx(learnerSolution, WebExercise.finder.byId(id), user, exType) match {
       case Success(result) =>
-        BaseController.log(user, new ExerciseCompletionEvent(Controller.request, id, result))
+        log(user, new ExerciseCompletionEvent(Controller.request, id, result))
         Results.ok(views.html.correction.render("Web", result, renderResult(result), user, routes.WebController.index(0)))
       case Failure(_) => Results.badRequest("Es gab einen internen Fehler!")
     }
   }
 
-  def correctLive(id: Int, exType: String) = {
+  def correctLive(id: Int, exType: String): Result = {
     val user = getUser
     val learnerSolution = factory.form().bindFromRequest().get(StringConsts.FORM_VALUE)
 
     correctEx(learnerSolution, WebExercise.finder.byId(id), user, exType) match {
       case Success(result) =>
-        BaseController.log(user, new ExerciseCompletionEvent(Controller.request, id, result))
+        log(user, new ExerciseCompletionEvent(Controller.request, id, result))
         Results.ok(renderResult(result))
       case Failure(_) => Results.badRequest("Es gab einen internen Fehler!")
     }
   }
 
-  def exercise(id: Int, exType: String) = exType match {
+  def exercise(id: Int, exType: String): Result = exType match {
     case (JS_TYPE | HTML_TYPE) =>
       val user = getUser
 
-      BaseController.log(user, new ExerciseStartEvent(Controller.request(), id))
+      log(user, new ExerciseStartEvent(Controller.request(), id))
 
       Results.ok(views.html.webExercise.render(user, WebExercise.finder.byId(id), exType,
-                                               WebController.getOldSolOrDefault(user.name, id), "Html-Korrektur"))
+        WebController.getOldSolOrDefault(user.name, id), "Html-Korrektur"))
     case _ =>
       Results.redirect(routes.WebController.index(0))
   }
 
-  def playground = Results.ok(views.html.webPlayground.render(getUser))
+  def playground: Result = Results.ok(views.html.webPlayground.render(getUser))
 
-  override def correctEx(form: DynamicForm, exercise: WebExercise, user: User) = // FIXME
+  override def correctEx(form: DynamicForm, exercise: WebExercise, user: User): Try[CompleteResult[WebResult]] = // FIXME
     ???
 
-  override def renderExercise(user: User, exercise: WebExercise) = // FIXME
+  override def renderExercise(user: User, exercise: WebExercise): Html = // FIXME
     ???
 
-  override def renderExesListRest = new Html(s"""<div class="panel panel-default">
+  override def renderExesListRest = new Html(
+    s"""<div class="panel panel-default">
   <a class="btn btn-primary btn-block" href="${controllers.web.routes.WebController.playground}">Web-Playground</a>
 </div>
 <hr>""")
 
-  override def renderResult(correctionResult: CompleteResult[WebResult]) = views.html.webResult.render(correctionResult.results)
+  override def renderResult(correctionResult: CompleteResult[WebResult]): Html = views.html.webResult.render(correctionResult.results)
 
 }
 
 class SolutionController extends Controller {
 
-  def site(username: String, exerciseId: Int) = Results.ok(new Html(WebController.getOldSolOrDefault(username, exerciseId)))
+  def site(username: String, exerciseId: Int): Result = Results.ok(new Html(WebController.getOldSolOrDefault(username, exerciseId)))
 
 }
 
 object WebController {
 
-  def getOldSolOrDefault(userName: String, exerciseId: Int) =
+  def getOldSolOrDefault(userName: String, exerciseId: Int): String =
     Try(WebSolution.finder.byId(new WebSolutionKey(userName, exerciseId)).sol).getOrElse(STANDARD_HTML)
 
-  val STANDARD_HTML = """<!doctype html>
+  val STANDARD_HTML =
+    """<!doctype html>
 <html>
 <head>
   
@@ -135,7 +138,8 @@ object WebController {
 </body>
 </html>"""
 
-  val STANDARD_HTML_PLAYGROUND = s"""<!doctype html>
+  val STANDARD_HTML_PLAYGROUND =
+    s"""<!doctype html>
 <html>
 <head>
   <style>
@@ -147,7 +151,7 @@ object WebController {
 </head>
 <body>
   <!-- Html-Elemente -->
-  
+
 </body>
 </html>"""
 }

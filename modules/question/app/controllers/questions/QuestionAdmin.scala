@@ -1,18 +1,19 @@
 package controllers.questions
 
-import java.util.{ Arrays, Collections }
-
-import controllers.core.{ AExerciseCollectionAdminController, BaseController }
+import java.util.{Arrays, Collections}
 import javax.inject.Inject
-import model.question.Question
-import model.quiz.Quiz
-import model.user.User
-import play.data.FormFactory
-import play.mvc.Results
-import model.quiz.QuizReader
 
-class QuestionAdmin @Inject() (f: FormFactory)
-  extends AExerciseCollectionAdminController[Question, Quiz](f, Quiz.finder, new QuizReader()) {
+import controllers.core.AExerciseCollectionAdminController
+import model.question.Question
+import model.quiz.{Quiz, QuizReader}
+import model.user.User
+import play.api.Configuration
+import play.data.FormFactory
+import play.mvc.{Result, Results}
+import play.twirl.api.Html
+
+class QuestionAdmin @Inject()(c: Configuration, f: FormFactory)
+  extends AExerciseCollectionAdminController[Question, Quiz](c, f, Quiz.finder, new QuizReader()) {
 
   def assignQuestion(keyAndValue: String, addOrRemove: Boolean) {
     // String[] quizAndQuestion = keyAndValue.split("_")
@@ -29,9 +30,9 @@ class QuestionAdmin @Inject() (f: FormFactory)
     // quiz.save()
   }
 
-  override def renderAdminIndex(user: User) = views.html.questionAdmin.index.render(user)
+  override def renderAdminIndex(user: User): Html = views.html.questionAdmin.index.render(user)
 
-  def assignQuestions = {
+  def assignQuestions: Result = {
     val form = factory.form().bindFromRequest()
 
     // Read it...
@@ -51,13 +52,11 @@ class QuestionAdmin @Inject() (f: FormFactory)
 
   def renderExerciseCollections(user: model.user.User, allCollections: java.util.List[model.quiz.Quiz]): play.twirl.api.Html = ???
 
-  def assignQuestionsForm = Results.ok(views.html.questionAdmin.assignQuestionsForm.render(
-    BaseController.getUser,
-    /* Question.finder.all() */ Collections.emptyList(), Quiz.finder.all()))
+  def assignQuestionsForm: Result = Results.ok(views.html.questionAdmin.assignQuestionsForm.render(
+    getUser, /* Question.finder.all() */ Collections.emptyList(), Quiz.finder.all()))
 
-  def assignQuestionsSingleForm(id: Int) = Results.ok(views.html.questionAdmin.assignQuestionsForm.render(
-    BaseController.getUser,
-    /* Question.finder.all() */ Collections.emptyList(), Arrays.asList(Quiz.finder.byId(id))))
+  def assignQuestionsSingleForm(id: Int): Result = Results.ok(views.html.questionAdmin.assignQuestionsForm.render(
+    getUser, /* Question.finder.all() */ Collections.emptyList(), Arrays.asList(Quiz.finder.byId(id))))
 
   //  def  exportQuizzes = {
   //    val json = Json.prettyPrint(Json.toJson(Quiz.finder.all()))
@@ -72,22 +71,23 @@ class QuestionAdmin @Inject() (f: FormFactory)
   //    }
   //  }
 
-  def gradeFreetextAnswer(id: Int, user: String) = {
+  def gradeFreetextAnswer(id: Int, user: String): Result = {
     // FreetextAnswer answer = FreetextAnswer.finder.byId(new
     // FreetextAnswerKey(user, id))
     //             views.html.questionAdmin.ftaGradeForm.render(getUser(), answer)
     Results.ok("TODO")
   }
 
-  def gradeFreetextAnswers = Results.ok("TODO!")
+  def gradeFreetextAnswers: Result = Results.ok("TODO!")
+
   /*
                        * views.html.questionAdmin.ftasToGrade.render(getUser(),
                        * FreetextAnswer.finder.all())
                        */
 
-  def importQuizzes = Results.ok("TODO!")
+  def importQuizzes: Result = Results.ok("TODO!")
 
-  def notAssignedQuestions = Results.ok(views.html.questionList.render(
-    BaseController.getUser, /* Question.notAssignedQuestions() */ Question.finder.all()))
+  def notAssignedQuestions: Result = Results.ok(views.html.questionList.render(
+    getUser, /* Question.notAssignedQuestions() */ Question.finder.all()))
 
 }

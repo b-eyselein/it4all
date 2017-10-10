@@ -1,25 +1,25 @@
 package controllers.questions
 
-import controllers.core.ExerciseCollectionController
 import javax.inject.Inject
+
+import controllers.core.ExerciseCollectionController
 import model.question.Question
 import model.quiz.Quiz
-import model.user.User
 import model.result.CompleteResult
+import model.user.User
+import play.api.Configuration
 import play.data.{DynamicForm, FormFactory}
-import controllers.core.BaseController
-import play.mvc.Results
-import play.mvc.Controller
+import play.mvc.{Result, Results}
+import play.twirl.api.Html
 
-class QuizController @Inject() (f: FormFactory)
-  extends ExerciseCollectionController[Question, Quiz](f, "question", Quiz.finder, Question.finder) {
+class QuizController @Inject()(c: Configuration, f: FormFactory)
+  extends ExerciseCollectionController[Question, Quiz](c, f, "question", Quiz.finder, Question.finder) {
 
-  override def correctPart(form: DynamicForm, question: Question, part: String, user: User) = // FIXME: implement...
-    null
+  override def correctPart(form: DynamicForm, question: Question, part: String, user: User): Result = ??? // FIXME: implement...
 
-  def quiz(id: Int) = Results.ok(views.html.quiz.render(BaseController.getUser, Quiz.finder.byId(id)))
+  def quiz(id: Int): Result = Results.ok(views.html.quiz.render(getUser, Quiz.finder.byId(id)))
 
-  def quizCorrection(quizId: Int, questionId: Int) = {
+  def quizCorrection(quizId: Int, questionId: Int): Result = {
     // User user = BaseController.getUser
     //
     // Quiz quiz = Quiz.finder.byId(quizId)
@@ -34,14 +34,14 @@ class QuizController @Inject() (f: FormFactory)
     Results.ok("TODO!")
   }
 
-  def quizQuestion(quizId: Int, questionId: Int) =
-    Results.ok(views.html.quizQuestion.render(BaseController.getUser, Quiz.finder.byId(quizId), questionId - 1))
+  def quizQuestion(quizId: Int, questionId: Int): Result =
+    Results.ok(views.html.quizQuestion.render(getUser, Quiz.finder.byId(quizId), questionId - 1))
 
-  def quizStart(quizId: Int) = Results.redirect(controllers.questions.routes.QuizController.quizQuestion(quizId, 1))
+  def quizStart(quizId: Int): Result = Results.redirect(controllers.questions.routes.QuizController.quizQuestion(quizId, 1))
 
-  def quizzes = Results.ok(views.html.quizzes.render(BaseController.getUser, Quiz.finder.all()))
+  def quizzes: Result = Results.ok(views.html.quizzes.render(getUser, Quiz.finder.all))
 
-  override def renderResult(correctionResult: CompleteResult[_]) = //FIXME: implement...
-    null
+  override def renderResult(correctionResult: CompleteResult[_]): Html = ??? //FIXME: implement...
+
 
 }

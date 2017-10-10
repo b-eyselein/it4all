@@ -1,11 +1,5 @@
 package controllers.questions;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
 import controllers.core.IdExController;
 import model.QuestionResult;
 import model.QuestionUser;
@@ -18,20 +12,25 @@ import model.quiz.Quiz;
 import model.result.CompleteResult;
 import model.user.Role;
 import model.user.User;
+import play.api.Configuration;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.mvc.Result;
 import play.twirl.api.Html;
 
+import javax.inject.Inject;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class QuestionController extends IdExController<Question, QuestionResult> {
 
-  @Inject
-  public QuestionController(FormFactory theFactory) {
-    super(theFactory, "question", Question.finder, QuestionToolObject$.MODULE$);
+  @Inject public QuestionController(Configuration c, FormFactory f) {
+    super(c, f, "question", Question.finder, new QuestionToolObject(c));
   }
 
-  public static User getUser() {
-    final User user = IdExController.getUser();
+  @Override public User getUser() {
+    final User user = super.getUser();
 
     if(QuestionUser.finder.byId(user.name) == null)
       // Make sure there is a corresponding entrance in other db...
@@ -39,7 +38,7 @@ public class QuestionController extends IdExController<Question, QuestionResult>
 
     return user;
   }
-  
+
   // private static List<Answer> readAnswersFromForm(DynamicForm form, int
   // questionId, boolean isChoice) {
   // return IntStream.range(0, Question.MAX_ANSWERS).mapToObj(id -> {
@@ -62,8 +61,8 @@ public class QuestionController extends IdExController<Question, QuestionResult>
         .collect(Collectors.toList());
   }
 
-  @Override
-  public scala.util.Try<CompleteResult<QuestionResult>> correctEx(DynamicForm form, Question exercise, User user) {
+  @Override public scala.util.Try<CompleteResult<QuestionResult>> correctEx(DynamicForm form, Question exercise,
+      User user) {
     // TODO Auto-generated method stub
     return null;
   }
@@ -90,8 +89,7 @@ public class QuestionController extends IdExController<Question, QuestionResult>
     return redirect(routes.QuestionController.index(0));
   }
 
-  @Override
-  public Result index(int start) {
+  @Override public Result index(int start) {
     final List<Question> all = Question.finder.all();
     final List<Question> questions = all.subList(Math.min(all.size(), start), Math.min(all.size(), start + STEP()));
     return ok(views.html.questionIndex.render(getUser(), questions, Quiz.finder.all()));
@@ -140,20 +138,17 @@ public class QuestionController extends IdExController<Question, QuestionResult>
     return ok(views.html.freetextQuestionResult.render(getUser(), question, answer));
   }
 
-  @Override
-  public Html renderExercise(User user, Question exercise) {
+  @Override public Html renderExercise(User user, Question exercise) {
     final UserAnswer oldAnswer = UserAnswer.finder.byId(new UserAnswerKey(user.name, exercise.getId()));
     return views.html.question.question.render(user, exercise, oldAnswer);
   }
 
-  @Override
-  public Html renderExesListRest() {
+  @Override public Html renderExesListRest() {
     // TODO Auto-generated method stub
     return new Html("");
   }
 
-  @Override
-  public Html renderResult(CompleteResult<QuestionResult> correctionResult) {
+  @Override public Html renderResult(CompleteResult<QuestionResult> correctionResult) {
     // TODO Auto-generated method stub
     return new Html("");
   }

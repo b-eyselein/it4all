@@ -1,50 +1,47 @@
 package controllers.xml
 
-import play.api.mvc.Call
+import model.tools.{IdExToolObject, ToolState}
+import play.api.Configuration
+import play.mvc.Call
 
-import controllers.xml.routes.XmlController._
-import controllers.xml.routes.XmlAdmin._
-import model.tools.ToolState
-import model.tools.IdExToolObject
-
-object XmlToolObject extends IdExToolObject("Xml", ToolState.LIVE) {
+class XmlToolObject(c: Configuration) extends IdExToolObject(c, "xml", "Xml", ToolState.LIVE) {
 
   // User
 
-  override def indexCall = index()
+  override def indexCall: Call = controllers.xml.routes.XmlController.index()
 
-  override def exerciseRoute(id: Int) = exercise(id)
+  override def exerciseRoute(id: Int): Call = controllers.xml.routes.XmlController.exercise(id)
 
-  override def exesListRoute(id: Int) = exesListRoute(id)
+  override def exesListRoute(id: Int): Call = ??? //controllers.xml.routes.XmlController.exercises(id)
 
-  override def correctLiveRoute(id: Int) = correctLive(id)
+  override def correctLiveRoute(id: Int): Call = controllers.xml.routes.XmlController.correctLive(id)
 
-  override def correctRoute(id: Int) = correct(id)
+  override def correctRoute(id: Int): Call = controllers.xml.routes.XmlController.correct(id)
 
   // Admin
 
-  val restHeaders = List("Typ", "Wurzelknoten")
+  val restHeaders: List[String] = List("Typ", "Wurzelknoten")
 
-  override def adminIndexRoute = adminIndex
+  override def adminIndexRoute: Call = controllers.xml.routes.XmlAdmin.adminIndex()
 
-  override def exercisesRoute = exercises
+  override def exercisesRoute: Call = controllers.xml.routes.XmlAdmin.exercises()
 
-  override def newExFormRoute = newExerciseForm
+  override def newExFormRoute: Call = controllers.xml.routes.XmlAdmin.newExerciseForm()
 
-  override def exportExesRoute = exportExercises
+  override def exportExesRoute: Call = controllers.xml.routes.XmlAdmin.exportExercises()
 
-  override def importExesRoute = importExercises
+  override def importExesRoute: Call = controllers.xml.routes.XmlAdmin.importExercises()
 
-  override def jsonSchemaRoute = getJSONSchemaFile
+  override def jsonSchemaRoute: Call = controllers.xml.routes.XmlAdmin.getJSONSchemaFile()
 
-  override def uploadFileRoute = uploadFile
+  override def uploadFileRoute: Call = controllers.xml.routes.XmlAdmin.uploadFile()
 
-  override def changeExStateRoute(id: Int) = changeExState(id)
+  override def changeExStateRoute(id: Int): Call = controllers.xml.routes.XmlAdmin.changeExState(id)
 
-  override def editExerciseFormRoute(id: Int) = editExerciseForm(id)
+  override def editExerciseFormRoute(id: Int): Call = controllers.xml.routes.XmlAdmin.editExerciseForm(id)
 
-  override def editExerciseRoute(id: Int) = editExercise(id)
+  override def editExerciseRoute(id: Int): Call = controllers.xml.routes.XmlAdmin.editExercise(id)
 
-  override def deleteExerciseRoute(id: Int) = deleteExercise(id)
+  override def deleteExerciseRoute(id: Int): Call = controllers.xml.routes.XmlAdmin.deleteExercise(id)
 
 }

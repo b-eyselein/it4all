@@ -1,15 +1,18 @@
 package controllers.core
 
 import javax.inject.Inject
-import play.data.FormFactory
+
 import model.tools.RandomExToolObject
-import play.twirl.api.Html
-import play.mvc.Results
 import model.user.User
+import play.api.Configuration
+import play.data.FormFactory
+import play.mvc.Results
+import play.twirl.api.Html
 
-abstract class ARandomExController @Inject() (f: FormFactory, toolObject: RandomExToolObject) extends BaseController(f) {
+abstract class ARandomExController @Inject()(c: Configuration, f: FormFactory, toolObject: RandomExToolObject)
+  extends BaseController(c, f) {
 
-  def index() = Results.ok(renderIndex(BaseController.getUser))
+  def index = Results.ok(renderIndex(getUser))
 
   def renderIndex(user: User): Html
 

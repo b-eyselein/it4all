@@ -1,36 +1,36 @@
 package controllers.core
 
 import java.io.IOException
-import java.nio.file.{ Files, Path }
-
-import scala.util.{ Failure, Success, Try }
+import java.nio.file.{Files, Path}
 
 import io.ebean.Finder
 import model.exercise.Exercise
-import model.logging.{ ExerciseCompletionEvent, ExerciseCorrectionEvent, ExerciseStartEvent }
-import model.result.{ CompleteResult, EvaluationResult }
+import model.logging.{ExerciseCompletionEvent, ExerciseCorrectionEvent, ExerciseStartEvent}
+import model.result.{CompleteResult, EvaluationResult}
 import model.tools.IdExToolObject
 import model.user.User
 import play.Logger
-import play.data.{ DynamicForm, FormFactory }
+import play.api.Configuration
+import play.data.{DynamicForm, FormFactory}
 import play.libs.Json
-import play.mvc.{ Controller, Results }
+import play.mvc.{Controller, Results}
 import play.twirl.api.Html
 
-abstract class IdExController[E <: Exercise, R <: EvaluationResult](
-  f: FormFactory, val exType: String, val finder: Finder[Integer, E], val toolObject: IdExToolObject
-)
-  extends BaseController(f) {
+import scala.util.{Failure, Success, Try}
+
+abstract class IdExController[E <: Exercise, R <: EvaluationResult]
+(c: Configuration, f: FormFactory, val exType: String, val finder: Finder[Integer, E], val toolObject: IdExToolObject)
+  extends BaseController(c, f) {
 
   val STEP = 10
 
   def getExType = exType
 
   def correct(id: Int) = {
-    val user = BaseController.getUser
+    val user = getUser
     correctEx(factory.form().bindFromRequest(), finder.byId(id), user) match {
       case Success(correctionResult) =>
-        BaseController.log(user, new ExerciseCompletionEvent(Controller.request, id, correctionResult))
+        log(user, new ExerciseCompletionEvent(Controller.request, id, correctionResult))
 
         Results.ok(renderCorrectionResult(user, correctionResult))
       case Failure(error) =>
@@ -40,10 +40,10 @@ abstract class IdExController[E <: Exercise, R <: EvaluationResult](
   }
 
   def correctLive(id: Int) = {
-    val user = BaseController.getUser
+    val user = getUser
     correctEx(factory.form().bindFromRequest(), finder.byId(id), user) match {
       case Success(correctionResult) =>
-        BaseController.log(user, new ExerciseCorrectionEvent(Controller.request, id, correctionResult))
+        log(user, new ExerciseCorrectionEvent(Controller.request, id, correctionResult))
 
         Results.ok(renderResult(correctionResult))
       case Failure(error) =>
@@ -52,10 +52,10 @@ abstract class IdExController[E <: Exercise, R <: EvaluationResult](
   }
 
   def exercise(id: Int) = {
-    val user = BaseController.getUser
+    val user = getUser
     finder.byId(id) match {
       case exercise if exercise != null =>
-        BaseController.log(user, new ExerciseStartEvent(Controller.request(), id))
+        log(user, new ExerciseStartEvent(Controller.request(), id))
 
         Results.ok(renderExercise(user, exercise))
       case _ => Results.redirect(controllers.routes.Application.index())
@@ -66,12 +66,12 @@ abstract class IdExController[E <: Exercise, R <: EvaluationResult](
     val allExes = finder.all()
     val exes = allExes.subList(Math.max(0, (page - 1) * STEP), Math.min(page * STEP, allExes.size()))
     Results.ok(
-      views.html.exesList.render(BaseController.getUser, exes, renderExesListRest, toolObject, allExes.size() / STEP + 1)
+      views.html.exesList.render(getUser, exes, renderExesListRest, toolObject, allExes.size() / STEP + 1)
     )
   }
 
   def checkAndCreateSolDir(username: String, exercise: E): Path = {
-    val dir = BaseController.getSolDirForExercise(username, exType.toLowerCase, exercise)
+    val dir = getSolDirForExercise(username, exType.toLowerCase, exercise)
 
     dir.toFile.exists match {
       case true => dir
@@ -88,11 +88,11 @@ abstract class IdExController[E <: Exercise, R <: EvaluationResult](
 
   def correctEx(form: DynamicForm, exercise: E, user: User): Try[CompleteResult[R]]
 
-  def getSampleDir = BaseController.getSampleDir(toolObject.exType)
+  def getSampleDir: Path = getSampleDir(toolObject.exType)
 
   def renderCorrectionResult(user: User, correctionResult: CompleteResult[R]) =
     views.html.correction.render(exType.toUpperCase, correctionResult, renderResult(correctionResult),
-                                 user, controllers.routes.Application.index())
+      user, controllers.routes.Application.index())
 
   def renderExercise(user: User, exercise: E): Html
 

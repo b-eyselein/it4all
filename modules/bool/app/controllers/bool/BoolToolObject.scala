@@ -1,13 +1,14 @@
 package controllers.bool
 
-import model.tools.RandomExToolObject
-import model.tools.ToolState
+import model.tools.{RandomExToolObject, ToolState}
+import play.api.Configuration
+import play.mvc.Call
 
-object BoolToolObject extends RandomExToolObject("Boolesche Algebra", ToolState.LIVE) {
+class BoolToolObject(c: Configuration) extends RandomExToolObject(c, "bool", "Boolesche Algebra", ToolState.LIVE) {
 
   // User
 
-  override def indexCall = controllers.bool.routes.BoolController.index()
+  override def indexCall: Call = controllers.bool.routes.BoolController.index()
 
   //  override def exerciseRoute(id: Int) = exercise(id)
   //

@@ -1,25 +1,29 @@
 package controllers.bool
 
-import controllers.core.{ ARandomExController, BaseController }
 import javax.inject.Inject
-import model.{ Assignment, BooleanQuestion, BooleanQuestionResult, CorrectionException, CreationQuestion, FilloutQuestion, ScalaNodeParser }
-import model.StringConsts.{ FORM_VALUE, VARS_NAME }
-import model.Variable
+
+import controllers.core.ARandomExController
+import model.StringConsts.{FORM_VALUE, VARS_NAME}
+import model._
 import model.result.SuccessType
 import model.user.User
+import play.api.Configuration
 import play.data.FormFactory
-import play.mvc.Results.{ badRequest, ok }
+import play.mvc.Result
+import play.mvc.Results.{badRequest, ok}
 import play.mvc.Security.Authenticated
+import play.twirl.api.Html
 
 @Authenticated(classOf[model.Secured])
-class BoolController @Inject() (f: FormFactory) extends ARandomExController(f, BoolToolObject) {
+class BoolController @Inject()(c: Configuration, f: FormFactory) extends ARandomExController(c, f, BoolToolObject) {
 
   val ONE = "1"
-  val SOL_VAR = BooleanQuestion.SOLUTION_VARIABLE
-  val LEA_VAR = BooleanQuestion.LEARNER_VARIABLE
+  val SOL_VAR: Variable = BooleanQuestion.SOLUTION_VARIABLE
+  val LEA_VAR: Variable = BooleanQuestion.LEARNER_VARIABLE
 
-  def checkBoolCreationSolution() = //Controller.request().body.asFormUrlEncoded match {
+  def checkBoolCreationSolution(): Result = //Controller.request().body.asFormUrlEncoded match {
     badRequest("TODO!")
+
   //    case Some(data) =>
   //      try {
   //        var result = checkCreationSolution(data)
@@ -29,8 +33,9 @@ class BoolController @Inject() (f: FormFactory) extends ARandomExController(f, B
   //      }
   //  }
 
-  def checkBoolCreationSolutionLive() = //Controller.request.body.asFormUrlEncoded match {
+  def checkBoolCreationSolutionLive(): Result = //Controller.request.body.asFormUrlEncoded match {
     badRequest("TODO!")
+
   //    case Some(data) =>
   //      try {
   //        var result = checkCreationSolution(data)
@@ -50,7 +55,7 @@ class BoolController @Inject() (f: FormFactory) extends ARandomExController(f, B
 
         // Check that formula only contains variables found in form
         val wrongVars = formula.usedVariables.filter(!variables.contains(_))
-        if (!wrongVars.isEmpty)
+        if (wrongVars.nonEmpty)
           throw new CorrectionException(learnerSolution, s"In ihrer Loesung wurde(n) die folgende(n) falsche(n) Variable(n) benutzt: '${wrongVars.mkString(", ")}'")
 
         val assignments = Assignment
@@ -62,8 +67,9 @@ class BoolController @Inject() (f: FormFactory) extends ARandomExController(f, B
     }
   }
 
-  def checkBoolFilloutSolution() = //Controller.request.body.asFormUrlEncoded match {
+  def checkBoolFilloutSolution: Result = //Controller.request.body.asFormUrlEncoded match {
     badRequest("")
+
   //    case Some(data) =>
   //      val formulaOptional = ScalaNodeParser.parse(data(StringConsts.FORM_VALUE).mkString(""))
   //
@@ -80,10 +86,10 @@ class BoolController @Inject() (f: FormFactory) extends ARandomExController(f, B
   //      ok(views.html.boolfilloutsolution.render(BaseController.getUser(), question))
   //  }
 
-  override def renderIndex(user: User) = views.html.booloverview.render(user)
+  override def renderIndex(user: User): Html = views.html.booloverview.render(user)
 
-  def newBoolCreationQuestion() = ok(views.html.boolcreatequestion.render(BaseController.getUser, CreationQuestion.generateNew()))
+  def newBoolCreationQuestion: Result = ok(views.html.boolcreatequestion.render(getUser, CreationQuestion.generateNew))
 
-  def newBoolFilloutQuestion() = ok(views.html.boolfilloutquestion.render(BaseController.getUser, FilloutQuestion.generateNew()))
+  def newBoolFilloutQuestion: Result = ok(views.html.boolfilloutquestion.render(getUser, FilloutQuestion.generateNew))
 
 }

@@ -1,23 +1,22 @@
 package controllers.mindmap;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import javax.inject.Inject;
-
 import controllers.core.BaseController;
 import model.Secured;
 import model.mindmap.Evaluation;
 import model.mindmap.Validation;
 import model.mindmap.evaluation.ParsingException;
 import model.mindmap.evaluation.enums.EvalParserType;
+import play.api.Configuration;
 import play.data.FormFactory;
 import play.mvc.Result;
 import play.mvc.Security;
 
-@Security.Authenticated(Secured.class)
-public class MindmapController extends BaseController {
+import javax.inject.Inject;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+@Security.Authenticated(Secured.class) public class MindmapController extends BaseController {
 
   private static final Path BASE_PATH = Paths.get("conf", "resources", "mindmap");
 
@@ -35,9 +34,8 @@ public class MindmapController extends BaseController {
 
   private static final Path ALT_SOLUTION_PATH = Paths.get(BASE_PATH.toString(), "alt_solution.xml");
 
-  @Inject
-  public MindmapController(FormFactory theFactory) {
-    super(theFactory);
+  @Inject public MindmapController(Configuration c, FormFactory f) {
+    super(c, f);
   }
 
   public Result index() {

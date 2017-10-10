@@ -1,22 +1,21 @@
 package controllers;
 
-import javax.inject.Inject;
-
 import controllers.core.BaseController;
 import model.Secured;
 import play.Environment;
+import play.api.Configuration;
 import play.data.FormFactory;
 import play.mvc.Result;
 import play.mvc.Security;
 
-@Security.Authenticated(Secured.class)
-public class Application extends BaseController {
+import javax.inject.Inject;
+
+@Security.Authenticated(Secured.class) public class Application extends BaseController {
 
   private Environment environment;
 
-  @Inject
-  public Application(FormFactory theFactory, Environment theEnvironment) {
-    super(theFactory);
+  @Inject public Application(Configuration c, FormFactory f, Environment theEnvironment) {
+    super(c, f);
     environment = theEnvironment;
   }
 

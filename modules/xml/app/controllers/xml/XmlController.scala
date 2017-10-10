@@ -1,30 +1,30 @@
 package controllers.xml
 
-import java.nio.file.{ Files, Path, Paths, StandardCopyOption, StandardOpenOption }
-
-import scala.collection.JavaConverters.{ asScalaBufferConverter, seqAsJavaListConverter }
-import scala.util.Try
-
-import controllers.core.{ BaseController, IdExController }
+import java.nio.file._
 import javax.inject.Inject
-import model.{ StringConsts, XmlCorrector, XmlError, XmlExType, XmlExercise }
+
+import controllers.core.IdExController
 import model.CommonUtils.RicherTry
+import model._
 import model.exercise.ExerciseOptions
 import model.result.CompleteResult
 import model.user.User
-import play.data.{ DynamicForm, FormFactory }
-import play.mvc.Results
-import play.twirl.api.Html
-import play.twirl.api.HtmlFormat
+import play.api.Configuration
+import play.data.{DynamicForm, FormFactory}
+import play.mvc.{Result, Results}
+import play.twirl.api.{Html, HtmlFormat}
 
-class XmlController @Inject() (f: FormFactory)
-  extends IdExController[XmlExercise, XmlError](f, "xml", XmlExercise.finder, XmlToolObject) {
+import scala.collection.JavaConverters.{asScalaBufferConverter, seqAsJavaListConverter}
+import scala.util.Try
+
+class XmlController @Inject()(c: Configuration, f: FormFactory)
+  extends IdExController[XmlExercise, XmlError](c, f, "xml", XmlExercise.finder, new XmlToolObject(c)) {
 
   val EX_OPTIONS = ExerciseOptions("Xml", "xml", 10, 20, false)
 
   val SAVE_ERROR_MSG = "An error has occured while saving an xml file to "
 
-  override def correctEx(form: DynamicForm, exercise: XmlExercise, user: User) = {
+  override def correctEx(form: DynamicForm, exercise: XmlExercise, user: User): Try[CompleteResult[XmlError]] = {
     val learnerSolution = form.get(StringConsts.FORM_VALUE)
     val dir = checkAndCreateSolDir(user.name, exercise)
 
@@ -45,9 +45,9 @@ class XmlController @Inject() (f: FormFactory)
     })
   }
 
-  def playground = Results.ok(views.html.xmlPlayground.render(BaseController.getUser))
+  def playground: Result = Results.ok(views.html.xmlPlayground.render(getUser))
 
-  def playgroundCorrection = Results.ok(
+  def playgroundCorrection: Result = Results.ok(
     renderResult(
       new CompleteResult(
         "",
@@ -56,33 +56,35 @@ class XmlController @Inject() (f: FormFactory)
     )
   )
 
-  override def renderExercise(user: User, exercise: XmlExercise) = views.html.exercise2Rows.render(
+  override def renderExercise(user: User, exercise: XmlExercise): Html = views.html.exercise2Rows.render(
     user, toolObject, EX_OPTIONS, exercise, renderExRest(exercise), readDefOrOldSolution(user.name, exercise)
   )
 
-  def renderExRest(exercise: XmlExercise) = new Html(s"""<section id="refFileSection">
-  <pre>${HtmlFormat.escape(XmlController.getReferenceCode(exercise))}</pre>
+  def renderExRest(exercise: XmlExercise) = new Html(
+    s"""<section id="refFileSection">
+  <pre>${HtmlFormat.escape(getReferenceCode(exercise))}</pre>
 </section>
 """)
 
-  override def renderExesListRest = new Html(s"""<div class="panel panel-default">
-  <a class="btn btn-primary btn-block" href="${controllers.xml.routes.XmlController.playground}">Xml-Playground</a>
+  override def renderExesListRest = new Html(
+    s"""<div class="panel panel-default">
+  <a class="btn btn-primary btn-block" href="${controllers.xml.routes.XmlController.playground()}">Xml-Playground</a>
 </div>
 
 <hr>""")
 
-  override def renderResult(completeResult: CompleteResult[XmlError]) = completeResult.results.asScala.toList match {
+  override def renderResult(completeResult: CompleteResult[XmlError]): Html = completeResult.results.asScala.toList match {
     case Nil => new Html("""<div class="alert alert-success">Es wurden keine Fehler gefunden.</div>""")
-    case results => new Html(results.map(res => s"""
+    case results => new Html(results.map(res =>
+      s"""
 <div class="panel panel-${res.getBSClass}">
   <div class="panel-heading">${res.title} ${res.lineStr}</div>
   <div class="panel-body">${res.errorMessage}</div>
 </div>""").mkString("\n"))
   }
 
-  def readDefOrOldSolution(username: String, exercise: XmlExercise) = Try(
-    Files.readAllLines(
-      BaseController.getSolFileForExercise(username, exType, exercise, exercise.rootNode, exercise.getStudentFileEnding)
+  def readDefOrOldSolution(username: String, exercise: XmlExercise): String = Try(
+    Files.readAllLines(toolObject.getSolFileForExercise(username, exType, exercise, exercise.rootNode, exercise.getStudentFileEnding)
     ).asScala.mkString("\n")
   ).getOrElse(exercise.getFixedStart)
 
@@ -102,20 +104,21 @@ class XmlController @Inject() (f: FormFactory)
     )
   )
 
+
+  def getReferenceCode(exercise: XmlExercise): String = {
+    val referenceFilePath = Paths.get(toolObject.sampleDir.toString, exercise.rootNode + "." + exercise.getReferenceFileEnding)
+    Try(Files.readAllLines(referenceFilePath).asScala.mkString("\n")).getOrElse("FEHLER!")
+  }
+
 }
 
 object XmlController {
 
-  val STANDARD_XML_PLAYGROUND = """<?xml version="1.0" encoding="utf-8"?>
+  val STANDARD_XML_PLAYGROUND =
+    """<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE root [
 
 ]>"""
 
-  def getReferenceCode(exercise: XmlExercise) = {
-    val referenceFilePath = Paths.get(
-      BaseController.getSampleDir("xml").toString, exercise.rootNode + "." + exercise.getReferenceFileEnding
-    )
-    Try(Files.readAllLines(referenceFilePath).asScala.mkString("\n")).getOrElse("FEHLER!")
-  }
 
 }

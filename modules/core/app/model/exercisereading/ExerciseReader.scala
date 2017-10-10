@@ -1,23 +1,22 @@
 package model.exercisereading
 
-import java.nio.file.{ Files, Paths, StandardCopyOption }
+import java.nio.file.{Files, Paths, StandardCopyOption}
 import java.util.Optional
 
-import scala.collection.JavaConverters.{ asScalaBufferConverter, asScalaIteratorConverter, seqAsJavaListConverter }
+import scala.collection.JavaConverters.{asScalaBufferConverter, asScalaIteratorConverter, seqAsJavaListConverter}
 import scala.util.Try
 
 import com.fasterxml.jackson.databind.JsonNode
 
 import io.ebean.Finder
 import model.JsonReadable
-import model.StringConsts.{ AUTHOR_NAME, STATE_NAME, TEXT_NAME, TITLE_NAME }
-import model.exercise.{ Exercise, ExerciseState }
+import model.StringConsts.{AUTHOR_NAME, STATE_NAME, TEXT_NAME, TITLE_NAME}
+import model.exercise.{Exercise, ExerciseState}
 import play.data.DynamicForm
 
 abstract class ExerciseReader[E <: Exercise](e: String, f: Finder[Integer, E], classFor: Class[_])
   extends JsonReader[E](e, f, classFor) {
 
-  val baseTargetDir = Paths.get("/data", "samples", exerciseType)
 
   def getOrInstantiateExercise(id: Int) = Optional.ofNullable(finder.byId(id)).orElse(instantiate(id))
 
@@ -47,7 +46,7 @@ abstract class ExerciseReader[E <: Exercise](e: String, f: Finder[Integer, E], c
   }
 
   def checkOrCreateSampleFile(exercise: Exercise, filename: String) = {
-    val providedFile = Paths.get("conf", "resources", exerciseType, filename).toAbsolutePath
+    val providedFile = Paths.get(resourcesFolder.toString, filename).toAbsolutePath
     val targetPath = Paths.get(baseTargetDir.toString, filename).toAbsolutePath
 
     Try(Files.createDirectories(baseTargetDir))
@@ -55,6 +54,7 @@ abstract class ExerciseReader[E <: Exercise](e: String, f: Finder[Integer, E], c
   }
 
   def updateExercise(exercise: E, exerciseNode: JsonNode)
+
 
 }
 

@@ -21,6 +21,7 @@ import model.testdata.CommitedTestData;
 import model.testdata.CommitedTestDataKey;
 import model.testdata.ITestData;
 import model.user.User;
+import play.api.Configuration;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
@@ -34,13 +35,12 @@ public class ProgController extends IdExController<ProgExercise, ProgEvaluationR
 
   public static final int STD_TEST_DATA_COUNT = 2;
 
-  @Inject
-  public ProgController(FormFactory theFactory) {
-    super(theFactory, "prog", ProgExercise.finder, ProgToolObject$.MODULE$);
+  @Inject public ProgController(Configuration c, FormFactory f) {
+    super(c, f, "prog", ProgExercise.finder, ProgToolObject$.MODULE$);
   }
 
-  public static User getUser() {
-    final User user = IdExController.getUser();
+  @Override public User getUser() {
+    final User user = super.getUser();
 
     if(ProgUser.finder.byId(user.name) == null)
       // Make sure there is a corresponding entrance in other db...
@@ -85,9 +85,8 @@ public class ProgController extends IdExController<ProgExercise, ProgEvaluationR
     return testdata;
   }
 
-  @Override
-  public scala.util.Try<CompleteResult<ProgEvaluationResult>> correctEx(DynamicForm form, ProgExercise exercise,
-      User user) {
+  @Override public scala.util.Try<CompleteResult<ProgEvaluationResult>> correctEx(DynamicForm form,
+      ProgExercise exercise, User user) {
     // TODO Auto-generated method stub
     return null;
   }
@@ -96,14 +95,13 @@ public class ProgController extends IdExController<ProgExercise, ProgEvaluationR
     return ok(AvailableLanguages.valueOf(lang).getDeclaration());
   }
 
-  @Override
-  public Html renderExercise(User user, ProgExercise exercise) {
-    return views.html.exercise2Rows.render(user, toolObject(), EX_OPTIONS, exercise,
-        views.html.progExRest.render(exercise), AvailableLanguages.getStdLang().getDeclaration());
+  @Override public Html renderExercise(User user, ProgExercise exercise) {
+    return views.html.exercise2Rows
+        .render(user, toolObject(), EX_OPTIONS, exercise, views.html.progExRest.render(exercise),
+            AvailableLanguages.getStdLang().getDeclaration());
   }
 
-  @Override
-  public Html renderExesListRest() {
+  @Override public Html renderExesListRest() {
     // TODO Auto-generated method stub
     return new Html("");
   }
@@ -132,8 +130,7 @@ public class ProgController extends IdExController<ProgExercise, ProgEvaluationR
   // }
   // }
 
-  @Override
-  public Html renderResult(CompleteResult<ProgEvaluationResult> correctionResult) {
+  @Override public Html renderResult(CompleteResult<ProgEvaluationResult> correctionResult) {
     // TODO Auto-generated method stub
     return null;
   }
@@ -156,7 +153,8 @@ public class ProgController extends IdExController<ProgExercise, ProgEvaluationR
     final List<CommitedTestData> testData = extractTestData(form, user.name, exercise);
     testData.forEach(CommitedTestData::save);
 
-    final List<ProgEvaluationResult> validatedTestData = Collections.emptyList(); // getCorrector(language).validateTestData(exercise,
+    final List<ProgEvaluationResult> validatedTestData = Collections
+        .emptyList(); // getCorrector(language).validateTestData(exercise,
     // testData);
 
     return ok(views.html.validatedTestData.render(user, exercise, validatedTestData));
@@ -171,7 +169,8 @@ public class ProgController extends IdExController<ProgExercise, ProgEvaluationR
     // final List<CommitedTestData> testData = extractTestData(form,
     // getUser().name, exercise);
 
-    final List<ProgEvaluationResult> validatedTestData = Collections.emptyList(); // getCorrector(language).validateTestData(exercise,
+    final List<ProgEvaluationResult> validatedTestData = Collections
+        .emptyList(); // getCorrector(language).validateTestData(exercise,
     // testData);
 
     return ok(Json.toJson(validatedTestData));

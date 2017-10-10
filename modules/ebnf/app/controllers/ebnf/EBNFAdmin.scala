@@ -1,21 +1,20 @@
-package controllers.ebnf;
+package controllers.ebnf
 
-import controllers.core.AExerciseAdminController
-import controllers.core.BaseController
-import javax.persistence.Entity
-import model.ebnf.EBNFExercise
-import model.ebnf.EBNFExerciseReader
-import model.user.User
-import play.data.FormFactory
-import play.mvc.Results
 import javax.inject.Inject
 
-class EBNFAdmin @Inject() (factory: FormFactory)
-  extends AExerciseAdminController[EBNFExercise](factory, EBNFToolObject, EBNFExercise.finder, EBNFExerciseReader) {
+import controllers.core.AExerciseAdminController
+import model.ebnf.{EBNFExercise, EBNFExerciseReader}
+import model.user.User
+import play.api.Configuration
+import play.data.FormFactory
+import play.twirl.api.Html
 
-  override def renderAdminIndex(user: User) = views.html.ebnfAdmin.index.render(user)
+class EBNFAdmin @Inject()(c: Configuration, f: FormFactory)
+  extends AExerciseAdminController[EBNFExercise](c, f, new EBNFToolObject(c), EBNFExercise.finder, EBNFExerciseReader) {
 
-  override def renderExEditForm(user: User, exercise: EBNFExercise, isCreation: Boolean) =
-    views.html.ebnfAdmin.newExForm.render(BaseController.getUser, exercise)
+  override def renderAdminIndex(user: User): Html = views.html.ebnfAdmin.index.render(user)
+
+  override def renderExEditForm(user: User, exercise: EBNFExercise, isCreation: Boolean): Html =
+    views.html.ebnfAdmin.newExForm.render(getUser, exercise)
 
 }

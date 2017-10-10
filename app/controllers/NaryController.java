@@ -1,29 +1,22 @@
 package controllers;
 
-import java.util.Random;
-
-import javax.inject.Inject;
-
 import controllers.core.ARandomExController;
-import model.nary.NAryAddResult;
-import model.nary.NAryConvResult;
-import model.nary.NAryNumber;
-import model.nary.NumberBase;
-import model.nary.NumberBase$;
-import model.nary.TwoCompResult;
-import model.nary.TwoCompResult$;
+import model.nary.*;
 import model.user.User;
+import play.api.Configuration;
 import play.data.FormFactory;
 import play.mvc.Result;
 import play.twirl.api.Html;
+
+import javax.inject.Inject;
+import java.util.Random;
 
 public class NaryController extends ARandomExController {
 
   private static final Random GENERATOR = new Random();
 
-  @Inject
-  public NaryController(FormFactory theFactory) {
-    super(theFactory, NAryToolObject$.MODULE$);
+  @Inject public NaryController(Configuration c, FormFactory f) {
+    super(c, f, NAryToolObject$.MODULE$);
   }
 
   public Result checkNaryAdditionSolution() {

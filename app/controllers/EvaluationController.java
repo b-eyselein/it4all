@@ -1,11 +1,5 @@
 package controllers;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
 import controllers.core.BaseController;
 import model.Secured;
 import model.feedback.EvaluatedAspect;
@@ -14,17 +8,21 @@ import model.feedback.Feedback.EvaluatedTool;
 import model.feedback.FeedbackKey;
 import model.feedback.Mark;
 import model.user.User;
+import play.api.Configuration;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.mvc.Result;
 import play.mvc.Security.Authenticated;
 
-@Authenticated(Secured.class)
-public class EvaluationController extends BaseController {
+import javax.inject.Inject;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
-  @Inject
-  public EvaluationController(FormFactory theFactory) {
-    super(theFactory);
+@Authenticated(Secured.class) public class EvaluationController extends BaseController {
+
+  @Inject public EvaluationController(Configuration c, FormFactory f) {
+    super(c, f);
   }
 
   public Result index() {
@@ -48,7 +46,7 @@ public class EvaluationController extends BaseController {
     List<Feedback> evaluation = Arrays.stream(EvaluatedTool.values()).map(tool -> readFeedback(user, form, tool))
         .collect(Collectors.toList());
 
-    for(Feedback f: evaluation)
+    for(Feedback f : evaluation)
       f.save();
 
     return ok(views.html.evaluation.submit.render(user, evaluation));
@@ -62,9 +60,9 @@ public class EvaluationController extends BaseController {
 
     String evaluatedTool = tool.toString().toLowerCase();
 
-    for(EvaluatedAspect evaledAspect: EvaluatedAspect.values()) {
-      feedback.set(evaledAspect, Mark
-          .valueOf(form.get(evaledAspect.toString().toLowerCase() + "-" + evaluatedTool.toLowerCase()).toUpperCase()));
+    for(EvaluatedAspect evaledAspect : EvaluatedAspect.values()) {
+      feedback.set(evaledAspect, Mark.valueOf(
+          form.get(evaledAspect.toString().toLowerCase() + "-" + evaluatedTool.toLowerCase()).toUpperCase()));
     }
 
     feedback.comment = form.get("comment-" + evaluatedTool);

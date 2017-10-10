@@ -1,54 +1,52 @@
 package controllers.uml
 
-import controllers.uml.routes.UmlAdmin._
-import controllers.uml.routes.UmlController._
-
-import model.tools.{ToolState, IdExToolObject}
 import model.UmlExPart
+import model.tools.{IdExToolObject, ToolState}
+import play.api.Configuration
+import play.api.mvc.Call
 
-object UmlToolObject extends IdExToolObject("Uml", ToolState.LIVE) {
+class UmlToolObject(c: Configuration) extends IdExToolObject(c, "uml", "Uml", ToolState.LIVE) {
 
   // User
 
-  override def indexCall = index()
+  override def indexCall: Call = controllers.uml.routes.UmlController.index()
 
-  override def exerciseRoute(id: Int) = ???
+  override def exerciseRoute(id: Int): Call = ???
 
-  override def exerciseRoutes(id: Int) =
-    List(
-      (exercise(id, UmlExPart.CLASS_SELECTION.toString), "Mit Zwischenkorrektur"),
-      (exercise(id, UmlExPart.DIAG_DRAWING.toString), "Freies Erstellen"))
+  override def exerciseRoutes(id: Int) = List(
+    (controllers.uml.routes.UmlController.exercise(id, UmlExPart.CLASS_SELECTION.toString), "Mit Zwischenkorrektur"),
+    (controllers.uml.routes.UmlController.exercise(id, UmlExPart.DIAG_DRAWING.toString), "Freies Erstellen"))
 
-  override def exesListRoute(id: Int) = exesListRoute(id)
+  override def exesListRoute(id: Int): Call = ???
 
-  override def correctLiveRoute(id: Int) = ???
+  override def correctLiveRoute(id: Int): Call = ???
 
-  override def correctRoute(id: Int) = ???
+  override def correctRoute(id: Int): Call = ???
 
   // Admin
 
-  val restHeaders = List.empty
+  val restHeaders: List[String] = List.empty
 
-  override def adminIndexRoute = adminIndex
+  override def adminIndexRoute: Call = controllers.uml.routes.UmlAdmin.adminIndex()
 
-  override def exercisesRoute = exercises
+  override def exercisesRoute: Call = controllers.uml.routes.UmlAdmin.exercises()
 
-  override def newExFormRoute = newExerciseForm
+  override def newExFormRoute: Call = controllers.uml.routes.UmlAdmin.newExerciseForm()
 
-  override def exportExesRoute = exportExercises
+  override def exportExesRoute: Call = controllers.uml.routes.UmlAdmin.exportExercises()
 
-  override def importExesRoute = importExercises
+  override def importExesRoute: Call = controllers.uml.routes.UmlAdmin.importExercises()
 
-  override def jsonSchemaRoute = getJSONSchemaFile
+  override def jsonSchemaRoute: Call = controllers.uml.routes.UmlAdmin.getJSONSchemaFile()
 
-  override def uploadFileRoute = uploadFile
+  override def uploadFileRoute: Call = controllers.uml.routes.UmlAdmin.uploadFile()
 
-  override def changeExStateRoute(id: Int) = changeExState(id)
+  override def changeExStateRoute(id: Int): Call = controllers.uml.routes.UmlAdmin.changeExState(id)
 
-  override def editExerciseFormRoute(id: Int) = editExerciseForm(id)
+  override def editExerciseFormRoute(id: Int): Call = controllers.uml.routes.UmlAdmin.editExerciseForm(id)
 
-  override def editExerciseRoute(id: Int) = editExercise(id)
+  override def editExerciseRoute(id: Int): Call = controllers.uml.routes.UmlAdmin.editExercise(id)
 
-  override def deleteExerciseRoute(id: Int) = deleteExercise(id)
+  override def deleteExerciseRoute(id: Int): Call = controllers.uml.routes.UmlAdmin.deleteExercise(id)
 
 }

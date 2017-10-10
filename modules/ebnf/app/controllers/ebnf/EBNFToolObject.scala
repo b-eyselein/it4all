@@ -1,50 +1,47 @@
 package controllers.ebnf
 
-import controllers.ebnf.routes.EBNFAdmin._
-import controllers.ebnf.routes.EBNFController._
-import model.tools.IdExToolObject
-import model.tools.ToolState
+import model.tools.{IdExToolObject, ToolState}
+import play.api.Configuration
+import play.mvc.Call
 
-object EBNFToolObject extends IdExToolObject("EBNF", ToolState.ALPHA) {
+class EBNFToolObject(c: Configuration) extends IdExToolObject(c, "ebnf", "Ebnf", ToolState.ALPHA) {
 
   // User
-  
-  override def indexCall = index()
 
-  override def exerciseRoute(id: Int) = exercise(id)
-  
-  
-  
-  override def exesListRoute(id: Int) = exesListRoute(id)
+  override def indexCall: Call = controllers.ebnf.routes.EBNFController.index()
 
-  override def correctLiveRoute(id: Int) = null
+  override def exerciseRoute(id: Int): Call = controllers.ebnf.routes.EBNFController.exercise(id)
 
-  override def correctRoute(id: Int) = null
+  override def exesListRoute(id: Int): Call = ??? // controllers.ebnf.routes.EBNFController.exesListRoute(id)
+
+  override def correctLiveRoute(id: Int): Call = ???
+
+  override def correctRoute(id: Int): Call = ???
 
   // Admin
 
-  val restHeaders = List("Terminalsymbole")
-  
-  override def adminIndexRoute = adminIndex
+  val restHeaders: List[String] = List("Terminalsymbole")
 
-  override def exercisesRoute = exercises
+  override def adminIndexRoute: Call = controllers.ebnf.routes.EBNFAdmin.adminIndex()
 
-  override def newExFormRoute = newExerciseForm
+  override def exercisesRoute: Call = controllers.ebnf.routes.EBNFAdmin.exercises()
 
-  override def exportExesRoute = exportExercises
+  override def newExFormRoute: Call = controllers.ebnf.routes.EBNFAdmin.newExerciseForm()
 
-  override def importExesRoute = importExercises
+  override def exportExesRoute: Call = controllers.ebnf.routes.EBNFAdmin.exportExercises()
 
-  override def jsonSchemaRoute = getJSONSchemaFile
+  override def importExesRoute: Call = controllers.ebnf.routes.EBNFAdmin.importExercises()
 
-  override def uploadFileRoute = uploadFile
+  override def jsonSchemaRoute: Call = controllers.ebnf.routes.EBNFAdmin.getJSONSchemaFile()
 
-  override def changeExStateRoute(id: Int) = changeExState(id)
+  override def uploadFileRoute: Call = controllers.ebnf.routes.EBNFAdmin.uploadFile()
 
-  override def editExerciseFormRoute(id: Int) = editExerciseForm(id)
+  override def changeExStateRoute(id: Int): Call = controllers.ebnf.routes.EBNFAdmin.changeExState(id)
 
-  override def editExerciseRoute(id: Int) = editExercise(id)
+  override def editExerciseFormRoute(id: Int): Call = controllers.ebnf.routes.EBNFAdmin.editExerciseForm(id)
 
-  override def deleteExerciseRoute(id: Int) = deleteExercise(id)
+  override def editExerciseRoute(id: Int): Call = controllers.ebnf.routes.EBNFAdmin.editExercise(id)
+
+  override def deleteExerciseRoute(id: Int): Call = controllers.ebnf.routes.EBNFAdmin.deleteExercise(id)
 
 }
