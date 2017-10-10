@@ -12,8 +12,6 @@ import play.twirl.api.Html
 class EBNFAdmin @Inject()(c: Configuration, f: FormFactory)
   extends AExerciseAdminController[EBNFExercise](c, f, new EBNFToolObject(c), EBNFExercise.finder, EBNFExerciseReader) {
 
-  override def renderAdminIndex(user: User): Html = views.html.ebnfAdmin.index.render(user)
-
   override def renderExEditForm(user: User, exercise: EBNFExercise, isCreation: Boolean): Html =
     views.html.ebnfAdmin.newExForm.render(getUser, exercise)
 

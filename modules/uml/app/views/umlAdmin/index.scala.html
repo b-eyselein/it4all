@@ -1,7 +1,0 @@
-@(user: model.user.User)
-
-@statistics = {
-<li>Es gibt insgesamt @model.UmlExercise.finder.all.size Aufgaben</li>
-}
-
-@admin.exerciseAdminMain(user, statistics, controllers.uml.UmlToolObject) { }

@@ -12,8 +12,6 @@ import play.twirl.api.Html
 class SpreadAdmin @Inject()(c: Configuration, f: FormFactory)
   extends AExerciseAdminController[SpreadExercise](c, f, new SpreadToolObject(c), SpreadExercise.finder, SpreadExerciseReader) {
 
-  override def renderAdminIndex(user: User): Html = views.html.spreadAdmin.index.render(user)
+  override def renderExEditForm(user: User, exercise: SpreadExercise, isCreation: Boolean): Html = ??? // FIXME: implement...
 
-  override def renderExEditForm(user: User, exercise: SpreadExercise, isCreation: Boolean): Html = // FIXME: implement...
-    ???
 }

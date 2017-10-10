@@ -22,8 +22,9 @@ import scala.collection.JavaConverters.{asScalaBufferConverter, seqAsJavaListCon
 import scala.collection.mutable.ListBuffer
 import scala.util.{Failure, Success, Try}
 
-class SqlController @Inject()(c: Configuration, f: FormFactory, @NamedDatabase("sqlselectroot") sqlSelect: Database, @NamedDatabase("sqlotherroot") sqlOther: Database)
-  extends IdExController[SqlExercise, EvaluationResult](c, f, "sql", SqlExercise.finder, SqlToolObject) {
+class SqlController @Inject()
+(c: Configuration, f: FormFactory, @NamedDatabase("sqlselectroot") sqlSelect: Database, @NamedDatabase("sqlotherroot") sqlOther: Database)
+  extends IdExController[SqlExercise, EvaluationResult](c, f, SqlExercise.finder, new SqlToolObject(c)) {
 
   override def getUser: User = {
     val user = super.getUser
@@ -44,7 +45,7 @@ class SqlController @Inject()(c: Configuration, f: FormFactory, @NamedDatabase("
     val exerciseType = SqlExerciseType.valueOf(exType)
 
     if (site <= 0)
-      Results.redirect(controllers.sql.routes.SqlController.filteredScenario(id, exType, 1))
+      Results.redirect(controllers.sql.routes.SqlController.filteredScenario(id, exType))
 
     val start = SqlScenario.STEP * (site - 1)
 
@@ -62,7 +63,7 @@ class SqlController @Inject()(c: Configuration, f: FormFactory, @NamedDatabase("
 
   override def correctEx(form: DynamicForm, exercise: SqlExercise, user: User): Try[SqlResult] = {
     val learnerSolution = form.get(StringConsts.FORM_VALUE)
-    SqlController.saveSolution(user.name, learnerSolution, exercise.getId())
+    SqlController.saveSolution(user.name, learnerSolution, exercise.id)
 
     val sample = SqlController.findBestFittingSample(learnerSolution, exercise.samples.asScala.toList)
 
@@ -75,7 +76,7 @@ class SqlController @Inject()(c: Configuration, f: FormFactory, @NamedDatabase("
   override def renderExercise(user: User, exercise: SqlExercise): Html = {
     val tables = SqlController.readTablesInDatabase(sqlSelect, exercise.scenario.shortName)
 
-    val oldSol = SqlSolution.finder.byId(new SqlSolutionKey(user.name, exercise.getId()))
+    val oldSol = SqlSolution.finder.byId(new SqlSolutionKey(user.name, exercise.id))
     val oldOrDefSol = if (oldSol == null) "" else oldSol.sol
 
     views.html.sqlExercise.render(user, exercise, oldOrDefSol, tables.asJava)
@@ -84,11 +85,11 @@ class SqlController @Inject()(c: Configuration, f: FormFactory, @NamedDatabase("
   //  override def renderExercises(user: User, exercises: List[SqlExercise]) = //FIXME: implement
   //    ???
 
-  override def renderExesListRest: Html = // FIXME: implement
-    ???
+  override def renderExesListRest: Html = ??? // FIXME: implement
 
-  override def renderResult(correctionResult: CompleteResult[EvaluationResult]): Html = //FIXME: implement
-    ???
+
+  override def renderResult(correctionResult: CompleteResult[EvaluationResult]): Html = ??? //FIXME: implement
+
 
 }
 

@@ -16,8 +16,13 @@ import scala.collection.JavaConverters.seqAsJavaListConverter
 
 @Authenticated(classOf[model.AdminSecured])
 abstract class AExerciseAdminController[E <: Exercise]
-(c: Configuration, f: FormFactory, val toolObject: IdExToolObject, val finder: Finder[Integer, E], val exerciseReader: ExerciseReader[E])
-  extends BaseAdminController[E](c, f, exerciseReader) {
+(c: Configuration, f: FormFactory, t: IdExToolObject, val finder: Finder[Integer, E], val exerciseReader: ExerciseReader[E])
+  extends BaseAdminController[E](c, f, t, exerciseReader) {
+
+  override def renderAdminIndex(user: User): Html =
+    views.html.admin.exerciseAdminMain.render(user, statistics, toolObject, new Html(""))
+
+  protected def statistics = new Html(s"<li>Es existieren insgesamt ${finder.query.findCount} Aufgaben</li>")
 
   def changeExState(id: Int): Result = {
     val exercise = finder.byId(id)

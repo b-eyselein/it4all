@@ -38,8 +38,10 @@ object XmlExerciseReader extends ExerciseReader[XmlExercise]("xml", XmlExercise.
   }
 
   override def checkFiles(exercise: XmlExercise): List[Try[Path]] = {
-    val fileName = exercise.rootNode + "." + exercise.getReferenceFileEnding
-    List(checkOrCreateSampleFile(exercise, fileName))
+    //    val fileName = exercise.rootNode + "." + exercise.getReferenceFileEnding
+    //    List(checkOrCreateSampleFile(exercise, toolObject, fileName))
+    // FIXME: Files...
+    List.empty
   }
 
 }

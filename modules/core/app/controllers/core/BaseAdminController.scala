@@ -4,6 +4,7 @@ import java.io.File
 import java.nio.file.{Path, Paths}
 
 import model.exercisereading._
+import model.tools.IdExToolObject
 import model.user.User
 import model.{JsonReadable, StringConsts}
 import play.api.Configuration
@@ -15,7 +16,8 @@ import play.twirl.api.Html
 
 import scala.util.{Failure, Success, Try}
 
-abstract class BaseAdminController[E <: JsonReadable](c: Configuration, f: FormFactory, exerciseReader: JsonReader[E])
+abstract class BaseAdminController[E <: JsonReadable]
+(c: Configuration, f: FormFactory, val toolObject: IdExToolObject, exerciseReader: JsonReader[E])
   extends BaseController(c, f) {
 
   val savingDir: Path = Paths.get(rootDir, StringConsts.ADMIN_FOLDER, exerciseReader.exerciseType)

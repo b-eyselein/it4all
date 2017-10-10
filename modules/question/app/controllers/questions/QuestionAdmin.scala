@@ -13,7 +13,22 @@ import play.mvc.{Result, Results}
 import play.twirl.api.Html
 
 class QuestionAdmin @Inject()(c: Configuration, f: FormFactory)
-  extends AExerciseCollectionAdminController[Question, Quiz](c, f, Quiz.finder, new QuizReader()) {
+  extends AExerciseCollectionAdminController[Question, Quiz](c, f, new QuestionToolObject(c), Quiz.finder, new QuizReader()) {
+
+  protected def statistics: Html = new Html(
+    s"""
+<li>Es existieren insgesamt <a href="${controllers.questions.routes.QuestionAdmin.exercises()}">${Question.finder.query.findCount} Fragen</a> in allen Kategorien
+    <ul>
+    @if(!notAssignedQuestions.isEmpty) {
+    <li>Es gibt noch @notAssignedQuestions.size
+    <a href="@questions.routes.QuestionAdmin.notAssignedQuestions">nicht zugeordnete Fragen</a>.
+    Sie k&ouml;nnen Sie <a href="@questions.routes.QuestionAdmin.assignQuestionsForm">hier</a> zuweisen.
+    </li>
+    }
+    </ul>
+    </li>
+    <li>Es existieren @model.quiz.Quiz.finder.all.size <a href="@questions.routes.QuestionAdmin.exerciseCollections">Quiz(ze)</a></li>
+    """)
 
   def assignQuestion(keyAndValue: String, addOrRemove: Boolean) {
     // String[] quizAndQuestion = keyAndValue.split("_")
@@ -44,19 +59,19 @@ class QuestionAdmin @Inject()(c: Configuration, f: FormFactory)
     Results.ok("TODO!")
   }
 
-  def renderCollectionCreated(collections: java.util.List[model.quiz.Quiz], created: Boolean): play.twirl.api.Html = ???
+  def renderCollectionCreated(collections: java.util.List[model.quiz.Quiz], created: Boolean): Html = ???
 
-  def renderExCollCreationForm(user: model.user.User, collection: model.quiz.Quiz): play.twirl.api.Html = ???
+  def renderExCollCreationForm(user: model.user.User, collection: model.quiz.Quiz): Html = ???
 
-  def renderExEditForm(user: model.user.User, exercise: model.quiz.Quiz, isCreation: Boolean): play.twirl.api.Html = ???
+  def renderExEditForm(user: model.user.User, exercise: model.quiz.Quiz, isCreation: Boolean): Html = ???
 
-  def renderExerciseCollections(user: model.user.User, allCollections: java.util.List[model.quiz.Quiz]): play.twirl.api.Html = ???
+  def renderExerciseCollections(user: model.user.User, allCollections: java.util.List[model.quiz.Quiz]): Html = ???
 
   def assignQuestionsForm: Result = Results.ok(views.html.questionAdmin.assignQuestionsForm.render(
     getUser, /* Question.finder.all() */ Collections.emptyList(), Quiz.finder.all()))
 
   def assignQuestionsSingleForm(id: Int): Result = Results.ok(views.html.questionAdmin.assignQuestionsForm.render(
-    getUser, /* Question.finder.all() */ Collections.emptyList(), Arrays.asList(Quiz.finder.byId(id))))
+    getUser, /* Question.finder.all() */ Collections.emptyList(), java.util.Arrays.asList(Quiz.finder.byId(id))))
 
   //  def  exportQuizzes = {
   //    val json = Json.prettyPrint(Json.toJson(Quiz.finder.all()))

@@ -1,25 +1,27 @@
 package controllers.uml
 
-import java.nio.file.{Files, Paths}
+import java.nio.file.{Files, Path, Paths}
 import javax.inject.Inject
 
-import controllers.core.{BaseController, IdExController}
+import com.fasterxml.jackson.databind.JsonNode
+import controllers.core.IdExController
+import model._
 import model.result.CompleteResult
 import model.user.User
-import model._
 import play.api.Configuration
 import play.data.{DynamicForm, FormFactory}
 import play.libs.Json
 import play.mvc.{Result, Results}
 import play.twirl.api.Html
 
+import scala.util.Try
+
 class UmlController @Inject()(c: Configuration, f: FormFactory)
-  extends IdExController[UmlExercise, UmlResult](c, f, "uml", UmlExercise.finder, UmlToolObject
-  ) {
+  extends IdExController[UmlExercise, UmlResult](c, f, UmlExercise.finder, new UmlToolObject(c)) {
 
   val ERROR_MSG = "Es gab einen Fehler bei der Validierung des Resultats!"
 
-  def exercise(exerciseId: Int, partStr: String) = {
+  def exercise(exerciseId: Int, partStr: String): Result = {
     val user = getUser
     val exercise = finder.byId(exerciseId)
 
@@ -41,9 +43,9 @@ class UmlController @Inject()(c: Configuration, f: FormFactory)
     solOption match {
       case Some(sol) =>
         val (result, nextPart) = part match {
-          case UmlExPart.CLASS_SELECTION => (new ClassSelectionResult(exercise, sol), UmlExPart.DIAG_DRAWING_HELP)
-          case UmlExPart.DIAG_DRAWING_HELP => (new DiagramDrawingHelpResult(exercise, sol), UmlExPart.ATTRS_METHS)
-          case UmlExPart.DIAG_DRAWING => (new DiagramDrawingResult(exercise, sol), UmlExPart.FINISHED)
+          case UmlExPart.CLASS_SELECTION => (ClassSelectionResult(exercise, sol), UmlExPart.DIAG_DRAWING_HELP)
+          case UmlExPart.DIAG_DRAWING_HELP => (DiagramDrawingHelpResult(exercise, sol), UmlExPart.ATTRS_METHS)
+          case UmlExPart.DIAG_DRAWING => (DiagramDrawingResult(exercise, sol), UmlExPart.FINISHED)
           case UmlExPart.ATTRS_METHS => (null, UmlExPart.FINISHED)
           case UmlExPart.FINISHED => (null, UmlExPart.FINISHED)
         }
@@ -52,11 +54,11 @@ class UmlController @Inject()(c: Configuration, f: FormFactory)
     }
   }
 
-  override def correctEx(form: DynamicForm, exercise: UmlExercise, user: User) = //FIXME: not used...
-    ???
+  override def correctEx(form: DynamicForm, exercise: UmlExercise, user: User): Try[CompleteResult[UmlResult]] = ??? //FIXME: not used...
 
-  override def renderExercise(user: User, exercise: UmlExercise) = //FIXME
-    ???
+
+  override def renderExercise(user: User, exercise: UmlExercise): Html = ??? //FIXME
+
 
   val renderExesListRest = new Html(
     s"""
@@ -66,14 +68,14 @@ der Erstellung eines Klassendiagrammes nach und nach durcharbeitet.
 </div>
 <hr>""")
 
-  override def renderResult(correctionResult: CompleteResult[UmlResult]) = //FIXME
-    ???
+  override def renderResult(correctionResult: CompleteResult[UmlResult]): Html = ??? //FIXME
+
 }
 
 object UmlController {
 
-  val SolutionSchemaPath = Paths.get("conf", "resources", "uml", "solutionSchema.json")
+  val SolutionSchemaPath: Path = Paths.get("conf", "resources", "uml", "solutionSchema.json")
 
-  val SolutionSchemaNode = Json.parse(String.join("\n", Files.readAllLines(SolutionSchemaPath)))
+  val SolutionSchemaNode: JsonNode = Json.parse(String.join("\n", Files.readAllLines(SolutionSchemaPath)))
 
 }

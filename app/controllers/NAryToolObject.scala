@@ -2,7 +2,7 @@ package controllers
 
 import model.tools.{RandomExToolObject, ToolState}
 import play.api.Configuration
-import play.mvc.Call
+import play.api.mvc.Call
 
 class NAryToolObject(c: Configuration) extends RandomExToolObject(c, "nary", "Zahlensyteme", ToolState.LIVE) {
 

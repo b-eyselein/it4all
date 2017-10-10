@@ -5,6 +5,7 @@ import java.nio.file.Paths
 import io.ebean.Finder
 import model.exercise.{Exercise, ExerciseCollection}
 import model.exercisereading.{ExerciseCollectionReader, ExerciseReader}
+import model.tools.{IdExToolObject, ToolObject}
 import model.user.User
 import play.api.Configuration
 import play.data.FormFactory
@@ -15,8 +16,8 @@ import play.twirl.api.Html
 
 @Authenticated(classOf[model.AdminSecured])
 abstract class AExerciseCollectionAdminController[E <: Exercise, C <: ExerciseCollection[E]]
-(c: Configuration, f: FormFactory, val finder: Finder[Integer, C], val collectionReader: ExerciseCollectionReader[E, C])
-  extends BaseAdminController[C](c, f, collectionReader) {
+(c: Configuration, f: FormFactory, t: IdExToolObject, finder: Finder[Integer, C], val collectionReader: ExerciseCollectionReader[E, C])
+  extends BaseAdminController[C](c, f, t, collectionReader) {
 
   //  public AExerciseCollectionAdminController(FormFactory theFactory, IdExToolObject theRoutes,
   //      Finder<Integer, E> theExerciseFinder, Finder<Integer, C> theCollectionFinder,

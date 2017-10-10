@@ -16,26 +16,26 @@ import scala.util.{Failure, Success, Try}
 
 abstract class JsonReader[R <: JsonReadable](val exerciseType: String, val finder: Finder[Integer, R], classFor: Class[_]) {
 
-  val baseTargetDir = Paths.get("/data", BaseController.SAMPLE_SUB_DIRECTORY, exerciseType)
+  val resourcesFolder: Path = Paths.get("conf", "resources", exerciseType)
 
-  val jsonSchema = new JsonSchemaGenerator(new ObjectMapper).generateJsonSchema(classFor)
+  val jsonSchema: JsonNode = new JsonSchemaGenerator(new ObjectMapper).generateJsonSchema(classFor)
 
-  def read(node: JsonNode) = {
+  def read(node: JsonNode): R = {
     val id = node.get(ID_NAME).asInt
-    val w = Option(finder.byId(id)).getOrElse(instantiate(id));
+    val w = Option(finder.byId(id)).getOrElse(instantiate(id))
 
     update(w, node)
 
     w
   }
 
-  val StdFile = Paths.get(resourcesFolder.toString, EX_FILE_NAME)
+  val StdFile: Path = Paths.get(resourcesFolder.toString, EX_FILE_NAME)
 
   def update(toUpdate: R, node: JsonNode): Unit
 
-  def save(toSave: R) = toSave.saveInDB()
+  def save(toSave: R): Unit = toSave.saveInDB()
 
-  def readFromStandardFile = readFromJsonFile(StdFile)
+  def readFromStandardFile: AbstractReadingResult = readFromJsonFile(StdFile)
 
   def instantiate(id: Int): R
 
@@ -46,10 +46,10 @@ abstract class JsonReader[R <: JsonReadable](val exerciseType: String, val finde
     val json = Json.parse(jsonAsString)
 
     JsonReader.validateJson(json, jsonSchema) match {
-      case Failure(e) => new ReadingFailure(jsonAsString, jsonSchemaAsString, e)
+      case Failure(e) => ReadingFailure(jsonAsString, jsonSchemaAsString, e)
       case Success(report) =>
-        if (!report.isSuccess()) new ReadingError(jsonAsString, jsonSchemaAsString, report)
-        else new ReadingResult(jsonAsString, jsonSchemaAsString, json.iterator.asScala.map(read(_)).toList)
+        if (report.isSuccess) ReadingResult(jsonAsString, jsonSchemaAsString, json.iterator.asScala.map(read).toList)
+        else ReadingError(jsonAsString, jsonSchemaAsString, report)
     }
   }
 
@@ -59,14 +59,14 @@ abstract class JsonReader[R <: JsonReadable](val exerciseType: String, val finde
 
 object JsonReader {
 
-  def readMap(mapNode: JsonNode) =
+  def readMap(mapNode: JsonNode): Map[String, String] =
     mapNode.iterator.asScala.map(node => node.get(KEY_NAME).asText -> node.get(VALUE_NAME).asText).toMap
 
-  def readArray(arrayNode: JsonNode) = arrayNode.iterator.asScala.toList
+  def readArray(arrayNode: JsonNode): List[JsonNode] = arrayNode.iterator.asScala.toList
 
-  def readTextArray(textArrayNode: JsonNode) = readArray(textArrayNode).map(_.asText)
+  def readTextArray(textArrayNode: JsonNode): List[String] = readArray(textArrayNode).map(_.asText)
 
-  def readAndJoinTextArray(textArrayNode: JsonNode, joinChar: String = "") = readTextArray(textArrayNode).mkString(joinChar)
+  def readAndJoinTextArray(textArrayNode: JsonNode, joinChar: String = ""): String = readTextArray(textArrayNode).mkString(joinChar)
 
   def validateJson(json: JsonNode, jsonSchema: JsonNode): Try[ProcessingReport] = try {
     Success(JsonSchemaFactory.byDefault().getJsonSchema(jsonSchema).validate(json))

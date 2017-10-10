@@ -3,11 +3,11 @@ package controllers.web
 import javax.inject.Inject
 
 import controllers.core.IdExController
+import model._
 import model.logging.{ExerciseCompletionEvent, ExerciseStartEvent}
 import model.result.CompleteResult
 import model.task.WebTask
 import model.user.User
-import model._
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import play.api.Configuration
 import play.data.{DynamicForm, FormFactory}
@@ -15,11 +15,10 @@ import play.mvc.{Controller, Result, Results}
 import play.twirl.api.Html
 
 import scala.collection.JavaConverters.{asScalaBufferConverter, seqAsJavaListConverter}
-import scala.collection.mutable.Buffer
 import scala.util.{Failure, Success, Try}
 
 class WebController @Inject()(c: Configuration, f: FormFactory)
-  extends IdExController[WebExercise, WebResult](c, f, "web", WebExercise.finder, WebToolObject) {
+  extends IdExController[WebExercise, WebResult](c, f, WebExercise.finder, new WebToolObject(c)) {
 
   val HTML_TYPE = "html"
   val JS_TYPE = "js"
@@ -46,7 +45,7 @@ class WebController @Inject()(c: Configuration, f: FormFactory)
     val driver = new HtmlUnitDriver(true)
     driver.get(solutionUrl)
 
-    val tasksTry: Try[Buffer[_ <: WebTask]] = exType match {
+    val tasksTry: Try[scala.collection.mutable.Buffer[_ <: WebTask]] = exType match {
       case JS_TYPE => Success(exercise.jsTasks.asScala)
       case HTML_TYPE => Success(exercise.htmlTasks.asScala)
       case _ => Failure(null)
@@ -100,15 +99,15 @@ class WebController @Inject()(c: Configuration, f: FormFactory)
 
   def playground: Result = Results.ok(views.html.webPlayground.render(getUser))
 
-  override def correctEx(form: DynamicForm, exercise: WebExercise, user: User): Try[CompleteResult[WebResult]] = // FIXME
-    ???
+  override def correctEx(form: DynamicForm, exercise: WebExercise, user: User): Try[CompleteResult[WebResult]] = ??? // FIXME
 
-  override def renderExercise(user: User, exercise: WebExercise): Html = // FIXME
-    ???
+
+  override def renderExercise(user: User, exercise: WebExercise): Html = ??? // FIXME
+
 
   override def renderExesListRest = new Html(
     s"""<div class="panel panel-default">
-  <a class="btn btn-primary btn-block" href="${controllers.web.routes.WebController.playground}">Web-Playground</a>
+  <a class="btn btn-primary btn-block" href="${controllers.web.routes.WebController.playground()}">Web-Playground</a>
 </div>
 <hr>""")
 

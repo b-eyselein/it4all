@@ -2,7 +2,7 @@ package controllers.sql
 
 import model.tools.{IdExToolObject, ToolState}
 import play.api.Configuration
-import play.mvc.Call
+import play.api.mvc.Call
 
 class SqlToolObject(c: Configuration) extends IdExToolObject(c, "sql", "Sql", ToolState.LIVE, "Szenarien") {
 

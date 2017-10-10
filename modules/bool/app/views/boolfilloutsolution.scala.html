@@ -4,10 +4,10 @@
 
 @main("Wertetabelle-L&ouml;sung", user) {
 <div class="container">
-  <div @if(question.isCorrect()) {class="panel panel-success"} else {class="panel panel-danger"}>
+  <div @if(question.isCorrect) {class="panel panel-success"} else {class="panel panel-danger"}>
     <div class="panel-heading">Ausf&uuml;llen der Wertetabelle</div>
     <div class="panel-body">
-    @if(question.isCorrect()) {
+    @if(question.isCorrect) {
       <p>Die Wertetabelle wurde richtig ausgef&uuml;llt.</p>
     } else {
       <p>Die Wertetabelle wurde leider falsch ausgef&uuml;llt. <br> Die richtige L&ouml;sungen sieht folgenderma&szlig;en aus:</p>

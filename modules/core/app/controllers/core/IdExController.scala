@@ -11,6 +11,7 @@ import model.tools.IdExToolObject
 import model.user.User
 import play.Logger
 import play.api.Configuration
+import play.mvc.Result
 import play.data.{DynamicForm, FormFactory}
 import play.libs.Json
 import play.mvc.{Controller, Results}
@@ -19,14 +20,12 @@ import play.twirl.api.Html
 import scala.util.{Failure, Success, Try}
 
 abstract class IdExController[E <: Exercise, R <: EvaluationResult]
-(c: Configuration, f: FormFactory, val exType: String, val finder: Finder[Integer, E], val toolObject: IdExToolObject)
+(c: Configuration, f: FormFactory, val finder: Finder[Integer, E], val toolObject: IdExToolObject)
   extends BaseController(c, f) {
 
   val STEP = 10
 
-  def getExType = exType
-
-  def correct(id: Int) = {
+  def correct(id: Int): Result = {
     val user = getUser
     correctEx(factory.form().bindFromRequest(), finder.byId(id), user) match {
       case Success(correctionResult) =>
@@ -39,7 +38,7 @@ abstract class IdExController[E <: Exercise, R <: EvaluationResult]
     }
   }
 
-  def correctLive(id: Int) = {
+  def correctLive(id: Int): Result = {
     val user = getUser
     correctEx(factory.form().bindFromRequest(), finder.byId(id), user) match {
       case Success(correctionResult) =>
@@ -47,11 +46,11 @@ abstract class IdExController[E <: Exercise, R <: EvaluationResult]
 
         Results.ok(renderResult(correctionResult))
       case Failure(error) =>
-        Results.badRequest(Json.toJson(error.getMessage()))
+        Results.badRequest(Json.toJson(error.getMessage))
     }
   }
 
-  def exercise(id: Int) = {
+  def exercise(id: Int): Result = {
     val user = getUser
     finder.byId(id) match {
       case exercise if exercise != null =>
@@ -62,7 +61,7 @@ abstract class IdExController[E <: Exercise, R <: EvaluationResult]
     }
   }
 
-  def index(page: Int) = {
+  def index(page: Int): Result = {
     val allExes = finder.all()
     val exes = allExes.subList(Math.max(0, (page - 1) * STEP), Math.min(page * STEP, allExes.size()))
     Results.ok(
@@ -71,27 +70,24 @@ abstract class IdExController[E <: Exercise, R <: EvaluationResult]
   }
 
   def checkAndCreateSolDir(username: String, exercise: E): Path = {
-    val dir = getSolDirForExercise(username, exType.toLowerCase, exercise)
+    val dir = toolObject.getSolDirForExercise(username, exercise)
 
-    dir.toFile.exists match {
-      case true => dir
-      case false =>
-        try {
-          Files.createDirectories(dir)
-        } catch {
-          case e: IOException =>
-            Logger.error(s"There was an error while creating the directory for an $exType  solution: $dir", e)
-            null
-        }
+    if (dir.toFile.exists) dir
+    else {
+      try {
+        Files.createDirectories(dir)
+      } catch {
+        case e: IOException =>
+          Logger.error(s"There was an error while creating the directory for an ${toolObject.exType}  solution: $dir", e)
+          null
+      }
     }
   }
 
   def correctEx(form: DynamicForm, exercise: E, user: User): Try[CompleteResult[R]]
 
-  def getSampleDir: Path = getSampleDir(toolObject.exType)
-
-  def renderCorrectionResult(user: User, correctionResult: CompleteResult[R]) =
-    views.html.correction.render(exType.toUpperCase, correctionResult, renderResult(correctionResult),
+  def renderCorrectionResult(user: User, correctionResult: CompleteResult[R]): Html =
+    views.html.correction.render(toolObject.toolname.toUpperCase, correctionResult, renderResult(correctionResult),
       user, controllers.routes.Application.index())
 
   def renderExercise(user: User, exercise: E): Html

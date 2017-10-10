@@ -17,8 +17,6 @@ import scala.util.{Failure, Success}
 class UmlAdmin @Inject()(c: Configuration, f: FormFactory)
   extends AExerciseAdminController[UmlExercise](c, f, new UmlToolObject(c), UmlExercise.finder, UmlExerciseReader) {
 
-  override def renderAdminIndex(user: User): Html = views.html.umlAdmin.index.render(user)
-
   def checkSolution: Result = {
     val form = factory.form().bindFromRequest()
 

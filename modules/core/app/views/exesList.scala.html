@@ -1,14 +1,13 @@
-@(user: model.user.User, exercises: List[_ <: model.exercise.Exercise],
-	 rest: Html, links: model.tools.IdExToolObject, pages: Int)
+@(user: model.user.User, exercises: List[_ <: model.exercise.Exercise], rest: Html, toolObject: model.tools.IdExToolObject, pages: Int)
 
-@main(links.exType, user) {
+@main(toolObject.toolname, user) {
 <div class="container">
   <div class="page-header">
     <h1 class="page-title">&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h1>
   </div>
 
 @if(exercises.isEmpty) {
-  <div class="alert alert-danger">Es existieren bisher keine Aufgaben in der Kategorie @links.exType.
+  <div class="alert alert-danger">Es existieren bisher keine Aufgaben in der Kategorie @toolObject.toolname.
   Wenden Sie Sich bitte an den Administrator.</div>
 } else {
   @rest
@@ -29,7 +28,7 @@
     <div class="col-sm-3">@exercise.title</div>
     <div class="col-sm-5">
       <div class="btn-group btn-group-justified">
-      @for(exRoute <- links.exerciseRoutes(exercise.id)) {
+      @for(exRoute <- toolObject.exerciseRoutes(exercise.id)) {
         <a href="@exRoute._1" class="btn btn-primary">@exRoute._2</a>
       }
       </div>
@@ -42,7 +41,7 @@
   <div class="text-center">
     <ul class="pagination">
     @for(i <- 1 until pages) {
-      <li><a href="@links.exesListRoute(i)">@i</a></li>
+      <li><a href="@toolObject.exesListRoute(i)">@i</a></li>
     }
     </ul>
   </div>

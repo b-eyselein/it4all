@@ -2,7 +2,7 @@ package controllers.ebnf
 
 import model.tools.{IdExToolObject, ToolState}
 import play.api.Configuration
-import play.mvc.Call
+import play.api.mvc.Call
 
 class EBNFToolObject(c: Configuration) extends IdExToolObject(c, "ebnf", "Ebnf", ToolState.ALPHA) {
 

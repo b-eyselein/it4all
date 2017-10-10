@@ -13,10 +13,7 @@ import play.twirl.api.Html
 class WebAdmin @Inject()(c: Configuration, f: FormFactory)
   extends AExerciseAdminController[WebExercise](c, f, new WebToolObject(c), WebExercise.finder, WebExerciseReader) {
 
-  override def renderAdminIndex(user: User): Html =
-    views.html.admin.exerciseAdminMain.render(user, statistics, toolObject, new Html(""))
-
-  def statistics = new Html(
+  override def statistics = new Html(
     s"""<li>Es existieren insgesamt ${WebExercise.finder.all.size} Aufgaben, davon
   <ul>
     <li>${WebExercise.withHtmlPart} Aufgaben mit HTML-Teil</li>

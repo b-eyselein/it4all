@@ -1,26 +1,26 @@
 package model.exercisereading
 
-import java.nio.file.{Files, Paths, StandardCopyOption}
+import java.nio.file.{Files, Path, Paths, StandardCopyOption}
 import java.util.Optional
 
-import scala.collection.JavaConverters.{asScalaBufferConverter, asScalaIteratorConverter, seqAsJavaListConverter}
-import scala.util.Try
-
 import com.fasterxml.jackson.databind.JsonNode
-
 import io.ebean.Finder
 import model.JsonReadable
 import model.StringConsts.{AUTHOR_NAME, STATE_NAME, TEXT_NAME, TITLE_NAME}
 import model.exercise.{Exercise, ExerciseState}
+import model.tools.ToolObject
 import play.data.DynamicForm
+
+import scala.collection.JavaConverters.{asScalaBufferConverter, asScalaIteratorConverter, seqAsJavaListConverter}
+import scala.util.Try
 
 abstract class ExerciseReader[E <: Exercise](e: String, f: Finder[Integer, E], classFor: Class[_])
   extends JsonReader[E](e, f, classFor) {
 
 
-  def getOrInstantiateExercise(id: Int) = Optional.ofNullable(finder.byId(id)).orElse(instantiate(id))
+  def getOrInstantiateExercise(id: Int): E = Optional.ofNullable(finder.byId(id)).orElse(instantiate(id))
 
-  def initFromForm(id: Int, form: DynamicForm) = {
+  def initFromForm(id: Int, form: DynamicForm): E = {
     val exercise = getOrInstantiateExercise(id)
 
     exercise.title = form.get(TITLE_NAME)
@@ -37,7 +37,7 @@ abstract class ExerciseReader[E <: Exercise](e: String, f: Finder[Integer, E], c
   def update(exercise: E, node: JsonNode) {
     exercise.title = node.get(TITLE_NAME).asText()
     exercise.author = node.get(AUTHOR_NAME).asText()
-    exercise.text = JsonReader.readAndJoinTextArray(node.get(TEXT_NAME), "")
+    exercise.text = JsonReader.readAndJoinTextArray(node.get(TEXT_NAME))
 
     val stateNode = node.get(STATE_NAME)
     exercise.state = if (stateNode != null) ExerciseState.valueOf(stateNode.asText()) else ExerciseState.CREATED
@@ -45,11 +45,11 @@ abstract class ExerciseReader[E <: Exercise](e: String, f: Finder[Integer, E], c
     updateExercise(exercise, node)
   }
 
-  def checkOrCreateSampleFile(exercise: Exercise, filename: String) = {
+  protected def checkOrCreateSampleFile(exercise: Exercise, toolObject: ToolObject, filename: String): Try[Path] = {
     val providedFile = Paths.get(resourcesFolder.toString, filename).toAbsolutePath
-    val targetPath = Paths.get(baseTargetDir.toString, filename).toAbsolutePath
+    val targetPath = Paths.get(toolObject.sampleDir.toString, filename).toAbsolutePath
 
-    Try(Files.createDirectories(baseTargetDir))
+    Try(Files.createDirectories(toolObject.sampleDir))
       .map(_ => Files.copy(providedFile, targetPath, StandardCopyOption.REPLACE_EXISTING))
   }
 
@@ -68,14 +68,14 @@ object ExerciseReader {
       1
     else {
       exercises.sliding(2).foreach { exes =>
-        if (exes(0).getId < exes(1).getId - 1)
-          return exes(0).getId + 1
+        if (exes.head.getId < exes(1).getId - 1)
+          return exes.head.getId + 1
       }
 
-      exercises.last.getId() + 1
+      exercises.last.getId + 1
     }
   }
 
-  def readArray[V](arrayNode: JsonNode, mappingFunction: JsonNode => V) =
+  def readArray[V](arrayNode: JsonNode, mappingFunction: JsonNode => V): java.util.List[V] =
     arrayNode.iterator.asScala.map(mappingFunction).toList.asJava
 }

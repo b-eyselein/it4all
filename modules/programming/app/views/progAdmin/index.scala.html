@@ -1,7 +1,0 @@
-@(user: model.user.User)
-
-@statistics = {
-<li>Es existieren insgesamt @model.ProgExercise.finder.all.size Augaben</li>
-}
-
-@admin.exerciseAdminMain(user, statistics, controllers.programming.ProgToolObject) { }

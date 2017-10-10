@@ -14,10 +14,7 @@ import scala.collection.JavaConverters.asScalaBufferConverter
 class XmlAdmin @Inject()(c: Configuration, f: FormFactory)
   extends AExerciseAdminController[XmlExercise](c, f, new XmlToolObject(c), XmlExercise.finder, XmlExerciseReader) {
 
-  override def renderAdminIndex(user: User): Html =
-    views.html.admin.exerciseAdminMain.render(user, statistics, toolObject, new Html(""))
-
-  def statistics = new Html(
+  override def statistics = new Html(
     s"""
 <li>Es existieren insgesamt ${XmlExercise.finder.all.size} <a href="${controllers.xml.routes.XmlAdmin.exercises()}">Aufgaben</a>, davon
   <ul>

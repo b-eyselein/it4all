@@ -16,7 +16,7 @@ public class NaryController extends ARandomExController {
   private static final Random GENERATOR = new Random();
 
   @Inject public NaryController(Configuration c, FormFactory f) {
-    super(c, f, NAryToolObject$.MODULE$);
+    super(c, f, new NAryToolObject(c));
   }
 
   public Result checkNaryAdditionSolution() {

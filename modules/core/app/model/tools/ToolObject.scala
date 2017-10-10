@@ -2,10 +2,11 @@ package model.tools
 
 import java.nio.file.{Path, Paths}
 
+import model.exercise.Exercise
 import play.api.Configuration
 import play.api.mvc.Call
 
-abstract sealed class ToolObject(c: Configuration, exType: String, val toolname: String, val state: ToolState, val decoration: String) {
+abstract sealed class ToolObject(c: Configuration, val exType: String, val toolname: String, val state: ToolState, val decoration: String) {
 
   ToolList.register(this)
 
@@ -26,15 +27,14 @@ abstract sealed class ToolObject(c: Configuration, exType: String, val toolname:
 
   def solDirForUser(username: String): Path = Paths.get(solutionDir.toString, username)
 
+  def getSampleDirForExercise(exerciseType: String, exercise: Exercise): Path =
+    Paths.get(sampleDir.toString, String.valueOf(exercise.getId))
 
-  //  def getSampleDirForExercise(exerciseType: String, exercise: Exercise) =
-  //    Paths.get(getSampleDir(exerciseType).toString(), String.valueOf(exercise.getId()))
+  def getSolDirForExercise(username: String, exercise: Exercise): Path =
+    Paths.get(solDirForUser(username).toString, exType, String.valueOf(exercise.id))
 
-  //  def getSolDirForExercise(username: String, exerciseType: String, exercise: Exercise) =
-  //    Paths.get(getSolDirForUser(username).toString(), exerciseType, String.valueOf(exercise.getId()))
-
-  //  def getSolFileForExercise(username: String, exType: String, ex: Exercise, fileName: String, fileExtension: String) =
-  //    Paths.get(getSolDirForExercise(username, exType, ex).toString, s"$fileName.$fileExtension")
+  def getSolFileForExercise(username: String, ex: Exercise, fileName: String, fileExt: String): Path =
+    Paths.get(getSolDirForExercise(username, ex).toString, s"$fileName.$fileExt")
 
 }
 

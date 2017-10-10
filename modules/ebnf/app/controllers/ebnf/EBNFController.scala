@@ -13,12 +13,14 @@ import play.mvc.Result
 import play.mvc.Security.Authenticated
 import play.twirl.api.Html
 
+import scala.util.Try
+
 @Authenticated(classOf[Secured])
 class EBNFController @Inject()(c: Configuration, f: FormFactory)
-  extends IdExController[EBNFExercise, EBNFResult](c, f, "ebnf", EBNFExercise.finder, EBNFToolObject) {
+  extends IdExController[EBNFExercise, EBNFResult](c, f, EBNFExercise.finder, new EBNFToolObject(c)) {
 
-  override def correctEx(form: DynamicForm, exercise: EBNFExercise, user: User): Result = // FIXME
-    ???
+  override def correctEx(form: DynamicForm, exercise: EBNFExercise, user: User): Try[CompleteResult[EBNFResult]] = ??? // FIXME
+
 
   //    val data = Controller.request.body.asFormUrlEncoded
   //

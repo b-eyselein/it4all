@@ -6,11 +6,11 @@
 
 @for(ex <- exercises) {
 <div class="panel panel-default">
-  <div class="panel-heading">Aufgabe @ex.getId: @ex.getTitle</div>
+  <div class="panel-heading">Aufgabe @ex.id: @ex.title</div>
   <div class="panel-body">
-    <p>Aufgabentext: @ex.getText</p>
-    <p>Vorlagendateiname: &quot;@ex.getTemplateFilename&quot;</p>
-    <p>Musterdateiname: &quot;@ex.getSampleFilename&quot;</p>
+    <p>Aufgabentext: @ex.text</p>
+    <p>Vorlagendateiname: &quot;@ex.templateFilename&quot;</p>
+    <p>Musterdateiname: &quot;@ex.sampleFilename&quot;</p>
   </div>
 </div>
 }

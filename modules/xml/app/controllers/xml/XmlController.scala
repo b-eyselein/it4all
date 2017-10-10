@@ -18,7 +18,7 @@ import scala.collection.JavaConverters.{asScalaBufferConverter, seqAsJavaListCon
 import scala.util.Try
 
 class XmlController @Inject()(c: Configuration, f: FormFactory)
-  extends IdExController[XmlExercise, XmlError](c, f, "xml", XmlExercise.finder, new XmlToolObject(c)) {
+  extends IdExController[XmlExercise, XmlError](c, f, XmlExercise.finder, new XmlToolObject(c)) {
 
   val EX_OPTIONS = ExerciseOptions("Xml", "xml", 10, 20, false)
 
@@ -84,13 +84,13 @@ class XmlController @Inject()(c: Configuration, f: FormFactory)
   }
 
   def readDefOrOldSolution(username: String, exercise: XmlExercise): String = Try(
-    Files.readAllLines(toolObject.getSolFileForExercise(username, exType, exercise, exercise.rootNode, exercise.getStudentFileEnding)
+    Files.readAllLines(toolObject.getSolFileForExercise(username, exercise, exercise.rootNode, exercise.getStudentFileEnding)
     ).asScala.mkString("\n")
   ).getOrElse(exercise.getFixedStart)
 
   def copy(dir: Path, filename: String) = Try(
     Files.copy(
-      Paths.get(getSampleDir.toString, filename),
+      Paths.get(toolObject.sampleDir.toString, filename),
       Paths.get(dir.toString, filename),
       StandardCopyOption.REPLACE_EXISTING
     )
