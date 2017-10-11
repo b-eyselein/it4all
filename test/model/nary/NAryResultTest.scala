@@ -1,14 +1,10 @@
 package model.nary
 
-import org.hamcrest.CoreMatchers.equalTo
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertThat
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.when
-
-import org.junit.Test
 import model.StringConsts._
-
+import org.hamcrest.CoreMatchers.equalTo
+import org.junit.Assert.assertThat
+import org.junit.Test
+import org.mockito.Mockito.{mock, when}
 import play.data.DynamicForm
 
 class NAryResultTest {
@@ -70,7 +66,7 @@ class NAryResultTest {
 
     when(form.get(NAryResult.SUMMAND_1)).thenReturn("0000 1001")
     when(form.get(NAryResult.SUMMAND_2)).thenReturn("0000 0110")
-    when(form.get(NAryResult.BASE_NAME)).thenReturn(BINARY.toString())
+    when(form.get(NAryResult.BASE_NAME)).thenReturn(BINARY.toString)
     // value is reversed!!
     when(form.get(FORM_VALUE)).thenReturn("1111 0000")
 

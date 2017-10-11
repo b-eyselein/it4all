@@ -31,10 +31,10 @@ case class UmlImplementationMatch(i1: Option[UmlImplementation], i2: Option[UmlI
 <td><span class="text-${if (isSuccessful) "success" else "danger"}">${arg.superClass}</span></td>""")
 
   override def explanation: List[String] = matchType match {
-    case MatchType.UNSUCCESSFUL_MATCH ⇒ List("Vererbungsrichtung falsch.")
-    case MatchType.ONLY_SAMPLE ⇒ List("Vererbungsbeziehung nicht erstellt.")
-    case MatchType.ONLY_USER ⇒ List("Vererbengsbeziehung ist falsch.")
-    case _ ⇒ super.explanation
+    case MatchType.UNSUCCESSFUL_MATCH => List("Vererbungsrichtung falsch.")
+    case MatchType.ONLY_SAMPLE => List("Vererbungsbeziehung nicht erstellt.")
+    case MatchType.ONLY_USER => List("Vererbengsbeziehung ist falsch.")
+    case _ => super.explanation
   }
 
 }

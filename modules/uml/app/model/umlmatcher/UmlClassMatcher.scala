@@ -31,8 +31,5 @@ object UmlClassMatch {
   val METHODS_MATCHER = new StringMatcher("Methoden")
 }
 
-class UmlClassMatcher(compareAttrsAndMethods: Boolean) extends Matcher[UmlClass, UmlClassMatch](
-  "Klassen",
-  List("Klassenname"),
-  (c1, c2) => c1.name == c2.name,
-  UmlClassMatch(_, _, _, compareAttrsAndMethods))
+case class UmlClassMatcher(compareAttrsAndMethods: Boolean) extends Matcher[UmlClass, UmlClassMatch](
+  "Klassen", List("Klassenname"), (c1, c2) => c1.name == c2.name, UmlClassMatch(_, _, _, compareAttrsAndMethods))

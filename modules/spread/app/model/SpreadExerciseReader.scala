@@ -1,11 +1,7 @@
 package model
 
-import scala.util.{Failure, Success}
-
 import com.fasterxml.jackson.databind.JsonNode
-
 import model.exercisereading.ExerciseReader
-import play.Logger
 import play.data.DynamicForm
 
 object SpreadExerciseReader
@@ -19,7 +15,7 @@ object SpreadExerciseReader
   override def instantiate(id: Int) = new SpreadExercise(id)
 
   override def save(exercise: SpreadExercise) {
-    exercise.save
+    exercise.save()
     // FIXME: implement with toolObject
     //    List("xlsx", "ods").map(exercise.sampleFilename + "." + _).foreach(fileName => {
     //      val tr = checkOrCreateSampleFile(exercise, toolObject, fileName) match {

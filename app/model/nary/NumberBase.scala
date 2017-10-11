@@ -4,15 +4,15 @@ import scala.util.Random
 
 sealed abstract class NumberBase(val base: Int, baseName: String, mark: String, regexStart: String, regexRest: String) {
 
-  def htmlPattern = "[\\s" + regexStart + "][\\s" + regexRest + "]*"
+  def htmlPattern: String = "[\\s" + regexStart + "][\\s" + regexRest + "]*"
 
-  def pluralName = baseName + "zahlen"
+  def pluralName: String = baseName + "zahlen"
 
-  def regex = "-?" + mark + "[" + regexStart + "][" + regexRest + "]*"
+  def regex: String = "-?" + mark + "[" + regexStart + "][" + regexRest + "]*"
 
-  def singularName = baseName + "zahl"
+  def singularName: String = baseName + "zahl"
 
-  def systemName = baseName + "system"
+  def systemName: String = baseName + "system"
 
 }
 
@@ -23,7 +23,7 @@ object NumberBase {
     case 2 => HEXADECIMAL
     case 3 => DECIMAL
   }
-  
+
   def valueOf(str: String): NumberBase = str match {
     case "BINARY" => BINARY
     case "OCTAL" => OCTAL

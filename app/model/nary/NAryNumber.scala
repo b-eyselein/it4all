@@ -1,20 +1,19 @@
 package model.nary
 
-import com.google.common.base.Splitter
-import com.google.common.base.Strings
+import com.google.common.base.{Splitter, Strings}
 
 case class NAryNumber(decimalValue: Int = 0, base: NumberBase) {
 
-  val FOUR_SPLITTER = Splitter.fixedLength(4)
+  val FOUR_SPLITTER: Splitter = Splitter.fixedLength(4)
 
   def +(that: NAryNumber) = new NAryNumber(this.decimalValue + that.decimalValue, this.base)
 
-  def toTwoComp(): String = {
+  def toTwoComp: String = {
     val binString = Integer.toBinaryString(decimalValue)
     NAryNumber.padBinary(binString.substring(Math.max(0, binString.length() - 8)))
   }
 
-  override def toString() = toString(false)
+  override def toString: String = toString(false)
 
   def toString(withBase: Boolean): String = {
     var result = Integer.toString(Math.abs(decimalValue), base.base)
@@ -40,7 +39,7 @@ object NAryNumber {
     val trimmedInput = input.trim().replaceAll("\\s", "")
 
     if (trimmedInput.charAt(0) != '1')
-      // Positive number...
+    // Positive number...
       new NAryNumber(Integer.parseInt(trimmedInput, 2), BINARY)
     else {
       val invertedInt = invertDigits(trimmedInput)
@@ -48,7 +47,7 @@ object NAryNumber {
     }
   }
 
-  def invertDigits(binaryInt: String) = binaryInt.replace("0", "a").replace("1", "0").replace("a", "1")
+  def invertDigits(binaryInt: String): String = binaryInt.replace("0", "a").replace("1", "0").replace("a", "1")
 
   def padBinary(binary: String): String = {
     val ungrouped = binary.trim().replaceAll("\\s", "")

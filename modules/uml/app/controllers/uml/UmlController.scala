@@ -18,8 +18,6 @@ import scala.util.Try
 class UmlController @Inject()(f: FormFactory)
   extends IdExController[UmlExercise, UmlResult](f, UmlExercise.finder, UmlToolObject) {
 
-  val ERROR_MSG = "Es gab einen Fehler bei der Validierung des Resultats!"
-
   def exercise(exerciseId: Int, partStr: String): Result = {
     val user = getUser
     val exercise = finder.byId(exerciseId)

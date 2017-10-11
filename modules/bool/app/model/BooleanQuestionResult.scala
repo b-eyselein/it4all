@@ -1,14 +1,13 @@
-package model;
+package model
 
-import model.result.SuccessType
-import model.result.EvaluationResult
+import model.result.{EvaluationResult, SuccessType}
 
 class BooleanQuestionResult(success: SuccessType, val learnerSolution: String, val question: CreationQuestion)
   extends EvaluationResult(success) {
 
-  val assignments = question.solutions
+  val assignments: List[Assignment] = question.solutions
 
-  def getSolutions = if (question == null) List.empty else question.solutions
+  def getSolutions: List[Assignment] = if (question == null) List.empty else question.solutions
 
 }
 

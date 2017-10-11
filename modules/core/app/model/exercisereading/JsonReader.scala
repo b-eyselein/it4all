@@ -29,17 +29,17 @@ abstract class JsonReader[R <: JsonReadable](val exerciseType: String, val finde
     w
   }
 
-  val StdFile: Path = Paths.get(resourcesFolder.toString, EX_FILE_NAME)
+  val stdFile: Path = Paths.get(resourcesFolder.toString, EX_FILE_NAME)
 
   def update(toUpdate: R, node: JsonNode): Unit
 
   def save(toSave: R): Unit = toSave.saveInDB()
 
-  def readFromStandardFile: AbstractReadingResult = readFromJsonFile(StdFile)
+  def readFromStandardFile: AbstractReadingResult = readFromJsonFile(stdFile)
 
   def instantiate(id: Int): R
 
-  def readFromJsonFile(path: Path = StdFile): AbstractReadingResult = {
+  def readFromJsonFile(path: Path = stdFile): AbstractReadingResult = {
     val jsonAsString = new String(Files.readAllBytes(path)).replace("\t", "  ")
     val jsonSchemaAsString = Json.prettyPrint(jsonSchema).replace("\t", "  ")
 

@@ -5,7 +5,7 @@ import model.StringConsts._
 
 sealed abstract class NAryResult(val targetNumber: NAryNumber, val learnerSolution: NAryNumber) {
 
-  def checkSolution() = targetNumber.decimalValue == learnerSolution.decimalValue
+  def checkSolution: Boolean = targetNumber.decimalValue == learnerSolution.decimalValue
 
 }
 
@@ -18,12 +18,13 @@ case class NAryConvResult(startingValue: NAryNumber, startingBase: NumberBase, t
 case class TwoCompResult(targetNum: NAryNumber, learnerSol: NAryNumber, binaryAbs: String, invertedAbs: String)
   extends NAryResult(targetNum, learnerSol) {
 
-  def binaryAbsCorrect() = NAryNumber.parse(binaryAbs, BINARY).decimalValue == Math.abs(targetNumber.decimalValue)
-  def invertedAbsCorrect() = NAryNumber.invertDigits(binaryAbs).equals(invertedAbs)
+  def binaryAbsCorrect: Boolean = NAryNumber.parse(binaryAbs, BINARY).decimalValue == Math.abs(targetNumber.decimalValue)
+
+  def invertedAbsCorrect: Boolean = NAryNumber.invertDigits(binaryAbs).equals(invertedAbs)
 }
 
 object NAryResult {
-  val ZERO = "0"
+  val zero = "0"
 
   val VALUE_NAME = "value"
 
@@ -73,8 +74,8 @@ object TwoCompResult {
     val targetNumber = new NAryNumber(Integer.parseInt(form.get(NAryResult.VALUE_NAME)), BINARY)
     val learnerSolution = NAryNumber.parseTwoComplement(form.get(FORM_VALUE))
 
-    val binaryAbs = if (isVerbose) form.get(NAryResult.BINARY_ABS) else NAryResult.ZERO
-    val invertedAbs = if (isVerbose) form.get(NAryResult.INVERTED_ABS) else NAryResult.ZERO
+    val binaryAbs = if (isVerbose) form.get(NAryResult.BINARY_ABS) else NAryResult.zero
+    val invertedAbs = if (isVerbose) form.get(NAryResult.INVERTED_ABS) else NAryResult.zero
 
     new TwoCompResult(targetNumber, learnerSolution, binaryAbs, invertedAbs)
   }
