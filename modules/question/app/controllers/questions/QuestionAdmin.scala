@@ -55,13 +55,13 @@ class QuestionAdmin @Inject()(f: FormFactory)
     Results.ok("TODO!")
   }
 
-  def renderCollectionCreated(collections: java.util.List[model.quiz.Quiz], created: Boolean): Html = ???
+  def renderCollectionCreated(collections: List[model.quiz.Quiz], created: Boolean): Html = ???
 
   def renderExCollCreationForm(user: model.user.User, collection: model.quiz.Quiz): Html = ???
 
   def renderExEditForm(user: model.user.User, exercise: model.quiz.Quiz, isCreation: Boolean): Html = ???
 
-  def renderExerciseCollections(user: model.user.User, allCollections: java.util.List[model.quiz.Quiz]): Html = ???
+  def renderExerciseCollections(user: model.user.User, allCollections: List[model.quiz.Quiz]): Html = ???
 
   def assignQuestionsForm: Result = Results.ok(views.html.questionAdmin.assignQuestionsForm.render(
     getUser, /* Question.finder.all() */ Collections.emptyList(), Quiz.finder.all()))

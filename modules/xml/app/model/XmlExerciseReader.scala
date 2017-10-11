@@ -3,6 +3,7 @@ package model
 import java.nio.file.Path
 
 import com.fasterxml.jackson.databind.JsonNode
+import controllers.xml.XmlToolObject
 import model.exercisereading.ExerciseReader
 import play.data.DynamicForm
 
@@ -14,10 +15,7 @@ object XmlExerciseReader extends ExerciseReader[XmlExercise]("xml", XmlExercise.
     exercise.exerciseTypeStr = form.get(StringConsts.EXERCISE_TYPE)
     exercise.rootNode = form.get(StringConsts.ROOT_NODE_NAME)
 
-    //    val referenceFilePath = Paths.get(
-    //      BaseController.getSampleDir(exerciseType).toString,
-    //      exercise.rootNode + "." + exercise.getReferenceFileEnding
-    //    )
+    //    val referenceFilePath = Paths.get(XmlToolObject.sampleDir.toString, exercise.rootNode + "." + exercise.exerciseType.refFileEnding)
     //    val referenceFileContent = form.get(StringConsts.REFERENCE_FILE_CONTENT).split(StringConsts.NEWLINE).toList.asJava
     //
     //    Try(Files.write(referenceFilePath, referenceFileContent, StandardOpenOption.TRUNCATE_EXISTING)) match {
@@ -38,10 +36,7 @@ object XmlExerciseReader extends ExerciseReader[XmlExercise]("xml", XmlExercise.
   }
 
   override def checkFiles(exercise: XmlExercise): List[Try[Path]] = {
-    //    val fileName = exercise.rootNode + "." + exercise.getReferenceFileEnding
-    //    List(checkOrCreateSampleFile(exercise, toolObject, fileName))
-    // FIXME: Files...
-    List.empty
+    List(checkOrCreateSampleFile(exercise, XmlToolObject, exercise.rootNode + "." + exercise.exerciseType.refFileEnding))
   }
 
 }

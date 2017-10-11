@@ -37,7 +37,7 @@ class SqlAdmin @Inject()(f: FormFactory,
   // return views.html.sqlAdmin.sqlCreation.render(created)
   // }
 
-  override def renderCollectionCreated(collections: java.util.List[SqlScenario], created: Boolean): Html = ??? // FIXME: implement...
+  override def renderCollectionCreated(collections: List[SqlScenario], created: Boolean): Html = ??? // FIXME: implement...
 
   override def renderExCollCreationForm(user: User, scenario: SqlScenario): Html =
     views.html.sqlAdmin.newScenarioForm.render(user, scenario)
@@ -45,7 +45,7 @@ class SqlAdmin @Inject()(f: FormFactory,
 
   override def renderExEditForm(user: User, exercise: SqlScenario, isCreation: Boolean): Html = ??? // FIXME: implement...
 
-  override def renderExerciseCollections(user: User, allCollections: java.util.List[SqlScenario]): Html = ??? // FIXME: implement...
+  override def renderExerciseCollections(user: User, allCollections: List[SqlScenario]): Html = ??? // FIXME: implement...
 
   def scenarioAdmin(id: Int): Result = Results.ok(views.html.sqlAdmin.scenarioAdmin.render(getUser, SqlScenario.finder.byId(id)))
 

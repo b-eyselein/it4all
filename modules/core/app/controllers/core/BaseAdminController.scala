@@ -27,21 +27,23 @@ abstract class BaseAdminController[E <: JsonReadable]
 
   def getJSONSchemaFile: Result = Results.ok(Json.prettyPrint(exerciseReader.jsonSchema))
 
-  def processReadingResult(abstractResult: AbstractReadingResult, render: (java.util.List[E], Boolean) => Html): Result =
+  protected def processReadingResult(abstractResult: AbstractReadingResult, render: (List[E], Boolean) => Html): Result =
     abstractResult match {
-      case result: ReadingResult[E] =>
-        result.read.foreach(exerciseReader.save)
-        val files: List[Try[Path]] = result.read.flatMap(exerciseReader.checkFiles)
-
-        files.foreach(println(_))
-
-        Results.ok(views.html.admin.preview.render(getUser, render(result.javaRead, false)))
       case error: ReadingError =>
         Results.badRequest(views.html.jsonReadingError.render(getUser, error))
+
       case failure: ReadingFailure => Results.badRequest("There has been an error...")
+
+      case result: ReadingResult[E] =>
+        result.read.foreach(exerciseReader.save)
+
+        // TODO: display result of file creation...
+        val files: List[Try[Path]] = result.read.flatMap(exerciseReader.checkFiles)
+
+        Results.ok(views.html.admin.preview.render(getUser, render(result.read, false)))
     }
 
-  def uploadFile(render: (java.util.List[E], Boolean) => Html): Result = {
+  def uploadFile(render: (List[E], Boolean) => Html): Result = {
     val body: MultipartFormData[File] = Controller.request.body().asMultipartFormData()
     body.getFile(StringConsts.BODY_FILE_NAME) match {
       case n if n == null => Results.badRequest("Fehler!")

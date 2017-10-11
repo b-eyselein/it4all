@@ -11,6 +11,8 @@ import play.mvc.Security.Authenticated
 import play.mvc.{Result, Results}
 import play.twirl.api.Html
 
+import scala.collection.JavaConverters._
+
 @Authenticated(classOf[model.AdminSecured])
 abstract class AExerciseCollectionAdminController[E <: Exercise, C <: ExerciseCollection[E]]
 (f: FormFactory, t: IdExToolObject, fi: Finder[Integer, C], val collectionReader: ExerciseCollectionReader[E, C])
@@ -35,7 +37,7 @@ abstract class AExerciseCollectionAdminController[E <: Exercise, C <: ExerciseCo
 
   def changeExState(exerciseId: Int): Result = ???
 
-  def exerciseCollections: Result = Results.ok(renderExerciseCollections(getUser, finder.all))
+  def exerciseCollections: Result = Results.ok(renderExerciseCollections(getUser, finder.all.asScala.toList))
 
   def exercises: Result = ???
 
@@ -44,9 +46,9 @@ abstract class AExerciseCollectionAdminController[E <: Exercise, C <: ExerciseCo
 
   def importExercises: Result = processReadingResult(collectionReader.readFromJsonFile(), renderCollectionCreated)
 
-  def editExerciseForm(id: Int): Result = finder.byId(id) match {
-    case exercise if exercise == null => Results.badRequest("")
-    case exercise => Results.ok(renderExEditForm(getUser, exercise, false))
+  def editExerciseForm(id: Int): Result = Option(finder.byId(id)) match {
+    case None => Results.badRequest("")
+    case Some(exercise) => Results.ok(renderExEditForm(getUser, exercise, isCreation = false))
   }
 
   def newExerciseCollection(collectionId: Int): Result = {
@@ -65,8 +67,8 @@ abstract class AExerciseCollectionAdminController[E <: Exercise, C <: ExerciseCo
   }
 
   def newExerciseForm: Result = {
-    val id = ExerciseReader.findMinimalNotUsedId(finder)
-
+//    val id = ExerciseReader.findMinimalNotUsedId(finder)
+    //
     //    val exercise = exerciseReader.getOrInstantiateExercise(id)
     //    exerciseReader.save(exercise)
     //
@@ -103,12 +105,12 @@ abstract class AExerciseCollectionAdminController[E <: Exercise, C <: ExerciseCo
 
   def uploadFile: Result = uploadFile(renderCollectionCreated)
 
-  def renderCollectionCreated(collections: java.util.List[C], created: Boolean): Html
+  def renderCollectionCreated(collections: List[C], created: Boolean): Html
 
   def renderExEditForm(user: User, exercise: C, isCreation: Boolean): Html
 
   def renderExCollCreationForm(user: User, collection: C): Html
 
-  def renderExerciseCollections(user: User, allCollections: java.util.List[C]): Html
+  def renderExerciseCollections(user: User, allCollections: List[C]): Html
 
 }

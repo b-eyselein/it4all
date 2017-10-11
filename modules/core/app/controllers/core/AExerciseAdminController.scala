@@ -11,7 +11,7 @@ import play.mvc.Security.Authenticated
 import play.mvc.{Result, Results}
 import play.twirl.api.Html
 
-import scala.collection.JavaConverters.seqAsJavaListConverter
+import scala.collection.JavaConverters._
 
 @Authenticated(classOf[model.AdminSecured])
 abstract class AExerciseAdminController[E <: Exercise]
@@ -47,16 +47,16 @@ abstract class AExerciseAdminController[E <: Exercise]
   def editExercise(id: Int): Result = {
     val exercise = exerciseReader.initFromForm(id, factory.form().bindFromRequest())
     exerciseReader.save(exercise)
-    Results.ok(views.html.admin.preview.render(getUser, renderExercises(List(exercise).asJava, false)))
+    Results.ok(views.html.admin.preview.render(getUser, renderExercises(List(exercise), changesAllowed = false)))
   }
 
   def editExerciseForm(id: Int): Result = finder.byId(id) match {
     case exercise if exercise == null => Results.badRequest("")
-    case exercise => Results.ok(renderExEditForm(getUser, exercise, false))
+    case exercise => Results.ok(renderExEditForm(getUser, exercise, isCreation = false))
   }
 
   def exercises: Result =
-    Results.ok(views.html.admin.exerciseList.render(getUser, renderExercises(finder.all, true)))
+    Results.ok(views.html.admin.exerciseList.render(getUser, renderExercises(finder.all.asScala.toList, changesAllowed = true)))
 
   def exportExercises: Result =
     Results.ok(views.html.admin.export.render(getUser, Json.prettyPrint(Json.toJson(finder.all))))
@@ -69,14 +69,14 @@ abstract class AExerciseAdminController[E <: Exercise]
     val exercise = exerciseReader.getOrInstantiateExercise(id)
     exerciseReader.save(exercise)
 
-    Results.ok(renderExEditForm(getUser, exercise, true))
+    Results.ok(renderExEditForm(getUser, exercise, isCreation = true))
   }
 
   def uploadFile: Result = uploadFile(renderExercises)
 
   def renderExEditForm(user: User, exercise: E, isCreation: Boolean): Html
 
-  def renderExercises(exercises: java.util.List[E], changesAllowed: Boolean): Html =
-    views.html.admin.exercisesTable.render(exercises, toolObject, changesAllowed)
+  def renderExercises(exercises: List[E], changesAllowed: Boolean): Html =
+    views.html.admin.exercisesTable.render(exercises.asJava, toolObject, changesAllowed)
 
 }

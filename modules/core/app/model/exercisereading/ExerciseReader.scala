@@ -64,8 +64,7 @@ object ExerciseReader {
     // FIXME: this is probably a ugly hack...
     val exercises = finder.all.asScala.sortWith(_.getId < _.getId)
 
-    if (exercises.isEmpty)
-      1
+    if (exercises.isEmpty) 1
     else {
       exercises.sliding(2).foreach { exes =>
         if (exes.head.getId < exes(1).getId - 1)
