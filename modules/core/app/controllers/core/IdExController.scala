@@ -84,7 +84,7 @@ abstract class IdExController[E <: Exercise, R <: EvaluationResult]
     }
   }
 
-  def correctEx(form: DynamicForm, exercise: E, user: User): Try[CompleteResult[R]]
+  protected def correctEx(form: DynamicForm, exercise: E, user: User): Try[CompleteResult[R]]
 
   def renderCorrectionResult(user: User, correctionResult: CompleteResult[R]): Html =
     views.html.correction.render(toolObject.toolname.toUpperCase, correctionResult, renderResult(correctionResult),

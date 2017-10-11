@@ -27,16 +27,19 @@ class WebController @Inject()(f: FormFactory)
   val ALLOWED_TYPES = List(HTML_TYPE, JS_TYPE)
 
   override def getUser: User = {
-    val user = getUser
+    val user = super.getUser
 
-    if (WebUser.finder.byId(user.name) == null)
-    // Make sure there is a corresponding entrance in other db...
-      new WebUser(user.name).save()
+    Option(WebUser.finder.byId(user.name)) match {
+      case None =>
+        // Make sure there is a corresponding entrance in other db...
+        new WebUser(user.name).save()
+      case _ => Unit
+    }
 
     user
   }
 
-  def correctEx(learnerSolution: String, exercise: WebExercise, user: User, exType: String): Try[CompleteResult[WebResult]] = {
+  protected def correctEx(learnerSolution: String, exercise: WebExercise, user: User, exType: String): Try[CompleteResult[WebResult]] = {
     saveSolution(learnerSolution, new WebSolutionKey(user.name, exercise.id))
 
     val solutionUrl = BASE_URL + routes.SolutionController.site(user.name, exercise.getId).url
