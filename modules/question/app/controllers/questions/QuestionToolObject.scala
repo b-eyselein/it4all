@@ -1,10 +1,9 @@
 package controllers.questions
 
 import model.tools.{IdExToolObject, ToolState}
-import play.api.Configuration
 import play.api.mvc.Call
 
-class QuestionToolObject(c: Configuration) extends IdExToolObject(c, "question", "Auswahlfragen", ToolState.BETA) {
+object QuestionToolObject extends IdExToolObject("question", "Auswahlfragen", ToolState.BETA) {
 
   // User
 

@@ -3,11 +3,10 @@ package controllers.core
 import java.io.File
 import java.nio.file.{Path, Paths}
 
+import io.ebean.Finder
 import model.exercisereading._
 import model.tools.IdExToolObject
-import model.user.User
 import model.{JsonReadable, StringConsts}
-import play.api.Configuration
 import play.data.FormFactory
 import play.libs.Json
 import play.mvc.Http.MultipartFormData
@@ -17,14 +16,14 @@ import play.twirl.api.Html
 import scala.util.{Failure, Success, Try}
 
 abstract class BaseAdminController[E <: JsonReadable]
-(c: Configuration, f: FormFactory, val toolObject: IdExToolObject, exerciseReader: JsonReader[E])
-  extends BaseController(c, f) {
+(f: FormFactory, val toolObject: IdExToolObject, val finder: Finder[Integer, E], exerciseReader: JsonReader[E])
+  extends BaseController(f) {
 
-  val savingDir: Path = Paths.get(rootDir, StringConsts.ADMIN_FOLDER, exerciseReader.exerciseType)
+  protected def statistics = new Html(s"<li>Es existieren insgesamt ${finder.query.findCount} Aufgaben</li>")
 
-  def adminIndex: Result = Results.ok(renderAdminIndex(getUser))
+  val savingDir: Path = Paths.get(toolObject.rootDir, StringConsts.ADMIN_FOLDER, exerciseReader.exerciseType)
 
-  def renderAdminIndex(user: User): Html
+  def adminIndex: Result = Results.ok(views.html.admin.exerciseAdminMain.render(getUser, statistics, toolObject, new Html("")))
 
   def getJSONSchemaFile: Result = Results.ok(Json.prettyPrint(exerciseReader.jsonSchema))
 

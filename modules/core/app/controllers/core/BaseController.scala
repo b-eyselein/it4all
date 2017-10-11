@@ -13,9 +13,7 @@ import play.mvc.{Controller, Http}
 
 import scala.util.Try
 
-abstract class BaseController(config: Configuration, val factory: FormFactory) extends Controller {
-
-  val rootDir: String = config.get[String]("datafolder")
+abstract class BaseController(val factory: FormFactory) extends Controller {
 
   def getUser: User = User.finder.byId(getUsername)
 

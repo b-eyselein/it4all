@@ -1,32 +1,24 @@
 package controllers.spread
 
+import java.io.File
+import java.nio.file.{Files, Path, Paths, StandardCopyOption}
+import javax.inject.Inject
+
 import controllers.core.IdExController
-import model.CorrectionException
-import model.SpreadExercise
-import model.SpreadSheetCorrectionResult
-import model.SpreadSheetCorrector
-import model.result.CompleteResult
-import model.result.EvaluationResult
+import model.result.{CompleteResult, EvaluationResult}
 import model.user.User
+import model.{CorrectionException, SpreadExercise, SpreadSheetCorrectionResult, SpreadSheetCorrector}
 import play.Logger
-import play.api.Configuration
-import play.data.DynamicForm
-import play.data.FormFactory
+import play.data.{DynamicForm, FormFactory}
 import play.mvc.Http.MultipartFormData
 import play.mvc.Http.MultipartFormData.FilePart
 import play.mvc.{Controller, Result, Results}
 import play.twirl.api.Html
-import javax.inject.Inject
-import java.io.File
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
 
 import scala.util.Try
 
-class SpreadController @Inject()(c: Configuration, f: FormFactory)
-  extends IdExController[SpreadExercise, EvaluationResult](c, f, SpreadExercise.finder, new SpreadToolObject(c)) {
+class SpreadController @Inject()(f: FormFactory)
+  extends IdExController[SpreadExercise, EvaluationResult](f, SpreadExercise.finder, SpreadToolObject) {
 
   val BODY_SOL_FILE_NAME: String = "solFile"
   val CORRECTION_ADD_STRING: String = "_Korrektur"

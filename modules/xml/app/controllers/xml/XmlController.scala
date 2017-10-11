@@ -9,7 +9,6 @@ import model._
 import model.exercise.ExerciseOptions
 import model.result.CompleteResult
 import model.user.User
-import play.api.Configuration
 import play.data.{DynamicForm, FormFactory}
 import play.mvc.{Result, Results}
 import play.twirl.api.{Html, HtmlFormat}
@@ -17,8 +16,8 @@ import play.twirl.api.{Html, HtmlFormat}
 import scala.collection.JavaConverters.{asScalaBufferConverter, seqAsJavaListConverter}
 import scala.util.Try
 
-class XmlController @Inject()(c: Configuration, f: FormFactory)
-  extends IdExController[XmlExercise, XmlError](c, f, XmlExercise.finder, new XmlToolObject(c)) {
+class XmlController @Inject()(f: FormFactory)
+  extends IdExController[XmlExercise, XmlError](f, XmlExercise.finder, XmlToolObject) {
 
   val EX_OPTIONS = ExerciseOptions("Xml", "xml", 10, 20, false)
 
@@ -89,17 +88,13 @@ class XmlController @Inject()(c: Configuration, f: FormFactory)
   ).getOrElse(exercise.getFixedStart)
 
   def copy(dir: Path, filename: String) = Try(
-    Files.copy(
-      Paths.get(toolObject.sampleDir.toString, filename),
-      Paths.get(dir.toString, filename),
-      StandardCopyOption.REPLACE_EXISTING
+    Files.copy(Paths.get(toolObject.sampleDir.toString, filename), Paths.get(dir.toString, filename), StandardCopyOption.REPLACE_EXISTING
     )
   )
 
   def save(dir: Path, filename: String, learnerSolution: String) = Try(
     Files.write(
-      Paths.get(dir.toString, filename),
-      learnerSolution.split(StringConsts.NEWLINE).toList.asJava,
+      Paths.get(dir.toString, filename), learnerSolution.split(StringConsts.NEWLINE).toList.asJava,
       StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING
     )
   )

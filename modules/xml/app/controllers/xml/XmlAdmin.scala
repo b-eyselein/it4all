@@ -5,14 +5,13 @@ import javax.inject.Inject
 import controllers.core.AExerciseAdminController
 import model.user.User
 import model.{XmlExercise, XmlExerciseReader}
-import play.api.Configuration
 import play.data.FormFactory
 import play.twirl.api.Html
 
 import scala.collection.JavaConverters.asScalaBufferConverter
 
-class XmlAdmin @Inject()(c: Configuration, f: FormFactory)
-  extends AExerciseAdminController[XmlExercise](c, f, new XmlToolObject(c), XmlExercise.finder, XmlExerciseReader) {
+class XmlAdmin @Inject()(f: FormFactory)
+  extends AExerciseAdminController[XmlExercise](f, XmlToolObject, XmlExercise.finder, XmlExerciseReader) {
 
   override def statistics = new Html(
     s"""

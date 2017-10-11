@@ -1,23 +1,24 @@
-package model.umlmatcher;
+package model.umlmatcher
 
 import model.UmlClass
-import model.matching.{ Match, MatchType, Matcher, MatchingResult, StringMatcher }
+import model.matching._
 import play.twirl.api.Html
 
 case class UmlClassMatch(m1: Option[UmlClass], m2: Option[UmlClass], s: Int, compareAttrsAndMethods: Boolean)
   extends Match[UmlClass](m1, m2, s) {
 
-  var attributesResult: MatchingResult[String, Match[String]] = null
-  var methodsResult: MatchingResult[String, Match[String]] = null
+  import UmlClassMatch._
 
-  override def analyze(c1: UmlClass, c2: UmlClass) = compareAttrsAndMethods match {
-    case false ⇒ MatchType.SUCCESSFUL_MATCH
-    case true ⇒
-      attributesResult = UmlClassMatch.ATTRS_MATCHER.doMatch(c1.attributes, c2.attributes)
-      methodsResult = UmlClassMatch.METHODS_MATCHER.doMatch(c1.methods, c2.methods)
+  var attributesResult: MatchingResult[String, Match[String]] = _
+  var methodsResult: MatchingResult[String, Match[String]] = _
 
-      if (attributesResult.isSuccessful && methodsResult.isSuccessful) MatchType.SUCCESSFUL_MATCH
-      else MatchType.UNSUCCESSFUL_MATCH
+  override def analyze(c1: UmlClass, c2: UmlClass): MatchType = if (compareAttrsAndMethods) MatchType.SUCCESSFUL_MATCH
+  else {
+    attributesResult = ATTRS_MATCHER.doMatch(c1.attributes, c2.attributes)
+    methodsResult = METHODS_MATCHER.doMatch(c1.methods, c2.methods)
+
+    if (attributesResult.isSuccessful && methodsResult.isSuccessful) MatchType.SUCCESSFUL_MATCH
+    else MatchType.UNSUCCESSFUL_MATCH
   }
 
   override def describeArg(arg: UmlClass) =
@@ -33,5 +34,5 @@ object UmlClassMatch {
 class UmlClassMatcher(compareAttrsAndMethods: Boolean) extends Matcher[UmlClass, UmlClassMatch](
   "Klassen",
   List("Klassenname"),
-  (c1, c2) ⇒ c1.name == c2.name,
-  new UmlClassMatch(_, _, _, compareAttrsAndMethods)) 
+  (c1, c2) => c1.name == c2.name,
+  UmlClassMatch(_, _, _, compareAttrsAndMethods))

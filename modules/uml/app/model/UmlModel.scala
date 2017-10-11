@@ -14,10 +14,10 @@ case object AbstractClass extends UmlClassType("Abstrakte Klasse")
 
 object UmlClassType {
   def fromString(str: String): UmlClassType = str match {
-    case "CLASS"     => Class
+    case "CLASS" => Class
     case "INTERFACE" => Interface
-    case "ABSTRACT"  => AbstractClass
-    case _           => null
+    case "ABSTRACT" => AbstractClass
+    case _ => null
   }
 }
 
@@ -44,9 +44,9 @@ case object UNBOUND extends Multiplicity("*")
 object Multiplicity {
 
   def getByString(str: String): Multiplicity = str match {
-    case "1" | "SINGLE"  => SINGLE
+    case "1" | "SINGLE" => SINGLE
     case "*" | "UNBOUND" => UNBOUND
-    case _               => throw new IllegalArgumentException(s"Value $str is not allowed for a Multiplicity!")
+    case _ => throw new IllegalArgumentException(s"Value $str is not allowed for a Multiplicity!")
   }
 
 }
@@ -77,4 +77,4 @@ object UmlAssociationType {
 
 // Association
 
-case class UmlAssociation(val assocType: UmlAssociationType, val ends: (UmlAssociationEnd, UmlAssociationEnd)) 
+case class UmlAssociation(assocType: UmlAssociationType, ends: (UmlAssociationEnd, UmlAssociationEnd))

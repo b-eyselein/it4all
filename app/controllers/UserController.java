@@ -14,8 +14,8 @@ import javax.inject.Inject;
 
 @Security.Authenticated(Secured.class) public class UserController extends BaseController {
 
-  @Inject public UserController(Configuration c, FormFactory f) {
-    super(c, f);
+  @Inject public UserController(FormFactory f) {
+    super(f);
   }
 
   public Result index() {

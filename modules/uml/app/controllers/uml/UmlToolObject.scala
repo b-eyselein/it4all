@@ -2,10 +2,9 @@ package controllers.uml
 
 import model.UmlExPart
 import model.tools.{IdExToolObject, ToolState}
-import play.api.Configuration
 import play.api.mvc.Call
 
-class UmlToolObject(c: Configuration) extends IdExToolObject(c, "uml", "Uml", ToolState.LIVE) {
+object UmlToolObject extends IdExToolObject("uml", "Uml", ToolState.LIVE) {
 
   // User
 

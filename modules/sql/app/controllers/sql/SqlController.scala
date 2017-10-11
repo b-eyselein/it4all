@@ -3,16 +3,15 @@ package controllers.sql
 import java.sql.Connection
 import javax.inject.Inject
 
-import controllers.core.{BaseController, IdExController}
+import controllers.core.IdExController
 import model.CommonUtils.cleanly
 import model.StringConsts.{SELECT_ALL_DUMMY, SHOW_ALL_TABLES}
+import model._
 import model.exercise.{SqlExercise, SqlExerciseType, SqlSample, SqlScenario}
 import model.querycorrectors.{QueryCorrector, SqlResult}
 import model.result.{CompleteResult, EvaluationResult}
 import model.sql.SqlQueryResult
 import model.user.User
-import model._
-import play.api.Configuration
 import play.data.{DynamicForm, FormFactory}
 import play.db.{Database, NamedDatabase}
 import play.mvc.{Result, Results}
@@ -22,9 +21,8 @@ import scala.collection.JavaConverters.{asScalaBufferConverter, seqAsJavaListCon
 import scala.collection.mutable.ListBuffer
 import scala.util.{Failure, Success, Try}
 
-class SqlController @Inject()
-(c: Configuration, f: FormFactory, @NamedDatabase("sqlselectroot") sqlSelect: Database, @NamedDatabase("sqlotherroot") sqlOther: Database)
-  extends IdExController[SqlExercise, EvaluationResult](c, f, SqlExercise.finder, new SqlToolObject(c)) {
+class SqlController @Inject()(f: FormFactory, @NamedDatabase("sqlselectroot") sqlSelect: Database, @NamedDatabase("sqlotherroot") sqlOther: Database)
+  extends IdExController[SqlExercise, EvaluationResult](f, SqlExercise.finder, SqlToolObject) {
 
   override def getUser: User = {
     val user = super.getUser

@@ -1,10 +1,9 @@
 package controllers.spread
 
 import model.tools.{IdExToolObject, ToolState}
-import play.api.Configuration
 import play.api.mvc.Call
 
-class SpreadToolObject(c: Configuration) extends IdExToolObject(c, "spread", "Tabellenkalkulation", ToolState.LIVE) {
+object SpreadToolObject extends IdExToolObject("spread", "Tabellenkalkulation", ToolState.LIVE) {
 
   // User
 

@@ -1,21 +1,19 @@
 package controllers.questions
 
-import java.util.{Arrays, Collections}
+import java.util.Collections
 import javax.inject.Inject
 
 import controllers.core.AExerciseCollectionAdminController
 import model.question.Question
 import model.quiz.{Quiz, QuizReader}
-import model.user.User
-import play.api.Configuration
 import play.data.FormFactory
 import play.mvc.{Result, Results}
 import play.twirl.api.Html
 
-class QuestionAdmin @Inject()(c: Configuration, f: FormFactory)
-  extends AExerciseCollectionAdminController[Question, Quiz](c, f, new QuestionToolObject(c), Quiz.finder, new QuizReader()) {
+class QuestionAdmin @Inject()(f: FormFactory)
+  extends AExerciseCollectionAdminController[Question, Quiz](f, QuestionToolObject, Quiz.finder, new QuizReader()) {
 
-  protected def statistics: Html = new Html(
+  override protected def statistics: Html = new Html(
     s"""
 <li>Es existieren insgesamt <a href="${controllers.questions.routes.QuestionAdmin.exercises()}">${Question.finder.query.findCount} Fragen</a> in allen Kategorien
     <ul>
@@ -44,8 +42,6 @@ class QuestionAdmin @Inject()(c: Configuration, f: FormFactory)
     //
     // quiz.save()
   }
-
-  override def renderAdminIndex(user: User): Html = views.html.questionAdmin.index.render(user)
 
   def assignQuestions: Result = {
     val form = factory.form().bindFromRequest()

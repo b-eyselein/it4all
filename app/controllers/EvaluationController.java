@@ -8,7 +8,6 @@ import model.feedback.Feedback.EvaluatedTool;
 import model.feedback.FeedbackKey;
 import model.feedback.Mark;
 import model.user.User;
-import play.api.Configuration;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.mvc.Result;
@@ -21,8 +20,8 @@ import java.util.stream.Collectors;
 
 @Authenticated(Secured.class) public class EvaluationController extends BaseController {
 
-  @Inject public EvaluationController(Configuration c, FormFactory f) {
-    super(c, f);
+  @Inject public EvaluationController(FormFactory f) {
+    super(f);
   }
 
   public Result index() {

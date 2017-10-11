@@ -8,7 +8,6 @@ import controllers.core.IdExController
 import model._
 import model.result.CompleteResult
 import model.user.User
-import play.api.Configuration
 import play.data.{DynamicForm, FormFactory}
 import play.libs.Json
 import play.mvc.{Result, Results}
@@ -16,8 +15,8 @@ import play.twirl.api.Html
 
 import scala.util.Try
 
-class UmlController @Inject()(c: Configuration, f: FormFactory)
-  extends IdExController[UmlExercise, UmlResult](c, f, UmlExercise.finder, new UmlToolObject(c)) {
+class UmlController @Inject()(f: FormFactory)
+  extends IdExController[UmlExercise, UmlResult](f, UmlExercise.finder, UmlToolObject) {
 
   val ERROR_MSG = "Es gab einen Fehler bei der Validierung des Resultats!"
 

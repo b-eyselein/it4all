@@ -1,10 +1,9 @@
 package controllers.xml
 
 import model.tools.{IdExToolObject, ToolState}
-import play.api.Configuration
 import play.api.mvc.Call
 
-class XmlToolObject(c: Configuration) extends IdExToolObject(c, "xml", "Xml", ToolState.LIVE) {
+object XmlToolObject extends IdExToolObject("xml", "Xml", ToolState.LIVE) {
 
   // User
 

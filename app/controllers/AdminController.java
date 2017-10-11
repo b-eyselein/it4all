@@ -1,9 +1,5 @@
 package controllers;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
 import controllers.core.BaseController;
 import model.AdminSecured;
 import model.feedback.Feedback;
@@ -11,16 +7,18 @@ import model.feedback.FeedbackResult;
 import model.feedback.FeedbackResult$;
 import model.user.Role;
 import model.user.User;
-import play.api.Configuration;
 import play.data.FormFactory;
 import play.libs.Json;
 import play.mvc.Result;
 import play.mvc.Security.Authenticated;
 
+import javax.inject.Inject;
+import java.util.List;
+
 @Authenticated(AdminSecured.class) public class AdminController extends BaseController {
 
-  @Inject public AdminController(Configuration c, FormFactory f) {
-    super(c, f);
+  @Inject public AdminController(FormFactory f) {
+    super(f);
   }
 
   public Result changeRole(String username) {

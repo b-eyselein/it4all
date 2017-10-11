@@ -1,23 +1,20 @@
 package controllers.core
 
-import java.nio.file.Paths
-
 import io.ebean.Finder
 import model.exercise.{Exercise, ExerciseCollection}
 import model.exercisereading.{ExerciseCollectionReader, ExerciseReader}
-import model.tools.{IdExToolObject, ToolObject}
+import model.tools.IdExToolObject
 import model.user.User
-import play.api.Configuration
 import play.data.FormFactory
 import play.libs.Json
-import play.mvc.{Result, Results}
 import play.mvc.Security.Authenticated
+import play.mvc.{Result, Results}
 import play.twirl.api.Html
 
 @Authenticated(classOf[model.AdminSecured])
 abstract class AExerciseCollectionAdminController[E <: Exercise, C <: ExerciseCollection[E]]
-(c: Configuration, f: FormFactory, t: IdExToolObject, finder: Finder[Integer, C], val collectionReader: ExerciseCollectionReader[E, C])
-  extends BaseAdminController[C](c, f, t, collectionReader) {
+(f: FormFactory, t: IdExToolObject, fi: Finder[Integer, C], val collectionReader: ExerciseCollectionReader[E, C])
+  extends BaseAdminController[C](f, t, fi, collectionReader) {
 
   //  public AExerciseCollectionAdminController(FormFactory theFactory, IdExToolObject theRoutes,
   //      Finder<Integer, E> theExerciseFinder, Finder<Integer, C> theCollectionFinder,

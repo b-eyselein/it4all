@@ -2,11 +2,10 @@ package controllers.uml
 
 import javax.inject.Inject
 
-import controllers.core.{AExerciseAdminController, BaseController}
+import controllers.core.AExerciseAdminController
 import model.exercisereading.JsonReader
 import model.user.User
 import model.{StringConsts, UmlExTextParser, UmlExercise, UmlExerciseReader}
-import play.api.Configuration
 import play.data.FormFactory
 import play.libs.Json
 import play.mvc.{Result, Results}
@@ -14,8 +13,8 @@ import play.twirl.api.Html
 
 import scala.util.{Failure, Success}
 
-class UmlAdmin @Inject()(c: Configuration, f: FormFactory)
-  extends AExerciseAdminController[UmlExercise](c, f, new UmlToolObject(c), UmlExercise.finder, UmlExerciseReader) {
+class UmlAdmin @Inject()(f: FormFactory)
+  extends AExerciseAdminController[UmlExercise](f, UmlToolObject, UmlExercise.finder, UmlExerciseReader) {
 
   def checkSolution: Result = {
     val form = factory.form().bindFromRequest()

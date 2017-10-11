@@ -1,25 +1,20 @@
 package controllers;
 
-import javax.inject.Inject;
-
 import controllers.core.BaseController;
 import model.AdminSecured;
 import model.StringConsts;
 import model.exercisereading.ExerciseReader;
-import model.user.Course;
-import model.user.CourseRole;
-import model.user.CourseRoleKey;
-import model.user.Role;
-import model.user.User;
-import play.api.Configuration;
+import model.user.*;
 import play.data.FormFactory;
 import play.mvc.Result;
 import play.mvc.Security.Authenticated;
 
+import javax.inject.Inject;
+
 @Authenticated(AdminSecured.class) public class CourseAdminController extends BaseController {
 
-  @Inject public CourseAdminController(Configuration c, FormFactory f) {
-    super(c, f);
+  @Inject public CourseAdminController(FormFactory f) {
+    super(f);
   }
 
   public Result addAdmin(int courseId) {

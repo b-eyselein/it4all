@@ -7,7 +7,7 @@ import model.umlmatcher.{ UmlAssociationMatcher, UmlClassMatcher, UmlImplementat
 abstract sealed class UmlResult(val exercise: UmlExercise, val learnerSolution: UmlSolution)
   extends EvaluationResult(SuccessType.NONE) {
 
-  val musterSolution = exercise.getSolution
+  val musterSolution: UmlSolution = exercise.getSolution
 
   def notEmptyMatchingResults: List[MatchingResult[_, _ <: Match[_]]]
 

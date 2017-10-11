@@ -3,7 +3,6 @@ package controllers;
 import controllers.core.BaseController;
 import model.Secured;
 import play.Environment;
-import play.api.Configuration;
 import play.data.FormFactory;
 import play.mvc.Result;
 import play.mvc.Security;
@@ -14,8 +13,8 @@ import javax.inject.Inject;
 
   private Environment environment;
 
-  @Inject public Application(Configuration c, FormFactory f, Environment theEnvironment) {
-    super(c, f);
+  @Inject public Application(FormFactory f, Environment theEnvironment) {
+    super(f);
     environment = theEnvironment;
   }
 

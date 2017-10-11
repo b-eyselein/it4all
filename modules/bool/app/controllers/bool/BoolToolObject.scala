@@ -1,10 +1,9 @@
 package controllers.bool
 
 import model.tools.{RandomExToolObject, ToolState}
-import play.api.Configuration
 import play.api.mvc.Call
 
-class BoolToolObject(c: Configuration) extends RandomExToolObject(c, "bool", "Boolesche Algebra", ToolState.LIVE) {
+object BoolToolObject extends RandomExToolObject("bool", "Boolesche Algebra", ToolState.LIVE) {
 
   // User
 

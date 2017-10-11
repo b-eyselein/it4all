@@ -9,38 +9,36 @@ public enum XmlExType implements Tag {
   XSD_XML("xsd", "xml", "xsd"),
   DTD_XML("dtd", "xml", "dtd");
   // @formatter:on
-  
+
   private String studFileEnding;
   private String refFileEnding;
   private String gramFileEnding;
-  
+
   private XmlExType(String studentEnding, String theRefFileEnding, String theGramFileEnding) {
     studFileEnding = studentEnding;
     refFileEnding = theRefFileEnding;
     gramFileEnding = theGramFileEnding;
   }
-  
-  @Override
-  public String getButtonContent() {
+
+  @Override public String getButtonContent() {
     return toString();
   }
-  
+
   public String getGramFileEnding() {
     return gramFileEnding;
   }
-  
+
   public String getRefFileEnding() {
     return refFileEnding;
   }
-  
+
   public String getStudFileEnding() {
     return studFileEnding;
   }
-  
-  @Override
-  public String getTitle() {
+
+  @Override public String getTitle() {
     final String[] forTitle = name().split("_");
     return forTitle[0] + " gegen " + forTitle[1];
   }
-  
+
 }

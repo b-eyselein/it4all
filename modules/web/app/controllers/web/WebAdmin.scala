@@ -5,13 +5,12 @@ import javax.inject.Inject
 import controllers.core.AExerciseAdminController
 import model.user.User
 import model.{WebExercise, WebExerciseReader}
-import play.api.Configuration
 import play.data.FormFactory
 import play.mvc.{Result, Results}
 import play.twirl.api.Html
 
-class WebAdmin @Inject()(c: Configuration, f: FormFactory)
-  extends AExerciseAdminController[WebExercise](c, f, new WebToolObject(c), WebExercise.finder, WebExerciseReader) {
+class WebAdmin @Inject()(f: FormFactory)
+  extends AExerciseAdminController[WebExercise](f, WebToolObject, WebExercise.finder, WebExerciseReader) {
 
   override def statistics = new Html(
     s"""<li>Es existieren insgesamt ${WebExercise.finder.all.size} Aufgaben, davon

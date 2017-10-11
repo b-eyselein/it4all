@@ -1,10 +1,9 @@
 package controllers.programming
 
 import model.tools.{IdExToolObject, ToolState}
-import play.api.Configuration
 import play.api.mvc.Call
 
-class ProgToolObject(c: Configuration) extends IdExToolObject(c, "prog", "Programmierung", ToolState.LIVE) {
+object ProgToolObject extends IdExToolObject("prog", "Programmierung", ToolState.LIVE) {
 
   // User
 

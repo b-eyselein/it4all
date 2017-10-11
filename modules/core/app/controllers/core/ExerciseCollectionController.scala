@@ -5,7 +5,6 @@ import model.exercise.{Exercise, ExerciseCollection}
 import model.logging.{ExerciseCompletionEvent, ExerciseCorrectionEvent}
 import model.result.CompleteResult
 import model.user.User
-import play.api.Configuration
 import play.data.{DynamicForm, FormFactory}
 import play.libs.Json
 import play.mvc.Security.Authenticated
@@ -16,8 +15,8 @@ import scala.util.{Failure, Success, Try}
 
 @Authenticated(classOf[model.Secured])
 abstract class ExerciseCollectionController[E <: Exercise, C <: ExerciseCollection[E]]
-(c: Configuration, f: FormFactory, exType: String, finder: Finder[Integer, C], exFinder: Finder[Integer, E])
-  extends BaseController(c, f) {
+(f: FormFactory, exType: String, finder: Finder[Integer, C], exFinder: Finder[Integer, E])
+  extends BaseController(f) {
 
   def exercises(id: Int): Result = Results.ok("TODO!")
 

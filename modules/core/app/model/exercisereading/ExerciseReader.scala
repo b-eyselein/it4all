@@ -8,7 +8,7 @@ import io.ebean.Finder
 import model.JsonReadable
 import model.StringConsts.{AUTHOR_NAME, STATE_NAME, TEXT_NAME, TITLE_NAME}
 import model.exercise.{Exercise, ExerciseState}
-import model.tools.ToolObject
+import model.tools.IdExToolObject
 import play.data.DynamicForm
 
 import scala.collection.JavaConverters.{asScalaBufferConverter, asScalaIteratorConverter, seqAsJavaListConverter}
@@ -45,7 +45,7 @@ abstract class ExerciseReader[E <: Exercise](e: String, f: Finder[Integer, E], c
     updateExercise(exercise, node)
   }
 
-  protected def checkOrCreateSampleFile(exercise: Exercise, toolObject: ToolObject, filename: String): Try[Path] = {
+  protected def checkOrCreateSampleFile(exercise: Exercise, toolObject: IdExToolObject, filename: String): Try[Path] = {
     val providedFile = Paths.get(resourcesFolder.toString, filename).toAbsolutePath
     val targetPath = Paths.get(toolObject.sampleDir.toString, filename).toAbsolutePath
 

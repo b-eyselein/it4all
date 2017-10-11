@@ -1,10 +1,9 @@
 package controllers.sql
 
 import model.tools.{IdExToolObject, ToolState}
-import play.api.Configuration
 import play.api.mvc.Call
 
-class SqlToolObject(c: Configuration) extends IdExToolObject(c, "sql", "Sql", ToolState.LIVE, "Szenarien") {
+object SqlToolObject extends IdExToolObject("sql", "Sql", ToolState.LIVE, "Szenarien") {
 
   // User
 

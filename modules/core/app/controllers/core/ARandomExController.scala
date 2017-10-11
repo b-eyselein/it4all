@@ -9,8 +9,8 @@ import play.data.FormFactory
 import play.mvc.Results
 import play.twirl.api.Html
 
-abstract class ARandomExController @Inject()(c: Configuration, f: FormFactory, toolObject: RandomExToolObject)
-  extends BaseController(c, f) {
+abstract class ARandomExController(f: FormFactory, toolObject: RandomExToolObject)
+  extends BaseController(f) {
 
   def index = Results.ok(renderIndex(getUser))
 

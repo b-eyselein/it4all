@@ -9,7 +9,6 @@ import model.result.CompleteResult
 import model.task.WebTask
 import model.user.User
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
-import play.api.Configuration
 import play.data.{DynamicForm, FormFactory}
 import play.mvc.{Controller, Result, Results}
 import play.twirl.api.Html
@@ -17,8 +16,8 @@ import play.twirl.api.Html
 import scala.collection.JavaConverters.{asScalaBufferConverter, seqAsJavaListConverter}
 import scala.util.{Failure, Success, Try}
 
-class WebController @Inject()(c: Configuration, f: FormFactory)
-  extends IdExController[WebExercise, WebResult](c, f, WebExercise.finder, new WebToolObject(c)) {
+class WebController @Inject()(f: FormFactory)
+  extends IdExController[WebExercise, WebResult](f, WebExercise.finder, WebToolObject) {
 
   val HTML_TYPE = "html"
   val JS_TYPE = "js"

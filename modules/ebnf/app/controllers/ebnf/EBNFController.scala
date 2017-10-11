@@ -7,17 +7,15 @@ import model.Secured
 import model.ebnf.{EBNFExercise, EBNFResult}
 import model.result.CompleteResult
 import model.user.User
-import play.api.Configuration
 import play.data.{DynamicForm, FormFactory}
-import play.mvc.Result
 import play.mvc.Security.Authenticated
 import play.twirl.api.Html
 
 import scala.util.Try
 
 @Authenticated(classOf[Secured])
-class EBNFController @Inject()(c: Configuration, f: FormFactory)
-  extends IdExController[EBNFExercise, EBNFResult](c, f, EBNFExercise.finder, new EBNFToolObject(c)) {
+class EBNFController @Inject()(f: FormFactory)
+  extends IdExController[EBNFExercise, EBNFResult](f, EBNFExercise.finder, EBNFToolObject) {
 
   override def correctEx(form: DynamicForm, exercise: EBNFExercise, user: User): Try[CompleteResult[EBNFResult]] = ??? // FIXME
 

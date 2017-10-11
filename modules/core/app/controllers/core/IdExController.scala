@@ -20,8 +20,8 @@ import play.twirl.api.Html
 import scala.util.{Failure, Success, Try}
 
 abstract class IdExController[E <: Exercise, R <: EvaluationResult]
-(c: Configuration, f: FormFactory, val finder: Finder[Integer, E], val toolObject: IdExToolObject)
-  extends BaseController(c, f) {
+(f: FormFactory, val finder: Finder[Integer, E], val toolObject: IdExToolObject)
+  extends BaseController(f) {
 
   val STEP = 10
 

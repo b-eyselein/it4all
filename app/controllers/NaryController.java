@@ -3,7 +3,6 @@ package controllers;
 import controllers.core.ARandomExController;
 import model.nary.*;
 import model.user.User;
-import play.api.Configuration;
 import play.data.FormFactory;
 import play.mvc.Result;
 import play.twirl.api.Html;
@@ -15,8 +14,8 @@ public class NaryController extends ARandomExController {
 
   private static final Random GENERATOR = new Random();
 
-  @Inject public NaryController(Configuration c, FormFactory f) {
-    super(c, f, new NAryToolObject(c));
+  @Inject public NaryController(FormFactory f) {
+    super(f, NAryToolObject$.MODULE$);
   }
 
   public Result checkNaryAdditionSolution() {

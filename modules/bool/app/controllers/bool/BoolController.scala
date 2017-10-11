@@ -15,7 +15,7 @@ import play.mvc.Security.Authenticated
 import play.twirl.api.Html
 
 @Authenticated(classOf[model.Secured])
-class BoolController @Inject()(c: Configuration, f: FormFactory) extends ARandomExController(c, f, new BoolToolObject(c)) {
+class BoolController @Inject()(f: FormFactory) extends ARandomExController(f, BoolToolObject) {
 
   val ONE = "1"
   val SOL_VAR: Variable = BooleanQuestion.SOLUTION_VARIABLE

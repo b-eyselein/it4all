@@ -15,7 +15,7 @@ import play.twirl.api.Html
 import scala.util.Try
 
 class QuizController @Inject()(c: Configuration, f: FormFactory)
-  extends ExerciseCollectionController[Question, Quiz](c, f, "question", Quiz.finder, Question.finder) {
+  extends ExerciseCollectionController[Question, Quiz](f, "question", Quiz.finder, Question.finder) {
 
   override def correctPart(form: DynamicForm, question: Question, part: String, user: User): Try[model.result.CompleteResult[_]] = ??? // FIXME: implement...
 

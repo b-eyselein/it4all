@@ -1,10 +1,9 @@
 package controllers.web
 
 import model.tools.{IdExToolObject, ToolState}
-import play.api.Configuration
 import play.api.mvc.Call
 
-class WebToolObject(c: Configuration) extends IdExToolObject(c, "web", "Web", ToolState.LIVE) {
+object WebToolObject extends IdExToolObject("web", "Web", ToolState.LIVE) {
 
   // User
 

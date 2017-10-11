@@ -6,7 +6,6 @@ import model.mindmap.Evaluation;
 import model.mindmap.Validation;
 import model.mindmap.evaluation.ParsingException;
 import model.mindmap.evaluation.enums.EvalParserType;
-import play.api.Configuration;
 import play.data.FormFactory;
 import play.mvc.Result;
 import play.mvc.Security;
@@ -34,8 +33,8 @@ import java.nio.file.Paths;
 
   private static final Path ALT_SOLUTION_PATH = Paths.get(BASE_PATH.toString(), "alt_solution.xml");
 
-  @Inject public MindmapController(Configuration c, FormFactory f) {
-    super(c, f);
+  @Inject public MindmapController(FormFactory f) {
+    super(f);
   }
 
   public Result index() {
