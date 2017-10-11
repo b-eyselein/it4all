@@ -28,12 +28,12 @@ class XmlController @Inject()(f: FormFactory)
     val dir = checkAndCreateSolDir(user.name, exercise)
 
     val (grammarTry, xmlTry) = exercise.exerciseType match {
-      case (XmlExType.DTD_XML | XmlExType.XSD_XML) => (
-        save(dir, exercise.rootNode + exercise.getGrammarFileEnding, learnerSolution),
+      case (DTD_XML | XSD_XML) => (
+        save(dir, exercise.rootNode + exercise.exerciseType.gramFileEnding, learnerSolution),
         copy(dir, exercise.rootNode + ".xml")
       )
       case _ => (
-        copy(dir, exercise.rootNode + "." + exercise.getGrammarFileEnding),
+        copy(dir, exercise.rootNode + "." + exercise.exerciseType.gramFileEnding),
         save(dir, exercise.rootNode + ".xml", learnerSolution)
       )
     }
@@ -50,7 +50,7 @@ class XmlController @Inject()(f: FormFactory)
     renderResult(
       new CompleteResult(
         "",
-        XmlCorrector.correct(factory.form().bindFromRequest().get(StringConsts.FORM_VALUE), "", XmlExType.XML_DTD).asJava
+        XmlCorrector.correct(factory.form().bindFromRequest().get(StringConsts.FORM_VALUE), "", XML_DTD).asJava
       )
     )
   )
@@ -83,9 +83,9 @@ class XmlController @Inject()(f: FormFactory)
   }
 
   def readDefOrOldSolution(username: String, exercise: XmlExercise): String = Try(
-    Files.readAllLines(toolObject.getSolFileForExercise(username, exercise, exercise.rootNode, exercise.getStudentFileEnding)
+    Files.readAllLines(toolObject.getSolFileForExercise(username, exercise, exercise.rootNode, exercise.exerciseType.studFileEnding)
     ).asScala.mkString("\n")
-  ).getOrElse(exercise.getFixedStart)
+  ).getOrElse(exercise.fixedStart)
 
   def copy(dir: Path, filename: String) = Try(
     Files.copy(Paths.get(toolObject.sampleDir.toString, filename), Paths.get(dir.toString, filename), StandardCopyOption.REPLACE_EXISTING
@@ -101,7 +101,7 @@ class XmlController @Inject()(f: FormFactory)
 
 
   def getReferenceCode(exercise: XmlExercise): String = {
-    val referenceFilePath = Paths.get(toolObject.sampleDir.toString, exercise.rootNode + "." + exercise.getReferenceFileEnding)
+    val referenceFilePath = Paths.get(toolObject.sampleDir.toString, exercise.rootNode + "." + exercise.exerciseType.refFileEnding)
     Try(Files.readAllLines(referenceFilePath).asScala.mkString("\n")).getOrElse("FEHLER!")
   }
 

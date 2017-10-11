@@ -11,7 +11,7 @@ import scala.util.Try
 object XmlExerciseReader extends ExerciseReader[XmlExercise]("xml", XmlExercise.finder, classOf[Array[XmlExercise]]) {
 
   override def initRemainingExFromForm(exercise: XmlExercise, form: DynamicForm) {
-    exercise.exerciseType = XmlExType.valueOf(form.get(StringConsts.EXERCISE_TYPE))
+    exercise.exerciseTypeStr = form.get(StringConsts.EXERCISE_TYPE)
     exercise.rootNode = form.get(StringConsts.ROOT_NODE_NAME)
 
     //    val referenceFilePath = Paths.get(
@@ -33,7 +33,7 @@ object XmlExerciseReader extends ExerciseReader[XmlExercise]("xml", XmlExercise.
   }
 
   override def updateExercise(exercise: XmlExercise, exerciseNode: JsonNode) {
-    exercise.exerciseType = XmlExType.valueOf(exerciseNode.get(StringConsts.EXERCISE_TYPE).asText)
+    exercise.exerciseTypeStr = exerciseNode.get(StringConsts.EXERCISE_TYPE).asText
     exercise.rootNode = exerciseNode.get(StringConsts.ROOT_NODE_NAME).asText
   }
 

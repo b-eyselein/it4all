@@ -10,6 +10,9 @@ tmp
 dist
 .history
 
+# Ignore saved files
+data/
+
 # IntelliJ IDEA
 .idea/
 

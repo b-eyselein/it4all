@@ -31,8 +31,8 @@ object XmlCorrector {
   private val SchFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
 
   def correct(xml: Path, grammar: Path, exercise: XmlExercise): List[XmlError] = exercise.exerciseType match {
-    case (XmlExType.XML_XSD | XmlExType.XSD_XML) => correctXsdAndXml(xml, grammar)
-    case (XmlExType.XML_DTD | XmlExType.DTD_XML) => correctDtdAndXml(xml)
+    case (XML_XSD | XSD_XML) => correctXsdAndXml(xml, grammar)
+    case (XML_DTD | DTD_XML) => correctDtdAndXml(xml)
   }
 
   def correctJava(xml: Path, grammar: Path, exercise: XmlExercise): java.util.List[XmlError] = correct(xml, grammar, exercise).asJava
@@ -43,8 +43,8 @@ object XmlCorrector {
     val grammarReader = new StringReader(grammar)
 
     exType match {
-      case (XmlExType.XML_XSD | XmlExType.XSD_XML) => correctXsdAndXml(xmlReader, grammarReader)
-      case (XmlExType.XML_DTD | XmlExType.DTD_XML) => correctDtdAndXml(xmlReader)
+      case (XML_XSD | XSD_XML) => correctXsdAndXml(xmlReader, grammarReader)
+      case (XML_DTD | DTD_XML) => correctDtdAndXml(xmlReader)
     }
   }
 

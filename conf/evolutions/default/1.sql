@@ -310,10 +310,9 @@ create table xml_exercise (
   author                        varchar(255),
   text                          text,
   state                         varchar(8),
-  exercise_type                 varchar(7),
+  exercise_type_str             varchar(255),
   root_node                     varchar(255),
   constraint ck_xml_exercise_state check ( state in ('RESERVED','CREATED','APPROVED')),
-  constraint ck_xml_exercise_exercise_type check ( exercise_type in ('XML_XSD','XML_DTD','XSD_XML','DTD_XML')),
   constraint pk_xml_exercise primary key (id)
 );
 
