@@ -23,26 +23,27 @@ class XmlController @Inject()(f: FormFactory)
 
   val SAVE_ERROR_MSG = "An error has occured while saving an xml file to "
 
-  override def correctEx(form: DynamicForm, exercise: XmlExercise, user: User): Try[CompleteResult[XmlError]] = {
-    val learnerSolution = form.get(StringConsts.FORM_VALUE)
-    val dir = checkAndCreateSolDir(user.name, exercise)
+  override protected def correctEx(form: DynamicForm, exercise: XmlExercise, user: User): Try[CompleteResult[XmlError]] =
+    checkAndCreateSolDir(user.name, exercise).flatMap(dir => {
+      val learnerSolution = form.get(StringConsts.FORM_VALUE)
 
-    val (grammarTry, xmlTry) = exercise.exerciseType match {
-      case (DTD_XML | XSD_XML) => (
-        save(dir, exercise.rootNode + "." + exercise.exerciseType.gramFileEnding, learnerSolution),
-        copy(dir, exercise.rootNode + "." + "xml")
-      )
-      case _ => (
-        copy(dir, exercise.rootNode + "." + exercise.exerciseType.gramFileEnding),
-        save(dir, exercise.rootNode + "." + "xml", learnerSolution)
-      )
-    }
+      val (grammarTry, xmlTry) = exercise.exerciseType match {
+        case (DTD_XML | XSD_XML) => (
+          save(dir, exercise.rootNode + "." + exercise.exerciseType.gramFileEnding, learnerSolution),
+          copy(dir, exercise.rootNode + "." + "xml")
+        )
+        case _ => (
+          copy(dir, exercise.rootNode + "." + exercise.exerciseType.gramFileEnding),
+          save(dir, exercise.rootNode + "." + "xml", learnerSolution)
+        )
+      }
 
-    grammarTry.zip(xmlTry).map({
-      case (grammar, xml) =>
-        new CompleteResult(learnerSolution, XmlCorrector.correct(xml, grammar, exercise).asJava)
+      grammarTry.zip(xmlTry).map({
+        case (grammar, xml) =>
+          new CompleteResult(learnerSolution, XmlCorrector.correct(xml, grammar, exercise).asJava)
+      })
     })
-  }
+
 
   def playground: Result = Results.ok(views.html.xmlPlayground.render(getUser))
 

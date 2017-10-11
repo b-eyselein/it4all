@@ -1,6 +1,6 @@
 package model
 
-import java.io.{IOException, StringReader}
+import java.io.StringReader
 import java.nio.file.Path
 import javax.xml.XMLConstants
 import javax.xml.parsers.DocumentBuilderFactory
@@ -12,6 +12,7 @@ import play.Logger
 
 import scala.collection.JavaConverters.seqAsJavaListConverter
 import scala.language.implicitConversions
+import scala.util.{Failure, Success, Try}
 
 object XmlCorrector {
 
@@ -50,12 +51,12 @@ object XmlCorrector {
 
   def correctJava(xml: String, grammar: String, exType: XmlExType): java.util.List[XmlError] = correct(xml, grammar, exType).asJava
 
-  def recover(e: IOException): List[XmlError] = {
+  def recover(e: Throwable): List[XmlError] = {
     Logger.error("There has been an error correcting", e)
     List(FailureXmlError(GenericFailureMsg, e))
   }
 
-  def correctDtdAndXml(xml: InputSource): List[XmlError] = try {
+  def correctDtdAndXml(xml: InputSource): List[XmlError] = Try({
     val errorHandler = new CorrectionErrorHandler
 
     val builder = DocBuilderFactory.newDocumentBuilder
@@ -63,11 +64,12 @@ object XmlCorrector {
     builder.parse(xml)
 
     errorHandler.errors.toList
-  } catch {
-    case e: IOException => recover(e)
+  }) match {
+    case Success(errors) => errors
+    case Failure(e) => recover(e)
   }
 
-  def correctXsdAndXml(xmlStreamSource: StreamSource, xsdStreamSource: StreamSource): List[XmlError] = try {
+  def correctXsdAndXml(xmlStreamSource: StreamSource, xsdStreamSource: StreamSource): List[XmlError] = Try({
     val errorHandler = new CorrectionErrorHandler
     val schemaOpt = Option(SchFactory.newSchema(xsdStreamSource))
 
@@ -79,8 +81,9 @@ object XmlCorrector {
         validator.validate(xmlStreamSource)
         errorHandler.errors.toList
     }
-  } catch {
-    case e: IOException => recover(e)
+  }) match {
+    case Success(errors) => errors
+    case Failure(e) => recover(e)
   }
 
 }

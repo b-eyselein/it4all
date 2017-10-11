@@ -1,13 +1,11 @@
 package model
 
-import scala.collection.JavaConverters.asScalaBufferConverter
-import scala.util.{Failure, Success, Try}
-
-import org.openqa.selenium.{By, SearchContext}
-
 import model.result.SuccessType
 import model.task.{Condition, HtmlTask, JsWebTask, WebTask}
-import org.openqa.selenium.WebElement
+import org.openqa.selenium.{By, SearchContext, WebElement}
+
+import scala.collection.JavaConverters.asScalaBufferConverter
+import scala.util.{Failure, Success, Try}
 
 object WebCorrector {
 
@@ -40,11 +38,11 @@ object WebCorrector {
     new ElementResult(task, foundElement, attrResults, textResult)
   }
 
-  def evaluateAttribute(attribute: Attribute, element: WebElement): AttributeResult = try {
-    AttributeResult(attribute, element.getAttribute(attribute.key))
-  } catch { // NOSONAR
-    case e: NoSuchMethodError => AttributeResult(attribute, null)
-  }
+  def evaluateAttribute(attribute: Attribute, element: WebElement): AttributeResult =
+    Try(AttributeResult(attribute, element.getAttribute(attribute.key))) match {
+      case Success(res) => res
+      case Failure(e) => AttributeResult(attribute, null)
+    }
 
   def evaluateConditions(context: SearchContext, conditions: List[Condition]): List[ConditionResult] = conditions.map(testCondition(_, context))
 

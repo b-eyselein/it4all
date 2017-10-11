@@ -1,7 +1,5 @@
 package model
 
-import java.io.IOException
-
 import model.result.{EvaluationResult, SuccessType}
 import org.xml.sax.{ErrorHandler, SAXParseException}
 
@@ -18,7 +16,7 @@ case class ErrorXmlError(e: SAXParseException) extends XmlError("Fehler", e.getM
 
 case class WarningXmlError(e: SAXParseException) extends XmlError("Warnung", e.getMessage, e.getLineNumber, SuccessType.PARTIALLY)
 
-case class FailureXmlError(msg: String, error: IOException = null) extends XmlError("Fehlschlag", msg, -1, SuccessType.NONE)
+case class FailureXmlError(msg: String, error: Throwable = null) extends XmlError("Fehlschlag", msg, -1, SuccessType.NONE)
 
 class CorrectionErrorHandler extends ErrorHandler {
 

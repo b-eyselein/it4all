@@ -66,12 +66,9 @@ object JsonReader {
 
   def readTextArray(textArrayNode: JsonNode): List[String] = readArray(textArrayNode).map(_.asText)
 
-  def readAndJoinTextArray(textArrayNode: JsonNode, joinChar: String = ""): String = readTextArray(textArrayNode).mkString(joinChar)
+  def readAndJoinTextArray(textArrN: JsonNode, joinChar: String = ""): String = readTextArray(textArrN).mkString(joinChar)
 
-  def validateJson(json: JsonNode, jsonSchema: JsonNode): Try[ProcessingReport] = try {
-    Success(JsonSchemaFactory.byDefault().getJsonSchema(jsonSchema).validate(json))
-  } catch {
-    case e: Throwable => Failure(e)
-  }
+  def validateJson(json: JsonNode, jsonSchema: JsonNode): Try[ProcessingReport] =
+    Try(JsonSchemaFactory.byDefault().getJsonSchema(jsonSchema).validate(json))
 
 }

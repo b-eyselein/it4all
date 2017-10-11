@@ -1,9 +1,8 @@
 package model
 
+import model.ScalaNode._
 import org.junit.Test
-
 import org.scalatest.Assertions._
-import ScalaNode._
 
 class ScalaNodeParserTest {
 
@@ -11,16 +10,17 @@ class ScalaNodeParserTest {
 
   def testParse(expected: ScalaNode, representations: String*) {
     for (toParse <- representations) {
-      val parsedOptional = ScalaNodeParser.parse(toParse)
-
-      assert(parsedOptional.isDefined, "expected that parsing of \"" + toParse + "\" succeeds!")
-
-      assert(parsedOptional.get == expected, "expected that parsing of \"" + toParse + "\" is equal to " + expected)
+      ScalaNodeParser.parse(toParse) match {
+        case Some(parsed) => assert(parsed == expected, s"""expected that parsing "$toParse" is equal to $expected""")
+        case None => fail(s"""expected that parsing of "$toParse" succeeds!""")
+      }
     }
   }
 
   @Test
-  def testNoOperators() = testParse(a, "a", "A")
+  def testNoOperators() = {
+    testParse(a, "a", "A")
+  }
 
   @Test
   def testConstants() {

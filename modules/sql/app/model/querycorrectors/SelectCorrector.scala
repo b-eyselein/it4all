@@ -2,19 +2,19 @@ package model.querycorrectors
 
 import java.sql.Connection
 
-import scala.collection.JavaConverters.asScalaBufferConverter
-import scala.util.{Failure, Success, Try}
 import model.CommonUtils.cleanly
 import model.CorrectionException
 import model.exercise.SqlExercise
 import model.matching.{Match, MatchType, Matcher}
 import model.sql.SqlQueryResult
-import net.sf.jsqlparser.JSQLParserException
 import net.sf.jsqlparser.expression.Expression
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.schema.{Column, Table}
-import net.sf.jsqlparser.statement.select.{OrderByElement, PlainSelect, SelectItem}
+import net.sf.jsqlparser.statement.select.{OrderByElement, PlainSelect, Select, SelectItem}
 import play.db.Database
+
+import scala.collection.JavaConverters.asScalaBufferConverter
+import scala.util.{Failure, Success, Try}
 
 case class GroupByMatch(ua: Option[Expression], sa: Option[Expression], s: Int)
   extends Match[Expression](ua, sa, s) {
@@ -36,7 +36,7 @@ object ORDER_BY_MATCHER extends Matcher[OrderByElement, OrderByMatch](
 
 object SelectCorrector extends QueryCorrector("SELECT") {
 
-  type Q = net.sf.jsqlparser.statement.select.Select
+  override type Q = net.sf.jsqlparser.statement.select.Select
 
   def executeStatement(select: String, conn: Connection): SqlQueryResult =
     cleanly(conn.createStatement)(_.close)(q => new SqlQueryResult(q.executeQuery(select))) match {
@@ -44,7 +44,7 @@ object SelectCorrector extends QueryCorrector("SELECT") {
       case Failure(e) => throw new CorrectionException(select, s"Es gab einen Fehler bei der Ausfuehrung des Statements '$select'", e)
     }
 
-  override def executeQuery(db: Database, userQ: Q, sampleQ: Q, exercise: SqlExercise): Try[SqlExecutionResult] =
+  override protected def executeQuery(db: Database, userQ: Q, sampleQ: Q, exercise: SqlExercise): Try[SqlExecutionResult] =
     cleanly(db.getConnection)(_.close)(conn => {
       conn.setCatalog(exercise.scenario.shortName)
       new SqlExecutionResult(executeStatement(userQ.toString, conn), executeStatement(sampleQ.toString, conn))
@@ -52,12 +52,12 @@ object SelectCorrector extends QueryCorrector("SELECT") {
 
   def getColumns(select: Q): List[SelectItem] = select.getSelectBody.asInstanceOf[PlainSelect].getSelectItems.asScala.toList
 
-  override def getColumnWrappers(query: Q): List[ColumnWrapper] =
+  override protected def getColumnWrappers(query: Q): List[ColumnWrapper] =
     query.getSelectBody.asInstanceOf[PlainSelect].getSelectItems.asScala.map(ColumnWrapper.wrap).toList
 
-  override def getTableNames(select: Q): List[String] = getTables(select).map(_.getName)
+  override protected def getTableNames(select: Q): List[String] = getTables(select).map(_.getName)
 
-  override def getTables(query: Q): List[Table] = {
+  override protected def getTables(query: Q): List[Table] = {
     val plain = query.getSelectBody.asInstanceOf[PlainSelect]
 
     val tables = plain.getFromItem match {
@@ -73,11 +73,11 @@ object SelectCorrector extends QueryCorrector("SELECT") {
     (tables ++ joins).toList
   }
 
-  override def getWhere(select: Q): Expression = select.getSelectBody.asInstanceOf[PlainSelect].getWhere
+  override protected def getWhere(select: Q): Expression = select.getSelectBody.asInstanceOf[PlainSelect].getWhere
 
-  override def compareGroupByElements(userQ: Q, sampleQ: Q) = Some(GROUP_BY_MATCHER.doMatch(groupByElements(userQ), groupByElements(sampleQ)))
+  override protected def compareGroupByElements(userQ: Q, sampleQ: Q) = Some(GROUP_BY_MATCHER.doMatch(groupByElements(userQ), groupByElements(sampleQ)))
 
-  override def compareOrderByElements(userQ: Q, sampleQ: Q) = Some(ORDER_BY_MATCHER.doMatch(orderByElements(userQ), orderByElements(sampleQ)))
+  override protected def compareOrderByElements(userQ: Q, sampleQ: Q) = Some(ORDER_BY_MATCHER.doMatch(orderByElements(userQ), orderByElements(sampleQ)))
 
   def orderByElements(userQ: Q): List[OrderByElement] = {
     val javaOrderBys = userQ.getSelectBody.asInstanceOf[PlainSelect].getOrderByElements
@@ -89,13 +89,10 @@ object SelectCorrector extends QueryCorrector("SELECT") {
     case Some(gbs) => gbs.asScala.toList
   }
 
-  def parseStatement(statement: String): Q = try {
+  override protected def parseStatement(statement: String): Try[Select] = Try(
     CCJSqlParserUtil.parse(statement) match {
-      case q: Q => q
-      case o => throw new CorrectionException(statement, s"Das Statement war vom falschen Typ ${o.getClass}! Erwartet wurde ein $queryType - Statement!")
-    }
-  } catch {
-    case e: JSQLParserException => throw new CorrectionException(statement, "Es gab einen Fehler beim Parsen des Statements: " + statement, e)
-  }
+      case q: Select => q
+      case _ => throw new CorrectionException(statement, s"Das Statement war vom falschen Typ! Erwartet wurde $queryType!")
+    })
 
 }

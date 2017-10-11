@@ -50,38 +50,24 @@ abstract class IdExController[E <: Exercise, R <: EvaluationResult]
     }
   }
 
-  def exercise(id: Int): Result = {
-    val user = getUser
-    finder.byId(id) match {
-      case exercise if exercise != null =>
-        log(user, new ExerciseStartEvent(Controller.request(), id))
-
-        Results.ok(renderExercise(user, exercise))
-      case _ => Results.redirect(controllers.routes.Application.index())
-    }
+  def exercise(id: Int): Result = Option(finder.byId(id)) match {
+    case Some(exercise) =>
+      val user = getUser
+      log(user, new ExerciseStartEvent(Controller.request(), id))
+      Results.ok(renderExercise(user, exercise))
+    case None => Results.redirect(controllers.routes.Application.index())
   }
+
 
   def index(page: Int): Result = {
     val allExes = finder.all()
     val exes = allExes.subList(Math.max(0, (page - 1) * STEP), Math.min(page * STEP, allExes.size()))
-    Results.ok(
-      views.html.exesList.render(getUser, exes, renderExesListRest, toolObject, allExes.size() / STEP + 1)
-    )
+    Results.ok(views.html.exesList.render(getUser, exes, renderExesListRest, toolObject, allExes.size() / STEP + 1))
   }
 
-  def checkAndCreateSolDir(username: String, exercise: E): Path = {
+  def checkAndCreateSolDir(username: String, exercise: E): Try[Path] = {
     val dir = toolObject.getSolDirForExercise(username, exercise)
-
-    if (dir.toFile.exists) dir
-    else {
-      try {
-        Files.createDirectories(dir)
-      } catch {
-        case e: IOException =>
-          Logger.error(s"There was an error while creating the directory for an ${toolObject.exType}  solution: $dir", e)
-          null
-      }
-    }
+    Try(Files.createDirectories(dir))
   }
 
   protected def correctEx(form: DynamicForm, exercise: E, user: User): Try[CompleteResult[R]]
