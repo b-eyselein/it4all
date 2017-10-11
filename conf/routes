@@ -3,73 +3,73 @@
 # ~~~~
 
 # Home page
-GET    /                         controllers.Application.index
+GET         /                              controllers.Application.index
 
 # User
-GET    /user                     controllers.UserController.index
-GET    /preferences              controllers.UserController.preferences
-POST   /preferences              controllers.UserController.saveOptions
+GET         /user                          controllers.UserController.index
+GET         /preferences                   controllers.UserController.preferences
+PUT         /preferences                   controllers.UserController.saveOptions
 
 # Admin
-GET    /admin                    controllers.AdminController.index
+GET         /admin                         controllers.AdminController.index
 
-GET    /users                    controllers.AdminController.users
-PUT    /users/changeRole/:user   controllers.AdminController.changeRole(user: String)
+GET         /users                         controllers.AdminController.users
+PUT         /users/changeRole/:user        controllers.AdminController.changeRole(user: String)
 
 # Tools
-GET    /nary                     controllers.NaryController.index
+GET         /nary                          controllers.NaryController.index
 
-GET    /nary/conv                controllers.NaryController.newNaryConversionQuestion
-POST   /nary/conv                controllers.NaryController.checkNaryConversionSolution
+GET         /nary/conv                     controllers.NaryController.newNaryConversionQuestion
+POST        /nary/conv                     controllers.NaryController.checkNaryConversionSolution
 
-GET    /nary/add                 controllers.NaryController.newNaryAdditionQuestion
-POST   /nary/add                 controllers.NaryController.checkNaryAdditionSolution
+GET         /nary/add                      controllers.NaryController.newNaryAdditionQuestion
+POST        /nary/add                      controllers.NaryController.checkNaryAdditionSolution
 
-GET    /nary/twocomp/:verb       controllers.NaryController.newTwoComplementQuestion(verb: Boolean)
-POST   /nary/twocomp/:verb       controllers.NaryController.checkTwoComplementSolution(verb: Boolean)
+GET         /nary/twocomp/:verb            controllers.NaryController.newTwoComplementQuestion(verb: Boolean)
+POST        /nary/twocomp/:verb            controllers.NaryController.checkTwoComplementSolution(verb: Boolean)
 
-->     /bool                     bool.Routes
+->          /bool                          bool.Routes
 
-->     /ebnf                     ebnf.Routes
+->          /ebnf                          ebnf.Routes
 
-->     /mindmap                  mindmap.Routes
+->          /mindmap                       mindmap.Routes
 
-->     /question                 question.Routes
+->          /question                      question.Routes
 
-->     /prog                     programming.Routes
+->          /prog                          programming.Routes
 
-->     /spread                   spread.Routes
+->          /spread                        spread.Routes
 
-->     /sql                      sql.Routes
+->          /sql                           sql.Routes
 
-->     /uml                      uml.Routes
+->          /uml                           uml.Routes
 
-->     /web                      web.Routes
+->          /web                           web.Routes
 
-->     /xml                      xml.Routes
+->          /xml                           xml.Routes
 
 # Test blanks...
-GET    /blanks                   controllers.BlanksTestController.testBlanks
-PUT    /blanks/:id               controllers.BlanksTestController.correctBlanks(id: Int)
+GET         /blanks                        controllers.BlanksTestController.testBlanks
+PUT         /blanks/:id                    controllers.BlanksTestController.correctBlanks(id: Int)
 
 # Courses
-GET    /courses/new              controllers.CourseAdminController.newCourseForm
-POST   /courses/new              controllers.CourseAdminController.newCourse
+GET         /courses/new                   controllers.CourseAdminController.newCourseForm
+POST        /courses/new                   controllers.CourseAdminController.newCourse
 
-GET    /course/:id               controllers.CourseAdminController.course(id: Int)
-POST   /course/addAdmin/:id      controllers.CourseAdminController.addAdmin(id: Int)
+GET         /course/:id                    controllers.CourseAdminController.course(id: Int)
+POST        /course/addAdmin/:id           controllers.CourseAdminController.addAdmin(id: Int)
 
 # Login && Logout
-GET    /login                    controllers.LoginController.login
-POST   /authenticate             controllers.LoginController.authenticate
-GET    /logout                   controllers.LoginController.logout
-GET    /direct                   controllers.LoginController.fromWuecampus(name: String ?= "", courseId: Int ?= -1, courseName: String ?= "")
+GET         /login                         controllers.LoginController.login
+POST        /authenticate                  controllers.LoginController.authenticate
+GET         /logout                        controllers.LoginController.logout
+GET         /direct                        controllers.LoginController.fromWuecampus(name: String ?= "", courseId: Int ?= -1, courseName: String ?= "")
 
 # Evaluation
-GET    /eval                     controllers.EvaluationController.index
-POST   /eval                     controllers.EvaluationController.submit
-GET    /eval/stats               controllers.AdminController.evaluation
+GET         /eval                          controllers.EvaluationController.index
+POST        /eval                          controllers.EvaluationController.submit
+GET         /eval/stats                    controllers.AdminController.evaluation
 
 
 # Map static resources from the /public folder to the /assets URL path
-GET    /assets/*file             controllers.Assets.versioned(path="/public", file: Asset)
+GET         /assets/*file                  controllers.Assets.versioned(path="/public", file: Asset)

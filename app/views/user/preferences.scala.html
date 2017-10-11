@@ -1,27 +1,33 @@
 @(title: String, user: model.user.User)
 
-@main(title, user) {
-<div class="container">
-  <div class="page-header">
-    <h1>Präferenzen</h1>
-  </div>
-  
-  <form class="form-horizontal" action="@controllers.routes.UserController.saveOptions()" method="post">
-  
-    <fieldset class="form-group">
-      <legend>Bestandene Tests...</legend>
-      @for(todo <- model.user.User.SHOW_HIDE_AGGREGATE.values()) {
-      <div class="form-check">
-        <label class="form-check-label">
-          <input type="radio" class="form-check-input" name="posTests"
-          value="@todo" @if(todo == user.todo) {checked}> @todo.getGerman()
-        </label>
-      </div>
-      }
-    </fieldset>
-    
-    <button type="submit" class="btn btn-default">Einstellungen speichern</button>    
-  </form>
+<script src="@routes.Assets.versioned("javascripts/preferences.js")"></script>
 
-</div>
+@main(title, user) {
+    <div class="container">
+        <div class="page-header">
+            <h1>Präferenzen</h1>
+        </div>
+
+        <form class="form-horizontal" action="@controllers.routes.UserController.saveOptions" method="post" onsubmit="return false;">
+
+            <div class="form-group">
+                <div class="input-group">
+                    <label class="input-group-addon" for="posTests">Bestandene Tests...</label>
+                    <select class="form-control" id="posTests" onchange="update(this.id)" data-std="@user.todo">
+                    @for(todo <- model.user.User.SHOW_HIDE_AGGREGATE.values) {
+                        <option value="@todo" @if(todo == user.todo) {selected}>@todo.getGerman </option>
+                    }
+                    </select>
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" id="btn_posTests" disabled onclick="savePreferences()">
+                            Speichern...</button>
+                    </span>
+                </div>
+            </div>
+
+            <hr>
+        </form>
+        <button class="btn btn-default btn-block">Einstellungen speichern</button>
+
+    </div>
 }
