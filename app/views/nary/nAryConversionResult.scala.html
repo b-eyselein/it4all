@@ -30,7 +30,7 @@
         </div>
       </div>
       
-      <a href="@routes.NaryController.newNaryConversionQuestion()" id="theLink"
+      <a href="@routes.NaryController.newNaryConversionQuestion" id="theLink"
        class="btn btn-primary btn-block">N&auml;chste Aufgabe</a>
       
     </div>
@@ -38,14 +38,14 @@
   
   <hr>
   
-@if(result.checkSolution()) {
+@if(result.checkSolution) {
   <div class="alert alert-success text-center">
     <span class="glyphicon glyphicon-ok"></span> Ihre L&ouml;sung ist richtig.</div>
 } else {
   <div class="alert alert-danger text-center">
     <p><span class="glyphicon glyphicon-remove"></span> Ihre L&ouml;sung ist leider falsch.</p>
     <p>Die richtige Antwort lautet
-      <span class="number">@result.targetNumber.toString()<sub>@result.targetBase.base</sub>.</span>
+      <span class="number">@result.targetNumber.toString<sub>@result.targetBase.base</sub>.</span>
     </p>
   </div>
 }

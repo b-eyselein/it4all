@@ -28,7 +28,7 @@
         <fieldset>
           <legend>Bin&auml;rdarstellung von @Math.abs(result.targetNumber.decimalValue)</legend>
         
-          <div class="form-group has-@if(result.binaryAbsCorrect()) {success} else {error}">
+          <div class="form-group has-@if(result.binaryAbsCorrect) {success} else {error}">
             <div class="input-group">
               <span class="input-group-addon">--></span>
               <input class="form-control text-right" readonly value="@result.binaryAbs">
@@ -40,7 +40,7 @@
         <fieldset>
           <legend>Invertierung aller Bits</legend>
         
-          <div class="form-group has-@if(result.invertedAbsCorrect()) {success} else {error}">
+          <div class="form-group has-@if(result.invertedAbsCorrect) {success} else {error}">
             <div class="input-group">
               <span class="input-group-addon">--></span>
               <input class="form-control text-right" readonly value="@result.invertedAbs">
@@ -53,7 +53,7 @@
         <fieldset>
           <legend>Zweierkomplement</legend>
           
-          <div class="form-group has-@if(result.checkSolution()) {success} else {error}">
+          <div class="form-group has-@if(result.checkSolution) {success} else {error}">
             <div class="input-group">
               <span class="input-group-addon">--></span>
               <input class="form-control text-right" readonly value="@result.learnerSolution.toTwoComp">
