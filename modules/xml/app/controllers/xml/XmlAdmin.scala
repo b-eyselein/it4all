@@ -14,16 +14,11 @@ class XmlAdmin @Inject()(f: FormFactory)
   extends AExerciseAdminController[XmlExercise](f, XmlToolObject, XmlExercise.finder, XmlExerciseReader) {
 
   override def statistics = new Html(
-    s"""
-<li>Es existieren insgesamt ${XmlExercise.finder.all.size} <a href="${controllers.xml.routes.XmlAdmin.exercises()}">Aufgaben</a>, davon
-  <ul>
-  ${
-      XmlExercise.finder.all.asScala.groupBy(_.exerciseType).map({
-        case (exType, exes) => s"""<li>${exes.size} Aufgaben von Typ $exType"""
-      }).mkString("\n")
-    }
-  </ul>
-</li>""")
+    s"""<li>Es existieren insgesamt ${XmlExercise.finder.all.size} <a href="${controllers.xml.routes.XmlAdmin.exercises()}">Aufgaben</a>, davon
+       |  <ul>
+       |    ${XmlExercise.finder.all.asScala.groupBy(_.exerciseType).map({ case (exType, exes) => s"""<li>${exes.size} Aufgaben von Typ $exType""" }).mkString("\n")}
+       |  </ul>
+       |</li>""".stripMargin)
 
   override def renderExEditForm(u: User, e: XmlExercise, isCreation: Boolean): Html = views.html.editExForm.render(u, e, isCreation)
 

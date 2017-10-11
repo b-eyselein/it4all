@@ -1,6 +1,6 @@
 package model
 
-import javax.persistence.{Column, Entity, EnumType, Enumerated}
+import javax.persistence.{Column, Entity}
 
 import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty}
 import io.ebean.Finder
@@ -26,14 +26,16 @@ class XmlExercise(id: Int) extends Exercise(id) {
   def fixedStart: String = if (exerciseType != XML_DTD) ""
   else
     s"""<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE $rootNode SYSTEM "$rootNode.dtd">"""
+       |<!DOCTYPE $rootNode SYSTEM "$rootNode.dtd">""".stripMargin
 
 
   @JsonIgnore
   override def getTags: java.util.List[Tag] = java.util.Arrays.asList(exerciseType)
 
   @JsonIgnore
-  override def renderRest: Html = new Html("<td>" + exerciseType + "</td>\n<td>" + rootNode + "</td>")
+  override def renderRest: Html = new Html(
+    s"""<td>$exerciseType</td>
+       |<td>$rootNode</td>""".stripMargin)
 
 }
 
@@ -41,5 +43,4 @@ object XmlExercise {
   val finder: Finder[Integer, XmlExercise] = new Finder(classOf[XmlExercise])
 
   def byType(exType: XmlExType): List[XmlExercise] = finder.all.asScala.filter(_.exerciseType == exType).toList
-
 }

@@ -19,7 +19,7 @@ import scala.util.Try
 class XmlController @Inject()(f: FormFactory)
   extends IdExController[XmlExercise, XmlError](f, XmlExercise.finder, XmlToolObject) {
 
-  val EX_OPTIONS = ExerciseOptions("Xml", "xml", 10, 20, false)
+  val EX_OPTIONS = ExerciseOptions("Xml", "xml", 10, 20, updatePrev = false)
 
   val SAVE_ERROR_MSG = "An error has occured while saving an xml file to "
 
@@ -29,12 +29,12 @@ class XmlController @Inject()(f: FormFactory)
 
     val (grammarTry, xmlTry) = exercise.exerciseType match {
       case (DTD_XML | XSD_XML) => (
-        save(dir, exercise.rootNode + exercise.exerciseType.gramFileEnding, learnerSolution),
-        copy(dir, exercise.rootNode + ".xml")
+        save(dir, exercise.rootNode + "." + exercise.exerciseType.gramFileEnding, learnerSolution),
+        copy(dir, exercise.rootNode + "." + "xml")
       )
       case _ => (
         copy(dir, exercise.rootNode + "." + exercise.exerciseType.gramFileEnding),
-        save(dir, exercise.rootNode + ".xml", learnerSolution)
+        save(dir, exercise.rootNode + "." + "xml", learnerSolution)
       )
     }
 
@@ -48,10 +48,7 @@ class XmlController @Inject()(f: FormFactory)
 
   def playgroundCorrection: Result = Results.ok(
     renderResult(
-      new CompleteResult(
-        "",
-        XmlCorrector.correct(factory.form().bindFromRequest().get(StringConsts.FORM_VALUE), "", XML_DTD).asJava
-      )
+      new CompleteResult("", XmlCorrector.correct(factory.form().bindFromRequest().get(StringConsts.FORM_VALUE), "", XML_DTD).asJava)
     )
   )
 
@@ -61,25 +58,24 @@ class XmlController @Inject()(f: FormFactory)
 
   def renderExRest(exercise: XmlExercise) = new Html(
     s"""<section id="refFileSection">
-  <pre>${HtmlFormat.escape(getReferenceCode(exercise))}</pre>
-</section>
-""")
+       |  <pre>${HtmlFormat.escape(getReferenceCode(exercise))}</pre>
+       |</section>
+""".stripMargin)
 
   override def renderExesListRest = new Html(
     s"""<div class="panel panel-default">
-  <a class="btn btn-primary btn-block" href="${controllers.xml.routes.XmlController.playground()}">Xml-Playground</a>
-</div>
+       |  <a class="btn btn-primary btn-block" href="${controllers.xml.routes.XmlController.playground()}">Xml-Playground</a>
+       |</div>
 
-<hr>""")
+       |<hr>""".stripMargin)
 
   override def renderResult(completeResult: CompleteResult[XmlError]): Html = completeResult.results.asScala.toList match {
     case Nil => new Html("""<div class="alert alert-success">Es wurden keine Fehler gefunden.</div>""")
     case results => new Html(results.map(res =>
-      s"""
-<div class="panel panel-${res.getBSClass}">
-  <div class="panel-heading">${res.title} ${res.lineStr}</div>
-  <div class="panel-body">${res.errorMessage}</div>
-</div>""").mkString("\n"))
+      s"""<div class="panel panel-${res.getBSClass}">
+         |  <div class="panel-heading">${res.title} ${res.lineStr}</div>
+         |  <div class="panel-body">${res.errorMessage}</div>
+         |</div>""".stripMargin).mkString("\n"))
   }
 
   def readDefOrOldSolution(username: String, exercise: XmlExercise): String = Try(
@@ -109,11 +105,10 @@ class XmlController @Inject()(f: FormFactory)
 
 object XmlController {
 
-  val STANDARD_XML_PLAYGROUND =
+  val STANDARD_XML_PLAYGROUND: String =
     """<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE root [
-
-]>"""
-
+      |<!DOCTYPE root [
+      |
+      |]>""".stripMargin
 
 }
