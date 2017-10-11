@@ -1,21 +1,18 @@
 package model.querycorrectors
 
-import scala.util.{ Failure, Success, Try }
-
-import model.{ CorrectionException, StringConsts }
-import model.conditioncorrector.{ BinaryExpressionMatcher, ExpressionExtractor }
-import model.exercise.{ SqlExercise, SqlExerciseType, SqlSample }
-import model.matching.{ Matcher, MatchingResult, StringMatcher }
-import net.sf.jsqlparser.expression.Expression
+import model.conditioncorrector.{BinaryExpressionMatch, BinaryExpressionMatcher, ExpressionExtractor}
+import model.exercise.{SqlExercise, SqlExerciseType, SqlSample}
+import model.matching.{Match, Matcher, MatchingResult, StringMatcher}
+import model.{CorrectionException, StringConsts}
+import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.select.OrderByElement
 import play.db.Database
 
+import scala.util.{Failure, Success, Try}
+
 object ColumnMatcher extends Matcher[ColumnWrapper, ColumnMatch](
-  model.StringConsts.COLUMNS_NAME,
-  List("Spaltenname"),
-  _.canMatch(_),
-  new ColumnMatch(_, _, _))
+  model.StringConsts.COLUMNS_NAME, List("Spaltenname"), _.canMatch(_), ColumnMatch)
 
 abstract class QueryCorrector(val queryType: String) {
 
@@ -25,7 +22,7 @@ abstract class QueryCorrector(val queryType: String) {
 
   val TABLE_NAME_MATCHER = new StringMatcher(StringConsts.TABLES_NAME)
 
-  def correct(database: Database, learnerSolution: String, sampleStatement: SqlSample, exercise: SqlExercise) = {
+  def correct(database: Database, learnerSolution: String, sampleStatement: SqlSample, exercise: SqlExercise): SqlResult = {
     val userQ = parseStatement(learnerSolution)
     val sampleQ = parseStatement(sampleStatement.sample)
 
@@ -38,29 +35,29 @@ abstract class QueryCorrector(val queryType: String) {
     val whereComparison = compareWhereClauses(userQ, userTAliases, sampleQ, sampleTAliases)
 
     val executionResult = executeQuery(database, userQ, sampleQ, exercise) match {
-      case Success(executionResult) => executionResult
+      case Success(execResult) => execResult
       case Failure(cause) => throw new CorrectionException(learnerSolution, s"Es gab einen Fehler bei der Ausführung des Statements $userQ", cause)
     }
 
     val groupByComparison = compareGroupByElements(userQ, sampleQ)
     val orderByComparison = compareOrderByElements(userQ, sampleQ)
 
-    new SqlResult(learnerSolution, columnComparison, tableComparison, whereComparison, executionResult, groupByComparison, orderByComparison)
+    SqlResult(learnerSolution, columnComparison, tableComparison, whereComparison, executionResult, groupByComparison, orderByComparison)
   }
 
-  def compareColumns(userQ: Q, userTAliases: AliasMap, sampleQ: Q, sampleTAliases: AliasMap) =
+  def compareColumns(userQ: Q, userTAliases: AliasMap, sampleQ: Q, sampleTAliases: AliasMap): MatchingResult[ColumnWrapper, ColumnMatch] =
     ColumnMatcher.doMatch(getColumnWrappers(userQ), getColumnWrappers(sampleQ))
 
-  def compareWhereClauses(userQ: Q, userTAliases: AliasMap, sampleQ: Q, sampleTAliases: AliasMap) =
+  def compareWhereClauses(userQ: Q, userTAliases: AliasMap, sampleQ: Q, sampleTAliases: AliasMap): MatchingResult[BinaryExpression, BinaryExpressionMatch] =
     new BinaryExpressionMatcher(userTAliases, sampleTAliases).doMatch(getExpressions(userQ), getExpressions(sampleQ))
 
-  def getExpressions(statement: Q) = new ExpressionExtractor(getWhere(statement)).extracted
+  def getExpressions(statement: Q): List[BinaryExpression] = new ExpressionExtractor(getWhere(statement)).extracted
 
-  def compareTables(userQ: Q, sampleQ: Q) = TABLE_NAME_MATCHER.doMatch(getTableNames(userQ), getTableNames(sampleQ))
+  def compareTables(userQ: Q, sampleQ: Q): MatchingResult[String, Match[String]] = TABLE_NAME_MATCHER.doMatch(getTableNames(userQ), getTableNames(sampleQ))
 
   def parseStatement(statement: String): Q
 
-  def resolveAliases(query: Q) = getTables(query).filter(_.getAlias != null).map(t => t.getAlias.getName -> t.getName).toMap
+  def resolveAliases(query: Q): Map[String, String] = getTables(query).filter(_.getAlias != null).map(t => t.getAlias.getName -> t.getName).toMap
 
   def executeQuery(database: Database, userStatement: Q, sampleStatement: Q, exercise: SqlExercise): Try[SqlExecutionResult]
 
@@ -80,7 +77,7 @@ abstract class QueryCorrector(val queryType: String) {
 
 object QueryCorrector {
 
-  def getCorrector(exerciseType: SqlExerciseType) = exerciseType match {
+  def getCorrector(exerciseType: SqlExerciseType): QueryCorrector = exerciseType match {
     case SqlExerciseType.CREATE => CreateCorrector
     case SqlExerciseType.DELETE => DeleteCorrector
     case SqlExerciseType.INSERT => InsertCorrector

@@ -1,18 +1,14 @@
 package model.conditioncorrector
 
-import model.CorrectionException
-import model.StringConsts
-import model.matching.Match
-import model.matching.MatchType
-import model.matching.Matcher
+import model.{CorrectionException, StringConsts}
+import model.matching.{Match, MatchType, Matcher}
 import net.sf.jsqlparser.expression.BinaryExpression
 import net.sf.jsqlparser.schema.Column
 
 object BinaryExpressionMatcher {
 
-  def compareExpressions(
-    binEx1: BinaryExpression, userTAliases: Map[String, String],
-    binEx2: BinaryExpression, sampleTAliases: Map[String, String]) = {
+  def compareExpressions(binEx1: BinaryExpression, userTAliases: Map[String, String],
+                         binEx2: BinaryExpression, sampleTAliases: Map[String, String]): Boolean = {
 
     def colNameAndAlias(col: Column) = (col.getColumnName, col.getTable.getName)
 
@@ -25,7 +21,7 @@ object BinaryExpressionMatcher {
     column1 == column2 && table1 == table2
   }
 
-  def getColToCompare(expression: BinaryExpression) = (expression.getLeftExpression, expression.getRightExpression) match {
+  def getColToCompare(expression: BinaryExpression): Column = (expression.getLeftExpression, expression.getRightExpression) match {
     case (left: Column, right: Column) => if (left.toString < right.toString) left else right
     case (left, right: Column) => right
     case (left: Column, right) => left
@@ -36,13 +32,11 @@ object BinaryExpressionMatcher {
 
 class BinaryExpressionMatcher(userTAliases: Map[String, String], sampleTAliases: Map[String, String])
   extends Matcher[BinaryExpression, BinaryExpressionMatch](
-    StringConsts.CONDITIONS_NAME,
-    List(""),
-    BinaryExpressionMatcher.compareExpressions(_, userTAliases, _, sampleTAliases),
-    new BinaryExpressionMatch(_, _, _))
+    StringConsts.CONDITIONS_NAME, List(""), BinaryExpressionMatcher.compareExpressions(_, userTAliases, _, sampleTAliases),
+    BinaryExpressionMatch)
 
-class BinaryExpressionMatch(arg1: Option[BinaryExpression], arg2: Option[BinaryExpression], size: Int)
-  extends Match[BinaryExpression](arg1, arg2, size) {
+case class BinaryExpressionMatch(arg1: Option[BinaryExpression], arg2: Option[BinaryExpression], s: Int)
+  extends Match[BinaryExpression](arg1, arg2, s) {
 
   //  can only be successful match
   override def analyze(a1: BinaryExpression, a2: BinaryExpression) = MatchType.SUCCESSFUL_MATCH

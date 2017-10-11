@@ -3,20 +3,17 @@ package model.matching
 import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.collection.mutable.ListBuffer
 
-import model.result.{ EvaluationResult, SuccessType }
+import model.result.{EvaluationResult, SuccessType}
 
-class MatchingResult[T, M <: Match[T]](
-  val matchName:  String,
-  val headings:   List[String],
-  val colWidth:   Int,
-  val allMatches: List[M]
-)
+class MatchingResult[T, M <: Match[T]](val matchName: String,
+                                       val headings: List[String],
+                                       val colWidth: Int,
+                                       val allMatches: List[M])
   extends EvaluationResult(MatchingResult.analyze(allMatches))
 
 object MatchingResult {
-  def analyze(allMatches: List[Match[_]]) = {
-    allMatches.map(_.matchType).distinct
-    // FIXME: is it possible to user ... match {} ?!?
+  def analyze(allMatches: List[Match[_]]): SuccessType = {
+    // FIXME: is it possible to use ... match {} ?!?
     if (allMatches.exists(_.matchType == MatchType.ONLY_USER) || allMatches.exists(_.matchType == MatchType.ONLY_SAMPLE))
       SuccessType.NONE
     else if (allMatches.exists(_.matchType == MatchType.UNSUCCESSFUL_MATCH))
@@ -26,16 +23,14 @@ object MatchingResult {
   }
 }
 
-class Matcher[T, M <: Match[T]](
-  matchName:          String,
-  headings:           List[String],
-  canMatch:           (T, T) => Boolean,
-  matchInstantiation: (Option[T], Option[T], Int) => M
-) {
+class Matcher[T, M <: Match[T]](matchName: String,
+                                headings: List[String],
+                                canMatch: (T, T) => Boolean,
+                                matchInstantiation: (Option[T], Option[T], Int) => M) {
 
-  val colWidth = headings.size
+  val colWidth: Int = headings.size
 
-  def doMatch(firstCollection: List[T], secondCollection: List[T]) = {
+  def doMatch(firstCollection: List[T], secondCollection: List[T]): MatchingResult[T, M] = {
     val matches: ListBuffer[M] = ListBuffer.empty
 
     val firstList = ListBuffer.empty ++ firstCollection
@@ -66,8 +61,5 @@ class Matcher[T, M <: Match[T]](
 }
 
 class StringMatcher(matchName: String) extends Matcher[String, Match[String]](
-  matchName,
-  List("String-Repraesentation"),
-  _ == _,
-  new Match[String](_, _, _)
+  matchName, List("String-Repraesentation"), _ == _, new Match[String](_, _, _)
 )

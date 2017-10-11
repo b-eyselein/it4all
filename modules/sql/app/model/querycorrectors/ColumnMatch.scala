@@ -1,11 +1,6 @@
-package model.querycorrectors;
+package model.querycorrectors
 
-import model.CorrectionException;
-import model.matching.Match;
-
-import model.matching.MatchType;
-import play.Logger;
-import play.twirl.api.Html;
+import model.matching.{Match, MatchType}
 
 case class ColumnMatch(uc: Option[ColumnWrapper], sc: Option[ColumnWrapper], s: Int)
   extends Match[ColumnWrapper](uc, sc, s) {
@@ -14,17 +9,17 @@ case class ColumnMatch(uc: Option[ColumnWrapper], sc: Option[ColumnWrapper], s: 
 
   val restMatched: Boolean = false
 
-  val colNamesMatched = matchType == MatchType.SUCCESSFUL_MATCH || matchType == MatchType.UNSUCCESSFUL_MATCH
+  val colNamesMatched: Boolean = matchType == MatchType.SUCCESSFUL_MATCH || matchType == MatchType.UNSUCCESSFUL_MATCH
 
-  val firstColName = userArg.get.getColName;
+  val firstColName: String = userArg.get.getColName
 
-  val firstRest = userArg.get.getRest;
+  val firstRest: String = userArg.get.getRest
 
-  val secondColName = sampleArg.get.getColName;
+  val secondColName: String = sampleArg.get.getColName
 
-  val secondRest = sampleArg.get.getRest;
+  val secondRest: String = sampleArg.get.getRest
 
-  override def analyze(userArg: ColumnWrapper, sampleArg: ColumnWrapper) = userArg.doMatch(sampleArg)
+  override def analyze(userArg: ColumnWrapper, sampleArg: ColumnWrapper): MatchType = userArg.doMatch(sampleArg)
 
   //  override def describe =
   //    <tr class={ getBSClass }>

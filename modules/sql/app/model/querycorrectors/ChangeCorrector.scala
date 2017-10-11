@@ -1,57 +1,66 @@
 package model.querycorrectors
 
 import java.sql.Connection
+
 import model.CommonUtils.cleanly
-import model.StringConsts
 import model.exercise.SqlExercise
+import model.matching.MatchingResult
 import model.sql.SqlQueryResult
-import play.db.Database
-import scala.collection.JavaConverters._
-import net.sf.jsqlparser.parser.CCJSqlParserUtil
-import model.CorrectionException
+import model.{CorrectionException, StringConsts}
 import net.sf.jsqlparser.JSQLParserException
+import net.sf.jsqlparser.expression.Expression
+import net.sf.jsqlparser.parser.CCJSqlParserUtil
+import net.sf.jsqlparser.schema.Table
+import net.sf.jsqlparser.statement.select.OrderByElement
+import play.db.Database
+
+import scala.collection.JavaConverters._
+import scala.util.Try
 
 abstract class ChangeCorrector(queryType: String) extends QueryCorrector(queryType) {
 
-  def runUpdate(conn: Connection, query: String) = cleanly(conn.createStatement)(_.close)(s => s.executeUpdate(query))
+  def runUpdate(conn: Connection, query: String): Try[Int] = cleanly(conn.createStatement)(_.close)(_.executeUpdate(query))
 
-  def runValidationQuery(conn: Connection, query: String) = cleanly(conn.createStatement)(_.close)(s => new SqlQueryResult(s.executeQuery(query)))
+  def runValidationQuery(conn: Connection, query: String): Try[SqlQueryResult] =
+    cleanly(conn.createStatement)(_.close)(s => new SqlQueryResult(s.executeQuery(query)))
 
-  def getResultSet(statement: Q, connection: Connection, validation: String) = {
+  def getResultSet(statement: Q, connection: Connection, validation: String): Try[SqlQueryResult] = {
     runUpdate(connection, statement.toString)
     val result = runValidationQuery(connection, validation)
-    connection.rollback
+    connection.rollback()
     result
   }
 
-  override def executeQuery(db: Database, userQ: Q, sampleQ: Q, exercise: SqlExercise) =
+  override def executeQuery(db: Database, userQ: Q, sampleQ: Q, exercise: SqlExercise): Try[SqlExecutionResult] =
     cleanly(db.getConnection)(_.close)(connection => {
       connection.setCatalog(exercise.scenario.shortName)
       connection.setAutoCommit(false)
 
-      val validation = StringConsts.SELECT_ALL_DUMMY + getTableNames(sampleQ)(0)
+      val validation = StringConsts.SELECT_ALL_DUMMY + getTableNames(sampleQ).head
 
       new SqlExecutionResult(getResultSet(userQ, connection, validation).get, getResultSet(sampleQ, connection, validation).get)
     })
 
-  override def compareGroupByElements(plainUserQuery: Q, plainSampleQuery: Q) = None
+  override def compareGroupByElements(plainUserQuery: Q, plainSampleQuery: Q): Option[MatchingResult[Expression, GroupByMatch]] = None
 
-  override def compareOrderByElements(plainUserQuery: Q, plainSampleQuery: Q) = None
+  override def compareOrderByElements(plainUserQuery: Q, plainSampleQuery: Q): Option[MatchingResult[OrderByElement, OrderByMatch]] = None
 }
 
 object InsertCorrector extends ChangeCorrector("INSERT") {
 
-  type Q = net.sf.jsqlparser.statement.insert.Insert
+  import net.sf.jsqlparser.statement.insert.Insert
 
-  override def getColumnWrappers(query: Q) = List.empty
+  type Q = Insert
+
+  override def getColumnWrappers(query: Q): List[ColumnWrapper] = List.empty
 
   override def getTableNames(query: Q) = List(query.getTable.getName)
 
   override def getTables(query: Q) = List(query.getTable)
 
-  override def getWhere(query: Q) = null
+  override def getWhere(query: Q): Expression = null
 
-  def parseStatement(statement: String) = try {
+  def parseStatement(statement: String): Insert = try {
     val parsed = CCJSqlParserUtil.parse(statement)
     parsed match {
       case q: Q => q
@@ -65,17 +74,19 @@ object InsertCorrector extends ChangeCorrector("INSERT") {
 
 object DeleteCorrector extends ChangeCorrector("DELETE") {
 
-  type Q = net.sf.jsqlparser.statement.delete.Delete
+  import net.sf.jsqlparser.statement.delete.Delete
 
-  override def getColumnWrappers(query: Q) = List.empty
+  type Q = Delete
+
+  override def getColumnWrappers(query: Q): List[ColumnWrapper] = List.empty
 
   override def getTableNames(query: Q) = List(query.getTable.getName)
 
-  override def getTables(query: Q) = query.getTables.asScala.toList
+  override def getTables(query: Q): List[Table] = query.getTables.asScala.toList
 
-  override def getWhere(query: Q) = query.getWhere
+  override def getWhere(query: Q): Expression = query.getWhere
 
-  def parseStatement(statement: String) = try {
+  def parseStatement(statement: String): Delete = try {
     val parsed = CCJSqlParserUtil.parse(statement)
     parsed match {
       case q: Q => q
@@ -89,17 +100,19 @@ object DeleteCorrector extends ChangeCorrector("DELETE") {
 
 object UpdateCorrector extends ChangeCorrector("UPDATE") {
 
-  type Q = net.sf.jsqlparser.statement.update.Update
+  import net.sf.jsqlparser.statement.update.Update
 
-  override def getColumnWrappers(query: Q) = query.getColumns.asScala.map(ColumnWrapper.wrap(_)).toList
+  type Q = Update
 
-  override def getTableNames(query: Q) = query.getTables.asScala.map(_.getName).toList
+  override def getColumnWrappers(query: Q): List[ColumnWrapper] = query.getColumns.asScala.map(ColumnWrapper.wrap).toList
 
-  override def getTables(query: Q) = query.getTables.asScala.toList
+  override def getTableNames(query: Q): List[String] = query.getTables.asScala.map(_.getName).toList
 
-  override def getWhere(query: Q) = query.getWhere
+  override def getTables(query: Q): List[Table] = query.getTables.asScala.toList
 
-  def parseStatement(statement: String) = try {
+  override def getWhere(query: Q): Expression = query.getWhere
+
+  def parseStatement(statement: String): Update = try {
     val parsed = CCJSqlParserUtil.parse(statement)
     parsed match {
       case q: Q => q
