@@ -38,9 +38,8 @@ class XmlController @Inject()(f: FormFactory)
         )
       }
 
-      grammarTry.zip(xmlTry).map({
-        case (grammar, xml) =>
-          new CompleteResult(learnerSolution, XmlCorrector.correct(xml, grammar, exercise).asJava)
+      grammarTry.zip(xmlTry).map({ case (grammar, xml) =>
+        new CompleteResult(learnerSolution, XmlCorrector.correct(xml, grammar, exercise).asJava)
       })
     })
 
@@ -84,18 +83,13 @@ class XmlController @Inject()(f: FormFactory)
     ).asScala.mkString("\n")
   ).getOrElse(exercise.fixedStart)
 
-  def copy(dir: Path, filename: String) = Try(
-    Files.copy(Paths.get(toolObject.sampleDir.toString, filename), Paths.get(dir.toString, filename), StandardCopyOption.REPLACE_EXISTING
-    )
-  )
+  def copy(dir: Path, filename: String) = Try(Files.copy(Paths.get(toolObject.sampleDir.toString, filename),
+    Paths.get(dir.toString, filename), StandardCopyOption.REPLACE_EXISTING))
 
   def save(dir: Path, filename: String, learnerSolution: String) = Try(
-    Files.write(
-      Paths.get(dir.toString, filename), learnerSolution.split(StringConsts.NEWLINE).toList.asJava,
-      StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING
-    )
+    Files.write(Paths.get(dir.toString, filename), learnerSolution.split(StringConsts.NEWLINE).toList.asJava,
+      StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
   )
-
 
   def getReferenceCode(exercise: XmlExercise): String = {
     val referenceFilePath = Paths.get(toolObject.sampleDir.toString, exercise.rootNode + "." + exercise.exerciseType.refFileEnding)

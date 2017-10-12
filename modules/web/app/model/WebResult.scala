@@ -6,6 +6,7 @@ import org.openqa.selenium.WebElement
 import play.twirl.api.Html
 
 import scala.collection.JavaConverters.seqAsJavaListConverter
+import scala.util.{Failure, Success, Try}
 
 trait HtmlRenderable {
   def render: Html
@@ -86,8 +87,8 @@ case class TextContentResult(foundContent: String, awaitedContent: String)
 
 }
 
-case class AttributeResult(attribute: Attribute, foundValue: String)
-  extends EvaluationResult(TextAnalyzer.analyze(foundValue, attribute.value)) {
+case class AttributeResult(attribute: Attribute, foundValue: Try[String])
+  extends EvaluationResult(TextAnalyzer.analyze(attribute.value, foundValue)) {
 
   def render =
     s"""
@@ -95,7 +96,7 @@ case class AttributeResult(attribute: Attribute, foundValue: String)
 ${
       success match {
         case SuccessType.COMPLETE => "hat den gesuchten Wert."
-        case SuccessType.PARTIALLY => s"""hat nicht den gesuchten Wert "${attribute.value}" sondern "$foundValue}"!"""
+        case SuccessType.PARTIALLY => s"""hat nicht den gesuchten Wert "${attribute.value}" sondern "${foundValue.getOrElse("")}"!"""
         case SuccessType.NONE => "konnte nicht gefunden werden!"
         case SuccessType.FAILURE => "konnte aufgrund eines Fehler nicht ueberprueft werden."
       }
@@ -110,6 +111,11 @@ object TextAnalyzer {
   } else {
     if (foundValue.contains(awaitedValue)) SuccessType.COMPLETE
     else SuccessType.PARTIALLY
+  }
+
+  def analyze(awaitedValue: String, foundValue: Try[String]): SuccessType = foundValue match {
+    case Success(found) => if (found.contains(awaitedValue)) SuccessType.COMPLETE else SuccessType.PARTIALLY
+    case Failure(e) => SuccessType.NONE
   }
 }
 

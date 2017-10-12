@@ -12,7 +12,6 @@ object WebCorrector {
   def evaluate(task: WebTask, searchContent: SearchContext): WebResult = task match {
     case task: HtmlTask => evaluateHtmlTask(task, searchContent)
     case task: JsWebTask => evaluateJsTask(task, searchContent)
-    case _ => null
   }
 
   def evaluateHtmlTask(task: HtmlTask, searchContext: SearchContext): ElementResult = {
@@ -39,10 +38,7 @@ object WebCorrector {
   }
 
   def evaluateAttribute(attribute: Attribute, element: WebElement): AttributeResult =
-    Try(AttributeResult(attribute, element.getAttribute(attribute.key))) match {
-      case Success(res) => res
-      case Failure(e) => AttributeResult(attribute, null)
-    }
+    AttributeResult(attribute, Try(element.getAttribute(attribute.key)))
 
   def evaluateConditions(context: SearchContext, conditions: List[Condition]): List[ConditionResult] = conditions.map(testCondition(_, context))
 
