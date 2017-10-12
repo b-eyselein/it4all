@@ -1,7 +1,7 @@
 package controllers.uml
 
 import javax.inject.Inject
-
+import scala.collection.JavaConverters._
 import controllers.core.AExerciseAdminController
 import model.exercisereading.JsonReader
 import model.user.User
@@ -28,8 +28,8 @@ class UmlAdmin @Inject()(f: FormFactory)
 
   def newExerciseStep2: Result = {
     val exercise = exerciseReader.initFromForm(0, factory.form().bindFromRequest())
-    val parser = new UmlExTextParser(exercise.text, exercise.mappings, exercise.ignoreWords)
-    Results.ok(views.html.umlAdmin.newExerciseStep2Form.render(getUser, exercise, parser.getCapitalizedWords))
+    val parser = new UmlExTextParser(exercise.text, exercise.mappings.asScala.toMap, exercise.ignoreWords.asScala.toList)
+    Results.ok(views.html.umlAdmin.newExerciseStep2Form.render(getUser, exercise, parser.capitalizedWords.toList))
   }
 
   def newExerciseStep3: Result = {

@@ -42,7 +42,7 @@ lazy val sql = (project in file("modules/sql"))
   .dependsOn(core)
 
 lazy val uml = (project in file("modules/uml"))
-  .enablePlugins(PlayScala, PlayJava, PlayEbean, PlayEnhancer)
+  .enablePlugins(PlayScala, PlayEbean, PlayEnhancer)
   .dependsOn(core)
 
 lazy val web = (project in file("modules/web"))

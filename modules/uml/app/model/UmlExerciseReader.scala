@@ -5,7 +5,8 @@ import model.StringConsts.{IGNORE_WORDS_NAME, MAPPINGS_NAME, SOLUTION_NAME}
 import model.exercisereading.{ExerciseReader, JsonReader}
 import play.data.DynamicForm
 
-import scala.collection.JavaConverters.{mapAsJavaMapConverter, seqAsJavaListConverter}
+import scala.collection.JavaConverters._
+
 
 object UmlExerciseReader extends ExerciseReader[UmlExercise]("uml", UmlExercise.finder, classOf[Array[UmlExercise]]) {
 
@@ -18,10 +19,14 @@ object UmlExerciseReader extends ExerciseReader[UmlExercise]("uml", UmlExercise.
   override def instantiate(id: Int) = new UmlExercise(id)
 
   override def updateExercise(exercise: UmlExercise, node: JsonNode) {
-    exercise.mappings = JsonReader.readMap(node.get(MAPPINGS_NAME)).asJava
-    exercise.ignoreWords = JsonReader.readTextArray(node.get(IGNORE_WORDS_NAME)).asJava
+    val mappings = JsonReader.readMap(node.get(MAPPINGS_NAME))
+    val ignoreWords = JsonReader.readTextArray(node.get(IGNORE_WORDS_NAME))
 
-    val parser = new UmlExTextParser(exercise.text, exercise.mappings, exercise.ignoreWords)
+    exercise.mappings = mappings.asJava
+    exercise.ignoreWords = ignoreWords.asJava
+
+
+    val parser = new UmlExTextParser(exercise.text, mappings, ignoreWords)
     exercise.classSelText = parser.parseTextForClassSel
     exercise.diagDrawText = parser.parseTextForDiagDrawing
 

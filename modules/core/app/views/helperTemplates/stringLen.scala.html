@@ -1,7 +1,7 @@
-@(str: String, len: Int)
+@(str: String, len: Int, name: String = "Text")
 
 @if(str.length >= len) {
-  <td title="@str">@str.substring(0, len) …</td>
+    <td>@helperTemplates.modal.render(str.substring(0, len), new Html(str), name)</td>
 } else {
-  <td>@str</td>
+    <td>@str</td>
 }

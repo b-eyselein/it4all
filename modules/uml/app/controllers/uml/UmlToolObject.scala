@@ -24,7 +24,7 @@ object UmlToolObject extends IdExToolObject("uml", "Uml", ToolState.LIVE) {
 
   // Admin
 
-  val restHeaders: List[String] = List.empty
+  val restHeaders: List[String] = List("Klassenwahl", "Diagrammzeichnen")
 
   override def adminIndexRoute: Call = controllers.uml.routes.UmlAdmin.adminIndex()
 

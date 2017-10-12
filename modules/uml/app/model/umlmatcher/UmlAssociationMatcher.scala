@@ -56,11 +56,10 @@ case class UmlAssociationMatch(a1: Option[UmlAssociation], a2: Option[UmlAssocia
   override def describeArg(arg: UmlAssociation): Html = {
     val turn = (arg eq sampleArg.orNull) && endsCrossed
     new Html(
-      s"""
-<td><span class="text-${if (assocTypeEqual) "success" else "danger"}">${arg.assocType.germanName}</span></td>
-<td><span class="text-${if (matched) "success" else "danger"}">${if (turn) arg.ends._2.endName else arg.ends._1.endName}</span></td>
-<td><span class="text-${if (matched) "success" else "danger"}">${if (turn) arg.ends._1.endName else arg.ends._2.endName}</span></td>
-<td><span class="text-${if (multiplicitiesEqual) "success" else "danger"}">${displayMults(arg, turn)}</span></td>""")
+      s"""<td><span class="text-${if (assocTypeEqual) "success" else "danger"}">${arg.assocType.germanName}</span></td>
+         |<td><span class="text-${if (matched) "success" else "danger"}">${if (turn) arg.ends._2.endName else arg.ends._1.endName}</span></td>
+         |<td><span class="text-${if (matched) "success" else "danger"}">${if (turn) arg.ends._1.endName else arg.ends._2.endName}</span></td>
+         |<td><span class="text-${if (multiplicitiesEqual) "success" else "danger"}">${displayMults(arg, turn)}</span></td>""".stripMargin)
   }
 
   override def explanation: List[String] = matchType match {
