@@ -21,7 +21,7 @@ abstract class BaseAdminController[E <: JsonReadable]
 
   protected def statistics = new Html(s"<li>Es existieren insgesamt ${finder.query.findCount} Aufgaben</li>")
 
-  val savingDir: Path = Paths.get(toolObject.rootDir, StringConsts.ADMIN_FOLDER, exerciseReader.exerciseType)
+  protected val savingDir: Path = Paths.get(toolObject.rootDir, StringConsts.ADMIN_FOLDER, exerciseReader.exerciseType)
 
   def adminIndex: Result = Results.ok(views.html.admin.exerciseAdminMain.render(getUser, statistics, toolObject, new Html("")))
 
@@ -43,15 +43,13 @@ abstract class BaseAdminController[E <: JsonReadable]
         Results.ok(views.html.admin.preview.render(getUser, render(result.read, false)))
     }
 
-  def uploadFile(render: (List[E], Boolean) => Html): Result = {
-    val body: MultipartFormData[File] = Controller.request.body().asMultipartFormData()
-    body.getFile(StringConsts.BODY_FILE_NAME) match {
-      case n if n == null => Results.badRequest("Fehler!")
-      case uploadedFile =>
-        val pathToUploadedFile = uploadedFile.getFile.toPath
-
+  protected def uploadFile(render: (List[E], Boolean) => Html): Result = {
+    val data: MultipartFormData[File] = Controller.request.body.asMultipartFormData()
+    Option(data.getFile(StringConsts.BODY_FILE_NAME)) match {
+      case None => Results.badRequest("Fehler!")
+      case Some(uploadedFile) =>
         val jsonFile = Paths.get(savingDir.toString, uploadedFile.getFilename)
-        saveUploadedFile(savingDir, pathToUploadedFile, jsonFile) match {
+        saveUploadedFile(savingDir, uploadedFile.getFile.toPath, jsonFile) match {
           case Success(jsonTargetPath) => processReadingResult(exerciseReader.readFromJsonFile(jsonTargetPath), render(_, _))
           case Failure(error) => Results.badRequest("There has been an error uploading your file...")
         }

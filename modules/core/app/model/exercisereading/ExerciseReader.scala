@@ -39,8 +39,10 @@ abstract class ExerciseReader[E <: Exercise](e: String, f: Finder[Integer, E], c
     exercise.author = node.get(AUTHOR_NAME).asText()
     exercise.text = JsonReader.readAndJoinTextArray(node.get(TEXT_NAME))
 
-    val stateNode = node.get(STATE_NAME)
-    exercise.state = if (stateNode != null) ExerciseState.valueOf(stateNode.asText()) else ExerciseState.CREATED
+    exercise.state = Option(node.get(STATE_NAME)) match {
+      case Some(stateNode) => ExerciseState.valueOf(stateNode.asText)
+      case None => ExerciseState.CREATED
+    }
 
     updateExercise(exercise, node)
   }

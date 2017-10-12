@@ -7,7 +7,7 @@ class BooleanQuestionResult(success: SuccessType, val learnerSolution: String, v
 
   val assignments: List[Assignment] = question.solutions
 
-  def getSolutions: List[Assignment] = if (question == null) List.empty else question.solutions
+  def getSolutions: List[Assignment] = question.solutions
 
 }
 

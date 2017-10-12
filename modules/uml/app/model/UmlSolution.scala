@@ -49,13 +49,13 @@ object UmlSolution {
       (JsPath \ "name").read[String] and
       (JsPath \ "attributes").read[List[String]] and
       (JsPath \ "methods").read[List[String]]) (
-    (c, n, a, m) => UmlClass(UmlClassType.fromString(c), n, a, m))
+    (c, n, a, m) => UmlClass(UmlClassType.fromString(c).getOrElse(Class), n, a, m))
 
   implicit lazy val umlAssocReads: Reads[UmlAssociation] = (
     (JsPath \ "assocType").read[String] and
       (JsPath \ "start").read[UmlAssociationEnd] and
       (JsPath \ "end").read[UmlAssociationEnd]) (
-    (t, s, e) => UmlAssociation(UmlAssociationType.getByString(t), (s, e)))
+    (t, s, e) => UmlAssociation(UmlAssociationType.getByString(t).getOrElse(Association), (s, e)))
 
   implicit lazy val endsReads: Reads[UmlAssociationEnd] = (
     (JsPath \ "endName").read[String] and

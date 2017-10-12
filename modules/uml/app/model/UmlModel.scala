@@ -1,10 +1,13 @@
 package model
 
 import scala.collection.JavaConverters.seqAsJavaListConverter
+import scala.collection.mutable.ListBuffer
 
 // Types of classes
 
-sealed class UmlClassType(val name: String)
+sealed class UmlClassType(val name: String) {
+  UmlClassType.values += this
+}
 
 case object Class extends UmlClassType("Klasse")
 
@@ -13,12 +16,10 @@ case object Interface extends UmlClassType("Interface")
 case object AbstractClass extends UmlClassType("Abstrakte Klasse")
 
 object UmlClassType {
-  def fromString(str: String): UmlClassType = str match {
-    case "CLASS" => Class
-    case "INTERFACE" => Interface
-    case "ABSTRACT" => AbstractClass
-    case _ => null
-  }
+
+  var values: ListBuffer[UmlClassType] = ListBuffer.empty
+
+  def fromString(str: String): Option[UmlClassType] = values.find(_.name == str)
 }
 
 // Class
@@ -57,7 +58,9 @@ case class UmlAssociationEnd(endName: String, multiplicity: Multiplicity)
 
 // Types of associations
 
-sealed class UmlAssociationType(val germanName: String, val name: String)
+sealed class UmlAssociationType(val germanName: String, val name: String) {
+  UmlAssociationType.values += this
+}
 
 case object Association extends UmlAssociationType("Assoziation", "ASSOCIATION")
 
@@ -67,11 +70,9 @@ case object Composition extends UmlAssociationType("Komposition", "COMPOSITION")
 
 object UmlAssociationType {
 
-  def getByString(str: String): UmlAssociationType = str match {
-    case "ASSOCIATION" => Association
-    case "AGGREGATION" => Aggregation
-    case "COMPOSITION" => Composition
-  }
+  val values: ListBuffer[UmlAssociationType] = ListBuffer.empty
+
+  def getByString(str: String): Option[UmlAssociationType] = values.find(_.name == str)
 
 }
 

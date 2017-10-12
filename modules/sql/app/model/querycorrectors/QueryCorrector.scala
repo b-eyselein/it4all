@@ -53,7 +53,11 @@ abstract class QueryCorrector(val queryType: String) {
   def compareWhereClauses(userQ: Q, userTAliases: AliasMap, sampleQ: Q, sampleTAliases: AliasMap): MatchingResult[BinaryExpression, BinaryExpressionMatch] =
     new BinaryExpressionMatcher(userTAliases, sampleTAliases).doMatch(getExpressions(userQ), getExpressions(sampleQ))
 
-  def getExpressions(statement: Q): List[BinaryExpression] = new ExpressionExtractor(getWhere(statement)).extracted
+  def getExpressions(statement: Q): List[BinaryExpression] = getWhere(statement) match {
+    case None => List.empty
+    case Some(expression) => new ExpressionExtractor(expression).extracted
+
+  }
 
   def compareTables(userQ: Q, sampleQ: Q): MatchingResult[String, Match[String]] = TABLE_NAME_MATCHER.doMatch(getTableNames(userQ), getTableNames(sampleQ))
 
@@ -69,7 +73,7 @@ abstract class QueryCorrector(val queryType: String) {
 
   protected def getTables(query: Q): List[Table]
 
-  protected def getWhere(query: Q): Expression
+  protected def getWhere(query: Q): Option[Expression]
 
   protected def compareGroupByElements(plainUserQuery: Q, plainSampleQuery: Q): Option[MatchingResult[Expression, GroupByMatch]]
 

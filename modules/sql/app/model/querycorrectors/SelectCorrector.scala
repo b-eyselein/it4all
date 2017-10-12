@@ -73,7 +73,7 @@ object SelectCorrector extends QueryCorrector("SELECT") {
     (tables ++ joins).toList
   }
 
-  override protected def getWhere(select: Q): Expression = select.getSelectBody.asInstanceOf[PlainSelect].getWhere
+  override protected def getWhere(select: Q): Option[Expression] = Option(select.getSelectBody.asInstanceOf[PlainSelect].getWhere)
 
   override protected def compareGroupByElements(userQ: Q, sampleQ: Q) = Some(GROUP_BY_MATCHER.doMatch(groupByElements(userQ), groupByElements(sampleQ)))
 

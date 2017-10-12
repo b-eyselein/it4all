@@ -50,9 +50,9 @@ abstract class AExerciseAdminController[E <: Exercise]
     Results.ok(views.html.admin.preview.render(getUser, renderExercises(List(exercise), changesAllowed = false)))
   }
 
-  def editExerciseForm(id: Int): Result = finder.byId(id) match {
-    case exercise if exercise == null => Results.badRequest("")
-    case exercise => Results.ok(renderExEditForm(getUser, exercise, isCreation = false))
+  def editExerciseForm(id: Int): Result = Option(finder.byId(id)) match {
+    case None => Results.badRequest("")
+    case Some(exercise) => Results.ok(renderExEditForm(getUser, exercise, isCreation = false))
   }
 
   def exercises: Result =

@@ -18,7 +18,7 @@ object CreateCorrector extends QueryCorrector("CREATE TABLE") {
   override type Q = CreateTable
 
   override protected def executeQuery(database: Database, userStatement: Q, sampleStatement: Q,
-                                      exercise: SqlExercise): Try[SqlExecutionResult] = null
+                                      exercise: SqlExercise): Try[SqlExecutionResult] = ???
 
   override protected def getColumnWrappers(query: Q): List[CreateColumnWrapper] = query.getColumnDefinitions.asScala.map(ColumnWrapper.wrap).toList
 
@@ -26,7 +26,7 @@ object CreateCorrector extends QueryCorrector("CREATE TABLE") {
 
   override protected def getTables(query: Q): List[Table] = List(query.getTable)
 
-  override protected def getWhere(query: Q): Expression = null
+  override protected def getWhere(query: Q): Option[Expression] = None
 
   override protected def compareGroupByElements(plainUserQuery: Q, plainSampleQuery: Q): Option[MatchingResult[Expression, GroupByMatch]] = None
 

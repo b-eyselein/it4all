@@ -11,7 +11,7 @@ import play.twirl.api.Html
 class EBNFExercise(i: Int) extends Exercise(i) {
 
   @JsonProperty(required = true)
-  var terminals = ""
+  var terminals: String = ""
 
   def getTerminals: Array[String] = terminals.split(",")
 

@@ -4,8 +4,8 @@ import scala.collection.JavaConverters.asScalaBufferConverter
 
 import com.fasterxml.jackson.databind.JsonNode
 
-import model.exercise.{ SqlExercise, SqlExerciseType, SqlSample, SqlSampleKey }
-import model.exercisereading.{ ExerciseReader, JsonReader }
+import model.exercise.{SqlExercise, SqlExerciseType, SqlSample, SqlSampleKey}
+import model.exercisereading.{ExerciseReader, JsonReader}
 import play.data.DynamicForm
 import play.libs.Json
 
@@ -14,13 +14,11 @@ object SqlExerciseReader extends ExerciseReader[SqlExercise]("sql", SqlExercise.
   def readSampleSolution(sampleSolNode: JsonNode): SqlSample = {
     val key = Json.fromJson(sampleSolNode.get(StringConsts.KEY_NAME), classOf[SqlSampleKey])
 
-    var sample = SqlSample.finder.byId(key)
-    if (sample == null)
-      sample = new SqlSample(key)
+    var sample = Option(SqlSample.finder.byId(key)).getOrElse(new SqlSample(key))
 
     sample.sample = JsonReader.readAndJoinTextArray(sampleSolNode.get("sample"), "\n")
 
-    return sample
+    sample
   }
 
   override def initRemainingExFromForm(exercise: SqlExercise, form: DynamicForm) {
@@ -45,7 +43,7 @@ object SqlExerciseReader extends ExerciseReader[SqlExercise]("sql", SqlExercise.
   override def updateExercise(exercise: SqlExercise, exerciseNode: JsonNode) {
     exercise.exerciseType = SqlExerciseType.valueOf(exerciseNode.get(StringConsts.EXERCISE_TYPE).asText())
 
-    exercise.samples = ExerciseReader.readArray(exerciseNode.get(StringConsts.SAMPLES_NAME), SqlExerciseReader.readSampleSolution(_))
+    exercise.samples = ExerciseReader.readArray(exerciseNode.get(StringConsts.SAMPLES_NAME), SqlExerciseReader.readSampleSolution)
     exercise.hint = exerciseNode.get("hint").asText()
     exercise.tags = JsonReader.readAndJoinTextArray(exerciseNode.get("tags"), SqlExercise.SAMPLE_JOIN_CHAR)
   }

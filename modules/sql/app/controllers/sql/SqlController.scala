@@ -73,8 +73,10 @@ class SqlController @Inject()(f: FormFactory, @NamedDatabase("sqlselectroot") sq
   override def renderExercise(user: User, exercise: SqlExercise): Html = {
     val tables = readTablesInDatabase(sqlSelect, exercise.scenario.shortName)
 
-    val oldSol = SqlSolution.finder.byId(new SqlSolutionKey(user.name, exercise.id))
-    val oldOrDefSol = if (oldSol == null) "" else oldSol.sol
+    val oldOrDefSol = Option(SqlSolution.finder.byId(new SqlSolutionKey(user.name, exercise.id))) match {
+      case None => ""
+      case Some(oldSol) => oldSol.sol
+    }
 
     views.html.sqlExercise.render(user, exercise, oldOrDefSol, tables.asJava)
   }

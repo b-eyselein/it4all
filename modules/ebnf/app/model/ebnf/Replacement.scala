@@ -5,13 +5,16 @@ package model.ebnf
 trait Replacement {
   def asString: String
 
-  override def toString = asString
+  override def toString: String = asString
 
   def * = Repetition(this)
+
   def + = Min1Repetition(this)
-  def ? = Option(this)
+
+  def ? = OptionReplacement(this)
 
   def ~(that: Replacement) = Sequence(this, that)
+
   def |(that: Replacement) = Alternative(this, that)
 }
 
@@ -22,11 +25,11 @@ abstract class BinaryReplacement(val left: Replacement, val right: Replacement, 
 }
 
 abstract class UnaryReplacement(val child: Replacement, val operator: String) extends Replacement {
-  override def asString = child + operator
+  override def asString: String = child + operator
 }
 
 abstract class SymbolReplacement(val symbol: Symbol) extends Replacement {
-  override def asString = symbol.toString
+  override def asString: String = symbol.toString
 }
 
 // Real kinds of replacements
@@ -35,14 +38,14 @@ case class Sequence(l: Replacement, r: Replacement) extends BinaryReplacement(l,
 
 case class Alternative(l: Replacement, r: Replacement) extends BinaryReplacement(l, r, Replacement.altOperator)
 
-case class Option(c: Replacement) extends UnaryReplacement(c, Replacement.optOperator)
+case class OptionReplacement(c: Replacement) extends UnaryReplacement(c, Replacement.optOperator)
 
 case class Repetition(c: Replacement) extends UnaryReplacement(c, Replacement.repOperator)
 
 case class Min1Repetition(c: Replacement) extends UnaryReplacement(c, Replacement.rep1Operator)
 
 case class Grouping(child: Replacement) extends Replacement {
-  override def asString = "(" + child + ")"
+  override def asString: String = "(" + child + ")"
 }
 
 case class TerminalReplacement(t: Terminal) extends SymbolReplacement(t)

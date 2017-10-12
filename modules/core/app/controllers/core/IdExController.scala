@@ -1,6 +1,5 @@
 package controllers.core
 
-import java.io.IOException
 import java.nio.file.{Files, Path}
 
 import io.ebean.Finder
@@ -9,12 +8,9 @@ import model.logging.{ExerciseCompletionEvent, ExerciseCorrectionEvent, Exercise
 import model.result.{CompleteResult, EvaluationResult}
 import model.tools.IdExToolObject
 import model.user.User
-import play.Logger
-import play.api.Configuration
-import play.mvc.Result
 import play.data.{DynamicForm, FormFactory}
 import play.libs.Json
-import play.mvc.{Controller, Results}
+import play.mvc.{Controller, Result, Results}
 import play.twirl.api.Html
 
 import scala.util.{Failure, Success, Try}
@@ -60,26 +56,25 @@ abstract class IdExController[E <: Exercise, R <: EvaluationResult]
 
 
   def index(page: Int): Result = {
-    val allExes = finder.all()
+    val allExes = finder.all
     val exes = allExes.subList(Math.max(0, (page - 1) * STEP), Math.min(page * STEP, allExes.size()))
     Results.ok(views.html.exesList.render(getUser, exes, renderExesListRest, toolObject, allExes.size() / STEP + 1))
   }
 
-  def checkAndCreateSolDir(username: String, exercise: E): Try[Path] = {
-    val dir = toolObject.getSolDirForExercise(username, exercise)
-    Try(Files.createDirectories(dir))
-  }
+  protected def checkAndCreateSolDir(username: String, exercise: E): Try[Path] =
+    Try(Files.createDirectories(toolObject.getSolDirForExercise(username, exercise)))
 
-  protected def correctEx(form: DynamicForm, exercise: E, user: User): Try[CompleteResult[R]]
 
-  def renderCorrectionResult(user: User, correctionResult: CompleteResult[R]): Html =
+  protected def renderCorrectionResult(user: User, correctionResult: CompleteResult[R]): Html =
     views.html.correction.render(toolObject.toolname.toUpperCase, correctionResult, renderResult(correctionResult),
       user, controllers.routes.Application.index())
 
-  def renderExercise(user: User, exercise: E): Html
+  protected def correctEx(form: DynamicForm, exercise: E, user: User): Try[CompleteResult[R]]
 
-  def renderExesListRest: Html
+  protected def renderExercise(user: User, exercise: E): Html
 
-  def renderResult(correctionResult: CompleteResult[R]): Html
+  protected def renderExesListRest: Html
+
+  protected def renderResult(correctionResult: CompleteResult[R]): Html
 
 }

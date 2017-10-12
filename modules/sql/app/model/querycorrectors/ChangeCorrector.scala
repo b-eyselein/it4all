@@ -57,7 +57,7 @@ object InsertCorrector extends ChangeCorrector("INSERT") {
 
   override protected def getTables(query: Q) = List(query.getTable)
 
-  override protected def getWhere(query: Q): Expression = null
+  override protected def getWhere(query: Q): Option[Expression] = None
 
   override protected def parseStatement(statement: String): Try[Insert] = Try(
     CCJSqlParserUtil.parse(statement) match {
@@ -79,7 +79,7 @@ object DeleteCorrector extends ChangeCorrector("DELETE") {
 
   override protected def getTables(query: Q): List[Table] = query.getTables.asScala.toList
 
-  override protected def getWhere(query: Q): Expression = query.getWhere
+  override protected def getWhere(query: Q): Option[Expression] = Option(query.getWhere)
 
   override protected def parseStatement(statement: String): Try[Delete] = Try(
     CCJSqlParserUtil.parse(statement) match {
@@ -101,7 +101,7 @@ object UpdateCorrector extends ChangeCorrector("UPDATE") {
 
   override protected def getTables(query: Q): List[Table] = query.getTables.asScala.toList
 
-  override protected def getWhere(query: Q): Expression = query.getWhere
+  override protected def getWhere(query: Q): Option[Expression] = Option(query.getWhere)
 
   override protected def parseStatement(statement: String): Try[Update] = Try(
     CCJSqlParserUtil.parse(statement) match {
