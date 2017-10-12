@@ -1,33 +1,37 @@
 @(title: String, user: model.user.User)
 
-<script src="@routes.Assets.versioned("javascripts/preferences.js")"></script>
+@scripts = {
+    <script src="@routes.Assets.versioned("javascripts/preferences.js")"></script>
+}
 
-@main(title, user) {
+@main(title, user, scripts) {
     <div class="container">
         <div class="page-header">
             <h1>Präferenzen</h1>
         </div>
 
-        <form class="form-horizontal" action="@controllers.routes.UserController.saveOptions" method="post" onsubmit="return false;">
+        <form class="form-horizontal" @*action="@controllers.routes.UserController.saveOptions"*@ method="post" onsubmit="return false;">
 
             <div class="form-group">
-                <div class="input-group">
-                    <label class="input-group-addon" for="posTests">Bestandene Tests...</label>
-                    <select class="form-control" id="posTests" onchange="update(this.id)" data-std="@user.todo">
-                    @for(todo <- model.user.User.SHOW_HIDE_AGGREGATE.values) {
-                        <option value="@todo" @if(todo == user.todo) {selected}>@todo.getGerman </option>
-                    }
-                    </select>
-                    <span class="input-group-btn">
-                        <button class="btn btn-default" type="button" id="btn_posTests" disabled onclick="savePreferences()">
-                            Speichern...</button>
-                    </span>
+                <label class="control-label col-sm-3" for="posTests">Bestandene Tests</label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <select class="form-control" id="posTests" onchange="update(this.id)" data-std="@user.todo">
+                        @for(todo <- model.user.User.SHOW_HIDE_AGGREGATE.values) {
+                            <option value="@todo" @todo.getSelected(user.todo)>@todo.getGerman </option>
+                        }
+                        </select>
+
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button" id="btn_posTests" disabled onclick="savePreferences('posTests')">
+                                Speichern...</button>
+                        </span>
+                    </div>
                 </div>
             </div>
 
             <hr>
-        </form>
-        <button class="btn btn-default btn-block">Einstellungen speichern</button>
 
+        </form>
     </div>
 }

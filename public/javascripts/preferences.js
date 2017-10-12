@@ -1,20 +1,19 @@
-function savePreferences() {
+const prefUrl = $('#commit').data('url');
+
+function savePreferences(value) {
+  var inp = $('#' + value);
   $.ajax({
-    url: $("#commit").data('url'),
-    type: "PUT",
-    data: "posTests=" + $("#posTests").val(),
+    url: prefUrl,
+    type: 'PUT',
+    data: value + '=' + inp.val(),
     success: function (result) {
-      // FIXME: verarbeiten...
-      console.log(result);
-    },
-    error: function (xhr, status, error) {
-      // FIXME: verarbeiten...
-      console.log(xhr);
+      inp.data('std', result.todo);
+      update(value);
     }
   });
 }
 
-function update(id) {
-  var inp = $("#" + id);
-  $("#btn_" + id).prop("disabled", inp.val() === inp.data("std"));
+function update(value) {
+  var inp = $('#' + value);
+  $('#btn_' + value).prop('disabled', inp.val() === inp.data('std'));
 }
