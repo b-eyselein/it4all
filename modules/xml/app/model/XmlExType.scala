@@ -1,7 +1,5 @@
 package model
 
-import model.exercise.Tag
-
 import scala.collection.mutable.ListBuffer
 
 object XmlExType {
@@ -12,7 +10,8 @@ object XmlExType {
 
 }
 
-abstract sealed class XmlExType(val name: String, val studFileEnding: String, val refFileEnding: String, val gramFileEnding: String) extends Tag {
+abstract sealed class XmlExType(val name: String, val studFileEnding: String, val refFileEnding: String, val gramFileEnding: String)
+  extends model.exercise.Tag {
 
   XmlExType.values += this
 
