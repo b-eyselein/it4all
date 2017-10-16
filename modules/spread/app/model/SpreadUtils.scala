@@ -6,7 +6,11 @@ object SpreadUtils {
 
   // Strings
 
+  private[model] val noFormulaRequired = "Keine Formel notwendig."
+
   private[model] val formulaCorrect = "Formel richtig."
+
+  private[model] val formulaMissing = "Formel notwendig."
 
   // Regexes
 

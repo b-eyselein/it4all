@@ -17,13 +17,13 @@ class XmlExercise(id: Int) extends Exercise(id) {
 
   @Column
   @JsonProperty(required = true)
-  var rootNode: String = "root"
+  var rootNode: String = _
 
   @JsonIgnore
-  def exerciseType = XmlExType.byName(exerciseTypeStr).getOrElse(XML_DTD)
+  def exerciseType: XmlExType = XmlExType.byName(exerciseTypeStr).getOrElse(XML_DTD)
 
 
-  def fixedStart: String = if (exerciseType != XML_DTD) ""
+  val fixedStart: String = if (exerciseType != XML_DTD) ""
   else
     s"""<?xml version="1.0" encoding="UTF-8"?>
        |<!DOCTYPE $rootNode SYSTEM "$rootNode.dtd">""".stripMargin

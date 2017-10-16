@@ -1,5 +1,7 @@
 package model
 
+import model.XmlExType._
+
 import scala.collection.mutable.ListBuffer
 
 object XmlExType {
@@ -13,7 +15,7 @@ object XmlExType {
 abstract sealed class XmlExType(val name: String, val studFileEnding: String, val refFileEnding: String, val gramFileEnding: String)
   extends model.exercise.Tag {
 
-  XmlExType.values += this
+  values += this
 
   override val getButtonContent: String = name
 

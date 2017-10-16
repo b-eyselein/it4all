@@ -4,6 +4,7 @@ import java.nio.file.{Path, Paths}
 
 import model.CommonUtils.RicherTry
 import model.ODFCorrector._
+import model.SpreadUtils._
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert._
 import org.junit.{Assert, Test}
@@ -29,7 +30,7 @@ class ODFCorrectorTest {
     workbook.getSheetByIndex(sheetIndex).getCellByPosition(rowIndex, cellIndex)
 
   @Test def testCompareChartsInSheet() {
-    assertNull(compareChartsInSheet(null, null))
+    compareChartsInSheet(null, null) shouldBe(false, "")
   }
 
   @Test def testCloseDocument(): Unit = loadDocument(standardDocument) match {
@@ -43,16 +44,16 @@ class ODFCorrectorTest {
     case Failure(e) => Assert.fail(e.getMessage)
     case Success((muster, teilLsg)) =>
 
-      compareCellFormulas(getCell(muster, 2, 7, 15), getCell(teilLsg, 2, 7, 15)) shouldBe(true, "Formel richtig.")
+      compareCellFormulas(getCell(muster, 2, 7, 15), getCell(teilLsg, 2, 7, 15)) shouldBe(true, formulaCorrect)
 
       // Wert in Muster null, Compare leer
-      compareCellFormulas(getCell(muster, 3, 3, 9), getCell(teilLsg, 3, 3, 9)) shouldBe(true, "")
+      compareCellFormulas(getCell(muster, 3, 3, 9), getCell(teilLsg, 3, 3, 9)) shouldBe(true, noFormulaRequired)
 
       // Wert in Muster, Compare leer
-      compareCellFormulas(getCell(muster, 3, 5, 16), getCell(teilLsg, 3, 5, 16)) shouldBe(false, "Formel notwendig.")
+      compareCellFormulas(getCell(muster, 3, 5, 16), getCell(teilLsg, 3, 5, 16)) shouldBe(false, formulaMissing)
 
       // Wert in Muster, Compare leer
-      compareCellFormulas(getCell(muster, 3, 5, 19), getCell(teilLsg, 3, 5, 19)) shouldBe(false, "Formel falsch. Der Bereich [D20] fehlt.")
+      compareCellFormulas(getCell(muster, 3, 5, 19), getCell(teilLsg, 3, 5, 19)) shouldBe(false, "Formel falsch. Die Bereiche [D20] fehlen.")
   }
 
   @Test def testCompareCellValues() {
@@ -169,9 +170,9 @@ class ODFCorrectorTest {
     assertNotNull(loadDocument(schullandheimMuster).get)
   }
 
-  @Test(expected = classOf[CorrectionException])
+  @Test
   def testLoadDocumentWithWrongPath() {
-    loadDocument(Paths.get(""))
+    assertTrue(loadDocument(Paths.get("")).isFailure)
   }
 
   @Test def testSaveCorrectedSpreadsheet() {

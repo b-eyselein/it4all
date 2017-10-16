@@ -88,14 +88,14 @@ object XLSXCorrector extends SpreadCorrector[Workbook, Sheet, XSSFCell, Font, Sh
   }
 
   override def compareCellFormulas(masterCell: XSSFCell, compareCell: XSSFCell): (Boolean, String) =
-    if (masterCell.getCellTypeEnum != CellType.FORMULA) (false, "Keine Formel notwendig.")
+    if (masterCell.getCellTypeEnum != CellType.FORMULA) (false, noFormulaRequired)
     else {
       if (masterCell.toString == compareCell.toString) (true, formulaCorrect)
-      else if (compareCell.getCellTypeEnum != CellType.FORMULA) (false, "Formel notwendig.")
+      else if (compareCell.getCellTypeEnum != CellType.FORMULA) (false, formulaMissing)
       else {
         val difference: String = getDiffOfTwoFormulas(masterCell.toString, compareCell.toString)
 
-        if (difference.isEmpty) (true, COMMENT_FORMULA_CORRECT)
+        if (difference.isEmpty) (true, formulaCorrect)
         else (false, s"Formel falsch. $difference")
       }
     }
@@ -200,7 +200,7 @@ object XLSXCorrector extends SpreadCorrector[Workbook, Sheet, XSSFCell, Font, Sh
     savePath
   })
 
-  override def setCellComment(cell: XSSFCell, message: String): Unit = if (message != null || !message.isEmpty) {
+  override def setCellComment(cell: XSSFCell, message: String): Unit = if (message != null && message.nonEmpty) {
 
     cell.removeCellComment()
 

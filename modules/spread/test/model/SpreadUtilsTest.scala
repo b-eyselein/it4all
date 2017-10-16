@@ -7,6 +7,8 @@ import SpreadUtils._
 
 class SpreadUtilsTest {
 
+  // Strings
+
   private[this] val gib = "giBbERisH"
 
   private[this] val titles = List("", "Test1", "MYTEST2", " This is the third test...")

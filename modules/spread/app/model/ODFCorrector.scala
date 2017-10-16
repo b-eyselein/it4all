@@ -5,6 +5,7 @@ import java.nio.file.{Files, Path, Paths}
 
 import com.google.common.io.{Files => GFiles}
 import model.StringConsts._
+import model.SpreadUtils._
 import org.odftoolkit.odfdom.`type`.Color
 import org.odftoolkit.simple.SpreadsheetDocument
 import org.odftoolkit.simple.style.Font
@@ -12,7 +13,6 @@ import org.odftoolkit.simple.style.StyleTypeDefinitions.FontStyle
 import org.odftoolkit.simple.table.{Cell, Table}
 
 import scala.util.Try
-
 
 object ODFCorrector extends SpreadCorrector[SpreadsheetDocument, Table, Cell, Font, Color](Color.GREEN, Color.RED) {
 
@@ -26,14 +26,14 @@ object ODFCorrector extends SpreadCorrector[SpreadsheetDocument, Table, Cell, Fo
   override def closeDocument(document: SpreadsheetDocument): Unit = document.close()
 
   override def compareCellFormulas(masterCell: Cell, compareCell: Cell): (Boolean, String) = Option(masterCell.getFormula) match {
-    case None => (true, "Keine Formel notwendig.")
+    case None => (true, noFormulaRequired)
     case Some(masterFormula) => Option(compareCell.getFormula) match {
-      case None => (false, COMMENT_FORMULA_MISSING)
+      case None => (false, formulaMissing)
       case Some(compareFormula) =>
-        if (masterFormula == compareFormula) (true, COMMENT_FORMULA_CORRECT)
+        if (masterFormula == compareFormula) (true, formulaCorrect)
         else {
           val diffOfTwoFormulas = SpreadUtils.getDiffOfTwoFormulas(masterFormula, compareFormula)
-          if (diffOfTwoFormulas.isEmpty) (true, COMMENT_FORMULA_CORRECT)
+          if (diffOfTwoFormulas.isEmpty) (true, formulaCorrect)
           else (false, s"Formel falsch. $diffOfTwoFormulas")
         }
     }
@@ -123,9 +123,8 @@ object ODFCorrector extends SpreadCorrector[SpreadsheetDocument, Table, Cell, Fo
     })
   }
 
-  override def setCellComment(cell: Cell, message: String): Unit = {
-    if (message != null || message.nonEmpty)
-      cell.setNoteText(message)
+  override def setCellComment(cell: Cell, message: String): Unit = if (message != null && message.nonEmpty) {
+    cell.setNoteText(message)
   }
 
   override def setCellStyle(cell: Cell, font: Font, success: Boolean): Unit = {

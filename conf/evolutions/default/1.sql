@@ -312,6 +312,7 @@ create table xml_exercise (
   state                         varchar(8),
   exercise_type_str             varchar(255),
   root_node                     varchar(255),
+  fixed_start                   varchar(255),
   constraint ck_xml_exercise_state check ( state in ('RESERVED','CREATED','APPROVED')),
   constraint pk_xml_exercise primary key (id)
 );
