@@ -11,7 +11,4 @@ libraryDependencies ++= Seq(
   javaJdbc, Common.mybatis, Common.jsqlparser
 )
 
-// JaCoCo - siehe project/plugins.sbt
-jacoco.settings
-
 EclipseKeys.classpathTransformerFactories := Seq(ClasspathentryTransformer)

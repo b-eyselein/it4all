@@ -11,7 +11,4 @@ libraryDependencies ++= Seq(
   Common.dockerjava
 )
 
-// JaCoCo - siehe project/plugins.sbt
-jacoco.settings
-
 EclipseKeys.classpathTransformerFactories := Seq(ClasspathentryTransformer)

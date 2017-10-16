@@ -4,15 +4,15 @@ addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.6.6")
 // Web plugins
 addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "5.2.2")
 
-addSbtPlugin("com.typesafe.sbt" % "sbt-play-enhancer" % "1.2.1")
-addSbtPlugin("com.typesafe.sbt" % "sbt-play-ebean" % "4.0.2")
+addSbtPlugin("com.typesafe.sbt" % "sbt-play-enhancer" % "1.2.2")
+addSbtPlugin("com.typesafe.sbt" % "sbt-play-ebean" % "4.0.6")
 
 // JaCoCo - Java Code Coverage
-addSbtPlugin("de.johoop" % "jacoco4sbt" % "2.3.0")
+addSbtPlugin("com.github.sbt" % "sbt-jacoco" % "3.0.2")
 
 // SCoverage for Scala
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.5.1")
-addSbtPlugin("com.codacy" % "sbt-codacy-coverage" % "1.3.8")
+addSbtPlugin("com.codacy" % "sbt-codacy-coverage" % "1.3.11")
 
 
 // Upgrade javaassist to use certain Java 8 features (IntStream.range(), ...)

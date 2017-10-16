@@ -16,9 +16,6 @@ libraryDependencies ++= Seq(
 
   // Apache Commons IO
   "commons-io" % "commons-io" % "2.4"
- )
-
-// JaCoCo - siehe project/plugins.sbt
-jacoco.settings
+)
 
 EclipseKeys.classpathTransformerFactories := Seq(ClasspathentryTransformer)

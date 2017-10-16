@@ -7,9 +7,6 @@ routesGenerator := InjectedRoutesGenerator
 
 playEbeanModels in Compile := Seq("model.*")
 
-// JaCoCo - siehe project/plugins.sbt
-jacoco.settings
-
 libraryDependencies ++= Seq(
   // Apache POI for Excel
   "org.apache.poi" % "poi" % "3.17",
