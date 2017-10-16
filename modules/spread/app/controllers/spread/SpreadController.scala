@@ -61,12 +61,12 @@ class SpreadController @Inject()(f: FormFactory)
             val sampleDocumentPath = Paths.get(toolObject.sampleDir.toString, exercise.sampleFilename + "." + fileExtension)
             if (sampleDocumentPath.toFile.exists) {
               try {
-                val result: SpreadSheetCorrectionResult = SpreadSheetCorrector.correct(sampleDocumentPath, targetFilePath, false, false)
+                val result: SpreadSheetCorrectionResult = SpreadSheetCorrector.correct(sampleDocumentPath, targetFilePath, conditionalFormating = false, charts = false)
 
-                if (result.isSuccess)
+                if (result.success)
                   Results.ok(views.html.excelcorrect.render(user, result, exercise.getId, fileExtension))
                 else
-                  Results.internalServerError(views.html.spreadcorrectionerror.render(user, result.getNotices.get(0)))
+                  Results.internalServerError(views.html.spreadcorrectionerror.render(user, result.notices.head))
               } catch {
                 case e: CorrectionException => Results.internalServerError(views.html.spreadcorrectionerror.render(user, e.getMessage))
               }

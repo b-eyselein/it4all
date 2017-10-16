@@ -1,19 +1,19 @@
 package model.feedback;
 
-import model.StringConsts;
+import model.StringConsts$;
 
 public enum EvaluatedAspect {
   
   // @formatter:off
   USED("Wie oft haben Sie dieses Tool genutzt?", "Oft", "Manchmal", "Selten"),
   
-  SENSE("Finden Sie dieses Tool sinnvoll?", "Sinnvoll", StringConsts.NEUTRAL, "Sinnlos"),
+  SENSE("Finden Sie dieses Tool sinnvoll?", "Sinnvoll", StringConsts$.MODULE$.NEUTRAL(), "Sinnlos"),
   
-  USABILITY("Wie bewerten Sie die allgemeine Bedienbarkeit dieses Tools?", "Gut", StringConsts.NEUTRAL, "Schlecht"),  
+  USABILITY("Wie bewerten Sie die allgemeine Bedienbarkeit dieses Tools?", "Gut", StringConsts$.MODULE$.NEUTRAL(), "Schlecht"),  
   
-  STYLE_OF_FEEDBACK("Wie bewerten Sie die Gestaltung des Feedbacks dieses Tools?", "Gut", StringConsts.NEUTRAL, "Schlecht"),
+  STYLE_OF_FEEDBACK("Wie bewerten Sie die Gestaltung des Feedbacks dieses Tools?", "Gut", StringConsts$.MODULE$.NEUTRAL(), "Schlecht"),
   
-  FAIRNESS_OF_FEEDBACK("Wie bewerten Sie die Fairness der Evaluation dieses Tools?", "Fair", StringConsts.NEUTRAL, "Unfair");
+  FAIRNESS_OF_FEEDBACK("Wie bewerten Sie die Fairness der Evaluation dieses Tools?", "Fair", StringConsts$.MODULE$.NEUTRAL(), "Unfair");
   // @formatter:on
   
   private String question;

@@ -2,7 +2,7 @@ package model.question;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import model.StringConsts;
+import model.StringConsts$;
 import model.exercisereading.ExerciseReader;
 import model.exercisereading.JsonReader;
 import play.data.DynamicForm;
@@ -20,41 +20,37 @@ public class QuestionReader extends ExerciseReader<Question> {
     return INSTANCE;
   }
 
-  public static Answer readAnswer(JsonNode answerNode) {
-    final AnswerKey key = Json.fromJson(answerNode.get(StringConsts.KEY_NAME), AnswerKey.class);
+  private static Answer readAnswer(JsonNode answerNode) {
+    final AnswerKey key = Json.fromJson(answerNode.get(StringConsts$.MODULE$.KEY_NAME()), AnswerKey.class);
 
     Answer answer = Answer.finder.byId(key);
     if(answer == null)
       answer = new Answer(key);
 
     answer.correctness = Correctness.valueOf(answerNode.get("correctness").asText());
-    answer.text = JsonReader.readAndJoinTextArray(answerNode.get(StringConsts.TEXT_NAME), "");
+    answer.text = JsonReader.readAndJoinTextArray(answerNode.get(StringConsts$.MODULE$.TEXT_NAME()), "");
     return answer;
   }
 
-  @Override
-  public void initRemainingExFromForm(Question exercise, DynamicForm form) {
-    exercise.setMaxPoints(Integer.parseInt(form.get(StringConsts.MAX_POINTS)));
-    exercise.setQuestionType(Question.QType.valueOf(form.get(StringConsts.EXERCISE_TYPE)));
+  @Override public void initRemainingExFromForm(Question exercise, DynamicForm form) {
+    exercise.setMaxPoints(Integer.parseInt(form.get(StringConsts$.MODULE$.MAX_POINTS())));
+    exercise.setQuestionType(Question.QType.valueOf(form.get(StringConsts$.MODULE$.EXERCISE_TYPE())));
     // exercise.setAnswers(readArray(form.get("answers"),
     // QuestionReader::readAnswer));
   }
 
-  @Override
-  public Question instantiate(int id) {
+  @Override public Question instantiate(int id) {
     return new Question(id);
   }
 
-  @Override
-  public void save(Question exercise) {
+  @Override public void save(Question exercise) {
     exercise.save();
     exercise.getAnswers().forEach(Answer::save);
   }
 
-  @Override
-  public void updateExercise(Question exercise, JsonNode exerciseNode) {
-    exercise.setMaxPoints(exerciseNode.get(StringConsts.MAX_POINTS).asInt());
-    exercise.setQuestionType(Question.QType.valueOf(exerciseNode.get(StringConsts.EXERCISE_TYPE).asText()));
+  @Override public void updateExercise(Question exercise, JsonNode exerciseNode) {
+    exercise.setMaxPoints(exerciseNode.get(StringConsts$.MODULE$.MAX_POINTS()).asInt());
+    exercise.setQuestionType(Question.QType.valueOf(exerciseNode.get(StringConsts$.MODULE$.EXERCISE_TYPE()).asText()));
     exercise.setAnswers(ExerciseReader.readArray(exerciseNode.get("answers"), QuestionReader::readAnswer));
   }
 

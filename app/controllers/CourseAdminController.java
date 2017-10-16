@@ -2,7 +2,7 @@ package controllers;
 
 import controllers.core.BaseController;
 import model.AdminSecured;
-import model.StringConsts;
+import model.StringConsts$;
 import model.exercisereading.ExerciseReader;
 import model.user.*;
 import play.data.FormFactory;
@@ -19,7 +19,7 @@ import javax.inject.Inject;
 
   public Result addAdmin(int courseId) {
     // FIXME: AJAX!
-    String userName = factory().form().bindFromRequest().get(StringConsts.NAME_NAME);
+    String userName = factory().form().bindFromRequest().get(StringConsts$.MODULE$.NAME_NAME());
 
     User user = User.finder.byId(userName);
     if(user == null)
@@ -42,7 +42,7 @@ import javax.inject.Inject;
 
   public Result newCourse() {
     // FIXME: AJAX!
-    String courseName = factory().form().bindFromRequest().get(StringConsts.NAME_NAME);
+    String courseName = factory().form().bindFromRequest().get(StringConsts$.MODULE$.NAME_NAME());
 
     Course course = Course.finder.all().stream().filter(c -> c.name.equals(courseName)).findAny().orElse(null);
     if(course != null)
