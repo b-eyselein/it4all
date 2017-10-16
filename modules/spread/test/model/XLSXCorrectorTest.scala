@@ -17,8 +17,6 @@ import scala.util.{Failure, Success}
 
 object XLSXCorrectorTest {
 
-  println(System.getProperty("user.dir"))
-
   val testDir: Path = Paths.get("test", "resources", "spreadsheet")
 
   val stdDoc: Path = Paths.get(testDir.toString, "standard.xlsx")
