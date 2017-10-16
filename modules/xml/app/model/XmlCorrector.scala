@@ -24,8 +24,6 @@ object XmlCorrector {
 
   implicit def stingReader2StreamSource(reader: StringReader): StreamSource = new StreamSource(reader)
 
-  private val GenericFailureMsg = "Es gab einen Fehler bei der Korrektur!"
-
   private val DocBuilderFactory = DocumentBuilderFactory.newInstance
   DocBuilderFactory.setValidating(true)
 
@@ -51,10 +49,7 @@ object XmlCorrector {
 
   def correctJava(xml: String, grammar: String, exType: XmlExType): java.util.List[XmlError] = correct(xml, grammar, exType).asJava
 
-  def recover(e: Throwable): List[XmlError] = {
-    Logger.error("There has been an error correcting", e)
-    List(FailureXmlError(GenericFailureMsg, e))
-  }
+  def recover(e: Throwable): List[XmlError] = List(FailureXmlError(e.getMessage, e))
 
   def correctDtdAndXml(xml: InputSource): List[XmlError] = Try({
     val errorHandler = new CorrectionErrorHandler
