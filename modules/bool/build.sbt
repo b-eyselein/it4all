@@ -12,6 +12,4 @@ jacoco.settings
 
 scalacOptions ++= Seq("-feature")
 
-libraryDependencies += Common.scalatest
-
 EclipseKeys.classpathTransformerFactories := Seq(ClasspathentryTransformer)
