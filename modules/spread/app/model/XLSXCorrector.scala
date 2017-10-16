@@ -185,7 +185,7 @@ object XLSXCorrector extends SpreadCorrector[Workbook, Sheet, XSSFCell, Font, Sh
 
   override def loadDocument(path: Path): Try[Workbook] = Try(new XSSFWorkbook(path.toFile))
 
-  override def saveC1orrectedSpreadsheet(compareDocument: Workbook, testPath: Path): Try[Path] = Try({
+  override def saveCorrectedSpreadsheet(compareDocument: Workbook, testPath: Path): Try[Path] = Try({
     val fileNameNew: String = GFiles.getNameWithoutExtension(testPath.toString) + CORRECTION_ADD_STRING +
       "." + GFiles.getFileExtension(testPath.toString)
 

@@ -1,19 +1,19 @@
-var variables = new Set(["S"])
+var variables = new Set(["S"]);
 
-const variablePattern = /\b(?!')\w+(?!')\b/g
+const variablePattern = /\b(?!')\w+(?!')\b/g;
 
-const ruleInputsSelector = 'input[name^="rule"]'
-  
+const ruleInputsSelector = 'input[name^="rule"]';
+
 function changeStartSymbol() {
   $('#rule1Variable').html($("#start").val())
 }
 
 function checkAndCreateRuleInputs(variables) {
   // Disable all inputs
-  $(ruleInputsSelector).prop('disabled', true)
-  
+  $(ruleInputsSelector).prop('disabled', true);
+
   for(var v of variables) {
-    var ruleVInput = $('#rule_' + v)
+    var ruleVInput = $('#rule_' + v);
     if(ruleVInput.length === 0) {
       // Input does not exist, needs to be created
       $('#rulesList').append(
@@ -33,9 +33,9 @@ function checkAndCreateRuleInputs(variables) {
 
 function updateVars() {
   // Add start symbol to variables
-  var newVars = new Set([$('#start').val()])
+  var newVars = new Set([$('#start').val()]);
   $(ruleInputsSelector).each(function() {
-    var matches = $(this).val().match(variablePattern)
+    var matches = $(this).val().match(variablePattern);
     if(matches !== null) {
       matches.forEach(function(match) {
         newVars.add(match)
@@ -43,5 +43,5 @@ function updateVars() {
     }
   })
   checkAndCreateRuleInputs([...newVars])
-  $('#variables').val([...newVars].join(", "))
+  $('#variables').val([...newVars].join(", "));
 }

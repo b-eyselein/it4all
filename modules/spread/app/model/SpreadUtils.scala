@@ -14,7 +14,7 @@ object SpreadUtils {
 
   private val cellOperatorsPattern: Regex = """([+\-*/])""".r
 
-  private val cellRangesPattern: Regex = """([A-Z]{1,3}[0-9]{1-7})""".r
+  private val cellRangesPattern: Regex = """([A-Z]+[0-9]+)""".r
 
   private val excelChartTitlePattern: Regex = """<a:t>(.*?)</a:t>""".r
 

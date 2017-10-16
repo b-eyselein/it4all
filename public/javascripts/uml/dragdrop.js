@@ -38,7 +38,7 @@
 
     // or if that's already happened then compare it with this item's parent
     // and if they're not the same container, return to prevent selection
-    else if(selections.owner != item.parentNode) {
+    else if(selections.owner !== item.parentNode) {
       return;
     }
     
@@ -56,7 +56,7 @@
     
     // then find and remove this item from the existing items array
     for(var len = selections.items.length, i = 0; i < len; i++) {
-      if(selections.items[i] == item) {
+      if(selections.items[i] === item) {
         selections.items.splice(i, 1);
         break;
       }

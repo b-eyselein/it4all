@@ -5,22 +5,12 @@ function changeFontsize(value) {
   fontsizeElement.innerHTML = fontsize;
 }
 
-$(document).ready(function() {
-  initEditor();
-  updateHiddenTextarea();
-  
-  if(theUpdatePrev) {
-    editor.on("change", updatePreview);
-    updatePreview();
-  }
-});
-
 function initEditor() {
   document.getElementById('editor').style.fontSize = '16px';
   editor = ace.edit("editor");
-  
+
   editor.on("change", updateHiddenTextarea);
-  
+
   editor.setTheme("ace/theme/eclipse");
   editor.getSession().setMode("ace/mode/" + theMode);
   editor.getSession().setTabSize(2);
@@ -57,11 +47,11 @@ function testTheSolution(theUrl) {
     data: extractParameters(),
     // FIXME: dataType: 'json',
     async: true,
-    success: function(correction) {
+    success: function (correction) {
       $("#correction").html(correction);
       $('#testButton').prop('disabled', false);
     },
-    error: function(jqXHR, error, errorThrown) {
+    error: function (jqXHR, error, errorThrown) {
       $("#correction").html("<div class=\"alert alert-danger\">" + jqXHR.responseJSON + "</div>");
       $('#testButton').prop('disabled', false);
     }
@@ -70,7 +60,7 @@ function testTheSolution(theUrl) {
 
 function updatePreview() {
   var toWrite = unescapeHTML(editor.getValue());
-  
+
   var theIFrame = document.getElementById("preview").contentWindow.document;
   theIFrame.open();
   theIFrame.write(toWrite);
@@ -80,3 +70,13 @@ function updatePreview() {
 function unescapeHTML(escapedHTML) {
   return escapedHTML.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
 }
+
+$(document).ready(function () {
+  initEditor();
+  updateHiddenTextarea();
+
+  if (theUpdatePrev) {
+    editor.on("change", updatePreview);
+    updatePreview();
+  }
+});
