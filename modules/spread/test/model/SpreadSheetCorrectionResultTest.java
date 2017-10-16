@@ -1,17 +1,6 @@
 package model;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.Test;
-
-import model.SpreadSheetCorrectionResult;
 
 public class SpreadSheetCorrectionResultTest {
 

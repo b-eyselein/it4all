@@ -54,16 +54,13 @@ object XLSXCorrector extends SpreadCorrector[Workbook, Sheet, XSSFCell, Font, Sh
 
   private def getFormatStrings(format: ConditionalFormatting): Set[String] = format.getFormattingRanges.map(_.formatAsString).toSet
 
-  private def getStringValueOfCell(cell: Cell): String = {
-    if (cell.getCellTypeEnum != CellType.FORMULA)
-      return cell.toString
-
+  private def getStringValueOfCell(cell: Cell): String = if (cell.getCellTypeEnum == CellType.FORMULA)
     cell.getCachedFormulaResultTypeEnum match {
       case NUMERIC => java.lang.Double.toString(cell.getNumericCellValue)
       case STRING => cell.getRichStringCellValue.toString
       case _ => ""
-    }
-  }
+    } else cell.toString
+
 
   override protected def compareSheetConditionalFormatting(master: Sheet, compare: Sheet): List[String] = {
     val scf1: SheetConditionalFormatting = master.getSheetConditionalFormatting
@@ -188,7 +185,7 @@ object XLSXCorrector extends SpreadCorrector[Workbook, Sheet, XSSFCell, Font, Sh
 
   override def loadDocument(path: Path): Try[Workbook] = Try(new XSSFWorkbook(path.toFile))
 
-  override def saveCorrectedSpreadsheet(compareDocument: Workbook, testPath: Path): Try[Path] = Try({
+  override def saveC1orrectedSpreadsheet(compareDocument: Workbook, testPath: Path): Try[Path] = Try({
     val fileNameNew: String = GFiles.getNameWithoutExtension(testPath.toString) + CORRECTION_ADD_STRING +
       "." + GFiles.getFileExtension(testPath.toString)
 
@@ -203,9 +200,7 @@ object XLSXCorrector extends SpreadCorrector[Workbook, Sheet, XSSFCell, Font, Sh
     savePath
   })
 
-  override def setCellComment(cell: XSSFCell, message: String): Unit = {
-    if (message == null || message.isEmpty)
-      return
+  override def setCellComment(cell: XSSFCell, message: String): Unit = if (message != null || !message.isEmpty) {
 
     cell.removeCellComment()
 

@@ -16,12 +16,12 @@ import scala.util.Try
 
 object ODFCorrector extends SpreadCorrector[SpreadsheetDocument, Table, Cell, Font, Color](Color.GREEN, Color.RED) {
 
-  val MAXROW = 80
-  val MAXCOLUMN = 22
+  val maxRow = 80
+  val maxColumn = 22
 
-  val COLOR_WHITE = "#FFFFFF"
-  val FONT = "Arial"
-  val FONT_SIZE: Double = 10
+  val colorWhite = "#FFFFFF"
+  val fontName = "Arial"
+  val fontSize: Double = 10
 
   override def closeDocument(document: SpreadsheetDocument): Unit = document.close()
 
@@ -49,10 +49,7 @@ object ODFCorrector extends SpreadCorrector[SpreadsheetDocument, Table, Cell, Fo
     else (false, s"Wert falsch. Erwartet wurde '$masterValue'.")
   }
 
-  override def compareChartsInSheet(compareSheet: Table, sampleSheet: Table): (Boolean, String) = {
-    // FIXME: nicht von ODFToolkit unterstützt...
-    null
-  }
+  override def compareChartsInSheet(compareSheet: Table, sampleSheet: Table): (Boolean, String) = (false, "") // FIXME: nicht von ODFToolkit unterstützt...
 
   override def compareNumberOfChartsInDocument(compare: SpreadsheetDocument, sample: SpreadsheetDocument): (Boolean, String) =
     sample.getChartCount match {
@@ -86,7 +83,7 @@ object ODFCorrector extends SpreadCorrector[SpreadsheetDocument, Table, Cell, Fo
 
           val fontstyle = if (cellValueResult && cellFormulaResult) FontStyle.BOLD else FontStyle.ITALIC
 
-          val font = new Font(FONT, fontstyle, FONT_SIZE)
+          val font = new Font(fontName, fontstyle, fontSize)
 
           setCellStyle(cellCompare, font, cellValueResult && cellFormulaResult)
       }
@@ -96,10 +93,10 @@ object ODFCorrector extends SpreadCorrector[SpreadsheetDocument, Table, Cell, Fo
   override def getCellByPosition(table: Table, column: Int, row: Int): Option[Cell] = Option(table.getCellByPosition(column, row))
 
   override def getColoredRange(master: Table): List[Cell] =
-    (for {row <- 0 until MAXROW
-          column <- 0 until MAXCOLUMN
+    (for {row <- 0 until maxRow
+          column <- 0 until maxColumn
           oCell = master.getRowByIndex(row).getCellByIndex(column)
-          if oCell.getCellBackgroundColorString != COLOR_WHITE} yield oCell).toList
+          if oCell.getCellBackgroundColorString != colorWhite} yield oCell).toList
 
 
   override def compareSheetConditionalFormatting(master: Table, compare: Table): List[String] = List.empty

@@ -132,20 +132,20 @@ class XLSXCorrectorTest {
       assertTrue(XLSXCorrector.getColoredRange(muster.getSheetAt(1)).isEmpty)
 
       val coloredRange = XLSXCorrector.getColoredRange(muster.getSheetAt(2))
-      coloredRange.size shouldBe (28)
+      coloredRange.size shouldBe 28
       for (i <- 0 until 25) {
         val cell: Cell = coloredRange(i)
         cell.getRowIndex shouldBe (15 + i)
-        cell.getColumnIndex shouldBe (7)
+        cell.getColumnIndex shouldBe 7
       }
 
       val maennlich: Cell = coloredRange(26)
-      maennlich.getRowIndex shouldBe (44)
-      maennlich.getColumnIndex shouldBe (1)
+      maennlich.getRowIndex shouldBe 44
+      maennlich.getColumnIndex shouldBe 1
 
       val weiblich: Cell = coloredRange(27)
-      weiblich.getRowIndex shouldBe (45)
-      weiblich.getColumnIndex shouldBe (1)
+      weiblich.getRowIndex shouldBe 45
+      weiblich.getColumnIndex shouldBe 1
   }
 
   @Test
@@ -162,11 +162,11 @@ class XLSXCorrectorTest {
       case Success(muster) =>
         val musterSheet1: Sheet = XLSXCorrector.getSheetByIndex(muster, 0)
         assertNotNull(musterSheet1)
-        musterSheet1.getRow(0).getCell(0).toString shouldBe ("Verwalten und Auswerten von Daten")
+        musterSheet1.getRow(0).getCell(0).toString shouldBe "Verwalten und Auswerten von Daten"
 
         val musterSheet2 = XLSXCorrector.getSheetByIndex(muster, 4)
         assertNotNull(musterSheet2)
-        musterSheet2.getRow(15).getCell(10).toString shouldBe ("5% Rabatt auf den Gesamtpreis")
+        musterSheet2.getRow(15).getCell(10).toString shouldBe "5% Rabatt auf den Gesamtpreis"
     }
   }
 
@@ -176,19 +176,19 @@ class XLSXCorrectorTest {
       case Failure(e) => Assert.fail(failureLoad(stdDoc, e))
       case Success(document) =>
         assertNotNull("Standarddokument konnte nicht geladen werden!", document)
-        XLSXCorrector.getSheetCount(document) shouldBe (1)
+        XLSXCorrector.getSheetCount(document) shouldBe 1
     }
 
     XLSXCorrector.loadDocument(testMusterCopy) match {
       case Failure(e) => Assert.fail(failureLoad(testMusterCopy, e))
       case Success(document) =>
-        XLSXCorrector.getSheetCount(document) shouldBe (8)
+        XLSXCorrector.getSheetCount(document) shouldBe 8
     }
 
     XLSXCorrector.loadDocument(testSolutionCopy) match {
       case Failure(e) => Assert.fail(failureLoad(testSolutionCopy, e))
       case Success(document) =>
-        XLSXCorrector.getSheetCount(document) shouldBe (8)
+        XLSXCorrector.getSheetCount(document) shouldBe 8
     }
   }
 
@@ -227,10 +227,10 @@ class XLSXCorrectorTest {
       assertNull(cell.getCellComment)
 
       XLSXCorrector.setCellComment(cell, message)
-      cell.getCellComment.getString.getString shouldBe (message)
+      cell.getCellComment.getString.getString shouldBe message
 
       XLSXCorrector.setCellComment(cell, message2)
-      cell.getCellComment.getString.getString shouldBe (message2)
+      cell.getCellComment.getString.getString shouldBe message2
 
       cell.removeCellComment()
   }

@@ -12,10 +12,10 @@ class NAryResultTest {
   @Test
   def testCheckAddSolution() {
     val resTrue = new NAryAddResult(OCTAL, new NAryNumber(0, OCTAL), new NAryNumber(127, OCTAL), new NAryNumber(127, OCTAL))
-    assertThat(resTrue.checkSolution(), equalTo(true))
+    assertThat(resTrue.checkSolution, equalTo(true))
 
     val resFalse = new NAryAddResult(OCTAL, new NAryNumber(2, OCTAL), new NAryNumber(127, OCTAL), new NAryNumber(127, OCTAL))
-    assertThat(resFalse.checkSolution(), equalTo(false))
+    assertThat(resFalse.checkSolution, equalTo(false))
   }
 
   @Test
@@ -27,16 +27,15 @@ class NAryResultTest {
     when(form.get(NAryResult.INVERTED_ABS)).thenReturn("1110 0101")
     when(form.get(FORM_VALUE)).thenReturn("1110 0110")
 
-    val res: TwoCompResult = TwoCompResult.parseFromForm(form, true)
+    val res: TwoCompResult = TwoCompResult.parseFromForm(form, isVerbose = true)
     assertThat(res.binaryAbs, equalTo("0001 1010"))
     assertThat(res.invertedAbs, equalTo("1110 0101"))
 
     NAryTestBase.verifyNumber(res.learnerSolution, BINARY, -26)
     NAryTestBase.verifyNumber(res.targetNumber, BINARY, -26)
 
-    assertThat(res.binaryAbsCorrect(), equalTo(true))
-    assertThat(res.invertedAbsCorrect(), equalTo(true))
-    assertThat(res.checkSolution(), equalTo(true))
+    assertThat(res.binaryAbsCorrect, equalTo(true))
+    assertThat(res.invertedAbsCorrect, equalTo(true))
   }
 
   @Test
@@ -48,16 +47,16 @@ class NAryResultTest {
     when(form.get(NAryResult.INVERTED_ABS)).thenReturn("1010 0101")
     when(form.get(FORM_VALUE)).thenReturn("1111 1111")
 
-    val res = TwoCompResult.parseFromForm(form, true)
+    val res = TwoCompResult.parseFromForm(form, isVerbose = true)
     assertThat(res.binaryAbs, equalTo("0001 1110"))
     assertThat(res.invertedAbs, equalTo("1010 0101"))
 
     NAryTestBase.verifyNumber(res.learnerSolution, BINARY, -1)
     NAryTestBase.verifyNumber(res.targetNumber, BINARY, -26)
 
-    assertThat(res.binaryAbsCorrect(), equalTo(false))
-    assertThat(res.invertedAbsCorrect(), equalTo(false))
-    assertThat(res.checkSolution(), equalTo(false))
+    assertThat(res.binaryAbsCorrect, equalTo(false))
+    assertThat(res.invertedAbsCorrect, equalTo(false))
+    assertThat(res.checkSolution, equalTo(false))
   }
 
   @Test
@@ -84,17 +83,17 @@ class NAryResultTest {
   @Test
   def testCheckConvSolution() {
     val resTrue = new NAryConvResult(new NAryNumber(8, OCTAL), OCTAL, BINARY, new NAryNumber(8, OCTAL))
-    assertThat(resTrue.checkSolution(), equalTo(true))
+    assertThat(resTrue.checkSolution, equalTo(true))
 
     val resFalse = new NAryConvResult(new NAryNumber(8, OCTAL), OCTAL, BINARY, new NAryNumber(9, OCTAL))
-    assertThat(resFalse.checkSolution(), equalTo(false))
+    assertThat(resFalse.checkSolution, equalTo(false))
   }
 
   @Test
   def testParseConvFromFormCorrect() {
     val form = mock(classOf[DynamicForm])
-    when(form.get(NAryResult.STARTING_NB)).thenReturn(BINARY.toString())
-    when(form.get(NAryResult.TARGET_NB)).thenReturn(OCTAL.toString())
+    when(form.get(NAryResult.STARTING_NB)).thenReturn(BINARY.toString)
+    when(form.get(NAryResult.TARGET_NB)).thenReturn(OCTAL.toString)
     when(form.get(NAryResult.VALUE_NAME)).thenReturn("0000 1111")
 
     // value is reversed!!
