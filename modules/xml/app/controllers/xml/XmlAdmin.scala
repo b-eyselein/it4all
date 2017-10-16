@@ -1,17 +1,12 @@
 package controllers.xml
 
-import javax.inject.Inject
-
-import controllers.core.AExerciseAdminController
-import model.user.User
-import model.{XmlExercise, XmlExerciseReader}
-import play.data.FormFactory
+import model.XmlExercise
 import play.twirl.api.Html
 
 import scala.collection.JavaConverters.asScalaBufferConverter
 
-class XmlAdmin @Inject()(f: FormFactory)
-  extends AExerciseAdminController[XmlExercise](f, XmlToolObject, XmlExercise.finder, XmlExerciseReader) {
+class XmlAdmin @javax.inject.Inject()(f: play.data.FormFactory)
+  extends controllers.core.AExerciseAdminController[XmlExercise](f, XmlToolObject, XmlExercise.finder, model.XmlExerciseReader) {
 
   override def statistics = new Html(
     s"""<li>Es existieren insgesamt ${XmlExercise.finder.all.size} <a href="${controllers.xml.routes.XmlAdmin.exercises()}">Aufgaben</a>, davon
@@ -20,6 +15,6 @@ class XmlAdmin @Inject()(f: FormFactory)
        |  </ul>
        |</li>""".stripMargin)
 
-  override def renderExEditForm(u: User, e: XmlExercise, isCreation: Boolean): Html = views.html.editExForm.render(u, e, isCreation)
+  override def renderExEditForm(u: model.user.User, e: XmlExercise, isCreation: Boolean): Html = views.html.editExForm.render(u, e, isCreation)
 
 }

@@ -4,20 +4,22 @@ import java.io.File
 import java.nio.file.{Files, Path, Paths, StandardCopyOption}
 import javax.inject.Inject
 
+import com.google.common.io.{Files => GFiles}
 import controllers.core.IdExController
+import controllers.spread.SpreadController._
+import model._
 import model.result.{CompleteResult, EvaluationResult}
 import model.user.User
-import model.{CorrectionException, SpreadExercise, SpreadSheetCorrectionResult, SpreadSheetCorrector}
 import play.data.{DynamicForm, FormFactory}
+import play.mvc.Http.MultipartFormData
 import play.mvc.{Controller, Result, Results}
 import play.twirl.api.Html
-import SpreadController._
-import play.mvc.Http.MultipartFormData
 
 import scala.util.{Failure, Success, Try}
 
 class SpreadController @Inject()(f: FormFactory)
   extends IdExController[SpreadExercise, EvaluationResult](f, SpreadExercise.finder, SpreadToolObject) {
+
 
   def download(id: Int, extension: String): Result = Option(SpreadExercise.finder.byId(id)) match {
     case None => Results.badRequest("This exercise does not exist!")
@@ -61,12 +63,12 @@ class SpreadController @Inject()(f: FormFactory)
             val sampleDocumentPath = Paths.get(toolObject.sampleDir.toString, exercise.sampleFilename + "." + fileExtension)
             if (sampleDocumentPath.toFile.exists) {
               try {
-                val result: SpreadSheetCorrectionResult = SpreadSheetCorrector.correct(sampleDocumentPath, targetFilePath, false, false)
+                val result: SpreadSheetCorrectionResult = correctSpread(sampleDocumentPath, targetFilePath, conditionalFormating = false, charts = false)
 
-                if (result.isSuccess)
+                if (result.success)
                   Results.ok(views.html.excelcorrect.render(user, result, exercise.getId, fileExtension))
                 else
-                  Results.internalServerError(views.html.spreadcorrectionerror.render(user, result.getNotices.get(0)))
+                  Results.internalServerError(views.html.spreadcorrectionerror.render(user, result.notices.head))
               } catch {
                 case e: CorrectionException => Results.internalServerError(views.html.spreadcorrectionerror.render(user, e.getMessage))
               }
@@ -92,8 +94,22 @@ object SpreadController {
   val BODY_SOL_FILE_NAME: String = "solFile"
   val CORRECTION_ADD_STRING: String = "_Korrektur"
 
+  val correctors = Map(
+    "ods" -> ODFCorrector,
+    "xlsx" -> XLSXCorrector,
+    "xlsm" -> XLSXCorrector)
+
   def saveSolutionForUser(uploadedSolution: Path, targetFilePath: Path): Try[Path] =
     Try(Files.createDirectories(targetFilePath.getParent))
       .map(_ => Files.move(uploadedSolution, targetFilePath, StandardCopyOption.REPLACE_EXISTING))
+
+  def correctSpread(musterPath: Path, testPath: Path, conditionalFormating: Boolean, charts: Boolean): SpreadSheetCorrectionResult = {
+    val fileExtension: String = GFiles.getFileExtension(testPath.toString)
+
+    correctors.get(fileExtension) match {
+      case None => SpreadSheetCorrectionFailure(s"""The filetype "$fileExtension" is not supported. Could not start correction.""")
+      case Some(corrector) => corrector.correct(musterPath, testPath, conditionalFormating, charts)
+    }
+  }
 
 }

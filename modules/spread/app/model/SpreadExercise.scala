@@ -1,8 +1,23 @@
 package model
 
+import javax.persistence.Entity
+
 import com.fasterxml.jackson.databind.JsonNode
+import io.ebean.Finder
+import model.exercise.Exercise
 import model.exercisereading.ExerciseReader
 import play.data.DynamicForm
+
+@Entity
+class SpreadExercise(i: Int) extends Exercise(i) {
+  var sampleFilename: String = _
+
+  var templateFilename: String = _
+}
+
+object SpreadExercise {
+  val finder: Finder[Integer, SpreadExercise] = new Finder(classOf[SpreadExercise])
+}
 
 object SpreadExerciseReader
   extends ExerciseReader[SpreadExercise]("spread", SpreadExercise.finder, classOf[Array[SpreadExercise]]) {

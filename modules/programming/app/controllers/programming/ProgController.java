@@ -9,12 +9,7 @@ import java.util.stream.IntStream;
 import javax.inject.Inject;
 
 import controllers.core.IdExController;
-import model.ApprovalState;
-import model.AvailableLanguages;
-import model.ProgEvaluationResult;
-import model.ProgExercise;
-import model.ProgUser;
-import model.StringConsts;
+import model.*;
 import model.exercise.ExerciseOptions;
 import model.result.CompleteResult;
 import model.testdata.CommitedTestData;
@@ -50,7 +45,7 @@ public class ProgController extends IdExController<ProgExercise, ProgEvaluationR
   }
 
   private static List<CommitedTestData> extractTestData(DynamicForm form, String username, ProgExercise exercise) {
-    return IntStream.range(0, Integer.parseInt(form.get(StringConsts.TEST_COUNT_NAME)))
+    return IntStream.range(0, Integer.parseInt(form.get(StringConsts$.MODULE$.TEST_COUNT_NAME())))
         .mapToObj(testCounter -> readTestDataFromForm(form, username, testCounter, exercise))
         .collect(Collectors.toList());
   }

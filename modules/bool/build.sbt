@@ -10,6 +10,4 @@ playEbeanModels in Compile := Seq("model.*")
 // JaCoCo - siehe project/plugins.sbt
 jacoco.settings
 
-scalacOptions ++= Seq("-feature")
-
 EclipseKeys.classpathTransformerFactories := Seq(ClasspathentryTransformer)

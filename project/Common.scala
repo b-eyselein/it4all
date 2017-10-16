@@ -8,18 +8,15 @@ object Common {
     scalaVersion := "2.12.3",
     libraryDependencies ++= Seq(
       "org.mockito" % "mockito-core" % "2.11.0",
-      "org.scalatest" %% "scalatest" % "3.0.4" % "test"
+      "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % "test"
     ),
     scalacOptions ++= Seq("-feature"))
-
-  // Scalatest
 
   val mysqlDependency = "mysql" % "mysql-connector-java" % "8.0.8-dmr"
 
   val seleniumDep = "org.seleniumhq.selenium" % "selenium-java" % "3.5.2"
   val htmlUnitDep = "org.seleniumhq.selenium" % "selenium-htmlunit-driver" % "2.52.0"
 
-  val mockitoDep = "org.mockito" % "mockito-core" % "2.8.47"
 
   // Json Schema
   val jsonSchemaValidator = "com.github.fge" % "json-schema-validator" % "2.2.6"

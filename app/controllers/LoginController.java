@@ -1,7 +1,7 @@
 package controllers;
 
 import controllers.core.BaseController;
-import model.StringConsts;
+import model.StringConsts$;
 import model.user.Course;
 import model.user.User;
 import play.Environment;
@@ -26,13 +26,13 @@ public class LoginController extends BaseController {
       return redirect(routes.LoginController.login());
 
     DynamicForm form = factory().form().bindFromRequest();
-    String userName = form.get(StringConsts.NAME_NAME);
-    String passwort = form.get(StringConsts.PW_NAME);
+    String userName = form.get(StringConsts$.MODULE$.NAME_NAME());
+    String passwort = form.get(StringConsts$.MODULE$.PW_NAME());
 
     User user = findOrCreateStudent(userName, passwort);
 
     session().clear();
-    session(StringConsts.SESSION_ID_FIELD, user.name);
+    session(StringConsts$.MODULE$.SESSION_ID_FIELD(), user.name);
 
     return redirect(controllers.routes.Application.index());
   }
@@ -52,7 +52,7 @@ public class LoginController extends BaseController {
     }
 
     session().clear();
-    session(StringConsts.SESSION_ID_FIELD, student.name);
+    session(StringConsts$.MODULE$.SESSION_ID_FIELD(), student.name);
 
     return redirect(controllers.routes.Application.index());
   }
