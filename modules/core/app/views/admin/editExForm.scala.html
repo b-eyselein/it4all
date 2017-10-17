@@ -1,0 +1,66 @@
+@(user: model.user.User, toolObject: model.tools.IdExToolObject, exercise: model.exercise.Exercise, isCreation: Boolean)
+
+@main(s"${toolObject.toolname}: Aufgabe ${if(isCreation) "erstellen" else "bearbeiten"}", user) {
+    <div class="container">
+        <div class="page-header">
+            <h1>@if(isCreation) {Erstellen} else {Bearbeiten} einer @toolObject.toolname-Aufgabe</h1>
+        </div>
+
+        <form class="form" method="post" role="form" action="@toolObject.editExerciseRoute(exercise.id)">
+
+            <fieldset>
+                <legend>Standardangaben</legend>
+
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <label for="@model.StringConsts.ID_NAME">ID:</label>
+                        <input type="number" class="form-control" name="@model.StringConsts.ID_NAME" id="@model.StringConsts.ID_NAME"
+                        value="@exercise.id" readonly required>
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="@model.StringConsts.AUTHOR_NAME">Autor:</label>
+                        <input class="form-control" name="@model.StringConsts.AUTHOR_NAME" id="@model.StringConsts.AUTHOR_NAME" value="@user.name"
+                        title="Dieser Wert kann nicht geändert werden." readonly required>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <label for="@model.StringConsts.TITLE_NAME">Titel:</label>
+                        <input class="form-control" name="@model.StringConsts.TITLE_NAME" id="@model.StringConsts.TITLE_NAME"
+                        value="@exercise.title" required>
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="@model.StringConsts.STATE_NAME">Status:</label>
+                        <div >
+                            <select class="form-control" name="@model.StringConsts.STATE_NAME" id="@model.StringConsts.STATE_NAME" required>
+                            @for(state <- model.exercise.ExerciseState.values) {
+                                <option @state.isSelected(exercise.state)>@state </option>
+                            }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="@model.StringConsts.TEXT_NAME">Text:</label>
+                    <textarea class="form-control" rows="5" name="@model.StringConsts.TEXT_NAME" id="@model.StringConsts.TEXT_NAME"
+                    required>@exercise.text</textarea>
+                </div>
+
+            </fieldset>
+
+            @exercise.renderEditRest(isCreation)
+
+            <hr>
+
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <button class="btn btn-primary btn-block">Aufgabe bearbeiten</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+}
+

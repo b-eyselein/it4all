@@ -7,8 +7,9 @@ import model.tools.IdExToolObject
 import model.user.User
 import play.data.FormFactory
 import play.libs.Json
+import play.mvc.Result
+import play.mvc.Results._
 import play.mvc.Security.Authenticated
-import play.mvc.{Result, Results}
 import play.twirl.api.Html
 
 import scala.collection.JavaConverters._
@@ -18,63 +19,58 @@ abstract class AExerciseAdminController[E <: Exercise]
 (f: FormFactory, t: IdExToolObject, fi: Finder[Integer, E], val exerciseReader: ExerciseReader[E])
   extends BaseAdminController[E](f, t, fi, exerciseReader) {
 
-  def changeExState(id: Int): Result = {
-    val exercise = finder.byId(id)
-    val newState = ExerciseState.valueOf(factory.form().bindFromRequest().get("state"))
+  def changeExState(id: Int): Result = Option(finder.byId(id)) match {
+    case None => badRequest(Json.parse("{No such file exists...}"))
+    case Some(exercise) =>
+      exercise.state = ExerciseState.valueOf(factory.form().bindFromRequest().get("state"))
+      exercise.save()
 
-    exercise.state = newState
-    exercise.save()
-
-    Results.ok(Json.parse(s"""{"id": "$id", "newState": "${exercise.state}"}"""))
+      ok(Json.parse(s"""{"id": "$id", "newState": "${exercise.state}"}"""))
   }
 
   def deleteExercise(id: Int): Result = Option(finder.byId(id)) match {
-    case None =>
-      Results.badRequest(Json.parse(
-        s"""{"message": "Die Aufgabe mit ID $id existiert nicht und kann daher nicht geloescht werden!"""
-      ))
+    case None => badRequest(Json.parse(
+      s"""{"message": "Die Aufgabe mit ID $id existiert nicht und kann daher nicht geloescht werden!"""
+    ))
     case Some(toDelete) =>
       if (toDelete.delete()) {
-        Results.ok(Json.parse(s"""{"id": "$id"}"""))
+        ok(Json.parse(s"""{"id": "$id"}"""))
       } else {
-        Results.badRequest(
+        badRequest(
           Json.parse(s"""{"message": "Es gab einen internen Fehler beim Loeschen der Aufgabe mit der ID $id}""")
         )
       }
   }
 
-
   def editExercise(id: Int): Result = {
     val exercise = exerciseReader.initFromForm(id, factory.form().bindFromRequest())
     exerciseReader.save(exercise)
-    Results.ok(views.html.admin.preview.render(getUser, renderExercises(List(exercise), changesAllowed = false)))
+    ok(views.html.admin.preview.render(getUser, renderExercises(List(exercise), changesAllowed = false)))
   }
 
   def editExerciseForm(id: Int): Result = Option(finder.byId(id)) match {
-    case None => Results.badRequest("")
-    case Some(exercise) => Results.ok(renderExEditForm(getUser, exercise, isCreation = false))
+    case None => badRequest("")
+    case Some(exercise) => ok(renderExEditForm(getUser, exercise, isCreation = false))
   }
 
   def exercises: Result =
-    Results.ok(views.html.admin.exerciseList.render(getUser, renderExercises(finder.all.asScala.toList, changesAllowed = true)))
+    ok(views.html.admin.exerciseList.render(getUser, renderExercises(finder.all.asScala.toList, changesAllowed = true)))
 
   def exportExercises: Result =
-    Results.ok(views.html.admin.export.render(getUser, Json.prettyPrint(Json.toJson(finder.all))))
+    ok(views.html.admin.export.render(getUser, Json.prettyPrint(Json.toJson(finder.all))))
 
   def importExercises: Result = processReadingResult(exerciseReader.readFromJsonFile(), renderExercises)
 
   def newExerciseForm: Result = {
-    val id = ExerciseReader.findMinimalNotUsedId(finder)
-
-    val exercise = exerciseReader.getOrInstantiateExercise(id)
+    val exercise = exerciseReader.getOrInstantiateExercise(ExerciseReader.findMinimalNotUsedId(finder))
     exerciseReader.save(exercise)
-
-    Results.ok(renderExEditForm(getUser, exercise, isCreation = true))
+    ok(renderExEditForm(getUser, exercise, isCreation = true))
   }
 
   def uploadFile: Result = uploadFile(renderExercises)
 
-  def renderExEditForm(user: User, exercise: E, isCreation: Boolean): Html
+  def renderExEditForm(user: User, exercise: E, isCreation: Boolean): Html =
+    views.html.admin.editExForm.render(user, toolObject, exercise, isCreation)
 
   def renderExercises(exercises: List[E], changesAllowed: Boolean): Html =
     views.html.admin.exercisesTable.render(exercises.asJava, toolObject, changesAllowed)

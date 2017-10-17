@@ -16,6 +16,17 @@ import play.twirl.api.{Html, HtmlFormat}
 import scala.collection.JavaConverters.{asScalaBufferConverter, seqAsJavaListConverter}
 import scala.util.Try
 
+class XmlAdmin @javax.inject.Inject()(f: play.data.FormFactory)
+  extends controllers.core.AExerciseAdminController[XmlExercise](f, XmlToolObject, XmlExercise.finder, model.XmlExerciseReader) {
+
+  override def statistics = new Html(
+    s"""<li>Es existieren insgesamt ${XmlExercise.finder.all.size} <a href="${controllers.xml.routes.XmlAdmin.exercises()}">Aufgaben</a>, davon
+       |  <ul>
+       |    ${XmlExercise.finder.all.asScala.groupBy(_.exerciseType).map({ case (exType, exes) => s"""<li>${exes.size} Aufgaben von Typ $exType""" }).mkString("\n")}
+       |  </ul>
+       |</li>""".stripMargin)
+}
+
 class XmlController @Inject()(f: FormFactory)
   extends IdExController[XmlExercise, XmlError](f, XmlExercise.finder, XmlToolObject) {
 

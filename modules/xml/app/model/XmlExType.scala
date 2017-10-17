@@ -17,6 +17,8 @@ abstract sealed class XmlExType(val name: String, val studFileEnding: String, va
 
   values += this
 
+  def isSelected(that: XmlExType): String = if (this == that) "selected" else ""
+
   override val getButtonContent: String = name
 
   override def getTitle: String = {

@@ -58,7 +58,7 @@ public abstract class Exercise extends Model implements JsonReadable {
   public int getId() {
     return id;
   }
-  
+
   @JsonIgnore
   public List<? extends Tag> getTags() {
     return Collections.emptyList();
@@ -79,6 +79,10 @@ public abstract class Exercise extends Model implements JsonReadable {
   }
 
   public Html renderRest() {
+    return new Html("");
+  }
+
+  public Html renderEditRest(boolean isCreation) {
     return new Html("");
   }
 

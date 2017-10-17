@@ -3,7 +3,6 @@ package model.tools
 import java.nio.file.{Path, Paths}
 
 import model.exercise.Exercise
-import play.api.Configuration
 import play.api.mvc.Call
 
 abstract sealed class ToolObject(val exType: String, val toolname: String, val state: ToolState, val decoration: String) {

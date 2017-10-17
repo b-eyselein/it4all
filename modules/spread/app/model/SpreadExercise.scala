@@ -2,6 +2,7 @@ package model
 
 import javax.persistence.Entity
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.JsonNode
 import io.ebean.Finder
 import model.exercise.Exercise
@@ -10,8 +11,11 @@ import play.data.DynamicForm
 
 @Entity
 class SpreadExercise(i: Int) extends Exercise(i) {
+
+  @JsonProperty(required = true)
   var sampleFilename: String = _
 
+  @JsonProperty(required = true)
   var templateFilename: String = _
 }
 

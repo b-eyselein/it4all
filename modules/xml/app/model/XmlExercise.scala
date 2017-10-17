@@ -22,12 +22,10 @@ class XmlExercise(id: Int) extends Exercise(id) {
   @JsonIgnore
   def exerciseType: XmlExType = XmlExType.byName(exerciseTypeStr).getOrElse(XML_DTD)
 
-
   val fixedStart: String = if (exerciseType != XML_DTD) ""
   else
     s"""<?xml version="1.0" encoding="UTF-8"?>
        |<!DOCTYPE $rootNode SYSTEM "$rootNode.dtd">""".stripMargin
-
 
   @JsonIgnore
   override def getTags: java.util.List[Tag] = java.util.Arrays.asList(exerciseType)
@@ -36,6 +34,9 @@ class XmlExercise(id: Int) extends Exercise(id) {
   override def renderRest: Html = new Html(
     s"""<td>$exerciseType</td>
        |<td>$rootNode</td>""".stripMargin)
+
+  @JsonIgnore
+  override def renderEditRest(isCreation: Boolean): Html = views.html.editXmlExRest(this, isCreation)
 
 }
 

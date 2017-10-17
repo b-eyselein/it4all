@@ -5,7 +5,7 @@ import java.nio.file.{Files, Path, Paths, StandardCopyOption}
 import javax.inject.Inject
 
 import com.google.common.io.{Files => GFiles}
-import controllers.core.IdExController
+import controllers.core.{AExerciseAdminController, IdExController}
 import controllers.spread.SpreadController._
 import model._
 import model.result.{CompleteResult, EvaluationResult}
@@ -17,9 +17,11 @@ import play.twirl.api.Html
 
 import scala.util.{Failure, Success, Try}
 
+class SpreadAdmin @Inject()(f: FormFactory)
+  extends AExerciseAdminController[SpreadExercise](f, SpreadToolObject, SpreadExercise.finder, SpreadExerciseReader)
+
 class SpreadController @Inject()(f: FormFactory)
   extends IdExController[SpreadExercise, EvaluationResult](f, SpreadExercise.finder, SpreadToolObject) {
-
 
   def download(id: Int, extension: String): Result = Option(SpreadExercise.finder.byId(id)) match {
     case None => Results.badRequest("This exercise does not exist!")
@@ -29,7 +31,6 @@ class SpreadController @Inject()(f: FormFactory)
       if (fileToDownload.toFile.exists) Results.ok(fileToDownload.toFile)
       else Results.redirect(routes.SpreadController.index(0))
   }
-
 
   def downloadTemplate(id: Int, fileType: String): Result = Option(SpreadExercise.finder.byId(id)) match {
     case None => Results.badRequest("This exercise does not exist!")
@@ -94,10 +95,7 @@ object SpreadController {
   val BODY_SOL_FILE_NAME: String = "solFile"
   val CORRECTION_ADD_STRING: String = "_Korrektur"
 
-  val correctors = Map(
-    "ods" -> ODFCorrector,
-    "xlsx" -> XLSXCorrector,
-    "xlsm" -> XLSXCorrector)
+  val correctors = Map("ods" -> ODFCorrector, "xlsx" -> XLSXCorrector, "xlsm" -> XLSXCorrector)
 
   def saveSolutionForUser(uploadedSolution: Path, targetFilePath: Path): Try[Path] =
     Try(Files.createDirectories(targetFilePath.getParent))
