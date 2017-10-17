@@ -2,7 +2,6 @@ package model.umlmatcher
 
 import model.UmlClass
 import model.matching._
-import model.umlmatcher.UmlClassMatch._
 import play.twirl.api.Html
 
 case class UmlClassMatch(m1: Option[UmlClass], m2: Option[UmlClass], s: Int, compAM: Boolean) extends Match[UmlClass](m1, m2, s) {
