@@ -2,20 +2,18 @@ package model.umlmatcher
 
 import model.UmlClass
 import model.matching._
+import model.umlmatcher.UmlClassMatch._
 import play.twirl.api.Html
 
-case class UmlClassMatch(m1: Option[UmlClass], m2: Option[UmlClass], s: Int, compareAttrsAndMethods: Boolean)
-  extends Match[UmlClass](m1, m2, s) {
-
-  import UmlClassMatch._
+case class UmlClassMatch(m1: Option[UmlClass], m2: Option[UmlClass], s: Int, compAM: Boolean) extends Match[UmlClass](m1, m2, s) {
 
   var attributesResult: MatchingResult[String, Match[String]] = _
   var methodsResult: MatchingResult[String, Match[String]] = _
 
-  override def analyze(c1: UmlClass, c2: UmlClass): MatchType = if (compareAttrsAndMethods) MatchType.SUCCESSFUL_MATCH
+  override def analyze(c1: UmlClass, c2: UmlClass): MatchType = if (compAM) MatchType.SUCCESSFUL_MATCH
   else {
-    attributesResult = ATTRS_MATCHER.doMatch(c1.attributes, c2.attributes)
-    methodsResult = METHODS_MATCHER.doMatch(c1.methods, c2.methods)
+    attributesResult = new StringMatcher("Attribute").doMatch(c1.attributes, c2.attributes)
+    methodsResult = new StringMatcher("Methoden").doMatch(c1.methods, c2.methods)
 
     if (attributesResult.isSuccessful && methodsResult.isSuccessful) MatchType.SUCCESSFUL_MATCH
     else MatchType.UNSUCCESSFUL_MATCH
@@ -24,11 +22,6 @@ case class UmlClassMatch(m1: Option[UmlClass], m2: Option[UmlClass], s: Int, com
   override def describeArg(arg: UmlClass) =
     new Html(s"""<td><span class="text-${if (isSuccessful) "success" else "danger"}">${arg.name}</span></td>""")
 
-}
-
-object UmlClassMatch {
-  val ATTRS_MATCHER = new StringMatcher("Attribute")
-  val METHODS_MATCHER = new StringMatcher("Methoden")
 }
 
 case class UmlClassMatcher(compareAttrsAndMethods: Boolean) extends Matcher[UmlClass, UmlClassMatch](

@@ -5,10 +5,8 @@ import scala.collection.mutable.ListBuffer
 
 import model.result.{EvaluationResult, SuccessType}
 
-class MatchingResult[T, M <: Match[T]](val matchName: String,
-                                       val headings: List[String],
-                                       val colWidth: Int,
-                                       val allMatches: List[M])
+class MatchingResult[T, M <: Match[T]]
+(val matchName: String, val headings: List[String], val colWidth: Int, val allMatches: List[M])
   extends EvaluationResult(MatchingResult.analyze(allMatches))
 
 object MatchingResult {
@@ -23,14 +21,12 @@ object MatchingResult {
   }
 }
 
-class Matcher[T, M <: Match[T]](matchName: String,
-                                headings: List[String],
-                                canMatch: (T, T) => Boolean,
-                                matchInstantiation: (Option[T], Option[T], Int) => M) {
+class Matcher[T, M <: Match[T]]
+(matchName: String, headings: List[String], canMatch: (T, T) => Boolean, matchInstantiation: (Option[T], Option[T], Int) => M) {
 
   val colWidth: Int = headings.size
 
-  def doMatch(firstCollection: List[T], secondCollection: List[T]): MatchingResult[T, M] = {
+  def doMatch(firstCollection: List[T], secondCollection: List[T], mn: String = matchName): MatchingResult[T, M] = {
     val matches: ListBuffer[M] = ListBuffer.empty
 
     val firstList = ListBuffer.empty ++ firstCollection
@@ -52,7 +48,7 @@ class Matcher[T, M <: Match[T]](matchName: String,
     val wrong = firstList.map(t => matchInstantiation.apply(Some(t), None, headings.size))
     val missing = secondList.map(t => matchInstantiation.apply(None, Some(t), headings.size))
 
-    new MatchingResult[T, M](matchName, headings, colWidth, (matches ++ wrong ++ missing).toList)
+    new MatchingResult[T, M](mn, headings, colWidth, (matches ++ wrong ++ missing).toList)
   }
 
   def doJavaMatch(firstCol: java.util.List[T], secondCol: java.util.List[T]): MatchingResult[T, M] =

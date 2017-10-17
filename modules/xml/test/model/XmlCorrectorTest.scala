@@ -11,7 +11,7 @@ import scala.util.Try
 
 class XmlCorrectorTest {
 
-  private val BASE = Paths.get("test", "resources")
+  private val basePath = Paths.get("test", "resources").toString
 
   private def assertError(error: XmlError, expectedLine: Int, expectedMessage: String): Unit = {
     error.line shouldBe expectedLine
@@ -26,7 +26,7 @@ class XmlCorrectorTest {
 
   @Test
   def emptyXmlAgainstXSD() {
-    val xsd = Paths.get(BASE.toString, "note.xsd")
+    val xsd = Paths.get(basePath, "note.xsd")
 
     val out: List[XmlError] = XmlCorrector.correct("", readFile(xsd), XML_XSD)
 
@@ -36,7 +36,7 @@ class XmlCorrectorTest {
 
   @Test
   def testClosingTagMissingXmlDtd() {
-    val xml = Paths.get(BASE.toString, "partyNoClosingTag.xml")
+    val xml = Paths.get(basePath, "partyNoClosingTag.xml")
 
     val out: List[XmlError] = XmlCorrector.correct(readFile(xml), "", XML_DTD)
 
@@ -48,8 +48,8 @@ class XmlCorrectorTest {
 
   @Test
   def testClosingTagMissingXmlXsd() {
-    val xml = Paths.get(BASE.toString, "noteNoClosingTag.xml")
-    val xsd = Paths.get(BASE.toString, "note.xsd")
+    val xml = Paths.get(basePath, "noteNoClosingTag.xml")
+    val xsd = Paths.get(basePath, "note.xsd")
 
     val out: List[XmlError] = XmlCorrector.correct(readFile(xml), readFile(xsd), XML_XSD)
 
@@ -60,8 +60,8 @@ class XmlCorrectorTest {
 
   @Test
   def testCorrectDTDAgainstXML() {
-    val referenceFile = Paths.get(BASE.toString, "party.xml")
-    val grammar = Paths.get(BASE.toString, "party.dtd")
+    val referenceFile = Paths.get(basePath, "party.xml")
+    val grammar = Paths.get(basePath, "party.dtd")
 
     val out: List[XmlError] = XmlCorrector.correct(readFile(referenceFile), readFile(grammar), XML_DTD)
 
@@ -71,8 +71,8 @@ class XmlCorrectorTest {
 
   @Test
   def testCorrectXMLAgainstDTD() {
-    val file = Paths.get(BASE.toString, "party.xml")
-    val grammar = Paths.get(BASE.toString, "party.dtd")
+    val file = Paths.get(basePath, "party.xml")
+    val grammar = Paths.get(basePath, "party.dtd")
 
     val out: List[XmlError] = XmlCorrector.correct(readFile(file), readFile(grammar), XML_DTD)
 
@@ -82,8 +82,8 @@ class XmlCorrectorTest {
 
   @Test
   def testCorrectXMLAgainstXSD() {
-    val xml = Paths.get(BASE.toString, "note.xml")
-    val xsd = Paths.get(BASE.toString, "note.xsd")
+    val xml = Paths.get(basePath, "note.xml")
+    val xsd = Paths.get(basePath, "note.xsd")
 
     val out: List[XmlError] = XmlCorrector.correct(readFile(xml), readFile(xsd), XML_XSD)
 
@@ -93,7 +93,7 @@ class XmlCorrectorTest {
 
   @Test
   def testMissingAttributeXmlDtd() {
-    // val file = Paths.get(BASE.toString, "partyMissingAttribute.xml")
+    // val file = Paths.get(basePath, "partyMissingAttribute.xml")
     //
     // List<XmlError> out = XmlCorrector.correct(readFile(file), "",
     // XmlExType.XML_DTD)
@@ -106,8 +106,8 @@ class XmlCorrectorTest {
 
   @Test
   def testMissingTagXmlXsd() {
-    val xml = Paths.get(BASE.toString, "noteMissingTag.xml")
-    val xsd = Paths.get(BASE.toString, "note.xsd")
+    val xml = Paths.get(basePath, "noteMissingTag.xml")
+    val xsd = Paths.get(basePath, "note.xsd")
 
     println(xml.toFile.exists + " :: " + xsd.toFile.exists)
 
@@ -120,7 +120,7 @@ class XmlCorrectorTest {
 
   @Test
   def testNoRootXmlDtd() {
-    val file = Paths.get(BASE.toString, "partyNoRoot.xml")
+    val file = Paths.get(basePath, "partyNoRoot.xml")
 
     val out: List[XmlError] = XmlCorrector.correct(readFile(file), "", XML_DTD)
 
@@ -130,8 +130,8 @@ class XmlCorrectorTest {
 
   @Test
   def testNoRootXmlXsd() {
-    val xml = Paths.get(BASE.toString, "noteNoRoot.xml")
-    val xsd = Paths.get(BASE.toString, "note.xsd")
+    val xml = Paths.get(basePath, "noteNoRoot.xml")
+    val xsd = Paths.get(basePath, "note.xsd")
 
     val out: List[XmlError] = XmlCorrector.correct(readFile(xml), readFile(xsd), XML_XSD)
 
@@ -142,7 +142,7 @@ class XmlCorrectorTest {
 
   @Test
   def testWrongAttributeDtdXml() {
-    // val referenceFile = Paths.get(BASE.toString, "partyNoDate.xml")
+    // val referenceFile = Paths.get(basePath, "partyNoDate.xml")
     //
     // List<XmlError> out = XmlCorrector.correct(readFile(referenceFile),
     // "",
@@ -155,7 +155,7 @@ class XmlCorrectorTest {
 
   @Test
   def testWrongTagXmlDtd() {
-    // val file = Paths.get(BASE.toString, "partyWrongTag.xml")
+    // val file = Paths.get(basePath, "partyWrongTag.xml")
     //
     // List<XmlError> out = XmlCorrector.correct(readFile(file), "",
     // XmlExType.XML_DTD)
@@ -169,8 +169,8 @@ class XmlCorrectorTest {
 
   @Test
   def testWrongTagXmlXsd() {
-    val xml = Paths.get(BASE.toString, "noteWrongTag.xml")
-    val xsd = Paths.get(BASE.toString, "note.xsd")
+    val xml = Paths.get(basePath, "noteWrongTag.xml")
+    val xsd = Paths.get(basePath, "note.xsd")
 
     val out: List[XmlError] = XmlCorrector.correct(readFile(xml), readFile(xsd), XML_XSD)
 
@@ -181,7 +181,7 @@ class XmlCorrectorTest {
 
   @Test
   def testXmlNoElement() {
-    val xml = readFile(Paths.get(BASE.toString, "xmlNoElement.xml"))
+    val xml = readFile(Paths.get(basePath, "xmlNoElement.xml"))
 
     val out: List[XmlError] = XmlCorrector.correct(xml, "", XML_DTD)
 

@@ -7,12 +7,12 @@ function changeFontsize(value) {
 
 function initEditor() {
   document.getElementById('editor').style.fontSize = '16px';
-  editor = ace.edit("editor");
+  editor = ace.edit('editor');
 
-  editor.on("change", updateHiddenTextarea);
+  editor.on('change', updateHiddenTextarea);
 
-  editor.setTheme("ace/theme/eclipse");
-  editor.getSession().setMode("ace/mode/" + theMode);
+  editor.setTheme('ace/theme/eclipse');
+  editor.getSession().setMode('ace/mode/' + theMode);
   editor.getSession().setTabSize(2);
   editor.getSession().setUseSoftTabs(true);
   editor.getSession().setUseWrapMode(true);
@@ -23,11 +23,11 @@ function initEditor() {
 }
 
 function updateHiddenTextarea() {
-  $("#learnerSolution").val(editor.getValue());
+  $('#learnerSolution').val(editor.getValue());
 }
 
 function toParam(input) {
-  return input.id + "=" + encodeURIComponent(input.value);
+  return input.id + '=' + encodeURIComponent(input.value);
 }
 
 function paramFilter(input, element) {
@@ -35,8 +35,8 @@ function paramFilter(input, element) {
 }
 
 function extractParameters() {
-  var inputs = $("form input, form textarea").filter(paramFilter);
-  return $.map(inputs, toParam).join("&");
+  var inputs = $('form input, form textarea').filter(paramFilter);
+  return $.map(inputs, toParam).join('&');
 }
 
 function testTheSolution(theUrl) {
@@ -48,11 +48,11 @@ function testTheSolution(theUrl) {
     // FIXME: dataType: 'json',
     async: true,
     success: function (correction) {
-      $("#correction").html(correction);
+      $('#correction').html(correction);
       $('#testButton').prop('disabled', false);
     },
     error: function (jqXHR, error, errorThrown) {
-      $("#correction").html("<div class=\"alert alert-danger\">" + jqXHR.responseJSON + "</div>");
+      $('#correction').html('<div class=\'alert alert-danger\'>' + jqXHR.responseJSON + '</div>');
       $('#testButton').prop('disabled', false);
     }
   });
@@ -61,7 +61,7 @@ function testTheSolution(theUrl) {
 function updatePreview() {
   var toWrite = unescapeHTML(editor.getValue());
 
-  var theIFrame = document.getElementById("preview").contentWindow.document;
+  var theIFrame = document.getElementById('preview').contentWindow.document;
   theIFrame.open();
   theIFrame.write(toWrite);
   theIFrame.close();
@@ -76,7 +76,7 @@ $(document).ready(function () {
   updateHiddenTextarea();
 
   if (theUpdatePrev) {
-    editor.on("change", updatePreview);
+    editor.on('change', updatePreview);
     updatePreview();
   }
 });

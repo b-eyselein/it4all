@@ -1,8 +1,8 @@
 function extractParameters() {
-  const inputs = document.getElementsByTagName("input");
-  var parameters = "count=" + inputs.length;
+  const inputs = document.getElementsByTagName('input');
+  var parameters = 'count=' + inputs.length;
   for (var i = 0; i < inputs.length; i++) {
-    parameters += "&inp" + i + "=" + inputs[i].value;
+    parameters += '&inp' + i + '=' + inputs[i].value;
   }
   return parameters;
 }
@@ -10,16 +10,16 @@ function extractParameters() {
 function processCorrection(correction) {
   const results = JSON.parse(correction);
   for (var i = 0; i < results.length; i++) {
-    const correct = results[i] === "COMPLETE";
+    const correct = results[i] === 'COMPLETE';
 
-    const inp = document.getElementById("inp" + (i + 1));
+    const inp = document.getElementById('inp' + (i + 1));
 
-    inp.parentNode.className = "form-group has-" + (correct ? "success" : "error") + " has-feedback";
+    inp.parentNode.className = 'form-group has-' + (correct ? 'success' : 'error') + ' has-feedback';
 
-    const newNode = document.createElement("span");
-    newNode.className = "glyphicon glyphicon-" + (correct ? "ok" : "warning-sign") + " form-control-feedback";
+    const newNode = document.createElement('span');
+    newNode.className = 'glyphicon glyphicon-' + (correct ? 'ok' : 'warning-sign') + ' form-control-feedback';
 
-    const oldSign = inp.parentNode.getElementsByTagName("span");
+    const oldSign = inp.parentNode.getElementsByTagName('span');
     console.log(oldSign[0]);
     if (oldSign[0] === null) {
       inp.parentNode.appendChild(newNode);
