@@ -29,9 +29,10 @@ abstract class AExerciseAdminController[E <: Exercise]
   }
 
   def deleteExercise(id: Int): Result = Option(finder.byId(id)) match {
-    case None => badRequest(Json.parse(
-      s"""{"message": "Die Aufgabe mit ID $id existiert nicht und kann daher nicht geloescht werden!"""
-    ))
+    case None =>
+      val obj = Json.newObject()
+      obj.put("message", "Die Aufgabe mit ID $id existiert nicht und kann daher nicht geloescht werden!")
+      badRequest(obj)
     case Some(toDelete) =>
       if (toDelete.delete()) {
         ok(Json.parse(s"""{"id": "$id"}"""))
@@ -48,8 +49,8 @@ abstract class AExerciseAdminController[E <: Exercise]
     case _: ReadingFailure => badRequest("There has been an error...")
     case result: ReadingResult[E] =>
 
-      exerciseReader.save(exercise)
-      ok(views.html.admin.preview.render(getUser, toolObject, List(exercise)))
+      result.read.foreach(res => exerciseReader.save(res.read))
+      ok(views.html.admin.preview.render(getUser, toolObject, result.read))
   }
 
   def editExerciseForm(id: Int): Result = Option(finder.byId(id)) match {
@@ -83,13 +84,13 @@ abstract class AExerciseAdminController[E <: Exercise]
     ok(renderExEditForm(getUser, exercise, isCreation = true))
   }
 
-  def uploadFile: Result = uploadFile(renderExesCreated)
+  def uploadFile: Result = super.uploadFile(renderExesCreated)
 
   def renderExEditForm(user: User, exercise: E, isCreation: Boolean): Html =
     views.html.admin.editExForm.render(user, toolObject, exercise, isCreation)
 
   def renderExercises(exercises: List[E]): Html = views.html.admin.exercisesTable.render(exercises, toolObject)
 
-  def renderExesCreated(exercises: List[SingleReadingResult[E]]): Html = views.html.admin.exercisesCreated.render(exercises, toolObject)
+  def renderExesCreated(exercises: List[SingleReadingResult[E]]): Html = views.html.admin.preview.render(getUser, toolObject, exercises)
 
 }

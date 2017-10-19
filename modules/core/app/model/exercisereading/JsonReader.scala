@@ -38,19 +38,20 @@ abstract class JsonReader[R <: JsonReadable](val exerciseType: String, val finde
 
   def instantiate(id: Int): R
 
-  def readFromJsonFile(path: Path = stdFile): Try[List[AbstractReadingResult]] =
-    Try(new String(Files.readAllBytes(path)).replace("\t", "  ")).map { jsonAsString =>
+  def readFromJsonFile(path: Path = stdFile): AbstractReadingResult = Try(new String(Files.readAllBytes(path)).replace("\t", "  ")) match {
+    case Failure(e) => ReadingFailure(e)
+    case Success(jsonAsString) =>
       val jsonSchemaAsString = Json.prettyPrint(jsonSchema).replace("\t", "  ")
 
       val json = Json.parse(jsonAsString)
 
       JsonReader.validateJson(json, jsonSchema) match {
-        case Failure(e) => ReadingFailure(jsonAsString, jsonSchemaAsString, e)
+        case Failure(e) => ReadingFailure(e)
         case Success(report) =>
-          if (report.isSuccess) ReadingResult(jsonAsString, jsonSchemaAsString, json.iterator.asScala.map(read).toList)
+          if (report.isSuccess) ReadingResult(json.iterator.asScala.map(read).toList)
           else ReadingError(jsonAsString, jsonSchemaAsString, report)
       }
-    }
+  }
 
   def checkFiles(r: R): List[Try[Path]] = List.empty
 

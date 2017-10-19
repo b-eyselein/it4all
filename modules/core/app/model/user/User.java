@@ -53,7 +53,7 @@ import io.ebean.Model;
   }
 
   @JsonIgnore public List<String> getCourseNames() {
-    return courseRoles.parallelStream().map(cr -> cr.course.name).collect(Collectors.toList());
+    return courseRoles.parallelStream().map(cr -> cr.course.name()).collect(Collectors.toList());
   }
 
   @JsonIgnore public List<Course> getCourses() {
@@ -76,12 +76,12 @@ import io.ebean.Model;
   }
 
   public boolean isAdminInCourse(Course course) {
-    CourseRole courseRole = CourseRole.finder.byId(new CourseRoleKey(name, course.getId()));
+    CourseRole courseRole = CourseRole.finder.byId(new CourseRoleKey(name, course.id()));
     return courseRole != null && courseRole.role.isAdminRole();
   }
 
   public boolean isInCourse(Course course) {
-    return CourseRole.finder.byId(new CourseRoleKey(name, course.getId())) != null;
+    return CourseRole.finder.byId(new CourseRoleKey(name, course.id())) != null;
   }
 
   public void setTodo(SHOW_HIDE_AGGREGATE newTodo) {

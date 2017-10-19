@@ -11,7 +11,7 @@ import model.exercise.{Exercise, ExerciseState}
 import model.tools.ExToolObject
 import play.data.DynamicForm
 
-import scala.collection.JavaConverters.{asScalaBufferConverter, asScalaIteratorConverter, seqAsJavaListConverter}
+import scala.collection.JavaConverters.{asScalaBufferConverter, asScalaIteratorConverter}
 import scala.util.Try
 
 abstract class ExerciseReader[E <: Exercise](e: String, f: Finder[Integer, E], classFor: Class[_])
@@ -19,7 +19,7 @@ abstract class ExerciseReader[E <: Exercise](e: String, f: Finder[Integer, E], c
 
   def getOrInstantiateExercise(id: Int): E = Optional.ofNullable(finder.byId(id)).orElse(instantiate(id))
 
-  def initFromForm(id: Int, form: DynamicForm): SingleReadingResult[E] = {
+  def initFromForm(id: Int, form: DynamicForm): AbstractReadingResult = {
     val exercise = getOrInstantiateExercise(id)
 
     exercise.title = form.get(TITLE_NAME)
@@ -28,7 +28,7 @@ abstract class ExerciseReader[E <: Exercise](e: String, f: Finder[Integer, E], c
 
     initRemainingExFromForm(exercise, form)
 
-    SingleReadingResult(exercise)
+    ReadingResult(List(SingleReadingResult(exercise)))
   }
 
   def initRemainingExFromForm(exercise: E, form: DynamicForm)

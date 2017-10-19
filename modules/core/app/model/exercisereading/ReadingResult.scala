@@ -12,12 +12,12 @@ import scala.util.Try
 case class SingleReadingResult[R <: JsonReadable](read: R, var fileResults: List[Try[Path]] = List.empty)
 
 
-sealed abstract class AbstractReadingResult(/*val json: String, val jsonSchema: String*/)
+sealed abstract class AbstractReadingResult
 
-case class ReadingResult[R <: JsonReadable](j: String, js: String, read: List[SingleReadingResult[R]]) extends AbstractReadingResult(j, js)
+case class ReadingResult[R <: JsonReadable](read: List[SingleReadingResult[R]]) extends AbstractReadingResult
 
-case class ReadingError(j: String, js: String, report: ProcessingReport) extends AbstractReadingResult(j, js) {
+case class ReadingError(json: String, jsonSchema: String, report: ProcessingReport) extends AbstractReadingResult {
   def getCauses: Iterator[String] = report.iterator.asScala.map(_.toString)
 }
 
-case class ReadingFailure(j: String, js: String, error: Throwable) extends AbstractReadingResult(j, js)
+case class ReadingFailure(error: Throwable) extends AbstractReadingResult

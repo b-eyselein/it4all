@@ -5,7 +5,7 @@ public enum Role {
   USER, ADMIN, SUPERADMIN;
 
   public boolean isAdminRole() {
-    return compareTo(ADMIN) >= 0;
+    return this != USER;
   }
 
 }
