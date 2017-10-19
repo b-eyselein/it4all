@@ -1,5 +1,6 @@
 package model
 
+import java.nio.file.Path
 import javax.persistence.{Column, Entity}
 
 import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty}
@@ -8,6 +9,7 @@ import model.exercise.{Exercise, Tag}
 import play.twirl.api.Html
 
 import scala.collection.JavaConverters._
+import scala.util.Try
 
 @Entity
 class XmlExercise(id: Int) extends Exercise(id) {
@@ -31,7 +33,7 @@ class XmlExercise(id: Int) extends Exercise(id) {
   override def getTags: java.util.List[Tag] = java.util.Arrays.asList(exerciseType)
 
   @JsonIgnore
-  override def renderRest: Html = new Html(
+  override def renderRest(fileResults: List[Try[Path]]): Html = new Html(
     s"""<td>$exerciseType</td>
        |<td>$rootNode</td>""".stripMargin)
 

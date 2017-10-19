@@ -1,19 +1,17 @@
 package model.tools
 
-import scala.collection.mutable.MutableList
-
 object ToolList {
 
-  var randomExTools: MutableList[RandomExToolObject] = MutableList.empty
+  var randomExTools: scala.collection.mutable.MutableList[RandomExToolObject] = scala.collection.mutable.MutableList.empty
 
-  var idExTools: MutableList[IdExToolObject] = MutableList.empty
+  var idExTools: scala.collection.mutable.MutableList[ExToolObject] = scala.collection.mutable.MutableList.empty
 
   def register(tool: ToolObject): Unit = tool match {
     case r: RandomExToolObject => randomExTools += r
-    case i: IdExToolObject => idExTools += i
+    case i: ExToolObject => idExTools += i
     case _ => println(s"Error while registering tool object $tool")
   }
 
-  def allTools: MutableList[ToolObject] = randomExTools ++ idExTools
+  def allTools: scala.collection.mutable.MutableList[ToolObject] = randomExTools ++ idExTools
 
 }

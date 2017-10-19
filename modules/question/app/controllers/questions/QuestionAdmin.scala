@@ -4,14 +4,15 @@ import java.util.Collections
 import javax.inject.Inject
 
 import controllers.core.AExerciseCollectionAdminController
-import model.question.Question
-import model.quiz.{Quiz, QuizReader}
+import model.exercisereading.SingleReadingResult
+import model.question.{Question, QuestionReader, QuizReader}
+import model.quiz.Quiz
 import play.data.FormFactory
 import play.mvc.{Result, Results}
 import play.twirl.api.Html
 
 class QuestionAdmin @Inject()(f: FormFactory)
-  extends AExerciseCollectionAdminController[Question, Quiz](f, QuestionToolObject, Quiz.finder, new QuizReader()) {
+  extends AExerciseCollectionAdminController[Question, Quiz](f, QuestionToolObject, Quiz.finder, QuizReader) {
 
   override protected def statistics: Html = new Html(
     s"""
@@ -55,13 +56,13 @@ class QuestionAdmin @Inject()(f: FormFactory)
     Results.ok("TODO!")
   }
 
-  def renderCollectionCreated(collections: List[model.quiz.Quiz], created: Boolean): Html = ???
+  override def renderCollectionCreated(collections: List[SingleReadingResult[Quiz]]): Html = ???
 
-  def renderExCollCreationForm(user: model.user.User, collection: model.quiz.Quiz): Html = ???
+  override def renderExCollCreationForm(user: model.user.User, collection: model.quiz.Quiz): Html = ???
 
-  def renderExEditForm(user: model.user.User, exercise: model.quiz.Quiz, isCreation: Boolean): Html = ???
+  override def renderExEditForm(user: model.user.User, exercise: model.quiz.Quiz, isCreation: Boolean): Html = ???
 
-  def renderExerciseCollections(user: model.user.User, allCollections: List[model.quiz.Quiz]): Html = ???
+  override def renderExerciseCollections(user: model.user.User, allCollections: List[model.quiz.Quiz]): Html = ???
 
   def assignQuestionsForm: Result = Results.ok(views.html.questionAdmin.assignQuestionsForm.render(
     getUser, /* Question.finder.all() */ Collections.emptyList(), Quiz.finder.all()))

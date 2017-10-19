@@ -4,7 +4,7 @@ import java.nio.file.{Files, Path, Paths}
 import javax.inject.Inject
 
 import com.fasterxml.jackson.databind.JsonNode
-import controllers.core.IdExController
+import controllers.core.IdPartExController
 import model._
 import model.result.CompleteResult
 import model.user.User
@@ -16,13 +16,13 @@ import play.twirl.api.Html
 import scala.util.Try
 
 class UmlController @Inject()(f: FormFactory)
-  extends IdExController[UmlExercise, UmlResult](f, UmlExercise.finder, UmlToolObject) {
+  extends IdPartExController[UmlExercise, UmlResult](f, UmlExercise.finder, UmlToolObject) {
 
-  def exercise(exerciseId: Int, partStr: String): Result = {
+  override def exercise(exerciseId: Int, part: String): Result = {
     val user = getUser
     val exercise = finder.byId(exerciseId)
 
-    Results.ok(UmlExPart.valueOf(partStr) match {
+    Results.ok(UmlExPart.valueOf(part) match {
       case UmlExPart.CLASS_SELECTION => views.html.classSelection.render(user, exercise)
       case UmlExPart.DIAG_DRAWING => views.html.diagdrawing.render(user, exercise, false)
       case UmlExPart.DIAG_DRAWING_HELP => views.html.diagdrawing.render(user, exercise, true)
@@ -31,15 +31,13 @@ class UmlController @Inject()(f: FormFactory)
     })
   }
 
-  def correct(exerciseId: Int, partStr: String): Result = {
+  override def correct(exerciseId: Int, part: String): Result = {
     val exercise = finder.byId(exerciseId)
     val solOption = UmlSolution.readFromForm(factory.form().bindFromRequest())
 
-    val part = UmlExPart.valueOf(partStr)
-
     solOption match {
       case Some(sol) =>
-        val (result, nextPart) = part match {
+        val (result, nextPart) = UmlExPart.valueOf(part) match {
           case UmlExPart.CLASS_SELECTION => (ClassSelectionResult(exercise, sol), UmlExPart.DIAG_DRAWING_HELP)
           case UmlExPart.DIAG_DRAWING_HELP => (DiagramDrawingHelpResult(exercise, sol), UmlExPart.ATTRS_METHS)
           case UmlExPart.DIAG_DRAWING => (DiagramDrawingResult(exercise, sol), UmlExPart.FINISHED)
@@ -57,13 +55,12 @@ class UmlController @Inject()(f: FormFactory)
   override def renderExercise(user: User, exercise: UmlExercise): Html = ??? //FIXME
 
 
-  val renderExesListRest = new Html(
-    s"""
-<div class="alert alert-info">
-Neueinsteiger sollten die Variante mit Zwischenkorrektur verwenden, die die einzelnen Schritte 
-der Erstellung eines Klassendiagrammes nach und nach durcharbeitet.
-</div>
-<hr>""")
+  override val renderExesListRest = new Html(
+    s"""<div class="alert alert-info">
+       |Neueinsteiger sollten die Variante mit Zwischenkorrektur verwenden, die die einzelnen Schritte
+       |der Erstellung eines Klassendiagrammes nach und nach durcharbeitet.
+       |</div>
+       |<hr>""")
 
   override def renderResult(correctionResult: CompleteResult[UmlResult]): Html = ??? //FIXME
 

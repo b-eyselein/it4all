@@ -5,7 +5,7 @@ import java.nio.file.{Path, Paths}
 import model.exercise.Exercise
 import play.api.mvc.Call
 
-abstract sealed class ToolObject(val exType: String, val toolname: String, val state: ToolState, val decoration: String) {
+abstract sealed class ToolObject(val exType: String, val toolname: String, val state: ToolState) {
 
   ToolList.register(this)
 
@@ -15,14 +15,12 @@ abstract sealed class ToolObject(val exType: String, val toolname: String, val s
 
 // Random ex: Bool, Nary, ...
 
-abstract class RandomExToolObject(e: String, t: String, s: ToolState, d: String = null)
-  extends ToolObject(e, t, s, d)
+abstract class RandomExToolObject(e: String, t: String, s: ToolState) extends ToolObject(e, t, s)
 
 // Exercises with single id: xml, spread, mindmap, ...
 
-abstract class IdExToolObject
-(e: String, t: String, s: ToolState = ToolState.ALPHA, d: String = null, val pluralName: String = "Aufgaben")
-  extends ToolObject(e, t, s, d) {
+abstract class ExToolObject(e: String, t: String, s: ToolState, val pluralName: String)
+  extends ToolObject(e, t, s) {
 
   // Methods for files...
 
@@ -50,15 +48,9 @@ abstract class IdExToolObject
 
   // User
 
-  def exerciseRoute(id: Int): Call
+  def exesListRoute(page: Int): Call
 
-  def exerciseRoutes(id: Int): List[(Call, String)] = List((exerciseRoute(id), "Aufgabe bearbeiten"))
-
-  def exesListRoute(id: Int): Call
-
-  def correctLiveRoute(id: Int): Call
-
-  def correctRoute(id: Int): Call
+  def exerciseRoutes(id: Int): List[(Call, String)]
 
   // Admin
 
@@ -85,5 +77,27 @@ abstract class IdExToolObject
   def editExerciseRoute(id: Int): Call
 
   def deleteExerciseRoute(id: Int): Call
+
+}
+
+abstract class IdExToolObject(e: String, t: String, s: ToolState = ToolState.ALPHA, p: String = "Aufgaben") extends ExToolObject(e, t, s, p) {
+
+  def exerciseRoute(id: Int): Call
+
+  override def exerciseRoutes(id: Int): List[(Call, String)] = List((exerciseRoute(id), "Aufgabe bearbeiten"))
+
+  def correctLiveRoute(id: Int): Call
+
+  def correctRoute(id: Int): Call
+
+}
+
+abstract class IdPartExToolObject(e: String, t: String, s: ToolState = ToolState.ALPHA, d: String = null, p: String = "Aufgaben") extends ExToolObject(e, t, s, p) {
+
+  def exerciseRoute(id: Int, part: String): Call
+
+  def correctLiveRoute(id: Int, part: String): Call
+
+  def correctRoute(id: Int, part: String): Call
 
 }

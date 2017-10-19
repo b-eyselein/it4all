@@ -1,16 +1,16 @@
 package controllers.uml
 
 import model.UmlExPart
-import model.tools.{IdExToolObject, ToolState}
+import model.tools.{IdPartExToolObject, ToolState}
 import play.api.mvc.Call
 
-object UmlToolObject extends IdExToolObject("uml", "Uml", ToolState.LIVE) {
+object UmlToolObject extends IdPartExToolObject("uml", "Uml", ToolState.LIVE) {
 
   // User
 
   override def indexCall: Call = controllers.uml.routes.UmlController.index()
 
-  override def exerciseRoute(id: Int): Call = ???
+  override def exerciseRoute(id: Int, part: String): Call = controllers.uml.routes.UmlController.exercise(id, part)
 
   override def exerciseRoutes(id: Int) = List(
     (controllers.uml.routes.UmlController.exercise(id, UmlExPart.CLASS_SELECTION.toString), "Mit Zwischenkorrektur"),
@@ -18,9 +18,9 @@ object UmlToolObject extends IdExToolObject("uml", "Uml", ToolState.LIVE) {
 
   override def exesListRoute(id: Int): Call = ???
 
-  override def correctLiveRoute(id: Int): Call = ???
+  override def correctLiveRoute(id: Int, part: String): Call = ???
 
-  override def correctRoute(id: Int): Call = ???
+  override def correctRoute(id: Int, part: String): Call = ???
 
   // Admin
 

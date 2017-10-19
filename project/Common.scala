@@ -12,11 +12,8 @@ object Common {
     ),
     scalacOptions ++= Seq("-feature"))
 
-  val mysqlDependency = "mysql" % "mysql-connector-java" % "8.0.8-dmr"
-
   val seleniumDep = "org.seleniumhq.selenium" % "selenium-java" % "3.5.2"
   val htmlUnitDep = "org.seleniumhq.selenium" % "selenium-htmlunit-driver" % "2.52.0"
-
 
   // Json Schema
   val jsonSchemaValidator = "com.github.fge" % "json-schema-validator" % "2.2.6"

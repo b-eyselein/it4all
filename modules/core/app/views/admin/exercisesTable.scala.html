@@ -1,4 +1,4 @@
-@(exercises: java.util.List[_ <: model.exercise.Exercise], links: model.tools.IdExToolObject, changesAllowed: Boolean)
+@(exercises: scala.collection.immutable.List[_ <: model.exercise.Exercise], links: model.tools.ExToolObject)
 
 <a href="@links.adminIndexRoute" class="btn btn-primary btn-block">Zur&uuml;ck zur Administratorseite</a>
 
@@ -9,59 +9,51 @@
 <div id="messages"></div>
 
 <table class="table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Status</th>
-            <th>Aktionen</th>
-            <th>Titel</th>
-            <th>Autor</th>
-            <th>Text</th>
-            @for(otherHeader <- links.restHeaders) {
-                <th>@otherHeader</th>
-            }
-        </tr>
-    </thead>
-    <tbody>
-    @for(exercise <- exercises) {
-        <tr id="tr1_@exercise.getId">
-            <td>@exercise.getId</td>
-            <td>
-            @if(changesAllowed) {
-                <div class="input-group">
-                    <select onchange="updateStateChangeButton(@exercise.id)" class="form-control" id="state_@exercise.id" data-val="@exercise.state">
-                    @for(exState <- model.exercise.ExerciseState.values) {
-                        <option @if(exState == exercise.state) { selected}>@exState </option>
-                    }
-                    </select>
-                    <span class="input-group-btn">
-                        <button class="btn btn-default" id="scb_@exercise.id" onclick="changeState('@links.changeExStateRoute(exercise.id)', @exercise.id)" disabled>
-                            <span class="glyphicon glyphicon-upload"></span></button>
-                    </span>
-                </div>
-            } else {
-                @exercise.state
-            }
-            </td>
-            <td>
-                <a class="btn btn-default" title="Aufgabe @exercise.getId bearbeiten" id="edit_@exercise.getId"
-                    @if(changesAllowed) { href="@links.editExerciseFormRoute(exercise.getId)"} else  { disabled }>
-                <span class="glyphicon glyphicon-wrench"></span>
-                </a>
-                <button class="btn btn-default" title="Aufgabe @exercise.getId l&ouml;schen" id="del_@exercise.getId"
-                    @if(changesAllowed) {
-                        onclick="deleteExercise('@links.deleteExerciseRoute(exercise.getId)')"
-                } else { disabled }>
-                <span class="glyphicon glyphicon-remove"></span>
-                </button>
-            </td>
-            <td>@exercise.getTitle</td>
-            <td>@exercise.getAuthor</td>
-            @helperTemplates.stringLen(exercise.getText, 40)
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Status</th>
+      <th>Aktionen</th>
+      <th>Titel</th>
+      <th>Autor</th>
+      <th>Text</th>
+      @for(otherHeader <- links.restHeaders) {
+        <th>@otherHeader</th>
+      }
+    </tr>
+  </thead>
+  <tbody>
+  @for(exercise <- exercises) {
+    <tr id="tr1_@exercise.id">
+      <td>@exercise.id</td>
+      <td>
+        <div class="input-group">
+          <select onchange="updateStateChangeButton(@exercise.id)" class="form-control" id="state_@exercise.id" data-val="@exercise.state">
+          @for(exState <- model.exercise.ExerciseState.values) {
+            <option
+            @if(exState == exercise.state) { selected}>@exState </option>
+          }
+          </select>
+          <span class="input-group-btn">
+            <button class="btn btn-default" id="scb_@exercise.id" onclick="changeState('@links.changeExStateRoute(exercise.id)', @exercise.id)" disabled>
+              <span class="glyphicon glyphicon-upload"></span></button>
+          </span>
+        </div>
+      </td>
+      <td>
+        <a class="btn btn-default" title="Aufgabe @exercise.id bearbeiten" id="edit_@exercise.id" href="@links.editExerciseFormRoute(exercise.id)">
+          <span class="glyphicon glyphicon-wrench"></span>
+        </a>
+        <button class="btn btn-default" title="Aufgabe @exercise.id l&ouml;schen" id="del_@exercise.id" onclick="deleteExercise('@links.deleteExerciseRoute(exercise.id)')">
+          <span class="glyphicon glyphicon-remove"></span>
+        </button>
+      </td>
+      <td>@exercise.title</td>
+      <td>@exercise.author</td>
 
-            @exercise.renderRest
+      @helperTemplates.stringLen(exercise.text, 40)
 
-        </tr>
-    }
-    </tbody>
+    </tr>
+  }
+  </tbody>
 </table>

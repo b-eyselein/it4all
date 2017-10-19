@@ -23,5 +23,5 @@ case class UmlClassMatch(m1: Option[UmlClass], m2: Option[UmlClass], s: Int, com
 
 }
 
-case class UmlClassMatcher(compareAttrsAndMethods: Boolean) extends Matcher[UmlClass, UmlClassMatch](
-  "Klassen", List("Klassenname"), (c1, c2) => c1.name == c2.name, UmlClassMatch(_, _, _, compareAttrsAndMethods))
+case class UmlClassMatcher(compareAttrsAndMethods: Boolean)
+  extends Matcher[UmlClass, UmlClassMatch]("Klassen", List("Klassenname"), (c1, c2) => c1.name == c2.name, UmlClassMatch(_, _, _, compareAttrsAndMethods))

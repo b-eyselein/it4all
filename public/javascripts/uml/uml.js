@@ -1,6 +1,6 @@
 // Class selection
 
-var chosenClasses = [];
+let chosenClasses = [];
 
 function prepareFormForSubmitting() {
   document.getElementById("learnerSolution").value = JSON.stringify({
@@ -18,7 +18,7 @@ function prepareFormForSubmitting() {
 }
 
 function select(span) {
-  var baseform = span.dataset.baseform;
+  let baseform = span.dataset.baseform;
 
   if (chosenClasses.indexOf(baseform) < 0) {
     chosenClasses.push(baseform);
@@ -28,7 +28,7 @@ function select(span) {
 
   document.getElementById("classesList").innerHTML = asList(chosenClasses);
 
-  for (var otherSpan of document.getElementById("exercisetext").getElementsByTagName("span")) {
+  for (let otherSpan of document.getElementById("exercisetext").getElementsByTagName("span")) {
     if (chosenClasses.indexOf(otherSpan.dataset.baseform) < 0) {
       otherSpan.className = "non-marked";
     } else {
@@ -54,8 +54,8 @@ function drag(ev) {
 function drop(ev, type) {
   ev.preventDefault();
 
-  var data = ev.dataTransfer.getData("text");
-  var dragged = document.getElementById(data);
+  let data = ev.dataTransfer.getData("text");
+  let dragged = document.getElementById(data);
 
   if (dragged.dataset.typ === type) {
     ev.target.appendChild(dragged);

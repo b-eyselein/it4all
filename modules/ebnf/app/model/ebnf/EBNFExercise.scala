@@ -1,11 +1,14 @@
 package model.ebnf
 
+import java.nio.file.Path
 import javax.persistence.Entity
 
 import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty}
 import io.ebean.Finder
 import model.exercise.Exercise
 import play.twirl.api.Html
+
+import scala.util.Try
 
 @Entity
 class EBNFExercise(i: Int) extends Exercise(i) {
@@ -18,7 +21,7 @@ class EBNFExercise(i: Int) extends Exercise(i) {
   @JsonIgnore
   def getTerminalsForForm: String = getTerminals.map(t => s"'$t'").mkString(" ")
 
-  override def renderRest: Html = new Html(s"<td>$terminals</td>")
+  override def renderRest(fileResults: List[Try[Path]]): Html = new Html(s"<td>$terminals</td>")
 
 }
 

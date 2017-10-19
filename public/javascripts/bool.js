@@ -1,7 +1,7 @@
 function extractParameters() {
-  var parameters = '';
-  var inputs = document.getElementById('valueDiv').getElementsByTagName('input');
-  for (var i = 0; i < inputs.length; i++) {
+  let parameters = '';
+  let inputs = document.getElementById('valueDiv').getElementsByTagName('input');
+  for (let i = 0; i < inputs.length; i++) {
     if (parameters !== '') {
       parameters += '&';
     }
@@ -13,7 +13,7 @@ function extractParameters() {
 
 function testTheSolution(url) {
   // AJAX-Objekt erstellen, Callback-Funktion bereitstellen
-  var xhttp = new XMLHttpRequest();
+  let xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function () {
     if (xhttp.readyState === 4 && xhttp.status === 200) {
       processCorrection(xhttp.responseText);
@@ -21,7 +21,7 @@ function testTheSolution(url) {
   };
 
   // AJAX-Objekt mit Daten fuellen, absenden
-  var parameters = extractParameters();
+  let parameters = extractParameters();
   xhttp.open('PUT', url, true);
   xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
   xhttp.setRequestHeader('Accept', 'application/json');
@@ -29,19 +29,19 @@ function testTheSolution(url) {
 }
 
 function processCorrection(correctionAsJson) {
-  var completeCorrection = JSON.parse(correctionAsJson);
+  let completeCorrection = JSON.parse(correctionAsJson);
 
-  var messageDiv = document.getElementById('messageDiv');
+  let messageDiv = document.getElementById('messageDiv');
   messageDiv.innerHTML = '';
 
   if (completeCorrection.success === 'NONE') {
     messageDiv.innerHTML = '<div class=\'alert alert-danger\'>' + completeCorrection.asHtml + '</div>';
   } else {
-    var correctionArray = completeCorrection.solutions;
+    let correctionArray = completeCorrection.solutions;
 
-    for (var i = 0; i < correctionArray.length; i++) {
-      var correction = correctionArray[i];
-      var solutionCell = document.getElementById(correction.assignmentsForJson);
+    for (let i = 0; i < correctionArray.length; i++) {
+      let correction = correctionArray[i];
+      let solutionCell = document.getElementById(correction.assignmentsForJson);
       solutionCell.className = 'text-center ' + correction.color;
       solutionCell.innerHTML = '<span class=\'text-' + correction.color + '\'>' + correction.learnerValue + '</span>';
     }

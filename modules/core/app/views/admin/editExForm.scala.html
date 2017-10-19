@@ -1,4 +1,4 @@
-@(user: model.user.User, toolObject: model.tools.IdExToolObject, exercise: model.exercise.Exercise, isCreation: Boolean)
+@(user: model.user.User, toolObject: model.tools.ExToolObject, exercise: model.exercise.Exercise, isCreation: Boolean)
 
 @main(s"${toolObject.toolname}: Aufgabe ${if(isCreation) "erstellen" else "bearbeiten"}", user) {
     <div class="container">

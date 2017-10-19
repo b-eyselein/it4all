@@ -1,25 +1,25 @@
 package controllers.web
 
-import model.tools.{IdExToolObject, ToolState}
+import model.tools.{IdPartExToolObject, ToolState}
 import play.api.mvc.Call
 
-object WebToolObject extends IdExToolObject("web", "Web", ToolState.LIVE) {
+object WebToolObject extends IdPartExToolObject("web", "Web", ToolState.LIVE) {
 
   // User
 
   override def indexCall: Call = controllers.web.routes.WebController.index()
 
-  override def exerciseRoute(id: Int): Call = null // controllers.web.routes.WebController.exercise(id)
+  override def exerciseRoute(id: Int, part: String): Call = controllers.web.routes.WebController.exercise(id, part)
 
   override def exerciseRoutes(id: Int) = List(
     (controllers.web.routes.WebController.exercise(id, "html"), "Html-Teil"),
     (controllers.web.routes.WebController.exercise(id, "js"), "Js-Teil"))
 
-  override def exesListRoute(id: Int): Call = exesListRoute(id)
+  override def exesListRoute(id: Int): Call = null // controllers.web.routes.WebController.exercises(id)
 
-  override def correctLiveRoute(id: Int): Call = controllers.web.routes.WebController.correctLive(id, "html")
+  override def correctLiveRoute(id: Int, part: String): Call = controllers.web.routes.WebController.correctLive(id, "html")
 
-  override def correctRoute(id: Int): Call = controllers.web.routes.WebController.correct(id, "html")
+  override def correctRoute(id: Int, part: String): Call = controllers.web.routes.WebController.correct(id, "html")
 
   // Admin
 

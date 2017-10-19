@@ -2,12 +2,12 @@
 
 @main("Spread-Test", user) {
 <div class="container">
-  <form action="#@*@spread.routes.Spread.correct(exercise.id)*@" method="post" onsubmit="prepareFormForSubmitting();">
+  <form action="#@*@spread.routes.SpreadController.correct(exercise.id)*@" method="post" onsubmit="prepareFormForSubmitting();">
   
     <div class="row">
       <div class="col-md-6">
         <div class="page-header">
-          <h1>Aufgabenstellung</h2>
+          <h1>Aufgabenstellung</h1>
         </div>
   
         @exercise.getText
@@ -19,7 +19,7 @@
     <div class="row">
       <div class="col-md-12">
         <h2>Bemerkungen</h2>
-        <div id="correction"/>
+        <div id="correction"></div>
       </div>
     </div>
     

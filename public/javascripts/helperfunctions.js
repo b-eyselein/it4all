@@ -1,6 +1,6 @@
 function changeFontsize(value) {
-  var fontsizeElement = document.getElementById('fontsize');
-  var fontsize = parseInt(fontsizeElement.innerHTML) + value;
+  let fontsizeElement = document.getElementById('fontsize');
+  let fontsize = parseInt(fontsizeElement.innerHTML) + value;
   document.getElementById('editor').style.fontSize = fontsize + 'px';
   fontsizeElement.innerHTML = fontsize;
 }
@@ -35,7 +35,7 @@ function paramFilter(input, element) {
 }
 
 function extractParameters() {
-  var inputs = $('form input, form textarea').filter(paramFilter);
+  let inputs = $('form input, form textarea').filter(paramFilter);
   return $.map(inputs, toParam).join('&');
 }
 
@@ -59,9 +59,9 @@ function testTheSolution(theUrl) {
 }
 
 function updatePreview() {
-  var toWrite = unescapeHTML(editor.getValue());
+  let toWrite = unescapeHTML(editor.getValue());
 
-  var theIFrame = document.getElementById('preview').contentWindow.document;
+  let theIFrame = document.getElementById('preview').contentWindow.document;
   theIFrame.open();
   theIFrame.write(toWrite);
   theIFrame.close();

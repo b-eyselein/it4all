@@ -1,5 +1,6 @@
 package model
 
+import java.nio.file.Path
 import javax.persistence.{Column, Entity}
 
 import com.fasterxml.jackson.annotation.{JsonGetter, JsonIgnore, JsonProperty, JsonSetter}
@@ -7,6 +8,8 @@ import io.ebean.Finder
 import io.ebean.annotation.DbJson
 import model.exercise.Exercise
 import play.twirl.api.{Html, HtmlFormat}
+
+import scala.util.Try
 
 @Entity
 class UmlExercise(id: Int) extends Exercise(id) {
@@ -30,7 +33,7 @@ class UmlExercise(id: Int) extends Exercise(id) {
   @JsonProperty(value = "ignoreWords", required = true)
   var ignoreWords: java.util.List[String] = _
 
-  override def renderRest: Html = new Html(
+  override def renderRest(fileResults: List[Try[Path]]): Html = new Html(
     s"""<td>${views.html.helperTemplates.modal.render("Klassenwahltext...", new Html(classSelText + "<hr>" + HtmlFormat.escape(classSelText)), "Klassenwahltext")}</td>
        |<td>${views.html.helperTemplates.modal.render("Diagrammzeichnentext...", new Html(diagDrawText + "<hr>" + HtmlFormat.escape(diagDrawText)), "Diagrammzeichnentext")}</td>""".stripMargin)
 

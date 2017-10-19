@@ -2,7 +2,7 @@ package controllers.core
 
 import io.ebean.Finder
 import model.exercise.{Exercise, ExerciseCollection}
-import model.exercisereading.{ExerciseCollectionReader, ExerciseReader}
+import model.exercisereading.{ExerciseCollectionReader, ExerciseReader, SingleReadingResult}
 import model.tools.IdExToolObject
 import model.user.User
 import play.data.FormFactory
@@ -67,7 +67,7 @@ abstract class AExerciseCollectionAdminController[E <: Exercise, C <: ExerciseCo
   }
 
   def newExerciseForm: Result = {
-//    val id = ExerciseReader.findMinimalNotUsedId(finder)
+    //    val id = ExerciseReader.findMinimalNotUsedId(finder)
     //
     //    val exercise = exerciseReader.getOrInstantiateExercise(id)
     //    exerciseReader.save(exercise)
@@ -105,7 +105,7 @@ abstract class AExerciseCollectionAdminController[E <: Exercise, C <: ExerciseCo
 
   def uploadFile: Result = uploadFile(renderCollectionCreated)
 
-  def renderCollectionCreated(collections: List[C], created: Boolean): Html
+  def renderCollectionCreated(collections: List[SingleReadingResult[C]]): Html
 
   def renderExEditForm(user: User, exercise: C, isCreation: Boolean): Html
 

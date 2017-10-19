@@ -1,5 +1,5 @@
 function getAllSpans(cap) {
-  var allSpans = [].slice.call(document.getElementById("textDiv").getElementsByTagName("span"));
+  let allSpans = [].slice.call(document.getElementById("textDiv").getElementsByTagName("span"));
   return allSpans.filter(function (span) {
     return span.dataset.baseform === cap;
   });
@@ -10,13 +10,13 @@ function getBaseformInner(cap, baseformInput) {
 }
 
 function radioChange(radio) {
-  var cap = radio.name;
+  let cap = radio.name;
 
-  var className = "";
-  var toDisable = true;
-  var newInner = cap;
+  let className = "";
+  let toDisable = true;
+  let newInner = cap;
 
-  var baseformInput = document.getElementById(cap + "_baseform");
+  let baseformInput = document.getElementById(cap + "_baseform");
 
   switch (radio.value) {
     case "ignore":
@@ -35,28 +35,28 @@ function radioChange(radio) {
   baseformInput.disabled = toDisable;
 
   // Convert HtmlCollection to array...
-  for (var span of getAllSpans(cap)) {
+  for (let span of getAllSpans(cap)) {
     span.className = className;
     span.innerHTML = newInner;
   }
 }
 
 function baseformChange(baseformInput) {
-  var cap = baseformInput.dataset.cap;
-  for (var span of getAllSpans(cap)) {
+  let cap = baseformInput.dataset.cap;
+  for (let span of getAllSpans(cap)) {
     span.innerHTML = getBaseformInner(cap, baseformInput);
   }
 }
 
 function checkSolutionWithSchema() {
-  var solution = encodeURIComponent(editor.getValue());
+  let solution = encodeURIComponent(editor.getValue());
   $.ajax({
     type: 'PUT',
     url: url,
     data: "solution=" + solution,
     async: true,
     success: function (response) {
-      var solutionvalidDiv = $("#solutionValid");
+      let solutionvalidDiv = $("#solutionValid");
       switch (response) {
         case "ok":
           solutionvalidDiv.attr("class", "alert alert-success");

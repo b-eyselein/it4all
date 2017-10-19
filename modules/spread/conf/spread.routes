@@ -1,29 +1,26 @@
 # Admin
-GET      /admin                controllers.spread.SpreadAdmin.adminIndex
+GET           /admin                     controllers.spread.SpreadAdmin.adminIndex
 
-GET      /jsonSchema           controllers.spread.SpreadAdmin.getJSONSchemaFile
-POST     /upload               controllers.spread.SpreadAdmin.uploadFile
+GET           /jsonSchema                controllers.spread.SpreadAdmin.getJSONSchemaFile
+POST          /upload                    controllers.spread.SpreadAdmin.uploadFile
 
-GET      /import               controllers.spread.SpreadAdmin.importExercises
-GET      /export               controllers.spread.SpreadAdmin.exportExercises
+GET           /import                    controllers.spread.SpreadAdmin.importExercises
+GET           /export                    controllers.spread.SpreadAdmin.exportExercises
 
-GET      /exercises            controllers.spread.SpreadAdmin.exercises
+GET           /exercises                 controllers.spread.SpreadAdmin.exercises
 
-GET      /exercises/:id        controllers.spread.SpreadAdmin.editExerciseForm(id: Int)
-PUT      /exercises/:id        controllers.spread.SpreadAdmin.editExercise(id: Int)
-POST     /exercises/:id        controllers.spread.SpreadAdmin.editExercise(id: Int)
-DELETE   /exercises/:id        controllers.spread.SpreadAdmin.deleteExercise(id: Int)
+GET           /exercises/:id             controllers.spread.SpreadAdmin.editExerciseForm(id: Int)
+PUT           /exercises/:id             controllers.spread.SpreadAdmin.editExercise(id: Int)
+POST          /exercises/:id             controllers.spread.SpreadAdmin.editExercise(id: Int)
+DELETE        /exercises/:id             controllers.spread.SpreadAdmin.deleteExercise(id: Int)
 
-PUT      /exercise/:id/state   controllers.spread.SpreadAdmin.changeExState(id: Int)
+PUT           /exercise/:id/state        controllers.spread.SpreadAdmin.changeExState(id: Int)
 
-GET      /newExForm            controllers.spread.SpreadAdmin.newExerciseForm
+GET           /newExForm                 controllers.spread.SpreadAdmin.newExerciseForm
 
 # User
-GET      /                     controllers.spread.SpreadController.index(page: Int ?= 1)
+GET           /                          controllers.spread.SpreadController.index(page: Int ?= 1)
 
-POST     /:id                  controllers.spread.SpreadController.upload(id: Int)
-GET      /:id/:typ             controllers.spread.SpreadController.download(id: Int, typ: String)
-GET      /temp/:id/:typ        controllers.spread.SpreadController.downloadTemplate(id: Int, typ: String)
-
-
-GET      /:id                  controllers.spread.SpreadController.exercise(id: Int)
+POST          /:id                       controllers.spread.SpreadController.upload(id: Int)
+GET           /:id/:part                 controllers.spread.SpreadController.download(id: Int, part: String)
+GET           /temp/:id/:typ             controllers.spread.SpreadController.exercise(id: Int, typ: String)

@@ -5,6 +5,7 @@ import javax.inject.Inject
 import controllers.core.AExerciseCollectionAdminController
 import model.SqlScenarioReader
 import model.exercise.{SqlExercise, SqlScenario}
+import model.exercisereading.SingleReadingResult
 import model.user.User
 import play.data.FormFactory
 import play.db.{Database, NamedDatabase}
@@ -37,7 +38,7 @@ class SqlAdmin @Inject()(f: FormFactory,
   // return views.html.sqlAdmin.sqlCreation.render(created)
   // }
 
-  override def renderCollectionCreated(collections: List[SqlScenario], created: Boolean): Html = ??? // FIXME: implement...
+  override def renderCollectionCreated(collections: List[SingleReadingResult[SqlScenario]]): Html = ??? // FIXME: implement...
 
   override def renderExCollCreationForm(user: User, scenario: SqlScenario): Html =
     views.html.sqlAdmin.newScenarioForm.render(user, scenario)

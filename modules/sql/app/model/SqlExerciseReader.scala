@@ -1,13 +1,12 @@
 package model
 
-import scala.collection.JavaConverters.asScalaBufferConverter
-
 import com.fasterxml.jackson.databind.JsonNode
-
 import model.exercise.{SqlExercise, SqlExerciseType, SqlSample, SqlSampleKey}
 import model.exercisereading.{ExerciseReader, JsonReader}
 import play.data.DynamicForm
 import play.libs.Json
+
+import scala.collection.JavaConverters._
 
 object SqlExerciseReader extends ExerciseReader[SqlExercise]("sql", SqlExercise.finder, classOf[Array[SqlExercise]]) {
 
@@ -43,7 +42,7 @@ object SqlExerciseReader extends ExerciseReader[SqlExercise]("sql", SqlExercise.
   override def updateExercise(exercise: SqlExercise, exerciseNode: JsonNode) {
     exercise.exerciseType = SqlExerciseType.valueOf(exerciseNode.get(StringConsts.EXERCISE_TYPE).asText())
 
-    exercise.samples = ExerciseReader.readArray(exerciseNode.get(StringConsts.SAMPLES_NAME), SqlExerciseReader.readSampleSolution)
+    exercise.samples = ExerciseReader.readArray(exerciseNode.get(StringConsts.SAMPLES_NAME), SqlExerciseReader.readSampleSolution).asJava
     exercise.hint = exerciseNode.get("hint").asText()
     exercise.tags = JsonReader.readAndJoinTextArray(exerciseNode.get("tags"), SqlExercise.SAMPLE_JOIN_CHAR)
   }

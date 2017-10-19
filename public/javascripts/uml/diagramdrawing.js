@@ -7,12 +7,12 @@ const COLOR_WHITE = '#ffffff';
 
 const MAX_ENTRIES_PER_CLASS = 3;
 
-var idList = []; // Linkverbindungen
+let idList = []; // Linkverbindungen
 
-var graph;
-var paper;
+let graph;
+let paper;
 
-var sel = "POINTER";
+let sel = "POINTER";
 
 $(document).ready(function () {
   // Init Graph and Paper
@@ -31,7 +31,7 @@ $(document).ready(function () {
   paper.on('blank:pointerdown', blankOnPointerDown);
 
   // Draw all classes, empty if diagramdrawing - help
-  for (var clazz of defaultClasses) { // NOSONAR
+  for (let clazz of defaultClasses) { // NOSONAR
     addClass(clazz);
   }
 });
@@ -50,7 +50,7 @@ function blankOnPointerDown(evt, x, y) {
 }
 
 function updateIdList() {
-  var idSpan = $("#idList");
+  let idSpan = $("#idList");
 
   if (idList.length === 0) {
     idSpan.html("--");
@@ -70,7 +70,7 @@ function cellOnLeftClick(cellView, evt, x, y) {
     case "AGGREGATION":
     case "COMPOSITION":
     case "IMPLEMENTATION":
-      var newId = cellView.model.id;
+      let newId = cellView.model.id;
 
       if (idList.length === 0 || idList[0] !== newId) {
         idList.push(cellView.model.id);
@@ -97,7 +97,7 @@ function cellOnLeftClick(cellView, evt, x, y) {
 }
 
 function cellOnRightClick(cellView, evt, x, y) {
-  var cellInGraph = graph.getCell(cellView.model.id);
+  let cellInGraph = graph.getCell(cellView.model.id);
   if (canDelete && confirm("Wollen Sie die Klasse / das Interface " + cellInGraph.attributes.name + " wirklich löschen?")) {
     cellInGraph.remove();
   }
@@ -114,7 +114,7 @@ function forwards() {
 function selectClassType(button) {
   unMarkButtons();
 
-  var classButton = document.getElementById("classButton");
+  let classButton = document.getElementById("classButton");
   classButton.className = "btn btn-primary";
   classButton.dataset.conntype = button.dataset.conntype;
 
@@ -127,7 +127,7 @@ function selectClassType(button) {
 function selectAssocType(button) {
   unMarkButtons();
 
-  var assocButton = document.getElementById("assocButton");
+  let assocButton = document.getElementById("assocButton");
   assocButton.className = "btn btn-primary";
   assocButton.dataset.conntype = button.dataset.conntype;
 
@@ -146,15 +146,15 @@ function selectButton(button) {
 }
 
 function unMarkButtons() {
-  for (var otherButton of document.getElementById("buttonsDiv").getElementsByTagName("button")) {
+  for (let otherButton of document.getElementById("buttonsDiv").getElementsByTagName("button")) {
     otherButton.className = "btn btn-default";
   }
 }
 
 function exportDiagram() {
-  var text = extractParametersAsJson();
-  var a = document.getElementById("a");
-  var file = new Blob([text], {type: 'text/json'});
+  let text = extractParametersAsJson();
+  let a = document.getElementById("a");
+  let file = new Blob([text], {type: 'text/json'});
   a.href = URL.createObjectURL(file);
   a.download = 'export.json';
 }
@@ -164,12 +164,12 @@ function importDiagram() {
 }
 
 function askMulitplicity(source, dest) {
-  var multiplicity = prompt("Bitte geben Sie die Multiplizität von " + source + " nach " + dest + " auf der Seite " + source + " an.");
+  let multiplicity = prompt("Bitte geben Sie die Multiplizität von " + source + " nach " + dest + " auf der Seite " + source + " an.");
   return (multiplicity && multiplicity === "1") ? multiplicity : "*";
 }
 
 function extractParametersAsJson() {
-  var learnerSolution = {
+  let learnerSolution = {
     classes: graph.getCells()
         .filter(function (cell) {
           return cell.attributes.name !== undefined;
@@ -245,16 +245,16 @@ function prepareFormForSubmitting() {
 }
 
 function link(sourceId, targetId) {
-  var source_name = getClassNameFromCellId(sourceId);
-  var destin_name = getClassNameFromCellId(targetId);
+  let source_name = getClassNameFromCellId(sourceId);
+  let destin_name = getClassNameFromCellId(targetId);
 
 
   if (sel !== "IMPLEMENTATION") {
-    var source_mult = askMulitplicity(source_name, destin_name);
-    var destin_mult = askMulitplicity(destin_name, source_name);
+    let source_mult = askMulitplicity(source_name, destin_name);
+    let destin_mult = askMulitplicity(destin_name, source_name);
   }
 
-  var members = {
+  let members = {
     source: {id: sourceId},
     target: {id: targetId},
     labels: [{
@@ -266,7 +266,7 @@ function link(sourceId, targetId) {
     }]
   };
 
-  var cellToAdd;
+  let cellToAdd;
   switch (sel) {
     case 'COMPOSITION':
       cellToAdd = new joint.shapes.uml.Composition(members);
@@ -290,7 +290,7 @@ function link(sourceId, targetId) {
 }
 
 function addClass(clazz) {
-  var content = {
+  let content = {
     position: clazz.position,
     size: {width: STD_CLASS_SIZE, height: STD_CLASS_SIZE},
     name: clazz.name,
@@ -323,7 +323,7 @@ function addClass(clazz) {
 }
 
 function newClass(posX, posY) {
-  var className = prompt("Wie soll die (abstrakte) Klasse / das Interface heißen?");
+  let className = prompt("Wie soll die (abstrakte) Klasse / das Interface heißen?");
 
   if (!className || className.length === 0) {
     return;
@@ -345,7 +345,7 @@ function allowDrop(ev) {
 }
 
 function drag(ev) {
-  var className = ev.target.innerHTML;
+  let className = ev.target.innerHTML;
   if (ev.target.getAttribute('data-baseform') !== null) {
     className = ev.target.getAttribute('data-baseform');
   }
@@ -354,7 +354,7 @@ function drag(ev) {
 
 function drop(ev) {
   ev.preventDefault();
-  var data = ev.dataTransfer.getData("text");
+  let data = ev.dataTransfer.getData("text");
   addClass({
     // Replace all " " with "_"
     name: data,

@@ -2,8 +2,8 @@ package controllers.core
 
 import io.ebean.Finder
 import model.exercise.{Exercise, ExerciseState}
-import model.exercisereading.ExerciseReader
-import model.tools.IdExToolObject
+import model.exercisereading.{ExerciseReader, SingleReadingResult}
+import model.tools.ExToolObject
 import model.user.User
 import play.data.FormFactory
 import play.libs.Json
@@ -16,7 +16,7 @@ import scala.collection.JavaConverters._
 
 @Authenticated(classOf[model.AdminSecured])
 abstract class AExerciseAdminController[E <: Exercise]
-(f: FormFactory, t: IdExToolObject, fi: Finder[Integer, E], val exerciseReader: ExerciseReader[E])
+(f: FormFactory, t: ExToolObject, fi: Finder[Integer, E], val exerciseReader: ExerciseReader[E])
   extends BaseAdminController[E](f, t, fi, exerciseReader) {
 
   def changeExState(id: Int): Result = Option(finder.byId(id)) match {
@@ -45,7 +45,7 @@ abstract class AExerciseAdminController[E <: Exercise]
   def editExercise(id: Int): Result = {
     val exercise = exerciseReader.initFromForm(id, factory.form().bindFromRequest())
     exerciseReader.save(exercise)
-    ok(views.html.admin.preview.render(getUser, renderExercises(List(exercise), changesAllowed = false)))
+    ok(views.html.admin.preview.render(getUser, renderExercises(List(exercise))))
   }
 
   def editExerciseForm(id: Int): Result = Option(finder.byId(id)) match {
@@ -54,12 +54,12 @@ abstract class AExerciseAdminController[E <: Exercise]
   }
 
   def exercises: Result =
-    ok(views.html.admin.exerciseList.render(getUser, renderExercises(finder.all.asScala.toList, changesAllowed = true)))
+    ok(views.html.admin.exerciseList.render(getUser, renderExercises(finder.all.asScala.toList)))
 
   def exportExercises: Result =
     ok(views.html.admin.export.render(getUser, Json.prettyPrint(Json.toJson(finder.all))))
 
-  def importExercises: Result = processReadingResult(exerciseReader.readFromJsonFile(), renderExercises)
+  def importExercises: Result = processReadingResult(exerciseReader.readFromJsonFile(), renderExesCreated)
 
   def newExerciseForm: Result = {
     val exercise = exerciseReader.getOrInstantiateExercise(ExerciseReader.findMinimalNotUsedId(finder))
@@ -67,12 +67,13 @@ abstract class AExerciseAdminController[E <: Exercise]
     ok(renderExEditForm(getUser, exercise, isCreation = true))
   }
 
-  def uploadFile: Result = uploadFile(renderExercises)
+  def uploadFile: Result = uploadFile(renderExesCreated)
 
   def renderExEditForm(user: User, exercise: E, isCreation: Boolean): Html =
     views.html.admin.editExForm.render(user, toolObject, exercise, isCreation)
 
-  def renderExercises(exercises: List[E], changesAllowed: Boolean): Html =
-    views.html.admin.exercisesTable.render(exercises.asJava, toolObject, changesAllowed)
+  def renderExercises(exercises: List[E]): Html = views.html.admin.exercisesTable.render(exercises, toolObject)
+
+  def renderExesCreated(exercises: List[SingleReadingResult[E]]): Html = views.html.admin.exercisesCreated.render(exercises, toolObject)
 
 }

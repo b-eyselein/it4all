@@ -7,4 +7,4 @@ import model.{ProgExercise, ProgExerciseReader}
 import play.data.FormFactory
 
 class ProgAdmin @Inject()(f: FormFactory)
-  extends AExerciseAdminController[ProgExercise](f, ProgToolObject, ProgExercise.finder, ProgExerciseReader.getInstance())
+  extends AExerciseAdminController[ProgExercise](f, ProgToolObject, ProgExercise.finder, ProgExerciseReader)

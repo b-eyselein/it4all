@@ -1,25 +1,29 @@
 package controllers.spread
 
-import model.tools.{IdExToolObject, ToolState}
+import model.tools.{IdPartExToolObject, ToolState}
 import play.api.mvc.Call
 
-object SpreadToolObject extends IdExToolObject("spread", "Tabellenkalkulation", ToolState.LIVE) {
+object SpreadToolObject extends IdPartExToolObject("spread", "Tabellenkalkulation", ToolState.LIVE) {
 
   // User
 
   override def indexCall: Call = controllers.spread.routes.SpreadController.index()
 
-  def exerciseRoute(id: Int): Call = controllers.spread.routes.SpreadController.exercise(id)
+  override def exerciseRoute(id: Int, part: String): Call = controllers.spread.routes.SpreadController.exercise(id, part)
+
+  override def exerciseRoutes(id: Int): List[(Call, String)] = List(
+    (controllers.spread.routes.SpreadController.exercise(id, "xlsx"), "Excel"),
+    (controllers.spread.routes.SpreadController.exercise(id, "ods"), "OpenOffice"))
 
   override def exesListRoute(id: Int): Call = ???
 
-  override def correctLiveRoute(id: Int): Call = ???
+  override def correctLiveRoute(id: Int, part: String): Call = ???
 
-  override def correctRoute(id: Int): Call = ???
+  override def correctRoute(id: Int, part: String): Call = ???
 
   // Admin
 
-  val restHeaders: List[String] = List.empty
+  val restHeaders: List[String] = List("Musterloesungsdatei", "Vorlagendatei")
 
   override def adminIndexRoute: Call = controllers.spread.routes.SpreadAdmin.adminIndex()
 

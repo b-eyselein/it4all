@@ -13,6 +13,8 @@ import play.Logger
 import play.data.DynamicForm
 import play.db.Database
 
+import scala.collection.JavaConverters._
+
 class SqlScenarioReader(sqlSelect: Database, sqlOther: Database)
   extends ExerciseCollectionReader[SqlExercise, SqlScenario]("sql", SqlScenario.finder, classOf[Array[SqlScenario]]) {
 
@@ -72,7 +74,8 @@ class SqlScenarioReader(sqlSelect: Database, sqlOther: Database)
     exercise.shortName = exerciseNode.get(StringConsts.SHORTNAME_NAME).asText
     exercise.scriptFile = exerciseNode.get(StringConsts.SCRIPTFILE_NAME).asText
 
-    exercise.exercises = ExerciseReader.readArray(exerciseNode.get(StringConsts.EXERCISES_NAME), SqlExerciseReader.read)
+    exercise.exercises = ExerciseReader.readArray(exerciseNode.get(StringConsts.EXERCISES_NAME),
+      SqlExerciseReader.read).map(_.read).asJava
   }
 
 }

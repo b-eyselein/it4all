@@ -20,13 +20,13 @@ abstract class JsonReader[R <: JsonReadable](val exerciseType: String, val finde
 
   val jsonSchema: JsonNode = new JsonSchemaGenerator(new ObjectMapper).generateJsonSchema(classFor)
 
-  def read(node: JsonNode): R = {
+  def read(node: JsonNode): SingleReadingResult[R] = {
     val id = node.get(ID_NAME).asInt
     val w = Option(finder.byId(id)).getOrElse(instantiate(id))
 
     update(w, node)
 
-    w
+    SingleReadingResult(w)
   }
 
   val stdFile: Path = Paths.get(resourcesFolder.toString, EX_FILE_NAME)

@@ -2,7 +2,7 @@ package controllers.web
 
 import javax.inject.Inject
 
-import controllers.core.IdExController
+import controllers.core.IdPartExController
 import model._
 import model.logging.{ExerciseCompletionEvent, ExerciseStartEvent}
 import model.result.CompleteResult
@@ -17,7 +17,7 @@ import scala.collection.JavaConverters.{asScalaBufferConverter, seqAsJavaListCon
 import scala.util.{Failure, Success, Try}
 
 class WebController @Inject()(f: FormFactory)
-  extends IdExController[WebExercise, WebResult](f, WebExercise.finder, WebToolObject) {
+  extends IdPartExController[WebExercise, WebResult](f, WebExercise.finder, WebToolObject) {
 
   val HTML_TYPE = "html"
   val JS_TYPE = "js"
@@ -63,11 +63,11 @@ class WebController @Inject()(f: FormFactory)
     solution.save()
   }
 
-  def correct(id: Int, exType: String): Result = {
+  override def correct(id: Int, part: String): Result = {
     val user = getUser
     val learnerSolution = factory.form().bindFromRequest().get(StringConsts.FORM_VALUE)
 
-    correctEx(learnerSolution, WebExercise.finder.byId(id), user, exType) match {
+    correctEx(learnerSolution, WebExercise.finder.byId(id), user, part) match {
       case Success(result) =>
         log(user, new ExerciseCompletionEvent(Controller.request, id, result))
         Results.ok(views.html.correction.render("Web", result, renderResult(result), user, routes.WebController.index(0)))
@@ -75,11 +75,11 @@ class WebController @Inject()(f: FormFactory)
     }
   }
 
-  def correctLive(id: Int, exType: String): Result = {
+  override def correctLive(id: Int, part: String): Result = {
     val user = getUser
     val learnerSolution = factory.form().bindFromRequest().get(StringConsts.FORM_VALUE)
 
-    correctEx(learnerSolution, WebExercise.finder.byId(id), user, exType) match {
+    correctEx(learnerSolution, WebExercise.finder.byId(id), user, part) match {
       case Success(result) =>
         log(user, new ExerciseCompletionEvent(Controller.request, id, result))
         Results.ok(renderResult(result))
@@ -87,13 +87,13 @@ class WebController @Inject()(f: FormFactory)
     }
   }
 
-  def exercise(id: Int, exType: String): Result = exType match {
+  override def exercise(id: Int, part: String): Result = part match {
     case (JS_TYPE | HTML_TYPE) =>
       val user = getUser
 
       log(user, new ExerciseStartEvent(Controller.request(), id))
 
-      Results.ok(views.html.webExercise.render(user, WebExercise.finder.byId(id), exType,
+      Results.ok(views.html.webExercise.render(user, WebExercise.finder.byId(id), part,
         WebController.getOldSolOrDefault(user.name, id), "Html-Korrektur"))
     case _ =>
       Results.redirect(routes.WebController.index(0))
@@ -101,11 +101,9 @@ class WebController @Inject()(f: FormFactory)
 
   def playground: Result = Results.ok(views.html.webPlayground.render(getUser))
 
-  override def correctEx(form: DynamicForm, exercise: WebExercise, user: User): Try[CompleteResult[WebResult]] = ??? // FIXME
-
+  override def correctEx(form: DynamicForm, exercise: WebExercise, user: User): Try[CompleteResult[WebResult]] = Failure(new Throwable("Not used..."))
 
   override def renderExercise(user: User, exercise: WebExercise): Html = ??? // FIXME
-
 
   override def renderExesListRest = new Html(
     s"""<div class="panel panel-default">

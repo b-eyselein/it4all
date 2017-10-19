@@ -26,11 +26,11 @@ case class OrderByMatch(ua: Option[OrderByElement], sa: Option[OrderByElement], 
   override def analyze(ua: OrderByElement, sa: OrderByElement) = MatchType.SUCCESSFUL_MATCH
 }
 
-object GROUP_BY_MATCHER extends Matcher[Expression, GroupByMatch](
+object GroupByMatcher extends Matcher[Expression, GroupByMatch](
   "Group By Elemente", List("Group By Statement"), _.asInstanceOf[Column].getColumnName == _.asInstanceOf[Column].getColumnName, GroupByMatch
 )
 
-object ORDER_BY_MATCHER extends Matcher[OrderByElement, OrderByMatch](
+object OrderByMatcher extends Matcher[OrderByElement, OrderByMatch](
   "Order By Elemente", List("Order By Statement"), _.getExpression.toString == _.getExpression.toString, OrderByMatch
 )
 
@@ -75,9 +75,9 @@ object SelectCorrector extends QueryCorrector("SELECT") {
 
   override protected def getWhere(select: Q): Option[Expression] = Option(select.getSelectBody.asInstanceOf[PlainSelect].getWhere)
 
-  override protected def compareGroupByElements(userQ: Q, sampleQ: Q) = Some(GROUP_BY_MATCHER.doMatch(groupByElements(userQ), groupByElements(sampleQ)))
+  override protected def compareGroupByElements(userQ: Q, sampleQ: Q) = Some(GroupByMatcher.doMatch(groupByElements(userQ), groupByElements(sampleQ)))
 
-  override protected def compareOrderByElements(userQ: Q, sampleQ: Q) = Some(ORDER_BY_MATCHER.doMatch(orderByElements(userQ), orderByElements(sampleQ)))
+  override protected def compareOrderByElements(userQ: Q, sampleQ: Q) = Some(OrderByMatcher.doMatch(orderByElements(userQ), orderByElements(sampleQ)))
 
   def orderByElements(userQ: Q): List[OrderByElement] = {
     val javaOrderBys = userQ.getSelectBody.asInstanceOf[PlainSelect].getOrderByElements

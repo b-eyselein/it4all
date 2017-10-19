@@ -6,11 +6,11 @@ import io.ebean.Finder
 import model.exercise.Exercise
 import model.logging.{ExerciseCompletionEvent, ExerciseCorrectionEvent, ExerciseStartEvent}
 import model.result.{CompleteResult, EvaluationResult}
-import model.tools.IdExToolObject
+import model.tools.IdPartExToolObject
 import model.user.User
 import play.data.{DynamicForm, FormFactory}
 import play.libs.Json
-import play.mvc.Results._
+import play.mvc.Results.{badRequest, ok, redirect}
 import play.mvc.Security.Authenticated
 import play.mvc.{Controller, Result}
 import play.twirl.api.Html
@@ -18,13 +18,13 @@ import play.twirl.api.Html
 import scala.util.{Failure, Success, Try}
 
 @Authenticated(classOf[model.Secured])
-abstract class IdExController[E <: Exercise, R <: EvaluationResult]
-(f: FormFactory, val finder: Finder[Integer, E], val toolObject: IdExToolObject)
+abstract class IdPartExController[E <: Exercise, R <: EvaluationResult]
+(f: FormFactory, val finder: Finder[Integer, E], val toolObject: IdPartExToolObject)
   extends BaseController(f) {
 
   val STEP = 10
 
-  def correct(id: Int): Result = {
+  def correct(id: Int, part: String): Result = {
     val user = getUser
     correctEx(factory.form().bindFromRequest(), finder.byId(id), user) match {
       case Success(correctionResult) =>
@@ -37,7 +37,7 @@ abstract class IdExController[E <: Exercise, R <: EvaluationResult]
     }
   }
 
-  def correctLive(id: Int): Result = {
+  def correctLive(id: Int, part: String): Result = {
     val user = getUser
     correctEx(factory.form().bindFromRequest(), finder.byId(id), user) match {
       case Success(correctionResult) =>
@@ -49,7 +49,7 @@ abstract class IdExController[E <: Exercise, R <: EvaluationResult]
     }
   }
 
-  def exercise(id: Int): Result = Option(finder.byId(id)) match {
+  def exercise(id: Int, part: String): Result = Option(finder.byId(id)) match {
     case Some(exercise) =>
       val user = getUser
       log(user, new ExerciseStartEvent(Controller.request(), id))

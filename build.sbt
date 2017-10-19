@@ -56,8 +56,8 @@ lazy val xml = (project in file("modules/xml"))
 // Used libraries from Maven Repository
 libraryDependencies ++= Seq(
   javaJdbc,
-  Common.mysqlDependency,
-  guice
+  guice,
+  "mysql" % "mysql-connector-java" % "8.0.8-dmr"
 )
 
 scalacOptions ++= Seq("-feature")

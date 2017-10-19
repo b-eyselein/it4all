@@ -17,7 +17,8 @@ import scala.util.Try
 class QuizController @Inject()(c: Configuration, f: FormFactory)
   extends ExerciseCollectionController[Question, Quiz](f, "question", Quiz.finder, Question.finder) {
 
-  override def correctPart(form: DynamicForm, question: Question, part: String, user: User): Try[model.result.CompleteResult[_]] = ??? // FIXME: implement...
+  override def correctPart(form: DynamicForm, question: Question, part: String, user: User): Try[model.result.CompleteResult[_]]
+  = ??? // FIXME: implement...
 
   def quiz(id: Int): Result = Results.ok(views.html.quiz.render(getUser, Quiz.finder.byId(id)))
 

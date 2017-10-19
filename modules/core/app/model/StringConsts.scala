@@ -4,6 +4,8 @@ object StringConsts {
 
   val ADMIN_FOLDER: String = "admin"
 
+  val ANSWERS_NAME: String = "answers"
+
   val ATTRS_NAME: String = "attributes"
 
   val AUTHOR_NAME: String = "author"

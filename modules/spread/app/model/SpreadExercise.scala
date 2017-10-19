@@ -1,13 +1,18 @@
 package model
 
+import java.nio.file.Path
 import javax.persistence.Entity
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty}
 import com.fasterxml.jackson.databind.JsonNode
+import controllers.spread.SpreadToolObject
 import io.ebean.Finder
 import model.exercise.Exercise
 import model.exercisereading.ExerciseReader
 import play.data.DynamicForm
+import play.twirl.api.Html
+
+import scala.util.Try
 
 @Entity
 class SpreadExercise(i: Int) extends Exercise(i) {
@@ -17,6 +22,16 @@ class SpreadExercise(i: Int) extends Exercise(i) {
 
   @JsonProperty(required = true)
   var templateFilename: String = _
+
+  @JsonIgnore
+  override def renderRest(fileResults: List[Try[Path]]): Html = new Html(
+    s"""<td>$sampleFilename</td>
+       |<td>$templateFilename</td>""".stripMargin)
+
+
+  //  @JsonIgnore
+  //  override def renderEditRest(isCreation: Boolean): Html = views.html.editXmlExRest(this, isCreation)
+
 }
 
 object SpreadExercise {
@@ -43,6 +58,13 @@ object SpreadExerciseReader
     //      }
     //    })
   }
+
+
+  override def checkFiles(exercise: SpreadExercise): List[scala.util.Try[java.nio.file.Path]] =
+    for {file <- List(exercise.sampleFilename, exercise.templateFilename)
+         ending <- List(".xsls", "ods")
+         res = checkOrCreateSampleFile(exercise, SpreadToolObject, file + "." + ending)
+    } yield res
 
   override def updateExercise(exercise: SpreadExercise, exerciseNode: JsonNode) {
     exercise.sampleFilename = exerciseNode.get(StringConsts.SAMPLE_FILENAME).asText

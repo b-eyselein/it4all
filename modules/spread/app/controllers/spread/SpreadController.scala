@@ -5,47 +5,48 @@ import java.nio.file.{Files, Path, Paths, StandardCopyOption}
 import javax.inject.Inject
 
 import com.google.common.io.{Files => GFiles}
-import controllers.core.{AExerciseAdminController, IdExController}
+import controllers.core.{AExerciseAdminController, IdPartExController}
 import controllers.spread.SpreadController._
 import model._
 import model.result.{CompleteResult, EvaluationResult}
 import model.user.User
 import play.data.{DynamicForm, FormFactory}
 import play.mvc.Http.MultipartFormData
-import play.mvc.{Controller, Result, Results}
+import play.mvc.Results._
+import play.mvc.{Controller, Result}
 import play.twirl.api.Html
 
 import scala.util.{Failure, Success, Try}
 
-class SpreadAdmin @Inject()(f: FormFactory)
-  extends AExerciseAdminController[SpreadExercise](f, SpreadToolObject, SpreadExercise.finder, SpreadExerciseReader)
+class SpreadAdmin @Inject()(f: FormFactory) extends AExerciseAdminController[SpreadExercise](f, SpreadToolObject, SpreadExercise.finder, SpreadExerciseReader)
 
-class SpreadController @Inject()(f: FormFactory)
-  extends IdExController[SpreadExercise, EvaluationResult](f, SpreadExercise.finder, SpreadToolObject) {
+class SpreadController @Inject()(f: FormFactory) extends IdPartExController[SpreadExercise, EvaluationResult](f, SpreadExercise.finder, SpreadToolObject) {
 
-  def download(id: Int, extension: String): Result = Option(SpreadExercise.finder.byId(id)) match {
-    case None => Results.badRequest("This exercise does not exist!")
+  def download(id: Int, fileExtension: String): Result = Option(SpreadExercise.finder.byId(id)) match {
+    case None => badRequest("This exercise does not exist!")
     case Some(exercise) =>
-      val fileToDownload = toolObject.getSolFileForExercise(getUser.name, exercise, exercise.templateFilename + CORRECTION_ADD_STRING, extension)
+      val fileToDownload = toolObject.getSolFileForExercise(getUser.name, exercise, exercise.templateFilename + CORRECTION_ADD_STRING, fileExtension)
 
-      if (fileToDownload.toFile.exists) Results.ok(fileToDownload.toFile)
-      else Results.redirect(routes.SpreadController.index(0))
+      if (fileToDownload.toFile.exists) ok(fileToDownload.toFile)
+      else redirect(routes.SpreadController.index(0))
   }
 
-  def downloadTemplate(id: Int, fileType: String): Result = Option(SpreadExercise.finder.byId(id)) match {
-    case None => Results.badRequest("This exercise does not exist!")
+
+  override def exercise(id: Int, fileExtension: String): Result = Option(SpreadExercise.finder.byId(id)) match {
+    case None => badRequest("This exercise does not exist!")
     case Some(exercise) =>
-      val filePath = Paths.get(toolObject.sampleDir.toString, exercise.templateFilename + "." + fileType)
+      val filePath = Paths.get(toolObject.sampleDir.toString, exercise.templateFilename + "." + fileExtension)
 
-      if (filePath.toFile.exists) Results.ok(filePath.toFile)
-      else Results.badRequest("This file does not exist!")
+      println(filePath.toAbsolutePath)
 
+      if (filePath.toFile.exists) ok(filePath.toFile)
+      else badRequest("This file does not exist!")
   }
 
   def upload(id: Int): Result = {
     val data: MultipartFormData[File] = Controller.request.body.asMultipartFormData()
     Option(data.getFile(BODY_SOL_FILE_NAME)) match {
-      case None => Results.internalServerError(views.html.spreadcorrectionerror.render(getUser, "Datei konnte nicht hochgeladen werden!"))
+      case None => internalServerError(views.html.spreadcorrectionerror.render(getUser, "Datei konnte nicht hochgeladen werden!"))
       case Some(uploadedFile) =>
 
         val user = getUser
@@ -58,7 +59,7 @@ class SpreadController @Inject()(f: FormFactory)
 
         // Save solution
         saveSolutionForUser(pathToUploadedFile, targetFilePath) match {
-          case Failure(e) => Results.internalServerError(views.html.spreadcorrectionerror.render(user, "Die Datei konnte nicht gespeichert werden!"))
+          case Failure(e) => internalServerError(views.html.spreadcorrectionerror.render(user, "Die Datei konnte nicht gespeichert werden!"))
           case Success(_) =>
             // Get paths to sample document
             val sampleDocumentPath = Paths.get(toolObject.sampleDir.toString, exercise.sampleFilename + "." + fileExtension)
@@ -67,24 +68,24 @@ class SpreadController @Inject()(f: FormFactory)
                 val result: SpreadSheetCorrectionResult = correctSpread(sampleDocumentPath, targetFilePath, conditionalFormating = false, charts = false)
 
                 if (result.success)
-                  Results.ok(views.html.excelcorrect.render(user, result, exercise.getId, fileExtension))
+                  ok(views.html.excelcorrect.render(user, result, exercise.getId, fileExtension))
                 else
-                  Results.internalServerError(views.html.spreadcorrectionerror.render(user, result.notices.head))
+                  internalServerError(views.html.spreadcorrectionerror.render(user, result.notices.head))
               } catch {
-                case e: CorrectionException => Results.internalServerError(views.html.spreadcorrectionerror.render(user, e.getMessage))
+                case e: CorrectionException => internalServerError(views.html.spreadcorrectionerror.render(user, e.getMessage))
               }
             } else {
-              Results.internalServerError(views.html.spreadcorrectionerror.render(user, "Die Musterdatei konnte nicht gefunden werden!"))
+              internalServerError(views.html.spreadcorrectionerror.render(user, "Die Musterdatei konnte nicht gefunden werden!"))
             }
         }
     }
   }
 
+  override def index(page: Int): Result = super.index(page)
+
   override protected def correctEx(form: DynamicForm, exercise: SpreadExercise, user: User): Try[CompleteResult[EvaluationResult]] = ??? // FIXME: implement???
 
   override protected def renderExercise(user: User, exercise: SpreadExercise): Html = views.html.spreadExercise.render(user, exercise)
-
-  override protected def renderExesListRest: Html = ??? // FIXME: implement...
 
   override protected def renderResult(correctionResult: CompleteResult[EvaluationResult]): Html = ??? // FIXME: implement...
 

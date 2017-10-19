@@ -1,7 +1,7 @@
 function extractParameters() {
   const inputs = document.getElementsByTagName('input');
-  var parameters = 'count=' + inputs.length;
-  for (var i = 0; i < inputs.length; i++) {
+  let parameters = 'count=' + inputs.length;
+  for (let i = 0; i < inputs.length; i++) {
     parameters += '&inp' + i + '=' + inputs[i].value;
   }
   return parameters;
@@ -9,7 +9,7 @@ function extractParameters() {
 
 function processCorrection(correction) {
   const results = JSON.parse(correction);
-  for (var i = 0; i < results.length; i++) {
+  for (let i = 0; i < results.length; i++) {
     const correct = results[i] === 'COMPLETE';
 
     const inp = document.getElementById('inp' + (i + 1));

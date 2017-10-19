@@ -51,7 +51,7 @@ object WebExerciseReader extends ExerciseReader[WebExercise]("web", WebExercise.
 
     task.conditions = Option(jsTaskNode.get("conditions")) match {
       case None => Collections.emptyList()
-      case Some(conditionsNode) => ExerciseReader.readArray(conditionsNode, readCondition)
+      case Some(conditionsNode) => ExerciseReader.readArray(conditionsNode, readCondition).asJava
     }
 
     task
@@ -60,7 +60,7 @@ object WebExerciseReader extends ExerciseReader[WebExercise]("web", WebExercise.
   private def readAttribute(attrNode: JsonNode): Attribute = new Attribute(attrNode.get("key").asText, attrNode.get("value").asText)
 
   private def readAttributes(attributesNode: JsonNode): String = {
-    ExerciseReader.readArray(attributesNode, readAttribute).asScala.map(_.forDB).mkString(HtmlTask.ATTRS_JOIN_STR)
+    ExerciseReader.readArray(attributesNode, readAttribute).map(_.forDB).mkString(HtmlTask.ATTRS_JOIN_STR)
   }
 
   override def initRemainingExFromForm(exercise: WebExercise, form: DynamicForm) {
@@ -78,10 +78,10 @@ object WebExerciseReader extends ExerciseReader[WebExercise]("web", WebExercise.
 
   override def updateExercise(exercise: WebExercise, exerciseNode: JsonNode) {
     exercise.htmlText = JsonReader.readAndJoinTextArray(exerciseNode.get(HTML_TEXT_NAME))
-    exercise.htmlTasks = ExerciseReader.readArray(exerciseNode.get("htmlTasks"), readHtmlTask)
+    exercise.htmlTasks = ExerciseReader.readArray(exerciseNode.get("htmlTasks"), readHtmlTask).asJava
 
     exercise.jsText = JsonReader.readAndJoinTextArray(exerciseNode.get(JS_TEXT_NAME))
-    exercise.jsTasks = ExerciseReader.readArray(exerciseNode.get("jsTasks"), readJsTask)
+    exercise.jsTasks = ExerciseReader.readArray(exerciseNode.get("jsTasks"), readJsTask).asJava
   }
 
 }

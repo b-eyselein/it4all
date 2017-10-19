@@ -1,13 +1,13 @@
 function updateAfterDelete(result) {
-  var tr = $('#tr1_' + result.id);
+  let tr = $('#tr1_' + result.id);
   tr.addClass('danger');
   tr.attr('title', 'Diese Aufgabe wurde erfolgreich gelöscht.');
 
-  var delButton = $('#del_' + result.id);
+  let delButton = $('#del_' + result.id);
   delButton.prop('disabled', true);
   delButton.attr('title', 'Diese Aufgabe wurde bereits gelöscht!');
 
-  var editButton = $('#edit_' + result.id);
+  let editButton = $('#edit_' + result.id);
   editButton.addClass('disabled');
   editButton.removeAttr('href');
   editButton.attr('title', 'Diese Aufgabe wurde bereits gelöscht!');
@@ -22,7 +22,7 @@ function deleteExercise(theUrl) {
 }
 
 function updateStateChangeButton(id) {
-  var select = $('#state_' + id);
+  let select = $('#state_' + id);
   $('#scb_' + id).prop('disabled', select.val() === select.data('val'));
 }
 

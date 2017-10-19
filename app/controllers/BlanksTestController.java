@@ -7,12 +7,13 @@ import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
 import play.mvc.Result;
+import play.mvc.Security;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlanksTestController extends BaseController {
+@Security.Authenticated(model.Secured.class) public class BlanksTestController extends BaseController {
 
   private static final BlanksExercise exercise = new BlanksExercise(1);
 

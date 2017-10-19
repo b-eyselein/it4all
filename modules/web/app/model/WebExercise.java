@@ -60,7 +60,8 @@ import play.twirl.api.Html;
     return Arrays.asList(new WebTag("Html", !htmlTasks.isEmpty()), new WebTag("Js", !jsTasks.isEmpty()));
   }
 
-  @Override @JsonIgnore public Html renderRest() {
+  @Override @JsonIgnore public Html renderRest(
+      scala.collection.immutable.List<scala.util.Try<java.nio.file.Path>> fileResults) {
     return views.html.webAdmin.webExTableRest.render(this);
   }
 
