@@ -8,9 +8,11 @@ import model.JsonReadable
 import scala.collection.JavaConverters.asScalaIteratorConverter
 import scala.util.Try
 
-sealed abstract class AbstractReadingResult(val json: String, val jsonSchema: String)
 
 case class SingleReadingResult[R <: JsonReadable](read: R, var fileResults: List[Try[Path]] = List.empty)
+
+
+sealed abstract class AbstractReadingResult(/*val json: String, val jsonSchema: String*/)
 
 case class ReadingResult[R <: JsonReadable](j: String, js: String, read: List[SingleReadingResult[R]]) extends AbstractReadingResult(j, js)
 

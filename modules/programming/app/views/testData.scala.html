@@ -10,7 +10,7 @@
   
   <div class="panel panel-success">
     <div class="panel-heading">Funktionsbeschreibung</div>
-    <div class="panel-body">@Html(exercise.getText)</div>
+    <div class="panel-body">@Html(exercise.text)</div>
   </div>
   
   <div class="alert alert-info alert-dismissable">
@@ -20,15 +20,15 @@
     Au&szlig;erdem werden Sie automatisch beim Testen ihrer L&ouml;sung verwendet.
   </div>
   
-  <form class="form" action="@programming.routes.ProgController.validateTestData(exercise.getId)" method="post">
-    <input hidden name="inputCount" id="inputCount" value="@exercise.getInputCount()">
+  <form class="form" action="@programming.routes.ProgController.validateTestData(exercise.id)" method="post">
+    <input hidden name="inputCount" id="inputCount" value="@exercise.inputCount">
     <input hidden name="testCount" id="testCount"
      value="@Math.max(oldData.size, controllers.programming.ProgController.STD_TEST_DATA_COUNT)">
     <table class="table" id="testDataTable">
       <thead>
         <tr>
           <th>ID</th>
-        @for(i <- 0 until exercise.getInputCount()) {
+        @for(i <- 0 until exercise.inputCount) {
           <th>Input @{i + 1}</th>
         }
           <th>Output</th>
@@ -37,11 +37,11 @@
       
       <tbody id="testDataRows">
       @for(old <- oldData) {
-        <tr id="tr_@old.getId()">
+        <tr id="tr_@old.getId">
           <td>@old.key.testId</td>
-        @for(inputCount <- 0 until exercise.getInputCount()) {
+        @for(inputCount <- 0 until exercise.inputCount) {
           <td>
-            <input class="form-control" value="@old.getInput().get(inputCount)" name="inp_@{inputCount}_@old.key.testId" 
+            <input class="form-control" value="@old.getInput.get(inputCount)" name="inp_@{inputCount}_@old.key.testId"
             id="inp_@{inputCount}_@old.key.testId" placeholder="Test @old.key.testId, Input @inputCount">
           </td>
         }
@@ -54,7 +54,7 @@
       @for(testCount <- oldData.size until controllers.programming.ProgController.STD_TEST_DATA_COUNT) {
         <tr id="tr_@testCount">
           <td>@testCount</td>
-        @for(inputCount <- 0 until exercise.getInputCount()) {
+        @for(inputCount <- 0 until exercise.inputCount) {
           <td>
             <input class="form-control" name="inp_@{inputCount}_@testCount" id="inp_@{inputCount}_@testCount"
            placeholder="Test @testCount, Input @inputCount">
@@ -76,7 +76,7 @@
     <div class="btn-group btn-group-justified">
       <div class="btn-group">
         <button type="button" class="btn btn-primary"
-        onclick="validateTestData('@programming.routes.ProgController.validateTestDataLive(exercise.getId)')">
+        onclick="validateTestData('@programming.routes.ProgController.validateTestDataLive(exercise.id)')">
           Testdaten validieren
         </button>
       </div>

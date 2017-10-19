@@ -8,7 +8,7 @@
 
 <div class="container">
   <div class="page-header">
-    <h1>Quiz &quot;@quiz.getTitle&quot;</h1>
+    <h1>Quiz &quot;@quiz.title&quot;</h1>
   </div>
   
   <ul class="pagination pagination-sm">
@@ -21,11 +21,11 @@
   
   <form class="form-horizontal" method="post" action="@questions.routes.QuestionController.quizCorrection(quiz.id, question.id)">
     <div id="answerDiv">
-    @for(ans <- question.getAnswersForTemplate()) {
-      <div class="@question.questionType.getDivClass()">
+    @for(ans <- question.answersForTemplate()) {
+      <div class="@question.questionType.divClass()">
         <label for="@ans.key.id">
         
-          <input type="@question.questionType.getInputType()" name="@if(isMultiple) {@ans.key.id} else {ans}" id="@ans.key.id" @if(!isMultiple) {required}
+          <input type="@question.questionType.inputType()" name="@if(isMultiple) {@ans.key.id} else {ans}" id="@ans.key.id" @if(!isMultiple) {required}
           value="@ans.key.id">@ans.text</input>
         </label>
       </div>

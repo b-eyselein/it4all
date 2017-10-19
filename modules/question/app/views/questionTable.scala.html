@@ -14,16 +14,16 @@
     
     @for(question <- questionList) {
       <tr>
-        <td>@question.getId</td>
-        <td><a href="@questions.routes.QuestionController.exercise(question.getId)">@question.getTitle</a></td>
-      @{question.getQuestionType match {
+        <td>@question.id</td>
+        <td><a href="@questions.routes.QuestionController.exercise(question.id)">@question.title</a></td>
+      @{question.questionType match {
         case model.question.Question.QType.FREETEXT => <td>Freitextfrage</td>
         case model.question.Question.QType.CHOICE => <td>Multiple Choice-Frage</td>
         case model.question.Question.QType.FILLOUT => <td></td>
 		case _ => <td>FEHLER!</td>
       	}
       }
-        <td>@question.getMaxPoints</td>
+        <td>@question.maxPoints</td>
         @if(question.userHasAnswered(user.name)) {
         <td><span class="glyphicon glyphicon-ok"></span></td>
         } else {

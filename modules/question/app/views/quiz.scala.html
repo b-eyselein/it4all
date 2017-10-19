@@ -3,7 +3,7 @@
 @main("Auswahlfragen", user) {
 <div class="container">
   <div class="page-header">
-    <h1>Quiz &quot;@quiz.getTitle&quot;</h1>
+    <h1>Quiz &quot;@quiz.title&quot;</h1>
   </div>
 
   <section>
@@ -11,7 +11,7 @@
   
     <div class="row">
       <div class="col-xs-6 text-right">Thema: </div>
-      <div class="col-xs-6">@quiz.getTheme</div>
+      <div class="col-xs-6">@quiz.theme</div>
     </div>
     <div class="row">
       <div class="col-xs-6 text-right">Anzahl Fragen: </div>
@@ -19,7 +19,7 @@
     </div>
     <div class="row">
       <div class="col-xs-6 text-right">Maximal erreichbare Punktzahl: </div>
-      <div class="col-xs-6">@@quiz.getMaxPoints() Punkte</div>
+      <div class="col-xs-6">@@quiz.maxPoints() Punkte</div>
     </div>
   </section>
   
@@ -32,7 +32,7 @@
   @@if(quiz.questions.size() > 0) {
   <hr>
   
-  <a class="btn btn-primary btn-block" href="@questions.routes.QuizController.quizStart(quiz.getId)">Quiz starten...</a>
+  <a class="btn btn-primary btn-block" href="@questions.routes.QuizController.quizStart(quiz.id)">Quiz starten...</a>
   }
   
 </div>

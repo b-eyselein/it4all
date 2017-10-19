@@ -20,9 +20,9 @@
     <tbody>
     @for(ex <- exercises) {
       <tr>
-        <td>@ex.getId</td>
-        <td>@ex.getTitle</td>
-        <td>@ex.getText</td>
+        <td>@ex.id</td>
+        <td>@ex.title</td>
+        <td>@ex.text</td>
 @*        <td>@ex.exerciseType</td>
         <td>@if(ex.fixedStart.isEmpty()) {--} else {<pre>@ex.fixedStart</pre>}</td>
         <td>@ex.referenceFileName</td>

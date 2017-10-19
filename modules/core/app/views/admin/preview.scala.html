@@ -1,12 +1,56 @@
-@(user: model.user.User, exercises: Html)
+@import model.user.User
+@import model.tools.ExToolObject
+@import scala.collection.immutable.List
+@import model.exercisereading.SingleReadingResult
+@import model.exercise.Exercise
 
-@main("Erstellte Aufgaben", user) {
-<div class="container">
-  <div class="page-header">
-    <h1>Erstellte Aufgaben:</h1>
-  </div>
-  
-  @exercises
-  
-</div>
+@(user: User, toolObject: ExToolObject, creationResults: List[SingleReadingResult[_ <: Exercise]])
+
+@scripts = {
+    <script src="@routes.Assets.versioned("javascripts/admin.js")"></script>
+}
+
+@main("Erstellte Aufgaben", user, scripts) {
+    <div class="container">
+        <div class="page-header">
+            <h1>Erstellte Aufgaben:</h1>
+        </div>
+
+        <a href="@toolObject.adminIndexRoute" class="btn btn-primary btn-block">Zur&uuml;ck zur Administratorseite</a>
+
+        <hr>
+
+        <div id="messages"></div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Status</th>
+                    <th>Titel</th>
+                    <th>Autor</th>
+                    <th>Text</th>
+                    @for(otherHeader <- toolObject.restHeaders) {
+                        <th>@otherHeader</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+            @for(singleResult <- singleResults;
+            (exercise, fileResults) = (singleResult.read, singleResult.fileResults)) {
+                <tr id="tr1_@exercise.id">
+                    <td>@exercise.id</td>
+                    <td>@exercise.state</td>
+                    <td>@exercise.title</td>
+                    <td>@exercise.author</td>
+
+                    @helperTemplates.stringLen(exercise.text, 40)
+
+                    @exercise.renderRest(fileResults)
+                </tr>
+            }
+            </tbody>
+        </table>
+
+    </div>
 }

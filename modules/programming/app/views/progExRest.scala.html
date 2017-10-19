@@ -1,16 +1,15 @@
 @(exercise: model.ProgExercise)
 
-@stdLanguage = @{model.AvailableLanguages.getStdLang()}
+@stdLanguage = @{model.AvailableLanguages.stdLang}
 
 <script src="@routes.Assets.versioned("javascripts/programming.js")"></script>
 
 <script>
-function changeProgLanguage(select, theUrl) {
-  var language = select.value;
+function changeProgLanguage(theUrl) {
   $.ajax({
     type: 'GET',
     url: theUrl,
-    data: "language=" + language,
+    data: "language=" + $('#langSelect').val(),
     async: true,
     success: function(response) {
       document.getElementById("language").value = language;
@@ -22,9 +21,9 @@ function changeProgLanguage(select, theUrl) {
 
 <div class="input-group">
   <span class="input-group-addon">Sprache</span>
-  <select class="form-control" onchange="changeProgLanguage(this, '@programming.routes.ProgController.getDeclaration()');">
-  @for(language <- model.AvailableLanguages.values()) {
-  	<option value="@language" @if(language == stdLanguage) {selected}>@language.getName()</option>
+  <select class="form-control" id="langSelect" onchange="changeProgLanguage('@programming.routes.ProgController.getDeclaration()');">
+  @for(language <- model.AvailableLanguages.values) {
+  	<option value="@language" @if(language == stdLanguage) {selected}>@language.name</option>
   }
   </select>
 </div>

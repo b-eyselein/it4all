@@ -25,7 +25,7 @@ public enum AvailableLanguages {
     declaration = theDeclaration;
   }
   
-  public static AvailableLanguages getStdLang() {
+  public static AvailableLanguages stdLang() {
     return PYTHON_3;
   }
   

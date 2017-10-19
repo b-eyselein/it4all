@@ -15,7 +15,7 @@ object AnswerMatcher extends Matcher[Answer, Match[Answer]](
 
 }
 
-class QuestionResult(selectedAnswers: List[Answer], question: Question) extends EvaluationResult(SuccessType.NONE) {
+case class QuestionResult(selectedAnswers: List[Answer], question: Question) extends EvaluationResult(SuccessType.NONE) {
 
   val (correct, missing, wrong) = analyze(selectedAnswers, question.getCorrectAnswers.asScala.toList)
 

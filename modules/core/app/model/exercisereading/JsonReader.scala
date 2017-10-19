@@ -12,6 +12,7 @@ import model.StringConsts.{EX_FILE_NAME, ID_NAME, KEY_NAME, VALUE_NAME}
 import play.libs.Json
 
 import scala.collection.JavaConverters._
+import scala.io.Source
 import scala.util.{Failure, Success, Try}
 
 abstract class JsonReader[R <: JsonReadable](val exerciseType: String, val finder: Finder[Integer, R], classFor: Class[_]) {
@@ -35,23 +36,21 @@ abstract class JsonReader[R <: JsonReadable](val exerciseType: String, val finde
 
   def save(toSave: R): Unit = toSave.saveInDB()
 
-  def readFromStandardFile: AbstractReadingResult = readFromJsonFile(stdFile)
-
   def instantiate(id: Int): R
 
-  def readFromJsonFile(path: Path = stdFile): AbstractReadingResult = {
-    val jsonAsString = new String(Files.readAllBytes(path)).replace("\t", "  ")
-    val jsonSchemaAsString = Json.prettyPrint(jsonSchema).replace("\t", "  ")
+  def readFromJsonFile(path: Path = stdFile): Try[List[AbstractReadingResult]] =
+    Try(new String(Files.readAllBytes(path)).replace("\t", "  ")).map { jsonAsString =>
+      val jsonSchemaAsString = Json.prettyPrint(jsonSchema).replace("\t", "  ")
 
-    val json = Json.parse(jsonAsString)
+      val json = Json.parse(jsonAsString)
 
-    JsonReader.validateJson(json, jsonSchema) match {
-      case Failure(e) => ReadingFailure(jsonAsString, jsonSchemaAsString, e)
-      case Success(report) =>
-        if (report.isSuccess) ReadingResult(jsonAsString, jsonSchemaAsString, json.iterator.asScala.map(read).toList)
-        else ReadingError(jsonAsString, jsonSchemaAsString, report)
+      JsonReader.validateJson(json, jsonSchema) match {
+        case Failure(e) => ReadingFailure(jsonAsString, jsonSchemaAsString, e)
+        case Success(report) =>
+          if (report.isSuccess) ReadingResult(jsonAsString, jsonSchemaAsString, json.iterator.asScala.map(read).toList)
+          else ReadingError(jsonAsString, jsonSchemaAsString, report)
+      }
     }
-  }
 
   def checkFiles(r: R): List[Try[Path]] = List.empty
 

@@ -3,10 +3,10 @@
 @for(res <- results) {
 <div class="col-md-6">
   <div class="alert alert-@res.getBSClass">
-    <p>Test von <code>@res.getExecutionResult.getEvaluated</code> war @if(!res.isSuccessful) {nicht } erfolgreich.<p>
+    <p>Test von <code>@res.executionResult.evaluated</code> war @if(!res.isSuccessful) {nicht } erfolgreich.<p>
     @if(!res.isSuccessful) {
-    <p>Erwartet: "@res.getAwaitedResult"</p>
-    <p>Bekommen: "@res.getRealResult"</p>
+    <p>Erwartet: "@res.awaitedResult"</p>
+    <p>Bekommen: "@res.realResult"</p>
     }
   </div>
 </div>

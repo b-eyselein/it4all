@@ -3,14 +3,14 @@
 @main("SQL: Administrator", user) {
 <div class="container">
   <div class="page-header">
-    <h1>Administrator SQL: &quot;@scenario.getTitle&quot;</h1>
+    <h1>Administrator SQL: &quot;@scenario.title&quot;</h1>
   </div>
   
     <section id="statistics">
     <h2>Statistiken</h2>
     <ul>
       <li>
-        Dieses Szenario hat insgesamt @scenario.getExercises.size Aufgaben. Darunter
+        Dieses Szenario hat insgesamt @scenario.exercises.size Aufgaben. Darunter
         <ul>
         @for(typ <- model.exercise.SqlExerciseType.values) {
           <li>@scenario.getExercisesByType(typ).size Aufgaben des Type &quot;@typ&quot;</li>

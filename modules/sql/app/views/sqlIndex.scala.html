@@ -16,20 +16,20 @@
         <tr>
           <th>ID</th>
           <th>Name</th>
-          @for(exType <- exTypes) {<th/>}
+          @for(exType <- exTypes) {<th></th>}
         </tr>
       </thead>
       <tbody>
       @for(scenario <- scenarioes) {
         <tr>
-          <td>@scenario.getId</td>
-          <td>@scenario.getTitle</td>
+          <td>@scenario.id</td>
+          <td>@scenario.title</td>
           @for(exType <- exTypes) {
           <td>
           @scenario.getExercisesByType(exType).size() match {
           	case 0 => {<button class="btn btn-default btn-block" disabled
-             title="Zu diesem Typ gibt es leider noch keine Aufgaben">0 Aufgaben</a>}
-      	    case _ => {<a href="@sql.routes.SqlController.filteredScenario(scenario.getId, exType.toString())"
+             title="Zu diesem Typ gibt es leider noch keine Aufgaben">0 Aufgaben</button>}
+      	    case _ => {<a href="@sql.routes.SqlController.filteredScenario(scenario.id, exType.toString)"
              class="btn btn-default btn-block">@exType</a>}
           }
           </td>

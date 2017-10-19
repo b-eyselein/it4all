@@ -17,11 +17,11 @@ public class Quiz extends ExerciseCollection<Question> {
 
   public static final Finder<Integer, Quiz> finder = new Finder<>(Quiz.class);
 
-  private String theme;
+  public String theme;
 
   @JsonIgnore
   @ManyToMany(mappedBy = "quizzes", cascade = CascadeType.ALL)
-  private List<Question> questions;
+  public List<Question> questions;
 
   public Quiz(int id) {
     super(id);

@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
     super(id);
   }
 
-  @JsonIgnore public List<Answer> getAnswersForTemplate() {
+  @JsonIgnore public List<Answer> answersForTemplate() {
     List<Answer> shuffeledAnswers = new ArrayList<>(answers);
     Collections.shuffle(shuffeledAnswers);
     return shuffeledAnswers;

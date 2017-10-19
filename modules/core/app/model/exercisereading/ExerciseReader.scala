@@ -19,7 +19,7 @@ abstract class ExerciseReader[E <: Exercise](e: String, f: Finder[Integer, E], c
 
   def getOrInstantiateExercise(id: Int): E = Optional.ofNullable(finder.byId(id)).orElse(instantiate(id))
 
-  def initFromForm(id: Int, form: DynamicForm): E = {
+  def initFromForm(id: Int, form: DynamicForm): SingleReadingResult[E] = {
     val exercise = getOrInstantiateExercise(id)
 
     exercise.title = form.get(TITLE_NAME)
@@ -28,7 +28,7 @@ abstract class ExerciseReader[E <: Exercise](e: String, f: Finder[Integer, E], c
 
     initRemainingExFromForm(exercise, form)
 
-    exercise
+    SingleReadingResult(exercise)
   }
 
   def initRemainingExFromForm(exercise: E, form: DynamicForm)

@@ -26,17 +26,17 @@
 <hr>
 
 <!-- Exercises -->
-@for((exercise, index) <- scenario.getExercises.zipWithIndex) {
+@for((exercise, index) <- scenario.exercises.zipWithIndex) {
 @if(index % 2 == 0) {<div class="row">}
   <div class="col-sm-6">
     <div class="panel panel-default">
-      <div class="panel-heading">@{exercise.getId}. @exercise.text</div>
+      <div class="panel-heading">@{exercise.id}. @exercise.text</div>
       <div class="panel-body">
         <div class="row">
           <div class="col-sm-2"><b>Typ:</b></div>
           <div class="col-sm-2">@exercise.exerciseType</div>
           <div class="col-sm-2"><b>Autor:</b></div>
-          <div class="col-sm-2">@exercise.getAuthor</div>
+          <div class="col-sm-2">@exercise.author</div>
           <div class="col-sm-2"><b>Tags:</b></div>
           <div class="col-sm-2">@exercise.tags</div>
         </div>
