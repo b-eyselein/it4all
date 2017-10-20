@@ -1,24 +1,22 @@
-package controllers.core
+package controllers.excontrollers
 
+import controllers.core.BaseAdminController
 import io.ebean.Finder
 import model.exercise.{Exercise, ExerciseCollection}
 import model.exercisereading._
 import model.tools.IdExToolObject
 import model.user.User
-import play.data.FormFactory
-import play.libs.Json
+import play.api.mvc.ControllerComponents
+import play.api.libs.json.Json
 import play.mvc.Security.Authenticated
-import play.mvc.{Result, Results}
 import play.twirl.api.Html
-
-import play.mvc.Results._
 
 import scala.collection.JavaConverters._
 
 @Authenticated(classOf[model.AdminSecured])
 abstract class AExerciseCollectionAdminController[E <: Exercise, C <: ExerciseCollection[E]]
-(f: FormFactory, t: IdExToolObject, fi: Finder[Integer, C], val collectionReader: ExerciseCollectionReader[E, C])
-  extends BaseAdminController[C](f, t, fi, collectionReader) {
+(cc: ControllerComponents, t: IdExToolObject, fi: Finder[Integer, C], val collectionReader: ExerciseCollectionReader[E, C])
+  extends BaseAdminController[C](cc, t, fi, collectionReader) {
 
   //  public AExerciseCollectionAdminController(FormFactory theFactory, IdExToolObject theRoutes,
   //      Finder<Integer, E> theExerciseFinder, Finder<Integer, C> theCollectionFinder,
@@ -27,72 +25,81 @@ abstract class AExerciseCollectionAdminController[E <: Exercise, C <: ExerciseCo
   //        null /* theExerciseReader.getDelegateReader() */)
   //  }
 
-  def deleteExerciseCollection(collectionId: Int): Result = if (finder.byId(collectionId).delete())
-    ok("Aufgabe konnte geloescht werden!")
-  else
-    badRequest("Konnte nicht geloescht werden!")
+  def deleteExerciseCollection(collectionId: Int) = Action { implicit request =>
+    if (finder.byId(collectionId).delete())
+      Ok("Aufgabe konnte geloescht werden!")
+    else
+      BadRequest("Konnte nicht geloescht werden!")
+  }
 
 
-  def editExercise(exerciseId: Int): Result = ???
+  def editExercise(exerciseId: Int) = Action { implicit request => ??? }
 
-  def deleteExercise(exerciseId: Int): Result = ???
+  def deleteExercise(exerciseId: Int) = Action { implicit request => ??? }
 
-  def changeExState(exerciseId: Int): Result = ???
+  def changeExState(exerciseId: Int) = Action { implicit request => ??? }
 
-  def exerciseCollections: Result = ok(renderExerciseCollections(getUser, finder.all.asScala.toList))
+  def exerciseCollections = Action { implicit request =>
+    Ok(renderExerciseCollections(getUser, finder.all.asScala.toList))
+  }
 
-  def exercises: Result = ???
+  def exercises = Action { implicit request => ??? }
 
-  def exportExercises: Result =
-    ok(views.html.admin.export.render(getUser, Json.prettyPrint(Json.toJson(finder.all))))
+  def exportExercises = Action { implicit request =>
+    Ok(views.html.admin.export.render(getUser, Json.prettyPrint(null /*Json.toJson(finder.all)*/)))
+  }
 
-  def importExercises: Result = collectionReader.readFromJsonFile() match {
-    case error: ReadingError =>
-      badRequest(views.html.jsonReadingError.render(getUser, error))
+  def importExercises = Action { implicit request =>
+    collectionReader.readFromJsonFile() match {
+      case error: ReadingError =>
+        BadRequest(views.html.jsonReadingError.render(getUser, error))
 
-    case _: ReadingFailure => badRequest("There has been an error...")
+      case _: ReadingFailure => BadRequest("There has been an error...")
 
-    case result: ReadingResult[C] =>
-      result.read.foreach(read => {
-        collectionReader.save(read.read)
-        read.fileResults = collectionReader.checkFiles(read.read)
-      })
-      ok(views.html.admin.preview.render(getUser, toolObject, List.empty /*result.read*/))
+      case result: ReadingResult[C] =>
+        result.read.foreach(read => {
+          collectionReader.save(read.read)
+          read.fileResults = collectionReader.checkFiles(read.read)
+        })
+        Ok(views.html.admin.preview.render(getUser, toolObject, List.empty /*result.read*/))
+    }
   }
 
   //  def importExercises: Result = processReadingResult(collectionReader.readFromJsonFile(), renderCollectionCreated)
 
 
-  def uploadFile: Result = super.uploadFile(_ => new Html(""))
+  def uploadFile = super.uploadFile(_ => new Html(""))
 
-  def editExerciseForm(id: Int): Result = Option(finder.byId(id)) match {
-    case None => badRequest("")
-    case Some(exercise) => ok(renderExEditForm(getUser, exercise, isCreation = false))
+  def editExerciseForm(id: Int) = Action { implicit request =>
+    Option(finder.byId(id)) match {
+      case None => BadRequest("")
+      case Some(exercise) => Ok(renderExEditForm(getUser, exercise, isCreation = false))
+    }
   }
 
-  def newExerciseCollection(collectionId: Int): Result = {
+  def newExerciseCollection(collectionId: Int) = Action { implicit request =>
     // final C exercise = exerciseCollectionReader.initFromForm(collectionId,
     // factory.form().bindFromRequest())
     // exerciseCollectionReader.saveExercise(exercise)
-    //  ok(views.html.admin.preview.render(BaseController.getUser,
+    //  Ok(views.html.admin.preview.render(BaseController.getUser,
     // renderCollectionCreated(Arrays.asList(exercise))))
-    ok("TODO!")
+    Ok("TODO!")
   }
 
-  def newExerciseCollectionForm: Result = {
+  def newExerciseCollectionForm = Action { implicit request =>
     val id = ExerciseReader.findMinimalNotUsedId(finder)
     val collection = finder.byId(id)
-    ok(renderExCollCreationForm(getUser, collection))
+    Ok(renderExCollCreationForm(getUser, collection))
   }
 
-  def newExerciseForm: Result = {
+  def newExerciseForm = Action { implicit request =>
     //    val id = ExerciseReader.findMinimalNotUsedId(finder)
     //
     //    val exercise = exerciseReader.getOrInstantiateExercise(id)
     //    exerciseReader.save(exercise)
     //
-    //    ok(renderExEditForm(BaseController.getUser, exercise, true))
-    ok("TODO!")
+    //    Ok(renderExEditForm(BaseController.getUser, exercise, true))
+    Ok("TODO!")
   }
 
   //  @Override
@@ -101,7 +108,7 @@ abstract class AExerciseCollectionAdminController[E <: Exercise, C <: ExerciseCo
   //    final FilePart<File> uploadedFile = body.getFile(StringConsts.BODY_FILE_NAME)
   //
   //    if(uploadedFile == null)
-  //       badRequest("Fehler!")
+  //       BadRequest("Fehler!")
   //
   //    final Path pathToUploadedFile = uploadedFile.getFile().toPath()
   //    final Path savingDir = Paths.get(BASE_DATA_PATH, StringConsts.ADMIN_FOLDER,
@@ -113,13 +120,13 @@ abstract class AExerciseCollectionAdminController[E <: Exercise, C <: ExerciseCo
   //    final AbstractReadingResult abstractResult = exerciseCollectionReader.readFromJsonFile(jsonTargetPath)
   //
   //    if(!(abstractResult instanceof ReadingResult<?>))
-  //       badRequest(views.html.jsonReadingError.render(BaseController.getUser, (ReadingError) abstractResult))
+  //       BadRequest(views.html.jsonReadingError.render(BaseController.getUser, (ReadingError) abstractResult))
   //
   //    @SuppressWarnings("unchecked")
   //    final ReadingResult<C> result = (ReadingResult<C>) abstractResult
   //
   //    result.read().forEach(exerciseCollectionReader::save)
-  //     ok(views.html.admin.preview.render(BaseController.getUser, renderCollectionCreated(result.read())))
+  //     Ok(views.html.admin.preview.render(BaseController.getUser, renderCollectionCreated(result.read())))
   //  }
 
   def renderCollectionCreated(collections: List[SingleReadingResult[C]]): Html

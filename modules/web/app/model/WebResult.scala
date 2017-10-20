@@ -5,7 +5,6 @@ import model.task.{Condition, WebTask}
 import org.openqa.selenium.WebElement
 import play.twirl.api.Html
 
-import scala.collection.JavaConverters.seqAsJavaListConverter
 import scala.util.{Failure, Success, Try}
 
 trait HtmlRenderable {
@@ -44,7 +43,7 @@ object ElementResult {
               textContentResult: Option[TextContentResult]): SuccessType = foundElement match {
     case None => SuccessType.NONE
     case Some(_) =>
-      if (!EvaluationResult.allResultsSuccessful(attributeResults.asJava))
+      if (!EvaluationResult.allResultsSuccessful(attributeResults))
         SuccessType.PARTIALLY
       else textContentResult match {
         case None => SuccessType.PARTIALLY
@@ -121,7 +120,7 @@ object TextAnalyzer {
 
 object JsWebResult {
   def analyze(preconds: List[ConditionResult], actionPerf: Boolean, postconds: List[ConditionResult]): SuccessType = {
-    if (EvaluationResult.allResultsSuccessful(preconds.asJava) && actionPerf && EvaluationResult.allResultsSuccessful(postconds.asJava))
+    if (EvaluationResult.allResultsSuccessful(preconds) && actionPerf && EvaluationResult.allResultsSuccessful(postconds))
       SuccessType.COMPLETE
     else SuccessType.NONE
   }

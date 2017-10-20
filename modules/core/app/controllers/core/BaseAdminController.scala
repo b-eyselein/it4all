@@ -1,51 +1,47 @@
 package controllers.core
 
-import java.io.File
 import java.nio.file.{Path, Paths}
 
 import io.ebean.Finder
 import model.exercisereading._
 import model.tools.ExToolObject
 import model.{JsonReadable, StringConsts}
-import play.data.FormFactory
-import play.libs.Json
-import play.mvc.Http.MultipartFormData
+import play.api.mvc.ControllerComponents
 import play.mvc.Security.Authenticated
-import play.mvc.{Controller, Result}
 import play.twirl.api.Html
-import play.mvc.Results._
-
-import scala.util.{Failure, Success}
 
 @Authenticated(classOf[model.AdminSecured])
 abstract class BaseAdminController[E <: JsonReadable]
-(f: FormFactory, val toolObject: ExToolObject, val finder: Finder[Integer, E], exerciseReader: JsonReader[E])
-  extends BaseController(f) {
+(cc: ControllerComponents, val toolObject: ExToolObject, val finder: Finder[Integer, E], exerciseReader: JsonReader[E])
+  extends BaseController(cc) {
 
   protected def statistics = new Html(s"<li>Es existieren insgesamt ${finder.query.findCount} Aufgaben</li>")
 
   protected val savingDir: Path = Paths.get(toolObject.rootDir, StringConsts.ADMIN_FOLDER, exerciseReader.exerciseType)
 
-  def adminIndex: Result = ok(views.html.admin.exerciseAdminMain.render(getUser, statistics, toolObject, new Html("")))
+  def adminIndex = Action { implicit request =>
+    Ok(views.html.admin.exerciseAdminMain.render(getUser, statistics, toolObject, new Html("")))
+  }
 
-  def getJSONSchemaFile: Result = ok(Json.prettyPrint(exerciseReader.jsonSchema))
+  def getJSONSchemaFile = Action { implicit request => Ok("" /*Json.prettyPrint(exerciseReader.jsonSchema)*/)
+  }
 
   //  protected def processReadingResult(abstractResult: AbstractReadingResult, render: List[SingleReadingResult[E]] => Html): Result =
   //    abstractResult match {
   //      case error: ReadingError =>
-  //        Results.badRequest(views.html.jsonReadingError.render(getUser, error))
+  //        BadRequest(views.html.jsonReadingError.render(getUser, error))
   //
-  //      case _: ReadingFailure => Results.badRequest("There has been an error...")
+  //      case _: ReadingFailure => BadRequest("There has been an error...")
   //
   //      case result: ReadingResult[E] =>
   //        result.read.foreach(read => {
   //          exerciseReader.save(read.read)
   //          read.fileResults = exerciseReader.checkFiles(read.read)
   //        })
-  //        Results.ok(views.html.admin.preview.render(getUser, toolObject, result.read))
+  //        Ok(views.html.admin.preview.render(getUser, toolObject, result.read))
   //    }
 
-  def uploadFile(render: List[SingleReadingResult[E]] => Html): Result = {
+  def uploadFile(render: List[SingleReadingResult[E]] => Html) = Action { implicit request =>
     //    val data: MultipartFormData[File] = Controller.request.body.asMultipartFormData()
     //    Option(data.getFile(StringConsts.BODY_FILE_NAME)) match {
     //      case None => Results.badRequest("Fehler!")
@@ -56,7 +52,7 @@ abstract class BaseAdminController[E <: JsonReadable]
     //          case Failure(error) => Results.badRequest("There has been an error uploading your file...")
     //        }
     //    }
-    ok("TODO!")
+    Ok("TODO!")
   }
 
 }

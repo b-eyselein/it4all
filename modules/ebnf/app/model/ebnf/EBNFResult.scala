@@ -1,12 +1,11 @@
 package model.ebnf
 
-import scala.collection.JavaConverters.seqAsJavaListConverter
+import model.result.{CompleteResult, EvaluationResult, SuccessType}
+import play.twirl.api.Html
 
-import model.result.{ CompleteResult, EvaluationResult, SuccessType }
+class EBNFCompleteResult(result: EBNFResult) extends CompleteResult[EBNFResult]("EBNF", List(result)) {
 
-class EBNFCompleteResult(result: EBNFResult) extends CompleteResult[EBNFResult]("EBNF", List(result).asJava) {
-
-  override def renderLearnerSolution = views.html.ebnfGrammar.render(result.grammar)
+  override def renderLearnerSolution: Html = views.html.ebnfGrammar.render(result.grammar)
 
 }
 

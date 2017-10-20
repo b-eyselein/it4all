@@ -7,8 +7,6 @@ import model.sql.SqlQueryResult
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.statement.select.OrderByElement
 
-import scala.collection.JavaConverters.seqAsJavaListConverter
-
 case class SqlResult(l: String,
                      columnComparison: MatchingResult[ColumnWrapper, ColumnMatch],
                      tableComparison: MatchingResult[String, Match[String]],
@@ -19,11 +17,7 @@ case class SqlResult(l: String,
                      groupByComparison: Option[MatchingResult[Expression, GroupByMatch]],
                      orderByComparison: Option[MatchingResult[OrderByElement, OrderByMatch]])
   extends CompleteResult[EvaluationResult](
-    l,
-    (List(columnComparison, tableComparison, whereComparison, executionResult)
-      ++ groupByComparison
-      ++ orderByComparison).asJava
-  ) {
+    l, List(columnComparison, tableComparison, whereComparison, executionResult) ++ groupByComparison ++ orderByComparison) {
 
   def getMatchingResults: List[MatchingResult[_, _ <: Match[_]]] =
     List(columnComparison, tableComparison, whereComparison) ++ groupByComparison ++ orderByComparison

@@ -3,21 +3,22 @@ package controllers.xml
 import java.nio.file._
 import javax.inject.Inject
 
-import controllers.core.IdExController
+import controllers.excontrollers.{AExerciseAdminController, IdExController}
 import model.CommonUtils.RicherTry
+import model.StringConsts._
 import model._
 import model.exercise.ExerciseOptions
 import model.result.CompleteResult
 import model.user.User
-import play.data.{DynamicForm, FormFactory}
-import play.mvc.{Result, Results}
+import play.api.data.Form
+import play.api.mvc.ControllerComponents
 import play.twirl.api.{Html, HtmlFormat}
 
 import scala.collection.JavaConverters.{asScalaBufferConverter, seqAsJavaListConverter}
 import scala.util.Try
 
-class XmlAdmin @javax.inject.Inject()(f: play.data.FormFactory)
-  extends controllers.core.AExerciseAdminController[XmlExercise](f, XmlToolObject, XmlExercise.finder, model.XmlExerciseReader) {
+class XmlAdmin @javax.inject.Inject()(cc: ControllerComponents)
+  extends AExerciseAdminController[XmlExercise](cc, XmlToolObject, XmlExercise.finder, model.XmlExerciseReader) {
 
   override def statistics = new Html(
     s"""<li>Es existieren insgesamt ${XmlExercise.finder.all.size} <a href="${controllers.xml.routes.XmlAdmin.exercises()}">Aufgaben</a>, davon
@@ -27,16 +28,20 @@ class XmlAdmin @javax.inject.Inject()(f: play.data.FormFactory)
        |</li>""".stripMargin)
 }
 
-class XmlController @Inject()(f: FormFactory)
-  extends IdExController[XmlExercise, XmlError](f, XmlExercise.finder, XmlToolObject) {
+class XmlController @Inject()(cc: ControllerComponents)
+  extends IdExController[XmlExercise, XmlError](cc, XmlExercise.finder, XmlToolObject) {
+
+  override type SolType = StringSolution
+
+  override def solForm: Form[StringSolution] = ???
 
   val EX_OPTIONS = ExerciseOptions("Xml", "xml", 10, 20, updatePrev = false)
 
   val SAVE_ERROR_MSG = "An error has occured while saving an xml file to "
 
-  override protected def correctEx(form: DynamicForm, exercise: XmlExercise, user: User): Try[CompleteResult[XmlError]] =
+  override protected def correctEx(sol: StringSolution, exercise: XmlExercise, user: User): Try[CompleteResult[XmlError]] =
     checkAndCreateSolDir(user.name, exercise).flatMap(dir => {
-      val learnerSolution = form.get(StringConsts.FORM_VALUE)
+      val learnerSolution = sol.learnerSolution
 
       val (grammarTry, xmlTry) = exercise.exerciseType match {
         case (DTD_XML | XSD_XML) => (
@@ -50,18 +55,19 @@ class XmlController @Inject()(f: FormFactory)
       }
 
       grammarTry.zip(xmlTry).map({ case (grammar, xml) =>
-        new CompleteResult(learnerSolution, XmlCorrector.correct(xml, grammar, exercise).asJava)
+        new CompleteResult(learnerSolution, XmlCorrector.correct(xml, grammar, exercise))
       })
     })
 
 
-  def playground: Result = Results.ok(views.html.xmlPlayground.render(getUser))
+  def playground = Action { implicit request =>
+    Ok(views.html.xmlPlayground.render(getUser))
+  }
 
-  def playgroundCorrection: Result = Results.ok(
-    renderResult(
-      new CompleteResult("", XmlCorrector.correct(factory.form().bindFromRequest().get(StringConsts.FORM_VALUE), "", XML_DTD).asJava)
-    )
-  )
+  def playgroundCorrection = Action { implicit request =>
+    val sol = request.body.asFormUrlEncoded.get(FORM_VALUE).mkString("\n")
+    Ok(renderResult(new CompleteResult("", XmlCorrector.correct(sol, "", XML_DTD))))
+  }
 
   override def renderExercise(user: User, exercise: XmlExercise): Html = views.html.exercise2Rows.render(
     user, toolObject, EX_OPTIONS, exercise, renderExRest(exercise), readDefOrOldSolution(user.name, exercise)
@@ -80,7 +86,7 @@ class XmlController @Inject()(f: FormFactory)
 
        |<hr>""".stripMargin)
 
-  override def renderResult(completeResult: CompleteResult[XmlError]): Html = completeResult.results.asScala.toList match {
+  override def renderResult(completeResult: CompleteResult[XmlError]): Html = completeResult.results match {
     case Nil => new Html("""<div class="alert alert-success">Es wurden keine Fehler gefunden.</div>""")
     case results => new Html(results.map(res =>
       s"""<div class="panel panel-${res.getBSClass}">

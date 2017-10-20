@@ -5,10 +5,10 @@ import model.exercisereading.ExerciseReader
 
 object XmlExerciseReader extends ExerciseReader[XmlExercise]("xml", XmlExercise.finder, classOf[Array[XmlExercise]]) {
 
-  override def initRemainingExFromForm(exercise: XmlExercise, form: play.data.DynamicForm) {
-    exercise.exerciseTypeStr = form.get(StringConsts.EXERCISE_TYPE)
-    exercise.rootNode = form.get(StringConsts.ROOT_NODE_NAME)
-  }
+//  override def initRemainingExFromForm(exercise: XmlExercise, form: play.data.DynamicForm) {
+  //    exercise.exerciseTypeStr = form.get(StringConsts.EXERCISE_TYPE)
+  //    exercise.rootNode = form.get(StringConsts.ROOT_NODE_NAME)
+  //  }
 
   override def instantiate(id: Int): XmlExercise = {
     val ex = new XmlExercise

@@ -1,89 +1,101 @@
 package controllers.spread
 
-import java.io.File
 import java.nio.file.{Files, Path, Paths, StandardCopyOption}
 import javax.inject.Inject
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 import com.google.common.io.{Files => GFiles}
-import controllers.core.{AExerciseAdminController, IdPartExController}
+import controllers.excontrollers.{AExerciseAdminController, IdPartExController}
 import controllers.spread.SpreadController._
 import model._
 import model.result.{CompleteResult, EvaluationResult}
 import model.user.User
-import play.data.{DynamicForm, FormFactory}
-import play.mvc.Http.MultipartFormData
-import play.mvc.Results._
-import play.mvc.{Controller, Result}
+import play.api.data.Form
+import play.api.mvc.ControllerComponents
 import play.twirl.api.Html
 
-import scala.util.{Failure, Success, Try}
+import scala.concurrent.ExecutionContext
+import scala.util.Try
 
-class SpreadAdmin @Inject()(f: FormFactory) extends AExerciseAdminController[SpreadExercise](f, SpreadToolObject, SpreadExercise.finder, SpreadExerciseReader)
+class SpreadAdmin @Inject()(cc: ControllerComponents)(implicit ec: ExecutionContext)
+  extends AExerciseAdminController[SpreadExercise](cc, SpreadToolObject, SpreadExercise.finder, SpreadExerciseReader)
 
-class SpreadController @Inject()(f: FormFactory) extends IdPartExController[SpreadExercise, EvaluationResult](f, SpreadExercise.finder, SpreadToolObject) {
+class SpreadController @Inject()(cc: ControllerComponents) extends IdPartExController[SpreadExercise, EvaluationResult](cc, SpreadExercise.finder, SpreadToolObject) {
 
-  def download(id: Int, fileExtension: String): Result = Option(SpreadExercise.finder.byId(id)) match {
-    case None => badRequest("This exercise does not exist!")
-    case Some(exercise) =>
-      val fileToDownload = toolObject.getSolFileForExercise(getUser.name, exercise, exercise.templateFilename + CORRECTION_ADD_STRING, fileExtension)
+  override type SolType = StringSolution
 
-      if (fileToDownload.toFile.exists) ok(fileToDownload.toFile)
-      else redirect(routes.SpreadController.index(0))
-  }
+  override def solForm: Form[StringSolution] = ???
 
+  def download(id: Int, fileExtension: String) = Action { implicit request =>
+    Option(SpreadExercise.finder.byId(id)) match {
+      case None => BadRequest("This exercise does not exist!")
+      case Some(exercise) =>
+        val fileToDownload = toolObject.getSolFileForExercise(getUser.name, exercise, exercise.templateFilename + CORRECTION_ADD_STRING, fileExtension)
 
-  override def exercise(id: Int, fileExtension: String): Result = Option(SpreadExercise.finder.byId(id)) match {
-    case None => badRequest("This exercise does not exist!")
-    case Some(exercise) =>
-      val filePath = Paths.get(toolObject.sampleDir.toString, exercise.templateFilename + "." + fileExtension)
-
-      println(filePath.toAbsolutePath)
-
-      if (filePath.toFile.exists) ok(filePath.toFile)
-      else badRequest("This file does not exist!")
-  }
-
-  def upload(id: Int): Result = {
-    val data: MultipartFormData[File] = Controller.request.body.asMultipartFormData()
-    Option(data.getFile(BODY_SOL_FILE_NAME)) match {
-      case None => internalServerError(views.html.spreadcorrectionerror.render(getUser, "Datei konnte nicht hochgeladen werden!"))
-      case Some(uploadedFile) =>
-
-        val user = getUser
-        val exercise = SpreadExercise.finder.byId(id)
-
-        val pathToUploadedFile = uploadedFile.getFile.toPath
-        val fileExtension = com.google.common.io.Files.getFileExtension(uploadedFile.getFilename)
-
-        val targetFilePath = toolObject.getSolFileForExercise(user.name, exercise, exercise.templateFilename, fileExtension)
-
-        // Save solution
-        saveSolutionForUser(pathToUploadedFile, targetFilePath) match {
-          case Failure(e) => internalServerError(views.html.spreadcorrectionerror.render(user, "Die Datei konnte nicht gespeichert werden!"))
-          case Success(_) =>
-            // Get paths to sample document
-            val sampleDocumentPath = Paths.get(toolObject.sampleDir.toString, exercise.sampleFilename + "." + fileExtension)
-            if (sampleDocumentPath.toFile.exists) {
-              try {
-                val result: SpreadSheetCorrectionResult = correctSpread(sampleDocumentPath, targetFilePath, conditionalFormating = false, charts = false)
-
-                if (result.success)
-                  ok(views.html.excelcorrect.render(user, result, exercise.getId, fileExtension))
-                else
-                  internalServerError(views.html.spreadcorrectionerror.render(user, result.notices.head))
-              } catch {
-                case e: CorrectionException => internalServerError(views.html.spreadcorrectionerror.render(user, e.getMessage))
-              }
-            } else {
-              internalServerError(views.html.spreadcorrectionerror.render(user, "Die Musterdatei konnte nicht gefunden werden!"))
-            }
-        }
+        if (fileToDownload.toFile.exists) Ok.sendFile(fileToDownload.toFile)
+        else Redirect(routes.SpreadController.index(0))
     }
   }
 
-  override def index(page: Int): Result = super.index(page)
 
-  override protected def correctEx(form: DynamicForm, exercise: SpreadExercise, user: User): Try[CompleteResult[EvaluationResult]] = ??? // FIXME: implement???
+  override def exercise(id: Int, fileExtension: String) = Action { implicit request =>
+    Option(SpreadExercise.finder.byId(id)) match {
+      case None => BadRequest("This exercise does not exist!")
+      case Some(exercise) =>
+        val filePath = Paths.get(toolObject.sampleDir.toString, exercise.templateFilename + "." + fileExtension)
+
+        println(filePath.toAbsolutePath)
+
+        if (filePath.toFile.exists) Ok.sendFile(filePath.toFile)
+        else BadRequest("This file does not exist!")
+    }
+  }
+
+  def upload(id: Int) = Action { implicit request =>
+    //    val data: MultipartFormData[File] = request.body.asMultipartFormData
+    //    Option(data.getFile(BODY_SOL_FILE_NAME)) match {
+    //      case None => InternalServerError(views.html.spreadcorrectionerror.render(getUser, "Datei konnte nicht hochgeladen werden!"))
+    //      case Some(uploadedFile) =>
+    //
+    //        val user = getUser
+    //        val exercise = SpreadExercise.finder.byId(id)
+    //
+    //        val pathToUploadedFile = uploadedFile.getFile.toPath
+    //        val fileExtension = com.google.common.io.Files.getFileExtension(uploadedFile.getFilename)
+    //
+    //        val targetFilePath = toolObject.getSolFileForExercise(user.name, exercise, exercise.templateFilename, fileExtension)
+    //
+    //        // Save solution
+    //        saveSolutionForUser(pathToUploadedFile, targetFilePath) match {
+    //          case Failure(e) => InternalServerError(views.html.spreadcorrectionerror.render(user, "Die Datei konnte nicht gespeichert werden!"))
+    //          case Success(_) =>
+    //            // Get paths to sample document
+    //            val sampleDocumentPath = Paths.get(toolObject.sampleDir.toString, exercise.sampleFilename + "." + fileExtension)
+    //            if (sampleDocumentPath.toFile.exists) {
+    //              try {
+    //                val result: SpreadSheetCorrectionResult = correctSpread(sampleDocumentPath, targetFilePath, conditionalFormating = false, charts = false)
+    //
+    //                if (result.success)
+    //                  Ok(views.html.excelcorrect.render(user, result, exercise.getId, fileExtension))
+    //                else
+    //                  InternalServerError(views.html.spreadcorrectionerror.render(user, result.notices.head))
+    //              } catch {
+    //                case e: CorrectionException => InternalServerError(views.html.spreadcorrectionerror.render(user, e.getMessage))
+    //              }
+    //            } else {
+    //              InternalServerError(views.html.spreadcorrectionerror.render(user, "Die Musterdatei konnte nicht gefunden werden!"))
+    //            }
+    //        }
+    //    }
+    Ok("TODO!")
+
+  }
+
+  override def index(page: Int) = super.index(page)
+
+  override protected def correctEx(sol: StringSolution, exercise: SpreadExercise, user: User): Try[CompleteResult[EvaluationResult]]
+  = ??? // FIXME: implement???
 
   override protected def renderExercise(user: User, exercise: SpreadExercise): Html = views.html.spreadExercise.render(user, exercise)
 

@@ -2,49 +2,74 @@ package controllers.bool
 
 import javax.inject.Inject
 
-import controllers.core.ARandomExController
+import controllers.bool.BoolController._
+import controllers.excontrollers.ARandomExController
 import model.StringConsts.{FORM_VALUE, VARS_NAME}
 import model._
 import model.result.SuccessType
 import model.user.User
-import play.api.Configuration
-import play.data.FormFactory
-import play.mvc.Result
-import play.mvc.Results.{badRequest, ok}
-import play.mvc.Security.Authenticated
+import play.api.mvc.ControllerComponents
 import play.twirl.api.Html
 
-@Authenticated(classOf[model.Secured])
-class BoolController @Inject()(f: FormFactory) extends ARandomExController(f, BoolToolObject) {
-
+object BoolController {
   val ONE = "1"
   val SOL_VAR: Variable = BooleanQuestion.SOLUTION_VARIABLE
   val LEA_VAR: Variable = BooleanQuestion.LEARNER_VARIABLE
+}
 
-  def checkBoolCreationSolution(): Result = //Controller.request().body.asFormUrlEncoded match {
-    badRequest("TODO!")
+@play.mvc.Security.Authenticated(classOf[model.Secured])
+class BoolController @Inject()(cc: ControllerComponents) extends ARandomExController(cc, BoolToolObject) {
 
-  //    case Some(data) =>
-  //      try {
-  //        var result = checkCreationSolution(data)
-  //        ok(views.html.boolcreatesolution.render(BaseController.getUser(), result))
-  //      } catch {
-  //        case ce: CorrectionException => ok(views.html.error.render(BaseController.getUser(), ce))
-  //      }
-  //  }
+  def checkBoolFilloutSolution = Action { implicit request => //Controller.request.body.asFormUrlEncoded match {
+    BadRequest("")
 
-  def checkBoolCreationSolutionLive(): Result = //Controller.request.body.asFormUrlEncoded match {
-    badRequest("TODO!")
+    //    case Some(data) =>
+    //      val formulaOptional = ScalaNodeParser.parse(data(StringConsts.FORM_VALUE).mkString(""))
+    //
+    //      if (!formulaOptional.isDefined)
+    //        BadRequest("There has been an error!")
+    //
+    //      val formula = formulaOptional.get
+    //
+    //      val assignments = Assignment.generateAllAssignments(formula.usedVariables.toList).map(assignment =>
+    //        assignment + (LEA_VAR -> (ONE == data(assignment.toString).mkString(""))) + (SOL_VAR -> formula.evaluate(assignment)))
+    //
+    //      val question = new FilloutQuestion(formula, assignments)
+    //
+    //      ok(views.html.boolfilloutsolution.render(BaseController.getUser(), question))
+    //  }
+  }
 
-  //    case Some(data) =>
-  //      try {
-  //        var result = checkCreationSolution(data)
-  //        // FIXME: ugly, stupid, sh**ty hack!
-  //        ok(play.api.libs.json.Json.parse(play.libs.Json.toJson(result).toString()))
-  //      } catch {
-  //        case ce: CorrectionException => null
-  //      }
-  //  }
+  def newBoolCreationQuestion = Action { implicit request => Ok(views.html.boolcreatequestion.render(getUser, CreationQuestion.generateNew)) }
+
+  def newBoolFilloutQuestion = Action { implicit request => Ok(views.html.boolfilloutquestion.render(getUser, FilloutQuestion.generateNew)) }
+
+  def checkBoolCreationSolution() = Action { implicit request => //Controller.request().body.asFormUrlEncoded match {
+    BadRequest("TODO!")
+
+    //    case Some(data) =>
+    //      try {
+    //        var result = checkCreationSolution(data)
+    //        ok(views.html.boolcreatesolution.render(BaseController.getUser(), result))
+    //      } catch {
+    //        case ce: CorrectionException => ok(views.html.error.render(BaseController.getUser(), ce))
+    //      }
+    //  }
+  }
+
+  def checkBoolCreationSolutionLive() = Action { implicit request => //Controller.request.body.asFormUrlEncoded match {
+    BadRequest("TODO!")
+
+    //    case Some(data) =>
+    //      try {
+    //        var result = checkCreationSolution(data)
+    //        // FIXME: ugly, stupid, sh**ty hack!
+    //        ok(play.api.libs.json.Json.parse(play.libs.Json.toJson(result).toString()))
+    //      } catch {
+    //        case ce: CorrectionException => null
+    //      }
+    //  }
+  }
 
   private def checkCreationSolution(data: Map[String, Seq[String]]): BooleanQuestionResult = {
     val learnerSolution = data(FORM_VALUE).mkString
@@ -67,29 +92,6 @@ class BoolController @Inject()(f: FormFactory) extends ARandomExController(f, Bo
     }
   }
 
-  def checkBoolFilloutSolution: Result = //Controller.request.body.asFormUrlEncoded match {
-    badRequest("")
-
-  //    case Some(data) =>
-  //      val formulaOptional = ScalaNodeParser.parse(data(StringConsts.FORM_VALUE).mkString(""))
-  //
-  //      if (!formulaOptional.isDefined)
-  //        badRequest("There has been an error!")
-  //
-  //      val formula = formulaOptional.get
-  //
-  //      val assignments = Assignment.generateAllAssignments(formula.usedVariables.toList).map(assignment =>
-  //        assignment + (LEA_VAR -> (ONE == data(assignment.toString).mkString(""))) + (SOL_VAR -> formula.evaluate(assignment)))
-  //
-  //      val question = new FilloutQuestion(formula, assignments)
-  //
-  //      ok(views.html.boolfilloutsolution.render(BaseController.getUser(), question))
-  //  }
-
   override def renderIndex(user: User): Html = views.html.booloverview.render(user)
-
-  def newBoolCreationQuestion: Result = ok(views.html.boolcreatequestion.render(getUser, CreationQuestion.generateNew))
-
-  def newBoolFilloutQuestion: Result = ok(views.html.boolfilloutquestion.render(getUser, FilloutQuestion.generateNew))
 
 }

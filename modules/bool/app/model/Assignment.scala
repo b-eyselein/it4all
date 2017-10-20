@@ -28,7 +28,7 @@ class Assignment(assignments: Map[Variable, Boolean]) {
 }
 
 object Assignment {
-  implicit def intToBool(value: Int): Boolean = value != 0
+//  implicit def intToBool(value: Int): Boolean = value != 0
 
   def apply(assigns: (Variable, Boolean)*) = new Assignment(assigns.toMap)
 

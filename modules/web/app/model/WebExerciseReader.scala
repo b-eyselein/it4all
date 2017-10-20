@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.JsonNode
 import model.StringConsts._
 import model.exercisereading.{ExerciseReader, JsonReader}
 import model.task._
-import play.data.DynamicForm
 import play.libs.Json
 
 import scala.collection.JavaConverters._
@@ -63,10 +62,10 @@ object WebExerciseReader extends ExerciseReader[WebExercise]("web", WebExercise.
     ExerciseReader.readArray(attributesNode, readAttribute).map(_.forDB).mkString(HtmlTask.ATTRS_JOIN_STR)
   }
 
-  override def initRemainingExFromForm(exercise: WebExercise, form: DynamicForm) {
-    exercise.htmlText = form.get(HTML_TEXT_NAME)
-    exercise.jsText = form.get(JS_TEXT_NAME)
-  }
+//  override def initRemainingExFromForm(exercise: WebExercise, form: DynamicForm) {
+  //    exercise.htmlText = form.get(HTML_TEXT_NAME)
+  //    exercise.jsText = form.get(JS_TEXT_NAME)
+  //  }
 
   override def instantiate(id: Int) = new WebExercise(id)
 

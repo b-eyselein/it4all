@@ -1,9 +1,11 @@
 package model.logging;
 
+import play.api.mvc.AnyContent;
+import play.api.mvc.Request;
+
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-import play.mvc.Http.Request;
 
 public abstract class WorkingEvent {
 
@@ -15,7 +17,7 @@ public abstract class WorkingEvent {
   protected ZonedDateTime dateTime;
   protected int id;
 
-  public WorkingEvent(EventType theEventType, Request theRequest, int theId) {
+  public WorkingEvent(EventType theEventType, Request<AnyContent> theRequest, int theId) {
     eventType = theEventType;
     method = theRequest.method();
     uri = theRequest.uri();

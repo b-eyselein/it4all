@@ -2,25 +2,23 @@ package controllers.programming
 
 import javax.inject.Inject
 
-import controllers.core.{AExerciseAdminController, IdExController}
+import controllers.excontrollers.{AExerciseAdminController, IdExController}
 import controllers.programming.ProgController._
-import model.StringConsts._
 import model._
 import model.exercise.ExerciseOptions
 import model.result.CompleteResult
-import model.testdata.{CommitedTestData, CommitedTestDataKey, ITestData}
+import model.testdata.CommitedTestData
 import model.user.User
-import play.data.{DynamicForm, FormFactory}
+import play.api.data.Form
+import play.api.mvc.{AnyContent, ControllerComponents, Request, Session}
 import play.libs.Json
-import play.mvc.Result
-import play.mvc.Results._
 import play.twirl.api.Html
 
 import scala.collection.JavaConverters._
 import scala.util.Try
 
-class ProgAdmin @Inject()(f: FormFactory)
-  extends AExerciseAdminController[ProgExercise](f, ProgToolObject, ProgExercise.finder, ProgExerciseReader)
+class ProgAdmin @Inject()(cc: ControllerComponents)
+  extends AExerciseAdminController[ProgExercise](cc, ProgToolObject, ProgExercise.finder, ProgExerciseReader)
 
 object ProgController {
 
@@ -28,27 +26,31 @@ object ProgController {
 
   val STD_TEST_DATA_COUNT = 2
 
-  private def extractTestData(form: DynamicForm, username: String, exercise: ProgExercise): List[CommitedTestData] =
-    (0 until Integer.parseInt(form.get(TEST_COUNT_NAME))).map(testCounter => readTestDataFromForm(form, username, testCounter, exercise)).toList
+  //  private def extractTestData(form: DynamicForm, username: String, exercise: ProgExercise): List[CommitedTestData] =
+  //    (0 until Integer.parseInt(form.get(TEST_COUNT_NAME))).map(testCounter => readTestDataFromForm(form, username, testCounter, exercise)).toList
 
-  private def readTestDataFromForm(form: DynamicForm, username: String, testId: Int, exercise: ProgExercise): CommitedTestData = {
-    val key: CommitedTestDataKey = new CommitedTestDataKey(username, exercise.id, testId)
-    val testdata: CommitedTestData = Option(CommitedTestData.finder.byId(key)).getOrElse(new CommitedTestData(key))
-
-    testdata.exercise = exercise
-    testdata.inputs = (0 until exercise.getInputCount).map(inputCounter => form.get(s"inp_${inputCounter}_$testId")).mkString(ITestData.VALUES_SPLIT_CHAR)
-
-    testdata.output = form.get(s"outp_$testId")
-    testdata.approvalState = ApprovalState.CREATED
-
-    testdata
-  }
+  //  private def readTestDataFromForm(form: DynamicForm, username: String, testId: Int, exercise: ProgExercise): CommitedTestData = {
+  //    val key: CommitedTestDataKey = new CommitedTestDataKey(username, exercise.id, testId)
+  //    val testdata: CommitedTestData = Option(CommitedTestData.finder.byId(key)).getOrElse(new CommitedTestData(key))
+  //
+  //    testdata.exercise = exercise
+  //    testdata.inputs = (0 until exercise.getInputCount).map(inputCounter => form.get(s"inp_${inputCounter}_$testId")).mkString(ITestData.VALUES_SPLIT_CHAR)
+  //
+  //    testdata.output = form.get(s"outp_$testId")
+  //    testdata.approvalState = ApprovalState.CREATED
+  //
+  //    testdata
+  //  }
 
 }
 
-class ProgController @Inject()(f: FormFactory) extends IdExController[ProgExercise, ProgEvaluationResult](f, ProgExercise.finder, ProgToolObject) {
+class ProgController @Inject()(cc: ControllerComponents) extends IdExController[ProgExercise, ProgEvaluationResult](cc, ProgExercise.finder, ProgToolObject) {
 
-  override def getUser: User = {
+  override type SolType = StringSolution
+
+  override def solForm: Form[StringSolution] = ???
+
+  override def getUser(implicit request: Request[AnyContent]): User = {
     val user = super.getUser
 
     Option(ProgUser.finder.byId(user.name)) match {
@@ -71,9 +73,9 @@ class ProgController @Inject()(f: FormFactory) extends IdExController[ProgExerci
   // }
 
 
-  override def correctEx(form: DynamicForm, exercise: ProgExercise, user: User): Try[CompleteResult[ProgEvaluationResult]] = ???
+  override def correctEx(sol: StringSolution, exercise: ProgExercise, user: User): Try[CompleteResult[ProgEvaluationResult]] = ???
 
-  def getDeclaration(lang: String): Result = ok(AvailableLanguages.valueOf(lang).getDeclaration)
+  def getDeclaration(lang: String) = Action { implicit request => Ok(AvailableLanguages.valueOf(lang).getDeclaration) }
 
   override def renderExercise(user: User, exercise: ProgExercise): Html = {
     views.html.exercise2Rows.render(user, toolObject, EX_OPTIONS, exercise, views.html.progExRest.render(exercise), AvailableLanguages.stdLang.getDeclaration)
@@ -107,28 +109,28 @@ class ProgController @Inject()(f: FormFactory) extends IdExController[ProgExerci
 
   override def renderResult(correctionResult: CompleteResult[ProgEvaluationResult]): Html = ???
 
-  def testData(id: Int): Result = {
+  def testData(id: Int) = Action { implicit request =>
     val user: User = getUser
-    val oldTestData = CommitedTestData.forUserAndExercise(user, id)
+    val oldTestData = Option(CommitedTestData.forUserAndExercise(user, id).asScala.toList).getOrElse(List.empty)
 
-    ok(views.html.testData.render(user, finder.byId(id), if (oldTestData != null) oldTestData else new java.util.LinkedList[CommitedTestData]()))
+    Ok(views.html.testData.render(user, finder.byId(id), oldTestData))
   }
 
-  def validateTestData(id: Int): Result = {
+  def validateTestData(id: Int) = Action { implicit request =>
     val user: User = getUser
     val exercise: ProgExercise = finder.byId(id)
     // val language: AvailableLanguages
     // AvailableLanguages.valueOf(form.get(StringConsts.LANGUAGE_NAME))
 
-    val testData: List[CommitedTestData] = extractTestData(factory.form().bindFromRequest(), user.name, exercise)
+    val testData: List[CommitedTestData] = List.empty //extractTestData(factory.form().bindFromRequest(), user.name, exercise)
     testData.foreach(_.save)
 
     val validatedTestData: List[ProgEvaluationResult] = List.empty
 
-    ok(views.html.validatedTestData.render(user, exercise, validatedTestData.asJava))
+    Ok(views.html.validatedTestData.render(user, exercise, validatedTestData))
   }
 
-  def validateTestDataLive(id: Int): Result = {
+  def validateTestDataLive(id: Int) = Action { implicit request =>
     // val exercise: ProgExercise finder.byId(id)
     // val form: DynamicForm factory.form().bindFromRequest()
     // val language: AvailableLanguages
@@ -139,6 +141,6 @@ class ProgController @Inject()(f: FormFactory) extends IdExController[ProgExerci
 
     val validatedTestData = List.empty
 
-    ok(Json.toJson(validatedTestData))
+    Ok("TODO" /*Json.toJson(validatedTestData)*/)
   }
 }

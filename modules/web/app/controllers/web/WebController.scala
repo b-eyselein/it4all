@@ -2,22 +2,41 @@ package controllers.web
 
 import javax.inject.Inject
 
-import controllers.core.IdPartExController
+import controllers.excontrollers.{AExerciseAdminController, IdPartExController}
 import model._
-import model.logging.{ExerciseCompletionEvent, ExerciseStartEvent}
+import model.logging.ExerciseStartEvent
 import model.result.CompleteResult
 import model.task.WebTask
 import model.user.User
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
-import play.data.{DynamicForm, FormFactory}
-import play.mvc.{Controller, Result, Results}
+import play.api.data.Form
+import play.api.mvc._
 import play.twirl.api.Html
 
-import scala.collection.JavaConverters.{asScalaBufferConverter, seqAsJavaListConverter}
+import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.util.{Failure, Success, Try}
 
-class WebController @Inject()(f: FormFactory)
-  extends IdPartExController[WebExercise, WebResult](f, WebExercise.finder, WebToolObject) {
+class WebAdmin @Inject()(cc: ControllerComponents)
+  extends AExerciseAdminController[WebExercise](cc, WebToolObject, WebExercise.finder, WebExerciseReader) {
+
+  override def statistics = new Html(
+    s"""<li>Es existieren insgesamt ${WebExercise.finder.all.size} Aufgaben, davon
+       |  <ul>
+       |    <li>${WebExercise.withHtmlPart} Aufgaben mit HTML-Teil</li>
+       |    <li>${WebExercise.withJsPart} Aufgaben mit JS-Teil</li>
+       |  </ul>
+       |</li>""".stripMargin)
+
+  def exRest(exerciseId: Int) = Action { implicit request => Ok(views.html.webAdmin.webExRest.render(getUser, finder.byId(exerciseId))) }
+
+}
+
+class WebController @Inject()(cc: ControllerComponents)
+  extends IdPartExController[WebExercise, WebResult](cc, WebExercise.finder, WebToolObject) {
+
+  override type SolType = StringSolution
+
+  override def solForm: Form[StringSolution] = ???
 
   val HTML_TYPE = "html"
   val JS_TYPE = "js"
@@ -26,7 +45,7 @@ class WebController @Inject()(f: FormFactory)
 
   val ALLOWED_TYPES = List(HTML_TYPE, JS_TYPE)
 
-  override def getUser: User = {
+  override def getUser(implicit request: Request[AnyContent]): User = {
     val user = super.getUser
 
     Option(WebUser.finder.byId(user.name)) match {
@@ -53,7 +72,7 @@ class WebController @Inject()(f: FormFactory)
       case _ => Failure(null)
     }
 
-    tasksTry.map(tasks => new CompleteResult(learnerSolution, tasks.map(WebCorrector.evaluate(_, driver)).asJava))
+    tasksTry.map(tasks => new CompleteResult(learnerSolution, tasks.map(WebCorrector.evaluate(_, driver)).toList))
   }
 
   def saveSolution(learnerSolution: String, key: WebSolutionKey): Unit = {
@@ -63,45 +82,23 @@ class WebController @Inject()(f: FormFactory)
     solution.save()
   }
 
-  override def correct(id: Int, part: String): Result = {
-    val user = getUser
-    val learnerSolution = factory.form().bindFromRequest().get(StringConsts.FORM_VALUE)
+  override def exercise(id: Int, part: String) = Action { implicit request =>
+    part match {
+      case (JS_TYPE | HTML_TYPE) =>
+        val user = getUser
 
-    correctEx(learnerSolution, WebExercise.finder.byId(id), user, part) match {
-      case Success(result) =>
-        log(user, new ExerciseCompletionEvent(Controller.request, id, result))
-        Results.ok(views.html.correction.render("Web", result, renderResult(result), user, routes.WebController.index(0)))
-      case Failure(_) => Results.badRequest("Es gab einen internen Fehler!")
+        log(user, new ExerciseStartEvent(request, id))
+
+        Ok(views.html.webExercise.render(user, WebExercise.finder.byId(id), part,
+          WebController.getOldSolOrDefault(user.name, id), "Html-Korrektur"))
+      case _ =>
+        Redirect(routes.WebController.index(0))
     }
   }
 
-  override def correctLive(id: Int, part: String): Result = {
-    val user = getUser
-    val learnerSolution = factory.form().bindFromRequest().get(StringConsts.FORM_VALUE)
+  def playground = Action { implicit request => Ok(views.html.webPlayground.render(getUser)) }
 
-    correctEx(learnerSolution, WebExercise.finder.byId(id), user, part) match {
-      case Success(result) =>
-        log(user, new ExerciseCompletionEvent(Controller.request, id, result))
-        Results.ok(renderResult(result))
-      case Failure(_) => Results.badRequest("Es gab einen internen Fehler!")
-    }
-  }
-
-  override def exercise(id: Int, part: String): Result = part match {
-    case (JS_TYPE | HTML_TYPE) =>
-      val user = getUser
-
-      log(user, new ExerciseStartEvent(Controller.request(), id))
-
-      Results.ok(views.html.webExercise.render(user, WebExercise.finder.byId(id), part,
-        WebController.getOldSolOrDefault(user.name, id), "Html-Korrektur"))
-    case _ =>
-      Results.redirect(routes.WebController.index(0))
-  }
-
-  def playground: Result = Results.ok(views.html.webPlayground.render(getUser))
-
-  override def correctEx(form: DynamicForm, exercise: WebExercise, user: User): Try[CompleteResult[WebResult]] = Failure(new Throwable("Not used..."))
+  override def correctEx(solType: StringSolution, exercise: WebExercise, user: User): Try[CompleteResult[WebResult]] = Failure(new Throwable("Not used..."))
 
   override def renderExercise(user: User, exercise: WebExercise): Html = ??? // FIXME
 
@@ -115,9 +112,9 @@ class WebController @Inject()(f: FormFactory)
 
 }
 
-class SolutionController extends Controller {
+class SolutionController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 
-  def site(username: String, exerciseId: Int): Result = Results.ok(new Html(WebController.getOldSolOrDefault(username, exerciseId)))
+  def site(username: String, exerciseId: Int) = Action { implicit request => Ok(new Html(WebController.getOldSolOrDefault(username, exerciseId))) }
 
 }
 
@@ -126,31 +123,30 @@ object WebController {
   def getOldSolOrDefault(userName: String, exerciseId: Int): String =
     Try(WebSolution.finder.byId(new WebSolutionKey(userName, exerciseId)).sol).getOrElse(STANDARD_HTML)
 
-  val STANDARD_HTML =
+  val STANDARD_HTML: String =
     """<!doctype html>
-<html>
-<head>
-  
-</head>
-<body>
-  
-</body>
-</html>"""
+      |<html>
+      |<head>
+      |
+      |</head>
+      |<body>
+      |
+      |</body>
+      |</html>""".stripMargin
 
-  val STANDARD_HTML_PLAYGROUND =
-    s"""<!doctype html>
-<html>
-<head>
-  <style>
-    /* Css-Anweisungen */
-  </style>
-  <script type=\"text/javascript\">
-    // Javascript-Code
-  </script>
-</head>
-<body>
-  <!-- Html-Elemente -->
-
-</body>
-</html>"""
+  val STANDARD_HTML_PLAYGROUND: String =
+    """<!doctype html>
+      |<html>
+      |<head>
+      |  <style>
+      |    /* Css-Anweisungen */
+      |  </style>
+      |  <script type=\"text/javascript\">
+      |    // Javascript-Code
+      |  </script>
+      |</head>
+      |<body>
+      |  <!-- Html-Elemente -->
+      |</body>
+      |</html>""".stripMargin
 }

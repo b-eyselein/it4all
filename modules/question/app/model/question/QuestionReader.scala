@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode
 import model.StringConsts._
 import model.exercisereading.{ExerciseCollectionReader, ExerciseReader, JsonReader}
 import model.quiz.Quiz
-import play.data.DynamicForm
 import play.libs.Json
 
 import scala.collection.JavaConverters._
@@ -21,10 +20,10 @@ object QuestionReader extends ExerciseReader[Question]("question", Question.find
     answer
   }
 
-  override def initRemainingExFromForm(exercise: Question, form: DynamicForm): Unit = {
-    exercise.maxPoints = Integer.parseInt(form.get(MAX_POINTS))
-    exercise.questionType = Question.QType.valueOf(form.get(EXERCISE_TYPE))
-  }
+  //  override def initRemainingExFromForm(exercise: Question, form: DynamicForm): Unit = {
+  //    exercise.maxPoints = Integer.parseInt(form.get(MAX_POINTS))
+  //    exercise.questionType = Question.QType.valueOf(form.get(EXERCISE_TYPE))
+  //  }
 
   override def instantiate(id: Int): Question = new Question(id)
 
@@ -44,7 +43,7 @@ object QuestionReader extends ExerciseReader[Question]("question", Question.find
 
 object QuizReader extends ExerciseCollectionReader[Question, Quiz]("question", Quiz.finder, classOf[Array[Quiz]]) {
 
-  def initRemainingExFromForm(exercise: Quiz, form: DynamicForm): Unit = exercise.setTheme(form.get("theme"))
+  //  def initRemainingExFromForm(exercise: Quiz, form: DynamicForm): Unit = exercise.setTheme(form.get("theme"))
 
   override def instantiate(id: Int) = new Quiz(id)
 

@@ -1,12 +1,7 @@
 package model
 
-import scala.util.{Failure, Success}
-
-import controllers.uml.UmlController
-import model.exercisereading.JsonReader
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
-import play.api.libs.json.{JsError, JsPath, JsSuccess, Json, Reads}
-import play.data.DynamicForm
+import play.api.libs.json._
 
 case class UmlSolution(classes: List[UmlClass], associations: List[UmlAssociation], implementations: List[UmlImplementation]) {
 
@@ -71,13 +66,13 @@ object UmlSolution {
     case e: JsError => println(Json.prettyPrint(JsError.toJson(e))); None
   }
 
-  def readFromForm(form: DynamicForm): Option[UmlSolution] = {
-    val sentJson = form.get(StringConsts.FORM_VALUE)
-
-    JsonReader.validateJson(play.libs.Json.parse(sentJson), UmlController.SolutionSchemaNode) match {
-      case Success(_) => fromJson(sentJson)
-      case Failure(e) => None
-    }
-  }
+//  def readFromForm(form: DynamicForm): Option[UmlSolution] = {
+  //    val sentJson = form.get(StringConsts.FORM_VALUE)
+  //
+  //    JsonReader.validateJson(play.libs.Json.parse(sentJson), UmlController.SolutionSchemaNode) match {
+  //      case Success(_) => fromJson(sentJson)
+  //      case Failure(e) => None
+  //    }
+  //  }
 
 }

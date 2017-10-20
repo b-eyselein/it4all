@@ -3,7 +3,7 @@ package controllers.sql
 import java.sql.Connection
 import javax.inject.Inject
 
-import controllers.core.IdExController
+import controllers.excontrollers.IdExController
 import controllers.sql.SqlController._
 import model.CommonUtils.cleanly
 import model.StringConsts.{SELECT_ALL_DUMMY, SHOW_ALL_TABLES}
@@ -13,19 +13,23 @@ import model.querycorrectors.{QueryCorrector, SqlResult}
 import model.result.{CompleteResult, EvaluationResult}
 import model.sql.SqlQueryResult
 import model.user.User
-import play.data.{DynamicForm, FormFactory}
+import play.api.data.Form
+import play.api.mvc.{AnyContent, ControllerComponents, Request, Session}
 import play.db.{Database, NamedDatabase}
-import play.mvc.{Result, Results}
 import play.twirl.api.Html
 
-import scala.collection.JavaConverters.{asScalaBufferConverter, seqAsJavaListConverter}
+import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.collection.mutable.ListBuffer
 import scala.util.{Failure, Success, Try}
 
-class SqlController @Inject()(f: FormFactory, @NamedDatabase("sqlselectroot") sqlSelect: Database, @NamedDatabase("sqlotherroot") sqlOther: Database)
-  extends IdExController[SqlExercise, EvaluationResult](f, SqlExercise.finder, SqlToolObject) {
+class SqlController @Inject()(cc: ControllerComponents, @NamedDatabase("sqlselectroot") sqlSelect: Database, @NamedDatabase("sqlotherroot") sqlOther: Database)
+  extends IdExController[SqlExercise, EvaluationResult](cc, SqlExercise.finder, SqlToolObject) {
 
-  override def getUser: User = {
+  override type SolType = StringSolution
+
+  override def solForm: Form[StringSolution] = ???
+
+  override def getUser(implicit request: Request[AnyContent]): User = {
     val user = super.getUser
 
     // Make sure there is a corresponding entrance in other db...
@@ -37,29 +41,31 @@ class SqlController @Inject()(f: FormFactory, @NamedDatabase("sqlselectroot") sq
     user
   }
 
-  def filteredScenario(id: Int, exType: String, site: Int): Result = Option(SqlScenario.finder.byId(id)) match {
-    case None => Results.redirect(controllers.sql.routes.SqlController.index())
-    case Some(scenario) =>
-      if (site <= 0)
-        Results.redirect(controllers.sql.routes.SqlController.filteredScenario(id, exType))
-      else {
-        val start = SqlScenario.STEP * (site - 1)
+  def filteredScenario(id: Int, exType: String, site: Int) = Action { implicit request =>
+    Option(SqlScenario.finder.byId(id)) match {
+      case None => Redirect(controllers.sql.routes.SqlController.index())
+      case Some(scenario) =>
+        if (site <= 0)
+          Redirect(controllers.sql.routes.SqlController.filteredScenario(id, exType))
+        else {
+          val start = SqlScenario.STEP * (site - 1)
 
-        val allByType = scenario.getExercisesByType(SqlExerciseType.valueOf(exType))
-        val exercises = allByType.subList(start, Math.min(start + SqlScenario.STEP, allByType.size))
+          val allByType = scenario.getExercisesByType(SqlExerciseType.valueOf(exType))
+          val exercises = allByType.subList(start, Math.min(start + SqlScenario.STEP, allByType.size))
 
-        Results.ok(views.html.sqlScenario.render(getUser, exercises, scenario, SqlExerciseType.valueOf(exType), site))
-      }
+          Ok(views.html.sqlScenario.render(getUser, exercises.asScala.toList, scenario, SqlExerciseType.valueOf(exType), site))
+        }
+    }
   }
 
-  def index: Result = Results.ok(views.html.sqlIndex.render(getUser, SqlScenario.finder.all))
+  def index = Action { implicit request => Ok(views.html.sqlIndex.render(getUser, SqlScenario.finder.all.asScala.toList)) }
 
-  def scenarioes: Result = Results.ok(views.html.scenarioes.render(getUser, SqlScenario.finder.all))
+  def scenarioes = Action { implicit request => Ok(views.html.scenarioes.render(getUser, SqlScenario.finder.all.asScala.toList)) }
 
   def getDBForExType(exerciseType: SqlExerciseType): Database = if (exerciseType == SqlExerciseType.SELECT) sqlSelect else sqlOther
 
-  override def correctEx(form: DynamicForm, exercise: SqlExercise, user: User): Try[SqlResult] = Try({
-    val learnerSolution = form.get(StringConsts.FORM_VALUE)
+  override def correctEx(sol: StringSolution, exercise: SqlExercise, user: User): Try[SqlResult] = Try({
+    val learnerSolution = sol.learnerSolution
     saveSolution(user.name, learnerSolution, exercise.id)
 
     val sample = findBestFittingSample(learnerSolution, exercise.samples.asScala.toList)
@@ -78,7 +84,7 @@ class SqlController @Inject()(f: FormFactory, @NamedDatabase("sqlselectroot") sq
       case Some(oldSol) => oldSol.sol
     }
 
-    views.html.sqlExercise.render(user, exercise, oldOrDefSol, tables.asJava)
+    views.html.sqlExercise.render(user, exercise, oldOrDefSol, tables)
   }
 
   override def renderExesListRest: Html = ??? // FIXME: implement

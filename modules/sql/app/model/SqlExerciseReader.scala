@@ -3,7 +3,6 @@ package model
 import com.fasterxml.jackson.databind.JsonNode
 import model.exercise.{SqlExercise, SqlExerciseType, SqlSample, SqlSampleKey}
 import model.exercisereading.{ExerciseReader, JsonReader}
-import play.data.DynamicForm
 import play.libs.Json
 
 import scala.collection.JavaConverters._
@@ -20,17 +19,17 @@ object SqlExerciseReader extends ExerciseReader[SqlExercise]("sql", SqlExercise.
     sample
   }
 
-  override def initRemainingExFromForm(exercise: SqlExercise, form: DynamicForm) {
-    // TODO Auto-generated method stub
-
-    exercise.exerciseType = SqlExerciseType.valueOf(form.get(StringConsts.EXERCISE_TYPE))
-
-    // exercise.samples = readArray(form.get(StringConsts.SAMPLES_NAME),
-    // SqlExerciseReader::readSampleSolution)
-    exercise.hint = form.get("hint")
-    // exercise.tags = String.join(SqlExercise.SAMPLE_JOIN_CHAR,
-    // parseJsonArrayNode(form.get("tags")))
-  }
+//  override def initRemainingExFromForm(exercise: SqlExercise, form: DynamicForm) {
+  //    // TODO Auto-generated method stub
+  //
+  //    exercise.exerciseType = SqlExerciseType.valueOf(form.get(StringConsts.EXERCISE_TYPE))
+  //
+  //    // exercise.samples = readArray(form.get(StringConsts.SAMPLES_NAME),
+  //    // SqlExerciseReader::readSampleSolution)
+  //    exercise.hint = form.get("hint")
+  //    // exercise.tags = String.join(SqlExercise.SAMPLE_JOIN_CHAR,
+  //    // parseJsonArrayNode(form.get("tags")))
+  //  }
 
   override def instantiate(id: Int) = new SqlExercise(id)
 

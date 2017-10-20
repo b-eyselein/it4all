@@ -4,11 +4,11 @@ import scala.util.Random
 
 sealed abstract class NumberBase(val base: Int, baseName: String, mark: String, regexStart: String, regexRest: String) {
 
-  def htmlPattern: String = "[\\s" + regexStart + "][\\s" + regexRest + "]*"
+  def htmlPattern: String = s"""[\s$regexStart][\s$regexRest]*"""
 
   def pluralName: String = baseName + "zahlen"
 
-  def regex: String = "-?" + mark + "[" + regexStart + "][" + regexRest + "]*"
+  def regex: String = s"-?$mark[$regexStart][$regexRest]*"
 
   def singularName: String = baseName + "zahl"
 

@@ -1,33 +1,31 @@
 package controllers.questions
 
-import java.util.Collections
 import javax.inject.Inject
 
-import controllers.core.AExerciseCollectionAdminController
+import controllers.excontrollers.AExerciseCollectionAdminController
 import model.exercisereading.SingleReadingResult
-import model.question.{Question, QuestionReader, QuizReader}
+import model.question.{Question, QuizReader}
 import model.quiz.Quiz
-import play.data.FormFactory
-import play.mvc.{Result, Results}
+import play.api.mvc.ControllerComponents
 import play.twirl.api.Html
 
-class QuestionAdmin @Inject()(f: FormFactory)
-  extends AExerciseCollectionAdminController[Question, Quiz](f, QuestionToolObject, Quiz.finder, QuizReader) {
+import scala.collection.JavaConverters._
+
+class QuestionAdmin @Inject()(cc: ControllerComponents)
+  extends AExerciseCollectionAdminController[Question, Quiz](cc, QuestionToolObject, Quiz.finder, QuizReader) {
 
   override protected def statistics: Html = new Html(
-    s"""
-<li>Es existieren insgesamt <a href="${controllers.questions.routes.QuestionAdmin.exercises()}">${Question.finder.query.findCount} Fragen</a> in allen Kategorien
-    <ul>
-    @if(!notAssignedQuestions.isEmpty) {
-    <li>Es gibt noch @notAssignedQuestions.size
-    <a href="@questions.routes.QuestionAdmin.notAssignedQuestions">nicht zugeordnete Fragen</a>.
-    Sie k&ouml;nnen Sie <a href="@questions.routes.QuestionAdmin.assignQuestionsForm">hier</a> zuweisen.
-    </li>
-    }
-    </ul>
-    </li>
-    <li>Es existieren @model.quiz.Quiz.finder.all.size <a href="@questions.routes.QuestionAdmin.exerciseCollections">Quiz(ze)</a></li>
-    """)
+    s"""<li>Es existieren insgesamt <a href="${controllers.questions.routes.QuestionAdmin.exercises()}">${Question.finder.query.findCount} Fragen</a> in allen Kategorien
+       |<ul>
+       |@if(!notAssignedQuestions.isEmpty) {
+       |<li>Es gibt noch @notAssignedQuestions.size
+       |<a href="@questions.routes.QuestionAdmin.notAssignedQuestions">nicht zugeordnete Fragen</a>.
+       |Sie k&ouml;nnen Sie <a href="@questions.routes.QuestionAdmin.assignQuestionsForm">hier</a> zuweisen.
+       |</li>
+       |}
+       |</ul>
+       |</li>
+       |<li>Es existieren @model.quiz.Quiz.finder.all.size <a href="@questions.routes.QuestionAdmin.exerciseCollections">Quiz(ze)</a></li>""".stripMargin)
 
   def assignQuestion(keyAndValue: String, addOrRemove: Boolean) {
     // String[] quizAndQuestion = keyAndValue.split("_")
@@ -44,8 +42,8 @@ class QuestionAdmin @Inject()(f: FormFactory)
     // quiz.save()
   }
 
-  def assignQuestions: Result = {
-    val form = factory.form().bindFromRequest()
+  def assignQuestions = Action { implicit request =>
+    //    val form = factory.form().bindFromRequest()
 
     // Read it...
     //    Map<String, String> assignments = form.rawData()
@@ -53,7 +51,7 @@ class QuestionAdmin @Inject()(f: FormFactory)
     //      assignQuestion(entry.getKey(), "on".equals(entry.getValue()))
     //
     //    return ok(views.html.questionAdmin.questionsAssigned.render(getUser(), assignments.toString()))
-    Results.ok("TODO!")
+    Ok("TODO!")
   }
 
   override def renderCollectionCreated(collections: List[SingleReadingResult[Quiz]]): Html = ???
@@ -64,11 +62,13 @@ class QuestionAdmin @Inject()(f: FormFactory)
 
   override def renderExerciseCollections(user: model.user.User, allCollections: List[model.quiz.Quiz]): Html = ???
 
-  def assignQuestionsForm: Result = Results.ok(views.html.questionAdmin.assignQuestionsForm.render(
-    getUser, /* Question.finder.all() */ Collections.emptyList(), Quiz.finder.all()))
+  def assignQuestionsForm = Action { implicit request =>
+    Ok(views.html.questionAdmin.assignQuestionsForm.render(getUser, /* Question.finder.all() */ List.empty, Quiz.finder.all.asScala.toList))
+  }
 
-  def assignQuestionsSingleForm(id: Int): Result = Results.ok(views.html.questionAdmin.assignQuestionsForm.render(
-    getUser, /* Question.finder.all() */ Collections.emptyList(), java.util.Arrays.asList(Quiz.finder.byId(id))))
+  def assignQuestionsSingleForm(id: Int) = Action { implicit request =>
+    Ok(views.html.questionAdmin.assignQuestionsForm.render(getUser, /* Question.finder.all() */ List.empty, List(Quiz.finder.byId(id))))
+  }
 
   //  def  exportQuizzes = {
   //    val json = Json.prettyPrint(Json.toJson(Quiz.finder.all()))
@@ -77,29 +77,30 @@ class QuestionAdmin @Inject()(f: FormFactory)
   //      File tempFile = new File("quizzes_export_" + LocalDateTime.now() + ".json")
   //      Files.asCharSink(tempFile, Charset.defaultCharset()).write(json)
   //      // false == download file!
-  //      Results.ok(tempFile, false)
+  //      Ok(tempFile, false)
   //    } catch (IOException e) {
-  //      Results.ok(json)
+  //      Ok(json)
   //    }
   //  }
 
-  def gradeFreetextAnswer(id: Int, user: String): Result = {
+  def gradeFreetextAnswer(id: Int, user: String) = Action { implicit request =>
     // FreetextAnswer answer = FreetextAnswer.finder.byId(new
     // FreetextAnswerKey(user, id))
     //             views.html.questionAdmin.ftaGradeForm.render(getUser(), answer)
-    Results.ok("TODO")
+    Ok("TODO")
   }
 
-  def gradeFreetextAnswers: Result = Results.ok("TODO!")
+  def gradeFreetextAnswers = Action { implicit request => Ok("TODO!") }
 
   /*
                        * views.html.questionAdmin.ftasToGrade.render(getUser(),
                        * FreetextAnswer.finder.all())
                        */
 
-  def importQuizzes: Result = Results.ok("TODO!")
+  def importQuizzes = Action { implicit request => Ok("TODO!") }
 
-  def notAssignedQuestions: Result = Results.ok(views.html.questionList.render(
-    getUser, /* Question.notAssignedQuestions() */ Question.finder.all()))
+  def notAssignedQuestions = Action { implicit request =>
+    Ok(views.html.questionList.render(getUser, /* Question.notAssignedQuestions() */ Question.finder.all.asScala.toList))
+  }
 
 }

@@ -4,8 +4,6 @@ import model.matching.{Match, MatchingResult}
 import model.result.{EvaluationResult, SuccessType}
 import model.umlmatcher._
 
-import scala.collection.JavaConverters._
-
 abstract sealed class UmlResult(val exercise: UmlExercise, val learnerSolution: UmlSolution, assocs: Boolean, impls: Boolean)
   extends EvaluationResult(SuccessType.NONE) {
 
@@ -23,8 +21,6 @@ abstract sealed class UmlResult(val exercise: UmlExercise, val learnerSolution: 
 
   def notEmptyMatchingResults: List[MatchingResult[_, _ <: Match[_]]] =
     List(classResult, associationResult, implementationResult).flatten
-
-  def notEmptyAsJava: java.util.List[MatchingResult[_, _ <: Match[_]]] = notEmptyMatchingResults.asJava
 
 }
 

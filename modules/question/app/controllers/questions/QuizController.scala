@@ -2,27 +2,32 @@ package controllers.questions
 
 import javax.inject.Inject
 
-import controllers.core.ExerciseCollectionController
+import controllers.excontrollers.ExerciseCollectionController
+import model.StringSolution
 import model.question.Question
 import model.quiz.Quiz
 import model.result.CompleteResult
 import model.user.User
-import play.api.Configuration
-import play.data.{DynamicForm, FormFactory}
-import play.mvc.{Result, Results}
+import play.api.data.Form
+import play.api.mvc.ControllerComponents
 import play.twirl.api.Html
 
+import scala.collection.JavaConverters._
 import scala.util.Try
 
-class QuizController @Inject()(c: Configuration, f: FormFactory)
-  extends ExerciseCollectionController[Question, Quiz](f, "question", Quiz.finder, Question.finder) {
+class QuizController @Inject()(cc: ControllerComponents)
+  extends ExerciseCollectionController[Question, Quiz](cc, "question", Quiz.finder, Question.finder) {
 
-  override def correctPart(form: DynamicForm, question: Question, part: String, user: User): Try[model.result.CompleteResult[_]]
+  override type SolType = StringSolution
+
+  override def solForm: Form[StringSolution] = ???
+
+  override def correctPart(sol: StringSolution, question: Question, part: String, user: User): Try[model.result.CompleteResult[_]]
   = ??? // FIXME: implement...
 
-  def quiz(id: Int): Result = Results.ok(views.html.quiz.render(getUser, Quiz.finder.byId(id)))
+  def quiz(id: Int) = Action { implicit request => Ok(views.html.quiz.render(getUser, Quiz.finder.byId(id))) }
 
-  def quizCorrection(quizId: Int, questionId: Int): Result = {
+  def quizCorrection(quizId: Int, questionId: Int) = Action { implicit request =>
     // User user = BaseController.getUser
     //
     // Quiz quiz = Quiz.finder.byId(quizId)
@@ -34,15 +39,16 @@ class QuizController @Inject()(c: Configuration, f: FormFactory)
     // QuestionResult result = new QuestionResult(selectedAnswers, question)
     //
     //   return ok(views.html.quizQuestionResult.render(user, quiz, result))
-    Results.ok("TODO!")
+    Ok("TODO!")
   }
 
-  def quizQuestion(quizId: Int, questionId: Int): Result =
-    Results.ok(views.html.quizQuestion.render(getUser, Quiz.finder.byId(quizId), questionId - 1))
+  def quizQuestion(quizId: Int, questionId: Int) = Action { implicit request =>
+    Ok(views.html.quizQuestion.render(getUser, Quiz.finder.byId(quizId), questionId - 1))
+  }
 
-  def quizStart(quizId: Int): Result = Results.redirect(controllers.questions.routes.QuizController.quizQuestion(quizId, 1))
+  def quizStart(quizId: Int) = Action { implicit request => Redirect(controllers.questions.routes.QuizController.quizQuestion(quizId, 1)) }
 
-  def quizzes: Result = Results.ok(views.html.quizzes.render(getUser, Quiz.finder.all))
+  def quizzes = Action { implicit request => Ok(views.html.quizzes.render(getUser, Quiz.finder.all.asScala.toList)) }
 
   override def renderResult(correctionResult: CompleteResult[_]): Html = ??? //FIXME: implement...
 

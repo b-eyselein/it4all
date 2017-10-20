@@ -9,7 +9,6 @@ import controllers.spread.SpreadToolObject
 import io.ebean.Finder
 import model.exercise.Exercise
 import model.exercisereading.ExerciseReader
-import play.data.DynamicForm
 import play.twirl.api.Html
 
 import scala.util.Try
@@ -42,10 +41,10 @@ object SpreadExercise {
 object SpreadExerciseReader
   extends ExerciseReader[SpreadExercise]("spread", SpreadExercise.finder, classOf[Array[SpreadExercise]]) {
 
-  override def initRemainingExFromForm(exercise: SpreadExercise, form: DynamicForm) {
-    exercise.templateFilename = form.get(StringConsts.TEMPALTE_FILENAME)
-    exercise.sampleFilename = form.get(StringConsts.SAMPLE_FILENAME)
-  }
+//  override def initRemainingExFromForm(exercise: SpreadExercise, form: DynamicForm) {
+  //    exercise.templateFilename = form.get(StringConsts.TEMPALTE_FILENAME)
+  //    exercise.sampleFilename = form.get(StringConsts.SAMPLE_FILENAME)
+  //  }
 
   override def instantiate(id: Int): SpreadExercise = {
     val ex = new SpreadExercise

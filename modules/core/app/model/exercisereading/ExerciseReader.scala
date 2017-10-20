@@ -9,7 +9,6 @@ import model.JsonReadable
 import model.StringConsts.{AUTHOR_NAME, STATE_NAME, TEXT_NAME, TITLE_NAME}
 import model.exercise.{Exercise, ExerciseState}
 import model.tools.ExToolObject
-import play.data.DynamicForm
 
 import scala.collection.JavaConverters.{asScalaBufferConverter, asScalaIteratorConverter}
 import scala.util.Try
@@ -19,19 +18,19 @@ abstract class ExerciseReader[E <: Exercise](e: String, f: Finder[Integer, E], c
 
   def getOrInstantiateExercise(id: Int): E = Optional.ofNullable(finder.byId(id)).orElse(instantiate(id))
 
-  def initFromForm(id: Int, form: DynamicForm): AbstractReadingResult = {
-    val exercise = getOrInstantiateExercise(id)
-
-    exercise.title = form.get(TITLE_NAME)
-    exercise.author = form.get(AUTHOR_NAME)
-    exercise.text = form.get(TEXT_NAME)
-
-    initRemainingExFromForm(exercise, form)
-
-    ReadingResult(List(SingleReadingResult(exercise)))
-  }
-
-  def initRemainingExFromForm(exercise: E, form: DynamicForm)
+//  def initFromForm(id: Int, form: DynamicForm): AbstractReadingResult = {
+  //    val exercise = getOrInstantiateExercise(id)
+  //
+  //    exercise.title = form.get(TITLE_NAME)
+  //    exercise.author = form.get(AUTHOR_NAME)
+  //    exercise.text = form.get(TEXT_NAME)
+  //
+  //    initRemainingExFromForm(exercise, form)
+  //
+  //    ReadingResult(List(SingleReadingResult(exercise)))
+  //  }
+  //
+  //  def initRemainingExFromForm(exercise: E, form: DynamicForm)
 
   def update(exercise: E, node: JsonNode) {
     exercise.title = node.get(TITLE_NAME).asText()

@@ -2,23 +2,21 @@ package controllers.sql
 
 import javax.inject.Inject
 
-import controllers.core.AExerciseCollectionAdminController
+import controllers.excontrollers.AExerciseCollectionAdminController
 import model.SqlScenarioReader
 import model.exercise.{SqlExercise, SqlScenario}
 import model.exercisereading.SingleReadingResult
 import model.user.User
-import play.data.FormFactory
+import play.api.mvc.ControllerComponents
 import play.db.{Database, NamedDatabase}
-import play.mvc.{Result, Results}
 import play.twirl.api.Html
 
-class SqlAdmin @Inject()(f: FormFactory,
-                         @NamedDatabase("sqlselectroot") sqlSelect: Database,
-                         @NamedDatabase("sqlotherroot") sqlOther: Database)
-  extends AExerciseCollectionAdminController[SqlExercise, SqlScenario](f, SqlToolObject, SqlScenario.finder, new SqlScenarioReader(sqlSelect, sqlOther)) {
+class SqlAdmin @Inject()
+(cc: ControllerComponents, @NamedDatabase("sqlselectroot") sqlSelect: Database, @NamedDatabase("sqlotherroot") sqlOther: Database)
+  extends AExerciseCollectionAdminController[SqlExercise, SqlScenario](cc, SqlToolObject, SqlScenario.finder, new SqlScenarioReader(sqlSelect, sqlOther)) {
 
 
-  override def newExerciseForm: Result = Results.ok(views.html.sqlAdmin.newExerciseForm.render(getUser, null))
+  override def newExerciseForm = Action { implicit request => Ok(views.html.sqlAdmin.newExerciseForm.render(getUser, null)) }
 
   override protected def statistics: Html = {
     //    return new Html("<li>
@@ -48,7 +46,7 @@ class SqlAdmin @Inject()(f: FormFactory,
 
   override def renderExerciseCollections(user: User, allCollections: List[SqlScenario]): Html = ??? // FIXME: implement...
 
-  def scenarioAdmin(id: Int): Result = Results.ok(views.html.sqlAdmin.scenarioAdmin.render(getUser, SqlScenario.finder.byId(id)))
+  def scenarioAdmin(id: Int) = Action { implicit request => Ok(views.html.sqlAdmin.scenarioAdmin.render(getUser, SqlScenario.finder.byId(id))) }
 
 
 }

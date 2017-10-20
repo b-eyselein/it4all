@@ -10,7 +10,6 @@ import model.exercise.{SqlExercise, SqlScenario}
 import model.exercisereading.{ExerciseCollectionReader, ExerciseReader}
 import org.apache.ibatis.jdbc.ScriptRunner
 import play.Logger
-import play.data.DynamicForm
 import play.db.Database
 
 import scala.collection.JavaConverters._
@@ -31,10 +30,10 @@ class SqlScenarioReader(sqlSelect: Database, sqlOther: Database)
     })
   }
 
-  def initRemainingExFromForm(exercise: SqlScenario, form: DynamicForm) {
-    exercise.shortName = form.get(StringConsts.SHORTNAME_NAME)
-    exercise.scriptFile = form.get(StringConsts.SCRIPTFILE_NAME)
-  }
+//  def initRemainingExFromForm(exercise: SqlScenario, form: DynamicForm) {
+  //    exercise.shortName = form.get(StringConsts.SHORTNAME_NAME)
+  //    exercise.scriptFile = form.get(StringConsts.SCRIPTFILE_NAME)
+  //  }
 
   override def instantiate(id: Int) = new SqlScenario(id)
 

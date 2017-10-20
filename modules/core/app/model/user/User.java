@@ -15,7 +15,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.ebean.Finder;
 import io.ebean.Model;
 
-@Entity @Table(name = "users") public class User extends Model {
+@Entity
+@Table(name = "users")
+public class User extends Model {
 
   public enum SHOW_HIDE_AGGREGATE {
     SHOW("Einblenden"), AGGREGATE("Zusammenfassen"), HIDE("Ausblenden");
@@ -31,7 +33,7 @@ import io.ebean.Model;
     }
 
     public String getSelected(SHOW_HIDE_AGGREGATE std) {
-      if(this == std)
+      if (this == std)
         return "selected";
       else
         return "";
@@ -40,27 +42,36 @@ import io.ebean.Model;
 
   public static final Finder<String, User> finder = new Finder<>(User.class);
 
-  @Id public String name;
+  @Id
+  public String name;
 
-  @Enumerated(EnumType.STRING) public Role stdRole = Role.USER;
+  @Enumerated(EnumType.STRING)
+  public Role stdRole = Role.USER;
 
-  @OneToMany(mappedBy = "user") @JsonIgnore public List<CourseRole> courseRoles;
+  @OneToMany(mappedBy = "user")
+  @JsonIgnore
+  public List<CourseRole> courseRoles;
 
-  @Enumerated(EnumType.STRING) public SHOW_HIDE_AGGREGATE todo = SHOW_HIDE_AGGREGATE.SHOW;
+  @Enumerated(EnumType.STRING)
+  public SHOW_HIDE_AGGREGATE todo = SHOW_HIDE_AGGREGATE.SHOW;
 
-  @Override public boolean equals(Object obj) {
+  @Override
+  public boolean equals(Object obj) {
     return obj instanceof User && ((User) obj).name.equals(name);
   }
 
-  @JsonIgnore public List<String> getCourseNames() {
+  @JsonIgnore
+  public List<String> getCourseNames() {
     return courseRoles.parallelStream().map(cr -> cr.course.name()).collect(Collectors.toList());
   }
 
-  @JsonIgnore public List<Course> getCourses() {
+  @JsonIgnore
+  public List<Course> getCourses() {
     return courseRoles.parallelStream().map(cr -> cr.course).collect(Collectors.toList());
   }
 
-  @Override public int hashCode() {
+  @Override
+  public int hashCode() {
     final int prime = 31;
     int result = 1;
     result = prime * result + ((name == null) ? 0 : name.hashCode());
@@ -71,7 +82,8 @@ import io.ebean.Model;
     return role.compareTo(stdRole) <= 0;
   }
 
-  @JsonIgnore public boolean isAdmin() {
+  @JsonIgnore
+  public boolean isAdmin() {
     return stdRole.isAdminRole();
   }
 

@@ -3,7 +3,6 @@ package model
 import com.fasterxml.jackson.databind.JsonNode
 import model.exercisereading.ExerciseReader
 import model.testdata.{SampleTestData, SampleTestDataKey}
-import play.data.DynamicForm
 import play.libs.Json
 
 object ProgExerciseReader extends ExerciseReader[ProgExercise]("prog", ProgExercise.finder, classOf[Array[ProgExercise]]) {
@@ -28,13 +27,13 @@ object ProgExerciseReader extends ExerciseReader[ProgExercise]("prog", ProgExerc
     test
   }
 
-  override def initRemainingExFromForm(exercise: ProgExercise, form: DynamicForm) {
-    exercise.functionName = form.get("functionName")
-    exercise.inputCount = Integer.parseInt(form.get("inputCount"))
-
-    exercise.samples = java.util.Collections.emptyList()
-    exercise.sampleTestData = java.util.Collections.emptyList()
-  }
+//  override def initRemainingExFromForm(exercise: ProgExercise, form: DynamicForm) {
+  //    exercise.functionName = form.get("functionName")
+  //    exercise.inputCount = Integer.parseInt(form.get("inputCount"))
+  //
+  //    exercise.samples = java.util.Collections.emptyList()
+  //    exercise.sampleTestData = java.util.Collections.emptyList()
+  //  }
 
   override def instantiate(id: Int) = new ProgExercise(id)
 

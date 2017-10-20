@@ -2,22 +2,35 @@ package controllers.ebnf
 
 import javax.inject.Inject
 
-import controllers.core.IdExController
-import model.Secured
-import model.ebnf.{EBNFExercise, EBNFResult}
+import controllers.excontrollers.{AExerciseAdminController, IdExController}
+import model.{Secured, StringSolution}
+import model.ebnf.{EBNFExercise, EBNFExerciseReader, EBNFResult}
 import model.result.CompleteResult
 import model.user.User
-import play.data.{DynamicForm, FormFactory}
+import play.api.data.Form
+import play.api.mvc.ControllerComponents
 import play.mvc.Security.Authenticated
 import play.twirl.api.Html
 
 import scala.util.Try
 
-@Authenticated(classOf[Secured])
-class EBNFController @Inject()(f: FormFactory)
-  extends IdExController[EBNFExercise, EBNFResult](f, EBNFExercise.finder, EBNFToolObject) {
+class EBNFAdmin @Inject()(cc: ControllerComponents)
+  extends AExerciseAdminController[EBNFExercise](cc, EBNFToolObject, EBNFExercise.finder, EBNFExerciseReader) {
 
-  override def correctEx(form: DynamicForm, exercise: EBNFExercise, user: User): Try[CompleteResult[EBNFResult]] = ??? // FIXME
+  override def renderExEditForm(user: User, exercise: EBNFExercise, isCreation: Boolean): Html =
+    views.html.ebnfAdmin.newExForm.render(user, exercise)
+
+}
+
+@Authenticated(classOf[Secured])
+class EBNFController @Inject()(cc: ControllerComponents)
+  extends IdExController[EBNFExercise, EBNFResult](cc, EBNFExercise.finder, EBNFToolObject) {
+
+  override type SolType = StringSolution
+
+  override def solForm: Form[StringSolution] = ???
+
+  override def correctEx(sol: StringSolution, exercise: EBNFExercise, user: User): Try[CompleteResult[EBNFResult]] = ??? // FIXME
 
 
   //    val data = Controller.request.body.asFormUrlEncoded
