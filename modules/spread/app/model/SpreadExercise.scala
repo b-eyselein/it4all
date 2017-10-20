@@ -14,6 +14,7 @@ import play.twirl.api.Html
 
 import scala.util.Try
 
+
 @Entity
 class SpreadExercise(i: Int) extends Exercise(i) {
 

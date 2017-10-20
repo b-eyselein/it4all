@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.ebean.Finder;
 import model.exercise.Exercise;
+import model.exercise.Exercise$;
 import model.task.HtmlTask;
 import model.task.JsWebTask;
 import play.twirl.api.Html;
@@ -49,16 +50,16 @@ import play.twirl.api.Html;
   }
 
   @JsonProperty("htmlText") public List<String> getHtmlTextForJson() {
-    return SPLITTER.splitToList(htmlText);
+    return Exercise$.MODULE$.SPLITTER().splitToList(htmlText);
   }
 
   @JsonProperty("jsText") public List<String> getJsTextForJson() {
-    return SPLITTER.splitToList(jsText);
+    return Exercise$.MODULE$.SPLITTER().splitToList(jsText);
   }
 
-  @Override public List<WebTag> getTags() {
-    return Arrays.asList(new WebTag("Html", !htmlTasks.isEmpty()), new WebTag("Js", !jsTasks.isEmpty()));
-  }
+//  @Override public List<WebTag> getTags() {
+//    return Arrays.asList(new WebTag("Html", !htmlTasks.isEmpty()), new WebTag("Js", !jsTasks.isEmpty()));
+//  }
 
   @Override @JsonIgnore public Html renderRest(
       scala.collection.immutable.List<scala.util.Try<java.nio.file.Path>> fileResults) {

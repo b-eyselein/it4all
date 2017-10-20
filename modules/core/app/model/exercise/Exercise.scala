@@ -21,7 +21,10 @@ object Exercise {
 }
 
 @MappedSuperclass
-abstract class Exercise(@Id var id: Int) extends Model with JsonReadable {
+abstract class Exercise extends Model with JsonReadable {
+
+  @Id
+  var id: Int
 
   @Column
   @JsonProperty(required = true)
