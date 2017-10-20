@@ -50,16 +50,16 @@ public class SqlExercise extends Exercise {
   public String hint;
 
   public SqlExercise(int id) {
-    super(id);
+    id_$eq(id);
   }
 
-  @Override
-  public List<SqlTag> getTags() {
-    if(tags.isEmpty())
-      return Collections.emptyList();
-
-    return Arrays.stream(tags.split(SAMPLE_JOIN_CHAR)).map(SqlTag::valueOf).collect(Collectors.toList());
-  }
+//  @Override
+//  public List<SqlTag> getTags() {
+//    if(tags.isEmpty())
+//      return Collections.emptyList();
+//
+//    return Arrays.stream(tags.split(SAMPLE_JOIN_CHAR)).map(SqlTag::valueOf).collect(Collectors.toList());
+//  }
 
   @JsonProperty(value = "tags", required = true)
   public List<String> getTagsForJson() {

@@ -12,7 +12,7 @@ import play.twirl.api.{Html, HtmlFormat}
 import scala.util.Try
 
 @Entity
-class UmlExercise(id: Int) extends Exercise(id) {
+class UmlExercise extends Exercise {
 
   @Column(columnDefinition = "text")
   @JsonIgnore

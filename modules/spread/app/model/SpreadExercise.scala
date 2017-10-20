@@ -16,7 +16,7 @@ import scala.util.Try
 
 
 @Entity
-class SpreadExercise(i: Int) extends Exercise(i) {
+class SpreadExercise extends Exercise {
 
   @JsonProperty(required = true)
   var sampleFilename: String = _

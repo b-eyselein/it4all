@@ -24,7 +24,7 @@ object Exercise {
 abstract class Exercise extends Model with JsonReadable {
 
   @Id
-  var id: Int
+  var id: Int = _
 
   @Column
   @JsonProperty(required = true)

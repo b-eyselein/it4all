@@ -12,7 +12,7 @@ import scala.collection.JavaConverters._
 import scala.util.Try
 
 @Entity
-class XmlExercise(id: Int) extends Exercise(id) {
+class XmlExercise extends Exercise {
 
   @JsonProperty(value = "exerciseType", required = true)
   var exerciseTypeStr: String = XML_DTD.name

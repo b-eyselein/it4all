@@ -11,7 +11,7 @@ import play.twirl.api.Html
 import scala.util.Try
 
 @Entity
-class EBNFExercise(i: Int) extends Exercise(i) {
+class EBNFExercise extends Exercise {
 
   @JsonProperty(required = true)
   var terminals: String = ""

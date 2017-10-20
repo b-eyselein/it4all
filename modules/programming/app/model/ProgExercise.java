@@ -14,7 +14,8 @@ import model.exercise.Exercise;
 import model.testdata.CommitedTestData;
 import model.testdata.SampleTestData;
 
-@Entity public class ProgExercise extends Exercise {
+@Entity
+public class ProgExercise extends Exercise {
 
   public static final Finder<Integer, ProgExercise> finder = new Finder<>(ProgExercise.class);
 
@@ -22,14 +23,20 @@ import model.testdata.SampleTestData;
 
   public int inputCount;
 
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "exercise") @JsonManagedReference public List<ProgSample> samples;
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "exercise")
+  @JsonManagedReference
+  public List<ProgSample> samples;
 
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "exercise") @JsonManagedReference public List<SampleTestData> sampleTestData;
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "exercise")
+  @JsonManagedReference
+  public List<SampleTestData> sampleTestData;
 
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "exercise") @JsonIgnore public List<CommitedTestData> commitedTestData;
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "exercise")
+  @JsonIgnore
+  public List<CommitedTestData> commitedTestData;
 
   public ProgExercise(int id) {
-    super(id);
+    id_$eq(id);
   }
 
   public String getFunctionName() {
