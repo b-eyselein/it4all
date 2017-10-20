@@ -10,7 +10,11 @@ object XmlExerciseReader extends ExerciseReader[XmlExercise]("xml", XmlExercise.
     exercise.rootNode = form.get(StringConsts.ROOT_NODE_NAME)
   }
 
-  override def instantiate(id: Int) = new XmlExercise(id)
+  override def instantiate(id: Int): XmlExercise = {
+    val ex = new XmlExercise
+    ex.id = id
+    ex
+  }
 
   override def save(exercise: XmlExercise): Unit = exercise.save()
 

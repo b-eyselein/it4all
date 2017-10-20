@@ -1,27 +1,25 @@
 package controllers.core
 
+
 import java.nio.file.{Files, Path, StandardCopyOption}
 
 import model.StringConsts.SESSION_ID_FIELD
 import model.logging.WorkingEvent
 import model.user.User
 import play.Logger
-import play.libs.Json
-import play.mvc.{Controller, Http}
+import play.api.mvc._
 
 import scala.util.Try
 
-abstract class BaseController(val factory: play.data.FormFactory) extends Controller {
+abstract class BaseController(cc: ControllerComponents) extends AbstractController(cc) {
 
-  def getUser: User = User.finder.byId(getUsername)
+  def getUser(session: Session): User = User.finder.byId(getUsername(session))
 
-  def getUsername: String = Option(Http.Context.current().session()) match {
-    case None => throw new IllegalArgumentException("There is no session set!")
-    case Some(session) =>
-      val name = session.get(SESSION_ID_FIELD)
-      if (name == null || name.isEmpty) throw new IllegalArgumentException("No user name was given!")
-      else name
+  def getUsername(session: Session): String = session.get(SESSION_ID_FIELD) match {
+    case None => throw new IllegalArgumentException("There is no user name!")
+    case Some(name) => name
   }
+
 
   val PROGRESS_LOGGER: Logger.ALogger = Logger.of("progress")
 

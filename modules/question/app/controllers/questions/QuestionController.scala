@@ -3,6 +3,7 @@ package controllers.questions
 import javax.inject.Inject
 
 import controllers.core.IdExController
+import model.exercisereading.{ReadingError, ReadingFailure, ReadingResult}
 import model.{QuestionResult, QuestionUser, UserAnswer, UserAnswerKey}
 import model.question.{Answer, Question, QuestionReader}
 import model.quiz.Quiz
@@ -80,12 +81,13 @@ class QuestionController @Inject()(f: FormFactory) extends IdExController[Questi
     ok(views.html.questionIndex.render(getUser, questions, Quiz.finder.all))
   }
 
-  def newQuestion(isFreetext: Boolean): Result = {
-    val question = QuestionReader.initFromForm(0, factory.form().bindFromRequest())
-
-    QuestionReader.save(question)
-
-    ok(views.html.questionAdmin.questionCreated.render(getUser, List(question).asJava))
+  def newQuestion(isFreetext: Boolean): Result = QuestionReader.initFromForm(0, factory.form().bindFromRequest()) match {
+    case ReadingError(_, _, _) => badRequest("There has been an error...")
+    case ReadingFailure(_) => badRequest("There has been an error")
+    case ReadingResult(questions) =>
+      val question = questions.head.read.asInstanceOf[Question]
+      QuestionReader.save(question)
+      ok(views.html.questionAdmin.questionCreated.render(getUser, List(question).asJava))
   }
 
   def newQuestionForm(isFreetext: Boolean): Result = if (isFreetext)

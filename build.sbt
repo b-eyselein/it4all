@@ -8,7 +8,7 @@ lazy val root = (project in file("."))
   .dependsOn(bool, ebnf, mindmap, programming, question, spread, sql, uml, web, xml, core)
 
 lazy val core: Project = (project in file("modules/core"))
-  .enablePlugins(PlayScala, PlayJava, PlayEbean, PlayEnhancer)
+  .enablePlugins(PlayScala)
   .settings(
     aggregateReverseRoutes := Seq(bool, ebnf, mindmap, programming, question, spread, sql, uml, web, xml, root)
   )
@@ -18,49 +18,48 @@ lazy val bool = (project in file("modules/bool"))
   .dependsOn(core)
 
 lazy val ebnf = (project in file("modules/ebnf"))
-  .enablePlugins(PlayScala, PlayJava, PlayEbean, PlayEnhancer)
+  .enablePlugins(PlayScala)
   .dependsOn(core)
 
 lazy val mindmap = (project in file("modules/mindmap"))
-  .enablePlugins(PlayScala, PlayJava, PlayEbean, PlayEnhancer)
+  .enablePlugins(PlayScala)
   .dependsOn(core)
 
 lazy val programming = (project in file("modules/programming"))
-  .enablePlugins(PlayScala, PlayJava, PlayEbean, PlayEnhancer)
+  .enablePlugins(PlayScala)
   .dependsOn(core)
 
 lazy val question = (project in file("modules/question"))
-  .enablePlugins(PlayScala, PlayJava, PlayEbean, PlayEnhancer)
+  .enablePlugins(PlayScala)
   .dependsOn(core)
 
 lazy val spread = (project in file("modules/spread"))
-  .enablePlugins(PlayScala, PlayJava, PlayEbean, PlayEnhancer)
+  .enablePlugins(PlayScala)
   .dependsOn(core)
 
 lazy val sql = (project in file("modules/sql"))
-  .enablePlugins(PlayScala, PlayJava, PlayEbean, PlayEnhancer)
+  .enablePlugins(PlayScala)
   .dependsOn(core)
 
 lazy val uml = (project in file("modules/uml"))
-  .enablePlugins(PlayScala, PlayEbean, PlayEnhancer)
+  .enablePlugins(PlayScala)
   .dependsOn(core)
 
 lazy val web = (project in file("modules/web"))
-  .enablePlugins(PlayScala, PlayJava, PlayEbean, PlayEnhancer)
+  .enablePlugins(PlayScala)
   .dependsOn(core)
 
 lazy val xml = (project in file("modules/xml"))
-  .enablePlugins(PlayScala, PlayEbean, PlayEnhancer)
+  .enablePlugins(PlayScala)
   .dependsOn(core)
 
 // Used libraries from Maven Repository
 libraryDependencies ++= Seq(
-  //javaJdbc,
+  "mysql" % "mysql-connector-java" % "8.0.8-dmr",
+
   "com.typesafe.play" %% "play-slick" % "3.0.0",
   "com.typesafe.play" %% "play-slick-evolutions" % "3.0.0",
-  "com.h2database" % "h2" % "${H2_VERSION}",
   guice
-  //  "mysql" % "mysql-connector-java" % "8.0.8-dmr"
 )
 
 scalacOptions ++= Seq("-feature")

@@ -7,10 +7,10 @@ import io.ebean.{Finder, Model}
 import scala.collection.JavaConverters._
 
 @Entity
-class Course(@Id var id: Int) extends Model {
+class Course extends Model {
 
-  //  @Id
-  //  var id: Int = _
+  @Id
+  var id: Int = _
 
   @Column
   var name: String = _

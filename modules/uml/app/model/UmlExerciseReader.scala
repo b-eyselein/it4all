@@ -16,7 +16,11 @@ object UmlExerciseReader extends ExerciseReader[UmlExercise]("uml", UmlExercise.
     exercise.solution = form.get("solution")
   }
 
-  override def instantiate(id: Int) = new UmlExercise(id)
+  override def instantiate(id: Int): UmlExercise = {
+    val ex = new UmlExercise()
+    ex.id = id
+    ex
+  }
 
   override def updateExercise(exercise: UmlExercise, node: JsonNode) {
     val mappings = JsonReader.readMap(node.get(MAPPINGS_NAME))

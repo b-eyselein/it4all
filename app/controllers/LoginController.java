@@ -3,6 +3,7 @@ package controllers;
 import controllers.core.BaseController;
 import model.StringConsts$;
 import model.user.Course;
+import model.user.Course$;
 import model.user.User;
 import play.Environment;
 import play.data.DynamicForm;
@@ -44,10 +45,10 @@ public class LoginController extends BaseController {
     String passwort = "";
     User student = findOrCreateStudent(userName, passwort);
 
-    if(Course.finder.byId(courseId) == null && courseId != -1) {
+    if(Course$.MODULE$.finder().byId(courseId) == null && courseId != -1) {
       // Create course
-      Course course = new Course(courseId);
-      course.name = courseName;
+      Course course = new Course();
+      course.name_$eq(courseName);
       course.save();
     }
 

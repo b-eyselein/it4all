@@ -47,7 +47,11 @@ object SpreadExerciseReader
     exercise.sampleFilename = form.get(StringConsts.SAMPLE_FILENAME)
   }
 
-  override def instantiate(id: Int) = new SpreadExercise(id)
+  override def instantiate(id: Int): SpreadExercise = {
+    val ex = new SpreadExercise
+    ex.id = id
+    ex
+  }
 
   override def save(exercise: SpreadExercise) {
     exercise.save()
