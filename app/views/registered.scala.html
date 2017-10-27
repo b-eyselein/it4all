@@ -1,0 +1,14 @@
+@(user: model.User)
+
+    @main("Nutzer registriert", null) {
+        <div class="container">
+            <div class="page-header">
+                <h1>Registrierung erfolgreich</h1>
+            </div>
+
+            <div class="alert alert-info">Sie haben sich erfolgreich mit dem Namen <strong>@user.username</strong>
+                registriert. Sie k&ouml;nnen Sich nun <a href="@routes.LoginController.login" class="alert-link">
+                    einloggen</a>
+                .</div>
+        </div>
+    }

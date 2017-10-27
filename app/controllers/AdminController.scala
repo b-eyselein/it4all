@@ -1,48 +1,52 @@
 package controllers
 
-import javax.inject.Inject
+import javax.inject._
 
 import controllers.core.BaseController
-import model.feedback.{Feedback, FeedbackResult}
-import model.user.{Role, User}
-import play.api.libs.json.Json
-import play.api.mvc.ControllerComponents
-import play.mvc.Security
+import model.core.{Repository, Secured}
+import model.feedback.FeedbackResult
+import play.api.db.slick.DatabaseConfigProvider
+import play.api.mvc.{ControllerComponents, EssentialAction}
 
-import scala.collection.JavaConverters._
+import scala.concurrent.ExecutionContext
 
-@Security.Authenticated(classOf[model.AdminSecured])
-class AdminController @Inject()(cc: ControllerComponents) extends BaseController(cc) {
+class AdminController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)
+                               (implicit ec: ExecutionContext)
+  extends BaseController(cc, dbcp, r) with Secured {
 
-
-  def changeRole(username: String) = Action { implicit request =>
-    if (getUser.stdRole != Role.SUPERADMIN)
-      Forbidden("You do not have sufficient privileges to change roles!")
-    else {
-      val newrole = Role.USER.toString //factory.form().bindFromRequest().get("newrole")
-
-      Option(User.finder.byId(username)) match {
-        case None => BadRequest("TODO!")
-        case Some(userToChange) =>
-          userToChange.stdRole = Role.valueOf(newrole)
-          userToChange.save()
-
-          Ok(Json.obj("user" -> userToChange.toString, "newRole" -> newrole))
-      }
-    }
+  def changeRole(username: String): EssentialAction = withAdmin { _ =>
+    implicit request =>
+      //      if (user.stdRole != Role.SUPERADMIN)
+      //        Forbidden("You do not have sufficient privileges to change roles!")
+      //      else {
+      //        val newrole = singleStrForm("newrole").get.str
+      //
+      //        Option(User.finder.byId(username)) match {
+      //          case None => BadRequest("TODO!")
+      //          case Some(userToChange) =>
+      //            userToChange.stdRole = Role.valueOf(newrole)
+      //            userToChange.save()
+      //
+      //            Ok(Json.obj("user" -> userToChange.toString, "newRole" -> newrole))
+      //        }
+      //      }
+      Ok("TODO!")
   }
 
-  def evaluation = Action { implicit request =>
-    val results: List[FeedbackResult] = FeedbackResult.evaluate(Feedback.finder.all.asScala.toList)
-    Ok(views.html.evaluation.stats.render(getUser, results))
+  def evaluation: EssentialAction = withAdmin { user =>
+    implicit request =>
+      val results: List[FeedbackResult] = List.empty // FeedbackResult.evaluate(Feedback.finder.all.asScala.toList)
+      Ok(views.html.evaluation.stats.render(user, results))
   }
 
-  def index = Action { implicit request =>
-    Ok(views.html.admin.adminPage.render(getUser))
+  def index: EssentialAction = futureWithAdmin { user =>
+    implicit request =>
+      repo.numOfUsers.zip(repo.numOfCourses).map(nums => Ok(views.html.admin.adminPage.render(user, nums._1, nums._2)))
   }
 
-  def users = Action { implicit request =>
-    Ok(views.html.admin.users.render(getUser, User.finder.all.asScala.toList))
+  def users: EssentialAction = futureWithAdmin { user =>
+    implicit request =>
+      repo.allUsers.map(users => Ok(views.html.admin.users.render(user, users)))
 
   }
 

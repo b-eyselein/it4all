@@ -1,27 +1,30 @@
 package controllers
 
-import javax.inject.Inject
+import javax.inject._
 
 import controllers.core.BaseController
-import model.Secured
-import model.user.User
+import model.core.{Repository, Secured}
+import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.Json
-import play.api.mvc.ControllerComponents
-import play.mvc.Security
+import play.api.mvc.{ControllerComponents, EssentialAction}
+import slick.jdbc.JdbcProfile
 
-@Security.Authenticated(classOf[Secured])
-class UserController @Inject()(cc: ControllerComponents) extends BaseController(cc) {
+import scala.concurrent.ExecutionContext
 
-  def index = Action { implicit request => Ok(views.html.user.render("User", getUser)) }
+class UserController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)
+                              (implicit ec: ExecutionContext)
+  extends BaseController(cc, dbcp, r) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
-  def preferences = Action { implicit request => Ok(views.html.preferences.render("Präferenzen", getUser)) }
+  def index: EssentialAction = withUser { user => implicit request => Ok(views.html.user.render("User", user)) }
 
-  def saveOptions = Action { implicit request =>
-    val user: User = getUser
-    //    user.todo = User.SHOW_HIDE_AGGREGATE.valueOf(factory.form.bindFromRequest().get("posTests"))
-    user.save()
+  def preferences: EssentialAction = withUser { user => implicit request => Ok(views.html.preferences.render("Präferenzen", user)) }
 
-    // FIXME: tell user that settings habe been saved!
-    Ok(Json.obj("todo" -> user.todo.toString))
+  def saveOptions: EssentialAction = withUser { user =>
+    implicit request =>
+      //      user.todo = SHOW_HIDE_AGGREGATE.withName(singleStrForm("posTests").get.str)
+      //      user.save()
+
+      // FIXME: tell user that settings habe been saved!
+      Ok(Json.obj("todo" -> user.todo.toString))
   }
 }

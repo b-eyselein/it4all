@@ -1,0 +1,55 @@
+@(user: model.User, exercise: model.uml.UmlExercise)
+
+@btnText = @{
+    "Klassen verifizieren"
+}
+
+@scripts = {
+    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/uml.css")">
+    <script src="@routes.Assets.versioned("javascripts/uml/uml.js")"></script>
+}
+
+@main("UML", user, scripts) {
+    <div class="container">
+        <div class="page-header">
+            <h1>Auswahl der Klassen</h1>
+        </div>
+
+        <h2 class="text-info"><i>Bearbeitungshinweise:</i></h2>
+        <ul>
+            <li>In diesem ersten Bearbeitungsschritt sollen Sie die zu modellierenden Klassen durch Anklicken im Aufgabentext ausw&auml;hlen.</li>
+            <li>Sie k&ouml;nnen nur Nomen ausw&auml;hlen.</li>
+            <li>Es werden alle Vorkommen gew&auml;hlter Klassen markiert, um eine Doppelauswahl zu verhindern.</li>
+            <li>Durch erneutes Anklicken einer Klasse - unabh&auml;ngig von der Position - k&ouml;nnen Sie eine Klasse wieder abw&auml;hlen.</li>
+            <li>Auf der rechten Seite wird Ihnen eine Liste Ihrer gew&auml;hlten Klassen angezeigt.</li>
+            <li>Wenn Sie alle Klassen ausgew&auml;hlt haben, k&ouml;nnen Sie Ihre Wahl mit dem Link "@btnText" korrigieren lassen und zum n&auml;chsten Schritt gelangen.</li>
+        </ul>
+
+        <hr>
+
+        <div class="row">
+            <div class="col-md-8">
+                <h2>Aufgabentext</h2>
+                <div class="well text-justify" id="exercisetext" unselectable="on" onselectstart="return false;" onmousedown="return false;">
+                @Html(exercise.classSelText)
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <h2>Gew&auml;hlte Klassen</h2>
+                <ul id="classesList">
+                    <li>--</li>
+                </ul>
+            </div>
+        </div>
+
+        <hr>
+
+        <form action="@controllers.uml.routes.UmlController.correct(exercise.id, model.uml.UmlExPart.CLASS_SELECTION.toString)" method="post"
+        onsubmit="return prepareFormForSubmitting();">
+            <input type="hidden" class="form-control" name="@model.core.StringConsts.FORM_VALUE" id="@model.core.StringConsts.FORM_VALUE" required>
+            <button class="btn btn-primary btn-block">@btnText</button>
+        </form>
+
+    </div>
+}

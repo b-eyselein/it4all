@@ -1,0 +1,24 @@
+@(user: model.User)
+
+@main("XML: Playground", user) {
+    <div class="container">
+        <div class="page-header">
+            <h1>XML: Playground</h1>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+            @views.html.core.editor(controllers.xml.XmlController.STANDARD_XML_PLAYGROUND, "xml", 25, 50, updatePrev = false)
+            </div>
+
+            <div class="col-md-6">
+                <div id="correction"></div>
+            </div>
+        </div>
+
+        <hr>
+
+        <button onclick="testTheSolution('@controllers.xml.routes.XmlController.playgroundCorrection');"
+        class="btn btn-primary btn-block">Gegen DTD in Dokument testen...</button>
+    </div>
+}

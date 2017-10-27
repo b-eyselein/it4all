@@ -1,0 +1,47 @@
+@(user: model.User, question: model.questions.Question, oldAnswer: model.questions.UserAnswer)
+
+@main("Frage", user) {
+    <div class="container">
+        <div class="page-header">
+            <h1>@question.text</h1>
+        </div>
+
+        <form class="form-horizontal" method="post" action="@controllers.questions.routes.QuestionController.questionResult(question.id)">
+
+
+            <div id="answerDiv">
+                @question.questionType match {
+                    case model.questions.QuestionType.CHOICE => {
+                        @for(ans <- question.answersForTemplate) {
+                            <div>
+                                <label for="@ans.id">
+                                    <input type="checkbox" id="@ans.id" name="@ans.id"> @ans.text
+                                </label>
+                            </div>
+                        }
+                    }
+                    case model.questions.QuestionType.FILLOUT => {
+                        @for(ans <- question.answersForTemplate) {
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <input id="@ans.id" name="@ans.id" class="form-control" placeholder="Antwort...">
+                                </div>
+                            </div>
+                        }
+                    }
+                    case model.questions.QuestionType.FREETEXT => {
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <textarea class="form-control" name="answer" rows="20"
+                                placeholder="Freitextantwort..." required>@if(oldAnswer != null) {@oldAnswer.text}</textarea>
+                            </div>
+                        </div>
+                    }
+                }
+                <hr>
+
+                <input class="btn btn-block btn-primary" type="submit" value="Kontrollieren">
+            </div>
+        </form>
+    </div>
+}

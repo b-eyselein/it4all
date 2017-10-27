@@ -1,38 +1,40 @@
-@(user: model.user.User, feedback: List[model.feedback.Feedback])
+@(user: model.User, feedback: List[model.feedback.Feedback])
 
-@main("Evaluation: Eintragung", user) {
-<div class="container">
-  <div class="page-header">
-    <h1>Ihre Bewertungen</h1>
-  </div>
-  <div class="alert alert-success">
-    <p>Ihre Bewertungen wurden gespeichert und werden zu einem sp&auml;teren Zeitpunkt ausgewertet.</p>
-    <p>Sie k&ouml;nnen nun <a href="@routes.Application.index()" class="alert-link">zur Startseite</a> zur&uuml;ckkehren.</p>
-  </div>
-  
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Frage</th>
-        @for(fb <- feedback) {<th>@fb.key.tool</th>
-        }
-      <tr>    
-    </thead>
-    <tbody>
-    @for(evaledAspect <- model.feedback.EvaluatedAspect.values) {
-      <tr>
-        <td>@evaledAspect.getQuestion</td>
-        @for(fb <- feedback) {
-      	<td>@fb.get(evaledAspect).display(evaledAspect)</td>
-        }
-      </tr>
+    @main("Evaluation: Eintragung", user) {
+        <div class="container">
+            <div class="page-header">
+                <h1>Ihre Bewertungen</h1>
+            </div>
+            <div class="alert alert-success">
+                <p>Ihre Bewertungen wurden gespeichert und werden zu einem sp&auml;teren Zeitpunkt ausgewertet.</p>
+                <p>Sie k&ouml;nnen nun <a href="@routes.Application.index()" class="alert-link">zur Startseite</a>
+                    zur&uuml;ckkehren.</p>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Frage</th>
+                        @for(fb <- feedback) {
+                            <th>@fb.tool</th>
+                    }
+                    <tr>
+                </thead>
+                <tbody>
+                    @for(evaledAspect <- model.Enums.EvaluatedAspect.values) {
+                        <tr>
+                            <td>@evaledAspect.question</td>
+                            @for(fb <- feedback) {
+                                <td>@fb.get(evaledAspect).display(evaledAspect)</td>
+                            }
+                        </tr>
+                    }
+                    <tr>
+                        <td>Kommentare</td>
+                        @for(fb <- feedback) {
+                            <td>@fb.comment</td>
+                        }
+                </tbody>
+            </table>
+        </div>
     }
-      <tr>
-        <td>Kommentare</td>
-        @for(fb <- feedback) {
-      	<td>@fb.comment</td>
-      	}
-    </tbody>
-  </table>
-</div>
-}

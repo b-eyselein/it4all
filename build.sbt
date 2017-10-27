@@ -1,69 +1,76 @@
 name := """it4all"""
 
-Common.settings
+organization := "is.informatik.uni-wuerzburg.de"
+
+version := "0.9.0"
+
+scalaVersion := "2.12.4"
+
+scalacOptions ++= Seq("-feature")
 
 lazy val root = (project in file("."))
-  .enablePlugins(PlayScala, PlayEbean, PlayEnhancer)
-  .aggregate(bool, ebnf, mindmap, programming, question, spread, sql, uml, web, xml)
-  .dependsOn(bool, ebnf, mindmap, programming, question, spread, sql, uml, web, xml, core)
-
-lazy val core: Project = (project in file("modules/core"))
-  .enablePlugins(PlayScala, PlayEbean, PlayEnhancer)
-  .settings(
-    aggregateReverseRoutes := Seq(bool, ebnf, mindmap, programming, question, spread, sql, uml, web, xml, root)
-  )
-
-lazy val bool = (project in file("modules/bool"))
-  .enablePlugins(PlayScala, PlayEbean, PlayEnhancer)
-  .dependsOn(core)
-
-lazy val ebnf = (project in file("modules/ebnf"))
-  .enablePlugins(PlayScala, PlayEbean, PlayEnhancer)
-  .dependsOn(core)
-
-lazy val mindmap = (project in file("modules/mindmap"))
-  .enablePlugins(PlayScala, PlayEbean, PlayEnhancer)
-  .dependsOn(core)
-
-lazy val programming = (project in file("modules/programming"))
-  .enablePlugins(PlayScala, PlayEbean, PlayEnhancer)
-  .dependsOn(core)
-
-lazy val question = (project in file("modules/question"))
-  .enablePlugins(PlayScala, PlayEbean, PlayEnhancer)
-  .dependsOn(core)
-
-lazy val spread = (project in file("modules/spread"))
-  .enablePlugins(PlayScala, PlayEbean, PlayEnhancer)
-  .dependsOn(core)
-
-lazy val sql = (project in file("modules/sql"))
-  .enablePlugins(PlayScala, PlayEbean, PlayEnhancer)
-  .dependsOn(core)
-
-lazy val uml = (project in file("modules/uml"))
-  .enablePlugins(PlayScala, PlayEbean, PlayEnhancer)
-  .dependsOn(core)
-
-lazy val web = (project in file("modules/web"))
-  .enablePlugins(PlayScala, PlayEbean, PlayEnhancer)
-  .dependsOn(core)
-
-lazy val xml = (project in file("modules/xml"))
-  .enablePlugins(PlayScala, PlayEbean, PlayEnhancer)
-  .dependsOn(core)
+  .enablePlugins(PlayScala)
 
 // Used libraries from Maven Repository
 libraryDependencies ++= Seq(
+  "org.mockito" % "mockito-core" % "2.11.0",
+  "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % "test",
+
   "mysql" % "mysql-connector-java" % "8.0.8-dmr",
+  guice,
 
-  javaJdbc,
-  //  "com.typesafe.play" %% "play-slick" % "3.0.0",
-  //  "com.typesafe.play" %% "play-slick-evolutions" % "3.0.0",
-  guice
+  // core
+  "com.github.fge" % "json-schema-validator" % "2.2.6",
+  "com.kjetland" % "mbknor-jackson-jsonschema_2.12" % "1.0.24",
+
+  "com.typesafe.play" %% "play-slick" % "3.0.0",
+  evolutions,
+  "com.typesafe.play" %% "play-slick-evolutions" % "3.0.0",
+
+  // Js-Libraries
+  "org.webjars" % "ace" % "1.2.8",
+  "org.webjars" % "bootstrap" % "3.3.7-1",
+  "org.webjars.npm" % "jointjs" % "1.1.0",
+
+  // Js-Libs for Uml
+  "org.webjars" % "lodash" % "3.10.1",
+  "org.webjars" % "backbonejs" % "1.3.3",
+
+  "com.github.t3hnar" %% "scala-bcrypt" % "3.0",
+
+  // Selenium and HtmlUnitDriver for Web+Js
+  "org.seleniumhq.selenium" % "selenium-java" % "3.6.0",
+  "org.seleniumhq.selenium" % "selenium-htmlunit-driver" % "2.52.0",
+
+  // MyBatis and JSqlParser for SQL
+  "org.mybatis" % "mybatis" % "3.4.5",
+  "com.github.jsqlparser" % "jsqlparser" % "1.1",
+
+  // Programming
+  "com.github.docker-java" % "docker-java" % "3.0.14",
+
+  // Apache POI for Excel
+  "org.apache.poi" % "poi" % "3.17",
+  "org.apache.poi" % "poi-excelant" % "3.17",
+  "org.apache.poi" % "poi-ooxml" % "3.17",
+  "org.apache.poi" % "poi-ooxml-schemas" % "3.17",
+  "org.apache.poi" % "poi-scratchpad" % "3.17",
+  "org.apache.xmlbeans" % "xmlbeans" % "2.6.0",
+
+  // ODF Toolkit for OpenOffice Calc
+  "commons-validator" % "commons-validator" % "1.5.0", // 1.6
+  "net.rootdev" % "java-rdfa" % "0.4.2",
+  "org.apache.jena" % "jena-core" % "2.11.2", // 3.4.0
+  "org.apache.odftoolkit" % "odfdom-java" % "0.8.11-incubating",
+  "org.apache.odftoolkit" % "simple-odf" % "0.8.2-incubating",
+  "org.apache.odftoolkit" % "taglets" % "0.8.11-incubating",
+  "xerces" % "xercesImpl" % "2.9.", // 2.11.0-22
+  "xml-apis" % "xml-apis" % "1.3.04",
+
+  // Apache Commons IO
+  "commons-io" % "commons-io" % "2.4"
+
 )
-
-scalacOptions ++= Seq("-feature")
 
 // Injected for non-static Routes
 routesGenerator := InjectedRoutesGenerator

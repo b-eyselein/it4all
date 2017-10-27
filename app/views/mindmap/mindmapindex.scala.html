@@ -1,0 +1,14 @@
+@(user: model.User)
+
+@main("Mindmap-Test", user) {
+    <div class="container">
+
+        <form action="@@controllers.mindmap.MindmapController.upload() /mindmap/upload" method="post">
+            <div class="form-group">
+                <label for="the_file">Mindmap-Datei:</label>
+                <input type="file" class="form-control" id="the_file" accept=".xml, .xmmap">
+            </div>
+            <button type="submit" class="btn btn-default">Abschicken</button>
+        </form>
+    </div>
+}

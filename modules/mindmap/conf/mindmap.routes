@@ -1,3 +1,0 @@
-GET         /index         controllers.mindmap.MindmapController.index
-
-POST        /upload        controllers.mindmap.MindmapController.upload

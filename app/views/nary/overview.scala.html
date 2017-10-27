@@ -1,27 +1,27 @@
-@(user: model.user.User)
+@(user: model.User)
 
 @main("Zahlensysteme", user) {
-<div class="container">
-  <div class="page-header">
-    <h1>Zahlensysteme</h1>
-  </div>
-  
-  <a type="button" class="btn btn-default btn-block" href="@routes.NaryController.newNaryConversionQuestion">
-    Umwandeln zwischen verschiedenen Zahlensystemen</a>
+    <div class="container">
+        <div class="page-header">
+            <h1>Zahlensysteme</h1>
+        </div>
 
-  &nbsp;
+        <a type="button" class="btn btn-default btn-block" href="@controllers.nary.routes.NaryController.newNaryConversionQuestion">
+            Umwandeln zwischen verschiedenen Zahlensystemen</a>
 
-  <div class="btn-group btn-group-justified">
-    <a class="btn btn-default" href="@routes.NaryController.newTwoComplementQuestion(true)">
-    Zweierkomplement ausf&uuml;hrlich</a>
-    <a class="btn btn-default" href="@routes.NaryController.newTwoComplementQuestion(false)">
-    Zweierkomplement kurz</a>
-  </div>
+            &nbsp;
 
-  &nbsp;
-  
-  <a type="button" class="btn btn-default btn-block" href="@routes.NaryController.newNaryAdditionQuestion">
-    Addition in anderen Zahlensystemen</a>
-  
-</div>
+        <div class="btn-group btn-group-justified">
+            <a class="btn btn-default" href="@controllers.nary.routes.NaryController.newTwoComplementQuestion(true)">
+                Zweierkomplement ausf&uuml;hrlich</a>
+            <a class="btn btn-default" href="@controllers.nary.routes.NaryController.newTwoComplementQuestion(false)">
+                Zweierkomplement kurz</a>
+        </div>
+
+            &nbsp;
+
+        <a type="button" class="btn btn-default btn-block" href="@controllers.nary.routes.NaryController.newNaryAdditionQuestion">
+            Addition in anderen Zahlensystemen</a>
+
+    </div>
 }

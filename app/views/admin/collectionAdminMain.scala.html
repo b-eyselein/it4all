@@ -1,0 +1,19 @@
+@(user: model.User, statistics: Html, links: model.core.tools.IdExToolObject)(content: Html)
+
+@administration = {
+    <h2>Verwaltung der @links.pluralName</h2>
+    <a class="btn btn-default btn-block" href="@links.exercisesRoute">Übersicht über alle Aufgaben</a>
+
+        &nbsp;
+
+    <a class="btn btn-default btn-block" href="@links.newExFormRoute">Neue Aufgabe erstellen</a>
+
+        &nbsp;
+
+    <div class="btn-group btn-group-justified">
+        <a class="btn btn-default" href="@links.exportExesRoute">Aufgaben als JSON exportieren</a>
+        <a class="btn btn-default" href="@links.importExesRoute">Standardaufgaben importieren</a>
+    </div>
+}
+
+@views.html.admin.adminMain.render(user, statistics, administration, links, new Html(""))

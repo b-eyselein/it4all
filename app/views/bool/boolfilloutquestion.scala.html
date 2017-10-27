@@ -1,0 +1,55 @@
+@(user: model.User, question: model.bool.FilloutQuestion)
+
+@vars = @{
+    question.variables
+}
+
+@main("Wertetabelle", user) {
+    <!-- Tooltip script -->
+    <script>
+            $(document).ready(function () {
+                $('[data-toggle="tooltip"]').tooltip();
+            });
+    </script>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Ausf&uuml;llen einer Wertetabelle</h1>
+        </div>
+
+        <form action="@controllers.bool.routes.BoolController.checkBoolFilloutSolution()" method="post">
+            <div class="row">
+                <div class="col-sm-6 col-sm-offset-3">
+                    <table class="table table-responsive" border="1">
+                        <thead>
+                            <tr>
+                                @for(v <- question.variables) {
+                                    <th class="text-center">@v</th>
+                                }
+                                <th class="text-center">@Html(question.getFormulaAsHtml)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @for(assignment <- question.assignments) {
+                            <tr>
+                                @for(variable <- vars) {
+                                    <td class="text-center">@assignment.asChar(variable)</td>
+                                }
+                            <td class="text-center">
+                                <input type="number" autocomplete="off" min="0" max="1" step="1" name="@assignment.toString" size="1" maxlength="1" required>
+                            </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6 col-sm-offset-3">
+                    <input hidden name="@model.core.StringConsts.FORM_VALUE" value="@question.formulaAsString">
+                    <button class="btn btn-primary btn-block">Pr&uuml;fen</button>
+                </div>
+            </div>
+        </form>
+    </div>
+}

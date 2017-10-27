@@ -1,85 +1,54 @@
-@(user: model.user.User, users: List[model.user.User])
+@(user: model.User, users: Seq[model.User])
 
-@main("Nutzerübersicht", user) {
-<script>
-function updateBtn(username) {
-  var sel = $("#sel_" + username);
-  $("#btn_" + username).prop('disabled', sel.val() === sel.data("stdrole"));
+@scripts = {
+    <script src="@routes.Assets.versioned("javascripts/users/users.js")"></script>
 }
 
-function onSuccess(changedUser) {
-  $("#sel_" + changedUser.name).data('stdrole', changedUser.stdRole);
-  $("#btn_" + changedUser.name).prop('disabled', true);
-  $("#reply").append("<div class=\"alert alert-success alert-dismissable\">"
-      + "<a href=\"\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>"
-      + "<strong>" + changedUser.name + "</strong> hat jetzt die neue Rolle <strong>" + changedUser.stdRole + "</strong> statt " + oldRole +  "</div>");
-}
+@main("Nutzerübersicht", user, scripts) {
+    <div class="container">
+        <div class="page-header">
+            <h1>Nutzer&uuml;bersicht</h1>
+        </div>
 
-function onError(jqXHR, textStatus, errorThrown) {
-  $("#reply").append("<div class=\"alert alert-danger alert-dismissable\">"
-          + "<a href=\"\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>"
-          + "<strong>" + jqXHR.responseText + "</strong></div>");
-}
+        <div id="reply"></div>
 
-function saveRole(username, roleChangeUrl) {
-  var sel = $("#sel_" + username);
-  var oldRole = sel.data('stdrole');
-  $.ajax({
-      type: "PUT",
-      url: roleChangeUrl,
-      data: {
-          username: username,
-          newrole: sel.val()
-      },
-      success: onSuccess,
-      error: onError
-  });
-}
-</script>
-  
-<div class="container">
-  <div class="page-header">
-    <h1>Nutzer&uuml;bersicht</h1>
-  </div>
-  
-  <div id="reply"></div>
-  
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Rolle (&auml;ndern)</th>
-        <th>Kurse</th>
-      </tr>
-    </thead>
-    <tbody>
-    @for(user <- users) {
-      <tr>
-        <td>@user.name</td>
-        <td>
-          <div class="input-group">
-            <select class="form-control" onchange="updateBtn('@user.name')" id="sel_@user.name" data-stdrole="@user.stdRole">
-            @for(role <- model.user.Role.values) {
-            	<option @if(user.stdRole == role) { selected }>@role</option>
-              }
-            </select>
-            <span class="input-group-btn">
-              <button class="btn btn-default" disabled id="btn_@user.name" onclick="saveRole('@user.name', '@routes.AdminController.changeRole(user.name)')">
-                <span class="glyphicon glyphicon-upload"></span>
-              </button>
-            </span>
-          </div>
-        </td>
-        <td>
-          <ul>
-          @for(course <- user.getCourses()) {
-            <li>@course.name</li>
-          }
-          </ul>
-        </td>
-      </tr>
-    }
-    </tbody>
-  </table>
-</div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Rolle (&auml;ndern)</th>
+                    <th>Kurse</th>
+                </tr>
+            </thead>
+            <tbody>
+            @for(user <- users) {
+                <tr>
+                    <td>@user.username</td>
+                    <td>
+                        <div class="input-group">
+                            <select class="form-control" onchange="updateBtn('@user.username')" id="sel_@user.username" data-stdrole="@user.stdRole">
+                            @for(role <- model.Enums.Role.values) {
+                                <option @role.isSelected(user.stdRole)>@role </option>
+                            }
+                            </select>
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" disabled id="btn_@user.username"
+                                onclick="saveRole('@user.username', '@routes.AdminController.changeRole(user.username)')">
+                                    <span class="glyphicon glyphicon-upload"></span>
+                                </button>
+                            </span>
+                        </div>
+                    </td>
+                    <td>
+                        <ul>
+                            @*for(course <- user.getCourses()) {
+                            <li>@course.name</li>
+                            }*@
+                        </ul>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
 }

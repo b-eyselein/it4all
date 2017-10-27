@@ -1,0 +1,29 @@
+@(user: model.User, questionList: List[model.questions.Question])
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Titel</th>
+            <th>Typ</th>
+            <th>Max. Punktzahl</th>
+            <th>Beantwortet</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @for(question <- questionList) {
+            <tr>
+                <td>@question.id</td>
+                <td><a href="@controllers.questions.routes.QuestionController.exercise(question.id)">@question.title</a></td>
+                <td>@question.questionType.german</td>
+                <td>@question.maxPoints</td>
+                @if(question.userHasAnswered(user.username)) {
+                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                } else {
+                    <td><span class="glyphicon glyphicon-minus"></span></td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>

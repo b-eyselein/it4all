@@ -1,4 +1,4 @@
-@(title: String, user: model.user.User)
+@(title: String, user: model.User)
 
 @scripts = {
     <script src="@routes.Assets.versioned("javascripts/preferences.js")"></script>
@@ -10,15 +10,15 @@
             <h1>Präferenzen</h1>
         </div>
 
-        <form class="form-horizontal" @*action="@controllers.routes.UserController.saveOptions"*@ method="post" onsubmit="return false;">
+        @helper.form(controllers.routes.UserController.saveOptions, 'class -> "form-horizontal", 'onsubmit -> "return false;") {
 
             <div class="form-group">
                 <label class="control-label col-sm-3" for="posTests">Bestandene Tests</label>
                 <div class="col-sm-9">
                     <div class="input-group">
                         <select class="form-control" id="posTests" onchange="update(this.id)" data-std="@user.todo">
-                        @for(todo <- model.user.User.SHOW_HIDE_AGGREGATE.values) {
-                            <option value="@todo" @todo.getSelected(user.todo)>@todo.getGerman </option>
+                        @for(todo <- model.Enums.ShowHideAggregate.values) {
+                            <option value="@todo" @todo.isSelected(user.todo)>@todo.german </option>
                         }
                         </select>
 
@@ -31,7 +31,7 @@
             </div>
 
             <hr>
+            }
 
-        </form>
     </div>
 }

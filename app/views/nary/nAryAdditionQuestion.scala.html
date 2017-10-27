@@ -1,63 +1,66 @@
-@(user: model.user.User, firstSummand: model.nary.NAryNumber, secondSummand: model.nary.NAryNumber, base: model.nary.NumberBase)
+@(user: model.User, firstSummand: model.nary.NAryNumber, secondSummand: model.nary.NAryNumber, base: model.nary.NumberBase)
 
-@title = @{"Addition"}
+@title = @{
+    "Addition"
+}
 
 @main(title, user) {
-<div class="container">
-  <div class="page-header">
-    <h1>@title von @base.pluralName</h1>
-  </div>
-  
-  <div class="row">
-    <div class="col-sm-4 col-sm-offset-4">
-      
-      <form role="form" action="@routes.NaryController.checkNaryAdditionSolution" method="post">
-         
-        <div class="form-group">
-          <div class="input-group">
-            <input value="@firstSummand" readonly class="form-control text-right" name="@model.nary.NAryResult.SUMMAND_1">
-            <span class="input-group-addon"><sub>@base.base</sub></span>
-          </div>  
-        </div>        
-         
-        <div class="form-group">
-          <div class="input-group">
-            <span class="input-group-addon">+</span>
-            <input value="@secondSummand" readonly class="form-control text-right" name="@model.nary.NAryResult.SUMMAND_2">
-            <span class="input-group-addon"><sub>@base.base</sub></span>
-          </div>    
+    <div class="container">
+        <div class="page-header">
+            <h1>@title von @base.pluralName</h1>
         </div>
-        
+
+        <div class="row">
+            <div class="col-sm-4 col-sm-offset-4">
+
+                <form role="form" action="@controllers.nary.routes.NaryController.checkNaryAdditionSolution" method="post">
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input value="@firstSummand" readonly class="form-control text-right" name="@model.nary.NAryResult.SUMMAND_1">
+                            <span class="input-group-addon"><sub>@base.base</sub></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon">+</span>
+                            <input value="@secondSummand" readonly class="form-control text-right" name="@model.nary.NAryResult.SUMMAND_2">
+                            <span class="input-group-addon"><sub>@base.base</sub></span>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input pattern="@base.htmlPattern" autocomplete="off"
+                            style="direction: rtl;
+                                unicode-bidi: bidi-override;" autofocus
+                            class="form-control text-right" name="@model.core.StringConsts.FORM_VALUE" placeholder="Ihre L&ouml;sung" required>
+                            <span class="input-group-addon"><sub>@base.base</sub></span>
+                        </div>
+                    </div>
+
+                    <input hidden name="@model.nary.NAryResult.BASE_NAME" value="@base">
+
+                    <button class="btn btn-primary btn-block">Pr&uuml;fen</button>
+                </form>
+
+            </div>
+        </div>
+
         <hr>
-        
-        <div class="form-group">
-          <div class="input-group">
-            <input pattern="@base.htmlPattern" autocomplete="off"
-              style="direction: rtl; unicode-bidi: bidi-override;" autofocus
-              class="form-control text-right" name="@model.StringConsts.FORM_VALUE" placeholder="Ihre L&ouml;sung" required>
-            <span class="input-group-addon"><sub>@base.base</sub></span>
-          </div>
+
+        <div class="panel panel-info">
+            <div class="panel-heading">Hinweise</div>
+            <div class="panel-body">
+                <ul>
+                    <li>Aufgrund der üblichen Addition von rechts nach links erfolgt die Eingabe der Zahlen umgekehrt von rechts nach links!</li>
+                    <li>Bin&auml;rzahlen bitte in 8-Bit-Darstellung mit f&uuml;hrenden Nullen angeben.</li>
+                </ul>
+            </div>
         </div>
-        
-        <input hidden name="@model.nary.NAryResult.BASE_NAME" value="@base">
-        
-        <button class="btn btn-primary btn-block">Pr&uuml;fen</button>
-      </form>
-      
+
     </div>
-  </div>
-  
-  <hr>
-  
-  <div class="panel panel-info">
-    <div class="panel-heading">Hinweise</div>
-    <div class="panel-body">
-      <ul>
-        <li>Aufgrund der üblichen Addition von rechts nach links erfolgt die Eingabe der Zahlen umgekehrt von rechts nach links!</li>
-        <li>Bin&auml;rzahlen bitte in 8-Bit-Darstellung mit f&uuml;hrenden Nullen angeben.</em></p>
-      </ul>
-    </div>
-  </div>
-  
-</div>
 }

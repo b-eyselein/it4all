@@ -1,0 +1,30 @@
+@(user: model.User, scenarioes: List[model.sql.SqlScenario])
+
+    @main("SQL: Szenarien", user) {
+        <div class="container">
+            <div class="page-header">
+                <h1>Verf&uuml;gbare Szenarien</h1>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Titel</th>
+                        <th># Aufgaben</th>
+                        <th>Autor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @for(scenario <- scenarioes) {
+                    <tr>
+                        <td>@scenario.id</td>
+                        <td><a href="@@sql.routes.Sql.scenario(scenario.id)">@scenario.title</a></td>
+                        <td>@scenario.exercises.size</td>
+                        <td>@scenario.author</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }

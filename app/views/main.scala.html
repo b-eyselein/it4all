@@ -1,0 +1,88 @@
+@(title: String, user: model.User, scripts: Html = Html(""))(content: Html)
+<!DOCTYPE html>
+
+<html lang="de">
+
+    <head>
+        <title>it4all: @title</title>
+
+            <!-- JQuery, Bootstrap (CSS und JS) -->
+        <script src="@routes.Assets.versioned("lib/jquery/jquery.min.js")"></script>
+
+        <link rel="stylesheet" href="@routes.Assets.versioned("lib/bootstrap/css/bootstrap.min.css")">
+        <script src="@routes.Assets.versioned("lib/bootstrap/js/bootstrap.min.js")"></script>
+
+        @scripts
+    </head>
+
+    <body>
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="@routes.Application.index">it4all<sup>BETA</sup></a>
+                </div>
+                <div class="collapse navbar-collapse" id="myNavbar">
+                    <ul class="nav navbar-nav">
+                        @for(tool <- model.core.tools.ToolList.allTools) {
+                            <li><a href="@tool.indexCall">@tool.toolname @tool.state.badge</a></li>
+                        }
+                        @*for(toolGroup <- model.tools.ToolList.toolGroups) {
+                        <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">@toolGroup.name <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                        @for(tool <- toolGroup.tools) {
+                        <li><a href="@tool.index">@tool.name</a></li>
+                        }
+                        </ul>
+                        </li>
+                        }*@
+
+                    </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                    @if(user != null) {
+                        @if(user.isAdmin) {
+                            <li class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="">
+                                    <span class="glyphicon glyphicon-cog"></span>
+                                    Administrator <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    @for(tool <- model.core.tools.ToolList.idExTools) {
+                                        <li><a href="@tool.adminIndexRoute">@tool.toolname</a></li>
+                                        <li class="divider"></li>
+                                    }
+                                    <li><a href="@routes.AdminController.index">Allgemein</a></li>
+                                </ul>
+                            </li>
+                        }
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-user"></span>
+                                @user.username <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="@routes.UserController.preferences">Präferenzen</a></li>
+                                <li class="divider"></li>
+                                <li><a href="@routes.LoginController.logout"><span class="glyphicon glyphicon-log-out"></span>
+                                    Logout
+                                </a>
+                                </li>
+                            </ul>
+                        </li>
+                    } else {
+                        <li><a href="@routes.LoginController.login"><span class="glyphicon glyphicon-log-in">
+                            Login</span></a></li>
+                        <li><a href="@routes.LoginController.register"><span class="glyphicon glyphicon-new-window">
+                            Registrieren</span></a></li>
+                    }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        @content
+    </body>
+</html>

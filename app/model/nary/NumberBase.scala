@@ -25,11 +25,11 @@ object NumberBase {
   }
 
   def valueOf(str: String): NumberBase = str match {
-    case "BINARY" => BINARY
-    case "OCTAL" => OCTAL
+    case "BINARY"      => BINARY
+    case "OCTAL"       => OCTAL
     case "HEXADECIMAL" => HEXADECIMAL
-    case "DECIMAL" => DECIMAL
-    case _ => throw new IllegalArgumentException(s"No value for $str!")
+    case "DECIMAL"     => DECIMAL
+    case _             => throw new IllegalArgumentException(s"No value for $str!")
   }
 }
 

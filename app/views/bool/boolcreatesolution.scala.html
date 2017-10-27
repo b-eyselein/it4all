@@ -1,0 +1,68 @@
+@(user: model.User, result: model.bool.BooleanQuestionResult)
+
+@scripts = {
+    <!-- Tooltip script -->
+    <script>
+            $(document).ready(function () {
+                $('[data-toggle="tooltip"]').tooltip();
+            });
+    </script>
+}
+
+@main("Formel erstellen", user, scripts) {
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-heading">Musterl&ouml;sung</div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="container-fluid">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    @for(variable <- result.question.variables) {
+                                        <th class="text-center">@variable</th>
+                                    }
+                                    <th class="text-center">@model.bool.BooleanQuestion.SOLUTION_VARIABLE</th>
+                                    <th class="text-center" id="learnerFormula">
+                                        Ihre L&ouml;sung: @result.learnerSolution</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @for(assignment <- result.assignments) {
+                                <tr>
+                                    @for(variable <- result.question.variables) {
+                                        <td class="text-center">@assignment.asChar(variable)</td>
+                                    }
+                                <td class="text-center">@assignment.asChar(model.bool.BooleanQuestion.SOLUTION_VARIABLE)</td>
+                                <td class="text-center @assignment.getColor">
+                                    <span class="text-@assignment.getColor">@assignment.asChar(model.bool.BooleanQuestion.LEARNER_VARIABLE)</span>
+                                </td>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <section>
+                    <h3>Musterl&ouml;sungen f&uuml;r z:</h3>
+                    <div class="row">
+                        <div class="col-sm-3">Kanonische disjunktive Normalform:</div>
+                        <div class="col-sm-9">
+                            <code>@model.bool.Assignment.getDisjunktiveNormalForm(result.question.solutions)</code>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">Kanonische konjunktive Normalform:</div>
+                        <div class="col-sm-9">
+                            <code>@model.bool.Assignment.getKonjunktiveNormalForm(result.question.solutions)</code>
+                        </div>
+                    </div>
+                </section>
+
+                <hr>
+                <a href="@controllers.bool.routes.BoolController.newBoolCreationQuestion()" class="btn btn-primary btn-block">
+                    N&auml;chste Aufgabe</a>
+            </div>
+        </div>
+    </div>
+}

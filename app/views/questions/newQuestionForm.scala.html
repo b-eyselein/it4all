@@ -1,0 +1,79 @@
+@(user: model.User, id: Int, isChoice: Boolean)
+
+@scripts = {
+    <script src="@routes.Assets.versioned("javascripts/question.js")"></script>
+
+    <script>
+            $(document).ready(function () {
+                onAnswerNumChange();
+            });
+    </script>
+}
+
+@main("Neue Frage erstellen", user, scripts) {
+    <div class="container">
+        <div class="page-header">
+            <h1>Neue Frage erstellen</h1>
+        </div>
+
+        <form class="form-horizontal" method="post" action="@controllers.questions.routes.QuestionController.newQuestion(false)">
+
+            @views.html.admin.exStdFields.render(user, null, 3)
+
+            @if(isChoice) {
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="numOfAnswers">Anzahl Antworten:</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" type="number" name="numOfAnswers" id="numOfAnswers" onchange="onAnswerNumChange();"
+                        min="@model.questions.QuestionHelper.MIN_ANSWERS" max="@model.questions.QuestionHelper.MAX_ANSWERS"
+                        value="@model.questions.QuestionHelper.STD_ANSWERS" required>
+                    </div>
+                </div>
+
+                @for(count <- 1 to model.questions.QuestionHelper.MAX_ANSWERS) {
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">Antwort @count</label>
+                        <div class="col-sm-10" id="answerDiv">
+                            <div class="input-group">
+                                <input name="correctness_@count" id="correctness_@count" hidden value="WRONG">
+                                <input name="@count" id="@count" class="form-control" placeholder="Antwort @count">
+                                <div class="input-group-btn">
+                                @for(correctness <- model.questions.Correctness.values()) {
+                                    <button type="button" onclick="changeCorrectness(@count, '@correctness', this)" title="@correctness.title"
+                                    class="btn btn-@if(correctness == model.questions.Correctness.WRONG) {danger} else {default}">
+                                        <span class="@correctness.bsGlyphicon"></span>
+                                    </button>
+                                }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            } else {
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="numOfAnswers">Anzahl Antworten:</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" type="number" name="numOfAnswers" id="numOfAnswers" onchange="onAnswerNumChange();"
+                        min="@model.questions.QuestionHelper.MIN_ANSWERS" max="@model.questions.QuestionHelper.MAX_ANSWERS"
+                        value="@model.questions.QuestionHelper.STD_ANSWERS" required>
+                    </div>
+                </div>
+
+                @for(count <- 1 to model.questions.QuestionHelper.MAX_ANSWERS) {
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">Antwort @count:</label>
+                        <div class="col-sm-10" id="answerDiv">
+                            <input class="form-control" name="@count" id="@count" placeholder="Antwort @count">
+                        </div>
+                    </div>
+                }
+            }
+
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" class="btn btn-primary">Frage erstellen</button>
+                </div>
+            </div>
+        </form>
+    </div>
+}

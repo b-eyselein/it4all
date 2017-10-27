@@ -1,36 +1,36 @@
-@(user: model.user.User, isDev: Boolean)
+@(user: model.User, isDev: Boolean)
 
-@main("HTML-Test", user) {
-  <div class="container">
+    @main("HTML-Test", user) {
+        <div class="container">
 
-    <section>
-      <h2>Tipps &amp; Tricks</h2>
-      <div class="well">@model.Tipp.getRandom</div>
-      <div class="btn-group btn-group-justified">
-        <div class="btn-group">
-          <button class="btn btn-default">Vorheriger Tipp</button>
+            <section>
+                <h2>Tipps &amp; Tricks</h2>
+                <div class="well">@model.TippHelper.getRandom</div>
+                <div class="btn-group btn-group-justified">
+                    <div class="btn-group">
+                        <button class="btn btn-default">Vorheriger Tipp</button>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-default">Nächster Tipp</button>
+                    </div>
+                </div>
+            </section>
+
+            <hr>
+
+            <h2>Verf&uuml;gbare Aufgabentypen</h2>
+            @for(tools <- model.core.tools.ToolList.allTools.grouped(3)) {
+                <div class="row">
+                @for(tool <- tools) {
+                    <div class="col-md-4">
+                        <a class="btn btn-default btn-block" href="@tool.indexCall">
+                            <span class="text-capitalize">@tool.exType</span>
+                        </a>
+                    </div>
+                }
+                </div>
+                    &nbsp;
+            }
+
         </div>
-        <div class="btn-group">
-          <button class="btn btn-default">Nächster Tipp</button>
-        </div>
-      </div>
-    </section>
-
-    <hr>
-
-    <h2>Verf&uuml;gbare Aufgabentypen</h2>
-    @for(tools <- model.tools.ToolList.allTools.grouped(3)) {
-      <div class="row">
-      @for(tool <- tools) {
-        <div class="col-md-4">
-          <a class="btn btn-default btn-block" href="@tool.indexCall">
-            <span class="text-capitalize">@tool.exType</span>
-          </a>
-        </div>
-      }
-      </div>
-        &nbsp;
     }
-
-  </div>
-}

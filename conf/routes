@@ -3,73 +3,379 @@
 # ~~~~
 
 # Home page
-GET         /                              controllers.Application.index
+GET           /                                         controllers.Application.index
 
 # User
-GET         /user                          controllers.UserController.index
-GET         /preferences                   controllers.UserController.preferences
-PUT         /preferences                   controllers.UserController.saveOptions
+GET           /user                                     controllers.UserController.index
+GET           /preferences                              controllers.UserController.preferences
+PUT           /preferences                              controllers.UserController.saveOptions
 
 # Admin
-GET         /admin                         controllers.AdminController.index
+GET           /admin                                    controllers.AdminController.index
 
-GET         /users                         controllers.AdminController.users
-PUT         /users/changeRole/:user        controllers.AdminController.changeRole(user: String)
+GET           /users                                    controllers.AdminController.users
+PUT           /users/changeRole/:user                   controllers.AdminController.changeRole(user: String)
 
 # Tools
-GET         /nary                          controllers.NaryController.index
+GET           /nary                                     controllers.nary.NaryController.index
 
-GET         /nary/conv                     controllers.NaryController.newNaryConversionQuestion
-POST        /nary/conv                     controllers.NaryController.checkNaryConversionSolution
+GET           /nary/conv                                controllers.nary.NaryController.newNaryConversionQuestion
+POST          /nary/conv                                controllers.nary.NaryController.checkNaryConversionSolution
 
-GET         /nary/add                      controllers.NaryController.newNaryAdditionQuestion
-POST        /nary/add                      controllers.NaryController.checkNaryAdditionSolution
+GET           /nary/add                                 controllers.nary.NaryController.newNaryAdditionQuestion
+POST          /nary/add                                 controllers.nary.NaryController.checkNaryAdditionSolution
 
-GET         /nary/twocomp/:verb            controllers.NaryController.newTwoComplementQuestion(verb: Boolean)
-POST        /nary/twocomp/:verb            controllers.NaryController.checkTwoComplementSolution(verb: Boolean)
+GET           /nary/twocomp/:verb                       controllers.nary.NaryController.newTwoComplementQuestion(verb: Boolean)
+POST          /nary/twocomp/:verb                       controllers.nary.NaryController.checkTwoComplementSolution(verb: Boolean)
 
-->          /bool                          bool.Routes
+# Mindmap
+GET           /index                                    controllers.mindmap.MindmapController.index
 
-->          /ebnf                          ebnf.Routes
+POST          /upload                                   controllers.mindmap.MindmapController.upload
 
-->          /mindmap                       mindmap.Routes
+# XML - Anfang
+GET           /xml/admin                                controllers.xml.XmlAdmin.adminIndex
 
-->          /question                      question.Routes
+GET           /xml/jsonSchema                           controllers.xml.XmlAdmin.getJSONSchemaFile
+POST          /xml/upload                               controllers.xml.XmlAdmin.uploadFile
 
-->          /prog                          programming.Routes
+GET           /xml/import                               controllers.xml.XmlAdmin.importExercises
+GET           /xml/export                               controllers.xml.XmlAdmin.exportExercises
 
-->          /spread                        spread.Routes
+GET           /xml/exercises                            controllers.xml.XmlAdmin.exercises
 
-->          /sql                           sql.Routes
+GET           /xml/exercises/:id                        controllers.xml.XmlAdmin.editExerciseForm(id: Int)
+PUT           /xml/exercises/:id                        controllers.xml.XmlAdmin.editExercise(id: Int)
+POST          /xml/exercises/:id                        controllers.xml.XmlAdmin.editExercise(id: Int)
+DELETE        /xml/exercises/:id                        controllers.xml.XmlAdmin.deleteExercise(id: Int)
 
-->          /uml                           uml.Routes
+PUT           /xml/exercise/:id/state                   controllers.xml.XmlAdmin.changeExState(id: Int)
 
-->          /web                           web.Routes
+GET           /xml/newExForm                            controllers.xml.XmlAdmin.newExerciseForm
 
-->          /xml                           xml.Routes
+GET           /xml/                                     controllers.xml.XmlController.index(page: Int ?= 1)
+
+GET           /xml/solve/:id                            controllers.xml.XmlController.exercise(id: Int)
+PUT           /xml/solve/:id                            controllers.xml.XmlController.correctLive(id: Int)
+POST          /xml/solve/:id                            controllers.xml.XmlController.correct(id: Int)
+
+
+GET           /xml/playground                           controllers.xml.XmlController.playground
+PUT           /xml/playground                           controllers.xml.XmlController.playgroundCorrection
+# XML - Ende
+
+# Question - Anfang
+# Administrator
+GET           /question/admin                           controllers.questions.QuestionAdmin.adminIndex
+
+# Admin Questions
+GET           /question/jsonSchema                      controllers.questions.QuestionAdmin.getJSONSchemaFile
+POST          /question/upload                          controllers.questions.QuestionAdmin.uploadFile
+
+GET           /question/export                          controllers.questions.QuestionAdmin.exportExercises
+GET           /question/import                          controllers.questions.QuestionAdmin.importExercises
+
+GET           /question/questions                       controllers.questions.QuestionAdmin.exercises
+
+GET           /question/freetext/grade                  controllers.questions.QuestionAdmin.gradeFreetextAnswers
+GET           /question/freetext/grade/:id/:user        controllers.questions.QuestionAdmin.gradeFreetextAnswer(id: Int, user: String)
+
+GET           /question/notAssigned                     controllers.questions.QuestionAdmin.notAssignedQuestions
+GET           /question/assign                          controllers.questions.QuestionAdmin.assignQuestionsForm
+POST          /question/assign                          controllers.questions.QuestionAdmin.assignQuestions
+
+GET           /question/assign/:id                      controllers.questions.QuestionAdmin.assignQuestionsSingleForm(id: Int)
+
+GET           /question/exercises/:id                   controllers.questions.QuestionAdmin.editExerciseForm(id: Int)
+PUT           /question/exercises/:id                   controllers.questions.QuestionAdmin.editExercise(id: Int)
+POST          /question/exercises/:id                   controllers.questions.QuestionAdmin.editExercise(id: Int)
+DELETE        /question/exercises/:id                   controllers.questions.QuestionAdmin.deleteExercise(id: Int)
+
+PUT           /question/exercise/:id/state              controllers.questions.QuestionAdmin.changeExState(id: Int)
+
+GET           /question/newQuestionForm                 controllers.questions.QuestionAdmin.newExerciseForm
+
+# All
+GET           /question/                                controllers.questions.QuestionController.index(start: Int ?= 1)
+
+
+GET           /question/new/:isFreetext                 controllers.questions.QuestionController.newQuestionForm(isFreetext: Boolean)
+POST          /question/new/:isFreetext                 controllers.questions.QuestionController.newQuestion(isFreetext: Boolean)
+
+GET           /question/edit/:id                        controllers.questions.QuestionController.editQuestionForm(id: Int)
+POST          /question/edit/:id                        controllers.questions.QuestionController.editQuestion(id: Int)
+
+GET           /question/question/:id                    controllers.questions.QuestionController.exercise(id: Int)
+POST          /question/question/:id                    controllers.questions.QuestionController.questionResult( id: Int)
+
+
+# Admin Quiz
+GET           /question/quizzes                         controllers.questions.QuestionAdmin.adminIndex
+
+GET           /question/quizzes/jsonSchema              controllers.questions.QuestionAdmin.getJSONSchemaFile
+POST          /question/quizzes/upload                  controllers.questions.QuestionAdmin.uploadFile
+
+#GET      /question/quizzes/export             controllers.questions.QuestionAdmin.exportExerciseCollections
+#GET      /question/quizzes/import             controllers.questions.QuestionAdmin.importExerciseCollections
+
+GET           /question/quizzes                         controllers.questions.QuestionAdmin.exerciseCollections
+POST          /question/quizzes                         controllers.questions.QuestionAdmin.adminIndex
+#newExercise
+
+GET           /question/newQuizForm                     controllers.questions.QuestionAdmin.newExerciseCollectionForm
+
+
+# Quizzes
+
+GET           /question/quiz/:id                        controllers.questions.QuizController.quiz(id: Int)
+
+GET           /question/start/:quizId                   controllers.questions.QuizController.quizStart(quizId: Int)
+GET           /question/:quizId/:questionId             controllers.questions.QuizController.quizQuestion(quizId: Int, questionId: Int)
+POST          /question/:quizId/:questionId             controllers.questions.QuizController.quizCorrection(quizId: Int, questionId: Int)
+# Question - Ende
+
+# Prog - Anfang
+# Administrator
+GET           /prog/admin                               controllers.programming.ProgAdmin.adminIndex
+
+GET           /prog/jsonSchema                          controllers.programming.ProgAdmin.getJSONSchemaFile
+POST          /prog/upload                              controllers.programming.ProgAdmin.uploadFile
+
+GET           /prog/import                              controllers.programming.ProgAdmin.importExercises
+GET           /prog/export                              controllers.programming.ProgAdmin.exportExercises
+
+GET           /prog/exercises                           controllers.programming.ProgAdmin.exercises
+
+GET           /prog/exercises/:id                       controllers.programming.ProgAdmin.editExerciseForm(id: Int)
+PUT           /prog/exercises/:id                       controllers.programming.ProgAdmin.editExercise(id: Int)
+POST          /prog/exercises/:id                       controllers.programming.ProgAdmin.editExercise(id: Int)
+DELETE        /prog/exercises/:id                       controllers.programming.ProgAdmin.deleteExercise(id: Int)
+
+PUT           /prog/exercise/:id/state                  controllers.programming.ProgAdmin.changeExState(id: Int)
+
+GET           /prog/newExForm                           controllers.programming.ProgAdmin.newExerciseForm
+
+
+# All
+GET           /prog/                                    controllers.programming.ProgController.index(page: Int ?= 1)
+
+GET           /prog/testdata/:id                        controllers.programming.ProgController.testData(id: Int)
+POST          /prog/validate/:id                        controllers.programming.ProgController.validateTestData(id: Int)
+PUT           /prog/validate/:id                        controllers.programming.ProgController.validateTestDataLive(id: Int)
+
+GET           /prog/declaration                         controllers.programming.ProgController.getDeclaration(language: String ?= "")
+
+GET           /prog/exercise/:id/                       controllers.programming.ProgController.exercise(id: Int)
+PUT           /prog/exercise/:id                        controllers.programming.ProgController.correctLive(id: Int)
+POST          /prog/exercise/:id                        controllers.programming.ProgController.correct(id: Int)
+# Prog - Ende
+
+# Spread - Anfang
+# Admin
+GET           /spread/admin                             controllers.spread.SpreadAdmin.adminIndex
+
+GET           /spread/jsonSchema                        controllers.spread.SpreadAdmin.getJSONSchemaFile
+POST          /spread/upload                            controllers.spread.SpreadAdmin.uploadFile
+
+GET           /spread/import                            controllers.spread.SpreadAdmin.importExercises
+GET           /spread/export                            controllers.spread.SpreadAdmin.exportExercises
+
+GET           /spread/exercises                         controllers.spread.SpreadAdmin.exercises
+
+GET           /spread/exercises/:id                     controllers.spread.SpreadAdmin.editExerciseForm(id: Int)
+PUT           /spread/exercises/:id                     controllers.spread.SpreadAdmin.editExercise(id: Int)
+POST          /spread/exercises/:id                     controllers.spread.SpreadAdmin.editExercise(id: Int)
+DELETE        /spread/exercises/:id                     controllers.spread.SpreadAdmin.deleteExercise(id: Int)
+
+PUT           /spread/exercise/:id/state                controllers.spread.SpreadAdmin.changeExState(id: Int)
+
+GET           /spread/newExForm                         controllers.spread.SpreadAdmin.newExerciseForm
+
+# User
+GET           /spread/                                  controllers.spread.SpreadController.index(page: Int ?= 1)
+
+POST          /spread/:id                               controllers.spread.SpreadController.upload(id: Int)
+GET           /spread/:id/:part                         controllers.spread.SpreadController.download(id: Int, part: String)
+GET           /spread/temp/:id/:typ                     controllers.spread.SpreadController.exercise(id: Int, typ: String)
+# Spread - Ende
+
+# Web - Anfang
+GET           /web/admin                                controllers.web.WebAdmin.adminIndex
+
+GET           /web/jsonSchema                           controllers.web.WebAdmin.getJSONSchemaFile
+POST          /web/upload                               controllers.web.WebAdmin.uploadFile
+
+GET           /web/import                               controllers.web.WebAdmin.importExercises
+GET           /web/export                               controllers.web.WebAdmin.exportExercises
+
+GET           /web/exercises                            controllers.web.WebAdmin.exercises
+
+GET           /web/exercises/:id                        controllers.web.WebAdmin.editExerciseForm(id: Int)
+PUT           /web/exercises/:id                        controllers.web.WebAdmin.editExercise(id: Int)
+POST          /web/exercises/:id                        controllers.web.WebAdmin.editExercise(id: Int)
+DELETE        /web/exercises/:id                        controllers.web.WebAdmin.deleteExercise(id: Int)
+
+PUT           /web/exercise/:id/state                   controllers.web.WebAdmin.changeExState(id: Int)
+
+
+GET           /web/exercises/:id/rest                   controllers.web.WebAdmin.exRest(id: Int)
+
+GET           /web/newExForm                            controllers.web.WebAdmin.newExerciseForm
+
+# User
+GET           /web/                                     controllers.web.WebController.index(page: Int ?= 1)
+
+GET           /web/playground                           controllers.web.WebController.playground
+
+
+GET           /web/:id/:type                            controllers.web.WebController.exercise(id: Int, type: String)
+
+PUT           /web/:id/:type                            controllers.web.WebController.correctLive(id: Int, type: String)
+POST          /web/:id/:type                            controllers.web.WebController.correct(id: Int, type: String)
+
+GET           /web/sol/:user/:id                        controllers.web.SolutionController.site(user: String, id: Int)
+# Web - Ende
+
+# Ebnf - Anfang
+GET           /ebnf/admin                               controllers.ebnf.EbnfAdmin.adminIndex
+
+GET           /ebnf/jsonSchema                          controllers.ebnf.EbnfAdmin.getJSONSchemaFile
+POST          /ebnf/upload                              controllers.ebnf.EbnfAdmin.uploadFile
+
+GET           /ebnf/import                              controllers.ebnf.EbnfAdmin.importExercises
+GET           /ebnf/export                              controllers.ebnf.EbnfAdmin.exportExercises
+
+
+GET           /ebnf/exercises                           controllers.ebnf.EbnfAdmin.exercises
+
+GET           /ebnf/exercises/:id                       controllers.ebnf.EbnfAdmin.editExerciseForm(id: Int)
+PUT           /ebnf/exercises/:id                       controllers.ebnf.EbnfAdmin.editExercise(id: Int)
+POST          /ebnf/exercises/:id                       controllers.ebnf.EbnfAdmin.editExercise(id: Int)
+DELETE        /ebnf/exercises/:id                       controllers.ebnf.EbnfAdmin.deleteExercise(id: Int)
+
+PUT           /ebnf/exercise/:id/state                  controllers.ebnf.EbnfAdmin.changeExState(id: Int)
+
+GET           /ebnf/newExForm                           controllers.ebnf.EbnfAdmin.newExerciseForm
+
+# User
+GET           /ebnf/                                    controllers.ebnf.EbnfController.index(page: Int ?= 1)
+GET           /ebnf/:id                                 controllers.ebnf.EbnfController.exercise(id: Int)
+PUT           /ebnf/:id                                 controllers.ebnf.EbnfController.correctLive(id: Int)
+POST          /ebnf/:id                                 controllers.ebnf.EbnfController.correct(id: Int)
+DELETE        /ebnf/:id                                 controllers.ebnf.EbnfAdmin.deleteExercise(id: Int)
+# Ebnf - Ende
+
+# Uml - Anfang
+# Admin
+GET           /uml/admin                                controllers.uml.UmlAdmin.adminIndex
+
+GET           /uml/jsonSchema                           controllers.uml.UmlAdmin.getJSONSchemaFile
+POST          /uml/upload                               controllers.uml.UmlAdmin.uploadFile
+
+GET           /uml/import                               controllers.uml.UmlAdmin.importExercises
+GET           /uml/export                               controllers.uml.UmlAdmin.exportExercises
+
+GET           /uml/exercises                            controllers.uml.UmlAdmin.exercises
+
+GET           /uml/exercises/:id                        controllers.uml.UmlAdmin.editExerciseForm(id: Int)
+PUT           /uml/exercises/:id                        controllers.uml.UmlAdmin.editExercise(id: Int)
+POST          /uml/exercises/:id                        controllers.uml.UmlAdmin.editExercise(id: Int)
+DELETE        /uml/exercises/:id                        controllers.uml.UmlAdmin.deleteExercise(id: Int)
+
+PUT           /uml/exercise/:id/state                   controllers.uml.UmlAdmin.changeExState(id: Int)
+
+
+GET           /uml/newEx/form                           controllers.uml.UmlAdmin.newExerciseForm
+POST          /uml/newEx/text                           controllers.uml.UmlAdmin.newExerciseStep2
+POST          /uml/newEx/solution                       controllers.uml.UmlAdmin.newExerciseStep3
+
+PUT           /uml/newEx/checkSolution                  controllers.uml.UmlAdmin.checkSolution
+
+# User
+GET           /uml/                                     controllers.uml.UmlController.index(page: Int ?= 1)
+
+GET           /uml/:id/:part                            controllers.uml.UmlController.exercise(id: Int, part)
+POST          /uml/:id/:part                            controllers.uml.UmlController.correct(id: Int, part)
+# Uml - Ende
 
 # Test blanks...
-GET         /blanks                        controllers.BlanksTestController.testBlanks
-PUT         /blanks/:id                    controllers.BlanksTestController.correctBlanks(id: Int)
+GET           /blanks                                   controllers.blanks.BlanksTestController.testBlanks
+PUT           /blanks/:id                               controllers.blanks.BlanksTestController.correctBlanks(id: Int)
+
+# Sql - Anfang
+# Administrator
+GET           /sql/scenarioes/admin                     controllers.sql.SqlAdmin.adminIndex
+
+GET           /sql/jsonSchema                           controllers.sql.SqlAdmin.getJSONSchemaFile
+POST          /sql/upload                               controllers.sql.SqlAdmin.uploadFile
+
+GET           /sql/scenarioes/import                    controllers.sql.SqlAdmin.importExercises
+GET           /sql/scenarioes/export                    controllers.sql.SqlAdmin.exportExercises
+
+GET           /sql/admin/:id                            controllers.sql.SqlAdmin.scenarioAdmin(id: Int)
+
+GET           /sql/scenarioes                           controllers.sql.SqlAdmin.exercises
+POST          /sql/scenarioes                           controllers.sql.SqlAdmin.adminIndex
+#newExercise
+GET           /sql/newScenarioForm                      controllers.sql.SqlAdmin.newExerciseForm
+
+GET           /sql/exercises                            controllers.sql.SqlAdmin.exercises
+
+GET           /sql/import                               controllers.sql.SqlAdmin.importExercises
+GET           /sql/export                               controllers.sql.SqlAdmin.exportExercises
+
+GET           /sql/exercises/:id                        controllers.sql.SqlAdmin.editExerciseForm(id: Int)
+PUT           /sql/exercises/:id                        controllers.sql.SqlAdmin.editExercise(id: Int)
+POST          /sql/exercises/:id                        controllers.sql.SqlAdmin.editExercise(id: Int)
+DELETE        /sql/exercises/:id                        controllers.sql.SqlAdmin.deleteExercise(id: Int)
+
+PUT           /sql/exercise/:id/state                   controllers.sql.SqlAdmin.changeExState(id: Int)
+
+# All
+GET           /sql/                                     controllers.sql.SqlController.index
+GET           /sql/scenario/:scId/:exType               controllers.sql.SqlController.filteredScenario(scId: Int, exType: String, site: Int ?= 1)
+GET           /sql/:id                                  controllers.sql.SqlController.exercise(id: Int)
+
+PUT           /sql/:id                                  controllers.sql.SqlController.correctLive(id: Int)
+POST          /sql/:id                                  controllers.sql.SqlController.correct(id: Int)
+# Sql - Ende
+
+# Bool - Anfang
+GET           /bool/                                    controllers.bool.BoolController.index
+
+GET           /bool/fillout                             controllers.bool.BoolController.newBoolFilloutQuestion
+PUT           /bool/fillout                             controllers.bool.BoolController.checkBoolFilloutSolution
+POST          /bool/fillout                             controllers.bool.BoolController.checkBoolFilloutSolution
+
+GET           /bool/creation                            controllers.bool.BoolController.newBoolCreationQuestion
+PUT           /bool/creation                            controllers.bool.BoolController.checkBoolCreationSolutionLive
+POST          /bool/creation                            controllers.bool.BoolController.checkBoolCreationSolution
+# Bool - Ende
 
 # Courses
-GET         /courses/new                   controllers.CourseAdminController.newCourseForm
-POST        /courses/new                   controllers.CourseAdminController.newCourse
+GET           /courses/new                              controllers.CourseAdminController.newCourseForm
+POST          /courses/new                              controllers.CourseAdminController.newCourse
 
-GET         /course/:id                    controllers.CourseAdminController.course(id: Int)
-POST        /course/addAdmin/:id           controllers.CourseAdminController.addAdmin(id: Int)
+GET           /course/:id                               controllers.CourseAdminController.course(id: Int)
+POST          /course/addAdmin/:id                      controllers.CourseAdminController.addAdmin(id: Int)
 
 # Login && Logout
-GET         /login                         controllers.LoginController.login
-POST        /authenticate                  controllers.LoginController.authenticate
-GET         /logout                        controllers.LoginController.logout
-GET         /direct                        controllers.LoginController.fromWuecampus(name: String ?= "", courseId: Int ?= -1, courseName: String ?= "")
+GET           /register                                 controllers.LoginController.registerForm
+POST          /register                                 controllers.LoginController.register
+
+PUT           /checkUserName                            controllers.LoginController.checkUserName
+
+GET           /login                                    controllers.LoginController.login(tries: Int = 0)
+POST          /authenticate                             controllers.LoginController.authenticate
+
+GET           /logout                                   controllers.LoginController.logout
+GET           /direct                                   controllers.LoginController.fromWuecampus(name: String ?= "", courseId: Int ?= -1, courseName: String ?= "")
 
 # Evaluation
-GET         /eval                          controllers.EvaluationController.index
-POST        /eval                          controllers.EvaluationController.submit
-GET         /eval/stats                    controllers.AdminController.evaluation
+GET           /eval                                     controllers.EvaluationController.index
+POST          /eval                                     controllers.EvaluationController.submit
+GET           /eval/stats                               controllers.AdminController.evaluation
 
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                  controllers.Assets.versioned(path="/public", file: Asset)
+GET           /assets/*file                             controllers.Assets.versioned(path="/public", file: Asset)

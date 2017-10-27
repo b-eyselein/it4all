@@ -1,59 +1,66 @@
 package controllers
 
-import javax.inject.Inject
+import javax.inject._
 
 import controllers.core.BaseController
-import model.StringConsts._
-import model.user._
-import play.api.mvc.ControllerComponents
-import play.mvc.Security
+import model.core.{Repository, Secured}
+import play.api.db.slick.DatabaseConfigProvider
+import play.api.mvc.{ControllerComponents, EssentialAction}
 
-import scala.collection.JavaConverters._
+import scala.concurrent.ExecutionContext
 
-@Security.Authenticated(classOf[model.AdminSecured])
-class CourseAdminController @Inject()(cc: ControllerComponents) extends BaseController(cc) {
-
-  // FIXME: AJAX!
-  def addAdmin(courseId: Int) = Action { implicit request =>
-    val userName = singleStrForm(NAME_NAME).bindFromRequest.get.str
-    Option(User.finder.byId(userName)) match {
-      case None => BadRequest(s"Der Nutzer mit dem Namen $userName existiert nicht!")
-      case Some(user) =>
-        val key = new CourseRoleKey(user.name, courseId)
-        val courseRole = Option(CourseRole.finder.byId(key)).getOrElse(new CourseRole(key))
-
-        courseRole.role = Role.ADMIN
-        courseRole.save()
-
-        Redirect(routes.CourseAdminController.course(courseId))
-    }
-  }
-
-  def course(id: Int) = Action { implicit request =>
-    Ok(views.html.admin.course.render(getUser, Course.finder.byId(id)))
-  }
+class CourseAdminController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)
+                                     (implicit ec: ExecutionContext)
+  extends BaseController(cc, dbcp, r) with Secured {
 
   // FIXME: AJAX!
-  def newCourse() = Action { implicit request =>
-    val courseName = singleStrForm(NAME_NAME).bindFromRequest.get.str
-    Course.finder.all.asScala.find(_.name == courseName) match {
-      case Some(course) => BadRequest(s"Kurs mit Namen $courseName existiert bereits!")
-      case None =>
-        val course = new Course()
-        course.name = courseName
-
-        course.save()
-
-        // Create course admin with current user
-        val firstAdmin = new CourseRole(new CourseRoleKey(getUser.name, course.id))
-        firstAdmin.role = Role.ADMIN
-        firstAdmin.save()
-
-        Redirect(routes.AdminController.index())
-    }
+  def addAdmin(courseId: Int): EssentialAction = withAdmin { user =>
+    implicit request =>
+      //      val userName = singleStrForm(NAME_NAME).bindFromRequest.get.str
+      //      Option(User.finder.byId(userName)) match {
+      //        case None => BadRequest(s"Der Nutzer mit dem Namen $userName existiert nicht!")
+      //        case Some(userToChange) =>
+      //          val key = new CourseRoleKey(userToChange.name, courseId)
+      //          val courseRole = Option(CourseRole.finder.byId(key)).getOrElse(new CourseRole(key))
+      //
+      //          courseRole.role = Role.ADMIN
+      //          courseRole.save()
+      //
+      //          Redirect(routes.CourseAdminController.course(courseId))
+      //      }
+      Ok("TODO!")
   }
 
-  def newCourseForm() = Action { implicit request =>
-    Ok(views.html.admin.newCourseForm.render(getUser))
+  def course(id: Int): EssentialAction = withAdmin { user =>
+    implicit request =>
+      //      Ok(views.html.admin.course.render(user, Course.finder.byId(id)))
+
+      Ok("TODO!")
+  }
+
+  // FIXME: AJAX!
+  def newCourse(): EssentialAction = withAdmin { user =>
+    implicit request =>
+      //      val courseName = singleStrForm(NAME_NAME).bindFromRequest.get.str
+      //      Course.finder.all.asScala.find(_.name == courseName) match {
+      //        case Some(_) => BadRequest(s"Kurs mit Namen $courseName existiert bereits!")
+      //        case None =>
+      //          val course = new Course(courseName)
+      //
+      //          course.save()
+      //
+      //          // Create course admin with current user
+      //          val firstAdmin = new CourseRole(new CourseRoleKey(user.name, course.id))
+      //          firstAdmin.role = Role.ADMIN
+      //          firstAdmin.save()
+      //
+      //          Redirect(routes.AdminController.index())
+      //      }
+      Ok("TODO!")
+  }
+
+  def newCourseForm(): EssentialAction = withAdmin { user =>
+    implicit request =>
+      Ok(views.html.admin.newCourseForm.render(user))
   }
 }

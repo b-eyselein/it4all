@@ -1,0 +1,32 @@
+@(user: model.User, exercise: model.sql.SqlExercise)
+
+@main("SQL: Neues Szenario anlegen", user) {
+    <div class="container">
+        <div class="page-header">
+            <h1>Neues Szenario anlegen</h1>
+        </div>
+
+        <form class="form-horizontal" action="@@sql.routes.SqlAdmin.newExercise()" method="post">
+
+            @views.html.admin.exStdFields.render(user, exercise, 10)
+
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="shortname">Kurzer Name:</label>
+                <div class="col-sm-10">
+                    <input class="form-control" name="shortname" id="shortname"
+                    placeholder="Kurzer Name, wird u. a. f&uuml;r das Skript benutzt" required>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" class="btn btn-primary btn-block">Szenario anlegen</button>
+                </div>
+            </div>
+        </form>
+
+
+    </div>
+}

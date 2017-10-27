@@ -1,0 +1,23 @@
+@(exercise: model.web.WebExercise)
+
+<td>
+    <a href="@controllers.web.routes.WebAdmin.exRest(exercise.id)">
+        @exercise.htmlTasks.size / @exercise.jsTasks.size
+    </a>
+</td>
+<td>
+    <a href="@controllers.web.routes.WebAdmin.exRest(exercise.id)">
+        @if(exercise.htmlText != null && !exercise.htmlText.isEmpty) {
+            <span class="glyphicon glyphicon-ok"></span>
+        } else {
+            <span class="glyphicon glyphicon-remove"></span>
+        }
+        /
+        @if(exercise.jsText != null && !exercise.jsText.isEmpty) {
+            <span class="glyphicon glyphicon-ok"></span>
+        } else {
+            <span class="glyphicon glyphicon-remove"></span>
+        }
+
+    </a>
+</td>

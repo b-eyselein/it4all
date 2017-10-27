@@ -1,0 +1,44 @@
+@(result: model.sql.SqlResult)
+
+<table class="table">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Nutzer</th>
+            <th>Muster</th>
+        </tr>
+    </thead>
+    <tbody>
+        @views.html.core.matching.matchingResult.render(result.notEmptyMatchingResults)
+
+        @result.executionResult match {case None =>
+            case Some(execResult) => {
+                <tr class="active">
+                    <th colspan="4" class="text-@execResult.getBSClass text-center">
+                        <span class="@execResult.getGlyphicon"></span>
+                        Vergleich ihrer L&ouml;sung mit der Musterl&ouml;sung
+                    </th>
+                </tr>
+                <tr class="@execResult.getBSClass">
+                    <td></td>
+                    <td>
+                    @if(execResult.userResult == null) {
+                        Es gab einen Fehler bei der Ausf&uuml;hrung ihrer L&ouml;sung!
+                    } else {
+                        @views.html.sql.resultTable.render(execResult.userResult)
+                    }
+                    </td>
+                    <td>
+                    @if(execResult.sampleResult == null) {
+                        Es gab einen Fehler bei der Ausf&uuml;hrung der Musterl&ouml;sung!
+                    } else {
+                        @views.html.sql.resultTable.render(execResult.sampleResult)
+                    }
+                    </td>
+                    <td></td>
+                </tr>
+            }
+        }
+
+    </tbody>
+</table>

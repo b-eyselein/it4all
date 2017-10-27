@@ -1,0 +1,27 @@
+@(user: model.User, exported: String)
+
+@main("Export", user) {
+    <script>
+            function exportAsFile() {
+                var text = document.getElementById("exported").textContent;
+                var a = document.getElementById("a");
+                var file = new Blob([text], {type: 'text/json'});
+                a.href = URL.createObjectURL(file);
+                a.download = 'export.json';
+            }
+    </script>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Export der Aufgaben</h1>
+        </div>
+
+        <a href="" id="a" class="btn btn-primary btn-block" onclick="exportAsFile();">
+            <span class="glyphicon glyphicon-download"></span> Download als Datei
+        </a>
+
+        <hr>
+
+        <pre id="exported">@exported</pre>
+    </div>
+}

@@ -1,0 +1,55 @@
+@(user: model.User, exercise: model.uml.UmlExercise)
+
+@solution = @{
+    exercise.getSolution
+}
+
+@main("UML", user) {
+    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/uml.css")">
+    <script src="@controllers.routes.Assets.versioned("javascripts/uml/uml.js")"></script>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Zuordnung der Attribute und Methoden</h1>
+        </div>
+
+
+        @for(clazz <- solution.classes) {
+            <div class="col-md-4">
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">@clazz.name</div>
+                    <div class="panel-body">
+                        @for(attr <- solution.allAttributes) {
+                            <div class="checkbox">
+                                <label><input type="checkbox" value="@{
+                                    clazz
+                                }_@attr">@attr
+                                </label>
+                            </div>
+                        }
+                    <hr>
+                        @for(method <- solution.allMethods) {
+                            <div class="checkbox">
+                                <label><input type="checkbox" value="@{
+                                    clazz
+                                }_@method">@method
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+            </div>
+        }
+
+        <hr>
+
+        <form method="post" onsubmit="prepareFormForSubmitting()"
+        action="@controllers.uml.routes.UmlController.correct(exercise.id, model.uml.UmlExPart.ATTRS_METHS.toString)">
+            <input hidden name="learnerSolution" id="learnerSolution">
+            <button class="btn btn-primary btn-block">Aufgabenteil korrigieren</button>
+        </form>
+
+    </div>
+}

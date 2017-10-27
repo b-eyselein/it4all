@@ -1,0 +1,20 @@
+@(exercise: model.web.WebExercise, isCreation: Boolean)
+
+<fieldset>
+    <legend>Angaben zum Html- und Javascript-Teil</legend>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="html_text">Text f&uuml;r den Html-Teil:</label>
+                <textarea class="form-control" name="html_text" id="html_text" rows="5" required>@exercise.htmlText</textarea>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="js_text">Text f&uuml;r den Js-Teil:</label>
+                <textarea class="form-control" name="js_text" id="js_text" rows="5" required>@exercise.jsText</textarea>
+            </div>
+        </div>
+    </div>
+</fieldset>

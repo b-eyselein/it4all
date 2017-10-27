@@ -1,895 +1,869 @@
 [
-	{
-		"id": 1, 
-		"title": "Listen in HTML", 
-		"author": "bje40dc", 
-		"text": [
-			"Erstellen Sie eine Liste in HTML, die die die Autohersteller Audi, BMW und Mercedes-Benz und Volkswa", 
-			"gen enthält. Achten Sie dabei für die Korrektur auf eine korrekte Schreibweise der einzelnen Herstel", 
-			"ler!"
-		], 
-		"htmlText": [
-			
-		], 
-		"jsText": [
-			
-		], 
-		"htmlTasks": [
-			{
-				"key": {
-					"taskId": 1, 
-					"exerciseId": 1
-				}, 
-				"text": [
-					"Erstellen Sie eine passende h1-Überschrift, die das Wort \"Autohersteller\" enthält."
-				], 
-				"xpathQuery": "/html/body//h1", 
-				"attributes": [
-					
-				], 
-				"textContent": "Autohersteller"
-			}, 
-			{
-				"key": {
-					"taskId": 2, 
-					"exerciseId": 1
-				}, 
-				"text": [
-					"Erstellen Sie eine ungeordnete Liste auf der Seite, die dann die einzelnen Hersteller enthalten wird", 
-					". Geben Sie dieser Liste die Klasse \"list-group\"."
-				], 
-				"xpathQuery": "/html/body//ul", 
-				"attributes": [
-					{
-						"key": "class", 
-						"value": "list-group"
-					}
-				], 
-				"textContent": ""
-			}, 
-			{
-				"key": {
-					"taskId": 3, 
-					"exerciseId": 1
-				}, 
-				"text": [
-					"Erstellen Sie das Listenelement für Audi. Geben Sie diesem Element die Klasse \"list-group-item\"."
-				], 
-				"xpathQuery": "/html/body//ul/li[1]", 
-				"attributes": [
-					{
-						"key": "class", 
-						"value": "list-group-item"
-					}
-				], 
-				"textContent": "Audi"
-			}, 
-			{
-				"key": {
-					"taskId": 4, 
-					"exerciseId": 1
-				}, 
-				"text": [
-					"Erstellen Sie das Listenelement für BMW. Geben Sie diesem Element die Klasse \"list-group-item\"."
-				], 
-				"xpathQuery": "/html/body//ul/li[2]", 
-				"attributes": [
-					{
-						"key": "class", 
-						"value": "list-group-item"
-					}
-				], 
-				"textContent": "BMW"
-			}, 
-			{
-				"key": {
-					"taskId": 5, 
-					"exerciseId": 1
-				}, 
-				"text": [
-					"Erstellen Sie das Listenelement für Mercedes-Benz. Geben Sie diesem Element die Klasse \"list-group-i", 
-					"tem\"."
-				], 
-				"xpathQuery": "/html/body//ul/li[3]", 
-				"attributes": [
-					{
-						"key": "class", 
-						"value": "list-group-item"
-					}
-				], 
-				"textContent": "Mercedes-Benz"
-			}, 
-			{
-				"key": {
-					"taskId": 6, 
-					"exerciseId": 1
-				}, 
-				"text": [
-					"Erstellen Sie das Listenelement für Volkswagen. Geben Sie diesem Element die Klasse \"list-group-item", 
-					"\"."
-				], 
-				"xpathQuery": "/html/body//ul/li[4]", 
-				"attributes": [
-					{
-						"key": "class", 
-						"value": "list-group-item"
-					}
-				], 
-				"textContent": "Volkswagen"
-			}, 
-			{
-				"key": {
-					"taskId": 7, 
-					"exerciseId": 1
-				}, 
-				"text": [
-					"Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL \"/assets/stylesh", 
-					"eets/bootstrap.css\" zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut \"rel\""
-				], 
-				"xpathQuery": "/html/head//link", 
-				"attributes": [
-					{
-						"key": "rel", 
-						"value": "stylesheet"
-					}, 
-					{
-						"key": "href", 
-						"value": "/assets/stylesheets/bootstrap.css"
-					}
-				], 
-				"textContent": ""
-			}
-		], 
-		"jsTasks": [
-			
-		]
-	}, 
-	{
-		"id": 2, 
-		"title": "Tabllen in HTML", 
-		"author": "bje40dc", 
-		"text": [
-			"Erstellen Sie eine Tabelle in HTML!"
-		], 
-		"htmlText": [
-			
-		], 
-		"jsText": [
-			
-		], 
-		"htmlTasks": [
-			{
-				"key": {
-					"taskId": 1, 
-					"exerciseId": 2
-				}, 
-				"text": [
-					"Erstellen Sie das Grundtag für die Tabelle Geben Sie der Tabelle die Klassen \"table\" und \"table-stri", 
-					"ped\"."
-				], 
-				"xpathQuery": "/html/body//table", 
-				"attributes": [
-					{
-						"key": "class", 
-						"value": "table table-striped"
-					}
-				], 
-				"textContent": ""
-			}, 
-			{
-				"key": {
-					"taskId": 2, 
-					"exerciseId": 2
-				}, 
-				"text": [
-					"Erstellen Sie die erste Zeile für die Überschriften"
-				], 
-				"xpathQuery": "/html/body//table//tr[1]", 
-				"attributes": [
-					
-				], 
-				"textContent": ""
-			}, 
-			{
-				"key": {
-					"taskId": 3, 
-					"exerciseId": 2
-				}, 
-				"text": [
-					"Erstellen Sie die erste Zelle für die Überschrift. Diese soll als Inhalt \"Jahr\" haben"
-				], 
-				"xpathQuery": "html/body//table//tr[1]/th[1]", 
-				"attributes": [
-					
-				], 
-				"textContent": "Jahr"
-			}, 
-			{
-				"key": {
-					"taskId": 4, 
-					"exerciseId": 2
-				}, 
-				"text": [
-					"Erstellen Sie die zweite Zelle für die Überschrift. Diese soll als Inhalt \"Produktion\" haben"
-				], 
-				"xpathQuery": "html/body//table//tr[1]/th[2]", 
-				"attributes": [
-					
-				], 
-				"textContent": "Produktion"
-			}, 
-			{
-				"key": {
-					"taskId": 5, 
-					"exerciseId": 2
-				}, 
-				"text": [
-					"Erstellen Sie die zweite Zeile in der Tabelle"
-				], 
-				"xpathQuery": "/html/body//table//tr[2]", 
-				"attributes": [
-					
-				], 
-				"textContent": ""
-			}, 
-			{
-				"key": {
-					"taskId": 6, 
-					"exerciseId": 2
-				}, 
-				"text": [
-					"Erstellen Sie die erste Zelle in der zweiten Zeile. Diese soll als Inhalt \"1900\" haben"
-				], 
-				"xpathQuery": "html/body//table//tr[2]/td[1]", 
-				"attributes": [
-					
-				], 
-				"textContent": "1900"
-			}, 
-			{
-				"key": {
-					"taskId": 7, 
-					"exerciseId": 2
-				}, 
-				"text": [
-					"Erstellen Sie die zweite Zelle in der zweiten Zeile. Diese soll als Inhalt \"9504\" haben"
-				], 
-				"xpathQuery": "html/body//table//tr[2]/td[2]", 
-				"attributes": [
-					
-				], 
-				"textContent": "9504"
-			}, 
-			{
-				"key": {
-					"taskId": 8, 
-					"exerciseId": 2
-				}, 
-				"text": [
-					"Erstellen Sie die dritte Zeile in der Tabelle"
-				], 
-				"xpathQuery": "/html/body//table//tr[3]", 
-				"attributes": [
-					
-				], 
-				"textContent": ""
-			}, 
-			{
-				"key": {
-					"taskId": 9, 
-					"exerciseId": 2
-				}, 
-				"text": [
-					"Erstellen Sie die erste Zelle in der dritten Zeile. Diese soll als Inhalt \"1950\" haben"
-				], 
-				"xpathQuery": "html/body//table//tr[3]/td[1]", 
-				"attributes": [
-					
-				], 
-				"textContent": "1950"
-			}, 
-			{
-				"key": {
-					"taskId": 10, 
-					"exerciseId": 2
-				}, 
-				"text": [
-					"Erstellen Sie die zweite Zelle in der dritten Zeile. Diese soll als Inhalt \"10577426\" haben"
-				], 
-				"xpathQuery": "html/body//table//tr[3]/td[2]", 
-				"attributes": [
-					
-				], 
-				"textContent": "10577426"
-			}, 
-			{
-				"key": {
-					"taskId": 11, 
-					"exerciseId": 2
-				}, 
-				"text": [
-					"Erstellen Sie die vierte Zeile in der Tabelle"
-				], 
-				"xpathQuery": "/html/body//table//tr[4]", 
-				"attributes": [
-					
-				], 
-				"textContent": ""
-			}, 
-			{
-				"key": {
-					"taskId": 12, 
-					"exerciseId": 2
-				}, 
-				"text": [
-					"Erstellen Sie die erste Zelle in der vierten Zeile. Diese soll als Inhalt \"2000\" haben"
-				], 
-				"xpathQuery": "html/body//table//tr[4]/td[1]", 
-				"attributes": [
-					
-				], 
-				"textContent": "2000"
-			}, 
-			{
-				"key": {
-					"taskId": 13, 
-					"exerciseId": 2
-				}, 
-				"text": [
-					"Erstellen Sie die zweite Zelle in der vierten Zeile. Diese soll als Inhalt \"58374162\" haben"
-				], 
-				"xpathQuery": "html/body//table//tr[4]/td[2]", 
-				"attributes": [
-					
-				], 
-				"textContent": "58374162"
-			}, 
-			{
-				"key": {
-					"taskId": 14, 
-					"exerciseId": 2
-				}, 
-				"text": [
-					"Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL \"/assets/stylesh", 
-					"eets/bootstrap.css\" zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut \"rel\""
-				], 
-				"xpathQuery": "/html/head//link", 
-				"attributes": [
-					{
-						"key": "rel", 
-						"value": "stylesheet"
-					}, 
-					{
-						"key": "href", 
-						"value": "/assets/stylesheets/bootstrap.css"
-					}
-				], 
-				"textContent": ""
-			}
-		], 
-		"jsTasks": [
-			
-		]
-	}, 
-	{
-		"id": 3, 
-		"title": "Hyperlinks und Bilder in HTML", 
-		"author": "bje40dc", 
-		"text": [
-			"Erstellen Sie ein Bild in HTML, das gleichzeitig ein Link ist."
-		], 
-		"htmlText": [
-			
-		], 
-		"jsText": [
-			
-		], 
-		"htmlTasks": [
-			{
-				"key": {
-					"taskId": 1, 
-					"exerciseId": 3
-				}, 
-				"text": [
-					"Erstellen Sie eine passende h1-Überschrift, die \"Ford Mustang\" enthält."
-				], 
-				"xpathQuery": "/html/body//h1", 
-				"attributes": [
-					
-				], 
-				"textContent": "Ford Mustang"
-			}, 
-			{
-				"key": {
-					"taskId": 2, 
-					"exerciseId": 3
-				}, 
-				"text": [
-					"Erstellen Sie den Link auf der Seite, der auf Wikipedia verweist. Geben Sie als Ziel die URL 'https:", 
-					"//de.wikipedia.org/wiki/Ford_Mustang' an."
-				], 
-				"xpathQuery": "/html/body//a", 
-				"attributes": [
-					{
-						"key": "href", 
-						"value": "https://de.wikipedia.org/wiki/Ford_Mustang"
-					}
-				], 
-				"textContent": ""
-			}, 
-			{
-				"key": {
-					"taskId": 3, 
-					"exerciseId": 3
-				}, 
-				"text": [
-					"Erstellen Sie im Link das Bild des Ford Mustang. Geben Sie als Quelle des Bildes die URL 'https://up", 
-					"load.wikimedia.org/wikipedia/commons/2/2d/1964_12_Ford_Mustang.jpg' und als alternative Beschreibung", 
-					" 'Ford Mustang' an. Geben Sie außerdem eine Breite von 250 und eine Höhe von 188 an, um das Bild zu ", 
-					"skalieren. Geben Sie dem Bild die Klasse \"img-rounded\"."
-				], 
-				"xpathQuery": "/html/body//a//img", 
-				"attributes": [
-					{
-						"key": "src", 
-						"value": "https://upload.wikimedia.org/wikipedia/commons/2/2d/1964_12_Ford_Mustang.jpg"
-					}, 
-					{
-						"key": "alt", 
-						"value": "Ford Mustang"
-					}, 
-					{
-						"key": "width", 
-						"value": "250"
-					}, 
-					{
-						"key": "height", 
-						"value": "188"
-					}, 
-					{
-						"key": "class", 
-						"value": "img-rounded"
-					}
-				], 
-				"textContent": ""
-			}, 
-			{
-				"key": {
-					"taskId": 4, 
-					"exerciseId": 3
-				}, 
-				"text": [
-					"Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL \"/assets/stylesh", 
-					"eets/bootstrap.css\" zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut \"rel\""
-				], 
-				"xpathQuery": "/html/head//link", 
-				"attributes": [
-					{
-						"key": "rel", 
-						"value": "stylesheet"
-					}, 
-					{
-						"key": "href", 
-						"value": "/assets/stylesheets/bootstrap.css"
-					}
-				], 
-				"textContent": ""
-			}
-		], 
-		"jsTasks": [
-			
-		]
-	}, 
-	{
-		"id": 4, 
-		"title": "Login-Formular", 
-		"author": "bje40dc", 
-		"text": [
-			"Erstellen Sie ein Login-Formular in HTML"
-		], 
-		"htmlText": [
-			
-		], 
-		"jsText": [
-			
-		], 
-		"htmlTasks": [
-			{
-				"key": {
-					"taskId": 1, 
-					"exerciseId": 4
-				}, 
-				"text": [
-					"Erstellen Sie das Formular-Tag. Geben Sie für die Attribute \"action\" und \"method\" jeweils die Werte ", 
-					"\"/test.php\" und \"post\" an."
-				], 
-				"xpathQuery": "/html/body//form", 
-				"attributes": [
-					{
-						"key": "action", 
-						"value": "/test.php"
-					}, 
-					{
-						"key": "method", 
-						"value": "post"
-					}
-				], 
-				"textContent": ""
-			}, 
-			{
-				"key": {
-					"taskId": 2, 
-					"exerciseId": 4
-				}, 
-				"text": [
-					"Erstellen Sie ein Feld zur Eingabe der Emailadresse. Benutzen Sie den in der Vorlesung gezeigten Typ", 
-					"en und geben Sie dem Attribut \"name\" den Wert \"email\". Die Eingabe soll außerdem required sein. Gebe", 
-					"n Sie dem Feld zur Eingabe der Emailadressedie Klasse \"form-control\"."
-				], 
-				"xpathQuery": "/html/body//form//input[@type='email']", 
-				"attributes": [
-					{
-						"key": "name", 
-						"value": "email"
-					}, 
-					{
-						"key": "required", 
-						"value": "true"
-					}, 
-					{
-						"key": "class", 
-						"value": "form-control"
-					}
-				], 
-				"textContent": ""
-			}, 
-			{
-				"key": {
-					"taskId": 3, 
-					"exerciseId": 4
-				}, 
-				"text": [
-					"Erstellen Sie ein Feld zur Eingabe des Passworts. Benutzen Sie den in der Vorlesung gezeigten Typen ", 
-					"und geben Sie dem Attribut \"name\" den Wert \"passwort\". Die Eingabe soll außerdem verpflichtend sein.", 
-					" Geben Sie dem Feld zur Eingabe des Passworts Klasse \"form-control\"."
-				], 
-				"xpathQuery": "/html/body//form//input[@type='password']", 
-				"attributes": [
-					{
-						"key": "name", 
-						"value": "passwort"
-					}, 
-					{
-						"key": "required", 
-						"value": "true"
-					}, 
-					{
-						"key": "class", 
-						"value": "form-control"
-					}
-				], 
-				"textContent": ""
-			}, 
-			{
-				"key": {
-					"taskId": 4, 
-					"exerciseId": 4
-				}, 
-				"text": [
-					"Erstellen Sie einen Knopf (input), um das Formular abzusenden. Geben Sie den Knopf zum Absenden des ", 
-					"Formular die Klasse \"btn btn-default\""
-				], 
-				"xpathQuery": "/html/body//form//input[@type='submit']", 
-				"attributes": [
-					{
-						"key": "class", 
-						"value": "btn btn-default"
-					}
-				], 
-				"textContent": ""
-			}, 
-			{
-				"key": {
-					"taskId": 5, 
-					"exerciseId": 4
-				}, 
-				"text": [
-					"Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL \"/assets/stylesh", 
-					"eets/bootstrap.css\" zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut \"rel\""
-				], 
-				"xpathQuery": "/html/head//link", 
-				"attributes": [
-					{
-						"key": "rel", 
-						"value": "stylesheet"
-					}, 
-					{
-						"key": "href", 
-						"value": "/assets/stylesheets/bootstrap.css"
-					}
-				], 
-				"textContent": ""
-			}
-		], 
-		"jsTasks": [
-			
-		]
-	}, 
-	{
-		"id": 5, 
-		"title": "Audio in HTML 5", 
-		"author": "bje40dc", 
-		"text": [
-			
-		], 
-		"htmlText": [
-			
-		], 
-		"jsText": [
-			
-		], 
-		"htmlTasks": [
-			{
-				"key": {
-					"taskId": 1, 
-					"exerciseId": 5
-				}, 
-				"text": [
-					"Erstellen Sie eine passende h1-Überschrift, die \"Deutsche Nationalhymne\" enthält."
-				], 
-				"xpathQuery": "/html/body//h1", 
-				"attributes": [
-					
-				], 
-				"textContent": "Deutsche Nationalhymne"
-			}, 
-			{
-				"key": {
-					"taskId": 2, 
-					"exerciseId": 5
-				}, 
-				"text": [
-					"Erstellen Sie das Grundelement für die Audiodatei. Aktivieren Sie die Kontrollelement. Falls der Bro", 
-					"wser keine Audiodateiene unterstützt, soll der Text \"Ihr Browser unterstützt kein Audio!\" ausgegeben", 
-					" werden"
-				], 
-				"xpathQuery": "/html/body//audio", 
-				"attributes": [
-					{
-						"key": "controls", 
-						"value": "true"
-					}
-				], 
-				"textContent": "Ihr Browser unterstützt kein Audio!"
-			}, 
-			{
-				"key": {
-					"taskId": 3, 
-					"exerciseId": 5
-				}, 
-				"text": [
-					"Erstellen Sie das Element für die Quelldatei. Diese ist vom Typ \"audio/ogg\" und befindet sich an der", 
-					" URL \"https://upload.wikimedia.org/wikipedia/commons/c/cb/National_anthem_of_Germany_-_U.S._Army_1st", 
-					"_Armored_Division_Band.ogg\""
-				], 
-				"xpathQuery": "/html/body//audio/source", 
-				"attributes": [
-					{
-						"key": "type", 
-						"value": "audio/ogg"
-					}, 
-					{
-						"key": "src", 
-						"value": "https://upload.wikimedia.org/wikipedia/commons/c/cb/National_anthem_of_Germany_-_U.S._Army_1st_Armored_Division_Band.ogg"
-					}
-				], 
-				"textContent": ""
-			}
-		], 
-		"jsTasks": [
-			
-		]
-	}, 
-	{
-		"id": 6, 
-		"title": "Klickzähler", 
-		"author": "bje40dc", 
-		"text": [
-			"Erstellen Sie einen Zähler, der die Klicks auf einen Button zählt!"
-		], 
-		"htmlText": [
-			"Erstellen Sie zunächst den Rumpf der Seite in HTML."
-		], 
-		"jsText": [
-			"Implementieren Sie nun die Funktion <code>increment()</code>, die aufgerufen wird, wenn auf den Knop", 
-			"f gedrückt wird. Sie soll den Inhalt (innerHTML) des Elementes mit der id \"theSpan\" auslesen und um ", 
-			"1 erhöhen. Sie können die Funktion <code>parseInt(str)</code> verwenden, um einen String in eine Gan", 
-			"zzahl umzuwandeln."
-		], 
-		"htmlTasks": [
-			{
-				"key": {
-					"taskId": 1, 
-					"exerciseId": 6
-				}, 
-				"text": [
-					"Erstellen Sie einen Button, auf den geklickt wird. Dieser soll als Text 'Klick mich!' haben. Außerde", 
-					"m soll beim Klick die Funktion 'increment()' aufgerufen werden."
-				], 
-				"xpathQuery": "/html/body//button", 
-				"attributes": [
-					{
-						"key": "onclick", 
-						"value": "increment()"
-					}
-				], 
-				"textContent": "Klick mich!"
-			}, 
-			{
-				"key": {
-					"taskId": 2, 
-					"exerciseId": 6
-				}, 
-				"text": [
-					"Erstellen Sie einen Span mit der ID 'theSpan', in dem die Anzahl der Klicks angezeigt werden. Zu Anf", 
-					"ang soll dieser eine 0 anzeigen."
-				], 
-				"xpathQuery": "/html/body//span[@id='theSpan']", 
-				"attributes": [
-					
-				], 
-				"textContent": "0"
-			}
-		], 
-		"jsTasks": [
-			{
-				"key": {
-					"taskId": 1, 
-					"exerciseId": 6
-				}, 
-				"text": [
-					"Test 1"
-				], 
-				"xpathQuery": "", 
-				"conditions": [
-					{
-						"key": {
-							"exerciseId": 6, 
-							"taskId": 1, 
-							"conditionId": 1
-						}, 
-						"xpathQuery": "/html/body//span[@id='theSpan']", 
-						"isPrecondition": true, 
-						"awaitedValue": "0"
-					}, 
-					{
-						"key": {
-							"exerciseId": 6, 
-							"taskId": 1, 
-							"conditionId": 2
-						}, 
-						"xpathQuery": "/html/body//span[@id='theSpan']", 
-						"isPrecondition": false, 
-						"awaitedValue": "1"
-					}
-				], 
-				"action": {
-					"actiontype": "CLICK", 
-					"actionXpathQuery": "/html/body//button", 
-					"keysToSend": ""
-				}
-			}, 
-			{
-				"key": {
-					"taskId": 2, 
-					"exerciseId": 6
-				}, 
-				"text": [
-					"Test 2"
-				], 
-				"xpathQuery": "", 
-				"conditions": [
-					{
-						"key": {
-							"exerciseId": 6, 
-							"taskId": 2, 
-							"conditionId": 1
-						}, 
-						"xpathQuery": "/html/body//span[@id='theSpan']", 
-						"isPrecondition": true, 
-						"awaitedValue": "1"
-					}, 
-					{
-						"key": {
-							"exerciseId": 6, 
-							"taskId": 2, 
-							"conditionId": 2
-						}, 
-						"xpathQuery": "/html/body//span[@id='theSpan']", 
-						"isPrecondition": false, 
-						"awaitedValue": "2"
-					}
-				], 
-				"action": {
-					"actiontype": "CLICK", 
-					"actionXpathQuery": "/html/body//button", 
-					"keysToSend": ""
-				}
-			}, 
-			{
-				"key": {
-					"taskId": 3, 
-					"exerciseId": 6
-				}, 
-				"text": [
-					"Test 3"
-				], 
-				"xpathQuery": "", 
-				"conditions": [
-					{
-						"key": {
-							"exerciseId": 6, 
-							"taskId": 3, 
-							"conditionId": 1
-						}, 
-						"xpathQuery": "/html/body//span[@id='theSpan']", 
-						"isPrecondition": true, 
-						"awaitedValue": "2"
-					}, 
-					{
-						"key": {
-							"exerciseId": 6, 
-							"taskId": 3, 
-							"conditionId": 2
-						}, 
-						"xpathQuery": "/html/body//span[@id='theSpan']", 
-						"isPrecondition": false, 
-						"awaitedValue": "3"
-					}
-				], 
-				"action": {
-					"actiontype": "CLICK", 
-					"actionXpathQuery": "/html/body//button", 
-					"keysToSend": ""
-				}
-			}, 
-			{
-				"key": {
-					"taskId": 4, 
-					"exerciseId": 6
-				}, 
-				"text": [
-					"Test 4"
-				], 
-				"xpathQuery": "", 
-				"conditions": [
-					{
-						"key": {
-							"exerciseId": 6, 
-							"taskId": 4, 
-							"conditionId": 1
-						}, 
-						"xpathQuery": "/html/body//span[@id='theSpan']", 
-						"isPrecondition": true, 
-						"awaitedValue": "3"
-					}, 
-					{
-						"key": {
-							"exerciseId": 6, 
-							"taskId": 4, 
-							"conditionId": 2
-						}, 
-						"xpathQuery": "/html/body//span[@id='theSpan']", 
-						"isPrecondition": false, 
-						"awaitedValue": "4"
-					}
-				], 
-				"action": {
-					"actiontype": "CLICK", 
-					"actionXpathQuery": "/html/body//button", 
-					"keysToSend": ""
-				}
-			}
-		]
-	}
+  {
+    "id": 1,
+    "title": "Listen in HTML",
+    "author": "bje40dc",
+    "text": [
+      "Erstellen Sie eine Liste in HTML, die die die Autohersteller Audi, BMW und Mercedes-Benz und Volkswa",
+      "gen enthält. Achten Sie dabei für die Korrektur auf eine korrekte Schreibweise der einzelnen Herstel",
+      "ler!"
+    ],
+    "status": "ACCEPTED",
+    "htmlText": [
+    ],
+    "jsText": [
+    ],
+    "htmlTasks": [
+      {
+        "key": {
+          "taskId": 1,
+          "exerciseId": 1
+        },
+        "text": [
+          "Erstellen Sie eine passende h1-Überschrift, die das Wort \"Autohersteller\" enthält."
+        ],
+        "xpathQuery": "/html/body//h1",
+        "attributes": [
+        ],
+        "textContent": "Autohersteller"
+      },
+      {
+        "key": {
+          "taskId": 2,
+          "exerciseId": 1
+        },
+        "text": [
+          "Erstellen Sie eine ungeordnete Liste auf der Seite, die dann die einzelnen Hersteller enthalten wird",
+          ". Geben Sie dieser Liste die Klasse \"list-group\"."
+        ],
+        "xpathQuery": "/html/body//ul",
+        "attributes": [
+          {
+            "key": "class",
+            "value": "list-group"
+          }
+        ],
+        "textContent": ""
+      },
+      {
+        "key": {
+          "taskId": 3,
+          "exerciseId": 1
+        },
+        "text": [
+          "Erstellen Sie das Listenelement für Audi. Geben Sie diesem Element die Klasse \"list-group-item\"."
+        ],
+        "xpathQuery": "/html/body//ul/li[1]",
+        "attributes": [
+          {
+            "key": "class",
+            "value": "list-group-item"
+          }
+        ],
+        "textContent": "Audi"
+      },
+      {
+        "key": {
+          "taskId": 4,
+          "exerciseId": 1
+        },
+        "text": [
+          "Erstellen Sie das Listenelement für BMW. Geben Sie diesem Element die Klasse \"list-group-item\"."
+        ],
+        "xpathQuery": "/html/body//ul/li[2]",
+        "attributes": [
+          {
+            "key": "class",
+            "value": "list-group-item"
+          }
+        ],
+        "textContent": "BMW"
+      },
+      {
+        "key": {
+          "taskId": 5,
+          "exerciseId": 1
+        },
+        "text": [
+          "Erstellen Sie das Listenelement für Mercedes-Benz. Geben Sie diesem Element die Klasse \"list-group-i",
+          "tem\"."
+        ],
+        "xpathQuery": "/html/body//ul/li[3]",
+        "attributes": [
+          {
+            "key": "class",
+            "value": "list-group-item"
+          }
+        ],
+        "textContent": "Mercedes-Benz"
+      },
+      {
+        "key": {
+          "taskId": 6,
+          "exerciseId": 1
+        },
+        "text": [
+          "Erstellen Sie das Listenelement für Volkswagen. Geben Sie diesem Element die Klasse \"list-group-item",
+          "\"."
+        ],
+        "xpathQuery": "/html/body//ul/li[4]",
+        "attributes": [
+          {
+            "key": "class",
+            "value": "list-group-item"
+          }
+        ],
+        "textContent": "Volkswagen"
+      },
+      {
+        "key": {
+          "taskId": 7,
+          "exerciseId": 1
+        },
+        "text": [
+          "Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL \"/assets/stylesh",
+          "eets/bootstrap.css\" zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut \"rel\""
+        ],
+        "xpathQuery": "/html/head//link",
+        "attributes": [
+          {
+            "key": "rel",
+            "value": "stylesheet"
+          },
+          {
+            "key": "href",
+            "value": "/assets/stylesheets/bootstrap.css"
+          }
+        ],
+        "textContent": ""
+      }
+    ],
+    "jsTasks": [
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Tabllen in HTML",
+    "author": "bje40dc",
+    "text": [
+      "Erstellen Sie eine Tabelle in HTML!"
+    ],
+    "status": "ACCEPTED",
+    "htmlText": [
+    ],
+    "jsText": [
+    ],
+    "htmlTasks": [
+      {
+        "key": {
+          "taskId": 1,
+          "exerciseId": 2
+        },
+        "text": [
+          "Erstellen Sie das Grundtag für die Tabelle Geben Sie der Tabelle die Klassen \"table\" und \"table-stri",
+          "ped\"."
+        ],
+        "xpathQuery": "/html/body//table",
+        "attributes": [
+          {
+            "key": "class",
+            "value": "table table-striped"
+          }
+        ],
+        "textContent": ""
+      },
+      {
+        "key": {
+          "taskId": 2,
+          "exerciseId": 2
+        },
+        "text": [
+          "Erstellen Sie die erste Zeile für die Überschriften"
+        ],
+        "xpathQuery": "/html/body//table//tr[1]",
+        "attributes": [
+        ],
+        "textContent": ""
+      },
+      {
+        "key": {
+          "taskId": 3,
+          "exerciseId": 2
+        },
+        "text": [
+          "Erstellen Sie die erste Zelle für die Überschrift. Diese soll als Inhalt \"Jahr\" haben"
+        ],
+        "xpathQuery": "html/body//table//tr[1]/th[1]",
+        "attributes": [
+        ],
+        "textContent": "Jahr"
+      },
+      {
+        "key": {
+          "taskId": 4,
+          "exerciseId": 2
+        },
+        "text": [
+          "Erstellen Sie die zweite Zelle für die Überschrift. Diese soll als Inhalt \"Produktion\" haben"
+        ],
+        "xpathQuery": "html/body//table//tr[1]/th[2]",
+        "attributes": [
+        ],
+        "textContent": "Produktion"
+      },
+      {
+        "key": {
+          "taskId": 5,
+          "exerciseId": 2
+        },
+        "text": [
+          "Erstellen Sie die zweite Zeile in der Tabelle"
+        ],
+        "xpathQuery": "/html/body//table//tr[2]",
+        "attributes": [
+        ],
+        "textContent": ""
+      },
+      {
+        "key": {
+          "taskId": 6,
+          "exerciseId": 2
+        },
+        "text": [
+          "Erstellen Sie die erste Zelle in der zweiten Zeile. Diese soll als Inhalt \"1900\" haben"
+        ],
+        "xpathQuery": "html/body//table//tr[2]/td[1]",
+        "attributes": [
+        ],
+        "textContent": "1900"
+      },
+      {
+        "key": {
+          "taskId": 7,
+          "exerciseId": 2
+        },
+        "text": [
+          "Erstellen Sie die zweite Zelle in der zweiten Zeile. Diese soll als Inhalt \"9504\" haben"
+        ],
+        "xpathQuery": "html/body//table//tr[2]/td[2]",
+        "attributes": [
+        ],
+        "textContent": "9504"
+      },
+      {
+        "key": {
+          "taskId": 8,
+          "exerciseId": 2
+        },
+        "text": [
+          "Erstellen Sie die dritte Zeile in der Tabelle"
+        ],
+        "xpathQuery": "/html/body//table//tr[3]",
+        "attributes": [
+        ],
+        "textContent": ""
+      },
+      {
+        "key": {
+          "taskId": 9,
+          "exerciseId": 2
+        },
+        "text": [
+          "Erstellen Sie die erste Zelle in der dritten Zeile. Diese soll als Inhalt \"1950\" haben"
+        ],
+        "xpathQuery": "html/body//table//tr[3]/td[1]",
+        "attributes": [
+        ],
+        "textContent": "1950"
+      },
+      {
+        "key": {
+          "taskId": 10,
+          "exerciseId": 2
+        },
+        "text": [
+          "Erstellen Sie die zweite Zelle in der dritten Zeile. Diese soll als Inhalt \"10577426\" haben"
+        ],
+        "xpathQuery": "html/body//table//tr[3]/td[2]",
+        "attributes": [
+        ],
+        "textContent": "10577426"
+      },
+      {
+        "key": {
+          "taskId": 11,
+          "exerciseId": 2
+        },
+        "text": [
+          "Erstellen Sie die vierte Zeile in der Tabelle"
+        ],
+        "xpathQuery": "/html/body//table//tr[4]",
+        "attributes": [
+        ],
+        "textContent": ""
+      },
+      {
+        "key": {
+          "taskId": 12,
+          "exerciseId": 2
+        },
+        "text": [
+          "Erstellen Sie die erste Zelle in der vierten Zeile. Diese soll als Inhalt \"2000\" haben"
+        ],
+        "xpathQuery": "html/body//table//tr[4]/td[1]",
+        "attributes": [
+        ],
+        "textContent": "2000"
+      },
+      {
+        "key": {
+          "taskId": 13,
+          "exerciseId": 2
+        },
+        "text": [
+          "Erstellen Sie die zweite Zelle in der vierten Zeile. Diese soll als Inhalt \"58374162\" haben"
+        ],
+        "xpathQuery": "html/body//table//tr[4]/td[2]",
+        "attributes": [
+        ],
+        "textContent": "58374162"
+      },
+      {
+        "key": {
+          "taskId": 14,
+          "exerciseId": 2
+        },
+        "text": [
+          "Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL \"/assets/stylesh",
+          "eets/bootstrap.css\" zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut \"rel\""
+        ],
+        "xpathQuery": "/html/head//link",
+        "attributes": [
+          {
+            "key": "rel",
+            "value": "stylesheet"
+          },
+          {
+            "key": "href",
+            "value": "/assets/stylesheets/bootstrap.css"
+          }
+        ],
+        "textContent": ""
+      }
+    ],
+    "jsTasks": [
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Hyperlinks und Bilder in HTML",
+    "author": "bje40dc",
+    "text": [
+      "Erstellen Sie ein Bild in HTML, das gleichzeitig ein Link ist."
+    ],
+    "status": "ACCEPTED",
+    "htmlText": [
+    ],
+    "jsText": [
+    ],
+    "htmlTasks": [
+      {
+        "key": {
+          "taskId": 1,
+          "exerciseId": 3
+        },
+        "text": [
+          "Erstellen Sie eine passende h1-Überschrift, die \"Ford Mustang\" enthält."
+        ],
+        "xpathQuery": "/html/body//h1",
+        "attributes": [
+        ],
+        "textContent": "Ford Mustang"
+      },
+      {
+        "key": {
+          "taskId": 2,
+          "exerciseId": 3
+        },
+        "text": [
+          "Erstellen Sie den Link auf der Seite, der auf Wikipedia verweist. Geben Sie als Ziel die URL 'https:",
+          "//de.wikipedia.org/wiki/Ford_Mustang' an."
+        ],
+        "xpathQuery": "/html/body//a",
+        "attributes": [
+          {
+            "key": "href",
+            "value": "https://de.wikipedia.org/wiki/Ford_Mustang"
+          }
+        ],
+        "textContent": ""
+      },
+      {
+        "key": {
+          "taskId": 3,
+          "exerciseId": 3
+        },
+        "text": [
+          "Erstellen Sie im Link das Bild des Ford Mustang. Geben Sie als Quelle des Bildes die URL 'https://up",
+          "load.wikimedia.org/wikipedia/commons/2/2d/1964_12_Ford_Mustang.jpg' und als alternative Beschreibung",
+          " 'Ford Mustang' an. Geben Sie außerdem eine Breite von 250 und eine Höhe von 188 an, um das Bild zu ",
+          "skalieren. Geben Sie dem Bild die Klasse \"img-rounded\"."
+        ],
+        "xpathQuery": "/html/body//a//img",
+        "attributes": [
+          {
+            "key": "src",
+            "value": "https://upload.wikimedia.org/wikipedia/commons/2/2d/1964_12_Ford_Mustang.jpg"
+          },
+          {
+            "key": "alt",
+            "value": "Ford Mustang"
+          },
+          {
+            "key": "width",
+            "value": "250"
+          },
+          {
+            "key": "height",
+            "value": "188"
+          },
+          {
+            "key": "class",
+            "value": "img-rounded"
+          }
+        ],
+        "textContent": ""
+      },
+      {
+        "key": {
+          "taskId": 4,
+          "exerciseId": 3
+        },
+        "text": [
+          "Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL \"/assets/stylesh",
+          "eets/bootstrap.css\" zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut \"rel\""
+        ],
+        "xpathQuery": "/html/head//link",
+        "attributes": [
+          {
+            "key": "rel",
+            "value": "stylesheet"
+          },
+          {
+            "key": "href",
+            "value": "/assets/stylesheets/bootstrap.css"
+          }
+        ],
+        "textContent": ""
+      }
+    ],
+    "jsTasks": [
+    ]
+  },
+  {
+    "id": 4,
+    "title": "Login-Formular",
+    "author": "bje40dc",
+    "text": [
+      "Erstellen Sie ein Login-Formular in HTML"
+    ],
+    "status": "ACCEPTED",
+    "htmlText": [
+    ],
+    "jsText": [
+    ],
+    "htmlTasks": [
+      {
+        "key": {
+          "taskId": 1,
+          "exerciseId": 4
+        },
+        "text": [
+          "Erstellen Sie das Formular-Tag. Geben Sie für die Attribute \"action\" und \"method\" jeweils die Werte ",
+          "\"/test.php\" und \"post\" an."
+        ],
+        "xpathQuery": "/html/body//form",
+        "attributes": [
+          {
+            "key": "action",
+            "value": "/test.php"
+          },
+          {
+            "key": "method",
+            "value": "post"
+          }
+        ],
+        "textContent": ""
+      },
+      {
+        "key": {
+          "taskId": 2,
+          "exerciseId": 4
+        },
+        "text": [
+          "Erstellen Sie ein Feld zur Eingabe der Emailadresse. Benutzen Sie den in der Vorlesung gezeigten Typ",
+          "en und geben Sie dem Attribut \"name\" den Wert \"email\". Die Eingabe soll außerdem required sein. Gebe",
+          "n Sie dem Feld zur Eingabe der Emailadressedie Klasse \"form-control\"."
+        ],
+        "xpathQuery": "/html/body//form//input[@type='email']",
+        "attributes": [
+          {
+            "key": "name",
+            "value": "email"
+          },
+          {
+            "key": "required",
+            "value": "true"
+          },
+          {
+            "key": "class",
+            "value": "form-control"
+          }
+        ],
+        "textContent": ""
+      },
+      {
+        "key": {
+          "taskId": 3,
+          "exerciseId": 4
+        },
+        "text": [
+          "Erstellen Sie ein Feld zur Eingabe des Passworts. Benutzen Sie den in der Vorlesung gezeigten Typen ",
+          "und geben Sie dem Attribut \"name\" den Wert \"passwort\". Die Eingabe soll außerdem verpflichtend sein.",
+          " Geben Sie dem Feld zur Eingabe des Passworts Klasse \"form-control\"."
+        ],
+        "xpathQuery": "/html/body//form//input[@type='password']",
+        "attributes": [
+          {
+            "key": "name",
+            "value": "passwort"
+          },
+          {
+            "key": "required",
+            "value": "true"
+          },
+          {
+            "key": "class",
+            "value": "form-control"
+          }
+        ],
+        "textContent": ""
+      },
+      {
+        "key": {
+          "taskId": 4,
+          "exerciseId": 4
+        },
+        "text": [
+          "Erstellen Sie einen Knopf (input), um das Formular abzusenden. Geben Sie den Knopf zum Absenden des ",
+          "Formular die Klasse \"btn btn-default\""
+        ],
+        "xpathQuery": "/html/body//form//input[@type='submit']",
+        "attributes": [
+          {
+            "key": "class",
+            "value": "btn btn-default"
+          }
+        ],
+        "textContent": ""
+      },
+      {
+        "key": {
+          "taskId": 5,
+          "exerciseId": 4
+        },
+        "text": [
+          "Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL \"/assets/stylesh",
+          "eets/bootstrap.css\" zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut \"rel\""
+        ],
+        "xpathQuery": "/html/head//link",
+        "attributes": [
+          {
+            "key": "rel",
+            "value": "stylesheet"
+          },
+          {
+            "key": "href",
+            "value": "/assets/stylesheets/bootstrap.css"
+          }
+        ],
+        "textContent": ""
+      }
+    ],
+    "jsTasks": [
+    ]
+  },
+  {
+    "id": 5,
+    "title": "Audio in HTML 5",
+    "author": "bje40dc",
+    "text": [
+    ],
+    "status": "ACCEPTED",
+    "htmlText": [
+    ],
+    "jsText": [
+    ],
+    "htmlTasks": [
+      {
+        "key": {
+          "taskId": 1,
+          "exerciseId": 5
+        },
+        "text": [
+          "Erstellen Sie eine passende h1-Überschrift, die \"Deutsche Nationalhymne\" enthält."
+        ],
+        "xpathQuery": "/html/body//h1",
+        "attributes": [
+        ],
+        "textContent": "Deutsche Nationalhymne"
+      },
+      {
+        "key": {
+          "taskId": 2,
+          "exerciseId": 5
+        },
+        "text": [
+          "Erstellen Sie das Grundelement für die Audiodatei. Aktivieren Sie die Kontrollelement. Falls der Bro",
+          "wser keine Audiodateiene unterstützt, soll der Text \"Ihr Browser unterstützt kein Audio!\" ausgegeben",
+          " werden"
+        ],
+        "xpathQuery": "/html/body//audio",
+        "attributes": [
+          {
+            "key": "controls",
+            "value": "true"
+          }
+        ],
+        "textContent": "Ihr Browser unterstützt kein Audio!"
+      },
+      {
+        "key": {
+          "taskId": 3,
+          "exerciseId": 5
+        },
+        "text": [
+          "Erstellen Sie das Element für die Quelldatei. Diese ist vom Typ \"audio/ogg\" und befindet sich an der",
+          " URL \"https://upload.wikimedia.org/wikipedia/commons/c/cb/National_anthem_of_Germany_-_U.S._Army_1st",
+          "_Armored_Division_Band.ogg\""
+        ],
+        "xpathQuery": "/html/body//audio/source",
+        "attributes": [
+          {
+            "key": "type",
+            "value": "audio/ogg"
+          },
+          {
+            "key": "src",
+            "value": "https://upload.wikimedia.org/wikipedia/commons/c/cb/National_anthem_of_Germany_-_U.S._Army_1st_Armored_Division_Band.ogg"
+          }
+        ],
+        "textContent": ""
+      }
+    ],
+    "jsTasks": [
+    ]
+  },
+  {
+    "id": 6,
+    "title": "Klickzähler",
+    "author": "bje40dc",
+    "text": [
+      "Erstellen Sie einen Zähler, der die Klicks auf einen Button zählt!"
+    ],
+    "status": "ACCEPTED",
+    "htmlText": [
+      "Erstellen Sie zunächst den Rumpf der Seite in HTML."
+    ],
+    "jsText": [
+      "Implementieren Sie nun die Funktion <code>increment()</code>, die aufgerufen wird, wenn auf den Knop",
+      "f gedrückt wird. Sie soll den Inhalt (innerHTML) des Elementes mit der id \"theSpan\" auslesen und um ",
+      "1 erhöhen. Sie können die Funktion <code>parseInt(str)</code> verwenden, um einen String in eine Gan",
+      "zzahl umzuwandeln."
+    ],
+    "htmlTasks": [
+      {
+        "key": {
+          "taskId": 1,
+          "exerciseId": 6
+        },
+        "text": [
+          "Erstellen Sie einen Button, auf den geklickt wird. Dieser soll als Text 'Klick mich!' haben. Außerde",
+          "m soll beim Klick die Funktion 'increment()' aufgerufen werden."
+        ],
+        "xpathQuery": "/html/body//button",
+        "attributes": [
+          {
+            "key": "onclick",
+            "value": "increment()"
+          }
+        ],
+        "textContent": "Klick mich!"
+      },
+      {
+        "key": {
+          "taskId": 2,
+          "exerciseId": 6
+        },
+        "text": [
+          "Erstellen Sie einen Span mit der ID 'theSpan', in dem die Anzahl der Klicks angezeigt werden. Zu Anf",
+          "ang soll dieser eine 0 anzeigen."
+        ],
+        "xpathQuery": "/html/body//span[@id='theSpan']",
+        "attributes": [
+        ],
+        "textContent": "0"
+      }
+    ],
+    "jsTasks": [
+      {
+        "key": {
+          "taskId": 1,
+          "exerciseId": 6
+        },
+        "text": [
+          "Test 1"
+        ],
+        "xpathQuery": "",
+        "conditions": [
+          {
+            "key": {
+              "exerciseId": 6,
+              "taskId": 1,
+              "conditionId": 1
+            },
+            "xpathQuery": "/html/body//span[@id='theSpan']",
+            "isPrecondition": true,
+            "awaitedValue": "0"
+          },
+          {
+            "key": {
+              "exerciseId": 6,
+              "taskId": 1,
+              "conditionId": 2
+            },
+            "xpathQuery": "/html/body//span[@id='theSpan']",
+            "isPrecondition": false,
+            "awaitedValue": "1"
+          }
+        ],
+        "action": {
+          "actiontype": "CLICK",
+          "actionXpathQuery": "/html/body//button",
+          "keysToSend": ""
+        }
+      },
+      {
+        "key": {
+          "taskId": 2,
+          "exerciseId": 6
+        },
+        "text": [
+          "Test 2"
+        ],
+        "xpathQuery": "",
+        "conditions": [
+          {
+            "key": {
+              "exerciseId": 6,
+              "taskId": 2,
+              "conditionId": 1
+            },
+            "xpathQuery": "/html/body//span[@id='theSpan']",
+            "isPrecondition": true,
+            "awaitedValue": "1"
+          },
+          {
+            "key": {
+              "exerciseId": 6,
+              "taskId": 2,
+              "conditionId": 2
+            },
+            "xpathQuery": "/html/body//span[@id='theSpan']",
+            "isPrecondition": false,
+            "awaitedValue": "2"
+          }
+        ],
+        "action": {
+          "actiontype": "CLICK",
+          "actionXpathQuery": "/html/body//button",
+          "keysToSend": ""
+        }
+      },
+      {
+        "key": {
+          "taskId": 3,
+          "exerciseId": 6
+        },
+        "text": [
+          "Test 3"
+        ],
+        "xpathQuery": "",
+        "conditions": [
+          {
+            "key": {
+              "exerciseId": 6,
+              "taskId": 3,
+              "conditionId": 1
+            },
+            "xpathQuery": "/html/body//span[@id='theSpan']",
+            "isPrecondition": true,
+            "awaitedValue": "2"
+          },
+          {
+            "key": {
+              "exerciseId": 6,
+              "taskId": 3,
+              "conditionId": 2
+            },
+            "xpathQuery": "/html/body//span[@id='theSpan']",
+            "isPrecondition": false,
+            "awaitedValue": "3"
+          }
+        ],
+        "action": {
+          "actiontype": "CLICK",
+          "actionXpathQuery": "/html/body//button",
+          "keysToSend": ""
+        }
+      },
+      {
+        "key": {
+          "taskId": 4,
+          "exerciseId": 6
+        },
+        "text": [
+          "Test 4"
+        ],
+        "xpathQuery": "",
+        "conditions": [
+          {
+            "key": {
+              "exerciseId": 6,
+              "taskId": 4,
+              "conditionId": 1
+            },
+            "xpathQuery": "/html/body//span[@id='theSpan']",
+            "isPrecondition": true,
+            "awaitedValue": "3"
+          },
+          {
+            "key": {
+              "exerciseId": 6,
+              "taskId": 4,
+              "conditionId": 2
+            },
+            "xpathQuery": "/html/body//span[@id='theSpan']",
+            "isPrecondition": false,
+            "awaitedValue": "4"
+          }
+        ],
+        "action": {
+          "actiontype": "CLICK",
+          "actionXpathQuery": "/html/body//button",
+          "keysToSend": ""
+        }
+      }
+    ]
+  }
 ]

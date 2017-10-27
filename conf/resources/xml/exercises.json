@@ -6,6 +6,7 @@
     "text": [
       "Erstellen Sie zu dieser DTD ein passendes XML-Dokument."
     ],
+    "status": "ACCEPTED",
     "exerciseType": "XML_DTD",
     "rootNode": "party"
   },
@@ -16,6 +17,7 @@
     "text": [
       "Erstellen Sie zu dieser DTD ein passendes XML-Dokument."
     ],
+    "status": "ACCEPTED",
     "exerciseType": "XML_DTD",
     "rootNode": "lecture"
   },
@@ -26,6 +28,7 @@
     "text": [
       "Erstellen Sie zu dieser DTD ein passendes XML-Dokument."
     ],
+    "status": "ACCEPTED",
     "exerciseType": "XML_DTD",
     "rootNode": "hospital"
   },
@@ -36,6 +39,7 @@
     "text": [
       "Erstellen Sie für dieses XML-Dokument eine passende DTD."
     ],
+    "status": "ACCEPTED",
     "exerciseType": "DTD_XML",
     "rootNode": "breakfast"
   },
@@ -46,6 +50,7 @@
     "text": [
       "Erstellen Sie für dieses XML-Dokument eine passende DTD."
     ],
+    "status": "ACCEPTED",
     "exerciseType": "DTD_XML",
     "rootNode": "library"
   }

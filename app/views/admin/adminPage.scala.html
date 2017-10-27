@@ -1,27 +1,29 @@
-@(user: model.user.User)
+@(user: model.User, numUsers: Int, numCourses: Int)
 
 @main("it4all: Administrator", user) {
-<div class="container">
-  <div class="page-header">
-    <h1>Administrator</h1>
-  </div>
-  
-  <section id="statistics">
-    <h2>Statistiken</h2>
-    <ul>
-      <li>Es sind momentan @model.user.User.finder.all().size() <a href="@routes.AdminController.users()">Nutzer</a> registriert</li>
-      <li>Es existieren @model.user.Course.finder.all().size() Kurse</li>
-    </ul>
-  </section>
-  
-  <hr>
+    <div class="container">
+        <div class="page-header">
+            <h1>Administrator</h1>
+        </div>
 
-  <section id="administration">
-    <h2>Verwaltung der Kurse</h3>
-    <a class="btn btn-primary btn-block" href="@routes.CourseAdminController.newCourseForm()">Neuen Kurs erstellen</a>
-    @for(course <- model.user.Course.finder.all()) {
-	  <a class="btn btn-default btn-block" href="@routes.CourseAdminController.course(course.id)">@course.name</a>
-    }
-  </section>
-</div>
+        <section id="statistics">
+            <h2>Statistiken</h2>
+            <ul>
+                <li>Es sind momentan @numUsers <a href="@routes.AdminController.users()">Nutzer</a>
+                    registriert</li>
+                <li>Es existieren @numCourses Kurse</li>
+            </ul>
+        </section>
+
+        <hr>
+
+        <section id="administration">
+            <h2>Verwaltung der Kurse</h2>
+            <a class="btn btn-primary btn-block" href="@routes.CourseAdminController.newCourseForm()">
+                Neuen Kurs erstellen</a>
+            @*for(course <- model.Course.finder.all()) {
+            <a class="btn btn-default btn-block" href="@routes.CourseAdminController.course(course.id)">@course.name</a>
+            }*@
+        </section>
+    </div>
 }

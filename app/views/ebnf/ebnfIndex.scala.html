@@ -1,0 +1,13 @@
+@(user: model.User, exercises: List[model.ebnf.EbnfExercise])
+
+    @main("Ebnf", user) {
+        <div class="container">
+            <div class="page-header">
+                <h1>Ebnf-Aufgaben</h1>
+            </div>
+
+            @for(exercise <- exercises) {
+                <p><a class="btn btn-default btn-block" href="@controllers.ebnf.routes.EbnfController.exercise(exercise.id)">Aufgabe @exercise.id</a></p>
+            }
+        </div>
+    }

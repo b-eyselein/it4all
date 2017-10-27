@@ -1,14 +1,15 @@
 [
-	{
-		"id": 1,
-		"title": "EBNF 1",
-		"author": "bje40dc",
-		"text": [
-			"Erstellen Sie eine Grammatik, die genau das Wort '1010' beinhaltet!"
-		],
-		"terminals": [
-			"0",
-			"1"
-		]
-	}
+  {
+    "id": 1,
+    "title": "EBNF 1",
+    "author": "bje40dc",
+    "text": [
+      "Erstellen Sie eine Grammatik, die genau das Wort '1010' beinhaltet!"
+    ],
+    "status": "CREATED",
+    "terminals": [
+      "0",
+      "1"
+    ]
+  }
 ]

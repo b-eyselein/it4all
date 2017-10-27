@@ -1,44 +1,44 @@
-@import model.feedback._
+@(user: model.User, toEvaluate: List[model.feedback.Feedback])
 
-@(user: model.user.User, toEvaluate: List[Feedback])
-
-@main("Evaluation", user) {
-<div class="container">
-  <div class="page-header">
-    <h1>Evaluation der Tools</h1>
-  </div>
-  
-  <form action="@controllers.routes.EvaluationController.submit" method="post" class="form">
-  @for(feedback <- toEvaluate; evaledTool = feedback.key.tool.toString.toLowerCase) {
-    <fieldset>
-      <legend>Evaluation der @feedback.key.tool-Korrektur</legend>
-      
-      @for(evaledAspect <- EvaluatedAspect.values) {
-      	<div class="form-group">
-          <label>@evaledAspect.getQuestion</label>
-          <div class="row">
-          @for(mark <- Mark.values) {
-            <div class="col-sm-2">
-              <div class="radio">
-                <label>
-                  <input type="radio" name="@{evaledAspect.toString.toLowerCase + "-" + evaledTool}" value="@mark.toString.toLowerCase" @if(mark == feedback.get(evaledAspect)) { checked}>
-                    @mark.display(evaledAspect)
-                </label>
-              </div>
+    @main("Evaluation", user) {
+        <div class="container">
+            <div class="page-header">
+                <h1>Evaluation der Tools</h1>
             </div>
-          }
-          </div>
+
+            <form action="@controllers.routes.EvaluationController.submit" method="post" class="form">
+                @for(feedback <- toEvaluate; evaledTool = feedback.tool.toString.toLowerCase) {
+                    <fieldset>
+                        <legend>Evaluation der @feedback.tool-Korrektur</legend>
+
+                        @for(evaledAspect <- model.Enums.EvaluatedAspect.values) {
+                            <div class="form-group">
+                                <label>@evaledAspect.question</label>
+                                <div class="row">
+                                @for(mark <- model.Enums.Mark.values) {
+                                    <div class="col-sm-2">
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="@evaledAspect.toString.toLowerCase-@evaledTool"
+                                                value="@mark.toString.toLowerCase" @mark.isChecked(feedback.get(evaledAspect))>
+                                                @mark.display(evaledAspect)
+                                            </label>
+                                        </div>
+                                    </div>
+                                }
+                                </div>
+                            </div>
+                        }
+
+                        <div class="form-group">
+                            <label for="comment-@evaledTool">Verbesserungsvorschl&auml;ge:</label>
+                            <textarea class="form-control" rows="5" name="comment-@evaledTool" id="comment-@evaledTool"
+                            placeholder="Verbesserungsvorschl&auml;ge">@feedback.comment</textarea>
+                            <p>Bitte beschr&auml;nken Sie Sich auf 250 Zeichen.</p>
+                        </div>
+                    </fieldset>
+                }
+                <button type="submit" class="btn btn-primary btn-block">Evaluation absenden</button>
+            </form>
         </div>
-      }
-      
-      <div class="form-group">
-        <label for="comment-@evaledTool">Verbesserungsvorschl&auml;ge:</label>
-        <textarea class="form-control" rows="5" name="comment-@evaledTool" id="comment-@evaledTool" placeholder="Verbesserungsvorschl&auml;ge">@feedback.comment</textarea>
-        <p>Bitte beschr&auml;nken Sie Sich auf 250 Zeichen.</p>
-      </div>
-    </fieldset>
-  }
-    <button type="submit" class="btn btn-primary btn-block">Evaluation absenden</button>
-  </form>
-</div>
-}
+    }

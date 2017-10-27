@@ -3,6 +3,7 @@ CREATE USER 'it4all'@'%';
 
 CREATE DATABASE IF NOT EXISTS sqlselect;
 
-GRANT ALL ON *.* TO 'it4all'@'%' IDENTIFIED BY 'sT8aV#k7';
+GRANT ALL ON *.* TO 'it4all'@'%'
+IDENTIFIED BY 'sT8aV#k7';
 
 FLUSH PRIVILEGES;
