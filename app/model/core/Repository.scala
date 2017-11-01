@@ -2,7 +2,9 @@ package model.core
 
 import javax.inject._
 
+import model.blanks.BlanksExercises
 import model.ebnf.EbnfExercises
+import model.mindmap.MindmapExercises
 import model.programming.ProgExercises
 import model.questions.QuestionsTableDefs
 import model.spread.SpreadExercises
@@ -16,10 +18,12 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class Repository @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
-                          (implicit executionContext: ExecutionContext)
+class Repository @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile] with TableDefs
-    with EbnfExercises with ProgExercises with QuestionsTableDefs with SpreadExercises with SqlTableDefs with UmlExercises with WebExercises with XmlExercises {
+
+    with BlanksExercises with EbnfExercises with MindmapExercises with ProgExercises
+    with QuestionsTableDefs with SpreadExercises with SqlTableDefs
+    with UmlExercises with WebExercises with XmlExercises {
 
   import profile.api._
 

@@ -3,7 +3,7 @@ package controllers.bool
 import javax.inject._
 
 import controllers.bool.BoolController._
-import controllers.core.excontrollers.ARandomExController
+import controllers.core.ARandomExController
 import model.User
 import model.bool.{BooleanQuestionResult, _}
 import model.core.StringConsts.{FORM_VALUE, VARS_NAME}
@@ -16,7 +16,7 @@ import play.twirl.api.Html
 import scala.concurrent.ExecutionContext
 
 object BoolController {
-  val ONE               = "1"
+  val ONE = "1"
   val SOL_VAR: Variable = BooleanQuestion.SOLUTION_VARIABLE
   val LEA_VAR: Variable = BooleanQuestion.LEARNER_VARIABLE
 }

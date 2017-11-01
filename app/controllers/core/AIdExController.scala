@@ -1,9 +1,8 @@
-package controllers.core.excontrollers
+package controllers.core
 
 import java.nio.file.{Files, Path}
 
-import controllers.core.BaseController
-import controllers.core.excontrollers.IdExController._
+import controllers.core.BaseExerciseController._
 import model.core._
 import model.core.result.{CompleteResult, EvaluationResult}
 import model.core.tools.IdExToolObject
@@ -16,23 +15,19 @@ import play.twirl.api.Html
 import scala.concurrent.ExecutionContext
 import scala.util.Try
 
-object IdExController {
-  val STEP = 10
-}
-
-abstract class IdExController[E <: Exercise, R <: EvaluationResult](cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository, val toolObject: IdExToolObject)
-                                                                   (implicit ec: ExecutionContext)
-  extends BaseController(cc, dbcp, r) with Secured {
+abstract class AIdExController[E <: Exercise, R <: EvaluationResult]
+(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository, to: IdExToolObject)(implicit ec: ExecutionContext)
+  extends BaseExerciseController[E](cc, dbcp, r, to) with Secured {
 
   type SolType <: Solution
 
   def solForm: Form[SolType]
 
-  def correct(id: Int): EssentialAction = withUser { user =>
+  def correct(id: Int): EssentialAction = withUser { _ =>
     implicit request =>
       solForm.bindFromRequest.fold(
         _ => BadRequest("There has been an error!"),
-        solution => {
+        _ => {
           //          correctEx(solution, finder.byId(id), user) match {
           //            case Success(correctionResult) =>
           //              log(user, new ExerciseCompletionEvent[R](request, id, correctionResult))
@@ -47,11 +42,11 @@ abstract class IdExController[E <: Exercise, R <: EvaluationResult](cc: Controll
       )
   }
 
-  def correctLive(id: Int): EssentialAction = withUser { user =>
+  def correctLive(id: Int): EssentialAction = withUser { _ =>
     implicit request =>
       solForm.bindFromRequest.fold(
         _ => BadRequest("There has been an error!"),
-        solution => {
+        _ => {
           //          correctEx(solution, finder.byId(id), user) match {
           //            case Success(correctionResult) =>
           //              log(user, new ExerciseCompletionEvent[R](request, id, correctionResult))
@@ -64,7 +59,7 @@ abstract class IdExController[E <: Exercise, R <: EvaluationResult](cc: Controll
       )
   }
 
-  def exercise(id: Int): EssentialAction = withUser { user =>
+  def exercise(id: Int): EssentialAction = withUser { _ =>
     implicit request =>
       //      finder.byId(id) match {
       //        case Some(exercise) =>
@@ -75,7 +70,7 @@ abstract class IdExController[E <: Exercise, R <: EvaluationResult](cc: Controll
       Ok("TODO")
   }
 
-  def index(page: Int): EssentialAction = withUser { user =>
+  def index(page: Int): EssentialAction = withUser { _ =>
     implicit request =>
       //      val allExes = finder.all
       //      val exes = allExes.slice(Math.max(0, (page - 1) * STEP), Math.min(page * STEP, allExes.size))

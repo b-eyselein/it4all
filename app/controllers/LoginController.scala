@@ -3,24 +3,29 @@ package controllers
 import javax.inject._
 
 import com.github.t3hnar.bcrypt._
-import controllers.core.BaseController
 import model.User
 import model.core.Repository
 import model.core.StringConsts._
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.db.slick.DatabaseConfigProvider
+import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
+import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 
 case class UserCredentials(name: String, pw: String)
 
-class LoginController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends BaseController(cc, dbcp, r) {
+class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository)
+                               (implicit ec: ExecutionContext)
+  extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] {
 
   import profile.api._
+
+  case class StrForm(str: String)
+
+  def singleStrForm(str: String) = Form(mapping(str -> nonEmptyText)(StrForm.apply)(StrForm.unapply))
 
   val userCredForm: Form[UserCredentials] = Form(
     mapping(
@@ -62,7 +67,7 @@ class LoginController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPr
     userCredForm.bindFromRequest.fold(_ => Future(Redirect(controllers.routes.LoginController.login())),
       credentials => {
         repo.userByName(credentials.name).map {
-          case None       => Redirect(controllers.routes.LoginController.register())
+          case None => Redirect(controllers.routes.LoginController.register())
           case Some(user) =>
             val pwOk = credentials.pw.isBcrypted(user.pwHash)
             if (pwOk) Redirect(controllers.routes.Application.index()).withSession(SESSION_ID_FIELD -> user.username)

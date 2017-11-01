@@ -2,17 +2,17 @@ package controllers
 
 import javax.inject._
 
-import controllers.core.BaseController
 import model.core.{Repository, Secured}
 import model.feedback.FeedbackResult
-import play.api.db.slick.DatabaseConfigProvider
-import play.api.mvc.{ControllerComponents, EssentialAction}
+import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
+import play.api.mvc.{AbstractController, ControllerComponents, EssentialAction}
+import slick.jdbc.JdbcProfile
 
 import scala.concurrent.ExecutionContext
 
-class AdminController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)
+class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository)
                                (implicit ec: ExecutionContext)
-  extends BaseController(cc, dbcp, r) with Secured {
+  extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
   def changeRole(username: String): EssentialAction = withAdmin { _ =>
     implicit request =>

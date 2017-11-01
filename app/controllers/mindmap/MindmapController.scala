@@ -4,16 +4,21 @@ import java.io.IOException
 import java.nio.file.{Path, Paths}
 import javax.inject._
 
-import controllers.core.BaseController
+import controllers.core.AIdExController
 import controllers.mindmap.MindmapController._
-import model.core.{Repository, Secured}
+import model.User
+import model.core.result.{CompleteResult, EvaluationResult}
+import model.core.{Repository, Secured, StringSolution}
 import model.mindmap.evaluation.ParsingException
 import model.mindmap.evaluation.enums.EvalParserType
-import model.mindmap.{Evaluation, Validation}
+import model.mindmap.{Evaluation, MindmapExercise, MindmapExerciseReads, Validation}
+import play.api.data.Form
 import play.api.db.slick.DatabaseConfigProvider
+import play.api.libs.json.Reads
 import play.api.mvc.{ControllerComponents, EssentialAction}
 
 import scala.concurrent.ExecutionContext
+import scala.util.Try
 
 object MindmapController {
 
@@ -34,9 +39,21 @@ object MindmapController {
   val ALT_SOLUTION_PATH: Path = Paths.get(BASE_PATH.toString, "alt_solution.xml")
 }
 
-class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)
-                                 (implicit ec: ExecutionContext)
-  extends BaseController(cc, dbcp, r) with Secured {
+class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
+  extends AIdExController[MindmapExercise, EvaluationResult](cc, dbcp, r, MindMapToolObject) with Secured {
+
+  override type SolType = StringSolution
+
+  override def solForm: Form[StringSolution] = ???
+
+  override protected def correctEx(sol: StringSolution, exercise: Option[MindmapExercise], user: User): Try[CompleteResult[EvaluationResult]] = ???
+
+  override implicit def reads: Reads[MindmapExercise] = MindmapExerciseReads.mindmapExReads
+
+  override type TQ = repo.MindmapExercisesTable
+
+  override def tq = repo.mindmapExercises
+
 
   def index: EssentialAction = withUser { user => implicit request => Ok(views.html.mindmap.mindmapindex.render(user)) }
 

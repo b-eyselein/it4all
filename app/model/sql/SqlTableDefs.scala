@@ -1,7 +1,7 @@
 package model.sql
 
 import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty}
-import controllers.core.excontrollers.IdPartExController
+import controllers.core.AIdPartExController
 import model.Enums.ExerciseState
 import model.core.ExerciseCollection
 import model.core.StringConsts._

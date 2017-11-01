@@ -1,19 +1,29 @@
-package controllers.core.excontrollers
+package controllers.core
 
-import controllers.core.BaseAdminController
 import model.core._
-import model.core.tools.IdExToolObject
+import model.core.result.{CompleteResult, EvaluationResult}
+import model.core.tools.ExToolObject
 import model.{Exercise, User}
-import play.api.db.slick.DatabaseConfigProvider
-import play.api.libs.json.Json
+import play.api.data.Form
+import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc.{ControllerComponents, EssentialAction}
 import play.twirl.api.Html
+import slick.jdbc.JdbcProfile
 
 import scala.concurrent.ExecutionContext
+import scala.util.Try
 
-abstract class AExerciseCollectionAdminController[E <: Exercise, C <: ExerciseCollection[E]]
-(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository, t: IdExToolObject)(implicit ec: ExecutionContext)
-  extends BaseAdminController[C](cc, dbcp, r, t) with Secured {
+abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E], R <: EvaluationResult]
+(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository, t: ExToolObject)(implicit ec: ExecutionContext)
+  extends BaseExerciseController(cc, dbcp, r, t) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
+
+  def exercises(id: Int): EssentialAction = withUser { _ => implicit request => Ok("TODO!") }
+
+  type SolType <: Solution
+
+  def solForm: Form[SolType]
+
+  // Admin
 
   //  public AExerciseCollectionAdminController(FormFactory theFactory, IdExToolObject theRoutes,
   //      Finder<Integer, E> theExerciseFinder, Finder<Integer, C> theCollectionFinder,
@@ -31,31 +41,9 @@ abstract class AExerciseCollectionAdminController[E <: Exercise, C <: ExerciseCo
   }
 
 
-  def editExercise(exerciseId: Int): EssentialAction = withAdmin { user => implicit request => ??? }
-
-  def deleteExercise(exerciseId: Int): EssentialAction = withAdmin { user => implicit request => ??? }
-
-  def changeExState(exerciseId: Int): EssentialAction = withAdmin { user => implicit request => ??? }
-
-  def exerciseCollections: EssentialAction = withAdmin { user =>
+  def exerciseCollections: EssentialAction = withAdmin { _ =>
     implicit request =>
       //      Ok(renderExerciseCollections(user, collectionFinder.all))
-      Ok("TODO")
-  }
-
-  def exercises: EssentialAction = withAdmin { user => implicit request => ??? }
-
-  def exportExercises: EssentialAction = withAdmin { user =>
-    implicit request =>
-      Ok(views.html.admin.export.render(user, Json.prettyPrint(null /*Json.toJson(finder.all)*/)))
-  }
-
-  def editExerciseForm(id: Int): EssentialAction = withAdmin { user =>
-    implicit request =>
-      //      collectionFinder.byId(id) match {
-      //        case None           => BadRequest("")
-      //        case Some(exercise) => Ok(renderExEditForm(user, exercise, isCreation = false))
-      //      }
       Ok("TODO")
   }
 
@@ -69,7 +57,7 @@ abstract class AExerciseCollectionAdminController[E <: Exercise, C <: ExerciseCo
       Ok("TODO!")
   }
 
-  def newExerciseCollectionForm: EssentialAction = withAdmin { user =>
+  def newExerciseCollectionForm: EssentialAction = withAdmin { _ =>
     implicit request =>
       //      val id = ExerciseReader.findMinimalNotUsedId(finder)
       //      collectionFinder.byId(id) match {
@@ -77,17 +65,6 @@ abstract class AExerciseCollectionAdminController[E <: Exercise, C <: ExerciseCo
       //        case Some(collection) => Ok(renderExCollCreationForm(user, collection))
       //      }
       Ok("TODO")
-  }
-
-  def newExerciseForm: EssentialAction = withAdmin { _ =>
-    implicit request =>
-      //    val id = ExerciseReader.findMinimalNotUsedId(finder)
-      //
-      //    val exercise = exerciseReader.getOrInstantiateExercise(id)
-      //    exerciseReader.save(exercise)
-      //
-      //    Ok(renderExEditForm(BaseController.user, exercise, true))
-      Ok("TODO!")
   }
 
   //  @Override
@@ -124,5 +101,49 @@ abstract class AExerciseCollectionAdminController[E <: Exercise, C <: ExerciseCo
   def renderExCollCreationForm(user: User, collection: C): Html
 
   def renderExerciseCollections(user: User, allCollections: List[C]): Html
+
+  // User
+
+  def correct(id: Int, part: String): EssentialAction = withUser { _ =>
+    implicit request =>
+      solForm.bindFromRequest.fold(
+        _ => BadRequest("There has been an error!"),
+        _ => {
+          //          correctPart(solution, exerciseFinder.byId(id), part, user) match {
+          //            case Success(correctionResult) =>
+          //              log(user, new ExerciseCompletionEvent[R](request, id, correctionResult))
+          //              Ok(renderCorrectionResult(user, correctionResult))
+          //            case Failure(error)            =>
+          //              val content = new Html(s"<pre>${error.getMessage}:\n${error.getStackTrace.mkString("\n")}</pre>")
+          //              BadRequest(views.html.main.render("Fehler", user, new Html(""), content))
+          //          }
+          Ok("TODO")
+        }
+      )
+  }
+
+  def correctLive(id: Int, part: String): EssentialAction = withUser { _ =>
+    implicit request =>
+      solForm.bindFromRequest.fold(
+        _ => BadRequest("There has been an error!"),
+        _ => {
+          //          correctPart(solution, exerciseFinder.byId(id), part, user) match {
+          //            case Success(correctionResult) =>
+          //              log(user, new ExerciseCompletionEvent[R](request, id, correctionResult))
+          //              Ok(renderResult(correctionResult))
+          //            case Failure(error)            => BadRequest(Json.obj("message" -> error.getMessage))
+          //          }
+          Ok("TODO")
+        }
+      )
+  }
+
+  private def renderCorrectionResult(user: User, correctionResult: CompleteResult[R]): Html =
+    views.html.core.correction.render(toolObject.exType.toUpperCase, correctionResult, renderResult(correctionResult),
+      user, controllers.routes.Application.index())
+
+  def renderResult(correctionResult: CompleteResult[R]): Html
+
+  def correctPart(form: SolType, exercise: Option[E], part: String, user: User): Try[CompleteResult[R]]
 
 }

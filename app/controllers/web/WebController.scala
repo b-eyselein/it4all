@@ -2,7 +2,7 @@ package controllers.web
 
 import javax.inject._
 
-import controllers.core.excontrollers.{AExerciseAdminController, IdPartExController}
+import controllers.core.AIdPartExController
 import model.User
 import model.core._
 import model.core.result.CompleteResult
@@ -18,14 +18,68 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
 @Singleton
-class WebAdmin @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends AExerciseAdminController[WebExercise](cc, dbcp, r, WebToolObject) with Secured {
+class SolutionController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
+
+  def site(username: String, exerciseId: Int) = Action { implicit request => Ok(new Html(WebController.getOldSolOrDefault(username, exerciseId))) }
+
+}
+
+object WebController {
+
+  def getOldSolOrDefault(userName: String, exerciseId: Int): String =
+    "" //    Try(WebSolution.exById(new WebSolutionKey(userName, exerciseId)).sol).getOrElse(STANDARD_HTML)
+
+  val STANDARD_HTML: String =
+    """<!doctype html>
+      |<html>
+      |<head>
+      |
+      |</head>
+      |<body>
+      |
+      |</body>
+      |</html>""".stripMargin
+
+  val STANDARD_HTML_PLAYGROUND: String =
+    """<!doctype html>
+      |<html>
+      |<head>
+      |  <style>
+      |    /* Css-Anweisungen */
+      |  </style>
+      |  <script type=\"text/javascript\">
+      |    // Javascript-Code
+      |  </script>
+      |</head>
+      |<body>
+      |  <!-- Html-Elemente -->
+      |</body>
+      |</html>""".stripMargin
+}
+
+@Singleton
+class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
+  extends AIdPartExController[WebExercise, WebResult](cc, dbcp, r, WebToolObject) with Secured {
+
+  override type SolType = StringSolution
+
+  override def solForm: Form[StringSolution] = ???
 
   override def reads: Reads[WebExercise] = WebExerciseReads.webExReads
 
   override type TQ = repo.WebExerciseTable
 
   override def tq = repo.webExercises
+
+  val HTML_TYPE = "html"
+  val JS_TYPE = "js"
+
+  val BASE_URL = "http://localhost:9000"
+
+  val ALLOWED_TYPES = List(HTML_TYPE, JS_TYPE)
+
+  // Admin
+
 
   override def statistics: Future[Html] = Future(new Html(
     s""", davon
@@ -36,28 +90,8 @@ class WebAdmin @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider,
 
   def exRest(exerciseId: Int): EssentialAction = withAdmin { user => implicit request => Ok(views.html.web.webExRest.render(user, null /*exById(exerciseId).get*/)) }
 
-}
 
-@Singleton
-class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends IdPartExController[WebExercise, WebResult](cc, dbcp, r, WebToolObject) with Secured {
-
-  override type SolType = StringSolution
-
-  override def solForm: Form[StringSolution] = ???
-
-
-  override type TQ = repo.WebExerciseTable
-
-  override def tq = repo.webExercises
-
-
-  val HTML_TYPE = "html"
-  val JS_TYPE   = "js"
-
-  val BASE_URL = "http://localhost:9000"
-
-  val ALLOWED_TYPES = List(HTML_TYPE, JS_TYPE)
+  // User
 
 
   protected def correctEx(learnerSolution: String, exercise: WebExercise, user: User, exType: String): Try[CompleteResult[WebResult]] = {
@@ -69,9 +103,9 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
     driver.get(solutionUrl)
 
     val tasksTry: Try[List[_ <: WebTask]] = exType match {
-      case JS_TYPE   => Success(exercise.jsTasks)
+      case JS_TYPE => Success(exercise.jsTasks)
       case HTML_TYPE => Success(exercise.htmlTasks)
-      case _         => Failure(null)
+      case _ => Failure(null)
     }
 
     tasksTry.map(tasks => new CompleteResult(learnerSolution, tasks.map(WebCorrector.evaluate(_, driver)).toList))
@@ -115,43 +149,4 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   override def renderResult(correctionResult: CompleteResult[WebResult]): Html = views.html.web.webResult.render(correctionResult.results)
 
-}
-
-class SolutionController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
-
-  def site(username: String, exerciseId: Int) = Action { implicit request => Ok(new Html(WebController.getOldSolOrDefault(username, exerciseId))) }
-
-}
-
-object WebController {
-
-  def getOldSolOrDefault(userName: String, exerciseId: Int): String =
-    "" //    Try(WebSolution.exById(new WebSolutionKey(userName, exerciseId)).sol).getOrElse(STANDARD_HTML)
-
-  val STANDARD_HTML: String =
-    """<!doctype html>
-      |<html>
-      |<head>
-      |
-      |</head>
-      |<body>
-      |
-      |</body>
-      |</html>""".stripMargin
-
-  val STANDARD_HTML_PLAYGROUND: String =
-    """<!doctype html>
-      |<html>
-      |<head>
-      |  <style>
-      |    /* Css-Anweisungen */
-      |  </style>
-      |  <script type=\"text/javascript\">
-      |    // Javascript-Code
-      |  </script>
-      |</head>
-      |<body>
-      |  <!-- Html-Elemente -->
-      |</body>
-      |</html>""".stripMargin
 }

@@ -2,19 +2,19 @@ package controllers
 
 import javax.inject._
 
-import controllers.core.BaseController
 import model.core.{Repository, Secured}
-import play.api.db.slick.DatabaseConfigProvider
-import play.api.mvc.{ControllerComponents, EssentialAction}
+import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
+import play.api.mvc.{AbstractController, ControllerComponents, EssentialAction}
+import slick.jdbc.JdbcProfile
 
 import scala.concurrent.ExecutionContext
 
-class CourseAdminController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)
+class CourseAdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository)
                                      (implicit ec: ExecutionContext)
-  extends BaseController(cc, dbcp, r) with Secured {
+  extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
   // FIXME: AJAX!
-  def addAdmin(courseId: Int): EssentialAction = withAdmin { user =>
+  def addAdmin(courseId: Int): EssentialAction = withAdmin { _ =>
     implicit request =>
       //      val userName = singleStrForm(NAME_NAME).bindFromRequest.get.str
       //      Option(User.finder.byId(userName)) match {
@@ -31,7 +31,7 @@ class CourseAdminController @Inject()(cc: ControllerComponents, dbcp: DatabaseCo
       Ok("TODO!")
   }
 
-  def course(id: Int): EssentialAction = withAdmin { user =>
+  def course(id: Int): EssentialAction = withAdmin { _ =>
     implicit request =>
       //      Ok(views.html.admin.course.render(user, Course.finder.byId(id)))
 
@@ -39,7 +39,7 @@ class CourseAdminController @Inject()(cc: ControllerComponents, dbcp: DatabaseCo
   }
 
   // FIXME: AJAX!
-  def newCourse(): EssentialAction = withAdmin { user =>
+  def newCourse(): EssentialAction = withAdmin { _ =>
     implicit request =>
       //      val courseName = singleStrForm(NAME_NAME).bindFromRequest.get.str
       //      Course.finder.all.asScala.find(_.name == courseName) match {

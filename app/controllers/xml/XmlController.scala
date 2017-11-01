@@ -3,7 +3,7 @@ package controllers.xml
 import java.nio.file._
 import javax.inject._
 
-import controllers.core.excontrollers.{AExerciseAdminController, IdExController}
+import controllers.core.AIdExController
 import model.User
 import model.core.CommonUtils.RicherTry
 import model.core.StringConsts._
@@ -21,8 +21,31 @@ import scala.collection.JavaConverters.{asScalaBufferConverter, seqAsJavaListCon
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
 
-class XmlAdmin @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends AExerciseAdminController[XmlExercise](cc, dbcp, r, XmlToolObject) with Secured {
+
+object XmlController {
+
+  val STANDARD_XML_PLAYGROUND: String =
+    """<?xml version="1.0" encoding="utf-8"?>
+      |<!DOCTYPE root [
+      |
+      |]>""".stripMargin
+
+}
+
+@Singleton
+class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)
+                             (implicit ec: ExecutionContext)
+  extends AIdExController[XmlExercise, XmlError](cc, dbcp, r, XmlToolObject) with Secured {
+
+  override type SolType = StringSolution
+
+  override def solForm: Form[StringSolution] = ???
+
+  val EX_OPTIONS = ExerciseOptions("Xml", "xml", 10, 20, updatePrev = false)
+
+  val SAVE_ERROR_MSG = "An error has occured while saving an xml file to "
+
+  // Admin
 
   override def reads: Reads[XmlExercise] = XmlExerciseReads.xmlExerciseReads
 
@@ -39,36 +62,24 @@ class XmlAdmin @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider,
 
   override def renderEditRest(exercise: Option[XmlExercise]): Html = views.html.xml.editXmlExRest(exercise)
 
-}
-
-class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)
-                             (implicit ec: ExecutionContext)
-  extends IdExController[XmlExercise, XmlError](cc, dbcp, r, XmlToolObject) with Secured {
-
-  override type SolType = StringSolution
-
-  override def solForm: Form[StringSolution] = ???
-
-  val EX_OPTIONS = ExerciseOptions("Xml", "xml", 10, 20, updatePrev = false)
-
-  val SAVE_ERROR_MSG = "An error has occured while saving an xml file to "
+  // User
 
   override protected def correctEx(sol: StringSolution, exerciseOpt: Option[XmlExercise], user: User): Try[CompleteResult[XmlError]] =
     exerciseOpt match {
-      case None           => Failure(null)
+      case None => Failure(null)
       case Some(exercise) =>
         checkAndCreateSolDir(user.username, exercise).flatMap(dir => {
           val learnerSolution = sol.learnerSolution
 
           val (grammarTry, xmlTry) = exercise.exerciseType match {
             case (XmlExType.DTD_XML | XmlExType.XSD_XML) => (
-                                                              save(dir, exercise.rootNode + "." + exercise.exerciseType.gramFileEnding, learnerSolution),
-                                                              copy(dir, exercise.rootNode + "." + "xml")
-                                                            )
-            case _                                       => (
-                                                              copy(dir, exercise.rootNode + "." + exercise.exerciseType.gramFileEnding),
-                                                              save(dir, exercise.rootNode + "." + "xml", learnerSolution)
-                                                            )
+              save(dir, exercise.rootNode + "." + exercise.exerciseType.gramFileEnding, learnerSolution),
+              copy(dir, exercise.rootNode + "." + "xml")
+            )
+            case _ => (
+              copy(dir, exercise.rootNode + "." + exercise.exerciseType.gramFileEnding),
+              save(dir, exercise.rootNode + "." + "xml", learnerSolution)
+            )
           }
 
           grammarTry.zip(xmlTry).map({ case (grammar, xml) =>
@@ -89,7 +100,7 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   }
 
   override def renderExercise(user: User, exercise: XmlExercise): Html = views.html.core.exercise2Rows.render(
-    user, toolObject, EX_OPTIONS, exercise, renderExRest(exercise), readDefOrOldSolution(user.username, exercise)
+    user, XmlToolObject, EX_OPTIONS, exercise, renderExRest(exercise), readDefOrOldSolution(user.username, exercise)
   )
 
   def renderExRest(exercise: XmlExercise) = new Html(
@@ -106,7 +117,7 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
        |<hr>""".stripMargin)
 
   override def renderResult(completeResult: CompleteResult[XmlError]): Html = completeResult.results match {
-    case Nil     => new Html("""<div class="alert alert-success">Es wurden keine Fehler gefunden.</div>""")
+    case Nil => new Html("""<div class="alert alert-success">Es wurden keine Fehler gefunden.</div>""")
     case results => new Html(results.map(res =>
       s"""<div class="panel panel-${res.getBSClass}">
          |  <div class="panel-heading">${res.title} ${res.lineStr}</div>
@@ -131,15 +142,5 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
     val referenceFilePath = Paths.get(toolObject.sampleDir.toString, exercise.rootNode + "." + exercise.exerciseType.refFileEnding)
     Try(Files.readAllLines(referenceFilePath).asScala.mkString("\n")).getOrElse("FEHLER!")
   }
-
-}
-
-object XmlController {
-
-  val STANDARD_XML_PLAYGROUND: String =
-    """<?xml version="1.0" encoding="utf-8"?>
-      |<!DOCTYPE root [
-      |
-      |]>""".stripMargin
 
 }

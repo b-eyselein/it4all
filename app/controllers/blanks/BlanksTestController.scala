@@ -2,16 +2,28 @@ package controllers.blanks
 
 import javax.inject._
 
-import controllers.core.BaseController
+import controllers.core.AIdExController
+import model.blanks.{BlanksExercise, BlanksExerciseReads}
+import model.core.result.{CompleteResult, EvaluationResult}
 import model.core.{Repository, Secured}
+import play.api.data.Form
 import play.api.db.slick.DatabaseConfigProvider
+import play.api.libs.json.Reads
 import play.api.mvc.{ControllerComponents, EssentialAction}
 
 import scala.concurrent.ExecutionContext
+import scala.util.Try
 
-class BlanksTestController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)
-                                    (implicit ec: ExecutionContext)
-  extends BaseController(cc, dbcp, r) with Secured {
+class BlanksTestController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
+  extends AIdExController[BlanksExercise, EvaluationResult](cc, dbcp, r, BlanksToolObject) with Secured {
+
+  override def solForm: (Form[SolType]) = ???
+
+  implicit def reads: Reads[BlanksExercise] = BlanksExerciseReads.blanksExReads
+
+  override type TQ = repo.BlanksExercisesTable
+
+  override def tq = repo.blanksExercises
 
   private val exercise = null // new BlanksExercise
 
@@ -27,5 +39,8 @@ class BlanksTestController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
       Ok("TODO")
   }
 
+  override protected def correctEx(sol: SolType, exercise: Option[BlanksExercise], user: model.User): Try[CompleteResult[EvaluationResult]] = ???
+
   def testBlanks: EssentialAction = withUser { user => implicit request => Ok(views.html.blanks.blanks.render(user, exercise)) }
 }
+

@@ -2,18 +2,17 @@ package controllers
 
 import javax.inject._
 
-import controllers.core.BaseController
 import model.core.{Repository, Secured}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.Json
-import play.api.mvc.{ControllerComponents, EssentialAction}
+import play.api.mvc.{AbstractController, ControllerComponents, EssentialAction}
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.ExecutionContext
 
-class UserController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)
+class UserController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository)
                               (implicit ec: ExecutionContext)
-  extends BaseController(cc, dbcp, r) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
+  extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
   def index: EssentialAction = withUser { user => implicit request => Ok(views.html.user.render("User", user)) }
 

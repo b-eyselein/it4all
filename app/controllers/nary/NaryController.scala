@@ -2,7 +2,7 @@ package controllers.nary
 
 import javax.inject.{Inject, Singleton}
 
-import controllers.core.excontrollers.ARandomExController
+import controllers.core.ARandomExController
 import model.User
 import model.core.{Repository, Secured}
 import model.nary._
@@ -20,7 +20,7 @@ object NaryController {
 @Singleton
 class NaryController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)
                               (implicit ec: ExecutionContext)
-  extends ARandomExController(cc, dbcp, r, NAryToolObject)  with Secured {
+  extends ARandomExController(cc, dbcp, r, NAryToolObject) with Secured {
 
 
   def checkNaryAdditionSolution: EssentialAction = withUser { user =>

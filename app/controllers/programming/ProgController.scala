@@ -2,7 +2,7 @@ package controllers.programming
 
 import javax.inject._
 
-import controllers.core.excontrollers.{AExerciseAdminController, IdExController}
+import controllers.core.AIdExController
 import controllers.programming.ProgController._
 import model.User
 import model.core._
@@ -43,28 +43,21 @@ object ProgController {
 
 }
 
-@Singleton
-class ProgAdmin @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends AExerciseAdminController[ProgExercise](cc, dbcp, r, ProgToolObject) with Secured {
-
-
-  override def reads: Reads[ProgExercise] = ProgExerciseReads.progExReads
-
-  override type TQ = repo.ProgExerciseTable
-
-  override def tq = repo.progExercises
-
-}
 
 @Singleton
 class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)
                               (implicit ec: ExecutionContext)
-  extends IdExController[ProgExercise, ProgEvaluationResult](cc, dbcp, r, ProgToolObject) with Secured {
+  extends AIdExController[ProgExercise, ProgEvaluationResult](cc, dbcp, r, ProgToolObject) with Secured {
 
   override type SolType = StringSolution
 
   override def solForm: Form[StringSolution] = ???
 
+  override def reads: Reads[ProgExercise] = ProgExerciseReads.progExReads
+
+  override type TQ = repo.ProgExercisesTable
+
+  override def tq = repo.progExercises
 
   //  override type TQ = repo.ProgExerciseTable
 
@@ -99,7 +92,7 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
   def getDeclaration(lang: String): EssentialAction = withUser { _ => implicit request => Ok(AvailableLanguages.byName(lang).get.declaration) }
 
   override def renderExercise(user: User, exercise: ProgExercise): Html = {
-    views.html.core.exercise2Rows.render(user, toolObject, EX_OPTIONS, exercise, views.html.programming.progExRest.render(exercise), AvailableLanguages.stdLang.declaration)
+    views.html.core.exercise2Rows.render(user, ProgToolObject, EX_OPTIONS, exercise, views.html.programming.progExRest.render(exercise), AvailableLanguages.stdLang.declaration)
   }
 
   override def renderExesListRest: Html = Html("")

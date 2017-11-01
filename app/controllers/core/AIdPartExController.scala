@@ -1,9 +1,8 @@
-package controllers.core.excontrollers
+package controllers.core
 
 import java.nio.file.{Files, Path}
 
-import controllers.core.BaseController
-import controllers.core.excontrollers.IdPartExController._
+import controllers.core.BaseExerciseController._
 import model.core._
 import model.core.result.{CompleteResult, EvaluationResult}
 import model.core.tools.IdPartExToolObject
@@ -14,34 +13,18 @@ import play.api.libs.json.Json
 import play.api.mvc.{ControllerComponents, EssentialAction}
 import play.twirl.api.Html
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success, Try}
 
-object IdPartExController {
-  val STEP = 10
-}
-
-abstract class IdPartExController[E <: Exercise, R <: EvaluationResult]
-(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository, val toolObject: IdPartExToolObject)(implicit ec: ExecutionContext)
-  extends BaseController(cc, dbcp, r) with Secured {
+abstract class AIdPartExController[E <: Exercise, R <: EvaluationResult]
+(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository, to: IdPartExToolObject)(implicit ec: ExecutionContext)
+  extends BaseExerciseController[E](cc, dbcp, r, to) with Secured {
 
   type SolType <: Solution
 
   def solForm: Form[SolType]
 
   // Table queries
-
-  import profile.api._
-
-  type TQ <: repo.HasBaseValuesTable[E]
-
-  def tq: TableQuery[TQ]
-
-  def numOfExes: Future[Int] = db.run(tq.size.result)
-
-  def allExes: Future[Seq[E]] = db.run(tq.result)
-
-  def exById(id: Int): Future[Option[E]] = db.run(tq.findBy(_.id).apply(id).result.headOption)
 
   def correct(id: Int, part: String): EssentialAction = withUser { user =>
     //TODO
@@ -54,7 +37,7 @@ abstract class IdPartExController[E <: Exercise, R <: EvaluationResult]
               log(user, new ExerciseCompletionEvent[R](request, id, correctionResult))
 
               Ok(renderCorrectionResult(user, correctionResult))
-            case Failure(error)            =>
+            case Failure(error) =>
               val content = new Html(s"<pre>${error.getMessage}:\n${error.getStackTrace.mkString("\n")}</pre>")
               BadRequest(views.html.main.render("Fehler", user, new Html(""), content))
           }
@@ -73,7 +56,7 @@ abstract class IdPartExController[E <: Exercise, R <: EvaluationResult]
               log(user, new ExerciseCompletionEvent[R](request, id, correctionResult))
 
               Ok(renderResult(correctionResult))
-            case Failure(error)            => BadRequest(Json.toJson(error.getMessage))
+            case Failure(error) => BadRequest(Json.toJson(error.getMessage))
           }
         }
       )
@@ -85,7 +68,7 @@ abstract class IdPartExController[E <: Exercise, R <: EvaluationResult]
         case Some(exercise) =>
           log(user, ExerciseStartEvent(request, id))
           Ok(renderExercise(user, exercise))
-        case None           => Redirect(toolObject.indexCall)
+        case None => Redirect(toolObject.indexCall)
       }
   }
 

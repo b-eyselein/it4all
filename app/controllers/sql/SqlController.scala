@@ -3,7 +3,7 @@ package controllers.sql
 import java.sql.Connection
 import javax.inject._
 
-import controllers.core.excontrollers.IdExController
+import controllers.core.AIdExController
 import model.User
 import model.core.CommonUtils.cleanly
 import model.core.StringConsts.{SELECT_ALL_DUMMY, SHOW_ALL_TABLES}
@@ -13,35 +13,68 @@ import model.sql.SqlEnums.SqlExerciseType
 import model.sql.{SqlQueryResult, _}
 import play.api.data.Form
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
+import play.api.libs.json.Reads
 import play.api.mvc._
 import play.db.Database
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
 import scala.collection.mutable.ListBuffer
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
 class SqlController @Inject()(cc: ControllerComponents /*, @NamedDatabase("sqlselectroot") sqlSelect: Database, @NamedDatabase("sqlotherroot") sqlOther: Database*/ ,
                               dbcp: DatabaseConfigProvider, r: Repository)
                              (implicit ec: ExecutionContext)
-  extends IdExController[SqlExercise, EvaluationResult](cc, dbcp, r, SqlToolObject) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
+  extends AIdExController[SqlExercise, EvaluationResult](cc, dbcp, r, SqlToolObject) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
   override type SolType = StringSolution
 
   override def solForm: Form[StringSolution] = ???
 
-  //  override def getUser(implicit request: Request[AnyContent]): User = {
-  //    val user = super.getUser
+  // Admin
+
+  override def reads: Reads[SqlScenario] = SqlReads.sqlScenarioReads
+
+  override type TQ = repo.SqlScenarioesTable
+
+  override def tq = repo.sqlScenarioes
+
+  override def newExerciseForm: EssentialAction = withAdmin { user => implicit request => Ok(views.html.sql.newExerciseForm.render(user, null)) }
+
+  override protected def statistics: Future[Html] = Future(
+    //    return new Html("<li>
+    //            Es gibt insgesamt @model.exercise.SqlScenario.finder.all.size Szenarien
+    //            <ul>
+    //    @for(scenario <- model.exercise.SqlScenario.finder.all) {
+    //    <li>Das Szenario &quot<a href="@sql.routes.SqlAdmin.scenarioAdmin(scenario.getId)">@scenario.getTitle</a>&quot
+    //      hat @scenario.getExercises.size Aufgaben</li>
+    //    }
+    //  </ul>
+    //</li>")
+    new Html("")
+  )
+
+  // override
+  // public Html renderCollectionCreated(List<SqlScenario> created) {
+  // return views.html.sqlAdmin.sqlCreation.render(created)
+  // }
+
+  //  override def renderCollectionCreated(collections: List[SingleReadingResult[SqlScenario]]): Html = ??? // FIXME: implement...
   //
-  //    // Make sure there is a corresponding entrance in other db...
-  //    Option(SqlUser.finder.byId(user.name)) match {
-  //      case None => new SqlUser(user.name).save()
-  //      case Some(_) => Unit
-  //    }
+  //  override def renderExCollCreationForm(user: User, scenario: SqlScenario): Html =
+  //    views.html.sql.newScenarioForm.render(user, scenario)
   //
-  //    user
-  //  }
+  //
+  //  override def renderExEditForm(user: User, exercise: SqlScenario, isCreation: Boolean): Html = ??? // FIXME: implement...
+  //
+  //  override def renderExerciseCollections(user: User, allCollections: List[SqlScenario]): Html = ??? // FIXME: implement...
+
+  def scenarioAdmin(id: Int): EssentialAction = withAdmin { user => implicit request => Ok(views.html.sql.scenarioAdmin.render(user, null /* SqlScenario.finder.byId(id)*/)) }
+
+
+  // User
+
 
   def filteredScenario(id: Int, exType: String, site: Int): EssentialAction = withUser { user =>
     implicit request =>
@@ -115,13 +148,13 @@ object SqlController {
     tableNames.toList
   }) match {
     case Success(list) => list
-    case Failure(_)    => List.empty
+    case Failure(_) => List.empty
   }
 
   def readTableContent(connection: Connection, tableName: String): SqlQueryResult =
     cleanly(connection.prepareStatement(SELECT_ALL_DUMMY + tableName))(_.close)(result => new SqlQueryResult(result.executeQuery, tableName)) match {
       case Success(result) => result
-      case Failure(_)      => null
+      case Failure(_) => null
     }
 
   def readTablesInDatabase(db: Database, databaseName: String): List[SqlQueryResult] = cleanly(db.getConnection)(_.close)(connection => {
@@ -129,7 +162,7 @@ object SqlController {
     readExistingTables(connection).map(readTableContent(connection, _))
   }) match {
     case Success(queryResult) => queryResult
-    case Failure(_)           => List.empty
+    case Failure(_) => List.empty
   }
 
   def saveSolution(userName: String, learnerSolution: String, id: Int) {

@@ -2,7 +2,7 @@ package controllers.ebnf
 
 import javax.inject._
 
-import controllers.core.excontrollers.{AExerciseAdminController, IdExController}
+import controllers.core.AIdExController
 import model.User
 import model.core.StringConsts._
 import model.core._
@@ -17,15 +17,22 @@ import play.twirl.api.Html
 import scala.concurrent.ExecutionContext
 import scala.util.Try
 
-@Singleton
-class EbnfAdmin @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends AExerciseAdminController[EbnfExercise](cc, dbcp, r, EbnfToolObject) with Secured {
 
-  override def reads: Reads[EbnfExercise] = EbnfExerciseReads.ebnfExReads
+@Singleton
+class EbnfController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
+  extends AIdExController[EbnfExercise, EbnfResult](cc, dbcp, r, EbnfToolObject) {
 
   override type TQ = repo.EbnfExerciseTable
 
+  override def reads: Reads[EbnfExercise] = EbnfExerciseReads.ebnfExReads
+
   override def tq = repo.ebnfExercises
+
+  override type SolType = StringSolution
+
+  override def solForm: Form[StringSolution] = ???
+
+  // Admin
 
   override def renderEditRest(exercise: Option[EbnfExercise]): Html = new Html(
     s"""|<div class="form-group">
@@ -34,15 +41,7 @@ class EbnfAdmin @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider
         |         ${exercise.map(_.terminals).getOrElse("")} required>
         |</div>""".stripMargin)
 
-}
-
-@Singleton
-class EbnfController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends IdExController[EbnfExercise, EbnfResult](cc, dbcp, r, EbnfToolObject) {
-
-  override type SolType = StringSolution
-
-  override def solForm: Form[StringSolution] = ???
+  // User
 
   override def correctEx(sol: StringSolution, exercise: Option[EbnfExercise], user: User): Try[CompleteResult[EbnfResult]] = ??? // FIXME
 

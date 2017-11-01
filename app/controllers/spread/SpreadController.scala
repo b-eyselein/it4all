@@ -4,7 +4,7 @@ import java.nio.file.{Files, Path, StandardCopyOption}
 import javax.inject._
 
 import com.google.common.io.{Files => GFiles}
-import controllers.core.excontrollers.{AExerciseAdminController, IdPartExController}
+import controllers.core.AIdPartExController
 import model.User
 import model.core._
 import model.core.result.{CompleteResult, EvaluationResult}
@@ -18,8 +18,13 @@ import play.twirl.api.Html
 import scala.concurrent.ExecutionContext
 import scala.util.Try
 
-class SpreadAdmin @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends AExerciseAdminController[SpreadExercise](cc, dbcp, r, SpreadToolObject) with Secured {
+@Singleton
+class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
+  extends AIdPartExController[SpreadExercise, EvaluationResult](cc, dbcp, r, SpreadToolObject) with Secured {
+
+  override type SolType = StringSolution
+
+  override def solForm: Form[StringSolution] = ???
 
   override implicit def reads: Reads[SpreadExercise] = SpreadExerciseReads.spreadExReads
 
@@ -27,20 +32,10 @@ class SpreadAdmin @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvid
 
   override def tq = repo.spreadExercises
 
-}
-
-class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends IdPartExController[SpreadExercise, EvaluationResult](cc, dbcp, r, SpreadToolObject) with Secured {
-
-  override type SolType = StringSolution
-
-  override def solForm: Form[StringSolution] = ???
+  // Admin
 
 
-  override type TQ = repo.SpreadExerciseTable
-
-  override def tq = repo.spreadExercises
-
+  // User
 
   def download(id: Int, fileExtension: String): EssentialAction = withUser { user =>
     implicit request =>
@@ -122,7 +117,7 @@ class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
 
 object SpreadController {
 
-  val BODY_SOL_FILE_NAME   : String = "solFile"
+  val BODY_SOL_FILE_NAME: String = "solFile"
   val CORRECTION_ADD_STRING: String = "_Korrektur"
 
   val correctors = Map("ods" -> ODFCorrector, "xlsx" -> XLSXCorrector, "xlsm" -> XLSXCorrector)
@@ -135,7 +130,7 @@ object SpreadController {
     val fileExtension: String = GFiles.getFileExtension(testPath.toString)
 
     correctors.get(fileExtension) match {
-      case None            => SpreadSheetCorrectionFailure(s"""The filetype "$fileExtension" is not supported. Could not start correction.""")
+      case None => SpreadSheetCorrectionFailure(s"""The filetype "$fileExtension" is not supported. Could not start correction.""")
       case Some(corrector) => corrector.correct(musterPath, testPath, conditionalFormating, charts)
     }
   }
