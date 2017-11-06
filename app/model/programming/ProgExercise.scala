@@ -3,7 +3,7 @@ package model.programming
 import com.fasterxml.jackson.annotation.JsonProperty
 import model.Enums.ExerciseState
 import model.core.StringConsts._
-import model.{Exercise, TableDefs}
+import model.{DbExercise, TableDefs}
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{JsPath, Reads}
@@ -25,7 +25,7 @@ object ProgExerciseReads {
 case class ProgExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState,
                         @JsonProperty(required = true) functionName: String,
                         @JsonProperty(required = true) inputCount: Int)
-  extends Exercise(i, ti, a, te, s) {
+  extends DbExercise(i, ti, a, te, s) {
 
   override def renderRest: Html = new Html(
     s"""<td>$functionName</td>

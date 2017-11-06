@@ -1,4 +1,4 @@
-@(user: model.User, exercises: List[_ <: model.core.HasBaseValues], toolObject: model.core.tools.ExToolObject)
+@(user: model.User, exercises: Seq[_ <: model.core.HasBaseValues], toolObject: model.core.tools.ExToolObject)
 
 @scripts = {
     <script src="@routes.Assets.versioned("javascripts/admin.js")"></script>

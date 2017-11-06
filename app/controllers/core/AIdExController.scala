@@ -2,12 +2,10 @@ package controllers.core
 
 import java.nio.file.{Files, Path}
 
-import controllers.core.BaseExerciseController._
 import model.core._
 import model.core.result.{CompleteResult, EvaluationResult}
 import model.core.tools.IdExToolObject
-import model.{Exercise, User}
-import play.api.data.Form
+import model.{DbExercise, User}
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.mvc.{ControllerComponents, EssentialAction}
 import play.twirl.api.Html
@@ -15,13 +13,9 @@ import play.twirl.api.Html
 import scala.concurrent.ExecutionContext
 import scala.util.Try
 
-abstract class AIdExController[E <: Exercise, R <: EvaluationResult]
+abstract class AIdExController[E <: DbExercise, R <: EvaluationResult]
 (cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository, to: IdExToolObject)(implicit ec: ExecutionContext)
   extends BaseExerciseController[E](cc, dbcp, r, to) with Secured {
-
-  type SolType <: Solution
-
-  def solForm: Form[SolType]
 
   def correct(id: Int): EssentialAction = withUser { _ =>
     implicit request =>
@@ -70,18 +64,6 @@ abstract class AIdExController[E <: Exercise, R <: EvaluationResult]
       Ok("TODO")
   }
 
-  def index(page: Int): EssentialAction = withUser { _ =>
-    implicit request =>
-      //      val allExes = finder.all
-      //      val exes = allExes.slice(Math.max(0, (page - 1) * STEP), Math.min(page * STEP, allExes.size))
-      //      Ok(renderExes(user, exes, allExes.size))
-      Ok("TODO")
-  }
-
-  protected def renderExes(user: User, exes: List[_ <: E], allExesSize: Int): Html =
-    views.html.core.exesList.render(user, exes, renderExesListRest, toolObject, allExesSize / STEP + 1)
-
-
   protected def checkAndCreateSolDir(username: String, exercise: E): Try[Path] =
     Try(Files.createDirectories(toolObject.getSolDirForExercise(username, exercise)))
 
@@ -90,11 +72,11 @@ abstract class AIdExController[E <: Exercise, R <: EvaluationResult]
     views.html.core.correction.render(toolObject.toolname.toUpperCase, correctionResult, renderResult(correctionResult),
       user, controllers.routes.Application.index())
 
-  protected def correctEx(sol: SolType, exercise: Option[E], user: User): Try[CompleteResult[R]]
+  protected def correctEx(sol: SolutionType, exercise: Option[E], user: User): Try[CompleteResult[R]]
 
-  protected def renderExercise(user: User, exercise: E): Html = new Html("")
+  protected def renderExercise(user: User, exercise: ExerciseType): Html = new Html("")
 
-  protected def renderExesListRest: Html = new Html("")
+  protected def renderExesListRest: Html //= new Html("")
 
   protected def renderResult(correctionResult: CompleteResult[R]): Html = new Html("")
 

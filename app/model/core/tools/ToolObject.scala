@@ -2,8 +2,9 @@ package model.core.tools
 
 import java.nio.file.{Path, Paths}
 
+import model.DbExercise
 import model.Enums.ToolState
-import model.Exercise
+import model.core.HasBaseValues
 import play.api.mvc.Call
 
 case class ExerciseOptions(tool: String, aceMode: String, minLines: Int, maxLines: Int, updatePrev: Boolean)
@@ -40,20 +41,20 @@ abstract class ExToolObject(e: String, t: String, s: ToolState, val pluralName: 
 
   def solDirForUser(username: String): Path = Paths.get(solutionDir.toString, username)
 
-  def getSampleDirForExercise(exerciseType: String, exercise: Exercise): Path =
+  def getSampleDirForExercise(exerciseType: String, exercise: DbExercise): Path =
     Paths.get(sampleDir.toString, String.valueOf(exercise.id))
 
-  def getSolDirForExercise(username: String, exercise: Exercise): Path =
+  def getSolDirForExercise(username: String, exercise: DbExercise): Path =
     Paths.get(solDirForUser(username).toString, exType, String.valueOf(exercise.id))
 
-  def getSolFileForExercise(username: String, ex: Exercise, fileName: String, fileExt: String): Path =
+  def getSolFileForExercise(username: String, ex: DbExercise, fileName: String, fileExt: String): Path =
     Paths.get(getSolDirForExercise(username, ex).toString, s"$fileName.$fileExt")
 
   // User
 
   def exesListRoute(page: Int): Call
 
-  def exerciseRoutes(id: Int): List[(Call, String)]
+  def exerciseRoutes(exercise: HasBaseValues): List[(Call, String)]
 
   // Admin
 
@@ -61,46 +62,49 @@ abstract class ExToolObject(e: String, t: String, s: ToolState, val pluralName: 
 
   def adminIndexRoute: Call
 
-  def exercisesRoute: Call
+  def adminExesListRoute: Call
 
   def newExFormRoute: Call
 
-  def exportExesRoute: Call
+  //  def exportExesRoute: Call
 
-  def importExesRoute: Call
+  //  def importExesRoute: Call
 
-  def jsonSchemaRoute: Call
+  //  def jsonSchemaRoute: Call
 
-  def uploadFileRoute: Call
+  //  def uploadFileRoute: Call
 
-  def changeExStateRoute(id: Int): Call
+  def changeExStateRoute(exercise: HasBaseValues): Call
 
-  def editExerciseFormRoute(id: Int): Call
+  def editExerciseFormRoute(exercise: HasBaseValues): Call
 
-  def editExerciseRoute(id: Int): Call
+  def editExerciseRoute(exercise: HasBaseValues): Call
 
-  def deleteExerciseRoute(id: Int): Call
-
-}
-
-abstract class IdExToolObject(e: String, t: String, s: ToolState = ToolState.ALPHA, p: String = "Aufgaben") extends ExToolObject(e, t, s, p) {
-
-  def exerciseRoute(id: Int): Call
-
-  override def exerciseRoutes(id: Int): List[(Call, String)] = List((exerciseRoute(id), "Aufgabe bearbeiten"))
-
-  def correctLiveRoute(id: Int): Call
-
-  def correctRoute(id: Int): Call
+  def deleteExerciseRoute(exercise: HasBaseValues): Call
 
 }
 
-abstract class IdPartExToolObject(e: String, t: String, s: ToolState = ToolState.ALPHA, d: String = null, p: String = "Aufgaben") extends ExToolObject(e, t, s, p) {
+abstract class IdExToolObject(e: String, t: String, s: ToolState = ToolState.ALPHA, p: String = "Aufgaben")
+  extends ExToolObject(e, t, s, p) {
 
-  def exerciseRoute(id: Int, part: String): Call
+  def exerciseRoute(exercise: HasBaseValues): Call
 
-  def correctLiveRoute(id: Int, part: String): Call
+  override def exerciseRoutes(exercise: HasBaseValues): List[(Call, String)] = List((exerciseRoute(exercise), "Aufgabe bearbeiten"))
 
-  def correctRoute(id: Int, part: String): Call
+  def correctLiveRoute(exercise: HasBaseValues): Call
+
+  def correctRoute(exercise: HasBaseValues): Call
+
+}
+
+// TODO: Exercise statt HasBaseValues...
+abstract class IdPartExToolObject(e: String, t: String, s: ToolState = ToolState.ALPHA, d: String = null, p: String = "Aufgaben")
+  extends ExToolObject(e, t, s, p) {
+
+  def exerciseRoute(exercise: HasBaseValues, part: String): Call
+
+  def correctLiveRoute(exercise: HasBaseValues, part: String): Call
+
+  def correctRoute(exercise: HasBaseValues, part: String): Call
 
 }

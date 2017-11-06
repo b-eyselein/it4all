@@ -1,6 +1,5 @@
 package model.core
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.google.common.base.Splitter
 import model.Enums.ExerciseState
 import play.twirl.api.Html
@@ -15,12 +14,10 @@ object HasBaseValues {
 
 }
 
-abstract class HasBaseValues(var id: Int,
-                             @JsonProperty(required = true) var title: String,
-                             @JsonProperty(required = true) var author: String,
-                             @JsonProperty(required = true) var text: String,
-                             var state: ExerciseState) {
+abstract class HasBaseValues(val id: Int, val title: String, val author: String, val text: String, val state: ExerciseState) {
 
   def renderRest = new Html("")
+
+  def tags: List[ExTag] = List.empty
 
 }

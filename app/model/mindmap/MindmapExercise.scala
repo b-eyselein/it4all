@@ -2,7 +2,7 @@ package model.mindmap
 
 import model.Enums.ExerciseState
 import model.core.StringConsts._
-import model.{Exercise, TableDefs}
+import model.{DbExercise, TableDefs}
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{JsPath, Reads}
@@ -18,7 +18,7 @@ object MindmapExerciseReads {
     ) ((i, ti, a, te, s) => MindmapExercise(i, ti, a, te.mkString, ExerciseState.valueOf(s)))
 }
 
-case class MindmapExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState) extends Exercise(i, ti, a, te, s)
+case class MindmapExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState) extends DbExercise(i, ti, a, te, s)
 
 
 trait MindmapExercises extends TableDefs {

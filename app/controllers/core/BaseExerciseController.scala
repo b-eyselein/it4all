@@ -2,50 +2,69 @@ package controllers.core
 
 import java.nio.file.{Files, Path, Paths, StandardCopyOption}
 
+import controllers.core.BaseExerciseController._
 import model.User
 import model.core._
 import model.core.tools.ExToolObject
+import net.jcazevedo.moultingyaml.{YamlFormat, _}
 import play.Logger
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.api.libs.json.{Json, Reads}
+import play.api.libs.json.Json
 import play.api.mvc.{AbstractController, ControllerComponents, EssentialAction}
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
-import scala.collection.JavaConverters._
+import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
+import scala.io.Source
+import scala.language.implicitConversions
 import scala.util.Try
 
 object BaseExerciseController {
+
+  val toolControllers: mutable.Map[String, BaseExerciseController] = mutable.Map.empty
+
   val STEP = 10
 }
 
-abstract class BaseExerciseController[B <: HasBaseValues]
-(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository, val toolObject: ExToolObject)(implicit ec: ExecutionContext)
+class BaseExerciseController(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository, val toolObject: ExToolObject)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
-  val jsonFile: Path = Paths.get(toolObject.resourcesFolder.toString, "exercises.json")
+  toolControllers(toolObject.exType) = this
 
-  implicit def reads: Reads[B]
+  // Reading solution from Request
+
+  type SolutionType <: Solution
+
+  def solForm: Form[SolutionType]
+
+  // Real type to workwith
+
+  type DbType <: HasBaseValues
+
+  type ExerciseType <: HasBaseValues
+
+  implicit def dbType2ExType(dbType: DbType): ExerciseType
+
+  // Database queries
 
   import profile.api._
 
-  type TQ <: repo.HasBaseValuesTable[B]
+  type TQ <: repo.HasBaseValuesTable[DbType]
 
   def tq: TableQuery[TQ]
 
   def numOfExes: Future[Int] = db.run(tq.size.result)
 
-  def allExes: Future[Seq[B]] = db.run(tq.result)
+  def allExes: Future[Seq[ExerciseType]] = db.run(tq.result).map(seq => seq.map(dbType2ExType)) //Future(List.empty) //db.run(tq.result)
 
-  def exById(id: Int): Future[Option[B]] = db.run(tq.findBy(_.id).apply(id).result.headOption)
+  def exById(id: Int): Future[Option[ExerciseType]] = db.run(tq.findBy(_.id).apply(id).result.headOption).map(res => res.map(dbType2ExType))
 
-  private def stdStatistics: Future[Html] = numOfExes.zip(statistics).map {
-    case (num, stats) => Html(s"<li>Es existieren insgesamt $num Aufgaben $stats</li>")
-  }
+  def statistics: Future[Html] = numOfExes.map(num => Html(s"<li>Es existieren insgesamt $num Aufgaben</li>"))
 
+  // Reading from form
 
   case class StrForm(str: String)
 
@@ -59,92 +78,61 @@ abstract class BaseExerciseController[B <: HasBaseValues]
 
   def log(user: User, eventToLog: WorkingEvent): Unit = Unit // PROGRESS_LOGGER.debug(s"""${user.name} - ${Json.toJson(eventToLog)}""")
 
-  def importExercises: EssentialAction = futureWithAdmin { admin =>
-    implicit request =>
-      Try(Files.readAllLines(jsonFile).asScala.mkString("\n")).fold(
-        fileError => Future(BadRequest(fileError.toString)),
-        readDoc => Json.parse(readDoc).validate[List[B]].fold(
-          jsonError => /* TODO: Fehlerseite... */ Future(BadRequest(views.html.core.jsonReadingError(admin, readDoc, jsonError))),
-          exes => db.run(tq ++= exes).map {
-            case Some(_) => Ok(views.html.admin.preview(admin, exes, toolObject))
-            case None => BadRequest("")
-          }
-        )
-      )
+  // Admin
+
+  //  override def exercisesRoute: Call = controllers.programming.routes.ProgController.exercises()
+  //
+  //  override def newExFormRoute: Call = controllers.programming.routes.ProgController.newExerciseForm()
+  //
+  //
+  //  override def uploadFileRoute: Call = controllers.programming.routes.ProgController.uploadFile()
+
+  def adminIndex: EssentialAction = futureWithAdmin { user =>
+    implicit request => statistics.map(stats => Ok(views.html.admin.adminMain.render(user, stats, toolObject, new Html(""))))
   }
 
-  protected def statistics: Future[Html] = Future(Html(""))
+  implicit val yamlFormat: YamlFormat[DbType]
+
+  def importExercises(exType: String): EssentialAction = toolControllers(exType).importExercises
+
+  def importExercises: EssentialAction = futureWithUser { user =>
+    implicit request =>
+      val exes: Seq[DbType] = Source.fromFile("conf/resources/xml.yaml").mkString.parseYamls.map(_.convertTo[DbType])
+
+      Future.sequence(exes.map(ex => db.run(tq insertOrUpdate ex)))
+        .map(res => Ok(views.html.admin.preview.render(user, exes, toolObject)))
+  }
+
 
   protected val savingDir: Path = Paths.get(toolObject.rootDir, StringConsts.ADMIN_FOLDER, toolObject.exType)
 
-  def adminIndex: EssentialAction = futureWithAdmin { user =>
-    implicit request =>
-      stdStatistics.map(stats => Ok(views.html.admin.exerciseAdminMain.render(user, stats, toolObject, new Html(""))))
-  }
-
-  def getJSONSchemaFile: EssentialAction = withAdmin { _ => implicit request => Ok("" /*Json.prettyPrint(exerciseReader.jsonSchema)*/)
-  }
-
-  //  protected def processReadingResult(abstractResult: AbstractReadingResult, render: List[SingleReadingResult[E]] => Html): Result =
-  //    abstractResult match {
-  //      case error: ReadingError =>
-  //        BadRequest(views.html.jsonReadingError.render(user, error))
-  //
-  //      case _: ReadingFailure => BadRequest("There has been an error...")
-  //
-  //      case result: ReadingResult[E] =>
-  //        result.read.foreach(read => {
-  //          exerciseReader.save(read.read)
-  //          read.fileResults = exerciseReader.checkFiles(read.read)
-  //        })
-  //        Ok(views.html.admin.preview.render(user, toolObject, result.read))
-  //    }
-
-  def uploadFile /*(render: List[SingleReadingResult[E]] => Html)*/ : EssentialAction = withAdmin { _ =>
-    implicit request =>
-      //    val data: MultipartFormData[File] = Controller.request.body.asMultipartFormData()
-      //    Option(data.getFile(StringConsts.BODY_FILE_NAME)) match {
-      //      case None => Results.badRequest("Fehler!")
-      //      case Some(uploadedFile) =>
-      //        val jsonFile = Paths.get(savingDir.toString, uploadedFile.getFilename)
-      //        saveUploadedFile(savingDir, uploadedFile.getFile.toPath, jsonFile) match {
-      //          case Success(jsonTargetPath) => processReadingResult(exerciseReader.readFromJsonFile(jsonTargetPath), render)
-      //          case Failure(error) => Results.badRequest("There has been an error uploading your file...")
-      //        }
-      //    }
-      Ok("TODO!")
-  }
-
-
-  //  import profile.api._
-
   def changeExState(id: Int): EssentialAction = withAdmin { _ =>
     implicit request =>
-      //      finder.byId(id) match {
-      //        case None => BadRequest(Json.obj("message" -> "No such file exists..."))
+      //      val newState: ExerciseState = Option(ExerciseState.valueOf(singleStrForm("state").bindFromRequest.get.str)).getOrElse(ExerciseState.RESERVED)
       //
-      //        case Some(exercise) =>
-      //          exercise.state = ExerciseStateHelper.byName(request.body.asFormUrlEncoded.get("state").mkString).getOrElse(RESERVED)
-      //          //          exercise.save()
-      //          Ok(Json.obj("id" -> id, "newState" -> exercise.state.toString))
+      //
+      //      val updateAction = (for {ex <- tq if ex.id === id} yield ex.state).update(newState)
+      //
+      //      db.run(updateAction).map {
+      //        case 1     => Ok("TODO!")
+      //        case other => BadRequest("")
       //      }
+      //      exById(id).map {
+      //        case None           => BadRequest(Json.obj("message" -> "No such file exists..."))
+      //        case Some(exercise) =>
+      //          exercise.state =
+      //          //          //          exercise.save()
+      //          //          Ok(Json.obj("id" -> id, "newState" -> exercise.state.toString))
       Ok("TODO")
+    //      }
   }
 
   def deleteExercise(id: Int): EssentialAction = futureWithAdmin { _ =>
     implicit request =>
-      exById(id).map {
-        //        def exById(id: Int): Future[Option[B]] = db.run(tq.findBy(_.id).apply(id).result.headOption)
-
-        case None =>
-          BadRequest(Json.obj("message" -> s"Die Aufgabe mit ID $id existiert nicht und kann daher nicht geloescht werden!"))
-        case Some(ex) =>
-          //          val query = tq.filter(_.id == id).delete
-          //          if (toDelete.delete()) {
-          //            Ok(Json.obj("id" -> id))
-          //          } else {
-          BadRequest(Json.obj("message" -> s"Es gab einen internen Fehler beim Loeschen der Aufgabe mit der ID $id"))
-        //          }
+      db.run(tq.filter(_.id === id).delete).map {
+        case 0     => NotFound(Json.obj("message" -> s"Die Aufgabe mit ID $id existiert nicht und kann daher nicht geloescht werden!"))
+        case 1     => Ok(Json.obj("id" -> id))
+        case other => BadRequest(Json.obj("message" -> s"Es gab einen internen Fehler beim Loeschen der Aufgabe mit der ID $id"))
       }
   }
 
@@ -170,9 +158,8 @@ abstract class BaseExerciseController[B <: HasBaseValues]
     implicit request => allExes.map(exes => Ok(views.html.admin.exerciseList.render(admin, exes, toolObject)))
   }
 
-  def exportExercises: EssentialAction = futureWithAdmin { admin =>
-    implicit request => allExes.map(exes => Ok(views.html.admin.export.render(admin, "" /* Json.prettyPrint(exes)*/)))
-  }
+  // FIXME: make abstract...
+  protected def renderExListRest(b: ExerciseType): Html = new Html("")
 
   def newExerciseForm: EssentialAction = withAdmin { admin =>
     // FIXME
@@ -186,12 +173,28 @@ abstract class BaseExerciseController[B <: HasBaseValues]
       Ok("TODO: Not yet used...")
   }
 
+  // User
+
+  def index(page: Int): EssentialAction = futureWithUser { user =>
+    implicit request =>
+      allExes.map(allExes => {
+        val exes = allExes.slice(Math.max(0, (page - 1) * STEP), Math.min(page * STEP, allExes.size))
+        Ok(renderExes(user, exes, allExes.size))
+      })
+  }
+
+  // FIXME: refactor...
+  protected def renderExes(user: User, exes: Seq[ExerciseType], allExesSize: Int): Html =
+    views.html.core.exesList.render(user, exes, renderExesListRest, toolObject, allExesSize / STEP + 1)
+
+  protected def renderExesListRest: Html = new Html("")
+
   // Helper methods
 
-  def renderEditRest(exercise: Option[B]): Html = new Html("")
+  def renderEditRest(exercise: Option[ExerciseType]): Html = new Html("")
 
-  def renderExercises(exercises: List[B]): Html = new Html("") //views.html.admin.exercisesTable.render(exercises, toolObject)
+  def renderExercises(exercises: List[ExerciseType]): Html = new Html("") //views.html.admin.exercisesTable.render(exercises, toolObject)
 
-  def renderExesCreated(admin: User, exercises: List[B]): Html = views.html.admin.preview.render(admin, exercises, toolObject)
+  def renderExesCreated(admin: User, exercises: List[ExerciseType]): Html = views.html.admin.preview.render(admin, exercises, toolObject)
 
 }

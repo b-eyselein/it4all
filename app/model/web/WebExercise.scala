@@ -1,64 +1,33 @@
 package model.web
 
-import com.fasterxml.jackson.annotation.JsonProperty
-import model.Enums.ExerciseState
-import model._
-import model.core.HasBaseValues._
-import model.core.StringConsts._
-import play.api.db.slick.HasDatabaseConfigProvider
-import play.api.libs.functional.syntax.toFunctionalBuilderOps
-import play.api.libs.json.{JsPath, Reads}
+import model.core.{ExTag, Exercise}
 import play.twirl.api.Html
-import slick.jdbc.JdbcProfile
 
-object WebExerciseReads {
-  implicit def webExReads: Reads[WebExercise] = (
-    (JsPath \ ID_NAME).read[Int] and
-      (JsPath \ TITLE_NAME).read[String] and
-      (JsPath \ AUTHOR_NAME).read[String] and
-      (JsPath \ TEXT_NAME).read[List[String]] and
-      (JsPath \ STATE_NAME).read[String] and
-      (JsPath \ HTML_TEXT_NAME).read[List[String]] and
-      (JsPath \ JS_TEXT_NAME).read[List[String]]
-    ) ((i, ti, a, te, s, htmlText, jsText) => WebExercise(i, ti, a, te.mkString, ExerciseState.valueOf(s), htmlText.mkString, jsText.mkString))
-}
+class WebExTag(part: String, hasExes: Boolean) extends ExTag {
 
-case class WebExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState,
-                       htmlText: String, jsText: String)
-  extends Exercise(i, ti, a, te, s) {
+  override def cssClass: String = if (hasExes) "label label-primary" else "label label-default"
 
-  def htmlTasks: List[HtmlTask] = List.empty
+  override def buttonContent: String = part
 
-  def jsTasks: List[JsTask] = List.empty
-
-  @JsonProperty("htmlText")
-  def htmlTextForJson: java.util.List[String] = SPLITTER.splitToList(htmlText)
-
-  @JsonProperty("jsText")
-  def jsTextForJson: java.util.List[String] = SPLITTER.splitToList(jsText)
-
-  override def renderEditRest(isCreation: Boolean): Html = views.html.web.editWebExRest.render(this, isCreation)
-
-  override def renderRest: Html = views.html.web.webExTableRest.render(this)
-
-  override def getTags: List[WebExTag] = List(new WebExTag("Html", htmlTasks.nonEmpty), new WebExTag("Js", jsTasks.nonEmpty))
+  override def title = s"Diese Aufgabe besitzt ${if (!hasExes) "k" else ""}einen $part-Teil"
 
 }
 
-trait WebExercises extends TableDefs {
-  self: HasDatabaseConfigProvider[JdbcProfile] =>
+case class WebExercise(ex: DbWebExercise, htmlTasks: Seq[DbHtmlTask], jsTasks: Seq[DbJsTask]) extends Exercise(ex.id, ex.title, ex.author, ex.text, ex.state) {
 
-  import profile.api._
+  override def tags: List[ExTag] = List(new WebExTag("Html", htmlTasks.nonEmpty), new WebExTag("Js", jsTasks.nonEmpty))
 
-  class WebExerciseTable(tag: Tag) extends HasBaseValuesTable[WebExercise](tag, "web_exercises") {
+  override def renderRest: Html = new Html(
+    s"""<td>
+       |    <a href="@controllers.exes.routes.WebController.exRest(exercise.id)">${htmlTasks.size} / ${jsTasks.size}</a>
+       |</td>
+       |<td>
+       |    <a href="@controllers.exes.routes.WebController.exRest(exercise.id)">${renderText(ex.htmlText)} / ${renderText(ex.jsText)}</a>
+       |</td> """.stripMargin)
 
-    def htmlText = column[String]("html_text")
-
-    def jsText = column[String]("js_text")
-
-    def * = (id, title, author, text, state, htmlText, jsText) <> (WebExercise.tupled, WebExercise.unapply)
-  }
-
-  lazy val webExercises = TableQuery[WebExerciseTable]
+  private def renderText(str: String) = if (text == null || text.isEmpty)
+    """<span class="glyphicon glyphicon-remove"></span>"""
+  else
+    """<span class="glyphicon glyphicon-ok"></span>"""
 
 }

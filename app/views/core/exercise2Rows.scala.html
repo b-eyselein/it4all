@@ -1,4 +1,4 @@
-@(user: model.User, routesObject: model.core.tools.IdExToolObject, exerciseOptions: model.core.tools.ExerciseOptions, exercise: model.Exercise, exRest: Html, oldSolution: String)
+@(user: model.User, routesObject: model.core.tools.IdExToolObject, exerciseOptions: model.core.tools.ExerciseOptions, exercise: model.DbExercise, exRest: Html, oldSolution: String)
 
 @scripts = {
     <script src="@routes.Assets.versioned("javascripts/lib/ace/src/ace.js")"></script>
@@ -13,7 +13,7 @@
 
 @main(exerciseOptions.tool, user, scripts) {
     <div class="container">
-        <form action="@routesObject.correctRoute(exercise.id)" method="post">
+        <form action="@routesObject.correctRoute(exercise)" method="post">
 
             <div class="row">
                 <div class="col-md-6">
@@ -60,7 +60,7 @@
             <hr>
 
             <button type="button" class="btn btn-primary btn-block" id="testButton"
-            onclick="testTheSolution('@routesObject.correctLiveRoute(exercise.id)');">L&ouml;sung testen</button>
+            onclick="testTheSolution('@routesObject.correctLiveRoute(exercise)');">L&ouml;sung testen</button>
             <button class="btn btn-success btn-block">L&ouml;sung abgeben</button>
 
         </form>

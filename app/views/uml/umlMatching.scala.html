@@ -46,7 +46,7 @@
         <hr>
 
         <form method="post" onsubmit="prepareFormForSubmitting()"
-        action="@controllers.uml.routes.UmlController.correct(exercise.id, model.uml.UmlExPart.ATTRS_METHS.toString)">
+        action="@controllers.exes.routes.UmlController.correct(exercise.id, model.uml.UmlExPart.ATTRS_METHS.toString)">
             <input hidden name="learnerSolution" id="learnerSolution">
             <button class="btn btn-primary btn-block">Aufgabenteil korrigieren</button>
         </form>

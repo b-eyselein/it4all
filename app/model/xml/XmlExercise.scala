@@ -1,50 +1,57 @@
 package model.xml
 
-import java.nio.file.Path
-
-import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty}
+import model.Enums.ExerciseState
+import model.core.ExTag
+import model.core.StringConsts._
+import model.{DbExercise, TableDefs}
+import net.jcazevedo.moultingyaml._
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
-import model.core.ExTag
-import model.TableDefs
-import model.Exercise
-import model.Enums.ExerciseState
-import play.api.libs.json.{JsPath, Reads}
-import play.api.db.slick.HasDatabaseConfigProvider
-import play.api.libs.functional.syntax.toFunctionalBuilderOps
-import play.api.libs.json.{JsPath, Reads}
-import model.core.StringConsts._
 
-import scala.util.Try
+import scala.language.implicitConversions
 
-object XmlExerciseReads {
-  implicit def xmlExerciseReads: Reads[XmlExercise] = (
-    (JsPath \ ID_NAME).read[Int] and
-      (JsPath \ TITLE_NAME).read[String] and
-      (JsPath \ AUTHOR_NAME).read[String] and
-      (JsPath \ TEXT_NAME).read[List[String]] and
-      (JsPath \ STATE_NAME).read[String] and
-      (JsPath \ "rootNode").read[String] and
-      (JsPath \ "exerciseType").read[String]
-    ) ((i, ti, a, te, s, rn, et) => XmlExercise(i, ti, a, te.mkString, ExerciseState.valueOf(s), rn, XmlExType.valueOf(et)))
+object XmlExYamlProtocol extends DefaultYamlProtocol {
+
+  implicit object XmlExYamlFormat extends YamlFormat[XmlExercise] {
+    override def write(ex: XmlExercise): YamlValue = YamlObject(
+      YamlString(ID_NAME) -> YamlNumber(ex.id),
+      YamlString(TITLE_NAME) -> YamlString(ex.title),
+      YamlString(AUTHOR_NAME) -> YamlString(ex.author),
+      YamlString(TEXT_NAME) -> YamlString(ex.text),
+      YamlString(STATE_NAME) -> YamlString(ex.state.name),
+      YamlString(EXERCISE_TYPE) -> YamlString(ex.state.name),
+      YamlString(ROOT_NODE_NAME) -> YamlString(ex.rootNode),
+      YamlString("referenceFile") -> YamlString(ex.refernenceFile)
+    )
+
+    override def read(yaml: YamlValue): XmlExercise = yaml.asYamlObject.getFields(
+      YamlString(ID_NAME), YamlString(TITLE_NAME), YamlString(AUTHOR_NAME), YamlString(TEXT_NAME), YamlString(STATE_NAME),
+      YamlString(EXERCISE_TYPE), YamlString(ROOT_NODE_NAME), YamlString("referenceFile")) match {
+      case Seq(
+      YamlNumber(id), YamlString(title), YamlString(author), YamlString(text), YamlString(state),
+      YamlString(exerciseType), YamlString(rootNode), YamlString(refFileContent))
+             => XmlExercise(id.intValue, title, author, text, ExerciseState.valueOf(state), XmlExType.valueOf(exerciseType), rootNode, refFileContent)
+      case _ => /* FIXME: Fehlerbehandlung... */ deserializationError("XmlExercise expected!")
+
+    }
+  }
+
 }
 
 case class XmlExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState,
-                       @JsonProperty(required = true) rootNode: String,
-                       @JsonProperty(required = true) exerciseType: XmlExType)
-  extends Exercise(i, ti, a, te, s) {
-
+                       exerciseType: XmlExType, rootNode: String, refernenceFile: String = "")
+  extends DbExercise(i, ti, a, te, s) {
 
   val fixedStart: String = if (exerciseType != XmlExType.XML_DTD) "" else
     s"""<?xml version="1.0" encoding="UTF-8"?>
        |<!DOCTYPE $rootNode SYSTEM "$rootNode.dtd">""".stripMargin
 
-  @JsonIgnore
   override def getTags: List[ExTag] = List(exerciseType)
 
-  @JsonIgnore
-  override def renderRest(/*fileResults: List[Try[Path]]*/): Html = new Html(s"<td>$exerciseType</td>\n<td>$rootNode</td>")
+  override def renderRest: Html = new Html(
+    s"""<td>$exerciseType</td>
+       |<td>$rootNode</td>""".stripMargin)
 
 }
 
@@ -53,18 +60,20 @@ trait XmlExercises extends TableDefs {
 
   import profile.api._
 
+  val xmlExercises = TableQuery[XmlExerciseTable]
+
   implicit val XmlExColumnType: BaseColumnType[XmlExType] =
     MappedColumnType.base[XmlExType, String](_.toString, str => Option(XmlExType.valueOf(str)).getOrElse(XmlExType.XML_DTD))
 
   class XmlExerciseTable(tag: Tag) extends HasBaseValuesTable[XmlExercise](tag, "xml_exercises") {
 
-    def exerciseType = column[XmlExType]("exercise_type")
-
     def rootNode = column[String]("root_node")
 
-    def * = (id, title, author, text, state, rootNode, exerciseType) <> (XmlExercise.tupled, XmlExercise.unapply)
-  }
+    def exerciseType = column[XmlExType]("exercise_type")
 
-  lazy val xmlExercises = TableQuery[XmlExerciseTable]
+    def refFileContent = column[String]("ref_file_content")
+
+    def * = (id, title, author, text, state, exerciseType, rootNode, refFileContent) <> (XmlExercise.tupled, XmlExercise.unapply)
+  }
 
 }

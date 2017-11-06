@@ -18,7 +18,7 @@ case class NAryNumber(decimalValue: Int = 0, base: NumberBase) {
   def toString(withBase: Boolean): String = {
     var result = Integer.toString(Math.abs(decimalValue), base.base)
 
-    if (base == BINARY)
+    if (base == NumberBase.BINARY)
       result = NAryNumber.padBinary(result)
 
     if (decimalValue < 0)
@@ -40,10 +40,10 @@ object NAryNumber {
 
     if (trimmedInput.charAt(0) != '1')
     // Positive number...
-      new NAryNumber(Integer.parseInt(trimmedInput, 2), BINARY)
+      new NAryNumber(Integer.parseInt(trimmedInput, 2), NumberBase.BINARY)
     else {
       val invertedInt = invertDigits(trimmedInput)
-      new NAryNumber(-1 * (Integer.parseInt(invertedInt, 2) + 1), BINARY)
+      new NAryNumber(-1 * (Integer.parseInt(invertedInt, 2) + 1), NumberBase.BINARY)
     }
   }
 

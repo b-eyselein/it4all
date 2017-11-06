@@ -2,98 +2,98 @@
 
 @(user: model.User, exercise: model.uml.UmlExercise, capWords: List[String])
 
-    @scripts = {
-        <script src="@controllers.routes.Assets.versioned("javascripts/uml/exerciseCreation.js")"></script>
-    }
+@scripts = {
+    <script src="@controllers.routes.Assets.versioned("javascripts/uml/exerciseCreation.js")"></script>
+}
 
-    @main("UML: neue Aufgabe", user, scripts) {
-        <style>
-                .non-marked {
-                    color: red;
-                }
-        </style>
+@main("UML: neue Aufgabe", user, scripts) {
+    <style>
+            .non-marked {
+                color: red;
+            }
+    </style>
 
-        <div class="container">
-            <div class="page-header">
-                <h1>Erstellung einer neuen UML-Aufgabe</h1>
+    <div class="container">
+        <div class="page-header">
+            <h1>Erstellung einer neuen UML-Aufgabe</h1>
+        </div>
+
+        <form class="form-horizontal" action="@controllers.exes.routes.UmlController.newExerciseStep3" method="post">
+
+            <div class="form-group">
+                <label class="control-label col-sm-1" for="@StringConsts.TITLE_NAME">Titel:</label>
+                <div class="col-sm-11">
+                    <input class="form-control" id="@StringConsts.TITLE_NAME" name="@StringConsts.TITLE_NAME" value="@exercise.title" readonly required>
+                </div>
             </div>
 
-            <form class="form-horizontal" action="@controllers.uml.routes.UmlAdmin.newExerciseStep3" method="post">
-
-                <div class="form-group">
-                    <label class="control-label col-sm-1" for="@StringConsts.TITLE_NAME">Titel:</label>
-                    <div class="col-sm-11">
-                        <input class="form-control" id="@StringConsts.TITLE_NAME" name="@StringConsts.TITLE_NAME" value="@exercise.title" readonly required>
-                    </div>
+            <div class="form-group">
+                <label class="control-label col-sm-1" for="@StringConsts.TEXT_NAME">Text:</label>
+                <div class="col-sm-11">
+                    <textarea class="form-control" id="@StringConsts.TEXT_NAME" name="@StringConsts.TEXT_NAME" readonly required>@exercise.text</textarea>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label class="control-label col-sm-1" for="@StringConsts.TEXT_NAME">Text:</label>
-                    <div class="col-sm-11">
-                        <textarea class="form-control" id="@StringConsts.TEXT_NAME" name="@StringConsts.TEXT_NAME" readonly required>@exercise.text</textarea>
-                    </div>
+            <hr>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <h2>Bisheriger (annotierter) Aufgabentext</h2>
+                    <div id="textDiv">@Html(exercise.classSelText)</div>
                 </div>
+            </div>
 
-                <hr>
+            <hr>
 
-                <div class="row">
-                    <div class="col-sm-12">
-                        <h2>Bisheriger (annotierter) Aufgabentext</h2>
-                        <div id="textDiv">@Html(exercise.classSelText)</div>
-                    </div>
-                </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <h2>Gro&szlig;geschriebene Worte im Text</h2>
 
-                <hr>
-
-                <div class="row">
-                    <div class="col-sm-12">
-                        <h2>Gro&szlig;geschriebene Worte im Text</h2>
-
-                        @for(caps <- capWords.sliding(10)) {
-                            <div class="col-sm-6">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Wort</th>
-                                            <th>Ignorieren?</th>
-                                            <th>Hat Basisform?</th>
-                                            <th>Weder noch.</th>
-                                            <th>Basisform</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    @for(cap <- caps) {
-                                        <tr>
-                                            <td>@cap</td>
-                                            <td><input type="radio" name="@cap" value="ignore" onclick="radioChange(this);"></td>
-                                            <td><input type="radio" name="@cap" value="baseform" onclick="radioChange(this);"></td>
-                                            <td><input type="radio" name="@cap" value="none" checked onclick="radioChange(this);"></td>
-
-                                            <td><input name="@{
-                                                cap
-                                            }_baseform" id="@{
-                                                cap
-                                            }_baseform" data-cap="@cap" onchange="baseformChange(this);"
-                                            disabled class="form-control">
-                                            </td>
+                    @for(caps <- capWords.sliding(10)) {
+                        <div class="col-sm-6">
+                            <table class="table">
+                                <thead>
                                     <tr>
-                                    }
-                                    </tbody>
-                                </table>
-                            </div>
-                        }
+                                        <th>Wort</th>
+                                        <th>Ignorieren?</th>
+                                        <th>Hat Basisform?</th>
+                                        <th>Weder noch.</th>
+                                        <th>Basisform</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                @for(cap <- caps) {
+                                    <tr>
+                                        <td>@cap</td>
+                                        <td><input type="radio" name="@cap" value="ignore" onclick="radioChange(this);"></td>
+                                        <td><input type="radio" name="@cap" value="baseform" onclick="radioChange(this);"></td>
+                                        <td><input type="radio" name="@cap" value="none" checked onclick="radioChange(this);"></td>
 
-                    </div>
+                                        <td><input name="@{
+                                            cap
+                                        }_baseform" id="@{
+                                            cap
+                                        }_baseform" data-cap="@cap" onchange="baseformChange(this);"
+                                        disabled class="form-control">
+                                        </td>
+                                <tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+
                 </div>
+            </div>
 
-                <hr>
+            <hr>
 
-                <div class="form-group">
-                    <div class="col-sm-12">
-                        <button class="btn btn-primary btn-block">N&auml;chster Schritt: ...</button>
-                    </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <button class="btn btn-primary btn-block">N&auml;chster Schritt: ...</button>
                 </div>
-            </form>
+            </div>
+        </form>
 
-        </div>
-    }
+    </div>
+}

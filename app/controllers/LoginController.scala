@@ -57,23 +57,22 @@ class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
   def checkUserName: Action[AnyContent] = Action.async { implicit request =>
     singleStrForm(NAME_NAME).bindFromRequest.fold(
       _ => Future(BadRequest("")),
-      usernameForm =>
-        repo.userByName(usernameForm.str).map(res => Ok(Json.obj("userexists" -> res.isDefined, "username" -> usernameForm.str)))
+      usernameForm => repo.userByName(usernameForm.str).map(res => Ok(Json.obj("userexists" -> res.isDefined, "username" -> usernameForm.str)))
     )
   }
 
 
   def authenticate: Action[AnyContent] = Action.async { implicit request =>
     userCredForm.bindFromRequest.fold(_ => Future(Redirect(controllers.routes.LoginController.login())),
-      credentials => {
-        repo.userByName(credentials.name).map {
-          case None => Redirect(controllers.routes.LoginController.register())
-          case Some(user) =>
-            val pwOk = credentials.pw.isBcrypted(user.pwHash)
-            if (pwOk) Redirect(controllers.routes.Application.index()).withSession(SESSION_ID_FIELD -> user.username)
-            else Redirect(controllers.routes.LoginController.login())
-        }
+      credentials => repo.userByName(credentials.name).map {
+        case None       => Redirect(controllers.routes.LoginController.register())
+        case Some(user) =>
+          if (credentials.pw.isBcrypted(user.pwHash))
+            Redirect(controllers.routes.Application.index()).withSession(SESSION_ID_FIELD -> user.username)
+          else
+            Redirect(controllers.routes.LoginController.login())
       }
+
     )
   }
 

@@ -1,5 +1,10 @@
 const prefUrl = $('#commit').data('url');
 
+function update(value) {
+    var inp = $('#' + value);
+    $('#btn_' + value).prop('disabled', inp.val() === inp.data('std'));
+}
+
 function savePreferences(value) {
     var inp = $('#' + value);
     $.ajax({
@@ -11,9 +16,4 @@ function savePreferences(value) {
             update(value);
         }
     });
-}
-
-function update(value) {
-    var inp = $('#' + value);
-    $('#btn_' + value).prop('disabled', inp.val() === inp.data('std'));
 }

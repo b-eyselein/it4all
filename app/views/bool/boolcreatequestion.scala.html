@@ -8,7 +8,7 @@
                     alert("Geben Sie bitte eine Formel ein!");
                     return;
                 }
-                testTheSolution("@controllers.bool.routes.BoolController.checkBoolCreationSolution()");
+                testTheSolution("@controllers.exes.routes.BoolController.checkBoolCreationSolution()");
             }
     </script>
 }
@@ -44,7 +44,7 @@
                     </div>
                 </div>
 
-                <form class="form-horizontal" action="@controllers.bool.routes.BoolController.checkBoolCreationSolution()" method="post">
+                <form class="form-horizontal" action="@controllers.exes.routes.BoolController.checkBoolCreationSolution()" method="post">
                     <div class="form-group">
                         <label class="control-label col-xs-1" for="learnerSolution">@model.bool.BooleanQuestion.SOLUTION_VARIABLE
                             = </label>
@@ -62,7 +62,7 @@
                             <button type="submit" class="btn btn-primary btn-block">zeige Musterl&ouml;sung</button>
                         </div>
                         <div class="col-sm-4">
-                            <a href="@controllers.bool.routes.BoolController.newBoolCreationQuestion()"
+                            <a href="@controllers.exes.routes.BoolController.newBoolCreationQuestion()"
                             class="btn btn-primary btn-block">N&auml;chste Aufgabe</a>
                         </div>
                     </div>

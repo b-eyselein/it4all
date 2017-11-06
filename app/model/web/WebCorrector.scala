@@ -8,12 +8,12 @@ import scala.util.{Failure, Success, Try}
 
 object WebCorrector {
 
-  def evaluate(task: WebTask, searchContent: SearchContext): WebResult = task match {
-    case task: HtmlTask => evaluateHtmlTask(task, searchContent)
-    case task: JsTask   => evaluateJsTask(task, searchContent)
+  def evaluate(task: DbWebTask, searchContent: SearchContext): WebResult = task match {
+    case task: DbHtmlTask => evaluateHtmlTask(task, searchContent)
+    case task: DbJsTask   => evaluateJsTask(task, searchContent)
   }
 
-  def evaluateHtmlTask(task: HtmlTask, searchContext: SearchContext): ElementResult = {
+  def evaluateHtmlTask(task: DbHtmlTask, searchContext: SearchContext): ElementResult = {
     val foundElements = searchContext.findElements(By.xpath(task.xpathQuery)).asScala.toList
 
     val foundElement = foundElements match {
@@ -34,24 +34,22 @@ object WebCorrector {
   def evaluateAttribute(attribute: Attribute, element: WebElement): AttributeResult =
     AttributeResult(attribute, Try(element.getAttribute(attribute.key)))
 
-  def evaluateConditions(context: SearchContext, conditions: List[Condition]): List[ConditionResult] = conditions.map(testCondition(_, context))
+  def evaluateConditions(context: SearchContext, conditions: List[DbJsCondition]): List[ConditionResult] = conditions.map(testCondition(_, context))
 
-  def evaluateJsTask(task: JsTask, searchContext: SearchContext) =
+  def evaluateJsTask(task: DbJsTask, searchContext: SearchContext) =
     new JsWebResult(
       task,
       evaluateConditions(searchContext, task.conditions.filter(_.isPrecondition)),
       task.action == null || task.action.perform(searchContext),
       evaluateConditions(searchContext, task.conditions.filter(!_.isPrecondition)),
-      List.empty
-    )
+      List.empty)
 
-  def testCondition(condition: Condition, searchContext: SearchContext): ConditionResult = Try(searchContext.findElement(By.xpath(condition.xpathQuery))) match {
+  def testCondition(condition: DbJsCondition, searchContext: SearchContext): ConditionResult = Try(searchContext.findElement(By.xpath(condition.xpathQuery))) match {
     case Failure(_)       => ConditionResult(SuccessType.NONE, condition, null)
     case Success(element) =>
       val gottenValue = element.getText
       val success = if (gottenValue.equals(condition.awaitedValue)) SuccessType.COMPLETE else SuccessType.NONE
       ConditionResult(success, condition, gottenValue)
-
   }
 
 }

@@ -4,13 +4,13 @@ import scala.collection.mutable
 
 object ToolList {
 
-  val toolObjOrdering: Ordering[ToolObject] = Ordering.by(_.toolname)
+  implicit val toolObjOrdering: Ordering[ToolObject] = Ordering.by(_.toolname)
 
-  var allTools: mutable.SortedSet[ToolObject] = mutable.SortedSet.empty(toolObjOrdering)
+  var allTools: mutable.SortedSet[ToolObject] = mutable.SortedSet.empty
 
-  lazy val idExTools: mutable.Set[ExToolObject] = allTools.flatMap {
+  lazy val idExTools: Seq[ExToolObject] = allTools.flatMap {
     case toolObj: ExToolObject => Some(toolObj)
     case _                     => None
-  }
+  }.toSeq.sortBy(_.toolname)
 
 }

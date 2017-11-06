@@ -4,8 +4,11 @@
     "Addition"
 }
 
-@main(title, user) {
+@scripts = {
     <script src="@routes.Assets.versioned("javascripts/snippets/followLinkOnEnter.js")"></script>
+}
+
+@main(title, user, scripts) {
 
     <div class="container">
         <div class="page-header">
@@ -17,7 +20,7 @@
 
                 <div class="form-group">
                     <div class="input-group">
-                        <input value="@result.firstSummand" readonly class="form-control text-right">
+                        <input title="" value="@result.firstSummand" readonly class="form-control text-right">
                         <span class="input-group-addon"><sub>@result.base.base</sub></span>
                     </div>
                 </div>
@@ -25,7 +28,7 @@
                 <div class="form-group">
                     <div class="input-group">
                         <span class="input-group-addon">+</span>
-                        <input value="@result.secondSummand" readonly class="form-control text-right">
+                        <input title="" value="@result.secondSummand" readonly class="form-control text-right">
                         <span class="input-group-addon"><sub>@result.base.base</sub></span>
                     </div>
                 </div>
@@ -34,12 +37,12 @@
 
                 <div class="form-group">
                     <div class="input-group">
-                        <input readonly value="@result.learnerSolution" class="form-control text-right">
+                        <input title="" readonly value="@result.learnerSolution" class="form-control text-right">
                         <span class="input-group-addon"><sub>@result.base.base</sub></span>
                     </div>
                 </div>
 
-                <a href="@controllers.nary.routes.NaryController.newNaryAdditionQuestion" id="theLink"
+                <a href="@controllers.exes.routes.NaryController.newNaryAdditionQuestion" id="theLink"
                 class="btn btn-primary btn-block">N&auml;chste Aufgabe</a>
 
             </div>

@@ -1,6 +1,8 @@
 package model.questions;
 
-public enum Correctness {
+import model.Enums.Selectable;
+
+public enum Correctness implements Selectable<Correctness> {
 
     CORRECT("Korrekt", "glyphicon glyphicon-ok-sign", "success"),
     OPTIONAL("Optional", "glyphicon glyphicon-question-sign", "warning"),

@@ -10,12 +10,9 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.ExecutionContext
 
-class Application @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository, env: Environment)
-                           (implicit ec: ExecutionContext)
+class Application @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository, env: Environment)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
-  def index: EssentialAction = withUser { user =>
-    implicit request => Ok(views.html.index.render(user, env.isDev))
-  }
+  def index: EssentialAction = withUser { user => implicit request => Ok(views.html.index.render(user, env.isDev)) }
 
 }

@@ -9,8 +9,7 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.ExecutionContext
 
-class CourseAdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository)
-                                     (implicit ec: ExecutionContext)
+class CourseAdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
   // FIXME: AJAX!
@@ -59,8 +58,5 @@ class CourseAdminController @Inject()(cc: ControllerComponents, val dbConfigProv
       Ok("TODO!")
   }
 
-  def newCourseForm(): EssentialAction = withAdmin { user =>
-    implicit request =>
-      Ok(views.html.admin.newCourseForm.render(user))
-  }
+  def newCourseForm(): EssentialAction = withAdmin { user => implicit request => Ok(views.html.admin.newCourseForm.render(user)) }
 }

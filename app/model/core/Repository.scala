@@ -10,7 +10,7 @@ import model.questions.QuestionsTableDefs
 import model.spread.SpreadExercises
 import model.sql.SqlTableDefs
 import model.uml.UmlExercises
-import model.web.WebExercises
+import model.web.WebTableDefs
 import model.xml.XmlExercises
 import model.{Course, TableDefs, User}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
@@ -23,7 +23,7 @@ class Repository @Inject()(protected val dbConfigProvider: DatabaseConfigProvide
 
     with BlanksExercises with EbnfExercises with MindmapExercises with ProgExercises
     with QuestionsTableDefs with SpreadExercises with SqlTableDefs
-    with UmlExercises with WebExercises with XmlExercises {
+    with UmlExercises with WebTableDefs with XmlExercises {
 
   import profile.api._
 

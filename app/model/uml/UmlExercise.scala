@@ -3,7 +3,7 @@ package model.uml
 import com.fasterxml.jackson.annotation.{JsonGetter, JsonIgnore, JsonProperty}
 import model.Enums.ExerciseState
 import model.core.StringConsts._
-import model.{Exercise, TableDefs}
+import model.{DbExercise, TableDefs}
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{JsPath, Reads}
@@ -24,7 +24,7 @@ case class UmlExercise(i: Int, ti: String, a: String, te: String, s: ExerciseSta
                        @JsonIgnore classSelText: String, @JsonIgnore diagDrawText: String,
                        @JsonProperty(required = true) solution: String,
                        @JsonProperty(required = true) mappings: String, @JsonProperty(required = true) ignoreWords: String
-                      ) extends Exercise(i, ti, a, te, s) {
+                      ) extends DbExercise(i, ti, a, te, s) {
 
   override def renderRest(/*fileResults: List[Try[Path]]*/): Html = new Html(
     s"""<td>${views.html.core.helperTemplates.modal.render("Klassenwahltext...", new Html(classSelText + "<hr>" + HtmlFormat.escape(classSelText)), "Klassenwahltext")}</td>

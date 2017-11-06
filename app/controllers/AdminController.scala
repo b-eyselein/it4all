@@ -41,7 +41,9 @@ class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
 
   def index: EssentialAction = futureWithAdmin { user =>
     implicit request =>
-      repo.numOfUsers.zip(repo.numOfCourses).map(nums => Ok(views.html.admin.adminPage.render(user, nums._1, nums._2)))
+      repo.numOfUsers.zip(repo.numOfCourses).map {
+        case (numUsers, numCourses) => Ok(views.html.admin.adminPage.render(user, numUsers, numCourses))
+      }
   }
 
   def users: EssentialAction = futureWithAdmin { user =>

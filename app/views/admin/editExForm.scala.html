@@ -13,7 +13,7 @@
       <h1>@if(isCreation) {Erstellen} else {Bearbeiten} einer @toolObject.toolname-Aufgabe</h1>
     </div>
 
-    <form class="form" method="post" role="form" action="@toolObject.editExerciseRoute(exerciseOpt.map(_.id).getOrElse(Integer.MAX_VALUE))">
+    <form class="form" method="post" role="form" action="@toolObject.editExerciseRoute(exerciseOpt.get)">
 
       <fieldset>
         <legend>Standardangaben</legend>

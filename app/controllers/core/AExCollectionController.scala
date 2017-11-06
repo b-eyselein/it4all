@@ -3,8 +3,7 @@ package controllers.core
 import model.core._
 import model.core.result.{CompleteResult, EvaluationResult}
 import model.core.tools.ExToolObject
-import model.{Exercise, User}
-import play.api.data.Form
+import model.{DbExercise, User}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc.{ControllerComponents, EssentialAction}
 import play.twirl.api.Html
@@ -13,15 +12,9 @@ import slick.jdbc.JdbcProfile
 import scala.concurrent.ExecutionContext
 import scala.util.Try
 
-abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E], R <: EvaluationResult]
+abstract class AExCollectionController[E <: DbExercise, C <: ExerciseCollection[E], R <: EvaluationResult]
 (cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository, t: ExToolObject)(implicit ec: ExecutionContext)
-  extends BaseExerciseController(cc, dbcp, r, t) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
-
-  def exercises(id: Int): EssentialAction = withUser { _ => implicit request => Ok("TODO!") }
-
-  type SolType <: Solution
-
-  def solForm: Form[SolType]
+  extends BaseExerciseController[C](cc, dbcp, r, t) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
   // Admin
 
@@ -104,7 +97,9 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E]
 
   // User
 
-  def correct(id: Int, part: String): EssentialAction = withUser { _ =>
+  def exercise(id: Int): EssentialAction = withUser { _ => implicit request => Ok("TODO!") }
+
+  def correct(id: Int): EssentialAction = withUser { _ =>
     implicit request =>
       solForm.bindFromRequest.fold(
         _ => BadRequest("There has been an error!"),
@@ -122,7 +117,7 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E]
       )
   }
 
-  def correctLive(id: Int, part: String): EssentialAction = withUser { _ =>
+  def correctLive(id: Int): EssentialAction = withUser { _ =>
     implicit request =>
       solForm.bindFromRequest.fold(
         _ => BadRequest("There has been an error!"),
@@ -144,6 +139,6 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E]
 
   def renderResult(correctionResult: CompleteResult[R]): Html
 
-  def correctPart(form: SolType, exercise: Option[E], part: String, user: User): Try[CompleteResult[R]]
+  def correctPart(form: SolutionType, exercise: Option[E], part: String, user: User): Try[CompleteResult[R]]
 
 }

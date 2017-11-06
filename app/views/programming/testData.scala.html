@@ -20,10 +20,10 @@
             Au&szlig;erdem werden Sie automatisch beim Testen ihrer L&ouml;sung verwendet.
         </div>
 
-        <form class="form" action="@controllers.programming.routes.ProgController.validateTestData(exercise.id)" method="post">
+        <form class="form" action="@controllers.exes.routes.ProgController.validateTestData(exercise.id)" method="post">
             <input hidden name="inputCount" id="inputCount" value="@exercise.inputCount">
             <input hidden name="testCount" id="testCount"
-            value="@Math.max(oldData.size, controllers.programming.ProgController.STD_TEST_DATA_COUNT)">
+            value="@Math.max(oldData.size, controllers.exes.ProgController.STD_TEST_DATA_COUNT)">
             <table class="table" id="testDataTable">
                 <thead>
                     <tr>
@@ -57,7 +57,7 @@
                             </td>
                         </tr>
                     }
-                    @for(testCount <- oldData.size until controllers.programming.ProgController.STD_TEST_DATA_COUNT) {
+                    @for(testCount <- oldData.size until controllers.exes.ProgController.STD_TEST_DATA_COUNT) {
                         <tr id="tr_@testCount">
                             <td>@testCount</td>
                             @for(inputCount <- 0 until exercise.inputCount) {
@@ -86,7 +86,7 @@
             <div class="btn-group btn-group-justified">
                 <div class="btn-group">
                     <button type="button" class="btn btn-primary"
-                    onclick="validateTestData('@controllers.programming.routes.ProgController.validateTestDataLive(exercise.id)')">
+                    onclick="validateTestData('@controllers.exes.routes.ProgController.validateTestDataLive(exercise.id)')">
                         Testdaten validieren
                     </button>
                 </div>

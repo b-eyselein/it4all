@@ -3,7 +3,7 @@ package model.spread
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import model.Enums.ExerciseState
-import model.{Exercise, TableDefs}
+import model.{DbExercise, TableDefs}
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{JsPath, Reads}
@@ -26,7 +26,7 @@ object SpreadExerciseReads {
 case class SpreadExercise(i: Int, ti: String, a: String, te: String, es: ExerciseState,
                           @JsonProperty(required = true) sampleFileName: String,
                           @JsonProperty(required = true) templateFilename: String)
-  extends Exercise(i, ti, a, te, es) {
+  extends DbExercise(i, ti, a, te, es) {
 
 
   override def renderRest: Html = new Html(s"""<td>$sampleFileName</td><td>$templateFilename</td>""")

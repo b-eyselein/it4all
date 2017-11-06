@@ -2,11 +2,11 @@ package model.core
 
 import com.fasterxml.jackson.annotation.{JsonGetter, JsonIgnore}
 import model.Enums.ExerciseState
-import model.Exercise
+import model.DbExercise
 import model.core.HasBaseValues.SPLITTER
 import play.twirl.api.Html
 
-abstract class ExerciseCollection[E <: Exercise](i: Int, ti: String, a: String, te: String, s: ExerciseState = ExerciseState.RESERVED)
+abstract class ExerciseCollection[E <: DbExercise](i: Int, ti: String, a: String, te: String, s: ExerciseState = ExerciseState.RESERVED)
   extends HasBaseValues(i, ti, a, te, s) {
 
   def exercises: List[E]

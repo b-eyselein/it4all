@@ -4,9 +4,11 @@
     "Zahlenumwandlung"
 }
 
-@main(title, user) {
+@scripts = {
     <script src="@routes.Assets.versioned("javascripts/snippets/followLinkOnEnter.js")"></script>
+}
 
+@main(title, user, scripts) {
     <div class="container">
         <div class="page-header">
             <h1>@title von @result.startingBase.systemName nach @result.targetBase.systemName</h1>
@@ -17,7 +19,7 @@
 
                 <div class="form-group">
                     <div class="input-group">
-                        <input value="@result.startingValue" readonly class="form-control text-right" name="value">
+                        <input title="" value="@result.startingValue" readonly class="form-control text-right" name="value">
                         <span class="input-group-addon"><sub>@result.startingBase.base</sub></span>
                     </div>
                 </div>
@@ -27,12 +29,12 @@
                 <div class="form-group">
                     <div class="input-group">
                         <span class="input-group-addon">--></span>
-                        <input readonly class="form-control text-right" value="@result.learnerSolution">
+                        <input title="" readonly class="form-control text-right" value="@result.learnerSolution">
                         <span class="input-group-addon"><sub>@result.targetBase.base</sub></span>
                     </div>
                 </div>
 
-                <a href="@controllers.nary.routes.NaryController.newNaryConversionQuestion" id="theLink"
+                <a href="@controllers.exes.routes.NaryController.newNaryConversionQuestion" id="theLink"
                 class="btn btn-primary btn-block">N&auml;chste Aufgabe</a>
 
             </div>

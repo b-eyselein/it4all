@@ -56,7 +56,8 @@ object StringConsts {
 
   val HINT_NAME = "hint"
 
-  val HTML_TEXT_NAME = "htmlText"
+  val HTML_TASKS_NAME = "htmlTasks"
+  val HTML_TEXT_NAME  = "htmlText"
 
   val ID_NAME = "id"
 
@@ -66,7 +67,8 @@ object StringConsts {
 
   val INPUTCOUNT_NAME = "inputCount"
 
-  val JS_TEXT_NAME = "jsText"
+  val JS_TASKS_NAME = "jsTasks"
+  val JS_TEXT_NAME  = "jsText"
 
   val KEY_NAME = "key"
 

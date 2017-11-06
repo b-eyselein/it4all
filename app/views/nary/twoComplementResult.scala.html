@@ -4,9 +4,11 @@
     "Zweierkomplement"
 }
 
-@main(title, user) {
+@scripts = {
     <script src="@routes.Assets.versioned("javascripts/snippets/followLinkOnEnter.js")"></script>
+}
 
+@main(title, user) {
     <div class="container">
         <div class="page-header">
             <h1>@title von @result.targetNumber.decimalValue</h1>
@@ -19,7 +21,7 @@
 
                     <div class="form-group">
                         <div class="input-group">
-                            <input value="@result.targetNumber.decimalValue" readonly class="form-control text-right">
+                            <input title="" value="@result.targetNumber.decimalValue" readonly class="form-control text-right">
                             <span class="input-group-addon"><sub>10</sub></span>
                         </div>
                     </div>
@@ -33,7 +35,7 @@
                             <div class="form-group has-@if(result.binaryAbsCorrect) {success} else {error}">
                                 <div class="input-group">
                                     <span class="input-group-addon">--></span>
-                                    <input class="form-control text-right" readonly value="@result.binaryAbs">
+                                    <input title="" class="form-control text-right" readonly value="@result.binaryAbs">
                                     <span class="input-group-addon"><sub>2</sub></span>
                                 </div>
                             </div>
@@ -45,7 +47,7 @@
                             <div class="form-group has-@if(result.invertedAbsCorrect) {success} else {error}">
                                 <div class="input-group">
                                     <span class="input-group-addon">--></span>
-                                    <input class="form-control text-right" readonly value="@result.invertedAbs">
+                                    <input title="" class="form-control text-right" readonly value="@result.invertedAbs">
                                     <span class="input-group-addon"><sub>2</sub></span>
                                 </div>
                             </div>
@@ -58,29 +60,19 @@
                         <div class="form-group has-@if(result.checkSolution) {success} else {error}">
                             <div class="input-group">
                                 <span class="input-group-addon">--></span>
-                                <input class="form-control text-right" readonly value="@result.learnerSolution.toTwoComp">
+                                <input title="" class="form-control text-right" readonly value="@result.learnerSolution.toTwoComp">
                                 <span class="input-group-addon"><sub>2</sub></span>
                             </div>
                         </div>
                     </fieldset>
 
-                    <a href="@controllers.nary.routes.NaryController.newTwoComplementQuestion(verbose)" id="theLink"
+                    <a href="@controllers.exes.routes.NaryController.newTwoComplementQuestion(verbose)" id="theLink"
                     class="btn btn-primary btn-block">N&auml;chste Aufgabe</a>
                 </div>
             </div>
         </div>
 
         <hr>
-
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                Platz f&uuml;r Notizen<br>
-                <em class="text-info">Notizen werden f&uuml;r die Korrektur nicht beachtet.</em>
-            </div>
-            <div class="panel-body">
-                <textarea class="form-control" rows="10"></textarea>
-            </div>
-        </div>
 
         <hr>
 

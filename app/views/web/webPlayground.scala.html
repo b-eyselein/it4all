@@ -1,10 +1,11 @@
+@import controllers.exes.WebController
 @(user: model.User)
 
 @main("Web-Playground", user) {
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-6">
-            @views.html.core.editor(controllers.web.WebController.STANDARD_HTML_PLAYGROUND, "html", 40, 50, updatePrev = true)
+            @views.html.core.editor(WebController.STANDARD_HTML_PLAYGROUND, "html", 40, 50, updatePrev = true)
             </div>
 
             <div class="col-sm-6">

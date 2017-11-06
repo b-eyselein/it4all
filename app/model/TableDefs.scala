@@ -14,7 +14,7 @@ case class Course(id: Int, courseName: String)
 
 case class Tipp(id: Int, str: String)
 
-abstract class Exercise(i: Int, ti: String, a: String, te: String, s: ExerciseState) extends HasBaseValues(i, ti, a, te, s) {
+abstract class DbExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState) extends HasBaseValues(i, ti, a, te, s) {
   def getTags: List[ExTag] = List.empty
 
   def renderEditRest(isCreation: Boolean) = new Html("")
@@ -77,7 +77,7 @@ trait TableDefs {
 
   abstract class HasBaseValuesTable[E <: HasBaseValues](tag: Tag, name: String) extends Table[E](tag, name) {
 
-    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
+    def id = column[Int]("id", O.PrimaryKey)
 
     def title = column[String]("title")
 

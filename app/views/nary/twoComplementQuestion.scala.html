@@ -1,24 +1,36 @@
-@(user: model.User, value: Int, verbose: Boolean)
+@import model.nary.{NAryResult, NumberBase, NAryNumber}
+
+@(user: model.User, startingNumber: NAryNumber, verbose: Boolean)
 
 @title = @{
     "Zweierkomplement"
 }
 
-@main(title, user) {
+@scripts = {
+    <style>
+            textarea {
+                resize: none;
+            }
+    </style>
+}
+
+@main(title, user, scripts) {
     <div class="container">
         <div class="page-header">
-            <h1>@title von @value</h1>
+            <h1>@title von @startingNumber</h1>
         </div>
 
         <div class="row">
             <div class="col-sm-6 col-sm-offset-3">
 
-                <form role="form" action="@controllers.nary.routes.NaryController.checkTwoComplementSolution(verbose)" method="post">
+                <p><em class="text-info">Bin&auml;rzahlen bitte in 8-Bit-Darstellung mit f&uuml;hrenden Nullen angeben.</em></p>
+
+                <form role="form" action="@controllers.exes.routes.NaryController.checkTwoComplementSolution(verbose)" method="post">
 
                     <div class="form-group">
                         <div class="input-group">
-                            <input value="@value" readonly class="form-control text-right" name="@model.nary.NAryResult.VALUE_NAME">
-                            <span class="input-group-addon"><sub>10</sub></span>
+                            <input value="@startingNumber" title="Vorgegebene Zahl" readonly class="form-control text-right" name="@NAryResult.VALUE_NAME">
+                            <span class="input-group-addon">@startingNumber.base.dispBase</span>
                         </div>
                     </div>
 
@@ -26,13 +38,13 @@
 
                     @if(verbose) {
                         <fieldset>
-                            <legend>Bin&auml;rdarstellung von @Math.abs(value)</legend>
+                            <legend>Bin&auml;rdarstellung von @Math.abs(startingNumber.decimalValue)</legend>
 
                             <div class="form-group">
                                 <div class="input-group">
                                     <span class="input-group-addon">--></span>
-                                    <input pattern="@model.nary.BINARY.htmlPattern" autocomplete="off" autofocus
-                                    class="form-control text-right" name="@model.nary.NAryResult.BINARY_ABS" placeholder="Ihre L&ouml;sung" required>
+                                    <input pattern="@NumberBase.BINARY.htmlPattern" autocomplete="off" autofocus
+                                    class="form-control text-right" name="@NAryResult.BINARY_ABS" placeholder="Ihre L&ouml;sung" required>
                                     <span class="input-group-addon"><sub>2</sub></span>
                                 </div>
                             </div>
@@ -44,8 +56,8 @@
                             <div class="form-group">
                                 <div class="input-group">
                                     <span class="input-group-addon">--></span>
-                                    <input pattern="@model.nary.BINARY.htmlPattern" autocomplete="off" autofocus
-                                    class="form-control text-right" name="@model.nary.NAryResult.INVERTED_ABS" placeholder="Ihre L&ouml;sung" required>
+                                    <input pattern="@NumberBase.BINARY.htmlPattern" autocomplete="off" autofocus
+                                    class="form-control text-right" name="@NAryResult.INVERTED_ABS" placeholder="Ihre L&ouml;sung" required>
                                     <span class="input-group-addon"><sub>2</sub></span>
                                 </div>
                             </div>
@@ -58,7 +70,7 @@
                         <div class="form-group">
                             <div class="input-group">
                                 <span class="input-group-addon">--></span>
-                                <input pattern="@model.nary.BINARY.htmlPattern" autocomplete="off" autofocus
+                                <input pattern="@NumberBase.BINARY.htmlPattern" autocomplete="off" autofocus
                                 class="form-control text-right" name="@model.core.StringConsts.FORM_VALUE" placeholder="Ihre L&ouml;sung" required>
                                 <span class="input-group-addon"><sub>2</sub></span>
                             </div>
@@ -73,26 +85,11 @@
 
         <hr>
 
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                Platz f&uuml;r Notizen<br>
-                <em class="text-info">Notizen werden f&uuml;r die Korrektur nicht beachtet.</em>
-            </div>
-            <div class="panel-body">
-                <textarea class="form-control" rows="10"></textarea>
-            </div>
-        </div>
+        <h3>Platz f&uuml;r Notizen</h3>
 
-        <hr>
+        <em class="text-info">Notizen werden f&uuml;r die Korrektur nicht beachtet.</em>
 
-        <div class="panel panel-info">
-            <div class="panel-heading">Hinweise</div>
-            <div class="panel-body">
-                <ul>
-                    <li>Bin&auml;rzahlen bitte in 8-Bit-Darstellung mit f&uuml;hrenden Nullen angeben.</li>
-                </ul>
-            </div>
-        </div>
+        <textarea title="Platz f&uuml;r Notizen" placeholder="Platz f&uuml;r Notizen" class="form-control" rows="10"></textarea>
 
     </div>
 }

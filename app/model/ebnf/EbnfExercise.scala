@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty}
 import model.Enums.ExerciseState
 import model.core.StringConsts._
 import model.ebnf.EbnfExerciseHelper._
-import model.{Exercise, TableDefs}
+import model.{DbExercise, TableDefs}
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{JsPath, Reads}
@@ -32,7 +32,7 @@ object EbnfExerciseReads {
 }
 
 case class EbnfExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState,
-                        @JsonProperty(required = true) terminals: String) extends Exercise(i, ti, a, te, s) {
+                        @JsonProperty(required = true) terminals: String) extends DbExercise(i, ti, a, te, s) {
 
   def getTerminals: Array[String] = terminals.split(termsJoinStr)
 

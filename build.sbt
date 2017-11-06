@@ -19,6 +19,9 @@ libraryDependencies ++= Seq(
   "mysql" % "mysql-connector-java" % "8.0.8-dmr",
   guice,
 
+  // Test YAML for ex reading...
+  "net.jcazevedo" %% "moultingyaml" % "0.4.0",
+
   // core
   "com.github.fge" % "json-schema-validator" % "2.2.6",
   "com.kjetland" % "mbknor-jackson-jsonschema_2.12" % "1.0.24",
@@ -39,7 +42,7 @@ libraryDependencies ++= Seq(
   "com.github.t3hnar" %% "scala-bcrypt" % "3.0",
 
   // Selenium and HtmlUnitDriver for Web+Js
-  "org.seleniumhq.selenium" % "selenium-java" % "3.6.0",
+  "org.seleniumhq.selenium" % "selenium-java" % "2.52.0",
   "org.seleniumhq.selenium" % "selenium-htmlunit-driver" % "2.52.0",
 
   // MyBatis and JSqlParser for SQL

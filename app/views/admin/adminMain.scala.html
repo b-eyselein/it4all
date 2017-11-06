@@ -1,4 +1,4 @@
-@(user: model.User, statistics: Html, administration: Html, links: model.core.tools.ExToolObject)(content: Html)
+@(user: model.User, statistics: Html, links: model.core.tools.ExToolObject)(content: Html)
 
 @title = @{
     "Administrator " + links.toolname
@@ -20,34 +20,46 @@
         <hr>
 
         <section id="administration">
-        @administration
+            <h2>Verwaltung der @links.pluralName</h2>
+            <a class="btn btn-default btn-block" href="@links.adminExesListRoute">Übersicht über alle Aufgaben</a>
+
+                &nbsp;
+
+            <a class="btn btn-default btn-block" href="@links.newExFormRoute">Neue Aufgabe erstellen</a>
+
+                &nbsp;
+
+            <div class="btn-group btn-group-justified">
+                @*<a class="btn btn-default" href="@links.exportExesRoute">Aufgaben als JSON exportieren</a>*@
+                @*<a class="btn btn-default" href="@links.importExesRoute">Standardaufgaben importieren</a>*@
+            </div>
         </section>
 
         <hr>
 
-        <section id="upload">
-            <h2>Upload neuer Aufgaben</h2>
-            <div class="alert alert-info">
-                Die Datei wird gegen diese <a class="alert-link" target="_blank"
-            href="@links.jsonSchemaRoute">JSON Schema-Datei</a> geprüft.
-                Im Erfolgsfall werden die Aufgaben ausgelesen und in der Datenbank gespeichert.
-            </div>
+            @*<section id="upload">*@
+            @*<h2>Upload neuer Aufgaben</h2>*@
+            @*<div class="alert alert-info">*@
+            @*Die Datei wird gegen diese <a class="alert-link" target="_blank"*@
+            @*href="@links.jsonSchemaRoute">JSON Schema-Datei</a> geprüft.*@
+            @*Im Erfolgsfall werden die Aufgaben ausgelesen und in der Datenbank gespeichert.*@
+            @*</div>*@
 
-            <form action="@links.uploadFileRoute" method="post" enctype="multipart/form-data" class="form-horizontal">
-                <div class="form-group">
-                    <label class="control-label col-sm-2" for="file">Ihre Datei:</label>
-                    <div class="col-sm-10">
-                        <input type="file" class="form-control" name="file" id="file" accept=".json" required>
-                    </div>
-                </div>
+            @*<form action="@links.uploadFileRoute" method="post" enctype="multipart/form-data" class="form-horizontal">*@
+            @*<div class="form-group">*@
+            @*<label class="control-label col-sm-2" for="file">Ihre Datei:</label>*@
+            @*<div class="col-sm-10">*@
+            @*<input type="file" class="form-control" name="file" id="file" accept=".json" required>*@
+            @*</div>*@
+            @*</div>*@
 
-                <hr>
+            @*<hr>*@
 
-                <button class="btn btn-primary btn-block">Datei hochladen</button>
-            </form>
-        </section>
+            @*<button class="btn btn-primary btn-block">Datei hochladen</button>*@
+            @*</form>*@
+            @*</section>*@
 
-        @content
+            @content
 
     </div>
 }

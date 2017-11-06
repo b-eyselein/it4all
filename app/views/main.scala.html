@@ -28,20 +28,9 @@
                 </div>
                 <div class="collapse navbar-collapse" id="myNavbar">
                     <ul class="nav navbar-nav">
-                        @for(tool <- model.core.tools.ToolList.allTools) {
-                            <li><a href="@tool.indexCall">@tool.toolname @tool.state.badge</a></li>
-                        }
-                        @*for(toolGroup <- model.tools.ToolList.toolGroups) {
-                        <li class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">@toolGroup.name <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                        @for(tool <- toolGroup.tools) {
-                        <li><a href="@tool.index">@tool.name</a></li>
-                        }
-                        </ul>
-                        </li>
-                        }*@
-
+                    @for(tool <- model.core.tools.ToolList.allTools.toSeq) {
+                        <li><a href="@tool.indexCall">@tool.toolname @tool.state.badge</a></li>
+                    }
                     </ul>
 
                     <ul class="nav navbar-nav navbar-right">
@@ -53,7 +42,7 @@
                                     Administrator <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu">
-                                    @for(tool <- model.core.tools.ToolList.idExTools) {
+                                    @for(tool <- model.core.tools.ToolList.idExTools.toSeq) {
                                         <li><a href="@tool.adminIndexRoute">@tool.toolname</a></li>
                                         <li class="divider"></li>
                                     }
