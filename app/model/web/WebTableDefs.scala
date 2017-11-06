@@ -1,44 +1,88 @@
 package model.web
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.google.common.base.Splitter
 import model.Enums.ExerciseState
-import model.{DbExercise, TableDefs}
+import model.core.ExTag
+import model.core.StringConsts._
+import model.{Exercise, TableDefs}
+import net.jcazevedo.moultingyaml._
 import org.openqa.selenium.{By, SearchContext}
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
 import scala.collection.JavaConverters._
+import scala.language.implicitConversions
 
 object HtmlTaskHelper {
   val ATTRS_JOIN_STR          = ";"
   val ATTR_SPLITTER: Splitter = Splitter.on(ATTRS_JOIN_STR).omitEmptyStrings()
 }
 
-case class DbWebExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState, htmlText: String, jsText: String)
-  extends DbExercise(i, ti, a, te, s) {
+object WebExYamlProtocol extends DefaultYamlProtocol {
+
+  implicit def string2YamlString(str: String): YamlString = YamlString(str)
+
+  implicit object WebExYamlFormat extends YamlFormat[WebExercise] {
+    override def write(ex: WebExercise): YamlValue = YamlObject(
+      YamlString(ID_NAME) -> YamlNumber(ex.id),
+      YamlString(TITLE_NAME) -> YamlString(ex.title),
+      YamlString(AUTHOR_NAME) -> YamlString(ex.author),
+      YamlString(TEXT_NAME) -> YamlString(ex.text),
+      YamlString(STATE_NAME) -> YamlString(ex.state.name),
+
+      // Exercise specific values
+      // FIXME: htmlTasks: List[HtmlTask], jsTasks: List[JsTask]...
+      YamlString(HTML_TEXT_NAME) -> YamlString(ex.htmlText),
+      YamlString(JS_TEXT_NAME) -> YamlString(ex.jsText)
+    )
+
+    override def read(yaml: YamlValue): WebExercise =
+      yaml.asYamlObject.getFields(ID_NAME, TITLE_NAME, AUTHOR_NAME, TEXT_NAME, STATE_NAME, HTML_TEXT_NAME, JS_TEXT_NAME) match {
+        case Seq(YamlNumber(id), YamlString(title), YamlString(author), YamlString(text), YamlString(state), YamlString(htmlText), YamlString(jsText)) =>
+          WebExercise(id.intValue, title, author, text, ExerciseState.valueOf(state), htmlText, jsText)
+
+        case other => /* FIXME: Fehlerbehandlung... */
+          other.foreach(value => println(value + "\n"))
+          deserializationError("WebExercise expected!")
+      }
+  }
+
+}
+
+class WebExTag(part: String, hasExes: Boolean) extends ExTag {
+
+  override def cssClass: String = if (hasExes) "label label-primary" else "label label-default"
+
+  override def buttonContent: String = part
+
+  override def title = s"Diese Aufgabe besitzt ${if (!hasExes) "k" else ""}einen $part-Teil"
+
+}
+
+case class WebExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState, htmlText: String, jsText: String)
+  extends Exercise(i, ti, a, te, s) {
 
   override def renderEditRest(isCreation: Boolean): Html = views.html.web.editWebExRest.render(this, isCreation)
 
 }
 
-abstract class DbWebTask(val id: Int, val exerciseId: Int, val text: String, val xpathQuery: String)
+abstract class WebTask(val id: Int, val exerciseId: Int, val text: String, val xpathQuery: String)
 
-case class DbHtmlTask(taskId: Int, exId: Int, t: String, x: String, attributes: String, textContent: String) extends DbWebTask(taskId, exId, t, x) {
+case class HtmlTask(taskId: Int, exId: Int, t: String, x: String, attributes: String, textContent: String) extends WebTask(taskId, exId, t, x) {
 
   def getAttributes: List[Attribute] = HtmlTaskHelper.ATTR_SPLITTER.splitToList(attributes).asScala.map(Attribute.fromString).toList
 
 }
 
-case class DbJsTask(taskId: Int, exId: Int, t: String, x: String /*,conditions: List[Condition], action: Action*/) extends DbWebTask(taskId, exId, t, x) {
+case class JsTask(taskId: Int, exId: Int, t: String, x: String /*,conditions: List[Condition], action: Action*/) extends WebTask(taskId, exId, t, x) {
 
-  def conditions: List[DbJsCondition] = List.empty
+  def conditions: List[JsCondition] = List.empty
 
-  def action: DbAction = null
+  def action: JsAction = null
 }
 
-case class DbAction(actionId: Int, taskId: Int, exerciseId: Int, actionType: ActionType, xpathQuery: String, keysToSend: String) {
+case class JsAction(actionId: Int, taskId: Int, exerciseId: Int, actionType: ActionType, xpathQuery: String, keysToSend: String) {
 
   def perform(context: SearchContext): Boolean = Option(context.findElement(By.xpath(xpathQuery))) match {
     case None          => false
@@ -57,13 +101,11 @@ case class DbAction(actionId: Int, taskId: Int, exerciseId: Int, actionType: Act
 
 }
 
-case class DbJsCondition(id: Int, taskId: Int, exerciseId: Int, xpathQuery: String, isPrecondition: Boolean, awaitedValue: String) {
+case class JsCondition(id: Int, taskId: Int, exerciseId: Int, xpathQuery: String, isPrecondition: Boolean, awaitedValue: String) {
 
-  @JsonIgnore
   def description = s"Element mit XPath '$xpathQuery' sollte den Inhalt '$awaitedValue' haben"
 
 }
-
 
 case class WebSolution(exerciseId: Int, userName: String, solution: String)
 
@@ -90,9 +132,9 @@ trait WebTableDefs extends TableDefs {
 
   // DB Actions
 
-  def htmlTasksForEx(exId: Int): Query[HtmlTasksTable, DbHtmlTask, Seq] = htmlTasks.filter(_.exerciseId === exId)
+  def htmlTasksForEx(exId: Int): Query[HtmlTasksTable, HtmlTask, Seq] = htmlTasks.filter(_.exerciseId === exId)
 
-  def jsTasksForEx(exId: Int): Query[JsTasksTable, DbJsTask, Seq] = jsTasks.filter(_.exerciseId === exId)
+  def jsTasksForEx(exId: Int): Query[JsTasksTable, JsTask, Seq] = jsTasks.filter(_.exerciseId === exId)
 
   // Implicit Column types
 
@@ -101,18 +143,18 @@ trait WebTableDefs extends TableDefs {
 
   // Tables
 
-  class WebExerciseTable(tag: Tag) extends HasBaseValuesTable[DbWebExercise](tag, "web_exercises") {
+  class WebExerciseTable(tag: Tag) extends HasBaseValuesTable[WebExercise](tag, "web_exercises") {
 
     def htmlText = column[String]("html_text")
 
     def jsText = column[String]("js_text")
 
 
-    def * = (id, title, author, text, state, htmlText, jsText) <> (DbWebExercise.tupled, DbWebExercise.unapply)
+    def * = (id, title, author, text, state, htmlText, jsText) <> (WebExercise.tupled, WebExercise.unapply)
   }
 
 
-  abstract class WebTasksTable[T <: DbWebTask](tag: Tag, name: String) extends Table[T](tag, name) {
+  abstract class WebTasksTable[T <: WebTask](tag: Tag, name: String) extends Table[T](tag, name) {
 
     def id = column[Int]("task_id")
 
@@ -125,29 +167,28 @@ trait WebTableDefs extends TableDefs {
 
     def pk = primaryKey("pk", (id, exerciseId))
 
-
     def exerciseFk = foreignKey("exercise_fk", exerciseId, webExercises)(_.id)
 
   }
 
-  class HtmlTasksTable(tag: Tag) extends WebTasksTable[DbHtmlTask](tag, "html_tasks") {
+  class HtmlTasksTable(tag: Tag) extends WebTasksTable[HtmlTask](tag, "html_tasks") {
 
     def attributes = column[String]("attributes")
 
     def textContent = column[String]("text_content")
 
 
-    def * = (id, exerciseId, text, xpathQuery, attributes, textContent) <> (DbHtmlTask.tupled, DbHtmlTask.unapply)
+    def * = (id, exerciseId, text, xpathQuery, attributes, textContent) <> (HtmlTask.tupled, HtmlTask.unapply)
 
   }
 
-  class JsTasksTable(tag: Tag) extends WebTasksTable[DbJsTask](tag, "js_tasks") {
+  class JsTasksTable(tag: Tag) extends WebTasksTable[JsTask](tag, "js_tasks") {
 
-    def * = (id, exerciseId, text, xpathQuery) <> (DbJsTask.tupled, DbJsTask.unapply)
+    def * = (id, exerciseId, text, xpathQuery) <> (JsTask.tupled, JsTask.unapply)
 
   }
 
-  class ConditionsTable(tag: Tag) extends Table[DbJsCondition](tag, "conditions") {
+  class ConditionsTable(tag: Tag) extends Table[JsCondition](tag, "conditions") {
 
     def conditionId = column[Int]("condition_id")
 
@@ -167,7 +208,7 @@ trait WebTableDefs extends TableDefs {
     def taskFk = foreignKey("task_fk", (taskId, exerciseId), jsTasks)(t => (t.id, t.exerciseId))
 
 
-    def * = (conditionId, taskId, exerciseId, xpathQuery, isPrecondition, awaitedValue) <> (DbJsCondition.tupled, DbJsCondition.unapply)
+    def * = (conditionId, taskId, exerciseId, xpathQuery, isPrecondition, awaitedValue) <> (JsCondition.tupled, JsCondition.unapply)
 
   }
 
@@ -191,7 +232,7 @@ trait WebTableDefs extends TableDefs {
 
   }
 
-  class ActionsTable(tag: Tag) extends Table[DbAction](tag, "ACTIONS") {
+  class ActionsTable(tag: Tag) extends Table[JsAction](tag, "ACTIONS") {
 
     def actionId = column[Int]("CONDITION_ID")
 
@@ -211,7 +252,7 @@ trait WebTableDefs extends TableDefs {
     def taskFk = foreignKey("TASK_FK", (taskId, exerciseId), jsTasks)(t => (t.id, t.exerciseId))
 
 
-    def * = (actionId, taskId, exerciseId, actionType, xpathQuery, keysToSend) <> (DbAction.tupled, DbAction.unapply)
+    def * = (actionId, taskId, exerciseId, actionType, xpathQuery, keysToSend) <> (JsAction.tupled, JsAction.unapply)
 
   }
 

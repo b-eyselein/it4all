@@ -21,7 +21,7 @@ object XmlToolObject extends IdExToolObject("xml", "Xml", ToolState.LIVE) {
 
   // Admin
 
-  val restHeaders: List[String] = List("Typ", "Wurzelknoten")
+  val restHeaders: List[String] = List("Typ", "Wurzelknoten", "Inhalt der Referenzdatei")
 
   override def adminIndexRoute: Call = controllers.exes.routes.XmlController.adminIndex()
 
@@ -29,9 +29,9 @@ object XmlToolObject extends IdExToolObject("xml", "Xml", ToolState.LIVE) {
 
   override def newExFormRoute: Call = controllers.exes.routes.XmlController.newExerciseForm()
 
-  //  override def exportExesRoute: Call = controllers.exes.routes.XmlController.exportExercises()
+  override def exportExesRoute: Call = controllers.exes.routes.XmlController.exportExercises()
 
-  //  override def importExesRoute: Call = controllers.exes.routes.XmlController.importExercises()
+  override def importExesRoute: Call = controllers.exes.routes.XmlController.importExercises()
 
   //  override def jsonSchemaRoute: Call = controllers.exes.routes.XmlController.getJSONSchemaFile()
 

@@ -3,7 +3,7 @@ package model.blanks
 import model.Enums.ExerciseState
 import model.core.StringConsts._
 import model.core.result.SuccessType
-import model.{DbExercise, TableDefs}
+import model.{Exercise, TableDefs}
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{JsPath, Reads}
@@ -20,7 +20,7 @@ object BlanksExerciseReads {
     ) ((i, ti, a, te, s) => BlanksExercise(i, ti, a, te.mkString, ExerciseState.valueOf(s)))
 }
 
-case class BlanksExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState) extends DbExercise(i, ti, a, te, s) {
+case class BlanksExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState) extends Exercise(i, ti, a, te, s) {
 
   val objects: List[BlankObject] = List(
     BlankObject(1,

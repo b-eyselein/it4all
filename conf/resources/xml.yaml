@@ -7,7 +7,7 @@ text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
 status: ACCEPTED
 exerciseType: XML_DTD
 rootNode: party
-referenceFile: |
+refFileContent: |
     <!ELEMENT party (gast+)>
     <!ATTLIST party datum CDATA #REQUIRED>
     <!ELEMENT gast (getraenk+, zustand?)>
@@ -24,7 +24,7 @@ text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
 status: ACCEPTED
 exerciseType: XML_DTD
 rootNode: lecture
-referenceFile: |
+refFileContent: |
     <!ELEMENT lecture (lecturer+, date+, student+)>
 
     <!ELEMENT lecturer (name)>
@@ -46,7 +46,7 @@ text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
 status: ACCEPTED
 exerciseType: XML_DTD
 rootNode: hospital
-referenceFile: |
+refFileContent: |
     <!ELEMENT krankenhaus (arzt+)>
     <!ELEMENT arzt (name, termin+)>
     <!ATTLIST arzt id CDATA #REQUIRED>
@@ -65,7 +65,7 @@ text: Erstellen Sie für dieses Xml-Dokument eine passende DTD
 status: ACCEPTED
 exerciseType: DTD_XML
 rootNode: breakfast
-referenceFile: |
+refFileContent: |
     <?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE breakfast SYSTEM "breakfast.dtd">
     <breakfast>
@@ -96,7 +96,7 @@ text: Erstellen Sie für dieses Xml-Dokument eine passende DTD
 status: ACCEPTED
 exerciseType: DTD_XML
 rootNode: library
-referenceFile: |
+refFileContent: |
     <?xml version="1.0" encoding="utf-8"?>
     <!DOCTYPE Bibliothek SYSTEM "bibliothek.dtd">
     <Bibliothek>

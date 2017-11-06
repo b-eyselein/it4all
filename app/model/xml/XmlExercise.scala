@@ -3,15 +3,17 @@ package model.xml
 import model.Enums.ExerciseState
 import model.core.ExTag
 import model.core.StringConsts._
-import model.{DbExercise, TableDefs}
+import model.{Exercise, TableDefs}
 import net.jcazevedo.moultingyaml._
 import play.api.db.slick.HasDatabaseConfigProvider
-import play.twirl.api.Html
+import play.twirl.api.{Html, HtmlFormat}
 import slick.jdbc.JdbcProfile
 
 import scala.language.implicitConversions
 
 object XmlExYamlProtocol extends DefaultYamlProtocol {
+
+  implicit def string2YamlString(str: String): YamlString = YamlString(str)
 
   implicit object XmlExYamlFormat extends YamlFormat[XmlExercise] {
     override def write(ex: XmlExercise): YamlValue = YamlObject(
@@ -20,38 +22,44 @@ object XmlExYamlProtocol extends DefaultYamlProtocol {
       YamlString(AUTHOR_NAME) -> YamlString(ex.author),
       YamlString(TEXT_NAME) -> YamlString(ex.text),
       YamlString(STATE_NAME) -> YamlString(ex.state.name),
-      YamlString(EXERCISE_TYPE) -> YamlString(ex.state.name),
+
+      // Exercise specific values
+      YamlString(EXERCISE_TYPE) -> YamlString(ex.exerciseType.name),
       YamlString(ROOT_NODE_NAME) -> YamlString(ex.rootNode),
-      YamlString("referenceFile") -> YamlString(ex.refernenceFile)
+      YamlString(REF_FILE_CONTENT_NAME) -> YamlString(ex.refFileContent)
     )
 
-    override def read(yaml: YamlValue): XmlExercise = yaml.asYamlObject.getFields(
-      YamlString(ID_NAME), YamlString(TITLE_NAME), YamlString(AUTHOR_NAME), YamlString(TEXT_NAME), YamlString(STATE_NAME),
-      YamlString(EXERCISE_TYPE), YamlString(ROOT_NODE_NAME), YamlString("referenceFile")) match {
-      case Seq(
-      YamlNumber(id), YamlString(title), YamlString(author), YamlString(text), YamlString(state),
-      YamlString(exerciseType), YamlString(rootNode), YamlString(refFileContent))
-             => XmlExercise(id.intValue, title, author, text, ExerciseState.valueOf(state), XmlExType.valueOf(exerciseType), rootNode, refFileContent)
-      case _ => /* FIXME: Fehlerbehandlung... */ deserializationError("XmlExercise expected!")
-
-    }
+    override def read(yaml: YamlValue): XmlExercise =
+      yaml.asYamlObject.getFields(ID_NAME, TITLE_NAME, AUTHOR_NAME, TEXT_NAME, STATE_NAME, EXERCISE_TYPE, ROOT_NODE_NAME, REF_FILE_CONTENT_NAME) match {
+        case Seq(
+        YamlNumber(id), YamlString(title), YamlString(author), YamlString(text), YamlString(state),
+        YamlString(exerciseType), YamlString(rootNode), YamlString(refFileContent))
+                   => XmlExercise(id.intValue, title, author, text, ExerciseState.valueOf(state), XmlExType.valueOf(exerciseType), rootNode, refFileContent)
+        case other => /* FIXME: Fehlerbehandlung... */
+          println(other)
+          deserializationError("XmlExercise expected!")
+      }
   }
 
 }
 
 case class XmlExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState,
-                       exerciseType: XmlExType, rootNode: String, refernenceFile: String = "")
-  extends DbExercise(i, ti, a, te, s) {
+                       exerciseType: XmlExType, rootNode: String, refFileContent: String = "")
+  extends Exercise(i, ti, a, te, s) {
 
   val fixedStart: String = if (exerciseType != XmlExType.XML_DTD) "" else
     s"""<?xml version="1.0" encoding="UTF-8"?>
        |<!DOCTYPE $rootNode SYSTEM "$rootNode.dtd">""".stripMargin
 
-  override def getTags: List[ExTag] = List(exerciseType)
+  override val getTags: List[ExTag] = List(exerciseType)
 
-  override def renderRest: Html = new Html(
+  override val renderRest: Html = new Html(
     s"""<td>$exerciseType</td>
-       |<td>$rootNode</td>""".stripMargin)
+       |<td>$rootNode</td>
+       |<td>${
+      views.html.core.helperTemplates.modal.render("Referenzdatei " + id, new Html("<pre>" + HtmlFormat.escape(refFileContent) + "</pre>"), "Referenzdatei" + id)
+    }
+       |</td>""".stripMargin)
 
 }
 

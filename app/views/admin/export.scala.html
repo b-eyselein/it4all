@@ -5,7 +5,7 @@
             function exportAsFile() {
                 var text = document.getElementById("exported").textContent;
                 var a = document.getElementById("a");
-                var file = new Blob([text], {type: 'text/json'});
+                var file = new Blob([text], {type: 'text/yaml'});
                 a.href = URL.createObjectURL(file);
                 a.download = 'export.json';
             }

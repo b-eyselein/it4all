@@ -86,6 +86,8 @@ object StringConsts {
 
   val PW2_NAME = "passwort_wieder"
 
+  val REF_FILE_CONTENT_NAME = "refFileContent"
+
   val ROOT_NODE_NAME = "rootNode"
 
   val SAMPLE_NAME = "sample"

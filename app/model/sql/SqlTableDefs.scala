@@ -6,7 +6,7 @@ import model.Enums.ExerciseState
 import model.core.ExerciseCollection
 import model.core.StringConsts._
 import model.sql.SqlEnums.{SqlExTag, SqlExerciseType}
-import model.{DbExercise, TableDefs}
+import model.{Exercise, TableDefs}
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{JsPath, Reads}
@@ -54,7 +54,7 @@ object SqlExerciseHelper {
 }
 
 case class SqlExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState, exerciseType: SqlExerciseType, sqlTags: String, hint: String)
-  extends DbExercise(i, ti, a, te, s) {
+  extends Exercise(i, ti, a, te, s) {
 
   override def getTags: List[SqlExTag] = {
     if (sqlTags.isEmpty) List.empty

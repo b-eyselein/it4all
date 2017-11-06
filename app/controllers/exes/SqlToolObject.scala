@@ -29,9 +29,9 @@ object SqlToolObject extends IdExToolObject("sql", "Sql", ToolState.LIVE, "Szena
 
   override def newExFormRoute: Call = controllers.exes.routes.SqlController.newExerciseForm()
 
-  //  override def exportExesRoute: Call = controllers.exes.routes.SqlController.exportExercises()
+  override def exportExesRoute: Call = controllers.exes.routes.SqlController.exportExercises()
 
-  //  override def importExesRoute: Call = controllers.exes.routes.SqlController.importExercises()
+  override def importExesRoute: Call = controllers.exes.routes.SqlController.importExercises()
 
   //  override def jsonSchemaRoute: Call = controllers.exes.routes.SqlController.getJSONSchemaFile()
 

@@ -23,10 +23,10 @@ object ElementResult {
   }
 }
 
-sealed abstract class WebResult(val task: DbWebTask, s: SuccessType, val messages: List[String])
+sealed abstract class WebResult(val task: WebTask, s: SuccessType, val messages: List[String])
   extends EvaluationResult(s) with HtmlRenderable
 
-case class ElementResult(t: DbWebTask, foundElement: Option[WebElement], attributeResults: List[AttributeResult], textContentResult: Option[TextContentResult])
+case class ElementResult(t: WebTask, foundElement: Option[WebElement], attributeResults: List[AttributeResult], textContentResult: Option[TextContentResult])
   extends WebResult(t, ElementResult.analyze(foundElement, attributeResults, textContentResult), List.empty) {
 
   override def render = new Html(
@@ -36,7 +36,7 @@ case class ElementResult(t: DbWebTask, foundElement: Option[WebElement], attribu
 }
 
 
-case class JsWebResult(t: DbWebTask, preResults: List[ConditionResult], actionPerformed: Boolean, postResults: List[ConditionResult], ms: List[String])
+case class JsWebResult(t: WebTask, preResults: List[ConditionResult], actionPerformed: Boolean, postResults: List[ConditionResult], ms: List[String])
   extends WebResult(t, JsWebResult.analyze(postResults, actionPerformed, postResults), ms) {
 
   override def render = new Html(
@@ -91,7 +91,7 @@ object JsWebResult {
   }
 }
 
-case class ConditionResult(s: SuccessType, condition: DbJsCondition, gottenValue: String)
+case class ConditionResult(s: SuccessType, condition: JsCondition, gottenValue: String)
   extends EvaluationResult(s) with HtmlRenderable {
 
   override def render = new Html(

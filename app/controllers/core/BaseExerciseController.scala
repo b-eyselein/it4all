@@ -16,7 +16,6 @@ import play.api.mvc.{AbstractController, ControllerComponents, EssentialAction}
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
-import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 import scala.language.implicitConversions
@@ -24,15 +23,11 @@ import scala.util.Try
 
 object BaseExerciseController {
 
-  val toolControllers: mutable.Map[String, BaseExerciseController] = mutable.Map.empty
-
   val STEP = 10
 }
 
-class BaseExerciseController(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository, val toolObject: ExToolObject)(implicit ec: ExecutionContext)
+abstract class BaseExerciseController(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository, val toolObject: ExToolObject)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
-
-  toolControllers(toolObject.exType) = this
 
   // Reading solution from Request
 
@@ -44,10 +39,6 @@ class BaseExerciseController(cc: ControllerComponents, val dbConfigProvider: Dat
 
   type DbType <: HasBaseValues
 
-  type ExerciseType <: HasBaseValues
-
-  implicit def dbType2ExType(dbType: DbType): ExerciseType
-
   // Database queries
 
   import profile.api._
@@ -58,9 +49,9 @@ class BaseExerciseController(cc: ControllerComponents, val dbConfigProvider: Dat
 
   def numOfExes: Future[Int] = db.run(tq.size.result)
 
-  def allExes: Future[Seq[ExerciseType]] = db.run(tq.result).map(seq => seq.map(dbType2ExType)) //Future(List.empty) //db.run(tq.result)
+  def allExes: Future[Seq[DbType]] = db.run(tq.result)
 
-  def exById(id: Int): Future[Option[ExerciseType]] = db.run(tq.findBy(_.id).apply(id).result.headOption).map(res => res.map(dbType2ExType))
+  def exById(id: Int): Future[Option[DbType]] = db.run(tq.findBy(_.id).apply(id).result.headOption)
 
   def statistics: Future[Html] = numOfExes.map(num => Html(s"<li>Es existieren insgesamt $num Aufgaben</li>"))
 
@@ -93,14 +84,18 @@ class BaseExerciseController(cc: ControllerComponents, val dbConfigProvider: Dat
 
   implicit val yamlFormat: YamlFormat[DbType]
 
-  def importExercises(exType: String): EssentialAction = toolControllers(exType).importExercises
-
-  def importExercises: EssentialAction = futureWithUser { user =>
+  def importExercises: EssentialAction = futureWithAdmin { admin =>
     implicit request =>
-      val exes: Seq[DbType] = Source.fromFile("conf/resources/xml.yaml").mkString.parseYamls.map(_.convertTo[DbType])
+      val file = Paths.get("conf", "resources", toolObject.exType + ".yaml").toFile
+      val exes: Seq[DbType] = Source.fromFile(file).mkString.parseYamls.map(_.convertTo[DbType])
 
       Future.sequence(exes.map(ex => db.run(tq insertOrUpdate ex)))
-        .map(res => Ok(views.html.admin.preview.render(user, exes, toolObject)))
+        .map(res => Ok(views.html.admin.preview.render(admin, exes, toolObject)))
+  }
+
+  def exportExercises: EssentialAction = futureWithAdmin { admin =>
+    implicit request =>
+      allExes.map(exes => Ok(views.html.admin.export.render(admin, exes.mkString)))
   }
 
 
@@ -159,7 +154,7 @@ class BaseExerciseController(cc: ControllerComponents, val dbConfigProvider: Dat
   }
 
   // FIXME: make abstract...
-  protected def renderExListRest(b: ExerciseType): Html = new Html("")
+  protected def renderExListRest(b: DbType): Html = new Html("")
 
   def newExerciseForm: EssentialAction = withAdmin { admin =>
     // FIXME
@@ -184,17 +179,17 @@ class BaseExerciseController(cc: ControllerComponents, val dbConfigProvider: Dat
   }
 
   // FIXME: refactor...
-  protected def renderExes(user: User, exes: Seq[ExerciseType], allExesSize: Int): Html =
+  protected def renderExes(user: User, exes: Seq[DbType], allExesSize: Int): Html =
     views.html.core.exesList.render(user, exes, renderExesListRest, toolObject, allExesSize / STEP + 1)
 
   protected def renderExesListRest: Html = new Html("")
 
   // Helper methods
 
-  def renderEditRest(exercise: Option[ExerciseType]): Html = new Html("")
+  def renderEditRest(exercise: Option[DbType]): Html = new Html("")
 
-  def renderExercises(exercises: List[ExerciseType]): Html = new Html("") //views.html.admin.exercisesTable.render(exercises, toolObject)
+  def renderExercises(exercises: List[DbType]): Html = new Html("") //views.html.admin.exercisesTable.render(exercises, toolObject)
 
-  def renderExesCreated(admin: User, exercises: List[ExerciseType]): Html = views.html.admin.preview.render(admin, exercises, toolObject)
+  def renderExesCreated(admin: User, exercises: List[DbType]): Html = views.html.admin.preview.render(admin, exercises, toolObject)
 
 }

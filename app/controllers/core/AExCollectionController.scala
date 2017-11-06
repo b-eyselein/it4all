@@ -3,7 +3,7 @@ package controllers.core
 import model.core._
 import model.core.result.{CompleteResult, EvaluationResult}
 import model.core.tools.ExToolObject
-import model.{DbExercise, User}
+import model.{Exercise, User}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc.{ControllerComponents, EssentialAction}
 import play.twirl.api.Html
@@ -12,9 +12,9 @@ import slick.jdbc.JdbcProfile
 import scala.concurrent.ExecutionContext
 import scala.util.Try
 
-abstract class AExCollectionController[E <: DbExercise, C <: ExerciseCollection[E], R <: EvaluationResult]
+abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E], R <: EvaluationResult]
 (cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository, t: ExToolObject)(implicit ec: ExecutionContext)
-  extends BaseExerciseController[C](cc, dbcp, r, t) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
+  extends BaseExerciseController(cc, dbcp, r, t) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
   // Admin
 

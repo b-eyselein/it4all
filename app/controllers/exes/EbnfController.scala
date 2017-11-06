@@ -29,15 +29,13 @@ class EbnfController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   // db
 
-  override val yamlFormat: YamlFormat[EbnfExercise] = null
+  override type DbType = EbnfExercise
 
-  override implicit def dbType2ExType(dbType: EbnfExercise): EbnfExercise = ???
+  override val yamlFormat: YamlFormat[EbnfExercise] = null
 
   override type SolutionType = StringSolution
 
   override def solForm: Form[StringSolution] = ???
-
-  override type ExerciseType = EbnfExercise
 
   // Admin
 

@@ -15,7 +15,7 @@ import play.api.db.slick.DatabaseConfigProvider
 import play.api.mvc.{ControllerComponents, EssentialAction}
 import play.twirl.api.Html
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
 import scala.util.Try
 
@@ -33,13 +33,9 @@ class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
 
   override implicit val yamlFormat: YamlFormat[SpreadExercise] = null
 
-  override implicit def dbType2ExType(dbType: SpreadExercise): SpreadExercise = ???
-
   override type TQ = repo.SpreadExerciseTable
 
   override def tq = repo.spreadExercises
-
-  override type ExerciseType = SpreadExercise
 
   // Admin
 
@@ -118,7 +114,7 @@ class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
   override protected def correctEx(user: User, sol: StringSolution, exercise: SpreadExercise, part: String): Try[CompleteResult[EvaluationResult]]
   = ??? // FIXME: implement???
 
-  override protected def renderExercise(user: User, exercise: SpreadExercise): Html = views.html.spread.spreadExercise.render(user, exercise)
+  override protected def renderExercise(user: User, exercise: SpreadExercise, part: String): Future[Html] = Future(views.html.spread.spreadExercise.render(user, exercise))
 
   override protected def renderResult(correctionResult: CompleteResult[EvaluationResult]): Html = ??? // FIXME: implement...
 

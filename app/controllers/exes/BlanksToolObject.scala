@@ -28,9 +28,9 @@ object BlanksToolObject extends IdExToolObject("blanks", "Lueckentext", ToolStat
 
   override def newExFormRoute: Call = ??? //controllers.exes.routes.BlanksController.newExerciseForm()
 
-  //  override def exportExesRoute: Call = ??? //controllers.exes.routes.BlanksController.exportExercises()
+  override def exportExesRoute: Call = ??? //controllers.exes.routes.BlanksController.exportExercises()
 
-  //  override def importExesRoute: Call = ??? //controllers.exes.routes.BlanksController.importExercises()
+  override def importExesRoute: Call = ??? //controllers.exes.routes.BlanksController.importExercises()
 
   //  override def jsonSchemaRoute: Call = ??? //controllers.exes.routes.BlanksController.getJSONSchemaFile()
 

@@ -51,10 +51,9 @@ object WebController {
 
 }
 
-
 @Singleton
 class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends AIdPartExController[DbWebExercise, WebResult](cc, dbcp, r, WebToolObject) with Secured {
+  extends AIdPartExController[WebExercise, WebResult](cc, dbcp, r, WebToolObject) with Secured {
 
   override type SolutionType = StringSolution
 
@@ -62,15 +61,16 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // db
 
-  override implicit val yamlFormat: YamlFormat[DbWebExercise] = null
+  // FIXME: Use some kind of that?
+  type ToRead = (WebExercise, List[HtmlTask], List[JsTask])
 
-  override implicit def dbType2ExType(dbType: DbWebExercise): WebExercise = ???
+  override type DbType = WebExercise
+
+  override implicit val yamlFormat: YamlFormat[WebExercise] = WebExYamlProtocol.WebExYamlFormat
 
   override type TQ = repo.WebExerciseTable
 
   override def tq = repo.webExercises
-
-  override type ExerciseType = WebExercise
 
   val HTML_TYPE = "html"
   val JS_TYPE   = "js"
@@ -82,22 +82,13 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   //noinspection TypeAnnotation
   def exAction(exId: Int) = repo.webExercises.findBy(_.id).apply(exId).result
 
-  override def allExes: Future[Seq[WebExercise]] =
-    db.run(repo.webExercises
-      .joinLeft(repo.htmlTasks).on { case (ex, htmlTask) => ex.id === htmlTask.exerciseId }
-      .joinLeft(repo.jsTasks).on { case ((ex, _), jsTask) => ex.id === jsTask.exerciseId }
-      .map { case ((ex, htmlTask), jsTask) => (ex, htmlTask, jsTask) }.result
-    ).map(seq => seq.groupBy(_._1)
-      .mapValues(_.unzip(pair => (pair._2, pair._3))) // Discard dbEx in values of map
-      .map { case (ex, (htmlTasks, jsTasks)) => WebExercise(ex, htmlTasks.flatten, jsTasks.flatten) }
-      .toSeq.sortBy(_.id))
-
+  override def allExes: Future[Seq[WebExercise]] = db.run(repo.webExercises.result)
 
   override def exById(id: Int): Future[Option[WebExercise]] = allExes.map(_.find(_.id == id))
 
-  def exAndHtmlTasks(exId: Int): Future[(DbWebExercise, Seq[DbHtmlTask])] = db.run(exAction(exId).head zip repo.htmlTasksForEx(exId).result)
+  def exAndHtmlTasks(exId: Int): Future[(WebExercise, Seq[HtmlTask])] = db.run(exAction(exId).head zip repo.htmlTasksForEx(exId).result)
 
-  def exAndJsTasks(exId: Int): Future[(DbWebExercise, Seq[DbJsTask])] = db.run(exAction(exId).head zip repo.jsTasksForEx(exId).result)
+  def exAndJsTasks(exId: Int): Future[(WebExercise, Seq[JsTask])] = db.run(exAction(exId).head zip repo.jsTasksForEx(exId).result)
 
   def getOldSolOrDefault(userName: String, exerciseId: Int): Future[String] =
     db.run(repo.webSolutions.filter(_.userName === userName).filter(_.exerciseId === exerciseId).result.headOption).map {
@@ -117,20 +108,6 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
     getOldSolOrDefault(username, exerciseId).map(sol => Ok(new Html(sol)))
   }
 
-  override def exercise(id: Int, part: String): EssentialAction = futureWithUser { user =>
-    implicit request =>
-      log(user, ExerciseStartEvent(request, id))
-      exById(id).map {
-        case Some(exercise) => part match {
-          case HTML_TYPE => Ok(renderEx(user, exercise.ex, exercise.htmlTasks, "html"))
-          case JS_TYPE   => Ok(renderEx(user, exercise.ex, exercise.jsTasks, "js"))
-          case _         => BadRequest("")
-        }
-        case None           => Redirect(toolObject.indexCall)
-      }
-
-  }
-
   override def correctEx(user: User, learnerSolution: StringSolution, exercise: WebExercise, part: String): Try[CompleteResult[WebResult]] = {
     val solutionUrl = BASE_URL + controllers.exes.routes.WebController.site(user.username, exercise.id).url
     val newSol = WebSolution(exercise.id, user.username, learnerSolution.learnerSolution)
@@ -139,10 +116,18 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
     val driver = new HtmlUnitDriver(true)
     driver.get(solutionUrl)
 
-    Try(new CompleteResult(learnerSolution.learnerSolution, getTasks(exercise, part).map(WebCorrector.evaluate(_, driver)).toList))
+    val tasks = Await.result(getTasks(exercise, part), Duration(2, duration.SECONDS))
+
+    Try(new CompleteResult(learnerSolution.learnerSolution, tasks.map(task => WebCorrector.evaluate(task, driver)).toList))
   }
 
-  override def renderExercise(user: User, exercise: WebExercise): Html = new Html("")
+  override protected def renderExercise(user: User, exercise: WebExercise, part: String): Future[Html] = {
+    val oldSolution = getOldSolOrDefault(user.username, exercise.id)
+    oldSolution zip getTasks(exercise, part) map {
+      case (oldSol, tasks) => views.html.web.webExercise.render(user, exercise, part, tasks, oldSol)
+    }
+  }
+
 
   override def renderExesListRest = new Html(
     s"""<div class="panel panel-default">
@@ -152,15 +137,11 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   override def renderResult(correctionResult: CompleteResult[WebResult]): Html = views.html.web.webResult.render(correctionResult.results)
 
-  private def renderEx(user: User, exercise: DbWebExercise, tasks: Seq[DbWebTask], exType: String): Html = {
-    val oldSolution = Await.result(getOldSolOrDefault(user.username, exercise.id), Duration.Inf)
-    views.html.web.webExercise.render(user, exercise, tasks, exType, oldSolution)
-  }
 
   //noinspection TypeAnnotation
-  private def getTasks(exercise: WebExercise, part: String) = part match {
-    case JS_TYPE   => exercise.jsTasks
-    case HTML_TYPE => exercise.htmlTasks
+  private def getTasks(exercise: WebExercise, part: String): Future[Seq[WebTask]] = part match {
+    case JS_TYPE   => db.run(repo.jsTasks.filter(_.id === exercise.id).result)
+    case HTML_TYPE => db.run(repo.htmlTasks.filter(_.id === exercise.id).result)
   }
 
 }

@@ -16,7 +16,7 @@ import play.api.mvc.{ControllerComponents, EssentialAction}
 import play.libs.Json
 import play.twirl.api.Html
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
 import scala.util.Try
 
@@ -29,8 +29,7 @@ object UmlController {
 }
 
 @Singleton
-class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)
-                             (implicit ec: ExecutionContext)
+class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
   extends AIdPartExController[UmlExercise, UmlResult](cc, dbcp, r, UmlToolObject) with Secured {
 
   override type SolutionType = StringSolution
@@ -39,15 +38,13 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // db
 
-  override implicit val yamlFormat: YamlFormat[UmlExercise] =  null
+  override type DbType = UmlExercise
 
-  override implicit def dbType2ExType(dbType: UmlExercise): UmlExercise = ???
+  override implicit val yamlFormat: YamlFormat[UmlExercise] = UmlExYamlProtocol.UmlExYamlFormat
 
   override type TQ = repo.UmlExerciseTable
 
   override def tq = repo.umlExercises
-
-  override type ExerciseType = UmlExercise
 
   // Admin
 
@@ -130,16 +127,14 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   override def correctEx(user: User, sol: StringSolution, exercise: UmlExercise, part: String): Try[CompleteResult[UmlResult]] = ??? //FIXME: not used...
 
-
-  override def renderExercise(user: User, exercise: UmlExercise): Html = ??? //FIXME
-
+  override def renderExercise(user: User, exercise: UmlExercise, part: String): Future[Html] = Future(views.html.uml.classSelection.render(user, exercise))
 
   override val renderExesListRest = new Html(
     s"""<div class="alert alert-info">
        |Neueinsteiger sollten die Variante mit Zwischenkorrektur verwenden, die die einzelnen Schritte
        |der Erstellung eines Klassendiagrammes nach und nach durcharbeitet.
        |</div>
-       |<hr>""")
+       |<hr>""".stripMargin)
 
   override def renderResult(correctionResult: CompleteResult[UmlResult]): Html = ??? //FIXME
 }

@@ -33,9 +33,9 @@ object WebToolObject extends IdPartExToolObject("web", "Web", ToolState.LIVE) {
 
   override def newExFormRoute: Call = controllers.exes.routes.WebController.newExerciseForm()
 
-  //  override def exportExesRoute: Call = controllers.exes.routes.WebController.exportExercises()
+  override def exportExesRoute: Call = controllers.exes.routes.WebController.exportExercises()
 
-  //  override def importExesRoute: Call = controllers.exes.routes.WebController.importExercises()
+  override def importExesRoute: Call = controllers.exes.routes.WebController.importExercises()
 
   //  override def jsonSchemaRoute: Call = controllers.exes.routes.WebController.getJSONSchemaFile()
 

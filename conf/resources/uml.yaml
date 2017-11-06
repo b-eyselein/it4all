@@ -1,0 +1,148 @@
+%YAML 1.2
+---
+id: 1
+title: Krankenhaus
+author: bje40dc
+text: >
+  Ein Krankenhaus besteht aus Stationen mit einer eindeutigen Nummer. Jede Station hat einen oder mehrere Doktoren,
+  Krankenschwestern und Patienten. Jede Person hat jeweils eine eindeutige Id und einen Namen. Ein Doktor kann dem
+  Patienten ein Rezept mit einer eindeutigen Id verschreiben, das ein oder mehrere Medikamente beinhalten kann.
+  Ein Medikament hat eine eindeutige Id und einen Namen. Ein Patient wiederum kann in einer Station aufgenommen bzw.
+  entlassen werden.
+status: CREATED
+
+mappings:
+  Stationen: Station
+  Doktoren: Doktor
+  Krankenschwestern: Krankenschwester
+  Patienten: Patient
+  Namen: Name
+  Medikamente: Medikament
+
+ignoreWords:
+- Ein
+- Jede
+
+solution:
+  classes:
+  - classType: ABSTRACT
+    name: Person
+    methods: []
+    attributes:
+    - id: String
+    - name: String
+    
+  - classType: CLASS
+    name: Doktor
+    methods: 
+    - "verschreiben(Patient): void"
+    attributes: []
+    
+  - classType: CLASS
+    name: Rezept
+    methods: []
+    attributes:
+    - id: String
+    
+  - classType: CLASS
+    name: Patient
+    methods:
+    - entlassen(Station): void
+    - aufnehmen(Station): void
+    attributes: []
+    
+  - classType: CLASS
+    name: Krankenschwester
+    methods: []
+    attributes: []
+    
+  - classType: CLASS
+    name: Station
+    methods: []
+    attributes:
+    - nummer: int
+    
+  - classType: CLASS
+    name: Medikament
+    methods: []
+    attributes:
+    - id: String
+    - name: String
+    
+  - classType: CLASS
+    name: Krankenhaus
+    methods: []
+    attributes: []
+    
+  implementations:
+  - subClass: Patient
+    superClass: Person
+  - subClass: Doktor
+    superClass: Person
+  - subClass: Krankenschwester
+    superClass: Person
+    
+  associations:
+  - assocType: ASSOCIATION
+    start:
+      endName: Doktor
+      multiplicity: SINGLE
+    end:
+      endName: Rezept
+      multiplicity: UNBOUND
+  - assocType: ASSOCIATION
+    start: 
+      endName: Doktor
+      multiplicity: SINGLE
+    end: 
+      endName: Patient
+      multiplicity: UNBOUND
+    
+  - assocType: ASSOCIATION
+    start:
+      endName: Station
+      multiplicity: SINGLE
+
+    end:
+      endName: Patient
+      multiplicity: UNBOUND
+
+  - assocType: ASSOCIATION
+    start:
+      endName: Station
+      multiplicity: SINGLE
+    end:
+      endName: Krankenschwester
+      multiplicity: UNBOUND
+
+  - assocType: ASSOCIATION
+    start:
+      endName: Station
+      multiplicity: SINGLE
+    end:
+      endName: Doktor
+      multiplicity: UNBOUND
+
+  - assocType: ASSOCIATION
+    start:
+      endName: Patient
+      multiplicity: SINGLE
+    end:
+      endName: Rezept
+      multiplicity: UNBOUND
+
+  - assocType: ASSOCIATION
+    start:
+      endName: Rezept
+      multiplicity: SINGLE
+    end:
+      endName: Medikament
+      multiplicity: UNBOUND
+
+  - assocType: COMPOSITION
+    start:
+      endName: Krankenhaus
+      multiplicity: SINGLE
+    end:
+      endName: Station
+      multiplicity: UNBOUND

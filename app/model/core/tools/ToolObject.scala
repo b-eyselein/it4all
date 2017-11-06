@@ -2,7 +2,7 @@ package model.core.tools
 
 import java.nio.file.{Path, Paths}
 
-import model.DbExercise
+import model.Exercise
 import model.Enums.ToolState
 import model.core.HasBaseValues
 import play.api.mvc.Call
@@ -30,7 +30,7 @@ abstract class ExToolObject(e: String, t: String, s: ToolState, val pluralName: 
 
   val rootDir: String = "data"
 
-  val SAMPLE_SUB_DIRECTORY    = "samples"
+  val SAMPLE_SUB_DIRECTORY = "samples"
   val SOLUTIONS_SUB_DIRECTORY = "solutions"
 
   val resourcesFolder: Path = Paths.get("conf", "resources", exType)
@@ -41,13 +41,13 @@ abstract class ExToolObject(e: String, t: String, s: ToolState, val pluralName: 
 
   def solDirForUser(username: String): Path = Paths.get(solutionDir.toString, username)
 
-  def getSampleDirForExercise(exerciseType: String, exercise: DbExercise): Path =
+  def getSampleDirForExercise(exerciseType: String, exercise: Exercise): Path =
     Paths.get(sampleDir.toString, String.valueOf(exercise.id))
 
-  def getSolDirForExercise(username: String, exercise: DbExercise): Path =
+  def getSolDirForExercise(username: String, exercise: Exercise): Path =
     Paths.get(solDirForUser(username).toString, exType, String.valueOf(exercise.id))
 
-  def getSolFileForExercise(username: String, ex: DbExercise, fileName: String, fileExt: String): Path =
+  def getSolFileForExercise(username: String, ex: Exercise, fileName: String, fileExt: String): Path =
     Paths.get(getSolDirForExercise(username, ex).toString, s"$fileName.$fileExt")
 
   // User
@@ -66,9 +66,9 @@ abstract class ExToolObject(e: String, t: String, s: ToolState, val pluralName: 
 
   def newExFormRoute: Call
 
-  //  def exportExesRoute: Call
+  def exportExesRoute: Call
 
-  //  def importExesRoute: Call
+  def importExesRoute: Call
 
   //  def jsonSchemaRoute: Call
 
@@ -97,7 +97,6 @@ abstract class IdExToolObject(e: String, t: String, s: ToolState = ToolState.ALP
 
 }
 
-// TODO: Exercise statt HasBaseValues...
 abstract class IdPartExToolObject(e: String, t: String, s: ToolState = ToolState.ALPHA, d: String = null, p: String = "Aufgaben")
   extends ExToolObject(e, t, s, p) {
 

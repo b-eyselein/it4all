@@ -5,7 +5,7 @@ import java.nio.file.{Files, Path}
 import model.core._
 import model.core.result.{CompleteResult, EvaluationResult}
 import model.core.tools.IdExToolObject
-import model.{DbExercise, User}
+import model.{Exercise, User}
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.mvc.{ControllerComponents, EssentialAction}
 import play.twirl.api.Html
@@ -13,9 +13,9 @@ import play.twirl.api.Html
 import scala.concurrent.ExecutionContext
 import scala.util.Try
 
-abstract class AIdExController[E <: DbExercise, R <: EvaluationResult]
+abstract class AIdExController[E <: Exercise, R <: EvaluationResult]
 (cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository, to: IdExToolObject)(implicit ec: ExecutionContext)
-  extends BaseExerciseController[E](cc, dbcp, r, to) with Secured {
+  extends BaseExerciseController(cc, dbcp, r, to) with Secured {
 
   def correct(id: Int): EssentialAction = withUser { _ =>
     implicit request =>
@@ -74,7 +74,7 @@ abstract class AIdExController[E <: DbExercise, R <: EvaluationResult]
 
   protected def correctEx(sol: SolutionType, exercise: Option[E], user: User): Try[CompleteResult[R]]
 
-  protected def renderExercise(user: User, exercise: ExerciseType): Html = new Html("")
+  protected def renderExercise(user: User, exercise: DbType): Html = new Html("")
 
   protected def renderExesListRest: Html //= new Html("")
 

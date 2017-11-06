@@ -28,9 +28,9 @@ object MindMapToolObject extends IdExToolObject("mindmap", "Mindmap", ToolState.
 
   override def newExFormRoute: Call = ??? //controllers.exes.routes.MindmapController.newExerciseForm()
 
-  //  override def exportExesRoute: Call = ??? //controllers.exes.routes.MindmapController.exportExercises()
+  override def exportExesRoute: Call = controllers.exes.routes.MindmapController.exportExercises()
 
-  //  override def importExesRoute: Call = ??? //controllers.exes.routes.MindmapController.importExercises()
+  override def importExesRoute: Call = controllers.exes.routes.MindmapController.importExercises()
 
   //  override def jsonSchemaRoute: Call = ??? //controllers.exes.routes.MindmapController.getJSONSchemaFile()
 

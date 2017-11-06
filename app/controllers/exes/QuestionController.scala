@@ -29,15 +29,13 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   // db
 
-  override implicit val yamlFormat: YamlFormat[Quiz] = null
+  override type DbType = Quiz
 
-  override implicit def dbType2ExType(dbType: Quiz): Quiz = ???
+  override implicit val yamlFormat: YamlFormat[Quiz] = null
 
   override type TQ = repo.QuizzesTable
 
   override def tq = repo.quizzes
-
-  override type ExerciseType = Quiz
 
   // Quizzes
 

@@ -31,23 +31,21 @@ POST          /nary/twocomp/:verb                       controllers.exes.NaryCon
 # Mindmap - Anfang
 GET           /mindmap/admin                            controllers.exes.MindmapController.adminIndex
 
+GET           /mindmap/import                           controllers.exes.MindmapController.importExercises
+GET           /mindmap/export                           controllers.exes.MindmapController.exportExercises
+
 GET           /mindmap                                  controllers.exes.MindmapController.index(page: Int ?= 1)
 
 POST          /mindmap/upload                           controllers.exes.MindmapController.upload
-
-
-GET           /:exType/import                           controllers.core.BaseExerciseController[_].importExercises(exType: String)
 
 # Mindmap - Ende
 
 # XML - Anfang
 GET           /xml/admin                                controllers.exes.XmlController.adminIndex
 
-#GET           /xml/jsonSchema                           controllers.exes.XmlController.getJSONSchemaFile
-#POST          /xml/upload                               controllers.exes.XmlController.uploadFile
-
 GET           /xml/import                               controllers.exes.XmlController.importExercises
-#GET           /xml/export                               controllers.exes.XmlController.exportExercises
+GET           /xml/export                               controllers.exes.XmlController.exportExercises
+#POST          /xml/upload                               controllers.exes.XmlController.uploadFile
 
 GET           /xml/exercises                            controllers.exes.XmlController.exercises
 
@@ -75,12 +73,9 @@ PUT           /xml/playground                           controllers.exes.XmlCont
 # Controlleristrator
 GET           /question/admin                           controllers.exes.QuestionController.adminIndex
 
-# Controller Questions
-#GET           /question/jsonSchema                      controllers.exes.QuestionController.getJSONSchemaFile
+GET           /question/export                          controllers.exes.QuestionController.exportExercises
+GET           /question/import                          controllers.exes.QuestionController.importExercises
 #POST          /question/upload                          controllers.exes.QuestionController.uploadFile
-
-#GET           /question/export                          controllers.exes.QuestionController.exportExercises
-#GET           /question/import                          controllers.exes.QuestionController.importExercises
 
 GET           /question/questions                       controllers.exes.QuestionController.exercises
 
@@ -116,14 +111,11 @@ GET           /question/question/:id                    controllers.exes.Questio
 POST          /question/question/:id                    controllers.exes.QuestionController.questionResult( id: Int)
 
 
-# Controller Quiz
-GET           /question/quizzes                         controllers.exes.QuestionController.adminIndex
+GET           /question/quizAdmin                       controllers.exes.QuestionController.adminIndex
 
-#GET           /question/quizzes/jsonSchema              controllers.exes.QuestionController.getJSONSchemaFile
+#GET          /question/quizzes/export                  controllers.exes.QuestionController.exportExerciseCollections
+#GET          /question/quizzes/import                  controllers.exes.QuestionController.importExerciseCollections
 #POST          /question/quizzes/upload                  controllers.exes.QuestionController.uploadFile
-
-# GET      /question/quizzes/export             controllers.exes.QuestionController.exportExerciseCollections
-# GET      /question/quizzes/import             controllers.exes.QuestionController.importExerciseCollections
 
 GET           /question/quizzes                         controllers.exes.QuestionController.quizzes
 # exerciseCollections
@@ -146,11 +138,10 @@ POST          /question/:quizId/:questionId             controllers.exes.Questio
 # Controlleristrator
 GET           /prog/admin                               controllers.exes.ProgController.adminIndex
 
-#GET           /prog/jsonSchema                          controllers.exes.ProgController.getJSONSchemaFile
-#POST          /prog/upload                              controllers.exes.ProgController.uploadFile
 
 GET           /prog/import                              controllers.exes.ProgController.importExercises
-#GET           /prog/export                              controllers.exes.ProgController.exportExercises
+GET           /prog/export                              controllers.exes.ProgController.exportExercises
+#POST          /prog/upload                              controllers.exes.ProgController.uploadFile
 
 GET           /prog/exercises                           controllers.exes.ProgController.exercises
 
@@ -179,14 +170,11 @@ POST          /prog/exercise/:id                        controllers.exes.ProgCon
 # Prog - Ende
 
 # Spread - Anfang
-# Controller
 GET           /spread/admin                             controllers.exes.SpreadController.adminIndex
 
-#GET           /spread/jsonSchema                        controllers.exes.SpreadController.getJSONSchemaFile
-#POST          /spread/upload                            controllers.exes.SpreadController.uploadFile
-
 GET           /spread/import                            controllers.exes.SpreadController.importExercises
-#GET           /spread/export                            controllers.exes.SpreadController.exportExercises
+GET           /spread/export                            controllers.exes.SpreadController.exportExercises
+#POST          /spread/upload                            controllers.exes.SpreadController.uploadFile
 
 GET           /spread/exercises                         controllers.exes.SpreadController.exercises
 
@@ -210,11 +198,9 @@ GET           /spread/temp/:id/:typ                     controllers.exes.SpreadC
 # Web - Anfang
 GET           /web/admin                                controllers.exes.WebController.adminIndex
 
-#GET           /web/jsonSchema                           controllers.exes.WebController.getJSONSchemaFile
-#POST          /web/upload                               controllers.exes.WebController.uploadFile
-
 GET           /web/import                               controllers.exes.WebController.importExercises
-#GET           /web/export                               controllers.exes.WebController.exportExercises
+GET           /web/export                               controllers.exes.WebController.exportExercises
+#POST          /web/upload                               controllers.exes.WebController.uploadFile
 
 GET           /web/exercises                            controllers.exes.WebController.exercises
 
@@ -247,11 +233,9 @@ GET           /web/sol/:user/:id                        controllers.exes.WebCont
 # Ebnf - Anfang
 GET           /ebnf/admin                               controllers.exes.EbnfController.adminIndex
 
-#GET           /ebnf/jsonSchema                          controllers.exes.EbnfController.getJSONSchemaFile
+GET           /ebnf/import                              controllers.exes.EbnfController.importExercises
+GET           /ebnf/export                              controllers.exes.EbnfController.exportExercises
 #POST          /ebnf/upload                              controllers.exes.EbnfController.uploadFile
-
-#GET           /ebnf/import                              controllers.exes.EbnfController.importExercises
-#GET           /ebnf/export                              controllers.exes.EbnfController.exportExercises
 
 
 GET           /ebnf/exercises                           controllers.exes.EbnfController.exercises
@@ -277,11 +261,9 @@ DELETE        /ebnf/:id                                 controllers.exes.EbnfCon
 # Controller
 GET           /uml/admin                                controllers.exes.UmlController.adminIndex
 
-#GET           /uml/jsonSchema                           controllers.exes.UmlController.getJSONSchemaFile
+GET           /uml/import                               controllers.exes.UmlController.importExercises
+GET           /uml/export                               controllers.exes.UmlController.exportExercises
 #POST          /uml/upload                               controllers.exes.UmlController.uploadFile
-
-#GET           /uml/import                               controllers.exes.UmlController.importExercises
-#GET           /uml/export                               controllers.exes.UmlController.exportExercises
 
 GET           /uml/exercises                            controllers.exes.UmlController.exercises
 
@@ -319,11 +301,9 @@ GET           /blanks                                   controllers.exes.BlanksC
 # Controlleristrator
 GET           /sql/scenarioes/admin                     controllers.exes.SqlController.adminIndex
 
-#GET           /sql/jsonSchema                           controllers.exes.SqlController.getJSONSchemaFile
+GET           /sql/scenarioes/import                    controllers.exes.SqlController.importExercises
+GET           /sql/scenarioes/export                    controllers.exes.SqlController.exportExercises
 #POST          /sql/upload                               controllers.exes.SqlController.uploadFile
-
-#GET           /sql/scenarioes/import                    controllers.exes.SqlController.importExercises
-#GET           /sql/scenarioes/export                    controllers.exes.SqlController.exportExercises
 
 GET           /sql/admin/:id                            controllers.exes.SqlController.scenarioAdmin(id: Int)
 

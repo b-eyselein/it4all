@@ -34,9 +34,9 @@ object UmlToolObject extends IdPartExToolObject("uml", "Uml", ToolState.LIVE) {
 
   override def newExFormRoute: Call = controllers.exes.routes.UmlController.newExerciseForm()
 
-  //  override def exportExesRoute: Call = controllers.exes.routes.UmlController.exportExercises()
+  override def exportExesRoute: Call = controllers.exes.routes.UmlController.exportExercises()
 
-  //  override def importExesRoute: Call = controllers.exes.routes.UmlController.importExercises()
+  override def importExesRoute: Call = controllers.exes.routes.UmlController.importExercises()
 
   //  override def jsonSchemaRoute: Call = controllers.exes.routes.UmlController.getJSONSchemaFile()
 

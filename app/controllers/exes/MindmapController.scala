@@ -50,15 +50,13 @@ class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfig
 
   // db
 
-  override implicit val yamlFormat: YamlFormat[MindmapExercise] = null
+  override type DbType = MindmapExercise
 
-  override implicit def dbType2ExType(dbType: MindmapExercise): MindmapExercise = ???
+  override implicit val yamlFormat: YamlFormat[MindmapExercise] = null
 
   override type TQ = repo.MindmapExercisesTable
 
   override def tq = repo.mindmapExercises
-
-  override type ExerciseType = MindmapExercise
 
 
   override protected def correctEx(sol: StringSolution, exercise: Option[MindmapExercise], user: User): Try[CompleteResult[EvaluationResult]] = ???

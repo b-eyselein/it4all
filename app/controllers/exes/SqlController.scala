@@ -35,15 +35,13 @@ class SqlController @Inject()(cc: ControllerComponents /*, @NamedDatabase("sqlse
 
   // db
 
-  override implicit val yamlFormat: YamlFormat[SqlScenario] = null
+  override type DbType = SqlScenario
 
-  override implicit def dbType2ExType(dbType: SqlScenario): SqlScenario = ???
+  override implicit val yamlFormat: YamlFormat[SqlScenario] = null
 
   override type TQ = repo.SqlScenarioesTable
 
   override def tq = repo.sqlScenarioes
-
-  override type ExerciseType = SqlScenario
 
   override def newExerciseForm: EssentialAction = withAdmin { user => implicit request => Ok(views.html.sql.newExerciseForm.render(user, null)) }
 

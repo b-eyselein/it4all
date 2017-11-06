@@ -5,7 +5,7 @@ import java.nio.file.{Files, Path}
 import model.core._
 import model.core.result.{CompleteResult, EvaluationResult}
 import model.core.tools.IdPartExToolObject
-import model.{DbExercise, User}
+import model.{Exercise, User}
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.json.Json
 import play.api.mvc.{ControllerComponents, EssentialAction}
@@ -14,7 +14,7 @@ import play.twirl.api.Html
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
-abstract class AIdPartExController[E <: DbExercise, R <: EvaluationResult]
+abstract class AIdPartExController[E <: Exercise, R <: EvaluationResult]
 (cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository, to: IdPartExToolObject)(implicit ec: ExecutionContext)
   extends BaseExerciseController(cc, dbcp, r, to) with Secured {
 
@@ -54,11 +54,11 @@ abstract class AIdPartExController[E <: DbExercise, R <: EvaluationResult]
 
   def exercise(id: Int, part: String): EssentialAction = futureWithUser { user =>
     implicit request =>
-      exById(id).map {
+      exById(id).flatMap {
         case Some(exercise) =>
           log(user, ExerciseStartEvent(request, id))
-          Ok(renderExercise(user, exercise))
-        case None           => Redirect(toolObject.indexCall)
+          renderExercise(user, exercise, part).map(rendered => Ok(rendered))
+        case None           => Future(Redirect(toolObject.indexCall))
       }
   }
 
@@ -70,9 +70,9 @@ abstract class AIdPartExController[E <: DbExercise, R <: EvaluationResult]
     views.html.core.correction.render(toolObject.toolname.toUpperCase, correctionResult, renderResult(correctionResult),
       user, controllers.routes.Application.index())
 
-  protected def correctEx(user: User, sol: SolutionType, exercise: ExerciseType, part: String): Try[CompleteResult[R]]
+  protected def correctEx(user: User, sol: SolutionType, exercise: DbType, part: String): Try[CompleteResult[R]]
 
-  protected def renderExercise(user: User, exercise: ExerciseType): Html = new Html("")
+  protected def renderExercise(user: User, exercise: DbType, part: String): Future[Html] = Future(new Html(""))
 
   protected def renderResult(correctionResult: CompleteResult[R]): Html = new Html("")
 

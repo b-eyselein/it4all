@@ -55,15 +55,13 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   // db
 
-  override implicit val yamlFormat: YamlFormat[ProgExercise] = null
+  override type DbType = ProgExercise
 
-  override implicit def dbType2ExType(dbType: ProgExercise): ProgExercise = ???
+  override implicit val yamlFormat: YamlFormat[ProgExercise] = null
 
   override type TQ = repo.ProgExercisesTable
 
   override def tq = repo.progExercises
-
-  override type ExerciseType = ProgExercise
 
   val correctors = Map(
     JAVA_8 -> new JavaCorrector(),

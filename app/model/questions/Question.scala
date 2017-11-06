@@ -3,7 +3,7 @@ package model.questions
 import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty}
 import model.Enums.ExerciseState
 import model.core.ExerciseCollection
-import model.{DbExercise, TableDefs}
+import model.{Exercise, TableDefs}
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 import model.core.StringConsts._
@@ -22,7 +22,7 @@ case class Quiz(i: Int, ti: String, a: String, te: String, s: ExerciseState, the
 
 case class Question(i: Int, ti: String, a: String, te: String, s: ExerciseState,
                     @JsonProperty(value = "exerciseType", required = true) questionType: QuestionType)
-  extends DbExercise(i, ti, a, te, s) {
+  extends Exercise(i, ti, a, te, s) {
 
   def answers: List[Answer] = List.empty
 

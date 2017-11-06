@@ -44,11 +44,9 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // Admin
 
+  override type DbType = XmlExercise
+
   override val yamlFormat: YamlFormat[XmlExercise] = XmlExYamlProtocol.XmlExYamlFormat
-
-  override implicit def dbType2ExType(dbt: XmlExercise): XmlExercise = dbt
-
-  override type ExerciseType = XmlExercise
 
   override type TQ = repo.XmlExerciseTable
 
@@ -60,20 +58,20 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   override protected def correctEx(sol: StringSolution, exerciseOpt: Option[XmlExercise], user: User): Try[CompleteResult[XmlError]] =
     exerciseOpt match {
-      case None           => Failure(null)
+      case None => Failure(null)
       case Some(exercise) =>
         checkAndCreateSolDir(user.username, exercise).flatMap(dir => {
           val learnerSolution = sol.learnerSolution
 
           val (grammarTry, xmlTry) = exercise.exerciseType match {
             case (XmlExType.DTD_XML | XmlExType.XSD_XML) => (
-                                                              save(dir, exercise.rootNode + "." + exercise.exerciseType.gramFileEnding, learnerSolution),
-                                                              copy(dir, exercise.rootNode + "." + "xml")
-                                                            )
-            case _                                       => (
-                                                              copy(dir, exercise.rootNode + "." + exercise.exerciseType.gramFileEnding),
-                                                              save(dir, exercise.rootNode + "." + "xml", learnerSolution)
-                                                            )
+              save(dir, exercise.rootNode + "." + exercise.exerciseType.gramFileEnding, learnerSolution),
+              copy(dir, exercise.rootNode + "." + "xml")
+            )
+            case _ => (
+              copy(dir, exercise.rootNode + "." + exercise.exerciseType.gramFileEnding),
+              save(dir, exercise.rootNode + "." + "xml", learnerSolution)
+            )
           }
 
           grammarTry.zip(xmlTry).map({ case (grammar, xml) =>
@@ -105,7 +103,7 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
        |<hr>""".stripMargin)
 
   override def renderResult(completeResult: CompleteResult[XmlError]): Html = completeResult.results match {
-    case Nil     => new Html("""<div class="alert alert-success">Es wurden keine Fehler gefunden.</div>""")
+    case Nil => new Html("""<div class="alert alert-success">Es wurden keine Fehler gefunden.</div>""")
     case results => new Html(results.map(res =>
       s"""<div class="panel panel-${res.getBSClass}">
          |  <div class="panel-heading">${res.title} ${res.lineStr}</div>

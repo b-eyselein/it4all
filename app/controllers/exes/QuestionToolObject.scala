@@ -29,9 +29,9 @@ object QuestionToolObject extends IdExToolObject("question", "Auswahlfragen", To
 
   override def newExFormRoute: Call = controllers.exes.routes.QuestionController.newExerciseForm()
 
-  //  override def exportExesRoute: Call = controllers.exes.routes.QuestionController.exportExercises()
+  override def exportExesRoute: Call = controllers.exes.routes.QuestionController.exportExercises()
 
-  //  override def importExesRoute: Call = controllers.exes.routes.QuestionController.importExercises()
+  override def importExesRoute: Call = controllers.exes.routes.QuestionController.importExercises()
 
   //  override def jsonSchemaRoute: Call = controllers.exes.routes.QuestionController.getJSONSchemaFile()
 

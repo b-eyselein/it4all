@@ -27,15 +27,13 @@ class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
 
   // db
 
-  override val yamlFormat: YamlFormat[BlanksExercise] = null
+  override type DbType = BlanksExercise
 
-  override implicit def dbType2ExType(dbt: BlanksExercise): BlanksExercise = dbt
+  override val yamlFormat: YamlFormat[BlanksExercise] = null
 
   override type TQ = repo.BlanksExercisesTable
 
   override def tq = repo.blanksExercises
-
-  override type ExerciseType = BlanksExercise
 
   def correctBlanks(id: Int): EssentialAction = withUser { user =>
     implicit request =>

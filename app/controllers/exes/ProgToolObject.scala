@@ -33,9 +33,9 @@ object ProgToolObject extends IdExToolObject("prog", "Programmierung", ToolState
 
   override def newExFormRoute: Call = controllers.exes.routes.ProgController.newExerciseForm()
 
-  //  override def exportExesRoute: Call = controllers.exes.routes.ProgController.exportExercises()
+  override def exportExesRoute: Call = controllers.exes.routes.ProgController.exportExercises()
 
-  //  override def importExesRoute: Call = controllers.exes.routes.ProgController.importExercises()
+  override def importExesRoute: Call = controllers.exes.routes.ProgController.importExercises()
 
   //  override def jsonSchemaRoute: Call = controllers.exes.routes.ProgController.getJSONSchemaFile()
 
