@@ -13,3 +13,8 @@ build:
     stage: build
     script:
     - sbt dist
+
+cache:
+    paths:
+    - ~/.ivy2
+    - ~/.sbt
