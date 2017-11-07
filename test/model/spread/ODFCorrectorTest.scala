@@ -1,10 +1,10 @@
-package model
+package model.spread
 
 import java.nio.file.{Path, Paths}
 
-import model.CommonUtils.RicherTry
-import model.ODFCorrector._
-import model.SpreadUtils._
+import model.core.CommonUtils.RicherTry
+import model.spread.ODFCorrector._
+import model.spread.SpreadUtils._
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert._
 import org.junit.{Assert, Test}
@@ -22,7 +22,7 @@ class ODFCorrectorTest {
 
   private val schullandheimDir: Path = Paths.get("test/resources/spreadsheet/schullandheim")
 
-  private val schullandheimMuster: Path = Paths.get(schullandheimDir.toString, "Aufgabe_Schullandheim_Muster.ods")
+  private val schullandheimMuster     : Path = Paths.get(schullandheimDir.toString, "Aufgabe_Schullandheim_Muster.ods")
   private val schullandheimTeilLoesung: Path = Paths.get(schullandheimDir.toString, "Aufgabe_Schullandheim.ods")
 
 
@@ -34,14 +34,14 @@ class ODFCorrectorTest {
   }
 
   @Test def testCloseDocument(): Unit = loadDocument(standardDocument) match {
-    case Failure(e) => Assert.fail(e.getMessage)
+    case Failure(e)        => Assert.fail(e.getMessage)
     case Success(document) =>
       assertNotNull(document)
       closeDocument(document)
   }
 
   @Test def testCompareCellFormulas(): Unit = loadDocument(schullandheimMuster).zip(loadDocument(schullandheimTeilLoesung)) match {
-    case Failure(e) => Assert.fail(e.getMessage)
+    case Failure(e)                 => Assert.fail(e.getMessage)
     case Success((muster, teilLsg)) =>
 
       compareCellFormulas(getCell(muster, 2, 7, 15), getCell(teilLsg, 2, 7, 15)) shouldBe(true, formulaCorrect)
@@ -57,8 +57,8 @@ class ODFCorrectorTest {
   }
 
   @Test def testCompareCellValues() {
-    val muster = loadDocument(schullandheimMuster)
-    val teilLsg = loadDocument(schullandheimTeilLoesung)
+//    val muster = loadDocument(schullandheimMuster)
+//    val teilLsg = loadDocument(schullandheimTeilLoesung)
 
     //    assertThat(compareCellValues(getCell(muster, 2, 7, 15), getCell(teilLsg, 2, 7, 15)),
     //        equalTo(StringConsts.COMMENT_VALUE_CORRECT))
@@ -74,7 +74,7 @@ class ODFCorrectorTest {
   }
 
   @Test def testCompareNumberOfChartsInDocument(): Unit = loadDocument(schullandheimMuster).zip(loadDocument(schullandheimTeilLoesung)) match {
-    case Failure(e) => Assert.fail(e.getMessage)
+    case Failure(e)                  => Assert.fail(e.getMessage)
     case Success((muster, solution)) =>
       //    assertThat(compareNumberOfChartsInDocument(muster, muster),
       //        equalTo(StringConsts.COMMENT_CHART_NUM_CORRECT))
@@ -95,7 +95,7 @@ class ODFCorrectorTest {
   }
 
   @Test def testGetCellByPosition(): Unit = loadDocument(schullandheimMuster) match {
-    case Failure(e) => Assert.fail(e.getMessage)
+    case Failure(e)      => Assert.fail(e.getMessage)
     case Success(muster) =>
       val musterSheet = getSheetByIndex(muster, 0)
       assertThat(getCellByPosition(musterSheet, 0, 0).get.getStringValue, equalTo(musterSheet.getCellByPosition("A1").getStringValue))
@@ -107,7 +107,7 @@ class ODFCorrectorTest {
   }
 
   @Test def testGetColoredRange(): Unit = loadDocument(schullandheimMuster) match {
-    case Failure(e) => Assert.fail(e.getMessage)
+    case Failure(e)      => Assert.fail(e.getMessage)
     case Success(muster) =>
       assertTrue(getColoredRange(muster.getSheetByIndex(1)).isEmpty)
 
@@ -206,7 +206,7 @@ class ODFCorrectorTest {
   }
 
   @Test def testSetCellStyle(): Unit = loadDocument(standardDocument) match {
-    case Failure(e) => Assert.fail(e.getMessage)
+    case Failure(e)        => Assert.fail(e.getMessage)
     case Success(document) =>
       val cell = document.getSheetByIndex(0).getCellByPosition("B2")
       val font = new Font("Arial", FontStyle.BOLD, 11)

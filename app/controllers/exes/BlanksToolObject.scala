@@ -20,7 +20,7 @@ object BlanksToolObject extends IdExToolObject("blanks", "Lueckentext", ToolStat
 
   // Admin
 
-  val restHeaders: List[String] = List.empty
+  override val restHeaders: List[String] = List.empty
 
   override def adminIndexRoute: Call = controllers.exes.routes.BlanksController.adminIndex()
 

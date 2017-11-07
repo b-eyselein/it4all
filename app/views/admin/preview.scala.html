@@ -1,4 +1,4 @@
-@(user: model.User, exercises: Seq[_ <: model.core.HasBaseValues], toolObject: model.core.tools.ExToolObject)
+@(user: model.User, exercises: Seq[_ <: model.core.CompleteEx[_]], toolObject: model.core.tools.ExToolObject)
 
 @scripts = {
     <script src="@routes.Assets.versioned("javascripts/admin.js")"></script>
@@ -31,13 +31,13 @@
             </thead>
             <tbody>
             @for(exercise <- exercises) {
-                <tr id="tr1_@exercise.id">
-                    <td>@exercise.id</td>
-                    <td>@exercise.state</td>
-                    <td>@exercise.title</td>
-                    <td>@exercise.author</td>
+                <tr id="tr1_@exercise.ex.id">
+                    <td>@exercise.ex.id</td>
+                    <td>@exercise.ex.state</td>
+                    <td>@exercise.ex.title</td>
+                    <td>@exercise.ex.author</td>
 
-                    @views.html.core.helperTemplates.stringLen(exercise.text, 40)
+                    @views.html.core.helperTemplates.stringLen(exercise.ex.text, 40)
 
                     @exercise.renderRest
                 </tr>

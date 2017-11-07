@@ -1,7 +1,7 @@
 @(user: model.User, exercise: model.uml.UmlExercise)
 
 @scripts = {
-    <script src="@controllers.routes.Assets.versioned("javascripts/lib/ace/src/ace.js")"></script>
+    <script src="@controllers.routes.Assets.versioned("lib/ace/src/ace.js")"></script>
     <script src="@controllers.routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
     <script src="@controllers.routes.Assets.versioned("javascripts/uml/exerciseCreation.js")"></script>
     <script>
@@ -101,7 +101,7 @@
                             ]
                             }
                         </div>
-                        <textarea hidden name="learnerSolution" id="learnerSolution"></textarea>
+                        <textarea title="hidden" hidden name="learnerSolution" id="learnerSolution"></textarea>
                     </div>
                 </div>
             </div>

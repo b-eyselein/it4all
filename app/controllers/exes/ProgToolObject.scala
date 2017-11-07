@@ -25,7 +25,7 @@ object ProgToolObject extends IdExToolObject("prog", "Programmierung", ToolState
 
   // Admin
 
-  val restHeaders: List[String] = List("Funktionsname", "Anzahl Inputs")
+  override val restHeaders: List[String] = List("Funktionsname", "Anzahl Inputs")
 
   override def adminIndexRoute: Call = controllers.exes.routes.ProgController.adminIndex()
 

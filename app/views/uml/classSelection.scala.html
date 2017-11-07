@@ -45,7 +45,7 @@
 
         <hr>
 
-        <form action="@controllers.exes.routes.UmlController.correct(exercise.id, model.uml.UmlExPart.CLASS_SELECTION.toString)" method="post"
+        <form action="@controllers.exes.routes.UmlController.correct(exercise.id, model.uml.UmlEnums.UmlExPart.CLASS_SELECTION.toString)" method="post"
         onsubmit="return prepareFormForSubmitting();">
             <input type="hidden" class="form-control" name="@model.core.StringConsts.FORM_VALUE" id="@model.core.StringConsts.FORM_VALUE" required>
             <button class="btn btn-primary btn-block">@btnText</button>

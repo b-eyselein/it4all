@@ -21,7 +21,7 @@ object SqlToolObject extends IdExToolObject("sql", "Sql", ToolState.LIVE, "Szena
 
   // Admin
 
-  val restHeaders: List[String] = List.empty
+  override val restHeaders: List[String] = List.empty
 
   override def adminIndexRoute: Call = controllers.exes.routes.SqlController.adminIndex()
 

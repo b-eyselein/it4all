@@ -3,7 +3,7 @@ package controllers.exes
 import model.Enums.ToolState
 import model.core.HasBaseValues
 import model.core.tools.IdPartExToolObject
-import model.uml.UmlExPart
+import model.uml.UmlEnums.UmlExPart
 import play.api.mvc.Call
 
 object UmlToolObject extends IdPartExToolObject("uml", "Uml", ToolState.LIVE) {
@@ -26,7 +26,7 @@ object UmlToolObject extends IdPartExToolObject("uml", "Uml", ToolState.LIVE) {
 
   // Admin
 
-  val restHeaders: List[String] = List("Klassenwahl", "Diagrammzeichnen")
+  override val restHeaders: List[String] = List("Klassenwahl", "Diagrammzeichnen", "Lösung")
 
   override def adminIndexRoute: Call = controllers.exes.routes.UmlController.adminIndex()
 

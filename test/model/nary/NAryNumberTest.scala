@@ -1,11 +1,8 @@
 package model.nary
 
+import model.nary.NumberBase._
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.assertThat
-
-import org.junit.Test
-
-import com.google.common.collect.ImmutableMap
 
 class NAryNumberTest {
 
@@ -15,19 +12,25 @@ class NAryNumberTest {
     87 -> Map(HEXADECIMAL -> "57", OCTAL -> "127", BINARY -> "0101 0111"),
     63 -> Map(HEXADECIMAL -> "3f", OCTAL -> "77", BINARY -> "0011 1111"))
 
-  def checkBase(number: NAryNumber, base: NumberBase) = assertThat("Basis von " + number + " sollte " + base + " sein!", number.base, equalTo(base))
+  def checkBase(number: NAryNumber, base: NumberBase) {
+    assertThat("Basis von " + number + " sollte " + base + " sein!", number.base, equalTo(base))
+  }
 
-  def checkPaddedString(toPad: String, expected: String) = assertThat("Expecting that padded binary string of " + toPad + " is " + expected, NAryNumber.padBinary(toPad),
-    equalTo(expected))
+  def checkPaddedString(toPad: String, expected: String) {
+    assertThat("Expecting that padded binary string of " + toPad + " is " + expected, NAryNumber.padBinary(toPad),
+      equalTo(expected))
+  }
 
-  def checkParsingWithoutMark(decValue: Int, base: NumberBase, toParse: String) = {
+  def checkParsingWithoutMark(decValue: Int, base: NumberBase, toParse: String) {
     val posLowerHex = NAryNumber.parse(toParse, base)
     checkBase(posLowerHex, base)
     checkValue(posLowerHex, decValue)
   }
 
-  def checkValue(posNary: NAryNumber, decimalvalue: Int) = assertThat("Dezimalwert von " + posNary + " sollte " + decimalvalue + " sein!", posNary.decimalValue,
-    equalTo(decimalvalue))
+  def checkValue(posNary: NAryNumber, decimalvalue: Int) {
+    assertThat("Dezimalwert von " + posNary + " sollte " + decimalvalue + " sein!", posNary.decimalValue,
+      equalTo(decimalvalue))
+  }
 
   //  @Test
   //  public void testAddNArys() {

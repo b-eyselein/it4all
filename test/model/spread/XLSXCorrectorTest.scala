@@ -1,17 +1,17 @@
-package model
+package model.spread
 
 import java.nio.file.{Files, Path, Paths}
 
-import model.CommonUtils.RicherTry
-import model.StringConsts._
-import model.SpreadUtils._
-import model.XLSXCorrectorTest._
+import model.core.CommonUtils.RicherTry
+import model.core.StringConsts._
+import model.spread.SpreadUtils._
+import model.spread.XLSXCorrector._
+import model.spread.XLSXCorrectorTest._
 import org.apache.poi.ss.usermodel.{Cell, Sheet, Workbook}
 import org.apache.poi.xssf.usermodel.XSSFCell
 import org.junit.Assert._
 import org.junit._
 import org.scalatest.Matchers._
-import XLSXCorrector._
 
 import scala.util.{Failure, Success}
 

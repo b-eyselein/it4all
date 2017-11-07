@@ -1,6 +1,7 @@
 package model.blanks
 
 import model.Enums.ExerciseState
+import model.core.CompleteEx
 import model.core.StringConsts._
 import model.core.result.SuccessType
 import model.{Exercise, TableDefs}
@@ -20,6 +21,8 @@ object BlanksExerciseReads {
     ) ((i, ti, a, te, s) => BlanksExercise(i, ti, a, te.mkString, ExerciseState.valueOf(s)))
 }
 
+case class BlanksCompleteEx(ex: BlanksExercise) extends CompleteEx[BlanksExercise]
+
 case class BlanksExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState) extends Exercise(i, ti, a, te, s) {
 
   val objects: List[BlankObject] = List(
@@ -32,7 +35,6 @@ case class BlanksExercise(i: Int, ti: String, a: String, te: String, s: Exercise
 
   def correct(inputs: List[String]): List[SuccessType] = for {(inp, obj) <- inputs zip objects}
     yield if (inp == obj.solution) SuccessType.COMPLETE else SuccessType.NONE
-
 
   def render = new Html(objects.map(_.render).mkString("\n"))
 

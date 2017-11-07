@@ -1,15 +1,15 @@
 package model.spread
 
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import model.Enums.ExerciseState
+import model.core.CompleteEx
+import model.core.StringConsts._
 import model.{Exercise, TableDefs}
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{JsPath, Reads}
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
-import model.core.StringConsts._
 
 object SpreadExerciseReads {
   implicit def spreadExReads: Reads[SpreadExercise] = (
@@ -23,11 +23,11 @@ object SpreadExerciseReads {
     ) ((i, ti, a, te, s, sa, tem) => SpreadExercise(i, ti, a, te.mkString, ExerciseState.valueOf(s), sa, tem))
 }
 
-case class SpreadExercise(i: Int, ti: String, a: String, te: String, es: ExerciseState,
-                          @JsonProperty(required = true) sampleFileName: String,
-                          @JsonProperty(required = true) templateFilename: String)
-  extends Exercise(i, ti, a, te, es) {
+case class SpreadCompleteEx(ex: SpreadExercise) extends CompleteEx[SpreadExercise]
 
+case class SpreadExercise(i: Int, ti: String, a: String, te: String, es: ExerciseState,
+                          sampleFileName: String, templateFilename: String)
+  extends Exercise(i, ti, a, te, es) {
 
   override def renderRest: Html = new Html(s"""<td>$sampleFileName</td><td>$templateFilename</td>""")
 }

@@ -1,9 +1,8 @@
-package model
+package model.spread
 
+import model.spread.SpreadUtils._
 import org.junit.Test
 import org.scalatest.Matchers._
-
-import SpreadUtils._
 
 class SpreadUtilsTest {
 

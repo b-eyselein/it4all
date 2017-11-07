@@ -25,7 +25,7 @@ object SpreadToolObject extends IdPartExToolObject("spread", "Tabellenkalkulatio
 
   // Admin
 
-  val restHeaders: List[String] = List("Musterloesungsdatei", "Vorlagendatei")
+  override val restHeaders: List[String] = List("Musterloesungsdatei", "Vorlagendatei")
 
   override def adminIndexRoute: Call = controllers.exes.routes.SpreadController.adminIndex()
 

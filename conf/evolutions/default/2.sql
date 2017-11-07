@@ -34,12 +34,6 @@ ON DUPLICATE KEY UPDATE std_role = VALUES(std_role);
 #   (7, 1, 'Erstellen Sie das Listenelement für Volkswagen. Geben Sie diesem Element die Klasse "list-group-item".',
 #    '/html/body//ul/li[4]', 'class=list-group-item', 'Volkswagen');
 
-# INSERT INTO xml_exercises (id, title, author, ex_text, ex_state, exercise_type, root_node, ref_file_content) VALUES
-#   (1, 'Party', 'bje40dc', 'Erstellen Sie zu dieser DTD ein passendes XML-Dokument.', 'ACCEPTED', 'XML_DTD', 'party',
-#    'TODO'),
-#   (2, 'Vorlesung', 'bje40dc', 'Erstellen Sie zu dieser DTD ein passendes XML-Dokument.', 'ACCEPTED', 'XML_DTD',
-#    'lecture', 'TODO');
-
 # --- !Downs
 
 DELETE FROM xml_exercises;
@@ -58,7 +52,7 @@ DELETE FROM spread_exercises;
 
 DELETE FROM sql_exercises;
 
-DELETE FROM sql_scenario;
+DELETE FROM sql_scenarioes;
 
 DELETE FROM questions;
 

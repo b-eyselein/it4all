@@ -53,11 +53,13 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   override def solForm: Form[StringSolution] = ???
 
+  // Yaml
+
+  override type CompEx = ProgCompleteEx
+
+  override implicit val yamlFormat: YamlFormat[ProgCompleteEx] = null
+
   // db
-
-  override type DbType = ProgExercise
-
-  override implicit val yamlFormat: YamlFormat[ProgExercise] = null
 
   override type TQ = repo.ProgExercisesTable
 
@@ -68,13 +70,15 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
     PYTHON_3 -> new PythonCorrector()
   )
 
-  override def correctEx(sol: StringSolution, exercise: Option[ProgExercise], user: User): Try[CompleteResult[ProgEvaluationResult]] = ???
 
   def getDeclaration(lang: String): EssentialAction = withUser { _ => implicit request => Ok(AvailableLanguages.byName(lang).get.declaration) }
 
-  override def renderExercise(user: User, exercise: ProgExercise): Html = {
-    views.html.core.exercise2Rows.render(user, ProgToolObject, EX_OPTIONS, exercise, views.html.programming.progExRest.render(exercise), AvailableLanguages.stdLang.declaration)
-  }
+  override def correctEx(sol: StringSolution, exercise: ProgCompleteEx, user: User): Try[CompleteResult[ProgEvaluationResult]] =
+    ???
+
+  override def renderExercise(user: User, exercise: ProgCompleteEx): Html =
+    views.html.core.exercise2Rows.render(user, ProgToolObject, EX_OPTIONS,
+      exercise.ex, views.html.programming.progExRest.render(exercise.ex), AvailableLanguages.stdLang.declaration)
 
   override def renderExesListRest: Html = Html("")
 

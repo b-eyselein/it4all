@@ -26,7 +26,9 @@ object BaseExerciseController {
   val STEP = 10
 }
 
-abstract class BaseExerciseController(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository, val toolObject: ExToolObject)(implicit ec: ExecutionContext)
+abstract class BaseExerciseController[B <: HasBaseValues]
+(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository, val toolObject: ExToolObject)
+(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
   // Reading solution from Request
@@ -35,23 +37,25 @@ abstract class BaseExerciseController(cc: ControllerComponents, val dbConfigProv
 
   def solForm: Form[SolutionType]
 
-  // Real type to workwith
+  // Reading Yaml
 
-  type DbType <: HasBaseValues
+  type CompEx <: CompleteEx[B]
+
+  implicit val yamlFormat: YamlFormat[CompEx]
 
   // Database queries
 
   import profile.api._
 
-  type TQ <: repo.HasBaseValuesTable[DbType]
+  type TQ <: repo.HasBaseValuesTable[B]
 
   def tq: TableQuery[TQ]
 
   def numOfExes: Future[Int] = db.run(tq.size.result)
 
-  def allExes: Future[Seq[DbType]] = db.run(tq.result)
+  def completeExById(id: Int): Future[Option[CompEx]] = ???
 
-  def exById(id: Int): Future[Option[DbType]] = db.run(tq.findBy(_.id).apply(id).result.headOption)
+  def completeExes: Future[Seq[CompEx]] = ???
 
   def statistics: Future[Html] = numOfExes.map(num => Html(s"<li>Es existieren insgesamt $num Aufgaben</li>"))
 
@@ -82,20 +86,20 @@ abstract class BaseExerciseController(cc: ControllerComponents, val dbConfigProv
     implicit request => statistics.map(stats => Ok(views.html.admin.adminMain.render(user, stats, toolObject, new Html(""))))
   }
 
-  implicit val yamlFormat: YamlFormat[DbType]
 
   def importExercises: EssentialAction = futureWithAdmin { admin =>
     implicit request =>
       val file = Paths.get("conf", "resources", toolObject.exType + ".yaml").toFile
-      val exes: Seq[DbType] = Source.fromFile(file).mkString.parseYamls.map(_.convertTo[DbType])
-
-      Future.sequence(exes.map(ex => db.run(tq insertOrUpdate ex)))
-        .map(res => Ok(views.html.admin.preview.render(admin, exes, toolObject)))
+      val read = Source.fromFile(file).mkString.parseYamls.map(_.convertTo[CompEx])
+      saveRead(read).map(_ => Ok(views.html.admin.preview.render(admin, read, toolObject)))
   }
+
+  protected def saveRead(read: Seq[CompEx]): Future[Seq[Int]] = ???
 
   def exportExercises: EssentialAction = futureWithAdmin { admin =>
     implicit request =>
-      allExes.map(exes => Ok(views.html.admin.export.render(admin, exes.mkString)))
+      // TODO: scalarStyle = Folded if fixed...
+      completeExes.map(exes => Ok(views.html.admin.export.render(admin, exes.map(_.toYaml.print(Auto)) mkString "---\n")))
   }
 
 
@@ -112,7 +116,7 @@ abstract class BaseExerciseController(cc: ControllerComponents, val dbConfigProv
       //        case 1     => Ok("TODO!")
       //        case other => BadRequest("")
       //      }
-      //      exById(id).map {
+      //      completeExById(id).map {
       //        case None           => BadRequest(Json.obj("message" -> "No such file exists..."))
       //        case Some(exercise) =>
       //          exercise.state =
@@ -125,9 +129,9 @@ abstract class BaseExerciseController(cc: ControllerComponents, val dbConfigProv
   def deleteExercise(id: Int): EssentialAction = futureWithAdmin { _ =>
     implicit request =>
       db.run(tq.filter(_.id === id).delete).map {
-        case 0     => NotFound(Json.obj("message" -> s"Die Aufgabe mit ID $id existiert nicht und kann daher nicht geloescht werden!"))
-        case 1     => Ok(Json.obj("id" -> id))
-        case other => BadRequest(Json.obj("message" -> s"Es gab einen internen Fehler beim Loeschen der Aufgabe mit der ID $id"))
+        case 0 => NotFound(Json.obj("message" -> s"Die Aufgabe mit ID $id existiert nicht und kann daher nicht geloescht werden!"))
+        case 1 => Ok(Json.obj("id" -> id))
+        case _ => BadRequest(Json.obj("message" -> s"Es gab einen internen Fehler beim Loeschen der Aufgabe mit der ID $id"))
       }
   }
 
@@ -146,15 +150,15 @@ abstract class BaseExerciseController(cc: ControllerComponents, val dbConfigProv
   }
 
   def editExerciseForm(id: Int): EssentialAction = futureWithAdmin { admin =>
-    implicit request => exById(id).map(ex => Ok(views.html.admin.editExForm(admin, toolObject, ex, renderEditRest(ex))))
+    implicit request => completeExById(id).map(ex => Ok(views.html.admin.editExForm(admin, toolObject, ex, renderEditRest(ex))))
   }
 
   def exercises: EssentialAction = futureWithAdmin { admin =>
-    implicit request => allExes.map(exes => Ok(views.html.admin.exerciseList.render(admin, exes, toolObject)))
+    implicit request => completeExes.map(exes => Ok(views.html.admin.exerciseList.render(admin, exes, toolObject)))
   }
 
   // FIXME: make abstract...
-  protected def renderExListRest(b: DbType): Html = new Html("")
+  protected def renderExListRest(b: B): Html = new Html("")
 
   def newExerciseForm: EssentialAction = withAdmin { admin =>
     // FIXME
@@ -172,24 +176,24 @@ abstract class BaseExerciseController(cc: ControllerComponents, val dbConfigProv
 
   def index(page: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
-      allExes.map(allExes => {
+      completeExes.map(allExes => {
         val exes = allExes.slice(Math.max(0, (page - 1) * STEP), Math.min(page * STEP, allExes.size))
         Ok(renderExes(user, exes, allExes.size))
       })
   }
 
   // FIXME: refactor...
-  protected def renderExes(user: User, exes: Seq[DbType], allExesSize: Int): Html =
+  protected def renderExes(user: User, exes: Seq[CompEx], allExesSize: Int): Html =
     views.html.core.exesList.render(user, exes, renderExesListRest, toolObject, allExesSize / STEP + 1)
 
   protected def renderExesListRest: Html = new Html("")
 
   // Helper methods
 
-  def renderEditRest(exercise: Option[DbType]): Html = new Html("")
+  def renderEditRest(exercise: Option[CompEx]): Html = new Html("")
 
-  def renderExercises(exercises: List[DbType]): Html = new Html("") //views.html.admin.exercisesTable.render(exercises, toolObject)
+  def renderExercises(exercises: List[CompEx]): Html = new Html("") //views.html.admin.exercisesTable.render(exercises, toolObject)
 
-  def renderExesCreated(admin: User, exercises: List[DbType]): Html = views.html.admin.preview.render(admin, exercises, toolObject)
+  //  def renderExesCreated(admin: User, exercises: List[B]): Html = views.html.admin.preview.render(admin, exercises, toolObject)
 
 }

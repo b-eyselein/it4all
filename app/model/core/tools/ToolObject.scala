@@ -2,7 +2,6 @@ package model.core.tools
 
 import java.nio.file.{Path, Paths}
 
-import model.Exercise
 import model.Enums.ToolState
 import model.core.HasBaseValues
 import play.api.mvc.Call
@@ -30,7 +29,7 @@ abstract class ExToolObject(e: String, t: String, s: ToolState, val pluralName: 
 
   val rootDir: String = "data"
 
-  val SAMPLE_SUB_DIRECTORY = "samples"
+  val SAMPLE_SUB_DIRECTORY    = "samples"
   val SOLUTIONS_SUB_DIRECTORY = "solutions"
 
   val resourcesFolder: Path = Paths.get("conf", "resources", exType)
@@ -41,13 +40,13 @@ abstract class ExToolObject(e: String, t: String, s: ToolState, val pluralName: 
 
   def solDirForUser(username: String): Path = Paths.get(solutionDir.toString, username)
 
-  def getSampleDirForExercise(exerciseType: String, exercise: Exercise): Path =
+  def getSampleDirForExercise(exerciseType: String, exercise: HasBaseValues): Path =
     Paths.get(sampleDir.toString, String.valueOf(exercise.id))
 
-  def getSolDirForExercise(username: String, exercise: Exercise): Path =
+  def getSolDirForExercise(username: String, exercise: HasBaseValues): Path =
     Paths.get(solDirForUser(username).toString, exType, String.valueOf(exercise.id))
 
-  def getSolFileForExercise(username: String, ex: Exercise, fileName: String, fileExt: String): Path =
+  def getSolFileForExercise(username: String, ex: HasBaseValues, fileName: String, fileExt: String): Path =
     Paths.get(getSolDirForExercise(username, ex).toString, s"$fileName.$fileExt")
 
   // User

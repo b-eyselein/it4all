@@ -2,52 +2,19 @@ package model.web
 
 import com.google.common.base.Splitter
 import model.Enums.ExerciseState
-import model.core.ExTag
-import model.core.StringConsts._
+import model.core.{CompleteEx, ExTag}
+import model.web.HtmlTaskHelper._
 import model.{Exercise, TableDefs}
-import net.jcazevedo.moultingyaml._
 import org.openqa.selenium.{By, SearchContext}
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
-
+import controllers.exes.WebController._
 import scala.collection.JavaConverters._
-import scala.language.implicitConversions
 
 object HtmlTaskHelper {
   val ATTRS_JOIN_STR          = ";"
   val ATTR_SPLITTER: Splitter = Splitter.on(ATTRS_JOIN_STR).omitEmptyStrings()
-}
-
-object WebExYamlProtocol extends DefaultYamlProtocol {
-
-  implicit def string2YamlString(str: String): YamlString = YamlString(str)
-
-  implicit object WebExYamlFormat extends YamlFormat[WebExercise] {
-    override def write(ex: WebExercise): YamlValue = YamlObject(
-      YamlString(ID_NAME) -> YamlNumber(ex.id),
-      YamlString(TITLE_NAME) -> YamlString(ex.title),
-      YamlString(AUTHOR_NAME) -> YamlString(ex.author),
-      YamlString(TEXT_NAME) -> YamlString(ex.text),
-      YamlString(STATE_NAME) -> YamlString(ex.state.name),
-
-      // Exercise specific values
-      // FIXME: htmlTasks: List[HtmlTask], jsTasks: List[JsTask]...
-      YamlString(HTML_TEXT_NAME) -> YamlString(ex.htmlText),
-      YamlString(JS_TEXT_NAME) -> YamlString(ex.jsText)
-    )
-
-    override def read(yaml: YamlValue): WebExercise =
-      yaml.asYamlObject.getFields(ID_NAME, TITLE_NAME, AUTHOR_NAME, TEXT_NAME, STATE_NAME, HTML_TEXT_NAME, JS_TEXT_NAME) match {
-        case Seq(YamlNumber(id), YamlString(title), YamlString(author), YamlString(text), YamlString(state), YamlString(htmlText), YamlString(jsText)) =>
-          WebExercise(id.intValue, title, author, text, ExerciseState.valueOf(state), htmlText, jsText)
-
-        case other => /* FIXME: Fehlerbehandlung... */
-          other.foreach(value => println(value + "\n"))
-          deserializationError("WebExercise expected!")
-      }
-  }
-
 }
 
 class WebExTag(part: String, hasExes: Boolean) extends ExTag {
@@ -57,6 +24,18 @@ class WebExTag(part: String, hasExes: Boolean) extends ExTag {
   override def buttonContent: String = part
 
   override def title = s"Diese Aufgabe besitzt ${if (!hasExes) "k" else ""}einen $part-Teil"
+
+}
+
+case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlTask], jsTasks: Seq[JsTask]) extends CompleteEx[WebExercise] {
+
+  override def renderRest: Html = new Html(
+    s"""<td>${htmlTasks.size} / ${jsTasks.size}</td>
+       |<td>TODO!</td>""".stripMargin)
+
+   override def tags: List[WebExTag] = List(
+     new WebExTag(HTML_TYPE, htmlTasks.nonEmpty), new WebExTag(JS_TYPE, jsTasks.nonEmpty)
+   )
 
 }
 
@@ -71,7 +50,10 @@ abstract class WebTask(val id: Int, val exerciseId: Int, val text: String, val x
 
 case class HtmlTask(taskId: Int, exId: Int, t: String, x: String, attributes: String, textContent: String) extends WebTask(taskId, exId, t, x) {
 
-  def getAttributes: List[Attribute] = HtmlTaskHelper.ATTR_SPLITTER.splitToList(attributes).asScala.map(Attribute.fromString).toList
+  def this(taskId: Int, exId: Int, t: String, x: String, attrs: Seq[Attribute], textContent: String) =
+    this(taskId, exId, t, x, attrs.map(_.forDB).mkString(ATTRS_JOIN_STR), textContent)
+
+  def getAttributes: List[Attribute] = ATTR_SPLITTER.splitToList(attributes).asScala.map(Attribute.fromString).toList
 
 }
 

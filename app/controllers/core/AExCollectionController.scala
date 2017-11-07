@@ -14,7 +14,7 @@ import scala.util.Try
 
 abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E], R <: EvaluationResult]
 (cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository, t: ExToolObject)(implicit ec: ExecutionContext)
-  extends BaseExerciseController(cc, dbcp, r, t) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
+  extends BaseExerciseController[C](cc, dbcp, r, t) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
   // Admin
 

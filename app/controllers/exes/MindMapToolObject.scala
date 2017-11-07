@@ -20,7 +20,7 @@ object MindMapToolObject extends IdExToolObject("mindmap", "Mindmap", ToolState.
 
   // Admin
 
-  val restHeaders: List[String] = List.empty
+  override val restHeaders: List[String] = List.empty
 
   override def adminIndexRoute: Call = controllers.exes.routes.MindmapController.adminIndex()
 

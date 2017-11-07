@@ -1,6 +1,7 @@
 package model.mindmap
 
 import model.Enums.ExerciseState
+import model.core.CompleteEx
 import model.core.StringConsts._
 import model.{Exercise, TableDefs}
 import play.api.db.slick.HasDatabaseConfigProvider
@@ -17,6 +18,8 @@ object MindmapExerciseReads {
       (JsPath \ STATE_NAME).read[String]
     ) ((i, ti, a, te, s) => MindmapExercise(i, ti, a, te.mkString, ExerciseState.valueOf(s)))
 }
+
+case class MindmapCompleteEx(ex: MindmapExercise) extends CompleteEx[MindmapExercise]
 
 case class MindmapExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState) extends Exercise(i, ti, a, te, s)
 

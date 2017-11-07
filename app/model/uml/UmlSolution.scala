@@ -1,5 +1,6 @@
 package model.uml
 
+import model.uml.UmlEnums.{Multiplicity, UmlAssociationType, UmlClassType}
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json._
 
@@ -19,17 +20,17 @@ object UmlSolution {
     val sqrt = Math.round(Math.sqrt(classes.size))
 
     classes.zipWithIndex.map {
-      case (clazz, i) => s"""
-                            |{
-                            |  name: "${clazz.name}",
-                            |  classType: "${clazz.classType.toString.toUpperCase}",
-                            |  attributes: [],
-                            |  methods: [],
-                            |  position: {
-                            |    x: ${(i / sqrt) * GAP + OFFSET},
-                            |    y: ${(i % sqrt) * GAP + OFFSET}
-                            |  }
-                            |}""".stripMargin
+      case (clazz, i) =>
+        s"""{
+           |  name: "${clazz.name}",
+           |  classType: "${clazz.classType.toString.toUpperCase}",
+           |  attributes: [],
+           |  methods: [],
+           |  position: {
+           |    x: ${(i / sqrt) * GAP + OFFSET},
+           |    y: ${(i % sqrt) * GAP + OFFSET}
+           |  }
+           |}""".stripMargin
     }.mkString(",")
   }
 
@@ -44,18 +45,18 @@ object UmlSolution {
       (JsPath \ "name").read[String] and
       (JsPath \ "attributes").read[List[String]] and
       (JsPath \ "methods").read[List[String]]) (
-    (c, n, a, m) => UmlClass(UmlClassType.fromString(c).getOrElse(Class), n, a, m))
+    (c, n, a, m) => UmlClass(UmlClassType.valueOf(c), n, a, m))
 
   implicit lazy val umlAssocReads: Reads[UmlAssociation] = (
     (JsPath \ "assocType").read[String] and
       (JsPath \ "start").read[UmlAssociationEnd] and
       (JsPath \ "end").read[UmlAssociationEnd]) (
-    (t, s, e) => UmlAssociation(UmlAssociationType.getByString(t).getOrElse(Association), (s, e)))
+    (t, s, e) => UmlAssociation(UmlAssociationType.valueOf(t), (s, e)))
 
   implicit lazy val endsReads: Reads[UmlAssociationEnd] = (
     (JsPath \ "endName").read[String] and
       (JsPath \ "multiplicity").read[String]) (
-    (e, m) => UmlAssociationEnd(e, Multiplicity.getByString(m)))
+    (e, m) => UmlAssociationEnd(e, Multiplicity.valueOf(m)))
 
   implicit lazy val umlImplReads: Reads[UmlImplementation] = (
     (JsPath \ "subClass").read[String] and
@@ -65,14 +66,5 @@ object UmlSolution {
     case s: JsSuccess[UmlSolution] => Some(s.get)
     case e: JsError                => println(Json.prettyPrint(JsError.toJson(e))); None
   }
-
-  //  def readFromForm(form: DynamicForm): Option[UmlSolution] = {
-  //    val sentJson = form.get(StringConsts.FORM_VALUE)
-  //
-  //    JsonReader.validateJson(play.libs.Json.parse(sentJson), UmlController.SolutionSchemaNode) match {
-  //      case Success(_) => fromJson(sentJson)
-  //      case Failure(e) => None
-  //    }
-  //  }
 
 }

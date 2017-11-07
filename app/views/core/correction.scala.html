@@ -1,31 +1,31 @@
 @(typ: String, result: model.core.result.CompleteResult[_], resultAsHtml: Html, user: model.User, nextUrl: play.api.mvc.Call)
 
-    @main(typ, user) {
-        <div class="container-fluid">
+@main(typ, user) {
+    <div class="container-fluid">
 
-            <div class="container">
-                <div class="alert alert-success">
-                    Ihre L&ouml;sung wurde gespeichert. Sie k&ouml;nnen nun weitere <a href="@nextUrl">
-                    Aufgaben bearbeiten.</a>
-                </div>
-            </div>
-
-            <div class="row row-eq-height">
-                <div class="col-md-6">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Ihre L&ouml;sung</div>
-                        <div class="panel-body">@result.renderLearnerSolution</div>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Korrektur</div>
-                        <div class="panel-body">@resultAsHtml</div>
-                    </div>
-                </div>
-
+        <div class="container">
+            <div class="alert alert-success">
+                Ihre L&ouml;sung wurde gespeichert. Sie k&ouml;nnen nun weitere <a href="@nextUrl">
+                Aufgaben bearbeiten.</a>
             </div>
         </div>
-    }
+
+        <div class="row row-eq-height">
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Ihre L&ouml;sung</div>
+                    <div class="panel-body">@result.renderLearnerSolution</div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Korrektur</div>
+                    <div class="panel-body">@resultAsHtml</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+}
 

@@ -2,6 +2,7 @@ package model.ebnf
 
 import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty}
 import model.Enums.ExerciseState
+import model.core.CompleteEx
 import model.core.StringConsts._
 import model.ebnf.EbnfExerciseHelper._
 import model.{Exercise, TableDefs}
@@ -31,6 +32,8 @@ object EbnfExerciseReads {
     ) ((i, ti, a, te, s, terms) => EbnfExercise(i, ti, a, te.mkString, ExerciseState.valueOf(s), terms.mkString(termsJoinStr)))
 }
 
+case class EbnfCompleteEx(ex: EbnfExercise) extends CompleteEx[EbnfExercise]
+
 case class EbnfExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState,
                         @JsonProperty(required = true) terminals: String) extends Exercise(i, ti, a, te, s) {
 
@@ -39,7 +42,7 @@ case class EbnfExercise(i: Int, ti: String, a: String, te: String, s: ExerciseSt
   @JsonIgnore
   def getTerminalsForForm: String = getTerminals.map(t => s"'$t'").mkString(" ")
 
-  override def renderRest(/*fileResults: List[Try[Path]]*/): Html = new Html(s"<td>$terminals</td>")
+  override def renderRest: Html = new Html(s"<td>$terminals</td>")
 
 }
 

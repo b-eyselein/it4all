@@ -21,7 +21,7 @@ object EbnfToolObject extends IdExToolObject("ebnf", "Ebnf", ToolState.ALPHA) {
 
   // Admin
 
-  val restHeaders: List[String] = List("Terminalsymbole")
+  override val restHeaders: List[String] = List("Terminalsymbole")
 
   override def adminIndexRoute: Call = controllers.exes.routes.EbnfController.adminIndex()
 

@@ -11,54 +11,70 @@ htmlText: ""
 jsText: ""
 htmlTasks:
 - id: 1
-  text: |
-    "Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL '/assets/stylesheets/bootstrap.css'
-    zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut 'rel'!"
+  exerciseId: 1
+  text: >
+    Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL
+    '/assets/stylesheets/bootstrap.css' zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut 'rel'!
   xpathQuery: /html/head/link
   attributes:
-  - rel: stylesheet
-  - href: /assets/stylesheets/bootstrap.css
+  - key: rel
+    value: stylesheet
+  - key: href
+    value: /assets/stylesheets/bootstrap.css
   textContent: ""
 
 - id: 2
-  text: "Erstellen Sie eine passende h1-Überschrift, die das Wort 'Autohersteller' enthält."
+  exerciseId: 1
+  text: Erstellen Sie eine passende h1-Überschrift, die das Wort 'Autohersteller' enthält.
   xpathQuery: /html/body//h1
   attributes: []
   textContent: Autohersteller
 
 - id: 3
-  text: "Erstellen Sie eine ungeordnete Liste auf der Seite, die dann die einzelnen Hersteller enthalten wird. Geben Sie dieser Liste die Klasse 'list-group'."
+  exerciseId: 1
+  text: >
+    Erstellen Sie eine ungeordnete Liste auf der Seite, die dann die einzelnen Hersteller enthalten wird.
+    Geben Sie dieser Liste die Klasse 'list-group'.
   xpathQuery: /html/body//ul
   attributes:
-  - class: list-group
+  - key: class
+    value: list-group
   textContent: ""
 
 - id: 4
-  text: "Erstellen Sie das Listenelement für Audi. Geben Sie diesem Element die Klasse 'list-group-item'."
+  exerciseId: 1
+  text: Erstellen Sie das Listenelement für Audi. Geben Sie diesem Element die Klasse 'list-group-item'.
   xpathQuery: /html/body//ul/li[1]
   attributes:
-  - class: list-group-item
+  - key: class
+    value: list-group-item
   textContent: Audi
 
 - id: 5
-  text: "Erstellen Sie das Listenelement für BMW. Geben Sie diesem Element die Klasse 'list-group-item'."
+  exerciseId: 1
+  text: Erstellen Sie das Listenelement für BMW. Geben Sie diesem Element die Klasse 'list-group-item'.
   xpathQuery: /html/body//ul/li[2]
   attributes:
-  - class: list-group-item
+  - key: class
+    value: list-group-item
   textContent: BMW
 
 - id: 6
-  text: "Erstellen Sie das Listenelement für Mercedes. Geben Sie diesem Element die Klasse 'list-group-item'."
+  exerciseId: 1
+  text: Erstellen Sie das Listenelement für Mercedes. Geben Sie diesem Element die Klasse 'list-group-item'.
   xpathQuery: /html/body//ul/li[3]
   attributes:
-  - class: list-group-item
+  - key: class
+    value: list-group-item
   textContent: Mercedes
 
 - id: 7
-  text: "Erstellen Sie das Listenelement für Volkswagen. Geben Sie diesem Element die Klasse 'list-group-item'."
+  exerciseId: 1
+  text: Erstellen Sie das Listenelement für Volkswagen. Geben Sie diesem Element die Klasse 'list-group-item'.
   xpathQuery: /html/body//ul/li[4]
   attributes:
-  - class: list-group-item
+  - key: class
+    value: list-group-item
   textContent: Volkswagen
 
 jsTasks: []

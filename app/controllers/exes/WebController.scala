@@ -22,6 +22,13 @@ import scala.util.Try
 
 object WebController {
 
+
+  val HTML_TYPE = "html"
+
+  val JS_TYPE = "js"
+
+  val BASE_URL = "http://localhost:9000"
+
   val STANDARD_HTML: String =
     """<!doctype html>
       |<html>
@@ -59,47 +66,53 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   override def solForm: Form[StringSolution] = Solution.stringSolForm
 
+  // Yaml
+
+  override type CompEx = WebCompleteEx
+
+  override implicit val yamlFormat: YamlFormat[WebCompleteEx] = WebExYamlProtocol.WebExYamlFormat
+
   // db
-
-  // FIXME: Use some kind of that?
-  type ToRead = (WebExercise, List[HtmlTask], List[JsTask])
-
-  override type DbType = WebExercise
-
-  override implicit val yamlFormat: YamlFormat[WebExercise] = WebExYamlProtocol.WebExYamlFormat
 
   override type TQ = repo.WebExerciseTable
 
   override def tq = repo.webExercises
 
-  val HTML_TYPE = "html"
-  val JS_TYPE   = "js"
-
-  val BASE_URL = "http://localhost:9000"
-
   import profile.api._
 
-  //noinspection TypeAnnotation
-  def exAction(exId: Int) = repo.webExercises.findBy(_.id).apply(exId).result
+  private def dbRes2WebCompleteEx(dbRes: Seq[(WebExercise, Option[HtmlTask], Option[JsTask])]): Seq[WebCompleteEx] =
+    dbRes.groupBy(_._1)
+      .mapValues(_.unzip { case (ex, htmlTasks, jsTasks) => (htmlTasks, jsTasks) })
+      .map { case (ex, (htmlTasks, jsTasks)) => WebCompleteEx(ex, htmlTasks.flatten, jsTasks.flatten) }
+      .toSeq
 
-  override def allExes: Future[Seq[WebExercise]] = db.run(repo.webExercises.result)
+  private val completeExQuery = repo.webExercises
+    .joinLeft(repo.htmlTasks).on { case (ex, htmlTask) => ex.id === htmlTask.exerciseId }
+    .joinLeft(repo.jsTasks).on { case ((ex, htmlTask), jsTask) => ex.id === jsTask.exerciseId }
+    .map { case ((ex, htmlTask), jsTask) => (ex, htmlTask, jsTask) }
 
-  override def exById(id: Int): Future[Option[WebExercise]] = allExes.map(_.find(_.id == id))
+  override def completeExes: Future[Seq[WebCompleteEx]] = db.run(completeExQuery.result) map dbRes2WebCompleteEx
 
-  def exAndHtmlTasks(exId: Int): Future[(WebExercise, Seq[HtmlTask])] = db.run(exAction(exId).head zip repo.htmlTasksForEx(exId).result)
+  override def completeExById(id: Int): Future[Option[WebCompleteEx]] = completeExes map (_ find (_.ex.id == id))
 
-  def exAndJsTasks(exId: Int): Future[(WebExercise, Seq[JsTask])] = db.run(exAction(exId).head zip repo.jsTasksForEx(exId).result)
+  override def saveRead(read: Seq[WebCompleteEx]): Future[Seq[Int]] = Future.sequence(read.map(completeEx =>
+    db.run(repo.webExercises insertOrUpdate completeEx.ex)
+      andThen { case _ => completeEx.htmlTasks.map(ht => db.run(repo.htmlTasks insertOrUpdate ht)) }
+      andThen { case _ => completeEx.jsTasks.map(jt => db.run(repo.jsTasks insertOrUpdate jt)) }
+  ))
 
-  def getOldSolOrDefault(userName: String, exerciseId: Int): Future[String] =
+  private def getOldSolOrDefault(userName: String, exerciseId: Int): Future[String] =
     db.run(repo.webSolutions.filter(_.userName === userName).filter(_.exerciseId === exerciseId).result.headOption).map {
       case Some(solution) => solution.solution
       case None           => STANDARD_HTML
     }
 
-
-  def exRest(exerciseId: Int): EssentialAction = withAdmin { user =>
+  def exRest(exerciseId: Int): EssentialAction = futureWithAdmin { user =>
     implicit request =>
-      Ok(views.html.web.webExRest.render(user, null /*exById(exerciseId).get*/))
+      completeExById(exerciseId) map {
+        case Some(compEx) => Ok(views.html.web.webExRest.render(user, compEx.ex))
+        case None         => BadRequest("TODO")
+      }
   }
 
   def playground: EssentialAction = withUser { user => implicit request => Ok(views.html.web.webPlayground.render(user)) }
@@ -108,24 +121,29 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
     getOldSolOrDefault(username, exerciseId).map(sol => Ok(new Html(sol)))
   }
 
-  override def correctEx(user: User, learnerSolution: StringSolution, exercise: WebExercise, part: String): Try[CompleteResult[WebResult]] = {
-    val solutionUrl = BASE_URL + controllers.exes.routes.WebController.site(user.username, exercise.id).url
-    val newSol = WebSolution(exercise.id, user.username, learnerSolution.learnerSolution)
+  override def correctEx(user: User, learnerSolution: StringSolution, exercise: WebCompleteEx, part: String): Try[CompleteResult[WebResult]] = {
+    val solutionUrl = BASE_URL + controllers.exes.routes.WebController.site(user.username, exercise.ex.id).url
+    val newSol = WebSolution(exercise.ex.id, user.username, learnerSolution.learnerSolution)
 
     Await.result(db.run(repo.webSolutions.insertOrUpdate(newSol)), Duration(2, duration.SECONDS))
     val driver = new HtmlUnitDriver(true)
     driver.get(solutionUrl)
 
-    val tasks = Await.result(getTasks(exercise, part), Duration(2, duration.SECONDS))
+    val tasks = part match {
+      case HTML_TYPE => exercise.htmlTasks
+      case JS_TYPE   => exercise.jsTasks
+    }
 
     Try(new CompleteResult(learnerSolution.learnerSolution, tasks.map(task => WebCorrector.evaluate(task, driver)).toList))
   }
 
-  override protected def renderExercise(user: User, exercise: WebExercise, part: String): Future[Html] = {
-    val oldSolution = getOldSolOrDefault(user.username, exercise.id)
-    oldSolution zip getTasks(exercise, part) map {
-      case (oldSol, tasks) => views.html.web.webExercise.render(user, exercise, part, tasks, oldSol)
+  override protected def renderExercise(user: User, exercise: WebCompleteEx, part: String): Future[Html] = {
+    val oldSolution = getOldSolOrDefault(user.username, exercise.ex.id)
+    val tasks = part match {
+      case HTML_TYPE => exercise.htmlTasks
+      case JS_TYPE   => exercise.jsTasks
     }
+    oldSolution map (oldSol => views.html.web.webExercise.render(user, exercise, part, tasks, oldSol))
   }
 
 
@@ -136,12 +154,5 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
        |<hr>""".stripMargin)
 
   override def renderResult(correctionResult: CompleteResult[WebResult]): Html = views.html.web.webResult.render(correctionResult.results)
-
-
-  //noinspection TypeAnnotation
-  private def getTasks(exercise: WebExercise, part: String): Future[Seq[WebTask]] = part match {
-    case JS_TYPE   => db.run(repo.jsTasks.filter(_.id === exercise.id).result)
-    case HTML_TYPE => db.run(repo.htmlTasks.filter(_.id === exercise.id).result)
-  }
 
 }

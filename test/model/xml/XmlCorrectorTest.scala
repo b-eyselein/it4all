@@ -2,6 +2,7 @@ package model.xml
 
 import java.nio.file.{Files, Paths}
 
+import model.xml.XmlExType._
 import org.junit.Assert.{assertNotNull, assertTrue}
 import org.junit.Test
 import org.scalatest.Matchers._

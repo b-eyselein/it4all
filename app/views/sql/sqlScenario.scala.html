@@ -20,7 +20,7 @@
 
         @for(ex <- exercises) {
             <div class="row">
-                <div class="col-md-1">@for(tag <- ex.getTags) {
+                <div class="col-md-1">@for(tag <- ex.tags) {
                     @tag.render
                 }</div>
                 <div class="col-md-1"><a href="@controllers.exes.routes.SqlController.exercise(ex.id)" class="btn btn-default btn-block">@ex.id</a></div>

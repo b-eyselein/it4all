@@ -1,10 +1,10 @@
 package model.bool
 
-import model.ScalaNode._
-import model.{Assignment, CreationQuestion, ScalaNode, Variable}
 import org.junit.Test
 
 class CreationQuestionTest {
+
+  implicit def char2Variable(char: Char): Variable = Variable(char)
 
   val (a, b, c, z): (Variable, Variable, Variable, Variable) = ('a', 'b', 'c', 'z')
 
@@ -25,7 +25,7 @@ class CreationQuestionTest {
     Assignment(a -> 1, b -> 1, c -> 1, z -> 1))
 
   @Test
-  def testDnf() = {
+  def testDnf() {
 
     val question = new CreationQuestion(List(a, b, c), assignments)
 
@@ -35,7 +35,7 @@ class CreationQuestionTest {
   }
 
   @Test
-  def testKnf() = {
+  def testKnf() {
     val question = new CreationQuestion(List(a, b, c), assignments)
 
     val knf = Assignment.getKonjunktiveNormalForm(question.solutions)

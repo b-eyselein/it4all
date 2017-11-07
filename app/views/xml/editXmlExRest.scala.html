@@ -1,6 +1,6 @@
 @import model.core.StringConsts
 
-@(exerciseOpt: Option[model.xml.XmlExercise])
+@(exerciseOpt: Option[model.xml.XmlCompleteEx])
 
 <fieldset>
     <legend>Typ, Wurzelknoten und Inhalt der Referenzdatei</legend>
@@ -10,14 +10,14 @@
             <label for="@StringConsts.EXERCISE_TYPE">Typ:</label>
             <select class="form-control" name="@StringConsts.EXERCISE_TYPE" id="@StringConsts.EXERCISE_TYPE" required>
             @for(exType <- model.xml.XmlExType.values) {
-                <option value="@exType" @exType.isSelected(exerciseOpt.map(_.exerciseType).getOrElse(model.xml.XmlExType.XML_DTD))>@exType.render</option>
+                <option value="@exType" @exType.isSelected(exerciseOpt.map(_.ex.exerciseType).getOrElse(model.xml.XmlExType.XML_DTD))>@exType.render</option>
             }
             </select>
         </div>
         <div class="col-sm-6">
             <label for="@StringConsts.ROOT_NODE_NAME">Wurzelknoten:</label>
             <input class="form-control" name="@StringConsts.ROOT_NODE_NAME" id="@StringConsts.ROOT_NODE_NAME"
-            @exerciseOpt.map("value=\"" + _.rootNode + "\"").getOrElse("") required>
+            @exerciseOpt.map("value=\"" + _.ex.rootNode + "\"").getOrElse("") required>
         </div>
     </div>
 

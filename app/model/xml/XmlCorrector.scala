@@ -9,7 +9,6 @@ import javax.xml.validation.SchemaFactory
 
 import org.xml.sax.InputSource
 
-import scala.collection.JavaConverters.seqAsJavaListConverter
 import scala.language.implicitConversions
 import scala.util.{Failure, Success, Try}
 
@@ -26,14 +25,12 @@ object XmlCorrector {
   private val DocBuilderFactory = DocumentBuilderFactory.newInstance
   DocBuilderFactory.setValidating(true)
 
-  private val SchFactory = SchemaFactory.newInstance(XMLConstants.W3C_XPATH_DATATYPE_NS_URI)
+  private val SchFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
 
   def correct(xml: Path, grammar: Path, exercise: XmlExercise): List[XmlError] = exercise.exerciseType match {
     case (XmlExType.XML_XSD | XmlExType.XSD_XML) => correctXsdAndXml(xml, grammar)
-    case (XmlExType.XML_DTD | XmlExType.DTD_XML)           => correctDtdAndXml(xml)
+    case (XmlExType.XML_DTD | XmlExType.DTD_XML) => correctDtdAndXml(xml)
   }
-
-  def correctJava(xml: Path, grammar: Path, exercise: XmlExercise): java.util.List[XmlError] = correct(xml, grammar, exercise).asJava
 
   def correct(xml: String, grammar: String, exType: XmlExType): List[XmlError] = {
     // FIXME: for Playground...
@@ -45,8 +42,6 @@ object XmlCorrector {
       case (XmlExType.XML_DTD | XmlExType.DTD_XML) => correctDtdAndXml(xmlReader)
     }
   }
-
-  def correctJava(xml: String, grammar: String, exType: XmlExType): java.util.List[XmlError] = correct(xml, grammar, exType).asJava
 
   def recover(e: Throwable): List[XmlError] = List(FailureXmlError(e.getMessage, e))
 

@@ -1,7 +1,7 @@
 @import model.core.StringConsts
 @import model._
 
-@(user: User, toolObject: model.core.tools.ExToolObject, exerciseOpt: Option[model.core.HasBaseValues], renderedRest: Html)
+@(user: User, toolObject: model.core.tools.ExToolObject, exerciseOpt: Option[model.core.CompleteEx[_]], renderedRest: Html)
 
 @isCreation = @{
   exerciseOpt.isEmpty
@@ -13,7 +13,7 @@
       <h1>@if(isCreation) {Erstellen} else {Bearbeiten} einer @toolObject.toolname-Aufgabe</h1>
     </div>
 
-    <form class="form" method="post" role="form" action="@toolObject.editExerciseRoute(exerciseOpt.get)">
+    <form class="form" method="post" role="form" action="@toolObject.editExerciseRoute(exerciseOpt.get.ex)">
 
       <fieldset>
         <legend>Standardangaben</legend>
@@ -22,7 +22,7 @@
           <div class="col-sm-6">
             <label for="@StringConsts.ID_NAME">ID:</label>
             <input type="number" class="form-control" name="@StringConsts.ID_NAME" id="@StringConsts.ID_NAME"
-            @exerciseOpt.map("value=\"" + _.id + "\" readonly").getOrElse("") required>
+            @exerciseOpt.map("value=\"" + _.ex.id + "\" readonly").getOrElse("") required>
           </div>
           <div class="col-sm-6">
             <label for="@StringConsts.AUTHOR_NAME">Autor:</label>
@@ -35,14 +35,14 @@
           <div class="col-sm-6">
             <label for="@StringConsts.TITLE_NAME">Titel:</label>
             <input class="form-control" name="@StringConsts.TITLE_NAME" id="@StringConsts.TITLE_NAME"
-            @Html(exerciseOpt.map("value=\"" + _.title + "\"").getOrElse("")) required>
+            @Html(exerciseOpt.map("value=\"" + _.ex.title + "\"").getOrElse("")) required>
           </div>
           <div class="col-sm-6">
             <label for="@StringConsts.STATE_NAME">Status:</label>
             <div >
               <select class="form-control" name="@StringConsts.STATE_NAME" id="@StringConsts.STATE_NAME" required>
               @for(state <- model.Enums.ExerciseState.values) {
-                <option @state.isSelected(exerciseOpt.map(_.state).getOrElse(model.Enums.ExerciseState.CREATED))>@state </option>
+                <option @state.isSelected(exerciseOpt.map(_.ex.state).getOrElse(model.Enums.ExerciseState.CREATED))>@state </option>
               }
               </select>
             </div>
@@ -51,7 +51,7 @@
 
         <div class="form-group">
           <label for="@StringConsts.TEXT_NAME">Text:</label>
-          <textarea class="form-control" rows="5" name="@StringConsts.TEXT_NAME" id="@StringConsts.TEXT_NAME" required>@exerciseOpt.map(_.text).getOrElse("")</textarea>
+          <textarea class="form-control" rows="5" name="@StringConsts.TEXT_NAME" id="@StringConsts.TEXT_NAME" required>@exerciseOpt.map(_.ex.text).getOrElse("")</textarea>
         </div>
 
       </fieldset>

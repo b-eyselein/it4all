@@ -2,6 +2,7 @@ package model.programming
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import model.Enums.ExerciseState
+import model.core.CompleteEx
 import model.core.StringConsts._
 import model.{Exercise, TableDefs}
 import play.api.db.slick.HasDatabaseConfigProvider
@@ -21,6 +22,8 @@ object ProgExerciseReads {
       (JsPath \ INPUTCOUNT_NAME).read[Int]
     ) ((i, ti, a, te, s, fn, ic) => ProgExercise(i, ti, a, te.mkString, ExerciseState.valueOf(s), fn, ic))
 }
+
+case class ProgCompleteEx(ex: ProgExercise) extends CompleteEx[ProgExercise]
 
 case class ProgExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState,
                         @JsonProperty(required = true) functionName: String,

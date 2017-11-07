@@ -16,8 +16,6 @@ object HasBaseValues {
 
 abstract class HasBaseValues(val id: Int, val title: String, val author: String, val text: String, val state: ExerciseState) {
 
-  def renderRest = new Html("")
-
-  def tags: List[ExTag] = List.empty
+  def renderRest: Html = ???
 
 }

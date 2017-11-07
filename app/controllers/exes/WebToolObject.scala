@@ -25,7 +25,7 @@ object WebToolObject extends IdPartExToolObject("web", "Web", ToolState.LIVE) {
 
   // Admin
 
-  val restHeaders: List[String] = List("# Tasks Html / Js", "Text Html / Js")
+  override val restHeaders: List[String] = List("# Tasks Html / Js", "Text Html / Js")
 
   override def adminIndexRoute: Call = controllers.exes.routes.WebController.adminIndex()
 

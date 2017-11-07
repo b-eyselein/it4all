@@ -7,74 +7,71 @@ import model.core.result.{CompleteResult, EvaluationResult}
 import model.core.tools.IdExToolObject
 import model.{Exercise, User}
 import play.api.db.slick.DatabaseConfigProvider
+import play.api.libs.json.Json
 import play.api.mvc.{ControllerComponents, EssentialAction}
 import play.twirl.api.Html
 
-import scala.concurrent.ExecutionContext
-import scala.util.Try
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success, Try}
 
 abstract class AIdExController[E <: Exercise, R <: EvaluationResult]
 (cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository, to: IdExToolObject)(implicit ec: ExecutionContext)
-  extends BaseExerciseController(cc, dbcp, r, to) with Secured {
+  extends BaseExerciseController[E](cc, dbcp, r, to) with Secured {
 
-  def correct(id: Int): EssentialAction = withUser { _ =>
+  def correct(id: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
-      solForm.bindFromRequest.fold(
-        _ => BadRequest("There has been an error!"),
-        _ => {
-          //          correctEx(solution, finder.byId(id), user) match {
-          //            case Success(correctionResult) =>
-          //              log(user, new ExerciseCompletionEvent[R](request, id, correctionResult))
-          //
-          //              Ok(renderCorrectionResult(user, correctionResult))
-          //            case Failure(error)            =>
-          //              val content = new Html(s"<pre>${error.getMessage}:\n${error.getStackTrace.mkString("\n")}</pre>")
-          //              BadRequest(views.html.main.render("Fehler", user, new Html(""), content))
-          //          }
-          Ok("TODO")
-        }
-      )
+      solForm.bindFromRequest.fold(_ => Future(BadRequest("There has been an error!")),
+        solution => completeExById(id).map {
+          case None           => BadRequest("TODO!")
+          case Some(exercise) =>
+            correctEx(solution, exercise, user) match {
+              case Success(correctionResult) =>
+                log(user, new ExerciseCompletionEvent[R](request, id, correctionResult))
+                Ok(renderCorrectionResult(user, correctionResult))
+              case Failure(error)            =>
+                val content = new Html(s"<pre>${error.getMessage}:\n${error.getStackTrace.mkString("\n")}</pre>")
+                BadRequest(views.html.main.render("Fehler", user, new Html(""), content))
+            }
+        })
   }
 
-  def correctLive(id: Int): EssentialAction = withUser { _ =>
+
+  def correctLive(id: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
-      solForm.bindFromRequest.fold(
-        _ => BadRequest("There has been an error!"),
-        _ => {
-          //          correctEx(solution, finder.byId(id), user) match {
-          //            case Success(correctionResult) =>
-          //              log(user, new ExerciseCompletionEvent[R](request, id, correctionResult))
-          //
-          //              Ok(renderResult(correctionResult))
-          //            case Failure(error)            => BadRequest(Json.toJson(error.getMessage))
-          //          }
-          Ok("TODO")
-        }
-      )
+      solForm.bindFromRequest.fold(_ => Future(BadRequest("There has been an error!")),
+        solution => completeExById(id).map {
+          case None           => BadRequest("TODO!")
+          case Some(exercise) =>
+            correctEx(solution, exercise, user) match {
+              case Success(correctionResult) =>
+                log(user, new ExerciseCompletionEvent[R](request, id, correctionResult))
+                Ok(renderResult(correctionResult))
+              case Failure(error)            => BadRequest(Json.toJson(error.getMessage))
+            }
+        })
   }
 
-  def exercise(id: Int): EssentialAction = withUser { _ =>
+  def exercise(id: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
-      //      finder.byId(id) match {
-      //        case Some(exercise) =>
-      //          log(user, ExerciseStartEvent(request, id))
-      //          Ok(renderExercise(user, exercise))
-      //        case None           => Redirect(controllers.routes.Application.index())
-      //      }
-      Ok("TODO")
+      completeExById(id).map {
+        case Some(exercise) =>
+          log(user, ExerciseStartEvent(request, id))
+          Ok(renderExercise(user, exercise))
+        case None           => Redirect(controllers.routes.Application.index())
+      }
   }
 
-  protected def checkAndCreateSolDir(username: String, exercise: E): Try[Path] =
-    Try(Files.createDirectories(toolObject.getSolDirForExercise(username, exercise)))
+  protected def checkAndCreateSolDir(username: String, exercise: CompEx): Try[Path] =
+    Try(Files.createDirectories(toolObject.getSolDirForExercise(username, exercise.ex)))
 
 
   protected def renderCorrectionResult(user: User, correctionResult: CompleteResult[R]): Html =
     views.html.core.correction.render(toolObject.toolname.toUpperCase, correctionResult, renderResult(correctionResult),
       user, controllers.routes.Application.index())
 
-  protected def correctEx(sol: SolutionType, exercise: Option[E], user: User): Try[CompleteResult[R]]
+  protected def correctEx(sol: SolutionType, exercise: CompEx, user: User): Try[CompleteResult[R]]
 
-  protected def renderExercise(user: User, exercise: DbType): Html = new Html("")
+  protected def renderExercise(user: User, exercise: CompEx): Html = new Html("")
 
   protected def renderExesListRest: Html //= new Html("")
 

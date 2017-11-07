@@ -4,7 +4,7 @@ import javax.inject._
 
 import controllers.core.AIdExController
 import model.User
-import model.blanks.BlanksExercise
+import model.blanks.{BlanksCompleteEx, BlanksExercise}
 import model.core.result.{CompleteResult, EvaluationResult}
 import model.core.{Repository, Secured, StringSolution}
 import net.jcazevedo.moultingyaml.YamlFormat
@@ -25,32 +25,34 @@ class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
 
   override def solForm: Form[StringSolution] = ???
 
+  // Yaml
+
+  override type CompEx = BlanksCompleteEx
+
+  override val yamlFormat: YamlFormat[BlanksCompleteEx] = null
+
   // db
-
-  override type DbType = BlanksExercise
-
-  override val yamlFormat: YamlFormat[BlanksExercise] = null
 
   override type TQ = repo.BlanksExercisesTable
 
   override def tq = repo.blanksExercises
 
+  def testBlanks: EssentialAction = withUser { user => implicit request => Ok(views.html.blanks.blanks.render(user, null)) }
+
   def correctBlanks(id: Int): EssentialAction = withUser { user =>
     implicit request =>
       //    val form = factory.form().bindFromRequest()
       //    val inputCount = Integer.parseInt(form.get("count"))
-      //
       //    val inputs = (for (count <- 0 until inputCount) yield form.get(s"inp$count")).toList
-      //
       //    ok(Json.toJson(exercise.correct(inputs)))
       Ok("TODO")
   }
 
-  override protected def correctEx(sol: StringSolution, exercise: Option[BlanksExercise], user: User): Try[CompleteResult[EvaluationResult]] = ???
+  override protected def correctEx(sol: StringSolution, exercise: BlanksCompleteEx, user: User): Try[CompleteResult[EvaluationResult]]
+  = ???
 
   override protected def renderExesListRest: Html = new Html("")
 
-  def testBlanks: EssentialAction = withUser { user => implicit request => Ok(views.html.blanks.blanks.render(user, null)) }
 
 }
 

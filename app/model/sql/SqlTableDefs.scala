@@ -3,8 +3,8 @@ package model.sql
 import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty}
 import controllers.core.BaseExerciseController._
 import model.Enums.ExerciseState
-import model.core.ExerciseCollection
 import model.core.StringConsts._
+import model.core.{CompleteEx, ExerciseCollection}
 import model.sql.SqlEnums.{SqlExTag, SqlExerciseType}
 import model.{Exercise, TableDefs}
 import play.api.db.slick.HasDatabaseConfigProvider
@@ -22,6 +22,15 @@ object SqlReads {
       (JsPath \ SHORTNAME_NAME).read[String] and
       (JsPath \ SCRIPTFILE_NAME).read[String]
     ) ((i, ti, a, te, s, shortName, scriptFile) => SqlScenario(i, ti, a, te.mkString, ExerciseState.valueOf(s), shortName, scriptFile))
+}
+
+case class SqlScenarioCompleteEx(ex: SqlScenario) extends CompleteEx[SqlScenario] {
+
+//  override def tags: List[SqlExTag] = {
+//    if (sqlTags.isEmpty) List.empty
+//    else sqlTags.split(SqlExerciseHelper.SampleJoinChar).map(SqlExTag.valueOf).toList
+//  }
+
 }
 
 case class SqlScenario(i: Int, ti: String, a: String, te: String, s: ExerciseState,
@@ -56,17 +65,14 @@ object SqlExerciseHelper {
 case class SqlExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState, exerciseType: SqlExerciseType, sqlTags: String, hint: String)
   extends Exercise(i, ti, a, te, s) {
 
-  override def getTags: List[SqlExTag] = {
-    if (sqlTags.isEmpty) List.empty
-    else sqlTags.split(SqlExerciseHelper.SampleJoinChar).map(SqlExTag.valueOf).toList
-  }
-
   def scenario: SqlScenario = null
 
   def samples: List[SqlSample] = List.empty
 
   @JsonProperty(value = "tags", required = true)
   def tagsForJson: List[String] = sqlTags.split(SqlExerciseHelper.SampleJoinChar).toList
+
+  def tags: List[SqlExTag] = List.empty
 
 }
 

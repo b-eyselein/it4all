@@ -11,7 +11,7 @@ import model.core.result.{CompleteResult, EvaluationResult}
 import model.core.{Repository, Secured, StringSolution}
 import model.mindmap.evaluation.ParsingException
 import model.mindmap.evaluation.enums.EvalParserType
-import model.mindmap.{Evaluation, MindmapExercise, Validation}
+import model.mindmap.{Evaluation, MindmapCompleteEx, MindmapExercise, Validation}
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.data.Form
 import play.api.db.slick.DatabaseConfigProvider
@@ -48,18 +48,21 @@ class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfig
 
   override def solForm: Form[StringSolution] = ???
 
+  // Yaml
+
+  override type CompEx = MindmapCompleteEx
+
+  override implicit val yamlFormat: YamlFormat[MindmapCompleteEx] = null
+
   // db
-
-  override type DbType = MindmapExercise
-
-  override implicit val yamlFormat: YamlFormat[MindmapExercise] = null
 
   override type TQ = repo.MindmapExercisesTable
 
   override def tq = repo.mindmapExercises
 
 
-  override protected def correctEx(sol: StringSolution, exercise: Option[MindmapExercise], user: User): Try[CompleteResult[EvaluationResult]] = ???
+  override protected def correctEx(sol: StringSolution, exercise: MindmapCompleteEx, user: User): Try[CompleteResult[EvaluationResult]]
+  = ???
 
   def index: EssentialAction = withUser { user => implicit request => Ok(views.html.mindmap.mindmapindex.render(user)) }
 

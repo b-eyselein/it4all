@@ -21,7 +21,7 @@ object XmlToolObject extends IdExToolObject("xml", "Xml", ToolState.LIVE) {
 
   // Admin
 
-  val restHeaders: List[String] = List("Typ", "Wurzelknoten", "Inhalt der Referenzdatei")
+  override val restHeaders: List[String] = List("Typ", "Wurzelknoten", "Inhalt der Referenzdatei")
 
   override def adminIndexRoute: Call = controllers.exes.routes.XmlController.adminIndex()
 

@@ -1,17 +1,25 @@
 package model.bool
 
-import model._
+import model.bool.NodeSpec._
 import org.scalatest._
+
+object NodeSpec {
+
+  implicit def char2Variable(char: Char): Variable = Variable(char)
+
+  implicit def char2Scalanode(char: Char): ScalaNode = Variable(char)
+
+}
 
 class NodeSpec(protected val nodeUnderTest: ScalaNode) extends FlatSpec {
 
   val (a, b, c): (Variable, Variable, Variable) = ('a', 'b', 'c')
 
   val (ff, ft, tf, tt) = (
-    Assignment(a -> false, b -> false),
-    Assignment(a -> false, b -> true),
-    Assignment(a -> true, b -> false),
-    Assignment(a -> true, b -> true))
+                           Assignment(a -> false, b -> false),
+                           Assignment(a -> false, b -> true),
+                           Assignment(a -> true, b -> false),
+                           Assignment(a -> true, b -> true))
 
   def testEvaluate(expected: Array[Boolean]) {
     assert(nodeUnderTest.evaluate(ff) == expected(0))
@@ -20,16 +28,16 @@ class NodeSpec(protected val nodeUnderTest: ScalaNode) extends FlatSpec {
     assert(nodeUnderTest.evaluate(tt) == expected(3))
   }
 
-  def testNegate(expected: ScalaNode) = assert(nodeUnderTest.negate == expected)
+  def testNegate(expected: ScalaNode): Assertion = assert(nodeUnderTest.negate == expected)
 
-  def testContainedVariables(expected: Set[Variable]) = assert(nodeUnderTest.usedVariables == expected)
+  def testContainedVariables(expected: Set[Variable]): Assertion = assert(nodeUnderTest.usedVariables == expected)
 
   def testGetAsString(expectedFalse: String, expectedTrue: String) {
     assert(nodeUnderTest.getAsString(false) == expectedFalse)
     assert(nodeUnderTest.getAsString(true) == expectedTrue)
   }
 
-  def evaluate(nodeUnderTest: ScalaNode, assignment: Assignment, expected: Boolean) = assert(nodeUnderTest.evaluate(assignment) == expected)
+  def evaluate(nodeUnderTest: ScalaNode, assignment: Assignment, expected: Boolean): Assertion = assert(nodeUnderTest.evaluate(assignment) == expected)
 
 }
 
@@ -43,7 +51,7 @@ class NotSpec extends NodeSpec(new NotScalaNode('a')) {
   it should "negate to 'a'" in testNegate(a)
 }
 
-class VariableSpec extends NodeSpec(new Variable('a')) {
+class VariableSpec extends NodeSpec(Variable('a')) {
   "A Variable node of \"a\"" should "only contain the variable 'a'" in testContainedVariables(Set('a'))
 
   it should "have a variable of 'a'" in assert(nodeUnderTest.asInstanceOf[Variable].variable == 'a')
@@ -52,7 +60,7 @@ class VariableSpec extends NodeSpec(new Variable('a')) {
 
   it should "always return a constant string representation" in testGetAsString("a", "a")
 
-  it should "negate to \"not a\"" in testNegate(new NotScalaNode(a))
+  it should "negate to \"not a\"" in testNegate(NotScalaNode(a))
 }
 
 class TrueSpec extends NodeSpec(TRUE) {
@@ -82,7 +90,7 @@ class AndSpec extends NodeSpec(new AndScalaNode('a', 'b')) {
 
   it should "return a certain string representation" in testGetAsString("a and b", "(a and b)")
 
-  it should "negate to \"a nand b\"" in testNegate(new NAndScalaNode('a', 'b'))
+  it should "negate to \"a nand b\"" in testNegate(NAndScalaNode('a', 'b'))
 }
 
 class OrSpec extends NodeSpec(new OrScalaNode('a', 'b')) {
@@ -92,7 +100,7 @@ class OrSpec extends NodeSpec(new OrScalaNode('a', 'b')) {
 
   it should "return a certain string representation" in testGetAsString("a or b", "(a or b)")
 
-  it should "negate to \"a nand b\"" in testNegate(new NOrScalaNode('a', 'b'))
+  it should "negate to \"a nand b\"" in testNegate(NOrScalaNode('a', 'b'))
 }
 
 class NAndSpec extends NodeSpec(new NAndScalaNode('a', 'b')) {
@@ -102,7 +110,7 @@ class NAndSpec extends NodeSpec(new NAndScalaNode('a', 'b')) {
 
   it should "return a certain string representation" in testGetAsString("a nand b", "(a nand b)")
 
-  it should "negate to \"a nand b\"" in testNegate(new AndScalaNode('a', 'b'))
+  it should "negate to \"a nand b\"" in testNegate(AndScalaNode('a', 'b'))
 }
 
 class NOrSpec extends NodeSpec(new NOrScalaNode('a', 'b')) {
@@ -132,7 +140,7 @@ class EquivalencySpec extends NodeSpec(new Equivalency('a', 'b')) {
 
   it should "return a certain string representation" in testGetAsString("a equiv b", "(a equiv b)")
 
-  it should "negate to \"a nand b\"" in testNegate(new XOrScalaNode('a', 'b'))
+  it should "negate to \"a nand b\"" in testNegate(XOrScalaNode('a', 'b'))
 }
 
 class ImplicationSpec extends NodeSpec(new Implication('a', 'b')) {
@@ -142,6 +150,6 @@ class ImplicationSpec extends NodeSpec(new Implication('a', 'b')) {
 
   it should "return a certain string representation" in testGetAsString("a impl b", "(a impl b)")
 
-  it should "negate to \"a nand b\"" in testNegate(new AndScalaNode('a', ScalaNode.not('b')))
+  it should "negate to \"a nand b\"" in testNegate(AndScalaNode('a', ScalaNode.not('b')))
 }
 

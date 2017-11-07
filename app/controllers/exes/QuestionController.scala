@@ -27,11 +27,13 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   override def solForm: Form[StringSolution] = ???
 
+  // Yaml
+
+  override type CompEx = QuizCompleteEx
+
+  override implicit val yamlFormat: YamlFormat[QuizCompleteEx] = null
+
   // db
-
-  override type DbType = Quiz
-
-  override implicit val yamlFormat: YamlFormat[Quiz] = null
 
   override type TQ = repo.QuizzesTable
 

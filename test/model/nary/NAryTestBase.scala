@@ -1,8 +1,7 @@
 package model.nary
 
 import org.hamcrest.CoreMatchers.equalTo
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertThat
+import org.junit.Assert.{assertNotNull, assertThat}
 
 object NAryTestBase {
 
@@ -12,6 +11,8 @@ object NAryTestBase {
     assertThat(number.decimalValue, equalTo(expectedValue))
   }
 
-  def checkBase(actual: NumberBase, expected: NumberBase) = assert(actual == expected, s"Awaited that number base is $expected but got $actual!")
+  def checkBase(actual: NumberBase, expected: NumberBase) {
+    assert(actual == expected, s"Awaited that number base is $expected but got $actual!")
+  }
 
 }

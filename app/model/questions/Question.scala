@@ -2,11 +2,11 @@ package model.questions
 
 import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty}
 import model.Enums.ExerciseState
-import model.core.ExerciseCollection
+import model.core.StringConsts._
+import model.core.{CompleteEx, ExerciseCollection}
 import model.{Exercise, TableDefs}
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
-import model.core.StringConsts._
 
 object QuestionHelper {
 
@@ -14,6 +14,8 @@ object QuestionHelper {
   val STD_ANSWERS = 4
   val MAX_ANSWERS = 8
 }
+
+case class QuizCompleteEx(ex: Quiz) extends CompleteEx[Quiz]
 
 case class Quiz(i: Int, ti: String, a: String, te: String, s: ExerciseState, theme: String)
   extends ExerciseCollection[Question](i, ti, a, te, s) {

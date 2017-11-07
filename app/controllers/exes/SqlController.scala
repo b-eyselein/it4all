@@ -33,11 +33,13 @@ class SqlController @Inject()(cc: ControllerComponents /*, @NamedDatabase("sqlse
 
   override def solForm: Form[StringSolution] = ???
 
+  // Yaml
+
+  override type CompEx = SqlScenarioCompleteEx
+
+  override implicit val yamlFormat: YamlFormat[SqlScenarioCompleteEx] = null
+
   // db
-
-  override type DbType = SqlScenario
-
-  override implicit val yamlFormat: YamlFormat[SqlScenario] = null
 
   override type TQ = repo.SqlScenarioesTable
 
@@ -131,6 +133,7 @@ class SqlController @Inject()(cc: ControllerComponents /*, @NamedDatabase("sqlse
   //  override def renderExesListRest: Html = ??? // FIXME: implement
 
   override def renderResult(correctionResult: CompleteResult[EvaluationResult]): Html = ??? //FIXME: implement
+
 }
 
 object SqlController {

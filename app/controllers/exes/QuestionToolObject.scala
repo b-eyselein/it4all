@@ -21,7 +21,7 @@ object QuestionToolObject extends IdExToolObject("question", "Auswahlfragen", To
 
   // Admin
 
-  val restHeaders: List[String] = List.empty
+  override val restHeaders: List[String] = List.empty
 
   override def adminIndexRoute: Call = controllers.exes.routes.QuestionController.adminIndex()
 

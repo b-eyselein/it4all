@@ -1,7 +1,8 @@
 package model.uml
 
 import model.Enums.ExerciseState
-import model.core.StringConsts._
+import model.core.CompleteEx
+import model.uml.UmlExYamlProtocol._
 import model.{Exercise, TableDefs}
 import net.jcazevedo.moultingyaml._
 import play.api.db.slick.HasDatabaseConfigProvider
@@ -10,52 +11,31 @@ import slick.jdbc.JdbcProfile
 
 import scala.language.implicitConversions
 
-object UmlExYamlProtocol extends DefaultYamlProtocol {
+case class UmlCompleteEx(ex: UmlExercise) extends CompleteEx[UmlExercise] {
 
-  implicit def string2YamlString(str: String): YamlString = YamlString(str)
+  import views.html.core.helperTemplates.modal
 
-  implicit object UmlExYamlFormat extends YamlFormat[UmlExercise] {
-    override def write(ex: UmlExercise): YamlValue = YamlObject(
-      YamlString(ID_NAME) -> YamlNumber(ex.id),
-      YamlString(TITLE_NAME) -> YamlString(ex.title),
-      YamlString(AUTHOR_NAME) -> YamlString(ex.author),
-      YamlString(TEXT_NAME) -> YamlString(ex.text),
-      YamlString(STATE_NAME) -> YamlString(ex.state.name),
+  override def renderRest: Html = new Html(
+    s"""<td>${modal.render("Klassenwahltext", new Html(ex.classSelText + "<hr>" + HtmlFormat.escape(ex.classSelText)), "Klassenwahltext")}
+       |</td>
+       |<td>${modal.render("Diagrammzeichnentext", new Html(ex.diagDrawText + "<hr>" + HtmlFormat.escape(ex.diagDrawText)), "Diagrammzeichnentext")}
+       |</td>
+       |<td>${modal.render("Lösung", new Html(ex.solution.toYaml.prettyPrint), "Lösung")}
+       |</td>""".stripMargin)
 
-      // Exercise specific values
-      // TODO: solution: String, mappings: Map[String, String], ignoreWords: List[String]
-      YamlString(SOLUTION_NAME) -> YamlString(ex.solution)
-      //      YamlString(MAPPINGS_NAME) -> YamlObject(ex.mappings),
-      //      YamlString(IGNORE_WORDS_NAME) -> YamlString(ex.refernenceFile)
-    )
-
-    override def read(yaml: YamlValue): UmlExercise =
-      yaml.asYamlObject.getFields(ID_NAME, TITLE_NAME, AUTHOR_NAME, TEXT_NAME, STATE_NAME, SOLUTION_NAME, MAPPINGS_NAME, IGNORE_WORDS_NAME) match {
-        case Seq(YamlNumber(id), YamlString(title), YamlString(author), YamlString(text), YamlString(state), YamlObject(solution), YamlObject(mappings), YamlArray(toIngore)) =>
-          val textParse = new UmlExTextParser(text, mappings.map(yamlVals => (yamlVals._1.toString, yamlVals._2.toString)), toIngore.toList.map(_.toString))
-          UmlExercise(id.intValue, title, author, text, ExerciseState.valueOf(state),
-            textParse.parseTextForClassSel, textParse.parseTextForDiagDrawing, solution.mkString, mappings.mkString, toIngore.toList.map(_.toString).mkString)
-
-        case other => /* FIXME: Fehlerbehandlung... */
-          other.foreach(value => println(value + "\n"))
-          deserializationError("UmlExercise expected!")
-      }
-  }
 }
 
 case class UmlExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState,
                        classSelText: String, diagDrawText: String, solution: String, mappings: String, ignoreWords: String)
   extends Exercise(i, ti, a, te, s) {
 
-  override def renderRest: Html = new Html(
-    s"""<td>${views.html.core.helperTemplates.modal.render("Klassenwahltext...", new Html(classSelText + "<hr>" + HtmlFormat.escape(classSelText)), "Klassenwahltext")}</td>
-       |<td>${views.html.core.helperTemplates.modal.render("Diagrammzeichnentext...", new Html(diagDrawText + "<hr>" + HtmlFormat.escape(diagDrawText)), "Diagrammzeichnentext")}</td>""".stripMargin)
-
   def getClassesForDiagDrawingHelp: String = UmlSolution.getClassesForDiagDrawingHelp(getSolution.classes)
 
   def getSolution: UmlSolution = UmlSolution.fromJson(solution).get
 
 }
+
+case class UmlMusterClass(name: String, exerciseId: Int, attributes: List[String])
 
 case class UmlMapping(exerciseId: Int, key: String, value: String)
 

@@ -46,9 +46,9 @@ object StringConsts {
 
   val EX_FILE_NAME = "exercises.json"
 
-  val EXERCISES_NAME = "exercises"
-
-  val EXERCISE_TYPE = "exerciseType"
+  val EXERCISES_NAME   = "exercises"
+  val EXERCISE_ID_NAME = "exerciseId"
+  val EXERCISE_TYPE    = "exerciseType"
 
   val FORM_VALUE = "learnerSolution"
 
