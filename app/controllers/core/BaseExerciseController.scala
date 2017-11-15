@@ -75,16 +75,11 @@ abstract class BaseExerciseController[B <: HasBaseValues]
     Try(Files.createDirectories(savingDir))
       .map(_ => Files.move(pathToUploadedFile, saveTo, StandardCopyOption.REPLACE_EXISTING))
 
-  def log(user: User, eventToLog: WorkingEvent): Unit = Unit // PROGRESS_LOGGER.debug(s"""${user.languageName} - ${Json.toJson(eventToLog)}""")
+  def log(user: User, eventToLog: WorkingEvent): Unit = Unit // PROGRESS_LOGGER.debug(s"""${user.username} - ${Json.toJson(eventToLog)}""")
 
   // Admin
 
-  //  override def exercisesRoute: Call = controllers.programming.routes.ProgController.exercises()
-  //
-  //  override def newExFormRoute: Call = controllers.programming.routes.ProgController.newExerciseForm()
-  //
-  //
-  //  override def uploadFileRoute: Call = controllers.programming.routes.ProgController.uploadFile()
+  //  override def uploadFileRoute: Call = controllers.programming.routes.ProgController.uploadFile()??
 
   def adminIndex: EssentialAction = futureWithAdmin { user =>
     implicit request => statistics map (stats => Ok(views.html.admin.adminMain.render(user, stats, toolObject, new Html(""))))
@@ -111,24 +106,24 @@ abstract class BaseExerciseController[B <: HasBaseValues]
 
   def exportExercises: EssentialAction = futureWithAdmin { admin =>
     implicit request =>
-      // TODO: scalarStyle = Folded if fixed...
-      completeExes map (exes => Ok(views.html.admin.export.render(admin, exes map (_.toYaml print Auto) mkString "---\n", toolObject)))
+      completeExes map (exes => Ok(views.html.admin.export.render(admin, writeYaml(exes), toolObject)))
   }
 
   def exportExercisesAsFile: EssentialAction = futureWithAdmin { admin =>
     implicit request =>
       val file = Files.createTempFile(s"export_${toolObject.exType}", ".yaml")
-
       completeExes map (exes => {
 
         val writer = new PrintWriter(file.toFile)
-        writer.write(exes map (_.toYaml.prettyPrint) mkString "---\n")
+        writer.write(writeYaml(exes))
         writer.close()
 
         Ok.sendPath(file, fileName = _ => s"export_${toolObject.exType}.yaml", onClose = () => Files.delete(file))
       })
   }
 
+  // FIXME: scalarStyle = Folded if fixed...
+  private def writeYaml(exes: Seq[CompEx]): String = "%YAML 1.2\n---\n" + (exes map (_.toYaml.print(Auto/*, Folded*/)) mkString "---\n")
 
   protected val savingDir: Path = Paths.get(toolObject.rootDir, ADMIN_FOLDER, toolObject.exType)
 

@@ -7,9 +7,10 @@ import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.language.{implicitConversions, postfixOps}
 import scala.util.Try
 
-case class ProgCompleteEx(ex: ProgExercise, sampleTestData: Seq[CompleteSampleTestData]) extends CompleteEx[ProgExercise] {
+case class ProgCompleteEx(ex: ProgExercise, sampleSolution: ProgSampleSolution, sampleTestData: Seq[CompleteSampleTestData]) extends CompleteEx[ProgExercise] {
 
   override def renderRest: Html = new Html(
     s"""<td>${ex.functionName}</td>
@@ -81,13 +82,29 @@ trait ProgTableDefs extends TableDefs {
 
     override def saveCompleteEx(completeEx: ProgCompleteEx)(implicit ec: ExecutionContext): Future[Int] = db.run(
       (this insertOrUpdate completeEx.ex) zip
-        // FIXME: implement!
-        DBIO.sequence(completeEx.sampleTestData map (sampleTD => sampleTestData insertOrUpdate sampleTD.sampleTestData))
-    ) map (_._1)
+        (sampleSolutions insertOrUpdate completeEx.sampleSolution) zip
+        DBIO.sequence(completeEx.sampleTestData map { sampleTD =>
+          (sampleTestData insertOrUpdate sampleTD.sampleTestData) zip DBIO.sequence(sampleTD.inputs map (input => sampleTestDataInputs insertOrUpdate input))
+        })
+    ) map (_._1._1)
 
-    override protected def completeExForEx(ex: ProgExercise)(implicit ec: ExecutionContext): Future[ProgCompleteEx] = ???
+    override protected def completeExForEx(ex: ProgExercise)(implicit ec: ExecutionContext): Future[ProgCompleteEx] = db.run(sampleSolForEx(ex) zip completeTestDataForEx(ex)) map {
+      case (sampleSol, ctds) =>
+        val completeSampleTestData: Seq[CompleteSampleTestData] = ctds groupBy (_._1) mapValues (_ map (_._2)) map (ctd => CompleteSampleTestData(ctd._1, ctd._2.flatten)) toSeq
+
+        ProgCompleteEx(ex, sampleSol, completeSampleTestData)
+    }
+
+    private def sampleSolForEx(ex: ProgExercise) = (sampleSolutions filter (_.exerciseId === ex.id)).result.head
+
+    private def completeTestDataForEx(ex: ProgExercise)(implicit ec: ExecutionContext) = sampleTestData.joinLeft(sampleTestDataInputs)
+      .on { case (td, tdi) => td.exerciseId === tdi.exerciseId && td.id === tdi.testId }
+      .filter(_._1.exerciseId === ex.id)
+      .result
 
   }
+
+  val sampleSolutions = TableQuery[ProgSampleSolutionsTable]
 
   val sampleTestData = TableQuery[SampleTestDataTable]
 
@@ -120,10 +137,7 @@ trait ProgTableDefs extends TableDefs {
 
   }
 
-  // Samples for validation of test data
-//  case class ProgSampleSolution(exerciseId: Int, language: ProgLanguage, solution: String)
-
-  class ProgSampleSolutionTable(tag: Tag) extends Table[ProgSampleSolution](tag, "prog_samples") {
+  class ProgSampleSolutionsTable(tag: Tag) extends Table[ProgSampleSolution](tag, "prog_samples") {
 
     def exerciseId = column[Int]("exercise_id")
 
@@ -140,7 +154,6 @@ trait ProgTableDefs extends TableDefs {
     def * = (exerciseId, language, solution) <> (ProgSampleSolution.tupled, ProgSampleSolution.unapply)
 
   }
-
 
   // Test data
 
@@ -167,8 +180,6 @@ trait ProgTableDefs extends TableDefs {
   }
 
   class CommitedTestDataTable(tag: Tag) extends ITestDataTable[CommitedTestData](tag, "prog_commited_testdata") {
-
-    // TODO: 1.sql prog_commited_testdata
 
     def username = column[String]("username")
 
@@ -211,8 +222,6 @@ trait ProgTableDefs extends TableDefs {
 
   class CommitedTestdataInputTable(tag: Tag) extends TestdataInputTable[CommitedTestDataInput](tag, "prog_commited_testdata_input") {
 
-    // TODO: 1.sql prog_commited_testdata_input
-
     def username = column[String]("username")
 
 
@@ -228,8 +237,6 @@ trait ProgTableDefs extends TableDefs {
   // Solutions of users
 
   class ProgSolutionTable(tag: Tag) extends Table[ProgSolution](tag, "prog_solutions") {
-
-    // TODO: 1.sql prog_solutions
 
     def username = column[String]("username")
 

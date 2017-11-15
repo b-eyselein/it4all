@@ -1,90 +1,86 @@
 // Some helper functions...
 
-function getTestCount() {
-  return document.getElementById('testCount').value;
-}
+var inputCount;
 
-function getInputCount() {
-  return document.getElementById('inputCount').value;
+$(document).ready(function () {
+    inputCount = $('#inputCount').val()
+});
+
+function getTestCount() {
+    return $('#testCount').val();
 }
 
 function getInputName(inputCounter, testCounter) {
-  return 'inp_' + inputCounter + '_' + testCounter;
+    return 'inp_' + inputCounter + '_' + testCounter;
 }
 
 function getOutputName(testCounter) {
-  return 'outp_' + testCounter;
+    return 'outp_' + testCounter;
 }
 
 // Real functions
 
 function moreTestData() {
-  let testDataRows = document.getElementById('testDataRows');
-  let newTestId = getTestCount();
+    var testDataRows = document.getElementById('testDataRows');
+    var newTestId = parseInt(getTestCount());
 
-  let newRow = document.createElement('tr');
-  newRow.id = 'tr_' + newTestId;
-  let newRowInner = '<td>' + newTestId + '</td>';
-  for (let ic = 0; ic < getInputCount(); ic++) {
-    newRowInner += '<td><input class=\'form-control\' '
-        + 'name=\'' + getInputName(ic, newTestId) + '\' '
-        + 'id=\'' + getInputName(ic, newTestId) + '\' '
-        + 'placeholder=\'Test ' + newTestId + ', Input ' + ic + '\'></td>';
-  }
-  newRowInner += '<td><input class=\'form-control\' '
-      + 'name=\'' + getOutputName(newTestId) + '\' '
-      + 'id=\'' + getOutputName(newTestId) + '\' '
-      + 'placeholder=\'Test ' + newTestId + ', Output\'></td>';
+    var newRow = document.createElement('tr');
+    newRow.id = 'tr_' + newTestId;
+    var newRowInner = '<td>' + newTestId + '</td>';
+    for (var ic = 0; ic < inputCount; ic++) {
+        newRowInner += '<td><input class="form-control" name="' + getInputName(ic, newTestId) + '" id="'
+            + getInputName(ic, newTestId) + '" placeholder="Test ' + (newTestId + 1) + ', Input ' + (ic + 1) + '"></td>';
+    }
+    newRowInner += '<td><input class="form-control" name="' + getOutputName(newTestId) + '" id="' + getOutputName(newTestId)
+        + '" placeholder="Test ' + newTestId + ', Output"></td>';
 
-  newRow.innerHTML = newRowInner;
+    newRow.innerHTML = newRowInner;
 
-  testDataRows.insertBefore(newRow, testDataRows.children[newTestId]);
-  document.getElementById('testCount').value = parseInt(newTestId) + 1;
+    testDataRows.insertBefore(newRow, testDataRows.children[newTestId]);
+    $('#testCount').val(newTestId + 1);
 }
 
 function getTestData() {
-  let testData = [];
-  for (let testCounter = 0; testCounter < getTestCount(); testCounter++) {
-    let inputs = [];
-    for (let inputCounter = 0; inputCounter < getInputCount(); inputCounter++) {
-      inputs.push({
-        id: inputCounter,
-        value: document.getElementById(getInputName(inputCounter, testCounter)).value
-      });
+    var testData = [];
+    for (var testCounter = 0; testCounter < getTestCount(); testCounter++) {
+        var inputs = [];
+        for (var inputCounter = 0; inputCounter < inputCount; inputCounter++) {
+            inputs.push({
+                id: inputCounter,
+                input: $('#inp_' + inputCounter + '_' + testCounter).val()
+            });
+        }
+        testData.push({
+            id: testCounter,
+            inputs: inputs,
+            output: $('#outp_' + testCounter).val()
+        });
     }
-    testData.push({
-      test: testCounter,
-      input: inputs,
-      output: document.getElementById(getOutputName(testCounter)).value
-    });
-  }
-  return testData;
+    return testData;
 }
 
 function validateTestData(theUrl) {
-  let table = document.getElementById('testDataTable');
-  for (let i = 1; i < table.rows.lenth - 1; i++) {
-    table.rows[i].className = '';
-  }
+    var table = document.getElementById('testDataTable');
+    for (var i = 1; i < table.rows.length - 1; i++) {
+        table.rows[i].className = '';
+    }
 
-  let parameters = 'testCount=' + getTestCount() + '&' + getTestData().map(function (data) {
-    let inputs = data.input.map(function (input) {
-      return getInputName(input.id, data.test) + '=' + input.value;
-    }).join('&');
-    return inputs + '&' + getOutputName(data.test) + '=' + data.output;
-  }).join('&');
+    $.ajax({
+        type: 'PUT',
+        dataType: 'json', // return type
+        contentType: "application/json", // type of message to server
+        url: theUrl,
+        data: JSON.stringify(getTestData()),
+        async: true,
+        success: validateTDSuccess
+    });
+}
 
-  $.ajax({
-    type: 'PUT',
-    url: theUrl,
-    data: parameters,
-    async: true,
-    success: function (response) {
-      for (let data of response) {
-        let row = document.getElementById('tr_' + data.id);
+function validateTDSuccess(response) {
+    for (var data of response) {
+        var row = document.getElementById('tr_' + data.id);
         row.title = data.titleForValidation;
         row.className = data.successful ? 'success' : 'danger';
-      }
     }
-  });
+
 }

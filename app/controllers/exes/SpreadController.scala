@@ -88,7 +88,7 @@ class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
       //      finder.byId(id) match {
       //        case None           => BadRequest("This exercise does not exist!")
       //        case Some(exercise) =>
-      //          val fileToDownload = toolObject.getSolFileForExercise(user.languageName, exercise, exercise.templateFilename + CORRECTION_ADD_STRING, fileExtension)
+      //          val fileToDownload = toolObject.getSolFileForExercise(user.name, exercise, exercise.templateFilename + CORRECTION_ADD_STRING, fileExtension)
       //
       //          if (fileToDownload.toFile.exists) Ok.sendFile(fileToDownload.toFile)
       //          else Redirect(routes.SpreadController.index(0))
@@ -124,7 +124,7 @@ class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
       //        val pathToUploadedFile = uploadedFile.getFile.toPath
       //        val fileExtension = com.google.common.io.Files.getFileExtension(uploadedFile.getFilename)
       //
-      //        val targetFilePath = toolObject.getSolFileForExercise(user.languageName, exercise, exercise.templateFilename, fileExtension)
+      //        val targetFilePath = toolObject.getSolFileForExercise(user.name, exercise, exercise.templateFilename, fileExtension)
       //
       //        // Save solution
       //        saveSolutionForUser(pathToUploadedFile, targetFilePath) match {

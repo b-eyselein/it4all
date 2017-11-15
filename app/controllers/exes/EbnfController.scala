@@ -42,7 +42,7 @@ class EbnfController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
   override def renderEditRest(exercise: Option[EbnfExercise]): Html = new Html(
     s"""|<div class="form-group">
         |  <label for="$TERMINALS">Terminalsymbole:</label>
-        |  <input class="form-control" languageName="$TERMINALS" id="$TERMINALS" placeholder="Terminalsymbole, durch Kommata getrennt"
+        |  <input class="form-control" name="$TERMINALS" id="$TERMINALS" placeholder="Terminalsymbole, durch Kommata getrennt"
         |         ${exercise.map(_.terminals).getOrElse("")} required>
         |</div>""".stripMargin)
 

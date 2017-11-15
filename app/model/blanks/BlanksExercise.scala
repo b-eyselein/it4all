@@ -46,7 +46,7 @@ case class BlankObject(id: Int, preText: String, length: Int, postText: String, 
   def render: String =
     s"""$preText
        |<div class="form-group">
-       |  <input languageName="inp$id" id="inp$id"  class="form-control" type="text" size="$length" maxlength="$length">
+       |  <input name="inp$id" id="inp$id"  class="form-control" type="text" size="$length" maxlength="$length">
        |</div>"
        |$postText""".stripMargin
 

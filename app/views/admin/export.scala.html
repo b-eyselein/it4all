@@ -1,27 +1,14 @@
 @(user: model.User, exported: String, toolObject: model.core.tools.ExToolObject)
 
 @main("Export", user) {
-    <script>
-            function exportAsFile() {
-                var text = document.getElementById("exported").textContent;
-                var a = document.getElementById("a");
-                var file = new Blob([text], {type: 'text/yaml'});
-                a.href = URL.createObjectURL(file);
-                a.download = 'export.yaml';
-            }
-    </script>
-
     <div class="container">
         <div class="page-header">
             <h1>Export der Aufgaben</h1>
         </div>
 
-        <a href="@toolObject.exportExesAsFileRoute" class="btn btn-primary btn-block">Als Datei downloaden</a>
-
-        <a href="" id="a" class="btn btn-primary btn-block" onclick="exportAsFile();">
+        <a href="@toolObject.exportExesAsFileRoute" class="btn btn-primary btn-block">
             <span class="glyphicon glyphicon-download"></span> Download als Datei
         </a>
-
         <hr>
 
         <pre id="exported">@exported</pre>

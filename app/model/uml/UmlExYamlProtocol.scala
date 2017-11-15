@@ -30,22 +30,11 @@ object UmlExYamlProtocol extends MyYamlProtocol {
       )
     }
 
-    override def write(completeEx: UmlCompleteEx): YamlValue = {
-      val ex = completeEx.ex
-      YamlObject(
-        YamlString(ID_NAME) -> ex.id,
-        YamlString(TITLE_NAME) -> ex.title,
-        YamlString(AUTHOR_NAME) -> ex.author,
-        YamlString(TEXT_NAME) -> ex.text,
-        YamlString(STATE_NAME) -> ex.state.name,
-
-        // Exercise specific values
-        YamlString(MAPPINGS_NAME) -> YamlArray(completeEx.mappings map (_.toYaml(UmlMappingYamlFormat(ex.id))) toVector),
-        YamlString(IGNORE_WORDS_NAME) -> YamlArray(completeEx.ignoreWords map (ignore => YamlString(ignore.toIgnore)) toVector),
-        YamlString(SOLUTION_NAME) -> completeEx.solution.toYaml(UmlSolutionYamlFormat(ex.id))
-      )
-    }
-
+    override protected def writeRest(completeEx: UmlCompleteEx): Map[YamlValue, YamlValue] = Map(
+      YamlString(MAPPINGS_NAME) -> YamlArray(completeEx.mappings map (_.toYaml(UmlMappingYamlFormat(completeEx.ex.id))) toVector),
+      YamlString(IGNORE_WORDS_NAME) -> YamlArray(completeEx.ignoreWords map (ignore => YamlString(ignore.toIgnore)) toVector),
+      YamlString(SOLUTION_NAME) -> completeEx.solution.toYaml(UmlSolutionYamlFormat(completeEx.ex.id))
+    )
   }
 
   case class UmlMappingYamlFormat(exerciseId: Int) extends MyYamlFormat[UmlMapping] {
@@ -132,12 +121,13 @@ object UmlExYamlProtocol extends MyYamlProtocol {
   case class UmlAssocYamlFormat(exerciseId: Int) extends MyYamlFormat[UmlAssociation] {
 
     override def write(assoc: UmlAssociation): YamlValue = YamlObject(
-      YamlString(ASSOCTYPE_NAME) -> assoc.assocType.name,
-      // FIXME: languageName of association!
-      YamlString(FIRST_END_NAME) -> assoc.firstEnd,
-      YamlString(FIRST_MULT_NAME) -> assoc.firstMult.representant,
-      YamlString(SECOND_END_NAME) -> assoc.secondEnd,
-      YamlString(SECOND_MULT_NAME) -> assoc.secondMult.representant
+      Map[YamlValue, YamlValue](
+        YamlString(ASSOCTYPE_NAME) -> assoc.assocType.name,
+        YamlString(FIRST_END_NAME) -> assoc.firstEnd,
+        YamlString(FIRST_MULT_NAME) -> assoc.firstMult.representant,
+        YamlString(SECOND_END_NAME) -> assoc.secondEnd,
+        YamlString(SECOND_MULT_NAME) -> assoc.secondMult.representant
+      ) ++ (assoc.assocName map (ac => YamlString(NAME_NAME) -> YamlString(ac)))
     )
 
     override def readObject(yamlObject: YamlObject): UmlAssociation = UmlAssociation(

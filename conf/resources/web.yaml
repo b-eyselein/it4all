@@ -1,175 +1,133 @@
 %YAML 1.2
 ---
-id: 1
-title: Listen in Html
 author: bje40dc
-text: >
-  Erstellen Sie eine Liste in HTML, die die die Autohersteller Audi, BMW und Mercedes-Benz und Volkswagen enthält.
-  Achten Sie dabei für die Korrektur auf eine korrekte Schreibweise der einzelnen Hersteller!
+text: |
+  Erstellen Sie eine Liste in HTML, die die die Autohersteller Audi, BMW und Mercedes-Benz und Volkswagen enthält. Achten Sie dabei für die Korrektur auf eine korrekte Schreibweise der einzelnen Hersteller!
+id: 1
 status: ACCEPTED
-
+title: Listen in Html
 htmlTasks:
 - id: 1
-  text: >
-    Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL
-    '/assets/stylesheets/bootstrap.css' zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut 'rel'!
+  text: |
+    Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL '/assets/stylesheets/bootstrap.css' zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut 'rel'!
   xpathQuery: /html/head/link
   attributes:
-  - {key: rel, value: stylesheet}
   - {key: href, value: /assets/stylesheets/bootstrap.css}
-
+  - {key: rel, value: stylesheet}
 - id: 2
   text: Erstellen Sie eine passende h1-Überschrift, die das Wort 'Autohersteller' enthält.
   xpathQuery: /html/body//h1
   textContent: Autohersteller
-
 - id: 3
-  text: >
-    Erstellen Sie eine ungeordnete Liste auf der Seite, die dann die einzelnen Hersteller enthalten wird.
-    Geben Sie dieser Liste die Klasse 'list-group'.
+  text: |
+    Erstellen Sie eine ungeordnete Liste auf der Seite, die dann die einzelnen Hersteller enthalten wird. Geben Sie dieser Liste die Klasse 'list-group'.
   xpathQuery: /html/body//ul
   attributes:
-  - key: class
-    value: list-group
-
-- id: 4
-  text: Erstellen Sie das Listenelement für Audi. Geben Sie diesem Element die Klasse 'list-group-item'.
-  xpathQuery: /html/body//ul/li[1]
-  attributes:
-  - key: class
-    value: list-group-item
+  - {key: class, value: list-group}
+- text: Erstellen Sie das Listenelement für Audi. Geben Sie diesem Element die Klasse 'list-group-item'.
   textContent: Audi
-
-- id: 5
-  text: Erstellen Sie das Listenelement für BMW. Geben Sie diesem Element die Klasse 'list-group-item'.
-  xpathQuery: /html/body//ul/li[2]
   attributes:
-  - key: class
-    value: list-group-item
+  - {key: class, value: list-group-item}
+  xpathQuery: /html/body//ul/li[1]
+  id: 4
+- text: Erstellen Sie das Listenelement für BMW. Geben Sie diesem Element die Klasse 'list-group-item'.
   textContent: BMW
-
-- id: 6
-  text: Erstellen Sie das Listenelement für Mercedes. Geben Sie diesem Element die Klasse 'list-group-item'.
-  xpathQuery: /html/body//ul/li[3]
   attributes:
-  - key: class
-    value: list-group-item
+  - {key: class, value: list-group-item}
+  xpathQuery: /html/body//ul/li[2]
+  id: 5
+- text: Erstellen Sie das Listenelement für Mercedes. Geben Sie diesem Element die Klasse 'list-group-item'.
   textContent: Mercedes
-
-- id: 7
-  text: Erstellen Sie das Listenelement für Volkswagen. Geben Sie diesem Element die Klasse 'list-group-item'.
-  xpathQuery: /html/body//ul/li[4]
   attributes:
-  - key: class
-    value: list-group-item
+  - {key: class, value: list-group-item}
+  xpathQuery: /html/body//ul/li[3]
+  id: 6
+- text: Erstellen Sie das Listenelement für Volkswagen. Geben Sie diesem Element die Klasse 'list-group-item'.
   textContent: Volkswagen
-
-jsTasks: []
+  attributes:
+  - {key: class, value: list-group-item}
+  xpathQuery: /html/body//ul/li[4]
+  id: 7
 ---
-id: 2
-title: Tabellen in Html
 author: bje40dc
 text: Erstellen Sie eine Tabelle in Html!
+id: 2
 status: ACCEPTED
-
+title: Tabellen in Html
 htmlTasks:
 - id: 1
-  text: >
-    Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL
-    '/assets/stylesheets/bootstrap.css' zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut 'rel'
+  text: |
+    Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL '/assets/stylesheets/bootstrap.css' zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut 'rel'
   xpathQuery: /html/head//link
   attributes:
-  - key: rel
-    value: stylesheet
-  - key: href
-    value: /assets/stylesheets/bootstrap.css
-
+  - {key: href, value: /assets/stylesheets/bootstrap.css}
+  - {key: rel, value: stylesheet}
 - id: 2
   text: Erstellen Sie das Grundtag für die Tabelle Geben Sie der Tabelle die Klassen 'table' und 'table-striped'.
   xpathQuery: /html/body//table
   attributes:
-  - key: class
-    value: table table-striped
-
+  - {key: class, value: table table-striped}
 - id: 3
   text: Erstellen Sie die erste Zeile für die Überschriften
   xpathQuery: /html/body//table//tr[1]
-
 - id: 4
   text: Erstellen Sie die erste Zelle für die Überschrift. Diese soll als Inhalt 'Jahr' haben
   xpathQuery: html/body//table//tr[1]/th[1]
   textContent: 'Jahr'
-
 - id: 5
   text: Erstellen Sie die zweite Zelle für die Überschrift. Diese soll als Inhalt 'Produktion' haben
   xpathQuery: html/body//table//tr[1]/th[2]
   textContent: 'Produktion'
-
 - id: 6
   text: Erstellen Sie die zweite Zeile in der Tabelle
   xpathQuery: /html/body//table//tr[2]
-
 - id: 7
   text: Erstellen Sie die erste Zelle in der zweiten Zeile. Diese soll als Inhalt '1900' haben
   xpathQuery: html/body//table//tr[2]/td[1]
   textContent: '1900'
-
 - id: 8
   text: Erstellen Sie die zweite Zelle in der zweiten Zeile. Diese soll als Inhalt '9504' haben
   xpathQuery: html/body//table//tr[2]/td[2]
   textContent: '9504'
-
 - id: 9
   text: Erstellen Sie die dritte Zeile in der Tabelle
   xpathQuery: /html/body//table//tr[3]
-
 - id: 10
   text: Erstellen Sie die erste Zelle in der dritten Zeile. Diese soll als Inhalt '1950' haben
   xpathQuery: html/body//table//tr[3]/td[1]
   textContent: '1950'
-
 - id: 11
   text: Erstellen Sie die zweite Zelle in der dritten Zeile. Diese soll als Inhalt '10577426' haben
   xpathQuery: html/body//table//tr[3]/td[2]
   textContent: '10577426'
-
 - id: 12
   text: Erstellen Sie die vierte Zeile in der Tabelle
   xpathQuery: /html/body//table//tr[4]
-
 - id: 13
   text: Erstellen Sie die erste Zelle in der vierten Zeile. Diese soll als Inhalt '2000' haben
   xpathQuery: html/body//table//tr[4]/td[1]
   textContent: '2000'
-
 - id: 14
   text: Erstellen Sie die zweite Zelle in der vierten Zeile. Diese soll als Inhalt '58374162' haben
   xpathQuery: html/body//table//tr[4]/td[2]
   textContent: '58374162'
-
-jsTasks: []
 ---
+author: bje40dc
 id: 3
 title: Hyperlinks und Bilder in HTML
-author: bje40dc
 text: Erstellen Sie ein Bild in HTML, das gleichzeitig ein Link ist.
 status: ACCEPTED
-
 htmlTasks:
 - id: 1
   text: Erstellen Sie eine passende h1-Überschrift, die 'Ford Mustang' enthält.
   xpathQuery: /html/body//h1
   textContent: Ford Mustang
-
 - id: 2
   text: >
-    Erstellen Sie den Link auf der Seite, der auf Wikipedia verweist. Geben Sie als Ziel die URL 
-    'https://de.wikipedia.org/wiki/Ford_Mustang' an.
+    Erstellen Sie den Link auf der Seite, der auf Wikipedia verweist. Geben Sie als Ziel die URL 'https://de.wikipedia.org/wiki/Ford_Mustang' an.
   xpathQuery: /html/body//a
   attributes:
-  - key: href
-    value: https://de.wikipedia.org/wiki/Ford_Mustang
-       
+  - {key: href, value: https://de.wikipedia.org/wiki/Ford_Mustang}
 - id: 3
   text: >
     Erstellen Sie im Link das Bild des Ford Mustang. Geben Sie als Quelle des Bildes die URL 
@@ -178,35 +136,25 @@ htmlTasks:
      Geben Sie dem Bild die Klasse 'img-rounded'.
   xpathQuery: /html/body//a//img
   attributes:
-  - key: src
-    value: https://upload.wikimedia.org/wikipedia/commons/2/2d/1964_12_Ford_Mustang.jpg
-  - key: alt
-    value: Ford Mustang
-  - key: width
-    value: '250'
-  - key: height
-    value: '188'
-  - key: class
-    value: img-rounded
-    
+  - {key: src, value: https://upload.wikimedia.org/wikipedia/commons/2/2d/1964_12_Ford_Mustang.jpg}
+  - {key: alt, value: Ford Mustang}
+  - {key: width, value: '250'}
+  - {key: height, value: '188'}
+  - {key: class, value: img-rounded}
 - id: 4
   text: >
     Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL 
     '/assets/stylesheets/bootstrap.css' zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut 'rel'
   xpathQuery: /html/head//link
   attributes: 
-  - key: rel
-    value: stylesheet
-  - key: href
-    value: /assets/stylesheets/bootstrap.css
-    
+  - {key: rel, value: stylesheet}
+  - {key: href, value: /assets/stylesheets/bootstrap.css}
 ---
+author: bje40dc
 id: 4
 title: Login-Formular
-author: bje40dc
 text: Erstellen Sie ein Login-Formular in HTML
 status: ACCEPTED
-
 htmlTasks:
 - id: 1
   text: >
@@ -214,11 +162,8 @@ htmlTasks:
     Werte '/test.php' und 'post' an.
   xpathQuery: /html/body//form
   attributes:
-  - key: action
-    value: /test.php
-  - key: method
-    value: post
-
+  - {key: action, value: /test.php}
+  - {key: method, value: post}
 - id: 2
   text: >
     Erstellen Sie ein Feld zur Eingabe der Emailadresse. Benutzen Sie den in der Vorlesung gezeigten Typen
@@ -226,13 +171,9 @@ htmlTasks:
     Feld zur Eingabe der Emailadressedie Klasse 'form-control'.
   xpathQuery: /html/body//form//input[@type='email']
   attributes:
-  - key: name
-    value: email
-  - key: required
-    value: 'true'
-  - key: class
-    value: form-control
-
+  - {key: name, value: email}
+  - {key: required, value: 'true'}
+  - {key: class, value: form-control}
 - id: 3
   text: >
     Erstellen Sie ein Feld zur Eingabe des Passworts. Benutzen Sie den in der Vorlesung gezeigten Typen und
@@ -240,118 +181,89 @@ htmlTasks:
     Sie dem Feld zur Eingabe des Passworts Klasse 'form-control'.
   xpathQuery: /html/body//form//input[@type='password']
   attributes:
-  - key: name
-    value: passwort
-  - key: required
-    value: 'true'
-  - key: class
-    value: form-control
-
+  - {key: name, value: passwort}
+  - {key: required, value: 'true'}
+  - {key: class, value: form-control}
 - id: 4
-  text: >
-    Erstellen Sie einen Knopf (input) um das Formular abzusenden. Geben Sie den Knopf zum Absenden des
-    Formular die Klasse 'btn btn-default'
+  text: |
+    Erstellen Sie einen Knopf (input) um das Formular abzusenden. Geben Sie den Knopf zum Absenden des Formular die Klasse 'btn btn-default'
   xpathQuery: /html/body//form//input[@type='submit']
   attributes:
-  - key: class
-    value: btn btn-default
-
+  - {key: class, value: btn btn-default}
 - id: 5
-  text: >
-    Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der
-    URL '/assets/stylesheets/bootstrap.css' zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut 'rel'
+  text: |
+    Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL '/assets/stylesheets/bootstrap.css' zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut 'rel'
   xpathQuery: /html/head//link
   attributes:
-  - key: rel
-    value: stylesheet
-  - key: href
-    value: /assets/stylesheets/bootstrap.css
+  - {key: rel, value: stylesheet}
+  - {key: href, value: /assets/stylesheets/bootstrap.css}
 ---
+author: bje40dc
 id: 5
 title: Audio in HTML 5
-author: bje40dc
 text: Erstellen Sie ein Audio-Element in Html5!
 status: ACCEPTED
-
 htmlTasks:
 - id: 1
   text: Erstellen Sie eine passende h1-Überschrift die 'Deutsche Nationalhymne' enthält.
   xpathQuery: /html/body//h1
   textContent: Deutsche Nationalhymne
-
 - id: 2
-  text: >
-    Erstellen Sie das Grundelement für die Audiodatei. Aktivieren Sie die Kontrollelement. Falls der Browser
-    keine Audiodateiene unterstützt soll der Text 'Ihr Browser unterstützt kein Audio!' ausgegeben werden
+  text: |
+    Erstellen Sie das Grundelement für die Audiodatei. Aktivieren Sie die Kontrollelement. Falls der Browser keine Audiodateiene unterstützt soll der Text 'Ihr Browser unterstützt kein Audio!' ausgegeben werden
   xpathQuery: /html/body//audio
   attributes:
-  - key: controls
-    value: 'true'
+  - {key: controls, value: 'true'}
   textContent: Ihr Browser unterstützt kein Audio!
-
 - id: 3
-  text: >
-    Erstellen Sie das Element für die Quelldatei. Diese ist vom Typ 'audio/ogg' und befindet sich an der
-    URL 'https://upload.wikimedia.org/wikipedia/commons/c/cb/National_anthem_of_Germany_-_U.S._Army_1st_Armored_Division_Band.ogg'
+  text:
+    Erstellen Sie das Element für die Quelldatei. Diese ist vom Typ 'audio/ogg' und befindet sich an der URL 'https://upload.wikimedia.org/wikipedia/commons/c/cb/National_anthem_of_Germany_-_U.S._Army_1st_Armored_Division_Band.ogg'
   xpathQuery: /html/body//audio/source
   attributes:
-  - key: type
-    value: audio/ogg
-  - key: src
-    value: https://upload.wikimedia.org/wikipedia/commons/c/cb/National_anthem_of_Germany_-_U.S._Army_1st_Armored_Division_Band.ogg
+  - {key: type, value: audio/ogg}
+  - {key: src, value: https://upload.wikimedia.org/wikipedia/commons/c/cb/National_anthem_of_Germany_-_U.S._Army_1st_Armored_Division_Band.ogg}
 ---
 id: 6
 title: Klickzähler
 author: bje40dc
 text: Erstellen Sie einen Zähler der die Klicks auf einen Button zählt!
 status: ACCEPTED
-
 htmlText: Erstellen Sie zunächst den Rumpf der Seite in HTML.
 jsText: >
   Implementieren Sie nun die Funktion <code>increment()</code> die aufgerufen wird wenn auf den Knopf
   gedrückt wird. Sie soll den Inhalt (innerHTML) des Elementes mit der id 'theSpan' auslesen und um 1 erhöhen.
   Sie können die Funktion <code>parseInt(str)</code> verwenden um einen String in eine Ganzzahl umzuwandeln.
-
 htmlTasks:
 - id: 1
-  text: >
-    Erstellen Sie einen Button auf den geklickt wird. Dieser soll als Text 'Klick mich!' haben. Außerdem soll
-    beim Klick die Funktion 'increment()' aufgerufen werden.
+  text: |
+    Erstellen Sie einen Button auf den geklickt wird. Dieser soll als Text 'Klick mich!' haben. Außerdem soll beim Klick die Funktion 'increment()' aufgerufen werden.
   xpathQuery: /html/body//button
   attributes:
-  - key: onclick
-    value: increment()
+  - {key: onclick, value: increment()}
   textContent: Klick mich!
-
 - id: 2
-  text: >
-    Erstellen Sie einen Span mit der ID 'theSpan' in dem die Anzahl der Klicks angezeigt werden. Zu Anfang soll
-    dieser eine 0 anzeigen.
+  text: |
+    Erstellen Sie einen Span mit der ID 'theSpan' in dem die Anzahl der Klicks angezeigt werden. Zu Anfang soll dieser eine 0 anzeigen.
   xpathQuery: /html/body//span[@id='theSpan']
   textContent: '0'
-
 jsTasks:
 - id: 1
   text: Test 1
   xpathQuery: /html/body//button
   actiontype: CLICK
-
   conditions:
   - id: 1
     xpathQuery: /html/body//span[@id='theSpan']
     isPrecondition: true
     awaitedValue: 0
-
   - id: 2
     xpathQuery: /html/body//span[@id='theSpan']
     isPrecondition: false
     awaitedValue: 1
-
 - id: 2
   text: Test 2
   xpathQuery: /html/body//button
   actiontype: CLICK
-
   conditions:
   - id: 1
     xpathQuery: /html/body//span[@id='theSpan']
@@ -362,12 +274,10 @@ jsTasks:
     xpathQuery: /html/body//span[@id='theSpan']
     isPrecondition: false
     awaitedValue: 2
-
 - id: 3
   text: Test 3
   xpathQuery: /html/body//button
   actiontype: CLICK
-
   conditions:
   - id: 1
     xpathQuery: /html/body//span[@id='theSpan']
@@ -378,18 +288,15 @@ jsTasks:
     xpathQuery: /html/body//span[@id='theSpan']
     isPrecondition: false
     awaitedValue: 3
-
 - id: 4
   text: Test 4
   xpathQuery: /html/body//button
   actiontype: CLICK
-
   conditions:
   - id: 1
     xpathQuery: /html/body//span[@id='theSpan']
     isPrecondition: true
     awaitedValue: 3
-
   - id: 2
     xpathQuery: /html/body//span[@id='theSpan']
     isPrecondition: false

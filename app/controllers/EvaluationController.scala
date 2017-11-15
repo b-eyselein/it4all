@@ -19,7 +19,7 @@ class EvaluationController @Inject()(cc: ControllerComponents, val dbConfigProvi
   def index: EssentialAction = withUser { user =>
     implicit request =>
       //      val toEvaluate: List[Feedback] = Feedback.EvaluatedTool.values.map(tool => {
-      //        val key = new FeedbackKey(user.languageName, tool)
+      //        val key = new FeedbackKey(user.name, tool)
       //        Option(Feedback.finder.byId(key)).getOrElse(new Feedback(key))
       //      }).toList
       val toEvaluate: List[Feedback] = List.empty
@@ -36,7 +36,7 @@ class EvaluationController @Inject()(cc: ControllerComponents, val dbConfigProvi
   }
 
   def readFeedback(user: User, tool: EvaluatedTool)(implicit request: Request[AnyContent]): Feedback = {
-    //    val key = new FeedbackKey(user.languageName, tool)
+    //    val key = new FeedbackKey(user.name, tool)
     //    val feedback = Option(Feedback.finder.byId(key)).getOrElse(new Feedback(key))
 
     val evaluatedTool = tool.toString.toLowerCase

@@ -107,12 +107,12 @@ trait WebTableDefs extends TableDefs {
   object webExercises extends ExerciseTableQuery[WebExercise, WebCompleteEx, WebExerciseTable](new WebExerciseTable(_)) {
 
     override def saveCompleteEx(completeEx: WebCompleteEx)(implicit ec: ExecutionContext): Future[Int] =
-      db.run(saveEx(completeEx.ex) zip DBIO.sequence(completeEx.htmlTasks.map(saveHtmlTask)) zip DBIO.sequence(completeEx.jsTasks.map(saveJsTask)))
+      db.run(saveEx(completeEx.ex) zip DBIO.sequence(completeEx.htmlTasks map saveHtmlTask) zip DBIO.sequence(completeEx.jsTasks map saveJsTask))
         .map(_._1._1)
 
     override protected def completeExForEx(ex: WebExercise)(implicit ec: ExecutionContext): Future[WebCompleteEx] = db.run(htmlTasksAction(ex.id) zip jsTasksAction(ex.id)) map { tasks =>
-      val htmlTasks = tasks._1 groupBy (_._1) mapValues (_.map(_._2)) map (ct => HtmlCompleteTask(ct._1, ct._2.flatten)) toSeq
-      val jsTasks = tasks._2 groupBy (_._1) mapValues (_.map(_._2)) map (ct => JsCompleteTask(ct._1, ct._2.flatten)) toSeq
+      val htmlTasks = tasks._1 groupBy (_._1) mapValues (_ map (_._2)) map (ct => HtmlCompleteTask(ct._1, ct._2.flatten)) toSeq
+      val jsTasks = tasks._2 groupBy (_._1) mapValues (_ map (_._2)) map (ct => JsCompleteTask(ct._1, ct._2.flatten)) toSeq
 
       WebCompleteEx(ex, htmlTasks sortBy (_.task.id), jsTasks sortBy (_.task.id))
     }

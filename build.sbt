@@ -19,7 +19,6 @@ libraryDependencies ++= Seq(
   "mysql" % "mysql-connector-java" % "8.0.8-dmr",
   guice,
 
-  // Test YAML for ex reading...
   "net.jcazevedo" %% "moultingyaml" % "0.4.0",
 
   // core

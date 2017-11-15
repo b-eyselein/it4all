@@ -273,7 +273,7 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
       //        //      val result = new QuestionResult(readSelAnswers(question, form), question)
       //        Ok(views.html.givenanswerQuestionResult.render(user, null /* result*/))
       //      } else {
-      //        val key = new UserAnswerKey(user.languageName, id)
+      //        val key = new UserAnswerKey(user.name, id)
       //        val answer = Option(UserAnswer.finder.byId(key)).getOrElse(new UserAnswer(key))
       //
       //
@@ -287,7 +287,7 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
   }
 
   //  override def renderExercise(user: User, exercise: Question): Html = {
-  //    views.html.questions.question.render(user, exercise, null /* UserAnswer.finder.byId(new UserAnswerKey(user.languageName, exercise.id))*/)
+  //    views.html.questions.question.render(user, exercise, null /* UserAnswer.finder.byId(new UserAnswerKey(user.name, exercise.id))*/)
   //  }
 
   //  override def renderExesListRest: Html = ???

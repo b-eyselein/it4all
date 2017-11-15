@@ -58,7 +58,7 @@ class ReplacementTest {
 
   private def testSymbolReplacement(repl: SymbolReplacement, symbol: Symbol, expStr: String, expRepl: List[List[Replacement]]) {
     assert(repl.symbol == symbol,
-      s"Expected that symbol of $repl has a languageName of '$symbol', but got '${repl.symbol}'")
+      s"Expected that symbol of $repl has a name of '$symbol', but got '${repl.symbol}'")
     testReplacement(repl, expStr, expRepl)
   }
 

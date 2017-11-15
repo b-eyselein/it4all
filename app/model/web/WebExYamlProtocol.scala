@@ -20,26 +20,43 @@ object WebExYamlProtocol extends MyYamlProtocol {
         htmlTasks, jsTasks)
     }
 
-    override protected def writeRest(completeEx: WebCompleteEx): Map[YamlValue, YamlValue] = Map(
-      YamlString(HTML_TEXT_NAME) -> (completeEx.ex.htmlText map YamlString getOrElse YamlNull),
-      YamlString(JS_TEXT_NAME) -> (completeEx.ex.jsText map YamlString getOrElse YamlNull),
+    override protected def writeRest(completeEx: WebCompleteEx): Map[YamlValue, YamlValue] = {
 
-      YamlString(HTML_TASKS_NAME) -> YamlArray(completeEx.htmlTasks map (_ toYaml HtmlCompleteTaskYamlFormat(completeEx.ex.id)) toVector),
-      YamlString(JS_TASKS_NAME) -> YamlArray(completeEx.jsTasks map (_ toYaml JsCompleteTaskYamlFormat(completeEx.ex.id)) toVector)
-    )
+      val htmlTasks: Option[(YamlValue, YamlValue)] = completeEx.htmlTasks match {
+        case Nil                        => None
+        case hts: Seq[HtmlCompleteTask] => Some(YamlString(HTML_TASKS_NAME) -> YamlArray(hts map (_ toYaml HtmlCompleteTaskYamlFormat(completeEx.ex.id)) toVector))
+      }
+
+      val jsTasks: Option[(YamlValue, YamlValue)] = completeEx.jsTasks match {
+        case Nil => None
+        case jts => Some(YamlString(JS_TASKS_NAME) -> YamlArray(jts map (_ toYaml JsCompleteTaskYamlFormat(completeEx.ex.id)) toVector))
+      }
+
+      Map.empty ++
+        (completeEx.ex.htmlText map (t => YamlString(HTML_TEXT_NAME) -> YamlString(t))) ++
+        (completeEx.ex.jsText map (t => YamlString(JS_TEXT_NAME) -> YamlString(t))) ++
+        htmlTasks ++ jsTasks
+
+    }
   }
 
   case class HtmlCompleteTaskYamlFormat(exerciseId: Int) extends MyYamlFormat[HtmlCompleteTask] {
 
     override def write(htmlCompTask: HtmlCompleteTask): YamlValue = {
-      val yamlAttrs = YamlArray(htmlCompTask.attributes map (_ toYaml TaskAttributeYamlFormat(htmlCompTask.task.id, htmlCompTask.task.exerciseId)) toVector)
-      YamlObject(
-        YamlString(ID_NAME) -> htmlCompTask.task.id,
-        YamlString(TEXT_NAME) -> htmlCompTask.task.text,
-        YamlString(XPATH_NAME) -> htmlCompTask.task.xpathQuery,
-        YamlString(TEXT_CONTENT_NAME) -> YamlString(htmlCompTask.task.textContent.getOrElse("")),
+      val yamlAttrs: Option[(YamlString, YamlArray)] = htmlCompTask.attributes match {
+        case Nil   => None
+        case attrs => Some(YamlString(ATTRS_NAME) -> YamlArray(attrs map (_ toYaml TaskAttributeYamlFormat(htmlCompTask.task.id, htmlCompTask.task.exerciseId)) toVector))
+      }
 
-        YamlString(ATTRS_NAME) -> yamlAttrs
+      val tcOpt: Option[(YamlValue, YamlValue)] = htmlCompTask.task.textContent map (tc => YamlString(TEXT_CONTENT_NAME) -> YamlString(tc))
+
+      new YamlObject(
+        Map[YamlValue, YamlValue](
+          YamlString(ID_NAME) -> htmlCompTask.task.id,
+          YamlString(TEXT_NAME) -> htmlCompTask.task.text,
+          YamlString(XPATH_NAME) -> htmlCompTask.task.xpathQuery,
+
+        ) ++ tcOpt ++ yamlAttrs
       )
     }
 

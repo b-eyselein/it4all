@@ -5,7 +5,7 @@ import java.nio.file.attribute.PosixFilePermission
 import com.google.common.base.Splitter
 
 object ProgLangCorrector {
-  val NEWLINE_SPLITTER: Splitter = Splitter.on("\n")
+  private val NEWLINE_SPLITTER: Splitter = Splitter.on("\n")
 
   val PYTHON_SCRIPT_FILE = "sol.py"
 
@@ -59,7 +59,7 @@ abstract class ProgLangCorrector {
 
 }
 
-class JavaCorrector extends ProgLangCorrector { // @Override
+object JavaCorrector extends ProgLangCorrector { // @Override
   // public String buildToEvaluate(String functionname, List<String> inputs) {
   // return functionname + "(" + String.join(", ", inputs) + ");";
   // }
@@ -70,7 +70,7 @@ class JavaCorrector extends ProgLangCorrector { // @Override
   //    }
 }
 
-class PythonCorrector extends ProgLangCorrector { // @Override
+object PythonCorrector extends ProgLangCorrector { // @Override
   // public String buildToEvaluate(String functionname, List<String> inputs) {
   // return functionname + "(" + String.join(", ", inputs) + ")";
   // }

@@ -1,132 +1,132 @@
 %YAML 1.2
 ---
-id: 1
-title: Party
 author: bje40dc
-text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
-status: ACCEPTED
 exerciseType: XML_DTD
-rootNode: party
 refFileContent: |
-    <!ELEMENT party (gast+)>
-    <!ATTLIST party datum CDATA #REQUIRED>
-    <!ELEMENT gast (getraenk+, zustand?)>
-    <!ATTLIST gast name CDATA #REQUIRED>
-    <!ELEMENT getraenk (#PCDATA)>
-    <!ELEMENT zustand EMPTY>
-    <!ATTLIST zustand	ledig CDATA #REQUIRED
+  <!ELEMENT party (gast+)>
+  <!ATTLIST party datum CDATA #REQUIRED>
+  <!ELEMENT gast (getraenk+, zustand?)>
+  <!ATTLIST gast name CDATA #REQUIRED>
+  <!ELEMENT getraenk (#PCDATA)>
+  <!ELEMENT zustand EMPTY>
+  <!ATTLIST zustand ledig CDATA #REQUIRED
                     nuechtern CDATA #REQUIRED>
+text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
+id: 1
+status: ACCEPTED
+rootNode: party
+title: Party
 ---
+author: bje40dc
+exerciseType: XML_DTD
+refFileContent: |
+  <!ELEMENT lecture (lecturer+, date+, student+)>
+
+  <!ELEMENT lecturer (name)>
+  <!ATTLIST lecturer title CDATA #REQUIRED>
+
+  <!ELEMENT date (hours)>
+  <!ATTLIST date weekday (mon | tue | wed | thu | fri | sat | sun)
+                  #REQUIRED>
+
+  <!ELEMENT student (name)>
+  <!ATTLIST student matrikel CDATA #REQUIRED>
+
+  <!ELEMENT name (#PCDATA)>
+  <!ELEMENT hours (#PCDATA)>
+text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
 id: 2
-title: Vorlesung
-author: bje40dc
-text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
 status: ACCEPTED
-exerciseType: XML_DTD
 rootNode: lecture
-refFileContent: |
-    <!ELEMENT lecture (lecturer+, date+, student+)>
-
-    <!ELEMENT lecturer (name)>
-    <!ATTLIST lecturer title CDATA #REQUIRED>
-
-    <!ELEMENT date (hours)>
-    <!ATTLIST date weekday (mon | tue | wed | thu | fri | sat | sun)
-                    #REQUIRED>
-
-    <!ELEMENT student (name)>
-    <!ATTLIST student matrikel CDATA #REQUIRED>
-
-    <!ELEMENT name (#PCDATA)>
-    <!ELEMENT hours (#PCDATA)>
+title: Vorlesung
 ---
-id: 3
-title: Krankenhaus
 author: bje40dc
-text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
-status: ACCEPTED
 exerciseType: XML_DTD
+refFileContent: |
+  <!ELEMENT krankenhaus (arzt+)>
+
+  <!ELEMENT arzt (name, termin+)>
+  <!ATTLIST arzt id CDATA #REQUIRED>
+
+  <!ELEMENT name (#PCDATA)>
+
+  <!ELEMENT termin (datum, uhrzeit, patient, beschreibung?)>
+  <!ATTLIST termin art
+            (untersuchung | behandlung | operation) #REQUIRED>
+
+  <!ELEMENT datum (#PCDATA)>
+  <!ELEMENT uhrzeit (#PCDATA)>
+  <!ELEMENT patient (#PCDATA)>
+  <!ELEMENT beschreibung (#PCDATA)>
+text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
+id: 3
+status: ACCEPTED
 rootNode: hospital
-refFileContent: |
-    <!ELEMENT krankenhaus (arzt+)>
-
-    <!ELEMENT arzt (name, termin+)>
-    <!ATTLIST arzt id CDATA #REQUIRED>
-
-    <!ELEMENT name (#PCDATA)>
-
-    <!ELEMENT termin (datum, uhrzeit, patient, beschreibung?)>
-    <!ATTLIST termin art
-              (untersuchung | behandlung | operation) #REQUIRED>
-
-    <!ELEMENT datum (#PCDATA)>
-    <!ELEMENT uhrzeit (#PCDATA)>
-    <!ELEMENT patient (#PCDATA)>
-    <!ELEMENT beschreibung (#PCDATA)>
+title: Krankenhaus
 ---
+author: bje40dc
+exerciseType: DTD_XML
+refFileContent: |
+  <?xml version="1.0" encoding="UTF-8"?>
+  <!DOCTYPE breakfast SYSTEM "breakfast.dtd">
+  <breakfast>
+      <food>
+          <name>Belgian Waffles</name>
+          <price>$5.95</price>
+          <description>
+              Two of our famous Belgian Waffles with plenty of real
+              maple syrup
+          </description>
+          <calories>650</calories>
+      </food>
+      <food>
+          <name>Strawberry Belgian Waffles</name>
+          <price>$7.95</price>
+          <description>
+              Light Belgian waffles covered with strawberries and
+              whipped cream
+          </description>
+          <calories>900</calories>
+      </food>
+  </breakfast>
+text: Erstellen Sie für dieses Xml-Dokument eine passende DTD
 id: 4
-title: Frühstück
-author: bje40dc
-text: Erstellen Sie für dieses Xml-Dokument eine passende DTD
 status: ACCEPTED
-exerciseType: DTD_XML
 rootNode: breakfast
-refFileContent: |
-    <?xml version="1.0" encoding="UTF-8"?>
-    <!DOCTYPE breakfast SYSTEM "breakfast.dtd">
-    <breakfast>
-        <food>
-            <name>Belgian Waffles</name>
-            <price>$5.95</price>
-            <description>
-                Two of our famous Belgian Waffles with plenty of real
-                maple syrup
-            </description>
-            <calories>650</calories>
-        </food>
-        <food>
-            <name>Strawberry Belgian Waffles</name>
-            <price>$7.95</price>
-            <description>
-                Light Belgian waffles covered with strawberries and
-                whipped cream
-            </description>
-            <calories>900</calories>
-        </food>
-    </breakfast>
+title: Frühstück
 ---
-id: 5
-title: Bibliothek
 author: bje40dc
-text: Erstellen Sie für dieses Xml-Dokument eine passende DTD
-status: ACCEPTED
 exerciseType: DTD_XML
-rootNode: library
 refFileContent: |
-    <?xml version="1.0" encoding="utf-8"?>
-    <!DOCTYPE Bibliothek SYSTEM "bibliothek.dtd">
-    <Bibliothek>
-        <Abteilung>
-            <Buch id="1">
-                <ISBN>978-3-7742-1142-1</ISBN>
-                <Titel>Basic cooking</Titel>
-                <Autor>Sabine Saelzer</Autor>
-                <Co-Autor>Sebastian Dickhaut</Co-Autor>
-                <Co-Autor>Barbara Bonisolli</Co-Autor>
-                <Co-Autor>Alexander Walter</Co-Autor>
-                <Auflage>27</Auflage>
-                <Jahr>2013</Jahr>
-            </Buch>
-            <Buch id="2">
-                <ISBN>978-1-4454-5973-8</ISBN>
-                <Titel>Studentenkueche</Titel>
-                <Verlag>Parragon</Verlag>
-                <Jahr>2012</Jahr>
-            </Buch>
-            <Buch id="3">
-                <ISBN>978-1-4748-2866-6</ISBN>
-                <Titel>Mediterran</Titel>
-                <Verlag>Parragon</Verlag>
-            </Buch>
-        </Abteilung>
-    </Bibliothek>
+  <?xml version="1.0" encoding="utf-8"?>
+  <!DOCTYPE Bibliothek SYSTEM "bibliothek.dtd">
+  <Bibliothek>
+      <Abteilung>
+          <Buch id="1">
+              <ISBN>978-3-7742-1142-1</ISBN>
+              <Titel>Basic cooking</Titel>
+              <Autor>Sabine Saelzer</Autor>
+              <Co-Autor>Sebastian Dickhaut</Co-Autor>
+              <Co-Autor>Barbara Bonisolli</Co-Autor>
+              <Co-Autor>Alexander Walter</Co-Autor>
+              <Auflage>27</Auflage>
+              <Jahr>2013</Jahr>
+          </Buch>
+          <Buch id="2">
+              <ISBN>978-1-4454-5973-8</ISBN>
+              <Titel>Studentenkueche</Titel>
+              <Verlag>Parragon</Verlag>
+              <Jahr>2012</Jahr>
+          </Buch>
+          <Buch id="3">
+              <ISBN>978-1-4748-2866-6</ISBN>
+              <Titel>Mediterran</Titel>
+              <Verlag>Parragon</Verlag>
+          </Buch>
+      </Abteilung>
+  </Bibliothek>
+text: Erstellen Sie für dieses Xml-Dokument eine passende DTD
+id: 5
+status: ACCEPTED
+rootNode: library
+title: Bibliothek

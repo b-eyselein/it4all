@@ -107,7 +107,7 @@ class SqlController @Inject()(cc: ControllerComponents /*, @NamedDatabase("sqlse
 
   //  override def correctEx(sol: StringSolution, exercise: Option[SqlExercise], user: User): Try[SqlResult] = Try({
   //    val learnerSolution = sol.learnerSolution
-  //    saveSolution(user.languageName, learnerSolution, exercise.id)
+  //    saveSolution(user.name, learnerSolution, exercise.id)
   //
   //    val sample = findBestFittingSample(learnerSolution, exercise.samples.toList)
   //
@@ -121,7 +121,7 @@ class SqlController @Inject()(cc: ControllerComponents /*, @NamedDatabase("sqlse
   //  override def renderExercise(user: User, exercise: SqlExercise): Html = {
   //    val tables = readTablesInDatabase(sqlSelect, exercise.scenario.shortName)
   //
-  //    val oldOrDefSol = Option(SqlSolution.finder.byId(new SqlSolutionKey(user.languageName, exercise.id))) match {
+  //    val oldOrDefSol = Option(SqlSolution.finder.byId(new SqlSolutionKey(user.name, exercise.id))) match {
   //      case None => ""
   //      case Some(oldSol) => oldSol.sol
   //    }

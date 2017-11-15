@@ -88,7 +88,7 @@ class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
             //      if (Course.finder.byId(courseId) == null && courseId != -1) {
             //        // Create course
             //        val course = new Course()
-            //        course.languageName = courseName
+            //        course.name = courseName
             //        course.save()
             //      }
 

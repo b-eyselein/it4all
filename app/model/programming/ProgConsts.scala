@@ -14,10 +14,10 @@ object ProgConsts extends Consts {
 
   val LANGUAGE_NAME = "language"
 
-  val OUTPOUT_NAME = "output"
+  val OUTPUT_NAME = "output"
 
   val SAMPLE_NAME          = "sample"
-  val SAMPLE_SOLS_NAME     = "sampleSolutions"
+  val SAMPLE_SOL_NAME      = "sampleSolution"
   val SAMPLE_TESTDATA_NAME = "sampleTestData"
 
   val PYTHON_DEFAULT: String =

@@ -5,14 +5,17 @@ import javax.inject._
 import controllers.Secured
 import controllers.core.AIdExController
 import controllers.exes.ProgController._
+import model.Enums.ExerciseState
 import model.User
 import model.core._
 import model.core.tools.ExerciseOptions
+import model.programming.ProgConsts._
 import model.programming.ProgLanguage._
 import model.programming._
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.data.Form
 import play.api.db.slick.DatabaseConfigProvider
+import play.api.libs.json._
 import play.api.mvc._
 import play.twirl.api.Html
 
@@ -52,7 +55,7 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   override type SolutionType = StringSolution
 
-  override def solForm: Form[StringSolution] = ???
+  override def solForm: Form[StringSolution] = Solution.stringSolForm
 
   // Yaml
 
@@ -76,8 +79,8 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
   // Helper methods, values ...
 
   val correctors = Map(
-    JAVA_8 -> new JavaCorrector(),
-    PYTHON_3 -> new PythonCorrector()
+    JAVA_8 -> JavaCorrector,
+    PYTHON_3 -> PythonCorrector
   )
 
   def getDeclaration(lang: String): EssentialAction = withUser { _ =>
@@ -107,7 +110,7 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
   //
   // val corrector: ProgLangCorrector getCorrector(lang)
   //
-  // val solDir: Path checkAndCreateSolDir(user.languageName, exercise)
+  // val solDir: Path checkAndCreateSolDir(user.name, exercise)
   //
   // return new CompleteResult[](learnerSolution,
   // corrector.evaluate(learnerSolution, completeTestData, solDir))
@@ -119,45 +122,93 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   override def renderResult(correctionResult: CompleteResult[ProgEvaluationResult]): Html = ???
 
-  def testData(id: Int): EssentialAction = withUser { user =>
+  def testData(id: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
-      //      val oldTestData = Option(CommitedTestDataHelper.forUserAndExercise(user, id)).getOrElse(List.empty)
+      completeExById(id) map {
+        case Some(ex) =>
+          //          val oldTestData = Option(CommitedTestDataHelper.forUserAndExercise(user, id)).getOrElse(List.empty)
 
-      //      Ok(views.html.programming.testData.render(user, finder.byId(id).get, oldTestData))
-      Ok("TODO")
+          Ok(views.html.programming.testData.render(user, ex, Seq.empty /* oldTestData*/))
+        case None     => Redirect(controllers.exes.routes.ProgController.index())
+      }
   }
 
-  def validateTestData(id: Int): EssentialAction = withUser { user =>
+  def validateTestData(id: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
-      //      finder.byId(id) match {
-      //        case None           => BadRequest("TODO!")
-      //        case Some(exercise) =>
-      //          // val language: ProgLanguage
-      //          // ProgLanguage.valueOf(form.get(StringConsts.LANGUAGE_NAME))
-      //
-      //          val testData: List[CommitedTestData] = List.empty //extractTestData(factory.form().bindFromRequest(), user.languageName, exercise)
-      //          //          testData.foreach(_.save)
-      //
-      //          val validatedTestData: List[ProgEvaluationResult] = List.empty
-      //
-      //          Ok(views.html.programming.validatedTestData.render(user, exercise, validatedTestData))
-      //      }
-      Ok("TODO")
+      readAndValidateTestdata(id, user, request) map {
+        case Some((ex, validatedTestData)) => Ok(views.html.programming.validatedTestData.render(user, ex.ex, Seq.empty /*validatedTestData*/))
+        case None                          => BadRequest("")
+      }
   }
 
-  def validateTestDataLive(id: Int): EssentialAction = withUser { user =>
+  def validateTestDataLive(exerciseId: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
-      // val exercise: ProgExercise finder.byId(id)
-      // val form: DynamicForm factory.form().bindFromRequest()
-      // val language: ProgLanguage
-      // ProgLanguage.valueOf(form.get(StringConsts.LANGUAGE_NAME))
+      readAndValidateTestdata(exerciseId, user, request) map {
+        case Some((ex, validatedTestData)) => Ok("TODO" /*Json.toJson(validatedTestData)*/)
+        case None                          => BadRequest
+      }
+  }
 
-      // val testData: List[CommitedTestData] extractTestData(form,
-      // user().languageName, exercise)
+  private def readAndValidateTestdata(exerciseId: Int, user: User, request: Request[AnyContent]): Future[Option[(ProgCompleteEx, Seq[CompleteCommitedTestData])]] = {
+    completeExById(exerciseId) map { exOpt =>
+      (exOpt zip request.body.asJson).headOption map {
+        case (ex, jsValue) =>
+          val testData = readAllCommitedTestDataFromJson(jsValue, ex.ex.id, user.username) getOrElse Seq.empty
+          // FIXME: save and validate test data...
+          testData.foreach(println)
 
-      val validatedTestData = List.empty
+          val validatedTestData = List.empty
 
-      Ok("TODO" /*Json.toJson(validatedTestData)*/)
+          //          Ok("TODO" /*Json.toJson(validatedTestData)*/)
+          (ex, validatedTestData)
+      }
+    }
+  }
+
+  private def readAllCommitedTestDataFromJson(jsValue: JsValue, exId: Int, username: String): Option[Seq[CompleteCommitedTestData]] = jsValue match {
+    case JsArray(completeTestData) => Some(completeTestData flatMap (jv => readCommitedTestDataFromJson(jv, exId, username)))
+    case _                         => None
+  }
+
+  private def readCommitedTestDataFromJson(jv: JsValue, exId: Int, username: String): Option[CompleteCommitedTestData] = jv match {
+    case JsObject(values) =>
+
+      val idOpt: Option[Int] = jsIntValue(values, ID_NAME)
+      val outputOpt: Option[String] = jsStringValue(values, OUTPUT_NAME)
+
+      (idOpt zip outputOpt).headOption map {
+        case (id, output) =>
+          CompleteCommitedTestData(
+            CommitedTestData(id, exId, username, output, ExerciseState.CREATED),
+            readInputsFromJson(values get INPUTS_NAME, id, exId, username) getOrElse Seq.empty
+          )
+      }
+    case _                => None
+  }
+
+  private def readInputsFromJson(jsValue: Option[JsValue], testId: Int, exId: Int, username: String): Option[Seq[CommitedTestDataInput]] = jsValue map {
+    case JsArray(objects) => objects flatMap (value => readInputFromJson(value, testId, exId, username))
+    case _                => Seq.empty
+  }
+
+  private def readInputFromJson(iObj: JsValue, exId: Int, testId: Int, username: String): Option[CommitedTestDataInput] = iObj match {
+    case JsObject(values) =>
+
+      val idOpt: Option[Int] = jsIntValue(values, ID_NAME)
+      val inputOpt: Option[String] = jsStringValue(values, INPUT_NAME)
+
+      (idOpt zip inputOpt).headOption map { case (id, input) => CommitedTestDataInput(id, testId, exId, input, username) }
+    case _                => None
+  }
+
+  private def jsIntValue(values: scala.collection.Map[String, JsValue], fieldName: String) = values get fieldName flatMap {
+    case JsNumber(value) => Some(value.intValue)
+    case _               => None
+  }
+
+  private def jsStringValue(values: scala.collection.Map[String, JsValue], fieldName: String) = values get fieldName flatMap {
+    case JsString(str) => Some(str)
+    case _             => None
   }
 
 }

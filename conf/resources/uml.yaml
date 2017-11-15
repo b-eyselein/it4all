@@ -35,7 +35,7 @@ solution:
     attributes:
     - name: id
       type: String
-    - name: languageName
+    - name: name
       type: String
     
   - classType: CLASS
@@ -79,7 +79,7 @@ solution:
     attributes:
     - name: id
       type: String
-    - name: languageName
+    - name: name
       type: String
     
   - classType: CLASS

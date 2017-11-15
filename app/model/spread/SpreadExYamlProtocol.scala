@@ -9,11 +9,13 @@ object SpreadExYamlProtocol extends MyYamlProtocol {
 
   implicit object SpreadExYamlFormat extends ExYamlFormat[SpreadExercise] {
 
-    override def write(spreadCompEx: SpreadExercise): YamlValue = ???
-
     override def readRest(yamlObject: YamlObject, baseValues: BaseValues): SpreadExercise =
       SpreadExercise(baseValues, yamlObject.stringField(SAMPLE_FILENAME), yamlObject.stringField(TEMPALTE_FILENAME))
 
+    override protected def writeRest(completeEx: SpreadExercise): Map[YamlValue, YamlValue] = Map(
+      YamlString(SAMPLE_FILENAME) -> completeEx.sampleFileName,
+      YamlString(TEMPALTE_FILENAME) -> completeEx.templateFilename
+    )
   }
 
 }

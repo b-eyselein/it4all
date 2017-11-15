@@ -33,7 +33,7 @@ case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping], ignoreWords
 
     classes.zipWithIndex.map { case (clazz, index) =>
       s"""{
-         |  languageName: "${clazz.clazz.className}",
+         |  name: "${clazz.clazz.className}",
          |  classType: "${clazz.clazz.classType.toString.toUpperCase}",
          |  attributes: [], methods: [],
          |  position: { x: ${(index / sqrt) * GAP + OFFSET}, y: ${(index % sqrt) * GAP + OFFSET} }
