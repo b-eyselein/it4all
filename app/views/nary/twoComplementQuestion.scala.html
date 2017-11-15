@@ -1,3 +1,4 @@
+@import model.nary.NaryConsts._
 @import model.nary.{NAryResult, NumberBase, NAryNumber}
 
 @(user: model.User, startingNumber: NAryNumber, verbose: Boolean)
@@ -29,7 +30,7 @@
 
                     <div class="form-group">
                         <div class="input-group">
-                            <input value="@startingNumber" title="Vorgegebene Zahl" readonly class="form-control text-right" name="@NAryResult.VALUE_NAME">
+                            <input value="@startingNumber" title="Vorgegebene Zahl" readonly class="form-control text-right" name="@VALUE_NAME">
                             <span class="input-group-addon">@startingNumber.base.dispBase</span>
                         </div>
                     </div>
@@ -44,7 +45,7 @@
                                 <div class="input-group">
                                     <span class="input-group-addon">--></span>
                                     <input pattern="@NumberBase.BINARY.htmlPattern" autocomplete="off" autofocus
-                                    class="form-control text-right" name="@NAryResult.BINARY_ABS" placeholder="Ihre L&ouml;sung" required>
+                                    class="form-control text-right" name="@BINARY_ABS" placeholder="Ihre L&ouml;sung" required>
                                     <span class="input-group-addon"><sub>2</sub></span>
                                 </div>
                             </div>
@@ -57,7 +58,7 @@
                                 <div class="input-group">
                                     <span class="input-group-addon">--></span>
                                     <input pattern="@NumberBase.BINARY.htmlPattern" autocomplete="off" autofocus
-                                    class="form-control text-right" name="@NAryResult.INVERTED_ABS" placeholder="Ihre L&ouml;sung" required>
+                                    class="form-control text-right" name="@INVERTED_ABS" placeholder="Ihre L&ouml;sung" required>
                                     <span class="input-group-addon"><sub>2</sub></span>
                                 </div>
                             </div>
@@ -71,7 +72,7 @@
                             <div class="input-group">
                                 <span class="input-group-addon">--></span>
                                 <input pattern="@NumberBase.BINARY.htmlPattern" autocomplete="off" autofocus
-                                class="form-control text-right" name="@model.core.StringConsts.FORM_VALUE" placeholder="Ihre L&ouml;sung" required>
+                                class="form-control text-right" name="@FORM_VALUE" placeholder="Ihre L&ouml;sung" required>
                                 <span class="input-group-addon"><sub>2</sub></span>
                             </div>
                         </div>

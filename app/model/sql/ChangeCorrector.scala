@@ -3,8 +3,8 @@ package model.sql
 import java.sql.Connection
 
 import model.core.CommonUtils.cleanly
-import model.core.StringConsts
 import model.core.matching.MatchingResult
+import model.sql.SqlConsts.SELECT_ALL_DUMMY
 import net.sf.jsqlparser.expression.Expression
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.schema.Table
@@ -33,7 +33,7 @@ abstract class ChangeCorrector(queryType: String) extends QueryCorrector(queryTy
       connection.setCatalog(exercise.scenario.shortName)
       connection.setAutoCommit(false)
 
-      val validation = StringConsts.SELECT_ALL_DUMMY + getTableNames(sampleQ).head
+      val validation = SELECT_ALL_DUMMY + getTableNames(sampleQ).head
 
       new SqlExecutionResult(getResultSet(userQ, connection, validation).get, getResultSet(sampleQ, connection, validation).get)
     })

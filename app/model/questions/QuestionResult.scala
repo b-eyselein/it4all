@@ -1,9 +1,10 @@
 package model.questions
 
 
-import model.questions.QuestionResult._
+import model.Enums.SuccessType
+import model.core.EvaluationResult
 import model.core.matching.{Match, Matcher}
-import model.core.result.{EvaluationResult, SuccessType}
+import model.questions.QuestionResult._
 
 case class AnswerMatch(ua: Option[Answer], sa: Option[Answer], s: Int) extends Match[Answer](ua, sa, s)
 

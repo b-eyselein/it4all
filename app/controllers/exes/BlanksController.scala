@@ -2,11 +2,11 @@ package controllers.exes
 
 import javax.inject._
 
+import controllers.Secured
 import controllers.core.AIdExController
 import model.User
-import model.blanks.{BlanksCompleteEx, BlanksExercise}
-import model.core.result.{CompleteResult, EvaluationResult}
-import model.core.{Repository, Secured, StringSolution}
+import model.blanks.BlanksExercise
+import model.core._
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.data.Form
 import play.api.db.slick.DatabaseConfigProvider
@@ -23,13 +23,13 @@ class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
 
   override type SolutionType = StringSolution
 
-  override def solForm: Form[StringSolution] = ???
+  override def solForm: Form[StringSolution] = Solution.stringSolForm
 
   // Yaml
 
-  override type CompEx = BlanksCompleteEx
+  override type CompEx = BlanksExercise
 
-  override val yamlFormat: YamlFormat[BlanksCompleteEx] = null
+  override val yamlFormat: YamlFormat[BlanksExercise] = null
 
   // db
 
@@ -48,7 +48,7 @@ class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
       Ok("TODO")
   }
 
-  override protected def correctEx(sol: StringSolution, exercise: BlanksCompleteEx, user: User): Try[CompleteResult[EvaluationResult]]
+  override protected def correctEx(sol: StringSolution, exercise: BlanksExercise, user: User): Try[CompleteResult[EvaluationResult]]
   = ???
 
   override protected def renderExesListRest: Html = new Html("")

@@ -1,7 +1,7 @@
 @(exercise: model.programming.ProgExercise)
 
 @stdLanguage = @{
-    model.programming.AvailableLanguages.stdLang
+    model.programming.ProgLanguage.STANDARD_LANG
 }
 
 <script src="@routes.Assets.versioned("javascripts/programming.js")"></script>
@@ -24,9 +24,8 @@
 <div class="input-group">
     <span class="input-group-addon">Sprache</span>
     <select class="form-control" id="langSelect" onchange="changeProgLanguage('@controllers.exes.routes.ProgController.getDeclaration()');">
-    @for(language <- model.programming.AvailableLanguages.values) {
-        <option value="@language"
-        @if(language == stdLanguage) {selected}>@language.name </option>
+    @for(language <- model.programming.ProgLanguage.values) {
+        <option value="@language" @language.isSelected(stdLanguage)>@language.languageName </option>
     }
     </select>
 </div>

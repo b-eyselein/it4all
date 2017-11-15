@@ -2,8 +2,8 @@ package controllers.core
 
 import java.nio.file.{Files, Path}
 
+import controllers.Secured
 import model.core._
-import model.core.result.{CompleteResult, EvaluationResult}
 import model.core.tools.IdPartExToolObject
 import model.{Exercise, User}
 import play.api.db.slick.DatabaseConfigProvider
@@ -21,7 +21,7 @@ abstract class AIdPartExController[E <: Exercise, R <: EvaluationResult]
   def correct(id: Int, part: String): EssentialAction = futureWithUser { user =>
     implicit request =>
       solForm.bindFromRequest.fold(_ => Future(BadRequest("There has been an error!")),
-        solution => completeExById(id).map {
+        solution => completeExById(id) map {
           case None => BadRequest("TODO!")
 
           case Some(ex) => correctEx(user, solution, ex, part) match {
@@ -32,7 +32,7 @@ abstract class AIdPartExController[E <: Exercise, R <: EvaluationResult]
             case Failure(error) =>
               BadRequest(views.html.main.render("Fehler", user, new Html(""), new Html(
                 s"""<pre>${error.getMessage}:
-                   |${error.getStackTrace.mkString("\n")}</pre>""".stripMargin)))
+                   |${error.getStackTrace mkString "\n"}</pre>""".stripMargin)))
           }
         })
   }
@@ -40,7 +40,7 @@ abstract class AIdPartExController[E <: Exercise, R <: EvaluationResult]
   def correctLive(id: Int, part: String): EssentialAction = futureWithUser { user =>
     implicit request =>
       solForm.bindFromRequest.fold(_ => Future(BadRequest("There has been an error!")),
-        solution => completeExById(id).map {
+        solution => completeExById(id) map {
           case None => BadRequest("TODO!")
 
           case Some(ex) => correctEx(user, solution, ex, part) match {
@@ -56,10 +56,10 @@ abstract class AIdPartExController[E <: Exercise, R <: EvaluationResult]
 
   def exercise(id: Int, part: String): EssentialAction = futureWithUser { user =>
     implicit request =>
-      completeExById(id).flatMap {
+      completeExById(id) flatMap {
         case Some(exercise) =>
           log(user, ExerciseStartEvent(request, id))
-          renderExercise(user, exercise, part).map(rendered => Ok(rendered))
+          renderExercise(user, exercise, part) map (Ok(_))
         case None           => Future(Redirect(toolObject.indexCall))
       }
   }

@@ -1,3 +1,4 @@
+@import model.nary.NaryConsts._
 @import model.nary.{NAryNumber, NAryResult, NumberBase}
 
 @(user: model.User, startingNumber: NAryNumber, toNB: NumberBase)
@@ -30,7 +31,7 @@
 
                     <div class="form-group">
                         <div class="input-group">
-                            <input value="@startingNumber" title="Vorgegebene Zahl" readonly class="form-control text-right" name="@NAryResult.VALUE_NAME">
+                            <input value="@startingNumber" title="Vorgegebene Zahl" readonly class="form-control text-right" name="@VALUE_NAME">
                             <span class="input-group-addon">@startingNumber.base.dispBase</span>
                         </div>
                     </div>
@@ -40,13 +41,13 @@
                     <div class="form-group">
                         <div class="input-group">
                             <span class="input-group-addon">--></span>
-                            <input pattern="@toNB.htmlPattern" autocomplete="off" autofocus class="form-control text-right" name="@NAryResult.LEARNER_SOL" placeholder="Ihre L&ouml;sung" required>
+                            <input pattern="@toNB.htmlPattern" autocomplete="off" autofocus class="form-control text-right" name="@LEARNER_SOL" placeholder="Ihre L&ouml;sung" required>
                             <span class="input-group-addon">@toNB.dispBase</span>
                         </div>
                     </div>
 
-                    <input hidden title="hidden" name="@NAryResult.STARTING_NB" value="@startingNumber.base">
-                    <input hidden title="hidden" name="@NAryResult.TARGET_NB" value="@toNB">
+                    <input hidden title="hidden" name="@STARTING_NB" value="@startingNumber.base">
+                    <input hidden title="hidden" name="@TARGET_NB" value="@toNB">
 
                     <button class="btn btn-primary btn-block">Pr&uuml;fen</button>
                 </form>

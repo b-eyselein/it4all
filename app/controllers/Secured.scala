@@ -1,16 +1,14 @@
-package model.core
+package controllers
 
 import model.User
-import model.core.StringConsts._
-import play.api.db.slick.HasDatabaseConfigProvider
-import play.api.mvc.Results.Redirect
+import model.core.CoreConsts.SESSION_ID_FIELD
+import model.core.Repository
 import play.api.mvc._
-import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 
 trait Secured {
-  self: HasDatabaseConfigProvider[JdbcProfile] =>
+  self: BaseController =>
 
   val repo: Repository
 

@@ -1,0 +1,62 @@
+package model.xml
+
+import model.Enums.ExerciseState
+import model._
+import play.api.db.slick.HasDatabaseConfigProvider
+import play.twirl.api.{Html, HtmlFormat}
+import slick.jdbc.JdbcProfile
+import views.html.core.helperTemplates.modal
+
+import scala.util.Try
+
+object XmlExercise {
+
+  def tupled(t: (Int, String, String, String, ExerciseState, XmlExType, String, String)): XmlExercise = XmlExercise(t._1, t._2, t._3, t._4, t._5, t._6, t._7, t._8)
+
+  def apply(id: Int, title: String, author: String, text: String, state: ExerciseState, exerciseType: XmlExType, rootNode: String, refFileContent: String): XmlExercise =
+    new XmlExercise(BaseValues(id, title, author, text, state), exerciseType, rootNode, refFileContent)
+
+  def unapply(arg: XmlExercise): Option[(Int, String, String, String, ExerciseState, XmlExType, String, String)] =
+    Some((arg.id, arg.title, arg.author, arg.text, arg.state, arg.exerciseType, arg.rootNode, arg.refFileContent))
+
+}
+
+case class XmlExercise(bvs: BaseValues, exerciseType: XmlExType, rootNode: String, refFileContent: String) extends Exercise(bvs) with CompleteEx[XmlExercise] {
+
+  val fixedStart: String = if (exerciseType != XmlExType.XML_DTD) "" else
+    s"""<?xml version="1.0" encoding="UTF-8"?>
+       |<!DOCTYPE $rootNode SYSTEM "$rootNode.dtd">""".stripMargin
+
+  override def ex: XmlExercise = this
+
+  override val tags: List[ExTag] = List(ex.exerciseType)
+
+  override val renderRest: Html = new Html(
+    s"""<td>${ex.exerciseType}</td>
+       |<td>${ex.rootNode}</td>
+       |<td>${modal.render("Referenzdatei " + ex.id, new Html("<pre>" + HtmlFormat.escape(ex.refFileContent) + "</pre>"), "Referenzdatei" + ex.id)}</td>""".stripMargin)
+
+}
+
+trait XmlTableDefs extends TableDefs {
+  self: HasDatabaseConfigProvider[JdbcProfile] =>
+
+  import profile.api._
+
+  val xmlExercises = TableQuery[XmlExerciseTable]
+
+  implicit val XmlExColumnType: BaseColumnType[XmlExType] =
+    MappedColumnType.base[XmlExType, String](_.toString, str => Try(XmlExType.valueOf(str)).getOrElse(XmlExType.XML_DTD))
+
+  class XmlExerciseTable(tag: Tag) extends HasBaseValuesTable[XmlExercise](tag, "xml_exercises") {
+
+    def rootNode = column[String]("root_node")
+
+    def exerciseType = column[XmlExType]("exercise_type")
+
+    def refFileContent = column[String]("ref_file_content")
+
+    def * = (id, title, author, text, state, exerciseType, rootNode, refFileContent) <> (XmlExercise.tupled, XmlExercise.unapply)
+  }
+
+}

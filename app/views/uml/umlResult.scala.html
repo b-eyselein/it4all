@@ -3,14 +3,14 @@
 @main("UML", user) {
     <div class="container">
         <div class="page-header">
-            <h1>Zwischenkorrektur der Aufgabe &quot;@result.exercise.title&quot;</h1>
+            <h1>Zwischenkorrektur der Aufgabe &quot;@result.exercise.ex.title&quot;</h1>
         </div>
 
         @views.html.core.matching.matchingResult.render(result.notEmptyMatchingResults)
 
         <hr>
 
-        <a href="@controllers.exes.routes.UmlController.exercise(result.exercise.id, nextPart.toString)"
+        <a href="@controllers.exes.routes.UmlController.exercise(result.exercise.ex.id, nextPart.toString)"
         class="btn btn-primary btn-block">Zum n&auml;chsten Aufgabenteil</a>
     </div>
 }

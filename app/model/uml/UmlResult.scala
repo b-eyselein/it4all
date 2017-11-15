@@ -1,14 +1,15 @@
 package model.uml
 
+import model.Enums.SuccessType.NONE
+import model.core.EvaluationResult
 import model.core.matching.{Match, MatchingResult}
-import model.core.result.{EvaluationResult, SuccessType}
 
-abstract sealed class UmlResult(val exercise: UmlExercise, val learnerSolution: UmlSolution, assocs: Boolean, impls: Boolean)
-  extends EvaluationResult(SuccessType.NONE) {
+abstract sealed class UmlResult(val exercise: UmlCompleteEx, val learnerSolution: UmlSolution, assocs: Boolean, impls: Boolean)
+  extends EvaluationResult(NONE) {
 
-  val musterSolution: UmlSolution = exercise.getSolution
+  val musterSolution: UmlSolution = exercise.solution
 
-  protected val classResult: Option[MatchingResult[UmlClass, UmlClassMatch]]
+  protected val classResult: Option[MatchingResult[UmlCompleteClass, UmlClassMatch]]
 
   protected val associationResult: Option[MatchingResult[UmlAssociation, UmlAssociationMatch]] =
     if (assocs) Some(UmlAssociationMatcher.doMatch(learnerSolution.associations, musterSolution.associations))
@@ -23,21 +24,25 @@ abstract sealed class UmlResult(val exercise: UmlExercise, val learnerSolution: 
 
 }
 
-case class ClassSelectionResult(e: UmlExercise, l: UmlSolution) extends UmlResult(e, l, assocs = false, impls = false) {
+case class ClassSelectionResult(e: UmlCompleteEx, l: UmlSolution) extends UmlResult(e, l, assocs = false, impls = false) {
+
+  println(learnerSolution)
+
+  println(musterSolution)
 
   override protected val classResult = Some(UmlClassMatcher(false).doMatch(learnerSolution.classes, musterSolution.classes))
 
 
 }
 
-case class DiagramDrawingHelpResult(e: UmlExercise, l: UmlSolution) extends UmlResult(e, l, assocs = true, impls = true) {
+case class DiagramDrawingHelpResult(e: UmlCompleteEx, l: UmlSolution) extends UmlResult(e, l, assocs = true, impls = true) {
 
-  override val classResult: Option[MatchingResult[UmlClass, UmlClassMatch]] = None
+  override protected val classResult: Option[MatchingResult[UmlCompleteClass, UmlClassMatch]] = None
 
 }
 
-case class DiagramDrawingResult(e: UmlExercise, l: UmlSolution) extends UmlResult(e, l, assocs = true, impls = true) {
+case class DiagramDrawingResult(e: UmlCompleteEx, l: UmlSolution) extends UmlResult(e, l, assocs = true, impls = true) {
 
-  override val classResult = Some(UmlClassMatcher(true).doMatch(learnerSolution.classes, musterSolution.classes))
+  override protected val classResult = Some(UmlClassMatcher(true).doMatch(learnerSolution.classes, musterSolution.classes))
 
 }

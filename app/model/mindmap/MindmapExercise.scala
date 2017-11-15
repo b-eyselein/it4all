@@ -1,27 +1,18 @@
 package model.mindmap
 
 import model.Enums.ExerciseState
-import model.core.CompleteEx
-import model.core.StringConsts._
-import model.{Exercise, TableDefs}
+import model.{CompleteEx, Exercise, TableDefs}
 import play.api.db.slick.HasDatabaseConfigProvider
-import play.api.libs.functional.syntax.toFunctionalBuilderOps
-import play.api.libs.json.{JsPath, Reads}
+import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
-object MindmapExerciseReads {
-  implicit def mindmapExReads: Reads[MindmapExercise] = (
-    (JsPath \ ID_NAME).read[Int] and
-      (JsPath \ TITLE_NAME).read[String] and
-      (JsPath \ AUTHOR_NAME).read[String] and
-      (JsPath \ TEXT_NAME).read[List[String]] and
-      (JsPath \ STATE_NAME).read[String]
-    ) ((i, ti, a, te, s) => MindmapExercise(i, ti, a, te.mkString, ExerciseState.valueOf(s)))
+case class MindmapExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState) extends Exercise(i, ti, a, te, s) with CompleteEx[MindmapExercise] {
+
+  override val ex: MindmapExercise = this
+
+  override def renderRest: Html = ???
+
 }
-
-case class MindmapCompleteEx(ex: MindmapExercise) extends CompleteEx[MindmapExercise]
-
-case class MindmapExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState) extends Exercise(i, ti, a, te, s)
 
 
 trait MindmapExercises extends TableDefs {

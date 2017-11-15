@@ -1,13 +1,11 @@
 package controllers.exes
 
 import model.Enums.ToolState
-import model.core.HasBaseValues
+import model.HasBaseValues
 import model.core.tools.IdExToolObject
 import play.api.mvc.Call
 
 object ProgToolObject extends IdExToolObject("prog", "Programmierung", ToolState.LIVE) {
-
-  // User
 
   override def indexCall: Call = controllers.exes.routes.ProgController.index()
 
@@ -17,13 +15,13 @@ object ProgToolObject extends IdExToolObject("prog", "Programmierung", ToolState
     (controllers.exes.routes.ProgController.testData(exercise.id), "Testdaten erstellen"),
     (controllers.exes.routes.ProgController.exercise(exercise.id), "Aufgabe bearbeiten"))
 
+  // only self ref
   override def exesListRoute(page: Int): Call = ???
 
   override def correctLiveRoute(exercise: HasBaseValues): Call = controllers.exes.routes.ProgController.correctLive(exercise.id)
 
   override def correctRoute(exercise: HasBaseValues): Call = controllers.exes.routes.ProgController.correct(exercise.id)
 
-  // Admin
 
   override val restHeaders: List[String] = List("Funktionsname", "Anzahl Inputs")
 
@@ -33,13 +31,11 @@ object ProgToolObject extends IdExToolObject("prog", "Programmierung", ToolState
 
   override def newExFormRoute: Call = controllers.exes.routes.ProgController.newExerciseForm()
 
-  override def exportExesRoute: Call = controllers.exes.routes.ProgController.exportExercises()
-
   override def importExesRoute: Call = controllers.exes.routes.ProgController.importExercises()
 
-  //  override def jsonSchemaRoute: Call = controllers.exes.routes.ProgController.getJSONSchemaFile()
+  override def exportExesRoute: Call = controllers.exes.routes.ProgController.exportExercises()
 
-  //  override def uploadFileRoute: Call = controllers.exes.routes.ProgController.uploadFile()
+  override def exportExesAsFileRoute: Call = controllers.exes.routes.ProgController.exportExercisesAsFile()
 
   override def changeExStateRoute(exercise: HasBaseValues): Call = controllers.exes.routes.ProgController.changeExState(exercise.id)
 

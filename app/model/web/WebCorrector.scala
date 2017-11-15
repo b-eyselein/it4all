@@ -1,6 +1,6 @@
 package model.web
 
-import model.core.result.SuccessType
+import model.Enums.SuccessType._
 import org.openqa.selenium.{By, SearchContext, WebElement}
 
 import scala.collection.JavaConverters.asScalaBufferConverter
@@ -8,13 +8,13 @@ import scala.util.{Failure, Success, Try}
 
 object WebCorrector {
 
-  def evaluate(task: WebTask, searchContent: SearchContext): WebResult = task match {
-    case task: HtmlTask => evaluateHtmlTask(task, searchContent)
-    case task: JsTask   => evaluateJsTask(task, searchContent)
+  def evaluate(task: WebCompleteTask, searchContent: SearchContext): WebResult = task match {
+    case task: HtmlCompleteTask => evaluateHtmlTask(task, searchContent)
+    case task: JsCompleteTask   => evaluateJsTask(task, searchContent)
   }
 
-  def evaluateHtmlTask(task: HtmlTask, searchContext: SearchContext): ElementResult = {
-    val foundElements = searchContext.findElements(By.xpath(task.xpathQuery)).asScala.toList
+  def evaluateHtmlTask(completeHtmlTask: HtmlCompleteTask, searchContext: SearchContext): ElementResult = {
+    val foundElements = searchContext.findElements(By.xpath(completeHtmlTask.task.xpathQuery)).asScala.toList
 
     val foundElement = foundElements match {
       case Nil            => None
@@ -23,32 +23,33 @@ object WebCorrector {
     }
 
     val (attrResults, textResult) = foundElements match {
-      case Nil                      => (List.empty, None)
-      case firstFoundElement :: Nil => (task.getAttributes.map(evaluateAttribute(_, firstFoundElement)), Option(TextContentResult(firstFoundElement.getText, task.textContent)))
-      case _ :: _                   => (List.empty, None)
+      case Nil                      => (Seq.empty, None)
+      case firstFoundElement :: Nil => (completeHtmlTask.attributes map (evaluateAttribute(_, firstFoundElement)),
+                                         completeHtmlTask.task.textContent map (TextContentResult(firstFoundElement.getText, _)))
+      case _ :: _                   => (Seq.empty, None)
     }
 
-    new ElementResult(task, foundElement, attrResults, textResult)
+    new ElementResult(completeHtmlTask, foundElement, attrResults, textResult)
   }
 
   def evaluateAttribute(attribute: Attribute, element: WebElement): AttributeResult =
-    AttributeResult(attribute, Try(element.getAttribute(attribute.key)))
+    AttributeResult(attribute, Try(element getAttribute attribute.key))
 
-  def evaluateConditions(context: SearchContext, conditions: List[JsCondition]): List[ConditionResult] = conditions.map(testCondition(_, context))
+  def evaluateConditions(context: SearchContext, conditions: Seq[JsCondition]): Seq[ConditionResult] = conditions map (testCondition(_, context))
 
-  def evaluateJsTask(task: JsTask, searchContext: SearchContext) =
+  def evaluateJsTask(completeJsTask: JsCompleteTask, searchContext: SearchContext) =
     new JsWebResult(
-      task,
-      evaluateConditions(searchContext, task.conditions.filter(_.isPrecondition)),
-      task.action == null || task.action.perform(searchContext),
-      evaluateConditions(searchContext, task.conditions.filter(!_.isPrecondition)),
-      List.empty)
+      completeJsTask,
+      evaluateConditions(searchContext, completeJsTask.conditions filter (_.isPrecondition)),
+      completeJsTask.task.perform(searchContext),
+      evaluateConditions(searchContext, completeJsTask.conditions filter (!_.isPrecondition)),
+      Seq.empty)
 
-  def testCondition(condition: JsCondition, searchContext: SearchContext): ConditionResult = Try(searchContext.findElement(By.xpath(condition.xpathQuery))) match {
-    case Failure(_)       => ConditionResult(SuccessType.NONE, condition, null)
+  def testCondition(condition: JsCondition, searchContext: SearchContext): ConditionResult = Try(searchContext findElement By.xpath(condition.xpathQuery)) match {
+    case Failure(_)       => ConditionResult(NONE, condition, null)
     case Success(element) =>
       val gottenValue = element.getText
-      val success = if (gottenValue.equals(condition.awaitedValue)) SuccessType.COMPLETE else SuccessType.NONE
+      val success = if (gottenValue == condition.awaitedValue) COMPLETE else NONE
       ConditionResult(success, condition, gottenValue)
   }
 

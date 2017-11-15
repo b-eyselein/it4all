@@ -1,3 +1,5 @@
+@import model.core.CoreConsts._
+
 @(user: model.User, routesObject: model.core.tools.IdExToolObject, exerciseOptions: model.core.tools.ExerciseOptions, exercise: model.Exercise, exRest: Html, oldSolution: String)
 
 @scripts = {
@@ -48,7 +50,7 @@
 
                         </div>
                         <div id="editor" class="form-control">@oldSolution</div>
-                        <textarea title="hidden" hidden name="@model.core.StringConsts.FORM_VALUE" id="@model.core.StringConsts.FORM_VALUE">@oldSolution</textarea>
+                        <textarea title="hidden" hidden name="@FORM_VALUE" id="@FORM_VALUE">@oldSolution</textarea>
                     </div>
                         <!-- Editor Ende -->
 

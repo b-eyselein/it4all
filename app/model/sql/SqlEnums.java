@@ -1,14 +1,13 @@
 package model.sql;
 
-import model.Enums;
-import model.core.ExTag;
+import model.Enums.Selectable;
+import model.ExTag;
+
 
 public abstract class SqlEnums {
 
-    public enum SqlExerciseType implements Enums.Selectable<SqlExerciseType> {
-
-        SELECT, CREATE, UPDATE, INSERT, DELETE;
-
+    public enum SqlExerciseType implements Selectable<SqlExerciseType> {
+        SELECT, CREATE, UPDATE, INSERT, DELETE
     }
 
     public enum SqlExTag implements ExTag {
@@ -22,8 +21,8 @@ public abstract class SqlEnums {
         LIMIT("L", "Limitierung"),
         SUBSELECT("S", "Zweites Select innerhalb");
 
-        private final String buttonContent;
-        private final String title;
+        public final String buttonContent;
+        public final String title;
 
         SqlExTag(String theButtonContent, String theTitle) {
             buttonContent = theButtonContent;

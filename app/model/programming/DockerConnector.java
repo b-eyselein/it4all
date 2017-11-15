@@ -81,7 +81,7 @@ class DockerConnector {
         }
     }
 
-    String runContainer(AvailableLanguages language, Path mountingDir, String resultFile) {
+    String runContainer(ProgLanguage language, Path mountingDir, String resultFile) {
         try {
             if (!checkImage(IMAGE_PYTHON)) // NOSONAR
                 return "FEHLER!";
@@ -92,7 +92,7 @@ class DockerConnector {
                 DOCKER_CLIENT.removeContainerCmd(oldContainerID).exec();
             }
 
-            String containerID = createContainer(language.imageName(), mountingDir);
+            String containerID = createContainer(language.dockerImageName, mountingDir);
 
             DOCKER_CLIENT.startContainerCmd(containerID).exec();
 

@@ -41,16 +41,16 @@
                     @for(old <- oldData) {
                         <tr id="tr_@old.id">
                             <td>@old.id</td>
-                            @for((input, inputCount) <- old.getInput.zipWithIndex) {
-                                <td>
-                                    <input class="form-control" value="@input" name="inp_@{
-                                        inputCount
-                                    }_@old.id"
-                                    id="inp_@{
-                                        inputCount
-                                    }_@old.id" placeholder="Test @old.id, Input @inputCount">
-                                </td>
-                            }
+                            @*for((input, inputCount) <- Seq.empty/*old.input*/.zipWithIndex) {*@
+                                @*<td>*@
+                                    @*<input class="form-control" value="@input" name="inp_@{*@
+                                        @*inputCount*@
+                                    @*}_@old.id"*@
+                                    @*id="inp_@{*@
+                                        @*inputCount*@
+                                    @*}_@old.id" placeholder="Test @old.id, Input @inputCount">*@
+                                @*</td>*@
+                            @*}*@
                             <td>
                                 <input class="form-control" value="@old.output" name="outp_@old.id" id="outp_@old.id"
                                 placeholder="Test @old.id, Output">

@@ -1,14 +1,12 @@
 package controllers.exes
 
 import model.Enums.ToolState
-import model.core.HasBaseValues
+import model.HasBaseValues
 import model.core.tools.IdPartExToolObject
 import model.uml.UmlEnums.UmlExPart
 import play.api.mvc.Call
 
 object UmlToolObject extends IdPartExToolObject("uml", "Uml", ToolState.LIVE) {
-
-  // User
 
   override def indexCall: Call = controllers.exes.routes.UmlController.index()
 
@@ -18,15 +16,16 @@ object UmlToolObject extends IdPartExToolObject("uml", "Uml", ToolState.LIVE) {
     (controllers.exes.routes.UmlController.exercise(exercise.id, UmlExPart.CLASS_SELECTION.toString), "Mit Zwischenkorrektur"),
     (controllers.exes.routes.UmlController.exercise(exercise.id, UmlExPart.DIAG_DRAWING.toString), "Freies Erstellen"))
 
+  // Not used anywhere except self reference...
   override def exesListRoute(page: Int): Call = ???
 
-  override def correctLiveRoute(exercise: HasBaseValues, part: String): Call = ???
+  // not in routes...
+  override def correctLiveRoute(exercise: HasBaseValues, part: String): Call = ??? // controllers.exes.routes.UmlController.correctLive(exercise.id, part)
 
-  override def correctRoute(exercise: HasBaseValues, part: String): Call = ???
+  override def correctRoute(exercise: HasBaseValues, part: String): Call = controllers.exes.routes.UmlController.correct(exercise.id, part)
 
-  // Admin
 
-  override val restHeaders: List[String] = List("Klassenwahl", "Diagrammzeichnen", "Lösung")
+  override val restHeaders: List[String] = List("Klassenwahl", "Diagrammzeichnen", "Lösung", "Mappings", "Ignoriert")
 
   override def adminIndexRoute: Call = controllers.exes.routes.UmlController.adminIndex()
 
@@ -36,11 +35,9 @@ object UmlToolObject extends IdPartExToolObject("uml", "Uml", ToolState.LIVE) {
 
   override def exportExesRoute: Call = controllers.exes.routes.UmlController.exportExercises()
 
+  override def exportExesAsFileRoute: Call = controllers.exes.routes.UmlController.exportExercisesAsFile()
+
   override def importExesRoute: Call = controllers.exes.routes.UmlController.importExercises()
-
-  //  override def jsonSchemaRoute: Call = controllers.exes.routes.UmlController.getJSONSchemaFile()
-
-  //  override def uploadFileRoute: Call = controllers.exes.routes.UmlController.uploadFile()
 
   override def changeExStateRoute(exercise: HasBaseValues): Call = controllers.exes.routes.UmlController.changeExState(exercise.id)
 

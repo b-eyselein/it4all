@@ -1,6 +1,7 @@
 package model.ebnf
 
-import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
+import model.Enums.SuccessType
+import model.core.{CompleteResult, EvaluationResult}
 import play.twirl.api.Html
 
 class EbnfCompleteResult(result: EbnfResult) extends CompleteResult[EbnfResult]("Ebnf", List(result)) {

@@ -1,10 +1,11 @@
 package model
 
 import model.Enums.{ExerciseState, Role, ShowHideAggregate}
-import model.core.{ExTag, HasBaseValues}
 import play.api.db.slick.HasDatabaseConfigProvider
-import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
+
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Random
 
 case class User(username: String, pwHash: String, stdRole: Role = Role.RoleUser, todo: ShowHideAggregate = ShowHideAggregate.SHOW) {
   val isAdmin: Boolean = stdRole ne Role.RoleUser
@@ -12,13 +13,16 @@ case class User(username: String, pwHash: String, stdRole: Role = Role.RoleUser,
 
 case class Course(id: Int, courseName: String)
 
-case class Tipp(id: Int, str: String)
+object TippHelper {
+  val ran = new Random
 
-abstract class Exercise(i: Int, ti: String, a: String, te: String, s: ExerciseState) extends HasBaseValues(i, ti, a, te, s) {
+  val StdTipp = "Hier werden in Zukunft Tipps & Tricks zur Benutzung von it4all präsentiert."
 
-  def renderEditRest(isCreation: Boolean) = new Html("")
-
+  def getRandom: Tipp = null
 }
+
+
+case class Tipp(id: Int, str: String)
 
 trait TableDefs {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
@@ -30,6 +34,28 @@ trait TableDefs {
   val courses = TableQuery[CoursesTable]
 
   val tipps = TableQuery[TippsTable]
+
+  abstract class ExerciseTableQuery[E <: Exercise, CompEx <: CompleteEx[E], T <: HasBaseValuesTable[E]](cons: Tag => T) extends TableQuery[T](cons) {
+
+    //noinspection TypeAnnotation
+    protected def exercise(id: Int) = this.filter(_.id === id).result.headOption
+
+    def completeById(id: Int)(implicit ec: ExecutionContext): Future[Option[CompEx]] = db.run(exercise(id)) flatMap {
+      case Some(ex) => completeExForEx(ex) map (Some(_))
+      case None     => Future(None)
+    }
+
+    def completeExes(implicit ec: ExecutionContext): Future[Seq[CompEx]] = db.run(this.sortBy(_.id).result)
+      .flatMap(exes => Future.sequence(exes map completeExForEx))
+
+    protected def saveEx(ex: E): DBIOAction[Int, NoStream, Effect.Write] = this insertOrUpdate ex
+
+
+    def saveCompleteEx(completeEx: CompEx)(implicit ec: ExecutionContext): Future[Int]
+
+    protected def completeExForEx(ex: E)(implicit ec: ExecutionContext): Future[CompEx]
+
+  }
 
   implicit def roleColumnType: BaseColumnType[Role] =
     MappedColumnType.base[Role, String](_.name, str => Option(Role.valueOf(str)).getOrElse(Role.RoleUser))
@@ -58,7 +84,7 @@ trait TableDefs {
 
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
-    def courseName = column[String]("courseName")
+    def courseName = column[String]("course_name")
 
     def * = (id, courseName) <> (Course.tupled, Course.unapply)
 

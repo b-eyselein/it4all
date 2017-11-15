@@ -2,9 +2,10 @@ package controllers.exes
 
 import javax.inject.{Inject, Singleton}
 
+import controllers.Secured
 import controllers.core.ARandomExController
 import model.User
-import model.core.{Repository, Secured}
+import model.core.Repository
 import model.nary.NAryResult._
 import model.nary._
 import play.api.db.slick.DatabaseConfigProvider

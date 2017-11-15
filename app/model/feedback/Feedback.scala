@@ -7,7 +7,7 @@ import scala.collection.mutable.ListBuffer
 object EvaluatedTool {
   var values: ListBuffer[EvaluatedTool] = ListBuffer.empty
 
-  def byName(name: String): Option[EvaluatedTool] = values.find(_.toString == name)
+  def byName(name: String): Option[EvaluatedTool] = values find (_.toString == name)
 }
 
 abstract sealed class EvaluatedTool {

@@ -2,9 +2,10 @@ package model.sql
 
 import java.sql.Connection
 
+import model.Enums.MatchType
+import model.Enums.MatchType._
 import model.core.CommonUtils.cleanly
-import model.core.matching.MatchType.MatchType
-import model.core.matching.{Match, MatchType, Matcher}
+import model.core.matching.{Match, Matcher}
 import net.sf.jsqlparser.expression.Expression
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.schema.{Column, Table}
@@ -16,12 +17,12 @@ import scala.util.{Failure, Success, Try}
 
 case class GroupByMatch(ua: Option[Expression], sa: Option[Expression], s: Int)
   extends Match[Expression](ua, sa, s) {
-  override def analyze(ua: Expression, sa: Expression): MatchType = MatchType.SUCCESSFUL_MATCH
+  override def analyze(ua: Expression, sa: Expression): MatchType = SUCCESSFUL_MATCH
 }
 
 case class OrderByMatch(ua: Option[OrderByElement], sa: Option[OrderByElement], s: Int)
   extends Match[OrderByElement](ua, sa, s) {
-  override def analyze(ua: OrderByElement, sa: OrderByElement): MatchType = MatchType.SUCCESSFUL_MATCH
+  override def analyze(ua: OrderByElement, sa: OrderByElement): MatchType = SUCCESSFUL_MATCH
 }
 
 object GroupByMatcher extends Matcher[Expression, GroupByMatch](
@@ -55,7 +56,7 @@ object SelectCorrector extends QueryCorrector("SELECT") {
   override protected def getColumnWrappers(query: Q): List[ColumnWrapper] =
     query.getSelectBody.asInstanceOf[PlainSelect].getSelectItems.asScala.map(ColumnWrapper.wrap).toList
 
-  override protected def getTableNames(select: Q): List[String] = getTables(select).map(_.getName)
+  override protected def getTableNames(select: Q): List[String] = getTables(select) map (_.getName)
 
   override protected def getTables(query: Q): List[Table] = {
     val plain = query.getSelectBody.asInstanceOf[PlainSelect]

@@ -3,9 +3,7 @@ package model.core
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import model.core.EventType.EventType
-import model.core.result.{CompleteResult, EvaluationResult}
 import play.api.mvc.{AnyContent, Request}
 
 object WorkingEvent {

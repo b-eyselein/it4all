@@ -1,7 +1,8 @@
 package model.sql
 
+import model.Enums.SuccessType
 import model.core.matching.{Match, MatchingResult}
-import model.core.result.{CompleteResult, EvaluationResult, SuccessType}
+import model.core.{CompleteResult, EvaluationResult}
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.statement.select.OrderByElement
 

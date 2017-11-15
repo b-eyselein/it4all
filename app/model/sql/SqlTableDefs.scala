@@ -3,10 +3,10 @@ package model.sql
 import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty}
 import controllers.core.BaseExerciseController._
 import model.Enums.ExerciseState
-import model.core.StringConsts._
-import model.core.{CompleteEx, ExerciseCollection}
+import model.core.ExerciseCollection
+import model.sql.SqlConsts._
 import model.sql.SqlEnums.{SqlExTag, SqlExerciseType}
-import model.{Exercise, TableDefs}
+import model.{CompleteEx, Exercise, TableDefs}
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{JsPath, Reads}
@@ -19,6 +19,7 @@ object SqlReads {
       (JsPath \ AUTHOR_NAME).read[String] and
       (JsPath \ TEXT_NAME).read[List[String]] and
       (JsPath \ STATE_NAME).read[String] and
+
       (JsPath \ SHORTNAME_NAME).read[String] and
       (JsPath \ SCRIPTFILE_NAME).read[String]
     ) ((i, ti, a, te, s, shortName, scriptFile) => SqlScenario(i, ti, a, te.mkString, ExerciseState.valueOf(s), shortName, scriptFile))
@@ -26,10 +27,10 @@ object SqlReads {
 
 case class SqlScenarioCompleteEx(ex: SqlScenario) extends CompleteEx[SqlScenario] {
 
-//  override def tags: List[SqlExTag] = {
-//    if (sqlTags.isEmpty) List.empty
-//    else sqlTags.split(SqlExerciseHelper.SampleJoinChar).map(SqlExTag.valueOf).toList
-//  }
+  //  override def tags: List[SqlExTag] = {
+  //    if (sqlTags.isEmpty) List.empty
+  //    else sqlTags.split(SqlExerciseHelper.SampleJoinChar).map(SqlExTag.valueOf).toList
+  //  }
 
 }
 

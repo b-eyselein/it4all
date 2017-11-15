@@ -2,11 +2,7 @@ package model.core;
 
 import java.util.stream.IntStream;
 
-public class Levenshtein {
-
-    private Levenshtein() {
-
-    }
+public abstract class Levenshtein {
 
     /**
      * Algorithm for levenshtein distance of two words as found on

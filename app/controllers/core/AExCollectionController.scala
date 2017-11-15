@@ -1,7 +1,7 @@
 package controllers.core
 
+import controllers.Secured
 import model.core._
-import model.core.result.{CompleteResult, EvaluationResult}
 import model.core.tools.ExToolObject
 import model.{Exercise, User}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}

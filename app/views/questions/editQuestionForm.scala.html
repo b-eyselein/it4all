@@ -60,7 +60,7 @@
                             <input hidden name="correctness_@answer.id" id="correctness_@answer.id" value="@answer.correctness">
                             <input class="form-control" name="@answer.id" id="@answer.id" placeholder="Alte Antwort: '@answer.text'" value="@answer.text">
                             <div class="input-group-btn">
-                            @for(correctness <- model.questions.Correctness.values()) {
+                            @for(correctness <- model.questions.QuestionEnums.Correctness.values()) {
                                 <button type="button" onclick="changeCorrectness(@answer.id, '@correctness', this)" title="@correctness.title"
                                 class="btn btn-@if(correctness == answer.correctness) {@correctness.bsButtonColor} else {default}">
                                     <span class="@correctness.bsGlyphicon"></span>
@@ -81,9 +81,9 @@
                             <input hidden name="correctness_@i" id="correctness_@i" value="WRONG">
                             <input class="form-control" name="@i" id="@i" placeholder="Antwort @i">
                             <div class="input-group-btn">
-                            @for(correctness <- model.questions.Correctness.values()) {
+                            @for(correctness <- model.questions.QuestionEnums.Correctness.values()) {
                                 <button type="button" onclick="changeCorrectness(@i, '@correctness', this)" title="@correctness.title"
-                                class="btn btn-@if(correctness == model.questions.Correctness.WRONG) {danger} else {default}">
+                                class="btn btn-@if(correctness == model.questions.QuestionEnums.Correctness.WRONG) {danger} else {default}">
                                     <span class="@correctness.bsGlyphicon"></span>
                                 </button>
                             }

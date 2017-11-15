@@ -1,9 +1,10 @@
 package model;
 
-import model.core.StringConsts$;
 import play.twirl.api.Html;
 
 public abstract class Enums {
+
+    public static final String NEUTRAL = "Neutral";
 
     public interface Selectable<T extends Selectable<T>> {
         default String isSelected(T that) {
@@ -59,6 +60,36 @@ public abstract class Enums {
         }
     }
 
+    public enum MatchType implements Selectable<MatchType> {
+
+        FAILURE("exclamation-sign"),
+        SUCCESSFUL_MATCH("ok"),
+        UNSUCCESSFUL_MATCH("question-sign"),
+        ONLY_USER("remove"),
+        ONLY_SAMPLE("minus");
+
+        public final String glyphicon;
+
+        MatchType(String glyphiconEnd) {
+            glyphicon = "glyphicon glyphicon-" + glyphiconEnd;
+        }
+    }
+
+
+    public enum SuccessType {
+
+        FAILURE(0, "danger"), NONE(0, "danger"), PARTIALLY(1, "warning"), COMPLETE(2, "success");
+
+        public final int points;
+        public final String color;
+
+        SuccessType(int thePoints, String theColor) {
+            points = thePoints;
+            color = theColor;
+        }
+
+    }
+
     public enum Mark implements Selectable<Mark> {
 
         VERY_GOOD(1), GOOD(2), NEUTRAL(3), BAD(4), VERY_BAD(5), NO_MARK(-1);
@@ -93,13 +124,13 @@ public abstract class Enums {
 
         USED("Wie oft haben Sie dieses Tool genutzt?", "Oft", "Manchmal", "Selten"),
 
-        SENSE("Finden Sie dieses Tool sinnvoll?", "Sinnvoll", StringConsts$.MODULE$.NEUTRAL(), "Sinnlos"),
+        SENSE("Finden Sie dieses Tool sinnvoll?", "Sinnvoll", NEUTRAL, "Sinnlos"),
 
-        USABILITY("Wie bewerten Sie die allgemeine Bedienbarkeit dieses Tools?", "Gut", StringConsts$.MODULE$.NEUTRAL(), "Schlecht"),
+        USABILITY("Wie bewerten Sie die allgemeine Bedienbarkeit dieses Tools?", "Gut", NEUTRAL, "Schlecht"),
 
-        STYLE_OF_FEEDBACK("Wie bewerten Sie die Gestaltung des Feedbacks dieses Tools?", "Gut", StringConsts$.MODULE$.NEUTRAL(), "Schlecht"),
+        STYLE_OF_FEEDBACK("Wie bewerten Sie die Gestaltung des Feedbacks dieses Tools?", "Gut", NEUTRAL, "Schlecht"),
 
-        FAIRNESS_OF_FEEDBACK("Wie bewerten Sie die Fairness der Evaluation dieses Tools?", "Fair", StringConsts$.MODULE$.NEUTRAL(), "Unfair");
+        FAIRNESS_OF_FEEDBACK("Wie bewerten Sie die Fairness der Evaluation dieses Tools?", "Fair", NEUTRAL, "Unfair");
 
         public final String question;
         public final String positive;

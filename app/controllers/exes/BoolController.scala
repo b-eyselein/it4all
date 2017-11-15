@@ -2,13 +2,14 @@ package controllers.exes
 
 import javax.inject._
 
+import controllers.Secured
 import controllers.core.ARandomExController
 import controllers.exes.BoolController._
+import model.Enums.SuccessType._
 import model.User
-import model.bool.{BooleanQuestionResult, _}
-import model.core.StringConsts.{FORM_VALUE, VARS_NAME}
-import model.core.result.SuccessType
-import model.core.{Repository, Secured}
+import model.bool.BoolConsts.{FORM_VALUE, VARS_NAME}
+import model.bool._
+import model.core.Repository
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.mvc.{ControllerComponents, EssentialAction}
 import play.twirl.api.Html
@@ -25,7 +26,7 @@ object BoolController {
 class BoolController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
   extends ARandomExController(cc, dbcp, r, BoolToolObject) with Secured {
 
-  def checkBoolFilloutSolution: EssentialAction = withUser { user =>
+  def checkBoolFilloutSolution: EssentialAction = withUser { _ =>
     implicit request => //Controller.request.body.asFormUrlEncoded match {
       BadRequest("")
 
@@ -83,7 +84,7 @@ class BoolController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
     val learnerSolution = data(FORM_VALUE).mkString
     ScalaNodeParser.parse(learnerSolution) match {
       case None =>
-        new BooleanQuestionResult(SuccessType.NONE, learnerSolution, null)
+        new BooleanQuestionResult(NONE, learnerSolution, null)
       //        throw new CorrectionException(learnerSolution, "Formula could not be parsed!")
       case Some(formula) =>
         val variables = data(VARS_NAME).mkString.split(",").map(variab => Variable(variab.charAt(0))).toList
@@ -98,7 +99,7 @@ class BoolController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
           .map(as => as + (LEA_VAR -> formula.evaluate(as)) + (SOL_VAR -> (data(as.toString()).mkString == ONE)))
 
         val question = new CreationQuestion(variables, assignments)
-        new BooleanQuestionResult(SuccessType.PARTIALLY, learnerSolution, question)
+        new BooleanQuestionResult(PARTIALLY, learnerSolution, question)
     }
   }
 

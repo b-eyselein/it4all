@@ -5,7 +5,7 @@ import javax.inject._
 import com.github.t3hnar.bcrypt._
 import model.User
 import model.core.Repository
-import model.core.StringConsts._
+import model.core.CoreConsts._
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
@@ -88,7 +88,7 @@ class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
             //      if (Course.finder.byId(courseId) == null && courseId != -1) {
             //        // Create course
             //        val course = new Course()
-            //        course.name = courseName
+            //        course.languageName = courseName
             //        course.save()
             //      }
 

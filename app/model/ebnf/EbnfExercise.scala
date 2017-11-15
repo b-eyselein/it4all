@@ -1,14 +1,11 @@
 package model.ebnf
 
-import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty}
+import com.fasterxml.jackson.annotation.JsonIgnore
 import model.Enums.ExerciseState
-import model.core.CompleteEx
-import model.core.StringConsts._
+import model.ebnf.EbnfConsts._
 import model.ebnf.EbnfExerciseHelper._
-import model.{Exercise, TableDefs}
+import model.{CompleteEx, Exercise, HasBaseValues, TableDefs}
 import play.api.db.slick.HasDatabaseConfigProvider
-import play.api.libs.functional.syntax.toFunctionalBuilderOps
-import play.api.libs.json.{JsPath, Reads}
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
@@ -20,22 +17,10 @@ object EbnfExerciseHelper {
 
 }
 
-object EbnfExerciseReads {
 
-  implicit def ebnfExReads: Reads[EbnfExercise] = (
-    (JsPath \ ID_NAME).read[Int] and
-      (JsPath \ TITLE_NAME).read[String] and
-      (JsPath \ AUTHOR_NAME).read[String] and
-      (JsPath \ TEXT_NAME).read[List[String]] and
-      (JsPath \ STATE_NAME).read[String] and
-      (JsPath \ "terminals").read[List[String]]
-    ) ((i, ti, a, te, s, terms) => EbnfExercise(i, ti, a, te.mkString, ExerciseState.valueOf(s), terms.mkString(termsJoinStr)))
-}
+case class EbnfExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState, terminals: String) extends Exercise(i, ti, a, te, s) with CompleteEx[EbnfExercise] {
 
-case class EbnfCompleteEx(ex: EbnfExercise) extends CompleteEx[EbnfExercise]
-
-case class EbnfExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState,
-                        @JsonProperty(required = true) terminals: String) extends Exercise(i, ti, a, te, s) {
+  override val ex: HasBaseValues = this
 
   def getTerminals: Array[String] = terminals.split(termsJoinStr)
 
@@ -53,7 +38,7 @@ trait EbnfExercises extends TableDefs {
 
   class EbnfExerciseTable(tag: Tag) extends HasBaseValuesTable[EbnfExercise](tag, "ebnf_exercises") {
 
-    def terminals = column[String]("terminals")
+    def terminals = column[String](TERMINALS)
 
     def * = (id, title, author, text, state, terminals) <> (EbnfExercise.tupled, EbnfExercise.unapply)
   }

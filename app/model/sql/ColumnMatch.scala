@@ -1,7 +1,7 @@
 package model.sql
 
-import model.core.matching.MatchType.MatchType
-import model.core.matching.{Match, MatchType}
+import model.Enums.MatchType
+import model.core.matching.Match
 
 case class ColumnMatch(uc: Option[ColumnWrapper], sc: Option[ColumnWrapper], s: Int)
   extends Match[ColumnWrapper](uc, sc, s) {

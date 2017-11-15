@@ -3,7 +3,7 @@ package model.core.tools
 import java.nio.file.{Path, Paths}
 
 import model.Enums.ToolState
-import model.core.HasBaseValues
+import model.HasBaseValues
 import play.api.mvc.Call
 
 case class ExerciseOptions(tool: String, aceMode: String, minLines: Int, maxLines: Int, updatePrev: Boolean)
@@ -51,6 +51,7 @@ abstract class ExToolObject(e: String, t: String, s: ToolState, val pluralName: 
 
   // User
 
+  // FIXME: only calls itself from template?
   def exesListRoute(page: Int): Call
 
   def exerciseRoutes(exercise: HasBaseValues): List[(Call, String)]
@@ -66,6 +67,8 @@ abstract class ExToolObject(e: String, t: String, s: ToolState, val pluralName: 
   def newExFormRoute: Call
 
   def exportExesRoute: Call
+
+  def exportExesAsFileRoute: Call
 
   def importExesRoute: Call
 

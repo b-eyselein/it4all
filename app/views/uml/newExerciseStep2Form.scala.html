@@ -1,4 +1,4 @@
-@import model.core.StringConsts
+@import model.uml.UmlConsts._
 
 @(user: model.User, exercise: model.uml.UmlExercise, capWords: List[String])
 
@@ -21,16 +21,16 @@
         <form class="form-horizontal" action="@controllers.exes.routes.UmlController.newExerciseStep3" method="post">
 
             <div class="form-group">
-                <label class="control-label col-sm-1" for="@StringConsts.TITLE_NAME">Titel:</label>
+                <label class="control-label col-sm-1" for="@TITLE_NAME">Titel:</label>
                 <div class="col-sm-11">
-                    <input class="form-control" id="@StringConsts.TITLE_NAME" name="@StringConsts.TITLE_NAME" value="@exercise.title" readonly required>
+                    <input class="form-control" id="@TITLE_NAME" name="@TITLE_NAME" value="@exercise.title" readonly required>
                 </div>
             </div>
 
             <div class="form-group">
-                <label class="control-label col-sm-1" for="@StringConsts.TEXT_NAME">Text:</label>
+                <label class="control-label col-sm-1" for="@TEXT_NAME">Text:</label>
                 <div class="col-sm-11">
-                    <textarea class="form-control" id="@StringConsts.TEXT_NAME" name="@StringConsts.TEXT_NAME" readonly required>@exercise.text</textarea>
+                    <textarea class="form-control" id="@TEXT_NAME" name="@TEXT_NAME" readonly required>@exercise.text</textarea>
                 </div>
             </div>
 

@@ -1,21 +1,34 @@
 package model.web
 
-import com.google.common.base.Splitter
 import model.Enums.ExerciseState
-import model.core.{CompleteEx, ExTag}
-import model.web.HtmlTaskHelper._
-import model.{Exercise, TableDefs}
+import model._
+import model.web.WebConsts.{HTML_TYPE, JS_TYPE}
 import org.openqa.selenium.{By, SearchContext}
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
-import controllers.exes.WebController._
-import scala.collection.JavaConverters._
 
-object HtmlTaskHelper {
-  val ATTRS_JOIN_STR          = ";"
-  val ATTR_SPLITTER: Splitter = Splitter.on(ATTRS_JOIN_STR).omitEmptyStrings()
+import scala.concurrent.{ExecutionContext, Future}
+import scala.language.postfixOps
+import scala.util.Try
+
+case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTasks: Seq[JsCompleteTask]) extends CompleteEx[WebExercise] {
+
+  override def renderRest: Html = new Html(
+    s"""<td>${htmlTasks.size} / ${jsTasks.size}</td>
+       |<td>TODO!</td>""".stripMargin)
+
+  override def tags: List[WebExTag] = List(new WebExTag(HTML_TYPE, ex.hasHtmlPart), new WebExTag(JS_TYPE, ex.hasJsPart))
+
 }
+
+trait WebCompleteTask {
+  val task: WebTask
+}
+
+case class HtmlCompleteTask(task: HtmlTask, attributes: Seq[Attribute]) extends WebCompleteTask
+
+case class JsCompleteTask(task: JsTask, conditions: Seq[JsCondition]) extends WebCompleteTask
 
 class WebExTag(part: String, hasExes: Boolean) extends ExTag {
 
@@ -27,57 +40,48 @@ class WebExTag(part: String, hasExes: Boolean) extends ExTag {
 
 }
 
-case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlTask], jsTasks: Seq[JsTask]) extends CompleteEx[WebExercise] {
+// Database classes
 
-  override def renderRest: Html = new Html(
-    s"""<td>${htmlTasks.size} / ${jsTasks.size}</td>
-       |<td>TODO!</td>""".stripMargin)
+object WebExercise {
 
-   override def tags: List[WebExTag] = List(
-     new WebExTag(HTML_TYPE, htmlTasks.nonEmpty), new WebExTag(JS_TYPE, jsTasks.nonEmpty)
-   )
+  def tupled(t: (Int, String, String, String, ExerciseState, Option[String], Boolean, Option[String], Boolean)): WebExercise =
+    WebExercise(t._1, t._2, t._3, t._4, t._5, t._6, t._7, t._8, t._9)
 
-}
+  def apply(i: Int, ti: String, a: String, te: String, s: ExerciseState, ht: Option[String], hp: Boolean, jt: Option[String], jp: Boolean) =
+    new WebExercise(BaseValues(i, ti, a, te, s), ht, hp, jt, jp)
 
-case class WebExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState, htmlText: String, jsText: String)
-  extends Exercise(i, ti, a, te, s) {
-
-  override def renderEditRest(isCreation: Boolean): Html = views.html.web.editWebExRest.render(this, isCreation)
+  def unapply(arg: WebExercise): Option[(Int, String, String, String, ExerciseState, Option[String], Boolean, Option[String], Boolean)] =
+    Some((arg.id, arg.title, arg.author, arg.text, arg.state, arg.htmlText, arg.hasHtmlPart, arg.jsText, arg.hasJsPart))
 
 }
 
-abstract class WebTask(val id: Int, val exerciseId: Int, val text: String, val xpathQuery: String)
+case class WebExercise(bv: BaseValues, htmlText: Option[String], hasHtmlPart: Boolean, jsText: Option[String], hasJsPart: Boolean) extends Exercise(bv)
 
-case class HtmlTask(taskId: Int, exId: Int, t: String, x: String, attributes: String, textContent: String) extends WebTask(taskId, exId, t, x) {
-
-  def this(taskId: Int, exId: Int, t: String, x: String, attrs: Seq[Attribute], textContent: String) =
-    this(taskId, exId, t, x, attrs.map(_.forDB).mkString(ATTRS_JOIN_STR), textContent)
-
-  def getAttributes: List[Attribute] = ATTR_SPLITTER.splitToList(attributes).asScala.map(Attribute.fromString).toList
-
+trait WebTask {
+  val id        : Int
+  val exerciseId: Int
+  val text      : String
+  val xpathQuery: String
 }
 
-case class JsTask(taskId: Int, exId: Int, t: String, x: String /*,conditions: List[Condition], action: Action*/) extends WebTask(taskId, exId, t, x) {
+case class HtmlTask(id: Int, exerciseId: Int, text: String, xpathQuery: String, textContent: Option[String]) extends WebTask
 
-  def conditions: List[JsCondition] = List.empty
+case class Attribute(key: String, taskId: Int, exerciseId: Int, value: String)
 
-  def action: JsAction = null
-}
-
-case class JsAction(actionId: Int, taskId: Int, exerciseId: Int, actionType: ActionType, xpathQuery: String, keysToSend: String) {
+case class JsTask(id: Int, exerciseId: Int, text: String, xpathQuery: String, actionType: JsActionType, keysToSend: Option[String]) extends WebTask {
 
   def perform(context: SearchContext): Boolean = Option(context.findElement(By.xpath(xpathQuery))) match {
     case None          => false
     case Some(element) => actionType match {
-      case ActionType.CLICK   =>
+      case JsActionType.CLICK   =>
         element.click()
         true
-      case ActionType.FILLOUT =>
-        element.sendKeys(keysToSend)
+      case JsActionType.FILLOUT =>
+        element.sendKeys(keysToSend.getOrElse(""))
         // click on other element to fire the onchange event...
         context.findElement(By.xpath("//body")).click()
         true
-      case _                  => false
+      case _                    => false
     }
   }
 
@@ -91,6 +95,8 @@ case class JsCondition(id: Int, taskId: Int, exerciseId: Int, xpathQuery: String
 
 case class WebSolution(exerciseId: Int, userName: String, solution: String)
 
+// Tables
+
 trait WebTableDefs extends TableDefs {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
@@ -98,13 +104,43 @@ trait WebTableDefs extends TableDefs {
 
   // Table queries
 
-  val webExercises = TableQuery[WebExerciseTable]
+  object webExercises extends ExerciseTableQuery[WebExercise, WebCompleteEx, WebExerciseTable](new WebExerciseTable(_)) {
+
+    override def saveCompleteEx(completeEx: WebCompleteEx)(implicit ec: ExecutionContext): Future[Int] =
+      db.run(saveEx(completeEx.ex) zip DBIO.sequence(completeEx.htmlTasks.map(saveHtmlTask)) zip DBIO.sequence(completeEx.jsTasks.map(saveJsTask)))
+        .map(_._1._1)
+
+    override protected def completeExForEx(ex: WebExercise)(implicit ec: ExecutionContext): Future[WebCompleteEx] = db.run(htmlTasksAction(ex.id) zip jsTasksAction(ex.id)) map { tasks =>
+      val htmlTasks = tasks._1 groupBy (_._1) mapValues (_.map(_._2)) map (ct => HtmlCompleteTask(ct._1, ct._2.flatten)) toSeq
+      val jsTasks = tasks._2 groupBy (_._1) mapValues (_.map(_._2)) map (ct => JsCompleteTask(ct._1, ct._2.flatten)) toSeq
+
+      WebCompleteEx(ex, htmlTasks sortBy (_.task.id), jsTasks sortBy (_.task.id))
+    }
+
+    private def htmlTasksAction(exId: Int) = htmlTasks.joinLeft(attributes)
+      .on { case (ht, att) => ht.id === att.taskId && ht.exerciseId === att.exerciseId }
+      .filter(_._1.exerciseId === exId)
+      .result
+
+    private def jsTasksAction(exId: Int) = jsTasks.joinLeft(conditions)
+      .on { case (ht, con) => ht.id === con.taskId && ht.exerciseId === con.exerciseId }
+      .filter(_._1.exerciseId === exId)
+      .result
+
+    private def saveHtmlTask(htmlTask: HtmlCompleteTask) =
+      (htmlTasks insertOrUpdate htmlTask.task) zip DBIO.sequence(htmlTask.attributes map (attr => attributes insertOrUpdate attr))
+
+    private def saveJsTask(jsTask: JsCompleteTask) =
+      (jsTasks insertOrUpdate jsTask.task) zip DBIO.sequence(jsTask.conditions map (cond => conditions insertOrUpdate cond))
+
+
+  }
 
   val htmlTasks = TableQuery[HtmlTasksTable]
 
-  val jsTasks = TableQuery[JsTasksTable]
+  val attributes = TableQuery[AttributesTable]
 
-  val actions = TableQuery[ActionsTable]
+  val jsTasks = TableQuery[JsTasksTable]
 
   val conditions = TableQuery[ConditionsTable]
 
@@ -112,29 +148,27 @@ trait WebTableDefs extends TableDefs {
 
   lazy val webSolutions = TableQuery[WebSolutionsTable]
 
-  // DB Actions
+  // Implicit column types
 
-  def htmlTasksForEx(exId: Int): Query[HtmlTasksTable, HtmlTask, Seq] = htmlTasks.filter(_.exerciseId === exId)
+  implicit val ActionTypeColumnType: BaseColumnType[JsActionType] =
+    MappedColumnType.base[JsActionType, String](_.name, str => Try(JsActionType.valueOf(str)).getOrElse(JsActionType.CLICK))
 
-  def jsTasksForEx(exId: Int): Query[JsTasksTable, JsTask, Seq] = jsTasks.filter(_.exerciseId === exId)
-
-  // Implicit Column types
-
-  implicit val ActionTypeColumnType: BaseColumnType[ActionType] =
-    MappedColumnType.base[ActionType, String](_.name, str => Option(ActionType.valueOf(str)).getOrElse(ActionType.CLICK))
-
-  // Tables
+  // Table definitions
 
   class WebExerciseTable(tag: Tag) extends HasBaseValuesTable[WebExercise](tag, "web_exercises") {
 
     def htmlText = column[String]("html_text")
 
+    def hasHtmlPart = column[Boolean]("has_html_part")
+
     def jsText = column[String]("js_text")
 
+    def hasJsPart = column[Boolean]("has_js_part")
 
-    def * = (id, title, author, text, state, htmlText, jsText) <> (WebExercise.tupled, WebExercise.unapply)
+
+    override def * = (id, title, author, text, state, htmlText.?, hasHtmlPart, jsText.?, hasJsPart) <> (WebExercise.tupled, WebExercise.unapply)
+
   }
-
 
   abstract class WebTasksTable[T <: WebTask](tag: Tag, name: String) extends Table[T](tag, name) {
 
@@ -155,22 +189,45 @@ trait WebTableDefs extends TableDefs {
 
   class HtmlTasksTable(tag: Tag) extends WebTasksTable[HtmlTask](tag, "html_tasks") {
 
-    def attributes = column[String]("attributes")
-
     def textContent = column[String]("text_content")
 
 
-    def * = (id, exerciseId, text, xpathQuery, attributes, textContent) <> (HtmlTask.tupled, HtmlTask.unapply)
+    override def * = (id, exerciseId, text, xpathQuery, textContent.?) <> (HtmlTask.tupled, HtmlTask.unapply)
+
+  }
+
+  class AttributesTable(tag: Tag) extends Table[Attribute](tag, "html_attributes") {
+
+    def key = column[String]("attr_key")
+
+    def value = column[String]("attr_value")
+
+    def taskId = column[Int]("task_id")
+
+    def exerciseId = column[Int]("exercise_id")
+
+
+    def pk = primaryKey("pk", (key, taskId, exerciseId))
+
+    def taskFk = foreignKey("task_fk", (taskId, exerciseId), htmlTasks)(t => (t.id, t.exerciseId))
+
+
+    override def * = (key, taskId, exerciseId, value) <> ((Attribute.apply _).tupled, Attribute.unapply)
 
   }
 
   class JsTasksTable(tag: Tag) extends WebTasksTable[JsTask](tag, "js_tasks") {
 
-    def * = (id, exerciseId, text, xpathQuery) <> (JsTask.tupled, JsTask.unapply)
+    def actionType = column[JsActionType]("action_type")
+
+    def keysToSend = column[String]("keys_to_send")
+
+
+    override def * = (id, exerciseId, text, xpathQuery, actionType, keysToSend.?) <> (JsTask.tupled, JsTask.unapply)
 
   }
 
-  class ConditionsTable(tag: Tag) extends Table[JsCondition](tag, "conditions") {
+  class ConditionsTable(tag: Tag) extends Table[JsCondition](tag, "js_conditions") {
 
     def conditionId = column[Int]("condition_id")
 
@@ -190,7 +247,7 @@ trait WebTableDefs extends TableDefs {
     def taskFk = foreignKey("task_fk", (taskId, exerciseId), jsTasks)(t => (t.id, t.exerciseId))
 
 
-    def * = (conditionId, taskId, exerciseId, xpathQuery, isPrecondition, awaitedValue) <> (JsCondition.tupled, JsCondition.unapply)
+    override def * = (conditionId, taskId, exerciseId, xpathQuery, isPrecondition, awaitedValue) <> (JsCondition.tupled, JsCondition.unapply)
 
   }
 
@@ -210,31 +267,7 @@ trait WebTableDefs extends TableDefs {
     def userFk = foreignKey("user_fk", userName, users)(_.username)
 
 
-    def * = (exerciseId, userName, solution) <> (WebSolution.tupled, WebSolution.unapply)
-
-  }
-
-  class ActionsTable(tag: Tag) extends Table[JsAction](tag, "ACTIONS") {
-
-    def actionId = column[Int]("CONDITION_ID")
-
-    def taskId = column[Int]("TASK_ID")
-
-    def exerciseId = column[Int]("EXERCISE_ID")
-
-    def actionType = column[ActionType]("ACTION_TYPE")
-
-    def xpathQuery = column[String]("XPATH_QUERY")
-
-    def keysToSend = column[String]("KEYS_TO_SEND")
-
-
-    def pk = primaryKey("PK", (actionId, taskId, exerciseId))
-
-    def taskFk = foreignKey("TASK_FK", (taskId, exerciseId), jsTasks)(t => (t.id, t.exerciseId))
-
-
-    def * = (actionId, taskId, exerciseId, actionType, xpathQuery, keysToSend) <> (JsAction.tupled, JsAction.unapply)
+    override def * = (exerciseId, userName, solution) <> (WebSolution.tupled, WebSolution.unapply)
 
   }
 

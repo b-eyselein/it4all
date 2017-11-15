@@ -4,7 +4,7 @@ import javax.inject._
 
 import model.Enums.EvaluatedAspect
 import model.User
-import model.core.{Repository, Secured}
+import model.core.Repository
 import model.feedback._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc._
@@ -19,7 +19,7 @@ class EvaluationController @Inject()(cc: ControllerComponents, val dbConfigProvi
   def index: EssentialAction = withUser { user =>
     implicit request =>
       //      val toEvaluate: List[Feedback] = Feedback.EvaluatedTool.values.map(tool => {
-      //        val key = new FeedbackKey(user.name, tool)
+      //        val key = new FeedbackKey(user.languageName, tool)
       //        Option(Feedback.finder.byId(key)).getOrElse(new Feedback(key))
       //      }).toList
       val toEvaluate: List[Feedback] = List.empty
@@ -36,7 +36,7 @@ class EvaluationController @Inject()(cc: ControllerComponents, val dbConfigProvi
   }
 
   def readFeedback(user: User, tool: EvaluatedTool)(implicit request: Request[AnyContent]): Feedback = {
-    //    val key = new FeedbackKey(user.name, tool)
+    //    val key = new FeedbackKey(user.languageName, tool)
     //    val feedback = Option(Feedback.finder.byId(key)).getOrElse(new Feedback(key))
 
     val evaluatedTool = tool.toString.toLowerCase

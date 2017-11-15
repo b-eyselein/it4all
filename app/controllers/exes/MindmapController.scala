@@ -4,14 +4,14 @@ import java.io.IOException
 import java.nio.file.{Path, Paths}
 import javax.inject._
 
+import controllers.Secured
 import controllers.core.AIdExController
 import controllers.exes.MindmapController._
 import model.User
-import model.core.result.{CompleteResult, EvaluationResult}
-import model.core.{Repository, Secured, StringSolution}
+import model.core.{CompleteResult, EvaluationResult, _}
 import model.mindmap.evaluation.ParsingException
 import model.mindmap.evaluation.enums.EvalParserType
-import model.mindmap.{Evaluation, MindmapCompleteEx, MindmapExercise, Validation}
+import model.mindmap.{Evaluation, MindmapExercise, Validation}
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.data.Form
 import play.api.db.slick.DatabaseConfigProvider
@@ -50,9 +50,9 @@ class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfig
 
   // Yaml
 
-  override type CompEx = MindmapCompleteEx
+  override type CompEx = MindmapExercise
 
-  override implicit val yamlFormat: YamlFormat[MindmapCompleteEx] = null
+  override implicit val yamlFormat: YamlFormat[MindmapExercise] = null
 
   // db
 
@@ -61,7 +61,7 @@ class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfig
   override def tq = repo.mindmapExercises
 
 
-  override protected def correctEx(sol: StringSolution, exercise: MindmapCompleteEx, user: User): Try[CompleteResult[EvaluationResult]]
+  override protected def correctEx(sol: StringSolution, exercise: MindmapExercise, user: User): Try[CompleteResult[EvaluationResult]]
   = ???
 
   def index: EssentialAction = withUser { user => implicit request => Ok(views.html.mindmap.mindmapindex.render(user)) }

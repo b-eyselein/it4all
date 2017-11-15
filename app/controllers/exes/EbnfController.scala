@@ -4,10 +4,9 @@ import javax.inject._
 
 import controllers.core.AIdExController
 import model.User
-import model.core.StringConsts._
 import model.core._
-import model.core.result.CompleteResult
-import model.ebnf.{EbnfCompleteEx, EbnfExercise, EbnfResult}
+import model.ebnf.EbnfConsts._
+import model.ebnf.{EbnfExercise, EbnfResult}
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.data.Form
 import play.api.db.slick.DatabaseConfigProvider
@@ -17,7 +16,6 @@ import play.twirl.api.Html
 import scala.concurrent.ExecutionContext
 import scala.language.implicitConversions
 import scala.util.Try
-
 
 @Singleton
 class EbnfController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
@@ -29,9 +27,9 @@ class EbnfController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   // Yaml
 
-  override type CompEx = EbnfCompleteEx
+  override type CompEx = EbnfExercise
 
-  override val yamlFormat: YamlFormat[EbnfCompleteEx] = null
+  override val yamlFormat: YamlFormat[EbnfExercise] = null
 
   // db
 
@@ -41,16 +39,16 @@ class EbnfController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   // Admin
 
-  override def renderEditRest(exercise: Option[EbnfCompleteEx]): Html = new Html(
+  override def renderEditRest(exercise: Option[EbnfExercise]): Html = new Html(
     s"""|<div class="form-group">
         |  <label for="$TERMINALS">Terminalsymbole:</label>
-        |  <input class="form-control" name="$TERMINALS" id="$TERMINALS" placeholder="Terminalsymbole, durch Kommata getrennt"
-        |         ${exercise.map(_.ex.terminals).getOrElse("")} required>
+        |  <input class="form-control" languageName="$TERMINALS" id="$TERMINALS" placeholder="Terminalsymbole, durch Kommata getrennt"
+        |         ${exercise.map(_.terminals).getOrElse("")} required>
         |</div>""".stripMargin)
 
   // User
 
-  override def correctEx(sol: StringSolution, exercise: EbnfCompleteEx, user: User): Try[CompleteResult[EbnfResult]] = ??? // FIXME
+  override def correctEx(sol: StringSolution, exercise: EbnfExercise, user: User): Try[CompleteResult[EbnfResult]] = ??? // FIXME
 
 
   //    val data = Controller.request.body.asFormUrlEncoded
@@ -71,7 +69,7 @@ class EbnfController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
   //
   //    new EbnfCompleteResult(new EbnfResult(grammar))
 
-  override def renderExercise(user: User, exercise: EbnfCompleteEx): Html = views.html.ebnf.ebnfExercise.render(user, exercise.ex)
+  override def renderExercise(user: User, exercise: EbnfExercise): Html = views.html.ebnf.ebnfExercise.render(user, exercise)
 
   override def renderResult(correctionResult: CompleteResult[EbnfResult]): Html = new Html("")
 

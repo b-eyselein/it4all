@@ -1,42 +1,56 @@
 package model.web
 
-import model.core.result.{EvaluationResult, SuccessType}
+import model.Enums.SuccessType
+import model.Enums.SuccessType._
+import model.core.EvaluationResult
+import model.web.ElementResult._
 import org.openqa.selenium.WebElement
 import play.twirl.api.Html
 
-import scala.util.{Failure, Success, Try}
+import scala.util.Try
 
 trait HtmlRenderable {
   def render: Html
 }
 
 object ElementResult {
-  def analyze(foundElement: Option[WebElement], attributeResults: List[AttributeResult], textContentResult: Option[TextContentResult]): SuccessType = foundElement match {
-    case None    => SuccessType.NONE
+
+  def analyze(foundElement: Option[WebElement], attributeResults: Seq[AttributeResult], textContentResult: Option[TextContentResult]): SuccessType = foundElement match {
+    case None    => NONE
     case Some(_) =>
       if (!EvaluationResult.allResultsSuccessful(attributeResults))
-        SuccessType.PARTIALLY
+        PARTIALLY
       else textContentResult match {
-        case None             => SuccessType.PARTIALLY
-        case Some(textResult) => if (textResult.isSuccessful) SuccessType.COMPLETE else SuccessType.PARTIALLY
+        case None             => PARTIALLY
+        case Some(textResult) => if (textResult.isSuccessful) COMPLETE else PARTIALLY
       }
+  }
+
+  val elemNotFoundMsg: String = asMsg(success = false, "Element konnte nicht gefunden werden!")
+
+  def asMsg(success: Boolean, msg: String): String = s"""<p><span class="glyphicon glyphicon-${if (success) "ok" else "remove"}"></span> $msg<p>"""
+
+  def analyzeText(foundValue: String, awaitedValue: String): SuccessType = if (foundValue == null) {
+    NONE
+  } else {
+    if (foundValue contains awaitedValue) COMPLETE else PARTIALLY
+  }
+
+}
+
+sealed abstract class WebResult(val task: WebCompleteTask, s: SuccessType, val messages: Seq[String]) extends EvaluationResult(s) with HtmlRenderable
+
+case class ElementResult(t: WebCompleteTask, foundElement: Option[WebElement], attributeResults: Seq[AttributeResult], textContentResult: Option[TextContentResult])
+  extends WebResult(t, ElementResult.analyze(foundElement, attributeResults, textContentResult), Seq.empty) {
+
+
+  override def render: Html = foundElement match {
+    case None    => new Html(elemNotFoundMsg)
+    case Some(_) => new Html(asMsg(success = true, "Element wurde gefunden.") + textContentResult.fold("")(_.render) + attributeResults.map(_.render).mkString("\n"))
   }
 }
 
-sealed abstract class WebResult(val task: WebTask, s: SuccessType, val messages: List[String])
-  extends EvaluationResult(s) with HtmlRenderable
-
-case class ElementResult(t: WebTask, foundElement: Option[WebElement], attributeResults: List[AttributeResult], textContentResult: Option[TextContentResult])
-  extends WebResult(t, ElementResult.analyze(foundElement, attributeResults, textContentResult), List.empty) {
-
-  override def render = new Html(
-    foundElement.fold("""<div class="alert alert-danger">Element konnte nicht gefunden werden!</div>""")
-    (_ => """<div class="alert alert-success">Element wurde gefunden!</div>""" + textContentResult.fold("")(_.render) + attributeResults.map(_.render).mkString("\n"))
-  )
-}
-
-
-case class JsWebResult(t: WebTask, preResults: List[ConditionResult], actionPerformed: Boolean, postResults: List[ConditionResult], ms: List[String])
+case class JsWebResult(t: WebCompleteTask, preResults: Seq[ConditionResult], actionPerformed: Boolean, postResults: Seq[ConditionResult], ms: Seq[String])
   extends WebResult(t, JsWebResult.analyze(postResults, actionPerformed, postResults), ms) {
 
   override def render = new Html(
@@ -50,44 +64,26 @@ case class JsWebResult(t: WebTask, preResults: List[ConditionResult], actionPerf
 }
 
 abstract class TextResult(name: String, foundContent: String, awaitedContent: String)
-  extends EvaluationResult(TextAnalyzer.analyze(foundContent, awaitedContent)) {
+  extends EvaluationResult(analyzeText(foundContent, awaitedContent)) {
 
-  def render: String =
-    s"""<div class="alert alert-$getBSClass">$name ${
-      success match {
-        case SuccessType.COMPLETE  => "hat den gesuchten Wert."
-        case SuccessType.PARTIALLY => s"""hat nicht den gesuchten Wert "$awaitedContent" sondern "$foundContent"!"""
-        case SuccessType.NONE      => "konnte nicht gefunden werden!"
-        case SuccessType.FAILURE   => "konnte aufgrund eines Fehler nicht ueberprueft werden."
-      }
-    }
-       |</div>""".stripMargin
+  def render: String = asMsg(success == COMPLETE, success match {
+    case COMPLETE  => s"$name hat den gesuchten Wert."
+    case PARTIALLY => s"$name hat nicht den gesuchten Wert '$awaitedContent' sondern '$foundContent'!"
+    case NONE      => s"$name konnte nicht gefunden werden!"
+    case FAILURE   => s"$name konnte aufgrund eines Fehler nicht ueberprueft werden."
+  })
 
 }
 
 case class TextContentResult(f: String, a: String) extends TextResult("Der Textinhalt", f, a)
 
-case class AttributeResult(attribute: Attribute, foundValue: Try[String]) extends TextResult("Das Attribut", foundValue.getOrElse(""), attribute.value)
-
-object TextAnalyzer {
-  def analyze(foundValue: String, awaitedValue: String): SuccessType = if (foundValue == null) {
-    SuccessType.NONE
-  } else {
-    if (foundValue.contains(awaitedValue)) SuccessType.COMPLETE
-    else SuccessType.PARTIALLY
-  }
-
-  def analyze(awaitedValue: String, foundValue: Try[String]): SuccessType = foundValue match {
-    case Success(found) => if (found.contains(awaitedValue)) SuccessType.COMPLETE else SuccessType.PARTIALLY
-    case Failure(_)     => SuccessType.NONE
-  }
-}
+case class AttributeResult(attribute: Attribute, foundValue: Try[String]) extends TextResult(s"Das Attribut '${attribute.key}'", foundValue getOrElse "", attribute.value)
 
 object JsWebResult {
-  def analyze(preconds: List[ConditionResult], actionPerf: Boolean, postconds: List[ConditionResult]): SuccessType = {
+  def analyze(preconds: Seq[ConditionResult], actionPerf: Boolean, postconds: Seq[ConditionResult]): SuccessType = {
     if (EvaluationResult.allResultsSuccessful(preconds) && actionPerf && EvaluationResult.allResultsSuccessful(postconds))
-      SuccessType.COMPLETE
-    else SuccessType.NONE
+      COMPLETE
+    else NONE
   }
 }
 

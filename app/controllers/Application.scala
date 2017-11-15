@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject._
 
-import model.core.{Repository, Secured}
+import model.core.Repository
 import play.Environment
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc.{AbstractController, ControllerComponents, EssentialAction}

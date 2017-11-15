@@ -1,6 +1,7 @@
 package model.nary
 
 import com.google.common.base.{Splitter, Strings}
+import model.nary.NumberBase._
 
 case class NAryNumber(decimalValue: Int = 0, base: NumberBase) {
 
@@ -10,7 +11,7 @@ case class NAryNumber(decimalValue: Int = 0, base: NumberBase) {
 
   def toTwoComp: String = {
     val binString = Integer.toBinaryString(decimalValue)
-    NAryNumber.padBinary(binString.substring(Math.max(0, binString.length() - 8)))
+    NAryNumber.padBinary(binString substring Math.max(0, binString.length() - 8))
   }
 
   override def toString: String = toString(false)
@@ -18,7 +19,7 @@ case class NAryNumber(decimalValue: Int = 0, base: NumberBase) {
   def toString(withBase: Boolean): String = {
     var result = Integer.toString(Math.abs(decimalValue), base.base)
 
-    if (base == NumberBase.BINARY)
+    if (base == BINARY)
       result = NAryNumber.padBinary(result)
 
     if (decimalValue < 0)
@@ -40,10 +41,10 @@ object NAryNumber {
 
     if (trimmedInput.charAt(0) != '1')
     // Positive number...
-      new NAryNumber(Integer.parseInt(trimmedInput, 2), NumberBase.BINARY)
+      new NAryNumber(Integer.parseInt(trimmedInput, 2), BINARY)
     else {
       val invertedInt = invertDigits(trimmedInput)
-      new NAryNumber(-1 * (Integer.parseInt(invertedInt, 2) + 1), NumberBase.BINARY)
+      new NAryNumber(-1 * (Integer.parseInt(invertedInt, 2) + 1), BINARY)
     }
   }
 

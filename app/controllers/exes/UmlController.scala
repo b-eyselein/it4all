@@ -4,10 +4,10 @@ import java.nio.file.{Files, Path, Paths}
 import javax.inject._
 
 import com.fasterxml.jackson.databind.JsonNode
+import controllers.Secured
 import controllers.core.AIdPartExController
 import model.User
 import model.core._
-import model.core.result.CompleteResult
 import model.uml.UmlEnums.UmlExPart
 import model.uml._
 import net.jcazevedo.moultingyaml.YamlFormat
@@ -45,29 +45,23 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // db
 
-  import profile.api._
+  override type TQ = repo.UmlExercisesTable
 
-  override type TQ = repo.UmlExerciseTable
+  override def tq: repo.ExerciseTableQuery[UmlExercise, UmlCompleteEx, repo.UmlExercisesTable] = repo.umlExercises
 
-  override def tq = repo.umlExercises
+  override def completeExes: Future[Seq[UmlCompleteEx]] = repo.umlExercises.completeExes
 
-  override def completeExes: Future[Seq[UmlCompleteEx]] = db.run(repo.umlExercises.result).map(_.map(ex => UmlCompleteEx(ex)))
+  override def completeExById(id: Int): Future[Option[UmlCompleteEx]] = repo.umlExercises.completeById(id)
 
-  override def completeExById(id: Int): Future[Option[UmlCompleteEx]] = db.run(repo.umlExercises.findBy(_.id).apply(id).result.headOption.map {
-    case Some(ex) => Some(UmlCompleteEx(ex))
-    case None     => None
-  })
-
-  override def saveRead(read: Seq[UmlCompleteEx]): Future[Seq[Int]] = Future.sequence(read.map(completeEx =>
-    db.run(repo.umlExercises insertOrUpdate completeEx.ex)))
+  override def saveRead(read: Seq[UmlCompleteEx]): Future[Seq[Int]] = Future.sequence(read map (repo.umlExercises.saveCompleteEx(_)))
 
   // Views
 
   override def renderExercise(user: User, exercise: UmlCompleteEx, part: String): Future[Html] = Future(UmlExPart.valueOf(part) match {
     case UmlExPart.CLASS_SELECTION   => views.html.uml.classSelection.render(user, exercise.ex)
-    case UmlExPart.DIAG_DRAWING      => views.html.uml.diagdrawing.render(user, exercise.ex, getsHelp = false)
-    case UmlExPart.DIAG_DRAWING_HELP => views.html.uml.diagdrawing.render(user, exercise.ex, getsHelp = true)
-    case UmlExPart.ATTRS_METHS       => views.html.uml.umlMatching.render(user, exercise.ex)
+    case UmlExPart.DIAG_DRAWING      => views.html.uml.diagdrawing.render(user, exercise, getsHelp = false)
+    case UmlExPart.DIAG_DRAWING_HELP => views.html.uml.diagdrawing.render(user, exercise, getsHelp = true)
+    case UmlExPart.ATTRS_METHS       => views.html.uml.umlMatching.render(user, exercise)
     case _                           => new Html("FEHLER!")
   })
 
@@ -85,9 +79,9 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   override def correctEx(user: User, sol: StringSolution, exercise: UmlCompleteEx, part: String): Try[CompleteResult[UmlResult]] = {
     val umlSol: UmlSolution = null
     val (result, nextPart) = UmlExPart.valueOf(part) match {
-      case UmlExPart.CLASS_SELECTION   => (ClassSelectionResult(exercise.ex, umlSol), UmlExPart.DIAG_DRAWING_HELP)
-      case UmlExPart.DIAG_DRAWING_HELP => (DiagramDrawingHelpResult(exercise.ex, umlSol), UmlExPart.ATTRS_METHS)
-      case UmlExPart.DIAG_DRAWING      => (DiagramDrawingResult(exercise.ex, umlSol), UmlExPart.FINISHED)
+      case UmlExPart.CLASS_SELECTION   => (ClassSelectionResult(exercise, umlSol), UmlExPart.DIAG_DRAWING_HELP)
+      case UmlExPart.DIAG_DRAWING_HELP => (DiagramDrawingHelpResult(exercise, umlSol), UmlExPart.ATTRS_METHS)
+      case UmlExPart.DIAG_DRAWING      => (DiagramDrawingResult(exercise, umlSol), UmlExPart.FINISHED)
       case UmlExPart.ATTRS_METHS       => (null, UmlExPart.FINISHED)
       case UmlExPart.FINISHED          => (null, UmlExPart.FINISHED)
     }

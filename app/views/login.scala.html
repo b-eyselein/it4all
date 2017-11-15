@@ -1,4 +1,4 @@
-@import model.core.StringConsts
+@import model.core.CoreConsts._
 
 @(message: String = "")
 
@@ -12,10 +12,10 @@
         @helper.form(routes.LoginController.authenticate, 'role -> "form", 'class -> "form-horizontal") {
 
             <div class="form-group has-feedback">
-                <label class="control-label col-sm-3" for="@StringConsts.NAME_NAME">Nutzername:</label>
+                <label class="control-label col-sm-3" for="@NAME_NAME">Nutzername:</label>
                 <div class="col-sm-9">
-                    <input class="form-control" id="@StringConsts.NAME_NAME" name="@StringConsts.NAME_NAME" placeholder="s-Nummer" required>
-                    <span class="glyphicon glyphicon-warning-sign form-control-feedback hidden" id="span_@StringConsts.NAME_NAME"></span>
+                    <input class="form-control" id="@NAME_NAME" name="@NAME_NAME" placeholder="s-Nummer" required>
+                    <span class="glyphicon glyphicon-warning-sign form-control-feedback hidden" id="span_@NAME_NAME"></span>
                     <p class="help-block">
                         Da it4all keinen Zugriff auf das Login-System der Universit&auml;t W&uuml;rburg hat, m&uuml;ssen Sie Sich erst
                         <a href="@routes.LoginController.register" tabindex="-1">registrieren</a>.</p>
@@ -23,10 +23,10 @@
             </div>
 
             <div class="form-group has-feedback">
-                <label class="control-label col-sm-3" for="@StringConsts.PW_NAME">Passwort:</label>
+                <label class="control-label col-sm-3" for="@PW_NAME">Passwort:</label>
                 <div class="col-sm-9">
-                    <input class="form-control" type="password" name="@StringConsts.PW_NAME" id="@StringConsts.PW_NAME" placeholder="Passwort" required>
-                    <span class="glyphicon glyphicon-warning-sign form-control-feedback hidden" id="span_@StringConsts.NAME_NAME">@message</span>
+                    <input class="form-control" type="password" name="@PW_NAME" id="@PW_NAME" placeholder="Passwort" required>
+                    <span class="glyphicon glyphicon-warning-sign form-control-feedback hidden" id="span_@NAME_NAME">@message</span>
                 </div>
             </div>
 

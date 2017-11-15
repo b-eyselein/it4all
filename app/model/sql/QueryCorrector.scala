@@ -1,9 +1,9 @@
 package model.sql
 
 import model.core.CommonUtils.RicherTry
-import model.core.StringConsts._
-import model.core.matching.{Match, Matcher, MatchingResult, StringMatcher}
+import model.core.matching._
 import model.sql.SqlEnums.SqlExerciseType
+import model.sql.SqlConsts._
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.select.OrderByElement

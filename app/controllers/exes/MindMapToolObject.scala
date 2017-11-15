@@ -1,7 +1,7 @@
 package controllers.exes
 
 import model.Enums.ToolState
-import model.core.HasBaseValues
+import model.HasBaseValues
 import model.core.tools.IdExToolObject
 import play.api.mvc.Call
 
@@ -28,13 +28,11 @@ object MindMapToolObject extends IdExToolObject("mindmap", "Mindmap", ToolState.
 
   override def newExFormRoute: Call = ??? //controllers.exes.routes.MindmapController.newExerciseForm()
 
-  override def exportExesRoute: Call = controllers.exes.routes.MindmapController.exportExercises()
-
   override def importExesRoute: Call = controllers.exes.routes.MindmapController.importExercises()
 
-  //  override def jsonSchemaRoute: Call = ??? //controllers.exes.routes.MindmapController.getJSONSchemaFile()
+  override def exportExesRoute: Call = controllers.exes.routes.MindmapController.exportExercises()
 
-  //  override def uploadFileRoute: Call = ??? //controllers.exes.routes.MindmapController.uploadFile()
+  override def exportExesAsFileRoute: Call = controllers.exes.routes.MindmapController.exportExercisesAsFile()
 
   override def changeExStateRoute(exercise: HasBaseValues): Call = ??? //controllers.exes.routes.MindmapController.changeExState(exercise.id)
 

@@ -4,11 +4,11 @@ import java.nio.file.{Files, Path, StandardCopyOption}
 import javax.inject._
 
 import com.google.common.io.{Files => GFiles}
+import controllers.Secured
 import controllers.core.AIdPartExController
 import model.User
 import model.core._
-import model.core.result.{CompleteResult, EvaluationResult}
-import model.spread.{SpreadCompleteEx, _}
+import model.spread._
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.data.Form
 import play.api.db.slick.DatabaseConfigProvider
@@ -51,9 +51,9 @@ class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
 
   // Yaml
 
-  override type CompEx = SpreadCompleteEx
+  override type CompEx = SpreadExercise
 
-  override implicit val yamlFormat: YamlFormat[SpreadCompleteEx] = null
+  override implicit val yamlFormat: YamlFormat[SpreadExercise] = SpreadExYamlProtocol.SpreadExYamlFormat
 
   // db
 
@@ -63,25 +63,22 @@ class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
 
   override def tq = repo.spreadExercises
 
-  override def completeExes: Future[Seq[SpreadCompleteEx]] = db.run(repo.spreadExercises.result).map(_.map(ex => SpreadCompleteEx(ex)))
+  override def completeExes: Future[Seq[SpreadExercise]] = db.run(repo.spreadExercises.result)
 
-  override def completeExById(id: Int): Future[Option[SpreadCompleteEx]] = db.run(repo.spreadExercises.findBy(_.id).apply(id).result.headOption.map {
-    case Some(ex) => Some(SpreadCompleteEx(ex))
-    case None     => None
-  })
+  override def completeExById(id: Int): Future[Option[SpreadExercise]] = db.run(repo.spreadExercises.findBy(_.id).apply(id).result.headOption)
 
-  override def saveRead(read: Seq[SpreadCompleteEx]): Future[Seq[Int]] = Future.sequence(read.map(completeEx =>
+  override def saveRead(read: Seq[SpreadExercise]): Future[Seq[Int]] = Future.sequence(read.map(completeEx =>
     db.run(repo.spreadExercises insertOrUpdate completeEx.ex)))
 
   // Views
 
-  override protected def renderExercise(user: User, exercise: SpreadCompleteEx, part: String): Future[Html] = Future(views.html.spread.spreadExercise.render(user, exercise.ex))
+  override protected def renderExercise(user: User, exercise: SpreadExercise, part: String): Future[Html] = Future(views.html.spread.spreadExercise.render(user, exercise.ex))
 
   override protected def renderResult(correctionResult: CompleteResult[EvaluationResult]): Html = ??? // FIXME: implement...
 
   // Correction
 
-  override protected def correctEx(user: User, sol: StringSolution, exercise: SpreadCompleteEx, part: String): Try[CompleteResult[EvaluationResult]]
+  override protected def correctEx(user: User, sol: StringSolution, exercise: SpreadExercise, part: String): Try[CompleteResult[EvaluationResult]]
   = ??? // FIXME: implement???
 
   // Other routes
@@ -91,7 +88,7 @@ class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
       //      finder.byId(id) match {
       //        case None           => BadRequest("This exercise does not exist!")
       //        case Some(exercise) =>
-      //          val fileToDownload = toolObject.getSolFileForExercise(user.name, exercise, exercise.templateFilename + CORRECTION_ADD_STRING, fileExtension)
+      //          val fileToDownload = toolObject.getSolFileForExercise(user.languageName, exercise, exercise.templateFilename + CORRECTION_ADD_STRING, fileExtension)
       //
       //          if (fileToDownload.toFile.exists) Ok.sendFile(fileToDownload.toFile)
       //          else Redirect(routes.SpreadController.index(0))
@@ -127,7 +124,7 @@ class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
       //        val pathToUploadedFile = uploadedFile.getFile.toPath
       //        val fileExtension = com.google.common.io.Files.getFileExtension(uploadedFile.getFilename)
       //
-      //        val targetFilePath = toolObject.getSolFileForExercise(user.name, exercise, exercise.templateFilename, fileExtension)
+      //        val targetFilePath = toolObject.getSolFileForExercise(user.languageName, exercise, exercise.templateFilename, fileExtension)
       //
       //        // Save solution
       //        saveSolutionForUser(pathToUploadedFile, targetFilePath) match {

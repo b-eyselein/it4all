@@ -1,45 +1,45 @@
-@import model.core.StringConsts
+@import model.core.CoreConsts._
 
 @(user: model.User, exercise: model.Exercise, textRows: Int)
 
 <fieldset>
     <legend>Standardangaben</legend>
     <div class="form-group">
-        <label class="control-label col-sm-2" for="@StringConsts.ID_NAME">ID:</label>
+        <label class="control-label col-sm-2" for="@ID_NAME">ID:</label>
         <div class="col-sm-10">
-            <input type="number" class="form-control" name="@StringConsts.ID_NAME" id="@StringConsts.ID_NAME"
+            <input type="number" class="form-control" name="@ID_NAME" id="@ID_NAME"
             value="@exercise.id" readonly required>
         </div>
     </div>
 
     <div class="form-group">
-        <label class="control-label col-sm-2" for="@StringConsts.TITLE_NAME">Titel:</label>
+        <label class="control-label col-sm-2" for="@TITLE_NAME">Titel:</label>
         <div class="col-sm-10">
-            <input class="form-control" name="@StringConsts.TITLE_NAME" id="@StringConsts.TITLE_NAME"
+            <input class="form-control" name="@TITLE_NAME" id="@TITLE_NAME"
             value="@exercise.title" required>
         </div>
     </div>
 
     <div class="form-group">
-        <label class="control-label col-sm-2" for="@StringConsts.AUTHOR_NAME">Autor:</label>
+        <label class="control-label col-sm-2" for="@AUTHOR_NAME">Autor:</label>
         <div class="col-sm-10">
-            <input class="form-control" name="@StringConsts.AUTHOR_NAME" id="@StringConsts.AUTHOR_NAME" value="@user.username"
+            <input class="form-control" name="@AUTHOR_NAME" id="@AUTHOR_NAME" value="@user.username"
             title="Dieser Wert kann nicht geändert werden." readonly required>
         </div>
     </div>
 
     <div class="form-group">
-        <label class="control-label col-sm-2" for="@StringConsts.TEXT_NAME">Text:</label>
+        <label class="control-label col-sm-2" for="@TEXT_NAME">Text:</label>
         <div class="col-sm-10">
-            <textarea class="form-control" rows="@textRows" name="@StringConsts.TEXT_NAME" id="@StringConsts.TEXT_NAME"
+            <textarea class="form-control" rows="@textRows" name="@TEXT_NAME" id="@TEXT_NAME"
             required>@exercise.text</textarea>
         </div>
     </div>
 
     <div class="form-group">
-        <label class="control-label col-sm-2" for="@StringConsts.STATE_NAME">Status:</label>
+        <label class="control-label col-sm-2" for="@STATE_NAME">Status:</label>
         <div class="col-sm-10">
-            <select class="form-control" name="@StringConsts.STATE_NAME" id="@StringConsts.STATE_NAME" required>
+            <select class="form-control" name="@STATE_NAME" id="@STATE_NAME" required>
             @for(state <- model.Enums.ExerciseState.values) {
                 <option @state.isSelected(exercise.state)>@state</option>
             }

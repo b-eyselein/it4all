@@ -2,11 +2,11 @@ package controllers.exes
 
 import javax.inject._
 
+import controllers.Secured
 import controllers.core.AExCollectionController
 import model.Enums.Role
 import model.User
 import model.core._
-import model.core.result.CompleteResult
 import model.questions._
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.data.Form
@@ -273,7 +273,7 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
       //        //      val result = new QuestionResult(readSelAnswers(question, form), question)
       //        Ok(views.html.givenanswerQuestionResult.render(user, null /* result*/))
       //      } else {
-      //        val key = new UserAnswerKey(user.name, id)
+      //        val key = new UserAnswerKey(user.languageName, id)
       //        val answer = Option(UserAnswer.finder.byId(key)).getOrElse(new UserAnswer(key))
       //
       //
@@ -287,7 +287,7 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
   }
 
   //  override def renderExercise(user: User, exercise: Question): Html = {
-  //    views.html.questions.question.render(user, exercise, null /* UserAnswer.finder.byId(new UserAnswerKey(user.name, exercise.id))*/)
+  //    views.html.questions.question.render(user, exercise, null /* UserAnswer.finder.byId(new UserAnswerKey(user.languageName, exercise.id))*/)
   //  }
 
   //  override def renderExesListRest: Html = ???

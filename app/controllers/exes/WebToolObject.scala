@@ -1,29 +1,31 @@
 package controllers.exes
 
 import model.Enums.ToolState
-import model.core.HasBaseValues
+import model.HasBaseValues
 import model.core.tools.IdPartExToolObject
+import model.web.WebExercise
 import play.api.mvc.Call
 
 object WebToolObject extends IdPartExToolObject("web", "Web", ToolState.LIVE) {
-
-  // User
 
   override def indexCall: Call = controllers.exes.routes.WebController.index()
 
   override def exerciseRoute(exercise: HasBaseValues, part: String): Call = controllers.exes.routes.WebController.exercise(exercise.id, part)
 
-  override def exerciseRoutes(exercise: HasBaseValues) = List(
-    (controllers.exes.routes.WebController.exercise(exercise.id, "html"), "Html-Teil"),
-    (controllers.exes.routes.WebController.exercise(exercise.id, "js"), "Js-Teil"))
+  override def exerciseRoutes(exercise: HasBaseValues): List[(Call, String)] = exercise match {
+    case ex: WebExercise => List.empty ++
+      (if (ex.hasHtmlPart) Some((exerciseRoute(exercise, "html"), "Html-Teil")) else None) ++
+      (if (ex.hasJsPart) Some((exerciseRoute(exercise, "js"), "Js-Teil")) else None)
+    case _               => List((exerciseRoute(exercise, "html"), "Html-Teil"), (exerciseRoute(exercise, "js"), "Js-Teil"))
+  }
 
-  override def exesListRoute(page: Int): Call = null // controllers.exes.routes.WebController.exercises(exercise.id)
+  // only self reference...
+  override def exesListRoute(page: Int): Call = ??? // controllers.exes.routes.WebController.exercises(exercise.id)
 
   override def correctLiveRoute(exercise: HasBaseValues, part: String): Call = controllers.exes.routes.WebController.correctLive(exercise.id, "html")
 
   override def correctRoute(exercise: HasBaseValues, part: String): Call = controllers.exes.routes.WebController.correct(exercise.id, "html")
 
-  // Admin
 
   override val restHeaders: List[String] = List("# Tasks Html / Js", "Text Html / Js")
 
@@ -33,13 +35,11 @@ object WebToolObject extends IdPartExToolObject("web", "Web", ToolState.LIVE) {
 
   override def newExFormRoute: Call = controllers.exes.routes.WebController.newExerciseForm()
 
-  override def exportExesRoute: Call = controllers.exes.routes.WebController.exportExercises()
-
   override def importExesRoute: Call = controllers.exes.routes.WebController.importExercises()
 
-  //  override def jsonSchemaRoute: Call = controllers.exes.routes.WebController.getJSONSchemaFile()
+  override def exportExesRoute: Call = controllers.exes.routes.WebController.exportExercises()
 
-  //  override def uploadFileRoute: Call = controllers.exes.routes.WebController.uploadFile()
+  override def exportExesAsFileRoute: Call = controllers.exes.routes.WebController.exportExercisesAsFile()
 
   override def changeExStateRoute(exercise: HasBaseValues): Call = controllers.exes.routes.WebController.changeExState(exercise.id)
 

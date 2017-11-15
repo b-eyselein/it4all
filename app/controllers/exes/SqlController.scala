@@ -3,13 +3,13 @@ package controllers.exes
 import java.sql.Connection
 import javax.inject._
 
+import controllers.Secured
 import controllers.core.AExCollectionController
 import model.core.CommonUtils.cleanly
-import model.core.StringConsts.{SELECT_ALL_DUMMY, SHOW_ALL_TABLES}
 import model.core._
-import model.core.result.{CompleteResult, EvaluationResult}
 import model.sql.SqlEnums.SqlExerciseType
-import model.sql.{SqlQueryResult, _}
+import model.sql.SqlConsts.{SELECT_ALL_DUMMY, SHOW_ALL_TABLES}
+import model.sql._
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.data.Form
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
@@ -45,7 +45,7 @@ class SqlController @Inject()(cc: ControllerComponents /*, @NamedDatabase("sqlse
 
   override def tq = repo.sqlScenarioes
 
-  override def newExerciseForm: EssentialAction = withAdmin { user => implicit request => Ok(views.html.sql.newExerciseForm.render(user, null)) }
+  //  override def newExerciseForm: EssentialAction = withAdmin { user => implicit request => Ok(views.html.sql.newExerciseForm.render(user, null)) }
 
   // override
   // public Html renderCollectionCreated(List<SqlScenario> created) {
@@ -65,7 +65,7 @@ class SqlController @Inject()(cc: ControllerComponents /*, @NamedDatabase("sqlse
   def scenarioAdmin(id: Int): EssentialAction = withAdmin { user => implicit request => Ok(views.html.sql.scenarioAdmin.render(user, null /* SqlScenario.finder.byId(id)*/)) }
 
   // FIXME: stubs...
-  def correctPart(form: model.core.StringSolution, exercise: Option[model.sql.SqlExercise], part: String, user: model.User): scala.util.Try[model.core.result.CompleteResult[model.core.result.EvaluationResult]] = ???
+  def correctPart(form: model.core.StringSolution, exercise: Option[model.sql.SqlExercise], part: String, user: model.User): scala.util.Try[CompleteResult[EvaluationResult]] = ???
 
   def renderCollectionCreated(collections: List[model.core.SingleReadingResult[model.sql.SqlScenario]]): play.twirl.api.Html = ???
 
@@ -107,7 +107,7 @@ class SqlController @Inject()(cc: ControllerComponents /*, @NamedDatabase("sqlse
 
   //  override def correctEx(sol: StringSolution, exercise: Option[SqlExercise], user: User): Try[SqlResult] = Try({
   //    val learnerSolution = sol.learnerSolution
-  //    saveSolution(user.name, learnerSolution, exercise.id)
+  //    saveSolution(user.languageName, learnerSolution, exercise.id)
   //
   //    val sample = findBestFittingSample(learnerSolution, exercise.samples.toList)
   //
@@ -121,7 +121,7 @@ class SqlController @Inject()(cc: ControllerComponents /*, @NamedDatabase("sqlse
   //  override def renderExercise(user: User, exercise: SqlExercise): Html = {
   //    val tables = readTablesInDatabase(sqlSelect, exercise.scenario.shortName)
   //
-  //    val oldOrDefSol = Option(SqlSolution.finder.byId(new SqlSolutionKey(user.name, exercise.id))) match {
+  //    val oldOrDefSol = Option(SqlSolution.finder.byId(new SqlSolutionKey(user.languageName, exercise.id))) match {
   //      case None => ""
   //      case Some(oldSol) => oldSol.sol
   //    }

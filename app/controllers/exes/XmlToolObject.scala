@@ -1,25 +1,23 @@
 package controllers.exes
 
 import model.Enums.ToolState
-import model.core.HasBaseValues
+import model.HasBaseValues
 import model.core.tools.IdExToolObject
 import play.api.mvc.Call
 
 object XmlToolObject extends IdExToolObject("xml", "Xml", ToolState.LIVE) {
 
-  // User
-
   override def indexCall: Call = controllers.exes.routes.XmlController.index()
 
   override def exerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.XmlController.exercise(exercise.id)
 
+  // only self reference...
   override def exesListRoute(page: Int): Call = ??? //controllers.exes.routes.XmlController.exercises(exercise.id)
 
   override def correctLiveRoute(exercise: HasBaseValues): Call = controllers.exes.routes.XmlController.correctLive(exercise.id)
 
   override def correctRoute(exercise: HasBaseValues): Call = controllers.exes.routes.XmlController.correct(exercise.id)
 
-  // Admin
 
   override val restHeaders: List[String] = List("Typ", "Wurzelknoten", "Inhalt der Referenzdatei")
 
@@ -29,13 +27,11 @@ object XmlToolObject extends IdExToolObject("xml", "Xml", ToolState.LIVE) {
 
   override def newExFormRoute: Call = controllers.exes.routes.XmlController.newExerciseForm()
 
-  override def exportExesRoute: Call = controllers.exes.routes.XmlController.exportExercises()
-
   override def importExesRoute: Call = controllers.exes.routes.XmlController.importExercises()
 
-  //  override def jsonSchemaRoute: Call = controllers.exes.routes.XmlController.getJSONSchemaFile()
+  override def exportExesRoute: Call = controllers.exes.routes.XmlController.exportExercises()
 
-  //  override def uploadFileRoute: Call = controllers.exes.routes.XmlController.uploadFile()
+  override def exportExesAsFileRoute: Call = controllers.exes.routes.XmlController.exportExercisesAsFile()
 
   override def changeExStateRoute(exercise: HasBaseValues): Call = controllers.exes.routes.XmlController.changeExState(exercise.id)
 

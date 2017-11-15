@@ -4,8 +4,8 @@ import java.io.FileOutputStream
 import java.nio.file.{Files, Path, Paths}
 
 import com.google.common.io.{Files => GFiles}
+import model.spread.SpreadConsts._
 import model.spread.SpreadUtils._
-import model.core.StringConsts._
 import org.odftoolkit.odfdom.`type`.Color
 import org.odftoolkit.simple.SpreadsheetDocument
 import org.odftoolkit.simple.style.Font

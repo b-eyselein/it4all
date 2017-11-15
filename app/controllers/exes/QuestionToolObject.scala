@@ -1,25 +1,23 @@
 package controllers.exes
 
 import model.Enums.ToolState
-import model.core.HasBaseValues
+import model.HasBaseValues
 import model.core.tools.IdExToolObject
 import play.api.mvc.Call
 
 object QuestionToolObject extends IdExToolObject("question", "Auswahlfragen", ToolState.BETA) {
 
-  // User
-
   override def indexCall: Call = controllers.exes.routes.QuestionController.index()
 
-  def exerciseRoute(exercise: HasBaseValues): Call = ???
+  override def exerciseRoute(exercise: HasBaseValues): Call = ???
 
+  // only self reference...
   override def exesListRoute(page: Int): Call = ???
 
   override def correctLiveRoute(exercise: HasBaseValues): Call = ???
 
   override def correctRoute(exercise: HasBaseValues): Call = ???
 
-  // Admin
 
   override val restHeaders: List[String] = List.empty
 
@@ -29,13 +27,11 @@ object QuestionToolObject extends IdExToolObject("question", "Auswahlfragen", To
 
   override def newExFormRoute: Call = controllers.exes.routes.QuestionController.newExerciseForm()
 
-  override def exportExesRoute: Call = controllers.exes.routes.QuestionController.exportExercises()
-
   override def importExesRoute: Call = controllers.exes.routes.QuestionController.importExercises()
 
-  //  override def jsonSchemaRoute: Call = controllers.exes.routes.QuestionController.getJSONSchemaFile()
+  override def exportExesRoute: Call = controllers.exes.routes.QuestionController.exportExercises()
 
-  //  override def uploadFileRoute: Call = controllers.exes.routes.QuestionController.uploadFile()
+  override def exportExesAsFileRoute: Call = controllers.exes.routes.QuestionController.exportExercisesAsFile()
 
   override def changeExStateRoute(exercise: HasBaseValues): Call = controllers.exes.routes.QuestionController.changeExState(exercise.id)
 

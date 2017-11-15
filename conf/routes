@@ -33,6 +33,7 @@ GET           /mindmap/admin                            controllers.exes.Mindmap
 
 GET           /mindmap/import                           controllers.exes.MindmapController.importExercises
 GET           /mindmap/export                           controllers.exes.MindmapController.exportExercises
+GET           /mindmap/exportFile                       controllers.exes.MindmapController.exportExercisesAsFile
 
 GET           /mindmap                                  controllers.exes.MindmapController.index(page: Int ?= 1)
 
@@ -45,6 +46,7 @@ GET           /xml/admin                                controllers.exes.XmlCont
 
 GET           /xml/import                               controllers.exes.XmlController.importExercises
 GET           /xml/export                               controllers.exes.XmlController.exportExercises
+GET           /xml/exportFile                           controllers.exes.XmlController.exportExercisesAsFile
 #POST          /xml/upload                               controllers.exes.XmlController.uploadFile
 
 GET           /xml/exercises                            controllers.exes.XmlController.exercises
@@ -73,9 +75,9 @@ PUT           /xml/playground                           controllers.exes.XmlCont
 # Controlleristrator
 GET           /question/admin                           controllers.exes.QuestionController.adminIndex
 
-GET           /question/export                          controllers.exes.QuestionController.exportExercises
 GET           /question/import                          controllers.exes.QuestionController.importExercises
-#POST          /question/upload                          controllers.exes.QuestionController.uploadFile
+GET           /question/export                          controllers.exes.QuestionController.exportExercises
+GET           /question/export                          controllers.exes.QuestionController.exportExercisesAsFile
 
 GET           /question/questions                       controllers.exes.QuestionController.exercises
 
@@ -141,7 +143,7 @@ GET           /prog/admin                               controllers.exes.ProgCon
 
 GET           /prog/import                              controllers.exes.ProgController.importExercises
 GET           /prog/export                              controllers.exes.ProgController.exportExercises
-#POST          /prog/upload                              controllers.exes.ProgController.uploadFile
+GET           /prog/exportFile                          controllers.exes.ProgController.exportExercisesAsFile
 
 GET           /prog/exercises                           controllers.exes.ProgController.exercises
 
@@ -174,6 +176,7 @@ GET           /spread/admin                             controllers.exes.SpreadC
 
 GET           /spread/import                            controllers.exes.SpreadController.importExercises
 GET           /spread/export                            controllers.exes.SpreadController.exportExercises
+GET           /spread/exportFile                        controllers.exes.SpreadController.exportExercisesAsFile
 #POST          /spread/upload                            controllers.exes.SpreadController.uploadFile
 
 GET           /spread/exercises                         controllers.exes.SpreadController.exercises
@@ -200,6 +203,7 @@ GET           /web/admin                                controllers.exes.WebCont
 
 GET           /web/import                               controllers.exes.WebController.importExercises
 GET           /web/export                               controllers.exes.WebController.exportExercises
+GET           /web/exportFile                           controllers.exes.WebController.exportExercisesAsFile
 #POST          /web/upload                               controllers.exes.WebController.uploadFile
 
 GET           /web/exercises                            controllers.exes.WebController.exercises
@@ -222,10 +226,10 @@ GET           /web/                                     controllers.exes.WebCont
 GET           /web/playground                           controllers.exes.WebController.playground
 
 
-GET           /web/:id/:type                            controllers.exes.WebController.exercise(id: Int, type: String)
+GET           /web/:id/:exType                          controllers.exes.WebController.exercise(id: Int, exType: String)
 
-PUT           /web/:id/:type                            controllers.exes.WebController.correctLive(id: Int, type: String)
-POST          /web/:id/:type                            controllers.exes.WebController.correct(id: Int, type: String)
+PUT           /web/:id/:exType                          controllers.exes.WebController.correctLive(id: Int, exType: String)
+POST          /web/:id/:exType                          controllers.exes.WebController.correct(id: Int, exType: String)
 
 GET           /web/sol/:user/:id                        controllers.exes.WebController.site(user: String, id: Int)
 # Web - Ende
@@ -235,6 +239,7 @@ GET           /ebnf/admin                               controllers.exes.EbnfCon
 
 GET           /ebnf/import                              controllers.exes.EbnfController.importExercises
 GET           /ebnf/export                              controllers.exes.EbnfController.exportExercises
+GET           /ebnf/exportFile                          controllers.exes.EbnfController.exportExercisesAsFile
 #POST          /ebnf/upload                              controllers.exes.EbnfController.uploadFile
 
 
@@ -263,6 +268,7 @@ GET           /uml/admin                                controllers.exes.UmlCont
 
 GET           /uml/import                               controllers.exes.UmlController.importExercises
 GET           /uml/export                               controllers.exes.UmlController.exportExercises
+GET           /uml/exportFile                           controllers.exes.UmlController.exportExercisesAsFile
 #POST          /uml/upload                               controllers.exes.UmlController.uploadFile
 
 GET           /uml/exercises                            controllers.exes.UmlController.exercises
@@ -284,15 +290,36 @@ PUT           /uml/newEx/checkSolution                  controllers.exes.UmlCont
 # User
 GET           /uml/                                     controllers.exes.UmlController.index(page: Int ?= 1)
 
-GET           /uml/:id/:part                            controllers.exes.UmlController.exercise(id: Int, part)
+GET           /uml/:id/:part                            controllers.exes.UmlController.exercise(id: Int, part: String)
 POST          /uml/:id/:part                            controllers.exes.UmlController.correct(id: Int, part)
 # Uml - Ende
 
 # Blanks - Anfang...
+
 GET           /blanks/admin                             controllers.exes.BlanksController.adminIndex
 
-GET           /blanks                                   controllers.exes.BlanksController.index(page: Int ?= 1)
-#PUT           /blanks/:id                               controllers.exes.BlanksController.correctBlanks(id: Int)
+GET           /blanks/import                            controllers.exes.BlanksController.importExercises
+GET           /blanks/export                            controllers.exes.BlanksController.exportExercises
+GET           /blanks/exportFile                        controllers.exes.BlanksController.exportExercisesAsFile
+#POST          /blanks/upload                               controllers.exes.BlanksController.uploadFile
+
+GET           /blanks/exercises                         controllers.exes.BlanksController.exercises
+
+GET           /blanks/exercises/:id                     controllers.exes.BlanksController.editExerciseForm(id: Int)
+PUT           /blanks/exercises/:id                     controllers.exes.BlanksController.editExercise(id: Int)
+POST          /blanks/exercises/:id                     controllers.exes.BlanksController.editExercise(id: Int)
+DELETE        /blanks/exercises/:id                     controllers.exes.BlanksController.deleteExercise(id: Int)
+
+PUT           /blanks/exercise/:id/state                controllers.exes.BlanksController.changeExState(id: Int)
+
+
+GET           /blanks/newExForm                         controllers.exes.BlanksController.newExerciseForm
+
+# User
+GET           /blanks/                                  controllers.exes.BlanksController.index(page: Int ?= 1)
+
+GET           /blanks/:id                               controllers.exes.BlanksController.exercise(id: Int)
+POST          /blanks/:id                               controllers.exes.BlanksController.correct(id: Int)
 
 # Blanks - Ende
 
@@ -302,7 +329,7 @@ GET           /blanks                                   controllers.exes.BlanksC
 GET           /sql/scenarioes/admin                     controllers.exes.SqlController.adminIndex
 
 GET           /sql/scenarioes/import                    controllers.exes.SqlController.importExercises
-GET           /sql/scenarioes/export                    controllers.exes.SqlController.exportExercises
+GET           /sql/scenarioes/exportFile                controllers.exes.SqlController.exportExercisesAsFile
 #POST          /sql/upload                               controllers.exes.SqlController.uploadFile
 
 GET           /sql/admin/:id                            controllers.exes.SqlController.scenarioAdmin(id: Int)

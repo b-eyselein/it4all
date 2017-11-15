@@ -3,14 +3,14 @@ package controllers.exes
 import java.nio.file._
 import javax.inject._
 
+import controllers.Secured
 import controllers.core.AIdExController
 import controllers.exes.XmlController._
 import model.User
 import model.core.CommonUtils.RicherTry
-import model.core.StringConsts._
 import model.core._
-import model.core.result.CompleteResult
 import model.core.tools.ExerciseOptions
+import model.xml.XmlConsts._
 import model.xml._
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.data.Form
@@ -24,11 +24,6 @@ import scala.language.implicitConversions
 import scala.util.Try
 
 object XmlController {
-  val STANDARD_XML_PLAYGROUND: String =
-    """<?xml version="1.0" encoding="utf-8"?>
-      |<!DOCTYPE root [
-      |
-      |]>""".stripMargin
 
   val EX_OPTIONS = ExerciseOptions("Xml", "xml", 15, 30, updatePrev = false)
 
@@ -45,9 +40,9 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // Yaml
 
-  override type CompEx = XmlCompleteEx
+  override type CompEx = XmlExercise
 
-  override val yamlFormat: YamlFormat[XmlCompleteEx] = XmlExYamlProtocol.XmlExYamlFormat
+  override val yamlFormat: YamlFormat[XmlExercise] = XmlExYamlProtocol.XmlExYamlFormat
 
   // db
 
@@ -57,19 +52,16 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   override def tq = repo.xmlExercises
 
-  override def completeExes: Future[Seq[XmlCompleteEx]] = db.run(repo.xmlExercises.result).map(_.map(ex => XmlCompleteEx(ex)))
+  override def completeExes: Future[Seq[XmlExercise]] = db.run(repo.xmlExercises.result)
 
-  override def completeExById(id: Int): Future[Option[XmlCompleteEx]] = db.run(repo.xmlExercises.findBy(_.id).apply(id).result.headOption.map {
-    case Some(ex) => Some(XmlCompleteEx(ex))
-    case None     => None
-  })
+  override def completeExById(id: Int): Future[Option[XmlExercise]] = db.run(repo.xmlExercises.findBy(_.id).apply(id).result.headOption)
 
-  override def saveRead(read: Seq[XmlCompleteEx]): Future[Seq[Int]] = Future.sequence(read.map(completeEx =>
+  override def saveRead(read: Seq[XmlExercise]): Future[Seq[Int]] = Future.sequence(read.map(completeEx =>
     db.run(repo.xmlExercises insertOrUpdate completeEx.ex)))
 
   // Views
 
-  override def renderEditRest(exercise: Option[XmlCompleteEx]): Html = views.html.xml.editXmlExRest(exercise)
+  override def renderEditRest(exercise: Option[XmlExercise]): Html = views.html.xml.editXmlExRest(exercise)
 
   override def renderExesListRest: Html = new Html(
     s"""<div class="panel panel-default">
@@ -86,12 +78,12 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
          |</div>""".stripMargin).mkString("\n")
   })
 
-  override def renderExercise(user: User, exercise: XmlCompleteEx): Html = views.html.core.exercise2Rows.render(
+  override def renderExercise(user: User, exercise: XmlExercise): Html = views.html.core.exercise2Rows.render(
     user, XmlToolObject, EX_OPTIONS, exercise.ex, renderExRest(exercise.ex), readDefOrOldSolution(user.username, exercise.ex))
 
   // Correction
 
-  override protected def correctEx(sol: StringSolution, completeEx: XmlCompleteEx, user: User): Try[CompleteResult[XmlError]] = {
+  override protected def correctEx(sol: StringSolution, completeEx: XmlExercise, user: User): Try[CompleteResult[XmlError]] = {
     checkAndCreateSolDir(user.username, completeEx) flatMap (dir => {
       val exercise = completeEx.ex
       val learnerSolution = sol.learnerSolution
@@ -134,7 +126,7 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   ).getOrElse(exercise.fixedStart)
 
   private def save(dir: Path, filename: String, learnerSolution: String) = Try(
-    Files.write(Paths.get(dir.toString, filename), learnerSolution.split(StringConsts.NEWLINE).toList.asJava,
+    Files.write(Paths.get(dir.toString, filename), learnerSolution.split(NEWLINE).toList.asJava,
       StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
   )
 

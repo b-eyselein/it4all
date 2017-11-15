@@ -1,3 +1,5 @@
+@import model.questions.QuestionEnums.QuestionType._
+
 @(user: model.User, question: model.questions.Question, oldAnswer: model.questions.UserAnswer)
 
 @main("Frage", user) {
@@ -11,7 +13,7 @@
 
             <div id="answerDiv">
                 @question.questionType match {
-                    case model.questions.QuestionType.CHOICE => {
+                    case CHOICE => {
                         @for(ans <- question.answersForTemplate) {
                             <div>
                                 <label for="@ans.id">
@@ -20,7 +22,7 @@
                             </div>
                         }
                     }
-                    case model.questions.QuestionType.FILLOUT => {
+                    case FILLOUT => {
                         @for(ans <- question.answersForTemplate) {
                             <div class="form-group">
                                 <div class="col-sm-12">
@@ -29,7 +31,7 @@
                             </div>
                         }
                     }
-                    case model.questions.QuestionType.FREETEXT => {
+                    case FREETEXT => {
                         <div class="form-group">
                             <div class="col-sm-12">
                                 <textarea class="form-control" name="answer" rows="20"

@@ -2,9 +2,10 @@ package model.questions
 
 import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty}
 import model.Enums.ExerciseState
-import model.core.StringConsts._
-import model.core.{CompleteEx, ExerciseCollection}
-import model.{Exercise, TableDefs}
+import model.core.ExerciseCollection
+import model.questions.QuestionConsts._
+import model.questions.QuestionEnums.{Correctness, QuestionType}
+import model.{CompleteEx, Exercise, TableDefs}
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 

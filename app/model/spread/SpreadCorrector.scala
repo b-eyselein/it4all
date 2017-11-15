@@ -2,7 +2,7 @@ package model.spread
 
 import java.nio.file.Path
 
-import model.core.StringConsts._
+import model.spread.SpreadConsts._
 
 import scala.collection.mutable.ListBuffer
 import scala.util.{Failure, Success, Try}

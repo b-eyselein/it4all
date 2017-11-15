@@ -2,17 +2,14 @@ package model.uml
 
 import java.util.regex.Pattern
 
-import scala.collection.JavaConverters.seqAsJavaListConverter
-import scala.util.matching.Regex
+import model.uml.UmlConsts._
 
-class UmlExTextParser(rawText: String, val mappings: Map[String, String], val toIgnore: List[String]) {
+import scala.language.postfixOps
 
-  import UmlExTextParser._
+class UmlExTextParser(rawText: String, val mappings: Map[String, String], val toIgnore: Seq[String]) {
 
-  val capitalizedWords  : Set[String] = CapWordsRegex.findAllIn(rawText).toSet
+  val capitalizedWords  : Set[String] = CapWordsRegex findAllIn rawText toSet
   val simpleReplacements: Set[String] = capitalizedWords.filter(k => !mappings.isDefinedAt(k) && !toIgnore.contains(k))
-
-  def getCapitalizedWords: java.util.List[String] = capitalizedWords.toList.asJava
 
   def replaceWithMappingSpan(text: String, key: String, value: String, function: String): String = {
     val matcher = Pattern.compile(key + "\\b").matcher(text)
@@ -25,22 +22,14 @@ class UmlExTextParser(rawText: String, val mappings: Map[String, String], val to
 
   def parseText(function: String): String = {
     var newText = rawText
+
     for (simpleRep <- simpleReplacements)
       newText = replaceWithMappingSpan(newText, simpleRep, simpleRep, function)
+
     for ((k, v) <- mappings)
       newText = replaceWithMappingSpan(newText, k, v, function)
 
     newText
   }
-
-}
-
-object UmlExTextParser {
-  val CapWordsRegex: Regex = """[A-Z][a-zäöüß]*""".r
-
-  val CssClassName = "non-marked"
-
-  val ClassSelectionFunction = "onclick=\"select(this)\""
-  val DiagramDrawingFunction = "draggable=\"true\" ondragstart=\"drag(event)\""
 
 }

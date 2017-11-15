@@ -1,7 +1,7 @@
 package model.xml;
 
 import model.Enums.Selectable;
-import model.core.ExTag;
+import model.ExTag;
 
 public enum XmlExType implements Selectable<XmlExType>, ExTag {
 
@@ -15,6 +15,7 @@ public enum XmlExType implements Selectable<XmlExType>, ExTag {
 
     public final String given;
     public final String toCreate;
+
     public final String studFileEnding;
     public final String refFileEnding;
     public final String gramFileEnding;

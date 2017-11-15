@@ -2,8 +2,8 @@ package controllers.core
 
 import java.nio.file.{Files, Path}
 
+import controllers.Secured
 import model.core._
-import model.core.result.{CompleteResult, EvaluationResult}
 import model.core.tools.IdExToolObject
 import model.{Exercise, User}
 import play.api.db.slick.DatabaseConfigProvider
@@ -29,7 +29,7 @@ abstract class AIdExController[E <: Exercise, R <: EvaluationResult]
                 log(user, new ExerciseCompletionEvent[R](request, id, correctionResult))
                 Ok(renderCorrectionResult(user, correctionResult))
               case Failure(error)            =>
-                val content = new Html(s"<pre>${error.getMessage}:\n${error.getStackTrace.mkString("\n")}</pre>")
+                val content = new Html(s"<pre>${error.getMessage}:\n${error.getStackTrace mkString "\n"}</pre>")
                 BadRequest(views.html.main.render("Fehler", user, new Html(""), content))
             }
         })
@@ -39,7 +39,7 @@ abstract class AIdExController[E <: Exercise, R <: EvaluationResult]
   def correctLive(id: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
       solForm.bindFromRequest.fold(_ => Future(BadRequest("There has been an error!")),
-        solution => completeExById(id).map {
+        solution => completeExById(id) map {
           case None           => BadRequest("TODO!")
           case Some(exercise) =>
             correctEx(solution, exercise, user) match {
@@ -53,7 +53,7 @@ abstract class AIdExController[E <: Exercise, R <: EvaluationResult]
 
   def exercise(id: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
-      completeExById(id).map {
+      completeExById(id) map {
         case Some(exercise) =>
           log(user, ExerciseStartEvent(request, id))
           Ok(renderExercise(user, exercise))
@@ -62,7 +62,7 @@ abstract class AIdExController[E <: Exercise, R <: EvaluationResult]
   }
 
   protected def checkAndCreateSolDir(username: String, exercise: CompEx): Try[Path] =
-    Try(Files.createDirectories(toolObject.getSolDirForExercise(username, exercise.ex)))
+    Try(Files.createDirectories(toolObject getSolDirForExercise(username, exercise.ex)))
 
 
   protected def renderCorrectionResult(user: User, correctionResult: CompleteResult[R]): Html =

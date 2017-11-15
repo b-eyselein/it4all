@@ -1,4 +1,5 @@
-@import model.nary.{NAryNumber, NAryResult, NumberBase}
+@import model.nary.NaryConsts._
+@import model.nary.{NAryNumber, NumberBase}
 
 @(user: model.User, firstSummand: NAryNumber, secondSummand: NAryNumber, base: NumberBase)
 
@@ -23,14 +24,16 @@
         <div class="row">
             <div class="col-sm-6 col-sm-offset-3">
 
-                <p><em class="text-info">Bin&auml;rzahlen bitte in 8-Bit-Darstellung mit f&uuml;hrenden Nullen angeben.</em></p>
-                <p><em class="text-info">Aufgrund der üblichen Addition von rechts nach links erfolgt die Eingabe der Zahlen umgekehrt von rechts nach links!</em></p>
+                <p><em class="text-info">
+                    Bin&auml;rzahlen bitte in 8-Bit-Darstellung mit f&uuml;hrenden Nullen angeben.</em></p>
+                <p><em class="text-info">
+                    Aufgrund der üblichen Addition von rechts nach links erfolgt die Eingabe der Zahlen umgekehrt von rechts nach links!</em></p>
 
                 <form role="form" action="@controllers.exes.routes.NaryController.checkNaryAdditionSolution" method="post">
 
                     <div class="form-group">
                         <div class="input-group">
-                            <input value="@firstSummand" readonly class="form-control text-right" name="@NAryResult.SUMMAND_1">
+                            <input value="@firstSummand" readonly class="form-control text-right" name="@SUMMAND_1">
                             <span class="input-group-addon"><sub>@base.base</sub></span>
                         </div>
                     </div>
@@ -38,7 +41,7 @@
                     <div class="form-group">
                         <div class="input-group">
                             <span class="input-group-addon">+</span>
-                            <input value="@secondSummand" readonly class="form-control text-right" name="@NAryResult.SUMMAND_2">
+                            <input value="@secondSummand" readonly class="form-control text-right" name="@SUMMAND_2">
                             <span class="input-group-addon"><sub>@base.base</sub></span>
                         </div>
                     </div>
@@ -50,12 +53,12 @@
                             <input pattern="@base.htmlPattern" autocomplete="off"
                             style="direction: rtl;
                                 unicode-bidi: bidi-override;" autofocus
-                            class="form-control text-right" name="@model.core.StringConsts.FORM_VALUE" placeholder="Ihre L&ouml;sung" required>
+                            class="form-control text-right" name="@FORM_VALUE" placeholder="Ihre L&ouml;sung" required>
                             <span class="input-group-addon"><sub>@base.base</sub></span>
                         </div>
                     </div>
 
-                    <input hidden name="@NAryResult.BASE_NAME" value="@base">
+                    <input hidden name="@BASE_NAME" value="@base">
 
                     <button class="btn btn-primary btn-block">Pr&uuml;fen</button>
                 </form>

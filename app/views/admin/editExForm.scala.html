@@ -1,72 +1,72 @@
-@import model.core.StringConsts
 @import model._
+@import model.core.CoreConsts._
 
-@(user: User, toolObject: model.core.tools.ExToolObject, exerciseOpt: Option[model.core.CompleteEx[_]], renderedRest: Html)
+@(user: User, toolObject: model.core.tools.ExToolObject, exerciseOpt: Option[CompleteEx[_]], renderedRest: Html)
 
 @isCreation = @{
-  exerciseOpt.isEmpty
+    exerciseOpt.isEmpty
 }
 
 @main(s"${toolObject.toolname}: Aufgabe ${if(isCreation) "erstellen" else "bearbeiten"}", user) {
-  <div class="container">
-    <div class="page-header">
-      <h1>@if(isCreation) {Erstellen} else {Bearbeiten} einer @toolObject.toolname-Aufgabe</h1>
-    </div>
-
-    <form class="form" method="post" role="form" action="@toolObject.editExerciseRoute(exerciseOpt.get.ex)">
-
-      <fieldset>
-        <legend>Standardangaben</legend>
-
-        <div class="form-group row">
-          <div class="col-sm-6">
-            <label for="@StringConsts.ID_NAME">ID:</label>
-            <input type="number" class="form-control" name="@StringConsts.ID_NAME" id="@StringConsts.ID_NAME"
-            @exerciseOpt.map("value=\"" + _.ex.id + "\" readonly").getOrElse("") required>
-          </div>
-          <div class="col-sm-6">
-            <label for="@StringConsts.AUTHOR_NAME">Autor:</label>
-            <input class="form-control" name="@StringConsts.AUTHOR_NAME" id="@StringConsts.AUTHOR_NAME" value="@user.username"
-            title="Dieser Wert kann nicht geändert werden." readonly required>
-          </div>
+    <div class="container">
+        <div class="page-header">
+            <h1>@if(isCreation) {Erstellen} else {Bearbeiten} einer @toolObject.toolname-Aufgabe</h1>
         </div>
 
-        <div class="form-group row">
-          <div class="col-sm-6">
-            <label for="@StringConsts.TITLE_NAME">Titel:</label>
-            <input class="form-control" name="@StringConsts.TITLE_NAME" id="@StringConsts.TITLE_NAME"
-            @Html(exerciseOpt.map("value=\"" + _.ex.title + "\"").getOrElse("")) required>
-          </div>
-          <div class="col-sm-6">
-            <label for="@StringConsts.STATE_NAME">Status:</label>
-            <div >
-              <select class="form-control" name="@StringConsts.STATE_NAME" id="@StringConsts.STATE_NAME" required>
-              @for(state <- model.Enums.ExerciseState.values) {
-                <option @state.isSelected(exerciseOpt.map(_.ex.state).getOrElse(model.Enums.ExerciseState.CREATED))>@state </option>
-              }
-              </select>
+        <form class="form" method="post" role="form" action="@toolObject.editExerciseRoute(exerciseOpt.get.ex)">
+
+            <fieldset>
+                <legend>Standardangaben</legend>
+
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <label for="@ID_NAME">ID:</label>
+                        <input type="number" class="form-control" name="@ID_NAME" id="@ID_NAME"
+                        @exerciseOpt.map("value=\"" + _.ex.id + "\" readonly").getOrElse("") required>
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="@AUTHOR_NAME">Autor:</label>
+                        <input class="form-control" name="@AUTHOR_NAME" id="@AUTHOR_NAME" value="@user.username"
+                        title="Dieser Wert kann nicht geändert werden." readonly required>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <label for="@TITLE_NAME">Titel:</label>
+                        <input class="form-control" name="@TITLE_NAME" id="@TITLE_NAME"
+                        @Html(exerciseOpt.map("value=\"" + _.ex.title + "\"").getOrElse("")) required>
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="@STATE_NAME">Status:</label>
+                        <div >
+                            <select class="form-control" name="@STATE_NAME" id="@STATE_NAME" required>
+                            @for(state <- model.Enums.ExerciseState.values) {
+                                <option @state.isSelected(exerciseOpt.map(_.ex.state).getOrElse(model.Enums.ExerciseState.CREATED))>@state </option>
+                            }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="@TEXT_NAME">Text:</label>
+                    <textarea class="form-control" rows="5" name="@TEXT_NAME" id="@TEXT_NAME" required>@exerciseOpt.map(_.ex.text).getOrElse("")</textarea>
+                </div>
+
+            </fieldset>
+
+            @renderedRest
+
+            <hr>
+
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <button class="btn btn-primary btn-block">Aufgabe bearbeiten</button>
+                </div>
             </div>
-          </div>
-        </div>
+        </form>
 
-        <div class="form-group">
-          <label for="@StringConsts.TEXT_NAME">Text:</label>
-          <textarea class="form-control" rows="5" name="@StringConsts.TEXT_NAME" id="@StringConsts.TEXT_NAME" required>@exerciseOpt.map(_.ex.text).getOrElse("")</textarea>
-        </div>
-
-      </fieldset>
-
-      @renderedRest
-
-      <hr>
-
-      <div class="form-group">
-        <div class="col-sm-12">
-          <button class="btn btn-primary btn-block">Aufgabe bearbeiten</button>
-        </div>
-      </div>
-    </form>
-
-  </div>
+    </div>
 }
 

@@ -1,7 +1,7 @@
 package controllers.exes
 
 import model.Enums.ToolState
-import model.core.HasBaseValues
+import model.HasBaseValues
 import model.core.tools.IdPartExToolObject
 import play.api.mvc.Call
 
@@ -33,13 +33,11 @@ object SpreadToolObject extends IdPartExToolObject("spread", "Tabellenkalkulatio
 
   override def newExFormRoute: Call = controllers.exes.routes.SpreadController.newExerciseForm()
 
-  override def exportExesRoute: Call = controllers.exes.routes.SpreadController.exportExercises()
-
   override def importExesRoute: Call = controllers.exes.routes.SpreadController.importExercises()
 
-  //  override def jsonSchemaRoute: Call = controllers.exes.routes.SpreadController.getJSONSchemaFile()
+  override def exportExesRoute: Call = controllers.exes.routes.SpreadController.exportExercises()
 
-  //  override def uploadFileRoute: Call = controllers.exes.routes.SpreadController.uploadFile()
+  override def exportExesAsFileRoute: Call = controllers.exes.routes.SpreadController.exportExercisesAsFile()
 
   override def changeExStateRoute(exercise: HasBaseValues): Call = controllers.exes.routes.SpreadController.changeExState(exercise.id)
 

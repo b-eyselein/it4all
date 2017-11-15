@@ -1,5 +1,7 @@
 package model.nary
 
+import model.nary.NaryConsts._
+import model.nary.NumberBase._
 import play.api.data.Form
 import play.api.data.Forms._
 
@@ -28,9 +30,9 @@ case class NAryConvResult(startingValue: NAryNumber, startingBase: NumberBase, t
   extends NAryResult(new NAryNumber(startingValue.decimalValue, targetBase), learnerSol)
 
 case class TwoCompResult(targetNum: Int, learnerSol: NAryNumber, binaryAbs: String, invertedAbs: String)
-  extends NAryResult(new NAryNumber(targetNum, NumberBase.BINARY), learnerSol) {
+  extends NAryResult(new NAryNumber(targetNum, BINARY), learnerSol) {
 
-  def binaryAbsCorrect: Boolean = NAryNumber.parse(binaryAbs, NumberBase.BINARY).decimalValue == Math.abs(targetNumber.decimalValue)
+  def binaryAbsCorrect: Boolean = NAryNumber.parse(binaryAbs, BINARY).decimalValue == Math.abs(targetNumber.decimalValue)
 
   def invertedAbsCorrect: Boolean = NAryNumber.invertDigits(binaryAbs).equals(invertedAbs)
 }
@@ -41,28 +43,15 @@ object NAryResult {
 
   val zero = "0"
 
-  val VALUE_NAME  = "value"
-  val LEARNER_SOL = "learnerSolution"
-
-  val SUMMAND_1 = "summand1"
-  val SUMMAND_2 = "summand2"
-
-  val BASE_NAME = "base"
-
-  val STARTING_NB = "startingNB"
-  val TARGET_NB   = "targetNB"
-
-  val BINARY_ABS   = "binaryAbs"
-  val INVERTED_ABS = "inverted"
 
   def addResultFromFormValue(form: AdditionSolution): NAryAddResult = {
-    val base: NumberBase = NumberBase.valueOf(form.base)
+    val base: NumberBase = valueOf(form.base)
     NAryAddResult(base, NAryNumber.parse(form.sum1, base), NAryNumber.parse(form.sum2, base), NAryNumber.parse(form.solutionNary.reverse, base))
   }
 
   def convResultFromFormValue(form: ConversionSolution): NAryConvResult = {
-    val startingBase = NumberBase.valueOf(form.startingNB)
-    val targetBase = NumberBase.valueOf(form.targetNB)
+    val startingBase = valueOf(form.startingNB)
+    val targetBase = valueOf(form.targetNB)
 
     val startingValue: NAryNumber = NAryNumber.parse(form.startingValueNary, startingBase)
     val learnerSol: NAryNumber = NAryNumber.parse(form.solutionNary, targetBase)
@@ -72,7 +61,7 @@ object NAryResult {
 
   def twoCompResultFromFormValue(form: TwoCompSolution): TwoCompResult =
   // FIXME: optionals!
-    TwoCompResult(form.startingValueDec, NAryNumber.parse(form.solutionBinary, NumberBase.BINARY), form.binaryAbs.getOrElse(""), form.inverted.getOrElse(""))
+    TwoCompResult(form.startingValueDec, NAryNumber.parse(form.solutionBinary, BINARY), form.binaryAbs.getOrElse(""), form.inverted.getOrElse(""))
 
   val additionSolution = Form(mapping(
     SUMMAND_1 -> nonEmptyText,

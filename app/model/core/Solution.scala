@@ -1,10 +1,11 @@
 package model.core
 
+import model.core.CoreConsts.FORM_VALUE
 import play.api.data.Form
 import play.api.data.Forms._
 
 object Solution {
-  val stringSolForm = Form(mapping(StringConsts.FORM_VALUE -> nonEmptyText)(StringSolution.apply)(StringSolution.unapply))
+  val stringSolForm = Form(mapping(FORM_VALUE -> nonEmptyText)(StringSolution.apply)(StringSolution.unapply))
 }
 
 abstract class Solution

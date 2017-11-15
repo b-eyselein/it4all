@@ -4,7 +4,7 @@ import java.io.{FileOutputStream, IOException}
 import java.nio.file._
 
 import com.google.common.io.{Files => GFiles}
-import model.core.StringConsts._
+import model.spread.SpreadConsts._
 import model.spread.SpreadUtils._
 import org.apache.poi.ss.usermodel.CellType._
 import org.apache.poi.ss.usermodel._

@@ -1,4 +1,5 @@
-@(typ: String, result: model.core.result.CompleteResult[_], resultAsHtml: Html, user: model.User, nextUrl: play.api.mvc.Call)
+@import model.core.CompleteResult
+@(typ: String, result: CompleteResult[_], resultAsHtml: Html, user: model.User, nextUrl: play.api.mvc.Call)
 
 @main(typ, user) {
     <div class="container-fluid">

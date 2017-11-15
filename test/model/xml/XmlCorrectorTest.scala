@@ -101,7 +101,7 @@ class XmlCorrectorTest {
     //
     // assertErrorNum(out.size, 1)
     // assertError(out.head, 7, XmlErrorType.ERROR,
-    // "Attribute \"name\" is required and must be specified for element type
+    // "Attribute \"languageName\" is required and must be specified for element type
     // \"gast\".")
   }
 

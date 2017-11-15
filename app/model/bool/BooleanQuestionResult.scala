@@ -1,6 +1,7 @@
 package model.bool
 
-import model.core.result.{EvaluationResult, SuccessType}
+import model.Enums.SuccessType
+import model.core.EvaluationResult
 
 class BooleanQuestionResult(success: SuccessType, val learnerSolution: String, val question: CreationQuestion)
   extends EvaluationResult(success) {

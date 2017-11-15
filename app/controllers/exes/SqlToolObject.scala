@@ -1,13 +1,11 @@
 package controllers.exes
 
 import model.Enums.ToolState
-import model.core.HasBaseValues
+import model.HasBaseValues
 import model.core.tools.IdExToolObject
 import play.api.mvc.Call
 
 object SqlToolObject extends IdExToolObject("sql", "Sql", ToolState.LIVE, "Szenarien") {
-
-  // User
 
   override def indexCall: Call = controllers.exes.routes.SqlController.index()
 
@@ -19,7 +17,6 @@ object SqlToolObject extends IdExToolObject("sql", "Sql", ToolState.LIVE, "Szena
 
   override def correctRoute(exercise: HasBaseValues): Call = ???
 
-  // Admin
 
   override val restHeaders: List[String] = List.empty
 
@@ -29,9 +26,11 @@ object SqlToolObject extends IdExToolObject("sql", "Sql", ToolState.LIVE, "Szena
 
   override def newExFormRoute: Call = controllers.exes.routes.SqlController.newExerciseForm()
 
-  override def exportExesRoute: Call = controllers.exes.routes.SqlController.exportExercises()
-
   override def importExesRoute: Call = controllers.exes.routes.SqlController.importExercises()
+
+  override def exportExesRoute: Call = ??? // controllers.exes.routes.SqlController.exportExercises()
+
+  override def exportExesAsFileRoute: Call = controllers.exes.routes.SqlController.exportExercisesAsFile()
 
   //  override def jsonSchemaRoute: Call = controllers.exes.routes.SqlController.getJSONSchemaFile()
 

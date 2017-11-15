@@ -1,8 +1,9 @@
 package controllers.core
 
+import controllers.Secured
 import model.User
+import model.core.Repository
 import model.core.tools.RandomExToolObject
-import model.core.{Repository, Secured}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc.{AbstractController, ControllerComponents, EssentialAction}
 import play.twirl.api.Html

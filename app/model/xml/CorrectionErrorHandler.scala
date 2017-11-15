@@ -1,6 +1,7 @@
 package model.xml
 
-import model.core.result.{EvaluationResult, SuccessType}
+import model.Enums.SuccessType
+import model.core.EvaluationResult
 import org.xml.sax.{ErrorHandler, SAXParseException}
 
 import scala.collection.mutable.ListBuffer

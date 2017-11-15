@@ -1,8 +1,8 @@
 package model.sql
 
-import model.core.StringConsts
-import model.core.matching.MatchType.MatchType
-import model.core.matching.{Match, MatchType, Matcher}
+import model.Enums.MatchType
+import model.core.matching.{Match, Matcher}
+import model.sql.SqlConsts.CONDITIONS_NAME
 import net.sf.jsqlparser.expression.BinaryExpression
 import net.sf.jsqlparser.schema.Column
 
@@ -33,7 +33,7 @@ object BinaryExpressionMatcher {
 
 class BinaryExpressionMatcher(userTAliases: Map[String, String], sampleTAliases: Map[String, String])
   extends Matcher[BinaryExpression, BinaryExpressionMatch](
-    StringConsts.CONDITIONS_NAME, List(""), BinaryExpressionMatcher.compareExpressions(_, userTAliases, _, sampleTAliases),
+    CONDITIONS_NAME, List(""), BinaryExpressionMatcher.compareExpressions(_, userTAliases, _, sampleTAliases),
     BinaryExpressionMatch)
 
 case class BinaryExpressionMatch(arg1: Option[BinaryExpression], arg2: Option[BinaryExpression], s: Int)

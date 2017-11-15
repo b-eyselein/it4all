@@ -2,12 +2,13 @@ package controllers.exes
 
 import javax.inject._
 
+import controllers.Secured
 import controllers.core.AIdExController
 import controllers.exes.ProgController._
 import model.User
 import model.core._
-import model.core.result.CompleteResult
 import model.core.tools.ExerciseOptions
+import model.programming.ProgLanguage._
 import model.programming._
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.data.Form
@@ -15,13 +16,13 @@ import play.api.db.slick.DatabaseConfigProvider
 import play.api.mvc._
 import play.twirl.api.Html
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
 import scala.util.Try
 
 object ProgController {
 
-  private val EX_OPTIONS = ExerciseOptions("Programmierung", AvailableLanguages.stdLang.aceName, 15, 30, updatePrev = false)
+  private val EX_OPTIONS = ExerciseOptions("Programmierung", ProgLanguage.STANDARD_LANG.aceName, 15, 30, updatePrev = false)
 
   val STD_TEST_DATA_COUNT = 2
 
@@ -57,34 +58,44 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   override type CompEx = ProgCompleteEx
 
-  override implicit val yamlFormat: YamlFormat[ProgCompleteEx] = null
+  override implicit val yamlFormat: YamlFormat[ProgCompleteEx] = ProgExYamlProtocol.ProgExYamlFormat
 
   // db
 
   override type TQ = repo.ProgExercisesTable
 
-  override def tq = repo.progExercises
+  override def tq: repo.ExerciseTableQuery[ProgExercise, ProgCompleteEx, repo.ProgExercisesTable] = repo.progExercises
+
+
+  override def completeExes: Future[Seq[ProgCompleteEx]] = repo.progExercises.completeExes
+
+  override def completeExById(id: Int): Future[Option[ProgCompleteEx]] = repo.progExercises.completeById(id)
+
+  override def saveRead(read: Seq[ProgCompleteEx]): Future[Seq[Int]] = Future.sequence(read map (repo.progExercises.saveCompleteEx(_)))
+
+  // Helper methods, values ...
 
   val correctors = Map(
     JAVA_8 -> new JavaCorrector(),
     PYTHON_3 -> new PythonCorrector()
   )
 
+  def getDeclaration(lang: String): EssentialAction = withUser { _ =>
+    implicit request =>
+      Ok(Try(ProgLanguage.valueOf(lang)).getOrElse(ProgLanguage.STANDARD_LANG).declaration)
+  }
 
-  def getDeclaration(lang: String): EssentialAction = withUser { _ => implicit request => Ok(AvailableLanguages.byName(lang).get.declaration) }
-
-  override def correctEx(sol: StringSolution, exercise: ProgCompleteEx, user: User): Try[CompleteResult[ProgEvaluationResult]] =
-    ???
+  override def correctEx(sol: StringSolution, exercise: ProgCompleteEx, user: User): Try[CompleteResult[ProgEvaluationResult]] = ???
 
   override def renderExercise(user: User, exercise: ProgCompleteEx): Html =
     views.html.core.exercise2Rows.render(user, ProgToolObject, EX_OPTIONS,
-      exercise.ex, views.html.programming.progExRest.render(exercise.ex), AvailableLanguages.stdLang.declaration)
+      exercise.ex, views.html.programming.progExRest.render(exercise.ex), ProgLanguage.STANDARD_LANG.declaration)
 
   override def renderExesListRest: Html = Html("")
 
   // private CompleteResult[ProgEvaluationResult] correct(User user,
   // ProgExercise exercise, String learnerSolution,
-  // AvailableLanguages lang) throws CorrectionException {
+  // ProgLanguage lang) throws CorrectionException {
   // // FIXME: Time out der Ausführung
   // try {
   // Logger.debug("Solution: " + learnerSolution)
@@ -96,7 +107,7 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
   //
   // val corrector: ProgLangCorrector getCorrector(lang)
   //
-  // val solDir: Path checkAndCreateSolDir(user.name, exercise)
+  // val solDir: Path checkAndCreateSolDir(user.languageName, exercise)
   //
   // return new CompleteResult[](learnerSolution,
   // corrector.evaluate(learnerSolution, completeTestData, solDir))
@@ -110,7 +121,7 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   def testData(id: Int): EssentialAction = withUser { user =>
     implicit request =>
-      val oldTestData = Option(CommitedTestDataHelper.forUserAndExercise(user, id)).getOrElse(List.empty)
+      //      val oldTestData = Option(CommitedTestDataHelper.forUserAndExercise(user, id)).getOrElse(List.empty)
 
       //      Ok(views.html.programming.testData.render(user, finder.byId(id).get, oldTestData))
       Ok("TODO")
@@ -121,10 +132,10 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
       //      finder.byId(id) match {
       //        case None           => BadRequest("TODO!")
       //        case Some(exercise) =>
-      //          // val language: AvailableLanguages
-      //          // AvailableLanguages.valueOf(form.get(StringConsts.LANGUAGE_NAME))
+      //          // val language: ProgLanguage
+      //          // ProgLanguage.valueOf(form.get(StringConsts.LANGUAGE_NAME))
       //
-      //          val testData: List[CommitedTestData] = List.empty //extractTestData(factory.form().bindFromRequest(), user.name, exercise)
+      //          val testData: List[CommitedTestData] = List.empty //extractTestData(factory.form().bindFromRequest(), user.languageName, exercise)
       //          //          testData.foreach(_.save)
       //
       //          val validatedTestData: List[ProgEvaluationResult] = List.empty
@@ -138,11 +149,11 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
     implicit request =>
       // val exercise: ProgExercise finder.byId(id)
       // val form: DynamicForm factory.form().bindFromRequest()
-      // val language: AvailableLanguages
-      // AvailableLanguages.valueOf(form.get(StringConsts.LANGUAGE_NAME))
+      // val language: ProgLanguage
+      // ProgLanguage.valueOf(form.get(StringConsts.LANGUAGE_NAME))
 
       // val testData: List[CommitedTestData] extractTestData(form,
-      // user().name, exercise)
+      // user().languageName, exercise)
 
       val validatedTestData = List.empty
 
