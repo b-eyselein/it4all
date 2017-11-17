@@ -1,7 +1,7 @@
-package model.nary
+package model.essentials
 
-import model.nary.NaryConsts._
-import model.nary.NumberBase._
+import model.essentials.EssentialsConsts._
+import model.essentials.NumberBase._
 import play.api.data.Form
 import play.api.data.Forms._
 

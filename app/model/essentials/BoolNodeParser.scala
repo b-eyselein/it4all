@@ -1,8 +1,8 @@
-package model.bool
+package model.essentials
 
-import scala.util.parsing.combinator._
+import scala.util.parsing.combinator.JavaTokenParsers
 
-object ScalaNodeParser extends JavaTokenParsers {
+object BoolNodeParser extends JavaTokenParsers {
 
   private lazy val b_expression: Parser[ScalaNode] = b_term ~ rep("or" ~ b_term) ^^ {
     case f1 ~ fs => (f1 /: fs) ((f1, fs) => f1 or fs._2)

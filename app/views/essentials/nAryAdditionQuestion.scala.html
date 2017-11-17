@@ -1,5 +1,6 @@
-@import model.nary.NaryConsts._
-@import model.nary.{NAryNumber, NumberBase}
+@import model.essentials.EssentialsConsts._
+@import model.essentials.EssentialsConsts
+@import model.essentials.{NAryNumber, NumberBase}
 
 @(user: model.User, firstSummand: NAryNumber, secondSummand: NAryNumber, base: NumberBase)
 
@@ -29,11 +30,11 @@
                 <p><em class="text-info">
                     Aufgrund der üblichen Addition von rechts nach links erfolgt die Eingabe der Zahlen umgekehrt von rechts nach links!</em></p>
 
-                <form role="form" action="@controllers.exes.routes.EssentialsController.checkNaryAdditionSolution" method="post">
+                <form role="form" action="@controllers.exes.routes.EssentialsController.checkNaryAdditionSolution(base.name)" method="post">
 
                     <div class="form-group">
                         <div class="input-group">
-                            <input value="@firstSummand" readonly class="form-control text-right" name="@SUMMAND_1">
+                            <input value="@firstSummand" readonly class="form-control text-right" name="@EssentialsConsts.SUMMAND_1">
                             <span class="input-group-addon"><sub>@base.base</sub></span>
                         </div>
                     </div>
@@ -41,7 +42,7 @@
                     <div class="form-group">
                         <div class="input-group">
                             <span class="input-group-addon">+</span>
-                            <input value="@secondSummand" readonly class="form-control text-right" name="@SUMMAND_2">
+                            <input value="@secondSummand" readonly class="form-control text-right" name="@EssentialsConsts.SUMMAND_2">
                             <span class="input-group-addon"><sub>@base.base</sub></span>
                         </div>
                     </div>
@@ -53,7 +54,7 @@
                             <input pattern="@base.htmlPattern" autocomplete="off"
                             style="direction: rtl;
                                 unicode-bidi: bidi-override;" autofocus
-                            class="form-control text-right" name="@FORM_VALUE" placeholder="Ihre L&ouml;sung" required>
+                            class="form-control text-right" name="@EssentialsConsts.FORM_VALUE" placeholder="Ihre L&ouml;sung" required>
                             <span class="input-group-addon"><sub>@base.base</sub></span>
                         </div>
                     </div>

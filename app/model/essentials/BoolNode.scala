@@ -1,7 +1,7 @@
-package model.bool
+package model.essentials
 
 sealed abstract class ScalaNode {
-  def evaluate(assignment: Assignment): Boolean
+  def evaluate(assignment: BoolAssignment): Boolean
 
   def negate: ScalaNode
 
@@ -60,7 +60,7 @@ case class Equivalency(l: ScalaNode, r: ScalaNode) extends BinaryScalaNode("EQUI
 case class NOrScalaNode(l: ScalaNode, r: ScalaNode) extends BinaryScalaNode("NOR", l, r, (l, r) => !(l || r))
 
 case class NotScalaNode(child: ScalaNode) extends ScalaNode {
-  override def evaluate(assignment: Assignment): Boolean = !child.evaluate(assignment)
+  override def evaluate(assignment: BoolAssignment): Boolean = !child.evaluate(assignment)
 
   override def negate: ScalaNode = child
 
@@ -76,7 +76,7 @@ case class OrScalaNode(l: ScalaNode, r: ScalaNode) extends BinaryScalaNode("OR",
 
 case class Constant(value: Boolean) extends ScalaNode {
 
-  override def evaluate(assignment: Assignment): Boolean = value
+  override def evaluate(assignment: BoolAssignment): Boolean = value
 
   override def negate: ScalaNode = if (value) FALSE else TRUE
 
@@ -88,7 +88,7 @@ case class Constant(value: Boolean) extends ScalaNode {
 object TRUE extends Constant(true)
 
 case class Variable(variable: Char) extends ScalaNode with Ordered[Variable] {
-  override def evaluate(assignment: Assignment) = assignment(this)
+  override def evaluate(assignment: BoolAssignment) = assignment(this)
 
   override def negate: ScalaNode = ScalaNode.not(this)
 
@@ -104,7 +104,7 @@ case class AndScalaNode(l: ScalaNode, r: ScalaNode) extends BinaryScalaNode("AND
 case class XOrScalaNode(l: ScalaNode, r: ScalaNode) extends BinaryScalaNode("XOR", l, r, (l, r) => l ^ r)
 
 sealed abstract class BinaryScalaNode(operator: String, left: ScalaNode, right: ScalaNode, eval: (Boolean, Boolean) => Boolean) extends ScalaNode {
-  override def evaluate(assignment: Assignment) = eval.apply(left.evaluate(assignment), right.evaluate(assignment))
+  override def evaluate(assignment: BoolAssignment) = eval.apply(left.evaluate(assignment), right.evaluate(assignment))
 
   override def negate: ScalaNode = this match {
     case AndScalaNode(l, r) => l nand r

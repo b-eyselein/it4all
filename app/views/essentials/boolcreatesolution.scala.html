@@ -1,4 +1,5 @@
-@(user: model.User, result: model.bool.BooleanQuestionResult)
+@import model.essentials._
+@(user: model.User, result: BooleanQuestionResult)
 
 @scripts = {
     <!-- Tooltip script -->
@@ -22,7 +23,7 @@
                                     @for(variable <- result.question.variables) {
                                         <th class="text-center">@variable</th>
                                     }
-                                    <th class="text-center">@model.bool.BooleanQuestion.SOLUTION_VARIABLE</th>
+                                    <th class="text-center">@BooleanQuestion.SOLUTION_VARIABLE</th>
                                     <th class="text-center" id="learnerFormula">
                                         Ihre L&ouml;sung: @result.learnerSolution</th>
                                 </tr>
@@ -33,9 +34,9 @@
                                     @for(variable <- result.question.variables) {
                                         <td class="text-center">@assignment.asChar(variable)</td>
                                     }
-                                <td class="text-center">@assignment.asChar(model.bool.BooleanQuestion.SOLUTION_VARIABLE)</td>
+                                <td class="text-center">@assignment.asChar(BooleanQuestion.SOLUTION_VARIABLE)</td>
                                 <td class="text-center @assignment.getColor">
-                                    <span class="text-@assignment.getColor">@assignment.asChar(model.bool.BooleanQuestion.LEARNER_VARIABLE)</span>
+                                    <span class="text-@assignment.getColor">@assignment.asChar(BooleanQuestion.LEARNER_VARIABLE)</span>
                                 </td>
                                 }
                             </tbody>
@@ -48,19 +49,19 @@
                     <div class="row">
                         <div class="col-sm-3">Kanonische disjunktive Normalform:</div>
                         <div class="col-sm-9">
-                            <code>@model.bool.Assignment.getDisjunktiveNormalForm(result.question.solutions)</code>
+                            <code>@BoolAssignment.getDisjunktiveNormalForm(result.question.solutions)</code>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-3">Kanonische konjunktive Normalform:</div>
                         <div class="col-sm-9">
-                            <code>@model.bool.Assignment.getKonjunktiveNormalForm(result.question.solutions)</code>
+                            <code>@BoolAssignment.getKonjunktiveNormalForm(result.question.solutions)</code>
                         </div>
                     </div>
                 </section>
 
                 <hr>
-                <a href="@controllers.exes.routes.BoolController.newBoolCreationQuestion" class="btn btn-primary btn-block">
+                <a href="@controllers.exes.routes.EssentialsController.newBoolCreationQuestion" class="btn btn-primary btn-block">
                     N&auml;chste Aufgabe</a>
             </div>
         </div>

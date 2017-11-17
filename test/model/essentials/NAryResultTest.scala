@@ -1,10 +1,10 @@
-package model.nary
+package model.essentials
 
 import model.core.StringConsts._
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.assertThat
 import org.junit.Test
-import model.nary.NumberBase._
+import model.essentials.NumberBase._
 import org.mockito.Mockito.{mock, when}
 import play.data.DynamicForm
 

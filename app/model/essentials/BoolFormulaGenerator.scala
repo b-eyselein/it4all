@@ -1,6 +1,6 @@
-package model.bool
+package model.essentials
 
-import model.bool.ScalaNode._
+import model.essentials.ScalaNode.toVariable
 
 import scala.util.Random
 

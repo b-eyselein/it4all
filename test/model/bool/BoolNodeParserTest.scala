@@ -1,15 +1,16 @@
 package model.bool
 
+import model.essentials._
 import org.junit.Test
 import org.scalatest.Assertions._
 
-class ScalaNodeParserTest {
+class BoolNodeParserTest {
 
   val (a, b, c): (ScalaNode, ScalaNode, ScalaNode) = (Variable('a'), Variable('b'), Variable('c'))
 
   def testParse(expected: ScalaNode, representations: String*) {
     for (toParse <- representations) {
-      ScalaNodeParser.parse(toParse) match {
+      BoolNodeParser.parse(toParse) match {
         case Some(parsed) => assert(parsed == expected, s"""expected that parsing "$toParse" is equal to $expected""")
         case None         => fail(s"""expected that parsing of "$toParse" succeeds!""")
       }

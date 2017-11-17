@@ -1,4 +1,4 @@
-@(user: model.User, result: model.nary.NAryAddResult)
+@(user: model.User, result: model.essentials.NAryAddResult, baseStr: String)
 
 @title = @{
     "Addition"
@@ -42,7 +42,7 @@
                     </div>
                 </div>
 
-                <a href="@controllers.exes.routes.EssentialsController.newNaryAdditionQuestion" id="theLink"
+                <a href="@controllers.exes.routes.EssentialsController.newNaryAdditionQuestion(baseStr)" id="theLink"
                 class="btn btn-primary btn-block">N&auml;chste Aufgabe</a>
 
             </div>

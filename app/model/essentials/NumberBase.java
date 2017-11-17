@@ -1,4 +1,4 @@
-package model.nary;
+package model.essentials;
 
 import model.Enums.Selectable;
 import play.twirl.api.Html;

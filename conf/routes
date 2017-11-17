@@ -16,17 +16,25 @@ GET           /admin                                    controllers.AdminControl
 GET           /users                                    controllers.AdminController.users
 PUT           /users/changeRole/:user                   controllers.AdminController.changeRole(user: String)
 
-# Tools
+# Essentials - Nary, Boolean, Ebnf?
 GET           /essentials                               controllers.exes.EssentialsController.index
 
-GET           /essentials/naryConv                      controllers.exes.EssentialsController.newNaryConversionQuestion(fromBase: String, toBase: String)
-POST          /essentials/naryConv                      controllers.exes.EssentialsController.checkNaryConversionSolution
+GET           /essentials/nary/conv                     controllers.exes.EssentialsController.newNaryConversionQuestion(fromBase: String, toBase: String)
+POST          /essentials/nary/conv                     controllers.exes.EssentialsController.checkNaryConversionSolution(fromBase: String, toBase: String)
 
-GET           /essentials/naryAdd                       controllers.exes.EssentialsController.newNaryAdditionQuestion
-POST          /essentials/naryAdd                       controllers.exes.EssentialsController.checkNaryAdditionSolution
+GET           /essentials/nary/add                      controllers.exes.EssentialsController.newNaryAdditionQuestion(base: String)
+POST          /essentials/nary/add                      controllers.exes.EssentialsController.checkNaryAdditionSolution(base: String)
 
-GET           /essentials/naryTwocomp/:verb             controllers.exes.EssentialsController.newNaryTwoComplementQuestion(verb: Boolean)
-POST          /essentials/naryTwocomp/:verb             controllers.exes.EssentialsController.checkNaryTwoComplementSolution(verb: Boolean)
+GET           /essentials/nary/twocomp/:verb            controllers.exes.EssentialsController.newNaryTwoComplementQuestion(verb: Boolean)
+POST          /essentials/nary/twocomp/:verb            controllers.exes.EssentialsController.checkNaryTwoComplementSolution(verb: Boolean)
+
+GET           /essentials/bool/fillout                  controllers.exes.EssentialsController.newBoolFilloutQuestion
+POST          /essentials/bool/fillout                  controllers.exes.EssentialsController.checkBoolFilloutSolution
+
+GET           /essentials/bool/creation                 controllers.exes.EssentialsController.newBoolCreationQuestion
+PUT           /essentials/bool/creation                 controllers.exes.EssentialsController.checkBoolCreationSolutionLive
+POST          /essentials/bool/creation                 controllers.exes.EssentialsController.checkBoolCreationSolution
+# Essentials - End
 
 # Mindmap - Anfang
 GET           /mindmap/admin                            controllers.exes.MindmapController.adminIndex
@@ -359,18 +367,6 @@ GET           /sql/:id                                  controllers.exes.SqlCont
 PUT           /sql/:id                                  controllers.exes.SqlController.correctLive(id: Int)
 POST          /sql/:id                                  controllers.exes.SqlController.correct(id: Int)
 # Sql - Ende
-
-# Bool - Anfang
-GET           /bool/                                    controllers.exes.BoolController.index
-
-GET           /bool/fillout                             controllers.exes.BoolController.newBoolFilloutQuestion
-PUT           /bool/fillout                             controllers.exes.BoolController.checkBoolFilloutSolution
-POST          /bool/fillout                             controllers.exes.BoolController.checkBoolFilloutSolution
-
-GET           /bool/creation                            controllers.exes.BoolController.newBoolCreationQuestion
-PUT           /bool/creation                            controllers.exes.BoolController.checkBoolCreationSolutionLive
-POST          /bool/creation                            controllers.exes.BoolController.checkBoolCreationSolution
-# Bool - Ende
 
 # Courses
 GET           /courses/new                              controllers.CourseAdminController.newCourseForm

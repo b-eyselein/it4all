@@ -1,7 +1,7 @@
-package model.nary
+package model.essentials
 
 import com.google.common.base.{Splitter, Strings}
-import model.nary.NumberBase._
+import model.essentials.NumberBase._
 
 case class NAryNumber(decimalValue: Int = 0, base: NumberBase) {
 

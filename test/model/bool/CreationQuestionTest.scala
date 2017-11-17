@@ -1,5 +1,6 @@
 package model.bool
 
+import model.essentials.{BoolAssignment, CreationQuestion, ScalaNode, Variable}
 import org.junit.Test
 
 class CreationQuestionTest {
@@ -11,7 +12,7 @@ class CreationQuestionTest {
   val awaitedDNF: ScalaNode = (-a and b and -c) or (-a and b and c) or (a and -b and c) or (a and b and c)
   val awaitedKNF: ScalaNode = (a or b or c) and (a or b or -c) and (-a or b or c) and (-a or -b or c)
 
-  val assignments: List[Assignment] = List(
+  val assignments: List[BoolAssignment] = List(
     Assignment(a -> 0, b -> 0, c -> 0, z -> 0),
     Assignment(a -> 0, b -> 0, c -> 1, z -> 0),
 
@@ -29,7 +30,7 @@ class CreationQuestionTest {
 
     val question = new CreationQuestion(List(a, b, c), assignments)
 
-    val dnf = Assignment.getDisjunktiveNormalForm(question.solutions)
+    val dnf = BoolAssignment.getDisjunktiveNormalForm(question.solutions)
     assert(dnf == awaitedDNF, s"Expected that DNF\n\tgenerated = $dnf\nequals\n\tawaited = $awaitedDNF")
 
   }
@@ -38,7 +39,7 @@ class CreationQuestionTest {
   def testKnf() {
     val question = new CreationQuestion(List(a, b, c), assignments)
 
-    val knf = Assignment.getKonjunktiveNormalForm(question.solutions)
+    val knf = BoolAssignment.getKonjunktiveNormalForm(question.solutions)
     assert(knf == awaitedKNF, s"Expected that KNF\n\tgenerated = $knf\nequals\n\tawaited = $awaitedKNF")
   }
 

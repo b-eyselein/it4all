@@ -1,4 +1,6 @@
-@(user: model.User, question: model.bool.CreationQuestion)
+@import model.essentials.BooleanQuestion
+@import model.essentials.CreationQuestion
+@(user: model.User, question: CreationQuestion)
 
 @scripts = {
     <script type="text/javascript" src="@controllers.routes.Assets.versioned("javascripts/bool.js")"></script>
@@ -8,12 +10,12 @@
                     alert("Geben Sie bitte eine Formel ein!");
                     return;
                 }
-                testTheSolution("@controllers.exes.routes.BoolController.checkBoolCreationSolution()");
+                testTheSolution("@controllers.exes.routes.EssentialsController.checkBoolCreationSolution()");
             }
     </script>
 }
 
-@main("Formel erstellen", user) {
+@main("Formel erstellen", user, scripts) {
     <div class="container">
         <div class="panel panel-default">
             <div class="panel-heading">Erstellen Sie die Formel zu folgender Wahrheitstafel:</div>
@@ -26,7 +28,7 @@
                                     @for(variable <- question.variables) {
                                         <th class="text-center">@variable</th>
                                     }
-                                    <th class="text-center">@model.bool.BooleanQuestion.SOLUTION_VARIABLE</th>
+                                    <th class="text-center">@BooleanQuestion.SOLUTION_VARIABLE</th>
                                     <th class="text-center" id="learnerFormula">Ihre L&ouml;sung</th>
                                 </tr>
                             </thead>
@@ -36,7 +38,7 @@
                                     @for(variable <- question.variables) {
                                         <td class="text-center">@assignment.asChar(variable)</td>
                                     }
-                                <td class="text-center">@assignment.asChar(model.bool.BooleanQuestion.SOLUTION_VARIABLE)</td>
+                                <td class="text-center">@assignment.asChar(model.essentials.BooleanQuestion.SOLUTION_VARIABLE)</td>
                                 <td class="text-center" id="@assignment.toString()">--</td>
                                 }
                             </tbody>
@@ -44,9 +46,9 @@
                     </div>
                 </div>
 
-                <form class="form-horizontal" action="@controllers.exes.routes.BoolController.checkBoolCreationSolution()" method="post">
+                <form class="form-horizontal" action="@controllers.exes.routes.EssentialsController.checkBoolCreationSolution()" method="post">
                     <div class="form-group">
-                        <label class="control-label col-xs-1" for="learnerSolution">@model.bool.BooleanQuestion.SOLUTION_VARIABLE
+                        <label class="control-label col-xs-1" for="learnerSolution">@model.essentials.BooleanQuestion.SOLUTION_VARIABLE
                             = </label>
                         <div class="col-xs-11">
                             <input class="form-control" name="learnerSolution" id="learnerSolution" placeholder="Ihre L&ouml;sung"
@@ -62,7 +64,7 @@
                             <button type="submit" class="btn btn-primary btn-block">zeige Musterl&ouml;sung</button>
                         </div>
                         <div class="col-sm-4">
-                            <a href="@controllers.exes.routes.BoolController.newBoolCreationQuestion()"
+                            <a href="@controllers.exes.routes.EssentialsController.newBoolCreationQuestion()"
                             class="btn btn-primary btn-block">N&auml;chste Aufgabe</a>
                         </div>
                     </div>
@@ -79,7 +81,7 @@
             </div>
         </div>
 
-        @views.html.bool.createInfo.render()
+        @views.html.essentials.boolCreateInfo.render()
 
     </div>
 }

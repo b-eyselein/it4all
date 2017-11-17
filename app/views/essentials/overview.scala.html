@@ -1,64 +1,86 @@
 @(user: model.User)
 
-@scripts = {
-    <script>
-            $(document).ready(function () {
-                $('#convButton').click(function () {
-                    // FIXME: route!
-                    window.location = "/essentials/naryConv?fromBase=" + $('#convFromBase').val() + "&toBase=" + $('#convToBase').val();
-                })
-            })
-    </script>
-}
+    @scripts = {
+        <script>
+                $(document).ready(function () {
+                    $('#convButton').click(function () {
+                        // FIXME: route!
+                        window.location = "/essentials/naryConv?fromBase=" + $('#convFromBase').val() + "&toBase=" + $('#convToBase').val();
+                    });
 
-@main("Zahlensysteme", user, scripts) {
-    <div class="container">
-        <div class="page-header">
-            <h1>Zahlensysteme</h1>
-        </div>
+                    $('#addButton').click(function () {
+                        window.location = "/essentials/naryAdd?base=" + $('#addBase').val();
+                    })
+                });
+        </script>
+    }
 
-
-        <h2>Umwandlung zwischen Systemen</h2>
-        <div class="row">
-            <div class="col-md-5">
-                <select class="form-control" id="convFromBase">
-                    <option value="RANDOM">Zuf&auml;llig</option>
-                    @for(base <- model.nary.NumberBase.values) {
-                        <option value="@base.name">@base.systemName</option>
-                    }
-                </select>
+    @main("Zahlensysteme", user, scripts) {
+        <div class="container">
+            <div class="page-header">
+                <h1>Allgemeiner Teil</h1>
             </div>
-            <div class="col-md-5">
-                <select class="form-control" id="convToBase">
-                    <option value="RANDOM">Zuf&auml;llig</option>
-                    @for(base <- model.nary.NumberBase.values) {
-                        <option value="@base.name">@base.systemName</option>
-                    }
-                </select>
+
+            <h2>Zahlensysteme</h2>
+
+                <!-- Conversion -->
+            <div class="form-group">
+                <div class="input-group">
+                    <span class="input-group-addon">Umwandlung von</span>
+                    <select title="Startsystem Umwandlung" class="form-control" id="convFromBase">
+                        <option value="RANDOM">Zuf&auml;lligem System</option>
+                        @for(base <- model.essentials.NumberBase.values) {
+                            <option value="@base.name">@base.systemName</option>
+                        }
+                    </select>
+                    <span class="input-group-addon">nach</span>
+                    <select title="Zielsystem Umwandlung" class="form-control" id="convToBase">
+                        <option value="RANDOM">Zuf&auml;lligem System</option>
+                        @for(base <- model.essentials.NumberBase.values) {
+                            <option value="@base.name">@base.systemName</option>
+                        }
+                    </select>
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-chevron-right"></span></span>
+                    <button class="form-control btn-primary" id="convButton">Go! </button>
+                </div>
             </div>
-            <div class="col-md-2">
-                <button class="btn btn-default btn-block" id="convButton">Go!</button>
+
+                <!-- Addition -->
+            <div class="form-group">
+                <div class="input-group">
+                    <span class="input-group-addon">Addition in</span>
+                    <select title="System Addition" class="form-control" id="addBase">
+                        <option value="RANDOM">Zuf&auml;lligem System</option>
+                        @for(base <- model.essentials.NumberBase.values) {
+                            <option value="@base.name">@base.systemName</option>
+                        }
+                    </select>
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-chevron-right"></span></span>
+                    <button class="form-control btn-primary" id="addButton">Go! </button>
+                </div>
             </div>
+
+                <!-- Zweierkomplement -->
+            <div class="btn-group btn-group-justified">
+                <a class="btn btn-default" href="@controllers.exes.routes.EssentialsController.newNaryTwoComplementQuestion(true)">
+                    Zweierkomplement ausf&uuml;hrlich</a>
+                <a class="btn btn-default" href="@controllers.exes.routes.EssentialsController.newNaryTwoComplementQuestion(false)">
+                    Zweierkomplement kurz</a>
+            </div>
+
+            <hr>
+
+
+            <h2>Boolesche Algebra</h2>
+            <p>
+                <a type="button" class="btn btn-default btn-block"
+                href="@controllers.exes.routes.EssentialsController.newBoolFilloutQuestion">
+                    Wahrheitstabellen ausf&uuml;llen </a>
+            </p>
+            <p>
+                <a type="button" class="btn btn-default btn-block"
+                href="@controllers.exes.routes.EssentialsController.newBoolCreationQuestion">
+                    Formel erstellen </a>            </p>
+
         </div>
-
-        <hr>
-
-        <a type="button" class="btn btn-default btn-block" href="@controllers.exes.routes.EssentialsController.newNaryConversionQuestion("RANDOM", "RANDOM")">
-            Umwandeln zwischen verschiedenen Zahlensystemen</a>
-
-            &nbsp;
-
-        <div class="btn-group btn-group-justified">
-            <a class="btn btn-default" href="@controllers.exes.routes.EssentialsController.newNaryTwoComplementQuestion(true)">
-                Zweierkomplement ausf&uuml;hrlich</a>
-            <a class="btn btn-default" href="@controllers.exes.routes.EssentialsController.newNaryTwoComplementQuestion(false)">
-                Zweierkomplement kurz</a>
-        </div>
-
-            &nbsp;
-
-        <a type="button" class="btn btn-default btn-block" href="@controllers.exes.routes.EssentialsController.newNaryAdditionQuestion">
-            Addition in anderen Zahlensystemen</a>
-
-    </div>
-}
+    }

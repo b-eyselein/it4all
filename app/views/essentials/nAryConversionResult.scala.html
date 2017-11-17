@@ -1,4 +1,4 @@
-@(user: model.User, result: model.nary.NAryConvResult)
+@(user: model.User, result: model.essentials.NAryConvResult, fromBase: String, toBase: String)
 
 @title = @{
     "Zahlenumwandlung"
@@ -34,7 +34,7 @@
                     </div>
                 </div>
 
-                <a href="@controllers.exes.routes.EssentialsController.newNaryConversionQuestion("TODO", "TODO")" id="theLink"
+                <a href="@controllers.exes.routes.EssentialsController.newNaryConversionQuestion(fromBase, toBase)" id="theLink"
                 class="btn btn-primary btn-block">N&auml;chste Aufgabe</a>
 
             </div>

@@ -1,6 +1,7 @@
 package model.bool
 
 import model.bool.NodeSpec._
+import model.essentials._
 import org.scalatest._
 
 object NodeSpec {
@@ -16,10 +17,10 @@ class NodeSpec(protected val nodeUnderTest: ScalaNode) extends FlatSpec {
   val (a, b, c): (Variable, Variable, Variable) = ('a', 'b', 'c')
 
   val (ff, ft, tf, tt) = (
-                           Assignment(a -> false, b -> false),
-                           Assignment(a -> false, b -> true),
-                           Assignment(a -> true, b -> false),
-                           Assignment(a -> true, b -> true))
+                           BoolAssignment(a -> false, b -> false),
+                           BoolAssignment(a -> false, b -> true),
+                           BoolAssignment(a -> true, b -> false),
+                           BoolAssignment(a -> true, b -> true))
 
   def testEvaluate(expected: Array[Boolean]) {
     assert(nodeUnderTest.evaluate(ff) == expected(0))
@@ -37,7 +38,7 @@ class NodeSpec(protected val nodeUnderTest: ScalaNode) extends FlatSpec {
     assert(nodeUnderTest.getAsString(true) == expectedTrue)
   }
 
-  def evaluate(nodeUnderTest: ScalaNode, assignment: Assignment, expected: Boolean): Assertion = assert(nodeUnderTest.evaluate(assignment) == expected)
+  def evaluate(nodeUnderTest: ScalaNode, assignment: BoolAssignment, expected: Boolean): Assertion = assert(nodeUnderTest.evaluate(assignment) == expected)
 
 }
 

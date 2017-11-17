@@ -1,6 +1,6 @@
-package model.bool
+package model.essentials
 
-import model.bool.ScalaNode._
+import model.essentials.ScalaNode._
 
 import scala.util.Random
 
@@ -19,13 +19,13 @@ object BooleanQuestion {
   val RANDOM = new Random
 }
 
-case class CreationQuestion(vars: List[Variable], solutions: List[Assignment]) extends BooleanQuestion(vars)
+case class CreationQuestion(vars: List[Variable], solutions: List[BoolAssignment]) extends BooleanQuestion(vars)
 
 object CreationQuestion {
   def generateNew: CreationQuestion = {
     val variables = ('a' to 'z').take(BooleanQuestion.randomBetweenInclBounds(2, 3)).map(toVariable).toList
 
-    val assignments: List[Assignment] = Assignment
+    val assignments: List[BoolAssignment] = BoolAssignment
       .generateAllAssignments(variables)
       .map(as => as + (BooleanQuestion.SOLUTION_VARIABLE -> BooleanQuestion.RANDOM.nextBoolean))
 
@@ -33,7 +33,7 @@ object CreationQuestion {
   }
 }
 
-case class FilloutQuestion(formula: ScalaNode, assignments: List[Assignment]) extends BooleanQuestion(formula.usedVariables.toList) {
+case class FilloutQuestion(formula: ScalaNode, assignments: List[BoolAssignment]) extends BooleanQuestion(formula.usedVariables.toList) {
   def getFormulaAsHtml: String = {
     var formulaAsHtml = formulaAsString
     for ((key, value) <- FilloutQuestion.HTML_REPLACERS) formulaAsHtml = formulaAsHtml.replaceAll(key, value)
@@ -60,6 +60,6 @@ object FilloutQuestion {
 
   def generateNew: FilloutQuestion = {
     val formula = BoolFormulaGenerator.generateRandom
-    new FilloutQuestion(formula, Assignment.generateAllAssignments(formula.usedVariables.toList))
+    new FilloutQuestion(formula, BoolAssignment.generateAllAssignments(formula.usedVariables.toList))
   }
 }
