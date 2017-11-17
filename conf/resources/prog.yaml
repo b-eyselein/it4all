@@ -3,7 +3,7 @@ id: 1
 title: Summen
 author: bje40dc
 text: >
-  Implementieren Sie folgende Funktion <code>sum(a b)</code>, die zwei Zahlen entegennimmt und deren
+  Implementieren Sie folgende Funktion <code>sum(a, b)</code>, die zwei Zahlen entegennimmt und deren
   Summe zurückgibt.
 status: CREATED
 functionName: sum
@@ -52,7 +52,7 @@ id: 2
 title: Konkatenation von Strings
 author: bje40dc
 text: >
-  Implementieren Sie die folgende Funktion <code>concat(str1 str2 str3)</code> die drei beliebige Strings
+  Implementieren Sie die folgende Funktion <code>concat(str1, str2, str3)</code> die drei beliebige Strings
   entgegennimmt und die Konkatenation der Strings zurückgibt.
 status: CREATED
 functionName: concat
@@ -72,7 +72,7 @@ sampleTestData:
   - id: 2
     input: Welt
   - id: 3
-    input: !
+    input: '!'
   output: Hallo Welt!
 
 - id: 2
@@ -89,7 +89,7 @@ id: 3
 title: Größter gemeinsamer Teiler
 author: bje40dc
 text: >
-  Implementieren Sie die folgende Funktion <code>ggt(a b)</code> die den größten gemeinsamen Teiler
+  Implementieren Sie die folgende Funktion <code>ggt(a, b)</code> die den größten gemeinsamen Teiler
   zweier Zahlen berechnet!
 status: CREATED
 functionName: ggt

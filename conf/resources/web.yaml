@@ -124,10 +124,10 @@ htmlTasks:
   textContent: Ford Mustang
 - id: 2
   text: >
-    Erstellen Sie den Link auf der Seite, der auf Wikipedia verweist. Geben Sie als Ziel die URL 'https://de.wikipedia.org/wiki/Ford_Mustang' an.
+    "Erstellen Sie den Link auf der Seite, der auf Wikipedia verweist. Geben Sie als Ziel die URL 'https://de.wikipedia.org/wiki/Ford_Mustang' an."
   xpathQuery: /html/body//a
   attributes:
-  - {key: href, value: https://de.wikipedia.org/wiki/Ford_Mustang}
+  - {key: href, value: 'https://de.wikipedia.org/wiki/Ford_Mustang'}
 - id: 3
   text: >
     Erstellen Sie im Link das Bild des Ford Mustang. Geben Sie als Quelle des Bildes die URL 
@@ -136,7 +136,7 @@ htmlTasks:
      Geben Sie dem Bild die Klasse 'img-rounded'.
   xpathQuery: /html/body//a//img
   attributes:
-  - {key: src, value: https://upload.wikimedia.org/wikipedia/commons/2/2d/1964_12_Ford_Mustang.jpg}
+  - {key: src, value: 'https://upload.wikimedia.org/wikipedia/commons/2/2d/1964_12_Ford_Mustang.jpg'}
   - {key: alt, value: Ford Mustang}
   - {key: width, value: '250'}
   - {key: height, value: '188'}
@@ -221,7 +221,7 @@ htmlTasks:
   xpathQuery: /html/body//audio/source
   attributes:
   - {key: type, value: audio/ogg}
-  - {key: src, value: https://upload.wikimedia.org/wikipedia/commons/c/cb/National_anthem_of_Germany_-_U.S._Army_1st_Armored_Division_Band.ogg}
+  - {key: src, value: 'https://upload.wikimedia.org/wikipedia/commons/c/cb/National_anthem_of_Germany_-_U.S._Army_1st_Armored_Division_Band.ogg'}
 ---
 id: 6
 title: Klickzähler

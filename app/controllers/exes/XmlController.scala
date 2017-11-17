@@ -59,6 +59,15 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   override def saveRead(read: Seq[XmlExercise]): Future[Seq[Int]] = Future.sequence(read.map(completeEx =>
     db.run(repo.xmlExercises insertOrUpdate completeEx.ex)))
 
+  // Other routes
+
+  def playground: EssentialAction = withUser { user => implicit request => Ok(views.html.xml.xmlPlayground.render(user)) }
+
+  def playgroundCorrection = Action { implicit request =>
+    val sol = request.body.asFormUrlEncoded.get(FORM_VALUE).mkString("\n")
+    Ok(renderResult(new CompleteResult("", XmlCorrector.correct(sol, "", XmlExType.XML_DTD))))
+  }
+
   // Views
 
   override def renderEditRest(exercise: Option[XmlExercise]): Html = views.html.xml.editXmlExRest(exercise)
@@ -80,6 +89,11 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   override def renderExercise(user: User, exercise: XmlExercise): Html = views.html.core.exercise2Rows.render(
     user, XmlToolObject, EX_OPTIONS, exercise.ex, renderExRest(exercise.ex), readDefOrOldSolution(user.username, exercise.ex))
+
+  def renderExRest(exercise: XmlExercise) = new Html(
+    s"""<section id="refFileSection">
+       |  <pre>${HtmlFormat.escape(exercise.refFileContent)}</pre>
+       |</section>""".stripMargin)
 
   // Correction
 
@@ -103,29 +117,16 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
     })
   }
 
-  // Other routes
-
-  def playground: EssentialAction = withUser { user => implicit request => Ok(views.html.xml.xmlPlayground.render(user)) }
-
-  def playgroundCorrection = Action { implicit request =>
-    val sol = request.body.asFormUrlEncoded.get(FORM_VALUE).mkString("\n")
-    Ok(renderResult(new CompleteResult("", XmlCorrector.correct(sol, "", XmlExType.XML_DTD))))
-  }
-
   // Own functions
 
-  def renderExRest(exercise: XmlExercise) = new Html(
-    s"""<section id="refFileSection">
-       |  <pre>${HtmlFormat.escape(exercise.refFileContent)}</pre>
-       |</section>""".stripMargin)
-
-
+  // FIXME: read old xml solution from db!
   private def readDefOrOldSolution(username: String, exercise: XmlExercise): String = Try(
     Files.readAllLines(toolObject.getSolFileForExercise(username, exercise, exercise.rootNode, exercise.exerciseType.studFileEnding)
     ).asScala.mkString("\n")
   ).getOrElse(exercise.fixedStart)
 
-  private def save(dir: Path, filename: String, learnerSolution: String) = Try(
+  // FIXME: write in other way?
+  private def save(dir: Path, filename: String, learnerSolution: String): Try[Path] = Try(
     Files.write(Paths.get(dir.toString, filename), learnerSolution.split(NEWLINE).toList.asJava,
       StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
   )

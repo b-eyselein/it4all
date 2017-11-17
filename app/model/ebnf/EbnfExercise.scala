@@ -2,11 +2,10 @@ package model.ebnf
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import model.Enums.ExerciseState
+import model._
 import model.ebnf.EbnfConsts._
 import model.ebnf.EbnfExerciseHelper._
-import model.{CompleteEx, Exercise, HasBaseValues, TableDefs}
 import play.api.db.slick.HasDatabaseConfigProvider
-import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
 object EbnfExerciseHelper {
@@ -17,8 +16,7 @@ object EbnfExerciseHelper {
 
 }
 
-
-case class EbnfExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState, terminals: String) extends Exercise(i, ti, a, te, s) with CompleteEx[EbnfExercise] {
+case class EbnfExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState, terminals: String) extends Exercise(BaseValues(i, ti, a, te, s)) with CompleteEx[EbnfExercise] {
 
   override val ex: HasBaseValues = this
 
@@ -27,7 +25,7 @@ case class EbnfExercise(i: Int, ti: String, a: String, te: String, s: ExerciseSt
   @JsonIgnore
   def getTerminalsForForm: String = getTerminals.map(t => s"'$t'").mkString(" ")
 
-  override def renderRest: Html = new Html(s"<td>$terminals</td>")
+//  override def preview: Html = new Html(s"<td>$terminals</td>")
 
 }
 

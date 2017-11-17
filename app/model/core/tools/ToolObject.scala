@@ -44,7 +44,7 @@ abstract class ExToolObject(e: String, t: String, s: ToolState, val pluralName: 
     Paths.get(sampleDir.toString, String.valueOf(exercise.id))
 
   def getSolDirForExercise(username: String, exercise: HasBaseValues): Path =
-    Paths.get(solDirForUser(username).toString, exType, String.valueOf(exercise.id))
+    Paths.get(solDirForUser(username).toString, String.valueOf(exercise.id))
 
   def getSolFileForExercise(username: String, ex: HasBaseValues, fileName: String, fileExt: String): Path =
     Paths.get(getSolDirForExercise(username, ex).toString, s"$fileName.$fileExt")

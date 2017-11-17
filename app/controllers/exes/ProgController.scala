@@ -10,13 +10,12 @@ import model.User
 import model.core._
 import model.core.tools.ExerciseOptions
 import model.programming.ProgConsts._
-import model.programming.ProgLanguage._
 import model.programming._
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.data.Form
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.json._
-import play.api.mvc._
+import play.api.mvc.{ControllerComponents, _}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -29,24 +28,7 @@ object ProgController {
 
   val STD_TEST_DATA_COUNT = 2
 
-  //  private def extractTestData(form: DynamicForm, username: String, exercise: ProgExercise): List[CommitedTestData] =
-  //    (0 until Integer.parseInt(form.get(TEST_COUNT_NAME))).map(testCounter => readTestDataFromForm(form, username, testCounter, exercise)).toList
-
-  //  private def readTestDataFromForm(form: DynamicForm, username: String, testId: Int, exercise: ProgExercise): CommitedTestData = {
-  //    val key: CommitedTestDataKey = new CommitedTestDataKey(username, exercise.id, testId)
-  //    val testdata: CommitedTestData = Option(CommitedTestData.finder.byId(key)).getOrElse(new CommitedTestData(key))
-  //
-  //    testdata.exercise = exercise
-  //    testdata.inputs = (0 until exercise.getInputCount).map(inputCounter => form.get(s"inp_${inputCounter}_$testId")).mkString(ITestData.VALUES_SPLIT_CHAR)
-  //
-  //    testdata.output = form.get(s"outp_$testId")
-  //    testdata.approvalState = ApprovalState.CREATED
-  //
-  //    testdata
-  //  }
-
 }
-
 
 @Singleton
 class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)
@@ -69,7 +51,6 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   override def tq: repo.ExerciseTableQuery[ProgExercise, ProgCompleteEx, repo.ProgExercisesTable] = repo.progExercises
 
-
   override def completeExes: Future[Seq[ProgCompleteEx]] = repo.progExercises.completeExes
 
   override def completeExById(id: Int): Future[Option[ProgCompleteEx]] = repo.progExercises.completeById(id)
@@ -78,49 +59,12 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   // Helper methods, values ...
 
-  val correctors = Map(
+  val correctors: Map[ProgLanguage, ProgLangCorrector] = Map(
     JAVA_8 -> JavaCorrector,
     PYTHON_3 -> PythonCorrector
   )
 
-  def getDeclaration(lang: String): EssentialAction = withUser { _ =>
-    implicit request =>
-      Ok(Try(ProgLanguage.valueOf(lang)).getOrElse(ProgLanguage.STANDARD_LANG).declaration)
-  }
-
-  override def correctEx(sol: StringSolution, exercise: ProgCompleteEx, user: User): Try[CompleteResult[ProgEvaluationResult]] = ???
-
-  override def renderExercise(user: User, exercise: ProgCompleteEx): Html =
-    views.html.core.exercise2Rows.render(user, ProgToolObject, EX_OPTIONS,
-      exercise.ex, views.html.programming.progExRest.render(exercise.ex), ProgLanguage.STANDARD_LANG.declaration)
-
-  override def renderExesListRest: Html = Html("")
-
-  // private CompleteResult[ProgEvaluationResult] correct(User user,
-  // ProgExercise exercise, String learnerSolution,
-  // ProgLanguage lang) throws CorrectionException {
-  // // FIXME: Time out der Ausführung
-  // try {
-  // Logger.debug("Solution: " + learnerSolution)
-  //
-  // val completeTestData: List[ITestData]
-  // Stream.concat(exercise.sampleTestData.stream(),
-  // CommitedTestData.forUserAndExercise(user,
-  // exercise.getId()).stream()).collect(Collectors.toList())
-  //
-  // val corrector: ProgLangCorrector getCorrector(lang)
-  //
-  // val solDir: Path checkAndCreateSolDir(user.name, exercise)
-  //
-  // return new CompleteResult[](learnerSolution,
-  // corrector.evaluate(learnerSolution, completeTestData, solDir))
-  // } catch (final Exception e) {
-  // throw new CorrectionException(learnerSolution, "Error while correcting
-  // files", e)
-  // }
-  // }
-
-  override def renderResult(correctionResult: CompleteResult[ProgEvaluationResult]): Html = ???
+  // Other routes
 
   def testData(id: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
@@ -148,6 +92,36 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
         case None                          => BadRequest
       }
   }
+
+  def getDeclaration(lang: String): EssentialAction = withUser { _ =>
+    implicit request =>      Ok(ProgLanguage.valueOf(lang).getOrElse(ProgLanguage.STANDARD_LANG).declaration)
+  }
+
+  // Corrections
+
+  override def correctEx(sol: StringSolution, exercise: ProgCompleteEx, user: User): Try[CompleteResult[ProgEvaluationResult]] = Try({
+    // FIXME: Time out der Ausführung
+    println(sol.learnerSolution)
+
+    val language = ProgLanguage.STANDARD_LANG
+    val corrector = correctors(language)
+
+    corrector.correct(user, exercise, sol.learnerSolution, language)
+  })
+
+  // Views
+
+  override def renderExercise(user: User, exercise: ProgCompleteEx): Html = {
+    val declaration = ProgLanguage.STANDARD_LANG.buildFunction(exercise.ex.functionName, exercise.ex.inputCount)
+
+    views.html.core.exercise2Rows.render(user, ProgToolObject, EX_OPTIONS, exercise.ex, views.html.programming.progExRest.render(exercise.ex), declaration)
+  }
+
+  override def renderExesListRest: Html = Html("")
+
+  override def renderResult(correctionResult: CompleteResult[ProgEvaluationResult]): Html = ???
+
+  // Helper methods
 
   private def readAndValidateTestdata(exerciseId: Int, user: User, request: Request[AnyContent]): Future[Option[(ProgCompleteEx, Seq[CompleteCommitedTestData])]] = {
     completeExById(exerciseId) map { exOpt =>

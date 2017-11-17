@@ -6,24 +6,11 @@ import model.Enums.ExerciseState
 import model.core.ExerciseCollection
 import model.sql.SqlConsts._
 import model.sql.SqlEnums.{SqlExTag, SqlExerciseType}
-import model.{CompleteEx, Exercise, TableDefs}
+import model.{BaseValues, CompleteEx, Exercise, TableDefs}
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{JsPath, Reads}
 import slick.jdbc.JdbcProfile
-
-object SqlReads {
-  implicit def sqlScenarioReads: Reads[SqlScenario] = (
-    (JsPath \ ID_NAME).read[Int] and
-      (JsPath \ TITLE_NAME).read[String] and
-      (JsPath \ AUTHOR_NAME).read[String] and
-      (JsPath \ TEXT_NAME).read[List[String]] and
-      (JsPath \ STATE_NAME).read[String] and
-
-      (JsPath \ SHORTNAME_NAME).read[String] and
-      (JsPath \ SCRIPTFILE_NAME).read[String]
-    ) ((i, ti, a, te, s, shortName, scriptFile) => SqlScenario(i, ti, a, te.mkString, ExerciseState.valueOf(s), shortName, scriptFile))
-}
 
 case class SqlScenarioCompleteEx(ex: SqlScenario) extends CompleteEx[SqlScenario] {
 
@@ -37,7 +24,7 @@ case class SqlScenarioCompleteEx(ex: SqlScenario) extends CompleteEx[SqlScenario
 case class SqlScenario(i: Int, ti: String, a: String, te: String, s: ExerciseState,
                        @JsonProperty(required = true) shortName: String,
                        @JsonProperty(required = true) scriptFile: String)
-  extends ExerciseCollection[SqlExercise](i, ti, a, te, s) {
+  extends ExerciseCollection[SqlExercise](BaseValues(i, ti, a, te, s)) {
 
   override def exercises: List[SqlExercise] = List.empty
 

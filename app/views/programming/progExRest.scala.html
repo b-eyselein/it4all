@@ -14,7 +14,7 @@
                 data: "language=" + $('#langSelect').val(),
                 async: true,
                 success: function (response) {
-                    document.getElementById("language").value = language;
+                    $('#language').val(language);
                     editor.setValue(response, 1000000);
                 }
             });

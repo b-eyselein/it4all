@@ -31,7 +31,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
   case class ProgSampleSolutionYamlFormat(exerciseId: Int) extends MyYamlFormat[ProgSampleSolution] {
 
     override def readObject(yamlObject: YamlObject): ProgSampleSolution = ProgSampleSolution(
-      exerciseId, yamlObject.enumField(LANGUAGE_NAME, ProgLanguage.valueOf, ProgLanguage.STANDARD_LANG), yamlObject.stringField(SAMPLE_NAME)
+      exerciseId, yamlObject.enumField(LANGUAGE_NAME, ProgLanguage.valueOf(_).get, ProgLanguage.STANDARD_LANG), yamlObject.stringField(SAMPLE_NAME)
     )
 
     override def write(pss: ProgSampleSolution): YamlValue = YamlObject(

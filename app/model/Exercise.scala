@@ -5,9 +5,9 @@ import play.twirl.api.Html
 
 case class BaseValues(id: Int, title: String, author: String, text: String, state: ExerciseState)
 
-abstract class HasBaseValues(val baseValues: BaseValues) {
+trait HasBaseValues {
 
-  def this(id: Int, title: String, author: String, text: String, state: ExerciseState) = this(BaseValues(id, title, author, text, state))
+  val baseValues: BaseValues
 
   def id: Int = baseValues.id
 
@@ -18,8 +18,6 @@ abstract class HasBaseValues(val baseValues: BaseValues) {
   def text: String = baseValues.text
 
   def state: ExerciseState = baseValues.state
-
-  def renderRest: Html = ???
 
 }
 
@@ -39,13 +37,13 @@ trait CompleteEx[B <: HasBaseValues] {
 
   def ex: HasBaseValues
 
-  def renderRest: Html = new Html("")
+  def preview: Html = ???
 
   def tags: List[ExTag] = List.empty
 
 }
 
-abstract class Exercise(bvs: BaseValues) extends HasBaseValues(bvs) {
+abstract class Exercise(val baseValues: BaseValues) extends HasBaseValues {
 
   def this(i: Int, ti: String, a: String, te: String, s: ExerciseState) = this(BaseValues(i, ti, a, te, s))
 

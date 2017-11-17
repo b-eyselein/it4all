@@ -1,0 +1,40 @@
+@(exercise: model.xml.XmlExercise)
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-4"><b>ID</b></div>
+            <div class="col-md-8">@exercise.id</div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4"><b>Titel:</b></div>
+            <div class="col-md-8">@exercise.title</div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4"><b>Autor:</b></div>
+            <div class="col-md-8">@exercise.author</div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4"><b>Text:</b></div>
+            <div class="col-md-8">@exercise.text</div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4"><b>Status:</b></div>
+            <div class="col-md-8">@exercise.state</div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4"><b>Wurzelknoten:</b></div>
+            <div class="col-md-8">@exercise.rootNode</div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <p><b>Inhalt der Referenzdatei:</b></p>
+        <pre>@exercise.refFileContent</pre>
+    </div>
+</div>

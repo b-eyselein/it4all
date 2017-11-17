@@ -1,7 +1,15 @@
-@(user: model.User, exercises: Seq[_ <: model.CompleteEx[_]], toolObject: model.core.tools.ExToolObject)
+@(user: model.User, completeExercises: Seq[model.CompleteEx[_]], toolObject: model.core.tools.ExToolObject)
 
 @scripts = {
     <script src="@routes.Assets.versioned("javascripts/admin.js")"></script>
+}
+
+@dispExercise(compEx: model.CompleteEx[_]) = {
+    <h2 data-toggle="collapse" data-target="#collapse_@compEx.ex.id">Aufgabe: &quot;@compEx.ex.title&quot;</h2>
+
+    <div id="collapse_@compEx.ex.id" class="collapse in">
+    @compEx.preview
+    </div>
 }
 
 @main("Erstellte Aufgaben", user, scripts) {
@@ -14,36 +22,7 @@
 
         <hr>
 
-        <div id="messages"></div>
-
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Status</th>
-                    <th>Titel</th>
-                    <th>Autor</th>
-                    <th>Text</th>
-                    @for(otherHeader <- toolObject.restHeaders) {
-                        <th>@otherHeader</th>
-                    }
-                </tr>
-            </thead>
-            <tbody>
-            @for(exercise <- exercises) {
-                <tr id="tr1_@exercise.ex.id">
-                    <td>@exercise.ex.id</td>
-                    <td>@exercise.ex.state</td>
-                    <td>@exercise.ex.title</td>
-                    <td>@exercise.ex.author</td>
-
-                    @views.html.core.helperTemplates.stringLen(exercise.ex.text, 40)
-
-                    @exercise.renderRest
-                </tr>
-            }
-            </tbody>
-        </table>
+        @Html(completeExercises.map(ex => dispExercise(ex)).mkString("\n<hr>"))
 
     </div>
 }

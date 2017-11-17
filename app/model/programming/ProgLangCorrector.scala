@@ -3,6 +3,9 @@ package model.programming
 import java.nio.file.attribute.PosixFilePermission
 
 import com.google.common.base.Splitter
+import controllers.exes.ProgToolObject
+import model.User
+import model.core.{CompleteResult, FileUtils}
 
 object ProgLangCorrector {
   private val NEWLINE_SPLITTER: Splitter = Splitter.on("\n")
@@ -14,11 +17,30 @@ object ProgLangCorrector {
   val FILE_PERMS = new java.util.TreeSet[PosixFilePermission](java.util.Arrays.asList(PosixFilePermission.OWNER_READ,
     PosixFilePermission.OWNER_WRITE, PosixFilePermission.OWNER_EXECUTE))
 
-  val DOCKER_CONNECTOR = new DockerConnector()
+  val filename = "solution_"
+
 }
 
 abstract class ProgLangCorrector {
 
+  def correct(user: User, exercise: ProgCompleteEx, learnerSolution: String, language: ProgLanguage): CompleteResult[ProgEvaluationResult] = {
+
+    val imageExits = DockerConnector.imageExists(language.dockerImageName) || DockerConnector.pullImage(language.dockerImageName)
+
+    val path = ProgToolObject.getSolFileForExercise(user.username, exercise.ex, "solution_" + language.aceName, language.scriptEnding)
+
+    FileUtils.write(path, learnerSolution)
+
+    println(path.toAbsolutePath)
+
+    // TODO: save learnerSolution as file...
+    //    Files.write(path, toWrite, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)
+
+    // Check if image exists
+    println(language.dockerImageName + " exists: " + imageExits)
+
+    new CompleteResult(learnerSolution, Seq.empty)
+  }
 
   //    private static void createFile(Path file, List<String> content) throws IOException {
   //        if (file.toFile().exists())

@@ -3,7 +3,6 @@ package model.spread
 import model.Enums.ExerciseState
 import model._
 import play.api.db.slick.HasDatabaseConfigProvider
-import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
 
@@ -24,13 +23,13 @@ case class SpreadExercise(bv: BaseValues, sampleFileName: String, templateFilena
 
   override def ex: SpreadExercise = this
 
-  override def renderRest: Html = new Html(
-    s"""<td>$sampleFileName</td>
-       |<td>$templateFilename</td>""".stripMargin)
+  //  override def preview: Html = new Html(
+  //    s"""<td>$sampleFileName</td>
+  //       |<td>$templateFilename</td>""".stripMargin)
 
 }
 
-trait SpreadExercises extends TableDefs {
+trait SpreadTableDefs extends TableDefs {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
   import profile.api._

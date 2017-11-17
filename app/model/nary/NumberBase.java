@@ -1,8 +1,9 @@
 package model.nary;
 
+import model.Enums.Selectable;
 import play.twirl.api.Html;
 
-public enum NumberBase {
+public enum NumberBase implements Selectable<NumberBase> {
 
     BINARY(2, "Binär", "0b", "0-1", "0-1"),
     OCTAL(8, "Oktal", "0o", "1-7", "0-7"),

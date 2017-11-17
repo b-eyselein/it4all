@@ -19,7 +19,8 @@ case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping], ignoreWords
 
   import views.html.core.helperTemplates.modal
 
-  override def renderRest: Html = new Html(
+  // FIXME: -> umlPreview.scala.html
+  override def preview: Html = new Html(
     s"""<td>${modal.render("Klassenwahltext", new Html(ex.classSelText + "<hr>" + HtmlFormat.escape(ex.classSelText)), "Klassenwahltext")}</td>
        |<td>${modal.render("Diagrammzeichnentext", new Html(ex.diagDrawText + "<hr>" + HtmlFormat.escape(ex.diagDrawText)), "Diagrammzeichnentext")}</td>
        |<td>${modal.render("Lösung", new Html("<pre>" + solution.toYaml(UmlSolutionYamlFormat(ex.id)).prettyPrint + "<pre>"), "Lösung" + ex.id)}</td>

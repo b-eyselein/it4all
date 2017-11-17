@@ -17,4 +17,6 @@ object NaryConsts extends Consts {
 
   val TARGET_NB  = "targetNB"
 
+  val RAND_NAME = "RANDOM"
+
 }

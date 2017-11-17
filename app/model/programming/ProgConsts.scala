@@ -20,18 +20,4 @@ object ProgConsts extends Consts {
   val SAMPLE_SOL_NAME      = "sampleSolution"
   val SAMPLE_TESTDATA_NAME = "sampleTestData"
 
-  val PYTHON_DEFAULT: String =
-    """if __name__ == '__main__':
-      |  # TODO: Solution...
-      |  n = int(input())""".stripMargin
-
-  val JAVA_DEFAULT: String =
-    """public class Solution
-      |
-      |  public static void main(String[] args) {
-      |    // TODO: Solution...
-      |  }
-      |
-      |}""".stripMargin
-
 }

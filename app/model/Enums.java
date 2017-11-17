@@ -4,8 +4,6 @@ import play.twirl.api.Html;
 
 public abstract class Enums {
 
-    public static final String NEUTRAL = "Neutral";
-
     public interface Selectable<T extends Selectable<T>> {
         default String isSelected(T that) {
             return this == that ? "selected" : "";
@@ -124,13 +122,13 @@ public abstract class Enums {
 
         USED("Wie oft haben Sie dieses Tool genutzt?", "Oft", "Manchmal", "Selten"),
 
-        SENSE("Finden Sie dieses Tool sinnvoll?", "Sinnvoll", NEUTRAL, "Sinnlos"),
+        SENSE("Finden Sie dieses Tool sinnvoll?", "Sinnvoll", "Neutral", "Sinnlos"),
 
-        USABILITY("Wie bewerten Sie die allgemeine Bedienbarkeit dieses Tools?", "Gut", NEUTRAL, "Schlecht"),
+        USABILITY("Wie bewerten Sie die allgemeine Bedienbarkeit dieses Tools?", "Gut", "Neutral", "Schlecht"),
 
-        STYLE_OF_FEEDBACK("Wie bewerten Sie die Gestaltung des Feedbacks dieses Tools?", "Gut", NEUTRAL, "Schlecht"),
+        STYLE_OF_FEEDBACK("Wie bewerten Sie die Gestaltung des Feedbacks dieses Tools?", "Gut", "Neutral", "Schlecht"),
 
-        FAIRNESS_OF_FEEDBACK("Wie bewerten Sie die Fairness der Evaluation dieses Tools?", "Fair", NEUTRAL, "Unfair");
+        FAIRNESS_OF_FEEDBACK("Wie bewerten Sie die Fairness der Evaluation dieses Tools?", "Fair", "Neutral", "Unfair");
 
         public final String question;
         public final String positive;

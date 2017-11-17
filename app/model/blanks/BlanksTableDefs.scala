@@ -1,12 +1,12 @@
 package model.blanks
 
 import model.Enums.{ExerciseState, SuccessType}
-import model.{CompleteEx, Exercise, TableDefs}
+import model.{BaseValues, CompleteEx, Exercise, TableDefs}
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
-case class BlanksExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState) extends Exercise(i, ti, a, te, s) with CompleteEx[BlanksExercise] {
+case class BlanksExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState) extends Exercise(BaseValues(i, ti, a, te, s)) with CompleteEx[BlanksExercise] {
 
   val objects: List[BlankObject] = List(
     BlankObject(1,
@@ -23,8 +23,6 @@ case class BlanksExercise(i: Int, ti: String, a: String, te: String, s: Exercise
 
   override val ex: BlanksExercise = this
 
-  override def renderRest: Html = ???
-
 }
 
 trait BlanksTableDefs extends TableDefs {
@@ -37,6 +35,7 @@ trait BlanksTableDefs extends TableDefs {
   class BlanksExercisesTable(tag: Tag) extends HasBaseValuesTable[BlanksExercise](tag, "blanks_exercises") {
 
     def * = (id, title, author, text, state) <> (BlanksExercise.tupled, BlanksExercise.unapply)
+
   }
 
 }

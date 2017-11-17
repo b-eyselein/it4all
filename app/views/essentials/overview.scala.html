@@ -1,0 +1,64 @@
+@(user: model.User)
+
+@scripts = {
+    <script>
+            $(document).ready(function () {
+                $('#convButton').click(function () {
+                    // FIXME: route!
+                    window.location = "/essentials/naryConv?fromBase=" + $('#convFromBase').val() + "&toBase=" + $('#convToBase').val();
+                })
+            })
+    </script>
+}
+
+@main("Zahlensysteme", user, scripts) {
+    <div class="container">
+        <div class="page-header">
+            <h1>Zahlensysteme</h1>
+        </div>
+
+
+        <h2>Umwandlung zwischen Systemen</h2>
+        <div class="row">
+            <div class="col-md-5">
+                <select class="form-control" id="convFromBase">
+                    <option value="RANDOM">Zuf&auml;llig</option>
+                    @for(base <- model.nary.NumberBase.values) {
+                        <option value="@base.name">@base.systemName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-5">
+                <select class="form-control" id="convToBase">
+                    <option value="RANDOM">Zuf&auml;llig</option>
+                    @for(base <- model.nary.NumberBase.values) {
+                        <option value="@base.name">@base.systemName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-default btn-block" id="convButton">Go!</button>
+            </div>
+        </div>
+
+        <hr>
+
+        <a type="button" class="btn btn-default btn-block" href="@controllers.exes.routes.EssentialsController.newNaryConversionQuestion("RANDOM", "RANDOM")">
+            Umwandeln zwischen verschiedenen Zahlensystemen</a>
+
+            &nbsp;
+
+        <div class="btn-group btn-group-justified">
+            <a class="btn btn-default" href="@controllers.exes.routes.EssentialsController.newNaryTwoComplementQuestion(true)">
+                Zweierkomplement ausf&uuml;hrlich</a>
+            <a class="btn btn-default" href="@controllers.exes.routes.EssentialsController.newNaryTwoComplementQuestion(false)">
+                Zweierkomplement kurz</a>
+        </div>
+
+            &nbsp;
+
+        <a type="button" class="btn btn-default btn-block" href="@controllers.exes.routes.EssentialsController.newNaryAdditionQuestion">
+            Addition in anderen Zahlensystemen</a>
+
+    </div>
+}

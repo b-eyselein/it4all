@@ -8,13 +8,10 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
-import scala.util.Try
 
 case class ProgCompleteEx(ex: ProgExercise, sampleSolution: ProgSampleSolution, sampleTestData: Seq[CompleteSampleTestData]) extends CompleteEx[ProgExercise] {
 
-  override def renderRest: Html = new Html(
-    s"""<td>${ex.functionName}</td>
-       |<td>${ex.inputCount}</td>""".stripMargin)
+  override def preview: Html = views.html.programming.progPreview.render(this)
 
 }
 
@@ -122,7 +119,7 @@ trait ProgTableDefs extends TableDefs {
   // Implicit column types
 
   implicit val ProgLanguageColumnType: BaseColumnType[ProgLanguage] =
-    MappedColumnType.base[ProgLanguage, String](_.name, str => Try(ProgLanguage.valueOf(str)).getOrElse(ProgLanguage.PYTHON_3))
+    MappedColumnType.base[ProgLanguage, String](_.name, str => ProgLanguage.valueOf(str).getOrElse(PYTHON_3))
 
   // Tables
 

@@ -6,13 +6,13 @@ import play.twirl.api.{Html, HtmlFormat}
 class EvaluationResult(val success: SuccessType = SuccessType.NONE) {
   val getBSClass: String = success.color
 
-  def getGlyphicon: String = success match {
+  val getGlyphicon: String = success match {
     case SuccessType.COMPLETE                     => "glyphicon glyphicon-ok"
     case SuccessType.PARTIALLY                    => "glyphicon glyphicon-question-sign"
     case (SuccessType.NONE | SuccessType.FAILURE) => "glyphicon glyphicon-remove"
   }
 
-  def getPoints: Int = success.points
+  val getPoints: Int = success.points
 
   val isSuccessful: Boolean = success == SuccessType.COMPLETE
 }

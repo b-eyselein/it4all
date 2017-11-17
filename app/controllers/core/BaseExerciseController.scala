@@ -85,12 +85,11 @@ abstract class BaseExerciseController[B <: HasBaseValues]
     implicit request => statistics map (stats => Ok(views.html.admin.adminMain.render(user, stats, toolObject, new Html(""))))
   }
 
-
   def importExercises: EssentialAction = futureWithAdmin { admin =>
     implicit request =>
       val file = Paths.get("conf", "resources", toolObject.exType + ".yaml").toFile
       val read = Source.fromFile(file).mkString.parseYamls map (_.convertTo[CompEx])
-      saveRead(read) map (_ => Ok(views.html.admin.preview.render(admin, read, toolObject))) recover {
+      saveRead(read) map (_ => Ok(previewExercises(admin, read, toolObject))) recover {
         // FIXME: Failures!
         case sqlError: SQLSyntaxErrorException =>
           sqlError.printStackTrace
@@ -103,6 +102,8 @@ abstract class BaseExerciseController[B <: HasBaseValues]
   }
 
   protected def saveRead(read: Seq[CompEx]): Future[Seq[Int]] = ???
+
+  protected def previewExercises(admin: User, read: Seq[CompEx], toolObject: ExToolObject): Html = views.html.admin.preview(admin, read, toolObject)
 
   def exportExercises: EssentialAction = futureWithAdmin { admin =>
     implicit request =>
@@ -123,7 +124,7 @@ abstract class BaseExerciseController[B <: HasBaseValues]
   }
 
   // FIXME: scalarStyle = Folded if fixed...
-  private def writeYaml(exes: Seq[CompEx]): String = "%YAML 1.2\n---\n" + (exes map (_.toYaml.print(Auto/*, Folded*/)) mkString "---\n")
+  private def writeYaml(exes: Seq[CompEx]): String = "%YAML 1.2\n---\n" + (exes map (_.toYaml.print(Auto /*, Folded*/)) mkString "---\n")
 
   protected val savingDir: Path = Paths.get(toolObject.rootDir, ADMIN_FOLDER, toolObject.exType)
 

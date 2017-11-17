@@ -3,9 +3,8 @@ package model.xml
 import model.Enums.ExerciseState
 import model._
 import play.api.db.slick.HasDatabaseConfigProvider
-import play.twirl.api.{Html, HtmlFormat}
+import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
-import views.html.core.helperTemplates.modal
 
 import scala.util.Try
 
@@ -21,7 +20,7 @@ object XmlExercise {
 
 }
 
-case class XmlExercise(bvs: BaseValues, exerciseType: XmlExType, rootNode: String, refFileContent: String) extends Exercise(bvs) with CompleteEx[XmlExercise] {
+case class XmlExercise(bv: BaseValues, exerciseType: XmlExType, rootNode: String, refFileContent: String) extends Exercise(bv) with CompleteEx[XmlExercise] {
 
   val fixedStart: String = if (exerciseType != XmlExType.XML_DTD) "" else
     s"""<?xml version="1.0" encoding="UTF-8"?>
@@ -31,11 +30,7 @@ case class XmlExercise(bvs: BaseValues, exerciseType: XmlExType, rootNode: Strin
 
   override val tags: List[ExTag] = List(ex.exerciseType)
 
-  override val renderRest: Html = new Html(
-    s"""<td>${ex.exerciseType}</td>
-       |<td>${ex.rootNode}</td>
-       |<td>${modal.render("Referenzdatei " + ex.id, new Html("<pre>" + HtmlFormat.escape(ex.refFileContent) + "</pre>"), "Referenzdatei" + ex.id)}</td>""".stripMargin)
-
+  override val preview: Html = views.html.xml.xmlPreview.render(this)
 }
 
 trait XmlTableDefs extends TableDefs {

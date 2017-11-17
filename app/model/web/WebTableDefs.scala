@@ -14,9 +14,7 @@ import scala.util.Try
 
 case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTasks: Seq[JsCompleteTask]) extends CompleteEx[WebExercise] {
 
-  override def renderRest: Html = new Html(
-    s"""<td>${htmlTasks.size} / ${jsTasks.size}</td>
-       |<td>TODO!</td>""".stripMargin)
+  override def preview: Html = views.html.web.webPreview.render(this)
 
   override def tags: List[WebExTag] = List(new WebExTag(HTML_TYPE, ex.hasHtmlPart), new WebExTag(JS_TYPE, ex.hasJsPart))
 

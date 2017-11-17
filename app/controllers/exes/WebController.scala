@@ -54,6 +54,8 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
       case None           => STANDARD_HTML
     }
 
+  // Other routes
+
   def exRest(exerciseId: Int): EssentialAction = futureWithAdmin { user =>
     implicit request =>
       completeExById(exerciseId) map {
@@ -67,6 +69,26 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   def site(username: String, exerciseId: Int): Action[AnyContent] = Action.async { implicit request =>
     getOldSolOrDefault(username, exerciseId).map(sol => Ok(new Html(sol)))
   }
+
+  // Views
+
+  override protected def renderExercise(user: User, exercise: WebCompleteEx, part: String): Future[Html] = {
+    val tasks = part match {
+      case HTML_TYPE => exercise.htmlTasks
+      case JS_TYPE   => exercise.jsTasks
+    }
+    getOldSolOrDefault(user.username, exercise.ex.id) map (oldSol => views.html.web.webExercise.render(user, exercise, part, tasks, oldSol))
+  }
+
+  override def renderExesListRest = new Html(
+    s"""<div class="panel panel-default">
+       |  <a class="btn btn-primary btn-block" href="${controllers.exes.routes.WebController.playground()}">Web-Playground</a>
+       |</div>
+       |<hr>""".stripMargin)
+
+  override def renderResult(correctionResult: CompleteResult[WebResult]): Html = views.html.web.webResult.render(correctionResult.results)
+
+  // Correction
 
   override def correctEx(user: User, learnerSolution: StringSolution, exercise: WebCompleteEx, part: String): Try[CompleteResult[WebResult]] = {
     val solutionUrl = BASE_URL + controllers.exes.routes.WebController.site(user.username, exercise.ex.id).url
@@ -83,22 +105,5 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
     Try(new CompleteResult(learnerSolution.learnerSolution, tasks map (task => WebCorrector.evaluate(task, driver))))
   }
-
-  override protected def renderExercise(user: User, exercise: WebCompleteEx, part: String): Future[Html] = {
-    val tasks = part match {
-      case HTML_TYPE => exercise.htmlTasks
-      case JS_TYPE   => exercise.jsTasks
-    }
-    getOldSolOrDefault(user.username, exercise.ex.id) map (oldSol => views.html.web.webExercise.render(user, exercise, part, tasks, oldSol))
-  }
-
-
-  override def renderExesListRest = new Html(
-    s"""<div class="panel panel-default">
-       |  <a class="btn btn-primary btn-block" href="${controllers.exes.routes.WebController.playground()}">Web-Playground</a>
-       |</div>
-       |<hr>""".stripMargin)
-
-  override def renderResult(correctionResult: CompleteResult[WebResult]): Html = views.html.web.webResult.render(correctionResult.results)
 
 }
