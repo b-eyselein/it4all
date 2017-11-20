@@ -1,5 +1,6 @@
-@import model.essentials._
-@(user: model.User, result: BooleanQuestionResult)
+@import model.essentials.{BoolAssignment, EssentialsConsts, BooleanQuestion}
+
+@(user: model.User, result: model.essentials.BooleanQuestionResult)
 
 @scripts = {
     <!-- Tooltip script -->
@@ -23,7 +24,7 @@
                                     @for(variable <- result.question.variables) {
                                         <th class="text-center">@variable</th>
                                     }
-                                    <th class="text-center">@BooleanQuestion.SOLUTION_VARIABLE</th>
+                                    <th class="text-center">@EssentialsConsts.SolVariable</th>
                                     <th class="text-center" id="learnerFormula">
                                         Ihre L&ouml;sung: @result.learnerSolution</th>
                                 </tr>
@@ -34,9 +35,9 @@
                                     @for(variable <- result.question.variables) {
                                         <td class="text-center">@assignment.asChar(variable)</td>
                                     }
-                                <td class="text-center">@assignment.asChar(BooleanQuestion.SOLUTION_VARIABLE)</td>
+                                <td class="text-center">@assignment.asChar(EssentialsConsts.SolVariable)</td>
                                 <td class="text-center @assignment.getColor">
-                                    <span class="text-@assignment.getColor">@assignment.asChar(BooleanQuestion.LEARNER_VARIABLE)</span>
+                                    <span class="text-@assignment.getColor">@assignment.asChar(EssentialsConsts.LerVariable)</span>
                                 </td>
                                 }
                             </tbody>

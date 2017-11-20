@@ -33,7 +33,7 @@ DELETE IGNORE FROM web_exercises;
 
 DELETE IGNORE FROM uml_sol_assocs;
 
-DELETE IGNORE FROM uml_sol_impl;
+DELETE IGNORE FROM uml_sol_impls;
 
 DELETE IGNORE FROM uml_sol_classes_methods;
 

@@ -10,10 +10,8 @@ class EbnfCompleteResult(result: EbnfResult) extends CompleteResult[EbnfResult](
 
 }
 
-case class EbnfResult(grammar: Grammar) extends EvaluationResult(EbnfResult.analyze(grammar))
+case class EbnfResult(grammar: Grammar) extends EvaluationResult {
 
-object EbnfResult {
-
-  def analyze(grammar: Grammar): SuccessType = SuccessType.NONE
+  override val success = SuccessType.NONE // TODO: implement!
 
 }

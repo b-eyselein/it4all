@@ -29,22 +29,22 @@ object UmlToolObject extends IdPartExToolObject("uml", "Uml", ToolState.LIVE) {
 
   override def adminIndexRoute: Call = controllers.exes.routes.UmlController.adminIndex()
 
-  override def adminExesListRoute: Call = controllers.exes.routes.UmlController.exercises()
+  override def adminExesListRoute: Call = controllers.exes.routes.UmlController.adminExerciseList()
 
-  override def newExFormRoute: Call = controllers.exes.routes.UmlController.newExerciseForm()
+  override def newExFormRoute: Call = controllers.exes.routes.UmlController.adminNewExerciseForm()
 
-  override def exportExesRoute: Call = controllers.exes.routes.UmlController.exportExercises()
+  override def exportExesRoute: Call = controllers.exes.routes.UmlController.adminExportExercises()
 
-  override def exportExesAsFileRoute: Call = controllers.exes.routes.UmlController.exportExercisesAsFile()
+  override def exportExesAsFileRoute: Call = controllers.exes.routes.UmlController.adminExportExercisesAsFile()
 
-  override def importExesRoute: Call = controllers.exes.routes.UmlController.importExercises()
+  override def importExesRoute: Call = controllers.exes.routes.UmlController.adminImportExercises()
 
-  override def changeExStateRoute(exercise: HasBaseValues): Call = controllers.exes.routes.UmlController.changeExState(exercise.id)
+  override def changeExStateRoute(exercise: HasBaseValues): Call = controllers.exes.routes.UmlController.adminChangeExState(exercise.id)
 
-  override def editExerciseFormRoute(exercise: HasBaseValues): Call = controllers.exes.routes.UmlController.editExerciseForm(exercise.id)
+  override def editExerciseFormRoute(exercise: HasBaseValues): Call = controllers.exes.routes.UmlController.adminEditExerciseForm(exercise.id)
 
-  override def editExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.UmlController.editExercise(exercise.id)
+  override def editExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.UmlController.adminEditExercise(exercise.id)
 
-  override def deleteExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.UmlController.deleteExercise(exercise.id)
+  override def deleteExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.UmlController.adminDeleteExercise(exercise.id)
 
 }

@@ -1,6 +1,6 @@
 function changeFontsize(value) {
-    var fontsizeElement = document.getElementById('fontsize');
-    var fontsize = parseInt(fontsizeElement.innerHTML) + value;
+    const fontsizeElement = document.getElementById('fontsize');
+    const fontsize = parseInt(fontsizeElement.innerHTML) + value;
     document.getElementById('editor').style.fontSize = fontsize + 'px';
     fontsizeElement.innerHTML = fontsize;
 }
@@ -35,7 +35,7 @@ function paramFilter(input, element) {
 }
 
 function extractParameters() {
-    var inputs = $('form input, form textarea').filter(paramFilter);
+    const inputs = $('form input, form textarea').filter(paramFilter);
     return $.map(inputs, toParam).join('&');
 }
 
@@ -45,23 +45,31 @@ function testTheSolution(theUrl) {
         type: 'PUT',
         url: theUrl,
         data: extractParameters(),
-        // FIXME: dataType: 'json',
+        // FIXME: dataType: 'json' ?,
         async: true,
-        success: function (correction) {
-            $('#correction').html(correction);
-            $('#testButton').prop('disabled', false);
-        },
-        error: function (jqXHR, error, errorThrown) {
-            $('#correction').html('<div class=\'alert alert-danger\'>' + jqXHR.responseJSON + '</div>');
-            $('#testButton').prop('disabled', false);
-        }
+        success: onSuccess,
+        error: onError
     });
 }
 
-function updatePreview() {
-    var toWrite = unescapeHTML(editor.getValue());
+function onSuccess(correction) {
+    $('#correction').html(correction);
+    $('#testButton').prop('disabled', false);
+}
 
-    var theIFrame = document.getElementById('preview').contentWindow.document;
+/**
+ *
+ * @param jqXHR {{responseText: string, responseJSON: string}}
+ */
+function onError(jqXHR) {
+    $('#correction').html('<div class=\'alert alert-danger\'>' + jqXHR.responseJSON + '</div>');
+    $('#testButton').prop('disabled', false);
+}
+
+function updatePreview() {
+    const toWrite = unescapeHTML(editor.getValue());
+
+    const theIFrame = document.getElementById('preview').contentWindow.document;
     theIFrame.open();
     theIFrame.write(toWrite);
     theIFrame.close();

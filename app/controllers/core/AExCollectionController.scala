@@ -134,8 +134,7 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E]
   }
 
   private def renderCorrectionResult(user: User, correctionResult: CompleteResult[R]): Html =
-    views.html.core.correction.render(toolObject.exType.toUpperCase, correctionResult, renderResult(correctionResult),
-      user, controllers.routes.Application.index())
+    views.html.core.correction.render(correctionResult, renderResult(correctionResult),      user, toolObject)
 
   def renderResult(correctionResult: CompleteResult[R]): Html
 

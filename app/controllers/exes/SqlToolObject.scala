@@ -22,26 +22,22 @@ object SqlToolObject extends IdExToolObject("sql", "Sql", ToolState.LIVE, "Szena
 
   override def adminIndexRoute: Call = controllers.exes.routes.SqlController.adminIndex()
 
-  override def adminExesListRoute: Call = controllers.exes.routes.SqlController.exercises()
+  override def adminExesListRoute: Call = controllers.exes.routes.SqlController.adminExerciseList()
 
-  override def newExFormRoute: Call = controllers.exes.routes.SqlController.newExerciseForm()
+  override def newExFormRoute: Call = controllers.exes.routes.SqlController.adminNewExerciseForm()
 
-  override def importExesRoute: Call = controllers.exes.routes.SqlController.importExercises()
+  override def importExesRoute: Call = controllers.exes.routes.SqlController.adminImportExercises()
 
-  override def exportExesRoute: Call = ??? // controllers.exes.routes.SqlController.exportExercises()
+  override def exportExesRoute: Call =  controllers.exes.routes.SqlController.adminExportExercises()
 
-  override def exportExesAsFileRoute: Call = controllers.exes.routes.SqlController.exportExercisesAsFile()
+  override def exportExesAsFileRoute: Call = controllers.exes.routes.SqlController.adminExportExercisesAsFile()
 
-  //  override def jsonSchemaRoute: Call = controllers.exes.routes.SqlController.getJSONSchemaFile()
+  override def changeExStateRoute(exercise: HasBaseValues): Call = controllers.exes.routes.SqlController.adminChangeExState(exercise.id)
 
-  //  override def uploadFileRoute: Call = controllers.exes.routes.SqlController.uploadFile()
+  override def editExerciseFormRoute(exercise: HasBaseValues): Call = controllers.exes.routes.SqlController.adminEditExerciseForm(exercise.id)
 
-  override def changeExStateRoute(exercise: HasBaseValues): Call = controllers.exes.routes.SqlController.changeExState(exercise.id)
+  override def editExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.SqlController.adminEditExercise(exercise.id)
 
-  override def editExerciseFormRoute(exercise: HasBaseValues): Call = controllers.exes.routes.SqlController.editExerciseForm(exercise.id)
-
-  override def editExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.SqlController.editExercise(exercise.id)
-
-  override def deleteExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.SqlController.deleteExercise(exercise.id)
+  override def deleteExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.SqlController.adminDeleteExercise(exercise.id)
 
 }

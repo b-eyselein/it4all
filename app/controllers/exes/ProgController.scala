@@ -28,6 +28,11 @@ object ProgController {
 
   val STD_TEST_DATA_COUNT = 2
 
+  val correctors: Map[ProgLanguage, ProgLangCorrector] = Map(
+    JAVA_8 -> JavaCorrector,
+    PYTHON_3 -> PythonCorrector
+  )
+
 }
 
 @Singleton
@@ -56,13 +61,6 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
   override def completeExById(id: Int): Future[Option[ProgCompleteEx]] = repo.progExercises.completeById(id)
 
   override def saveRead(read: Seq[ProgCompleteEx]): Future[Seq[Int]] = Future.sequence(read map (repo.progExercises.saveCompleteEx(_)))
-
-  // Helper methods, values ...
-
-  val correctors: Map[ProgLanguage, ProgLangCorrector] = Map(
-    JAVA_8 -> JavaCorrector,
-    PYTHON_3 -> PythonCorrector
-  )
 
   // Other routes
 
@@ -94,10 +92,10 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
   }
 
   def getDeclaration(lang: String): EssentialAction = withUser { _ =>
-    implicit request =>      Ok(ProgLanguage.valueOf(lang).getOrElse(ProgLanguage.STANDARD_LANG).declaration)
+    implicit request => Ok(ProgLanguage.valueOf(lang).getOrElse(ProgLanguage.STANDARD_LANG).declaration)
   }
 
-  // Corrections
+  // Correction
 
   override def correctEx(sol: StringSolution, exercise: ProgCompleteEx, user: User): Try[CompleteResult[ProgEvaluationResult]] = Try({
     // FIXME: Time out der Ausführung

@@ -1,15 +1,13 @@
 package controllers.core
 
-import java.io.PrintWriter
-import java.nio.file.{Files, Path, Paths, StandardCopyOption}
+import java.nio.file.{Files, Paths}
 import java.sql.SQLSyntaxErrorException
 
 import controllers.Secured
-import controllers.core.BaseExerciseController._
-import model._
 import model.core.CoreConsts._
 import model.core._
 import model.core.tools.ExToolObject
+import model.{CompleteEx, HasBaseValues, User}
 import net.jcazevedo.moultingyaml._
 import play.Logger
 import play.api.data.Form
@@ -23,17 +21,11 @@ import slick.jdbc.JdbcProfile
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 import scala.language.implicitConversions
-import scala.util.Try
-
-object BaseExerciseController {
-
-  val STEP = 10
-}
 
 abstract class BaseExerciseController[B <: HasBaseValues]
 (cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository, val toolObject: ExToolObject)
 (implicit ec: ExecutionContext)
-  extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
+  extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured with FileUtils {
 
   // Reading solution from Request
 
@@ -63,36 +55,38 @@ abstract class BaseExerciseController[B <: HasBaseValues]
 
   protected def statistics: Future[Html] = numOfExes map (num => Html(s"<li>Es existieren insgesamt $num Aufgaben</li>"))
 
-  // Reading from form
+  protected def saveRead(read: Seq[CompEx]): Future[Seq[Int]] = ???
+
+  // Reading from form TODO: Move to other file?
 
   case class StrForm(str: String)
 
   def singleStrForm(str: String) = Form(mapping(str -> nonEmptyText)(StrForm.apply)(StrForm.unapply))
 
+  //  protected val savingDir: Path = Paths.get(toolObject.rootDir, ADMIN_FOLDER, toolObject.exType)
+
   val PROGRESS_LOGGER: Logger.ALogger = Logger.of("progress")
 
-  def saveUploadedFile(savingDir: Path, pathToUploadedFile: Path, saveTo: Path): Try[Path] =
-    Try(Files.createDirectories(savingDir))
-      .map(_ => Files.move(pathToUploadedFile, saveTo, StandardCopyOption.REPLACE_EXISTING))
+  //  private def saveUploadedFile(savingDir: Path, pathToUploadedFile: Path, saveTo: Path): Try[Path] =
+  //    Try(Files.createDirectories(savingDir))
+  //      .map(_ => Files.move(pathToUploadedFile, saveTo, StandardCopyOption.REPLACE_EXISTING))
 
   def log(user: User, eventToLog: WorkingEvent): Unit = Unit // PROGRESS_LOGGER.debug(s"""${user.username} - ${Json.toJson(eventToLog)}""")
 
   // Admin
 
-  //  override def uploadFileRoute: Call = controllers.programming.routes.ProgController.uploadFile()??
-
   def adminIndex: EssentialAction = futureWithAdmin { user =>
     implicit request => statistics map (stats => Ok(views.html.admin.adminMain.render(user, stats, toolObject, new Html(""))))
   }
 
-  def importExercises: EssentialAction = futureWithAdmin { admin =>
+  def adminImportExercises: EssentialAction = futureWithAdmin { admin =>
     implicit request =>
       val file = Paths.get("conf", "resources", toolObject.exType + ".yaml").toFile
       val read = Source.fromFile(file).mkString.parseYamls map (_.convertTo[CompEx])
       saveRead(read) map (_ => Ok(previewExercises(admin, read, toolObject))) recover {
         // FIXME: Failures!
         case sqlError: SQLSyntaxErrorException =>
-          sqlError.printStackTrace
+          sqlError.printStackTrace()
           BadRequest(sqlError.getMessage)
         case throwable                         =>
           println("\nERROR: ")
@@ -101,34 +95,23 @@ abstract class BaseExerciseController[B <: HasBaseValues]
       }
   }
 
-  protected def saveRead(read: Seq[CompEx]): Future[Seq[Int]] = ???
-
-  protected def previewExercises(admin: User, read: Seq[CompEx], toolObject: ExToolObject): Html = views.html.admin.preview(admin, read, toolObject)
-
-  def exportExercises: EssentialAction = futureWithAdmin { admin =>
+  def adminExportExercises: EssentialAction = futureWithAdmin { admin =>
     implicit request =>
-      completeExes map (exes => Ok(views.html.admin.export.render(admin, writeYaml(exes), toolObject)))
+      completeExes map (exes => Ok(views.html.admin.export.render(admin, yamlString(exes), toolObject)))
   }
 
-  def exportExercisesAsFile: EssentialAction = futureWithAdmin { admin =>
+  def adminExportExercisesAsFile: EssentialAction = futureWithAdmin { admin =>
     implicit request =>
       val file = Files.createTempFile(s"export_${toolObject.exType}", ".yaml")
       completeExes map (exes => {
 
-        val writer = new PrintWriter(file.toFile)
-        writer.write(writeYaml(exes))
-        writer.close()
+        write(file, yamlString(exes))
 
         Ok.sendPath(file, fileName = _ => s"export_${toolObject.exType}.yaml", onClose = () => Files.delete(file))
       })
   }
 
-  // FIXME: scalarStyle = Folded if fixed...
-  private def writeYaml(exes: Seq[CompEx]): String = "%YAML 1.2\n---\n" + (exes map (_.toYaml.print(Auto /*, Folded*/)) mkString "---\n")
-
-  protected val savingDir: Path = Paths.get(toolObject.rootDir, ADMIN_FOLDER, toolObject.exType)
-
-  def changeExState(id: Int): EssentialAction = withAdmin { _ =>
+  def adminChangeExState(id: Int): EssentialAction = withAdmin { _ =>
     implicit request =>
       //      val newState: ExerciseState = Option(ExerciseState.valueOf(singleStrForm("state").bindFromRequest.get.str)).getOrElse(ExerciseState.RESERVED)
       //
@@ -149,16 +132,15 @@ abstract class BaseExerciseController[B <: HasBaseValues]
     //      }
   }
 
-  def deleteExercise(id: Int): EssentialAction = futureWithAdmin { _ =>
+  def adminDeleteExercise(id: Int): EssentialAction = futureWithAdmin { _ =>
     implicit request =>
       db.run(tq.filter(_.id === id).delete) map {
         case 0 => NotFound(Json.obj("message" -> s"Die Aufgabe mit ID $id existiert nicht und kann daher nicht geloescht werden!"))
-        case 1 => Ok(Json.obj("id" -> id))
-        case _ => BadRequest(Json.obj("message" -> s"Es gab einen internen Fehler beim Loeschen der Aufgabe mit der ID $id"))
+        case _ => Ok(Json.obj("id" -> id))
       }
   }
 
-  def editExercise(id: Int): EssentialAction = withAdmin { _ =>
+  def adminEditExercise(id: Int): EssentialAction = withAdmin { _ =>
     implicit request =>
       //    exerciseReader.initFromForm(id, factory.form().bindFromRequest()) match {
       //      case error: ReadingError =>
@@ -172,18 +154,15 @@ abstract class BaseExerciseController[B <: HasBaseValues]
       Ok("TODO!")
   }
 
-  def editExerciseForm(id: Int): EssentialAction = futureWithAdmin { admin =>
+  def adminEditExerciseForm(id: Int): EssentialAction = futureWithAdmin { admin =>
     implicit request => completeExById(id) map (ex => Ok(views.html.admin.editExForm(admin, toolObject, ex, renderEditRest(ex))))
   }
 
-  def exercises: EssentialAction = futureWithAdmin { admin =>
+  def adminExerciseList: EssentialAction = futureWithAdmin { admin =>
     implicit request => completeExes map (exes => Ok(views.html.admin.exerciseList.render(admin, exes, toolObject)))
   }
 
-  // FIXME: make abstract...
-  protected def renderExListRest(b: B): Html = new Html("")
-
-  def newExerciseForm: EssentialAction = withAdmin { admin =>
+  def adminNewExerciseForm: EssentialAction = withAdmin { admin =>
     // FIXME
     implicit request =>
       // FIXME: ID of new exercise?
@@ -191,9 +170,19 @@ abstract class BaseExerciseController[B <: HasBaseValues]
   }
 
   def newExercise: EssentialAction = withAdmin { admin =>
-    implicit request =>
-      Ok("TODO: Not yet used...")
+    implicit request => ???
+    //      Ok("TODO: Not yet used...")
   }
+
+  // Views and other helper methods for admin
+
+  // FIXME: make abstract...
+  protected def renderExListRest(b: B): Html = ???
+
+  private def previewExercises(admin: User, read: Seq[CompEx], toolObject: ExToolObject): Html = views.html.admin.preview(admin, read, toolObject)
+
+  // FIXME: scalarStyle = Folded if fixed...
+  private def yamlString(exes: Seq[CompEx]): String = "%YAML 1.2\n---\n" + (exes map (_.toYaml.print(Auto /*, Folded*/)) mkString "---\n")
 
   // User
 
@@ -209,14 +198,12 @@ abstract class BaseExerciseController[B <: HasBaseValues]
   protected def renderExes(user: User, exes: Seq[CompEx], allExesSize: Int): Html =
     views.html.core.exesList.render(user, exes, renderExesListRest, toolObject, allExesSize / STEP + 1)
 
-  protected def renderExesListRest: Html = new Html("")
+  protected def renderExesListRest: Html = ???
 
   // Helper methods
 
-  def renderEditRest(exercise: Option[CompEx]): Html = new Html("")
+  def renderEditRest(exercise: Option[CompEx]): Html = ???
 
-  def renderExercises(exercises: List[CompEx]): Html = new Html("") //views.html.admin.exercisesTable.render(exercises, toolObject)
-
-  //  def renderExesCreated(admin: User, exercises: List[B]): Html = views.html.admin.preview.render(admin, exercises, toolObject)
+  def renderExercises(exercises: List[CompEx]): Html = ??? //views.html.admin.exercisesTable.render(exercises, toolObject)
 
 }

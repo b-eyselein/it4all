@@ -4,7 +4,7 @@ import javax.inject.{Inject, Singleton}
 
 import controllers.Secured
 import controllers.core.ARandomExController
-import model.Enums.SuccessType.{NONE, PARTIALLY}
+import model.Enums.SuccessType.PARTIALLY
 import model.User
 import model.core.Repository
 import model.essentials.EssentialsConsts._
@@ -40,7 +40,7 @@ class EssentialsController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   def newNaryAdditionQuestion(baseStr: String): EssentialAction = withUser { user =>
     implicit request =>
-      val base = if (baseStr == RAND_NAME)
+      val base = if (baseStr == RandomName)
         NumberBase.values()(generator.nextInt(3)) // No decimal system...
       else nbFromString(baseStr)
 
@@ -53,19 +53,19 @@ class EssentialsController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
   def newNaryConversionQuestion(fromBaseStr: String, toBaseStr: String): EssentialAction = withUser { user =>
     implicit request =>
       val (fromBase, toBase): (NumberBase, NumberBase) = fromBaseStr match {
-        case RAND_NAME   => toBaseStr match {
-          case RAND_NAME =>
+        case RandomName  => toBaseStr match {
+          case RandomName =>
             val fromBase = randNumberBase(None)
             (fromBase, randNumberBase(Some(fromBase)))
-          case toBaseReq =>
+          case toBaseReq  =>
             val toBase = nbFromString(toBaseStr)
             (randNumberBase(Some(toBase)), toBase)
         }
         case fromBaseReq =>
           val fromBase = nbFromString(fromBaseReq)
           val toBase = toBaseStr match {
-            case RAND_NAME => randNumberBase(Some(fromBase))
-            case toBaseReq => nbFromString(toBaseStr)
+            case RandomName => randNumberBase(Some(fromBase))
+            case toBaseReq  => nbFromString(toBaseStr)
           }
           (fromBase, toBase)
       }
@@ -92,11 +92,11 @@ class EssentialsController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
       request.body.asFormUrlEncoded match {
         case None       => BadRequest("There has been an error!")
         case Some(data) =>
-          BoolNodeParser.parse(data(FORMULA_NAME).mkString("")) match {
+          BoolNodeParser.parse(data(FormulaName).mkString("")) match {
             case Some(formula) =>
 
               val assignments = BoolAssignment.generateAllAssignments(formula.usedVariables.toList).map(assignment =>
-                assignment + (LEA_VAR -> (ONE == data(assignment.toString).mkString(""))) + (SOL_VAR -> formula.evaluate(assignment)))
+                assignment + (LerVariable -> (One == data(assignment.toString).mkString(""))) + (SolVariable -> formula.evaluate(assignment)))
 
               val question = new FilloutQuestion(formula, assignments)
 
@@ -113,9 +113,9 @@ class EssentialsController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   def checkBoolCreationSolution: EssentialAction = withUser { user =>
     implicit request =>
-      request.body.asFormUrlEncoded match {
+      request.body.asFormUrlEncoded flatMap checkCreationSolution match {
         case None       => BadRequest("There has been an error!")
-        case Some(data) => Ok(views.html.essentials.boolcreatesolution.render(user, checkCreationSolution(data)))
+        case Some(result) => Ok(views.html.essentials.boolcreatesolution.render(user, result))
       }
   }
 
@@ -125,32 +125,29 @@ class EssentialsController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
         case None => BadRequest("There has been an error!")
 
         case Some(data) =>
-          var result = checkCreationSolution(data)
+          val result = checkCreationSolution(data)
           // FIXME: ugly, stupid, sh**ty hack!
           Ok(play.api.libs.json.Json.parse(play.libs.Json.toJson(result).toString))
       }
   }
 
-  private def checkCreationSolution(data: Map[String, Seq[String]]): BooleanQuestionResult = {
+  private def checkCreationSolution(data: Map[String, Seq[String]]): Option[BooleanQuestionResult] = {
+    // FIXME: get per json, read from json!
     val learnerSolution = data(FORM_VALUE).mkString
-    BoolNodeParser.parse(learnerSolution) match {
-      case None =>
-        new BooleanQuestionResult(NONE, learnerSolution, null)
-      //        throw new CorrectionException(learnerSolution, "Formula could not be parsed!")
-      case Some(formula) =>
-        val variables = data(VARS_NAME).mkString.split(",").map(variab => Variable(variab.charAt(0))).toList
+    BoolNodeParser.parse(learnerSolution) map { formula =>
+      val variables = data(VARS_NAME).mkString.split(",").map(variab => Variable(variab.charAt(0))).toList
 
-        // Check that formula only contains variables found in form
-        val wrongVars = formula.usedVariables.filter(!variables.contains(_))
-        //        if (wrongVars.nonEmpty)
-        //          throw new CorrectionException(learnerSolution, s"In ihrer Loesung wurde(n) die folgende(n) falsche(n) Variable(n) benutzt: '${wrongVars.mkString(", ")}'")
+      // Check that formula only contains variables found in form
+      val wrongVars = formula.usedVariables.filter(!variables.contains(_))
+      //        if (wrongVars.nonEmpty)
+      //          throw new CorrectionException(learnerSolution, s"In ihrer Loesung wurde(n) die folgende(n) falsche(n) Variable(n) benutzt: '${wrongVars.mkString(", ")}'")
 
-        val assignments = BoolAssignment
-          .generateAllAssignments(variables)
-          .map(as => as + (LEA_VAR -> formula.evaluate(as)) + (SOL_VAR -> (data(as.toString()).mkString == ONE)))
+      val assignments = BoolAssignment
+        .generateAllAssignments(variables)
+        .map(as => as + (LerVariable -> formula.evaluate(as)) + (SolVariable -> (data(as.toString()).mkString == One)))
 
-        val question = new CreationQuestion(variables, assignments)
-        new BooleanQuestionResult(PARTIALLY, learnerSolution, question)
+      val question = new CreationQuestion(variables, assignments)
+      BooleanQuestionResult(PARTIALLY, learnerSolution, question)
     }
   }
 

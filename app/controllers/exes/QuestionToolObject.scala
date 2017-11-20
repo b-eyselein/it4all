@@ -23,22 +23,22 @@ object QuestionToolObject extends IdExToolObject("question", "Auswahlfragen", To
 
   override def adminIndexRoute: Call = controllers.exes.routes.QuestionController.adminIndex()
 
-  override def adminExesListRoute: Call = controllers.exes.routes.QuestionController.exercises()
+  override def adminExesListRoute: Call = controllers.exes.routes.QuestionController.adminExerciseList()
 
-  override def newExFormRoute: Call = controllers.exes.routes.QuestionController.newExerciseForm()
+  override def newExFormRoute: Call = controllers.exes.routes.QuestionController.adminNewExerciseForm()
 
-  override def importExesRoute: Call = controllers.exes.routes.QuestionController.importExercises()
+  override def importExesRoute: Call = controllers.exes.routes.QuestionController.adminImportExercises()
 
-  override def exportExesRoute: Call = controllers.exes.routes.QuestionController.exportExercises()
+  override def exportExesRoute: Call = controllers.exes.routes.QuestionController.adminExportExercises()
 
-  override def exportExesAsFileRoute: Call = controllers.exes.routes.QuestionController.exportExercisesAsFile()
+  override def exportExesAsFileRoute: Call = controllers.exes.routes.QuestionController.adminExportExercisesAsFile()
 
-  override def changeExStateRoute(exercise: HasBaseValues): Call = controllers.exes.routes.QuestionController.changeExState(exercise.id)
+  override def changeExStateRoute(exercise: HasBaseValues): Call = controllers.exes.routes.QuestionController.adminChangeExState(exercise.id)
 
-  override def editExerciseFormRoute(exercise: HasBaseValues): Call = controllers.exes.routes.QuestionController.editExerciseForm(exercise.id)
+  override def editExerciseFormRoute(exercise: HasBaseValues): Call = controllers.exes.routes.QuestionController.adminEditExerciseForm(exercise.id)
 
-  override def editExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.QuestionController.editExercise(exercise.id)
+  override def editExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.QuestionController.adminEditExercise(exercise.id)
 
-  override def deleteExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.QuestionController.deleteExercise(exercise.id)
+  override def deleteExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.QuestionController.adminDeleteExercise(exercise.id)
 
 }

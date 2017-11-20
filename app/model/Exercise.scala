@@ -41,6 +41,8 @@ trait CompleteEx[B <: HasBaseValues] {
 
   def tags: List[ExTag] = List.empty
 
+  def renderListRest: Html = ???
+
 }
 
 abstract class Exercise(val baseValues: BaseValues) extends HasBaseValues {

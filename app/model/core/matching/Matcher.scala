@@ -1,25 +1,24 @@
 package model.core.matching
 
+import model.Enums
 import model.Enums.MatchType._
 import model.Enums.SuccessType._
-import model.Enums._
 import model.core.EvaluationResult
 
 import scala.collection.mutable.ListBuffer
 
 class MatchingResult[T, M <: Match[T]](val matchName: String, val headings: Seq[String], val colWidth: Int, val allMatches: Seq[M])
-  extends EvaluationResult(MatchingResult.analyze(allMatches))
+  extends EvaluationResult {
 
-object MatchingResult {
-  def analyze(allMatches: Seq[Match[_]]): SuccessType = {
-    // FIXME: is it possible to use ... match { case ...} ?!?
-    if (allMatches.exists(_.matchType == ONLY_USER) || allMatches.exists(_.matchType == ONLY_SAMPLE))
+  // FIXME: is it possible to use ... match { case ...} ?!?
+  override val success: Enums.SuccessType =
+    if ((allMatches exists (_.matchType == ONLY_USER)) || (allMatches exists (_.matchType == ONLY_SAMPLE)))
       NONE
-    else if (allMatches.exists(_.matchType == UNSUCCESSFUL_MATCH))
+    else if (allMatches exists (_.matchType == UNSUCCESSFUL_MATCH))
       PARTIALLY
     else
       COMPLETE
-  }
+
 }
 
 class Matcher[T, M <: Match[T]]
@@ -53,6 +52,4 @@ class Matcher[T, M <: Match[T]]
 
 }
 
-class StringMatcher(matchName: String) extends Matcher[String, Match[String]](
-  matchName, Seq("String-Repraesentation"), _ == _, new Match[String](_, _, _)
-)
+class StringMatcher(matchName: String) extends Matcher[String, Match[String]](matchName, Seq("String-Repraesentation"), _ == _, new Match[String](_, _, _))

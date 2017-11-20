@@ -25,11 +25,10 @@ case class SqlResult(l: String,
 
 }
 
-case class SqlExecutionResult(userResult: SqlQueryResult, sampleResult: SqlQueryResult) extends EvaluationResult(SqlExecutionResult.analyze(userResult, sampleResult))
+case class SqlExecutionResult(userResult: SqlQueryResult, sampleResult: SqlQueryResult) extends EvaluationResult {
 
-object SqlExecutionResult {
-  def analyze(userResult: SqlQueryResult, sampleResult: SqlQueryResult): SuccessType =
-    if (userResult == null || sampleResult == null)
-      SuccessType.FAILURE
-    else if (!userResult.isIdentic(sampleResult)) SuccessType.NONE else SuccessType.COMPLETE
+  override val success: SuccessType =
+    if (userResult == null || sampleResult == null) SuccessType.FAILURE
+    else SuccessType.ofBool(userResult.isIdentic(sampleResult))
+
 }

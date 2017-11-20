@@ -97,7 +97,9 @@ case class UmlClassMethod(en: Int, cn: String, methodName: String, returns: Stri
 
 case class UmlImplementation(exerciseId: Int, subClass: String, superClass: String)
 
-case class UmlAssociation(exerciseId: Int, assocType: UmlAssociationType, assocName: Option[String], firstEnd: String, firstMult: UmlMultiplicity, secondEnd: String, secondMult: UmlMultiplicity)
+case class UmlAssociation(exerciseId: Int, assocType: UmlAssociationType, assocName: Option[String],
+                          firstEnd: String, firstMult: UmlMultiplicity,
+                          secondEnd: String, secondMult: UmlMultiplicity)
 
 // Tables
 
@@ -120,14 +122,18 @@ trait UmlTableDefs extends TableDefs {
     override def saveCompleteEx(completeEx: UmlCompleteEx)(implicit ec: ExecutionContext): Future[Int] = {
       //      println("\n\nSaving complete ex!")
 
-      val query = saveEx(completeEx.ex) zip saveMappings(completeEx.mappings) zip saveIgnoreWords(completeEx.ignoreWords) zip saveSolution(completeEx.solution)
+      println(completeEx.ignoreWords)
 
-      db.run(query) map (_._1._1._1)
+      val saveQueryIgnoreWords = saveIgnoreWords(completeEx.ignoreWords)
+
+      val query = saveEx(completeEx.ex) andThen saveMappings(completeEx.mappings) andThen saveQueryIgnoreWords /*andThen saveSolution(completeEx.solution) */
+
+      db.run(query) map (_ => 1)
     }
 
     private def saveMappings(mappings: Seq[UmlMapping]) = DBIO.sequence(mappings map (mapping => umlMappings insertOrUpdate mapping))
 
-    private def saveIgnoreWords(ignoreWords: Seq[UmlIgnore]) = DBIO.sequence(ignoreWords map (ignore => umlToIgnore insertOrUpdate ignore))
+    private def saveIgnoreWords(ignoreWords: Seq[UmlIgnore]) = DBIO.sequence(ignoreWords map (ignoreWord => umlToIgnore insertOrUpdate ignoreWord))
 
     // Mappings and ignore words
 
@@ -209,6 +215,7 @@ trait UmlTableDefs extends TableDefs {
   }
 
   trait ForeignKeyUmlExercise {
+
     self: Table[_] =>
 
     def exerciseId = column[Int]("exercise_id")

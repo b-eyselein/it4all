@@ -1,6 +1,6 @@
-@import model.essentials.BooleanQuestion
-@import model.essentials.FilloutQuestion
-@(user: model.User, question: FilloutQuestion)
+@import model.essentials.EssentialsConsts
+
+@(user: model.User, question: model.essentials.FilloutQuestion)
 
 @vars = @{
     question.variables
@@ -36,8 +36,8 @@
                             @for(variable <- vars) {
                                 <td>@assignment.asChar(variable)</td>
                             }
-                        <td class="@assignment.getColor text-@assignment.getColor">@assignment.asChar(BooleanQuestion.SOLUTION_VARIABLE)</td>
-                        <td class="@assignment.getColor text-@assignment.getColor">@assignment.asChar(model.essentials.BooleanQuestion.LEARNER_VARIABLE)</td>
+                        <td class="@assignment.getColor text-@assignment.getColor">@assignment.asChar(EssentialsConsts.SolVariable)</td>
+                        <td class="@assignment.getColor text-@assignment.getColor">@assignment.asChar(EssentialsConsts.LerVariable)</td>
                         </tr>
                     }
                     </tbody>

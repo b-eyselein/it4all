@@ -28,7 +28,9 @@ trait Consts {
   val PW_NAME  = "passwort"
   val PW2_NAME = "passwort_wieder"
 
-  val STATE_NAME   = "status"
+  val STATE_NAME = "status"
+  val STEP       = 10
+
 
   val TEST_COUNT_NAME = "testCount"
   val TEXT_NAME       = "text"

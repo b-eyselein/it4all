@@ -64,24 +64,24 @@ object NAryResult {
     TwoCompResult(form.startingValueDec, NAryNumber.parse(form.solutionBinary, BINARY), form.binaryAbs.getOrElse(""), form.inverted.getOrElse(""))
 
   val additionSolution = Form(mapping(
-    SUMMAND_1 -> nonEmptyText,
-    SUMMAND_2 -> nonEmptyText,
-    LEARNER_SOL -> nonEmptyText,
-    BASE_NAME -> nonEmptyText
+    FirstSummand -> nonEmptyText,
+    SecondSummand -> nonEmptyText,
+    LearnerSol -> nonEmptyText,
+    BaseName -> nonEmptyText
   )(AdditionSolution.apply)(AdditionSolution.unapply))
 
   val conversionSolution = Form(mapping(
     VALUE_NAME -> nonEmptyText,
-    LEARNER_SOL -> nonEmptyText,
-    STARTING_NB -> nonEmptyText,
-    TARGET_NB -> nonEmptyText
+    LearnerSol -> nonEmptyText,
+    StartingNumBase -> nonEmptyText,
+    TargetNumBase -> nonEmptyText
   )(ConversionSolution.apply)(ConversionSolution.unapply))
 
   val twoComplementSolution = Form(mapping(
     VALUE_NAME -> number,
-    BINARY_ABS -> optional(nonEmptyText),
-    INVERTED_ABS -> optional(nonEmptyText),
-    LEARNER_SOL -> nonEmptyText
+    BinaryAbs -> optional(nonEmptyText),
+    InvertedAbs -> optional(nonEmptyText),
+    LearnerSol -> nonEmptyText
   )(TwoCompSolution.apply)(TwoCompSolution.unapply))
 
 }

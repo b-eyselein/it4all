@@ -1,14 +1,13 @@
 package controllers.exes
 
 import java.io.IOException
-import java.nio.file.{Path, Paths}
 import javax.inject._
 
 import controllers.Secured
 import controllers.core.AIdExController
-import controllers.exes.MindmapController._
 import model.User
-import model.core.{CompleteResult, EvaluationResult, _}
+import model.core._
+import model.mindmap.MindmapConsts._
 import model.mindmap.evaluation.ParsingException
 import model.mindmap.evaluation.enums.EvalParserType
 import model.mindmap.{Evaluation, MindmapExercise, Validation}
@@ -22,25 +21,7 @@ import scala.concurrent.ExecutionContext
 import scala.language.implicitConversions
 import scala.util.Try
 
-object MindmapController {
-
-  val BASE_PATH: Path = Paths.get("conf", "resources", "mindmap")
-
-  val SOLUTION_PATH: Path = Paths.get(BASE_PATH.toString, "solution.xml")
-
-  val INPUT_PATH: Path = Paths.get(BASE_PATH.toString, "input.xml")
-
-  val META_PATH: Path = Paths.get(BASE_PATH.toString, "meta.xls")
-
-  val RESULT_PATH: Path = Paths.get(BASE_PATH.toString, "result.xls")
-
-  val TEMPLATE_PATH: Path = Paths.get(BASE_PATH.toString, "template.mmas")
-
-  val ALT_INPUT_PATH: Path = Paths.get(BASE_PATH.toString, "als_input.xml")
-
-  val ALT_SOLUTION_PATH: Path = Paths.get(BASE_PATH.toString, "alt_solution.xml")
-}
-
+@Singleton
 class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
   extends AIdExController[MindmapExercise, EvaluationResult](cc, dbcp, r, MindMapToolObject) with Secured {
 
@@ -60,9 +41,7 @@ class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfig
 
   override def tq = repo.mindmapExercises
 
-
-  override protected def correctEx(sol: StringSolution, exercise: MindmapExercise, user: User): Try[CompleteResult[EvaluationResult]]
-  = ???
+  // Other routes
 
   def index: EssentialAction = withUser { user => implicit request => Ok(views.html.mindmap.mindmapindex.render(user)) }
 
@@ -92,6 +71,16 @@ class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfig
       Ok(views.html.mindmap.mindmapcorrect.render(user))
   }
 
+  // Views
+
   override protected def renderExesListRest: Html = ???
+
+  override protected def renderExercise(user: User, exercise: MindmapExercise): Html = ???
+
+  override protected def renderResult(correctionResult: CompleteResult[EvaluationResult]): Html = ???
+
+  // Correction - probably not used...
+
+  override protected def correctEx(sol: StringSolution, exercise: MindmapExercise, user: User): Try[CompleteResult[EvaluationResult]] = ???
 
 }

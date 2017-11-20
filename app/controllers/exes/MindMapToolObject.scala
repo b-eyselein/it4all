@@ -24,23 +24,23 @@ object MindMapToolObject extends IdExToolObject("mindmap", "Mindmap", ToolState.
 
   override def adminIndexRoute: Call = controllers.exes.routes.MindmapController.adminIndex()
 
-  override def adminExesListRoute: Call = ??? // controllers.exes.routes.MindmapController.exercises()
+  override def adminExesListRoute: Call = ??? // controllers.exes.routes.MindmapController.adminExerciseList()
 
-  override def newExFormRoute: Call = ??? //controllers.exes.routes.MindmapController.newExerciseForm()
+  override def newExFormRoute: Call = ??? //controllers.exes.routes.MindmapController.adminNewExerciseForm()
 
-  override def importExesRoute: Call = controllers.exes.routes.MindmapController.importExercises()
+  override def importExesRoute: Call = controllers.exes.routes.MindmapController.adminImportExercises()
 
-  override def exportExesRoute: Call = controllers.exes.routes.MindmapController.exportExercises()
+  override def exportExesRoute: Call = controllers.exes.routes.MindmapController.adminExportExercises()
 
-  override def exportExesAsFileRoute: Call = controllers.exes.routes.MindmapController.exportExercisesAsFile()
+  override def exportExesAsFileRoute: Call = controllers.exes.routes.MindmapController.adminExportExercisesAsFile()
 
-  override def changeExStateRoute(exercise: HasBaseValues): Call = ??? //controllers.exes.routes.MindmapController.changeExState(exercise.id)
+  override def changeExStateRoute(exercise: HasBaseValues): Call = ??? //controllers.exes.routes.MindmapController.adminChangeExState(exercise.id)
 
-  override def editExerciseFormRoute(exercise: HasBaseValues): Call = ??? //controllers.exes.routes.MindmapController.editExerciseForm(exercise.id)
+  override def editExerciseFormRoute(exercise: HasBaseValues): Call = ??? //controllers.exes.routes.MindmapController.adminEditExerciseForm(exercise.id)
 
-  override def editExerciseRoute(exercise: HasBaseValues): Call = ??? //controllers.exes.routes.MindmapController.editExercise(exercise.id)
+  override def editExerciseRoute(exercise: HasBaseValues): Call = ??? //controllers.exes.routes.MindmapController.adminEditExercise(exercise.id)
 
-  override def deleteExerciseRoute(exercise: HasBaseValues): Call = ??? //controllers.exes.routes.MindmapController.deleteExercise(exercise.id)
+  override def deleteExerciseRoute(exercise: HasBaseValues): Call = ??? //controllers.exes.routes.MindmapController.adminDeleteExercise(exercise.id)
 
 
 }

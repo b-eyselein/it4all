@@ -21,7 +21,7 @@ object ProgLangCorrector {
 
 }
 
-abstract class ProgLangCorrector {
+abstract class ProgLangCorrector extends FileUtils {
 
   def correct(user: User, exercise: ProgCompleteEx, learnerSolution: String, language: ProgLanguage): CompleteResult[ProgEvaluationResult] = {
 
@@ -29,7 +29,7 @@ abstract class ProgLangCorrector {
 
     val path = ProgToolObject.getSolFileForExercise(user.username, exercise.ex, "solution_" + language.aceName, language.scriptEnding)
 
-    FileUtils.write(path, learnerSolution)
+    write(path, learnerSolution)
 
     println(path.toAbsolutePath)
 

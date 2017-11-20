@@ -76,14 +76,23 @@ public abstract class Enums {
 
     public enum SuccessType {
 
-        FAILURE(0, "danger"), NONE(0, "danger"), PARTIALLY(1, "warning"), COMPLETE(2, "success");
+        FAILURE(0, "danger", "glyphicon glyphicon-remove"),
+        NONE(0, "danger", "glyphicon glyphicon-remove"),
+        PARTIALLY(1, "warning", "glyphicon glyphicon-question-sign"),
+        COMPLETE(2, "success", "glyphicon glyphicon-ok");
 
         public final int points;
         public final String color;
+        public final String glyphicon;
 
-        SuccessType(int thePoints, String theColor) {
+        SuccessType(int thePoints, String theColor, String theGlyphicon) {
             points = thePoints;
             color = theColor;
+            glyphicon = theGlyphicon;
+        }
+
+        public static SuccessType ofBool(boolean success) {
+            return success ? COMPLETE : NONE;
         }
 
     }

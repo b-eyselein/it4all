@@ -69,8 +69,7 @@ abstract class AIdPartExController[E <: Exercise, R <: EvaluationResult]
 
 
   protected def renderCorrectionResult(user: User, correctionResult: CompleteResult[R]): Html =
-    views.html.core.correction.render(toolObject.toolname.toUpperCase, correctionResult, renderResult(correctionResult),
-      user, controllers.routes.Application.index())
+    views.html.core.correction.render(correctionResult, renderResult(correctionResult), user, toolObject)
 
   protected def correctEx(user: User, sol: SolutionType, exercise: CompEx, part: String): Try[CompleteResult[R]] = ???
 

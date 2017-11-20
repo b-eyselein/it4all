@@ -23,22 +23,22 @@ object BlanksToolObject extends IdExToolObject("blanks", "Lueckentext", ToolStat
 
   override def adminIndexRoute: Call = controllers.exes.routes.BlanksController.adminIndex()
 
-  override def adminExesListRoute: Call = controllers.exes.routes.BlanksController.exercises()
+  override def adminExesListRoute: Call = controllers.exes.routes.BlanksController.adminExerciseList()
 
-  override def newExFormRoute: Call = controllers.exes.routes.BlanksController.newExerciseForm()
+  override def newExFormRoute: Call = controllers.exes.routes.BlanksController.adminNewExerciseForm()
 
-  override def importExesRoute: Call = controllers.exes.routes.BlanksController.importExercises()
+  override def importExesRoute: Call = controllers.exes.routes.BlanksController.adminImportExercises()
 
-  override def exportExesRoute: Call = controllers.exes.routes.BlanksController.exportExercises()
+  override def exportExesRoute: Call = controllers.exes.routes.BlanksController.adminExportExercises()
 
-  override def exportExesAsFileRoute: Call = controllers.exes.routes.BlanksController.exportExercisesAsFile()
+  override def exportExesAsFileRoute: Call = controllers.exes.routes.BlanksController.adminExportExercisesAsFile()
 
-  override def changeExStateRoute(exercise: HasBaseValues): Call = controllers.exes.routes.BlanksController.changeExState(exercise.id)
+  override def changeExStateRoute(exercise: HasBaseValues): Call = controllers.exes.routes.BlanksController.adminChangeExState(exercise.id)
 
-  override def editExerciseFormRoute(exercise: HasBaseValues): Call = controllers.exes.routes.BlanksController.editExerciseForm(exercise.id)
+  override def editExerciseFormRoute(exercise: HasBaseValues): Call = controllers.exes.routes.BlanksController.adminEditExerciseForm(exercise.id)
 
-  override def editExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.BlanksController.editExercise(exercise.id)
+  override def editExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.BlanksController.adminEditExercise(exercise.id)
 
-  override def deleteExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.BlanksController.deleteExercise(exercise.id)
+  override def deleteExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.BlanksController.adminDeleteExercise(exercise.id)
 
 }

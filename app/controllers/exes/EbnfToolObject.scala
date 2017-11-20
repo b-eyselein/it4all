@@ -23,22 +23,22 @@ object EbnfToolObject extends IdExToolObject("ebnf", "Ebnf", ToolState.ALPHA) {
 
   override def adminIndexRoute: Call = controllers.exes.routes.EbnfController.adminIndex()
 
-  override def adminExesListRoute: Call = controllers.exes.routes.EbnfController.exercises()
+  override def adminExesListRoute: Call = controllers.exes.routes.EbnfController.adminExerciseList()
 
-  override def newExFormRoute: Call = controllers.exes.routes.EbnfController.newExerciseForm()
+  override def newExFormRoute: Call = controllers.exes.routes.EbnfController.adminNewExerciseForm()
 
-  override def importExesRoute: Call = controllers.exes.routes.EbnfController.importExercises()
+  override def importExesRoute: Call = controllers.exes.routes.EbnfController.adminImportExercises()
 
-  override def exportExesRoute: Call = controllers.exes.routes.EbnfController.exportExercises()
+  override def exportExesRoute: Call = controllers.exes.routes.EbnfController.adminExportExercises()
 
-  override def exportExesAsFileRoute: Call = controllers.exes.routes.EbnfController.exportExercisesAsFile()
+  override def exportExesAsFileRoute: Call = controllers.exes.routes.EbnfController.adminExportExercisesAsFile()
 
-  override def changeExStateRoute(exercise: HasBaseValues): Call = controllers.exes.routes.EbnfController.changeExState(exercise.id)
+  override def changeExStateRoute(exercise: HasBaseValues): Call = controllers.exes.routes.EbnfController.adminChangeExState(exercise.id)
 
-  override def editExerciseFormRoute(exercise: HasBaseValues): Call = controllers.exes.routes.EbnfController.editExerciseForm(exercise.id)
+  override def editExerciseFormRoute(exercise: HasBaseValues): Call = controllers.exes.routes.EbnfController.adminEditExerciseForm(exercise.id)
 
-  override def editExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.EbnfController.editExercise(exercise.id)
+  override def editExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.EbnfController.adminEditExercise(exercise.id)
 
-  override def deleteExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.EbnfController.deleteExercise(exercise.id)
+  override def deleteExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.EbnfController.adminDeleteExercise(exercise.id)
 
 }

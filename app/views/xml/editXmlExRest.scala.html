@@ -1,4 +1,4 @@
-@import model.xml.XmlConsts._
+@import model.xml.XmlConsts
 
 @(exerciseOpt: Option[model.xml.XmlExercise])
 
@@ -7,22 +7,23 @@
 
     <div class="form-group row">
         <div class="col-sm-6">
-            <label for="@EXERCISE_TYPE">Typ:</label>
-            <select class="form-control" name="@EXERCISE_TYPE" id="@EXERCISE_TYPE" required>
+            <label for="@XmlConsts.EXERCISE_TYPE">Typ:</label>
+            <select class="form-control" name="@XmlConsts.EXERCISE_TYPE" id="@XmlConsts.EXERCISE_TYPE" required>
             @for(exType <- model.xml.XmlExType.values) {
                 <option value="@exType" @exType.isSelected(exerciseOpt.map(_.exerciseType).getOrElse(model.xml.XmlExType.XML_DTD))>@exType.render</option>
             }
             </select>
         </div>
         <div class="col-sm-6">
-            <label for="@ROOT_NODE_NAME">Wurzelknoten:</label>
-            <input class="form-control" name="@ROOT_NODE_NAME" id="@ROOT_NODE_NAME"
-            @exerciseOpt.map("value=\"" + _.rootNode + "\"").getOrElse("") required>
+            <label for="@XmlConsts.ROOT_NODE_NAME">Wurzelknoten:</label>
+            <input class="form-control" name="@XmlConsts.ROOT_NODE_NAME" id="@XmlConsts.ROOT_NODE_NAME" required
+                @Html(exerciseOpt.map(ex => s"""value="${ex.rootNode}"""").getOrElse(""))>
         </div>
     </div>
 
     <div class="form-group">
         <label for="referenceFileContent">Inhalt der Referenzdatei</label>
-        <textarea rows="10" class="form-control" name="referenceFileContent" placeholder="<!ELEMENT root ...>" required></textarea>
+        <textarea rows="10" class="form-control" name="referenceFileContent" placeholder="<!ELEMENT root ...>" required>@Html(exerciseOpt.map(ex => ex.refFileContent).getOrElse(""))
+        </textarea>
     </div>
 </fieldset>

@@ -1,29 +1,23 @@
-@import model.core.CompleteResult
-@(typ: String, result: CompleteResult[_], resultAsHtml: Html, user: model.User, nextUrl: play.api.mvc.Call)
+@(result: model.core.CompleteResult[_], resultAsHtml: Html, user: model.User, toolObject: model.core.tools.ToolObject)
 
-@main(typ, user) {
-    <div class="container-fluid">
+@main(toolObject.toolname.toUpperCase(), user) {
+    <div class="container">
 
-        <div class="container">
-            <div class="alert alert-success">
-                Ihre L&ouml;sung wurde gespeichert. Sie k&ouml;nnen nun weitere <a href="@nextUrl">
-                Aufgaben bearbeiten.</a>
-            </div>
+
+        <div class="alert alert-success">
+            Ihre L&ouml;sung wurde gespeichert. Sie k&ouml;nnen nun weitere <a href="@toolObject.indexCall">
+            Aufgaben bearbeiten.</a>
         </div>
 
         <div class="row row-eq-height">
             <div class="col-md-6">
-                <div class="panel panel-default">
-                    <div class="panel-heading">Ihre L&ouml;sung</div>
-                    <div class="panel-body">@result.renderLearnerSolution</div>
-                </div>
+                <h2>Ihre L&ouml;sung</h2>
+                @result.renderLearnerSolution
             </div>
 
             <div class="col-md-6">
-                <div class="panel panel-default">
-                    <div class="panel-heading">Korrektur</div>
-                    <div class="panel-body">@resultAsHtml</div>
-                </div>
+                <h2>Korrektur</h2>
+                @resultAsHtml
             </div>
 
         </div>

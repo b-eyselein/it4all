@@ -14,8 +14,6 @@ import scala.util.{Failure, Success, Try}
 
 object XmlCorrector {
 
-  implicit def path2InputSource(xml: Path): InputSource = new InputSource(xml.toAbsolutePath.toString)
-
   implicit def stringReader2InputSource(reader: StringReader): InputSource = new InputSource(reader)
 
   implicit def file2StreamSource(xml: Path): StreamSource = new StreamSource(xml.toFile)
@@ -45,7 +43,21 @@ object XmlCorrector {
 
   def recover(e: Throwable): List[XmlError] = List(FailureXmlError(e.getMessage, e))
 
-  def correctDtdAndXml(xml: InputSource): List[XmlError] = Try({
+
+  def correctDtdAndXml(xml: Path): List[XmlError] = Try {
+    val errorHandler = new CorrectionErrorHandler
+
+    val builder = DocBuilderFactory.newDocumentBuilder
+    builder.setErrorHandler(errorHandler)
+    builder.parse(xml.toFile)
+
+    errorHandler.errors.toList
+  } match {
+    case Success(errors)    => errors
+    case Failure(throwable) => recover(throwable)
+  }
+
+  def correctDtdAndXml(xml: InputSource): List[XmlError] = Try {
     val errorHandler = new CorrectionErrorHandler
 
     val builder = DocBuilderFactory.newDocumentBuilder
@@ -53,7 +65,7 @@ object XmlCorrector {
     builder.parse(xml)
 
     errorHandler.errors.toList
-  }) match {
+  } match {
     case Success(errors) => errors
     case Failure(e)      => recover(e)
   }

@@ -2,9 +2,7 @@ package model.xml
 
 import model.Enums.ExerciseState
 import model._
-import play.api.db.slick.HasDatabaseConfigProvider
 import play.twirl.api.Html
-import slick.jdbc.JdbcProfile
 
 import scala.util.Try
 
@@ -31,10 +29,17 @@ case class XmlExercise(bv: BaseValues, exerciseType: XmlExType, rootNode: String
   override val tags: List[ExTag] = List(ex.exerciseType)
 
   override val preview: Html = views.html.xml.xmlPreview.render(this)
+
+  override def renderListRest: Html = new Html(
+    s"""<td>$exerciseType</td>
+       |<td>$rootNode</td>
+       |<td>TODO!</td>
+     """.stripMargin)
+
 }
 
 trait XmlTableDefs extends TableDefs {
-  self: HasDatabaseConfigProvider[JdbcProfile] =>
+  self: play.api.db.slick.HasDatabaseConfigProvider[slick.jdbc.JdbcProfile] =>
 
   import profile.api._
 

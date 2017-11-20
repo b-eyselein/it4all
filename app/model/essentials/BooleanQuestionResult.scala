@@ -3,12 +3,11 @@ package model.essentials
 import model.Enums.SuccessType
 import model.core.EvaluationResult
 
-class BooleanQuestionResult(success: SuccessType, val learnerSolution: String, val question: CreationQuestion)
-  extends EvaluationResult(success) {
+case class BooleanQuestionResult(override val success: SuccessType, learnerSolution: String, question: CreationQuestion) extends EvaluationResult {
 
-  val assignments: List[BoolAssignment] = question.solutions
+  val assignments: Seq[BoolAssignment] = question.solutions
 
-  def getSolutions: List[BoolAssignment] = question.solutions
+  val getSolutions: Seq[BoolAssignment] = question.solutions
 
 }
 

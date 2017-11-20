@@ -48,8 +48,8 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   override def saveRead(read: Seq[WebCompleteEx]): Future[Seq[Int]] = Future.sequence(read map (repo.webExercises.saveCompleteEx(_)))
 
-  private def getOldSolOrDefault(userName: String, exerciseId: Int): Future[String] =
-    db.run(repo.webSolutions.filter(_.userName === userName).filter(_.exerciseId === exerciseId).result.headOption) map {
+  private def getOldSolOrDefault(username: String, exerciseId: Int): Future[String] =
+    db.run(repo.webSolutions.filter(_.userName === username).filter(_.exerciseId === exerciseId).result.headOption) map {
       case Some(solution) => solution.solution
       case None           => STANDARD_HTML
     }
@@ -67,7 +67,7 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   def playground: EssentialAction = withUser { user => implicit request => Ok(views.html.web.webPlayground.render(user)) }
 
   def site(username: String, exerciseId: Int): Action[AnyContent] = Action.async { implicit request =>
-    getOldSolOrDefault(username, exerciseId).map(sol => Ok(new Html(sol)))
+    getOldSolOrDefault(username, exerciseId) map (sol => Ok(new Html(sol)))
   }
 
   // Views
@@ -81,29 +81,34 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   }
 
   override def renderExesListRest = new Html(
-    s"""<div class="panel panel-default">
-       |  <a class="btn btn-primary btn-block" href="${controllers.exes.routes.WebController.playground()}">Web-Playground</a>
-       |</div>
+    s"""<a class="btn btn-primary btn-block" href="${controllers.exes.routes.WebController.playground()}">Web-Playground</a>
        |<hr>""".stripMargin)
 
-  override def renderResult(correctionResult: CompleteResult[WebResult]): Html = views.html.web.webResult.render(correctionResult.results)
+  override def renderResult(correctionResult: CompleteResult[WebResult]): Html = Html(correctionResult.results.map(res =>
+    s"""|<div class="alert alert-${res.getBSClass}">
+        |  <p data-toggle="collapse" href="#task${res.task.task.id}">${res.task.task.id}. ${res.task.task.text}</p>
+        |  <div id="task${res.task.task.id}" class="collapse ${if (res.isSuccessful) "" else "in"}">
+        |    <hr>
+        |    ${res.render}
+        |  </div>
+        |</div>""".stripMargin) mkString "\n")
 
   // Correction
 
-  override def correctEx(user: User, learnerSolution: StringSolution, exercise: WebCompleteEx, part: String): Try[CompleteResult[WebResult]] = {
+  override def correctEx(user: User, learnerSolution: StringSolution, exercise: WebCompleteEx, part: String): Try[CompleteResult[WebResult]] = Try {
     val solutionUrl = BASE_URL + controllers.exes.routes.WebController.site(user.username, exercise.ex.id).url
     val newSol = WebSolution(exercise.ex.id, user.username, learnerSolution.learnerSolution)
 
     Await.result(db.run(repo.webSolutions insertOrUpdate newSol), Duration(2, duration.SECONDS))
     val driver = new HtmlUnitDriver(true)
-    driver.get(solutionUrl)
+    driver get solutionUrl
 
     val tasks = part match {
       case HTML_TYPE => exercise.htmlTasks
       case JS_TYPE   => exercise.jsTasks
     }
 
-    Try(new CompleteResult(learnerSolution.learnerSolution, tasks map (task => WebCorrector.evaluate(task, driver))))
+    new CompleteResult(learnerSolution.learnerSolution, tasks map (task => WebCorrector.evaluate(task, driver)))
   }
 
 }

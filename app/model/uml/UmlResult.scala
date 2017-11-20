@@ -1,11 +1,14 @@
 package model.uml
 
+import model.Enums
 import model.Enums.SuccessType.NONE
 import model.core.EvaluationResult
 import model.core.matching.{Match, MatchingResult}
 
 abstract sealed class UmlResult(val exercise: UmlCompleteEx, val learnerSolution: UmlSolution, assocs: Boolean, impls: Boolean)
-  extends EvaluationResult(NONE) {
+  extends EvaluationResult {
+
+  override val success: Enums.SuccessType = NONE
 
   val musterSolution: UmlSolution = exercise.solution
 

@@ -11,19 +11,21 @@ case class ExecutionResult(e: String, r: String, c: String) extends AExecutionRe
 case class SyntaxError(e: String, error: String, c: String) extends AExecutionResult(e, error, c)
 
 object ProgEvaluationResult {
-  private def analyze(executionResult: AExecutionResult, testData: TestData): SuccessType = executionResult match {
-    case SyntaxError(_, _, _)          => SuccessType.NONE
-    case ExecutionResult(_, result, _) => if (validateResult(result, testData.output)) SuccessType.COMPLETE else SuccessType.NONE
-  }
 
-  private def validateResult[T](gottenResult: T, awaitedResult: T): Boolean = {
+  def validateResult[T](gottenResult: T, awaitedResult: T): Boolean = {
     // FIXME: validation of result is dependent on language! Example: numbers in
     gottenResult == awaitedResult
   }
+
 }
 
 case class ProgEvaluationResult(executionResult: AExecutionResult, testData: CompleteSampleTestData)
-  extends EvaluationResult(analyze(executionResult, testData.sampleTestData)) {
+  extends EvaluationResult {
+
+  override val success: SuccessType = executionResult match {
+    case SyntaxError(_, _, _)          => SuccessType.NONE
+    case ExecutionResult(_, result, _) => if (validateResult(result, testData.sampleTestData.output)) SuccessType.COMPLETE else SuccessType.NONE
+  }
 
   def awaitedResult: String = testData.sampleTestData.output
 

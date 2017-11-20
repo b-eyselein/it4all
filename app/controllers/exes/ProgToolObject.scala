@@ -27,22 +27,22 @@ object ProgToolObject extends IdExToolObject("prog", "Programmierung", ToolState
 
   override def adminIndexRoute: Call = controllers.exes.routes.ProgController.adminIndex()
 
-  override def adminExesListRoute: Call = controllers.exes.routes.ProgController.exercises()
+  override def adminExesListRoute: Call = controllers.exes.routes.ProgController.adminExerciseList()
 
-  override def newExFormRoute: Call = controllers.exes.routes.ProgController.newExerciseForm()
+  override def newExFormRoute: Call = controllers.exes.routes.ProgController.adminNewExerciseForm()
 
-  override def importExesRoute: Call = controllers.exes.routes.ProgController.importExercises()
+  override def importExesRoute: Call = controllers.exes.routes.ProgController.adminImportExercises()
 
-  override def exportExesRoute: Call = controllers.exes.routes.ProgController.exportExercises()
+  override def exportExesRoute: Call = controllers.exes.routes.ProgController.adminExportExercises()
 
-  override def exportExesAsFileRoute: Call = controllers.exes.routes.ProgController.exportExercisesAsFile()
+  override def exportExesAsFileRoute: Call = controllers.exes.routes.ProgController.adminExportExercisesAsFile()
 
-  override def changeExStateRoute(exercise: HasBaseValues): Call = controllers.exes.routes.ProgController.changeExState(exercise.id)
+  override def changeExStateRoute(exercise: HasBaseValues): Call = controllers.exes.routes.ProgController.adminChangeExState(exercise.id)
 
-  override def editExerciseFormRoute(exercise: HasBaseValues): Call = controllers.exes.routes.ProgController.editExerciseForm(exercise.id)
+  override def editExerciseFormRoute(exercise: HasBaseValues): Call = controllers.exes.routes.ProgController.adminEditExerciseForm(exercise.id)
 
-  override def editExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.ProgController.editExercise(exercise.id)
+  override def editExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.ProgController.adminEditExercise(exercise.id)
 
-  override def deleteExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.ProgController.deleteExercise(exercise.id)
+  override def deleteExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.ProgController.adminDeleteExercise(exercise.id)
 
 }

@@ -243,7 +243,7 @@ CREATE TABLE IF NOT EXISTS uml_sol_classes_methods (
     ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS uml_sol_impl (
+CREATE TABLE IF NOT EXISTS uml_sol_impls (
   exercise_id INT,
   sub_class   VARCHAR(50),
   super_class VARCHAR(50),
@@ -393,7 +393,7 @@ DROP TABLE IF EXISTS web_exercises;
 
 DROP TABLE IF EXISTS uml_sol_assocs;
 
-DROP TABLE IF EXISTS uml_sol_impl;
+DROP TABLE IF EXISTS uml_sol_impls;
 
 DROP TABLE IF EXISTS uml_sol_classes_methods;
 

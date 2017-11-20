@@ -48,11 +48,13 @@ class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
       Ok("TODO")
   }
 
-  override protected def correctEx(sol: StringSolution, exercise: BlanksExercise, user: User): Try[CompleteResult[EvaluationResult]]
-  = ???
+  override protected def correctEx(sol: StringSolution, exercise: BlanksExercise, user: User): Try[CompleteResult[EvaluationResult]] = ???
 
   override protected def renderExesListRest: Html = new Html("")
 
+  override def renderExercise(user: User, exercise: BlanksExercise): Html = ???
+
+  override def renderResult(correctionResult: CompleteResult[EvaluationResult]): Html = ???
 
 }
 

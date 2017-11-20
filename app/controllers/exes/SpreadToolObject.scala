@@ -29,22 +29,22 @@ object SpreadToolObject extends IdPartExToolObject("spread", "Tabellenkalkulatio
 
   override def adminIndexRoute: Call = controllers.exes.routes.SpreadController.adminIndex()
 
-  override def adminExesListRoute: Call = controllers.exes.routes.SpreadController.exercises()
+  override def adminExesListRoute: Call = controllers.exes.routes.SpreadController.adminExerciseList()
 
-  override def newExFormRoute: Call = controllers.exes.routes.SpreadController.newExerciseForm()
+  override def newExFormRoute: Call = controllers.exes.routes.SpreadController.adminNewExerciseForm()
 
-  override def importExesRoute: Call = controllers.exes.routes.SpreadController.importExercises()
+  override def importExesRoute: Call = controllers.exes.routes.SpreadController.adminImportExercises()
 
-  override def exportExesRoute: Call = controllers.exes.routes.SpreadController.exportExercises()
+  override def exportExesRoute: Call = controllers.exes.routes.SpreadController.adminExportExercises()
 
-  override def exportExesAsFileRoute: Call = controllers.exes.routes.SpreadController.exportExercisesAsFile()
+  override def exportExesAsFileRoute: Call = controllers.exes.routes.SpreadController.adminExportExercisesAsFile()
 
-  override def changeExStateRoute(exercise: HasBaseValues): Call = controllers.exes.routes.SpreadController.changeExState(exercise.id)
+  override def changeExStateRoute(exercise: HasBaseValues): Call = controllers.exes.routes.SpreadController.adminChangeExState(exercise.id)
 
-  override def editExerciseFormRoute(exercise: HasBaseValues): Call = controllers.exes.routes.SpreadController.editExerciseForm(exercise.id)
+  override def editExerciseFormRoute(exercise: HasBaseValues): Call = controllers.exes.routes.SpreadController.adminEditExerciseForm(exercise.id)
 
-  override def editExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.SpreadController.editExercise(exercise.id)
+  override def editExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.SpreadController.adminEditExercise(exercise.id)
 
-  override def deleteExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.SpreadController.deleteExercise(exercise.id)
+  override def deleteExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.SpreadController.adminDeleteExercise(exercise.id)
 
 }

@@ -66,15 +66,12 @@ abstract class AIdExController[E <: Exercise, R <: EvaluationResult]
 
 
   protected def renderCorrectionResult(user: User, correctionResult: CompleteResult[R]): Html =
-    views.html.core.correction.render(toolObject.toolname.toUpperCase, correctionResult, renderResult(correctionResult),
-      user, controllers.routes.Application.index())
+    views.html.core.correction.render(correctionResult, renderResult(correctionResult), user, toolObject)
 
   protected def correctEx(sol: SolutionType, exercise: CompEx, user: User): Try[CompleteResult[R]]
 
-  protected def renderExercise(user: User, exercise: CompEx): Html = new Html("")
+  protected def renderExercise(user: User, exercise: CompEx): Html
 
-  protected def renderExesListRest: Html //= new Html("")
-
-  protected def renderResult(correctionResult: CompleteResult[R]): Html = new Html("")
+  protected def renderResult(correctionResult: CompleteResult[R]): Html
 
 }

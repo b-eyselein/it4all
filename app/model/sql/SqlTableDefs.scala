@@ -1,15 +1,12 @@
 package model.sql
 
 import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty}
-import controllers.core.BaseExerciseController._
 import model.Enums.ExerciseState
 import model.core.ExerciseCollection
 import model.sql.SqlConsts._
 import model.sql.SqlEnums.{SqlExTag, SqlExerciseType}
 import model.{BaseValues, CompleteEx, Exercise, TableDefs}
 import play.api.db.slick.HasDatabaseConfigProvider
-import play.api.libs.functional.syntax.toFunctionalBuilderOps
-import play.api.libs.json.{JsPath, Reads}
 import slick.jdbc.JdbcProfile
 
 case class SqlScenarioCompleteEx(ex: SqlScenario) extends CompleteEx[SqlScenario] {

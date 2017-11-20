@@ -1,5 +1,5 @@
 @import model._
-@import model.core.CoreConsts._
+@import model.core.CoreConsts
 
 @(user: User, toolObject: model.core.tools.ExToolObject, exerciseOpt: Option[CompleteEx[_]], renderedRest: Html)
 
@@ -20,27 +20,27 @@
 
                 <div class="form-group row">
                     <div class="col-sm-6">
-                        <label for="@ID_NAME">ID:</label>
-                        <input type="number" class="form-control" name="@ID_NAME" id="@ID_NAME"
-                        @exerciseOpt.map("value=\"" + _.ex.id + "\" readonly").getOrElse("") required>
+                        <label for="@CoreConsts.ID_NAME">ID:</label>
+                        <input type="number" class="form-control from-control-static" name="@CoreConsts.ID_NAME" id="@CoreConsts.ID_NAME" required
+                        @Html(exerciseOpt.map(ex => s"""value="${ex.ex.id}" readonly""").getOrElse(""))>
                     </div>
                     <div class="col-sm-6">
-                        <label for="@AUTHOR_NAME">Autor:</label>
-                        <input class="form-control" name="@AUTHOR_NAME" id="@AUTHOR_NAME" value="@user.username"
+                        <label for="@CoreConsts.AUTHOR_NAME">Autor:</label>
+                        <input class="form-control" name="@CoreConsts.AUTHOR_NAME" id="@CoreConsts.AUTHOR_NAME" value="@user.username"
                         title="Dieser Wert kann nicht geändert werden." readonly required>
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <div class="col-sm-6">
-                        <label for="@TITLE_NAME">Titel:</label>
-                        <input class="form-control" name="@TITLE_NAME" id="@TITLE_NAME"
-                        @Html(exerciseOpt.map("value=\"" + _.ex.title + "\"").getOrElse("")) required>
+                        <label for="@CoreConsts.TITLE_NAME">Titel:</label>
+                        <input class="form-control" name="@CoreConsts.TITLE_NAME" id="@CoreConsts.TITLE_NAME" required
+                        @Html(exerciseOpt.map(ex => s"""value="${ex.ex.title}"""").getOrElse(""))>
                     </div>
                     <div class="col-sm-6">
-                        <label for="@STATE_NAME">Status:</label>
+                        <label for="@CoreConsts.STATE_NAME">Status:</label>
                         <div >
-                            <select class="form-control" name="@STATE_NAME" id="@STATE_NAME" required>
+                            <select class="form-control" name="@CoreConsts.STATE_NAME" id="@CoreConsts.STATE_NAME" required>
                             @for(state <- model.Enums.ExerciseState.values) {
                                 <option @state.isSelected(exerciseOpt.map(_.ex.state).getOrElse(model.Enums.ExerciseState.CREATED))>@state </option>
                             }
@@ -50,8 +50,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="@TEXT_NAME">Text:</label>
-                    <textarea class="form-control" rows="5" name="@TEXT_NAME" id="@TEXT_NAME" required>@exerciseOpt.map(_.ex.text).getOrElse("")</textarea>
+                    <label for="@CoreConsts.TEXT_NAME">Text:</label>
+                    <textarea class="form-control" rows="5" name="@CoreConsts.TEXT_NAME" id="@CoreConsts.TEXT_NAME" required>@exerciseOpt.map(_.ex.text).getOrElse("")</textarea>
                 </div>
 
             </fieldset>

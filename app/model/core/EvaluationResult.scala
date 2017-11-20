@@ -1,29 +1,34 @@
 package model.core
 
 import model.Enums.SuccessType
+import model.core.EvaluationResult._
 import play.twirl.api.{Html, HtmlFormat}
 
-class EvaluationResult(val success: SuccessType = SuccessType.NONE) {
-  val getBSClass: String = success.color
+trait EvaluationResult {
 
-  val getGlyphicon: String = success match {
-    case SuccessType.COMPLETE                     => "glyphicon glyphicon-ok"
-    case SuccessType.PARTIALLY                    => "glyphicon glyphicon-question-sign"
-    case (SuccessType.NONE | SuccessType.FAILURE) => "glyphicon glyphicon-remove"
-  }
+  val success: SuccessType
 
-  val getPoints: Int = success.points
+  def getBSClass: String = success.color
 
-  val isSuccessful: Boolean = success == SuccessType.COMPLETE
+  def getGlyphicon: String = success.glyphicon
+
+  def getPoints: Int = success.points
+
+  def isSuccessful: Boolean = success == SuccessType.COMPLETE
+
 }
 
-class CompleteResult[E <: EvaluationResult](val learnerSolution: String, val results: Seq[E])
-  extends EvaluationResult(CompleteResult.analyzeResults(results)) {
+class CompleteResult[E <: EvaluationResult](val learnerSolution: String, val results: Seq[E]) extends EvaluationResult {
+
+  override val success: SuccessType = SuccessType.ofBool(allResultsSuccessful(results))
 
   def renderLearnerSolution = new Html(s"<pre>${HtmlFormat.escape(learnerSolution)}</pre>")
 }
 
 object EvaluationResult {
+
+  def notAllResultsSuccessful[T <: EvaluationResult](results: Seq[T]): Boolean = results.exists(!_.isSuccessful)
+
   def allResultsSuccessful[T <: EvaluationResult](results: Seq[T]): Boolean = results.forall(_.isSuccessful)
 
   def concatCodeElements(elements: List[String]): String = elements match {
@@ -35,10 +40,9 @@ object EvaluationResult {
     case Nil => "<ul/>"
     case els => s"<ul>${els.map(el => s"<li>$el</li>")}</ul>".mkString
   }
-}
 
-object CompleteResult {
-  def analyzeResults[T <: EvaluationResult](results: Seq[T]): SuccessType =
-    if (EvaluationResult.allResultsSuccessful(results)) SuccessType.NONE
-    else SuccessType.COMPLETE
+  def asMsg(successType: SuccessType, msg: String): String = s"""<p><span class="${successType.glyphicon}"></span> $msg</p>"""
+
+  def asMsg(success: Boolean, msg: String): String = s"""<p><span class="glyphicon glyphicon-${if (success) "ok" else "remove"}"></span> $msg</p>"""
+
 }

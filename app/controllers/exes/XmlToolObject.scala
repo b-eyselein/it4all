@@ -23,22 +23,22 @@ object XmlToolObject extends IdExToolObject("xml", "Xml", ToolState.LIVE) {
 
   override def adminIndexRoute: Call = controllers.exes.routes.XmlController.adminIndex()
 
-  override def adminExesListRoute: Call = controllers.exes.routes.XmlController.exercises()
+  override def adminExesListRoute: Call = controllers.exes.routes.XmlController.adminExerciseList()
 
-  override def newExFormRoute: Call = controllers.exes.routes.XmlController.newExerciseForm()
+  override def newExFormRoute: Call = controllers.exes.routes.XmlController.adminNewExerciseForm()
 
-  override def importExesRoute: Call = controllers.exes.routes.XmlController.importExercises()
+  override def importExesRoute: Call = controllers.exes.routes.XmlController.adminImportExercises()
 
-  override def exportExesRoute: Call = controllers.exes.routes.XmlController.exportExercises()
+  override def exportExesRoute: Call = controllers.exes.routes.XmlController.adminExportExercises()
 
-  override def exportExesAsFileRoute: Call = controllers.exes.routes.XmlController.exportExercisesAsFile()
+  override def exportExesAsFileRoute: Call = controllers.exes.routes.XmlController.adminExportExercisesAsFile()
 
-  override def changeExStateRoute(exercise: HasBaseValues): Call = controllers.exes.routes.XmlController.changeExState(exercise.id)
+  override def changeExStateRoute(exercise: HasBaseValues): Call = controllers.exes.routes.XmlController.adminChangeExState(exercise.id)
 
-  override def editExerciseFormRoute(exercise: HasBaseValues): Call = controllers.exes.routes.XmlController.editExerciseForm(exercise.id)
+  override def editExerciseFormRoute(exercise: HasBaseValues): Call = controllers.exes.routes.XmlController.adminEditExerciseForm(exercise.id)
 
-  override def editExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.XmlController.editExercise(exercise.id)
+  override def editExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.XmlController.adminEditExercise(exercise.id)
 
-  override def deleteExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.XmlController.deleteExercise(exercise.id)
+  override def deleteExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.routes.XmlController.adminDeleteExercise(exercise.id)
 
 }

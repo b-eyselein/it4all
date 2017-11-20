@@ -1,6 +1,6 @@
-@import model.essentials.BooleanQuestion
-@import model.essentials.CreationQuestion
-@(user: model.User, question: CreationQuestion)
+@import model.essentials.EssentialsConsts
+
+@(user: model.User, question: model.essentials.CreationQuestion)
 
 @scripts = {
     <script type="text/javascript" src="@controllers.routes.Assets.versioned("javascripts/bool.js")"></script>
@@ -28,7 +28,7 @@
                                     @for(variable <- question.variables) {
                                         <th class="text-center">@variable</th>
                                     }
-                                    <th class="text-center">@BooleanQuestion.SOLUTION_VARIABLE</th>
+                                    <th class="text-center">@EssentialsConsts.SolVariable</th>
                                     <th class="text-center" id="learnerFormula">Ihre L&ouml;sung</th>
                                 </tr>
                             </thead>
@@ -38,7 +38,7 @@
                                     @for(variable <- question.variables) {
                                         <td class="text-center">@assignment.asChar(variable)</td>
                                     }
-                                <td class="text-center">@assignment.asChar(model.essentials.BooleanQuestion.SOLUTION_VARIABLE)</td>
+                                <td class="text-center">@assignment.asChar(model.essentials.EssentialsConsts.SolVariable)</td>
                                 <td class="text-center" id="@assignment.toString()">--</td>
                                 }
                             </tbody>
@@ -48,7 +48,7 @@
 
                 <form class="form-horizontal" action="@controllers.exes.routes.EssentialsController.checkBoolCreationSolution()" method="post">
                     <div class="form-group">
-                        <label class="control-label col-xs-1" for="learnerSolution">@model.essentials.BooleanQuestion.SOLUTION_VARIABLE
+                        <label class="control-label col-xs-1" for="learnerSolution">@model.essentials.EssentialsConsts.SolVariable
                             = </label>
                         <div class="col-xs-11">
                             <input class="form-control" name="learnerSolution" id="learnerSolution" placeholder="Ihre L&ouml;sung"
