@@ -23,7 +23,7 @@
                     <div class="col-md-1">@for(tag <- ex.tags) {
                         @tag.render
                     }</div>
-                    <div class="col-md-1"><a href="@controllers.exes.routes.SqlController.exercise(ex.id)" class="btn btn-default btn-block">@ex.id</a></div>
+                    <div class="col-md-1"><a href="@controllers.exCollections.routes.SqlController.exercise(ex.id)" class="btn btn-default btn-block">@ex.id</a></div>
                     <div class="col-md-10">@ex.text</div>
                 </div>
 
@@ -32,22 +32,22 @@
 
             <div class="text-center">
                 <ul class="pagination text">
-                    <li><a href="@controllers.exes.routes.SqlController.filteredScenario(scenario.id, exType.toString)"
+                    <li><a href="@controllers.exCollections.routes.SqlController.filteredScenario(scenario.id, exType.toString)"
                         @if(currentSite <= 1) {
                             onclick="return false" class="btn disabled" }>&lt;&lt;</a></li>
-                    <li><a href="@controllers.exes.routes.SqlController.filteredScenario(scenario.id, exType.toString, currentSite - 1)"
+                    <li><a href="@controllers.exCollections.routes.SqlController.filteredScenario(scenario.id, exType.toString, currentSite - 1)"
                         @if(currentSite <= 1) {
                             onclick="return false" class="btn disabled" }>&lt;</a></li>
 
                     @for(site <- 1 to numOfSites) {
                         <li @if(site == currentSite) {
-                            class="active" }><a href="@controllers.exes.routes.SqlController.filteredScenario(scenario.id, exType.toString, site)">@site</a></li>
+                            class="active" }><a href="@controllers.exCollections.routes.SqlController.filteredScenario(scenario.id, exType.toString, site)">@site</a></li>
                     }
 
-                    <li><a href="@controllers.exes.routes.SqlController.filteredScenario(scenario.id, exType.toString, currentSite + 1)"
+                    <li><a href="@controllers.exCollections.routes.SqlController.filteredScenario(scenario.id, exType.toString, currentSite + 1)"
                         @if(currentSite >= numOfSites) {
                             onclick="return false" class="btn disabled" }>&gt;</a></li>
-                    <li><a href="@controllers.exes.routes.SqlController.filteredScenario(scenario.id, exType.toString, numOfSites)"
+                    <li><a href="@controllers.exCollections.routes.SqlController.filteredScenario(scenario.id, exType.toString, numOfSites)"
                         @if(currentSite >= numOfSites) {
                             onclick="return false" class="btn disabled" }>&gt;&gt;</a></li>
                 </ul>

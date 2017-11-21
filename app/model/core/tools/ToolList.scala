@@ -6,11 +6,15 @@ object ToolList {
 
   implicit val toolObjOrdering: Ordering[ToolObject] = Ordering.by(_.toolname)
 
-  var allTools: mutable.SortedSet[ToolObject] = mutable.SortedSet.empty
+  private var allTools: mutable.ListBuffer[ToolObject] = mutable.ListBuffer.empty
+
+  def +=(toolObject: ToolObject): Unit = allTools += toolObject
+
+  def allToolObjects: Seq[ToolObject] = allTools.sortBy(_.toolname)
 
   lazy val idExTools: Seq[ExToolObject] = allTools.flatMap {
     case toolObj: ExToolObject => Some(toolObj)
     case _                     => None
-  }.toSeq.sortBy(_.toolname)
+  }.sortBy(_.toolname)
 
 }

@@ -3,58 +3,63 @@ package model.core.tools
 import java.nio.file.{Path, Paths}
 
 import model.Enums.ToolState
-import model.HasBaseValues
+import model.core.CoreConsts._
+import model.core.FileUtils
+import model.{CompleteEx, Consts, HasBaseValues}
 import play.api.mvc.Call
 
 case class ExerciseOptions(tool: String, aceMode: String, minLines: Int, maxLines: Int, updatePrev: Boolean)
 
-abstract sealed class ToolObject(val exType: String, val toolname: String, val state: ToolState) {
+trait ToolObject {
 
-  ToolList.allTools += this
+  val hasTags : Boolean
+  val toolname: String
+  val exType  : String
+  val consts  : Consts
+
+  val toolState: ToolState = ToolState.LIVE
+
+  ToolList += this
 
   def indexCall: Call
 
 }
 
-// Random ex: Bool, Nary, ...
 
-abstract class RandomExToolObject(e: String, t: String, s: ToolState) extends ToolObject(e, t, s)
-
-// Exercises with single id: xml, spread, mindmap, ...
-
-abstract class ExToolObject(e: String, t: String, s: ToolState, val pluralName: String)
-  extends ToolObject(e, t, s) {
+trait ExToolObject extends ToolObject with FileUtils {
 
   // Methods for files...
+  // Important: exType is initialized later ...
+
+  type CompEx <: CompleteEx[_]
+
+  val pluralName: String = "Aufgaben"
 
   val rootDir: String = "data"
 
-  val SAMPLE_SUB_DIRECTORY    = "samples"
-  val SOLUTIONS_SUB_DIRECTORY = "solutions"
+  val resourcesFolder: Path = Paths.get("conf", "resources")
 
-  val resourcesFolder: Path = Paths.get("conf", "resources", exType)
+  lazy val exerciseResourcesFolder: Path = resourcesFolder / exType
 
-  val sampleDir: Path = Paths.get(rootDir, exType, SAMPLE_SUB_DIRECTORY)
+  lazy val exerciseRootDir: Path = Paths.get(rootDir, exType)
 
-  val solutionDir: Path = Paths.get(rootDir, exType, SOLUTIONS_SUB_DIRECTORY)
+  lazy val sampleDir: Path = exerciseRootDir / SAMPLE_SUB_DIRECTORY
 
-  def solDirForUser(username: String): Path = Paths.get(solutionDir.toString, username)
+  lazy val solutionDir: Path = exerciseRootDir / SOLUTIONS_SUB_DIRECTORY
 
-  def getSampleDirForExercise(exerciseType: String, exercise: HasBaseValues): Path =
-    Paths.get(sampleDir.toString, String.valueOf(exercise.id))
+  def solDirForUser(username: String): Path = solutionDir / username
 
-  def getSolDirForExercise(username: String, exercise: HasBaseValues): Path =
-    Paths.get(solDirForUser(username).toString, String.valueOf(exercise.id))
+  def getSampleDirForExercise(exerciseType: String, exercise: HasBaseValues): Path = sampleDir / String.valueOf(exercise.id)
 
-  def getSolFileForExercise(username: String, ex: HasBaseValues, fileName: String, fileExt: String): Path =
-    Paths.get(getSolDirForExercise(username, ex).toString, s"$fileName.$fileExt")
+  def getSolDirForExercise(username: String, exercise: HasBaseValues): Path = solDirForUser(username) / String.valueOf(exercise.id)
+
+  def getSolFileForExercise(username: String, ex: HasBaseValues, fileName: String, fileExt: String): Path = getSolDirForExercise(username, ex) / s"$fileName.$fileExt"
 
   // User
 
-  // FIXME: only calls itself from template?
-  def exesListRoute(page: Int): Call
+  def exerciseListRoute(page: Int): Call
 
-  def exerciseRoutes(exercise: HasBaseValues): List[(Call, String)]
+  def exerciseRoutes(exercise: CompEx): List[(Call, String)]
 
   // Admin
 
@@ -72,10 +77,6 @@ abstract class ExToolObject(e: String, t: String, s: ToolState, val pluralName: 
 
   def importExesRoute: Call
 
-  //  def jsonSchemaRoute: Call
-
-  //  def uploadFileRoute: Call
-
   def changeExStateRoute(exercise: HasBaseValues): Call
 
   def editExerciseFormRoute(exercise: HasBaseValues): Call
@@ -83,29 +84,5 @@ abstract class ExToolObject(e: String, t: String, s: ToolState, val pluralName: 
   def editExerciseRoute(exercise: HasBaseValues): Call
 
   def deleteExerciseRoute(exercise: HasBaseValues): Call
-
-}
-
-abstract class IdExToolObject(e: String, t: String, s: ToolState = ToolState.ALPHA, p: String = "Aufgaben")
-  extends ExToolObject(e, t, s, p) {
-
-  def exerciseRoute(exercise: HasBaseValues): Call
-
-  override def exerciseRoutes(exercise: HasBaseValues): List[(Call, String)] = List((exerciseRoute(exercise), "Aufgabe bearbeiten"))
-
-  def correctLiveRoute(exercise: HasBaseValues): Call
-
-  def correctRoute(exercise: HasBaseValues): Call
-
-}
-
-abstract class IdPartExToolObject(e: String, t: String, s: ToolState = ToolState.ALPHA, d: String = null, p: String = "Aufgaben")
-  extends ExToolObject(e, t, s, p) {
-
-  def exerciseRoute(exercise: HasBaseValues, part: String): Call
-
-  def correctLiveRoute(exercise: HasBaseValues, part: String): Call
-
-  def correctRoute(exercise: HasBaseValues, part: String): Call
 
 }

@@ -9,7 +9,6 @@ trait Consts {
 
   val BODY_FILE_NAME = "file"
 
-
   val EX_FILE_NAME     = "exercises.json"
   val EXERCISES_NAME   = "exercises"
   val EXERCISE_ID_NAME = "exerciseId"
@@ -28,8 +27,11 @@ trait Consts {
   val PW_NAME  = "passwort"
   val PW2_NAME = "passwort_wieder"
 
-  val STATE_NAME = "status"
-  val STEP       = 10
+
+  val SAMPLE_SUB_DIRECTORY    = "samples"
+  val STATE_NAME              = "status"
+  val STEP                    = 10
+  val SOLUTIONS_SUB_DIRECTORY = "solutions"
 
 
   val TEST_COUNT_NAME = "testCount"

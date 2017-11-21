@@ -1,7 +1,9 @@
 package model.xml
 
+import controllers.idExes.XmlToolObject
 import model.Enums.ExerciseState
 import model._
+import play.api.mvc.Call
 import play.twirl.api.Html
 
 import scala.util.Try
@@ -18,7 +20,7 @@ object XmlExercise {
 
 }
 
-case class XmlExercise(bv: BaseValues, exerciseType: XmlExType, rootNode: String, refFileContent: String) extends Exercise(bv) with CompleteEx[XmlExercise] {
+case class XmlExercise(baseValues: BaseValues, exerciseType: XmlExType, rootNode: String, refFileContent: String) extends Exercise with CompleteEx[XmlExercise] {
 
   val fixedStart: String = if (exerciseType != XmlExType.XML_DTD) "" else
     s"""<?xml version="1.0" encoding="UTF-8"?>
@@ -36,6 +38,7 @@ case class XmlExercise(bv: BaseValues, exerciseType: XmlExType, rootNode: String
        |<td>TODO!</td>
      """.stripMargin)
 
+  override def exerciseRoutes: List[(Call, String)] = XmlToolObject.exerciseRoutes(this)
 }
 
 trait XmlTableDefs extends TableDefs {

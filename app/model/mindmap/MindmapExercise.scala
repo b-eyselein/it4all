@@ -1,17 +1,29 @@
 package model.mindmap
 
+import controllers.fileExes.{FileExToolObject, MindMapToolObject}
 import model.Enums.ExerciseState
-import model.{BaseValues, CompleteEx, Exercise, TableDefs}
+import model._
 import play.api.db.slick.HasDatabaseConfigProvider
-import play.twirl.api.Html
+import play.api.mvc.Call
 import slick.jdbc.JdbcProfile
 
-case class MindmapExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState) extends Exercise(BaseValues(i, ti, a, te, s)) with CompleteEx[MindmapExercise] {
+case class MindmapExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState) extends Exercise with FileCompleteEx[MindmapExercise] {
+
+  override val toolObject: FileExToolObject = MindMapToolObject
+
+  override val baseValues: BaseValues = BaseValues(i, ti, a, te, s)
 
   override val ex: MindmapExercise = this
 
-//  override def preview: Html = ???
+  override def preview = ???
 
+  override def renderListRest = ???
+
+  override def templateFilename: String = ???
+
+  override def sampleFilename: String = ???
+
+  override def exerciseRoutes: List[(Call, String)] = MindMapToolObject.exerciseRoutes(this)
 }
 
 

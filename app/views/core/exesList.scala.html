@@ -15,8 +15,10 @@
 
             <div class="row">
                 <div class="col-sm-2"><h4>Id</h4></div>
-                <div class="col-sm-2"><h4>Tags</h4></div>
-                <div class="col-sm-3"><h4>Title</h4></div>
+                @if(toolObject.hasTags) {
+                    <div class="col-sm-2"><h4>Tags</h4></div>
+                }
+                <div class="col-sm-3"><h4>Titel</h4></div>
                 <div class="col-sm-5"><h4>Link(s)</h4></div>
             </div>
 
@@ -25,13 +27,15 @@
             @for(exercise <- exercises) {
                 <div class="row">
                     <div class="col-sm-2">@exercise.ex.id</div>
-                    <div class="col-sm-2">@for(tag <- exercise.tags) {
-                        @tag.render
-                    }</div>
+                    @if(toolObject.hasTags) {
+                        <div class="col-sm-2">@for(tag <- exercise.tags) {
+                            @tag.render
+                        }</div>
+                    }
                     <div class="col-sm-3">@exercise.ex.title</div>
                     <div class="col-sm-5">
                         <div class="btn-group btn-group-justified">
-                        @for(exRoute <- toolObject.exerciseRoutes(exercise.ex)) {
+                        @for(exRoute <- exercise.exerciseRoutes) {
                             <a href="@exRoute._1" class="btn btn-primary">@exRoute._2</a>
                         }
                         </div>
@@ -44,7 +48,7 @@
             <div class="text-center">
                 <ul class="pagination">
                 @for(i <- 1 until pages) {
-                    <li><a href="@toolObject.exesListRoute(i)">@i</a></li>
+                    <li><a href="@toolObject.exerciseListRoute(i)">@i</a></li>
                 }
                 </ul>
             </div>

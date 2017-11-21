@@ -11,7 +11,7 @@
                 <h1>Szenario &quot;@@exercise.scenario.title&quot;, Aufgabe &quot;@exercise.title&quot;</h1>
             </div>
 
-            <form action="@controllers.exes.routes.SqlController.correct(exercise.id)" method="post">
+            <form action="@controllers.exCollections.routes.SqlController.correct(exercise.id)" method="post">
                 <p>@exercise.text</p>
                 @if(exercise.hint.nonEmpty) {
                     <p>
@@ -22,7 +22,7 @@
                 <div class="btn-group btn-group-justified">
                     <div class="btn-group">
                         <button type="button" class="btn btn-default"
-                        onclick="testTheSolution('@controllers.exes.routes.SqlController.correctLive(exercise.id)')">
+                        onclick="testTheSolution('@controllers.exCollections.routes.SqlController.correctLive(exercise.id)')">
                             L&ouml;sung testen</button>
                     </div>
                     <div class="btn-group">

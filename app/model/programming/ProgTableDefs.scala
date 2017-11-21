@@ -1,8 +1,10 @@
 package model.programming
 
+import controllers.idExes.ProgToolObject
 import model.Enums.ExerciseState
 import model._
 import play.api.db.slick.HasDatabaseConfigProvider
+import play.api.mvc.Call
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
@@ -13,6 +15,9 @@ case class ProgCompleteEx(ex: ProgExercise, sampleSolution: ProgSampleSolution, 
 
   override def preview: Html = views.html.programming.progPreview.render(this)
 
+  override def renderListRest = ???
+
+  override def exerciseRoutes: List[(Call, String)] = ProgToolObject.exerciseRoutes(this)
 }
 
 case class CompleteSampleTestData(sampleTestData: SampleTestData, inputs: Seq[SampleTestDataInput])
@@ -34,7 +39,7 @@ object ProgExercise {
 
 }
 
-case class ProgExercise(bv: BaseValues, functionName: String, inputCount: Int) extends Exercise(bv)
+case class ProgExercise(baseValues: BaseValues, functionName: String, inputCount: Int) extends Exercise
 
 case class ProgSampleSolution(exerciseId: Int, language: ProgLanguage, solution: String)
 

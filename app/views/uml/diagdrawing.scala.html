@@ -95,9 +95,9 @@
 
                 <form method="post" onsubmit="return prepareFormForSubmitting();"
                     @if(getsHelp) {
-                        action="@controllers.exes.routes.UmlController.correct(exercise.ex.id, model.uml.UmlEnums.UmlExPart.DIAG_DRAWING_HELP.toString)"
+                        action="@controllers.idPartExes.routes.UmlController.correct(exercise.ex.id, model.uml.UmlEnums.UmlExPart.DIAG_DRAWING_HELP.toString)"
                     } else {
-                        action="@controllers.exes.routes.UmlController.correct(exercise.ex.id, model.uml.UmlEnums.UmlExPart.DIAG_DRAWING.toString)" }>
+                        action="@controllers.idPartExes.routes.UmlController.correct(exercise.ex.id, model.uml.UmlEnums.UmlExPart.DIAG_DRAWING.toString)" }>
                     <input type="hidden" name="@FORM_VALUE" id="@FORM_VALUE" required>
                     <button class="btn btn-primary btn-block">Aufgabe verifizieren</button>
                 </form>

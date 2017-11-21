@@ -1,6 +1,11 @@
 package model
 
+import java.nio.file.Path
+
+import controllers.fileExes.{FileExToolObject, FileType}
 import model.Enums.ExerciseState
+import model.core.FileUtils
+import play.api.mvc.Call
 import play.twirl.api.Html
 
 case class BaseValues(id: Int, title: String, author: String, text: String, state: ExerciseState)
@@ -33,22 +38,35 @@ trait ExTag {
 
 }
 
+trait Exercise extends HasBaseValues
+
 trait CompleteEx[B <: HasBaseValues] {
 
   def ex: HasBaseValues
 
-  def preview: Html = ???
+  def preview: Html
 
   def tags: List[ExTag] = List.empty
 
-  def renderListRest: Html = ???
+  def renderListRest: Html
+
+  def exerciseRoutes: List[(Call, String)]
 
 }
 
-abstract class Exercise(val baseValues: BaseValues) extends HasBaseValues {
+trait FileCompleteEx[B <: Exercise] extends CompleteEx[B] with FileUtils {
 
-  def this(i: Int, ti: String, a: String, te: String, s: ExerciseState) = this(BaseValues(i, ti, a, te, s))
+  def toolObject: FileExToolObject
 
-  def renderEditRest(isCreation: Boolean) = new Html("")
+  def templateFilename: String
+
+  def sampleFilename: String
+
+  def templateFilePath(fileEnding: String): Path = toolObject.sampleDir / (templateFilename + "." + fileEnding)
+
+  def sampleFilePath(fileEnding: String): Path = toolObject.sampleDir / (sampleFilename + "." + fileEnding)
+
+  def available(fileType: FileType): Boolean = templateFilePath(fileType.fileEnding).toFile.exists &&
+    sampleFilePath(fileType.fileEnding).toFile.exists
 
 }

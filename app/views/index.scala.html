@@ -19,7 +19,7 @@
             <hr>
 
             <h2>Verf&uuml;gbare Aufgabentypen</h2>
-            @for(tools <- model.core.tools.ToolList.allTools.grouped(3)) {
+            @for(tools <- model.core.tools.ToolList.allToolObjects.grouped(3)) {
                 <div class="row">
                 @for(tool <- tools) {
                     <div class="col-md-4">

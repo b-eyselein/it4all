@@ -1,10 +1,10 @@
 package model.spread
 
+import controllers.fileExes.{FileExToolObject, SpreadToolObject}
 import model.Enums.ExerciseState
-import model._
-import play.api.db.slick.HasDatabaseConfigProvider
-import slick.jdbc.JdbcProfile
-
+import model.{BaseValues, Exercise, FileCompleteEx, TableDefs}
+import play.api.mvc.Call
+import play.twirl.api.Html
 
 object SpreadExercise {
 
@@ -15,22 +15,29 @@ object SpreadExercise {
     new SpreadExercise(BaseValues(id, title, author, text, state), sampleFile, templateFile)
 
   def unapply(arg: SpreadExercise): Option[(Int, String, String, String, ExerciseState, String, String)] =
-    Some((arg.id, arg.title, arg.author, arg.text, arg.state, arg.sampleFileName, arg.templateFilename))
+    Some((arg.id, arg.title, arg.author, arg.text, arg.state, arg.sampleFilename, arg.templateFilename))
 
 }
 
-case class SpreadExercise(bv: BaseValues, sampleFileName: String, templateFilename: String) extends Exercise(bv) with CompleteEx[SpreadExercise] {
+case class SpreadExercise(baseValues: BaseValues, sampleFilename: String, templateFilename: String) extends Exercise with FileCompleteEx[SpreadExercise] {
+
+  override val toolObject: FileExToolObject = SpreadToolObject
 
   override def ex: SpreadExercise = this
 
-  //  override def preview: Html = new Html(
-  //    s"""<td>$sampleFileName</td>
+  override def preview: Html = views.html.spread.spreadPreview.render(this)
+
+  //    s"""<td>$sampleFilename</td>
   //       |<td>$templateFilename</td>""".stripMargin)
+
+  override def renderListRest: Html = ???
+
+  override def exerciseRoutes: List[(Call, String)] = SpreadToolObject.exerciseRoutes(this)
 
 }
 
 trait SpreadTableDefs extends TableDefs {
-  self: HasDatabaseConfigProvider[JdbcProfile] =>
+  self: play.api.db.slick.HasDatabaseConfigProvider[slick.jdbc.JdbcProfile] =>
 
   import profile.api._
 

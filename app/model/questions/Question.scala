@@ -1,12 +1,14 @@
 package model.questions
 
 import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty}
+import controllers.exCollections.QuestionToolObject
 import model.Enums.ExerciseState
 import model.core.ExerciseCollection
 import model.questions.QuestionConsts._
 import model.questions.QuestionEnums.{Correctness, QuestionType}
 import model.{BaseValues, CompleteEx, Exercise, TableDefs}
 import play.api.db.slick.HasDatabaseConfigProvider
+import play.api.mvc.Call
 import slick.jdbc.JdbcProfile
 
 object QuestionHelper {
@@ -16,7 +18,15 @@ object QuestionHelper {
   val MAX_ANSWERS = 8
 }
 
-case class QuizCompleteEx(ex: Quiz) extends CompleteEx[Quiz]
+case class QuizCompleteEx(ex: Quiz) extends CompleteEx[Quiz] {
+
+  override def preview = ???
+
+  override def renderListRest = ???
+
+  override def exerciseRoutes: List[(Call, String)] = QuestionToolObject.exerciseRoutes(this)
+
+}
 
 case class Quiz(i: Int, ti: String, a: String, te: String, s: ExerciseState, theme: String) extends ExerciseCollection[Question](BaseValues(i, ti, a, te, s)) {
   override def exercises: List[Question] = List.empty
@@ -24,7 +34,9 @@ case class Quiz(i: Int, ti: String, a: String, te: String, s: ExerciseState, the
 
 case class Question(i: Int, ti: String, a: String, te: String, s: ExerciseState,
                     @JsonProperty(value = "exerciseType", required = true) questionType: QuestionType)
-  extends Exercise(BaseValues(i, ti, a, te, s)) {
+  extends Exercise {
+
+  override val baseValues = BaseValues(i, ti, a, te, s)
 
   def answers: List[Answer] = List.empty
 

@@ -1,12 +1,18 @@
 package model.blanks
 
+import controllers.idExes.BlanksToolObject
 import model.Enums.{ExerciseState, SuccessType}
 import model.{BaseValues, CompleteEx, Exercise, TableDefs}
 import play.api.db.slick.HasDatabaseConfigProvider
+import play.api.mvc.Call
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
-case class BlanksExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState) extends Exercise(BaseValues(i, ti, a, te, s)) with CompleteEx[BlanksExercise] {
+case class BlanksExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState) extends Exercise with CompleteEx[BlanksExercise] {
+
+  override val baseValues = BaseValues(i, ti, a, te, s)
+
+  override val ex: BlanksExercise = this
 
   val objects: List[BlankObject] = List(
     BlankObject(1,
@@ -21,8 +27,11 @@ case class BlanksExercise(i: Int, ti: String, a: String, te: String, s: Exercise
 
   def render = new Html(objects.map(_.render) mkString "\n")
 
-  override val ex: BlanksExercise = this
+  override def preview = ???
 
+  override def renderListRest = ???
+
+  override def exerciseRoutes: List[(Call, String)] = BlanksToolObject.exerciseRoutes(this)
 }
 
 trait BlanksTableDefs extends TableDefs {

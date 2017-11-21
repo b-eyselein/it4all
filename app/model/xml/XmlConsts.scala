@@ -15,4 +15,6 @@ object XmlConsts extends Consts {
       |
       |]>""".stripMargin
 
+  val XML_FILE_ENDING = "xml"
+
 }

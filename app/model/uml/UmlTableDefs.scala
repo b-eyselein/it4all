@@ -1,5 +1,6 @@
 package model.uml
 
+import controllers.idPartExes.UmlToolObject
 import model.Enums.ExerciseState
 import model.uml.UmlConsts._
 import model.uml.UmlEnums._
@@ -7,6 +8,7 @@ import model.uml.UmlExYamlProtocol.UmlSolutionYamlFormat
 import model.{BaseValues, CompleteEx, Exercise, TableDefs}
 import net.jcazevedo.moultingyaml._
 import play.api.db.slick.HasDatabaseConfigProvider
+import play.api.mvc.Call
 import play.twirl.api.{Html, HtmlFormat}
 import slick.jdbc.JdbcProfile
 
@@ -42,6 +44,9 @@ case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping], ignoreWords
     } mkString ","
   }
 
+  override def renderListRest = ???
+
+  override def exerciseRoutes: List[(Call, String)] = UmlToolObject.exerciseRoutes(this)
 }
 
 case class UmlSolution(classes: Seq[UmlCompleteClass], associations: Seq[UmlAssociation], implementations: Seq[UmlImplementation]) {
@@ -74,7 +79,7 @@ object UmlExercise {
 
 }
 
-case class UmlExercise(bv: BaseValues, classSelText: String, diagDrawText: String) extends Exercise(bv)
+case class UmlExercise(baseValues: BaseValues, classSelText: String, diagDrawText: String) extends Exercise
 
 
 case class UmlMapping(exerciseId: Int, key: String, value: String)

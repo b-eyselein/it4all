@@ -1,10 +1,12 @@
 package model.web
 
+import controllers.idPartExes.WebToolObject
 import model.Enums.ExerciseState
 import model._
 import model.web.WebConsts.{HTML_TYPE, JS_TYPE}
 import org.openqa.selenium.{By, SearchContext}
 import play.api.db.slick.HasDatabaseConfigProvider
+import play.api.mvc.Call
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
@@ -22,6 +24,7 @@ case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTa
     s"""<td>${htmlTasks.size} / ${jsTasks.size}</td>
        |<td>ToDo / ToDo</td>""".stripMargin)
 
+  override def exerciseRoutes: List[(Call, String)] = WebToolObject.exerciseRoutes(this)
 }
 
 trait WebCompleteTask {
@@ -59,7 +62,7 @@ object WebExercise {
 
 }
 
-case class WebExercise(bv: BaseValues, htmlText: Option[String], hasHtmlPart: Boolean, jsText: Option[String], hasJsPart: Boolean) extends Exercise(bv)
+case class WebExercise(baseValues: BaseValues, htmlText: Option[String], hasHtmlPart: Boolean, jsText: Option[String], hasJsPart: Boolean) extends Exercise
 
 trait WebTask {
   val id        : Int

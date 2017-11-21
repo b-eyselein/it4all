@@ -15,6 +15,11 @@ case class SqlScenarioCompleteEx(ex: SqlScenario) extends CompleteEx[SqlScenario
   //    if (sqlTags.isEmpty) List.empty
   //    else sqlTags.split(SqlExerciseHelper.SampleJoinChar).map(SqlExTag.valueOf).toList
   //  }
+  override def preview = ???
+
+  override def renderListRest = ???
+
+  override def exerciseRoutes = ???
 
 }
 
@@ -48,7 +53,9 @@ object SqlExerciseHelper {
 }
 
 case class SqlExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState, exerciseType: SqlExerciseType, sqlTags: String, hint: String)
-  extends Exercise(i, ti, a, te, s) {
+  extends Exercise {
+
+  override val baseValues = BaseValues(i, ti, a, te, s)
 
   def scenario: SqlScenario = null
 

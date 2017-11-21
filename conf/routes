@@ -16,358 +16,391 @@ GET           /admin                                    controllers.AdminControl
 GET           /users                                    controllers.AdminController.users
 PUT           /users/changeRole/:user                   controllers.AdminController.changeRole(user: String)
 
+
+
 # Essentials - Nary, Boolean, Ebnf?
-GET           /essentials                               controllers.exes.EssentialsController.index
+GET           /essentials                               controllers.randomExes.EssentialsController.index
 
-GET           /essentials/nary/conv                     controllers.exes.EssentialsController.newNaryConversionQuestion(fromBase: String, toBase: String)
-POST          /essentials/nary/conv                     controllers.exes.EssentialsController.checkNaryConversionSolution(fromBase: String, toBase: String)
+GET           /essentials/nary/conv                     controllers.randomExes.EssentialsController.newNaryConversionQuestion(fromBase: String, toBase: String)
+POST          /essentials/nary/conv                     controllers.randomExes.EssentialsController.checkNaryConversionSolution(fromBase: String, toBase: String)
 
-GET           /essentials/nary/add                      controllers.exes.EssentialsController.newNaryAdditionQuestion(base: String)
-POST          /essentials/nary/add                      controllers.exes.EssentialsController.checkNaryAdditionSolution(base: String)
+GET           /essentials/nary/add                      controllers.randomExes.EssentialsController.newNaryAdditionQuestion(base: String)
+POST          /essentials/nary/add                      controllers.randomExes.EssentialsController.checkNaryAdditionSolution(base: String)
 
-GET           /essentials/nary/twocomp/:verb            controllers.exes.EssentialsController.newNaryTwoComplementQuestion(verb: Boolean)
-POST          /essentials/nary/twocomp/:verb            controllers.exes.EssentialsController.checkNaryTwoComplementSolution(verb: Boolean)
+GET           /essentials/nary/twocomp/:verb            controllers.randomExes.EssentialsController.newNaryTwoComplementQuestion(verb: Boolean)
+POST          /essentials/nary/twocomp/:verb            controllers.randomExes.EssentialsController.checkNaryTwoComplementSolution(verb: Boolean)
 
-GET           /essentials/bool/fillout                  controllers.exes.EssentialsController.newBoolFilloutQuestion
-POST          /essentials/bool/fillout                  controllers.exes.EssentialsController.checkBoolFilloutSolution
+GET           /essentials/bool/fillout                  controllers.randomExes.EssentialsController.newBoolFilloutQuestion
+POST          /essentials/bool/fillout                  controllers.randomExes.EssentialsController.checkBoolFilloutSolution
 
-GET           /essentials/bool/creation                 controllers.exes.EssentialsController.newBoolCreationQuestion
-PUT           /essentials/bool/creation                 controllers.exes.EssentialsController.checkBoolCreationSolutionLive
-POST          /essentials/bool/creation                 controllers.exes.EssentialsController.checkBoolCreationSolution
+GET           /essentials/bool/creation                 controllers.randomExes.EssentialsController.newBoolCreationQuestion
+PUT           /essentials/bool/creation                 controllers.randomExes.EssentialsController.checkBoolCreationSolutionLive
+POST          /essentials/bool/creation                 controllers.randomExes.EssentialsController.checkBoolCreationSolution
 # Essentials - End
 
-# Mindmap - Anfang
-GET           /mindmap/admin                            controllers.exes.MindmapController.adminIndex
 
-GET           /mindmap/import                           controllers.exes.MindmapController.adminImportExercises
-GET           /mindmap/export                           controllers.exes.MindmapController.adminExportExercises
-GET           /mindmap/exportFile                       controllers.exes.MindmapController.adminExportExercisesAsFile
-
-GET           /mindmap                                  controllers.exes.MindmapController.index(page: Int ?= 1)
-
-POST          /mindmap/upload                           controllers.exes.MindmapController.upload
-
-# Mindmap - Ende
 
 # XML - Anfang
-GET           /xml/admin                                controllers.exes.XmlController.adminIndex
+GET           /xml/admin                                controllers.idExes.XmlController.adminIndex
 
-GET           /xml/admin/import                         controllers.exes.XmlController.adminImportExercises
-GET           /xml/admin/export                         controllers.exes.XmlController.adminExportExercises
-GET           /xml/admin/exportFile                     controllers.exes.XmlController.adminExportExercisesAsFile
-#POST          /xml/upload                               controllers.exes.XmlController.uploadFile
+GET           /xml/admin/import                         controllers.idExes.XmlController.adminImportExercises
+GET           /xml/admin/export                         controllers.idExes.XmlController.adminExportExercises
+GET           /xml/admin/exportFile                     controllers.idExes.XmlController.adminExportExercisesAsFile
 
-GET           /xml/admin/exerciseList                   controllers.exes.XmlController.adminExerciseList
+GET           /xml/admin/exerciseList                   controllers.idExes.XmlController.adminExerciseList
 
-GET           /xml/admin/exerciseList/:id               controllers.exes.XmlController.adminEditExerciseForm(id: Int)
-PUT           /xml/admin/exerciseList/:id               controllers.exes.XmlController.adminEditExercise(id: Int)
-POST          /xml/admin/exerciseList/:id               controllers.exes.XmlController.adminEditExercise(id: Int)
-DELETE        /xml/admin/exerciseList/:id               controllers.exes.XmlController.adminDeleteExercise(id: Int)
+GET           /xml/admin/exerciseList/:id               controllers.idExes.XmlController.adminEditExerciseForm(id: Int)
+PUT           /xml/admin/exerciseList/:id               controllers.idExes.XmlController.adminEditExercise(id: Int)
+POST          /xml/admin/exerciseList/:id               controllers.idExes.XmlController.adminEditExercise(id: Int)
+DELETE        /xml/admin/exerciseList/:id               controllers.idExes.XmlController.adminDeleteExercise(id: Int)
 
-PUT           /xml/admin/exercise/:id/state             controllers.exes.XmlController.adminChangeExState(id: Int)
+PUT           /xml/admin/exercise/:id/state             controllers.idExes.XmlController.adminChangeExState(id: Int)
 
-GET           /xml/admin/newExForm                      controllers.exes.XmlController.adminNewExerciseForm
-
-GET           /xml/                                     controllers.exes.XmlController.index(page: Int ?= 1)
-
-GET           /xml/solve/:id                            controllers.exes.XmlController.exercise(id: Int)
-PUT           /xml/solve/:id                            controllers.exes.XmlController.correctLive(id: Int)
-POST          /xml/solve/:id                            controllers.exes.XmlController.correct(id: Int)
+GET           /xml/admin/newExForm                      controllers.idExes.XmlController.adminNewExerciseForm
 
 
-GET           /xml/playground                           controllers.exes.XmlController.playground
-PUT           /xml/playground                           controllers.exes.XmlController.playgroundCorrection
+GET           /xml/                                     controllers.idExes.XmlController.index
+GET           /xml/exercises                            controllers.idExes.XmlController.exerciseList(page: Int ?= 1)
+
+GET           /xml/solve/:id                            controllers.idExes.XmlController.exercise(id: Int)
+PUT           /xml/solve/:id                            controllers.idExes.XmlController.correctLive(id: Int)
+POST          /xml/solve/:id                            controllers.idExes.XmlController.correct(id: Int)
+
+
+GET           /xml/playground                           controllers.idExes.XmlController.playground
+PUT           /xml/playground                           controllers.idExes.XmlController.playgroundCorrection
 # XML - Ende
-
-# Question - Anfang
-# Controlleristrator
-GET           /question/admin                           controllers.exes.QuestionController.adminIndex
-
-GET           /question/import                          controllers.exes.QuestionController.adminImportExercises
-GET           /question/export                          controllers.exes.QuestionController.adminExportExercises
-GET           /question/export                          controllers.exes.QuestionController.adminExportExercisesAsFile
-
-GET           /question/questions                       controllers.exes.QuestionController.adminExerciseList
-
-GET           /question/freetext/grade                  controllers.exes.QuestionController.gradeFreetextAnswers
-GET           /question/freetext/grade/:id/:user        controllers.exes.QuestionController.gradeFreetextAnswer(id: Int, user: String)
-
-GET           /question/notAssigned                     controllers.exes.QuestionController.notAssignedQuestions
-GET           /question/assign                          controllers.exes.QuestionController.assignQuestionsForm
-POST          /question/assign                          controllers.exes.QuestionController.assignQuestions
-
-GET           /question/assign/:id                      controllers.exes.QuestionController.assignQuestionsSingleForm(id: Int)
-
-GET           /question/admin/exerciseList/:id          controllers.exes.QuestionController.adminEditExerciseForm(id: Int)
-PUT           /question/admin/exerciseList/:id          controllers.exes.QuestionController.adminEditExercise(id: Int)
-POST          /question/admin/exerciseList/:id          controllers.exes.QuestionController.adminEditExercise(id: Int)
-DELETE        /question/admin/exerciseList/:id          controllers.exes.QuestionController.adminDeleteExercise(id: Int)
-
-PUT           /question/exercise/:id/state              controllers.exes.QuestionController.adminChangeExState(id: Int)
-
-GET           /question/newQuestionForm                 controllers.exes.QuestionController.adminNewExerciseForm
-
-# All
-GET           /question/                                controllers.exes.QuestionController.index(start: Int ?= 1)
-
-
-GET           /question/new/:isFreetext                 controllers.exes.QuestionController.newQuestionForm(isFreetext: Boolean)
-POST          /question/new/:isFreetext                 controllers.exes.QuestionController.newQuestion(isFreetext: Boolean)
-
-GET           /question/edit/:id                        controllers.exes.QuestionController.editQuestionForm(id: Int)
-POST          /question/edit/:id                        controllers.exes.QuestionController.editQuestion(id: Int)
-
-GET           /question/question/:id                    controllers.exes.QuestionController.exercise(id: Int)
-POST          /question/question/:id                    controllers.exes.QuestionController.questionResult( id: Int)
-
-
-GET           /question/quizAdmin                       controllers.exes.QuestionController.adminIndex
-
-#GET          /question/quizzes/export                  controllers.exes.QuestionController.exportExerciseCollections
-#GET          /question/quizzes/import                  controllers.exes.QuestionController.importExerciseCollections
-#POST          /question/quizzes/upload                  controllers.exes.QuestionController.uploadFile
-
-GET           /question/quizzes                         controllers.exes.QuestionController.quizzes
-# exerciseCollections
-POST          /question/quizzes                         controllers.exes.QuestionController.adminIndex
-#newExercise
-
-#GET           /question/newQuizForm                     controllers.exes.QuestionController.newExerciseCollectionForm
-
-
-# Quizzes
-
-GET           /question/quiz/:id                        controllers.exes.QuestionController.quiz(id: Int)
-
-GET           /question/start/:quizId                   controllers.exes.QuestionController.quizStart(quizId: Int)
-GET           /question/:quizId/:questionId             controllers.exes.QuestionController.quizQuestion(quizId: Int, questionId: Int)
-POST          /question/:quizId/:questionId             controllers.exes.QuestionController.quizCorrection(quizId: Int, questionId: Int)
-# Question - Ende
 
 # Prog - Anfang
 # Controlleristrator
-GET           /prog/admin                               controllers.exes.ProgController.adminIndex
+GET           /prog/admin                               controllers.idExes.ProgController.adminIndex
 
+GET           /prog/import                              controllers.idExes.ProgController.adminImportExercises
+GET           /prog/export                              controllers.idExes.ProgController.adminExportExercises
+GET           /prog/exportFile                          controllers.idExes.ProgController.adminExportExercisesAsFile
 
-GET           /prog/import                              controllers.exes.ProgController.adminImportExercises
-GET           /prog/export                              controllers.exes.ProgController.adminExportExercises
-GET           /prog/exportFile                          controllers.exes.ProgController.adminExportExercisesAsFile
+GET           /prog/admin/exerciseList                  controllers.idExes.ProgController.adminExerciseList
 
-GET           /prog/admin/exerciseList                  controllers.exes.ProgController.adminExerciseList
+GET           /prog/admin/exerciseList/:id              controllers.idExes.ProgController.adminEditExerciseForm(id: Int)
+PUT           /prog/admin/exerciseList/:id              controllers.idExes.ProgController.adminEditExercise(id: Int)
+POST          /prog/admin/exerciseList/:id              controllers.idExes.ProgController.adminEditExercise(id: Int)
+DELETE        /prog/admin/exerciseList/:id              controllers.idExes.ProgController.adminDeleteExercise(id: Int)
 
-GET           /prog/admin/exerciseList/:id              controllers.exes.ProgController.adminEditExerciseForm(id: Int)
-PUT           /prog/admin/exerciseList/:id              controllers.exes.ProgController.adminEditExercise(id: Int)
-POST          /prog/admin/exerciseList/:id              controllers.exes.ProgController.adminEditExercise(id: Int)
-DELETE        /prog/admin/exerciseList/:id              controllers.exes.ProgController.adminDeleteExercise(id: Int)
+PUT           /prog/exercise/:id/state                  controllers.idExes.ProgController.adminChangeExState(id: Int)
 
-PUT           /prog/exercise/:id/state                  controllers.exes.ProgController.adminChangeExState(id: Int)
-
-GET           /prog/newExForm                           controllers.exes.ProgController.adminNewExerciseForm
-
+GET           /prog/newExForm                           controllers.idExes.ProgController.adminNewExerciseForm
 
 # All
-GET           /prog/                                    controllers.exes.ProgController.index(page: Int ?= 1)
+GET           /prog/                                    controllers.idExes.ProgController.index
+GET           /prog/exercises                           controllers.idExes.ProgController.exerciseList(page: Int ?= 1)
 
-GET           /prog/testdata/:id                        controllers.exes.ProgController.testData(id: Int)
-POST          /prog/validate/:id                        controllers.exes.ProgController.validateTestData(id: Int)
-PUT           /prog/validate/:id                        controllers.exes.ProgController.validateTestDataLive(id: Int)
+GET           /prog/testdata/:id                        controllers.idExes.ProgController.testData(id: Int)
+POST          /prog/validate/:id                        controllers.idExes.ProgController.validateTestData(id: Int)
+PUT           /prog/validate/:id                        controllers.idExes.ProgController.validateTestDataLive(id: Int)
 
-GET           /prog/declaration                         controllers.exes.ProgController.getDeclaration(language: String ?= "")
+GET           /prog/declaration                         controllers.idExes.ProgController.getDeclaration(language: String ?= "")
 
-GET           /prog/exercise/:id/                       controllers.exes.ProgController.exercise(id: Int)
-PUT           /prog/exercise/:id                        controllers.exes.ProgController.correctLive(id: Int)
-POST          /prog/exercise/:id                        controllers.exes.ProgController.correct(id: Int)
+GET           /prog/exercise/:id/                       controllers.idExes.ProgController.exercise(id: Int)
+PUT           /prog/exercise/:id                        controllers.idExes.ProgController.correctLive(id: Int)
+POST          /prog/exercise/:id                        controllers.idExes.ProgController.correct(id: Int)
 # Prog - Ende
 
-# Spread - Anfang
-GET           /spread/admin                             controllers.exes.SpreadController.adminIndex
-
-GET           /spread/import                            controllers.exes.SpreadController.adminImportExercises
-GET           /spread/export                            controllers.exes.SpreadController.adminExportExercises
-GET           /spread/exportFile                        controllers.exes.SpreadController.adminExportExercisesAsFile
-#POST          /spread/upload                            controllers.exes.SpreadController.uploadFile
-
-GET           /spread/admin/exerciseList                controllers.exes.SpreadController.adminExerciseList
-
-GET           /spread/admin/exerciseList/:id            controllers.exes.SpreadController.adminEditExerciseForm(id: Int)
-PUT           /spread/admin/exerciseList/:id            controllers.exes.SpreadController.adminEditExercise(id: Int)
-POST          /spread/admin/exerciseList/:id            controllers.exes.SpreadController.adminEditExercise(id: Int)
-DELETE        /spread/admin/exerciseList/:id            controllers.exes.SpreadController.adminDeleteExercise(id: Int)
-
-PUT           /spread/exercise/:id/state                controllers.exes.SpreadController.adminChangeExState(id: Int)
-
-GET           /spread/newExForm                         controllers.exes.SpreadController.adminNewExerciseForm
-
-# User
-GET           /spread/                                  controllers.exes.SpreadController.index(page: Int ?= 1)
-
-POST          /spread/:id                               controllers.exes.SpreadController.upload(id: Int)
-GET           /spread/:id/:part                         controllers.exes.SpreadController.download(id: Int, part: String)
-GET           /spread/temp/:id/:typ                     controllers.exes.SpreadController.exercise(id: Int, typ: String)
-# Spread - Ende
-
-# Web - Anfang
-GET           /web/admin                                controllers.exes.WebController.adminIndex
-
-GET           /web/import                               controllers.exes.WebController.adminImportExercises
-GET           /web/export                               controllers.exes.WebController.adminExportExercises
-GET           /web/exportFile                           controllers.exes.WebController.adminExportExercisesAsFile
-#POST          /web/upload                               controllers.exes.WebController.uploadFile
-
-GET           /web/admin/exerciseList                   controllers.exes.WebController.adminExerciseList
-
-GET           /web/admin/exerciseList/:id               controllers.exes.WebController.adminEditExerciseForm(id: Int)
-PUT           /web/admin/exerciseList/:id               controllers.exes.WebController.adminEditExercise(id: Int)
-POST          /web/admin/exerciseList/:id               controllers.exes.WebController.adminEditExercise(id: Int)
-DELETE        /web/admin/exerciseList/:id               controllers.exes.WebController.adminDeleteExercise(id: Int)
-
-PUT           /web/exercise/:id/state                   controllers.exes.WebController.adminChangeExState(id: Int)
-
-
-GET           /web/exercises/:id/rest                   controllers.exes.WebController.exRest(id: Int)
-
-GET           /web/newExForm                            controllers.exes.WebController.adminNewExerciseForm
-
-# User
-GET           /web/                                     controllers.exes.WebController.index(page: Int ?= 1)
-
-GET           /web/playground                           controllers.exes.WebController.playground
-
-
-GET           /web/:id/:exType                          controllers.exes.WebController.exercise(id: Int, exType: String)
-
-PUT           /web/:id/:exType                          controllers.exes.WebController.correctLive(id: Int, exType: String)
-POST          /web/:id/:exType                          controllers.exes.WebController.correct(id: Int, exType: String)
-
-GET           /web/sol/:user/:id                        controllers.exes.WebController.site(user: String, id: Int)
-# Web - Ende
 
 # Ebnf - Anfang
-GET           /ebnf/admin                               controllers.exes.EbnfController.adminIndex
+GET           /ebnf/admin                               controllers.idExes.EbnfController.adminIndex
 
-GET           /ebnf/import                              controllers.exes.EbnfController.adminImportExercises
-GET           /ebnf/export                              controllers.exes.EbnfController.adminExportExercises
-GET           /ebnf/exportFile                          controllers.exes.EbnfController.adminExportExercisesAsFile
-#POST          /ebnf/upload                              controllers.exes.EbnfController.uploadFile
+GET           /ebnf/import                              controllers.idExes.EbnfController.adminImportExercises
+GET           /ebnf/export                              controllers.idExes.EbnfController.adminExportExercises
+GET           /ebnf/exportFile                          controllers.idExes.EbnfController.adminExportExercisesAsFile
+#POST          /ebnf/upload                              controllers.idExes.EbnfController.uploadFile
 
 
-GET           /ebnf/admin/exerciseList                  controllers.exes.EbnfController.adminExerciseList
+GET           /ebnf/admin/exerciseList                  controllers.idExes.EbnfController.adminExerciseList
 
-GET           /ebnf/admin/exerciseList/:id              controllers.exes.EbnfController.adminEditExerciseForm(id: Int)
-PUT           /ebnf/admin/exerciseList/:id              controllers.exes.EbnfController.adminEditExercise(id: Int)
-POST          /ebnf/admin/exerciseList/:id              controllers.exes.EbnfController.adminEditExercise(id: Int)
-DELETE        /ebnf/admin/exerciseList/:id              controllers.exes.EbnfController.adminDeleteExercise(id: Int)
+GET           /ebnf/admin/exerciseList/:id              controllers.idExes.EbnfController.adminEditExerciseForm(id: Int)
+PUT           /ebnf/admin/exerciseList/:id              controllers.idExes.EbnfController.adminEditExercise(id: Int)
+POST          /ebnf/admin/exerciseList/:id              controllers.idExes.EbnfController.adminEditExercise(id: Int)
+DELETE        /ebnf/admin/exerciseList/:id              controllers.idExes.EbnfController.adminDeleteExercise(id: Int)
 
-PUT           /ebnf/exercise/:id/state                  controllers.exes.EbnfController.adminChangeExState(id: Int)
+PUT           /ebnf/exercise/:id/state                  controllers.idExes.EbnfController.adminChangeExState(id: Int)
 
-GET           /ebnf/newExForm                           controllers.exes.EbnfController.adminNewExerciseForm
+GET           /ebnf/newExForm                           controllers.idExes.EbnfController.adminNewExerciseForm
 
 # User
-GET           /ebnf/                                    controllers.exes.EbnfController.index(page: Int ?= 1)
-GET           /ebnf/:id                                 controllers.exes.EbnfController.exercise(id: Int)
-PUT           /ebnf/:id                                 controllers.exes.EbnfController.correctLive(id: Int)
-POST          /ebnf/:id                                 controllers.exes.EbnfController.correct(id: Int)
-DELETE        /ebnf/:id                                 controllers.exes.EbnfController.adminDeleteExercise(id: Int)
+GET           /ebnf/                                    controllers.idExes.EbnfController.index
+GET           /ebnf/exercises                           controllers.idExes.EbnfController.exerciseList(page: Int ?= 1)
+
+GET           /ebnf/:id                                 controllers.idExes.EbnfController.exercise(id: Int)
+PUT           /ebnf/:id                                 controllers.idExes.EbnfController.correctLive(id: Int)
+POST          /ebnf/:id                                 controllers.idExes.EbnfController.correct(id: Int)
+DELETE        /ebnf/:id                                 controllers.idExes.EbnfController.adminDeleteExercise(id: Int)
 # Ebnf - Ende
-
-# Uml - Anfang
-# Controller
-GET           /uml/admin                                controllers.exes.UmlController.adminIndex
-
-GET           /uml/import                               controllers.exes.UmlController.adminImportExercises
-GET           /uml/export                               controllers.exes.UmlController.adminExportExercises
-GET           /uml/exportFile                           controllers.exes.UmlController.adminExportExercisesAsFile
-#POST          /uml/upload                               controllers.exes.UmlController.uploadFile
-
-GET           /uml/admin/exerciseList                   controllers.exes.UmlController.adminExerciseList
-
-GET           /uml/admin/exerciseList/:id               controllers.exes.UmlController.adminEditExerciseForm(id: Int)
-PUT           /uml/admin/exerciseList/:id               controllers.exes.UmlController.adminEditExercise(id: Int)
-POST          /uml/admin/exerciseList/:id               controllers.exes.UmlController.adminEditExercise(id: Int)
-DELETE        /uml/admin/exerciseList/:id               controllers.exes.UmlController.adminDeleteExercise(id: Int)
-
-PUT           /uml/exercise/:id/state                   controllers.exes.UmlController.adminChangeExState(id: Int)
-
-
-GET           /uml/newEx/form                           controllers.exes.UmlController.adminNewExerciseForm
-POST          /uml/newEx/text                           controllers.exes.UmlController.newExerciseStep2
-POST          /uml/newEx/solution                       controllers.exes.UmlController.newExerciseStep3
-
-PUT           /uml/newEx/checkSolution                  controllers.exes.UmlController.checkSolution
-
-# User
-GET           /uml/                                     controllers.exes.UmlController.index(page: Int ?= 1)
-
-GET           /uml/:id/:part                            controllers.exes.UmlController.exercise(id: Int, part: String)
-POST          /uml/:id/:part                            controllers.exes.UmlController.correct(id: Int, part)
-# Uml - Ende
 
 # Blanks - Anfang...
 
-GET           /blanks/admin                             controllers.exes.BlanksController.adminIndex
+GET           /blanks/admin                             controllers.idExes.BlanksController.adminIndex
 
-GET           /blanks/import                            controllers.exes.BlanksController.adminImportExercises
-GET           /blanks/export                            controllers.exes.BlanksController.adminExportExercises
-GET           /blanks/exportFile                        controllers.exes.BlanksController.adminExportExercisesAsFile
-#POST          /blanks/upload                               controllers.exes.BlanksController.uploadFile
+GET           /blanks/import                            controllers.idExes.BlanksController.adminImportExercises
+GET           /blanks/export                            controllers.idExes.BlanksController.adminExportExercises
+GET           /blanks/exportFile                        controllers.idExes.BlanksController.adminExportExercisesAsFile
+#POST          /blanks/upload                               controllers.idExes.BlanksController.uploadFile
 
-GET           /blanks/admin/exerciseList                controllers.exes.BlanksController.adminExerciseList
+GET           /blanks/admin/exerciseList                controllers.idExes.BlanksController.adminExerciseList
 
-GET           /blanks/admin/exerciseList/:id            controllers.exes.BlanksController.adminEditExerciseForm(id: Int)
-PUT           /blanks/admin/exerciseList/:id            controllers.exes.BlanksController.adminEditExercise(id: Int)
-POST          /blanks/admin/exerciseList/:id            controllers.exes.BlanksController.adminEditExercise(id: Int)
-DELETE        /blanks/admin/exerciseList/:id            controllers.exes.BlanksController.adminDeleteExercise(id: Int)
+GET           /blanks/admin/exerciseList/:id            controllers.idExes.BlanksController.adminEditExerciseForm(id: Int)
+PUT           /blanks/admin/exerciseList/:id            controllers.idExes.BlanksController.adminEditExercise(id: Int)
+POST          /blanks/admin/exerciseList/:id            controllers.idExes.BlanksController.adminEditExercise(id: Int)
+DELETE        /blanks/admin/exerciseList/:id            controllers.idExes.BlanksController.adminDeleteExercise(id: Int)
 
-PUT           /blanks/exercise/:id/state                controllers.exes.BlanksController.adminChangeExState(id: Int)
+PUT           /blanks/exercise/:id/state                controllers.idExes.BlanksController.adminChangeExState(id: Int)
 
 
-GET           /blanks/newExForm                         controllers.exes.BlanksController.adminNewExerciseForm
+GET           /blanks/newExForm                         controllers.idExes.BlanksController.adminNewExerciseForm
 
 # User
-GET           /blanks/                                  controllers.exes.BlanksController.index(page: Int ?= 1)
+GET           /blanks/                                  controllers.idExes.BlanksController.index
+GET           /blanks/exercises                         controllers.idExes.BlanksController.exerciseList(page: Int ?= 1)
 
-GET           /blanks/:id                               controllers.exes.BlanksController.exercise(id: Int)
-POST          /blanks/:id                               controllers.exes.BlanksController.correct(id: Int)
-
+GET           /blanks/:id                               controllers.idExes.BlanksController.exercise(id: Int)
+PUT           /blanks/:id                               controllers.idExes.BlanksController.correctLive(id: Int)
+POST          /blanks/:id                               controllers.idExes.BlanksController.correct(id: Int)
 # Blanks - Ende
 
 
-# Sql - Anfang
+# Spread - Anfang
+GET           /spread/admin                             controllers.fileExes.SpreadController.adminIndex
+
+GET           /spread/import                            controllers.fileExes.SpreadController.adminImportExercises
+GET           /spread/export                            controllers.fileExes.SpreadController.adminExportExercises
+GET           /spread/exportFile                        controllers.fileExes.SpreadController.adminExportExercisesAsFile
+#POST          /spread/upload                            controllers.fileExes.SpreadController.uploadFile
+
+GET           /spread/admin/exerciseList                controllers.fileExes.SpreadController.adminExerciseList
+
+GET           /spread/admin/exerciseList/:id            controllers.fileExes.SpreadController.adminEditExerciseForm(id: Int)
+PUT           /spread/admin/exerciseList/:id            controllers.fileExes.SpreadController.adminEditExercise(id: Int)
+POST          /spread/admin/exerciseList/:id            controllers.fileExes.SpreadController.adminEditExercise(id: Int)
+DELETE        /spread/admin/exerciseList/:id            controllers.fileExes.SpreadController.adminDeleteExercise(id: Int)
+
+PUT           /spread/exercise/:id/state                controllers.fileExes.SpreadController.adminChangeExState(id: Int)
+
+GET           /spread/newExForm                         controllers.fileExes.SpreadController.adminNewExerciseForm
+
+# User
+GET           /spread/                                  controllers.fileExes.SpreadController.index
+GET           /spread/exercises                         controllers.fileExes.SpreadController.exerciseList(page: Int ?= 1)
+
+GET           /spread/template/:id/:fileType            controllers.fileExes.SpreadController.downloadTemplate(id: Int, fileType: String)
+POST          /spread/:id                               controllers.fileExes.SpreadController.uploadSolution(id: Int)
+GET           /spread/:id/:part                         controllers.fileExes.SpreadController.downloadCorrected(id: Int, part: String)
+# Spread - Ende
+
+# Mindmap - Anfang
+GET           /mindmap/admin                            controllers.fileExes.MindmapController.adminIndex
+
+GET           /mindmap/admin/import                     controllers.fileExes.MindmapController.adminImportExercises
+GET           /mindmap/admin/export                     controllers.fileExes.MindmapController.adminExportExercises
+GET           /mindmap/admin/exportFile                 controllers.fileExes.MindmapController.adminExportExercisesAsFile
+
+GET           /mindmap/admin/exerciseList               controllers.fileExes.MindmapController.adminExerciseList
+
+GET           /mindmap/admin/exerciseList/:id           controllers.fileExes.MindmapController.adminEditExerciseForm(id: Int)
+PUT           /mindmap/admin/exerciseList/:id           controllers.fileExes.MindmapController.adminEditExercise(id: Int)
+POST          /mindmap/admin/exerciseList/:id           controllers.fileExes.MindmapController.adminEditExercise(id: Int)
+DELETE        /mindmap/admin/exerciseList/:id           controllers.fileExes.MindmapController.adminDeleteExercise(id: Int)
+
+PUT           /mindmap/admin/exercise/:id/state         controllers.fileExes.MindmapController.adminChangeExState(id: Int)
+
+GET           /mindmap/admin/newExForm                  controllers.fileExes.MindmapController.adminNewExerciseForm
+
+
+
+GET           /mindmap                                  controllers.fileExes.MindmapController.index
+GET           /mindmap/exercises                        controllers.fileExes.MindmapController.exerciseList(page: Int ?= 1)
+
+GET           /mindmap/template/:id/:fileType           controllers.fileExes.MindmapController.downloadTemplate(id: Int, fileType: String)
+POST          /mindmap/:id                              controllers.fileExes.MindmapController.uploadSolution(id: Int)
+GET           /mindmap/:id/:fileType                    controllers.fileExes.MindmapController.downloadCorrected(id: Int, fileType: String)
+# Mindmap - Ende
+
+# Web - Anfang
+GET           /web/admin                                controllers.idPartExes.WebController.adminIndex
+
+GET           /web/import                               controllers.idPartExes.WebController.adminImportExercises
+GET           /web/export                               controllers.idPartExes.WebController.adminExportExercises
+GET           /web/exportFile                           controllers.idPartExes.WebController.adminExportExercisesAsFile
+#POST          /web/upload                               controllers.exes.WebController.uploadFile
+
+GET           /web/admin/exerciseList                   controllers.idPartExes.WebController.adminExerciseList
+
+GET           /web/admin/exerciseList/:id               controllers.idPartExes.WebController.adminEditExerciseForm(id: Int)
+PUT           /web/admin/exerciseList/:id               controllers.idPartExes.WebController.adminEditExercise(id: Int)
+POST          /web/admin/exerciseList/:id               controllers.idPartExes.WebController.adminEditExercise(id: Int)
+DELETE        /web/admin/exerciseList/:id               controllers.idPartExes.WebController.adminDeleteExercise(id: Int)
+
+PUT           /web/exercise/:id/state                   controllers.idPartExes.WebController.adminChangeExState(id: Int)
+
+
+GET           /web/exercises/:id/rest                   controllers.idPartExes.WebController.exRest(id: Int)
+
+GET           /web/newExForm                            controllers.idPartExes.WebController.adminNewExerciseForm
+
+# User
+GET           /web/                                     controllers.idPartExes.WebController.index
+GET           /web/exercises                            controllers.idPartExes.WebController.exerciseList(page: Int ?= 1)
+
+GET           /web/playground                           controllers.idPartExes.WebController.playground
+
+
+GET           /web/:id/:exType                          controllers.idPartExes.WebController.exercise(id: Int, exType: String)
+
+PUT           /web/:id/:exType                          controllers.idPartExes.WebController.correctLive(id: Int, exType: String)
+POST          /web/:id/:exType                          controllers.idPartExes.WebController.correct(id: Int, exType: String)
+
+GET           /web/sol/:user/:id                        controllers.idPartExes.WebController.site(user: String, id: Int)
+# Web - Ende
+
+
+# Uml - Anfang
+# Controller
+GET           /uml/admin                                controllers.idPartExes.UmlController.adminIndex
+
+GET           /uml/import                               controllers.idPartExes.UmlController.adminImportExercises
+GET           /uml/export                               controllers.idPartExes.UmlController.adminExportExercises
+GET           /uml/exportFile                           controllers.idPartExes.UmlController.adminExportExercisesAsFile
+#POST          /uml/upload                               controllers.exes.UmlController.uploadFile
+
+GET           /uml/admin/exerciseList                   controllers.idPartExes.UmlController.adminExerciseList
+
+GET           /uml/admin/exerciseList/:id               controllers.idPartExes.UmlController.adminEditExerciseForm(id: Int)
+PUT           /uml/admin/exerciseList/:id               controllers.idPartExes.UmlController.adminEditExercise(id: Int)
+POST          /uml/admin/exerciseList/:id               controllers.idPartExes.UmlController.adminEditExercise(id: Int)
+DELETE        /uml/admin/exerciseList/:id               controllers.idPartExes.UmlController.adminDeleteExercise(id: Int)
+
+PUT           /uml/exercise/:id/state                   controllers.idPartExes.UmlController.adminChangeExState(id: Int)
+
+
+GET           /uml/newEx/form                           controllers.idPartExes.UmlController.adminNewExerciseForm
+POST          /uml/newEx/text                           controllers.idPartExes.UmlController.newExerciseStep2
+POST          /uml/newEx/solution                       controllers.idPartExes.UmlController.newExerciseStep3
+
+PUT           /uml/newEx/checkSolution                  controllers.idPartExes.UmlController.checkSolution
+
+# User
+GET           /uml/                                     controllers.idPartExes.UmlController.index
+GET           /uml/exercises                            controllers.idPartExes.UmlController.exerciseList(page: Int ?= 1)
+
+GET           /uml/:id/:part                            controllers.idPartExes.UmlController.exercise(id: Int, part: String)
+POST          /uml/:id/:part                            controllers.idPartExes.UmlController.correct(id: Int, part)
+# Uml - Ende
+
+
+
+# Question - Anfang
 # Controlleristrator
-GET           /sql/scenarioes/admin                     controllers.exes.SqlController.adminIndex
+GET           /question/admin                           controllers.exCollections.QuestionController.adminIndex
 
-GET           /sql/scenarioes/import                    controllers.exes.SqlController.adminImportExercises
-GET           /sql/scenarioes/exportFile                controllers.exes.SqlController.adminExportExercisesAsFile
-#POST          /sql/upload                               controllers.exes.SqlController.uploadFile
+GET           /question/import                          controllers.exCollections.QuestionController.adminImportExercises
+GET           /question/export                          controllers.exCollections.QuestionController.adminExportExercises
+GET           /question/export                          controllers.exCollections.QuestionController.adminExportExercisesAsFile
 
-GET           /sql/admin/:id                            controllers.exes.SqlController.scenarioAdmin(id: Int)
+GET           /question/questions                       controllers.exCollections.QuestionController.adminExerciseList
 
-GET           /sql/scenarioes                           controllers.exes.SqlController.adminExerciseList
-POST          /sql/scenarioes                           controllers.exes.SqlController.adminIndex
-#newExercise
-GET           /sql/newScenarioForm                      controllers.exes.SqlController.adminNewExerciseForm
+GET           /question/freetext/grade                  controllers.exCollections.QuestionController.gradeFreetextAnswers
+GET           /question/freetext/grade/:id/:user        controllers.exCollections.QuestionController.gradeFreetextAnswer(id: Int, user: String)
 
-GET           /sql/admin/exerciseList                   controllers.exes.SqlController.adminExerciseList
+GET           /question/notAssigned                     controllers.exCollections.QuestionController.notAssignedQuestions
+GET           /question/assign                          controllers.exCollections.QuestionController.assignQuestionsForm
+POST          /question/assign                          controllers.exCollections.QuestionController.assignQuestions
 
-GET           /sql/import                               controllers.exes.SqlController.adminImportExercises
-GET           /sql/export                               controllers.exes.SqlController.adminExportExercises
-GET           /sql/exportFile                           controllers.exes.SqlController.adminExportExercisesAsFile
+GET           /question/assign/:id                      controllers.exCollections.QuestionController.assignQuestionsSingleForm(id: Int)
 
-GET           /sql/admin/exerciseList/:id               controllers.exes.SqlController.adminEditExerciseForm(id: Int)
-PUT           /sql/admin/exerciseList/:id               controllers.exes.SqlController.adminEditExercise(id: Int)
-POST          /sql/admin/exerciseList/:id               controllers.exes.SqlController.adminEditExercise(id: Int)
-DELETE        /sql/admin/exerciseList/:id               controllers.exes.SqlController.adminDeleteExercise(id: Int)
+GET           /question/admin/exerciseList/:id          controllers.exCollections.QuestionController.adminEditExerciseForm(id: Int)
+PUT           /question/admin/exerciseList/:id          controllers.exCollections.QuestionController.adminEditExercise(id: Int)
+POST          /question/admin/exerciseList/:id          controllers.exCollections.QuestionController.adminEditExercise(id: Int)
+DELETE        /question/admin/exerciseList/:id          controllers.exCollections.QuestionController.adminDeleteExercise(id: Int)
 
-PUT           /sql/exercise/:id/state                   controllers.exes.SqlController.adminChangeExState(id: Int)
+PUT           /question/exercise/:id/state              controllers.exCollections.QuestionController.adminChangeExState(id: Int)
+
+GET           /question/newQuestionForm                 controllers.exCollections.QuestionController.adminNewExerciseForm
 
 # All
-GET           /sql/                                     controllers.exes.SqlController.index
-GET           /sql/scenario/:scId/:exType               controllers.exes.SqlController.filteredScenario(scId: Int, exType: String, site: Int ?= 1)
-GET           /sql/:id                                  controllers.exes.SqlController.exercise(id: Int)
+GET           /question/                                controllers.exCollections.QuestionController.index
+GET           /question/questions                       controllers.exCollections.QuestionController.exerciseList(page: Int ?= 1)
 
-PUT           /sql/:id                                  controllers.exes.SqlController.correctLive(id: Int)
-POST          /sql/:id                                  controllers.exes.SqlController.correct(id: Int)
+
+GET           /question/new/:isFreetext                 controllers.exCollections.QuestionController.newQuestionForm(isFreetext: Boolean)
+POST          /question/new/:isFreetext                 controllers.exCollections.QuestionController.newQuestion(isFreetext: Boolean)
+
+GET           /question/edit/:id                        controllers.exCollections.QuestionController.editQuestionForm(id: Int)
+POST          /question/edit/:id                        controllers.exCollections.QuestionController.editQuestion(id: Int)
+
+GET           /question/question/:id                    controllers.exCollections.QuestionController.exercise(id: Int)
+POST          /question/question/:id                    controllers.exCollections.QuestionController.questionResult( id: Int)
+
+
+GET           /question/quizAdmin                       controllers.exCollections.QuestionController.adminIndex
+
+#GET          /question/quizzes/export                  controllers.exCollections.QuestionController.exportExerciseCollections
+#GET          /question/quizzes/import                  controllers.exCollections.QuestionController.importExerciseCollections
+#POST          /question/quizzes/upload                  controllers.exCollections.QuestionController.uploadFile
+
+GET           /question/quizzes                         controllers.exCollections.QuestionController.quizzes
+# exerciseCollections
+POST          /question/quizzes                         controllers.exCollections.QuestionController.adminIndex
+#newExercise
+
+#GET           /question/newQuizForm                     controllers.exCollections.QuestionController.newExerciseCollectionForm
+
+# Quizzes
+
+GET           /question/quiz/:id                        controllers.exCollections.QuestionController.quiz(id: Int)
+
+GET           /question/start/:quizId                   controllers.exCollections.QuestionController.quizStart(quizId: Int)
+GET           /question/:quizId/:questionId             controllers.exCollections.QuestionController.quizQuestion(quizId: Int, questionId: Int)
+POST          /question/:quizId/:questionId             controllers.exCollections.QuestionController.quizCorrection(quizId: Int, questionId: Int)
+# Question - Ende
+
+# Sql - Anfang
+# Controlleristrator
+GET           /sql/scenarioes/admin                     controllers.exCollections.SqlController.adminIndex
+
+GET           /sql/scenarioes/import                    controllers.exCollections.SqlController.adminImportExercises
+GET           /sql/scenarioes/exportFile                controllers.exCollections.SqlController.adminExportExercisesAsFile
+#POST          /sql/upload                               controllers.exCollections.SqlController.uploadFile
+
+GET           /sql/admin/:id                            controllers.exCollections.SqlController.scenarioAdmin(id: Int)
+
+GET           /sql/scenarioes                           controllers.exCollections.SqlController.adminExerciseList
+POST          /sql/scenarioes                           controllers.exCollections.SqlController.adminIndex
+#newExercise
+GET           /sql/newScenarioForm                      controllers.exCollections.SqlController.adminNewExerciseForm
+
+GET           /sql/admin/exerciseList                   controllers.exCollections.SqlController.adminExerciseList
+
+GET           /sql/import                               controllers.exCollections.SqlController.adminImportExercises
+GET           /sql/export                               controllers.exCollections.SqlController.adminExportExercises
+GET           /sql/exportFile                           controllers.exCollections.SqlController.adminExportExercisesAsFile
+
+GET           /sql/admin/exerciseList/:id               controllers.exCollections.SqlController.adminEditExerciseForm(id: Int)
+PUT           /sql/admin/exerciseList/:id               controllers.exCollections.SqlController.adminEditExercise(id: Int)
+POST          /sql/admin/exerciseList/:id               controllers.exCollections.SqlController.adminEditExercise(id: Int)
+DELETE        /sql/admin/exerciseList/:id               controllers.exCollections.SqlController.adminDeleteExercise(id: Int)
+
+PUT           /sql/exercise/:id/state                   controllers.exCollections.SqlController.adminChangeExState(id: Int)
+
+# All
+GET           /sql/                                     controllers.exCollections.SqlController.index
+GET           /sql/exercises                            controllers.exCollections.SqlController.exerciseList(page: Int ?= 1)
+
+GET           /sql/scenario/:scId/:exType               controllers.exCollections.SqlController.filteredScenario(scId: Int, exType: String, site: Int ?= 1)
+GET           /sql/:id                                  controllers.exCollections.SqlController.exercise(id: Int)
+
+PUT           /sql/:id                                  controllers.exCollections.SqlController.correctLive(id: Int)
+POST          /sql/:id                                  controllers.exCollections.SqlController.correct(id: Int)
 # Sql - Ende
+
+
 
 # Courses
 GET           /courses/new                              controllers.CourseAdminController.newCourseForm

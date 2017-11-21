@@ -15,7 +15,7 @@
         @for(question <- questionList) {
             <tr>
                 <td>@question.id</td>
-                <td><a href="@controllers.exes.routes.QuestionController.exercise(question.id)">@question.title</a></td>
+                <td><a href="@controllers.exCollections.routes.QuestionController.exercise(question.id)">@question.title</a></td>
                 <td>@question.questionType.german</td>
                 <td>@question.maxPoints</td>
                 @if(question.userHasAnswered(user.username)) {

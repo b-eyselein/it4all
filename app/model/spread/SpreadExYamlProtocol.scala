@@ -13,7 +13,7 @@ object SpreadExYamlProtocol extends MyYamlProtocol {
       SpreadExercise(baseValues, yamlObject.stringField(SAMPLE_FILENAME), yamlObject.stringField(TEMPALTE_FILENAME))
 
     override protected def writeRest(completeEx: SpreadExercise): Map[YamlValue, YamlValue] = Map(
-      YamlString(SAMPLE_FILENAME) -> completeEx.sampleFileName,
+      YamlString(SAMPLE_FILENAME) -> completeEx.sampleFilename,
       YamlString(TEMPALTE_FILENAME) -> completeEx.templateFilename
     )
   }

@@ -11,7 +11,7 @@
 
 @main("Web", user, scripts) {
     <div class="container-fluid">
-        <form method="post" onsubmit="prepareFormForSubmitting();" action="@controllers.exes.routes.WebController.correct(exercise.ex.id, exType)">
+        <form method="post" onsubmit="prepareFormForSubmitting();" action="@controllers.idPartExes.routes.WebController.correct(exercise.ex.id, exType)">
             <div class="row">
                 <div class="col-md-4 col-sm-6">
 
@@ -29,7 +29,7 @@
                     <div class="btn-group btn-group-justified">
                         <div class="btn-group">
                             <button type="button" class="btn btn-primary" id="testButton"
-                            onclick="testTheSolution('@controllers.exes.routes.WebController.correctLive(exercise.ex.id, exType)')">
+                            onclick="testTheSolution('@controllers.idPartExes.routes.WebController.correctLive(exercise.ex.id, exType)')">
                                 L&ouml;sung testen</button>
                         </div>
                         <div class="btn-group">

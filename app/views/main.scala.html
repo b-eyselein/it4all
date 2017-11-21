@@ -28,8 +28,8 @@
                 </div>
                 <div class="collapse navbar-collapse" id="myNavbar">
                     <ul class="nav navbar-nav">
-                    @for(tool <- model.core.tools.ToolList.allTools.toSeq) {
-                        <li><a href="@tool.indexCall">@tool.toolname @tool.state.badge</a></li>
+                    @for(tool <- model.core.tools.ToolList.allToolObjects) {
+                        <li><a href="@tool.indexCall">@tool.toolname @tool.toolState.badge</a></li>
                     }
                     </ul>
 
@@ -42,7 +42,7 @@
                                     Administrator <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu">
-                                    @for(tool <- model.core.tools.ToolList.idExTools.toSeq) {
+                                    @for(tool <- model.core.tools.ToolList.idExTools) {
                                         <li><a href="@tool.adminIndexRoute">@tool.toolname</a></li>
                                         <li class="divider"></li>
                                     }
