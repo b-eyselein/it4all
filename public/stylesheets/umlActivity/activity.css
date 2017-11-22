@@ -1,0 +1,330 @@
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+#paper {
+    width: 100%;
+    height: 85vh;
+    overflow: scroll;
+	border: 1px;
+	border-style: groove;
+}
+
+.my-html-element {
+    border-radius: 6px;
+    position: absolute;
+    background: #ffffff;
+    pointer-events: none;
+    -webkit-user-select: none;
+    padding: 0px;
+    box-sizing: border-box;
+    border: dashed;
+}
+
+.my-html-element label {
+    line-height: 2em;
+}
+
+.my-html-element input {
+    width: 60px;
+    pointer-events: auto;
+    border: 0;
+}
+
+.my-html-element textarea {
+    pointer-events: all;
+    border: 0;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+button:hover {
+    box-shadow: 0 8px 6px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+}
+
+/* Definition DIST-Element */
+
+.myDiv2 {
+    position: absolute;
+    webkit-transform-origin: 0 100%;
+    -moz-transform-origin: 0 100%;
+    -ms-transform-origin: 0 100%;
+    -o-transform-origin: 0 100%;
+    transform-origin: 0 100%;
+    pointer-events: none;
+    -webkit-user-select: none;
+
+}
+
+.basic {
+    position: absolute;
+    webkit-transform-origin: 0 100%;
+    -moz-transform-origin: 0 100%;
+    -ms-transform-origin: 0 100%;
+    -o-transform-origin: 0 100%;
+    transform-origin: 0 100%;
+    pointer-events: none;
+    -webkit-user-select: none;
+
+}
+
+.myDiv3 {
+    width: 80px;
+    height: 80px;
+    background: #ffffff;
+    border: solid;
+    margin: -30px 0 0 30px;
+    /* Rotate */
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+    /* Rotate Origin */
+    -webkit-transform-origin: 0 100%;
+    -moz-transform-origin: 0 100%;
+    -ms-transform-origin: 0 100%;
+    -o-transform-origin: 100% 100%;
+    transform-origin: 100% 100%;
+}
+
+.myDiv4 {
+    width: 70px;
+    height: 20px;
+    margin: -2px 0 0 25px;
+    /* Rotate */
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -o-transform: rotate(-45deg);
+    transform: rotate(45deg);
+    /* Rotate Origin */
+    -webkit-transform-origin: 0 100%;
+    -moz-transform-origin: 0 100%;
+    -ms-transform-origin: 0 100%;
+    -o-transform-origin: 0 0;
+    transform-origin: -15% 0;
+    border: 0px;
+    pointer-events: all;
+    text-align: center;
+}
+
+/* Differ between manual_loopstart and manual_ifstart  */
+.left {
+    position: absolute;
+    top: 20px;
+    left: -40px;
+}
+
+
+.bot {
+    position: absolute;
+    top: 110px;
+    left: 63px;
+}
+
+.top{
+    position: absolute;
+    top: -30px;
+    left: 63px;
+}
+
+.right {
+    position: absolute;
+    top: 20px;
+    left: 105px;
+}
+
+
+.colorTrue{
+    color: green;	
+}
+
+.colorFalse{
+    color: red;	
+}
+
+/* Definition For-Element */
+
+.for_element span {
+    font-weight: bold;
+}
+
+.for_element {
+    border-radius: 6px;
+    position: absolute;
+    background: #ffffff;
+    pointer-events: none;
+    -webkit-user-select: none;
+    padding: 0px;
+    box-sizing: border-box;
+    border: dashed;
+}
+
+.for_element input {
+    width: 60px;
+    pointer-events: auto;
+    border: 0;
+    text-align: center;
+}
+
+.for_element textarea {
+    pointer-events: all;
+    border: 0;
+    height: 69px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Definition WhileDo-Element */
+
+.wd_element span {
+    font-weight: bold;
+}
+
+.wd_element {
+    border-radius: 6px;
+    position: absolute;
+    background: #ffffff;
+    pointer-events: none;
+    -webkit-user-select: none;
+    padding: 0px;
+    box-sizing: border-box;
+    border: dashed;
+}
+
+.wd_element input {
+    width: 125px;
+    pointer-events: auto;
+    border: 0;
+}
+
+.wd_element textarea {
+    pointer-events: all;
+    border: 0;
+    height: 69px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Definition Action-Element */
+
+.action-element {
+    border-radius: 6px;
+    position: absolute;
+    background: #ffffff;
+    pointer-events: none;
+    -webkit-user-select: none;
+    padding: 3px;
+    box-sizing: border-box;
+    border: solid;
+}
+
+.action-element textarea {
+    pointer-events: all;
+    border: 0;
+    display: block;
+    width: 109px;
+    height: 69px;
+}
+
+/* Definition if-Element */
+
+.if_element span {
+    font-weight: bold;
+}
+
+.if_element {
+    border-radius: 6px;
+    position: absolute;
+    background: #ffffff;
+    pointer-events: none;
+    -webkit-user-select: none;
+    padding: 0px;
+    box-sizing: border-box;
+    border: dashed;
+}
+
+.if_element input {
+    pointer-events: auto;
+    border: 0;
+    width: 230px;
+    text-align: center;
+}
+
+.if_element textarea {
+    pointer-events: all;
+    border: 0;
+    width: 245px;
+}
+
+/* Definition asdfasdfdsf */
+
+.dashed-bot {
+    border-bottom-style: dashed;
+    width: 250;
+    font-family: "Times New Roman", Times, serif;
+}
+
+.dashed-top {
+    border-top-style: dashed;
+    width: 250;
+    height: 10%;
+    font-family: "Times New Roman", Times, serif;
+}
+
+#span {
+    height: 120px;
+}
+
+/* Definition Delete Button */
+
+.delete {
+    color: white;
+    border: none;
+    background-color: #C0392B;
+    border-radius: 20px;
+    width: 15px;
+    height: 15px;
+    line-height: 15px;
+    text-align: center;
+    position: absolute;
+    top: -15px;
+    left: -15px;
+    padding: 0;
+    margin: 0;
+    font-weight: bold;
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+.delete:hover {
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+
+}
+
+/* Definition Start test */
+
+.circleStart {
+    -webkit-user-select: all;
+    padding: 5px;
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+    background: black
+}
+
+.startend {
+    background: #ffffff;
+    pointer-events: none;
+    -webkit-user-select: none;
+    padding: 3px;
+    box-sizing: border-box;
+}			

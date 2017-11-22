@@ -261,6 +261,9 @@ POST          /web/:id/:exType                            controllers.idPartExes
 GET           /web/sol/:user/:id                          controllers.idPartExes.WebController.site(user: String, id: Int)
 # Web - Ende
 
+# UmlActivity - Anfang
+GET           /umlActivity/drawing                        controllers.idPartExes.UmlController.activityExercise
+# UmlActivity - Ende
 
 # Uml - Anfang
 # Controller
