@@ -33,7 +33,7 @@ object BoolAssignment {
 
   def apply(assigns: (Variable, Boolean)*) = new BoolAssignment(assigns.toMap)
 
-  def generateAllAssignments(variables: Seq[Variable]): Seq[BoolAssignment] = variables.sorted.reverse match {
+  def generateAllAssignments(variables: Seq[Variable]): Seq[BoolAssignment] = variables.sorted.reverse.toList match {
     case Nil          => List.empty
     case head :: Nil  => List(BoolAssignment(head -> false), BoolAssignment(head -> true))
     case head :: tail =>

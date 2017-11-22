@@ -58,7 +58,7 @@ abstract class TextResult(name: String, foundContent: String, awaitedContent: St
   else if (foundContent contains awaitedContent) COMPLETE
   else PARTIALLY
 
-  def render: String = asMsg(COMPLETE, success match {
+  def render: String = asMsg(success, success match {
     case COMPLETE  => s"$name hat den gesuchten Wert."
     case PARTIALLY => s"$name hat nicht den gesuchten Wert '$awaitedContent' sondern '$foundContent'!"
     case NONE      => s"$name konnte nicht gefunden werden!"
@@ -74,7 +74,7 @@ case class AttributeResult(attribute: Attribute, foundValue: Try[String]) extend
 case class ConditionResult(override val success: SuccessType, condition: JsCondition, gottenValue: String) extends EvaluationResult {
 
   def render: String = asMsg(success,
-    s"""${if(condition.isPrecondition) "Vor" else "Nach"}bedingung konnte ${if (isSuccessful) "" else "nicht"} verifiziert werden.</p>
+    s"""${if (condition.isPrecondition) "Vor" else "Nach"}bedingung konnte ${if (isSuccessful) "" else "nicht"} verifiziert werden.</p>
        |  <p>${condition.description}</p>
        |  ${if (isSuccessful) "" else s"<p>Element hatte aber folgenden Wert: $gottenValue</p>"}""".stripMargin)
 

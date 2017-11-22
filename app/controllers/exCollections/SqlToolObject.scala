@@ -1,5 +1,6 @@
 package controllers.exCollections
 
+import model.Enums.ToolState
 import model.sql.{SqlConsts, SqlScenarioCompleteEx}
 import model.{Consts, HasBaseValues}
 import play.api.mvc.Call
@@ -8,11 +9,12 @@ object SqlToolObject extends CollectionToolOjbect {
 
   override type CompEx = SqlScenarioCompleteEx
 
-  override val hasTags   : Boolean = true
-  override val toolname  : String  = "Sql"
-  override val exType    : String  = "sql"
-  override val pluralName: String  = "Szenarien"
-  override val consts    : Consts  = SqlConsts
+  override val hasTags   : Boolean   = true
+  override val toolname  : String    = "Sql"
+  override val exType    : String    = "sql"
+  override val pluralName: String    = "Szenarien"
+  override val toolState : ToolState = ToolState.ALPHA
+  override val consts    : Consts    = SqlConsts
 
   override def indexCall: Call = controllers.exCollections.routes.SqlController.index()
 

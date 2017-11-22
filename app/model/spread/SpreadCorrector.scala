@@ -2,6 +2,8 @@ package model.spread
 
 import java.nio.file.Path
 
+import model.Enums.SuccessType
+import model.core.EvaluationResult
 import model.spread.SpreadConsts._
 
 import scala.collection.mutable.ListBuffer
@@ -9,13 +11,13 @@ import scala.util.{Failure, Success, Try}
 
 // Types of results
 
-abstract sealed class SpreadSheetCorrectionResult(val success: Boolean, val notices: List[String])
+abstract sealed class SpreadSheetCorrectionResult(val success: SuccessType, val notices: List[String]) extends EvaluationResult
 
-case class SpreadSheetCorrectionFailure(cause: String) extends SpreadSheetCorrectionResult(false, List(cause))
+case class SpreadSheetCorrectionFailure(cause: String) extends SpreadSheetCorrectionResult(SuccessType.FAILURE, List(cause))
 
-case class SpreadSheetCorrectionError(strs: List[String]) extends SpreadSheetCorrectionResult(false, strs)
+case class SpreadSheetCorrectionError(strs: List[String]) extends SpreadSheetCorrectionResult(SuccessType.NONE, strs)
 
-case object SpreadSheetCorrectionSuccess extends SpreadSheetCorrectionResult(true, List(SUCCESS_CORRECTION))
+case object SpreadSheetCorrectionSuccess extends SpreadSheetCorrectionResult(SuccessType.COMPLETE, List(SUCCESS_CORRECTION))
 
 // Actual corrector
 

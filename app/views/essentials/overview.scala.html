@@ -1,86 +1,94 @@
 @(user: model.User)
 
-    @scripts = {
-        <script>
-                $(document).ready(function () {
-                    $('#convButton').click(function () {
-                        // FIXME: route!
-                        window.location = "/essentials/naryConv?fromBase=" + $('#convFromBase').val() + "&toBase=" + $('#convToBase').val();
-                    });
-
-                    $('#addButton').click(function () {
-                        window.location = "/essentials/naryAdd?base=" + $('#addBase').val();
-                    })
+@scripts = {
+    <script>
+            $(document).ready(function () {
+                $('#convButton').click(function () {
+                    // FIXME: route!
+                    window.location = "/essentials/nary/conv?fromBase=" + $('#convFromBase').val() + "&toBase=" + $('#convToBase').val();
                 });
-        </script>
-    }
 
-    @main("Zahlensysteme", user, scripts) {
-        <div class="container">
-            <div class="page-header">
-                <h1>Allgemeiner Teil</h1>
-            </div>
+                $('#addButton').click(function () {
+                    window.location = "/essentials/nary/add?base=" + $('#addBase').val();
+                });
 
-            <h2>Zahlensysteme</h2>
+                $('#twoCompButton').click(function () {
+                    window.location = "/essentials/nary/twocomp?verbose=" + $('#twoComp').val();
+                })
+            });
+    </script>
+}
 
-                <!-- Conversion -->
-            <div class="form-group">
-                <div class="input-group">
-                    <span class="input-group-addon">Umwandlung von</span>
-                    <select title="Startsystem Umwandlung" class="form-control" id="convFromBase">
-                        <option value="RANDOM">Zuf&auml;lligem System</option>
-                        @for(base <- model.essentials.NumberBase.values) {
-                            <option value="@base.name">@base.systemName</option>
-                        }
-                    </select>
-                    <span class="input-group-addon">nach</span>
-                    <select title="Zielsystem Umwandlung" class="form-control" id="convToBase">
-                        <option value="RANDOM">Zuf&auml;lligem System</option>
-                        @for(base <- model.essentials.NumberBase.values) {
-                            <option value="@base.name">@base.systemName</option>
-                        }
-                    </select>
-                    <span class="input-group-addon"><span class="glyphicon glyphicon-chevron-right"></span></span>
-                    <button class="form-control btn-primary" id="convButton">Go! </button>
-                </div>
-            </div>
-
-                <!-- Addition -->
-            <div class="form-group">
-                <div class="input-group">
-                    <span class="input-group-addon">Addition in</span>
-                    <select title="System Addition" class="form-control" id="addBase">
-                        <option value="RANDOM">Zuf&auml;lligem System</option>
-                        @for(base <- model.essentials.NumberBase.values) {
-                            <option value="@base.name">@base.systemName</option>
-                        }
-                    </select>
-                    <span class="input-group-addon"><span class="glyphicon glyphicon-chevron-right"></span></span>
-                    <button class="form-control btn-primary" id="addButton">Go! </button>
-                </div>
-            </div>
-
-                <!-- Zweierkomplement -->
-            <div class="btn-group btn-group-justified">
-                <a class="btn btn-default" href="@controllers.randomExes.routes.EssentialsController.newNaryTwoComplementQuestion(true)">
-                    Zweierkomplement ausf&uuml;hrlich</a>
-                <a class="btn btn-default" href="@controllers.randomExes.routes.EssentialsController.newNaryTwoComplementQuestion(false)">
-                    Zweierkomplement kurz</a>
-            </div>
-
-            <hr>
-
-
-            <h2>Boolesche Algebra</h2>
-            <p>
-                <a type="button" class="btn btn-default btn-block"
-                href="@controllers.randomExes.routes.EssentialsController.newBoolFilloutQuestion">
-                    Wahrheitstabellen ausf&uuml;llen </a>
-            </p>
-            <p>
-                <a type="button" class="btn btn-default btn-block"
-                href="@controllers.randomExes.routes.EssentialsController.newBoolCreationQuestion">
-                    Formel erstellen </a>            </p>
-
+@main("Zahlensysteme", user, scripts) {
+    <div class="container">
+        <div class="page-header">
+            <h1>Allgemeiner Teil</h1>
         </div>
-    }
+
+        <h2>Zahlensysteme</h2>
+
+            <!-- Conversion -->
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">Umwandlung von</span>
+                <select title="Startsystem Umwandlung" class="form-control" id="convFromBase">
+                    <option value="RANDOM">Zuf&auml;lligem System</option>
+                    @for(base <- model.essentials.NumberBase.values) {
+                        <option value="@base.name">@base.systemName</option>
+                    }
+                </select>
+                <span class="input-group-addon">nach</span>
+                <select title="Zielsystem Umwandlung" class="form-control" id="convToBase">
+                    <option value="RANDOM">Zuf&auml;lligem System</option>
+                    @for(base <- model.essentials.NumberBase.values) {
+                        <option value="@base.name">@base.systemName</option>
+                    }
+                </select>
+                <span class="input-group-addon"><span class="glyphicon glyphicon-chevron-right"></span></span>
+                <button class="form-control btn-primary" id="convButton">Go! </button>
+            </div>
+        </div>
+
+            <!-- Addition -->
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">Addition in</span>
+                <select title="System Addition" class="form-control" id="addBase">
+                    <option value="RANDOM">Zuf&auml;lligem System</option>
+                    @for(base <- model.essentials.NumberBase.values) {
+                        <option value="@base.name">@base.systemName</option>
+                    }
+                </select>
+                <span class="input-group-addon"><span class="glyphicon glyphicon-chevron-right"></span></span>
+                <button class="form-control btn-primary" id="addButton">Go! </button>
+            </div>
+        </div>
+
+            <!-- Zweierkomplement -->
+        <div class="form-group">
+            <div class="input-group">
+                <select title="Zweierkomplement" class="form-control" id="twoComp">
+                    <option value="true">Ausf&uuml;hrliche</option>
+                    <option value="false">Knappe</option>
+                </select>
+                <span class="input-group-addon">Umwandlung in das</span>
+                <button class="form-control btn-primary" id="twoCompButton">Zweierkomplement</button>
+            </div>
+        </div>
+
+        <hr>
+
+        <h2>Boolesche Algebra</h2>
+        <h3>TODO!</h3>
+        <p>
+            <a type="button" class="btn btn-default btn-block"
+            href="@controllers.randomExes.routes.EssentialsController.newBoolFilloutQuestion">
+                Wahrheitstabellen ausf&uuml;llen </a>
+        </p>
+        <p>
+            <a type="button" class="btn btn-default btn-block"
+            href="@controllers.randomExes.routes.EssentialsController.newBoolCreationQuestion">
+                Formel erstellen </a>            </p>
+
+    </div>
+}

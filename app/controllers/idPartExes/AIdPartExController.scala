@@ -86,7 +86,7 @@ abstract class AIdPartExController[E <: Exercise, R <: EvaluationResult]
   }
 
   protected def checkAndCreateSolDir(username: String, exercise: CompEx): Try[Path] =
-    Try(Files.createDirectories(toolObject.getSolDirForExercise(username, exercise.ex)))
+    Try(Files.createDirectories(toolObject.solutionDirForExercise(username, exercise.ex)))
 
 
   protected def renderCorrectionResult(user: User, correctionResult: CompleteResult[R]): Html =

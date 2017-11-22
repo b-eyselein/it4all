@@ -43,17 +43,12 @@ trait ExToolObject extends ToolObject with FileUtils {
 
   lazy val exerciseRootDir: Path = Paths.get(rootDir, exType)
 
-  lazy val sampleDir: Path = exerciseRootDir / SAMPLE_SUB_DIRECTORY
 
-  lazy val solutionDir: Path = exerciseRootDir / SOLUTIONS_SUB_DIRECTORY
+  def sampleDirForExercise(exercise: HasBaseValues): Path = exerciseRootDir / SAMPLE_SUB_DIRECTORY / String.valueOf(exercise.id)
 
-  def solDirForUser(username: String): Path = solutionDir / username
+  def templateDirForExercise(exercise: HasBaseValues): Path = exerciseRootDir / TEMPLATE_SUB_DIRECTORY / String.valueOf(exercise.id)
 
-  def getSampleDirForExercise(exerciseType: String, exercise: HasBaseValues): Path = sampleDir / String.valueOf(exercise.id)
-
-  def getSolDirForExercise(username: String, exercise: HasBaseValues): Path = solDirForUser(username) / String.valueOf(exercise.id)
-
-  def getSolFileForExercise(username: String, ex: HasBaseValues, fileName: String, fileExt: String): Path = getSolDirForExercise(username, ex) / s"$fileName.$fileExt"
+  def solutionDirForExercise(username: String, exercise: HasBaseValues): Path = exerciseRootDir / SOLUTIONS_SUB_DIRECTORY / username / String.valueOf(exercise.id)
 
   // User
 

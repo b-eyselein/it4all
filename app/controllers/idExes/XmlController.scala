@@ -113,6 +113,6 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // FIXME: read old xml solution from db!
   private def readDefOrOldSolution(username: String, exercise: XmlExercise): String =
-    readAll(toolObject.getSolFileForExercise(username, exercise, exercise.rootNode, exercise.exerciseType.studFileEnding)).getOrElse(exercise.fixedStart)
+    readAll(toolObject.solutionDirForExercise(username, exercise) / s"${exercise.rootNode}.${exercise.exerciseType.studFileEnding}").getOrElse(exercise.fixedStart)
 
 }

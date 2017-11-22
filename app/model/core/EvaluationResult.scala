@@ -23,6 +23,7 @@ class CompleteResult[E <: EvaluationResult](val learnerSolution: String, val res
   override val success: SuccessType = SuccessType.ofBool(allResultsSuccessful(results))
 
   def renderLearnerSolution = new Html(s"<pre>${HtmlFormat.escape(learnerSolution)}</pre>")
+
 }
 
 object EvaluationResult {

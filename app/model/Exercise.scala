@@ -62,9 +62,9 @@ trait FileCompleteEx[B <: Exercise] extends CompleteEx[B] with FileUtils {
 
   def sampleFilename: String
 
-  def templateFilePath(fileEnding: String): Path = toolObject.sampleDir / (templateFilename + "." + fileEnding)
+  def templateFilePath(fileEnding: String): Path = toolObject.templateDirForExercise(ex) / (templateFilename + "." + fileEnding)
 
-  def sampleFilePath(fileEnding: String): Path = toolObject.sampleDir / (sampleFilename + "." + fileEnding)
+  def sampleFilePath(fileEnding: String): Path = toolObject.sampleDirForExercise(ex) / (sampleFilename + "." + fileEnding)
 
   def available(fileEnding: String): Boolean = templateFilePath(fileEnding).toFile.exists && sampleFilePath(fileEnding).toFile.exists
 

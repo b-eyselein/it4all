@@ -1,20 +1,20 @@
 package controllers.fileExes
 
-import java.nio.file.{Files, Path}
+import java.nio.file.Path
 import java.sql.SQLSyntaxErrorException
 
 import controllers.{BaseExerciseController, Secured}
-import model.spread.SpreadConsts._
+import model._
+import model.core.CommonUtils.RicherTry
 import model.core._
 import model.core.tools.ExToolObject
-import model._
 import model.spread.SpreadConsts
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.mvc.{Call, ControllerComponents, EssentialAction, Result}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
 trait FileExToolObject extends ExToolObject {
 
@@ -46,90 +46,87 @@ abstract class AFileExController[E <: Exercise, R <: EvaluationResult]
         sqlError.printStackTrace()
         BadRequest(sqlError.getMessage)
       case throwable                         =>
-        println("\nERROR: ")
         throwable.printStackTrace()
         BadRequest(throwable.getMessage)
     }
 
-
   override protected def saveRead(read: Seq[CompEx]): Future[Seq[Int]] = Future.sequence(read map { ex =>
+    // FIXME: use pathTries ==> display with exercises?
     val pathTries = checkFiles(ex)
-    pathTries.foreach(println)
     saveReadToDb(ex)
   })
 
-  protected def saveReadToDb(read: CompEx): Future[Int]
-
-  protected def checkFiles(ex: CompEx): List[Try[Path]]
+  // Routes
 
   def exercise(id: Int, fileExtension: String): EssentialAction = futureWithUser { user =>
     implicit request =>
-      completeExById(id) flatMap {
+      completeExById(id) map {
         case Some(exercise) =>
           log(user, ExerciseStartEvent(request, id))
-          renderExercise(user, exercise, fileExtension) map (Ok(_))
-        case None           => Future(Redirect(toolObject.indexCall))
+          Ok(renderExercise(user, exercise, fileExtension))
+        case None           => Redirect(toolObject.indexCall)
       }
   }
 
   def uploadSolution(id: Int, fileExtension: String): EssentialAction = futureWithUser(parse.multipartFormData) { user =>
     implicit request =>
-      request.body.file(SpreadConsts.FILE_NAME) map { file =>
-        // TODO: user file...
-        Future(Ok("TODO!"))
-      } getOrElse Future(BadRequest("There has been an error uploading your file!"))
-    //      solForm.bindFromRequest.fold(_ => Future(BadRequest("There has been an error!")),
-    //        solution => completeExById(id) map {
-    //          case None => BadRequest("TODO!")
-    //
-    //          case Some(ex) => correctEx(user, solution, ex, part) match {
-    //            case Success(correctionResult) =>
-    //              log(user, new ExerciseCompletionEvent[R](request, id, correctionResult))
-    //              Ok(renderCorrectionResult(user, correctionResult))
-    //
-    //            case Failure(error) =>
-    //              BadRequest(views.html.main.render("Fehler", user, new Html(""), new Html(
-    //                s"""<pre>${error.getMessage}:
-    //                   |${error.getStackTrace mkString "\n"}</pre>""".stripMargin)))
-    //          }
-    //        })
+      request.body.file(SpreadConsts.FILE_NAME) match {
+        case None       => Future(BadRequest("There has been an error uploading your file!"))
+        case Some(file) =>
+          completeExById(id) map {
+            case None         => BadRequest("There is no such exercise!")
+            case Some(compEx) =>
+              val learnerFileTargetPath = toolObject.solutionDirForExercise(user.username, compEx.ex) / s"${compEx.templateFilename}.$fileExtension"
+              val learnerTry = move(file.ref.path, learnerFileTargetPath)
+
+              val sampleFilename = s"${compEx.sampleFilename}.$fileExtension"
+              val musterFileSourcePath = toolObject.sampleDirForExercise(compEx.ex) / sampleFilename
+              val musterFileTargetPath = toolObject.solutionDirForExercise(user.username, compEx.ex) / sampleFilename
+              val musterTry = copy(musterFileSourcePath, musterFileTargetPath)
+
+              learnerTry zip musterTry match {
+                case Success((learnerFilePath, musterFilePath)) =>
+                  val result = correctEx(learnerFilePath, musterFilePath, fileExtension)
+                  Ok(renderResult(user, result, compEx, fileExtension))
+                case Failure(e)                                 =>
+                  BadRequest("There has been an error saving your file!")
+              }
+          }
+      }
   }
 
   def downloadTemplate(id: Int, fileExtension: String): EssentialAction = futureWithUser { user =>
     implicit request =>
       completeExById(id) map {
-        case Some(exercise) =>
-          val templateFilePath = exercise.templateFilePath(fileExtension)
-          println(templateFilePath.toAbsolutePath)
-          Ok.sendFile(templateFilePath.toFile, inline = true)
+        case Some(exercise) => Ok.sendFile(exercise.templateFilePath(fileExtension).toFile)
         case None           => Redirect(toolObject.indexCall)
       }
   }
 
-  def downloadCorrected(id: Int, fileExtension: String): EssentialAction = withUser { user =>
+  def downloadCorrected(id: Int, fileExtension: String): EssentialAction = futureWithUser { user =>
     implicit request =>
-      //      finder.byId(id) match {
-      //        case None           => BadRequest("This exercise does not exist!")
-      //        case Some(exercise) =>
-      //          val fileToDownload = toolObject.getSolFileForExercise(user.name, exercise, exercise.templateFilename + CORRECTION_ADD_STRING, fileExtension)
-      //
-      //          if (fileToDownload.toFile.exists) Ok.sendFile(fileToDownload.toFile)
-      //          else Redirect(routes.SpreadController.index(0))
-      //      }
-      Ok("TODO")
+      completeExById(id) map {
+        case Some(exercise) =>
+          val correctedFilePath = toolObject.solutionDirForExercise(user.username, exercise.ex) / (exercise.templateFilename + SpreadConsts.CORRECTION_ADD_STRING + "." + fileExtension)
+          Ok.sendFile(correctedFilePath.toFile)
+        case None           => BadRequest("There is no such exercise!")
+      }
   }
 
-  protected def checkAndCreateSolDir(username: String, exercise: CompEx): Try[Path] =
-    Try(Files.createDirectories(toolObject.getSolDirForExercise(username, exercise.ex)))
+  // View helpers
 
+  protected def renderExercise(user: User, exercise: CompEx, part: String): Html
 
-  protected def renderCorrectionResult(user: User, correctionResult: CompleteResult[R]): Html =
-    views.html.core.correction.render(correctionResult, renderResult(correctionResult), user, toolObject)
+  protected def renderResult(user: User, correctionResult: R, exercise: CompEx, fileExtension: String): Html
 
-  protected def correctEx(user: User, solution: PathSolution, exercise: CompEx, part: String): Try[CompleteResult[R]] = ???
+  // Correction
 
-  protected def renderExercise(user: User, exercise: CompEx, part: String): Future[Html] = ???
+  protected def correctEx(learnerFilePath: Path, sampleFilePath: Path, fileExtension: String): R
 
-  protected def renderResult(correctionResult: CompleteResult[R]): Html = ???
+  // Creation of exercises
+
+  protected def saveReadToDb(read: CompEx): Future[Int]
+
+  protected def checkFiles(ex: CompEx): List[Try[Path]]
 
 }

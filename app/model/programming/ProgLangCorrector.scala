@@ -27,7 +27,7 @@ abstract class ProgLangCorrector extends FileUtils {
 
     val imageExits = DockerConnector.imageExists(language.dockerImageName) || DockerConnector.pullImage(language.dockerImageName)
 
-    val path = ProgToolObject.getSolFileForExercise(user.username, exercise.ex, "solution_" + language.aceName, language.scriptEnding)
+    val path = ProgToolObject.solutionDirForExercise(user.username, exercise.ex) / s"solution_${language.aceName}.${language.scriptEnding}"
 
     write(path, learnerSolution)
 

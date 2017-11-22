@@ -19,8 +19,6 @@ object SpreadConsts extends FileExConsts {
   val COMMENT_VALUE_INCORRECT_VAR                  = "Wert falsch. Erwartet wurde '%s'."
   val COMMENT_VALUE_MISSING                        = "Kein Wert angegeben."
 
-  val CORRECTION_ADD_STRING = "_Korrektur"
-
   val ERROR_CLOSE_FILE       = "Beim Schließen des Dokuments ist ein Fehler aufgetreten."
   val ERROR_LOAD_CHART       = "Beim Öffnen eines Diagramms ist ein Fehler aufgetreten."
   val ERROR_LOAD_SAMPLE      = "Beim Laden der Musterdatei ist ein Fehler aufgetreten."
@@ -31,8 +29,5 @@ object SpreadConsts extends FileExConsts {
   val ERROR_WRONG_SHEET_NUM  = "Die Anzahl der Arbeitsblätter stimmt nicht überein. Haben Sie die richtige Datei hochgeladen?"
 
   val SUCCESS_CORRECTION = "Die Korrektur war erfolgreich."
-
-  val SAMPLE_FILENAME   = "sampleFilename"
-  val TEMPALTE_FILENAME = "templateFilename"
 
 }

@@ -27,8 +27,8 @@ POST          /essentials/nary/conv                       controllers.randomExes
 GET           /essentials/nary/add                        controllers.randomExes.EssentialsController.newNaryAdditionQuestion(base: String)
 POST          /essentials/nary/add                        controllers.randomExes.EssentialsController.checkNaryAdditionSolution(base: String)
 
-GET           /essentials/nary/twocomp/:verb              controllers.randomExes.EssentialsController.newNaryTwoComplementQuestion(verb: Boolean)
-POST          /essentials/nary/twocomp/:verb              controllers.randomExes.EssentialsController.checkNaryTwoComplementSolution(verb: Boolean)
+GET           /essentials/nary/twocomp                    controllers.randomExes.EssentialsController.newNaryTwoComplementQuestion(verbose: Boolean)
+POST          /essentials/nary/twocomp                    controllers.randomExes.EssentialsController.checkNaryTwoComplementSolution(verbose: Boolean)
 
 GET           /essentials/bool/fillout                    controllers.randomExes.EssentialsController.newBoolFilloutQuestion
 POST          /essentials/bool/fillout                    controllers.randomExes.EssentialsController.checkBoolFilloutSolution
@@ -263,7 +263,7 @@ GET           /web/sol/:user/:id                          controllers.idPartExes
 
 # UmlActivity - Anfang
 GET           /umlActivity/drawing                        controllers.idPartExes.UmlController.activityExercise
-POST          /umlActivity/check                          controllers.idPartExes.UmlController.activityCheckSolution()
+POST          /umlActivity/check                          controllers.idPartExes.UmlController.activityCheckSolution(lang: String ?= "python")
 # UmlActivity - Ende
 
 # Uml - Anfang
@@ -273,7 +273,6 @@ GET           /uml/admin                                  controllers.idPartExes
 GET           /uml/import                                 controllers.idPartExes.UmlController.adminImportExercises
 GET           /uml/export                                 controllers.idPartExes.UmlController.adminExportExercises
 GET           /uml/exportFile                             controllers.idPartExes.UmlController.adminExportExercisesAsFile
-#POST          /uml/upload                               controllers.exes.UmlController.uploadFile
 
 GET           /uml/admin/exerciseList                     controllers.idPartExes.UmlController.adminExerciseList
 

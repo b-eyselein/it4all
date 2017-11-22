@@ -20,8 +20,10 @@ trait FileUtils {
 
   private def fileEnding(file: File): String = GFiles.getFileExtension(file.getName)
 
-  def copy(source: Path, target: Path): Try[Path] = Try {
+  def copy(filename: String, sourceDir: Path, targetDir: Path): Try[Path] = copy(sourceDir / filename, targetDir / filename)
 
+
+  def copy(source: Path, target: Path): Try[Path] = Try {
     if (!target.getParent.toFile.exists)
       Files.createDirectories(target.getParent)
 

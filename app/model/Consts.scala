@@ -31,10 +31,10 @@ trait Consts {
   val STEP                    = 10
   val SOLUTIONS_SUB_DIRECTORY = "solutions"
 
-
-  val TEST_COUNT_NAME = "testCount"
-  val TEXT_NAME       = "text"
-  val TITLE_NAME      = "title"
+  val TEMPLATE_SUB_DIRECTORY = "templates"
+  val TEST_COUNT_NAME        = "testCount"
+  val TEXT_NAME              = "text"
+  val TITLE_NAME             = "title"
 
   val VALUE_NAME = "value"
   val VARS_NAME  = "vars"

@@ -51,25 +51,27 @@ window.onload = function () {
 
 
     function enterFullscreen(element) {
-        if(element.requestFullscreen) {
+        if (element.requestFullscreen) {
             element.requestFullscreen();
-        } else if(element.mozRequestFullScreen) {
+        } else if (element.mozRequestFullScreen) {
             element.mozRequestFullScreen();
-        } else if(element.msRequestFullscreen) {
+        } else if (element.msRequestFullscreen) {
             element.msRequestFullscreen();
-        } else if(element.webkitRequestFullscreen) {
+        } else if (element.webkitRequestFullscreen) {
             element.webkitRequestFullscreen();
         }
     }
+
     function exitFullscreen() {
-        if(document.exitFullscreen) {
+        if (document.exitFullscreen) {
             document.exitFullscreen();
-        } else if(document.mozCancelFullScreen) {
+        } else if (document.mozCancelFullScreen) {
             document.mozCancelFullScreen();
-        } else if(document.webkitExitFullscreen) {
+        } else if (document.webkitExitFullscreen) {
             document.webkitExitFullscreen();
         }
     }
+
     console.log("outside");
     $("#fullscreenStart").click(function () {
         console.log("fullstart");
@@ -80,13 +82,14 @@ window.onload = function () {
         exitFullscreen();
     });
 
-    function prepareFormForSubmitting() {
-        $('#learnerSolution').val(document.getElementById("preCode").innerHTML);
-    }
-
-
-
 };
+
+function writeActivityDiagram() {
+    var sendForm = $('#sendForm');
+    sendForm.attr('action', sendForm.attr('action') + "?lang=python");
+    // FIXME: language!
+    $('#learnerSolution').val($('#preCode').html());
+}
 
 //Test: Is Json Objrect
 function isJson(str) {

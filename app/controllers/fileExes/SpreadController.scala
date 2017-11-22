@@ -1,10 +1,10 @@
 package controllers.fileExes
 
-import java.nio.file.{Files, Path, StandardCopyOption}
+import java.nio.file.Path
 import javax.inject._
 
-import com.google.common.io.{Files => GFiles}
 import controllers.Secured
+import controllers.fileExes.SpreadController._
 import model.User
 import model.core._
 import model.spread._
@@ -19,30 +19,13 @@ import scala.util.Try
 
 object SpreadController {
 
-  // FIXME move both to consts-object!
-  val BODY_SOL_FILE_NAME   : String = "solFile"
-  val CORRECTION_ADD_STRING: String = "_Korrektur"
-
   val correctors = Map("ods" -> ODFCorrector, "xlsx" -> XLSXCorrector, "xlsm" -> XLSXCorrector)
-
-  def saveSolutionForUser(uploadedSolution: Path, targetFilePath: Path): Try[Path] =
-    Try(Files.createDirectories(targetFilePath.getParent))
-      .map(_ => Files.move(uploadedSolution, targetFilePath, StandardCopyOption.REPLACE_EXISTING))
-
-  def correctSpread(musterPath: Path, testPath: Path, conditionalFormating: Boolean, charts: Boolean): SpreadSheetCorrectionResult = {
-    val fileExtension: String = GFiles.getFileExtension(testPath.toString)
-
-    correctors.get(fileExtension) match {
-      case None            => SpreadSheetCorrectionFailure(s"""The filetype "$fileExtension" is not supported. Could not start correction.""")
-      case Some(corrector) => corrector.correct(musterPath, testPath, conditionalFormating, charts)
-    }
-  }
 
 }
 
 @Singleton
 class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends AFileExController[SpreadExercise, EvaluationResult](cc, dbcp, r, SpreadToolObject) with Secured {
+  extends AFileExController[SpreadExercise, SpreadSheetCorrectionResult](cc, dbcp, r, SpreadToolObject) with Secured {
 
   // Yaml
 
@@ -64,74 +47,32 @@ class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
 
   override def saveReadToDb(read: SpreadExercise): Future[Int] = db.run(repo.spreadExercises insertOrUpdate read)
 
-  // Check files (sample, template in xlsx, ods)
   override protected def checkFiles(ex: SpreadExercise): List[Try[Path]] = SpreadToolObject.fileTypes flatMap {
     case (fileEnding, _) =>
-      // FIXME: TODO!
-      println("Moving files...")
-      val sampleFileSourcePath = toolObject.exerciseResourcesFolder / (ex.sampleFilename + "." + fileEnding)
-      val templateFileSourcePath = toolObject.exerciseResourcesFolder / (ex.templateFilename + "." + fileEnding)
-
-      val sampleFileTargetPath = toolObject.sampleDir / (ex.sampleFilename + "." + fileEnding)
-      val templateFileTargetPath = toolObject.sampleDir / (ex.templateFilename + "." + fileEnding)
-
+      // FIXME: use result!
+      val sampleFilename = ex.sampleFilename + "." + fileEnding
+      val templateFilename = ex.templateFilename + "." + fileEnding
 
       List(
-        copy(sampleFileSourcePath, sampleFileTargetPath),
-        copy(templateFileSourcePath, templateFileTargetPath)
+        copy(sampleFilename, toolObject.exerciseResourcesFolder, toolObject.sampleDirForExercise(ex)),
+        copy(templateFilename, toolObject.exerciseResourcesFolder, toolObject.templateDirForExercise(ex))
       )
   } toList
 
   // Views
 
-  override protected def renderExercise(user: User, exercise: SpreadExercise, part: String): Future[Html] =
-    Future(views.html.spread.spreadExercise.render(user, exercise.ex, (part, SpreadToolObject.fileTypes(part))))
+  override protected def renderExercise(user: User, exercise: SpreadExercise, part: String): Html =
+    views.html.spread.spreadExercise.render(user, exercise.ex, (part, SpreadToolObject.fileTypes(part)))
 
-  override protected def renderResult(correctionResult: CompleteResult[EvaluationResult]): Html = ??? // FIXME: implement...
+  override protected def renderResult(user: User, correctionResult: SpreadSheetCorrectionResult, exercise: SpreadExercise, fileExtension: String): Html =
+    views.html.spread.spreadCorrectionResult.render(user, correctionResult, exercise, fileExtension)
 
   // Correction
 
-  override protected def correctEx(user: User, sol: PathSolution, exercise: SpreadExercise, part: String): Try[CompleteResult[EvaluationResult]]
-  = ??? // FIXME: implement???
+  override protected def correctEx(learnerFilePath: Path, sampleFilePath: Path, fileExtension: String): SpreadSheetCorrectionResult =
+    correctors.get(fileExtension) match {
+      case None            => SpreadSheetCorrectionFailure(s"""The filetype "$fileExtension" is not supported. Could not start correction.""")
+      case Some(corrector) => corrector.correct(samplePath = sampleFilePath, comparePath = learnerFilePath, conditionalFormating = false, compareCharts = false)
+    }
 
-  // Other routes
-
-  //  def upload(id: Int): EssentialAction = withUser { user =>
-  //    implicit request =>
-  //    val data: MultipartFormData[File] = request.body.asMultipartFormData
-  //    Option(data.getFile(BODY_SOL_FILE_NAME)) match {
-  //      case None => InternalServerError(views.html.spreadcorrectionerror.render(user, "Datei konnte nicht hochgeladen werden!"))
-  //      case Some(uploadedFile) =>
-  //
-  //        val exercise = SpreadExercise.finder.byId(id)
-  //
-  //        val pathToUploadedFile = uploadedFile.getFile.toPath
-  //        val fileExtension = com.google.common.io.Files.getFileExtension(uploadedFile.getFilename)
-  //
-  //        val targetFilePath = toolObject.getSolFileForExercise(user.name, exercise, exercise.templateFilename, fileExtension)
-  //
-  //        // Save solution
-  //        saveSolutionForUser(pathToUploadedFile, targetFilePath) match {
-  //          case Failure(e) => InternalServerError(views.html.spreadcorrectionerror.render(user, "Die Datei konnte nicht gespeichert werden!"))
-  //          case Success(_) =>
-  //            // Get paths to sample document
-  //            val sampleDocumentPath = Paths.get(toolObject.sampleDir.toString, exercise.sampleFilename + "." + fileExtension)
-  //            if (sampleDocumentPath.toFile.exists) {
-  //              try {
-  //                val result: SpreadSheetCorrectionResult = correctSpread(sampleDocumentPath, targetFilePath, conditionalFormating = false, charts = false)
-  //
-  //                if (result.success)
-  //                  Ok(views.html.excelcorrect.render(user, result, exercise.getId, fileExtension))
-  //                else
-  //                  InternalServerError(views.html.spreadcorrectionerror.render(user, result.notices.head))
-  //              } catch {
-  //                case e: CorrectionException => InternalServerError(views.html.spreadcorrectionerror.render(user, e.getMessage))
-  //              }
-  //            } else {
-  //              InternalServerError(views.html.spreadcorrectionerror.render(user, "Die Musterdatei konnte nicht gefunden werden!"))
-  //            }
-  //        }
-  //    }
-  //      Ok("TODO!")
-  //  }
 }

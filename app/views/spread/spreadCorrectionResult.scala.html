@@ -1,0 +1,23 @@
+@(student: model.User, result: model.spread.SpreadSheetCorrectionResult, exercise: model.spread.SpreadExercise, typ: String)
+
+@main("Excel", student) {
+    <div class="container">
+        <div class="page-header">
+            <h1>Korrektur der Aufgabe: &quot;@exercise.title&quot;</h1>
+        </div>
+
+        <h3>Meldungen der Korrektur:</h3>
+        <ul>
+        @for(notice <- result.notices) {
+            <li>@notice</li>
+        }
+        </ul>
+
+        <hr>
+
+        <div class="alert alert-@result.getBSClass">Sie k&ouml;nnen Ihre korrigierte L&ouml;sung
+            <a class="alert-link" href="@controllers.fileExes.routes.SpreadController.downloadCorrected(exercise.ex.id, typ)" target="_blank">
+                hier</a> herunterladen.
+        </div>
+    </div>
+}

@@ -1,5 +1,6 @@
 package controllers.fileExes
 
+import java.nio.file.Path
 import javax.inject._
 
 import controllers.Secured
@@ -31,16 +32,22 @@ class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfig
 
   override def tq = repo.mindmapExercises
 
-  override def saveReadToDb(compEx: MindmapExercise): Future[Int] = Future(-1)
+  override def saveReadToDb(compEx: MindmapExercise): Future[Int] = ???
 
-  override protected def checkFiles(ex: MindmapExercise) = ???
+  override protected def checkFiles(ex: MindmapExercise): List[Try[Path]] = ???
 
-  // Other routes
+  // Views
 
-  //  def upload: EssentialAction = withUser { user =>
-  //    implicit request =>
-  //       TODO: getFile, correct and present for download!
-  //      try {
+  override protected def renderExercise(user: User, exercise: MindmapExercise, part: String): Html = ???
+
+  override protected def renderResult(user: User, correctionResult: EvaluationResult, exercise: MindmapExercise, fileExtension: String): Html = ???
+
+  //Ok(views.html.mindmap.mindmapcorrect.render(user))
+
+  // Correction
+
+  override protected def correctEx(learnerFilePath: Path, sampleFilePath: Path, fileExtension: String): EvaluationResult = ???
+
   //        Validation.validateMindMap(SOLUTION_PATH)
   //        Validation.validateMindMap(INPUT_PATH)
   //
@@ -59,20 +66,5 @@ class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfig
   //      } catch {
   //        case e@(_: ParsingException | _: IOException) => e.printStackTrace()
   //      }
-  //
-  //      Ok(views.html.mindmap.mindmapcorrect.render(user))
-  //  }
-
-  // Views
-
-  override protected def renderExesListRest: Html = ???
-
-  override protected def renderExercise(user: User, exercise: MindmapExercise, part: String): Future[Html] = ???
-
-  override protected def renderResult(correctionResult: CompleteResult[EvaluationResult]): Html = ???
-
-  // Correction - probably not used...
-
-  override protected def correctEx(user: User, solution: PathSolution, exercise: MindmapExercise, part: String): Try[CompleteResult[EvaluationResult]] = ???
 
 }

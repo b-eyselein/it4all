@@ -1,5 +1,6 @@
 package controllers.idPartExes
 
+import model.Enums.ToolState
 import model.uml.UmlEnums.UmlExPart
 import model.uml.{UmlCompleteEx, UmlConsts}
 import model.{Consts, HasBaseValues}
@@ -11,10 +12,11 @@ object UmlToolObject extends IdPartExToolObject {
 
   override def exParts: Map[String, String] = Map(UmlExPart.CLASS_SELECTION.name -> "Mit Zwischenkorrektur", UmlExPart.DIAG_DRAWING.name -> "Freies Erstellen")
 
-  override val hasTags : Boolean = false
-  override val toolname: String  = "Uml"
-  override val exType  : String  = "uml"
-  override val consts  : Consts  = UmlConsts
+  override val hasTags : Boolean   = false
+  override val toolname: String    = "Uml"
+  override val exType  : String    = "uml"
+  override val toolState   : ToolState = ToolState.BETA
+  override val consts  : Consts    = UmlConsts
 
   override def indexCall: Call = controllers.idPartExes.routes.UmlController.index()
 

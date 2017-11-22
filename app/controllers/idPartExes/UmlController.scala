@@ -57,14 +57,14 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   // Views
 
   override def renderExercise(user: User, exercise: UmlCompleteEx, part: String): Future[Html] = Future(UmlExPart.valueOf(part) match {
-    case UmlExPart.CLASS_SELECTION => views.html.uml.classSelection.render(user, exercise.ex)
-    case UmlExPart.DIAG_DRAWING => views.html.uml.diagdrawing.render(user, exercise, getsHelp = false)
+    case UmlExPart.CLASS_SELECTION   => views.html.uml.classSelection.render(user, exercise.ex)
+    case UmlExPart.DIAG_DRAWING      => views.html.uml.diagdrawing.render(user, exercise, getsHelp = false)
     case UmlExPart.DIAG_DRAWING_HELP => views.html.uml.diagdrawing.render(user, exercise, getsHelp = true)
-    case UmlExPart.ATTRS_METHS => views.html.uml.umlMatching.render(user, exercise)
-    case _ => new Html("FEHLER!")
+    case UmlExPart.ATTRS_METHS       => views.html.uml.umlMatching.render(user, exercise)
+    case _                           => new Html("FEHLER!")
   })
 
-  /** @inheritdoc**/
+  /** @inheritdoc **/
   override val renderExesListRest = new Html(
     s"""<div class="alert alert-info">
        |Neueinsteiger sollten die Variante mit Zwischenkorrektur verwenden, die die einzelnen Schritte
@@ -79,11 +79,11 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   override def correctEx(user: User, sol: StringSolution, exercise: UmlCompleteEx, part: String): Try[CompleteResult[UmlResult]] = {
     val umlSol: UmlSolution = null
     val (result, nextPart) = UmlExPart.valueOf(part) match {
-      case UmlExPart.CLASS_SELECTION => (ClassSelectionResult(exercise, umlSol), UmlExPart.DIAG_DRAWING_HELP)
+      case UmlExPart.CLASS_SELECTION   => (ClassSelectionResult(exercise, umlSol), UmlExPart.DIAG_DRAWING_HELP)
       case UmlExPart.DIAG_DRAWING_HELP => (DiagramDrawingHelpResult(exercise, umlSol), UmlExPart.ATTRS_METHS)
-      case UmlExPart.DIAG_DRAWING => (DiagramDrawingResult(exercise, umlSol), UmlExPart.FINISHED)
-      case UmlExPart.ATTRS_METHS => (null, UmlExPart.FINISHED)
-      case UmlExPart.FINISHED => (null, UmlExPart.FINISHED)
+      case UmlExPart.DIAG_DRAWING      => (DiagramDrawingResult(exercise, umlSol), UmlExPart.FINISHED)
+      case UmlExPart.ATTRS_METHS       => (null, UmlExPart.FINISHED)
+      case UmlExPart.FINISHED          => (null, UmlExPart.FINISHED)
     }
     Try(new CompleteResult(sol.learnerSolution, List(result)))
   }
@@ -127,14 +127,14 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   }
 
   def activityExercise: EssentialAction = withAdmin { user =>
-    implicit request =>
-      Ok(views.html.umlActivity.activitiyDrawing.render(user))
+    implicit request => Ok(views.html.umlActivity.activitiyDrawing.render(user))
   }
 
-  def activityCheckSolution(): EssentialAction = withAdmin { user =>
+  def activityCheckSolution(lang: String): EssentialAction = withAdmin { user =>
     implicit request => {
       solForm.bindFromRequest.fold(_ => BadRequest("TODO!"),
-        solution =>{
+        solution => {
+          println("ProgLang: " + lang)
           println(solution)
           Ok("TODO_checksolution")
         }
