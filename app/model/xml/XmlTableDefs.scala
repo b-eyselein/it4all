@@ -38,7 +38,7 @@ case class XmlExercise(baseValues: BaseValues, exerciseType: XmlExType, rootNode
        |<td>TODO!</td>
      """.stripMargin)
 
-  override def exerciseRoutes: List[(Call, String)] = XmlToolObject.exerciseRoutes(this)
+  override def exerciseRoutes: Map[Call, String] = XmlToolObject.exerciseRoutes(this)
 }
 
 trait XmlTableDefs extends TableDefs {

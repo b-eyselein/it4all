@@ -19,7 +19,7 @@ trait IdExToolObject extends ExToolObject {
 
   def exerciseRoute(exercise: HasBaseValues): Call
 
-  override def exerciseRoutes(exercise: CompEx): List[(Call, String)] = List((exerciseRoute(exercise.ex), "Aufgabe bearbeiten"))
+  override def exerciseRoutes(exercise: CompEx): Map[Call, String] = Map(exerciseRoute(exercise.ex) -> "Aufgabe bearbeiten")
 
   def correctLiveRoute(exercise: HasBaseValues): Call
 

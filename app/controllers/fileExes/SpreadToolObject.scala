@@ -9,23 +9,23 @@ object SpreadToolObject extends FileExToolObject {
 
   override type CompEx = SpreadExercise
 
-  override val fileTypes = List(FileType("xlsx", "MS Excel"), FileType("ods", "OpenOffice"))
+  override val fileTypes: Map[String, String] = Map("xlsx" -> "MS Excel", "ods" -> "OpenOffice")
 
-  override val hasTags: Boolean = false
-  override val toolname         = "Tabellenkalkulation"
-  override val exType           = "spread"
-  override val consts : Consts  = SpreadConsts
+  override val hasTags : Boolean = false
+  override val toolname: String  = "Tabellenkalkulation"
+  override val exType  : String  = "spread"
+  override val consts  : Consts  = SpreadConsts
 
 
   override def indexCall: Call = controllers.fileExes.routes.SpreadController.index()
 
-  override def exerciseRoute(exercise: HasBaseValues, fileType: String): Call = controllers.fileExes.routes.SpreadController.downloadTemplate(exercise.id, fileType)
+  override def exerciseRoute(exercise: HasBaseValues, fileExtension: String): Call = controllers.fileExes.routes.SpreadController.exercise(exercise.id, fileExtension)
 
   override def exerciseListRoute(page: Int): Call = controllers.fileExes.routes.SpreadController.exerciseList(page)
 
-  override def uploadSolutionRoute(exercise: HasBaseValues): Call = controllers.fileExes.routes.SpreadController.uploadSolution(exercise.id)
+  override def uploadSolutionRoute(exercise: HasBaseValues, fileExtension: String): Call = controllers.fileExes.routes.SpreadController.uploadSolution(exercise.id, fileExtension)
 
-  override def downloadCorrectedRoute(exercise: HasBaseValues, fileType: String): Call = controllers.fileExes.routes.SpreadController.downloadCorrected(exercise.id, fileType)
+  override def downloadCorrectedRoute(exercise: HasBaseValues, fileExtension: String): Call = controllers.fileExes.routes.SpreadController.downloadCorrected(exercise.id, fileExtension)
 
 
   override val restHeaders: List[String] = List("Musterloesungsdatei", "Vorlagendatei")

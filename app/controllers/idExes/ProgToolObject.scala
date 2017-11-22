@@ -19,9 +19,10 @@ object ProgToolObject extends IdExToolObject {
 
   override def exerciseRoute(exercise: HasBaseValues): Call = controllers.idExes.routes.ProgController.exercise(exercise.id)
 
-  override def exerciseRoutes(exercise: ProgCompleteEx) = List(
-    (controllers.idExes.routes.ProgController.testData(exercise.ex.id), "Testdaten erstellen"),
-    (controllers.idExes.routes.ProgController.exercise(exercise.ex.id), "Aufgabe bearbeiten"))
+  override def exerciseRoutes(exercise: ProgCompleteEx) = Map(
+    controllers.idExes.routes.ProgController.testData(exercise.ex.id) -> "Testdaten erstellen",
+    controllers.idExes.routes.ProgController.exercise(exercise.ex.id) -> "Aufgabe bearbeiten"
+  )
 
   override def exerciseListRoute(page: Int): Call = controllers.idExes.routes.ProgController.exerciseList(page)
 

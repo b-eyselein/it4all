@@ -4,10 +4,11 @@ import java.nio.file.{Files, Path}
 import java.sql.SQLSyntaxErrorException
 
 import controllers.{BaseExerciseController, Secured}
-import model.core.FileExConsts._
+import model.spread.SpreadConsts._
 import model.core._
 import model.core.tools.ExToolObject
-import model.{Exercise, FileCompleteEx, HasBaseValues, User}
+import model._
+import model.spread.SpreadConsts
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.mvc.{Call, ControllerComponents, EssentialAction, Result}
 import play.twirl.api.Html
@@ -15,22 +16,20 @@ import play.twirl.api.Html
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-case class FileType(fileEnding: String, typeName: String)
-
 trait FileExToolObject extends ExToolObject {
 
   override type CompEx <: FileCompleteEx[_]
 
-  val fileTypes: List[FileType]
+  val fileTypes: Map[String, String]
 
-  def exerciseRoute(exercise: HasBaseValues, fileType: String): Call
+  def exerciseRoute(exercise: HasBaseValues, fileExtension: String): Call
 
-  override def exerciseRoutes(exercise: CompEx): List[(Call, String)] =
-    fileTypes filter exercise.available map (fileType => (exerciseRoute(exercise.ex, fileType.fileEnding), s"Mit ${fileType.typeName} bearbeiten"))
+  override def exerciseRoutes(exercise: CompEx): Map[Call, String] =
+    fileTypes filter (ft => exercise.available(ft._1)) map (ft => (exerciseRoute(exercise.ex, ft._1), s"Mit ${ft._2} bearbeiten"))
 
-  def uploadSolutionRoute(exercise: HasBaseValues): Call
+  def uploadSolutionRoute(exercise: HasBaseValues, fileExtension: String): Call
 
-  def downloadCorrectedRoute(exercise: HasBaseValues, fileType: String): Call
+  def downloadCorrectedRoute(exercise: HasBaseValues, fileExtension: String): Call
 
 }
 
@@ -63,9 +62,19 @@ abstract class AFileExController[E <: Exercise, R <: EvaluationResult]
 
   protected def checkFiles(ex: CompEx): List[Try[Path]]
 
-  def uploadSolution(id: Int): EssentialAction = futureWithUser(parse.multipartFormData) { user =>
+  def exercise(id: Int, fileExtension: String): EssentialAction = futureWithUser { user =>
     implicit request =>
-      request.body.file(FILE_NAME) map { file =>
+      completeExById(id) flatMap {
+        case Some(exercise) =>
+          log(user, ExerciseStartEvent(request, id))
+          renderExercise(user, exercise, fileExtension) map (Ok(_))
+        case None           => Future(Redirect(toolObject.indexCall))
+      }
+  }
+
+  def uploadSolution(id: Int, fileExtension: String): EssentialAction = futureWithUser(parse.multipartFormData) { user =>
+    implicit request =>
+      request.body.file(SpreadConsts.FILE_NAME) map { file =>
         // TODO: user file...
         Future(Ok("TODO!"))
       } getOrElse Future(BadRequest("There has been an error uploading your file!"))
@@ -86,11 +95,11 @@ abstract class AFileExController[E <: Exercise, R <: EvaluationResult]
     //        })
   }
 
-  def downloadTemplate(id: Int, fileType: String): EssentialAction = futureWithUser { user =>
+  def downloadTemplate(id: Int, fileExtension: String): EssentialAction = futureWithUser { user =>
     implicit request =>
       completeExById(id) map {
         case Some(exercise) =>
-          val templateFilePath = exercise.templateFilePath(fileType)
+          val templateFilePath = exercise.templateFilePath(fileExtension)
           println(templateFilePath.toAbsolutePath)
           Ok.sendFile(templateFilePath.toFile, inline = true)
         case None           => Redirect(toolObject.indexCall)

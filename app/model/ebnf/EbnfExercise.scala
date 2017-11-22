@@ -31,7 +31,7 @@ case class EbnfExercise(i: Int, ti: String, a: String, te: String, s: ExerciseSt
 
   override def renderListRest = ???
 
-  override def exerciseRoutes: List[(Call, String)] = EbnfToolObject.exerciseRoutes(this)
+  override def exerciseRoutes: Map[Call, String] = EbnfToolObject.exerciseRoutes(this)
 
 }
 

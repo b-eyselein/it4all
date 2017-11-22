@@ -1,33 +1,36 @@
-@(user: model.User, exercise: model.spread.SpreadExercise)
+@(user: model.User, exercise: model.spread.SpreadExercise, fileType: (String, String))
 
 @main("Spread-Test", user) {
     <div class="container">
-        <form action="#@* @spread.routes.SpreadController.correct(exercise.id)*@" method="post" onsubmit="prepareFormForSubmitting();">
+        <div class="page-header">
+            <h1>Aufgabe &quot;@exercise.title&quot;</h1>
+        </div>
 
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="page-header">
-                        <h1>Aufgabenstellung</h1>
-                    </div>
+        <p>@exercise.text</p>
 
-                    @exercise.text
+        <hr>
+
+        <h2>Download der Musterdatei</h2>
+
+        <a href="@controllers.fileExes.routes.SpreadController.downloadTemplate(exercise.id, fileType._1)" class="btn btn-default btn-block">
+            Musterdatei f&uuml;r @fileType._2 herunterladen</a>
+
+
+        <hr>
+
+        <h2>Upload ihrer L&ouml;sung</h2>
+
+        <form class="form-horizontal" action="@controllers.fileExes.routes.SpreadController.uploadSolution(exercise.id, fileType._1)"
+        method="post" enctype="multipart/form-data">
+
+            <div class="form-group">
+                <label class="control-label col-sm-3">Datei: </label>
+                <div class="col-sm-9">
+                    <input type="file" class="form-control" name="@model.spread.SpreadConsts.FILE_NAME" required>
                 </div>
             </div>
 
-            <hr>
-
-            <div class="row">
-                <div class="col-md-12">
-                    <h2>Bemerkungen</h2>
-                    <div id="correction"></div>
-                </div>
-            </div>
-
-            <hr>
-
-            <button type="button" class="btn btn-primary btn-block"
-            onclick="@*testTheSolution('@spread.routes.Spread.correctLive(exercise.id)');*@">L&ouml;sung testen</button>
-            <input type="submit" class="btn btn-success btn-block" value="L&ouml;sung abgeben">
+            <button class="btn btn-success btn-block">L&ouml;sung abgeben</button>
 
         </form>
     </div>

@@ -24,7 +24,7 @@ case class QuizCompleteEx(ex: Quiz) extends CompleteEx[Quiz] {
 
   override def renderListRest = ???
 
-  override def exerciseRoutes: List[(Call, String)] = QuestionToolObject.exerciseRoutes(this)
+  override def exerciseRoutes: Map[Call, String] = QuestionToolObject.exerciseRoutes(this)
 
 }
 

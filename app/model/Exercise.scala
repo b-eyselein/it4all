@@ -2,7 +2,7 @@ package model
 
 import java.nio.file.Path
 
-import controllers.fileExes.{FileExToolObject, FileType}
+import controllers.fileExes.FileExToolObject
 import model.Enums.ExerciseState
 import model.core.FileUtils
 import play.api.mvc.Call
@@ -50,7 +50,7 @@ trait CompleteEx[B <: HasBaseValues] {
 
   def renderListRest: Html
 
-  def exerciseRoutes: List[(Call, String)]
+  def exerciseRoutes: Map[Call, String]
 
 }
 
@@ -66,7 +66,6 @@ trait FileCompleteEx[B <: Exercise] extends CompleteEx[B] with FileUtils {
 
   def sampleFilePath(fileEnding: String): Path = toolObject.sampleDir / (sampleFilename + "." + fileEnding)
 
-  def available(fileType: FileType): Boolean = templateFilePath(fileType.fileEnding).toFile.exists &&
-    sampleFilePath(fileType.fileEnding).toFile.exists
+  def available(fileEnding: String): Boolean = templateFilePath(fileEnding).toFile.exists && sampleFilePath(fileEnding).toFile.exists
 
 }

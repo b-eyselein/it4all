@@ -14,7 +14,7 @@ import play.api.mvc.ControllerComponents
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.language.implicitConversions
+import scala.language.{implicitConversions, postfixOps}
 import scala.util.Try
 
 object SpreadController {
@@ -65,25 +65,27 @@ class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
   override def saveReadToDb(read: SpreadExercise): Future[Int] = db.run(repo.spreadExercises insertOrUpdate read)
 
   // Check files (sample, template in xlsx, ods)
-  override protected def checkFiles(ex: SpreadExercise): List[Try[Path]] = SpreadToolObject.fileTypes flatMap { fileType =>
-    // FIXME: TODO!
-    println("Moving files...")
-    val sampleFileSourcePath = toolObject.exerciseResourcesFolder / (ex.sampleFilename + "." + fileType.fileEnding)
-    val templateFileSourcePath = toolObject.exerciseResourcesFolder / (ex.templateFilename + "." + fileType.fileEnding)
+  override protected def checkFiles(ex: SpreadExercise): List[Try[Path]] = SpreadToolObject.fileTypes flatMap {
+    case (fileEnding, _) =>
+      // FIXME: TODO!
+      println("Moving files...")
+      val sampleFileSourcePath = toolObject.exerciseResourcesFolder / (ex.sampleFilename + "." + fileEnding)
+      val templateFileSourcePath = toolObject.exerciseResourcesFolder / (ex.templateFilename + "." + fileEnding)
 
-    val sampleFileTargetPath = toolObject.sampleDir / (ex.sampleFilename + "." + fileType.fileEnding)
-    val templateFileTargetPath = toolObject.sampleDir / (ex.templateFilename + "." + fileType.fileEnding)
+      val sampleFileTargetPath = toolObject.sampleDir / (ex.sampleFilename + "." + fileEnding)
+      val templateFileTargetPath = toolObject.sampleDir / (ex.templateFilename + "." + fileEnding)
 
 
-    List(
-      copy(sampleFileSourcePath, sampleFileTargetPath),
-      copy(templateFileSourcePath, templateFileTargetPath)
-    )
-  }
+      List(
+        copy(sampleFileSourcePath, sampleFileTargetPath),
+        copy(templateFileSourcePath, templateFileTargetPath)
+      )
+  } toList
 
   // Views
 
-  override protected def renderExercise(user: User, exercise: SpreadExercise, part: String): Future[Html] = Future(views.html.spread.spreadExercise.render(user, exercise.ex))
+  override protected def renderExercise(user: User, exercise: SpreadExercise, part: String): Future[Html] =
+    Future(views.html.spread.spreadExercise.render(user, exercise.ex, (part, SpreadToolObject.fileTypes(part))))
 
   override protected def renderResult(correctionResult: CompleteResult[EvaluationResult]): Html = ??? // FIXME: implement...
 

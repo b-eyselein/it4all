@@ -46,7 +46,7 @@ case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping], ignoreWords
 
   override def renderListRest = ???
 
-  override def exerciseRoutes: List[(Call, String)] = UmlToolObject.exerciseRoutes(this)
+  override def exerciseRoutes: Map[Call, String] = UmlToolObject.exerciseRoutes(this)
 }
 
 case class UmlSolution(classes: Seq[UmlCompleteClass], associations: Seq[UmlAssociation], implementations: Seq[UmlImplementation]) {

@@ -59,7 +59,7 @@ trait ExToolObject extends ToolObject with FileUtils {
 
   def exerciseListRoute(page: Int): Call
 
-  def exerciseRoutes(exercise: CompEx): List[(Call, String)]
+  def exerciseRoutes(exercise: CompEx): Map[Call, String]
 
   // Admin
 

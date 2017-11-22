@@ -9,6 +9,8 @@ object UmlToolObject extends IdPartExToolObject {
 
   override type CompEx = UmlCompleteEx
 
+  override def exParts: Map[String, String] = Map(UmlExPart.CLASS_SELECTION.name -> "Mit Zwischenkorrektur", UmlExPart.DIAG_DRAWING.name -> "Freies Erstellen")
+
   override val hasTags : Boolean = false
   override val toolname: String  = "Uml"
   override val exType  : String  = "uml"
@@ -17,10 +19,6 @@ object UmlToolObject extends IdPartExToolObject {
   override def indexCall: Call = controllers.idPartExes.routes.UmlController.index()
 
   override def exerciseRoute(exercise: HasBaseValues, part: String): Call = controllers.idPartExes.routes.UmlController.exercise(exercise.id, part)
-
-  override def exerciseRoutes(exercise: UmlCompleteEx) = List(
-    (controllers.idPartExes.routes.UmlController.exercise(exercise.ex.id, UmlExPart.CLASS_SELECTION.toString), "Mit Zwischenkorrektur"),
-    (controllers.idPartExes.routes.UmlController.exercise(exercise.ex.id, UmlExPart.DIAG_DRAWING.toString), "Freies Erstellen"))
 
   override def exerciseListRoute(page: Int): Call = controllers.idPartExes.routes.UmlController.exerciseList(page)
 

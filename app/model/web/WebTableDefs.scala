@@ -24,7 +24,7 @@ case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTa
     s"""<td>${htmlTasks.size} / ${jsTasks.size}</td>
        |<td>ToDo / ToDo</td>""".stripMargin)
 
-  override def exerciseRoutes: List[(Call, String)] = WebToolObject.exerciseRoutes(this)
+  override def exerciseRoutes: Map[Call, String] = WebToolObject.exerciseRoutes(this)
 }
 
 trait WebCompleteTask {

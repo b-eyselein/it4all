@@ -17,7 +17,11 @@ import scala.util.{Failure, Success, Try}
 
 trait IdPartExToolObject extends ExToolObject {
 
+  def exParts: Map[String, String]
+
   def exerciseRoute(exercise: HasBaseValues, part: String): Call
+
+  override def exerciseRoutes(exercise: CompEx): Map[Call, String] = exParts map (exPart => (exerciseRoute(exercise.ex, exPart._1), exPart._2))
 
   def correctLiveRoute(exercise: HasBaseValues, part: String): Call
 

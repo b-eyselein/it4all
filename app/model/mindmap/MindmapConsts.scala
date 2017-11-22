@@ -2,9 +2,9 @@ package model.mindmap
 
 import java.nio.file.{Path, Paths}
 
-import model.Consts
+import model.core.FileExConsts
 
-object MindmapConsts extends Consts {
+object MindmapConsts extends FileExConsts {
 
   val BASE_PATH: Path = Paths.get("conf", "resources", "mindmap")
 

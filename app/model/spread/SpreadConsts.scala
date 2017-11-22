@@ -1,8 +1,8 @@
 package model.spread
 
-import model.Consts
+import model.core.FileExConsts
 
-object SpreadConsts extends Consts {
+object SpreadConsts extends FileExConsts {
 
   val COMMENT_CHART_CORRECT                        = "Diagramm(e) richtig."
   val COMMENT_CHART_FALSE                          = "Es sollten keine Diagramme erstellt werden."

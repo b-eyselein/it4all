@@ -7,8 +7,6 @@ trait Consts {
   val ATTRS_NAME   = "attributes"
   val AUTHOR_NAME  = "author"
 
-  val BODY_FILE_NAME = "file"
-
   val EX_FILE_NAME     = "exercises.json"
   val EXERCISES_NAME   = "exercises"
   val EXERCISE_ID_NAME = "exerciseId"

@@ -32,7 +32,7 @@ case class SpreadExercise(baseValues: BaseValues, sampleFilename: String, templa
 
   override def renderListRest: Html = ???
 
-  override def exerciseRoutes: List[(Call, String)] = SpreadToolObject.exerciseRoutes(this)
+  override def exerciseRoutes: Map[Call, String] = SpreadToolObject.exerciseRoutes(this)
 
 }
 

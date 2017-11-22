@@ -31,7 +31,7 @@ case class BlanksExercise(i: Int, ti: String, a: String, te: String, s: Exercise
 
   override def renderListRest = ???
 
-  override def exerciseRoutes: List[(Call, String)] = BlanksToolObject.exerciseRoutes(this)
+  override def exerciseRoutes: Map[Call, String] = BlanksToolObject.exerciseRoutes(this)
 }
 
 trait BlanksTableDefs extends TableDefs {

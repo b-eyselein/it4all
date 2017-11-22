@@ -17,7 +17,7 @@ case class ProgCompleteEx(ex: ProgExercise, sampleSolution: ProgSampleSolution, 
 
   override def renderListRest = ???
 
-  override def exerciseRoutes: List[(Call, String)] = ProgToolObject.exerciseRoutes(this)
+  override def exerciseRoutes: Map[Call, String] = ProgToolObject.exerciseRoutes(this)
 }
 
 case class CompleteSampleTestData(sampleTestData: SampleTestData, inputs: Seq[SampleTestDataInput])

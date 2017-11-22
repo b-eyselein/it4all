@@ -9,13 +9,13 @@ object MindMapToolObject extends FileExToolObject {
 
   override type CompEx = MindmapExercise
 
-  override val fileTypes = List(FileType("mmap", "MindJet MindManager"))
+  override val fileTypes: Map[String, String] = Map("mmap" -> "MindJet MindManager")
 
-  override val hasTags: Boolean = false
-  override val toolname         = "Mindmap"
-  override val exType           = "mindmap"
-  override val toolState        = ToolState.ALPHA
-  override val consts : Consts  = MindmapConsts
+  override val hasTags  : Boolean   = false
+  override val toolname : String    = "Mindmap"
+  override val exType   : String    = "mindmap"
+  override val toolState: ToolState = ToolState.ALPHA
+  override val consts   : Consts    = MindmapConsts
 
 
   override def indexCall: Call = controllers.fileExes.routes.MindmapController.index()
@@ -24,7 +24,7 @@ object MindMapToolObject extends FileExToolObject {
 
   override def exerciseListRoute(page: Int): Call = controllers.fileExes.routes.MindmapController.exerciseList(page)
 
-  override def uploadSolutionRoute(exercise: HasBaseValues): Call = controllers.fileExes.routes.MindmapController.uploadSolution(exercise.id)
+  override def uploadSolutionRoute(exercise: HasBaseValues, fileExtension: String): Call = controllers.fileExes.routes.MindmapController.uploadSolution(exercise.id, fileExtension)
 
   override def downloadCorrectedRoute(exercise: HasBaseValues, fileType: String): Call = controllers.fileExes.routes.MindmapController.downloadCorrected(exercise.id, fileType)
 
