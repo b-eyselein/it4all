@@ -263,6 +263,7 @@ GET           /web/sol/:user/:id                          controllers.idPartExes
 
 # UmlActivity - Anfang
 GET           /umlActivity/drawing                        controllers.idPartExes.UmlController.activityExercise
+POST          /umlActivity/check                          controllers.idPartExes.UmlController.activityCheckSolution()
 # UmlActivity - Ende
 
 # Uml - Anfang

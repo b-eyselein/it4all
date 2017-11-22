@@ -130,4 +130,22 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
     implicit request =>
       Ok(views.html.umlActivity.activitiyDrawing.render(user))
   }
+
+  def activityCheckSolution(): EssentialAction = withAdmin { user =>
+    implicit request => {
+      solForm.bindFromRequest.fold(_ => BadRequest("TODO!"),
+        solution =>{
+          println(solution)
+          Ok("TODO_checksolution")
+        }
+      )
+
+      //      val solNode = Json.parse(singleStrForm(StringConsts.SOLUTION_NAME).get.str)
+      //      JsonReader.validateJson(solNode, UmlController.SolutionSchemaNode) match {
+      //        case Success(_) => Ok("Ok...")
+      //        case Failure(_) => BadRequest("FEHLER!")
+      //      }
+    }
+  }
+
 }

@@ -48,7 +48,45 @@ window.onload = function () {
         };
         reader.readAsText(file);
     });
-}
+
+
+    function enterFullscreen(element) {
+        if(element.requestFullscreen) {
+            element.requestFullscreen();
+        } else if(element.mozRequestFullScreen) {
+            element.mozRequestFullScreen();
+        } else if(element.msRequestFullscreen) {
+            element.msRequestFullscreen();
+        } else if(element.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen();
+        }
+    }
+    function exitFullscreen() {
+        if(document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if(document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        } else if(document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        }
+    }
+    console.log("outside");
+    $("#fullscreenStart").click(function () {
+        console.log("fullstart");
+        enterFullscreen(document.getElementById("tool")); // ein bestimmtes Element
+    });
+
+    $("#fullscreenEnd").click(function () {
+        exitFullscreen();
+    });
+
+    function prepareFormForSubmitting() {
+        $('#learnerSolution').val(document.getElementById("preCode").innerHTML);
+    }
+
+
+
+};
 
 //Test: Is Json Objrect
 function isJson(str) {
@@ -66,4 +104,3 @@ function saveGraphAsTxt() {
     var blob = new Blob([input], {type: "text/plain;charset=utf-8"});
     saveAs(blob, "graph.txt");
 }
-
