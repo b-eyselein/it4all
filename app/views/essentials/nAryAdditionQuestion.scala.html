@@ -1,8 +1,6 @@
-@import model.essentials.EssentialsConsts._
-@import model.essentials.EssentialsConsts
-@import model.essentials.{NAryNumber, NumberBase}
+@import model.essentials.{EssentialsConsts, NAryNumber}
 
-@(user: model.User, firstSummand: NAryNumber, secondSummand: NAryNumber, base: NumberBase)
+@(user: model.User, firstSummand: NAryNumber, secondSummand: NAryNumber, base: model.essentials.NumberBase)
 
 @title = @{
     "Addition"
@@ -59,7 +57,7 @@
                         </div>
                     </div>
 
-                    <input hidden name="@BaseName" value="@base">
+                    <input hidden name="@EssentialsConsts.BaseName" value="@base">
 
                     <button class="btn btn-primary btn-block">Pr&uuml;fen</button>
                 </form>

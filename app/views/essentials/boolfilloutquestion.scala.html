@@ -1,46 +1,92 @@
 @(user: model.User, question: model.essentials.FilloutQuestion)
 
-@main("Wertetabelle", user) {
+@variables = @{
+    question.variables.sortBy(_.variable)
+}
+@size = @{
+    12 / (variables.size + 1)
+}
+
+@scripts = {
+    <script>
+            const variables = [@Html(variables.map{v => "\"" + v + "\""}.mkString(","))];
+
+            function toJson() {
+                const cells = $('#valueTableBody').find('.text-center');
+                console.log(cells.length);
+                cells.map(function (index, cell) {
+//                    console.log(cell);
+                    let variable = cell.dataset.variable;
+                    let value = cell.value;
+                    console.log(variable + " :: " + value);
+                    return {
+                        variables: "",
+                        value: ""
+                    }
+                })
+            }
+
+            function writeToJson() {
+
+//                return false;
+            }
+
+            function testSol() {
+                let theData = toJson();
+
+                console.log(theData);
+            }
+    </script>
+}
+
+@main("Wertetabelle", user, scripts) {
     <div class="container">
         <div class="page-header">
             <h1>Ausf&uuml;llen einer Wertetabelle</h1>
         </div>
 
-        z = @question.formulaAsString
+        <h2 class="text-center"><code>z = @question.formulaAsString</code></h2>
 
         <hr>
 
-        <form action="@controllers.randomExes.routes.EssentialsController.checkBoolFilloutSolution" method="post">
+        <form action="@controllers.randomExes.routes.EssentialsController.checkBoolFilloutSolution" method="post" onsubmit="return writeToJson();">
             <div class="row">
                 <div class="col-sm-6 col-sm-offset-3">
                     <table class="table table-responsive" border="1">
                         <thead>
                             <tr>
-                                @for(v <- question.variables) {
+                                @for(v <- variables) {
                                     <th class="text-center">@v</th>
                                 }
-                                <th class="text-center">@Html(question.getFormulaAsHtml)</th>
+                                <th class="text-center">z</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="valueTableBody">
                         @for(assignment <- question.assignments) {
                             <tr>
-                                @for(variable <- question.variables) {
-                                    <td class="text-center">@assignment.asChar(variable)</td>
+                                @for(variable <- variables) {
+                                    <td class="text-center" data-variable="@variable">@assignment.asChar(variable)</td>
                                 }
-                            <td class="text-center">
-                                <input type="number" autocomplete="off" min="0" max="1" step="1" name="@assignment.toString" size="1" maxlength="1" required>
+                            <td>
+                                <input title="@assignment.toString" class="form-control" type="number" autocomplete="off" min="0" max="1" step="1" name="@assignment.toString" size="1" maxlength="1" required>
                             </td>
                             </tr>
                         }
                         </tbody>
                     </table>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-6 col-sm-offset-3">
-                    <input hidden name="@model.essentials.EssentialsConsts.FormulaName" value="@question.formulaAsString">
-                    <button class="btn btn-primary btn-block">Pr&uuml;fen</button>
+
+
+                    <input title="hidden" hidden name="@model.essentials.EssentialsConsts.FormulaName" value="@question.formulaAsString">
+
+                    <div class="btn-group btn-group-justified">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary" onclick="testSol()">Testen</button>
+                        </div>
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-success">Pr&uuml;fen</button>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </form>

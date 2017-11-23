@@ -91,6 +91,7 @@ class EssentialsController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
       request.body.asFormUrlEncoded match {
         case None       => BadRequest("There has been an error!")
         case Some(data) =>
+          println(data map (d => d._1 + " -> " + d._2.mkString) mkString "\n")
           BoolNodeParser.parse(data(FormulaName).mkString("")) match {
             case Some(formula) =>
 
@@ -113,7 +114,7 @@ class EssentialsController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
   def checkBoolCreationSolution: EssentialAction = withUser { user =>
     implicit request =>
       request.body.asFormUrlEncoded flatMap checkCreationSolution match {
-        case None       => BadRequest("There has been an error!")
+        case None         => BadRequest("There has been an error!")
         case Some(result) => Ok(views.html.essentials.boolcreatesolution.render(user, result))
       }
   }

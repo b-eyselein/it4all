@@ -1,6 +1,6 @@
 // Some helper functions...
 
-var inputCount;
+let inputCount;
 
 $(document).ready(function () {
     inputCount = $('#inputCount').val()
@@ -21,13 +21,13 @@ function getOutputName(testCounter) {
 // Real functions
 
 function moreTestData() {
-    var testDataRows = document.getElementById('testDataRows');
-    var newTestId = parseInt(getTestCount());
+    let testDataRows = document.getElementById('testDataRows');
+    let newTestId = parseInt(getTestCount());
 
-    var newRow = document.createElement('tr');
+    let newRow = document.createElement('tr');
     newRow.id = 'tr_' + newTestId;
-    var newRowInner = '<td>' + newTestId + '</td>';
-    for (var ic = 0; ic < inputCount; ic++) {
+    let newRowInner = '<td>' + newTestId + '</td>';
+    for (let ic = 0; ic < inputCount; ic++) {
         newRowInner += '<td><input class="form-control" name="' + getInputName(ic, newTestId) + '" id="'
             + getInputName(ic, newTestId) + '" placeholder="Test ' + (newTestId + 1) + ', Input ' + (ic + 1) + '"></td>';
     }
@@ -41,10 +41,10 @@ function moreTestData() {
 }
 
 function getTestData() {
-    var testData = [];
-    for (var testCounter = 0; testCounter < getTestCount(); testCounter++) {
-        var inputs = [];
-        for (var inputCounter = 0; inputCounter < inputCount; inputCounter++) {
+    let testData = [];
+    for (let testCounter = 0; testCounter < getTestCount(); testCounter++) {
+        let inputs = [];
+        for (let inputCounter = 0; inputCounter < inputCount; inputCounter++) {
             inputs.push({
                 id: inputCounter,
                 input: $('#inp_' + inputCounter + '_' + testCounter).val()
@@ -60,8 +60,8 @@ function getTestData() {
 }
 
 function validateTestData(theUrl) {
-    var table = document.getElementById('testDataTable');
-    for (var i = 1; i < table.rows.length - 1; i++) {
+    let table = document.getElementById('testDataTable');
+    for (let i = 1; i < table.rows.length - 1; i++) {
         table.rows[i].className = '';
     }
 
@@ -77,8 +77,8 @@ function validateTestData(theUrl) {
 }
 
 function validateTDSuccess(response) {
-    for (var data of response) {
-        var row = document.getElementById('tr_' + data.id);
+    for (let data of response) {
+        let row = document.getElementById('tr_' + data.id);
         row.title = data.titleForValidation;
         row.className = data.successful ? 'success' : 'danger';
     }

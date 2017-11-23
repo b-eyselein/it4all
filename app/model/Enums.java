@@ -33,18 +33,22 @@ public abstract class Enums {
     }
 
     public enum ToolState implements Selectable<ToolState> {
-        LIVE("Verfügbare Tools", Role.RoleUser), ALPHA("Tools in Alpha-Status", Role.RoleAdmin), BETA("Tools in Beta-Status", Role.RoleAdmin);
+        LIVE("Verfügbare Tools", "", Role.RoleUser),
+        ALPHA("Tools in Alpha-Status", "&alpha;", Role.RoleAdmin),
+        BETA("Tools in Beta-Status", "&beta;", Role.RoleAdmin);
 
         public final String german;
+        public final String greek;
         public final Role requiredRole;
 
-        ToolState(String theGerman, Role theRequiredRole) {
+        ToolState(String theGerman, String theGreek, Role theRequiredRole) {
             german = theGerman;
+            greek = theGreek;
             requiredRole = theRequiredRole;
         }
 
         public Html badge() {
-            return new Html(this == LIVE ? "" : "<sup>" + name() + "</sup>");
+            return new Html(this == LIVE ? "" : "<sup>" + greek + "</sup>");
         }
     }
 
