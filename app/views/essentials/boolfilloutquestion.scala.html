@@ -1,3 +1,5 @@
+@import model.essentials.EssentialsConsts
+
 @(user: model.User, question: model.essentials.FilloutQuestion)
 
 @variables = @{
@@ -9,32 +11,45 @@
 
 @scripts = {
     <script>
-            const variables = [@Html(variables.map{v => "\"" + v + "\""}.mkString(","))];
 
-            function toJson() {
-                const cells = $('#valueTableBody').find('.text-center');
-                console.log(cells.length);
-                cells.map(function (index, cell) {
-//                    console.log(cell);
-                    let variable = cell.dataset.variable;
-                    let value = cell.value;
-                    console.log(variable + " :: " + value);
-                    return {
-                        variables: "",
-                        value: ""
-                    }
-                })
+            function readValues() {
+                let assignments = [];
+
+                $('#valueTableBody').find('tr').each(function (index, row) {
+                    let partAssignments = {};
+                    $(row).find('.text-center').each(function (index, cell) {
+                        partAssignments[cell.dataset.variable] = cell.dataset.value === "true"
+                    });
+                    partAssignments["z"] = $(row).find('td > input').val() !== "0";
+                    assignments.push(partAssignments)
+                });
+
+                return {
+                    formula: "@question.formulaAsString",
+                    @EssentialsConsts.VariablesName: [@question.varsForJson],
+                    assignments: assignments
+                };
             }
 
             function writeToJson() {
-
+                console.log("Writing to json...");
 //                return false;
             }
 
-            function testSol() {
-                let theData = toJson();
+            function onAjaxSuccess(response) {
+                console.log(response);
+            }
 
-                console.log(theData);
+            function testSol() {
+                $.ajax({
+                    type: 'PUT',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    url: "@controllers.randomExes.routes.EssentialsController.checkBoolFilloutSolution",
+                    data: JSON.stringify(readValues()),
+                    async: true,
+                    success: onAjaxSuccess
+                });
             }
     </script>
 }
@@ -45,11 +60,12 @@
             <h1>Ausf&uuml;llen einer Wertetabelle</h1>
         </div>
 
-        <h2 class="text-center"><code>z = @question.formulaAsString</code></h2>
+        <h2 class="text-center"><code>
+            z = <span id="@model.essentials.EssentialsConsts.FormulaName">@question.formulaAsString</span></code></h2>
 
         <hr>
 
-        <form action="@controllers.randomExes.routes.EssentialsController.checkBoolFilloutSolution" method="post" onsubmit="return writeToJson();">
+        <form action="@controllers.randomExes.routes.EssentialsController.checkBoolFilloutSolution" method="post">
             <div class="row">
                 <div class="col-sm-6 col-sm-offset-3">
                     <table class="table table-responsive" border="1">
@@ -63,12 +79,13 @@
                         </thead>
                         <tbody id="valueTableBody">
                         @for(assignment <- question.assignments) {
-                            <tr>
+                            <tr id="valueTableRow">
                                 @for(variable <- variables) {
-                                    <td class="text-center" data-variable="@variable">@assignment.asChar(variable)</td>
+                                    <td class="text-center" data-variable="@variable" data-value="@assignment(variable)">@assignment.asChar(variable)</td>
                                 }
                             <td>
-                                <input title="@assignment.toString" class="form-control" type="number" autocomplete="off" min="0" max="1" step="1" name="@assignment.toString" size="1" maxlength="1" required>
+                                <input title="@assignment.toString" class="form-control" type="number" autocomplete="off" min="0" max="1" step="1"
+                                name="@assignment.toString" size="1" maxlength="1" required>
                             </td>
                             </tr>
                         }
@@ -80,10 +97,10 @@
 
                     <div class="btn-group btn-group-justified">
                         <div class="btn-group">
-                            <button type="button" class="btn btn-primary" onclick="testSol()">Testen</button>
+                            <button type="submit" class="btn btn-primary" formaction="javascript:testSol()">Testen</button>
                         </div>
                         <div class="btn-group">
-                            <button type="submit" class="btn btn-success">Pr&uuml;fen</button>
+                            <button type="submit" class="btn btn-success" onclick="writeToJson();">Pr&uuml;fen</button>
                         </div>
                     </div>
 

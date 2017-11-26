@@ -3,6 +3,7 @@ package model.essentials
 import model.essentials.BoolAssignment.generateAllAssignments
 import model.essentials.EssentialsConsts._
 import model.essentials.ScalaNode._
+import play.twirl.api.Html
 
 import scala.language.postfixOps
 import scala.util.Random
@@ -11,6 +12,9 @@ abstract sealed class BooleanQuestion(val variables: Seq[Variable]) {
   val joinedVariables: String = variables.mkString(",")
 
   def numberOfLines: Int = scala.math.pow(2, variables.size).toInt
+
+  def varsForJson: Html = Html(variables.map(v => s"'$v'").mkString(", "))
+
 }
 
 object BooleanQuestion {

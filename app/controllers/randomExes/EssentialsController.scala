@@ -10,11 +10,13 @@ import model.essentials.EssentialsConsts._
 import model.essentials.NAryResult._
 import model.essentials._
 import play.api.db.slick.DatabaseConfigProvider
+import play.api.libs.json._
+import play.libs.{Json => JavaJson}
 import play.api.mvc.{ControllerComponents, EssentialAction}
 import play.twirl.api.Html
 
 import scala.concurrent.ExecutionContext
-import scala.language.implicitConversions
+import scala.language.{implicitConversions, postfixOps}
 import scala.util.Try
 
 @Singleton
@@ -86,6 +88,24 @@ class EssentialsController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   // Boolean Algebra
 
+  def checkBoolFilloutSolutionLive: EssentialAction = withUser { user =>
+    implicit request =>
+      request.body.asJson match {
+        case None       => BadRequest("There has been an error!");
+        case Some(json) =>
+          println(json)
+          readFilloutQuestionFromJson(json) match {
+            case None                  => BadRequest("There has been an error!")
+            case Some(filloutQuestion) =>
+              // FIXME: implement correction!
+
+              println(filloutQuestion)
+
+              Ok("TODO!")
+          }
+      }
+  }
+
   def checkBoolFilloutSolution: EssentialAction = withUser { user =>
     implicit request =>
       request.body.asFormUrlEncoded match {
@@ -127,8 +147,50 @@ class EssentialsController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
         case Some(data) =>
           val result = checkCreationSolution(data)
           // FIXME: ugly, stupid, sh**ty hack!
-          Ok(play.api.libs.json.Json.parse(play.libs.Json.toJson(result).toString))
+          Ok(play.api.libs.json.Json.parse(JavaJson.toJson(result.get).toString))
       }
+  }
+
+  // Helper mehtods
+
+  private def readFilloutQuestionFromJson(json: JsValue): Option[FilloutQuestion] = json match {
+    case JsObject(values) =>
+
+      val formula: Option[ScalaNode] = values get FormulaName flatMap {
+        case JsString(formulaString) => BoolNodeParser.parse(formulaString)
+        case _                       => None
+      }
+
+      val variables: Option[Seq[Char]] = values get VariablesName map {
+        case JsArray(vars) => vars map {
+          case JsString(str) => str(0)
+          case _             => 'y'
+        }
+        case _             => Seq.empty
+      }
+
+      val assignments: Option[Seq[BoolAssignment]] = values get AssignmentsName map {
+        case JsArray(jsAssignments) => jsAssignments.flatMap {
+          case JsObject(assignmentValues) =>
+            Some(new BoolAssignment(assignmentValues map {
+              case (str, jsValue) =>
+                (Variable(str(0)), jsValue match {
+                  case JsBoolean(bool) => bool
+                  case _               => false
+                })
+            } toMap))
+          case _                          => None
+        }
+        case _                      => Seq.empty
+      }
+
+      println(variables)
+
+      (formula zip assignments).headOption map {
+        case (f, as) => FilloutQuestion(f, as)
+      }
+    case _                => None
+
   }
 
   private def checkCreationSolution(data: Map[String, Seq[String]]): Option[BooleanQuestionResult] = {

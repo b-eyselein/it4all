@@ -31,6 +31,7 @@ GET           /essentials/nary/twocomp                    controllers.randomExes
 POST          /essentials/nary/twocomp                    controllers.randomExes.EssentialsController.checkNaryTwoComplementSolution(verbose: Boolean)
 
 GET           /essentials/bool/fillout                    controllers.randomExes.EssentialsController.newBoolFilloutQuestion
+PUT           /essentials/bool/fillout                    controllers.randomExes.EssentialsController.checkBoolFilloutSolutionLive
 POST          /essentials/bool/fillout                    controllers.randomExes.EssentialsController.checkBoolFilloutSolution
 
 GET           /essentials/bool/creation                   controllers.randomExes.EssentialsController.newBoolCreationQuestion

@@ -68,7 +68,7 @@ function validateTestData(theUrl) {
     $.ajax({
         type: 'PUT',
         dataType: 'json', // return type
-        contentType: "application/json", // type of message to server
+        contentType: 'application/json', // type of message to server
         url: theUrl,
         data: JSON.stringify(getTestData()),
         async: true,

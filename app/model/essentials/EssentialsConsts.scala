@@ -6,22 +6,27 @@ object EssentialsConsts extends Consts {
 
   // Nary
 
+  val AssignmentsName = "assignments"
+
   val BaseName  = "base"
   val BinaryAbs = "binaryAbs"
 
-  val FormulaName = "formula"
+  val FirstSummand = "summand1"
+  val FormulaName  = "formula"
 
   val InvertedAbs = "inverted"
 
   val LearnerSol = "learnerSolution"
 
-  val StartingNumBase = "startingNB"
-  val FirstSummand    = "summand1"
+  val RandomName = "RANDOM"
+
   val SecondSummand   = "summand2"
+  val StartingNumBase = "startingNB"
 
   val TargetNumBase = "targetNB"
 
-  val RandomName = "RANDOM"
+  val VariablesName = "variables"
+
 
   // Boolean
 
