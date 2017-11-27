@@ -136,6 +136,8 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
     }
   }
 
+  // FIXME: use JsonFormat!
+
   private def readAllCommitedTestDataFromJson(jsValue: JsValue, exId: Int, username: String): Option[Seq[CompleteCommitedTestData]] = jsValue match {
     case JsArray(completeTestData) => Some(completeTestData flatMap (jv => readCommitedTestDataFromJson(jv, exId, username)))
     case _                         => None

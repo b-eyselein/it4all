@@ -39,7 +39,7 @@
                                         <td class="text-center">@assignment.asChar(variable)</td>
                                     }
                                 <td class="text-center">@assignment.asChar(model.essentials.EssentialsConsts.SolVariable)</td>
-                                <td class="text-center" id="@assignment.toString()">--</td>
+                                <td class="text-center" id="@assignment.toString">--</td>
                                 }
                             </tbody>
                         </table>
@@ -71,7 +71,7 @@
                     <div id="valueDiv" hidden>
                             <!-- Save values for return -->
                         @for(assignment <- question.solutions) {
-                            <input name="@assignment.toString()" value="@assignment.asChar('z')">
+                            <input name="@assignment.toString" value="@assignment.asChar(EssentialsConsts.SolVariable)">
                         }
                         <input name="vars" value="@question.joinedVariables">
                     </div>

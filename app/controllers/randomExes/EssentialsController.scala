@@ -4,15 +4,17 @@ import javax.inject.{Inject, Singleton}
 
 import controllers.Secured
 import model.Enums.SuccessType.PARTIALLY
-import model.User
 import model.core.Repository
+import model.essentials.BoolNodeParser.parseBoolFormula
+import model.essentials.BooleanQuestion._
 import model.essentials.EssentialsConsts._
 import model.essentials.NAryResult._
 import model.essentials._
+import model.{JsonFormat, User}
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.json._
-import play.libs.{Json => JavaJson}
 import play.api.mvc.{ControllerComponents, EssentialAction}
+import play.libs.{Json => JavaJson}
 import play.twirl.api.Html
 
 import scala.concurrent.ExecutionContext
@@ -21,28 +23,35 @@ import scala.util.Try
 
 @Singleton
 class EssentialsController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends ARandomExController(cc, dbcp, r, EssentialsToolObject) with Secured {
+  extends ARandomExController(cc, dbcp, r, EssentialsToolObject) with Secured with JsonFormat {
 
   def renderIndex(user: User): Html = views.html.essentials.overview.render(user)
 
   // Nary
 
+  // FIXME: nary komplett auf AJAX!
+
   def checkNaryAdditionSolution(baseStr: String): EssentialAction = withUser { user =>
-    implicit request => Ok(views.html.essentials.nAryAdditionResult.render(user, addResultFromFormValue(additionSolution.bindFromRequest.get), baseStr))
+    implicit request =>
+      additionSolution.bindFromRequest.fold(_ => BadRequest("TODO!"),
+        solution => Ok(views.html.essentials.nAryAdditionResult.render(user, addResultFromFormValue(solution), baseStr)))
   }
 
   def checkNaryConversionSolution(fromBase: String, toBase: String): EssentialAction = withUser { user =>
-    implicit request => Ok(views.html.essentials.nAryConversionResult.render(user, convResultFromFormValue(conversionSolution.bindFromRequest.get), fromBase, toBase))
+    implicit request =>
+      conversionSolution.bindFromRequest.fold(_ => BadRequest("TODO!"),
+        solution => Ok(views.html.essentials.nAryConversionResult.render(user, convResultFromFormValue(solution), fromBase, toBase)))
   }
 
   def checkNaryTwoComplementSolution(verbose: Boolean): EssentialAction = withUser { user =>
-    implicit request => Ok(views.html.essentials.twoComplementResult.render(user, twoCompResultFromFormValue(twoComplementSolution.bindFromRequest.get), verbose))
+    implicit request =>
+      twoComplementSolution.bindFromRequest.fold(_ => BadRequest("TODO!"),
+        solution => Ok(views.html.essentials.twoComplementResult.render(user, twoCompResultFromFormValue(solution), verbose)))
   }
 
   def newNaryAdditionQuestion(baseStr: String): EssentialAction = withUser { user =>
     implicit request =>
-      val base = if (baseStr == RandomName)
-        NumberBase.values()(generator.nextInt(3)) // No decimal system...
+      val base = if (baseStr == RandomName) NumberBase.values()(generator.nextInt(3)) // No decimal system...
       else nbFromString(baseStr)
 
       val sum = generator.nextInt(255) + 1
@@ -58,7 +67,7 @@ class EssentialsController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
           case RandomName =>
             val fromBase = randNumberBase(None)
             (fromBase, randNumberBase(Some(fromBase)))
-          case toBaseReq  =>
+          case _          =>
             val toBase = nbFromString(toBaseStr)
             (randNumberBase(Some(toBase)), toBase)
         }
@@ -66,7 +75,7 @@ class EssentialsController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
           val fromBase = nbFromString(fromBaseReq)
           val toBase = toBaseStr match {
             case RandomName => randNumberBase(Some(fromBase))
-            case toBaseReq  => nbFromString(toBaseStr)
+            case _          => nbFromString(toBaseStr)
           }
           (fromBase, toBase)
       }
@@ -88,48 +97,28 @@ class EssentialsController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   // Boolean Algebra
 
-  def checkBoolFilloutSolutionLive: EssentialAction = withUser { user =>
+  def newBoolFilloutQuestion(opsAsSymbols: Boolean): EssentialAction = withUser { user =>
+    implicit request => Ok(views.html.essentials.boolfilloutquestion.render(user, generateNewFilloutQuestion, opsAsSymbols))
+  }
+
+  def checkBoolFilloutSolution: EssentialAction = withUser { _ =>
     implicit request =>
-      request.body.asJson match {
-        case None       => BadRequest("There has been an error!");
-        case Some(json) =>
-          println(json)
-          readFilloutQuestionFromJson(json) match {
-            case None                  => BadRequest("There has been an error!")
-            case Some(filloutQuestion) =>
-              // FIXME: implement correction!
+      request.body.asJson flatMap readFilloutQuestionResultFromJson match {
+        case None                        => BadRequest("There has been an error!")
+        case Some(filloutQuestionResult) =>
 
-              println(filloutQuestion)
+          val ret = JsArray(filloutQuestionResult.assignments map { assignment =>
+            val fields: Seq[(String, JsValue)] = assignment.assignments map { case (variab, bool) => variab.asString -> JsBoolean(bool) } toSeq
 
-              Ok("TODO!")
-          }
+            JsObject(fields ++ Option("id" -> JsString(assignment.identifier)))
+          })
+
+          Ok(ret)
       }
   }
 
-  def checkBoolFilloutSolution: EssentialAction = withUser { user =>
-    implicit request =>
-      request.body.asFormUrlEncoded match {
-        case None       => BadRequest("There has been an error!")
-        case Some(data) =>
-          println(data map (d => d._1 + " -> " + d._2.mkString) mkString "\n")
-          BoolNodeParser.parse(data(FormulaName).mkString("")) match {
-            case Some(formula) =>
+  def newBoolCreationQuestion: EssentialAction = withUser { user => implicit request => Ok(views.html.essentials.boolcreatequestion.render(user, generateNewCreationQuestion)) }
 
-              val assignments = BoolAssignment.generateAllAssignments(formula.usedVariables.toList).map(assignment =>
-                assignment + (LerVariable -> (One == data(assignment.toString).mkString(""))) + (SolVariable -> formula.evaluate(assignment)))
-
-              val question = new FilloutQuestion(formula, assignments)
-
-              Ok(views.html.essentials.boolfilloutsolution.render(user, question))
-
-            case None => BadRequest("There has been an error!")
-          }
-      }
-  }
-
-  def newBoolCreationQuestion: EssentialAction = withUser { user => implicit request => Ok(views.html.essentials.boolcreatequestion.render(user, CreationQuestion.generateNew)) }
-
-  def newBoolFilloutQuestion: EssentialAction = withUser { user => implicit request => Ok(views.html.essentials.boolfilloutquestion.render(user, FilloutQuestion.generateNew)) }
 
   def checkBoolCreationSolution: EssentialAction = withUser { user =>
     implicit request =>
@@ -153,63 +142,38 @@ class EssentialsController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   // Helper mehtods
 
-  private def readFilloutQuestionFromJson(json: JsValue): Option[FilloutQuestion] = json match {
-    case JsObject(values) =>
+  private def readFilloutQuestionResultFromJson(json: JsValue): Option[FilloutQuestionResult] = json.asObj flatMap { jsObj =>
 
-      val formula: Option[ScalaNode] = values get FormulaName flatMap {
-        case JsString(formulaString) => BoolNodeParser.parse(formulaString)
-        case _                       => None
-      }
+    val maybeFormula: Option[ScalaNode] = jsObj.stringField(FormulaName) flatMap parseBoolFormula
 
-      val variables: Option[Seq[Char]] = values get VariablesName map {
-        case JsArray(vars) => vars map {
-          case JsString(str) => str(0)
-          case _             => 'y'
-        }
-        case _             => Seq.empty
-      }
+    val maybeAssignments: Option[Seq[BoolAssignment]] = jsObj.arrayField(AssignmentsName, _.asObj flatMap readAssignmentsObject)
 
-      val assignments: Option[Seq[BoolAssignment]] = values get AssignmentsName map {
-        case JsArray(jsAssignments) => jsAssignments.flatMap {
-          case JsObject(assignmentValues) =>
-            Some(new BoolAssignment(assignmentValues map {
-              case (str, jsValue) =>
-                (Variable(str(0)), jsValue match {
-                  case JsBoolean(bool) => bool
-                  case _               => false
-                })
-            } toMap))
-          case _                          => None
-        }
-        case _                      => Seq.empty
-      }
-
-      println(variables)
-
-      (formula zip assignments).headOption map {
-        case (f, as) => FilloutQuestion(f, as)
-      }
-    case _                => None
-
+    (maybeFormula zip maybeAssignments).headOption map {
+      case (formula, assignments) => FilloutQuestionResult(formula, assignments map (as => as + (SolVariable -> formula(as))))
+    }
   }
 
-  private def checkCreationSolution(data: Map[String, Seq[String]]): Option[BooleanQuestionResult] = {
+  private def readAssignmentsObject(jsObject: JsObject): Option[BoolAssignment] = jsObject.asMap(_.apply(0), _.asBool) map {
+    mapping => mapping map (strAndVal => (Variable(strAndVal._1), strAndVal._2))
+  } map BoolAssignment.apply
+
+  private def checkCreationSolution(data: Map[String, Seq[String]]): Option[CreationQuestionResult] = {
     // FIXME: get per json, read from json!
-    val learnerSolution = data(FORM_VALUE).mkString
-    BoolNodeParser.parse(learnerSolution) map { formula =>
-      val variables = data(VARS_NAME).mkString.split(",").map(variab => Variable(variab.charAt(0))).toList
+    val learnerSolution = data(FORM_VALUE) mkString
+
+    parseBoolFormula(learnerSolution) map { formula =>
+      val variables = data(VARS_NAME).mkString split "," map (v => Variable(v(0))) toSet
 
       // Check that formula only contains variables found in form
-      val wrongVars = formula.usedVariables.filter(!variables.contains(_))
+      //      val wrongVars = formula.usedVariables filter (!variables.contains(_))
       //        if (wrongVars.nonEmpty)
       //          throw new CorrectionException(learnerSolution, s"In ihrer Loesung wurde(n) die folgende(n) falsche(n) Variable(n) benutzt: '${wrongVars.mkString(", ")}'")
 
       val assignments = BoolAssignment
-        .generateAllAssignments(variables)
-        .map(as => as + (LerVariable -> formula.evaluate(as)) + (SolVariable -> (data(as.toString()).mkString == One)))
+        .generateAllAssignments(variables toSeq)
+        .map(as => as + (LerVariable -> formula(as)) + (SolVariable -> (data(as.toString).mkString == One)))
 
-      val question = new CreationQuestion(variables, assignments)
-      BooleanQuestionResult(PARTIALLY, learnerSolution, question)
+      CreationQuestionResult(PARTIALLY, learnerSolution, CreationQuestion(variables, assignments))
     }
   }
 

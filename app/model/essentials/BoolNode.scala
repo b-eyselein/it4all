@@ -1,7 +1,10 @@
 package model.essentials
 
+import model.essentials.ScalaNode._
+
 sealed abstract class ScalaNode {
-  def evaluate(assignment: BoolAssignment): Boolean
+
+  def apply(assignment: BoolAssignment): Boolean
 
   def negate: ScalaNode
 
@@ -26,17 +29,30 @@ sealed abstract class ScalaNode {
   def unary_-() = NotScalaNode(this)
 
   override def toString: String = getAsString(false)
+
+  def asString: String = getAsString(false)
+
+  def asHtml: String = {
+    var formulaAsHtml = getAsString(false)
+    for ((key, value) <- HtmlReplacers) formulaAsHtml = formulaAsHtml.replaceAll(key, value)
+    formulaAsHtml
+  }
+
 }
 
 object ScalaNode {
 
-  def toVariable(char: Char): Variable = Variable(char)
+  val HtmlReplacers = Map(
+    "impl" -> "&rArr;",
+    "nor" -> "&#x22bd;",
+    "nand" -> "&#x22bc;",
+    "equiv" -> "&hArr;",
+    "not " -> "&not;",
+    "and" -> "&and;",
+    "xor" -> "&oplus;",
+    "or" -> "&or;")
 
   def not(child: ScalaNode) = NotScalaNode(child)
-
-  def unary_-(child: ScalaNode) = NotScalaNode(child)
-
-  def variable(variable: Character) = Variable(variable)
 
   def constant(value: Boolean): Constant = if (value) TRUE else FALSE
 
@@ -60,7 +76,8 @@ case class Equivalency(l: ScalaNode, r: ScalaNode) extends BinaryScalaNode("EQUI
 case class NOrScalaNode(l: ScalaNode, r: ScalaNode) extends BinaryScalaNode("NOR", l, r, (l, r) => !(l || r))
 
 case class NotScalaNode(child: ScalaNode) extends ScalaNode {
-  override def evaluate(assignment: BoolAssignment): Boolean = !child.evaluate(assignment)
+
+  override def apply(assignment: BoolAssignment): Boolean = !child(assignment)
 
   override def negate: ScalaNode = child
 
@@ -70,13 +87,14 @@ case class NotScalaNode(child: ScalaNode) extends ScalaNode {
   }
 
   override def usedVariables: Set[Variable] = child.usedVariables
+
 }
 
 case class OrScalaNode(l: ScalaNode, r: ScalaNode) extends BinaryScalaNode("OR", l, r, (l, r) => l || r)
 
 case class Constant(value: Boolean) extends ScalaNode {
 
-  override def evaluate(assignment: BoolAssignment): Boolean = value
+  override def apply(assignment: BoolAssignment): Boolean = value
 
   override def negate: ScalaNode = if (value) FALSE else TRUE
 
@@ -88,15 +106,17 @@ case class Constant(value: Boolean) extends ScalaNode {
 object TRUE extends Constant(true)
 
 case class Variable(variable: Char) extends ScalaNode with Ordered[Variable] {
-  override def evaluate(assignment: BoolAssignment) = assignment(this)
 
-  override def negate: ScalaNode = ScalaNode.not(this)
+  override def apply(assignment: BoolAssignment) = assignment(this)
+
+  override def negate: ScalaNode = not(this)
 
   override def getAsString(needsParans: Boolean): String = variable.toString
 
   override def usedVariables = Set(this)
 
   override def compare(that: Variable): Int = variable - that.variable
+
 }
 
 case class AndScalaNode(l: ScalaNode, r: ScalaNode) extends BinaryScalaNode("AND", l, r, (l, r) => l && r)
@@ -104,7 +124,8 @@ case class AndScalaNode(l: ScalaNode, r: ScalaNode) extends BinaryScalaNode("AND
 case class XOrScalaNode(l: ScalaNode, r: ScalaNode) extends BinaryScalaNode("XOR", l, r, (l, r) => l ^ r)
 
 sealed abstract class BinaryScalaNode(operator: String, left: ScalaNode, right: ScalaNode, eval: (Boolean, Boolean) => Boolean) extends ScalaNode {
-  override def evaluate(assignment: BoolAssignment) = eval.apply(left.evaluate(assignment), right.evaluate(assignment))
+
+  override def apply(assignment: BoolAssignment) = eval.apply(left(assignment), right(assignment))
 
   override def negate: ScalaNode = this match {
     case AndScalaNode(l, r) => l nand r
@@ -128,4 +149,5 @@ sealed abstract class BinaryScalaNode(operator: String, left: ScalaNode, right: 
   }
 
   override def usedVariables: Set[Variable] = left.usedVariables ++ right.usedVariables
+
 }

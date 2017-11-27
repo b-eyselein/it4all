@@ -38,7 +38,7 @@ object BoolNodeParser extends JavaTokenParsers {
 
   private lazy val b_variable: Parser[Variable] = "[a-zA-Z]".r ^^ (str => Variable(str.charAt(0).toLower))
 
-  def parse(toParse: String): Option[ScalaNode] = parseAll(b_expression, toParse) match {
+  def parseBoolFormula(toParse: String): Option[ScalaNode] = parseAll(b_expression, toParse) match {
     case Success(result, _)    => Some(result)
     case NoSuccess(msg, input) => throw new IllegalArgumentException(msg + " :: " + input)
     case Error(_, _)           => null

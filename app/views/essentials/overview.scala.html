@@ -4,17 +4,20 @@
     <script>
             $(document).ready(function () {
                 $('#convButton').click(function () {
-                    // FIXME: route!
-                    window.location = "/essentials/nary/conv?fromBase=" + $('#convFromBase').val() + "&toBase=" + $('#convToBase').val();
+                    window.location = "@controllers.randomExes.routes.EssentialsController.newNaryConversionQuestion()?fromBase=" + $('#convFromBase').val() + "&toBase=" + $('#convToBase').val();
                 });
 
                 $('#addButton').click(function () {
-                    window.location = "/essentials/nary/add?base=" + $('#addBase').val();
+                    window.location = "@controllers.randomExes.routes.EssentialsController.newNaryAdditionQuestion()?base=" + $('#addBase').val();
                 });
 
                 $('#twoCompButton').click(function () {
-                    window.location = "/essentials/nary/twocomp?verbose=" + $('#twoComp').val();
-                })
+                    window.location = "@controllers.randomExes.routes.EssentialsController.newNaryTwoComplementQuestion()?verbose=" + $('#twoComp').val();
+                });
+
+                $('#filloutButton').click(function () {
+                    window.location = "@controllers.randomExes.routes.EssentialsController.newBoolFilloutQuestion()?opsAsSymbols=" + $('#fillout').val();
+                });
             });
     </script>
 }
@@ -67,24 +70,36 @@
             <!-- Zweierkomplement -->
         <div class="form-group">
             <div class="input-group">
+                <span class="input-group-addon">Umwandlung in das Zweierkomplement </span>
                 <select title="Zweierkomplement" class="form-control" id="twoComp">
-                    <option value="true">Ausf&uuml;hrliche</option>
-                    <option value="false">Knappe</option>
+                    <option value="true">mit Zwischenschritten</option>
+                    <option value="false">ohne Zwischenschritte</option>
                 </select>
-                <span class="input-group-addon">Umwandlung in das</span>
-                <button class="form-control btn-primary" id="twoCompButton">Zweierkomplement</button>
+                <span class="input-group-addon"><span class="glyphicon glyphicon-chevron-right"></span></span>
+                <button class="form-control btn-primary" id="twoCompButton">Go! </button>
             </div>
         </div>
 
         <hr>
 
         <h2>Boolesche Algebra</h2>
+
+
+            <!-- Fill out truth tabels -->
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">Wahrheitstabellen ausf&uuml;llen mit Operatoren als </span>
+                <select title="Fillout" class="form-control" id="fillout">
+                    <option value="true">Symbole</option>
+                    <option value="false">Text</option>
+                </select>
+                <span class="input-group-addon"><span class="glyphicon glyphicon-chevron-right"></span></span>
+                <button class="form-control btn-primary" id="filloutButton">Go! </button>
+            </div>
+        </div>
+
+
         <h3>TODO!</h3>
-        <p>
-            <a type="button" class="btn btn-default btn-block"
-            href="@controllers.randomExes.routes.EssentialsController.newBoolFilloutQuestion">
-                Wahrheitstabellen ausf&uuml;llen </a>
-        </p>
         <p>
             <a type="button" class="btn btn-default btn-block"
             href="@controllers.randomExes.routes.EssentialsController.newBoolCreationQuestion">

@@ -21,18 +21,17 @@ PUT           /users/changeRole/:user                     controllers.AdminContr
 # Essentials - Nary, Boolean, Ebnf?
 GET           /essentials                                 controllers.randomExes.EssentialsController.index
 
-GET           /essentials/nary/conv                       controllers.randomExes.EssentialsController.newNaryConversionQuestion(fromBase: String, toBase: String)
-POST          /essentials/nary/conv                       controllers.randomExes.EssentialsController.checkNaryConversionSolution(fromBase: String, toBase: String)
+GET           /essentials/nary/conv                       controllers.randomExes.EssentialsController.newNaryConversionQuestion(fromBase: String ?= "RANDOM", toBase: String ?= "RANDOM")
+POST          /essentials/nary/conv                       controllers.randomExes.EssentialsController.checkNaryConversionSolution(fromBase: String ?= "RANDOM", toBase: String ?= "RANDOM")
 
-GET           /essentials/nary/add                        controllers.randomExes.EssentialsController.newNaryAdditionQuestion(base: String)
-POST          /essentials/nary/add                        controllers.randomExes.EssentialsController.checkNaryAdditionSolution(base: String)
+GET           /essentials/nary/add                        controllers.randomExes.EssentialsController.newNaryAdditionQuestion(base: String ?= "RANDOM")
+POST          /essentials/nary/add                        controllers.randomExes.EssentialsController.checkNaryAdditionSolution(base: String ?= "RANDOM")
 
-GET           /essentials/nary/twocomp                    controllers.randomExes.EssentialsController.newNaryTwoComplementQuestion(verbose: Boolean)
-POST          /essentials/nary/twocomp                    controllers.randomExes.EssentialsController.checkNaryTwoComplementSolution(verbose: Boolean)
+GET           /essentials/nary/twocomp                    controllers.randomExes.EssentialsController.newNaryTwoComplementQuestion(verbose: Boolean ?= true)
+POST          /essentials/nary/twocomp                    controllers.randomExes.EssentialsController.checkNaryTwoComplementSolution(verbose: Boolean ?= true)
 
-GET           /essentials/bool/fillout                    controllers.randomExes.EssentialsController.newBoolFilloutQuestion
-PUT           /essentials/bool/fillout                    controllers.randomExes.EssentialsController.checkBoolFilloutSolutionLive
-POST          /essentials/bool/fillout                    controllers.randomExes.EssentialsController.checkBoolFilloutSolution
+GET           /essentials/bool/fillout                    controllers.randomExes.EssentialsController.newBoolFilloutQuestion(opsAsSymbols: Boolean ?= false)
+PUT           /essentials/bool/fillout                    controllers.randomExes.EssentialsController.checkBoolFilloutSolution
 
 GET           /essentials/bool/creation                   controllers.randomExes.EssentialsController.newBoolCreationQuestion
 PUT           /essentials/bool/creation                   controllers.randomExes.EssentialsController.checkBoolCreationSolutionLive

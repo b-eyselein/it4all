@@ -1,13 +1,15 @@
 package model.essentials
 
 import model.essentials.EssentialsConsts._
-import model.essentials.ScalaNode.not
+import model.essentials.ScalaNode.{constant, not}
 
-class BoolAssignment(assignments: Map[Variable, Boolean]) {
+import scala.language.postfixOps
 
-  def asChar(variable: Variable): Char = if (apply(variable)) '1' else '0'
+case class BoolAssignment(assignments: Map[Variable, Boolean]) {
 
-  def asChar(char: Char): Char = if (apply(Variable(char))) '1' else '0'
+  def asChar(variable: Variable): Char = if (this (variable)) '1' else '0'
+
+  def asChar(char: Char): Char = if (this (Variable(char))) '1' else '0'
 
   def apply(variable: Variable) = assignments(variable)
 
@@ -15,25 +17,23 @@ class BoolAssignment(assignments: Map[Variable, Boolean]) {
 
   def getColor: String = if (isCorrect) "success" else "danger"
 
-  def getLearnerValueAsChar: Char = asChar(LerVariable)
-
   def variables: Iterable[Variable] = assignments.keys filter (variable => variable != SolVariable && variable != LerVariable)
 
   def isSet(variable: Variable): Boolean = assignments.isDefinedAt(variable)
 
-  override def toString: String = assignments
-    .filter(as => as._1 != LerVariable && as._1 != SolVariable)
-    .map(as => as._1 + ":" + (if (as._2) "1" else "0"))
-    .mkString(",")
-
   def +(toAssign: (Variable, Boolean)) = new BoolAssignment(assignments = assignments + (toAssign._1 -> toAssign._2))
+
+  def identifier: String = assignments.toSeq.filter(as => as._1 != SolVariable && as._1 != LerVariable).sortBy(_._1.variable) map (as => as._1 + (if (as._2) "1" else "0")) mkString
+
 }
 
 object BoolAssignment {
 
+  def apply(assignments: Map[Variable, Boolean]) = new BoolAssignment(assignments)
+
   def apply(assigns: (Variable, Boolean)*) = new BoolAssignment(assigns.toMap)
 
-  def generateAllAssignments(variables: Seq[Variable]): Seq[BoolAssignment] = variables.sorted.reverse.toList match {
+  def generateAllAssignments(variables: Seq[Variable]): Seq[BoolAssignment] = variables.sorted.toList match {
     case Nil          => List.empty
     case head :: Nil  => List(BoolAssignment(head -> false), BoolAssignment(head -> true))
     case head :: tail =>
@@ -44,9 +44,9 @@ object BoolAssignment {
 
   def getNF(assignments: Seq[BoolAssignment], takePos: Boolean, innerF: (ScalaNode, ScalaNode) => ScalaNode, outerF: (ScalaNode, ScalaNode) => ScalaNode): ScalaNode =
     assignments
-      .filter(takePos ^ _ (SolVariable))
+      .filter(takePos ^ _.apply(SolVariable))
       .map(as => as.variables map (v => if (takePos ^ as(v)) v else not(v)) reduceLeft innerF) match {
-      case Nil => ScalaNode.constant(takePos)
+      case Nil => constant(takePos)
       case l   => l reduceLeft outerF
     }
 

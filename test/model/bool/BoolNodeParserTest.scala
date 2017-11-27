@@ -10,7 +10,7 @@ class BoolNodeParserTest {
 
   def testParse(expected: ScalaNode, representations: String*) {
     for (toParse <- representations) {
-      BoolNodeParser.parse(toParse) match {
+      BoolNodeParser.parseBoolFormula(toParse) match {
         case Some(parsed) => assert(parsed == expected, s"""expected that parsing "$toParse" is equal to $expected""")
         case None         => fail(s"""expected that parsing of "$toParse" succeeds!""")
       }
