@@ -301,3 +301,147 @@ jsTasks:
     xpathQuery: /html/body//span[@id='theSpan']
     isPrecondition: false
     awaitedValue: 4
+---
+id: 10
+title: Verzweigungen und Strings
+author: alg81dm
+text: Erstellen Sie ein Anmeldeformular, das eine einfache Passwort-Qualitätsprüfung durchführt
+htmlText: Erstellen Sie zunächst den Rumpf der Seite in HTML.
+jsText: >
+  Implementieren Sie nun die Funktion <code>passwordStrength()</code>, die bei Änderung des Felds aufgerufen wird. Sie
+  soll den Inhalt (value) des Passwortfeldes auslesen und verschiedene Tests durchführen. Bei fehlgeschlagenen Tests
+  soll der Inhalt des Elements mit der ID 'errors' auf den entsprechenden Text gesetzt werden. Es soll immer nur der
+  erste fehlgeschlagene Test (in der Reihenfolge der Teilaufgaben) beachtet werden. Wenn kein Test fehlschlägt,
+  soll der Fehlertext gelöscht werden (auf '' setzen)
+
+htmlTasks:
+- id: 1
+  text: Erstellen Sie ein Texteingabefeld mit der ID 'name'
+  xpathQuery: /html/body//input[@id='name']
+  attributes:
+  - {key: type, value: text}
+  
+- id: 2
+  text: Erstellen Sie ein Passworteingabefeld mit der ID 'password'
+  xpathQuery: /html/body//input[@id='password']
+  attributes:
+  - {key: type, value: password}
+
+- id: 3
+  text: Bei Änderung des Passwortfeldes (onchange) soll die Funktion 'passwordStrength()' aufgerufen werden.
+  xpathQuery: /html/body//input[@id='password']
+  attributes:
+  - {key: onchange, value: passwordStrength()}
+
+- id: 4
+  text: >
+    Erstellen Sie einen Span mit der ID 'errors', der später anzeigen soll, wenn das Passwort zu schwach ist. Zu Anfang
+    soll dieser leer sein.
+  xpathQuery: /html/body//span[@id='errors']
+
+jsTasks:
+- id: 1
+  text: Wenn das Passwort unter 8 Zeichen lang ist, setze den Fehlertext auf 'Zu kurz'
+  xpathQuery: /html/body//input[@id='password']
+  actiontype: FILLOUT
+  keysToSend: 123
+  conditions:
+  - id: 1
+    xpathQuery: /html/body//span[@id='errors']
+    isPrecondition: false
+    awaitedValue: Zu kurz
+
+- id: 2
+  text: Wenn das Passwort 'passwort' enthält, setze den Fehlertext auf 'Zu einfach'
+  xpathQuery: /html/body//input[@id='password']
+  actiontype: FILLOUT
+  keysToSend: meinpasswort
+  conditions:
+  - id: 1
+    xpathQuery: /html/body//span[@id='errors']
+    isPrecondition: false
+    awaitedValue: Zu einfach
+
+- id: 3
+  text: Für alle anderen Passwörter soll das Fehlerfeld geleert (auf '' gesetzt) werden
+  actiontype: FILLOUT
+  xpathQuery: /html/body//input[@id='password']
+  keysToSend: GanzGanzSicherUndGeheim
+  conditions:
+  - id: 1
+    xpathQuery: /html/body//span[@id='errors']
+    isPrecondition: false
+    awaitedValue: ''
+---
+id: 11
+title: Schleifen
+author: alg81dm
+text: Erstellen Sie ein einfaches Formular zur Berechnung der Fakultät einer Zahl n (alle Zahlen von 1 bis n multipliziert).
+htmlText: Erstellen Sie zunächst den Rumpf der Seite in HTML.
+jsText: >
+  Implementieren Sie nun die Funktion <code>fakultaet()</code>, die bei Änderung des Felds aufgerufen wird. Sie soll
+  den Inhalt (value) des Eingabefeldes auslesen, die Fakultät davon berechnen und den Inhalt (textContent) des Elements
+  mit der ID 'result' auf das Ergebnis setzen
+
+htmlTasks:
+- id: 1
+  text: Erstellen Sie ein Zahlen-Eingabefeld mit der ID 'number'
+  xpathQuery: /html/body//input[@id='number']
+  attributes:
+  - {key: type, value: number}
+
+- id: 2
+  text: Bei Änderung des Feldes (onchange) soll die Funktion 'fakultaet()' aufgerufen werden.
+  xpathQuery: /html/body//input[@id='number']
+  attributes:
+  - {key: onchange, value: fakultaet()}
+
+- id: 3
+  text: Erstellen Sie einen Span mit der ID 'result', in dem das Ergebnis der Berechnung stehen soll. Zu Anfang soll dieser leer sein.
+  xpathQuery: /html/body//span[@id='result']
+
+jsTasks:
+- id: 1
+  text: Fakultät von 1 muss 1 sein
+  actiontype: FILLOUT
+  xpathQuery: /html/body//input[@id='number']
+  keysToSend: 1
+  conditions:
+  - id: 1
+    xpathQuery: /html/body//span[@id='result']
+    isPrecondition: false
+    awaitedValue: 1
+
+- id: 2
+  text: Fakultät von 3 muss 6 sein
+  actiontype: FILLOUT
+  xpathQuery: /html/body//input[@id='number']
+  keysToSend: 3
+  conditions:
+  - id: 1
+    xpathQuery: /html/body//span[@id='result']
+    isPrecondition: false
+    awaitedValue: 6
+
+- id: 3
+  text: Fakultät von 6 muss 720 sein
+  actiontype: FILLOUT
+  xpathQuery: /html/body//input[@id='number']
+  keysToSend: 6
+  conditions:
+  - id: 1
+    xpathQuery: /html/body//span[@id='result']
+    isPrecondition: false
+    awaitedValue: 720
+
+
+- id: 4
+  text: Fakultät von 10 muss 3628800 sein
+  actiontype: FILLOUT
+  xpathQuery: /html/body//input[@id='number']
+  keysToSend: 10
+  conditions:
+  - id: 1
+    xpathQuery: /html/body//span[@id='result']
+    isPrecondition: false
+    awaitedValue: 3628800

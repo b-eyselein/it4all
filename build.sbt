@@ -41,8 +41,8 @@ libraryDependencies ++= Seq(
   "com.github.t3hnar" %% "scala-bcrypt" % "3.0",
 
   // Selenium and HtmlUnitDriver for Web+Js
-  "org.seleniumhq.selenium" % "selenium-java" % "2.52.0",
-  "org.seleniumhq.selenium" % "selenium-htmlunit-driver" % "2.52.0",
+  "org.seleniumhq.selenium" % "selenium-java" % "3.7.1",
+  "org.seleniumhq.selenium" % "htmlunit-driver" % "2.28.1",
 
   // MyBatis and JSqlParser for SQL
   "org.mybatis" % "mybatis" % "3.4.5",

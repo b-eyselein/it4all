@@ -15,9 +15,12 @@ case class ProgCompleteEx(ex: ProgExercise, sampleSolution: ProgSampleSolution, 
 
   override def preview: Html = views.html.programming.progPreview.render(this)
 
-  override def renderListRest = ???
+  override def renderListRest: Html = new Html(
+    s"""<td>${ex.functionName}</td>
+       |<td>${ex.inputCount}</td>""".stripMargin)
 
   override def exerciseRoutes: Map[Call, String] = ProgToolObject.exerciseRoutes(this)
+
 }
 
 case class CompleteSampleTestData(sampleTestData: SampleTestData, inputs: Seq[SampleTestDataInput])

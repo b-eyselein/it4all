@@ -79,17 +79,19 @@ case class JsTask(id: Int, exerciseId: Int, text: String, xpathQuery: String, ac
 
   def perform(context: SearchContext): Boolean = Option(context.findElement(By.xpath(xpathQuery))) match {
     case None          => false
-    case Some(element) => actionType match {
-      case JsActionType.CLICK   =>
-        element.click()
-        true
-      case JsActionType.FILLOUT =>
-        element.sendKeys(keysToSend.getOrElse(""))
-        // click on other element to fire the onchange event...
-        context.findElement(By.xpath("//body")).click()
-        true
-      case _                    => false
-    }
+    case Some(element) =>
+      actionType match {
+        case JsActionType.CLICK   =>
+          element.click()
+          true
+        case JsActionType.FILLOUT =>
+          element.clear()
+          element.sendKeys(keysToSend getOrElse "")
+          // click on other element to fire the onchange event...
+          context.findElement(By.xpath("//body")).click()
+          true
+        case _                    => false
+      }
   }
 
 }

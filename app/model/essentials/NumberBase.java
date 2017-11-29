@@ -25,7 +25,7 @@ public enum NumberBase implements Selectable<NumberBase> {
     }
 
     public final String htmlPattern() {
-        return "[\\s" + regexStart + "][\\s" + regexRest + "]*";
+        return "[\\s" + regexRest + "]+";
     }
 
     public final String pluralName() {

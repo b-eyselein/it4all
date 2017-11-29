@@ -57,7 +57,7 @@
                     <fieldset>
                         <legend>Zweierkomplement</legend>
 
-                        <div class="form-group has-@if(result.checkSolution) {success} else {error}">
+                        <div class="form-group has-@if(result.solutionCorrect) {success} else {error}">
                             <div class="input-group">
                                 <span class="input-group-addon">--></span>
                                 <input title="" class="form-control text-right" readonly value="@result.learnerSolution.toTwoComp">

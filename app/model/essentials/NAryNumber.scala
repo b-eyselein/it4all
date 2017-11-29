@@ -1,11 +1,11 @@
 package model.essentials
 
-import com.google.common.base.{Splitter, Strings}
+import com.google.common.base.Strings
 import model.essentials.NumberBase._
 
-case class NAryNumber(decimalValue: Int = 0, base: NumberBase) {
+import scala.util.Try
 
-  val FOUR_SPLITTER: Splitter = Splitter.fixedLength(4)
+case class NAryNumber(decimalValue: Int = 0, base: NumberBase) {
 
   def +(that: NAryNumber) = new NAryNumber(this.decimalValue + that.decimalValue, this.base)
 
@@ -31,9 +31,11 @@ case class NAryNumber(decimalValue: Int = 0, base: NumberBase) {
 }
 
 object NAryNumber {
-  def parse(input: String, base: NumberBase): NAryNumber = {
-    val value = Integer.parseInt(input.trim().replaceAll("\\s", ""), base.base)
-    new NAryNumber(value, base)
+
+  def parse(input: String, base: NumberBase): Option[NAryNumber] = {
+    val decimalValue = Try(Some(Integer.parseInt(input.trim().replaceAll("\\s", ""), base.base))) getOrElse None
+
+    decimalValue map (NAryNumber(_, base))
   }
 
   def parseTwoComplement(input: String): NAryNumber = {

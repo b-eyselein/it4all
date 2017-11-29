@@ -4,7 +4,7 @@ import model.Consts
 
 object WebConsts extends Consts {
 
-  val ACTION_TYPE_NAME   = "actionType"
+  val ACTION_TYPE_NAME   = "actiontype"
   val AWAITED_VALUE_NAME = "awaitedValue"
 
   val BASE_URL = "http://localhost:9000"

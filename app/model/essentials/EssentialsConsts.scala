@@ -16,7 +16,7 @@ object EssentialsConsts extends Consts {
 
   val InvertedAbs = "inverted"
 
-  val LearnerSol = "learnerSolution"
+  val LearnerSol = "solution"
 
   val RandomName = "RANDOM"
 

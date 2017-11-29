@@ -13,10 +13,10 @@ class NAryResultTest {
   @Test
   def testCheckAddSolution() {
     val resTrue = new NAryAddResult(OCTAL, new NAryNumber(0, OCTAL), new NAryNumber(127, OCTAL), new NAryNumber(127, OCTAL))
-    assertThat(resTrue.checkSolution, equalTo(true))
+    assertThat(resTrue.solutionCorrect, equalTo(true))
 
     val resFalse = new NAryAddResult(OCTAL, new NAryNumber(2, OCTAL), new NAryNumber(127, OCTAL), new NAryNumber(127, OCTAL))
-    assertThat(resFalse.checkSolution, equalTo(false))
+    assertThat(resFalse.solutionCorrect, equalTo(false))
   }
 
   @Test
@@ -84,10 +84,10 @@ class NAryResultTest {
   @Test
   def testCheckConvSolution() {
     val resTrue = new NAryConvResult(new NAryNumber(8, OCTAL), OCTAL, BINARY, new NAryNumber(8, OCTAL))
-    assertThat(resTrue.checkSolution, equalTo(true))
+    assertThat(resTrue.solutionCorrect, equalTo(true))
 
     val resFalse = new NAryConvResult(new NAryNumber(8, OCTAL), OCTAL, BINARY, new NAryNumber(9, OCTAL))
-    assertThat(resFalse.checkSolution, equalTo(false))
+    assertThat(resFalse.solutionCorrect, equalTo(false))
   }
 
   @Test

@@ -6,6 +6,7 @@ import controllers.Secured
 import model.User
 import model.core._
 import model.web.WebConsts._
+import model.web.WebCorrector.evaluateWebTask
 import model.web._
 import net.jcazevedo.moultingyaml.YamlFormat
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
@@ -107,7 +108,7 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
       case JS_TYPE   => exercise.jsTasks
     }
 
-    new CompleteResult(learnerSolution.learnerSolution, tasks map (task => WebCorrector.evaluate(task, driver)))
+    new CompleteResult(learnerSolution.learnerSolution, tasks map (task => evaluateWebTask(task, driver)))
   }
 
 }

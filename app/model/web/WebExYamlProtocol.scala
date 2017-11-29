@@ -86,6 +86,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
 
     override def write(jsTask: JsCompleteTask): YamlValue = {
       val yamlConds = YamlArray(jsTask.conditions map (_ toYaml JsConditionYamlFormat(jsTask.task.id, jsTask.task.exerciseId)) toVector)
+
       YamlObject(
         YamlString(ID_NAME) -> jsTask.task.id,
         YamlString(TEXT_NAME) -> jsTask.task.text,
@@ -105,7 +106,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
           yamlObject.stringField(TEXT_NAME),
           yamlObject.stringField(XPATH_NAME),
           yamlObject.enumField(ACTION_TYPE_NAME, JsActionType.valueOf, JsActionType.CLICK),
-          yamlObject.optStringField(KEYS_TO_SEND_NAME)),
+          yamlObject.optForgivingStringField(KEYS_TO_SEND_NAME)),
         yamlObject.arrayField(CONDITIONS_NAME, _ convertTo[JsCondition] JsConditionYamlFormat(taskId, exerciseId))
       )
     }

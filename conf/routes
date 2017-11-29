@@ -16,8 +16,6 @@ GET           /admin                                      controllers.AdminContr
 GET           /users                                      controllers.AdminController.users
 PUT           /users/changeRole/:user                     controllers.AdminController.changeRole(user: String)
 
-
-
 # Essentials - Nary, Boolean, Ebnf?
 GET           /essentials                                 controllers.randomExes.EssentialsController.index
 
@@ -25,7 +23,7 @@ GET           /essentials/nary/conv                       controllers.randomExes
 POST          /essentials/nary/conv                       controllers.randomExes.EssentialsController.checkNaryConversionSolution(fromBase: String ?= "RANDOM", toBase: String ?= "RANDOM")
 
 GET           /essentials/nary/add                        controllers.randomExes.EssentialsController.newNaryAdditionQuestion(base: String ?= "RANDOM")
-POST          /essentials/nary/add                        controllers.randomExes.EssentialsController.checkNaryAdditionSolution(base: String ?= "RANDOM")
+PUT           /essentials/nary/add                        controllers.randomExes.EssentialsController.checkNaryAdditionSolution
 
 GET           /essentials/nary/twocomp                    controllers.randomExes.EssentialsController.newNaryTwoComplementQuestion(verbose: Boolean ?= true)
 POST          /essentials/nary/twocomp                    controllers.randomExes.EssentialsController.checkNaryTwoComplementSolution(verbose: Boolean ?= true)

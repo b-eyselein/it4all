@@ -9,7 +9,7 @@ import scala.util.Random
 
 sealed abstract class NAryResult(val targetNumber: NAryNumber, val learnerSolution: NAryNumber) {
 
-  def checkSolution: Boolean = targetNumber.decimalValue == learnerSolution.decimalValue
+  val solutionCorrect: Boolean = targetNumber.decimalValue == learnerSolution.decimalValue
 
 }
 
@@ -32,7 +32,7 @@ case class NAryConvResult(startingValue: NAryNumber, startingBase: NumberBase, t
 case class TwoCompResult(targetNum: Int, learnerSol: NAryNumber, binaryAbs: String, invertedAbs: String)
   extends NAryResult(new NAryNumber(targetNum, BINARY), learnerSol) {
 
-  def binaryAbsCorrect: Boolean = NAryNumber.parse(binaryAbs, BINARY).decimalValue == Math.abs(targetNumber.decimalValue)
+  def binaryAbsCorrect: Boolean = NAryNumber.parse(binaryAbs, BINARY).get.decimalValue == Math.abs(targetNumber.decimalValue)
 
   def invertedAbsCorrect: Boolean = NAryNumber.invertDigits(binaryAbs).equals(invertedAbs)
 }
@@ -44,24 +44,24 @@ object NAryResult {
   val zero = "0"
 
 
-  def addResultFromFormValue(form: AdditionSolution): NAryAddResult = {
-    val base: NumberBase = valueOf(form.base)
-    NAryAddResult(base, NAryNumber.parse(form.sum1, base), NAryNumber.parse(form.sum2, base), NAryNumber.parse(form.solutionNary.reverse, base))
-  }
+  //  def addResultFromFormValue(form: AdditionSolution): NAryAddResult = {
+  //    val base: NumberBase = valueOf(form.base)
+  //    NAryAddResult(base, NAryNumber.parse(form.sum1, base), NAryNumber.parse(form.sum2, base), NAryNumber.parse(form.solutionNary.reverse, base))
+  //  }
 
   def convResultFromFormValue(form: ConversionSolution): NAryConvResult = {
     val startingBase = valueOf(form.startingNB)
     val targetBase = valueOf(form.targetNB)
 
-    val startingValue: NAryNumber = NAryNumber.parse(form.startingValueNary, startingBase)
-    val learnerSol: NAryNumber = NAryNumber.parse(form.solutionNary, targetBase)
+    val startingValue: NAryNumber = NAryNumber.parse(form.startingValueNary, startingBase) getOrElse NAryNumber(0, BINARY)
+    val learnerSol: NAryNumber = NAryNumber.parse(form.solutionNary, targetBase) getOrElse NAryNumber(0, BINARY)
 
     NAryConvResult(startingValue, startingBase, targetBase, learnerSol)
   }
 
   def twoCompResultFromFormValue(form: TwoCompSolution): TwoCompResult =
   // FIXME: optionals!
-    TwoCompResult(form.startingValueDec, NAryNumber.parse(form.solutionBinary, BINARY), form.binaryAbs.getOrElse(""), form.inverted.getOrElse(""))
+    TwoCompResult(form.startingValueDec, NAryNumber.parse(form.solutionBinary, BINARY) getOrElse NAryNumber(0, BINARY), form.binaryAbs.getOrElse(""), form.inverted.getOrElse(""))
 
   val additionSolution = Form(mapping(
     FirstSummand -> nonEmptyText,

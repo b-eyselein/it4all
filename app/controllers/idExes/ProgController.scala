@@ -5,11 +5,11 @@ import javax.inject._
 import controllers.Secured
 import controllers.idExes.ProgController._
 import model.Enums.ExerciseState
-import model.User
 import model.core._
 import model.core.tools.ExerciseOptions
 import model.programming.ProgConsts._
 import model.programming._
+import model.{JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.data.Form
 import play.api.db.slick.DatabaseConfigProvider
@@ -37,7 +37,7 @@ object ProgController {
 @Singleton
 class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)
                               (implicit ec: ExecutionContext)
-  extends AIdExController[ProgExercise, ProgEvaluationResult](cc, dbcp, r, ProgToolObject) with Secured {
+  extends AIdExController[ProgExercise, ProgEvaluationResult](cc, dbcp, r, ProgToolObject) with Secured with JsonFormat {
 
   override type SolutionType = StringSolution
 
@@ -116,7 +116,7 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   override def renderExesListRest: Html = Html("")
 
-  override def renderResult(correctionResult: CompleteResult[ProgEvaluationResult]): Html = ???
+  override def renderResult(correctionResult: CompleteResult[ProgEvaluationResult]): Html = new Html(correctionResult.toString) // FIXME : implement!
 
   // Helper methods
 
@@ -143,20 +143,18 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
     case _                         => None
   }
 
-  private def readCommitedTestDataFromJson(jv: JsValue, exId: Int, username: String): Option[CompleteCommitedTestData] = jv match {
-    case JsObject(values) =>
+  private def readCommitedTestDataFromJson(jv: JsValue, exId: Int, username: String): Option[CompleteCommitedTestData] = jv.asObj flatMap {
+    jsObject =>
 
-      val idOpt: Option[Int] = jsIntValue(values, ID_NAME)
-      val outputOpt: Option[String] = jsStringValue(values, OUTPUT_NAME)
+      val idOpt: Option[Int] = jsObject.intField(ID_NAME)
+      val outputOpt: Option[String] = jsObject.stringField(OUTPUT_NAME)
 
       (idOpt zip outputOpt).headOption map {
         case (id, output) =>
-          CompleteCommitedTestData(
-            CommitedTestData(id, exId, username, output, ExerciseState.CREATED),
-            readInputsFromJson(values get INPUTS_NAME, id, exId, username) getOrElse Seq.empty
-          )
+          val testData = CommitedTestData(id, exId, username, output, ExerciseState.CREATED)
+          val inputs = readInputsFromJson(jsObject.value get INPUTS_NAME, id, exId, username) getOrElse Seq.empty
+          CompleteCommitedTestData(testData, inputs)
       }
-    case _                => None
   }
 
   private def readInputsFromJson(jsValue: Option[JsValue], testId: Int, exId: Int, username: String): Option[Seq[CommitedTestDataInput]] = jsValue map {
@@ -164,24 +162,12 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
     case _                => Seq.empty
   }
 
-  private def readInputFromJson(iObj: JsValue, exId: Int, testId: Int, username: String): Option[CommitedTestDataInput] = iObj match {
-    case JsObject(values) =>
-
-      val idOpt: Option[Int] = jsIntValue(values, ID_NAME)
-      val inputOpt: Option[String] = jsStringValue(values, INPUT_NAME)
+  private def readInputFromJson(inputJsValue: JsValue, exId: Int, testId: Int, username: String): Option[CommitedTestDataInput] = inputJsValue.asObj flatMap {
+    inputJsObject =>
+      val idOpt: Option[Int] = inputJsObject.intField(ID_NAME)
+      val inputOpt: Option[String] = inputJsObject.stringField(INPUT_NAME)
 
       (idOpt zip inputOpt).headOption map { case (id, input) => CommitedTestDataInput(id, testId, exId, input, username) }
-    case _                => None
-  }
-
-  private def jsIntValue(values: scala.collection.Map[String, JsValue], fieldName: String) = values get fieldName flatMap {
-    case JsNumber(value) => Some(value.intValue)
-    case _               => None
-  }
-
-  private def jsStringValue(values: scala.collection.Map[String, JsValue], fieldName: String) = values get fieldName flatMap {
-    case JsString(str) => Some(str)
-    case _             => None
   }
 
 }

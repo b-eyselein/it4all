@@ -9,7 +9,7 @@ import scala.util.{Failure, Success, Try}
 
 object WebCorrector {
 
-  def evaluate(task: WebCompleteTask, searchContent: SearchContext): WebResult = task match {
+  def evaluateWebTask(task: WebCompleteTask, searchContent: SearchContext): WebResult = task match {
     case task: HtmlCompleteTask => evaluateHtmlTask(task, searchContent)
     case task: JsCompleteTask   => evaluateJsTask(task, searchContent)
   }
@@ -29,16 +29,16 @@ object WebCorrector {
   private def evaluateAttribute(attribute: Attribute, element: WebElement): AttributeResult =
     AttributeResult(attribute, Try(element getAttribute attribute.key))
 
-  private def evaluateConditions(context: SearchContext, conditions: Seq[JsCondition]): Seq[ConditionResult] =
-    conditions map (testCondition(_, context))
+  private def evaluateJsTask(completeJsTask: JsCompleteTask, searchContext: SearchContext) = {
+    val (preconds, postconds) = completeJsTask.conditions.partition(_.isPrecondition)
 
-  private def evaluateJsTask(completeJsTask: JsCompleteTask, searchContext: SearchContext) =
     JsWebResult(
       completeJsTask,
-      evaluateConditions(searchContext, completeJsTask.conditions filter (_.isPrecondition)),
+      preconds map (testCondition(_, searchContext)),
       completeJsTask.task.perform(searchContext),
-      evaluateConditions(searchContext, completeJsTask.conditions filter (!_.isPrecondition))
+      postconds map (testCondition(_, searchContext))
     )
+  }
 
   private def testCondition(condition: JsCondition, searchContext: SearchContext): ConditionResult = Try(searchContext findElement By.xpath(condition.xpathQuery)) match {
     case Failure(_)       => ConditionResult(NONE, condition, null)

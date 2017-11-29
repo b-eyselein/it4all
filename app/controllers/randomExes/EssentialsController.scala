@@ -29,13 +29,16 @@ class EssentialsController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
 
   // Nary
 
-  // FIXME: nary komplett auf AJAX!
 
-  def checkNaryAdditionSolution(baseStr: String): EssentialAction = withUser { user =>
+  def checkNaryAdditionSolution: EssentialAction = withUser { _ =>
     implicit request =>
-      additionSolution.bindFromRequest.fold(_ => BadRequest("TODO!"),
-        solution => Ok(views.html.essentials.nAryAdditionResult.render(user, addResultFromFormValue(solution), baseStr)))
+      request.body.asJson flatMap readAddSolutionFromJson match {
+        case None           => BadRequest("TODO!")
+        case Some(solution) => Ok(Json.obj("correct" -> solution.solutionCorrect))
+      }
   }
+
+  // FIXME: nary komplett auf AJAX!
 
   def checkNaryConversionSolution(fromBase: String, toBase: String): EssentialAction = withUser { user =>
     implicit request =>
@@ -49,15 +52,15 @@ class EssentialsController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
         solution => Ok(views.html.essentials.twoComplementResult.render(user, twoCompResultFromFormValue(solution), verbose)))
   }
 
-  def newNaryAdditionQuestion(baseStr: String): EssentialAction = withUser { user =>
+  def newNaryAdditionQuestion(requestedBaseStr: String): EssentialAction = withUser { user =>
     implicit request =>
-      val base = if (baseStr == RandomName) NumberBase.values()(generator.nextInt(3)) // No decimal system...
-      else nbFromString(baseStr)
+      val base = if (requestedBaseStr == RandomName) NumberBase.values()(generator.nextInt(3)) // No decimal system...
+      else nbFromString(requestedBaseStr)
 
       val sum = generator.nextInt(255) + 1
       val firstSummand = generator.nextInt(sum)
 
-      Ok(views.html.essentials.nAryAdditionQuestion.render(user, new NAryNumber(firstSummand, base), new NAryNumber(sum - firstSummand, base), base))
+      Ok(views.html.essentials.nAryAdditionQuestion.render(user, new NAryNumber(firstSummand, base), new NAryNumber(sum - firstSummand, base), base, requestedBaseStr))
   }
 
   def newNaryConversionQuestion(fromBaseStr: String, toBaseStr: String): EssentialAction = withUser { user =>
@@ -95,10 +98,24 @@ class EssentialsController @Inject()(cc: ControllerComponents, dbcp: DatabaseCon
     implicit request => Ok(views.html.essentials.twoComplementQuestion.render(user, NAryNumber(-generator.nextInt(129), NumberBase.DECIMAL), verbose))
   }
 
+  private def readAddSolutionFromJson(jsValue: JsValue): Option[NAryAddResult] = jsValue.asObj flatMap { jsObj =>
+
+    jsObj.stringField(BaseName) flatMap (baseStr => Try(Some(NumberBase.valueOf(baseStr))).getOrElse(None)) flatMap { base =>
+
+      val maybeSummand1 = jsObj.stringField(FirstSummand) flatMap (NAryNumber.parse(_, base))
+      val maybeSummand2 = jsObj.stringField(SecondSummand) flatMap (NAryNumber.parse(_, base))
+      val maybeSolutionNary = jsObj.stringField(LearnerSol) flatMap (NAryNumber.parse(_, base))
+
+      (maybeSummand1 zip maybeSummand2 zip maybeSolutionNary).headOption map {
+        case (((summand1, summand2), solutionNary)) => NAryAddResult(base, summand1, summand2, solutionNary)
+      }
+    }
+  }
+
   // Boolean Algebra
 
   def newBoolFilloutQuestion(opsAsSymbols: Boolean): EssentialAction = withUser { user =>
-    implicit request => Ok(views.html.essentials.boolfilloutquestion.render(user, generateNewFilloutQuestion, opsAsSymbols))
+    implicit request => Ok(views.html.essentials.boolFilloutQuestion.render(user, generateNewFilloutQuestion, opsAsSymbols))
   }
 
   def checkBoolFilloutSolution: EssentialAction = withUser { _ =>
