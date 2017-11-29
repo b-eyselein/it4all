@@ -100,7 +100,6 @@ object XLSXCorrector extends SpreadCorrector[Workbook, Sheet, XSSFCell, Font, Sh
       }
     }
 
-
   override def compareCellValues(masterCell: XSSFCell, compareCell: XSSFCell): (Boolean, String) = {
     val masterCellValue: String = getStringValueOfCell(masterCell)
     val compareCellValue: String = getStringValueOfCell(compareCell)

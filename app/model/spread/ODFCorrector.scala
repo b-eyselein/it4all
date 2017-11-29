@@ -19,7 +19,6 @@ object ODFCorrector extends SpreadCorrector[SpreadsheetDocument, Table, Cell, Fo
   val maxRow    = 80
   val maxColumn = 22
 
-  val colorWhite       = "#FFFFFF"
   val fontName         = "Arial"
   val fontSize: Double = 10
 
@@ -95,9 +94,12 @@ object ODFCorrector extends SpreadCorrector[SpreadsheetDocument, Table, Cell, Fo
   override def getColoredRange(master: Table): List[Cell] =
     (for {row <- 0 until maxRow
           column <- 0 until maxColumn
-          oCell = master.getRowByIndex(row).getCellByIndex(column)
-          if oCell.getCellBackgroundColorString != colorWhite} yield oCell).toList
+          oCell = Option(master getRowByIndex row getCellByIndex column)
+          if checkCellBackground(oCell)} yield oCell).flatten.toList
 
+
+  private def checkCellBackground(maybeCell: Option[Cell]): Boolean =
+    Try(maybeCell map (_.getCellBackgroundColor) exists (_ != Color.WHITE)) getOrElse false
 
   override def compareSheetConditionalFormatting(master: Table, compare: Table): List[String] = List.empty
 
