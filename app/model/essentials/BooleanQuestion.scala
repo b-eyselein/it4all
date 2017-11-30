@@ -4,15 +4,12 @@ import model.essentials.BoolAssignment.generateAllAssignments
 import model.essentials.EssentialsConsts._
 
 import scala.language.postfixOps
-import scala.util.Random
 
 object BooleanQuestion {
 
-  private def randomBetweenInclBounds(startIncl: Int, endIncl: Int): Int = startIncl + RANDOM.nextInt(endIncl - startIncl + 1)
+  private def randomBetweenInclBounds(startIncl: Int, endIncl: Int): Int = startIncl + generator.nextInt(endIncl - startIncl + 1)
 
-  private def takeRandom[A](seq: Seq[A]): A = seq(RANDOM.nextInt(seq.size))
-
-  private val RANDOM = new Random
+  private def takeRandom[A](seq: Seq[A]): A = seq(generator.nextInt(seq.size))
 
   private val MIN_VARS = 2
   private val MAX_VARS = 3
@@ -41,18 +38,18 @@ object BooleanQuestion {
     * </ul>
     */
   private def generateRandomOperator(leftChild: ScalaNode, rightChild: ScalaNode): ScalaNode = {
-    val left = if (RANDOM.nextInt(3) == 2) leftChild.negate else leftChild
-    val right = if (RANDOM.nextInt(3) == 2) rightChild.negate else rightChild
+    val left = if (generator.nextInt(3) == 2) leftChild.negate else leftChild
+    val right = if (generator.nextInt(3) == 2) rightChild.negate else rightChild
 
-    if (RANDOM.nextBoolean) left and right else left or right
+    if (generator.nextBoolean) left and right else left or right
   }
 
   def generateNewCreationQuestion: CreationQuestion = {
     val variables = ('a' to 'z') take randomBetweenInclBounds(2, 3) map Variable toSet
 
-    val assignments: Seq[BoolAssignment] = generateAllAssignments(variables toSeq) map (as => as + (SolVariable -> RANDOM.nextBoolean))
+    val assignments = generateAllAssignments(variables toSeq) map (as => as + (SolVariable -> generator.nextBoolean))
 
-    CreationQuestion(variables, assignments)
+    CreationQuestion(assignments)
   }
 
   def generateNewFilloutQuestion: FilloutQuestion = FilloutQuestion(generateRandom)
@@ -66,7 +63,9 @@ sealed trait BooleanQuestion {
 
 }
 
-case class CreationQuestion(variables: Set[Variable], solutions: Seq[BoolAssignment]) extends BooleanQuestion {
+case class CreationQuestion(solutions: Seq[BoolAssignment]) extends BooleanQuestion {
+
+  override val variables: Set[Variable] = solutions.head.variables.toList.reverse.toSet
 
   def joinedVariables: String = variables mkString ","
 

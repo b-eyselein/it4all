@@ -27,12 +27,12 @@ function onAjaxSuccess(response) {
     }
 }
 
-function testSol() {
+function testSol(theUrl) {
     $.ajax({
         type: 'PUT',
         dataType: 'json',
         contentType: 'application/json',
-        url: url,
+        url: theUrl,
         data: JSON.stringify(readValues()),
         async: true,
         success: onAjaxSuccess

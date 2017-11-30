@@ -50,7 +50,7 @@ object BoolAssignment {
       case l   => l reduceLeft outerF
     }
 
-  def getDisjunktiveNormalForm(assignments: Seq[BoolAssignment]): ScalaNode = getNF(assignments, takePos = false, AndScalaNode, OrScalaNode)
+  def disjunktiveNormalForm(assignments: Seq[BoolAssignment]): ScalaNode = getNF(assignments, takePos = false, AndScalaNode, OrScalaNode)
 
-  def getKonjunktiveNormalForm(assignments: Seq[BoolAssignment]): ScalaNode = getNF(assignments, takePos = true, OrScalaNode, AndScalaNode)
+  def konjunktiveNormalForm(assignments: Seq[BoolAssignment]): ScalaNode = getNF(assignments, takePos = true, OrScalaNode, AndScalaNode)
 }

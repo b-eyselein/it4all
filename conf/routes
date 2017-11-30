@@ -32,8 +32,7 @@ GET           /essentials/bool/fillout                    controllers.randomExes
 PUT           /essentials/bool/fillout                    controllers.randomExes.BoolController.checkBoolFilloutSolution
 
 GET           /essentials/bool/creation                   controllers.randomExes.BoolController.newBoolCreationQuestion
-PUT           /essentials/bool/creation                   controllers.randomExes.BoolController.checkBoolCreationSolutionLive
-POST          /essentials/bool/creation                   controllers.randomExes.BoolController.checkBoolCreationSolution
+PUT           /essentials/bool/creation                   controllers.randomExes.BoolController.checkBoolCreationSolution
 # Essentials - End
 
 

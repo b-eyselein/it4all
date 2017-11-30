@@ -4,20 +4,24 @@
     <script>
             $(document).ready(function () {
                 $('#convButton').click(function () {
-                    window.location = "@controllers.randomExes.routes.NaryController.newNaryConversionQuestion()?fromBase=" + $('#convFromBase').val() + "&toBase=" + $('#convToBase').val();
+                    window.location = '@controllers.randomExes.routes.NaryController.newNaryConversionQuestion()?fromBase=' + $('#convFromBase').val() + '&toBase=' + $('#convToBase').val();
                 });
 
                 $('#addButton').click(function () {
-                    window.location = "@controllers.randomExes.routes.NaryController.newNaryAdditionQuestion()?base=" + $('#addBase').val();
+                    window.location = '@controllers.randomExes.routes.NaryController.newNaryAdditionQuestion()?base=' + $('#addBase').val();
                 });
 
                 $('#twoCompButton').click(function () {
-                    window.location = "@controllers.randomExes.routes.NaryController.newNaryTwoComplementQuestion()?verbose=" + $('#twoComp').val();
+                    window.location = '@controllers.randomExes.routes.NaryController.newNaryTwoComplementQuestion()?verbose=' + $('#twoComp').val();
                 });
 
                 $('#filloutButton').click(function () {
-                    window.location = "@controllers.randomExes.routes.BoolController.newBoolFilloutQuestion()?opsAsSymbols=" + $('#fillout').val();
+                    window.location = '@controllers.randomExes.routes.BoolController.newBoolFilloutQuestion()?opsAsSymbols=' + $('#fillout').val();
                 });
+
+                $('#createButton').click(function() {
+                    window.location = '@controllers.randomExes.routes.BoolController.newBoolCreationQuestion()';
+                })
             });
     </script>
 }
@@ -98,12 +102,13 @@
             </div>
         </div>
 
-
-        <h3>TODO!</h3>
-        <p>
-            <a type="button" class="btn btn-default btn-block"
-            href="@controllers.randomExes.routes.BoolController.newBoolCreationQuestion">
-                Formel erstellen </a>            </p>
+        <!-- Creation of a bool formula -->
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">Erstellen einer Booleschen Formel <span class="glyphicon glyphicon-chevron-right"></span></span>
+                <button class="form-control btn-primary" id="createButton">Go! </button>
+            </div>
+        </div>
 
     </div>
 }

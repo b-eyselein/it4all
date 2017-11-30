@@ -30,7 +30,7 @@ class CreationQuestionTest {
 
     val question = new CreationQuestion(List(a, b, c), assignments)
 
-    val dnf = BoolAssignment.getDisjunktiveNormalForm(question.solutions)
+    val dnf = BoolAssignment.disjunktiveNormalForm(question.solutions)
     assert(dnf == awaitedDNF, s"Expected that DNF\n\tgenerated = $dnf\nequals\n\tawaited = $awaitedDNF")
 
   }
@@ -39,7 +39,7 @@ class CreationQuestionTest {
   def testKnf() {
     val question = new CreationQuestion(List(a, b, c), assignments)
 
-    val knf = BoolAssignment.getKonjunktiveNormalForm(question.solutions)
+    val knf = BoolAssignment.konjunktiveNormalForm(question.solutions)
     assert(knf == awaitedKNF, s"Expected that KNF\n\tgenerated = $knf\nequals\n\tawaited = $awaitedKNF")
   }
 
