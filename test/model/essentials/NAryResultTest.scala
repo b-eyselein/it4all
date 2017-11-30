@@ -29,8 +29,8 @@ class NAryResultTest {
     when(form.get(FORM_VALUE)).thenReturn("1110 0110")
 
     val res: TwoCompResult = TwoCompResult.parseFromForm(form, isVerbose = true)
-    assertThat(res.binaryAbs, equalTo("0001 1010"))
-    assertThat(res.invertedAbs, equalTo("1110 0101"))
+    assertThat(res.maybeBinaryAbs, equalTo("0001 1010"))
+    assertThat(res.maybeInvertedAbs, equalTo("1110 0101"))
 
     NAryTestBase.verifyNumber(res.learnerSolution, BINARY, -26)
     NAryTestBase.verifyNumber(res.targetNumber, BINARY, -26)

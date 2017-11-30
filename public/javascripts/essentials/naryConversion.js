@@ -1,9 +1,9 @@
 function readValues() {
     return {
-        summand1: $('#firstSummand').val(),
-        summand2: $('#secondSummand').val(),
-        base: $('#base').data('base'),
-        solution: $('#solution').val().split('').reverse().join('')
+        startingNB: $('#startingNB').data('base'),
+        targetNB: $('#targetNB').data('base'),
+        value: $('#value').val(),
+        solution: $('#solution').val()
     }
 }
 

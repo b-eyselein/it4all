@@ -5,7 +5,7 @@ import model.Enums.ToolState
 import model.essentials.EssentialsConsts
 import play.api.mvc.Call
 
-object EssentialsToolObject extends RandomExToolObject {
+case object EssentialsToolObject extends RandomExToolObject {
 
   override val hasTags  : Boolean   = false
   override val toolname : String    = "Allgemeiner Teil"

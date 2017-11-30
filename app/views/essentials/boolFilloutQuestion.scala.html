@@ -12,7 +12,7 @@
             const formula = "@question.formula.asString";
             const lerVar = "@lerVar";
             const solVar = "@model.essentials.EssentialsConsts.SolVariable";
-            const url = "@controllers.randomExes.routes.EssentialsController.checkBoolFilloutSolution";
+            const url = "@controllers.randomExes.routes.BoolController.checkBoolFilloutSolution";
     </script>
     <script src="@routes.Assets.versioned("javascripts/essentials/boolFillout.js")"></script>
 }
@@ -62,7 +62,7 @@
                         <div class="btn-group">
                             <button type="submit" class="btn btn-primary">Testen</button>
                         </div>
-                        <a class="btn btn-success" href="@controllers.randomExes.routes.EssentialsController.newBoolFilloutQuestion(opsAsSymbols)">
+                        <a class="btn btn-success" href="@controllers.randomExes.routes.BoolController.newBoolFilloutQuestion(opsAsSymbols)">
                             N&auml;chste Aufgabe</a>
                     </div>
                 </div>

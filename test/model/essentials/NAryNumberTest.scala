@@ -22,7 +22,7 @@ class NAryNumberTest {
   }
 
   def checkParsingWithoutMark(decValue: Int, base: NumberBase, toParse: String) {
-    val posLowerHex = NAryNumber.parse(toParse, base)
+    val posLowerHex = NAryNumber.parseNaryNumber(toParse, base)
     checkBase(posLowerHex, base)
     checkValue(posLowerHex, decValue)
   }

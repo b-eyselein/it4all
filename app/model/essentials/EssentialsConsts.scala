@@ -2,7 +2,11 @@ package model.essentials
 
 import model.Consts
 
+import scala.util.Random
+
 object EssentialsConsts extends Consts {
+
+  val generator = new Random
 
   // Nary
 
@@ -14,7 +18,7 @@ object EssentialsConsts extends Consts {
   val FirstSummand = "summand1"
   val FormulaName  = "formula"
 
-  val InvertedAbs = "inverted"
+  val InvertedAbs = "invertedAbs"
 
   val LearnerSol = "solution"
 
@@ -30,7 +34,6 @@ object EssentialsConsts extends Consts {
 
   // Boolean
 
-  val One                   = "1"
   val SolVariable: Variable = Variable('z')
   val LerVariable: Variable = Variable('y')
 

@@ -1,11 +1,7 @@
 package model.essentials
 
-import model.essentials.EssentialsConsts._
+import model.essentials.NAryNumber._
 import model.essentials.NumberBase._
-import play.api.data.Form
-import play.api.data.Forms._
-
-import scala.util.Random
 
 sealed abstract class NAryResult(val targetNumber: NAryNumber, val learnerSolution: NAryNumber) {
 
@@ -13,75 +9,23 @@ sealed abstract class NAryResult(val targetNumber: NAryNumber, val learnerSoluti
 
 }
 
-// Mappings for request
-
-case class AdditionSolution(sum1: String, sum2: String, solutionNary: String, base: String)
-
-case class ConversionSolution(startingValueNary: String, solutionNary: String, startingNB: String, targetNB: String)
-
-case class TwoCompSolution(startingValueDec: Int, binaryAbs: Option[String], inverted: Option[String], solutionBinary: String)
-
-// Result classes
-
 case class NAryAddResult(base: NumberBase, firstSummand: NAryNumber, secondSummand: NAryNumber, learnerSol: NAryNumber)
   extends NAryResult(firstSummand + secondSummand, learnerSol)
 
 case class NAryConvResult(startingValue: NAryNumber, startingBase: NumberBase, targetBase: NumberBase, learnerSol: NAryNumber)
   extends NAryResult(new NAryNumber(startingValue.decimalValue, targetBase), learnerSol)
 
-case class TwoCompResult(targetNum: Int, learnerSol: NAryNumber, binaryAbs: String, invertedAbs: String)
+case class TwoCompResult(targetNum: Int, learnerSol: NAryNumber, maybeBinaryAbs: Option[String], maybeInvertedAbs: Option[String])
   extends NAryResult(new NAryNumber(targetNum, BINARY), learnerSol) {
 
-  def binaryAbsCorrect: Boolean = NAryNumber.parse(binaryAbs, BINARY).get.decimalValue == Math.abs(targetNumber.decimalValue)
+  def verbose: Boolean = maybeBinaryAbs.isDefined && maybeInvertedAbs.isDefined
 
-  def invertedAbsCorrect: Boolean = NAryNumber.invertDigits(binaryAbs).equals(invertedAbs)
-}
+  def binaryAbsCorrect: Boolean = maybeBinaryAbs flatMap (parseNaryNumber(_, BINARY)) exists (_.decimalValue == Math.abs(targetNumber.decimalValue))
 
-object NAryResult {
-
-  val generator = new Random
-
-  val zero = "0"
-
-
-  //  def addResultFromFormValue(form: AdditionSolution): NAryAddResult = {
-  //    val base: NumberBase = valueOf(form.base)
-  //    NAryAddResult(base, NAryNumber.parse(form.sum1, base), NAryNumber.parse(form.sum2, base), NAryNumber.parse(form.solutionNary.reverse, base))
-  //  }
-
-  def convResultFromFormValue(form: ConversionSolution): NAryConvResult = {
-    val startingBase = valueOf(form.startingNB)
-    val targetBase = valueOf(form.targetNB)
-
-    val startingValue: NAryNumber = NAryNumber.parse(form.startingValueNary, startingBase) getOrElse NAryNumber(0, BINARY)
-    val learnerSol: NAryNumber = NAryNumber.parse(form.solutionNary, targetBase) getOrElse NAryNumber(0, BINARY)
-
-    NAryConvResult(startingValue, startingBase, targetBase, learnerSol)
+  def invertedAbsCorrect: Boolean = (maybeInvertedAbs zip maybeBinaryAbs).headOption exists {
+    case (binaryAbs, invertedAbs) => invertDigits(binaryAbs) == invertedAbs
   }
 
-  def twoCompResultFromFormValue(form: TwoCompSolution): TwoCompResult =
-  // FIXME: optionals!
-    TwoCompResult(form.startingValueDec, NAryNumber.parse(form.solutionBinary, BINARY) getOrElse NAryNumber(0, BINARY), form.binaryAbs.getOrElse(""), form.inverted.getOrElse(""))
-
-  val additionSolution = Form(mapping(
-    FirstSummand -> nonEmptyText,
-    SecondSummand -> nonEmptyText,
-    LearnerSol -> nonEmptyText,
-    BaseName -> nonEmptyText
-  )(AdditionSolution.apply)(AdditionSolution.unapply))
-
-  val conversionSolution = Form(mapping(
-    VALUE_NAME -> nonEmptyText,
-    LearnerSol -> nonEmptyText,
-    StartingNumBase -> nonEmptyText,
-    TargetNumBase -> nonEmptyText
-  )(ConversionSolution.apply)(ConversionSolution.unapply))
-
-  val twoComplementSolution = Form(mapping(
-    VALUE_NAME -> number,
-    BinaryAbs -> optional(nonEmptyText),
-    InvertedAbs -> optional(nonEmptyText),
-    LearnerSol -> nonEmptyText
-  )(TwoCompSolution.apply)(TwoCompSolution.unapply))
+  private def invertDigits(binaryInt: String): String = binaryInt.replace("0", "a").replace("1", "0").replace("a", "1")
 
 }
