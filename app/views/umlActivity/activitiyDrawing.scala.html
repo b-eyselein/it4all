@@ -160,7 +160,7 @@
                 <hr>
 
                 <h3>Programmiercode</h3>
-                <form action="@controllers.idPartExes.routes.UmlController.activityCheckSolution()" method="post" id="sendForm" onsubmit="return writeActivityDiagram();">
+                <form action="@controllers.exes.idPartExes.routes.UmlController.activityCheckSolution()" method="post" id="sendForm" onsubmit="return writeActivityDiagram();">
                     <input type="hidden" name="@UmlConsts.FORM_VALUE" id="@UmlConsts.FORM_VALUE" required>
                     <button class="btn btn-primary btn-block">Aufgabe verifizieren</button>
                 </form>

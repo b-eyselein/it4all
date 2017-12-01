@@ -7,7 +7,7 @@
             </div>
 
             @for(exercise <- exercises) {
-                <p><a class="btn btn-default btn-block" href="@controllers.idExes.routes.EbnfController.exercise(exercise.id)">Aufgabe @exercise.id</a></p>
+                <p><a class="btn btn-default btn-block" href="@controllers.exes.idExes.routes.EbnfController.exercise(exercise.id)">Aufgabe @exercise.id</a></p>
             }
         </div>
     }

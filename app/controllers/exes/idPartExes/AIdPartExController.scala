@@ -1,8 +1,9 @@
-package controllers.idPartExes
+package controllers.exes.idPartExes
 
 import java.nio.file.{Files, Path}
 
-import controllers.{BaseExerciseController, Secured}
+import controllers.exes.BaseExerciseController
+import controllers.Secured
 import model.core._
 import model.core.tools.ExToolObject
 import model.{Exercise, HasBaseValues, User}

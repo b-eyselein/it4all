@@ -28,9 +28,9 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   // Yaml
 
-  override type CompEx = QuizCompleteEx
+  override type CompColl = Quiz
 
-  override implicit val yamlFormat: YamlFormat[QuizCompleteEx] = null
+  override implicit val yamlFormat: YamlFormat[Quiz] = null
 
   // db
 

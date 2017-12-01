@@ -5,7 +5,7 @@ import java.nio.file.{Path, Paths}
 import model.Enums.ToolState
 import model.core.CoreConsts._
 import model.core.FileUtils
-import model.{CompleteEx, Consts, HasBaseValues}
+import model.{CompleteEx, Consts, Exercise, HasBaseValues}
 import play.api.mvc.Call
 
 case class ExerciseOptions(tool: String, aceMode: String, minLines: Int, maxLines: Int, updatePrev: Boolean)
@@ -25,13 +25,12 @@ trait ToolObject {
 
 }
 
-
 trait ExToolObject extends ToolObject with FileUtils {
 
   // Methods for files...
   // Important: exType is initialized later ...
 
-  type CompEx <: CompleteEx[_]
+  type CompEx <: CompleteEx[_ <: Exercise]
 
   val pluralName: String = "Aufgaben"
 

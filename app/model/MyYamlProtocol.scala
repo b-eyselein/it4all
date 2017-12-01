@@ -111,7 +111,7 @@ abstract class MyYamlProtocol extends DefaultYamlProtocol {
       )
     )
 
-    override def write(completeEx: E): YamlObject = YamlObject(writeBaseValues(completeEx.ex.baseValues) ++ writeRest(completeEx))
+    override def write(completeEx: E): YamlObject = YamlObject(writeBaseValues(completeEx.baseValues) ++ writeRest(completeEx))
 
     protected def readRest(yamlObject: YamlObject, baseValues: BaseValues): E
 

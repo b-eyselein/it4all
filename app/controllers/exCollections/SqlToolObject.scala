@@ -1,13 +1,13 @@
 package controllers.exCollections
 
 import model.Enums.ToolState
-import model.sql.{SqlConsts, SqlScenarioCompleteEx}
+import model.sql.{SqlConsts, SqlScenario}
 import model.{Consts, HasBaseValues}
 import play.api.mvc.Call
 
-object SqlToolObject extends CollectionToolOjbect {
+object SqlToolObject extends CollectionToolObject {
 
-  override type CompEx = SqlScenarioCompleteEx
+  override type CompEx = SqlScenario
 
   override val hasTags   : Boolean   = true
   override val toolname  : String    = "Sql"

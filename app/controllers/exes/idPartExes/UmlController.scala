@@ -1,4 +1,4 @@
-package controllers.idPartExes
+package controllers.exes.idPartExes
 
 import java.nio.file.{Files, Path, Paths}
 import javax.inject._

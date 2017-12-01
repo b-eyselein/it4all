@@ -1,4 +1,4 @@
-package controllers.idPartExes
+package controllers.exes.idPartExes
 
 import javax.inject._
 
@@ -81,7 +81,7 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   }
 
   override def renderExesListRest = new Html(
-    s"""<a class="btn btn-primary btn-block" href="${controllers.idPartExes.routes.WebController.playground()}">Web-Playground</a>
+    s"""<a class="btn btn-primary btn-block" href="${controllers.exes.idPartExes.routes.WebController.playground()}">Web-Playground</a>
        |<hr>""".stripMargin)
 
   override def renderResult(correctionResult: CompleteResult[WebResult]): Html = Html(correctionResult.results.map(res =>
@@ -96,7 +96,7 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   // Correction
 
   override def correctEx(user: User, learnerSolution: StringSolution, exercise: WebCompleteEx, part: String): Try[CompleteResult[WebResult]] = Try {
-    val solutionUrl = BASE_URL + controllers.idPartExes.routes.WebController.site(user.username, exercise.ex.id).url
+    val solutionUrl = BASE_URL + controllers.exes.idPartExes.routes.WebController.site(user.username, exercise.ex.id).url
     val newSol = WebSolution(exercise.ex.id, user.username, learnerSolution.learnerSolution)
 
     Await.result(db.run(repo.webSolutions insertOrUpdate newSol), Duration(2, duration.SECONDS))

@@ -1,6 +1,6 @@
 package model.spread
 
-import controllers.fileExes.{FileExToolObject, SpreadToolObject}
+import controllers.exes.fileExes.{FileExToolObject, SpreadToolObject}
 import model.Enums.ExerciseState
 import model.{BaseValues, Exercise, FileCompleteEx, TableDefs}
 import play.api.mvc.Call
@@ -19,7 +19,7 @@ object SpreadExercise {
 
 }
 
-case class SpreadExercise(baseValues: BaseValues, sampleFilename: String, templateFilename: String) extends Exercise with FileCompleteEx[SpreadExercise] {
+case class SpreadExercise(override val baseValues: BaseValues, sampleFilename: String, templateFilename: String) extends Exercise with FileCompleteEx[SpreadExercise] {
 
   override val toolObject: FileExToolObject = SpreadToolObject
 

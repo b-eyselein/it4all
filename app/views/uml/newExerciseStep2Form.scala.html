@@ -1,4 +1,4 @@
-@import model.uml.UmlConsts._
+@import model.uml.UmlConsts
 
 @(user: model.User, exercise: model.uml.UmlExercise, capWords: List[String])
 
@@ -18,19 +18,19 @@
             <h1>Erstellung einer neuen UML-Aufgabe</h1>
         </div>
 
-        <form class="form-horizontal" action="@controllers.idPartExes.routes.UmlController.newExerciseStep3" method="post">
+        <form class="form-horizontal" action="@controllers.exes.idPartExes.routes.UmlController.newExerciseStep3" method="post">
 
             <div class="form-group">
-                <label class="control-label col-sm-1" for="@TITLE_NAME">Titel:</label>
+                <label class="control-label col-sm-1" for="@UmlConsts.TITLE_NAME">Titel:</label>
                 <div class="col-sm-11">
-                    <input class="form-control" id="@TITLE_NAME" name="@TITLE_NAME" value="@exercise.title" readonly required>
+                    <input class="form-control" id="@UmlConsts.TITLE_NAME" name="@UmlConsts.TITLE_NAME" value="@exercise.title" readonly required>
                 </div>
             </div>
 
             <div class="form-group">
-                <label class="control-label col-sm-1" for="@TEXT_NAME">Text:</label>
+                <label class="control-label col-sm-1" for="@UmlConsts.TEXT_NAME">Text:</label>
                 <div class="col-sm-11">
-                    <textarea class="form-control" id="@TEXT_NAME" name="@TEXT_NAME" readonly required>@exercise.text</textarea>
+                    <textarea class="form-control" id="@UmlConsts.TEXT_NAME" name="@UmlConsts.TEXT_NAME" readonly required>@exercise.text</textarea>
                 </div>
             </div>
 

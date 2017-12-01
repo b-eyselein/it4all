@@ -1,6 +1,6 @@
 package model.web
 
-import controllers.idPartExes.WebToolObject
+import controllers.exes.idPartExes.WebToolObject
 import model.Enums.ExerciseState
 import model._
 import model.web.WebConsts.{HTML_TYPE, JS_TYPE}

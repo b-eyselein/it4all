@@ -1,12 +1,13 @@
 package model.ebnf
 
-import controllers.idExes.EbnfToolObject
+import controllers.exes.idExes.EbnfToolObject
 import model.Enums.ExerciseState
 import model._
 import model.ebnf.EbnfConsts._
 import model.ebnf.EbnfExerciseHelper._
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.mvc.Call
+import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
 object EbnfExerciseHelper {
@@ -21,15 +22,15 @@ case class EbnfExercise(i: Int, ti: String, a: String, te: String, s: ExerciseSt
 
   override val baseValues = BaseValues(i, ti, a, te, s)
 
-  override val ex: HasBaseValues = this
+  override val ex: EbnfExercise = this
 
   def getTerminals: Array[String] = terminals.split(termsJoinStr)
 
   def getTerminalsForForm: String = getTerminals.map(t => s"'$t'").mkString(" ")
 
-  override def preview = ???
+  override def preview: Html = ???
 
-  override def renderListRest = ???
+  override def renderListRest: Html = ???
 
   override def exerciseRoutes: Map[Call, String] = EbnfToolObject.exerciseRoutes(this)
 

@@ -1,13 +1,13 @@
 package controllers.exCollections
 
 import model.Enums.ToolState
-import model.questions.{QuestionConsts, QuizCompleteEx}
+import model.questions.{QuestionConsts, Quiz}
 import model.{Consts, HasBaseValues}
 import play.api.mvc.Call
 
-object QuestionToolObject extends CollectionToolOjbect {
+object QuestionToolObject extends CollectionToolObject {
 
-  override type CompEx = QuizCompleteEx
+  override type CompEx = Quiz
 
   override val hasTags  : Boolean   = true
   override val toolname             = "Auswahlfragen"

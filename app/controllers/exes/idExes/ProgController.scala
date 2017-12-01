@@ -1,9 +1,9 @@
-package controllers.idExes
+package controllers.exes.idExes
 
 import javax.inject._
 
 import controllers.Secured
-import controllers.idExes.ProgController._
+import ProgController._
 import model.Enums.ExerciseState
 import model.core._
 import model.core.tools.ExerciseOptions
@@ -70,7 +70,7 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
           //          val oldTestData = Option(CommitedTestDataHelper.forUserAndExercise(user, id)).getOrElse(List.empty)
 
           Ok(views.html.programming.testData.render(user, ex, Seq.empty /* oldTestData*/))
-        case None     => Redirect(controllers.idExes.routes.ProgController.index())
+        case None     => Redirect(controllers.exes.idExes.routes.ProgController.index())
       }
   }
 

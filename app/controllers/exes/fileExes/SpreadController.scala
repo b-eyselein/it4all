@@ -1,10 +1,10 @@
-package controllers.fileExes
+package controllers.exes.fileExes
 
 import java.nio.file.Path
 import javax.inject._
 
 import controllers.Secured
-import controllers.fileExes.SpreadController._
+import SpreadController._
 import model.User
 import model.core._
 import model.spread._

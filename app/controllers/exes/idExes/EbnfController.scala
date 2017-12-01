@@ -1,4 +1,4 @@
-package controllers.idExes
+package controllers.exes.idExes
 
 import javax.inject._
 
@@ -23,7 +23,6 @@ class EbnfController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
   override type SolutionType = StringSolution
 
   override def solForm: Form[StringSolution] = Solution.stringSolForm
-
 
   // Yaml
 

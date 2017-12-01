@@ -1,10 +1,10 @@
-package controllers.idExes
+package controllers.exes.idExes
 
 import java.nio.file._
 import javax.inject._
 
 import controllers.Secured
-import controllers.idExes.XmlController._
+import XmlController._
 import model.User
 import model.core.CommonUtils.RicherTry
 import model.core._
@@ -93,7 +93,7 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   override def renderEditRest(exercise: Option[XmlExercise]): Html = views.html.xml.editXmlExRest(exercise)
 
   override def renderExesListRest: Html = new Html(
-    s"""<a class="btn btn-primary btn-block" href="${controllers.idExes.routes.XmlController.playground()}">Xml-Playground</a>
+    s"""<a class="btn btn-primary btn-block" href="${controllers.exes.idExes.routes.XmlController.playground()}">Xml-Playground</a>
        |<hr>""".stripMargin)
 
   override def renderResult(completeResult: CompleteResult[XmlError]): Html = new Html(completeResult.results match {

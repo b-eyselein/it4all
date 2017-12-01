@@ -1,32 +1,18 @@
 package model.sql
 
-import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty}
+import com.fasterxml.jackson.annotation.JsonProperty
 import model.Enums.ExerciseState
-import model.core.ExerciseCollection
+import model._
 import model.sql.SqlConsts._
 import model.sql.SqlEnums.{SqlExTag, SqlExerciseType}
-import model.{BaseValues, CompleteEx, Exercise, TableDefs}
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
-case class SqlScenarioCompleteEx(ex: SqlScenario) extends CompleteEx[SqlScenario] {
 
-  //  override def tags: List[SqlExTag] = {
-  //    if (sqlTags.isEmpty) List.empty
-  //    else sqlTags.split(SqlExerciseHelper.SampleJoinChar).map(SqlExTag.valueOf).toList
-  //  }
-  override def preview = ???
+case class SqlScenario(i: Int, ti: String, a: String, te: String, s: ExerciseState, shortName: String, scriptFile: String)
+  extends ExerciseCollection[SqlExercise] with CompleteCollection[SqlExercise, SqlScenario] {
 
-  override def renderListRest = ???
-
-  override def exerciseRoutes = ???
-
-}
-
-case class SqlScenario(i: Int, ti: String, a: String, te: String, s: ExerciseState,
-                       @JsonProperty(required = true) shortName: String,
-                       @JsonProperty(required = true) scriptFile: String)
-  extends ExerciseCollection[SqlExercise](BaseValues(i, ti, a, te, s)) {
+  override val baseValues = BaseValues(i, ti, a, te, s)
 
   override def exercises: List[SqlExercise] = List.empty
 
@@ -40,12 +26,11 @@ case class SqlScenario(i: Int, ti: String, a: String, te: String, s: ExerciseSta
 
   def getExercisesByType(exType: SqlExerciseType): List[SqlExercise] = exercises.filter(_.exerciseType == exType)
 
-  @JsonIgnore
-  def imageUrl: String = shortName + ".png"
+  val imageUrl: String = shortName + ".png"
 
-  @JsonIgnore
-  def numOfSites: Int = exercises.size / STEP + 1
+  val numOfSites: Int = exercises.size / STEP + 1
 
+  override def coll: SqlScenario = this
 }
 
 object SqlExerciseHelper {
@@ -61,7 +46,6 @@ case class SqlExercise(i: Int, ti: String, a: String, te: String, s: ExerciseSta
 
   def samples: List[SqlSample] = List.empty
 
-  @JsonProperty(value = "tags", required = true)
   def tagsForJson: List[String] = sqlTags.split(SqlExerciseHelper.SampleJoinChar).toList
 
   def tags: List[SqlExTag] = List.empty

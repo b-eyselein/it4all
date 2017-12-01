@@ -1,6 +1,7 @@
 @import model.core.CoreConsts
 
-@(user: model.User, routesObject: controllers.idExes.IdExToolObject, exerciseOptions: model.core.tools.ExerciseOptions, exercise: model.Exercise, exRest: Html, oldSolution: String)
+@import controllers.exes.idExes.IdExToolObject
+@(user: model.User, routesObject: IdExToolObject, exerciseOptions: model.core.tools.ExerciseOptions, exercise: model.Exercise, exRest: Html, oldSolution: String)
 
 @scripts = {
     <script src="@routes.Assets.versioned("lib/ace/src/ace.js")"></script>

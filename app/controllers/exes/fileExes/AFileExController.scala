@@ -1,9 +1,10 @@
-package controllers.fileExes
+package controllers.exes.fileExes
 
 import java.nio.file.Path
 import java.sql.SQLSyntaxErrorException
 
-import controllers.{BaseExerciseController, Secured}
+import controllers.Secured
+import controllers.exes.BaseExerciseController
 import model._
 import model.core.CommonUtils.RicherTry
 import model.core._
@@ -18,7 +19,7 @@ import scala.util.{Failure, Success, Try}
 
 trait FileExToolObject extends ExToolObject {
 
-  override type CompEx <: FileCompleteEx[_]
+  override type CompEx <: FileCompleteEx[_ <: Exercise]
 
   val fileTypes: Map[String, String]
 

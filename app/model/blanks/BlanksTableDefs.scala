@@ -1,6 +1,6 @@
 package model.blanks
 
-import controllers.idExes.BlanksToolObject
+import controllers.exes.idExes.BlanksToolObject
 import model.Enums.{ExerciseState, SuccessType}
 import model.{BaseValues, CompleteEx, Exercise, TableDefs}
 import play.api.db.slick.HasDatabaseConfigProvider

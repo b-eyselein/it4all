@@ -1,4 +1,4 @@
-package controllers.idExes
+package controllers.exes.idExes
 
 import javax.inject._
 

@@ -2,7 +2,7 @@ package model
 
 import java.nio.file.Path
 
-import controllers.fileExes.FileExToolObject
+import controllers.exes.fileExes.FileExToolObject
 import model.Enums.ExerciseState
 import model.core.FileUtils
 import play.api.mvc.Call
@@ -40,9 +40,11 @@ trait ExTag {
 
 trait Exercise extends HasBaseValues
 
-trait CompleteEx[B <: HasBaseValues] {
+trait CompleteEx[E <: Exercise] {
 
-  def ex: HasBaseValues
+  def ex: E
+
+  def baseValues: BaseValues = ex.baseValues
 
   def preview: Html
 
@@ -54,7 +56,7 @@ trait CompleteEx[B <: HasBaseValues] {
 
 }
 
-trait FileCompleteEx[B <: Exercise] extends CompleteEx[B] with FileUtils {
+trait FileCompleteEx[E <: Exercise] extends CompleteEx[E] with FileUtils {
 
   def toolObject: FileExToolObject
 
@@ -67,5 +69,21 @@ trait FileCompleteEx[B <: Exercise] extends CompleteEx[B] with FileUtils {
   def sampleFilePath(fileEnding: String): Path = toolObject.sampleDirForExercise(ex) / (sampleFilename + "." + fileEnding)
 
   def available(fileEnding: String): Boolean = templateFilePath(fileEnding).toFile.exists && sampleFilePath(fileEnding).toFile.exists
+
+}
+
+trait ExerciseCollection[E <: Exercise] extends HasBaseValues {
+
+  def exercises: List[E]
+
+  val maxPoints = 0
+
+}
+
+trait CompleteCollection[E <: Exercise, C <: ExerciseCollection[E]] {
+
+  def coll: C
+
+  def baseValues: BaseValues = coll.baseValues
 
 }

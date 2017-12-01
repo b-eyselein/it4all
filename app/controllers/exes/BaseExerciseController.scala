@@ -1,12 +1,13 @@
-package controllers
+package controllers.exes
 
 import java.nio.file.{Files, Paths}
 import java.sql.SQLSyntaxErrorException
 
+import controllers.Secured
 import model.core.CoreConsts._
 import model.core._
 import model.core.tools.ExToolObject
-import model.{CompleteEx, HasBaseValues, User}
+import model.{CompleteEx, Exercise, User}
 import net.jcazevedo.moultingyaml._
 import play.Logger
 import play.api.data.Form
@@ -21,14 +22,13 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 import scala.language.implicitConversions
 
-abstract class BaseExerciseController[B <: HasBaseValues]
-(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository, val toolObject: ExToolObject)
-(implicit ec: ExecutionContext)
+abstract class BaseExerciseController[Ex <: Exercise]
+(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository, val toolObject: ExToolObject)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured with FileUtils {
 
   // Reading Yaml
 
-  type CompEx <: CompleteEx[B]
+  type CompEx <: CompleteEx[Ex]
 
   implicit val yamlFormat: YamlFormat[CompEx]
 
@@ -36,7 +36,7 @@ abstract class BaseExerciseController[B <: HasBaseValues]
 
   import profile.api._
 
-  protected type TQ <: repo.HasBaseValuesTable[B]
+  protected type TQ <: repo.HasBaseValuesTable[Ex]
 
   protected def tq: TableQuery[TQ]
 

@@ -1,4 +1,4 @@
-package controllers.fileExes
+package controllers.exes.fileExes
 
 import java.nio.file.Path
 import javax.inject._

@@ -12,7 +12,7 @@
 
         <h2>Download der Musterdatei</h2>
 
-        <a href="@controllers.fileExes.routes.SpreadController.downloadTemplate(exercise.id, fileType._1)" class="btn btn-default btn-block">
+        <a href="@controllers.exes.fileExes.routes.SpreadController.downloadTemplate(exercise.id, fileType._1)" class="btn btn-default btn-block">
             Musterdatei f&uuml;r @fileType._2 herunterladen</a>
 
 
@@ -20,7 +20,7 @@
 
         <h2>Upload ihrer L&ouml;sung</h2>
 
-        <form class="form-horizontal" action="@controllers.fileExes.routes.SpreadController.uploadSolution(exercise.id, fileType._1)"
+        <form class="form-horizontal" action="@controllers.exes.fileExes.routes.SpreadController.uploadSolution(exercise.id, fileType._1)"
         method="post" enctype="multipart/form-data">
 
             <div class="form-group">

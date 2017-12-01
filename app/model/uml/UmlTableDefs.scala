@@ -1,6 +1,6 @@
 package model.uml
 
-import controllers.idPartExes.UmlToolObject
+import controllers.exes.idPartExes.UmlToolObject
 import model.Enums.ExerciseState
 import model.uml.UmlConsts._
 import model.uml.UmlEnums._

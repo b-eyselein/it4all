@@ -22,10 +22,10 @@ import scala.concurrent.ExecutionContext
 import scala.language.implicitConversions
 import scala.util.{Failure, Success}
 
+/*, @NamedDatabase("sqlselectroot") sqlSelect: Database, @NamedDatabase("sqlotherroot") sqlOther: Database*/
+
 @Singleton
-class SqlController @Inject()(cc: ControllerComponents /*, @NamedDatabase("sqlselectroot") sqlSelect: Database, @NamedDatabase("sqlotherroot") sqlOther: Database*/ ,
-                              dbcp: DatabaseConfigProvider, r: Repository)
-                             (implicit ec: ExecutionContext)
+class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
   extends AExCollectionController[SqlExercise, SqlScenario, EvaluationResult](cc, dbcp, r, SqlToolObject) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
   override type SolutionType = StringSolution
@@ -34,9 +34,9 @@ class SqlController @Inject()(cc: ControllerComponents /*, @NamedDatabase("sqlse
 
   // Yaml
 
-  override type CompEx = SqlScenarioCompleteEx
+  override type CompColl = SqlScenario
 
-  override implicit val yamlFormat: YamlFormat[SqlScenarioCompleteEx] = null
+  override implicit val yamlFormat: YamlFormat[SqlScenario] = null
 
   // db
 

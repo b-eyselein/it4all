@@ -1,6 +1,6 @@
 package model.programming
 
-import controllers.idExes.ProgToolObject
+import controllers.exes.idExes.ProgToolObject
 import model.Enums.ExerciseState
 import model._
 import play.api.db.slick.HasDatabaseConfigProvider

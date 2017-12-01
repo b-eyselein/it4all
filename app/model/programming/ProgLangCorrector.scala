@@ -2,7 +2,7 @@ package model.programming
 
 import java.nio.file.attribute.{PosixFilePermission, PosixFilePermissions}
 
-import controllers.idExes.ProgToolObject
+import controllers.exes.idExes.ProgToolObject
 import model.User
 import model.core.{CompleteResult, FileUtils}
 import model.programming.ProgLangCorrector._

@@ -1,4 +1,4 @@
-@import model.uml.UmlConsts._
+@import model.uml.UmlConsts
 
 @(user: model.User, exercise: model.uml.UmlCompleteEx, getsHelp: Boolean)
 
@@ -95,10 +95,10 @@
 
                 <form method="post" onsubmit="return prepareFormForSubmitting();"
                     @if(getsHelp) {
-                        action="@controllers.idPartExes.routes.UmlController.correct(exercise.ex.id, model.uml.UmlEnums.UmlExPart.DIAG_DRAWING_HELP.toString)"
+                        action="@controllers.exes.idPartExes.routes.UmlController.correct(exercise.ex.id, model.uml.UmlEnums.UmlExPart.DIAG_DRAWING_HELP.toString)"
                     } else {
-                        action="@controllers.idPartExes.routes.UmlController.correct(exercise.ex.id, model.uml.UmlEnums.UmlExPart.DIAG_DRAWING.toString)" }>
-                    <input type="hidden" name="@FORM_VALUE" id="@FORM_VALUE" required>
+                        action="@controllers.exes.idPartExes.routes.UmlController.correct(exercise.ex.id, model.uml.UmlEnums.UmlExPart.DIAG_DRAWING.toString)" }>
+                    <input type="hidden" name="@UmlConsts.FORM_VALUE" id="@UmlConsts.FORM_VALUE" required>
                     <button class="btn btn-primary btn-block">Aufgabe verifizieren</button>
                 </form>
 

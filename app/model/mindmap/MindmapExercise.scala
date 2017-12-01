@@ -1,6 +1,6 @@
 package model.mindmap
 
-import controllers.fileExes.{FileExToolObject, MindMapToolObject}
+import controllers.exes.fileExes.{FileExToolObject, MindMapToolObject}
 import model.Enums.ExerciseState
 import model._
 import play.api.db.slick.HasDatabaseConfigProvider

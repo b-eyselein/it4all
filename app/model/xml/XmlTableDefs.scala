@@ -1,6 +1,6 @@
 package model.xml
 
-import controllers.idExes.XmlToolObject
+import controllers.exes.idExes.XmlToolObject
 import model.Enums.ExerciseState
 import model._
 import play.api.mvc.Call
@@ -20,7 +20,7 @@ object XmlExercise {
 
 }
 
-case class XmlExercise(baseValues: BaseValues, exerciseType: XmlExType, rootNode: String, refFileContent: String) extends Exercise with CompleteEx[XmlExercise] {
+case class XmlExercise(override val baseValues: BaseValues, exerciseType: XmlExType, rootNode: String, refFileContent: String) extends Exercise with CompleteEx[XmlExercise] {
 
   val fixedStart: String = if (exerciseType != XmlExType.XML_DTD) "" else
     s"""<?xml version="1.0" encoding="UTF-8"?>
