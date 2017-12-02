@@ -9,7 +9,7 @@ import scala.language.{implicitConversions, postfixOps}
 
 object WebExYamlProtocol extends MyYamlProtocol {
 
-  implicit object WebExYamlFormat extends ExYamlFormat[WebCompleteEx] {
+  implicit object WebExYamlFormat extends HasBaseValuesYamlFormat[WebCompleteEx] {
 
     override def readRest(yamlObject: YamlObject, baseValues: BaseValues): WebCompleteEx = {
       val htmlTasks = yamlObject.optArrayField(HTML_TASKS_NAME, _ convertTo[HtmlCompleteTask] HtmlCompleteTaskYamlFormat(baseValues.id))

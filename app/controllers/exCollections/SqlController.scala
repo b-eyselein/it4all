@@ -3,22 +3,22 @@ package controllers.exCollections
 import java.sql.Connection
 import javax.inject._
 
+import model.core.Levenshtein.levenshteinDistance
 import controllers.Secured
 import model.core.CommonUtils.cleanly
 import model.core._
 import model.sql.SqlConsts.{SELECT_ALL_DUMMY, SHOW_ALL_TABLES}
-import model.sql.SqlEnums.SqlExerciseType
+import model.sql.SqlYamlProtocol.SqlScenarioYamlFormat
 import model.sql._
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.data.Form
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc._
-import play.db.Database
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
 import scala.collection.mutable.ListBuffer
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
 import scala.util.{Failure, Success}
 
@@ -34,15 +34,23 @@ class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // Yaml
 
-  override type CompColl = SqlScenario
+  override type CompColl = SqlCompleteScenario
 
-  override implicit val yamlFormat: YamlFormat[SqlScenario] = null
+  override implicit val yamlFormat: YamlFormat[SqlCompleteScenario] = SqlScenarioYamlFormat
 
   // db
 
   override type TQ = repo.SqlScenarioesTable
 
   override def tq = repo.sqlScenarioes
+
+  override protected def completeColls: Future[Seq[SqlCompleteScenario]] = tq.completeScenarioes
+
+  import profile.api._
+
+  protected def saveRead(read: Seq[SqlCompleteScenario]): Future[Seq[Int]] = Future.sequence(read map {
+    compScenario => db.run(tq insertOrUpdate compScenario.coll)
+  })
 
   //  override def newExerciseForm: EssentialAction = withAdmin { user => implicit request => Ok(views.html.sql.newExerciseForm.render(user, null)) }
 
@@ -100,7 +108,7 @@ class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   def scenarioes: EssentialAction = withUser { user => implicit request => Ok(views.html.sql.scenarioes.render(user, List.empty /* SqlScenario.finder.all.asScala.toList*/)) }
 
-  def getDBForExType(exerciseType: SqlExerciseType): Database = if (exerciseType == SqlExerciseType.SELECT) null /* sqlSelect else sqlOther*/ else null
+  //  def getDBForExType(exerciseType: SqlExerciseType): Database = if (exerciseType == SqlExerciseType.SELECT) null /* sqlSelect else sqlOther*/ else null
 
   //  override def correctEx(sol: StringSolution, exercise: Option[SqlExercise], user: User): Try[SqlResult] = Try({
   //    val learnerSolution = sol.learnerSolution
@@ -134,11 +142,9 @@ class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 }
 
 object SqlController {
-  def findBestFittingSample(userSt: String, samples: List[SqlSample]): SqlSample = {
-    samples.reduceLeft((samp1, samp2) =>
-      if (Levenshtein.distance(samp1.sample, userSt) < Levenshtein.distance(samp2.sample, userSt))
-        samp1 else samp2)
-  }
+
+  def findBestFittingSample(userSt: String, samples: List[SqlSample]): SqlSample =
+    samples.reduceLeft((samp1, samp2) => if (levenshteinDistance(samp1.sample, userSt) < levenshteinDistance(samp2.sample, userSt)) samp1 else samp2)
 
   def readExistingTables(connection: Connection): List[String] = cleanly(connection.createStatement.executeQuery(SHOW_ALL_TABLES))(_.close)(existingTables => {
     var tableNames = ListBuffer.empty[String]
@@ -157,13 +163,13 @@ object SqlController {
       case Failure(_)      => null
     }
 
-  def readTablesInDatabase(db: Database, databaseName: String): List[SqlQueryResult] = cleanly(db.getConnection)(_.close)(connection => {
-    connection.setCatalog(databaseName)
-    readExistingTables(connection).map(readTableContent(connection, _))
-  }) match {
-    case Success(queryResult) => queryResult
-    case Failure(_)           => List.empty
-  }
+  //  def readTablesInDatabase(db: Database, databaseName: String): List[SqlQueryResult] = cleanly(db.getConnection)(_.close)(connection => {
+  //    connection.setCatalog(databaseName)
+  //    readExistingTables(connection).map(readTableContent(connection, _))
+  //  }) match {
+  //    case Success(queryResult) => queryResult
+  //    case Failure(_)           => List.empty
+  //  }
 
   def saveSolution(userName: String, learnerSolution: String, id: Int) {
     //    val key = new SqlSolutionKey(userName, id)

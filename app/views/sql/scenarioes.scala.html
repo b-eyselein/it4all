@@ -1,4 +1,4 @@
-@(user: model.User, scenarioes: List[model.sql.SqlScenario])
+@(user: model.User, scenarioes: List[model.sql.SqlCompleteScenario])
 
     @main("SQL: Szenarien", user) {
         <div class="container">
@@ -18,10 +18,10 @@
                 <tbody>
                 @for(scenario <- scenarioes) {
                     <tr>
-                        <td>@scenario.id</td>
-                        <td><a href="@@sql.routes.Sql.scenario(scenario.id)">@scenario.title</a></td>
+                        <td>@scenario.coll.id</td>
+                        <td><a href="@@sql.routes.Sql.scenario(scenario.id)">@scenario.coll.title</a></td>
                         <td>@scenario.exercises.size</td>
-                        <td>@scenario.author</td>
+                        <td>@scenario.coll.author</td>
                     </tr>
                 }
                 </tbody>

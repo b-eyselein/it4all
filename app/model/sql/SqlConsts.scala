@@ -16,5 +16,6 @@ object SqlConsts extends Consts {
 
   val TABLES_NAME = "Tabellen"
   val TAGS_NAME   = "tags"
+  val TagJoinChar = "#"
 
 }

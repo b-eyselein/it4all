@@ -174,6 +174,9 @@ trait WebTableDefs extends TableDefs {
     def hasJsPart = column[Boolean]("has_js_part")
 
 
+    def pk = primaryKey("pk", id)
+
+
     override def * = (id, title, author, text, state, htmlText.?, hasHtmlPart, jsText.?, hasJsPart) <> (WebExercise.tupled, WebExercise.unapply)
 
   }

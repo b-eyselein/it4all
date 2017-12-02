@@ -30,7 +30,7 @@ abstract class ChangeCorrector(queryType: String) extends QueryCorrector(queryTy
 
   override protected def executeQuery(db: Database, userQ: Q, sampleQ: Q, exercise: SqlExercise): Try[SqlExecutionResult] =
     cleanly(db.getConnection)(_.close)(connection => {
-      connection.setCatalog(exercise.scenario.shortName)
+//      connection.setCatalog(exercise.scenario.shortName)
       connection.setAutoCommit(false)
 
       val validation = SELECT_ALL_DUMMY + getTableNames(sampleQ).head

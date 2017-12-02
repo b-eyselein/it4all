@@ -1,4 +1,6 @@
-@(user: model.User, exercises: Seq[_ <: model.CompleteEx[_ <: model.Exercise]], rest: Html, toolObject: model.core.tools.ExToolObject, pages: Int)
+@import model._
+
+@(user: User, collections: Seq[_ <: CompleteCollection], rest: Html, toolObject: controllers.exCollections.CollectionToolObject, pages: Int)
 
 @main(toolObject.toolname, user) {
     <div class="container">
@@ -6,7 +8,7 @@
             <h1 class="page-title">&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h1>
         </div>
 
-        @if(exercises.isEmpty) {
+        @if(collections.isEmpty) {
             <div class="alert alert-danger">
                 Es existieren bisher keine Aufgaben in der Kategorie @toolObject.toolname.
                 Wenden Sie Sich bitte an den Administrator.</div>
@@ -24,20 +26,15 @@
 
             <hr>
 
-            @for(exercise <- exercises) {
+            @for(collection <- collections) {
                 <div class="row">
-                    <div class="col-sm-2">@exercise.ex.id</div>
-                    @if(toolObject.hasTags) {
-                        <div class="col-sm-2">@for(tag <- exercise.tags) {
-                            @tag.render
-                        }</div>
-                    }
-                    <div class="col-sm-3">@exercise.ex.title</div>
+                    <div class="col-sm-2">@collection.coll.id</div>
+                    <div class="col-sm-3">@collection.coll.title</div>
                     <div class="col-sm-5">
                         <div class="btn-group btn-group-justified">
-                        @for(exRoute <- exercise.exerciseRoutes) {
+                            @*@for(exRoute <- collection.exerciseRoutes) {
                             <a href="@exRoute._1" class="btn btn-primary">@exRoute._2</a>
-                        }
+                        }*@
                         </div>
                     </div>
                 </div>

@@ -144,7 +144,7 @@ public class Util {
             tmpList.add(inTupel);
           }
         }
-        // if there is no identity/regex match: check for edit-distance
+        // if there is no identity/regex match: check for edit-levenshteinDistance
         if(!contains) {
           for(Tuple inTupel: inputValues) {
             if(isPartiallyCorrect(solTupel, inTupel)) {
@@ -297,7 +297,7 @@ public class Util {
     double maxCorrectness = -1.0;
     for(String editSyn: solNode.getEditSynonyms()) {
       int maxLength = Math.max(editSyn.length(), inNode.getText().length());
-      int distance = Levenshtein.distance(editSyn, inNode.getText());
+      int distance = Levenshtein.levenshteinDistance(editSyn, inNode.getText());
       double correctPercentage = 1.0 - ((double) distance / (double) maxLength);
       if(correctPercentage > maxCorrectness) {
         maxCorrectness = correctPercentage;

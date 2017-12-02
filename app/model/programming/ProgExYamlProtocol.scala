@@ -9,7 +9,7 @@ import scala.language.{implicitConversions, postfixOps}
 
 object ProgExYamlProtocol extends MyYamlProtocol {
 
-  implicit object ProgExYamlFormat extends ExYamlFormat[ProgCompleteEx] {
+  implicit object ProgExYamlFormat extends HasBaseValuesYamlFormat[ProgCompleteEx] {
 
     override def readRest(yamlObject: YamlObject, baseValues: BaseValues): ProgCompleteEx = ProgCompleteEx(
       ProgExercise(baseValues,

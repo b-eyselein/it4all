@@ -1,9 +1,9 @@
-@(user: model.User, scenario: model.sql.SqlScenario)
+@(user: model.User, scenario: model.sql.SqlCompleteScenario)
 
 @main("SQL: Administrator", user) {
     <div class="container">
         <div class="page-header">
-            <h1>Administrator SQL: &quot;@scenario.title&quot;</h1>
+            <h1>Administrator SQL: &quot;@scenario.coll.title&quot;</h1>
         </div>
 
         <section id="statistics">

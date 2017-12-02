@@ -102,7 +102,7 @@ trait TableDefs {
 
   abstract class HasBaseValuesTable[E <: HasBaseValues](tag: Tag, name: String) extends Table[E](tag, name) {
 
-    def id = column[Int]("id", O.PrimaryKey)
+    def id = column[Int]("id")
 
     def title = column[String]("title")
 

@@ -45,7 +45,7 @@ object SelectCorrector extends QueryCorrector("SELECT") {
 
   override protected def executeQuery(db: Database, userQ: Q, sampleQ: Q, exercise: SqlExercise): Try[SqlExecutionResult] =
     cleanly(db.getConnection)(_.close)(conn => {
-      conn.setCatalog(exercise.scenario.shortName)
+//      conn.setCatalog(exercise.scenario.shortName)
       val userResult = executeStatement(userQ.toString, conn)
       val sampleResult = executeStatement(sampleQ.toString, conn)
       new SqlExecutionResult(userResult, sampleResult)

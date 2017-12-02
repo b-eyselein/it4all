@@ -10,6 +10,12 @@ import scala.util.Try
 
 object MyYamlProtocol {
 
+  implicit def string2YamlString(str: String): YamlString = YamlString(str)
+
+  implicit def int2YamlNumber(num: Int): YamlNumber = YamlNumber(num)
+
+  implicit def bool2YamlBoolean(bool: Boolean): YamlBoolean = YamlBoolean(bool)
+
   implicit class PimpedYaml(yaml: YamlValue) {
 
     def asBool: Option[Boolean] = yaml match {
@@ -43,8 +49,6 @@ object MyYamlProtocol {
   }
 
   implicit class PimpedYamlObject(yamlObject: YamlObject) {
-
-    implicit def string2YamlString(str: String): YamlString = YamlString(str)
 
     private def someField[T](fieldName: String, f: YamlValue => T): T = yamlObject.fields get fieldName match {
       case Some(field) => f(field)
@@ -85,12 +89,6 @@ object MyYamlProtocol {
 
 abstract class MyYamlProtocol extends DefaultYamlProtocol {
 
-  implicit def string2YamlString(str: String): YamlString = YamlString(str)
-
-  implicit def int2YamlNumber(num: Int): YamlNumber = YamlNumber(num)
-
-  implicit def bool2YamlBoolean(bool: Boolean): YamlBoolean = YamlBoolean(bool)
-
   protected def writeBaseValues(bv: BaseValues): Map[YamlValue, YamlValue] = Map(
     YamlString(ID_NAME) -> bv.id,
     YamlString(TITLE_NAME) -> bv.title,
@@ -99,17 +97,17 @@ abstract class MyYamlProtocol extends DefaultYamlProtocol {
     YamlString(STATE_NAME) -> bv.state.name
   )
 
-  abstract class ExYamlFormat[E <: CompleteEx[_]] extends MyYamlFormat[E] {
+  protected def readBaseValues(yamlObject: YamlObject): BaseValues = BaseValues(
+    yamlObject.intField(ID_NAME),
+    yamlObject.stringField(TITLE_NAME),
+    yamlObject.stringField(AUTHOR_NAME),
+    yamlObject.stringField(TEXT_NAME),
+    yamlObject.enumField(STATE_NAME, ExerciseState.valueOf, ExerciseState.CREATED)
+  )
 
-    override def readObject(yamlObject: YamlObject): E = readRest(yamlObject,
-      BaseValues(
-        yamlObject.intField(ID_NAME),
-        yamlObject.stringField(TITLE_NAME),
-        yamlObject.stringField(AUTHOR_NAME),
-        yamlObject.stringField(TEXT_NAME),
-        yamlObject.enumField(STATE_NAME, ExerciseState.valueOf, ExerciseState.CREATED)
-      )
-    )
+  abstract class HasBaseValuesYamlFormat[E <: HasBaseValues] extends MyYamlFormat[E] {
+
+    override def readObject(yamlObject: YamlObject): E = readRest(yamlObject, readBaseValues(yamlObject))
 
     override def write(completeEx: E): YamlObject = YamlObject(writeBaseValues(completeEx.baseValues) ++ writeRest(completeEx))
 

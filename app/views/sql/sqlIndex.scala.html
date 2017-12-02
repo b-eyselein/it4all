@@ -1,4 +1,4 @@
-@(user: model.User, scenarioes: List[model.sql.SqlScenario])
+@(user: model.User, scenarioes: List[model.sql.SqlCompleteScenario])
 
     @exTypes = @{
         model.sql.SqlEnums.SqlExerciseType.values
@@ -26,15 +26,15 @@
                     <tbody>
                     @for(scenario <- scenarioes) {
                         <tr>
-                            <td>@scenario.id</td>
-                            <td>@scenario.title</td>
+                            <td>@scenario.coll.id</td>
+                            <td>@scenario.coll.title</td>
                             @for(exType <- exTypes) {
                                 <td>
                                 @if(scenario.getExercisesByType(exType).isEmpty) {
                                     <button class="btn btn-default btn-block" disabled
                                     title="Zu diesem Typ gibt es leider noch keine Aufgaben">0 Aufgaben</button>
                                 } else {
-                                    <a href="@controllers.exCollections.routes.SqlController.filteredScenario(scenario.id, exType.toString)"
+                                    <a href="@controllers.exCollections.routes.SqlController.filteredScenario(scenario.coll.id, exType.toString)"
                                     class="btn btn-default btn-block">@exType</a>
                                 }
                                 </td>

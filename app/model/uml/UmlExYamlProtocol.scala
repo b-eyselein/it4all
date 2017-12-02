@@ -10,7 +10,7 @@ import scala.language.{implicitConversions, postfixOps}
 
 object UmlExYamlProtocol extends MyYamlProtocol {
 
-  implicit object UmlExYamlFormat extends ExYamlFormat[UmlCompleteEx] {
+  implicit object UmlExYamlFormat extends HasBaseValuesYamlFormat[UmlCompleteEx] {
 
     override def readRest(yamlObject: YamlObject, baseValues: BaseValues): UmlCompleteEx = {
 

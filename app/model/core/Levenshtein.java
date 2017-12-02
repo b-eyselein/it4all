@@ -5,7 +5,7 @@ import java.util.stream.IntStream;
 public abstract class Levenshtein {
 
     /**
-     * Algorithm for levenshtein distance of two words as found on
+     * Algorithm for levenshtein levenshteinDistance of two words as found on
      *
      * @param lhs
      * @param rhs
@@ -14,7 +14,7 @@ public abstract class Levenshtein {
      * "https://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Levenshtein_distance#Java">
      * Levenshtein Implementation for Java on Wikibooks</a>}
      */
-    public static int distance(CharSequence lhs, CharSequence rhs) {
+    public static int levenshteinDistance(CharSequence lhs, CharSequence rhs) {
         int len0 = lhs.length() + 1;
         int len1 = rhs.length() + 1;
 
@@ -53,7 +53,7 @@ public abstract class Levenshtein {
             newcost = swap;
         }
 
-        // the distance is the cost for transforming all letters in both strings
+        // the levenshteinDistance is the cost for transforming all letters in both strings
         return cost[len0 - 1];
     }
 

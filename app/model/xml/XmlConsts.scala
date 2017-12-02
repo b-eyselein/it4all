@@ -4,8 +4,6 @@ import model.Consts
 
 object XmlConsts extends Consts {
 
-  val EXERCISE_TYPE = "exerciseType"
-
   val REF_FILE_CONTENT_NAME = "refFileContent"
   val ROOT_NODE_NAME        = "rootNode"
 

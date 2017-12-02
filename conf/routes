@@ -72,9 +72,9 @@ PUT           /xml/playground                             controllers.exes.idExe
 # Controlleristrator
 GET           /prog/admin                                 controllers.exes.idExes.ProgController.adminIndex
 
-GET           /prog/import                                controllers.exes.idExes.ProgController.adminImportExercises
-GET           /prog/export                                controllers.exes.idExes.ProgController.adminExportExercises
-GET           /prog/exportFile                            controllers.exes.idExes.ProgController.adminExportExercisesAsFile
+GET           /prog/admin/import                          controllers.exes.idExes.ProgController.adminImportExercises
+GET           /prog/admin/export                          controllers.exes.idExes.ProgController.adminExportExercises
+GET           /prog/admin/exportFile                      controllers.exes.idExes.ProgController.adminExportExercisesAsFile
 
 GET           /prog/admin/exerciseList                    controllers.exes.idExes.ProgController.adminExerciseList
 
@@ -106,9 +106,9 @@ POST          /prog/exercise/:id                          controllers.exes.idExe
 # Ebnf - Anfang
 GET           /ebnf/admin                                 controllers.exes.idExes.EbnfController.adminIndex
 
-GET           /ebnf/import                                controllers.exes.idExes.EbnfController.adminImportExercises
-GET           /ebnf/export                                controllers.exes.idExes.EbnfController.adminExportExercises
-GET           /ebnf/exportFile                            controllers.exes.idExes.EbnfController.adminExportExercisesAsFile
+GET           /ebnf/admin/import                          controllers.exes.idExes.EbnfController.adminImportExercises
+GET           /ebnf/admin/export                          controllers.exes.idExes.EbnfController.adminExportExercises
+GET           /ebnf/admin/exportFile                      controllers.exes.idExes.EbnfController.adminExportExercisesAsFile
 #POST          /ebnf/upload                              controllers.exes.idExes.EbnfController.uploadFile
 
 
@@ -137,9 +137,9 @@ DELETE        /ebnf/:id                                   controllers.exes.idExe
 
 GET           /blanks/admin                               controllers.exes.idExes.BlanksController.adminIndex
 
-GET           /blanks/import                              controllers.exes.idExes.BlanksController.adminImportExercises
-GET           /blanks/export                              controllers.exes.idExes.BlanksController.adminExportExercises
-GET           /blanks/exportFile                          controllers.exes.idExes.BlanksController.adminExportExercisesAsFile
+GET           /blanks/admin/import                        controllers.exes.idExes.BlanksController.adminImportExercises
+GET           /blanks/admin/export                        controllers.exes.idExes.BlanksController.adminExportExercises
+GET           /blanks/admin/exportFile                    controllers.exes.idExes.BlanksController.adminExportExercisesAsFile
 #POST          /blanks/upload                               controllers.exes.idExes.BlanksController.uploadFile
 
 GET           /blanks/admin/exerciseList                  controllers.exes.idExes.BlanksController.adminExerciseList
@@ -167,10 +167,9 @@ POST          /blanks/:id                                 controllers.exes.idExe
 # Spread - Anfang
 GET           /spread/admin                               controllers.exes.fileExes.SpreadController.adminIndex
 
-GET           /spread/import                              controllers.exes.fileExes.SpreadController.adminImportExercises
-GET           /spread/export                              controllers.exes.fileExes.SpreadController.adminExportExercises
-GET           /spread/exportFile                          controllers.exes.fileExes.SpreadController.adminExportExercisesAsFile
-#POST          /spread/upload                            controllers.exes.fileExes.SpreadController.uploadFile
+GET           /spread/admin/import                        controllers.exes.fileExes.SpreadController.adminImportExercises
+GET           /spread/admin/export                        controllers.exes.fileExes.SpreadController.adminExportExercises
+GET           /spread/admin/exportFile                    controllers.exes.fileExes.SpreadController.adminExportExercisesAsFile
 
 GET           /spread/admin/exerciseList                  controllers.exes.fileExes.SpreadController.adminExerciseList
 
@@ -225,9 +224,9 @@ POST          /mindmap/:id/:fileExtension                 controllers.exes.fileE
 # Web - Anfang
 GET           /web/admin                                  controllers.exes.idPartExes.WebController.adminIndex
 
-GET           /web/import                                 controllers.exes.idPartExes.WebController.adminImportExercises
-GET           /web/export                                 controllers.exes.idPartExes.WebController.adminExportExercises
-GET           /web/exportFile                             controllers.exes.idPartExes.WebController.adminExportExercisesAsFile
+GET           /web/admin/import                           controllers.exes.idPartExes.WebController.adminImportExercises
+GET           /web/admin/export                           controllers.exes.idPartExes.WebController.adminExportExercises
+GET           /web/admin/exportFile                       controllers.exes.idPartExes.WebController.adminExportExercisesAsFile
 
 GET           /web/admin/exerciseList                     controllers.exes.idPartExes.WebController.adminExerciseList
 
@@ -267,9 +266,9 @@ POST          /umlActivity/check                          controllers.exes.idPar
 # Controller
 GET           /uml/admin                                  controllers.exes.idPartExes.UmlController.adminIndex
 
-GET           /uml/import                                 controllers.exes.idPartExes.UmlController.adminImportExercises
-GET           /uml/export                                 controllers.exes.idPartExes.UmlController.adminExportExercises
-GET           /uml/exportFile                             controllers.exes.idPartExes.UmlController.adminExportExercisesAsFile
+GET           /uml/admin/import                           controllers.exes.idPartExes.UmlController.adminImportExercises
+GET           /uml/admin/export                           controllers.exes.idPartExes.UmlController.adminExportExercises
+GET           /uml/admin/exportFile                       controllers.exes.idPartExes.UmlController.adminExportExercisesAsFile
 
 GET           /uml/admin/exerciseList                     controllers.exes.idPartExes.UmlController.adminExerciseList
 
@@ -301,11 +300,11 @@ POST          /uml/:id/:part                              controllers.exes.idPar
 # Controlleristrator
 GET           /question/admin                             controllers.exCollections.QuestionController.adminIndex
 
-GET           /question/import                            controllers.exCollections.QuestionController.adminImportExercises
-GET           /question/export                            controllers.exCollections.QuestionController.adminExportExercises
-GET           /question/export                            controllers.exCollections.QuestionController.adminExportExercisesAsFile
+GET           /question/admin/import                      controllers.exCollections.QuestionController.adminImportExercises
+GET           /question/admin/export                      controllers.exCollections.QuestionController.adminExportExercises
+GET           /question/admin/exportAsFile                controllers.exCollections.QuestionController.adminExportExercisesAsFile
 
-GET           /question/questions                         controllers.exCollections.QuestionController.adminExerciseList
+GET           /question/admin/questions                   controllers.exCollections.QuestionController.adminExerciseList
 
 GET           /question/freetext/grade                    controllers.exCollections.QuestionController.gradeFreetextAnswers
 GET           /question/freetext/grade/:id/:user          controllers.exCollections.QuestionController.gradeFreetextAnswer(id: Int, user: String)
@@ -364,13 +363,9 @@ POST          /question/:quizId/:questionId               controllers.exCollecti
 
 # Sql - Anfang
 # Controlleristrator
-GET           /sql/scenarioes/admin                       controllers.exCollections.SqlController.adminIndex
+GET           /sql/admin                                  controllers.exCollections.SqlController.adminIndex
 
-GET           /sql/scenarioes/import                      controllers.exCollections.SqlController.adminImportExercises
-GET           /sql/scenarioes/exportFile                  controllers.exCollections.SqlController.adminExportExercisesAsFile
-#POST          /sql/upload                               controllers.exCollections.SqlController.uploadFile
-
-GET           /sql/admin/:id                              controllers.exCollections.SqlController.scenarioAdmin(id: Int)
+GET           /sql/admin/scenario/:id                     controllers.exCollections.SqlController.scenarioAdmin(id: Int)
 
 GET           /sql/scenarioes                             controllers.exCollections.SqlController.adminExerciseList
 POST          /sql/scenarioes                             controllers.exCollections.SqlController.adminIndex
@@ -379,9 +374,9 @@ GET           /sql/newScenarioForm                        controllers.exCollecti
 
 GET           /sql/admin/exerciseList                     controllers.exCollections.SqlController.adminExerciseList
 
-GET           /sql/import                                 controllers.exCollections.SqlController.adminImportExercises
-GET           /sql/export                                 controllers.exCollections.SqlController.adminExportExercises
-GET           /sql/exportFile                             controllers.exCollections.SqlController.adminExportExercisesAsFile
+GET           /sql/admin/import                           controllers.exCollections.SqlController.adminImportExercises
+GET           /sql/admin/export                           controllers.exCollections.SqlController.adminExportExercises
+GET           /sql/admin/exportFile                       controllers.exCollections.SqlController.adminExportExercisesAsFile
 
 GET           /sql/admin/exerciseList/:id                 controllers.exCollections.SqlController.adminEditExerciseForm(id: Int)
 PUT           /sql/admin/exerciseList/:id                 controllers.exCollections.SqlController.adminEditExercise(id: Int)

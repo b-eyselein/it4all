@@ -14,7 +14,7 @@ import play.api.mvc._
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
 import scala.util.Try
 
@@ -37,6 +37,10 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
   override type TQ = repo.QuizzesTable
 
   override def tq = repo.quizzes
+
+  protected def completeColls: Future[Seq[CompColl]] = ???
+
+  protected def saveRead(read: Seq[Quiz]): Future[Seq[Int]] = ???
 
   // Quizzes
 

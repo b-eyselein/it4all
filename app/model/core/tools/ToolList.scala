@@ -1,5 +1,7 @@
 package model.core.tools
 
+import controllers.exCollections.CollectionToolObject
+
 import scala.collection.mutable
 
 object ToolList {
@@ -13,8 +15,8 @@ object ToolList {
   def allToolObjects: Seq[ToolObject] = allTools.sortBy(_.toolname)
 
   lazy val idExTools: Seq[ExToolObject] = allTools.flatMap {
-    case toolObj: ExToolObject => Some(toolObj)
-    case _                     => None
+    case toolObj: ExToolObject         => Some(toolObj)
+    case _                             => None
   }.sortBy(_.toolname)
 
 }

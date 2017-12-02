@@ -10,6 +10,7 @@ trait Consts {
   val EX_FILE_NAME     = "exercises.json"
   val EXERCISES_NAME   = "exercises"
   val EXERCISE_ID_NAME = "exerciseId"
+  val ExerciseTypeName = "exerciseType"
 
   val FORM_VALUE = "learnerSolution"
 

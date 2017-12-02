@@ -56,13 +56,7 @@ abstract class BaseExerciseController[Ex <: Exercise]
 
   def singleStrForm(str: String) = Form(mapping(str -> nonEmptyText)(StrForm.apply)(StrForm.unapply))
 
-  //  protected val savingDir: Path = Paths.get(toolObject.rootDir, ADMIN_FOLDER, toolObject.exType)
-
   val PROGRESS_LOGGER: Logger.ALogger = Logger.of("progress")
-
-  //  private def saveUploadedFile(savingDir: Path, pathToUploadedFile: Path, saveTo: Path): Try[Path] =
-  //    Try(Files.createDirectories(savingDir))
-  //      .map(_ => Files.move(pathToUploadedFile, saveTo, StandardCopyOption.REPLACE_EXISTING))
 
   def log(user: User, eventToLog: WorkingEvent): Unit = Unit // PROGRESS_LOGGER.debug(s"""${user.username} - ${Json.toJson(eventToLog)}""")
 
@@ -152,7 +146,7 @@ abstract class BaseExerciseController[Ex <: Exercise]
       //      case result: ReadingResult[E] =>
       //
       //        result.read.foreach(res => exerciseReader.save(res.read))
-      //        Ok(views.html.admin.preview.render(admin, toolObject, result.read))
+      //        Ok(views.html.admin.exPreview.render(admin, toolObject, result.read))
       //    }
       Ok("TODO!")
   }
@@ -179,7 +173,7 @@ abstract class BaseExerciseController[Ex <: Exercise]
 
   // Views and other helper methods for admin
 
-  protected def previewExercises(admin: User, read: Seq[CompEx]): Html = views.html.admin.preview(admin, read, toolObject)
+  protected def previewExercises(admin: User, read: Seq[CompEx]): Html = views.html.admin.exPreview(admin, read, toolObject)
 
   // FIXME: scalarStyle = Folded if fixed...
   private def yamlString(exes: Seq[CompEx]): String = "%YAML 1.2\n---\n" + (exes map (_.toYaml.print(Auto /*, Folded*/)) mkString "---\n")

@@ -7,7 +7,7 @@ import net.jcazevedo.moultingyaml._
 
 object SpreadExYamlProtocol extends MyYamlProtocol {
 
-  implicit object SpreadExYamlFormat extends ExYamlFormat[SpreadExercise] {
+  implicit object SpreadExYamlFormat extends HasBaseValuesYamlFormat[SpreadExercise] {
 
     override def readRest(yamlObject: YamlObject, baseValues: BaseValues): SpreadExercise =
       SpreadExercise(baseValues, yamlObject.stringField(SAMPLE_FILENAME), yamlObject.stringField(TEMPALTE_FILENAME))

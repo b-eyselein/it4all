@@ -60,7 +60,7 @@ class BoolController @Inject()(cc: ControllerComponents, val dbConfigProvider: D
   // Creation of a function
 
   def newBoolCreationQuestion: EssentialAction = withUser { user =>
-    implicit request => Ok(views.html.essentials.boolcreatequestion.render(user, generateNewCreationQuestion))
+    implicit request => Ok(views.html.essentials.boolCreateQuestion.render(user, generateNewCreationQuestion))
   }
 
   def checkBoolCreationSolution: EssentialAction = withUser { _ =>

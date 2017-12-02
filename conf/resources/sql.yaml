@@ -1,0 +1,760 @@
+%YAML 1.2
+---
+id: 1
+title: Angestellte
+author: bje40dc
+text: Dieses Szenario beschreibt die Datenbank einer kleinen Firma.
+status: ACCEPTED
+shortName: employee
+scriptFile: employee.sql
+
+exercises:
+- id: 1001
+  title: TODO!
+  author: bje40dc
+  text: Wie viele Angestellte hat die Firma? Benennen Sie das Ergebnis als 'Anzahl'
+  exerciseType: SELECT
+  samples: 
+  - id: 1
+    sample: |
+      SELECT COUNT(*) AS Anzahl
+        FROM Employee
+  - id: 2
+    sample: |
+      SELECT COUNT(employeeOID) AS Anzahl
+        FROM Employee
+  tags: []
+  hint:
+  
+- id: 1002
+  title: TODO!
+  author: bje40dc
+  text: Welche Angestelltennummer (employeeOID) hat Max Becker?
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample: |
+      SELECT employeeOID
+        FROM Employee
+        WHERE firstname = 'Max'
+          AND lastname = 'Becker'
+  tags: []
+  hint: 
+
+- id: 1003
+  title: TODO!
+  author: bje40dc
+  text: Welche Emailadresse hat Max Becker für die Arbeit?
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample: |
+      SELECT emailaddress
+        FROM Employee
+          JOIN Emailaddress ON Employee.employeeOID = Emailaddress.employeeOID
+        WHERE firstname = 'Max' AND lastname = 'Becker'
+
+  - id: 2
+    sample:
+      SELECT emailaddress
+        FROM Employee Emailaddress
+        WHERE Employee.employeeOID = Emailaddress.employeeOID
+          AND firstname = 'Max' AND lastname = 'Becker'
+
+  - id: 3
+    sample: |
+      SELECT emailaddress
+        FROM Employee emp Emailaddress email
+        WHERE emp.employeeOID = email.employeeOID
+          AND firstname = 'Max' AND lastname = 'Becker'
+  tags: []
+  hint: 
+
+- id: 1004
+  title: TODO!
+  author: bje40dc
+  text: Geben Sie die Nutzernamen aller Angestellten alphabetisch geordnet aus!
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample: |
+      SELECT username
+        FROM Employee
+        ORDER BY username
+  tags: []
+  hint:
+   
+- id: 1005
+  title: TODO!
+  author: bje40dc
+  text: Wie viele Untergebene hat jeder Chef? Geben Sie jeweils die OID des Chefs und die Anzahl aus!
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample: 
+      SELECT chefOID count(employeeOID)
+        FROM Employee
+        WHERE chefOID IS NOT NULL
+        GROUP BY chefOID
+  tags: []
+  hint: 
+  
+- id: 1006
+  title: TODO!
+  author: bje40dc
+  text: Erstellen Sie das CREATE TABLE-Skript für die Tabelle Employee!
+  exerciseType: CREATE
+  samples:
+  - id: 1
+    sample: |
+      CREATE TABLE Employee (
+        employeeOID INT PRIMARY KEY
+        firstname VARCHAR(50)
+        lastname VARCHAR(50)
+        username VARCHAR(20)
+        chefOID INT
+        FOREIGN KEY (chefOID) REFERENCES Employee(employeeOID)
+      );
+  tags: []
+  hint: 
+
+- id: 1007
+  title: TODO!
+  author: bje40dc
+  text: Der Angestellte mit der OID 8 arbeitet jetzt für den Angestellten mit der OID 3. Aktualisieren Sie die Datenbank!
+  exerciseType: UPDATE
+  samples:
+  - id: 1
+    sample:
+      UPDATE Employee
+        SET chefOID = 3
+        WHERE employeeOID = 8
+  tags: []
+  hint: 
+
+- id: 1008
+  title: TODO!
+  author: bje40dc
+  text: Der Angestellte mit der OID 7 hat gekündigt. Löschen Sie ihn aus der Angestelltentabelle.
+  exerciseType: DELETE
+  samples:
+  - id: 1
+    sample:
+      DELETE FROM Employee
+        WHERE employeeOID = 7
+  tags: []
+  hint: 
+
+- id: 1009
+  title: TODO!
+  author: bje40dc
+  text: >
+    Es gibt eine neue Angestellte mit Namen Tina Sattler. Diese arbeitet für die Person mit der OID 2 und soll als 
+    OID 9 und als Nutzernamen tina_sattler bekommen.
+  exerciseType: INSERT
+  samples:
+  - id: 1
+    sample: |
+      INSERT INTO Employee VALUES
+        (9 'Tina' 'Sattler' 'tina_sattler' 2)
+  - id: 2
+    sample: |
+      INSERT INTO Employee (`employeeOID` `firstname` `lastname` `username` `chefOID`) VALUES
+        (9 'Tina' 'Sattler' 'tina_sattler' 2)
+  tags: []
+  hint: 
+---
+id: 2
+title: Amazon
+author: bje40dc
+text: ""
+status: ACCEPTED
+shortName: amazon
+scriptFile: amazon.sql
+exercises:
+- id: 2001
+  title: TODO!
+  author: bje40dc
+  text: Geben Sie alle Spalten der Autorentabelle aus!
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT *
+        FROM authors
+  - id: 2
+    sample:
+      SELECT id first_name family_name birthday
+        FROM authors
+  tags: []
+  hint:
+   
+- id: 2002
+  title: TODO!
+  author: bje40dc
+  text: Geben Sie die Nachnamen aller Autoren aus!
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT family_name
+        FROM authors
+  tags: []
+  hint:
+   
+- id: 2003
+  title: TODO!
+  author: bje40dc
+  text: Geben Sie die Namen aller Verlage aus!
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT name
+        FROM publishers
+  tags: []
+  hint:
+  
+- id: 2004
+  title: TODO!
+  author: bje40dc
+  text: Geben Sie die Vor- und Nachnamen aller Kunden aus!
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT first_name family_name
+        FROM customers
+  tags: []
+  hint:
+
+- id: 2005
+  title: TODO!
+  author: bje40dc
+  text: Geben Sie für jedes Buch jeweils den Titel das Erscheinungsjahr und die ISBN aus!
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT title year isbn
+        FROM books
+  tags: []
+  hint:
+
+- id: 2006
+  title: TODO!
+  author: bje40dc
+  text: Bestimmen Sie den Titel des Buches mit der ISBN '978-3551354051' (ohne Anführungszeichen).
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT title
+        FROM books
+        WHERE isbn = '978-3551354051'
+  tags: []
+  hint:
+
+- id: 2007
+  title: TODO!
+  author: bje40dc
+  text: Bestimmen Sie den Preis des Buches mit der ISBN '978-3551354068' (ohne Anführungszeichen).
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT price
+        FROM books
+        WHERE isbn = '978-3551354068'
+  tags: []
+  hint:
+
+- id: 2008
+  title: TODO!
+  author: bje40dc
+  text: Bestimmen Sie den Vor- und Nachnamen des Autoren mit der ID 3
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT first_name family_name
+        FROM authors
+        WHERE id = 3
+  tags: []
+  hint:
+
+- id: 2009
+  title: TODO!
+  author: bje40dc
+  text: Bestimmen Sie die ID des Autoren des Buches 'Der kleine Prinz' (ohne Anführungszeichen).
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT author_id
+        FROM books
+        WHERE title = 'Der kleine Prinz'
+  tags: []
+  hint:
+
+- id: 2010
+  title: TODO!
+  author: bje40dc
+  text: Bestimmen Sie den Namen des Verlages der unter der Telefonnummer '+49 2402 / 806341' erreichbar ist.
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT name
+        FROM publishers
+        WHERE phone = '+49 2402 / 806341'
+  tags: []
+  hint:
+
+- id: 2011
+  title: TODO!
+  author: bje40dc
+  text: Ordnen Sie allen Büchern ihre jeweiligen Autoren zu. Geben Sie jeweils den Titel des Buches und den Nachnamen des Autoren aus!
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT title family_name
+        FROM authors
+          JOIN books ON authors.id = books.author_id
+  tags: [JOIN]
+  hint:
+
+- id: 2012
+  title: TODO!
+  author: bje40dc
+  text: Bestimmen Sie Titel und Preis aller Bücher die im Carlsen-Verlag erschienen sind.
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT title price
+        FROM books
+          JOIN publishers ON publisher_id = publishers.id
+        WHERE name = 'Carlsen'
+  - id: 2
+    sample:
+      SELECT title price
+        FROM books publishers
+        WHERE publishers ON publisher_id = publishers.id
+          AND publishers.name = 'Carlsen'
+  tags: [JOIN]
+  hint: Die Zuordnung von Verlag-Id zu Verlag-Name befindet sich in der Tabelle 'publishers'.
+
+- id: 2013
+  title: TODO!
+  author: bje40dc
+  text: Bestimmen Sie Titel und ISBN sämtlicher Bücher der Autorin 'Rowling' (ohne Anführungszeichen).
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT title isbn
+        FROM books
+          JOIN authors on books.author_id = authors.id
+        WHERE family_name = 'Rowling'
+  - id: 2
+    sample:
+      SELECT title isbn
+        FROM books authors
+        WHERE authors on books.author_id = authors.id
+          AND family_name = 'Rowling'
+  tags: [JOIN]
+  hint:
+
+- id: 2014
+  title: TODO!
+  author: bje40dc
+  text: Zeigen Sie die Werte aller Ratings an die der Kunde mit der Email 'wilhard_1041@web.de' abgegeben hat.
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT rating
+        FROM ratings
+          JOIN customers ON ratings.customer_id = customers.id
+        WHERE email = 'wilhard_1041@web.de'
+  tags: [JOIN]
+  hint:
+
+- id: 2015
+  title: TODO!
+  author: bje40dc
+  text: Wie lautet der Nachname des Kunden der die Bestellung mit der ID 5 aufgegeben hat?
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT family_name
+        FROM orders
+          JOIN customers ON orders.customer_id = customers.id
+        WHERE orders.id = 5
+  tags: [JOIN]
+  hint:
+
+- id: 2016
+  title: TODO!
+  author: bje40dc
+  text: Geben Sie alle Email-Adressen der Kunden aus die mit 'gmx.de' enden.
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT email
+        FROM customers
+        WHERE email LIKE '%gmx.de'
+  tags: []
+  hint: Verwenden Sie für die Eingrenzung der Mailadresse den 'LIKE'-Operator.
+
+- id: 2017
+  title: TODO!
+  author: bje40dc
+  text: Geben Sie die Titel aller Bücher aus die weniger als 1000 € kosten.
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT title
+        FROM books WHERE price < 10
+  - id: 2
+    sample:
+      SELECT title
+        FROM books WHERE price < 10.00
+  tags: []
+  hint:
+
+- id: 2018
+  title: TODO!
+  author: bje40dc
+  text: Geben die die IDs aller Bücher aus die sich Kunden wünschen. Achten Sie darauf dass eine ID nur einmal vorkommt.
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT DISTINCT book_id
+        FROM wishlists
+  tags: []
+  hint:
+
+- id: 2019
+  title: TODO!
+  author: bje40dc
+  text: Wählen Sie alle Einträge zu Kunden aus die im Jahr 1981 Geburtstag haben.
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT *
+        FROM customers
+        WHERE birthday LIKE '1981-%'
+  tags: []
+  hint: Verwenden Sie den 'LIKE'-Operator zu Vergleich des Jahres
+
+- id: 2020
+  title: TODO!
+  author: bje40dc
+  text: Geben Sie die Titel aller Bücher aus die einen Bestand von weniger als 20.000 Exemplaren oder einen Preis über 14€ haben.
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT title
+        FROM books
+        WHERE stock < 20000
+           OR price > 14.00
+  - id: 2
+    sample:
+      SELECT title
+        FROM books
+        WHERE stock < 20000
+           OR price > 14
+  tags: []
+  hint:
+
+- id: 2021
+  title: TODO!
+  author: bje40dc
+  text: Wie oft wurde das Buch 'Die Stadt in der Wüste' bewertet? Nennen Sie die Spalte 'Anzahl'.
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT COUNT(rating) AS Anzahl
+        FROM ratings
+          JOIN books ON books.id = ratings.book_id
+        WHERE title = 'Die Stadt in der Wüste'
+  - id: 2
+    sample:
+      SELECT COUNT(*) AS Anzahl
+        FROM ratings books
+        WHERE books.id = ratings.book_id
+          AND title = 'Die Stadt in der Wüste'
+  tags: [FUNCTION, JOIN, ALIAS]
+  hint:
+
+- id: 2022
+  title: TODO!
+  author: bje40dc
+  text: Welche Durchschnittsbewertung bekam das Buch 'Die Stadt in der Wüste'? Nennen Sie die Spalte 'Durchschnitt'.
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT AVG(rating) AS Durchschnitt
+        FROM ratings
+          JOIN books ON books.id = ratings.book_id
+        WHERE title = 'Die Stadt in der Wüste'
+  - id: 2
+    sample:
+      SELECT AVG(rating) AS Durchschnitt
+        FROM ratings books
+        WHERE books.id = ratings.book_id
+          AND title = 'Die Stadt in der Wüste'
+  tags: [FUNCTION, JOIN, ALIAS]
+  hint:
+
+- id: 2023
+  title: TODO!
+  author: bje40dc
+  text: Wie hoch ist der Gesamtbestand an Harry Potter-Büchern? Nennen Sie die Spalte 'Gesamtbestand'.
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT SUM(stock) AS Gesamtbestand
+        FROM books
+        WHERE title like 'Harry Potter%'
+  tags: [FUNCTION, ALIAS]
+  hint:
+
+- id: 2024
+  title: TODO!
+  author: bje40dc
+  text: >
+    Geben Sie jeweils die schlechteste und beste Bewertung des Buches 'Harry Potter und der Halbblutprinz' aus. Nennen Sie
+    die Spalten jeweils 'Schlechteste' und 'Beste'.
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT min(rating) AS Schlechteste max(rating) AS Beste
+        FROM books
+          JOIN ratings ON books.id = ratings.book_id
+        WHERE title = 'Harry Potter und der Halbblutprinz'
+  - id: 2
+    sample:
+      SELECT min(rating) AS Schlechteste max(rating) AS Beste
+        FROM books ratings
+        WHERE books.id = ratings.book_id
+          AND title = 'Harry Potter und der Halbblutprinz'
+  tags: [FUNCTION, ALIAS, JOIN]
+  hint:
+
+- id: 2025
+  title: TODO!
+  author: bje40dc
+  text: Wie hoch ist der durchschnittliche Bestand aller Bücher? Nennen Sie die Spalte 'Durchschnitt'
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT AVG(stock) AS Durchschnitt
+        FROM books
+  tags: [FUNCTION, ALIAS]
+  hint:
+
+- id: 2026
+  title: TODO!
+  author: bje40dc
+  text: Wie lauten die Nachnamen der Kunden die sich das Buch 'Harry Potter und der Orden des Phönix' wünschen?
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT family_name
+        FROM customers
+          JOIN wishlists ON wishlists.customer_id = customers.id
+          JOIN books on wishlists.book_id = books.id
+        WHERE title = 'Harry Potter und der Orden des Phönix'
+  - id: 2
+    sample:
+      SELECT family_name
+        FROM customers wishlists books
+        WHERE wishlists.customer_id = customers.id
+          AND wishlists.book_id = books.id
+          AND title = 'Harry Potter und der Orden des Phönix'
+  tags: [DOUBLE_JOIN]
+  hint:
+
+- id: 2027
+  title: TODO!
+  author: bje40dc
+  text: Suchen Sie die Titel aller Bücher deren Autor George Orwell ist. Ordnen Sie die Titel nach Erscheinungsjahr abwärts.
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT title
+        FROM books
+          JOIN authors on books.author_id = authors.id
+        WHERE first_name = 'George'
+        AND family_name = 'Orwell'
+        ORDER BY year DESC
+  tags: [ORDER_BY, JOIN]
+  hint:
+
+- id: 2028
+  title: TODO!
+  author: bje40dc
+  text: Zeigen sie Titel und Autor-ID der drei teuersten Bücher an. Sortieren Sie die Einträge nach Preis abwärts.
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT title author_id
+        FROM books
+        ORDER BY price DESC
+        LIMIT 3
+  tags: [ORDER_BY, LIMIT]
+  hint:
+
+- id: 2029
+  title: TODO!
+  author: bje40dc
+  text: >
+    Bestimmen Sie Titel und Preis aller Bücher des Autors 'Tolkien' deren Preis unter 10€ liegt. Ordnen Sie die
+    Einträge nach Erscheinungsjahr abwärts.
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT title price
+        FROM books
+        JOIN authors on book.author_id = authors.id
+        WHERE family_name = 'Tolkien'
+        AND price < 10
+        ORDER BY year DESC
+  tags: [ORDER_BY, JOIN]
+  hint:
+
+- id: 2030
+  title: TODO!
+  author: bje40dc
+  text: >
+    Wählen Sie alle Bestellungen aus die das Buch 'Harry Potter und der Halbblutprinz' enthalten. Geben Sie hierfür
+    die Bestell-ID (Tabelle orders) und die Bestellmenge (Tabelle order_positions) aus.
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT order_id amount
+       FROM orders
+          JOIN order_positions ON orders.id = order_id
+          JOIN books ON books.id = book_id
+          WHERE title = 'Harry Potter und der Halbblutprinz'
+  tags: [DOUBLE_JOIN]
+  hint:
+
+- id: 2031
+  title: TODO!
+  author: bje40dc
+  text: Geben Sie alle Email-Adressen der Kunden aus die mit 'gmx.de ' oder mit 'gmail.com ' enden.
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT email
+        FROM customers
+        WHERE email LIKE '%gmx.de'
+        OR email LIKE '%gmail.com'
+  tags: []
+  hint:
+
+- id: 2032
+  title: TODO!
+  author: bje40dc
+  text: >
+    Bestimmen Sie Titel und Preis aller Bücher des Autors 'Tolkien' deren Preis unter 10€ liegt. Ordnen Sie die
+    Einträge nach Erscheinungsjahr abwärts.
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT title price
+        FROM books
+          JOIN authors on authors.id = books.author_id
+        WHERE authors.family_name = 'Tolkien'
+        AND price < 10
+        ORDER BY year DESC
+  tags: [ORDER_BY]
+  hint:
+
+- id: 2033
+  title: TODO!
+  author: bje40dc
+  text: >
+    Berechnen Sie die Anzahl der bestellten Bücher (Tabelle order_positions) die zum Zeitpunkt des Kaufes weniger als
+    fünf Euro gekostet haben. Geben Sie das Ergebnis unter dem Spaltenname 'Anzahl' aus.
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT SUM(amount) AS Anzahl
+        FROM order_positions WHERE price < 5
+  - id: 2
+    sample:
+      SELECT SUM(amount) AS Anzahl
+        FROM order_positions WHERE price < 5.00
+  tags: [FUNCTION, ALIAS]
+  hint:
+
+- id: 2034
+  title: TODO!
+  author: bje40dc
+  text: >
+    Erfassen Sie alle Autoren und den kumulierten Bestand ihrer Bücher. Ordnen Sie die Einträge nach kumulierten
+    Bestand abwärts. Benennen Sie die Spalte des kumulierten Bestandes 'stock_sum' (ohne Anführungszeichen).
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT author sum(stock) AS stock_sum
+        FROM books
+        GROUP BY author
+        ORDER BY stock_sum DESC
+  tags: [FUNCTION, GROUP_BY, ORDER_BY]
+  hint: Verwenden Sie den Sum-Operator und das Schlüsselwort AS.
+
+- id: 2035
+  title: TODO!
+  author: bje40dc
+  text: Wählen Sie alle Kunden aus die im Februar Geburtstag haben und geben Sie den Vornamen Nachnamen und das Geburtsdatum aus.
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT first_name family_name birthday
+        FROM customers
+       WHERE birthday LIKE '%-02-%'
+  tags: []
+  hint: Verwenden Sie für die Eingrenzung des Geburtsdatums den 'LIKE'-Operator.
+
+- id: 2036
+  title: TODO!
+  author: bje40dc
+  text: Geben Sie den Vornamen Nachnamen und Geburtstag des jüngsten Kunden aus. Achten Sie darauf dass sich die Spaltennamen nicht verändern.
+  exerciseType: SELECT
+  samples:
+  - id: 1
+    sample:
+      SELECT first_name family_name birthday
+        FROM customers
+        ORDER BY birthday DESC
+        LIMIT 1
+  tags: [ORDER_BY, LIMIT]
+  hint:

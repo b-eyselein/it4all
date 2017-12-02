@@ -12,7 +12,7 @@ case class BaseValues(id: Int, title: String, author: String, text: String, stat
 
 trait HasBaseValues {
 
-  val baseValues: BaseValues
+  def baseValues: BaseValues
 
   def id: Int = baseValues.id
 
@@ -40,15 +40,15 @@ trait ExTag {
 
 trait Exercise extends HasBaseValues
 
-trait CompleteEx[E <: Exercise] {
+trait CompleteEx[E <: Exercise] extends HasBaseValues {
 
   def ex: E
 
-  def baseValues: BaseValues = ex.baseValues
+  override def baseValues: BaseValues = ex.baseValues
 
   def preview: Html
 
-  def tags: List[ExTag] = List.empty
+  def tags: Seq[ExTag] = List.empty
 
   def renderListRest: Html
 
@@ -56,7 +56,7 @@ trait CompleteEx[E <: Exercise] {
 
 }
 
-trait FileCompleteEx[E <: Exercise] extends CompleteEx[E] with FileUtils {
+trait FileCompleteEx[Ex <: Exercise] extends CompleteEx[Ex] with FileUtils {
 
   def toolObject: FileExToolObject
 
@@ -72,18 +72,20 @@ trait FileCompleteEx[E <: Exercise] extends CompleteEx[E] with FileUtils {
 
 }
 
-trait ExerciseCollection[E <: Exercise] extends HasBaseValues {
+trait ExerciseCollection[ExType <: Exercise, CompExType <: CompleteEx[ExType]] extends HasBaseValues
 
-  def exercises: List[E]
+trait CompleteCollection extends HasBaseValues {
 
-  val maxPoints = 0
+  type ExType <: Exercise
 
-}
+  type CompExType <: CompleteEx[ExType]
 
-trait CompleteCollection[E <: Exercise, C <: ExerciseCollection[E]] {
+  type CollType <: ExerciseCollection[ExType, CompExType]
 
-  def coll: C
+  def coll: CollType
 
-  def baseValues: BaseValues = coll.baseValues
+  override def baseValues: BaseValues = coll.baseValues
+
+  def exercises: Seq[CompExType]
 
 }

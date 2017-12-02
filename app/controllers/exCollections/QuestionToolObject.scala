@@ -1,13 +1,15 @@
 package controllers.exCollections
 
 import model.Enums.ToolState
-import model.questions.{QuestionConsts, Quiz}
+import model.questions.{Question, QuestionConsts, Quiz}
 import model.{Consts, HasBaseValues}
 import play.api.mvc.Call
 
 object QuestionToolObject extends CollectionToolObject {
 
-  override type CompEx = Quiz
+  override val collectionName: String = "Quiz"
+
+  override type CompEx = Question
 
   override val hasTags  : Boolean   = true
   override val toolname             = "Auswahlfragen"
@@ -17,7 +19,7 @@ object QuestionToolObject extends CollectionToolObject {
 
   override def indexCall: Call = controllers.exCollections.routes.QuestionController.index()
 
-  override def exerciseRoute(exercise: HasBaseValues): Call = ???
+  override def exerciseRoute(exercise: Question): Call = ???
 
   override def exerciseListRoute(page: Int): Call = controllers.exCollections.routes.QuestionController.exerciseList(page)
 

@@ -1,7 +1,7 @@
 @import model._
 @import model.core.CoreConsts
 
-@(user: User, toolObject: model.core.tools.ExToolObject, exerciseOpt: Option[CompleteEx[_]], renderedRest: Html)
+@(user: User, toolObject: model.core.tools.ExToolObject, exerciseOpt: Option[CompleteEx[_ <: Exercise]], renderedRest: Html)
 
 @isCreation = @{
     exerciseOpt.isEmpty

@@ -1,13 +1,13 @@
 package controllers.exCollections
 
-import java.nio.file.{Files, Path, Paths}
+import java.nio.file.{Files, Paths}
 import java.sql.SQLSyntaxErrorException
 
 import controllers.Secured
 import model._
 import model.core.CoreConsts._
 import model.core._
-import model.core.tools.ToolObject
+import model.core.tools.ExToolObject
 import net.jcazevedo.moultingyaml._
 import play.Logger
 import play.api.data.Form
@@ -22,73 +22,21 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 import scala.util.Try
 
-trait CollectionToolObject extends ToolObject with FileUtils {
+trait CollectionToolObject extends ExToolObject with FileUtils {
 
-  type CompEx <: CompleteCollection[_ <: Exercise, _ <: CompleteCollection[_, _]]
+  val collectionName: String
 
-  def exerciseRoute(exercise: HasBaseValues): Call
-
-  //  override def exerciseRoutes(exercise: CompEx): Map[Call, String] = Map.empty //(exerciseRoute(exercise.ex) -> "Aufgabe bearbeiten")
+  def exerciseRoute(exercise: CompEx): Call
 
   def correctLiveRoute(exercise: HasBaseValues): Call
 
   def correctRoute(exercise: HasBaseValues): Call
 
-
-
-  // Methods for files...
-  // Important: exType is initialized later ...
-
-  val pluralName: String = "Aufgaben"
-
-  val rootDir: String = "data"
-
-  val resourcesFolder: Path = Paths.get("conf", "resources")
-
-  lazy val exerciseResourcesFolder: Path = resourcesFolder / exType
-
-  lazy val exerciseRootDir: Path = Paths.get(rootDir, exType)
-
-
-  def sampleDirForExercise(exercise: HasBaseValues): Path = exerciseRootDir / SAMPLE_SUB_DIRECTORY / String.valueOf(exercise.id)
-
-  def templateDirForExercise(exercise: HasBaseValues): Path = exerciseRootDir / TEMPLATE_SUB_DIRECTORY / String.valueOf(exercise.id)
-
-  def solutionDirForExercise(username: String, exercise: HasBaseValues): Path = exerciseRootDir / SOLUTIONS_SUB_DIRECTORY / username / String.valueOf(exercise.id)
-
-  // User
-
-  def exerciseListRoute(page: Int): Call
-
-//  def exerciseRoutes(exercise: CompEx): Map[Call, String]
-
-  // Admin
-
-  def restHeaders: List[String]
-
-  def adminIndexRoute: Call
-
-  def adminExesListRoute: Call
-
-  def newExFormRoute: Call
-
-  def exportExesRoute: Call
-
-  def exportExesAsFileRoute: Call
-
-  def importExesRoute: Call
-
-  def changeExStateRoute(exercise: HasBaseValues): Call
-
-  def editExerciseFormRoute(exercise: HasBaseValues): Call
-
-  def editExerciseRoute(exercise: HasBaseValues): Call
-
-  def deleteExerciseRoute(exercise: HasBaseValues): Call
+  override def exerciseRoutes(exercise: CompEx): Map[Call, String] = Map(exerciseRoute(exercise) -> "Aufgabe bearbeiten")
 
 }
 
-abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E], R <: EvaluationResult]
+abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E, _], R <: EvaluationResult]
 (cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository, val toolObject: CollectionToolObject)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured with FileUtils {
 
@@ -98,10 +46,9 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E]
 
   def solForm: Form[SolutionType]
 
-
   // Reading Yaml
 
-  type CompColl <: CompleteCollection[E, C]
+  type CompColl <: CompleteCollection
 
   implicit val yamlFormat: YamlFormat[CompColl]
 
@@ -115,13 +62,13 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E]
 
   protected def numOfExes: Future[Int] = db.run(tq.size.result)
 
-  protected def completeExById(id: Int): Future[Option[CompColl]] = ???
+  protected def completeCollById(id: Int): Future[Option[CompColl]] = ???
 
-  protected def completeExes: Future[Seq[CompColl]] = ???
+  protected def completeColls: Future[Seq[CompColl]]
 
   protected def statistics: Future[Html] = numOfExes map (num => Html(s"<li>Es existieren insgesamt $num Aufgaben</li>"))
 
-  protected def saveRead(read: Seq[CompColl]): Future[Seq[Int]] = ???
+  protected def saveRead(read: Seq[CompColl]): Future[Seq[Int]]
 
   // Reading from form TODO: Move to other file?
 
@@ -142,7 +89,7 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E]
   // Admin
 
   def adminIndex: EssentialAction = futureWithAdmin { user =>
-    implicit request => statistics map (stats => Ok(views.html.admin.adminMain.render(user, stats, null /* toolObject*/ , new Html(""))))
+    implicit request => statistics map (stats => Ok(views.html.admin.adminMain.render(user, stats, toolObject, new Html(""))))
   }
 
   def adminImportExercises: EssentialAction = futureWithAdmin { admin =>
@@ -165,7 +112,7 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E]
       case sqlError: SQLSyntaxErrorException =>
         sqlError.printStackTrace()
         BadRequest(sqlError.getMessage)
-      case throwable                         =>
+      case throwable: Throwable              =>
         println("\nERROR: ")
         throwable.printStackTrace()
         BadRequest(throwable.getMessage)
@@ -173,13 +120,13 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E]
 
   def adminExportExercises: EssentialAction = futureWithAdmin { admin =>
     implicit request =>
-      completeExes map (exes => Ok(views.html.admin.export.render(admin, yamlString(exes), null /* toolObject*/)))
+      completeColls map (exes => Ok(views.html.admin.export.render(admin, yamlString(exes), null /* toolObject*/)))
   }
 
   def adminExportExercisesAsFile: EssentialAction = futureWithAdmin { admin =>
     implicit request =>
       val file = Files.createTempFile(s"export_${toolObject.exType}", ".yaml")
-      completeExes map (exes => {
+      completeColls map (exes => {
 
         write(file, yamlString(exes))
 
@@ -225,17 +172,17 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E]
       //      case result: ReadingResult[E] =>
       //
       //        result.read.foreach(res => exerciseReader.save(res.read))
-      //        Ok(views.html.admin.preview.render(admin, toolObject, result.read))
+      //        Ok(views.html.admin.exPreview.render(admin, toolObject, result.read))
       //    }
       Ok("TODO!")
   }
 
   def adminEditExerciseForm(id: Int): EssentialAction = futureWithAdmin { admin =>
-    implicit request => completeExById(id) map (ex => Ok("TODO!" /*views.html.admin.editExForm(admin, toolObject, ex, renderEditRest(ex))*/))
+    implicit request => completeCollById(id) map (ex => Ok("TODO!" /*views.html.admin.editExForm(admin, toolObject, ex, renderEditRest(ex))*/))
   }
 
   def adminExerciseList: EssentialAction = futureWithAdmin { admin =>
-    implicit request => completeExes map (exes => Ok(views.html.admin.exerciseList.render(admin, Seq.empty /* exes*/ , null /*toolObject */)))
+    implicit request => completeColls map (colls => Ok(views.html.admin.collectionList.render(admin, colls, toolObject)))
   }
 
   def adminNewExerciseForm: EssentialAction = withAdmin { admin =>
@@ -252,7 +199,7 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E]
 
   // Views and other helper methods for admin
 
-  protected def previewExercises(admin: User, read: Seq[CompColl]): Html = views.html.admin.preview(admin, Seq.empty /* read*/ , null /*toolObject */)
+  protected def previewExercises(admin: User, read: Seq[CompColl]): Html = views.html.admin.collPreview(admin, read, toolObject)
 
   // FIXME: scalarStyle = Folded if fixed...
   private def yamlString(exes: Seq[CompColl]): String = "%YAML 1.2\n---\n" + (exes map (_.toYaml.print(Auto /*, Folded*/)) mkString "---\n")
@@ -263,15 +210,15 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E]
 
   def exerciseList(page: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
-      completeExes map (allExes => {
+      completeColls map (allExes => {
         val exes = allExes slice(Math.max(0, (page - 1) * STEP), Math.min(page * STEP, allExes.size))
         Ok(renderExes(user, exes, allExes.size))
       })
   }
 
   // FIXME: refactor...
-  protected def renderExes(user: User, exes: Seq[CompColl], allExesSize: Int): Html =
-    views.html.core.exesList.render(user, Seq.empty /* exes */ , renderExesListRest, null /*toolObject */ , allExesSize / STEP + 1)
+  protected def renderExes(user: User, colls: Seq[CompColl], allExesSize: Int): Html =
+    views.html.core.collsList.render(user, colls, renderExesListRest, toolObject, allExesSize / STEP + 1)
 
 
   /**
@@ -317,7 +264,7 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E]
       // final C exercise = exerciseCollectionReader.initFromForm(collectionId,
       // factory.form().bindFromRequest())
       // exerciseCollectionReader.saveExercise(exercise)
-      //  Ok(views.html.admin.preview.render(BaseController.user,
+      //  Ok(views.html.admin.exPreview.render(BaseController.user,
       // renderCollectionCreated(Arrays.asList(exercise))))
       Ok("TODO!")
   }
@@ -356,7 +303,7 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E]
   //    final ReadingResult<C> result = (ReadingResult<C>) abstractResult
   //
   //    result.read().forEach(exerciseCollectionReader::save)
-  //     Ok(views.html.admin.preview.render(BaseController.user, renderCollectionCreated(result.read())))
+  //     Ok(views.html.admin.exPreview.render(BaseController.user, renderCollectionCreated(result.read())))
   //  }
 
   def renderCollectionCreated(collections: List[SingleReadingResult[C]]): Html

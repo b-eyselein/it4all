@@ -7,8 +7,8 @@
 
     <div class="form-group row">
         <div class="col-sm-6">
-            <label for="@XmlConsts.EXERCISE_TYPE">Typ:</label>
-            <select class="form-control" name="@XmlConsts.EXERCISE_TYPE" id="@XmlConsts.EXERCISE_TYPE" required>
+            <label for="@XmlConsts.ExerciseTypeName">Typ:</label>
+            <select class="form-control" name="@XmlConsts.ExerciseTypeName" id="@XmlConsts.ExerciseTypeName" required>
             @for(exType <- model.xml.XmlExType.values) {
                 <option value="@exType" @exType.isSelected(exerciseOpt.map(_.exerciseType).getOrElse(model.xml.XmlExType.XML_DTD))>@exType.render</option>
             }
