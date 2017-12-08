@@ -7,9 +7,7 @@ trait Consts {
   val ATTRS_NAME   = "attributes"
   val AUTHOR_NAME  = "author"
 
-  val EX_FILE_NAME     = "exercises.json"
   val EXERCISES_NAME   = "exercises"
-  val EXERCISE_ID_NAME = "exerciseId"
   val ExerciseTypeName = "exerciseType"
 
   val FORM_VALUE = "learnerSolution"
@@ -21,7 +19,6 @@ trait Consts {
   val MAX_POINTS = "maxPoints"
 
   val NAME_NAME = "name"
-  val NEWLINE   = "\n"
 
   val PW_NAME  = "passwort"
   val PW2_NAME = "passwort_wieder"

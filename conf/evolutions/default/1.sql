@@ -163,15 +163,48 @@ CREATE TABLE IF NOT EXISTS sql_scenarioes (
 );
 
 CREATE TABLE IF NOT EXISTS sql_exercises (
-  id            INT PRIMARY KEY,
+  id            INT,
   title         VARCHAR(50),
   author        VARCHAR(50),
   ex_text       TEXT,
   ex_state      ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED')    DEFAULT 'RESERVED',
 
+  scenario_id   INT,
+  tags          TEXT,
   exercise_type ENUM ('SELECT', 'CREATE', 'UPDATE', 'INSERT', 'DELETE') DEFAULT 'SELECT',
-  tags          VARCHAR(50),
-  hint          VARCHAR(50)
+  hint          TEXT,
+
+  PRIMARY KEY (id, scenario_id),
+  FOREIGN KEY (scenario_id) REFERENCES sql_scenarioes (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS sql_samples (
+  id          INT,
+  exercise_id INT,
+  scenario_id INT,
+  sample      TEXT,
+
+  PRIMARY KEY (id, exercise_id, scenario_id),
+  FOREIGN KEY (exercise_id, scenario_id) REFERENCES sql_exercises (id, scenario_id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS sql_solutions (
+  username    VARCHAR(50),
+  scenario_id INT,
+  exercise_id INT,
+  solution    TEXT,
+
+  PRIMARY KEY (username, scenario_id, exercise_id),
+  FOREIGN KEY (username) REFERENCES users (username)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
+  FOREIGN KEY (exercise_id, scenario_id) REFERENCES sql_exercises (id, scenario_id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
 );
 
 # Uml
@@ -412,6 +445,10 @@ DROP TABLE IF EXISTS uml_exercises;
 DROP TABLE IF EXISTS spread_exercises;
 
 # Sql
+
+DROP TABLE IF EXISTS sql_solutions;
+
+DROP TABLE IF EXISTS sql_samples;
 
 DROP TABLE IF EXISTS sql_exercises;
 

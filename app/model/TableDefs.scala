@@ -35,6 +35,16 @@ trait TableDefs {
 
   val tipps = TableQuery[TippsTable]
 
+  def userByName(username: String): Future[Option[User]] = db.run(users.findBy(_.username).apply(username).result.headOption)
+
+  def allUsers: Future[Seq[User]] = db.run(users.result)
+
+  def numOfUsers: Future[Int] = db.run(users.size.result)
+
+  def allCourses: Future[Seq[Course]] = db.run(courses.result)
+
+  def numOfCourses: Future[Int] = db.run(courses.size.result)
+
   abstract class ExerciseTableQuery[E <: Exercise, CompEx <: CompleteEx[E], T <: HasBaseValuesTable[E]](cons: Tag => T) extends TableQuery[T](cons) {
 
     //noinspection TypeAnnotation

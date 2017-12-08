@@ -3,13 +3,9 @@ package model.sql
 import java.sql.Connection
 
 import model.core.CommonUtils.cleanly
-import model.core.matching.MatchingResult
-import model.sql.SqlConsts.SELECT_ALL_DUMMY
 import net.sf.jsqlparser.expression.Expression
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.schema.Table
-import net.sf.jsqlparser.statement.select.OrderByElement
-import play.db.Database
 
 import scala.collection.JavaConverters._
 import scala.util.Try
@@ -28,19 +24,6 @@ abstract class ChangeCorrector(queryType: String) extends QueryCorrector(queryTy
     result
   }
 
-  override protected def executeQuery(db: Database, userQ: Q, sampleQ: Q, exercise: SqlExercise): Try[SqlExecutionResult] =
-    cleanly(db.getConnection)(_.close)(connection => {
-//      connection.setCatalog(exercise.scenario.shortName)
-      connection.setAutoCommit(false)
-
-      val validation = SELECT_ALL_DUMMY + getTableNames(sampleQ).head
-
-      new SqlExecutionResult(getResultSet(userQ, connection, validation).get, getResultSet(sampleQ, connection, validation).get)
-    })
-
-  override protected def compareGroupByElements(plainUserQuery: Q, plainSampleQuery: Q): Option[MatchingResult[Expression, GroupByMatch]] = None
-
-  override protected def compareOrderByElements(plainUserQuery: Q, plainSampleQuery: Q): Option[MatchingResult[OrderByElement, OrderByMatch]] = None
 }
 
 object InsertCorrector extends ChangeCorrector("INSERT") {
@@ -82,7 +65,7 @@ object DeleteCorrector extends ChangeCorrector("DELETE") {
   override protected def parseStatement(statement: String): Try[Delete] = Try(
     CCJSqlParserUtil.parse(statement) match {
       case q: Delete => q
-      case _         => null //  throw new CorrectionException(statement, s"Das Statement war vom falschen Typ! Erwartet wurde $queryType!")
+      case _         => null // Left(s"Das Statement war vom falschen Typ! Erwartet wurde $queryType!")
     })
 
 }
@@ -93,7 +76,7 @@ object UpdateCorrector extends ChangeCorrector("UPDATE") {
 
   override type Q = Update
 
-  override protected def getColumnWrappers(query: Q): List[ColumnWrapper] = query.getColumns.asScala.map(ColumnWrapper.wrap).toList
+  override protected def getColumnWrappers(query: Q): List[ColumnWrapper] = query.getColumns.asScala.map(ColumnWrapper.wrapColumn).toList
 
   override protected def getTableNames(query: Q): List[String] = query.getTables.asScala.map(_.getName).toList
 

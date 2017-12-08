@@ -53,6 +53,10 @@ DELETE IGNORE FROM spread_exercises;
 
 # Sql
 
+DELETE IGNORE FROM sql_solutions;
+
+DELETE IGNORE FROM sql_samples;
+
 DELETE IGNORE FROM sql_exercises;
 
 DELETE IGNORE FROM sql_scenarioes;

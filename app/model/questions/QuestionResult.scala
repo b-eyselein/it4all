@@ -3,13 +3,21 @@ package model.questions
 
 import model.Enums.SuccessType
 import model.core.EvaluationResult
-import model.core.matching.{Match, Matcher}
+import model.core.matching.{Match, Matcher, MatchingResult}
 import model.questions.QuestionResult._
+import play.twirl.api.Html
 
 case class AnswerMatch(ua: Option[Answer], sa: Option[Answer], s: Int) extends Match[Answer](ua, sa, s)
 
-object AnswerMatcher extends Matcher[Answer, Match[Answer]](
-  "Antworten", List.empty, _.id == _.id, AnswerMatch) {
+object AnswerMatcher extends Matcher[Answer, Match[Answer], AnswerMatchingResult](List.empty, _.id == _.id, AnswerMatch, AnswerMatchingResult)
+
+case class AnswerMatchingResult(allMatches: Seq[Match[Answer]]) extends MatchingResult[Answer, Match[Answer]] {
+
+  override val matchName: String = "TODO!"
+
+  override val headings: Seq[String] = Seq.empty
+
+  override def describe: Html = ???
 
 }
 

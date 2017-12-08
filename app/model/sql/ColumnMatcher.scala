@@ -2,10 +2,73 @@ package model.sql
 
 import model.Enums.MatchType
 import model.Enums.MatchType._
+import model.Enums.SuccessType._
+import model.core.matching.{Match, Matcher, MatchingResult}
 import net.sf.jsqlparser.expression.Alias
 import net.sf.jsqlparser.schema.Column
 import net.sf.jsqlparser.statement.create.table.{ColDataType, ColumnDefinition}
 import net.sf.jsqlparser.statement.select.{AllColumns, AllTableColumns, SelectExpressionItem, SelectItem}
+import play.twirl.api.Html
+
+import scala.language.postfixOps
+
+case class ColumnMatch(uc: Option[ColumnWrapper], sc: Option[ColumnWrapper], s: Int)
+  extends Match[ColumnWrapper](uc, sc, s) {
+
+  val hasAlias: Boolean = (userArg exists (_.hasAlias)) || (sampleArg exists (_.hasAlias))
+
+  val restMatched: Boolean = false
+
+  val colNamesMatched: Boolean = matchType == SUCCESSFUL_MATCH || matchType == UNSUCCESSFUL_MATCH
+
+  val firstColName: String = userArg map (_.getColName) getOrElse ""
+
+  val firstRest: String = userArg map (_.getRest) getOrElse ""
+
+  val secondColName: String = sampleArg map (_.getColName) getOrElse ""
+
+  val secondRest: String = sampleArg map (_.getRest) getOrElse ""
+
+  override def analyze(userArg: ColumnWrapper, sampleArg: ColumnWrapper): MatchType = userArg doMatch sampleArg
+
+}
+
+case class ColumnMatchingResult(allMatches: Seq[ColumnMatch]) extends MatchingResult[ColumnWrapper, ColumnMatch] {
+
+  override val matchName: String = "Spalten"
+
+  override val headings: Seq[String] = ColumnMatcher.headings
+
+  override def describe: Html = {
+    val message: String = success match {
+
+      case COMPLETE => "Die Korrektur der Spalten war erfolgreich."
+
+      // Teilfehler in einem Spaltenvergleich
+      case PARTIALLY => "Die Korrektur der Spalten ergab folgende (Teil-)fehler" + (allMatches filter (_.matchType == UNSUCCESSFUL_MATCH) toString())
+
+      case NONE => "Die Korrektur der Spalten ergab folgende Fehler:<ul>" +
+        onlySampleColMatches(allMatches filter (_.matchType == ONLY_SAMPLE)) +
+        onlyUserColMatches(allMatches filter (_.matchType == ONLY_USER)) + "</ul>"
+
+      case ERROR => "Es gab einen Fehler bei der Korrektur!"
+    }
+    new Html(s"""<div class="alert alert-${success.color}"><span class="${success.glyphicon}"></span> $message</div>""")
+  }
+
+  private def onlySampleColMatches(colMatches: Seq[ColumnMatch]): String = colMatches match {
+    case Nil => ""
+    case ms  => s"\n<li>Folgende Spalten fehlten: ${ms map (_.secondColName) mkString ", "}</li>"
+  }
+
+  private def onlyUserColMatches(colMatches: Seq[ColumnMatch]): String = colMatches match {
+    case Nil => ""
+    case ms  => s"\n<li>Folgende Spalten waren überzählig: ${ms map (_.firstColName) mkString ", "}</li>"
+  }
+
+}
+
+object ColumnMatcher extends Matcher[ColumnWrapper, ColumnMatch, ColumnMatchingResult](List("Spaltenname"), _.canMatch(_), ColumnMatch, ColumnMatchingResult)
 
 abstract sealed class ColumnWrapper {
 
@@ -34,11 +97,13 @@ abstract sealed class ColumnWrapper {
 }
 
 object ColumnWrapper {
-  def wrap(col: Column) = ChangeColumnWrapper(col)
 
-  def wrap(colDef: ColumnDefinition) = CreateColumnWrapper(colDef)
+  def wrapColumn(col: Column) = ChangeColumnWrapper(col)
 
-  def wrap(selItem: SelectItem) = SelectColumnWrapper(selItem)
+  def wrapColumn(colDef: ColumnDefinition) = CreateColumnWrapper(colDef)
+
+  def wrapColumn(selItem: SelectItem) = SelectColumnWrapper(selItem)
+
 }
 
 case class ChangeColumnWrapper(col: Column) extends ColumnWrapper {
@@ -57,6 +122,7 @@ case class ChangeColumnWrapper(col: Column) extends ColumnWrapper {
   override def toString: String = col.toString
 
   def matchOther(that: ChangeColumnWrapper): MatchType = SUCCESSFUL_MATCH
+
 }
 
 case class CreateColumnWrapper(col: ColumnDefinition) extends ColumnWrapper {
@@ -127,16 +193,21 @@ case class SelectColumnWrapper(col: SelectItem) extends ColumnWrapper {
 
   override type C = SelectItem
 
-  override def hasAlias: Boolean = col.isInstanceOf[SelectExpressionItem] && col.asInstanceOf[SelectExpressionItem].getAlias != null
+  override def hasAlias: Boolean = col match {
+    case sei: SelectExpressionItem => sei.getAlias != null
+    case _                         => false
+  }
 
-  def compareAliases(alias1: Alias, alias2: Alias): Boolean =
-    alias1 != null && alias2 != null && alias1.getName == alias2.getName
+  def compareAliases(maybeAlias1: Option[Alias], maybeAlias2: Option[Alias]): Boolean = (maybeAlias1, maybeAlias2) match {
+    case (Some(alias1), Some(alias2)) => alias1.getName == alias2.getName
+    case (Some(alias1), None)         => false
+    case (None, Some(alias2))         => false
+    case (None, None)                 => true
+  }
 
-  def selectExprEqual(sei1: SelectExpressionItem, sei2: SelectExpressionItem): Boolean =
-    sei1.getExpression.toString.equalsIgnoreCase(sei2.getExpression.toString)
+  def selectExprEqual(sei1: SelectExpressionItem, sei2: SelectExpressionItem): Boolean = sei1.getExpression.toString equalsIgnoreCase sei2.getExpression.toString
 
-  def tableNamesEqual(col1: AllTableColumns, col2: AllTableColumns): Boolean =
-    col1.getTable.getFullyQualifiedName == col2.getTable.getFullyQualifiedName
+  def tableNamesEqual(col1: AllTableColumns, col2: AllTableColumns): Boolean = col1.getTable.getFullyQualifiedName == col2.getTable.getFullyQualifiedName
 
   def canMatchOther(that: SelectColumnWrapper): Boolean = (this.col, that.col) match {
     case (_: AllColumns, _: AllColumns)                       => true
@@ -147,26 +218,20 @@ case class SelectColumnWrapper(col: SelectItem) extends ColumnWrapper {
 
   override def getColName: String = col match {
     case _: AllColumns             => "*"
-    case at: AllTableColumns       => at.toString
-    case set: SelectExpressionItem => set.getExpression.toString
+    case at: AllTableColumns       => at toString
+    case set: SelectExpressionItem => set.getExpression toString
   }
 
   override def getRest: String = col match {
     case (_: AllColumns) | (_: AllTableColumns) => ""
-    case (set: SelectExpressionItem)            => if (set.getAlias == null) "" else set.getAlias.toString
+    case (set: SelectExpressionItem)            => Option(set.getAlias) map (_.toString) getOrElse ""
   }
 
   def matchOther(that: SelectColumnWrapper): MatchType = (this.col, that.col) match {
     case (_: AllColumns, _: AllColumns) | (_: AllTableColumns, _: AllTableColumns) => SUCCESSFUL_MATCH
 
     case (selExpr1: SelectExpressionItem, selExpr2: SelectExpressionItem) =>
-      val aliasesCompared = selExpr1.getAlias != null || selExpr2.getAlias != null
-
-      var aliasesEqual = false
-      if (aliasesCompared)
-        aliasesEqual = compareAliases(selExpr1.getAlias, selExpr2.getAlias)
-
-      if (aliasesCompared && aliasesEqual) SUCCESSFUL_MATCH else UNSUCCESSFUL_MATCH
+      if (compareAliases(Option(selExpr1.getAlias), Option(selExpr2.getAlias))) SUCCESSFUL_MATCH else UNSUCCESSFUL_MATCH
 
     case _ => UNSUCCESSFUL_MATCH
   }

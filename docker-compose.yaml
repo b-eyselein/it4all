@@ -1,8 +1,5 @@
 version: '2'
 
-volumes:
-    volume_it4all:
-
 services:
     dbit4all:
         image:        mysql:8
@@ -24,12 +21,22 @@ services:
         environment:
         - MYSQL_ROOT_PASSWORD=sT8aV#k7
     
-    sqlother:
+    sqlchange:
         image:        mysql:8
         restart:      always
         ports:
         - 3108:3306
         volumes:
-        - ./inits/sql_other_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
+        - ./inits/sql_change_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
+        environment:
+        - MYSQL_ROOT_PASSWORD=sT8aV#k7
+
+    sqlcreate:
+        image:        mysql:8
+        restart:      always
+        ports:
+        - 3109:3306
+        volumes:
+        - ./inits/sql_create_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
         environment:
         - MYSQL_ROOT_PASSWORD=sT8aV#k7

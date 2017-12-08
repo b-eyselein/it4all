@@ -15,20 +15,13 @@ object CreateCorrector extends QueryCorrector("CREATE TABLE") {
 
   override type Q = CreateTable
 
-  override protected def executeQuery(database: Database, userStatement: Q, sampleStatement: Q,
-                                      exercise: SqlExercise): Try[SqlExecutionResult] = ???
-
-  override protected def getColumnWrappers(query: Q): List[CreateColumnWrapper] = query.getColumnDefinitions.asScala.map(ColumnWrapper.wrap).toList
+  override protected def getColumnWrappers(query: Q): List[CreateColumnWrapper] = query.getColumnDefinitions.asScala.map(ColumnWrapper.wrapColumn).toList
 
   override protected def getTableNames(query: Q): List[String] = List(query.getTable.toString)
 
   override protected def getTables(query: Q): List[Table] = List(query.getTable)
 
   override protected def getWhere(query: Q): Option[Expression] = None
-
-  override protected def compareGroupByElements(plainUserQuery: Q, plainSampleQuery: Q): Option[MatchingResult[Expression, GroupByMatch]] = None
-
-  override protected def compareOrderByElements(plainUserQuery: Q, plainSampleQuery: Q): Option[MatchingResult[OrderByElement, OrderByMatch]] = None
 
   override protected def parseStatement(statement: String): Try[CreateTable] = Try(
     CCJSqlParserUtil.parse(statement) match {

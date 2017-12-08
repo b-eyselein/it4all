@@ -6,7 +6,7 @@ import play.twirl.api.{Html, HtmlFormat}
 
 trait EvaluationResult {
 
-  val success: SuccessType
+  def success: SuccessType
 
   def getBSClass: String = success.color
 
@@ -30,7 +30,7 @@ object EvaluationResult {
 
   def notAllResultsSuccessful[T <: EvaluationResult](results: Seq[T]): Boolean = results.exists(!_.isSuccessful)
 
-  def allResultsSuccessful[T <: EvaluationResult](results: Seq[T]): Boolean = results.forall(_.isSuccessful)
+  def allResultsSuccessful[T <: EvaluationResult](results: Seq[T]): Boolean = results.nonEmpty && results.forall(_.isSuccessful)
 
   def concatCodeElements(elements: List[String]): String = elements match {
     case Nil => "--"

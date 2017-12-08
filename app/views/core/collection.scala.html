@@ -1,0 +1,54 @@
+@(user: model.User, collection: model.CompleteCollection, exes: Seq[model.CompleteEx[_]], toolObject: controllers.exCollections.CollectionToolObject, currentSite: Int, numOfSites: Int)
+
+@main("Collection", user) {
+    <div class="container">
+        <div class="page-header">
+            <h1>@toolObject.collectionName &quot;@collection.coll.title&quot;</h1>
+        </div>
+
+        <div class="row">
+            <div class="col-md-1">Tags</div>
+            <div class="col-md-1">Link</div>
+            <div class="col-md-1">Typ</div>
+            <div class="col-md-9">Text</div>
+        </div>
+
+        <hr>
+
+        @for(ex <- exes) {
+            <div class="row">
+                <div class="col-md-1">@for(tag <- ex.tags) {
+                    @tag.render
+                }</div>
+                <div class="col-md-1"><a href="@controllers.exCollections.routes.SqlController.exercise(collection.id, ex.id)" class="btn btn-default btn-block">@ex.id</a></div>
+                <div class="col-md-1">@@ex.exType</div>
+                <div class="col-md-9">@ex.text</div>
+            </div>
+
+            <br>
+        }
+
+        <div class="text-center">
+            <ul class="pagination text">
+                <li><a href="@toolObject.collectionRoute(collection.id, 0)"
+                    @if(currentSite <= 1) {
+                        onclick="return false" class="btn disabled" }>&lt;&lt;</a></li>
+                <li><a href="@toolObject.collectionRoute(collection.id, currentSite - 1)"
+                    @if(currentSite <= 1) {
+                        onclick="return false" class="btn disabled" }>&lt;</a></li>
+
+                @for(adder <- -2 to 2 if currentSite + adder > 0 && (currentSite + adder) < numOfSites) {
+                    <li @if(adder == 0) {
+                        class="active" }><a href="@toolObject.collectionRoute(collection.id, currentSite + adder)">@{currentSite + adder}</a></li>
+                }
+
+                <li><a href="@toolObject.collectionRoute(collection.id, currentSite + 1)"
+                    @if(currentSite + 1 >= numOfSites) {
+                        onclick="return false" class="btn disabled" }>&gt;</a></li>
+                <li><a href="@toolObject.collectionRoute(collection.id, numOfSites)"
+                    @if(currentSite + 1 >= numOfSites) {
+                        onclick="return false" class="btn disabled" }>&gt;&gt;</a></li>
+            </ul>
+        </div>
+    </div>
+}

@@ -9,7 +9,11 @@
         </tr>
     </thead>
     <tbody>
-        @views.html.core.matching.matchingResult.render(result.notEmptyMatchingResults)
+        @*views.html.core.matching.matchingResult.render(result.notEmptyMatchingResults)*@
+
+        @for(res <- result.notEmptyMatchingResults) {
+            @res.describe
+        }
 
         @result.executionResult match {case None =>
             case Some(execResult) => {

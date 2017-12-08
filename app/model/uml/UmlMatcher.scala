@@ -4,9 +4,16 @@ import model.Enums.MatchType
 import model.Enums.MatchType._
 import model.core.matching.{Match, Matcher, MatchingResult, StringMatcher}
 import model.uml.UmlEnums.UmlMultiplicity
+import model.uml.UmlMatchingHelper._
 import play.twirl.api.Html
 
-object UmlAssocMatcherHelper {
+object UmlMatchingHelper {
+
+  val AssociationMatchHeaders = Seq("Typ", "Start", "Ende", "Multiplizität")
+
+  val ClassMatchHeaders = Seq("Klassenname")
+
+  val ImplMatchHeaders = Seq("Subklasse", "Superklasse")
 
   def canAssocsMatch(assoc1: UmlAssociation, assoc2: UmlAssociation): Boolean = endsParallelEqual(assoc1, assoc2) || endsCrossedEqual(assoc1, assoc2)
 
@@ -14,10 +21,16 @@ object UmlAssocMatcherHelper {
 
   def endsParallelEqual(assoc1: UmlAssociation, assoc2: UmlAssociation): Boolean = (assoc1.firstEnd == assoc2.firstEnd) && (assoc1.secondEnd == assoc2.secondEnd)
 
+
+  def compareImpls(i1: UmlImplementation, i2: UmlImplementation): Boolean =
+    (i1.subClass == i2.subClass && i1.superClass == i2.superClass) || (i1.subClass == i2.superClass && i1.superClass == i2.subClass)
+
 }
 
-object UmlAssociationMatcher extends Matcher[UmlAssociation, UmlAssociationMatch](
-  "Assoziationen", List("Typ", "Start", "Ende", "Multiplizität"), UmlAssocMatcherHelper.canAssocsMatch, UmlAssociationMatch)
+// Associations
+
+object UmlAssociationMatcher extends Matcher[UmlAssociation, UmlAssociationMatch, UmlAssociationMatchingResult](
+  AssociationMatchHeaders, canAssocsMatch, UmlAssociationMatch, UmlAssociationMatchingResult)
 
 case class UmlAssociationMatch(a1: Option[UmlAssociation], a2: Option[UmlAssociation], s: Int)
   extends Match[UmlAssociation](a1, a2, s) {
@@ -31,7 +44,7 @@ case class UmlAssociationMatch(a1: Option[UmlAssociation], a2: Option[UmlAssocia
     matched = true
     assocTypeEqual = assoc1.assocType == assoc2.assocType
 
-    endsCrossed = UmlAssocMatcherHelper.endsCrossedEqual(assoc1, assoc2)
+    endsCrossed = endsCrossedEqual(assoc1, assoc2)
 
     multiplicitiesEqual =
       if (endsCrossed) assoc1.firstMult == assoc2.secondMult && assoc1.secondMult == assoc2.firstMult
@@ -66,6 +79,17 @@ case class UmlAssociationMatch(a1: Option[UmlAssociation], a2: Option[UmlAssocia
 
 }
 
+case class UmlAssociationMatchingResult(allMatches: Seq[UmlAssociationMatch]) extends MatchingResult[UmlAssociation, UmlAssociationMatch] {
+
+  override val matchName: String = "Assoziationen"
+
+  override val headings: Seq[String] = AssociationMatchHeaders
+
+  override def describe: Html = ???
+}
+
+// Classes
+
 case class UmlClassMatch(m1: Option[UmlCompleteClass], m2: Option[UmlCompleteClass], s: Int, compAM: Boolean) extends Match[UmlCompleteClass](m1, m2, s) {
 
   var attributesResult: MatchingResult[String, Match[String]] = _
@@ -85,16 +109,23 @@ case class UmlClassMatch(m1: Option[UmlCompleteClass], m2: Option[UmlCompleteCla
 
 }
 
-case class UmlClassMatcher(compareAttrsAndMethods: Boolean)
-  extends Matcher[UmlCompleteClass, UmlClassMatch]("Klassen", List("Klassenname"), _.clazz.className == _.clazz.className, UmlClassMatch(_, _, _, compareAttrsAndMethods))
+case class UmlClassMatcher(compareAttrsAndMethods: Boolean) extends Matcher[UmlCompleteClass, UmlClassMatch, UmlClassMatchingResult](
+  Seq("Klassenname"), _.clazz.className == _.clazz.className, UmlClassMatch(_, _, _, compareAttrsAndMethods), UmlClassMatchingResult)
 
-object UmlImplMatcherHelper {
-  def compareImpls(i1: UmlImplementation, i2: UmlImplementation): Boolean =
-    (i1.subClass == i2.subClass && i1.superClass == i2.superClass) || (i1.subClass == i2.superClass && i1.superClass == i2.subClass)
+case class UmlClassMatchingResult(allMatches: Seq[UmlClassMatch]) extends MatchingResult[UmlCompleteClass, UmlClassMatch] {
+
+  override val matchName: String = "Klassen"
+
+  override val headings: Seq[String] = ClassMatchHeaders
+
+  override def describe: Html = ???
+
 }
 
-object UmlImplementationMatcher extends Matcher[UmlImplementation, UmlImplementationMatch](
-  "Vererbungsbeziehungen", List("Subklasse", "Superklasse"), UmlImplMatcherHelper.compareImpls, UmlImplementationMatch)
+// Implementations
+
+object UmlImplementationMatcher extends Matcher[UmlImplementation, UmlImplementationMatch, UmlImplementationMatchingResult](
+  ImplMatchHeaders, compareImpls, UmlImplementationMatch, UmlImplementationMatchingResult)
 
 case class UmlImplementationMatch(i1: Option[UmlImplementation], i2: Option[UmlImplementation], s: Int)
   extends Match[UmlImplementation](i1, i2, s) {
@@ -112,5 +143,15 @@ case class UmlImplementationMatch(i1: Option[UmlImplementation], i2: Option[UmlI
     case ONLY_USER          => List("Vererbengsbeziehung ist falsch.")
     case _                  => super.explanation
   }
+
+}
+
+case class UmlImplementationMatchingResult(allMatches: Seq[UmlImplementationMatch]) extends MatchingResult[UmlImplementation, UmlImplementationMatch] {
+
+  override val matchName: String = "Vererbungsbeziehungen"
+
+  override val headings: Seq[String] = ImplMatchHeaders
+
+  override def describe: Html = ???
 
 }

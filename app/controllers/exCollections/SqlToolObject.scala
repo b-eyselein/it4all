@@ -5,6 +5,7 @@ import model.sql.{SqlCompleteEx, SqlConsts}
 import model.{Consts, HasBaseValues}
 import play.api.mvc.Call
 
+
 object SqlToolObject extends CollectionToolObject {
 
   override val collectionName: String = "Szenario"
@@ -18,11 +19,15 @@ object SqlToolObject extends CollectionToolObject {
   override val toolState : ToolState = ToolState.ALPHA
   override val consts    : Consts    = SqlConsts
 
-  override def indexCall: Call = controllers.exCollections.routes.SqlController.index()
+  override def indexCall: Call = routes.SqlController.index()
 
   override def exerciseRoute(exercise: SqlCompleteEx): Call = ???
 
-  override def exerciseListRoute(page: Int): Call = controllers.exCollections.routes.SqlController.exerciseList(page)
+  override def collectionRoute(id: Int, page: Int = 1): Call = routes.SqlController.collection(id, page)
+
+  override def filteredCollectionRoute(id: Int, filter: String, page: Int = 1): Call = routes.SqlController.filteredCollection(id, filter, page)
+
+  override def exerciseListRoute(page: Int): Call = routes.SqlController.collectionList(page)
 
   override def correctLiveRoute(exercise: HasBaseValues): Call = ???
 
@@ -31,24 +36,24 @@ object SqlToolObject extends CollectionToolObject {
 
   override val restHeaders: List[String] = List.empty
 
-  override def adminIndexRoute: Call = controllers.exCollections.routes.SqlController.adminIndex()
+  override def adminIndexRoute: Call = routes.SqlController.adminIndex()
 
-  override def adminExesListRoute: Call = controllers.exCollections.routes.SqlController.adminExerciseList()
+  override def adminExesListRoute: Call = routes.SqlController.adminExerciseList()
 
-  override def newExFormRoute: Call = controllers.exCollections.routes.SqlController.adminNewExerciseForm()
+  override def newExFormRoute: Call = routes.SqlController.adminNewExerciseForm()
 
-  override def importExesRoute: Call = controllers.exCollections.routes.SqlController.adminImportExercises()
+  override def importExesRoute: Call = routes.SqlController.adminImportExercises()
 
-  override def exportExesRoute: Call = controllers.exCollections.routes.SqlController.adminExportExercises()
+  override def exportExesRoute: Call = routes.SqlController.adminExportExercises()
 
-  override def exportExesAsFileRoute: Call = controllers.exCollections.routes.SqlController.adminExportExercisesAsFile()
+  override def exportExesAsFileRoute: Call = routes.SqlController.adminExportExercisesAsFile()
 
-  override def changeExStateRoute(exercise: HasBaseValues): Call = controllers.exCollections.routes.SqlController.adminChangeExState(exercise.id)
+  override def changeExStateRoute(exercise: HasBaseValues): Call = routes.SqlController.adminChangeExState(exercise.id)
 
-  override def editExerciseFormRoute(exercise: HasBaseValues): Call = controllers.exCollections.routes.SqlController.adminEditExerciseForm(exercise.id)
+  override def editExerciseFormRoute(exercise: HasBaseValues): Call = routes.SqlController.adminEditExerciseForm(exercise.id)
 
-  override def editExerciseRoute(exercise: HasBaseValues): Call = controllers.exCollections.routes.SqlController.adminEditExercise(exercise.id)
+  override def editExerciseRoute(exercise: HasBaseValues): Call = routes.SqlController.adminEditExercise(exercise.id)
 
-  override def deleteExerciseRoute(exercise: HasBaseValues): Call = controllers.exCollections.routes.SqlController.adminDeleteExercise(exercise.id)
+  override def deleteExerciseRoute(exercise: HasBaseValues): Call = routes.SqlController.adminDeleteExercise(exercise.id)
 
 }

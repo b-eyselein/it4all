@@ -1,7 +1,7 @@
 @(matchingResults: List[model.core.matching.MatchingResult[_, _ <: model.core.matching.Match[_]]])
 
 @for(matchingResult <- matchingResults) {
-    <table class="table">
+    @*<table class="table">*@
         <thead>
             <tr>
                 <th>Korrektheit</th>
@@ -47,5 +47,5 @@
             </tr>
         }
         </tbody>
-    </table>
+    @*</table>*@
 }

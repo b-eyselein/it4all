@@ -13,7 +13,7 @@ import scala.util.{Failure, Success, Try}
 
 abstract sealed class SpreadSheetCorrectionResult(val success: SuccessType, val notices: List[String]) extends EvaluationResult
 
-case class SpreadSheetCorrectionFailure(cause: String) extends SpreadSheetCorrectionResult(SuccessType.FAILURE, List(cause))
+case class SpreadSheetCorrectionFailure(cause: String) extends SpreadSheetCorrectionResult(SuccessType.ERROR, List(cause))
 
 case class SpreadSheetCorrectionError(strs: List[String]) extends SpreadSheetCorrectionResult(SuccessType.NONE, strs)
 

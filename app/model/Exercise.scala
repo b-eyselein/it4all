@@ -88,4 +88,6 @@ trait CompleteCollection extends HasBaseValues {
 
   def exercises: Seq[CompExType]
 
+  def renderRest: Html
+
 }

@@ -9,10 +9,10 @@ title: Listen in Html
 htmlTasks:
 - id: 1
   text: |
-    Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL '/assets/stylesheets/bootstrap.css' zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut 'rel'!
+    Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL '/assets/lib/bootstrap/css/bootstrap.css' zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut 'rel'!
   xpathQuery: /html/head/link
   attributes:
-  - {key: href, value: /assets/stylesheets/bootstrap.css}
+  - {key: href, value: /assets/lib/bootstrap/css/bootstrap.css}
   - {key: rel, value: stylesheet}
 - id: 2
   text: Erstellen Sie eine passende h1-Überschrift, die das Wort 'Autohersteller' enthält.
@@ -57,10 +57,10 @@ title: Tabellen in Html
 htmlTasks:
 - id: 1
   text: |
-    Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL '/assets/stylesheets/bootstrap.css' zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut 'rel'
+    Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL '/assets/lib/bootstrap/css/bootstrap.css' zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut 'rel'
   xpathQuery: /html/head//link
   attributes:
-  - {key: href, value: /assets/stylesheets/bootstrap.css}
+  - {key: href, value: /assets/lib/bootstrap/css/bootstrap.css}
   - {key: rel, value: stylesheet}
 - id: 2
   text: Erstellen Sie das Grundtag für die Tabelle Geben Sie der Tabelle die Klassen 'table' und 'table-striped'.
@@ -119,16 +119,24 @@ text: Erstellen Sie ein Bild in HTML, das gleichzeitig ein Link ist.
 status: ACCEPTED
 htmlTasks:
 - id: 1
+  text: >
+    Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL
+    '/assets/lib/bootstrap/css/bootstrap.css' zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut 'rel'
+  xpathQuery: /html/head//link
+  attributes:
+  - {key: rel, value: stylesheet}
+  - {key: href, value: /assets/lib/bootstrap/css/bootstrap.css}
+- id: 2
   text: Erstellen Sie eine passende h1-Überschrift, die 'Ford Mustang' enthält.
   xpathQuery: /html/body//h1
   textContent: Ford Mustang
-- id: 2
+- id: 3
   text: >
     "Erstellen Sie den Link auf der Seite, der auf Wikipedia verweist. Geben Sie als Ziel die URL 'https://de.wikipedia.org/wiki/Ford_Mustang' an."
   xpathQuery: /html/body//a
   attributes:
   - {key: href, value: 'https://de.wikipedia.org/wiki/Ford_Mustang'}
-- id: 3
+- id: 4
   text: >
     Erstellen Sie im Link das Bild des Ford Mustang. Geben Sie als Quelle des Bildes die URL 
     'https://upload.wikimedia.org/wikipedia/commons/2/2d/1964_12_Ford_Mustang.jpg' und als alternative Beschreibung
@@ -141,14 +149,6 @@ htmlTasks:
   - {key: width, value: '250'}
   - {key: height, value: '188'}
   - {key: class, value: img-rounded}
-- id: 4
-  text: >
-    Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL 
-    '/assets/stylesheets/bootstrap.css' zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut 'rel'
-  xpathQuery: /html/head//link
-  attributes: 
-  - {key: rel, value: stylesheet}
-  - {key: href, value: /assets/stylesheets/bootstrap.css}
 ---
 author: bje40dc
 id: 4
@@ -157,6 +157,13 @@ text: Erstellen Sie ein Login-Formular in HTML
 status: ACCEPTED
 htmlTasks:
 - id: 1
+  text: |
+    Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL '/assets/lib/bootstrap/css/bootstrap.css' zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut 'rel'
+  xpathQuery: /html/head//link
+  attributes:
+  - {key: rel, value: stylesheet}
+  - {key: href, value: /assets/lib/bootstrap/css/bootstrap.css}
+- id: 2
   text: >
     Erstellen Sie das Formular-Tag. Geben Sie für die Attribute 'action' und 'method' jeweils die 
     Werte '/test.php' und 'post' an.
@@ -164,7 +171,7 @@ htmlTasks:
   attributes:
   - {key: action, value: /test.php}
   - {key: method, value: post}
-- id: 2
+- id: 3
   text: >
     Erstellen Sie ein Feld zur Eingabe der Emailadresse. Benutzen Sie den in der Vorlesung gezeigten Typen
     und geben Sie dem Attribut 'name' den Wert 'email'. Die Eingabe soll außerdem required sein. Geben Sie dem
@@ -174,7 +181,7 @@ htmlTasks:
   - {key: name, value: email}
   - {key: required, value: 'true'}
   - {key: class, value: form-control}
-- id: 3
+- id: 4
   text: >
     Erstellen Sie ein Feld zur Eingabe des Passworts. Benutzen Sie den in der Vorlesung gezeigten Typen und
     geben Sie dem Attribut 'name' den Wert 'passwort'. Die Eingabe soll außerdem verpflichtend sein. Geben
@@ -184,19 +191,12 @@ htmlTasks:
   - {key: name, value: passwort}
   - {key: required, value: 'true'}
   - {key: class, value: form-control}
-- id: 4
+- id: 5
   text: |
     Erstellen Sie einen Knopf (input) um das Formular abzusenden. Geben Sie den Knopf zum Absenden des Formular die Klasse 'btn btn-default'
   xpathQuery: /html/body//form//input[@type='submit']
   attributes:
   - {key: class, value: btn btn-default}
-- id: 5
-  text: |
-    Binden Sie Bootstrap über einen Link ein. Die entsprechende Datei ist unter der URL '/assets/stylesheets/bootstrap.css' zu finden. Setzen Sie auch den entsprechenden Wert für das Attribut 'rel'
-  xpathQuery: /html/head//link
-  attributes:
-  - {key: rel, value: stylesheet}
-  - {key: href, value: /assets/stylesheets/bootstrap.css}
 ---
 author: bje40dc
 id: 5

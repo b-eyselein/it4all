@@ -17,7 +17,7 @@ class ExpressionExtractor(expression: Expression) extends ExpressionVisitor {
 
   lazy val extracted: List[BinaryExpression] = {
     if (expression != null)
-      expression.accept(this)
+      expression accept this
     binaryExpressions.toList
   }
 
@@ -28,8 +28,8 @@ class ExpressionExtractor(expression: Expression) extends ExpressionVisitor {
   override def visit(aexpr: AnalyticExpression): Unit = {}
 
   override def visit(andExpression: AndExpression): Unit = {
-    andExpression.getLeftExpression.accept(this)
-    andExpression.getRightExpression.accept(this)
+    andExpression.getLeftExpression accept this
+    andExpression.getRightExpression accept this
   }
 
   override def visit(anyComparisonExpression: AnyComparisonExpression): Unit = {}
@@ -117,11 +117,11 @@ class ExpressionExtractor(expression: Expression) extends ExpressionVisitor {
   override def visit(hint: OracleHint): Unit = {}
 
   override def visit(orExpression: OrExpression): Unit = {
-    orExpression.getLeftExpression.accept(this)
-    orExpression.getRightExpression.accept(this)
+    orExpression.getLeftExpression accept this
+    orExpression.getRightExpression accept this
   }
 
-  override def visit(parenthesis: Parenthesis): Unit = parenthesis.getExpression.accept(this)
+  override def visit(parenthesis: Parenthesis): Unit = parenthesis.getExpression accept this
 
   override def visit(rexpr: RegExpMatchOperator): Unit = {}
 

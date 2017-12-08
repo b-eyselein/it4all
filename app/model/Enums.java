@@ -1,10 +1,13 @@
 package model;
 
 import play.twirl.api.Html;
+import scala.Option;
+import scala.Some;
 
 public abstract class Enums {
 
     public interface Selectable<T extends Selectable<T>> {
+
         default String isSelected(T that) {
             return this == that ? "selected" : "";
         }
@@ -15,11 +18,29 @@ public abstract class Enums {
     }
 
     public enum ExerciseState implements Selectable<ExerciseState> {
-        RESERVED, CREATED, ACCEPTED, APPROVED
+        RESERVED, CREATED, ACCEPTED, APPROVED;
+
+        public static Option<ExerciseState> byString(String str) {
+            try {
+                return new Some<>(valueOf(str));
+            } catch (Exception e) {
+                // ==> None!
+                return Option.apply(null);
+            }
+        }
     }
 
     public enum Role implements Selectable<Role> {
-        RoleUser, RoleAdmin, RoleSuperAdmin
+        RoleUser, RoleAdmin, RoleSuperAdmin;
+
+        public static Option<Role> byString(String str) {
+            try {
+                return new Some<>(valueOf(str));
+            } catch (Exception e) {
+                // ==> None!
+                return Option.apply(null);
+            }
+        }
     }
 
     public enum ShowHideAggregate implements Selectable<ShowHideAggregate> {
@@ -29,6 +50,15 @@ public abstract class Enums {
 
         ShowHideAggregate(String theGerman) {
             german = theGerman;
+        }
+
+        public static Option<ShowHideAggregate> byString(String str) {
+            try {
+                return new Some<>(valueOf(str));
+            } catch (Exception e) {
+                // ==> None!
+                return Option.apply(null);
+            }
         }
     }
 
@@ -50,6 +80,15 @@ public abstract class Enums {
         public Html badge() {
             return new Html(this == LIVE ? "" : "<sup>" + greek + "</sup>");
         }
+
+        public static Option<ToolState> byString(String str) {
+            try {
+                return new Some<>(valueOf(str));
+            } catch (Exception e) {
+                // ==> None!
+                return Option.apply(null);
+            }
+        }
     }
 
     public enum FeedbackLevel implements Selectable<FeedbackLevel> {
@@ -59,6 +98,15 @@ public abstract class Enums {
 
         FeedbackLevel(String theDescription) {
             description = theDescription;
+        }
+
+        public static Option<FeedbackLevel> byString(String str) {
+            try {
+                return new Some<>(valueOf(str));
+            } catch (Exception e) {
+                // ==> None!
+                return Option.apply(null);
+            }
         }
     }
 
@@ -75,12 +123,21 @@ public abstract class Enums {
         MatchType(String glyphiconEnd) {
             glyphicon = "glyphicon glyphicon-" + glyphiconEnd;
         }
+
+        public static Option<MatchType> byString(String str) {
+            try {
+                return new Some<>(valueOf(str));
+            } catch (Exception e) {
+                // ==> None!
+                return Option.apply(null);
+            }
+        }
     }
 
 
-    public enum SuccessType {
+    public enum SuccessType implements Selectable<SuccessType> {
 
-        FAILURE(0, "danger", "glyphicon glyphicon-remove"),
+        ERROR(0, "danger", "glyphicon glyphicon-remove"),
         NONE(0, "danger", "glyphicon glyphicon-remove"),
         PARTIALLY(1, "warning", "glyphicon glyphicon-question-sign"),
         COMPLETE(2, "success", "glyphicon glyphicon-ok");
@@ -99,6 +156,14 @@ public abstract class Enums {
             return success ? COMPLETE : NONE;
         }
 
+        public static Option<SuccessType> byString(String str) {
+            try {
+                return new Some<>(valueOf(str));
+            } catch (Exception e) {
+                // ==> None!
+                return Option.apply(null);
+            }
+        }
     }
 
     public enum Mark implements Selectable<Mark> {
@@ -129,6 +194,15 @@ public abstract class Enums {
             }
         }
 
+
+        public static Option<Mark> byString(String str) {
+            try {
+                return new Some<>(valueOf(str));
+            } catch (Exception e) {
+                // ==> None!
+                return Option.apply(null);
+            }
+        }
     }
 
     public enum EvaluatedAspect implements Selectable<EvaluatedAspect> {
@@ -155,6 +229,14 @@ public abstract class Enums {
             negative = theNegative;
         }
 
+        public static Option<EvaluatedAspect> byString(String str) {
+            try {
+                return new Some<>(valueOf(str));
+            } catch (Exception e) {
+                // ==> None!
+                return Option.apply(null);
+            }
+        }
     }
 
 }

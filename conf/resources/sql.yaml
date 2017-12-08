@@ -10,7 +10,7 @@ scriptFile: employee.sql
 
 exercises:
 - id: 1001
-  title: TODO!
+  title: Anzahl der Angestellten
   author: bje40dc
   text: Wie viele Angestellte hat die Firma? Benennen Sie das Ergebnis als 'Anzahl'
   exerciseType: SELECT
@@ -24,10 +24,9 @@ exercises:
       SELECT COUNT(employeeOID) AS Anzahl
         FROM Employee
   tags: []
-  hint:
-  
+
 - id: 1002
-  title: TODO!
+  title: Angestelltennummer
   author: bje40dc
   text: Welche Angestelltennummer (employeeOID) hat Max Becker?
   exerciseType: SELECT
@@ -39,10 +38,9 @@ exercises:
         WHERE firstname = 'Max'
           AND lastname = 'Becker'
   tags: []
-  hint: 
 
 - id: 1003
-  title: TODO!
+  title: Emailadresse
   author: bje40dc
   text: Welche Emailadresse hat Max Becker für die Arbeit?
   exerciseType: SELECT
@@ -55,7 +53,7 @@ exercises:
         WHERE firstname = 'Max' AND lastname = 'Becker'
 
   - id: 2
-    sample:
+    sample: |
       SELECT emailaddress
         FROM Employee Emailaddress
         WHERE Employee.employeeOID = Emailaddress.employeeOID
@@ -68,10 +66,9 @@ exercises:
         WHERE emp.employeeOID = email.employeeOID
           AND firstname = 'Max' AND lastname = 'Becker'
   tags: []
-  hint: 
 
 - id: 1004
-  title: TODO!
+  title: Nutzernamen
   author: bje40dc
   text: Geben Sie die Nutzernamen aller Angestellten alphabetisch geordnet aus!
   exerciseType: SELECT
@@ -82,23 +79,21 @@ exercises:
         FROM Employee
         ORDER BY username
   tags: []
-  hint:
-   
+
 - id: 1005
-  title: TODO!
+  title: Anzahl der Untergebenen
   author: bje40dc
   text: Wie viele Untergebene hat jeder Chef? Geben Sie jeweils die OID des Chefs und die Anzahl aus!
   exerciseType: SELECT
   samples:
   - id: 1
-    sample: 
+    sample: |
       SELECT chefOID count(employeeOID)
         FROM Employee
         WHERE chefOID IS NOT NULL
         GROUP BY chefOID
   tags: []
-  hint: 
-  
+
 - id: 1006
   title: TODO!
   author: bje40dc
@@ -116,7 +111,6 @@ exercises:
         FOREIGN KEY (chefOID) REFERENCES Employee(employeeOID)
       );
   tags: []
-  hint: 
 
 - id: 1007
   title: TODO!
@@ -125,12 +119,11 @@ exercises:
   exerciseType: UPDATE
   samples:
   - id: 1
-    sample:
+    sample: |
       UPDATE Employee
         SET chefOID = 3
         WHERE employeeOID = 8
   tags: []
-  hint: 
 
 - id: 1008
   title: TODO!
@@ -139,11 +132,10 @@ exercises:
   exerciseType: DELETE
   samples:
   - id: 1
-    sample:
+    sample: |
       DELETE FROM Employee
         WHERE employeeOID = 7
   tags: []
-  hint: 
 
 - id: 1009
   title: TODO!
@@ -162,7 +154,6 @@ exercises:
       INSERT INTO Employee (`employeeOID` `firstname` `lastname` `username` `chefOID`) VALUES
         (9 'Tina' 'Sattler' 'tina_sattler' 2)
   tags: []
-  hint: 
 ---
 id: 2
 title: Amazon
@@ -173,60 +164,52 @@ shortName: amazon
 scriptFile: amazon.sql
 exercises:
 - id: 2001
-  title: TODO!
+  title: Alles über die Autoren
   author: bje40dc
   text: Geben Sie alle Spalten der Autorentabelle aus!
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT *
         FROM authors
   - id: 2
-    sample:
+    sample: |
       SELECT id first_name family_name birthday
         FROM authors
-  tags: []
-  hint:
-   
+
 - id: 2002
-  title: TODO!
+  title: Nachnamen aller Autoren
   author: bje40dc
   text: Geben Sie die Nachnamen aller Autoren aus!
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT family_name
         FROM authors
-  tags: []
-  hint:
-   
+
 - id: 2003
-  title: TODO!
+  title: Verlagsnamen
   author: bje40dc
   text: Geben Sie die Namen aller Verlage aus!
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT name
         FROM publishers
-  tags: []
-  hint:
-  
+
 - id: 2004
-  title: TODO!
+  title: Namen aller Kunden
   author: bje40dc
   text: Geben Sie die Vor- und Nachnamen aller Kunden aus!
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT first_name family_name
         FROM customers
-  tags: []
-  hint:
 
 - id: 2005
   title: TODO!
@@ -235,11 +218,9 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT title year isbn
         FROM books
-  tags: []
-  hint:
 
 - id: 2006
   title: TODO!
@@ -248,12 +229,10 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT title
         FROM books
         WHERE isbn = '978-3551354051'
-  tags: []
-  hint:
 
 - id: 2007
   title: TODO!
@@ -262,12 +241,10 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT price
         FROM books
         WHERE isbn = '978-3551354068'
-  tags: []
-  hint:
 
 - id: 2008
   title: TODO!
@@ -276,12 +253,10 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT first_name family_name
         FROM authors
         WHERE id = 3
-  tags: []
-  hint:
 
 - id: 2009
   title: TODO!
@@ -290,12 +265,10 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT author_id
         FROM books
         WHERE title = 'Der kleine Prinz'
-  tags: []
-  hint:
 
 - id: 2010
   title: TODO!
@@ -304,12 +277,10 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT name
         FROM publishers
         WHERE phone = '+49 2402 / 806341'
-  tags: []
-  hint:
 
 - id: 2011
   title: TODO!
@@ -318,12 +289,11 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT title family_name
         FROM authors
           JOIN books ON authors.id = books.author_id
-  tags: [JOIN]
-  hint:
+  tags: [SQL_JOIN]
 
 - id: 2012
   title: TODO!
@@ -332,18 +302,18 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT title price
         FROM books
           JOIN publishers ON publisher_id = publishers.id
         WHERE name = 'Carlsen'
   - id: 2
-    sample:
+    sample: |
       SELECT title price
         FROM books publishers
         WHERE publishers ON publisher_id = publishers.id
           AND publishers.name = 'Carlsen'
-  tags: [JOIN]
+  tags: [SQL_JOIN]
   hint: Die Zuordnung von Verlag-Id zu Verlag-Name befindet sich in der Tabelle 'publishers'.
 
 - id: 2013
@@ -353,19 +323,18 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT title isbn
         FROM books
           JOIN authors on books.author_id = authors.id
         WHERE family_name = 'Rowling'
   - id: 2
-    sample:
+    sample: |
       SELECT title isbn
         FROM books authors
         WHERE authors on books.author_id = authors.id
           AND family_name = 'Rowling'
-  tags: [JOIN]
-  hint:
+  tags: [SQL_JOIN]
 
 - id: 2014
   title: TODO!
@@ -374,13 +343,12 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT rating
         FROM ratings
           JOIN customers ON ratings.customer_id = customers.id
         WHERE email = 'wilhard_1041@web.de'
-  tags: [JOIN]
-  hint:
+  tags: [SQL_JOIN]
 
 - id: 2015
   title: TODO!
@@ -389,13 +357,12 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT family_name
         FROM orders
           JOIN customers ON orders.customer_id = customers.id
         WHERE orders.id = 5
-  tags: [JOIN]
-  hint:
+  tags: [SQL_JOIN]
 
 - id: 2016
   title: TODO!
@@ -404,11 +371,10 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT email
         FROM customers
         WHERE email LIKE '%gmx.de'
-  tags: []
   hint: Verwenden Sie für die Eingrenzung der Mailadresse den 'LIKE'-Operator.
 
 - id: 2017
@@ -418,15 +384,13 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT title
         FROM books WHERE price < 10
   - id: 2
-    sample:
+    sample: |
       SELECT title
         FROM books WHERE price < 10.00
-  tags: []
-  hint:
 
 - id: 2018
   title: TODO!
@@ -435,11 +399,9 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT DISTINCT book_id
         FROM wishlists
-  tags: []
-  hint:
 
 - id: 2019
   title: TODO!
@@ -448,11 +410,10 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT *
         FROM customers
         WHERE birthday LIKE '1981-%'
-  tags: []
   hint: Verwenden Sie den 'LIKE'-Operator zu Vergleich des Jahres
 
 - id: 2020
@@ -462,19 +423,17 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT title
         FROM books
         WHERE stock < 20000
            OR price > 14.00
   - id: 2
-    sample:
+    sample: |
       SELECT title
         FROM books
         WHERE stock < 20000
            OR price > 14
-  tags: []
-  hint:
 
 - id: 2021
   title: TODO!
@@ -483,19 +442,18 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT COUNT(rating) AS Anzahl
         FROM ratings
           JOIN books ON books.id = ratings.book_id
         WHERE title = 'Die Stadt in der Wüste'
   - id: 2
-    sample:
+    sample: |
       SELECT COUNT(*) AS Anzahl
         FROM ratings books
         WHERE books.id = ratings.book_id
           AND title = 'Die Stadt in der Wüste'
-  tags: [FUNCTION, JOIN, ALIAS]
-  hint:
+  tags: [SQL_FUNCTION, SQL_JOIN, SQL_ALIAS]
 
 - id: 2022
   title: TODO!
@@ -504,19 +462,18 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT AVG(rating) AS Durchschnitt
         FROM ratings
           JOIN books ON books.id = ratings.book_id
         WHERE title = 'Die Stadt in der Wüste'
   - id: 2
-    sample:
+    sample: |
       SELECT AVG(rating) AS Durchschnitt
         FROM ratings books
         WHERE books.id = ratings.book_id
           AND title = 'Die Stadt in der Wüste'
-  tags: [FUNCTION, JOIN, ALIAS]
-  hint:
+  tags: [SQL_FUNCTION, SQL_JOIN, SQL_ALIAS]
 
 - id: 2023
   title: TODO!
@@ -525,12 +482,11 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT SUM(stock) AS Gesamtbestand
         FROM books
         WHERE title like 'Harry Potter%'
-  tags: [FUNCTION, ALIAS]
-  hint:
+  tags: [SQL_FUNCTION, SQL_ALIAS]
 
 - id: 2024
   title: TODO!
@@ -541,19 +497,18 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT min(rating) AS Schlechteste max(rating) AS Beste
         FROM books
           JOIN ratings ON books.id = ratings.book_id
         WHERE title = 'Harry Potter und der Halbblutprinz'
   - id: 2
-    sample:
+    sample: |
       SELECT min(rating) AS Schlechteste max(rating) AS Beste
         FROM books ratings
         WHERE books.id = ratings.book_id
           AND title = 'Harry Potter und der Halbblutprinz'
-  tags: [FUNCTION, ALIAS, JOIN]
-  hint:
+  tags: [SQL_FUNCTION, SQL_ALIAS, SQL_JOIN]
 
 - id: 2025
   title: TODO!
@@ -562,11 +517,10 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT AVG(stock) AS Durchschnitt
         FROM books
-  tags: [FUNCTION, ALIAS]
-  hint:
+  tags: [SQL_FUNCTION, SQL_ALIAS]
 
 - id: 2026
   title: TODO!
@@ -575,21 +529,20 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT family_name
         FROM customers
           JOIN wishlists ON wishlists.customer_id = customers.id
           JOIN books on wishlists.book_id = books.id
         WHERE title = 'Harry Potter und der Orden des Phönix'
   - id: 2
-    sample:
+    sample: |
       SELECT family_name
         FROM customers wishlists books
         WHERE wishlists.customer_id = customers.id
           AND wishlists.book_id = books.id
           AND title = 'Harry Potter und der Orden des Phönix'
-  tags: [DOUBLE_JOIN]
-  hint:
+  tags: [SQL_DOUBLE_JOIN]
 
 - id: 2027
   title: TODO!
@@ -598,15 +551,14 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT title
         FROM books
           JOIN authors on books.author_id = authors.id
         WHERE first_name = 'George'
         AND family_name = 'Orwell'
         ORDER BY year DESC
-  tags: [ORDER_BY, JOIN]
-  hint:
+  tags: [SQL_ORDER_BY, SQL_JOIN]
 
 - id: 2028
   title: TODO!
@@ -615,13 +567,12 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT title author_id
         FROM books
         ORDER BY price DESC
         LIMIT 3
-  tags: [ORDER_BY, LIMIT]
-  hint:
+  tags: [SQL_ORDER_BY, SQL_LIMIT]
 
 - id: 2029
   title: TODO!
@@ -632,15 +583,14 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT title price
         FROM books
         JOIN authors on book.author_id = authors.id
         WHERE family_name = 'Tolkien'
         AND price < 10
         ORDER BY year DESC
-  tags: [ORDER_BY, JOIN]
-  hint:
+  tags: [SQL_ORDER_BY, SQL_JOIN]
 
 - id: 2030
   title: TODO!
@@ -651,14 +601,13 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT order_id amount
        FROM orders
           JOIN order_positions ON orders.id = order_id
           JOIN books ON books.id = book_id
           WHERE title = 'Harry Potter und der Halbblutprinz'
-  tags: [DOUBLE_JOIN]
-  hint:
+  tags: [SQL_DOUBLE_JOIN]
 
 - id: 2031
   title: TODO!
@@ -667,13 +616,12 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT email
         FROM customers
         WHERE email LIKE '%gmx.de'
         OR email LIKE '%gmail.com'
   tags: []
-  hint:
 
 - id: 2032
   title: TODO!
@@ -684,15 +632,14 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT title price
         FROM books
           JOIN authors on authors.id = books.author_id
         WHERE authors.family_name = 'Tolkien'
         AND price < 10
         ORDER BY year DESC
-  tags: [ORDER_BY]
-  hint:
+  tags: [SQL_ORDER_BY]
 
 - id: 2033
   title: TODO!
@@ -703,15 +650,14 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT SUM(amount) AS Anzahl
         FROM order_positions WHERE price < 5
   - id: 2
     sample:
       SELECT SUM(amount) AS Anzahl
         FROM order_positions WHERE price < 5.00
-  tags: [FUNCTION, ALIAS]
-  hint:
+  tags: [SQL_FUNCTION, SQL_ALIAS]
 
 - id: 2034
   title: TODO!
@@ -722,12 +668,12 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT author sum(stock) AS stock_sum
         FROM books
         GROUP BY author
         ORDER BY stock_sum DESC
-  tags: [FUNCTION, GROUP_BY, ORDER_BY]
+  tags: [SQL_FUNCTION, SQL_GROUP_BY, SQL_ORDER_BY]
   hint: Verwenden Sie den Sum-Operator und das Schlüsselwort AS.
 
 - id: 2035
@@ -737,7 +683,7 @@ exercises:
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT first_name family_name birthday
         FROM customers
        WHERE birthday LIKE '%-02-%'
@@ -747,14 +693,14 @@ exercises:
 - id: 2036
   title: TODO!
   author: bje40dc
-  text: Geben Sie den Vornamen Nachnamen und Geburtstag des jüngsten Kunden aus. Achten Sie darauf dass sich die Spaltennamen nicht verändern.
+  text: Geben Sie den Vornamen Nachnamen und Geburtstag des jüngsten Kunden aus.
   exerciseType: SELECT
   samples:
   - id: 1
-    sample:
+    sample: |
       SELECT first_name family_name birthday
         FROM customers
         ORDER BY birthday DESC
         LIMIT 1
-  tags: [ORDER_BY, LIMIT]
-  hint:
+  tags: [SQL_ORDER_BY, SQL_LIMIT]
+  hint: Achten Sie darauf dass sich die Spaltennamen nicht verändern.

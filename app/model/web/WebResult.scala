@@ -62,7 +62,7 @@ abstract class TextResult(name: String, foundContent: String, awaitedContent: St
     case COMPLETE  => s"$name hat den gesuchten Wert."
     case PARTIALLY => s"$name hat nicht den gesuchten Wert '$awaitedContent' sondern '$foundContent'!"
     case NONE      => s"$name konnte nicht gefunden werden!"
-    case FAILURE   => s"$name konnte aufgrund eines Fehler nicht ueberprueft werden."
+    case ERROR     => s"$name konnte aufgrund eines Fehler nicht ueberprueft werden."
   })
 
 }

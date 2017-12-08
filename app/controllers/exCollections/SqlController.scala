@@ -1,181 +1,137 @@
 package controllers.exCollections
 
-import java.sql.Connection
 import javax.inject._
 
-import model.core.Levenshtein.levenshteinDistance
 import controllers.Secured
-import model.core.CommonUtils.cleanly
+import controllers.exCollections.SqlController._
+import model.core.Levenshtein.levenshteinDistance
 import model.core._
-import model.sql.SqlConsts.{SELECT_ALL_DUMMY, SHOW_ALL_TABLES}
+import model.sql.SqlConsts._
+import model.sql.SqlEnums.SqlExerciseType
 import model.sql.SqlYamlProtocol.SqlScenarioYamlFormat
 import model.sql._
+import model.{JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
-import play.api.data.Form
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc._
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
-import scala.collection.mutable.ListBuffer
-import scala.concurrent.{ExecutionContext, Future}
-import scala.language.implicitConversions
-import scala.util.{Failure, Success}
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, ExecutionContext, Future, duration}
+import scala.language.{implicitConversions, postfixOps}
+import scala.util.Try
 
-/*, @NamedDatabase("sqlselectroot") sqlSelect: Database, @NamedDatabase("sqlotherroot") sqlOther: Database*/
+
+object SqlController {
+
+  val daos = Map(
+    SqlExerciseType.SELECT -> SelectDAO,
+    SqlExerciseType.CREATE -> CreateDAO,
+    SqlExerciseType.UPDATE -> ChangeDAO,
+    SqlExerciseType.INSERT -> ChangeDAO,
+    SqlExerciseType.DELETE -> ChangeDAO
+  )
+
+  val correctors = Map(
+    SqlExerciseType.CREATE -> CreateCorrector,
+    SqlExerciseType.DELETE -> DeleteCorrector,
+    SqlExerciseType.INSERT -> InsertCorrector,
+    SqlExerciseType.SELECT -> SelectCorrector,
+    SqlExerciseType.UPDATE -> UpdateCorrector
+  )
+
+  def findBestFittingSample(userSt: String, samples: List[SqlSample]): SqlSample =
+    samples.reduceLeft((samp1, samp2) => if (levenshteinDistance(samp1.sample, userSt) < levenshteinDistance(samp2.sample, userSt)) samp1 else samp2)
+
+}
 
 @Singleton
 class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends AExCollectionController[SqlExercise, SqlScenario, EvaluationResult](cc, dbcp, r, SqlToolObject) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
+  extends AExCollectionController[SqlExercise, SqlScenario, EvaluationResult](cc, dbcp, r, SqlToolObject)
+    with HasDatabaseConfigProvider[JdbcProfile] with JsonFormat with Secured {
 
-  override type SolutionType = StringSolution
+  override type SolType = String
 
-  override def solForm: Form[StringSolution] = ???
+  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[String] =
+    request.body.asJson flatMap (_.asObj flatMap (jsObj => jsObj.stringField(FORM_VALUE)))
+
+  override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[String] =
+    Solution.stringSolForm.bindFromRequest() fold(_ => None, sol => Some(sol.learnerSolution))
+
 
   // Yaml
 
   override type CompColl = SqlCompleteScenario
 
+  override type CompEx = SqlCompleteEx
+
   override implicit val yamlFormat: YamlFormat[SqlCompleteScenario] = SqlScenarioYamlFormat
 
   // db
 
-  override type TQ = repo.SqlScenarioesTable
-
-  override def tq = repo.sqlScenarioes
-
-  override protected def completeColls: Future[Seq[SqlCompleteScenario]] = tq.completeScenarioes
-
   import profile.api._
 
-  protected def saveRead(read: Seq[SqlCompleteScenario]): Future[Seq[Int]] = Future.sequence(read map {
-    compScenario => db.run(tq insertOrUpdate compScenario.coll)
+  override type TQ = repo.SqlScenarioesTable
+
+  //noinspection TypeAnnotation
+  override def tq = repo.sqlScenarioes
+
+  override protected def completeColls: Future[Seq[SqlCompleteScenario]] = repo.completeSqlScenarioes
+
+  override protected def completeCollById(id: Int): Future[Option[SqlCompleteScenario]] = repo.completeScenarioById(id)
+
+  override protected def futureCompleteExById(collId: Int, id: Int): Future[Option[SqlCompleteEx]] = repo.sqlExercises.completeEx(collId, id)
+
+  override protected def saveRead(read: Seq[SqlCompleteScenario]): Future[Seq[Boolean]] = Future.sequence(read map { compScenario =>
+    val scriptFilePath = toolObject.exerciseResourcesFolder / s"${compScenario.coll.shortName}.sql"
+
+    daos.values foreach (_.executeSetup(compScenario.coll.shortName, scriptFilePath))
+
+    repo.saveSqlCompleteScenario(compScenario) map (_ => true)
   })
+
+  private def saveSolution(sol: SqlSolution) = db.run(repo.sqlSolutions insertOrUpdate sol)
 
   //  override def newExerciseForm: EssentialAction = withAdmin { user => implicit request => Ok(views.html.sql.newExerciseForm.render(user, null)) }
 
-  // override
-  // public Html renderCollectionCreated(List<SqlScenario> created) {
-  // return views.html.sqlAdmin.sqlCreation.render(created)
-  // }
-
-  //  override def renderCollectionCreated(collections: List[SingleReadingResult[SqlScenario]]): Html = ??? // FIXME: implement...
-  //
-  //  override def renderExCollCreationForm(user: User, scenario: SqlScenario): Html =
-  //    views.html.sql.newScenarioForm.render(user, scenario)
-  //
-  //
-  //  override def renderExEditForm(user: User, exercise: SqlScenario, isCreation: Boolean): Html = ??? // FIXME: implement...
-  //
-  //  override def renderExerciseCollections(user: User, allCollections: List[SqlScenario]): Html = ??? // FIXME: implement...
-
   def scenarioAdmin(id: Int): EssentialAction = withAdmin { user => implicit request => Ok(views.html.sql.scenarioAdmin.render(user, null /* SqlScenario.finder.byId(id)*/)) }
 
-  // FIXME: stubs...
-  def correctPart(form: model.core.StringSolution, exercise: Option[model.sql.SqlExercise], part: String, user: model.User): scala.util.Try[CompleteResult[EvaluationResult]] = ???
+  override def renderCollectionCreated(collections: List[model.core.SingleReadingResult[SqlScenario]]): play.twirl.api.Html = ???
 
-  def renderCollectionCreated(collections: List[model.core.SingleReadingResult[model.sql.SqlScenario]]): play.twirl.api.Html = ???
+  override def renderExCollCreationForm(user: model.User, collection: SqlScenario): play.twirl.api.Html = ??? //    views.html.sql.newScenarioForm.render(user, scenario)
 
-  def renderExCollCreationForm(user: model.User, collection: model.sql.SqlScenario): play.twirl.api.Html = ???
+  override def renderExEditForm(user: model.User, exercise: SqlScenario, isCreation: Boolean): play.twirl.api.Html = ???
 
-  def renderExEditForm(user: model.User, exercise: model.sql.SqlScenario, isCreation: Boolean): play.twirl.api.Html = ???
-
-  def renderExerciseCollections(user: model.User, allCollections: List[model.sql.SqlScenario]): play.twirl.api.Html = ???
+  override def renderExerciseCollections(user: model.User, allCollections: List[SqlScenario]): play.twirl.api.Html = ???
 
   // FIXME: stubs end...
 
   // User
 
+  override protected def correctEx(learnerSolution: String, exercise: SqlCompleteEx, sqlScenario: SqlScenario, user: User): Try[SqlCorrResult] = Try({
+    Await.result(saveSolution(SqlSolution(user.username, exercise.ex.scenarioId, exercise.id, learnerSolution)), Duration(2, duration.SECONDS))
 
-  def filteredScenario(id: Int, exType: String, site: Int): EssentialAction = withUser { user =>
-    implicit request =>
-      //      Option(SqlScenario.finder.byId(id)) match {
-      //        case None => Redirect(controllers.sql.routes.SqlController.index())
-      //        case Some(scenario) =>
-      //          if (site <= 0)
-      //            Redirect(controllers.sql.routes.SqlController.filteredScenario(id, exType))
-      //          else {
-      //            val start = SqlScenario.STEP * (site - 1)
-      //
-      //            val allByType = scenario.getExercisesByType(SqlExerciseType.valueOf(exType))
-      //            val exercises = allByType.subList(start, Math.min(start + SqlScenario.STEP, allByType.size))
-      //
-      //            Ok(views.html.sqlScenario.render(user, exercises.asScala.toList, scenario, SqlExerciseType.valueOf(exType), site))
-      //          }
-      //      }
-      null
+    val sample = findBestFittingSample(learnerSolution, exercise.samples toList)
+
+    correctors(exercise.ex.exerciseType).correct(daos(exercise.ex.exerciseType), learnerSolution, sample, exercise, sqlScenario)
+  })
+
+  override protected def renderExercise(user: User, sqlScenario: SqlScenario, exercise: SqlCompleteEx): Html = {
+    val tables: Seq[SqlQueryResult] = SelectDAO.tableContents(sqlScenario.shortName)
+
+    val oldOrDefSol: String = Await.result(
+      db.run(repo.sqlSolutions.filter(sol => sol.username === user.username && sol.exerciseId === exercise.id && sol.scenarioId === exercise.ex.scenarioId).result.headOption),
+      Duration(2, duration.SECONDS)
+    ) map (_.solution) getOrElse ""
+
+    views.html.sql.sqlExercise(user, exercise, oldOrDefSol, tables, sqlScenario.shortName + ".png")
   }
 
-  def scenarioes: EssentialAction = withUser { user => implicit request => Ok(views.html.sql.scenarioes.render(user, List.empty /* SqlScenario.finder.all.asScala.toList*/)) }
-
-  //  def getDBForExType(exerciseType: SqlExerciseType): Database = if (exerciseType == SqlExerciseType.SELECT) null /* sqlSelect else sqlOther*/ else null
-
-  //  override def correctEx(sol: StringSolution, exercise: Option[SqlExercise], user: User): Try[SqlResult] = Try({
-  //    val learnerSolution = sol.learnerSolution
-  //    saveSolution(user.name, learnerSolution, exercise.id)
-  //
-  //    val sample = findBestFittingSample(learnerSolution, exercise.samples.toList)
-  //
-  //    val corrector = QueryCorrector.getCorrector(exercise.exerciseType)
-  //    val db = getDBForExType(exercise.exerciseType)
-  //
-  //    corrector.correct(db, learnerSolution, sample, exercise)
-  //    null
-  //  })
-
-  //  override def renderExercise(user: User, exercise: SqlExercise): Html = {
-  //    val tables = readTablesInDatabase(sqlSelect, exercise.scenario.shortName)
-  //
-  //    val oldOrDefSol = Option(SqlSolution.finder.byId(new SqlSolutionKey(user.name, exercise.id))) match {
-  //      case None => ""
-  //      case Some(oldSol) => oldSol.sol
-  //    }
-  //
-  //    views.html.sqlExercise.render(user, exercise, oldOrDefSol, tables)
-  //    new Html("")
-  //  }
-
-  //  override def renderExesListRest: Html = ??? // FIXME: implement
-
-  override def renderResult(correctionResult: CompleteResult[EvaluationResult]): Html = ??? //FIXME: implement
-
-}
-
-object SqlController {
-
-  def findBestFittingSample(userSt: String, samples: List[SqlSample]): SqlSample =
-    samples.reduceLeft((samp1, samp2) => if (levenshteinDistance(samp1.sample, userSt) < levenshteinDistance(samp2.sample, userSt)) samp1 else samp2)
-
-  def readExistingTables(connection: Connection): List[String] = cleanly(connection.createStatement.executeQuery(SHOW_ALL_TABLES))(_.close)(existingTables => {
-    var tableNames = ListBuffer.empty[String]
-    while (existingTables.next) {
-      tableNames += existingTables.getString(1)
-    }
-    tableNames.toList
-  }) match {
-    case Success(list) => list
-    case Failure(_)    => List.empty
+  // FIXME: get rif of cast...
+  override def renderResult(correctionResult: CompleteResult[EvaluationResult]): Html = correctionResult match {
+    case res: SqlResult => views.html.sql.sqlResult(res)
+    case _              => new Html("")
   }
 
-  def readTableContent(connection: Connection, tableName: String): SqlQueryResult =
-    cleanly(connection.prepareStatement(SELECT_ALL_DUMMY + tableName))(_.close)(result => new SqlQueryResult(result.executeQuery, tableName)) match {
-      case Success(result) => result
-      case Failure(_)      => null
-    }
-
-  //  def readTablesInDatabase(db: Database, databaseName: String): List[SqlQueryResult] = cleanly(db.getConnection)(_.close)(connection => {
-  //    connection.setCatalog(databaseName)
-  //    readExistingTables(connection).map(readTableContent(connection, _))
-  //  }) match {
-  //    case Success(queryResult) => queryResult
-  //    case Failure(_)           => List.empty
-  //  }
-
-  def saveSolution(userName: String, learnerSolution: String, id: Int) {
-    //    val key = new SqlSolutionKey(userName, id)
-    //    var solution = Option(SqlSolution.finder.byId(key)).getOrElse(new SqlSolution(key))
-    //
-    //    solution.sol = learnerSolution
-    //    solution.save()
-  }
 }

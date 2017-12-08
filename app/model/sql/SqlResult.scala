@@ -1,22 +1,17 @@
 package model.sql
 
 import model.Enums.SuccessType
-import model.core.matching.{Match, MatchingResult}
+import model.core.matching.{Match, MatchingResult, StringMatchingResult}
 import model.core.{CompleteResult, EvaluationResult}
-import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
-import net.sf.jsqlparser.statement.select.OrderByElement
+
+abstract class SqlCorrResult(l: String, results: Seq[EvaluationResult]) extends CompleteResult[EvaluationResult](l, results)
 
 case class SqlResult(l: String,
-                     columnComparison: MatchingResult[ColumnWrapper, ColumnMatch],
-                     tableComparison: MatchingResult[String, Match[String]],
-                     whereComparison: MatchingResult[BinaryExpression, BinaryExpressionMatch],
+                     columnComparison: ColumnMatchingResult, tableComparison: StringMatchingResult,
+                     whereComparison: BinaryExpressionMatchingResult, executionResult: Option[SqlExecutionResult],
+                     groupByComparison: Option[GroupByMatchingResult], orderByComparison: Option[OrderByMatchingResult])
 
-                     executionResult: Option[SqlExecutionResult],
-
-                     groupByComparison: Option[MatchingResult[Expression, GroupByMatch]],
-                     orderByComparison: Option[MatchingResult[OrderByElement, OrderByMatch]])
-  extends CompleteResult[EvaluationResult](
-    l, List(columnComparison, tableComparison, whereComparison) ++ executionResult ++ groupByComparison ++ orderByComparison) {
+  extends SqlCorrResult(l, List(columnComparison, tableComparison, whereComparison) ++ executionResult ++ groupByComparison ++ orderByComparison) {
 
   def getMatchingResults: List[MatchingResult[_, _ <: Match[_]]] =
     List(columnComparison, tableComparison, whereComparison) ++ groupByComparison ++ orderByComparison
@@ -25,10 +20,12 @@ case class SqlResult(l: String,
 
 }
 
+case class SqlFailed(l: String) extends SqlCorrResult(l, Seq.empty)
+
 case class SqlExecutionResult(userResult: SqlQueryResult, sampleResult: SqlQueryResult) extends EvaluationResult {
 
   override val success: SuccessType =
-    if (userResult == null || sampleResult == null) SuccessType.FAILURE
+    if (userResult == null || sampleResult == null) SuccessType.ERROR
     else SuccessType.ofBool(userResult.isIdentic(sampleResult))
 
 }

@@ -4,11 +4,10 @@ import javax.inject._
 
 import controllers.Secured
 import model.Enums.Role
-import model.User
 import model.core._
 import model.questions._
+import model.{JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
-import play.api.data.Form
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc._
 import play.twirl.api.Html
@@ -18,17 +17,22 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
 import scala.util.Try
 
-class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)
-                                  (implicit ec: ExecutionContext)
-  extends AExCollectionController[Question, Quiz, QuestionResult](cc, dbcp, r, QuestionToolObject) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
+@Singleton
+class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
+  extends AExCollectionController[Question, Quiz, QuestionResult](cc, dbcp, r, QuestionToolObject)
+    with HasDatabaseConfigProvider[JdbcProfile] with JsonFormat with Secured {
 
-  override type SolutionType = StringSolution
+  override type SolType = String
 
-  override def solForm: Form[StringSolution] = ???
+  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[String] = request.body.asJson flatMap (_.asStr)
+
+  override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[String] = ???
 
   // Yaml
 
   override type CompColl = Quiz
+
+  override type CompEx = Question
 
   override implicit val yamlFormat: YamlFormat[Quiz] = null
 
@@ -38,9 +42,9 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   override def tq = repo.quizzes
 
-  protected def completeColls: Future[Seq[CompColl]] = ???
+  override protected def completeColls: Future[Seq[CompColl]] = ???
 
-  protected def saveRead(read: Seq[Quiz]): Future[Seq[Int]] = ???
+  override protected def saveRead(read: Seq[Quiz]): Future[Seq[Boolean]] = ???
 
   // Quizzes
 
@@ -73,26 +77,25 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
 
   // FIXME: stubs...
-  def correctPart(form: StringSolution, exercise: Option[Question], part: String, user: User): Try[CompleteResult[QuestionResult]] = ???
+  override def correctEx(form: String, exercise: Question, quiz: Quiz, user: User): Try[CompleteResult[QuestionResult]] = ???
 
-  def renderCollectionCreated(collections: List[model.core.SingleReadingResult[model.questions.Quiz]]): play.twirl.api.Html = ???
+  override def renderCollectionCreated(collections: List[model.core.SingleReadingResult[model.questions.Quiz]]): play.twirl.api.Html = ???
 
-  def renderExCollCreationForm(user: model.User, collection: model.questions.Quiz): play.twirl.api.Html = ???
+  override def renderExCollCreationForm(user: model.User, collection: model.questions.Quiz): play.twirl.api.Html = ???
 
-  def renderExEditForm(user: model.User, exercise: model.questions.Quiz, isCreation: Boolean): play.twirl.api.Html = ???
+  override def renderExEditForm(user: model.User, exercise: model.questions.Quiz, isCreation: Boolean): play.twirl.api.Html = ???
 
-  def renderExerciseCollections(user: model.User, allCollections: List[model.questions.Quiz]): play.twirl.api.Html = ???
+  override def renderExerciseCollections(user: model.User, allCollections: List[model.questions.Quiz]): play.twirl.api.Html = ???
 
   // FIXME: stubs...
 
-  def quizQuestion(quizId: Int, questionId: Int): EssentialAction = withUser { user =>
-    implicit request =>
-      Ok(views.html.questions.quizQuestion.render(user, null /* Quiz.finder.byId(quizId)*/ , questionId - 1))
-  }
+  //  def quizQuestion(quizId: Int, questionId: Int): EssentialAction = withUser { user =>
+  //    implicit request =>
+  //      Ok(views.html.questions.quizQuestion.render(user, null /* Quiz.finder.byId(quizId)*/ , questionId - 1))
+  //  }
 
   def quizStart(quizId: Int): EssentialAction = withUser { user =>
-    implicit request =>
-      Redirect(controllers.exCollections.routes.QuestionController.quizQuestion(quizId, 1))
+    implicit request => Redirect(routes.QuestionController.exercise(quizId, 1))
   }
 
   def quizzes: EssentialAction = withUser { user => implicit request => Ok(views.html.questions.quizzes.render(user, null /*Quiz.finder.all.asScala.toList*/)) }
@@ -297,4 +300,5 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   override def renderResult(correctionResult: CompleteResult[QuestionResult]): Html = ???
 
+  override protected def renderExercise(user: User, quiz: Quiz, exercise: Question): Html = ???
 }

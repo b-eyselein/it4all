@@ -1,68 +1,58 @@
-@import model._
+@(user: model.User, collections: Seq[model.CompleteCollection], toolObject: controllers.exCollections.CollectionToolObject)
 
-@(user: User, collections: Seq[CompleteCollection], toolObject: exCollections.CollectionToolObject)
+@main("Import: ...", user) {
+    <div class="container">
+        <div class="page-header">
+            <h1>Erstellte Aufgabensammlungen</h1>
+        </div>
 
-    @main("Import: ...", user) {
-        <div class="container">
-            <div class="page-header">
-                <h1>Erstellte Aufgabensammlungen</h1>
+        <a href="@controllers.exCollections.routes.SqlController.adminIndex" class="btn btn-primary btn-block">
+            Zur&uuml;ck zur Administratorseite</a>
+
+        <hr>
+
+        @for(collection <- collections) {
+                <!-- Szenariobeschreibung -->
+            <h2>@toolObject.collectionName: &quot;@collection.title&quot;</h2>
+
+            <div class="row">
+                <div class="col-sm-2"><b>ID</b>: @collection.id</div>
+                <div class="col-sm-4"><b>Autor</b>: @collection.author</div>
+                <div class="col-sm-2"><b># Aufgaben</b>: @collection.exercises.size</div>
+                <div class="col-sm-4"><b>Status</b>: @collection.state</div>
             </div>
 
-            <a href="@controllers.exCollections.routes.SqlController.adminIndex" class="btn btn-primary btn-block">
-                Zur&uuml;ck zur Administratorseite</a>
+            <div class="row">
+                <div class="col-sm-2"><b>Text:</b></div>
+                <div class="col-sm-10">@collection.text</div>
+            </div>
 
-            <hr>
+            @collection.renderRest
 
-            @for(collection <- collections) {
-                    <!-- Szenariobeschreibung -->
-                <h2>@toolObject.collectionName: &quot;@collection.title&quot;</h2>
-
-                <div class="row">
-                    <div class="col-sm-3"><b>ID</b>: @collection.id</div>
-                    <div class="col-sm-3"><b>Autor</b>: @collection.author</div>
-                    <div class="col-sm-3"><b># Aufgaben</b>: @collection.exercises.size</div>
-                    <div class="col-sm-3"><b>Status</b>: @collection.state</div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-4"><b>Text:</b></div>
-                    <div class="col-sm-8">@collection.text</div>
-                </div>
-
+                <!-- Exercises -->
+            @for(exerciseTuple <- collection.exercises.grouped(2)) {
                 <hr>
-
-                    <!-- Exercises -->
-                @* @for((exercise, index) <- collection.exercises.zipWithIndex) {
-                @if(index % 2 == 0) {
-                <div class="row">}
-                <div class="col-sm-6">
-                <div class="panel panel-default">
-                <div class="panel-heading">@{
-                exercise.ex.id + "." + exercise.text
-                }</div>
-                <div class="panel-body">
                 <div class="row">
-                <div class="col-sm-2"><b>Typ:</b></div>
-                <div class="col-sm-2">@@exercise.exerciseType</div>
-                <div class="col-sm-2"><b>Autor:</b></div>
-                <div class="col-sm-2">@@exercise.author</div>
-                <div class="col-sm-2"><b>Tags:</b></div>
-                <div class="col-sm-2">@@exercise.sqlTags</div>
-                </div>
-                <div class="row">
-                <div class="col-sm-12"><b>Musterl&ouml;sungen:</b></div>
-                </div>
-                @for(sample <- exercise.samples) {
-                <div class="row">
-                <div class="col-sm-12">
-                <pre>@sample.sample</pre>
-                </div>
-                </div>
+                @for(exercise <- exerciseTuple) {
+                    <div class="col-sm-6">
+                        <h3>@exercise.title</h3>
+                        <div class="row">
+                            <div class="col-md-2"><b>Text:</b></div>
+                            <div class="col-md-10">@exercise.text</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-2"><b>ID:</b></div>
+                            <div class="col-sm-4">@exercise.id</div>
+                            <div class="col-sm-2"><b>Autor:</b></div>
+                            <div class="col-sm-4">@exercise.author</div>
+                        </div>
+                        @exercise.preview
+                    </div>
                 }
+
                 </div>
-                </div>
-                </div>
-                @if(index % 2 == 1) {</div>}
-                }*@
             }
-        </div>
-    }
+
+        }
+    </div>
+}

@@ -1,9 +1,9 @@
 @import model.essentials.EssentialsConsts
 
-@(user: model.User, question: model.essentials.CreationQuestion)
+@(user: model.User, theQuestion: model.essentials.CreationQuestion)
 
 @variables = @{
-    question.variables ++ Option(EssentialsConsts.SolVariable)
+    theQuestion.variables ++ Option(EssentialsConsts.SolVariable)
 }
 @varSize = @{
     12 / 3
@@ -34,7 +34,7 @@
                         </tr>
                     </thead>
                     <tbody id="valueTableBody">
-                    @for(assignment <- question.solutions) {
+                    @for(assignment <- theQuestion.solutions) {
                         <tr>
                             @for(variable <- variables) {
                                 <td class="text-center" data-variable="@variable" data-value="@assignment(variable)">@assignment.asChar(variable)</td>

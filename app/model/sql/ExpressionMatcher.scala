@@ -1,12 +1,16 @@
 package model.sql
 
 import model.Enums.MatchType
-import model.core.matching.{Match, Matcher}
+import model.core.matching.{Match, Matcher, MatchingResult}
+import model.sql.BinaryExpressionMatcher._
 import model.sql.SqlConsts.CONDITIONS_NAME
 import net.sf.jsqlparser.expression.BinaryExpression
 import net.sf.jsqlparser.schema.Column
+import play.twirl.api.Html
 
 object BinaryExpressionMatcher {
+
+  val BinaryExpressionHeadings = Seq("TODO!")
 
   def compareExpressions(binEx1: BinaryExpression, userTAliases: Map[String, String],
                          binEx2: BinaryExpression, sampleTAliases: Map[String, String]): Boolean = {
@@ -32,14 +36,24 @@ object BinaryExpressionMatcher {
 }
 
 class BinaryExpressionMatcher(userTAliases: Map[String, String], sampleTAliases: Map[String, String])
-  extends Matcher[BinaryExpression, BinaryExpressionMatch](
-    CONDITIONS_NAME, List(""), BinaryExpressionMatcher.compareExpressions(_, userTAliases, _, sampleTAliases),
-    BinaryExpressionMatch)
+  extends Matcher[BinaryExpression, BinaryExpressionMatch, BinaryExpressionMatchingResult](
+    BinaryExpressionHeadings, compareExpressions(_, userTAliases, _, sampleTAliases),
+    BinaryExpressionMatch, BinaryExpressionMatchingResult)
 
 case class BinaryExpressionMatch(arg1: Option[BinaryExpression], arg2: Option[BinaryExpression], s: Int)
   extends Match[BinaryExpression](arg1, arg2, s) {
 
   //  can only be successful match
   override def analyze(a1: BinaryExpression, a2: BinaryExpression): MatchType = MatchType.SUCCESSFUL_MATCH
+
+}
+
+case class BinaryExpressionMatchingResult(allMatches: Seq[BinaryExpressionMatch]) extends MatchingResult[BinaryExpression, BinaryExpressionMatch] {
+
+  override val matchName: String = CONDITIONS_NAME
+
+  override val headings: Seq[String] = BinaryExpressionHeadings
+
+  override def describe: Html = ???
 
 }

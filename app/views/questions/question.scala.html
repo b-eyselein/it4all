@@ -1,4 +1,4 @@
-@import model.questions.QuestionEnums.QuestionType._
+@import model.questions.QuestionEnums.QuestionType
 
 @(user: model.User, question: model.questions.Question, oldAnswer: model.questions.UserAnswer)
 
@@ -8,12 +8,12 @@
             <h1>@question.text</h1>
         </div>
 
-        <form class="form-horizontal" method="post" action="@controllers.exCollections.routes.QuestionController.questionResult(question.id)">
+        <form class="form-horizontal" method="post" action="@controllers.exCollections.routes.QuestionController.correct(-1, question.id)">
 
 
             <div id="answerDiv">
                 @question.questionType match {
-                    case CHOICE => {
+                    case QuestionType.CHOICE => {
                         @for(ans <- question.answersForTemplate) {
                             <div>
                                 <label for="@ans.id">
@@ -22,7 +22,7 @@
                             </div>
                         }
                     }
-                    case FILLOUT => {
+                    case QuestionType.FILLOUT => {
                         @for(ans <- question.answersForTemplate) {
                             <div class="form-group">
                                 <div class="col-sm-12">
@@ -31,7 +31,7 @@
                             </div>
                         }
                     }
-                    case FREETEXT => {
+                    case QuestionType.FREETEXT => {
                         <div class="form-group">
                             <div class="col-sm-12">
                                 <textarea class="form-control" name="answer" rows="20"

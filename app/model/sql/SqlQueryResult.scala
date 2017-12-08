@@ -5,10 +5,15 @@ import java.sql.{ResultSet, ResultSetMetaData}
 import model.core.matching.StringMatcher
 
 import scala.collection.mutable.ListBuffer
+import scala.language.postfixOps
 import scala.util.Try
 
 object SqlQueryResult {
+
   val ColumnNameMatcher = new StringMatcher("Spaltennamen")
+
+  def apply(resultSet: ResultSet, tableName: String = "") = new SqlQueryResult(resultSet, tableName)
+
 }
 
 
@@ -24,9 +29,9 @@ class SqlCell(colName: String, resultSet: ResultSet) {
 
 class SqlRow(colNames: List[String], resultSet: ResultSet) {
 
-  val cells: Map[String, SqlCell] = colNames.map(c => (c, new SqlCell(c, resultSet))).toMap
+  val cells: Map[String, SqlCell] = colNames map (c => (c, new SqlCell(c, resultSet))) toMap
 
-  def getCells(columnNames: List[String]): List[SqlCell] = columnNames.flatMap(cells.get)
+  def getCells(columnNames: List[String]): List[SqlCell] = columnNames flatMap cells.get
 
   val size: Int = cells.size
 
@@ -35,14 +40,14 @@ class SqlRow(colNames: List[String], resultSet: ResultSet) {
 class SqlQueryResult(resultSet: ResultSet, val tableName: String = "") {
   val metaData: ResultSetMetaData = resultSet.getMetaData
 
-  val columnNames: List[String] = (1 to metaData.getColumnCount).map(count => Try(metaData.getColumnLabel(count)).getOrElse("")).toList
+  val columnNames: List[String] = (1 to metaData.getColumnCount) map (count => Try(metaData.getColumnLabel(count)) getOrElse "") toList
 
   private var pRows: ListBuffer[SqlRow] = ListBuffer.empty
   while (resultSet.next)
     pRows += new SqlRow(columnNames, resultSet)
 
 
-  val rows: List[SqlRow] = pRows.toList
+  val rows: List[SqlRow] = pRows toList
 
   val columnCount: Int = columnNames.size
 

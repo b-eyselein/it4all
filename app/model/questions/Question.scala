@@ -32,6 +32,8 @@ case class Quiz(i: Int, ti: String, a: String, te: String, s: ExerciseState, the
 
   override def coll: Quiz = this
 
+  override def renderRest: Html = ???
+
 }
 
 case class Question(i: Int, ti: String, a: String, te: String, s: ExerciseState, questionType: QuestionType)
