@@ -31,8 +31,6 @@ object SelectCorrector extends QueryCorrector("SELECT") {
     case _               => Seq.empty
   }
 
-  override protected def getTableNames(select: Q): Seq[String] = getTables(select) map (_.getName)
-
   override protected def getTables(query: Q): Seq[Table] = query.getSelectBody match {
     case plain: PlainSelect =>
 

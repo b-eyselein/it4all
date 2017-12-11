@@ -4,8 +4,11 @@ import model.Enums.MatchType
 import model.Enums.MatchType._
 import play.twirl.api.Html
 
+trait Match[T] {
 
-class Match[T](val userArg: Option[T], val sampleArg: Option[T], val size: Int) {
+  val userArg  : Option[T]
+  val sampleArg: Option[T]
+  val size     : Int
 
   val matchType: MatchType = (userArg, sampleArg) match {
     case (None, None)       => throw new IllegalArgumentException("At least one arg of a match must not be None!")
@@ -43,6 +46,12 @@ class Match[T](val userArg: Option[T], val sampleArg: Option[T], val size: Int) 
   def describeUserArg: Html = describeArgOption(userArg)
 
   def describeSampleArg: Html = describeArgOption(sampleArg)
+
+  def descUserArg: String = userArg map descArg getOrElse ""
+
+  def descSampleArg: String = sampleArg map descArg getOrElse ""
+
+  protected def descArg(arg: T): String = arg.toString
 
 }
 

@@ -2,22 +2,24 @@ package model.sql
 
 import java.sql.Connection
 
-import model.core.CommonUtils.cleanly
+import model.core.CommonUtils.using
 import net.sf.jsqlparser.expression.Expression
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.schema.Table
+
+import ColumnWrapper.wrapColumn
 
 import scala.collection.JavaConverters._
 import scala.util.Try
 
 abstract class ChangeCorrector(queryType: String) extends QueryCorrector(queryType) {
 
-  def runUpdate(conn: Connection, query: String): Try[Int] = cleanly(conn.createStatement)(_.close)(_.executeUpdate(query))
+  def runUpdate(conn: Connection, query: String): Int = using(conn.createStatement)(_.executeUpdate(query))
 
-  def runValidationQuery(conn: Connection, query: String): Try[SqlQueryResult] =
-    cleanly(conn.createStatement)(_.close)(s => new SqlQueryResult(s.executeQuery(query)))
+  def runValidationQuery(conn: Connection, query: String): SqlQueryResult =
+    using(conn.createStatement)(s => new SqlQueryResult(s.executeQuery(query)))
 
-  def getResultSet(statement: Q, connection: Connection, validation: String): Try[SqlQueryResult] = {
+  def getResultSet(statement: Q, connection: Connection, validation: String): SqlQueryResult = {
     runUpdate(connection, statement.toString)
     val result = runValidationQuery(connection, validation)
     connection.rollback()
@@ -32,11 +34,9 @@ object InsertCorrector extends ChangeCorrector("INSERT") {
 
   override type Q = Insert
 
-  override protected def getColumnWrappers(query: Q): List[ColumnWrapper] = List.empty
+  override protected def getColumnWrappers(query: Q): Seq[ColumnWrapper] = Seq.empty
 
-  override protected def getTableNames(query: Q) = List(query.getTable.getName)
-
-  override protected def getTables(query: Q) = List(query.getTable)
+  override protected def getTables(query: Q) = Seq(query.getTable)
 
   override protected def getWhere(query: Q): Option[Expression] = None
 
@@ -54,11 +54,9 @@ object DeleteCorrector extends ChangeCorrector("DELETE") {
 
   override type Q = Delete
 
-  override protected def getColumnWrappers(query: Q): List[ColumnWrapper] = List.empty
+  override protected def getColumnWrappers(query: Q): Seq[ColumnWrapper] = Seq.empty
 
-  override protected def getTableNames(query: Q) = List(query.getTable.getName)
-
-  override protected def getTables(query: Q): List[Table] = query.getTables.asScala.toList
+  override protected def getTables(query: Q): Seq[Table] = query.getTables.asScala
 
   override protected def getWhere(query: Q): Option[Expression] = Option(query.getWhere)
 
@@ -76,11 +74,9 @@ object UpdateCorrector extends ChangeCorrector("UPDATE") {
 
   override type Q = Update
 
-  override protected def getColumnWrappers(query: Q): List[ColumnWrapper] = query.getColumns.asScala.map(ColumnWrapper.wrapColumn).toList
+  override protected def getColumnWrappers(query: Q): Seq[ColumnWrapper] = query.getColumns.asScala map wrapColumn
 
-  override protected def getTableNames(query: Q): List[String] = query.getTables.asScala.map(_.getName).toList
-
-  override protected def getTables(query: Q): List[Table] = query.getTables.asScala.toList
+  override protected def getTables(query: Q): Seq[Table] = query.getTables.asScala
 
   override protected def getWhere(query: Q): Option[Expression] = Option(query.getWhere)
 

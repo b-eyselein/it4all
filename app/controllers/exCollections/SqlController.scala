@@ -114,6 +114,8 @@ class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
     val sample = findBestFittingSample(learnerSolution, exercise.samples toList)
 
+    // FIXME: parse queries here!
+
     correctors(exercise.ex.exerciseType).correct(daos(exercise.ex.exerciseType), learnerSolution, sample, exercise, sqlScenario)
   })
 

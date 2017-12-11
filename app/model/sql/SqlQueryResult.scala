@@ -2,15 +2,11 @@ package model.sql
 
 import java.sql.{ResultSet, ResultSetMetaData}
 
-import model.core.matching.StringMatcher
-
 import scala.collection.mutable.ListBuffer
 import scala.language.postfixOps
 import scala.util.Try
 
 object SqlQueryResult {
-
-  val ColumnNameMatcher = new StringMatcher("Spaltennamen")
 
   def apply(resultSet: ResultSet, tableName: String = "") = new SqlQueryResult(resultSet, tableName)
 

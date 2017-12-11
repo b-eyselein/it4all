@@ -1,6 +1,7 @@
 package model.core.matching
 
 import model.Enums
+import model.Enums.MatchType
 import model.Enums.MatchType._
 import model.Enums.SuccessType._
 import model.core.EvaluationResult
@@ -27,12 +28,45 @@ trait MatchingResult[T, M <: Match[T]] extends EvaluationResult {
     else
       COMPLETE
 
-  def describe: Html = new Html("")
+  private def groupWrongMatches: Map[MatchType, Seq[M]] = allMatches filter (!_.isSuccessful) groupBy (_.matchType)
+
+  def describe: Html = {
+    val message: String = success match {
+      case COMPLETE => s"Die Korrektur der $matchName war erfolgreich."
+
+      case (PARTIALLY | NONE) =>
+        val groupedWrongMatches = groupWrongMatches
+        s"Die Korrektur der $matchName ergab folgende Fehler:<ul>" +
+          (groupedWrongMatches get UNSUCCESSFUL_MATCH map describePartialMatches getOrElse "") +
+          (groupedWrongMatches get ONLY_SAMPLE map describeOnlySampleMatches getOrElse "") +
+          (groupedWrongMatches get ONLY_USER map describeOnlyUserMatches getOrElse "") + "</ul>"
+
+      case ERROR => s"Es gab einen Fehler bei der Korrektur der $matchName!"
+    }
+
+    new Html(s"""<div class="alert alert-${success.color}"><span class="${success.glyphicon}"></span> $message</div>""")
+  }
+
+
+  protected def describePartialMatches(colMatches: Seq[M]): String = colMatches match {
+    case Nil => ""
+    case ms  => s"\n<li>Bei folgenden $matchName war die Korrektur nicht komplett erfolgreicht: ${ms map ("<code>" + _.describeUserArg + "</code>") mkString ", "}</li>"
+  }
+
+  protected def describeOnlySampleMatches(matches: Seq[M]): String = matches match {
+    case Nil => ""
+    case ms  => s"\n<li>Folgende $matchName fehlen: ${ms map (m => "<code>" + m.descSampleArg + "</code>") mkString ", "}</li>"
+  }
+
+  protected def describeOnlyUserMatches(matches: Seq[M]): String = matches match {
+    case Nil => ""
+    case ms  => s"\n<li>Folgende $matchName waren überzählig: ${ms map (m => "<code>" + m.descUserArg + "</code>") mkString ", "}</li>"
+  }
 
 }
 
 class Matcher[T, M <: Match[T], R <: MatchingResult[T, M]](val headings: Seq[String], canMatch: (T, T) => Boolean,
-                                                           matchInstantiation: (Option[T], Option[T], Int) => M,
+                                                           matchInstantiation: (Option[T], Option[T]) => M,
                                                            resultInstantiation: Seq[M] => R) {
 
   def doMatch(firstCollection: Seq[T], secondCollection: Seq[T]): R = {
@@ -46,30 +80,17 @@ class Matcher[T, M <: Match[T], R <: MatchingResult[T, M]](val headings: Seq[Str
       for (arg2 <- secondList if !matched) {
         matched = canMatch(arg1, arg2)
         if (matched) {
-          matches += matchInstantiation(Some(arg1), Some(arg2), headings.size)
+          matches += matchInstantiation(Some(arg1), Some(arg2))
           firstList -= arg1
           secondList -= arg2
         }
       }
     }
 
-    val wrong = firstList map (t => matchInstantiation apply(Some(t), None, headings.size))
-    val missing = secondList map (t => matchInstantiation apply(None, Some(t), headings.size))
+    val wrong = firstList map (t => matchInstantiation(Some(t), None))
+    val missing = secondList map (t => matchInstantiation(None, Some(t)))
 
     resultInstantiation(matches ++ wrong ++ missing)
   }
 
 }
-
-case class StringMatchingResult(allMatches: Seq[Match[String]]) extends MatchingResult[String, Match[String]] {
-
-  override val matchName = "TODO!"
-
-  override val headings: Seq[String] = Seq("String-Repräsentation")
-
-  override def describe: Html = super.describe
-
-}
-
-class StringMatcher(matchName: String) extends Matcher[String, Match[String], StringMatchingResult](
-  Seq("String-Repraesentation"), _ == _, new Match[String](_, _, _), StringMatchingResult)

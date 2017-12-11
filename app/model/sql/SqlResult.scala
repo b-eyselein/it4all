@@ -1,13 +1,13 @@
 package model.sql
 
 import model.Enums.SuccessType
-import model.core.matching.{Match, MatchingResult, StringMatchingResult}
+import model.core.matching.{Match, MatchingResult}
 import model.core.{CompleteResult, EvaluationResult}
 
 abstract class SqlCorrResult(l: String, results: Seq[EvaluationResult]) extends CompleteResult[EvaluationResult](l, results)
 
 case class SqlResult(l: String,
-                     columnComparison: ColumnMatchingResult, tableComparison: StringMatchingResult,
+                     columnComparison: ColumnMatchingResult, tableComparison: TableMatchingResult,
                      whereComparison: BinaryExpressionMatchingResult, executionResult: Option[SqlExecutionResult],
                      groupByComparison: Option[GroupByMatchingResult], orderByComparison: Option[OrderByMatchingResult])
 
@@ -26,6 +26,6 @@ case class SqlExecutionResult(userResult: SqlQueryResult, sampleResult: SqlQuery
 
   override val success: SuccessType =
     if (userResult == null || sampleResult == null) SuccessType.ERROR
-    else SuccessType.ofBool(userResult.isIdentic(sampleResult))
+    else SuccessType.ofBool(userResult isIdentic sampleResult)
 
 }

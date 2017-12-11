@@ -37,11 +37,11 @@ object BinaryExpressionMatcher {
 
 class BinaryExpressionMatcher(userTAliases: Map[String, String], sampleTAliases: Map[String, String])
   extends Matcher[BinaryExpression, BinaryExpressionMatch, BinaryExpressionMatchingResult](
-    BinaryExpressionHeadings, compareExpressions(_, userTAliases, _, sampleTAliases),
-    BinaryExpressionMatch, BinaryExpressionMatchingResult)
+    BinaryExpressionHeadings, compareExpressions(_, userTAliases, _, sampleTAliases), BinaryExpressionMatch, BinaryExpressionMatchingResult)
 
-case class BinaryExpressionMatch(arg1: Option[BinaryExpression], arg2: Option[BinaryExpression], s: Int)
-  extends Match[BinaryExpression](arg1, arg2, s) {
+case class BinaryExpressionMatch(userArg: Option[BinaryExpression], sampleArg: Option[BinaryExpression]) extends Match[BinaryExpression] {
+
+  override val size: Int = 1
 
   //  can only be successful match
   override def analyze(a1: BinaryExpression, a2: BinaryExpression): MatchType = MatchType.SUCCESSFUL_MATCH
@@ -53,7 +53,5 @@ case class BinaryExpressionMatchingResult(allMatches: Seq[BinaryExpressionMatch]
   override val matchName: String = CONDITIONS_NAME
 
   override val headings: Seq[String] = BinaryExpressionHeadings
-
-  override def describe: Html = ???
 
 }

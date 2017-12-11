@@ -32,7 +32,9 @@ object SelectMatcher {
 
 }
 
-case class GroupByMatch(ua: Option[Expression], sa: Option[Expression], s: Int) extends Match[Expression](ua, sa, s) {
+case class GroupByMatch(userArg: Option[Expression], sampleArg: Option[Expression]) extends Match[Expression] {
+
+  override val size: Int = GroupByHeadings.size
 
   override def analyze(ua: Expression, sa: Expression): MatchType = SUCCESSFUL_MATCH
 
@@ -46,12 +48,11 @@ case class GroupByMatchingResult(allMatches: Seq[GroupByMatch]) extends Matching
 
   override val headings: Seq[String] = GroupByHeadings
 
-  override def describe: Html = ???
-
 }
 
+case class OrderByMatch(userArg: Option[OrderByElement], sampleArg: Option[OrderByElement]) extends Match[OrderByElement] {
 
-case class OrderByMatch(ua: Option[OrderByElement], sa: Option[OrderByElement], s: Int) extends Match[OrderByElement](ua, sa, s) {
+  override val size: Int = OrderByHeadings.size
 
   override def analyze(ua: OrderByElement, sa: OrderByElement): MatchType = SUCCESSFUL_MATCH
 
@@ -64,7 +65,5 @@ case class OrderByMatchingResult(allMatches: Seq[OrderByMatch]) extends Matching
   override val matchName: String = OrderByName
 
   override val headings: Seq[String] = OrderByHeadings
-
-  override def describe: Html = ???
 
 }

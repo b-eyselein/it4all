@@ -12,8 +12,10 @@ import play.twirl.api.Html
 
 import scala.language.postfixOps
 
-case class ColumnMatch(uc: Option[ColumnWrapper], sc: Option[ColumnWrapper], s: Int)
-  extends Match[ColumnWrapper](uc, sc, s) {
+case class ColumnMatch(userArg: Option[ColumnWrapper], sampleArg: Option[ColumnWrapper])
+  extends Match[ColumnWrapper] {
+
+  override val size: Int = ColumnMatcher.headings.size
 
   val hasAlias: Boolean = (userArg exists (_.hasAlias)) || (sampleArg exists (_.hasAlias))
 
@@ -39,36 +41,9 @@ case class ColumnMatchingResult(allMatches: Seq[ColumnMatch]) extends MatchingRe
 
   override val headings: Seq[String] = ColumnMatcher.headings
 
-  override def describe: Html = {
-    val message: String = success match {
-
-      case COMPLETE => "Die Korrektur der Spalten war erfolgreich."
-
-      // Teilfehler in einem Spaltenvergleich
-      case PARTIALLY => "Die Korrektur der Spalten ergab folgende (Teil-)fehler" + (allMatches filter (_.matchType == UNSUCCESSFUL_MATCH) toString())
-
-      case NONE => "Die Korrektur der Spalten ergab folgende Fehler:<ul>" +
-        onlySampleColMatches(allMatches filter (_.matchType == ONLY_SAMPLE)) +
-        onlyUserColMatches(allMatches filter (_.matchType == ONLY_USER)) + "</ul>"
-
-      case ERROR => "Es gab einen Fehler bei der Korrektur!"
-    }
-    new Html(s"""<div class="alert alert-${success.color}"><span class="${success.glyphicon}"></span> $message</div>""")
-  }
-
-  private def onlySampleColMatches(colMatches: Seq[ColumnMatch]): String = colMatches match {
-    case Nil => ""
-    case ms  => s"\n<li>Folgende Spalten fehlten: ${ms map (_.secondColName) mkString ", "}</li>"
-  }
-
-  private def onlyUserColMatches(colMatches: Seq[ColumnMatch]): String = colMatches match {
-    case Nil => ""
-    case ms  => s"\n<li>Folgende Spalten waren überzählig: ${ms map (_.firstColName) mkString ", "}</li>"
-  }
-
 }
 
-object ColumnMatcher extends Matcher[ColumnWrapper, ColumnMatch, ColumnMatchingResult](List("Spaltenname"), _.canMatch(_), ColumnMatch, ColumnMatchingResult)
+object ColumnMatcher extends Matcher[ColumnWrapper, ColumnMatch, ColumnMatchingResult](List("Spaltenname"), _ canMatch _, ColumnMatch, ColumnMatchingResult)
 
 abstract sealed class ColumnWrapper {
 
@@ -148,13 +123,13 @@ case class CreateColumnWrapper(col: ColumnDefinition) extends ColumnWrapper {
 
   override def getColName: String = col.getColumnName
 
-  override def getRest: String = col.getColDataType.getDataType.toUpperCase
+  override def getRest: String = col.getColDataType.getDataType toUpperCase
 
   def matchOther(that: CreateColumnWrapper): MatchType = {
     val theArg1 = col
     val theArg2 = that.col
 
-    val datatypeName = col.getColumnName
+    //    val datatypeName = col.getColumnName
 
     val typesOk = compareDataTypes(theArg1.getColDataType, theArg2.getColDataType)
 
@@ -164,11 +139,11 @@ case class CreateColumnWrapper(col: ColumnDefinition) extends ColumnWrapper {
   }
 
   def compareDataTypes(userType: ColDataType, sampleType: ColDataType): Boolean = {
-    val firstColType = userType.getDataType.toUpperCase
-    val secondColType = sampleType.getDataType.toUpperCase
+    val firstColType = userType.getDataType toUpperCase
+    val secondColType = sampleType.getDataType toUpperCase
 
     // Comparing datatype
-    firstColType.equalsIgnoreCase(secondColType)
+    firstColType equalsIgnoreCase secondColType
     // return "Datentyp \"" + firstColType + "\" ist nicht korrekt, erwartet
     // wurde \"" + secondColType + "\"!"
 
@@ -200,8 +175,8 @@ case class SelectColumnWrapper(col: SelectItem) extends ColumnWrapper {
 
   def compareAliases(maybeAlias1: Option[Alias], maybeAlias2: Option[Alias]): Boolean = (maybeAlias1, maybeAlias2) match {
     case (Some(alias1), Some(alias2)) => alias1.getName == alias2.getName
-    case (Some(alias1), None)         => false
-    case (None, Some(alias2))         => false
+    case (Some(_), None)              => false
+    case (None, Some(_))              => false
     case (None, None)                 => true
   }
 

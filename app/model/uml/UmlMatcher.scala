@@ -2,7 +2,7 @@ package model.uml
 
 import model.Enums.MatchType
 import model.Enums.MatchType._
-import model.core.matching.{Match, Matcher, MatchingResult, StringMatcher}
+import model.core.matching.{Match, Matcher, MatchingResult}
 import model.uml.UmlEnums.UmlMultiplicity
 import model.uml.UmlMatchingHelper._
 import play.twirl.api.Html
@@ -32,8 +32,9 @@ object UmlMatchingHelper {
 object UmlAssociationMatcher extends Matcher[UmlAssociation, UmlAssociationMatch, UmlAssociationMatchingResult](
   AssociationMatchHeaders, canAssocsMatch, UmlAssociationMatch, UmlAssociationMatchingResult)
 
-case class UmlAssociationMatch(a1: Option[UmlAssociation], a2: Option[UmlAssociation], s: Int)
-  extends Match[UmlAssociation](a1, a2, s) {
+case class UmlAssociationMatch(userArg: Option[UmlAssociation], sampleArg: Option[UmlAssociation]) extends Match[UmlAssociation] {
+
+  override val size = 1
 
   var matched            : Boolean = _
   var endsCrossed        : Boolean = _
@@ -90,7 +91,9 @@ case class UmlAssociationMatchingResult(allMatches: Seq[UmlAssociationMatch]) ex
 
 // Classes
 
-case class UmlClassMatch(m1: Option[UmlCompleteClass], m2: Option[UmlCompleteClass], s: Int, compAM: Boolean) extends Match[UmlCompleteClass](m1, m2, s) {
+case class UmlClassMatch(userArg: Option[UmlCompleteClass], sampleArg: Option[UmlCompleteClass], compAM: Boolean) extends Match[UmlCompleteClass] {
+
+  override val size = 1
 
   var attributesResult: MatchingResult[String, Match[String]] = _
   var methodsResult   : MatchingResult[String, Match[String]] = _
@@ -98,8 +101,8 @@ case class UmlClassMatch(m1: Option[UmlCompleteClass], m2: Option[UmlCompleteCla
   override def analyze(c1: UmlCompleteClass, c2: UmlCompleteClass): MatchType = if (!compAM) SUCCESSFUL_MATCH
   else {
     // FIXME: get attributes!
-    attributesResult = new StringMatcher("Attribute").doMatch(c1.allAttrs, c2.allAttrs)
-    methodsResult = new StringMatcher("Methoden").doMatch(c1.allMethods, c2.allMethods)
+    //    attributesResult = new StringMatcher("Attribute").doMatch(c1.allAttrs, c2.allAttrs)
+    //    methodsResult = new StringMatcher("Methoden").doMatch(c1.allMethods, c2.allMethods)
 
     if (attributesResult.isSuccessful && methodsResult.isSuccessful) SUCCESSFUL_MATCH else UNSUCCESSFUL_MATCH
   }
@@ -110,7 +113,7 @@ case class UmlClassMatch(m1: Option[UmlCompleteClass], m2: Option[UmlCompleteCla
 }
 
 case class UmlClassMatcher(compareAttrsAndMethods: Boolean) extends Matcher[UmlCompleteClass, UmlClassMatch, UmlClassMatchingResult](
-  Seq("Klassenname"), _.clazz.className == _.clazz.className, UmlClassMatch(_, _, _, compareAttrsAndMethods), UmlClassMatchingResult)
+  Seq("Klassenname"), _.clazz.className == _.clazz.className, UmlClassMatch(_, _, compareAttrsAndMethods), UmlClassMatchingResult)
 
 case class UmlClassMatchingResult(allMatches: Seq[UmlClassMatch]) extends MatchingResult[UmlCompleteClass, UmlClassMatch] {
 
@@ -127,8 +130,9 @@ case class UmlClassMatchingResult(allMatches: Seq[UmlClassMatch]) extends Matchi
 object UmlImplementationMatcher extends Matcher[UmlImplementation, UmlImplementationMatch, UmlImplementationMatchingResult](
   ImplMatchHeaders, compareImpls, UmlImplementationMatch, UmlImplementationMatchingResult)
 
-case class UmlImplementationMatch(i1: Option[UmlImplementation], i2: Option[UmlImplementation], s: Int)
-  extends Match[UmlImplementation](i1, i2, s) {
+case class UmlImplementationMatch(userArg: Option[UmlImplementation], sampleArg: Option[UmlImplementation]) extends Match[UmlImplementation] {
+
+  override val size: Int = 1
 
   override def analyze(i1: UmlImplementation, i2: UmlImplementation): MatchType =
     if (i1.subClass == i2.subClass && i1.superClass == i2.superClass) SUCCESSFUL_MATCH else UNSUCCESSFUL_MATCH
