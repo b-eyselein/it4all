@@ -8,16 +8,16 @@ import play.api.mvc.Call
 
 object SqlToolObject extends CollectionToolObject {
 
-  override val collectionName: String = "Szenario"
-
   override type CompEx = SqlCompleteEx
 
-  override val hasTags   : Boolean   = true
-  override val toolname  : String    = "Sql"
-  override val exType    : String    = "sql"
-  override val pluralName: String    = "Szenarien"
-  override val toolState : ToolState = ToolState.ALPHA
-  override val consts    : Consts    = SqlConsts
+  override val hasTags       : Boolean   = true
+  override val toolname      : String    = "Sql"
+  override val exType        : String    = "sql"
+  override val consts        : Consts    = SqlConsts
+  override val collectionName: String    = "Szenario"
+  override val pluralName    : String    = "Szenarien"
+  override val hasExType     : Boolean   = true
+  override val toolState     : ToolState = ToolState.ALPHA
 
   override def indexCall: Call = routes.SqlController.index()
 

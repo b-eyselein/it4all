@@ -42,6 +42,8 @@ trait ExToolObject extends ToolObject with FileUtils {
 
   lazy val exerciseRootDir: Path = Paths.get(rootDir, exType)
 
+  val hasExType: Boolean = false
+
 
   def sampleDirForExercise(exercise: HasBaseValues): Path = exerciseRootDir / SAMPLE_SUB_DIRECTORY / String.valueOf(exercise.id)
 

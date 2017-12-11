@@ -77,8 +77,6 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E,
 
   protected def saveRead(read: Seq[CompColl]): Future[Seq[Boolean]]
 
-  // Reading from form TODO: Move to other file?
-
   //  val PROGRESS_LOGGER: Logger.ALogger = Logger.of("progress")
 
   def log(user: User, eventToLog: WorkingEvent): Unit = Unit // PROGRESS_LOGGER.debug(s"""${user.username} - ${Json.toJson(eventToLog)}""")
@@ -112,7 +110,7 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E,
     }
 
   def adminExportExercises: EssentialAction = futureWithAdmin { admin =>
-    implicit request => completeColls map (exes => Ok(views.html.admin.export.render(admin, yamlString(exes), toolObject)))
+    implicit request => completeColls map (exes => Ok(views.html.admin.export(admin, yamlString(exes), toolObject)))
   }
 
   def adminExportExercisesAsFile: EssentialAction = futureWithAdmin { admin =>
@@ -159,12 +157,12 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E,
     implicit request =>
       //    exerciseReader.initFromForm(id, factory.form().bindFromRequest()) match {
       //      case error: ReadingError =>
-      //        BadRequest(views.html.jsonReadingError.render(admin, error))
+      //        BadRequest(views.html.jsonReadingError(admin, error))
       //      case _: ReadingFailure => BadRequest("There has been an error...")
       //      case result: ReadingResult[E] =>
       //
       //        result.read.foreach(res => exerciseReader.save(res.read))
-      //        Ok(views.html.admin.exPreview.render(admin, toolObject, result.read))
+      //        Ok(views.html.admin.exPreview(admin, toolObject, result.read))
       //    }
       Ok("TODO!")
   }
@@ -175,14 +173,14 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E,
   }
 
   def adminExerciseList: EssentialAction = futureWithAdmin { admin =>
-    implicit request => completeColls map (colls => Ok(views.html.admin.collectionList.render(admin, colls, toolObject)))
+    implicit request => completeColls map (colls => Ok(views.html.admin.collectionList(admin, colls, toolObject)))
   }
 
   def adminNewExerciseForm: EssentialAction = withAdmin { admin =>
     // FIXME
     implicit request =>
       // FIXME: ID of new exercise?
-      Ok(views.html.admin.editExForm.render(admin, toolObject, None, renderEditRest(None)))
+      Ok(views.html.admin.editExForm(admin, toolObject, None, renderEditRest(None)))
   }
 
   def newExercise: EssentialAction = withAdmin { admin =>
@@ -218,7 +216,13 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E,
   }
 
   def filteredCollection(id: Int, filter: String, page: Int): EssentialAction = futureWithUser { user =>
-    implicit request => completeCollById(id) map (coll => Ok("TODO!"))
+    implicit request =>
+      completeCollById(id) map {
+        case Some(coll) =>
+          val exes = takeSlice(coll.exercisesWithFilter(filter), page)
+          Ok(views.html.core.filteredCollection(user, coll, exes, toolObject, filter, page, (coll.exercises.size / STEP) + 2))
+        case None       => BadRequest("TODO!")
+      }
     //      Option(SqlScenario.finder.byId(id)) match {
     //        case None => Redirect(controllers.sql.routes.SqlController.index())
     //        case Some(scenario) =>
@@ -230,7 +234,7 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E,
     //            val allByType = scenario.getExercisesByType(SqlExerciseType.valueOf(exType))
     //            val exercises = allByType.subList(start, Math.min(start + SqlScenario.STEP, allByType.size))
     //
-    //            Ok(views.html.sqlScenario.render(user, exercises.asScala.toList, scenario, SqlExerciseType.valueOf(exType), site))
+    //            Ok(views.html.sqlScenario(user, exercises.asScala.toList, scenario, SqlExerciseType.valueOf(exType), site))
     //          }
     //      }
   }
@@ -314,7 +318,11 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E,
   }
 
   def correctLive(collId: Int, id: Int): EssentialAction = futureWithUser { user =>
-    implicit request => correctAbstract(user, collId, id, readSolutionFromPutRequest, renderResult, error => {error.printStackTrace(); Json.obj("message" -> error.getMessage)})
+    implicit request =>
+      correctAbstract(user, collId, id, readSolutionFromPutRequest, renderResult, error => {
+        error.printStackTrace();
+        Json.obj("message" -> error.getMessage)
+      })
   }
 
   private def correctAbstract[S, Err](user: User, collId: Int, id: Int, maybeSolution: Option[SolType],

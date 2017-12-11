@@ -1,5 +1,6 @@
 @(user: model.User, collection: model.CompleteCollection, exes: Seq[model.CompleteEx[_]], toolObject: controllers.exCollections.CollectionToolObject, currentSite: Int, numOfSites: Int)
 
+
 @main("Collection", user) {
     <div class="container">
         <div class="page-header">
@@ -9,7 +10,7 @@
         <div class="row">
             <div class="col-md-1">Tags</div>
             <div class="col-md-1">Link</div>
-            <div class="col-md-1">Typ</div>
+            @if(toolObject.hasExType) {<div class="col-md-1">Typ</div>}
             <div class="col-md-9">Text</div>
         </div>
 
@@ -21,7 +22,8 @@
                     @tag.render
                 }</div>
                 <div class="col-md-1"><a href="@controllers.exCollections.routes.SqlController.exercise(collection.id, ex.id)" class="btn btn-default btn-block">@ex.id</a></div>
-                <div class="col-md-1">@@ex.exType</div>
+                @if(toolObject.hasExType) {<div class="col-md-1">
+                    <a href="@exCollections.routes.SqlController.filteredCollection(collection.id, ex.exType)">@ex.exType</a></div>}
                 <div class="col-md-9">@ex.text</div>
             </div>
 

@@ -52,6 +52,8 @@ trait CompleteEx[E <: Exercise] extends HasBaseValues {
 
   def renderListRest: Html
 
+  def exType: String = ""
+
   def exerciseRoutes: Map[Call, String]
 
 }
@@ -85,6 +87,8 @@ trait CompleteCollection extends HasBaseValues {
   def coll: CollType
 
   override def baseValues: BaseValues = coll.baseValues
+
+  def exercisesWithFilter(filter: String): Seq[CompExType] = exercises
 
   def exercises: Seq[CompExType]
 

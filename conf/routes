@@ -389,7 +389,7 @@ GET           /sql/                                       controllers.exCollecti
 GET           /sql/scenarioes                             controllers.exCollections.SqlController.collectionList(page: Int ?= 1)
 GET           /sql/scenarioes/:collId                     controllers.exCollections.SqlController.collection(collId: Int, page: Int ?= 1)
 
-GET           /sql/scenarioes/:collId                     controllers.exCollections.SqlController.filteredCollection(collId: Int, filter: String, site: Int ?= 1)
+GET           /sql/scenarioes/:collId/:filter             controllers.exCollections.SqlController.filteredCollection(collId: Int, filter: String, site: Int ?= 1)
 GET           /sql/:collId/:id                            controllers.exCollections.SqlController.exercise(collId: Int, id: Int)
 
 PUT           /sql/:collId/:id                            controllers.exCollections.SqlController.correctLive(collId: Int, id: Int)

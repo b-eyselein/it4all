@@ -1,9 +1,10 @@
-@(user: model.User, collection: model.CompleteCollection, toolObject: controllers.exCollections.CollectionToolObject, filter: String, currentSite: Int, numOfSites: Int)
+@(user: model.User, collection: model.CompleteCollection, exercises: Seq[_ <: model.CompleteEx[_]], toolObject: controllers.exCollections.CollectionToolObject,
+        filter: String, currentSite: Int, numOfSites: Int)
 
 @main("Collection", user) {
     <div class="container">
         <div class="page-header">
-            <h1>@toolObject.collectionName &quot;@collection.coll.title&quot;</h1>
+            <h1>@toolObject.collectionName &quot;@collection.coll.title&quot; - Filter: &quot;@filter&quot;</h1>
         </div>
 
         <div class="row">
@@ -15,14 +16,14 @@
 
         <hr>
 
-        @for(ex <- collection.exercises) {
+        @for(ex <- exercises) {
             <div class="row">
                 <div class="col-md-1">@for(tag <- ex.tags) {
                     @tag.render
                 }</div>
-                <div class="col-md-1"><a href="@controllers.exCollections.routes.SqlController.exercise(collection.id, ex.id)" class="btn btn-default btn-block">@ex.ex.id</a></div>
-                <div class="col-md-1">@@ex.exType</div>
-                <div class="col-md-10">@ex.ex.text</div>
+                <div class="col-md-1"><a href="@controllers.exCollections.routes.SqlController.exercise(collection.id, ex.id)" class="btn btn-default btn-block">@ex.id</a></div>
+                <div class="col-md-1">@ex.exType</div>
+                <div class="col-md-9">@ex.text</div>
             </div>
 
             <br>

@@ -23,6 +23,8 @@ case class SqlCompleteScenario(override val coll: SqlScenario, override val exer
 
   override type CollType = SqlScenario
 
+  override def exercisesWithFilter(filter: String): Seq[SqlCompleteEx] = SqlExerciseType.byString(filter) map (exType => getExercisesByType(exType)) getOrElse Seq.empty
+
   def getExercisesByType(exType: SqlExerciseType): Seq[SqlCompleteEx] = exercises filter (_.ex.exerciseType == exType)
 
   override def renderRest: Html = new Html(
@@ -37,6 +39,8 @@ case class SqlCompleteEx(ex: SqlExercise, samples: Seq[SqlSample]) extends Compl
 
   override def tags: Seq[SqlExTag] = (ex.tags split TagJoinChar).toSeq flatMap SqlExTag.byString
 
+  override def exType: String = ex.exerciseType.name
+
   override def preview: Html = new Html(
     s"""<div class="row">
        |  <div class="col-sm-2"><b>Typ:</b></div>
@@ -48,6 +52,7 @@ case class SqlCompleteEx(ex: SqlExercise, samples: Seq[SqlSample]) extends Compl
        |  <div class="col-sm-12"><b>Musterl&ouml;sungen:</b></div>
        |</div>
        |${samples map (sample => s"<pre>${sample.sample}</pre>") mkString}""".stripMargin)
+
 
   override def renderListRest: Html = ???
 
