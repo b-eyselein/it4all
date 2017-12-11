@@ -18,7 +18,7 @@ object SelectCorrector extends QueryCorrector("SELECT") {
 
   override type Q = net.sf.jsqlparser.statement.select.Select
 
-  def executeStatement(select: String, conn: Connection): SqlQueryResult =
+  def executeStatement(select: String, conn: Connection): Try[SqlQueryResult] =
     using(conn.createStatement)(statement => new SqlQueryResult(statement.executeQuery(select)))
 
   def getColumns(select: Q): Seq[SelectItem] = select.getSelectBody match {

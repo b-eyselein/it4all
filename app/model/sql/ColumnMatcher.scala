@@ -2,13 +2,11 @@ package model.sql
 
 import model.Enums.MatchType
 import model.Enums.MatchType._
-import model.Enums.SuccessType._
 import model.core.matching.{Match, Matcher, MatchingResult}
 import net.sf.jsqlparser.expression.Alias
 import net.sf.jsqlparser.schema.Column
 import net.sf.jsqlparser.statement.create.table.{ColDataType, ColumnDefinition}
 import net.sf.jsqlparser.statement.select.{AllColumns, AllTableColumns, SelectExpressionItem, SelectItem}
-import play.twirl.api.Html
 
 import scala.language.postfixOps
 

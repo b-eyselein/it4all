@@ -8,7 +8,6 @@ import model.core.Levenshtein.levenshteinDistance
 import model.core._
 import model.sql.SqlConsts._
 import model.sql.SqlEnums.SqlExerciseType
-import model.sql.SqlYamlProtocol.SqlScenarioYamlFormat
 import model.sql._
 import model.{JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
@@ -21,7 +20,6 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future, duration}
 import scala.language.{implicitConversions, postfixOps}
 import scala.util.Try
-
 
 object SqlController {
 
@@ -42,7 +40,7 @@ object SqlController {
   )
 
   def findBestFittingSample(userSt: String, samples: List[SqlSample]): SqlSample =
-    samples.reduceLeft((samp1, samp2) => if (levenshteinDistance(samp1.sample, userSt) < levenshteinDistance(samp2.sample, userSt)) samp1 else samp2)
+    samples.minBy(samp => levenshteinDistance(samp.sample, userSt))
 
 }
 
@@ -66,7 +64,7 @@ class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   override type CompEx = SqlCompleteEx
 
-  override implicit val yamlFormat: YamlFormat[SqlCompleteScenario] = SqlScenarioYamlFormat
+  override implicit val yamlFormat: YamlFormat[SqlCompleteScenario] = SqlYamlProtocol.SqlScenarioYamlFormat
 
   // db
 

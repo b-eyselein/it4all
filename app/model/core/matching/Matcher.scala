@@ -11,6 +11,14 @@ import scala.collection.mutable.ListBuffer
 
 trait MatchingResult[T, M <: Match[T]] extends EvaluationResult {
 
+  implicit class PimpedBSStrign(string: String) {
+
+    def asCode: String = "<code>" + string + "</code>"
+
+    def asListElem: String = "<li>" + string + "</li>"
+
+  }
+
   val matchName: String
 
   val headings: Seq[String]
@@ -50,17 +58,17 @@ trait MatchingResult[T, M <: Match[T]] extends EvaluationResult {
 
   protected def describePartialMatches(colMatches: Seq[M]): String = colMatches match {
     case Nil => ""
-    case ms  => s"\n<li>Bei folgenden $matchName war die Korrektur nicht komplett erfolgreicht: ${ms map ("<code>" + _.describeUserArg + "</code>") mkString ", "}</li>"
+    case ms  => s"Bei folgenden $matchName war die Korrektur nicht komplett erfolgreich: ${ms map (_.descUserArg.asCode) mkString ", "}".asListElem
   }
 
   protected def describeOnlySampleMatches(matches: Seq[M]): String = matches match {
     case Nil => ""
-    case ms  => s"\n<li>Folgende $matchName fehlen: ${ms map (m => "<code>" + m.descSampleArg + "</code>") mkString ", "}</li>"
+    case ms  => s"Folgende $matchName fehlen: ${ms map (_.descSampleArg.asCode) mkString ", "}".asListElem
   }
 
   protected def describeOnlyUserMatches(matches: Seq[M]): String = matches match {
     case Nil => ""
-    case ms  => s"\n<li>Folgende $matchName waren überzählig: ${ms map (m => "<code>" + m.descUserArg + "</code>") mkString ", "}</li>"
+    case ms  => s"Folgende $matchName waren falsch: ${ms map (_.descUserArg.asCode) mkString ", "}".asListElem
   }
 
 }

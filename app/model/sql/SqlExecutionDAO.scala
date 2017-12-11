@@ -9,6 +9,7 @@ import slick.jdbc.JdbcBackend.Database
 
 import scala.collection.mutable.ListBuffer
 import scala.io.Source
+import scala.util.Try
 
 abstract class SqlExecutionDAO(mainDbName: String, port: Int) {
 
@@ -17,10 +18,15 @@ abstract class SqlExecutionDAO(mainDbName: String, port: Int) {
   protected def db(schemaName: String): Database = Database.forURL(url = s"jdbc:mysql://localhost:$port/$schemaName?useSSL=false",
     user = "it4all", password = "sT8aV#k7", driver = "com.mysql.cj.jdbc.Driver")
 
-  def executeQuery(schemaName: String, userStatement: String, sampleStatement: String): SqlExecutionResult = using(db(schemaName).source.createConnection()) { connection =>
-    val userResultSet = connection.prepareStatement(userStatement).executeQuery()
-    val sampleResultSet = connection.prepareStatement(sampleStatement).executeQuery()
-    SqlExecutionResult(new SqlQueryResult(userResultSet), new SqlQueryResult(sampleResultSet))
+  def executeQueries(schemaName: String, userStatement: String, sampleStatement: String): SqlExecutionResult =
+    SqlExecutionResult(executeQuery(schemaName, userStatement), executeQuery(schemaName, sampleStatement))
+
+  private def executeQuery(schemaName: String, query: String): Try[SqlQueryResult] = using(db(schemaName).source.createConnection()) { connection =>
+    val statement = connection.prepareStatement(query)
+    val res = statement.executeQuery()
+    val ret = SqlQueryResult(res)
+    statement.close()
+    ret
   }
 
   def executeSetup(schemaName: String, scriptFilePath: Path): Unit = {
@@ -28,8 +34,9 @@ abstract class SqlExecutionDAO(mainDbName: String, port: Int) {
       val res = mainConnection.prepareStatement(s"SHOW DATABASES LIKE '$schemaName';").executeQuery()
 
       if (!res.next() || res.getString(1) != schemaName) {
-        var createStatement = mainConnection.prepareStatement(s"CREATE DATABASE IF NOT EXISTS $schemaName")
+        val createStatement = mainConnection.prepareStatement(s"CREATE DATABASE IF NOT EXISTS $schemaName")
         createStatement.execute()
+        createStatement.close()
       }
     }
 
@@ -55,7 +62,7 @@ abstract class SqlExecutionDAO(mainDbName: String, port: Int) {
 
       queries
     }
-  }
+  } getOrElse Seq.empty
 
   private def allTableNames(connection: Connection): Seq[String] = using(connection.prepareStatement("SHOW TABLES")) { tablesQuery =>
     val resultSet = tablesQuery.executeQuery()
@@ -68,7 +75,7 @@ abstract class SqlExecutionDAO(mainDbName: String, port: Int) {
     resultSet.close()
 
     tableNames
-  }
+  } getOrElse Seq.empty
 
   def tableContents(schemaName: String): Seq[SqlQueryResult] = using(db(schemaName).source.createConnection()) { connection =>
     allTableNames(connection) map { tableName =>
@@ -76,7 +83,7 @@ abstract class SqlExecutionDAO(mainDbName: String, port: Int) {
       val resultSet = selectStatement.executeQuery()
       SqlQueryResult(resultSet, tableName)
     }
-  }
+  } getOrElse Seq.empty
 
 }
 

@@ -1,6 +1,5 @@
 package model.core
 
-import scala.language.reflectiveCalls
 import scala.util.{Failure, Success, Try}
 
 object CommonUtils {
@@ -26,8 +25,10 @@ object CommonUtils {
     }
   }
 
-  def using[A <: {def close() : Unit}, B](resource: A)(f: A => B): B = try {
-    f(resource)
+  def using[A <: AutoCloseable, B](resource: A)(f: A => B): Try[B] = try {
+    Success(f(resource))
+  } catch {
+    case e: Exception => Failure(e)
   } finally {
     if (resource != null) resource.close()
   }

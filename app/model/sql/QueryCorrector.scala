@@ -32,7 +32,7 @@ abstract class QueryCorrector(val queryType: String) {
   type AliasMap = Map[String, String]
 
   def correct(database: SqlExecutionDAO, learnerSolution: String, sampleStatement: SqlSample, exercise: SqlCompleteEx, scenario: SqlScenario): SqlCorrResult =
-    parseStatement(learnerSolution).zip(parseStatement(sampleStatement.sample)) match {
+    parseStatement(learnerSolution) zip parseStatement(sampleStatement.sample) match {
       case Success((userQ, sampleQ)) => correctQueries(learnerSolution, database, scenario, userQ, sampleQ)
       case Failure(_)                => SqlFailed(learnerSolution)
     }
@@ -46,12 +46,12 @@ abstract class QueryCorrector(val queryType: String) {
 
     val whereComparison = compareWhereClauses(userQ, userTAliases, sampleQ, sampleTAliases)
 
-    val executionResult = database.executeQuery(scenario.shortName, userQ.toString, sampleQ.toString)
+    val executionResult = database.executeQueries(scenario.shortName, userQ.toString, sampleQ.toString)
 
     val groupByComparison = compareGroupByElements(userQ, sampleQ)
     val orderByComparison = compareOrderByElements(userQ, sampleQ)
 
-    SqlResult(learnerSolution, columnComparison, tableComparison, whereComparison, Some(executionResult), groupByComparison, orderByComparison)
+    SqlResult(learnerSolution, columnComparison, tableComparison, whereComparison, executionResult, groupByComparison, orderByComparison)
   }
 
   def compareColumns(userQ: Q, userTAliases: AliasMap, sampleQ: Q, sampleTAliases: AliasMap): ColumnMatchingResult =
@@ -69,6 +69,7 @@ abstract class QueryCorrector(val queryType: String) {
 
   def resolveAliases(query: Q): Map[String, String] = getTables(query).filter(_.getAlias != null).map(t => t.getAlias.getName -> t.getName).toMap
 
+  // FIXME: Failure!
   protected def parseStatement(statement: String): Try[Q]
 
   protected def getColumnWrappers(query: Q): Seq[ColumnWrapper]

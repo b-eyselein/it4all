@@ -3,23 +3,22 @@ package model.sql
 import java.sql.Connection
 
 import model.core.CommonUtils.using
+import model.sql.ColumnWrapper.wrapColumn
 import net.sf.jsqlparser.expression.Expression
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.schema.Table
-
-import ColumnWrapper.wrapColumn
 
 import scala.collection.JavaConverters._
 import scala.util.Try
 
 abstract class ChangeCorrector(queryType: String) extends QueryCorrector(queryType) {
 
-  def runUpdate(conn: Connection, query: String): Int = using(conn.createStatement)(_.executeUpdate(query))
+  def runUpdate(conn: Connection, query: String): Try[Int] = using(conn.createStatement)(_.executeUpdate(query))
 
-  def runValidationQuery(conn: Connection, query: String): SqlQueryResult =
+  def runValidationQuery(conn: Connection, query: String): Try[SqlQueryResult] =
     using(conn.createStatement)(s => new SqlQueryResult(s.executeQuery(query)))
 
-  def getResultSet(statement: Q, connection: Connection, validation: String): SqlQueryResult = {
+  def getResultSet(statement: Q, connection: Connection, validation: String): Try[SqlQueryResult] = {
     runUpdate(connection, statement.toString)
     val result = runValidationQuery(connection, validation)
     connection.rollback()
