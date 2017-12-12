@@ -43,7 +43,6 @@ case class BinaryExpressionMatch(userArg: Option[BinaryExpression], sampleArg: O
   override val size: Int = 1
 
   override def analyze(a1: BinaryExpression, a2: BinaryExpression): MatchType = {
-    // FIXME: implement!
 
     val (a1Left, a1Right) = (a1.getLeftExpression.toString, a1.getRightExpression.toString)
     val (a2Left, a2Right) = (a2.getLeftExpression.toString, a2.getRightExpression.toString)
@@ -51,10 +50,8 @@ case class BinaryExpressionMatch(userArg: Option[BinaryExpression], sampleArg: O
     val parallelEqual = (a1Left == a2Left) && (a1Right == a2Right)
     val crossedEqual = (a1Left == a2Right) && (a1Right == a2Left)
 
-    if (parallelEqual || crossedEqual)
-      MatchType.SUCCESSFUL_MATCH
+    if (parallelEqual || crossedEqual) MatchType.SUCCESSFUL_MATCH
     else MatchType.UNSUCCESSFUL_MATCH
-
   }
 }
 
