@@ -1,0 +1,70 @@
+@(user: model.User, toolObject: model.core.tools.ExToolObject, exerciseOpt: Option[model.CompleteEx[_ <: model.Exercise]], renderedRest: Html)
+
+@isCreation = @{
+    exerciseOpt.isEmpty
+}
+
+@main(s"${toolObject.toolname}: Aufgabe ${if(isCreation) "erstellen" else "bearbeiten"}", user) {
+    <div class="container">
+        <div class="page-header">
+            <h1>@if(isCreation) {Erstellen} else {Bearbeiten} einer @toolObject.toolname-Aufgabe</h1>
+        </div>
+
+        <form class="form" method="post" role="form" action="@{
+            exerciseOpt match {
+                case Some(exercise) => toolObject.editExerciseRoute(exercise.ex)
+                case None => toolObject.createNewExRoute
+            }
+        }">
+
+            <fieldset>
+                <legend>Standardangaben</legend>
+
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <label for="@model.core.CoreConsts.ID_NAME">ID:</label>
+                        <input type="number" class="form-control from-control-static" name="@model.core.CoreConsts.ID_NAME" id="@model.core.CoreConsts.ID_NAME" required
+                            @Html(exerciseOpt.map(ex => s"""value="${ex.id}" readonly""").getOrElse(""))>
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="@model.core.CoreConsts.AUTHOR_NAME">Autor:</label>
+                        <input class="form-control" name="@model.core.CoreConsts.AUTHOR_NAME" id="@model.core.CoreConsts.AUTHOR_NAME" value="@user.username"
+                        title="Dieser Wert kann nicht geändert werden." readonly required>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <label for="@model.core.CoreConsts.TITLE_NAME">Titel:</label>
+                        <input class="form-control" name="@model.core.CoreConsts.TITLE_NAME" id="@model.core.CoreConsts.TITLE_NAME" required
+                            @Html(exerciseOpt.map(ex => s"""value="${ex.title}"""").getOrElse(""))>
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="@model.core.CoreConsts.STATE_NAME">Status:</label>
+                        <div >
+                            <select class="form-control" name="@model.core.CoreConsts.STATE_NAME" id="@model.core.CoreConsts.STATE_NAME" required>
+                            @for(state <- model.Enums.ExerciseState.values) {
+                                <option @state.isSelected(exerciseOpt.map(_.state).getOrElse(model.Enums.ExerciseState.CREATED))>@state </option>
+                            }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="@model.core.CoreConsts.TEXT_NAME">Text:</label>
+                    <textarea class="form-control" rows="5" name="@model.core.CoreConsts.TEXT_NAME" id="@model.core.CoreConsts.TEXT_NAME" required>@exerciseOpt.map(_.text).getOrElse("")</textarea>
+                </div>
+
+            </fieldset>
+
+            @renderedRest
+
+            <hr>
+
+            <button class="btn btn-primary btn-block">Aufgabe bearbeiten</button>
+        </form>
+
+    </div>
+}
+

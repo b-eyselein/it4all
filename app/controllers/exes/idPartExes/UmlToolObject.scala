@@ -12,44 +12,46 @@ object UmlToolObject extends IdPartExToolObject {
 
   override def exParts: Map[String, String] = Map(UmlExPart.CLASS_SELECTION.name -> "Mit Zwischenkorrektur", UmlExPart.DIAG_DRAWING.name -> "Freies Erstellen")
 
-  override val hasTags : Boolean   = false
-  override val toolname: String    = "Uml"
-  override val exType  : String    = "uml"
-  override val toolState   : ToolState = ToolState.BETA
-  override val consts  : Consts    = UmlConsts
+  override val hasTags  : Boolean   = false
+  override val toolname : String    = "Uml"
+  override val exType   : String    = "uml"
+  override val consts   : Consts    = UmlConsts
+  override val toolState: ToolState = ToolState.BETA
 
-  override def indexCall: Call = controllers.exes.idPartExes.routes.UmlController.index()
+  override def indexCall: Call = routes.UmlController.index()
 
-  override def exerciseRoute(exercise: HasBaseValues, part: String): Call = controllers.exes.idPartExes.routes.UmlController.exercise(exercise.id, part)
+  override def exerciseRoute(exercise: HasBaseValues, part: String): Call = routes.UmlController.exercise(exercise.id, part)
 
-  override def exerciseListRoute(page: Int): Call = controllers.exes.idPartExes.routes.UmlController.exerciseList(page)
+  override def exerciseListRoute(page: Int): Call = routes.UmlController.exerciseList(page)
 
   // not in routes...
-  override def correctLiveRoute(exercise: HasBaseValues, part: String): Call = ??? // controllers.exes.routes.UmlController.correctLive(exercise.id, part)
+  override def correctLiveRoute(exercise: HasBaseValues, part: String): Call = ??? // routes.UmlController.correctLive(exercise.id, part)
 
-  override def correctRoute(exercise: HasBaseValues, part: String): Call = controllers.exes.idPartExes.routes.UmlController.correct(exercise.id, part)
+  override def correctRoute(exercise: HasBaseValues, part: String): Call = routes.UmlController.correct(exercise.id, part)
 
 
   override val restHeaders: List[String] = List("Klassenwahl", "Diagrammzeichnen", "Lösung", "Mappings", "Ignoriert")
 
-  override def adminIndexRoute: Call = controllers.exes.idPartExes.routes.UmlController.adminIndex()
+  override def adminIndexRoute: Call = routes.UmlController.adminIndex()
 
-  override def adminExesListRoute: Call = controllers.exes.idPartExes.routes.UmlController.adminExerciseList()
+  override def adminExesListRoute: Call = routes.UmlController.adminExerciseList()
 
-  override def newExFormRoute: Call = controllers.exes.idPartExes.routes.UmlController.adminNewExerciseForm()
+  override def newExFormRoute: Call = routes.UmlController.adminNewExerciseForm()
 
-  override def exportExesRoute: Call = controllers.exes.idPartExes.routes.UmlController.adminExportExercises()
+  override def createNewExRoute: Call = routes.UmlController.adminCreateExercise()
 
-  override def exportExesAsFileRoute: Call = controllers.exes.idPartExes.routes.UmlController.adminExportExercisesAsFile()
+  override def exportExesRoute: Call = routes.UmlController.adminExportExercises()
 
-  override def importExesRoute: Call = controllers.exes.idPartExes.routes.UmlController.adminImportExercises()
+  override def exportExesAsFileRoute: Call = routes.UmlController.adminExportExercisesAsFile()
 
-  override def changeExStateRoute(exercise: HasBaseValues): Call = controllers.exes.idPartExes.routes.UmlController.adminChangeExState(exercise.id)
+  override def importExesRoute: Call = routes.UmlController.adminImportExercises()
 
-  override def editExerciseFormRoute(exercise: HasBaseValues): Call = controllers.exes.idPartExes.routes.UmlController.adminEditExerciseForm(exercise.id)
+  override def changeExStateRoute(exercise: HasBaseValues): Call = routes.UmlController.adminChangeExState(exercise.id)
 
-  override def editExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.idPartExes.routes.UmlController.adminEditExercise(exercise.id)
+  override def editExerciseFormRoute(exercise: HasBaseValues): Call = routes.UmlController.adminEditExerciseForm(exercise.id)
 
-  override def deleteExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.idPartExes.routes.UmlController.adminDeleteExercise(exercise.id)
+  override def editExerciseRoute(exercise: HasBaseValues): Call = routes.UmlController.adminEditExercise(exercise.id)
+
+  override def deleteExerciseRoute(exercise: HasBaseValues): Call = routes.UmlController.adminDeleteExercise(exercise.id)
 
 }

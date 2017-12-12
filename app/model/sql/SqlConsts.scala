@@ -17,8 +17,7 @@ object SqlConsts extends Consts {
   val SELECT_ALL_DUMMY = "SELECT * FROM "
   val SHOW_ALL_TABLES  = "SHOW TABLES"
 
-  val TablesName  = "Tabellen"
-  val TAGS_NAME   = "tags"
-  val TagJoinChar = "#"
+  val TablesName = "Tabellen"
+  val TAGS_NAME  = "tags"
 
 }

@@ -1,0 +1,38 @@
+@(user: model.User, statistics: Html, toolObject: controllers.exCollections.CollectionToolObject)
+
+@title = @{
+    "Administrator " + toolObject.toolname
+}
+
+@main(title, user) {
+    <div class="container">
+        <div class="page-header">
+            <h1>@title</h1>
+        </div>
+
+        <section id="statistics">
+            <h2>Statistiken</h2>
+            <ul>
+            @statistics
+            </ul>
+        </section>
+
+        <hr>
+
+        <section id="administration">
+            <h2>Verwaltung der @toolObject.pluralName</h2>
+            <a class="btn btn-default btn-block" href="@toolObject.adminExesListRoute">Übersicht über alle @toolObject.collectionPluralName</a>
+
+                &nbsp;
+
+            <a class="btn btn-default btn-block" href="@toolObject.newExFormRoute">Neues @toolObject.collectionSingularName erstellen</a>
+
+                &nbsp;
+
+            <div class="btn-group btn-group-justified">
+                <a class="btn btn-default" href="@toolObject.exportExesRoute">@toolObject.collectionPluralName als YAML exportieren</a>
+                <a class="btn btn-default" href="@toolObject.importExesRoute">@toolObject.collectionPluralName aus YAML importieren</a>
+            </div>
+        </section>
+    </div>
+}

@@ -90,11 +90,11 @@ object SqlExercise {
     new SqlExercise(BaseValues(i, ti, a, te, s), scenarioId, exerciseType, tags, hint)
 
   def unapply(arg: SqlExercise): Option[(Int, String, String, String, ExerciseState, Int, SqlExerciseType, String, Option[String])] =
-    Some((arg.id, arg.title, arg.author, arg.text, arg.state, arg.scenarioId, arg.exerciseType, arg.tags, arg.hint))
+    Some((arg.id, arg.title, arg.author, arg.text, arg.state, arg.collectionId, arg.exerciseType, arg.tags, arg.hint))
 
 }
 
-case class SqlExercise(override val baseValues: BaseValues, scenarioId: Int, exerciseType: SqlExerciseType, tags: String, hint: Option[String]) extends Exercise
+case class SqlExercise(override val baseValues: BaseValues, collectionId: Int, exerciseType: SqlExerciseType, tags: String, hint: Option[String]) extends ExerciseInCollection
 
 case class SqlSample(id: Int, exerciseId: Int, scenarioId: Int, sample: String)
 
@@ -107,18 +107,18 @@ trait SqlTableDefs extends TableDefs {
 
   import profile.api._
 
+  // Saving
+
+  def saveSqlCompleteScenario(completeScenario: SqlCompleteScenario)(implicit ec: ExecutionContext): Future[Seq[Any]] =
+    db.run(sqlScenarioes insertOrUpdate completeScenario.coll) flatMap (_ => Future.sequence(completeScenario.exercises map saveSqlCompleteEx))
+
   private def saveSqlCompleteEx(completeEx: SqlCompleteEx)(implicit ec: ExecutionContext) =
     db.run(sqlExercises insertOrUpdate completeEx.ex) flatMap { _ => Future.sequence(completeEx.samples map saveSqlSample) }
 
   private def saveSqlSample(sample: SqlSample)(implicit ec: ExecutionContext): Future[Int] =
     db.run(sqlSamples insertOrUpdate sample)
 
-  def saveSqlCompleteScenario(completeScenario: SqlCompleteScenario)(implicit ec: ExecutionContext): Future[Seq[Any]] =
-    db.run(sqlScenarioes insertOrUpdate completeScenario.coll) flatMap (_ => Future.sequence(completeScenario.exercises map saveSqlCompleteEx))
-
-  def samplesForEx(collId: Int, exId: Int)(implicit ec: ExecutionContext): Future[Seq[SqlSample]] =
-    db.run(sqlSamples filter (table => table.exerciseId === exId && table.scenarioId === collId) result)
-
+  // Reading
 
   def completeSqlScenarioes(implicit ec: ExecutionContext): Future[Seq[SqlCompleteScenario]] = db.run(
     sqlScenarioes.result map (results => results map (res => SqlCompleteScenario(res, Seq.empty))))
@@ -128,6 +128,8 @@ trait SqlTableDefs extends TableDefs {
       case None           => Future(None)
       case Some(scenario) => sqlExercises.completeExesForScenario(id) map (exercises => Some(SqlCompleteScenario(scenario, exercises)))
     }
+
+  // Table queries
 
   val sqlScenarioes = TableQuery[SqlScenarioesTable]
 
@@ -147,6 +149,9 @@ trait SqlTableDefs extends TableDefs {
         case None     => Future(None)
         case Some(ex) => samplesForEx(collId, id) map (samples => Some(SqlCompleteEx(ex, samples)))
       }
+
+    def samplesForEx(collId: Int, exId: Int)(implicit ec: ExecutionContext): Future[Seq[SqlSample]] =
+      db.run(sqlSamples filter (table => table.exerciseId === exId && table.scenarioId === collId) result)
 
   }
 

@@ -1,29 +1,18 @@
 package model.sql
 
-import java.sql.Connection
-
-import model.core.CommonUtils.using
 import model.sql.ColumnWrapper.wrapColumn
 import net.sf.jsqlparser.expression.Expression
+import net.sf.jsqlparser.expression.operators.relational.{ExpressionList, MultiExpressionList}
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.schema.Table
+import net.sf.jsqlparser.statement.select.SubSelect
 
 import scala.collection.JavaConverters._
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
 abstract class ChangeCorrector(queryType: String) extends QueryCorrector(queryType) {
 
-  def runUpdate(conn: Connection, query: String): Try[Int] = using(conn.createStatement)(_.executeUpdate(query))
-
-  def runValidationQuery(conn: Connection, query: String): Try[SqlQueryResult] =
-    using(conn.createStatement)(s => new SqlQueryResult(s.executeQuery(query)))
-
-  def getResultSet(statement: Q, connection: Connection, validation: String): Try[SqlQueryResult] = {
-    runUpdate(connection, statement.toString)
-    val result = runValidationQuery(connection, validation)
-    connection.rollback()
-    result
-  }
+  override protected def getColumnWrappers(query: Q): Seq[ColumnWrapper] = Seq.empty
 
 }
 
@@ -33,17 +22,24 @@ object InsertCorrector extends ChangeCorrector("INSERT") {
 
   override type Q = Insert
 
-  override protected def getColumnWrappers(query: Q): Seq[ColumnWrapper] = Seq.empty
+  // FIXME: correct inserted values!
+  protected def correctValues(query: Q): Boolean = {
+    query.getItemsList match {
+      case mel: MultiExpressionList => false
+      case el: ExpressionList       => false
+      case sub: SubSelect           => false
+    }
+    ???
+  }
 
   override protected def getTables(query: Q) = Seq(query.getTable)
 
   override protected def getWhere(query: Q): Option[Expression] = None
 
-  override protected def parseStatement(statement: String): Try[Insert] = Try(
-    CCJSqlParserUtil.parse(statement) match {
-      case q: Insert => q
-      case _         => null // throw new CorrectionException(statement, s"Das Statement war vom falschen Typ! Erwartet wurde $queryType!")
-    })
+  override protected def parseStatement(statement: String): Try[Insert] = Try(CCJSqlParserUtil.parse(statement)) flatMap {
+    case q: Insert => Success(q)
+    case _         => Failure(new Exception(s"Das Statement war vom falschen Typ! Erwartet wurde $queryType!"))
+  }
 }
 
 
@@ -53,17 +49,14 @@ object DeleteCorrector extends ChangeCorrector("DELETE") {
 
   override type Q = Delete
 
-  override protected def getColumnWrappers(query: Q): Seq[ColumnWrapper] = Seq.empty
-
   override protected def getTables(query: Q): Seq[Table] = query.getTables.asScala
 
   override protected def getWhere(query: Q): Option[Expression] = Option(query.getWhere)
 
-  override protected def parseStatement(statement: String): Try[Delete] = Try(
-    CCJSqlParserUtil.parse(statement) match {
-      case q: Delete => q
-      case _         => null // Left(s"Das Statement war vom falschen Typ! Erwartet wurde $queryType!")
-    })
+  override protected def parseStatement(statement: String): Try[Delete] = Try(CCJSqlParserUtil.parse(statement)) flatMap {
+    case q: Delete => Success(q)
+    case _         => Failure(new Exception(s"Das Statement war vom falschen Typ! Erwartet wurde $queryType!"))
+  }
 
 }
 
@@ -79,10 +72,9 @@ object UpdateCorrector extends ChangeCorrector("UPDATE") {
 
   override protected def getWhere(query: Q): Option[Expression] = Option(query.getWhere)
 
-  override protected def parseStatement(statement: String): Try[Update] = Try(
-    CCJSqlParserUtil.parse(statement) match {
-      case q: Update => q
-      case _         => null //  throw new CorrectionException(statement, s"Das Statement war vom falschen Typ! Erwartet wurde $queryType!")
-    })
+  override protected def parseStatement(statement: String): Try[Update] = Try(CCJSqlParserUtil.parse(statement)) flatMap {
+    case q: Update => Success(q)
+    case _         => Failure(new Exception(s"Das Statement war vom falschen Typ! Erwartet wurde $queryType!"))
+  }
 
 }

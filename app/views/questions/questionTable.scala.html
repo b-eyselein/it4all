@@ -1,4 +1,4 @@
-@(user: model.User, questionList: List[model.questions.Question])
+@(user: model.User, questionList: List[model.questions.CompleteQuestion])
 
 <table class="table">
     <thead>
@@ -16,8 +16,8 @@
             <tr>
                 <td>@question.id</td>
                 <td><a href="@controllers.exCollections.routes.QuestionController.exercise(-1, question.id)">@question.title</a></td>
-                <td>@question.questionType.german</td>
-                <td>@question.maxPoints</td>
+                <td>@question.ex.questionType.german</td>
+                <td>@question.ex.maxPoints</td>
                 @if(question.userHasAnswered(user.username)) {
                     <td><span class="glyphicon glyphicon-ok"></span></td>
                 } else {

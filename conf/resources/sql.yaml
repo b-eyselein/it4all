@@ -18,26 +18,24 @@ exercises:
   - id: 1
     sample: |
       SELECT COUNT(*) AS Anzahl
-        FROM Employee
+        FROM employee
   - id: 2
     sample: |
-      SELECT COUNT(employeeOID) AS Anzahl
-        FROM Employee
-  tags: []
+      SELECT COUNT(id) AS Anzahl
+        FROM employee
 
 - id: 2
   title: Angestelltennummer
   author: bje40dc
-  text: Welche Angestelltennummer (employeeOID) hat Max Becker?
+  text: Welche Angestelltennummer (id) hat Max Becker?
   exerciseType: SELECT
   samples:
   - id: 1
     sample: |
-      SELECT employeeOID
-        FROM Employee
+      SELECT id
+        FROM employee
         WHERE firstname = 'Max'
           AND lastname = 'Becker'
-  tags: []
 
 - id: 3
   title: Emailadresse
@@ -48,24 +46,24 @@ exercises:
   - id: 1
     sample: |
       SELECT emailaddress
-        FROM Employee
-          JOIN Emailaddress ON Employee.employeeOID = Emailaddress.employeeOID
+        FROM employee
+          JOIN emailaddress ON employee.id = emailaddress.employee_id
         WHERE firstname = 'Max' AND lastname = 'Becker'
 
   - id: 2
     sample: |
       SELECT emailaddress
-        FROM Employee Emailaddress
-        WHERE Employee.employeeOID = Emailaddress.employeeOID
+        FROM employee, emailaddress
+        WHERE employee.id = emailaddress.employee_id
           AND firstname = 'Max' AND lastname = 'Becker'
 
   - id: 3
     sample: |
       SELECT emailaddress
-        FROM Employee emp Emailaddress email
-        WHERE emp.employeeOID = email.employeeOID
+        FROM employee as emp, emailaddress as email
+        WHERE emp.id = email.employee_id
           AND firstname = 'Max' AND lastname = 'Becker'
-  tags: []
+  tags: [SQL_JOIN]
 
 - id: 4
   title: Nutzernamen
@@ -76,9 +74,9 @@ exercises:
   - id: 1
     sample: |
       SELECT username
-        FROM Employee
+        FROM employee
         ORDER BY username
-  tags: []
+  tags: [SQL_ORDER_BY]
 
 - id: 5
   title: Anzahl der Untergebenen
@@ -88,29 +86,28 @@ exercises:
   samples:
   - id: 1
     sample: |
-      SELECT chefOID count(employeeOID)
-        FROM Employee
-        WHERE chefOID IS NOT NULL
-        GROUP BY chefOID
-  tags: []
+      SELECT chef_id, count(id)
+        FROM employee
+        WHERE chef_id IS NOT NULL
+        GROUP BY chef_id
+  tags: [SQL_GROUP_BY]
 
 - id: 6
   title: TODO!
   author: bje40dc
-  text: Erstellen Sie das CREATE TABLE-Skript für die Tabelle Employee!
+  text: Erstellen Sie das CREATE TABLE-Skript für die Tabelle employee!
   exerciseType: CREATE
   samples:
   - id: 1
     sample: |
-      CREATE TABLE Employee (
-        employeeOID INT PRIMARY KEY
-        firstname VARCHAR(50)
-        lastname VARCHAR(50)
-        username VARCHAR(20)
-        chefOID INT
-        FOREIGN KEY (chefOID) REFERENCES Employee(employeeOID)
+      CREATE TABLE employee (
+        id INT PRIMARY KEY,
+        firstname VARCHAR(50),
+        lastname VARCHAR(50),
+        username VARCHAR(20),
+        chef_id INT,
+        FOREIGN KEY (chef_id) REFERENCES employee(id)
       );
-  tags: []
 
 - id: 7
   title: TODO!
@@ -120,10 +117,9 @@ exercises:
   samples:
   - id: 1
     sample: |
-      UPDATE Employee
-        SET chefOID = 3
-        WHERE employeeOID = 8
-  tags: []
+      UPDATE employee
+        SET chef_id = 3
+        WHERE id = 8
 
 - id: 8
   title: TODO!
@@ -133,9 +129,8 @@ exercises:
   samples:
   - id: 1
     sample: |
-      DELETE FROM Employee
-        WHERE employeeOID = 7
-  tags: []
+      DELETE FROM employee
+        WHERE id = 7
 
 - id: 9
   title: TODO!
@@ -147,13 +142,12 @@ exercises:
   samples:
   - id: 1
     sample: |
-      INSERT INTO Employee VALUES
-        (9 'Tina' 'Sattler' 'tina_sattler' 2)
+      INSERT INTO employee VALUES
+        (9, 'Tina', 'Sattler', 'tina_sattler', 2)
   - id: 2
     sample: |
-      INSERT INTO Employee (`employeeOID` `firstname` `lastname` `username` `chefOID`) VALUES
-        (9 'Tina' 'Sattler' 'tina_sattler' 2)
-  tags: []
+      INSERT INTO employee (`id`, `firstname`, `lastname`, `username`, `chef_id`) VALUES
+        (9, 'Tina', 'Sattler', 'tina_sattler', 2)
 ---
 id: 2
 title: Amazon
@@ -629,7 +623,6 @@ exercises:
         FROM customers
         WHERE email LIKE '%gmx.de'
         OR email LIKE '%gmail.com'
-  tags: []
 
 - id: 32
   title: TODO!
@@ -695,7 +688,6 @@ exercises:
       SELECT first_name, family_name, birthday
         FROM customers
        WHERE birthday LIKE '%-02-%'
-  tags: []
   hint: Verwenden Sie für die Eingrenzung des Geburtsdatums den 'LIKE'-Operator.
 
 - id: 36

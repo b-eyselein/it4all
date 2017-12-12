@@ -23,16 +23,15 @@ object UmlExYamlProtocol extends MyYamlProtocol {
       val textParser = new UmlExTextParser(baseValues.text, mappingsForTextParser, ignoreWords)
 
       UmlCompleteEx(
-        UmlExercise(baseValues, textParser.parseTextForClassSel, textParser.parseTextForDiagDrawing),
+        UmlExercise(baseValues, textParser.parseTextForClassSel, textParser.parseTextForDiagDrawing, ignoreWords mkString TagJoinChar),
         mappings,
-        ignoreWords map (UmlIgnore(baseValues.id, _)),
         solution
       )
     }
 
     override protected def writeRest(completeEx: UmlCompleteEx): Map[YamlValue, YamlValue] = Map(
       YamlString(MAPPINGS_NAME) -> YamlArray(completeEx.mappings map (_.toYaml(UmlMappingYamlFormat(completeEx.ex.id))) toVector),
-      YamlString(IGNORE_WORDS_NAME) -> YamlArray(completeEx.ignoreWords map (ignore => YamlString(ignore.toIgnore)) toVector),
+      YamlString(IGNORE_WORDS_NAME) -> YamlArray(completeEx.ex.getToIngore map YamlString toVector),
       YamlString(SOLUTION_NAME) -> completeEx.solution.toYaml(UmlSolutionYamlFormat(completeEx.ex.id))
     )
   }
@@ -88,8 +87,8 @@ object UmlExYamlProtocol extends MyYamlProtocol {
           exerciseId,
           className,
           yamlObject.enumField(CLASSTYPE_NAME, UmlClassType.valueOf, UmlClassType.CLASS)),
-        yamlObject.arrayField(ATTRS_NAME, _ convertTo[UmlClassAttribute] UmlClassAttributeYamlFormat(exerciseId, className)),
-        yamlObject.arrayField(METHODS_NAME, _ convertTo[UmlClassMethod] UmlClassMethodYamlFormat(exerciseId, className))
+        yamlObject.optArrayField(ATTRS_NAME, _ convertTo[UmlClassAttribute] UmlClassAttributeYamlFormat(exerciseId, className)),
+        yamlObject.optArrayField(METHODS_NAME, _ convertTo[UmlClassMethod] UmlClassMethodYamlFormat(exerciseId, className))
       )
     }
   }
@@ -110,11 +109,11 @@ object UmlExYamlProtocol extends MyYamlProtocol {
 
     override def write(method: UmlClassMethod): YamlValue = YamlObject(
       YamlString(NAME_NAME) -> method.methodName,
-      YamlString(RETURNS_NAME) -> method.returns
+      YamlString(ReturnTypeName) -> method.returns
     )
 
     override def readObject(yamlObject: YamlObject): UmlClassMethod = UmlClassMethod(
-      exerciseId, className, yamlObject.stringField(NAME_NAME), yamlObject.stringField(RETURNS_NAME)
+      exerciseId, className, yamlObject.stringField(NAME_NAME), yamlObject.stringField(ReturnTypeName)
     )
   }
 

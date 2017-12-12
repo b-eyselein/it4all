@@ -1,6 +1,8 @@
 package model.questions;
 
 import model.Enums.Selectable;
+import scala.Option;
+import scala.Some;
 
 public class QuestionEnums {
 
@@ -20,6 +22,15 @@ public class QuestionEnums {
             bsButtonColor = theBSButtonColor;
         }
 
+        public static Option<Correctness> byString(String str) {
+            try {
+                return new Some<>(valueOf(str));
+            } catch (Exception e) {
+                // ==> None!
+                return Option.apply(null);
+            }
+        }
+
     }
 
     public enum QuestionType {
@@ -30,6 +41,16 @@ public class QuestionEnums {
         QuestionType(String theGerman) {
             german = theGerman;
         }
+
+        public static Option<QuestionType> byString(String str) {
+            try {
+                return new Some<>(valueOf(str));
+            } catch (Exception e) {
+                // ==> None!
+                return Option.apply(null);
+            }
+        }
+
     }
 
 

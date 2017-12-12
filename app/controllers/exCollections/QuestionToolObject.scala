@@ -1,25 +1,26 @@
 package controllers.exCollections
 
 import model.Enums.ToolState
-import model.questions.{Question, QuestionConsts}
+import model.questions.{CompleteQuestion, QuestionConsts}
 import model.{Consts, HasBaseValues}
 import play.api.mvc.Call
 
 object QuestionToolObject extends CollectionToolObject {
 
-  override val collectionName: String = "Quiz"
+  override type CompEx = CompleteQuestion
 
-  override type CompEx = Question
-
-  override val hasTags  : Boolean   = true
-  override val toolname             = "Auswahlfragen"
-  override val exType               = "question"
-  override val toolState: ToolState = ToolState.ALPHA
-  override val consts   : Consts    = QuestionConsts
+  override val hasTags               : Boolean   = true
+  override val hasExType             : Boolean   = true
+  override val toolname              : String    = "Auswahlfragen"
+  override val collectionSingularName: String    = "Quiz"
+  override val collectionPluralName  : String    = "Quizze"
+  override val exType                : String    = "question"
+  override val consts                : Consts    = QuestionConsts
+  override val toolState             : ToolState = ToolState.ALPHA
 
   override def indexCall: Call = routes.QuestionController.index()
 
-  override def exerciseRoute(exercise: Question): Call = ???
+  override def exerciseRoute(collectionId: Int, exerciseId: Int): Call = routes.QuestionController.exercise(collectionId, exerciseId)
 
   override def collectionRoute(id: Int, page: Int = 1): Call = routes.QuestionController.collection(id, page)
 
@@ -36,21 +37,23 @@ object QuestionToolObject extends CollectionToolObject {
 
   override def adminIndexRoute: Call = routes.QuestionController.adminIndex()
 
-  override def adminExesListRoute: Call = routes.QuestionController.adminExerciseList()
+  override def adminExesListRoute: Call = routes.QuestionController.adminCollectionsList()
 
-  override def newExFormRoute: Call = routes.QuestionController.adminNewExerciseForm()
+  override def newExFormRoute: Call = routes.QuestionController.adminNewCollectionForm()
 
-  override def importExesRoute: Call = routes.QuestionController.adminImportExercises()
+  override def createNewExRoute: Call = routes.QuestionController.adminCreateCollection()
 
-  override def exportExesRoute: Call = routes.QuestionController.adminExportExercises()
+  override def importExesRoute: Call = routes.QuestionController.adminImportCollections()
 
-  override def exportExesAsFileRoute: Call = routes.QuestionController.adminExportExercisesAsFile()
+  override def exportExesRoute: Call = routes.QuestionController.adminExportCollections()
 
-  override def changeExStateRoute(exercise: HasBaseValues): Call = routes.QuestionController.adminChangeExState(exercise.id)
+  override def exportExesAsFileRoute: Call = routes.QuestionController.adminExportCollectionsAsFile()
 
-  override def editExerciseFormRoute(exercise: HasBaseValues): Call = routes.QuestionController.adminEditExerciseForm(exercise.id)
+  override def changeExStateRoute(exercise: HasBaseValues): Call = routes.QuestionController.adminChangeCollectionState(exercise.id)
 
-  override def editExerciseRoute(exercise: HasBaseValues): Call = routes.QuestionController.adminEditExercise(exercise.id)
+  override def editExerciseFormRoute(exercise: HasBaseValues): Call = routes.QuestionController.adminEditCollectionForm(exercise.id)
 
-  override def deleteExerciseRoute(exercise: HasBaseValues): Call = routes.QuestionController.adminDeleteExercise(exercise.id)
+  override def editExerciseRoute(exercise: HasBaseValues): Call = routes.QuestionController.adminEditCollection(exercise.id)
+
+  override def deleteExerciseRoute(exercise: HasBaseValues): Call = routes.QuestionController.adminDeleteCollection(exercise.id)
 }

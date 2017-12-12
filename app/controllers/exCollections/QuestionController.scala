@@ -30,11 +30,11 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   // Yaml
 
-  override type CompColl = Quiz
+  override type CompColl = CompleteQuiz
 
-  override type CompEx = Question
+  override type CompEx = CompleteQuestion
 
-  override implicit val yamlFormat: YamlFormat[Quiz] = null
+  override implicit val yamlFormat: YamlFormat[CompleteQuiz] = QuestionYamlProtocol.QuizYamlFormat
 
   // db
 
@@ -42,9 +42,13 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   override def tq = repo.quizzes
 
-  override protected def completeColls: Future[Seq[CompColl]] = ???
+  override protected def futureCompleteColls: Future[Seq[CompColl]] = repo.completeQuizzes
 
-  override protected def saveRead(read: Seq[Quiz]): Future[Seq[Boolean]] = ???
+  override protected def futureCompleteCollById(id: Int): Future[Option[CompleteQuiz]] = repo.completeQuiz(id)
+
+  override protected def futureCompleteExById(collId: Int, id: Int): Future[Option[CompleteQuestion]] = repo.completeQuestion(collId, id)
+
+  override protected def saveRead(read: Seq[CompColl]): Future[Seq[Boolean]] = Future.sequence(read map repo.saveQuiz)
 
   // Quizzes
 
@@ -56,66 +60,43 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
   //  override def correctPart(sol: StringSolution, question: Option[Question], part: String, user: User): Try[CompleteResult[EvaluationResult]]
   //  = ??? // FIXME: implement...
 
-  def quiz(id: Int): EssentialAction = withUser { user => implicit request => Ok(views.html.questions.quiz.render(user, null /* Quiz.finder.byId(id)*/)) }
+  //  def quiz(id: Int): EssentialAction = withUser { user => implicit request => Ok(views.html.questions.quiz.render(user, null /* Quiz.finder.byId(id)*/)) }
 
-  def quizCorrection(quizId: Int, questionId: Int): EssentialAction = withUser { user =>
-    implicit request =>
-      // User user = BaseController.user
-      //
-      // Quiz quiz = Quiz.finder.byId(quizId)
-      //
-      // Question question = quiz.questions.get(questionId - 1)
-      // DynamicForm form = factory.form().bindFromRequest()
-      //
-      // List<Answer> selectedAnswers = readSelAnswers(question, form)
-
-      // QuestionResult result = new QuestionResult(selectedAnswers, question)
-      //
-      //   return ok(views.html.quizQuestionResult.render(user, quiz, result))
-      Ok("TODO!")
-  }
-
-
-  // FIXME: stubs...
-  override def correctEx(form: String, exercise: Question, quiz: Quiz, user: User): Try[CompleteResult[QuestionResult]] = ???
-
-  override def renderCollectionCreated(collections: List[model.core.SingleReadingResult[model.questions.Quiz]]): play.twirl.api.Html = ???
-
-  override def renderExCollCreationForm(user: model.User, collection: model.questions.Quiz): play.twirl.api.Html = ???
-
-  override def renderExEditForm(user: model.User, exercise: model.questions.Quiz, isCreation: Boolean): play.twirl.api.Html = ???
-
-  override def renderExerciseCollections(user: model.User, allCollections: List[model.questions.Quiz]): play.twirl.api.Html = ???
-
-  // FIXME: stubs...
-
-  //  def quizQuestion(quizId: Int, questionId: Int): EssentialAction = withUser { user =>
+  //  def quizCorrection(quizId: Int, questionId: Int): EssentialAction = withUser { user =>
   //    implicit request =>
-  //      Ok(views.html.questions.quizQuestion.render(user, null /* Quiz.finder.byId(quizId)*/ , questionId - 1))
+  // User user = BaseController.user
+  //
+  // Quiz quiz = Quiz.finder.byId(quizId)
+  //
+  // Question question = quiz.questions.get(questionId - 1)
+  // DynamicForm form = factory.form().bindFromRequest()
+  //
+  // List<Answer> selectedAnswers = readSelAnswers(question, form)
+
+  // QuestionResult result = new QuestionResult(selectedAnswers, question)
+  //
+  //   return ok(views.html.quizQuestionResult.render(user, quiz, result))
+  //      Ok("TODO!")
   //  }
 
-  def quizStart(quizId: Int): EssentialAction = withUser { user =>
+
+  // FIXME: stubs...
+
+  override def correctEx(form: String, exercise: CompleteQuestion, quiz: Quiz, user: User): Try[CompleteResult[QuestionResult]] = ???
+
+  override def renderEditRest(collOpt: Option[CompleteQuiz]): Html = new Html(
+    s"""<div class="form-group row">
+       |  <div class="col-sm-12">
+       |    <label for="${QuestionConsts.ThemeName}">Thema:</label>
+       |    <input class="form-control" name="${QuestionConsts.ThemeName}" id="${QuestionConsts.ThemeName}" required ${collOpt map (coll => s"""value="${coll.coll.theme}"""") getOrElse ""})>
+       |  </div>
+       |</div>""".stripMargin)
+
+  def quizStart(quizId: Int): EssentialAction = withUser { _ =>
     implicit request => Redirect(routes.QuestionController.exercise(quizId, 1))
   }
 
-  def quizzes: EssentialAction = withUser { user => implicit request => Ok(views.html.questions.quizzes.render(user, null /*Quiz.finder.all.asScala.toList*/)) }
-
-  //  override def renderResult(correctionResult: CompleteResult[EvaluationResult]): Html = ??? //FIXME: implement...
-
-  // Admin
-
-  //  override protected def statistics: Future[Html] = Future(new Html(
-  //    s""" in allen Kategorien
-  //       |<ul>
-  //       |@if(!notAssignedQuestions.isEmpty) {
-  //       |<li>Es gibt noch @notAssignedQuestions.size
-  //       |<a href="@questions.routes.QuestionAdmin.notAssignedQuestions">nicht zugeordnete Fragen</a>.
-  //       |Sie k&ouml;nnen Sie <a href="@questions.routes.QuestionAdmin.assignQuestionsForm">hier</a> zuweisen.
-  //       |</li>
-  //       |}
-  //       |</ul>
-  //       |</li>
-  //       |<li>Es existieren @model.Quiz.finder.all.size <a href="@questions.routes.QuestionAdmin.exerciseCollections">Quiz(ze)</a>""".stripMargin)
+  //  def quizzes: EssentialAction = withUser { user => implicit request => Ok(views.html.questions.quizzes.render(user, null /*Quiz.finder.all.asScala.toList*/)) }
 
   def assignQuestion(keyAndValue: String, addOrRemove: Boolean) {
     // String[] quizAndQuestion = keyAndValue.split("_")
@@ -132,7 +113,7 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
     // quiz.save()
   }
 
-  def assignQuestions: EssentialAction = withAdmin { user =>
+  def assignQuestions: EssentialAction = withAdmin { _ =>
     implicit request =>
       //    val form = factory.form().bindFromRequest()
 
@@ -176,7 +157,7 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
   //    }
   //  }
 
-  def gradeFreetextAnswer(id: Int, user: String): EssentialAction = withAdmin { user =>
+  def gradeFreetextAnswer(id: Int, user: String): EssentialAction = withAdmin { _ =>
     implicit request =>
       // FreetextAnswer answer = FreetextAnswer.finder.byId(new
       // FreetextAnswerKey(user, id))
@@ -184,14 +165,9 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
       Ok("TODO")
   }
 
-  def gradeFreetextAnswers: EssentialAction = withAdmin { user => implicit request => Ok("TODO!") }
+  def gradeFreetextAnswers: EssentialAction = withAdmin { _ => implicit request => Ok("TODO!") }
 
-  /*
-                       * views.html.questionAdmin.ftasToGrade.render(user(),
-                       * FreetextAnswer.finder.all())
-                       */
-
-  def importQuizzes: EssentialAction = withAdmin { user => implicit request => Ok("TODO!") }
+  // views.html.questionAdmin.ftasToGrade.render(user(), FreetextAnswer.finder.all())
 
   def notAssignedQuestions: EssentialAction = withAdmin { user =>
     implicit request =>
@@ -235,17 +211,19 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
       Ok(views.html.questions.questionAdmin.questionCreated.render(user, List(question)))
   }
 
-  def editQuestionForm(id: Int): EssentialAction = withUser { user =>
+  def editQuestionForm(id: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
-      val question: Question = null /* Question.finder.byId(id)*/
-
-      if (question.author == user.username || user.stdRole == Role.RoleAdmin)
-        Ok(views.html.questions.editQuestionForm.render(user, question, isEdit = true))
-      else
-        Redirect(routes.QuestionController.index())
+      futureCompleteExById(1 /*collId*/ , id) map {
+        case None           => BadRequest("TODO!")
+        case Some(question) =>
+          if (question.author == user.username || user.stdRole == Role.RoleAdmin)
+            Ok(views.html.questions.editQuestionForm.render(user, question, isEdit = true))
+          else
+            Redirect(routes.QuestionController.index())
+      }
   }
 
-  def newQuestion(isFreetext: Boolean): EssentialAction = withUser { user =>
+  def newQuestion(isFreetext: Boolean): EssentialAction = withUser { _ =>
     implicit request =>
       //    QuestionReader.initFromForm(0, null /* factory.form().bindFromRequest()*/) match {
       //      case ReadingError(_, _, _) => BadRequest("There has been an error...")
@@ -268,37 +246,32 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
       }
   }
 
-
-  def questionResult(id: Int): EssentialAction = withUser { user =>
-    implicit request =>
-      //      val question = Question.finder.byId(id)
-      //
-      //      if (question.questionType != Question.QType.FREETEXT) {
-      //        // FILLOUT or MULTIPLE CHOICE
-      //        //      val form = factory.form().bindFromRequest()
-      //        //      val result = new QuestionResult(readSelAnswers(question, form), question)
-      //        Ok(views.html.givenanswerQuestionResult.render(user, null /* result*/))
-      //      } else {
-      //        val key = new UserAnswerKey(user.name, id)
-      //        val answer = Option(UserAnswer.finder.byId(key)).getOrElse(new UserAnswer(key))
-      //
-      //
-      //        answer.question = Question.finder.byId(id)
-      //        //    answer.text = factory.form().bindFromRequest().get("answer")
-      //        answer.save()
-      //
-      //        Ok(views.html.freetextQuestionResult.render(user, question, answer))
-      //  }
-      Ok("TODO!")
-  }
-
-  //  override def renderExercise(user: User, exercise: Question): Html = {
-  //    views.html.questions.question.render(user, exercise, null /* UserAnswer.finder.byId(new UserAnswerKey(user.name, exercise.id))*/)
+  //  def questionResult(id: Int): EssentialAction = withUser { user =>
+  //    implicit request =>
+  //      val question = Question.finder.byId(id)
+  //
+  //      if (question.questionType != Question.QType.FREETEXT) {
+  //        // FILLOUT or MULTIPLE CHOICE
+  //        //      val form = factory.form().bindFromRequest()
+  //        //      val result = new QuestionResult(readSelAnswers(question, form), question)
+  //        Ok(views.html.givenanswerQuestionResult.render(user, null /* result*/))
+  //      } else {
+  //        val key = new UserAnswerKey(user.name, id)
+  //        val answer = Option(UserAnswer.finder.byId(key)).getOrElse(new UserAnswer(key))
+  //
+  //
+  //        answer.question = Question.finder.byId(id)
+  //        //    answer.text = factory.form().bindFromRequest().get("answer")
+  //        answer.save()
+  //
+  //        Ok(views.html.freetextQuestionResult.render(user, question, answer))
   //  }
-
-  //  override def renderExesListRest: Html = ???
+  //      Ok("TODO!")
+  //  }
 
   override def renderResult(correctionResult: CompleteResult[QuestionResult]): Html = ???
 
-  override protected def renderExercise(user: User, quiz: Quiz, exercise: Question): Html = ???
+  override protected def renderExercise(user: User, quiz: Quiz, exercise: CompleteQuestion): Html =
+    views.html.questions.question.render(user, quiz, exercise, null /* FIXME: old answer... UserAnswer.finder.byId(new UserAnswerKey(user.name, exercise.id))*/)
+
 }

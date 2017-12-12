@@ -1,6 +1,6 @@
 @import model.questions.QuestionEnums.QuestionType
 
-@(user: model.User, question: model.questions.Question, oldAnswer: model.questions.UserAnswer)
+@(user: model.User, quiz: model.questions.Quiz, question: model.questions.CompleteQuestion, oldAnswer: model.questions.UserAnswer)
 
 @main("Frage", user) {
     <div class="container">
@@ -12,7 +12,7 @@
 
 
             <div id="answerDiv">
-                @question.questionType match {
+                @question.ex.questionType match {
                     case QuestionType.CHOICE => {
                         @for(ans <- question.answersForTemplate) {
                             <div>

@@ -25,13 +25,13 @@ public abstract class SqlEnums {
     public enum SqlExTag implements ExTag, Selectable<SqlExTag> {
         SQL_JOIN("J", "Join"),
         SQL_DOUBLE_JOIN("2J", "Zweifacher Join"),
-        TRIPLE_JOIN("3J", "Dreifacher Join"),
+        SQL_TRIPLE_JOIN("3J", "Dreifacher Join"),
         SQL_ORDER_BY("O", "Reihenfolge"),
         SQL_GROUP_BY("G", "Gruppierung"),
         SQL_FUNCTION("F", "Funktion"),
         SQL_ALIAS("A", "Alias"),
         SQL_LIMIT("L", "Limitierung"),
-        SUBSELECT("S", "Zweites Select innerhalb");
+        SQL_SUBSELECT("S", "Zweites Select innerhalb");
 
         public final String buttonContent;
         public final String title;

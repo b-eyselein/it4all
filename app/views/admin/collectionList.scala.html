@@ -31,14 +31,14 @@
                 </tr>
             </thead>
             <tbody>
-            @*@for(completeCollection <- completeCollections;
+            @for(completeCollection <- completeCollections;
             collection = completeCollection.coll) {
                 <tr id="tr1_@collection.id">
                     <td>@collection.id</td>
                     <td>
                         <div class="input-group">
                             <select onchange="updateStateChangeButton(@collection.id)" name="state_@collection.id" class="form-control" id="state_@collection.id"
-                            data-val="@collection.state">
+                            title="Status der Aufgabe" data-val="@collection.state">
                             @for(exState <- model.Enums.ExerciseState.values) {
                                 <option @exState.isSelected(collection.state)>@exState </option>
                             }
@@ -64,10 +64,10 @@
                     @views.html.core.helperTemplates.stringLen(collection.text, 40)
 
                         <!--TODO: implement? -->
-                        @@completeCollection.renderListRest
+                        @*@completeCollection.renderListRest*@
 
                 </tr>
-            }*@
+            }
             </tbody>
         </table>
 

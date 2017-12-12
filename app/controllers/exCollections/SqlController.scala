@@ -75,53 +75,51 @@ class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   //noinspection TypeAnnotation
   override def tq = repo.sqlScenarioes
 
-  override protected def completeColls: Future[Seq[SqlCompleteScenario]] = repo.completeSqlScenarioes
+  override protected def futureCompleteColls: Future[Seq[SqlCompleteScenario]] = repo.completeSqlScenarioes
 
-  override protected def completeCollById(id: Int): Future[Option[SqlCompleteScenario]] = repo.completeScenarioById(id)
+  override protected def futureCompleteCollById(id: Int): Future[Option[SqlCompleteScenario]] = repo.completeScenarioById(id)
 
   override protected def futureCompleteExById(collId: Int, id: Int): Future[Option[SqlCompleteEx]] = repo.sqlExercises.completeEx(collId, id)
 
   override protected def saveRead(read: Seq[SqlCompleteScenario]): Future[Seq[Boolean]] = Future.sequence(read map { compScenario =>
     val scriptFilePath = toolObject.exerciseResourcesFolder / s"${compScenario.coll.shortName}.sql"
 
-    daos.values foreach (_.executeSetup(compScenario.coll.shortName, scriptFilePath))
+    daos.values.toList.distinct foreach (_.executeSetup(compScenario.coll.shortName, scriptFilePath))
 
     repo.saveSqlCompleteScenario(compScenario) map (_ => true)
   })
 
   private def saveSolution(sol: SqlSolution) = db.run(repo.sqlSolutions insertOrUpdate sol)
 
-  //  override def newExerciseForm: EssentialAction = withAdmin { user => implicit request => Ok(views.html.sql.newExerciseForm.render(user, null)) }
+  // Views for admin
 
-  def scenarioAdmin(id: Int): EssentialAction = withAdmin { user => implicit request => Ok(views.html.sql.scenarioAdmin.render(user, null /* SqlScenario.finder.byId(id)*/)) }
-
-  override def renderCollectionCreated(collections: List[model.core.SingleReadingResult[SqlScenario]]): play.twirl.api.Html = ???
-
-  override def renderExCollCreationForm(user: model.User, collection: SqlScenario): play.twirl.api.Html = ??? //    views.html.sql.newScenarioForm.render(user, scenario)
-
-  override def renderExEditForm(user: model.User, exercise: SqlScenario, isCreation: Boolean): play.twirl.api.Html = ???
-
-  override def renderExerciseCollections(user: model.User, allCollections: List[SqlScenario]): play.twirl.api.Html = ???
-
-  // FIXME: stubs end...
+  override def renderEditRest(collOpt: Option[SqlCompleteScenario]): Html = new Html(
+    s"""<div class="form-group row">
+       |  <div class="col-sm-12">
+       |    <label for="${SqlConsts.SHORTNAME_NAME}">Name der DB:</label>
+       |    <input class="form-control" name="${SqlConsts.SHORTNAME_NAME}" id="${SqlConsts.SHORTNAME_NAME}" required ${collOpt map (coll => s"""value="${coll.coll.shortName}"""") getOrElse ""})>
+       |  </div>
+       |</div>""".stripMargin)
 
   // User
 
   override protected def correctEx(learnerSolution: String, exercise: SqlCompleteEx, sqlScenario: SqlScenario, user: User): Try[SqlCorrResult] = Try({
-    Await.result(saveSolution(SqlSolution(user.username, exercise.ex.scenarioId, exercise.id, learnerSolution)), Duration(2, duration.SECONDS))
+    Await.result(saveSolution(SqlSolution(user.username, exercise.ex.collectionId, exercise.id, learnerSolution)), Duration(2, duration.SECONDS))
 
     val sample = findBestFittingSample(learnerSolution, exercise.samples toList)
 
-    // FIXME: parse queries here!
+    // FIXME: parse queries here!?!
 
     correctors(exercise.ex.exerciseType).correct(daos(exercise.ex.exerciseType), learnerSolution, sample, exercise, sqlScenario)
   })
+
+  // Views for user
 
   override protected def renderExercise(user: User, sqlScenario: SqlScenario, exercise: SqlCompleteEx): Html = {
     val tables: Seq[SqlQueryResult] = SelectDAO.tableContents(sqlScenario.shortName)
 
     val oldOrDefSol: String = Await.result(
-      db.run(repo.sqlSolutions.filter(sol => sol.username === user.username && sol.exerciseId === exercise.id && sol.scenarioId === exercise.ex.scenarioId).result.headOption),
+      db.run(repo.sqlSolutions.filter(sol => sol.username === user.username && sol.exerciseId === exercise.id && sol.scenarioId === exercise.ex.collectionId).result.headOption),
       Duration(2, duration.SECONDS)
     ) map (_.solution) getOrElse ""
 

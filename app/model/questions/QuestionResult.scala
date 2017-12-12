@@ -1,11 +1,9 @@
 package model.questions
 
-
 import model.Enums.SuccessType
 import model.core.EvaluationResult
 import model.core.matching.{Match, Matcher, MatchingResult}
 import model.questions.QuestionResult._
-import play.twirl.api.Html
 
 case class AnswerMatch(userArg: Option[Answer], sampleArg: Option[Answer]) extends Match[Answer] {
 
@@ -14,7 +12,7 @@ case class AnswerMatch(userArg: Option[Answer], sampleArg: Option[Answer]) exten
 }
 
 
-object AnswerMatcher extends Matcher[Answer, Match[Answer], AnswerMatchingResult](List.empty, _.id == _.id, AnswerMatch, AnswerMatchingResult)
+object AnswerMatcher extends Matcher[Answer, Match[Answer], AnswerMatchingResult](Seq.empty, _.id == _.id, AnswerMatch, AnswerMatchingResult)
 
 case class AnswerMatchingResult(allMatches: Seq[Match[Answer]]) extends MatchingResult[Answer, Match[Answer]] {
 
@@ -24,7 +22,7 @@ case class AnswerMatchingResult(allMatches: Seq[Match[Answer]]) extends Matching
 
 }
 
-case class QuestionResult(selectedAnswers: List[Answer], question: Question) extends EvaluationResult {
+case class QuestionResult(selectedAnswers: Seq[Answer], question: CompleteQuestion) extends EvaluationResult {
 
   override val success: SuccessType = SuccessType.NONE // TODO: implement!
 
@@ -33,11 +31,11 @@ case class QuestionResult(selectedAnswers: List[Answer], question: Question) ext
 }
 
 object QuestionResult {
-  def analyze(selectedAnswers: List[Answer], correctAnswers: List[Answer]): (List[Answer], List[Answer], List[Answer]) = {
-    (List.empty, List.empty, List.empty)
+  def analyze(selectedAnswers: Seq[Answer], correctAnswers: Seq[Answer]): (Seq[Answer], Seq[Answer], Seq[Answer]) = {
+    (Seq.empty, Seq.empty, Seq.empty)
   }
 
-  //  private SuccessType analyze (List < Answer > selAns, List < Answer > corrAns) {
+  //  private SuccessType analyze (Seq < Answer > selAns, Seq < Answer > corrAns) {
   //    for (Iterator < Answer > sel    = selAns.iterator() sel    .hasNext()    )
   //    {
   //      Answer selectedAns = sel.next()

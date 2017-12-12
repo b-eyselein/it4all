@@ -6,27 +6,27 @@
 
 <div class="row">
     <div class="col-md-6">
-    @result.executionResult.userResultTry match {
-        case scala.util.Failure(e) => {
-            <div class="alert alert-danger"><span class="glyphicon glyphicon-remove"></span>
-                Es gab einen Fehler bei der Ausf&uuml;hrung ihrer L&ouml;sung!</div>
+        <h3>Lernerl&ouml;sung</h3>
+        @result.executionResult.userResultTry match {
+            case scala.util.Failure(e) => {
+                <div class="alert alert-danger"><span class="glyphicon glyphicon-remove"></span>
+                    Es gab einen Fehler bei der Ausf&uuml;hrung ihrer L&ouml;sung!</div>
+            }
+            case scala.util.Success(userResult) => {
+                @views.html.sql.resultTable(userResult)
+            }
         }
-        case scala.util.Success(userResult) => {
-            <h3>Lernerl&ouml;sung</h3>
-            @views.html.sql.resultTable(userResult)
-        }
-    }
     </div>
     <div class="col-md-6">
-    @result.executionResult.sampleResultTry match {
-        case scala.util.Failure(e) => {
-            <div class="alert alert-danger"><span class="glyphicon glyphicon-remove"></span>
-                Es gab einen Fehler bei der Ausf&uuml;hrung der Musterl&ouml;sung!</div>
+        <h3>Musterl&ouml;sung</h3>
+        @result.executionResult.sampleResultTry match {
+            case scala.util.Failure(e) => {
+                <div class="alert alert-danger"><span class="glyphicon glyphicon-remove"></span>
+                    Es gab einen Fehler bei der Ausf&uuml;hrung der Musterl&ouml;sung!</div>
+            }
+            case scala.util.Success(sampleResult) => {
+                @views.html.sql.resultTable(sampleResult)
+            }
         }
-        case scala.util.Success(sampleResult) => {
-            <h3>Musterl&ouml;sung</h3>
-            @views.html.sql.resultTable(sampleResult)
-        }
-    }
     </div>
 </div>

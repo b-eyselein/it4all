@@ -127,13 +127,33 @@ CREATE TABLE IF NOT EXISTS quizzes (
 );
 
 CREATE TABLE IF NOT EXISTS questions (
-  id            INT PRIMARY KEY,
+  id            INT,
   title         VARCHAR(50),
   author        VARCHAR(50),
   ex_text       TEXT,
   ex_state      ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
 
-  question_type ENUM ('CHOICE', 'FREETEXT', 'FILLOUT')               DEFAULT 'CHOICE'
+  quiz_id       INT,
+  question_type ENUM ('CHOICE', 'FREETEXT', 'FILLOUT')               DEFAULT 'CHOICE',
+  max_points    INT,
+
+  PRIMARY KEY (id, quiz_id),
+  FOREIGN KEY (quiz_id) REFERENCES quizzes (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS question_answers (
+  id          INT,
+  question_id INT,
+  quiz_id     INT,
+  answer_text TEXT,
+  correctness ENUM ('CORRECT', 'OPTIONAL', 'WRONG') DEFAULT 'WRONG',
+
+  PRIMARY KEY (id, question_id, quiz_id),
+  FOREIGN KEY (question_id, quiz_id) REFERENCES questions (id, quiz_id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
 );
 
 # Spread
@@ -217,17 +237,8 @@ CREATE TABLE IF NOT EXISTS uml_exercises (
   ex_state       ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
 
   class_sel_text TEXT,
-  diag_draw_text TEXT
-);
-
-CREATE TABLE IF NOT EXISTS uml_ignore (
-  exercise_id INT,
-  to_ignore   VARCHAR(30),
-
-  PRIMARY KEY (exercise_id, to_ignore),
-  FOREIGN KEY (exercise_id) REFERENCES uml_exercises (id)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  diag_draw_text TEXT,
+  to_ignore      TEXT
 );
 
 CREATE TABLE IF NOT EXISTS uml_mappings (
@@ -268,9 +279,9 @@ CREATE TABLE IF NOT EXISTS uml_sol_classes_methods (
   exercise_id INT,
   class_name  VARCHAR(50),
   method_name VARCHAR(50),
-  returns     VARCHAR(50),
+  return_type VARCHAR(50),
 
-  PRIMARY KEY (exercise_id, class_name, method_name, returns),
+  PRIMARY KEY (exercise_id, class_name, method_name),
   FOREIGN KEY (exercise_id, class_name) REFERENCES uml_sol_classes (exercise_id, class_name)
     ON UPDATE CASCADE
     ON DELETE CASCADE
@@ -434,8 +445,6 @@ DROP TABLE IF EXISTS uml_sol_classes_attrs;
 
 DROP TABLE IF EXISTS uml_sol_classes;
 
-DROP TABLE IF EXISTS uml_ignore;
-
 DROP TABLE IF EXISTS uml_mappings;
 
 DROP TABLE IF EXISTS uml_exercises;
@@ -455,6 +464,8 @@ DROP TABLE IF EXISTS sql_exercises;
 DROP TABLE IF EXISTS sql_scenarioes;
 
 # Questions
+
+DROP TABLE IF EXISTS question_answers;
 
 DROP TABLE IF EXISTS questions;
 

@@ -1,9 +1,7 @@
 package controllers.exes.idPartExes
 
-import java.nio.file.{Files, Path, Paths}
 import javax.inject._
 
-import com.fasterxml.jackson.databind.JsonNode
 import controllers.Secured
 import model.User
 import model.core._
@@ -13,7 +11,6 @@ import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.data.Form
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.mvc.{ControllerComponents, EssentialAction}
-import play.libs.Json
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -22,9 +19,9 @@ import scala.util.Try
 
 object UmlController {
 
-  val SolutionSchemaPath: Path = Paths.get("conf", "resources", "uml", "solutionSchema.json")
+  //  val SolutionSchemaPath: Path = Paths.get("conf", "resources", "uml", "solutionSchema.json")
 
-  val SolutionSchemaNode: JsonNode = Json.parse(String.join("\n", Files.readAllLines(SolutionSchemaPath)))
+  //  val SolutionSchemaNode: JsonNode = Json.parse(String.join("\n", Files.readAllLines(SolutionSchemaPath)))
 
 }
 
@@ -52,7 +49,7 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   override def completeExById(id: Int): Future[Option[UmlCompleteEx]] = repo.umlExercises.completeById(id)
 
-  override def saveRead(read: Seq[UmlCompleteEx]): Future[Seq[Int]] = Future.sequence(read map (repo.umlExercises.saveCompleteEx(_)))
+  override def saveRead(read: Seq[UmlCompleteEx]): Future[Seq[Any]] = Future.sequence(read map repo.saveCompleteEx)
 
   // Views
 
@@ -64,11 +61,9 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
     case _                           => new Html("FEHLER!")
   })
 
-  /** @inheritdoc **/
   override val renderExesListRest = new Html(
     s"""<div class="alert alert-info">
-       |Neueinsteiger sollten die Variante mit Zwischenkorrektur verwenden, die die einzelnen Schritte
-       |der Erstellung eines Klassendiagrammes nach und nach durcharbeitet.
+       |  Neueinsteiger sollten die Variante mit Zwischenkorrektur verwenden, die die einzelnen Schritte der Erstellung eines Klassendiagrammes nach und nach durcharbeitet.
        |</div>
        |<hr>""".stripMargin)
 

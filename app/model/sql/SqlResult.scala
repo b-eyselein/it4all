@@ -13,10 +13,10 @@ case class SqlResult(l: String, columnComparison: ColumnMatchingResult, tableCom
                      groupByComparison: Option[GroupByMatchingResult], orderByComparison: Option[OrderByMatchingResult])
   extends SqlCorrResult(l, List(columnComparison, tableComparison, whereComparison, executionResult) ++ groupByComparison ++ orderByComparison) {
 
-  def getMatchingResults: List[MatchingResult[_, _ <: Match[_]]] =
+  private def matchingResults: List[MatchingResult[_, _ <: Match[_]]] =
     List(columnComparison, tableComparison, whereComparison) ++ groupByComparison ++ orderByComparison
 
-  def notEmptyMatchingResults: List[MatchingResult[_, _ <: Match[_]]] = getMatchingResults filter (_.allMatches.nonEmpty)
+  def notEmptyMatchingResults: List[MatchingResult[_, _ <: Match[_]]] = matchingResults filter (_.allMatches.nonEmpty)
 
 }
 
@@ -27,11 +27,12 @@ case class SqlExecutionResult(userResultTry: Try[SqlQueryResult], sampleResultTr
   override val success: SuccessType = (userResultTry, sampleResultTry) match {
     case (Success(userResult), Success(sampleResult)) => SuccessType.ofBool(userResult isIdentic sampleResult)
 
-    case (Failure(userError), Success(sampleResult)) => SuccessType.ERROR
+    case (Failure(_), Success(_)) => SuccessType.ERROR
 
-    case (Success(userResult), Failure(sampleError)) => SuccessType.PARTIALLY
+    case (Success(_), Failure(_)) => SuccessType.PARTIALLY
 
-    case (Failure(userError), Failure(sampleError)) => SuccessType.ERROR
+    case (Failure(_), Failure(_)) => SuccessType.ERROR
   }
+
 
 }

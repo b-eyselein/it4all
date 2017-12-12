@@ -4,6 +4,8 @@ import model.Consts
 
 object QuestionConsts extends Consts {
 
-  val THEME_NAME = "theme"
+  val CorrectnessName = "correctness"
+
+  val ThemeName = "theme"
 
 }

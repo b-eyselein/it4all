@@ -209,6 +209,6 @@ case class SelectColumnWrapper(col: SelectItem) extends ColumnWrapper {
     case _ => UNSUCCESSFUL_MATCH
   }
 
-  override def toString: String = col.toString
+  override def toString: String = col toString
 
 }

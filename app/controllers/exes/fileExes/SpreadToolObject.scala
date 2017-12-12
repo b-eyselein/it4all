@@ -17,37 +17,39 @@ object SpreadToolObject extends FileExToolObject {
   override val consts  : Consts  = SpreadConsts
 
 
-  override def indexCall: Call = controllers.exes.fileExes.routes.SpreadController.index()
+  override def indexCall: Call = routes.SpreadController.index()
 
-  override def exerciseRoute(exercise: HasBaseValues, fileExtension: String): Call = controllers.exes.fileExes.routes.SpreadController.exercise(exercise.id, fileExtension)
+  override def exerciseRoute(exercise: HasBaseValues, fileExtension: String): Call = routes.SpreadController.exercise(exercise.id, fileExtension)
 
-  override def exerciseListRoute(page: Int): Call = controllers.exes.fileExes.routes.SpreadController.exerciseList(page)
+  override def exerciseListRoute(page: Int): Call = routes.SpreadController.exerciseList(page)
 
-  override def uploadSolutionRoute(exercise: HasBaseValues, fileExtension: String): Call = controllers.exes.fileExes.routes.SpreadController.uploadSolution(exercise.id, fileExtension)
+  override def uploadSolutionRoute(exercise: HasBaseValues, fileExtension: String): Call = routes.SpreadController.uploadSolution(exercise.id, fileExtension)
 
-  override def downloadCorrectedRoute(exercise: HasBaseValues, fileExtension: String): Call = controllers.exes.fileExes.routes.SpreadController.downloadCorrected(exercise.id, fileExtension)
+  override def downloadCorrectedRoute(exercise: HasBaseValues, fileExtension: String): Call = routes.SpreadController.downloadCorrected(exercise.id, fileExtension)
 
 
   override val restHeaders: List[String] = List("Musterloesungsdatei", "Vorlagendatei")
 
-  override def adminIndexRoute: Call = controllers.exes.fileExes.routes.SpreadController.adminIndex()
+  override def adminIndexRoute: Call = routes.SpreadController.adminIndex()
 
-  override def adminExesListRoute: Call = controllers.exes.fileExes.routes.SpreadController.adminExerciseList()
+  override def adminExesListRoute: Call = routes.SpreadController.adminExerciseList()
 
-  override def newExFormRoute: Call = controllers.exes.fileExes.routes.SpreadController.adminNewExerciseForm()
+  override def newExFormRoute: Call = routes.SpreadController.adminNewExerciseForm()
 
-  override def importExesRoute: Call = controllers.exes.fileExes.routes.SpreadController.adminImportExercises()
+  override def createNewExRoute: Call = routes.SpreadController.adminCreateExercise()
 
-  override def exportExesRoute: Call = controllers.exes.fileExes.routes.SpreadController.adminExportExercises()
+  override def importExesRoute: Call = routes.SpreadController.adminImportExercises()
 
-  override def exportExesAsFileRoute: Call = controllers.exes.fileExes.routes.SpreadController.adminExportExercisesAsFile()
+  override def exportExesRoute: Call = routes.SpreadController.adminExportExercises()
 
-  override def changeExStateRoute(exercise: HasBaseValues): Call = controllers.exes.fileExes.routes.SpreadController.adminChangeExState(exercise.id)
+  override def exportExesAsFileRoute: Call = routes.SpreadController.adminExportExercisesAsFile()
 
-  override def editExerciseFormRoute(exercise: HasBaseValues): Call = controllers.exes.fileExes.routes.SpreadController.adminEditExerciseForm(exercise.id)
+  override def changeExStateRoute(exercise: HasBaseValues): Call = routes.SpreadController.adminChangeExState(exercise.id)
 
-  override def editExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.fileExes.routes.SpreadController.adminEditExercise(exercise.id)
+  override def editExerciseFormRoute(exercise: HasBaseValues): Call = routes.SpreadController.adminEditExerciseForm(exercise.id)
 
-  override def deleteExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.fileExes.routes.SpreadController.adminDeleteExercise(exercise.id)
+  override def editExerciseRoute(exercise: HasBaseValues): Call = routes.SpreadController.adminEditExercise(exercise.id)
+
+  override def deleteExerciseRoute(exercise: HasBaseValues): Call = routes.SpreadController.adminDeleteExercise(exercise.id)
 
 }

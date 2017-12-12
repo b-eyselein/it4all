@@ -15,9 +15,9 @@ object WebToolObject extends IdPartExToolObject {
   override val exType  : String  = "web"
   override val consts  : Consts  = WebConsts
 
-  override def indexCall: Call = controllers.exes.idPartExes.routes.WebController.index()
+  override def indexCall: Call = routes.WebController.index()
 
-  override def exerciseRoute(exercise: HasBaseValues, part: String): Call = controllers.exes.idPartExes.routes.WebController.exercise(exercise.id, part)
+  override def exerciseRoute(exercise: HasBaseValues, part: String): Call = routes.WebController.exercise(exercise.id, part)
 
   override def exerciseRoutes(exercise: WebCompleteEx): Map[Call, String] = exercise.ex match {
     // FIXME: user super method...
@@ -27,33 +27,35 @@ object WebToolObject extends IdPartExToolObject {
     case _               => Map(exerciseRoute(exercise.ex, "html") -> "Html-Teil", exerciseRoute(exercise.ex, "js") -> "Js-Teil")
   }
 
-  override def exerciseListRoute(page: Int): Call = controllers.exes.idPartExes.routes.WebController.exerciseList(page)
+  override def exerciseListRoute(page: Int): Call = routes.WebController.exerciseList(page)
 
-  override def correctLiveRoute(exercise: HasBaseValues, part: String): Call = controllers.exes.idPartExes.routes.WebController.correctLive(exercise.id, "html")
+  override def correctLiveRoute(exercise: HasBaseValues, part: String): Call = routes.WebController.correctLive(exercise.id, "html")
 
-  override def correctRoute(exercise: HasBaseValues, part: String): Call = controllers.exes.idPartExes.routes.WebController.correct(exercise.id, "html")
+  override def correctRoute(exercise: HasBaseValues, part: String): Call = routes.WebController.correct(exercise.id, "html")
 
 
   override val restHeaders: List[String] = List("# Tasks Html / Js", "Text Html / Js")
 
-  override def adminIndexRoute: Call = controllers.exes.idPartExes.routes.WebController.adminIndex()
+  override def adminIndexRoute: Call = routes.WebController.adminIndex()
 
-  override def adminExesListRoute: Call = controllers.exes.idPartExes.routes.WebController.adminExerciseList()
+  override def adminExesListRoute: Call = routes.WebController.adminExerciseList()
 
-  override def newExFormRoute: Call = controllers.exes.idPartExes.routes.WebController.adminNewExerciseForm()
+  override def newExFormRoute: Call = routes.WebController.adminNewExerciseForm()
 
-  override def importExesRoute: Call = controllers.exes.idPartExes.routes.WebController.adminImportExercises()
+  override def createNewExRoute: Call = routes.WebController.adminCreateExercise()
 
-  override def exportExesRoute: Call = controllers.exes.idPartExes.routes.WebController.adminExportExercises()
+  override def importExesRoute: Call = routes.WebController.adminImportExercises()
 
-  override def exportExesAsFileRoute: Call = controllers.exes.idPartExes.routes.WebController.adminExportExercisesAsFile()
+  override def exportExesRoute: Call = routes.WebController.adminExportExercises()
 
-  override def changeExStateRoute(exercise: HasBaseValues): Call = controllers.exes.idPartExes.routes.WebController.adminChangeExState(exercise.id)
+  override def exportExesAsFileRoute: Call = routes.WebController.adminExportExercisesAsFile()
 
-  override def editExerciseFormRoute(exercise: HasBaseValues): Call = controllers.exes.idPartExes.routes.WebController.adminEditExerciseForm(exercise.id)
+  override def changeExStateRoute(exercise: HasBaseValues): Call = routes.WebController.adminChangeExState(exercise.id)
 
-  override def editExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.idPartExes.routes.WebController.adminEditExercise(exercise.id)
+  override def editExerciseFormRoute(exercise: HasBaseValues): Call = routes.WebController.adminEditExerciseForm(exercise.id)
 
-  override def deleteExerciseRoute(exercise: HasBaseValues): Call = controllers.exes.idPartExes.routes.WebController.adminDeleteExercise(exercise.id)
+  override def editExerciseRoute(exercise: HasBaseValues): Call = routes.WebController.adminEditExercise(exercise.id)
+
+  override def deleteExerciseRoute(exercise: HasBaseValues): Call = routes.WebController.adminDeleteExercise(exercise.id)
 
 }

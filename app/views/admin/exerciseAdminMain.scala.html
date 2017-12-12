@@ -1,0 +1,39 @@
+@(user: model.User, statistics: Html, toolObject: model.core.tools.ExToolObject)
+
+@title = @{
+    "Administrator " + toolObject.toolname
+}
+
+@main(title, user) {
+    <div class="container">
+        <div class="page-header">
+            <h1>@title</h1>
+        </div>
+
+        <section id="statistics">
+            <h2>Statistiken</h2>
+            <ul>
+            @statistics
+            </ul>
+        </section>
+
+        <hr>
+
+        <section id="administration">
+            <h2>Verwaltung der @toolObject.pluralName</h2>
+            <a class="btn btn-default btn-block" href="@toolObject.adminExesListRoute">Übersicht über alle Aufgaben</a>
+
+                &nbsp;
+
+            <a class="btn btn-default btn-block" href="@toolObject.newExFormRoute">Neue Aufgabe erstellen</a>
+
+                &nbsp;
+
+            <div class="btn-group btn-group-justified">
+                <a class="btn btn-default" href="@toolObject.exportExesRoute">Aufgaben als YAML exportieren</a>
+                <a class="btn btn-default" href="@toolObject.importExesRoute">Aufgaben aus YAML importieren</a>
+            </div>
+        </section>
+
+    </div>
+}

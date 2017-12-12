@@ -40,6 +40,12 @@ trait ExTag {
 
 trait Exercise extends HasBaseValues
 
+trait ExerciseInCollection extends Exercise {
+
+  def collectionId: Int
+
+}
+
 trait CompleteEx[E <: Exercise] extends HasBaseValues {
 
   def ex: E

@@ -11,7 +11,7 @@
                 <h1>Aufgabe &quot;@exercise.title&quot;</h1>
             </div>
 
-            <form action="@controllers.exCollections.routes.SqlController.correct(exercise.ex.scenarioId, exercise.id)" method="post">
+            <form action="@controllers.exCollections.routes.SqlController.correct(exercise.ex.collectionId, exercise.id)" method="post">
                 <div class="row">
 
                     <div class="col-md-6">
@@ -26,7 +26,7 @@
                         <div class="btn-group btn-group-justified">
                             <div class="btn-group">
                                 <button type="button" class="btn btn-primary" id="testButton"
-                                onclick="testSqlSol('@controllers.exCollections.routes.SqlController.correctLive(exercise.ex.scenarioId, exercise.id)')">
+                                onclick="testSqlSol('@controllers.exCollections.routes.SqlController.correctLive(exercise.ex.collectionId, exercise.id)')">
                                     L&ouml;sung testen</button>
                             </div>
                             <div class="btn-group">

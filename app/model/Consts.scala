@@ -29,6 +29,7 @@ trait Consts {
   val STEP                    = 10
   val SOLUTIONS_SUB_DIRECTORY = "solutions"
 
+  val TagJoinChar            = "#"
   val TEMPLATE_SUB_DIRECTORY = "templates"
   val TEST_COUNT_NAME        = "testCount"
   val TEXT_NAME              = "text"

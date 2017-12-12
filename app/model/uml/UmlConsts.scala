@@ -11,7 +11,6 @@ object UmlConsts extends Consts {
   val OFFSET = 50
   val GAP    = 200
 
-
   // Text parsing
 
   val CapWordsRegex: Regex = """[A-Z][a-zäöüß]*""".r
@@ -38,7 +37,7 @@ object UmlConsts extends Consts {
   val MAPPINGS_NAME = "mappings"
   val METHODS_NAME  = "methods"
 
-  val RETURNS_NAME = "returns"
+  val ReturnTypeName = "returnType"
 
   val SECOND_END_NAME  = "secondEnd"
   val SECOND_MULT_NAME = "secondMult"

@@ -48,7 +48,7 @@ abstract class BaseExerciseController[Ex <: Exercise]
 
   protected def statistics: Future[Html] = numOfExes map (num => Html(s"<li>Es existieren insgesamt $num Aufgaben</li>"))
 
-  protected def saveRead(read: Seq[CompEx]): Future[Seq[Int]] = ???
+  protected def saveRead(read: Seq[CompEx]): Future[Seq[Any]] = ???
 
   // Reading from form TODO: Move to other file?
 
@@ -63,7 +63,7 @@ abstract class BaseExerciseController[Ex <: Exercise]
   // Admin
 
   def adminIndex: EssentialAction = futureWithAdmin { user =>
-    implicit request => statistics map (stats => Ok(views.html.admin.adminMain.render(user, stats, toolObject, new Html(""))))
+    implicit request => statistics map (stats => Ok(views.html.admin.exerciseAdminMain(user, stats, toolObject)))
   }
 
   def adminImportExercises: EssentialAction = futureWithAdmin { admin =>
@@ -94,7 +94,7 @@ abstract class BaseExerciseController[Ex <: Exercise]
 
   def adminExportExercises: EssentialAction = futureWithAdmin { admin =>
     implicit request =>
-      completeExes map (exes => Ok(views.html.admin.export.render(admin, yamlString(exes), toolObject)))
+      completeExes map (exes => Ok(views.html.admin.export(admin, yamlString(exes), toolObject)))
   }
 
   def adminExportExercisesAsFile: EssentialAction = futureWithAdmin { admin =>
@@ -141,39 +141,38 @@ abstract class BaseExerciseController[Ex <: Exercise]
     implicit request =>
       //    exerciseReader.initFromForm(id, factory.form().bindFromRequest()) match {
       //      case error: ReadingError =>
-      //        BadRequest(views.html.jsonReadingError.render(admin, error))
+      //        BadRequest(views.html.jsonReadingError(admin, error))
       //      case _: ReadingFailure => BadRequest("There has been an error...")
       //      case result: ReadingResult[E] =>
       //
       //        result.read.foreach(res => exerciseReader.save(res.read))
-      //        Ok(views.html.admin.exPreview.render(admin, toolObject, result.read))
+      //        Ok(views.html.admin.exercisePreview(admin, toolObject, result.read))
       //    }
       Ok("TODO!")
   }
 
   def adminEditExerciseForm(id: Int): EssentialAction = futureWithAdmin { admin =>
-    implicit request => completeExById(id) map (ex => Ok(views.html.admin.editExForm(admin, toolObject, ex, renderEditRest(ex))))
+    implicit request => completeExById(id) map (ex => Ok(views.html.admin.exerciseEditForm(admin, toolObject, ex, renderEditRest(ex))))
   }
 
   def adminExerciseList: EssentialAction = futureWithAdmin { admin =>
-    implicit request => completeExes map (exes => Ok(views.html.admin.exerciseList.render(admin, exes, toolObject)))
+    implicit request => completeExes map (exes => Ok(views.html.admin.exerciseList(admin, exes, toolObject)))
   }
 
   def adminNewExerciseForm: EssentialAction = withAdmin { admin =>
     // FIXME
     implicit request =>
       // FIXME: ID of new exercise?
-      Ok(views.html.admin.editExForm.render(admin, toolObject, None, renderEditRest(None)))
+      Ok(views.html.admin.exerciseEditForm(admin, toolObject, None, renderEditRest(None)))
   }
 
-  def newExercise: EssentialAction = withAdmin { admin =>
+  def adminCreateExercise: EssentialAction = withAdmin { admin =>
     implicit request => ???
-    //      Ok("TODO: Not yet used...")
   }
 
   // Views and other helper methods for admin
 
-  protected def previewExercises(admin: User, read: Seq[CompEx]): Html = views.html.admin.exPreview(admin, read, toolObject)
+  protected def previewExercises(admin: User, read: Seq[CompEx]): Html = views.html.admin.exercisePreview(admin, read, toolObject)
 
   // FIXME: scalarStyle = Folded if fixed...
   private def yamlString(exes: Seq[CompEx]): String = "%YAML 1.2\n---\n" + (exes map (_.toYaml.print(Auto /*, Folded*/)) mkString "---\n")
@@ -192,7 +191,7 @@ abstract class BaseExerciseController[Ex <: Exercise]
 
   // FIXME: refactor...
   protected def renderExes(user: User, exes: Seq[CompEx], allExesSize: Int): Html =
-    views.html.core.exesList.render(user, exes, renderExesListRest, toolObject, allExesSize / STEP + 1)
+    views.html.core.exesList(user, exes, renderExesListRest, toolObject, allExesSize / STEP + 1)
 
 
   /**
@@ -206,6 +205,6 @@ abstract class BaseExerciseController[Ex <: Exercise]
 
   def renderEditRest(exercise: Option[CompEx]): Html = ???
 
-  def renderExercises(exercises: List[CompEx]): Html = ??? //views.html.admin.exercisesTable.render(exercises, toolObject)
+  def renderExercises(exercises: List[CompEx]): Html = ??? //views.html.admin.exercisesTable(exercises, toolObject)
 
 }

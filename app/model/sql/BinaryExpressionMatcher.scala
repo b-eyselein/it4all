@@ -6,7 +6,6 @@ import model.sql.BinaryExpressionMatcher._
 import model.sql.SqlConsts.CONDITIONS_NAME
 import net.sf.jsqlparser.expression.BinaryExpression
 import net.sf.jsqlparser.schema.Column
-import play.twirl.api.Html
 
 object BinaryExpressionMatcher {
 

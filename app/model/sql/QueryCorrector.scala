@@ -33,11 +33,11 @@ abstract class QueryCorrector(val queryType: String) {
 
   def correct(database: SqlExecutionDAO, learnerSolution: String, sampleStatement: SqlSample, exercise: SqlCompleteEx, scenario: SqlScenario): SqlCorrResult =
     parseStatement(learnerSolution) zip parseStatement(sampleStatement.sample) match {
-      case Success((userQ, sampleQ)) => correctQueries(learnerSolution, database, scenario, userQ, sampleQ)
+      case Success((userQ, sampleQ)) => correctQueries(learnerSolution, database, exercise, scenario, userQ, sampleQ)
       case Failure(_)                => SqlFailed(learnerSolution)
     }
 
-  private def correctQueries(learnerSolution: String, database: SqlExecutionDAO, scenario: SqlScenario, userQ: Q, sampleQ: Q) = {
+  private def correctQueries(learnerSolution: String, database: SqlExecutionDAO, exercise: SqlCompleteEx, scenario: SqlScenario, userQ: Q, sampleQ: Q) = {
     val (userTAliases, sampleTAliases) = (resolveAliases(userQ), resolveAliases(sampleQ))
 
     val tableComparison = compareTables(userQ, sampleQ)
@@ -46,7 +46,7 @@ abstract class QueryCorrector(val queryType: String) {
 
     val whereComparison = compareWhereClauses(userQ, userTAliases, sampleQ, sampleTAliases)
 
-    val executionResult = database.executeQueries(scenario.shortName, userQ.toString, sampleQ.toString)
+    val executionResult = database.executeQueries(scenario, exercise, userQ, sampleQ)
 
     val groupByComparison = compareGroupByElements(userQ, sampleQ)
     val orderByComparison = compareOrderByElements(userQ, sampleQ)

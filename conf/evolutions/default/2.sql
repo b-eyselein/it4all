@@ -41,8 +41,6 @@ DELETE IGNORE FROM uml_sol_classes_attrs;
 
 DELETE IGNORE FROM uml_sol_classes;
 
-DELETE IGNORE FROM uml_ignore;
-
 DELETE IGNORE FROM uml_mappings;
 
 DELETE IGNORE FROM uml_exercises;
@@ -62,6 +60,8 @@ DELETE IGNORE FROM sql_exercises;
 DELETE IGNORE FROM sql_scenarioes;
 
 # Questions
+
+DELETE IGNORE FROM question_answers;
 
 DELETE IGNORE FROM questions;
 

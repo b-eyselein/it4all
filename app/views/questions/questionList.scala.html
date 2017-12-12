@@ -1,12 +1,12 @@
-@(user: model.User, questionList: List[model.questions.Question])
+@(user: model.User, questionList: List[model.questions.CompleteQuestion])
 
-    @main("Auswahlfragen", user) {
-        <div class="container">
-            <div class="page-header">
-                <h1>Alle Fragen</h1>
-            </div>
-
-            @views.html.questions.questionTable.render(user, questionList)
-
+@main("Auswahlfragen", user) {
+    <div class="container">
+        <div class="page-header">
+            <h1>Alle Fragen</h1>
         </div>
-    }
+
+        @views.html.questions.questionTable.render(user, questionList)
+
+    </div>
+}

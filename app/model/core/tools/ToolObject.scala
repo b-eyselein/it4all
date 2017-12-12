@@ -67,6 +67,8 @@ trait ExToolObject extends ToolObject with FileUtils {
 
   def newExFormRoute: Call
 
+  def createNewExRoute: Call
+
   def exportExesRoute: Call
 
   def exportExesAsFileRoute: Call
