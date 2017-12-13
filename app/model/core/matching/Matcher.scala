@@ -36,7 +36,7 @@ trait MatchingResult[T, M <: Match[T]] extends EvaluationResult {
     else
       COMPLETE
 
-  private def groupWrongMatches: Map[MatchType, Seq[M]] = allMatches filter (!_.isSuccessful) groupBy (_.matchType)
+  private def groupWrongMatches: Map[MatchType, Seq[M]] = allMatches groupBy (_.matchType)
 
   def describe: Html = {
     val message: String = success match {

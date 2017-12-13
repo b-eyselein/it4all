@@ -61,7 +61,7 @@ abstract class AFileExController[E <: Exercise, R <: EvaluationResult]
 
   def exercise(id: Int, fileExtension: String): EssentialAction = futureWithUser { user =>
     implicit request =>
-      completeExById(id) map {
+      futureCompleteExById(id) map {
         case Some(exercise) =>
           log(user, ExerciseStartEvent(request, id))
           Ok(renderExercise(user, exercise, fileExtension))
@@ -74,7 +74,7 @@ abstract class AFileExController[E <: Exercise, R <: EvaluationResult]
       request.body.file(SpreadConsts.FILE_NAME) match {
         case None       => Future(BadRequest("There has been an error uploading your file!"))
         case Some(file) =>
-          completeExById(id) map {
+          futureCompleteExById(id) map {
             case None         => BadRequest("There is no such exercise!")
             case Some(compEx) =>
               val learnerFileTargetPath = toolObject.solutionDirForExercise(user.username, compEx.ex) / s"${compEx.templateFilename}.$fileExtension"
@@ -98,7 +98,7 @@ abstract class AFileExController[E <: Exercise, R <: EvaluationResult]
 
   def downloadTemplate(id: Int, fileExtension: String): EssentialAction = futureWithUser { user =>
     implicit request =>
-      completeExById(id) map {
+      futureCompleteExById(id) map {
         case Some(exercise) => Ok.sendFile(exercise.templateFilePath(fileExtension).toFile)
         case None           => Redirect(toolObject.indexCall)
       }
@@ -106,7 +106,7 @@ abstract class AFileExController[E <: Exercise, R <: EvaluationResult]
 
   def downloadCorrected(id: Int, fileExtension: String): EssentialAction = futureWithUser { user =>
     implicit request =>
-      completeExById(id) map {
+      futureCompleteExById(id) map {
         case Some(exercise) =>
           val correctedFilePath = toolObject.solutionDirForExercise(user.username, exercise.ex) / (exercise.templateFilename + SpreadConsts.CORRECTION_ADD_STRING + "." + fileExtension)
           Ok.sendFile(correctedFilePath.toFile)

@@ -24,8 +24,6 @@ object XmlToolObject extends IdExToolObject {
   override def correctRoute(exercise: HasBaseValues): Call = routes.XmlController.correct(exercise.id)
 
 
-  override val restHeaders: List[String] = List("Typ", "Wurzelknoten", "Inhalt der Referenzdatei")
-
   override def adminIndexRoute: Call = routes.XmlController.adminIndex()
 
   override def adminExesListRoute: Call = routes.XmlController.adminExerciseList()

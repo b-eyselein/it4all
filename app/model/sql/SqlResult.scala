@@ -3,24 +3,39 @@ package model.sql
 import model.Enums.SuccessType
 import model.core.matching.{Match, MatchingResult}
 import model.core.{CompleteResult, EvaluationResult}
+import play.twirl.api.Html
 
 import scala.util.{Failure, Success, Try}
 
-abstract class SqlCorrResult(l: String, results: Seq[EvaluationResult]) extends CompleteResult[EvaluationResult](l, results)
+abstract class SqlCorrResult extends CompleteResult[EvaluationResult] {
 
-case class SqlResult(l: String, columnComparison: ColumnMatchingResult, tableComparison: TableMatchingResult,
-                     whereComparison: BinaryExpressionMatchingResult, executionResult: SqlExecutionResult,
-                     groupByComparison: Option[GroupByMatchingResult], orderByComparison: Option[OrderByMatchingResult])
-  extends SqlCorrResult(l, List(columnComparison, tableComparison, whereComparison, executionResult) ++ groupByComparison ++ orderByComparison) {
-
-  private def matchingResults: List[MatchingResult[_, _ <: Match[_]]] =
-    List(columnComparison, tableComparison, whereComparison) ++ groupByComparison ++ orderByComparison
-
-  def notEmptyMatchingResults: List[MatchingResult[_, _ <: Match[_]]] = matchingResults filter (_.allMatches.nonEmpty)
+  override type SolType = String
 
 }
 
-case class SqlFailed(l: String) extends SqlCorrResult(l, Seq.empty)
+case class SqlResult(learnerSolution: String, columnComparison: ColumnMatchingResult, tableComparison: TableMatchingResult,
+                     whereComparison: BinaryExpressionMatchingResult, executionResult: SqlExecutionResult,
+                     groupByComparison: Option[GroupByMatchingResult], orderByComparison: Option[OrderByMatchingResult])
+  extends SqlCorrResult {
+
+  override def results: Seq[EvaluationResult] = Seq(columnComparison, tableComparison, whereComparison, executionResult) ++ groupByComparison ++ orderByComparison
+
+  private def matchingResults: Seq[MatchingResult[_, _ <: Match[_]]] =
+    Seq(columnComparison, tableComparison, whereComparison) ++ groupByComparison ++ orderByComparison
+
+  def notEmptyMatchingResults: Seq[MatchingResult[_, _ <: Match[_]]] = matchingResults filter (_.allMatches.nonEmpty)
+
+  override def renderLearnerSolution: Html = new Html(s"<pre>$learnerSolution</pre>")
+
+}
+
+case class SqlFailed(learnerSolution: String) extends SqlCorrResult {
+
+  override val results: Seq[EvaluationResult] = Seq.empty
+
+  override def renderLearnerSolution: Html = new Html(s"<pre>$learnerSolution</pre>")
+
+}
 
 case class SqlExecutionResult(userResultTry: Try[SqlQueryResult], sampleResultTry: Try[SqlQueryResult]) extends EvaluationResult {
 

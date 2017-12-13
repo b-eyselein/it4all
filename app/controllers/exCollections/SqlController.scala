@@ -46,7 +46,7 @@ object SqlController {
 
 @Singleton
 class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends AExCollectionController[SqlExercise, SqlScenario, EvaluationResult](cc, dbcp, r, SqlToolObject)
+  extends AExCollectionController[SqlExercise, SqlScenario, EvaluationResult, SqlCorrResult](cc, dbcp, r, SqlToolObject)
     with HasDatabaseConfigProvider[JdbcProfile] with JsonFormat with Secured {
 
   override type SolType = String
@@ -103,7 +103,7 @@ class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // User
 
-  override protected def correctEx(learnerSolution: String, exercise: SqlCompleteEx, sqlScenario: SqlScenario, user: User): Try[SqlCorrResult] = Try({
+  override protected def correctEx(user: User, learnerSolution: String, exercise: SqlCompleteEx, sqlScenario: SqlScenario): Try[SqlCorrResult] = Try({
     Await.result(saveSolution(SqlSolution(user.username, exercise.ex.collectionId, exercise.id, learnerSolution)), Duration(2, duration.SECONDS))
 
     val sample = findBestFittingSample(learnerSolution, exercise.samples toList)
@@ -127,9 +127,9 @@ class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   }
 
   // FIXME: get rif of cast...
-  override def renderResult(correctionResult: CompleteResult[EvaluationResult]): Html = correctionResult match {
+  override def renderResult(correctionResult: SqlCorrResult): Html = correctionResult match {
     case res: SqlResult => views.html.sql.sqlResult(res)
-    case _              => new Html("")
+    case res: SqlFailed => ???
   }
 
 }

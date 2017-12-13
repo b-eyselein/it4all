@@ -1,11 +1,23 @@
 package model.uml;
 
 import model.Enums.Selectable;
+import scala.Option;
+import scala.Some;
 
 public abstract class UmlEnums {
 
     public enum UmlExPart implements Selectable<UmlExPart> {
-        CLASS_SELECTION, DIAG_DRAWING_HELP, DIAG_DRAWING, ATTRS_METHS, FINISHED
+        CLASS_SELECTION, DIAG_DRAWING_HELP, DIAG_DRAWING, ATTRS_METHS, FINISHED;
+
+        public static Option<UmlExPart> byString(String str) {
+            try {
+                return new Some<>(valueOf(str));
+            } catch (Exception e) {
+                // ==> None!
+                return Option.apply(null);
+            }
+        }
+
     }
 
     public enum UmlClassType {
@@ -16,6 +28,16 @@ public abstract class UmlEnums {
         UmlClassType(String theGerman) {
             german = theGerman;
         }
+
+        public static Option<UmlClassType> byString(String str) {
+            try {
+                return new Some<>(valueOf(str));
+            } catch (Exception e) {
+                // ==> None!
+                return Option.apply(null);
+            }
+        }
+
     }
 
     public enum UmlMultiplicity implements Selectable<UmlMultiplicity> {
@@ -36,6 +58,15 @@ public abstract class UmlEnums {
 //            else throw new IllegalArgumentException("Value " + rep + " is not allowed for a UmlMultiplicity!");
 //        }
 
+        public static Option<UmlMultiplicity> byString(String str) {
+            try {
+                return new Some<>(valueOf(str));
+            } catch (Exception e) {
+                // ==> None!
+                return Option.apply(null);
+            }
+        }
+
     }
 
     public enum UmlAssociationType implements Selectable<UmlAssociationType> {
@@ -45,7 +76,16 @@ public abstract class UmlEnums {
 
         UmlAssociationType(String theGermanName) {
             germanName = theGermanName;
-
         }
+
+        public static Option<UmlAssociationType> byString(String str) {
+            try {
+                return new Some<>(valueOf(str));
+            } catch (Exception e) {
+                // ==> None!
+                return Option.apply(null);
+            }
+        }
+
     }
 }

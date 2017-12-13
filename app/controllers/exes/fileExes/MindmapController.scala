@@ -9,7 +9,7 @@ import model.core._
 import model.mindmap.MindmapExercise
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.mvc.ControllerComponents
+import play.api.mvc.{AnyContent, ControllerComponents, Request}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -19,6 +19,14 @@ import scala.util.Try
 @Singleton
 class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
   extends AFileExController[MindmapExercise, EvaluationResult](cc, dbcp, r, MindMapToolObject) with Secured {
+
+  // Reading solution from requests
+
+  override type SolType = this.type
+
+  override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[MindmapController.this.type] = ???
+
+  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[MindmapController.this.type] = ???
 
   // Yaml
 

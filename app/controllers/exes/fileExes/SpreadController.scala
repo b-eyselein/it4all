@@ -10,7 +10,7 @@ import model.core._
 import model.spread._
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.mvc.ControllerComponents
+import play.api.mvc.{AnyContent, ControllerComponents, Request}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -27,6 +27,14 @@ object SpreadController {
 class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
   extends AFileExController[SpreadExercise, SpreadSheetCorrectionResult](cc, dbcp, r, SpreadToolObject) with Secured {
 
+  // Reading solution from requests
+
+  override type SolType = this.type
+
+  override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[SpreadController.this.type] = ???
+
+  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[SpreadController.this.type] = ???
+
   // Yaml
 
   override type CompEx = SpreadExercise
@@ -41,9 +49,9 @@ class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
 
   override def tq = repo.spreadExercises
 
-  override def completeExes: Future[Seq[SpreadExercise]] = db.run(repo.spreadExercises.result)
+  override def futureCompleteExes: Future[Seq[SpreadExercise]] = db.run(repo.spreadExercises.result)
 
-  override def completeExById(id: Int): Future[Option[SpreadExercise]] = db.run(repo.spreadExercises.filter(_.id === id).result.headOption)
+  override def futureCompleteExById(id: Int): Future[Option[SpreadExercise]] = db.run(repo.spreadExercises.filter(_.id === id).result.headOption)
 
   override def saveReadToDb(read: SpreadExercise): Future[Int] = db.run(repo.spreadExercises insertOrUpdate read)
 

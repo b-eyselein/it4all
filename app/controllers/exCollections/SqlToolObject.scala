@@ -32,8 +32,6 @@ object SqlToolObject extends CollectionToolObject {
   override def correctRoute(collection: HasBaseValues): Call = ???
 
 
-  override val restHeaders: List[String] = List.empty
-
   override def adminIndexRoute: Call = routes.SqlController.adminIndex()
 
   override def adminExesListRoute: Call = routes.SqlController.adminCollectionsList()

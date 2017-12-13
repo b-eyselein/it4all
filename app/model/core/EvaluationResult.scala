@@ -18,11 +18,25 @@ trait EvaluationResult {
 
 }
 
-class CompleteResult[E <: EvaluationResult](val learnerSolution: String, val results: Seq[E]) extends EvaluationResult {
+trait CompleteResult[E <: EvaluationResult] extends EvaluationResult {
 
-  override val success: SuccessType = SuccessType.ofBool(allResultsSuccessful(results))
+  type SolType
 
-  def renderLearnerSolution = new Html(s"<pre>${HtmlFormat.escape(learnerSolution)}</pre>")
+  def learnerSolution: SolType
+
+  def results: Seq[E]
+
+  def renderLearnerSolution: Html
+
+  override def success: SuccessType = SuccessType.ofBool(allResultsSuccessful(results))
+
+}
+
+case class GenericCompleteResult[E <: EvaluationResult](learnerSolution: String, results: Seq[E]) extends CompleteResult[E] {
+
+  override type SolType = String
+
+  override def renderLearnerSolution = new Html(s"<pre>${HtmlFormat.escape(learnerSolution)}</pre>")
 
 }
 

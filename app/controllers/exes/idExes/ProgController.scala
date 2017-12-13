@@ -3,7 +3,7 @@ package controllers.exes.idExes
 import javax.inject._
 
 import controllers.Secured
-import ProgController._
+import controllers.exes.idExes.ProgController._
 import model.Enums.ExerciseState
 import model.core._
 import model.core.tools.ExerciseOptions
@@ -11,11 +11,11 @@ import model.programming.ProgConsts._
 import model.programming._
 import model.{JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
-import play.api.data.Form
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.json._
 import play.api.mvc._
 import play.twirl.api.Html
+import views.html.programming._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
@@ -37,11 +37,17 @@ object ProgController {
 @Singleton
 class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)
                               (implicit ec: ExecutionContext)
-  extends AIdExController[ProgExercise, ProgEvaluationResult](cc, dbcp, r, ProgToolObject) with Secured with JsonFormat {
+  extends AIdExController[ProgExercise, ProgEvaluationResult, GenericCompleteResult[ProgEvaluationResult]](cc, dbcp, r, ProgToolObject) with Secured with JsonFormat {
 
-  override type SolutionType = StringSolution
+  // Reading solution from requests
 
-  override def solForm: Form[StringSolution] = Solution.stringSolForm
+  override type SolType = String
+
+  override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[String] =
+    Solution.stringSolForm.bindFromRequest().fold(_ => None, sol => Some(sol.learnerSolution))
+
+  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[String] =
+    Solution.stringSolForm.bindFromRequest().fold(_ => None, sol => Some(sol.learnerSolution))
 
   // Yaml
 
@@ -55,9 +61,9 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   override def tq: repo.ExerciseTableQuery[ProgExercise, ProgCompleteEx, repo.ProgExercisesTable] = repo.progExercises
 
-  override def completeExes: Future[Seq[ProgCompleteEx]] = repo.progExercises.completeExes
+  override def futureCompleteExes: Future[Seq[ProgCompleteEx]] = repo.progExercises.completeExes
 
-  override def completeExById(id: Int): Future[Option[ProgCompleteEx]] = repo.progExercises.completeById(id)
+  override def futureCompleteExById(id: Int): Future[Option[ProgCompleteEx]] = repo.progExercises.completeById(id)
 
   override def saveRead(read: Seq[ProgCompleteEx]): Future[Seq[Int]] = Future.sequence(read map (repo.progExercises.saveCompleteEx(_)))
 
@@ -65,11 +71,11 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   def testData(id: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
-      completeExById(id) map {
+      futureCompleteExById(id) map {
         case Some(ex) =>
           //          val oldTestData = Option(CommitedTestDataHelper.forUserAndExercise(user, id)).getOrElse(List.empty)
 
-          Ok(views.html.programming.testData.render(user, ex, Seq.empty /* oldTestData*/))
+          Ok(testDataCreation(user, ex, Seq.empty /* oldTestData*/))
         case None     => Redirect(controllers.exes.idExes.routes.ProgController.index())
       }
   }
@@ -77,8 +83,8 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
   def validateTestData(id: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
       readAndValidateTestdata(id, user, request) map {
-        case Some((ex, validatedTestData)) => Ok(views.html.programming.validatedTestData.render(user, ex.ex, Seq.empty /*validatedTestData*/))
-        case None                          => BadRequest("")
+        case Some((ex, validTestData)) => Ok(validatedTestData(user, ex.ex, Seq.empty /*validatedTestData*/))
+        case None                      => BadRequest("")
       }
   }
 
@@ -96,14 +102,14 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   // Correction
 
-  override def correctEx(sol: StringSolution, exercise: ProgCompleteEx, user: User): Try[CompleteResult[ProgEvaluationResult]] = Try({
+  override def correctEx(user: User, sol: String, exercise: ProgCompleteEx): Try[GenericCompleteResult[ProgEvaluationResult]] = Try({
     // FIXME: Time out der Ausführung
-    println(sol.learnerSolution)
+    println(sol)
 
     val language = ProgLanguage.STANDARD_LANG
     val corrector = correctors(language)
 
-    corrector.correct(user, exercise, sol.learnerSolution, language)
+    corrector.correct(user, exercise, sol, language)
   })
 
   // Views
@@ -111,17 +117,17 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
   override def renderExercise(user: User, exercise: ProgCompleteEx): Html = {
     val declaration = ProgLanguage.STANDARD_LANG.buildFunction(exercise.ex.functionName, exercise.ex.inputCount)
 
-    views.html.core.exercise2Rows.render(user, ProgToolObject, EX_OPTIONS, exercise.ex, views.html.programming.progExRest.render(exercise.ex), declaration)
+    views.html.core.exercise2Rows.render(user, ProgToolObject, EX_OPTIONS, exercise.ex, progExRest(exercise.ex), declaration)
   }
 
   override def renderExesListRest: Html = Html("")
 
-  override def renderResult(correctionResult: CompleteResult[ProgEvaluationResult]): Html = new Html(correctionResult.toString) // FIXME : implement!
+  override def renderResult(correctionResult: GenericCompleteResult[ProgEvaluationResult]): Html = new Html(correctionResult.toString) // FIXME : implement!
 
   // Helper methods
 
   private def readAndValidateTestdata(exerciseId: Int, user: User, request: Request[AnyContent]): Future[Option[(ProgCompleteEx, Seq[CompleteCommitedTestData])]] = {
-    completeExById(exerciseId) map { exOpt =>
+    futureCompleteExById(exerciseId) map { exOpt =>
       (exOpt zip request.body.asJson).headOption map {
         case (ex, jsValue) =>
           val testData = readAllCommitedTestDataFromJson(jsValue, ex.ex.id, user.username) getOrElse Seq.empty

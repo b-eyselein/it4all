@@ -13,33 +13,27 @@ class CreationQuestionTest {
   val awaitedKNF: ScalaNode = (a or b or c) and (a or b or -c) and (-a or b or c) and (-a or -b or c)
 
   val assignments: List[BoolAssignment] = List(
-    Assignment(a -> 0, b -> 0, c -> 0, z -> 0),
-    Assignment(a -> 0, b -> 0, c -> 1, z -> 0),
+    BoolAssignment(a -> false, b -> false, c -> false, z -> false),
+    BoolAssignment(a -> false, b -> false, c -> true, z -> false),
 
-    Assignment(a -> 0, b -> 1, c -> 0, z -> 1),
-    Assignment(a -> 0, b -> 1, c -> 1, z -> 1),
+    BoolAssignment(a -> false, b -> true, c -> false, z -> true),
+    BoolAssignment(a -> false, b -> true, c -> true, z -> true),
 
-    Assignment(a -> 1, b -> 0, c -> 0, z -> 0),
-    Assignment(a -> 1, b -> 0, c -> 1, z -> 1),
+    BoolAssignment(a -> true, b -> false, c -> false, z -> false),
+    BoolAssignment(a -> true, b -> false, c -> true, z -> true),
 
-    Assignment(a -> 1, b -> 1, c -> 0, z -> 0),
-    Assignment(a -> 1, b -> 1, c -> 1, z -> 1))
+    BoolAssignment(a -> true, b -> true, c -> false, z -> false),
+    BoolAssignment(a -> true, b -> true, c -> true, z -> true))
 
   @Test
   def testDnf() {
-
-    val question = new CreationQuestion(List(a, b, c), assignments)
-
-    val dnf = BoolAssignment.disjunktiveNormalForm(question.solutions)
+    val dnf = BoolAssignment.disjunktiveNormalForm(CreationQuestion(assignments).solutions)
     assert(dnf == awaitedDNF, s"Expected that DNF\n\tgenerated = $dnf\nequals\n\tawaited = $awaitedDNF")
-
   }
 
   @Test
   def testKnf() {
-    val question = new CreationQuestion(List(a, b, c), assignments)
-
-    val knf = BoolAssignment.konjunktiveNormalForm(question.solutions)
+    val knf = BoolAssignment.konjunktiveNormalForm(CreationQuestion(assignments).solutions)
     assert(knf == awaitedKNF, s"Expected that KNF\n\tgenerated = $knf\nequals\n\tawaited = $awaitedKNF")
   }
 

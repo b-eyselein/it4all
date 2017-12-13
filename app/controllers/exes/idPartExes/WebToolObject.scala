@@ -34,8 +34,6 @@ object WebToolObject extends IdPartExToolObject {
   override def correctRoute(exercise: HasBaseValues, part: String): Call = routes.WebController.correct(exercise.id, "html")
 
 
-  override val restHeaders: List[String] = List("# Tasks Html / Js", "Text Html / Js")
-
   override def adminIndexRoute: Call = routes.WebController.adminIndex()
 
   override def adminExesListRoute: Call = routes.WebController.adminExerciseList()

@@ -1,0 +1,29 @@
+@(completeEx: model.uml.UmlCompleteEx)
+
+<td>
+    <p>Klassenwahltext</p>
+    <p>@completeEx.ex.classSelText </p>
+</td>
+<td>
+    <p>Diagrammzeichnentext</p>
+    <p>@completeEx.ex.diagDrawText</p>
+</td>
+<td>
+    <p>Lösung</p>
+    <p>@completeEx.solution</p>
+</td>
+<td>
+    <ul>
+    @for(mapping <- completeEx.mappings) {
+        <li>@mapping.key &rarr;
+            @mapping.value</li>
+    }
+    </ul>
+</td>
+<td>
+    <ul>
+    @for(toIgnore <- completeEx.ex.getToIgnore) {
+        <li>@toIgnore</li>
+    }
+    </ul>
+</td>

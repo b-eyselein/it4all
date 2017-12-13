@@ -29,7 +29,7 @@ class XmlCorrectorTest {
   def emptyXmlAgainstXSD() {
     val xsd = Paths.get(basePath, "xml/note.xsd")
 
-    val out: List[XmlError] = XmlCorrector.correct("", readFile(xsd), XML_XSD)
+    val out: Seq[XmlError] = XmlCorrector.correct("", readFile(xsd), XML_XSD)
 
     assertErrorNum(out.size, 1)
     assertError(out.head, -1, "Premature end of file.")
@@ -39,7 +39,7 @@ class XmlCorrectorTest {
   def testClosingTagMissingXmlDtd() {
     val xml = Paths.get(basePath, "xml/partyNoClosingTag.xml")
 
-    val out: List[XmlError] = XmlCorrector.correct(readFile(xml), "", XML_DTD)
+    val out: Seq[XmlError] = XmlCorrector.correct(readFile(xml), "", XML_DTD)
 
     assertNotNull(out)
     assertErrorNum(out.size, 1)
@@ -52,7 +52,7 @@ class XmlCorrectorTest {
     val xml = Paths.get(basePath, "xml/noteNoClosingTag.xml")
     val xsd = Paths.get(basePath, "xml/note.xsd")
 
-    val out: List[XmlError] = XmlCorrector.correct(readFile(xml), readFile(xsd), XML_XSD)
+    val out: Seq[XmlError] = XmlCorrector.correct(readFile(xml), readFile(xsd), XML_XSD)
 
     assertNotNull(out)
     assertErrorNum(out.size, 1)
@@ -64,7 +64,7 @@ class XmlCorrectorTest {
     val referenceFile = Paths.get(basePath, "xml/party.xml")
     val grammar = Paths.get(basePath, "xml/party.dtd")
 
-    val out: List[XmlError] = XmlCorrector.correct(readFile(referenceFile), readFile(grammar), XML_DTD)
+    val out: Seq[XmlError] = XmlCorrector.correct(readFile(referenceFile), readFile(grammar), XML_DTD)
 
     assertNotNull(out)
     assertTrue(out.isEmpty)
@@ -75,7 +75,7 @@ class XmlCorrectorTest {
     val file = Paths.get(basePath, "xml/party.xml")
     val grammar = Paths.get(basePath, "xml/party.dtd")
 
-    val out: List[XmlError] = XmlCorrector.correct(readFile(file), readFile(grammar), XML_DTD)
+    val out: Seq[XmlError] = XmlCorrector.correct(readFile(file), readFile(grammar), XML_DTD)
 
     assertNotNull(out)
     assertTrue(out.isEmpty)
@@ -86,7 +86,7 @@ class XmlCorrectorTest {
     val xml = Paths.get(basePath, "xml/note.xml")
     val xsd = Paths.get(basePath, "xml/note.xsd")
 
-    val out: List[XmlError] = XmlCorrector.correct(readFile(xml), readFile(xsd), XML_XSD)
+    val out: Seq[XmlError] = XmlCorrector.correct(readFile(xml), readFile(xsd), XML_XSD)
 
     assertNotNull(out)
     assertTrue(out.isEmpty)
@@ -96,7 +96,7 @@ class XmlCorrectorTest {
   def testMissingAttributeXmlDtd() {
     // val file = Paths.get(basePath, "partyMissingAttribute.xml")
     //
-    // List<XmlError> out = XmlCorrector.correct(readFile(file), "",
+    // Seq<XmlError> out = XmlCorrector.correct(readFile(file), "",
     // XmlExType.XML_DTD)
     //
     // assertErrorNum(out.size, 1)
@@ -112,7 +112,7 @@ class XmlCorrectorTest {
 
     println(xml.toFile.exists + " :: " + xsd.toFile.exists)
 
-    val out: List[XmlError] = XmlCorrector.correct(readFile(xml), readFile(xsd), XML_XSD)
+    val out: Seq[XmlError] = XmlCorrector.correct(readFile(xml), readFile(xsd), XML_XSD)
 
     assertErrorNum(out.size, 1)
     assertError(out.head, 5,
@@ -123,7 +123,7 @@ class XmlCorrectorTest {
   def testNoRootXmlDtd() {
     val file = Paths.get(basePath, "xml/partyNoRoot.xml")
 
-    val out: List[XmlError] = XmlCorrector.correct(readFile(file), "", XML_DTD)
+    val out: Seq[XmlError] = XmlCorrector.correct(readFile(file), "", XML_DTD)
 
     assertErrorNum(out.size, 1)
     assertError(out.head, 17, "The markup in the document following the root element must be well-formed.")
@@ -134,7 +134,7 @@ class XmlCorrectorTest {
     val xml = Paths.get(basePath, "xml/noteNoRoot.xml")
     val xsd = Paths.get(basePath, "xml/note.xsd")
 
-    val out: List[XmlError] = XmlCorrector.correct(readFile(xml), readFile(xsd), XML_XSD)
+    val out: Seq[XmlError] = XmlCorrector.correct(readFile(xml), readFile(xsd), XML_XSD)
 
     assertErrorNum(out.size, 2)
     assertError(out.head, 2, "cvc-elt.1.a: Cannot find the declaration of element 'to'.")
@@ -145,7 +145,7 @@ class XmlCorrectorTest {
   def testWrongAttributeDtdXml() {
     // val referenceFile = Paths.get(basePath, "partyNoDate.xml")
     //
-    // List<XmlError> out = XmlCorrector.correct(readFile(referenceFile),
+    // Seq<XmlError> out = XmlCorrector.correct(readFile(referenceFile),
     // "",
     // XmlExType.DTD_XML)
     //
@@ -158,7 +158,7 @@ class XmlCorrectorTest {
   def testWrongTagXmlDtd() {
     // val file = Paths.get(basePath, "partyWrongTag.xml")
     //
-    // List<XmlError> out = XmlCorrector.correct(readFile(file), "",
+    // Seq<XmlError> out = XmlCorrector.correct(readFile(file), "",
     // XmlExType.XML_DTD)
     //
     // assertErrorNum(out.size, 2)
@@ -173,7 +173,7 @@ class XmlCorrectorTest {
     val xml = Paths.get(basePath, "xml/noteWrongTag.xml")
     val xsd = Paths.get(basePath, "xml/note.xsd")
 
-    val out: List[XmlError] = XmlCorrector.correct(readFile(xml), readFile(xsd), XML_XSD)
+    val out: Seq[XmlError] = XmlCorrector.correct(readFile(xml), readFile(xsd), XML_XSD)
 
     assertErrorNum(out.size, 1)
     assertError(out.head, 11,
@@ -184,7 +184,7 @@ class XmlCorrectorTest {
   def testXmlNoElement() {
     val xml = readFile(Paths.get(basePath, "xml/xmlNoElement.xml"))
 
-    val out: List[XmlError] = XmlCorrector.correct(xml, "", XML_DTD)
+    val out: Seq[XmlError] = XmlCorrector.correct(xml, "", XML_DTD)
 
     assertErrorNum(out.size, 1)
     assertError(out.head, -1, "Premature end of file.")

@@ -42,7 +42,7 @@ trait JsonFormat {
     //      case JsArray(content) => content map fieldType
     //    }
 
-    def arrayField[T](fieldName: String, fieldType: (JsValue => Option[T])): Option[Seq[T]] = jsObject.value get fieldName flatMap {
+    def arrayField[T](fieldName: String, fieldType: JsValue => Option[T]): Option[Seq[T]] = jsObject.value get fieldName flatMap {
       case JsArray(content) => Some((content map fieldType) flatten)
       case _                => None
     }

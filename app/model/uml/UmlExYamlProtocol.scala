@@ -31,7 +31,7 @@ object UmlExYamlProtocol extends MyYamlProtocol {
 
     override protected def writeRest(completeEx: UmlCompleteEx): Map[YamlValue, YamlValue] = Map(
       YamlString(MAPPINGS_NAME) -> YamlArray(completeEx.mappings map (_.toYaml(UmlMappingYamlFormat(completeEx.ex.id))) toVector),
-      YamlString(IGNORE_WORDS_NAME) -> YamlArray(completeEx.ex.getToIngore map YamlString toVector),
+      YamlString(IGNORE_WORDS_NAME) -> YamlArray(completeEx.ex.getToIgnore map YamlString toVector),
       YamlString(SOLUTION_NAME) -> completeEx.solution.toYaml(UmlSolutionYamlFormat(completeEx.ex.id))
     )
   }

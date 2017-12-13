@@ -1,6 +1,4 @@
-@import model._
-
-@(user: User, completeCollections: Seq[CompleteCollection], toolObject: exCollections.CollectionToolObject)
+@(user: model.User, completeCollections: Seq[model.CompleteCollection], toolObject: exCollections.CollectionToolObject)
 
 @main("Aufgabenübersicht", user) {
     <div class="container">
@@ -24,10 +22,6 @@
                     <th>Aktionen</th>
                     <th>Titel</th>
                     <th>Autor</th>
-                    <th>Text</th>
-                    @for(otherHeader <- toolObject.restHeaders) {
-                        <th>@otherHeader</th>
-                    }
                 </tr>
             </thead>
             <tbody>
@@ -60,12 +54,6 @@
                     </td>
                     <td>@collection.title</td>
                     <td>@collection.author</td>
-
-                    @views.html.core.helperTemplates.stringLen(collection.text, 40)
-
-                        <!--TODO: implement? -->
-                        @*@completeCollection.renderListRest*@
-
                 </tr>
             }
             </tbody>

@@ -300,14 +300,14 @@ CREATE TABLE IF NOT EXISTS uml_sol_impls (
 
 CREATE TABLE IF NOT EXISTS uml_sol_assocs (
   exercise_id INT,
-  assoc_type  ENUM ('ASSOCICATION', 'AGGREGATION', 'COMPOSITION') DEFAULT 'ASSOCICATION',
+  assoc_type  ENUM ('ASSOCIATION', 'AGGREGATION', 'COMPOSITION') DEFAULT 'ASSOCIATION',
   assoc_name  VARCHAR(50),
   first_end   VARCHAR(50),
   first_mult  ENUM ('SINGLE', 'UNBOUND'),
   second_end  VARCHAR(50),
   second_mult ENUM ('SINGLE', 'UNBOUND'),
 
-  PRIMARY KEY (exercise_id, assoc_name, first_end, second_end),
+  PRIMARY KEY (exercise_id, first_end, second_end),
   FOREIGN KEY (exercise_id) REFERENCES uml_exercises (id)
     ON UPDATE CASCADE
     ON DELETE CASCADE

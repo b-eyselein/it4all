@@ -26,8 +26,6 @@ object EbnfToolObject extends IdExToolObject {
   override def correctRoute(exercise: HasBaseValues): Call = ???
 
 
-  override val restHeaders: List[String] = List("Terminalsymbole")
-
   override def adminIndexRoute: Call = routes.EbnfController.adminIndex()
 
   override def adminExesListRoute: Call = routes.EbnfController.adminExerciseList()

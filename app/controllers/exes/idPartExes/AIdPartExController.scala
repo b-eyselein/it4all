@@ -2,15 +2,15 @@ package controllers.exes.idPartExes
 
 import java.nio.file.{Files, Path}
 
-import controllers.exes.BaseExerciseController
 import controllers.Secured
+import controllers.exes.BaseExerciseController
 import model.core._
 import model.core.tools.ExToolObject
 import model.{Exercise, HasBaseValues, User}
-import play.api.data.Form
 import play.api.db.slick.DatabaseConfigProvider
+import play.api.http.Writeable
 import play.api.libs.json.Json
-import play.api.mvc.{Call, ControllerComponents, EssentialAction}
+import play.api.mvc._
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -30,55 +30,40 @@ trait IdPartExToolObject extends ExToolObject {
 
 }
 
-abstract class AIdPartExController[E <: Exercise, R <: EvaluationResult]
+abstract class AIdPartExController[E <: Exercise, R <: EvaluationResult, CompResult <: CompleteResult[R]]
 (cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository, to: IdPartExToolObject)(implicit ec: ExecutionContext)
   extends BaseExerciseController[E](cc, dbcp, r, to) with Secured {
 
-  // Reading solution from Request
-
-  type SolutionType <: Solution
-
-  def solForm: Form[SolutionType]
-
   def correct(id: Int, part: String): EssentialAction = futureWithUser { user =>
     implicit request =>
-      solForm.bindFromRequest.fold(_ => Future(BadRequest("There has been an error!")),
-        solution => completeExById(id) map {
-          case None => BadRequest("TODO!")
-
-          case Some(ex) => correctEx(user, solution, ex, part) match {
-            case Success(correctionResult) =>
-              log(user, new ExerciseCompletionEvent[R](request, id, correctionResult))
-              Ok(renderCorrectionResult(user, correctionResult))
-
-            case Failure(error) =>
-              BadRequest(views.html.main.render("Fehler", user, new Html(""), new Html(
-                s"""<pre>${error.getMessage}:
-                   |${error.getStackTrace mkString "\n"}</pre>""".stripMargin)))
-          }
-        })
+      correctAbstract(user, part, id, readSolutionFromPostRequest, renderCorrectionResult(user, _),
+        error => views.html.main.render("Fehler", user, new Html(""), new Html(
+          s"""<pre>${error.getMessage}:
+             |${error.getStackTrace mkString "\n"}</pre>""".stripMargin)))
   }
 
   def correctLive(id: Int, part: String): EssentialAction = futureWithUser { user =>
-    implicit request =>
-      solForm.bindFromRequest.fold(_ => Future(BadRequest("There has been an error!")),
-        solution => completeExById(id) map {
-          case None => BadRequest("TODO!")
-
-          case Some(ex) => correctEx(user, solution, ex, part) match {
-            case Success(correctionResult) =>
-              log(user, new ExerciseCorrectionEvent[R](request, id, correctionResult))
-              Ok(renderResult(correctionResult))
-
-            case Failure(error) => BadRequest(Json.toJson(error.getMessage))
-          }
-        })
+    implicit request => correctAbstract(user, part, id, readSolutionFromPutRequest, renderResult, error => Json.toJson(error.getMessage))
   }
+
+  private def correctAbstract[S, Err](user: User, part: String, id: Int, maybeSolution: Option[SolType],
+                                      onCorrectionSuccess: CompResult => S, onCorrectionError: Throwable => Err)
+                                     (implicit successWriteable: Writeable[S], errorWriteable: Writeable[Err], request: Request[AnyContent]): Future[Result] =
+    maybeSolution match {
+      case None           => Future(BadRequest("No solution!"))
+      case Some(solution) => futureCompleteExById(id) map {
+        case None           => NotFound("No such exercise!")
+        case Some(exercise) => correctEx(user, solution, exercise, part) match {
+          case Success(result) => Ok(onCorrectionSuccess(result))
+          case Failure(error)  => BadRequest(onCorrectionError(error))
+        }
+      }
+    }
 
 
   def exercise(id: Int, part: String): EssentialAction = futureWithUser { user =>
     implicit request =>
-      completeExById(id) flatMap {
+      futureCompleteExById(id) flatMap {
         case Some(exercise) =>
           log(user, ExerciseStartEvent(request, id))
           renderExercise(user, exercise, part) map (Ok(_))
@@ -90,13 +75,13 @@ abstract class AIdPartExController[E <: Exercise, R <: EvaluationResult]
     Try(Files.createDirectories(toolObject.solutionDirForExercise(username, exercise.ex)))
 
 
-  protected def renderCorrectionResult(user: User, correctionResult: CompleteResult[R]): Html =
+  protected def renderCorrectionResult(user: User, correctionResult: CompResult): Html =
     views.html.core.correction.render(correctionResult, renderResult(correctionResult), user, toolObject)
 
-  protected def correctEx(user: User, sol: SolutionType, exercise: CompEx, part: String): Try[CompleteResult[R]] = ???
+  protected def correctEx(user: User, sol: SolType, exercise: CompEx, part: String): Try[CompResult] = ???
 
   protected def renderExercise(user: User, exercise: CompEx, part: String): Future[Html] = ???
 
-  protected def renderResult(correctionResult: CompleteResult[R]): Html = ???
+  protected def renderResult(correctionResult: CompResult): Html = ???
 
 }

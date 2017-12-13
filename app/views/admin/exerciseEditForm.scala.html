@@ -1,10 +1,18 @@
 @(user: model.User, toolObject: model.core.tools.ExToolObject, exerciseOpt: Option[model.CompleteEx[_ <: model.Exercise]], renderedRest: Html)
 
+@scripts = {
+    <style>
+            textarea {
+                resize: vertical;
+            }
+    </style>
+}
+
 @isCreation = @{
     exerciseOpt.isEmpty
 }
 
-@main(s"${toolObject.toolname}: Aufgabe ${if(isCreation) "erstellen" else "bearbeiten"}", user) {
+@main(s"${toolObject.toolname}: Aufgabe ${if(isCreation) "erstellen" else "bearbeiten"}", user, scripts) {
     <div class="container">
         <div class="page-header">
             <h1>@if(isCreation) {Erstellen} else {Bearbeiten} einer @toolObject.toolname-Aufgabe</h1>

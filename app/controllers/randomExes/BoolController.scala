@@ -14,6 +14,7 @@ import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json._
 import play.api.mvc.{AbstractController, ControllerComponents, EssentialAction}
 import slick.jdbc.JdbcProfile
+import views.html.essentials._
 
 import scala.concurrent.ExecutionContext
 import scala.language.{implicitConversions, postfixOps}
@@ -26,7 +27,7 @@ class BoolController @Inject()(cc: ControllerComponents, val dbConfigProvider: D
   // Table fillout
 
   def newBoolFilloutQuestion(opsAsSymbols: Boolean): EssentialAction = withUser { user =>
-    implicit request => Ok(views.html.essentials.boolFilloutQuestion.render(user, generateNewFilloutQuestion, opsAsSymbols))
+    implicit request => Ok(boolFilloutQuestion(user, generateNewFilloutQuestion, opsAsSymbols))
   }
 
   def checkBoolFilloutSolution: EssentialAction = withUser { _ =>
@@ -60,7 +61,7 @@ class BoolController @Inject()(cc: ControllerComponents, val dbConfigProvider: D
   // Creation of a function
 
   def newBoolCreationQuestion: EssentialAction = withUser { user =>
-    implicit request => Ok(views.html.essentials.boolCreateQuestion.render(user, generateNewCreationQuestion))
+    implicit request => Ok(boolCreateQuestion(user, generateNewCreationQuestion))
   }
 
   def checkBoolCreationSolution: EssentialAction = withUser { _ =>

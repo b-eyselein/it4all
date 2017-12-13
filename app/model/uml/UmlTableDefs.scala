@@ -1,35 +1,21 @@
 package model.uml
 
-import java.sql.SQLSyntaxErrorException
-
 import controllers.exes.idPartExes.UmlToolObject
 import model.Enums.ExerciseState
 import model.uml.UmlConsts._
 import model.uml.UmlEnums._
-import model.uml.UmlExYamlProtocol.UmlSolutionYamlFormat
 import model.{BaseValues, CompleteEx, Exercise, TableDefs}
-import net.jcazevedo.moultingyaml._
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.mvc.Call
-import play.twirl.api.{Html, HtmlFormat}
+import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
-import scala.util.Try
 
 case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping], solution: UmlSolution) extends CompleteEx[UmlExercise] {
 
-  import views.html.core.helperTemplates.modal
-
-  // FIXME: -> umlPreview.scala.html ?!?
-  override def preview: Html = new Html(
-    s"""<td>${modal.render("Klassenwahltext", new Html(ex.classSelText + "<hr>" + HtmlFormat.escape(ex.classSelText)), "Klassenwahltext")}</td>
-       |<td>${modal.render("Diagrammzeichnentext", new Html(ex.diagDrawText + "<hr>" + HtmlFormat.escape(ex.diagDrawText)), "Diagrammzeichnentext")}</td>
-       |<td>${modal.render("Lösung", new Html("<pre>" + solution.toYaml(UmlSolutionYamlFormat(ex.id)).prettyPrint + "<pre>"), "Lösung" + ex.id)}</td>
-       |<td><ul>${mappings.map(m => s"<li>${m.key} --> ${m.value}</li>").mkString}</ul></td>
-       |<td><ul>${ex.getToIngore.map(i => s"<li>$i</li>").mkString}</ul></td>""".stripMargin)
-
+  override def preview: Html = views.html.uml.umlPreview(this)
 
   def getClassesForDiagDrawingHelp: String = {
     val classes = solution.classes
@@ -38,16 +24,16 @@ case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping], solution: U
     classes.zipWithIndex.map { case (clazz, index) =>
       s"""{
          |  name: "${clazz.clazz.className}",
-         |  classType: "${clazz.clazz.classType.toString.toUpperCase}",
-         |  attributes: [], methods: [],
-         |  position: { x: ${(index / sqrt) * GAP + OFFSET}, y: ${(index % sqrt) * GAP + OFFSET} }
+         |  classType: "${clazz.clazz.classType.toString.toUpperCase}", attributes: [], methods: [],
+         |  position: { x: ${(index / sqrt) * GapHorizontal + OFFSET}, y: ${(index % sqrt) * GapVertival + OFFSET} }
          |}""".stripMargin
     } mkString ","
   }
 
-  override def renderListRest = ???
+  override def renderListRest = new Html("") // ???
 
   override def exerciseRoutes: Map[Call, String] = UmlToolObject.exerciseRoutes(this)
+
 }
 
 case class UmlSolution(classes: Seq[UmlCompleteClass], associations: Seq[UmlAssociation], implementations: Seq[UmlImplementation]) {
@@ -82,7 +68,7 @@ object UmlExercise {
 
 case class UmlExercise(baseValues: BaseValues, classSelText: String, diagDrawText: String, toIgnore: String) extends Exercise {
 
-  def getToIngore: Seq[String] = toIgnore split TagJoinChar
+  def getToIgnore: Seq[String] = toIgnore split TagJoinChar
 
 }
 
@@ -100,7 +86,7 @@ abstract class UmlClassMember(exerciseId: Int, className: String, name: String, 
 
 case class UmlClassAttribute(exId: Int, cn: String, attrName: String, attrType: String) extends UmlClassMember(exId, cn, attrName, attrType)
 
-case class UmlClassMethod(en: Int, cn: String, methodName: String, returns: String) extends UmlClassMember(en, cn, methodName, returns)
+case class UmlClassMethod(exId: Int, cn: String, methodName: String, returns: String) extends UmlClassMember(exId, cn, methodName, returns)
 
 
 case class UmlImplementation(exerciseId: Int, subClass: String, superClass: String)
@@ -116,64 +102,57 @@ trait UmlTableDefs extends TableDefs {
 
   import profile.api._
 
-  def saveCompleteEx(completeEx: UmlCompleteEx)(implicit ec: ExecutionContext): Future[Seq[Any]] =
-    db.run(umlExercises insertOrUpdate completeEx.ex) flatMap { _ =>
+  // Delete old exercise first
+  def saveCompleteEx(completeEx: UmlCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] = db.run(umlExercises.filter(_.id === completeEx.id).delete) flatMap { _ =>
+    db.run(umlExercises += completeEx.ex) flatMap { _ =>
       Future.sequence(completeEx.mappings map saveMapping) zip Future.sequence(saveSampleSolution(completeEx.solution))
-    } map (_._1)
-
-  private def saveMapping(mapping: UmlMapping)(implicit ec: ExecutionContext) = db.run(umlMappings insertOrUpdate mapping) recover {
-    case _: Throwable =>
-      println("Error while saving mapping")
-      //      e.printStackTrace()
-      -1
+    } map (_ => true) recover {
+      case e: Throwable => false
+    }
   }
+
+  private def saveMapping(mapping: UmlMapping)(implicit ec: ExecutionContext): Future[Boolean] =
+    db.run(umlMappings += mapping) map (_ => true) recover {
+      case e: Throwable =>
+        println(s"Error while saving mapping $mapping:\n\t${e.getMessage}")
+        false
+    }
 
   private def saveSampleSolution(solution: UmlSolution)(implicit ec: ExecutionContext) =
     (solution.classes map saveClass) zip (solution.associations map saveAssociation) zip (solution.implementations map saveImplementation) map (_._1._1)
 
-  private def saveClass(umlCompleteClass: UmlCompleteClass)(implicit ec: ExecutionContext): Future[Seq[Int]] = db.run(umlClasses insertOrUpdate umlCompleteClass.clazz) flatMap {
-    _ => Future.sequence(umlCompleteClass.attributes map saveClassAttribute) zip Future.sequence(umlCompleteClass.methods map saveClassMethod) map (_._1)
-  } recover {
-    case _: Throwable =>
-      println("Error while saving class!")
-      //      e.printStackTrace()
-      Seq.empty
-  }
+  private def saveClass(umlCompleteClass: UmlCompleteClass)(implicit ec: ExecutionContext): Future[Boolean] = db.run(umlClasses += umlCompleteClass.clazz) flatMap { _ =>
+    Future.sequence(umlCompleteClass.attributes map saveClassAttribute) map (_ forall identity) zip
+      Future.sequence(umlCompleteClass.methods map saveClassMethod).map(_ forall identity)
+  } map (tuple => tuple._1 && tuple._2)
 
-  private def saveAssociation(association: UmlAssociation)(implicit ec: ExecutionContext) = db.run(umlAssociations insertOrUpdate association) recover {
-    case _: Throwable =>
-      println("Error while saving association")
-      // e.printStackTrace()
-      -1
-  }
+  private def saveAssociation(association: UmlAssociation)(implicit ec: ExecutionContext): Future[Boolean] =
+    db.run(umlAssociations += association) map (_ => true) recover {
+      case e: Throwable =>
+        println(s"Error while saving uml association $association:\n\t${e.getMessage}")
+        false
+    }
 
-  private def saveImplementation(implementation: UmlImplementation)(implicit ec: ExecutionContext) = db.run(umlImplementations insertOrUpdate implementation) recover {
-    case e: SQLSyntaxErrorException =>
-      println("Error while saving impl: " + e.getMessage + ", " + e.getErrorCode)
-      -1
-    case _: Throwable               =>
-      println("Error while saving implementation")
-      // e.printStackTrace()
-      -1
-  }
+  private def saveImplementation(implementation: UmlImplementation)(implicit ec: ExecutionContext): Future[Boolean] =
+    db.run(umlImplementations += implementation) map (_ => true) recover {
+      case e: Throwable =>
+        println(s"Error while saving uml implementation $implementation:\n\t${e.getMessage}")
+        false
+    }
 
-  private def saveClassAttribute(umlClassAttribute: UmlClassAttribute)(implicit ec: ExecutionContext) = db.run(umlClassAttributes insertOrUpdate umlClassAttribute) recover {
-    case _: Throwable =>
-      println("Error while saving attribute")
-      // e.printStackTrace()
-      -1
-  }
+  private def saveClassAttribute(umlClassAttribute: UmlClassAttribute)(implicit ec: ExecutionContext): Future[Boolean] =
+    db.run(umlClassAttributes += umlClassAttribute) map (_ => true) recover {
+      case e: Throwable =>
+        println(s"Error while saving uml attribute $umlClassAttribute:\n\t${e.getMessage}")
+        false
+    }
 
-  private def saveClassMethod(umlClassMethod: UmlClassMethod)(implicit ec: ExecutionContext) = {
-    val action = umlClassMethods insertOrUpdate umlClassMethod
-    println(action.statements.mkString + " with " + umlClassMethod)
-    db.run(action)
-  } recover {
-    case e: SQLSyntaxErrorException =>
-      println("Error while saving method: " + e.getMessage + " :: " + e.getSQLState + ", " + e.getErrorCode)
-      // e.printStackTrace()
-      -1
-  }
+  private def saveClassMethod(umlClassMethod: UmlClassMethod)(implicit ec: ExecutionContext): Future[Boolean] =
+    db.run(umlClassMethods += umlClassMethod) map (_ => true) recover {
+      case e: Throwable =>
+        println(s"Error while saving uml method $umlClassMethod:\n\t${e.getMessage}")
+        false
+    }
 
   object umlExercises extends ExerciseTableQuery[UmlExercise, UmlCompleteEx, UmlExercisesTable](new UmlExercisesTable(_)) {
 
@@ -227,13 +206,13 @@ trait UmlTableDefs extends TableDefs {
   // Implicit column types
 
   implicit val UmlClassTypeColumnType: BaseColumnType[UmlClassType] =
-    MappedColumnType.base[UmlClassType, String](_.name, str => Try(UmlClassType.valueOf(str)).getOrElse(UmlClassType.CLASS))
+    MappedColumnType.base[UmlClassType, String](_.name, str => UmlClassType.byString(str) getOrElse UmlClassType.CLASS)
 
   implicit val UmlAssoctypeColumnType: BaseColumnType[UmlAssociationType] =
-    MappedColumnType.base[UmlAssociationType, String](_.name, str => Try(UmlAssociationType.valueOf(str)).getOrElse(UmlAssociationType.ASSOCIATION))
+    MappedColumnType.base[UmlAssociationType, String](_.name, str => UmlAssociationType.byString(str) getOrElse UmlAssociationType.ASSOCIATION)
 
   implicit val UmlMultiplicityColumnType: BaseColumnType[UmlMultiplicity] =
-    MappedColumnType.base[UmlMultiplicity, String](_.name, str => Try(UmlMultiplicity.valueOf(str)).getOrElse(UmlMultiplicity.UNBOUND))
+    MappedColumnType.base[UmlMultiplicity, String](_.name, str => UmlMultiplicity.byString(str) getOrElse UmlMultiplicity.UNBOUND)
 
   // Table definitions
 
@@ -253,17 +232,9 @@ trait UmlTableDefs extends TableDefs {
 
   }
 
-  trait ForeignKeyUmlExercise {
-
-    self: Table[_] =>
+  class UmlMappingsTable(tag: Tag) extends Table[UmlMapping](tag, "uml_mappings") {
 
     def exerciseId = column[Int]("exercise_id")
-
-    def exerciseFk = foreignKey("exercise_fk", exerciseId, umlExercises)(_.id)
-
-  }
-
-  class UmlMappingsTable(tag: Tag) extends Table[UmlMapping](tag, "uml_mappings") with ForeignKeyUmlExercise {
 
     def mappingKey = column[String]("mapping_key")
 
@@ -272,37 +243,37 @@ trait UmlTableDefs extends TableDefs {
 
     def pk = primaryKey("pk", (exerciseId, mappingKey))
 
+    def exerciseFk = foreignKey("exercise_fk", exerciseId, umlExercises)(_.id)
+
 
     def * = (exerciseId, mappingKey, mappingValue) <> (UmlMapping.tupled, UmlMapping.unapply)
 
   }
 
-  class UmlClassTable(tag: Tag) extends Table[UmlClass](tag, "uml_sol_classes") with ForeignKeyUmlExercise {
+  class UmlClassTable(tag: Tag) extends Table[UmlClass](tag, "uml_sol_classes") {
 
     def className = column[String]("class_name")
+
+    def exerciseId = column[Int]("exercise_id")
 
     def classType = column[UmlClassType]("class_type")
 
 
     def pk = primaryKey("pk", (exerciseId, className))
 
+    def exerciseFk = foreignKey("exercise_fk", exerciseId, umlExercises)(_.id)
+
 
     def * = (exerciseId, className, classType) <> (UmlClass.tupled, UmlClass.unapply)
 
   }
 
-  abstract class UmlClassMemberTable[M <: UmlClassMember](tag: Tag, name: String) extends Table[M](tag, name) {
+
+  class UmlClassAttributesTable(tag: Tag) extends Table[UmlClassAttribute](tag, "uml_sol_classes_attrs") {
 
     def exerciseId = column[Int]("exercise_id")
 
     def className = column[String]("class_name")
-
-
-    def classFk = foreignKey("class_fk", (exerciseId, className), umlClasses)(c => (c.exerciseId, c.className))
-
-  }
-
-  class UmlClassAttributesTable(tag: Tag) extends UmlClassMemberTable[UmlClassAttribute](tag, "uml_sol_classes_attrs") {
 
     def attrName = column[String]("attr_name")
 
@@ -311,12 +282,18 @@ trait UmlTableDefs extends TableDefs {
 
     def pk = primaryKey("pk", (exerciseId, className, attrName))
 
+    def classFk = foreignKey("class_fk", (exerciseId, className), umlClasses)(c => (c.exerciseId, c.className))
+
 
     def * = (exerciseId, className, attrName, attrType) <> (UmlClassAttribute.tupled, UmlClassAttribute.unapply)
 
   }
 
-  class UmlClassMethodsTable(tag: Tag) extends UmlClassMemberTable[UmlClassMethod](tag, "uml_sol_classes_methods") {
+  class UmlClassMethodsTable(tag: Tag) extends Table[UmlClassMethod](tag, "uml_sol_classes_methods") {
+
+    def exerciseId = column[Int]("exercise_id")
+
+    def className = column[String]("class_name")
 
     def methodName = column[String]("method_name")
 
@@ -325,12 +302,16 @@ trait UmlTableDefs extends TableDefs {
 
     def pk = primaryKey("pk", (exerciseId, className, methodName, returnType))
 
+    def classFk = foreignKey("class_fk", (exerciseId, className), umlClasses)(c => (c.exerciseId, c.className))
+
 
     def * = (exerciseId, className, methodName, returnType) <> (UmlClassMethod.tupled, UmlClassMethod.unapply)
 
   }
 
-  class UmlImplementationsTable(tag: Tag) extends Table[UmlImplementation](tag, "uml_sol_impls") with ForeignKeyUmlExercise {
+  class UmlImplementationsTable(tag: Tag) extends Table[UmlImplementation](tag, "uml_sol_impls") {
+
+    def exerciseId = column[Int]("exercise_id")
 
     def subClass = column[String]("sub_class")
 
@@ -339,16 +320,20 @@ trait UmlTableDefs extends TableDefs {
 
     def pk = primaryKey("pk", (exerciseId, subClass, superClass))
 
+    def exerciseFk = foreignKey("exercise_fk", exerciseId, umlExercises)(_.id)
+
 
     def * = (exerciseId, subClass, superClass) <> (UmlImplementation.tupled, UmlImplementation.unapply)
 
   }
 
-  class UmlAssociationsTable(tag: Tag) extends Table[UmlAssociation](tag, "uml_sol_assocs") with ForeignKeyUmlExercise {
+  class UmlAssociationsTable(tag: Tag) extends Table[UmlAssociation](tag, "uml_sol_assocs") {
 
     def assocType = column[UmlAssociationType]("assoc_type")
 
-    def name = column[String]("assoc_name")
+    def assocName = column[String]("assoc_name")
+
+    def exerciseId = column[Int]("exercise_id")
 
     def firstEnd = column[String]("first_end")
 
@@ -359,10 +344,12 @@ trait UmlTableDefs extends TableDefs {
     def secondMult = column[UmlMultiplicity]("second_mult")
 
 
-    def pk = primaryKey("pk", (exerciseId, name, firstEnd, secondEnd))
+    def pk = primaryKey("pk", (exerciseId, firstEnd, secondEnd))
+
+    def exerciseFk = foreignKey("exercise_fk", exerciseId, umlExercises)(_.id)
 
 
-    def * = (exerciseId, assocType, name.?, firstEnd, firstMult, secondEnd, secondMult) <> (UmlAssociation.tupled, UmlAssociation.unapply)
+    def * = (exerciseId, assocType, assocName.?, firstEnd, firstMult, secondEnd, secondMult) <> (UmlAssociation.tupled, UmlAssociation.unapply)
 
   }
 

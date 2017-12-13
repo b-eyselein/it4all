@@ -22,10 +22,6 @@
                     <th>Aktionen</th>
                     <th>Titel</th>
                     <th>Autor</th>
-                    <th>Text</th>
-                    @for(otherHeader <- toolObject.restHeaders) {
-                        <th>@otherHeader</th>
-                    }
                 </tr>
             </thead>
             <tbody>
@@ -35,8 +31,8 @@
                     <td>@exercise.id</td>
                     <td>
                         <div class="input-group">
-                            <select onchange="updateStateChangeButton(@exercise.id)" name="state_@exercise.id" class="form-control" id="state_@exercise.id"
-                            data-val="@exercise.state">
+                            <select title="Status &auml;ndern" onchange="updateStateChangeButton(@exercise.id)" name="state_@exercise.id"
+                            class="form-control" id="state_@exercise.id" data-val="@exercise.state">
                             @for(exState <- model.Enums.ExerciseState.values) {
                                 <option @exState.isSelected(exercise.state)>@exState </option>
                             }
@@ -58,12 +54,6 @@
                     </td>
                     <td>@exercise.title</td>
                     <td>@exercise.author</td>
-
-                    @views.html.core.helperTemplates.stringLen(exercise.text, 40)
-
-                        <!--TODO: implement? -->
-                    @completeExercise.renderListRest
-
                 </tr>
             }
             </tbody>

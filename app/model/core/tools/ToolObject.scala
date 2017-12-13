@@ -59,8 +59,6 @@ trait ExToolObject extends ToolObject with FileUtils {
 
   // Admin
 
-  def restHeaders: List[String]
-
   def adminIndexRoute: Call
 
   def adminExesListRoute: Call

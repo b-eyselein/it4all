@@ -598,18 +598,19 @@ exercises:
   title: TODO!
   author: bje40dc
   text: >
-    Wählen Sie alle Bestellungen aus die das Buch 'Harry Potter und der Halbblutprinz' enthalten. Geben Sie hierfür
-    die Bestell-ID (Tabelle orders) und die Bestellmenge (Tabelle order_positions) aus.
+    Wählen Sie alle Bestellungen aus, die das Buch 'Harry Potter und der Halbblutprinz' enthalten. Geben Sie für diese
+    Bestellungen jeweils das Datum und die Anzahl der bestellten Exemplare des Buches aus.
   exerciseType: SELECT
   samples:
   - id: 1
     sample: |
-      SELECT order_id, amount
+      SELECT date, amount
        FROM orders
           JOIN order_positions ON orders.id = order_id
           JOIN books ON books.id = book_id
           WHERE title = 'Harry Potter und der Halbblutprinz'
   tags: [SQL_DOUBLE_JOIN]
+
 
 - id: 31
   title: TODO!

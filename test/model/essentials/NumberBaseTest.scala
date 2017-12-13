@@ -17,15 +17,15 @@ class NumberBaseTest {
 
   @Test
   def testGetHtmlPattern() {
-    assertThat(BINARY.htmlPattern, equalTo("[\\s0-1][\\s0-1]*"))
-    assertThat(OCTAL.htmlPattern, equalTo("[\\s1-7][\\s0-7]*"))
-    assertThat(DECIMAL.htmlPattern, equalTo("[\\s1-9][\\s0-9]*"))
-    assertThat(HEXADECIMAL.htmlPattern, equalTo("[\\s1-9a-fA-F][\\s0-9a-fA-F]*"))
+    assertThat(BINARY.htmlPattern, equalTo("[\\s0-1]+"))
+    assertThat(OCTAL.htmlPattern, equalTo("[\\s0-7]+"))
+    assertThat(DECIMAL.htmlPattern, equalTo("[\\s0-9]+"))
+    assertThat(HEXADECIMAL.htmlPattern, equalTo("[\\s0-9a-fA-F]+"))
   }
 
   @Test
   def testGetPluralName() {
-    assertThat(BINARY.pluralName, equalTo("Binaerzahlen"))
+    assertThat(BINARY.pluralName, equalTo("Binärzahlen"))
     assertThat(OCTAL.pluralName, equalTo("Oktalzahlen"))
     assertThat(DECIMAL.pluralName, equalTo("Dezimalzahlen"))
     assertThat(HEXADECIMAL.pluralName, equalTo("Hexadezimalzahlen"))
@@ -41,7 +41,7 @@ class NumberBaseTest {
 
   @Test
   def testGetSingularName() {
-    assertThat(BINARY.singularName, equalTo("Binaerzahl"))
+    assertThat(BINARY.singularName, equalTo("Binärzahl"))
     assertThat(OCTAL.singularName, equalTo("Oktalzahl"))
     assertThat(DECIMAL.singularName, equalTo("Dezimalzahl"))
     assertThat(HEXADECIMAL.singularName, equalTo("Hexadezimalzahl"))
@@ -49,7 +49,7 @@ class NumberBaseTest {
 
   @Test
   def testGetSystemName() {
-    assertThat(BINARY.systemName, equalTo("Binaersystem"))
+    assertThat(BINARY.systemName, equalTo("Binärsystem"))
     assertThat(OCTAL.systemName, equalTo("Oktalsystem"))
     assertThat(DECIMAL.systemName, equalTo("Dezimalsystem"))
     assertThat(HEXADECIMAL.systemName, equalTo("Hexadezimalsystem"))

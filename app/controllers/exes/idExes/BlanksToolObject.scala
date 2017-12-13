@@ -26,8 +26,6 @@ object BlanksToolObject extends IdExToolObject {
   override def correctRoute(exercise: HasBaseValues): Call = routes.BlanksController.correct(exercise.id)
 
 
-  override val restHeaders: List[String] = List.empty
-
   override def adminIndexRoute: Call = routes.BlanksController.adminIndex()
 
   override def adminExesListRoute: Call = routes.BlanksController.adminExerciseList()

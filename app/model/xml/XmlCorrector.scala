@@ -25,12 +25,12 @@ object XmlCorrector {
 
   private val SchFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
 
-  def correct(xml: Path, grammar: Path, exercise: XmlExercise): List[XmlError] = exercise.exerciseType match {
+  def correct(xml: Path, grammar: Path, exercise: XmlExercise): Seq[XmlError] = exercise.exerciseType match {
     case (XmlExType.XML_XSD | XmlExType.XSD_XML) => correctXsdAndXml(xml, grammar)
     case (XmlExType.XML_DTD | XmlExType.DTD_XML) => correctDtdAndXml(xml)
   }
 
-  def correct(xml: String, grammar: String, exType: XmlExType): List[XmlError] = {
+  def correct(xml: String, grammar: String, exType: XmlExType): Seq[XmlError] = {
     // FIXME: for Playground...
     val xmlReader = new StringReader(xml)
     val grammarReader = new StringReader(grammar)
@@ -41,46 +41,46 @@ object XmlCorrector {
     }
   }
 
-  def recover(e: Throwable): List[XmlError] = List(FailureXmlError(e.getMessage, e))
+  def recover(e: Throwable): Seq[XmlError] = Seq(FailureXmlError(e.getMessage, e))
 
 
-  def correctDtdAndXml(xml: Path): List[XmlError] = Try {
+  def correctDtdAndXml(xml: Path): Seq[XmlError] = Try {
     val errorHandler = new CorrectionErrorHandler
 
     val builder = DocBuilderFactory.newDocumentBuilder
     builder.setErrorHandler(errorHandler)
     builder.parse(xml.toFile)
 
-    errorHandler.errors.toList
+    errorHandler.errors
   } match {
     case Success(errors)    => errors
     case Failure(throwable) => recover(throwable)
   }
 
-  def correctDtdAndXml(xml: InputSource): List[XmlError] = Try {
+  def correctDtdAndXml(xml: InputSource): Seq[XmlError] = Try {
     val errorHandler = new CorrectionErrorHandler
 
     val builder = DocBuilderFactory.newDocumentBuilder
     builder.setErrorHandler(new CorrectionErrorHandler)
     builder.parse(xml)
 
-    errorHandler.errors.toList
+    errorHandler.errors
   } match {
     case Success(errors) => errors
     case Failure(e)      => recover(e)
   }
 
-  def correctXsdAndXml(xmlStreamSource: StreamSource, xsdStreamSource: StreamSource): List[XmlError] = Try({
+  def correctXsdAndXml(xmlStreamSource: StreamSource, xsdStreamSource: StreamSource): Seq[XmlError] = Try({
     val errorHandler = new CorrectionErrorHandler
     val schemaOpt = Option(SchFactory.newSchema(xsdStreamSource))
 
     schemaOpt match {
-      case None         => List(FailureXmlError("Ihre Eingabedaten konnten nicht geladen werden!"))
+      case None         => Seq(FailureXmlError("Ihre Eingabedaten konnten nicht geladen werden!"))
       case Some(schema) =>
         val validator = schema.newValidator
         validator.setErrorHandler(new CorrectionErrorHandler)
         validator.validate(xmlStreamSource)
-        errorHandler.errors.toList
+        errorHandler.errors
     }
   }) match {
     case Success(errors) => errors

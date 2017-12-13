@@ -8,8 +8,9 @@ object UmlConsts extends Consts {
 
   // Numbers
 
-  val OFFSET = 50
-  val GAP    = 200
+  val OFFSET        = 100
+  val GapHorizontal = 250
+  val GapVertival   = 200
 
   // Text parsing
 

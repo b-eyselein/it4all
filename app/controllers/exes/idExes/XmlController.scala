@@ -4,7 +4,7 @@ import java.nio.file._
 import javax.inject._
 
 import controllers.Secured
-import XmlController._
+import controllers.exes.idExes.XmlController._
 import model.User
 import model.core.CommonUtils.RicherTry
 import model.core._
@@ -12,10 +12,10 @@ import model.core.tools.ExerciseOptions
 import model.xml.XmlConsts._
 import model.xml._
 import net.jcazevedo.moultingyaml.YamlFormat
-import play.api.data.Form
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.mvc.{ControllerComponents, EssentialAction}
+import play.api.mvc.{AnyContent, ControllerComponents, EssentialAction, Request}
 import play.twirl.api.{Html, HtmlFormat}
+import views.html.xml._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
@@ -29,11 +29,17 @@ object XmlController {
 
 @Singleton
 class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends AIdExController[XmlExercise, XmlError](cc, dbcp, r, XmlToolObject) with Secured with FileUtils {
+  extends AIdExController[XmlExercise, XmlError, GenericCompleteResult[XmlError]](cc, dbcp, r, XmlToolObject) with Secured with FileUtils {
 
-  override type SolutionType = StringSolution
+  // Reading solution from requests
 
-  override def solForm: Form[StringSolution] = Solution.stringSolForm
+  override type SolType = String
+
+  override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[String] =
+    Solution.stringSolForm.bindFromRequest().fold(_ => None, sol => Some(sol.learnerSolution))
+
+  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[String] =
+    Solution.stringSolForm.bindFromRequest().fold(_ => None, sol => Some(sol.learnerSolution))
 
   // Yaml
 
@@ -49,9 +55,9 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   override def tq = repo.xmlExercises
 
-  override def completeExes: Future[Seq[XmlExercise]] = db.run(repo.xmlExercises.result)
+  override def futureCompleteExes: Future[Seq[XmlExercise]] = db.run(repo.xmlExercises.result)
 
-  override def completeExById(id: Int): Future[Option[XmlExercise]] =
+  override def futureCompleteExById(id: Int): Future[Option[XmlExercise]] =
     db.run(repo.xmlExercises.findBy(_.id).apply(id).result.headOption)
 
   override def saveRead(read: Seq[XmlExercise]): Future[Seq[Int]] = Future.sequence(read.map(completeEx =>
@@ -59,49 +65,49 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // Other routes
 
-  def playground: EssentialAction = withUser { user => implicit request => Ok(views.html.xml.xmlPlayground.render(user)) }
+  def playground: EssentialAction = withUser { user => implicit request => Ok(xmlPlayground(user)) }
 
   def playgroundCorrection = Action { implicit request =>
-    solForm.bindFromRequest.fold(
+    Solution.stringSolForm.bindFromRequest.fold(
       _ => BadRequest("There has been an error!"),
-      sol => Ok(renderResult(new CompleteResult(sol.learnerSolution, XmlCorrector.correct(sol.learnerSolution, "", XmlExType.XML_DTD))))
+      sol => Ok(renderResult(GenericCompleteResult(sol.learnerSolution, XmlCorrector.correct(sol.learnerSolution, "", XmlExType.XML_DTD))))
     )
   }
 
   // Correction
 
-  override protected def correctEx(sol: StringSolution, completeEx: XmlExercise, user: User): Try[CompleteResult[XmlError]] =
+  override protected def correctEx(user: User, sol: String, completeEx: XmlExercise): Try[GenericCompleteResult[XmlError]] =
     checkAndCreateSolDir(user.username, completeEx) flatMap (dir => {
       val (grammarTry: Try[Path], xmlTry: Try[Path]) =
         if (completeEx.exerciseType == XmlExType.DTD_XML || completeEx.exerciseType == XmlExType.XSD_XML) {
-          val grammar = write(dir, completeEx.rootNode + "." + completeEx.exerciseType.gramFileEnding, sol.learnerSolution)
+          val grammar = write(dir, completeEx.rootNode + "." + completeEx.exerciseType.gramFileEnding, sol)
           val xml = write(dir, completeEx.rootNode + "." + XML_FILE_ENDING, completeEx.refFileContent)
           (grammar, xml)
         } else {
           val grammar = write(dir, completeEx.rootNode + "." + completeEx.exerciseType.gramFileEnding, completeEx.refFileContent)
-          val xml = write(dir, completeEx.rootNode + "." + XML_FILE_ENDING, sol.learnerSolution)
+          val xml = write(dir, completeEx.rootNode + "." + XML_FILE_ENDING, sol)
           (grammar, xml)
         }
 
       grammarTry.zip(xmlTry).map {
-        case (grammar, xml) => new CompleteResult(sol.learnerSolution, XmlCorrector.correct(xml, grammar, completeEx))
+        case (grammar, xml) => GenericCompleteResult(sol, XmlCorrector.correct(xml, grammar, completeEx))
       }
     })
 
   // Views
 
-  override def renderEditRest(exercise: Option[XmlExercise]): Html = views.html.xml.editXmlExRest(exercise)
+  override def renderEditRest(exercise: Option[XmlExercise]): Html = editXmlExRest(exercise)
 
   override def renderExesListRest: Html = new Html(
     s"""<a class="btn btn-primary btn-block" href="${controllers.exes.idExes.routes.XmlController.playground()}">Xml-Playground</a>
        |<hr>""".stripMargin)
 
-  override def renderResult(completeResult: CompleteResult[XmlError]): Html = new Html(completeResult.results match {
+  override def renderResult(completeResult: GenericCompleteResult[XmlError]): Html = new Html(completeResult.results match {
     case Nil     => """<div class="alert alert-success"><span class="glyphicon glyphicon-ok"></span> Es wurden keine Fehler gefunden.</div>"""
     case results => results map (_.render) mkString "\n"
   })
 
-  override def renderExercise(user: User, exercise: XmlExercise): Html = views.html.core.exercise2Rows.render(
+  override def renderExercise(user: User, exercise: XmlExercise): Html = views.html.core.exercise2Rows(
     user, XmlToolObject, EX_OPTIONS, exercise.ex, renderExRest(exercise.ex), readDefOrOldSolution(user.username, exercise.ex))
 
   def renderExRest(exercise: XmlExercise) = new Html(

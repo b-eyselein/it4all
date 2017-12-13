@@ -3,35 +3,50 @@ package controllers.exes.idPartExes
 import javax.inject._
 
 import controllers.Secured
-import model.User
 import model.core._
-import model.uml.UmlEnums.UmlExPart
+import model.uml.UmlConsts._
+import model.uml.UmlEnums.UmlExPart._
+import model.uml.UmlEnums.{UmlClassType, UmlExPart}
 import model.uml._
+import model.{JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
-import play.api.data.Form
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.mvc.{ControllerComponents, EssentialAction}
+import play.api.libs.json.{JsValue, Json}
+import play.api.mvc.{AnyContent, ControllerComponents, EssentialAction, Request}
 import play.twirl.api.Html
+import views.html.uml._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
 import scala.util.Try
 
-object UmlController {
-
-  //  val SolutionSchemaPath: Path = Paths.get("conf", "resources", "uml", "solutionSchema.json")
-
-  //  val SolutionSchemaNode: JsonNode = Json.parse(String.join("\n", Files.readAllLines(SolutionSchemaPath)))
-
-}
-
 @Singleton
 class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends AIdPartExController[UmlExercise, UmlResult](cc, dbcp, r, UmlToolObject) with Secured {
+  extends AIdPartExController[UmlExercise, EvaluationResult, UmlResult](cc, dbcp, r, UmlToolObject) with JsonFormat with Secured {
 
-  override type SolutionType = StringSolution
+  override type SolType = UmlSolution
 
-  override def solForm: Form[StringSolution] = Solution.stringSolForm
+  override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[UmlSolution] =
+    Solution.stringSolForm.bindFromRequest.fold(_ => None, sol => readFromJson(Json.parse(sol.learnerSolution)))
+
+  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[UmlSolution] = ???
+
+  private def readFromJson(jsValue: JsValue): Option[UmlSolution] = jsValue.asObj flatMap { jsObj =>
+    val maybeClasses = jsObj.arrayField(CLASSES_NAME, readClassFromJson)
+    maybeClasses map { classes =>
+      UmlSolution(
+        classes,
+        associations = Seq.empty,
+        implementations = Seq.empty)
+    }
+  }
+
+  private def readClassFromJson(jsValue: JsValue): Option[UmlCompleteClass] = jsValue.asObj map { jsObj =>
+    UmlCompleteClass(
+      clazz = UmlClass(exerciseId = -1, className = jsObj.stringField(NAME_NAME) getOrElse "", classType = UmlClassType.CLASS),
+      attributes = Seq.empty,
+      methods = Seq.empty)
+  }
 
   // Yaml
 
@@ -45,43 +60,46 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   override def tq: repo.ExerciseTableQuery[UmlExercise, UmlCompleteEx, repo.UmlExercisesTable] = repo.umlExercises
 
-  override def completeExes: Future[Seq[UmlCompleteEx]] = repo.umlExercises.completeExes
+  override def futureCompleteExes: Future[Seq[UmlCompleteEx]] = repo.umlExercises.completeExes
 
-  override def completeExById(id: Int): Future[Option[UmlCompleteEx]] = repo.umlExercises.completeById(id)
+  override def futureCompleteExById(id: Int): Future[Option[UmlCompleteEx]] = repo.umlExercises.completeById(id)
 
-  override def saveRead(read: Seq[UmlCompleteEx]): Future[Seq[Any]] = Future.sequence(read map repo.saveCompleteEx)
+  override def saveRead(read: Seq[UmlCompleteEx]): Future[Seq[Boolean]] = Future.sequence(read map repo.saveCompleteEx)
 
   // Views
 
-  override def renderExercise(user: User, exercise: UmlCompleteEx, part: String): Future[Html] = Future(UmlExPart.valueOf(part) match {
-    case UmlExPart.CLASS_SELECTION   => views.html.uml.classSelection.render(user, exercise.ex)
-    case UmlExPart.DIAG_DRAWING      => views.html.uml.diagdrawing.render(user, exercise, getsHelp = false)
-    case UmlExPart.DIAG_DRAWING_HELP => views.html.uml.diagdrawing.render(user, exercise, getsHelp = true)
-    case UmlExPart.ATTRS_METHS       => views.html.uml.umlMatching.render(user, exercise)
-    case _                           => new Html("FEHLER!")
+  override protected def renderExercise(user: User, exercise: UmlCompleteEx, part: String): Future[Html] = Future(UmlExPart.valueOf(part) match {
+    case CLASS_SELECTION   => classSelection(user, exercise.ex)
+    case DIAG_DRAWING      => diagdrawing(user, exercise, getsHelp = false)
+    case DIAG_DRAWING_HELP => diagdrawing(user, exercise, getsHelp = true)
+    case ATTRS_METHS       => umlMatching(user, exercise)
+    case _                 => new Html("FEHLER!")
   })
 
-  override val renderExesListRest = new Html(
+  override protected val renderExesListRest = new Html(
     s"""<div class="alert alert-info">
        |  Neueinsteiger sollten die Variante mit Zwischenkorrektur verwenden, die die einzelnen Schritte der Erstellung eines Klassendiagrammes nach und nach durcharbeitet.
        |</div>
        |<hr>""".stripMargin)
 
-  override def renderResult(correctionResult: CompleteResult[UmlResult]): Html = ??? //FIXME
+  override protected def renderResult(correctionResult: UmlResult): Html = umlResult(correctionResult)
+
+  override protected def renderEditRest(exercise: Option[UmlCompleteEx]): Html = editUmlExRest(exercise)
 
   // Correction
 
-  override def correctEx(user: User, sol: StringSolution, exercise: UmlCompleteEx, part: String): Try[CompleteResult[UmlResult]] = {
-    val umlSol: UmlSolution = null
-    val (result, nextPart) = UmlExPart.valueOf(part) match {
-      case UmlExPart.CLASS_SELECTION   => (ClassSelectionResult(exercise, umlSol), UmlExPart.DIAG_DRAWING_HELP)
-      case UmlExPart.DIAG_DRAWING_HELP => (DiagramDrawingHelpResult(exercise, umlSol), UmlExPart.ATTRS_METHS)
-      case UmlExPart.DIAG_DRAWING      => (DiagramDrawingResult(exercise, umlSol), UmlExPart.FINISHED)
-      case UmlExPart.ATTRS_METHS       => (null, UmlExPart.FINISHED)
-      case UmlExPart.FINISHED          => (null, UmlExPart.FINISHED)
+  override def correctEx(user: User, sol: UmlSolution, exercise: UmlCompleteEx, part: String): Try[UmlResult] = Try({
+    UmlExPart.valueOf(part) match {
+      case CLASS_SELECTION          => ClassSelectionResult(exercise, sol)
+      case (DIAG_DRAWING_HELP)      =>
+        println(sol)
+        DiagramDrawingHelpResult(exercise, sol)
+      case DIAG_DRAWING             =>
+        println(sol)
+        DiagramDrawingResult(exercise, sol)
+      case (ATTRS_METHS | FINISHED) => ???
     }
-    Try(new CompleteResult(sol.learnerSolution, List(result)))
-  }
+  })
 
   // Other routes
 
@@ -104,7 +122,7 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
       //      case ReadingResult(exercises) =>
       //        val exercise = exercises.head.read.asInstanceOf[UmlExercise]
       //        val parser = new UmlExTextParser(exercise.text, exercise.mappings.asScala.toMap, exercise.ignoreWords.asScala.toList)
-      //        Ok(views.html.umlAdmin.newExerciseStep2Form.render(user, exercise, parser.capitalizedWords.toList))
+      //        Ok(views.html.umlAdmin.newExerciseStep2Form(user, exercise, parser.capitalizedWords.toList))
       //    }
       Ok("TODO!")
   }
@@ -116,20 +134,21 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
       //      case ReadingFailure(_) => BadRequest("There has been an error...")
       //      case ReadingResult(exercises) =>
       //        val exercise = exercises.head.read.asInstanceOf[UmlExercise]
-      //        Ok(views.html.umlAdmin.newExerciseStep3Form.render(user, exercise))
+      //        Ok(views.html.umlAdmin.newExerciseStep3Form(user, exercise))
       //    }
       Ok("TODO!")
   }
 
   def activityExercise: EssentialAction = withAdmin { user =>
-    implicit request => Ok(views.html.umlActivity.activitiyDrawing.render(user))
+    implicit request => Ok(views.html.umlActivity.activitiyDrawing(user))
   }
 
-  def activityCheckSolution(lang: String): EssentialAction = withAdmin { user =>
+  // FIXME: used where?
+  def activityCheckSolution(language: String): EssentialAction = withAdmin { user =>
     implicit request => {
-      solForm.bindFromRequest.fold(_ => BadRequest("TODO!"),
+      Solution.stringSolForm.bindFromRequest.fold(_ => BadRequest("TODO!"),
         solution => {
-          println("ProgLang: " + lang)
+          println("Checking Solution: " + language)
           println(solution)
           Ok("TODO_checksolution")
         }

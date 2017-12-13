@@ -3,7 +3,7 @@ package model.spread
 import java.nio.file.{Files, Path, Paths}
 
 import model.core.CommonUtils.RicherTry
-import model.core.StringConsts._
+import model.spread.SpreadConsts._
 import model.spread.SpreadUtils._
 import model.spread.XLSXCorrector._
 import model.spread.XLSXCorrectorTest._
@@ -17,7 +17,7 @@ import scala.util.{Failure, Success}
 
 object XLSXCorrectorTest {
 
-  val testDir: Path = Paths.get("test", "resources", "spreadsheet")
+  val testDir: Path = Paths.get("test", "resources", "spread")
 
   val stdDoc: Path = Paths.get(testDir.toString, "standard.xlsx")
 

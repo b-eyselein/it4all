@@ -19,7 +19,7 @@ import scala.util.Try
 
 @Singleton
 class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends AExCollectionController[Question, Quiz, QuestionResult](cc, dbcp, r, QuestionToolObject)
+  extends AExCollectionController[Question, Quiz, QuestionResult, CompleteResult[QuestionResult]](cc, dbcp, r, QuestionToolObject)
     with HasDatabaseConfigProvider[JdbcProfile] with JsonFormat with Secured {
 
   override type SolType = String
@@ -82,7 +82,7 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   // FIXME: stubs...
 
-  override def correctEx(form: String, exercise: CompleteQuestion, quiz: Quiz, user: User): Try[CompleteResult[QuestionResult]] = ???
+  override def correctEx(user: User, solution: SolType, exercise: CompleteQuestion, quiz: Quiz): Try[CompleteResult[QuestionResult]] = ???
 
   override def renderEditRest(collOpt: Option[CompleteQuiz]): Html = new Html(
     s"""<div class="form-group row">

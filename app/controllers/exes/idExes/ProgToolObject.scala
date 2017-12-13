@@ -31,8 +31,6 @@ object ProgToolObject extends IdExToolObject {
   override def correctRoute(exercise: HasBaseValues): Call = routes.ProgController.correct(exercise.id)
 
 
-  override val restHeaders: List[String] = List("Funktionsname", "Anzahl Inputs")
-
   override def adminIndexRoute: Call = routes.ProgController.adminIndex()
 
   override def adminExesListRoute: Call = routes.ProgController.adminExerciseList()

@@ -7,10 +7,10 @@ import model.core._
 import model.ebnf.EbnfConsts._
 import model.ebnf.{EbnfExercise, EbnfResult}
 import net.jcazevedo.moultingyaml.YamlFormat
-import play.api.data.Form
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.mvc.ControllerComponents
+import play.api.mvc.{AnyContent, ControllerComponents, Request}
 import play.twirl.api.Html
+import views.html.ebnf._
 
 import scala.concurrent.ExecutionContext
 import scala.language.implicitConversions
@@ -18,11 +18,17 @@ import scala.util.Try
 
 @Singleton
 class EbnfController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends AIdExController[EbnfExercise, EbnfResult](cc, dbcp, r, EbnfToolObject) {
+  extends AIdExController[EbnfExercise, EbnfResult, GenericCompleteResult[EbnfResult]](cc, dbcp, r, EbnfToolObject) {
 
-  override type SolutionType = StringSolution
+  // Reading solution from requests
 
-  override def solForm: Form[StringSolution] = Solution.stringSolForm
+  override type SolType = String
+
+  override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[String] =
+    Solution.stringSolForm.bindFromRequest().fold(_ => None, sol => Some(sol.learnerSolution))
+
+  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[String] =
+    Solution.stringSolForm.bindFromRequest().fold(_ => None, sol => Some(sol.learnerSolution))
 
   // Yaml
 
@@ -38,7 +44,7 @@ class EbnfController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   // Correction
 
-  override def correctEx(sol: StringSolution, exercise: EbnfExercise, user: User): Try[CompleteResult[EbnfResult]] = {
+  override def correctEx(user: User, sol: String, exercise: EbnfExercise): Try[GenericCompleteResult[EbnfResult]] = {
     // FIXME: implement!
 
     //    val data = Controller.request.body.asFormUrlEncoded
@@ -70,9 +76,9 @@ class EbnfController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
         |         ${exercise.map(_.terminals).getOrElse("")} required>
         |</div>""".stripMargin)
 
-  override def renderExercise(user: User, exercise: EbnfExercise): Html = views.html.ebnf.ebnfExercise.render(user, exercise)
+  override def renderExercise(user: User, exercise: EbnfExercise): Html = ebnfExercise(user, exercise)
 
-  override def renderResult(correctionResult: CompleteResult[EbnfResult]): Html = new Html("") //views.html.ebnf.ebnfResult.render(correctionResult)
+  override def renderResult(correctionResult: GenericCompleteResult[EbnfResult]): Html = new Html("") //ebnfResult(correctionResult)
 
   override def renderExesListRest: Html = new Html("")
 

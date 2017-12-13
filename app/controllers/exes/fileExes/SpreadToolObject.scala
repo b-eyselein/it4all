@@ -28,8 +28,6 @@ object SpreadToolObject extends FileExToolObject {
   override def downloadCorrectedRoute(exercise: HasBaseValues, fileExtension: String): Call = routes.SpreadController.downloadCorrected(exercise.id, fileExtension)
 
 
-  override val restHeaders: List[String] = List("Musterloesungsdatei", "Vorlagendatei")
-
   override def adminIndexRoute: Call = routes.SpreadController.adminIndex()
 
   override def adminExesListRoute: Call = routes.SpreadController.adminExerciseList()

@@ -113,6 +113,7 @@ object ODFCorrector extends SpreadCorrector[SpreadsheetDocument, Table, Cell, Fo
     val tPath = testPath.toString
     val fileNameNew = GFiles.getNameWithoutExtension(tPath) + CORRECTION_ADD_STRING + "." + GFiles.getFileExtension(tPath)
     val savePath = Paths.get(testPath.getParent.toString, fileNameNew)
+
     Try({
       if (!savePath.getParent.toFile.exists())
         Files.createDirectories(savePath.getParent)
@@ -123,6 +124,7 @@ object ODFCorrector extends SpreadCorrector[SpreadsheetDocument, Table, Cell, Fo
 
       savePath
     })
+
   }
 
   override def setCellComment(cell: Cell, message: String): Unit = if (message != null && message.nonEmpty) {

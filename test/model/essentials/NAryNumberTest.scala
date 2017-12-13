@@ -23,8 +23,10 @@ class NAryNumberTest {
 
   def checkParsingWithoutMark(decValue: Int, base: NumberBase, toParse: String) {
     val posLowerHex = NAryNumber.parseNaryNumber(toParse, base)
-    checkBase(posLowerHex, base)
-    checkValue(posLowerHex, decValue)
+    posLowerHex foreach { posLowerHex =>
+      checkBase(posLowerHex, base)
+      checkValue(posLowerHex, decValue)
+    }
   }
 
   def checkValue(posNary: NAryNumber, decimalvalue: Int) {

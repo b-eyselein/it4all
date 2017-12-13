@@ -30,8 +30,6 @@ object UmlToolObject extends IdPartExToolObject {
   override def correctRoute(exercise: HasBaseValues, part: String): Call = routes.UmlController.correct(exercise.id, part)
 
 
-  override val restHeaders: List[String] = List("Klassenwahl", "Diagrammzeichnen", "Lösung", "Mappings", "Ignoriert")
-
   override def adminIndexRoute: Call = routes.UmlController.adminIndex()
 
   override def adminExesListRoute: Call = routes.UmlController.adminExerciseList()

@@ -28,7 +28,7 @@ case class XmlExercise(override val baseValues: BaseValues, exerciseType: XmlExT
 
   override def ex: XmlExercise = this
 
-  override val tags: List[ExTag] = List(ex.exerciseType)
+  override val tags: Seq[ExTag] = Seq(ex.exerciseType)
 
   override val preview: Html = views.html.xml.xmlPreview.render(this)
 
@@ -49,7 +49,7 @@ trait XmlTableDefs extends TableDefs {
   val xmlExercises = TableQuery[XmlExerciseTable]
 
   implicit val XmlExColumnType: BaseColumnType[XmlExType] =
-    MappedColumnType.base[XmlExType, String](_.toString, str => Try(XmlExType.valueOf(str)).getOrElse(XmlExType.XML_DTD))
+    MappedColumnType.base[XmlExType, String](_.toString, str => XmlExType.byString(str) getOrElse XmlExType.XML_DTD)
 
   class XmlExerciseTable(tag: Tag) extends HasBaseValuesTable[XmlExercise](tag, "xml_exercises") {
 

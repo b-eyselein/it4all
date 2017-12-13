@@ -1,16 +1,8 @@
-@(user: model.User, result: model.uml.UmlResult, nextPart: model.uml.UmlEnums.UmlExPart)
+@(result: model.uml.UmlResult)
 
-@main("UML", user) {
-    <div class="container">
-        <div class="page-header">
-            <h1>Zwischenkorrektur der Aufgabe &quot;@result.exercise.ex.title&quot;</h1>
-        </div>
+@result.notEmptyMatchingResults.map(_.describe)
 
-        @views.html.core.matching.matchingResult.render(result.notEmptyMatchingResults)
+<hr>
 
-        <hr>
-
-        <a href="@controllers.exes.idPartExes.routes.UmlController.exercise(result.exercise.ex.id, nextPart.toString)"
-        class="btn btn-primary btn-block">Zum n&auml;chsten Aufgabenteil</a>
-    </div>
-}
+<a href="@controllers.exes.idPartExes.routes.UmlController.exercise(result.exercise.ex.id, result.nextPart.toString)"
+class="btn btn-primary btn-block">Zum n&auml;chsten Aufgabenteil</a>

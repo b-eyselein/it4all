@@ -33,8 +33,6 @@ object QuestionToolObject extends CollectionToolObject {
   override def correctRoute(exercise: HasBaseValues): Call = ???
 
 
-  override val restHeaders: List[String] = List.empty
-
   override def adminIndexRoute: Call = routes.QuestionController.adminIndex()
 
   override def adminExesListRoute: Call = routes.QuestionController.adminCollectionsList()

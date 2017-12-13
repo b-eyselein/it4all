@@ -39,7 +39,7 @@ trait CollectionToolObject extends model.core.tools.ExToolObject with FileUtils 
 
 }
 
-abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E, _], R <: EvaluationResult]
+abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E, _], R <: EvaluationResult, CompResult <: CompleteResult[R]]
 (cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository, val toolObject: CollectionToolObject)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured with FileUtils {
 
@@ -245,25 +245,25 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E,
   }
 
   private def correctAbstract[S, Err](user: User, collId: Int, id: Int, maybeSolution: Option[SolType],
-                                      onCorrectionSuccess: CompleteResult[R] => S, onCorrectionError: Throwable => Err)
+                                      onCorrectionSuccess: CompResult => S, onCorrectionError: Throwable => Err)
                                      (implicit successWriteable: Writeable[S], errorWriteable: Writeable[Err], request: Request[AnyContent]): Future[Result] =
     maybeSolution match {
       case None           => Future(BadRequest("No solution!"))
       case Some(solution) => (futureCompleteExById(collId, id) zip futureCollById(collId)) map (opts => (opts._1 zip opts._2).headOption) map {
         case None                         => NotFound("No such exercise!")
-        case Some((exercise, collection)) => correctEx(solution, exercise, collection, user) match {
+        case Some((exercise, collection)) => correctEx(user, solution, exercise, collection) match {
           case Success(result) => Ok(onCorrectionSuccess(result))
           case Failure(error)  => BadRequest(onCorrectionError(error))
         }
       }
     }
 
-  private def renderCorrectionResult(user: User, correctionResult: CompleteResult[R]): Html =
+  private def renderCorrectionResult(user: User, correctionResult: CompResult): Html =
     views.html.core.correction(correctionResult, renderResult(correctionResult), user, toolObject)
 
-  protected def renderResult(correctionResult: CompleteResult[R]): Html
+  protected def renderResult(correctionResult: CompResult): Html
 
-  protected def correctEx(form: SolType, exercise: CompEx, collection: C, user: User): Try[CompleteResult[R]]
+  protected def correctEx(user: User, form: SolType, exercise: CompEx, collection: C): Try[CompResult]
 
   private def takeSlice[T](collection: Seq[T], page: Int): Seq[T] =
     collection slice(Math.max(0, (page - 1) * STEP), Math.min(page * STEP, collection.size))

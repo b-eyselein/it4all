@@ -25,14 +25,16 @@ libraryDependencies ++= Seq(
   "com.github.fge" % "json-schema-validator" % "2.2.6",
   "com.kjetland" % "mbknor-jackson-jsonschema_2.12" % "1.0.24",
 
-  "com.typesafe.play" %% "play-slick" % "3.0.0",
+  "com.typesafe.play" %% "play-slick" % "3.0.1",
   evolutions,
-  "com.typesafe.play" %% "play-slick-evolutions" % "3.0.0",
+  "com.typesafe.play" %% "play-slick-evolutions" % "3.0.1",
 
   // Js-Libraries
   "org.webjars" % "ace" % "1.2.8",
   "org.webjars" % "bootstrap" % "3.3.7-1",
-  "org.webjars.npm" % "jointjs" % "1.1.0",
+
+  // FIXME: cannot use npm...
+  "org.webjars.npm" % "jointjs" % "2.0.1",
 
   // Js-Libs for Uml
   "org.webjars" % "lodash" % "3.10.1",

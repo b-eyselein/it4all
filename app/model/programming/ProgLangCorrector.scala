@@ -4,7 +4,7 @@ import java.nio.file.attribute.{PosixFilePermission, PosixFilePermissions}
 
 import controllers.exes.idExes.ProgToolObject
 import model.User
-import model.core.{CompleteResult, FileUtils}
+import model.core.{FileUtils, GenericCompleteResult}
 import model.programming.ProgLangCorrector._
 
 object ProgLangCorrector {
@@ -29,7 +29,7 @@ object ProgLangCorrector {
 
 abstract class ProgLangCorrector extends FileUtils {
 
-  def correct(user: User, exercise: ProgCompleteEx, learnerSolution: String, language: ProgLanguage): CompleteResult[ProgEvaluationResult] = {
+  def correct(user: User, exercise: ProgCompleteEx, learnerSolution: String, language: ProgLanguage): GenericCompleteResult[ProgEvaluationResult] = {
 
     val targetDir = ProgToolObject.solutionDirForExercise(user.username, exercise.ex)
 
@@ -48,7 +48,7 @@ abstract class ProgLangCorrector extends FileUtils {
     // Check if image exists
     println(language.dockerImageName + " exists: " + imageExits)
 
-    new CompleteResult(learnerSolution, Seq.empty)
+    GenericCompleteResult(learnerSolution, Seq.empty)
   }
 
   //    private static void createFile(Path file, List<String> content) throws IOException {

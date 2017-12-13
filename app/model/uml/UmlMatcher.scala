@@ -86,7 +86,6 @@ case class UmlAssociationMatchingResult(allMatches: Seq[UmlAssociationMatch]) ex
 
   override val headings: Seq[String] = AssociationMatchHeaders
 
-  override def describe: Html = ???
 }
 
 // Classes
@@ -110,6 +109,8 @@ case class UmlClassMatch(userArg: Option[UmlCompleteClass], sampleArg: Option[Um
   override def describeArg(arg: UmlCompleteClass) =
     new Html(s"""<td><span class="text-${if (isSuccessful) "success" else "danger"}">${arg.clazz.className}</span></td>""")
 
+  override protected def descArg(arg: UmlCompleteClass): String = arg.clazz.className
+
 }
 
 case class UmlClassMatcher(compareAttrsAndMethods: Boolean) extends Matcher[UmlCompleteClass, UmlClassMatch, UmlClassMatchingResult](
@@ -120,8 +121,6 @@ case class UmlClassMatchingResult(allMatches: Seq[UmlClassMatch]) extends Matchi
   override val matchName: String = "Klassen"
 
   override val headings: Seq[String] = ClassMatchHeaders
-
-  override def describe: Html = ???
 
 }
 
@@ -155,7 +154,5 @@ case class UmlImplementationMatchingResult(allMatches: Seq[UmlImplementationMatc
   override val matchName: String = "Vererbungsbeziehungen"
 
   override val headings: Seq[String] = ImplMatchHeaders
-
-  override def describe: Html = ???
 
 }

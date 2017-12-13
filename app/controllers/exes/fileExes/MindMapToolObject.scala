@@ -29,8 +29,6 @@ object MindMapToolObject extends FileExToolObject {
   override def downloadCorrectedRoute(exercise: HasBaseValues, fileType: String): Call = routes.MindmapController.downloadCorrected(exercise.id, fileType)
 
 
-  override val restHeaders: List[String] = List.empty
-
   override def adminIndexRoute: Call = routes.MindmapController.adminIndex()
 
   override def adminExesListRoute: Call = routes.MindmapController.adminExerciseList()

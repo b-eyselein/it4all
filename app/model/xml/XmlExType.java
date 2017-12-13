@@ -2,6 +2,8 @@ package model.xml;
 
 import model.Enums.Selectable;
 import model.ExTag;
+import scala.Option;
+import scala.Some;
 
 public enum XmlExType implements Selectable<XmlExType>, ExTag {
 
@@ -36,6 +38,15 @@ public enum XmlExType implements Selectable<XmlExType>, ExTag {
     @Override
     public String title() {
         return toCreate + " gegen " + given;
+    }
+
+    public static Option<XmlExType> byString(String str) {
+        try {
+            return new Some<>(valueOf(str));
+        } catch (Exception e) {
+            // ==> None!
+            return Option.apply(null);
+        }
     }
 
 }

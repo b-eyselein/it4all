@@ -1,0 +1,128 @@
+@(maybeExercise: Option[model.uml.UmlCompleteEx])
+
+<div class="form-horizontal">
+    <div class="form-group">
+        <label class="control-label col-sm-2">Ignoriert:</label>
+        <div class="col-md-10">
+            <input class="form-control" value="@maybeExercise.map(_.ex.getToIgnore).getOrElse(Seq.empty).mkString(", ")">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2">Basisformen:</label>
+        <div class="col-md-10">
+        @for(m <- maybeExercise map (_.mappings) getOrElse Seq.empty) {
+            <div class="form-group">
+                <div class="col-md-12">
+                    <div class="input-group">
+                        <input class="form-control" value="@m.key">
+                        <span class="input-group-addon">&rarr;</span>
+                        <input class="form-control" value="@m.value">
+                    </div>
+                </div>
+            </div>
+        }
+        </div>
+    </div>
+</div>
+
+<fieldset>
+    <legend>Musterl&ouml;sung</legend>
+
+    <h3>Klassen</h3>
+    <div class="form-horizontal">
+    @for(clazz <- maybeExercise map (_.solution.classes) getOrElse Seq.empty) {
+        <div class="form-group">
+            <label class="control-label col-md-1">Name:</label>
+            <div class="col-md-5">
+                <input class="form-control" value="@clazz.clazz.className">
+            </div>
+            <label class="control-label col-md-1">Typ:</label>
+            <div class="col-md-5">
+                <select class="form-control">
+                @for(classType <- model.uml.UmlEnums.UmlClassType.values) {
+                    <option @{
+                        if(classType == clazz.clazz.classType) "selected" else ""
+                    }>@classType</option>
+                }
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-1">Attribute:</label>
+            <div class="col-md-5">
+            @for(attribute <- clazz.attributes) {
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <div class="input-group">
+                            <input class="form-control" value="@attribute.attrName">
+                            <span class="input-group-addon">:</span>
+                            <input class="form-control" value="@attribute.attrType">
+                        </div>
+                    </div>
+                </div>
+            }
+            </div>
+
+            <label class="control-label col-md-1">Methoden:</label>
+            <div class="col-md-5">
+            @for(method <- clazz.methods) {
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <div class="input-group">
+                            <input class="form-control" value="@method.methodName">
+                            <span class="input-group-addon">:</span>
+                            <input class="form-control" value="@method.returns">
+                        </div>
+                    </div>
+                </div>
+            }
+            </div>
+        </div>
+    }
+    </div>
+
+    <h3>Vererbungen</h3>
+    @for(implementationTuple <- maybeExercise map (_.solution.implementations) getOrElse Seq.empty grouped 2) {
+        <div class="row">
+        @for(implementation <- implementationTuple) {
+            <div class="col-md-6">
+                <div class="form-group">
+                    <div class="input-group">
+                        <input class="form-control" value="@implementation.subClass">
+                        <span class="input-group-addon">&rarr;</span>
+                        <input class="form-control" value="@implementation.superClass">
+                    </div>
+                </div>
+            </div>
+        }
+        </div>
+    }
+
+    <h3>Assoziationen</h3>
+    @for(association <- maybeExercise map (_.solution.associations) getOrElse Seq.empty) {
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-2">
+                    <input class="form-control" value="@association.assocName.getOrElse("")">
+                </div>
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <input class="form-control" value="@association.firstEnd">
+                        <span class="input-group-addon">&amp;</span>
+                        <input class="form-control" value="@association.secondEnd">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="input-group">
+                        <input class="form-control" value="@association.firstMult.representant">
+                        <span class="input-group-addon">:</span>
+                        <input class="form-control" value="@association.secondMult.representant">
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+</fieldset>

@@ -7,10 +7,10 @@ import model.User
 import model.blanks.BlanksExercise
 import model.core._
 import net.jcazevedo.moultingyaml.YamlFormat
-import play.api.data.Form
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.mvc.{ControllerComponents, EssentialAction}
+import play.api.mvc.{AnyContent, ControllerComponents, EssentialAction, Request}
 import play.twirl.api.Html
+import views.html.blanks._
 
 import scala.concurrent.ExecutionContext
 import scala.language.implicitConversions
@@ -18,11 +18,17 @@ import scala.util.Try
 
 @Singleton
 class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends AIdExController[BlanksExercise, EvaluationResult](cc, dbcp, r, BlanksToolObject) with Secured {
+  extends AIdExController[BlanksExercise, EvaluationResult, GenericCompleteResult[EvaluationResult]](cc, dbcp, r, BlanksToolObject) with Secured {
 
-  override type SolutionType = StringSolution
+  // Reading solution from requests
 
-  override def solForm: Form[StringSolution] = Solution.stringSolForm
+  override type SolType = String
+
+  override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[String] =
+    Solution.stringSolForm.bindFromRequest().fold(_ => None, sol => Some(sol.learnerSolution))
+
+  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[String] =
+    Solution.stringSolForm.bindFromRequest().fold(_ => None, sol => Some(sol.learnerSolution))
 
   // Yaml
 
@@ -36,7 +42,7 @@ class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
 
   override def tq = repo.blanksExercises
 
-  def testBlanks: EssentialAction = withUser { user => implicit request => Ok(views.html.blanks.blanks.render(user, null)) }
+  def testBlanks: EssentialAction = withUser { user => implicit request => Ok(blanks(user, null)) }
 
   def correctBlanks(id: Int): EssentialAction = withUser { user =>
     implicit request =>
@@ -47,13 +53,13 @@ class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
       Ok("TODO")
   }
 
-  override protected def correctEx(sol: StringSolution, exercise: BlanksExercise, user: User): Try[CompleteResult[EvaluationResult]] = ???
+  override protected def correctEx(user: User, sol: String, exercise: BlanksExercise): Try[GenericCompleteResult[EvaluationResult]] = ???
 
   override protected def renderExesListRest: Html = new Html("")
 
   override def renderExercise(user: User, exercise: BlanksExercise): Html = ???
 
-  override def renderResult(correctionResult: CompleteResult[EvaluationResult]): Html = ???
+  override def renderResult(correctionResult: GenericCompleteResult[EvaluationResult]): Html = ???
 
 }
 

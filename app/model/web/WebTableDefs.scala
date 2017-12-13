@@ -12,11 +12,10 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
-import scala.util.Try
 
 case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTasks: Seq[JsCompleteTask]) extends CompleteEx[WebExercise] {
 
-  override def preview: Html = views.html.web.webPreview.render(this)
+  override def preview: Html = views.html.web.webPreview(this)
 
   override def tags: List[WebExTag] = List(new WebExTag(HTML_TYPE, ex.hasHtmlPart), new WebExTag(JS_TYPE, ex.hasJsPart))
 
@@ -159,7 +158,7 @@ trait WebTableDefs extends TableDefs {
   // Implicit column types
 
   implicit val ActionTypeColumnType: BaseColumnType[JsActionType] =
-    MappedColumnType.base[JsActionType, String](_.name, str => Try(JsActionType.valueOf(str)).getOrElse(JsActionType.CLICK))
+    MappedColumnType.base[JsActionType, String](_.name, str => JsActionType.byString(str) getOrElse JsActionType.CLICK)
 
   // Table definitions
 

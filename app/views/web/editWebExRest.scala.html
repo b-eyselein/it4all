@@ -1,20 +1,83 @@
-@(exercise: model.web.WebExercise, isCreation: Boolean)
+@(maybeExercise: Option[model.web.WebCompleteEx])
 
 <fieldset>
-    <legend>Angaben zum Html- und Javascript-Teil</legend>
-    <div class="row">
-        <div class="col-sm-6">
-            <div class="form-group">
-                <label for="html_text">Text f&uuml;r den Html-Teil:</label>
-                <textarea class="form-control" name="html_text" id="html_text" rows="5" required>@exercise.htmlText</textarea>
-            </div>
-        </div>
+    <legend>Angaben zum Html-Teil</legend>
+    <div class="form-group">
+        <label for="html_text">Text f&uuml;r den Html-Teil:</label>
+        <textarea class="form-control" name="html_text" id="html_text" rows="5" placeholder="Text f&uuml;r den Html-Teil"
+        required>@maybeExercise.map(_.ex.htmlText).getOrElse("")</textarea>
+    </div>
 
-        <div class="col-sm-6">
+    <div class="form-horizontal">
+        <h3>Aufgaben</h3>
+        @for(task <- maybeExercise map (_.htmlTasks) getOrElse Seq.empty) {
             <div class="form-group">
-                <label for="js_text">Text f&uuml;r den Js-Teil:</label>
-                <textarea class="form-control" name="js_text" id="js_text" rows="5" required>@exercise.jsText</textarea>
+                <label class="control-label col-md-2" for="html_task_id_@task.task.id">ID:</label>
+                <div class="col-md-10">
+                    <input type="number" class="form-control" readonly name="html_task_id_@task.task.id" id="html_task_id_@task.task.id" value="@task.task.id">
+                </div>
             </div>
-        </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2" for="html_task_text_@task.task.id">Text:</label>
+                <div class="col-md-10">
+                    <textarea class="form-control" rows="3" name="html_task_text_@task.task.id" id="html_task_text_@task.task.id"
+                    placeholder="Beschreibung der Teilaufgabe">@task.task.text</textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2" for="html_task_xpath_@task.task.id">XPath:</label>
+                <div class="col-md-10">
+                    <input class="form-control" name="html_task_xpath_@task.task.id" id="html_task_xpath_@task.task.id"
+                    placeholder="XPathQuery f&uuml;r diesen Task" value="@task.task.xpathQuery">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2" for="html_task_content_@task.task.id">Textinhalt:</label>
+                <div class="col-md-10">
+                    <input class="form-control" name="html_task_content_@task.task.id" id="html_task_content_@task.task.id"
+                    placeholder="Gew&uuml;nschter Textinhalt (Optionaler Wert)" value="@task.task.textContent.getOrElse("")">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2">Attribute:</label>
+                <div class="col-md-10">
+                @for(attr <- task.attributes) {
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <div class="input-group">
+                                <input class="form-control" placeholder="Schl&uuml;ssel" value="@attr.key">
+                                <span class="input-group-addon">&rarr;</span>
+                                <input class="form-control" placeholder="Wert" value="@attr.value">
+                            </div>
+
+                        </div>
+                    </div>
+                }
+                </div>
+            </div>
+
+            <hr>
+            }
+    </div>
+</fieldset>
+
+<fieldset>
+    <legend>Angaben zum Javascript-Teil</legend>
+    <div class="form-group">
+        <label for="js_text">Text f&uuml;r den Js-Teil:</label>
+        <textarea class="form-control" name="js_text" id="js_text" rows="5" placeholder="Text f&uuml;r den Js-Teil"
+        required>@maybeExercise.map(_.ex.jsText).getOrElse("")</textarea>
+    </div>
+
+    <div class="form-horizontal">
+        <h3>Aufgaben</h3>
+        @for(task <- maybeExercise map (_.jsTasks) getOrElse Seq.empty) {
+            @* FIXME: Aufgaben! *@
+            <p>@task</p>
+        }
     </div>
 </fieldset>

@@ -18,9 +18,9 @@ import scala.util.{Failure, Success}
 
 class ODFCorrectorTest {
 
-  private val standardDocument: Path = Paths.get("test/resources/spreadsheet/standard.ods")
+  private val standardDocument: Path = Paths.get("test/resources/spread/standard.ods")
 
-  private val schullandheimDir: Path = Paths.get("test/resources/spreadsheet/schullandheim")
+  private val schullandheimDir: Path = Paths.get("test/resources/spread/schullandheim")
 
   private val schullandheimMuster     : Path = Paths.get(schullandheimDir.toString, "Aufgabe_Schullandheim_Muster.ods")
   private val schullandheimTeilLoesung: Path = Paths.get(schullandheimDir.toString, "Aufgabe_Schullandheim.ods")
@@ -57,8 +57,8 @@ class ODFCorrectorTest {
   }
 
   @Test def testCompareCellValues() {
-//    val muster = loadDocument(schullandheimMuster)
-//    val teilLsg = loadDocument(schullandheimTeilLoesung)
+    //    val muster = loadDocument(schullandheimMuster)
+    //    val teilLsg = loadDocument(schullandheimTeilLoesung)
 
     //    assertThat(compareCellValues(getCell(muster, 2, 7, 15), getCell(teilLsg, 2, 7, 15)),
     //        equalTo(StringConsts.COMMENT_VALUE_CORRECT))

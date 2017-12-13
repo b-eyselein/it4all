@@ -1,9 +1,20 @@
 package model.web;
 
 import model.Enums.Selectable;
+import scala.Option;
+import scala.Some;
 
 public enum JsActionType implements Selectable<JsActionType> {
 
-    CLICK, FILLOUT
+    CLICK, FILLOUT;
+
+    public static Option<JsActionType> byString(String str) {
+        try {
+            return new Some<>(valueOf(str));
+        } catch (Exception e) {
+            // ==> None!
+            return Option.apply(null);
+        }
+    }
 
 }

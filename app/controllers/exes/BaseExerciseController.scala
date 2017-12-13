@@ -10,8 +10,6 @@ import model.core.tools.ExToolObject
 import model.{CompleteEx, Exercise, User}
 import net.jcazevedo.moultingyaml._
 import play.Logger
-import play.api.data.Form
-import play.api.data.Forms._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.Json
 import play.api.mvc._
@@ -25,6 +23,18 @@ import scala.language.implicitConversions
 abstract class BaseExerciseController[Ex <: Exercise]
 (cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository, val toolObject: ExToolObject)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured with FileUtils {
+
+  // Reading solution from requests
+
+  type SolType
+
+  def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[SolType]
+
+  def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[SolType]
+
+  //  case class StrForm(str: String)
+
+  //  def singleStrForm(str: String) = Form(mapping(str -> nonEmptyText)(StrForm.apply)(StrForm.unapply))
 
   // Reading Yaml
 
@@ -42,19 +52,13 @@ abstract class BaseExerciseController[Ex <: Exercise]
 
   protected def numOfExes: Future[Int] = db.run(tq.size.result)
 
-  protected def completeExById(id: Int): Future[Option[CompEx]] = ???
+  protected def futureCompleteExById(id: Int): Future[Option[CompEx]] = ???
 
-  protected def completeExes: Future[Seq[CompEx]] = ???
+  protected def futureCompleteExes: Future[Seq[CompEx]] = ???
 
   protected def statistics: Future[Html] = numOfExes map (num => Html(s"<li>Es existieren insgesamt $num Aufgaben</li>"))
 
   protected def saveRead(read: Seq[CompEx]): Future[Seq[Any]] = ???
-
-  // Reading from form TODO: Move to other file?
-
-  case class StrForm(str: String)
-
-  def singleStrForm(str: String) = Form(mapping(str -> nonEmptyText)(StrForm.apply)(StrForm.unapply))
 
   val PROGRESS_LOGGER: Logger.ALogger = Logger.of("progress")
 
@@ -94,13 +98,13 @@ abstract class BaseExerciseController[Ex <: Exercise]
 
   def adminExportExercises: EssentialAction = futureWithAdmin { admin =>
     implicit request =>
-      completeExes map (exes => Ok(views.html.admin.export(admin, yamlString(exes), toolObject)))
+      futureCompleteExes map (exes => Ok(views.html.admin.export(admin, yamlString(exes), toolObject)))
   }
 
   def adminExportExercisesAsFile: EssentialAction = futureWithAdmin { admin =>
     implicit request =>
       val file = Files.createTempFile(s"export_${toolObject.exType}", ".yaml")
-      completeExes map (exes => {
+      futureCompleteExes map (exes => {
 
         write(file, yamlString(exes))
 
@@ -152,11 +156,11 @@ abstract class BaseExerciseController[Ex <: Exercise]
   }
 
   def adminEditExerciseForm(id: Int): EssentialAction = futureWithAdmin { admin =>
-    implicit request => completeExById(id) map (ex => Ok(views.html.admin.exerciseEditForm(admin, toolObject, ex, renderEditRest(ex))))
+    implicit request => futureCompleteExById(id) map (ex => Ok(views.html.admin.exerciseEditForm(admin, toolObject, ex, renderEditRest(ex))))
   }
 
   def adminExerciseList: EssentialAction = futureWithAdmin { admin =>
-    implicit request => completeExes map (exes => Ok(views.html.admin.exerciseList(admin, exes, toolObject)))
+    implicit request => futureCompleteExes map (exes => Ok(views.html.admin.exerciseList(admin, exes, toolObject)))
   }
 
   def adminNewExerciseForm: EssentialAction = withAdmin { admin =>
@@ -183,7 +187,7 @@ abstract class BaseExerciseController[Ex <: Exercise]
 
   def exerciseList(page: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
-      completeExes map (allExes => {
+      futureCompleteExes map (allExes => {
         val exes = allExes slice(Math.max(0, (page - 1) * STEP), Math.min(page * STEP, allExes.size))
         Ok(renderExes(user, exes, allExes.size))
       })
@@ -203,8 +207,6 @@ abstract class BaseExerciseController[Ex <: Exercise]
 
   // Helper methods
 
-  def renderEditRest(exercise: Option[CompEx]): Html = ???
-
-  def renderExercises(exercises: List[CompEx]): Html = ??? //views.html.admin.exercisesTable(exercises, toolObject)
+  protected def renderEditRest(exercise: Option[CompEx]): Html = ???
 
 }

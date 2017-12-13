@@ -27,7 +27,7 @@
                         <td>@task.task.id</td>
                         <td>@task.task.text</td>
                         <td>@task.task.xpathQuery</td>
-                        <td>@task.task.asInstanceOf[model.web.HtmlTask].textContent.getOrElse("")</td>
+                        <td>@task.task.textContent.getOrElse("")</td>
                         <td><ul>
                         @for(attr <- task.attributes) {
                             <li>@attr.toString</li>
