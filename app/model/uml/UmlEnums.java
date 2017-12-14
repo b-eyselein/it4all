@@ -7,7 +7,7 @@ import scala.Some;
 public abstract class UmlEnums {
 
     public enum UmlExPart implements Selectable<UmlExPart> {
-        CLASS_SELECTION, DIAG_DRAWING_HELP, DIAG_DRAWING, ATTRS_METHS, FINISHED;
+        CLASS_SELECTION, DIAG_DRAWING_HELP, DIAG_DRAWING, ALLOCATION;
 
         public static Option<UmlExPart> byString(String str) {
             try {
@@ -49,14 +49,6 @@ public abstract class UmlEnums {
         UmlMultiplicity(String theRepresentant) {
             representant = theRepresentant;
         }
-
-//        public static UmlMultiplicity getByString(String rep) {
-//            if ("1".equals(rep) || "SINGLE".equals(rep))
-//                return SINGLE;
-//            else if ("*".equals(rep) || "UNBOUND".equals(rep))
-//                return UNBOUND;
-//            else throw new IllegalArgumentException("Value " + rep + " is not allowed for a UmlMultiplicity!");
-//        }
 
         public static Option<UmlMultiplicity> byString(String str) {
             try {

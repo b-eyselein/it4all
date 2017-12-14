@@ -24,6 +24,7 @@ object UmlConsts extends Consts {
   // Strings
 
   val ASSOCS_NAME    = "associations"
+  val ASSOCNAME_NAME = "assocName"
   val ASSOCTYPE_NAME = "assocType"
 
   val CLASSES_NAME   = "classes"

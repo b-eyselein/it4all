@@ -38,16 +38,15 @@ case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping], solution: U
 
 case class UmlSolution(classes: Seq[UmlCompleteClass], associations: Seq[UmlAssociation], implementations: Seq[UmlImplementation]) {
 
-  def allAttributes: Seq[String] = classes.flatMap(_.attributes).distinct map (_.toString)
+  def allAttributes: Seq[UmlClassAttribute] = classes flatMap (_.attributes) groupBy (attr => (attr.name, attr.umlType)) map (_._2.head) toSeq
 
-  def allMethods: Seq[String] = classes.flatMap(_.methods).distinct map (_.toString)
+  def allMethods: Seq[UmlClassMethod] = classes flatMap (_.methods) groupBy (method => (method.name, method.umlType)) map (_._2.head) toSeq
+
 }
 
 case class UmlCompleteClass(clazz: UmlClass, attributes: Seq[UmlClassAttribute], methods: Seq[UmlClassMethod]) {
 
-  def allAttrs: Seq[String] = attributes map (_.toString)
-
-  def allMethods: Seq[String] = methods map (_.toString)
+  def allMembers: Seq[UmlClassMember] = attributes ++ methods
 
 }
 
@@ -68,7 +67,7 @@ object UmlExercise {
 
 case class UmlExercise(baseValues: BaseValues, classSelText: String, diagDrawText: String, toIgnore: String) extends Exercise {
 
-  def getToIgnore: Seq[String] = toIgnore split TagJoinChar
+  def splitToIgnore: Seq[String] = toIgnore split TagJoinChar
 
 }
 
@@ -78,22 +77,32 @@ case class UmlMapping(exerciseId: Int, key: String, value: String)
 
 case class UmlClass(exerciseId: Int, className: String, classType: UmlClassType)
 
-abstract class UmlClassMember(exerciseId: Int, className: String, name: String, umlType: String) {
+trait UmlClassMember {
 
-  val render: String = name + ": " + umlType
+  val exerciseId: Int
+  val className : String
+  val name      : String
+  val umlType   : String
+
+  def render: String = name + ": " + umlType
 
 }
 
-case class UmlClassAttribute(exId: Int, cn: String, attrName: String, attrType: String) extends UmlClassMember(exId, cn, attrName, attrType)
+case class UmlClassAttribute(exerciseId: Int, className: String, name: String, umlType: String) extends UmlClassMember
 
-case class UmlClassMethod(exId: Int, cn: String, methodName: String, returns: String) extends UmlClassMember(exId, cn, methodName, returns)
-
+case class UmlClassMethod(exerciseId: Int, className: String, name: String, umlType: String) extends UmlClassMember
 
 case class UmlImplementation(exerciseId: Int, subClass: String, superClass: String)
 
 case class UmlAssociation(exerciseId: Int, assocType: UmlAssociationType, assocName: Option[String],
                           firstEnd: String, firstMult: UmlMultiplicity,
-                          secondEnd: String, secondMult: UmlMultiplicity)
+                          secondEnd: String, secondMult: UmlMultiplicity) {
+
+  def displayMult(turn: Boolean = false): String =
+    if (turn) secondMult.representant + " : " + firstMult.representant
+    else firstMult.representant + " : " + secondMult.representant
+
+}
 
 // Tables
 
@@ -106,17 +115,11 @@ trait UmlTableDefs extends TableDefs {
   def saveCompleteEx(completeEx: UmlCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] = db.run(umlExercises.filter(_.id === completeEx.id).delete) flatMap { _ =>
     db.run(umlExercises += completeEx.ex) flatMap { _ =>
       Future.sequence(completeEx.mappings map saveMapping) zip Future.sequence(saveSampleSolution(completeEx.solution))
-    } map (_ => true) recover {
-      case e: Throwable => false
-    }
+    } map (_ => true) recover { case _: Throwable => false }
   }
 
   private def saveMapping(mapping: UmlMapping)(implicit ec: ExecutionContext): Future[Boolean] =
-    db.run(umlMappings += mapping) map (_ => true) recover {
-      case e: Throwable =>
-        println(s"Error while saving mapping $mapping:\n\t${e.getMessage}")
-        false
-    }
+    db.run(umlMappings += mapping) map (_ => true) recover { case _: Throwable => false }
 
   private def saveSampleSolution(solution: UmlSolution)(implicit ec: ExecutionContext) =
     (solution.classes map saveClass) zip (solution.associations map saveAssociation) zip (solution.implementations map saveImplementation) map (_._1._1)
@@ -127,32 +130,16 @@ trait UmlTableDefs extends TableDefs {
   } map (tuple => tuple._1 && tuple._2)
 
   private def saveAssociation(association: UmlAssociation)(implicit ec: ExecutionContext): Future[Boolean] =
-    db.run(umlAssociations += association) map (_ => true) recover {
-      case e: Throwable =>
-        println(s"Error while saving uml association $association:\n\t${e.getMessage}")
-        false
-    }
+    db.run(umlAssociations += association) map (_ => true) recover { case _: Throwable => false }
 
   private def saveImplementation(implementation: UmlImplementation)(implicit ec: ExecutionContext): Future[Boolean] =
-    db.run(umlImplementations += implementation) map (_ => true) recover {
-      case e: Throwable =>
-        println(s"Error while saving uml implementation $implementation:\n\t${e.getMessage}")
-        false
-    }
+    db.run(umlImplementations += implementation) map (_ => true) recover { case _: Throwable => false }
 
   private def saveClassAttribute(umlClassAttribute: UmlClassAttribute)(implicit ec: ExecutionContext): Future[Boolean] =
-    db.run(umlClassAttributes += umlClassAttribute) map (_ => true) recover {
-      case e: Throwable =>
-        println(s"Error while saving uml attribute $umlClassAttribute:\n\t${e.getMessage}")
-        false
-    }
+    db.run(umlClassAttributes += umlClassAttribute) map (_ => true) recover { case _: Throwable => false }
 
   private def saveClassMethod(umlClassMethod: UmlClassMethod)(implicit ec: ExecutionContext): Future[Boolean] =
-    db.run(umlClassMethods += umlClassMethod) map (_ => true) recover {
-      case e: Throwable =>
-        println(s"Error while saving uml method $umlClassMethod:\n\t${e.getMessage}")
-        false
-    }
+    db.run(umlClassMethods += umlClassMethod) map (_ => true) recover { case _: Throwable => false }
 
   object umlExercises extends ExerciseTableQuery[UmlExercise, UmlCompleteEx, UmlExercisesTable](new UmlExercisesTable(_)) {
 

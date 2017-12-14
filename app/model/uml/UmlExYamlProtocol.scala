@@ -31,7 +31,7 @@ object UmlExYamlProtocol extends MyYamlProtocol {
 
     override protected def writeRest(completeEx: UmlCompleteEx): Map[YamlValue, YamlValue] = Map(
       YamlString(MAPPINGS_NAME) -> YamlArray(completeEx.mappings map (_.toYaml(UmlMappingYamlFormat(completeEx.ex.id))) toVector),
-      YamlString(IGNORE_WORDS_NAME) -> YamlArray(completeEx.ex.getToIgnore map YamlString toVector),
+      YamlString(IGNORE_WORDS_NAME) -> YamlArray(completeEx.ex.splitToIgnore map YamlString toVector),
       YamlString(SOLUTION_NAME) -> completeEx.solution.toYaml(UmlSolutionYamlFormat(completeEx.ex.id))
     )
   }
@@ -96,8 +96,7 @@ object UmlExYamlProtocol extends MyYamlProtocol {
   case class UmlClassAttributeYamlFormat(exerciseId: Int, className: String) extends MyYamlFormat[UmlClassAttribute] {
 
     override def write(attr: UmlClassAttribute): YamlValue = YamlObject(
-      YamlString(NAME_NAME) -> attr.attrName,
-      YamlString(TYPE_NAME) -> attr.attrType
+      YamlString(NAME_NAME) -> attr.name, YamlString(TYPE_NAME) -> attr.umlType
     )
 
     override def readObject(yamlObject: YamlObject): UmlClassAttribute = UmlClassAttribute(
@@ -108,8 +107,7 @@ object UmlExYamlProtocol extends MyYamlProtocol {
   case class UmlClassMethodYamlFormat(exerciseId: Int, className: String) extends MyYamlFormat[UmlClassMethod] {
 
     override def write(method: UmlClassMethod): YamlValue = YamlObject(
-      YamlString(NAME_NAME) -> method.methodName,
-      YamlString(ReturnTypeName) -> method.returns
+      YamlString(NAME_NAME) -> method.name, YamlString(ReturnTypeName) -> method.umlType
     )
 
     override def readObject(yamlObject: YamlObject): UmlClassMethod = UmlClassMethod(

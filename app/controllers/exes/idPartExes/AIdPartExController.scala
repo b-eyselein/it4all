@@ -34,24 +34,28 @@ abstract class AIdPartExController[E <: Exercise, R <: EvaluationResult, CompRes
 (cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository, to: IdPartExToolObject)(implicit ec: ExecutionContext)
   extends BaseExerciseController[E](cc, dbcp, r, to) with Secured {
 
-  def correct(id: Int, part: String): EssentialAction = futureWithUser { user =>
+  type PartType
+
+  def partTypeFromString(str: String): Option[PartType]
+
+  def correct(id: Int, partStr: String): EssentialAction = futureWithUser { user =>
     implicit request =>
-      correctAbstract(user, part, id, readSolutionFromPostRequest, renderCorrectionResult(user, _),
+      correctAbstract(user, partStr, id, readSolutionFromPostRequest, renderCorrectionResult(user, _),
         error => views.html.main.render("Fehler", user, new Html(""), new Html(
           s"""<pre>${error.getMessage}:
              |${error.getStackTrace mkString "\n"}</pre>""".stripMargin)))
   }
 
-  def correctLive(id: Int, part: String): EssentialAction = futureWithUser { user =>
-    implicit request => correctAbstract(user, part, id, readSolutionFromPutRequest, renderResult, error => Json.toJson(error.getMessage))
+  def correctLive(id: Int, partStr: String): EssentialAction = futureWithUser { user =>
+    implicit request => correctAbstract(user, partStr, id, readSolutionFromPutRequest, renderResult, error => Json.toJson(error.getMessage))
   }
 
-  private def correctAbstract[S, Err](user: User, part: String, id: Int, maybeSolution: Option[SolType],
+  private def correctAbstract[S, Err](user: User, partStr: String, id: Int, maybeSolution: Option[SolType],
                                       onCorrectionSuccess: CompResult => S, onCorrectionError: Throwable => Err)
                                      (implicit successWriteable: Writeable[S], errorWriteable: Writeable[Err], request: Request[AnyContent]): Future[Result] =
-    maybeSolution match {
-      case None           => Future(BadRequest("No solution!"))
-      case Some(solution) => futureCompleteExById(id) map {
+    (partTypeFromString(partStr) zip maybeSolution).headOption match {
+      case None                   => Future(BadRequest("No solution!"))
+      case Some((part, solution)) => futureCompleteExById(id) map {
         case None           => NotFound("No such exercise!")
         case Some(exercise) => correctEx(user, solution, exercise, part) match {
           case Success(result) => Ok(onCorrectionSuccess(result))
@@ -61,13 +65,17 @@ abstract class AIdPartExController[E <: Exercise, R <: EvaluationResult, CompRes
     }
 
 
-  def exercise(id: Int, part: String): EssentialAction = futureWithUser { user =>
+  def exercise(id: Int, partStr: String): EssentialAction = futureWithUser { user =>
     implicit request =>
-      futureCompleteExById(id) flatMap {
-        case Some(exercise) =>
-          log(user, ExerciseStartEvent(request, id))
-          renderExercise(user, exercise, part) map (Ok(_))
-        case None           => Future(Redirect(toolObject.indexCall))
+      partTypeFromString(partStr) match {
+        case None       => Future(Redirect(toolObject.indexCall))
+        case Some(part) =>
+          futureCompleteExById(id) flatMap {
+            case Some(exercise) =>
+              log(user, ExerciseStartEvent(request, id))
+              renderExercise(user, exercise, part) map (Ok(_))
+            case None           => Future(Redirect(toolObject.indexCall))
+          }
       }
   }
 
@@ -78,9 +86,9 @@ abstract class AIdPartExController[E <: Exercise, R <: EvaluationResult, CompRes
   protected def renderCorrectionResult(user: User, correctionResult: CompResult): Html =
     views.html.core.correction.render(correctionResult, renderResult(correctionResult), user, toolObject)
 
-  protected def correctEx(user: User, sol: SolType, exercise: CompEx, part: String): Try[CompResult] = ???
+  protected def correctEx(user: User, sol: SolType, exercise: CompEx, part: PartType): Try[CompResult] = ???
 
-  protected def renderExercise(user: User, exercise: CompEx, part: String): Future[Html] = ???
+  protected def renderExercise(user: User, exercise: CompEx, part: PartType): Future[Html] = ???
 
   protected def renderResult(correctionResult: CompResult): Html = ???
 

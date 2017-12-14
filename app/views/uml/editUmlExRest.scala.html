@@ -4,7 +4,7 @@
     <div class="form-group">
         <label class="control-label col-sm-2">Ignoriert:</label>
         <div class="col-md-10">
-            <input class="form-control" value="@maybeExercise.map(_.ex.getToIgnore).getOrElse(Seq.empty).mkString(", ")">
+            <input class="form-control" value="@maybeExercise.map(_.ex.splitToIgnore).getOrElse(Seq.empty).mkString(", ")">
         </div>
     </div>
 
@@ -56,9 +56,9 @@
                 <div class="form-group">
                     <div class="col-md-12">
                         <div class="input-group">
-                            <input class="form-control" value="@attribute.attrName">
+                            <input class="form-control" value="@attribute.name">
                             <span class="input-group-addon">:</span>
-                            <input class="form-control" value="@attribute.attrType">
+                            <input class="form-control" value="@attribute.umlType">
                         </div>
                     </div>
                 </div>
@@ -71,9 +71,9 @@
                 <div class="form-group">
                     <div class="col-md-12">
                         <div class="input-group">
-                            <input class="form-control" value="@method.methodName">
+                            <input class="form-control" value="@method.name">
                             <span class="input-group-addon">:</span>
-                            <input class="form-control" value="@method.returns">
+                            <input class="form-control" value="@method.umlType">
                         </div>
                     </div>
                 </div>

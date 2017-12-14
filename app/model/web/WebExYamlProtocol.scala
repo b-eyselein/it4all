@@ -2,6 +2,7 @@ package model.web
 
 import model.MyYamlProtocol._
 import model.web.WebConsts._
+import model.web.WebEnums._
 import model.{BaseValues, MyYamlProtocol}
 import net.jcazevedo.moultingyaml._
 

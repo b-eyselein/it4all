@@ -1,29 +1,18 @@
 package model.core.matching
 
 import model.Enums
-import model.Enums.MatchType
 import model.Enums.MatchType._
 import model.Enums.SuccessType._
 import model.core.EvaluationResult
+import model.core.EvaluationResult.PimpedHtmlString
 import play.twirl.api.Html
 
 import scala.collection.mutable.ListBuffer
+import scala.language.postfixOps
 
 trait MatchingResult[T, M <: Match[T]] extends EvaluationResult {
 
-  implicit class PimpedBSStrign(string: String) {
-
-    def asCode: String = "<code>" + string + "</code>"
-
-    def asListElem: String = "<li>" + string + "</li>"
-
-  }
-
   val matchName: String
-
-  val headings: Seq[String]
-
-  def colWidth: Int = headings.size
 
   def allMatches: Seq[M]
 
@@ -36,46 +25,56 @@ trait MatchingResult[T, M <: Match[T]] extends EvaluationResult {
     else
       COMPLETE
 
-  private def groupWrongMatches: Map[MatchType, Seq[M]] = allMatches groupBy (_.matchType)
+  def describe: Html = new Html(success match {
+    case COMPLETE => s"""<span class="glyphicon glyphicon-ok"></span> Die Korrektur der $matchName war erfolgreich.""" asDivWithClass "alert alert-success"
 
-  def describe: Html = {
-    val message: String = success match {
-      case COMPLETE => s"Die Korrektur der $matchName war erfolgreich."
+    case (PARTIALLY | NONE) =>
+      val groupedMatches = allMatches groupBy (_.matchType)
 
-      case (PARTIALLY | NONE) =>
-        val groupedWrongMatches = groupWrongMatches
-        s"Die Korrektur der $matchName ergab folgende Fehler:<ul>" +
-          (groupedWrongMatches get UNSUCCESSFUL_MATCH map describePartialMatches getOrElse "") +
-          (groupedWrongMatches get ONLY_SAMPLE map describeOnlySampleMatches getOrElse "") +
-          (groupedWrongMatches get ONLY_USER map describeOnlyUserMatches getOrElse "") + "</ul>"
+      val message =
+        s"""<h4><span class="${success.glyphicon}"></span> Die Korrektur der $matchName ergab folgendes Ergebnis:</h4>""" +
+          (groupedMatches get SUCCESSFUL_MATCH map describeCorrectMatches getOrElse "") +
+          (groupedMatches get UNSUCCESSFUL_MATCH map describePartialMatches getOrElse "") +
+          (groupedMatches get ONLY_SAMPLE map describeOnlySampleMatches getOrElse "") +
+          (groupedMatches get ONLY_USER map describeOnlyUserMatches getOrElse "") + "<hr>"
 
-      case ERROR => s"Es gab einen Fehler bei der Korrektur der $matchName!"
-    }
+      message asDiv
 
-    new Html(s"""<div class="alert alert-${success.color}"><span class="${success.glyphicon}"></span> $message</div>""")
+    case ERROR => s"""<span class="glyphicon glyphicon-ok"></span> Es gab einen Fehler bei der Korrektur der $matchName!""" asDiv
+  })
+
+  protected def describeCorrectMatches(colMatches: Seq[M]): String = colMatches match {
+    case Nil => ""
+    case ms  => describeMatches(s"Folgende $matchName waren korrekt:", ms, "alert alert-success")(isCorrect = true)
   }
-
 
   protected def describePartialMatches(colMatches: Seq[M]): String = colMatches match {
     case Nil => ""
-    case ms  => s"Bei folgenden $matchName war die Korrektur nicht komplett erfolgreich: ${ms map (_.descUserArg.asCode) mkString ", "}".asListElem
+    case ms  => describeMatches(s"Bei folgenden $matchName war die Korrektur nicht komplett erfolgreich:", ms, "alert alert-warning")
   }
 
   protected def describeOnlySampleMatches(matches: Seq[M]): String = matches match {
     case Nil => ""
-    case ms  => s"Folgende $matchName fehlen: ${ms map (_.descSampleArg.asCode) mkString ", "}".asListElem
+    case ms  => describeMatches(s"Folgende $matchName fehlen:", ms, "alert alert-danger", userArg = false)
   }
 
   protected def describeOnlyUserMatches(matches: Seq[M]): String = matches match {
     case Nil => ""
-    case ms  => s"Folgende $matchName waren falsch: ${ms map (_.descUserArg.asCode) mkString ", "}".asListElem
+    case ms  => describeMatches(s"Folgende $matchName waren falsch:", ms, "alert alert-danger")
   }
+
+  protected def describeMatches(message: String, matches: Seq[M], cssClass: String, userArg: Boolean = true)(implicit isCorrect: Boolean = false): String =
+    (message + "<ul>" + (matches map (m => (if (userArg) m.descUserArgWithReason else m.descSampleArgWithReason) asListElem) mkString) + "<ul>") asDivWithClass cssClass
 
 }
 
-class Matcher[T, M <: Match[T], R <: MatchingResult[T, M]](val headings: Seq[String], canMatch: (T, T) => Boolean,
-                                                           matchInstantiation: (Option[T], Option[T]) => M,
-                                                           resultInstantiation: Seq[M] => R) {
+trait Matcher[T, M <: Match[T], R <: MatchingResult[T, M]] {
+
+  def canMatch: (T, T) => Boolean
+
+  def matchInstantiation: (Option[T], Option[T]) => M
+
+  def resultInstantiation: Seq[M] => R
 
   def doMatch(firstCollection: Seq[T], secondCollection: Seq[T]): R = {
     val matches: ListBuffer[M] = ListBuffer.empty

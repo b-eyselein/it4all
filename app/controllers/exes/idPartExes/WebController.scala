@@ -7,6 +7,7 @@ import model.User
 import model.core._
 import model.web.WebConsts._
 import model.web.WebCorrector.evaluateWebTask
+import model.web.WebEnums.WebExPart
 import model.web._
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import play.api.db.slick.DatabaseConfigProvider
@@ -22,6 +23,10 @@ import scala.util.Try
 @Singleton
 class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
   extends AIdPartExController[WebExercise, WebResult, CompleteResult[WebResult]](cc, dbcp, r, WebToolObject) with Secured {
+
+  override type PartType = WebExPart
+
+  override def partTypeFromString(str: String): Option[WebExPart] = WebExPart.byString(str)
 
   override type SolType = String
 
@@ -69,7 +74,7 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // Views
 
-  override protected def renderExercise(user: User, exercise: WebCompleteEx, part: String): Future[Html] =
+  override protected def renderExercise(user: User, exercise: WebCompleteEx, part: WebExPart): Future[Html] =
     getOldSolOrDefault(user.username, exercise.ex.id) map (oldSol => webExercise(user, exercise, part, getTasks(exercise, part), oldSol))
 
 
@@ -90,7 +95,7 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // Correction
 
-  override def correctEx(user: User, learnerSolution: String, exercise: WebCompleteEx, part: String): Try[CompleteResult[WebResult]] = Try {
+  override def correctEx(user: User, learnerSolution: String, exercise: WebCompleteEx, part: WebExPart): Try[CompleteResult[WebResult]] = Try {
     val solutionUrl = BASE_URL + routes.WebController.site(user.username, exercise.ex.id).url
 
     val newSol = WebSolution(exercise.ex.id, user.username, learnerSolution)
@@ -110,10 +115,9 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
       case None           => STANDARD_HTML
     }
 
-  private def getTasks(exercise: WebCompleteEx, part: String): Seq[WebCompleteTask] = part match {
-    case HTML_TYPE => exercise.htmlTasks
-    case JS_TYPE   => exercise.jsTasks
-    case _         => Seq.empty
+  private def getTasks(exercise: WebCompleteEx, part: WebExPart): Seq[WebCompleteTask] = part match {
+    case WebExPart.HTML_PART => exercise.htmlTasks
+    case WebExPart.JS_PART   => exercise.jsTasks
   }
 
 }

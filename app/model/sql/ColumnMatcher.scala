@@ -13,8 +13,6 @@ import scala.language.postfixOps
 case class ColumnMatch(userArg: Option[ColumnWrapper], sampleArg: Option[ColumnWrapper])
   extends Match[ColumnWrapper] {
 
-  override val size: Int = ColumnMatcher.headings.size
-
   val hasAlias: Boolean = (userArg exists (_.hasAlias)) || (sampleArg exists (_.hasAlias))
 
   val restMatched: Boolean = false
@@ -37,11 +35,17 @@ case class ColumnMatchingResult(allMatches: Seq[ColumnMatch]) extends MatchingRe
 
   override val matchName: String = "Spalten"
 
-  override val headings: Seq[String] = ColumnMatcher.headings
-
 }
 
-object ColumnMatcher extends Matcher[ColumnWrapper, ColumnMatch, ColumnMatchingResult](List("Spaltenname"), _ canMatch _, ColumnMatch, ColumnMatchingResult)
+object ColumnMatcher extends Matcher[ColumnWrapper, ColumnMatch, ColumnMatchingResult] {
+
+  override def canMatch: (ColumnWrapper, ColumnWrapper) => Boolean = _ canMatch _
+
+  override def matchInstantiation: (Option[ColumnWrapper], Option[ColumnWrapper]) => ColumnMatch = ColumnMatch
+
+  override def resultInstantiation: Seq[ColumnMatch] => ColumnMatchingResult = ColumnMatchingResult
+
+}
 
 abstract sealed class ColumnWrapper {
 

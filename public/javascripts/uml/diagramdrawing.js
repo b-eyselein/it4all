@@ -2,7 +2,7 @@ const STD_CLASS_SIZE = 140;
 const HEIGHT_PERCENTAGE = 0.7;
 const COLOR_WHITE = '#ffffff';
 
-let idList = []; // Linkverbindungen
+let chosenCell = undefined;
 
 const graph = new joint.dia.Graph();
 let paper;
@@ -15,7 +15,6 @@ $(document).ready(function () {
     // Init Graph and Paper
     paper = new joint.dia.Paper({
         el: paperJQ,
-        // FIXME: change width and height!
         width: paperJQ.parent().width(),
         height: HEIGHT_PERCENTAGE * window.screen.availHeight,
         gridSize: 1,
@@ -28,7 +27,7 @@ $(document).ready(function () {
     paper.on('blank:pointerdown', blankOnPointerDown);
 
     // Draw all classes, empty if diagramdrawing - help
-    for (let clazz of defaultClasses) { // NOSONAR
+    for (let clazz of defaultClasses) {
         addClass(clazz);
     }
 });
@@ -46,37 +45,52 @@ function blankOnPointerDown(evt, x, y) {
     }
 }
 
-function updateIdList() {
-    let idSpan = $("#idList");
-
-    if (idList.length === 0) {
-        idSpan.html("--");
-    } else {
-        idSpan.html(idList.map(getClassNameFromCellId).join(", "));
-    }
-}
-
-function cellOnLeftClick(cellView, evt, x, y) {
+function cellOnLeftClick(cellView, evt) {
     switch (sel) {
         case "POINTER":
             // TODO: Changing class type, name, attributes or methods!?!
-            console.log(evt.toElement);
+            let rectClassName = evt.toElement.className.baseVal;
+            switch (rectClassName) {
+                case "uml-class-name-rect":
+                case "v-line":
+                    console.log("TODO: change class name...");
+                    break;
+                case "uml-class-attrs-rect":
+                    console.log("TODO: change class attributes");
+                    break;
+                case "uml-class-methods-rect":
+                    console.log("TODO: change class methods");
+                    break;
+                default:
+                    console.log(rectClassName);
+                    break;
+            }
             break;
 
         case "ASSOCIATION":
         case "AGGREGATION":
         case "COMPOSITION":
         case "IMPLEMENTATION":
-            let newId = cellView.model.id;
+            // FIXME: do not select arrows or other things, only classes!
 
-            if (idList.length === 0 || idList[0] !== newId) {
-                idList.push(cellView.model.id);
+            let newCellId = cellView.model.id;
+
+            if (chosenCell === undefined) {
+                cellView.highlight();
+                chosenCell = cellView;
+            } else if (chosenCell.model.id === newCellId) {
+                cellView.unhighlight();
+                chosenCell = undefined;
+            } else {
+                cellView.highlight();
+                link(chosenCell.model.id, newCellId);
+
+                chosenCell.unhighlight();
+                cellView.unhighlight();
+
+                chosenCell = undefined;
             }
 
-            if (idList.length === 2) {
-                link(idList[0], idList[1]);
-                idList = [];
-            }
             break;
 
         case "INTERFACE":
@@ -90,13 +104,16 @@ function cellOnLeftClick(cellView, evt, x, y) {
             break;
     }
 
-    updateIdList();
 }
 
-function cellOnRightClick(cellView, evt, x, y) {
+function cellOnRightClick(cellView) {
     let cellInGraph = graph.getCell(cellView.model.id);
-    if (canDelete && confirm("Wollen Sie die Klasse / das Interface " + cellInGraph.attributes.name + " wirklich löschen?")) {
-        cellInGraph.remove();
+    if (canDelete) {
+        if (confirm("Wollen Sie die Klasse / das Interface " + cellInGraph.attributes.name + " wirklich löschen?")) {
+            cellInGraph.remove();
+        }
+    } else {
+        alert("Sie können keine Klassen löschen!");
     }
 }
 
@@ -116,9 +133,8 @@ function selectClassType(button) {
     classButton.dataset.conntype = button.dataset.conntype;
 
     sel = button.dataset.conntype;
-    document.getElementById("selType").innerHTML = sel;
 
-    document.getElementById("classType").textContent = button.textContent;
+    $("#classType").text(button.textContent);
 }
 
 function selectAssocType(button) {
@@ -129,9 +145,7 @@ function selectAssocType(button) {
     assocButton.dataset.conntype = button.dataset.conntype;
 
     sel = button.dataset.conntype;
-    document.getElementById("selType").innerHTML = sel;
-
-    document.getElementById("assocType").textContent = button.textContent;
+    $("#assocType").text(button.textContent);
 }
 
 function selectButton(button) {
@@ -139,7 +153,6 @@ function selectButton(button) {
     button.className = "btn btn-primary";
 
     sel = button.dataset.conntype;
-    document.getElementById("selType").innerHTML = sel;
 }
 
 function unMarkButtons() {
@@ -167,12 +180,8 @@ function askMulitplicity(source, dest) {
 
 function extractParametersAsJson() {
     let learnerSolution = {
-        classes: graph.getCells()
-            .filter(function (cell) {
-                return cell.attributes.name !== undefined;
-            })
+        classes: graph.getCells().filter(cell => cell.attributes.name !== undefined)
             .map(function (cell) {
-                console.log(cell);
                 return {
                     name: cell.attributes.name,
                     classType: cell.attributes.type,
@@ -181,28 +190,21 @@ function extractParametersAsJson() {
                 };
             }),
 
-        associations: graph.getLinks()
-            .filter(function (conn) {
-                return conn.attributes.type !== "uml.Implementation";
-            })
+        associations: graph.getLinks().filter(conn => conn.attributes.type !== "uml.Implementation")
             .map(function (conn) {
                 return {
                     assocType: getTypeName(conn.attributes.type),
-                    start: {
-                        endName: getClassNameFromCellId(conn.attributes.source.id),
-                        multiplicity: getMultiplicity(conn.attributes.labels[0])
-                    },
-                    end: {
-                        endName: getClassNameFromCellId(conn.attributes.target.id),
-                        multiplicity: getMultiplicity(conn.attributes.labels[1])
-                    }
+                    assocName: "",
+
+                    firstEnd: getClassNameFromCellId(conn.attributes.source.id),
+                    firstMult: getMultiplicity(conn.attributes.labels[0]),
+
+                    secondEnd: getClassNameFromCellId(conn.attributes.target.id),
+                    secondMult: getMultiplicity(conn.attributes.labels[1])
                 };
             }),
 
-        implementations: graph.getLinks()
-            .filter(function (conn) {
-                return conn.attributes.type === "uml.Implementation";
-            })
+        implementations: graph.getLinks().filter(conn => conn.attributes.type === "uml.Implementation")
             .map(function (conn) {
                 return {
                     subClass: getClassNameFromCellId(conn.attributes.source.id),
@@ -299,9 +301,7 @@ function addClass(clazz) {
             '.uml-class-name-rect': {fill: COLOR_WHITE},
             '.uml-class-attrs-rect, .uml-class-methods-rect': {fill: COLOR_WHITE},
             '.uml-class-attrs-text, .uml-class-methods-text': {
-                ref: '.uml-class-attrs-rect',
-                'ref-y': 0.5,
-                'y-alignment': 'middle'
+                ref: '.uml-class-attrs-rect', 'ref-y': 0.5, 'y-alignment': 'middle'
             }
         }
     };
@@ -310,7 +310,7 @@ function addClass(clazz) {
         case "INTERFACE":
             graph.addCell(new joint.shapes.uml.Interface(content));
             break;
-        case "ABSTRACTCLASS":
+        case "ABSTRACT":
             graph.addCell(new joint.shapes.uml.Abstract(content));
             break;
         case "CLASS":

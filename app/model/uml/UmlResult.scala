@@ -2,12 +2,23 @@ package model.uml
 
 import model.Enums
 import model.Enums.SuccessType.NONE
+import model.core.EvaluationResult._
 import model.core.matching.{Match, MatchingResult}
 import model.core.{CompleteResult, EvaluationResult}
 import model.uml.UmlEnums.UmlExPart
+import model.uml.UmlResult._
 import play.twirl.api.Html
 
 import scala.language.postfixOps
+
+object UmlResult {
+
+  def describeImplementation(impl: UmlImplementation): String = s"${impl.subClass}  &rarr;  ${impl.superClass}"
+
+  def describeAssociation(assoc: UmlAssociation): String =
+    s"${assoc.assocType.germanName}: ${assoc.firstEnd} &harr; ${assoc.secondEnd} (${assoc.displayMult()})"
+
+}
 
 // FIXME: convert to CompleteResult?
 abstract sealed class UmlResult(val exercise: UmlCompleteEx, val learnerSolution: UmlSolution, compareClasses: Boolean, compareClassesExtended: Boolean, assocs: Boolean, impls: Boolean) extends CompleteResult[EvaluationResult] {
@@ -39,7 +50,7 @@ abstract sealed class UmlResult(val exercise: UmlCompleteEx, val learnerSolution
 
 }
 
-case class ClassSelectionResult(e: UmlCompleteEx, l: UmlSolution) extends UmlResult(e, l, true, false, assocs = false, impls = false) {
+case class ClassSelectionResult(e: UmlCompleteEx, l: UmlSolution) extends UmlResult(e, l, compareClasses = true, compareClassesExtended = false, assocs = false, impls = false) {
 
   override def renderLearnerSolution: Html = new Html(
     "<h4>Ihre gew&auml;hlten Klassen:</h4>\n<ul>" + (classResult match {
@@ -51,18 +62,34 @@ case class ClassSelectionResult(e: UmlCompleteEx, l: UmlSolution) extends UmlRes
 
 }
 
-case class DiagramDrawingHelpResult(e: UmlCompleteEx, l: UmlSolution) extends UmlResult(e, l, false, true, assocs = true, impls = true) {
+case class DiagramDrawingHelpResult(e: UmlCompleteEx, l: UmlSolution) extends UmlResult(e, l, compareClasses = false, compareClassesExtended = true, assocs = true, impls = true) {
 
-  override def renderLearnerSolution: Html = ???
+  // FIXME: implement renderLearnerSolution!
+  override def renderLearnerSolution: Html = new Html(
+    "<h4>Ihre Vererbungsbeziehungen:</h4><ul>" + (learnerSolution.implementations map (impl => "<li>" + describeImplementation(impl) + "</li>") mkString) + "</ul>"
+      + "<h4>Ihre Assoziationen:</h4><ul>" + (learnerSolution.associations map (assoc => "<li>" + describeAssociation(assoc) + "</li>") mkString) + "</ul>")
 
-  override val nextPart = UmlExPart.ATTRS_METHS
+  override val nextPart = UmlExPart.ALLOCATION
 
 }
 
-case class DiagramDrawingResult(e: UmlCompleteEx, l: UmlSolution) extends UmlResult(e, l, true, true, assocs = true, impls = true) {
+case class DiagramDrawingResult(e: UmlCompleteEx, l: UmlSolution) extends UmlResult(e, l, compareClasses = true, compareClassesExtended = true, assocs = true, impls = true) {
 
   override def renderLearnerSolution: Html = ???
 
   override val nextPart = UmlExPart.FINISHED
+
+}
+
+case class AllocationResult(e: UmlCompleteEx, l: UmlSolution) extends UmlResult(e, l, compareClasses = true, compareClassesExtended = true, assocs = false, impls = false) {
+
+  override def renderLearnerSolution: Html = new Html(learnerSolution.classes map { clazz =>
+    "<p>" + clazz.clazz.className + "</p><ul>" + (clazz.allMembers map (_.render asListElem) match {
+      case Nil => "--" asListElem
+      case ms  => ms mkString
+    }) + "</ul>"
+  } mkString)
+
+  override val nextPart: UmlExPart = UmlExPart.FINISHED
 
 }

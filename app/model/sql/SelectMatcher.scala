@@ -3,67 +3,57 @@ package model.sql
 import model.Enums.MatchType
 import model.Enums.MatchType.SUCCESSFUL_MATCH
 import model.core.matching.{Match, Matcher, MatchingResult}
-import model.sql.SelectMatcher._
 import net.sf.jsqlparser.expression.Expression
 import net.sf.jsqlparser.schema.Column
 import net.sf.jsqlparser.statement.select.OrderByElement
-import play.twirl.api.Html
 
-object SelectMatcher {
+case class GroupByMatch(userArg: Option[Expression], sampleArg: Option[Expression]) extends Match[Expression] {
 
-  val GroupByName = "Group By-Elemente"
+  override def analyze(ua: Expression, sa: Expression): MatchType = SUCCESSFUL_MATCH
 
-  val GroupByHeadings = Seq("Group By-Statement")
+}
 
-  def matchGroupBy(expression1: Expression, expression: Expression): Boolean = expression1 match {
-    case column1: Column => expression match {
+object GroupByMatcher extends Matcher[Expression, GroupByMatch, GroupByMatchingResult] {
+
+  override def canMatch: (Expression, Expression) => Boolean = (exp1, exp2) => exp1 match {
+    case column1: Column => exp2 match {
       case column2: Column => column1.getColumnName == column2.getColumnName
       case _               => false
     }
     case _               => false
   }
 
-  val OrderByName = "Order By-Elemente"
+  override def matchInstantiation: (Option[Expression], Option[Expression]) => GroupByMatch = GroupByMatch
 
-  val OrderByHeadings = Seq("Order By-Statement")
-
-  def matchOrderBy(orderByElement1: OrderByElement, orderByElement2: OrderByElement): Boolean =
-    orderByElement1.getExpression.toString == orderByElement2.getExpression.toString
+  override def resultInstantiation: Seq[GroupByMatch] => GroupByMatchingResult = GroupByMatchingResult
 
 }
-
-case class GroupByMatch(userArg: Option[Expression], sampleArg: Option[Expression]) extends Match[Expression] {
-
-  override val size: Int = GroupByHeadings.size
-
-  override def analyze(ua: Expression, sa: Expression): MatchType = SUCCESSFUL_MATCH
-
-}
-
-object GroupByMatcher extends Matcher[Expression, GroupByMatch, GroupByMatchingResult](GroupByHeadings, matchGroupBy, GroupByMatch, GroupByMatchingResult)
 
 case class GroupByMatchingResult(allMatches: Seq[GroupByMatch]) extends MatchingResult[Expression, GroupByMatch] {
 
-  override val matchName: String = GroupByName
-
-  override val headings: Seq[String] = GroupByHeadings
+  override val matchName: String = "Group By-Elemente"
 
 }
 
 case class OrderByMatch(userArg: Option[OrderByElement], sampleArg: Option[OrderByElement]) extends Match[OrderByElement] {
 
-  override val size: Int = OrderByHeadings.size
-
   override def analyze(ua: OrderByElement, sa: OrderByElement): MatchType = SUCCESSFUL_MATCH
 
 }
 
-object OrderByMatcher extends Matcher[OrderByElement, OrderByMatch, OrderByMatchingResult](OrderByHeadings, matchOrderBy, OrderByMatch, OrderByMatchingResult)
+object OrderByMatcher extends Matcher[OrderByElement, OrderByMatch, OrderByMatchingResult] {
+
+  override def canMatch: (OrderByElement, OrderByElement) => Boolean = (ob1, ob2) =>
+    ob1.getExpression.toString == ob2.getExpression.toString
+
+  override def matchInstantiation: (Option[OrderByElement], Option[OrderByElement]) => OrderByMatch = OrderByMatch
+
+  override def resultInstantiation: Seq[OrderByMatch] => OrderByMatchingResult = OrderByMatchingResult
+
+}
 
 case class OrderByMatchingResult(allMatches: Seq[OrderByMatch]) extends MatchingResult[OrderByElement, OrderByMatch] {
 
-  override val matchName: String = OrderByName
-
-  override val headings: Seq[String] = OrderByHeadings
+  override val matchName: String = "Order By-Elemente"
 
 }

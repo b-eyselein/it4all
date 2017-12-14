@@ -4,6 +4,7 @@ import controllers.exes.idPartExes.WebToolObject
 import model.Enums.ExerciseState
 import model._
 import model.web.WebConsts.{HTML_TYPE, JS_TYPE}
+import model.web.WebEnums.JsActionType
 import org.openqa.selenium.{By, SearchContext}
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.mvc.Call

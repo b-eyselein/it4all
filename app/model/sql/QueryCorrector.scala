@@ -9,21 +9,25 @@ import scala.util.{Failure, Success, Try}
 
 case class TableMatch(userArg: Option[Table], sampleArg: Option[Table]) extends Match[Table] {
 
-  override val size: Int = TableMatcher.headings.size
-
   override def descArg(arg: Table): String = arg.getName
 
 }
 
-object TableMatcher extends Matcher[Table, TableMatch, TableMatchingResult](Seq("Tabellenname"), _.getName == _.getName, TableMatch, TableMatchingResult)
+object TableMatcher extends Matcher[Table, TableMatch, TableMatchingResult] {
 
-case class TableMatchingResult(allMatches: Seq[TableMatch]) extends MatchingResult[Table, TableMatch] {
+  override def canMatch: (Table, Table) => Boolean = _.getName == _.getName
 
-  override val matchName: String      = "Tabellen"
-  override val headings : Seq[String] = TableMatcher.headings
+  override def matchInstantiation: (Option[Table], Option[Table]) => TableMatch = TableMatch
+
+  override def resultInstantiation: Seq[TableMatch] => TableMatchingResult = TableMatchingResult
 
 }
 
+case class TableMatchingResult(allMatches: Seq[TableMatch]) extends MatchingResult[Table, TableMatch] {
+
+  override val matchName: String = "Tabellen"
+
+}
 
 abstract class QueryCorrector(val queryType: String) {
 

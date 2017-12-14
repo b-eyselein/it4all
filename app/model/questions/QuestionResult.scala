@@ -5,20 +5,22 @@ import model.core.EvaluationResult
 import model.core.matching.{Match, Matcher, MatchingResult}
 import model.questions.QuestionResult._
 
-case class AnswerMatch(userArg: Option[Answer], sampleArg: Option[Answer]) extends Match[Answer] {
+case class AnswerMatch(userArg: Option[Answer], sampleArg: Option[Answer]) extends Match[Answer]
 
-  override val size: Int = 1
+
+object AnswerMatcher extends Matcher[Answer, Match[Answer], AnswerMatchingResult] {
+
+  override def canMatch: (Answer, Answer) => Boolean = _.id == _.id
+
+  override def matchInstantiation: (Option[Answer], Option[Answer]) => Match[Answer] = AnswerMatch
+
+  override def resultInstantiation: Seq[Match[Answer]] => AnswerMatchingResult = AnswerMatchingResult
 
 }
-
-
-object AnswerMatcher extends Matcher[Answer, Match[Answer], AnswerMatchingResult](Seq.empty, _.id == _.id, AnswerMatch, AnswerMatchingResult)
 
 case class AnswerMatchingResult(allMatches: Seq[Match[Answer]]) extends MatchingResult[Answer, Match[Answer]] {
 
   override val matchName: String = "TODO!"
-
-  override val headings: Seq[String] = Seq.empty
 
 }
 
