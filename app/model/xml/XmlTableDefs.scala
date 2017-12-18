@@ -3,10 +3,9 @@ package model.xml
 import controllers.exes.idExes.XmlToolObject
 import model.Enums.ExerciseState
 import model._
+import model.xml.XmlEnums.XmlExType
 import play.api.mvc.Call
 import play.twirl.api.Html
-
-import scala.util.Try
 
 object XmlExercise {
 
@@ -32,11 +31,11 @@ case class XmlExercise(override val baseValues: BaseValues, exerciseType: XmlExT
 
   override val preview: Html = views.html.xml.xmlPreview.render(this)
 
+  // TODO: implement?
   override def renderListRest: Html = new Html(
     s"""<td>$exerciseType</td>
        |<td>$rootNode</td>
-       |<td>TODO!</td>
-     """.stripMargin)
+       |<td>TODO!</td>""".stripMargin)
 
   override def exerciseRoutes: Map[Call, String] = XmlToolObject.exerciseRoutes(this)
 }

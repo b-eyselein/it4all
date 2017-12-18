@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE party [
-  <!ELEMENT party (gast+)>
-  <!ATTLIST party datum CDATA #REQUIRED>
-  <!ELEMENT gast (getraenk+, zustand?)>
-  <!ATTLIST gast name CDATA #REQUIRED>
-  <!ELEMENT getraenk (#PCDATA)>
-  <!ELEMENT zustand EMPTY>
-  <!ATTLIST zustand ledig CDATA #REQUIRED
-                    nuechtern CDATA #REQUIRED>
-]>
+<!DOCTYPE party SYSTEM "party.dtd">
 <gast name="Albert Angsthase">
 	<getraenk>Wein</getraenk>
 	<getraenk>Bier</getraenk>

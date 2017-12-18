@@ -3,6 +3,8 @@ package model.bool
 import model.essentials.{BoolAssignment, CreationQuestion, ScalaNode, Variable}
 import org.junit.Test
 
+import scala.language.implicitConversions
+
 class CreationQuestionTest {
 
   implicit def char2Variable(char: Char): Variable = Variable(char)
@@ -28,13 +30,21 @@ class CreationQuestionTest {
   @Test
   def testDnf() {
     val dnf = BoolAssignment.disjunktiveNormalForm(CreationQuestion(assignments).solutions)
-    assert(dnf == awaitedDNF, s"Expected that DNF\n\tgenerated = $dnf\nequals\n\tawaited = $awaitedDNF")
+    assert(dnf == awaitedDNF,
+      s"""Expected that DNF
+         |  generated = $dnf
+         |equals
+         |  awaited = $awaitedDNF""".stripMargin)
   }
 
   @Test
   def testKnf() {
     val knf = BoolAssignment.konjunktiveNormalForm(CreationQuestion(assignments).solutions)
-    assert(knf == awaitedKNF, s"Expected that KNF\n\tgenerated = $knf\nequals\n\tawaited = $awaitedKNF")
+    assert(knf == awaitedKNF,
+      s"""Expected that KNF
+         |  generated = $knf
+         |equals
+         |  awaited = $awaitedKNF""".stripMargin)
   }
 
 }

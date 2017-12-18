@@ -3,11 +3,11 @@
 let chosenClasses = [];
 
 function prepareFormForSubmitting() {
-    $("#learnerSolution").val(JSON.stringify({
+    $('#learnerSolution').val(JSON.stringify({
         classes: chosenClasses.map(function (clazz) {
             return {
                 name: clazz,
-                classType: "CLASS",
+                classType: 'CLASS',
                 methods: [],
                 attributes: []
             };
@@ -17,7 +17,7 @@ function prepareFormForSubmitting() {
 }
 
 function asList(array) {
-    return array.length === 0 ? "<li>--</li>" : "<li>" + array.join("</li><li>") + "</li>";
+    return array.length === 0 ? '<li>--</li>' : '<li>' + array.join('</li><li>') + '</li>';
 }
 
 function select(span) {
@@ -29,13 +29,13 @@ function select(span) {
         chosenClasses.splice(chosenClasses.indexOf(baseform), 1);
     }
 
-    $("#classesList").html(asList(chosenClasses));
+    $('#classesList').html(asList(chosenClasses));
 
-    for (let otherSpan of document.getElementById("exercisetext").getElementsByTagName("span")) {
+    for (let otherSpan of document.getElementById('exercisetext').getElementsByTagName('span')) {
         if (chosenClasses.indexOf(otherSpan.dataset.baseform) < 0) {
-            otherSpan.className = "non-marked";
+            otherSpan.className = 'non-marked';
         } else {
-            otherSpan.className = "marked bg-info";
+            otherSpan.className = 'marked bg-info';
         }
     }
 }

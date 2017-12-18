@@ -10,12 +10,12 @@ function prepareFormForSubmitting() {
         classes.push({
             name: className,
             attributes: attrCheckboxes.map((index, elem) => {
-                return (elem.checked) ? {name: elem.dataset.name, type: elem.dataset.type} : null
+                return (elem.checked) ? {name: elem.dataset.name, type: elem.dataset.type} : null;
             }).get(),
             methods: methodCheckboxes.map((index, elem) => {
-                return (elem.checked) ? {name: elem.dataset.name, returnType: elem.dataset.type} : null
+                return (elem.checked) ? {name: elem.dataset.name, returnType: elem.dataset.type} : null;
             }).get()
-        })
+        });
     });
 
 

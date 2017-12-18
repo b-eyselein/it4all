@@ -7,10 +7,12 @@ import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.stream.StreamSource
 import javax.xml.validation.SchemaFactory
 
+import model.xml.XmlEnums._
 import org.xml.sax.InputSource
 
 import scala.language.implicitConversions
 import scala.util.{Failure, Success, Try}
+import scala.xml.SAXException
 
 object XmlCorrector {
 
@@ -23,10 +25,10 @@ object XmlCorrector {
   private val DocBuilderFactory = DocumentBuilderFactory.newInstance
   DocBuilderFactory.setValidating(true)
 
-  private val SchFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
+  private val XsdSchemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
 
-  def correct(xml: Path, grammar: Path, exercise: XmlExercise): Seq[XmlError] = exercise.exerciseType match {
-    case (XmlExType.XML_XSD | XmlExType.XSD_XML) => correctXsdAndXml(xml, grammar)
+  def correct(xml: Path, grammar: Path, exerciseType: XmlExType): Seq[XmlError] = exerciseType match {
+    case (XmlExType.XML_XSD | XmlExType.XSD_XML) => correctXmlAndXsd(xml, grammar)
     case (XmlExType.XML_DTD | XmlExType.DTD_XML) => correctDtdAndXml(xml)
   }
 
@@ -36,28 +38,30 @@ object XmlCorrector {
     val grammarReader = new StringReader(grammar)
 
     exType match {
-      case (XmlExType.XML_XSD | XmlExType.XSD_XML) => correctXsdAndXml(xmlReader, grammarReader)
-      case (XmlExType.XML_DTD | XmlExType.DTD_XML) => correctDtdAndXml(xmlReader)
+      case (XmlExType.XML_XSD | XmlExType.XSD_XML) => correctXsdAndXmlStreamSource(xmlReader, grammarReader)
+      case (XmlExType.XML_DTD | XmlExType.DTD_XML) => correctDtdAndXmlInputSource(xmlReader)
     }
+    ???
   }
 
   def recover(e: Throwable): Seq[XmlError] = Seq(FailureXmlError(e.getMessage, e))
 
 
-  def correctDtdAndXml(xml: Path): Seq[XmlError] = Try {
+  def correctDtdAndXml(xml: Path): Seq[XmlError] = {
     val errorHandler = new CorrectionErrorHandler
 
-    val builder = DocBuilderFactory.newDocumentBuilder
-    builder.setErrorHandler(errorHandler)
-    builder.parse(xml.toFile)
+    try {
+      val builder = DocBuilderFactory.newDocumentBuilder
+      builder.setErrorHandler(errorHandler)
+      builder.parse(xml.toFile)
+    } catch {
+      case e: SAXException => // Ignore...
+    }
 
     errorHandler.errors
-  } match {
-    case Success(errors)    => errors
-    case Failure(throwable) => recover(throwable)
   }
 
-  def correctDtdAndXml(xml: InputSource): Seq[XmlError] = Try {
+  def correctDtdAndXmlInputSource(xml: InputSource): Seq[XmlError] = Try {
     val errorHandler = new CorrectionErrorHandler
 
     val builder = DocBuilderFactory.newDocumentBuilder
@@ -70,9 +74,28 @@ object XmlCorrector {
     case Failure(e)      => recover(e)
   }
 
-  def correctXsdAndXml(xmlStreamSource: StreamSource, xsdStreamSource: StreamSource): Seq[XmlError] = Try({
+
+  def correctXmlAndXsd(xml: Path, grammar: Path): Seq[XmlError] = {
     val errorHandler = new CorrectionErrorHandler
-    val schemaOpt = Option(SchFactory.newSchema(xsdStreamSource))
+
+    val schema = XsdSchemaFactory.newSchema(new StreamSource(grammar.toFile))
+
+    if (schema == null) List(FailureXmlError("Ihre Eingabedaten konnten nicht geladen werden!"))
+
+    try {
+      val validator = schema.newValidator
+      validator.setErrorHandler(errorHandler)
+      validator.validate(new StreamSource(xml.toFile))
+    } catch {
+      case e: SAXException => // Ignore...
+    }
+
+    errorHandler.errors
+  }
+
+  def correctXsdAndXmlStreamSource(xmlStreamSource: StreamSource, xsdStreamSource: StreamSource): Seq[XmlError] = Try({
+    val errorHandler = new CorrectionErrorHandler
+    val schemaOpt = Option(XsdSchemaFactory.newSchema(xsdStreamSource))
 
     schemaOpt match {
       case None         => Seq(FailureXmlError("Ihre Eingabedaten konnten nicht geladen werden!"))

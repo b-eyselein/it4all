@@ -16,6 +16,7 @@ import play.api.db.slick.DatabaseConfigProvider
 import play.api.mvc.{AnyContent, ControllerComponents, EssentialAction, Request}
 import play.twirl.api.{Html, HtmlFormat}
 import views.html.xml._
+import model.xml.XmlEnums._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
@@ -90,7 +91,7 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
         }
 
       grammarTry.zip(xmlTry).map {
-        case (grammar, xml) => GenericCompleteResult(sol, XmlCorrector.correct(xml, grammar, completeEx))
+        case (grammar, xml) => GenericCompleteResult(sol, XmlCorrector.correct(xml, grammar, completeEx.exerciseType))
       }
     })
 

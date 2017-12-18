@@ -65,7 +65,7 @@ sealed trait BooleanQuestion {
 
 case class CreationQuestion(solutions: Seq[BoolAssignment]) extends BooleanQuestion {
 
-  override val variables: Set[Variable] = solutions.head.variables.toList.reverse.toSet
+  override val variables: Set[Variable] = solutions.headOption map (_.variables.toList.reverse.toSet) getOrElse Set.empty
 
   def joinedVariables: String = variables mkString ","
 

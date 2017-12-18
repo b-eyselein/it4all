@@ -2,6 +2,7 @@ package model.xml
 
 import model.MyYamlProtocol._
 import model.xml.XmlConsts._
+import model.xml.XmlEnums.XmlExType
 import model.{BaseValues, MyYamlProtocol}
 import net.jcazevedo.moultingyaml._
 

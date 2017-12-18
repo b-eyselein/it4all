@@ -22,21 +22,21 @@ object BoolNodeParser extends JavaTokenParsers {
     })
   }
 
-  private lazy val b_not_factor: Parser[ScalaNode] = opt("not") ~ b_factor ^^ {
+  private lazy val b_not_factor: Parser[ScalaNode] = opt("not") ~ bFactor ^^ {
     case Some(_) ~ f => ScalaNode.not(f);
     case None ~ f    => f
   }
 
-  private lazy val b_factor: Parser[ScalaNode] = b_literal | b_variable | ("(" ~ b_expression ~ ")" ^^ {
+  private lazy val bFactor: Parser[ScalaNode] = bLiteral | bVariable | ("(" ~ b_expression ~ ")" ^^ {
     case "(" ~ exp ~ ")" => exp
     case other           => other._1._2
   })
 
   private lazy val b_other_operator: Parser[String] = "nand" | "nor" | "xor" | "equiv" | "impl"
 
-  private lazy val b_literal: Parser[ScalaNode] = ("1" | "true" | "TRUE") ^^ (_ => TRUE) | ("0" | "false" | "FALSE") ^^ (_ => FALSE)
+  private lazy val bLiteral: Parser[ScalaNode] = ("1" | "true" | "TRUE") ^^ (_ => TRUE) | ("0" | "false" | "FALSE") ^^ (_ => FALSE)
 
-  private lazy val b_variable: Parser[Variable] = "[a-zA-Z]".r ^^ (str => Variable(str.charAt(0).toLower))
+  private lazy val bVariable: Parser[Variable] = "[a-zA-Z]".r ^^ (str => Variable(str.charAt(0).toLower))
 
   def parseBoolFormula(toParse: String): Option[ScalaNode] = parseAll(b_expression, toParse) match {
     case Success(result, _)    => Some(result)

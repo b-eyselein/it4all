@@ -20,7 +20,7 @@ object CommonUtils {
           cleanup(resource)
         }
       } catch {
-        case e: Throwable => Failure(e)
+        case e: Exception => Failure(e)
       }
     }
   }

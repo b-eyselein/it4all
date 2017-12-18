@@ -1,21 +1,22 @@
 package model.xml
 
-import java.nio.file.{Files, Paths}
+import java.nio.file.Paths
 
-import model.xml.XmlExType._
+import model.core.FileUtils
+import model.xml.XmlEnums.XmlErrorType
+import model.xml.XmlEnums.XmlExType._
 import org.junit.Assert.{assertNotNull, assertTrue}
 import org.junit.Test
 import org.scalatest.Matchers._
 
-import scala.collection.JavaConverters._
-import scala.util.Try
+class XmlCorrectorTest extends FileUtils {
 
-class XmlCorrectorTest {
+  private val basePath = Paths.get("test", "resources", "xml")
 
-  private val basePath = Paths.get("test", "resources").toString
-
-  private def assertError(error: XmlError, expectedLine: Int, expectedMessage: String): Unit = {
+  private def testXmlError(error: XmlError, expectedLine: Int, expectedErrorType: XmlErrorType, expectedMessage: String): Unit = {
     error.line shouldBe expectedLine
+
+    error.errorType shouldBe expectedErrorType
 
     error.errorMessage shouldBe expectedMessage
   }
@@ -23,70 +24,51 @@ class XmlCorrectorTest {
   private def assertErrorNum(errorNum: Int, expectedErrors: Int): Unit = errorNum shouldBe expectedErrors
 
 
-  private def readFile(file: java.nio.file.Path): String = Try(Files.readAllLines(file).asScala.mkString("\n")).getOrElse("")
-
   @Test
-  def emptyXmlAgainstXSD() {
-    val xsd = Paths.get(basePath, "xml/note.xsd")
-
-    val out: Seq[XmlError] = XmlCorrector.correct("", readFile(xsd), XML_XSD)
+  def testEmptyXmlAgainstXSD() {
+    val out = XmlCorrector.correct(basePath / "empty.xml", basePath / "note.xsd", XML_XSD)
 
     assertErrorNum(out.size, 1)
-    assertError(out.head, -1, "Premature end of file.")
+    testXmlError(out.head, -1, XmlErrorType.FATAL, "Premature end of file.")
   }
 
   @Test
   def testClosingTagMissingXmlDtd() {
-    val xml = Paths.get(basePath, "xml/partyNoClosingTag.xml")
-
-    val out: Seq[XmlError] = XmlCorrector.correct(readFile(xml), "", XML_DTD)
+    val out = XmlCorrector.correct(basePath / "partyNoClosingTag.xml", basePath / "party.dtd", XML_DTD)
 
     assertNotNull(out)
     assertErrorNum(out.size, 1)
-    assertError(out.head, 17,
-      "The element type \"getraenk\" must be terminated by the matching end-tag \"</getraenk>\".")
+    testXmlError(out.head, 8, XmlErrorType.FATAL, """The element type "getraenk" must be terminated by the matching end-tag "</getraenk>".""")
   }
 
   @Test
   def testClosingTagMissingXmlXsd() {
-    val xml = Paths.get(basePath, "xml/noteNoClosingTag.xml")
-    val xsd = Paths.get(basePath, "xml/note.xsd")
-
-    val out: Seq[XmlError] = XmlCorrector.correct(readFile(xml), readFile(xsd), XML_XSD)
+    val out = XmlCorrector.correct(basePath / "noteNoClosingTag.xml", basePath / "note.xsd", XML_XSD)
 
     assertNotNull(out)
     assertErrorNum(out.size, 1)
-    assertError(out.head, 7, "The element type \"to\" must be terminated by the matching end-tag \"</to>\".")
+    testXmlError(out.head, 7, XmlErrorType.FATAL, "The element type \"to\" must be terminated by the matching end-tag \"</to>\".")
   }
 
   @Test
   def testCorrectDTDAgainstXML() {
-    val referenceFile = Paths.get(basePath, "xml/party.xml")
-    val grammar = Paths.get(basePath, "xml/party.dtd")
-
-    val out: Seq[XmlError] = XmlCorrector.correct(readFile(referenceFile), readFile(grammar), XML_DTD)
+    val out = XmlCorrector.correct(basePath / "party.xml", basePath / "party.dtd", XML_DTD)
 
     assertNotNull(out)
-    assertTrue(out.isEmpty)
+    out.isEmpty shouldBe true
   }
 
   @Test
   def testCorrectXMLAgainstDTD() {
-    val file = Paths.get(basePath, "xml/party.xml")
-    val grammar = Paths.get(basePath, "xml/party.dtd")
-
-    val out: Seq[XmlError] = XmlCorrector.correct(readFile(file), readFile(grammar), XML_DTD)
+    val out = XmlCorrector.correct(basePath / "party.xml", basePath / "party.dtd", XML_DTD)
 
     assertNotNull(out)
-    assertTrue(out.isEmpty)
+    out.isEmpty shouldBe true
   }
 
   @Test
   def testCorrectXMLAgainstXSD() {
-    val xml = Paths.get(basePath, "xml/note.xml")
-    val xsd = Paths.get(basePath, "xml/note.xsd")
-
-    val out: Seq[XmlError] = XmlCorrector.correct(readFile(xml), readFile(xsd), XML_XSD)
+    val out = XmlCorrector.correct(basePath / "note.xml", basePath / "note.xsd", XML_XSD)
 
     assertNotNull(out)
     assertTrue(out.isEmpty)
@@ -107,38 +89,29 @@ class XmlCorrectorTest {
 
   @Test
   def testMissingTagXmlXsd() {
-    val xml = Paths.get(basePath, "xml/noteMissingTag.xml")
-    val xsd = Paths.get(basePath, "xml/note.xsd")
-
-    println(xml.toFile.exists + " :: " + xsd.toFile.exists)
-
-    val out: Seq[XmlError] = XmlCorrector.correct(readFile(xml), readFile(xsd), XML_XSD)
+    val out = XmlCorrector.correct(basePath / "noteMissingTag.xml", basePath / "note.xsd", XML_XSD)
 
     assertErrorNum(out.size, 1)
-    assertError(out.head, 5,
+    testXmlError(out.head, 5, XmlErrorType.ERROR,
       "cvc-complex-type.2.4.a: Invalid content was found starting with element 'body'. One of '{heading}' is expected.")
   }
 
   @Test
   def testNoRootXmlDtd() {
-    val file = Paths.get(basePath, "xml/partyNoRoot.xml")
+    val out = XmlCorrector.correct(basePath / "partyNoRoot.xml", basePath / "party.dtd", XML_DTD)
 
-    val out: Seq[XmlError] = XmlCorrector.correct(readFile(file), "", XML_DTD)
-
-    assertErrorNum(out.size, 1)
-    assertError(out.head, 17, "The markup in the document following the root element must be well-formed.")
+    assertErrorNum(out.size, 2)
+    testXmlError(out.head, 3, XmlErrorType.ERROR, """Document root element "gast", must match DOCTYPE root "party".""")
+    testXmlError(out(1), 8, XmlErrorType.FATAL, "The markup in the document following the root element must be well-formed.")
   }
 
   @Test
   def testNoRootXmlXsd() {
-    val xml = Paths.get(basePath, "xml/noteNoRoot.xml")
-    val xsd = Paths.get(basePath, "xml/note.xsd")
-
-    val out: Seq[XmlError] = XmlCorrector.correct(readFile(xml), readFile(xsd), XML_XSD)
+    val out = XmlCorrector.correct(basePath / "noteNoRootXsd.xml", basePath / "note.xsd", XML_XSD)
 
     assertErrorNum(out.size, 2)
-    assertError(out.head, 2, "cvc-elt.1.a: Cannot find the declaration of element 'to'.")
-    assertError(out(1), 3, "The markup in the document following the root element must be well-formed.")
+    testXmlError(out.head, 2, XmlErrorType.ERROR, "cvc-elt.1.a: Cannot find the declaration of element 'to'.")
+    testXmlError(out(1), 3, XmlErrorType.FATAL, "The markup in the document following the root element must be well-formed.")
   }
 
   @Test
@@ -170,23 +143,19 @@ class XmlCorrectorTest {
 
   @Test
   def testWrongTagXmlXsd() {
-    val xml = Paths.get(basePath, "xml/noteWrongTag.xml")
-    val xsd = Paths.get(basePath, "xml/note.xsd")
 
-    val out: Seq[XmlError] = XmlCorrector.correct(readFile(xml), readFile(xsd), XML_XSD)
+    val out = XmlCorrector.correct(basePath / "noteWrongTag.xml", basePath / "note.xsd", XML_XSD)
 
     assertErrorNum(out.size, 1)
-    assertError(out.head, 11,
+    testXmlError(out.head, 11, XmlErrorType.ERROR,
       "cvc-complex-type.2.4.a: Invalid content was found starting with element 'sender'. One of '{from}' is expected.")
   }
 
   @Test
   def testXmlNoElement() {
-    val xml = readFile(Paths.get(basePath, "xml/xmlNoElement.xml"))
-
-    val out: Seq[XmlError] = XmlCorrector.correct(xml, "", XML_DTD)
+    val out = XmlCorrector.correct(basePath / "xmlNoElement.xml", basePath / "party.dtd", XML_DTD)
 
     assertErrorNum(out.size, 1)
-    assertError(out.head, -1, "Premature end of file.")
+    testXmlError(out.head, -1, XmlErrorType.FATAL, "Premature end of file.")
   }
 }
