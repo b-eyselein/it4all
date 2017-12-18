@@ -22,7 +22,7 @@
 </td>
 <td>
     <ul>
-    @for(toIgnore <- completeEx.ex.getToIgnore) {
+    @for(toIgnore <- completeEx.ex.splitToIgnore) {
         <li>@toIgnore</li>
     }
     </ul>

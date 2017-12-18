@@ -8,7 +8,8 @@ GET           /                                           controllers.Applicatio
 # User
 GET           /user                                       controllers.UserController.index
 GET           /preferences                                controllers.UserController.preferences
-PUT           /preferences                                controllers.UserController.saveOptions
+PUT           /preferences/updateOptions                  controllers.UserController.saveShowHideAgg
+PUT           /preferences/updatePassword                 controllers.UserController.saveNewPassword
 
 # Controller
 GET           /admin                                      controllers.AdminController.index

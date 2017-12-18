@@ -10,8 +10,7 @@
             <h1>Präferenzen</h1>
         </div>
 
-        @helper.form(controllers.routes.UserController.saveOptions, 'class -> "form-horizontal", 'onsubmit -> "return false;") {
-
+        <form class="form-horizontal" action="javascript:updateShowHideAgg('@controllers.routes.UserController.saveShowHideAgg')">
             <div class="form-group">
                 <label class="control-label col-sm-3" for="posTests">Bestandene Tests</label>
                 <div class="col-sm-9">
@@ -23,15 +22,50 @@
                         </select>
 
                         <span class="input-group-btn">
-                            <button class="btn btn-default" type="button" id="btn_posTests" disabled onclick="savePreferences('posTests')">
-                                Speichern...</button>
+                            <button class="btn btn-default" id="btn_posTests" disabled>Speichern...</button>
                         </span>
                     </div>
                 </div>
             </div>
+        </form>
 
-            <hr>
-            }
+        <div id="changeShowHideAggDiv"></div>
+
+        <hr>
+
+        <form class="form-horizontal" action="javascript:updatePassword('@controllers.routes.UserController.saveNewPassword')">
+            <h2>Passwort &auml;ndern</h2>
+
+            <div class="form-group">
+                <label class="control-label col-sm-3" for="old_pw">Altes Passwort:</label>
+                <div class="col-sm-9">
+                    <input type="password" class="form-control" id="old_pw" name="old_pw" placeholder="Ihr altes Passwort" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-sm-3" for="new_pw1">Neues Passwort:</label>
+                <div class="col-sm-9">
+                    <input type="password" class="form-control" id="new_pw1" name="new_pw1" placeholder="Ihr neues Passwort" required>
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label class="control-label col-sm-3" for="new_pw2">Passwort wiederholen:</label>
+                <div class="col-sm-9">
+                    <input type="password" class="form-control" id="new_pw2" name="new_pw2" placeholder="Ihr neues Passwort" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-9">
+                    <button class="btn btn-default" id="btn_pwChange">Passwort aktualisieren</button>
+                </div>
+            </div>
+        </form>
+
+        <div id="changePwDiv"></div>
 
     </div>
 }

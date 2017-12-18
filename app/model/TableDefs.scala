@@ -1,5 +1,6 @@
 package model
 
+import com.github.t3hnar.bcrypt._
 import model.Enums.{ExerciseState, Role, ShowHideAggregate}
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
@@ -67,14 +68,22 @@ trait TableDefs {
 
   }
 
-  implicit def roleColumnType: BaseColumnType[Role] =
+  def updateShowHideAggregate(user: User, newPref: ShowHideAggregate): Future[Int] =
+    db.run(users filter (_.username === user.username) map (_.todo) update newPref)
+
+  def updateUserPassword(user: User, newPW: String): Future[Int] =
+    db.run(users filter (_.username === user.username) map (_.pwHash) update newPW.bcrypt)
+
+  def saveUser(username: String, pw: String): Future[Int] = db.run(users += User(username, pw.bcrypt))
+
+  implicit val roleColumnType: BaseColumnType[Role] =
     MappedColumnType.base[Role, String](_.name, str => Option(Role.valueOf(str)).getOrElse(Role.RoleUser))
 
-  implicit def showhideaggrColumnType: BaseColumnType[ShowHideAggregate] =
-    MappedColumnType.base[ShowHideAggregate, String](_.name, str => Option(ShowHideAggregate.valueOf(str)).getOrElse(ShowHideAggregate.SHOW))
+  implicit val showhideaggrColumnType: BaseColumnType[ShowHideAggregate] =
+    MappedColumnType.base[ShowHideAggregate, String](_.name, str => ShowHideAggregate.byString(str) getOrElse ShowHideAggregate.SHOW)
 
-  implicit def exercisetypeColumnType: BaseColumnType[ExerciseState] =
-    MappedColumnType.base[ExerciseState, String](_.name, str => Option(ExerciseState.valueOf(str)).getOrElse(ExerciseState.CREATED))
+  implicit val exercisetypeColumnType: BaseColumnType[ExerciseState] =
+    MappedColumnType.base[ExerciseState, String](_.name, str => ExerciseState.byString(str) getOrElse ExerciseState.CREATED)
 
   class UsersTable(tag: Tag) extends Table[User](tag, "users") {
 
