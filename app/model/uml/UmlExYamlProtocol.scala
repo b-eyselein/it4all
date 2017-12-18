@@ -54,9 +54,9 @@ object UmlExYamlProtocol extends MyYamlProtocol {
   case class UmlSolutionYamlFormat(exerciseId: Int) extends MyYamlFormat[UmlSolution] {
 
     override def write(sol: UmlSolution): YamlValue = YamlObject(
-      YamlString(CLASSES_NAME) -> YamlArray(sol.classes map (_.toYaml(UmlCompleteClassYamlFormat(exerciseId))) toVector),
-      YamlString(IMPLS_NAME) -> YamlArray(sol.implementations map (_.toYaml(UmlImplYamlFormat(exerciseId))) toVector),
-      YamlString(ASSOCS_NAME) -> YamlArray(sol.associations map (_.toYaml(UmlAssocYamlFormat(exerciseId))) toVector)
+      YamlString(CLASSES_NAME) -> YamlArray(sol.classes map (_ toYaml UmlCompleteClassYamlFormat(exerciseId)) toVector),
+      YamlString(IMPLS_NAME) -> YamlArray(sol.implementations map (_ toYaml UmlImplYamlFormat(exerciseId)) toVector),
+      YamlString(ASSOCS_NAME) -> YamlArray(sol.associations map (_ toYaml UmlAssocYamlFormat(exerciseId)) toVector)
     )
 
     override def readObject(yamlObject: YamlObject): UmlSolution = UmlSolution(
@@ -75,8 +75,8 @@ object UmlExYamlProtocol extends MyYamlProtocol {
       YamlObject(
         YamlString(CLASSTYPE_NAME) -> clazz.classType.name,
         YamlString(NAME_NAME) -> clazz.className,
-        YamlString(ATTRS_NAME) -> YamlArray(completeClazz.attributes map (_.toYaml(UmlClassAttributeYamlFormat(exerciseId, clazz.className))) toVector),
-        YamlString(METHODS_NAME) -> YamlArray(completeClazz.methods map (_.toYaml(UmlClassMethodYamlFormat(exerciseId, clazz.className))) toVector)
+        YamlString(ATTRS_NAME) -> YamlArray(completeClazz.attributes map (_ toYaml UmlClassAttributeYamlFormat(exerciseId, clazz.className)) toVector),
+        YamlString(METHODS_NAME) -> YamlArray(completeClazz.methods map (_ toYaml UmlClassMethodYamlFormat(exerciseId, clazz.className)) toVector)
       )
     }
 
@@ -107,11 +107,11 @@ object UmlExYamlProtocol extends MyYamlProtocol {
   case class UmlClassMethodYamlFormat(exerciseId: Int, className: String) extends MyYamlFormat[UmlClassMethod] {
 
     override def write(method: UmlClassMethod): YamlValue = YamlObject(
-      YamlString(NAME_NAME) -> method.name, YamlString(ReturnTypeName) -> method.umlType
+      YamlString(NAME_NAME) -> method.name, YamlString(TYPE_NAME) -> method.umlType
     )
 
     override def readObject(yamlObject: YamlObject): UmlClassMethod = UmlClassMethod(
-      exerciseId, className, yamlObject.stringField(NAME_NAME), yamlObject.stringField(ReturnTypeName)
+      exerciseId, className, yamlObject.stringField(NAME_NAME), yamlObject.stringField(TYPE_NAME)
     )
   }
 

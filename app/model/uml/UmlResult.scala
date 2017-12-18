@@ -21,7 +21,8 @@ object UmlResult {
 }
 
 // FIXME: convert to CompleteResult?
-abstract sealed class UmlResult(val exercise: UmlCompleteEx, val learnerSolution: UmlSolution, compareClasses: Boolean, compareClassesExtended: Boolean, assocs: Boolean, impls: Boolean) extends CompleteResult[EvaluationResult] {
+abstract sealed class UmlResult(val exercise: UmlCompleteEx, val learnerSolution: UmlSolution, compareClasses: Boolean, compareClassesExtended: Boolean, assocs: Boolean, impls: Boolean)
+  extends CompleteResult[EvaluationResult] {
 
   override type SolType = UmlSolution
 
@@ -46,50 +47,65 @@ abstract sealed class UmlResult(val exercise: UmlCompleteEx, val learnerSolution
   def notEmptyMatchingResults: Seq[MatchingResult[_, _ <: Match[_]]] =
     Seq(classResult, associationResult, implementationResult) flatten
 
-  val nextPart: UmlExPart
+  val nextPart: Option[UmlExPart]
+
+  protected def displayAssocsAndImpls: String =
+    s"""<h4>Ihre Vererbungsbeziehungen:</h4>
+       |<ul>
+       |  ${learnerSolution.implementations map (describeImplementation(_) asListElem) mkString}
+       |</ul>
+       |<h4>Ihre Assoziationen:</h4>
+       |<ul>
+       |  ${learnerSolution.associations map (describeAssociation(_) asListElem) mkString}
+       |</ul>""".stripMargin
+
+  protected def displayClasses: String = "<h4>Ihre Klassen:</h4>" + (learnerSolution.classes map { clazz =>
+    s"""<p>${clazz.clazz.className}</p>
+       |<ul>
+       |  ${displayMembers(clazz.allMembers)}
+       |</ul>""".stripMargin
+  } mkString)
+
+  private def displayMembers(members: Seq[UmlClassMember]): String = members map (_.render asListElem) match {
+    case Nil => "<li>--</li>"
+    case ms  => ms mkString
+  }
 
 }
 
 case class ClassSelectionResult(e: UmlCompleteEx, l: UmlSolution) extends UmlResult(e, l, compareClasses = true, compareClassesExtended = false, assocs = false, impls = false) {
 
   override def renderLearnerSolution: Html = new Html(
-    "<h4>Ihre gew&auml;hlten Klassen:</h4>\n<ul>" + (classResult match {
-      case Some(cr) => cr.allMatches.flatMap(matching => matching.userArg map (_.clazz.className)) map (clazz => "<li>" + clazz + "</li>") mkString
-      case _        => ""
-    }) + "</ul>")
+    s"""<h4>Ihre Klassen:</h4>
+       |<ul>
+       |  ${classResult map (_.allMatches flatMap (_.userArg map (_.clazz.className asListElem)) mkString) getOrElse ""}
+       |</ul>""".stripMargin)
 
-  override val nextPart = UmlExPart.DIAG_DRAWING_HELP
+  override val nextPart: Option[UmlExPart] = Some(UmlExPart.DIAG_DRAWING_HELP)
 
 }
 
 case class DiagramDrawingHelpResult(e: UmlCompleteEx, l: UmlSolution) extends UmlResult(e, l, compareClasses = false, compareClassesExtended = true, assocs = true, impls = true) {
 
   // FIXME: implement renderLearnerSolution!
-  override def renderLearnerSolution: Html = new Html(
-    "<h4>Ihre Vererbungsbeziehungen:</h4><ul>" + (learnerSolution.implementations map (impl => "<li>" + describeImplementation(impl) + "</li>") mkString) + "</ul>"
-      + "<h4>Ihre Assoziationen:</h4><ul>" + (learnerSolution.associations map (assoc => "<li>" + describeAssociation(assoc) + "</li>") mkString) + "</ul>")
+  override def renderLearnerSolution: Html = new Html(displayAssocsAndImpls)
 
-  override val nextPart = UmlExPart.ALLOCATION
+  override val nextPart: Option[UmlExPart] = Some(UmlExPart.ALLOCATION)
 
 }
 
 case class DiagramDrawingResult(e: UmlCompleteEx, l: UmlSolution) extends UmlResult(e, l, compareClasses = true, compareClassesExtended = true, assocs = true, impls = true) {
 
-  override def renderLearnerSolution: Html = ???
+  override def renderLearnerSolution: Html = new Html(displayClasses + displayAssocsAndImpls)
 
-  override val nextPart = UmlExPart.FINISHED
+  override val nextPart: Option[UmlExPart] = None
 
 }
 
 case class AllocationResult(e: UmlCompleteEx, l: UmlSolution) extends UmlResult(e, l, compareClasses = true, compareClassesExtended = true, assocs = false, impls = false) {
 
-  override def renderLearnerSolution: Html = new Html(learnerSolution.classes map { clazz =>
-    "<p>" + clazz.clazz.className + "</p><ul>" + (clazz.allMembers map (_.render asListElem) match {
-      case Nil => "--" asListElem
-      case ms  => ms mkString
-    }) + "</ul>"
-  } mkString)
+  override def renderLearnerSolution: Html = new Html(displayClasses)
 
-  override val nextPart: UmlExPart = UmlExPart.FINISHED
+  override val nextPart: Option[UmlExPart] = None
 
 }

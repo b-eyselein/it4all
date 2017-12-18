@@ -11,26 +11,16 @@
 
 @main("UML", user, scripts) {
         <!-- Modal for hints -->
-    <div class="modal fade" role="dialog" id="hintModal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h1 class="modal-title">Bearbeitungshinweise:</h1>
-                </div>
-                <div class="model-body">
-                    <ul>
-                        <li>In diesem ersten Bearbeitungsschritt sollen Sie die zu modellierenden Klassen durch Anklicken im Aufgabentext ausw&auml;hlen.</li>
-                        <li>Sie k&ouml;nnen nur Nomen ausw&auml;hlen.</li>
-                        <li>Es werden alle Vorkommen gew&auml;hlter Klassen markiert, um eine Doppelauswahl zu verhindern.</li>
-                        <li>Durch erneutes Anklicken einer Klasse - unabh&auml;ngig von der Position - k&ouml;nnen Sie eine Klasse wieder abw&auml;hlen.</li>
-                        <li>Auf der rechten Seite wird Ihnen eine Liste Ihrer gew&auml;hlten Klassen angezeigt.</li>
-                        <li>Wenn Sie alle Klassen ausgew&auml;hlt haben, k&ouml;nnen Sie Ihre Wahl mit dem Link "@btnText" korrigieren lassen und zum n&auml;chsten Schritt gelangen.</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
+    @core.helperTemplates.modal("Bearbeitungshinweise", "hintModal") {
+        <ul>
+            <li>In diesem ersten Bearbeitungsschritt sollen Sie die zu modellierenden Klassen durch Anklicken im Aufgabentext ausw&auml;hlen.</li>
+            <li>Sie k&ouml;nnen nur Nomen ausw&auml;hlen.</li>
+            <li>Es werden alle Vorkommen gew&auml;hlter Klassen markiert, um eine Doppelauswahl zu verhindern.</li>
+            <li>Durch erneutes Anklicken einer Klasse - unabh&auml;ngig von der Position - k&ouml;nnen Sie eine Klasse wieder abw&auml;hlen.</li>
+            <li>Auf der rechten Seite wird Ihnen eine Liste Ihrer gew&auml;hlten Klassen angezeigt.</li>
+            <li>Wenn Sie alle Klassen ausgew&auml;hlt haben, k&ouml;nnen Sie Ihre Wahl mit dem Link "@btnText" korrigieren lassen und zum n&auml;chsten Schritt gelangen.</li>
+        </ul>
+    }
 
     <div class="container">
         <div class="page-header">
@@ -61,7 +51,7 @@
 
         <hr>
 
-        <form action="@controllers.exes.idPartExes.routes.UmlController.correct(exercise.id, model.uml.UmlEnums.UmlExPart.CLASS_SELECTION.toString)" method="post"
+        <form action="@controllers.exes.idPartExes.routes.UmlController.correct(exercise.id, model.uml.UmlEnums.UmlExPart.CLASS_SELECTION.name)" method="post"
         onsubmit="return prepareFormForSubmitting();">
             <input type="hidden" class="form-control" name="@model.uml.UmlConsts.FORM_VALUE" id="@model.uml.UmlConsts.FORM_VALUE" required>
             <button class="btn btn-primary btn-block">@btnText</button>

@@ -32,7 +32,7 @@ solution:
   - classType: CLASS
     name: Doktor
     methods: 
-    - {name: verschreiben(Patient), returnType: void}
+    - {name: verschreiben(Patient), type: void}
 
   - classType: CLASS
     name: Rezept
@@ -42,8 +42,8 @@ solution:
   - classType: CLASS
     name: Patient
     methods:
-    - {name: entlassen(Station), returnType: void}
-    - {name: aufnehmen(Station), returnType: void}
+    - {name: entlassen(Station), type: void}
+    - {name: aufnehmen(Station), type: void}
 
   - classType: CLASS
     name: Krankenschwester
@@ -51,7 +51,7 @@ solution:
   - classType: CLASS
     name: Station
     attributes:
-    - {name: nummer, type: int}
+    - {name: nummer, type: Int}
     
   - classType: CLASS
     name: Medikament

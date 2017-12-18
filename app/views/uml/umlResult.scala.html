@@ -4,5 +4,13 @@
 
 <hr>
 
-<a href="@controllers.exes.idPartExes.routes.UmlController.exercise(result.exercise.ex.id, result.nextPart.toString)"
-class="btn btn-primary btn-block">Zum n&auml;chsten Aufgabenteil</a>
+@result.nextPart match {
+    case Some(np) => {
+        <a href="@controllers.exes.idPartExes.routes.UmlController.exercise(result.exercise.ex.id, np.name)"
+        class="btn btn-primary btn-block">Zum n&auml;chsten Aufgabenteil</a>
+    }
+    case None => {
+        <a href="@controllers.exes.idPartExes.routes.UmlController.index()"
+        class="btn btn-primary btn-block">Zur&uuml;ck zur Startseite</a>
+    }
+}

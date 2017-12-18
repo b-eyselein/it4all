@@ -48,6 +48,7 @@ case class UmlClassMatch(userArg: Option[UmlCompleteClass], sampleArg: Option[Um
     case ms  => ms map (aMatch => aMatch.matchType match {
       case ONLY_SAMPLE => aMatch.sampleArg map (_.render.asCode + " fehlte!") getOrElse "FEHLER!"
       case ONLY_USER   => aMatch.userArg map (_.render.asCode + " war falsch!") getOrElse "FEHLER!"
+      case _           => "FEHLER!"
     }) map (_.asListElem) mkString
   }
 
@@ -74,11 +75,6 @@ object UmlAttributeMatcher extends Matcher[UmlClassAttribute, UmlAttributeMatch,
 case class UmlAttributeMatch(userArg: Option[UmlClassAttribute], sampleArg: Option[UmlClassAttribute]) extends Match[UmlClassAttribute] {
 
   override def analyze(arg1: UmlClassAttribute, arg2: UmlClassAttribute): MatchType = super.analyze(arg1, arg2)
-
-  override def explanation: String = {
-    println(this.matchType)
-    super.explanation
-  }
 
 }
 

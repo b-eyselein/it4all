@@ -4,14 +4,13 @@ import javax.inject._
 
 import controllers.Secured
 import model.core._
-import model.uml.UmlConsts._
+import model.uml.UmlEnums.UmlExPart
 import model.uml.UmlEnums.UmlExPart._
-import model.uml.UmlEnums.{UmlAssociationType, UmlClassType, UmlExPart, UmlMultiplicity}
-import model.uml._
+import model.uml.{UmlJsonProtocol, _}
 import model.{JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 import play.api.mvc.{AnyContent, ControllerComponents, EssentialAction, Request}
 import play.twirl.api.Html
 import views.html.uml._
@@ -30,73 +29,13 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   override type SolType = UmlSolution
 
-  override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[UmlSolution] = {
-    // println(Solution.stringSolForm.bindFromRequest)
-    Solution.stringSolForm.bindFromRequest.fold(_ => None, sol => readFromJson(Json.parse(sol.learnerSolution)))
-  }
+  override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[UmlSolution] =
+    Solution.stringSolForm.bindFromRequest fold(_ => None, sol => UmlJsonProtocol.readFromJson(Json parse sol.learnerSolution))
 
-  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[UmlSolution] = ???
-
-  private def readFromJson(jsValue: JsValue): Option[UmlSolution] = jsValue.asObj flatMap { jsObj =>
-
-    val maybeClasses = jsObj.arrayField(CLASSES_NAME, readClassFromJson)
-    val maybeAssociations = jsObj.arrayField(ASSOCS_NAME, readAssociationFromJson)
-    val maybeImplementations = jsObj.arrayField(IMPLS_NAME, readImplementationFromJson)
-
-    (maybeClasses zip maybeAssociations zip maybeImplementations).headOption map {
-      case ((classes, associations), implementations) => UmlSolution(classes, associations, implementations)
-    }
-  }
-
-  private def readClassFromJson(jsValue: JsValue): Option[UmlCompleteClass] = jsValue.asObj flatMap { jsObj =>
-    val maybeClassname = jsObj.stringField(NAME_NAME)
-    val classType = jsObj.stringField(CLASSTYPE_NAME) flatMap UmlClassType.byString getOrElse UmlClassType.CLASS
-    val maybeAttributes = jsObj.arrayField(ATTRS_NAME, readAttributeFromJson)
-    val maybeMethods = jsObj.arrayField(METHODS_NAME, readMethodsFromJson)
-
-
-    (maybeClassname zip maybeAttributes zip maybeMethods).headOption map {
-      case ((name, attributes), methods) => UmlCompleteClass(UmlClass(-1, name, classType), attributes, methods)
-    }
-  }
-
-  private def readAttributeFromJson(jsValue: JsValue): Option[UmlClassAttribute] = jsValue.asObj flatMap { jsObj =>
-
-    val maybeName = jsObj.stringField(NAME_NAME)
-    val maybeType = jsObj.stringField(TYPE_NAME)
-
-    (maybeName zip maybeType).headOption map { case (name, attrType) => UmlClassAttribute(-1, "", name, attrType) }
-  }
-
-  private def readMethodsFromJson(jsValue: JsValue): Option[UmlClassMethod] = jsValue.asObj flatMap { jsObj =>
-    val maybeName = jsObj.stringField(NAME_NAME)
-    val maybeReturns = jsObj.stringField(ReturnTypeName)
-
-    (maybeName zip maybeReturns).headOption map { case (name, returns) => UmlClassMethod(-1, "", name, returns) }
-  }
-
-  private def readAssociationFromJson(jsValue: JsValue): Option[UmlAssociation] = jsValue.asObj flatMap { jsObj =>
-
-    val maybeAssocType = jsObj.stringField(ASSOCTYPE_NAME) flatMap UmlAssociationType.byString
-    // TODO: assoc_name
-    val maybeAssocName = jsObj.stringField(ASSOCNAME_NAME)
-    val maybeFirstEnd = jsObj.stringField(FIRST_END_NAME)
-    val maybeFirstMult = jsObj.stringField(FIRST_MULT_NAME) flatMap UmlMultiplicity.byString
-    val maybeSecondEnd = jsObj.stringField(SECOND_END_NAME)
-    val maybeSecondMult = jsObj.stringField(SECOND_MULT_NAME) flatMap UmlMultiplicity.byString
-
-    (maybeAssocType zip maybeFirstEnd zip maybeFirstMult zip maybeSecondEnd zip maybeSecondMult).headOption map {
-      case ((((assocType, firstEnd), firstMult), secondEnd), secondMult) => UmlAssociation(-1, assocType, maybeAssocName, firstEnd, firstMult, secondEnd, secondMult)
-    }
-  }
-
-  private def readImplementationFromJson(jsValue: JsValue): Option[UmlImplementation] = jsValue.asObj flatMap { jsObj =>
-
-    val maybeSubclass = jsObj.stringField(SUBCLASS_NAME)
-    val maybeSuperClass = jsObj.stringField(SUPERCLASS_NAME)
-
-    (maybeSubclass zip maybeSuperClass).headOption map { case (subClass, superClass) => UmlImplementation(-1, subClass, superClass) }
-  }
+  /**
+    * Not yet used...
+    */
+  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[UmlSolution] = None
 
   // Yaml
 
@@ -141,16 +80,12 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
     case CLASS_SELECTION   => ClassSelectionResult(exercise, sol)
     case DIAG_DRAWING_HELP => DiagramDrawingHelpResult(exercise, sol)
     case ALLOCATION        => AllocationResult(exercise, sol)
-
-    case DIAG_DRAWING      =>
-      // TODO: implement!
-      println(sol)
-      DiagramDrawingResult(exercise, sol)
+    case DIAG_DRAWING      => DiagramDrawingResult(exercise, sol)
   })
 
   // Other routes
 
-  def checkSolution: EssentialAction = withAdmin { user =>
+  def checkSolution: EssentialAction = withAdmin { _ =>
     implicit request => {
       //      val solNode = Json.parse(singleStrForm(StringConsts.SOLUTION_NAME).get.str)
       //      JsonReader.validateJson(solNode, UmlController.SolutionSchemaNode) match {
@@ -161,7 +96,7 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
     }
   }
 
-  def newExerciseStep2: EssentialAction = withAdmin { user =>
+  def newExerciseStep2: EssentialAction = withAdmin { _ =>
     implicit request =>
       //    exerciseReader.initFromForm(0, null /* factory.form().bindFromRequest()*/) match {
       //      case ReadingError(_, _, _) => BadRequest("There has been an error...")
@@ -174,7 +109,7 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
       Ok("TODO!")
   }
 
-  def newExerciseStep3: EssentialAction = withAdmin { user =>
+  def newExerciseStep3: EssentialAction = withAdmin { _ =>
     implicit request =>
       //    exerciseReader.initFromForm(0, null /* factory.form().bindFromRequest()*/) match {
       //      case ReadingError(_, _, _) => BadRequest("There has been an error...")
@@ -191,7 +126,7 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   }
 
   // FIXME: used where?
-  def activityCheckSolution(language: String): EssentialAction = withAdmin { user =>
+  def activityCheckSolution(language: String): EssentialAction = withAdmin { _ =>
     implicit request => {
       Solution.stringSolForm.bindFromRequest.fold(_ => BadRequest("TODO!"),
         solution => {

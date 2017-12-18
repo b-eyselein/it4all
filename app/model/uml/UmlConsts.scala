@@ -39,8 +39,6 @@ object UmlConsts extends Consts {
   val MAPPINGS_NAME = "mappings"
   val METHODS_NAME  = "methods"
 
-  val ReturnTypeName = "returnType"
-
   val SECOND_END_NAME  = "secondEnd"
   val SECOND_MULT_NAME = "secondMult"
   val SOLUTION_NAME    = "solution"
