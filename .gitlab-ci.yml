@@ -16,5 +16,5 @@ build:
 
 cache:
     paths:
-    - ~/.ivy2
-    - ~/.sbt
+    - /home/gitlab-runner/.ivy2/
+    - /home/gitlab-runner/.sbt/
