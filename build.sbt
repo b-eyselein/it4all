@@ -33,7 +33,6 @@ libraryDependencies ++= Seq(
   "org.webjars" % "ace" % "1.2.8",
   "org.webjars" % "bootstrap" % "3.3.7-1",
 
-  // FIXME: cannot use npm...
   "org.webjars.npm" % "jointjs" % "2.0.1",
 
   // Js-Libs for Uml
