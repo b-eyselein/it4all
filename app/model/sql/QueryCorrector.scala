@@ -71,7 +71,7 @@ abstract class QueryCorrector(val queryType: String) {
 
   def compareTables(userQ: Q, sampleQ: Q): TableMatchingResult = TableMatcher.doMatch(getTables(userQ), getTables(sampleQ))
 
-  def resolveAliases(query: Q): Map[String, String] = getTables(query).filter(_.getAlias != null).map(t => t.getAlias.getName -> t.getName).toMap
+  def resolveAliases(query: Q): Map[String, String] = getTables(query).filter(q => Option(q.getAlias).isDefined).map(t => t.getAlias.getName -> t.getName).toMap
 
   // FIXME: Failure!
   protected def parseStatement(statement: String): Try[Q]

@@ -15,11 +15,13 @@ case class User(username: String, pwHash: String, stdRole: Role = Role.RoleUser,
 case class Course(id: Int, courseName: String)
 
 object TippHelper {
+
   val ran = new Random
 
   val StdTipp = "Hier werden in Zukunft Tipps & Tricks zur Benutzung von it4all präsentiert."
 
-  def getRandom: Tipp = null
+  def getRandom: Tipp = Tipp(-1, StdTipp)
+
 }
 
 

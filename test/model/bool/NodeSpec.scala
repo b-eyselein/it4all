@@ -4,6 +4,8 @@ import model.bool.NodeSpec._
 import model.essentials._
 import org.scalatest._
 
+import scala.language.implicitConversions
+
 object NodeSpec {
 
   implicit def char2Variable(char: Char): Variable = Variable(char)

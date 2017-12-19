@@ -24,6 +24,17 @@ CREATE TABLE IF NOT EXISTS ebnf_exercises (
   terminals VARCHAR(30)
 );
 
+CREATE TABLE IF NOT EXISTS ebnf_testdata (
+  exercise_id INT,
+  test_data   VARCHAR(20),
+  is_positive BOOLEAN,
+
+  PRIMARY KEY (exercise_id, test_data),
+  FOREIGN KEY (exercise_id) REFERENCES ebnf_exercises (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
 # Programming
 
 CREATE TABLE IF NOT EXISTS prog_exercises (
@@ -488,6 +499,8 @@ DROP TABLE IF EXISTS prog_samples;
 DROP TABLE IF EXISTS prog_exercises;
 
 # Ebnf
+
+DROP TABLE IF EXISTS ebnf_testdata;
 
 DROP TABLE IF EXISTS ebnf_exercises;
 

@@ -1,25 +1,54 @@
 package model.ebnf
 
 import org.junit.Test
+import org.scalatest.Matchers._
+
+import scala.language.implicitConversions
 
 class GrammarTest {
 
-  val terms = List(Terminal("0"), Terminal("1"))
+  implicit def terminal2TerminalReplacement(symbol: Symbol): SymbolReplacement = symbol match {
+    case v: Variable => VariableReplacement(v)
+    case t: Terminal => TerminalReplacement(t)
+  }
 
   val (s, a, b, c) = (Variable("S"), Variable("A"), Variable("B"), Variable("C"))
+  val (nul, one)   = (Terminal("0"), Terminal("1"))
 
-  val (aRepl, bRepl, cRepl) = (VariableReplacement(a), VariableReplacement(b), VariableReplacement(c))
-  val (nul, one)            = (TerminalReplacement(Terminal("0")), TerminalReplacement(Terminal("1")))
-
-  val rules: Map[Variable, Replacement] = Map(
-    s -> (aRepl | bRepl),
-
-    a -> (one ~ nul))
 
   @Test
   def testDeriveAll() {
-    val gr = new Grammar(terms, List(s, a, b, c), s, rules)
-    gr.deriveAll()
+    val gr1 = new Grammar(Seq(nul, one), List(s, a, b), s, Map(
+      s -> (a | b),
+      a -> (one ~ nul)
+    ))
+
+    val derived1 = gr1.deriveAll
+    derived1.size shouldBe 1
+    derived1.head shouldBe "10"
+
+
+    val gr2 = new Grammar(Seq(nul, one), List(s, a, b), s, Map(
+      s -> (a ~ b ~ a ~ b),
+      a -> one,
+      b -> nul
+    ))
+
+    val derived2 = gr2.deriveAll
+    derived2.size shouldBe 1
+    derived2.head shouldBe "1010"
+  }
+
+  @Test
+  def deriveAllEvenBinaries(): Unit = {
+    val gr3 = new Grammar(Seq(nul, one), List(s, a), s, Map(
+      s -> a ~ nul,
+      a -> a.? ~ one
+    ))
+
+    val derived3 = gr3.deriveAll
+    derived3.size shouldBe 10
+    derived3.head shouldBe "10"
   }
 
 }

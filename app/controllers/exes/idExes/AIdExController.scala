@@ -34,7 +34,7 @@ abstract class AIdExController[E <: Exercise, R <: EvaluationResult, CompResult 
 
   def correct(id: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
-      correctAbstract(user, id, readSolutionFromPutRequest, renderCorrectionResult(user, _),
+      correctAbstract(user, id, readSolutionFromPostRequest, renderCorrectionResult(user, _),
         error => views.html.main.render("Fehler", user, new Html(""), new Html(s"<pre>${error.getMessage}:\n${error.getStackTrace mkString "\n"}</pre>")))
   }
 

@@ -1,13 +1,13 @@
 package controllers.exes.idExes
 
 import model.Enums.ToolState
-import model.ebnf.{EbnfConsts, EbnfExercise}
+import model.ebnf.{EbnfCompleteExercise, EbnfConsts}
 import model.{Consts, HasBaseValues}
 import play.api.mvc.Call
 
 object EbnfToolObject extends IdExToolObject {
 
-  override type CompEx = EbnfExercise
+  override type CompEx = EbnfCompleteExercise
 
   override val hasTags  : Boolean   = false
   override val toolname : String    = "Ebnf"

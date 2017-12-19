@@ -1,0 +1,30 @@
+@(exercise: model.ebnf.EbnfCompleteExercise)
+
+<div class="row">
+    <div class="col-md-2"><b>ID:</b></div>
+    <div class="col-md-2">@exercise.id</div>
+
+    <div class="col-md-2"><b>Titel:</b></div>
+    <div class="col-md-2">@exercise.title</div>
+
+    <div class="col-md-2"><b>Autor:</b></div>
+    <div class="col-md-2">@exercise.author</div>
+</div>
+
+<div class="row">
+    <div class="col-md-2"><b>Text:</b></div>
+    <div class="col-md-10">@exercise.text</div>
+</div>
+
+<div class="row">
+    <div class="col-md-2"><b>Startsymbol</b></div>
+    <div class="col-md-2"><code>@model.ebnf.EbnfExercise.StartSymbol</code></div>
+    <div class="col-md-2"><b>Terminalsymbole:</b></div>
+    <div class="col-md-2">@Html(exercise.ex.terminals map (t => s"<code>$t</code>") mkString ", ")</div>
+    <div class="col-md-2"><b>Testdaten:</b></div>
+    <div class="col-md-2">
+    @for(pos <- exercise.testdata) {
+        <p><code>@pos.testData</code></p>
+    }
+    </div>
+</div>

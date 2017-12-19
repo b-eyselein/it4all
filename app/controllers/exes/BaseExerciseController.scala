@@ -1,6 +1,6 @@
 package controllers.exes
 
-import java.nio.file.{Files, Paths}
+import java.nio.file.Files
 import java.sql.SQLSyntaxErrorException
 
 import controllers.Secured
@@ -15,10 +15,11 @@ import play.api.libs.json.Json
 import play.api.mvc._
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
+import views.html.admin._
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.io.Source
-import scala.language.implicitConversions
+import scala.language.{implicitConversions, postfixOps}
+import scala.util.{Failure, Success}
 
 abstract class BaseExerciseController[Ex <: Exercise]
 (cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository, val toolObject: ExToolObject)(implicit ec: ExecutionContext)
@@ -31,10 +32,6 @@ abstract class BaseExerciseController[Ex <: Exercise]
   def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[SolType]
 
   def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[SolType]
-
-  //  case class StrForm(str: String)
-
-  //  def singleStrForm(str: String) = Form(mapping(str -> nonEmptyText)(StrForm.apply)(StrForm.unapply))
 
   // Reading Yaml
 
@@ -52,13 +49,13 @@ abstract class BaseExerciseController[Ex <: Exercise]
 
   protected def numOfExes: Future[Int] = db.run(tq.size.result)
 
-  protected def futureCompleteExById(id: Int): Future[Option[CompEx]] = ???
+  protected def futureCompleteExById(id: Int): Future[Option[CompEx]]
 
-  protected def futureCompleteExes: Future[Seq[CompEx]] = ???
+  protected def futureCompleteExes: Future[Seq[CompEx]]
 
   protected def statistics: Future[Html] = numOfExes map (num => Html(s"<li>Es existieren insgesamt $num Aufgaben</li>"))
 
-  protected def saveRead(read: Seq[CompEx]): Future[Seq[Any]] = ???
+  protected def saveRead(read: Seq[CompEx]): Future[Seq[Any]]
 
   val PROGRESS_LOGGER: Logger.ALogger = Logger.of("progress")
 
@@ -67,14 +64,15 @@ abstract class BaseExerciseController[Ex <: Exercise]
   // Admin
 
   def adminIndex: EssentialAction = futureWithAdmin { user =>
-    implicit request => statistics map (stats => Ok(views.html.admin.exerciseAdminMain(user, stats, toolObject)))
+    implicit request => statistics map (stats => Ok(exerciseAdminMain(user, stats, toolObject)))
   }
 
   def adminImportExercises: EssentialAction = futureWithAdmin { admin =>
     implicit request =>
-      val file = Paths.get("conf", "resources", toolObject.exType + ".yaml").toFile
-      val read = Source.fromFile(file).mkString.parseYamls map (_.convertTo[CompEx])
-      saveAndPreviewExercises(admin, read)
+      readAll(toolObject.resourcesFolder / (toolObject.exType + ".yaml")) match {
+        case Failure(e) => Future(BadRequest("TODO!"))
+        case Success(r) => saveAndPreviewExercises(admin, r.mkString.parseYamls map (_.convertTo[CompEx]))
+      }
   }
 
   /**
@@ -98,13 +96,13 @@ abstract class BaseExerciseController[Ex <: Exercise]
 
   def adminExportExercises: EssentialAction = futureWithAdmin { admin =>
     implicit request =>
-      futureCompleteExes map (exes => Ok(views.html.admin.export(admin, yamlString(exes), toolObject)))
+      futureCompleteExes map (exes => Ok(export(admin, yamlString(exes), toolObject)))
   }
 
   def adminExportExercisesAsFile: EssentialAction = futureWithAdmin { admin =>
     implicit request =>
-      val file = Files.createTempFile(s"export_${toolObject.exType}", ".yaml")
       futureCompleteExes map (exes => {
+        val file = Files.createTempFile(s"export_${toolObject.exType}", ".yaml")
 
         write(file, yamlString(exes))
 
@@ -150,24 +148,24 @@ abstract class BaseExerciseController[Ex <: Exercise]
       //      case result: ReadingResult[E] =>
       //
       //        result.read.foreach(res => exerciseReader.save(res.read))
-      //        Ok(views.html.admin.exercisePreview(admin, toolObject, result.read))
+      //        Ok(exercisePreview(admin, toolObject, result.read))
       //    }
       Ok("TODO!")
   }
 
   def adminEditExerciseForm(id: Int): EssentialAction = futureWithAdmin { admin =>
-    implicit request => futureCompleteExById(id) map (ex => Ok(views.html.admin.exerciseEditForm(admin, toolObject, ex, renderEditRest(ex))))
+    implicit request => futureCompleteExById(id) map (ex => Ok(exerciseEditForm(admin, toolObject, ex, renderEditRest(ex))))
   }
 
   def adminExerciseList: EssentialAction = futureWithAdmin { admin =>
-    implicit request => futureCompleteExes map (exes => Ok(views.html.admin.exerciseList(admin, exes, toolObject)))
+    implicit request => futureCompleteExes map (exes => Ok(exerciseListView(admin, exes, toolObject)))
   }
 
   def adminNewExerciseForm: EssentialAction = withAdmin { admin =>
     // FIXME
     implicit request =>
       // FIXME: ID of new exercise?
-      Ok(views.html.admin.exerciseEditForm(admin, toolObject, None, renderEditRest(None)))
+      Ok(exerciseEditForm(admin, toolObject, None, renderEditRest(None)))
   }
 
   def adminCreateExercise: EssentialAction = withAdmin { admin =>
@@ -176,9 +174,9 @@ abstract class BaseExerciseController[Ex <: Exercise]
 
   // Views and other helper methods for admin
 
-  protected def previewExercises(admin: User, read: Seq[CompEx]): Html = views.html.admin.exercisePreview(admin, read, toolObject)
+  protected def previewExercises(admin: User, read: Seq[CompEx]): Html = exercisePreview(admin, read, toolObject)
 
-  // FIXME: scalarStyle = Folded if fixed...
+  // TODO: scalarStyle = Folded if fixed...
   private def yamlString(exes: Seq[CompEx]): String = "%YAML 1.2\n---\n" + (exes map (_.toYaml.print(Auto /*, Folded*/)) mkString "---\n")
 
   // User

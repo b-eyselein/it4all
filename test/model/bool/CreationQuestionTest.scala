@@ -5,7 +5,7 @@ import org.junit.Test
 
 import scala.language.implicitConversions
 
-class CreationQuestionTest {
+class CreationQuestionTest  {
 
   implicit def char2Variable(char: Char): Variable = Variable(char)
 

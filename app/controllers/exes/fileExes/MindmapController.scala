@@ -44,6 +44,10 @@ class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfig
 
   override protected def checkFiles(ex: MindmapExercise): List[Try[Path]] = ???
 
+  protected def futureCompleteExById(id: Int): Future[Option[MindmapExercise]] = ???
+
+  protected def futureCompleteExes: Future[Seq[MindmapExercise]] = ???
+
   // Views
 
   override protected def renderExercise(user: User, exercise: MindmapExercise, part: String): Html = ???

@@ -1,9 +1,6 @@
 package model.core
 
-import java.io.File
 import java.nio.file._
-
-import com.google.common.io.{Files => GFiles}
 
 import scala.collection.JavaConverters._
 import scala.util.Try
@@ -17,8 +14,6 @@ trait FileUtils {
     def /(that: String): Path = Paths.get(path.toString, that)
 
   }
-
-  private def fileEnding(file: File): String = GFiles.getFileExtension(file.getName)
 
   def copy(filename: String, sourceDir: Path, targetDir: Path): Try[Path] = copy(sourceDir / filename, targetDir / filename)
 
@@ -51,6 +46,6 @@ trait FileUtils {
       StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
   }
 
-  def readAll(path: Path): Try[String] = Try(Files.readAllLines(path).asScala.mkString("\n"))
+  def readAll(path: Path): Try[String] = Try(Files.readAllLines(path).asScala mkString "\n")
 
 }

@@ -24,7 +24,7 @@ import scala.util.Try
 
 object XmlController {
 
-  val EX_OPTIONS = ExerciseOptions("Xml", "xml", 15, 30, updatePrev = false)
+  val exOptions = ExerciseOptions("Xml", "xml", 15, 30, updatePrev = false)
 
 }
 
@@ -109,7 +109,7 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   })
 
   override def renderExercise(user: User, exercise: XmlExercise): Html = views.html.core.exercise2Rows(
-    user, XmlToolObject, EX_OPTIONS, exercise.ex, renderExRest(exercise.ex), readDefOrOldSolution(user.username, exercise.ex))
+    user, XmlToolObject, exOptions, exercise.ex, renderExRest(exercise.ex), readDefOrOldSolution(user.username, exercise.ex))
 
   def renderExRest(exercise: XmlExercise) = new Html(
     s"""<section id="refFileSection">

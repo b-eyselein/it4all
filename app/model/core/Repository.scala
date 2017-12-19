@@ -4,7 +4,7 @@ import javax.inject._
 
 import model.TableDefs
 import model.blanks.BlanksTableDefs
-import model.ebnf.EbnfExercises
+import model.ebnf.EbnfTableDefs
 import model.mindmap.MindmapTableDefs
 import model.programming.ProgTableDefs
 import model.questions.QuestionsTableDefs
@@ -24,7 +24,7 @@ class Repository @Inject()(protected val dbConfigProvider: DatabaseConfigProvide
     with TableDefs
 
     with BlanksTableDefs
-    with EbnfExercises
+    with EbnfTableDefs
     with MindmapTableDefs
     with ProgTableDefs
     with QuestionsTableDefs

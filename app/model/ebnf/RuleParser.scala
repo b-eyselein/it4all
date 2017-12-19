@@ -2,12 +2,10 @@ package model.ebnf
 
 import model.ebnf.Replacement._
 
-import scala.util.parsing.combinator.JavaTokenParsers
-
-object RuleParser extends JavaTokenParsers {
+object RuleParser extends scala.util.parsing.combinator.JavaTokenParsers {
 
   private lazy val sequence: Parser[Replacement] = alternative ~ rep(opt(seqOperator) ~ alternative) ^^ {
-    case seq1 ~ seqs => seqs.foldLeft(seq1)((repl, seqNext) => repl ~ seqNext._2)
+    case seq1 ~ seqs => seqs.foldLeft(seq1)((replacement, seqNext) => replacement ~ seqNext._2)
   }
 
   private lazy val alternative = option ~ rep(altOperator ~ option) ^^ {
@@ -19,20 +17,19 @@ object RuleParser extends JavaTokenParsers {
     case rep ~ Some(Replacement.optOperator)  => rep.?
     case rep ~ Some(Replacement.repOperator)  => rep.*
     case rep ~ Some(Replacement.rep1Operator) => rep.+
-    case _ ~ Some(_)                          => null // throw new CorrectionException("", s"Not awaited: $t")
+    case _ ~ Some(t)                          => throw new Exception("Not awaited: " + t)
   }
 
-  private lazy val subterm = /*variable | terminalsymbol |*/ "(" ~ sequence ~ ")" ^^ { grouping => Grouping(grouping._1._2) }
+  private lazy val subterm: Parser[Replacement] = variable | terminalsymbol | "(" ~ sequence ~ ")" ^^ { grouping => Grouping(grouping._1._2) }
 
-  //  private lazy val variable = "\\w+".r ^^ {
-  //    Variable
-  //  }
+  private lazy val variable: Parser[Replacement] = "\\w+".r ^^ { str => VariableReplacement(Variable(str)) }
 
-  //  private lazy val terminalsymbol = "'" ~ "\\w+".r ~ "'" ^^ { terminal => Terminal(terminal._1._2) }
+  private lazy val terminalsymbol: Parser[Replacement] = "'" ~ "\\w+".r ~ "'" ^^ { terminal => TerminalReplacement(Terminal(terminal._1._2)) }
 
   def parseRules(repl: String): Replacement = parseAll(sequence, repl) match {
     case Success(result, _) => result
-    case _                  => throw new Exception("Fehler beim Parsen!")
+    case Failure(msg, _)    => throw new Exception("Fataler Fehler beim Parsen: " + msg)
+    case Error(msg, _)      => throw new Exception("Fehler beim Parsen: " + msg)
   }
 
 }

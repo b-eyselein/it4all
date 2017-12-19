@@ -12,7 +12,7 @@ import play.api.mvc.{AnyContent, ControllerComponents, EssentialAction, Request}
 import play.twirl.api.Html
 import views.html.blanks._
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
 import scala.util.Try
 
@@ -25,10 +25,10 @@ class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
   override type SolType = String
 
   override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[String] =
-    Solution.stringSolForm.bindFromRequest().fold(_ => None, sol => Some(sol.learnerSolution))
+    Solution.stringSolForm.bindFromRequest() fold(_ => None, sol => Some(sol.learnerSolution))
 
   override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[String] =
-    Solution.stringSolForm.bindFromRequest().fold(_ => None, sol => Some(sol.learnerSolution))
+    Solution.stringSolForm.bindFromRequest() fold(_ => None, sol => Some(sol.learnerSolution))
 
   // Yaml
 
@@ -41,6 +41,15 @@ class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
   override type TQ = repo.BlanksExercisesTable
 
   override def tq = repo.blanksExercises
+
+  override protected def futureCompleteExById(id: Int): Future[Option[BlanksExercise]] = ???
+
+  override protected def futureCompleteExes: Future[Seq[BlanksExercise]] = ???
+
+  override protected def saveRead(read: Seq[BlanksExercise]): Future[Seq[Any]] = ???
+
+
+  // Other routes
 
   def testBlanks: EssentialAction = withUser { user => implicit request => Ok(blanks(user, null)) }
 
@@ -55,7 +64,7 @@ class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
 
   override protected def correctEx(user: User, sol: String, exercise: BlanksExercise): Try[GenericCompleteResult[EvaluationResult]] = ???
 
-  override protected def renderExesListRest: Html = new Html("")
+  //  override protected def renderExesListRest: Html = new Html("")
 
   override def renderExercise(user: User, exercise: BlanksExercise): Html = ???
 

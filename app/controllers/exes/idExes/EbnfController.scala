@@ -2,39 +2,57 @@ package controllers.exes.idExes
 
 import javax.inject._
 
-import model.User
 import model.core._
 import model.ebnf.EbnfConsts._
-import model.ebnf.{EbnfExercise, EbnfResult}
+import model.ebnf._
+import model.{JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.db.slick.DatabaseConfigProvider
+import play.api.libs.json.{JsObject, JsValue}
 import play.api.mvc.{AnyContent, ControllerComponents, Request}
 import play.twirl.api.Html
 import views.html.ebnf._
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
-import scala.util.Try
+import scala.util.{Failure, Try}
 
 @Singleton
 class EbnfController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends AIdExController[EbnfExercise, EbnfResult, GenericCompleteResult[EbnfResult]](cc, dbcp, r, EbnfToolObject) {
+  extends AIdExController[EbnfExercise, EbnfResult, GenericCompleteResult[EbnfResult]](cc, dbcp, r, EbnfToolObject) with JsonFormat {
 
   // Reading solution from requests
 
-  override type SolType = String
+  override type SolType = Grammar
 
-  override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[String] =
-    Solution.stringSolForm.bindFromRequest().fold(_ => None, sol => Some(sol.learnerSolution))
+  override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[SolType] = {
+    //    Some(Grammar(terminals = List.empty, variables = List.empty, startSymbol = null, rules = Map.empty))
+    None
+  }
 
-  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[String] =
-    Solution.stringSolForm.bindFromRequest().fold(_ => None, sol => Some(sol.learnerSolution))
+  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[SolType] = request.body.asJson flatMap (_.asObj) flatMap { jsObj: JsObject =>
+    val maybeTerminals = jsObj.arrayField("terminals", _.asStr map (_.replace("'", "")) map Terminal)
+    val maybeVariables = jsObj.arrayField("variables", _.asStr map Variable)
+    val maybeStartSymbol = jsObj.stringField("startSymbol") map Variable
+    val maybeRules = jsObj.arrayField("rules", readRuleFromJsValue) map (_.toMap)
+
+    (maybeTerminals zip maybeVariables zip maybeStartSymbol zip maybeRules).headOption map {
+      case (((terminals, variables), startSymbol), rules) => Grammar(terminals, variables, startSymbol, rules)
+    }
+  }
+
+  private def readRuleFromJsValue(jsValue: JsValue): Option[(Variable, Replacement)] = jsValue.asObj flatMap { jsObj =>
+    val maybeVariable = jsObj.stringField("symbol") map Variable
+    val maybeReplacement = jsObj.stringField("rule") map RuleParser.parseRules
+
+    (maybeVariable zip maybeReplacement).headOption
+  }
 
   // Yaml
 
-  override type CompEx = EbnfExercise
+  override type CompEx = EbnfCompleteExercise
 
-  override val yamlFormat: YamlFormat[EbnfExercise] = null
+  override val yamlFormat: YamlFormat[EbnfCompleteExercise] = EbnfExerciseYamlProtocol.EbnfExerciseYamlFormat
 
   // db
 
@@ -42,44 +60,36 @@ class EbnfController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   override def tq = repo.ebnfExercises
 
+  override def futureCompleteExes: Future[Seq[EbnfCompleteExercise]] = repo.ebnfCompleteExes
+
+  override def futureCompleteExById(id: Int): Future[Option[EbnfCompleteExercise]] = repo.ebnfCompleteExById(id)
+
+  override def saveRead(read: Seq[EbnfCompleteExercise]): Future[Seq[Any]] = Future.sequence(read map repo.ebnfSaveCompleteEx)
+
   // Correction
 
-  override def correctEx(user: User, sol: String, exercise: EbnfExercise): Try[GenericCompleteResult[EbnfResult]] = {
+  override def correctEx(user: User, grammar: Grammar, exercise: EbnfCompleteExercise): Try[GenericCompleteResult[EbnfResult]] = {
     // FIXME: implement!
+    val derived = grammar.deriveAll
 
-    //    val data = Controller.request.body.asFormUrlEncoded
-    //
-    //    val terminals = data.get("terminals")(0).split(" ").map(str => new TerminalSymbol(str.replace("'", ""))).toList
-    //    val variables = data.get("variables")(0).split(",").map(new Variable(_)).toList
-    //    val start = new Variable(data.get("start")(0))
-    //    val replacementsAsStrs = data.get("rule[]")
-    //
-    //    System.out.println(replacementsAsStrs.toList.mkString("\n"))
-    //
-    //    val replacements = replacementsAsStrs.map(RuleParser.parseReplacement(_))
-    //    val rules = replacements.map(new Rule(Variable("S"), _)).toList
-    //
-    //    val grammar = new Grammar(terminals, variables, start, rules)
-    //
-    //    System.out.println(grammar)
-    //
-    //    new EbnfCompleteResult(new EbnfResult(grammar))
-    ???
+    println(derived)
+
+    Failure(new Exception("Not yet implemented..."))
   }
 
   // Views
 
-  override def renderEditRest(exercise: Option[EbnfExercise]): Html = new Html(
+  override def renderEditRest(exercise: Option[EbnfCompleteExercise]): Html = new Html(
     s"""|<div class="form-group">
         |  <label for="$TERMINALS">Terminalsymbole:</label>
         |  <input class="form-control" name="$TERMINALS" id="$TERMINALS" placeholder="Terminalsymbole, durch Kommata getrennt"
-        |         ${exercise.map(_.terminals).getOrElse("")} required>
+        |         value="${exercise map (_.ex.joinedTerminals) getOrElse ""}" required>
         |</div>""".stripMargin)
 
-  override def renderExercise(user: User, exercise: EbnfExercise): Html = ebnfExercise(user, exercise)
+  override def renderExercise(user: User, exercise: EbnfCompleteExercise): Html = ebnfExercise(user, exercise.ex)
 
   override def renderResult(correctionResult: GenericCompleteResult[EbnfResult]): Html = new Html("") //ebnfResult(correctionResult)
 
-  override def renderExesListRest: Html = new Html("")
+  //  override def renderExesListRest: Html = new Html("")
 
 }
