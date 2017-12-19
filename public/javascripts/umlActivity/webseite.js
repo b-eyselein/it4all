@@ -9,40 +9,40 @@
 
 window.onload = function () {
 
-    $("#graph_imp").click(function () {
+    $('#graph_imp').click(function () {
         $('#file').click();
     });
 
-    var input = document.getElementById("file");
-    input.addEventListener("change", function (e) {
-        var file = e.target.files[0];
+    const input = document.getElementById('file');
+    input.addEventListener('change', function (e) {
+        const file = e.target.files[0];
 
         // Only render plain text files
-        if (!file.type === "text/plain")
+        if (!file.type === 'text/plain')
             return;
 
-        var reader = new FileReader();
+        const reader = new FileReader();
 
         reader.onload = function (event) {
-            var log = [];
-            var data = event.target.result;
+            const log = [];
+            const data = event.target.result;
             //Test if Json
             if (!isJson(event.target.result)) {
-                document.getElementById("code").innerHTML = "";
+                document.getElementById('code').innerHTML = '';
 
-                log.push("Die geladene Datei ist nicht im JSON-Format");
-                document.getElementById("code").appendChild(preparelog(log));
+                log.push('Die geladene Datei ist nicht im JSON-Format');
+                document.getElementById('code').appendChild(preparelog(log));
             } else {
                 try {
-                    document.getElementById("code").removeChild(document.getElementById("list_error"));
+                    document.getElementById('code').removeChild(document.getElementById('list_error'));
                 } catch (e) {
                 }
                 try {
                     graph.fromJSON(JSON.parse(data));
                     refreshDia();
                 } catch (e) {
-                    log.push("Die JSON-Datei konnte nicht geladen werden!");
-                    document.getElementById("code").appendChild(preparelog(log));
+                    log.push('Die JSON-Datei konnte nicht geladen werden!');
+                    document.getElementById('code').appendChild(preparelog(log));
                 }
             }
         };
@@ -72,21 +72,21 @@ window.onload = function () {
         }
     }
 
-    console.log("outside");
-    $("#fullscreenStart").click(function () {
-        console.log("fullstart");
-        enterFullscreen(document.getElementById("tool")); // ein bestimmtes Element
+    console.log('outside');
+    $('#fullscreenStart').click(function () {
+        console.log('fullstart');
+        enterFullscreen(document.getElementById('tool')); // ein bestimmtes Element
     });
 
-    $("#fullscreenEnd").click(function () {
+    $('#fullscreenEnd').click(function () {
         exitFullscreen();
     });
 
 };
 
 function writeActivityDiagram() {
-    var sendForm = $('#sendForm');
-    sendForm.attr('action', sendForm.attr('action') + "?lang=python");
+    const sendForm = $('#sendForm');
+    sendForm.attr('action', sendForm.attr('action') + '?lang=python');
     // FIXME: language!
     $('#learnerSolution').val($('#preCode').html());
 }
@@ -103,7 +103,7 @@ function isJson(str) {
 
 //writer via FileSaver.js --->  https://github.com/eligrey/FileSaver.js
 function saveGraphAsTxt() {
-    var input = JSON.stringify(graph.toJSON());
-    var blob = new Blob([input], {type: "text/plain;charset=utf-8"});
-    saveAs(blob, "graph.txt");
+    const input = JSON.stringify(graph.toJSON());
+    const blob = new Blob([input], {type: 'text/plain;charset=utf-8'});
+    saveAs(blob, 'graph.txt');
 }

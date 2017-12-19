@@ -4,7 +4,7 @@ function readValues() {
         summand2: $('#secondSummand').val(),
         base: $('#base').data('base'),
         solution: $('#solution').val().split('').reverse().join('')
-    }
+    };
 }
 
 /**
@@ -14,9 +14,9 @@ function readValues() {
 function onAjaxSuccess(response) {
     let solInputParent = $('#solution').parent();
     if (response.correct) {
-        solInputParent.removeClass('has-error').addClass('has-success')
+        solInputParent.removeClass('has-error').addClass('has-success');
     } else {
-        solInputParent.removeClass('has-success').addClass('has-error')
+        solInputParent.removeClass('has-success').addClass('has-error');
     }
 }
 

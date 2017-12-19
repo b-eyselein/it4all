@@ -11,7 +11,7 @@ let sel = 'POINTER';
 
 let classEditModal;
 
-const UmlTypes = ["String", "Int", "Double", "Char", "Boolean"];
+const UmlTypes = ['String', 'Int', 'Double', 'Char', 'Boolean'];
 
 $(document).ready(function () {
     let paperJQ = $('#paper');
@@ -59,11 +59,11 @@ function discardEdits() {
 
 // noinspection JSUnusedGlobalSymbols
 function updateClass(elementId) {
-    console.log("Updating class...");
+    console.log('Updating class...');
     let element = graph.getCell(elementId);
 
     // FIXME: update class (--> element...)
-    console.warn("TODO: change type " + element.attributes.type);
+    console.warn('TODO: change type ' + element.attributes.type);
     element.attr('.uml-class-name-text/text', $('#editClassName').val());
 
     let attrs = $('#editAttrsDiv').find('.input-group').map((index, attrGroup) => {
@@ -83,7 +83,7 @@ function updateClass(elementId) {
         }
     }).get();
     element.attributes.methods = mets;
-    element.attr('.uml-class-methods-text/text', mets.map(m => m.name + ": " + m.type).join('\n'));
+    element.attr('.uml-class-methods-text/text', mets.map(m => m.name + ': ' + m.type).join('\n'));
 
     discardEdits();
 }
@@ -186,14 +186,14 @@ function cellOnLeftClick(cellView) {
 }
 
 function addMember(button, isAttr) {
-    $(button).before(memberInputs("", "", isAttr));
+    $(button).before(memberInputs('', '', isAttr));
 }
 
 function deleteMember(button) {
     $(button).parent().parent().remove();
 }
 
-function memberInputs(memberName, memberType = "", isAttr = true) {
+function memberInputs(memberName, memberType = '', isAttr = true) {
     return `<div class="form-group">
               <div class="input-group">
                 <input class="form-control" placeholder="${isAttr ? 'Attribut' : 'Methode'} für diese Klasse" value="${memberName}" required>
@@ -278,6 +278,14 @@ function askMulitplicity(source, dest) {
     return (multiplicity && multiplicity === '1') ? multiplicity : '*';
 }
 
+function getClassNameFromCellId(id) {
+    return graph.getCell(id).attributes.name;
+}
+
+function getMultiplicity(label) {
+    return label.attrs.text.text === '1' ? 'SINGLE' : 'UNBOUND';
+}
+
 function extractParametersAsJson() {
     let learnerSolution = {
         classes: graph.getCells().filter(cell => cell.attributes.name !== undefined)
@@ -314,14 +322,6 @@ function extractParametersAsJson() {
     };
 
     return JSON.stringify(learnerSolution);
-}
-
-function getClassNameFromCellId(id) {
-    return graph.getCell(id).attributes.name;
-}
-
-function getMultiplicity(label) {
-    return label.attrs.text.text === '1' ? 'SINGLE' : 'UNBOUND';
 }
 
 function getTypeName(type) {

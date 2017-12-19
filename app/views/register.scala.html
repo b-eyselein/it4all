@@ -1,62 +1,46 @@
-@import model.core.CoreConsts._
-
 @()
 
 @scripts = {
     <script src="@routes.Assets.versioned("javascripts/users/register.js")"></script>
-    <script>
-            var nameVal = '@NAME_NAME';
-            var pw1Val = '@PW_NAME';
-            var pw2Val = '@PW2_NAME';
-            var pw1, pw2;
-
-            $(document).ready(function () {
-                pw1 = $('#@PW_NAME');
-                pw2 = $('#@PW2_NAME');
-            });
-    </script>
 }
 
 @main("Registrierung", null, scripts) {
-
     <div class="container">
         <div class="page-header">
             <h1>Registrierung</h1>
         </div>
 
-
-        @helper.form(routes.LoginController.register, 'role -> "form", 'class -> "form-horizontal", 'onsubmit -> "return testFields();") {
-
+        <form action="@routes.LoginController.register" role="form" class="form-horizontal" onsubmit="return testFields();">
             <div class="form-group has-feedback">
-                <label class="control-label col-sm-3" for="@NAME_NAME">Nutzername:</label>
+                <label class="control-label col-sm-3" for="@model.core.CoreConsts.NAME_NAME">Nutzername:</label>
                 <div class="col-sm-9">
-                    <input class="form-control" id="@NAME_NAME" name="@NAME_NAME" data-taken="false" placeholder="s-Nummer" required
+                    <input class="form-control" id="@model.core.CoreConsts.NAME_NAME" name="@model.core.CoreConsts.NAME_NAME" data-taken="false" placeholder="s-Nummer" required
                     onchange="checkUserName('@controllers.routes.LoginController.checkUserName()')">
-                    <span class="glyphicon glyphicon-warning-sign form-control-feedback hidden" id="span_@NAME_NAME"></span>
-                    <p id="help_@NAME_NAME" class="help-block hidden">
+                    <span class="glyphicon glyphicon-warning-sign form-control-feedback hidden" id="span_@model.core.CoreConsts.NAME_NAME"></span>
+                    <p id="help_@model.core.CoreConsts.NAME_NAME" class="help-block hidden">
                         Dieser Nutzername scheint bereits vergeben zu sein.</p>
                 </div>
             </div>
 
             <div class="form-group has-feedback">
-                <label class="control-label col-sm-3" for="@PW_NAME">Passwort:</label>
+                <label class="control-label col-sm-3" for="@model.core.CoreConsts.PW_NAME">Passwort:</label>
                 <div class="col-sm-9">
-                    <input type="password" class="form-control" id="@PW_NAME" name="@PW_NAME" placeholder="Gew&uuml;nschtes Passwort"
+                    <input type="password" class="form-control" id="@model.core.CoreConsts.PW_NAME" name="@model.core.CoreConsts.PW_NAME" placeholder="Gew&uuml;nschtes Passwort"
                     onchange="checkPws()" required>
-                    <span class="glyphicon glyphicon-warning-sign form-control-feedback hidden" id="span_@PW_NAME"></span>
-                    <p id="help_@PW_NAME" class="help-block">
+                    <span class="glyphicon glyphicon-warning-sign form-control-feedback hidden" id="span_@model.core.CoreConsts.PW_NAME"></span>
+                    <p id="help_@model.core.CoreConsts.PW_NAME" class="help-block">
                         Das Passwort muss mindestens 8 Zeichen enthalten.</p>
                 </div>
 
             </div>
 
             <div class="form-group has-feedback">
-                <label class="control-label col-sm-3" for="@PW2_NAME">Passwort wiederholen:</label>
+                <label class="control-label col-sm-3" for="@model.core.CoreConsts.PW2_NAME">Passwort wiederholen:</label>
                 <div class="col-sm-9">
-                    <input type="password" class="form-control" id="@PW2_NAME" name="@PW2_NAME" placeholder="Passwort wiederholen"
+                    <input type="password" class="form-control" id="@model.core.CoreConsts.PW2_NAME" name="@model.core.CoreConsts.PW2_NAME" placeholder="Passwort wiederholen"
                     onchange="checkSecondPw()" required>
-                    <span class="glyphicon glyphicon-warning-sign form-control-feedback hidden" id="span_@PW2_NAME"></span>
-                    <p id="help_@PW2_NAME" class="help-block hidden">
+                    <span class="glyphicon glyphicon-warning-sign form-control-feedback hidden" id="span_@model.core.CoreConsts.PW2_NAME"></span>
+                    <p id="help_@model.core.CoreConsts.PW2_NAME" class="help-block hidden">
                         Dieses Passwort muss mit dem ersten &uuml;bereinstimmen.</p>
                 </div>
             </div>
@@ -68,9 +52,6 @@
                     <button type="submit" class="form-control">Registrierung vornehmen</button>
                 </div>
             </div>
-
-        }
-
+        </form>
     </div>
-
 }

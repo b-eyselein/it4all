@@ -14,9 +14,9 @@ function readValues() {
 function onAjaxSuccess(response) {
     let solInputParent = $('#solution').parent();
     if (response.correct) {
-        solInputParent.removeClass('has-error').addClass('has-success')
+        solInputParent.removeClass('has-error').addClass('has-success');
     } else {
-        solInputParent.removeClass('has-success').addClass('has-error')
+        solInputParent.removeClass('has-success').addClass('has-error');
     }
 }
 

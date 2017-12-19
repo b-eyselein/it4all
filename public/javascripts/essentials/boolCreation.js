@@ -12,7 +12,7 @@ function readValues(withSol) {
         $(row).find('[data-variable]').each(function (index, cell) {
             partAssignments[cell.dataset.variable] = cell.dataset.value === 'true'
         });
-        assignments.push(partAssignments)
+        assignments.push(partAssignments);
     });
 
     return {
@@ -40,7 +40,7 @@ function readValues(withSol) {
 function onAjaxSuccess(response, withSol) {
     for (const assignment of response.assignments) {
         let elem = $('#' + assignment.id);
-        elem.html(assignment.learnerVal ? "1" : "0");
+        elem.html(assignment.learnerVal ? '1' : '0');
         if (assignment.correct) {
             elem.removeClass('danger').addClass('success');
         } else {

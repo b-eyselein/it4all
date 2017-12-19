@@ -39,19 +39,6 @@ function extractParameters() {
     return $.map(inputs, toParam).join('&');
 }
 
-function testTheSolution(theUrl) {
-    $('#testButton').prop('disabled', true);
-    $.ajax({
-        type: 'PUT',
-        url: theUrl,
-        data: extractParameters(),
-        // FIXME: dataType: 'json' ?,
-        async: true,
-        success: onSuccess,
-        error: onError
-    });
-}
-
 function onSuccess(correction) {
     $('#correction').html(correction);
     $('#testButton').prop('disabled', false);
@@ -64,6 +51,19 @@ function onSuccess(correction) {
 function onError(jqXHR) {
     $('#correction').html('<div class="alert alert-danger">' + jqXHR.responseJSON + '</div>');
     $('#testButton').prop('disabled', false);
+}
+
+function testTheSolution(theUrl) {
+    $('#testButton').prop('disabled', true);
+    $.ajax({
+        type: 'PUT',
+        url: theUrl,
+        data: extractParameters(),
+        // FIXME: dataType: 'json' ?,
+        async: true,
+        success: onSuccess,
+        error: onError
+    });
 }
 
 function updatePreview() {

@@ -28,8 +28,9 @@ function updatePassword(theUrl) {
     let newPw1 = $('#new_pw1').val();
     let newPw2 = $('#new_pw2').val();
 
-    if (newPw1 !== newPw2)
+    if (newPw1 !== newPw2) {
         return;
+    }
 
     $('#changePwDiv').html('');
     $('#btn_pwChange').prop('disabled', true);
@@ -50,9 +51,9 @@ function updatePassword(theUrl) {
 function onPwChangeSuccess(response) {
     let changePwDiv = $('#changePwDiv');
     if (response.changed) {
-        changePwDiv.html('<div class="alert alert-success">Ihr Passwort wurde erfolgreich ge&auml;ndert.</div>')
+        changePwDiv.html('<div class="alert alert-success">Ihr Passwort wurde erfolgreich ge&auml;ndert.</div>');
     } else {
-        changePwDiv.html(`<div class="alert alert-danger">Es gab einen Fehler beim &Auml;ndern ihres Passwortes: ${response.reason}</div>`)
+        changePwDiv.html(`<div class="alert alert-danger">Es gab einen Fehler beim &Auml;ndern ihres Passwortes: ${response.reason}</div>`);
     }
     $('#btn_pwChange').prop('disabled', false);
 }

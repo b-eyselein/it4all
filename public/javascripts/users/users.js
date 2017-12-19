@@ -1,5 +1,5 @@
 function updateBtn(username) {
-    var sel = $('#sel' + username);
+    const sel = $('#sel' + username);
     $('#btn' + username).prop('disabled', sel.val() === sel.data('stdrol'));
 }
 
@@ -20,7 +20,7 @@ function updateRoles(changedUser, oldRole) {
 }
 
 function saveRole(username, roleChangeUrl) {
-    var sel = $('#sel' + username);
+    const sel = $('#sel' + username);
     $.ajax({
         type: 'PUT',
         url: roleChangeUrl,

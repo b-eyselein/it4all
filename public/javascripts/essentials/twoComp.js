@@ -19,9 +19,9 @@ function onAjaxSuccess(response) {
 
 function colorParent(parent, correct) {
     if (correct) {
-        parent.removeClass('has-error').addClass('has-success')
+        parent.removeClass('has-error').addClass('has-success');
     } else {
-        parent.removeClass('has-success').addClass('has-error')
+        parent.removeClass('has-success').addClass('has-error');
     }
 }
 
