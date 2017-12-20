@@ -12,7 +12,7 @@ object EbnfToolObject extends IdExToolObject {
   override val hasTags  : Boolean   = false
   override val toolname : String    = "Ebnf"
   override val exType   : String    = "ebnf"
-  override val toolState: ToolState = ToolState.ALPHA
+  override val toolState: ToolState = ToolState.BETA
   override val consts   : Consts    = EbnfConsts
 
   override def indexCall: Call = routes.EbnfController.index()

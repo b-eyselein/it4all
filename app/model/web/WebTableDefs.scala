@@ -20,11 +20,8 @@ case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTa
 
   override def tags: List[WebExTag] = List(new WebExTag(HTML_TYPE, ex.hasHtmlPart), new WebExTag(JS_TYPE, ex.hasJsPart))
 
-  override def renderListRest: Html = new Html(
-    s"""<td>${htmlTasks.size} / ${jsTasks.size}</td>
-       |<td>ToDo / ToDo</td>""".stripMargin)
-
   override def exerciseRoutes: Map[Call, String] = WebToolObject.exerciseRoutes(this)
+
 }
 
 trait WebCompleteTask {

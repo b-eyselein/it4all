@@ -58,11 +58,11 @@ abstract class AIdExController[E <: Exercise, R <: EvaluationResult, CompResult 
 
   def exercise(id: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
-      futureCompleteExById(id) map {
+      futureCompleteExById(id) flatMap {
         case Some(exercise) =>
           log(user, ExerciseStartEvent(request, id))
-          Ok(renderExercise(user, exercise))
-        case None           => Redirect(controllers.routes.Application.index())
+          renderExercise(user, exercise) map (rendered => Ok(rendered))
+        case None           => Future(Redirect(controllers.routes.Application.index()))
       }
   }
 
@@ -75,7 +75,7 @@ abstract class AIdExController[E <: Exercise, R <: EvaluationResult, CompResult 
 
   protected def correctEx(user: User, sol: SolType, exercise: CompEx): Try[CompResult]
 
-  protected def renderExercise(user: User, exercise: CompEx): Html
+  protected def renderExercise(user: User, exercise: CompEx): Future[Html]
 
   protected def renderResult(correctionResult: CompResult): Html
 

@@ -21,10 +21,8 @@
     <div class="col-md-2"><code>@model.ebnf.EbnfExercise.StartSymbol</code></div>
     <div class="col-md-2"><b>Terminalsymbole:</b></div>
     <div class="col-md-2">@Html(exercise.ex.terminals map (t => s"<code>$t</code>") mkString ", ")</div>
+</div>
+<div class="row">
     <div class="col-md-2"><b>Testdaten:</b></div>
-    <div class="col-md-2">
-    @for(pos <- exercise.testdata) {
-        <p><code>@pos.testData</code></p>
-    }
-    </div>
+    <div class="col-md-10">@Html(exercise.testdata map (td => "<code>" + td.testData + "</code>") mkString ", ")</div>
 </div>

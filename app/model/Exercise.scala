@@ -56,8 +56,6 @@ trait CompleteEx[E <: Exercise] extends HasBaseValues {
 
   def tags: Seq[ExTag] = List.empty
 
-  def renderListRest: Html
-
   def exType: String = ""
 
   def exerciseRoutes: Map[Call, String]

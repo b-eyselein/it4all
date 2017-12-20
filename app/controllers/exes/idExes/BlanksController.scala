@@ -66,7 +66,7 @@ class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
 
   //  override protected def renderExesListRest: Html = new Html("")
 
-  override def renderExercise(user: User, exercise: BlanksExercise): Html = ???
+  override def renderExercise(user: User, exercise: BlanksExercise): Future[Html] = ???
 
   override def renderResult(correctionResult: GenericCompleteResult[EvaluationResult]): Html = ???
 

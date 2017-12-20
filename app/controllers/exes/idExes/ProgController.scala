@@ -114,7 +114,7 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   // Views
 
-  override def renderExercise(user: User, exercise: ProgCompleteEx): Html = {
+  override def renderExercise(user: User, exercise: ProgCompleteEx): Future[Html] = Future {
     val declaration = ProgLanguage.STANDARD_LANG.buildFunction(exercise.ex.functionName, exercise.ex.inputCount)
 
     views.html.core.exercise2Rows.render(user, ProgToolObject, EX_OPTIONS, exercise.ex, progExRest(exercise.ex), declaration)

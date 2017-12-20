@@ -30,8 +30,6 @@ case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping], solution: U
     } mkString ","
   }
 
-  override def renderListRest = new Html("") // ???
-
   override def exerciseRoutes: Map[Call, String] = UmlToolObject.exerciseRoutes(this)
 
 }

@@ -5,6 +5,7 @@ import model.Enums.ExerciseState
 import model._
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.mvc.Call
+import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
 case class MindmapExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState) extends Exercise with FileCompleteEx[MindmapExercise] {
@@ -15,9 +16,7 @@ case class MindmapExercise(i: Int, ti: String, a: String, te: String, s: Exercis
 
   override val ex: MindmapExercise = this
 
-  override def preview = ???
-
-  override def renderListRest = ???
+  override def preview: Html = ???
 
   override def templateFilename: String = ???
 

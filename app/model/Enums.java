@@ -1,7 +1,6 @@
 package model;
 
 import play.twirl.api.Html;
-import scala.None$;
 import scala.Option;
 import scala.Some;
 

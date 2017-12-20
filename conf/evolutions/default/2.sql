@@ -85,6 +85,8 @@ DELETE IGNORE FROM prog_exercises;
 
 # Ebnf
 
+DELETE IGNORE FROM ebnf_solutions;
+
 DELETE IGNORE FROM ebnf_testdata;
 
 DELETE IGNORE FROM ebnf_exercises;

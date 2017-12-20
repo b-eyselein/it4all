@@ -11,15 +11,14 @@ import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.json.{JsObject, JsValue}
 import play.api.mvc.{AnyContent, ControllerComponents, Request}
 import play.twirl.api.Html
-import views.html.ebnf._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
-import scala.util.{Failure, Try}
+import scala.util.Try
 
 @Singleton
 class EbnfController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends AIdExController[EbnfExercise, EbnfResult, GenericCompleteResult[EbnfResult]](cc, dbcp, r, EbnfToolObject) with JsonFormat {
+  extends AIdExController[EbnfExercise, EbnfTestdataMatchingResult, EbnfCompleteResult](cc, dbcp, r, EbnfToolObject) with JsonFormat {
 
   // Reading solution from requests
 
@@ -37,7 +36,7 @@ class EbnfController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
     val maybeRules = jsObj.arrayField("rules", readRuleFromJsValue) map (_.toMap)
 
     (maybeTerminals zip maybeVariables zip maybeStartSymbol zip maybeRules).headOption map {
-      case (((terminals, variables), startSymbol), rules) => Grammar(terminals, variables, startSymbol, rules)
+      case (((terminals, variables), startSymbol), rules) => Grammar(terminals, variables, startSymbol, RulesList(rules))
     }
   }
 
@@ -68,13 +67,14 @@ class EbnfController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   // Correction
 
-  override def correctEx(user: User, grammar: Grammar, exercise: EbnfCompleteExercise): Try[GenericCompleteResult[EbnfResult]] = {
-    // FIXME: implement!
-    val derived = grammar.deriveAll
+  override def correctEx(user: User, grammar: Grammar, exercise: EbnfCompleteExercise): Try[EbnfCompleteResult] = Try {
+    repo.saveEbnfSolution(user, exercise, grammar.rulesList)
 
-    println(derived)
+    val derived = grammar.deriveAll map (EbnfTestData(-1, _))
 
-    Failure(new Exception("Not yet implemented..."))
+    val evalResult = EbnfCorrector.doMatch(derived, exercise.testdata)
+
+    EbnfCompleteResult(grammar, evalResult)
   }
 
   // Views
@@ -86,10 +86,9 @@ class EbnfController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
         |         value="${exercise map (_.ex.joinedTerminals) getOrElse ""}" required>
         |</div>""".stripMargin)
 
-  override def renderExercise(user: User, exercise: EbnfCompleteExercise): Html = ebnfExercise(user, exercise.ex)
+  override def renderExercise(user: User, exercise: EbnfCompleteExercise): Future[Html] =
+    repo.readEbnfSolution(user.username, exercise.id) map (maybeSolution => views.html.ebnf.ebnfExercise(user, exercise.ex, maybeSolution.map(_.solution)))
 
-  override def renderResult(correctionResult: GenericCompleteResult[EbnfResult]): Html = new Html("") //ebnfResult(correctionResult)
-
-  //  override def renderExesListRest: Html = new Html("")
+  override def renderResult(correctionResult: EbnfCompleteResult): Html = correctionResult.result.describe
 
 }

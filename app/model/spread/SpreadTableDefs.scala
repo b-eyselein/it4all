@@ -27,11 +27,6 @@ case class SpreadExercise(override val baseValues: BaseValues, sampleFilename: S
 
   override def preview: Html = views.html.spread.spreadPreview.render(this)
 
-  //    s"""<td>$sampleFilename</td>
-  //       |<td>$templateFilename</td>""".stripMargin)
-
-  override def renderListRest: Html = ???
-
   override def exerciseRoutes: Map[Call, String] = SpreadToolObject.exerciseRoutes(this)
 
 }

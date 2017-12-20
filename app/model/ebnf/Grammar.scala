@@ -20,9 +20,22 @@ object Grammar {
 
   val MaxDeriveDepth = 10
 
+  def rulesListFromDbString(string: String): RulesList = RulesList(string.split("\n") map {
+    ruleStr =>
+      val varAndRepl = ruleStr.split(" -> ")
+      (Variable(varAndRepl(0)), RuleParser.parseRules(varAndRepl(1)))
+  } toMap)
+
 }
 
-case class Grammar(terminals: Seq[Terminal], variables: Seq[Variable], startSymbol: Variable, rules: Map[Variable, Replacement]) {
+
+case class RulesList(rules: Map[Variable, Replacement]) {
+
+  def toDbString: String = rules.map(rule => rule._1 + " -> " + rule._2) mkString "\n"
+
+}
+
+case class Grammar(terminals: Seq[Terminal], variables: Seq[Variable], startSymbol: Variable, rulesList: RulesList) {
 
   def deriveAll: Seq[String] = deriveNew(Nil, Seq(VariableReplacement(startSymbol)), 0)
 
@@ -35,7 +48,7 @@ case class Grammar(terminals: Seq[Terminal], variables: Seq[Variable], startSymb
         case tr: TerminalReplacement => deriveNew(prefix :+ tr, tail, depth)
         // case other: replacement can still be done
         case other =>
-          val replacedWith: Seq[Seq[Replacement]] = other.getReplacements(rules)
+          val replacedWith: Seq[Seq[Replacement]] = other.getReplacements(rulesList.rules)
           replacedWith flatMap (repl => deriveNew(prefix, repl ++ tail, depth + 1)) filter (_.nonEmpty)
       }
     }

@@ -27,10 +27,23 @@ CREATE TABLE IF NOT EXISTS ebnf_exercises (
 CREATE TABLE IF NOT EXISTS ebnf_testdata (
   exercise_id INT,
   test_data   VARCHAR(20),
-  is_positive BOOLEAN,
 
   PRIMARY KEY (exercise_id, test_data),
   FOREIGN KEY (exercise_id) REFERENCES ebnf_exercises (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS ebnf_solutions (
+  exercise_id INT,
+  username    VARCHAR(50),
+  solution    TEXT,
+
+  PRIMARY KEY (exercise_id, username),
+  FOREIGN KEY (exercise_id) REFERENCES ebnf_exercises (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
+  FOREIGN KEY (username) REFERENCES users (username)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
@@ -499,6 +512,8 @@ DROP TABLE IF EXISTS prog_samples;
 DROP TABLE IF EXISTS prog_exercises;
 
 # Ebnf
+
+DROP TABLE IF EXISTS ebnf_solutions;
 
 DROP TABLE IF EXISTS ebnf_testdata;
 

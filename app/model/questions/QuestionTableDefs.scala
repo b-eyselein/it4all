@@ -58,8 +58,6 @@ case class CompleteQuestion(ex: Question, answers: Seq[Answer]) extends Complete
     s"""<div class="col-md-2">${answer.correctness.name}</div>
        |<div class="col-md-10">${answer.text} </div>""".stripMargin
 
-  override def renderListRest: Html = ???
-
   override def exerciseRoutes: Map[Call, String] = ???
 
 }

@@ -4,10 +4,6 @@ const variablePattern = /\b(?!')\w+(?!')\b/g;
 
 const ruleInputsSelector = 'input[name^="rule"]';
 
-function changeStartSymbol() {
-    $('#rule1Variable').html($('#start').val())
-}
-
 function checkAndCreateRuleInputs(variables) {
     // Disable all inputs
     $(ruleInputsSelector).prop('disabled', true);
@@ -19,7 +15,7 @@ function checkAndCreateRuleInputs(variables) {
             // Input does not exist, needs to be created
             $('#rulesList').append(
                 `<div class="form-group">
-                   <label class="control-label col-sm-2" for="rule_${v}"><span id="rule1Variable">${v}</span> =</label>
+                   <label class="control-label col-sm-2" for="rule_${v}">${v} = </label>
                    <div class="col-sm-10">
                      <input class="form-control" id="rule_${v}" name="rule[${v}]" data-variable="${v}" onchange="updateVars()" required placeholder="Ersetzung f&uuml;r ${v}">
                    </div>
@@ -50,6 +46,7 @@ function updateVars() {
 function onAjaxSuccess(response) {
     console.log(response);
     $('#submitBtn').prop('disable', false);
+    $('#solutionDiv').html(response);
 }
 
 function onAjaxError(jqXHR) {
@@ -62,7 +59,7 @@ function testSol(theUrl) {
         terminals: $('#terminals').val().split(", "),
         variables: $('#variables').val().split(", "),
         startSymbol: $('#start').val(),
-        rules: $(ruleInputsSelector).map((index, elem) => {
+        rules: $(ruleInputsSelector).filter((index, elem) => elem.value !== "").map((index, elem) => {
             return {
                 symbol: elem.dataset.variable,
                 rule: elem.value
@@ -72,7 +69,7 @@ function testSol(theUrl) {
 
     $.ajax({
         type: 'PUT',
-        dataType: 'json',
+        // dataType: 'json',
         contentType: 'application/json',
         url: theUrl,
         data: JSON.stringify(grammar),

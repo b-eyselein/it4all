@@ -27,9 +27,7 @@ case class BlanksExercise(i: Int, ti: String, a: String, te: String, s: Exercise
 
   def render = new Html(objects.map(_.render) mkString "\n")
 
-  override def preview = ???
-
-  override def renderListRest = ???
+  override def preview: Html = ???
 
   override def exerciseRoutes: Map[Call, String] = BlanksToolObject.exerciseRoutes(this)
 }

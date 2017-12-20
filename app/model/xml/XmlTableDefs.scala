@@ -7,6 +7,8 @@ import model.xml.XmlEnums.XmlExType
 import play.api.mvc.Call
 import play.twirl.api.Html
 
+import scala.concurrent.Future
+
 object XmlExercise {
 
   def tupled(t: (Int, String, String, String, ExerciseState, XmlExType, String, String)): XmlExercise = XmlExercise(t._1, t._2, t._3, t._4, t._5, t._6, t._7, t._8)
@@ -31,14 +33,11 @@ case class XmlExercise(override val baseValues: BaseValues, exerciseType: XmlExT
 
   override val preview: Html = views.html.xml.xmlPreview.render(this)
 
-  // TODO: implement?
-  override def renderListRest: Html = new Html(
-    s"""<td>$exerciseType</td>
-       |<td>$rootNode</td>
-       |<td>TODO!</td>""".stripMargin)
-
   override def exerciseRoutes: Map[Call, String] = XmlToolObject.exerciseRoutes(this)
+
 }
+
+case class XmlSolution(exerciseId: Int, username: String, solution: String)
 
 trait XmlTableDefs extends TableDefs {
   self: play.api.db.slick.HasDatabaseConfigProvider[slick.jdbc.JdbcProfile] =>
@@ -47,8 +46,15 @@ trait XmlTableDefs extends TableDefs {
 
   val xmlExercises = TableQuery[XmlExerciseTable]
 
+  lazy val xmlSolutions = TableQuery[XmlSolutionsTable]
+
   implicit val XmlExColumnType: BaseColumnType[XmlExType] =
     MappedColumnType.base[XmlExType, String](_.toString, str => XmlExType.byString(str) getOrElse XmlExType.XML_DTD)
+
+  // Reading
+
+  def readXmlSolution(username: String, exerciseId: Int): Future[Option[XmlSolution]] =
+    db.run(xmlSolutions.filter(sol => sol.exerciseId === exerciseId && sol.username === username).result.headOption)
 
   class XmlExerciseTable(tag: Tag) extends HasBaseValuesTable[XmlExercise](tag, "xml_exercises") {
 
@@ -59,6 +65,26 @@ trait XmlTableDefs extends TableDefs {
     def refFileContent = column[String]("ref_file_content")
 
     def * = (id, title, author, text, state, exerciseType, rootNode, refFileContent) <> (XmlExercise.tupled, XmlExercise.unapply)
+  }
+
+  class XmlSolutionsTable(tag: Tag) extends Table[XmlSolution](tag, "xml_solutions") {
+
+    def exerciseId = column[Int]("exercise_id")
+
+    def username = column[String]("username")
+
+    def solution = column[String]("solution")
+
+
+    def pk = primaryKey("pk", (exerciseId, username))
+
+    def exerciseFk = foreignKey("exercise_fk", exerciseId, xmlExercises)(_.id)
+
+    def userFk = foreignKey("user_fk", username, users)(_.username)
+
+
+    def * = (exerciseId, username, solution) <> (XmlSolution.tupled, XmlSolution.unapply)
+
   }
 
 }

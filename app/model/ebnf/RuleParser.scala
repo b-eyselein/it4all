@@ -26,10 +26,11 @@ object RuleParser extends scala.util.parsing.combinator.JavaTokenParsers {
 
   private lazy val terminalsymbol: Parser[Replacement] = "'" ~ "\\w+".r ~ "'" ^^ { terminal => TerminalReplacement(Terminal(terminal._1._2)) }
 
-  def parseRules(repl: String): Replacement = parseAll(sequence, repl) match {
+  def parseRules(toParse: String): Replacement = parseAll(sequence, toParse) match {
     case Success(result, _) => result
     case Failure(msg, _)    => throw new Exception("Fataler Fehler beim Parsen: " + msg)
     case Error(msg, _)      => throw new Exception("Fehler beim Parsen: " + msg)
   }
+
 
 }

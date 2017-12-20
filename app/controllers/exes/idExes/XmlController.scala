@@ -10,13 +10,13 @@ import model.core.CommonUtils.RicherTry
 import model.core._
 import model.core.tools.ExerciseOptions
 import model.xml.XmlConsts._
+import model.xml.XmlEnums._
 import model.xml._
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.mvc.{AnyContent, ControllerComponents, EssentialAction, Request}
 import play.twirl.api.{Html, HtmlFormat}
 import views.html.xml._
-import model.xml.XmlEnums._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
@@ -108,8 +108,8 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
     case results => results map (_.render) mkString "\n"
   })
 
-  override def renderExercise(user: User, exercise: XmlExercise): Html = views.html.core.exercise2Rows(
-    user, XmlToolObject, exOptions, exercise.ex, renderExRest(exercise.ex), readDefOrOldSolution(user.username, exercise.ex))
+  override def renderExercise(user: User, exercise: XmlExercise): Future[Html] = readDefOrOldSolution(user.username, exercise.ex) map (sol =>
+    views.html.core.exercise2Rows(user, XmlToolObject, exOptions, exercise.ex, renderExRest(exercise.ex), sol))
 
   def renderExRest(exercise: XmlExercise) = new Html(
     s"""<section id="refFileSection">
@@ -118,8 +118,10 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // Own functions
 
-  // FIXME: read old xml solution from db!
-  private def readDefOrOldSolution(username: String, exercise: XmlExercise): String =
-    readAll(toolObject.solutionDirForExercise(username, exercise) / s"${exercise.rootNode}.${exercise.exerciseType.studFileEnding}").getOrElse(exercise.fixedStart)
+  private def readDefOrOldSolution(username: String, exercise: XmlExercise): Future[String] =
+    repo.readXmlSolution(username, exercise.id).map(_.map(_.solution) getOrElse exercise.fixedStart)
+
+  //    readAll(toolObject.solutionDirForExercise(username, exercise) / s"${exercise.rootNode}.${exercise.exerciseType.studFileEnding}").getOrElse(exercise.fixedStart)
+
 
 }

@@ -54,8 +54,6 @@ case class SqlCompleteEx(ex: SqlExercise, samples: Seq[SqlSample]) extends Compl
        |${samples map (sample => s"<pre>${sample.sample}</pre>") mkString}""".stripMargin)
 
 
-  override def renderListRest: Html = ???
-
   override def exerciseRoutes: Map[Call, String] = ???
 
 }
