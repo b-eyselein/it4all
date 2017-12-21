@@ -4,7 +4,7 @@ import java.nio.file.Path
 import javax.inject._
 
 import controllers.Secured
-import SpreadController._
+import controllers.exes.fileExes.SpreadController._
 import model.User
 import model.core._
 import model.spread._
@@ -25,7 +25,7 @@ object SpreadController {
 
 @Singleton
 class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends AFileExController[SpreadExercise, SpreadSheetCorrectionResult](cc, dbcp, r, SpreadToolObject) with Secured {
+  extends AFileExController[SpreadExercise, SpreadSheetCorrectionResult, GenericCompleteResult[SpreadSheetCorrectionResult]](cc, dbcp, r, SpreadToolObject) with Secured {
 
   // Reading solution from requests
 

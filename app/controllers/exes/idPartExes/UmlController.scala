@@ -27,6 +27,12 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   override def partTypeFromString(str: String): Option[UmlExPart] = UmlExPart.byString(str)
 
+  case class UmlExIdentifier(id: Int, part: UmlExPart) extends IdPartExIdentifier
+
+  override type ExIdentifier = UmlExIdentifier
+
+  override def identifier(id: Int, part: String): UmlExIdentifier = UmlExIdentifier(id, partTypeFromString(part) getOrElse UmlExPart.CLASS_SELECTION)
+
   override type SolType = UmlSolution
 
   override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[UmlSolution] =
@@ -76,7 +82,7 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // Correction
 
-  override def correctEx(user: User, sol: UmlSolution, exercise: UmlCompleteEx, part: UmlExPart): Try[UmlResult] = Try(part match {
+  override def correctEx(user: User, sol: UmlSolution, exercise: UmlCompleteEx, identifier: UmlExIdentifier): Try[UmlResult] = Try(identifier.part match {
     case CLASS_SELECTION   => ClassSelectionResult(exercise, sol)
     case DIAG_DRAWING_HELP => DiagramDrawingHelpResult(exercise, sol)
     case ALLOCATION        => AllocationResult(exercise, sol)

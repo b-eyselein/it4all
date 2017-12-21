@@ -91,6 +91,12 @@ DELETE IGNORE FROM ebnf_testdata;
 
 DELETE IGNORE FROM ebnf_exercises;
 
+# Blanks
+
+DELETE IGNORE FROM blanks_samples;
+
+DELETE IGNORE FROM blanks_exercises;
+
 # General
 
 DELETE IGNORE FROM courses;

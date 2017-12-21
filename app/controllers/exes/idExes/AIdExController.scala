@@ -3,18 +3,17 @@ package controllers.exes.idExes
 import java.nio.file.{Files, Path}
 
 import controllers.Secured
-import controllers.exes.BaseExerciseController
+import controllers.exes.{BaseExerciseController, IntExIdentifier}
 import model.core._
 import model.core.tools.ExToolObject
 import model.{Exercise, HasBaseValues, User}
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.http.Writeable
 import play.api.libs.json.Json
 import play.api.mvc._
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success, Try}
+import scala.util.Try
 
 trait IdExToolObject extends ExToolObject {
 
@@ -30,31 +29,19 @@ trait IdExToolObject extends ExToolObject {
 
 abstract class AIdExController[E <: Exercise, R <: EvaluationResult, CompResult <: CompleteResult[R]]
 (cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository, to: IdExToolObject)(implicit ec: ExecutionContext)
-  extends BaseExerciseController[E](cc, dbcp, r, to) with Secured {
+  extends BaseExerciseController[E, R, CompResult](cc, dbcp, r, to) with Secured {
+
+  override type ExIdentifier = IntExIdentifier
 
   def correct(id: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
-      correctAbstract(user, id, readSolutionFromPostRequest, renderCorrectionResult(user, _),
-        error => views.html.main.render("Fehler", user, new Html(""), new Html(s"<pre>${error.getMessage}:\n${error.getStackTrace mkString "\n"}</pre>")))
+      correctAbstract(user, IntExIdentifier(id), readSolutionFromPostRequest, res => Ok(renderCorrectionResult(user, res)),
+        error => BadRequest(views.html.main.render("Fehler", user, new Html(""), new Html(s"<pre>${error.getMessage}:\n${error.getStackTrace mkString "\n"}</pre>"))))
   }
 
   def correctLive(id: Int): EssentialAction = futureWithUser { user =>
-    implicit request => correctAbstract(user, id, readSolutionFromPutRequest, renderResult, error => Json.obj("message" -> error.getMessage))
+    implicit request => correctAbstract(user, IntExIdentifier(id), readSolutionFromPutRequest, onLiveCorrectionSuccess, error => BadRequest(Json.obj("message" -> error.getMessage)))
   }
-
-  private def correctAbstract[S, Err](user: User, id: Int, maybeSolution: Option[SolType],
-                                      onCorrectionSuccess: CompResult => S, onCorrectionError: Throwable => Err)
-                                     (implicit successWriteable: Writeable[S], errorWriteable: Writeable[Err], request: Request[AnyContent]): Future[Result] =
-    maybeSolution match {
-      case None           => Future(BadRequest("No solution!"))
-      case Some(solution) => futureCompleteExById(id) map {
-        case None           => NotFound("No such exercise!")
-        case Some(exercise) => correctEx(user, solution, exercise) match {
-          case Success(result) => Ok(onCorrectionSuccess(result))
-          case Failure(error)  => BadRequest(onCorrectionError(error))
-        }
-      }
-    }
 
   def exercise(id: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
@@ -73,10 +60,10 @@ abstract class AIdExController[E <: Exercise, R <: EvaluationResult, CompResult 
   protected def renderCorrectionResult(user: User, correctionResult: CompResult): Html =
     views.html.core.correction.render(correctionResult, renderResult(correctionResult), user, toolObject)
 
-  protected def correctEx(user: User, sol: SolType, exercise: CompEx): Try[CompResult]
-
   protected def renderExercise(user: User, exercise: CompEx): Future[Html]
 
   protected def renderResult(correctionResult: CompResult): Html
+
+  protected def onLiveCorrectionSuccess(correctionResult: CompResult): Result
 
 }

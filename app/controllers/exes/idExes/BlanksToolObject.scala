@@ -1,13 +1,13 @@
 package controllers.exes.idExes
 
 import model.Enums.ToolState
-import model.blanks.{BlanksConsts, BlanksExercise}
+import model.blanks.{BlanksCompleteExercise, BlanksConsts}
 import model.{Consts, HasBaseValues}
 import play.api.mvc.Call
 
 object BlanksToolObject extends IdExToolObject {
 
-  override type CompEx = BlanksExercise
+  override type CompEx = BlanksCompleteExercise
 
   override val hasTags  : Boolean   = false
   override val toolname : String    = "Lückentext"

@@ -4,6 +4,7 @@ import java.nio.file._
 import javax.inject._
 
 import controllers.Secured
+import controllers.exes.IntExIdentifier
 import controllers.exes.idExes.XmlController._
 import model.User
 import model.core.CommonUtils.RicherTry
@@ -14,7 +15,7 @@ import model.xml.XmlEnums._
 import model.xml._
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.mvc.{AnyContent, ControllerComponents, EssentialAction, Request}
+import play.api.mvc._
 import play.twirl.api.{Html, HtmlFormat}
 import views.html.xml._
 
@@ -77,7 +78,7 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // Correction
 
-  override protected def correctEx(user: User, sol: String, completeEx: XmlExercise): Try[GenericCompleteResult[XmlError]] =
+  override protected def correctEx(user: User, sol: String, completeEx: XmlExercise, identifier: IntExIdentifier): Try[GenericCompleteResult[XmlError]] =
     checkAndCreateSolDir(user.username, completeEx) flatMap (dir => {
       val (grammarTry: Try[Path], xmlTry: Try[Path]) =
         if (completeEx.exerciseType == XmlExType.DTD_XML || completeEx.exerciseType == XmlExType.XSD_XML) {
@@ -111,6 +112,8 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   override def renderExercise(user: User, exercise: XmlExercise): Future[Html] = readDefOrOldSolution(user.username, exercise.ex) map (sol =>
     views.html.core.exercise2Rows(user, XmlToolObject, exOptions, exercise.ex, renderExRest(exercise.ex), sol))
 
+  override protected def onLiveCorrectionSuccess(correctionResult: GenericCompleteResult[XmlError]): Result = Ok(renderResult(correctionResult))
+
   def renderExRest(exercise: XmlExercise) = new Html(
     s"""<section id="refFileSection">
        |  <pre>${HtmlFormat.escape(exercise.refFileContent)}</pre>
@@ -120,8 +123,5 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   private def readDefOrOldSolution(username: String, exercise: XmlExercise): Future[String] =
     repo.readXmlSolution(username, exercise.id).map(_.map(_.solution) getOrElse exercise.fixedStart)
-
-  //    readAll(toolObject.solutionDirForExercise(username, exercise) / s"${exercise.rootNode}.${exercise.exerciseType.studFileEnding}").getOrElse(exercise.fixedStart)
-
 
 }

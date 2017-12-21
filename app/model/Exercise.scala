@@ -38,6 +38,12 @@ trait ExTag {
 
 }
 
+trait ExerciseIdentifier {
+
+  val id: Int
+
+}
+
 trait Exercise extends HasBaseValues
 
 trait ExerciseInCollection extends Exercise {

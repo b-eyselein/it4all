@@ -18,7 +18,7 @@ import scala.util.Try
 
 @Singleton
 class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends AFileExController[MindmapExercise, EvaluationResult](cc, dbcp, r, MindMapToolObject) with Secured {
+  extends AFileExController[MindmapExercise, EvaluationResult, GenericCompleteResult[EvaluationResult]](cc, dbcp, r, MindMapToolObject) with Secured {
 
   // Reading solution from requests
 

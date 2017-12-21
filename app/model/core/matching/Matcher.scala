@@ -34,7 +34,8 @@ trait MatchingResult[T, M <: Match[T]] extends EvaluationResult {
       val message =
         s"""<h4><span class="${success.glyphicon}"></span> Die Korrektur der $matchName ergab folgendes Ergebnis:</h4>""" +
           (groupedMatches get SUCCESSFUL_MATCH map describeCorrectMatches getOrElse "") +
-          (groupedMatches get UNSUCCESSFUL_MATCH map describePartialMatches getOrElse "") +
+          (groupedMatches get PARTIAL_MATCH map describePartialMatches getOrElse "") +
+          (groupedMatches get UNSUCCESSFUL_MATCH map describeUnsuccessfulMatches getOrElse "") +
           (groupedMatches get ONLY_SAMPLE map describeOnlySampleMatches getOrElse "") +
           (groupedMatches get ONLY_USER map describeOnlyUserMatches getOrElse "") + "<hr>"
 
@@ -51,6 +52,11 @@ trait MatchingResult[T, M <: Match[T]] extends EvaluationResult {
   protected def describePartialMatches(colMatches: Seq[M]): String = colMatches match {
     case Nil => ""
     case ms  => describeMatches(s"Bei folgenden $matchName war die Korrektur nicht komplett erfolgreich:", ms, "alert alert-warning")
+  }
+
+  protected def describeUnsuccessfulMatches(colMatches: Seq[M]): String = colMatches match {
+    case Nil => ""
+    case ms  => describeMatches(s"Bei folgenden $matchName war die Korrektur nicht erfolgreich:", ms, "alert alert-danger")
   }
 
   protected def describeOnlySampleMatches(matches: Seq[M]): String = matches match {

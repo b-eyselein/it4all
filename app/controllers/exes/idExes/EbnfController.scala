@@ -2,6 +2,7 @@ package controllers.exes.idExes
 
 import javax.inject._
 
+import controllers.exes.IntExIdentifier
 import model.core._
 import model.ebnf.EbnfConsts._
 import model.ebnf._
@@ -9,7 +10,7 @@ import model.{JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.json.{JsObject, JsValue}
-import play.api.mvc.{AnyContent, ControllerComponents, Request}
+import play.api.mvc.{AnyContent, ControllerComponents, Request, Result}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -67,7 +68,7 @@ class EbnfController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   // Correction
 
-  override def correctEx(user: User, grammar: Grammar, exercise: EbnfCompleteExercise): Try[EbnfCompleteResult] = Try {
+  override def correctEx(user: User, grammar: Grammar, exercise: EbnfCompleteExercise, identifier: IntExIdentifier): Try[EbnfCompleteResult] = Try {
     repo.saveEbnfSolution(user, exercise, grammar.rulesList)
 
     val derived = grammar.deriveAll map (EbnfTestData(-1, _))
@@ -90,5 +91,7 @@ class EbnfController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
     repo.readEbnfSolution(user.username, exercise.id) map (maybeSolution => views.html.ebnf.ebnfExercise(user, exercise.ex, maybeSolution.map(_.solution)))
 
   override def renderResult(correctionResult: EbnfCompleteResult): Html = correctionResult.result.describe
+
+  override protected def onLiveCorrectionSuccess(correctionResult: EbnfCompleteResult): Result = Ok(renderResult(correctionResult))
 
 }

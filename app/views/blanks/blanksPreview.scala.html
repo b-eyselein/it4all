@@ -1,0 +1,29 @@
+@(exercise: model.blanks.BlanksCompleteExercise)
+
+<!-- TODO: implement... -->
+
+<div class="row">
+    <div class="col-md-2"><b>ID:</b></div>
+    <div class="col-md-2">@exercise.id</div>
+
+    <div class="col-md-2"><b>Titel:</b></div>
+    <div class="col-md-2">@exercise.title</div>
+
+    <div class="col-md-2"><b>Autor:</b></div>
+    <div class="col-md-2">@exercise.author</div>
+</div>
+
+<div class="row">
+    <div class="col-md-2"><b>Text:</b></div>
+    <div class="col-md-10">@exercise.text</div>
+</div>
+
+<div class="row">
+    <div class="col-md-2"><b>L&uuml;ckentext:</b></div>
+    <div class="col-md-10">@exercise.ex.blanksText</div>
+</div>
+
+<div class="row">
+    <div class="col-md-2"><b>L&ouml;sungen</b></div>
+    <div class="col-md-10"><ul>@Html(exercise.samples.map(samp => "<li>" + samp.id + " &rarr; " + samp.solution + "</li>").mkString)</ul></div>
+</div>

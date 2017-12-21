@@ -7,7 +7,7 @@ import controllers.Secured
 import model.core.CoreConsts._
 import model.core._
 import model.core.tools.ExToolObject
-import model.{CompleteEx, Exercise, User}
+import model.{CompleteEx, Exercise, ExerciseIdentifier, User}
 import net.jcazevedo.moultingyaml._
 import play.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
@@ -19,9 +19,11 @@ import views.html.admin._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
-import scala.util.{Failure, Success}
+import scala.util.{Failure, Success, Try}
 
-abstract class BaseExerciseController[Ex <: Exercise]
+case class IntExIdentifier(id: Int) extends ExerciseIdentifier
+
+abstract class BaseExerciseController[Ex <: Exercise, R <: EvaluationResult, CompResult <: CompleteResult[R]]
 (cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository, val toolObject: ExToolObject)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured with FileUtils {
 
@@ -40,6 +42,8 @@ abstract class BaseExerciseController[Ex <: Exercise]
   implicit val yamlFormat: YamlFormat[CompEx]
 
   // Database queries
+
+  type ExIdentifier <: ExerciseIdentifier
 
   import profile.api._
 
@@ -70,7 +74,9 @@ abstract class BaseExerciseController[Ex <: Exercise]
   def adminImportExercises: EssentialAction = futureWithAdmin { admin =>
     implicit request =>
       readAll(toolObject.resourcesFolder / (toolObject.exType + ".yaml")) match {
-        case Failure(e) => Future(BadRequest("TODO!"))
+        case Failure(e) =>
+          Logger.error("Import " + toolObject.exType + "-Aufgaben:", e)
+          Future(BadRequest("Es gab einen Fehler beim Import der Datei: " + e.getMessage))
         case Success(r) => saveAndPreviewExercises(admin, r.mkString.parseYamls map (_.convertTo[CompEx]))
       }
   }
@@ -195,6 +201,21 @@ abstract class BaseExerciseController[Ex <: Exercise]
   protected def renderExes(user: User, exes: Seq[CompEx], allExesSize: Int): Html =
     views.html.core.exesList(user, exes, renderExesListRest, toolObject, allExesSize / STEP + 1)
 
+  protected def correctAbstract[S, Err](user: User, identifier: ExIdentifier, maybeSolution: Option[SolType],
+                                        onCorrectionSuccess: CompResult => Result, onCorrectionError: Throwable => Result)
+                                       (implicit request: Request[AnyContent]): Future[Result] =
+    maybeSolution match {
+      case None           => Future(BadRequest("No solution!"))
+      case Some(solution) => futureCompleteExById(identifier.id) map {
+        case None           => NotFound("No such exercise!")
+        case Some(exercise) => correctEx(user, solution, exercise, identifier) match {
+          case Success(result) => onCorrectionSuccess(result)
+          case Failure(error)  => onCorrectionError(error)
+        }
+      }
+    }
+
+  protected def correctEx(user: User, sol: SolType, exercise: CompEx, identifier: ExIdentifier): Try[CompResult] = ???
 
   /**
     * Used for rendering things such as playgrounds

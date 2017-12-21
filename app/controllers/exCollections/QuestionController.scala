@@ -26,7 +26,11 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[String] = request.body.asJson flatMap (_.asStr)
 
-  override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[String] = ???
+  override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[String] = {
+    println(request.body.asFormUrlEncoded)
+
+    ???
+  }
 
   // Yaml
 
@@ -51,11 +55,6 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
   override protected def saveRead(read: Seq[CompColl]): Future[Seq[Boolean]] = Future.sequence(read map repo.saveQuiz)
 
   // Quizzes
-
-
-  //  override type SolType = StringSolution
-
-  //  override def solForm: Form[StringSolution] = ???
 
   //  override def correctPart(sol: StringSolution, question: Option[Question], part: String, user: User): Try[CompleteResult[EvaluationResult]]
   //  = ??? // FIXME: implement...

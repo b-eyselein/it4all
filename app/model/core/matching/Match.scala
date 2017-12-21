@@ -18,15 +18,19 @@ trait Match[T] {
     case (Some(ua), Some(sa)) => analyze(ua, sa)
   }
 
-  def getBSClass: String = if (matchType == SUCCESSFUL_MATCH) "success" else "warning"
+  def getBSClass: String = matchType match {
+    case SUCCESSFUL_MATCH => "success"
+    case PARTIAL_MATCH    => "warning"
+    case _                => "danger"
+  }
 
   def explanation: String = matchType match {
-    case FAILURE            => "Es ist ein Fehler aufgetreten."
-    case ONLY_USER          => "Angabe ist falsch!"
-    case ONLY_SAMPLE        => "Angabe fehlt!"
-    case UNSUCCESSFUL_MATCH => "Fehler beim Abgleich."
-    case SUCCESSFUL_MATCH   => "Korrekt."
-    case _                  => "FEHLER!"
+    case FAILURE                              => "Es ist ein Fehler aufgetreten."
+    case ONLY_USER                            => "Angabe ist falsch!"
+    case ONLY_SAMPLE                          => "Angabe fehlt!"
+    case (UNSUCCESSFUL_MATCH | PARTIAL_MATCH) => s"Fehler beim Abgleich. Erwartet wurde ${sampleArg map descArg getOrElse ""}"
+    case SUCCESSFUL_MATCH                     => "Korrekt."
+    case _                                    => "FEHLER!"
   }
 
   lazy val isSuccessful: Boolean = matchType == SUCCESSFUL_MATCH

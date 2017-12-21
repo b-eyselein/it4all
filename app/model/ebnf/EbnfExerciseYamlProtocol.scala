@@ -12,8 +12,7 @@ object EbnfExerciseYamlProtocol extends MyYamlProtocol {
 
     override protected def readRest(yamlObject: YamlObject, baseValues: BaseValues) = EbnfCompleteExercise(
       EbnfExercise(baseValues, yamlObject.arrayField("terminals", _.forgivingStr) flatten),
-      testdata = yamlObject.arrayField("testdata", _.asStr map (str => EbnfTestData(baseValues.id, str))) flatten
-    )
+      yamlObject.arrayField("testdata", _.asStr map (str => EbnfTestData(baseValues.id, str))) flatten)
 
     override protected def writeRest(completeEx: EbnfCompleteExercise): Map[YamlValue, YamlValue] = ???
 

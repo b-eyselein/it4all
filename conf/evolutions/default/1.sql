@@ -12,6 +12,29 @@ CREATE TABLE IF NOT EXISTS courses (
   course_name VARCHAR(50)
 );
 
+# Blanks
+
+CREATE TABLE IF NOT EXISTS blanks_exercises (
+  id          INT PRIMARY KEY,
+  title       VARCHAR(50),
+  author      VARCHAR(50),
+  ex_text     TEXT,
+  ex_state    ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+
+  blanks_text TEXT
+);
+
+CREATE TABLE IF NOT EXISTS blanks_samples (
+  id          INT,
+  exercise_id INT,
+  solution    VARCHAR(50),
+
+  PRIMARY KEY (id, exercise_id),
+  FOREIGN KEY (exercise_id) REFERENCES blanks_exercises (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
 # Ebnf
 
 CREATE TABLE IF NOT EXISTS ebnf_exercises (
@@ -518,6 +541,12 @@ DROP TABLE IF EXISTS ebnf_solutions;
 DROP TABLE IF EXISTS ebnf_testdata;
 
 DROP TABLE IF EXISTS ebnf_exercises;
+
+# Blanks
+
+DROP TABLE IF EXISTS blanks_samples;
+
+DROP TABLE IF EXISTS blanks_exercises;
 
 # General
 

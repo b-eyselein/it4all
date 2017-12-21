@@ -4,7 +4,7 @@ import java.nio.file.Path
 import java.sql.SQLSyntaxErrorException
 
 import controllers.Secured
-import controllers.exes.BaseExerciseController
+import controllers.exes.{BaseExerciseController, IntExIdentifier}
 import model._
 import model.core.CommonUtils.RicherTry
 import model.core._
@@ -34,9 +34,11 @@ trait FileExToolObject extends ExToolObject {
 
 }
 
-abstract class AFileExController[E <: Exercise, R <: EvaluationResult]
+abstract class AFileExController[E <: Exercise, R <: EvaluationResult, CompResult <: CompleteResult[R]]
 (cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository, to: FileExToolObject)(implicit ec: ExecutionContext)
-  extends BaseExerciseController[E](cc, dbcp, r, to) with Secured with FileUtils {
+  extends BaseExerciseController[E, R, CompResult](cc, dbcp, r, to) with Secured with FileUtils {
+
+  override type ExIdentifier = IntExIdentifier
 
   override type CompEx <: FileCompleteEx[E]
 
@@ -86,17 +88,14 @@ abstract class AFileExController[E <: Exercise, R <: EvaluationResult]
               val musterTry = copy(musterFileSourcePath, musterFileTargetPath)
 
               learnerTry zip musterTry match {
-                case Success((learnerFilePath, musterFilePath)) =>
-                  val result = correctEx(learnerFilePath, musterFilePath, fileExtension)
-                  Ok(renderResult(user, result, compEx, fileExtension))
-                case Failure(e)                                 =>
-                  BadRequest("There has been an error saving your file!")
+                case Failure(_)                                 => BadRequest("There has been an error saving your file!")
+                case Success((learnerFilePath, musterFilePath)) => Ok(renderResult(user, correctEx(learnerFilePath, musterFilePath, fileExtension), compEx, fileExtension))
               }
           }
       }
   }
 
-  def downloadTemplate(id: Int, fileExtension: String): EssentialAction = futureWithUser { user =>
+  def downloadTemplate(id: Int, fileExtension: String): EssentialAction = futureWithUser { _ =>
     implicit request =>
       futureCompleteExById(id) map {
         case Some(exercise) => Ok.sendFile(exercise.templateFilePath(fileExtension).toFile)

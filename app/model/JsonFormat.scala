@@ -34,6 +34,11 @@ trait JsonFormat {
       case _             => None
     }
 
+    def asArray[T](func: JsValue => T): Option[Seq[T]] = jsValue match {
+      case JsArray(values) => Some(values map func)
+      case _               => None
+    }
+
   }
 
   implicit class PimpedJsObject(jsObject: JsObject) {

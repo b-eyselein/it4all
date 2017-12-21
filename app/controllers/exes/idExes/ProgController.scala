@@ -3,6 +3,7 @@ package controllers.exes.idExes
 import javax.inject._
 
 import controllers.Secured
+import controllers.exes.IntExIdentifier
 import controllers.exes.idExes.ProgController._
 import model.Enums.ExerciseState
 import model.core._
@@ -102,7 +103,7 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   // Correction
 
-  override def correctEx(user: User, sol: String, exercise: ProgCompleteEx): Try[GenericCompleteResult[ProgEvaluationResult]] = Try({
+  override def correctEx(user: User, sol: String, exercise: ProgCompleteEx, identifier: IntExIdentifier): Try[GenericCompleteResult[ProgEvaluationResult]] = Try({
     // FIXME: Time out der Ausführung
     println(sol)
 
@@ -123,6 +124,8 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
   override def renderExesListRest: Html = Html("")
 
   override def renderResult(correctionResult: GenericCompleteResult[ProgEvaluationResult]): Html = new Html(correctionResult.toString) // FIXME : implement!
+
+  override protected def onLiveCorrectionSuccess(correctionResult: GenericCompleteResult[ProgEvaluationResult]): Result = Ok(renderResult(correctionResult))
 
   // Helper methods
 

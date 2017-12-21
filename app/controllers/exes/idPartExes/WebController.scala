@@ -9,6 +9,7 @@ import model.web.WebConsts._
 import model.web.WebCorrector.evaluateWebTask
 import model.web.WebEnums.WebExPart
 import model.web._
+import net.jcazevedo.moultingyaml.YamlFormat
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.mvc._
@@ -28,6 +29,13 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   override def partTypeFromString(str: String): Option[WebExPart] = WebExPart.byString(str)
 
+  case class WebExIdentifier(id: Int, part: WebExPart) extends IdPartExIdentifier
+
+  override type ExIdentifier = WebExIdentifier
+
+  override def identifier(id: Int, part: String): WebExIdentifier = WebExIdentifier(id, partTypeFromString(part) getOrElse WebExPart.HTML_PART)
+
+
   override type SolType = String
 
   override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[String] =
@@ -40,7 +48,7 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   override type CompEx = WebCompleteEx
 
-  override implicit val yamlFormat: net.jcazevedo.moultingyaml.YamlFormat[WebCompleteEx] = WebExYamlProtocol.WebExYamlFormat
+  override implicit val yamlFormat: YamlFormat[WebCompleteEx] = WebExYamlProtocol.WebExYamlFormat
 
   // db
 
@@ -95,7 +103,7 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // Correction
 
-  override def correctEx(user: User, learnerSolution: String, exercise: WebCompleteEx, part: WebExPart): Try[CompleteResult[WebResult]] = Try {
+  override def correctEx(user: User, learnerSolution: String, exercise: WebCompleteEx, identifier: WebExIdentifier): Try[CompleteResult[WebResult]] = Try {
     val solutionUrl = BASE_URL + routes.WebController.site(user.username, exercise.ex.id).url
 
     val newSol = WebSolution(exercise.ex.id, user.username, learnerSolution)
@@ -104,7 +112,7 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
     val driver = new HtmlUnitDriver(true)
     driver get solutionUrl
 
-    new GenericCompleteResult[WebResult](learnerSolution, getTasks(exercise, part) map (task => evaluateWebTask(task, driver)))
+    new GenericCompleteResult[WebResult](learnerSolution, getTasks(exercise, identifier.part) map (task => evaluateWebTask(task, driver)))
   }
 
   // Other helper methods

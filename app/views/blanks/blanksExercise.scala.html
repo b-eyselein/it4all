@@ -1,0 +1,32 @@
+@(user: model.User, exercise: model.blanks.BlanksCompleteExercise)
+
+@scripts = {
+    <script src="@routes.Assets.versioned("javascripts/blanks/blanks.js")"></script>
+}
+
+@main("HTML-Test", user, scripts) {
+    <div class="container">
+        <div class="page-header">
+            <h1>L&uuml;ckentext</h1>
+        </div>
+
+        <form class="form-inline" autocomplete="off" action="javascript:testSol('@exes.idExes.routes.BlanksController.correct(exercise.id)')" >
+
+            @Html(exercise.ex.blanksText)
+
+            <hr>
+
+            <div class="btn-group btn-group-justified">
+                <div class="btn-group">
+                    <button class="btn btn-primary">Eingaben testen</button>
+                </div>
+                <a href="@exes.idExes.routes.BlanksController.index()" class="btn btn-default">Zur&uuml;ck zur Aufgabenseite</a>
+            </div>
+        </form>
+
+        <hr>
+
+        <div id="solutionDiv"></div>
+
+    </div>
+}
