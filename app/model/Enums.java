@@ -113,9 +113,11 @@ public abstract class Enums {
     public enum MatchType implements Selectable<MatchType> {
 
         FAILURE("warning-sign"),
+
         SUCCESSFUL_MATCH("ok"),
         PARTIAL_MATCH("question-sign"),
         UNSUCCESSFUL_MATCH("exclamation-sign"),
+
         ONLY_USER("remove"),
         ONLY_SAMPLE("minus");
 

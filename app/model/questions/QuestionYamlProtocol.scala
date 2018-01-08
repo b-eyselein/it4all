@@ -21,7 +21,7 @@ object QuestionYamlProtocol extends MyYamlProtocol {
   case class QuestionYamlFormat(quizId: Int) extends HasBaseValuesYamlFormat[CompleteQuestion] {
 
     override protected def readRest(yamlObject: YamlObject, baseValues: BaseValues): CompleteQuestion = CompleteQuestion(
-      Question(baseValues, quizId, yamlObject.enumField(ExerciseTypeName, QuestionType.valueOf, QuestionType.FILLOUT), yamlObject.intField(MAX_POINTS)),
+      Question(baseValues, quizId, yamlObject.enumField(ExerciseTypeName, QuestionType.valueOf, QuestionType.CHOICE), yamlObject.intField(MAX_POINTS)),
       yamlObject.arrayField(ANSWERS_NAME, _ convertTo[Answer] QuestionAnswerYamlFormat(quizId, baseValues.id))
     )
 

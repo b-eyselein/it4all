@@ -34,7 +34,9 @@ public class QuestionEnums {
     }
 
     public enum QuestionType {
-        CHOICE("Auswahlfrage"), FILLOUT("TODO!"), FREETEXT("Freitextfrage");
+        CHOICE("Auswahlfrage"),
+        //        FILLOUT("TODO!"),
+        FREETEXT("Freitextfrage");
 
         public final String german;
 

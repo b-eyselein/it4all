@@ -81,8 +81,6 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E,
 
   protected def saveRead(read: Seq[CompColl]): Future[Seq[Boolean]]
 
-  //  val PROGRESS_LOGGER: Logger.ALogger = Logger.of("progress")
-
   def log(user: User, eventToLog: WorkingEvent): Unit = Unit // PROGRESS_LOGGER.debug(s"""${user.username} - ${Json.toJson(eventToLog)}""")
 
   // Admin
@@ -154,7 +152,7 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E,
   }
 
   private def collEditForm(admin: User, collection: Option[CompColl]): Html =
-    views.html.admin.collectionEditForm(admin, toolObject, collection, renderEditRest(collection))
+    views.html.admin.collectionEditForm(admin, toolObject, collection, adminRenderEditRest(collection))
 
   def adminDeleteCollection(id: Int): EssentialAction = futureWithAdmin { _ =>
     implicit request =>
@@ -166,13 +164,12 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E,
 
   // Views and other helper methods for admin
 
-  private def saveAndPreviewCollections(admin: User, read: Seq[CompColl]): Future[Result] =
-    saveRead(read) map (_ => Ok(views.html.admin.collPreview(admin, read, toolObject))) recover {
-      // FIXME: Failures!
-      case throwable: Throwable =>
-        throwable.printStackTrace()
-        BadRequest(throwable.getMessage)
-    }
+  private def saveAndPreviewCollections(admin: User, read: Seq[CompColl]): Future[Result] = saveRead(read) map (_ => Ok(views.html.admin.collPreview(admin, read, toolObject))) recover {
+    // FIXME: Failures!
+    case throwable: Throwable =>
+      throwable.printStackTrace()
+      BadRequest(throwable.getMessage)
+  }
 
   // TODO: scalarStyle = Folded if fixed...
   private def yamlString(exes: Seq[CompColl]): String = "%YAML 1.2\n---\n" + (exes map (_.toYaml.print(Auto /*, Folded*/)) mkString "---\n")
@@ -204,19 +201,6 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E,
       }
   }
 
-  private def numOfPages(completeSize: Int) = (completeSize / STEP) + 2
-
-  /**
-    * Used for rendering things such as playgrounds
-    *
-    * @return Html - with link to other "exercises"
-    */
-  protected def renderExesListRest: Html = new Html("")
-
-  // Helper methods
-
-  def renderEditRest(exercise: Option[CompColl]): Html
-
   // User
 
   def exercise(collId: Int, id: Int): EssentialAction = futureWithUser { user =>
@@ -227,45 +211,56 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E,
       }
   }
 
-  protected def renderExercise(user: User, coll: C, exercise: CompEx): Html
 
   def correct(collId: Int, id: Int): EssentialAction = futureWithUser { user =>
-    implicit request =>
-      correctAbstract(user, collId, id, readSolutionFromPostRequest, renderCorrectionResult(user, _),
-        //FIXME: on error!
-        error => views.html.main("Fehler", user, new Html(""))(new Html(s"<pre>${error.getMessage}:\n${error.getStackTrace.mkString("\n")}</pre>")))
+    implicit request => correctAbstract(user, collId, id, readSolutionFromPostRequest, onSubmitCorrectionResult(user, _), onSubmitCorrectionError(user, _))
   }
 
   def correctLive(collId: Int, id: Int): EssentialAction = futureWithUser { user =>
-    implicit request =>
-      correctAbstract(user, collId, id, readSolutionFromPutRequest, renderResult, error => {
-        error.printStackTrace()
-        Json.obj("message" -> error.getMessage)
-      })
+    implicit request => correctAbstract(user, collId, id, readSolutionFromPutRequest, onLiveCorrectionResult, onLiveCorrectionError)
   }
 
   private def correctAbstract[S, Err](user: User, collId: Int, id: Int, maybeSolution: Option[SolType],
-                                      onCorrectionSuccess: CompResult => S, onCorrectionError: Throwable => Err)
-                                     (implicit successWriteable: Writeable[S], errorWriteable: Writeable[Err], request: Request[AnyContent]): Future[Result] =
-    maybeSolution match {
-      case None           => Future(BadRequest("No solution!"))
-      case Some(solution) => (futureCompleteExById(collId, id) zip futureCollById(collId)) map (opts => (opts._1 zip opts._2).headOption) map {
-        case None                         => NotFound("No such exercise!")
-        case Some((exercise, collection)) => correctEx(user, solution, exercise, collection) match {
-          case Success(result) => Ok(onCorrectionSuccess(result))
-          case Failure(error)  => BadRequest(onCorrectionError(error))
-        }
+                                      onCorrectionSuccess: CompResult => Result, onCorrectionError: Throwable => Result)
+                                     (implicit request: Request[AnyContent]): Future[Result] = maybeSolution match {
+    case None           => Future(BadRequest("No solution!"))
+    case Some(solution) => (futureCompleteExById(collId, id) zip futureCollById(collId)) map (opts => (opts._1 zip opts._2).headOption) map {
+      case None                         => NotFound("No such exercise!")
+      case Some((exercise, collection)) => correctEx(user, solution, exercise, collection) match {
+        case Success(result) => onCorrectionSuccess(result)
+        case Failure(error)  => onCorrectionError(error)
       }
     }
+  }
 
-  private def renderCorrectionResult(user: User, correctionResult: CompResult): Html =
-    views.html.core.correction(correctionResult, renderResult(correctionResult), user, toolObject)
+  // Views and other result handlers
 
-  protected def renderResult(correctionResult: CompResult): Html
+  protected def renderExercise(user: User, coll: C, exercise: CompEx): Html
+
+  protected def onSubmitCorrectionResult(user: User, result: CompResult): Result
+
+  protected def onSubmitCorrectionError(user: User, error: Throwable): Result
+
+  protected def onLiveCorrectionResult(result: CompResult): Result
+
+  protected def onLiveCorrectionError(error: Throwable): Result
 
   protected def correctEx(user: User, form: SolType, exercise: CompEx, collection: C): Try[CompResult]
 
+  protected def adminRenderEditRest(exercise: Option[CompColl]): Html
+
+  /**
+    * Used for rendering things such as playgrounds
+    *
+    * @return Html - with link to other "exercises"
+    */
+  protected def renderExesListRest: Html = new Html("")
+
+  // Other helper methods
+
   private def takeSlice[T](collection: Seq[T], page: Int): Seq[T] =
     collection slice(Math.max(0, (page - 1) * STEP), Math.min(page * STEP, collection.size))
+
+  private def numOfPages(completeSize: Int) = (completeSize / STEP) + 2
 
 }

@@ -1,39 +1,34 @@
-@(user: model.User, quiz: model.questions.Quiz, question: model.questions.CompleteQuestion, oldAnswer: model.questions.UserAnswer)
+@(user: model.User, quiz: model.questions.Quiz, question: model.questions.CompleteQuestion, oldAnswer: Option[model.questions.UserAnswer])
 
-@main("Frage", user) {
+@scripts = {
+    <script src="@routes.Assets.versioned("javascripts/question/question.js")"></script>
+    <script>
+        const theQuestionType = "@question.ex.questionType"
+    </script>
+}
+
+@main("Frage", user, scripts) {
     <div class="container">
         <div class="page-header">
             <h1>@question.text</h1>
         </div>
 
-        <form class="form-horizontal" method="post" action="@controllers.exCollections.routes.QuestionController.correct(question.id, question.id)">
-
+        <form class="form-horizontal" action="javascript:testSol('@exCollections.routes.QuestionController.correct(quiz.id, question.id)')">
 
             <div id="answerDiv">
-                @question.ex.questionType match {
-                    case model.questions.QuestionEnums.QuestionType.CHOICE => {
-                        @for(ans <- question.answersForTemplate) {
-                            <div>
-                                <label for="@ans.id">
-                                    <input type="checkbox" id="@ans.id" name="@ans.id"> @ans.text
-                                </label>
-                            </div>
-                        }
-                    }
-                    case model.questions.QuestionEnums.QuestionType.FILLOUT => {
-                        @for(ans <- question.answersForTemplate) {
-                            <div class="form-group">
-                                <div class="col-sm-12">
-                                    <input id="@ans.id" name="@ans.id" class="form-control" placeholder="Antwort...">
-                                </div>
-                            </div>
-                        }
-                    }
-                    case model.questions.QuestionEnums.QuestionType.FREETEXT => {
+                @if(question.ex.questionType == model.questions.QuestionEnums.QuestionType.FREETEXT) {
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <textarea class="form-control" name="answer" rows="20" placeholder="Freitextantwort..." required>@oldAnswer.getOrElse("")</textarea>
+                        </div>
+                    </div>
+                } else {
+                    @for(ans <- question.answersForTemplate) {
                         <div class="form-group">
-                            <div class="col-sm-12">
-                                <textarea class="form-control" name="answer" rows="20"
-                                placeholder="Freitextantwort..." required>@if(oldAnswer != null) {@oldAnswer.text}</textarea>
+                            <div class="col-md-12">
+                                <label for="@ans.id">
+                                    <input type="checkbox" id="@ans.id" data-answerid="@ans.id" name="@ans.id"> @ans.text
+                                </label>
                             </div>
                         </div>
                     }

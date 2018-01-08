@@ -98,9 +98,7 @@ case class Question(override val baseValues: BaseValues, collectionId: Int, ques
 
 }
 
-case class Answer(id: Int, questionId: Int, quizId: Int, text: String, correctness: Correctness) {
-
-  def getIdAsChar: Char = ('a' + id - 1) toChar
+case class Answer(id: Int, questionId: Int, quizId: Int, text: String, correctness: Correctness) extends IdAnswer {
 
   def isCorrect: Boolean = correctness != Correctness.WRONG
 

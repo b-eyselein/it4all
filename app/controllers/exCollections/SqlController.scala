@@ -93,7 +93,7 @@ class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // Views for admin
 
-  override def renderEditRest(collOpt: Option[SqlCompleteScenario]): Html = new Html(
+  override def adminRenderEditRest(collOpt: Option[SqlCompleteScenario]): Html = new Html(
     s"""<div class="form-group row">
        |  <div class="col-sm-12">
        |    <label for="${SqlConsts.SHORTNAME_NAME}">Name der DB:</label>
@@ -127,9 +127,17 @@ class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   }
 
   // FIXME: get rif of cast...
-  override def renderResult(correctionResult: SqlCorrResult): Html = correctionResult match {
-    case res: SqlResult => views.html.sql.sqlResult(res)
-    case res: SqlFailed => ???
-  }
+  //  override def renderResult(correctionResult: SqlCorrResult): Html = correctionResult match {
+  //    case res: SqlResult => views.html.sql.sqlResult(res)
+  //    case res: SqlFailed => ???
+  //  }
+
+  protected def onSubmitCorrectionError(user: model.User, error: Throwable): play.api.mvc.Result = ??? // FIXME: implement...
+
+  protected def onSubmitCorrectionResult(user: model.User, result: model.sql.SqlCorrResult): play.api.mvc.Result = ??? // FIXME: implement...
+
+  protected def onLiveCorrectionError(error: Throwable): play.api.mvc.Result = ??? // FIXME: implement...
+
+  protected def onLiveCorrectionResult(result: model.sql.SqlCorrResult): play.api.mvc.Result = ??? // FIXME: implement...
 
 }

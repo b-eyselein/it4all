@@ -1,35 +1,41 @@
 package controllers.exCollections
 
-import javax.inject._
+import javax.inject.{Inject, Singleton}
 
 import controllers.Secured
-import model.Enums.Role
+import model.Enums.{MatchType, Role}
 import model.core._
+import model.questions.QuestionEnums.QuestionType
 import model.questions._
 import model.{JsonFormat, User}
-import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
+import play.api.libs.json._
 import play.api.mvc._
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.language.implicitConversions
-import scala.util.Try
+import scala.language.{implicitConversions, postfixOps}
+import scala.util.{Failure, Try}
 
 @Singleton
 class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends AExCollectionController[Question, Quiz, QuestionResult, CompleteResult[QuestionResult]](cc, dbcp, r, QuestionToolObject)
+  extends AExCollectionController[Question, Quiz, IdAnswerMatchingResult, QuestionResult](cc, dbcp, r, QuestionToolObject)
     with HasDatabaseConfigProvider[JdbcProfile] with JsonFormat with Secured {
 
-  override type SolType = String
+  override type SolType = Seq[GivenAnswer]
 
-  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[String] = request.body.asJson flatMap (_.asStr)
+  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[Seq[GivenAnswer]] = request.body.asJson flatMap (_.asObj) flatMap { jsObj =>
+    jsObj.stringField("questionType") flatMap QuestionType.byString flatMap {
+      case QuestionType.CHOICE   => jsObj.arrayField("chosen", jsValue => Some(IdGivenAnswer(jsValue.asInt getOrElse -1)))
+      case QuestionType.FREETEXT => ??? // Some(Seq.empty)
+    }
+  }
 
-  override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[String] = {
+  override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[Seq[GivenAnswer]] = {
     println(request.body.asFormUrlEncoded)
 
-    ???
+    None
   }
 
   // Yaml
@@ -38,7 +44,7 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   override type CompEx = CompleteQuestion
 
-  override implicit val yamlFormat: YamlFormat[CompleteQuiz] = QuestionYamlProtocol.QuizYamlFormat
+  override implicit val yamlFormat: net.jcazevedo.moultingyaml.YamlFormat[CompleteQuiz] = QuestionYamlProtocol.QuizYamlFormat
 
   // db
 
@@ -54,42 +60,7 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   override protected def saveRead(read: Seq[CompColl]): Future[Seq[Boolean]] = Future.sequence(read map repo.saveQuiz)
 
-  // Quizzes
-
-  //  override def correctPart(sol: StringSolution, question: Option[Question], part: String, user: User): Try[CompleteResult[EvaluationResult]]
-  //  = ??? // FIXME: implement...
-
-  //  def quiz(id: Int): EssentialAction = withUser { user => implicit request => Ok(views.html.questions.quiz.render(user, null /* Quiz.finder.byId(id)*/)) }
-
-  //  def quizCorrection(quizId: Int, questionId: Int): EssentialAction = withUser { user =>
-  //    implicit request =>
-  // User user = BaseController.user
-  //
-  // Quiz quiz = Quiz.finder.byId(quizId)
-  //
-  // Question question = quiz.questions.get(questionId - 1)
-  // DynamicForm form = factory.form().bindFromRequest()
-  //
-  // List<Answer> selectedAnswers = readSelAnswers(question, form)
-
-  // QuestionResult result = new QuestionResult(selectedAnswers, question)
-  //
-  //   return ok(views.html.quizQuestionResult.render(user, quiz, result))
-  //      Ok("TODO!")
-  //  }
-
-
-  // FIXME: stubs...
-
-  override def correctEx(user: User, solution: SolType, exercise: CompleteQuestion, quiz: Quiz): Try[CompleteResult[QuestionResult]] = ???
-
-  override def renderEditRest(collOpt: Option[CompleteQuiz]): Html = new Html(
-    s"""<div class="form-group row">
-       |  <div class="col-sm-12">
-       |    <label for="${QuestionConsts.ThemeName}">Thema:</label>
-       |    <input class="form-control" name="${QuestionConsts.ThemeName}" id="${QuestionConsts.ThemeName}" required ${collOpt map (coll => s"""value="${coll.coll.theme}"""") getOrElse ""})>
-       |  </div>
-       |</div>""".stripMargin)
+  // Other routes
 
   def quizStart(quizId: Int): EssentialAction = withUser { _ =>
     implicit request => Redirect(routes.QuestionController.exercise(quizId, 1))
@@ -268,9 +239,43 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
   //      Ok("TODO!")
   //  }
 
-  override def renderResult(correctionResult: CompleteResult[QuestionResult]): Html = ???
+  // Views
+
+  override def adminRenderEditRest(collOpt: Option[CompleteQuiz]): Html = new Html(
+    s"""<div class="form-group row">
+       |  <div class="col-sm-12">
+       |    <label for="${QuestionConsts.ThemeName}">Thema:</label>
+       |    <input class="form-control" name="${QuestionConsts.ThemeName}" id="${QuestionConsts.ThemeName}" required ${collOpt map (coll => s"""value="${coll.coll.theme}"""") getOrElse ""})>
+       |  </div>
+       |</div>""".stripMargin)
 
   override protected def renderExercise(user: User, quiz: Quiz, exercise: CompleteQuestion): Html =
-    views.html.questions.question.render(user, quiz, exercise, null /* FIXME: old answer... UserAnswer.finder.byId(new UserAnswerKey(user.name, exercise.id))*/)
+    views.html.questions.question(user, quiz, exercise, None /* FIXME: old answer... UserAnswer.finder.byId(new UserAnswerKey(user.name, exercise.id))*/)
 
+  protected def onSubmitCorrectionError(user: User, error: Throwable): Result = ???
+
+  protected def onSubmitCorrectionResult(user: User, result: QuestionResult): Result = ???
+
+  protected def onLiveCorrectionError(error: Throwable): Result = ???
+
+  protected def onLiveCorrectionResult(result: QuestionResult): Result = Ok(Json.obj(
+    "correct" -> JsArray(result.matchingResult.allMatches filter (_.matchType == MatchType.SUCCESSFUL_MATCH) map (i => JsNumber(i.id))),
+    "missing" -> JsArray(result.matchingResult.allMatches filter (_.matchType == MatchType.ONLY_SAMPLE) map (i => JsNumber(i.id))),
+    "wrong" -> JsArray(result.matchingResult.allMatches filter (_.matchType == MatchType.ONLY_USER) map (i => JsNumber(i.id)))
+  ))
+
+  // Correction
+
+  override def correctEx(user: User, answers: Seq[GivenAnswer], exercise: CompleteQuestion, quiz: Quiz): Try[QuestionResult] = exercise.ex.questionType match {
+    case QuestionType.FREETEXT => Failure(new Exception("Not yet implemented..."))
+    case QuestionType.CHOICE   => Try {
+      val idAnswers: Seq[IdGivenAnswer] = answers flatMap {
+        case idA: IdGivenAnswer => Some(idA)
+        case _                  => None
+      }
+
+      QuestionResult(idAnswers, exercise)
+      // ???
+    }
+  }
 }
