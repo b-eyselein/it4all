@@ -18,21 +18,21 @@ class EvaluationController @Inject()(cc: ControllerComponents, val dbConfigProvi
 
   def index: EssentialAction = withUser { user =>
     implicit request =>
-      //      val toEvaluate: List[Feedback] = Feedback.EvaluatedTool.values.map(tool => {
+      //      val toEvaluate: Seq[Feedback] = Feedback.EvaluatedTool.values.map(tool => {
       //        val key = new FeedbackKey(user.name, tool)
       //        Option(Feedback.finder.byId(key)).getOrElse(new Feedback(key))
       //      }).toList
-      val toEvaluate: List[Feedback] = List.empty
-      Ok(views.html.evaluation.eval.render(user, toEvaluate))
+      val toEvaluate: Seq[Feedback] = Seq.empty
+      Ok(views.html.evaluation.eval(user, toEvaluate))
   }
 
   def submit: EssentialAction = withUser { user =>
     implicit request =>
-      val evaluation: List[Feedback] = EvaluatedTool.values.map(tool => readFeedback(user, tool)).toList
+      val evaluation: Seq[Feedback] = EvaluatedTool.values map (tool => readFeedback(user, tool))
 
       //      evaluation.foreach(_.save)
 
-      Ok(views.html.evaluation.submit.render(user, evaluation))
+      Ok(views.html.evaluation.submit(user, evaluation))
   }
 
   def readFeedback(user: User, tool: EvaluatedTool)(implicit request: Request[AnyContent]): Feedback = {

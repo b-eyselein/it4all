@@ -127,6 +127,6 @@ abstract class AFileExController[E <: Exercise, R <: EvaluationResult, CompResul
 
   protected def saveReadToDb(read: CompEx): Future[Int]
 
-  protected def checkFiles(ex: CompEx): List[Try[Path]]
+  protected def checkFiles(ex: CompEx): Seq[Try[Path]]
 
 }

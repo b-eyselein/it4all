@@ -18,7 +18,7 @@ case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTa
 
   override def preview: Html = views.html.web.webPreview(this)
 
-  override def tags: List[WebExTag] = List(new WebExTag(HTML_TYPE, ex.hasHtmlPart), new WebExTag(JS_TYPE, ex.hasJsPart))
+  override def tags: Seq[WebExTag] = Seq(new WebExTag(HTML_TYPE, ex.hasHtmlPart), new WebExTag(JS_TYPE, ex.hasJsPart))
 
   override def exerciseRoutes: Map[Call, String] = WebToolObject.exerciseRoutes(this)
 

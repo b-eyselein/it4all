@@ -60,7 +60,7 @@ trait CompleteEx[E <: Exercise] extends HasBaseValues {
 
   def preview: Html
 
-  def tags: Seq[ExTag] = List.empty
+  def tags: Seq[ExTag] = Seq.empty
 
   def exType: String = ""
 

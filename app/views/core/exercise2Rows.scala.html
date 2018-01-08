@@ -23,6 +23,7 @@
                     } else if (elem.webkitRequestFullscreen) {
                         elem.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
                     }
+                    $('#fullscBtnSpan').removeClass('glyphicon-resize-full').addClass('glyphicon-resize-small');
                 } else {
                     if (document.exitFullscreen) {
                         document.exitFullscreen();
@@ -33,6 +34,8 @@
                     } else if (document.webkitExitFullscreen) {
                         document.webkitExitFullscreen();
                     }
+                    $('#fullscBtnSpan').removeClass('glyphicon-resize-small').addClass('glyphicon-resize-full');
+
                 }
             }
     </script>
@@ -109,7 +112,9 @@
                     onclick="testTheSolution('@routesObject.correctLiveRoute(exercise)');">L&ouml;sung testen</button>
                 </div>
                 <div class="btn-group">
-                    <button type="button" class="btn btn-default" onclick="toggleFullscreen()">Fullscreen...</button>
+                    <button type="button" class="btn btn-default" onclick="toggleFullscreen()">
+                        Toggle Fullscreen <span class="glyphicon glyphicon-resize-full" id="fullscBtnSpan"></span>
+                    </button>
                 </div>
                 <div class="btn-group">
                     <button class="btn btn-success">L&ouml;sung abgeben</button>

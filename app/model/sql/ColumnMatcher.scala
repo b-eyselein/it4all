@@ -150,8 +150,8 @@ case class CreateColumnWrapper(col: ColumnDefinition) extends ColumnWrapper {
     // wurde \"" + secondColType + "\"!"
 
     // TODO: Compare argumentslist?
-    // List<String> userArgs = userType.getArgumentsStringList
-    // List<String> sampleArgs = sampleType.getArgumentsStringList
+    // Seq<String> userArgs = userType.getArgumentsStringList
+    // Seq<String> sampleArgs = sampleType.getArgumentsStringList
     //
     // if(userArgs == null && sampleArgs == null)
     // return "Datentyp richtig spezifiziert"

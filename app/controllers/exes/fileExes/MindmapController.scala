@@ -40,13 +40,13 @@ class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfig
 
   override def tq = repo.mindmapExercises
 
-  override def saveReadToDb(compEx: MindmapExercise): Future[Int] = ???
+  override def saveReadToDb(compEx: MindmapExercise): Future[Int] = Future(-1) //???
 
-  override protected def checkFiles(ex: MindmapExercise): List[Try[Path]] = ???
+  override protected def checkFiles(ex: MindmapExercise): Seq[Try[Path]] = Seq.empty // ???
 
-  protected def futureCompleteExById(id: Int): Future[Option[MindmapExercise]] = ???
+  protected def futureCompleteExById(id: Int): Future[Option[MindmapExercise]] = Future(None) // ???
 
-  protected def futureCompleteExes: Future[Seq[MindmapExercise]] = ???
+  protected def futureCompleteExes: Future[Seq[MindmapExercise]] = Future(Seq.empty) // ???
 
   // Views
 

@@ -15,7 +15,7 @@ class ExpressionExtractor(expression: Expression) extends ExpressionVisitor {
 
   // FIXME: compare compelte tree with and, or ...
 
-  lazy val extracted: List[BinaryExpression] = {
+  def extracted: Seq[BinaryExpression] = {
     if (expression != null)
       expression accept this
     binaryExpressions.toList

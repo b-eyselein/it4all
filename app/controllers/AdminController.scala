@@ -35,7 +35,7 @@ class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
 
   def evaluation: EssentialAction = withAdmin { user =>
     implicit request =>
-      val results: List[FeedbackResult] = List.empty // FeedbackResult.evaluate(Feedback.finder.all.asScala.toList)
+      val results: Seq[FeedbackResult] = Seq.empty // FeedbackResult.evaluate(Feedback.finder.all.asScala.toList)
       Ok(views.html.evaluation.stats.render(user, results))
   }
 
