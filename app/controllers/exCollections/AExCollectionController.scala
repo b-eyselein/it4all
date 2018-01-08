@@ -8,7 +8,6 @@ import model.core.CoreConsts._
 import model.core._
 import net.jcazevedo.moultingyaml._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.api.http.Writeable
 import play.api.libs.json.Json
 import play.api.mvc._
 import play.twirl.api.Html
@@ -68,6 +67,8 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E,
   protected def tq: TableQuery[TQ]
 
   protected def numOfExes: Future[Int] = db.run(tq.size.result)
+
+  protected def numOfExesInColl(id: Int): Future[Int]
 
   protected def futureCollById(id: Int): Future[Option[C]] = db.run(tq.filter(_.id === id).result.headOption)
 
@@ -205,9 +206,11 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E,
 
   def exercise(collId: Int, id: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
-      (futureCollById(collId) zip futureCompleteExById(collId, id)) map { optTuple => (optTuple._1 zip optTuple._2).headOption } map {
-        case None             => BadRequest("TODO!")
-        case Some((coll, ex)) => Ok(renderExercise(user, coll, ex))
+      (futureCollById(collId) zip futureCompleteExById(collId, id) zip numOfExesInColl(collId)) map {
+        optTuple => ((optTuple._1._1 zip optTuple._1._2).headOption, optTuple._2)
+      } map {
+        case (None, _)                     => BadRequest("TODO!")
+        case (Some((coll, ex)), numOfExes) => Ok(renderExercise(user, coll, ex, numOfExes))
       }
   }
 
@@ -235,7 +238,7 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E,
 
   // Views and other result handlers
 
-  protected def renderExercise(user: User, coll: C, exercise: CompEx): Html
+  protected def renderExercise(user: User, coll: C, exercise: CompEx, numOfExes: Int): Html
 
   protected def onSubmitCorrectionResult(user: User, result: CompResult): Result
 

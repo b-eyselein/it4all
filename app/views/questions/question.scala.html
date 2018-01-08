@@ -1,9 +1,9 @@
-@(user: model.User, quiz: model.questions.Quiz, question: model.questions.CompleteQuestion, oldAnswer: Option[model.questions.UserAnswer])
+@(user: model.User, quiz: model.questions.Quiz, question: model.questions.CompleteQuestion, numOfExes: Int, oldAnswer: Option[model.questions.UserAnswer])
 
 @scripts = {
     <script src="@routes.Assets.versioned("javascripts/question/question.js")"></script>
     <script>
-        const theQuestionType = "@question.ex.questionType"
+            const theQuestionType = "@question.ex.questionType";
     </script>
 }
 
@@ -16,27 +16,31 @@
         <form class="form-horizontal" action="javascript:testSol('@exCollections.routes.QuestionController.correct(quiz.id, question.id)')">
 
             <div id="answerDiv">
-                @if(question.ex.questionType == model.questions.QuestionEnums.QuestionType.FREETEXT) {
+            @if(question.ex.questionType == model.questions.QuestionEnums.QuestionType.FREETEXT) {
+                <div class="form-group">
+                    <div class="col-sm-12">
+                        <textarea class="form-control" name="answer" rows="20" placeholder="Freitextantwort..." required>@oldAnswer.getOrElse("")</textarea>
+                    </div>
+                </div>
+            } else {
+                @for(ans <- question.answersForTemplate) {
                     <div class="form-group">
-                        <div class="col-sm-12">
-                            <textarea class="form-control" name="answer" rows="20" placeholder="Freitextantwort..." required>@oldAnswer.getOrElse("")</textarea>
+                        <div class="col-md-12">
+                            <label for="@ans.id">
+                                <input type="checkbox" id="@ans.id" data-answerid="@ans.id" name="@ans.id"> @ans.text
+                            </label>
                         </div>
                     </div>
-                } else {
-                    @for(ans <- question.answersForTemplate) {
-                        <div class="form-group">
-                            <div class="col-md-12">
-                                <label for="@ans.id">
-                                    <input type="checkbox" id="@ans.id" data-answerid="@ans.id" name="@ans.id"> @ans.text
-                                </label>
-                            </div>
-                        </div>
-                    }
                 }
-                <hr>
-
-                <input class="btn btn-block btn-primary" type="submit" value="Kontrollieren">
+            }
             </div>
+
+            <button class="btn btn-block btn-primary" id="submit">Kontrollieren</button>
+
+            <hr>
+
+            @core.helperTemplates.bsPager(question.id, numOfExes, id => exCollections.routes.QuestionController.exercise(quiz.id, id))
+
         </form>
     </div>
 }

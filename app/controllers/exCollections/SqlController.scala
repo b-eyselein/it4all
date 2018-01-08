@@ -75,6 +75,8 @@ class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   //noinspection TypeAnnotation
   override def tq = repo.sqlScenarioes
 
+  override protected def numOfExesInColl(id: Int): Future[Int] = repo.exercisesInScenario(id)
+
   override protected def futureCompleteColls: Future[Seq[SqlCompleteScenario]] = repo.completeSqlScenarioes
 
   override protected def futureCompleteCollById(id: Int): Future[Option[SqlCompleteScenario]] = repo.completeScenarioById(id)
@@ -115,7 +117,7 @@ class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // Views for user
 
-  override protected def renderExercise(user: User, sqlScenario: SqlScenario, exercise: SqlCompleteEx): Html = {
+  override protected def renderExercise(user: User, sqlScenario: SqlScenario, exercise: SqlCompleteEx, numOfExes: Int): Html = {
     val tables: Seq[SqlQueryResult] = SelectDAO.tableContents(sqlScenario.shortName)
 
     val oldOrDefSol: String = Await.result(
@@ -123,7 +125,7 @@ class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
       Duration(2, duration.SECONDS)
     ) map (_.solution) getOrElse ""
 
-    views.html.sql.sqlExercise(user, exercise, oldOrDefSol, tables, sqlScenario.shortName + ".png")
+    views.html.sql.sqlExercise(user, exercise, oldOrDefSol, tables, sqlScenario, numOfExes)
   }
 
   // FIXME: get rif of cast...

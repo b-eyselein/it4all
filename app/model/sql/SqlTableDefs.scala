@@ -118,6 +118,8 @@ trait SqlTableDefs extends TableDefs {
 
   // Reading
 
+  def exercisesInScenario(id: Int): Future[Int] = db.run(sqlExercises.filter(_.scenarioId === id).size.result)
+
   def completeSqlScenarioes(implicit ec: ExecutionContext): Future[Seq[SqlCompleteScenario]] = db.run(
     sqlScenarioes.result map (results => results map (res => SqlCompleteScenario(res, Seq.empty))))
 

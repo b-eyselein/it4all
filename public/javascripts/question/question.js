@@ -9,17 +9,17 @@ function onAjaxSuccess(response) {
     for (let correct of response.correct) {
         let parent = $('#' + correct).parent();
         parent.addClass('bg-success');
-        parent.attr('title', 'TODO!');
+        parent.attr('title', 'Diese Antwort war korrekt!');
     }
     for (let missing of response.missing) {
         let parent = $('#' + missing).parent();
-        parent.addClass('bg-warning');
-        parent.attr('title', 'TODO!');
+        parent.addClass('bg-danger');
+        parent.attr('title', 'Diese Antwort ist korrekt, war aber nicht angegeben!');
     }
     for (let wrong of response.wrong) {
         let parent = $('#' + wrong).parent();
         parent.addClass('bg-danger');
-        parent.attr('title', 'TODO!');
+        parent.attr('title', 'Diese Antwort war angegeben, ist aber falsch!');
     }
 }
 
@@ -31,7 +31,9 @@ function onAjaxError(jqXHR) {
  * @param {string} theUrl
  */
 function testSol(theUrl) {
-    let theChosen = $('input[data-answerid]').filter((index, elem) => elem.checked).map((index, elem) => parseInt(elem.dataset.answerid)).get();
+    $('#submit').prop('disabled', true);
+
+    let theChosen = $('#answerDiv').find('input[data-answerid]').filter((index, elem) => elem.checked).map((index, elem) => parseInt(elem.dataset.answerid)).get();
 
     let theData = {
         quiz: 1,

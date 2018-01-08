@@ -3,7 +3,7 @@ package controllers.exCollections
 import javax.inject.{Inject, Singleton}
 
 import controllers.Secured
-import model.Enums.{MatchType, Role}
+import model.Enums.Role
 import model.core._
 import model.questions.QuestionEnums.QuestionType
 import model.questions._
@@ -20,7 +20,7 @@ import scala.util.{Failure, Try}
 
 @Singleton
 class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends AExCollectionController[Question, Quiz, IdAnswerMatchingResult, QuestionResult](cc, dbcp, r, QuestionToolObject)
+  extends AExCollectionController[Question, Quiz, IdAnswerMatch, QuestionResult](cc, dbcp, r, QuestionToolObject)
     with HasDatabaseConfigProvider[JdbcProfile] with JsonFormat with Secured {
 
   override type SolType = Seq[GivenAnswer]
@@ -51,6 +51,8 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
   override type TQ = repo.QuizzesTable
 
   override def tq = repo.quizzes
+
+  override protected def numOfExesInColl(id: Int): Future[Int] = repo.questionsInQuiz(id)
 
   override protected def futureCompleteColls: Future[Seq[CompColl]] = repo.completeQuizzes
 
@@ -95,14 +97,6 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
       //    return ok(views.html.questionAdmin.questionsAssigned.render(user(), assignments.toString()))
       Ok("TODO!")
   }
-
-  //  override def renderCollectionCreated(collections: List[SingleReadingResult[Quiz]]): Html = ???
-  //
-  //  override def renderExCollCreationForm(user: User, collection: Quiz): Html = ???
-  //
-  //  override def renderExEditForm(user: User, exercise: Quiz, isCreation: Boolean): Html = ???
-  //
-  //  override def renderExerciseCollections(user: User, allCollections: List[Quiz]): Html = ???
 
   def assignQuestionsForm: EssentialAction = withAdmin { user =>
     implicit request =>
@@ -208,8 +202,7 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   def newQuestionForm(isFreetext: Boolean): EssentialAction = withUser { user =>
     implicit request =>
-      if (isFreetext)
-        Ok(views.html.questions.newFreetextQuestionForm.render(user, Integer.MAX_VALUE))
+      if (isFreetext) Ok(views.html.questions.newFreetextQuestionForm.render(user, Integer.MAX_VALUE))
       else {
         // TODO: Unterscheidung zwischen ausfuellen und ankreuzen!
         Ok(views.html.questions.newQuestionForm.render(user, Integer.MAX_VALUE, isChoice = true))
@@ -249,8 +242,8 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
        |  </div>
        |</div>""".stripMargin)
 
-  override protected def renderExercise(user: User, quiz: Quiz, exercise: CompleteQuestion): Html =
-    views.html.questions.question(user, quiz, exercise, None /* FIXME: old answer... UserAnswer.finder.byId(new UserAnswerKey(user.name, exercise.id))*/)
+  override protected def renderExercise(user: User, quiz: Quiz, exercise: CompleteQuestion, numOfExes: Int): Html =
+    views.html.questions.question(user, quiz, exercise, numOfExes, None /* FIXME: old answer... UserAnswer.finder.byId(new UserAnswerKey(user.name, exercise.id))*/)
 
   protected def onSubmitCorrectionError(user: User, error: Throwable): Result = ???
 
@@ -259,9 +252,9 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
   protected def onLiveCorrectionError(error: Throwable): Result = ???
 
   protected def onLiveCorrectionResult(result: QuestionResult): Result = Ok(Json.obj(
-    "correct" -> JsArray(result.matchingResult.allMatches filter (_.matchType == MatchType.SUCCESSFUL_MATCH) map (i => JsNumber(i.id))),
-    "missing" -> JsArray(result.matchingResult.allMatches filter (_.matchType == MatchType.ONLY_SAMPLE) map (i => JsNumber(i.id))),
-    "wrong" -> JsArray(result.matchingResult.allMatches filter (_.matchType == MatchType.ONLY_USER) map (i => JsNumber(i.id)))
+    "correct" -> JsArray(result.correct map (i => JsNumber(i.id))),
+    "missing" -> JsArray(result.missing map (i => JsNumber(i.id))),
+    "wrong" -> JsArray(result.wrong map (i => JsNumber(i.id)))
   ))
 
   // Correction

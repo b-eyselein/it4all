@@ -115,6 +115,8 @@ trait QuestionsTableDefs extends TableDefs {
 
   // Reading
 
+  def questionsInQuiz(id: Int) : Future[Int] = db.run(questions.filter(_.quizId === id).size.result)
+
   def completeQuizzes(implicit ec: ExecutionContext): Future[Seq[CompleteQuiz]] = db.run(quizzes.result) map { quizSeq => quizSeq map (quiz => CompleteQuiz(quiz, Seq.empty)) }
 
   def completeQuiz(id: Int)(implicit ec: ExecutionContext): Future[Option[CompleteQuiz]] = db.run(quizzes.filter(_.id === id).result.headOption) flatMap {

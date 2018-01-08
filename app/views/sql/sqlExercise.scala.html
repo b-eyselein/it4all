@@ -1,4 +1,4 @@
-@(user: model.User, exercise: model.sql.SqlCompleteEx, oldOrDefSol: String, tables: Seq[model.sql.SqlQueryResult], imageFilename: String)
+@(user: model.User, exercise: model.sql.SqlCompleteEx, oldOrDefSol: String, tables: Seq[model.sql.SqlQueryResult], scenario: model.sql.SqlScenario, numOfExes: Int)
 
     @scripts = {
         <script src="@routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
@@ -68,7 +68,7 @@
                             <h4 class="modal-title">Datenbankschema</h4>
                         </div>
                         <div class="modal-body">
-                            <img class="img-rounded img-responsive center-block" src="@routes.Assets.versioned(s"images/sql/$imageFilename")" alt="Datenbankschema">
+                            <img class="img-rounded img-responsive center-block" src="@routes.Assets.versioned(s"images/sql/${scenario.shortName + ".png"}")" alt="Datenbankschema">
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -94,5 +94,11 @@
                 </div>
             }
 
+            <hr>
+
+            @core.helperTemplates.bsPager(exercise.id, numOfExes, id => exCollections.routes.SqlController.exercise(scenario.id, id))
+
         </div>
+
+
     }
