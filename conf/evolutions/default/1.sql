@@ -460,9 +460,24 @@ CREATE TABLE IF NOT EXISTS xml_exercises (
   ref_file_content TEXT
 );
 
+CREATE TABLE IF NOT EXISTS xml_solutions (
+  exercise_id INT,
+  username    VARCHAR(50),
+  solution    TEXT,
+
+  PRIMARY KEY (exercise_id, username),
+  FOREIGN KEY (exercise_id) REFERENCES xml_exercises (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
+  FOREIGN KEY (username) REFERENCES users (username)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
 # --- !Downs
 
 # Xml
+
+DROP TABLE IF EXISTS xml_solutions;
 
 DROP TABLE IF EXISTS xml_exercises;
 

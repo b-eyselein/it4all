@@ -13,6 +13,8 @@ ON DUPLICATE KEY UPDATE std_role = VALUES(std_role);
 
 # Xml
 
+DELETE IGNORE FROM xml_solutions;
+
 DELETE IGNORE FROM xml_exercises;
 
 # Web

@@ -1,9 +1,7 @@
-@import model.core.CoreConsts
-
-@import controllers.exes.idExes.IdExToolObject
-@(user: model.User, routesObject: IdExToolObject, exerciseOptions: model.core.tools.ExerciseOptions, exercise: model.Exercise, exRest: Html, oldSolution: String)
+@(user: model.User, routesObject: controllers.exes.idExes.IdExToolObject, exerciseOptions: model.core.tools.ExerciseOptions, exercise: model.Exercise, exRest: Html, oldSolution: String)
 
 @scripts = {
+    <!--suppress JSUnusedLocalSymbols -->
     <script src="@routes.Assets.versioned("lib/ace/src/ace.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
     <script>
@@ -11,13 +9,60 @@
             const theMinLines = @exerciseOptions.minLines;
             const theMaxLines = @exerciseOptions.maxLines;
             const theUpdatePrev = @exerciseOptions.updatePrev;
+
+            function toggleFullscreen() {
+                var elem = document.getElementById('fullsc');// document.documentElement;
+                if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+                    console.log(elem);
+                    if (elem.requestFullscreen) {
+                        elem.requestFullscreen();
+                    } else if (elem.msRequestFullscreen) {
+                        elem.msRequestFullscreen();
+                    } else if (elem.mozRequestFullScreen) {
+                        elem.mozRequestFullScreen();
+                    } else if (elem.webkitRequestFullscreen) {
+                        elem.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+                    }
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.msExitFullscreen) {
+                        document.msExitFullscreen();
+                    } else if (document.mozCancelFullScreen) {
+                        document.mozCancelFullScreen();
+                    } else if (document.webkitExitFullscreen) {
+                        document.webkitExitFullscreen();
+                    }
+                }
+            }
     </script>
+    <style>
+            #fullsc:-webkit-full-screen {
+                width: 100vw;
+                height: 100vh;
+            }
+
+            #fullsc:-moz-full-screen {
+                width: 100vw;
+                height: 100vh;
+            }
+
+            #fullsc:-ms-fullscreen {
+                width: 100vw;
+                height: 100vh;
+            }
+
+            #fullsc:fullscreen {
+                width: 100vw;
+                height: 100vh;
+            }
+    </style>
 }
 
 @main(exerciseOptions.tool, user, scripts) {
-    <div class="container">
-        <form action="@routesObject.correctRoute(exercise)" method="post">
+    <div class="container" id="fullsc">
 
+        <form action="@routesObject.correctRoute(exercise)" method="post">
             <div class="row">
                 <div class="col-md-6">
                     <div class="page-header">
@@ -51,7 +96,7 @@
 
                         </div>
                         <div id="editor" class="form-control">@oldSolution</div>
-                        <textarea title="hidden" hidden name="@CoreConsts.FORM_VALUE" id="@CoreConsts.FORM_VALUE">@oldSolution</textarea>
+                        <textarea title="hidden" hidden name="@model.core.CoreConsts.FORM_VALUE" id="@model.core.CoreConsts.FORM_VALUE">@oldSolution</textarea>
                     </div>
                         <!-- Editor Ende -->
 
@@ -62,6 +107,9 @@
                 <div class="btn-group">
                     <button type="button" class="btn btn-primary" id="testButton"
                     onclick="testTheSolution('@routesObject.correctLiveRoute(exercise)');">L&ouml;sung testen</button>
+                </div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default" onclick="toggleFullscreen()">Fullscreen...</button>
                 </div>
                 <div class="btn-group">
                     <button class="btn btn-success">L&ouml;sung abgeben</button>
@@ -75,5 +123,6 @@
                 <div id="correction"></div>
             </section>
         </form>
+
     </div>
 }
