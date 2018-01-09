@@ -15,6 +15,12 @@ build:
     - sbt dist
 
 cache:
+    key: "$CI_BUILD_REF_NAME"
+    untracked: true
     paths:
-    - /home/gitlab-runner/.ivy2/
-    - /home/gitlab-runner/.sbt/
+    - "sbt-cache/.ivy.cache"
+    - "sbt-cache/.boot"
+    - "sbt-cache/.sbtboot"
+    - "sbt-cache/target"
+    - ~/.ivy2/
+    - ~/.sbt/
