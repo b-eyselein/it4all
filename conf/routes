@@ -105,36 +105,6 @@ PUT           /prog/exercise/:id                          controllers.exes.idExe
 POST          /prog/exercise/:id                          controllers.exes.idExes.ProgController.correct(id: Int)
 # Prog - Ende
 
-
-# Ebnf - Anfang
-GET           /ebnf/admin                                 controllers.exes.idExes.EbnfController.adminIndex
-
-GET           /ebnf/admin/import                          controllers.exes.idExes.EbnfController.adminImportExercises
-GET           /ebnf/admin/export                          controllers.exes.idExes.EbnfController.adminExportExercises
-GET           /ebnf/admin/exportFile                      controllers.exes.idExes.EbnfController.adminExportExercisesAsFile
-
-GET           /ebnf/admin/exerciseList                    controllers.exes.idExes.EbnfController.adminExerciseList
-GET           /ebnf/admin/newExForm                       controllers.exes.idExes.EbnfController.adminNewExerciseForm
-PUT           /ebnf/admin/exerciseList                    controllers.exes.idExes.EbnfController.adminCreateExercise
-POST          /ebnf/admin/exerciseList                    controllers.exes.idExes.EbnfController.adminCreateExercise
-
-GET           /ebnf/admin/exerciseList/:id                controllers.exes.idExes.EbnfController.adminEditExerciseForm(id: Int)
-PUT           /ebnf/admin/exerciseList/:id                controllers.exes.idExes.EbnfController.adminEditExercise(id: Int)
-POST          /ebnf/admin/exerciseList/:id                controllers.exes.idExes.EbnfController.adminEditExercise(id: Int)
-DELETE        /ebnf/admin/exerciseList/:id                controllers.exes.idExes.EbnfController.adminDeleteExercise(id: Int)
-
-PUT           /ebnf/admin/exercise/:id/state              controllers.exes.idExes.EbnfController.adminChangeExState(id: Int)
-
-# User
-GET           /ebnf/                                      controllers.exes.idExes.EbnfController.index
-GET           /ebnf/exercises                             controllers.exes.idExes.EbnfController.exerciseList(page: Int ?= 1)
-
-GET           /ebnf/:id                                   controllers.exes.idExes.EbnfController.exercise(id: Int)
-PUT           /ebnf/:id                                   controllers.exes.idExes.EbnfController.correctLive(id: Int)
-POST          /ebnf/:id                                   controllers.exes.idExes.EbnfController.correct(id: Int)
-DELETE        /ebnf/:id                                   controllers.exes.idExes.EbnfController.adminDeleteExercise(id: Int)
-# Ebnf - Ende
-
 # Blanks - Anfang...
 
 GET           /blanks/admin                               controllers.exes.idExes.BlanksController.adminIndex

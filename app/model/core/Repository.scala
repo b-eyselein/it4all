@@ -2,17 +2,6 @@ package model.core
 
 import javax.inject._
 
-import model.TableDefs
-import model.blanks.BlanksTableDefs
-import model.ebnf.EbnfTableDefs
-import model.mindmap.MindmapTableDefs
-import model.programming.ProgTableDefs
-import model.questions.QuestionsTableDefs
-import model.spread.SpreadTableDefs
-import model.sql.SqlTableDefs
-import model.uml.UmlTableDefs
-import model.web.WebTableDefs
-import model.xml.XmlTableDefs
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 
@@ -21,15 +10,14 @@ import scala.concurrent.ExecutionContext
 class Repository @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]
 
-    with TableDefs
+    with model.TableDefs
 
-    with BlanksTableDefs
-    with EbnfTableDefs
-    with MindmapTableDefs
-    with ProgTableDefs
-    with QuestionsTableDefs
-    with SpreadTableDefs
-    with SqlTableDefs
-    with UmlTableDefs
-    with WebTableDefs
-    with XmlTableDefs
+    with model.blanks.BlanksTableDefs
+    with model.mindmap.MindmapTableDefs
+    with model.programming.ProgTableDefs
+    with model.questions.QuestionsTableDefs
+    with model.spread.SpreadTableDefs
+    with model.sql.SqlTableDefs
+    with model.uml.UmlTableDefs
+    with model.web.WebTableDefs
+    with model.xml.XmlTableDefs
