@@ -15,6 +15,7 @@ class BoolNodeParserTest {
         case None         => fail(s"""expected that parsing of "$toParse" succeeds!""")
       }
     }
+    
   }
 
   @Test
