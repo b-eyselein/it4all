@@ -98,7 +98,7 @@ case class Question(override val baseValues: BaseValues, collectionId: Int, ques
 
 }
 
-case class Answer(id: Int, questionId: Int, quizId: Int, text: String, correctness: Correctness) extends IdAnswer {
+case class Answer(id: Int, questionId: Int, quizId: Int, text: String, correctness: Correctness, explanation: Option[String]) extends IdAnswer {
 
   def isCorrect: Boolean = correctness != Correctness.WRONG
 
@@ -213,13 +213,15 @@ trait QuestionsTableDefs extends TableDefs {
 
     def correctness = column[Correctness]("correctness")
 
+    def explanation = column[String]("explanation")
+
 
     def pk = primaryKey("pk", (id, questionId, quizId))
 
     def questionFk = foreignKey("question_fk", (questionId, quizId), questions)(question => (question.id, question.quizId))
 
 
-    def * = (id, questionId, quizId, ansText, correctness) <> (Answer.tupled, Answer.unapply)
+    def * = (id, questionId, quizId, ansText, correctness, explanation.?) <> (Answer.tupled, Answer.unapply)
 
   }
 

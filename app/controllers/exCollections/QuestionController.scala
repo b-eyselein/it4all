@@ -251,11 +251,7 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   protected def onLiveCorrectionError(error: Throwable): Result = ???
 
-  protected def onLiveCorrectionResult(result: QuestionResult): Result = Ok(Json.obj(
-    "correct" -> JsArray(result.correct map (i => JsNumber(i.id))),
-    "missing" -> JsArray(result.missing map (i => JsNumber(i.id))),
-    "wrong" -> JsArray(result.wrong map (i => JsNumber(i.id)))
-  ))
+  protected def onLiveCorrectionResult(result: QuestionResult): Result = Ok(result.forJson)
 
   // Correction
 

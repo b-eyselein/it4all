@@ -1,25 +1,19 @@
 /**
- * @param {object} response
- * @param {number[]} response.correct
- * @param {number[]} response.wrong
- * @param {number[]} response.missing
+ * @param {Array<{id: Number, chosen: Boolean, correct: Boolean, explanation: String=}>} response
  */
 function onAjaxSuccess(response) {
-    console.log(response);
-    for (let correct of response.correct) {
-        let parent = $('#' + correct).parent();
-        parent.addClass('bg-success');
-        parent.attr('title', 'Diese Antwort war korrekt!');
-    }
-    for (let missing of response.missing) {
-        let parent = $('#' + missing).parent();
-        parent.addClass('bg-danger');
-        parent.attr('title', 'Diese Antwort ist korrekt, war aber nicht angegeben!');
-    }
-    for (let wrong of response.wrong) {
-        let parent = $('#' + wrong).parent();
-        parent.addClass('bg-danger');
-        parent.attr('title', 'Diese Antwort war angegeben, ist aber falsch!');
+    for (let entry of response) {
+        let parent = $('#' + entry.id).parent();
+        if (entry.correct) {
+            parent.addClass('bg-success');
+        } else {
+            parent.addClass('bg-danger');
+            if (entry.chosen) {
+                parent.parent().append(`<p class="text-info">Diese Auswahl ist falsch, wurde aber ausgewählt${entry.explanation ? ": " + entry.explanation : ""}!</p>`)
+            } else {
+                parent.parent().append(`<p class="text-info">Diese Auswahl ist korrekt, wurde aber nicht ausgewählt${entry.explanation ? ": " + entry.explanation : ""}!</p>`)
+            }
+        }
     }
 }
 

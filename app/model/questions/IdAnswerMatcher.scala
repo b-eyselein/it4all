@@ -3,6 +3,7 @@ package model.questions
 import model.Enums
 import model.core.{CompleteResult, EvaluationResult}
 import model.questions.QuestionEnums.Correctness
+import play.api.libs.json._
 import play.twirl.api.Html
 
 import scala.collection.mutable.ListBuffer
@@ -15,11 +16,9 @@ case class QuestionResult(learnerSolution: Seq[IdGivenAnswer], question: Complet
 
   override val results: Seq[IdAnswerMatch] = IdAnswerMatcher.doMatch(learnerSolution, question.answers)
 
-  def correct: Seq[IdAnswerMatch] = results filter (r => r.userArg.isDefined && r.sampleArg.isDefined && r.correctness != Correctness.WRONG)
-
-  def missing: Seq[IdAnswerMatch] = results filter (r => r.userArg.isEmpty && r.correctness == Correctness.CORRECT)
-
-  def wrong: Seq[IdAnswerMatch] = results filter (r => r.sampleArg.isEmpty || r.correctness == Correctness.WRONG)
+  def forJson: JsValue = JsArray(results map { r =>
+    JsObject(Seq("id" -> JsNumber(r.id), "chosen" -> JsBoolean(r.userArg.isDefined), "correct" -> JsBoolean(r.isCorrect)) ++ r.sampleArg.flatMap(_.explanation).map(expl => "explanation" -> JsString(expl)))
+  })
 
 }
 
@@ -43,8 +42,6 @@ object IdAnswerMatcher {
       }
     }
 
-    println(firstList.map(_.id) + " :: " + secondList.map(_.id) + " :: " + matches.map(_.id))
-
     val wrong = firstList map (t => IdAnswerMatch(Some(t), None))
     val missing = secondList map (t => IdAnswerMatch(None, Some(t)))
 
@@ -57,7 +54,14 @@ case class IdAnswerMatch(userArg: Option[IdGivenAnswer], sampleArg: Option[Answe
 
   def id: Int = userArg map (_.id) getOrElse (sampleArg map (_.id) getOrElse (-1))
 
-  def correctness: Correctness = sampleArg map (_.correctness) getOrElse Correctness.WRONG
+  def correctness: Correctness = if (userArg.isDefined) sampleArg map (_.correctness) getOrElse Correctness.WRONG
+  else sampleArg map (_.correctness) match {
+    case Some(Correctness.WRONG | Correctness.OPTIONAL) => Correctness.CORRECT
+    case _                                              => Correctness.WRONG
+  }
 
   override def success: Enums.SuccessType = ???
+
+  def isCorrect: Boolean = correctness != Correctness.WRONG
+
 }

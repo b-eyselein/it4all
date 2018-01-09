@@ -32,7 +32,9 @@ object QuestionYamlProtocol extends MyYamlProtocol {
   case class QuestionAnswerYamlFormat(quizId: Int, questionId: Int) extends MyYamlFormat[Answer] {
 
     override def readObject(yamlObject: YamlObject): Answer = Answer(yamlObject.intField(ID_NAME), questionId, quizId,
-      yamlObject.stringField(TEXT_NAME), yamlObject.enumField(CorrectnessName, Correctness.valueOf, Correctness.OPTIONAL))
+      yamlObject.stringField(TEXT_NAME),
+      yamlObject.enumField(CorrectnessName, Correctness.valueOf, Correctness.OPTIONAL),
+      yamlObject.optStringField("explanation"))
 
     override def write(obj: Answer): YamlValue = ???
 

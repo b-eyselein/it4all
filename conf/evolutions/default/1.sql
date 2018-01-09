@@ -196,6 +196,7 @@ CREATE TABLE IF NOT EXISTS question_answers (
   quiz_id     INT,
   answer_text TEXT,
   correctness ENUM ('CORRECT', 'OPTIONAL', 'WRONG') DEFAULT 'WRONG',
+  explanation TEXT,
 
   PRIMARY KEY (id, question_id, quiz_id),
   FOREIGN KEY (question_id, quiz_id) REFERENCES questions (id, quiz_id)
