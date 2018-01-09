@@ -14,8 +14,7 @@ it4all is a correction framework for
 
 [![build status](https://gitlab2.informatik.uni-wuerzburg.de/bje40dc/it4all/badges/master/build.svg)](https://gitlab2.informatik.uni-wuerzburg.de/bje40dc/it4all/commits/master)
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/1d60243593e347fc9ec6026bf8e7e465)](https://www.codacy.com/app/b.eyselein/it4all?utm_source=bje40dc@gitlab2.informatik.uni-wuerzburg.de&amp;utm_medium=referral&amp;utm_content=bje40dc/it4all&amp;utm_campaign=Badge_Grade)
-
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/2941021ee993484db0cab405aa03b209)](https://www.codacy.com/app/it4all/it4all?utm_source=gitlab2.informatik.uni-wuerzburg.de&amp;utm_medium=referral&amp;utm_content=bje40dc/it4all&amp;utm_campaign=Badge_Grade)
 ## Development
 
 ### Prerequisites
