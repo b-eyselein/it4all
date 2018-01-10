@@ -27,8 +27,8 @@ function updateStateChangeButton(id) {
 }
 
 function onChangeStateSuccess(response) {
-    $('#scb_' + result.id).prop('disabled', true);
-    $('#state_' + result.id).data('val', result.newState);
+    $('#scb_' + response.id).prop('disabled', true);
+    $('#state_' + response.id).data('val', response.newState);
 }
 
 function changeState(theUrl, id) {

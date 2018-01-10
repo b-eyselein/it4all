@@ -11,7 +11,7 @@ function readValues() {
     });
 
     return {
-        formula: formula,
+        formula,
         assignments: assignments
     };
 }

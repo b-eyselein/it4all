@@ -9,9 +9,9 @@ function onAjaxSuccess(response) {
         } else {
             parent.addClass('bg-danger');
             if (entry.chosen) {
-                parent.parent().append(`<p class="text-info">Diese Auswahl ist falsch, wurde aber ausgewählt${entry.explanation ? ": " + entry.explanation : ""}!</p>`)
+                parent.parent().append(`<p class="text-info">Diese Auswahl ist falsch, wurde aber ausgewählt${entry.explanation ? ': ' + entry.explanation : ''}!</p>`)
             } else {
-                parent.parent().append(`<p class="text-info">Diese Auswahl ist korrekt, wurde aber nicht ausgewählt${entry.explanation ? ": " + entry.explanation : ""}!</p>`)
+                parent.parent().append(`<p class="text-info">Diese Auswahl ist korrekt, wurde aber nicht ausgewählt${entry.explanation ? ': ' + entry.explanation : ''}!</p>`)
             }
         }
     }

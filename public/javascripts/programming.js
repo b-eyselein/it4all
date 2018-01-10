@@ -52,7 +52,7 @@ function getTestData() {
         }
         testData.push({
             id: testCounter,
-            inputs: inputs,
+            inputs,
             output: $('#outp_' + testCounter).val()
         });
     }

@@ -1,9 +1,11 @@
 package controllers.exes.idExes
 
 import model.Enums.ToolState
-import model.blanks.{BlanksCompleteExercise, BlanksConsts}
+import model.blanks.BlanksCompleteExercise
 import model.{Consts, HasBaseValues}
 import play.api.mvc.Call
+
+object BlanksConsts extends Consts
 
 object BlanksToolObject extends IdExToolObject {
 

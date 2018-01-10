@@ -73,7 +73,7 @@ function updateClass(elementId) {
         };
     }).get();
     element.attributes.attributes = attrs;
-    element.attr('.uml-class-attrs-text/text', attrs.map(a => a.name + ': ' + a.type).join('\n'));
+    element.attr('.uml-class-attrs-text/text', attrs.map((a) => a.name + ': ' + a.type).join('\n'));
 
     // FIXME: method parameters?
     let mets = $('#editMethodsDiv').find('.input-group').map((index, metGroup) => {
