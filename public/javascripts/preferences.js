@@ -52,6 +52,9 @@ function onPwChangeSuccess(response) {
     let changePwDiv = $('#changePwDiv');
     if (response.changed) {
         changePwDiv.html('<div class="alert alert-success">Ihr Passwort wurde erfolgreich ge&auml;ndert.</div>');
+        $('#old_pw').val('');
+        $('#new_pw1').val('');
+        $('#new_pw2').val('');
     } else {
         changePwDiv.html(`<div class="alert alert-danger">Es gab einen Fehler beim &Auml;ndern ihres Passwortes: ${response.reason}</div>`);
     }
