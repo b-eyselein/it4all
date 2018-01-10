@@ -24,8 +24,8 @@ object SpreadController {
 }
 
 @Singleton
-class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends AFileExController[SpreadExercise, SpreadSheetCorrectionResult, GenericCompleteResult[SpreadSheetCorrectionResult]](cc, dbcp, r, SpreadToolObject) with Secured {
+class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: SpreadTableDefs)(implicit ec: ExecutionContext)
+  extends AFileExController[SpreadExercise, SpreadExercise, SpreadSheetCorrectionResult, GenericCompleteResult[SpreadSheetCorrectionResult], SpreadTableDefs](cc, dbcp, t, SpreadToolObject) with Secured {
 
   // Reading solution from requests
 
@@ -37,23 +37,17 @@ class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
 
   // Yaml
 
-  override type CompEx = SpreadExercise
-
   override implicit val yamlFormat: YamlFormat[SpreadExercise] = SpreadExYamlProtocol.SpreadExYamlFormat
 
   // db
 
   import profile.api._
 
-  override type TQ = repo.SpreadExerciseTable
+  override def futureCompleteExes: Future[Seq[SpreadExercise]] = db.run(tables.spreadExercises.result)
 
-  override def tq = repo.spreadExercises
+  override def futureCompleteExById(id: Int): Future[Option[SpreadExercise]] = db.run(tables.spreadExercises.filter(_.id === id).result.headOption)
 
-  override def futureCompleteExes: Future[Seq[SpreadExercise]] = db.run(repo.spreadExercises.result)
-
-  override def futureCompleteExById(id: Int): Future[Option[SpreadExercise]] = db.run(repo.spreadExercises.filter(_.id === id).result.headOption)
-
-  override def saveReadToDb(read: SpreadExercise): Future[Int] = db.run(repo.spreadExercises insertOrUpdate read)
+  override def saveReadToDb(read: SpreadExercise): Future[Int] = db.run(tables.spreadExercises insertOrUpdate read)
 
   override protected def checkFiles(ex: SpreadExercise): List[Try[Path]] = SpreadToolObject.fileTypes flatMap {
     case (fileEnding, _) =>

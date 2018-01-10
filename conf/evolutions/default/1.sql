@@ -180,12 +180,12 @@ CREATE TABLE IF NOT EXISTS questions (
   ex_text       TEXT,
   ex_state      ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
 
-  quiz_id       INT,
+  collection_id       INT,
   question_type ENUM ('CHOICE', 'FREETEXT', 'FILLOUT')               DEFAULT 'CHOICE',
   max_points    INT,
 
-  PRIMARY KEY (id, quiz_id),
-  FOREIGN KEY (quiz_id) REFERENCES quizzes (id)
+  PRIMARY KEY (id, collection_id),
+  FOREIGN KEY (collection_id) REFERENCES quizzes (id)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
@@ -193,13 +193,13 @@ CREATE TABLE IF NOT EXISTS questions (
 CREATE TABLE IF NOT EXISTS question_answers (
   id          INT,
   question_id INT,
-  quiz_id     INT,
+  collection_id     INT,
   answer_text TEXT,
   correctness ENUM ('CORRECT', 'OPTIONAL', 'WRONG') DEFAULT 'WRONG',
   explanation TEXT,
 
-  PRIMARY KEY (id, question_id, quiz_id),
-  FOREIGN KEY (question_id, quiz_id) REFERENCES questions (id, quiz_id)
+  PRIMARY KEY (id, question_id, collection_id),
+  FOREIGN KEY (question_id, collection_id) REFERENCES questions (id, collection_id)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
@@ -237,13 +237,13 @@ CREATE TABLE IF NOT EXISTS sql_exercises (
   ex_text       TEXT,
   ex_state      ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED')    DEFAULT 'RESERVED',
 
-  scenario_id   INT,
+  collection_id   INT,
   tags          TEXT,
   exercise_type ENUM ('SELECT', 'CREATE', 'UPDATE', 'INSERT', 'DELETE') DEFAULT 'SELECT',
   hint          TEXT,
 
-  PRIMARY KEY (id, scenario_id),
-  FOREIGN KEY (scenario_id) REFERENCES sql_scenarioes (id)
+  PRIMARY KEY (id, collection_id),
+  FOREIGN KEY (collection_id) REFERENCES sql_scenarioes (id)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
@@ -251,26 +251,26 @@ CREATE TABLE IF NOT EXISTS sql_exercises (
 CREATE TABLE IF NOT EXISTS sql_samples (
   id          INT,
   exercise_id INT,
-  scenario_id INT,
+  collection_id INT,
   sample      TEXT,
 
-  PRIMARY KEY (id, exercise_id, scenario_id),
-  FOREIGN KEY (exercise_id, scenario_id) REFERENCES sql_exercises (id, scenario_id)
+  PRIMARY KEY (id, exercise_id, collection_id),
+  FOREIGN KEY (exercise_id, collection_id) REFERENCES sql_exercises (id, collection_id)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS sql_solutions (
   username    VARCHAR(50),
-  scenario_id INT,
+  collection_id INT,
   exercise_id INT,
   solution    TEXT,
 
-  PRIMARY KEY (username, scenario_id, exercise_id),
+  PRIMARY KEY (username, collection_id, exercise_id),
   FOREIGN KEY (username) REFERENCES users (username)
     ON UPDATE CASCADE
     ON DELETE CASCADE,
-  FOREIGN KEY (exercise_id, scenario_id) REFERENCES sql_exercises (id, scenario_id)
+  FOREIGN KEY (exercise_id, collection_id) REFERENCES sql_exercises (id, collection_id)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );

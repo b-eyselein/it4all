@@ -1,10 +1,15 @@
 package model.spread
 
+import javax.inject.Inject
+
 import controllers.exes.fileExes.{FileExToolObject, SpreadToolObject}
 import model.Enums.ExerciseState
-import model.{BaseValues, Exercise, FileCompleteEx, TableDefs}
+import model._
+import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc.Call
 import play.twirl.api.Html
+
+import scala.concurrent.{ExecutionContext, Future}
 
 object SpreadExercise {
 
@@ -31,12 +36,20 @@ case class SpreadExercise(override val baseValues: BaseValues, sampleFilename: S
 
 }
 
-trait SpreadTableDefs extends TableDefs {
-  self: play.api.db.slick.HasDatabaseConfigProvider[slick.jdbc.JdbcProfile] =>
+class SpreadTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
+  extends HasDatabaseConfigProvider[slick.jdbc.JdbcProfile] with ExerciseTableDefs[SpreadExercise, SpreadExercise] {
 
   import profile.api._
 
+  override def completeExForEx(ex: SpreadExercise)(implicit ec: ExecutionContext): Future[SpreadExercise] = Future(ex)
+
+  override def saveExerciseRest(compEx: SpreadExercise)(implicit ec: ExecutionContext): Future[Boolean] = Future(true)
+
   val spreadExercises = TableQuery[SpreadExerciseTable]
+
+  override type ExTableDef = SpreadExerciseTable
+
+  override val exTable = spreadExercises
 
   class SpreadExerciseTable(tag: Tag) extends HasBaseValuesTable[SpreadExercise](tag, "spread_exercises") {
 

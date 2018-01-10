@@ -1,9 +1,11 @@
 package model.blanks
 
+import javax.inject.Inject
+
 import controllers.exes.idExes.BlanksToolObject
 import model.Enums.ExerciseState
-import model.{BaseValues, CompleteEx, Exercise, TableDefs}
-import play.api.db.slick.HasDatabaseConfigProvider
+import model._
+import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc.Call
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
@@ -36,8 +38,8 @@ case class BlanksAnswer(id: Int, exerciseId: Int, solution: String)
 
 // Table definitions
 
-trait BlanksTableDefs extends TableDefs {
-  self: HasDatabaseConfigProvider[JdbcProfile] =>
+class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
+  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseTableDefs[BlanksExercise, BlanksCompleteExercise] {
 
   import profile.api._
 
@@ -45,32 +47,18 @@ trait BlanksTableDefs extends TableDefs {
 
   val blanksSamples = TableQuery[BlanksSampleAnswersTable]
 
+  override type ExTableDef = BlanksExercisesTable
+
+  override val exTable = blanksExercises
+
+  override def completeExForEx(ex: BlanksExercise)(implicit ec: ExecutionContext): Future[BlanksCompleteExercise] =
+    samplesForExercise(ex) map (samples => BlanksCompleteExercise(ex, samples))
+
+  override protected def saveExerciseRest(compEx: BlanksCompleteExercise)(implicit ec: ExecutionContext): Future[Boolean] = saveSeq[BlanksAnswer](compEx.samples, a => db.run(blanksSamples += a))
+
   // Reading
 
-  def blanksCompleteExById(id: Int)(implicit ec: ExecutionContext): Future[Option[BlanksCompleteExercise]] =
-    db.run(blanksExercises.filter(_.id === id).result.headOption) flatMap {
-      case Some(ex) => samplesForExercise(ex) map (samples => Some(BlanksCompleteExercise(ex, samples)))
-      case None     => Future(None)
-    }
-
-  def blanksCompleteExes(implicit ec: ExecutionContext): Future[Seq[BlanksCompleteExercise]] =
-    db.run(blanksExercises.result) flatMap { exes =>
-      Future.sequence(exes map {
-        ex => samplesForExercise(ex) map (s => BlanksCompleteExercise(ex, s))
-      })
-    }
-
-  private def samplesForExercise(ex: BlanksExercise)(implicit ec: ExecutionContext): Future[Seq[BlanksAnswer]] =
-    db.run(blanksSamples.filter(_.exerciseId === ex.id).result)
-
-  // Saving
-
-  def saveBlanksExercise(ex: BlanksCompleteExercise)(implicit ec: ExecutionContext): Future[Boolean] = db.run(blanksExercises.filter(_.id === ex.id).delete) flatMap {
-    _ => db.run(blanksExercises += ex.ex) flatMap { _ => Future.sequence(ex.samples map saveBlanksSample) map (_.forall(identity)) }
-  }
-
-  private def saveBlanksSample(sample: BlanksAnswer)(implicit ec: ExecutionContext): Future[Boolean] =
-    db.run(blanksSamples += sample) map (_ => true) recover { case _: Exception => false }
+  private def samplesForExercise(ex: BlanksExercise)(implicit ec: ExecutionContext): Future[Seq[BlanksAnswer]] = db.run(blanksSamples.filter(_.exerciseId === ex.id).result)
 
   // Table defs
 

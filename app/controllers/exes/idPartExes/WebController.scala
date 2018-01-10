@@ -22,12 +22,12 @@ import scala.language.implicitConversions
 import scala.util.Try
 
 @Singleton
-class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends AIdPartExController[WebExercise, WebResult, CompleteResult[WebResult]](cc, dbcp, r, WebToolObject) with Secured {
+class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: WebTableDefs)(implicit ec: ExecutionContext)
+  extends AIdPartExController[WebExercise, WebCompleteEx, WebResult, CompleteResult[WebResult], WebTableDefs](cc, dbcp, t, WebToolObject) with Secured {
 
   override type PartType = WebExPart
 
-  override def partTypeFromString(str: String): Option[WebExPart] = WebExPart.byString(str)
+  override def partTypeFromString(str: String): Option[WebExPart] = WebExPart.byShortName(str)
 
   case class WebExIdentifier(id: Int, part: WebExPart) extends IdPartExIdentifier
 
@@ -46,23 +46,13 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // Yaml
 
-  override type CompEx = WebCompleteEx
-
   override implicit val yamlFormat: YamlFormat[WebCompleteEx] = WebExYamlProtocol.WebExYamlFormat
 
   // db
 
   import profile.api._
 
-  override type TQ = repo.WebExerciseTable
-
-  override def tq: repo.ExerciseTableQuery[WebExercise, WebCompleteEx, repo.WebExerciseTable] = repo.webExercises
-
-  override def futureCompleteExes: Future[Seq[WebCompleteEx]] = repo.webExercises.completeExes
-
-  override def futureCompleteExById(id: Int): Future[Option[WebCompleteEx]] = repo.webExercises.completeById(id)
-
-  override def saveRead(read: Seq[WebCompleteEx]): Future[Seq[Int]] = Future.sequence(read map repo.webExercises.saveCompleteEx)
+  override def saveRead(read: Seq[WebCompleteEx]): Future[Seq[Boolean]] = Future.sequence(read map tables.saveCompleteEx)
 
   // Other routes
 
@@ -108,7 +98,7 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
     val newSol = WebSolution(exercise.ex.id, user.username, learnerSolution)
 
-    Await.result(db.run(repo.webSolutions insertOrUpdate newSol), Duration(2, duration.SECONDS))
+    Await.result(db.run(tables.webSolutions insertOrUpdate newSol), Duration(2, duration.SECONDS))
     val driver = new HtmlUnitDriver(true)
     driver get solutionUrl
 
@@ -118,7 +108,7 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   // Other helper methods
 
   private def getOldSolOrDefault(username: String, exerciseId: Int): Future[String] =
-    db.run(repo.webSolutions.filter(sol => sol.userName === username && sol.exerciseId === exerciseId).result.headOption) map {
+    db.run(tables.webSolutions.filter(sol => sol.userName === username && sol.exerciseId === exerciseId).result.headOption) map {
       case Some(solution) => solution.solution
       case None           => STANDARD_HTML
     }

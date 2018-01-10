@@ -1,11 +1,13 @@
 package model.uml
 
+import javax.inject.Inject
+
 import controllers.exes.idPartExes.UmlToolObject
 import model.Enums.ExerciseState
 import model.uml.UmlConsts._
 import model.uml.UmlEnums._
-import model.{BaseValues, CompleteEx, Exercise, TableDefs}
-import play.api.db.slick.HasDatabaseConfigProvider
+import model._
+import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc.Call
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
@@ -78,9 +80,9 @@ case class UmlClass(exerciseId: Int, className: String, classType: UmlClassType)
 trait UmlClassMember {
 
   val exerciseId: Int
-  val className : String
-  val name      : String
-  val umlType   : String
+  val className: String
+  val name: String
+  val umlType: String
 
   def render: String = name + ": " + umlType
 
@@ -104,78 +106,62 @@ case class UmlAssociation(exerciseId: Int, assocType: UmlAssociationType, assocN
 
 // Tables
 
-trait UmlTableDefs extends TableDefs {
-  self: HasDatabaseConfigProvider[JdbcProfile] =>
+class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
+  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseTableDefs[UmlExercise, UmlCompleteEx] {
 
   import profile.api._
 
-  // Delete old exercise first
-  def saveCompleteEx(completeEx: UmlCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] = db.run(umlExercises.filter(_.id === completeEx.id).delete) flatMap { _ =>
-    db.run(umlExercises += completeEx.ex) flatMap { _ =>
-      Future.sequence(completeEx.mappings map saveMapping) zip Future.sequence(saveSampleSolution(completeEx.solution))
-    } map (_ => true) recover { case _: Throwable => false }
-  }
+  // Reading
 
-  private def saveMapping(mapping: UmlMapping)(implicit ec: ExecutionContext): Future[Boolean] =
-    db.run(umlMappings += mapping) map (_ => true) recover { case _: Throwable => false }
+  override def completeExForEx(ex: UmlExercise)(implicit ec: ExecutionContext): Future[UmlCompleteEx] =
+    db.run(mappingsAction(ex.id) zip classesAction(ex.id) zip associationsAction(ex.id) zip implementationsAction(ex.id)) flatMap {
+      case (((mappings, classes), assocs), impls) =>
+        completeClasses(ex, classes) map { compClasses =>
+          val solution = UmlSolution(compClasses, assocs, impls)
+          UmlCompleteEx(ex, mappings, solution)
+        }
+    }
 
-  private def saveSampleSolution(solution: UmlSolution)(implicit ec: ExecutionContext) =
-    (solution.classes map saveClass) zip (solution.associations map saveAssociation) zip (solution.implementations map saveImplementation) map (_._1._1)
+  private def mappingsAction(id: Int) = umlMappings filter (_.exerciseId === id) result
+
+  private def completeClasses(ex: UmlExercise, classes: Seq[UmlClass])(implicit ec: ExecutionContext): Future[Seq[UmlCompleteClass]] = Future.sequence(classes map { clazz =>
+    db.run(attrsAction(ex.id, clazz.className) zip methodsAction(ex.id, clazz.className)) map { case (attrs, methods) => UmlCompleteClass(clazz, attrs, methods) }
+  })
+
+  private def classesAction(id: Int) = umlClasses filter (_.exerciseId === id) result
+
+  private def attrsAction(id: Int, className: String) = umlClassAttributes filter (attr => attr.exerciseId === id && attr.className === className) result
+
+  private def methodsAction(id: Int, className: String) = umlClassMethods filter (method => method.exerciseId === id && method.className === className) result
+
+  private def associationsAction(id: Int) = umlAssociations filter (_.exerciseId === id) result
+
+  private def implementationsAction(id: Int) = umlImplementations filter (_.exerciseId === id) result
+
+  // Saving
+
+  override protected def saveExerciseRest(compEx: UmlCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] =
+    saveMappings(compEx.mappings) zip saveSampleSolution(compEx.solution) map (future => future._1 && future._2)
+
+  private def saveMappings(mappings: Seq[UmlMapping])(implicit ec: ExecutionContext): Future[Boolean] = saveSeq[UmlMapping](mappings, m => db.run(umlMappings += m))
+
+  private def saveSampleSolution(solution: UmlSolution)(implicit ec: ExecutionContext): Future[Boolean] = saveSeq(solution.classes, saveClass) zip
+    saveSeq[UmlAssociation](solution.associations, a => db.run(umlAssociations += a)) zip
+    saveSeq[UmlImplementation](solution.implementations, i => db.run(umlImplementations += i)) map (t => t._1._1 && t._1._2 && t._2)
 
   private def saveClass(umlCompleteClass: UmlCompleteClass)(implicit ec: ExecutionContext): Future[Boolean] = db.run(umlClasses += umlCompleteClass.clazz) flatMap { _ =>
-    Future.sequence(umlCompleteClass.attributes map saveClassAttribute) map (_ forall identity) zip
-      Future.sequence(umlCompleteClass.methods map saveClassMethod).map(_ forall identity)
-  } map (tuple => tuple._1 && tuple._2)
+    saveSeq[UmlClassAttribute](umlCompleteClass.attributes, a => db.run(umlClassAttributes += a)) zip
+      saveSeq[UmlClassMethod](umlCompleteClass.methods, m => db.run(umlClassMethods += m))
+  } map (t => t._1 && t._2)
 
-  private def saveAssociation(association: UmlAssociation)(implicit ec: ExecutionContext): Future[Boolean] =
-    db.run(umlAssociations += association) map (_ => true) recover { case _: Throwable => false }
+  // Deletion
 
-  private def saveImplementation(implementation: UmlImplementation)(implicit ec: ExecutionContext): Future[Boolean] =
-    db.run(umlImplementations += implementation) map (_ => true) recover { case _: Throwable => false }
+  // Table Queries
 
-  private def saveClassAttribute(umlClassAttribute: UmlClassAttribute)(implicit ec: ExecutionContext): Future[Boolean] =
-    db.run(umlClassAttributes += umlClassAttribute) map (_ => true) recover { case _: Throwable => false }
+  val umlExercises = TableQuery[UmlExercisesTable]
 
-  private def saveClassMethod(umlClassMethod: UmlClassMethod)(implicit ec: ExecutionContext): Future[Boolean] =
-    db.run(umlClassMethods += umlClassMethod) map (_ => true) recover { case _: Throwable => false }
-
-  object umlExercises extends ExerciseTableQuery[UmlExercise, UmlCompleteEx, UmlExercisesTable](new UmlExercisesTable(_)) {
-
-    override protected def completeExForEx(ex: UmlExercise)(implicit ec: ExecutionContext): Future[UmlCompleteEx] =
-      db.run(mappingsAction(ex.id) zip classesAction(ex.id) zip associationsAction(ex.id) zip implementationsAction(ex.id)) flatMap {
-        case (((mappings, classes), assocs), impls) =>
-          completeClasses(ex, classes) map { compClasses =>
-            val solution = UmlSolution(compClasses, assocs, impls)
-            UmlCompleteEx(ex, mappings, solution)
-          }
-      }
-
-    // Mappings and ignore words
-
-    private def mappingsAction(id: Int) = umlMappings filter (_.exerciseId === id) result
-
-    // Solution
-
-    private def completeClasses(ex: UmlExercise, classes: Seq[UmlClass])(implicit ec: ExecutionContext): Future[Seq[UmlCompleteClass]] = Future.sequence(classes map { clazz =>
-      db.run(attrsAction(ex.id, clazz.className) zip methodsAction(ex.id, clazz.className)) map { case (attrs, methods) => UmlCompleteClass(clazz, attrs, methods) }
-    })
-
-    private def classesAction(id: Int) = umlClasses filter (_.exerciseId === id) result
-
-    private def attrsAction(id: Int, className: String) = umlClassAttributes filter (attr => attr.exerciseId === id && attr.className === className) result
-
-    private def methodsAction(id: Int, className: String) = umlClassMethods filter (method => method.exerciseId === id && method.className === className) result
-
-    private def associationsAction(id: Int) = umlAssociations filter (_.exerciseId === id) result
-
-    private def implementationsAction(id: Int) = umlImplementations filter (_.exerciseId === id) result
-
-    override def saveCompleteEx(completeEx: UmlCompleteEx)(implicit ec: ExecutionContext): Future[Int] = ???
-
-  }
 
   val umlMappings = TableQuery[UmlMappingsTable]
-
 
   val umlClasses = TableQuery[UmlClassTable]
 
@@ -187,6 +173,10 @@ trait UmlTableDefs extends TableDefs {
   val umlAssociations = TableQuery[UmlAssociationsTable]
 
   val umlImplementations = TableQuery[UmlImplementationsTable]
+
+  override type ExTableDef = UmlExercisesTable
+
+  override val exTable = umlExercises
 
   // Implicit column types
 

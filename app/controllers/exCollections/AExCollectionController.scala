@@ -38,8 +38,9 @@ trait CollectionToolObject extends model.core.tools.ExToolObject with FileUtils 
 
 }
 
-abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E, _], R <: EvaluationResult, CompResult <: CompleteResult[R]]
-(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository, val toolObject: CollectionToolObject)(implicit ec: ExecutionContext)
+abstract class AExCollectionController[Ex <: ExerciseInCollection, CompEx <: CompleteEx[Ex], Coll <: ExerciseCollection[Ex, CompEx], CompColl <: CompleteCollection[Ex, CompEx, Coll],
+R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseCollectionTableDefs[Ex, CompEx, Coll, CompColl]]
+(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val tables: Tables, val toolObject: CollectionToolObject)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured with FileUtils {
 
   // Reading solution from Request
@@ -52,35 +53,27 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E,
 
   // Reading Yaml
 
-  type CompColl <: CompleteCollection
-
-  type CompEx <: CompleteEx[E]
-
   implicit val yamlFormat: YamlFormat[CompColl]
 
   // Database queries
 
-  import profile.api._
-
-  protected type TQ <: repo.HasBaseValuesTable[C]
-
-  protected def tq: TableQuery[TQ]
-
-  protected def numOfExes: Future[Int] = db.run(tq.size.result)
+  protected def numOfExes: Future[Int] = tables.futureNumOfExes
 
   protected def numOfExesInColl(id: Int): Future[Int]
 
-  protected def futureCollById(id: Int): Future[Option[C]] = db.run(tq.filter(_.id === id).result.headOption)
+  protected def futureCollById(id: Int): Future[Option[Coll]] = tables.futureCollById(id)
 
-  protected def futureCompleteColls: Future[Seq[CompColl]]
+  protected def futureCompleteColls: Future[Seq[CompColl]] = tables.futureCompleteColls
 
-  protected def futureCompleteCollById(id: Int): Future[Option[CompColl]]
+  protected def futureCompleteCollById(id: Int): Future[Option[CompColl]] = tables.futureCompleteCollById(id)
 
-  protected def futureCompleteExById(collId: Int, id: Int): Future[Option[CompEx]]
+  protected def futureCompleteExById(collId: Int, id: Int): Future[Option[CompEx]] = tables.futureCompleteExById(collId, id)
 
   protected def statistics: Future[Html] = numOfExes map (num => Html(s"<li>Es existieren insgesamt $num Aufgaben</li>"))
 
   protected def saveRead(read: Seq[CompColl]): Future[Seq[Boolean]]
+
+  protected def wrap(compColl: CompColl): CompleteCollectionWrapper
 
   def log(user: User, eventToLog: WorkingEvent): Unit = Unit // PROGRESS_LOGGER.debug(s"""${user.username} - ${Json.toJson(eventToLog)}""")
 
@@ -129,7 +122,7 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E,
   }
 
   def adminCollectionsList: EssentialAction = futureWithAdmin { admin =>
-    implicit request => futureCompleteColls map (colls => Ok(views.html.admin.collectionList(admin, colls, toolObject)))
+    implicit request => futureCompleteColls map (colls => Ok(views.html.admin.collectionList(admin, colls map wrap, toolObject)))
   }
 
   def adminEditCollectionForm(id: Int): EssentialAction = futureWithAdmin { admin =>
@@ -146,7 +139,7 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E,
     implicit request => Ok(collEditForm(admin, None))
   }
 
-  def adminCreateCollection: EssentialAction = withAdmin { admin =>
+  def adminCreateCollection: EssentialAction = withAdmin { _ =>
     implicit request =>
       // FIXME: implement: creation of collection!
       Ok("TODO: Creating new collection...!")
@@ -157,7 +150,7 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E,
 
   def adminDeleteCollection(id: Int): EssentialAction = futureWithAdmin { _ =>
     implicit request =>
-      db.run(tq.filter(_.id === id).delete) map {
+      tables.deleteColl(id) map {
         case 0 => NotFound(Json.obj("message" -> s"Die Aufgabe mit ID $id existiert nicht und kann daher nicht geloescht werden!"))
         case _ => Ok(Json.obj("id" -> id))
       }
@@ -188,7 +181,7 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E,
     implicit request =>
       futureCompleteCollById(id) map {
         case None       => Redirect(toolObject.indexCall)
-        case Some(coll) => Ok(views.html.core.collection(user, coll, takeSlice(coll.exercises, page), toolObject, page, numOfPages(coll.exercises.size)))
+        case Some(coll) => Ok(views.html.core.collection(user, wrap(coll), takeSlice(coll.exercises, page), toolObject, page, numOfPages(coll.exercises.size)))
       }
   }
 
@@ -238,7 +231,7 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E,
 
   // Views and other result handlers
 
-  protected def renderExercise(user: User, coll: C, exercise: CompEx, numOfExes: Int): Html
+  protected def renderExercise(user: User, coll: Coll, exercise: CompEx, numOfExes: Int): Html
 
   protected def onSubmitCorrectionResult(user: User, result: CompResult): Result
 
@@ -248,7 +241,7 @@ abstract class AExCollectionController[E <: Exercise, C <: ExerciseCollection[E,
 
   protected def onLiveCorrectionError(error: Throwable): Result
 
-  protected def correctEx(user: User, form: SolType, exercise: CompEx, collection: C): Try[CompResult]
+  protected def correctEx(user: User, form: SolType, exercise: CompEx, collection: Coll): Try[CompResult]
 
   protected def adminRenderEditRest(exercise: Option[CompColl]): Html
 

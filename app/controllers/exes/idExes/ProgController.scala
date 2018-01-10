@@ -36,9 +36,8 @@ object ProgController {
 }
 
 @Singleton
-class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)
-                              (implicit ec: ExecutionContext)
-  extends AIdExController[ProgExercise, ProgEvaluationResult, GenericCompleteResult[ProgEvaluationResult]](cc, dbcp, r, ProgToolObject) with Secured with JsonFormat {
+class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: ProgTableDefs)(implicit ec: ExecutionContext)
+  extends AIdExController[ProgExercise, ProgCompleteEx, ProgEvaluationResult, GenericCompleteResult[ProgEvaluationResult], ProgTableDefs](cc, dbcp, t, ProgToolObject) with Secured with JsonFormat {
 
   // Reading solution from requests
 
@@ -52,21 +51,11 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   // Yaml
 
-  override type CompEx = ProgCompleteEx
-
   override implicit val yamlFormat: YamlFormat[ProgCompleteEx] = ProgExYamlProtocol.ProgExYamlFormat
 
   // db
 
-  override type TQ = repo.ProgExercisesTable
-
-  override def tq: repo.ExerciseTableQuery[ProgExercise, ProgCompleteEx, repo.ProgExercisesTable] = repo.progExercises
-
-  override def futureCompleteExes: Future[Seq[ProgCompleteEx]] = repo.progExercises.completeExes
-
-  override def futureCompleteExById(id: Int): Future[Option[ProgCompleteEx]] = repo.progExercises.completeById(id)
-
-  override def saveRead(read: Seq[ProgCompleteEx]): Future[Seq[Int]] = Future.sequence(read map (repo.progExercises.saveCompleteEx(_)))
+  override def saveRead(read: Seq[ProgCompleteEx]): Future[Seq[Boolean]] = Future.sequence(read map tables.saveCompleteEx)
 
   // Other routes
 

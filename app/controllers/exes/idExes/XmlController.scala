@@ -30,8 +30,8 @@ object XmlController {
 }
 
 @Singleton
-class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends AIdExController[XmlExercise, XmlError, GenericCompleteResult[XmlError]](cc, dbcp, r, XmlToolObject) with Secured with FileUtils {
+class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: XmlTableDefs)(implicit ec: ExecutionContext)
+  extends AIdExController[XmlExercise, XmlExercise, XmlError, GenericCompleteResult[XmlError], XmlTableDefs](cc, dbcp, t, XmlToolObject) with Secured with FileUtils {
 
   // Reading solution from requests
 
@@ -45,25 +45,14 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // Yaml
 
-  override type CompEx = XmlExercise
-
   override val yamlFormat: YamlFormat[XmlExercise] = XmlExYamlProtocol.XmlExYamlFormat
 
   // db
 
   import profile.api._
 
-  override type TQ = repo.XmlExerciseTable
-
-  override def tq = repo.xmlExercises
-
-  override def futureCompleteExes: Future[Seq[XmlExercise]] = db.run(repo.xmlExercises.result)
-
-  override def futureCompleteExById(id: Int): Future[Option[XmlExercise]] =
-    db.run(repo.xmlExercises.findBy(_.id).apply(id).result.headOption)
-
   override def saveRead(read: Seq[XmlExercise]): Future[Seq[Int]] = Future.sequence(read.map(completeEx =>
-    db.run(repo.xmlExercises insertOrUpdate completeEx.ex)))
+    db.run(tables.xmlExercises insertOrUpdate completeEx.ex)))
 
   // Other routes
 
@@ -122,6 +111,6 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   // Own functions
 
   private def readDefOrOldSolution(username: String, exercise: XmlExercise): Future[String] =
-    repo.readXmlSolution(username, exercise.id).map(_.map(_.solution) getOrElse exercise.fixedStart)
+    tables.readXmlSolution(username, exercise.id).map(_.map(_.solution) getOrElse exercise.fixedStart)
 
 }

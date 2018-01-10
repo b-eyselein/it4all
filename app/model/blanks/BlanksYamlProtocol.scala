@@ -20,9 +20,9 @@ object BlanksYamlProtocol extends MyYamlProtocol {
     var i = 1
     var solutions: mutable.Map[Int, String] = mutable.Map.empty
 
-    val iter: Iterator[Regex.Match] = parseRegex.findAllMatchIn(blanksText)
-    while (iter.hasNext) {
-      val current = iter.next
+    val iterator: Iterator[Regex.Match] = parseRegex.findAllMatchIn(blanksText)
+    while (iterator.hasNext) {
+      val current = iterator.next
 
       val sol = solRegex.findFirstMatchIn(current.toString) map (_.group(1)) getOrElse "FEHLER!"
 

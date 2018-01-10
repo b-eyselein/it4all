@@ -34,13 +34,11 @@ trait FileExToolObject extends ExToolObject {
 
 }
 
-abstract class AFileExController[E <: Exercise, R <: EvaluationResult, CompResult <: CompleteResult[R]]
-(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository, to: FileExToolObject)(implicit ec: ExecutionContext)
-  extends BaseExerciseController[E, R, CompResult](cc, dbcp, r, to) with Secured with FileUtils {
+abstract class AFileExController[Ex <: Exercise, CompEx <: FileCompleteEx[Ex], R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseTableDefs[Ex, CompEx]]
+(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: Tables, to: FileExToolObject)(implicit ec: ExecutionContext)
+  extends BaseExerciseController[Ex, CompEx, R, CompResult, Tables](cc, dbcp, t, to) with Secured with FileUtils {
 
   override type ExIdentifier = IntExIdentifier
-
-  override type CompEx <: FileCompleteEx[E]
 
   override def saveAndPreviewExercises(admin: User, read: Seq[CompEx]): Future[Result] =
     saveRead(read) map (_ => Ok(previewExercises(admin, read))) recover {
@@ -55,7 +53,7 @@ abstract class AFileExController[E <: Exercise, R <: EvaluationResult, CompResul
 
   override protected def saveRead(read: Seq[CompEx]): Future[Seq[Int]] = Future.sequence(read map { ex =>
     // FIXME: use pathTries ==> display with exercises?
-    val pathTries = checkFiles(ex)
+    /*val pathTries =*/ checkFiles(ex)
     saveReadToDb(ex)
   })
 

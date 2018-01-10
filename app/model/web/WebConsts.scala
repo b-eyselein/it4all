@@ -11,13 +11,11 @@ object WebConsts extends Consts {
 
   val CONDITIONS_NAME = "conditions"
 
-  val HTML_TYPE       = "html"
   val HTML_TASKS_NAME = "htmlTasks"
   val HTML_TEXT_NAME  = "htmlText"
 
   val IS_PRECOND_NAME = "isPrecondition"
 
-  val JS_TYPE       = "js"
   val JS_TASKS_NAME = "jsTasks"
   val JS_TEXT_NAME  = "jsText"
 

@@ -14,7 +14,7 @@ import scala.concurrent.ExecutionContext
 trait RandomExToolObject extends ToolObject
 
 @Singleton
-class EssentialsController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository)
+class EssentialsController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val tables: Repository)
                                     (implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 

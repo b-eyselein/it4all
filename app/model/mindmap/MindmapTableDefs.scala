@@ -1,12 +1,16 @@
 package model.mindmap
 
+import javax.inject.Inject
+
 import controllers.exes.fileExes.{FileExToolObject, MindMapToolObject}
 import model.Enums.ExerciseState
 import model._
-import play.api.db.slick.HasDatabaseConfigProvider
+import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc.Call
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
+
+import scala.concurrent.{ExecutionContext, Future}
 
 case class MindmapExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState) extends Exercise with FileCompleteEx[MindmapExercise] {
 
@@ -26,16 +30,25 @@ case class MindmapExercise(i: Int, ti: String, a: String, te: String, s: Exercis
 }
 
 
-trait MindmapTableDefs extends TableDefs {
-  self: HasDatabaseConfigProvider[JdbcProfile] =>
+class MindmapTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
+  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseTableDefs[MindmapExercise, MindmapExercise] {
 
   import profile.api._
 
   val mindmapExercises = TableQuery[MindmapExercisesTable]
 
+  override type ExTableDef = MindmapExercisesTable
+
+  override val exTable = mindmapExercises
+
+  override def completeExForEx(ex: MindmapExercise)(implicit ec: ExecutionContext): Future[MindmapExercise] = Future(ex)
+
+  override def saveExerciseRest(compEx: MindmapExercise)(implicit ec: ExecutionContext): Future[Boolean] = Future(true)
+
   class MindmapExercisesTable(tag: Tag) extends HasBaseValuesTable[MindmapExercise](tag, "mindmap_exercises") {
 
     def * = (id, title, author, text, state) <> (MindmapExercise.tupled, MindmapExercise.unapply)
+
   }
 
 }

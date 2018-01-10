@@ -1,9 +1,11 @@
 package model.programming
 
+import javax.inject.Inject
+
 import controllers.exes.idExes.ProgToolObject
 import model.Enums.ExerciseState
 import model._
-import play.api.db.slick.HasDatabaseConfigProvider
+import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc.Call
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
@@ -12,6 +14,8 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
 
 case class ProgCompleteEx(ex: ProgExercise, sampleSolution: ProgSampleSolution, sampleTestData: Seq[CompleteSampleTestData]) extends CompleteEx[ProgExercise] {
+
+  // FIXME: only one solution?
 
   override def preview: Html = views.html.programming.progPreview.render(this)
 
@@ -44,18 +48,18 @@ case class ProgSampleSolution(exerciseId: Int, language: ProgLanguage, solution:
 
 sealed trait TestData {
 
-  val id        : Int
+  val id: Int
   val exerciseId: Int
-  val output    : String
+  val output: String
 
 }
 
 trait TestDataInput {
 
-  val id        : Int
-  val testId    : Int
+  val id: Int
+  val testId: Int
   val exerciseId: Int
-  val input     : String
+  val input: String
 
 }
 
@@ -74,36 +78,36 @@ case class ProgSolution(username: String, exerciseId: Int, solution: String)
 
 // Tables
 
-trait ProgTableDefs extends TableDefs {
-  self: HasDatabaseConfigProvider[JdbcProfile] =>
+class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
+  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseTableDefs[ProgExercise, ProgCompleteEx] {
 
   import profile.api._
 
-  object progExercises extends ExerciseTableQuery[ProgExercise, ProgCompleteEx, ProgExercisesTable](new ProgExercisesTable(_)) {
+  def completeExForEx(ex: ProgExercise)(implicit ec: ExecutionContext): Future[ProgCompleteEx] = db.run(sampleSolForEx(ex) zip completeTestDataForEx(ex)) map {
+    case (sampleSol, ctds) =>
+      val completeSampleTestData: Seq[CompleteSampleTestData] = ctds groupBy (_._1) mapValues (_ map (_._2)) map (ctd => CompleteSampleTestData(ctd._1, ctd._2.flatten)) toSeq
 
-    override def saveCompleteEx(completeEx: ProgCompleteEx)(implicit ec: ExecutionContext): Future[Int] = db.run(
-      (this insertOrUpdate completeEx.ex) zip
-        (sampleSolutions insertOrUpdate completeEx.sampleSolution) zip
-        DBIO.sequence(completeEx.sampleTestData map { sampleTD =>
-          (sampleTestData insertOrUpdate sampleTD.sampleTestData) zip DBIO.sequence(sampleTD.inputs map (input => sampleTestDataInputs insertOrUpdate input))
-        })
-    ) map (_._1._1)
-
-    override protected def completeExForEx(ex: ProgExercise)(implicit ec: ExecutionContext): Future[ProgCompleteEx] = db.run(sampleSolForEx(ex) zip completeTestDataForEx(ex)) map {
-      case (sampleSol, ctds) =>
-        val completeSampleTestData: Seq[CompleteSampleTestData] = ctds groupBy (_._1) mapValues (_ map (_._2)) map (ctd => CompleteSampleTestData(ctd._1, ctd._2.flatten)) toSeq
-
-        ProgCompleteEx(ex, sampleSol, completeSampleTestData)
-    }
-
-    private def sampleSolForEx(ex: ProgExercise) = (sampleSolutions filter (_.exerciseId === ex.id)).result.head
-
-    private def completeTestDataForEx(ex: ProgExercise)(implicit ec: ExecutionContext) = sampleTestData.joinLeft(sampleTestDataInputs)
-      .on { case (td, tdi) => td.exerciseId === tdi.exerciseId && td.id === tdi.testId }
-      .filter(_._1.exerciseId === ex.id)
-      .result
-
+      ProgCompleteEx(ex, sampleSol, completeSampleTestData)
   }
+
+  override def saveExerciseRest(compEx: ProgCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] =
+    (db.run(sampleSolutions += compEx.sampleSolution) map (_ => true) zip saveSeq[CompleteSampleTestData](compEx.sampleTestData, saveSampleTestdata)) map (f => f._1 && f._2)
+
+  private def saveSampleTestdata(sampleData: CompleteSampleTestData)(implicit ec: ExecutionContext): Future[Boolean] =
+    db.run(sampleTestData += sampleData.sampleTestData) flatMap { _ => saveSeq[SampleTestDataInput](sampleData.inputs, i => db.run(sampleTestDataInputs += i)) }
+
+  private def sampleSolForEx(ex: ProgExercise) = (sampleSolutions filter (_.exerciseId === ex.id)).result.head
+
+  private def completeTestDataForEx(ex: ProgExercise)(implicit ec: ExecutionContext) = sampleTestData.joinLeft(sampleTestDataInputs)
+    .on { case (td, tdi) => td.exerciseId === tdi.exerciseId && td.id === tdi.testId }
+    .filter(_._1.exerciseId === ex.id)
+    .result
+
+  val progExercises = TableQuery[ProgExercisesTable]
+
+  override type ExTableDef = ProgExercisesTable
+
+  override val exTable = progExercises
 
   val sampleSolutions = TableQuery[ProgSampleSolutionsTable]
 

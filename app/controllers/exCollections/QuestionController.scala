@@ -4,12 +4,10 @@ import javax.inject.{Inject, Singleton}
 
 import controllers.Secured
 import model.Enums.Role
-import model.core._
 import model.questions.QuestionEnums.QuestionType
 import model.questions._
-import model.{JsonFormat, User}
+import model.{CompleteCollectionWrapper, JsonFormat, User}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.api.libs.json._
 import play.api.mvc._
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
@@ -19,8 +17,8 @@ import scala.language.{implicitConversions, postfixOps}
 import scala.util.{Failure, Try}
 
 @Singleton
-class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends AExCollectionController[Question, Quiz, IdAnswerMatch, QuestionResult](cc, dbcp, r, QuestionToolObject)
+class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: QuestionsTableDefs)(implicit ec: ExecutionContext)
+  extends AExCollectionController[Question, CompleteQuestion, Quiz, CompleteQuiz, IdAnswerMatch, QuestionResult, QuestionsTableDefs](cc, dbcp, t, QuestionToolObject)
     with HasDatabaseConfigProvider[JdbcProfile] with JsonFormat with Secured {
 
   override type SolType = Seq[GivenAnswer]
@@ -40,27 +38,15 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   // Yaml
 
-  override type CompColl = CompleteQuiz
-
-  override type CompEx = CompleteQuestion
-
   override implicit val yamlFormat: net.jcazevedo.moultingyaml.YamlFormat[CompleteQuiz] = QuestionYamlProtocol.QuizYamlFormat
 
   // db
 
-  override type TQ = repo.QuizzesTable
+  override protected def numOfExesInColl(id: Int): Future[Int] = tables.questionsInQuiz(id)
 
-  override def tq = repo.quizzes
+  override protected def saveRead(read: Seq[CompleteQuiz]): Future[Seq[Boolean]] = Future.sequence(read map tables.saveQuiz)
 
-  override protected def numOfExesInColl(id: Int): Future[Int] = repo.questionsInQuiz(id)
-
-  override protected def futureCompleteColls: Future[Seq[CompColl]] = repo.completeQuizzes
-
-  override protected def futureCompleteCollById(id: Int): Future[Option[CompleteQuiz]] = repo.completeQuiz(id)
-
-  override protected def futureCompleteExById(collId: Int, id: Int): Future[Option[CompleteQuestion]] = repo.completeQuestion(collId, id)
-
-  override protected def saveRead(read: Seq[CompColl]): Future[Seq[Boolean]] = Future.sequence(read map repo.saveQuiz)
+  override protected def wrap(compColl: CompleteQuiz): CompleteCollectionWrapper = new CompleteQuizWrapper(compColl)
 
   // Other routes
 

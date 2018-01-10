@@ -9,7 +9,7 @@ import model.core._
 import model.sql.SqlConsts._
 import model.sql.SqlEnums.SqlExerciseType
 import model.sql._
-import model.{JsonFormat, User}
+import model.{CompleteCollectionWrapper, JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc._
@@ -45,8 +45,8 @@ object SqlController {
 }
 
 @Singleton
-class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends AExCollectionController[SqlExercise, SqlScenario, EvaluationResult, SqlCorrResult](cc, dbcp, r, SqlToolObject)
+class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: SqlTableDefs)(implicit ec: ExecutionContext)
+  extends AExCollectionController[SqlExercise, SqlCompleteEx, SqlScenario, SqlCompleteScenario, EvaluationResult, SqlCorrResult, SqlTableDefs](cc, dbcp, t, SqlToolObject)
     with HasDatabaseConfigProvider[JdbcProfile] with JsonFormat with Secured {
 
   override type SolType = String
@@ -57,12 +57,7 @@ class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[String] =
     Solution.stringSolForm.bindFromRequest() fold(_ => None, sol => Some(sol.learnerSolution))
 
-
   // Yaml
-
-  override type CompColl = SqlCompleteScenario
-
-  override type CompEx = SqlCompleteEx
 
   override implicit val yamlFormat: YamlFormat[SqlCompleteScenario] = SqlYamlProtocol.SqlScenarioYamlFormat
 
@@ -70,28 +65,19 @@ class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   import profile.api._
 
-  override type TQ = repo.SqlScenarioesTable
-
-  //noinspection TypeAnnotation
-  override def tq = repo.sqlScenarioes
-
-  override protected def numOfExesInColl(id: Int): Future[Int] = repo.exercisesInScenario(id)
-
-  override protected def futureCompleteColls: Future[Seq[SqlCompleteScenario]] = repo.completeSqlScenarioes
-
-  override protected def futureCompleteCollById(id: Int): Future[Option[SqlCompleteScenario]] = repo.completeScenarioById(id)
-
-  override protected def futureCompleteExById(collId: Int, id: Int): Future[Option[SqlCompleteEx]] = repo.sqlExercises.completeEx(collId, id)
+  override protected def numOfExesInColl(id: Int): Future[Int] = tables.exercisesInScenario(id)
 
   override protected def saveRead(read: Seq[SqlCompleteScenario]): Future[Seq[Boolean]] = Future.sequence(read map { compScenario =>
     val scriptFilePath = toolObject.exerciseResourcesFolder / s"${compScenario.coll.shortName}.sql"
 
     daos.values.toList.distinct foreach (_.executeSetup(compScenario.coll.shortName, scriptFilePath))
 
-    repo.saveSqlCompleteScenario(compScenario) map (_ => true)
+    tables.saveSqlCompleteScenario(compScenario) map (_ => true)
   })
 
-  private def saveSolution(sol: SqlSolution) = db.run(repo.sqlSolutions insertOrUpdate sol)
+  override protected def wrap(compColl: SqlCompleteScenario): CompleteCollectionWrapper = new SqlScenarioWrapper(compColl)
+
+  private def saveSolution(sol: SqlSolution) = db.run(tables.sqlSolutions insertOrUpdate sol)
 
   // Views for admin
 
@@ -118,14 +104,14 @@ class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   // Views for user
 
   override protected def renderExercise(user: User, sqlScenario: SqlScenario, exercise: SqlCompleteEx, numOfExes: Int): Html = {
-    val tables: Seq[SqlQueryResult] = SelectDAO.tableContents(sqlScenario.shortName)
+    val readTables: Seq[SqlQueryResult] = SelectDAO.tableContents(sqlScenario.shortName)
 
     val oldOrDefSol: String = Await.result(
-      db.run(repo.sqlSolutions.filter(sol => sol.username === user.username && sol.exerciseId === exercise.id && sol.scenarioId === exercise.ex.collectionId).result.headOption),
+      db.run(tables.sqlSolutions.filter(sol => sol.username === user.username && sol.exerciseId === exercise.id && sol.scenarioId === exercise.ex.collectionId).result.headOption),
       Duration(2, duration.SECONDS)
     ) map (_.solution) getOrElse ""
 
-    views.html.sql.sqlExercise(user, exercise, oldOrDefSol, tables, sqlScenario, numOfExes)
+    views.html.sql.sqlExercise(user, exercise, oldOrDefSol, readTables, sqlScenario, numOfExes)
   }
 
   // FIXME: get rif of cast...

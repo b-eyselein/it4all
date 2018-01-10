@@ -18,7 +18,7 @@ import scala.language.{implicitConversions, postfixOps}
 import scala.util.Try
 
 @Singleton
-class NaryController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository)
+class NaryController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val tables: Repository)
                               (implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured with JsonFormat {
 

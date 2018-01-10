@@ -27,6 +27,97 @@ object TippHelper {
 
 case class Tipp(id: Int, str: String)
 
+trait ExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex]] extends TableDefs {
+  self: HasDatabaseConfigProvider[JdbcProfile] =>
+
+  import profile.api._
+
+  type ExTableDef <: HasBaseValuesTable[Ex]
+
+  val exTable: TableQuery[ExTableDef]
+
+  // Numbers
+
+  def futureNumOfExes: Future[Int] = db.run(exTable.length.result)
+
+  // Reading
+
+  def futureCompleteExes(implicit ec: ExecutionContext): Future[Seq[CompEx]] = db.run(exTable.result) flatMap (exes => Future.sequence(exes map completeExForEx))
+
+  def futureCompleteExById(id: Int)(implicit ec: ExecutionContext): Future[Option[CompEx]] = db.run(exTable.filter(_.id === id).result.headOption) flatMap {
+    case Some(ex) => completeExForEx(ex) map Some.apply
+    case None     => Future(None)
+  }
+
+  protected def completeExForEx(ex: Ex)(implicit ec: ExecutionContext): Future[CompEx]
+
+  // Saving
+
+  def saveCompleteEx(compEx: CompEx)(implicit ec: ExecutionContext): Future[Boolean] = db.run(exTable.filter(_.id === compEx.id).delete) flatMap { _ =>
+    db.run(exTable += compEx.ex) flatMap { _ => saveExerciseRest(compEx) } recover { case _: Exception => false }
+  }
+
+  protected def saveExerciseRest(compEx: CompEx)(implicit ec: ExecutionContext): Future[Boolean]
+
+  // Deletion
+
+  def deleteExercise(id: Int): Future[Int] = db.run(exTable.filter(_.id === id).delete)
+
+}
+
+trait ExerciseCollectionTableDefs[Ex <: ExerciseInCollection, CompEx <: CompleteEx[Ex], Coll <: ExerciseCollection[Ex, CompEx], CompColl <: CompleteCollection[Ex, CompEx, Coll]] extends TableDefs {
+  self: HasDatabaseConfigProvider[JdbcProfile] =>
+
+  import profile.api._
+
+  type ExTableDef <: ExerciseInCollectionTable[Ex]
+
+  type CollTableDef <: HasBaseValuesTable[Coll]
+
+  val exTable: TableQuery[ExTableDef]
+
+  val collTable: TableQuery[CollTableDef]
+
+  // Numbers
+
+  def futureNumOfExes: Future[Int] = db.run(exTable.length.result)
+
+  def futureNumOfCollections: Future[Int] = db.run(collTable.length.result)
+
+  // Reading
+
+  def futureCompleteExes(implicit ec: ExecutionContext): Future[Seq[CompEx]] = db.run(exTable.result) flatMap (exes => Future.sequence(exes map completeExForEx))
+
+  def futureCompleteExById(collId: Int, id: Int)(implicit ec: ExecutionContext): Future[Option[CompEx]] = db.run(exTable.filter(_.id === id).result.headOption) flatMap {
+    case Some(ex) => completeExForEx(ex) map Some.apply
+    case None     => Future(None)
+  }
+
+  def futureColls: Future[Seq[Coll]] = db.run(collTable.result)
+
+  def futureCollById(id: Int): Future[Option[Coll]] = db.run(collTable.filter(_.id === id).result.headOption)
+
+  def futureCompleteColls(implicit ec: ExecutionContext): Future[Seq[CompColl]] = futureColls flatMap (colls => Future.sequence(colls map completeCollForColl))
+
+  def futureCompleteCollById(id: Int)(implicit ec: ExecutionContext): Future[Option[CompColl]] = futureCollById(id) flatMap {
+    case Some(coll) => completeCollForColl(coll) map Some.apply
+    case None       => Future(None)
+  }
+
+  protected def completeExForEx(ex: Ex)(implicit ec: ExecutionContext): Future[CompEx]
+
+  protected def completeCollForColl(coll: Coll)(implicit ec: ExecutionContext): Future[CompColl]
+
+  // Saving
+
+  // Deletion
+
+  def deleteExercise(collId: Int, id: Int): Future[Int] = db.run(exTable.filter(ex => ex.id === id && ex.collectionId === collId).delete)
+
+  def deleteColl(id: Int): Future[Int] = db.run(collTable.filter(_.id === id).delete)
+
+}
+
 trait TableDefs {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
@@ -48,27 +139,9 @@ trait TableDefs {
 
   def numOfCourses: Future[Int] = db.run(courses.size.result)
 
-  abstract class ExerciseTableQuery[E <: Exercise, CompEx <: CompleteEx[E], T <: HasBaseValuesTable[E]](cons: Tag => T) extends TableQuery[T](cons) {
-
-    //noinspection TypeAnnotation
-    protected def exercise(id: Int) = this.filter(_.id === id).result.headOption
-
-    def completeById(id: Int)(implicit ec: ExecutionContext): Future[Option[CompEx]] = db.run(exercise(id)) flatMap {
-      case Some(ex) => completeExForEx(ex) map (Some(_))
-      case None     => Future(None)
-    }
-
-    def completeExes(implicit ec: ExecutionContext): Future[Seq[CompEx]] = db.run(this.sortBy(_.id).result)
-      .flatMap(exes => Future.sequence(exes map completeExForEx))
-
-    protected def saveEx(ex: E): DBIOAction[Int, NoStream, Effect.Write] = this insertOrUpdate ex
-
-
-    def saveCompleteEx(completeEx: CompEx)(implicit ec: ExecutionContext): Future[Int]
-
-    protected def completeExForEx(ex: E)(implicit ec: ExecutionContext): Future[CompEx]
-
-  }
+  protected def saveSeq[T](seqToSave: Seq[T], save: T => Future[Any])(implicit ec: ExecutionContext): Future[Boolean] = Future.sequence(seqToSave map {
+    toSave => save(toSave) map (_ => true) recover { case e: Exception => false }
+  }) map (_ forall identity)
 
   def updateShowHideAggregate(user: User, newPref: ShowHideAggregate): Future[Int] =
     db.run(users filter (_.username === user.username) map (_.todo) update newPref)
@@ -132,6 +205,12 @@ trait TableDefs {
     def text = column[String]("ex_text")
 
     def state = column[ExerciseState]("ex_state")
+
+  }
+
+  abstract class ExerciseInCollectionTable[E <: ExerciseInCollection](tag: Tag, name: String) extends HasBaseValuesTable[E](tag, name) {
+
+    def collectionId = column[Int]("collection_id")
 
   }
 

@@ -14,7 +14,7 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class UserController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository)
+class UserController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val tables: Repository)
                               (implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
@@ -32,7 +32,7 @@ class UserController @Inject()(cc: ControllerComponents, val dbConfigProvider: D
         str => ShowHideAggregate.byString(str) match {
           case None         => Future(BadRequest("TODO!"))
           case Some(newVal) =>
-            repo.updateShowHideAggregate(user, newVal) map {
+            tables.updateShowHideAggregate(user, newVal) map {
               case 1 => Ok(Json.obj("todo" -> newVal.toString))
               case _ => BadRequest("TODO!")
             }
@@ -44,7 +44,7 @@ class UserController @Inject()(cc: ControllerComponents, val dbConfigProvider: D
       pwChangeForm.bindFromRequest().fold(_ => Future(BadRequest("Es gab einen Fehler beim Einlesen ihrer Daten!")),
         pwChangeData =>
           if (pwChangeData._1.isBcrypted(user.pwHash) && pwChangeData._2 == pwChangeData._3) {
-            repo.updateUserPassword(user, pwChangeData._2) map {
+            tables.updateUserPassword(user, pwChangeData._2) map {
               case 1 => Ok(Json.obj("changed" -> true, "reason" -> ""))
               case _ => Ok(Json.obj("changed" -> false, "reason" -> "Ihr Passwort konnte nicht gespeichert werden. Waren eventuell die Daten falsch?"))
             }

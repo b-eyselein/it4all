@@ -1,13 +1,17 @@
 package model.xml
 
+import javax.inject.Inject
+
 import controllers.exes.idExes.XmlToolObject
 import model.Enums.ExerciseState
 import model._
 import model.xml.XmlEnums.XmlExType
+import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc.Call
 import play.twirl.api.Html
+import slick.jdbc.JdbcProfile
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 object XmlExercise {
 
@@ -39,12 +43,16 @@ case class XmlExercise(override val baseValues: BaseValues, exerciseType: XmlExT
 
 case class XmlSolution(exerciseId: Int, username: String, solution: String)
 
-trait XmlTableDefs extends TableDefs {
-  self: play.api.db.slick.HasDatabaseConfigProvider[slick.jdbc.JdbcProfile] =>
+class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
+  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseTableDefs[XmlExercise, XmlExercise] {
 
   import profile.api._
 
-  val xmlExercises = TableQuery[XmlExerciseTable]
+  val xmlExercises = TableQuery[XmlExercisesTable]
+
+  override type ExTableDef = XmlExercisesTable
+
+  override val exTable = xmlExercises
 
   lazy val xmlSolutions = TableQuery[XmlSolutionsTable]
 
@@ -53,10 +61,18 @@ trait XmlTableDefs extends TableDefs {
 
   // Reading
 
+  override def completeExForEx(ex: XmlExercise)(implicit ec: ExecutionContext): Future[XmlExercise] = Future(ex)
+
   def readXmlSolution(username: String, exerciseId: Int): Future[Option[XmlSolution]] =
     db.run(xmlSolutions.filter(sol => sol.exerciseId === exerciseId && sol.username === username).result.headOption)
 
-  class XmlExerciseTable(tag: Tag) extends HasBaseValuesTable[XmlExercise](tag, "xml_exercises") {
+  // Saving
+
+  override def saveExerciseRest(compEx: XmlExercise)(implicit ec: ExecutionContext): Future[Boolean] = Future(true)
+
+  // Deletion
+
+  class XmlExercisesTable(tag: Tag) extends HasBaseValuesTable[XmlExercise](tag, "xml_exercises") {
 
     def rootNode = column[String]("root_node")
 

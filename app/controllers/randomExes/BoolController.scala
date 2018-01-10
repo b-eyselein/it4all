@@ -20,7 +20,7 @@ import scala.concurrent.ExecutionContext
 import scala.language.{implicitConversions, postfixOps}
 
 @Singleton
-class BoolController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository)
+class BoolController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val tables: Repository)
                               (implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured with JsonFormat {
 
