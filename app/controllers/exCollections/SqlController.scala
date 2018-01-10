@@ -7,7 +7,7 @@ import controllers.exCollections.SqlController._
 import model.core.Levenshtein.levenshteinDistance
 import model.core._
 import model.sql.SqlConsts._
-import model.sql.SqlEnums.SqlExerciseType
+import model.sql.SqlEnums.SqlExerciseType._
 import model.sql._
 import model.{CompleteCollectionWrapper, JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
@@ -15,6 +15,7 @@ import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc._
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
+import views.html.sql._
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future, duration}
@@ -24,23 +25,22 @@ import scala.util.Try
 object SqlController {
 
   val daos = Map(
-    SqlExerciseType.SELECT -> SelectDAO,
-    SqlExerciseType.CREATE -> CreateDAO,
-    SqlExerciseType.UPDATE -> ChangeDAO,
-    SqlExerciseType.INSERT -> ChangeDAO,
-    SqlExerciseType.DELETE -> ChangeDAO
+    SELECT -> SelectDAO,
+    CREATE -> CreateDAO,
+    UPDATE -> ChangeDAO,
+    INSERT -> ChangeDAO,
+    DELETE -> ChangeDAO
   )
 
   val correctors = Map(
-    SqlExerciseType.CREATE -> CreateCorrector,
-    SqlExerciseType.DELETE -> DeleteCorrector,
-    SqlExerciseType.INSERT -> InsertCorrector,
-    SqlExerciseType.SELECT -> SelectCorrector,
-    SqlExerciseType.UPDATE -> UpdateCorrector
+    CREATE -> CreateCorrector,
+    DELETE -> DeleteCorrector,
+    INSERT -> InsertCorrector,
+    SELECT -> SelectCorrector,
+    UPDATE -> UpdateCorrector
   )
 
-  def findBestFittingSample(userSt: String, samples: List[SqlSample]): SqlSample =
-    samples.minBy(samp => levenshteinDistance(samp.sample, userSt))
+  def findBestFittingSample(userSt: String, samples: List[SqlSample]): SqlSample = samples.minBy(samp => levenshteinDistance(samp.sample, userSt))
 
 }
 
@@ -114,18 +114,22 @@ class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
     views.html.sql.sqlExercise(user, exercise, oldOrDefSol, readTables, sqlScenario, numOfExes)
   }
 
-  // FIXME: get rif of cast...
-  //  override def renderResult(correctionResult: SqlCorrResult): Html = correctionResult match {
-  //    case res: SqlResult => views.html.sql.sqlResult(res)
-  //    case res: SqlFailed => ???
-  //  }
+  protected def onSubmitCorrectionError(user: User, error: Throwable): Result = ??? // FIXME: implement...
 
-  protected def onSubmitCorrectionError(user: model.User, error: Throwable): play.api.mvc.Result = ??? // FIXME: implement...
+  protected def onSubmitCorrectionResult(user: User, result: SqlCorrResult): Result = result match {
+    case res: SqlResult => Ok(views.html.core.correction(result, sqlResult(res), user, toolObject))
+    case res: SqlFailed =>
+      // FIXME: implement...
+      ???
+  }
 
-  protected def onSubmitCorrectionResult(user: model.User, result: model.sql.SqlCorrResult): play.api.mvc.Result = ??? // FIXME: implement...
+  protected def onLiveCorrectionError(error: Throwable): Result = ??? // FIXME: implement...
 
-  protected def onLiveCorrectionError(error: Throwable): play.api.mvc.Result = ??? // FIXME: implement...
-
-  protected def onLiveCorrectionResult(result: model.sql.SqlCorrResult): play.api.mvc.Result = ??? // FIXME: implement...
+  protected def onLiveCorrectionResult(result: SqlCorrResult): Result = result match {
+    case res: SqlResult => Ok(sqlResult(res))
+    case res: SqlFailed =>
+      // FIXME: implement...
+      ???
+  }
 
 }

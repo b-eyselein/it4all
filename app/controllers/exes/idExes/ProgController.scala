@@ -53,10 +53,6 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   override implicit val yamlFormat: YamlFormat[ProgCompleteEx] = ProgExYamlProtocol.ProgExYamlFormat
 
-  // db
-
-  override def saveRead(read: Seq[ProgCompleteEx]): Future[Seq[Boolean]] = Future.sequence(read map tables.saveCompleteEx)
-
   // Other routes
 
   def testData(id: Int): EssentialAction = futureWithUser { user =>

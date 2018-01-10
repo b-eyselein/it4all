@@ -88,10 +88,11 @@ trait ExerciseCollectionTableDefs[Ex <: ExerciseInCollection, CompEx <: Complete
 
   def futureCompleteExes(implicit ec: ExecutionContext): Future[Seq[CompEx]] = db.run(exTable.result) flatMap (exes => Future.sequence(exes map completeExForEx))
 
-  def futureCompleteExById(collId: Int, id: Int)(implicit ec: ExecutionContext): Future[Option[CompEx]] = db.run(exTable.filter(_.id === id).result.headOption) flatMap {
-    case Some(ex) => completeExForEx(ex) map Some.apply
-    case None     => Future(None)
-  }
+  def futureCompleteExById(collId: Int, id: Int)(implicit ec: ExecutionContext): Future[Option[CompEx]] =
+    db.run(exTable.filter(ex => ex.id === id && ex.collectionId === collId).result.headOption) flatMap {
+      case Some(ex) => completeExForEx(ex) map Some.apply
+      case None     => Future(None)
+    }
 
   def futureColls: Future[Seq[Coll]] = db.run(collTable.result)
 

@@ -47,10 +47,6 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   override val yamlFormat: YamlFormat[UmlCompleteEx] = UmlExYamlProtocol.UmlExYamlFormat
 
-  // db
-
-  override def saveRead(read: Seq[UmlCompleteEx]): Future[Seq[Boolean]] = Future.sequence(read map tables.saveCompleteEx)
-
   // Views
 
   override protected def renderExercise(user: User, exercise: UmlCompleteEx, part: UmlExPart): Future[Html] = Future(part match {

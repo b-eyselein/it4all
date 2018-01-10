@@ -51,9 +51,6 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   import profile.api._
 
-  override def saveRead(read: Seq[XmlExercise]): Future[Seq[Int]] = Future.sequence(read.map(completeEx =>
-    db.run(tables.xmlExercises insertOrUpdate completeEx.ex)))
-
   // Other routes
 
   def playground: EssentialAction = withUser { user => implicit request => Ok(xmlPlayground(user)) }

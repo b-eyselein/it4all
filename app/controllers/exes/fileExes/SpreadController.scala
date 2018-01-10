@@ -43,10 +43,6 @@ class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
 
   import profile.api._
 
-  override def futureCompleteExes: Future[Seq[SpreadExercise]] = db.run(tables.spreadExercises.result)
-
-  override def futureCompleteExById(id: Int): Future[Option[SpreadExercise]] = db.run(tables.spreadExercises.filter(_.id === id).result.headOption)
-
   override def saveReadToDb(read: SpreadExercise): Future[Int] = db.run(tables.spreadExercises insertOrUpdate read)
 
   override protected def checkFiles(ex: SpreadExercise): List[Try[Path]] = SpreadToolObject.fileTypes flatMap {

@@ -52,8 +52,6 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   import profile.api._
 
-  override def saveRead(read: Seq[WebCompleteEx]): Future[Seq[Boolean]] = Future.sequence(read map tables.saveCompleteEx)
-
   // Other routes
 
   def exRest(exerciseId: Int): EssentialAction = futureWithAdmin { user =>
