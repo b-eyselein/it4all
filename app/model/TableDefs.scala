@@ -5,6 +5,8 @@ import model.Enums.{ExerciseState, Role, ShowHideAggregate}
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
+import model.core.CoreConsts.ID_NAME
+
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Random
 
@@ -177,7 +179,7 @@ trait TableDefs {
 
   class CoursesTable(tag: Tag) extends Table[Course](tag, "courses") {
 
-    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
+    def id = column[Int](ID_NAME, O.PrimaryKey, O.AutoInc)
 
     def courseName = column[String]("course_name")
 
@@ -187,7 +189,7 @@ trait TableDefs {
 
   class TippsTable(tag: Tag) extends Table[Tipp](tag, "tipps") {
 
-    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
+    def id = column[Int](ID_NAME, O.PrimaryKey, O.AutoInc)
 
     def str = column[String]("str")
 
@@ -197,7 +199,7 @@ trait TableDefs {
 
   abstract class HasBaseValuesTable[E <: HasBaseValues](tag: Tag, name: String) extends Table[E](tag, name) {
 
-    def id = column[Int]("id")
+    def id = column[Int](ID_NAME)
 
     def title = column[String]("title")
 

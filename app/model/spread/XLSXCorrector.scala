@@ -116,7 +116,7 @@ object XLSXCorrector extends SpreadCorrector[Workbook, Sheet, XSSFCell, Font, Sh
     case sampleCharts =>
       val compareCharts = getCharts(compareSheet)
 
-      if (sampleCharts.size != compareCharts.size)
+      if (sampleCharts.lengthCompare(compareCharts.size) != 0)
         (false, s"Falsche Anzahl Diagramme im Dokument (Erwartet: ${sampleCharts.size}, Gefunden: ${compareCharts.size}).")
       else {
         // TODO: refactor & test!

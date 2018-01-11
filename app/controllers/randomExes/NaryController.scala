@@ -22,6 +22,8 @@ class NaryController @Inject()(cc: ControllerComponents, val dbConfigProvider: D
                               (implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured with JsonFormat {
 
+  val CORRECT = "correct"
+
   // Nary Addition
 
   def newNaryAdditionQuestion(requestedBaseStr: String): EssentialAction = withUser { user =>
@@ -39,7 +41,7 @@ class NaryController @Inject()(cc: ControllerComponents, val dbConfigProvider: D
     implicit request =>
       request.body.asJson flatMap readAddSolutionFromJson match {
         case None           => BadRequest("TODO!")
-        case Some(solution) => Ok(Json.obj("correct" -> solution.solutionCorrect))
+        case Some(solution) => Ok(Json.obj(CORRECT -> solution.solutionCorrect))
       }
   }
 
@@ -92,7 +94,7 @@ class NaryController @Inject()(cc: ControllerComponents, val dbConfigProvider: D
     implicit request =>
       request.body.asJson flatMap readConvSolutionFromJson match {
         case None           => BadRequest("TODO!")
-        case Some(solution) => Ok(Json.obj("correct" -> solution.solutionCorrect))
+        case Some(solution) => Ok(Json.obj(CORRECT -> solution.solutionCorrect))
       }
   }
 
@@ -122,7 +124,7 @@ class NaryController @Inject()(cc: ControllerComponents, val dbConfigProvider: D
       request.body.asJson flatMap readTwoCompSolutionFromJson match {
         case None           => BadRequest("TODO!")
         case Some(solution) => Ok(Json.obj(
-          "correct" -> solution.solutionCorrect,
+          CORRECT -> solution.solutionCorrect,
           "verbose" -> solution.verbose,
           BinaryAbs -> solution.binaryAbsCorrect,
           InvertedAbs -> solution.invertedAbsCorrect))

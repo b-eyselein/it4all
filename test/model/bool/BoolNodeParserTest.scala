@@ -8,30 +8,27 @@ class BoolNodeParserTest {
 
   val (a, b, c): (ScalaNode, ScalaNode, ScalaNode) = (Variable('a'), Variable('b'), Variable('c'))
 
-  def testParse(expected: ScalaNode, representations: String*) {
-    for (toParse <- representations) {
-      BoolNodeParser.parseBoolFormula(toParse) match {
-        case Some(parsed) => assert(parsed == expected, s"""expected that parsing "$toParse" is equal to $expected""")
-        case None         => fail(s"""expected that parsing of "$toParse" succeeds!""")
-      }
+  def testParse(expected: ScalaNode, representations: String*): Unit = for (toParse <- representations) {
+    BoolNodeParser.parseBoolFormula(toParse) match {
+      case Some(parsed) => assert(parsed == expected, s"""expected that parsing "$toParse" is equal to $expected""")
+      case None         => fail(s"""expected that parsing of "$toParse" succeeds!""")
     }
-    
   }
 
   @Test
-  def testNoOperators() {
+  def testNoOperators(): Unit = {
     testParse(a, "a", "A")
   }
 
   @Test
-  def testConstants() {
+  def testConstants(): Unit = {
     testParse(TRUE, "true", "1", "TRUE")
 
     testParse(FALSE, "false", "0", "FALSE")
   }
 
   @Test
-  def testSingleOperators() {
+  def testSingleOperators(): Unit = {
     testParse(a and b, "a and b", "(a and b)")
 
     testParse(a or b, "a or b", "(a or b)")
@@ -52,7 +49,7 @@ class BoolNodeParserTest {
   }
 
   @Test
-  def testDoubleOperators() {
+  def testDoubleOperators(): Unit = {
     testParse(a and b or c, "a and b or c")
     testParse(a and (b or c), "a and (b or c)")
 
@@ -65,7 +62,7 @@ class BoolNodeParserTest {
   }
 
   @Test
-  def testTripleOperators() {
+  def testTripleOperators(): Unit = {
     testParse((a and b) or (b and a), "a and b or b and a")
     testParse(a and (b or (b and a)), "a and (b or b and a)")
   }
