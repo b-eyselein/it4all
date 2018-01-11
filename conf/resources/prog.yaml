@@ -3,9 +3,7 @@
 id: 1
 title: Summen
 author: bje40dc
-text: >
-  Implementieren Sie folgende Funktion <code>sum(a, b)</code>, die zwei Zahlen entegennimmt und deren
-  Summe zurückgibt.
+text: Implementieren Sie folgende Funktion <code>sum(a, b)</code>, die zwei Ganzzahlen entegennimmt und deren Summe zurückgibt.
 status: CREATED
 functionName: sum
 inputCount: 2
@@ -44,17 +42,16 @@ sampleTestData:
 - id: 4
   inputs:
   - id: 1
-    input: 555.0
+    input: 555
   - id: 2
     input: 42
-  output: 597.0
+  output: 597
 ---
 id: 2
 title: Konkatenation von Strings
 author: bje40dc
 text: >
-  Implementieren Sie die folgende Funktion <code>concat(str1, str2, str3)</code> die drei beliebige Strings
-  entgegennimmt und die Konkatenation der Strings zurückgibt.
+  Implementieren Sie die folgende Funktion <code>concat(str1, str2, str3)</code> die drei beliebige Strings entgegennimmt und deren Konkatenation zurückgibt.
 status: CREATED
 functionName: concat
 inputCount: 3

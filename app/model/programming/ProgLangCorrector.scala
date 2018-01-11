@@ -5,109 +5,97 @@ import java.nio.file.attribute.{PosixFilePermission, PosixFilePermissions}
 import controllers.exes.idExes.ProgToolObject
 import model.User
 import model.core.{FileUtils, GenericCompleteResult}
-import model.programming.ProgLangCorrector._
+import play.api.libs.json.Json
 
-object ProgLangCorrector {
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
-  val PYTHON_SCRIPT_FILE = "sol.py"
+object ProgLangCorrector extends FileUtils {
 
-  val RESULT_FILE = "result.txt"
+  val ResultFile = "result.txt"
 
-  val FILE_PERMS: java.util.Set[PosixFilePermission] = PosixFilePermissions.fromString("rwx------")
+  val TestdataFile = "testdata.txt"
 
-  val filename = "solution_"
+  val FilePermissions: java.util.Set[PosixFilePermission] = PosixFilePermissions.fromString("rwx------")
 
-  def toAddPython(ex: ProgExercise): String = {
-    val inputs = ('a' to 'z') take ex.inputCount mkString ", "
+  val ResultFileName = "result"
+
+  def toAddPython(ex: ProgExercise, language: ProgLanguage): String = {
+    val inputsAsVars = ('a' to 'z') take ex.inputCount map (_.toString)
+
+    val toEvaluate = ProgLanguage.buildToEvaluate(ex.functionName, inputsAsVars)
 
     s"""if __name__ == "__main__":
-       |  ($inputs) = map(int, input().split(" "))
-       |  print(${ex.functionName}($inputs))""".stripMargin
+       |  import json
+       |
+       |  (index, ${inputsAsVars mkString ", "}) = map(int, input().split(' '))
+       |
+       |  toWrite = {"inputs": [${inputsAsVars map (ip => s"""{"variable": "$ip", "value": $ip}""") mkString ", "}], "functionName": "${ex.functionName}"}
+       |
+       |  result = $toEvaluate
+       |
+       |  toWrite["result"] = result
+       |
+       |  file = open("$ResultFileName{}.txt".format(index), 'w')
+       |  file.write(json.dumps(toWrite, indent = 2))
+       |""".stripMargin
   }
 
-}
+  def correct(user: User, exercise: ProgCompleteEx, learnerSolution: String, language: ProgLanguage)(implicit ec: ExecutionContext): Future[GenericCompleteResult[ProgEvaluationResult]] = {
 
-abstract class ProgLangCorrector extends FileUtils {
-
-  def correct(user: User, exercise: ProgCompleteEx, learnerSolution: String, language: ProgLanguage): GenericCompleteResult[ProgEvaluationResult] = {
+    val futureImageExists: Future[Boolean] = Future(DockerConnector.imageExists(language.dockerImageName) || DockerConnector.pullImage(language.dockerImageName))
 
     val targetDir = ProgToolObject.solutionDirForExercise(user.username, exercise.ex)
 
-    val imageExits = DockerConnector.imageExists(language.dockerImageName) || DockerConnector.pullImage(language.dockerImageName)
+    val solutionPath = targetDir / s"solution.${language.fileEnding}"
 
-    val solutionPath = targetDir / s"solution.${language.scriptEnding}"
+    val testData = exercise.sampleTestData
 
-    write(solutionPath, learnerSolution + "\n\n" + toAddPython(exercise.ex))
+    write(solutionPath, learnerSolution + "\n\n" + toAddPython(exercise.ex, language))
 
-    // FIXME: write testdata
-    write(targetDir, "testdata.txt", "1 2\n\n")
+    write(targetDir, TestdataFile, (testData sortBy (_.sampleTestData.id) map (_.write) mkString "\n") + "\n")
 
-    // FIXME: copy script from resources?
-    copy(s"${language.aceName}.sh", ProgToolObject.exerciseResourcesFolder, targetDir)
+    copy(language.aceName + ".sh", ProgToolObject.exerciseResourcesFolder, targetDir)
 
     // Check if image exists
-    println(language.dockerImageName + " exists: " + imageExits)
+    futureImageExists flatMap {
+      _ => DockerConnector.runContainer(language, targetDir)
+    } map {
+      _ =>
+        val results = testData.zipWithIndex map {
+          case (td, index) =>
 
-    GenericCompleteResult(learnerSolution, Seq.empty)
+            val outputFilePath = targetDir / s"output$index.txt"
+            val errorFilePath = targetDir / s"error$index.txt"
+            val resultFilePath = targetDir / s"$ResultFileName$index.txt"
+
+            val maybeOutput: Option[String] = if (outputFilePath.toFile.exists)
+              readAll(outputFilePath) map Some.apply getOrElse None
+            else None
+
+            if (errorFilePath.toFile.exists()) {
+
+              readAll(errorFilePath) match {
+                case Failure(error)   => ProgEvaluationResult(EvaluationFailed(error), td)
+                case Success(content) => ProgEvaluationResult(SyntaxError("", content, maybeOutput), td)
+              }
+
+            } else if (resultFilePath.toFile.exists()) {
+
+              readAll(resultFilePath) match {
+                case Failure(error)   => ProgEvaluationResult(EvaluationFailed(error), td)
+                case Success(content) =>
+                  val res = ExecutionResult.fromJson(Json.parse(content), maybeOutput) getOrElse EvaluationFailed(new Exception("Reading of following content failed:\n" + content))
+                  ProgEvaluationResult(res, td)
+              }
+
+            } else {
+              ProgEvaluationResult(EvaluationFailed(new Exception("Allgemeiner Fehler!")), td)
+            }
+        }
+
+        GenericCompleteResult(learnerSolution, results)
+    }
   }
 
-  //    private static void createFile(Path file, List<String> content) throws IOException {
-  //        if (file.toFile().exists())
-  //            Files.delete(file)
-  //
-  //        Files.write(file, content, StandardOpenOption.CREATE)
-  //        Files.setPosixFilePermissions(file, FILE_PERMS)
-  //    }
-
-  // private static String getCommand() {
-  // return "#!/bin/bash\n" + "rm result.txt\n" + "cat testdata.txt | while read
-  // VAR do echo $VAR | python "
-  // + PYTHON_SCRIPT_FILE + " done > " + RESULT_FILE
-  // }
-
-  //    public List<ProgEvaluationResult> evaluate(String learnerSolution /*, List<ITestData> completeTestData*/, Path solDir) {
-  //        try {
-  //            createFile(Paths.get(solDir.toString(), PYTHON_SCRIPT_FILE), NEWLINE_SPLITTER.splitToList(learnerSolution))
-  //
-  //            Path shellScriptSource = Paths.get("conf", "resources", "prog", "python.sh")
-  //            Path shellScriptTarget = Paths.get("/data", "solutions", "developer", "prog", "1", "script.sh")
-  //            Files.copy(shellScriptSource, shellScriptTarget, StandardCopyOption.REPLACE_EXISTING)
-  //
-  //            String ret = DOCKER_CONNECTOR.runContainer(AvailableLanguages.stdLang(), solDir, RESULT_FILE)
-  //
-  //            Logger.debug("----------------------------------------------------------")
-  //            Logger.debug("Returned:")
-  //            Logger.debug(ret)
-  //            Logger.debug("----------------------------------------------------------")
-  //
-  //        } catch (IOException e) {
-  //            Logger.error("Error ...", e)
-  //        }
-  //        return Collections.emptyList()
-  //    }
-
-  //    protected abstract boolean validateResult(Object realResult, Object awaitedResult)
-
-}
-
-object JavaCorrector extends ProgLangCorrector { // @Override
-  // public String buildToEvaluate(String functionname, List<String> inputs) {
-  // return functionname + "(" + String.join(", ", inputs) + ");";
-  // }
-  //    @Override
-  //    protected boolean validateResult(Object realResult, Object awaitedResult) {
-  //        // TODO Auto-generated method stub
-  //        return false;
-  //    }
-}
-
-object PythonCorrector extends ProgLangCorrector { // @Override
-  // public String buildToEvaluate(String functionname, List<String> inputs) {
-  // return functionname + "(" + String.join(", ", inputs) + ")";
-  // }
-  //    @Override
-  //    protected boolean validateResult(Object realResult, Object awaitedResult) {
-  //        // TODO Auto-generated method stub
-  //        return false;
-  //    }
 }

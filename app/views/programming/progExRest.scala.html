@@ -25,7 +25,7 @@
     <span class="input-group-addon">Sprache</span>
     <select class="form-control" id="langSelect" onchange="changeProgLanguage('@controllers.exes.idExes.routes.ProgController.getDeclaration()');">
     @for(language <- model.programming.ProgLanguage.values) {
-        <option value="@language" @language.isSelected(stdLanguage)>@language.languageName </option>
+        <option value="@language.name" @language.isSelected(stdLanguage)>@language.languageName </option>
     }
     </select>
 </div>

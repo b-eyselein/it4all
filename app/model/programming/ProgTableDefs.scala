@@ -23,7 +23,11 @@ case class ProgCompleteEx(ex: ProgExercise, sampleSolution: ProgSampleSolution, 
 
 }
 
-case class CompleteSampleTestData(sampleTestData: SampleTestData, inputs: Seq[SampleTestDataInput])
+case class CompleteSampleTestData(sampleTestData: SampleTestData, inputs: Seq[SampleTestDataInput]) {
+
+  def write: String = (inputs map (_.input)) mkString " "
+
+}
 
 case class CompleteCommitedTestData(commitedTestData: CommitedTestData, inputs: Seq[CommitedTestDataInput])
 
@@ -48,18 +52,18 @@ case class ProgSampleSolution(exerciseId: Int, language: ProgLanguage, solution:
 
 sealed trait TestData {
 
-  val id: Int
+  val id        : Int
   val exerciseId: Int
-  val output: String
+  val output    : String
 
 }
 
 trait TestDataInput {
 
-  val id: Int
-  val testId: Int
+  val id        : Int
+  val testId    : Int
   val exerciseId: Int
-  val input: String
+  val input     : String
 
 }
 

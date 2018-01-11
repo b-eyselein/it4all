@@ -1,13 +1,40 @@
-@(results: List[model.programming.ProgEvaluationResult])
+@(results: Seq[model.programming.ProgEvaluationResult])
 
-@for(res <- results) {
-    <div class="col-md-6">
-        <div class="alert alert-@res.getBSClass">
-            <p>Test von <code>@res.executionResult.evaluated</code> war @if(!res.isSuccessful) {nicht } erfolgreich.<p>
-            @if(!res.isSuccessful) {
-                <p>Erwartet: "@res.awaitedResult"</p>
-                <p>Bekommen: "@res.realResult"</p>
+@for(resultTuples <- results.grouped(2)) {
+    <div class="row">
+    @for(res <- resultTuples) {
+        @res.executionResult match {
+            case se: model.programming.EvaluationFailed => {
+                <div class="col-md-6">
+                    <div class="alert alert-@res.getBSClass">
+                        <p>Test von <code>@res.executionResult.evaluated</code> war @if(!res.isSuccessful) {nicht } erfolgreich.<p>
+                        @if(!res.isSuccessful) {
+                            <p>Erwartet: "@res.awaitedResult"</p>
+                            <p>Bekommen: "@res.realResult"</p>
+                        }
+                    </div>
+                </div>
             }
-        </div>
+            case er: model.programming.ExecutionResult => {
+                <div class="col-md-6">
+                    <div class="alert alert-@res.getBSClass">
+                        <p>Test von <code>@res.executionResult.evaluated</code> war @if(!res.isSuccessful) {nicht } erfolgreich.<p>
+                        @if(!res.isSuccessful) {
+                            <p>Erwartet: "@res.awaitedResult"</p>
+                            <p>Bekommen: "@res.realResult"</p>
+                        }
+                    </div>
+                </div>
+            }
+            case ee: model.programming.SyntaxError => {
+                <div class="col-md-6">
+                    <div class="alert alert-@res.getBSClass">
+                        <p>Test von <code>@res.executionResult.evaluated</code>  ergab einen Syntaxfehler:<p>
+                        <pre>@res.realResult</pre>
+                    </div>
+                </div>
+            }
+        }
+    }
     </div>
 }

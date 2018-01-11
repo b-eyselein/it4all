@@ -34,6 +34,14 @@ trait JsonFormat {
       case _             => None
     }
 
+    def asForgivingString: String = jsValue match {
+      case JsString(str)   => str
+      case JsNumber(i)     => i.toString
+      case JsBoolean(bool) => bool.toString
+      case JsNull          => "null"
+      case other           => other.toString
+    }
+
     def asArray[T](func: JsValue => T): Option[Seq[T]] = jsValue match {
       case JsArray(values) => Some(values map func)
       case _               => None
@@ -55,6 +63,8 @@ trait JsonFormat {
     def intField(fieldName: String): Option[Int] = jsObject.value get fieldName flatMap (_.asInt)
 
     def stringField(fieldName: String): Option[String] = jsObject.value get fieldName flatMap (_.asStr)
+
+    def forgivingStringField(fieldName: String): Option[String] = jsObject.value get fieldName map (_.asForgivingString)
 
   }
 

@@ -49,6 +49,7 @@ function onSuccess(correction) {
  * @param jqXHR {{responseText: string, responseJSON: string}}
  */
 function onError(jqXHR) {
+    console.error(jqXHR.responseJSON);
     $('#correction').html('<div class="alert alert-danger">' + jqXHR.responseJSON + '</div>');
     $('#testButton').prop('disabled', false);
 }

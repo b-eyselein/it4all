@@ -18,7 +18,8 @@ import play.api.mvc._
 import play.twirl.api.Html
 import views.html.programming._
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, ExecutionContext, Future, duration}
 import scala.language.implicitConversions
 import scala.util.Try
 
@@ -28,16 +29,12 @@ object ProgController {
 
   val STD_TEST_DATA_COUNT = 2
 
-  val correctors: Map[ProgLanguage, ProgLangCorrector] = Map(
-    JAVA_8 -> JavaCorrector,
-    PYTHON_3 -> PythonCorrector
-  )
-
 }
 
 @Singleton
 class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: ProgTableDefs)(implicit ec: ExecutionContext)
-  extends AIdExController[ProgExercise, ProgCompleteEx, ProgEvaluationResult, GenericCompleteResult[ProgEvaluationResult], ProgTableDefs](cc, dbcp, t, ProgToolObject) with Secured with JsonFormat {
+  extends AIdExController[ProgExercise, ProgCompleteEx, ProgEvaluationResult, GenericCompleteResult[ProgEvaluationResult], ProgTableDefs](cc, dbcp, t, ProgToolObject)
+    with Secured with JsonFormat {
 
   // Reading solution from requests
 
@@ -88,27 +85,24 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   // Correction
 
-  override def correctEx(user: User, sol: String, exercise: ProgCompleteEx, identifier: IntExIdentifier): Try[GenericCompleteResult[ProgEvaluationResult]] = Try({
-    // FIXME: Time out der Ausführung
-    println(sol)
-
+  override def correctEx(user: User, sol: String, exercise: ProgCompleteEx, identifier: IntExIdentifier): Try[GenericCompleteResult[ProgEvaluationResult]] = Try {
     val language = ProgLanguage.STANDARD_LANG
-    val corrector = correctors(language)
 
-    corrector.correct(user, exercise, sol, language)
-  })
+    // FIXME: Time out der Ausführung
+    Await.result(ProgLangCorrector.correct(user, exercise, sol, language), Duration(5, duration.SECONDS))
+  }
 
   // Views
 
   override def renderExercise(user: User, exercise: ProgCompleteEx): Future[Html] = Future {
-    val declaration = ProgLanguage.STANDARD_LANG.buildFunction(exercise.ex.functionName, exercise.ex.inputCount)
+    val declaration = ProgLanguage.STANDARD_LANG.buildFunction(exercise.ex)
 
     views.html.core.exercise2Rows.render(user, ProgToolObject, EX_OPTIONS, exercise.ex, progExRest(exercise.ex), declaration)
   }
 
   override def renderExesListRest: Html = Html("")
 
-  override def renderResult(correctionResult: GenericCompleteResult[ProgEvaluationResult]): Html = new Html(correctionResult.toString) // FIXME : implement!
+  override def renderResult(correctionResult: GenericCompleteResult[ProgEvaluationResult]): Html = progResult(correctionResult.results)
 
   override protected def onLiveCorrectionSuccess(correctionResult: GenericCompleteResult[ProgEvaluationResult]): Result = Ok(renderResult(correctionResult))
 
