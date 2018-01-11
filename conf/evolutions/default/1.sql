@@ -15,13 +15,14 @@ CREATE TABLE IF NOT EXISTS courses (
 # Blanks
 
 CREATE TABLE IF NOT EXISTS blanks_exercises (
-  id          INT PRIMARY KEY,
-  title       VARCHAR(50),
-  author      VARCHAR(50),
-  ex_text     TEXT,
-  ex_state    ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+  id              INT PRIMARY KEY,
+  title           VARCHAR(50),
+  author          VARCHAR(50),
+  ex_text         TEXT,
+  ex_state        ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
 
-  blanks_text TEXT
+  raw_blanks_text TEXT,
+  blanks_text     TEXT
 );
 
 CREATE TABLE IF NOT EXISTS blanks_samples (
@@ -35,40 +36,14 @@ CREATE TABLE IF NOT EXISTS blanks_samples (
     ON DELETE CASCADE
 );
 
-# Ebnf
+# Mindmap
 
-CREATE TABLE IF NOT EXISTS ebnf_exercises (
-  id        INT PRIMARY KEY,
-  title     VARCHAR(50),
-  author    VARCHAR(50),
-  ex_text   TEXT,
-  ex_state  ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
-
-  terminals VARCHAR(30)
-);
-
-CREATE TABLE IF NOT EXISTS ebnf_testdata (
-  exercise_id INT,
-  test_data   VARCHAR(20),
-
-  PRIMARY KEY (exercise_id, test_data),
-  FOREIGN KEY (exercise_id) REFERENCES ebnf_exercises (id)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS ebnf_solutions (
-  exercise_id INT,
-  username    VARCHAR(50),
-  solution    TEXT,
-
-  PRIMARY KEY (exercise_id, username),
-  FOREIGN KEY (exercise_id) REFERENCES ebnf_exercises (id)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE,
-  FOREIGN KEY (username) REFERENCES users (username)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+CREATE TABLE IF NOT EXISTS mindmap_exercises (
+  id       INT PRIMARY KEY,
+  title    VARCHAR(50),
+  author   VARCHAR(50),
+  ex_text  TEXT,
+  ex_state ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED'
 );
 
 # Programming
@@ -180,7 +155,7 @@ CREATE TABLE IF NOT EXISTS questions (
   ex_text       TEXT,
   ex_state      ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
 
-  collection_id       INT,
+  collection_id INT,
   question_type ENUM ('CHOICE', 'FREETEXT', 'FILLOUT')               DEFAULT 'CHOICE',
   max_points    INT,
 
@@ -191,12 +166,12 @@ CREATE TABLE IF NOT EXISTS questions (
 );
 
 CREATE TABLE IF NOT EXISTS question_answers (
-  id          INT,
-  question_id INT,
-  collection_id     INT,
-  answer_text TEXT,
-  correctness ENUM ('CORRECT', 'OPTIONAL', 'WRONG') DEFAULT 'WRONG',
-  explanation TEXT,
+  id            INT,
+  question_id   INT,
+  collection_id INT,
+  answer_text   TEXT,
+  correctness   ENUM ('CORRECT', 'OPTIONAL', 'WRONG') DEFAULT 'WRONG',
+  explanation   TEXT,
 
   PRIMARY KEY (id, question_id, collection_id),
   FOREIGN KEY (question_id, collection_id) REFERENCES questions (id, collection_id)
@@ -237,7 +212,7 @@ CREATE TABLE IF NOT EXISTS sql_exercises (
   ex_text       TEXT,
   ex_state      ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED')    DEFAULT 'RESERVED',
 
-  collection_id   INT,
+  collection_id INT,
   tags          TEXT,
   exercise_type ENUM ('SELECT', 'CREATE', 'UPDATE', 'INSERT', 'DELETE') DEFAULT 'SELECT',
   hint          TEXT,
@@ -249,10 +224,10 @@ CREATE TABLE IF NOT EXISTS sql_exercises (
 );
 
 CREATE TABLE IF NOT EXISTS sql_samples (
-  id          INT,
-  exercise_id INT,
+  id            INT,
+  exercise_id   INT,
   collection_id INT,
-  sample      TEXT,
+  sample        TEXT,
 
   PRIMARY KEY (id, exercise_id, collection_id),
   FOREIGN KEY (exercise_id, collection_id) REFERENCES sql_exercises (id, collection_id)
@@ -261,10 +236,10 @@ CREATE TABLE IF NOT EXISTS sql_samples (
 );
 
 CREATE TABLE IF NOT EXISTS sql_solutions (
-  username    VARCHAR(50),
+  username      VARCHAR(50),
   collection_id INT,
-  exercise_id INT,
-  solution    TEXT,
+  exercise_id   INT,
+  solution      TEXT,
 
   PRIMARY KEY (username, collection_id, exercise_id),
   FOREIGN KEY (username) REFERENCES users (username)
@@ -550,13 +525,9 @@ DROP TABLE IF EXISTS prog_samples;
 
 DROP TABLE IF EXISTS prog_exercises;
 
-# Ebnf
+# Mindmap
 
-DROP TABLE IF EXISTS ebnf_solutions;
-
-DROP TABLE IF EXISTS ebnf_testdata;
-
-DROP TABLE IF EXISTS ebnf_exercises;
+DROP TABLE IF EXISTS mindmap_exercises;
 
 # Blanks
 

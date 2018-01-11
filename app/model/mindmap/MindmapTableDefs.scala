@@ -45,6 +45,8 @@ class MindmapTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigP
 
   override def saveExerciseRest(compEx: MindmapExercise)(implicit ec: ExecutionContext): Future[Boolean] = Future(true)
 
+  // Table Defs
+
   class MindmapExercisesTable(tag: Tag) extends HasBaseValuesTable[MindmapExercise](tag, "mindmap_exercises") {
 
     def * = (id, title, author, text, state) <> (MindmapExercise.tupled, MindmapExercise.unapply)

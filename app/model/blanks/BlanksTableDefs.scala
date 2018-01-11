@@ -22,17 +22,17 @@ case class BlanksCompleteExercise(ex: BlanksExercise, samples: Seq[BlanksAnswer]
 
 object BlanksExercise {
 
-  def tupled(t: (Int, String, String, String, ExerciseState, String)): BlanksExercise = BlanksExercise(t._1, t._2, t._3, t._4, t._5, t._6)
+  def tupled(t: (Int, String, String, String, ExerciseState, String, String)): BlanksExercise = BlanksExercise(t._1, t._2, t._3, t._4, t._5, t._6, t._7)
 
-  def apply(id: Int, title: String, author: String, text: String, state: ExerciseState, blanksText: String): BlanksExercise =
-    new BlanksExercise(BaseValues(id, title, author, text, state), blanksText)
+  def apply(id: Int, title: String, author: String, text: String, state: ExerciseState, rawBlanksText: String, blanksText: String): BlanksExercise =
+    new BlanksExercise(BaseValues(id, title, author, text, state), rawBlanksText, blanksText)
 
-  def unapply(arg: BlanksExercise): Option[(Int, String, String, String, ExerciseState, String)] =
-    Some((arg.id, arg.title, arg.author, arg.text, arg.state, arg.blanksText))
+  def unapply(arg: BlanksExercise): Option[(Int, String, String, String, ExerciseState, String, String)] =
+    Some((arg.id, arg.title, arg.author, arg.text, arg.state, arg.rawBlanksText, arg.blanksText))
 
 }
 
-case class BlanksExercise(override val baseValues: BaseValues, blanksText: String) extends Exercise
+case class BlanksExercise(override val baseValues: BaseValues, rawBlanksText: String, blanksText: String) extends Exercise
 
 case class BlanksAnswer(id: Int, exerciseId: Int, solution: String)
 
@@ -66,11 +66,13 @@ class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
     def blanksText = column[String]("blanks_text")
 
+    def rawBlanksText = column[String]("raw_blanks_text")
+
 
     def pk = primaryKey("pk", id)
 
 
-    def * = (id, title, author, text, state, blanksText) <> (BlanksExercise.tupled, BlanksExercise.unapply)
+    def * = (id, title, author, text, state, rawBlanksText, blanksText) <> (BlanksExercise.tupled, BlanksExercise.unapply)
 
   }
 

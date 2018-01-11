@@ -85,13 +85,9 @@ DELETE IGNORE FROM prog_samples;
 
 DELETE IGNORE FROM prog_exercises;
 
-# Ebnf
+# Mindmap
 
-DELETE IGNORE FROM ebnf_solutions;
-
-DELETE IGNORE FROM ebnf_testdata;
-
-DELETE IGNORE FROM ebnf_exercises;
+DELETE IGNORE FROM mindmap_exercises;
 
 # Blanks
 
