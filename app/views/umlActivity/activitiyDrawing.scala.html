@@ -1,25 +1,26 @@
-@import model.uml.UmlConsts
-
 @(user: model.User)
-<!--  first lodash, than bootstrap  -->
+
 @scripts = {
+    <!-- Why has bootstrap to be loaded twice? -->
+    <script src="@routes.Assets.versioned("lib/bootstrap/js/bootstrap.min.js")"></script>
+
     <!-- Important: Order of Scripts -->
-    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/umlActivity/webseite.css")">
-    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/umlActivity/joint.css")">
-    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/umlActivity/activity.css")">
-    <script src="@routes.Assets.versioned("javascripts/umlActivity/jquery.js")"></script>
     <script src="@routes.Assets.versioned("lib/lodash/lodash.js")"></script>
     <script src="@routes.Assets.versioned("lib/backbonejs/backbone.js")"></script>
     <script src="@routes.Assets.versioned("lib/jointjs/dist/joint.js")"></script>
     <script src="@routes.Assets.versioned("lib/bootstrap/js/bootstrap.js")"></script>
+
     <script src="@routes.Assets.versioned("javascripts/umlActivity/elements.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/umlActivity/drawing.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/umlActivity/converter.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/umlActivity/webseite.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/umlActivity/FileSaver.js")"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script src="@routes.Assets.versioned("javascripts/umlActivity/classdiagram.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/umlActivity/autosize.js")"></script>
+
+    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/umlActivity/webseite.css")">
+    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/umlActivity/joint.css")">
+    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/umlActivity/activity.css")">
 }
 
 @main("UML", user, scripts) {
@@ -169,6 +170,7 @@
     <div id="fullscreen" class="container-fluid">
         <div class="row">
             <div class="col-md-8" id="leftblock">
+
                 <div class="row">
                         <!-- Aktionsknoten -->
                     <div class="col-md-4">
@@ -232,8 +234,8 @@
                             </ul>
                         </div>
                     </div>
-                        <!-- -->
                 </div>
+
                 <div id="scroll">
                     <div ondrop="drop(event)" ondragover="allowDrop(event)" id="paper"></div>
                 </div>
