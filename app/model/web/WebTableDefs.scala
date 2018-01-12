@@ -1,12 +1,13 @@
 package model.web
 
+import javax.inject.Inject
+
 import controllers.exes.idPartExes.WebToolObject
 import model.Enums.ExerciseState
 import model._
-import model.web.WebConsts.{HTML_TYPE, JS_TYPE}
-import model.web.WebEnums.JsActionType
+import model.web.WebEnums.{JsActionType, WebExPart}
 import org.openqa.selenium.{By, SearchContext}
-import play.api.db.slick.HasDatabaseConfigProvider
+import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc.Call
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
@@ -18,7 +19,7 @@ case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTa
 
   override def preview: Html = views.html.web.webPreview(this)
 
-  override def tags: Seq[WebExTag] = Seq(new WebExTag(HTML_TYPE, ex.hasHtmlPart), new WebExTag(JS_TYPE, ex.hasJsPart))
+  override def tags: Seq[WebExTag] = Seq(new WebExTag(WebExPart.HTML_PART.shortName, ex.hasHtmlPart), new WebExTag(WebExPart.JS_PART.shortName, ex.hasJsPart))
 
   override def exerciseRoutes: Map[Call, String] = WebToolObject.exerciseRoutes(this)
 
@@ -62,9 +63,9 @@ object WebExercise {
 case class WebExercise(baseValues: BaseValues, htmlText: Option[String], hasHtmlPart: Boolean, jsText: Option[String], hasJsPart: Boolean) extends Exercise
 
 trait WebTask {
-  val id        : Int
+  val id: Int
   val exerciseId: Int
-  val text      : String
+  val text: String
   val xpathQuery: String
 }
 
@@ -103,43 +104,45 @@ case class WebSolution(exerciseId: Int, userName: String, solution: String)
 
 // Tables
 
-trait WebTableDefs extends TableDefs {
-  self: HasDatabaseConfigProvider[JdbcProfile] =>
+class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
+  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseTableDefs[WebExercise, WebCompleteEx] {
 
   import profile.api._
 
+  override def completeExForEx(ex: WebExercise)(implicit ec: ExecutionContext): Future[WebCompleteEx] = db.run(htmlTasksAction(ex.id) zip jsTasksAction(ex.id)) map { tasks =>
+    val htmlTasks = tasks._1 groupBy (_._1) mapValues (_ map (_._2)) map (ct => HtmlCompleteTask(ct._1, ct._2.flatten)) toSeq
+    val jsTasks = tasks._2 groupBy (_._1) mapValues (_ map (_._2)) map (ct => JsCompleteTask(ct._1, ct._2.flatten)) toSeq
+
+    WebCompleteEx(ex, htmlTasks sortBy (_.task.id), jsTasks sortBy (_.task.id))
+  }
+
+  private def htmlTasksAction(exId: Int) = htmlTasks.joinLeft(attributes)
+    .on { case (ht, att) => ht.id === att.taskId && ht.exerciseId === att.exerciseId }
+    .filter(_._1.exerciseId === exId)
+    .result
+
+  private def jsTasksAction(exId: Int) = jsTasks.joinLeft(conditions)
+    .on { case (ht, con) => ht.id === con.taskId && ht.exerciseId === con.exerciseId }
+    .filter(_._1.exerciseId === exId)
+    .result
+
+  // Saving
+
+  override def saveExerciseRest(compEx: WebCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] =
+    (saveSeq[HtmlCompleteTask](compEx.htmlTasks, saveHtmlTask) zip saveSeq[JsCompleteTask](compEx.jsTasks, saveJsTask)) map (future => future._1 && future._2)
+
+  private def saveHtmlTask(htmlTask: HtmlCompleteTask): Future[Boolean] = db.run(htmlTasks += htmlTask.task) flatMap { _ =>
+    saveSeq[Attribute](htmlTask.attributes, a => db.run(attributes += a))
+  }
+
+  private def saveJsTask(jsTask: JsCompleteTask): Future[Boolean] = db.run(jsTasks += jsTask.task) flatMap { _ =>
+    saveSeq[JsCondition](jsTask.conditions, c => db.run(conditions += c))
+  }
+
+
   // Table queries
 
-  object webExercises extends ExerciseTableQuery[WebExercise, WebCompleteEx, WebExerciseTable](new WebExerciseTable(_)) {
-
-    override def saveCompleteEx(completeEx: WebCompleteEx)(implicit ec: ExecutionContext): Future[Int] =
-      db.run(saveEx(completeEx.ex) zip DBIO.sequence(completeEx.htmlTasks map saveHtmlTask) zip DBIO.sequence(completeEx.jsTasks map saveJsTask))
-        .map(_._1._1)
-
-    override protected def completeExForEx(ex: WebExercise)(implicit ec: ExecutionContext): Future[WebCompleteEx] = db.run(htmlTasksAction(ex.id) zip jsTasksAction(ex.id)) map { tasks =>
-      val htmlTasks = tasks._1 groupBy (_._1) mapValues (_ map (_._2)) map (ct => HtmlCompleteTask(ct._1, ct._2.flatten)) toSeq
-      val jsTasks = tasks._2 groupBy (_._1) mapValues (_ map (_._2)) map (ct => JsCompleteTask(ct._1, ct._2.flatten)) toSeq
-
-      WebCompleteEx(ex, htmlTasks sortBy (_.task.id), jsTasks sortBy (_.task.id))
-    }
-
-    private def htmlTasksAction(exId: Int) = htmlTasks.joinLeft(attributes)
-      .on { case (ht, att) => ht.id === att.taskId && ht.exerciseId === att.exerciseId }
-      .filter(_._1.exerciseId === exId)
-      .result
-
-    private def jsTasksAction(exId: Int) = jsTasks.joinLeft(conditions)
-      .on { case (ht, con) => ht.id === con.taskId && ht.exerciseId === con.exerciseId }
-      .filter(_._1.exerciseId === exId)
-      .result
-
-    private def saveHtmlTask(htmlTask: HtmlCompleteTask) =
-      (htmlTasks insertOrUpdate htmlTask.task) zip DBIO.sequence(htmlTask.attributes map (attr => attributes insertOrUpdate attr))
-
-    private def saveJsTask(jsTask: JsCompleteTask) =
-      (jsTasks insertOrUpdate jsTask.task) zip DBIO.sequence(jsTask.conditions map (cond => conditions insertOrUpdate cond))
-
-  }
+  val webExercises = TableQuery[WebExercisesTable]
 
   val htmlTasks = TableQuery[HtmlTasksTable]
 
@@ -148,6 +151,10 @@ trait WebTableDefs extends TableDefs {
   val jsTasks = TableQuery[JsTasksTable]
 
   val conditions = TableQuery[ConditionsTable]
+
+  override type ExTableDef = WebExercisesTable
+
+  override val exTable = webExercises
 
   // Dependent query tables
 
@@ -160,7 +167,7 @@ trait WebTableDefs extends TableDefs {
 
   // Table definitions
 
-  class WebExerciseTable(tag: Tag) extends HasBaseValuesTable[WebExercise](tag, "web_exercises") {
+  class WebExercisesTable(tag: Tag) extends HasBaseValuesTable[WebExercise](tag, "web_exercises") {
 
     def htmlText = column[String]("html_text")
 

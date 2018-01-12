@@ -5,7 +5,6 @@ import javax.inject._
 import controllers.Secured
 import controllers.exes.IntExIdentifier
 import model.blanks._
-import model.core._
 import model.{JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.db.slick.DatabaseConfigProvider
@@ -19,8 +18,8 @@ import scala.language.{implicitConversions, postfixOps}
 import scala.util.Try
 
 @Singleton
-class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends AIdExController[BlanksExercise, BlanksAnswerMatchingResult, BlanksCompleteResult](cc, dbcp, r, BlanksToolObject) with JsonFormat with Secured {
+class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: BlanksTableDefs)(implicit ec: ExecutionContext)
+  extends AIdExController[BlanksExercise, BlanksCompleteExercise, BlanksAnswerMatchingResult, BlanksCompleteResult, BlanksTableDefs](cc, dbcp, t, BlanksToolObject) with JsonFormat with Secured {
 
   // Reading solution from requests
 
@@ -35,24 +34,9 @@ class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
     BlanksAnswer(id, -1, answer)
   }))
 
-
   // Yaml
 
-  override type CompEx = BlanksCompleteExercise
-
   override val yamlFormat: YamlFormat[BlanksCompleteExercise] = BlanksYamlProtocol.BlanksYamlFormat
-
-  // db
-
-  override type TQ = repo.BlanksExercisesTable
-
-  override def tq = repo.blanksExercises
-
-  override protected def futureCompleteExById(id: Int): Future[Option[BlanksCompleteExercise]] = repo.blanksCompleteExById(id)
-
-  override protected def futureCompleteExes: Future[Seq[BlanksCompleteExercise]] = repo.blanksCompleteExes
-
-  override protected def saveRead(read: Seq[BlanksCompleteExercise]): Future[Seq[Any]] = Future.sequence(read map repo.saveBlanksExercise)
 
   // Correction
 

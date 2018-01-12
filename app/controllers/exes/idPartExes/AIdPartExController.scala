@@ -6,7 +6,7 @@ import controllers.Secured
 import controllers.exes.BaseExerciseController
 import model.core._
 import model.core.tools.ExToolObject
-import model.{Exercise, ExerciseIdentifier, HasBaseValues, User}
+import model._
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.json.Json
 import play.api.mvc._
@@ -30,9 +30,9 @@ trait IdPartExToolObject extends ExToolObject {
 }
 
 
-abstract class AIdPartExController[E <: Exercise, R <: EvaluationResult, CompResult <: CompleteResult[R]]
-(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository, to: IdPartExToolObject)(implicit ec: ExecutionContext)
-  extends BaseExerciseController[E, R, CompResult](cc, dbcp, r, to) with Secured {
+abstract class AIdPartExController[Ex <: Exercise, CompEx <: CompleteEx[Ex], R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseTableDefs[Ex, CompEx]]
+(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: Tables, to: IdPartExToolObject)(implicit ec: ExecutionContext)
+  extends BaseExerciseController[Ex, CompEx, R, CompResult, Tables](cc, dbcp, t, to) with Secured {
 
   type PartType
 

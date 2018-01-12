@@ -10,7 +10,7 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.ExecutionContext
 
-class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository)
+class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val tables: Repository)
                                (implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured {
 
@@ -41,12 +41,12 @@ class AdminController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
 
   def index: EssentialAction = futureWithAdmin { user =>
     implicit request =>
-      repo.numOfUsers.zip(repo.numOfCourses).map { case (numUsers, numCourses) => Ok(views.html.admin.adminMainPage.render(user, numUsers, numCourses)) }
+      tables.numOfUsers.zip(tables.numOfCourses).map { case (numUsers, numCourses) => Ok(views.html.admin.adminMainPage.render(user, numUsers, numCourses)) }
   }
 
   def users: EssentialAction = futureWithAdmin { user =>
     implicit request =>
-      repo.allUsers.map(users => Ok(views.html.admin.users.render(user, users)))
+      tables.allUsers.map(users => Ok(views.html.admin.users.render(user, users)))
 
   }
 

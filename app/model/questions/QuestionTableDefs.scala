@@ -1,12 +1,15 @@
 package model.questions
 
+import javax.inject.Inject
+
 import model.Enums.ExerciseState
 import model._
 import model.questions.QuestionConsts._
 import model.questions.QuestionEnums.{Correctness, QuestionType}
-import play.api.db.slick.HasDatabaseConfigProvider
+import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc.Call
 import play.twirl.api.Html
+import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
@@ -21,13 +24,19 @@ object QuestionHelper {
 
 // Classes for use
 
-case class CompleteQuiz(coll: Quiz, exercises: Seq[CompleteQuestion]) extends CompleteCollection {
+class CompleteQuizWrapper(override val coll: CompleteQuiz) extends CompleteCollectionWrapper {
 
-  override type ExType = Question
+  override type Ex = Question
 
-  override type CompExType = CompleteQuestion
+  override type CompEx = CompleteQuestion
 
-  override type CollType = Quiz
+  override type Coll = Quiz
+
+  override type CompColl = CompleteQuiz
+
+}
+
+case class CompleteQuiz(coll: Quiz, exercises: Seq[CompleteQuestion]) extends CompleteCollection[Question, CompleteQuestion, Quiz] {
 
   override def renderRest: Html = new Html("") // FIXME: implement! ???
 
@@ -108,14 +117,14 @@ case class QuestionRating(questionId: Int, userName: String, rating: Int)
 
 case class UserAnswer(questionId: Int, userName: String, text: String)
 
-trait QuestionsTableDefs extends TableDefs {
-  self: HasDatabaseConfigProvider[slick.jdbc.JdbcProfile] =>
+class QuestionsTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
+  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseCollectionTableDefs[Question, CompleteQuestion, Quiz, CompleteQuiz] {
 
   import profile.api._
 
   // Reading
 
-  def questionsInQuiz(id: Int) : Future[Int] = db.run(questions.filter(_.quizId === id).size.result)
+  def questionsInQuiz(id: Int): Future[Int] = db.run(questions.filter(_.collectionId === id).size.result)
 
   def completeQuizzes(implicit ec: ExecutionContext): Future[Seq[CompleteQuiz]] = db.run(quizzes.result) map { quizSeq => quizSeq map (quiz => CompleteQuiz(quiz, Seq.empty)) }
 
@@ -124,12 +133,12 @@ trait QuestionsTableDefs extends TableDefs {
     case Some(quiz) => questionsForQuiz(id) map (questions => Some(CompleteQuiz(quiz, questions)))
   }
 
-  private def questionsForQuiz(quizId: Int)(implicit ec: ExecutionContext): Future[Seq[CompleteQuestion]] = db.run(questions.filter(_.quizId === quizId).result) flatMap {
+  private def questionsForQuiz(quizId: Int)(implicit ec: ExecutionContext): Future[Seq[CompleteQuestion]] = db.run(questions.filter(_.collectionId === quizId).result) flatMap {
     questionSeq => Future.sequence(questionSeq map (question => answersForQuestion(quizId, question.id) map (answers => CompleteQuestion(question, answers))))
   }
 
   def completeQuestion(quizId: Int, questionId: Int)(implicit ec: ExecutionContext): Future[Option[CompleteQuestion]] =
-    db.run(questions.filter(q => q.quizId === quizId && q.id === questionId).result.headOption) flatMap {
+    db.run(questions.filter(q => q.collectionId === quizId && q.id === questionId).result.headOption) flatMap {
       case None           => Future(None)
       case Some(question) => answersForQuestion(quizId, questionId) map (answers => Some(CompleteQuestion(question, answers)))
     }
@@ -156,6 +165,22 @@ trait QuestionsTableDefs extends TableDefs {
 
   val questions = TableQuery[QuestionsTable]
 
+
+  override type ExTableDef = QuestionsTable
+
+  override type CollTableDef = QuizzesTable
+
+  override val exTable = questions
+
+  override val collTable = quizzes
+
+  override def completeExForEx(ex: Question)(implicit ec: ExecutionContext): Future[CompleteQuestion] =
+    answersForQuestion(ex.collectionId, ex.id) map (answers => CompleteQuestion(ex, answers))
+
+  override def completeCollForColl(coll: Quiz)(implicit ec: ExecutionContext): Future[CompleteQuiz] =
+    questionsForQuiz(coll.id) map (qs => CompleteQuiz(coll, qs))
+
+
   val answers = TableQuery[AnswersTable]
 
   // Column types
@@ -180,25 +205,21 @@ trait QuestionsTableDefs extends TableDefs {
 
   }
 
-  class QuestionsTable(tag: Tag) extends HasBaseValuesTable[Question](tag, "questions") {
-
-    def quizId = column[Int]("quiz_id")
+  class QuestionsTable(tag: Tag) extends ExerciseInCollectionTable[Question](tag, "questions") {
 
     def questionType = column[QuestionType]("question_type")
 
     def maxPoints = column[Int]("max_points")
 
 
-    def pk = primaryKey("pk", (id, quizId))
+    def pk = primaryKey("pk", (id, collectionId))
 
-    def quizFk = foreignKey("quiz_fk", quizId, quizzes)(_.id)
+    def quizFk = foreignKey("quiz_fk", collectionId, quizzes)(_.id)
 
 
-    def * = (id, title, author, text, state, quizId, questionType, maxPoints) <> (Question.tupled, Question.unapply)
+    def * = (id, title, author, text, state, collectionId, questionType, maxPoints) <> (Question.tupled, Question.unapply)
 
   }
-
-  //  case class Answer(id: Int, questionId: Int, quizId: Int, text: String, correctness: Correctness) {
 
 
   class AnswersTable(tag: Tag) extends Table[Answer](tag, "question_answers") {
@@ -207,7 +228,7 @@ trait QuestionsTableDefs extends TableDefs {
 
     def questionId = column[Int]("question_id")
 
-    def quizId = column[Int]("quiz_id")
+    def quizId = column[Int]("collection_id")
 
     def ansText = column[String]("answer_text")
 
@@ -218,7 +239,7 @@ trait QuestionsTableDefs extends TableDefs {
 
     def pk = primaryKey("pk", (id, questionId, quizId))
 
-    def questionFk = foreignKey("question_fk", (questionId, quizId), questions)(question => (question.id, question.quizId))
+    def questionFk = foreignKey("question_fk", (questionId, quizId), questions)(question => (question.id, question.collectionId))
 
 
     def * = (id, questionId, quizId, ansText, correctness, explanation.?) <> (Answer.tupled, Answer.unapply)

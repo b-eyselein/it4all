@@ -46,6 +46,8 @@ trait FileUtils {
       StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
   }
 
+  def readAllLines(path: Path): Try[Seq[String]] = Try(Files.readAllLines(path).asScala)
+
   def readAll(path: Path): Try[String] = Try(Files.readAllLines(path).asScala mkString "\n")
 
 }

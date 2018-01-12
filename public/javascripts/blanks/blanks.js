@@ -7,7 +7,7 @@
  */
 function onAjaxSuccess(response) {
     console.log(response);
-    for (result of response) {
+    for (let result of response) {
         const span = $('#span_' + result.id);
         const inputParent = $('#' + result.id).parent();
         switch (result.correctness) {

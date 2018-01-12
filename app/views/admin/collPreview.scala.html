@@ -1,4 +1,6 @@
-@(user: model.User, collections: Seq[model.CompleteCollection], toolObject: controllers.exCollections.CollectionToolObject)
+@import model._
+
+@(user: User, collections: Seq[CompleteCollection[_ <: Exercise, _ <: CompleteEx[_], _ <: ExerciseCollection[_, _]]], toolObject: controllers.exCollections.CollectionToolObject)
 
 @main("Import: " + toolObject.collectionSingularName, user) {
     <div class="container">

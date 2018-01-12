@@ -86,22 +86,33 @@ trait FileCompleteEx[Ex <: Exercise] extends CompleteEx[Ex] with FileUtils {
 
 trait ExerciseCollection[ExType <: Exercise, CompExType <: CompleteEx[ExType]] extends HasBaseValues
 
-trait CompleteCollection extends HasBaseValues {
 
-  type ExType <: Exercise
+trait CompleteCollection[Ex <: Exercise, CompEx <: CompleteEx[Ex], Coll <: ExerciseCollection[Ex, CompEx]] extends HasBaseValues {
 
-  type CompExType <: CompleteEx[ExType]
-
-  type CollType <: ExerciseCollection[ExType, CompExType]
-
-  def coll: CollType
+  def coll: Coll
 
   override def baseValues: BaseValues = coll.baseValues
 
-  def exercisesWithFilter(filter: String): Seq[CompExType] = exercises
+  def exercisesWithFilter(filter: String): Seq[CompEx] = exercises
 
-  def exercises: Seq[CompExType]
+  def exercises: Seq[CompEx]
 
   def renderRest: Html
+
+}
+
+abstract class CompleteCollectionWrapper extends HasBaseValues {
+
+  type Ex <: Exercise
+
+  type CompEx <: CompleteEx[Ex]
+
+  type Coll <: ExerciseCollection[Ex, CompEx]
+
+  type CompColl <: CompleteCollection[Ex, CompEx, Coll]
+
+  val coll: CompColl
+
+  override def baseValues: BaseValues = coll.baseValues
 
 }

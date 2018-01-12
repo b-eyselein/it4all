@@ -17,6 +17,10 @@ GET           /admin                                      controllers.AdminContr
 GET           /users                                      controllers.AdminController.users
 PUT           /users/changeRole/:user                     controllers.AdminController.changeRole(user: String)
 
+# LTI Test
+GET           /lti                                        controllers.LTIController.honeypot
+POST          /lti                                        controllers.LTIController.honeypot
+
 # Essentials - Nary, Boolean, Ebnf?
 GET           /essentials                                 controllers.randomExes.EssentialsController.index
 

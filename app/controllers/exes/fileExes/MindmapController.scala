@@ -6,7 +6,7 @@ import javax.inject._
 import controllers.Secured
 import model.User
 import model.core._
-import model.mindmap.MindmapExercise
+import model.mindmap.{MindmapExercise, MindmapTableDefs}
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.mvc.{AnyContent, ControllerComponents, Request}
@@ -17,8 +17,8 @@ import scala.language.implicitConversions
 import scala.util.Try
 
 @Singleton
-class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends AFileExController[MindmapExercise, EvaluationResult, GenericCompleteResult[EvaluationResult]](cc, dbcp, r, MindMapToolObject) with Secured {
+class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: MindmapTableDefs)(implicit ec: ExecutionContext)
+  extends AFileExController[MindmapExercise, MindmapExercise, EvaluationResult, GenericCompleteResult[EvaluationResult], MindmapTableDefs](cc, dbcp, t, MindMapToolObject) with Secured {
 
   // Reading solution from requests
 
@@ -30,23 +30,13 @@ class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfig
 
   // Yaml
 
-  override type CompEx = MindmapExercise
-
   override implicit val yamlFormat: YamlFormat[MindmapExercise] = null
 
   // db
 
-  override type TQ = repo.MindmapExercisesTable
-
-  override def tq = repo.mindmapExercises
-
   override def saveReadToDb(compEx: MindmapExercise): Future[Int] = Future(-1) //???
 
   override protected def checkFiles(ex: MindmapExercise): Seq[Try[Path]] = Seq.empty // ???
-
-  protected def futureCompleteExById(id: Int): Future[Option[MindmapExercise]] = Future(None) // ???
-
-  protected def futureCompleteExes: Future[Seq[MindmapExercise]] = Future(Seq.empty) // ???
 
   // Views
 

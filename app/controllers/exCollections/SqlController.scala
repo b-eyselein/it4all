@@ -7,14 +7,15 @@ import controllers.exCollections.SqlController._
 import model.core.Levenshtein.levenshteinDistance
 import model.core._
 import model.sql.SqlConsts._
-import model.sql.SqlEnums.SqlExerciseType
+import model.sql.SqlEnums.SqlExerciseType._
 import model.sql._
-import model.{JsonFormat, User}
+import model.{CompleteCollectionWrapper, JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc._
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
+import views.html.sql._
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future, duration}
@@ -24,29 +25,28 @@ import scala.util.Try
 object SqlController {
 
   val daos = Map(
-    SqlExerciseType.SELECT -> SelectDAO,
-    SqlExerciseType.CREATE -> CreateDAO,
-    SqlExerciseType.UPDATE -> ChangeDAO,
-    SqlExerciseType.INSERT -> ChangeDAO,
-    SqlExerciseType.DELETE -> ChangeDAO
+    SELECT -> SelectDAO,
+    CREATE -> CreateDAO,
+    UPDATE -> ChangeDAO,
+    INSERT -> ChangeDAO,
+    DELETE -> ChangeDAO
   )
 
   val correctors = Map(
-    SqlExerciseType.CREATE -> CreateCorrector,
-    SqlExerciseType.DELETE -> DeleteCorrector,
-    SqlExerciseType.INSERT -> InsertCorrector,
-    SqlExerciseType.SELECT -> SelectCorrector,
-    SqlExerciseType.UPDATE -> UpdateCorrector
+    CREATE -> CreateCorrector,
+    DELETE -> DeleteCorrector,
+    INSERT -> InsertCorrector,
+    SELECT -> SelectCorrector,
+    UPDATE -> UpdateCorrector
   )
 
-  def findBestFittingSample(userSt: String, samples: List[SqlSample]): SqlSample =
-    samples.minBy(samp => levenshteinDistance(samp.sample, userSt))
+  def findBestFittingSample(userSt: String, samples: List[SqlSample]): SqlSample = samples.minBy(samp => levenshteinDistance(samp.sample, userSt))
 
 }
 
 @Singleton
-class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends AExCollectionController[SqlExercise, SqlScenario, EvaluationResult, SqlCorrResult](cc, dbcp, r, SqlToolObject)
+class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: SqlTableDefs)(implicit ec: ExecutionContext)
+  extends AExCollectionController[SqlExercise, SqlCompleteEx, SqlScenario, SqlCompleteScenario, EvaluationResult, SqlCorrResult, SqlTableDefs](cc, dbcp, t, SqlToolObject)
     with HasDatabaseConfigProvider[JdbcProfile] with JsonFormat with Secured {
 
   override type SolType = String
@@ -57,12 +57,7 @@ class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[String] =
     Solution.stringSolForm.bindFromRequest() fold(_ => None, sol => Some(sol.learnerSolution))
 
-
   // Yaml
-
-  override type CompColl = SqlCompleteScenario
-
-  override type CompEx = SqlCompleteEx
 
   override implicit val yamlFormat: YamlFormat[SqlCompleteScenario] = SqlYamlProtocol.SqlScenarioYamlFormat
 
@@ -70,28 +65,19 @@ class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   import profile.api._
 
-  override type TQ = repo.SqlScenarioesTable
-
-  //noinspection TypeAnnotation
-  override def tq = repo.sqlScenarioes
-
-  override protected def numOfExesInColl(id: Int): Future[Int] = repo.exercisesInScenario(id)
-
-  override protected def futureCompleteColls: Future[Seq[SqlCompleteScenario]] = repo.completeSqlScenarioes
-
-  override protected def futureCompleteCollById(id: Int): Future[Option[SqlCompleteScenario]] = repo.completeScenarioById(id)
-
-  override protected def futureCompleteExById(collId: Int, id: Int): Future[Option[SqlCompleteEx]] = repo.sqlExercises.completeEx(collId, id)
+  override protected def numOfExesInColl(id: Int): Future[Int] = tables.exercisesInScenario(id)
 
   override protected def saveRead(read: Seq[SqlCompleteScenario]): Future[Seq[Boolean]] = Future.sequence(read map { compScenario =>
     val scriptFilePath = toolObject.exerciseResourcesFolder / s"${compScenario.coll.shortName}.sql"
 
     daos.values.toList.distinct foreach (_.executeSetup(compScenario.coll.shortName, scriptFilePath))
 
-    repo.saveSqlCompleteScenario(compScenario) map (_ => true)
+    tables.saveSqlCompleteScenario(compScenario) map (_ => true)
   })
 
-  private def saveSolution(sol: SqlSolution) = db.run(repo.sqlSolutions insertOrUpdate sol)
+  override protected def wrap(compColl: SqlCompleteScenario): CompleteCollectionWrapper = new SqlScenarioWrapper(compColl)
+
+  private def saveSolution(sol: SqlSolution) = db.run(tables.sqlSolutions insertOrUpdate sol)
 
   // Views for admin
 
@@ -118,28 +104,32 @@ class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   // Views for user
 
   override protected def renderExercise(user: User, sqlScenario: SqlScenario, exercise: SqlCompleteEx, numOfExes: Int): Html = {
-    val tables: Seq[SqlQueryResult] = SelectDAO.tableContents(sqlScenario.shortName)
+    val readTables: Seq[SqlQueryResult] = SelectDAO.tableContents(sqlScenario.shortName)
 
     val oldOrDefSol: String = Await.result(
-      db.run(repo.sqlSolutions.filter(sol => sol.username === user.username && sol.exerciseId === exercise.id && sol.scenarioId === exercise.ex.collectionId).result.headOption),
+      db.run(tables.sqlSolutions.filter(sol => sol.username === user.username && sol.exerciseId === exercise.id && sol.scenarioId === exercise.ex.collectionId).result.headOption),
       Duration(2, duration.SECONDS)
     ) map (_.solution) getOrElse ""
 
-    views.html.sql.sqlExercise(user, exercise, oldOrDefSol, tables, sqlScenario, numOfExes)
+    views.html.sql.sqlExercise(user, exercise, oldOrDefSol, readTables, sqlScenario, numOfExes)
   }
 
-  // FIXME: get rif of cast...
-  //  override def renderResult(correctionResult: SqlCorrResult): Html = correctionResult match {
-  //    case res: SqlResult => views.html.sql.sqlResult(res)
-  //    case res: SqlFailed => ???
-  //  }
+  protected def onSubmitCorrectionError(user: User, error: Throwable): Result = ??? // FIXME: implement...
 
-  protected def onSubmitCorrectionError(user: model.User, error: Throwable): play.api.mvc.Result = ??? // FIXME: implement...
+  protected def onSubmitCorrectionResult(user: User, result: SqlCorrResult): Result = result match {
+    case res: SqlResult => Ok(views.html.core.correction(result, sqlResult(res), user, toolObject))
+    case res: SqlFailed =>
+      // FIXME: implement...
+      ???
+  }
 
-  protected def onSubmitCorrectionResult(user: model.User, result: model.sql.SqlCorrResult): play.api.mvc.Result = ??? // FIXME: implement...
+  protected def onLiveCorrectionError(error: Throwable): Result = ??? // FIXME: implement...
 
-  protected def onLiveCorrectionError(error: Throwable): play.api.mvc.Result = ??? // FIXME: implement...
-
-  protected def onLiveCorrectionResult(result: model.sql.SqlCorrResult): play.api.mvc.Result = ??? // FIXME: implement...
+  protected def onLiveCorrectionResult(result: SqlCorrResult): Result = result match {
+    case res: SqlResult => Ok(sqlResult(res))
+    case res: SqlFailed =>
+      // FIXME: implement...
+      ???
+  }
 
 }

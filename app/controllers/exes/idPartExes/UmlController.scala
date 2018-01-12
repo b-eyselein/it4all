@@ -20,8 +20,8 @@ import scala.language.implicitConversions
 import scala.util.Try
 
 @Singleton
-class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, r: Repository)(implicit ec: ExecutionContext)
-  extends AIdPartExController[UmlExercise, EvaluationResult, UmlResult](cc, dbcp, r, UmlToolObject) with JsonFormat with Secured {
+class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: UmlTableDefs)(implicit ec: ExecutionContext)
+  extends AIdPartExController[UmlExercise, UmlCompleteEx, EvaluationResult, UmlResult, UmlTableDefs](cc, dbcp, t, UmlToolObject) with JsonFormat with Secured {
 
   override type PartType = UmlExPart
 
@@ -45,21 +45,7 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // Yaml
 
-  override type CompEx = UmlCompleteEx
-
   override val yamlFormat: YamlFormat[UmlCompleteEx] = UmlExYamlProtocol.UmlExYamlFormat
-
-  // db
-
-  override type TQ = repo.UmlExercisesTable
-
-  override def tq: repo.ExerciseTableQuery[UmlExercise, UmlCompleteEx, repo.UmlExercisesTable] = repo.umlExercises
-
-  override def futureCompleteExes: Future[Seq[UmlCompleteEx]] = repo.umlExercises.completeExes
-
-  override def futureCompleteExById(id: Int): Future[Option[UmlCompleteEx]] = repo.umlExercises.completeById(id)
-
-  override def saveRead(read: Seq[UmlCompleteEx]): Future[Seq[Boolean]] = Future.sequence(read map repo.saveCompleteEx)
 
   // Views
 

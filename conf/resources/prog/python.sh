@@ -2,21 +2,47 @@
 
 index=0
 
-while read testdata < testdata.txt; do
+function delete {
+    if [[ -f $1 ]]
+    then
+        rm $1
+    fi
+}
 
-  # delete old result file if existing
-  filename=res$index.txt;
-  if [ -e $filename ]
-  then
-    rm $filename;
-  fi
+outputBase="output"
+errorBase="error"
+resultBase="result"
 
-  # execute script with testdata
-  solFilename=solution.py;
-  if [ -e $solFilename ]
-  then
-    echo $testdata | python $solFilename > $filename;
-  fi
+testdatafile=testdata.txt
+solFilename=solution.py;
 
-  (( index++ ));
-done
+if [[ -f $solFilename ]] && [[ -f $testdatafile ]]
+then
+    while read testdata
+    do
+
+        outputFile=$outputBase$index.txt
+        errorFile=$errorBase$index.txt
+        resultFile=$resultBase$index.txt
+
+        # delete old files
+        delete $outputFile
+        delete $errorFile
+        delete $resultFile
+
+        # if testdata not empty
+        if [[ ! -z $testdata ]]
+        then
+            # execute script with testdata and record console output and errors
+            echo $index $testdata | python $solFilename > $outputFile 2> $errorFile;
+        fi
+
+        # delete empty files
+        [[ -s $outputFile ]] || delete $outputFile
+        [[ -s $errorFile ]] || delete $errorFile
+        [[ -s $resultFile ]] || delete $resultFile
+
+        (( index++ ));
+
+    done < $testdatafile
+fi

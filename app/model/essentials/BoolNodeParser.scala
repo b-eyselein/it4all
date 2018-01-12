@@ -4,15 +4,15 @@ import scala.util.parsing.combinator.JavaTokenParsers
 
 object BoolNodeParser extends JavaTokenParsers {
 
-  private lazy val b_expression: Parser[ScalaNode] = b_term ~ rep("or" ~ b_term) ^^ {
+  private lazy val boolExpression: Parser[ScalaNode] = boolTerm ~ rep("or" ~ boolTerm) ^^ {
     case f1 ~ fs => (f1 /: fs) ((f1, fs) => f1 or fs._2)
   }
 
-  private lazy val b_term: Parser[ScalaNode] = (b_other_term ~ rep("and" ~ b_other_term)) ^^ {
+  private lazy val boolTerm: Parser[ScalaNode] = (boolOtherTerm ~ rep("and" ~ boolOtherTerm)) ^^ {
     case f1 ~ fs => (f1 /: fs) ((f1, fs) => f1 and fs._2)
   }
 
-  private lazy val b_other_term: Parser[ScalaNode] = (b_not_factor ~ rep(b_other_operator ~ b_not_factor)) ^^ {
+  private lazy val boolOtherTerm: Parser[ScalaNode] = (boolNotFactor ~ rep(boolOtherOperator ~ boolNotFactor)) ^^ {
     case f1 ~ fs => (f1 /: fs) ((f1, fs) => fs._1 match {
       case "nand"  => f1 nand fs._2
       case "nor"   => f1 nor fs._2
@@ -22,23 +22,23 @@ object BoolNodeParser extends JavaTokenParsers {
     })
   }
 
-  private lazy val b_not_factor: Parser[ScalaNode] = opt("not") ~ bFactor ^^ {
+  private lazy val boolNotFactor: Parser[ScalaNode] = opt("not") ~ boolFactor ^^ {
     case Some(_) ~ f => ScalaNode.not(f);
     case None ~ f    => f
   }
 
-  private lazy val bFactor: Parser[ScalaNode] = bLiteral | bVariable | ("(" ~ b_expression ~ ")" ^^ {
+  private lazy val boolFactor: Parser[ScalaNode] = boolLiteral | boolVariable | ("(" ~ boolExpression ~ ")" ^^ {
     case "(" ~ exp ~ ")" => exp
     case other           => other._1._2
   })
 
-  private lazy val b_other_operator: Parser[String] = "nand" | "nor" | "xor" | "equiv" | "impl"
+  private lazy val boolOtherOperator: Parser[String] = "nand" | "nor" | "xor" | "equiv" | "impl"
 
-  private lazy val bLiteral: Parser[ScalaNode] = ("1" | "true" | "TRUE") ^^ (_ => TRUE) | ("0" | "false" | "FALSE") ^^ (_ => FALSE)
+  private lazy val boolLiteral: Parser[ScalaNode] = ("1" | "true" | "TRUE") ^^ (_ => TRUE) | ("0" | "false" | "FALSE") ^^ (_ => FALSE)
 
-  private lazy val bVariable: Parser[Variable] = "[a-zA-Z]".r ^^ (str => Variable(str.charAt(0).toLower))
+  private lazy val boolVariable: Parser[Variable] = "[a-zA-Z]".r ^^ (str => Variable(str.charAt(0).toLower))
 
-  def parseBoolFormula(toParse: String): Option[ScalaNode] = parseAll(b_expression, toParse) match {
+  def parseBoolFormula(toParse: String): Option[ScalaNode] = parseAll(boolExpression, toParse) match {
     case Success(result, _)    => Some(result)
     case NoSuccess(msg, input) => throw new IllegalArgumentException(msg + " :: " + input)
     case Error(_, _)           => null

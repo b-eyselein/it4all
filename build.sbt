@@ -13,7 +13,7 @@ lazy val root = (project in file("."))
 
 // Used libraries from Maven Repository
 libraryDependencies ++= Seq(
-  "org.mockito" % "mockito-core" % "2.11.0",
+  "org.mockito" % "mockito-core" % "2.13.0",
   "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % "test",
 
   "mysql" % "mysql-connector-java" % "8.0.8-dmr",
@@ -23,11 +23,11 @@ libraryDependencies ++= Seq(
 
   // core
   "com.github.fge" % "json-schema-validator" % "2.2.6",
-  "com.kjetland" % "mbknor-jackson-jsonschema_2.12" % "1.0.24",
+  "com.kjetland" %% "mbknor-jackson-jsonschema" % "1.0.26",
 
-  "com.typesafe.play" %% "play-slick" % "3.0.1",
+  "com.typesafe.play" %% "play-slick" % "3.0.3",
   evolutions,
-  "com.typesafe.play" %% "play-slick-evolutions" % "3.0.1",
+  "com.typesafe.play" %% "play-slick-evolutions" % "3.0.3",
 
   // Js-Libraries
   "org.webjars" % "ace" % "1.2.8",
@@ -39,14 +39,14 @@ libraryDependencies ++= Seq(
   "org.webjars" % "lodash" % "3.10.1",
   "org.webjars" % "backbonejs" % "1.3.3",
 
-  "com.github.t3hnar" %% "scala-bcrypt" % "3.0",
+  "com.github.t3hnar" %% "scala-bcrypt" % "3.1",
 
   // Selenium and HtmlUnitDriver for Web+Js
-  "org.seleniumhq.selenium" % "selenium-java" % "3.7.1",
-  "org.seleniumhq.selenium" % "htmlunit-driver" % "2.28.1",
+  "org.seleniumhq.selenium" % "selenium-java" % "3.8.1",
+  "org.seleniumhq.selenium" % "htmlunit-driver" % "2.29.0",
 
   // MyBatis and JSqlParser for SQL
-  "org.mybatis" % "mybatis" % "3.4.5",
+//  "org.mybatis" % "mybatis" % "3.4.5",
   "com.github.jsqlparser" % "jsqlparser" % "1.1",
 
   // Programming

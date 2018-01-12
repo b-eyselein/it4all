@@ -1,9 +1,11 @@
 package model.blanks
 
+import javax.inject.Inject
+
 import controllers.exes.idExes.BlanksToolObject
 import model.Enums.ExerciseState
-import model.{BaseValues, CompleteEx, Exercise, TableDefs}
-import play.api.db.slick.HasDatabaseConfigProvider
+import model._
+import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc.Call
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
@@ -20,24 +22,24 @@ case class BlanksCompleteExercise(ex: BlanksExercise, samples: Seq[BlanksAnswer]
 
 object BlanksExercise {
 
-  def tupled(t: (Int, String, String, String, ExerciseState, String)): BlanksExercise = BlanksExercise(t._1, t._2, t._3, t._4, t._5, t._6)
+  def tupled(t: (Int, String, String, String, ExerciseState, String, String)): BlanksExercise = BlanksExercise(t._1, t._2, t._3, t._4, t._5, t._6, t._7)
 
-  def apply(id: Int, title: String, author: String, text: String, state: ExerciseState, blanksText: String): BlanksExercise =
-    new BlanksExercise(BaseValues(id, title, author, text, state), blanksText)
+  def apply(id: Int, title: String, author: String, text: String, state: ExerciseState, rawBlanksText: String, blanksText: String): BlanksExercise =
+    new BlanksExercise(BaseValues(id, title, author, text, state), rawBlanksText, blanksText)
 
-  def unapply(arg: BlanksExercise): Option[(Int, String, String, String, ExerciseState, String)] =
-    Some((arg.id, arg.title, arg.author, arg.text, arg.state, arg.blanksText))
+  def unapply(arg: BlanksExercise): Option[(Int, String, String, String, ExerciseState, String, String)] =
+    Some((arg.id, arg.title, arg.author, arg.text, arg.state, arg.rawBlanksText, arg.blanksText))
 
 }
 
-case class BlanksExercise(override val baseValues: BaseValues, blanksText: String) extends Exercise
+case class BlanksExercise(override val baseValues: BaseValues, rawBlanksText: String, blanksText: String) extends Exercise
 
 case class BlanksAnswer(id: Int, exerciseId: Int, solution: String)
 
 // Table definitions
 
-trait BlanksTableDefs extends TableDefs {
-  self: HasDatabaseConfigProvider[JdbcProfile] =>
+class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
+  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseTableDefs[BlanksExercise, BlanksCompleteExercise] {
 
   import profile.api._
 
@@ -45,32 +47,18 @@ trait BlanksTableDefs extends TableDefs {
 
   val blanksSamples = TableQuery[BlanksSampleAnswersTable]
 
+  override type ExTableDef = BlanksExercisesTable
+
+  override val exTable = blanksExercises
+
+  override def completeExForEx(ex: BlanksExercise)(implicit ec: ExecutionContext): Future[BlanksCompleteExercise] =
+    samplesForExercise(ex) map (samples => BlanksCompleteExercise(ex, samples))
+
+  override protected def saveExerciseRest(compEx: BlanksCompleteExercise)(implicit ec: ExecutionContext): Future[Boolean] = saveSeq[BlanksAnswer](compEx.samples, a => db.run(blanksSamples += a))
+
   // Reading
 
-  def blanksCompleteExById(id: Int)(implicit ec: ExecutionContext): Future[Option[BlanksCompleteExercise]] =
-    db.run(blanksExercises.filter(_.id === id).result.headOption) flatMap {
-      case Some(ex) => samplesForExercise(ex) map (samples => Some(BlanksCompleteExercise(ex, samples)))
-      case None     => Future(None)
-    }
-
-  def blanksCompleteExes(implicit ec: ExecutionContext): Future[Seq[BlanksCompleteExercise]] =
-    db.run(blanksExercises.result) flatMap { exes =>
-      Future.sequence(exes map {
-        ex => samplesForExercise(ex) map (s => BlanksCompleteExercise(ex, s))
-      })
-    }
-
-  private def samplesForExercise(ex: BlanksExercise)(implicit ec: ExecutionContext): Future[Seq[BlanksAnswer]] =
-    db.run(blanksSamples.filter(_.exerciseId === ex.id).result)
-
-  // Saving
-
-  def saveBlanksExercise(ex: BlanksCompleteExercise)(implicit ec: ExecutionContext): Future[Boolean] = db.run(blanksExercises.filter(_.id === ex.id).delete) flatMap {
-    _ => db.run(blanksExercises += ex.ex) flatMap { _ => Future.sequence(ex.samples map saveBlanksSample) map (_.forall(identity)) }
-  }
-
-  private def saveBlanksSample(sample: BlanksAnswer)(implicit ec: ExecutionContext): Future[Boolean] =
-    db.run(blanksSamples += sample) map (_ => true) recover { case _: Exception => false }
+  private def samplesForExercise(ex: BlanksExercise)(implicit ec: ExecutionContext): Future[Seq[BlanksAnswer]] = db.run(blanksSamples.filter(_.exerciseId === ex.id).result)
 
   // Table defs
 
@@ -78,11 +66,13 @@ trait BlanksTableDefs extends TableDefs {
 
     def blanksText = column[String]("blanks_text")
 
+    def rawBlanksText = column[String]("raw_blanks_text")
+
 
     def pk = primaryKey("pk", id)
 
 
-    def * = (id, title, author, text, state, blanksText) <> (BlanksExercise.tupled, BlanksExercise.unapply)
+    def * = (id, title, author, text, state, rawBlanksText, blanksText) <> (BlanksExercise.tupled, BlanksExercise.unapply)
 
   }
 

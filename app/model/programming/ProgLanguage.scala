@@ -3,42 +3,73 @@ package model.programming
 import model.Enums.Selectable
 import model.programming.ProgLanguage._
 
+import scala.collection.mutable.ListBuffer
+import scala.language.postfixOps
+
 object ProgLanguage {
 
-  val STANDARD_LANG: ProgLanguage = PYTHON_3
+  def STANDARD_LANG: ProgLanguage = PYTHON_3
 
-  val values: List[ProgLanguage] = List(PYTHON_3, JAVA_8)
+  val values: Seq[ProgLanguage] = Seq(PYTHON_3, JAVA_8)
 
   def valueOf(str: String): Option[ProgLanguage] = values find (_.name == str)
 
-  def inputcount2Vars(ic: Int): List[Char] = ('a' to 'z').take(ic).toList
+  def inputcount2Vars(ic: Int): Seq[Char] = ('a' to 'z') take ic mkString COMMA
+
+  val COMMA = ", "
+
+  def buildToEvaluate(functionName: String, inputs: Seq[String]): String = functionName + "(" + (inputs mkString COMMA) + ")"
+
 
 }
 
-abstract class ProgLanguage(val name: String, val languageName: String, val aceName: String, val dockerImageName: String,
-                            val scriptEnding: String)
-  extends Selectable[ProgLanguage] {
+trait ProgLanguage extends Selectable[ProgLanguage] {
 
-  val declaration: String
+  val name           : String
+  val languageName   : String
+  val aceName        : String
+  val dockerImageName: String
+  val fileEnding     : String
+  val declaration    : String
 
-  def buildFunction(name: String, inputs: Int): String
+  def buildFunction(exercise: ProgExercise): String
+
+  def buildToEvaluate(exercise: ProgExercise): String
 
 }
 
-case object PYTHON_3 extends ProgLanguage("PYTHON_3", "Python 3", "python", "python:3", "py") {
+object PYTHON_3 extends ProgLanguage {
+
+  override val name           : String = "PYTHON_3"
+  override val languageName   : String = "Python 3"
+  override val aceName        : String = "python"
+  override val dockerImageName: String = "python:3"
+  override val fileEnding     : String = "py"
 
   override val declaration: String =
     """if __name__ == '__main__':
       |  # TODO: Solution...
       |  n = int(input())""".stripMargin
 
-  override def buildFunction(name: String, inputs: Int): String =
-    s"""def $name(${inputcount2Vars(inputs).mkString(", ")}):
+  override def buildFunction(exercise: ProgExercise): String = {
+    s"""def ${exercise.functionName}(${inputcount2Vars(exercise.inputCount)}):
        |  return 0""".stripMargin
+  }
+
+  override def buildToEvaluate(exercise: ProgExercise): String = {
+
+    exercise.functionName + "(" + inputcount2Vars(exercise.inputCount) + ")"
+  }
 
 }
 
-case object JAVA_8 extends ProgLanguage("JAVA_8", "Java 8", "java", "8-jdk", "java") {
+object JAVA_8 extends ProgLanguage {
+
+  override val name           : String = "JAVA_8"
+  override val languageName   : String = "Java 8"
+  override val aceName        : String = "java"
+  override val dockerImageName: String = "8-jdk"
+  override val fileEnding     : String = "java"
 
   override val declaration: String =
     """public class Solution
@@ -49,9 +80,10 @@ case object JAVA_8 extends ProgLanguage("JAVA_8", "Java 8", "java", "8-jdk", "ja
       |
       |}""".stripMargin
 
-  override def buildFunction(name: String, inputs: Int): String =
-    s"""public void $name(${inputcount2Vars(inputs).mkString(", ")}) {
+  override def buildFunction(exercise: ProgExercise): String =
+    s"""public int ${exercise.functionName}(${inputcount2Vars(exercise.inputCount)}) {
        |  return 0;
-       |}
-     """.stripMargin
+       |}""".stripMargin
+
+  override def buildToEvaluate(exercise: ProgExercise): String = exercise.functionName + "(" + inputcount2Vars(exercise.inputCount) + ")"
 }

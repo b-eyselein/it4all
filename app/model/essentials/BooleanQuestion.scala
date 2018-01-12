@@ -11,16 +11,16 @@ object BooleanQuestion {
 
   private def takeRandom[A](seq: Seq[A]): A = seq(generator.nextInt(seq.size))
 
-  private val MIN_VARS = 2
-  private val MAX_VARS = 3
+  private val MinVars = 2
+  private val MaxVars = 3
 
-  private val MIN_DEPTH = 1
-  private val MAX_DEPTH = 2
+  private val MinDepth = 1
+  private val MaxDepth = 2
 
-  def generateRandom: ScalaNode = if (randomBetweenInclBounds(MIN_DEPTH, MAX_DEPTH) < 2)
+  def generateRandom: ScalaNode = if (randomBetweenInclBounds(MinDepth, MaxDepth) < 2)
     generateRandomOperator(Variable('a'), Variable('b'))
   else {
-    val variables = ('a' to 'z') map Variable take randomBetweenInclBounds(MIN_VARS, MAX_VARS)
+    val variables = ('a' to 'z') map Variable take randomBetweenInclBounds(MinVars, MaxVars)
 
     val leftChild = generateRandomOperator(takeRandom(variables), takeRandom(variables))
     val rightChild = generateRandomOperator(takeRandom(variables), takeRandom(variables))

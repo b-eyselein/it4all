@@ -18,9 +18,5 @@ cache:
     key: "$CI_BUILD_REF_NAME"
     untracked: true
     paths:
-    - "sbt-cache/.ivy.cache"
-    - "sbt-cache/.boot"
-    - "sbt-cache/.sbtboot"
-    - "sbt-cache/target"
-    - ~/.ivy2/
-    - ~/.sbt/
+    - ~/.ivy2/*
+    - ~/.sbt/*

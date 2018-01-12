@@ -1,4 +1,6 @@
-@(user: model.User, toolObject: controllers.exCollections.CollectionToolObject, exerciseOpt: Option[model.CompleteCollection], renderedRest: Html)
+@import model._
+
+@(user: User, toolObject: controllers.exCollections.CollectionToolObject, exerciseOpt: Option[CompleteCollection[_ <: Exercise, _ <: CompleteEx[_], _ <: ExerciseCollection[_, _]]], renderedRest: Html)
 
 @isCreation = @{
     exerciseOpt.isEmpty

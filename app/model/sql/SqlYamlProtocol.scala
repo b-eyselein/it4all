@@ -4,7 +4,9 @@ import model.MyYamlProtocol._
 import model.sql.SqlConsts._
 import model.sql.SqlEnums.{SqlExTag, SqlExerciseType}
 import model.{BaseValues, MyYamlProtocol}
-import net.jcazevedo.moultingyaml.{YamlObject, YamlValue}
+import net.jcazevedo.moultingyaml._
+
+import scala.language.postfixOps
 
 object SqlYamlProtocol extends MyYamlProtocol {
 
@@ -15,7 +17,10 @@ object SqlYamlProtocol extends MyYamlProtocol {
       yamlObject.arrayField(EXERCISES_NAME, _ convertTo[SqlCompleteEx] SqlExYamlFormat(baseValues.id))
     )
 
-    override protected def writeRest(completeEx: SqlCompleteScenario): Map[YamlValue, YamlValue] = ???
+    override protected def writeRest(completeEx: SqlCompleteScenario): Map[YamlValue, YamlValue] = Map(
+      YamlString(SHORTNAME_NAME) -> YamlString(completeEx.coll.shortName),
+      YamlString(EXERCISES_NAME) -> YamlArray(completeEx.exercises map (_ toYaml SqlExYamlFormat(completeEx.id)) toVector)
+    )
   }
 
 
@@ -30,15 +35,28 @@ object SqlYamlProtocol extends MyYamlProtocol {
         yamlObject.arrayField("samples", _ convertTo[SqlSample] SqlSampleYamlFormat(scenarioId, baseValues.id))
       )
 
-    override protected def writeRest(completeEx: SqlCompleteEx): Map[YamlValue, YamlValue] = ???
+    override protected def writeRest(completeEx: SqlCompleteEx): Map[YamlValue, YamlValue] = Map(
+      YamlString(ExerciseTypeName) -> YamlString(completeEx.ex.exerciseType.name),
+      YamlString("samples") -> YamlArray(completeEx.samples map (_ toYaml SqlSampleYamlFormat(completeEx.ex.collectionId, completeEx.id)) toVector)
+    ) ++ completeEx.ex.hint.map(h => YamlString(HINT_NAME) -> YamlString(h)) ++ writeTags(completeEx)
+
+    private def writeTags(completeEx: SqlCompleteEx): Option[(YamlValue, YamlValue)] = completeEx.tags match {
+      case Nil  => None
+      case tags => Some(YamlString(TAGS_NAME) -> YamlArray(tags map (t => YamlString(t.name)) toVector))
+    }
+
   }
+
 
   case class SqlSampleYamlFormat(scenarioId: Int, exerciseId: Int) extends MyYamlFormat[SqlSample] {
 
     override def readObject(yamlObject: YamlObject): SqlSample =
       SqlSample(yamlObject.intField(ID_NAME), exerciseId, scenarioId, yamlObject.stringField("sample"))
 
-    override def write(obj: SqlSample): YamlValue = ???
+    override def write(obj: SqlSample): YamlValue = YamlObject(
+      YamlString(ID_NAME) -> obj.id,
+      YamlString("sample") -> obj.sample
+    )
 
   }
 

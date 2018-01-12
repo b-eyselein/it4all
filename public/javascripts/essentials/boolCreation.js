@@ -17,8 +17,8 @@ function readValues(withSol) {
 
     return {
         solution: $('#solution').val(),
-        assignments: assignments,
-        withSol: withSol
+        assignments,
+        withSol
     };
 }
 

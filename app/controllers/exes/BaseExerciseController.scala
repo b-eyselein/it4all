@@ -7,7 +7,7 @@ import controllers.Secured
 import model.core.CoreConsts._
 import model.core._
 import model.core.tools.ExToolObject
-import model.{CompleteEx, Exercise, ExerciseIdentifier, User}
+import model._
 import net.jcazevedo.moultingyaml._
 import play.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
@@ -23,8 +23,8 @@ import scala.util.{Failure, Success, Try}
 
 case class IntExIdentifier(id: Int) extends ExerciseIdentifier
 
-abstract class BaseExerciseController[Ex <: Exercise, R <: EvaluationResult, CompResult <: CompleteResult[R]]
-(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val repo: Repository, val toolObject: ExToolObject)(implicit ec: ExecutionContext)
+abstract class BaseExerciseController[Ex <: Exercise, CompEx <: CompleteEx[Ex], R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseTableDefs[Ex, CompEx]]
+(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val tables: Tables, val toolObject: ExToolObject)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured with FileUtils {
 
   // Reading solution from requests
@@ -37,29 +37,21 @@ abstract class BaseExerciseController[Ex <: Exercise, R <: EvaluationResult, Com
 
   // Reading Yaml
 
-  type CompEx <: CompleteEx[Ex]
-
   implicit val yamlFormat: YamlFormat[CompEx]
 
   // Database queries
 
   type ExIdentifier <: ExerciseIdentifier
 
-  import profile.api._
+  protected def numOfExes: Future[Int] = tables.futureNumOfExes
 
-  protected type TQ <: repo.HasBaseValuesTable[Ex]
+  protected def futureCompleteExById(id: Int): Future[Option[CompEx]] = tables.futureCompleteExById(id)
 
-  protected def tq: TableQuery[TQ]
-
-  protected def numOfExes: Future[Int] = db.run(tq.size.result)
-
-  protected def futureCompleteExById(id: Int): Future[Option[CompEx]]
-
-  protected def futureCompleteExes: Future[Seq[CompEx]]
+  protected def futureCompleteExes: Future[Seq[CompEx]] = tables.futureCompleteExes
 
   protected def statistics: Future[Html] = numOfExes map (num => Html(s"<li>Es existieren insgesamt $num Aufgaben</li>"))
 
-  protected def saveRead(read: Seq[CompEx]): Future[Seq[Any]]
+  protected def saveRead(read: Seq[CompEx]): Future[Seq[Any]] = Future.sequence(read map tables.saveCompleteEx)
 
   val PROGRESS_LOGGER: Logger.ALogger = Logger.of("progress")
 
@@ -139,7 +131,7 @@ abstract class BaseExerciseController[Ex <: Exercise, R <: EvaluationResult, Com
 
   def adminDeleteExercise(id: Int): EssentialAction = futureWithAdmin { _ =>
     implicit request =>
-      db.run(tq.filter(_.id === id).delete) map {
+      tables.deleteExercise(id) map {
         case 0 => NotFound(Json.obj("message" -> s"Die Aufgabe mit ID $id existiert nicht und kann daher nicht geloescht werden!"))
         case _ => Ok(Json.obj("id" -> id))
       }

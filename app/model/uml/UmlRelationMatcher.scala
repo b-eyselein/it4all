@@ -9,10 +9,6 @@ import play.twirl.api.Html
 
 import scala.language.postfixOps
 
-object UmlRelationMatcher {
-
-}
-
 // Implementations
 
 object UmlImplementationMatcher extends Matcher[UmlImplementation, UmlImplementationMatch, UmlImplementationMatchingResult] {

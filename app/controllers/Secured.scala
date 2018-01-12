@@ -1,8 +1,7 @@
 package controllers
 
-import model.User
 import model.core.CoreConsts.SESSION_ID_FIELD
-import model.core.Repository
+import model.{TableDefs, User}
 import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -12,7 +11,7 @@ trait Secured {
 
   val actionBuilder: ActionBuilder[Request, AnyContent] = controllerComponents.actionBuilder
 
-  val repo: Repository
+  val tables: TableDefs
 
   private def username(request: RequestHeader): Option[String] = request.session.get(SESSION_ID_FIELD)
 
@@ -29,7 +28,7 @@ trait Secured {
 
   def withUser(f: User => Request[AnyContent] => Result)(implicit ec: ExecutionContext): EssentialAction = withAuth { username =>
     implicit request => {
-      repo.userByName(username) map {
+      tables.userByName(username) map {
         case Some(user) => f(user)(request)
         case None       => onUnauthorized(request)
       }
@@ -38,7 +37,7 @@ trait Secured {
 
   def futureWithUser(f: User => Request[AnyContent] => Future[Result])(implicit ec: ExecutionContext): EssentialAction = withAuth { username =>
     implicit request =>
-      repo.userByName(username) flatMap {
+      tables.userByName(username) flatMap {
         case Some(user) => f(user)(request)
         case None       => futureOnUnauthorized(request)
       }
@@ -47,7 +46,7 @@ trait Secured {
 
   def futureWithUser[A](bodyParser: BodyParser[A])(f: User => Request[A] => Future[Result])(implicit ec: ExecutionContext): EssentialAction = withAuth(bodyParser) { username =>
     implicit request =>
-      repo.userByName(username) flatMap {
+      tables.userByName(username) flatMap {
         case Some(user) => f(user)(request)
         case None       => futureOnUnauthorized(request)
       }
@@ -55,7 +54,7 @@ trait Secured {
 
   def withAdmin(f: User => Request[AnyContent] => Result)(implicit ec: ExecutionContext): EssentialAction = withAuth { username =>
     implicit request =>
-      repo.userByName(username) map {
+      tables.userByName(username) map {
         case Some(user) =>
           if (user.isAdmin) f(user)(request)
           else onUnauthorized(request)
@@ -66,7 +65,7 @@ trait Secured {
 
   def futureWithAdmin(f: User => Request[AnyContent] => Future[Result])(implicit ec: ExecutionContext): EssentialAction = withAuth { username =>
     implicit request =>
-      repo.userByName(username) flatMap {
+      tables.userByName(username) flatMap {
         case Some(user) =>
           if (user.isAdmin) f(user)(request)
           else futureOnUnauthorized(request)
