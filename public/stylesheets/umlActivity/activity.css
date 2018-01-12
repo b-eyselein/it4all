@@ -38,6 +38,7 @@ html, body {
     display: block;
     margin-left: auto;
     margin-right: auto;
+	overflow-y: hidden;
 }
 
 button:hover {
@@ -110,7 +111,21 @@ button:hover {
     pointer-events: all;
     text-align: center;
 }
+	
+/* Edit start end */
 
+.startlabelpos{
+	position:absolute;
+	left: 60px;
+	top: 0px;
+}
+
+.endlabelpos{
+	position:absolute;
+	left: 0px;
+    top: -35px;
+}
+	
 /* Differ between manual_loopstart and manual_ifstart  */
 .left {
     position: absolute;
@@ -164,7 +179,7 @@ button:hover {
 }
 
 .for_element input {
-    width: 60px;
+    width: 100px;
     pointer-events: auto;
     border: 0;
     text-align: center;
@@ -177,6 +192,22 @@ button:hover {
     display: block;
     margin-left: auto;
     margin-right: auto;
+	overflow:hidden;
+	width:240px;
+}
+
+
+/* edit modal */
+
+.edit_element{
+    border-radius: 6px;
+    position: absolute;
+    background-color:transparent;
+    pointer-events: none;
+    -webkit-user-select: none;
+    padding: 0px;
+    box-sizing: border-box;
+    border: dashed;
 }
 
 /* Definition WhileDo-Element */
@@ -197,7 +228,7 @@ button:hover {
 }
 
 .wd_element input {
-    width: 125px;
+    width: 200px;
     pointer-events: auto;
     border: 0;
 }
@@ -205,10 +236,12 @@ button:hover {
 .wd_element textarea {
     pointer-events: all;
     border: 0;
+	width: 240px;
     height: 69px;
     display: block;
     margin-left: auto;
     margin-right: auto;
+	overflow-y: hidden;
 }
 
 /* Definition Action-Element */
@@ -228,8 +261,170 @@ button:hover {
     pointer-events: all;
     border: 0;
     display: block;
-    width: 109px;
-    height: 69px;
+    width: 240px;
+	height: 30px;
+	overflow:hidden;
+}
+
+.action-element input {
+    pointer-events: all;
+    border: 0;
+    display: block;
+    width: 110px;
+    height: 30px;
+	text-align: center;
+}
+
+
+.action-element select {
+    pointer-events: all;
+    border: 0;
+    width: 240px;
+    height: 30px;
+	text-align: center;
+}
+
+.action-element span {
+    height: 30px;
+}
+
+.actionDeclare{
+    border-radius: 6px;
+    position: absolute;
+    background: #ffffff;
+    pointer-events: none;
+    -webkit-user-select: none;
+    padding: 3px;
+    box-sizing: border-box;
+    border: solid;
+}
+
+.actionDeclare select {
+    pointer-events: all;
+    border: 0;
+    width: 80px;
+    height: 30px;
+	text-align: center;
+}
+
+.normalInput {
+    pointer-events: all;
+    border: 0;
+    width: 110px;
+    height: 30px;
+    text-align: center;	
+}
+
+.smallInput{
+	pointer-events: all;
+    border: 0;
+	height: 30px;
+    text-align: center;
+	width:30px;
+}
+
+
+/* MODAL Activity Diagramm and Elements*/
+
+.circle1 {
+                background-color:black;
+                width:400px; /* You can define it by % also */
+                height:400px; /* You can define it by % also*/
+                position:absolute;
+                border-radius: 50%;
+				-webkit-user-select: none;
+				pointer-events: none;
+}
+.circle2{
+                background-color:white;
+                top: 10%; left:10%; /* of the container */
+                width:80%; /* of the outer-1 */
+                height:80%; /* of the outer-1 */
+                position: absolute;
+                border-radius: 50%;
+}
+.circle3 {
+                background-color:black;
+                top: 12%; left:12%; /* of the container */
+                width:76%; /* of the inner-1 */
+                height:76%; /* of the inner-1 */
+                position: absolute;
+                border-radius: 50%;
+}
+
+
+.backgroundWh{
+	background:white;
+}
+
+.edit1 {
+    color: white;
+    border: none;
+    border-radius: 20px;
+    width: 15px;
+    height: 15px;
+    line-height: 15px;
+    text-align: center;
+    position: absolute;
+    padding: 0;
+    margin: 0;
+    font-weight: bold;
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+.edit2{
+	background: none;
+    border: 0px;
+    text-align: left;
+    cursor: pointer;
+    pointer-events: auto;	
+}
+
+.nopadding {
+   padding: 0 !important;
+   margin: 0 !important;
+}
+
+
+
+/* Definition ExtendedAction-Element */
+
+.Extended_element {
+    border-radius: 6px;
+    position: absolute;
+    background: #ffffff;
+    -webkit-user-select: none;
+	pointer-events: none;
+    padding: 3px;
+    box-sizing: border-box;
+    border: solid;
+}
+
+.Extended_element textarea {
+    pointer-events: auto;
+    border: 0;
+    width: 100%;
+    height: 39%;
+}
+
+.Extended_element input {
+    pointer-events: auto;
+    width: 50%;
+    height: 14%;
+}
+
+.Extended_element select {
+    pointer-events: auto;
+    border: 0;
+    height: 14%;
+}
+.Extended_elementMethods {
+    width: 100%;
+}
+
+.Extended_elementVariable {
+    width: 50%;
 }
 
 /* Definition if-Element */
@@ -258,11 +453,10 @@ button:hover {
 
 .if_element textarea {
     pointer-events: all;
+	overflow-y: hidden;
     border: 0;
-    width: 245px;
+    width: 240px;
 }
-
-/* Definition asdfasdfdsf */
 
 .dashed-bot {
     border-bottom-style: dashed;
@@ -286,7 +480,7 @@ button:hover {
 .delete {
     color: white;
     border: none;
-    background-color: #C0392B;
+    background-color: #ff0000;
     border-radius: 20px;
     width: 15px;
     height: 15px;
@@ -328,3 +522,55 @@ button:hover {
     padding: 3px;
     box-sizing: border-box;
 }			
+
+/* classdiagramm*/
+.classdiagram{
+	visibility:visible;
+    position: absolute;
+    margin-left: 8px;
+    padding: 5px 0 10px 0;
+    background-color: #fff;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    pointer-events: none;
+    -webkit-user-select: none;
+}
+
+.classdiaEl {
+    position: absolute;
+    background: #ffffff;
+    pointer-events: none;
+    -webkit-user-select: none;
+    padding: 0px;
+    border: solid;
+
+}
+
+.solid-bot {
+    border-bottom-style: solid;
+    width: 250;
+    font-family: "Times New Roman", Times, serif;
+}
+
+.tcenter {
+    text-align:center;
+	font-weight: bold;	
+}
+
+.values{
+    pointer-events: none;
+    border: 0;
+	width: 240px;
+	height: 65px;
+}
+
+.cname{
+    pointer-events: none;
+    border: 0;
+	height: 45px;
+	width: 240px;	
+}
+
+/* dont allow removing links or elements
+.link-tools .tool-remove { display: none } 
+*/
