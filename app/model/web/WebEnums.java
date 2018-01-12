@@ -4,8 +4,6 @@ import model.Enums.Selectable;
 import scala.Option;
 import scala.Some;
 
-import javax.swing.text.html.HTML;
-
 public abstract class WebEnums {
 
 
