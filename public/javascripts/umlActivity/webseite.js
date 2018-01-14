@@ -109,3 +109,31 @@ function exitFullscreen() {
     document.webkitExitFullscreen();
   }
 }
+
+function prepareFormForSubmitting() {
+    $('#preCode').val();
+}
+
+function onAjaxSuccess(response) {
+    console.log(response);
+}
+
+function onAjaxError(jqXHR) {
+    console.error(jqXHR.responseText);
+}
+
+function testSol(theUrl) {
+    let answers = $('#preCode').val();
+
+    $.ajax({
+        type: 'PUT',
+        dataType: 'json',
+        contentType: 'application/json',
+        url: theUrl,
+        data: JSON.stringify(answers),
+        async: true,
+        success: onAjaxSuccess,
+        error: onAjaxError
+    });
+}
+

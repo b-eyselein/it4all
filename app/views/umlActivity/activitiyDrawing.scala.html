@@ -2,14 +2,14 @@
 
 @scripts = {
     <!-- Why has bootstrap to be loaded twice? -->
-    <script src="@routes.Assets.versioned("lib/bootstrap/js/bootstrap.min.js")"></script>
+    @*<!-- <script src="@routes.Assets.versioned("lib/bootstrap/js/bootstrap.min.js")"></script> -->*@
 
     <!-- Important: Order of Scripts -->
     <script src="@routes.Assets.versioned("lib/lodash/lodash.js")"></script>
     <script src="@routes.Assets.versioned("lib/backbonejs/backbone.js")"></script>
     <script src="@routes.Assets.versioned("lib/jointjs/dist/joint.js")"></script>
     <script src="@routes.Assets.versioned("lib/bootstrap/js/bootstrap.js")"></script>
-
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script src="@routes.Assets.versioned("javascripts/umlActivity/elements.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/umlActivity/drawing.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/umlActivity/converter.js")"></script>
@@ -348,9 +348,9 @@
                                 <div class="drawingElements">
                                     <div>
                                         <pre id="preCode">Ermittelter Code</pre>
-                                        <button id="sendToServer" type="button" class="form-control">
-                                            Abgeben
-                                        </button>
+                                        <form action="javascript:testSol('@controllers.exes.idPartExes.routes.UmlController.activityCheckSolution()')">
+                                            <button class="btn btn-primary btn-block">Aufgabe verifizieren</button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
