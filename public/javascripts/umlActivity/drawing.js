@@ -21,7 +21,14 @@
 	var MousePosElementName;
 	var MousePosElementID;	
 	var parentChildNodes; // Array with all subgraphs (startid,endid,..)
-	const list_externPorts=["extern","extern-eelse","extern-then"];		
+	const list_externPorts=["extern","extern-eelse","extern-ethen"];		
+	/* versions
+	1 = small fields, no textarea for extendable nodes
+	2 = expanding fields, textara always disabled for extendable nodes
+	3 = expanding fields, auto act/deact for textareas
+	*/
+	var version = "3";
+
 
 
 	
@@ -385,7 +392,7 @@ $(document).ready(function () {
         ;
     }
 
-	function forbidInputTextarea(eventName, cell){
+	function forbidInputTextarea(eventName, cell){ 
 		try {
 			var cellname = graph.getCell(cell.id).attributes.name;
 			if(cellname === "edit"){
@@ -394,25 +401,40 @@ $(document).ready(function () {
 				var parentCell = graph.getCell(eventName.attributes.source.id);
 				var parentPort = eventName.attributes.source.port;
 				if (list_externPorts.includes(parentPort)) {
-					var parentView = parentCell.findView(paper);
-					console.log(parentView);
-					console.log(parentView.$box["0"].prop("height"));
+					var parentView = parentCell.findView(paper);	
+					if(parentCell.attributes.name === "if"){
+						var testString =parentPort.substring(7, parentPort.length);
+						for(var i = 0; i< parentView.$attributes.length;i++){
+							if( parentView.$attributes[i].dataset.attribute === testString){
+								 parentView.$attributes[i].setAttributeNode(document.createAttribute("disabled"));
+							}
+						}
+					}else{
+						for(var i = 0 ; i<parentView.$box["0"].children.length;i++){
+							console.log(parentView.$box["0"].children[i].nodeName );
+							if(parentView.$box["0"].children[i].nodeName  ==="TEXTAREA"){
+								parentView.$box["0"].children[i].setAttributeNode(document.createAttribute("disabled"));
+							}
+						}
+					}
 				}				
 			}	
         } catch (e) {
         }
         ;
-
 	}
 
 //graph.on events
     graph.on('change:target', function (eventName, cell) {
         setNameForTarget(eventName, cell);
-		forbidInputTextarea(eventName, cell);		
+		if(version === "3"){
+			forbidInputTextarea(eventName, cell);	
+		}
     });
-
+	
     graph.on('change:source', function (eventName, cell) {
         setNameForSource(eventName, cell);
+		activateTextarea(eventName, cell);
     });
 
     graph.on('change', function (eventName, cell) {
@@ -450,7 +472,30 @@ $(document).ready(function () {
     graph.on('remove', function (eventName, cell) {
         setNameForSource(eventName, cell);
         setNameForTarget(eventName, cell);
+		activateTextarea(eventName, cell);
     });
+	
+	function activateTextarea(eventName, cell){
+		if(arguments["0"].attributes.type === "link" && list_externPorts.includes(arguments["0"].attributes.source.port)){
+			var sourceCell = graph.getCell(arguments["0"].attributes.source.id);
+			var parentView = sourceCell.findView(paper);
+			var parentPort = eventName.attributes.source.port;
+			if(sourceCell.attributes.name === "if"){
+				var testString =parentPort.substring(7, parentPort.length);
+				for(var i = 0; i< parentView.$attributes.length;i++){
+					if( parentView.$attributes[i].dataset.attribute === testString){
+						 parentView.$attributes[i].removeAttribute("disabled");
+					}
+				}
+			}else{
+				for(var i = 0 ; i<parentView.$box["0"].children.length;i++){
+					if(parentView.$box["0"].children[i].nodeName  ==="TEXTAREA"){
+						parentView.$box["0"].children[i].removeAttribute("disabled");
+					}
+				}
+			}
+		}
+	}
 
     graph.on('change:position', function(cell, newPosition, opt) {
 
@@ -577,53 +622,7 @@ $(document).ready(function () {
                     left: bbox.x,
                     top: bbox.y
                 });
-				if(this.model.attributes.name === "forin"){
-					var nheight = this.$box["0"].children[2].style.height;
-					nheight = Number(nheight.replace("px", ""));
-					if(nheight >50){
-						this.model.resize(bbox.width,nheight+35);
-						this.model.prop("ports/items/2/args/y",(nheight+35));						
-					}					
-				}
-				if(this.model.attributes.name === "dw"){
-					var nheight = this.$box["0"].children[2].style.height;
-					nheight = Number(nheight.replace("px", ""));
-					if(nheight >50){
-						this.model.resize(bbox.width,nheight+50);
-						this.model.prop("ports/items/1/args/y",(nheight+50));						
-					}					
-				}				
-				if(this.model.attributes.name === "wd"){
-					var nheight = this.$box["0"].children[4].style.height;
-					nheight = Number(nheight.replace("px", ""));
-					if(nheight >50){
-						this.model.resize(bbox.width,nheight+52);
-						this.model.prop("ports/items/1/args/y",(nheight+52));						
-					}					
-				}		
-				if(this.model.attributes.name === "actionInput"){
-					var tets = this.$box["0"];
-					var nheight = this.$box["0"].children[1].style.height;
-					nheight = Number(nheight.replace("px", ""));
-					if(nheight >15){
-						this.model.resize(bbox.width,nheight+15);
-						this.model.prop("ports/items/1/args/y",(nheight+15));						
-					}					
-				}					
-				if(this.model.attributes.name === "if"){
-					var nheight = this.$box["0"].children[2].children[1].style.height;
-					var nheight2 = this.$box["0"].children[3].children[1].style.height;
-					nheight = Number(nheight.replace("px", ""));
-					nheight2 = Number(nheight2.replace("px", ""));
-					if(nheight+nheight2 >100){
-						nheight = Math.max(nheight,75);
-						nheight2 = Math.max(nheight2,75);
-						this.model.resize(bbox.width,nheight+nheight2+130);
-						this.model.prop("ports/items/2/args/y",(nheight));
-						this.model.prop("ports/items/3/args/y",(nheight+nheight2+25));	
-						this.model.prop("ports/items/1/args/y",(nheight+nheight2+130));						
-					}
-				}
+				changeSize(this.model,this.$box,bbox);
                 //SET: textfields if inputfield is set
                 switch (this.model.attributes.name) {
                     /*
@@ -735,10 +734,63 @@ $(document).ready(function () {
                 this.$box.find('.delete').on('click', _.bind(this.model.remove, this.model));
                 this.model.on('remove', this.removeBox, this);
                 this.$box.remove();
-				console.log(this.model);  // remove entries  parentChildNodes
+				//console.log(this.model);  // remove entries  parentChildNodes
 				removeIdFromArray(this.model.id);
             }
         });
+
+function changeSize(model,box,bbox){
+	if(model.attributes.name === "actionInput"){
+		var nheight = box["0"].children[1].style.height;
+		nheight = Number(nheight.replace("px", ""));
+		if(nheight >15){
+			model.resize(bbox.width,nheight+15);
+			model.prop("ports/items/1/args/y",(nheight+15));						
+		}					
+	}
+	if(version !== "1"){
+		if(model.attributes.name === "forin"){
+			var nheight = box["0"].children[2].style.height;
+			nheight = Number(nheight.replace("px", ""));
+			if(nheight >50){
+				model.resize(bbox.width,nheight+35);
+				model.prop("ports/items/2/args/y",(nheight+35));						
+			}		
+		}
+		if(model.attributes.name === "dw"){
+			var nheight = box["0"].children[2].style.height;
+			nheight = Number(nheight.replace("px", ""));
+			if(nheight >50){
+				model.resize(bbox.width,nheight+50);
+				model.prop("ports/items/1/args/y",(nheight+50));						
+			}					
+		}				
+		if(model.attributes.name === "wd"){
+			var nheight = box["0"].children[4].style.height;
+			nheight = Number(nheight.replace("px", ""));
+			if(nheight >50){
+				model.resize(bbox.width,nheight+52);
+				model.prop("ports/items/1/args/y",(nheight+52));						
+			}					
+		}							
+		if(model.attributes.name === "if"){
+			var nheight = box["0"].children[2].children[1].style.height;
+			var nheight2 = box["0"].children[3].children[1].style.height;
+			nheight = Number(nheight.replace("px", ""));
+			nheight2 = Number(nheight2.replace("px", ""));
+			if(nheight+nheight2 >100){
+				nheight = Math.max(nheight,75);
+				nheight2 = Math.max(nheight2,75);
+				model.resize(bbox.width,nheight+nheight2+130);
+				model.prop("ports/items/2/args/y",(nheight));
+				model.prop("ports/items/3/args/y",(nheight+nheight2+25));	
+				model.prop("ports/items/1/args/y",(nheight+nheight2+130));						
+			}
+		}			
+	}
+}
+		
+		
 
 		
 
@@ -777,6 +829,13 @@ $(document).ready(function () {
 		})
 		preparePaper(); // set start and endnode	
 });
+
+function refreshElement(el){
+		var x = el.get('position').x;
+		var y = el.get('position').y;
+		el.set('position',{ x: x+1, y: y+1 });
+		el.set('position',{ x: x, y: y });		
+}
 
 //calculate each elements height and sum up --_> Fail
 function calculateFinalHeight(htmlCollection,finalHeightValue){

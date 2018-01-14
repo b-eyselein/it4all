@@ -1309,6 +1309,29 @@ function fillContentinElement(parentId,result){
 			break;				
 	}
 	connectedCell.prop(field,result);
+	if(version !== "1"){
+		var textareaHeight =  (result.split("\n").length)*25;  
+		var parentView = connectedCell.findView(paper);
+		for(var i = 0 ; i<parentView.$box["0"].children.length;i++){
+			if(parentView.$box["0"].children[i].nodeName  ==="TEXTAREA"){
+				var oldTextAreaHeight = parentView.$box["0"].style.height;
+				parentView.$box["0"].children[i].style.height = textareaHeight+"px";
+				refreshElement(connectedCell);
+			}
+			if(parentView.$box["0"].children[i].nodeName  ==="DIV"){
+				for(var j = 0 ; j<parentView.$attributes.length;j++){
+					console.log (parentView.$attributes[j].nodeName  );
+						if(parentView.$attributes[j].nodeName  ==="TEXTAREA"){
+							var oldTextAreaHeight = parentView.$attributes[j].style.height;
+							parentView.$attributes[j].style.height = textareaHeight+"px";
+							refreshElement(connectedCell);
+						}					
+
+				}
+			}
+		}		
+	}
+
 }
 
 function buildProgramm(json,sel_langClass){

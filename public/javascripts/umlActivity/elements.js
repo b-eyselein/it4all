@@ -148,9 +148,22 @@ function get_actionDeclare(xCoord,yCoord){
 }
 
 function get_for(xCoord,yCoord){
+	var codeTextarea ='';
+	var height = 50;
+	var portExternHeight = 25;
+	var portOutHeight = 50;
+	if(version !== "1"){
+		codeTextarea = '<textarea disabled onkeyup="textAreaAdjust(this)" placeholder="Anweisungen" data-attribute="area"></textarea>';
+		height = 100;
+		portExternHeight = 55;
+		portOutHeight = 100;
+	}
+	if(version === "3"){
+		codeTextarea = '<textarea onkeyup="textAreaAdjust(this)" placeholder="Anweisungen" data-attribute="area"></textarea>';
+	}
 	element_for = new joint.shapes.html.Element({
                 position: {x: xCoord, y: yCoord},
-                size: {width: 250, height: 100},
+                size: {width: 250, height: height},
                 template: [
                     '<div class="for_element">',
                     '<button class="delete">x</button>',
@@ -160,7 +173,7 @@ function get_for(xCoord,yCoord){
                     '<span> in </span>',
                     '<input placeholder="Collection" data-attribute="ein"  type="text"/></input>',
                     '</div>',
-					'<textarea onkeyup="textAreaAdjust(this)" placeholder="Anweisungen" data-attribute="area"></textarea>',
+					codeTextarea, 
                     '</div>'
                 ].join(''),
                 'efor': '',
@@ -209,12 +222,12 @@ function get_for(xCoord,yCoord){
 					{
                         id: 'extern',
                         group: 'extern',
-                        args: {x: externPortWidth, y: 55}
+                        args: {x: externPortWidth, y: portExternHeight}
                     },
 					{
 						id: 'out',
 						group: 'out',
-						args: {x: 125, y: 100}
+						args: {x: 125, y: portOutHeight}
 					}]
                 }
             });
@@ -222,9 +235,27 @@ function get_for(xCoord,yCoord){
 }
 	
 function get_if(xCoord,yCoord){
+	var codeTextareaEthen ='';
+	var codeTextareaEelse ='';
+	var height = 75;
+	var portExternHeight_Ethen = 38;
+	var portExternHeight_Eelse = 61;
+	var portOutHeight = 75;
+	if(version !== "1"){
+		codeTextareaEthen = '<textarea disabled onkeyup="textAreaAdjust(this)"  placeholder="Anweisungen" data-attribute="ethen"></textarea>';
+		codeTextareaEelse = '<textarea disabled onkeyup="textAreaAdjust(this)"  placeholder="Anweisungen" data-attribute="eelse"></textarea>';
+		height = 180;
+		portExternHeight_Ethen = 75;
+		portExternHeight_Eelse = 125;
+		portOutHeight = 180;
+	}
+	if(version === "3"){
+		codeTextareaEthen = '<textarea  onkeyup="textAreaAdjust(this)"  placeholder="Anweisungen" data-attribute="ethen"></textarea>';
+		codeTextareaEelse = '<textarea  onkeyup="textAreaAdjust(this)"  placeholder="Anweisungen" data-attribute="eelse"></textarea>';
+	}
 	ife = new joint.shapes.html.Element({
                 position: {x: xCoord, y: yCoord},
-                size: {width: 250, height: 180},
+                size: {width: 250, height: height},
                 template: [
                     '<div class="if_element">',
                     '<button class="delete">x</button>',
@@ -234,11 +265,11 @@ function get_if(xCoord,yCoord){
                     '</div>',
                     '<div class="dashed-bot">',
                     '<span>then</span>',
-                    '<textarea onkeyup="textAreaAdjust(this)"  placeholder="Anweisungen" data-attribute="ethen"></textarea>',
+                    codeTextareaEthen,
                     '</div>',
                     '<div>',
                     '<span>else</span>',
-                    '<textarea onkeyup="textAreaAdjust(this)"  placeholder="Anweisungen" data-attribute="eelse"></textarea>',
+                    codeTextareaEelse,
                     '</div>',
                     '</div>'
 
@@ -283,17 +314,17 @@ function get_if(xCoord,yCoord){
 					{
 						id: 'out',
 						group: 'out',
-						args: {x: 125, y: 180}
+						args: {x: 125, y: portOutHeight}
 					},
 					{
                         id: 'extern-ethen',
                         group: 'extern-ethen',
-                        args: {x: externPortWidth, y: 75}
+                        args: {x: externPortWidth, y: portExternHeight_Ethen}
                     },
 					{
                         id: 'extern-eelse',
                         group: 'extern-eelse',
-                        args: {x: externPortWidth, y: 125}
+                        args: {x: externPortWidth, y: portExternHeight_Eelse}
                     }]
                 }
             });
@@ -301,14 +332,27 @@ function get_if(xCoord,yCoord){
 }
 	
 function get_dw(xCoord,yCoord){
+	var codeTextarea ='';
+	var height = 50;
+	var portExternHeight = 15;
+	var portOutHeight = 50;
+	if(version !== "1"){
+		codeTextarea = '<textarea disabled onkeyup="textAreaAdjust(this)"  placeholder="Anweisungen"  data-attribute="edo"></textarea>';
+		height = 120;
+		portExternHeight = 60;
+		portOutHeight = 120;
+	}
+	if(version === "3"){
+		codeTextarea = '<textarea onkeyup="textAreaAdjust(this)"  placeholder="Anweisungen"  data-attribute="edo"></textarea>';
+	}	
 	dw =  new joint.shapes.html.Element({
                 position: {x: xCoord, y: yCoord},
-                size: {width: 250, height: 120},
+                size: {width: 250, height: height},
                 template: [
                     '<div class="wd_element">',
                     '<button class="delete">x</button>',
                     '<span>do</span>',
-                    '<textarea onkeyup="textAreaAdjust(this)"  placeholder="Anweisungen"  data-attribute="edo"></textarea>',
+                    codeTextarea,
                     '<div class="dashed-top">',
                     '<span> while </span>',
                     '<input placeholder="Bedingung" data-attribute="ewhile" type="text"/></input>',
@@ -348,12 +392,12 @@ function get_dw(xCoord,yCoord){
 					{
 						id: 'out',
 						group: 'out',
-						args: {x: 125, y: 120}
+						args: {x: 125, y: portOutHeight}
 					},
 					{
 						id: 'extern',
 						group: 'extern',
-						args: {x: externPortWidth, y: 60}
+						args: {x: externPortWidth, y: portExternHeight}
 					}]
                 }
             });
@@ -361,9 +405,22 @@ function get_dw(xCoord,yCoord){
 }	
 	
 function get_wd(xCoord,yCoord){
+	var codeTextarea ='';
+	var height = 50;
+	var portExternHeight = 35;
+	var portOutHeight = 50;
+	if(version !== "1"){
+		codeTextarea = '<textarea disabled onkeyup="textAreaAdjust(this)" placeholder="Anweisungen" data-attribute="edo"></textarea>';
+		height = 120;
+		portExternHeight = 60;
+		portOutHeight = 120;
+	}	
+	if(version === "3"){
+		codeTextarea = '<textarea onkeyup="textAreaAdjust(this)" placeholder="Anweisungen" data-attribute="edo"></textarea>';
+	}	
 	wd = new joint.shapes.html.Element({
                 position: {x: xCoord, y: yCoord},
-                size: {width: 250, height: 120},
+                size: {width: 250, height: height},
                 template: [
                     '<div class="wd_element">',
                     '<button class="delete">x</button>',
@@ -373,7 +430,7 @@ function get_wd(xCoord,yCoord){
                     '</div>',
                     '<span>do</span>',
                     '</br>',
-                    '<textarea onkeyup="textAreaAdjust(this)" placeholder="Anweisungen" data-attribute="edo"></textarea>',
+                    codeTextarea,
                     '</div>'
                 ].join(''),
                 'ewhile': '',
@@ -409,12 +466,12 @@ function get_wd(xCoord,yCoord){
 					{
 						id: 'out',
 						group: 'out',
-						args: {x: 125, y: 120}
+						args: {x: 125, y: portOutHeight}
 					},
 					{
 						id: 'extern',
 						group: 'extern',
-						args: {x: externPortWidth, y: 60}
+						args: {x: externPortWidth, y: portExternHeight}
 					}
 					]
                 }

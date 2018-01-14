@@ -26,7 +26,7 @@
 @main("UML", user, scripts) {
         <!-- Modal instruction manual -->
     <div id="myModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
+        <div class="modal-dialog"  role="document">
                 <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-header">
@@ -349,7 +349,7 @@
                                     <div>
                                         <pre id="preCode">Ermittelter Code</pre>
                                         <form action="javascript:testSol('@controllers.exes.idPartExes.routes.UmlController.activityCheckSolution()')">
-                                            <button class="btn btn-primary btn-block">Aufgabe verifizieren</button>
+                                            <button id="sendToServer" class="btn btn-primary btn-block">Aufgabe verifizieren</button>
                                         </form>
                                     </div>
                                 </div>
