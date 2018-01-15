@@ -27,11 +27,11 @@ class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
 
   override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[Seq[BlanksAnswer]] = None
 
-  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[Seq[BlanksAnswer]] = request.body.asJson flatMap (_.asArray(jsValue => {
-    val id = jsValue.asObj flatMap (_.intField("id")) getOrElse -1
-    val answer = jsValue.asObj flatMap (_.stringField("value")) getOrElse ""
-
-    BlanksAnswer(id, -1, answer)
+  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[Seq[BlanksAnswer]] = request.body.asJson flatMap (_.asArray(_.asObj flatMap { jsObj =>
+    for {
+      id <- jsObj.intField("id")
+      answer <- jsObj.stringField("value")
+    } yield BlanksAnswer(id, -1, answer)
   }))
 
   // Yaml

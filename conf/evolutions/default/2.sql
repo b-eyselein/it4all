@@ -83,6 +83,8 @@ DELETE IGNORE FROM prog_sample_testdata;
 
 DELETE IGNORE FROM prog_samples;
 
+DELETE IGNORE FROM prog_input_types;
+
 DELETE IGNORE FROM prog_exercises;
 
 # Mindmap

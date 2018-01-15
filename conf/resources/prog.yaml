@@ -6,7 +6,8 @@ author: bje40dc
 text: Implementieren Sie folgende Funktion <code>sum(a, b)</code>, die zwei Ganzzahlen entegennimmt und deren Summe zurückgibt.
 status: CREATED
 functionName: sum
-inputCount: 2
+inputTypes: [int, int]
+outputType: int
 
 sampleSolution:
   language: PYTHON_3
@@ -54,7 +55,8 @@ text: >
   Implementieren Sie die folgende Funktion <code>concat(str1, str2, str3)</code> die drei beliebige Strings entgegennimmt und deren Konkatenation zurückgibt.
 status: CREATED
 functionName: concat
-inputCount: 3
+inputTypes: [string, string, string]
+outputType: string
 
 sampleSolution:
   language: PYTHON_3
@@ -91,7 +93,8 @@ text: >
   zweier Zahlen berechnet!
 status: CREATED
 functionName: ggt
-inputCount: 2
+inputTypes: [int, int]
+outputType: int
 
 sampleSolution:
   language: PYTHON_3

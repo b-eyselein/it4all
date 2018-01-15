@@ -56,7 +56,18 @@ CREATE TABLE IF NOT EXISTS prog_exercises (
   ex_state      ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
 
   function_name VARCHAR(30),
-  input_count   INT
+  output_type   ENUM ('INTEGER', 'FLOAT', 'BOOLEAN', 'STRING')       DEFAULT 'STRING'
+);
+
+CREATE TABLE IF NOT EXISTS prog_input_types (
+  id          INT,
+  exercise_id INT,
+  input_type  ENUM ('INTEGER', 'FLOAT', 'BOOLEAN', 'STRING') DEFAULT 'STRING',
+
+  PRIMARY KEY (id, exercise_id),
+  FOREIGN KEY (exercise_id) REFERENCES prog_exercises (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS prog_samples (
@@ -522,6 +533,8 @@ DROP TABLE IF EXISTS prog_commited_testdata;
 DROP TABLE IF EXISTS prog_sample_testdata;
 
 DROP TABLE IF EXISTS prog_samples;
+
+DROP TABLE IF EXISTS prog_input_types;
 
 DROP TABLE IF EXISTS prog_exercises;
 

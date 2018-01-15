@@ -14,15 +14,18 @@ object ProgExYamlProtocol extends MyYamlProtocol {
     override def readRest(yamlObject: YamlObject, baseValues: BaseValues): ProgCompleteEx = ProgCompleteEx(
       ProgExercise(baseValues,
         yamlObject.stringField(FUNCTIONNAME_NAME),
-        yamlObject.intField(INPUTCOUNT_NAME)
+        yamlObject.enumField("outputType", str => DataTypes.byName(str) getOrElse DataTypes.STRING, DataTypes.STRING)
       ),
+      yamlObject.arrayField("inputTypes", _.asStr).zipWithIndex.map {
+        case (optStr, index) => InputType(index, baseValues.id, optStr flatMap (str => DataTypes.byName(str)) getOrElse DataTypes.STRING)
+      },
       yamlObject.objectField(SAMPLE_SOL_NAME, ProgSampleSolutionYamlFormat(baseValues.id)),
       yamlObject.arrayField(SAMPLE_TESTDATA_NAME, _ convertTo[CompleteSampleTestData] ProgCompleteSampleTestdataYamlFormat(baseValues.id))
     )
 
     override protected def writeRest(completeEx: ProgCompleteEx): Map[YamlValue, YamlValue] = Map(
       YamlString(FUNCTIONNAME_NAME) -> completeEx.ex.functionName,
-      YamlString(INPUTCOUNT_NAME) -> completeEx.ex.inputCount,
+      YamlString("inputTypes") -> YamlArray(completeEx.inputTypes.map(it => YamlString(it.inputType.typeName)) toVector),
       YamlString(SAMPLE_SOL_NAME) -> completeEx.sampleSolution.toYaml(ProgSampleSolutionYamlFormat(completeEx.ex.id)),
       YamlString(SAMPLE_TESTDATA_NAME) -> YamlArray(completeEx.sampleTestData map (_ toYaml ProgCompleteSampleTestdataYamlFormat(completeEx.ex.id)) toVector)
     )

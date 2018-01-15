@@ -1,40 +1,32 @@
-@(results: Seq[model.programming.ProgEvaluationResult])
+@(compResult: model.programming.ProgCompleteResult)
 
-@for(resultTuples <- results.grouped(2)) {
-    <div class="row">
-    @for(res <- resultTuples) {
-        @res.executionResult match {
-            case se: model.programming.EvaluationFailed => {
-                <div class="col-md-6">
-                    <div class="alert alert-@res.getBSClass">
-                        <p>Test von <code>@res.executionResult.evaluated</code> war @if(!res.isSuccessful) {nicht } erfolgreich.<p>
-                        @if(!res.isSuccessful) {
-                            <p>Erwartet: "@res.awaitedResult"</p>
-                            <p>Bekommen: "@res.realResult"</p>
-                        }
-                    </div>
+    @for(resultTuples <- compResult.results.grouped(2)) {
+        <div class="row">
+        @for(res <- resultTuples) {
+            <div class="col-md-6">
+                <div class="alert alert-@res.getBSClass">
+                @res match {
+                    case se: model.programming.ExecutionFailed => {
+                        <p>Test von <code>@se.evaluated</code> war @if(!res.isSuccessful) {nicht } erfolgreich.<p>
+                        <p>Erwartet: <code>@se.awaited</code></p>
+                        <p>Bekommen: <code>@se.result</code></p>
+                    }
+                    case er: model.programming.ExecutionResult => {
+                        <p>Test von <code>@er.evaluated</code> war @if(!res.isSuccessful) {nicht } erfolgreich.<p>
+                        <p>Erwartet: <code>@er.awaited</code></p>
+                        <p>Bekommen: <code>@er.result</code></p>
+                    }
+                    case ee: model.programming.ExecutionException => {
+                        <p>Es gab einen Fehler bei der Ausf&uuml;hrung ihres Codes:</p>
+                        <pre>@ee.result</pre>
+                    }
+                    case se: model.programming.SyntaxError => {
+                        <p>Ihr Code hat einen Syntaxfehler:<p>
+                        <pre>@se.reason</pre>
+                    }
+                }
                 </div>
-            }
-            case er: model.programming.ExecutionResult => {
-                <div class="col-md-6">
-                    <div class="alert alert-@res.getBSClass">
-                        <p>Test von <code>@res.executionResult.evaluated</code> war @if(!res.isSuccessful) {nicht } erfolgreich.<p>
-                        @if(!res.isSuccessful) {
-                            <p>Erwartet: "@res.awaitedResult"</p>
-                            <p>Bekommen: "@res.realResult"</p>
-                        }
-                    </div>
-                </div>
-            }
-            case ee: model.programming.SyntaxError => {
-                <div class="col-md-6">
-                    <div class="alert alert-@res.getBSClass">
-                        <p>Test von <code>@res.executionResult.evaluated</code>  ergab einen Syntaxfehler:<p>
-                        <pre>@res.realResult</pre>
-                    </div>
-                </div>
-            }
+            </div>
         }
+        </div>
     }
-    </div>
-}

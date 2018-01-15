@@ -8,18 +8,21 @@ import model._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc.Call
 import play.twirl.api.Html
+import ProgConsts._
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
 
-case class ProgCompleteEx(ex: ProgExercise, sampleSolution: ProgSampleSolution, sampleTestData: Seq[CompleteSampleTestData]) extends CompleteEx[ProgExercise] {
+case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[InputType], sampleSolution: ProgSampleSolution, sampleTestData: Seq[CompleteSampleTestData]) extends CompleteEx[ProgExercise] {
 
   // FIXME: only one solution?
 
   override def preview: Html = views.html.programming.progPreview.render(this)
 
   override def exerciseRoutes: Map[Call, String] = ProgToolObject.exerciseRoutes(this)
+
+  val inputCount: Int = inputTypes.size
 
 }
 
@@ -35,18 +38,20 @@ case class CompleteCommitedTestData(commitedTestData: CommitedTestData, inputs: 
 
 object ProgExercise {
 
-  def tupled(t: (Int, String, String, String, ExerciseState, String, Int)): ProgExercise =
+  def tupled(t: (Int, String, String, String, ExerciseState, String, DataTypes)): ProgExercise =
     ProgExercise(t._1, t._2, t._3, t._4, t._5, t._6, t._7)
 
-  def apply(id: Int, title: String, author: String, text: String, state: ExerciseState, funName: String, inpCount: Int): ProgExercise =
-    new ProgExercise(BaseValues(id, title, author, text, state), funName, inpCount)
+  def apply(id: Int, title: String, author: String, text: String, state: ExerciseState, funName: String, outputType: DataTypes): ProgExercise =
+    new ProgExercise(BaseValues(id, title, author, text, state), funName, outputType)
 
-  def unapply(arg: ProgExercise): Option[(Int, String, String, String, ExerciseState, String, Int)] =
-    Some(arg.id, arg.title, arg.author, arg.text, arg.state, arg.functionName, arg.inputCount)
+  def unapply(arg: ProgExercise): Option[(Int, String, String, String, ExerciseState, String, DataTypes)] =
+    Some(arg.id, arg.title, arg.author, arg.text, arg.state, arg.functionName, arg.outputType)
 
 }
 
-case class ProgExercise(baseValues: BaseValues, functionName: String, inputCount: Int) extends Exercise
+case class ProgExercise(baseValues: BaseValues, functionName: String, outputType: DataTypes) extends Exercise
+
+case class InputType(id: Int, exerciseId: Int, inputType: DataTypes)
 
 case class ProgSampleSolution(exerciseId: Int, language: ProgLanguage, solution: String)
 
@@ -87,20 +92,25 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   import profile.api._
 
-  def completeExForEx(ex: ProgExercise)(implicit ec: ExecutionContext): Future[ProgCompleteEx] = db.run(sampleSolForEx(ex) zip completeTestDataForEx(ex)) map {
-    case (sampleSol, ctds) =>
+  def completeExForEx(ex: ProgExercise)(implicit ec: ExecutionContext): Future[ProgCompleteEx] = db.run(sampleSolForEx(ex) zip inputTypesForEx(ex) zip completeTestDataForEx(ex)) map {
+    case ((sampleSol, inputTypes), ctds) =>
+
       val completeSampleTestData: Seq[CompleteSampleTestData] = ctds groupBy (_._1) mapValues (_ map (_._2)) map (ctd => CompleteSampleTestData(ctd._1, ctd._2.flatten)) toSeq
 
-      ProgCompleteEx(ex, sampleSol, completeSampleTestData)
+      ProgCompleteEx(ex, inputTypes, sampleSol, completeSampleTestData)
   }
 
   override def saveExerciseRest(compEx: ProgCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] =
-    (db.run(sampleSolutions += compEx.sampleSolution) map (_ => true) zip saveSeq[CompleteSampleTestData](compEx.sampleTestData, saveSampleTestdata)) map (f => f._1 && f._2)
+    (db.run(sampleSolutions += compEx.sampleSolution) map (_ => true) zip
+      saveSeq[InputType](compEx.inputTypes, i => db.run(inputTypesQuery += i)) zip
+      saveSeq[CompleteSampleTestData](compEx.sampleTestData, saveSampleTestdata)) map (f => f._1._1 && f._1._2 && f._2)
 
   private def saveSampleTestdata(sampleData: CompleteSampleTestData)(implicit ec: ExecutionContext): Future[Boolean] =
     db.run(sampleTestData += sampleData.sampleTestData) flatMap { _ => saveSeq[SampleTestDataInput](sampleData.inputs, i => db.run(sampleTestDataInputs += i)) }
 
-  private def sampleSolForEx(ex: ProgExercise) = (sampleSolutions filter (_.exerciseId === ex.id)).result.head
+  private def inputTypesForEx(ex: ProgExercise) = inputTypesQuery.filter(_.exerciseId === ex.id).result
+
+  private def sampleSolForEx(ex: ProgExercise) = sampleSolutions.filter(_.exerciseId === ex.id).result.head
 
   private def completeTestDataForEx(ex: ProgExercise)(implicit ec: ExecutionContext) = sampleTestData.joinLeft(sampleTestDataInputs)
     .on { case (td, tdi) => td.exerciseId === tdi.exerciseId && td.id === tdi.testId }
@@ -109,9 +119,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   val progExercises = TableQuery[ProgExercisesTable]
 
-  override type ExTableDef = ProgExercisesTable
-
-  override val exTable = progExercises
+  val inputTypesQuery = TableQuery[InputTypesTable]
 
   val sampleSolutions = TableQuery[ProgSampleSolutionsTable]
 
@@ -128,10 +136,19 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   val progSolutions = TableQuery[ProgSolutionTable]
 
+  // Other table stuff
+
+  override type ExTableDef = ProgExercisesTable
+
+  override val exTable = progExercises
+
   // Implicit column types
 
   implicit val ProgLanguageColumnType: BaseColumnType[ProgLanguage] =
-    MappedColumnType.base[ProgLanguage, String](_.name, str => ProgLanguage.valueOf(str).getOrElse(PYTHON_3))
+    MappedColumnType.base[ProgLanguage, String](_.name, str => ProgLanguage.valueOf(str) getOrElse ProgLanguage.STANDARD_LANG)
+
+  implicit val DataTypesColumnType: BaseColumnType[DataTypes] =
+    MappedColumnType.base[DataTypes, String](_.name, str => DataTypes.byString(str) getOrElse DataTypes.STRING)
 
   // Tables
 
@@ -139,10 +156,33 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
     def functionName = column[String]("function_name")
 
-    def inputCount = column[Int]("input_count")
+    def outputType = column[DataTypes]("output_type")
 
 
-    def * = (id, title, author, text, state, functionName, inputCount) <> (ProgExercise.tupled, ProgExercise.unapply)
+    def pk = primaryKey("pk", id)
+
+
+    def * = (id, title, author, text, state, functionName, outputType) <> (ProgExercise.tupled, ProgExercise.unapply)
+
+  }
+
+  //  case class InputType(exerciseId: Int, id: Int, inputType: DataTypes)
+
+  class InputTypesTable(tag: Tag) extends Table[InputType](tag, "prog_input_types") {
+
+    def id = column[Int](ID_NAME)
+
+    def exerciseId = column[Int]("exercise_id")
+
+    def inputType = column[DataTypes]("input_type")
+
+
+    def pk = primaryKey("pk", (id, exerciseId))
+
+    def exerciseFk = foreignKey("exercise_fk", exerciseId, progExercises)(_.id)
+
+
+    def * = (id, exerciseId, inputType) <> (InputType.tupled, InputType.unapply)
 
   }
 

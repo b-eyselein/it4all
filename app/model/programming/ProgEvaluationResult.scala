@@ -1,95 +1,92 @@
 package model.programming
 
 import model.Enums.SuccessType
-import model.JsonFormat
-import model.core.EvaluationResult
-import model.programming.ProgEvaluationResult._
-import play.api.libs.json.JsValue
+import model.core.{CompleteResult, EvaluationResult}
+import play.twirl.api.Html
 
-sealed trait AExecutionResult {
+case class ProgCompleteResult(learnerSolution: String, results: Seq[ProgEvalResult]) extends CompleteResult[ProgEvalResult] {
+
+  override type SolType = String
+
+  override def renderLearnerSolution: Html = Html(s"<pre>$learnerSolution</pre>")
+
+}
+
+
+trait ProgEvalResult extends EvaluationResult
+
+
+case class SyntaxError(reason: String) extends ProgEvalResult {
+
+  override def success: SuccessType = SuccessType.ERROR
+
+}
+
+object AExecutionResult {
+
+  def apply(successType: SuccessType, evaluated: String, awaited: String, result: String, consoleOutput: Option[String]): AExecutionResult = successType match {
+    case (SuccessType.COMPLETE | SuccessType.PARTIALLY) => ExecutionResult(evaluated, awaited, result, consoleOutput)
+    case SuccessType.NONE                               => ExecutionFailed(evaluated, awaited, result, consoleOutput)
+    case SuccessType.ERROR                              => ExecutionException(evaluated, awaited, result, consoleOutput)
+  }
+
+}
+
+sealed trait AExecutionResult extends ProgEvalResult {
+
   val evaluated    : String
+  val awaited      : String
   val result       : String
   val consoleOutput: Option[String]
-}
-
-object ExecutionResult extends JsonFormat {
-
-  def fromJson(jsValue: JsValue, consoleOutput: Option[String]): Option[ExecutionResult] = jsValue.asObj flatMap { jsObj =>
-
-    // FIXME: refactor ProgEvaluationResult.fromJson(...)!
-
-    val maybeVarAndValue = jsObj.arrayField("inputs", _.asObj flatMap { jsObj =>
-      val variable = jsObj.stringField("variable")
-      val value = jsObj.forgivingStringField("value")
-      (variable zip value).headOption
-    })
-
-    val maybeInputs = maybeVarAndValue map (varAndValue => varAndValue.sortBy(_._1)) map (_ map (_._2))
-
-    val maybeFunctionName = jsObj.stringField("functionName")
-
-    val maybeResult = jsObj.forgivingStringField("result")
-
-    (maybeInputs zip maybeFunctionName zip maybeResult).headOption map {
-      case ((inputs, functionName), result) =>
-        val evaluated = ProgLanguage.buildToEvaluate(functionName, inputs)
-        ExecutionResult(evaluated, result, consoleOutput)
-    }
-  }
 
 }
 
-case class ExecutionResult(evaluated: String, result: String, consoleOutput: Option[String]) extends AExecutionResult
+case class ExecutionResult(evaluated: String, awaited: String, result: String, consoleOutput: Option[String]) extends AExecutionResult {
 
-case class SyntaxError(evaluated: String, result: String, consoleOutput: Option[String]) extends AExecutionResult
-
-case class EvaluationFailed(error: Throwable) extends AExecutionResult {
-
-  override val evaluated: String = "ERROR!"
-
-  override val result: String = error.getMessage
-
-  override val consoleOutput: Option[String] = None
+  override def success: SuccessType = SuccessType.COMPLETE
 
 }
 
-object ProgEvaluationResult {
+case class ExecutionFailed(evaluated: String, awaited: String, result: String, consoleOutput: Option[String]) extends AExecutionResult {
 
-  def validateResult[T](gottenResult: T, awaitedResult: T): Boolean = {
-    // FIXME: validation of result is dependent on language! Example: numbers in
-    gottenResult == awaitedResult
-  }
+  override def success: SuccessType = SuccessType.NONE
 
 }
 
-case class ProgEvaluationResult(executionResult: AExecutionResult, testData: CompleteSampleTestData)
-  extends EvaluationResult {
+case class ExecutionException(evaluated: String, awaited: String, result: String, consoleOutput: Option[String]) extends AExecutionResult {
 
-  override val success: SuccessType = executionResult match {
-    case SyntaxError(_, _, _)          => SuccessType.NONE
-    case EvaluationFailed(_)           => SuccessType.NONE
-    case ExecutionResult(_, result, _) => if (validateResult(result, testData.sampleTestData.output)) SuccessType.COMPLETE else SuccessType.NONE
-  }
-
-  def awaitedResult: String = testData.sampleTestData.output
-
-  def id: Int = testData.sampleTestData.id
-
-  def input: Seq[String] = testData.inputs map (_.input)
-
-  def realResult: String = executionResult.result
-
-  def getTitleForValidation: String = executionResult match {
-    case SyntaxError(_, error, _) => error
-    case EvaluationFailed(err)    => err.getMessage
-    case ExecutionResult(_, _, _) => if (isSuccessful)
-      "Dieser Test war erfolgreich."
-    else
-      s"""Dieser Test war nicht erfolgreich.
-         |  Erwartetes Ergebnisses: ${testData.sampleTestData.output}
-         |  Reales Ergebnis: " + executionResult.result""".stripMargin
-  }
-
-  override def toString: String = testData.toString + ", " + executionResult.result
+  override def success: SuccessType = SuccessType.ERROR
 
 }
+
+
+//case class ProgEvaluationResult(executionResult: AExecutionResult, testData: CompleteSampleTestData) extends ProgEvalResult {
+//
+//  override val success: SuccessType = executionResult match {
+//    case SyntaxError(_)                => SuccessType.NONE
+//    case ExecutionFailed(_, _, _)      => SuccessType.NONE
+//    case ExecutionResult(_, result, _) => SuccessType.COMPLETE
+//  }
+//
+//  def awaitedResult: String = testData.sampleTestData.output
+//
+//  def id: Int = testData.sampleTestData.id
+//
+//  def input: Seq[String] = testData.inputs map (_.input)
+//
+//  def realResult: String = executionResult.result
+//
+//  def getTitleForValidation: String = executionResult match {
+//    case SyntaxError(_, error, _)   => error
+//    case ExecutionFailed(_, err, _) => err
+//    case ExecutionResult(_, _, _)   => if (isSuccessful)
+//      "Dieser Test war erfolgreich."
+//    else
+//      s"""Dieser Test war nicht erfolgreich.
+//         |  Erwartetes Ergebnisses: ${testData.sampleTestData.output}
+//         |  Reales Ergebnis: " + executionResult.result""".stripMargin
+//  }
+//
+//  override def toString: String = testData.toString + ", " + executionResult.result
+//
+//}

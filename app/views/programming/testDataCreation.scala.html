@@ -30,13 +30,13 @@
             <div class="col-md-6">
 
                 <form class="form" action="@controllers.exes.idExes.routes.ProgController.validateTestData(exercise.ex.id)" method="post">
-                    <input title="hidden" hidden type="number" name="inputCount" id="inputCount" value="@exercise.ex.inputCount">
+                    <input title="hidden" hidden type="number" name="inputCount" id="inputCount" value="@exercise.inputCount">
                     <input title="hidden" hidden type="number" name="testCount" id="testCount" value="@Math.max(oldData.size, ProgController.STD_TEST_DATA_COUNT)">
                     <table class="table" id="testDataTable">
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                @for(i <- 1 to exercise.ex.inputCount) {
+                                @for(i <- 1 to exercise.inputCount) {
                                     <th>Input @i</th>
                                 }
                                 <th>Output</th>
@@ -66,7 +66,7 @@
                             @for(testCount <- oldData.size until exes.idExes.ProgController.STD_TEST_DATA_COUNT) {
                                 <tr id="tr_@testCount">
                                     <td>@testCount</td>
-                                    @for(inputCount <- 0 until exercise.ex.inputCount) {
+                                    @for(inputCount <- 0 until exercise.inputCount) {
                                         <td>
                                             <input class="form-control" name="inp_@{
                                                 inputCount

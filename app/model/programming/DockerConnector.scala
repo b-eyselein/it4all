@@ -4,15 +4,27 @@ import java.nio.file.Path
 import java.util.concurrent.TimeUnit
 
 import com.github.dockerjava.api.DockerClient
-import com.github.dockerjava.api.model.{Bind, Volume}
+import com.github.dockerjava.api.model.{Bind, Frame, Volume}
 import com.github.dockerjava.core.DockerClientBuilder
-import com.github.dockerjava.core.command.{PullImageResultCallback, WaitContainerResultCallback}
+import com.github.dockerjava.core.command.{LogContainerResultCallback, PullImageResultCallback, WaitContainerResultCallback}
 
 import scala.collection.JavaConverters._
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
+class LogContainerCallback extends LogContainerResultCallback {
+
+  val log: StringBuilder = StringBuilder.newBuilder
+
+  override def onNext(item: Frame): Unit = log ++= new String(item.getPayload)
+
+  override def toString: String = log.toString
+
+}
+
 object DockerConnector {
+
+  val MaxWaitTimeInSeconds = 2
 
   val WorkingDir = "/data"
 
@@ -33,17 +45,18 @@ object DockerConnector {
     //    .withName(language.aceName)
     .withWorkingDir(WorkingDir)
     .withBinds(new Bind(mountingDir.toAbsolutePath.toString, new Volume(WorkingDir)))
-    .withCmd("./" + language.aceName + ".sh")
+    .withCmd("./script." + language.fileEnding)
     .exec.getId
+
 
   private def startContainer(container: String): Unit = DockerClient.startContainerCmd(container).exec
 
   private def waitForContainer(container: String): Int = DockerClient.waitContainerCmd(container)
-    .exec(new WaitContainerResultCallback()).awaitStatusCode(2, TimeUnit.SECONDS)
+    .exec(new WaitContainerResultCallback()).awaitStatusCode(MaxWaitTimeInSeconds, TimeUnit.SECONDS)
 
   private def deleteContainer(container: String): Unit = DockerClient.removeContainerCmd(container).exec
 
-  def runContainer(language: ProgLanguage, mountingDir: Path)(implicit ec: ExecutionContext): Future[Int] = Future {
+  def runContainer(language: ProgLanguage, mountingDir: Path)(implicit ec: ExecutionContext): Future[Either[String, Int]] = Future {
 
     val containerId = createContainer(language, mountingDir)
 
@@ -53,10 +66,19 @@ object DockerConnector {
     // Wait for container
     val statusCode: Int = waitForContainer(containerId)
 
-    //  remove container
-//    deleteContainer(containerId)
+    if (statusCode == 0) Right(statusCode)
+    else {
+      val logs: LogContainerCallback = DockerClient.logContainerCmd(containerId)
+        .withStdErr(true).withStdOut(true)
+        .withFollowStream(true)
+        .withTailAll()
+        .exec(new LogContainerCallback)
 
-    statusCode
+      logs.awaitCompletion(MaxWaitTimeInSeconds, TimeUnit.SECONDS)
+
+
+      Left(logs.toString)
+    }
   }
 
 }

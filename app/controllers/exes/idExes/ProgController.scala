@@ -29,11 +29,13 @@ object ProgController {
 
   val STD_TEST_DATA_COUNT = 2
 
+  val MaxWaitTimeInSeconds = 5
+
 }
 
 @Singleton
 class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: ProgTableDefs)(implicit ec: ExecutionContext)
-  extends AIdExController[ProgExercise, ProgCompleteEx, ProgEvaluationResult, GenericCompleteResult[ProgEvaluationResult], ProgTableDefs](cc, dbcp, t, ProgToolObject)
+  extends AIdExController[ProgExercise, ProgCompleteEx, ProgEvalResult, ProgCompleteResult, ProgTableDefs](cc, dbcp, t, ProgToolObject)
     with Secured with JsonFormat {
 
   // Reading solution from requests
@@ -66,7 +68,7 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
   def validateTestData(id: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
       readAndValidateTestdata(id, user, request) map {
-        case Some((ex, validTestData)) => Ok(validatedTestData(user, ex.ex, Seq.empty /*validatedTestData*/))
+        case Some((ex, validTestData)) => Ok(validatedTestData(user, ex, null /*validatedTestData*/))
         case None                      => BadRequest("")
       }
   }
@@ -85,26 +87,26 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   // Correction
 
-  override def correctEx(user: User, sol: String, exercise: ProgCompleteEx, identifier: IntExIdentifier): Try[GenericCompleteResult[ProgEvaluationResult]] = Try {
+  override def correctEx(user: User, sol: String, exercise: ProgCompleteEx, identifier: IntExIdentifier): Try[ProgCompleteResult] = Try {
     val language = ProgLanguage.STANDARD_LANG
 
     // FIXME: Time out der Ausführung
-    Await.result(ProgLangCorrector.correct(user, exercise, sol, language), Duration(5, duration.SECONDS))
+    Await.result(ProgCorrector.correct(user, exercise, sol, language), Duration(MaxWaitTimeInSeconds, duration.SECONDS))
   }
 
   // Views
 
   override def renderExercise(user: User, exercise: ProgCompleteEx): Future[Html] = Future {
-    val declaration = ProgLanguage.STANDARD_LANG.buildFunction(exercise.ex)
+    val declaration = ProgLanguage.STANDARD_LANG.buildFunction(exercise)
 
     views.html.core.exercise2Rows.render(user, ProgToolObject, EX_OPTIONS, exercise.ex, progExRest(exercise.ex), declaration)
   }
 
   override def renderExesListRest: Html = Html("")
 
-  override def renderResult(correctionResult: GenericCompleteResult[ProgEvaluationResult]): Html = progResult(correctionResult.results)
+  override def renderResult(correctionResult: ProgCompleteResult): Html = progResult(correctionResult)
 
-  override protected def onLiveCorrectionSuccess(correctionResult: GenericCompleteResult[ProgEvaluationResult]): Result = Ok(renderResult(correctionResult))
+  override protected def onLiveCorrectionSuccess(correctionResult: ProgCompleteResult): Result = Ok(progResult(correctionResult))
 
   // Helper methods
 

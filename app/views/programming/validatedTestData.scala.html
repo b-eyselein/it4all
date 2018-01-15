@@ -1,4 +1,4 @@
-@(user: model.User, exercise: model.programming.ProgExercise, validatedTestData: Seq[model.programming.ProgEvaluationResult])
+@(user: model.User, exercise: model.programming.ProgCompleteEx, validatedTestData: model.programming.ProgCompleteResult)
 
 @main("Programmierung: Validierte Testdaten", user) {
     <div class="container">
@@ -18,16 +18,16 @@
                 </tr>
             </thead>
             <tbody>
-            @for(testData <- validatedTestData) {
-                <tr class="@if(testData.isSuccessful) {success} else {danger}">
-                    <td>@testData.id</td>
-                    @for(input <- testData.input) {
-                        <td>@input</td>
-                    }
-                    <td>@testData.awaitedResult</td>
-                    <td>@testData.realResult</td>
-                </tr>
-            }
+            @*@for(testData <- validatedTestData) {*@
+                @*<tr class="@if(testData.isSuccessful) {success} else {danger}">*@
+                    @*<td>@testData.id</td>*@
+                @*@for(input <- testData.input) {*@
+                        @*<td>@input</td>*@
+                    @*}*@
+                    @*<td>@testData.awaitedResult</td>*@
+                    @*<td>@testData.realResult</td>*@
+                @*</tr>*@
+            @*}*@
             </tbody>
         </table>
 

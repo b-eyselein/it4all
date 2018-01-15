@@ -3,17 +3,31 @@ package model
 import play.api.libs.json._
 
 import scala.language.{implicitConversions, postfixOps}
+import scala.util.{Failure, Success, Try}
+
+class JsTypeException(msg: String) extends Exception(msg)
 
 trait JsonFormat {
 
   implicit class PimpedJsValue(jsValue: JsValue) {
+
+    def tryAsBool: Try[Boolean] = jsValue match {
+      case JsBoolean(bool) => Success(bool)
+      case other           => Failure(new JsTypeException("Awaited type JsBoolean, but got " + other.getClass))
+    }
 
     def asBool: Option[Boolean] = jsValue match {
       case JsBoolean(bool) => Some(bool)
       case _               => None
     }
 
+
     def asChar: Option[Char] = jsValue.asStr map (_ apply 0)
+
+    def tryAsInt: Try[Int] = jsValue match {
+      case JsNumber(bigDecimal) => Success(bigDecimal.intValue)
+      case other                => Failure(new JsTypeException("Awaited type JsNumber, but got " + other.getClass))
+    }
 
     def asInt: Option[Int] = jsValue match {
       case JsNumber(bigDecimal) => Some(bigDecimal.intValue)
@@ -29,6 +43,11 @@ trait JsonFormat {
       case _               => None
     }
 
+    def tryAsStr: Try[String] = jsValue match {
+      case JsString(str) => Success(str)
+      case other         => Failure(new JsTypeException("Awaited type JsString, but got " + other.getClass))
+    }
+
     def asStr: Option[String] = jsValue match {
       case JsString(str) => Some(str)
       case _             => None
@@ -42,8 +61,8 @@ trait JsonFormat {
       case other           => other.toString
     }
 
-    def asArray[T](func: JsValue => T): Option[Seq[T]] = jsValue match {
-      case JsArray(values) => Some(values map func)
+    def asArray[T](func: JsValue => Option[T]): Option[Seq[T]] = jsValue match {
+      case JsArray(values) => Some((values map func) flatten)
       case _               => None
     }
 
@@ -65,6 +84,8 @@ trait JsonFormat {
     def stringField(fieldName: String): Option[String] = jsObject.value get fieldName flatMap (_.asStr)
 
     def forgivingStringField(fieldName: String): Option[String] = jsObject.value get fieldName map (_.asForgivingString)
+
+    def enumField[T](fieldName: String, func: String => T): Option[T] = jsObject.value get fieldName flatMap (_.asStr) map func
 
   }
 

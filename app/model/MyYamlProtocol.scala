@@ -33,12 +33,12 @@ object MyYamlProtocol {
       case _               => None
     }
 
-    def forgivingStr: Option[String] = yaml match {
-      case YamlString(str)   => Some(str)
-      case YamlNumber(num)   => Some(num.toString)
-      case YamlBoolean(bool) => Some(bool.toString)
-      case YamlNull          => Some("null")
-      case _                 => None
+    def forgivingStr: String = yaml match {
+      case YamlString(str)   => str
+      case YamlNumber(num)   => num.toString
+      case YamlBoolean(bool) => bool.toString
+      case YamlNull          => "null"
+      case other             => other.toString
     }
 
     def asArray[T](mapping: YamlValue => T): Option[Seq[T]] = yaml match {
@@ -68,11 +68,12 @@ object MyYamlProtocol {
       .getOrElse(deserializationError(s"The field with name '$fieldName' was supposed to have a type of 'String'"))
 
     def forgivingStringField(fieldName: String): String = someField(fieldName, _.forgivingStr)
-      .getOrElse(deserializationError(s"The field with name '$fieldName' was supposed to have a type of 'String'"))
+
+    //      .getOrElse(deserializationError(s"The field with name '$fieldName' was supposed to have a type of 'String'"))
 
     def optStringField(fieldName: String): Option[String] = optField(fieldName, identity).flatMap(_.asStr)
 
-    def optForgivingStringField(fieldName: String): Option[String] = optField(fieldName, identity).flatMap(_.forgivingStr)
+    def optForgivingStringField(fieldName: String): Option[String] = optField(fieldName, identity).map(_.forgivingStr)
 
     def arrayField[T](fieldName: String, mapping: YamlValue => T): Seq[T] = someField(fieldName, _ asArray mapping)
       .getOrElse(deserializationError(s"The field with name '$fieldName' was supposed to be an array"))

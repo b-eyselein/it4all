@@ -32,9 +32,9 @@ trait ProgLanguage extends Selectable[ProgLanguage] {
   val fileEnding     : String
   val declaration    : String
 
-  def buildFunction(exercise: ProgExercise): String
+  def buildFunction(exercise: ProgCompleteEx): String
 
-  def buildToEvaluate(exercise: ProgExercise): String
+  def buildToEvaluate(exercise: ProgCompleteEx): String
 
 }
 
@@ -51,15 +51,12 @@ object PYTHON_3 extends ProgLanguage {
       |  # TODO: Solution...
       |  n = int(input())""".stripMargin
 
-  override def buildFunction(exercise: ProgExercise): String = {
-    s"""def ${exercise.functionName}(${inputcount2Vars(exercise.inputCount)}):
+  override def buildFunction(exercise: ProgCompleteEx): String = {
+    s"""def ${exercise.ex.functionName}(${inputcount2Vars(exercise.inputCount)}):
        |  return 0""".stripMargin
   }
 
-  override def buildToEvaluate(exercise: ProgExercise): String = {
-
-    exercise.functionName + "(" + inputcount2Vars(exercise.inputCount) + ")"
-  }
+  override def buildToEvaluate(exercise: ProgCompleteEx): String = exercise.ex.functionName + "(" + inputcount2Vars(exercise.inputCount) + ")"
 
 }
 
@@ -80,10 +77,10 @@ object JAVA_8 extends ProgLanguage {
       |
       |}""".stripMargin
 
-  override def buildFunction(exercise: ProgExercise): String =
-    s"""public int ${exercise.functionName}(${inputcount2Vars(exercise.inputCount)}) {
+  override def buildFunction(exercise: ProgCompleteEx): String =
+    s"""public int ${exercise.ex.functionName}(${inputcount2Vars(exercise.inputCount)}) {
        |  return 0;
        |}""".stripMargin
 
-  override def buildToEvaluate(exercise: ProgExercise): String = exercise.functionName + "(" + inputcount2Vars(exercise.inputCount) + ")"
+  override def buildToEvaluate(exercise: ProgCompleteEx): String = exercise.ex.functionName + "(" + inputcount2Vars(exercise.inputCount) + ")"
 }
