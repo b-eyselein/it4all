@@ -88,6 +88,9 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
   // Correction
 
   override def correctEx(user: User, sol: String, exercise: ProgCompleteEx, identifier: IntExIdentifier): Try[ProgCompleteResult] = Try {
+
+    tables.saveSolution(user, exercise, sol)
+
     val language = ProgLanguage.STANDARD_LANG
 
     // FIXME: Time out der Ausführung
@@ -96,8 +99,9 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   // Views
 
-  override def renderExercise(user: User, exercise: ProgCompleteEx): Future[Html] = Future {
-    val declaration = ProgLanguage.STANDARD_LANG.buildFunction(exercise)
+  override def renderExercise(user: User, exercise: ProgCompleteEx): Future[Html] = tables.loadSolution(user, exercise) map { oldSol =>
+
+    val declaration: String = oldSol map (_.solution) getOrElse ProgLanguage.STANDARD_LANG.buildFunction(exercise)
 
     views.html.core.exercise2Rows.render(user, ProgToolObject, EX_OPTIONS, exercise.ex, progExRest(exercise.ex), declaration)
   }

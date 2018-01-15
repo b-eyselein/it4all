@@ -117,6 +117,14 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     .filter(_._1.exerciseId === ex.id)
     .result
 
+  def saveSolution(user: User, exercise: ProgCompleteEx, solution: String): Future[Int] =
+    db.run(progSolutions insertOrUpdate ProgSolution(user.username, exercise.id, solution))
+
+  def loadSolution(user: User, exercise: ProgCompleteEx): Future[Option[ProgSolution]] =
+    db.run(progSolutions.filter(sol => sol.username === user.username && sol.exerciseId === exercise.id).result.headOption)
+
+  // Table Queries
+
   val progExercises = TableQuery[ProgExercisesTable]
 
   val inputTypesQuery = TableQuery[InputTypesTable]

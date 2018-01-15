@@ -10,15 +10,21 @@
                         <p>Test von <code>@se.evaluated</code> war @if(!res.isSuccessful) {nicht } erfolgreich.<p>
                         <p>Erwartet: <code>@se.awaited</code></p>
                         <p>Bekommen: <code>@se.result</code></p>
+
+                        @se.printConsoleOut
                     }
                     case er: model.programming.ExecutionResult => {
                         <p>Test von <code>@er.evaluated</code> war @if(!res.isSuccessful) {nicht } erfolgreich.<p>
                         <p>Erwartet: <code>@er.awaited</code></p>
                         <p>Bekommen: <code>@er.result</code></p>
+
+                        @er.printConsoleOut
                     }
                     case ee: model.programming.ExecutionException => {
                         <p>Es gab einen Fehler bei der Ausf&uuml;hrung ihres Codes:</p>
                         <pre>@ee.result</pre>
+
+                        @ee.printConsoleOut
                     }
                     case se: model.programming.SyntaxError => {
                         <p>Ihr Code hat einen Syntaxfehler:<p>
