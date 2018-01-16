@@ -36,7 +36,8 @@ abstract class AIdExController[Ex <: Exercise, CompEx <: CompleteEx[Ex], R <: Ev
   def correct(id: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
       correctAbstract(user, IntExIdentifier(id), readSolutionFromPostRequest, res => Ok(renderCorrectionResult(user, res)),
-        error => BadRequest(views.html.main.render("Fehler", user, new Html(""), new Html(s"<pre>${error.getMessage}:\n${error.getStackTrace mkString "\n"}</pre>"))))
+        // FIXME: site...
+        error => BadRequest(views.html.main.render("Fehler", user, new Html(""), new Html(""), new Html(s"<pre>${error.getMessage}:\n${error.getStackTrace mkString "\n"}</pre>"))))
   }
 
   def correctLive(id: Int): EssentialAction = futureWithUser { user =>

@@ -14,6 +14,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{AnyContent, ControllerComponents, EssentialAction, Request}
 import play.twirl.api.Html
 import views.html.uml._
+import views.html.umlActivity._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
@@ -50,10 +51,10 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   // Views
 
   override protected def renderExercise(user: User, exercise: UmlCompleteEx, part: UmlExPart): Future[Html] = Future(part match {
-    case CLASS_SELECTION   => classSelection(user, exercise.ex)
-    case DIAG_DRAWING      => diagdrawing(user, exercise, getsHelp = false)
-    case DIAG_DRAWING_HELP => diagdrawing(user, exercise, getsHelp = true)
-    case ALLOCATION        => allocation(user, exercise)
+    case CLASS_SELECTION   => classSelection.render(user, exercise.ex)
+    case DIAG_DRAWING      => diagdrawing.render(user, exercise, getsHelp = false)
+    case DIAG_DRAWING_HELP => diagdrawing.render(user, exercise, getsHelp = true)
+    case ALLOCATION        => allocation.render(user, exercise)
   })
 
   override protected val renderExesListRest = new Html(
@@ -62,9 +63,9 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
        |</div>
        |<hr>""".stripMargin)
 
-  override protected def renderResult(correctionResult: UmlResult): Html = umlResult(correctionResult)
+  override protected def renderResult(correctionResult: UmlResult): Html = umlResult.render(correctionResult)
 
-  override protected def renderEditRest(exercise: Option[UmlCompleteEx]): Html = editUmlExRest(exercise)
+  override protected def renderEditRest(exercise: Option[UmlCompleteEx]): Html = editUmlExRest.render(exercise)
 
   // Correction
 
@@ -113,8 +114,14 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
       Ok("TODO!")
   }
 
+  // Activity exercises
+
+  def activityIndex: EssentialAction = withAdmin { user =>
+    implicit request => Ok(activityDrawingIndex.render(user))
+  }
+
   def activityExercise: EssentialAction = withAdmin { user =>
-    implicit request => Ok(views.html.umlActivity.activitiyDrawing(user))
+    implicit request => Ok(activitiyDrawing.render(user))
   }
 
   // FIXME: used where?

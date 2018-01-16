@@ -231,6 +231,8 @@ GET           /web/sol/:user/:id                          controllers.exes.idPar
 # Web - Ende
 
 # UmlActivity - Anfang
+GET           /umlActivity/                               controllers.exes.idPartExes.UmlController.activityIndex
+
 GET           /umlActivity/drawing                        controllers.exes.idPartExes.UmlController.activityExercise
 POST          /umlActivity/check                          controllers.exes.idPartExes.UmlController.activityCheckSolution(lang: String ?= "python")
 # UmlActivity - Ende

@@ -54,8 +54,8 @@ abstract class AIdPartExController[Ex <: Exercise, CompEx <: CompleteEx[Ex], R <
     implicit request =>
       correctAbstract(user, identifier(id, partStr), readSolutionFromPostRequest, res => Ok(renderCorrectionResult(user, res)),
         // FIXME: on error...
-        error => BadRequest(views.html.main.render("Fehler", user, new Html(""), new Html(
-          s"""<pre>${error.getMessage}: ${error.getStackTrace mkString "\n"}</pre>""".stripMargin))))
+        error => BadRequest(views.html.main.render("Fehler", user, new Html(""), new Html(""),
+          new Html(s"""<pre>${error.getMessage}: ${error.getStackTrace mkString "\n"}</pre>""".stripMargin))))
   }
 
   def correctLive(id: Int, partStr: String): EssentialAction = futureWithUser { user =>

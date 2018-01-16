@@ -53,7 +53,7 @@ class CourseAdminController @Inject()(cc: ControllerComponents, val dbConfigProv
       //          firstAdmin.role = Role.ADMIN
       //          firstAdmin.save()
       //
-      //          Redirect(routes.AdminController.index())
+      //          Redirect(routes.AdminController.activityDrawingIndex())
       //      }
       Ok("TODO!")
   }

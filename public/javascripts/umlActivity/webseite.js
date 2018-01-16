@@ -7,8 +7,8 @@ var loaded_graph;
 window.onload = function () {	
 
 	$('#myModal2').on('hidden.bs.modal', function () {
-		//sel_elementname = "";
-	})
+		//selElement = "";
+	});
 	
 	$("#startFullscreen").click(function () {
 		enterFullscreen(document.getElementById("fullscreen"));

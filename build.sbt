@@ -40,6 +40,9 @@ libraryDependencies ++= Seq(
   "org.webjars" % "lodash" % "3.10.1",
   "org.webjars" % "backbonejs" % "1.3.3",
 
+  "org.webjars.npm" % "autosize" % "4.0.0",
+  "org.webjars.bower" % "filesaver" % "1.3.3",
+
   "com.github.t3hnar" %% "scala-bcrypt" % "3.1",
 
   // Selenium and HtmlUnitDriver for Web+Js
@@ -47,7 +50,7 @@ libraryDependencies ++= Seq(
   "org.seleniumhq.selenium" % "htmlunit-driver" % "2.29.0",
 
   // MyBatis and JSqlParser for SQL
-//  "org.mybatis" % "mybatis" % "3.4.5",
+  //  "org.mybatis" % "mybatis" % "3.4.5",
   "com.github.jsqlparser" % "jsqlparser" % "1.1",
 
   // Programming

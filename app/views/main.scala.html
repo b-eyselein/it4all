@@ -1,4 +1,4 @@
-@(title: String, user: model.User, scripts: Html = Html(""))(content: Html)
+@(title: String, user: model.User, scripts: Html = Html(""), scriptsBefore: Html = Html(""))(content: Html)
 <!DOCTYPE html>
 
 <html lang="de">
@@ -8,6 +8,8 @@
 
             <!-- JQuery, Bootstrap (CSS und JS) -->
         <script src="@routes.Assets.versioned("lib/jquery/jquery.min.js")"></script>
+
+        @scriptsBefore
 
         <link rel="stylesheet" href="@routes.Assets.versioned("lib/bootstrap/css/bootstrap.min.css")">
         <script src="@routes.Assets.versioned("lib/bootstrap/js/bootstrap.min.js")"></script>

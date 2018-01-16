@@ -80,7 +80,7 @@ class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
         //                    course.save()
         //                  }
         //
-        //            Redirect(controllers.routes.Application.index()).withSession(SESSION_ID_FIELD -> user.get.username)
+        //            Redirect(controllers.routes.Application.activityDrawingIndex()).withSession(SESSION_ID_FIELD -> user.get.username)
       }
   }
 

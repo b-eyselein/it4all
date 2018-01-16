@@ -1,37 +1,11 @@
 
-body{
-	overflow: hidden;
-}
-
-.modal-dialog{
-  width:100vh;
-}
-
-.leftblockModal{
-	height:600px;
+body {
+    /* Deactivate scrolling? */
+    overflow: hidden;
 }
 
 .drawingElements div {
     text-align: center;
-}
-
-.drawingElementsModal {
-    width:250px;
-	
-}
-
-.colorBlue{
-	color: #fff;
-    background-color: #337ab7;
-    border-color: #2e6da4;
-}    
-.notActive{
-    pointer-events: none;
-}
-
-.rowModal{
-	margin-right: 0px;
-    margin-left: 0px;
 }
 
 img {
@@ -40,32 +14,17 @@ img {
 }
 
 #preCode {
-	text-align: left;
-	overflow: scroll;
-	height: 40vh;
-}	
-
-.button100{
-    width: 100%;
-}
-
-.scroll{
-    overflow: scroll;	
+    text-align: left;
+    overflow: scroll;
+    height: 40vh;
 }
 
 #scroll {
-    overflow: scroll;
     width: 100%;
-    height: 100vh;
+    height: 100%;
     border: 1px;
 }
 
-#scrollModal{
-    overflow: scroll;
-    width: 100%;
-    height: 600px;
-    border: 1px;
-}
 #list_error {
     color: red;
 }
@@ -74,10 +33,10 @@ img {
     overflow: scroll;
 }
 
-.line{
-	height: 1em;
+.line {
+    height: 1em;
 }
 
-h4{
-	text-align: center;
+h4 {
+    text-align: center;
 }
