@@ -6,7 +6,8 @@ let paper;
 let dragX; // Postion within div : X
 let dragY;	// Postion within div : Y
 
-const list_nameOfChangingElements = ['basic', 'manual_ifend', 'manual_ifstart', 'manual_loopstart', 'manual_loopendct', 'manual_loopendcf', 'unknown']; // gültige einträge beim wechseln der elementbezeichnungen --> Verwendung für paper.on link elements
+// gültige einträge beim wechseln der elementbezeichnungen --> Verwendung für paper.on link elements
+const list_nameOfChangingElements = ['basic', 'manual_ifend', 'manual_ifstart', 'manual_loopstart', 'manual_loopendct', 'manual_loopendcf', 'unknown'];
 
 // used for select element and click on paper to generate Element
 let selElement;
@@ -30,14 +31,9 @@ let MousePosElementID;
 let parentChildNodes; // Array with all subgraphs (startid,endid,..)
 
 const list_externPorts = ['extern', 'extern-eelse', 'extern-ethen'];
+const list_addEditNodesByCreateName = ["elementFor", "elementDoWhile", "elementWhileDo", "elementIf"];
 
-/* versions
-1 = small fields, no textarea for extendable nodes
-2 = expanding fields, textara always disabled for extendable nodes
-3 = expanding fields, auto act/deact for textareas
-*/
-const version = 3;
-
+let connectProperties = {sourceId: "sourceId", targetId: "targetId", sourcePort: "sourcePort", targetPort: "targetPort"};
 
 //force refresh by function
 function refreshDia() {
@@ -195,11 +191,11 @@ function createElement(elementName, xCoord, yCoord) {
             break;
 
         case 'elementDoWhile':
-            ele = get_dw(xCoord, yCoord);
+            ele = createDoWhile(xCoord, yCoord);
             break;
 
         case 'elementWhileDo':
-            ele = get_wd(xCoord, yCoord);
+            ele = createWhileDo(xCoord, yCoord);
             break;
 
         case 'elementIf':
@@ -438,9 +434,7 @@ $(document).ready(function () {
     //graph.on events
     graph.on('change:target', function (eventName, cell) {
         setNameForTarget(eventName, cell);
-        if (version === 3) {
-            forbidInputTextarea(eventName, cell);
-        }
+        forbidInputTextarea(eventName, cell);
     });
 
     graph.on('change:source', function (eventName, cell) {
@@ -487,7 +481,7 @@ $(document).ready(function () {
     });
 
     function activateTextarea(eventName, cell) {
-        if (arguments['0'].attributes.type === 'link' && list_externPorts.includes(arguments['0'].attributes.source.port)) {
+        if ((arguments["0"].attributes.type === "link" || arguments["0"].attributes.type === "devs.Link") && list_externPorts.includes(arguments["0"].attributes.source.port)) {
             const sourceCell = graph.getCell(arguments['0'].attributes.source.id);
             const parentView = sourceCell.findView(paper);
             const parentPort = eventName.attributes.source.port;
@@ -740,7 +734,6 @@ $(document).ready(function () {
                         break;
                     case 'INPUT':
                         this.value = value;
-                        //console.log(model.attributes.template);
                         break;
                     case 'TEXTAREA':
                         this.value = value;
@@ -753,7 +746,6 @@ $(document).ready(function () {
             this.$box.find('.delete').on('click', _.bind(this.model.remove, this.model));
             this.model.on('remove', this.removeBox, this);
             this.$box.remove();
-            //console.log(this.model);  // remove entries  parentChildNodes
             removeIdFromArray(this.model.id);
         }
     });
@@ -767,54 +759,82 @@ $(document).ready(function () {
                 model.prop('ports/items/1/args/y', (nheight + 15));
             }
         }
-        if (version !== '1') {
-            if (model.attributes.name === 'forin') {
-                var nheight = box['0'].children[2].style.height;
-                nheight = Number(nheight.replace('px', ''));
-                if (nheight > 50) {
-                    model.resize(bbox.width, nheight + 35);
-                    model.prop('ports/items/2/args/y', (nheight + 35));
-                }
+        if (model.attributes.name === 'forin') {
+            var nheight = box['0'].children[2].style.height;
+            nheight = Number(nheight.replace('px', ''));
+            if (nheight > 50) {
+                model.resize(bbox.width, nheight + 35);
+                model.prop('ports/items/2/args/y', (nheight + 35));
             }
-            if (model.attributes.name === 'dw') {
-                var nheight = box['0'].children[2].style.height;
-                nheight = Number(nheight.replace('px', ''));
-                if (nheight > 50) {
-                    model.resize(bbox.width, nheight + 50);
-                    model.prop('ports/items/1/args/y', (nheight + 50));
-                }
+        }
+        if (model.attributes.name === 'dw') {
+            var nheight = box['0'].children[2].style.height;
+            nheight = Number(nheight.replace('px', ''));
+            if (nheight > 50) {
+                model.resize(bbox.width, nheight + 50);
+                model.prop('ports/items/1/args/y', (nheight + 50));
             }
-            if (model.attributes.name === 'wd') {
-                var nheight = box['0'].children[4].style.height;
-                nheight = Number(nheight.replace('px', ''));
-                if (nheight > 50) {
-                    model.resize(bbox.width, nheight + 52);
-                    model.prop('ports/items/1/args/y', (nheight + 52));
-                }
+        }
+        if (model.attributes.name === 'wd') {
+            var nheight = box['0'].children[4].style.height;
+            nheight = Number(nheight.replace('px', ''));
+            if (nheight > 50) {
+                model.resize(bbox.width, nheight + 52);
+                model.prop('ports/items/1/args/y', (nheight + 52));
             }
-            if (model.attributes.name === 'if') {
-                var nheight = box['0'].children[2].children[1].style.height;
-                let nheight2 = box['0'].children[3].children[1].style.height;
-                nheight = Number(nheight.replace('px', ''));
-                nheight2 = Number(nheight2.replace('px', ''));
-                if (nheight + nheight2 > 100) {
-                    nheight = Math.max(nheight, 75);
-                    nheight2 = Math.max(nheight2, 75);
-                    model.resize(bbox.width, nheight + nheight2 + 130);
-                    model.prop('ports/items/2/args/y', (nheight));
-                    model.prop('ports/items/3/args/y', (nheight + nheight2 + 25));
-                    model.prop('ports/items/1/args/y', (nheight + nheight2 + 130));
-                }
+        }
+        if (model.attributes.name === 'if') {
+            var nheight = box['0'].children[2].children[1].style.height;
+            let nheight2 = box['0'].children[3].children[1].style.height;
+            nheight = Number(nheight.replace('px', ''));
+            nheight2 = Number(nheight2.replace('px', ''));
+            if (nheight + nheight2 > 100) {
+                nheight = Math.max(nheight, 75);
+                nheight2 = Math.max(nheight2, 75);
+                model.resize(bbox.width, nheight + nheight2 + 130);
+                model.prop('ports/items/2/args/y', (nheight));
+                model.prop('ports/items/3/args/y', (nheight + nheight2 + 25));
+                model.prop('ports/items/1/args/y', (nheight + nheight2 + 130));
             }
         }
     }
 
+    function connectNodes(sourceId, targetId, sourcePort, targetPort) {
+        let link = new joint.shapes.devs.Link({
+            source: {
+                id: sourceId,
+                port: sourcePort
+            },
+            target: {
+                id: targetId,
+                port: targetPort
+            },
+            router: {name: 'manhattan'},  // Link design for horizontal and vertical lines
+            connector: {name: 'normal'},
+            attrs: {'.marker-target': {d: 'M 10 0 L 0 5 L 10 10 z'}} // Arrow is horizentor or vertical
+        });
+        graph.addCell(link);
+    }
 
-//paperevents
+
+    // paperevents
     paper.on('blank:pointerclick', function (evt, x, y) {
         try {
             if (selElement !== '') {
+                connectProperties = []; // reset properties from older ones
                 createElement(selElement, x, y);
+
+                if (list_addEditNodesByCreateName.includes(selElement)) {
+                    createElement("elementEdit", x + 350, y);
+                    connectNodes(connectProperties.sourceId, connectProperties.targetId, connectProperties.sourcePort, connectProperties.targetPort);
+
+                    if (selElement === "elementIf") {
+                        createElement("elementEdit", x + 350, y + 150);
+                        connectNodes(connectProperties.sourceId, connectProperties.targetId, connectProperties.sourcePort2, connectProperties.targetPort);
+                    }
+                }
+
+
                 clearSelElement();
             }
         } catch (e) {
@@ -824,8 +844,6 @@ $(document).ready(function () {
     paper.on('cell:mouseenter', function (cellView, evt, x, y) {
         MousePosElementID = cellView.model.id;
         MousePosElementName = cellView.model.attributes.name;
-        //	console.log(MousePosElementID);
-        //	console.log(MousePosElementName);
     });
 
     paper.on('cell:mouseleave', function (cellView, evt, x, y) {

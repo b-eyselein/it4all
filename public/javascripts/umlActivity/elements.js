@@ -1,7 +1,11 @@
-const externPortWidth = 250; // all excecpt if-then-else
+const EXTERN_PORT_WIDTH = 250; // all except if-then-else
 
 const ACTION_HEIGHT = 40;
 const ACTION_WIDTH = 250;
+
+const FOR_LOOP_HEIGHT = 100;
+const WHILE_LOOP_HEIGHT = 120;
+const IF_ELSE_HEIGHT = 180;
 
 const START_END_SIZE = 50;
 
@@ -120,22 +124,9 @@ function createActionDeclare(xCoord, yCoord) {
 }
 
 function get_for(xCoord, yCoord) {
-    let codeTextarea = '';
-    let height = 50;
-    let portExternHeight = 25;
-    let portOutHeight = 50;
-    if (version !== 1) {
-        codeTextarea = '<textarea disabled onkeyup="textAreaAdjust(this)" placeholder="Anweisungen" data-attribute="area"></textarea>';
-        height = 100;
-        portExternHeight = 55;
-        portOutHeight = 100;
-    }
-    if (version === 3) {
-        codeTextarea = '<textarea onkeyup="textAreaAdjust(this)" placeholder="Anweisungen" data-attribute="area"></textarea>';
-    }
-    return new joint.shapes.html.Element({
+    let forElement = new joint.shapes.html.Element({
         position: {x: xCoord, y: yCoord},
-        size: {width: ACTION_WIDTH, height: height},
+        size: {width: ACTION_WIDTH, height: FOR_LOOP_HEIGHT},
         template:
             `<div class="for_element">
                <button class="delete">x</button>
@@ -145,7 +136,7 @@ function get_for(xCoord, yCoord) {
                  <span> in </span>
                  <input placeholder="Collection" data-attribute="ein"  type="text"/></input>
                </div>
-               ${codeTextarea}
+               <textarea onkeyup="textAreaAdjust(this)" disabled  placeholder="Anweisungen" data-attribute="area"></textarea>
             </div>`,
         efor: '',
         ein: '',
@@ -180,34 +171,20 @@ function get_for(xCoord, yCoord) {
             },
             items: [
                 {id: 'in', group: 'in', args: {x: ACTION_WIDTH / 2, y: 0}},
-                {id: 'extern', group: 'extern', args: {x: externPortWidth, y: portExternHeight}},
-                {id: 'out', group: 'out', args: {x: ACTION_WIDTH / 2, y: portOutHeight}}]
+                {id: 'extern', group: 'extern', args: {x: EXTERN_PORT_WIDTH, y: 55}},
+                {id: 'out', group: 'out', args: {x: ACTION_WIDTH / 2, y: FOR_LOOP_HEIGHT}}]
         }
     });
+    connectProperties.sourceId = forElement.id;
+    connectProperties.sourcePort = "extern";
+
+    return forElement;
 }
 
 function get_if(xCoord, yCoord) {
-    let codeTextareaEthen = '';
-    let codeTextareaEelse = '';
-    let height = 75;
-    let portExternHeight_Ethen = 38;
-    let portExternHeight_Eelse = 61;
-    let portOutHeight = 75;
-    if (version !== 1) {
-        codeTextareaEthen = '<textarea disabled onkeyup="textAreaAdjust(this)"  placeholder="Anweisungen" data-attribute="ethen"></textarea>';
-        codeTextareaEelse = '<textarea disabled onkeyup="textAreaAdjust(this)"  placeholder="Anweisungen" data-attribute="eelse"></textarea>';
-        height = 180;
-        portExternHeight_Ethen = 75;
-        portExternHeight_Eelse = ACTION_WIDTH / 2;
-        portOutHeight = 180;
-    }
-    if (version === 3) {
-        codeTextareaEthen = '<textarea  onkeyup="textAreaAdjust(this)"  placeholder="Anweisungen" data-attribute="ethen"></textarea>';
-        codeTextareaEelse = '<textarea  onkeyup="textAreaAdjust(this)"  placeholder="Anweisungen" data-attribute="eelse"></textarea>';
-    }
-    return new joint.shapes.html.Element({
+    let ifElseElem = new joint.shapes.html.Element({
         position: {x: xCoord, y: yCoord},
-        size: {width: ACTION_WIDTH, height: height},
+        size: {width: ACTION_WIDTH, height: IF_ELSE_HEIGHT},
         template:
             `<div class="if_element">
                <button class="delete">x</button>
@@ -218,11 +195,11 @@ function get_if(xCoord, yCoord) {
                </div>
                <div class="dashed-bot">
                  <span>then</span>
-                 ${codeTextareaEthen}
+                 <textarea onkeyup="textAreaAdjust(this)" disabled placeholder="Anweisungen" data-attribute="ethen"></textarea>
                </div>
                <div>
                  <span>else</span>
-                 ${codeTextareaEelse}
+                 <textarea onkeyup="textAreaAdjust(this)" disabled placeholder="Anweisungen" data-attribute="eelse"></textarea>
                </div>
             </div>`,
         eif: '',
@@ -251,37 +228,30 @@ function get_if(xCoord, yCoord) {
             },
             items: [
                 {id: 'in', group: 'in', args: {x: ACTION_WIDTH / 2, y: 0}},
-                {id: 'out', group: 'out', args: {x: ACTION_WIDTH / 2, y: portOutHeight}},
-                {id: 'extern-ethen', group: 'extern-ethen', args: {x: externPortWidth, y: portExternHeight_Ethen}},
-                {id: 'extern-eelse', group: 'extern-eelse', args: {x: externPortWidth, y: portExternHeight_Eelse}}
+                {id: 'out', group: 'out', args: {x: ACTION_WIDTH / 2, y: IF_ELSE_HEIGHT}},
+                {id: 'extern-ethen', group: 'extern-ethen', args: {x: EXTERN_PORT_WIDTH, y: 75}},
+                {id: 'extern-eelse', group: 'extern-eelse', args: {x: EXTERN_PORT_WIDTH, y: ACTION_WIDTH / 2}}
             ]
         }
     });
+
+    connectProperties.sourceId = ifElseElem.id;
+    connectProperties.sourcePort = "extern-ethen";
+    connectProperties.sourcePort2 = "extern-eelse";
+
+    return ifElseElem;
+
 }
 
-function get_dw(xCoord, yCoord) {
-    let codeTextarea = '';
-    let height = 50;
-    let portExternHeight = 15;
-    let portOutHeight = 50;
-    if (version !== 1) {
-        codeTextarea = '<textarea disabled onkeyup="textAreaAdjust(this)"  placeholder="Anweisungen"  data-attribute="edo"></textarea>';
-        height = 120;
-        portExternHeight = 60;
-        portOutHeight = 120;
-    }
-    if (version === 3) {
-        codeTextarea = '<textarea onkeyup="textAreaAdjust(this)"  placeholder="Anweisungen"  data-attribute="edo"></textarea>';
-    }
-
-    return new joint.shapes.html.Element({
+function createDoWhile(xCoord, yCoord) {
+    let doWhileElem = new joint.shapes.html.Element({
         position: {x: xCoord, y: yCoord},
-        size: {width: ACTION_WIDTH, height: height},
+        size: {width: ACTION_WIDTH, height: WHILE_LOOP_HEIGHT},
         template:
             `<div class="wd_element">
                <button class="delete">x</button>
                <span>do</span>
-               ${codeTextarea}
+               <textarea disabled onkeyup="textAreaAdjust(this)"  placeholder="Anweisungen"  data-attribute="edo"></textarea>
                <div class="dashed-top">
                  <span> while </span>
                  <input placeholder="Bedingung" data-attribute="ewhile" type="text"/></input>
@@ -308,31 +278,21 @@ function get_dw(xCoord, yCoord) {
             },
             items: [
                 {id: 'in', group: 'in', args: {x: ACTION_WIDTH / 2, y: 0}},
-                {id: 'out', group: 'out', args: {x: ACTION_WIDTH / 2, y: portOutHeight}},
-                {id: 'extern', group: 'extern', args: {x: externPortWidth, y: portExternHeight}}]
+                {id: 'out', group: 'out', args: {x: ACTION_WIDTH / 2, y: WHILE_LOOP_HEIGHT}},
+                {id: 'extern', group: 'extern', args: {x: EXTERN_PORT_WIDTH, y: WHILE_LOOP_HEIGHT / 2}}]
         }
     });
+
+    connectProperties.sourceId = doWhileElem.id;
+    connectProperties.sourcePort = "extern";
+
+    return doWhileElem;
 }
 
-function get_wd(xCoord, yCoord) {
-    let codeTextarea = '';
-    let height = 50;
-    let portExternHeight = 35;
-    let portOutHeight = 50;
-
-    if (version !== 1) {
-        codeTextarea = '<textarea disabled onkeyup="textAreaAdjust(this)" placeholder="Anweisungen" data-attribute="edo"></textarea>';
-        height = 120;
-        portExternHeight = 60;
-        portOutHeight = 120;
-    }
-    if (version === 3) {
-        codeTextarea = '<textarea onkeyup="textAreaAdjust(this)" placeholder="Anweisungen" data-attribute="edo"></textarea>';
-    }
-
-    return new joint.shapes.html.Element({
+function createWhileDo(xCoord, yCoord) {
+    let whileDoElem = new joint.shapes.html.Element({
         position: {x: xCoord, y: yCoord},
-        size: {width: ACTION_WIDTH, height: height},
+        size: {width: ACTION_WIDTH, height: WHILE_LOOP_HEIGHT},
         template:
             `<div class="wd_element">
                <button class="delete">x</button>
@@ -344,7 +304,7 @@ function get_wd(xCoord, yCoord) {
                
                <span>do</span>
                </br>
-               ${codeTextarea}
+               <textarea disabled onkeyup="textAreaAdjust(this)" placeholder="Anweisungen" data-attribute="edo"></textarea>
             </div>`,
         ewhile: '',
         edo: '',
@@ -367,17 +327,23 @@ function get_wd(xCoord, yCoord) {
             },
             items: [
                 {id: 'in', group: 'in', args: {x: ACTION_WIDTH / 2, y: 0}},
-                {id: 'out', group: 'out', args: {x: ACTION_WIDTH / 2, y: portOutHeight}},
-                {id: 'extern', group: 'extern', args: {x: externPortWidth, y: portExternHeight}}
+                {id: 'out', group: 'out', args: {x: ACTION_WIDTH / 2, y: WHILE_LOOP_HEIGHT}},
+                {id: 'extern', group: 'extern', args: {x: EXTERN_PORT_WIDTH, y: WHILE_LOOP_HEIGHT / 2}}
             ]
         }
     });
+
+    connectProperties.sourceId = whileDoElem.id;
+    connectProperties.sourcePort = "extern";
+
+    return whileDoElem;
+
 }
 
 function get_edit(xCoord, yCoord) {
     let edit = new joint.shapes.html.Element({
         position: {x: xCoord, y: yCoord},
-        size: {width: 170, height: 120},
+        size: {width: 170, height: WHILE_LOOP_HEIGHT},
         template: [
             '<div class="edit_element">',
             '<button class="delete">x</button>',
@@ -412,6 +378,10 @@ function get_edit(xCoord, yCoord) {
     edit.embed(end);
     parentChildNodes.push({'parentId': edit.id, 'startId': start.id, 'endId': end.id, 'endName': end.name});
     //edit.attr('rect/magnet', true).attr('text/pointer-events', 'none');
+    connectProperties.targetId = edit.id;
+    connectProperties.targetPort = "extern";
+    parentChildNodes.push({"parentId": edit.id, "startId": start.id, "endId": end.id, "endName": end.name});
+
     return end;
 }
 
