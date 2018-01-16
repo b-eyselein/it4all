@@ -10,7 +10,7 @@ object ProgLanguage {
 
   def STANDARD_LANG: ProgLanguage = PYTHON_3
 
-  val values: Seq[ProgLanguage] = Seq(PYTHON_3, JAVA_8)
+  val values: Seq[ProgLanguage] = Seq(PYTHON_3 /*, JAVA_8*/)
 
   def valueOf(str: String): Option[ProgLanguage] = values find (_.name == str)
 
@@ -60,27 +60,27 @@ object PYTHON_3 extends ProgLanguage {
 
 }
 
-object JAVA_8 extends ProgLanguage {
-
-  override val name           : String = "JAVA_8"
-  override val languageName   : String = "Java 8"
-  override val aceName        : String = "java"
-  override val dockerImageName: String = "8-jdk"
-  override val fileEnding     : String = "java"
-
-  override val declaration: String =
-    """public class Solution
-      |
-      |  public static void main(String[] args) {
-      |    // TODO: Solution...
-      |  }
-      |
-      |}""".stripMargin
-
-  override def buildFunction(exercise: ProgCompleteEx): String =
-    s"""public int ${exercise.ex.functionName}(${inputcount2Vars(exercise.inputCount)}) {
-       |  return 0;
-       |}""".stripMargin
-
-  override def buildToEvaluate(exercise: ProgCompleteEx): String = exercise.ex.functionName + "(" + inputcount2Vars(exercise.inputCount) + ")"
-}
+//object JAVA_8 extends ProgLanguage {
+//
+//  override val name           : String = "JAVA_8"
+//  override val languageName   : String = "Java 8"
+//  override val aceName        : String = "java"
+//  override val dockerImageName: String = "8-jdk"
+//  override val fileEnding     : String = "java"
+//
+//  override val declaration: String =
+//    """public class Solution
+//      |
+//      |  public static void main(String[] args) {
+//      |    // TODO: Solution...
+//      |  }
+//      |
+//      |}""".stripMargin
+//
+//  override def buildFunction(exercise: ProgCompleteEx): String =
+//    s"""public int ${exercise.ex.functionName}(${inputcount2Vars(exercise.inputCount)}) {
+//       |  return 0;
+//       |}""".stripMargin
+//
+//  override def buildToEvaluate(exercise: ProgCompleteEx): String = exercise.ex.functionName + "(" + inputcount2Vars(exercise.inputCount) + ")"
+//}

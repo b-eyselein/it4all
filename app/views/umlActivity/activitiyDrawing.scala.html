@@ -16,6 +16,7 @@
     <script src="@routes.Assets.versioned("javascripts/umlActivity/converter.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/umlActivity/webseite.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/umlActivity/classdiagram.js")"></script>
+    <script src="@routes.Assets.versioned("javascripts/umlActivity/umlActivityTests.js")"></script>
 
     <link rel="stylesheet" href="@routes.Assets.versioned("lib/jointjs/dist/joint.css")">
     <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/umlActivity/webseite.css")">
@@ -46,7 +47,8 @@
                             <ul class="dropdown-menu btn-block">
                                 <li class="dropdown-header">Aktionsknoten</li>
                                 <li>
-                                    <a onclick="setSelElement(this);" name="elementActionDeclare" draggable="true" ondragstart="drag(event)">Deklarationsknoten</a>
+                                    <a onclick="setSelElement(this);" name="elementActionDeclare" draggable="true" ondragstart="drag(event)">
+                                        Deklarationsknoten</a>
                                 </li>
                                 <li class="divider"></li>
                                 <li>
@@ -72,11 +74,13 @@
                                 </li>
                                 <li class="divider"></li>
                                 <li>
-                                    <a onclick="setSelElement(this);" name="elementDoWhile" draggable="true" ondragstart="drag(event)">Do-While-Schleifenknoten</a>
+                                    <a onclick="setSelElement(this);" name="elementDoWhile" draggable="true" ondragstart="drag(event)">
+                                        Do-While-Schleifenknoten</a>
                                 </li>
                                 <li class="divider"></li>
                                 <li>
-                                    <a onclick="setSelElement(this);" name="elementWhileDo" draggable="true" ondragstart="drag(event)">While-Do-Schleifenknoten</a>
+                                    <a onclick="setSelElement(this);" name="elementWhileDo" draggable="true" ondragstart="drag(event)">
+                                        While-Do-Schleifenknoten</a>
                                 </li>
                             </ul>
                         </div>
@@ -118,9 +122,9 @@
                     <div class="col-md-12">
                         <h4>Konvertierung in Code</h4>
                         <div class="input-group">
-                            <select title="Programmiersprache" class="form-control" id="sel_lang">
+                            <select title="Programmiersprache" class="form-control" id="selectedLanguage">
                             @for(lang <- model.programming.ProgLanguage.values) {
-                                <option value="@lang.name">@lang.languageName</option>
+                                <option value="@lang.aceName">@lang.languageName</option>
                             }
                             </select>
                             <span class="input-group-addon">-Code</span>
@@ -156,7 +160,6 @@
                                     </div>
                                 </div>
 
-
                                 <p>Im folgenden Szenario sollen Sie ein Aktivit&auml;tsdiagramm für die Funktion
                                     "berechneKostenAllerFahrzeuge(): int". Als Basis dient das UML-Klassendiagramm Fahrzeugh&auml;ndler.
                                     Als Eingabeparameter erhalten Sie ein Array mit Fahrzeugen des Typs LKW und PKW. Verwenden Sie bereits
@@ -165,6 +168,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4 class="panel-title">
@@ -225,6 +229,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4 class="panel-title">
@@ -235,9 +240,11 @@
                             <div class="panel-body">
                                 <div class="drawingElements">
                                     <div>
-                                        <pre id="preCode">Ermittelter Code</pre>
+                                        <h4>Ermittelter Code</h4>
+                                        <pre id="preCode"></pre>
                                         <form action="javascript:testSol('@controllers.exes.idPartExes.routes.UmlController.activityCheckSolution()')">
-                                            <button id="sendToServer" class="btn btn-primary btn-block">Aufgabe verifizieren</button>
+                                            <button id="sendToServer" title="Generieren Sie zuerst den Code!" disabled class="btn btn-default btn-block">
+                                                Aufgabe verifizieren</button>
                                         </form>
                                     </div>
                                 </div>

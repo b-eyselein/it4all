@@ -66,7 +66,10 @@ object DockerConnector {
     // Wait for container
     val statusCode: Int = waitForContainer(containerId)
 
-    if (statusCode == 0) Right(statusCode)
+    if (statusCode == 0) {
+      deleteContainer(containerId)
+      Right(statusCode)
+    }
     else {
       val logs: LogContainerCallback = DockerClient.logContainerCmd(containerId)
         .withStdErr(true).withStdOut(true)
@@ -76,6 +79,7 @@ object DockerConnector {
 
       logs.awaitCompletion(MaxWaitTimeInSeconds, TimeUnit.SECONDS)
 
+      deleteContainer(containerId)
 
       Left(logs.toString)
     }

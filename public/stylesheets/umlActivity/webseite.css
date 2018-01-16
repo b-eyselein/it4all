@@ -20,9 +20,8 @@ img {
 }
 
 #scroll {
-    width: 100%;
     height: 100%;
-    border: 1px;
+    overflow-y: scroll;
 }
 
 #list_error {

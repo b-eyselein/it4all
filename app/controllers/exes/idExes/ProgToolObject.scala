@@ -13,14 +13,14 @@ object ProgToolObject extends IdExToolObject {
   override val toolname : String    = "Programmierung"
   override val exType   : String    = "prog"
   override val consts   : Consts    = ProgConsts
-  override val toolState: ToolState = ToolState.ALPHA
+  override val toolState: ToolState = ToolState.BETA
 
   override def indexCall: Call = routes.ProgController.index()
 
   override def exerciseRoute(exercise: HasBaseValues): Call = routes.ProgController.exercise(exercise.id)
 
   override def exerciseRoutes(exercise: ProgCompleteEx) = Map(
-    routes.ProgController.testData(exercise.ex.id) -> "Testdaten erstellen",
+    //    routes.ProgController.testData(exercise.ex.id) -> "Testdaten erstellen",
     routes.ProgController.exercise(exercise.ex.id) -> "Aufgabe bearbeiten"
   )
 

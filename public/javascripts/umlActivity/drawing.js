@@ -256,7 +256,7 @@ $(document).ready(function () {
     paper = new joint.dia.Paper({
         el: paperJQ,
         width: paperJQ.width(),
-        height: $('#leftblock').height(),
+        height: $('#leftblock').height() * .75,
         gridSize: 15,  // distance between the dots from drawGrid
         model: graph,
         drawGrid: 'dot',  // backgrounddesign for paper --> mesh

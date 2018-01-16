@@ -438,7 +438,7 @@ function get_basic(xCoord, yCoord) {
     });
 }
 
-function createEndCircle(endName, endId, endXCoord, endYCoord, labeltext) {
+function createEndCircle(endName, endId, endXCoord, endYCoord, labelText) {
     return new joint.shapes.html.Element({
         position: {x: endXCoord, y: endYCoord},
         size: {width: START_END_SIZE, height: START_END_SIZE},
@@ -453,7 +453,7 @@ function createEndCircle(endName, endId, endXCoord, endYCoord, labeltext) {
                  </div>
                </div>
              </div>`,
-        label: labeltext,
+        label: labelText,
         ports: {
             groups: {
                 'in': {
@@ -468,7 +468,7 @@ function createEndCircle(endName, endId, endXCoord, endYCoord, labeltext) {
     });
 }
 
-function createStartCircle(startName, startId, startXCoord, startYCoord, labeltext) {
+function createStartCircle(startName, startId, startXCoord, startYCoord, labelText) {
     return new joint.shapes.html.Element({
         position: {x: startXCoord, y: startYCoord},
         size: {width: START_END_SIZE, height: START_END_SIZE},
@@ -479,7 +479,7 @@ function createStartCircle(startName, startId, startXCoord, startYCoord, labelte
             `<div class="circle1">
                <label class="startlabelpos" data-attribute="label"></label>
             </div>`,
-        label: labeltext,
+        label: labelText,
         ports: {
             groups: {
                 'in': {
