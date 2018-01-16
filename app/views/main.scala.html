@@ -27,11 +27,20 @@
                     <a class="navbar-brand" href="@routes.Application.index">it4all<sup>BETA</sup></a>
                 </div>
                 <div class="collapse navbar-collapse" id="myNavbar">
+
+
                     <ul class="nav navbar-nav">
-                    @for(tool <- model.core.tools.ToolList.allToolObjects) {
-                        <li><a href="@tool.indexCall">@tool.toolname @tool.toolState.badge</a></li>
-                    }
+                        <li class="dropdown active">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Aufgabenbereiche <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                            @Html(
+                                model.core.tools.ToolList.allToolObjects.map {
+                                    to => s"""<li><a href="${to.indexCall}">${to.toolname} ${to.toolState.badge}</a></li>"""
+                                }.mkString("""<li class="divider"></li>"""))
+                            </ul>
+                        </li>
                     </ul>
+
 
                     <ul class="nav navbar-nav navbar-right">
                     @if(user != null) {
