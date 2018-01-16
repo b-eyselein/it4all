@@ -31,6 +31,7 @@ libraryDependencies ++= Seq(
 
   // Js-Libraries
   "org.webjars" % "ace" % "1.2.8",
+  "org.webjars" % "jquery" % "3.2.1",
   "org.webjars" % "bootstrap" % "3.3.7-1",
 
   "org.webjars.npm" % "jointjs" % "2.0.1",

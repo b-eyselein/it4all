@@ -1,27 +1,55 @@
-var graph = new joint.dia.Graph;
-var paper;
-
+//Basis Main
+	var graph;
+	var paper;
+//Basics both	
+	var dragX; // Postion within div : X
+	var dragY;	// Postion within div : Y
+	var list_nameOfChangingElements = ["basic", "manual_ifend", "manual_ifstart", "manual_loopstart", "manual_loopendct", "manual_loopendcf", "unknown"]; // gültige einträge beim wechseln der elementbezeichnungen --> Verwendung für paper.on link elements
+	var sel_elementname; // used for select element and click on paper to generate Element
 //Basic zum Erfassen aller Elemente im Drawing --> wird für Elementbestimmung schon hier definiert
-var jsongraph;
-var graphcopy;
-var list_connections;
-// Needed for Converting --> language definition
-var startnode_inputtype = "String";
-var startnode_input = "W1";
-var endnode_outputtype = "String";
-var endnode_output = "W2";
-var methodname = "heckeSchneiden";
+	var jsongraph;
+	var graphcopy;
+	var list_connections;
+	const paperH = $('#leftblock').height(); // paper as tall as the left div next to him --> size for fullscreen
+// Parameters for Task
+	var startnode_inputtype = "String";
+	var startnode_input = "W1";
+	var endnode_outputtype = "String";
+	var endnode_output = "W2";
+	var methodname = "heckeSchneiden";	
+	//vars
+	var MousePosElementName;
+	var MousePosElementID;	
+	var parentChildNodes; // Array with all subgraphs (startid,endid,..)
+	const list_externPorts=["extern","extern-eelse","extern-ethen"];		
+	/* versions
+	1 = small fields, no textarea for extendable nodes
+	2 = expanding fields, textara always disabled for extendable nodes
+	3 = expanding fields, auto act/deact for textareas
+	*/
+	var version = "3";
 
-const paperH = $('#leftblock').height(); // paper as tall as the left div next to him --> minimum paper size for expanding --> makes no sense :)
 
-//Listen aktuell halten für Test und Objektbestimmung
+
+	
+//force refresh by function
 function refreshDia() {
     document.getElementById("zoomplus").click();
     document.getElementById("zoomminus").click();
 }
 
-function test() {
-    console.log(graph.getCells());
+function removeIdFromArray(id){
+	for(var i = 0; i < parentChildNodes.length; i++){
+		if(parentChildNodes[i].parentId === id){
+			parentChildNodes.splice(i, 1);
+		}
+	}
+}
+
+function setOptionsForModal(buttonelement){
+	currentDiagramInModalID = MousePosElementID;
+	currentElementNameForModal = buttonelement.name;
+	console.log("currentID: "+currentDiagramInModalID+" name: "+currentElementNameForModal);
 }
 
 // Ändern des Elementtyps Basic während des Zeichnens
@@ -115,437 +143,129 @@ function getTypeByLinks(node) {
     }
 }
 
-/*
-function consoleOut() {
-    console.log($('#paper').width());
-    //document.getElementById("consoleOut").innerHTML=$('#paper').width()-60;
-    document.getElementById("consoleOut").innerHTML = element_dist.attr('.label/text');
-}
-*/
-
-// MousePostion within div
-var dragX;
-var dragY;
-
+//Define MousePos  within the different papers 
 document.addEventListener("dragover", function (e) {
-    e = e || window.event;
-    var offset = $('#paper').offset();
+	e = e || window.event;
+	if($('#editDiagramModal').hasClass('in')){
+		var offset = $('#activitydiagram').offset();
+	}else{
+		var offset = $('#paper').offset();
+	}
     dragX = e.pageX - offset.left;
     dragY = e.pageY - offset.top;
 }, false);
 
-// Drag and Drop
-function allowDrop(ev) {
-    ev.preventDefault();
-}
-
-function drag(ev) {
-    var elementName = ev.target.innerHTML;
-    if (ev.target.getAttribute('data-baseform') != null) {
-        elementName = ev.target.getAttribute('data-baseform');
-    }
-    ev.dataTransfer.setData("text", elementName);
-}
-
-function drop(ev) {
-    ev.preventDefault();
-    createElement(ev.dataTransfer.getData("text"), dragX, dragY);
+// --> paper.on click --> sel_elementname
+function setName(name){
+	sel_elementname = name;
 }
 
 // Constructor Elements
 function createElement(elementName, xCoord, yCoord) {
     switch (elementName) {
         case "elementAction":
-            var element_action = new joint.shapes.html.Element({
-                position: {x: xCoord, y: yCoord},
-                size: {width: 120, height: 80},
-                cnr: -1,
-                name: "action",
-                cleanname: "Aktionsknoten",
-                template: [
-                    '<div class="action-element">',
-                    '<button class="delete">x</button>',
-                    '<textarea data-attribute="area"></textarea>',
-                    '</div>'
-                ].join(''),
-                area: '',
-                ports: {
-                    groups: {
-                        'in': {
-                            position: 'absolute',
-                            attrs: {
-                                circle: {fill: 'transparent', stroke: 'blue', 'stroke-width': 1, r: 10, magnet: true}
-                            }
-                        },
-                        'out': {
-                            position: 'absolute',
-                            attrs: {
-                                circle: {fill: 'transparent', stroke: 'green', 'stroke-width': 1, r: 10, magnet: true}
-                            }
-                        }
-                    },
-                    items: [{
-                        id: 'in',
-                        group: 'in',
-                        args: {x: 60, y: 0}
-                    },
-                        {
-                            id: 'out',
-                            group: 'out',
-                            args: {x: 60, y: 80}
-                        }]
-                }
-            });
-            graph.addCell(element_action);
+            ele = get_action(xCoord,yCoord);
             break;
 
+        case "elementActionInput":
+            ele = get_actionInput(xCoord,yCoord);
+            break;
+			
+		case "elementActionSelect":
+            ele = get_actionSelect(xCoord,yCoord);
+            break;
+
+		case "elementActionDeclare":
+            ele = get_actionDeclare(xCoord,yCoord);
+            break;			
+			
         case "elementFor":
-            var element_for = new joint.shapes.html.Element({
-                position: {x: xCoord, y: yCoord},
-                size: {width: 170, height: 100},
-                template: [
-                    '<div class="for_element">',
-                    '<button class="delete">x</button>',
-                    '<div class="dashed-bot">',
-                    '<span> for </span>',
-                    '<input data-attribute="efor" type="text"/></input>',
-                    '<span> in </span>',
-                    '<input data-attribute="ein" placeholder="Anweisungen" type="text"/></input>',
-                    '</div>',
-                    '<textarea  data-attribute="area"></textarea>',
-                    '</div>'
-                ].join(''),
-                'efor': 'Element',
-                'ein': 'Collection',
-                area: 'Bitte geben Sie hier die Anweisung ein',
-                name: "forin",
-                cleanname: "For-In-Schleife",
-                ports: {
-                    groups: {
-                        'in': {
-                            position: 'absolute',
-                            label: {
-                                // label layout definition:
-                                position: {
-                                    name: 'manual', args: {
-                                        y: 250,
-                                        attrs: {
-                                            '.': {'text-anchor': 'middle'},
-                                            text: {fill: 'black', 'pointer-events': 'none'}
-                                        }
-                                    }
-                                }
-                            },
-                            attrs: {
-                                circle: {fill: 'transparent', stroke: 'blue', 'stroke-width': 1, r: 10, magnet: true}
-                            }
-                        },
-                        'out': {
-                            position: 'absolute',
-                            attrs: {
-                                circle: {fill: 'transparent', stroke: 'green', 'stroke-width': 1, r: 10, magnet: true}
-                            }
-                        }
-                    },
-                    items: [{
-                        id: 'in',
-                        group: 'in',
-                        args: {x: 85, y: 0}
-                    },
-                        {
-                            id: 'out',
-                            group: 'out',
-                            args: {x: 85, y: 100}
-                        }]
-                }
-            });
-            graph.addCell(element_for);
+            ele = get_for(xCoord,yCoord);
             break;
 
         case "elementDoWhile":
-            var element_doWhile = new joint.shapes.html.Element({
-                position: {x: xCoord, y: yCoord},
-                size: {width: 170, height: 120},
-                template: [
-                    '<div class="wd_element">',
-                    '<button class="delete">x</button>',
-                    '<span> do </span>',
-                    '<textarea  data-attribute="edo"></textarea>',
-                    '<div class="dashed-top">',
-                    '<span> while </span>',
-                    '<input data-attribute="ewhile" type="text"/></input>',
-                    '</div>',
-                    '</div>'
-                ].join(''),
-                'ewhile': 'Bedingung',
-                'edo': 'Bitte geben Sie hier die Anweisung ein',
-                name: "dw",
-                cleanname: "Do-While-Knoten",
-                ports: {
-                    groups: {
-                        'in': {
-                            position: 'absolute',
-                            attrs: {
-                                circle: {fill: 'transparent', stroke: 'blue', 'stroke-width': 1, r: 10, magnet: true}
-                            }
-                        },
-                        'out': {
-                            position: 'absolute',
-                            attrs: {
-                                circle: {fill: 'transparent', stroke: 'green', 'stroke-width': 1, r: 10, magnet: true}
-                            }
-                        }
-                    },
-                    items: [{
-                        id: 'in',
-                        group: 'in',
-                        args: {x: 85, y: 0}
-                    },
-                        {
-                            id: 'out',
-                            group: 'out',
-                            args: {x: 85, y: 120}
-                        }]
-                }
-            });
-            graph.addCell(element_doWhile);
+            ele = get_dw(xCoord,yCoord);			
             break;
 
         case "elementWhileDo":
-            var element_WhileDo = new joint.shapes.html.Element({
-                position: {x: xCoord, y: yCoord},
-                size: {width: 170, height: 120},
-                template: [
-                    '<div class="wd_element">',
-                    '<button class="delete">x</button>',
-                    '<div class="dashed-bot">',
-                    '<span> while </span>',
-                    '<input data-attribute="ewhile" type="text"/></input>',
-                    '</div>',
-                    '<span> do </span>',
-                    '</br>',
-                    '<textarea  data-attribute="edo"></textarea>',
-                    '</div>'
-                ].join(''),
-                'ewhile': 'Bedingung',
-                'edo': 'Bitte geben Sie hier die Anweisung ein',
-                name: "wd",
-                cleanname: "While-Do-Knoten",
-                ports: {
-                    groups: {
-                        'in': {
-                            position: 'absolute',
-                            attrs: {
-                                circle: {fill: 'transparent', stroke: 'blue', 'stroke-width': 1, r: 10, magnet: true}
-                            }
-                        },
-                        'out': {
-                            position: 'absolute',
-                            attrs: {
-                                circle: {fill: 'transparent', stroke: 'green', 'stroke-width': 1, r: 10, magnet: true}
-                            }
-                        }
-                    },
-                    items: [{
-                        id: 'in',
-                        group: 'in',
-                        args: {x: 85, y: 0}
-                    },
-                        {
-                            id: 'out',
-                            group: 'out',
-                            args: {x: 85, y: 120}
-                        }]
-                }
-            });
-            graph.addCell(element_WhileDo);
+            ele = get_wd(xCoord,yCoord);			
             break;
 
         case "elementIf":
-            var element_if = new joint.shapes.html.Element({
-                position: {x: xCoord, y: yCoord},
-                size: {width: 250, height: 180},
-                template: [
-                    '<div class="if_element">',
-                    '<button class="delete">x</button>',
-                    '<div class="dashed-bot">',
-                    '<span> if </span>',
-                    '<input data-attribute="eif" type="text"/></input>',
-                    '</div>',
-                    '<div class="dashed-bot">',
-                    '<span> then </span>',
-                    '<textarea  data-attribute="ethen"></textarea>',
-                    '</div>',
-                    '<div>',
-                    '<span> else </span>',
-                    '<textarea  data-attribute="eelse"></textarea>',
-                    '</div>',
-                    '</div>'
-                ].join(''),
-                'eif': 'Bedingung',
-                'ethen': 'then_inhalt',
-                'eelse': 'else_inhalt',
-                name: "if",
-                cleanname: "Bedingungsknoten",
-                ports: {
-                    groups: {
-                        'in': {
-                            position: 'absolute',
-                            attrs: {
-                                circle: {fill: 'transparent', stroke: 'blue', 'stroke-width': 1, r: 10, magnet: true}
-                            }
-                        },
-                        'out': {
-                            position: 'absolute',
-                            attrs: {
-                                circle: {fill: 'transparent', stroke: 'green', 'stroke-width': 1, r: 10, magnet: true}
-                            }
-                        }
-                    },
-                    items: [{
-                        id: 'in',
-                        group: 'in',
-                        args: {x: 125, y: 0}
-                    },
-                        {
-                            id: 'out',
-                            group: 'out',
-                            args: {x: 125, y: 180}
-                        }]
-                }
-            });
-            graph.addCell(element_if);
+            ele = get_if(xCoord,yCoord);
             break;
 
         case "elementBasic":
-            var element_basic = new joint.shapes.html.Element({
-                position: {x: xCoord, y: yCoord},
-                size: {width: 100, height: 100},
-                template: [
-                    '<div class="basic">',
-                    '<button class="delete">x</button>',
-
-                    '<div class="myDiv3">',
-                    '<input  data-attribute="einput" class="myDiv4" type="text">',
-                    '</div>',
-                    '<div class="left">',
-                    '<span></span>',
-                    '</div>',
-                    '<div class="right"></div>',
-                    '<div class="bot">',
-                    '<span></span>',
-                    '</div>',
-                    '<div class="top"></div>',
-                    '</div>'
-                ].join(''),
-                einput: '',
-                name: "unknown",
-                cleanname: "Verzweigungsknoten",
-                ports: {
-                    groups: {
-                        'top': {
-                            position: 'absolute',
-                            attrs: {
-                                circle: {fill: 'transparent', stroke: 'blue', 'stroke-width': 1, r: 10, magnet: true}
-                            }
-                        },
-                        'left': {
-                            position: 'absolute',
-                            attrs: {
-                                circle: {fill: 'transparent', stroke: 'green', 'stroke-width': 1, r: 10, magnet: true}
-                            }
-                        },
-                        'right': {
-                            position: 'absolute',
-                            attrs: {
-                                circle: {fill: 'transparent', stroke: 'red', 'stroke-width': 1, r: 10, magnet: true}
-                            }
-                        },
-                        'bot': {
-                            position: 'absolute',
-                            attrs: {
-                                circle: {fill: 'transparent', stroke: 'blue', 'stroke-width': 1, r: 10, magnet: true}
-                            }
-                        }
-                    },
-                    items: [{
-                        id: 'top',
-                        group: 'top',
-                        args: {x: 53, y: -3}
-                    },
-                        {
-                            id: 'bot',
-                            group: 'bot',
-                            args: {x: 53, y: 104}
-                        },
-                        {
-                            id: 'left',
-                            group: 'left',
-                            args: {x: 0, y: 50}
-                        },
-                        {
-                            id: 'right',
-                            group: 'right',
-                            args: {x: 108, y: 50}
-                        }]
-                }
-            });
-            graph.addCell(element_basic);
+            ele = get_basic(xCoord,yCoord);
+            break;	
+			
+        case "elementStart":
+            ele = get_start("teststart","teststartnem",xCoord,yCoord);
+            break;
+			
+        case "elementEnde":
+            ele = get_end("testende","testende",xCoord,yCoord);
+            break;
+        case "elementEdit":
+            ele = get_edit(xCoord,yCoord);
             break;
 
+			
         default:
             console.log("Element nicht gefunden");
     }
+	if(MousePosElementName === "edit"){
+		graph.getCell(MousePosElementID).embed(ele);
+	}
+	graph.addCell(ele);
 }
 
-
+function textAreaAdjust(o) {
+  o.style.height = "1px";
+  o.style.height = (25+o.scrollHeight)+"px";
+}
+	
 // JOINTJS
 $(document).ready(function () {
-// Endpunkt festlegen	
-    var posEndheight = ($('#paper').height() - 80);
-    var posEndwidth = $('#paper').width() - 80;
-
-// Mauspostion im DIV anzeigen
-
-    mouseTop = 0;
-    mouseLeft = 0;
-
-    $('#paper').on('mousemove', function (event) {
-        mouseTop = event.clientY;
-        mouseLeft = event.clientX - $(this).offset().left;
-        $('#coords').text('X: ' + mouseLeft + ' Y:' + mouseTop);
-    });
+	autosize(document.querySelectorAll('textarea')); 
+	parentChildNodes =[]; 
+	// Define spot for endNode	
+    var posEndheight = ($('#paper').height() - 100);
+    var posEndwidth = $('#paper').width() - 100;
+	
+	//SET start- and endNode
+	function preparePaper(){	
+		start = get_start("start","startId",10,10,startnode_inputtype + ":" + startnode_input);
+		end = get_end("end","endId",posEndwidth,posEndheight,endnode_outputtype + ":" + endnode_output);
+		graph.addCells([end, start]);
+		parentChildNodes.push({"parentId":"Startknoten-startId","startId":"Startknoten-startId","endId":"Endknoten-endId","endName":"end"});
+	}	
 
 //Basics
-    var paper = new joint.dia.Paper({
-        el: document.getElementById('paper'),
-        width: $('#paper').width(),
-        height: paperH,
-        gridSize: 10,
-        model: graph,
-        drawGrid: 'dot',
-        defaultLink: new joint.dia.Link({
-            router: {name: 'manhattan'},
-            connector: {name: 'normal'},
-            attrs: {'.marker-target': {d: 'M 10 0 L 0 5 L 10 10 z'}}
-        }),
-        snapLinks: {radius: 25},//Snap Elemente zu Raster
-        linkPinning: false, // dropping on fail spot
-        setLinkVertices: true
-    });
-//origin x and y
-    var $sx = $('#sx');
-    var $sy = $('#sy');
-    var $w = $('#width');
-    var $h = $('#height');
-    var $ox = $('#ox');
-    var $oy = $('#oy');
+	graph = new joint.dia.Graph;
+	paper = new joint.dia.Paper({
+		el: document.getElementById('paper'),
+		width: $('#paper').width(),
+		height: paperH,
+		gridSize: 15,  // distance between the dots from drawGrid
+		model: graph,
+		drawGrid: 'dot',  // backgrounddesign for paper --> mesh
+		defaultLink: new joint.dia.Link({
+			router: {name: 'manhattan'},  // Link design for horizontal and vertical lines
+			connector: {name: 'normal'},
+			attrs: {'.marker-target': {d: 'M 10 0 L 0 5 L 10 10 z'}} // Arrow is horizentor or vertical
+		}),
+		snapLinks: {radius: 25},//Snaps links to port inbetween the radius
+		linkPinning: false, // dropping links on paper fail
+		setLinkVertices: true
+	});
 
 
 //paper expand buttons
-    var ph = $('#paper').height();
+    var ph = $('#paper').height(); // maximal decreasing to loaded size of paper
+	var save_ph=ph;
     $("#paperplus").click(function () {
-        if (ph < 2000) {
+        if (ph <= 2000) {
             ph += 100;
             paper.setDimensions(parseInt(0), parseInt(ph));
             paper.setDimensions(parseInt(0), parseInt(ph));
@@ -553,7 +273,7 @@ $(document).ready(function () {
     });
 
     $("#paperminus").click(function () {
-        if (ph > (posEndheight + 200)) {
+        if (ph > save_ph) {
             ph -= 100;
             paper.setDimensions(parseInt(0), parseInt(ph));
             paper.setDimensions(parseInt(0), parseInt(ph));
@@ -614,8 +334,7 @@ $(document).ready(function () {
     });
 
 
-//view reseten
-
+//view reset
     $("#viewreset").click(function () {
         paper.scale(1.0, 1.0);
         paper.setOrigin(0, 0);
@@ -625,15 +344,32 @@ $(document).ready(function () {
 
 //rebuild graph
     function rebuildGraph() {
+		localStorage.setItem("parentChildNodes", JSON.stringify(parentChildNodes));
         graph.fromJSON(graph.toJSON());
+		parentChildNodes = JSON.parse(localStorage.getItem("parentChildNodes"));
+		reSetSelection();
         refreshDia();
+		updateHighlight();
     }
-
+	
+	// make the value in the view visible
+	function reSetSelection(){
+		var allElements = graph.getElements();
+		for(var i = 0; i < allElements.length;i++){
+			switch(allElements[i].attributes.name){
+				case "actionSelect":
+					var currentSelection = allElements[i].get('varContent');
+					allElements[i].findView(paper).$attributes["0"].value = currentSelection;
+					break;
+				case "actionDeclare":
+					var currentSelection = allElements[i].get('varContent1');
+					allElements[i].findView(paper).$attributes["0"].value = currentSelection;					
+					break;				
+			}
+		}
+	}
+	
 // Aktualisierung nachdem sich ein Link ändert
-
-// gültige einträge beim wechseln der elementbezeichnungen --> Verwendung für paper.on link elements
-    var list_nameOfChangingElements = ["basic", "manual_ifend", "manual_ifstart", "manual_loopstart", "manual_loopendct", "manual_loopendcf", "unknown"];
-
     function setNameForTarget(eventName, cell) {
         try {
             if (list_nameOfChangingElements.includes(graph.getCell(arguments["0"].attributes.target.id).attributes.name)) {
@@ -644,7 +380,6 @@ $(document).ready(function () {
         }
         ;
     }
-
 
     function setNameForSource(eventName, cell) {
         try {
@@ -657,14 +392,50 @@ $(document).ready(function () {
         ;
     }
 
+	function forbidInputTextarea(eventName, cell){ 
+		try {
+			var cellname = graph.getCell(cell.id).attributes.name;
+			if(cellname === "edit"){
+				console.log(eventName);
+				console.log(cell);
+				var parentCell = graph.getCell(eventName.attributes.source.id);
+				var parentPort = eventName.attributes.source.port;
+				if (list_externPorts.includes(parentPort)) {
+					var parentView = parentCell.findView(paper);	
+					if(parentCell.attributes.name === "if"){
+						var testString =parentPort.substring(7, parentPort.length);
+						for(var i = 0; i< parentView.$attributes.length;i++){
+							if( parentView.$attributes[i].dataset.attribute === testString){
+								 parentView.$attributes[i].setAttributeNode(document.createAttribute("disabled"));
+							}
+						}
+					}else{
+						for(var i = 0 ; i<parentView.$box["0"].children.length;i++){
+							console.log(parentView.$box["0"].children[i].nodeName );
+							if(parentView.$box["0"].children[i].nodeName  ==="TEXTAREA"){
+								parentView.$box["0"].children[i].setAttributeNode(document.createAttribute("disabled"));
+							}
+						}
+					}
+				}				
+			}	
+        } catch (e) {
+        }
+        ;
+	}
+
+//graph.on events
     graph.on('change:target', function (eventName, cell) {
         setNameForTarget(eventName, cell);
+		if(version === "3"){
+			forbidInputTextarea(eventName, cell);	
+		}
     });
-
+	
     graph.on('change:source', function (eventName, cell) {
         setNameForSource(eventName, cell);
+		activateTextarea(eventName, cell);
     });
-
 
     graph.on('change', function (eventName, cell) {
         try {
@@ -685,12 +456,6 @@ $(document).ready(function () {
         }
     });
 
-    /*
-        graph.on('all', function(eventName, cell) {
-        console.log(arguments);
-    });
-    */
-
     graph.on('batch:stop', function (eventName, cell) {
         if (arguments["0"].batchName == "add-link") {
             try {
@@ -707,17 +472,91 @@ $(document).ready(function () {
     graph.on('remove', function (eventName, cell) {
         setNameForSource(eventName, cell);
         setNameForTarget(eventName, cell);
+		activateTextarea(eventName, cell);
     });
+	
+	function activateTextarea(eventName, cell){
+		if(arguments["0"].attributes.type === "link" && list_externPorts.includes(arguments["0"].attributes.source.port)){
+			var sourceCell = graph.getCell(arguments["0"].attributes.source.id);
+			var parentView = sourceCell.findView(paper);
+			var parentPort = eventName.attributes.source.port;
+			if(sourceCell.attributes.name === "if"){
+				var testString =parentPort.substring(7, parentPort.length);
+				for(var i = 0; i< parentView.$attributes.length;i++){
+					if( parentView.$attributes[i].dataset.attribute === testString){
+						 parentView.$attributes[i].removeAttribute("disabled");
+					}
+				}
+			}else{
+				for(var i = 0 ; i<parentView.$box["0"].children.length;i++){
+					if(parentView.$box["0"].children[i].nodeName  ==="TEXTAREA"){
+						parentView.$box["0"].children[i].removeAttribute("disabled");
+					}
+				}
+			}
+		}
+	}
 
-    /*
-    graph.on('reset', function (eventName, cell) {
-        console.log("reset");
-        graph.resetCells(graph.get("cells"));
+    graph.on('change:position', function(cell, newPosition, opt) {
+
+        if (opt.skipParentHandler) return;
+
+        if (cell.get('embeds') && cell.get('embeds').length) {
+            // If we're manipulating a parent element, let's store
+            // it's original position to a special property so that
+            // we can shrink the parent element back while manipulating
+            // its children.
+            cell.set('originalPosition', cell.get('position'));
+        }
+        
+        var parentId = cell.get('parent');
+        if (!parentId) return;
+
+        var parent = graph.getCell(parentId);
+        var parentBbox = parent.getBBox();
+        if (!parent.get('originalPosition')) parent.set('originalPosition', parent.get('position'));
+        if (!parent.get('originalSize')) parent.set('originalSize', parent.get('size'));
+        
+        var originalPosition = parent.get('originalPosition');
+        var originalSize = parent.get('originalSize');
+        
+        var newX = originalPosition.x;
+        var newY = originalPosition.y;
+        var newCornerX = originalPosition.x + originalSize.width;
+        var newCornerY = originalPosition.y + originalSize.height;
+        
+        _.each(parent.getEmbeddedCells(), function(child) {
+
+            var childBbox = child.getBBox();
+            
+            if (childBbox.x < newX) { newX = childBbox.x; }
+            if (childBbox.y < newY) { newY = childBbox.y; }
+            if (childBbox.corner().x > newCornerX) { newCornerX = childBbox.corner().x; }
+            if (childBbox.corner().y > newCornerY) { newCornerY = childBbox.corner().y; }
+        });
+
+        // Note that we also pass a flag so that we know we shouldn't adjust the
+        // `originalPosition` and `originalSize` in our handlers as a reaction
+        // on the following `set()` call.
+        parent.set({
+            position: { x: newX, y: newY },
+            size: { width: newCornerX - newX, height: newCornerY - newY }
+        }, { skipParentHandler: true });
     });
-    */
-
-    (function (joint, $) {
-
+	
+    graph.on('change:size', function(cell, newPosition, opt) {
+        
+        if (opt.skipParentHandler) return;
+        
+        if (cell.get('embeds') && cell.get('embeds').length) {
+            // If we're manipulating a parent element, let's store
+            // it's original size to a special property so that
+            // we can shrink the parent element back while manipulating
+            // its children.
+            cell.set('originalSize', cell.get('size'));
+        }
+    });
+	
         // Create a custom element.
         joint.shapes.html = {};
         joint.shapes.html.Element = joint.shapes.basic.Generic.extend({
@@ -736,8 +575,6 @@ $(document).ready(function () {
         });
 
 // Create a custom view for that element that displays an HTML div above it.
-
-
         joint.shapes.html.ElementView = joint.dia.ElementView.extend({
 
             init: function () {
@@ -753,17 +590,14 @@ $(document).ready(function () {
                 if (attribute) {
                     this.model.set(attribute, input.value);
                 }
+				console.log(this.model);
             },
 
             onRender: function () {
-
                 if (this.$box) this.$box.remove();
-
                 var boxMarkup = joint.util.template(this.model.get('template'))();
                 var $box = this.$box = $(boxMarkup);
-
                 this.$attributes = $box.find('[data-attribute]');
-
                 // React on all box changes. e.g. input change
                 $box.on('change', _.bind(this.onBoxChange, this));
                 // Update the box size and position whenever the paper transformation changes.
@@ -780,8 +614,6 @@ $(document).ready(function () {
                 // (taking the paper transformations into account).
                 var bbox = this.getBBox({useModelGeometry: true});
                 var scale = V(this.paper.viewport).scale();
-
-
                 this.$box.css({
                     transform: 'scale(' + scale.sx + ',' + scale.sy + ')',
                     transformOrigin: '0 0',
@@ -790,12 +622,7 @@ $(document).ready(function () {
                     left: bbox.x,
                     top: bbox.y
                 });
-                //console.log(this.$box);    // --> zugriff auf paperelement möglich
-                //console.log(this.model); //  --> zugriff auf id möglich
-                // Anzeigen von TRUE and FALSE, wenn Inhalt von Bedingung nicht leer
-                // Überprüfe ob es ein Verzweigungsobjekt ist.
-                // Lege aktueller Zustand des Elementes fest.
-                //console.log(this.$box);
+				changeSize(this.model,this.$box,bbox);
                 //SET: textfields if inputfield is set
                 switch (this.model.attributes.name) {
                     /*
@@ -881,30 +708,20 @@ $(document).ready(function () {
                         this.$box["0"].children[5].innerText = "";
                         break;
                 }
-                //updateLists(); // Renew all Elements and Links
-                //console.log(this.model); //  --> zugriff auf id möglich
-                //getTypeByLinks(getNodeById(this.model.id));
-                //console.log(list_connections);
-                //console.log(this.$box);
-                //console.log(getNodeById(this.model.id));
-                //console.log(getTypeByLinks(getNodeById(this.model.id)));
                 this.updateAttributes();
             },
 
             updateAttributes: function () {
-
                 var model = this.model;
-
                 this.$attributes.each(function () {
-
                     var value = model.get(this.dataset.attribute);
-
                     switch (this.tagName.toUpperCase()) {
                         case 'LABEL':
                             this.textContent = value;
                             break;
                         case 'INPUT':
                             this.value = value;
+							//console.log(model.attributes.template);
                             break;
                         case 'TEXTAREA':
                             this.value = value;
@@ -917,118 +734,121 @@ $(document).ready(function () {
                 this.$box.find('.delete').on('click', _.bind(this.model.remove, this.model));
                 this.model.on('remove', this.removeBox, this);
                 this.$box.remove();
-            }
-
-        });
-
-// ELEMENT START
-        var svgStart = [
-            '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="58px" height="58px" version="1.1" content="&lt;mxfile userAgent=&quot;Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36&quot; version=&quot;7.0.9&quot; editor=&quot;www.draw.io&quot; type=&quot;google&quot;&gt;&lt;diagram&gt;jZPBcoMgEIafxrvK1KTX2jS99OShZyqrMEHXwU3VPn1RQOOkmSkHh/3+XVh+MGJ5M54N7+QHCtBRGosxYq9Rmh6Omf3OYHIgO8YO1EYJh5INFOoHPAxpVyWg3yUSoibV7WGJbQsl7Rg3Bod9WoV6v2vHa7gDRcn1Pf1UgqSnSfa8Ce+gaum3Pqb+wF+8vNQGr63fL0pZtQwnNzys5Q/aSy5wuEHsFLHcIJKbNWMOerY22Obq3h6oa98GWvpPQeoKvrm+Quh46Yum4IUtsLbb4EVSoy1L7NT23c16T9xQQZxmvVJa56jRLIUsXsacTAYv8JeyOAXCLyp4L9fANwaGYHx4uGS1zL5EwAbITDYlFGTe5Sm8LubiYbvTp4ND8uY2A+P+FdXrypuTduLNDOF2aYt282Ow0y8=&lt;/diagram&gt;&lt;/mxfile&gt;" style="background-color: rgb(255, 255, 255);">', '<defs/>', '<g transform="translate(0.5,0.5)">', '<ellipse cx="29" cy="29" rx="24.5" ry="24.5" fill="#000000" stroke="#000000" stroke-dasharray="3 3" pointer-events="none"/>', '</g>', '</svg>'
-        ].join('');
-
-        var start = new joint.shapes.devs.Model({
-            markup: '<g class="rotatable"><g class="scalable"><image class="body"/></g><g class="outPorts"/></g><text/>',
-            size: {
-                width: 50,
-                height: 50
-            },
-            name: 'start',
-            cleanname: "Startknoten",
-            id: 'startid',
-            position: {
-                x: 10,
-                y: 10
-            },
-            attrs: {
-                '.body': {
-                    width: 1024,
-                    height: 768,
-                    'xlink:href': 'data:image/svg+xml;utf8,' + encodeURIComponent(svgStart),
-                    preserveAspectRatio: 'none'
-                },
-                '.outPorts circle': {r: 3, fill: '#E74C3C', magnet: 'passive', type: 'output'},
-                text: {
-                    'text': startnode_inputtype + ":" + startnode_input,
-                    'fill': 'black',
-                    'ref-y': '10px',
-                    'ref-x': '100px',
-                    'text-anchor': 'middle'
-                }
-            },
-            outPorts: [''],
-            ports: {
-                groups: {
-                    'out': {
-                        attrs: {
-                            '.port-body': {
-                                fill: 'transparent',
-                                'ref-x': -25,
-                                'ref-y': 0,
-                                r: 20
-                            }
-                        }
-                    }
-                }
+				//console.log(this.model);  // remove entries  parentChildNodes
+				removeIdFromArray(this.model.id);
             }
         });
 
-// ELEMENT Ende
-        var svgEnd = [
-            '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="31px" height="31px" version="1.1" content="&lt;mxfile userAgent=&quot;Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36&quot; version=&quot;7.1.0&quot; editor=&quot;www.draw.io&quot; type=&quot;google&quot;&gt;&lt;diagram&gt;jVNNc4IwEP013IGMVq9S2x7a6cFDzylZIWPIMnGt2F/fxGxEap0pB4Z9+16yH49MVN3w7GTfvqECk5W5GjLxmJVlkQv/DsApAstZjBunFVNGYKO/IekYPWgF+wmREA3pfgrWaC3UNMGkc3ic0rZoprf2soEbYFNLc4t+aEVtRBflw4i/gG7adHMxX8ZMJxOZO9m3UuHxChLrTFQOkeJXN1RgwujSXKLu6U72UpgDS/8RlFHwJc2Be+O66JSa9QI/Vx+sfLF9AMGqDUkK0FYbU6FBd+aK/PwEKjncwZ+Z1HEIGieV9qUmokUbTjXyE8xK1rvG4cGqX9kt3ggsvgaJBwofEQz03staU7DXMlzEbYLzubujKi4L8L4F7IDcyVNYMF/wztizs5xNexwtIJjSXm0/YZJN11xOHvfiP3g1KRwtcM5d/UZi/QM=&lt;/diagram&gt;&lt;/mxfile&gt;">', '<defs/>', '<g transform="translate(0.5,0.5)">', '<ellipse cx="15" cy="15" rx="11" ry="11" fill="#000000" stroke="#000000" pointer-events="none"/>', '<ellipse cx="15" cy="15" rx="15" ry="15" fill="none" stroke="#000000" pointer-events="none"/>', '</g>', '</svg>'
-        ].join('');
+function changeSize(model,box,bbox){
+	if(model.attributes.name === "actionInput"){
+		var nheight = box["0"].children[1].style.height;
+		nheight = Number(nheight.replace("px", ""));
+		if(nheight >15){
+			model.resize(bbox.width,nheight+15);
+			model.prop("ports/items/1/args/y",(nheight+15));						
+		}					
+	}
+	if(version !== "1"){
+		if(model.attributes.name === "forin"){
+			var nheight = box["0"].children[2].style.height;
+			nheight = Number(nheight.replace("px", ""));
+			if(nheight >50){
+				model.resize(bbox.width,nheight+35);
+				model.prop("ports/items/2/args/y",(nheight+35));						
+			}		
+		}
+		if(model.attributes.name === "dw"){
+			var nheight = box["0"].children[2].style.height;
+			nheight = Number(nheight.replace("px", ""));
+			if(nheight >50){
+				model.resize(bbox.width,nheight+50);
+				model.prop("ports/items/1/args/y",(nheight+50));						
+			}					
+		}				
+		if(model.attributes.name === "wd"){
+			var nheight = box["0"].children[4].style.height;
+			nheight = Number(nheight.replace("px", ""));
+			if(nheight >50){
+				model.resize(bbox.width,nheight+52);
+				model.prop("ports/items/1/args/y",(nheight+52));						
+			}					
+		}							
+		if(model.attributes.name === "if"){
+			var nheight = box["0"].children[2].children[1].style.height;
+			var nheight2 = box["0"].children[3].children[1].style.height;
+			nheight = Number(nheight.replace("px", ""));
+			nheight2 = Number(nheight2.replace("px", ""));
+			if(nheight+nheight2 >100){
+				nheight = Math.max(nheight,75);
+				nheight2 = Math.max(nheight2,75);
+				model.resize(bbox.width,nheight+nheight2+130);
+				model.prop("ports/items/2/args/y",(nheight));
+				model.prop("ports/items/3/args/y",(nheight+nheight2+25));	
+				model.prop("ports/items/1/args/y",(nheight+nheight2+130));						
+			}
+		}			
+	}
+}
+		
+		
 
-        var end = new joint.shapes.devs.Model({
-            markup: '<g class="rotatable"><g class="scalable"><image class="body"/></g><g class="outPorts"/></g><text/>',
-            size: {
-                width: 50,
-                height: 50
-            },
-            name: 'end',
-            id: "endid",
-            cleanname: "Endknoten",
-            position: {
-                x: posEndwidth,
-                y: posEndheight
-            },
-            attrs: {
-                '.body': {
-                    width: 1024,
-                    height: 768,
-                    'xlink:href': 'data:image/svg+xml;utf8,' + encodeURIComponent(svgEnd),
-                    preserveAspectRatio: 'none'
-                },
-                '.outPorts circle': {r: 25, fill: '#transparent', magnet: 'active', type: 'output'},
-                text: {
-                    'text': endnode_outputtype + ":" + endnode_output,
-                    'fill': 'black',
-                    'ref-y': '-30px',
-                    'ref-x': '25px',
-                    'text-anchor': 'middle'
-                }
-            },
-            inPorts: [''],
-            ports: {
-                groups: {
-                    'in': {
-                        attrs: {
-                            '.port-body': {
-                                fill: 'transparent',
-                                'ref-x': 25,
-                                'ref-y': 0,
-                                r: 18
-                            }
-                        }
-                    },
-                    args: {
-                        x: 25, y: 25
-                    },
-                    attrs: {
-                        circle: {fill: 'transparent', stroke: 'none', 'stroke-width': 1, r: 20, magnet: true}
-                    }
-                }
-            }
-        });
-        graph.addCells([end, start]);
+		
 
-    })(joint, $);
+//paperevents
+	paper.on('blank:pointerclick', function(evt, x, y) {
+		try {
+			if (sel_elementname != "") {
+				createElement(sel_elementname,x,y);
+				sel_elementname ="";
+			}
+		} catch (e) {
+		}
+		;		
+	})		
+
+	paper.on('cell:mouseenter', 
+		function(cellView, evt, x, y) {
+					MousePosElementID =cellView.model.id;
+					MousePosElementName =cellView.model.attributes.name;
+				//	console.log(MousePosElementID);
+				//	console.log(MousePosElementName);					
+		})
+
+		paper.on('cell:mouseleave', 
+		function(cellView, evt, x, y) {
+					MousePosElementID ="mainId";
+					MousePosElementName ="main";					
+		})	
+		
+	paper.on('cell:pointerclick', 
+		function(cellView, evt, x, y) {
+		if(cellView.model.attributes.name === "edit" && sel_elementname !== ""){
+			createElement(sel_elementname,x,y);
+			sel_elementname ="";
+		}				
+		})
+		preparePaper(); // set start and endnode	
 });
+
+function refreshElement(el){
+		var x = el.get('position').x;
+		var y = el.get('position').y;
+		el.set('position',{ x: x+1, y: y+1 });
+		el.set('position',{ x: x, y: y });		
+}
+
+//calculate each elements height and sum up --_> Fail
+function calculateFinalHeight(htmlCollection,finalHeightValue){
+	for(var i = 0; i < htmlCollection.length;i++){
+		switch(htmlCollection[i].nodeName){
+			case "INPUT":
+			case "TEXTAREA":
+				finalHeightValue += Number((htmlCollection[i].style.height).replace("px", ""));
+				break;
+		}
+		if(htmlCollection[i].nodeName === "DIV"){
+			finalHeightValue += calculateFinalHeight(htmlCollection[i].childNodes,finalHeightValue);
+		}
+	}
+	return finalHeightValue;
+}
