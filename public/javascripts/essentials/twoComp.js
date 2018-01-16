@@ -7,6 +7,15 @@ function readValues() {
     }
 }
 
+
+function colorParent(parent, correct) {
+    if (correct) {
+        parent.removeClass('has-error').addClass('has-success');
+    } else {
+        parent.removeClass('has-success').addClass('has-error');
+    }
+}
+
 /**
  *
  * @param {{correct: boolean, verbose: boolean, binaryAbs: boolean, invertedAbs: boolean}} response
@@ -15,14 +24,6 @@ function onAjaxSuccess(response) {
     colorParent($('#binaryAbs').parent(), response.binaryAbs);
     colorParent($('#invertedAbs').parent(), response.invertedAbs);
     colorParent($('#solution').parent(), response.correct);
-}
-
-function colorParent(parent, correct) {
-    if (correct) {
-        parent.removeClass('has-error').addClass('has-success');
-    } else {
-        parent.removeClass('has-success').addClass('has-error');
-    }
 }
 
 /**

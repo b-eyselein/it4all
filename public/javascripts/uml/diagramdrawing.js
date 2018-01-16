@@ -13,31 +13,50 @@ let classEditModal;
 
 const UmlTypes = ['String', 'Int', 'Double', 'Char', 'Boolean'];
 
-$(document).ready(function () {
-    let paperJQ = $('#paper');
+function addClass(clazz) {
+    let content = {
+        position: clazz.position,
+        size: {width: STD_CLASS_SIZE, height: STD_CLASS_SIZE},
+        name: clazz.name.replace(/ /g, '_'),
+        attributes: clazz.attributes,
+        methods: clazz.methods,
+        attrs: {
+            '.uml-class-name-rect': {fill: COLOR_WHITE},
+            '.uml-class-attrs-rect, .uml-class-methods-rect': {fill: COLOR_WHITE},
+            '.uml-class-attrs-text': {ref: '.uml-class-attrs-rect', 'ref-y': 0.5, 'y-alignment': 'middle'},
+            '.uml-class-methods-text': {ref: '.uml-class-methods-rect', 'ref-y': 0.5, 'y-alignment': 'middle'}
+        }
+    };
 
-    // Init Graph and Paper
-    paper = new joint.dia.Paper({
-        el: paperJQ,
-        width: paperJQ.parent().width(),
-        height: HEIGHT_PERCENTAGE * window.screen.availHeight,
-        gridSize: 1,
-        model: graph
-    });
+    switch (clazz.classType) {
+        case INTERFACE:
+            graph.addCell(new joint.shapes.uml.Interface(content));
+            break;
+        case ABSTRACT:
+            graph.addCell(new joint.shapes.uml.Abstract(content));
+            break;
+        case CLASSTYPE:
+            graph.addCell(new joint.shapes.uml.Class(content));
+            break;
+        default:
+            return;
+    }
+}
 
-    // Set callback for click on cells and blank paper
-    paper.on('cell:pointerclick', cellOnLeftClick);
-    paper.on('cell:contextmenu', cellOnRightClick);
-    paper.on('blank:pointerdown', blankOnPointerDown);
+function newClass(posX, posY) {
+    let className = prompt('Wie soll die (abstrakte) Klasse / das Interface heißen?');
 
-    // Draw all classes, empty if diagramdrawing - help
-    for (let clazz of defaultClasses) {
-        addClass(clazz);
+    if (!className || className.length === 0) {
+        return;
     }
 
-    classEditModal = $('#classEditModal');
-    classEditModal.modal({show: false});
-});
+    addClass({
+        name: className,
+        classType: sel,
+        attributes: [], methods: [],
+        position: {x: posX, y: posY}
+    });
+}
 
 function blankOnPointerDown(evt, x, y) {
     switch (sel) {
@@ -55,6 +74,14 @@ function blankOnPointerDown(evt, x, y) {
 function discardEdits() {
     classEditModal.find('.modal-body').html('');
     classEditModal.modal('hide');
+}
+
+function addMember(button, isAttr) {
+    $(button).before(memberInputs('', '', isAttr));
+}
+
+function deleteMember(button) {
+    $(button).parent().parent().remove();
 }
 
 // noinspection JSUnusedGlobalSymbols
@@ -86,6 +113,20 @@ function updateClass(elementId) {
     element.attr('.uml-class-methods-text/text', mets.map(m => m.name + ': ' + m.type).join('\n'));
 
     discardEdits();
+}
+
+function memberInputs(memberName, memberType = '', isAttr = true) {
+    return `<div class="form-group">
+              <div class="input-group">
+                <input class="form-control" placeholder="${isAttr ? 'Attribut' : 'Methode'} für diese Klasse" value="${memberName}" required>
+                <span class="input-group-addon">:</span>
+                <select class="form-control">
+                  ${UmlTypes.map(umlType => `<option ${umlType === memberType ? 'selected' : ''}>${umlType}</option>`).join("")}
+                </select>
+                <span class="input-group-addon"></span>
+                <button class="form-control btn-warning" title="L&ouml;schen" onclick="deleteMember(this)"><span class="glyphicon glyphicon-remove"></span></button>
+              </div>
+            </div>`;
 }
 
 function cellOnLeftClick(cellView) {
@@ -183,28 +224,6 @@ function cellOnLeftClick(cellView) {
             break;
     }
 
-}
-
-function addMember(button, isAttr) {
-    $(button).before(memberInputs('', '', isAttr));
-}
-
-function deleteMember(button) {
-    $(button).parent().parent().remove();
-}
-
-function memberInputs(memberName, memberType = '', isAttr = true) {
-    return `<div class="form-group">
-              <div class="input-group">
-                <input class="form-control" placeholder="${isAttr ? 'Attribut' : 'Methode'} für diese Klasse" value="${memberName}" required>
-                <span class="input-group-addon">:</span>
-                <select class="form-control">
-                  ${UmlTypes.map(umlType => `<option ${umlType === memberType ? 'selected' : ''}>${umlType}</option>`).join("")}
-                </select>
-                <span class="input-group-addon"></span>
-                <button class="form-control btn-warning" title="L&ouml;schen" onclick="deleteMember(this)"><span class="glyphicon glyphicon-remove"></span></button>
-              </div>
-            </div>`;
 }
 
 function cellOnRightClick(cellView) {
@@ -390,50 +409,31 @@ function link(sourceId, targetId) {
     graph.addCell(cellToAdd);
 }
 
-function addClass(clazz) {
-    let content = {
-        position: clazz.position,
-        size: {width: STD_CLASS_SIZE, height: STD_CLASS_SIZE},
-        name: clazz.name.replace(/ /g, '_'),
-        attributes: clazz.attributes,
-        methods: clazz.methods,
-        attrs: {
-            '.uml-class-name-rect': {fill: COLOR_WHITE},
-            '.uml-class-attrs-rect, .uml-class-methods-rect': {fill: COLOR_WHITE},
-            '.uml-class-attrs-text': {ref: '.uml-class-attrs-rect', 'ref-y': 0.5, 'y-alignment': 'middle'},
-            '.uml-class-methods-text': {ref: '.uml-class-methods-rect', 'ref-y': 0.5, 'y-alignment': 'middle'}
-        }
-    };
+$(document).ready(function () {
+    let paperJQ = $('#paper');
 
-    switch (clazz.classType) {
-        case INTERFACE:
-            graph.addCell(new joint.shapes.uml.Interface(content));
-            break;
-        case ABSTRACT:
-            graph.addCell(new joint.shapes.uml.Abstract(content));
-            break;
-        case CLASSTYPE:
-            graph.addCell(new joint.shapes.uml.Class(content));
-            break;
-        default:
-            return;
-    }
-}
-
-function newClass(posX, posY) {
-    let className = prompt('Wie soll die (abstrakte) Klasse / das Interface heißen?');
-
-    if (!className || className.length === 0) {
-        return;
-    }
-
-    addClass({
-        name: className,
-        classType: sel,
-        attributes: [], methods: [],
-        position: {x: posX, y: posY}
+    // Init Graph and Paper
+    paper = new joint.dia.Paper({
+        el: paperJQ,
+        width: paperJQ.parent().width(),
+        height: HEIGHT_PERCENTAGE * window.screen.availHeight,
+        gridSize: 1,
+        model: graph
     });
-}
+
+    // Set callback for click on cells and blank paper
+    paper.on('cell:pointerclick', cellOnLeftClick);
+    paper.on('cell:contextmenu', cellOnRightClick);
+    paper.on('blank:pointerdown', blankOnPointerDown);
+
+    // Draw all classes, empty if diagramdrawing - help
+    for (let clazz of defaultClasses) {
+        addClass(clazz);
+    }
+
+    classEditModal = $('#classEditModal');
+    classEditModal.modal({show: false});
+});
 
 // TODO: Begin Drag-And-Drop-Functionality
 
