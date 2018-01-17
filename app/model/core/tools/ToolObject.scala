@@ -57,6 +57,10 @@ trait ExToolObject extends ToolObject with FileUtils {
 
   def exerciseRoutes(exercise: CompEx): Map[Call, String]
 
+  //  def correctRoute(exercise: HasBaseValues): Call
+
+  //  def correctLiveRoute(exercise: HasBaseValues): Call
+
   // Admin
 
   def adminIndexRoute: Call

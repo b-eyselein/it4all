@@ -12,7 +12,6 @@ case class ProgCompleteResult(learnerSolution: String, results: Seq[ProgEvalResu
 
 }
 
-
 trait ProgEvalResult extends EvaluationResult
 
 

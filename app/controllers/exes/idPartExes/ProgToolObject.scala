@@ -1,11 +1,14 @@
-package controllers.exes.idExes
+package controllers.exes.idPartExes
 
 import model.Enums.ToolState
+import model.programming.ProgEnums.ProgExPart
 import model.programming.{ProgCompleteEx, ProgConsts}
 import model.{Consts, HasBaseValues}
 import play.api.mvc.Call
 
-object ProgToolObject extends IdExToolObject {
+object ProgToolObject extends IdPartExToolObject {
+
+  override def exParts: Map[String, String] = ProgExPart.values().map(part => part.name.toLowerCase -> part.partName).toMap
 
   override type CompEx = ProgCompleteEx
 
@@ -17,18 +20,18 @@ object ProgToolObject extends IdExToolObject {
 
   override def indexCall: Call = routes.ProgController.index()
 
-  override def exerciseRoute(exercise: HasBaseValues): Call = routes.ProgController.exercise(exercise.id)
+  override def exerciseRoute(exercise: HasBaseValues, part: String): Call = routes.ProgController.exercise(exercise.id, part)
 
-  override def exerciseRoutes(exercise: ProgCompleteEx) = Map(
-    //    routes.ProgController.testData(exercise.ex.id) -> "Testdaten erstellen",
-    routes.ProgController.exercise(exercise.ex.id) -> "Aufgabe bearbeiten"
-  )
+  //  override def exerciseRoutes(exercise: ProgCompleteEx) = Map(
+  //    routes.ProgController.exercise(exercise.ex.id, ProgExPart.TESTDATA_CREATION.name) -> "Testdaten erstellen",
+  //    routes.ProgController.exercise(exercise.ex.id, ProgExPart.IMPLEMENTATION.name) -> "Aufgabe bearbeiten"
+  //  )
 
   override def exerciseListRoute(page: Int): Call = routes.ProgController.exerciseList(page)
 
-  override def correctLiveRoute(exercise: HasBaseValues): Call = routes.ProgController.correctLive(exercise.id)
+  override def correctLiveRoute(exercise: HasBaseValues, part: String): Call = routes.ProgController.correctLive(exercise.id, part)
 
-  override def correctRoute(exercise: HasBaseValues): Call = routes.ProgController.correct(exercise.id)
+  override def correctRoute(exercise: HasBaseValues, part: String): Call = routes.ProgController.correct(exercise.id, part)
 
 
   override def adminIndexRoute: Call = routes.ProgController.adminIndex()

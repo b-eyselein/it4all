@@ -11,6 +11,7 @@ public abstract class UmlEnums {
 
         public static Option<UmlExPart> byString(String str) {
             try {
+                System.out.println("TODO: " + str);
                 return new Some<>(valueOf(str));
             } catch (Exception e) {
                 // ==> None!

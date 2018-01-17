@@ -2,6 +2,7 @@ package model.programming
 
 import model.MyYamlProtocol._
 import model.programming.ProgConsts._
+import model.programming.ProgEnums.DataTypes
 import model.{BaseValues, MyYamlProtocol}
 import net.jcazevedo.moultingyaml._
 

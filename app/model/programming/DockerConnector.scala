@@ -48,7 +48,6 @@ object DockerConnector {
     .withCmd("./script." + language.fileEnding)
     .exec.getId
 
-
   private def startContainer(container: String): Unit = DockerClient.startContainerCmd(container).exec
 
   private def waitForContainer(container: String): Int = DockerClient.waitContainerCmd(container)

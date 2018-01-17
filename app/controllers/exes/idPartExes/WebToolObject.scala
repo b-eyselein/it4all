@@ -1,5 +1,6 @@
 package controllers.exes.idPartExes
 
+import model.web.WebEnums.WebExPart
 import model.web.{WebCompleteEx, WebConsts, WebExercise}
 import model.{Consts, HasBaseValues}
 import play.api.mvc.Call
@@ -8,7 +9,7 @@ object WebToolObject extends IdPartExToolObject {
 
   override type CompEx = WebCompleteEx
 
-  override def exParts: Map[String, String] = Map("html" -> "Html-Teil", "js" -> "Js-Teil")
+  override def exParts: Map[String, String] = WebExPart.values().map(part => part.shortName -> part.partName).toMap
 
   override val hasTags : Boolean = true
   override val toolname: String  = "Web"
@@ -29,9 +30,9 @@ object WebToolObject extends IdPartExToolObject {
 
   override def exerciseListRoute(page: Int): Call = routes.WebController.exerciseList(page)
 
-  override def correctLiveRoute(exercise: HasBaseValues, part: String): Call = routes.WebController.correctLive(exercise.id, "html")
+  override def correctLiveRoute(exercise: HasBaseValues, part: String): Call = routes.WebController.correctLive(exercise.id, part)
 
-  override def correctRoute(exercise: HasBaseValues, part: String): Call = routes.WebController.correct(exercise.id, "html")
+  override def correctRoute(exercise: HasBaseValues, part: String): Call = routes.WebController.correct(exercise.id, part)
 
 
   override def adminIndexRoute: Call = routes.WebController.adminIndex()

@@ -1,87 +1,88 @@
 #!/usr/bin/env python3
 
-from typing import List
-
 # Load learner solution
+# noinspection PyUnresolvedReferences
 from solution import *
 
 # Load other libraries
-import json, sys, traceback
+import json
+import sys
 
 
 # Helper defs
-def typeToFunction(aType):
-    if aType == "int":
+def type_to_function(a_type):
+    if a_type == "int":
         return lambda s: int(s)
-    elif aType == "boolean":
+    elif a_type == "boolean":
         return lambda s: s in ['true', '1', 't', 'y', 'yes']
-    elif aType == "float":
+    elif a_type == "float":
         return lambda s: float(s)
-    elif aType == "string":
+    elif a_type == "string":
         return lambda s: str(s)
     else:
         return lambda s: str(s)
 
 
-def mapVariables(variableTypes: List[str]) -> List[str]:
-    variables = {}
-    for index, variableType in enumerate(variableTypes):
-        variables[chr(startIndex + index)] = typeToFunction(variableType)
-    return variables
+def map_variables(variable_types):
+    current_vars = {}
+    for index, variable_type in enumerate(variable_types):
+        current_vars[chr(start_index + index)] = type_to_function(variable_type)
+    return current_vars
 
 
-def toJson(variable, allocation):
+def to_json(variable, variable_allocation):
     return {
         "variable": "{}".format(variable),
-        "value": allocation[ord(variable) - startIndex]
+        "value": variable_allocation[ord(variable) - start_index]
     }
 
 
 # Constants
-startIndex = ord("a")
-resultFilename = "result"
-errorFilename = "error"
+start_index = ord("a")
+result_filename = "result"
+error_filename = "error"
 
 # Main
 if __name__ == "__main__":
 
     # Load testconfig.json
-    testconfigFile = open("testconfig.json", 'r')
-    testconfig = json.loads(testconfigFile.read())
-    testconfigFile.close()
+    testconfig_file = open("testconfig.json", 'r')
+    testconfig = json.loads(testconfig_file.read())
+    testconfig_file.close()
 
     functionname = testconfig['functionname']
     variableTypes = testconfig['variableTypes']
-    outputTypeFunc = typeToFunction(testconfig['outputType'])
+    outputTypeFunc = type_to_function(testconfig['outputType'])
 
-    variables = mapVariables(variableTypes)
+    variables = map_variables(variableTypes)
 
     results = []
 
     for testdata in testconfig['testdata']:
-        id = int(testdata['id'])
+        testdataId = int(testdata['id'])
 
         allocationArray = testdata['inputs']
         awaited = outputTypeFunc(testdata['awaited'])
 
         if len(variables) > len(allocationArray):
-            print("Fehler bei Testdaten mit Id {}: Es gab {} Variablen und {} Testdaten".format(id, len(variables), len(allocationArray)), file = sys.stderr)
+            print("Fehler bei Testdaten mit Id {}: Es gab {} Variablen und {} Testdaten".format(
+                testdataId, len(variables), len(allocationArray)), file=sys.stderr)
             continue
 
         allocation = []
         for i in range(0, len(variables)):
-            func = variables[chr(i + startIndex)]
+            func = variables[chr(i + start_index)]
             allocation.append(func(allocationArray[i]))
 
         toWrite = {
-            'id': id,
-            'inputs': list(map(lambda ip: toJson(ip, allocation), variables)),
+            'id': testdataId,
+            'inputs': list(map(lambda ip: to_json(ip, allocation), variables)),
             'functionName': functionname,
             'awaited': awaited
         }
 
         # Redirect print into output.txt
-        newStdOut = open("output{}.txt".format(id), 'w')
+        newStdOut = open("output{}.txt".format(testdataId), 'w')
         sys.stdout = newStdOut
 
         try:
@@ -97,5 +98,5 @@ if __name__ == "__main__":
 
         results.append(toWrite)
 
-    with open("{}.json".format(resultFilename), 'w') as file:
+    with open("{}.json".format(result_filename), 'w') as file:
         file.write(json.dumps(results, indent=2))

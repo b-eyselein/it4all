@@ -3,7 +3,7 @@ package model.programming
 import java.nio.file.Files
 import java.nio.file.attribute.{PosixFilePermission, PosixFilePermissions}
 
-import controllers.exes.idExes.ProgToolObject
+import controllers.exes.idPartExes.ProgToolObject
 import model.Enums.SuccessType
 import model.core.FileUtils
 import model.programming.ProgConsts._

@@ -24,13 +24,15 @@ public abstract class WebEnums {
 
     public enum WebExPart implements Selectable<WebExPart> {
 
-        HTML_PART("html"),
-        JS_PART("js");
+        HTML_PART("html", "Html-Teil"),
+        JS_PART("js", "Js-Teil");
 
         public final String shortName;
+        public final String partName;
 
-        WebExPart(String theShortName) {
+        WebExPart(String theShortName, String thePartName) {
             shortName = theShortName;
+            partName = thePartName;
         }
 
         public static Option<WebExPart> byShortName(String str) {

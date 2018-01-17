@@ -4,9 +4,8 @@ import java.nio.file.{Files, Path}
 
 import controllers.Secured
 import controllers.exes.{BaseExerciseController, IntExIdentifier}
-import model.core._
-import model.core.tools.ExToolObject
 import model._
+import model.core._
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.json.Json
 import play.api.mvc._
@@ -14,18 +13,6 @@ import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
-
-trait IdExToolObject extends ExToolObject {
-
-  def exerciseRoute(exercise: HasBaseValues): Call
-
-  override def exerciseRoutes(exercise: CompEx): Map[Call, String] = Map(exerciseRoute(exercise.ex) -> "Aufgabe bearbeiten")
-
-  def correctLiveRoute(exercise: HasBaseValues): Call
-
-  def correctRoute(exercise: HasBaseValues): Call
-
-}
 
 abstract class AIdExController[Ex <: Exercise, CompEx <: CompleteEx[Ex], R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseTableDefs[Ex, CompEx]]
 (cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: Tables, to: IdExToolObject)(implicit ec: ExecutionContext)

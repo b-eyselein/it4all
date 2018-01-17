@@ -76,37 +76,37 @@ PUT           /xml/playground                             controllers.exes.idExe
 
 # Prog - Anfang
 # Controlleristrator
-GET           /prog/admin                                 controllers.exes.idExes.ProgController.adminIndex
+GET           /prog/admin                                 controllers.exes.idPartExes.ProgController.adminIndex
 
-GET           /prog/admin/import                          controllers.exes.idExes.ProgController.adminImportExercises
-GET           /prog/admin/export                          controllers.exes.idExes.ProgController.adminExportExercises
-GET           /prog/admin/exportFile                      controllers.exes.idExes.ProgController.adminExportExercisesAsFile
+GET           /prog/admin/import                          controllers.exes.idPartExes.ProgController.adminImportExercises
+GET           /prog/admin/export                          controllers.exes.idPartExes.ProgController.adminExportExercises
+GET           /prog/admin/exportFile                      controllers.exes.idPartExes.ProgController.adminExportExercisesAsFile
 
-GET           /prog/admin/exerciseList                    controllers.exes.idExes.ProgController.adminExerciseList
-GET           /prog/admin/newExForm                       controllers.exes.idExes.ProgController.adminNewExerciseForm
-PUT           /prog/admin/exerciseList                    controllers.exes.idExes.ProgController.adminCreateExercise
-POST          /prog/admin/exerciseList                    controllers.exes.idExes.ProgController.adminCreateExercise
+GET           /prog/admin/exerciseList                    controllers.exes.idPartExes.ProgController.adminExerciseList
+GET           /prog/admin/newExForm                       controllers.exes.idPartExes.ProgController.adminNewExerciseForm
+PUT           /prog/admin/exerciseList                    controllers.exes.idPartExes.ProgController.adminCreateExercise
+POST          /prog/admin/exerciseList                    controllers.exes.idPartExes.ProgController.adminCreateExercise
 
-GET           /prog/admin/exerciseList/:id                controllers.exes.idExes.ProgController.adminEditExerciseForm(id: Int)
-PUT           /prog/admin/exerciseList/:id                controllers.exes.idExes.ProgController.adminEditExercise(id: Int)
-POST          /prog/admin/exerciseList/:id                controllers.exes.idExes.ProgController.adminEditExercise(id: Int)
-DELETE        /prog/admin/exerciseList/:id                controllers.exes.idExes.ProgController.adminDeleteExercise(id: Int)
+GET           /prog/admin/exerciseList/:id                controllers.exes.idPartExes.ProgController.adminEditExerciseForm(id: Int)
+PUT           /prog/admin/exerciseList/:id                controllers.exes.idPartExes.ProgController.adminEditExercise(id: Int)
+POST          /prog/admin/exerciseList/:id                controllers.exes.idPartExes.ProgController.adminEditExercise(id: Int)
+DELETE        /prog/admin/exerciseList/:id                controllers.exes.idPartExes.ProgController.adminDeleteExercise(id: Int)
 
-PUT           /prog/admin/exercise/:id/state              controllers.exes.idExes.ProgController.adminChangeExState(id: Int)
+PUT           /prog/admin/exercise/:id/state              controllers.exes.idPartExes.ProgController.adminChangeExState(id: Int)
 
 # All
-GET           /prog/                                      controllers.exes.idExes.ProgController.index
-GET           /prog/exercises                             controllers.exes.idExes.ProgController.exerciseList(page: Int ?= 1)
+GET           /prog/                                      controllers.exes.idPartExes.ProgController.index
+GET           /prog/exercises                             controllers.exes.idPartExes.ProgController.exerciseList(page: Int ?= 1)
 
-GET           /prog/testdata/:id                          controllers.exes.idExes.ProgController.testData(id: Int)
-POST          /prog/validate/:id                          controllers.exes.idExes.ProgController.validateTestData(id: Int)
-PUT           /prog/validate/:id                          controllers.exes.idExes.ProgController.validateTestDataLive(id: Int)
+GET           /prog/testdata/:id                          controllers.exes.idPartExes.ProgController.testData(id: Int)
+POST          /prog/validate/:id                          controllers.exes.idPartExes.ProgController.validateTestData(id: Int)
+PUT           /prog/validate/:id                          controllers.exes.idPartExes.ProgController.validateTestDataLive(id: Int)
 
-GET           /prog/declaration                           controllers.exes.idExes.ProgController.getDeclaration(language: String ?= "")
+GET           /prog/declaration                           controllers.exes.idPartExes.ProgController.getDeclaration(language: String ?= "")
 
-GET           /prog/exercise/:id/                         controllers.exes.idExes.ProgController.exercise(id: Int)
-PUT           /prog/exercise/:id                          controllers.exes.idExes.ProgController.correctLive(id: Int)
-POST          /prog/exercise/:id                          controllers.exes.idExes.ProgController.correct(id: Int)
+GET           /prog/exercise/:id/:part                    controllers.exes.idPartExes.ProgController.exercise(id: Int, part: String)
+PUT           /prog/exercise/:id/:part                    controllers.exes.idPartExes.ProgController.correctLive(id: Int, part: String)
+POST          /prog/exercise/:id/:part                    controllers.exes.idPartExes.ProgController.correct(id: Int, part: String)
 # Prog - Ende
 
 # Blanks - Anfang...

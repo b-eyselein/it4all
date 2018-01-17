@@ -17,23 +17,6 @@ import play.twirl.api.Html
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
-trait FileExToolObject extends ExToolObject {
-
-  override type CompEx <: FileCompleteEx[_ <: Exercise]
-
-  val fileTypes: Map[String, String]
-
-  def exerciseRoute(exercise: HasBaseValues, fileExtension: String): Call
-
-  override def exerciseRoutes(exercise: CompEx): Map[Call, String] =
-    fileTypes filter (ft => exercise.available(ft._1)) map (ft => (exerciseRoute(exercise.ex, ft._1), s"Mit ${ft._2} bearbeiten"))
-
-  def uploadSolutionRoute(exercise: HasBaseValues, fileExtension: String): Call
-
-  def downloadCorrectedRoute(exercise: HasBaseValues, fileExtension: String): Call
-
-}
-
 abstract class AFileExController[Ex <: Exercise, CompEx <: FileCompleteEx[Ex], R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseTableDefs[Ex, CompEx]]
 (cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: Tables, to: FileExToolObject)(implicit ec: ExecutionContext)
   extends BaseExerciseController[Ex, CompEx, R, CompResult, Tables](cc, dbcp, t, to) with Secured with FileUtils {

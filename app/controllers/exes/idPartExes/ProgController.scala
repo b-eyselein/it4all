@@ -1,14 +1,14 @@
-package controllers.exes.idExes
+package controllers.exes.idPartExes
 
 import javax.inject._
 
 import controllers.Secured
-import controllers.exes.IntExIdentifier
-import controllers.exes.idExes.ProgController._
+import controllers.exes.idPartExes.ProgController._
 import model.Enums.ExerciseState
 import model.core._
 import model.core.tools.ExerciseOptions
 import model.programming.ProgConsts._
+import model.programming.ProgEnums._
 import model.programming._
 import model.{JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
@@ -16,7 +16,7 @@ import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.json._
 import play.api.mvc._
 import play.twirl.api.Html
-import views.html.programming._
+import views.html.programming.{validatedTestData, _}
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future, duration}
@@ -35,8 +35,18 @@ object ProgController {
 
 @Singleton
 class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: ProgTableDefs)(implicit ec: ExecutionContext)
-  extends AIdExController[ProgExercise, ProgCompleteEx, ProgEvalResult, ProgCompleteResult, ProgTableDefs](cc, dbcp, t, ProgToolObject)
+  extends AIdPartExController[ProgExercise, ProgCompleteEx, ProgEvalResult, ProgCompleteResult, ProgTableDefs](cc, dbcp, t, ProgToolObject)
     with Secured with JsonFormat {
+
+  override type PartType = ProgExPart
+
+  override def partTypeFromString(str: String): Option[ProgExPart] = ProgExPart.byString(str.toUpperCase)
+
+  case class ProgExIdentifier(id: Int, part: ProgExPart) extends IdPartExIdentifier
+
+  override type ExIdentifier = ProgExIdentifier
+
+  override def identifier(id: Int, part: String): ProgExIdentifier = ProgExIdentifier(id, partTypeFromString(part.toUpperCase) getOrElse ProgExPart.IMPLEMENTATION)
 
   // Reading solution from requests
 
@@ -47,6 +57,7 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[String] =
     Solution.stringSolForm.bindFromRequest().fold(_ => None, sol => Some(sol.learnerSolution))
+
 
   // Yaml
 
@@ -61,7 +72,7 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
           //          val oldTestData = Option(CommitedTestDataHelper.forUserAndExercise(user, id)).getOrElse(List.empty)
 
           Ok(testDataCreation(user, ex, Seq.empty /* oldTestData*/))
-        case None     => Redirect(controllers.exes.idExes.routes.ProgController.index())
+        case None     => Redirect(controllers.exes.idPartExes.routes.ProgController.index())
       }
   }
 
@@ -87,7 +98,7 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   // Correction
 
-  override def correctEx(user: User, sol: String, exercise: ProgCompleteEx, identifier: IntExIdentifier): Try[ProgCompleteResult] = Try {
+  override def correctEx(user: User, sol: String, exercise: ProgCompleteEx, identifier: ProgExIdentifier): Try[ProgCompleteResult] = Try {
 
     tables.saveSolution(user, exercise, sol)
 
@@ -99,18 +110,27 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   // Views
 
-  override def renderExercise(user: User, exercise: ProgCompleteEx): Future[Html] = tables.loadSolution(user, exercise) map { oldSol =>
+  override def renderExercise(user: User, exercise: ProgCompleteEx, part: ProgExPart): Future[Html] = tables.loadSolution(user, exercise) map { oldSol =>
 
     val declaration: String = oldSol map (_.solution) getOrElse ProgLanguage.STANDARD_LANG.buildFunction(exercise)
 
-    views.html.core.exercise2Rows.render(user, ProgToolObject, EX_OPTIONS, exercise.ex, progExRest(exercise.ex), declaration)
+    progExercise.render(user, EX_OPTIONS, exercise.ex, declaration, part.name)
   }
 
   override def renderExesListRest: Html = Html("")
 
-  override def renderResult(correctionResult: ProgCompleteResult): Html = progResult(correctionResult)
+  private def renderResult(correctionResult: ProgCompleteResult): Html = progResult(correctionResult)
 
-  override protected def onLiveCorrectionSuccess(correctionResult: ProgCompleteResult): Result = Ok(progResult(correctionResult))
+  // Handlers for results
+
+  protected def onSubmitCorrectionResult(user: User, result: ProgCompleteResult): Result =
+    Ok(views.html.core.correction.render(result, renderResult(result), user, toolObject))
+
+  protected def onSubmitCorrectionError(user: User, error: Throwable): Result = ???
+
+  protected def onLiveCorrectionResult(result: ProgCompleteResult): Result = Ok(renderResult(result))
+
+  protected def onLiveCorrectionError(error: Throwable): Result = ???
 
   // Helper methods
 

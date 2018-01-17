@@ -11,7 +11,7 @@ import model.{JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.json.Json
-import play.api.mvc.{AnyContent, ControllerComponents, EssentialAction, Request}
+import play.api.mvc._
 import play.twirl.api.Html
 import views.html.uml._
 import views.html.umlActivity._
@@ -26,7 +26,7 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   override type PartType = UmlExPart
 
-  override def partTypeFromString(str: String): Option[UmlExPart] = UmlExPart.byString(str)
+  override def partTypeFromString(str: String): Option[UmlExPart] = UmlExPart.byString(str.toUpperCase)
 
   case class UmlExIdentifier(id: Int, part: UmlExPart) extends IdPartExIdentifier
 
@@ -63,7 +63,7 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
        |</div>
        |<hr>""".stripMargin)
 
-  override protected def renderResult(correctionResult: UmlResult): Html = umlResult.render(correctionResult)
+  private def renderResult(correctionResult: UmlResult): Html = umlResult.render(correctionResult)
 
   override protected def renderEditRest(exercise: Option[UmlCompleteEx]): Html = editUmlExRest.render(exercise)
 
@@ -140,5 +140,17 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
       //      }
     }
   }
+
+
+  // Handlers for results
+
+  protected def onSubmitCorrectionResult(user: User, result: UmlResult): Result =
+    Ok(views.html.core.correction.render(result, renderResult(result), user, toolObject))
+
+  protected def onSubmitCorrectionError(user: User, error: Throwable): Result = ???
+
+  protected def onLiveCorrectionResult(result: UmlResult): Result = Ok(renderResult(result))
+
+  protected def onLiveCorrectionError(error: Throwable): Result = ???
 
 }

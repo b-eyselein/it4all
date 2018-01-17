@@ -33,8 +33,9 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   override type ExIdentifier = WebExIdentifier
 
-  override def identifier(id: Int, part: String): WebExIdentifier = WebExIdentifier(id, partTypeFromString(part) getOrElse WebExPart.HTML_PART)
+  override def identifier(id: Int, part: String): WebExIdentifier = WebExIdentifier(id, partTypeFromString(part.toUpperCase) getOrElse WebExPart.HTML_PART)
 
+  // Reading solution from requests
 
   override type SolType = String
 
@@ -57,12 +58,12 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   def exRest(exerciseId: Int): EssentialAction = futureWithAdmin { user =>
     implicit request =>
       futureCompleteExById(exerciseId) map {
-        case Some(compEx) => Ok(webExRest(user, compEx))
+        case Some(compEx) => Ok(webExRest.render(user, compEx))
         case None         => BadRequest("TODO")
       }
   }
 
-  def playground: EssentialAction = withUser { user => implicit request => Ok(webPlayground(user)) }
+  def playground: EssentialAction = withUser { user => implicit request => Ok(webPlayground.render(user)) }
 
   def site(username: String, exerciseId: Int): Action[AnyContent] = Action.async { implicit request =>
     getOldSolOrDefault(username, exerciseId) map (sol => Ok(new Html(sol)))
@@ -71,14 +72,13 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   // Views
 
   override protected def renderExercise(user: User, exercise: WebCompleteEx, part: WebExPart): Future[Html] =
-    getOldSolOrDefault(user.username, exercise.ex.id) map (oldSol => webExercise(user, exercise, part, getTasks(exercise, part), oldSol))
-
+    getOldSolOrDefault(user.username, exercise.ex.id) map (oldSol => webExercise.render(user, exercise, part, getTasks(exercise, part), oldSol))
 
   override def renderExesListRest = new Html(
     s"""<a class="btn btn-primary btn-block" href="${routes.WebController.playground()}">Web-Playground</a>
        |<hr>""".stripMargin)
 
-  override def renderResult(correctionResult: CompleteResult[WebResult]): Html = Html(correctionResult.results.map(res =>
+  private def renderResult(correctionResult: CompleteResult[WebResult]): Html = Html(correctionResult.results.map(res =>
     s"""|<div class="alert alert-${res.getBSClass}">
         |  <p data-toggle="collapse" href="#task${res.task.task.id}">${res.task.task.id}. ${res.task.task.text}</p>
         |  <div id="task${res.task.task.id}" class="collapse ${if (res.isSuccessful) "" else "in"}">
@@ -87,7 +87,7 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
         |  </div>
         |</div>""".stripMargin) mkString "\n")
 
-  override protected def renderEditRest(exercise: Option[WebCompleteEx]): Html = editWebExRest(exercise)
+  override protected def renderEditRest(exercise: Option[WebCompleteEx]): Html = editWebExRest.render(exercise)
 
   // Correction
 
@@ -102,6 +102,17 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
     new GenericCompleteResult[WebResult](learnerSolution, getTasks(exercise, identifier.part) map (task => evaluateWebTask(task, driver)))
   }
+
+  // Handlers for results
+
+  protected def onSubmitCorrectionResult(user: User, result: CompleteResult[WebResult]): Result =
+    Ok(views.html.core.correction.render(result, renderResult(result), user, toolObject))
+
+  protected def onSubmitCorrectionError(user: User, error: Throwable): Result = ???
+
+  protected def onLiveCorrectionResult(result: CompleteResult[WebResult]): Result = Ok(renderResult(result))
+
+  protected def onLiveCorrectionError(error: Throwable): Result = ???
 
   // Other helper methods
 

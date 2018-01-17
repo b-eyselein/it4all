@@ -1,0 +1,163 @@
+@(user: model.User, exerciseOptions: model.core.tools.ExerciseOptions, exercise: model.programming.ProgExercise, oldSolution: String, part: String)
+
+@stdLanguage = @{
+    model.programming.ProgLanguage.STANDARD_LANG
+}
+
+@scripts = {
+    <script src="@routes.Assets.versioned("javascripts/programming.js")"></script>
+
+    <script>
+            function changeProgLanguage(theUrl) {
+                $.ajax({
+                    type: 'GET',
+                    url: theUrl,
+                    data: "language=" + $('#langSelect').val(),
+                    async: true,
+                    success: function (response) {
+                        $('#language').val(language);
+                        editor.setValue(response, 1000000);
+                    }
+                });
+            }
+    </script>
+
+        <!--suppress JSUnusedLocalSymbols -->
+    <script src="@routes.Assets.versioned("lib/ace/src/ace.js")"></script>
+    <script src="@routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
+    <script>
+            const theMode = "@exerciseOptions.aceMode";
+            const theMinLines = @exerciseOptions.minLines;
+            const theMaxLines = @exerciseOptions.maxLines;
+            const theUpdatePrev = @exerciseOptions.updatePrev;
+
+            function toggleFullscreen() {
+                var elem = document.getElementById('fullsc');// document.documentElement;
+                if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+                    console.log(elem);
+                    if (elem.requestFullscreen) {
+                        elem.requestFullscreen();
+                    } else if (elem.msRequestFullscreen) {
+                        elem.msRequestFullscreen();
+                    } else if (elem.mozRequestFullScreen) {
+                        elem.mozRequestFullScreen();
+                    } else if (elem.webkitRequestFullscreen) {
+                        elem.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+                    }
+                    $('#fullscBtnSpan').removeClass('glyphicon-resize-full').addClass('glyphicon-resize-small');
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.msExitFullscreen) {
+                        document.msExitFullscreen();
+                    } else if (document.mozCancelFullScreen) {
+                        document.mozCancelFullScreen();
+                    } else if (document.webkitExitFullscreen) {
+                        document.webkitExitFullscreen();
+                    }
+                    $('#fullscBtnSpan').removeClass('glyphicon-resize-small').addClass('glyphicon-resize-full');
+
+                }
+            }
+    </script>
+    <style>
+            #fullsc:-webkit-full-screen {
+                width: 100vw;
+                height: 100vh;
+            }
+
+            #fullsc:-moz-full-screen {
+                width: 100vw;
+                height: 100vh;
+            }
+
+            #fullsc:-ms-fullscreen {
+                width: 100vw;
+                height: 100vh;
+            }
+
+            #fullsc:fullscreen {
+                width: 100vw;
+                height: 100vh;
+            }
+    </style>
+}
+
+@main(exerciseOptions.tool, user, scripts) {
+    <div class="container" id="fullsc">
+
+        <form action="@controllers.exes.idPartExes.ProgToolObject.correctRoute(exercise, part)" method="post">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="page-header">
+                        <h2>Aufgabenstellung</h2>
+                    </div>
+
+                    <p>@Html(exercise.text)</p>
+
+
+                    <div class="input-group">
+                        <span class="input-group-addon">Sprache</span>
+                        <select class="form-control" id="langSelect" onchange="changeProgLanguage('@controllers.exes.idPartExes.routes.ProgController.getDeclaration()');">
+                        @for(language <- model.programming.ProgLanguage.values) {
+                            <option value="@language.name" @language.isSelected(stdLanguage)>@language.languageName </option>
+                        }
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="col-md-6">
+                    <div class="page-header">
+                        <h2>Editor</h2>
+                    </div>
+
+                        <!-- Editor -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default" onclick="changeFontsize(-2);">
+                                    <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                                </button>
+                                <span class="btn btn-default">Schriftgr&ouml;&szlig;e: <span id="fontsize">16</span>
+                                    px</span>
+                                <button type="button" class="btn btn-default" onclick="changeFontsize(+2);">
+                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                </button>
+                            </div>
+
+                        </div>
+                        <div id="editor" class="form-control">@oldSolution</div>
+                        <textarea title="hidden" hidden name="@model.core.CoreConsts.FORM_VALUE" id="@model.core.CoreConsts.FORM_VALUE">@oldSolution</textarea>
+                    </div>
+                        <!-- Editor Ende -->
+
+                </div>
+            </div>
+
+            <div class="btn-group btn-group-justified">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary" id="testButton"
+                    onclick="testTheSolution('@controllers.exes.idPartExes.ProgToolObject.correctLiveRoute(exercise, part)');">L&ouml;sung testen</button>
+                </div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default" onclick="toggleFullscreen()">
+                        Toggle Fullscreen <span class="glyphicon glyphicon-resize-full" id="fullscBtnSpan"></span>
+                    </button>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-success">L&ouml;sung abgeben</button>
+                </div>
+            </div>
+
+            <hr>
+
+            <section id="correctionDiv">
+                <h2>Bemerkungen</h2>
+                <div id="correction"></div>
+            </section>
+        </form>
+
+    </div>
+}

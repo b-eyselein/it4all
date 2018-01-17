@@ -1,5 +1,5 @@
-@import controllers.exes.idExes.ProgController
 @import controllers.exes
+@import controllers.exes.idPartExes.ProgController
 @(user: model.User, exercise: model.programming.ProgCompleteEx, oldData: Seq[model.programming.CommitedTestData])
 
 @scripts = {
@@ -29,7 +29,7 @@
 
             <div class="col-md-6">
 
-                <form class="form" action="@controllers.exes.idExes.routes.ProgController.validateTestData(exercise.ex.id)" method="post">
+                <form class="form" action="@controllers.exes.idPartExes.routes.ProgController.validateTestData(exercise.ex.id)" method="post">
                     <input title="hidden" hidden type="number" name="inputCount" id="inputCount" value="@exercise.inputCount">
                     <input title="hidden" hidden type="number" name="testCount" id="testCount" value="@Math.max(oldData.size, ProgController.STD_TEST_DATA_COUNT)">
                     <table class="table" id="testDataTable">
@@ -63,7 +63,7 @@
                                     </td>
                                 </tr>
                             }
-                            @for(testCount <- oldData.size until exes.idExes.ProgController.STD_TEST_DATA_COUNT) {
+                            @for(testCount <- oldData.size until exes.idPartExes.ProgController.STD_TEST_DATA_COUNT) {
                                 <tr id="tr_@testCount">
                                     <td>@testCount</td>
                                     @for(inputCount <- 0 until exercise.inputCount) {
@@ -96,7 +96,7 @@
                     <div class="btn-group btn-group-justified">
                         <div class="btn-group">
                             <button type="button" class="btn btn-primary"
-                            onclick="validateTestData('@controllers.exes.idExes.routes.ProgController.validateTestDataLive(exercise.ex.id)')">
+                            onclick="validateTestData('@controllers.exes.idPartExes.routes.ProgController.validateTestDataLive(exercise.ex.id)')">
                                 Testdaten validieren
                             </button>
                         </div>

@@ -4,9 +4,8 @@ import java.nio.file.{Files, Path}
 
 import controllers.Secured
 import controllers.exes.BaseExerciseController
-import model.core._
-import model.core.tools.ExToolObject
 import model._
+import model.core._
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.json.Json
 import play.api.mvc._
@@ -15,28 +14,21 @@ import play.twirl.api.Html
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-trait IdPartExToolObject extends ExToolObject {
-
-  def exParts: Map[String, String]
-
-  def exerciseRoute(exercise: HasBaseValues, part: String): Call
-
-  override def exerciseRoutes(exercise: CompEx): Map[Call, String] = exParts map (exPart => (exerciseRoute(exercise.ex, exPart._1), exPart._2))
-
-  def correctLiveRoute(exercise: HasBaseValues, part: String): Call
-
-  def correctRoute(exercise: HasBaseValues, part: String): Call
-
-}
-
-
 abstract class AIdPartExController[Ex <: Exercise, CompEx <: CompleteEx[Ex], R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseTableDefs[Ex, CompEx]]
 (cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: Tables, to: IdPartExToolObject)(implicit ec: ExecutionContext)
   extends BaseExerciseController[Ex, CompEx, R, CompResult, Tables](cc, dbcp, t, to) with Secured {
 
-  type PartType
+  type PartType <: ExPart
 
-  def partTypeFromString(str: String): Option[PartType]
+  protected def partTypeFromString(str: String): Option[PartType]
+
+  trait ExPart {
+
+    def urlName: String
+
+    def partName: String
+
+  }
 
   trait IdPartExIdentifier extends ExerciseIdentifier {
 
@@ -48,20 +40,17 @@ abstract class AIdPartExController[Ex <: Exercise, CompEx <: CompleteEx[Ex], R <
 
   override type ExIdentifier <: IdPartExIdentifier
 
-  def identifier(id: Int, part: String): ExIdentifier
+  protected def identifier(id: Int, part: String): ExIdentifier
 
   def correct(id: Int, partStr: String): EssentialAction = futureWithUser { user =>
     implicit request =>
-      correctAbstract(user, identifier(id, partStr), readSolutionFromPostRequest, res => Ok(renderCorrectionResult(user, res)),
-        // FIXME: on error...
-        error => BadRequest(views.html.main.render("Fehler", user, new Html(""), new Html(""),
-          new Html(s"""<pre>${error.getMessage}: ${error.getStackTrace mkString "\n"}</pre>""".stripMargin))))
+      correctAbstract(user, identifier(id, partStr), readSolutionFromPostRequest,
+        onSubmitCorrectionResult(user, _), onSubmitCorrectionError(user, _))
   }
 
   def correctLive(id: Int, partStr: String): EssentialAction = futureWithUser { user =>
-    implicit request => correctAbstract(user, identifier(id, partStr), readSolutionFromPutRequest, res => Ok(renderResult(res)), error => BadRequest(Json.toJson(error.getMessage)))
+    implicit request => correctAbstract(user, identifier(id, partStr), readSolutionFromPutRequest, onLiveCorrectionResult, onLiveCorrectionError)
   }
-
 
   def exercise(id: Int, partStr: String): EssentialAction = futureWithUser { user =>
     implicit request =>
@@ -80,12 +69,18 @@ abstract class AIdPartExController[Ex <: Exercise, CompEx <: CompleteEx[Ex], R <
   protected def checkAndCreateSolDir(username: String, exercise: CompEx): Try[Path] =
     Try(Files.createDirectories(toolObject.solutionDirForExercise(username, exercise.ex)))
 
-
-  protected def renderCorrectionResult(user: User, correctionResult: CompResult): Html =
-    views.html.core.correction.render(correctionResult, renderResult(correctionResult), user, toolObject)
+  // Views
 
   protected def renderExercise(user: User, exercise: CompEx, part: PartType): Future[Html]
 
-  protected def renderResult(correctionResult: CompResult): Html
+  // Handlers for results
+
+  protected def onSubmitCorrectionResult(user: User, result: CompResult): Result
+
+  protected def onSubmitCorrectionError(user: User, error: Throwable): Result
+
+  protected def onLiveCorrectionResult(result: CompResult): Result
+
+  protected def onLiveCorrectionError(error: Throwable): Result
 
 }

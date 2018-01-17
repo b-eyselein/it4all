@@ -229,7 +229,11 @@ R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseCollec
     }
   }
 
-  // Views and other result handlers
+  // Correction
+
+  protected def correctEx(user: User, form: SolType, exercise: CompEx, collection: Coll): Try[CompResult]
+
+  // Views
 
   protected def renderExercise(user: User, coll: Coll, exercise: CompEx, numOfExes: Int): Html
 
@@ -240,8 +244,6 @@ R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseCollec
   protected def onLiveCorrectionResult(result: CompResult): Result
 
   protected def onLiveCorrectionError(error: Throwable): Result
-
-  protected def correctEx(user: User, form: SolType, exercise: CompEx, collection: Coll): Try[CompResult]
 
   protected def adminRenderEditRest(exercise: Option[CompColl]): Html
 
