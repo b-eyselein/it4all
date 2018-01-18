@@ -10,7 +10,7 @@ import model.core._
 import model.spread._
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.mvc.{AnyContent, ControllerComponents, Request}
+import play.api.mvc.{AnyContent, ControllerComponents, Request, Result}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -31,9 +31,9 @@ class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
 
   override type SolType = this.type
 
-  override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[SpreadController.this.type] = ???
+  override def readSolutionFromPostRequest(user: User, id: Int)(implicit request: Request[AnyContent]): Option[SpreadController.this.type] = ???
 
-  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[SpreadController.this.type] = ???
+  override def readSolutionFromPutRequest(user: User, id: Int)(implicit request: Request[AnyContent]): Option[SpreadController.this.type] = ???
 
   // Yaml
 
@@ -73,4 +73,11 @@ class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
       case Some(corrector) => corrector.correct(samplePath = sampleFilePath, comparePath = learnerFilePath, conditionalFormating = false, compareCharts = false)
     }
 
+  override protected def onSubmitCorrectionResult(user: User, result: GenericCompleteResult[SpreadSheetCorrectionResult]): Result = ???
+
+  override protected def onSubmitCorrectionError(user: User, error: Throwable): Result = ???
+
+  override protected def onLiveCorrectionResult(result: GenericCompleteResult[SpreadSheetCorrectionResult]): Result = ???
+
+  override protected def onLiveCorrectionError(error: Throwable): Result = ???
 }

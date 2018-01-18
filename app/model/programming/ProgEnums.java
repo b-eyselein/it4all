@@ -1,8 +1,6 @@
 package model.programming;
 
-import controllers.exes.idPartExes.AIdPartExController;
 import model.Enums;
-import model.essentials.TRUE;
 import play.api.libs.json.JsBoolean;
 import play.api.libs.json.JsNumber;
 import play.api.libs.json.JsString;
@@ -16,30 +14,7 @@ import java.util.List;
 
 public abstract class ProgEnums {
 
-    public enum ProgExPart implements Enums.Selectable<ProgExPart>, AIdPartExController.ExPart {
-
-        TESTDATA_CREATION("Erstellen der Testdaten"),
-        IMPLEMENTATION("Implementierung");
-
-        public final String partName;
-
-        ProgExPart(String thePartName) {
-            partName = thePartName;
-        }
-
-        public static Option<ProgExPart> byString(String str) {
-            try {
-                return new Some<>(valueOf(str));
-            } catch (Exception e) {
-                // ==> None!
-                return Option.apply(null);
-            }
-        }
-
-    }
-
     public enum DataTypes implements Enums.Selectable<DataTypes> {
-
 
         INTEGER("int"),
         FLOAT("float"),

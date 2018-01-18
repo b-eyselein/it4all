@@ -5,7 +5,7 @@ import javax.inject.Inject
 import controllers.exes.idPartExes.WebToolObject
 import model.Enums.ExerciseState
 import model._
-import model.web.WebEnums.{JsActionType, WebExPart}
+import model.web.WebEnums.JsActionType
 import org.openqa.selenium.{By, SearchContext}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc.Call
@@ -19,7 +19,7 @@ case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTa
 
   override def preview: Html = views.html.web.webPreview(this)
 
-  override def tags: Seq[WebExTag] = Seq(new WebExTag(WebExPart.HTML_PART.shortName, ex.hasHtmlPart), new WebExTag(WebExPart.JS_PART.shortName, ex.hasJsPart))
+  override def tags: Seq[WebExTag] = Seq(new WebExTag(WebExParts.HtmlPart.partName, ex.hasHtmlPart), new WebExTag(WebExParts.JsPart.partName, ex.hasJsPart))
 
   override def exerciseRoutes: Map[Call, String] = WebToolObject.exerciseRoutes(this)
 
@@ -63,9 +63,9 @@ object WebExercise {
 case class WebExercise(baseValues: BaseValues, htmlText: Option[String], hasHtmlPart: Boolean, jsText: Option[String], hasJsPart: Boolean) extends Exercise
 
 trait WebTask {
-  val id: Int
+  val id        : Int
   val exerciseId: Int
-  val text: String
+  val text      : String
   val xpathQuery: String
 }
 

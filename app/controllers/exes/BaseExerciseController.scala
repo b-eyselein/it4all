@@ -4,10 +4,10 @@ import java.nio.file.Files
 import java.sql.SQLSyntaxErrorException
 
 import controllers.Secured
+import model._
 import model.core.CoreConsts._
 import model.core._
 import model.core.tools.ExToolObject
-import model._
 import net.jcazevedo.moultingyaml._
 import play.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
@@ -21,8 +21,6 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
 import scala.util.{Failure, Success, Try}
 
-case class IntExIdentifier(id: Int) extends ExerciseIdentifier
-
 abstract class BaseExerciseController[Ex <: Exercise, CompEx <: CompleteEx[Ex], R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseTableDefs[Ex, CompEx]]
 (cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val tables: Tables, val toolObject: ExToolObject)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured with FileUtils {
@@ -31,9 +29,9 @@ abstract class BaseExerciseController[Ex <: Exercise, CompEx <: CompleteEx[Ex], 
 
   type SolType
 
-  def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[SolType]
+  protected def readSolutionFromPostRequest(user: User, id: Int)(implicit request: Request[AnyContent]): Option[SolType]
 
-  def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[SolType]
+  protected def readSolutionFromPutRequest(user: User, id: Int)(implicit request: Request[AnyContent]): Option[SolType]
 
   // Reading Yaml
 
@@ -41,7 +39,6 @@ abstract class BaseExerciseController[Ex <: Exercise, CompEx <: CompleteEx[Ex], 
 
   // Database queries
 
-  type ExIdentifier <: ExerciseIdentifier
 
   protected def numOfExes: Future[Int] = tables.futureNumOfExes
 
@@ -170,6 +167,24 @@ abstract class BaseExerciseController[Ex <: Exercise, CompEx <: CompleteEx[Ex], 
     implicit request => ???
   }
 
+  def correct(id: Int): EssentialAction = futureWithUser { user =>
+    implicit request => correctAbstract(user, id, readSolutionFromPostRequest(user, id), onSubmitCorrectionResult(user, _), onSubmitCorrectionError(user, _))
+  }
+
+  def correctLive(id: Int): EssentialAction = futureWithUser { user =>
+    implicit request => correctAbstract(user, id, readSolutionFromPutRequest(user, id), onLiveCorrectionResult, onLiveCorrectionError)
+  }
+
+  // Handlers for results
+
+  protected def onSubmitCorrectionResult(user: User, result: CompResult): Result
+
+  protected def onSubmitCorrectionError(user: User, error: Throwable): Result
+
+  protected def onLiveCorrectionResult(result: CompResult): Result
+
+  protected def onLiveCorrectionError(error: Throwable): Result
+
   // Views and other helper methods for admin
 
   protected def previewExercises(admin: User, read: Seq[CompEx]): Html = exercisePreview(admin, read, toolObject)
@@ -193,21 +208,21 @@ abstract class BaseExerciseController[Ex <: Exercise, CompEx <: CompleteEx[Ex], 
   protected def renderExes(user: User, exes: Seq[CompEx], allExesSize: Int): Html =
     views.html.core.exesList(user, exes, renderExesListRest, toolObject, allExesSize / STEP + 1)
 
-  protected def correctAbstract[S, Err](user: User, identifier: ExIdentifier, maybeSolution: Option[SolType],
+  protected def correctAbstract[S, Err](user: User, id: Int, maybeSolution: Option[SolType],
                                         onCorrectionSuccess: CompResult => Result, onCorrectionError: Throwable => Result)
                                        (implicit request: Request[AnyContent]): Future[Result] =
     maybeSolution match {
       case None           => Future(BadRequest("No solution!"))
-      case Some(solution) => futureCompleteExById(identifier.id) map {
+      case Some(solution) => futureCompleteExById(id) map {
         case None           => NotFound("No such exercise!")
-        case Some(exercise) => correctEx(user, solution, exercise, identifier) match {
+        case Some(exercise) => correctEx(user, solution, exercise) match {
           case Success(result) => onCorrectionSuccess(result)
           case Failure(error)  => onCorrectionError(error)
         }
       }
     }
 
-  protected def correctEx(user: User, sol: SolType, exercise: CompEx, identifier: ExIdentifier): Try[CompResult] = ???
+  protected def correctEx(user: User, sol: SolType, exercise: CompEx): Try[CompResult] = ???
 
   /**
     * Used for rendering things such as playgrounds

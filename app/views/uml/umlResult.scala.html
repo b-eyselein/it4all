@@ -6,7 +6,7 @@
 
 @result.nextPart match {
     case Some(np) => {
-        <a href="@controllers.exes.idPartExes.routes.UmlController.exercise(result.exercise.ex.id, np.name)"
+        <a href="@controllers.exes.idPartExes.routes.UmlController.exercise(result.exercise.ex.id, np.partName)"
         class="btn btn-primary btn-block">Zum n&auml;chsten Aufgabenteil</a>
     }
     case None => {

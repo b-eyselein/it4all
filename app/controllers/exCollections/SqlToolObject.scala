@@ -1,5 +1,6 @@
 package controllers.exCollections
 
+import model.core.tools.CollectionToolObject
 import model.sql.{SqlCompleteEx, SqlConsts}
 import model.{Consts, HasBaseValues}
 import play.api.mvc.Call

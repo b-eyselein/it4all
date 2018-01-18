@@ -1,14 +1,14 @@
 package controllers.exes.idPartExes
 
 import model.Enums.ToolState
-import model.programming.ProgEnums.ProgExPart
-import model.programming.{ProgCompleteEx, ProgConsts}
+import model.core.tools.IdPartExToolObject
+import model.programming.{ProgCompleteEx, ProgConsts, ProgExParts}
 import model.{Consts, HasBaseValues}
 import play.api.mvc.Call
 
 object ProgToolObject extends IdPartExToolObject {
 
-  override def exParts: Map[String, String] = ProgExPart.values().map(part => part.name.toLowerCase -> part.partName).toMap
+  override def exParts: Map[String, String] = ProgExParts.values.map(part => part.urlName -> part.partName).toMap
 
   override type CompEx = ProgCompleteEx
 
@@ -29,9 +29,9 @@ object ProgToolObject extends IdPartExToolObject {
 
   override def exerciseListRoute(page: Int): Call = routes.ProgController.exerciseList(page)
 
-  override def correctLiveRoute(exercise: HasBaseValues, part: String): Call = routes.ProgController.correctLive(exercise.id, part)
+  override def correctLiveRoute(exercise: HasBaseValues): Call = routes.ProgController.correctLive(exercise.id)
 
-  override def correctRoute(exercise: HasBaseValues, part: String): Call = routes.ProgController.correct(exercise.id, part)
+  override def correctRoute(exercise: HasBaseValues): Call = routes.ProgController.correct(exercise.id)
 
 
   override def adminIndexRoute: Call = routes.ProgController.adminIndex()

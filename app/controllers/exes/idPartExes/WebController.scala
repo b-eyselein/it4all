@@ -3,15 +3,16 @@ package controllers.exes.idPartExes
 import javax.inject._
 
 import controllers.Secured
-import model.User
 import model.core._
 import model.web.WebConsts._
 import model.web.WebCorrector.evaluateWebTask
-import model.web.WebEnums.WebExPart
+import model.web.WebExParts.WebExPart
 import model.web._
+import model.{JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import play.api.db.slick.DatabaseConfigProvider
+import play.api.libs.json.{JsObject, JsValue}
 import play.api.mvc._
 import play.twirl.api.Html
 import views.html.web._
@@ -21,29 +22,31 @@ import scala.concurrent.{Await, ExecutionContext, Future, duration}
 import scala.language.implicitConversions
 import scala.util.Try
 
+case class WebSolutionType(part: WebExPart, solution: String)
+
 @Singleton
 class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: WebTableDefs)(implicit ec: ExecutionContext)
-  extends AIdPartExController[WebExercise, WebCompleteEx, WebResult, CompleteResult[WebResult], WebTableDefs](cc, dbcp, t, WebToolObject) with Secured {
+  extends AIdPartExController[WebExercise, WebCompleteEx, WebResult, CompleteResult[WebResult], WebTableDefs](cc, dbcp, t, WebToolObject)
+    with Secured with JsonFormat {
 
   override type PartType = WebExPart
 
-  override def partTypeFromString(str: String): Option[WebExPart] = WebExPart.byShortName(str)
+  override def partTypeFromUrl(urlName: String): Option[WebExPart] = WebExParts.values.find(_.urlName == urlName)
 
   case class WebExIdentifier(id: Int, part: WebExPart) extends IdPartExIdentifier
 
-  override type ExIdentifier = WebExIdentifier
-
-  override def identifier(id: Int, part: String): WebExIdentifier = WebExIdentifier(id, partTypeFromString(part.toUpperCase) getOrElse WebExPart.HTML_PART)
-
   // Reading solution from requests
 
-  override type SolType = String
+  override type SolType = WebSolutionType
 
-  override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[String] =
-    Solution.stringSolForm.bindFromRequest().fold(_ => None, sol => Some(sol.learnerSolution))
+  override def readSolutionFromPostRequest(user: User, id: Int)(implicit request: Request[AnyContent]): Option[WebSolutionType] =
+    Solution.stringSolForm.bindFromRequest().fold(_ => None, sol => ??? /*Some(sol.learnerSolution)*/)
 
-  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[String] =
-    Solution.stringSolForm.bindFromRequest().fold(_ => None, sol => Some(sol.learnerSolution))
+  //  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[String] =
+  //    Solution.stringSolForm.bindFromRequest().fold(_ => None, sol => Some(sol.learnerSolution))
+
+  override protected def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: WebExPart): Option[WebSolutionType] =
+    jsValue.asStr map (sol => WebSolutionType(part, sol))
 
   // Yaml
 
@@ -91,16 +94,16 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // Correction
 
-  override def correctEx(user: User, learnerSolution: String, exercise: WebCompleteEx, identifier: WebExIdentifier): Try[CompleteResult[WebResult]] = Try {
+  override def correctEx(user: User, learnerSolution: WebSolutionType, exercise: WebCompleteEx): Try[CompleteResult[WebResult]] = Try {
     val solutionUrl = BASE_URL + routes.WebController.site(user.username, exercise.ex.id).url
 
-    val newSol = WebSolution(exercise.ex.id, user.username, learnerSolution)
+    val newSol = WebSolution(exercise.ex.id, user.username, learnerSolution.solution)
 
     Await.result(db.run(tables.webSolutions insertOrUpdate newSol), Duration(2, duration.SECONDS))
     val driver = new HtmlUnitDriver(true)
     driver get solutionUrl
 
-    new GenericCompleteResult[WebResult](learnerSolution, getTasks(exercise, identifier.part) map (task => evaluateWebTask(task, driver)))
+    new GenericCompleteResult[WebResult](learnerSolution.solution, getTasks(exercise, learnerSolution.part) map (task => evaluateWebTask(task, driver)))
   }
 
   // Handlers for results
@@ -114,6 +117,8 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   protected def onLiveCorrectionError(error: Throwable): Result = ???
 
+  //    Ok(Html(s"""<div class="alert alert-danger">Es gab einen Fehler bei der Korrektur ihrer L&ouml;sung: ${error.getMessage}</div>"""))
+
   // Other helper methods
 
   private def getOldSolOrDefault(username: String, exerciseId: Int): Future[String] =
@@ -123,8 +128,8 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
     }
 
   private def getTasks(exercise: WebCompleteEx, part: WebExPart): Seq[WebCompleteTask] = part match {
-    case WebExPart.HTML_PART => exercise.htmlTasks
-    case WebExPart.JS_PART   => exercise.jsTasks
+    case WebExParts.HtmlPart => exercise.htmlTasks
+    case WebExParts.JsPart   => exercise.jsTasks
   }
 
 }

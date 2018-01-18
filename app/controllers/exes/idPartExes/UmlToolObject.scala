@@ -1,8 +1,8 @@
 package controllers.exes.idPartExes
 
 import model.Enums.ToolState
-import model.uml.UmlEnums.UmlExPart
-import model.uml.{UmlCompleteEx, UmlConsts}
+import model.core.tools.IdPartExToolObject
+import model.uml.{UmlCompleteEx, UmlConsts, UmlExParts}
 import model.{Consts, HasBaseValues}
 import play.api.mvc.Call
 
@@ -10,7 +10,7 @@ object UmlToolObject extends IdPartExToolObject {
 
   override type CompEx = UmlCompleteEx
 
-  override def exParts: Map[String, String] = Map(UmlExPart.CLASS_SELECTION.name -> "Mit Zwischenkorrektur", UmlExPart.DIAG_DRAWING.name -> "Freies Erstellen")
+  override def exParts: Map[String, String] = Map(UmlExParts.ClassSelection.urlName -> "Mit Zwischenkorrektur", UmlExParts.DiagramDrawing.urlName -> "Freies Erstellen")
 
   override val hasTags  : Boolean   = false
   override val toolname : String    = "Uml"
@@ -25,9 +25,9 @@ object UmlToolObject extends IdPartExToolObject {
   override def exerciseListRoute(page: Int): Call = routes.UmlController.exerciseList(page)
 
   // not in routes...
-  override def correctLiveRoute(exercise: HasBaseValues, part: String): Call = ??? // routes.UmlController.correctLive(exercise.id, part)
+  override def correctLiveRoute(exercise: HasBaseValues): Call = ??? // routes.UmlController.correctLive(exercise.id, part)
 
-  override def correctRoute(exercise: HasBaseValues, part: String): Call = routes.UmlController.correct(exercise.id, part)
+  override def correctRoute(exercise: HasBaseValues): Call = routes.UmlController.correct(exercise.id)
 
 
   override def adminIndexRoute: Call = routes.UmlController.adminIndex()

@@ -1,7 +1,5 @@
 package model.core.tools
 
-import controllers.exCollections.CollectionToolObject
-
 import scala.collection.mutable
 
 object ToolList {

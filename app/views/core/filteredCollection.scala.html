@@ -1,7 +1,7 @@
 @import model._
 
 @(user: User, collection: CompleteCollection[_ <: Exercise, _ <: CompleteEx[_], _ <: ExerciseCollection[_, _]], exercises: Seq[_ <: CompleteEx[_]],
-        toolObject: controllers.exCollections.CollectionToolObject, filter: String, currentSite: Int, numOfSites: Int)
+        toolObject: model.core.tools.CollectionToolObject, filter: String, currentSite: Int, numOfSites: Int)
 
     @main("Collection", user) {
         <div class="container">

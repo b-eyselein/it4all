@@ -1,9 +1,9 @@
 package controllers.exes.fileExes
 
+import model.core.tools.FileExToolObject
 import model.spread.{SpreadConsts, SpreadExercise}
 import model.{Consts, HasBaseValues}
 import play.api.mvc.Call
-
 
 object SpreadToolObject extends FileExToolObject {
 
@@ -50,4 +50,7 @@ object SpreadToolObject extends FileExToolObject {
 
   override def deleteExerciseRoute(exercise: HasBaseValues): Call = routes.SpreadController.adminDeleteExercise(exercise.id)
 
+  override def correctRoute(exercise: HasBaseValues): Call = ???
+
+  override def correctLiveRoute(exercise: HasBaseValues): Call = ???
 }

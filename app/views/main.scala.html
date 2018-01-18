@@ -38,7 +38,7 @@
                             @Html(
                                 model.core.tools.ToolList.allToolObjects.map {
                                     to => s"""<li><a href="${to.indexCall}">${to.toolname} ${to.toolState.badge}</a></li>"""
-                                }.mkString("""<li class="divider"></li>"""))
+                                }.mkString(s"""\n<li class="divider"></li>\n"""))
                             </ul>
                         </li>
                     </ul>

@@ -9,7 +9,7 @@ import model.core._
 import model.mindmap.{MindmapExercise, MindmapTableDefs}
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.mvc.{AnyContent, ControllerComponents, Request}
+import play.api.mvc.{AnyContent, ControllerComponents, Request, Result}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -24,9 +24,9 @@ class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfig
 
   override type SolType = this.type
 
-  override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[MindmapController.this.type] = ???
+  override def readSolutionFromPostRequest(user: User, id: Int)(implicit request: Request[AnyContent]): Option[MindmapController.this.type] = ???
 
-  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[MindmapController.this.type] = ???
+  override def readSolutionFromPutRequest(user: User, id: Int)(implicit request: Request[AnyContent]): Option[MindmapController.this.type] = ???
 
   // Yaml
 
@@ -68,5 +68,11 @@ class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfig
   //      } catch {
   //        case e@(_: ParsingException | _: IOException) => e.printStackTrace()
   //      }
+  override protected def onSubmitCorrectionResult(user: User, result: GenericCompleteResult[EvaluationResult]): Result = ???
 
+  override protected def onSubmitCorrectionError(user: User, error: Throwable): Result = ???
+
+  override protected def onLiveCorrectionResult(result: GenericCompleteResult[EvaluationResult]): Result = ???
+
+  override protected def onLiveCorrectionError(error: Throwable): Result = ???
 }

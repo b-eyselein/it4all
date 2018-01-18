@@ -4,14 +4,14 @@ import java.nio.file.Path
 import java.sql.SQLSyntaxErrorException
 
 import controllers.Secured
-import controllers.exes.{BaseExerciseController, IntExIdentifier}
+import controllers.exes.BaseExerciseController
 import model._
 import model.core.CommonUtils.RicherTry
 import model.core._
-import model.core.tools.ExToolObject
+import model.core.tools.FileExToolObject
 import model.spread.SpreadConsts
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.mvc.{Call, ControllerComponents, EssentialAction, Result}
+import play.api.mvc.{ControllerComponents, EssentialAction, Result}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -20,8 +20,6 @@ import scala.util.{Failure, Success, Try}
 abstract class AFileExController[Ex <: Exercise, CompEx <: FileCompleteEx[Ex], R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseTableDefs[Ex, CompEx]]
 (cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: Tables, to: FileExToolObject)(implicit ec: ExecutionContext)
   extends BaseExerciseController[Ex, CompEx, R, CompResult, Tables](cc, dbcp, t, to) with Secured with FileUtils {
-
-  override type ExIdentifier = IntExIdentifier
 
   override def saveAndPreviewExercises(admin: User, read: Seq[CompEx]): Future[Result] =
     saveRead(read) map (_ => Ok(previewExercises(admin, read))) recover {

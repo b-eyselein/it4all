@@ -43,35 +43,35 @@ PUT           /essentials/bool/creation                   controllers.randomExes
 
 
 # XML - Anfang
-GET           /xml/admin                                  controllers.exes.idExes.XmlController.adminIndex
+GET           /xml/admin                                  controllers.exes.idPartExes.XmlController.adminIndex
 
-GET           /xml/admin/import                           controllers.exes.idExes.XmlController.adminImportExercises
-GET           /xml/admin/export                           controllers.exes.idExes.XmlController.adminExportExercises
-GET           /xml/admin/exportFile                       controllers.exes.idExes.XmlController.adminExportExercisesAsFile
+GET           /xml/admin/import                           controllers.exes.idPartExes.XmlController.adminImportExercises
+GET           /xml/admin/export                           controllers.exes.idPartExes.XmlController.adminExportExercises
+GET           /xml/admin/exportFile                       controllers.exes.idPartExes.XmlController.adminExportExercisesAsFile
 
-GET           /xml/admin/exerciseList                     controllers.exes.idExes.XmlController.adminExerciseList
-GET           /xml/admin/newExForm                        controllers.exes.idExes.XmlController.adminNewExerciseForm
-PUT           /xml/admin/exerciseList                     controllers.exes.idExes.XmlController.adminCreateExercise
-POST          /xml/admin/exerciseList                     controllers.exes.idExes.XmlController.adminCreateExercise
+GET           /xml/admin/exerciseList                     controllers.exes.idPartExes.XmlController.adminExerciseList
+GET           /xml/admin/newExForm                        controllers.exes.idPartExes.XmlController.adminNewExerciseForm
+PUT           /xml/admin/exerciseList                     controllers.exes.idPartExes.XmlController.adminCreateExercise
+POST          /xml/admin/exerciseList                     controllers.exes.idPartExes.XmlController.adminCreateExercise
 
-GET           /xml/admin/exerciseList/:id                 controllers.exes.idExes.XmlController.adminEditExerciseForm(id: Int)
-PUT           /xml/admin/exerciseList/:id                 controllers.exes.idExes.XmlController.adminEditExercise(id: Int)
-POST          /xml/admin/exerciseList/:id                 controllers.exes.idExes.XmlController.adminEditExercise(id: Int)
-DELETE        /xml/admin/exerciseList/:id                 controllers.exes.idExes.XmlController.adminDeleteExercise(id: Int)
+GET           /xml/admin/exerciseList/:id                 controllers.exes.idPartExes.XmlController.adminEditExerciseForm(id: Int)
+PUT           /xml/admin/exerciseList/:id                 controllers.exes.idPartExes.XmlController.adminEditExercise(id: Int)
+POST          /xml/admin/exerciseList/:id                 controllers.exes.idPartExes.XmlController.adminEditExercise(id: Int)
+DELETE        /xml/admin/exerciseList/:id                 controllers.exes.idPartExes.XmlController.adminDeleteExercise(id: Int)
 
-PUT           /xml/admin/exercise/:id/state               controllers.exes.idExes.XmlController.adminChangeExState(id: Int)
-
-
-GET           /xml/                                       controllers.exes.idExes.XmlController.index
-GET           /xml/exercises                              controllers.exes.idExes.XmlController.exerciseList(page: Int ?= 1)
-
-GET           /xml/solve/:id                              controllers.exes.idExes.XmlController.exercise(id: Int)
-PUT           /xml/solve/:id                              controllers.exes.idExes.XmlController.correctLive(id: Int)
-POST          /xml/solve/:id                              controllers.exes.idExes.XmlController.correct(id: Int)
+PUT           /xml/admin/exercise/:id/state               controllers.exes.idPartExes.XmlController.adminChangeExState(id: Int)
 
 
-GET           /xml/playground                             controllers.exes.idExes.XmlController.playground
-PUT           /xml/playground                             controllers.exes.idExes.XmlController.playgroundCorrection
+GET           /xml/                                       controllers.exes.idPartExes.XmlController.index
+GET           /xml/exercises                              controllers.exes.idPartExes.XmlController.exerciseList(page: Int ?= 1)
+
+GET           /xml/solve/:id/:part                        controllers.exes.idPartExes.XmlController.exercise(id: Int, part: String)
+PUT           /xml/solve/:id                              controllers.exes.idPartExes.XmlController.correctLive(id: Int)
+POST          /xml/solve/:id                              controllers.exes.idPartExes.XmlController.correct(id: Int)
+
+
+GET           /xml/playground                             controllers.exes.idPartExes.XmlController.playground
+PUT           /xml/playground                             controllers.exes.idPartExes.XmlController.playgroundCorrection
 # XML - Ende
 
 # Prog - Anfang
@@ -98,15 +98,11 @@ PUT           /prog/admin/exercise/:id/state              controllers.exes.idPar
 GET           /prog/                                      controllers.exes.idPartExes.ProgController.index
 GET           /prog/exercises                             controllers.exes.idPartExes.ProgController.exerciseList(page: Int ?= 1)
 
-GET           /prog/testdata/:id                          controllers.exes.idPartExes.ProgController.testData(id: Int)
-POST          /prog/validate/:id                          controllers.exes.idPartExes.ProgController.validateTestData(id: Int)
-PUT           /prog/validate/:id                          controllers.exes.idPartExes.ProgController.validateTestDataLive(id: Int)
-
 GET           /prog/declaration                           controllers.exes.idPartExes.ProgController.getDeclaration(language: String ?= "")
 
 GET           /prog/exercise/:id/:part                    controllers.exes.idPartExes.ProgController.exercise(id: Int, part: String)
-PUT           /prog/exercise/:id/:part                    controllers.exes.idPartExes.ProgController.correctLive(id: Int, part: String)
-POST          /prog/exercise/:id/:part                    controllers.exes.idPartExes.ProgController.correct(id: Int, part: String)
+PUT           /prog/exercise/:id                          controllers.exes.idPartExes.ProgController.correctLive(id: Int)
+POST          /prog/exercise/:id                          controllers.exes.idPartExes.ProgController.correct(id: Int)
 # Prog - Ende
 
 # Blanks - Anfang...
@@ -224,8 +220,8 @@ GET           /web/playground                             controllers.exes.idPar
 
 GET           /web/:id/:exType                            controllers.exes.idPartExes.WebController.exercise(id: Int, exType: String)
 
-PUT           /web/:id/:exType                            controllers.exes.idPartExes.WebController.correctLive(id: Int, exType: String)
-POST          /web/:id/:exType                            controllers.exes.idPartExes.WebController.correct(id: Int, exType: String)
+PUT           /web/:id                                    controllers.exes.idPartExes.WebController.correctLive(id: Int)
+POST          /web/:id                                    controllers.exes.idPartExes.WebController.correct(id: Int)
 
 GET           /web/sol/:user/:id                          controllers.exes.idPartExes.WebController.site(user: String, id: Int)
 # Web - Ende
@@ -267,7 +263,8 @@ GET           /uml/                                       controllers.exes.idPar
 GET           /uml/exercises                              controllers.exes.idPartExes.UmlController.exerciseList(page: Int ?= 1)
 
 GET           /uml/:id/:part                              controllers.exes.idPartExes.UmlController.exercise(id: Int, part: String)
-POST          /uml/:id/:part                              controllers.exes.idPartExes.UmlController.correct(id: Int, part)
+POST          /uml/:id                                    controllers.exes.idPartExes.UmlController.correct(id: Int)
+PUT           /uml/:id                                    controllers.exes.idPartExes.UmlController.correctLive(id: Int)
 # Uml - Ende
 
 

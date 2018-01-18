@@ -4,13 +4,12 @@ import javax.inject._
 
 import controllers.Secured
 import model.core._
-import model.uml.UmlEnums.UmlExPart
-import model.uml.UmlEnums.UmlExPart._
+import model.uml.UmlExParts._
 import model.uml.{UmlJsonProtocol, _}
 import model.{JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import play.twirl.api.Html
 import views.html.uml._
@@ -26,23 +25,21 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   override type PartType = UmlExPart
 
-  override def partTypeFromString(str: String): Option[UmlExPart] = UmlExPart.byString(str.toUpperCase)
+  override def partTypeFromUrl(urlName: String): Option[UmlExPart] = UmlExParts.values.find(_.urlName == urlName)
 
   case class UmlExIdentifier(id: Int, part: UmlExPart) extends IdPartExIdentifier
 
-  override type ExIdentifier = UmlExIdentifier
-
-  override def identifier(id: Int, part: String): UmlExIdentifier = UmlExIdentifier(id, partTypeFromString(part) getOrElse UmlExPart.CLASS_SELECTION)
-
   override type SolType = UmlSolution
 
-  override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[UmlSolution] =
+  override def readSolutionFromPostRequest(user: User, id: Int)(implicit request: Request[AnyContent]): Option[UmlSolution] =
     Solution.stringSolForm.bindFromRequest fold(_ => None, sol => UmlJsonProtocol.readFromJson(Json parse sol.learnerSolution))
 
   /**
     * Not yet used...
     */
-  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[UmlSolution] = None
+  //  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[UmlSolution] = None
+
+  override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: UmlExPart): Option[UmlSolution] = ???
 
   // Yaml
 
@@ -51,10 +48,10 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   // Views
 
   override protected def renderExercise(user: User, exercise: UmlCompleteEx, part: UmlExPart): Future[Html] = Future(part match {
-    case CLASS_SELECTION   => classSelection.render(user, exercise.ex)
-    case DIAG_DRAWING      => diagdrawing.render(user, exercise, getsHelp = false)
-    case DIAG_DRAWING_HELP => diagdrawing.render(user, exercise, getsHelp = true)
-    case ALLOCATION        => allocation.render(user, exercise)
+    case ClassSelection     => classSelection.render(user, exercise.ex)
+    case DiagramDrawing     => diagdrawing.render(user, exercise, getsHelp = false)
+    case DiagramDrawingHelp => diagdrawing.render(user, exercise, getsHelp = true)
+    case MemberAllocation   => allocation.render(user, exercise)
   })
 
   override protected val renderExesListRest = new Html(
@@ -69,12 +66,18 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // Correction
 
-  override def correctEx(user: User, sol: UmlSolution, exercise: UmlCompleteEx, identifier: UmlExIdentifier): Try[UmlResult] = Try(identifier.part match {
-    case CLASS_SELECTION   => ClassSelectionResult(exercise, sol)
-    case DIAG_DRAWING_HELP => DiagramDrawingHelpResult(exercise, sol)
-    case ALLOCATION        => AllocationResult(exercise, sol)
-    case DIAG_DRAWING      => DiagramDrawingResult(exercise, sol)
-  })
+  override def correctEx(user: User, sol: UmlSolution, exercise: UmlCompleteEx): Try[UmlResult] = {
+    def part: UmlExPart = ???
+
+    Try {
+      part match {
+        case ClassSelection     => ClassSelectionResult(exercise, sol)
+        case DiagramDrawing     => DiagramDrawingResult(exercise, sol)
+        case DiagramDrawingHelp => DiagramDrawingHelpResult(exercise, sol)
+        case MemberAllocation   => AllocationResult(exercise, sol)
+      }
+    }
+  }
 
   // Other routes
 

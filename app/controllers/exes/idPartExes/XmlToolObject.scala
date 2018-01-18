@@ -1,10 +1,13 @@
-package controllers.exes.idExes
+package controllers.exes.idPartExes
 
-import model.xml.{XmlConsts, XmlExercise}
+import model.core.tools.IdPartExToolObject
+import model.xml.{XmlConsts, XmlExParts, XmlExercise}
 import model.{Consts, HasBaseValues}
 import play.api.mvc.Call
 
-object XmlToolObject extends IdExToolObject {
+import scala.language.postfixOps
+
+object XmlToolObject extends IdPartExToolObject {
 
   override type CompEx = XmlExercise
 
@@ -15,7 +18,7 @@ object XmlToolObject extends IdExToolObject {
 
   override def indexCall: Call = routes.XmlController.index()
 
-  override def exerciseRoute(exercise: HasBaseValues): Call = routes.XmlController.exercise(exercise.id)
+  override def exerciseRoute(exercise: HasBaseValues, part: String): Call = routes.XmlController.exercise(exercise.id, part)
 
   override def exerciseListRoute(page: Int): Call = routes.XmlController.exerciseList(page)
 
@@ -45,5 +48,7 @@ object XmlToolObject extends IdExToolObject {
   override def editExerciseRoute(exercise: HasBaseValues): Call = routes.XmlController.adminEditExercise(exercise.id)
 
   override def deleteExerciseRoute(exercise: HasBaseValues): Call = routes.XmlController.adminDeleteExercise(exercise.id)
+
+  override def exParts: Map[String, String] = XmlExParts.values map (part => part.urlName -> part.partName) toMap
 
 }

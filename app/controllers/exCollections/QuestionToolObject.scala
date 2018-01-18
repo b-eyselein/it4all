@@ -1,6 +1,7 @@
 package controllers.exCollections
 
 import model.Enums.ToolState
+import model.core.tools.CollectionToolObject
 import model.questions.{CompleteQuestion, QuestionConsts}
 import model.{Consts, HasBaseValues}
 import play.api.mvc.Call

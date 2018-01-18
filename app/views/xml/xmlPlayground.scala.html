@@ -8,7 +8,7 @@
 
         <div class="row">
             <div class="col-md-6">
-            @views.html.core.editor(model.xml.XmlConsts.STANDARD_XML_PLAYGROUND, "xml", 25, 50, updatePrev = false)
+            @core.editor(model.xml.XmlConsts.STANDARD_XML_PLAYGROUND, "xml", 25, 50, updatePrev = false)
             </div>
 
             <div class="col-md-6">
@@ -18,7 +18,7 @@
 
         <hr>
 
-        <button onclick="testTheSolution('@controllers.exes.idExes.routes.XmlController.playgroundCorrection');"
+        <button onclick="testTheSolution('@exes.idPartExes.routes.XmlController.playgroundCorrection');"
         class="btn btn-primary btn-block">Gegen DTD in Dokument testen...</button>
     </div>
 }

@@ -2,9 +2,10 @@ package model.mindmap
 
 import javax.inject.Inject
 
-import controllers.exes.fileExes.{FileExToolObject, MindMapToolObject}
+import controllers.exes.fileExes.MindMapToolObject
 import model.Enums.ExerciseState
 import model._
+import model.core.tools.FileExToolObject
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc.Call
 import play.twirl.api.Html

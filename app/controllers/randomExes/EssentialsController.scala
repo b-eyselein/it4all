@@ -4,14 +4,13 @@ import javax.inject.{Inject, Singleton}
 
 import controllers.Secured
 import model.core.Repository
-import model.core.tools.ToolObject
+import model.core.tools.{RandomExToolObject, ToolObject}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc.{AbstractController, ControllerComponents, EssentialAction}
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.ExecutionContext
 
-trait RandomExToolObject extends ToolObject
 
 @Singleton
 class EssentialsController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val tables: Repository)

@@ -51,7 +51,7 @@
 
         <hr>
 
-        <form action="@controllers.exes.idPartExes.routes.UmlController.correct(exercise.id, model.uml.UmlEnums.UmlExPart.CLASS_SELECTION.name)" method="post"
+        <form action="@controllers.exes.idPartExes.routes.UmlController.correct(exercise.id)" method="post"
         onsubmit="return prepareFormForSubmitting();">
             <input type="hidden" class="form-control" name="@model.uml.UmlConsts.FORM_VALUE" id="@model.uml.UmlConsts.FORM_VALUE" required>
             <button class="btn btn-primary btn-block">@btnText</button>

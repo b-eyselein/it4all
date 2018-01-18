@@ -6,6 +6,7 @@ import controllers.Secured
 import model._
 import model.core.CoreConsts._
 import model.core._
+import model.core.tools.CollectionToolObject
 import net.jcazevedo.moultingyaml._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.Json
@@ -16,27 +17,7 @@ import slick.jdbc.JdbcProfile
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
-trait CollectionToolObject extends model.core.tools.ExToolObject with FileUtils {
 
-  override type CompEx <: CompleteEx[_ <: ExerciseInCollection]
-
-  val collectionSingularName: String
-
-  val collectionPluralName: String
-
-  def exerciseRoute(collectionId: Int, exerciseId: Int): Call
-
-  def collectionRoute(id: Int, page: Int = 1): Call
-
-  def filteredCollectionRoute(id: Int, filter: String, page: Int = 1): Call
-
-  def correctLiveRoute(exercise: HasBaseValues): Call
-
-  def correctRoute(exercise: HasBaseValues): Call
-
-  override def exerciseRoutes(exercise: CompEx): Map[Call, String] = Map(exerciseRoute(exercise.ex.collectionId, exercise.id) -> "Aufgabe bearbeiten")
-
-}
 
 abstract class AExCollectionController[Ex <: ExerciseInCollection, CompEx <: CompleteEx[Ex], Coll <: ExerciseCollection[Ex, CompEx], CompColl <: CompleteCollection[Ex, CompEx, Coll],
 R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseCollectionTableDefs[Ex, CompEx, Coll, CompColl]]

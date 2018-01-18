@@ -1,15 +1,17 @@
 package controllers.exes.idPartExes
 
-import model.web.WebEnums.WebExPart
-import model.web.{WebCompleteEx, WebConsts, WebExercise}
+import model.core.tools.IdPartExToolObject
+import model.web.{WebCompleteEx, WebConsts, WebExParts, WebExercise}
 import model.{Consts, HasBaseValues}
 import play.api.mvc.Call
+
+import scala.language.postfixOps
 
 object WebToolObject extends IdPartExToolObject {
 
   override type CompEx = WebCompleteEx
 
-  override def exParts: Map[String, String] = WebExPart.values().map(part => part.shortName -> part.partName).toMap
+  override def exParts: Map[String, String] = WebExParts.values map (part => part.urlName -> part.partName) toMap
 
   override val hasTags : Boolean = true
   override val toolname: String  = "Web"
@@ -30,9 +32,9 @@ object WebToolObject extends IdPartExToolObject {
 
   override def exerciseListRoute(page: Int): Call = routes.WebController.exerciseList(page)
 
-  override def correctLiveRoute(exercise: HasBaseValues, part: String): Call = routes.WebController.correctLive(exercise.id, part)
+  override def correctLiveRoute(exercise: HasBaseValues): Call = routes.WebController.correctLive(exercise.id)
 
-  override def correctRoute(exercise: HasBaseValues, part: String): Call = routes.WebController.correct(exercise.id, part)
+  override def correctRoute(exercise: HasBaseValues): Call = routes.WebController.correct(exercise.id)
 
 
   override def adminIndexRoute: Call = routes.WebController.adminIndex()

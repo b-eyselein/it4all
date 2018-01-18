@@ -1,20 +1,21 @@
-package controllers.exes.idExes
+package controllers.exes.idPartExes
 
 import java.nio.file._
 import javax.inject._
 
 import controllers.Secured
-import controllers.exes.IntExIdentifier
-import controllers.exes.idExes.XmlController._
+import controllers.exes.idPartExes.XmlController._
 import model.User
 import model.core.CommonUtils.RicherTry
 import model.core._
 import model.core.tools.ExerciseOptions
 import model.xml.XmlConsts._
 import model.xml.XmlEnums._
+import model.xml.XmlExParts.XmlExPart
 import model.xml._
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.db.slick.DatabaseConfigProvider
+import play.api.libs.json.JsValue
 import play.api.mvc._
 import play.twirl.api.{Html, HtmlFormat}
 import views.html.xml._
@@ -31,25 +32,27 @@ object XmlController {
 
 @Singleton
 class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: XmlTableDefs)(implicit ec: ExecutionContext)
-  extends AIdExController[XmlExercise, XmlExercise, XmlError, GenericCompleteResult[XmlError], XmlTableDefs](cc, dbcp, t, XmlToolObject) with Secured with FileUtils {
+  extends AIdPartExController[XmlExercise, XmlExercise, XmlError, GenericCompleteResult[XmlError], XmlTableDefs](cc, dbcp, t, XmlToolObject) with Secured with FileUtils {
+
+  override type PartType = XmlExPart
+
+  override protected def partTypeFromUrl(urlName: String): Option[XmlExPart] = Some(XmlExParts.XmlSingleExPart)
 
   // Reading solution from requests
 
-  override type SolType = String
+  override type SolType = XmlSolution
 
-  override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[String] =
-    Solution.stringSolForm.bindFromRequest().fold(_ => None, sol => Some(sol.learnerSolution))
+  override def readSolutionFromPostRequest(user: User, id: Int)(implicit request: Request[AnyContent]): Option[XmlSolution] =
+    Solution.stringSolForm.bindFromRequest().fold(_ => None, sol => Some(XmlSolution(id, user.username, sol.learnerSolution)))
 
-  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[String] =
-    Solution.stringSolForm.bindFromRequest().fold(_ => None, sol => Some(sol.learnerSolution))
+  override protected def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: XmlExPart): Option[XmlSolution] =
+    jsValue.asStr map (XmlSolution(id, user.username, _))
 
   // Yaml
 
   override val yamlFormat: YamlFormat[XmlExercise] = XmlExYamlProtocol.XmlExYamlFormat
 
   // db
-
-  import profile.api._
 
   // Other routes
 
@@ -64,41 +67,45 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // Correction
 
-  override protected def correctEx(user: User, sol: String, completeEx: XmlExercise, identifier: IntExIdentifier): Try[GenericCompleteResult[XmlError]] =
+  override protected def correctEx(user: User, solution: XmlSolution, completeEx: XmlExercise): Try[GenericCompleteResult[XmlError]] = {
+    tables.saveXmlSolution(solution)
+
     checkAndCreateSolDir(user.username, completeEx) flatMap (dir => {
       val (grammarTry: Try[Path], xmlTry: Try[Path]) =
         if (completeEx.exerciseType == XmlExType.DTD_XML || completeEx.exerciseType == XmlExType.XSD_XML) {
-          val grammar = write(dir, completeEx.rootNode + "." + completeEx.exerciseType.gramFileEnding, sol)
+          val grammar = write(dir, completeEx.rootNode + "." + completeEx.exerciseType.gramFileEnding, solution.solution)
           val xml = write(dir, completeEx.rootNode + "." + XML_FILE_ENDING, completeEx.refFileContent)
           (grammar, xml)
         } else {
           val grammar = write(dir, completeEx.rootNode + "." + completeEx.exerciseType.gramFileEnding, completeEx.refFileContent)
-          val xml = write(dir, completeEx.rootNode + "." + XML_FILE_ENDING, sol)
+          val xml = write(dir, completeEx.rootNode + "." + XML_FILE_ENDING, solution.solution)
           (grammar, xml)
         }
 
       grammarTry.zip(xmlTry).map {
-        case (grammar, xml) => GenericCompleteResult(sol, XmlCorrector.correct(xml, grammar, completeEx.exerciseType))
+        case (grammar, xml) => GenericCompleteResult(solution.solution, XmlCorrector.correct(xml, grammar, completeEx.exerciseType))
       }
     })
+  }
 
   // Views
 
   override def renderEditRest(exercise: Option[XmlExercise]): Html = editXmlExRest(exercise)
 
   override def renderExesListRest: Html = new Html(
-    s"""<a class="btn btn-primary btn-block" href="${controllers.exes.idExes.routes.XmlController.playground()}">Xml-Playground</a>
+    s"""<a class="btn btn-primary btn-block" href="${routes.XmlController.playground()}">Xml-Playground</a>
        |<hr>""".stripMargin)
 
-  override def renderResult(completeResult: GenericCompleteResult[XmlError]): Html = new Html(completeResult.results match {
+  private def renderResult(completeResult: GenericCompleteResult[XmlError]): Html = new Html(completeResult.results match {
     case Nil     => """<div class="alert alert-success"><span class="glyphicon glyphicon-ok"></span> Es wurden keine Fehler gefunden.</div>"""
     case results => results map (_.render) mkString "\n"
   })
 
-  override def renderExercise(user: User, exercise: XmlExercise): Future[Html] = readDefOrOldSolution(user.username, exercise.ex) map (sol =>
-    views.html.core.exercise2Rows(user, XmlToolObject, exOptions, exercise.ex, renderExRest(exercise.ex), sol))
+  override protected def renderExercise(user: User, exercise: XmlExercise, part: XmlExPart): Future[Html] = readDefOrOldSolution(user.username, exercise.ex) map {
+    sol => views.html.core.exercise2Rows(user, XmlToolObject, exOptions, exercise.ex, renderExRest(exercise.ex), exScript, sol, XmlExParts.XmlSingleExPart)
+  }
 
-  override protected def onLiveCorrectionSuccess(correctionResult: GenericCompleteResult[XmlError]): Result = Ok(renderResult(correctionResult))
+  private def exScript: Html = Html(s"""<script src="${controllers.routes.Assets.versioned("javascripts/xml/xmlExercise.js")}"></script>""")
 
   def renderExRest(exercise: XmlExercise) = new Html(
     s"""<section id="refFileSection">
@@ -109,5 +116,14 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   private def readDefOrOldSolution(username: String, exercise: XmlExercise): Future[String] =
     tables.readXmlSolution(username, exercise.id).map(_.map(_.solution) getOrElse exercise.fixedStart)
+
+  override protected def onSubmitCorrectionResult(user: User, result: GenericCompleteResult[XmlError]): Result =
+    Ok(views.html.core.correction.render(result, renderResult(result), user, toolObject))
+
+  override protected def onSubmitCorrectionError(user: User, error: Throwable): Result = ???
+
+  override protected def onLiveCorrectionResult(result: GenericCompleteResult[XmlError]): Result = Ok(renderResult(result))
+
+  override protected def onLiveCorrectionError(error: Throwable): Result = ???
 
 }

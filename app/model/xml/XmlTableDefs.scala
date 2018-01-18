@@ -2,7 +2,7 @@ package model.xml
 
 import javax.inject.Inject
 
-import controllers.exes.idExes.XmlToolObject
+import controllers.exes.idPartExes.XmlToolObject
 import model.Enums.ExerciseState
 import model._
 import model.xml.XmlEnums.XmlExType
@@ -50,11 +50,13 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   val xmlExercises = TableQuery[XmlExercisesTable]
 
+  val xmlSolutions = TableQuery[XmlSolutionsTable]
+
   override type ExTableDef = XmlExercisesTable
 
   override val exTable = xmlExercises
 
-  lazy val xmlSolutions = TableQuery[XmlSolutionsTable]
+  // Column Types
 
   implicit val XmlExColumnType: BaseColumnType[XmlExType] =
     MappedColumnType.base[XmlExType, String](_.toString, str => XmlExType.byString(str) getOrElse XmlExType.XML_DTD)
@@ -69,6 +71,9 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   // Saving
 
   override def saveExerciseRest(compEx: XmlExercise)(implicit ec: ExecutionContext): Future[Boolean] = Future(true)
+
+  def saveXmlSolution(solution: XmlSolution)(implicit ec: ExecutionContext): Future[Boolean] =
+    db.run(xmlSolutions insertOrUpdate solution) map (_ => true) recover { case e: Exception => false }
 
   // Deletion
 

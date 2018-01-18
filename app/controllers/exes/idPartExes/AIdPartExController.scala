@@ -6,29 +6,31 @@ import controllers.Secured
 import controllers.exes.BaseExerciseController
 import model._
 import model.core._
+import model.core.tools.IdPartExToolObject
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, JsValue}
 import play.api.mvc._
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
+trait ExPart {
+
+  def urlName: String
+
+  def partName: String
+
+}
+
 abstract class AIdPartExController[Ex <: Exercise, CompEx <: CompleteEx[Ex], R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseTableDefs[Ex, CompEx]]
 (cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: Tables, to: IdPartExToolObject)(implicit ec: ExecutionContext)
-  extends BaseExerciseController[Ex, CompEx, R, CompResult, Tables](cc, dbcp, t, to) with Secured {
+  extends BaseExerciseController[Ex, CompEx, R, CompResult, Tables](cc, dbcp, t, to)
+    with Secured with JsonFormat {
 
   type PartType <: ExPart
 
-  protected def partTypeFromString(str: String): Option[PartType]
-
-  trait ExPart {
-
-    def urlName: String
-
-    def partName: String
-
-  }
+  protected def partTypeFromUrl(urlName: String): Option[PartType]
 
   trait IdPartExIdentifier extends ExerciseIdentifier {
 
@@ -38,23 +40,30 @@ abstract class AIdPartExController[Ex <: Exercise, CompEx <: CompleteEx[Ex], R <
 
   }
 
-  override type ExIdentifier <: IdPartExIdentifier
+  override def readSolutionFromPutRequest(user: User, id: Int)(implicit request: Request[AnyContent]): Option[SolType] = request.body.asJson flatMap (_.asObj) match {
+    case Some(jsObj) =>
+      println("Complete obj: " + jsObj)
 
-  protected def identifier(id: Int, part: String): ExIdentifier
+      val partAndSolution = for {
+        part <- jsObj.stringField("part") flatMap partTypeFromUrl
+        solution <- jsObj.field("solution")
+      } yield (part, solution)
 
-  def correct(id: Int, partStr: String): EssentialAction = futureWithUser { user =>
-    implicit request =>
-      correctAbstract(user, identifier(id, partStr), readSolutionFromPostRequest,
-        onSubmitCorrectionResult(user, _), onSubmitCorrectionError(user, _))
+      println(partAndSolution)
+
+      partAndSolution flatMap {
+        case (part, solution) => readSolutionForPartFromJson(user, id, solution, part)
+      }
+
+    case None => ???
   }
 
-  def correctLive(id: Int, partStr: String): EssentialAction = futureWithUser { user =>
-    implicit request => correctAbstract(user, identifier(id, partStr), readSolutionFromPutRequest, onLiveCorrectionResult, onLiveCorrectionError)
-  }
+  protected def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: PartType): Option[SolType]
+
 
   def exercise(id: Int, partStr: String): EssentialAction = futureWithUser { user =>
     implicit request =>
-      partTypeFromString(partStr) match {
+      partTypeFromUrl(partStr) match {
         case None       => Future(Redirect(toolObject.indexCall))
         case Some(part) =>
           futureCompleteExById(id) flatMap {
@@ -72,15 +81,5 @@ abstract class AIdPartExController[Ex <: Exercise, CompEx <: CompleteEx[Ex], R <
   // Views
 
   protected def renderExercise(user: User, exercise: CompEx, part: PartType): Future[Html]
-
-  // Handlers for results
-
-  protected def onSubmitCorrectionResult(user: User, result: CompResult): Result
-
-  protected def onSubmitCorrectionError(user: User, error: Throwable): Result
-
-  protected def onLiveCorrectionResult(result: CompResult): Result
-
-  protected def onLiveCorrectionError(error: Throwable): Result
 
 }

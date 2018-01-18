@@ -1,7 +1,7 @@
 @(user: model.User, exercise: model.uml.UmlCompleteEx, getsHelp: Boolean)
 
 @curPart = @{
-    if(getsHelp) model.uml.UmlEnums.UmlExPart.DIAG_DRAWING_HELP else model.uml.UmlEnums.UmlExPart.DIAG_DRAWING
+    if(getsHelp) model.uml.UmlExParts.DiagramDrawingHelp else model.uml.UmlExParts.DiagramDrawing
 }
 
 @scripts = {
@@ -201,7 +201,7 @@
 
                 <hr>
 
-                <form method="post" onsubmit="return prepareFormForSubmitting();" action="@controllers.exes.idPartExes.routes.UmlController.correct(exercise.id, curPart.name) ">
+                <form method="post" onsubmit="return prepareFormForSubmitting();" action="@controllers.exes.idPartExes.routes.UmlController.correct(exercise.id) ">
                     <input title="hidden" type="hidden" hidden name="@model.uml.UmlConsts.FORM_VALUE" id="@model.uml.UmlConsts.FORM_VALUE">
                     <button class="btn btn-primary btn-block">Aufgabe verifizieren</button>
                 </form>

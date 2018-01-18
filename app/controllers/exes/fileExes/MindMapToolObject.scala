@@ -1,6 +1,7 @@
 package controllers.exes.fileExes
 
 import model.Enums.ToolState
+import model.core.tools.FileExToolObject
 import model.mindmap.{MindmapConsts, MindmapExercise}
 import model.{Consts, HasBaseValues}
 import play.api.mvc.Call
@@ -51,4 +52,7 @@ object MindMapToolObject extends FileExToolObject {
 
   override def deleteExerciseRoute(exercise: HasBaseValues): Call = routes.MindmapController.adminDeleteExercise(exercise.id)
 
+  override def correctRoute(exercise: HasBaseValues): Call = ???
+
+  override def correctLiveRoute(exercise: HasBaseValues): Call = ???
 }

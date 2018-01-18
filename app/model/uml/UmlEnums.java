@@ -6,21 +6,6 @@ import scala.Some;
 
 public abstract class UmlEnums {
 
-    public enum UmlExPart implements Selectable<UmlExPart> {
-        CLASS_SELECTION, DIAG_DRAWING_HELP, DIAG_DRAWING, ALLOCATION;
-
-        public static Option<UmlExPart> byString(String str) {
-            try {
-                System.out.println("TODO: " + str);
-                return new Some<>(valueOf(str));
-            } catch (Exception e) {
-                // ==> None!
-                return Option.apply(null);
-            }
-        }
-
-    }
-
     public enum UmlClassType {
         CLASS("Klasse"), INTERFACE("Interface"), ABSTRACT("Abstrakte Klasse");
 

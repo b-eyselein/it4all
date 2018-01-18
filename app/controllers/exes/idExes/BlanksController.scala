@@ -3,7 +3,6 @@ package controllers.exes.idExes
 import javax.inject._
 
 import controllers.Secured
-import controllers.exes.IntExIdentifier
 import model.blanks._
 import model.{JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
@@ -25,9 +24,9 @@ class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
 
   override type SolType = Seq[BlanksAnswer]
 
-  override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[Seq[BlanksAnswer]] = None
+  override def readSolutionFromPostRequest(user: User, id: Int)(implicit request: Request[AnyContent]): Option[Seq[BlanksAnswer]] = None
 
-  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[Seq[BlanksAnswer]] = request.body.asJson flatMap (_.asArray(_.asObj flatMap { jsObj =>
+  override def readSolutionFromPutRequest(user: User, id: Int)(implicit request: Request[AnyContent]): Option[Seq[BlanksAnswer]] = request.body.asJson flatMap (_.asArray(_.asObj flatMap { jsObj =>
     for {
       id <- jsObj.intField("id")
       answer <- jsObj.stringField("value")
@@ -40,7 +39,7 @@ class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
 
   // Correction
 
-  override protected def correctEx(user: User, sol: Seq[BlanksAnswer], exercise: BlanksCompleteExercise, identifier: IntExIdentifier): Try[BlanksCompleteResult] =
+  override protected def correctEx(user: User, sol: Seq[BlanksAnswer], exercise: BlanksCompleteExercise): Try[BlanksCompleteResult] =
     Try(BlanksCompleteResult(sol, BlanksCorrector.doMatch(sol, exercise.samples)))
 
   // Views
@@ -68,5 +67,12 @@ class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
       "explanation" -> m.explanation))
   ))
 
+  override protected def onSubmitCorrectionResult(user: User, result: BlanksCompleteResult): Result = ???
+
+  override protected def onSubmitCorrectionError(user: User, error: Throwable): Result = ???
+
+  override protected def onLiveCorrectionResult(result: BlanksCompleteResult): Result = ???
+
+  override protected def onLiveCorrectionError(error: Throwable): Result = ???
 }
 

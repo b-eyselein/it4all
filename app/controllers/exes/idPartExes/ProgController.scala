@@ -8,7 +8,7 @@ import model.Enums.ExerciseState
 import model.core._
 import model.core.tools.ExerciseOptions
 import model.programming.ProgConsts._
-import model.programming.ProgEnums._
+import model.programming.ProgExParts.ProgExPart
 import model.programming._
 import model.{JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
@@ -16,7 +16,7 @@ import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.json._
 import play.api.mvc._
 import play.twirl.api.Html
-import views.html.programming.{validatedTestData, _}
+import views.html.programming._
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future, duration}
@@ -25,7 +25,7 @@ import scala.util.Try
 
 object ProgController {
 
-  private val EX_OPTIONS = ExerciseOptions("Programmierung", ProgLanguage.STANDARD_LANG.aceName, 15, 30, updatePrev = false)
+  private val ProgExOptions = ExerciseOptions("Programmierung", ProgLanguage.STANDARD_LANG.aceName, 15, 30, updatePrev = false)
 
   val STD_TEST_DATA_COUNT = 2
 
@@ -40,24 +40,40 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   override type PartType = ProgExPart
 
-  override def partTypeFromString(str: String): Option[ProgExPart] = ProgExPart.byString(str.toUpperCase)
-
-  case class ProgExIdentifier(id: Int, part: ProgExPart) extends IdPartExIdentifier
-
-  override type ExIdentifier = ProgExIdentifier
-
-  override def identifier(id: Int, part: String): ProgExIdentifier = ProgExIdentifier(id, partTypeFromString(part.toUpperCase) getOrElse ProgExPart.IMPLEMENTATION)
+  override def partTypeFromUrl(urlName: String): Option[ProgExPart] = ProgExParts.values.find(_.urlName == urlName)
 
   // Reading solution from requests
 
-  override type SolType = String
+  override type SolType = ProgSolutionType
 
-  override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[String] =
-    Solution.stringSolForm.bindFromRequest().fold(_ => None, sol => Some(sol.learnerSolution))
+  override protected def readSolutionFromPostRequest(user: User, id: Int)(implicit request: Request[AnyContent]): Option[ProgSolutionType] =
+    Solution.stringSolForm.bindFromRequest().fold(_ => None, sol => Some(ImplementationSolution(ProgLanguage.STANDARD_LANG, sol.learnerSolution)))
 
-  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[String] =
-    Solution.stringSolForm.bindFromRequest().fold(_ => None, sol => Some(sol.learnerSolution))
+  override protected def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: ProgExPart): Option[ProgSolutionType] = part match {
+    case ProgExParts.TestdataCreation => jsValue.asArray(_.asObj flatMap (jsValue => readTestData(id, jsValue, user))) map TestdataSolution
+    case ProgExParts.Implementation   => jsValue.asObj flatMap { jsObj =>
+      println("JsObj => " + jsObj)
+      for {
+        language <- jsObj.enumField("languague", str => ProgLanguage.valueOf(str) getOrElse ProgLanguage.STANDARD_LANG)
+        implementation <- jsObj.stringField("implementation")
+      } yield ImplementationSolution(language, implementation)
+    }
+  }
 
+  private def readTestData(id: Int, tdJsObj: JsObject, user: User): Option[CompleteCommitedTestData] = for {
+    testId <- tdJsObj.intField(ID_NAME)
+    inputs <- readInputs(tdJsObj, testId, user)
+    output <- tdJsObj.stringField(OUTPUT_NAME)
+  } yield CompleteCommitedTestData(CommitedTestData(testId, id, user.username, output, ExerciseState.RESERVED), inputs)
+
+
+  private def readInputs(tdJsObj: JsObject, testId: Int, user: User) = tdJsObj.arrayField(INPUTS_NAME, _.asObj flatMap {
+    inpJsObj =>
+      for {
+        id <- inpJsObj.intField(ID_NAME)
+        input <- inpJsObj.stringField(INPUT_NAME)
+      } yield CommitedTestDataInput(id, testId, id, input, user.username)
+  })
 
   // Yaml
 
@@ -65,61 +81,60 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   // Other routes
 
-  def testData(id: Int): EssentialAction = futureWithUser { user =>
-    implicit request =>
-      futureCompleteExById(id) map {
-        case Some(ex) =>
-          //          val oldTestData = Option(CommitedTestDataHelper.forUserAndExercise(user, id)).getOrElse(List.empty)
-
-          Ok(testDataCreation(user, ex, Seq.empty /* oldTestData*/))
-        case None     => Redirect(controllers.exes.idPartExes.routes.ProgController.index())
-      }
-  }
-
-  def validateTestData(id: Int): EssentialAction = futureWithUser { user =>
-    implicit request =>
-      readAndValidateTestdata(id, user, request) map {
-        case Some((ex, validTestData)) => Ok(validatedTestData(user, ex, null /*validatedTestData*/))
-        case None                      => BadRequest("")
-      }
-  }
-
-  def validateTestDataLive(exerciseId: Int): EssentialAction = futureWithUser { user =>
-    implicit request =>
-      readAndValidateTestdata(exerciseId, user, request) map {
-        case Some((ex, validatedTestData)) => Ok("TODO" /*Json.toJson(validatedTestData)*/)
-        case None                          => BadRequest
-      }
-  }
-
-  def getDeclaration(lang: String): EssentialAction = withUser { _ =>
-    implicit request => Ok(ProgLanguage.valueOf(lang).getOrElse(ProgLanguage.STANDARD_LANG).declaration)
+  def getDeclaration(lang: String): EssentialAction = withUser {
+    _ =>
+      implicit request => Ok(ProgLanguage.valueOf(lang).getOrElse(ProgLanguage.STANDARD_LANG).declaration)
   }
 
   // Correction
 
-  override def correctEx(user: User, sol: String, exercise: ProgCompleteEx, identifier: ProgExIdentifier): Try[ProgCompleteResult] = Try {
+  override def correctEx(user: User, sol: ProgSolutionType, exercise: ProgCompleteEx): Try[ProgCompleteResult] = sol match {
+    case tds: TestdataSolution      => Try {
 
-    tables.saveSolution(user, exercise, sol)
+      tables.saveCompleteCommitedTestData(tds.completeCommitedTestData)
 
-    val language = ProgLanguage.STANDARD_LANG
+      println("Solution: " + sol)
 
-    // FIXME: Time out der Ausführung
-    Await.result(ProgCorrector.correct(user, exercise, sol, language), Duration(MaxWaitTimeInSeconds, duration.SECONDS))
+      ???
+    }
+    case is: ImplementationSolution => Try {
+
+      tables.saveSolution(user, exercise, is.implementation)
+
+      val language = ProgLanguage.STANDARD_LANG
+
+      // FIXME: Time out der Ausführung
+      Await.result(ProgCorrector.correct(user, exercise, is.implementation, language), Duration(MaxWaitTimeInSeconds, duration.SECONDS))
+    }
   }
 
   // Views
 
-  override def renderExercise(user: User, exercise: ProgCompleteEx, part: ProgExPart): Future[Html] = tables.loadSolution(user, exercise) map { oldSol =>
+  override def renderExercise(user: User, exercise: ProgCompleteEx, part: ProgExPart): Future[Html] = part match {
+    case ProgExParts.TestdataCreation =>
+      val oldTestData: Seq[CommitedTestData] = Seq.empty // FIXME: Option(CommitedTestDataHelper.forUserAndExercise(user, id)).getOrElse(List.empty)
+      Future(testDataCreation.render(user, exercise, oldTestData))
 
-    val declaration: String = oldSol map (_.solution) getOrElse ProgLanguage.STANDARD_LANG.buildFunction(exercise)
-
-    progExercise.render(user, EX_OPTIONS, exercise.ex, declaration, part.name)
+    case ProgExParts.Implementation => tables.loadSolution(user, exercise) map {
+      oldSol =>
+        val declaration: String = oldSol map (_.solution) getOrElse ProgLanguage.STANDARD_LANG.buildFunction(exercise)
+        views.html.core.exercise2Rows.render(user, ProgToolObject, ProgExOptions, exercise.ex, renderExRest, exScript, declaration, ProgExParts.Implementation)
+    }
   }
 
   override def renderExesListRest: Html = Html("")
 
-  private def renderResult(correctionResult: ProgCompleteResult): Html = progResult(correctionResult)
+  private def renderResult(correctionResult: ProgCompleteResult): Html = progResult.render(correctionResult)
+
+  private def exScript: Html = Html(s"""<script src="${controllers.routes.Assets.versioned("javascripts/programming/progExercise.js")}"></script>""")
+
+  private def renderExRest: Html = Html(
+    s"""<div class="input-group">
+       |  <span class="input-group-addon">Sprache</span>
+       |  <select class="form-control" id="langSelect" onchange="changeProgLanguage('${controllers.exes.idPartExes.routes.ProgController.getDeclaration()}');">
+       |    ${ProgLanguage.values map (lang => s"""<option value="${lang.name}" ${lang.isSelected(ProgLanguage.STANDARD_LANG)}>${lang.languageName} </option>)""") mkString "\n"}
+       |  </select>
+       |</div>""".stripMargin)
 
   // Handlers for results
 
@@ -130,58 +145,6 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   protected def onLiveCorrectionResult(result: ProgCompleteResult): Result = Ok(renderResult(result))
 
-  protected def onLiveCorrectionError(error: Throwable): Result = ???
-
-  // Helper methods
-
-  private def readAndValidateTestdata(exerciseId: Int, user: User, request: Request[AnyContent]): Future[Option[(ProgCompleteEx, Seq[CompleteCommitedTestData])]] = {
-    futureCompleteExById(exerciseId) map { exOpt =>
-      (exOpt zip request.body.asJson).headOption map {
-        case (ex, jsValue) =>
-          val testData = readAllCommitedTestDataFromJson(jsValue, ex.ex.id, user.username) getOrElse Seq.empty
-          // FIXME: save and validate test data...
-          testData.foreach(println)
-
-          val validatedTestData = List.empty
-
-          //          Ok("TODO" /*Json.toJson(validatedTestData)*/)
-          (ex, validatedTestData)
-      }
-    }
-  }
-
-  // FIXME: use JsonFormat!
-
-  private def readAllCommitedTestDataFromJson(jsValue: JsValue, exId: Int, username: String): Option[Seq[CompleteCommitedTestData]] = jsValue match {
-    case JsArray(completeTestData) => Some(completeTestData flatMap (jv => readCommitedTestDataFromJson(jv, exId, username)))
-    case _                         => None
-  }
-
-  private def readCommitedTestDataFromJson(jv: JsValue, exId: Int, username: String): Option[CompleteCommitedTestData] = jv.asObj flatMap {
-    jsObject =>
-
-      val idOpt: Option[Int] = jsObject.intField(ID_NAME)
-      val outputOpt: Option[String] = jsObject.stringField(OUTPUT_NAME)
-
-      (idOpt zip outputOpt).headOption map {
-        case (id, output) =>
-          val testData = CommitedTestData(id, exId, username, output, ExerciseState.CREATED)
-          val inputs = readInputsFromJson(jsObject.value get INPUTS_NAME, id, exId, username) getOrElse Seq.empty
-          CompleteCommitedTestData(testData, inputs)
-      }
-  }
-
-  private def readInputsFromJson(jsValue: Option[JsValue], testId: Int, exId: Int, username: String): Option[Seq[CommitedTestDataInput]] = jsValue map {
-    case JsArray(objects) => objects flatMap (value => readInputFromJson(value, testId, exId, username))
-    case _                => Seq.empty
-  }
-
-  private def readInputFromJson(inputJsValue: JsValue, exId: Int, testId: Int, username: String): Option[CommitedTestDataInput] = inputJsValue.asObj flatMap {
-    inputJsObject =>
-      val idOpt: Option[Int] = inputJsObject.intField(ID_NAME)
-      val inputOpt: Option[String] = inputJsObject.stringField(INPUT_NAME)
-
-      (idOpt zip inputOpt).headOption map { case (id, input) => CommitedTestDataInput(id, testId, exId, input, username) }
-  }
+  protected def onLiveCorrectionError(error: Throwable): Result = BadRequest("Es gab einen Fehler bei der Korrektur!")
 
 }

@@ -75,6 +75,10 @@ trait JsonFormat {
       case _                => None
     }
 
+    def field(fieldName: String): Option[JsValue] = jsObject.value get fieldName
+
+    def objField(fieldName: String): Option[JsObject] = jsObject.value get fieldName flatMap (_.asObj)
+
     def boolField(fieldName: String): Option[Boolean] = jsObject.value get fieldName flatMap (_.asBool)
 
     def charField(fieldName: String): Option[Char] = jsObject.value get fieldName flatMap (_.asChar)

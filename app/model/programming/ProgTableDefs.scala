@@ -124,6 +124,15 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   def loadSolution(user: User, exercise: ProgCompleteEx): Future[Option[ProgSolution]] =
     db.run(progSolutions.filter(sol => sol.username === user.username && sol.exerciseId === exercise.id).result.headOption)
 
+  def saveCompleteCommitedTestData(compCommTd: Seq[CompleteCommitedTestData])(implicit ec: ExecutionContext): Future[Boolean] =
+    Future.sequence(compCommTd map saveCompCommTestData) map (_ forall identity)
+
+  private def saveCompCommTestData(compCommTestData: CompleteCommitedTestData)(implicit ec: ExecutionContext): Future[Boolean] =
+    db.run(commitedTestData += compCommTestData.commitedTestData) flatMap { _ =>
+      saveSeq[CommitedTestDataInput](compCommTestData.inputs, inp => db.run(commitedTestDataInput += inp))
+    }
+
+
   // Table Queries
 
   val progExercises = TableQuery[ProgExercisesTable]
