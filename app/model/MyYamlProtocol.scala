@@ -50,7 +50,7 @@ object MyYamlProtocol {
 
   implicit class PimpedYamlObject(yamlObject: YamlObject) {
 
-    private def someField[T](fieldName: String, f: YamlValue => T): T = yamlObject.fields get fieldName match {
+    def someField[T](fieldName: String, f: YamlValue => T): T = yamlObject.fields get fieldName match {
       case Some(field) => f(field)
       case None        => deserializationError(msg = s"A field with name '$fieldName' was expected but not found!", fieldNames = List(fieldName))
     }

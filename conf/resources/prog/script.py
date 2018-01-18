@@ -7,7 +7,10 @@ from solution import *
 # Load other libraries
 import json
 import sys
+import re
+import traceback
 
+list_type_regex = "list<(.*?)>"
 
 # Helper defs
 def type_to_function(a_type):
@@ -19,7 +22,12 @@ def type_to_function(a_type):
         return lambda s: float(s)
     elif a_type == "string":
         return lambda s: str(s)
+    elif re.match(list_type_regex, a_type):
+        sub_type_function = type_to_function(re.match(list_type_regex, a_type).group(1))
+        return lambda s: list(map(sub_type_function, s))
     else:
+        print("Matches: {}".format(re.match("list<(.*?>", a_type)))
+        print("There has been an error!")
         return lambda s: str(s)
 
 
@@ -89,8 +97,8 @@ if __name__ == "__main__":
             result = getattr(sys.modules[__name__], functionname)(*allocation)
             toWrite['result'] = result
             toWrite['success'] = "COMPLETE" if result == awaited else "NONE"
-        except Exception as err:
-            toWrite['result'] = str(err)
+        except Exception:
+            toWrite['result'] = str(traceback.format_exc())
             toWrite['success'] = "ERROR"
 
         sys.stdout = sys.__stdout__

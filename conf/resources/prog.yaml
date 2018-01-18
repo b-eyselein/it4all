@@ -146,3 +146,45 @@ sampleTestData:
   - id: 2
     input: 25
   output: 5
+---
+id: 4
+title: Durchschnitt
+author: bje40dc
+text: Berechnen Sie den Durchschnittswert aller Elemente in der übergebenen Liste von (Ganz-)Zahlen!
+status: CREATED
+functionName: average
+inputTypes: [list<int>]
+outputType: float
+
+sampleSolution:
+  language: PYTHON
+  sample: |
+    def average(a):
+      return sum(list) / float(len(list))
+
+sampleTestData:
+- id: 1
+  inputs:
+  - id: 1
+    input: [3, 5, 7]
+  output: 5.
+---
+id: 5
+title: Längste Zeichenkette
+author: bje40dc
+text: Suchen Sie aus einer Liste von Zeichenketten jeweils die längste heraus!
+status: CREATED
+functionName: longestString
+inputTypes: [list<string>]
+outputType: string
+
+sampleSolution:
+  language: PYTHON
+  sample: ""
+
+sampleTestData:
+- id: 1
+  inputs:
+  - id: 1
+    input: ["1", "11", "111"]
+  output: "111"

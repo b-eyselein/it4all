@@ -1,4 +1,8 @@
-@(user: model.User)
+@(user: model.User, completeEx: model.programming.ProgCompleteEx)
+
+@solutionVar = @{
+    "solution"
+}
 
 @scriptsBefore = {
     <!-- Important: Order of Scripts -->
@@ -13,6 +17,7 @@
 
     <script src="@routes.Assets.versioned("javascripts/umlActivity/elements.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/umlActivity/drawing.js")"></script>
+    <script src="@routes.Assets.versioned("javascripts/umlActivity/languageBuilders.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/umlActivity/converter.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/umlActivity/webseite.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/umlActivity/classdiagram.js")"></script>
@@ -21,6 +26,22 @@
     <link rel="stylesheet" href="@routes.Assets.versioned("lib/jointjs/dist/joint.css")">
     <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/umlActivity/webseite.css")">
     <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/umlActivity/activity.css")">
+
+    <script>
+            // Parameters for Task
+            const parameters = {
+                methodName: '@completeEx.ex.functionName',
+                startNode: {
+                    inputType: 'String',
+                    input: 'W1'
+                },
+                endNode: {
+                    outputType: 'int',
+                    output: '@solutionVar'
+                }
+            };
+    </script>
+
 }
 
 @main("UML", user, scripts, scriptsBefore) {
@@ -52,11 +73,13 @@
                                 </li>
                                 <li class="divider"></li>
                                 <li>
-                                    <a onclick="setSelElement(this);" name="elementActionInput" draggable="true" ondragstart="drag(event)">Eingabefeldknoten</a>
+                                    <a onclick="setSelElement(this);" name="elementActionInput" draggable="true" ondragstart="drag(event)">
+                                        Eingabefeldknoten</a>
                                 </li>
                                 <li class="divider"></li>
                                 <li>
-                                    <a onclick="setSelElement(this);" name="elementActionSelect" draggable="true" ondragstart="drag(event)">Selektionsknoten</a>
+                                    <a onclick="setSelElement(this);" name="elementActionSelect" draggable="true" ondragstart="drag(event)">
+                                        Selektionsknoten</a>
                                 </li>
                             </ul>
                         </div>
@@ -160,11 +183,10 @@
                                     </div>
                                 </div>
 
-                                <p>Im folgenden Szenario sollen Sie ein Aktivit&auml;tsdiagramm für die Funktion
-                                    "berechneKostenAllerFahrzeuge(): int". Als Basis dient das UML-Klassendiagramm Fahrzeugh&auml;ndler.
-                                    Als Eingabeparameter erhalten Sie ein Array mit Fahrzeugen des Typs LKW und PKW. Verwenden Sie bereits
-                                    definierte Methoden der Klassen um Zugriff auf die Daten zu erhalten. Als Rückgabeparameter wird ein Zahlenwert erwartet.
-                                </p>
+                                <p>@Html(completeEx.text)</p>
+
+                                <p>Speichern Sie ihre L&ouml;sung in der Variable <code>@solutionVar</code>, die (automatisch) zur&uuml;ckgegeben wird.</p>
+
                             </div>
                         </div>
                     </div>

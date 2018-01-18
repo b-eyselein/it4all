@@ -124,7 +124,7 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   }
 
   def activityExercise: EssentialAction = withAdmin { user =>
-    implicit request => Ok(activitiyDrawing.render(user))
+    implicit request => Ok(activitiyDrawing.render(user, null))
   }
 
   // FIXME: used where?
@@ -135,20 +135,13 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
           Ok("TODO: check solution" + language + solution.learnerSolution)
         }
       )
-
-      //      val solNode = Json.parse(singleStrForm(StringConsts.SOLUTION_NAME).get.str)
-      //      JsonReader.validateJson(solNode, UmlController.SolutionSchemaNode) match {
-      //        case Success(_) => Ok("Ok...")
-      //        case Failure(_) => BadRequest("FEHLER!")
-      //      }
     }
   }
 
 
   // Handlers for results
 
-  protected def onSubmitCorrectionResult(user: User, result: UmlResult): Result =
-    Ok(views.html.core.correction.render(result, renderResult(result), user, toolObject))
+  protected def onSubmitCorrectionResult(user: User, result: UmlResult): Result = Ok(views.html.core.correction.render(result, renderResult(result), user, toolObject))
 
   protected def onSubmitCorrectionError(user: User, error: Throwable): Result = ???
 

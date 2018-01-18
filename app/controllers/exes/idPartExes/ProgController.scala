@@ -121,6 +121,8 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
         val declaration: String = oldSol map (_.solution) getOrElse ProgLanguage.STANDARD_LANG.buildFunction(exercise)
         views.html.core.exercise2Rows.render(user, ProgToolObject, ProgExOptions, exercise.ex, renderExRest, exScript, declaration, ProgExParts.Implementation)
     }
+
+    case ProgExParts.ActivityDiagram => Future(views.html.umlActivity.activitiyDrawing.render(user, exercise))
   }
 
   override def renderExesListRest: Html = Html("")

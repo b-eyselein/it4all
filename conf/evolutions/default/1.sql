@@ -56,13 +56,13 @@ CREATE TABLE IF NOT EXISTS prog_exercises (
   ex_state      ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
 
   function_name VARCHAR(30),
-  output_type   ENUM ('int', 'float', 'boolean', 'string')           DEFAULT 'string'
+  output_type   VARCHAR(30)
 );
 
 CREATE TABLE IF NOT EXISTS prog_input_types (
   id          INT,
   exercise_id INT,
-  input_type  ENUM ('int', 'float', 'boolean', 'string') DEFAULT 'string',
+  input_type  VARCHAR(30),
 
   PRIMARY KEY (id, exercise_id),
   FOREIGN KEY (exercise_id) REFERENCES prog_exercises (id)

@@ -13,10 +13,10 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
     override def readRest(yamlObject: YamlObject, baseValues: BaseValues): ProgCompleteEx = ProgCompleteEx(
       ProgExercise(baseValues,
-        yamlObject.stringField(FUNCTIONNAME_NAME),
-        yamlObject.enumField("outputType", str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING, ProgDataTypes.STRING)
+        yamlObject.stringField(FunctionName),
+        yamlObject.enumField(OutputTypeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING, ProgDataTypes.STRING)
       ),
-      yamlObject.arrayField("inputTypes", _.asStr).zipWithIndex.map {
+      yamlObject.arrayField(InputTypesName, _.asStr).zipWithIndex.map {
         case (optStr, index) => InputType(index, baseValues.id, optStr flatMap (str => ProgDataTypes.byName(str)) getOrElse ProgDataTypes.STRING)
       },
       yamlObject.objectField(SAMPLE_SOL_NAME, ProgSampleSolutionYamlFormat(baseValues.id)),
@@ -24,8 +24,8 @@ object ProgExYamlProtocol extends MyYamlProtocol {
     )
 
     override protected def writeRest(completeEx: ProgCompleteEx): Map[YamlValue, YamlValue] = Map(
-      YamlString(FUNCTIONNAME_NAME) -> completeEx.ex.functionName,
-      YamlString("inputTypes") -> YamlArray(completeEx.inputTypes.map(it => YamlString(it.inputType.typeName)) toVector),
+      YamlString(FunctionName) -> completeEx.ex.functionName,
+      YamlString(InputTypesName) -> YamlArray(completeEx.inputTypes.map(it => YamlString(it.inputType.typeName)) toVector),
       YamlString(SAMPLE_SOL_NAME) -> completeEx.sampleSolution.toYaml(ProgSampleSolutionYamlFormat(completeEx.ex.id)),
       YamlString(SAMPLE_TESTDATA_NAME) -> YamlArray(completeEx.sampleTestData map (_ toYaml ProgCompleteSampleTestdataYamlFormat(completeEx.ex.id)) toVector)
     )
@@ -64,9 +64,15 @@ object ProgExYamlProtocol extends MyYamlProtocol {
 
   case class TestDataInputYamlFormat(testId: Int, exerciseId: Int) extends MyYamlFormat[SampleTestDataInput] {
 
-    override def readObject(yamlObject: YamlObject): SampleTestDataInput = SampleTestDataInput(
-      yamlObject.intField(ID_NAME), testId, exerciseId, yamlObject.forgivingStringField(INPUT_NAME)
-    )
+    override def readObject(yamlObject: YamlObject): SampleTestDataInput = {
+
+      val newInput: String = yamlObject.someField(INPUT_NAME, {
+        case YamlArray(values) => values map (v => v.forgivingStr) mkString ", "
+        case other             => other.forgivingStr
+      })
+
+      SampleTestDataInput(yamlObject.intField(ID_NAME), testId, exerciseId, newInput)
+    }
 
     override def write(stdi: SampleTestDataInput): YamlValue = YamlObject(YamlString(ID_NAME) -> stdi.id, YamlString(INPUT_NAME) -> stdi.input)
 

@@ -37,125 +37,6 @@ const MultipleDeclarations = false;
 const DeclarationAgainstProgress = false;
 const TypeAgainstValue = false;
 
-
-class AbstractLanguageBuilder {
-
-    funcsToTest() {
-        return [this.get_core, this.get_if, this.get_loop, this.get_efor, this.get_edw, this.get_ewd, this.get_manualIf, this.get_manualLoop];
-    }
-
-    constructor() {
-        for (let func of this.funcsToTest()) {
-            if (func === undefined || typeof func !== 'function') {
-                throw new TypeError('Must override method ' + func)
-            }
-        }
-    }
-
-}
-
-//python contents
-class PythonBuilder extends AbstractLanguageBuilder {
-
-    constructor(deep) {
-        super();
-        this.deep = parseInt(deep);// deep is the amount of spaces before the text starts
-    }
-
-    get_core(startnode_inputtype, startnode_input, endnode_outputtype, endnode_output, methodname, content) {
-        if ($('#editDiagramModal').hasClass('in')) {
-            return content;
-        } else {
-            return 'def ' + methodname + '(' + startnode_input + '):\n' + content + ' return ' + endnode_output;
-        }
-    }
-
-    get_if(econdition, ethen, eelse, deep) {
-        return ' '.repeat(deep) + 'if ' + econdition + ':\n' + ethen + '\n' + ' '.repeat(deep) + 'else:\n' + eelse + '\n';
-    }
-
-    get_loop(econdition, path, content, deep) {
-        return path + '\n' + ' '.repeat(deep) + 'while' + econdition + ':\n' + content;
-    }
-
-    get_efor(eelement, collection, content, deep) {
-        return ' '.repeat(deep) + 'for ' + eelement + ' in ' + collection + ':\n' + content + '\n';
-    }
-
-    get_edw(econdition, content, deep) {
-        return ' '.repeat(deep) + 'while True:\n' + content + '\n' + ' '.repeat(deep) + 'if ' + econdition + ':\n' + ' '.repeat(deep) + 'break\n';
-    }
-
-    get_ewd(econdition, content, deep) {
-        return ' '.repeat(deep) + 'while ' + econdition + ':\n' + content + '\n';
-    }
-
-    get_manualIf(econdition, left, right, deep) {
-        return ' '.repeat(deep - 1) + 'if ' + econdition + ':\n' + ' '.repeat(deep - 2) + left + ' '.repeat(deep - 1) + 'else:\n' + ' '.repeat(deep - 2) + right;
-    }
-
-    get_manualLoop(econdition, path2, comb, deep) {
-        return path2 + ' '.repeat(deep - 1) + 'while ' + econdition + ':\n' + comb;
-    }
-
-    set_increaseDeep(value) {
-        this.deep = this.deep + parseInt(value);
-    }
-}
-
-
-//java contents
-class JavaBuilder extends AbstractLanguageBuilder {
-
-    constructor(deep) {
-        super();
-        this.deep = parseInt(deep);
-    }
-
-    get_core(startnode_inputtype, startnode_input, endnode_outputtype, endnode_output, methodname, content) {
-        if ($('#editDiagramModal').hasClass('in')) {
-            return content;
-        } else {
-            return "public " + endnode_outputtype + " " + methodname + "(" + startnode_inputtype + " " + startnode_input + ")\n{\n" + content + "return " + endnode_output + ";\n}";
-        }
-    }
-
-    get_if(econdition, ethen, eelse, deep) {
-        return " ".repeat(deep) + "if(" + econdition + "){\n" + ethen + "\n" + " ".repeat(deep) + "}else{\n" + eelse + "\n" + " ".repeat(deep) + "}\n";
-    }
-
-    get_loop(econdition, path, content, deep) {
-        return path + " ".repeat(deep) + "while(!(" + econdition + ")){\n" + content + "}";
-    }
-
-    get_efor(eelement, collection, content, deep) {
-        return " ".repeat(deep) + "for(" + eelement + ":" + collection + "){\n" + content + "\n" + " ".repeat(deep) + "}\n";
-    }
-
-    get_edw(econdition, content, deep) {
-        return " ".repeat(deep) + "do{\n" + content + "\n" + " ".repeat(deep) + "}\n" + " ".repeat(deep) + "while(" + econdition + ");\n";
-    }
-
-    get_ewd(econdition, content, deep) {
-        return " ".repeat(deep) + "while(" + econdition + "){\n" + content + "\n" + " ".repeat(deep) + "}\n";
-    }
-
-    get_manualIf(econdition, left, right, deep) {
-        return " ".repeat(deep - 1) + "if(" + econdition + "){\n" + left + " ".repeat(deep - 1) + "}else{\n" + right + " ".repeat(deep - 1) + "}\n";
-    }
-
-    get_manualLoop(econdition, path2, comb, deep) {
-        return path2 + " ".repeat(deep - 1) + "while(!(" + econdition + ")){\n" + comb + "}\n";
-    }
-
-    set_increaseDeep(value) {
-        this.deep = this.deep + parseInt(value);
-    }
-}
-
-const Java = new JavaBuilder();
-const Python = new PythonBuilder();
-
 function mainGeneration() {
     isCodeGenerated = false;
     allElements = graph.getElements();
@@ -1124,8 +1005,10 @@ function convert_JsonToProgrammCode(json_graph, language) {
 
         $('#preCode').html(wrap);
 
-        let submitButton = $('sendToServer');
-        submitButton.removeClass('btn-default').addClass('btn-primary').prop('disabled', false).title('');
+        let submitButton = $('#sendToServer');
+        console.log(submitButton.length);
+        submitButton.removeClass('btn-default').addClass('btn-primary').prop('disabled', false);
+        submitButton.prop('title', '');
         document.getElementById("mainGeneration").className = "form-control";
         isCodeGenerated = true;
     }

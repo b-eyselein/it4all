@@ -10,6 +10,8 @@ object ProgExParts {
 
   case object Implementation extends ProgExPart("Implementierung", "implementation")
 
-  val values = Seq(TestdataCreation, Implementation)
+  case object ActivityDiagram extends ProgExPart("Als Aktivitätsdiagramm", "activity")
+
+  val values = Seq(TestdataCreation, Implementation, ActivityDiagram)
 
 }

@@ -6,6 +6,8 @@ import model.core.tools.IdPartExToolObject
 import model.{Consts, HasBaseValues}
 import play.api.mvc.Call
 
+import scala.language.postfixOps
+
 object BlanksToolObject extends IdPartExToolObject {
 
   override type CompEx = BlanksCompleteExercise

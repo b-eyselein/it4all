@@ -32,6 +32,7 @@ function testSol(url, part) {
         }
     };
 
+    console.log(dataToSend);
 
     $.ajax({
         type: 'PUT',

@@ -22,11 +22,6 @@ object ProgToolObject extends IdPartExToolObject {
 
   override def exerciseRoute(exercise: HasBaseValues, part: String): Call = routes.ProgController.exercise(exercise.id, part)
 
-  //  override def exerciseRoutes(exercise: ProgCompleteEx) = Map(
-  //    routes.ProgController.exercise(exercise.ex.id, ProgExPart.TESTDATA_CREATION.name) -> "Testdaten erstellen",
-  //    routes.ProgController.exercise(exercise.ex.id, ProgExPart.IMPLEMENTATION.name) -> "Aufgabe bearbeiten"
-  //  )
-
   override def exerciseListRoute(page: Int): Call = routes.ProgController.exerciseList(page)
 
   override def correctLiveRoute(exercise: HasBaseValues): Call = routes.ProgController.correctLive(exercise.id)

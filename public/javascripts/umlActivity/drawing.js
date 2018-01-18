@@ -12,18 +12,6 @@ const list_nameOfChangingElements = ['basic', 'manual_ifend', 'manual_ifstart', 
 // used for select element and click on paper to generate Element
 let selElement;
 
-// Parameters for Task
-const parameters = {
-    methodName: 'heckeSchneiden',
-    startNode: {
-        inputType: 'String',
-        input: 'W1'
-    },
-    endNode: {
-        outputType: 'String',
-        output: 'W2'
-    }
-};
 
 //vars
 let MousePosElementName;

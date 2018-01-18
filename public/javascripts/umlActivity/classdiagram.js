@@ -118,21 +118,15 @@ $(document).ready(function () {
             switch (connection.type) {
                 case "Composition":
                     return new uml.Composition(input);
-                    break;
                 case "Implementation":
                     return new uml.Implementation(input);
-                    break;
                 case "Aggregation":
                     return new uml.Aggregation(input);
-                    break;
                 case "Generalization":
                     return new uml.Generalization(input);
-                    break;
                 case "Link":
                     return new joint.dia.Link(input);
-                    break;
             }
-            return;
         }
 
         function get_class(xCoord, yCoord, cname, clname, isAbstract, attributesArr, methodsArr, ownId) {
