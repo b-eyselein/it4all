@@ -1,89 +1,87 @@
 @(user: model.User, routesObject: model.core.tools.ExToolObject, exerciseOptions: model.core.tools.ExerciseOptions, exercise: model.Exercise,
         exRest: Html, exScript: Html, oldSolution: String, part: controllers.exes.idPartExes.ExPart)
 
-@scripts = {
-@exScript
+    @scripts = {
+    @exScript
 
-    <script src="@routes.Assets.versioned("lib/ace/src/ace.js")"></script>
-    <script src="@routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
+        <script src="@routes.Assets.versioned("lib/ace/src/ace.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
 
-        <!--suppress JSUnusedLocalSymbols, JSAnnotator -->
-    <script>
-            const theMode = "@exerciseOptions.aceMode";
-            const theMinLines = @exerciseOptions.minLines;
-            const theMaxLines = @exerciseOptions.maxLines;
-            const theUpdatePrev = @exerciseOptions.updatePrev;
-    </script>
+            <!--suppress JSUnusedLocalSymbols, JSAnnotator -->
+        <script>
+                const theMode = "@exerciseOptions.aceMode";
+                const theMinLines = @exerciseOptions.minLines;
+                const theMaxLines = @exerciseOptions.maxLines;
+                const theUpdatePrev = @exerciseOptions.updatePrev;
+        </script>
 
     @core.helperTemplates.fullScreenScripts.render()
 
-}
+    }
 
-@main(exerciseOptions.tool, user, scripts) {
-    <div class="container" id="fullsc">
+    @main(exerciseOptions.tool, user, scripts) {
+        <div class="container" id="fullsc">
 
-        <form action="javascript:testSol('@routesObject.correctRoute(exercise)', '@part.urlName')">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="page-header">
-                        <h2>Aufgabenstellung</h2>
-                    </div>
-
-                    <p>@Html(exercise.text)</p>
-
-                    @exRest
-                </div>
-
-                <div class="col-md-6">
-                    <div class="page-header">
-                        <h2>Editor</h2>
-                    </div>
-
-                        <!-- Editor -->
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-default" onclick="changeFontsize(-2);">
-                                    <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-                                </button>
-                                <span class="btn btn-default">Schriftgr&ouml;&szlig;e: <span id="fontsize">16</span>
-                                    px</span>
-                                <button type="button" class="btn btn-default" onclick="changeFontsize(+2);">
-                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                                </button>
-                            </div>
-
+            <form action="javascript:testSol('@routesObject.correctRoute(exercise)', '@part.urlName')">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="page-header">
+                            <h2>Aufgabenstellung</h2>
                         </div>
-                        <div id="editor" class="form-control">@oldSolution</div>
-                        <textarea title="hidden" hidden name="@model.core.CoreConsts.FORM_VALUE" id="@model.core.CoreConsts.FORM_VALUE">@oldSolution</textarea>
+
+                        <p>@Html(exercise.text)</p>
+
+                        @exRest
                     </div>
-                        <!-- Editor Ende -->
 
+                    <div class="col-md-6">
+                        <div class="page-header">
+                            <h2>Editor</h2>
+                        </div>
+
+                            <!-- Editor -->
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default" onclick="changeFontsize(-2);">
+                                        <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                                    </button>
+                                    <span class="btn btn-default">Schriftgr&ouml;&szlig;e: <span id="fontsize">16</span>
+                                        px</span>
+                                    <button type="button" class="btn btn-default" onclick="changeFontsize(+2);">
+                                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                    </button>
+                                </div>
+
+                            </div>
+                            <div id="editor" class="form-control">@oldSolution</div>
+                            <textarea title="hidden" hidden name="@model.core.CoreConsts.FORM_VALUE" id="@model.core.CoreConsts.FORM_VALUE">@oldSolution</textarea>
+                        </div>
+                            <!-- Editor Ende -->
+
+                    </div>
                 </div>
-            </div>
 
-            <div class="btn-group btn-group-justified">
-                <div class="btn-group">
-                    <button class="btn btn-primary" id="testButton">L&ouml;sung testen</button>
+                <div class="btn-group btn-group-justified">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default" onclick="toggleFullscreen()">
+                            Toggle Fullscreen <span class="glyphicon glyphicon-resize-full" id="fullscBtnSpan"></span>
+                        </button>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-success" id="testButton">L&ouml;sung testen</button>
+                    </div>
+                    <a class="btn btn-default" href="@routesObject.indexCall">Bearbeitung beenden</a>
                 </div>
-                <div class="btn-group">
-                    <button type="button" class="btn btn-default" onclick="toggleFullscreen()">
-                        Toggle Fullscreen <span class="glyphicon glyphicon-resize-full" id="fullscBtnSpan"></span>
-                    </button>
-                </div>
-                <div class="btn-group">
-                    <button class="btn btn-success">L&ouml;sung abgeben</button>
-                </div>
-            </div>
 
-            <hr>
+                <hr>
 
-            <section id="correctionDiv">
-                <h2>Bemerkungen</h2>
-                <div id="correction"></div>
-            </section>
-        </form>
+                <section id="correctionDiv">
+                    <h2>Bemerkungen</h2>
+                    <div id="correction"></div>
+                </section>
+            </form>
 
-    </div>
-}
+        </div>
+    }

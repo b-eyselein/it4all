@@ -107,31 +107,31 @@ POST          /prog/exercise/:id                          controllers.exes.idPar
 
 # Blanks - Anfang...
 
-GET           /blanks/admin                               controllers.exes.idExes.BlanksController.adminIndex
+GET           /blanks/admin                               controllers.exes.idPartExes.BlanksController.adminIndex
 
-GET           /blanks/admin/import                        controllers.exes.idExes.BlanksController.adminImportExercises
-GET           /blanks/admin/export                        controllers.exes.idExes.BlanksController.adminExportExercises
-GET           /blanks/admin/exportFile                    controllers.exes.idExes.BlanksController.adminExportExercisesAsFile
+GET           /blanks/admin/import                        controllers.exes.idPartExes.BlanksController.adminImportExercises
+GET           /blanks/admin/export                        controllers.exes.idPartExes.BlanksController.adminExportExercises
+GET           /blanks/admin/exportFile                    controllers.exes.idPartExes.BlanksController.adminExportExercisesAsFile
 
-GET           /blanks/admin/exerciseList                  controllers.exes.idExes.BlanksController.adminExerciseList
-GET           /blanks/admin/newExForm                     controllers.exes.idExes.BlanksController.adminNewExerciseForm
-PUT           /blanks/admin/exerciseList                  controllers.exes.idExes.BlanksController.adminCreateExercise
-POST          /blanks/admin/exerciseList                  controllers.exes.idExes.BlanksController.adminCreateExercise
+GET           /blanks/admin/exerciseList                  controllers.exes.idPartExes.BlanksController.adminExerciseList
+GET           /blanks/admin/newExForm                     controllers.exes.idPartExes.BlanksController.adminNewExerciseForm
+PUT           /blanks/admin/exerciseList                  controllers.exes.idPartExes.BlanksController.adminCreateExercise
+POST          /blanks/admin/exerciseList                  controllers.exes.idPartExes.BlanksController.adminCreateExercise
 
-GET           /blanks/admin/exerciseList/:id              controllers.exes.idExes.BlanksController.adminEditExerciseForm(id: Int)
-PUT           /blanks/admin/exerciseList/:id              controllers.exes.idExes.BlanksController.adminEditExercise(id: Int)
-POST          /blanks/admin/exerciseList/:id              controllers.exes.idExes.BlanksController.adminEditExercise(id: Int)
-DELETE        /blanks/admin/exerciseList/:id              controllers.exes.idExes.BlanksController.adminDeleteExercise(id: Int)
+GET           /blanks/admin/exerciseList/:id              controllers.exes.idPartExes.BlanksController.adminEditExerciseForm(id: Int)
+PUT           /blanks/admin/exerciseList/:id              controllers.exes.idPartExes.BlanksController.adminEditExercise(id: Int)
+POST          /blanks/admin/exerciseList/:id              controllers.exes.idPartExes.BlanksController.adminEditExercise(id: Int)
+DELETE        /blanks/admin/exerciseList/:id              controllers.exes.idPartExes.BlanksController.adminDeleteExercise(id: Int)
 
-PUT           /blanks/admin/exercise/:id/state            controllers.exes.idExes.BlanksController.adminChangeExState(id: Int)
+PUT           /blanks/admin/exercise/:id/state            controllers.exes.idPartExes.BlanksController.adminChangeExState(id: Int)
 
 # User
-GET           /blanks/                                    controllers.exes.idExes.BlanksController.index
-GET           /blanks/exercises                           controllers.exes.idExes.BlanksController.exerciseList(page: Int ?= 1)
+GET           /blanks/                                    controllers.exes.idPartExes.BlanksController.index
+GET           /blanks/exercises                           controllers.exes.idPartExes.BlanksController.exerciseList(page: Int ?= 1)
 
-GET           /blanks/:id                                 controllers.exes.idExes.BlanksController.exercise(id: Int)
-PUT           /blanks/:id                                 controllers.exes.idExes.BlanksController.correctLive(id: Int)
-POST          /blanks/:id                                 controllers.exes.idExes.BlanksController.correct(id: Int)
+GET           /blanks/:id/:part                           controllers.exes.idPartExes.BlanksController.exercise(id: Int, part: String)
+PUT           /blanks/:id                                 controllers.exes.idPartExes.BlanksController.correctLive(id: Int)
+POST          /blanks/:id                                 controllers.exes.idPartExes.BlanksController.correct(id: Int)
 # Blanks - Ende
 
 

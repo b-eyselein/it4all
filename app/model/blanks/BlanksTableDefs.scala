@@ -2,7 +2,7 @@ package model.blanks
 
 import javax.inject.Inject
 
-import controllers.exes.idExes.BlanksToolObject
+import controllers.exes.idPartExes.BlanksToolObject
 import model.Enums.ExerciseState
 import model._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}

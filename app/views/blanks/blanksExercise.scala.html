@@ -10,7 +10,7 @@
             <h1>L&uuml;ckentext</h1>
         </div>
 
-        <form class="form-inline" autocomplete="off" action="javascript:testSol('@exes.idExes.routes.BlanksController.correct(exercise.id)')" >
+        <form class="form-inline" autocomplete="off" action="javascript:testSol('@exes.idPartExes.routes.BlanksController.correct(exercise.id)')" >
 
             @Html(exercise.ex.blanksText)
 
@@ -20,7 +20,7 @@
                 <div class="btn-group">
                     <button class="btn btn-primary">Eingaben testen</button>
                 </div>
-                <a href="@exes.idExes.routes.BlanksController.index()" class="btn btn-default">Zur&uuml;ck zur Aufgabenseite</a>
+                <a href="@exes.idPartExes.routes.BlanksController.index()" class="btn btn-default">Zur&uuml;ck zur Aufgabenseite</a>
             </div>
         </form>
 

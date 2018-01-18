@@ -22,6 +22,8 @@ function onProgCorrectionError(jqXHR) {
 }
 
 function testSol(url, part) {
+    $('#correction').html('');
+
     let dataToSend = {
         part,
         solution: {

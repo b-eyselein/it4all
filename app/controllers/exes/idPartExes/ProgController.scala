@@ -4,7 +4,7 @@ import javax.inject._
 
 import controllers.Secured
 import controllers.exes.idPartExes.ProgController._
-import model.Enums.ExerciseState
+import model.Enums.{ExerciseState, SuccessType}
 import model.core._
 import model.core.tools.ExerciseOptions
 import model.programming.ProgConsts._
@@ -12,6 +12,7 @@ import model.programming.ProgExParts.ProgExPart
 import model.programming._
 import model.{JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
+import play.api.Logger
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.json._
 import play.api.mvc._
@@ -52,7 +53,6 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
   override protected def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: ProgExPart): Option[ProgSolutionType] = part match {
     case ProgExParts.TestdataCreation => jsValue.asArray(_.asObj flatMap (jsValue => readTestData(id, jsValue, user))) map TestdataSolution
     case ProgExParts.Implementation   => jsValue.asObj flatMap { jsObj =>
-      println("JsObj => " + jsObj)
       for {
         language <- jsObj.enumField("languague", str => ProgLanguage.valueOf(str) getOrElse ProgLanguage.STANDARD_LANG)
         implementation <- jsObj.stringField("implementation")
@@ -82,8 +82,7 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
   // Other routes
 
   def getDeclaration(lang: String): EssentialAction = withUser {
-    _ =>
-      implicit request => Ok(ProgLanguage.valueOf(lang).getOrElse(ProgLanguage.STANDARD_LANG).declaration)
+    _ => implicit request => Ok(ProgLanguage.valueOf(lang).getOrElse(ProgLanguage.STANDARD_LANG).declaration)
   }
 
   // Correction
@@ -93,9 +92,9 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
       tables.saveCompleteCommitedTestData(tds.completeCommitedTestData)
 
-      println("Solution: " + sol)
+      val futureResult = ProgrammingCorrector.validateTestdata(user, exercise, tds)
 
-      ???
+      Await.result(futureResult, Duration(MaxWaitTimeInSeconds, duration.SECONDS))
     }
     case is: ImplementationSolution => Try {
 
@@ -103,8 +102,10 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
       val language = ProgLanguage.STANDARD_LANG
 
-      // FIXME: Time out der Ausführung
-      Await.result(ProgCorrector.correct(user, exercise, is.implementation, language), Duration(MaxWaitTimeInSeconds, duration.SECONDS))
+      val futureResult = ProgrammingCorrector.correctImplementation(user, exercise, is.implementation, language)
+
+      // FIXME: Time out der Ausführung?
+      Await.result(futureResult, Duration(MaxWaitTimeInSeconds, duration.SECONDS))
     }
   }
 
@@ -143,8 +144,20 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   protected def onSubmitCorrectionError(user: User, error: Throwable): Result = ???
 
-  protected def onLiveCorrectionResult(result: ProgCompleteResult): Result = Ok(renderResult(result))
+  protected def onLiveCorrectionResult(result: ProgCompleteResult): Result = result match {
+    case ir: ProgImplementationCompleteResult => Ok(renderResult(ir))
+    case vr: ProgValidationCompleteResult     => {
+      val json = JsArray(vr.results.map {
+        case se: SyntaxError       => ???
+        case aer: AExecutionResult => Json.obj(ID_NAME -> aer.completeTestData.testData.id, "correct" -> JsBoolean(aer.success == SuccessType.COMPLETE))
+      })
 
-  protected def onLiveCorrectionError(error: Throwable): Result = BadRequest("Es gab einen Fehler bei der Korrektur!")
+      Ok(json)
+    }
+  }
 
+  protected def onLiveCorrectionError(error: Throwable): Result = {
+    Logger.error("Es gab einen Fehler bei der Korrektur:", error)
+    BadRequest("Es gab einen Fehler bei der Korrektur!")
+  }
 }

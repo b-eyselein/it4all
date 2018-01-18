@@ -2,7 +2,6 @@ package model.programming
 
 import model.MyYamlProtocol._
 import model.programming.ProgConsts._
-import model.programming.ProgEnums.DataTypes
 import model.{BaseValues, MyYamlProtocol}
 import net.jcazevedo.moultingyaml._
 
@@ -15,10 +14,10 @@ object ProgExYamlProtocol extends MyYamlProtocol {
     override def readRest(yamlObject: YamlObject, baseValues: BaseValues): ProgCompleteEx = ProgCompleteEx(
       ProgExercise(baseValues,
         yamlObject.stringField(FUNCTIONNAME_NAME),
-        yamlObject.enumField("outputType", str => DataTypes.byName(str) getOrElse DataTypes.STRING, DataTypes.STRING)
+        yamlObject.enumField("outputType", str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING, ProgDataTypes.STRING)
       ),
       yamlObject.arrayField("inputTypes", _.asStr).zipWithIndex.map {
-        case (optStr, index) => InputType(index, baseValues.id, optStr flatMap (str => DataTypes.byName(str)) getOrElse DataTypes.STRING)
+        case (optStr, index) => InputType(index, baseValues.id, optStr flatMap (str => ProgDataTypes.byName(str)) getOrElse ProgDataTypes.STRING)
       },
       yamlObject.objectField(SAMPLE_SOL_NAME, ProgSampleSolutionYamlFormat(baseValues.id)),
       yamlObject.arrayField(SAMPLE_TESTDATA_NAME, _ convertTo[CompleteSampleTestData] ProgCompleteSampleTestdataYamlFormat(baseValues.id))
@@ -56,9 +55,9 @@ object ProgExYamlProtocol extends MyYamlProtocol {
     }
 
     override def write(cstd: CompleteSampleTestData): YamlValue = YamlObject(
-      YamlString(ID_NAME) -> cstd.sampleTestData.id,
-      YamlString(OUTPUT_NAME) -> cstd.sampleTestData.output,
-      YamlString(INPUTS_NAME) -> YamlArray(cstd.inputs map (_ toYaml TestDataInputYamlFormat(cstd.sampleTestData.id, cstd.sampleTestData.exerciseId)) toVector)
+      YamlString(ID_NAME) -> cstd.testData.id,
+      YamlString(OUTPUT_NAME) -> cstd.testData.output,
+      YamlString(INPUTS_NAME) -> YamlArray(cstd.inputs map (_ toYaml TestDataInputYamlFormat(cstd.testData.id, cstd.testData.exerciseId)) toVector)
     )
 
   }

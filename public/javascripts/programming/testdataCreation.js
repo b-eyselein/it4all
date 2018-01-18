@@ -20,11 +20,16 @@ function moreTestData() {
          </tr>`);
 }
 
+/**
+ *
+ * @param {object[]} response
+ * @param {number} response.id
+ * @param {boolean} response.correct
+ */
 function onValidateTDSuccess(response) {
     for (let data of response) {
         let row = document.getElementById('tr_' + data.id);
-        row.title = data.titleForValidation;
-        row.className = data.successful ? 'success' : 'danger';
+        row.className = data.correct ? 'success' : 'danger';
     }
 }
 
@@ -52,7 +57,7 @@ function validateTestData(url, part) {
 
     $.ajax({
         type: 'PUT',
-        dataType: 'json', // return type
+        // dataType: 'json', // return type
         contentType: 'application/json', // type of message to server
         url,
         data: JSON.stringify(dataToSend),

@@ -79,11 +79,11 @@
 
                 @for(td <- completeEx.sampleTestData) {
                     <tr>
-                        <td>@td.sampleTestData.id</td>
+                        <td>@td.testData.id</td>
                         @for(input <- td.inputs) {
                             <td>@input.input</td>
                         }
-                        <td>@td.sampleTestData.output</td>
+                        <td>@td.testData.output</td>
                     </tr>
                 }
             </tbody>

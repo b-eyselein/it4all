@@ -1,8 +1,9 @@
-package controllers.exes.idExes
+package controllers.exes.idPartExes
 
 import javax.inject._
 
 import controllers.Secured
+import model.blanks.BlanksExParts.BlankExPart
 import model.blanks._
 import model.{JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
@@ -18,7 +19,14 @@ import scala.util.Try
 
 @Singleton
 class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: BlanksTableDefs)(implicit ec: ExecutionContext)
-  extends AIdExController[BlanksExercise, BlanksCompleteExercise, BlanksAnswerMatchingResult, BlanksCompleteResult, BlanksTableDefs](cc, dbcp, t, BlanksToolObject) with JsonFormat with Secured {
+  extends AIdPartExController[BlanksExercise, BlanksCompleteExercise, BlanksAnswerMatchingResult, BlanksCompleteResult, BlanksTableDefs](cc, dbcp, t, BlanksToolObject)
+    with Secured with JsonFormat {
+
+  override type PartType = BlankExPart
+
+  override protected def partTypeFromUrl(urlName: String): Option[BlankExPart] = Some(BlanksExParts.BlankExSinglePart)
+
+  override protected def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: BlankExPart): Option[Seq[BlanksAnswer]] = ???
 
   // Reading solution from requests
 
@@ -44,9 +52,9 @@ class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
 
   // Views
 
-  override def renderExercise(user: User, exercise: BlanksCompleteExercise): Future[Html] = Future(views.html.blanks.blanksExercise(user, exercise))
+  override def renderExercise(user: User, exercise: BlanksCompleteExercise, part: BlankExPart): Future[Html] = Future(views.html.blanks.blanksExercise(user, exercise))
 
-  override def renderResult(correctionResult: BlanksCompleteResult): Html = correctionResult.result.describe // ???
+  private def renderResult(correctionResult: BlanksCompleteResult): Html = correctionResult.result.describe // ???
 
   override def renderEditRest(exercise: Option[BlanksCompleteExercise]): Html = new Html(
     s"""<div class="form-group">
@@ -60,19 +68,18 @@ class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
 
   private def renderSample(sample: BlanksAnswer): String = s"<li>${sample.id} &rarr; ${sample.solution}</li>"
 
-  override protected def onLiveCorrectionSuccess(correctionResult: BlanksCompleteResult): Result = Ok(json.JsArray(
-    correctionResult.result.allMatches map (m => Json.obj(
+  override protected def onSubmitCorrectionResult(user: User, result: BlanksCompleteResult): Result = ???
+
+  override protected def onSubmitCorrectionError(user: User, error: Throwable): Result = ???
+
+  override protected def onLiveCorrectionResult(result: BlanksCompleteResult): Result = Ok(json.JsArray(
+    result.result.allMatches map (m => Json.obj(
       "id" -> JsNumber(BigDecimal(m.userArg map (_.id) getOrElse -1)),
       "correctness" -> m.matchType.name,
       "explanation" -> m.explanation))
   ))
 
-  override protected def onSubmitCorrectionResult(user: User, result: BlanksCompleteResult): Result = ???
-
-  override protected def onSubmitCorrectionError(user: User, error: Throwable): Result = ???
-
-  override protected def onLiveCorrectionResult(result: BlanksCompleteResult): Result = ???
-
   override protected def onLiveCorrectionError(error: Throwable): Result = ???
+
 }
 

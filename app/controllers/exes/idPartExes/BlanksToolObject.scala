@@ -1,14 +1,12 @@
-package controllers.exes.idExes
+package controllers.exes.idPartExes
 
 import model.Enums.ToolState
-import model.blanks.BlanksCompleteExercise
-import model.core.tools.IdExToolObject
+import model.blanks.{BlanksCompleteExercise, BlanksExParts}
+import model.core.tools.IdPartExToolObject
 import model.{Consts, HasBaseValues}
 import play.api.mvc.Call
 
-object BlanksConsts extends Consts
-
-object BlanksToolObject extends IdExToolObject {
+object BlanksToolObject extends IdPartExToolObject {
 
   override type CompEx = BlanksCompleteExercise
 
@@ -20,7 +18,7 @@ object BlanksToolObject extends IdExToolObject {
 
   override def indexCall: Call = routes.BlanksController.index()
 
-  override def exerciseRoute(exercise: HasBaseValues): Call = routes.BlanksController.exercise(exercise.id)
+  override def exerciseRoute(exercise: HasBaseValues, part: String): Call = routes.BlanksController.exercise(exercise.id, part)
 
   override def exerciseListRoute(page: Int): Call = routes.BlanksController.exerciseList(page)
 
@@ -51,4 +49,5 @@ object BlanksToolObject extends IdExToolObject {
 
   override def deleteExerciseRoute(exercise: HasBaseValues): Call = routes.BlanksController.adminDeleteExercise(exercise.id)
 
+  override def exParts: Map[String, String] = BlanksExParts.values map (part => part.urlName -> part.partName) toMap
 }

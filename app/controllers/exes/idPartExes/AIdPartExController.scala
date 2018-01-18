@@ -42,14 +42,11 @@ abstract class AIdPartExController[Ex <: Exercise, CompEx <: CompleteEx[Ex], R <
 
   override def readSolutionFromPutRequest(user: User, id: Int)(implicit request: Request[AnyContent]): Option[SolType] = request.body.asJson flatMap (_.asObj) match {
     case Some(jsObj) =>
-      println("Complete obj: " + jsObj)
 
       val partAndSolution = for {
         part <- jsObj.stringField("part") flatMap partTypeFromUrl
         solution <- jsObj.field("solution")
       } yield (part, solution)
-
-      println(partAndSolution)
 
       partAndSolution flatMap {
         case (part, solution) => readSolutionForPartFromJson(user, id, solution, part)
