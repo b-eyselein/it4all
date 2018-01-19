@@ -32,6 +32,8 @@ object ProgController {
 
   val MaxWaitTimeInSeconds = 5
 
+  val MaxDuration = Duration(MaxWaitTimeInSeconds, duration.SECONDS)
+
 }
 
 @Singleton
@@ -58,6 +60,7 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
         implementation <- jsObj.stringField("implementation")
       } yield ImplementationSolution(language, implementation)
     }
+    case ProgExParts.ActivityDiagram  => jsValue.asStr map UmlActivitySolution
   }
 
   private def readTestData(id: Int, tdJsObj: JsObject, user: User): Option[CompleteCommitedTestData] = for {
@@ -94,7 +97,7 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
       val futureResult = ProgrammingCorrector.validateTestdata(user, exercise, tds)
 
-      Await.result(futureResult, Duration(MaxWaitTimeInSeconds, duration.SECONDS))
+      Await.result(futureResult, MaxDuration)
     }
     case is: ImplementationSolution => Try {
 
@@ -105,7 +108,15 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
       val futureResult = ProgrammingCorrector.correctImplementation(user, exercise, is.implementation, language)
 
       // FIXME: Time out der Ausführung?
-      Await.result(futureResult, Duration(MaxWaitTimeInSeconds, duration.SECONDS))
+      Await.result(futureResult, MaxDuration)
+    }
+    case uas: UmlActivitySolution   => Try {
+
+      val language = ProgLanguage.STANDARD_LANG
+
+      val futureResult = ProgrammingCorrector.correctImplementation(user, exercise, uas.implementation, language)
+
+      Await.result(futureResult, MaxDuration)
     }
   }
 
@@ -122,7 +133,7 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
         views.html.core.exercise2Rows.render(user, ProgToolObject, ProgExOptions, exercise.ex, renderExRest, exScript, declaration, ProgExParts.Implementation)
     }
 
-    case ProgExParts.ActivityDiagram => Future(views.html.umlActivity.activitiyDrawing.render(user, exercise))
+    case ProgExParts.ActivityDiagram => Future(views.html.umlActivity.activitiyDrawing.render(user, exercise, toolObject))
   }
 
   override def renderExesListRest: Html = Html("")

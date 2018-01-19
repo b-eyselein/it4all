@@ -12,7 +12,6 @@ const list_nameOfChangingElements = ['basic', 'manual_ifend', 'manual_ifstart', 
 // used for select element and click on paper to generate Element
 let selElement;
 
-
 //vars
 let MousePosElementName;
 let MousePosElementID;
@@ -231,10 +230,10 @@ $(document).ready(function () {
     //SET start- and endNode
     function preparePaper() {
 
-        const functionDeclaration = parameters.methodName + '(' + parameters.startNode.inputType + ' ' + parameters.startNode.input + ')';
+        const functionDeclaration = EXERCISE_PARAMETERS.methodName + '(' + EXERCISE_PARAMETERS.methodParameters + ')';
 
         let start = createStartCircle('start', 'startId', 10, 10, functionDeclaration);
-        let end = createEndCircle('end', 'endId', paperJQ.width() - 100, paperJQ.height() - 100, parameters.endNode.outputType + ' ' + parameters.endNode.output);
+        let end = createEndCircle('end', 'endId', paperJQ.width() - 100, paperJQ.height() - 100, EXERCISE_PARAMETERS.endNode.outputType + ' ' + EXERCISE_PARAMETERS.endNode.output);
 
         graph.addCells([end, start]);
         parentChildNodes.push({'parentId': 'Startknoten-startId', 'startId': 'Startknoten-startId', 'endId': 'Endknoten-endId', 'endName': 'end'});

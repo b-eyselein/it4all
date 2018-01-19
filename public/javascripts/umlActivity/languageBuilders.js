@@ -27,10 +27,7 @@ class PythonBuilder extends AbstractLanguageBuilder {
         if ($('#editDiagramModal').hasClass('in')) {
             return content;
         } else {
-            return `
-def ${methodname}(${startnode_input}):
-${content}
-  return ${endnode_output}`;
+            return `def ${methodname}(${startnode_input}):` + '\n' + content + '\n' + ' '.repeat(this.deep) + `return ${endnode_output}`;
         }
     }
 
@@ -46,9 +43,7 @@ ${content}
 
     // noinspection JSMethodCanBeStatic
     get_efor(eelement, collection, content, deep) {
-        return ' '.repeat(deep) + `
-for ${eelement} in ${collection}:
-${content}`;
+        return ' '.repeat(deep) + `for ${eelement} in ${collection}:` + '\n' + content;
     }
 
     // noinspection JSMethodCanBeStatic

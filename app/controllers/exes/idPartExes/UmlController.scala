@@ -124,7 +124,7 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   }
 
   def activityExercise: EssentialAction = withAdmin { user =>
-    implicit request => Ok(activitiyDrawing.render(user, null))
+    implicit request => Ok(activitiyDrawing.render(user, null, toolObject))
   }
 
   // FIXME: used where?

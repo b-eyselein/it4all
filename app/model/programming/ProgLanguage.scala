@@ -13,12 +13,11 @@ object ProgLanguage {
 
   def valueOf(str: String): Option[ProgLanguage] = values find (_.name == str)
 
-  def inputcount2Vars(ic: Int): Seq[Char] = ('a' to 'z') take ic mkString COMMA
-
   val COMMA = ", "
 
   def buildToEvaluate(functionName: String, inputs: Seq[String]): String = functionName + "(" + (inputs mkString COMMA) + ")"
 
+  val PointOfA = 97
 
 }
 
@@ -34,6 +33,8 @@ trait ProgLanguage extends Selectable[ProgLanguage] {
   def buildFunction(exercise: ProgCompleteEx): String
 
   def buildToEvaluate(exercise: ProgCompleteEx): String
+
+  def buildParameters(inputTypes: Seq[InputType]): String
 
 }
 
@@ -51,11 +52,15 @@ object PYTHON_3 extends ProgLanguage {
       |  n = int(input())""".stripMargin
 
   override def buildFunction(exercise: ProgCompleteEx): String = {
-    s"""def ${exercise.ex.functionName}(${inputcount2Vars(exercise.inputCount)}):
+    s"""def ${exercise.ex.functionName}(${buildParameters(exercise.inputTypes)}):
        |  return 0""".stripMargin
   }
 
-  override def buildToEvaluate(exercise: ProgCompleteEx): String = exercise.ex.functionName + "(" + inputcount2Vars(exercise.inputCount) + ")"
+  override def buildToEvaluate(exercise: ProgCompleteEx): String = exercise.ex.functionName + "(" + buildParameters(exercise.inputTypes) + ")"
+
+  override def buildParameters(inputsTypes: Seq[InputType]): String = inputsTypes.sortBy(_.id).zipWithIndex.map {
+    case (inputType, index) => (index + PointOfA).toChar
+  } mkString ", "
 
 }
 

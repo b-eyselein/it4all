@@ -1,18 +1,23 @@
-/**
- * TEST: path to end possible (beginnning at startIdToTest)
- */
-function test_isEndnodeAccessible(graphToTest, startIdToTest, endIdToTest) {
-    list_successors = graph.getSuccessors(graph.getCell(startIdToTest));
+const pattTypeDouble = / {0,}\d+.?\d* {0,}/;
+const pattTypeString = / {0,}(".{0,}"|[a-zA-Z]) {0,}/;
+const pattTypeBoolean = / {0,}(true|false){1} {0,}/;
+
+// Test: path to end possible (beginnning at startIdToTest)
+function test_isEndNodeAccessible(graphToTest, startIdToTest, endIdToTest) {
+    let list_successors = graphToTest.getSuccessors(graphToTest.getCell(startIdToTest));
+
+    // Search for end node
     if (typeof list_successors[list_successors.length - 1] !== 'undefined') {
         for (let i = list_successors.length - 1; i > -1; i--) {
             if (list_successors[i].attributes.id === endIdToTest) {
-                return;
+                // end node found
+                return true;
             }
         }
     }
 
-    log.push("Der Endknoten kann nicht erreicht werden.");
-    highlightedCells.push(endIdToTest);
+    // end node not found
+    return false;
 }
 
 
@@ -77,29 +82,30 @@ function test_atLeastOneElementinMerge() {
     }
 }
 
-//Test: outbound connections from endnode are restricted
-function test_forbidOutboundConForEnd(endId) {
-    if (graph.getConnectedLinks(graph.getCell(endId), {outbound: true}).length > 0) {
-        log.push("Der Endknoten darf keine ausgehenden Verbindungen enthalten.");
-        highlightedCells.push(endId);
-    }
+// Test: endnode has outbound connections
+function test_EndNodeHasOutboundConnections(endId) {
+    return graph.getConnectedLinks(graph.getCell(endId), {outbound: true}).length > 0;
 }
 
-//TEST: graph doesnt contains unknown elements
-function test_noUnknownElements(graphToTest) {
-    for (i = 0; i < graphToTest.length; i++) {
-        if (graphToTest[i].attributes.name === "unknown") {
-            log.push("Der Graph enth\u00e4lt Verzweigungselemente, welche nicht korrekt verbunden sind.");
-            highlightedCells.push(graphToTest[i].attributes.id);
-            return;
+// Test: search for unknown elements in graph
+function test_SearchForUnknownElements(graphToTest) {
+    let unknownElements = [];
+    for (let element of  graphToTest) {
+        if (element.attributes.name === "unknown") {
+            unknownElements.push(element.attributes.id);
         }
     }
+    return unknownElements;
 }
 
-//TEST: alternative Endpoints through not connected elements
-function test_alternativeEnds(graphToTest, endId) {
+// Test: alternative Endpoints through not connected elements
+function test_alternativeEnds(graph, endId) {
+    // FIXME: currently broken...
     const sinks = graph.getSinks();
     let string = [];
+
+    console.log("Senkenanzahl: " + sinks.length);
+
     if (sinks.length > 1) {
         for (let i = 0; i < sinks.length; i++) {
             if (sinks[i].id.startsWith("Endknoten") || sinks[i].attributes.name === "edit") {
@@ -188,7 +194,6 @@ function test_conditionOfMergeelements() {
     }
 }
 
-
 function highlightCellsFromRegex(i) {
     for (let j = 0; j < currentVariables[i].found.length; j++) {
         highlightedCells.push(currentVariables[i].found[j].id);
@@ -200,6 +205,219 @@ function test_MultipleDeclarations() {
         if (currentVariables[i].found.length > 1) {
             log.push("Die Variable " + currentVariables[i].variable + " wurde " + currentVariables[i].found.length + "-mal deklariert");
             highlightCellsFromRegex(i);
+        }
+    }
+}
+
+function test_DeclarationAgainstProgress() {
+    for (let i = 0; i < currentVariables.length; i++) {
+        if (currentVariables[i].found.length > 1) {
+            for (let j = 0; j < currentVariables[i].found.length - 1; j++) {
+                if (currentVariables[i].found[j].type !== currentVariables[i].found[j + 1].type) {
+                    log.push("Die Variable " + currentVariables[i].variable + " wechselte den Datentyp von " + currentVariables[i].found[j].type + " zu " + currentVariables[i].found[j + 1].type + " durch mehrfache Deklaration");
+                    highlightedCells.push(currentVariables[i].found[j].id);
+                    highlightedCells.push(currentVariables[i].found[j + 1].id);
+                }
+            }
+        }
+    }
+}
+
+function test_TypeAgainstValue() {
+    for (let i = 0; i < currentVariables.length; i++) {
+        switch (currentVariables[i].found[0].type) {
+            case "String":
+                if (!(pattTypeString.test(currentVariables[i].found[0].value) | pattTypeString.test(currentVariables[i].lastValue))) {
+                    highlightedCells.push(currentVariables[i].found[0].id);
+                    log.push("Die Variable " + currentVariables[i].variable + " wurde als " + currentVariables[i].found[0].type + " erkannt und mit Wert " + currentVariables[i].found[0].value + " initialisiert.");
+                    log.push("Die Variable " + currentVariables[i].variable + " wurde zuletzt mit dem Wert " + currentVariables[i].lastValue + " erkannt.");
+                }
+
+                break;
+
+            case "Boolean":
+                console.log("pattDouble with " + currentVariables[i].lastValue + " :" + pattTypeBoolean.test(pattTypeBoolean.test(currentVariables[i].lastValue)));
+                if (!(pattTypeBoolean.test(currentVariables[i].found[0].value) | pattTypeBoolean.test(currentVariables[i].lastValue))) {
+                    highlightedCells.push(currentVariables[i].found[0].id);
+                    log.push("Die Variable " + currentVariables[i].variable + " wurde als " + currentVariables[i].found[0].type + " erkannt und mit Wert " + currentVariables[i].found[0].value + " initialisiert.");
+                    log.push("Die Variable " + currentVariables[i].variable + " wurde zuletzt mit dem Wert " + currentVariables[i].lastValue + " erkannt.");
+                }
+                break;
+
+            case "Double":
+                //console.log("pattDouble with "+currentVariables[i].found[0].value+" :"+pattTypeDouble.test(currentVariables[i].found[0].value));
+                if (!(pattTypeDouble.test(currentVariables[i].found[0].value) | pattTypeBoolean.test(currentVariables[i].lastValue))) {
+                    highlightedCells.push(currentVariables[i].found[0].id);
+                    log.push("Die Variable " + currentVariables[i].variable + " wurde als " + currentVariables[i].found[0].type + " erkannt und mit Wert " + currentVariables[i].found[0].value + " initialisiert.");
+                    log.push("Die Variable " + currentVariables[i].variable + " wurde zuletzt mit dem Wert " + currentVariables[i].lastValue + " erkannt.");
+                }
+                break;
+        }
+    }
+}
+
+//TEST: Elements must have an Input
+function test_elementsMustHaveInputs(graphToTest, startId, endId) {
+    for (let i = 0; i < graphToTest.length; i++) {
+        if (!(graphToTest[i].attributes.id === startId || graphToTest[i].attributes.id === endId)) {
+            switch (graphToTest[i].attributes.name) {
+                case "actionInput":
+                    //console.log(getDataFromElement(graphToTest[i].attributes).content);
+                    if (getDataFromElement((graphToTest[i].attributes)).content.data.toString() === "") {
+                        log.push("Das Element " + graphToTest[i].attributes.cleanname + " enth\u00e4lt keine Anweisungen");
+                        highlightedCells.push(graphToTest[i].attributes.id);
+                    }
+                    break;
+
+                case "actionSelect":
+                    //console.log(getDataFromElement(graphToTest[i].attributes).content);
+                    if (getDataFromElement((graphToTest[i].attributes)).content.data.toString() === "") {
+                        log.push("Das Element " + graphToTest[i].attributes.cleanname + " enth\u00e4lt keine Anweisungen");
+                        highlightedCells.push(graphToTest[i].attributes.id);
+                    }
+                    break;
+
+                case "actionDeclare":
+                    //console.log(getDataFromElement(graphToTest[i].attributes).content);
+                    if (!(pattDeclaration.test(getDataFromElement((graphToTest[i].attributes)).content.data.toString()))) {
+                        log.push("Das Element " + graphToTest[i].attributes.cleanname + " wurde unvollst\u00e4ndig initialsiert");
+                        highlightedCells.push(graphToTest[i].attributes.id);
+                    }
+                    break;
+
+                case "forin":
+                    if (!(amountOfEditNodes(graphToTest[i]) > 0)) {
+                        if (getDataFromElement((graphToTest[i].attributes)).content.area.toString() === "") {
+                            log.push("Das Element " + graphToTest[i].attributes.cleanname + " enth\u00e4lt keine Anweisungen");
+                            highlightedCells.push(graphToTest[i].attributes.id);
+                        }
+                    }
+                    if (getDataFromElement((graphToTest[i].attributes)).content.for.toString() === "") {
+                        log.push("Das Element " + graphToTest[i].attributes.cleanname + " enth\u00e4lt keine Anweisungen im Bereich \"for\"");
+                        highlightedCells.push(graphToTest[i].attributes.id);
+                    }
+                    if (getDataFromElement((graphToTest[i].attributes)).content.in.toString() === "") {
+                        log.push("Das Element " + graphToTest[i].attributes.cleanname + " enth\u00e4lt keine Anweisungen im Bereich \"in\"");
+                        highlightedCells.push(graphToTest[i].attributes.id);
+                    }
+                    break;
+
+                case "dw":
+                    if (getDataFromElement((graphToTest[i].attributes)).content.ewhile.toString() === "") {
+                        log.push("Das Element " + graphToTest[i].attributes.cleanname + " enth\u00e4lt keine Anweisungen im Bereich \"while\"");
+                        highlightedCells.push(graphToTest[i].attributes.id);
+                    }
+                    if (!(amountOfEditNodes(graphToTest[i]) > 0)) {
+                        if (getDataFromElement((graphToTest[i].attributes)).content.edo.toString() === "") {
+                            log.push("Das Element " + graphToTest[i].attributes.cleanname + " enth\u00e4lt keine Anweisungen");
+                            highlightedCells.push(graphToTest[i].attributes.id);
+                        }
+                    }
+                    break;
+
+                case "wd":
+                    if (getDataFromElement((graphToTest[i].attributes)).content.ewhile.toString() === "") {
+                        log.push("Das Element " + graphToTest[i].attributes.cleanname + " enth\u00e4lt keine Anweisungen im Bereich \"while\"");
+                        highlightedCells.push(graphToTest[i].attributes.id);
+                    }
+                    if (!(amountOfEditNodes(graphToTest[i]) > 0)) {
+                        if (getDataFromElement((graphToTest[i].attributes)).content.edo.toString() === "") {
+                            log.push("Das Element " + graphToTest[i].attributes.cleanname + " enth\u00e4lt keine Anweisungen");
+                            highlightedCells.push(graphToTest[i].attributes.id);
+                        }
+                    }
+                    break;
+
+                case "if":
+                    if (getDataFromElement((graphToTest[i].attributes)).content.eif.toString() === "") {
+                        log.push("Das Element " + graphToTest[i].attributes.cleanname + " enth\u00e4lt keine Anweisungen im Bereich \"if\"");
+                        highlightedCells.push(graphToTest[i].attributes.id);
+                    }
+                    if (!(amountOfEditNodes(graphToTest[i]) > 1)) {
+                        if (getDataFromElement((graphToTest[i].attributes)).content.ethen.toString() === "") {
+                            log.push("Das Element " + graphToTest[i].attributes.cleanname + " enth\u00e4lt keine Anweisungen im Bereich \"then\"");
+                            highlightedCells.push(graphToTest[i].attributes.id);
+                        }
+                        if (getDataFromElement((graphToTest[i].attributes)).content.eelse.toString() === "") {
+                            log.push("Das Element " + graphToTest[i].attributes.cleanname + " enth\u00e4lt keine Anweisungen im Bereich \"else\"");
+                            highlightedCells.push(graphToTest[i].attributes.id);
+                        }
+                    }
+                    break;
+            }
+        }
+    }
+}
+
+//TEST: if a merge element is open --> must be close with end tag
+function test_CnrStartnodeEqualsEndnode() {
+    let eif = 0;
+    let eloop = 0;
+    for (let i = 0; i < allElements.length; i++) {
+        switch (allElements[i].attributes.name) {
+            case "manual_ifstart":
+                eif++;
+                break;
+            case "manual_ifend":
+                eif--;
+                break;
+            case "manual_loopstart":
+                eloop++;
+                break;
+            case "manual_loopendct":
+                eloop--;
+                break;
+            case "manual_loopendcf":
+                eloop--;
+                break;
+        }
+    }
+    if (eloop > 0) {
+        log.push("Das Verzweigungselement Schleife wurde nicht korrekt abgeschlossen");
+    } else if (eloop < 0) {
+        log.push("Das Verzweigungselement Schleife wurde nicht korrekt begonnen");
+    }
+    if (eif > 0) {
+        log.push("Das Verzweigungselement Bedingung wurde nicht korrekt abgeschlossen");
+    } else if (eif < 0) {
+        log.push("Das Verzweigungselement Bedingung wurde nicht korrekt begonnen");
+    }
+}
+
+function test_isExternPortConnectedWithEditNode() {
+    for (let i = allElements.length - 1; i >= 0; i--) {
+        switch (allElements[i].attributes.name) {
+            case "wd":
+            case "dw":
+            case "forin":
+                if (graph.getConnectedLinks(allElements[i], {outbound: true}).length > 0) {
+                    const targetId = getPortByName(graph.getConnectedLinks(allElements[i]), "extern");
+                    if (targetId !== undefined) {
+                        if (graph.getCell(targetId).attributes.name !== "edit") {
+                            log.push("Ein " + allElements[i].attributes.cleanname + " ist nicht mit einem Bearbeitungsknoten verbunden");
+                            highlightedCells.push(allElements[i].attributes.id);
+                        }
+                    }
+                }
+                break;
+            case "if":
+                if (graph.getConnectedLinks(allElements[i], {outbound: true}).length > 1) {
+                    const targetIdethen = getPortByName(graph.getConnectedLinks(allElements[i]), "extern-ethen");
+                    const targetIdeelse = getPortByName(graph.getConnectedLinks(allElements[i]), "extern-eelse");
+                    if (targetIdethen !== undefined) {
+                        if (graph.getCell(targetIdethen).attributes.name !== "edit") {
+                            log.push("Ein " + allElements[i].attributes.cleanname + " ist nicht mit einem Bearbeitungsknoten verbunden");
+                            highlightedCells.push(allElements[i].attributes.id);
+                        }
+                    }
+                    if (targetIdeelse !== undefined) {
+                        if (graph.getCell(targetIdeelse).attributes.name !== "edit") {
+                            log.push("Ein " + allElements[i].attributes.cleanname + " ist nicht mit einem Bearbeitungsknoten verbunden");
+                            highlightedCells.push(allElements[i].attributes.id);
+                        }
+                    }
+                    break;
+                }
         }
     }
 }
