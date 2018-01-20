@@ -42,10 +42,10 @@ object DockerConnector {
   }
 
   private def createContainer(language: ProgLanguage, mountingDir: Path): String = DockerClient.createContainerCmd(language.dockerImageName)
-    //    .withName(language.aceName)
     .withWorkingDir(WorkingDir)
     .withBinds(new Bind(mountingDir.toAbsolutePath.toString, new Volume(WorkingDir)))
-    .withCmd("./script." + language.fileEnding)
+    .withCmd(s"bash timeout 2s $WorkingDir/script." + language.fileEnding)
+    //    .withCmd("pwd")
     .exec.getId
 
   private def startContainer(container: String): Unit = DockerClient.startContainerCmd(container).exec
@@ -78,7 +78,7 @@ object DockerConnector {
 
       logs.awaitCompletion(MaxWaitTimeInSeconds, TimeUnit.SECONDS)
 
-      deleteContainer(containerId)
+      //      deleteContainer(containerId)
 
       Left(logs.toString)
     }

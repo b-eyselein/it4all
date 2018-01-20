@@ -90,34 +90,26 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   // Correction
 
-  override def correctEx(user: User, sol: ProgSolutionType, exercise: ProgCompleteEx): Try[ProgCompleteResult] = sol match {
-    case tds: TestdataSolution      => Try {
+  override def correctEx(user: User, sol: ProgSolutionType, exercise: ProgCompleteEx): Try[ProgCompleteResult] = Try {
+    val language = ProgLanguage.STANDARD_LANG
 
-      tables.saveCompleteCommitedTestData(tds.completeCommitedTestData)
+    val futureResult = sol match {
+      case tds: TestdataSolution =>
 
-      val futureResult = ProgrammingCorrector.validateTestdata(user, exercise, tds)
+        tables.saveCompleteCommitedTestData(tds.completeCommitedTestData)
 
-      Await.result(futureResult, MaxDuration)
+        ProgrammingCorrector.validateTestdata(user, exercise, tds)
+
+      case is: ImplementationSolution =>
+
+        tables.saveSolution(user, exercise, is.implementation)
+
+        ProgrammingCorrector.correctImplementation(user, exercise, is.implementation, language)
+
+      case uas: UmlActivitySolution => ProgrammingCorrector.correctImplementation(user, exercise, uas.implementation, language)
     }
-    case is: ImplementationSolution => Try {
 
-      tables.saveSolution(user, exercise, is.implementation)
-
-      val language = ProgLanguage.STANDARD_LANG
-
-      val futureResult = ProgrammingCorrector.correctImplementation(user, exercise, is.implementation, language)
-
-      // FIXME: Time out der Ausführung?
-      Await.result(futureResult, MaxDuration)
-    }
-    case uas: UmlActivitySolution   => Try {
-
-      val language = ProgLanguage.STANDARD_LANG
-
-      val futureResult = ProgrammingCorrector.correctImplementation(user, exercise, uas.implementation, language)
-
-      Await.result(futureResult, MaxDuration)
-    }
+    Await.result(futureResult, MaxDuration)
   }
 
   // Views
@@ -127,10 +119,9 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
       val oldTestData: Seq[CommitedTestData] = Seq.empty // FIXME: Option(CommitedTestDataHelper.forUserAndExercise(user, id)).getOrElse(List.empty)
       Future(testDataCreation.render(user, exercise, oldTestData))
 
-    case ProgExParts.Implementation => tables.loadSolution(user, exercise) map {
-      oldSol =>
-        val declaration: String = oldSol map (_.solution) getOrElse ProgLanguage.STANDARD_LANG.buildFunction(exercise)
-        views.html.core.exercise2Rows.render(user, ProgToolObject, ProgExOptions, exercise.ex, renderExRest, exScript, declaration, ProgExParts.Implementation)
+    case ProgExParts.Implementation => tables.loadSolution(user, exercise) map { oldSol =>
+      val declaration: String = oldSol map (_.solution) getOrElse ProgLanguage.STANDARD_LANG.buildFunction(exercise)
+      views.html.core.exercise2Rows.render(user, ProgToolObject, ProgExOptions, exercise.ex, renderExRest, exScript, declaration, ProgExParts.Implementation)
     }
 
     case ProgExParts.ActivityDiagram => Future(views.html.umlActivity.activitiyDrawing.render(user, exercise, toolObject))

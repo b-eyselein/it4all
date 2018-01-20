@@ -43,7 +43,7 @@ class PythonBuilder extends AbstractLanguageBuilder {
 
     // noinspection JSMethodCanBeStatic
     get_efor(eelement, collection, content, deep) {
-        return ' '.repeat(deep) + `for ${eelement} in ${collection}:` + '\n' + content;
+        return ' '.repeat(deep) + `for ${eelement} in ${collection}:` + '\n' + content + '\n';
     }
 
     // noinspection JSMethodCanBeStatic
@@ -91,7 +91,7 @@ class JavaBuilder extends AbstractLanguageBuilder {
 
     // noinspection JSMethodCanBeStatic
     get_if(econdition, ethen, eelse, deep) {
-        return " ".repeat(deep) + "if(" + econdition + "){\n" + ethen + "\n" + " ".repeat(deep) + "}else{\n" + eelse + "\n" + " ".repeat(deep) + "}\n";
+        return " ".repeat(deep) + "if(" + econdition + ") {\n" + ethen + "\n" + " ".repeat(deep) + "}else{\n" + eelse + "\n" + " ".repeat(deep) + "}\n";
     }
 
     // noinspection JSMethodCanBeStatic
