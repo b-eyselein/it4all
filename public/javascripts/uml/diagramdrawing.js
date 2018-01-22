@@ -151,9 +151,9 @@ function cellOnLeftClick(cellView) {
                      <div class="panel-heading">
                        <div class="form-group">
                          <select class="form-control text-center">
-                           <option value="${CLASSTYPE}" ${classType === "uml.Class" ? "selected" : ""}>&lt;&lt;class&gt;&gt;</option>
-                           <option value="${ABSTRACT}" ${classType === "uml.Abstract" ? "selected" : ""}>&lt;&lt;abstract&gt;&gt;</option>
-                           <option value="${INTERFACE}" ${classType === "uml.Interface" ? "selected" : ""}>&lt;&lt;interface&gt;&gt;</option>
+                           <option value="${CLASSTYPE}" ${classType === 'uml.Class' ? 'selected' : ''}>&lt;&lt;class&gt;&gt;</option>
+                           <option value="${ABSTRACT}" ${classType === 'uml.Abstract' ? 'selected' : ''}>&lt;&lt;abstract&gt;&gt;</option>
+                           <option value="${INTERFACE}" ${classType === 'uml.Interface' ? 'selected' : ''}>&lt;&lt;interface&gt;&gt;</option>
                          </select>
                        </div>
                        <div class="form-group">
@@ -243,6 +243,10 @@ function forwards() {
     console.error('TODO: not yet implemented!');
 }
 
+function unMarkButtons() {
+    $('#buttonsDiv').find('button').removeClass('btn-primary').addClass('btn-default');
+}
+
 function selectClassType(button) {
     unMarkButtons();
 
@@ -272,12 +276,6 @@ function selectButton(button) {
     button.className = 'btn btn-primary';
 
     sel = button.dataset.conntype;
-}
-
-function unMarkButtons() {
-    for (let otherButton of document.getElementById('buttonsDiv').getElementsByTagName('button')) {
-        otherButton.className = 'btn btn-default';
-    }
 }
 
 function exportDiagram() {
@@ -363,26 +361,26 @@ function prepareFormForSubmitting() {
 }
 
 function link(sourceId, targetId) {
-    let source_name = getClassNameFromCellId(sourceId);
-    let destin_name = getClassNameFromCellId(targetId);
+    let sourceName = getClassNameFromCellId(sourceId);
+    let targetName = getClassNameFromCellId(targetId);
 
-    let source_mult = '';
-    let destin_mult = '';
+    let sourceMultiplicity = '';
+    let targetMultiplicity = '';
 
     if (sel !== 'IMPLEMENTATION') {
-        source_mult = askMulitplicity(source_name, destin_name);
-        destin_mult = askMulitplicity(destin_name, source_name);
+        sourceMultiplicity = askMulitplicity(sourceName, targetName);
+        targetMultiplicity = askMulitplicity(targetName, sourceName);
     }
 
     let members = {
-        source: {id: sourceId},
+        source: {id: sourceName},
         target: {id: targetId},
         labels: [{
             position: 25,
-            attrs: {text: {text: source_mult}}
+            attrs: {text: {text: sourceMultiplicity}}
         }, {
             position: -25,
-            attrs: {text: {text: destin_mult}}
+            attrs: {text: {text: targetMultiplicity}}
         }]
     };
 

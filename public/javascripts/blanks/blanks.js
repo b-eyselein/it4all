@@ -6,7 +6,6 @@
  * @param {string} response.explanation
  */
 function onAjaxSuccess(response) {
-    console.log(response);
     for (let result of response) {
         const span = $('#span_' + result.id);
         const inputParent = $('#' + result.id).parent();

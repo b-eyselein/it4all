@@ -1,44 +1,44 @@
 const targetModal = 'classDiagModal';
 
 $(document).ready(function () {
-    $('#' + targetModal).on('shown.bs.modal', function (e) {
+    $('#' + targetModal).on('shown.bs.modal', function () {
         const uml = joint.shapes.uml;
 
         const classes = [
             {
                 x: 160, y: 50,
-                name: "fahrzeug",
-                cname: "Fahrzeug",
+                name: 'fahrzeug',
+                cname: 'Fahrzeug',
                 isAbstract: false,
-                attributes: ["Besitzer: String", "ID: Integer", "Preis: Double"],
-                methodes: ["fahren(): void", "getType(): String", "getPrice: Double"],
+                attributes: ['Besitzer: String', 'ID: Integer', 'Preis: Double'],
+                methodes: ['fahren(): void', 'getType(): String', 'getPrice: Double'],
                 ownId: 1
             },
             {
                 x: 550, y: 50,
-                name: "haendler",
-                cname: "H\u00e4ndler",
+                name: 'haendler',
+                cname: 'H\u00e4ndler',
                 isAbstract: false,
-                attributes: ["Adresse: String", "Name: String", "AnzahlAutosimBesitz: Integer"],
-                methodes: ["calculateCostsPkws(): Integer", "getNutzlastLkw(Typ: String): Integer", "getAnzahlPkw(): Integer"],
+                attributes: ['Adresse: String', 'Name: String', 'AnzahlAutosimBesitz: Integer'],
+                methodes: ['calculateCostsPkws(): Integer', 'getNutzlastLkw(Typ: String): Integer', 'getAnzahlPkw(): Integer'],
                 ownId: 2
             },
             {
                 x: 25, y: 350,
-                name: "lkw",
-                cname: "LKW",
+                name: 'lkw',
+                cname: 'LKW',
                 isAbstract: false,
-                attributes: ["Nutzlast: Double"],
-                methodes: ["getNutzlast(): Double"],
+                attributes: ['Nutzlast: Double'],
+                methodes: ['getNutzlast(): Double'],
                 ownId: 3
             },
             {
                 x: 300, y: 350,
-                name: "pkw",
-                cname: "PKW",
+                name: 'pkw',
+                cname: 'PKW',
                 isAbstract: false,
-                attributes: ["isCabrio: Boolean"],
-                methodes: ["getNutzlast(): Double"],
+                attributes: ['isCabrio: Boolean'],
+                methodes: ['getNutzlast(): Double'],
                 ownId: 4
             }
         ];
@@ -46,30 +46,31 @@ $(document).ready(function () {
         //Kind of types:Composition,Implementation,Aggregation,Generalization,Link
         const connections = [
             {
-                sourceId: "3",
-                targetId: "1",
-                type: "Generalization",
-                sourceMultiplicity: "",
-                targetMultiplicity: "",
+                sourceId: '3',
+                targetId: '1',
+                type: 'Generalization',
+                sourceMultiplicity: '',
+                targetMultiplicity: '',
             },
             {
-                sourceId: "4",
-                targetId: "1",
-                type: "Generalization",
-                sourceMultiplicity: "",
-                targetMultiplicity: "",
+                sourceId: '4',
+                targetId: '1',
+                type: 'Generalization',
+                sourceMultiplicity: '',
+                targetMultiplicity: '',
             },
             {
-                sourceId: "1",
-                targetId: "2",
-                type: "Link",
-                sourceMultiplicity: "*",
-                targetMultiplicity: "1",
+                sourceId: '1',
+                targetId: '2',
+                type: 'Link',
+                sourceMultiplicity: '*',
+                targetMultiplicity: '1',
             }
         ];
 
         const graphClass = new joint.dia.Graph();
-        const paperClass = new joint.dia.Paper({
+
+        new joint.dia.Paper({
             el: $('#classdiagram'),
             width: 900,
             height: 600,
@@ -83,28 +84,12 @@ $(document).ready(function () {
         classdia = graphClass.toJSON();
 
         function loadDiagramm(classes, connections) {
-            for (var i = 0; i < classes.length; i++) {
+            for (let i = 0; i < classes.length; i++) {
                 graphClass.addCell(get_class(classes[i].x, classes[i].y, classes[i].name, classes[i].cname, classes[i].isAbstract, classes[i].attributes, classes[i].methodes, classes[i].ownId));
             }
-            for (var i = 0; i < connections.length; i++) {
-                graphClass.addCell(getConnection(connections[i]));
+            for (let j = 0; j < connections.length; j++) {
+                graphClass.addCell(getConnection(connections[j]));
             }
-        }
-
-        function setAttributes(cell, array) {
-            cell.prop('attributes', array.join('\n'));
-        }
-
-        function setMethods(cell, array) {
-            cell.prop('methods', array.join('\n'));
-        }
-
-        function getAttributes(cell) {
-            return cell.get('attributes').split("\n");
-        }
-
-        function getMethods(cell) {
-            return cell.get('methods').split("\n");
         }
 
         function getConnection(connection) {
@@ -116,24 +101,25 @@ $(document).ready(function () {
                 ]
             };
             switch (connection.type) {
-                case "Composition":
+                case 'Composition':
                     return new uml.Composition(input);
-                case "Implementation":
+                case 'Implementation':
                     return new uml.Implementation(input);
-                case "Aggregation":
+                case 'Aggregation':
                     return new uml.Aggregation(input);
-                case "Generalization":
+                case 'Generalization':
                     return new uml.Generalization(input);
-                case "Link":
+                case 'Link':
                     return new joint.dia.Link(input);
             }
         }
 
         function get_class(xCoord, yCoord, cname, clname, isAbstract, attributesArr, methodsArr, ownId) {
             if (isAbstract) {
-                clname = clname + "\n" + "{abstract}";
+                clname = clname + '\n' + '{abstract}';
             }
-            ele = new joint.shapes.html.Element({
+
+            return new joint.shapes.html.Element({
                 position: {x: xCoord, y: yCoord},
                 size: {width: 250, height: 200},
                 template: [
@@ -149,9 +135,9 @@ $(document).ready(function () {
                     '</div>',
                     '</div>'
                 ].join(''),
-                'attributes': [],
-                'methods': [],
-                'clname': clname,
+                attributes: attributesArr,
+                methods: methodsArr,
+                clname: clname,
                 name: cname,
                 id: ownId,
                 initialize: function () {
@@ -185,9 +171,6 @@ $(document).ready(function () {
                     });
                 }
             });
-            setAttributes(ele, attributesArr);
-            setMethods(ele, methodsArr);
-            return ele;
         }
     });
 });
