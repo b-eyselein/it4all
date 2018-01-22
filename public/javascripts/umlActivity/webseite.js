@@ -40,10 +40,6 @@ function testSol(url, part) {
 
 window.onload = function () {
 
-    $('#myModal2').on('hidden.bs.modal', function () {
-        //selElement = "";
-    });
-
     $("#startFullscreen").click(function () {
         enterFullscreen(document.getElementById("fullscreen"));
     });
@@ -68,30 +64,18 @@ window.onload = function () {
         });
     });
 
-    $("#graph_imp").click(function () {
-        //Test if Json
-        if (!isJson(loaded_graph)) {
-            try {
-                document.getElementById("code").innerHTML = "";
+    $("#graph_import").click(function () {
+        try {
+            const parsed = JSON.parse(loaded_graph);
 
-                log.push("Die geladene Datei ist nicht im JSON-Format");
-                document.getElementById("code").appendChild(preparelog(log));
-            } catch (e) {
-            }
-        } else {
-            try {
-                document.getElementById("code").removeChild(document.getElementById("list_error"));
-            } catch (e) {
-            }
-            try {
-                const parsed = JSON.parse(loaded_graph);
-                graph.fromJSON(parsed.graph);
-                parentChildNodes = parsed.parentChildNodes;
-                rebuildGraph();
-            } catch (e) {
-                log.push("Die JSON-Datei konnte nicht geladen werden!");
-                document.getElementById("code").appendChild(preparelog(log));
-            }
+            graph.fromJSON(parsed.graph);
+            parentChildNodes = parsed.parentChildNodes;
+
+            rebuildGraph();
+
+        } catch (e) {
+            // Not json...
+            $('#generationAlerts').html('<div class="alert alert-danger">Die geladene Datei ist nicht im JSON-Format!</div>');
         }
     });
 

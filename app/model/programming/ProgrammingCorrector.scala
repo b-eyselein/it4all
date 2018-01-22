@@ -56,45 +56,34 @@ object ProgrammingCorrector extends FileUtils with JsonFormat {
 
     val language = ProgLanguage.STANDARD_LANG
 
-    val futureImageExists: Future[Boolean] = Future(DockerConnector.imageExists(language.dockerImageName) || DockerConnector.pullImage(language.dockerImageName))
-
     val targetDir = ProgToolObject.solutionDirForExercise(user.username, exercise.ex) / ValidationFolder
 
     val script = exercise.sampleSolution.solution
 
-    val completeTestData: Seq[CompleteTestData] = solution.completeCommitedTestData
-
-    val results = correct(exercise, language, futureImageExists, targetDir, script, completeTestData)
-
-    results map (rs => ProgValidationCompleteResult(rs))
+    correct(exercise, language, targetDir, script, solution.completeCommitedTestData) map ProgValidationCompleteResult
 
   }
 
   def correctImplementation(user: User, exercise: ProgCompleteEx, learnerSolution: String, language: ProgLanguage)(implicit ec: ExecutionContext): Future[ProgCompleteResult] = {
 
-    val futureImageExists: Future[Boolean] = Future(DockerConnector.imageExists(language.dockerImageName) || DockerConnector.pullImage(language.dockerImageName))
-
     val targetDir = ProgToolObject.solutionDirForExercise(user.username, exercise.ex) / ImplementationsFolder
 
     val script = if (learnerSolution endsWith "\n") learnerSolution else learnerSolution + "\n"
 
-    val completeTestData: Seq[CompleteTestData] = exercise.sampleTestData
-
-    val results = correct(exercise, language, futureImageExists, targetDir, script, completeTestData)
-
-    results map (rs => ProgImplementationCompleteResult(script, rs))
+    correct(exercise, language, targetDir, script, exercise.sampleTestData) map (ProgImplementationCompleteResult(script, _))
 
   }
 
-  private def correct(exercise: ProgCompleteEx, language: ProgLanguage, futureImageExists: Future[Boolean], targetDir: Path, script: String, completeTestData: Seq[CompleteTestData])
+  private def correct(exercise: ProgCompleteEx, language: ProgLanguage, targetDir: Path, script: String, completeTestData: Seq[CompleteTestData])
                      (implicit ec: ExecutionContext): Future[Seq[ProgEvalResult]] = {
+
+    val scriptTargetPath = targetDir / ScriptName
+
+    val futureImageExists: Future[Boolean] = Future(DockerConnector.imageExists(language.dockerImageName) || DockerConnector.pullImage(language.dockerImageName))
 
     write(targetDir / s"solution.${language.fileEnding}", script)
 
     write(targetDir / TestDataFile, Json.prettyPrint(dumpTestDataToJson(exercise.ex, exercise.inputTypes, completeTestData)))
-
-    // FIXME: copy conf/resources/prog/script.py to targetDir!
-    val scriptTargetPath = targetDir / ScriptName
 
     copy(ProgToolObject.resourcesFolder / "prog" / ScriptName, scriptTargetPath)
 
@@ -104,18 +93,26 @@ object ProgrammingCorrector extends FileUtils with JsonFormat {
     futureImageExists flatMap {
       _ => DockerConnector.runContainer(language, targetDir)
     } map {
-      case Left(errorMsg) => Seq(SyntaxError(reason = errorMsg))
+      // Error while waiting for container
+      case RunContainerException(_) => Seq(ProgEvalFailed)
 
-      case Right(_) => readAll(targetDir / ResultFileName) match {
-        case Failure(error) =>
-          Logger.error("TODO: catch error", error)
-          throw new Exception("TODO: Fehler behandeln!")
+      case RunContainerTimeOut => Seq(TimeOut)
 
-        case Success(resultFileContent) =>
-          val jsonResult = Json.parse(resultFileContent)
-          jsonResult.asArray(_.asObj flatMap (matchDataWithJson(_, completeTestData, targetDir))) getOrElse Seq.empty
-      }
+      // Error while running script with status code other than 0 or 124 (from timeout!)
+      case RunContainerError(_, msg) => Seq(SyntaxError(reason = msg))
+
+      case RunContainerSuccess => readResultFile(targetDir, completeTestData)
     }
+  }
+
+  private def readResultFile(targetDir: Path, completeTestData: Seq[CompleteTestData]) = readAll(targetDir / ResultFileName) match {
+    case Failure(error) =>
+      Logger.error("TODO: catch error", error)
+      throw new Exception("TODO: Fehler behandeln!")
+
+    case Success(resultFileContent) =>
+      val jsonResult = Json.parse(resultFileContent)
+      jsonResult.asArray(_.asObj flatMap (matchDataWithJson(_, completeTestData, targetDir))) getOrElse Seq.empty
   }
 
   private def matchDataWithJson(jsObj: JsObject, completeTestData: Seq[CompleteTestData], targetDir: Path) = readDataFromJson(jsObj) map {

@@ -129,7 +129,7 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   override def renderExesListRest: Html = Html("")
 
-  private def renderResult(correctionResult: ProgCompleteResult): Html = progResult.render(correctionResult)
+  private def renderResult(correctionResult: ProgCompleteResult): Html = correctionResult.render
 
   private def exScript: Html = Html(s"""<script src="${controllers.routes.Assets.versioned("javascripts/programming/progExercise.js")}"></script>""")
 

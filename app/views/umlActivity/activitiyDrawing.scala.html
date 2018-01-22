@@ -34,11 +34,7 @@
             const EXERCISE_PARAMETERS = {
                 methodName: '@completeEx.ex.functionName',
                 methodParameters: '@Html(ProgLanguage.STANDARD_LANG.buildParameters(completeEx.inputTypes))',
-                startNode: {
-                    inputType: 'String',
-                    input: 'W1'
-                },
-                endNode: {
+                output: {
                     outputType: '@completeEx.ex.outputType.typeName',
                     output: '@solutionVar'
                 }
@@ -70,82 +66,19 @@
                 <div class="row">
                     <div class="col-md-8" id="leftblock">
 
+                        <div class="form-group">
+                            <div class="btn-group btn-group-justified" id="buttonsDiv">
+                                <a class="btn btn-default" onclick="setSelElement(this);" data-elemname="elementActionInput">@*Einfacher *@Aktionsknoten</a>
+                                @*<button onclick="setSelElement(this);" name="elementActionSelect">Auswahlaktionsknoten</button>*@
+                                @*<button onclick="setSelElement(this);" name="elementActionSelect">Deklarationsaktionsknoten</button>*@
 
-                        <div class="row" id="buttonDivs">
+                                <a class="btn btn-default" onclick="setSelElement(this);" data-elemname="elementFor">For-Schleife</a>
+                                <a class="btn btn-default" onclick="setSelElement(this);" data-elemname="elementWhileDo">While-Schleife</a>
+                                <a class="btn btn-default" onclick="setSelElement(this);" data-elemname="elementDoWhile">Do-While-Schleife</a>
 
-                                <!-- Aktionsknoten -->
-                            <div class="col-md-4">
-                                <div class="dropdown">
-                                    <button class="btn btn-default btn-block dropdown-toggle" type="button" data-toggle="dropdown">
-                                        Aktionsknoten <span class="caret"></span></button>
-                                    <ul class="dropdown-menu btn-block">
-                                        <li class="dropdown-header">Aktionsknoten</li>
-                                        <li>
-                                            <a onclick="setSelElement(this);" name="elementActionDeclare" draggable="true" ondragstart="drag(event)">
-                                                Deklarationsknoten</a>
-                                        </li>
-                                        <li class="divider"></li>
-                                        <li>
-                                            <a onclick="setSelElement(this);" name="elementActionInput" draggable="true" ondragstart="drag(event)">
-                                                Eingabefeldknoten</a>
-                                        </li>
-                                        <li class="divider"></li>
-                                        <li>
-                                            <a onclick="setSelElement(this);" name="elementActionSelect" draggable="true" ondragstart="drag(event)">
-                                                Selektionsknoten</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
+                                <a class="btn btn-default" onclick="setSelElement(this);" data-elemname="elementIf">If-Else-Verzweigung</a>
 
-                                <!-- Schleifen -->
-                            <div class="col-md-4">
-                                <div class="dropdown">
-                                    <button class="btn btn-default btn-block dropdown-toggle" type="button" data-toggle="dropdown">
-                                        Schleifen <span class="caret"></span></button>
-                                    <ul class="dropdown-menu btn-block">
-                                        <li class="dropdown-header">Schleifenknoten</li>
-                                        <li>
-                                            <a onclick="setSelElement(this);" name="elementFor" draggable="true" ondragstart="drag(event)">
-                                                For-In-Schleifenknoten</a>
-                                        </li>
-                                        <li class="divider"></li>
-                                        <li>
-                                            <a onclick="setSelElement(this);" name="elementDoWhile" draggable="true" ondragstart="drag(event)">
-                                                Do-While-Schleifenknoten</a>
-                                        </li>
-                                        <li class="divider"></li>
-                                        <li>
-                                            <a onclick="setSelElement(this);" name="elementWhileDo" draggable="true" ondragstart="drag(event)">
-                                                While-Do-Schleifenknoten</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-
-                                <!-- Bearbeitungsknoten -->
-                            <div class="col-md-4">
-                                <div class="dropdown">
-                                    <button class="btn btn-default btn-block dropdown-toggle" type="button" data-toggle="dropdown">
-                                        Spezielle Knoten <span class="caret"></span></button>
-                                    <ul class="dropdown-menu btn-block">
-                                        <li class="dropdown-header">Spezielle Knoten</li>
-                                        <li>
-                                            <a onclick="setSelElement(this);" name="elementIf" draggable="true" ondragstart="drag(event)">
-                                                If-Then-Else</a>
-                                        </li>
-                                        <li class="divider"></li>
-                                        <li>
-                                            <a onclick="setSelElement(this);" name="elementBasic" draggable="true" ondragstart="drag(event)">
-                                                Verzweigungsknoten</a>
-                                        </li>
-                                        <li class="divider"></li>
-                                        <li>
-                                            <a onclick="setSelElement(this);" name="elementEdit" draggable="true" ondragstart="drag(event)">
-                                                Bearbeitungsknoten</a>
-                                        </li>
-                                    </ul>
-                                </div>
+                                <a class="btn btn-default" onclick="setSelElement(this);" data-elemname="elementEdit">Bearbeitungsknoten</a>
                             </div>
                         </div>
 
@@ -258,7 +191,7 @@
                                         Exportieren</button>
                                 </div>
                                 <div class="btn-group">
-                                    <button class="btn btn-default" id="graph_imp">Importieren</button>
+                                    <button class="btn btn-default" id="graph_import">Importieren</button>
                                 </div>
                             </div>
                         </section>

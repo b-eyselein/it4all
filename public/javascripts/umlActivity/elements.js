@@ -18,9 +18,9 @@ function createActionInput(xCoord, yCoord) {
         template:
             `<div class="action-element">
                <button class="delete">x</button>
-               <textarea onkeyup="textAreaAdjust(this)" placeholder="Anweisungen" data-attribute="varContent"></textarea>
+               <textarea onkeyup="textAreaAdjust(this)" placeholder="Anweisungen" data-attribute="actionElementContent"></textarea>
              </div>`,
-        varContent: '',
+        actionElementContent: '',
         ports: {
             groups: {
                 'in': {
@@ -49,9 +49,14 @@ function createActionSelect(xCoord, yCoord) {
         template:
             `<div class="action-element">
                <button class="delete">x</button>
-               <select data-attribute="varContent"><option></option><option>getNutzlast()</option><option>getContent()</option><option>Example()</option></select>
+               <select data-attribute="actionElementContent">
+                 <option></option>
+                 <option>getNutzlast()</option>
+                 <option>getContent()</option>
+                 <option>Example()</option>
+               </select>
              </div>`,
-        varContent: '',
+        actionElementContent: '',
         ports: {
             groups: {
                 'in': {
@@ -123,7 +128,7 @@ function createActionDeclare(xCoord, yCoord) {
     });
 }
 
-function get_for(xCoord, yCoord) {
+function createForLoop(xCoord, yCoord) {
     let forElement = new joint.shapes.html.Element({
         position: {x: xCoord, y: yCoord},
         size: {width: ACTION_WIDTH, height: FOR_LOOP_HEIGHT},
@@ -134,14 +139,14 @@ function get_for(xCoord, yCoord) {
                  <span> for </span>
                  <input placeholder="Element" data-attribute="efor" type="text"/></input>
                  <span> in </span>
-                 <input placeholder="Collection" data-attribute="ein"  type="text"/></input>
+                 <input placeholder="Collection" data-attribute="collectionName"  type="text"/></input>
                </div>
                <textarea onkeyup="textAreaAdjust(this)" disabled  placeholder="Anweisungen" data-attribute="area"></textarea>
             </div>`,
         efor: '',
-        ein: '',
+        collectionName: '',
         area: '',
-        name: 'forin',
+        name: 'forLoop',
         cleanname: 'For-In-Schleife',
         ports: {
             groups: {
@@ -181,7 +186,7 @@ function get_for(xCoord, yCoord) {
     return forElement;
 }
 
-function get_if(xCoord, yCoord) {
+function createIfElse(xCoord, yCoord) {
     let ifElseElem = new joint.shapes.html.Element({
         position: {x: xCoord, y: yCoord},
         size: {width: ACTION_WIDTH, height: IF_ELSE_HEIGHT},
@@ -383,59 +388,6 @@ function get_edit(xCoord, yCoord) {
     parentChildNodes.push({"parentId": edit.id, "startId": start.id, "endId": end.id, "endName": end.name});
 
     return end;
-}
-
-
-function get_basic(xCoord, yCoord) {
-    return new joint.shapes.html.Element({
-        position: {x: xCoord, y: yCoord},
-        size: {width: 100, height: 100},
-        template:
-            `<div class="basic">
-               <button class="delete">x</button>
-               
-               <div class="myDiv3">
-                 <input placeholder="Bedingung" data-attribute="einput" class="myDiv4" type="text">
-               </div>
-               
-               <div class="left"><span></span></div>
-               
-               <div class="right"></div>
-               
-               <div class="bot"><span></span></div>
-               
-               <div class="top"></div>
-            </div>`,
-        einput: '',
-        name: 'unknown',
-        cleanname: 'Verzweigungsknoten',
-        ports: {
-            groups: {
-                'top': {
-                    position: 'absolute',
-                    attrs: {circle: {fill: 'transparent', stroke: 'blue', 'stroke-width': 1, r: 10, magnet: true}}
-                },
-                'left': {
-                    position: 'absolute',
-                    attrs: {circle: {fill: 'transparent', stroke: 'green', 'stroke-width': 1, r: 10, magnet: true}}
-                },
-                'right': {
-                    position: 'absolute',
-                    attrs: {circle: {fill: 'transparent', stroke: 'red', 'stroke-width': 1, r: 10, magnet: true}}
-                },
-                'bot': {
-                    position: 'absolute',
-                    attrs: {circle: {fill: 'transparent', stroke: 'blue', 'stroke-width': 1, r: 10, magnet: true}}
-                }
-            },
-            items: [
-                {id: 'top', group: 'top', args: {x: 53, y: -3}},
-                {id: 'bot', group: 'bot', args: {x: 53, y: 104}},
-                {id: 'left', group: 'left', args: {x: 0, y: 50}},
-                {id: 'right', group: 'right', args: {x: 108, y: 50}}
-            ]
-        }
-    });
 }
 
 function createEndCircle(endName, endId, endXCoord, endYCoord, labelText) {

@@ -6,9 +6,6 @@ let paper;
 let dragX; // Postion within div : X
 let dragY;	// Postion within div : Y
 
-// gültige einträge beim wechseln der elementbezeichnungen --> Verwendung für paper.on link elements
-const list_nameOfChangingElements = ['basic', 'manual_ifend', 'manual_ifstart', 'manual_loopstart', 'manual_loopendct', 'manual_loopendcf', 'unknown'];
-
 // used for select element and click on paper to generate Element
 let selElement;
 
@@ -36,88 +33,6 @@ function removeIdFromArray(id) {
     }
 }
 
-// Ändern des Elementtyps Basic während des Zeichnens
-function getTypeByLinks(node) {
-    //Belegung der vier Ports speichern
-
-    // TOP BOTTOM LEFT RIGHT
-    //  I = IN , O = OUT , N = NOT SET
-    const portDirections = ['N', 'N', 'N', 'N'];
-
-    const outboundLinks = graph.getConnectedLinks(node, {outbound: true});
-    for (let i = 0; i < outboundLinks.length; i++) {
-        switch (outboundLinks[i].attributes.source.port) {
-            case 'top':
-                portDirections[0] = 'O';
-                break;
-            case 'bot':
-                portDirections[1] = 'O';
-                break;
-            case 'left':
-                portDirections[2] = 'O';
-                break;
-            case 'right':
-                portDirections[3] = 'O';
-                break;
-        }
-    }
-
-    const inboundLinks = graph.getConnectedLinks(node, {inbound: true});
-    for (let i = 0; i < inboundLinks.length; i++) {
-        switch (inboundLinks[i].attributes.target.port) {
-            case 'top':
-                portDirections[0] = 'I';
-                break;
-            case 'bot':
-                portDirections[1] = 'I';
-                break;
-            case 'left':
-                portDirections[2] = 'I';
-                break;
-            case 'right':
-                portDirections[3] = 'I';
-                break;
-        }
-    }
-
-    //Festlegung des Typs
-    switch (portDirections.join()) {
-        //2 cases: from top to bot, bot to top (IF)
-        //top --> bot
-        case 'N,O,I,I':
-            return ('manual_ifend');
-        case 'I,N,O,O':
-            return ('manual_ifstart');
-        //bot --> top
-        case 'O,N,I,I':
-            return ('manual_ifend');
-        case 'N,I,O,O':
-            return ('manual_ifstart');
-        //2 cases: from top to bot, bot to top   (LOOP)
-        //top --> bot
-        case 'I,O,N,I':
-            return ('manual_loopstart');
-        case 'I,O,I,N':
-            return ('manual_loopstart');
-        //Loopende mit bedingung true
-        case 'I,O,O,N':
-            return ('manual_loopendct');
-        case 'I,O,N,O':
-            return ('manual_loopendcf');
-        // bot --> top
-        case 'O,I,N,I':
-            return ('manual_loopstart');
-        case 'O,I,I,N':
-            return ('manual_loopstart');
-        //Loopende mit bedingung true
-        case 'O,I,O,N':
-            return ('manual_loopendct');
-        case 'O,I,N,O':
-            return ('manual_loopendcf');
-        default:
-            return 'unknown';
-    }
-}
 
 //Define MousePos  within the different papers
 document.addEventListener('dragover', function (e) {
@@ -132,76 +47,61 @@ document.addEventListener('dragover', function (e) {
     dragY = e.pageY - offset.top;
 }, false);
 
-function unMarkButtons() {
-    $('#buttonDivs').find('button').removeClass('btn-primary').addClass('btn-default');
-}
 
 // --> paper.on click --> selElement
 function setSelElement(anchor) {
-    unMarkButtons();
+    let anchorJQ = $(anchor);
 
-    let buttonJQ = $(anchor).parent().parent().parent().find('button');
-
-    buttonJQ.removeClass('btn-default').addClass('btn-primary');
-    buttonJQ.text($(anchor).text());
-
-    selElement = anchor.name;
+    if (anchorJQ.hasClass('btn-primary')) {
+        // Element was already selected
+        clearSelElement();
+    } else {
+        anchorJQ.siblings().removeClass('btn-primary').addClass('btn-default');
+        anchorJQ.removeClass('btn-default').addClass('btn-primary');
+        selElement = anchorJQ.data('elemname');
+    }
 }
 
 function clearSelElement() {
-    unMarkButtons();
+    // Unmark all buttons
+    $('#buttonsDiv').find('a').removeClass('btn-primary').addClass('btn-default');
     selElement = '';
 }
 
 // Constructor Elements
 function createElement(elementName, xCoord, yCoord) {
-    let ele;
+    let elementToAdd;
     switch (elementName) {
-        // case 'elementAction':
-        //     ele = get_action(xCoord, yCoord);
-        //     break;
-
         case 'elementActionInput':
-            ele = createActionInput(xCoord, yCoord);
+            elementToAdd = createActionInput(xCoord, yCoord);
             break;
 
         case 'elementActionSelect':
-            ele = createActionSelect(xCoord, yCoord);
+            elementToAdd = createActionSelect(xCoord, yCoord);
             break;
 
         case 'elementActionDeclare':
-            ele = createActionDeclare(xCoord, yCoord);
+            elementToAdd = createActionDeclare(xCoord, yCoord);
             break;
 
         case 'elementFor':
-            ele = get_for(xCoord, yCoord);
+            elementToAdd = createForLoop(xCoord, yCoord);
             break;
 
         case 'elementDoWhile':
-            ele = createDoWhile(xCoord, yCoord);
+            elementToAdd = createDoWhile(xCoord, yCoord);
             break;
 
         case 'elementWhileDo':
-            ele = createWhileDo(xCoord, yCoord);
+            elementToAdd = createWhileDo(xCoord, yCoord);
             break;
 
         case 'elementIf':
-            ele = get_if(xCoord, yCoord);
+            elementToAdd = createIfElse(xCoord, yCoord);
             break;
 
-        case 'elementBasic':
-            ele = get_basic(xCoord, yCoord);
-            break;
-
-        case 'elementStart':
-            ele = createStartCircle('teststart', 'teststartnem', xCoord, yCoord);
-            break;
-
-        case 'elementEnde':
-            ele = createEndCircle('testende', 'testende', xCoord, yCoord);
-            break;
         case 'elementEdit':
-            ele = get_edit(xCoord, yCoord);
+            elementToAdd = get_edit(xCoord, yCoord);
             break;
 
         default:
@@ -210,9 +110,9 @@ function createElement(elementName, xCoord, yCoord) {
             break;
     }
     if (MousePosElementName === 'edit') {
-        graph.getCell(MousePosElementID).embed(ele);
+        graph.getCell(MousePosElementID).embed(elementToAdd);
     }
-    graph.addCell(ele);
+    graph.addCell(elementToAdd);
 }
 
 function textAreaAdjust(o) {
@@ -233,7 +133,7 @@ $(document).ready(function () {
         const functionDeclaration = EXERCISE_PARAMETERS.methodName + '(' + EXERCISE_PARAMETERS.methodParameters + ')';
 
         let start = createStartCircle('start', 'startId', 10, 10, functionDeclaration);
-        let end = createEndCircle('end', 'endId', paperJQ.width() - 100, paperJQ.height() - 100, EXERCISE_PARAMETERS.endNode.outputType + ' ' + EXERCISE_PARAMETERS.endNode.output);
+        let end = createEndCircle('end', 'endId', paperJQ.width() - 100, paperJQ.height() - 100, EXERCISE_PARAMETERS.output.outputType + ' ' + EXERCISE_PARAMETERS.output.output);
 
         graph.addCells([end, start]);
         parentChildNodes.push({'parentId': 'Startknoten-startId', 'startId': 'Startknoten-startId', 'endId': 'Endknoten-endId', 'endName': 'end'});
@@ -357,33 +257,12 @@ $(document).ready(function () {
         for (let i = 0; i < allElements.length; i++) {
             switch (allElements[i].attributes.name) {
                 case 'actionSelect':
-                    allElements[i].findView(paper).$attributes['0'].value = allElements[i].get('varContent');
+                    allElements[i].findView(paper).$attributes['0'].value = allElements[i].get('actionElementContent');
                     break;
                 case 'actionDeclare':
                     allElements[i].findView(paper).$attributes['0'].value = allElements[i].get('varContent1');
                     break;
             }
-        }
-    }
-
-    // Aktualisierung nachdem sich ein Link ändert
-    function setNameForTarget(eventName, cell) {
-        try {
-            if (list_nameOfChangingElements.includes(graph.getCell(arguments['0'].attributes.target.id).attributes.name)) {
-                graph.getCell(arguments['0'].attributes.target.id).set('name', getTypeByLinks(getNodeById(arguments['0'].attributes.target.id)));
-                console.log(graph.getCell(arguments['0'].attributes.target.id).get('name'));
-            }
-        } catch (e) {
-        }
-    }
-
-    function setNameForSource(eventName, cell) {
-        try {
-            if (list_nameOfChangingElements.includes(graph.getCell(arguments['0'].attributes.source.id).attributes.name)) {
-                graph.getCell(arguments['0'].attributes.source.id).set('name', getTypeByLinks(getNodeById(arguments['0'].attributes.source.id)));
-                console.log(graph.getCell(arguments['0'].attributes.source.id).get('name'));
-            }
-        } catch (e) {
         }
     }
 
@@ -418,52 +297,16 @@ $(document).ready(function () {
         }
     }
 
-    //graph.on events
+    // graph.on events
     graph.on('change:target', function (eventName, cell) {
-        setNameForTarget(eventName, cell);
         forbidInputTextarea(eventName, cell);
     });
 
     graph.on('change:source', function (eventName, cell) {
-        setNameForSource(eventName, cell);
         activateTextarea(eventName, cell);
     });
 
-    graph.on('change', function (eventName, cell) {
-        try {
-            if (list_nameOfChangingElements.includes(graph.getCell(arguments['0'].attributes.source.id).attributes.name)) {
-                let cell = graph.getCell(arguments['0'].attributes.source.id);
-                graph.getCell(arguments['0'].attributes.source.id).set('name', getTypeByLinks(cell));
-                console.log(graph.getCell(arguments['0'].attributes.source.id).get('name'));
-            }
-        } catch (e) {
-        }
-        try {
-            if (list_nameOfChangingElements.includes(graph.getCell(arguments['0'].attributes.target.id).attributes.name)) {
-                let cell = graph.getCell(arguments['0'].attributes.target.id);
-                graph.getCell(arguments['0'].attributes.target.id).set('name', getTypeByLinks(cell));
-                console.log(graph.getCell(arguments['0'].attributes.target.id).get('name'));
-            }
-        } catch (e) {
-        }
-    });
-
-    graph.on('batch:stop', function (eventName, cell) {
-        if (arguments['0'].batchName === 'add-link') {
-            try {
-                //console.log(graph.getCell(arguments['0'].cell.id));
-                if (list_nameOfChangingElements.includes(graph.getCell(arguments['0'].cell.id).attributes.name)) {
-                    graph.getCell(arguments['0'].cell.id).set('name', getTypeByLinks(getNodeById(arguments['0'].cell.id)));
-                    console.log(graph.getCell(arguments['0'].cell.id).get('name'));
-                }
-            } catch (e) {
-            }
-        }
-    });
-
     graph.on('remove', function (eventName, cell) {
-        setNameForSource(eventName, cell);
-        setNameForTarget(eventName, cell);
         activateTextarea(eventName, cell);
     });
 
@@ -505,7 +348,7 @@ $(document).ready(function () {
         if (!parentId) return;
 
         const parent = graph.getCell(parentId);
-        const parentBbox = parent.getBBox();
+        // const parentBbox = parent.getBBox();
         if (!parent.get('originalPosition')) parent.set('originalPosition', parent.get('position'));
         if (!parent.get('originalSize')) parent.set('originalSize', parent.get('size'));
 
@@ -590,7 +433,6 @@ $(document).ready(function () {
             if (attribute) {
                 this.model.set(attribute, input.value);
             }
-            console.log(this.model);
         },
 
         onRender: function () {
@@ -600,8 +442,7 @@ $(document).ready(function () {
             this.$attributes = $box.find('[data-attribute]');
             // React on all box changes. e.g. input change
             $box.on('change', _.bind(this.onBoxChange, this));
-            // Update the box size and position whenever the paper transformation changes.
-            // Note: there is no paper yet on `init` method.
+            // Update the box size and position whenever the paper transformation changes. Note: there is no paper yet on `init` method.
             this.listenTo(this.paper, 'scale', this.updateBox);
             this.$box.find('.delete').on('click', _.bind(this.model.remove, this.model));
             $box.appendTo(this.paper.el);
@@ -610,8 +451,7 @@ $(document).ready(function () {
         },
 
         updateBox: function () {
-            // Set the position and the size of the box so that it covers the JointJS element
-            // (taking the paper transformations into account).
+            // Set the position and the size of the box so that it covers the JointJS element (taking the paper transformations into account).
             const bbox = this.getBBox({useModelGeometry: true});
             const scale = V(this.paper.viewport).scale();
             this.$box.css({
@@ -623,91 +463,6 @@ $(document).ready(function () {
                 top: bbox.y
             });
             changeSize(this.model, this.$box, bbox);
-            //SET: textfields if inputfield is set
-            switch (this.model.attributes.name) {
-                /*
-                Activating True False description with input according to object
-                0 : button
-                1 : div with inputfield
-                2 : left
-                3 : right
-                4 : bot
-                5 : top
-                */
-                case 'manual_ifstart':
-                    //console.log(this.$box['0'].children[1].childNodes['0']);
-                    if (this.$box['0'].children[1].childNodes['0'].value.length > 0) {
-                        this.$box['0'].children[2].innerText = '[TRUE]';
-                        this.$box['0'].children[3].innerText = '[FALSE]';
-                        this.$box['0'].children[2].classList.add('colorTrue');
-                        this.$box['0'].children[3].classList.add('colorFalse');
-                    } else {
-                        this.$box['0'].children[2].innerText = '';
-                        this.$box['0'].children[3].innerText = '';
-
-                    }
-                    this.$box['0'].children[4].innerText = '';
-                    this.$box['0'].children[5].innerText = '';
-                    break;
-
-                case 'manual_loopendcf':
-                    if (this.$box['0'].children[1].childNodes['0'].value.length > 0) {
-                        this.$box['0'].children[3].innerText = '[FALSE]';
-                        this.$box['0'].children[3].classList.add('colorFalse');
-                        // Differ bot and top side generated loop
-                        var con = graph.getConnectedLinks(graph.getCell(this.model.attributes.id), {outbound: true});
-                        for (var i = 0; i < con.length; i++) {
-                            if (con[i].attributes.source.port == 'top') {
-                                this.$box['0'].children[5].innerText = '[TRUE]';
-                                this.$box['0'].children[5].classList.add('colorTrue');
-                                this.$box['0'].children[4].innerText = '';
-                            } else if (con[i].attributes.source.port == 'bot') {
-                                this.$box['0'].children[4].innerText = '[TRUE]';
-                                this.$box['0'].children[4].classList.add('colorTrue');
-                                this.$box['0'].children[5].innerText = '';
-                            }
-                        }
-                    } else {
-                        // deactivate
-                        this.$box['0'].children[3].innerText = '';
-                        this.$box['0'].children[4].innerText = '';
-                        this.$box['0'].children[5].innerText = '';
-                    }
-                    this.$box['0'].children[2].innerText = '';
-                    break;
-
-                case 'manual_loopendct':
-                    if (this.$box['0'].children[1].childNodes['0'].value.length > 0) {
-                        this.$box['0'].children[2].innerText = '[FALSE]';
-                        this.$box['0'].children[2].classList.add('colorFalse');
-                        var con = graph.getConnectedLinks(graph.getCell(this.model.attributes.id), {outbound: true});
-                        for (var i = 0; i < con.length; i++) {
-                            if (con[i].attributes.source.port == 'top') {
-                                this.$box['0'].children[5].innerText = '[TRUE]';
-                                this.$box['0'].children[5].classList.add('colorTrue');
-                                this.$box['0'].children[4].innerText = '';
-                            } else if (con[i].attributes.source.port == 'bot') {
-                                this.$box['0'].children[4].innerText = '[TRUE]';
-                                this.$box['0'].children[4].classList.add('colorTrue');
-                                this.$box['0'].children[5].innerText = '';
-                            }
-                        }
-                    } else {
-
-                        this.$box['0'].children[2].innerText = '';
-                        this.$box['0'].children[4].innerText = '';
-                        this.$box['0'].children[5].innerText = '';
-                    }
-                    this.$box['0'].children[3].innerText = '';
-                    break;
-
-                case 'unknown':
-                    this.$box['0'].children[2].innerText = '';
-                    this.$box['0'].children[3].innerText = '';
-                    this.$box['0'].children[4].innerText = '';
-                    this.$box['0'].children[5].innerText = '';
-                    break;
-            }
             this.updateAttributes();
         },
 
@@ -739,49 +494,49 @@ $(document).ready(function () {
 
     function changeSize(model, box, bbox) {
         if (model.attributes.name === 'actionInput') {
-            var nheight = box['0'].children[1].style.height;
-            nheight = Number(nheight.replace('px', ''));
-            if (nheight > 15) {
-                model.resize(bbox.width, nheight + 15);
-                model.prop('ports/items/1/args/y', (nheight + 15));
+            let newHeight = box['0'].children[1].style.height;
+            newHeight = Number(newHeight.replace('px', ''));
+            if (newHeight > 15) {
+                model.resize(bbox.width, newHeight + 15);
+                model.prop('ports/items/1/args/y', (newHeight + 15));
             }
         }
         if (model.attributes.name === 'forin') {
-            var nheight = box['0'].children[2].style.height;
-            nheight = Number(nheight.replace('px', ''));
-            if (nheight > 50) {
-                model.resize(bbox.width, nheight + 35);
-                model.prop('ports/items/2/args/y', (nheight + 35));
+            let newHeight = box['0'].children[2].style.height;
+            newHeight = Number(newHeight.replace('px', ''));
+            if (newHeight > 50) {
+                model.resize(bbox.width, newHeight + 35);
+                model.prop('ports/items/2/args/y', (newHeight + 35));
             }
         }
         if (model.attributes.name === 'dw') {
-            var nheight = box['0'].children[2].style.height;
-            nheight = Number(nheight.replace('px', ''));
-            if (nheight > 50) {
-                model.resize(bbox.width, nheight + 50);
-                model.prop('ports/items/1/args/y', (nheight + 50));
+            let newHeight = box['0'].children[2].style.height;
+            newHeight = Number(newHeight.replace('px', ''));
+            if (newHeight > 50) {
+                model.resize(bbox.width, newHeight + 50);
+                model.prop('ports/items/1/args/y', (newHeight + 50));
             }
         }
         if (model.attributes.name === 'wd') {
-            var nheight = box['0'].children[4].style.height;
-            nheight = Number(nheight.replace('px', ''));
-            if (nheight > 50) {
-                model.resize(bbox.width, nheight + 52);
-                model.prop('ports/items/1/args/y', (nheight + 52));
+            let newHeight = box['0'].children[4].style.height;
+            newHeight = Number(newHeight.replace('px', ''));
+            if (newHeight > 50) {
+                model.resize(bbox.width, newHeight + 52);
+                model.prop('ports/items/1/args/y', (newHeight + 52));
             }
         }
         if (model.attributes.name === 'if') {
-            var nheight = box['0'].children[2].children[1].style.height;
-            let nheight2 = box['0'].children[3].children[1].style.height;
-            nheight = Number(nheight.replace('px', ''));
-            nheight2 = Number(nheight2.replace('px', ''));
-            if (nheight + nheight2 > 100) {
-                nheight = Math.max(nheight, 75);
-                nheight2 = Math.max(nheight2, 75);
-                model.resize(bbox.width, nheight + nheight2 + 130);
-                model.prop('ports/items/2/args/y', (nheight));
-                model.prop('ports/items/3/args/y', (nheight + nheight2 + 25));
-                model.prop('ports/items/1/args/y', (nheight + nheight2 + 130));
+            let newHeight = box['0'].children[2].children[1].style.height;
+            let newHeight2 = box['0'].children[3].children[1].style.height;
+            newHeight = Number(newHeight.replace('px', ''));
+            newHeight2 = Number(newHeight2.replace('px', ''));
+            if (newHeight + newHeight2 > 100) {
+                newHeight = Math.max(newHeight, 75);
+                newHeight2 = Math.max(newHeight2, 75);
+                model.resize(bbox.width, newHeight + newHeight2 + 130);
+                model.prop('ports/items/2/args/y', (newHeight));
+                model.prop('ports/items/3/args/y', (newHeight + newHeight2 + 25));
+                model.prop('ports/items/1/args/y', (newHeight + newHeight2 + 130));
             }
         }
     }
@@ -821,19 +576,18 @@ $(document).ready(function () {
                     }
                 }
 
-
                 clearSelElement();
             }
         } catch (e) {
         }
     });
 
-    paper.on('cell:mouseenter', function (cellView, evt, x, y) {
+    paper.on('cell:mouseenter', function (cellView) {
         MousePosElementID = cellView.model.id;
         MousePosElementName = cellView.model.attributes.name;
     });
 
-    paper.on('cell:mouseleave', function (cellView, evt, x, y) {
+    paper.on('cell:mouseleave', function () {
         MousePosElementID = 'mainId';
         MousePosElementName = 'main';
     });
@@ -853,20 +607,4 @@ function refreshElement(el) {
     const y = el.get('position').y;
     el.set('position', {x: x + 1, y: y + 1});
     el.set('position', {x: x, y: y});
-}
-
-//calculate each elements height and sum up --_> Fail
-function calculateFinalHeight(htmlCollection, finalHeightValue) {
-    for (let i = 0; i < htmlCollection.length; i++) {
-        switch (htmlCollection[i].nodeName) {
-            case 'INPUT':
-            case 'TEXTAREA':
-                finalHeightValue += Number((htmlCollection[i].style.height).replace('px', ''));
-                break;
-        }
-        if (htmlCollection[i].nodeName === 'DIV') {
-            finalHeightValue += calculateFinalHeight(htmlCollection[i].childNodes, finalHeightValue);
-        }
-    }
-    return finalHeightValue;
 }

@@ -1,91 +1,6 @@
 %YAML 1.2
 ---
 id: 1
-title: Summen
-author: bje40dc
-text: Implementieren Sie folgende Funktion <code>sum(a, b)</code>, die zwei Ganzzahlen entegennimmt und deren Summe zurückgibt.
-status: CREATED
-functionName: sum
-inputTypes: [int, int]
-outputType: int
-
-sampleSolution:
-  language: PYTHON_3
-  sample: |
-    def sum(a, b):
-      return a + b
-
-sampleTestData:
-- id: 1
-  inputs:
-  - id: 1
-    input: 1
-  - id: 2
-    input: 1
-  output: 2
-
-- id: 2
-  inputs:
-  - id: 1
-    input: 1
-  - id: 2
-    input: 2
-  output: 3
-
-- id: 3
-  inputs:
-  - id: 1
-    input: 44
-  - id: 2
-    input: 43
-  output: 87
-
-- id: 4
-  inputs:
-  - id: 1
-    input: 555
-  - id: 2
-    input: 42
-  output: 597
----
-id: 2
-title: Konkatenation von Strings
-author: bje40dc
-text: >
-  Implementieren Sie die folgende Funktion <code>concat(str1, str2, str3)</code> die drei beliebige Strings entgegennimmt und deren Konkatenation zurückgibt.
-status: CREATED
-functionName: concat
-inputTypes: [string, string, string]
-outputType: string
-
-sampleSolution:
-  language: PYTHON_3
-  sample: |
-    def concat(a, b, c):
-      return a + b + c
-
-sampleTestData:
-- id: 1
-  inputs:
-  - id: 1
-    input: 'Hallo '
-  - id: 2
-    input: Welt
-  - id: 3
-    input: '!'
-  output: Hallo Welt!
-
-- id: 2
-  inputs:
-  - id: 1
-    input: Test
-  - id: 2
-    input: Test
-  - id: 3
-    input: Test
-  output: TestTestTest
----
-id: 3
 title: Größter gemeinsamer Teiler
 author: bje40dc
 text: >
@@ -147,10 +62,12 @@ sampleTestData:
     input: 25
   output: 5
 ---
-id: 4
+id: 2
 title: Durchschnitt
 author: bje40dc
-text: Berechnen Sie den Durchschnittswert aller Elemente in der übergebenen Liste von (Ganz-)Zahlen!
+text: >
+  Berechnen Sie den Durchschnittswert aller Elemente als Gleitkommazahl in der übergebenen Liste von (Ganz-)Zahlen!
+  Bei einer leeren Liste soll der String 'Fehler' ausgegeben werden.
 status: CREATED
 functionName: average
 inputTypes: [list<int>]
@@ -166,13 +83,23 @@ sampleTestData:
 - id: 1
   inputs:
   - id: 1
+    input: []
+  output: Fehler
+- id: 2
+  inputs:
+  - id: 1
+    input: [1]
+  output: 1.
+- id: 3
+  inputs:
+  - id: 1
     input: [3, 5, 7]
   output: 5.
 ---
-id: 5
+id: 3
 title: Längste Zeichenkette
 author: bje40dc
-text: Suchen Sie aus einer Liste von Zeichenketten jeweils die längste heraus!
+text: Suchen Sie aus einer Liste von Zeichenketten jeweils die längste heraus! Bei einer leeren Liste soll der leere String zurückgegeben werden.
 status: CREATED
 functionName: longestString
 inputTypes: [list<string>]
@@ -184,6 +111,16 @@ sampleSolution:
 
 sampleTestData:
 - id: 1
+  inputs:
+  - id: 1
+    input: []
+  output: ""
+- id: 2
+  inputs:
+  - id: 1
+    input: ["0"]
+  output: "0"
+- id: 3
   inputs:
   - id: 1
     input: ["1", "11", "111"]
