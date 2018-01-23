@@ -15,7 +15,7 @@ let MousePosElementID;
 let parentChildNodes; // Array with all subgraphs (startid,endid,..)
 
 const list_externPorts = ['extern', 'extern-eelse', 'extern-ethen'];
-const list_addEditNodesByCreateName = ["elementFor", "elementDoWhile", "elementWhileDo", "elementIf","elementIfThen"];
+const list_addEditNodesByCreateName = ["elementFor", "elementDoWhile", "elementWhileDo", "elementIf", "elementIfThen"];
 
 let connectProperties = {sourceId: "sourceId", targetId: "targetId", sourcePort: "sourcePort", targetPort: "targetPort"};
 
@@ -498,52 +498,75 @@ $(document).ready(function () {
     });
 
     function changeSize(model, box, bbox) {
-        if (model.attributes.name === 'actionInput') {
-            let newHeight = box['0'].children[1].style.height;
-            newHeight = Number(newHeight.replace('px', ''));
-            if (newHeight > 15) {
-                model.resize(bbox.width, newHeight + 15);
-                model.prop('ports/items/1/args/y', (newHeight + 15));
-            }
+        switch (model.attributes.name) {
+            case 'actionInput':
+                let newHeightActionInput = box['0'].children[1].style.height;
+
+                newHeightActionInput = Number(newHeightActionInput.replace('px', ''));
+
+                if (newHeightActionInput > 15) {
+                    model.resize(bbox.width, newHeightActionInput + 15);
+                    model.prop('ports/items/1/args/y', (newHeightActionInput + 15));
+                }
+                break;
+
+            case 'forLoop':
+                let newHeightForLoop = box['0'].children[2].style.height;
+
+                newHeightForLoop = Number(newHeightForLoop.replace('px', ''));
+
+                if (newHeightForLoop > 50) {
+                    model.resize(bbox.width, newHeightForLoop + 35);
+                    model.prop('ports/items/2/args/y', (newHeightForLoop + 35));
+                }
+                break;
+
+            case 'doWhile':
+                let newHeightDoWhile = box['0'].children[2].style.height;
+
+                newHeightDoWhile = Number(newHeightDoWhile.replace('px', ''));
+
+                if (newHeightDoWhile > 50) {
+                    model.resize(bbox.width, newHeightDoWhile + 50);
+                    model.prop('ports/items/1/args/y', (newHeightDoWhile + 50));
+                }
+                break;
+
+            case 'whileDo' || model.attributes.name === "ifThen":
+                let newHeightWhileDo = box['0'].children[4].style.height;
+
+                newHeightWhileDo = Number(newHeightWhileDo.replace('px', ''));
+
+                if (newHeightWhileDo > 50) {
+                    model.resize(bbox.width, newHeightWhileDo + 52);
+                    model.prop('ports/items/1/args/y', (newHeightWhileDo + 52));
+                }
+                break;
+
+            case 'if':
+                let newHeightIf = box['0'].children[2].children[1].style.height;
+                let newHeightElse = box['0'].children[3].children[1].style.height;
+
+                newHeightIf = Number(newHeightIf.replace('px', ''));
+                newHeightElse = Number(newHeightElse.replace('px', ''));
+
+                if (newHeightIf + newHeightElse > 100) {
+
+                    newHeightIf = Math.max(newHeightIf, 75);
+                    newHeightElse = Math.max(newHeightElse, 75);
+
+                    model.resize(bbox.width, newHeightIf + newHeightElse + 130);
+                    model.prop('ports/items/2/args/y', (newHeightIf));
+                    model.prop('ports/items/3/args/y', (newHeightIf + newHeightElse + 25));
+                    model.prop('ports/items/1/args/y', (newHeightIf + newHeightElse + 130));
+                }
+                break;
+
+            default:
+                // do nothing
+                break;
         }
-        if (model.attributes.name === 'forin') {
-            let newHeight = box['0'].children[2].style.height;
-            newHeight = Number(newHeight.replace('px', ''));
-            if (newHeight > 50) {
-                model.resize(bbox.width, newHeight + 35);
-                model.prop('ports/items/2/args/y', (newHeight + 35));
-            }
-        }
-        if (model.attributes.name === 'dw') {
-            let newHeight = box['0'].children[2].style.height;
-            newHeight = Number(newHeight.replace('px', ''));
-            if (newHeight > 50) {
-                model.resize(bbox.width, newHeight + 50);
-                model.prop('ports/items/1/args/y', (newHeight + 50));
-            }
-        }
-        if (model.attributes.name === 'wd' || model.attributes.name =="ifThen") {
-            let newHeight = box['0'].children[4].style.height;
-            newHeight = Number(newHeight.replace('px', ''));
-            if (newHeight > 50) {
-                model.resize(bbox.width, newHeight + 52);
-                model.prop('ports/items/1/args/y', (newHeight + 52));
-            }
-        }
-        if (model.attributes.name === 'if') {
-            let newHeight = box['0'].children[2].children[1].style.height;
-            let newHeight2 = box['0'].children[3].children[1].style.height;
-            newHeight = Number(newHeight.replace('px', ''));
-            newHeight2 = Number(newHeight2.replace('px', ''));
-            if (newHeight + newHeight2 > 100) {
-                newHeight = Math.max(newHeight, 75);
-                newHeight2 = Math.max(newHeight2, 75);
-                model.resize(bbox.width, newHeight + newHeight2 + 130);
-                model.prop('ports/items/2/args/y', (newHeight));
-                model.prop('ports/items/3/args/y', (newHeight + newHeight2 + 25));
-                model.prop('ports/items/1/args/y', (newHeight + newHeight2 + 130));
-            }
-        }
+
     }
 
     function connectNodes(sourceId, targetId, sourcePort, targetPort) {
@@ -558,7 +581,7 @@ $(document).ready(function () {
             },
             router: {name: 'manhattan'},  // Link design for horizontal and vertical lines
             connector: {name: 'normal'},
-            attrs: {'.marker-target': {d: 'M 10 0 L 0 5 L 10 10 z'}} // Arrow is horizentor or vertical
+            attrs: {'.marker-target': {d: 'M 10 0 L 0 5 L 10 10 z'}} // Arrow is horizontal or vertical
         });
         graph.addCell(link);
     }

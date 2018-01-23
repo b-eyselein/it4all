@@ -130,8 +130,7 @@ function generateCodeForElement(parentId, startId, endId, allElements) {
     }
 
     if (testIfEndnodeHasOutboundConnections) {
-        let endNodeHasOutBoundCons = test_EndNodeHasOutboundConnections(endId);
-        if (endNodeHasOutBoundCons) {
+        if (graph.getConnectedLinks(graph.getCell(endId), {outbound: true}).length > 0) {
             log.push('Der Endknoten darf keine ausgehenden Verbindungen enthalten.');
             highlightedCells.push(endId);
         }
@@ -140,28 +139,29 @@ function generateCodeForElement(parentId, startId, endId, allElements) {
     if (noUnknownElements) {
         let unknownElements = test_SearchForUnknownElements(graphCopy);
         if (unknownElements.length !== 0) {
+            highlightedCells.push(...unknownElements);
             log.push('Der Graph enthält Verzweigungselemente, welche nicht korrekt verbunden sind.');
-            for (let ue of unknownElements) {
-                highlightedCells.push(ue);
-            }
         }
     }
 
     if (alternativeEnds) {
-        test_alternativeEnds(graph, endId);
+        let sinks = graph.getSinks().filter((sink) => !sink.id.startsWith('Endknoten') && sink.attributes.name !== 'edit');
+
+        if (sinks.length !== 0) {
+            highlightedCells.push(...sinks);
+            log.push((elements.length > 1 ? 'Die Elemente ' + elements.join(', ') + ' stellen jeweils' : 'Das Element ' + elements.join(', ') + ' stellt')
+                + ' einen Endpunkt bzw. eine Senke (Endknoten exklusiv) dar.');
+        }
     }
+
     if (disconnectedElements) {
-        test_disconnectedElements(allElements);
+        let disconnectedElements = test_disconnectedElements(allElements);
+        for (let disconnectedElement of disconnectedElements) {
+            highlightedCells.push(disconnectedElement.id);
+            log.push(disconnectedElement.msg);
+        }
     }
-    if (conditionOfMergeelements) {
-        test_conditionOfMergeelements(allElements);
-    }
-    if (CnrStartnodeEqualsEndnode) {
-        test_CnrStartnodeEqualsEndnode(allElements);
-    }
-    if (atLeastOneElementinMerge) {
-        test_atLeastOneElementinMerge(allElements);
-    }
+
     if (elementsMustHaveInputs) {
         test_elementsMustHaveInputs(graphCopy, startId, endId);
     }
@@ -333,6 +333,8 @@ function updateHighlight(allElements, cellsToHighLight) {
  *
  */
 function getDataFromElement(el) {
+    // FIXME: überarbeiten?
+
     let data = {
         name: el.name,
         id: el.id,
@@ -356,11 +358,11 @@ function getDataFromElement(el) {
             data['content'].in = el.collectionName.split(newLine);
             data['content'].area = el.area.split(newLine);
             break;
-        case 'dw':
+        case 'doWhile':
             data['content'].ewhile = el.ewhile.split(newLine);
             data['content'].edo = el.edo.split(newLine);
             break;
-        case 'wd':
+        case 'whileDo':
             data['content'].ewhile = el.ewhile.split(newLine);
             data['content'].edo = el.edo.split(newLine);
             break;
@@ -369,7 +371,6 @@ function getDataFromElement(el) {
             data['content'].eif = el.eif.split(newLine);
             data['content'].ethen = el.ethen.split(newLine);
             break;
-
         case 'if':
             data['content'].eif = el.eif.split(newLine);
             data['content'].ethen = el.ethen.split(newLine);
@@ -464,10 +465,10 @@ function fillContentInElement(parentId, result) {
                     break;
             }
             break;
-        case 'dw':
+        case 'doWhile':
             field = 'edo';
             break;
-        case 'wd':
+        case 'whileDo':
             field = 'edo';
             break;
     }
@@ -560,7 +561,7 @@ function readDataFromLanguage(graphelement, selectedLangBuilder) {
 
             return selectedLangBuilder.get_efor(variable, collection, forContent);
 
-        case 'dw':
+        case 'doWhile':
             let doContent /* string[] */ = graphelement.content.edo;
             let doWhileConditionContent /* string */ = graphelement.content.ewhile.join('');
 
@@ -569,7 +570,7 @@ function readDataFromLanguage(graphelement, selectedLangBuilder) {
 
             return selectedLangBuilder.get_edw(doWhileConditionContent, doContent);
 
-        case 'wd':
+        case 'whileDo':
             let whileDoContent /* string[] */ = graphelement.content.edo;
             let whileDoConditionContent /* string */ = graphelement.content.ewhile.join('');
 
@@ -585,7 +586,7 @@ function readDataFromLanguage(graphelement, selectedLangBuilder) {
             detectVariableInStringList(ifThenContent, graphelement.id);
             detectVariableInString(ifThenConditionContent, graphelement.id);
 
-            return selectedLangBuilder.get_eifthen(ifThenConditionContent,ifThenContent);
+            return selectedLangBuilder.get_eifthen(ifThenConditionContent, ifThenContent);
 
         case 'edit':
             // FIXME called when?

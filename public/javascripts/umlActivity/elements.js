@@ -315,7 +315,7 @@ function createDoWhile(xCoord, yCoord) {
             </div>`,
         ewhile: '',
         edo: '',
-        name: 'dw',
+        name: 'doWhile',
         cleanname: 'Do-While-Knoten',
         ports: {
             groups: {
@@ -364,7 +364,7 @@ function createWhileDo(xCoord, yCoord) {
             </div>`,
         ewhile: '',
         edo: '',
-        name: 'wd',
+        name: 'whileDo',
         cleanname: 'While-Do-Knoten',
         ports: {
             groups: {
