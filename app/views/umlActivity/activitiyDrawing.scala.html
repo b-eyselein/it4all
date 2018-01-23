@@ -36,7 +36,8 @@
                 methodParameters: '@Html(ProgLanguage.STANDARD_LANG.buildParameters(completeEx.inputTypes))',
                 output: {
                     outputType: '@completeEx.ex.outputType.typeName',
-                    output: '@solutionVar'
+                    output: '@solutionVar',
+                    defaultValue: '@Html(completeEx.ex.outputType.defaultValue)'
                 }
             };
     </script>

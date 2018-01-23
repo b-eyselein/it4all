@@ -235,6 +235,21 @@ function test_elementsMustHaveInputs(graphToTest, startId, endId) {
                     }
                 }
                 break;
+
+            case "ifThen":
+                if (getDataFromElement((elementToTest.attributes)).content.eif.toString() === "") {
+                    log.push("Das Element " + elementToTest.attributes.cleanname + " enth\u00e4lt keine Anweisungen im Bereich \"if\"");
+                    highlightedCells.push(elementToTest.attributes.id);
+                }
+                if (!(amountOfEditNodes(elementToTest) === 1)) {
+                    if (getDataFromElement((elementToTest.attributes)).content.ethen.toString() === "") {
+                        log.push("Das Element " + elementToTest.attributes.cleanname + " enth\u00e4lt keine Anweisungen im Bereich \"then\"");
+                        highlightedCells.push(elementToTest.attributes.id);
+                    }
+                }
+                break;
+
+
             default:
                 // Start- or end node, do nothing...
                 break;
@@ -254,6 +269,7 @@ function test_isExternPortConnectedWithEditNode(allElements) {
             case "whileDo":
             case "doWhile":
             case "forLoop":
+            case "ifThen":
                 if (graph.getConnectedLinks(allElements[i], {outbound: true}).length > 0) {
                     const targetId = getPortByName(graph.getConnectedLinks(allElements[i]), "extern");
                     if (targetId !== undefined) {
@@ -266,8 +282,10 @@ function test_isExternPortConnectedWithEditNode(allElements) {
                 break;
             case "if":
                 if (graph.getConnectedLinks(allElements[i], {outbound: true}).length > 1) {
+
                     const targetIdethen = getPortByName(graph.getConnectedLinks(allElements[i]), "extern-ethen");
                     const targetIdeelse = getPortByName(graph.getConnectedLinks(allElements[i]), "extern-eelse");
+
                     if (targetIdethen !== undefined) {
                         if (graph.getCell(targetIdethen).attributes.name !== "edit") {
                             log.push("Ein " + allElements[i].attributes.cleanname + " ist nicht mit einem Bearbeitungsknoten verbunden");

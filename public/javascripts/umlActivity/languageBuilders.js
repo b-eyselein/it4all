@@ -53,9 +53,9 @@ class PythonBuilder extends AbstractLanguageBuilder {
     get_core(functionName, methodParameters, returnType, returnVariable, content) {
         let definition = 'def ' + functionName + '(' + methodParameters + '):';
         let contentToAdd = contentIsEmpty(content) ? '  ' : this.addIdentation(content);
-        let retStatement = ' '.repeat(this.standardIndent) + 'return ' + returnVariable;
+        // let retStatement = ' '.repeat(this.standardIndent) + 'return ' + returnVariable;
 
-        return [definition, ...contentToAdd, retStatement].join('\n');
+        return [definition, ...contentToAdd].join('\n');
     }
 
     /**

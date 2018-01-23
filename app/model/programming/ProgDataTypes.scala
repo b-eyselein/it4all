@@ -20,9 +20,11 @@ object ProgDataTypes {
 
     def typeName: String
 
+    def defaultValue: String
+
   }
 
-  sealed abstract class NonGenericProgDataType(val typeName: String, val convertToJson: String => JsValue) extends ProgDataType {
+  sealed abstract class NonGenericProgDataType(val typeName: String, val convertToJson: String => JsValue, val defaultValue: String) extends ProgDataType {
 
     override def toJson(str: String): JsValue = convertToJson(str)
 
@@ -31,19 +33,21 @@ object ProgDataTypes {
   sealed abstract class GenericProgDataType extends ProgDataType
 
 
-  case object INTEGER extends NonGenericProgDataType("int", str => JsNumber(string2IntBigDecimal(str)))
+  case object INTEGER extends NonGenericProgDataType("int", str => JsNumber(string2IntBigDecimal(str)), "0")
 
-  case object FLOAT extends NonGenericProgDataType("float", str => JsNumber(string2FloatBigDecimal(str)))
+  case object FLOAT extends NonGenericProgDataType("float", str => JsNumber(string2FloatBigDecimal(str)), "0.0")
 
-  case object BOOLEAN extends NonGenericProgDataType("boolean", str => JsBoolean(str == "true"))
+  case object BOOLEAN extends NonGenericProgDataType("boolean", str => JsBoolean(str == "true"), "false")
 
-  case object STRING extends NonGenericProgDataType("string", str => JsString(str))
+  case object STRING extends NonGenericProgDataType("string", str => JsString(str), "\"\"")
 
   case class LIST(subtype: ProgDataType) extends GenericProgDataType {
 
     override def toJson(str: String): JsValue = JsArray(str.split(", ") map subtype.toJson)
 
     override def typeName: String = s"list<${subtype.typeName}>"
+
+    override def defaultValue: String = "[]"
 
   }
 

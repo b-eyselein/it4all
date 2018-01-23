@@ -120,7 +120,7 @@ function generateCodeForElement(parentId, startId, endId, allElements) {
         graphCopy = removeUsedCells(graph.getElements());
     }
 
-    //Testcases
+    // Testcases
     if (testIfEndNodeIsAccessible) {
         let endNodeAccessible = test_isEndNodeAccessible(graph, startId, endId);
         if (!endNodeAccessible) {

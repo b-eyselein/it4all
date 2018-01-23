@@ -139,7 +139,18 @@ $(document).ready(function () {
         let start = createStartCircle('start', 'startId', 10, 10, functionDeclaration);
         let end = createEndCircle('end', 'endId', paperJQ.width() - 100, paperJQ.height() - 100, EXERCISE_PARAMETERS.output.outputType + ' ' + EXERCISE_PARAMETERS.output.output);
 
-        graph.addCells([end, start]);
+        let actionNodeStart = createActionInput(150, 100);
+        actionNodeStart.prop('actionElementContent', 'solution = ' + EXERCISE_PARAMETERS.output.defaultValue);
+
+        let actionNodeEnd = createActionInput(paperJQ.width() - 300, paperJQ.height() - 200);
+        actionNodeEnd.prop('actionElementContent', 'return solution');
+
+
+        graph.addCells([end, start, actionNodeStart, actionNodeEnd]);
+
+        connectNodes(start.id, actionNodeStart.id, "in", "in");
+        connectNodes(actionNodeEnd.id, end.id, "out", "in");
+
         parentChildNodes.push({'parentId': 'Startknoten-startId', 'startId': 'Startknoten-startId', 'endId': 'Endknoten-endId', 'endName': 'end'});
     }
 
@@ -252,7 +263,7 @@ $(document).ready(function () {
 
         reSetSelection();
         refreshDia();
-        updateHighlight(graph.getElements(), highlightedCells);
+        updateHighlight();
     }
 
     // make the value in the view visible
