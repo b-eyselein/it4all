@@ -101,7 +101,7 @@ function createElement(elementName, xCoord, yCoord) {
             break;
 
         case 'elementEdit':
-            elementToAdd = get_edit(xCoord, yCoord);
+            elementToAdd = createEdit(xCoord, yCoord);
             break;
 
         default:
@@ -248,7 +248,7 @@ $(document).ready(function () {
 
         reSetSelection();
         refreshDia();
-        updateHighlight();
+        updateHighlight(graph.getElements(), highlightedCells);
     }
 
     // make the value in the view visible

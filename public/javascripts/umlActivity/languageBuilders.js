@@ -68,9 +68,9 @@ class PythonBuilder extends AbstractLanguageBuilder {
         let contentThenToAdd = contentIsEmpty(contentThen) ? ['  pass'] : this.addIdentation(contentThen);
 
         // Omit else if content is empty
-        let contentElseToAdd = contentIsEmpty(contentElse) ? [] : ['else:', ... this.addIdentation(contentElse)];
+        let contentElseToAdd = contentIsEmpty(contentElse) ? [] : ['else:', ...this.addIdentation(contentElse)];
 
-        return ['if ' + condition + ':', ...contentThenToAdd, contentElseToAdd];
+        return ['if ' + condition + ':', ...contentThenToAdd, ...contentElseToAdd];
     }
 
     /**

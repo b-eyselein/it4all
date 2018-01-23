@@ -345,15 +345,14 @@ function createWhileDo(xCoord, yCoord) {
 
 }
 
-function get_edit(xCoord, yCoord) {
+function createEdit(xCoord, yCoord) {
     let edit = new joint.shapes.html.Element({
         position: {x: xCoord, y: yCoord},
         size: {width: 170, height: WHILE_LOOP_HEIGHT},
-        template: [
-            '<div class="edit_element">',
-            '<button class="delete">x</button>',
-            '</div>'
-        ].join(''),
+        template:
+            `<div class="edit_element">
+               <button class="delete">x</button>
+             </div>`,
         name: 'edit',
         cleanname: 'Externer Knoten',
         ports: {
@@ -365,29 +364,34 @@ function get_edit(xCoord, yCoord) {
                     }
                 }
             },
-            items: [{
-                id: 'extern',
-                group: 'extern',
-                args: {x: -10, y: 60}
-            }]
+            items: [
+                {id: 'extern', group: 'extern', args: {x: -10, y: 60}}
+            ]
         }
     });
+
     const start = createStartCircle('Externer Startknoten', edit.id, xCoord, yCoord, 'Start');
     const end = createEndCircle('Externer Endknoten', edit.id, xCoord + 118, yCoord + 68, 'Ende');
 
     graph.addCell(edit);
+
     edit.embed(start);
+    edit.embed(end);
+
     start.toFront({deep: true});
     end.toFront({deep: true});
+
     graph.addCell(start);
-    edit.embed(end);
+    graph.addCell(end);
+
     parentChildNodes.push({'parentId': edit.id, 'startId': start.id, 'endId': end.id, 'endName': end.name});
-    //edit.attr('rect/magnet', true).attr('text/pointer-events', 'none');
-    connectProperties.targetId = edit.id;
-    connectProperties.targetPort = "extern";
     parentChildNodes.push({"parentId": edit.id, "startId": start.id, "endId": end.id, "endName": end.name});
 
-    return end;
+    connectProperties.targetId = edit.id;
+    connectProperties.targetPort = "extern";
+
+    // Add edit twice --> bug...
+    return edit;
 }
 
 function createEndCircle(endName, endId, endXCoord, endYCoord, labelText) {

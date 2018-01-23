@@ -22,7 +22,13 @@ function test_isEndNodeAccessible(graphToTest, startIdToTest, endIdToTest) {
 
 
 //TEST: test if manual_loopstart and manual_ifstart have at least one element
-function test_atLeastOneElementinMerge() {
+/**
+ *
+ * @param {object[]} allElements
+ *
+ * @returns {boolean}
+ */
+function test_atLeastOneElementinMerge(allElements) {
     const list_namesOfIncorrectElements = ["manual_ifstart", "manual_loopstart"];
     for (let i = 0; i < allElements.length; i++) {
         if (allElements[i].attributes.name === "manual_ifstart") {
@@ -124,8 +130,12 @@ function test_alternativeEnds(graph, endId) {
     }
 }
 
-//TEST: Anzahl der unverbundenen Knoten vom Start aus ( -1 um den Startknoten zu ignorieren)
-function test_disconnectedElements() {
+/**
+ * TEST: Anzahl der unverbundenen Knoten vom Start aus ( -1 um den Startknoten zu ignorieren)
+ *
+ * @param {object[]} allElements
+ */
+function test_disconnectedElements(allElements) {
     const allElements2 = allElements.slice();
     for (let i = allElements2.length - 1; i >= 0; i--) {
         switch (allElements2[i].attributes.cleanname) {
@@ -163,8 +173,12 @@ function test_disconnectedElements() {
     }
 }
 
-//manuell loop start darf keine Bedingung enthalten!
-function test_conditionOfMergeelements() {
+/**
+ * manuell loop start darf keine Bedingung enthalten!
+ *
+ * @param {object[]} allElements
+ */
+function test_conditionOfMergeelements(allElements) {
     for (let i = 0; i < allElements.length; i++) {
         if (allElements[i].attributes.name === "manual_ifstart" || allElements[i].attributes.name === "manual_loopendcf" || allElements[i].attributes.name === "manual_loopendct") {
             if (allElements[i].attributes.einput === "") {
@@ -349,8 +363,12 @@ function test_elementsMustHaveInputs(graphToTest, startId, endId) {
     }
 }
 
-//TEST: if a merge element is open --> must be close with end tag
-function test_CnrStartnodeEqualsEndnode() {
+/**
+ * TEST: if a merge element is open --> must be close with end tag
+ *
+ * @param {object[]} allElements
+ */
+function test_CnrStartnodeEqualsEndnode(allElements) {
     let eif = 0;
     let eloop = 0;
     for (let i = 0; i < allElements.length; i++) {
@@ -384,7 +402,11 @@ function test_CnrStartnodeEqualsEndnode() {
     }
 }
 
-function test_isExternPortConnectedWithEditNode() {
+/**
+ *
+ * @param {object[]} allElements
+ */
+function test_isExternPortConnectedWithEditNode(allElements) {
     for (let i = allElements.length - 1; i >= 0; i--) {
         switch (allElements[i].attributes.name) {
             case "wd":

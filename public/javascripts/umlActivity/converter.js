@@ -10,7 +10,6 @@ let log = []; // hints and feedback from testcases
 let highlightedCells = []; //filled via tests
 let currentVariables; //current used Variables in Diagramm
 
-let allElements;
 let isCodeGenerated; // needed for logpage to prevent rewrite previous errors from other papers
 
 //TEST: ON,OFF
@@ -30,8 +29,40 @@ const DeclarationAgainstProgress = false;
 const TypeAgainstValue = false;
 
 function mainGeneration() {
+
+    let startNode = graph.getCell('Startknoten-startId');
+    let endNode = graph.getCell('Endknoten-endId');
+
+    let currentElement = startNode;
+
+    console.log(currentElement.id + " :: " + endNode.id);
+
+    console.log(graph.getNeighbors(startNode));
+
+    let step = 0;
+    while (currentElement.id !== endNode.id && step < 100) {
+
+        currentElement.findView(paper).highlight();
+
+        // Get next element!
+        let nextElementList = graph.getConnectedLinks(currentElement, {outbound: true});
+        if (nextElementList.length === 0) {
+            console.error("Element has no outbound link...");
+            return false;
+        } else if (nextElementList.length > 1) {
+            console.error("Element has more than one outbound links...");
+            return false;
+        } else {
+            currentElement = nextElementList[0].getTargetElement();
+        }
+
+        step++;
+    }
+
+    // return;
+
     isCodeGenerated = false;
-    allElements = graph.getElements();
+    let allElements = graph.getElements();
 
     highlightedCells = [];
     currentVariables = [];
@@ -39,7 +70,7 @@ function mainGeneration() {
 
     // Generate code for the edit fields first --> last one is main paper
     for (let i = parentChildNodes.length - 1; i > -1; i--) {
-        generateCodeForElement(parentChildNodes[i].parentId, parentChildNodes[i].startId, parentChildNodes[i].endId);
+        generateCodeForElement(parentChildNodes[i].parentId, parentChildNodes[i].startId, parentChildNodes[i].endId, allElements);
     }
     //REGEX Vartest
     if (MultipleDeclarations) {
@@ -57,7 +88,8 @@ function mainGeneration() {
         document.getElementById('sendToServer').className = 'form-control';
         document.getElementById('mainGeneration').className = 'form-control btn-primary';
     }
-    updateHighlight();
+
+    updateHighlight(allElements, highlightedCells);
 
     // set programmcode toggle
     $('#ExerciseText').collapse('hide');
@@ -67,7 +99,7 @@ function mainGeneration() {
 }
 
 //MAIN Function
-function generateCodeForElement(parentId, startId, endId) {
+function generateCodeForElement(parentId, startId, endId, allElements) {
     let generationAlertsJq = $('#generationAlerts');
     generationAlertsJq.html('');
 
@@ -110,22 +142,22 @@ function generateCodeForElement(parentId, startId, endId) {
         test_alternativeEnds(graph, endId);
     }
     if (disconnectedElements) {
-        test_disconnectedElements();
+        test_disconnectedElements(allElements);
     }
     if (conditionOfMergeelements) {
-        test_conditionOfMergeelements();
+        test_conditionOfMergeelements(allElements);
     }
     if (CnrStartnodeEqualsEndnode) {
-        test_CnrStartnodeEqualsEndnode();
+        test_CnrStartnodeEqualsEndnode(allElements);
     }
     if (atLeastOneElementinMerge) {
-        test_atLeastOneElementinMerge();
+        test_atLeastOneElementinMerge(allElements);
     }
     if (elementsMustHaveInputs) {
         test_elementsMustHaveInputs(graphCopy, startId, endId);
     }
     if (isExternPortConnectedWithEditNode) {
-        test_isExternPortConnectedWithEditNode();
+        test_isExternPortConnectedWithEditNode(allElements);
     }
 
     // Generating Code, if no errors occured
@@ -271,9 +303,13 @@ function amountOfEditNodes(node) {
     return cnr;
 }
 
-function updateHighlight() {
+/**
+ * @param {object[]} allElements
+ * @param {string[]} cellsToHighLight
+ */
+function updateHighlight(allElements, cellsToHighLight) {
     for (let i = 0; i < allElements.length; i++) {
-        if (highlightedCells.includes(allElements[i].id)) {
+        if (cellsToHighLight.includes(allElements[i].id)) {
             allElements[i].findView(paper).highlight();
         } else {
             allElements[i].findView(paper).unhighlight();
