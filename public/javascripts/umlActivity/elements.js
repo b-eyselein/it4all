@@ -438,13 +438,13 @@ function createStartCircle(startName, startId, startXCoord, startYCoord, labelTe
         label: labelText,
         ports: {
             groups: {
-                'in': {
+                'out': {
                     position: 'absolute',
                     attrs: {circle: {fill: 'transparent', stroke: 'blue', 'stroke-width': 1, r: 22, magnet: true}}
                 },
             },
             items: [
-                {id: 'in', group: 'in', args: {x: START_END_SIZE / 2, y: START_END_SIZE / 2}}
+                {id: 'out', group: 'out', args: {x: START_END_SIZE / 2, y: START_END_SIZE / 2}}
             ]
         }
     });

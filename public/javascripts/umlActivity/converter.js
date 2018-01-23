@@ -28,39 +28,48 @@ const MultipleDeclarations = false;
 const DeclarationAgainstProgress = false;
 const TypeAgainstValue = false;
 
-function mainGeneration() {
+function newGenerate() {
+    // FIXME: recursively generate
 
     let startNode = graph.getCell('Startknoten-startId');
     let endNode = graph.getCell('Endknoten-endId');
 
     let currentElement = startNode;
 
-    console.log(currentElement.id + " :: " + endNode.id);
-
-    console.log(graph.getNeighbors(startNode));
-
     let step = 0;
     while (currentElement.id !== endNode.id && step < 100) {
 
-        currentElement.findView(paper).highlight();
+        let elementView = currentElement.findView(paper);
+
+        elementView.highlight();
 
         // Get next element!
-        let nextElementList = graph.getConnectedLinks(currentElement, {outbound: true});
-        if (nextElementList.length === 0) {
+        let allOutboundLinks = graph.getConnectedLinks(currentElement, {outbound: true});
+
+        // Link to next element
+        let nextElementLinksList = allOutboundLinks.filter((elem) => elem.attributes.source.port === 'out');
+        let editElementLinksList = allOutboundLinks.filter((elem) => elem.attributes.source.port !== 'out');
+
+        console.log(editElementLinksList.length);
+
+        if (nextElementLinksList.length === 0) {
             console.error("Element has no outbound link...");
             return false;
-        } else if (nextElementList.length > 1) {
+        } else if (nextElementLinksList.length > 1) {
             console.error("Element has more than one outbound links...");
             return false;
         } else {
-            currentElement = nextElementList[0].getTargetElement();
+            currentElement = nextElementLinksList[0].getTargetElement();
         }
+
+        console.log("------------------------------------");
+        elementView.unhighlight();
 
         step++;
     }
+}
 
-    // return;
-
+function mainGeneration() {
     isCodeGenerated = false;
     let allElements = graph.getElements();
 
