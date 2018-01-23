@@ -186,6 +186,57 @@ function createForLoop(xCoord, yCoord) {
     return forElement;
 }
 
+function createIfThen(xCoord, yCoord) {
+    let ifThenElem = new joint.shapes.html.Element({
+        position: {x: xCoord, y: yCoord},
+        size: {width: ACTION_WIDTH, height: WHILE_LOOP_HEIGHT},
+        template:
+            `<div class="wd_element">
+               <button class="delete">x</button>
+            
+               <div class="dashed-bot">
+                 <span> if </span>
+                 <input placeholder="Bedingung" data-attribute="eif" type="text"/></input>
+               </div>
+               
+               <span>then</span>
+               </br>
+               <textarea disabled onkeyup="textAreaAdjust(this)" placeholder="Anweisungen" data-attribute="ethen"></textarea>
+            </div>`,
+        eif: '',
+        ethen: '',
+        name: 'ifThen',
+        cleanname: 'If-Then-Knoten',
+        ports: {
+            groups: {
+                'in': {
+                    position: 'absolute',
+                    attrs: {circle: {fill: 'transparent', stroke: 'blue', 'stroke-width': 1, r: 10, magnet: true}}
+                },
+                'out': {
+                    position: 'absolute',
+                    attrs: {circle: {fill: 'transparent', stroke: 'green', 'stroke-width': 1, r: 10, magnet: true}}
+                },
+                'extern': {
+                    position: 'absolute',
+                    attrs: {circle: {fill: 'transparent', stroke: 'black', 'stroke-width': 1, r: 10, magnet: true}}
+                }
+            },
+            items: [
+                {id: 'in', group: 'in', args: {x: ACTION_WIDTH / 2, y: 0}},
+                {id: 'out', group: 'out', args: {x: ACTION_WIDTH / 2, y: WHILE_LOOP_HEIGHT}},
+                {id: 'extern', group: 'extern', args: {x: EXTERN_PORT_WIDTH, y: WHILE_LOOP_HEIGHT / 2}}
+            ]
+        }
+    });
+
+    connectProperties.sourceId = ifThenElem.id;
+    connectProperties.sourcePort = "extern";
+
+    return ifThenElem;
+
+}
+
 function createIfElse(xCoord, yCoord) {
     let ifElseElem = new joint.shapes.html.Element({
         position: {x: xCoord, y: yCoord},

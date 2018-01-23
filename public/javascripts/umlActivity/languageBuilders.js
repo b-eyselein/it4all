@@ -1,7 +1,7 @@
 class AbstractLanguageBuilder {
 
     funcsToTest() {
-        return [this.get_core, this.get_if, this.get_efor, this.get_edw, this.get_ewd];
+        return [this.get_core, this.get_if, this.get_efor, this.get_edw, this.get_ewd, this.get_eifthen];
     }
 
     constructor(standardIndent) {
@@ -103,6 +103,17 @@ class PythonBuilder extends AbstractLanguageBuilder {
      *
      * @returns {string[]}
      */
+    get_eifthen(condition, content) {
+        let contentToAdd = contentIsEmpty(content) ? ['  pass'] : this.addIdentation(content);
+        return ['if ' + condition + ':', ...contentToAdd];
+    }
+
+    /**
+     * @param {string} condition
+     * @param {string[]} content
+     *
+     * @returns {string[]}
+     */
     get_ewd(condition, content) {
         let contentToAdd = contentIsEmpty(content) ? ['  pass'] : this.addIdentation(content);
         return ['while ' + condition + ':', ...contentToAdd];
@@ -135,6 +146,11 @@ class JavaBuilder extends AbstractLanguageBuilder {
         let retStatement = ' '.repeat(this.standardIndent) + 'return ' + returnVariable;
 
         return [definition, ...contentToAdd, retStatement, '}'].join('\n');
+    }
+
+    // noinspection JSMethodCanBeStatic
+    get_eifthen(econdition, content, deep) {
+        return " ".repeat(deep) + "if(" + econdition + "){\n" + content + "\n" + " ".repeat(deep) + "}\n";
     }
 
     /**

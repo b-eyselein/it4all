@@ -32,7 +32,7 @@ const TypeAgainstValue = false;
 function mainGeneration() {
     isCodeGenerated = false;
     allElements = graph.getElements();
-
+    $('#preCode').html('');
     highlightedCells = [];
     currentVariables = [];
     log = [];  // reset logfile before starting
@@ -320,6 +320,11 @@ function getDataFromElement(el) {
             data['content'].edo = el.edo.split(newLine);
             break;
 
+        case 'ifThen':
+            data['content'].eif = el.eif.split(newLine);
+            data['content'].ethen = el.ethen.split(newLine);
+            break;
+
         case 'if':
             data['content'].eif = el.eif.split(newLine);
             data['content'].ethen = el.ethen.split(newLine);
@@ -400,6 +405,9 @@ function fillContentInElement(parentId, result) {
     switch (connectedCell.attributes.name) {
         case 'forLoop':
             field = 'area';
+            break;
+        case 'ifThen':
+            field = 'ethen';
             break;
         case 'if':
             switch (portLabel) {
@@ -524,6 +532,15 @@ function readDataFromLanguage(graphelement, selectedLangBuilder) {
             detectVariableInString(whileDoConditionContent, graphelement.id);
 
             return selectedLangBuilder.get_ewd(whileDoConditionContent, whileDoContent);
+
+        case 'ifThen':
+            let ifThenContent /* string[] */ = graphelement.content.ethen;
+            let ifThenConditionContent /* string */ = graphelement.content.eif.join('');
+
+            detectVariableInStringList(ifThenContent, graphelement.id);
+            detectVariableInString(ifThenConditionContent, graphelement.id);
+
+            return selectedLangBuilder.get_eifthen(ifThenConditionContent,ifThenContent);
 
         case 'edit':
             // FIXME called when?

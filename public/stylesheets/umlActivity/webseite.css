@@ -11,15 +11,15 @@ img {
 
 #rightblock {
     overflow-y: auto;
-    height: 800px;
+    height: 80vh;
 }
 
 #preCode {
     min-height: 60vh;
 }
 
-#scroll {
-    height: 100%;
+#leftblock {
+    height: 80vh;
     overflow-y: scroll;
 }
 

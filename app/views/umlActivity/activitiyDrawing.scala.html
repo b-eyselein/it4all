@@ -64,7 +64,7 @@
         <div class="tab-content">
             <div id="drawingTab" class="tab-pane fade in active">
                 <div class="row">
-                    <div class="col-md-8" id="leftblock">
+                    <div class="col-md-8">
 
                         <div class="form-group">
                             <div class="btn-group btn-group-justified" id="buttonsDiv">
@@ -75,14 +75,14 @@
                                 <a class="btn btn-default" onclick="setSelElement(this);" data-elemname="elementFor">For-Schleife</a>
                                 <a class="btn btn-default" onclick="setSelElement(this);" data-elemname="elementWhileDo">While-Schleife</a>
                                 <a class="btn btn-default" onclick="setSelElement(this);" data-elemname="elementDoWhile">Do-While-Schleife</a>
-
+                                <a class="btn btn-default" onclick="setSelElement(this);" data-elemname="elementIfThen">If-Then-Verzweigung</a>
                                 <a class="btn btn-default" onclick="setSelElement(this);" data-elemname="elementIf">If-Else-Verzweigung</a>
 
                                 <a class="btn btn-default" onclick="setSelElement(this);" data-elemname="elementEdit">Bearbeitungsknoten</a>
                             </div>
                         </div>
 
-                        <div id="scroll">
+                        <div id="leftblock">
                             <div ondrop="drop(event)" ondragover="allowDrop(event)" id="paper"></div>
                         </div>
                     </div>
