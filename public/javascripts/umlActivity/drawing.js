@@ -15,7 +15,7 @@ let MousePosElementID;
 let parentChildNodes; // Array with all subgraphs (startid,endid,..)
 
 const list_externPorts = ['extern', 'extern-eelse', 'extern-ethen'];
-const list_addEditNodesByCreateName = ["elementFor", "elementDoWhile", "elementWhileDo", "elementIf"];
+const list_addEditNodesByCreateName = ["elementFor", "elementDoWhile", "elementWhileDo", "elementIf","elementIfThen"];
 
 let connectProperties = {sourceId: "sourceId", targetId: "targetId", sourcePort: "sourcePort", targetPort: "targetPort"};
 
@@ -96,6 +96,10 @@ function createElement(elementName, xCoord, yCoord) {
             elementToAdd = createWhileDo(xCoord, yCoord);
             break;
 
+        case 'elementIfThen':
+            elementToAdd = createIfThen(xCoord, yCoord);
+            break;
+
         case 'elementIf':
             elementToAdd = createIfElse(xCoord, yCoord);
             break;
@@ -143,7 +147,7 @@ $(document).ready(function () {
     paper = new joint.dia.Paper({
         el: paperJQ,
         width: paperJQ.width(),
-        height: $('#leftblock').height() * .75,
+        height: $('#leftblock').height(), /** .75, */
         gridSize: 15,  // distance between the dots from drawGrid
         model: graph,
         drawGrid: 'dot',  // backgrounddesign for paper --> mesh
@@ -489,6 +493,7 @@ $(document).ready(function () {
             this.model.on('remove', this.removeBox, this);
             this.$box.remove();
             removeIdFromArray(this.model.id);
+            removeIdFromArray(this.model.id);
         }
     });
 
@@ -517,7 +522,7 @@ $(document).ready(function () {
                 model.prop('ports/items/1/args/y', (newHeight + 50));
             }
         }
-        if (model.attributes.name === 'wd') {
+        if (model.attributes.name === 'wd' || model.attributes.name =="ifThen") {
             let newHeight = box['0'].children[4].style.height;
             newHeight = Number(newHeight.replace('px', ''));
             if (newHeight > 50) {
