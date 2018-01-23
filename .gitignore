@@ -15,6 +15,7 @@ data/
 
 # IntelliJ IDEA
 .idea/
+venv/
 
 # Eclipse
 .settings

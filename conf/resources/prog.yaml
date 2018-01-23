@@ -99,7 +99,7 @@ sampleTestData:
 id: 3
 title: Längste Zeichenkette
 author: bje40dc
-text: Suchen Sie aus einer Liste von Zeichenketten jeweils die längste heraus! Bei einer leeren Liste soll der leere String zurückgegeben werden.
+text: Suchen Sie aus einer Liste von Zeichenketten jeweils die längste heraus! Bei einer leeren Liste soll der leere String zurückgegeben werden. Ignorieren Sie dabei Groß- und Kleinschreibung.
 status: CREATED
 functionName: longestString
 inputTypes: [list<string>]
@@ -125,3 +125,51 @@ sampleTestData:
   - id: 1
     input: ["1", "11", "111"]
   output: "111"
+---
+id: 4
+title: Palindrom
+author: bje40dc
+text: Erstellen Sie ein Aktivitätsdiagramm, der prüft ob der übergebene String ein Palindrom darstellt! Ein leerer String ist per Defintion kein Palindrom.
+status: CREATED
+functionName: palindrom
+inputTypes: [string]
+outputType: boolean
+sampleSolution:
+  language: PYTHON_3
+  sample: |
+    def isPalindrome(word):
+      for i in range(len(word) // 2):
+        if word[i] != word[-i-1]:
+          return False
+      return True
+sampleTestData:
+- id: 1
+  inputs:
+  - id: 1
+    input: "anna"
+  output: true
+- id: 2
+  inputs:
+  - id: 1
+    input: "ananas"
+  output: false
+- id: 3
+  inputs:
+  - id: 1
+    input: ""
+  output: false
+- id: 4
+  inputs:
+  - id: 1
+    input: "qwertzuiiuztrewq"
+  output: true
+- id: 5
+  inputs:
+  - id: 1
+    input: "qwertzuiyiuztrewq"
+  output: true
+- id: 5
+  inputs:
+  - id: 1
+    input: "Tacocat"
+  output: true

@@ -37,7 +37,10 @@ object ProgDataTypes {
 
   case object FLOAT extends NonGenericProgDataType("float", str => JsNumber(string2FloatBigDecimal(str)), "0.0")
 
-  case object BOOLEAN extends NonGenericProgDataType("boolean", str => JsBoolean(str == "true"), "false")
+  case object BOOLEAN extends NonGenericProgDataType("boolean", str => {
+    println(str + " :: " + (str == "true"))
+    JsBoolean(str == "true")
+  }, "false")
 
   case object STRING extends NonGenericProgDataType("string", str => JsString(str), "\"\"")
 

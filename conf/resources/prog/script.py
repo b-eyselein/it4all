@@ -12,6 +12,7 @@ import traceback
 
 list_type_regex = "list<(.*?)>"
 
+
 # Helper defs
 def type_to_function(a_type):
     if a_type == "int":
@@ -26,7 +27,6 @@ def type_to_function(a_type):
         sub_type_function = type_to_function(re.match(list_type_regex, a_type).group(1))
         return lambda s: list(map(sub_type_function, s))
     else:
-        print("Matches: {}".format(re.match("list<(.*?>", a_type)))
         print("There has been an error!")
         return lambda s: str(s)
 
@@ -60,17 +60,19 @@ if __name__ == "__main__":
 
     functionname = testconfig['functionname']
     variableTypes = testconfig['variableTypes']
-    outputTypeFunc = type_to_function(testconfig['outputType'])
+    output_type_func = type_to_function(testconfig['outputType'])
 
     variables = map_variables(variableTypes)
 
     results = []
 
     for testdata in testconfig['testdata']:
-        testdataId = int(testdata['id'])
+        testdataId = testdata['id']
 
         allocationArray = testdata['inputs']
-        awaited = outputTypeFunc(testdata['awaited'])
+        # FIXME: check if working for boolean
+        # awaited = output_type_func(testdata['awaited'])
+        awaited = testdata['awaited']
 
         if len(variables) > len(allocationArray):
             print("Fehler bei Testdaten mit Id {}: Es gab {} Variablen und {} Testdaten".format(
@@ -93,6 +95,7 @@ if __name__ == "__main__":
         newStdOut = open("output{}.txt".format(testdataId), 'w')
         sys.stdout = newStdOut
 
+        # noinspection PyBroadException
         try:
             result = getattr(sys.modules[__name__], functionname)(*allocation)
             toWrite['result'] = result
