@@ -67,7 +67,6 @@ function clearSelElement() {
     $('#buttonsDiv').find('a').removeClass('btn-primary').addClass('btn-default');
     selElement = '';
 }
-
 // Constructor Elements
 function createElement(elementName, xCoord, yCoord) {
     let elementToAdd;
@@ -138,8 +137,16 @@ $(document).ready(function () {
 
         let start = createStartCircle('start', 'startId', 10, 10, functionDeclaration);
         let end = createEndCircle('end', 'endId', paperJQ.width() - 100, paperJQ.height() - 100, EXERCISE_PARAMETERS.output.outputType + ' ' + EXERCISE_PARAMETERS.output.output);
+        let actionNodeStart = createActionInput(150,100);
+        actionNodeStart.prop('actionElementContent', 'solution =""');
+        let actionNodeEnd = createActionInput(paperJQ.width() - 300, paperJQ.height() - 200);
+        actionNodeEnd.prop('actionElementContent', 'return solution');
 
-        graph.addCells([end, start]);
+
+        graph.addCells([end, start,actionNodeStart,actionNodeEnd]);
+        connectNodes(start.id, actionNodeStart.id, "in", "in");
+        connectNodes(actionNodeEnd.id, end.id, "out", "in");
+        console.log(graph.getElements());
         parentChildNodes.push({'parentId': 'Startknoten-startId', 'startId': 'Startknoten-startId', 'endId': 'Endknoten-endId', 'endName': 'end'});
     }
 
@@ -506,7 +513,8 @@ $(document).ready(function () {
                 model.prop('ports/items/1/args/y', (newHeight + 15));
             }
         }
-        if (model.attributes.name === 'forin') {
+        if (model.attributes.name === 'forLoop') {
+            console.log(box['0']);
             let newHeight = box['0'].children[2].style.height;
             newHeight = Number(newHeight.replace('px', ''));
             if (newHeight > 50) {
