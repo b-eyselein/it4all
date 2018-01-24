@@ -10,6 +10,7 @@
                 <div class="panel-body">
                     <ul>
                         <li>
+                            Zum Erstellen das gewünschte Element durch Anklicken markieren und anschließend innerhalb der Zeichenfläche erneut klicken.
                             <img src="@routes.Assets.versioned("images/umlActivity/element_create.gif")" style="width:760px;height:366px;">
                         </li>
                     </ul>
@@ -24,12 +25,13 @@
                 <div class="panel-body">
                     <ul>
                         <li>
-                            Zum Ändern der Links mit gedrückter Maustaste vom Startport zum Zielport ziehen.
-                            <IMG src="@routes.Assets.versioned("images/umlActivity/element_tab.gif")" style="width:357px;height:143px;">
-                        </li>
-                        <li>
                             Zum Speichern der eingetragenen Daten Tabulator drücken.
-                            <IMG src="@routes.Assets.versioned("images/umlActivity/element_edit.gif")" style="width:624px;height:243px;">
+                            <IMG src="@routes.Assets.versioned("images/umlActivity/element_tab.gif")" style="width:760px;height:366px;">
+                        </li>
+                        <hr>
+                        <li>
+                            Zum Ändern der Links mit gedrückter Maustaste vom Startport zum Zielport ziehen.
+                            <IMG src="@routes.Assets.versioned("images/umlActivity/element_edit.gif")" style="width:760px;height:366px;">
                         </li>
                     </ul>
                 </div>
@@ -37,18 +39,19 @@
             <hr>
                 <!-- next Collapsible-->
             <h5 class="panel-title">
-                <a data-toggle="collapse" href="#collapse31"><b>Einsatz von Verzweigungsknoten</b></a>
+                <a data-toggle="collapse" href="#collapse31"><b>Einsatz von Elementen mit Bearbeitungsknoten</b></a>
             </h5>
             <div id="collapse31" class="panel-collapse collapse">
                 <div class="panel-body">
                     <ul>
                         <li>
-                            Schleife mittels Verzweigungsknoten
-                            @*<IMG src="gifs/mergeS.gif" height="100" width="150">*@
+                            Möglichkeit 1: Verwendung des Bearbeitungsknotens als Inhalt des verbundenen Anweisungsblockes.
+                            <IMG src="@routes.Assets.versioned("images/umlActivity/element_for1.gif")" style="width:760px;height:366px;">
                         </li>
+                        <hr>
                         <li>
-                            Entscheidungspfad bestimmen mittels Verzweigungsknoten
-                            @*<IMG src="gifs/mergeI.gif" height="100" width="150">*@
+                            Möglichkeit 2: Entfernen des Bearbeitungsknotens und direktes Verwenden des Anweisungsblockes.
+                            <IMG src="@routes.Assets.versioned("images/umlActivity/element_for2.gif")" style="width:760px;height:366px;">
                         </li>
                     </ul>
                 </div>
