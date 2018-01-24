@@ -124,7 +124,7 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
       views.html.core.exercise2Rows.render(user, ProgToolObject, ProgExOptions, exercise.ex, renderExRest, exScript, declaration, ProgExParts.Implementation)
     }
 
-    case ProgExParts.ActivityDiagram => Future(views.html.umlActivity.activitiyDrawing.render(user, exercise, toolObject))
+    case ProgExParts.ActivityDiagram => Future(views.html.umlActivity.activityDrawing.render(user, exercise, toolObject))
   }
 
   override def renderExesListRest: Html = Html("")
