@@ -141,6 +141,9 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   def saveSolution(sol: WebSolution): Future[Boolean] = db.run(webSolutions insertOrUpdate sol) map (_ => true) recover { case e: Exception => false }
 
+  def getSolution(username: String, exerciseId: Int): Future[Option[WebSolution]] =
+    db.run(webSolutions.filter(sol => sol.userName === username && sol.exerciseId === exerciseId).result.headOption)
+
 
   // Table queries
 

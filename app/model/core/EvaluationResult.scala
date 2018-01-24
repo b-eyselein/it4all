@@ -35,9 +35,12 @@ object EvaluationResult {
     case els => ul(els map (li(_)))
   }
 
-  def asMsg(successType: SuccessType, msg: String): Text.TypedTag[String] = p(span(cls := successType.glyphicon, msg))
+  def asMsg(successType: SuccessType, msg: String): Text.TypedTag[String] = p(span(cls := successType.glyphicon), " " + msg)
 
-  def asMsg(success: Boolean, msg: String): Text.TypedTag[String] = p(span(cls := "glyphicon glyphicon-" + (if (success) "ok" else "remove"), msg))
+  def asMsg(success: Boolean, msg: String): Text.TypedTag[String] = p(
+    span(cls := "glyphicon glyphicon-" + (if (success) "ok" else "remove")),
+    " " + msg
+  )
 
 }
 

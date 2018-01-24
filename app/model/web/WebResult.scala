@@ -30,9 +30,10 @@ case class WebCompleteResult(learnerSolution: String, solutionSaved: Boolean, re
         div(cls := s"alert alert-${res.getBSClass}")(
           p(data("toggle") := "collapse", href := "#task" + res.task.task.id)(res.task.task.id + ". " + res.task.task.text),
           div(id := "task" + res.task.task.id, cls := ("collapse " + (if (res.isSuccessful) "" else "in")))(
-            hr, res.render
+            hr,
+            RawFrag(res.render)
           )
-        )
+        ).toString
       }) mkString "\n"
     }
 
