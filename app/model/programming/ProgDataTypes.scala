@@ -20,11 +20,11 @@ object ProgDataTypes {
 
     def typeName: String
 
-    def defaultValue: String
+    def defaultValue: ProgLanguage => String
 
   }
 
-  sealed abstract class NonGenericProgDataType(val typeName: String, val convertToJson: String => JsValue, val defaultValue: String) extends ProgDataType {
+  sealed abstract class NonGenericProgDataType(val typeName: String, val convertToJson: String => JsValue, val defaultValue: ProgLanguage => String) extends ProgDataType {
 
     override def toJson(str: String): JsValue = convertToJson(str)
 
@@ -33,25 +33,27 @@ object ProgDataTypes {
   sealed abstract class GenericProgDataType extends ProgDataType
 
 
-  case object INTEGER extends NonGenericProgDataType("int", str => JsNumber(string2IntBigDecimal(str)), "0")
+  case object INTEGER extends NonGenericProgDataType("int", str => JsNumber(string2IntBigDecimal(str)), _ => "0")
 
-  case object FLOAT extends NonGenericProgDataType("float", str => JsNumber(string2FloatBigDecimal(str)), "0.0")
+  case object FLOAT extends NonGenericProgDataType("float", str => JsNumber(string2FloatBigDecimal(str)), _ => "0.0")
 
-  case object BOOLEAN extends NonGenericProgDataType("boolean", str => {
-    println(str + " :: " + (str == "true"))
-    JsBoolean(str == "true")
-  }, "false")
+  case object BOOLEAN extends NonGenericProgDataType("boolean", str => JsBoolean(str == "true"), {
+    case PYTHON_3 => "False"
+    case _        => "false"
+  })
 
-  case object STRING extends NonGenericProgDataType("string", str => JsString(str), "\"\"")
+  case object STRING extends NonGenericProgDataType("string", str => JsString(str), _ => "\"\"")
 
   case class LIST(subtype: ProgDataType) extends GenericProgDataType {
 
     override def toJson(str: String): JsValue = JsArray(str.split(", ") map subtype.toJson)
 
-    override def typeName: String = s"list<${subtype.typeName}>"
+    override val typeName: String = s"list<${subtype.typeName}>"
 
-    override def defaultValue: String = "[]"
-
+    override def defaultValue: ProgLanguage => String = {
+      case PYTHON_3 => "[]"
+      case _        => ""
+    }
   }
 
 

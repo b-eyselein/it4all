@@ -129,7 +129,7 @@ sampleTestData:
 id: 4
 title: Palindrom
 author: bje40dc
-text: Erstellen Sie ein Aktivitätsdiagramm, der prüft ob der übergebene String ein Palindrom darstellt! Ein leerer String ist per Defintion kein Palindrom.
+text: Erstellen Sie ein Aktivitätsdiagramm, der prüft ob der übergebene String ein Palindrom darstellt! Ein leerer String ist für diese Aufgabe auch ein Palindrom.
 status: CREATED
 functionName: palindrom
 inputTypes: [string]
@@ -157,7 +157,7 @@ sampleTestData:
   inputs:
   - id: 1
     input: ""
-  output: false
+  output: true
 - id: 4
   inputs:
   - id: 1

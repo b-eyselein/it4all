@@ -138,13 +138,15 @@ $(document).ready(function () {
 
         let start = createStartCircle('start', 'startId', 10, 10, functionDeclaration);
         let end = createEndCircle('end', 'endId', paperJQ.width() - 100, paperJQ.height() - 100, EXERCISE_PARAMETERS.output.outputType + ' ' + EXERCISE_PARAMETERS.output.output);
-        let actionNodeStart = createActionInput(150,100);
-        actionNodeStart.prop('actionElementContent', 'solution =""');
+
+        let actionNodeStart = createActionInput(150, 100);
+        actionNodeStart.prop('actionElementContent', 'solution = ' + EXERCISE_PARAMETERS.output.defaultValue);
+
         let actionNodeEnd = createActionInput(paperJQ.width() - 300, paperJQ.height() - 200);
         actionNodeEnd.prop('actionElementContent', 'return solution');
 
 
-        graph.addCells([end, start,actionNodeStart,actionNodeEnd]);
+        graph.addCells([end, start, actionNodeStart, actionNodeEnd]);
         connectNodes(start.id, actionNodeStart.id, "in", "in");
         connectNodes(actionNodeEnd.id, end.id, "out", "in");
         console.log(graph.getElements());
@@ -308,6 +310,12 @@ $(document).ready(function () {
         } catch (e) {
         }
     }
+
+    graph.on('change', function () {
+        $('#generationAlerts').html(`<div class="alert alert-warning">Ihr Diagramm hat sich ge&auml;ndert. Bitte generieren Sie ihren Code neu!</div>`);
+        $('#mainGeneration').removeClass('btn-default').addClass('btn-primary');
+        // $('#preCode').html('');
+    });
 
     // graph.on events
     graph.on('change:target', function (eventName, cell) {

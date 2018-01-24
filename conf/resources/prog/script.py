@@ -60,23 +60,18 @@ if __name__ == "__main__":
 
     functionname = testconfig['functionname']
     variableTypes = testconfig['variableTypes']
-    output_type_func = type_to_function(testconfig['outputType'])
 
     variables = map_variables(variableTypes)
 
     results = []
 
     for testdata in testconfig['testdata']:
-        testdataId = testdata['id']
-
+        testdata_id = testdata['id']
         allocationArray = testdata['inputs']
-        # FIXME: check if working for boolean
-        # awaited = output_type_func(testdata['awaited'])
-        awaited = testdata['awaited']
 
         if len(variables) > len(allocationArray):
             print("Fehler bei Testdaten mit Id {}: Es gab {} Variablen und {} Testdaten".format(
-                testdataId, len(variables), len(allocationArray)), file=sys.stderr)
+                testdata_id, len(variables), len(allocationArray)), file=sys.stderr)
             continue
 
         allocation = []
@@ -84,30 +79,30 @@ if __name__ == "__main__":
             func = variables[chr(i + start_index)]
             allocation.append(func(allocationArray[i]))
 
-        toWrite = {
-            'id': testdataId,
+        to_write = {
+            'id': testdata_id,
             'inputs': list(map(lambda ip: to_json(ip, allocation), variables)),
             'functionName': functionname,
-            'awaited': awaited
+            'awaited': testdata['awaited']
         }
 
         # Redirect print into output.txt
-        newStdOut = open("output{}.txt".format(testdataId), 'w')
+        newStdOut = open("output{}.txt".format(testdata_id), 'w')
         sys.stdout = newStdOut
 
         # noinspection PyBroadException
         try:
             result = getattr(sys.modules[__name__], functionname)(*allocation)
-            toWrite['result'] = result
-            toWrite['success'] = "COMPLETE" if result == awaited else "NONE"
+            to_write['result'] = result
+            to_write['success'] = "COMPLETE" if result == testdata['awaited'] else "NONE"
         except Exception:
-            toWrite['result'] = str(traceback.format_exc())
-            toWrite['success'] = "ERROR"
+            to_write['result'] = str(traceback.format_exc())
+            to_write['success'] = "ERROR"
 
         sys.stdout = sys.__stdout__
         newStdOut.close()
 
-        results.append(toWrite)
+        results.append(to_write)
 
     with open("{}.json".format(result_filename), 'w') as file:
         file.write(json.dumps(results, indent=2))
