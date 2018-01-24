@@ -1,3 +1,6 @@
+/**
+ * @param {string} response html representation of correction
+ */
 function onProgCorrectionSuccess(response) {
     $('#correction').html(response);
 }

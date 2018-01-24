@@ -26,7 +26,7 @@ case class WebSolutionType(part: WebExPart, solution: String)
 
 @Singleton
 class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: WebTableDefs)(implicit ec: ExecutionContext)
-  extends AIdPartExController[WebExercise, WebCompleteEx, WebResult, CompleteResult[WebResult], WebTableDefs](cc, dbcp, t, WebToolObject)
+  extends AIdPartExController[WebExercise, WebCompleteEx, WebResult, WebCompleteResult, WebTableDefs](cc, dbcp, t, WebToolObject)
     with Secured with JsonFormat {
 
   override type PartType = WebExPart
@@ -41,9 +41,6 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   override def readSolutionFromPostRequest(user: User, id: Int)(implicit request: Request[AnyContent]): Option[WebSolutionType] =
     Solution.stringSolForm.bindFromRequest().fold(_ => None, sol => ??? /*Some(sol.learnerSolution)*/)
-
-  //  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[String] =
-  //    Solution.stringSolForm.bindFromRequest().fold(_ => None, sol => Some(sol.learnerSolution))
 
   override protected def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: WebExPart): Option[WebSolutionType] =
     jsValue.asStr map (sol => WebSolutionType(part, sol))
@@ -81,39 +78,33 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
     s"""<a class="btn btn-primary btn-block" href="${routes.WebController.playground()}">Web-Playground</a>
        |<hr>""".stripMargin)
 
-  private def renderResult(correctionResult: CompleteResult[WebResult]): Html = Html(correctionResult.results.map(res =>
-    s"""|<div class="alert alert-${res.getBSClass}">
-        |  <p data-toggle="collapse" href="#task${res.task.task.id}">${res.task.task.id}. ${res.task.task.text}</p>
-        |  <div id="task${res.task.task.id}" class="collapse ${if (res.isSuccessful) "" else "in"}">
-        |    <hr>
-        |    ${res.render}
-        |  </div>
-        |</div>""".stripMargin) mkString "\n")
-
   override protected def renderEditRest(exercise: Option[WebCompleteEx]): Html = editWebExRest.render(exercise)
 
   // Correction
 
-  override def correctEx(user: User, learnerSolution: WebSolutionType, exercise: WebCompleteEx): Try[CompleteResult[WebResult]] = Try {
-    val solutionUrl = BASE_URL + routes.WebController.site(user.username, exercise.ex.id).url
+  override def correctEx(user: User, learnerSolution: WebSolutionType, exercise: WebCompleteEx): Future[Try[WebCompleteResult]] =
+    tables.saveSolution(WebSolution(exercise.ex.id, user.username, learnerSolution.solution)) map { solutionSaved =>
+      Try {
+        val solutionUrl = BASE_URL + routes.WebController.site(user.username, exercise.ex.id).url
 
-    val newSol = WebSolution(exercise.ex.id, user.username, learnerSolution.solution)
+        val newSol = WebSolution(exercise.ex.id, user.username, learnerSolution.solution)
 
-    Await.result(db.run(tables.webSolutions insertOrUpdate newSol), Duration(2, duration.SECONDS))
-    val driver = new HtmlUnitDriver(true)
-    driver get solutionUrl
+        Await.result(db.run(tables.webSolutions insertOrUpdate newSol), Duration(2, duration.SECONDS))
+        val driver = new HtmlUnitDriver(true)
+        driver get solutionUrl
 
-    new GenericCompleteResult[WebResult](learnerSolution.solution, getTasks(exercise, learnerSolution.part) map (task => evaluateWebTask(task, driver)))
-  }
+        WebCompleteResult(learnerSolution.solution, solutionSaved, getTasks(exercise, learnerSolution.part) map (task => evaluateWebTask(task, driver)))
+      }
+    }
 
   // Handlers for results
 
-  protected def onSubmitCorrectionResult(user: User, result: CompleteResult[WebResult]): Result =
-    Ok(views.html.core.correction.render(result, renderResult(result), user, toolObject))
+  protected def onSubmitCorrectionResult(user: User, result: WebCompleteResult): Result =
+    Ok(views.html.core.correction.render(result, result.render, user, toolObject))
 
   protected def onSubmitCorrectionError(user: User, error: Throwable): Result = ???
 
-  protected def onLiveCorrectionResult(result: CompleteResult[WebResult]): Result = Ok(renderResult(result))
+  protected def onLiveCorrectionResult(result: WebCompleteResult): Result = Ok(result.render)
 
   protected def onLiveCorrectionError(error: Throwable): Result = ???
 

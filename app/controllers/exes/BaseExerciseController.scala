@@ -208,21 +208,22 @@ abstract class BaseExerciseController[Ex <: Exercise, CompEx <: CompleteEx[Ex], 
   protected def renderExes(user: User, exes: Seq[CompEx], allExesSize: Int): Html =
     views.html.core.exesList(user, exes, renderExesListRest, toolObject, allExesSize / STEP + 1)
 
-  protected def correctAbstract[S, Err](user: User, id: Int, maybeSolution: Option[SolType],
-                                        onCorrectionSuccess: CompResult => Result, onCorrectionError: Throwable => Result)
-                                       (implicit request: Request[AnyContent]): Future[Result] =
+  protected def correctAbstract[S, Err](user: User, id: Int, maybeSolution: Option[SolType], onCorrectionSuccess: CompResult => Result,
+                                        onCorrectionError: Throwable => Result)(implicit request: Request[AnyContent]): Future[Result] =
     maybeSolution match {
-      case None           => Future(BadRequest("No solution!"))
-      case Some(solution) => futureCompleteExById(id) map {
-        case None           => NotFound("No such exercise!")
-        case Some(exercise) => correctEx(user, solution, exercise) match {
+      case None => Future(BadRequest("No solution!"))
+
+      case Some(solution) => futureCompleteExById(id) flatMap {
+        case None => Future(NotFound("No such exercise!"))
+
+        case Some(exercise) => correctEx(user, solution, exercise) map {
           case Success(result) => onCorrectionSuccess(result)
           case Failure(error)  => onCorrectionError(error)
         }
       }
     }
 
-  protected def correctEx(user: User, sol: SolType, exercise: CompEx): Try[CompResult] = ???
+  protected def correctEx(user: User, sol: SolType, exercise: CompEx): Future[Try[CompResult]] = ???
 
   /**
     * Used for rendering things such as playgrounds

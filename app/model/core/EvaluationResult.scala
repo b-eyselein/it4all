@@ -4,6 +4,9 @@ import model.Enums.SuccessType
 import model.core.EvaluationResult._
 import play.twirl.api.{Html, HtmlFormat}
 
+import scalatags.Text
+import scalatags.Text.all._
+
 object EvaluationResult {
 
   implicit class PimpedHtmlString(string: String) {
@@ -27,15 +30,14 @@ object EvaluationResult {
     case els => els.map(el => s"<code>$el</code>").mkString
   }
 
-  def concatListElements(elements: List[String]): String = elements match {
-    case Nil => "<ul/>"
-    case els => s"<ul>${els.map(el => s"<li>$el</li>")}</ul>".mkString
+  def concatListElements(elements: List[String]): Text.TypedTag[String] = elements match {
+    case Nil => ul()
+    case els => ul(els map (li(_)))
   }
 
-  def asMsg(successType: SuccessType, msg: String): String = s"""<p><span class="${successType.glyphicon}"></span> $msg</p>"""
+  def asMsg(successType: SuccessType, msg: String): Text.TypedTag[String] = p(span(cls := successType.glyphicon, msg))
 
-  def asMsg(success: Boolean, msg: String): String = s"""<p><span class="glyphicon glyphicon-${if (success) "ok" else "remove"}"></span> $msg</p>"""
-
+  def asMsg(success: Boolean, msg: String): Text.TypedTag[String] = p(span(cls := "glyphicon glyphicon-" + (if (success) "ok" else "remove"), msg))
 
 }
 

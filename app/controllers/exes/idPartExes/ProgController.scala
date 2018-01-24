@@ -90,7 +90,7 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   // Correction
 
-  override def correctEx(user: User, sol: ProgSolutionType, exercise: ProgCompleteEx): Try[ProgCompleteResult] = Try {
+  override def correctEx(user: User, sol: ProgSolutionType, exercise: ProgCompleteEx): Future[Try[ProgCompleteResult]] = Future(Try {
     val language = ProgLanguage.STANDARD_LANG
 
     val futureResult = sol match {
@@ -110,7 +110,7 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
     }
 
     Await.result(futureResult, MaxDuration)
-  }
+  })
 
   // Views
 

@@ -21,6 +21,9 @@ libraryDependencies ++= Seq(
 
   "net.jcazevedo" %% "moultingyaml" % "0.4.0",
 
+  // Test scalatags (html!)
+  "com.lihaoyi" %% "scalatags" % "0.6.7",
+
   // core
   "com.github.fge" % "json-schema-validator" % "2.2.6",
   "com.kjetland" %% "mbknor-jackson-jsonschema" % "1.0.26",

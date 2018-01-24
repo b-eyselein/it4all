@@ -66,7 +66,7 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // Correction
 
-  override def correctEx(user: User, sol: UmlSolution, exercise: UmlCompleteEx): Try[UmlResult] = {
+  override def correctEx(user: User, sol: UmlSolution, exercise: UmlCompleteEx): Future[Try[UmlResult]] = Future {
     def part: UmlExPart = ???
 
     Try {

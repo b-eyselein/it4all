@@ -1,18 +1,42 @@
 package model.xml
 
 import model.Enums.SuccessType
-import model.core.EvaluationResult
+import model.core.{CompleteResult, EvaluationResult}
 import model.xml.XmlEnums.XmlErrorType
 import org.xml.sax.{ErrorHandler, SAXParseException}
+import play.twirl.api.{Html, HtmlFormat}
 
 import scala.collection.mutable.ListBuffer
+import scalatags.Text.all._
+
+case class XmlCompleteResult(learnerSolution: String, solutionSaved: Boolean, results: Seq[XmlError]) extends CompleteResult[XmlError] {
+
+  override type SolType = String
+
+  override def renderLearnerSolution: Html = new Html(pre(HtmlFormat.escape(learnerSolution).toString).toString)
+
+  def render: Html = {
+    val solSaved: String = if (solutionSaved)
+      div(cls := "alert alert-success")(span(cls := "glyphicon glyphicon-ok"), " Ihre Lösung wurde gespeichert.").toString
+    else
+      div(cls := "alert alert-danger")(span(cls := "glyphicon glyphicon-remove"), " Ihre L&ouml;sung konnte nicht gespeichert werden!").toString
+
+    val resultsRender: String = results match {
+      case Nil => div(cls := "alert alert-success")(span(cls := "glyphicon glyphicon-ok"), "Es wurden keine Fehler gefunden.").toString
+      case res => res map (_.render) mkString "\n"
+    }
+
+    new Html(solSaved + resultsRender)
+  }
+
+}
 
 abstract sealed class XmlError(val errorType: XmlErrorType, val errorMessage: String, val line: Int, override val success: SuccessType)
   extends EvaluationResult {
 
   val lineStr: String = if (line != -1) s" in Zeile $line" else ""
 
-  def render: String = s"""<div class="alert alert-$getBSClass"><strong>${errorType.german} $lineStr:</strong> $errorMessage</div>"""
+  def render: String = div(cls := s"alert alert-$getBSClass")(strong(errorType.german + lineStr + ":"), errorMessage).toString
 
 }
 

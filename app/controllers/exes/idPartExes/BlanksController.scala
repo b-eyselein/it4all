@@ -47,8 +47,8 @@ class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
 
   // Correction
 
-  override protected def correctEx(user: User, sol: Seq[BlanksAnswer], exercise: BlanksCompleteExercise): Try[BlanksCompleteResult] =
-    Try(BlanksCompleteResult(sol, BlanksCorrector.doMatch(sol, exercise.samples)))
+  override protected def correctEx(user: User, sol: Seq[BlanksAnswer], exercise: BlanksCompleteExercise): Future[Try[BlanksCompleteResult]] =
+    Future(Try(BlanksCompleteResult(sol, BlanksCorrector.doMatch(sol, exercise.samples))))
 
   // Views
 

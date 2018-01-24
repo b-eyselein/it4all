@@ -139,6 +139,8 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     saveSeq[JsCondition](jsTask.conditions, c => db.run(conditions += c))
   }
 
+  def saveSolution(sol: WebSolution): Future[Boolean] = db.run(webSolutions insertOrUpdate sol) map (_ => true) recover { case e: Exception => false }
+
 
   // Table queries
 

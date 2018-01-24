@@ -10,7 +10,7 @@
             <h1>Registrierung</h1>
         </div>
 
-        <form action="@routes.LoginController.register" role="form" class="form-horizontal" onsubmit="return testFields();">
+        <form action="@routes.LoginController.register" role="form" class="form-horizontal" onsubmit="return testFields();" method="post">
             <div class="form-group has-feedback">
                 <label class="control-label col-sm-3" for="@model.core.CoreConsts.NAME_NAME">Nutzername:</label>
                 <div class="col-sm-9">
