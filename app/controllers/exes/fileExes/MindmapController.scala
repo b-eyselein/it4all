@@ -22,11 +22,11 @@ class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfig
 
   // Reading solution from requests
 
-  override type SolType = this.type
+  override type SolType = Path
 
-  override def readSolutionFromPostRequest(user: User, id: Int)(implicit request: Request[AnyContent]): Option[MindmapController.this.type] = ???
+  override def readSolutionFromPostRequest(user: User, id: Int)(implicit request: Request[AnyContent]): Option[Path] = ???
 
-  override def readSolutionFromPutRequest(user: User, id: Int)(implicit request: Request[AnyContent]): Option[MindmapController.this.type] = ???
+  override def readSolutionFromPutRequest(user: User, id: Int)(implicit request: Request[AnyContent]): Option[Path] = ???
 
   // Yaml
 
@@ -43,10 +43,11 @@ class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfig
   override protected def renderExercise(user: User, exercise: MindmapExercise, part: String): Html = ???
 
   override protected def renderResult(user: User, correctionResult: EvaluationResult, exercise: MindmapExercise, fileExtension: String): Html = ???
-
   //Ok(views.html.mindmap.mindmapcorrect.render(user))
 
   // Correction
+
+  override protected def correctEx(user: User, sol: Path, exercise: MindmapExercise): Future[Try[GenericCompleteResult[EvaluationResult]]] = ???
 
   override protected def correctEx(learnerFilePath: Path, sampleFilePath: Path, fileExtension: String): EvaluationResult = ???
 
@@ -75,4 +76,5 @@ class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfig
   override protected def onLiveCorrectionResult(result: GenericCompleteResult[EvaluationResult]): Result = ???
 
   override protected def onLiveCorrectionError(msg: String, error: Option[Throwable]): Result = ???
+
 }

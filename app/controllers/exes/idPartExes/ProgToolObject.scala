@@ -20,13 +20,13 @@ object ProgToolObject extends IdPartExToolObject[ProgExPart] {
 
   override def indexCall: Call = routes.ProgController.index()
 
-  override def exerciseRoute(exercise: HasBaseValues, part: String): Call = routes.ProgController.exercise(exercise.id, part)
+  override def exerciseRoute(id: Int, part: String): Call = routes.ProgController.exercise(id, part)
 
   override def exerciseListRoute(page: Int): Call = routes.ProgController.exerciseList(page)
 
-  override def correctLiveRoute(exercise: HasBaseValues): Call = routes.ProgController.correctLive(exercise.id)
+  override def correctLiveRoute(id: Int): Call = routes.ProgController.correctLive(id)
 
-  override def correctRoute(exercise: HasBaseValues): Call = routes.ProgController.correct(exercise.id)
+  override def correctRoute(id: Int): Call = routes.ProgController.correct(id)
 
 
   override def adminIndexRoute: Call = routes.ProgController.adminIndex()
@@ -43,12 +43,12 @@ object ProgToolObject extends IdPartExToolObject[ProgExPart] {
 
   override def exportExesAsFileRoute: Call = routes.ProgController.adminExportExercisesAsFile()
 
-  override def changeExStateRoute(exercise: HasBaseValues): Call = routes.ProgController.adminChangeExState(exercise.id)
+  override def changeExStateRoute(id: Int): Call = routes.ProgController.adminChangeExState(id)
 
-  override def editExerciseFormRoute(exercise: HasBaseValues): Call = routes.ProgController.adminEditExerciseForm(exercise.id)
+  override def editExerciseFormRoute(id: Int): Call = routes.ProgController.adminEditExerciseForm(id)
 
-  override def editExerciseRoute(exercise: HasBaseValues): Call = routes.ProgController.adminEditExercise(exercise.id)
+  override def editExerciseRoute(id: Int): Call = routes.ProgController.adminEditExercise(id)
 
-  override def deleteExerciseRoute(exercise: HasBaseValues): Call = routes.ProgController.adminDeleteExercise(exercise.id)
+  override def deleteExerciseRoute(id: Int): Call = routes.ProgController.adminDeleteExercise(id)
 
 }

@@ -1,9 +1,9 @@
 package controllers.exes.fileExes
 
+import model.Consts
 import model.Enums.ToolState
 import model.core.tools.FileExToolObject
 import model.mindmap.{MindmapConsts, MindmapExercise}
-import model.{Consts, HasBaseValues}
 import play.api.mvc.Call
 
 object MindMapToolObject extends FileExToolObject {
@@ -21,13 +21,13 @@ object MindMapToolObject extends FileExToolObject {
 
   override def indexCall: Call = routes.MindmapController.index()
 
-  override def exerciseRoute(exercise: HasBaseValues, fileType: String): Call = routes.MindmapController.downloadTemplate(exercise.id, fileType)
+  override def exerciseRoute(id: Int, fileType: String): Call = routes.MindmapController.downloadTemplate(id, fileType)
 
   override def exerciseListRoute(page: Int): Call = routes.MindmapController.exerciseList(page)
 
-  override def uploadSolutionRoute(exercise: HasBaseValues, fileExtension: String): Call = routes.MindmapController.uploadSolution(exercise.id, fileExtension)
+  override def uploadSolutionRoute(id: Int, fileExtension: String): Call = routes.MindmapController.uploadSolution(id, fileExtension)
 
-  override def downloadCorrectedRoute(exercise: HasBaseValues, fileType: String): Call = routes.MindmapController.downloadCorrected(exercise.id, fileType)
+  override def downloadCorrectedRoute(id: Int, fileType: String): Call = routes.MindmapController.downloadCorrected(id, fileType)
 
 
   override def adminIndexRoute: Call = routes.MindmapController.adminIndex()
@@ -44,15 +44,15 @@ object MindMapToolObject extends FileExToolObject {
 
   override def exportExesAsFileRoute: Call = routes.MindmapController.adminExportExercisesAsFile()
 
-  override def changeExStateRoute(exercise: HasBaseValues): Call = routes.MindmapController.adminChangeExState(exercise.id)
+  override def changeExStateRoute(id: Int): Call = routes.MindmapController.adminChangeExState(id)
 
-  override def editExerciseFormRoute(exercise: HasBaseValues): Call = routes.MindmapController.adminEditExerciseForm(exercise.id)
+  override def editExerciseFormRoute(id: Int): Call = routes.MindmapController.adminEditExerciseForm(id)
 
-  override def editExerciseRoute(exercise: HasBaseValues): Call = routes.MindmapController.adminEditExercise(exercise.id)
+  override def editExerciseRoute(id: Int): Call = routes.MindmapController.adminEditExercise(id)
 
-  override def deleteExerciseRoute(exercise: HasBaseValues): Call = routes.MindmapController.adminDeleteExercise(exercise.id)
+  override def deleteExerciseRoute(id: Int): Call = routes.MindmapController.adminDeleteExercise(id)
 
-  override def correctRoute(exercise: HasBaseValues): Call = ???
+  override def correctRoute(id: Int): Call = ???
 
-  override def correctLiveRoute(exercise: HasBaseValues): Call = ???
+  override def correctLiveRoute(id: Int): Call = ???
 }

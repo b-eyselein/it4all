@@ -1,0 +1,13 @@
+%YAML 1.2
+---
+id: 1
+title: Zeichnen eines Rechtecks
+author: bje40dc
+text: Zeichen Sie ein Rechteck mit einer Breite von 7 und einer Höhe von 3 Feldern!
+status: CREATED
+
+isMultiplayer: false
+sampleSolution:
+  language: PYTHON_3
+  sample: |
+    pass

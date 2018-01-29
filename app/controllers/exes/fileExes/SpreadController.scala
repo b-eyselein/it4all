@@ -29,11 +29,11 @@ class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
 
   // Reading solution from requests
 
-  override type SolType = this.type
+  override type SolType = Path
 
-  override def readSolutionFromPostRequest(user: User, id: Int)(implicit request: Request[AnyContent]): Option[SpreadController.this.type] = ???
+  override def readSolutionFromPostRequest(user: User, id: Int)(implicit request: Request[AnyContent]): Option[Path] = ???
 
-  override def readSolutionFromPutRequest(user: User, id: Int)(implicit request: Request[AnyContent]): Option[SpreadController.this.type] = ???
+  override def readSolutionFromPutRequest(user: User, id: Int)(implicit request: Request[AnyContent]): Option[Path] = ???
 
   // Yaml
 
@@ -52,8 +52,8 @@ class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
       val templateFilename = ex.templateFilename + "." + fileEnding
 
       List(
-        copy(sampleFilename, toolObject.exerciseResourcesFolder, toolObject.sampleDirForExercise(ex)),
-        copy(templateFilename, toolObject.exerciseResourcesFolder, toolObject.templateDirForExercise(ex))
+        copy(sampleFilename, toolObject.exerciseResourcesFolder, toolObject.sampleDirForExercise(ex.id)),
+        copy(templateFilename, toolObject.exerciseResourcesFolder, toolObject.templateDirForExercise(ex.id))
       )
   } toList
 
@@ -66,6 +66,8 @@ class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
     views.html.spread.spreadCorrectionResult.render(user, correctionResult, exercise, fileExtension)
 
   // Correction
+
+  override protected def correctEx(user: User, sol: Path, exercise: SpreadExercise): Future[Try[GenericCompleteResult[SpreadSheetCorrectionResult]]] = ???
 
   override protected def correctEx(learnerFilePath: Path, sampleFilePath: Path, fileExtension: String): SpreadSheetCorrectionResult =
     correctors.get(fileExtension) match {
@@ -80,4 +82,5 @@ class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
   override protected def onLiveCorrectionResult(result: GenericCompleteResult[SpreadSheetCorrectionResult]): Result = ???
 
   override protected def onLiveCorrectionError(msg: String, error: Option[Throwable]): Result = ???
+
 }

@@ -190,6 +190,18 @@ CREATE TABLE IF NOT EXISTS question_answers (
     ON DELETE CASCADE
 );
 
+# Rose
+
+CREATE TABLE IF NOT EXISTS rose_exercises (
+  id       INT PRIMARY KEY,
+  title    VARCHAR(50),
+  author   VARCHAR(50),
+  ex_text  TEXT,
+  ex_state ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+
+  is_mp    BOOLEAN
+);
+
 # Spread
 
 CREATE TABLE IF NOT EXISTS spread_exercises (
@@ -511,6 +523,10 @@ DROP TABLE IF EXISTS sql_samples;
 DROP TABLE IF EXISTS sql_exercises;
 
 DROP TABLE IF EXISTS sql_scenarioes;
+
+# Rose
+
+DROP TABLE IF EXISTS rose_exercises;
 
 # Questions
 

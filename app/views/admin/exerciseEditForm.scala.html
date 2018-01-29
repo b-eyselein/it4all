@@ -20,7 +20,7 @@
 
         <form class="form" method="post" role="form" action="@{
             exerciseOpt match {
-                case Some(exercise) => toolObject.editExerciseRoute(exercise.ex)
+                case Some(exercise) => toolObject.editExerciseRoute(exercise.id)
                 case None => toolObject.createNewExRoute
             }
         }">

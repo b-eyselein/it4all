@@ -103,9 +103,36 @@ GET           /prog/declaration                           controllers.exes.idPar
 GET           /prog/exercise/:id/:part                    controllers.exes.idPartExes.ProgController.exercise(id: Int, part: String)
 PUT           /prog/exercise/:id                          controllers.exes.idPartExes.ProgController.correctLive(id: Int)
 POST          /prog/exercise/:id                          controllers.exes.idPartExes.ProgController.correct(id: Int)
-
-GET           /prog/roseTest                              controllers.exes.idPartExes.ProgController.roseTest
 # Prog - Ende
+
+# Rose - Anfang
+# Controlleristrator
+GET           /rose/admin                                 controllers.exes.idPartExes.RoseController.adminIndex
+
+GET           /rose/admin/import                          controllers.exes.idPartExes.RoseController.adminImportExercises
+GET           /rose/admin/export                          controllers.exes.idPartExes.RoseController.adminExportExercises
+GET           /rose/admin/exportFile                      controllers.exes.idPartExes.RoseController.adminExportExercisesAsFile
+
+GET           /rose/admin/exerciseList                    controllers.exes.idPartExes.RoseController.adminExerciseList
+GET           /rose/admin/newExForm                       controllers.exes.idPartExes.RoseController.adminNewExerciseForm
+PUT           /rose/admin/exerciseList                    controllers.exes.idPartExes.RoseController.adminCreateExercise
+POST          /rose/admin/exerciseList                    controllers.exes.idPartExes.RoseController.adminCreateExercise
+
+GET           /rose/admin/exerciseList/:id                controllers.exes.idPartExes.RoseController.adminEditExerciseForm(id: Int)
+PUT           /rose/admin/exerciseList/:id                controllers.exes.idPartExes.RoseController.adminEditExercise(id: Int)
+POST          /rose/admin/exerciseList/:id                controllers.exes.idPartExes.RoseController.adminEditExercise(id: Int)
+DELETE        /rose/admin/exerciseList/:id                controllers.exes.idPartExes.RoseController.adminDeleteExercise(id: Int)
+
+PUT           /rose/admin/exercise/:id/state              controllers.exes.idPartExes.RoseController.adminChangeExState(id: Int)
+
+# All
+GET           /rose/                                      controllers.exes.idPartExes.RoseController.index
+GET           /rose/exercises                             controllers.exes.idPartExes.RoseController.exerciseList(page: Int ?= 1)
+
+GET           /rose/exercise/:id/:part                    controllers.exes.idPartExes.RoseController.exercise(id: Int, part: String)
+PUT           /rose/exercise/:id                          controllers.exes.idPartExes.RoseController.correctLive(id: Int)
+POST          /rose/exercise/:id                          controllers.exes.idPartExes.RoseController.correct(id: Int)
+# Rose - Ende
 
 # Blanks - Anfang...
 

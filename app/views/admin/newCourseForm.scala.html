@@ -1,5 +1,3 @@
-@import model.core.CoreConsts._
-
 @(user: model.User)
 
 @main("Neuen Kurs erstellen", user) {
@@ -10,9 +8,9 @@
 
         <form class="form-horizontal" method="post" action="@routes.CourseAdminController.newCourse()">
             <div class="form-group">
-                <label class="control-label col-sm-2" for="@NAME_NAME">Name des Kurses:</label>
+                <label class="control-label col-sm-2" for="@model.core.CoreConsts.NAME_NAME">Name des Kurses:</label>
                 <div class="col-sm-10">
-                    <input name="@NAME_NAME" id="@NAME_NAME" class="form-control" placeholder="SWT_2017">
+                    <input name="@model.core.CoreConsts.NAME_NAME" id="@model.core.CoreConsts.NAME_NAME" class="form-control" placeholder="SWT_2017">
                 </div>
             </div>
 

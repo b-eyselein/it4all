@@ -38,17 +38,17 @@
                             }
                             </select>
                             <span class="input-group-btn">
-                                <button class="btn btn-default" id="scb_@exercise.id" onclick="changeState('@toolObject.changeExStateRoute(exercise)', @exercise.id)" disabled>
+                                <button class="btn btn-default" id="scb_@exercise.id" onclick="changeState('@toolObject.changeExStateRoute(exercise.id)', @exercise.id)" disabled>
                                     <span class="glyphicon glyphicon-upload"></span></button>
                             </span>
                         </div>
                     </td>
                     <td>
-                        <a class="btn btn-default" title="Aufgabe @exercise.id bearbeiten" id="edit_@exercise.id" href="@toolObject.editExerciseFormRoute(exercise)">
+                        <a class="btn btn-default" title="Aufgabe @exercise.id bearbeiten" id="edit_@exercise.id" href="@toolObject.editExerciseFormRoute(exercise.id)">
                             <span class="glyphicon glyphicon-wrench"></span>
                         </a>
                         <button class="btn btn-default" title="Aufgabe @exercise.id l&ouml;schen" id="del_@exercise.id"
-                        onclick="deleteExercise('@toolObject.deleteExerciseRoute(exercise) ')">
+                        onclick="deleteExercise('@toolObject.deleteExerciseRoute(exercise.id) ')">
                             <span class="glyphicon glyphicon-remove"></span>
                         </button>
                     </td>

@@ -58,12 +58,12 @@ abstract class AFileExController[Ex <: Exercise, CompEx <: FileCompleteEx[Ex], R
           futureCompleteExById(id) map {
             case None         => BadRequest("There is no such exercise!")
             case Some(compEx) =>
-              val learnerFileTargetPath = toolObject.solutionDirForExercise(user.username, compEx.ex) / s"${compEx.templateFilename}.$fileExtension"
+              val learnerFileTargetPath = toolObject.solutionDirForExercise(user.username, compEx.id) / s"${compEx.templateFilename}.$fileExtension"
               val learnerTry = move(file.ref.path, learnerFileTargetPath)
 
               val sampleFilename = s"${compEx.sampleFilename}.$fileExtension"
-              val musterFileSourcePath = toolObject.sampleDirForExercise(compEx.ex) / sampleFilename
-              val musterFileTargetPath = toolObject.solutionDirForExercise(user.username, compEx.ex) / sampleFilename
+              val musterFileSourcePath = toolObject.sampleDirForExercise(compEx.id) / sampleFilename
+              val musterFileTargetPath = toolObject.solutionDirForExercise(user.username, compEx.id) / sampleFilename
               val musterTry = copy(musterFileSourcePath, musterFileTargetPath)
 
               learnerTry zip musterTry match {
@@ -86,7 +86,7 @@ abstract class AFileExController[Ex <: Exercise, CompEx <: FileCompleteEx[Ex], R
     implicit request =>
       futureCompleteExById(id) map {
         case Some(exercise) =>
-          val correctedFilePath = toolObject.solutionDirForExercise(user.username, exercise.ex) / (exercise.templateFilename + SpreadConsts.CORRECTION_ADD_STRING + "." + fileExtension)
+          val correctedFilePath = toolObject.solutionDirForExercise(user.username, exercise.id) / (exercise.templateFilename + SpreadConsts.CORRECTION_ADD_STRING + "." + fileExtension)
           Ok.sendFile(correctedFilePath.toFile)
         case None           => BadRequest("There is no such exercise!")
       }

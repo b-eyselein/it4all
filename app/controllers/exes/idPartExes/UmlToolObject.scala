@@ -20,14 +20,14 @@ object UmlToolObject extends IdPartExToolObject[UmlExPart] {
 
   override def indexCall: Call = routes.UmlController.index()
 
-  override def exerciseRoute(exercise: HasBaseValues, part: String): Call = routes.UmlController.exercise(exercise.id, part)
+  override def exerciseRoute(id: Int, part: String): Call = routes.UmlController.exercise(id, part)
 
   override def exerciseListRoute(page: Int): Call = routes.UmlController.exerciseList(page)
 
   // not in routes...
-  override def correctLiveRoute(exercise: HasBaseValues): Call = ??? // routes.UmlController.correctLive(exercise.id, part)
+  override def correctLiveRoute(id: Int): Call = ??? // routes.UmlController.correctLive(id, part)
 
-  override def correctRoute(exercise: HasBaseValues): Call = routes.UmlController.correct(exercise.id)
+  override def correctRoute(id: Int): Call = routes.UmlController.correct(id)
 
 
   override def adminIndexRoute: Call = routes.UmlController.adminIndex()
@@ -44,12 +44,12 @@ object UmlToolObject extends IdPartExToolObject[UmlExPart] {
 
   override def importExesRoute: Call = routes.UmlController.adminImportExercises()
 
-  override def changeExStateRoute(exercise: HasBaseValues): Call = routes.UmlController.adminChangeExState(exercise.id)
+  override def changeExStateRoute(id: Int): Call = routes.UmlController.adminChangeExState(id)
 
-  override def editExerciseFormRoute(exercise: HasBaseValues): Call = routes.UmlController.adminEditExerciseForm(exercise.id)
+  override def editExerciseFormRoute(id: Int): Call = routes.UmlController.adminEditExerciseForm(id)
 
-  override def editExerciseRoute(exercise: HasBaseValues): Call = routes.UmlController.adminEditExercise(exercise.id)
+  override def editExerciseRoute(id: Int): Call = routes.UmlController.adminEditExercise(id)
 
-  override def deleteExerciseRoute(exercise: HasBaseValues): Call = routes.UmlController.adminDeleteExercise(exercise.id)
+  override def deleteExerciseRoute(id: Int): Call = routes.UmlController.adminDeleteExercise(id)
 
 }

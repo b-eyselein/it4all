@@ -25,8 +25,7 @@
                 </tr>
             </thead>
             <tbody>
-            @for(completeCollection <- completeCollections;
-            collection = completeCollection.coll) {
+            @for(collection <- completeCollections.map(_.coll)) {
                 <tr id="tr1_@collection.id">
                     <td>@collection.id</td>
                     <td>
@@ -38,17 +37,17 @@
                             }
                             </select>
                             <span class="input-group-btn">
-                                <button class="btn btn-default" id="scb_@collection.id" onclick="changeState('@toolObject.changeExStateRoute(collection)', @collection.id)" disabled>
+                                <button class="btn btn-default" id="scb_@collection.id" onclick="changeState('@toolObject.changeExStateRoute(collection.id)', @collection.id)" disabled>
                                     <span class="glyphicon glyphicon-upload"></span></button>
                             </span>
                         </div>
                     </td>
                     <td>
-                        <a class="btn btn-default" title="Aufgabe @collection.id bearbeiten" id="edit_@collection.id" href="@toolObject.editExerciseFormRoute(collection)">
+                        <a class="btn btn-default" title="Aufgabe @collection.id bearbeiten" id="edit_@collection.id" href="@toolObject.editExerciseFormRoute(collection.id)">
                             <span class="glyphicon glyphicon-wrench"></span>
                         </a>
                         <button class="btn btn-default" title="Aufgabe @collection.id l&ouml;schen" id="del_@collection.id"
-                        onclick="deleteExercise('@toolObject.deleteExerciseRoute(collection) ')">
+                        onclick="deleteExercise('@toolObject.deleteExerciseRoute(collection.id) ')">
                             <span class="glyphicon glyphicon-remove"></span>
                         </button>
                     </td>

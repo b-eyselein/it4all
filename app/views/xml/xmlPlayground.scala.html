@@ -1,6 +1,20 @@
 @(user: model.User)
 
-@main("XML: Playground", user) {
+
+@scripts = {
+    <script src="@routes.Assets.versioned("lib/ace/src/ace.js")"></script>
+    <script src="@routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
+
+        <!--suppress JSUnusedLocalSymbols -->
+    <script>
+            const theMode = "xml";
+            const theMinLines = 25;
+            const theMaxLines = 50;
+            const theUpdatePrev = false;
+    </script>
+}
+
+@main("XML: Playground", user, scripts) {
     <div class="container">
         <div class="page-header">
             <h1>XML: Playground</h1>
@@ -8,7 +22,28 @@
 
         <div class="row">
             <div class="col-md-6">
-            @core.editor(model.xml.XmlConsts.STANDARD_XML_PLAYGROUND, "xml", 25, 50, updatePrev = false)
+
+                <h2>Editor</h2>
+                    <!-- Start Editor -->
+                <div class="form-group">
+                    <div class="input-group">
+
+                        <button type="button" class="form-control" onclick="changeFontsize(-2);">
+                            <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                        </button>
+
+                        <span class="input-group-addon">Schriftgr&ouml;&szlig;e: <span id="fontsize">16</span> px</span>
+
+                        <button type="button" class="form-control" onclick="changeFontsize(+2);">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+
+
+                <div id="editor" class="form-control">@model.xml.XmlConsts.STANDARD_XML_PLAYGROUND</div>
+                    <!-- End Editor -->
+
             </div>
 
             <div class="col-md-6">

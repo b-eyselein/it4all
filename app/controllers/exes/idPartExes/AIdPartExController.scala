@@ -56,7 +56,7 @@ R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseTableD
   }
 
   protected def checkAndCreateSolDir(username: String, exercise: CompEx): Try[Path] =
-    Try(Files.createDirectories(toolObject.solutionDirForExercise(username, exercise.ex)))
+    Try(Files.createDirectories(toolObject.solutionDirForExercise(username, exercise.id)))
 
   // Views
 

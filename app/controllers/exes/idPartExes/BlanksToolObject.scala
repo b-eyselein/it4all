@@ -23,13 +23,13 @@ object BlanksToolObject extends IdPartExToolObject[BlanksExPart] {
 
   override def indexCall: Call = routes.BlanksController.index()
 
-  override def exerciseRoute(exercise: HasBaseValues, part: String): Call = routes.BlanksController.exercise(exercise.id, part)
+  override def exerciseRoute(id: Int, part: String): Call = routes.BlanksController.exercise(id, part)
 
   override def exerciseListRoute(page: Int): Call = routes.BlanksController.exerciseList(page)
 
-  override def correctLiveRoute(exercise: HasBaseValues): Call = routes.BlanksController.correctLive(exercise.id)
+  override def correctLiveRoute(id: Int): Call = routes.BlanksController.correctLive(id)
 
-  override def correctRoute(exercise: HasBaseValues): Call = routes.BlanksController.correct(exercise.id)
+  override def correctRoute(id: Int): Call = routes.BlanksController.correct(id)
 
 
   override def adminIndexRoute: Call = routes.BlanksController.adminIndex()
@@ -46,12 +46,12 @@ object BlanksToolObject extends IdPartExToolObject[BlanksExPart] {
 
   override def exportExesAsFileRoute: Call = routes.BlanksController.adminExportExercisesAsFile()
 
-  override def changeExStateRoute(exercise: HasBaseValues): Call = routes.BlanksController.adminChangeExState(exercise.id)
+  override def changeExStateRoute(id: Int): Call = routes.BlanksController.adminChangeExState(id)
 
-  override def editExerciseFormRoute(exercise: HasBaseValues): Call = routes.BlanksController.adminEditExerciseForm(exercise.id)
+  override def editExerciseFormRoute(id: Int): Call = routes.BlanksController.adminEditExerciseForm(id)
 
-  override def editExerciseRoute(exercise: HasBaseValues): Call = routes.BlanksController.adminEditExercise(exercise.id)
+  override def editExerciseRoute(id: Int): Call = routes.BlanksController.adminEditExercise(id)
 
-  override def deleteExerciseRoute(exercise: HasBaseValues): Call = routes.BlanksController.adminDeleteExercise(exercise.id)
+  override def deleteExerciseRoute(id: Int): Call = routes.BlanksController.adminDeleteExercise(id)
 
 }

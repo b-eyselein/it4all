@@ -221,7 +221,7 @@ abstract class BaseExerciseController[Ex <: Exercise, CompEx <: CompleteEx[Ex], 
       }
     }
 
-  protected def correctEx(user: User, sol: SolType, exercise: CompEx): Future[Try[CompResult]] = ???
+  protected def correctEx(user: User, sol: SolType, exercise: CompEx): Future[Try[CompResult]]
 
   /**
     * Used for rendering things such as playgrounds

@@ -1,8 +1,8 @@
 package controllers.exCollections
 
+import model.Consts
 import model.core.tools.CollectionToolObject
 import model.sql.{SqlCompleteEx, SqlConsts}
-import model.{Consts, HasBaseValues}
 import play.api.mvc.Call
 
 
@@ -28,9 +28,9 @@ object SqlToolObject extends CollectionToolObject {
 
   override def exerciseListRoute(page: Int): Call = routes.SqlController.collectionList(page)
 
-  override def correctLiveRoute(collection: HasBaseValues): Call = ???
+  override def correctLiveRoute(id: Int): Call = ???
 
-  override def correctRoute(collection: HasBaseValues): Call = ???
+  override def correctRoute(id: Int): Call = ???
 
 
   override def adminIndexRoute: Call = routes.SqlController.adminIndex()
@@ -47,12 +47,12 @@ object SqlToolObject extends CollectionToolObject {
 
   override def exportExesAsFileRoute: Call = routes.SqlController.adminExportCollectionsAsFile()
 
-  override def changeExStateRoute(collection: HasBaseValues): Call = routes.SqlController.adminChangeCollectionState(collection.id)
+  override def changeExStateRoute(id: Int): Call = routes.SqlController.adminChangeCollectionState(id)
 
-  override def editExerciseFormRoute(collection: HasBaseValues): Call = routes.SqlController.adminEditCollectionForm(collection.id)
+  override def editExerciseFormRoute(id: Int): Call = routes.SqlController.adminEditCollectionForm(id)
 
-  override def editExerciseRoute(collection: HasBaseValues): Call = routes.SqlController.adminEditCollection(collection.id)
+  override def editExerciseRoute(id: Int): Call = routes.SqlController.adminEditCollection(id)
 
-  override def deleteExerciseRoute(collection: HasBaseValues): Call = routes.SqlController.adminDeleteCollection(collection.id)
+  override def deleteExerciseRoute(id: Int): Call = routes.SqlController.adminDeleteCollection(id)
 
 }

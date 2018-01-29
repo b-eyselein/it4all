@@ -51,13 +51,15 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   override protected def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: ProgExPart): Option[ProgSolutionType] = part match {
     case TestdataCreation => jsValue.asArray(_.asObj flatMap (jsValue => readTestData(id, jsValue, user))) map TestdataSolution
-    case Implementation   => jsValue.asObj flatMap { jsObj =>
+
+    case Implementation => jsValue.asObj flatMap { jsObj =>
       for {
         language <- jsObj.enumField("languague", str => ProgLanguage.valueOf(str) getOrElse ProgLanguage.STANDARD_LANG)
         implementation <- jsObj.stringField("implementation")
       } yield ImplementationSolution(language, implementation)
     }
-    case ActivityDiagram  => jsValue.asStr map UmlActivitySolution
+
+    case ActivityDiagram => jsValue.asStr map UmlActivitySolution
   }
 
   private def readTestData(id: Int, tdJsObj: JsObject, user: User): Option[CompleteCommitedTestData] = for {
@@ -80,10 +82,6 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
   override implicit val yamlFormat: YamlFormat[ProgCompleteEx] = ProgExYamlProtocol.ProgExYamlFormat
 
   // Other routes
-
-  def roseTest: EssentialAction = withUser {
-    user => implicit  request => Ok(views.html.programming.rose.roseTest.render(user))
-  }
 
   def getDeclaration(lang: String): EssentialAction = withUser {
     _ => implicit request => Ok(ProgLanguage.valueOf(lang).getOrElse(ProgLanguage.STANDARD_LANG).declaration)

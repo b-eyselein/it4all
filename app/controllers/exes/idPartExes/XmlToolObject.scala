@@ -20,13 +20,13 @@ object XmlToolObject extends IdPartExToolObject[XmlExPart] {
 
   override def indexCall: Call = routes.XmlController.index()
 
-  override def exerciseRoute(exercise: HasBaseValues, part: String): Call = routes.XmlController.exercise(exercise.id, part)
+  override def exerciseRoute(id: Int, part: String): Call = routes.XmlController.exercise(id, part)
 
   override def exerciseListRoute(page: Int): Call = routes.XmlController.exerciseList(page)
 
-  override def correctLiveRoute(exercise: HasBaseValues): Call = routes.XmlController.correctLive(exercise.id)
+  override def correctLiveRoute(id: Int): Call = routes.XmlController.correctLive(id)
 
-  override def correctRoute(exercise: HasBaseValues): Call = routes.XmlController.correct(exercise.id)
+  override def correctRoute(id: Int): Call = routes.XmlController.correct(id)
 
 
   override def adminIndexRoute: Call = routes.XmlController.adminIndex()
@@ -43,12 +43,12 @@ object XmlToolObject extends IdPartExToolObject[XmlExPart] {
 
   override def exportExesAsFileRoute: Call = routes.XmlController.adminExportExercisesAsFile()
 
-  override def changeExStateRoute(exercise: HasBaseValues): Call = routes.XmlController.adminChangeExState(exercise.id)
+  override def changeExStateRoute(id: Int): Call = routes.XmlController.adminChangeExState(id)
 
-  override def editExerciseFormRoute(exercise: HasBaseValues): Call = routes.XmlController.adminEditExerciseForm(exercise.id)
+  override def editExerciseFormRoute(id: Int): Call = routes.XmlController.adminEditExerciseForm(id)
 
-  override def editExerciseRoute(exercise: HasBaseValues): Call = routes.XmlController.adminEditExercise(exercise.id)
+  override def editExerciseRoute(id: Int): Call = routes.XmlController.adminEditExercise(id)
 
-  override def deleteExerciseRoute(exercise: HasBaseValues): Call = routes.XmlController.adminDeleteExercise(exercise.id)
+  override def deleteExerciseRoute(id: Int): Call = routes.XmlController.adminDeleteExercise(id)
 
 }

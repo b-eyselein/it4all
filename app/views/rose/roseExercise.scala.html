@@ -1,0 +1,93 @@
+@(user: model.User, toolObject: model.core.tools.IdPartExToolObject[_], exercise: model.rose.RoseCompleteEx)
+
+@scripts = {
+    <script src="@routes.Assets.versioned("lib/ace/src/ace.js")"></script>
+    <script src="@routes.Assets.versioned("lib/ace/src/ext-language_tools.js")"></script>
+
+    <script src="@routes.Assets.versioned("javascripts/rose/roseHelperFuncs.js")"></script>
+
+    <script src="@routes.Assets.versioned("javascripts/rose/roseExercise.js")"></script>
+
+        <!--suppress JSUnusedLocalSymbols -->
+    <script>
+            const theMode = "python";
+            const theMinLines = 20;
+            const theMaxLines = 30;
+            const theUpdatePrev = false;
+    </script>
+
+    <script>
+    </script>
+
+}
+
+@main("Rose Test", user, scripts) {
+    @core.helperTemplates.modal("API des Roboters", "robot_api", "lg") {
+        <h1>TODO!</h1>
+    }
+
+    <div id="fullsc" class="container">
+
+        <ul class="nav nav-tabs nav-justified">
+            <li class="active"><a data-toggle="tab" href="#drawingTab">Zeichenfl&auml;che</a></li>
+            <li><a data-toggle="tab" id="resultTabToggle" href="#resultTab">Generierter Code &amp; Resultate</a> </li>
+        </ul>
+
+        <div class="tab-content">
+            <div id="drawingTab" class="tab-pane fade in active">
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h2>Aufgabenstellung</h2>
+
+                        <hr>
+
+                        <div class="well">@exercise.text</div>
+
+                        <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#robot_api">Roboter API</button>
+
+                        <hr>
+
+                        <button type="button" class="btn btn-primary btn-block" onclick="testSol('@toolObject.correctLiveRoute(exercise.id)')">L&ouml;sung testen</button>
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <h2>Editor</h2>
+
+                        <hr>
+
+                            <!-- Start Editor -->
+                        <div class="form-group">
+                            <div class="input-group">
+
+                                <button type="button" class="form-control" onclick="changeFontsize(-2);">
+                                    <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                                </button>
+
+                                <span class="input-group-addon">Schriftgr&ouml;&szlig;e: <span id="fontsize">16</span> px</span>
+
+                                <button type="button" class="form-control" onclick="changeFontsize(+2);">
+                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+
+
+                        <div id="editor" class="form-control">@exercise.declaration</div>
+                            <!-- End Editor -->
+
+                    </div>
+                </div>
+
+
+            </div>
+
+
+            <div id="resultTab" class="tab-pane fade">Result tab...</div>
+        </div>
+
+
+    </div>
+}

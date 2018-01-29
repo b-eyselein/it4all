@@ -56,7 +56,7 @@ object ProgrammingCorrector extends FileUtils with JsonFormat {
 
     val language = ProgLanguage.STANDARD_LANG
 
-    val targetDir = ProgToolObject.solutionDirForExercise(user.username, exercise.ex) / ValidationFolder
+    val targetDir = ProgToolObject.solutionDirForExercise(user.username, exercise.id) / ValidationFolder
 
     val script = exercise.sampleSolution.solution
 
@@ -66,7 +66,7 @@ object ProgrammingCorrector extends FileUtils with JsonFormat {
 
   def correctImplementation(user: User, exercise: ProgCompleteEx, learnerSolution: String, language: ProgLanguage)(implicit ec: ExecutionContext): Future[ProgCompleteResult] = {
 
-    val targetDir = ProgToolObject.solutionDirForExercise(user.username, exercise.ex) / ImplementationsFolder
+    val targetDir = ProgToolObject.solutionDirForExercise(user.username, exercise.id) / ImplementationsFolder
 
     val script = if (learnerSolution endsWith "\n") learnerSolution else learnerSolution + "\n"
 
@@ -85,7 +85,7 @@ object ProgrammingCorrector extends FileUtils with JsonFormat {
 
     write(targetDir / TestDataFile, Json.prettyPrint(dumpTestDataToJson(exercise.ex, exercise.inputTypes, completeTestData)))
 
-    copy(ProgToolObject.resourcesFolder / "prog" / ScriptName, scriptTargetPath)
+    copy(ProgToolObject.exerciseResourcesFolder / ScriptName, scriptTargetPath)
 
     Files.setPosixFilePermissions(scriptTargetPath, FilePermissions)
 

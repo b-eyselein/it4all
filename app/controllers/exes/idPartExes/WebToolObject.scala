@@ -20,13 +20,13 @@ object WebToolObject extends IdPartExToolObject[WebExPart] {
 
   override def indexCall: Call = routes.WebController.index()
 
-  override def exerciseRoute(exercise: HasBaseValues, part: String): Call = routes.WebController.exercise(exercise.id, part)
+  override def exerciseRoute(id: Int, part: String): Call = routes.WebController.exercise(id, part)
 
   override def exerciseListRoute(page: Int): Call = routes.WebController.exerciseList(page)
 
-  override def correctLiveRoute(exercise: HasBaseValues): Call = routes.WebController.correctLive(exercise.id)
+  override def correctLiveRoute(id: Int): Call = routes.WebController.correctLive(id)
 
-  override def correctRoute(exercise: HasBaseValues): Call = routes.WebController.correct(exercise.id)
+  override def correctRoute(id: Int): Call = routes.WebController.correct(id)
 
 
   override def adminIndexRoute: Call = routes.WebController.adminIndex()
@@ -43,12 +43,12 @@ object WebToolObject extends IdPartExToolObject[WebExPart] {
 
   override def exportExesAsFileRoute: Call = routes.WebController.adminExportExercisesAsFile()
 
-  override def changeExStateRoute(exercise: HasBaseValues): Call = routes.WebController.adminChangeExState(exercise.id)
+  override def changeExStateRoute(id: Int): Call = routes.WebController.adminChangeExState(id)
 
-  override def editExerciseFormRoute(exercise: HasBaseValues): Call = routes.WebController.adminEditExerciseForm(exercise.id)
+  override def editExerciseFormRoute(id: Int): Call = routes.WebController.adminEditExerciseForm(id)
 
-  override def editExerciseRoute(exercise: HasBaseValues): Call = routes.WebController.adminEditExercise(exercise.id)
+  override def editExerciseRoute(id: Int): Call = routes.WebController.adminEditExercise(id)
 
-  override def deleteExerciseRoute(exercise: HasBaseValues): Call = routes.WebController.adminDeleteExercise(exercise.id)
+  override def deleteExerciseRoute(id: Int): Call = routes.WebController.adminDeleteExercise(id)
 
 }

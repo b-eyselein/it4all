@@ -2,7 +2,7 @@ package model.core.tools
 
 import java.nio.file.{Path, Paths}
 
-import controllers.exes.idPartExes.{ExPart, ExParts}
+import controllers.exes.idPartExes.ExPart
 import model._
 import model.core.CoreConsts._
 import model.core.FileUtils
@@ -30,11 +30,11 @@ trait ExToolObject extends ToolObject with FileUtils {
   val hasExType: Boolean = false
 
 
-  def sampleDirForExercise(exercise: HasBaseValues): Path = exerciseRootDir / SAMPLE_SUB_DIRECTORY / String.valueOf(exercise.id)
+  def sampleDirForExercise(id: Int): Path = exerciseRootDir / SAMPLE_SUB_DIRECTORY / String.valueOf(id)
 
-  def templateDirForExercise(exercise: HasBaseValues): Path = exerciseRootDir / TEMPLATE_SUB_DIRECTORY / String.valueOf(exercise.id)
+  def templateDirForExercise(id: Int): Path = exerciseRootDir / TEMPLATE_SUB_DIRECTORY / String.valueOf(id)
 
-  def solutionDirForExercise(username: String, exercise: HasBaseValues): Path = exerciseRootDir / SOLUTIONS_SUB_DIRECTORY / username / String.valueOf(exercise.id)
+  def solutionDirForExercise(username: String, id: Int): Path = exerciseRootDir / SOLUTIONS_SUB_DIRECTORY / username / String.valueOf(id)
 
   // User
 
@@ -42,9 +42,9 @@ trait ExToolObject extends ToolObject with FileUtils {
 
   def exerciseRoutes(exercise: CompEx): Map[Call, String]
 
-  def correctRoute(exercise: HasBaseValues): Call
+  def correctRoute(id: Int): Call
 
-  def correctLiveRoute(exercise: HasBaseValues): Call
+  def correctLiveRoute(id: Int): Call
 
   // Admin
 
@@ -62,21 +62,13 @@ trait ExToolObject extends ToolObject with FileUtils {
 
   def importExesRoute: Call
 
-  def changeExStateRoute(exercise: HasBaseValues): Call
+  def changeExStateRoute(id: Int): Call
 
-  def editExerciseFormRoute(exercise: HasBaseValues): Call
+  def editExerciseFormRoute(id: Int): Call
 
-  def editExerciseRoute(exercise: HasBaseValues): Call
+  def editExerciseRoute(id: Int): Call
 
-  def deleteExerciseRoute(exercise: HasBaseValues): Call
-
-}
-
-trait IdExToolObject extends ExToolObject {
-
-  def exerciseRoute(exercise: HasBaseValues): Call
-
-  override def exerciseRoutes(exercise: CompEx): Map[Call, String] = Map(exerciseRoute(exercise.ex) -> "Aufgabe bearbeiten")
+  def deleteExerciseRoute(id: Int): Call
 
 }
 
@@ -86,16 +78,13 @@ trait IdPartExToolObject[Part <: ExPart] extends ExToolObject {
 
   def exParts: Seq[Part]
 
-  def exerciseRoute(exercise: HasBaseValues, part: String): Call
+  def exerciseRoute(id: Int, part: String): Call
 
   override def exerciseRoutes(exercise: CompEx): Map[Call, String] = exParts.flatMap { exPart =>
     if (exercise.hasPart(exPart)) {
-      Some((exerciseRoute(exercise.ex, exPart.urlName), exPart.partName))
+      Some((exerciseRoute(exercise.ex.id, exPart.urlName), exPart.partName))
     } else None
   } toMap
-
-  //  override def exerciseRoutes(exercise: CompEx): Map[Call, String] =
-  //    exParts map (exPart => (exerciseRoute(exercise.ex, exPart._1.toLowerCase), exPart._2))
 
 }
 
@@ -123,13 +112,13 @@ trait FileExToolObject extends ExToolObject {
 
   val fileTypes: Map[String, String]
 
-  def exerciseRoute(exercise: HasBaseValues, fileExtension: String): Call
+  def exerciseRoute(id: Int, fileExtension: String): Call
 
   override def exerciseRoutes(exercise: CompEx): Map[Call, String] =
-    fileTypes filter (ft => exercise.available(ft._1)) map (ft => (exerciseRoute(exercise.ex, ft._1), s"Mit ${ft._2} bearbeiten"))
+    fileTypes filter (ft => exercise.available(ft._1)) map (ft => (exerciseRoute(exercise.ex.id, ft._1), s"Mit ${ft._2} bearbeiten"))
 
-  def uploadSolutionRoute(exercise: HasBaseValues, fileExtension: String): Call
+  def uploadSolutionRoute(id: Int, fileExtension: String): Call
 
-  def downloadCorrectedRoute(exercise: HasBaseValues, fileExtension: String): Call
+  def downloadCorrectedRoute(id: Int, fileExtension: String): Call
 
 }
