@@ -1,4 +1,4 @@
-@(user: model.User, exercise: model.web.WebCompleteEx, part: model.web.WebExParts.WebExPart, tasks: Seq[model.web.WebCompleteTask], oldSolution: String)
+@(user: model.User, exercise: model.web.WebCompleteEx, part: model.web.WebExPart, tasks: Seq[model.web.WebCompleteTask], oldSolution: String)
 
 @scripts = {
     <script src="@routes.Assets.versioned("javascripts/web/webExercise.js")"></script>
@@ -23,7 +23,7 @@
                     <hr>
 
                     <p class="text-justify">@exercise.ex.text</p>
-                    @if(part == model.web.WebExParts.HtmlPart) {
+                    @if(part == model.web.HtmlPart) {
                         <p>@Html(exercise.ex.htmlText getOrElse "")</p>
                     } else {
                         <p>@Html(exercise.ex.jsText getOrElse "")</p>

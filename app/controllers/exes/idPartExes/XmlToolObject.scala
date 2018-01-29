@@ -1,15 +1,17 @@
 package controllers.exes.idPartExes
 
 import model.core.tools.IdPartExToolObject
-import model.xml.{XmlConsts, XmlExParts, XmlExercise}
+import model.xml.{XmlConsts, XmlExPart, XmlExParts, XmlExercise}
 import model.{Consts, HasBaseValues}
 import play.api.mvc.Call
 
 import scala.language.postfixOps
 
-object XmlToolObject extends IdPartExToolObject {
+object XmlToolObject extends IdPartExToolObject[XmlExPart] {
 
   override type CompEx = XmlExercise
+
+  override def exParts: Seq[XmlExPart] = XmlExParts.values
 
   override val hasTags : Boolean = true
   override val toolname: String  = "Xml"
@@ -48,7 +50,5 @@ object XmlToolObject extends IdPartExToolObject {
   override def editExerciseRoute(exercise: HasBaseValues): Call = routes.XmlController.adminEditExercise(exercise.id)
 
   override def deleteExerciseRoute(exercise: HasBaseValues): Call = routes.XmlController.adminDeleteExercise(exercise.id)
-
-  override def exParts: Map[String, String] = XmlExParts.values map (part => part.urlName -> part.partName) toMap
 
 }

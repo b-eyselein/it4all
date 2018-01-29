@@ -75,9 +75,9 @@ class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
 
   override protected def onSubmitCorrectionResult(user: User, result: GenericCompleteResult[SpreadSheetCorrectionResult]): Result = ???
 
-  override protected def onSubmitCorrectionError(user: User, error: Throwable): Result = ???
+  override protected def onSubmitCorrectionError(user: User, msg: String, error: Option[Throwable]): Result = ???
 
   override protected def onLiveCorrectionResult(result: GenericCompleteResult[SpreadSheetCorrectionResult]): Result = ???
 
-  override protected def onLiveCorrectionError(error: Throwable): Result = ???
+  override protected def onLiveCorrectionError(msg: String, error: Option[Throwable]): Result = ???
 }

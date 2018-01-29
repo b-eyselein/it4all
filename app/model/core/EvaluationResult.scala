@@ -11,7 +11,7 @@ object EvaluationResult {
 
   implicit class PimpedHtmlString(string: String) {
 
-    def asCode: String = s"<code>$string</code>"
+    def asCode: Text.TypedTag[String] = code(string)
 
     def asListElem: String = s"<li>$string</li>"
 

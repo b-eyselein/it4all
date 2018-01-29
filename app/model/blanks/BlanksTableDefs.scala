@@ -5,6 +5,7 @@ import javax.inject.Inject
 import controllers.exes.idPartExes.BlanksToolObject
 import model.Enums.ExerciseState
 import model._
+import model.blanks.BlanksExParts.BlanksExPart
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc.Call
 import play.twirl.api.Html
@@ -12,12 +13,13 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 
-case class BlanksCompleteExercise(ex: BlanksExercise, samples: Seq[BlanksAnswer]) extends CompleteEx[BlanksExercise] {
+case class BlanksCompleteExercise(ex: BlanksExercise, samples: Seq[BlanksAnswer]) extends PartsCompleteEx[BlanksExercise, BlanksExPart] {
 
   override def preview: Html = views.html.blanks.blanksPreview(this)
 
   override def exerciseRoutes: Map[Call, String] = BlanksToolObject.exerciseRoutes(this)
 
+  override def hasPart(partType: BlanksExPart): Boolean = true
 }
 
 object BlanksExercise {

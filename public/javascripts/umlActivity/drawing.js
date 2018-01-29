@@ -47,24 +47,28 @@ document.addEventListener('dragover', function (e) {
     dragY = e.pageY - offset.top;
 }, false);
 
+const notSelectedElemButtonClass = 'btn-warning';
+const selectedElemButtonClass = 'btn-primary';
 
 // --> paper.on click --> selElement
 function setSelElement(anchor) {
     let anchorJQ = $(anchor);
 
-    if (anchorJQ.hasClass('btn-primary')) {
+    let elemToSelect = anchorJQ.data('elemname');
+
+    if (selElement === elemToSelect) {
         // Element was already selected
         clearSelElement();
     } else {
-        anchorJQ.siblings().removeClass('btn-primary').addClass('btn-default');
-        anchorJQ.removeClass('btn-default').addClass('btn-primary');
-        selElement = anchorJQ.data('elemname');
+        anchorJQ.siblings().removeClass(selectedElemButtonClass).addClass(notSelectedElemButtonClass);
+        anchorJQ.removeClass(notSelectedElemButtonClass).addClass(selectedElemButtonClass);
+        selElement = elemToSelect;
     }
 }
 
 function clearSelElement() {
     // Unmark all buttons
-    $('#buttonsDiv').find('a').removeClass('btn-primary').addClass('btn-default');
+    $('#buttonsDiv').find('a').removeClass(selectedElemButtonClass).addClass(notSelectedElemButtonClass);
     selElement = '';
 }
 
@@ -229,7 +233,6 @@ $(document).ready(function () {
     });
 
     $('#otop').click(function () {
-        console.log('top: ' + top);
         if (top > -400) {
             top -= 100;
             paper.setOrigin(currentOrigin, top);
@@ -238,7 +241,6 @@ $(document).ready(function () {
     });
 
     $('#obot').click(function () {
-        console.log('bot: ' + top);
         if (top < 400) {
             top += 100;
             paper.setOrigin(currentOrigin, top);
@@ -262,7 +264,7 @@ $(document).ready(function () {
 
         reSetSelection();
         refreshDia();
-        updateHighlight();
+        updateHighlight(graph.getElements(), highlightedCells);
     }
 
     // make the value in the view visible

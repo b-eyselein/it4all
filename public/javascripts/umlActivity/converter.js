@@ -4,8 +4,6 @@ const pattUpdate = /^\s*[a-z]+[a-z0-9]*\s*=\s*[a-z0-9"]+.*/;
 //for getDataFromElement split(const)
 const newLine = /\n/;
 
-let jsonMerge = {};  //merged elements
-
 let log = []; // hints and feedback from testcases
 let highlightedCells = []; //filled via tests
 let currentVariables; //current used Variables in Diagramm
@@ -18,9 +16,6 @@ const noUnknownElements = true;
 const testIfEndnodeHasOutboundConnections = true;
 const alternativeEnds = false; // broken, since editfields!
 const disconnectedElements = true;
-const conditionOfMergeelements = true;
-const CnrStartnodeEqualsEndnode = true;
-const atLeastOneElementinMerge = true;
 const elementsMustHaveInputs = true;
 const isExternPortConnectedWithEditNode = true;
 
@@ -29,7 +24,7 @@ const DeclarationAgainstProgress = false;
 const TypeAgainstValue = false;
 
 function newGenerate() {
-    // FIXME: recursively generate
+    // FIXME: recursively generate ?!?
 
     let startNode = graph.getCell('Startknoten-startId');
     let endNode = graph.getCell('Endknoten-endId');
@@ -71,7 +66,7 @@ function newGenerate() {
 
 function mainGeneration() {
     isCodeGenerated = false;
-    allElements = graph.getElements();
+    let allElements = graph.getElements();
     $('#preCode').html('');
     highlightedCells = [];
     currentVariables = [];

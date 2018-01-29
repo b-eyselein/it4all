@@ -4,8 +4,6 @@ import model.Enums.MatchType
 import model.Enums.MatchType._
 import model.core.EvaluationResult.PimpedHtmlString
 
-import scala.language.postfixOps
-
 trait Match[T] {
 
   val userArg  : Option[T]

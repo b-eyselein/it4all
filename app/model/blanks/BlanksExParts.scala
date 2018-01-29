@@ -4,9 +4,9 @@ import controllers.exes.idPartExes.ExPart
 
 object BlanksExParts {
 
-  sealed abstract class BlankExPart(val partName: String, val urlName: String) extends ExPart
+  sealed abstract class BlanksExPart(val partName: String, val urlName: String) extends ExPart
 
-  case object BlankExSinglePart extends BlankExPart("Lückentext", "blanks")
+  case object BlankExSinglePart extends BlanksExPart("Lückentext", "blanks")
 
   val values = Seq(BlankExSinglePart)
 

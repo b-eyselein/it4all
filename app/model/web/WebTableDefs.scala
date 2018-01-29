@@ -15,14 +15,18 @@ import slick.jdbc.JdbcProfile
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
-case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTasks: Seq[JsCompleteTask]) extends CompleteEx[WebExercise] {
+case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTasks: Seq[JsCompleteTask]) extends PartsCompleteEx[WebExercise, WebExPart] {
 
   override def preview: Html = views.html.web.webPreview(this)
 
-  override def tags: Seq[WebExTag] = Seq(new WebExTag(WebExParts.HtmlPart.partName, ex.hasHtmlPart), new WebExTag(WebExParts.JsPart.partName, ex.hasJsPart))
+  override def tags: Seq[WebExTag] = Seq(new WebExTag(HtmlPart.partName, ex.hasHtmlPart), new WebExTag(JsPart.partName, ex.hasJsPart))
 
   override def exerciseRoutes: Map[Call, String] = WebToolObject.exerciseRoutes(this)
 
+  override def hasPart(partType: WebExPart): Boolean = partType match {
+    case HtmlPart => htmlTasks.nonEmpty
+    case JsPart   => jsTasks.nonEmpty
+  }
 }
 
 trait WebCompleteTask {

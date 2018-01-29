@@ -25,7 +25,8 @@ object XmlExercise {
 
 }
 
-case class XmlExercise(override val baseValues: BaseValues, exerciseType: XmlExType, rootNode: String, refFileContent: String) extends Exercise with CompleteEx[XmlExercise] {
+case class XmlExercise(override val baseValues: BaseValues, exerciseType: XmlExType, rootNode: String, refFileContent: String)
+  extends Exercise with PartsCompleteEx[XmlExercise, XmlExPart] {
 
   val fixedStart: String = if (exerciseType != XmlExType.XML_DTD) "" else
     s"""<?xml version="1.0" encoding="UTF-8"?>
@@ -39,6 +40,7 @@ case class XmlExercise(override val baseValues: BaseValues, exerciseType: XmlExT
 
   override def exerciseRoutes: Map[Call, String] = XmlToolObject.exerciseRoutes(this)
 
+  override def hasPart(partType: XmlExPart): Boolean = true
 }
 
 case class XmlSolution(exerciseId: Int, username: String, solution: String)
@@ -73,7 +75,7 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   override def saveExerciseRest(compEx: XmlExercise)(implicit ec: ExecutionContext): Future[Boolean] = Future(true)
 
   def saveXmlSolution(solution: XmlSolution)(implicit ec: ExecutionContext): Future[Boolean] =
-    db.run(xmlSolutions insertOrUpdate solution) map (_ => true) recover { case e: Exception => false }
+    db.run(xmlSolutions insertOrUpdate solution) map (_ => true) recover { case _: Exception => false }
 
   // Deletion
 

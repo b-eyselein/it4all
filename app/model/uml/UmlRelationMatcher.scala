@@ -43,7 +43,7 @@ case class UmlImplementationMatchingResult(allMatches: Seq[UmlImplementationMatc
   override val matchName: String = "Vererbungsbeziehungen"
 
   // FIXME: override with list instead of join with ", "
-  override def describe: Html = super.describe
+  //  override def describe: String = super.describe
 
 }
 

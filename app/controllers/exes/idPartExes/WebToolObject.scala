@@ -1,17 +1,17 @@
 package controllers.exes.idPartExes
 
 import model.core.tools.IdPartExToolObject
-import model.web.{WebCompleteEx, WebConsts, WebExParts, WebExercise}
+import model.web.{WebCompleteEx, WebConsts, WebExPart, WebExParts}
 import model.{Consts, HasBaseValues}
 import play.api.mvc.Call
 
 import scala.language.postfixOps
 
-object WebToolObject extends IdPartExToolObject {
+object WebToolObject extends IdPartExToolObject[WebExPart] {
 
   override type CompEx = WebCompleteEx
 
-  override def exParts: Map[String, String] = WebExParts.values map (part => part.urlName -> part.partName) toMap
+  override def exParts: Seq[WebExPart] = WebExParts.values
 
   override val hasTags : Boolean = true
   override val toolname: String  = "Web"
@@ -21,14 +21,6 @@ object WebToolObject extends IdPartExToolObject {
   override def indexCall: Call = routes.WebController.index()
 
   override def exerciseRoute(exercise: HasBaseValues, part: String): Call = routes.WebController.exercise(exercise.id, part)
-
-  override def exerciseRoutes(exercise: WebCompleteEx): Map[Call, String] = exercise.ex match {
-    // FIXME: user super method...
-    case ex: WebExercise => Map.empty ++
-      (if (ex.hasHtmlPart) Some((exerciseRoute(exercise.ex, "html"), "Html-Teil")) else None) ++
-      (if (ex.hasJsPart) Some((exerciseRoute(exercise.ex, "js"), "Js-Teil")) else None)
-    case _               => Map(exerciseRoute(exercise.ex, "html") -> "Html-Teil", exerciseRoute(exercise.ex, "js") -> "Js-Teil")
-  }
 
   override def exerciseListRoute(page: Int): Call = routes.WebController.exerciseList(page)
 

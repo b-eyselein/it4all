@@ -22,7 +22,7 @@ case class XmlCompleteResult(learnerSolution: String, solutionSaved: Boolean, re
       div(cls := "alert alert-danger")(span(cls := "glyphicon glyphicon-remove"), " Ihre L&ouml;sung konnte nicht gespeichert werden!").toString
 
     val resultsRender: String = results match {
-      case Nil => div(cls := "alert alert-success")(span(cls := "glyphicon glyphicon-ok"), "Es wurden keine Fehler gefunden.").toString
+      case Nil => div(cls := "alert alert-success")(span(cls := "glyphicon glyphicon-ok"), " Es wurden keine Fehler gefunden.").toString
       case res => res map (_.render) mkString "\n"
     }
 

@@ -5,10 +5,10 @@ import model.Enums.MatchType._
 import model.Enums.SuccessType._
 import model.core.EvaluationResult
 import model.core.EvaluationResult.PimpedHtmlString
-import play.twirl.api.Html
 
 import scala.collection.mutable.ListBuffer
 import scala.language.postfixOps
+import scalatags.Text.all._
 
 trait MatchingResult[T, M <: Match[T]] extends EvaluationResult {
 
@@ -25,7 +25,9 @@ trait MatchingResult[T, M <: Match[T]] extends EvaluationResult {
     else
       COMPLETE
 
-  def describe: Html = new Html(success match {
+  // FIXME: use scalatags for results...
+
+  def describe: String = success match {
     case COMPLETE => s"""<span class="glyphicon glyphicon-ok"></span> Die Korrektur der $matchName war erfolgreich.""" asDivWithClass "alert alert-success"
 
     case (PARTIALLY | NONE) =>
@@ -37,12 +39,12 @@ trait MatchingResult[T, M <: Match[T]] extends EvaluationResult {
           (groupedMatches get PARTIAL_MATCH map describePartialMatches getOrElse "") +
           (groupedMatches get UNSUCCESSFUL_MATCH map describeUnsuccessfulMatches getOrElse "") +
           (groupedMatches get ONLY_SAMPLE map describeOnlySampleMatches getOrElse "") +
-          (groupedMatches get ONLY_USER map describeOnlyUserMatches getOrElse "") + "<hr>"
+          (groupedMatches get ONLY_USER map describeOnlyUserMatches getOrElse "")
 
       message asDiv
 
     case ERROR => s"""<span class="glyphicon glyphicon-ok"></span> Es gab einen Fehler bei der Korrektur der $matchName!""" asDiv
-  })
+  }
 
   protected def describeCorrectMatches(colMatches: Seq[M]): String = colMatches match {
     case Nil => ""

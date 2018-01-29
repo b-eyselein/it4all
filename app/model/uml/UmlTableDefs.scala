@@ -4,9 +4,9 @@ import javax.inject.Inject
 
 import controllers.exes.idPartExes.UmlToolObject
 import model.Enums.ExerciseState
+import model._
 import model.uml.UmlConsts._
 import model.uml.UmlEnums._
-import model._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc.Call
 import play.twirl.api.Html
@@ -15,7 +15,7 @@ import slick.jdbc.JdbcProfile
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
 
-case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping], solution: UmlSolution) extends CompleteEx[UmlExercise] {
+case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping], solution: UmlSolution) extends PartsCompleteEx[UmlExercise, UmlExPart] {
 
   override def preview: Html = views.html.uml.umlPreview(this)
 
@@ -34,6 +34,10 @@ case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping], solution: U
 
   override def exerciseRoutes: Map[Call, String] = UmlToolObject.exerciseRoutes(this)
 
+  override def hasPart(partType: UmlExPart): Boolean = partType match {
+    case (ClassSelection | DiagramDrawing) => true
+    case _                                 => false
+  }
 }
 
 case class UmlSolution(classes: Seq[UmlCompleteClass], associations: Seq[UmlAssociation], implementations: Seq[UmlImplementation]) {
@@ -80,9 +84,9 @@ case class UmlClass(exerciseId: Int, className: String, classType: UmlClassType)
 trait UmlClassMember {
 
   val exerciseId: Int
-  val className: String
-  val name: String
-  val umlType: String
+  val className : String
+  val name      : String
+  val umlType   : String
 
   def render: String = name + ": " + umlType
 

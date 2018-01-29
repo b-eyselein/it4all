@@ -1,12 +1,14 @@
 package model.xml
 
-import controllers.exes.idPartExes.ExPart
+import controllers.exes.idPartExes.{ExPart, ExParts}
 
-object XmlExParts {
 
-  sealed abstract class XmlExPart(val partName: String, val urlName: String) extends ExPart
+sealed abstract class XmlExPart(val partName: String, val urlName: String) extends ExPart
 
-  case object XmlSingleExPart extends XmlExPart("Bearbeitung", "xml")
+case object XmlSingleExPart extends XmlExPart("Bearbeitung", "xml")
+
+
+object XmlExParts extends ExParts[XmlExPart] {
 
   val values = Seq(XmlSingleExPart)
 

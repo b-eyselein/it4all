@@ -6,8 +6,7 @@ import controllers.Secured
 import model.core._
 import model.web.WebConsts._
 import model.web.WebCorrector.evaluateWebTask
-import model.web.WebExParts.WebExPart
-import model.web._
+import model.web.{WebExPart, _}
 import model.{JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
@@ -26,14 +25,10 @@ case class WebSolutionType(part: WebExPart, solution: String)
 
 @Singleton
 class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: WebTableDefs)(implicit ec: ExecutionContext)
-  extends AIdPartExController[WebExercise, WebCompleteEx, WebResult, WebCompleteResult, WebTableDefs](cc, dbcp, t, WebToolObject)
+  extends AIdPartExController[WebExercise, WebCompleteEx, WebExPart, WebResult, WebCompleteResult, WebTableDefs](cc, dbcp, t, WebToolObject)
     with Secured with JsonFormat {
 
-  override type PartType = WebExPart
-
   override def partTypeFromUrl(urlName: String): Option[WebExPart] = WebExParts.values.find(_.urlName == urlName)
-
-  case class WebExIdentifier(id: Int, part: WebExPart) extends IdPartExIdentifier
 
   // Reading solution from requests
 
@@ -93,11 +88,11 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   protected def onSubmitCorrectionResult(user: User, result: WebCompleteResult): Result =
     Ok(views.html.core.correction.render(result, result.render, user, toolObject))
 
-  protected def onSubmitCorrectionError(user: User, error: Throwable): Result = ???
+  protected def onSubmitCorrectionError(user: User, msg: String, error: Option[Throwable]): Result = ???
 
   protected def onLiveCorrectionResult(result: WebCompleteResult): Result = Ok(result.render)
 
-  protected def onLiveCorrectionError(error: Throwable): Result = ???
+  protected def onLiveCorrectionError(msg: String, error: Option[Throwable]): Result = ???
 
   // Other helper methods
 
@@ -107,8 +102,8 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   }
 
   private def getTasks(exercise: WebCompleteEx, part: WebExPart): Seq[WebCompleteTask] = part match {
-    case WebExParts.HtmlPart => exercise.htmlTasks
-    case WebExParts.JsPart   => exercise.jsTasks
+    case HtmlPart => exercise.htmlTasks
+    case JsPart   => exercise.jsTasks
   }
 
 }

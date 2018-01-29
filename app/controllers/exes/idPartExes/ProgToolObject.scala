@@ -2,15 +2,15 @@ package controllers.exes.idPartExes
 
 import model.Enums.ToolState
 import model.core.tools.IdPartExToolObject
-import model.programming.{ProgCompleteEx, ProgConsts, ProgExParts}
+import model.programming.{ProgCompleteEx, ProgConsts, ProgExPart, ProgExParts}
 import model.{Consts, HasBaseValues}
 import play.api.mvc.Call
 
-object ProgToolObject extends IdPartExToolObject {
-
-  override def exParts: Map[String, String] = ProgExParts.values.map(part => part.urlName -> part.partName).toMap
+object ProgToolObject extends IdPartExToolObject[ProgExPart] {
 
   override type CompEx = ProgCompleteEx
+
+  override def exParts: Seq[ProgExPart] = ProgExParts.values
 
   override val hasTags  : Boolean   = false
   override val toolname : String    = "Programmierung"

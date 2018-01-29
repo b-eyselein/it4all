@@ -3,17 +3,23 @@
 let chosenClasses = [];
 
 function prepareFormForSubmitting() {
-    $('#learnerSolution').val(JSON.stringify({
-        classes: chosenClasses.map(function (clazz) {
-            return {
-                name: clazz,
-                classType: 'CLASS',
-                methods: [],
-                attributes: []
-            };
-        }),
-        associations: [], implementations: []
-    }))
+    let solutionToSend = {
+        part: "ClassSelection",
+        solution: {
+            associations: [],
+            implementations: [],
+            classes: chosenClasses.map(function (clazz) {
+                return {
+                    name: clazz,
+                    classType: 'CLASS',
+                    methods: [],
+                    attributes: []
+                };
+            })
+        }
+    };
+
+    $('#learnerSolution').val(JSON.stringify(solutionToSend))
 }
 
 function asList(array) {
@@ -31,7 +37,7 @@ function select(span) {
 
     $('#classesList').html(asList(chosenClasses));
 
-    for (let otherSpan of document.getElementById('exercisetext').getElementsByTagName('span')) {
+    for (let otherSpan of $('#exercisetext').find('span').get()) {
         if (chosenClasses.indexOf(otherSpan.dataset.baseform) < 0) {
             otherSpan.className = 'non-marked';
         } else {
@@ -39,3 +45,4 @@ function select(span) {
         }
     }
 }
+

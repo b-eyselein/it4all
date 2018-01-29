@@ -8,7 +8,6 @@ import model.Enums.{ExerciseState, SuccessType}
 import model.core._
 import model.core.tools.ExerciseOptions
 import model.programming.ProgConsts._
-import model.programming.ProgExParts.ProgExPart
 import model.programming._
 import model.{JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
@@ -38,10 +37,8 @@ object ProgController {
 
 @Singleton
 class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: ProgTableDefs)(implicit ec: ExecutionContext)
-  extends AIdPartExController[ProgExercise, ProgCompleteEx, ProgEvalResult, ProgCompleteResult, ProgTableDefs](cc, dbcp, t, ProgToolObject)
+  extends AIdPartExController[ProgExercise, ProgCompleteEx, ProgExPart, ProgEvalResult, ProgCompleteResult, ProgTableDefs](cc, dbcp, t, ProgToolObject)
     with Secured with JsonFormat {
-
-  override type PartType = ProgExPart
 
   override def partTypeFromUrl(urlName: String): Option[ProgExPart] = ProgExParts.values.find(_.urlName == urlName)
 
@@ -53,14 +50,14 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
     Solution.stringSolForm.bindFromRequest().fold(_ => None, sol => Some(ImplementationSolution(ProgLanguage.STANDARD_LANG, sol.learnerSolution)))
 
   override protected def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: ProgExPart): Option[ProgSolutionType] = part match {
-    case ProgExParts.TestdataCreation => jsValue.asArray(_.asObj flatMap (jsValue => readTestData(id, jsValue, user))) map TestdataSolution
-    case ProgExParts.Implementation   => jsValue.asObj flatMap { jsObj =>
+    case TestdataCreation => jsValue.asArray(_.asObj flatMap (jsValue => readTestData(id, jsValue, user))) map TestdataSolution
+    case Implementation   => jsValue.asObj flatMap { jsObj =>
       for {
         language <- jsObj.enumField("languague", str => ProgLanguage.valueOf(str) getOrElse ProgLanguage.STANDARD_LANG)
         implementation <- jsObj.stringField("implementation")
       } yield ImplementationSolution(language, implementation)
     }
-    case ProgExParts.ActivityDiagram  => jsValue.asStr map UmlActivitySolution
+    case ActivityDiagram  => jsValue.asStr map UmlActivitySolution
   }
 
   private def readTestData(id: Int, tdJsObj: JsObject, user: User): Option[CompleteCommitedTestData] = for {
@@ -115,16 +112,16 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
   // Views
 
   override def renderExercise(user: User, exercise: ProgCompleteEx, part: ProgExPart): Future[Html] = part match {
-    case ProgExParts.TestdataCreation =>
+    case TestdataCreation =>
       val oldTestData: Seq[CommitedTestData] = Seq.empty // FIXME: Option(CommitedTestDataHelper.forUserAndExercise(user, id)).getOrElse(List.empty)
       Future(testDataCreation.render(user, exercise, oldTestData))
 
-    case ProgExParts.Implementation => tables.loadSolution(user, exercise) map { oldSol =>
+    case Implementation => tables.loadSolution(user, exercise) map { oldSol =>
       val declaration: String = oldSol map (_.solution) getOrElse ProgLanguage.STANDARD_LANG.buildFunction(exercise)
-      views.html.core.exercise2Rows.render(user, ProgToolObject, ProgExOptions, exercise.ex, renderExRest, exScript, declaration, ProgExParts.Implementation)
+      views.html.core.exercise2Rows.render(user, ProgToolObject, ProgExOptions, exercise.ex, renderExRest, exScript, declaration, Implementation)
     }
 
-    case ProgExParts.ActivityDiagram => Future(views.html.umlActivity.activityDrawing.render(user, exercise, toolObject))
+    case ActivityDiagram => Future(views.html.umlActivity.activityDrawing.render(user, exercise, toolObject))
   }
 
   override def renderExesListRest: Html = Html("")
@@ -146,7 +143,7 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
   protected def onSubmitCorrectionResult(user: User, result: ProgCompleteResult): Result =
     Ok(views.html.core.correction.render(result, renderResult(result), user, toolObject))
 
-  protected def onSubmitCorrectionError(user: User, error: Throwable): Result = ???
+  protected def onSubmitCorrectionError(user: User, msg: String, error: Option[Throwable]): Result = ???
 
   protected def onLiveCorrectionResult(result: ProgCompleteResult): Result = result match {
     case ir: ProgImplementationCompleteResult => Ok(renderResult(ir))
@@ -160,8 +157,11 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
     }
   }
 
-  protected def onLiveCorrectionError(error: Throwable): Result = {
-    Logger.error("Es gab einen Fehler bei der Korrektur:", error)
+  protected def onLiveCorrectionError(msg: String, error: Option[Throwable]): Result = {
+
+    // Log error if error exists
+    error foreach (err => Logger.error("Es gab einen Fehler bei der Korrektur:", err))
+
     BadRequest("Es gab einen Fehler bei der Korrektur!")
   }
 }

@@ -11,13 +11,12 @@ import model.core._
 import model.core.tools.ExerciseOptions
 import model.xml.XmlConsts._
 import model.xml.XmlEnums._
-import model.xml.XmlExParts.XmlExPart
 import model.xml._
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.json.JsValue
 import play.api.mvc._
-import play.twirl.api.{Html, HtmlFormat}
+import play.twirl.api.Html
 import views.html.xml._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,11 +32,9 @@ object XmlController {
 
 @Singleton
 class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: XmlTableDefs)(implicit ec: ExecutionContext)
-  extends AIdPartExController[XmlExercise, XmlExercise, XmlError, XmlCompleteResult, XmlTableDefs](cc, dbcp, t, XmlToolObject) with Secured with FileUtils {
+  extends AIdPartExController[XmlExercise, XmlExercise, XmlExPart, XmlError, XmlCompleteResult, XmlTableDefs](cc, dbcp, t, XmlToolObject) with Secured with FileUtils {
 
-  override type PartType = XmlExPart
-
-  override protected def partTypeFromUrl(urlName: String): Option[XmlExPart] = Some(XmlExParts.XmlSingleExPart)
+  override protected def partTypeFromUrl(urlName: String): Option[XmlExPart] = Some(XmlSingleExPart)
 
   // Reading solution from requests
 
@@ -100,12 +97,12 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   private def renderResult(completeResult: XmlCompleteResult): Html = completeResult.render
 
   override protected def renderExercise(user: User, exercise: XmlExercise, part: XmlExPart): Future[Html] = readDefOrOldSolution(user.username, exercise.ex) map {
-    sol => views.html.core.exercise2Rows(user, XmlToolObject, exOptions, exercise.ex, renderExRest(exercise.ex), exScript, sol, XmlExParts.XmlSingleExPart)
+    sol => views.html.core.exercise2Rows(user, XmlToolObject, exOptions, exercise.ex, renderExRest(exercise.ex), exScript, sol, XmlSingleExPart)
   }
 
   private def exScript: Html = Html(script(src := controllers.routes.Assets.versioned("javascripts/xml/xmlExercise.js").url).toString)
 
-  def renderExRest(exercise: XmlExercise) = Html(div(id := "refFileSection")(pre(HtmlFormat.escape(exercise.refFileContent).toString)).toString)
+  def renderExRest(exercise: XmlExercise) = Html(div(id := "refFileSection")(pre(exercise.refFileContent)).toString)
 
   // Own functions
 
@@ -115,10 +112,10 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   override protected def onSubmitCorrectionResult(user: User, result: XmlCompleteResult): Result =
     Ok(views.html.core.correction.render(result, renderResult(result), user, toolObject))
 
-  override protected def onSubmitCorrectionError(user: User, error: Throwable): Result = ???
+  override protected def onSubmitCorrectionError(user: User, msg: String, error: Option[Throwable]): Result = ???
 
   override protected def onLiveCorrectionResult(result: XmlCompleteResult): Result = Ok(renderResult(result))
 
-  override protected def onLiveCorrectionError(error: Throwable): Result = ???
+  override protected def onLiveCorrectionError(msg: String, error: Option[Throwable]): Result = ???
 
 }

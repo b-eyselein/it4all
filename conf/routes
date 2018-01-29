@@ -226,13 +226,6 @@ POST          /web/:id                                    controllers.exes.idPar
 GET           /web/sol/:user/:id                          controllers.exes.idPartExes.WebController.site(user: String, id: Int)
 # Web - Ende
 
-# UmlActivity - Anfang
-GET           /umlActivity/                               controllers.exes.idPartExes.UmlController.activityIndex
-
-GET           /umlActivity/drawing                        controllers.exes.idPartExes.UmlController.activityExercise
-POST          /umlActivity/check                          controllers.exes.idPartExes.UmlController.activityCheckSolution(lang: String ?= "python")
-# UmlActivity - Ende
-
 # Uml - Anfang
 # Controller
 GET           /uml/admin                                  controllers.exes.idPartExes.UmlController.adminIndex

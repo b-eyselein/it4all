@@ -1,7 +1,7 @@
 @(user: model.User, exercise: model.uml.UmlCompleteEx, getsHelp: Boolean)
 
 @curPart = @{
-    if(getsHelp) model.uml.UmlExParts.DiagramDrawingHelp else model.uml.UmlExParts.DiagramDrawing
+    if(getsHelp) model.uml.DiagramDrawingHelp else model.uml.DiagramDrawing
 }
 
 @scripts = {

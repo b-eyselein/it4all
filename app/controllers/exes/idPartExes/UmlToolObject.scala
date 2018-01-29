@@ -2,15 +2,15 @@ package controllers.exes.idPartExes
 
 import model.Enums.ToolState
 import model.core.tools.IdPartExToolObject
-import model.uml.{UmlCompleteEx, UmlConsts, UmlExParts}
+import model.uml.{UmlCompleteEx, UmlConsts, UmlExPart, UmlExParts}
 import model.{Consts, HasBaseValues}
 import play.api.mvc.Call
 
-object UmlToolObject extends IdPartExToolObject {
+object UmlToolObject extends IdPartExToolObject[UmlExPart] {
 
   override type CompEx = UmlCompleteEx
 
-  override def exParts: Map[String, String] = Map(UmlExParts.ClassSelection.urlName -> "Mit Zwischenkorrektur", UmlExParts.DiagramDrawing.urlName -> "Freies Erstellen")
+  override def exParts: Seq[UmlExPart] = UmlExParts.values
 
   override val hasTags  : Boolean   = false
   override val toolname : String    = "Uml"

@@ -3,7 +3,7 @@ package controllers.exes.idPartExes
 import javax.inject._
 
 import controllers.Secured
-import model.blanks.BlanksExParts.BlankExPart
+import model.blanks.BlanksExParts.BlanksExPart
 import model.blanks._
 import model.{JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
@@ -19,14 +19,12 @@ import scala.util.Try
 
 @Singleton
 class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: BlanksTableDefs)(implicit ec: ExecutionContext)
-  extends AIdPartExController[BlanksExercise, BlanksCompleteExercise, BlanksAnswerMatchingResult, BlanksCompleteResult, BlanksTableDefs](cc, dbcp, t, BlanksToolObject)
+  extends AIdPartExController[BlanksExercise, BlanksCompleteExercise, BlanksExPart, BlanksAnswerMatchingResult, BlanksCompleteResult, BlanksTableDefs](cc, dbcp, t, BlanksToolObject)
     with Secured with JsonFormat {
 
-  override type PartType = BlankExPart
+  override protected def partTypeFromUrl(urlName: String): Option[BlanksExPart] = Some(BlanksExParts.BlankExSinglePart)
 
-  override protected def partTypeFromUrl(urlName: String): Option[BlankExPart] = Some(BlanksExParts.BlankExSinglePart)
-
-  override protected def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: BlankExPart): Option[Seq[BlanksAnswer]] = ???
+  override protected def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: BlanksExPart): Option[Seq[BlanksAnswer]] = ???
 
   // Reading solution from requests
 
@@ -52,9 +50,9 @@ class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
 
   // Views
 
-  override def renderExercise(user: User, exercise: BlanksCompleteExercise, part: BlankExPart): Future[Html] = Future(views.html.blanks.blanksExercise(user, exercise))
+  override def renderExercise(user: User, exercise: BlanksCompleteExercise, part: BlanksExPart): Future[Html] = Future(views.html.blanks.blanksExercise(user, exercise))
 
-  private def renderResult(correctionResult: BlanksCompleteResult): Html = correctionResult.result.describe // ???
+  private def renderResult(correctionResult: BlanksCompleteResult): Html = Html(correctionResult.result.describe) // ???
 
   override def renderEditRest(exercise: Option[BlanksCompleteExercise]): Html = new Html(
     s"""<div class="form-group">
@@ -70,7 +68,7 @@ class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
 
   override protected def onSubmitCorrectionResult(user: User, result: BlanksCompleteResult): Result = ???
 
-  override protected def onSubmitCorrectionError(user: User, error: Throwable): Result = ???
+  override protected def onSubmitCorrectionError(user: User, msg: String, error: Option[Throwable]): Result = ???
 
   override protected def onLiveCorrectionResult(result: BlanksCompleteResult): Result = Ok(json.JsArray(
     result.result.allMatches map (m => Json.obj(
@@ -79,7 +77,7 @@ class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
       "explanation" -> m.explanation))
   ))
 
-  override protected def onLiveCorrectionError(error: Throwable): Result = ???
+  override protected def onLiveCorrectionError(msg: String, error: Option[Throwable]): Result = ???
 
 }
 

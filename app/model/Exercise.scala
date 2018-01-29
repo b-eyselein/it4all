@@ -2,6 +2,7 @@ package model
 
 import java.nio.file.Path
 
+import controllers.exes.idPartExes.ExPart
 import model.core.tools.FileExToolObject
 import model.Enums.ExerciseState
 import model.core.FileUtils
@@ -65,6 +66,13 @@ trait CompleteEx[E <: Exercise] extends HasBaseValues {
   def exType: String = ""
 
   def exerciseRoutes: Map[Call, String]
+
+
+}
+
+trait PartsCompleteEx[E <: Exercise, PartType <: ExPart] extends CompleteEx[E] {
+
+  def hasPart(partType: PartType): Boolean
 
 }
 

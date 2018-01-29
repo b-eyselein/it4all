@@ -40,12 +40,6 @@ function testSol(url, part) {
 
 window.onload = function () {
 
-    $("#startFullscreen").click(function () {
-        enterFullscreen(document.getElementById("fullscreen"));
-    });
-    $("#endFullscreen").click(function () {
-        exitFullscreen();
-    });
     $('#file').click(function () {
         const input = document.getElementById("file");
         input.addEventListener("change", function (e) {
@@ -81,48 +75,9 @@ window.onload = function () {
 
 };
 
-//Test: Is Json Objrect
-function isJson(str) {
-    try {
-        JSON.parse(str);
-    } catch (e) {
-        return false;
-    }
-    return true;
-}
-
 //writer via FileSaver.js --->  https://github.com/eligrey/FileSaver.js
 function saveGraphAsTxt() {
-    let input = {"graph": graph.toJSON(), "parentChildNodes": parentChildNodes};
-    input = JSON.stringify(input);
-    // var input = JSON.stringify(graph.toJSON());
-    const blob = new Blob([input], {type: "text/plain;charset=utf-8"});
+    const graphInput = {"graph": graph.toJSON(), "parentChildNodes": parentChildNodes};
+    const blob = new Blob([JSON.stringify(graphInput)], {type: "text/plain;charset=utf-8"});
     saveAs(blob, "graph.json");
-}
-
-function enterFullscreen(element) {
-    localStorage.setItem("parentChildNodes", JSON.stringify(parentChildNodes));
-    const currentGraph = graph.toJSON();
-    if (element.requestFullscreen) {
-        element.requestFullscreen();
-    } else if (element.mozRequestFullScreen) {
-        element.mozRequestFullScreen();
-    } else if (element.msRequestFullscreen) {
-        element.msRequestFullscreen();
-    } else if (element.webkitRequestFullscreen) {
-        element.webkitRequestFullscreen();
-    }
-    graph.fromJSON(currentGraph);
-    parentChildNodes = JSON.parse(localStorage.getItem("parentChildNodes"));
-    reSetSelection();
-}
-
-function exitFullscreen() {
-    if (document.exitFullscreen) {
-        document.exitFullscreen();
-    } else if (document.mozCancelFullScreen) {
-        document.mozCancelFullScreen();
-    } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen();
-    }
 }

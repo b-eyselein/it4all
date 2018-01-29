@@ -15,7 +15,8 @@ import slick.jdbc.JdbcProfile
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
 
-case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[InputType], sampleSolution: ProgSampleSolution, sampleTestData: Seq[CompleteSampleTestData]) extends CompleteEx[ProgExercise] {
+case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[InputType], sampleSolution: ProgSampleSolution, sampleTestData: Seq[CompleteSampleTestData])
+  extends PartsCompleteEx[ProgExercise, ProgExPart] {
 
   // FIXME: only one solution?
 
@@ -25,13 +26,14 @@ case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[InputType], sampleSo
 
   val inputCount: Int = inputTypes.size
 
+  override def hasPart(partType: ProgExPart): Boolean = true
 }
 
 sealed trait CompleteTestData {
 
   val testData: TestData
 
-  val inputs  : Seq[TestDataInput]
+  val inputs: Seq[TestDataInput]
 
   def write: String = (inputs map (_.input)) mkString " "
 

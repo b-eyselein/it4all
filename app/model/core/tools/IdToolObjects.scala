@@ -2,10 +2,13 @@ package model.core.tools
 
 import java.nio.file.{Path, Paths}
 
+import controllers.exes.idPartExes.{ExPart, ExParts}
 import model._
-import model.core.FileUtils
 import model.core.CoreConsts._
+import model.core.FileUtils
 import play.api.mvc.Call
+
+import scala.language.postfixOps
 
 trait ExToolObject extends ToolObject with FileUtils {
 
@@ -77,13 +80,22 @@ trait IdExToolObject extends ExToolObject {
 
 }
 
-trait IdPartExToolObject extends ExToolObject {
+trait IdPartExToolObject[Part <: ExPart] extends ExToolObject {
 
-  def exParts: Map[String, String]
+  override type CompEx <: PartsCompleteEx[_ <: Exercise, Part]
+
+  def exParts: Seq[Part]
 
   def exerciseRoute(exercise: HasBaseValues, part: String): Call
 
-  override def exerciseRoutes(exercise: CompEx): Map[Call, String] = exParts map (exPart => (exerciseRoute(exercise.ex, exPart._1.toLowerCase), exPart._2))
+  override def exerciseRoutes(exercise: CompEx): Map[Call, String] = exParts.flatMap { exPart =>
+    if (exercise.hasPart(exPart)) {
+      Some((exerciseRoute(exercise.ex, exPart.urlName), exPart.partName))
+    } else None
+  } toMap
+
+  //  override def exerciseRoutes(exercise: CompEx): Map[Call, String] =
+  //    exParts map (exPart => (exerciseRoute(exercise.ex, exPart._1.toLowerCase), exPart._2))
 
 }
 

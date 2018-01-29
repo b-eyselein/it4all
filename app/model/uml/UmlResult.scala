@@ -5,7 +5,6 @@ import model.Enums.SuccessType.NONE
 import model.core.EvaluationResult._
 import model.core.matching.{Match, MatchingResult}
 import model.core.{CompleteResult, EvaluationResult}
-import model.uml.UmlExParts.UmlExPart
 import model.uml.UmlResult._
 import play.twirl.api.Html
 
@@ -81,7 +80,7 @@ case class ClassSelectionResult(e: UmlCompleteEx, l: UmlSolution) extends UmlRes
        |  ${classResult map (_.allMatches flatMap (_.userArg map (_.clazz.className asListElem)) mkString) getOrElse ""}
        |</ul>""".stripMargin)
 
-  override val nextPart: Option[UmlExPart] = Some(UmlExParts.DiagramDrawingHelp)
+  override val nextPart: Option[UmlExPart] = Some(DiagramDrawingHelp)
 
 }
 
@@ -90,7 +89,7 @@ case class DiagramDrawingHelpResult(e: UmlCompleteEx, l: UmlSolution) extends Um
   // FIXME: implement renderLearnerSolution!
   override def renderLearnerSolution: Html = new Html(displayAssocsAndImpls)
 
-  override val nextPart: Option[UmlExPart] = Some(UmlExParts.MemberAllocation)
+  override val nextPart: Option[UmlExPart] = Some(MemberAllocation)
 
 }
 

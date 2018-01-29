@@ -28,6 +28,7 @@ case class MindmapExercise(i: Int, ti: String, a: String, te: String, s: Exercis
   override def sampleFilename: String = ???
 
   override def exerciseRoutes: Map[Call, String] = MindMapToolObject.exerciseRoutes(this)
+
 }
 
 

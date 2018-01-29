@@ -1,6 +1,7 @@
 package controllers.exes.idPartExes
 
 import model.Enums.ToolState
+import model.blanks.BlanksExParts.BlanksExPart
 import model.blanks.{BlanksCompleteExercise, BlanksExParts}
 import model.core.tools.IdPartExToolObject
 import model.{Consts, HasBaseValues}
@@ -8,9 +9,11 @@ import play.api.mvc.Call
 
 import scala.language.postfixOps
 
-object BlanksToolObject extends IdPartExToolObject {
+object BlanksToolObject extends IdPartExToolObject[BlanksExPart] {
 
   override type CompEx = BlanksCompleteExercise
+
+  override def exParts: Seq[BlanksExPart] = BlanksExParts.values
 
   override val hasTags  : Boolean   = false
   override val toolname : String    = "Lückentext"
@@ -51,5 +54,4 @@ object BlanksToolObject extends IdPartExToolObject {
 
   override def deleteExerciseRoute(exercise: HasBaseValues): Call = routes.BlanksController.adminDeleteExercise(exercise.id)
 
-  override def exParts: Map[String, String] = BlanksExParts.values map (part => part.urlName -> part.partName) toMap
 }
