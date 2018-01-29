@@ -81,6 +81,10 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   // Other routes
 
+  def roseTest: EssentialAction = withUser {
+    user => implicit  request => Ok(views.html.programming.rose.roseTest.render(user))
+  }
+
   def getDeclaration(lang: String): EssentialAction = withUser {
     _ => implicit request => Ok(ProgLanguage.valueOf(lang).getOrElse(ProgLanguage.STANDARD_LANG).declaration)
   }
