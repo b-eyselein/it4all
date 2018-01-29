@@ -50,7 +50,6 @@ class RoseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
   // Correction
 
   override protected def correctEx(user: User, sol: String, exercise: RoseCompleteEx): Future[Try[RoseCompleteResult]] = {
-    println(sol)
     RoseCorrector.correct(user, exercise, sol, ProgLanguage.STANDARD_LANG)
     ???
   }

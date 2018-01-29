@@ -19,6 +19,8 @@ case class RoseCompleteEx(ex: RoseExercise, sampleSolution: RoseSampleSolution) 
 
   // FIXME: only one solution?
 
+  val NewLine = "\n"
+
   override def preview: Html = views.html.rose.rosePreview.render(this)
 
   override def exerciseRoutes: Map[Call, String] = RoseToolObject.exerciseRoutes(this)
@@ -26,28 +28,30 @@ case class RoseCompleteEx(ex: RoseExercise, sampleSolution: RoseSampleSolution) 
   override def hasPart(partType: RoseExPart): Boolean = true
 
   def declaration: String = if (ex.isMultiplayer) {
-    """def run(self) -> None:
-      |  pass""".stripMargin
+    """class UserRobot(Robot, MultiPlayerActor):
+      |  def run(self) -> None:
+      |    pass""".stripMargin
   } else {
-    """def act(self) -> Action:
-      |  pass""".stripMargin
+    """class UserRobot(Robot, SinglePlayerActor):
+      |  def run(self, options: Dict) -> Action:
+      |    pass""".stripMargin
   }
 
+  def imports: String = if (ex.isMultiplayer) {
+    """from typing import Dict
+      |from base.actors import MultiPlayerActor
+      |from base.robot import Robot""".stripMargin
+  } else {
+    """from typing import Dict
+      |from base.actors import SinglePlayerActor
+      |from base.robot import Robot""".stripMargin
+  }
+
+  def buildSampleSolution: String =
+    """class SampleRobot(Robot, SinglePlayerActor):
+      |  def run(self, options: Dict) -> Action:""".stripMargin + NewLine + sampleSolution.solution.split(NewLine).map(" " * 4 + _).mkString(NewLine)
+
 }
-
-sealed trait CompleteTestData {
-
-  val testData: TestData
-
-  val inputs: Seq[TestDataInput]
-
-  def write: String = (inputs map (_.input)) mkString " "
-
-}
-
-case class CompleteSampleTestData(testData: SampleTestData, inputs: Seq[SampleTestDataInput]) extends CompleteTestData
-
-case class CompleteCommitedTestData(testData: CommitedTestData, inputs: Seq[CommitedTestDataInput]) extends CompleteTestData
 
 // Case classes for tables
 
@@ -66,35 +70,7 @@ object RoseExercise {
 
 case class RoseExercise(baseValues: BaseValues, isMultiplayer: Boolean) extends Exercise
 
-case class InputType(id: Int, exerciseId: Int, inputType: ProgDataType)
-
 case class RoseSampleSolution(exerciseId: Int, language: ProgLanguage, solution: String)
-
-sealed trait TestData {
-
-  val id        : Int
-  val exerciseId: Int
-  val output    : String
-
-}
-
-trait TestDataInput {
-
-  val id        : Int
-  val testId    : Int
-  val exerciseId: Int
-  val input     : String
-
-}
-
-case class SampleTestData(id: Int, exerciseId: Int, output: String) extends TestData
-
-case class CommitedTestData(id: Int, exerciseId: Int, username: String, output: String, state: ExerciseState) extends TestData
-
-
-case class SampleTestDataInput(id: Int, testId: Int, exerciseId: Int, input: String) extends TestDataInput
-
-case class CommitedTestDataInput(id: Int, testId: Int, exerciseId: Int, input: String, username: String) extends TestDataInput
 
 // Dependent on users and roseExercises
 
@@ -111,6 +87,8 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   val roseExercises = TableQuery[RoseExercisesTable]
 
+  val roseSamples = TableQuery[RoseSampleSolutionsTable]
+
   // Dependent tables
 
   val roseSolutions = TableQuery[RoseSolutionTable]
@@ -122,9 +100,10 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   override val exTable = roseExercises
 
   override protected def completeExForEx(ex: RoseExercise)(implicit ec: ExecutionContext): Future[RoseCompleteEx] =
-    Future(RoseCompleteEx(ex, RoseSampleSolution(ex.id, ProgLanguage.STANDARD_LANG, "")))
+    db.run(roseSamples.filter(_.exerciseId === ex.id).result.head) map (samp => RoseCompleteEx(ex, samp))
 
-  override protected def saveExerciseRest(compEx: RoseCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] = ???
+  override protected def saveExerciseRest(compEx: RoseCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] =
+    db.run(roseSamples insertOrUpdate compEx.sampleSolution) map (_ => true) recover { case _ => false }
 
   // Implicit column types
 
@@ -147,6 +126,27 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def * = (id, title, author, text, state, isMultiplayer) <> (RoseExercise.tupled, RoseExercise.unapply)
 
   }
+
+  //  case class RoseSampleSolution(exerciseId: Int, language: ProgLanguage, solution: String)
+
+  class RoseSampleSolutionsTable(tag: Tag) extends Table[RoseSampleSolution](tag, "rose_samples") {
+
+    def exerciseId = column[Int]("exercise_id")
+
+    def language = column[ProgLanguage]("language")
+
+    def solution = column[String]("solution")
+
+
+    def pk = primaryKey("pk", (exerciseId, language))
+
+    def exerciseFk = foreignKey("exercise_fk", exerciseId, roseExercises)(_.id)
+
+
+    def * = (exerciseId, language, solution) <> (RoseSampleSolution.tupled, RoseSampleSolution.unapply)
+
+  }
+
 
   // Solutions of users
 

@@ -63,6 +63,8 @@ DELETE IGNORE FROM sql_scenarioes;
 
 # Rose
 
+DELETE IGNORE FROM rose_samples;
+
 DELETE IGNORE FROM rose_exercises;
 
 # Questions

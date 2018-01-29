@@ -2,10 +2,10 @@ package model.rose
 
 import java.nio.file.{Files, Path}
 
-import controllers.exes.idPartExes.{ProgToolObject, RoseToolObject}
+import controllers.exes.idPartExes.RoseToolObject
 import model.User
 import model.core.FileUtils
-import model.programming.ProgrammingCorrector.{FilePermissions, copy, readResultFile, write}
+import model.programming.ProgrammingCorrector.FilePermissions
 import model.programming._
 import play.api.Logger
 
@@ -18,6 +18,8 @@ object RoseCorrector extends FileUtils {
 
   val TestDataFile = "testconfig.json"
 
+  val NewLine = "\n"
+
   def correct(user: User, exercise: RoseCompleteEx, learnerSolution: String, language: ProgLanguage)(implicit ec: ExecutionContext): Future[Seq[ProgEvalResult]] = {
 
     // Check if image exists
@@ -27,10 +29,10 @@ object RoseCorrector extends FileUtils {
 
     val scriptTargetPath = targetDir / ScriptName
 
-    val script = if (learnerSolution endsWith "\n") learnerSolution else learnerSolution + "\n"
+    val solutionFileContent: String = exercise.imports + (NewLine * 3) + learnerSolution + (NewLine * 3) + exercise.buildSampleSolution + (NewLine * 3)
 
     val filesWritten: Try[(Path, Path, Path)] = for {
-      solFile <- write(targetDir / s"solution.${language.fileEnding}", script)
+      solFile <- write(targetDir / "solution" / s"solution.${language.fileEnding}", solutionFileContent)
       scriptFile <- copy(RoseToolObject.exerciseResourcesFolder / ScriptName, scriptTargetPath)
       permissionsSet <- Try(Files.setPosixFilePermissions(scriptTargetPath, FilePermissions))
     } yield (solFile, scriptFile, permissionsSet)
@@ -56,5 +58,10 @@ object RoseCorrector extends FileUtils {
     }
   }
 
+  def copyAllScriptFiles(sourceDir: Path, targetDir: Path): Try[Seq[Path]] = {
+    val res: Array[Try[Path]] = sourceDir.toFile.listFiles.map(_.toPath.toAbsolutePath) map (path => copy(path, targetDir / path.getFileName))
+
+    ???
+  }
 
 }

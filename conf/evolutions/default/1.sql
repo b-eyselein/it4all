@@ -202,6 +202,17 @@ CREATE TABLE IF NOT EXISTS rose_exercises (
   is_mp    BOOLEAN
 );
 
+CREATE TABLE IF NOT EXISTS rose_samples (
+  exercise_id INT,
+  language    ENUM ('PYTHON_3', 'JAVA_8') DEFAULT 'PYTHON_3',
+  solution    TEXT,
+
+  PRIMARY KEY (exercise_id, language),
+  FOREIGN KEY (exercise_id) REFERENCES rose_exercises (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
 # Spread
 
 CREATE TABLE IF NOT EXISTS spread_exercises (
@@ -525,6 +536,8 @@ DROP TABLE IF EXISTS sql_exercises;
 DROP TABLE IF EXISTS sql_scenarioes;
 
 # Rose
+
+DROP TABLE IF EXISTS rose_samples;
 
 DROP TABLE IF EXISTS rose_exercises;
 

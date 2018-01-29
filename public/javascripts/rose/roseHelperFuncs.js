@@ -1,9 +1,23 @@
 let editor;
 
+/**
+ * @param {int} value
+ */
+function setFontSize(value) {
+    $('#editor').css({'fontSize': value + 'px'})
+}
+
+function changeFontsize(value) {
+    const fontSizeElement = $('#fontsize');
+    const fontSize = parseInt(fontSizeElement.text()) + value;
+    setFontSize(fontSize);
+    fontSizeElement.html(fontSize);
+}
+
 function initEditor() {
     const langTools = ace.require('ace/ext/language_tools');
 
-    $('#editor').css({'fontSize': '16px'});
+    setFontSize(16);
 
     editor = ace.edit('editor');
 
