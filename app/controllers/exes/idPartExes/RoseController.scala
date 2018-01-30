@@ -3,13 +3,14 @@ package controllers.exes.idPartExes
 import javax.inject.Inject
 
 import controllers.Secured
+import model.rose.{RoseCompleteResult, RoseEvalResult}
 import model.programming.ProgLanguage
 import model.rose._
 import model.{JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.libs.json.JsValue
-import play.api.mvc.{AnyContent, ControllerComponents, Request, Result}
+import play.api.libs.json.{JsString, JsValue, Json}
+import play.api.mvc._
 import play.twirl.api.Html
 import views.html.rose._
 
@@ -36,8 +37,11 @@ class RoseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   override implicit val yamlFormat: YamlFormat[RoseCompleteEx] = RoseExYamlProtocol.RoseExYamlFormat
 
-  // Views
+  // Other routes
 
+  def test: EssentialAction = withUser { user => { implicit request => Ok(roseTestSolution.render(user)) } }
+
+  // Views
 
   override protected def renderExercise(user: User, exercise: RoseCompleteEx, part: RoseExPart): Future[Html] = {
 
@@ -49,11 +53,8 @@ class RoseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   // Correction
 
-  override protected def correctEx(user: User, sol: String, exercise: RoseCompleteEx): Future[Try[RoseCompleteResult]] = {
-    RoseCorrector.correct(user, exercise, sol, ProgLanguage.STANDARD_LANG)
-    ???
-  }
-
+  override protected def correctEx(user: User, sol: String, exercise: RoseCompleteEx): Future[Try[RoseCompleteResult]] =
+    RoseCorrector.correct(user, exercise, sol, ProgLanguage.STANDARD_LANG) map (result => Try(RoseCompleteResult(sol, result)))
 
   // Result handlers
 
@@ -61,8 +62,13 @@ class RoseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   override protected def onSubmitCorrectionError(user: User, msg: String, error: Option[Throwable]): Result = ???
 
-  override protected def onLiveCorrectionResult(result: RoseCompleteResult): Result = ???
+  override protected def onLiveCorrectionResult(result: RoseCompleteResult): Result = Ok(result.render)
 
-  override protected def onLiveCorrectionError(msg: String, error: Option[Throwable]): Result = ???
+  override protected def onLiveCorrectionError(msg: String, error: Option[Throwable]): Result = {
+    Ok(Json.obj(
+      "message" -> msg,
+      "error" -> JsString(error map (_.getMessage) getOrElse "")
+    ))
+  }
 
 }

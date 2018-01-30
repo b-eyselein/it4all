@@ -3,26 +3,18 @@ function onChangeLanguageSuccess(response) {
     editor.setValue(response, 1000000);
 }
 
-function changeProgLanguage(theUrl) {
-    $.ajax({
-        type: 'GET',
-        url: theUrl,
-        data: 'language=' + $('#langSelect').val(),
-        async: true,
-        success: onChangeLanguageSuccess
-    });
+function onRoseCorrectionSuccess(runResult) {
+    $('#testBtn').prop('disabled', false);
+    instantiateAll(runResult);
 }
 
-function onProgCorrectionSuccess(response) {
-    $('#correction').html(response);
-}
-
-function onProgCorrectionError(jqXHR) {
+function onRoseCorrectionError(jqXHR) {
     console.error(jqXHR.responseText);
+    $('#testBtn').prop('disabled', false);
 }
 
 function testSol(url) {
-    $('#correction').html('');
+    $('#testBtn').prop('disabled', true);
 
     let dataToSend = {
         part: "",
@@ -32,17 +24,15 @@ function testSol(url) {
         }
     };
 
-    console.log(dataToSend);
-
     $.ajax({
         type: 'PUT',
-        // dataType: 'json', // return type
+        dataType: 'json', // return type
         contentType: 'application/json', // type of message to server
         url,
         data: JSON.stringify(dataToSend),
         async: true,
-        success: onProgCorrectionSuccess,
-        error: onProgCorrectionError
+        success: onRoseCorrectionSuccess,
+        error: onRoseCorrectionError
     });
 
 }

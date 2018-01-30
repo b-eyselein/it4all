@@ -13,9 +13,9 @@ sealed abstract class ProgCompleteResult(val learnerSolution: String, results: S
 
   override val renderLearnerSolution: Html = Html(s"<pre>$learnerSolution</pre>")
 
-  def render: Html = Html(results.grouped(2) map { resultTuples =>
+  def render: Html = Html(results.grouped(2) map { tuple =>
     s"""<div class="row">
-       |  ${resultTuples map (_.render) mkString "\n"}
+       |  ${tuple map (_.render) mkString "\n"}
        |</div>""".stripMargin
   } mkString "\n")
 
@@ -68,7 +68,7 @@ case object TimeOut extends ProgEvalResult {
 
 }
 
-case class AExecutionResult(success: SuccessType, evaluated: String, completeTestData: CompleteTestData, result: String, consoleOutput: Option[String]) extends ProgEvalResult {
+case class ExecutionResult(success: SuccessType, evaluated: String, completeTestData: CompleteTestData, result: String, consoleOutput: Option[String]) extends ProgEvalResult {
 
   // FIXME: outputType beachten ?!?
 

@@ -1,12 +1,12 @@
 package model.rose
 
-import java.nio.file.{Files, Path}
+import java.nio.file.Path
 
 import controllers.exes.idPartExes.RoseToolObject
 import model.User
 import model.core.FileUtils
-import model.programming.ProgrammingCorrector.FilePermissions
-import model.programming._
+import model.docker._
+import model.programming.ProgLanguage
 import play.api.Logger
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -20,48 +20,51 @@ object RoseCorrector extends FileUtils {
 
   val NewLine = "\n"
 
-  def correct(user: User, exercise: RoseCompleteEx, learnerSolution: String, language: ProgLanguage)(implicit ec: ExecutionContext): Future[Seq[ProgEvalResult]] = {
+  def correct(user: User, exercise: RoseCompleteEx, learnerSolution: String, language: ProgLanguage)(implicit ec: ExecutionContext): Future[RoseEvalResult] = {
 
     // Check if image exists
     val futureImageExists: Future[Boolean] = Future(DockerConnector.imageExists(language.dockerImageName) || DockerConnector.pullImage(language.dockerImageName))
 
     val targetDir = RoseToolObject.solutionDirForExercise(user.username, exercise.id)
 
-    val scriptTargetPath = targetDir / ScriptName
-
     val solutionFileContent: String = exercise.imports + (NewLine * 3) + learnerSolution + (NewLine * 3) + exercise.buildSampleSolution + (NewLine * 3)
 
-    val filesWritten: Try[(Path, Path, Path)] = for {
-      solFile <- write(targetDir / "solution" / s"solution.${language.fileEnding}", solutionFileContent)
-      scriptFile <- copy(RoseToolObject.exerciseResourcesFolder / ScriptName, scriptTargetPath)
-      permissionsSet <- Try(Files.setPosixFilePermissions(scriptTargetPath, FilePermissions))
-    } yield (solFile, scriptFile, permissionsSet)
+    val filesCopied: Seq[Try[Path]] = Seq("sp_main.py", "sp_validation.py") map { filePath =>
+      copy(filePath, RoseToolObject.exerciseResourcesFolder, targetDir)
+    }
+
+    val filesWritten = for {
+      solFile <- write(targetDir / s"solution.${language.fileEnding}", solutionFileContent)
+    } yield solFile
+
+    val dockerBinds: Seq[DockerBind] = Seq(
+      new DockerBind(RoseToolObject.exerciseResourcesFolder / "base", DockerConnector.DefaultWorkingDir + "/base"),
+      new DockerBind(targetDir, DockerConnector.DefaultWorkingDir)
+    )
+
 
     filesWritten match {
       case Failure(e) =>
         Logger.error("Some files could not be written", e)
-        Future(Seq.empty)
+        Future(RoseEvalFailed)
       case Success(_) =>
-        futureImageExists flatMap {
-          _ => DockerConnector.runContainer(language, targetDir)
+
+        futureImageExists flatMap { _ =>
+          DockerConnector.runContainer(language.dockerImageName, entryPoint = Seq("python3", "sp_main.py"), dockerBinds)
         } map {
           // Error while waiting for container
-          case RunContainerException(_) => Seq(ProgEvalFailed)
-
-          case RunContainerTimeOut => Seq(TimeOut)
+          case RunContainerTimeOut => RoseTimeOutResult
 
           // Error while running script with status code other than 0 or 124 (from timeout!)
-          case RunContainerError(_, msg) => Seq(SyntaxError(reason = msg))
+          case RunContainerError(_, msg) => RoseSyntaxErrorResult(msg)
 
-          case RunContainerSuccess => Seq.empty // readResultFile(targetDir)
+          case RunContainerSuccess => readAll(targetDir / "actions.json") map (content => RoseExecutionResult(content)) getOrElse RoseEvalFailed
+
+          case exc: RunContainerException =>
+            Logger.error("Error running container:", exc.error)
+            RoseEvalFailed
         }
     }
-  }
-
-  def copyAllScriptFiles(sourceDir: Path, targetDir: Path): Try[Seq[Path]] = {
-    val res: Array[Try[Path]] = sourceDir.toFile.listFiles.map(_.toPath.toAbsolutePath) map (path => copy(path, targetDir / path.getFileName))
-
-    ???
   }
 
 }

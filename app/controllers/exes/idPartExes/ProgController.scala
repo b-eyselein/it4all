@@ -151,8 +151,8 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
     case ir: ProgImplementationCompleteResult => Ok(renderResult(ir))
     case vr: ProgValidationCompleteResult     => {
       val json = JsArray(vr.results.map {
-        case se: SyntaxError       => ???
-        case aer: AExecutionResult => Json.obj(ID_NAME -> aer.completeTestData.testData.id, "correct" -> JsBoolean(aer.success == SuccessType.COMPLETE))
+        case se: SyntaxError      => ???
+        case aer: ExecutionResult => Json.obj(ID_NAME -> aer.completeTestData.testData.id, "correct" -> JsBoolean(aer.success == SuccessType.COMPLETE))
       })
 
       Ok(json)

@@ -1,11 +1,14 @@
 package model.programming
 
-import java.nio.file.{Files, Path}
 import java.nio.file.attribute.{PosixFilePermission, PosixFilePermissions}
+import java.nio.file.{Files, Path}
 
+import com.github.dockerjava.api.model.AccessMode
 import controllers.exes.idPartExes.ProgToolObject
 import model.Enums.SuccessType
 import model.core.FileUtils
+import model.docker.DockerConnector.MaxRuntime
+import model.docker._
 import model.programming.ProgConsts._
 import model.{JsonFormat, User}
 import play.api.Logger
@@ -89,12 +92,21 @@ object ProgrammingCorrector extends FileUtils with JsonFormat {
 
     Files.setPosixFilePermissions(scriptTargetPath, FilePermissions)
 
+    val workingDir = DockerConnector.DefaultWorkingDir
+
     // Check if image exists
     futureImageExists flatMap {
-      _ => DockerConnector.runContainer(language, targetDir)
+      _ =>
+        DockerConnector.runContainer(
+          imageName = language.dockerImageName,
+          entryPoint = Seq("timeout", MaxRuntime + "s", s"$workingDir/script." + language.fileEnding),
+          dockerBinds = Seq(new DockerBind(targetDir, workingDir, AccessMode.rw))
+        )
     } map {
       // Error while waiting for container
-      case RunContainerException(_) => Seq(ProgEvalFailed)
+      case exc: RunContainerException =>
+        Logger.error("Error while running container:", exc.error)
+        Seq(ProgEvalFailed)
 
       case RunContainerTimeOut => Seq(TimeOut)
 
@@ -127,7 +139,7 @@ object ProgrammingCorrector extends FileUtils with JsonFormat {
         case Some(x) => x
       }
 
-      AExecutionResult(successType, evaluated, testData, result, consoleOutput)
+      ExecutionResult(successType, evaluated, testData, result, consoleOutput)
   }
 
   private def readDataFromJson(jsObj: JsObject): Option[(Int, SuccessType, String, String, Seq[(String, String)])] = for {

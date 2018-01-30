@@ -5,7 +5,6 @@
     <script src="@routes.Assets.versioned("lib/ace/src/ext-language_tools.js")"></script>
 
     <script src="@routes.Assets.versioned("javascripts/rose/roseHelperFuncs.js")"></script>
-
     <script src="@routes.Assets.versioned("javascripts/rose/roseExercise.js")"></script>
 
         <!--suppress JSUnusedLocalSymbols -->
@@ -16,8 +15,16 @@
             const theUpdatePrev = false;
     </script>
 
-    <script>
-    </script>
+
+        <!-- Scripts for simulation! -->
+    <script src="@routes.Assets.versioned("lib/lodash/lodash.js")"></script>
+    <script src="@routes.Assets.versioned("lib/backbonejs/backbone.js")"></script>
+    <script src="@routes.Assets.versioned("lib/jointjs/dist/joint.js")"></script>
+
+    <script src="@routes.Assets.versioned("javascripts/rose/coordinates.js")"></script>
+    <script src="@routes.Assets.versioned("javascripts/rose/simulatorElements.js")"></script>
+    <script src="@routes.Assets.versioned("javascripts/rose/simulator.js")"></script>
+
 
 }
 
@@ -28,66 +35,77 @@
 
     <div id="fullsc" class="container">
 
-        <ul class="nav nav-tabs nav-justified">
-            <li class="active"><a data-toggle="tab" href="#drawingTab">Zeichenfl&auml;che</a></li>
-            <li><a data-toggle="tab" id="resultTabToggle" href="#resultTab">Generierter Code &amp; Resultate</a> </li>
-        </ul>
+        <div class="row">
+            <div class="col-md-6">
+                <h2>Aufgabenstellung</h2>
 
-        <div class="tab-content">
-            <div id="drawingTab" class="tab-pane fade in active">
+                <hr>
 
-                <div class="row">
-                    <div class="col-md-6">
-                        <h2>Aufgabenstellung</h2>
+                <div class="well">@exercise.text</div>
 
-                        <hr>
+                <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#robot_api">Roboter API</button>
 
-                        <div class="well">@exercise.text</div>
+                <hr>
 
-                        <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#robot_api">Roboter API</button>
+                <button type="button" class="btn btn-primary btn-block" id="testBtn" onclick="testSol('@toolObject.correctLiveRoute(exercise.id)')">
+                    L&ouml;sung testen</button>
 
-                        <hr>
+            </div>
 
-                        <button type="button" class="btn btn-primary btn-block" onclick="testSol('@toolObject.correctLiveRoute(exercise.id)')">L&ouml;sung testen</button>
+            <div class="col-md-6">
 
-                    </div>
+                <h2>Editor</h2>
 
-                    <div class="col-md-6">
+                <hr>
 
-                        <h2>Editor</h2>
+                    <!-- Start Editor -->
+                <div class="form-group">
+                    <div class="input-group">
 
-                        <hr>
+                        <button type="button" class="form-control" onclick="changeFontsize(-2);">
+                            <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                        </button>
 
-                            <!-- Start Editor -->
-                        <div class="form-group">
-                            <div class="input-group">
+                        <span class="input-group-addon">Schriftgr&ouml;&szlig;e: <span id="fontsize">16</span> px</span>
 
-                                <button type="button" class="form-control" onclick="changeFontsize(-2);">
-                                    <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-                                </button>
-
-                                <span class="input-group-addon">Schriftgr&ouml;&szlig;e: <span id="fontsize">16</span> px</span>
-
-                                <button type="button" class="form-control" onclick="changeFontsize(+2);">
-                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                                </button>
-                            </div>
-                        </div>
-
-
-                        <div id="editor" class="form-control">@exercise.declaration</div>
-                            <!-- End Editor -->
-
+                        <button type="button" class="form-control" onclick="changeFontsize(+2);">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </button>
                     </div>
                 </div>
 
 
+                <div id="editor" class="form-control">@exercise.declaration</div>
+                    <!-- End Editor -->
+
             </div>
 
-
-            <div id="resultTab" class="tab-pane fade">Result tab...</div>
         </div>
 
+        <hr>
+
+        <div id="correction">
+
+            <div class="form-group text-center">
+                <div class="btn-group">
+                    <button type="button" id="stepBackBtn" onclick="stepBack()" disabled class="btn">&lt;</button>
+                    <button type="button" class="btn btn-primary">Play</button>
+                    <button type="button" id="stepOnBtn" onclick="stepOn()" class="btn">&gt;</button>
+                </div>
+            </div>
+
+            <div class="row text-center">
+                <div class="col-md-6">
+                    <h2>Lernerroboter</h2>
+                    <div id="userField"></div>
+                </div>
+                <div class="col-md-6">
+                    <h2>Musterroboter</h2>
+                    <div id="sampleField"></div>
+                </div>
+            </div>
+
+        </div>
 
     </div>
 }

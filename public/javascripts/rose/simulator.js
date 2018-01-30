@@ -11,39 +11,46 @@ class SimulatorThings {
     /**
      * @param {joint.shapes.robot.Robot} robot
      * @param {joint.shapes.robot.Cell[][]} fieldCells
+     * @param {string[]} steps
      */
-    constructor(robot, fieldCells) {
+    constructor(robot, fieldCells, steps) {
         this.robot = robot;
         this.fieldCells = fieldCells;
+        this.steps = steps;
+        this.stepCount = steps.length;
     }
 }
 
+let runResult;
+
 let userThings;
 let sampleThings;
-
-const USER_STEPS = RUN_RESULT.user.actions;
-const SAMPLE_STEPS = RUN_RESULT.sample.actions;
 
 let currentStep = -1;
 
 
 function updateButtons() {
+    // FIXME: split in 2 buttons...
     $('#stepBackBtn').prop('disabled', currentStep < 0);
-    $('#stepOnBtn').prop('disabled', currentStep >= USER_STEPS.length - 1);
+    $('#stepOnBtn').prop('disabled', currentStep >= Math.max(userThings.stepCount, sampleThings.stepCount) - 1);
 }
 
 function stepOn() {
     currentStep++;
-    performAction(userThings, USER_STEPS[currentStep]);
-    performAction(sampleThings, SAMPLE_STEPS[currentStep]);
+    performAction(userThings);
+    performAction(sampleThings);
     updateButtons();
 }
 
 /**
  * @param {SimulatorThings} simulatorThings
- * @param {string} action
  */
-function performAction(simulatorThings, action) {
+function performAction(simulatorThings) {
+    if (currentStep >= simulatorThings.stepCount)
+        return;
+
+    const action = simulatorThings.steps[currentStep];
+
     if (Object.keys(DIRECTIONS).includes(action)) {
         moveRobot(simulatorThings.robot, DIRECTIONS[action]);
     } else if (Object.keys(COLORS).includes(action)) {
@@ -110,7 +117,7 @@ function moveRobot(robot, direction) {
     robot.prop('position', newPosition);
 }
 
-function instantiateField(element, width, height) {
+function instantiateField(element, width, height, isUser) {
     let graph = new joint.dia.Graph();
 
     /*let paper =*/
@@ -119,8 +126,6 @@ function instantiateField(element, width, height) {
         model: graph,
 
         width, height,
-
-        // gridSize: PADDING,
 
         // userFieldCells cannot be moved
         interactive: false
@@ -134,12 +139,18 @@ function instantiateField(element, width, height) {
         }
     }
 
-    let robot = addRobot(graph, RUN_RESULT.user.start);
+    let robot = addRobot(graph, new SimulatorCoordinates(runResult.start.x, runResult.start.y));
 
-    return new SimulatorThings(robot, cells);
+    if (isUser) {
+        return new SimulatorThings(robot, cells, runResult.user.actions);
+    } else {
+        return new SimulatorThings(robot, cells, runResult.sample.actions);
+    }
 }
 
-$(document).ready(function () {
+function instantiateAll(theRunResult) {
+    runResult = theRunResult;
+
     let userField = $('#userField');
     let sampleField = $('#sampleField');
 
@@ -149,7 +160,8 @@ $(document).ready(function () {
     const paperWidth = FIELD_SIZE_CELLS.x * optimalCellSize;
     const paperHeight = FIELD_SIZE_CELLS.y * optimalCellSize;
 
-    userThings = instantiateField(userField, paperWidth, paperHeight);
-    sampleThings = instantiateField(sampleField, paperWidth, paperHeight);
+    userThings = instantiateField(userField, paperWidth, paperHeight, true);
+    sampleThings = instantiateField(sampleField, paperWidth, paperHeight, false);
 
-});
+    updateButtons();
+}

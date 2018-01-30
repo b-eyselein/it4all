@@ -40,10 +40,12 @@ case class RoseCompleteEx(ex: RoseExercise, sampleSolution: RoseSampleSolution) 
   def imports: String = if (ex.isMultiplayer) {
     """from typing import Dict
       |from base.actors import MultiPlayerActor
+      |from base.actions import *
       |from base.robot import Robot""".stripMargin
   } else {
     """from typing import Dict
       |from base.actors import SinglePlayerActor
+      |from base.actions import *
       |from base.robot import Robot""".stripMargin
   }
 

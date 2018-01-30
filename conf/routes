@@ -126,6 +126,8 @@ DELETE        /rose/admin/exerciseList/:id                controllers.exes.idPar
 PUT           /rose/admin/exercise/:id/state              controllers.exes.idPartExes.RoseController.adminChangeExState(id: Int)
 
 # All
+GET           /rose/test                                  controllers.exes.idPartExes.RoseController.test
+
 GET           /rose/                                      controllers.exes.idPartExes.RoseController.index
 GET           /rose/exercises                             controllers.exes.idPartExes.RoseController.exerciseList(page: Int ?= 1)
 
