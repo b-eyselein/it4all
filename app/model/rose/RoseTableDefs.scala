@@ -29,11 +29,11 @@ case class RoseCompleteEx(ex: RoseExercise, sampleSolution: RoseSampleSolution) 
 
   def declaration: String = if (ex.isMultiplayer) {
     """class UserRobot(Robot, MultiPlayerActor):
-      |  def run(self) -> None:
+      |  def run(self) -> Action:
       |    pass""".stripMargin
   } else {
     """class UserRobot(Robot, SinglePlayerActor):
-      |  def run(self, options: Dict) -> Action:
+      |  def run(self) -> None:
       |    pass""".stripMargin
   }
 
@@ -51,7 +51,7 @@ case class RoseCompleteEx(ex: RoseExercise, sampleSolution: RoseSampleSolution) 
 
   def buildSampleSolution: String =
     """class SampleRobot(Robot, SinglePlayerActor):
-      |  def run(self, options: Dict) -> Action:""".stripMargin + NewLine + sampleSolution.solution.split(NewLine).map(" " * 4 + _).mkString(NewLine)
+      |  def run(self) -> None:""".stripMargin + NewLine + sampleSolution.solution.split(NewLine).map(" " * 4 + _).mkString(NewLine)
 
 }
 

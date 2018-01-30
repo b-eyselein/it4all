@@ -4,7 +4,16 @@ function onChangeLanguageSuccess(response) {
 }
 
 function onRoseCorrectionSuccess(runResult) {
+    console.log(JSON.stringify(runResult, null, 2));
     $('#testBtn').prop('disabled', false);
+
+    let correct =runResult.correct;
+    if(correct) {
+        $('#correction').html(`<div class="alert alert-success">Ihre Lösung war korrekt.</div>`)
+    } else {
+        $('#correction').html(`<div class="alert alert-danger">Ihre Lösung war nicht korrekt!</div>`)
+    }
+
     instantiateAll(runResult);
 }
 

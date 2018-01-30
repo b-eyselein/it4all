@@ -8,6 +8,7 @@ import model.programming.ProgLanguage
 import model.rose._
 import model.{JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
+import play.api.Logger
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.json.{JsString, JsValue, Json}
 import play.api.mvc._
@@ -37,10 +38,6 @@ class RoseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   override implicit val yamlFormat: YamlFormat[RoseCompleteEx] = RoseExYamlProtocol.RoseExYamlFormat
 
-  // Other routes
-
-  def test: EssentialAction = withUser { user => { implicit request => Ok(roseTestSolution.render(user)) } }
-
   // Views
 
   override protected def renderExercise(user: User, exercise: RoseCompleteEx, part: RoseExPart): Future[Html] = {
@@ -58,11 +55,16 @@ class RoseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   // Result handlers
 
-  override protected def onSubmitCorrectionResult(user: User, result: RoseCompleteResult): Result = Ok(views.html.rose.roseTestSolution.render(user))
+  override protected def onSubmitCorrectionResult(user: User, result: RoseCompleteResult): Result = ??? // Ok(views.html.rose.roseTestSolution.render(user))
 
   override protected def onSubmitCorrectionError(user: User, msg: String, error: Option[Throwable]): Result = ???
 
-  override protected def onLiveCorrectionResult(result: RoseCompleteResult): Result = Ok(result.render)
+  override protected def onLiveCorrectionResult(result: RoseCompleteResult): Result = result.result match {
+    case rer: RoseExecutionResult => Ok(Json.parse(rer.result))
+    case other                    =>
+      Logger.error(other.toString)
+      BadRequest("Error")
+  }
 
   override protected def onLiveCorrectionError(msg: String, error: Option[Throwable]): Result = {
     Ok(Json.obj(
