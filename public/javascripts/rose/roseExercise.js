@@ -4,7 +4,7 @@ function onChangeLanguageSuccess(response) {
 }
 
 function onRoseCorrectionSuccess(runResult) {
-    console.log(JSON.stringify(runResult, null, 2));
+    // console.log(JSON.stringify(runResult, null, 2));
     $('#testBtn').prop('disabled', false);
 
     let correct =runResult.correct;

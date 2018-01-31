@@ -39,19 +39,25 @@ class RoseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
   override implicit val yamlFormat: YamlFormat[RoseCompleteEx] = RoseExYamlProtocol.RoseExYamlFormat
 
   // Views
-
   override protected def renderExercise(user: User, exercise: RoseCompleteEx, part: RoseExPart): Future[Html] = {
+
+    // FIXME: load old solution!
+    val futureOldSolOrDec: Future[String] = tables.loadSolution(user.username, exercise.id) map (_ getOrElse exercise.declaration(forUser = true))
 
     //    val exOptions = ExerciseOptions("rose", "python", 10, 20, updatePrev = false)
     //    val declaration = "def act(self) -> Action:\n  pass"
 
-    Future(roseExercise.render(user, RoseToolObject, exercise))
+    futureOldSolOrDec map (oldSolution => roseExercise.render(user, RoseToolObject, exercise, oldSolution))
   }
 
   // Correction
 
-  override protected def correctEx(user: User, sol: String, exercise: RoseCompleteEx): Future[Try[RoseCompleteResult]] =
+  override protected def correctEx(user: User, sol: String, exercise: RoseCompleteEx): Future[Try[RoseCompleteResult]] = {
+    // FIXME: save solution
+    tables.saveSolution(RoseSolution(user.username, exercise.id, sol))
+
     RoseCorrector.correct(user, exercise, sol, ProgLanguage.STANDARD_LANG) map (result => Try(RoseCompleteResult(sol, result)))
+  }
 
   // Result handlers
 

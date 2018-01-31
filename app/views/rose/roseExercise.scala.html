@@ -1,4 +1,4 @@
-@(user: model.User, toolObject: model.core.tools.IdPartExToolObject[_], exercise: model.rose.RoseCompleteEx)
+@(user: model.User, toolObject: model.core.tools.IdPartExToolObject[_], exercise: model.rose.RoseCompleteEx, oldSolution: String)
 
 @scripts = {
     <script src="@routes.Assets.versioned("lib/ace/src/ace.js")"></script>
@@ -6,15 +6,6 @@
 
     <script src="@routes.Assets.versioned("javascripts/rose/roseHelperFuncs.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/rose/roseExercise.js")"></script>
-
-        <!--suppress JSUnusedLocalSymbols -->
-    <script>
-            const theMode = "python";
-            const theMinLines = 20;
-            const theMaxLines = 30;
-            const theUpdatePrev = false;
-    </script>
-
 
         <!-- Scripts for simulation! -->
     <script src="@routes.Assets.versioned("lib/lodash/lodash.js")"></script>
@@ -24,13 +15,11 @@
     <script src="@routes.Assets.versioned("javascripts/rose/coordinates.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/rose/simulatorElements.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/rose/simulator.js")"></script>
-
-
 }
 
 @main("Rose Test", user, scripts) {
     @core.helperTemplates.modal("API des Roboters", "robot_api", "lg") {
-        <h1>TODO!</h1>
+        @rose.roseAPI.render()
     }
 
     <div id="fullsc" class="container">
@@ -62,20 +51,20 @@
                 <div class="form-group">
                     <div class="input-group">
 
-                        <button type="button" class="form-control" onclick="changeFontsize(-2);">
+                        <button type="button" class="form-control" onclick="changeFontSize(-2);">
                             <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
                         </button>
 
-                        <span class="input-group-addon">Schriftgr&ouml;&szlig;e: <span id="fontsize">16</span> px</span>
+                        <span class="input-group-addon">Schriftgr&ouml;&szlig;e: <span id="fontSize">16</span> px</span>
 
-                        <button type="button" class="form-control" onclick="changeFontsize(+2);">
+                        <button type="button" class="form-control" onclick="changeFontSize(+2);">
                             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                         </button>
                     </div>
                 </div>
 
 
-                <div id="editor" class="form-control">@exercise.declaration</div>
+                <div id="editor" class="form-control">@oldSolution</div>
                     <!-- End Editor -->
 
             </div>
@@ -87,12 +76,18 @@
         <div>
 
             <div class="form-group text-center">
-                <div class="btn-group">
-                    <button type="button" id="stepBackBtn" onclick="stepBack()" disabled class="btn">&lt;</button>
-                    <button type="button" class="btn btn-primary">Play</button>
-                    <button type="button" id="stepOnBtn" onclick="stepOn()" class="btn">&gt;</button>
+                <div class="input-group">
+                    <button type="button" class="form-control btn-default" onclick="stepBack()" id="stepBackBtn" disabled >&lt;</button>
+                    <span class="input-group-addon"></span>
+                    <button type="button" class="form-control btn-primary" onclick="play()">Play</button>
+                    <span class="input-group-addon">Schritt: <span id="stepSpan">0</span></span>
+                    <button type="button" class="form-control btn-default" onclick="pause()">Pause</button>
+                    <span class="input-group-addon"></span>
+                    <button type="button" class="form-control btn-default" onclick="stepOn()" id="stepOnBtn">&gt;</button>
                 </div>
             </div>
+
+            <div id="correction"></div>
 
             <div class="row text-center">
                 <div class="col-md-6">
@@ -104,10 +99,6 @@
                     <div id="sampleField"></div>
                 </div>
             </div>
-
-            <hr>
-
-            <div id="correction"></div>
 
         </div>
 

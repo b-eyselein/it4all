@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS prog_exercises (
 CREATE TABLE IF NOT EXISTS prog_input_types (
   id          INT,
   exercise_id INT,
-  input_type  VARCHAR(30),
+  input_type  VARCHAR(20),
 
   PRIMARY KEY (id, exercise_id),
   FOREIGN KEY (exercise_id) REFERENCES prog_exercises (id)
@@ -202,12 +202,38 @@ CREATE TABLE IF NOT EXISTS rose_exercises (
   is_mp    BOOLEAN
 );
 
+CREATE TABLE IF NOT EXISTS rose_inputs (
+  id          INT,
+  exercise_id INT,
+  input_name  VARCHAR(20),
+  input_type  VARCHAR(20),
+
+  PRIMARY KEY (id, exercise_id),
+  FOREIGN KEY (exercise_id) REFERENCES rose_exercises (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS rose_samples (
   exercise_id INT,
   language    ENUM ('PYTHON_3', 'JAVA_8') DEFAULT 'PYTHON_3',
   solution    TEXT,
 
   PRIMARY KEY (exercise_id, language),
+  FOREIGN KEY (exercise_id) REFERENCES rose_exercises (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS rose_solutions (
+  username    VARCHAR(50),
+  exercise_id INT,
+  solution    TEXT,
+
+  PRIMARY KEY (username, exercise_id),
+  FOREIGN KEY (username) REFERENCES users (username)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
   FOREIGN KEY (exercise_id) REFERENCES rose_exercises (id)
     ON UPDATE CASCADE
     ON DELETE CASCADE
@@ -537,7 +563,11 @@ DROP TABLE IF EXISTS sql_scenarioes;
 
 # Rose
 
+DROP TABLE IF EXISTS rose_solutions;
+
 DROP TABLE IF EXISTS rose_samples;
+
+DROP TABLE IF EXISTS rose_inputs;
 
 DROP TABLE IF EXISTS rose_exercises;
 

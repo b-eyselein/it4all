@@ -7,11 +7,11 @@ function setFontSize(value) {
     $('#editor').css({'fontSize': value + 'px'})
 }
 
-function changeFontsize(value) {
-    const fontSizeElement = $('#fontsize');
+function changeFontSize(value) {
+    const fontSizeElement = $('#fontSize');
     const fontSize = parseInt(fontSizeElement.text()) + value;
     setFontSize(fontSize);
-    fontSizeElement.html(fontSize);
+    fontSizeElement.text(fontSize);
 }
 
 function initEditor() {
@@ -21,11 +21,9 @@ function initEditor() {
 
     editor = ace.edit('editor');
 
-    // editor.on('change', updateHiddenTextarea);
-
     editor.setTheme('ace/theme/eclipse');
 
-    editor.getSession().setMode('ace/mode/' + theMode);
+    editor.getSession().setMode('ace/mode/python');
 
     editor.getSession().setTabSize(2);
 
@@ -33,15 +31,15 @@ function initEditor() {
     editor.getSession().setUseWrapMode(true);
 
     editor.setOptions({
-        minLines: theMinLines,
-        maxLines: theMaxLines,
+        minLines: 20,
+        maxLines: 30,
         enableBasicAutocompletion: true,
         enableSnippets: true,
         enableLiveAutocompletion: false
     });
 
-
-    const rhymeCompleter = {
+    // noinspection JSUnusedGlobalSymbols
+    const robotCompleter = {
         getCompletions: function (editor, session, pos, prefix, callback) {
             let selfFunctions = ['self.go_up()', 'self.go_down()', 'self.go_left()', 'self.go_right()'];
 
@@ -54,15 +52,9 @@ function initEditor() {
             }));
         }
     };
-    langTools.addCompleter(rhymeCompleter);
+    langTools.addCompleter(robotCompleter);
 }
 
 $(document).ready(function () {
     initEditor();
-    // updateHiddenTextarea();
-
-    if (theUpdatePrev) {
-        editor.on('change', updatePreview);
-        updatePreview();
-    }
 });

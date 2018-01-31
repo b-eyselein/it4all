@@ -15,7 +15,7 @@ import slick.jdbc.JdbcProfile
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
 
-case class RoseCompleteEx(ex: RoseExercise, sampleSolution: RoseSampleSolution) extends PartsCompleteEx[RoseExercise, RoseExPart] {
+case class RoseCompleteEx(ex: RoseExercise, inputType: Seq[RoseInputType], sampleSolution: RoseSampleSolution) extends PartsCompleteEx[RoseExercise, RoseExPart] {
 
   // FIXME: only one solution?
 
@@ -27,14 +27,18 @@ case class RoseCompleteEx(ex: RoseExercise, sampleSolution: RoseSampleSolution) 
 
   override def hasPart(partType: RoseExPart): Boolean = true
 
-  def declaration: String = if (ex.isMultiplayer) {
-    """class UserRobot(Robot, MultiPlayerActor):
-      |  def run(self) -> Action:
-      |    pass""".stripMargin
-  } else {
-    """class UserRobot(Robot, SinglePlayerActor):
-      |  def run(self) -> None:
-      |    pass""".stripMargin
+  def declaration(forUser: Boolean): String = {
+    val className = if (forUser) "UserRobot" else "SampleRobot"
+    val (actorClass, methodName, returnType) = if (ex.isMultiplayer) ("MultiPlayerActor", "act", "Action") else ("SinglePlayerActor", "run", "None")
+
+    val parameters = inputType match {
+      case Nil   => ""
+      case other => ", " + (other map (it => it.name + ": " + it.inputType.typeName) mkString ", ")
+    }
+
+    s"""class $className(Robot, $actorClass):
+       |  def $methodName(self$parameters) -> $returnType:
+       |    pass""".stripMargin
   }
 
   def imports: String = if (ex.isMultiplayer) {
@@ -49,9 +53,7 @@ case class RoseCompleteEx(ex: RoseExercise, sampleSolution: RoseSampleSolution) 
       |from base.robot import Robot""".stripMargin
   }
 
-  def buildSampleSolution: String =
-    """class SampleRobot(Robot, SinglePlayerActor):
-      |  def run(self) -> None:""".stripMargin + NewLine + sampleSolution.solution.split(NewLine).map(" " * 4 + _).mkString(NewLine)
+  def buildSampleSolution: String = declaration(false) + NewLine + sampleSolution.solution.split(NewLine).map(" " * 4 + _).mkString(NewLine)
 
 }
 
@@ -72,6 +74,8 @@ object RoseExercise {
 
 case class RoseExercise(baseValues: BaseValues, isMultiplayer: Boolean) extends Exercise
 
+case class RoseInputType(id: Int, exerciseId: Int, name: String, inputType: ProgDataType)
+
 case class RoseSampleSolution(exerciseId: Int, language: ProgLanguage, solution: String)
 
 // Dependent on users and roseExercises
@@ -89,6 +93,8 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   val roseExercises = TableQuery[RoseExercisesTable]
 
+  val roseInputs = TableQuery[RoseInputTypesTable]
+
   val roseSamples = TableQuery[RoseSampleSolutionsTable]
 
   // Dependent tables
@@ -101,11 +107,27 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   override val exTable = roseExercises
 
-  override protected def completeExForEx(ex: RoseExercise)(implicit ec: ExecutionContext): Future[RoseCompleteEx] =
-    db.run(roseSamples.filter(_.exerciseId === ex.id).result.head) map (samp => RoseCompleteEx(ex, samp))
+  override protected def completeExForEx(ex: RoseExercise)(implicit ec: ExecutionContext): Future[RoseCompleteEx] = {
+    val values: Future[(Seq[RoseInputType], RoseSampleSolution)] = for {
+      inputTypes <- db.run(roseInputs.filter(_.exerciseId === ex.id).result)
+      samples <- db.run(roseSamples.filter(_.exerciseId === ex.id).result.head)
+    } yield (inputTypes, samples)
 
-  override protected def saveExerciseRest(compEx: RoseCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] =
-    db.run(roseSamples insertOrUpdate compEx.sampleSolution) map (_ => true) recover { case _ => false }
+    values map {
+      case (inputTypes, samples) => RoseCompleteEx(ex, inputTypes, samples)
+    }
+  }
+
+  override protected def saveExerciseRest(compEx: RoseCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] = for {
+    inputsSaved <- saveSeq[RoseInputType](compEx.inputType, it => db.run(roseInputs insertOrUpdate it))
+    sampleSaved <- db.run(roseSamples insertOrUpdate compEx.sampleSolution) map (_ => true) recover { case _ => false }
+  } yield inputsSaved && sampleSaved
+
+  def saveSolution(solution: RoseSolution)(implicit ec: ExecutionContext): Future[Boolean] =
+    db.run(roseSolutions insertOrUpdate solution) map (_ => true) recover { case _ => false }
+
+  def loadSolution(username: String, exerciseId: Int): Future[Option[String]] =
+    db.run(roseSolutions.filter(sol => sol.username === username && sol.exerciseId === exerciseId).map(_.solution).result.headOption)
 
   // Implicit column types
 
@@ -129,7 +151,25 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   }
 
-  //  case class RoseSampleSolution(exerciseId: Int, language: ProgLanguage, solution: String)
+  class RoseInputTypesTable(tag: Tag) extends Table[RoseInputType](tag, "rose_inputs") {
+
+    def id = column[Int]("id")
+
+    def exerciseId = column[Int]("exercise_id")
+
+    def name = column[String]("input_name")
+
+    def inputType = column[ProgDataType]("input_type")
+
+
+    def pk = primaryKey("pk", (id, exerciseId))
+
+    def exerciseFk = foreignKey("exercise_fk", exerciseId, roseExercises)(_.id)
+
+
+    def * = (id, exerciseId, name, inputType) <> (RoseInputType.tupled, RoseInputType.unapply)
+
+  }
 
   class RoseSampleSolutionsTable(tag: Tag) extends Table[RoseSampleSolution](tag, "rose_samples") {
 

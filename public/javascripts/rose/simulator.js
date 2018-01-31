@@ -6,6 +6,8 @@ const DIRECTIONS = {'UP': {x: 0, y: +1}, 'DOWN': {x: 0, y: -1}, 'LEFT': {x: -1, 
 
 const COLORS = {'BLUE': '#0000ff', 'PURPLE': '#800080', 'RED': '#ff0000', 'ORANGE': '#FFA500', 'YELLOW': '#ffff00', 'GREEN': '#008000', 'CYAN': '#00ffff'};
 
+const DELAY_IN_MS = 200;
+
 class SimulatorThings {
 
     /**
@@ -26,27 +28,41 @@ let runResult;
 let userThings;
 let sampleThings;
 
+let maxStep;
 let currentStep = -1;
 
 
 function updateButtons() {
     // FIXME: split in 2 buttons...
     $('#stepBackBtn').prop('disabled', currentStep < 0);
-    $('#stepOnBtn').prop('disabled', currentStep >= Math.max(userThings.stepCount, sampleThings.stepCount) - 1);
+    $('#stepOnBtn').prop('disabled', currentStep >= maxStep);
 }
 
 function stepOn() {
-    currentStep++;
-    performAction(userThings);
-    performAction(sampleThings);
+    performStep(currentStep++);
+    $('#stepSpan').html(currentStep);
+}
+
+function performStep(currentStep) {
+    performAction(userThings, currentStep);
+    performAction(sampleThings, currentStep);
     updateButtons();
+}
+
+function play() {
+    console.log("Starting play...");
+    let interval = setInterval(function () {
+        stepOn();
+        if (currentStep > maxStep) clearInterval(interval);
+    }, DELAY_IN_MS);
 }
 
 /**
  * @param {SimulatorThings} simulatorThings
+ * @param {int} currentStep
  */
-function performAction(simulatorThings) {
-    if (currentStep >= simulatorThings.stepCount)
+function performAction(simulatorThings, currentStep) {
+    if (currentStep > simulatorThings.stepCount)
         return;
 
     const action = simulatorThings.steps[currentStep];
@@ -162,6 +178,8 @@ function instantiateAll(theRunResult) {
 
     userThings = instantiateField(userField, paperWidth, paperHeight, true);
     sampleThings = instantiateField(sampleField, paperWidth, paperHeight, false);
+
+    maxStep = Math.max(userThings.stepCount, sampleThings.stepCount) - 1;
 
     updateButtons();
 }

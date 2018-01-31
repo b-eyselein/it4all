@@ -1,8 +1,8 @@
 package model.rose
 
 import model.MyYamlProtocol._
-import model.programming.ProgConsts.{LANGUAGE_NAME, SAMPLE_NAME}
-import model.programming.{ProgLanguage, ProgSampleSolution}
+import model.programming.ProgConsts._
+import model.programming.{ProgDataTypes, ProgLanguage}
 import model.{BaseValues, MyYamlProtocol}
 import net.jcazevedo.moultingyaml._
 
@@ -13,6 +13,7 @@ object RoseExYamlProtocol extends MyYamlProtocol {
 
     protected def readRest(yamlObject: YamlObject, baseValues: BaseValues): RoseCompleteEx = RoseCompleteEx(
       RoseExercise(baseValues, yamlObject.boolField("isMultiplayer")),
+      yamlObject.arrayField("inputTypes", _ convertTo[RoseInputType] RoseInputTypeYamlFormat(baseValues.id)),
       yamlObject.objectField("sampleSolution", RoseSampleSolutionYamlFormat(baseValues.id))
     )
 
@@ -20,6 +21,17 @@ object RoseExYamlProtocol extends MyYamlProtocol {
 
   }
 
+  case class RoseInputTypeYamlFormat(exerciseId: Int) extends MyYamlFormat[RoseInputType] {
+
+    override def readObject(yamlObject: YamlObject): RoseInputType =
+      RoseInputType(yamlObject.intField(ID_NAME), exerciseId,
+        yamlObject.stringField("name"),
+        yamlObject.enumField("type", str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING, ProgDataTypes.STRING)
+      )
+
+    override def write(obj: RoseInputType): YamlValue = ???
+
+  }
 
   case class RoseSampleSolutionYamlFormat(exerciseId: Int) extends MyYamlFormat[RoseSampleSolution] {
 

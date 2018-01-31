@@ -3,15 +3,20 @@
 id: 1
 title: Zeichnen eines Rechtecks
 author: bje40dc
-text: Zeichen Sie ein Rechteck mit einer Breite von 7 und einer Höhe von 3 Feldern!
+text: >
+  Zeichen Sie ein Rechteck mit der übergebenen Breite und Höhe! Benutzen Sie dazu die API des Roboters
+  und zum "Zeichnen" die Markierungsfunktions des Roboters! Ihr Roboter startet im Feld (0, 0).
 status: CREATED
 
 isMultiplayer: false
+
+inputTypes:
+- {id: 1, name: width, type: int}
+- {id: 2, name: height, type: int}
+
 sampleSolution:
   language: PYTHON_3
   sample: |
-    height = 3
-    width = 7
     for h in range(height - 1):
       self.mark()
       self.go_up()
