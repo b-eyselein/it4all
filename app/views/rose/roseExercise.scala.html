@@ -1,10 +1,8 @@
 @(user: model.User, toolObject: model.core.tools.IdPartExToolObject[_], exercise: model.rose.RoseCompleteEx, oldSolution: String)
 
 @scripts = {
-    <script src="@routes.Assets.versioned("lib/ace/src/ace.js")"></script>
-    <script src="@routes.Assets.versioned("lib/ace/src/ext-language_tools.js")"></script>
+@core.editorScripts.render("python", 20, 40)
 
-    <script src="@routes.Assets.versioned("javascripts/rose/roseHelperFuncs.js")"></script>
     <script src="@routes.Assets.versioned("javascripts/rose/roseExercise.js")"></script>
 
         <!-- Scripts for simulation! -->
@@ -73,30 +71,47 @@
 
         <hr>
 
-        <div>
+        <div id="correction"></div>
 
-            <div class="form-group text-center">
-                <div class="input-group">
-                    <button type="button" class="form-control btn-default" onclick="stepBack()" id="stepBackBtn" disabled >&lt;</button>
-                    <span class="input-group-addon"></span>
-                    <button type="button" class="form-control btn-primary" onclick="play()">Play</button>
-                    <span class="input-group-addon">Schritt: <span id="stepSpan">0</span></span>
-                    <button type="button" class="form-control btn-default" onclick="pause()">Pause</button>
-                    <span class="input-group-addon"></span>
-                    <button type="button" class="form-control btn-default" onclick="stepOn()" id="stepOnBtn">&gt;</button>
+        <div class="row">
+
+            <div class="col-md-2">
+
+                <div class="form-group">
+                    <div class="btn-group btn-group-justified">
+                        <div class="btn-group">
+                            <button type="button" class="form-control btn-default" onclick="stepBack()" id="stepBackBtn" disabled >&lt;</button>
+                        </div>
+                        <div class="btn-group">
+
+                            <button type="button" class="form-control btn-default" onclick="stepOn()" id="stepOnBtn">&gt;</button>
+                        </div>
+                    </div>
                 </div>
+
+                <div class="form-group">
+                    <button type="button" class="btn btn-primary btn-block" onclick="play()" id="playBtn" disabled>Play</button>
+                </div>
+
+                <div class="form-group">
+                    <button type="button" class="btn btn-default btn-block" onclick="pause()" id="pauseBtn" disabled>Pause</button>
+                </div>
+
+
+                <div class="well">Schritt: <span id="stepSpan">0</span></div>
             </div>
 
-            <div id="correction"></div>
+            <div class="col-md-10">
 
-            <div class="row text-center">
-                <div class="col-md-6">
-                    <h2>Lernerroboter</h2>
-                    <div id="userField"></div>
-                </div>
-                <div class="col-md-6">
-                    <h2>Musterroboter</h2>
-                    <div id="sampleField"></div>
+                <div class="row text-center">
+                    <div class="col-md-6">
+                        <h2>Lernerroboter</h2>
+                        <div id="userField"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <h2>Musterroboter</h2>
+                        <div id="sampleField"></div>
+                    </div>
                 </div>
             </div>
 

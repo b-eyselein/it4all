@@ -1,7 +1,11 @@
 @(user: model.User, exercise: model.web.WebCompleteEx, part: model.web.WebExPart, tasks: Seq[model.web.WebCompleteTask], oldSolution: String)
 
 @scripts = {
+@core.editorScripts.render("html", 30, 50)
+
     <script src="@routes.Assets.versioned("javascripts/web/webExercise.js")"></script>
+
+
     <style>
             .pre-scrollable {
                 max-height: 500px;
@@ -57,7 +61,7 @@
 
                     <hr>
 
-                    @core.editor(oldSolution, "html", 25, 45, updatePrev = true)
+                    @core.editor(oldSolution)
                 </div>
 
                 <div class="col-md-4 col-sm-12">

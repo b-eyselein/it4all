@@ -1,27 +1,19 @@
-@(template: String, mode: String, minLines: Int, maxLines: Int, updatePrev: Boolean)
+@(template: String)
 
-<script src="@routes.Assets.versioned("lib/ace/src/ace.js")"></script>
-<script src="@routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
-<script>
-        var theMode = "@mode";
-        var theMinLines = @minLines;
-        var theMaxLines = @maxLines;
-        var theUpdatePrev = @updatePrev;
-</script>
-<div class="panel panel-default">
-    <div class="panel-heading">
+<div class="form-group">
+    <div class="input-group">
 
-        <div class="btn-group">
-            <button type="button" class="btn btn-default" onclick="changeFontsize(-2);">
-                <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-            </button>
-            <span class="btn btn-default">Schriftgr&ouml;&szlig;e: <span id="fontsize">16</span> px</span>
-            <button type="button" class="btn btn-default" onclick="changeFontsize(+2);">
-                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-            </button>
-        </div>
+        <button type="button" class="form-control" onclick="changeFontSize(-2);">
+            <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+        </button>
 
+        <span class="input-group-addon">Schriftgr&ouml;&szlig;e: <span id="fontSize">16</span> px</span>
+
+        <button type="button" class="form-control" onclick="changeFontSize(+2);">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+        </button>
     </div>
-    <div id="editor" class="form-control">@template</div>
-    <textarea hidden name="@model.core.CoreConsts.FORM_VALUE" id="@model.core.CoreConsts.FORM_VALUE">@template</textarea>
 </div>
+
+
+<div id="editor" class="form-control">@template</div>

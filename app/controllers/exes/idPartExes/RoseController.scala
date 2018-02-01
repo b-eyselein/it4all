@@ -66,8 +66,9 @@ class RoseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
   override protected def onSubmitCorrectionError(user: User, msg: String, error: Option[Throwable]): Result = ???
 
   override protected def onLiveCorrectionResult(result: RoseCompleteResult): Result = result.result match {
-    case rer: RoseExecutionResult => Ok(Json.parse(rer.result))
-    case other                    =>
+    case rer: RoseExecutionResult    => Ok(Json.obj("resultType" -> JsString("success"), "result" -> Json.parse(rer.result)))
+    case rser: RoseSyntaxErrorResult => Ok(Json.obj("resultType" -> JsString("syntaxError"), "cause" -> JsString(rser.cause)))
+    case other                       =>
       Logger.error(other.toString)
       BadRequest("Error")
   }

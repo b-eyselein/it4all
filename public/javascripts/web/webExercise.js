@@ -19,7 +19,7 @@ function testSol(theUrl, part) {
         solution: editor.getValue()
     };
 
-    console.log(JSON.stringify(dataToSend));
+    // console.log(JSON.stringify(dataToSend));
 
     $.ajax({
         type: 'PUT',
@@ -31,4 +31,21 @@ function testSol(theUrl, part) {
         success: onWebCorrectionSuccess,
         error: onWebCorrectionError
     });
+}
+
+/**
+ * @param {string} escapedHTML
+ */
+function unescapeHTML(escapedHTML) {
+    return escapedHTML.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+}
+
+function updatePreview() {
+    const toWrite = unescapeHTML(editor.getValue());
+
+    const theIFrame = document.getElementById('preview').contentWindow.document;
+    theIFrame.open();
+    theIFrame.write(toWrite);
+    theIFrame.close();
+
 }

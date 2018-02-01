@@ -46,3 +46,7 @@ function testSol(url, part) {
     });
 
 }
+
+function updatePreview() {
+    // Do nothing
+}

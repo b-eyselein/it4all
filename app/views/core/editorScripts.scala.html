@@ -1,0 +1,14 @@
+@(mode: String, minLines: Int, maxLines: Int)
+
+<script src="@routes.Assets.versioned("lib/ace/src/ace.js")"></script>
+<script src="@routes.Assets.versioned("javascripts/editorHelpers.js")"></script>
+
+<script>
+        let editor;
+
+        $(document).ready(function () {
+            editor = initEditor('@mode', @minLines, @maxLines);
+
+            editor.on('change', updatePreview);
+        });
+</script>

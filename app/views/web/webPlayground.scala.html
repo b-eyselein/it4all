@@ -1,57 +1,50 @@
 @(user: model.User)
 
-@scripts = {
-    <script src="@routes.Assets.versioned("lib/ace/src/ace.js")"></script>
-    <script src="@routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
+    @scripts = {
+    @core.editorScripts("html", 40, 50)
 
-        <!--suppress JSUnusedLocalSymbols -->
-    <script>
-            const theMode = "html";
-            const theMinLines = 40;
-            const theMaxLines = 50;
-            const theUpdatePrev = true;
-    </script>
+        <script src="@routes.Assets.versioned("javascripts/web/webExercise.js")"></script>
 
-    <style>
-            #live {
-                border: 1px solid black
-            }
-    </style>
-}
+        <style>
+                #live {
+                    border: 1px solid black
+                }
+        </style>
+    }
 
-@main("Web-Playground", user, scripts) {
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-6">
+    @main("Web-Playground", user, scripts) {
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-6">
 
-                <h2>Editor</h2>
-                    <!-- Start Editor -->
-                <div class="form-group">
-                    <div class="input-group">
+                    <h2>Editor</h2>
+                        <!-- Start Editor -->
+                    <div class="form-group">
+                        <div class="input-group">
 
-                        <button type="button" class="form-control" onclick="changeFontsize(-2);">
-                            <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-                        </button>
+                            <button type="button" class="form-control" onclick="changeFontsize(-2);">
+                                <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                            </button>
 
-                        <span class="input-group-addon">Schriftgr&ouml;&szlig;e: <span id="fontsize">16</span> px</span>
+                            <span class="input-group-addon">Schriftgr&ouml;&szlig;e: <span id="fontsize">16</span> px</span>
 
-                        <button type="button" class="form-control" onclick="changeFontsize(+2);">
-                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                        </button>
+                            <button type="button" class="form-control" onclick="changeFontsize(+2);">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            </button>
+                        </div>
                     </div>
+
+
+                    <div id="editor" class="form-control">@model.web.WebConsts.STANDARD_HTML_PLAYGROUND</div>
+                        <!-- End Editor -->
+
                 </div>
 
-
-                <div id="editor" class="form-control">@model.web.WebConsts.STANDARD_HTML_PLAYGROUND</div>
-                    <!-- End Editor -->
-
-            </div>
-
-            <div class="col-sm-6">
-                <div class="embed-responsive embed-responsive-4by3" id="live">
-                    <iframe class="embed-responsive-item" src="about:blank" id="exercisePreview"></iframe>
+                <div class="col-sm-6">
+                    <div class="embed-responsive embed-responsive-4by3" id="live">
+                        <iframe class="embed-responsive-item" src="about:blank" id="preview"></iframe>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-}
+    }

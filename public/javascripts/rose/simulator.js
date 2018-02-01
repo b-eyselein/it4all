@@ -4,7 +4,16 @@ let optimalCellSize;
 
 const DIRECTIONS = {'UP': {x: 0, y: +1}, 'DOWN': {x: 0, y: -1}, 'LEFT': {x: -1, y: 0}, 'RIGHT': {x: 1, y: 0}};
 
-const COLORS = {'BLUE': '#0000ff', 'PURPLE': '#800080', 'RED': '#ff0000', 'ORANGE': '#FFA500', 'YELLOW': '#ffff00', 'GREEN': '#008000', 'CYAN': '#00ffff'};
+const COLORS = {
+    'BLUE': '#0000ff',
+    'PURPLE': '#800080',
+    'RED': '#ff0000',
+    'ORANGE': '#FFA500',
+    'YELLOW': '#ffff00',
+    'GREEN': '#008000',
+    'CYAN': '#00ffff',
+    'WHITE': '#ffffff'
+};
 
 const DELAY_IN_MS = 200;
 
@@ -29,32 +38,44 @@ let userThings;
 let sampleThings;
 
 let maxStep;
-let currentStep = -1;
+let currentStep = 0;
 
+function updateHtml() {
+    $('#stepSpan').html(currentStep);
 
-function updateButtons() {
-    // FIXME: split in 2 buttons...
-    $('#stepBackBtn').prop('disabled', currentStep < 0);
+    $('#stepBackBtn').prop('disabled', currentStep <= 0);
     $('#stepOnBtn').prop('disabled', currentStep >= maxStep);
+    $('#playBtn').prop('disabled', currentStep >= maxStep);
 }
 
 function stepOn() {
-    performStep(currentStep++);
-    $('#stepSpan').html(currentStep);
-}
-
-function performStep(currentStep) {
     performAction(userThings, currentStep);
     performAction(sampleThings, currentStep);
-    updateButtons();
+
+    currentStep++;
+
+    updateHtml();
 }
+
+function stepBack() {
+    currentStep--;
+
+    reverseAction(userThings, currentStep);
+    reverseAction(sampleThings, currentStep);
+
+    updateHtml();
+
+}
+
 
 function play() {
     console.log("Starting play...");
-    let interval = setInterval(function () {
-        stepOn();
-        if (currentStep > maxStep) clearInterval(interval);
-    }, DELAY_IN_MS);
+    if (currentStep <= maxStep) {
+        let interval = setInterval(function () {
+            stepOn();
+            if (currentStep > maxStep) clearInterval(interval);
+        }, DELAY_IN_MS);
+    }
 }
 
 /**
@@ -62,9 +83,6 @@ function play() {
  * @param {int} currentStep
  */
 function performAction(simulatorThings, currentStep) {
-    if (currentStep > simulatorThings.stepCount)
-        return;
-
     const action = simulatorThings.steps[currentStep];
 
     if (Object.keys(DIRECTIONS).includes(action)) {
@@ -77,12 +95,34 @@ function performAction(simulatorThings, currentStep) {
     }
 }
 
-function stepBack() {
-    // FIXME: implement!
-    currentStep--;
-    updateButtons();
+function reverse(direction) {
+    switch (direction) {
+        case 'UP':
+            return 'DOWN';
+        case 'DOWN':
+            return 'UP';
+        case 'LEFT':
+            return 'RIGHT';
+        case 'RIGHT':
+            return 'LEFT';
+        default:
+            return direction;
+    }
 }
 
+function reverseAction(simulatorThings, currentStep) {
+    const action = simulatorThings.steps[currentStep];
+
+    if (Object.keys(DIRECTIONS).includes(action)) {
+        moveRobot(simulatorThings.robot, DIRECTIONS[reverse(action)]);
+    } else if (Object.keys(COLORS).includes(action)) {
+        let coordinates = Position.fromRobotPosition(simulatorThings.robot.position()).toCoordinates();
+        changeCellColor(simulatorThings.fieldCells, coordinates, 'WHITE');
+    } else {
+        console.error(action)
+    }
+
+}
 
 /**
  *
@@ -181,5 +221,5 @@ function instantiateAll(theRunResult) {
 
     maxStep = Math.max(userThings.stepCount, sampleThings.stepCount) - 1;
 
-    updateButtons();
+    updateHtml();
 }

@@ -1,11 +1,11 @@
 /**
  * @param {string} response html representation of correction
  */
-function onProgCorrectionSuccess(response) {
+function onXmlCorrectionSuccess(response) {
     $('#correction').html(response);
 }
 
-function onProgCorrectionError(jqXHR) {
+function onXmlCorrectionError(jqXHR) {
     console.error(jqXHR.responseText);
 }
 
@@ -22,8 +22,12 @@ function testSol(url, part) {
         url,
         data: JSON.stringify(dataToSend),
         async: true,
-        success: onProgCorrectionSuccess,
-        error: onProgCorrectionError
+        success: onXmlCorrectionSuccess,
+        error: onXmlCorrectionError
     });
 
+}
+
+function updatePreview() {
+    // Do nothing...
 }

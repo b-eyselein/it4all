@@ -1,8 +1,8 @@
-const testButton = $('#testButton');
-
+/**
+ * @param {html} response
+ */
 function onSqlCorrectionSuccess(response) {
-    testButton.prop('disabled', false);
-
+    $('#testButton').prop('disabled', false);
     $('#correctionDiv').html(response);
 }
 
@@ -14,7 +14,7 @@ function onSqlCorrectionSuccess(response) {
  */
 function onSqlCorrectionError(jqXHR, textStatus, errorThrown) {
     console.error(jqXHR.responseText);
-    testButton.prop('disabled', false);
+    $('#testButton').prop('disabled', false);
 }
 
 function testSqlSol(theUrl) {
@@ -23,7 +23,7 @@ function testSqlSol(theUrl) {
         return;
     }
 
-    testButton.prop('disabled', true);
+    $('#testButton').prop('disabled', true);
 
     $.ajax({
         type: 'PUT',
@@ -37,4 +37,8 @@ function testSqlSol(theUrl) {
         success: onSqlCorrectionSuccess,
         error: onSqlCorrectionError
     });
+}
+
+function updatePreview() {
+    // Do nothing...
 }

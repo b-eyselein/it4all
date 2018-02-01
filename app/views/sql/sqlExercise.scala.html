@@ -1,8 +1,11 @@
 @(user: model.User, exercise: model.sql.SqlCompleteEx, oldOrDefSol: String, tables: Seq[model.sql.SqlQueryResult], scenario: model.sql.SqlScenario, numOfExes: Int)
 
 @scripts = {
-    <script src="@routes.Assets.versioned("javascripts/helperfunctions.js")"></script>
-    <script src="@routes.Assets.versioned("javascripts/sql/sql.js")"></script>
+@core.editorScripts.render("sql", 10, 15)
+
+    <script src="@routes.Assets.versioned("javascripts/sql/sqlExercise.js")"></script>
+
+
 }
 
 @main("SQL", user, scripts) {
@@ -35,13 +38,7 @@
                     </div>
 
                 </div>
-                <div class="col-md-6">
-
-                        <!-- FIXME: go from template to direct use! -->
-                    @views.html.core.editor(oldOrDefSol, "sql", 10, 15, updatePrev = false)
-
-
-                </div>
+                <div class="col-md-6">@core.editor(oldOrDefSol)</div>
             </div>
         </form>
 

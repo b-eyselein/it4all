@@ -3,18 +3,29 @@ function onChangeLanguageSuccess(response) {
     editor.setValue(response, 1000000);
 }
 
-function onRoseCorrectionSuccess(runResult) {
-    // console.log(JSON.stringify(runResult, null, 2));
+function onRoseCorrectionSuccess(completeResult) {
     $('#testBtn').prop('disabled', false);
 
-    let correct =runResult.correct;
-    if(correct) {
-        $('#correction').html(`<div class="alert alert-success">Ihre Lösung war korrekt.</div>`)
-    } else {
-        $('#correction').html(`<div class="alert alert-danger">Ihre Lösung war nicht korrekt!</div>`)
-    }
+    let correctionDiv = $('#correction');
 
-    instantiateAll(runResult);
+    switch (completeResult.resultType) {
+        case 'syntaxError':
+            correctionDiv.html(`<div class="alert alert-danger"><b>Ihre Lösung hat einen Syntaxfehler:</b><hr><pre>${completeResult.cause}</pre></div>`);
+            break;
+        case 'success':
+            let runResult = completeResult.result;
+            let correct = runResult.correct;
+            if (correct) {
+                correctionDiv.html(`<div class="alert alert-success">Ihre Lösung war korrekt.</div>`)
+            } else {
+                correctionDiv.html(`<div class="alert alert-danger">Ihre Lösung war nicht korrekt!</div>`)
+            }
+            instantiateAll(runResult);
+            break;
+        default:
+            console.error('Unknown runresult type: ' + completeResult.type);
+            break;
+    }
 }
 
 function onRoseCorrectionError(jqXHR) {
@@ -44,4 +55,8 @@ function testSol(url) {
         error: onRoseCorrectionError
     });
 
+}
+
+function updatePreview() {
+    // Do nothing
 }
