@@ -9,6 +9,7 @@ import model.core._
 import model.core.tools.ExerciseOptions
 import model.programming.ProgConsts._
 import model.programming._
+import model.yaml.MyYamlFormat
 import model.{JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.Logger
@@ -21,7 +22,7 @@ import views.html.programming._
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future, duration}
 import scala.language.implicitConversions
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
 object ProgController {
 
@@ -79,9 +80,19 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   // Yaml
 
-  override implicit val yamlFormat: YamlFormat[ProgCompleteEx] = ProgExYamlProtocol.ProgExYamlFormat
+  override implicit val yamlFormat: MyYamlFormat[ProgCompleteEx] = ProgExYamlProtocol.ProgExYamlFormat
 
   // Other routes
+
+  def testNew: EssentialAction = withAdmin {
+    admin =>
+      implicit request => {
+        NewProgYamlProtocol.testRead match {
+          case Success((fileContent, classTest)) => Ok(testNewFormat.render(admin, fileContent, classTest))
+          case Failure(error)                    => BadRequest("There has been an error: " + error.getMessage)
+        }
+      }
+  }
 
   def getDeclaration(lang: String): EssentialAction = withUser {
     _ => implicit request => Ok(ProgLanguage.valueOf(lang).getOrElse(ProgLanguage.STANDARD_LANG).declaration)

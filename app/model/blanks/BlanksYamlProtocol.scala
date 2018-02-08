@@ -6,6 +6,7 @@ import net.jcazevedo.moultingyaml.{YamlObject, YamlString, YamlValue}
 
 import scala.collection.mutable
 import scala.language.postfixOps
+import scala.util.Try
 import scala.util.matching.Regex
 
 object BlanksYamlProtocol extends MyYamlProtocol {
@@ -41,12 +42,10 @@ object BlanksYamlProtocol extends MyYamlProtocol {
 
   implicit object BlanksYamlFormat extends HasBaseValuesYamlFormat[BlanksCompleteExercise] {
 
-    override protected def readRest(yamlObject: YamlObject, baseValues: BaseValues): BlanksCompleteExercise = {
-      val rawBlanksText = yamlObject.stringField("blankstext")
-      val (parsedText, samples) = parseBlanksText(baseValues.id, rawBlanksText)
-
-      BlanksCompleteExercise(BlanksExercise(baseValues, rawBlanksText, parsedText), samples)
-    }
+    override protected def readRest(yamlObject: YamlObject, baseValues: BaseValues): Try[BlanksCompleteExercise] = for {
+      rawBlanksText <- yamlObject.stringField("blankstext")
+      (parsedText, samples) = parseBlanksText(baseValues.id, rawBlanksText)
+    } yield BlanksCompleteExercise(BlanksExercise(baseValues, rawBlanksText, parsedText), samples)
 
     override protected def writeRest(completeEx: BlanksCompleteExercise): Map[YamlValue, YamlValue] = Map(
       YamlString("blankstext") -> YamlString(completeEx.ex.rawBlanksText)

@@ -5,6 +5,7 @@ import javax.inject._
 import controllers.Secured
 import model.blanks.BlanksExParts.BlanksExPart
 import model.blanks._
+import model.yaml.MyYamlFormat
 import model.{JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.db.slick.DatabaseConfigProvider
@@ -41,7 +42,7 @@ class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
 
   // Yaml
 
-  override val yamlFormat: YamlFormat[BlanksCompleteExercise] = BlanksYamlProtocol.BlanksYamlFormat
+  override val yamlFormat: MyYamlFormat[BlanksCompleteExercise] = BlanksYamlProtocol.BlanksYamlFormat
 
   // Correction
 

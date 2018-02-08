@@ -5,6 +5,7 @@ import javax.inject._
 import controllers.Secured
 import model.core._
 import model.uml._
+import model.yaml.MyYamlFormat
 import model.{JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.Logger
@@ -40,7 +41,7 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // Yaml
 
-  override val yamlFormat: YamlFormat[UmlCompleteEx] = UmlExYamlProtocol.UmlExYamlFormat
+  override val yamlFormat: MyYamlFormat[UmlCompleteEx] = UmlExYamlProtocol.UmlExYamlFormat
 
   // Views
 

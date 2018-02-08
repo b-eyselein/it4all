@@ -103,6 +103,8 @@ GET           /prog/declaration                           controllers.exes.idPar
 GET           /prog/exercise/:id/:part                    controllers.exes.idPartExes.ProgController.exercise(id: Int, part: String)
 PUT           /prog/exercise/:id                          controllers.exes.idPartExes.ProgController.correctLive(id: Int)
 POST          /prog/exercise/:id                          controllers.exes.idPartExes.ProgController.correct(id: Int)
+
+GET           /prog/test                                  controllers.exes.idPartExes.ProgController.testNew()
 # Prog - Ende
 
 # Rose - Anfang

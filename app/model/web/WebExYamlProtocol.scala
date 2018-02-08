@@ -3,34 +3,33 @@ package model.web
 import model.MyYamlProtocol._
 import model.web.WebConsts._
 import model.web.WebEnums._
-import model.{BaseValues, MyYamlProtocol}
+import model.{BaseValues, MyYamlProtocol, YamlArr, YamlObj}
 import net.jcazevedo.moultingyaml._
 
 import scala.language.{implicitConversions, postfixOps}
+import scala.util.Try
 
 object WebExYamlProtocol extends MyYamlProtocol {
 
   implicit object WebExYamlFormat extends HasBaseValuesYamlFormat[WebCompleteEx] {
 
-    override def readRest(yamlObject: YamlObject, baseValues: BaseValues): WebCompleteEx = {
-      val htmlTasks = yamlObject.optArrayField(HTML_TASKS_NAME, _ convertTo[HtmlCompleteTask] HtmlCompleteTaskYamlFormat(baseValues.id))
-      val jsTasks = yamlObject.optArrayField(JS_TASKS_NAME, _ convertTo[JsCompleteTask] JsCompleteTaskYamlFormat(baseValues.id))
-
-      WebCompleteEx(
-        WebExercise(baseValues, yamlObject.optStringField(HTML_TEXT_NAME), htmlTasks.nonEmpty, yamlObject.optStringField(JS_TEXT_NAME), jsTasks.nonEmpty),
-        htmlTasks, jsTasks)
-    }
+    override def readRest(yamlObject: YamlObject, baseValues: BaseValues): Try[WebCompleteEx] = for {
+      htmlText <- yamlObject.optStringField(HTML_TEXT_NAME)
+      jsText <- yamlObject.optStringField(JS_TEXT_NAME)
+      htmlTasks: Seq[HtmlCompleteTask] <- yamlObject.optArrayField(HTML_TASKS_NAME, HtmlCompleteTaskYamlFormat(baseValues.id).read)
+      jsTasks: Seq[JsCompleteTask] <- yamlObject.optArrayField(JS_TASKS_NAME, JsCompleteTaskYamlFormat(baseValues.id).read)
+    } yield WebCompleteEx(WebExercise(baseValues, htmlText, htmlTasks.nonEmpty, jsText, jsTasks.nonEmpty), htmlTasks, jsTasks)
 
     override protected def writeRest(completeEx: WebCompleteEx): Map[YamlValue, YamlValue] = {
 
       val htmlTasks: Option[(YamlValue, YamlValue)] = completeEx.htmlTasks match {
         case Nil                        => None
-        case hts: Seq[HtmlCompleteTask] => Some(YamlString(HTML_TASKS_NAME) -> YamlArray(hts map (_ toYaml HtmlCompleteTaskYamlFormat(completeEx.ex.id)) toVector))
+        case hts: Seq[HtmlCompleteTask] => Some(YamlString(HTML_TASKS_NAME) -> YamlArr(hts map HtmlCompleteTaskYamlFormat(completeEx.ex.id).write))
       }
 
       val jsTasks: Option[(YamlValue, YamlValue)] = completeEx.jsTasks match {
         case Nil => None
-        case jts => Some(YamlString(JS_TASKS_NAME) -> YamlArray(jts map (_ toYaml JsCompleteTaskYamlFormat(completeEx.ex.id)) toVector))
+        case jts => Some(YamlString(JS_TASKS_NAME) -> YamlArr(jts map JsCompleteTaskYamlFormat(completeEx.ex.id).write))
       }
 
       Map.empty ++
@@ -41,12 +40,12 @@ object WebExYamlProtocol extends MyYamlProtocol {
     }
   }
 
-  case class HtmlCompleteTaskYamlFormat(exerciseId: Int) extends MyYamlFormat[HtmlCompleteTask] {
+  case class HtmlCompleteTaskYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[HtmlCompleteTask] {
 
     override def write(htmlCompTask: HtmlCompleteTask): YamlValue = {
       val yamlAttrs: Option[(YamlString, YamlArray)] = htmlCompTask.attributes match {
         case Nil   => None
-        case attrs => Some(YamlString(ATTRS_NAME) -> YamlArray(attrs map (_ toYaml TaskAttributeYamlFormat(htmlCompTask.task.id, htmlCompTask.task.exerciseId)) toVector))
+        case attrs => Some(YamlString(ATTRS_NAME) -> YamlArr(attrs map TaskAttributeYamlFormat(htmlCompTask.task.id, htmlCompTask.task.exerciseId).write))
       }
 
       val tcOpt: Option[(YamlValue, YamlValue)] = htmlCompTask.task.textContent map (tc => YamlString(TEXT_CONTENT_NAME) -> YamlString(tc))
@@ -55,79 +54,71 @@ object WebExYamlProtocol extends MyYamlProtocol {
         Map[YamlValue, YamlValue](
           YamlString(ID_NAME) -> htmlCompTask.task.id,
           YamlString(TEXT_NAME) -> htmlCompTask.task.text,
-          YamlString(XPATH_NAME) -> htmlCompTask.task.xpathQuery,
-
+          YamlString(XPATH_NAME) -> htmlCompTask.task.xpathQuery
         ) ++ tcOpt ++ yamlAttrs
       )
     }
 
-    override def readObject(yamlObject: YamlObject): HtmlCompleteTask = {
-      val taskId = yamlObject.intField(ID_NAME)
-      val attributes = yamlObject.optArrayField(ATTRS_NAME, _ convertTo[Attribute] TaskAttributeYamlFormat(taskId, exerciseId))
-
-      HtmlCompleteTask(
-        HtmlTask(
-          taskId, exerciseId,
-          text = yamlObject.stringField(TEXT_NAME),
-          xpathQuery = yamlObject.stringField(XPATH_NAME),
-          textContent = yamlObject.optForgivingStringField(TEXT_CONTENT_NAME)),
-        attributes)
-    }
+    override def readObject(yamlObject: YamlObject): Try[HtmlCompleteTask] = for {
+      taskId <- yamlObject.intField(ID_NAME)
+      text <- yamlObject.stringField(TEXT_NAME)
+      xpathQuery <- yamlObject.stringField(XPATH_NAME)
+      textContent <- yamlObject.optForgivingStringField(TEXT_CONTENT_NAME)
+      attributes: Seq[Attribute] <- yamlObject.optArrayField(ATTRS_NAME, TaskAttributeYamlFormat(taskId, exerciseId).read)
+    } yield HtmlCompleteTask(HtmlTask(taskId, exerciseId, text, xpathQuery, textContent), attributes)
   }
 
-  case class TaskAttributeYamlFormat(taskId: Int, exerciseId: Int) extends MyYamlFormat[Attribute] {
+  case class TaskAttributeYamlFormat(taskId: Int, exerciseId: Int) extends MyYamlObjectFormat[Attribute] {
 
-    override def readObject(yamlObject: YamlObject): Attribute = Attribute(yamlObject.stringField(KEY_NAME), taskId, exerciseId, yamlObject.stringField(VALUE_NAME))
+    override def readObject(yamlObject: YamlObject): Try[Attribute] = for {
+      key <- yamlObject.stringField(KEY_NAME)
+      value <- yamlObject.stringField(VALUE_NAME)
+    } yield Attribute(key, taskId, exerciseId, value)
 
-    override def write(attr: Attribute): YamlValue = YamlObject(YamlString(KEY_NAME) -> attr.key, YamlString(VALUE_NAME) -> attr.value)
+    override def write(attr: Attribute): YamlValue = YamlObj(KEY_NAME -> attr.key, VALUE_NAME -> attr.value)
 
   }
 
-  case class JsCompleteTaskYamlFormat(exerciseId: Int) extends MyYamlFormat[JsCompleteTask] {
+  case class JsCompleteTaskYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[JsCompleteTask] {
 
     override def write(jsTask: JsCompleteTask): YamlValue = {
-      val yamlConds = YamlArray(jsTask.conditions map (_ toYaml JsConditionYamlFormat(jsTask.task.id, jsTask.task.exerciseId)) toVector)
+      val yamlConds = YamlArr(jsTask.conditions map JsConditionYamlFormat(jsTask.task.id, jsTask.task.exerciseId).write)
 
-      YamlObject(
-        YamlString(ID_NAME) -> jsTask.task.id,
-        YamlString(TEXT_NAME) -> jsTask.task.text,
-        YamlString(XPATH_NAME) -> jsTask.task.xpathQuery,
-        YamlString(ACTION_TYPE_NAME) -> jsTask.task.actionType.name,
-        YamlString(KEYS_TO_SEND_NAME) -> jsTask.task.keysToSend.map(YamlString).getOrElse(YamlNull),
-
-        YamlString(CONDITIONS_NAME) -> yamlConds
+      YamlObj(
+        ID_NAME -> jsTask.task.id,
+        TEXT_NAME -> jsTask.task.text,
+        XPATH_NAME -> jsTask.task.xpathQuery,
+        ACTION_TYPE_NAME -> jsTask.task.actionType.name,
+        KEYS_TO_SEND_NAME -> jsTask.task.keysToSend.map(YamlString).getOrElse(YamlNull),
+        CONDITIONS_NAME -> yamlConds
       )
     }
 
-    override def readObject(yamlObject: YamlObject): JsCompleteTask = {
-      val taskId = yamlObject.intField(ID_NAME)
-      JsCompleteTask(
-        JsTask(
-          taskId, exerciseId: Int,
-          yamlObject.stringField(TEXT_NAME),
-          yamlObject.stringField(XPATH_NAME),
-          yamlObject.enumField(ACTION_TYPE_NAME, JsActionType.valueOf, JsActionType.CLICK),
-          yamlObject.optForgivingStringField(KEYS_TO_SEND_NAME)),
-        yamlObject.arrayField(CONDITIONS_NAME, _ convertTo[JsCondition] JsConditionYamlFormat(taskId, exerciseId))
-      )
-    }
+    override def readObject(yamlObject: YamlObject): Try[JsCompleteTask] = for {
+      taskId <- yamlObject.intField(ID_NAME)
+      text <- yamlObject.stringField(TEXT_NAME)
+      xpathQuery <- yamlObject.stringField(XPATH_NAME)
+      actionType <- yamlObject.enumField(ACTION_TYPE_NAME, JsActionType.valueOf)
+      keysToSend <- yamlObject.optForgivingStringField(KEYS_TO_SEND_NAME)
+      conditions <- yamlObject.arrayField(CONDITIONS_NAME, JsConditionYamlFormat(taskId, exerciseId).read)
+    } yield JsCompleteTask(JsTask(taskId, exerciseId, text, xpathQuery, actionType, keysToSend), conditions)
 
   }
 
-  case class JsConditionYamlFormat(taskId: Int, exerciseId: Int) extends MyYamlFormat[JsCondition] {
+  case class JsConditionYamlFormat(taskId: Int, exerciseId: Int) extends MyYamlObjectFormat[JsCondition] {
 
-    override def readObject(yamlObject: YamlObject): JsCondition = JsCondition(
-      yamlObject.intField(ID_NAME), taskId, exerciseId,
-      yamlObject.stringField(XPATH_NAME),
-      yamlObject.boolField(IS_PRECOND_NAME),
-      yamlObject.forgivingStringField(AWAITED_VALUE_NAME)
-    )
+    override def readObject(yamlObject: YamlObject): Try[JsCondition] = for {
+      id <- yamlObject.intField(ID_NAME)
+      xpathQuery <- yamlObject.stringField(XPATH_NAME)
+      isPrecondition <- yamlObject.boolField(IS_PRECOND_NAME)
+      awaitedValue <- yamlObject.forgivingStringField(AWAITED_VALUE_NAME)
+    } yield JsCondition(id, taskId, exerciseId, xpathQuery, isPrecondition, awaitedValue)
 
-    override def write(jsCond: JsCondition): YamlValue = YamlObject(
-      YamlString(ID_NAME) -> jsCond.id,
-      YamlString(XPATH_NAME) -> jsCond.xpathQuery,
-      YamlString(IS_PRECOND_NAME) -> jsCond.isPrecondition,
-      YamlString(AWAITED_VALUE_NAME) -> jsCond.awaitedValue
+    override def write(jsCond: JsCondition): YamlValue = YamlObj(
+      ID_NAME -> jsCond.id,
+      XPATH_NAME -> jsCond.xpathQuery,
+      IS_PRECOND_NAME -> jsCond.isPrecondition,
+      AWAITED_VALUE_NAME -> jsCond.awaitedValue
     )
 
   }

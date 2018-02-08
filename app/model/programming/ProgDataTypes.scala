@@ -32,6 +32,7 @@ object ProgDataTypes {
 
   sealed abstract class GenericProgDataType extends ProgDataType
 
+  case object VOID extends NonGenericProgDataType("void", str => JsString("void"), _ => "void")
 
   case object INTEGER extends NonGenericProgDataType("int", str => JsNumber(string2IntBigDecimal(str)), _ => "0")
 
@@ -56,10 +57,8 @@ object ProgDataTypes {
     }
   }
 
-
-  val values: Seq[ProgDataType] = Seq(INTEGER, FLOAT, BOOLEAN, STRING)
-
   def byName(str: String): Option[ProgDataType] = str match {
+    case "void"    => Some(VOID)
     case "int"     => Some(INTEGER)
     case "float"   => Some(FLOAT)
     case "boolean" => Some(BOOLEAN)

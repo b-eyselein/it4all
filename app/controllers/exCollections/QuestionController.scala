@@ -6,6 +6,7 @@ import controllers.Secured
 import model.Enums.Role
 import model.questions.QuestionEnums.QuestionType
 import model.questions._
+import model.yaml.MyYamlFormat
 import model.{CompleteCollectionWrapper, JsonFormat, User}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc._
@@ -38,7 +39,7 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   // Yaml
 
-  override implicit val yamlFormat: net.jcazevedo.moultingyaml.YamlFormat[CompleteQuiz] = QuestionYamlProtocol.QuizYamlFormat
+  override implicit val yamlFormat: MyYamlFormat[CompleteQuiz] = QuestionYamlProtocol.QuizYamlFormat
 
   // db
 

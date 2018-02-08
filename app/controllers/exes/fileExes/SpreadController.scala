@@ -8,6 +8,7 @@ import controllers.exes.fileExes.SpreadController._
 import model.User
 import model.core._
 import model.spread._
+import model.yaml.MyYamlFormat
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.mvc.{AnyContent, ControllerComponents, Request, Result}
@@ -37,7 +38,7 @@ class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
 
   // Yaml
 
-  override implicit val yamlFormat: YamlFormat[SpreadExercise] = SpreadExYamlProtocol.SpreadExYamlFormat
+  override implicit val yamlFormat: MyYamlFormat[SpreadExercise] = SpreadExYamlProtocol.SpreadExYamlFormat
 
   // db
 

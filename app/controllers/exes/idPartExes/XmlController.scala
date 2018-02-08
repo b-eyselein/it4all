@@ -12,7 +12,7 @@ import model.core.tools.ExerciseOptions
 import model.xml.XmlConsts._
 import model.xml.XmlEnums._
 import model.xml._
-import net.jcazevedo.moultingyaml.YamlFormat
+import model.yaml.MyYamlFormat
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.json.JsValue
 import play.api.mvc._
@@ -48,7 +48,7 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // Yaml
 
-  override val yamlFormat: YamlFormat[XmlExercise] = XmlExYamlProtocol.XmlExYamlFormat
+  override val yamlFormat: MyYamlFormat[XmlExercise] = XmlExYamlProtocol.XmlExYamlFormat
 
   // db
 

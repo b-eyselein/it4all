@@ -21,23 +21,6 @@ abstract class AFileExController[Ex <: Exercise, CompEx <: FileCompleteEx[Ex], R
 (cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: Tables, to: FileExToolObject)(implicit ec: ExecutionContext)
   extends BaseExerciseController[Ex, CompEx, R, CompResult, Tables](cc, dbcp, t, to) with Secured with FileUtils {
 
-  override def saveAndPreviewExercises(admin: User, read: Seq[CompEx]): Future[Result] =
-    saveRead(read) map (_ => Ok(previewExercises(admin, read))) recover {
-      // FIXME: Failures!
-      case sqlError: SQLSyntaxErrorException =>
-        sqlError.printStackTrace()
-        BadRequest(sqlError.getMessage)
-      case throwable                         =>
-        throwable.printStackTrace()
-        BadRequest(throwable.getMessage)
-    }
-
-  override protected def saveRead(read: Seq[CompEx]): Future[Seq[Int]] = Future.sequence(read map { ex =>
-    // FIXME: use pathTries ==> display with exercises?
-    /*val pathTries =*/ checkFiles(ex)
-    saveReadToDb(ex)
-  })
-
   // Routes
 
   def exercise(id: Int, fileExtension: String): EssentialAction = futureWithUser { user =>

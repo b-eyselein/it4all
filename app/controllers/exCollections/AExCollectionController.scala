@@ -7,6 +7,7 @@ import model._
 import model.core.CoreConsts._
 import model.core._
 import model.core.tools.CollectionToolObject
+import model.yaml.MyYamlFormat
 import net.jcazevedo.moultingyaml._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.Json
@@ -16,7 +17,6 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
-
 
 
 abstract class AExCollectionController[Ex <: ExerciseInCollection, CompEx <: CompleteEx[Ex], Coll <: ExerciseCollection[Ex, CompEx], CompColl <: CompleteCollection[Ex, CompEx, Coll],
@@ -34,7 +34,7 @@ R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseCollec
 
   // Reading Yaml
 
-  implicit val yamlFormat: YamlFormat[CompColl]
+  implicit val yamlFormat: MyYamlFormat[CompColl]
 
   // Database queries
 
@@ -67,12 +67,16 @@ R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseCollec
   def adminImportCollections: EssentialAction = futureWithAdmin { admin =>
     implicit request =>
       val file = toolObject.resourcesFolder / (toolObject.exType + ".yaml")
-      val read = readAll(file).get.parseYamls map (_.convertTo[CompColl])
-      saveAndPreviewCollections(admin, read)
+      val reads: Seq[Try[CompColl]] = readAll(file).get.parseYamls map yamlFormat.read
+
+      reads match {
+        case Nil => saveAndPreviewCollections(admin, Seq.empty /* successReads*/)
+        case _   => Future(BadRequest("TODO!"))
+      }
   }
 
   def adminExportCollections: EssentialAction = futureWithAdmin { admin =>
-    implicit request => futureCompleteColls map (colls => Ok(views.html.admin.export(admin, yamlString(colls), toolObject)))
+    implicit request => futureCompleteColls map (colls => Ok(views.html.admin.export.render(admin, yamlString(colls), toolObject)))
   }
 
   def adminExportCollectionsAsFile: EssentialAction = futureWithAdmin { _ =>

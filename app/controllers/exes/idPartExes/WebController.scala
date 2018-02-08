@@ -7,6 +7,7 @@ import model.core._
 import model.web.WebConsts._
 import model.web.WebCorrector.evaluateWebTask
 import model.web.{WebExPart, _}
+import model.yaml.MyYamlFormat
 import model.{JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
@@ -42,7 +43,7 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // Yaml
 
-  override implicit val yamlFormat: YamlFormat[WebCompleteEx] = WebExYamlProtocol.WebExYamlFormat
+  override implicit val yamlFormat: MyYamlFormat[WebCompleteEx] = WebExYamlProtocol.WebExYamlFormat
 
   // Other routes
 

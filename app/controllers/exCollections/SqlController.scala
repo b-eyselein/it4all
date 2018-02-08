@@ -9,6 +9,7 @@ import model.core._
 import model.sql.SqlConsts._
 import model.sql.SqlEnums.SqlExerciseType._
 import model.sql._
+import model.yaml.MyYamlFormat
 import model.{CompleteCollectionWrapper, JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
@@ -59,7 +60,7 @@ class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // Yaml
 
-  override implicit val yamlFormat: YamlFormat[SqlCompleteScenario] = SqlYamlProtocol.SqlScenarioYamlFormat
+  override implicit val yamlFormat: MyYamlFormat[SqlCompleteScenario] = SqlYamlProtocol.SqlScenarioYamlFormat
 
   // db
 

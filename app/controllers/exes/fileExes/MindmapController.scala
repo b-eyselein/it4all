@@ -7,6 +7,7 @@ import controllers.Secured
 import model.User
 import model.core._
 import model.mindmap.{MindmapExercise, MindmapTableDefs}
+import model.yaml.MyYamlFormat
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.mvc.{AnyContent, ControllerComponents, Request, Result}
@@ -18,7 +19,8 @@ import scala.util.Try
 
 @Singleton
 class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: MindmapTableDefs)(implicit ec: ExecutionContext)
-  extends AFileExController[MindmapExercise, MindmapExercise, EvaluationResult, GenericCompleteResult[EvaluationResult], MindmapTableDefs](cc, dbcp, t, MindMapToolObject) with Secured {
+  extends AFileExController[MindmapExercise, MindmapExercise, EvaluationResult, GenericCompleteResult[EvaluationResult], MindmapTableDefs](cc, dbcp, t, MindMapToolObject)
+    with Secured {
 
   // Reading solution from requests
 
@@ -30,7 +32,7 @@ class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfig
 
   // Yaml
 
-  override implicit val yamlFormat: YamlFormat[MindmapExercise] = null
+  override implicit val yamlFormat: MyYamlFormat[MindmapExercise] = null
 
   // db
 
@@ -43,6 +45,7 @@ class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfig
   override protected def renderExercise(user: User, exercise: MindmapExercise, part: String): Html = ???
 
   override protected def renderResult(user: User, correctionResult: EvaluationResult, exercise: MindmapExercise, fileExtension: String): Html = ???
+
   //Ok(views.html.mindmap.mindmapcorrect.render(user))
 
   // Correction

@@ -6,6 +6,7 @@ import controllers.Secured
 import model.rose.{RoseCompleteResult, RoseEvalResult}
 import model.programming.ProgLanguage
 import model.rose._
+import model.yaml.MyYamlFormat
 import model.{JsonFormat, User}
 import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.Logger
@@ -36,7 +37,7 @@ class RoseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   // Yaml
 
-  override implicit val yamlFormat: YamlFormat[RoseCompleteEx] = RoseExYamlProtocol.RoseExYamlFormat
+  override implicit val yamlFormat: MyYamlFormat[RoseCompleteEx] = RoseExYamlProtocol.RoseExYamlFormat
 
   // Views
   override protected def renderExercise(user: User, exercise: RoseCompleteEx, part: RoseExPart): Future[Html] = {

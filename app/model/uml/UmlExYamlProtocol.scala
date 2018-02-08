@@ -3,119 +3,107 @@ package model.uml
 import model.MyYamlProtocol._
 import model.uml.UmlConsts._
 import model.uml.UmlEnums.{UmlAssociationType, UmlClassType, UmlMultiplicity}
-import model.{BaseValues, MyYamlProtocol}
+import model.{BaseValues, MyYamlProtocol, YamlArr, YamlObj}
 import net.jcazevedo.moultingyaml._
 
 import scala.language.{implicitConversions, postfixOps}
+import scala.util.Try
 
 object UmlExYamlProtocol extends MyYamlProtocol {
 
   implicit object UmlExYamlFormat extends HasBaseValuesYamlFormat[UmlCompleteEx] {
 
-    override def readRest(yamlObject: YamlObject, baseValues: BaseValues): UmlCompleteEx = {
+    override def readRest(yamlObject: YamlObject, baseValues: BaseValues): Try[UmlCompleteEx] = for {
 
-      val mappings = yamlObject.arrayField(MAPPINGS_NAME, _ convertTo[UmlMapping] UmlMappingYamlFormat(baseValues.id))
-      val ignoreWords = yamlObject.arrayField(IGNORE_WORDS_NAME, _ asStr) flatten
+      mappings: Seq[UmlMapping] <- yamlObject.arrayField(MAPPINGS_NAME, UmlMappingYamlFormat(baseValues.id).read)
+      ignoreWords <- yamlObject.arrayField(IGNORE_WORDS_NAME, _ asStr)
 
-      val solution = yamlObject.objectField[UmlSolution](SOLUTION_NAME, UmlSolutionYamlFormat(baseValues.id))
+      solution <- yamlObject.someField(SOLUTION_NAME) flatMap UmlSolutionYamlFormat(baseValues.id).read
 
-      val mappingsForTextParser: Map[String, String] = mappings map (mapping => (mapping.key, mapping.value)) toMap
-      val textParser = new UmlExTextParser(baseValues.text, mappingsForTextParser, ignoreWords)
+      mappingsForTextParser: Map[String, String] = mappings map (mapping => (mapping.key, mapping.value)) toMap;
+      textParser = new UmlExTextParser(baseValues.text, mappingsForTextParser, ignoreWords)
 
-      UmlCompleteEx(
-        UmlExercise(baseValues, textParser.parseTextForClassSel, textParser.parseTextForDiagDrawing, ignoreWords mkString TagJoinChar),
-        mappings,
-        solution
-      )
-    }
+    } yield UmlCompleteEx(
+      UmlExercise(baseValues, textParser.parseTextForClassSel, textParser.parseTextForDiagDrawing, ignoreWords mkString TagJoinChar),
+      mappings,
+      solution
+    )
 
     override protected def writeRest(completeEx: UmlCompleteEx): Map[YamlValue, YamlValue] = Map(
-      YamlString(MAPPINGS_NAME) -> YamlArray(completeEx.mappings map (_ toYaml UmlMappingYamlFormat(completeEx.ex.id)) toVector),
-      YamlString(IGNORE_WORDS_NAME) -> YamlArray(completeEx.ex.splitToIgnore map YamlString toVector),
-      YamlString(SOLUTION_NAME) -> (completeEx.solution toYaml UmlSolutionYamlFormat(completeEx.ex.id))
+      YamlString(MAPPINGS_NAME) -> YamlArr(completeEx.mappings map UmlMappingYamlFormat(completeEx.ex.id).write),
+      YamlString(IGNORE_WORDS_NAME) -> YamlArr(completeEx.ex.splitToIgnore map YamlString),
+      YamlString(SOLUTION_NAME) -> UmlSolutionYamlFormat(completeEx.ex.id).write(completeEx.solution)
     )
   }
 
-  case class UmlMappingYamlFormat(exerciseId: Int) extends MyYamlFormat[UmlMapping] {
+  case class UmlMappingYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[UmlMapping] {
 
-    override def write(mapping: UmlMapping): YamlValue = YamlObject(
-      YamlString(KEY_NAME) -> mapping.key,
-      YamlString(VALUE_NAME) -> mapping.value
+    override def write(mapping: UmlMapping): YamlValue = YamlObj(
+      KEY_NAME -> mapping.key,
+      VALUE_NAME -> mapping.value
     )
 
-    override def readObject(yamlObject: YamlObject): UmlMapping = UmlMapping(
-      exerciseId,
-      yamlObject.stringField(KEY_NAME),
-      yamlObject.stringField(VALUE_NAME)
-    )
+    override def readObject(yamlObject: YamlObject): Try[UmlMapping] = for {
+      key <- yamlObject.stringField(KEY_NAME)
+      value <- yamlObject.stringField(VALUE_NAME)
+    } yield UmlMapping(exerciseId, key, value)
 
   }
 
-  case class UmlSolutionYamlFormat(exerciseId: Int) extends MyYamlFormat[UmlSolution] {
+  case class UmlSolutionYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[UmlSolution] {
 
-    override def write(sol: UmlSolution): YamlValue = YamlObject(
-      YamlString(CLASSES_NAME) -> YamlArray(sol.classes map (_ toYaml UmlCompleteClassYamlFormat(exerciseId)) toVector),
-      YamlString(IMPLS_NAME) -> YamlArray(sol.implementations map (_ toYaml UmlImplYamlFormat(exerciseId)) toVector),
-      YamlString(ASSOCS_NAME) -> YamlArray(sol.associations map (_ toYaml UmlAssocYamlFormat(exerciseId)) toVector)
+    override def write(sol: UmlSolution): YamlValue = YamlObj(
+      CLASSES_NAME -> YamlArr(sol.classes map UmlCompleteClassYamlFormat(exerciseId).write),
+      IMPLS_NAME -> YamlArr(sol.implementations map UmlImplYamlFormat(exerciseId).write),
+      ASSOCS_NAME -> YamlArr(sol.associations map UmlAssocYamlFormat(exerciseId).write)
     )
 
-    override def readObject(yamlObject: YamlObject): UmlSolution = UmlSolution(
-      yamlObject.arrayField(CLASSES_NAME, _ convertTo[UmlCompleteClass] UmlCompleteClassYamlFormat(exerciseId)),
-      yamlObject.arrayField(ASSOCS_NAME, _ convertTo[UmlAssociation] UmlAssocYamlFormat(exerciseId)),
-      yamlObject.arrayField(IMPLS_NAME, _ convertTo[UmlImplementation] UmlImplYamlFormat(exerciseId))
-
-    )
+    override def readObject(yamlObject: YamlObject): Try[UmlSolution] = for {
+      classes <- yamlObject.arrayField(CLASSES_NAME, UmlCompleteClassYamlFormat(exerciseId).read)
+      associations <- yamlObject.arrayField(ASSOCS_NAME, UmlAssocYamlFormat(exerciseId).read)
+      implementations <- yamlObject.arrayField(IMPLS_NAME, UmlImplYamlFormat(exerciseId).read)
+    } yield UmlSolution(classes, associations, implementations)
 
   }
 
-  case class UmlCompleteClassYamlFormat(exerciseId: Int) extends MyYamlFormat[UmlCompleteClass] {
+  case class UmlCompleteClassYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[UmlCompleteClass] {
 
-    override def write(completeClazz: UmlCompleteClass): YamlValue = {
-      val clazz = completeClazz.clazz
-      YamlObject(
-        YamlString(CLASSTYPE_NAME) -> clazz.classType.name,
-        YamlString(NAME_NAME) -> clazz.className,
-        YamlString(ATTRS_NAME) -> YamlArray(completeClazz.attributes map (_ toYaml UmlClassAttributeYamlFormat(exerciseId, clazz.className)) toVector),
-        YamlString(METHODS_NAME) -> YamlArray(completeClazz.methods map (_ toYaml UmlClassMethodYamlFormat(exerciseId, clazz.className)) toVector)
-      )
-    }
+    override def write(completeClazz: UmlCompleteClass): YamlValue = YamlObj(
+      CLASSTYPE_NAME -> completeClazz.clazz.classType.name,
+      NAME_NAME -> completeClazz.clazz.className,
+      ATTRS_NAME -> YamlArr(completeClazz.attributes map UmlClassAttributeYamlFormat(exerciseId, completeClazz.clazz.className).write),
+      METHODS_NAME -> YamlArr(completeClazz.methods map UmlClassMethodYamlFormat(exerciseId, completeClazz.clazz.className).write)
+    )
 
-    override def readObject(yamlObject: YamlObject): UmlCompleteClass = {
-      val className = yamlObject.stringField(NAME_NAME)
-      UmlCompleteClass(
-        UmlClass(
-          exerciseId,
-          className,
-          yamlObject.enumField(CLASSTYPE_NAME, UmlClassType.valueOf, UmlClassType.CLASS)),
-        yamlObject.optArrayField(ATTRS_NAME, _ convertTo[UmlClassAttribute] UmlClassAttributeYamlFormat(exerciseId, className)),
-        yamlObject.optArrayField(METHODS_NAME, _ convertTo[UmlClassMethod] UmlClassMethodYamlFormat(exerciseId, className))
-      )
-    }
+    override def readObject(yamlObject: YamlObject): Try[UmlCompleteClass] = for {
+      className <- yamlObject.stringField(NAME_NAME)
+      classType <- yamlObject.enumField(CLASSTYPE_NAME, UmlClassType.valueOf)
+      attributes: Seq[UmlClassAttribute] <- yamlObject.optArrayField(ATTRS_NAME, UmlClassAttributeYamlFormat(exerciseId, className).read)
+      methods: Seq[UmlClassMethod] <- yamlObject.optArrayField(METHODS_NAME, UmlClassMethodYamlFormat(exerciseId, className).read)
+    } yield UmlCompleteClass(UmlClass(exerciseId, className, classType), attributes, methods)
   }
 
-  case class UmlClassAttributeYamlFormat(exerciseId: Int, className: String) extends MyYamlFormat[UmlClassAttribute] {
+  case class UmlClassAttributeYamlFormat(exerciseId: Int, className: String) extends MyYamlObjectFormat[UmlClassAttribute] {
 
-    override def write(attr: UmlClassAttribute): YamlValue = YamlObject(
-      YamlString(NAME_NAME) -> attr.name, YamlString(TYPE_NAME) -> attr.umlType
-    )
+    override def write(attr: UmlClassAttribute): YamlValue = YamlObj(NAME_NAME -> attr.name, TYPE_NAME -> attr.umlType)
 
-    override def readObject(yamlObject: YamlObject): UmlClassAttribute = UmlClassAttribute(
-      exerciseId, className, yamlObject.stringField(NAME_NAME), yamlObject.stringField(TYPE_NAME)
-    )
+    override def readObject(yamlObject: YamlObject): Try[UmlClassAttribute] = for {
+      name <- yamlObject.stringField(NAME_NAME)
+      attrtype <- yamlObject.stringField(TYPE_NAME)
+    } yield UmlClassAttribute(exerciseId, className, name, attrtype)
   }
 
-  case class UmlClassMethodYamlFormat(exerciseId: Int, className: String) extends MyYamlFormat[UmlClassMethod] {
+  case class UmlClassMethodYamlFormat(exerciseId: Int, className: String) extends MyYamlObjectFormat[UmlClassMethod] {
 
-    override def write(method: UmlClassMethod): YamlValue = YamlObject(
-      YamlString(NAME_NAME) -> method.name, YamlString(TYPE_NAME) -> method.umlType
-    )
+    override def write(method: UmlClassMethod): YamlValue = YamlObj(NAME_NAME -> method.name, TYPE_NAME -> method.umlType)
 
-    override def readObject(yamlObject: YamlObject): UmlClassMethod = UmlClassMethod(
-      exerciseId, className, yamlObject.stringField(NAME_NAME), yamlObject.stringField(TYPE_NAME)
-    )
+    override def readObject(yamlObject: YamlObject): Try[UmlClassMethod] = for {
+      name <- yamlObject.stringField(NAME_NAME)
+      methodType <- yamlObject.stringField(TYPE_NAME)
+    } yield UmlClassMethod(exerciseId, className, name, methodType)
   }
 
-  case class UmlAssocYamlFormat(exerciseId: Int) extends MyYamlFormat[UmlAssociation] {
+  case class UmlAssocYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[UmlAssociation] {
 
     override def write(assoc: UmlAssociation): YamlValue = YamlObject(
       Map[YamlValue, YamlValue](
@@ -127,25 +115,27 @@ object UmlExYamlProtocol extends MyYamlProtocol {
       ) ++ (assoc.assocName map (ac => YamlString(NAME_NAME) -> YamlString(ac)))
     )
 
-    override def readObject(yamlObject: YamlObject): UmlAssociation = UmlAssociation(
-      exerciseId,
-      yamlObject.enumField(ASSOCTYPE_NAME, UmlAssociationType.valueOf, UmlAssociationType.ASSOCIATION),
-      yamlObject.optStringField(NAME_NAME),
-      yamlObject.stringField(FIRST_END_NAME), yamlObject.enumField(FIRST_MULT_NAME, UmlMultiplicity.valueOf, UmlMultiplicity.UNBOUND),
-      yamlObject.stringField(SECOND_END_NAME), yamlObject.enumField(SECOND_MULT_NAME, UmlMultiplicity.valueOf, UmlMultiplicity.UNBOUND)
-    )
+    override def readObject(yamlObject: YamlObject): Try[UmlAssociation] = for {
+      assocType <- yamlObject.enumField(ASSOCTYPE_NAME, UmlAssociationType.valueOf)
+      assocName <- yamlObject.optStringField(NAME_NAME)
+      firstEnd <- yamlObject.stringField(FIRST_END_NAME)
+      firstMult <- yamlObject.enumField(FIRST_MULT_NAME, UmlMultiplicity.valueOf)
+      secondEnd <- yamlObject.stringField(SECOND_END_NAME)
+      secondMult <- yamlObject.enumField(SECOND_MULT_NAME, UmlMultiplicity.valueOf)
+    } yield UmlAssociation(exerciseId, assocType, assocName, firstEnd, firstMult, secondEnd, secondMult)
   }
 
-  case class UmlImplYamlFormat(exerciseId: Int) extends MyYamlFormat[UmlImplementation] {
+  case class UmlImplYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[UmlImplementation] {
 
-    override def write(impl: UmlImplementation): YamlValue = YamlObject(
-      YamlString(SUBCLASS_NAME) -> impl.subClass,
-      YamlString(SUPERCLASS_NAME) -> impl.superClass
+    override def write(impl: UmlImplementation): YamlValue = YamlObj(
+      SUBCLASS_NAME -> impl.subClass,
+      SUPERCLASS_NAME -> impl.superClass
     )
 
-    override def readObject(yamlObject: YamlObject): UmlImplementation = UmlImplementation(
-      exerciseId, yamlObject.stringField(SUBCLASS_NAME), yamlObject.stringField(SUPERCLASS_NAME)
-    )
+    override def readObject(yamlObject: YamlObject): Try[UmlImplementation] = for {
+      subClass <- yamlObject.stringField(SUBCLASS_NAME)
+      superClass <- yamlObject.stringField(SUPERCLASS_NAME)
+    } yield UmlImplementation(exerciseId, subClass, superClass)
   }
 
 }

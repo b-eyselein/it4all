@@ -8,6 +8,7 @@ import model._
 import model.core.CoreConsts._
 import model.core._
 import model.core.tools.ExToolObject
+import model.yaml.MyYamlFormat
 import net.jcazevedo.moultingyaml._
 import play.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
@@ -35,7 +36,7 @@ abstract class BaseExerciseController[Ex <: Exercise, CompEx <: CompleteEx[Ex], 
 
   // Reading Yaml
 
-  implicit val yamlFormat: YamlFormat[CompEx]
+  implicit val yamlFormat: MyYamlFormat[CompEx]
 
   // Database queries
 
@@ -66,7 +67,7 @@ abstract class BaseExerciseController[Ex <: Exercise, CompEx <: CompleteEx[Ex], 
         case Failure(e) =>
           Logger.error("Import " + toolObject.exType + "-Aufgaben:", e)
           Future(BadRequest("Es gab einen Fehler beim Import der Datei: " + e.getMessage))
-        case Success(r) => saveAndPreviewExercises(admin, r.mkString.parseYamls map (_.convertTo[CompEx]))
+        case Success(r) => saveAndPreviewExercises(admin, r.mkString.parseYamls map yamlFormat.read)
       }
   }
 
@@ -77,7 +78,12 @@ abstract class BaseExerciseController[Ex <: Exercise, CompEx <: CompleteEx[Ex], 
     * @param read  Seq of read (exercises)
     * @return
     */
-  def saveAndPreviewExercises(admin: User, read: Seq[CompEx]): Future[Result] =
+  def saveAndPreviewExercises(admin: User, readTries: Seq[Try[CompEx]]): Future[Result] = {
+    val read: Seq[CompEx] = readTries flatMap {
+      case Success(x) => Some(x)
+      case Failure(_) => None
+    }
+
     saveRead(read) map (_ => Ok(previewExercises(admin, read))) recover {
       // FIXME: Failures!
       case sqlError: SQLSyntaxErrorException =>
@@ -88,6 +94,7 @@ abstract class BaseExerciseController[Ex <: Exercise, CompEx <: CompleteEx[Ex], 
         throwable.printStackTrace()
         BadRequest(throwable.getMessage)
     }
+  }
 
   def adminExportExercises: EssentialAction = futureWithAdmin { admin =>
     implicit request =>
