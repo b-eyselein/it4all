@@ -1,6 +1,5 @@
-version: Ignore, field is for later use...
-
-classname: Vector2D
+module: vector.vector
+classname: &clazzname Vector2D
 description: >
   Schreiben Sie eine Klasse Vector2D. Diese soll einen zweidimensionalen Vektor mit einer x- und einer
   y-Koordinate darstellen. Als Konstruktorargumente werden die x- und die y-Koordinate übergeben. Diese
@@ -11,14 +10,11 @@ init_args:
 - {name: y, dataType: int}
 
 constructortests:
-- args:   &ia1args
-          {x: 1, y: 1}
+- args:   &ia1args {x: 1, y: 1}
   result: *ia1args
-- args:   &ia2args
-          {x: 3, y: 4}
+- args:   &ia2args {x: 3, y: 4}
   result: *ia2args
-- args:   &ia3args
-          {x: 77, y: 51}
+- args:   &ia3args {x: 77, y: 51}
   result: *ia3args
 
 functiontests:
@@ -30,9 +26,9 @@ functiontests:
     (also "(x, y)") zurückgeben.
   returntype: string
   testdata:
-  - {init: *ia1args,   args: [], result: "(1, 1)"}
-  - {init: *ia2args,   args: [], result: "(3, 4)"}
-  - {init: *ia3args, args: [], result: "(77, 51)"}
+  - {init: *ia1args, result: "(1, 1)"}
+  - {init: *ia2args, result: "(3, 4)"}
+  - {init: *ia3args, result: "(77, 51)"}
 
 - functionname: length
   description: >
@@ -41,8 +37,8 @@ functiontests:
   arguments: []
   returntype: float
   testdata:
-  - {init: *ia1args, args: [], result: 1.4142135623730951}
-  - {init: *ia2args, args: [], result: 5}
+  - {init: *ia1args, result: 1.4142135623730951}
+  - {init: *ia2args, result: 5}
 
 - functionname: add_scalar
   description: >
@@ -52,6 +48,20 @@ functiontests:
   - {name: factor, dataType: int}
   returntype: void
   testdata:
-  - {init: *ia1args, args: [2], effects: {x: 3, y: 3}}
-  - {init: *ia2args, args: [-3], effects: {x: 0, y: 1}}
-  - {init: *ia3args, args: [0], effects: *ia3args}
+  - {init: *ia1args, args: {factor: 2}, effects: {x: 3, y: 3}}
+  - {init: *ia2args, args: {factor: -3}, effects: {x: 0, y: 1}}
+  - {init: *ia3args, args: {factor: 0}, effects: *ia3args}
+
+- functionname: add
+  description: >
+    Schreiben...
+  arguments:
+  - {name: other_vector, dataType: {class: *clazzname, module: vector}}
+  returntype: void
+  testdata:
+  - init: *ia1args
+    args: {other_vector: {init: *ia1args}}
+    effects: {x: 2, y: 2}
+  - init: *ia2args
+    args: {other_vector: {init: {x: 4, y: -1}}}
+    effects: {x: 7, y: 3}
