@@ -1,23 +1,35 @@
 %YAML 1.2
 ---
+id: 1
+title: Party
 author: bje40dc
+text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
+status: ACCEPTED
+
 exerciseType: XML_DTD
 refFileContent: |
   <!ELEMENT party (gast+)>
   <!ATTLIST party datum CDATA #REQUIRED>
-  <!ELEMENT gast (getraenk+, zustand?)>
-  <!ATTLIST gast name CDATA #REQUIRED>
+  <!ELEMENT gast (vorname, nachname, getraenk+)>
+  <!ELEMENT vorname (#PCDATA)>
+  <!ELEMENT nachname (#PCDATA)>
   <!ELEMENT getraenk (#PCDATA)>
-  <!ELEMENT zustand EMPTY>
-  <!ATTLIST zustand ledig CDATA #REQUIRED
-                    nuechtern CDATA #REQUIRED>
-text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
-id: 1
-status: ACCEPTED
+  <!ATTLIST gast
+    ledig (true | false) #REQUIRED
+    nuechtern (true | false) #REQUIRED
+  >
+grammarDescription: >
+  In dieser XML-Datei soll eine Party [party] beschrieben werden. Diese hat ein Datum [datum] und eine Liste von Gästen [gast] (mindestens ein Gast war
+  anwesend). Für jeden Gast sollen der Vor- [vorname] und Nachname [nachname] und die Getränke [getraenk], die er getrunken hat, notiert werden. Jeder Gast
+  hat mindestens ein Getränk getrunken. Außerdem soll für jeden Gast gespeichert werden, ob er nüchtern [nuechtern] und ob er ledig [ledig] ist.
 rootNode: party
-title: Party
 ---
+id: 2
+title: Vorlesung
 author: bje40dc
+text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
+status: ACCEPTED
+
 exerciseType: XML_DTD
 refFileContent: |
   <!ELEMENT lecture (lecturer+, date+, student+)>
@@ -34,13 +46,14 @@ refFileContent: |
 
   <!ELEMENT name (#PCDATA)>
   <!ELEMENT hours (#PCDATA)>
-text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
-id: 2
-status: ACCEPTED
 rootNode: lecture
-title: Vorlesung
 ---
+id: 3
+title: Krankenhaus
 author: bje40dc
+text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
+status: ACCEPTED
+
 exerciseType: XML_DTD
 refFileContent: |
   <!ELEMENT krankenhaus (arzt+)>
@@ -58,13 +71,16 @@ refFileContent: |
   <!ELEMENT uhrzeit (#PCDATA)>
   <!ELEMENT patient (#PCDATA)>
   <!ELEMENT beschreibung (#PCDATA)>
-text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
-id: 3
-status: ACCEPTED
+grammarDescription: >
+  TODO!
 rootNode: hospital
-title: Krankenhaus
 ---
+id: 4
+title: Frühstück
 author: bje40dc
+text: Erstellen Sie für dieses Xml-Dokument eine passende DTD
+status: ACCEPTED
+
 exerciseType: DTD_XML
 refFileContent: |
   <?xml version="1.0" encoding="UTF-8"?>
@@ -89,13 +105,16 @@ refFileContent: |
           <calories>900</calories>
       </food>
   </breakfast>
-text: Erstellen Sie für dieses Xml-Dokument eine passende DTD
-id: 4
-status: ACCEPTED
+grammarDescription: >
+  TODO!
 rootNode: breakfast
-title: Frühstück
 ---
+id: 5
+title: Bibliothek
 author: bje40dc
+text: Erstellen Sie für dieses Xml-Dokument eine passende DTD
+status: ACCEPTED
+
 exerciseType: DTD_XML
 refFileContent: |
   <?xml version="1.0" encoding="utf-8"?>
@@ -125,8 +144,6 @@ refFileContent: |
           </Buch>
       </Abteilung>
   </Bibliothek>
-text: Erstellen Sie für dieses Xml-Dokument eine passende DTD
-id: 5
-status: ACCEPTED
+grammarDescription: >
+  TODO!
 rootNode: library
-title: Bibliothek

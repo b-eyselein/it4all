@@ -1,6 +1,6 @@
-@(student: model.User, result: model.spread.SpreadSheetCorrectionResult, exercise: model.spread.SpreadExercise, typ: String)
+@(user: model.User, result: model.spread.SpreadSheetCorrectionResult, exercise: model.spread.SpreadExercise, typ: String)
 
-@main("Excel", student) {
+@main("Excel", Some(user)) {
     <div class="container">
         <div class="page-header">
             <h1>Korrektur der Aufgabe: &quot;@exercise.title&quot;</h1>

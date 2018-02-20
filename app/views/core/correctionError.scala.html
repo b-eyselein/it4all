@@ -1,6 +1,6 @@
-@(user: model.User, msg: String, exception: Option[Throwable])
+@(user: model.User, exception: model.core.CorrectionException)
 
-@main("Fehler", user) {
+@main("Fehler", Some(user)) {
     <div class="container">
         <div class="page-header">
             <h1>Ein Fehler ist aufgetreten</h1>
@@ -11,6 +11,6 @@
 
         <hr>
 
-        @exception.map(exc => "<pre>" + exc.getStackTrace mkString "\n" + "</pre>")
+        <pre>@exception.getStackTrace.mkString("\n")</pre>
     </div>
 }

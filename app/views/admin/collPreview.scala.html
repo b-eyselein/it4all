@@ -2,7 +2,7 @@
 
 @(user: User, collections: Seq[CompleteCollection[_ <: Exercise, _ <: CompleteEx[_], _ <: ExerciseCollection[_, _]]], toolObject: model.core.tools.CollectionToolObject)
 
-@main("Import: " + toolObject.collectionSingularName, user) {
+@main("Import: " + toolObject.collectionSingularName, Some(user)) {
     <div class="container">
         <div class="page-header">
             <h1>Erstellte Aufgabensammlungen</h1>

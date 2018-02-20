@@ -1,4 +1,4 @@
-@(title: String, user: model.User, scripts: Html = Html(""), scriptsBefore: Html = Html(""))(content: Html)
+@(title: String, maybeUser: Option[model.User], scripts: Html = Html(""), scriptsBefore: Html = Html(""))(content: Html)
 <!DOCTYPE html>
 
 <html lang="de">
@@ -30,7 +30,6 @@
                 </div>
                 <div class="collapse navbar-collapse" id="myNavbar">
 
-
                     <ul class="nav navbar-nav">
                         <li class="dropdown active">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Aufgabenbereiche <span class="caret"></span></a>
@@ -45,39 +44,46 @@
 
 
                     <ul class="nav navbar-nav navbar-right">
-                    @if(user != null) {
-                        @if(user.isAdmin) {
+                    @maybeUser match {
+                        case Some(user) => {
+                            @if(user.isAdmin) {
+                                <li class="dropdown">
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="">
+                                        <span class="glyphicon glyphicon-cog"></span>
+                                        Administrator <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        @for(tool <- model.core.tools.ToolList.idExTools) {
+                                            <li><a href="@tool.adminIndexRoute">@tool.toolname</a></li>
+                                            <li class="divider"></li>
+                                        }
+                                        <li><a href="@routes.AdminController.index">Allgemein</a></li>
+                                    </ul>
+                                </li>
+                            }
                             <li class="dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="">
-                                    <span class="glyphicon glyphicon-cog"></span>
-                                    Administrator <span class="caret"></span>
-                                </a>
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-user"></span>
+                                    @user.username <span class="caret"></span></a>
                                 <ul class="dropdown-menu">
-                                    @for(tool <- model.core.tools.ToolList.idExTools) {
-                                        <li><a href="@tool.adminIndexRoute">@tool.toolname</a></li>
-                                        <li class="divider"></li>
-                                    }
-                                    <li><a href="@routes.AdminController.index">Allgemein</a></li>
+                                    <li><a href="@routes.UserController.preferences">Präferenzen</a></li>
+                                    <li class="divider"></li>
+                                    <li><a href="@routes.LoginController.logout"><span class="glyphicon glyphicon-log-out"></span>
+                                        Logout
+                                    </a>
+                                    </li>
                                 </ul>
                             </li>
                         }
-                        <li class="dropdown">
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-user"></span>
-                                @user.username <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="@routes.UserController.preferences">Präferenzen</a></li>
-                                <li class="divider"></li>
-                                <li><a href="@routes.LoginController.logout"><span class="glyphicon glyphicon-log-out"></span>
-                                    Logout
-                                </a>
-                                </li>
-                            </ul>
-                        </li>
-                    } else {
-                        <li><a href="@routes.LoginController.login"><span class="glyphicon glyphicon-log-in">
-                            Login</span></a></li>
-                        <li><a href="@routes.LoginController.register"><span class="glyphicon glyphicon-new-window">
-                            Registrieren</span></a></li>
+                        case None => {
+                            <li><a href="@routes.LoginController.login"><span class="glyphicon glyphicon-log-in">
+                            Login</span>
+                            </a>
+                            </li>
+                            <li><a href="@routes.LoginController.register"><span class="glyphicon glyphicon-new-window">
+                            Registrieren</span>
+                            </a>
+                            </li>
+                        }
                     }
                     </ul>
                 </div>

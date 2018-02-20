@@ -485,18 +485,19 @@ CREATE TABLE IF NOT EXISTS web_solutions (
 # Xml
 
 CREATE TABLE IF NOT EXISTS xml_exercises (
-  id               INT PRIMARY KEY,
-  title            VARCHAR(50),
-  author           VARCHAR(50),
-  ex_text          TEXT,
-  ex_state         ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
+  id                  INT PRIMARY KEY,
+  title               VARCHAR(50),
+  author              VARCHAR(50),
+  ex_text             TEXT,
+  ex_state            ENUM ('RESERVED', 'CREATED', 'ACCEPTED', 'APPROVED') DEFAULT 'RESERVED',
 
-  exercise_type    ENUM ('XML_XSD', 'XML_DTD', 'XSD_XML', 'DTD_XML')    DEFAULT 'XML_XSD',
-  root_node        VARCHAR(30),
-  ref_file_content TEXT
+  exercise_type       ENUM ('XML_XSD', 'XML_DTD', 'XSD_XML', 'DTD_XML')    DEFAULT 'XML_XSD',
+  grammar_description TEXT,
+  root_node           VARCHAR(20),
+  ref_file_content    TEXT
 );
 
-CREATE TABLE IF NOT EXISTS xml_solutions (
+CREATE TABLE IF NOT EXISTS xml_document_solutions (
   exercise_id INT,
   username    VARCHAR(50),
   solution    TEXT,
@@ -509,11 +510,26 @@ CREATE TABLE IF NOT EXISTS xml_solutions (
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS xml_grammar_solutions (
+  exercise_id INT,
+  username    VARCHAR(50),
+  solution    TEXT,
+
+  PRIMARY KEY (exercise_id, username),
+  FOREIGN KEY (exercise_id) REFERENCES xml_exercises (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
+  FOREIGN KEY (username) REFERENCES users (username)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
 # --- !Downs
 
 # Xml
 
-DROP TABLE IF EXISTS xml_solutions;
+DROP TABLE IF EXISTS xml_document_solutions;
 
 DROP TABLE IF EXISTS xml_exercises;
 

@@ -46,7 +46,7 @@
 
 }
 
-@main("UML", user, scripts, scriptsBefore) {
+@main("UML", Some(user), scripts, scriptsBefore) {
 
     @core.helperTemplates.modal("Bedienungsanleitung", "instructionsModal", "lg") {
         @umlActivity.activityInstructions.render()

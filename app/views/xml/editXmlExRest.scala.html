@@ -13,8 +13,8 @@
             </select>
         </div>
         <div class="col-sm-6">
-            <label for="@model.xml.XmlConsts.ROOT_NODE_NAME">Wurzelknoten:</label>
-            <input class="form-control" name="@model.xml.XmlConsts.ROOT_NODE_NAME" id="@model.xml.XmlConsts.ROOT_NODE_NAME" required
+            <label for="@model.xml.XmlConsts.RootNodeName">Wurzelknoten:</label>
+            <input class="form-control" name="@model.xml.XmlConsts.RootNodeName" id="@model.xml.XmlConsts.RootNodeName" required
                 @Html(exerciseOpt.map(ex => s"""value="${ex.rootNode}"""").getOrElse(""))>
         </div>
     </div>

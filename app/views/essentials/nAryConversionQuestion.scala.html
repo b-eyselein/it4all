@@ -10,7 +10,7 @@
     <script src="@controllers.routes.Assets.versioned("javascripts/essentials/naryConversion.js")"></script>
 }
 
-@main(title, user, scripts) {
+@main(title, Some(user), scripts) {
     <div class="container">
         <div class="page-header">
             <h1>@title

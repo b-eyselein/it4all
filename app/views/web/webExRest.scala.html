@@ -1,6 +1,6 @@
 @(user: model.User, exercise: model.web.WebCompleteEx)
 
-@main("", user) {
+@main("", Some(user)) {
     <div class="container">
         <div class="page-header">
             <h1>Tasks Aufgabe @exercise.ex.id</h1>

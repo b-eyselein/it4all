@@ -15,14 +15,16 @@ object XmlExYamlProtocol extends MyYamlProtocol {
 
     override def readRest(yamlObject: YamlObject, baseValues: BaseValues): Try[XmlExercise] = for {
       exerciseType <- yamlObject.enumField(ExerciseTypeName, XmlExType.valueOf)
-      rootNode <- yamlObject.stringField(ROOT_NODE_NAME)
-      refFileContent <- yamlObject.stringField(REF_FILE_CONTENT_NAME)
-    } yield XmlExercise(baseValues, exerciseType, rootNode, refFileContent)
+      grammarDescription <- yamlObject.stringField(GrammarDescriptionName)
+      rootNode <- yamlObject.stringField(RootNodeName)
+      refFileContent <- yamlObject.stringField(RefFileContentName)
+    } yield XmlExercise(baseValues, exerciseType, grammarDescription, rootNode, refFileContent)
 
     override protected def writeRest(completeEx: XmlExercise): Map[YamlValue, YamlValue] = Map(
       YamlString(ExerciseTypeName) -> completeEx.exerciseType.name,
-      YamlString(ROOT_NODE_NAME) -> completeEx.rootNode,
-      YamlString(REF_FILE_CONTENT_NAME) -> completeEx.refFileContent
+      YamlString(GrammarDescriptionName) -> completeEx.grammarDescription,
+      YamlString(RootNodeName) -> completeEx.rootNode,
+      YamlString(RefFileContentName) -> completeEx.refFileContent
     )
   }
 

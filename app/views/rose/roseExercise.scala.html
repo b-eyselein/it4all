@@ -15,7 +15,7 @@
     <script src="@routes.Assets.versioned("javascripts/rose/simulator.js")"></script>
 }
 
-@main("Rose Test", user, scripts) {
+@main("Rose Test", Some(user), scripts) {
     @core.helperTemplates.modal("API des Roboters", "robot_api", "lg") {
         @rose.roseAPI.render()
     }

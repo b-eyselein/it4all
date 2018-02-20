@@ -1,6 +1,6 @@
 @(user: model.User, exercise: model.spread.SpreadExercise, fileType: (String, String))
 
-@main("Spread-Test", user) {
+@main("Spread-Test", Some(user)) {
     <div class="container">
         <div class="page-header">
             <h1>Aufgabe &quot;@exercise.title&quot;</h1>

@@ -3,7 +3,7 @@
 @(user: User, collection: CompleteCollection[_ <: Exercise, _ <: CompleteEx[_], _ <: ExerciseCollection[_, _]], exercises: Seq[_ <: CompleteEx[_]],
         toolObject: model.core.tools.CollectionToolObject, filter: String, currentSite: Int, numOfSites: Int)
 
-    @main("Collection", user) {
+    @main("Collection", Some(user)) {
         <div class="container">
             <div class="page-header">
                 <h1>@toolObject.collectionSingularName &quot;@collection.coll.title&quot; - Filter: &quot;@filter&quot;</h1>

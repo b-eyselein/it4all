@@ -2,10 +2,9 @@ package model
 
 import com.github.t3hnar.bcrypt._
 import model.Enums.{ExerciseState, Role, ShowHideAggregate}
+import model.core.CoreConsts.ID_NAME
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
-
-import model.core.CoreConsts.ID_NAME
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Random
@@ -25,7 +24,6 @@ object TippHelper {
   def getRandom: Tipp = Tipp(-1, StdTipp)
 
 }
-
 
 case class Tipp(id: Int, str: String)
 

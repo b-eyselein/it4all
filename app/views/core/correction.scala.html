@@ -1,6 +1,6 @@
 @(result: model.core.CompleteResult[_], resultAsHtml: Html, user: model.User, toolObject: model.core.tools.ToolObject)
 
-@main(toolObject.toolname.toUpperCase(), user) {
+@main(toolObject.toolname.toUpperCase(), Some(user)) {
     <div class="container">
 
         <div class="alert alert-success">

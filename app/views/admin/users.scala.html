@@ -4,7 +4,7 @@
     <script src="@routes.Assets.versioned("javascripts/users/users.js")"></script>
 }
 
-@main("Nutzerübersicht", user, scripts) {
+@main("Nutzerübersicht", Some(user), scripts) {
     <div class="container">
         <div class="page-header">
             <h1>Nutzer&uuml;bersicht</h1>

@@ -1,6 +1,6 @@
 @(user: model.User, questionList: List[model.questions.Question], quizzes: List[model.questions.Quiz])
 
-@main("Auswahlfragen", user) {
+@main("Auswahlfragen", Some(user)) {
     <script>
             function update(input) {
                 var otherInput = document.getElementById(input.id + "_hidden");

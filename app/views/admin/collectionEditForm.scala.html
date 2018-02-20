@@ -6,7 +6,7 @@
     exerciseOpt.isEmpty
 }
 
-@main(s"${toolObject.toolname}: Aufgabe ${if(isCreation) "erstellen" else "bearbeiten"}", user) {
+@main(s"${toolObject.toolname}: Aufgabe ${if(isCreation) "erstellen" else "bearbeiten"}", Some(user)) {
     <div class="container">
         <div class="page-header">
             <h1>@if(isCreation) {Erstellen} else {Bearbeiten} einer @toolObject.toolname-Aufgabe</h1>

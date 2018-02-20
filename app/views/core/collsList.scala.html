@@ -3,7 +3,7 @@
 @(user: User, collections: Seq[CompleteCollection[_ <: Exercise, _ <: CompleteEx[_], _ <: ExerciseCollection[_, _]]], rest: Html,
         toolObject: model.core.tools.CollectionToolObject, pages: Int)
 
-    @main(toolObject.toolname, user) {
+    @main(toolObject.toolname, Some(user)) {
         <div class="container">
             <div class="page-header">
                 <h1 class="page-title">&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h1>

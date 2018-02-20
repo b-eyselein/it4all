@@ -1,6 +1,6 @@
 @(user: model.User, exercises: Seq[_ <: model.CompleteEx[_ <: model.Exercise]], rest: Html, toolObject: model.core.tools.ExToolObject, pages: Int)
 
-@main(toolObject.toolname, user) {
+@main(toolObject.toolname, Some(user)) {
     <div class="container">
         <div class="page-header">
             <h1 class="page-title">&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h1>

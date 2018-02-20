@@ -74,6 +74,8 @@ trait PartsCompleteEx[E <: Exercise, PartType <: ExPart] extends CompleteEx[E] {
 
   def hasPart(partType: PartType): Boolean
 
+  def textForPart(urlName: String): String = text
+
 }
 
 trait FileCompleteEx[Ex <: Exercise] extends CompleteEx[Ex] with FileUtils {

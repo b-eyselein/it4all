@@ -89,11 +89,11 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   protected def onSubmitCorrectionResult(user: User, result: WebCompleteResult): Result =
     Ok(views.html.core.correction.render(result, result.render, user, toolObject))
 
-  protected def onSubmitCorrectionError(user: User, msg: String, error: Option[Throwable]): Result = ???
+  protected def onSubmitCorrectionError(user: User, error: CorrectionException): Result = ???
 
   protected def onLiveCorrectionResult(result: WebCompleteResult): Result = Ok(result.render)
 
-  protected def onLiveCorrectionError(msg: String, error: Option[Throwable]): Result = BadRequest("TODO!") // ???
+  protected def onLiveCorrectionError(error: CorrectionException): Result = BadRequest("TODO!") // ???
 
   // Other helper methods
 

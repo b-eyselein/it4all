@@ -16,7 +16,7 @@
 @core.helperTemplates.fullScreenScripts.render()
 }
 
-@main("Web", user, scripts) {
+@main("Web", Some(user), scripts) {
     <div class="container-fluid" id="fullsc">
         <form action="javascript:testSol('@controllers.exes.idPartExes.routes.WebController.correct(exercise.ex.id)', '@part.urlName')">
             <div class="row">

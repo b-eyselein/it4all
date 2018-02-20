@@ -3,12 +3,11 @@ package controllers.exes.idPartExes
 import javax.inject.Inject
 
 import controllers.Secured
-import model.rose.{RoseCompleteResult, RoseEvalResult}
+import model.core.CorrectionException
 import model.programming.ProgLanguage
-import model.rose._
+import model.rose.{RoseCompleteResult, RoseEvalResult, _}
 import model.yaml.MyYamlFormat
 import model.{JsonFormat, User}
-import net.jcazevedo.moultingyaml.YamlFormat
 import play.api.Logger
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.json.{JsString, JsValue, Json}
@@ -64,7 +63,7 @@ class RoseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   override protected def onSubmitCorrectionResult(user: User, result: RoseCompleteResult): Result = ??? // Ok(views.html.rose.roseTestSolution.render(user))
 
-  override protected def onSubmitCorrectionError(user: User, msg: String, error: Option[Throwable]): Result = ???
+  override protected def onSubmitCorrectionError(user: User, error: CorrectionException): Result = ???
 
   override protected def onLiveCorrectionResult(result: RoseCompleteResult): Result = result.result match {
     case rer: RoseExecutionResult    => Ok(Json.obj("resultType" -> JsString("success"), "result" -> Json.parse(rer.result)))
@@ -74,10 +73,10 @@ class RoseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
       BadRequest("Error")
   }
 
-  override protected def onLiveCorrectionError(msg: String, error: Option[Throwable]): Result = {
+  override protected def onLiveCorrectionError(error: CorrectionException): Result = {
     Ok(Json.obj(
-      "message" -> msg,
-      "error" -> JsString(error map (_.getMessage) getOrElse "")
+      "msg" -> error.getMessage,
+      "error" -> error.getMessage
     ))
   }
 

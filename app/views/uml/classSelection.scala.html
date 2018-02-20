@@ -9,7 +9,7 @@
     <script src="@routes.Assets.versioned("javascripts/uml/classSelection.js")"></script>
 }
 
-@main("UML", user, scripts) {
+@main("UML", Some(user), scripts) {
         <!-- Modal for hints -->
     @core.helperTemplates.modal("Bearbeitungshinweise", "hintModal") {
         <ul>

@@ -1,6 +1,6 @@
 @(user: model.User)
 
-@main("Mindmap-Test", user) {
+@main("Mindmap-Test", Some(user)) {
     <div class="container">
 
         <form action="@@controllers.fileExes.MindmapController.upload() /mindmap/upload" method="post">

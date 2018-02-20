@@ -10,7 +10,7 @@
     <script src="@routes.Assets.versioned("javascripts/essentials/naryAddition.js")"></script>
 }
 
-@main(title, user, scripts) {
+@main(title, Some(user), scripts) {
     <div class="container">
         <div class="page-header">
             <h1>@title von <span id="base" data-base="@base.name">@base.pluralName</span></h1>

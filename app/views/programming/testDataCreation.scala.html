@@ -27,7 +27,7 @@
     controllers.exes.idPartExes.routes.ProgController.correctLive(exercise.ex.id)
 }
 
-@main("Programmierung: Defintion von Testdaten", user, scripts) {
+@main("Programmierung: Defintion von Testdaten", Some(user), scripts) {
 
     @core.helperTemplates.modal("Bearbeitungshinweise", "hintsModal", "lg") {
         <ul>

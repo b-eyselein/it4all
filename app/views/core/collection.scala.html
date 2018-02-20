@@ -2,7 +2,7 @@
         toolObject: model.core.tools.CollectionToolObject, currentSite: Int, numOfSites: Int)
 
 
-@main("Collection", user) {
+@main("Collection", Some(user)) {
     <div class="container">
         <div class="page-header">
             <h1>@toolObject.collectionSingularName &quot;@collection.coll.title&quot;</h1>

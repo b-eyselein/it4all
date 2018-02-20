@@ -10,7 +10,7 @@
     <script src="@routes.Assets.versioned("javascripts/essentials/twoComp.js")"></script>
 }
 
-@main(title, user, scripts) {
+@main(title, Some(user), scripts) {
     <div class="container">
         <div class="page-header">
             <h1>@title von @startingNumber</h1>

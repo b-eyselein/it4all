@@ -7,6 +7,7 @@ import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.stream.StreamSource
 import javax.xml.validation.SchemaFactory
 
+import dtdparser.{DTDLine, DTDParser}
 import model.xml.XmlEnums._
 import org.xml.sax.InputSource
 
@@ -46,6 +47,16 @@ object XmlCorrector {
 
   def recover(e: Throwable): Seq[XmlError] = Seq(FailureXmlError(e.getMessage, e))
 
+  def correctDTD(dtd: String, exercise: XmlExercise): Seq[Any] = {
+    // FIXME: use...
+    val parsedLines: Seq[Try[DTDLine]] = DTDParser.parseDTD(dtd)
+
+    println(exercise.refFileContent)
+
+    println(parsedLines)
+
+    Seq.empty
+  }
 
   def correctDtdAndXml(xml: Path): Seq[XmlError] = {
     val errorHandler = new CorrectionErrorHandler

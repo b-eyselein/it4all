@@ -4,6 +4,7 @@ import model.Enums.SuccessType
 import model.core.{CompleteResult, EvaluationResult}
 import model.xml.XmlEnums.XmlErrorType
 import org.xml.sax.{ErrorHandler, SAXParseException}
+import play.api.libs.json.{JsObject, JsValue, Json}
 import play.twirl.api.{Html, HtmlFormat}
 
 import scala.collection.mutable.ListBuffer
@@ -16,6 +17,8 @@ case class XmlCompleteResult(learnerSolution: String, solutionSaved: Boolean, re
   override def renderLearnerSolution: Html = new Html(pre(HtmlFormat.escape(learnerSolution).toString).toString)
 
   def render: Html = {
+    println(this)
+
     val solSaved: String = if (solutionSaved)
       div(cls := "alert alert-success")(span(cls := "glyphicon glyphicon-ok"), " Ihre Lösung wurde gespeichert.").toString
     else
@@ -29,6 +32,12 @@ case class XmlCompleteResult(learnerSolution: String, solutionSaved: Boolean, re
     new Html(solSaved + resultsRender)
   }
 
+  def toJson: JsValue = Json.obj(
+    "solSaved" -> solutionSaved,
+    "success" -> results.isEmpty,
+    "results" -> results.map(_.toJson)
+  )
+
 }
 
 abstract sealed class XmlError(val errorType: XmlErrorType, val errorMessage: String, val line: Int, override val success: SuccessType)
@@ -37,6 +46,8 @@ abstract sealed class XmlError(val errorType: XmlErrorType, val errorMessage: St
   val lineStr: String = if (line != -1) s" in Zeile $line" else ""
 
   def render: String = div(cls := s"alert alert-$getBSClass")(strong(errorType.german + lineStr + ":"), errorMessage).toString
+
+  def toJson: JsObject = Json.obj("errorType" -> errorType.name, "errorMessage" -> errorMessage, "line" -> line, "success" -> success.name)
 
 }
 

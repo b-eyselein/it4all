@@ -129,16 +129,16 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   protected def onSubmitCorrectionResult(user: User, result: UmlResult): Result = Ok(views.html.core.correction.render(result, renderResult(result), user, toolObject))
 
-  protected def onSubmitCorrectionError(user: User, msg: String, error: Option[Throwable]): Result = {
+  protected def onSubmitCorrectionError(user: User, error: CorrectionException): Result = {
 
-    // Log error msg if error exists
-    error.map(_.getMessage) foreach (str => Logger.debug(str))
+    // Log error msg
+    Logger.debug(error.getMessage)
 
-    Ok(views.html.core.correctionError.render(user, msg, error))
+    Ok(views.html.core.correctionError.render(user, error))
   }
 
   protected def onLiveCorrectionResult(result: UmlResult): Result = Ok(renderResult(result))
 
-  protected def onLiveCorrectionError(msg: String, error: Option[Throwable]): Result = ???
+  protected def onLiveCorrectionError(error: CorrectionException): Result = ???
 
 }

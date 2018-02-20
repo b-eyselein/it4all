@@ -8,9 +8,13 @@ scalaVersion := "2.12.4"
 
 scalacOptions ++= Seq("-feature")
 
-lazy val root = (project in file("."))
-  .enablePlugins(PlayScala)
+lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
+// Resolver for JFrog Uni Wue
+resolvers ++= Seq(
+  "Artifactory" at "http://132.187.11.33:8081/artifactory/libs-release/",
+  "Snapshot Artifactory" at "http://132.187.11.33:8081/artifactory/libs-snapshot/"
+)
 // Used libraries from Maven Repository
 libraryDependencies ++= Seq(
   "org.mockito" % "mockito-core" % "2.13.0",
@@ -78,7 +82,10 @@ libraryDependencies ++= Seq(
   "xml-apis" % "xml-apis" % "1.3.04",
 
   // Apache Commons IO
-  "commons-io" % "commons-io" % "2.4"
+  "commons-io" % "commons-io" % "2.4",
+
+  // DTD Parser
+  "de.uni-wuerzburg.is" % "scala_dtd_2.12" % "0.2.0-SNAPSHOT"
 
 )
 

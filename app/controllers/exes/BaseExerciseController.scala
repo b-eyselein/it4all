@@ -74,8 +74,8 @@ abstract class BaseExerciseController[Ex <: Exercise, CompEx <: CompleteEx[Ex], 
   /**
     * FIXME: save and import in same method? => in direct subclasses!?!
     *
-    * @param admin current user, has to be admin
-    * @param read  Seq of read (exercises)
+    * @param admin     current user, has to be admin
+    * @param readTries Seq of read (exercises)
     * @return
     */
   def saveAndPreviewExercises(admin: User, readTries: Seq[Try[CompEx]]): Future[Result] = {
@@ -101,7 +101,7 @@ abstract class BaseExerciseController[Ex <: Exercise, CompEx <: CompleteEx[Ex], 
       futureCompleteExes map (exes => Ok(export(admin, yamlString(exes), toolObject)))
   }
 
-  def adminExportExercisesAsFile: EssentialAction = futureWithAdmin { admin =>
+  def adminExportExercisesAsFile: EssentialAction = futureWithAdmin { _ =>
     implicit request =>
       futureCompleteExes map (exes => {
         val file = Files.createTempFile(s"export_${toolObject.exType}", ".yaml")
@@ -175,7 +175,7 @@ abstract class BaseExerciseController[Ex <: Exercise, CompEx <: CompleteEx[Ex], 
   }
 
   def correct(id: Int): EssentialAction = futureWithUser { user =>
-    implicit request => correctAbstract(user, id, readSolutionFromPostRequest(user, id), onSubmitCorrectionResult(user, _), onSubmitCorrectionError(user, _, _))
+    implicit request => correctAbstract(user, id, readSolutionFromPostRequest(user, id), onSubmitCorrectionResult(user, _), onSubmitCorrectionError(user, _))
   }
 
   def correctLive(id: Int): EssentialAction = futureWithUser { user =>
@@ -186,11 +186,11 @@ abstract class BaseExerciseController[Ex <: Exercise, CompEx <: CompleteEx[Ex], 
 
   protected def onSubmitCorrectionResult(user: User, result: CompResult): Result
 
-  protected def onSubmitCorrectionError(user: User, msg: String, error: Option[Throwable]): Result
+  protected def onSubmitCorrectionError(user: User, error: CorrectionException): Result
 
   protected def onLiveCorrectionResult(result: CompResult): Result
 
-  protected def onLiveCorrectionError(msg: String, error: Option[Throwable]): Result
+  protected def onLiveCorrectionError(error: CorrectionException): Result
 
   // Views and other helper methods for admin
 
@@ -214,16 +214,16 @@ abstract class BaseExerciseController[Ex <: Exercise, CompEx <: CompleteEx[Ex], 
   protected def renderExes(user: User, exes: Seq[CompEx], allExesSize: Int): Html = views.html.core.exesList(user, exes, renderExesListRest, toolObject, allExesSize / STEP + 1)
 
   protected def correctAbstract[S, Err](user: User, id: Int, maybeSolution: Option[SolType], onCorrectionSuccess: CompResult => Result,
-                                        onCorrectionError: (String, Option[Throwable]) => Result)(implicit request: Request[AnyContent]): Future[Result] =
+                                        onCorrectionError: CorrectionException => Result)(implicit request: Request[AnyContent]): Future[Result] =
     maybeSolution match {
-      case None => Future(onCorrectionError("Es gab einen Fehler bei der Übertragung ihrer Lösung!", None))
+      case None => Future(onCorrectionError(new SolutionTransferException))
 
       case Some(solution) => futureCompleteExById(id) flatMap {
-        case None => Future(onCorrectionError(s"Es existiert keine Aufgabe mit der Id $id!", None))
+        case None => Future(onCorrectionError(new NoSuchExerciseException(id)))
 
         case Some(exercise) => correctEx(user, solution, exercise) map {
           case Success(result) => onCorrectionSuccess(result)
-          case Failure(error)  => onCorrectionError("Es gab einen Fehler bei der Korrektur ihrer Lösung!", Some(error))
+          case Failure(error)  => onCorrectionError(new OtherCorrectionException(error))
         }
       }
     }

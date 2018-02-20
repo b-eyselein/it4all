@@ -1,6 +1,6 @@
 @(user: model.User, completeCollections: Seq[model.CompleteCollectionWrapper], toolObject: model.core.tools.CollectionToolObject)
 
-@main("Aufgabenübersicht", user) {
+@main("Aufgabenübersicht", Some(user)) {
     <div class="container">
         <div class="page-header">
             <h1>Verf&uuml;gbare Aufgaben</h1>

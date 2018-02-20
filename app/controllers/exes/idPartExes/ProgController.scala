@@ -131,7 +131,7 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
     case Implementation => tables.loadSolution(user, exercise) map { oldSol =>
       val declaration: String = oldSol map (_.solution) getOrElse ProgLanguage.STANDARD_LANG.buildFunction(exercise)
-      views.html.core.exercise2Rows.render(user, ProgToolObject, ProgExOptions, exercise.ex, renderExRest, exScript, declaration, Implementation)
+      views.html.core.exercise2Rows.render(user, ProgToolObject, ProgExOptions, exercise, renderExRest, exScript, declaration, Implementation)
     }
 
     case ActivityDiagram => Future(views.html.umlActivity.activityDrawing.render(user, exercise, toolObject))
@@ -143,7 +143,7 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
 
   private def exScript: Html = Html(s"""<script src="${controllers.routes.Assets.versioned("javascripts/programming/progExercise.js")}"></script>""")
 
-  private def renderExRest: Html = Html(
+  private def renderExRest(part: String): Html = Html(
     s"""<div class="input-group">
        |  <span class="input-group-addon">Sprache</span>
        |  <select class="form-control" id="langSelect" onchange="changeProgLanguage('${controllers.exes.idPartExes.routes.ProgController.getDeclaration()}');">
@@ -156,7 +156,7 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
   protected def onSubmitCorrectionResult(user: User, result: ProgCompleteResult): Result =
     Ok(views.html.core.correction.render(result, renderResult(result), user, toolObject))
 
-  protected def onSubmitCorrectionError(user: User, msg: String, error: Option[Throwable]): Result = ???
+  protected def onSubmitCorrectionError(user: User, error: CorrectionException): Result = ???
 
   protected def onLiveCorrectionResult(result: ProgCompleteResult): Result = result match {
     case ir: ProgImplementationCompleteResult => Ok(renderResult(ir))
@@ -170,10 +170,10 @@ class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigPro
     }
   }
 
-  protected def onLiveCorrectionError(msg: String, error: Option[Throwable]): Result = {
+  protected def onLiveCorrectionError(error: CorrectionException): Result = {
 
-    // Log error if error exists
-    error foreach (err => Logger.error("Es gab einen Fehler bei der Korrektur:", err))
+    // Log error
+    Logger.error("Es gab einen Fehler bei der Korrektur:", error)
 
     BadRequest("Es gab einen Fehler bei der Korrektur!")
   }
