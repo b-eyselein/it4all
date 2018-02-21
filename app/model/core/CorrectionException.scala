@@ -1,9 +1,9 @@
 package model.core
 
-sealed abstract class CorrectionException extends Exception
+sealed abstract class CorrectionException(msg: String) extends Exception(msg)
 
-case class NoSuchExerciseException(id: Int) extends CorrectionException
+case class NoSuchExerciseException(id: Int) extends CorrectionException(s"Es gibt keine Aufgabe mit der ID '$id'")
 
-case class SolutionTransferException() extends CorrectionException
+case class SolutionTransferException() extends CorrectionException("Es gab einen Fehler bei der Übertragung ihrer Lösung!")
 
-case class OtherCorrectionException(cause: Throwable) extends CorrectionException
+case class OtherCorrectionException(cause: Throwable) extends CorrectionException(cause.getMessage)

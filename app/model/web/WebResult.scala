@@ -19,7 +19,7 @@ case class WebCompleteResult(learnerSolution: String, exercise: WebCompleteEx, p
   override def renderLearnerSolution: Html = Html(pre(learnerSolution).toString)
 
   def render: Html = {
-
+    // FIXME: convert to template...
     val solSaved: String = if (solutionSaved)
       div(cls := "alert alert-success")(span(cls := "glyphicon glyphicon-ok"), " Ihre Lösung wurde gespeichert.").toString
     else
@@ -43,11 +43,11 @@ case class WebCompleteResult(learnerSolution: String, exercise: WebCompleteEx, p
 
   def toJson: JsValue = Json.obj(
     "solutionSaved" -> solutionSaved,
+    "part" -> part.urlName,
+    "points" -> results.map(_.points).sum, "maxPoints" -> exercise.maxPoints(part),
     "success" -> results.forall(_.isSuccessful),
     "htmlResults" -> results.filter(_.isInstanceOf[ElementResult]).map(_.toJson),
-    "jsResults" -> results.filter(_.isInstanceOf[JsWebResult]).map(_.toJson),
-    "points" -> results.map(_.points).sum,
-    "maxPoints" -> exercise.maxPoints(part)
+    "jsResults" -> results.filter(_.isInstanceOf[JsWebResult]).map(_.toJson)
   )
 
 }
@@ -60,7 +60,7 @@ sealed trait WebResult extends EvaluationResult {
 
   def toJson: JsObject
 
-  def points: Double = ???
+  def points: Double
 
 }
 
@@ -86,8 +86,7 @@ case class ElementResult(task: WebCompleteTask, foundElement: Option[WebElement]
 
   override def toJson: JsObject = Json.obj(
     "id" -> task.task.id,
-    "points" -> points,
-    "maxPoints" -> task.maxPoints,
+    "points" -> points, "maxPoints" -> task.maxPoints,
     "success" -> (foundElement.isDefined && textContentResult.forall(_.isSuccessful) && attributeResults.forall(_.isSuccessful)),
     "elementFound" -> foundElement.isDefined,
     "textContent" -> (textContentResult map (_.toJson)),
@@ -122,11 +121,12 @@ case class TextContentResult(f: String, a: String) extends TextResult("Der Texti
 
   def toJson: JsObject = Json.obj(
     "success" -> isSuccessful,
+    "points" -> points, "maxPoints" -> 1,
     "awaited" -> awaitedContent,
     "found" -> foundContent
   )
 
-  def points: Double = if (isSuccessful) 1 else 0
+  val points: Double = if (isSuccessful) 1 else 0
 
 }
 
@@ -134,18 +134,19 @@ case class AttributeResult(attribute: Attribute, foundValue: Option[String]) ext
 
   def toJson: JsObject = Json.obj(
     "success" -> isSuccessful,
+    "points" -> points, "maxPoints" -> 1,
     "attrName" -> attribute.key,
     "awaited" -> awaitedContent,
     "found" -> foundContent
   )
 
-  def points: Double = if (isSuccessful) 1d else foundValue map (_ => 0.5) getOrElse 0d
+  val points: Double = if (isSuccessful) 1d else foundValue map (_ => 0.5) getOrElse 0d
 
 }
 
 // Javascript Results
 
-case class JsWebResult(task: WebCompleteTask, preResults: Seq[ConditionResult], actionPerformed: Boolean, postResults: Seq[ConditionResult])
+case class JsWebResult(task: JsCompleteTask, preResults: Seq[ConditionResult], actionPerformed: Boolean, postResults: Seq[ConditionResult])
   extends WebResult {
 
   override val success: SuccessType = SuccessType.ofBool(allResultsSuccessful(preResults) && actionPerformed && allResultsSuccessful(postResults))
@@ -155,12 +156,18 @@ case class JsWebResult(task: WebCompleteTask, preResults: Seq[ConditionResult], 
     (postResults map (_.render) mkString "\n")
 
   override def toJson: JsObject = Json.obj(
-    "preResults" -> Json.arr(),
-    "action" -> "",
-    "postResults" -> Json.arr()
+    "id" -> task.task.id,
+    "points" -> points, "maxPoints" -> task.maxPoints,
+    "success" -> (preResults.forall(_.isSuccessful) && actionPerformed && postResults.forall(_.isSuccessful)),
+    "preResults" -> preResults.map(_.toJson),
+    "actionDescription" -> task.task.actionDescription,
+    "actionPerformed" -> actionPerformed,
+    "postResults" -> postResults.map(_.toJson)
 
     // FIXME: implement!
   )
+
+  override val points: Double = preResults.map(_.points).sum + (if (actionPerformed) 1 else 0) + postResults.map(_.points).sum
 
 }
 
@@ -170,5 +177,15 @@ case class ConditionResult(override val success: SuccessType, condition: JsCondi
     s"""${if (condition.isPrecondition) "Vor" else "Nach"}bedingung konnte ${if (isSuccessful) "" else "nicht"} verifiziert werden.</p>
        |  <p>${condition.description}</p>
        |  ${if (isSuccessful) "" else s"<p>Element hatte aber folgenden Wert: $gottenValue</p>"}""".stripMargin)
+
+  def points: Double = if (isSuccessful) 1 else 0
+
+  def toJson: JsObject = Json.obj(
+    "points" -> points, "maxPoints" -> condition.maxPoints,
+    "success" -> isSuccessful,
+    "description" -> condition.description,
+    "awaited" -> condition.awaitedValue,
+    "gotten" -> gottenValue
+  )
 
 }

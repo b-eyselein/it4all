@@ -48,6 +48,8 @@ function renderAttrResult(attrResult) {
 /**
  * @param {object} result
  * @param {int} result.id
+ * @param {int} result.points
+ * @param {int} result.maxPoints
  * @param {success} result.success
  * @param {boolean} result.elementFound
  * @param {object | null} result.textContent
@@ -57,7 +59,7 @@ function renderAttrResult(attrResult) {
 function renderHtmlResult(result) {
     let subHtml = `<div class="alert alert-${result.success ? 'success' : 'danger'}">`;
 
-    subHtml += '<b>Teilaufgabe ' + result.id + '</b>: ' + $('#text_' + result.id).text() + '<hr>';
+    subHtml += `<b>Teilaufgabe ${result.id}</b>: ${$('#text_' + result.id).text()} (${ result.points} / ${result.maxPoints} Punkte)<hr>`;
 
     if (result.elementFound) {
         subHtml += `<p><span class="glyphicon glyphicon-ok"></span> Das Element konnte gefunden werden.</p>`;
@@ -77,16 +79,94 @@ function renderHtmlResult(result) {
     return subHtml;
 }
 
+/**
+ * @param {object} condRes
+ * @param {int} condRes.points
+ * @param {int} condRes.maxPoints
+ * @param {boolean} condRes.success
+ * @param {string} condRes.description
+ * @param {string} condRes.awaited
+ * @param {string} condRes.gotten
+ *
+ * @return {string}
+ */
+function renderConditionResult(condRes) {
+    if (condRes.success) {
+        return `<p><span class="glyphicon glyphicon-ok"></span> ${condRes.description}&quot;</p>`
+    } else {
+        return `
+<p><span class="glyphicon glyphicon-remove"></span> ${condRes.description}&quot;
+    <ul>
+        <li>Gesucht war:    &quot;${condRes.awaited}&quot;</li>
+        <li>Gefunden wurde aber: &quot;${condRes.gotten}&quot;</li>
+    </ul>
+</p>`.trim();
+    }
+}
+
+/**
+ * @param {object} result
+ * @param {int} result.id
+ * @param {int} result.points
+ * @param {int} result.maxPoints
+ * @param {boolean} result.success
+ * @param {object[]} result.preResults
+ * @param {string} result.actionDescription
+ * @param {boolean} result.actionPerformed
+ * @param {object[]} result.postResults
+ *
+ * @return {string}
+ */
 function renderJsResult(result) {
-    // let subhtml = "";
-    // TODO: implement!
-    return '';
+    let subHtml = `<div class="alert alert-${result.success ? 'success' : 'danger'}">`;
+
+    subHtml += `<b>Test ${result.id}:</b> (${ result.points} / ${result.maxPoints} Punkte)<hr>`;
+
+    for (let preResult of result.preResults) {
+        subHtml += renderConditionResult(preResult);
+    }
+
+    if (result.actionDescription) {
+        subHtml += `<p><span class="glyphicon glyphicon-ok"></span> ${result.actionDescription}&quot;</p>`;
+    } else {
+        subHtml += `<p><span class="glyphicon glyphicon-remove"></span> ${result.actionDescription}&quot;</p>`;
+    }
+
+    for (let postResult of result.postResults) {
+        subHtml += renderConditionResult(postResult);
+    }
+
+    subHtml += ` </div>`;
+    return subHtml;
+}
+
+/**
+ * @param {object[]} results
+ * @param {function} renderFunc
+ * @return {string}
+ */
+function renderResults(results, renderFunc) {
+    let html = '';
+
+    for (let i = 0; i < results.length; i = i + 3) {
+        let secondToRender = results[i + 1];
+        let thirdToRender = results[i + 2];
+        html += `
+<div class="row">
+    <div class="col-md-4">${renderFunc(results[i])}</div>
+    <div class="col-md-4">${secondToRender === undefined ? '' : renderFunc(secondToRender)}</div>
+    <div class="col-md-4">${thirdToRender === undefined ? '' : renderFunc(thirdToRender)}</div>
+</div>`.trim();
+    }
+
+    return html;
 }
 
 /**
  *
  * @param {object} corr
  * @param {boolean} corr.solutionSaved
+ * @param {string} corr.part
  * @param {success} corr.success
  * @param {int} corr.points
  * @param {int} corr.maxPoints
@@ -115,20 +195,12 @@ function onWebCorrectionSuccess(corr) {
             html += `<div class="alert alert-warning">Ihre Lösung war nicht komplett richtig. Sie haben ${corr.points} von ${corr.maxPoints} erreicht.</div>`;
         }
 
-        for (let i = 0; i < corr.htmlResults.length; i = i + 3) {
-            let secondToRender = corr.htmlResults[i + 1];
-            let thirdToRender = corr.htmlResults[i + 2];
-            html += `
-<div class="row">
-    <div class="col-md-4">${renderHtmlResult(corr.htmlResults[i])}</div>
-    <div class="col-md-4">${secondToRender === undefined ? '' : renderHtmlResult(secondToRender)}</div>
-    <div class="col-md-4">${thirdToRender === undefined ? '' : renderHtmlResult(thirdToRender)}</div>
-</div>`.trim();
+        if (corr.part === 'html') {
+            html += renderResults(corr.htmlResults, renderHtmlResult);
+        } else {
+            html += renderResults(corr.jsResults, renderJsResult);
         }
 
-        for (let result of corr.jsResults) {
-            html += renderJsResult(result);
-        }
     }
 
     $('#correction').html(html);

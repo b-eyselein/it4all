@@ -39,7 +39,7 @@ trait WebCompleteTask {
 
   val task: WebTask
 
-  def maxPoints: Double = ???
+  def maxPoints: Double
 
 }
 
@@ -47,7 +47,9 @@ case class HtmlCompleteTask(task: HtmlTask, attributes: Seq[Attribute]) extends 
   override def maxPoints: Double = 1 + task.textContent.map(_ => 1d).getOrElse(0d) + attributes.size
 }
 
-case class JsCompleteTask(task: JsTask, conditions: Seq[JsCondition]) extends WebCompleteTask
+case class JsCompleteTask(task: JsTask, conditions: Seq[JsCondition]) extends WebCompleteTask {
+  override def maxPoints: Double = 1 + conditions.size
+}
 
 class WebExTag(part: String, hasExes: Boolean) extends ExTag {
 
@@ -89,21 +91,26 @@ case class Attribute(key: String, taskId: Int, exerciseId: Int, value: String)
 
 case class JsTask(id: Int, exerciseId: Int, text: String, xpathQuery: String, actionType: JsActionType, keysToSend: Option[String]) extends WebTask {
 
-  def perform(context: SearchContext): Boolean = Option(context.findElement(By.xpath(xpathQuery))) match {
-    case None          => false
-    case Some(element) =>
-      actionType match {
-        case JsActionType.CLICK   =>
-          element.click()
-          true
-        case JsActionType.FILLOUT =>
-          element.clear()
-          element.sendKeys(keysToSend getOrElse "")
-          // click on other element to fire the onchange event...
-          context.findElement(By.xpath("//body")).click()
-          true
-        case _                    => false
-      }
+  def perform(context: SearchContext): Boolean = Option(context findElement By.xpath(xpathQuery)) match {
+    case None => false
+
+    case Some(element) => actionType match {
+      case JsActionType.CLICK   =>
+        element.click()
+        true
+      case JsActionType.FILLOUT =>
+        element.clear()
+        element.sendKeys(keysToSend getOrElse "")
+        // click on other element to fire the onchange event...
+        context.findElement(By.xpath("//body")).click()
+        true
+      case _                    => false
+    }
+  }
+
+  def actionDescription: String = actionType match {
+    case JsActionType.CLICK   => s"Klicke auf Element mit XPath Query $xpathQuery"
+    case JsActionType.FILLOUT => s"Sende Keys '${keysToSend getOrElse ""} an Element mit XPath Query $xpathQuery"
   }
 
 }
@@ -111,6 +118,8 @@ case class JsTask(id: Int, exerciseId: Int, text: String, xpathQuery: String, ac
 case class JsCondition(id: Int, taskId: Int, exerciseId: Int, xpathQuery: String, isPrecondition: Boolean, awaitedValue: String) {
 
   def description = s"Element mit XPath '$xpathQuery' sollte den Inhalt '$awaitedValue' haben"
+
+  def maxPoints: Double = 1
 
 }
 
