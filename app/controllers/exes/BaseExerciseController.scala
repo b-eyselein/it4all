@@ -80,8 +80,10 @@ abstract class BaseExerciseController[Ex <: Exercise, CompEx <: CompleteEx[Ex], 
     */
   def saveAndPreviewExercises(admin: User, readTries: Seq[Try[CompEx]]): Future[Result] = {
     val read: Seq[CompEx] = readTries flatMap {
-      case Success(x) => Some(x)
-      case Failure(_) => None
+      case Success(x)     => Some(x)
+      case Failure(error) =>
+        Logger.error("There has been an error reading a exercise", error)
+        None
     }
 
     saveRead(read) map (_ => Ok(previewExercises(admin, read))) recover {

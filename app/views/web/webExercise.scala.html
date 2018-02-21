@@ -58,13 +58,13 @@
 
                 @part match {
                     case model.web.HtmlPart => {
-                        @for(task <- tasks.sortBy(_.task.id)) {
-                            <div class="pre-scrollable">
-                                <ol>
-                                    <li><p id="text_@task.task.id">@task.task.text</p></li>
-                                </ol>
-                            </div>
-                        }
+                        <div class="pre-scrollable">
+                            <ol>
+                            @for(task <- tasks.sortBy(_.task.id)) {
+                                <li><p id="text_@task.task.id">@task.task.text</p></li>
+                            }
+                            </ol>
+                        </div>
                     }
                     case model.web.JsPart => {
                         <p>Es gibt insgesamt 4 Testf&auml;lle.</p>
