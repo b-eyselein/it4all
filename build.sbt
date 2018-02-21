@@ -12,8 +12,8 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
 // Resolver for JFrog Uni Wue
 resolvers ++= Seq(
-  "Artifactory" at "http://132.187.11.33:8081/artifactory/libs-release/",
-  "Snapshot Artifactory" at "http://132.187.11.33:8081/artifactory/libs-snapshot/"
+  "Artifactory" at "http://artifactory-ls6.informatik.uni-wuerzburg.de/artifactory/libs-release",
+  "Snapshot Artifactory" at "http://artifactory-ls6.informatik.uni-wuerzburg.de/artifactory/libs-snapshot/"
 )
 // Used libraries from Maven Repository
 libraryDependencies ++= Seq(

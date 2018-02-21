@@ -8,7 +8,6 @@ import javax.xml.transform.stream.StreamSource
 import javax.xml.validation.SchemaFactory
 
 import dtdparser.{DTDLine, DTDParser}
-import model.xml.XmlEnums._
 import org.xml.sax.InputSource
 
 import scala.language.implicitConversions
@@ -28,20 +27,25 @@ object XmlCorrector {
 
   private val XsdSchemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
 
-  def correct(xml: Path, grammar: Path, exerciseType: XmlExType): Seq[XmlError] = exerciseType match {
-    case (XmlExType.XML_XSD | XmlExType.XSD_XML) => correctXmlAndXsd(xml, grammar)
-    case (XmlExType.XML_DTD | XmlExType.DTD_XML) => correctDtdAndXml(xml)
+  def correct(xml: Path, grammar: Path): Seq[XmlError] = {
+    //    exerciseType match {
+    //      case (XmlExType.XML_XSD | XmlExType.XSD_XML) => correctXmlAndXsd(xml, grammar)
+    //      case (XmlExType.XML_DTD | XmlExType.DTD_XML) => correctDtdAndXml(xml)
+    //    }
+    correctDtdAndXml(xml)
   }
 
-  def correct(xml: String, grammar: String, exType: XmlExType): Seq[XmlError] = {
+  def correct(xml: String, grammar: String): Seq[XmlError] = {
     // FIXME: for Playground...
     val xmlReader = new StringReader(xml)
-    val grammarReader = new StringReader(grammar)
+    //    val grammarReader = new StringReader(grammar)
 
-    exType match {
-      case (XmlExType.XML_XSD | XmlExType.XSD_XML) => correctXsdAndXmlStreamSource(xmlReader, grammarReader)
-      case (XmlExType.XML_DTD | XmlExType.DTD_XML) => correctDtdAndXmlInputSource(xmlReader)
-    }
+    //    exType match {
+    //      case (XmlExType.XML_XSD | XmlExType.XSD_XML) => correctXsdAndXmlStreamSource(xmlReader, grammarReader)
+    //      case (XmlExType.XML_DTD | XmlExType.DTD_XML) =>
+    //    }
+
+    correctDtdAndXmlInputSource(xmlReader)
     ???
   }
 
@@ -51,7 +55,7 @@ object XmlCorrector {
     // FIXME: use...
     val parsedLines: Seq[Try[DTDLine]] = DTDParser.parseDTD(dtd)
 
-    println(exercise.refFileContent)
+    println("Grammar file content: " + exercise.sampleGrammar)
 
     println(parsedLines)
 

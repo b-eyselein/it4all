@@ -493,7 +493,8 @@ CREATE TABLE IF NOT EXISTS xml_exercises (
 
   exercise_type       ENUM ('XML_XSD', 'XML_DTD', 'XSD_XML', 'DTD_XML')    DEFAULT 'XML_XSD',
   grammar_description TEXT,
-  root_node           VARCHAR(20),
+  sample_grammar      TEXT,
+  root_node           VARCHAR(30),
   ref_file_content    TEXT
 );
 
@@ -528,6 +529,8 @@ CREATE TABLE IF NOT EXISTS xml_grammar_solutions (
 # --- !Downs
 
 # Xml
+
+DROP TABLE IF EXISTS xml_grammar_solutions;
 
 DROP TABLE IF EXISTS xml_document_solutions;
 

@@ -6,8 +6,11 @@ author: bje40dc
 text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
 status: ACCEPTED
 
-exerciseType: XML_DTD
-refFileContent: |
+grammarDescription: >
+  In dieser XML-Datei soll eine Party [party] beschrieben werden. Diese hat ein Datum [datum] und eine Liste von Gästen [gast] (mindestens ein Gast war
+  anwesend). Für jeden Gast sollen der Vor- [vorname] und Nachname [nachname] und die Getränke [getraenk], die er getrunken hat, notiert werden. Jeder Gast
+  hat mindestens ein Getränk getrunken. Außerdem soll für jeden Gast gespeichert werden, ob er nüchtern [nuechtern] und ob er ledig [ledig] ist.
+sampleGrammar: |
   <!ELEMENT party (gast+)>
   <!ATTLIST party datum CDATA #REQUIRED>
   <!ELEMENT gast (vorname, nachname, getraenk+)>
@@ -18,10 +21,6 @@ refFileContent: |
     ledig (true | false) #REQUIRED
     nuechtern (true | false) #REQUIRED
   >
-grammarDescription: >
-  In dieser XML-Datei soll eine Party [party] beschrieben werden. Diese hat ein Datum [datum] und eine Liste von Gästen [gast] (mindestens ein Gast war
-  anwesend). Für jeden Gast sollen der Vor- [vorname] und Nachname [nachname] und die Getränke [getraenk], die er getrunken hat, notiert werden. Jeder Gast
-  hat mindestens ein Getränk getrunken. Außerdem soll für jeden Gast gespeichert werden, ob er nüchtern [nuechtern] und ob er ledig [ledig] ist.
 rootNode: party
 ---
 id: 2
@@ -30,20 +29,16 @@ author: bje40dc
 text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
 status: ACCEPTED
 
-exerciseType: XML_DTD
-refFileContent: |
+grammarDescription: >
+  TODO!
+sampleGrammar: |
   <!ELEMENT lecture (lecturer+, date+, student+)>
-
   <!ELEMENT lecturer (name)>
   <!ATTLIST lecturer title CDATA #REQUIRED>
-
   <!ELEMENT date (hours)>
-  <!ATTLIST date weekday (mon | tue | wed | thu | fri | sat | sun)
-                  #REQUIRED>
-
+  <!ATTLIST date weekday (mon | tue | wed | thu | fri | sat | sun) #REQUIRED>
   <!ELEMENT student (name)>
   <!ATTLIST student matrikel CDATA #REQUIRED>
-
   <!ELEMENT name (#PCDATA)>
   <!ELEMENT hours (#PCDATA)>
 rootNode: lecture
@@ -54,26 +49,19 @@ author: bje40dc
 text: Erstellen Sie zu dieser DTD ein passendes Xml-Dokument
 status: ACCEPTED
 
-exerciseType: XML_DTD
-refFileContent: |
+grammarDescription: >
+  TODO!
+sampleGrammar: |
   <!ELEMENT krankenhaus (arzt+)>
-
   <!ELEMENT arzt (name, termin+)>
-  <!ATTLIST arzt id CDATA #REQUIRED>
-
   <!ELEMENT name (#PCDATA)>
-
   <!ELEMENT termin (datum, uhrzeit, patient, beschreibung?)>
-  <!ATTLIST termin art
-            (untersuchung | behandlung | operation) #REQUIRED>
-
+  <!ATTLIST termin art (untersuchung | behandlung | operation) #REQUIRED>
   <!ELEMENT datum (#PCDATA)>
   <!ELEMENT uhrzeit (#PCDATA)>
   <!ELEMENT patient (#PCDATA)>
   <!ELEMENT beschreibung (#PCDATA)>
-grammarDescription: >
-  TODO!
-rootNode: hospital
+rootNode: krankenhaus
 ---
 id: 4
 title: Frühstück
@@ -81,32 +69,15 @@ author: bje40dc
 text: Erstellen Sie für dieses Xml-Dokument eine passende DTD
 status: ACCEPTED
 
-exerciseType: DTD_XML
-refFileContent: |
-  <?xml version="1.0" encoding="UTF-8"?>
-  <!DOCTYPE breakfast SYSTEM "breakfast.dtd">
-  <breakfast>
-      <food>
-          <name>Belgian Waffles</name>
-          <price>$5.95</price>
-          <description>
-              Two of our famous Belgian Waffles with plenty of real
-              maple syrup
-          </description>
-          <calories>650</calories>
-      </food>
-      <food>
-          <name>Strawberry Belgian Waffles</name>
-          <price>$7.95</price>
-          <description>
-              Light Belgian waffles covered with strawberries and
-              whipped cream
-          </description>
-          <calories>900</calories>
-      </food>
-  </breakfast>
 grammarDescription: >
   TODO!
+sampleGrammar: |
+  <!ELEMENT breakfast (food+)>
+  <!ELEMENT food (name, price, description, calories)>
+  <!ELEMENT name (#PCDATA)>
+  <!ELEMENT price (#PCDATA)>
+  <!ELEMENT desciption (#PCDATA)>
+  <!ELEMENT calories (#PCDATA)>
 rootNode: breakfast
 ---
 id: 5
@@ -115,35 +86,18 @@ author: bje40dc
 text: Erstellen Sie für dieses Xml-Dokument eine passende DTD
 status: ACCEPTED
 
-exerciseType: DTD_XML
-refFileContent: |
-  <?xml version="1.0" encoding="utf-8"?>
-  <!DOCTYPE Bibliothek SYSTEM "bibliothek.dtd">
-  <Bibliothek>
-      <Abteilung>
-          <Buch id="1">
-              <ISBN>978-3-7742-1142-1</ISBN>
-              <Titel>Basic cooking</Titel>
-              <Autor>Sabine Saelzer</Autor>
-              <Co-Autor>Sebastian Dickhaut</Co-Autor>
-              <Co-Autor>Barbara Bonisolli</Co-Autor>
-              <Co-Autor>Alexander Walter</Co-Autor>
-              <Auflage>27</Auflage>
-              <Jahr>2013</Jahr>
-          </Buch>
-          <Buch id="2">
-              <ISBN>978-1-4454-5973-8</ISBN>
-              <Titel>Studentenkueche</Titel>
-              <Verlag>Parragon</Verlag>
-              <Jahr>2012</Jahr>
-          </Buch>
-          <Buch id="3">
-              <ISBN>978-1-4748-2866-6</ISBN>
-              <Titel>Mediterran</Titel>
-              <Verlag>Parragon</Verlag>
-          </Buch>
-      </Abteilung>
-  </Bibliothek>
 grammarDescription: >
   TODO!
-rootNode: library
+sampleGrammar: |
+  <!ELEMENT bibliothek (abteilung+)>
+  <!ELEMENT abteilung (buch+)>
+  <!ELEMENT buch (isbn, titel, autor, coautor*, verlag?, auflage?, jahr>
+  <!ATTLIST buch id CDATA #REQUIRED>
+  <!ELEMENT isbn (#PCDATA)>
+  <!ELEMENT titel (#PCDATA)>
+  <!ELEMENT autor (#PCDATA)>
+  <!ELEMENT coautor (#PCDATA)>
+  <!ELEMENT verlag (#PCDATA)>
+  <!ELEMENT auflage (#PCDATA)>
+  <!ELEMENT jahr (#PCDATA)>
+rootNode: bibliothek

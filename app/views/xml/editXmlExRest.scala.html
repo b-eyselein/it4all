@@ -1,27 +1,23 @@
 @(exerciseOpt: Option[model.xml.XmlExercise])
 
-<fieldset>
-    <legend>Typ, Wurzelknoten und Inhalt der Referenzdatei</legend>
+<div class="form-group">
+    <label for="@model.xml.XmlConsts.RootNodeName">Wurzelknoten:</label>
+    <input class="form-control" name="@model.xml.XmlConsts.RootNodeName" id="@model.xml.XmlConsts.RootNodeName" required
+        @Html(exerciseOpt map (ex => s"""value="${ex.rootNode}"""") getOrElse "")>
+</div>
 
-    <div class="form-group row">
-        <div class="col-sm-6">
-            <label for="@model.xml.XmlConsts.ExerciseTypeName">Typ:</label>
-            <select class="form-control" name="@model.xml.XmlConsts.ExerciseTypeName" id="@model.xml.XmlConsts.ExerciseTypeName" required>
-            @for(exType <- model.xml.XmlEnums.XmlExType.values) {
-                <option value="@exType" @exType.isSelected(exerciseOpt.map(_.exerciseType).getOrElse(model.xml.XmlEnums.XmlExType.XML_DTD))>@exType.render</option>
-            }
-            </select>
-        </div>
-        <div class="col-sm-6">
-            <label for="@model.xml.XmlConsts.RootNodeName">Wurzelknoten:</label>
-            <input class="form-control" name="@model.xml.XmlConsts.RootNodeName" id="@model.xml.XmlConsts.RootNodeName" required
-                @Html(exerciseOpt.map(ex => s"""value="${ex.rootNode}"""").getOrElse(""))>
-        </div>
+<div class="form-group row">
+    <div class="col-md-6">
+        <label for="grammarDescription">Grammatikbeschreibung</label>
+        <textarea rows="15" class="form-control" name="grammarDescription" id="grammarDescription" placeholder="Beschreibung der Grammatik" required>@{
+            exerciseOpt map (ex => ex.grammarDescription) getOrElse ""
+        }</textarea>
     </div>
 
-    <div class="form-group">
-        <label for="referenceFileContent">Inhalt der Referenzdatei</label>
-        <textarea rows="10" class="form-control" name="referenceFileContent" placeholder="<!ELEMENT root ...>" required>@Html(exerciseOpt.map(ex => ex.refFileContent).getOrElse(""))
-        </textarea>
+    <div class="col-md-6">
+        <label for="referenceFileContent">Mustergrammaik</label>
+        <textarea rows="15" class="form-control" name="referenceFileContent" id="referenceFileContent" placeholder="<!ELEMENT root ...>" required>@{
+            Html(exerciseOpt map (ex => ex.sampleGrammar) getOrElse "")
+        }</textarea>
     </div>
-</fieldset>
+</div>

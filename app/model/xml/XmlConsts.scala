@@ -6,8 +6,9 @@ object XmlConsts extends Consts {
 
   val GrammarDescriptionName = "grammarDescription"
 
-  val RefFileContentName = "refFileContent"
-  val RootNodeName       = "rootNode"
+  val RootNodeName = "rootNode"
+
+  val SampleGrammarName = "sampleGrammar"
 
   val STANDARD_XML_PLAYGROUND: String =
     """<?xml version="1.0" encoding="utf-8"?>

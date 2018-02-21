@@ -4,49 +4,35 @@ import javax.inject.Inject
 
 import controllers.exes.idPartExes.XmlToolObject
 import model.Enums.ExerciseState
-import model._
 import model.xml.XmlEnums.XmlExType
+import model.{BaseValues, Exercise, ExerciseTableDefs, PartsCompleteEx}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.api.mvc.Call
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object XmlExercise {
-
-  def tupled(t: (Int, String, String, String, ExerciseState, XmlExType, String, String, String)): XmlExercise =
-    XmlExercise(t._1, t._2, t._3, t._4, t._5, t._6, t._7, t._8, t._9)
-
-  def apply(id: Int, title: String, author: String, text: String, state: ExerciseState, exerciseType: XmlExType,
-            grammarDescription: String, rootNode: String, refFileContent: String): XmlExercise =
-    new XmlExercise(BaseValues(id, title, author, text, state), exerciseType, grammarDescription, rootNode, refFileContent)
-
-  def unapply(arg: XmlExercise): Option[(Int, String, String, String, ExerciseState, XmlExType, String, String, String)] =
-    Some((arg.id, arg.title, arg.author, arg.text, arg.state, arg.exerciseType, arg.grammarDescription, arg.rootNode, arg.refFileContent))
-
-}
-
-case class XmlExercise(override val baseValues: BaseValues, exerciseType: XmlExType, grammarDescription: String, rootNode: String, refFileContent: String)
+case class XmlExercise(override val id: Int, override val title: String, override val author: String, override val text: String, override val state: ExerciseState,
+                       grammarDescription: String, sampleGrammar: String, rootNode: String)
   extends Exercise with PartsCompleteEx[XmlExercise, XmlExPart] {
 
-  val fixedStart: String = if (exerciseType != XmlExType.XML_DTD) "" else
-    s"""<?xml version="1.0" encoding="UTF-8"?>
-       |<!DOCTYPE $rootNode SYSTEM "$rootNode.dtd">""".stripMargin
+  def this(baseValues: BaseValues, grammarDescription: String, sampleGrammar: String, rootNode: String) =
+    this(baseValues.id, baseValues.title, baseValues.author, baseValues.text, baseValues.state, grammarDescription, sampleGrammar, rootNode)
+
+  override def baseValues: BaseValues = BaseValues(id, title, author, text, state)
 
   override def ex: XmlExercise = this
 
-  override val tags: Seq[ExTag] = Seq(ex.exerciseType)
-
   override def preview: Html = views.html.xml.xmlPreview.render(this)
 
-  override def exerciseRoutes: Map[Call, String] = XmlToolObject.exerciseRoutes(this)
+  override def exerciseRoutes: Map[play.api.mvc.Call, String] = XmlToolObject.exerciseRoutes(this)
 
   override def hasPart(partType: XmlExPart): Boolean = true
 
   def getTemplate(part: XmlExPart): String = part match {
-    case DocumentCreationXmlPart => fixedStart
-    case GrammarCreationXmlPart  => s"<!ELEMENT $rootNode ()>"
+    case DocumentCreationXmlPart => s"""<?xml version="1.0" encoding="UTF-8"?>
+                                       |<!DOCTYPE $rootNode SYSTEM "$rootNode.dtd">"""
+    case GrammarCreationXmlPart  => s"<!ELEMENT $rootNode (EMPTY)>"
   }
 
   override def textForPart(urlName: String): String = XmlExParts.values.find(_.urlName == urlName) match {
@@ -66,6 +52,8 @@ sealed trait XmlSolution {
 case class XmlDocumentSolution(exerciseId: Int, username: String, solution: String) extends XmlSolution
 
 case class XmlGrammarSolution(exerciseId: Int, username: String, solution: String) extends XmlSolution
+
+// Table defs
 
 class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
   extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseTableDefs[XmlExercise, XmlExercise] {
@@ -113,20 +101,18 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     db.run(action) map (_ => true) recover { case _: Exception => false }
   }
 
-  // Deletion
+  // Actual table defs
 
   class XmlExercisesTable(tag: Tag) extends HasBaseValuesTable[XmlExercise](tag, "xml_exercises") {
 
     def rootNode = column[String]("root_node")
 
-    def exerciseType = column[XmlExType]("exercise_type")
-
     def grammarDescription = column[String]("grammar_description")
 
-    def refFileContent = column[String]("ref_file_content")
+    def sampleGrammar = column[String]("sample_grammar")
 
 
-    def * = (id, title, author, text, state, exerciseType, grammarDescription, rootNode, refFileContent) <> (XmlExercise.tupled, XmlExercise.unapply)
+    def * = (id, title, author, text, state, grammarDescription, sampleGrammar, rootNode) <> (XmlExercise.tupled, XmlExercise.unapply)
 
   }
 

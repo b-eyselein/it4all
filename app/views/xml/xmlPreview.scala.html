@@ -1,7 +1,7 @@
 @(exercise: model.xml.XmlExercise)
 
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div class="row">
             <div class="col-md-4"><b>ID</b></div>
             <div class="col-md-8">@exercise.id</div>
@@ -32,12 +32,15 @@
             <div class="col-md-8">@exercise.rootNode</div>
         </div>
     </div>
-
-    <div class="col-md-6">
-        <p><b>Inhalt der Referenzdatei:</b></p>
-        <pre>@exercise.refFileContent</pre>
-    </div>
 </div>
 
-<p><b>Grammatikbeschreibung:</b></p>
-<p>@exercise.grammarDescription</p>
+<div class="row">
+    <div class="col-md-6">
+        <p><b>Grammatikbeschreibung:</b></p>
+        <p>@exercise.grammarDescription</p>
+    </div>
+    <div class="col-md-6">
+        <p><b>Mustergrammatik:</b></p>
+        <pre>@exercise.sampleGrammar</pre>
+    </div>
+</div>

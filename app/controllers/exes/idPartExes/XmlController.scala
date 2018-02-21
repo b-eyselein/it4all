@@ -9,7 +9,6 @@ import model.User
 import model.core._
 import model.core.tools.ExerciseOptions
 import model.xml.XmlConsts._
-import model.xml.XmlEnums._
 import model.xml._
 import model.yaml.MyYamlFormat
 import play.api.db.slick.DatabaseConfigProvider
@@ -61,7 +60,7 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
     Solution.stringSolForm.bindFromRequest.fold(
       _ => BadRequest("There has been an error!"),
       sol => {
-        val correctionResult = XmlCorrector.correct(sol.learnerSolution, "", XmlExType.XML_DTD)
+        val correctionResult = XmlCorrector.correct(sol.learnerSolution, "")
         val result = XmlCompleteResult(sol.learnerSolution, solutionSaved = false, correctionResult)
         Ok(result.render)
       })
@@ -75,20 +74,13 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
       case xds: XmlDocumentSolution =>
         checkAndCreateSolDir(user.username, completeEx) flatMap (dir => {
 
-          val grammarAndXmlTries: Try[(Path, Path)] = if (completeEx.exerciseType == XmlExType.DTD_XML || completeEx.exerciseType == XmlExType.XSD_XML) {
-            for {
-              grammar <- write(dir, completeEx.rootNode + "." + completeEx.exerciseType.gramFileEnding, xds.solution)
-              xml <- write(dir, completeEx.rootNode + "." + XML_FILE_ENDING, completeEx.refFileContent)
-            } yield (grammar, xml)
-          } else {
-            for {
-              grammar <- write(dir, completeEx.rootNode + "." + completeEx.exerciseType.gramFileEnding, completeEx.refFileContent)
-              xml <- write(dir, completeEx.rootNode + "." + XML_FILE_ENDING, xds.solution)
-            } yield (grammar, xml)
-          }
+          val grammarAndXmlTries: Try[(Path, Path)] = for {
+            grammar <- write(dir, completeEx.rootNode + ".dtd", completeEx.sampleGrammar)
+            xml <- write(dir, completeEx.rootNode + "." + XML_FILE_ENDING, xds.solution)
+          } yield (grammar, xml)
 
           grammarAndXmlTries map { case (grammar, xml) =>
-            val correctionResult = XmlCorrector.correct(xml, grammar, completeEx.exerciseType)
+            val correctionResult = XmlCorrector.correct(xml, grammar)
             XmlCompleteResult(xds.solution, solSaved, correctionResult)
           }
         })
@@ -114,7 +106,7 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   private def exScript: Html = Html(script(src := controllers.routes.Assets.versioned("javascripts/xml/xmlExercise.js").url).toString)
 
   def renderExRest(exercise: XmlExercise, urlName: String): Html = XmlExParts.values.find(_.urlName == urlName) match {
-    case (None | Some(DocumentCreationXmlPart)) => Html(div(id := "refFileSection")(pre(exercise.refFileContent)).toString)
+    case (None | Some(DocumentCreationXmlPart)) => Html(div(id := "refFileSection")(pre(exercise.sampleGrammar)).toString)
     case Some(GrammarCreationXmlPart)           => Html(p(exercise.grammarDescription).toString)
   }
 
