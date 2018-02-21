@@ -1,8 +1,8 @@
 package controllers.exes.idPartExes
 
+import model.Consts
 import model.core.tools.IdPartExToolObject
 import model.xml.{XmlConsts, XmlExPart, XmlExParts, XmlExercise}
-import model.{Consts, HasBaseValues}
 import play.api.mvc.Call
 
 import scala.language.postfixOps
@@ -13,7 +13,7 @@ object XmlToolObject extends IdPartExToolObject[XmlExPart] {
 
   override def exParts: Seq[XmlExPart] = XmlExParts.values
 
-  override val hasTags : Boolean = true
+  override val hasTags : Boolean = false
   override val toolname: String  = "Xml"
   override val exType  : String  = "xml"
   override val consts  : Consts  = XmlConsts

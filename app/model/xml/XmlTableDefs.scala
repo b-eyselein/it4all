@@ -31,7 +31,7 @@ case class XmlExercise(override val id: Int, override val title: String, overrid
 
   def getTemplate(part: XmlExPart): String = part match {
     case DocumentCreationXmlPart => s"""<?xml version="1.0" encoding="UTF-8"?>
-                                       |<!DOCTYPE $rootNode SYSTEM "$rootNode.dtd">"""
+                                       |<!DOCTYPE $rootNode SYSTEM "$rootNode.dtd">""".stripMargin
     case GrammarCreationXmlPart  => s"<!ELEMENT $rootNode (EMPTY)>"
   }
 

@@ -27,7 +27,7 @@ object WebCorrector {
     }
 
   private def evaluateAttribute(attribute: Attribute, element: WebElement): AttributeResult =
-    AttributeResult(attribute, Try(element getAttribute attribute.key))
+    AttributeResult(attribute, Try(element.getAttribute(attribute.key)).toOption)
 
   private def evaluateJsTask(completeJsTask: JsCompleteTask, searchContext: SearchContext) = {
     val (preconds, postconds) = completeJsTask.conditions.partition(_.isPrecondition)

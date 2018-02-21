@@ -91,7 +91,7 @@ grammarDescription: >
 sampleGrammar: |
   <!ELEMENT bibliothek (abteilung+)>
   <!ELEMENT abteilung (buch+)>
-  <!ELEMENT buch (isbn, titel, autor, coautor*, verlag?, auflage?, jahr>
+  <!ELEMENT buch (isbn, titel, autor, coautor*, verlag?, auflage?, jahr)>
   <!ATTLIST buch id CDATA #REQUIRED>
   <!ELEMENT isbn (#PCDATA)>
   <!ELEMENT titel (#PCDATA)>

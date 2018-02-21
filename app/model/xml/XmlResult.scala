@@ -59,15 +59,3 @@ case class WarningXmlError(e: SAXParseException) extends XmlError(XmlErrorType.W
 
 case class FailureXmlError(msg: String, error: Throwable = null) extends XmlError(XmlErrorType.FAILURE, msg, -1, SuccessType.NONE)
 
-
-class CorrectionErrorHandler extends ErrorHandler {
-
-  val errors: ListBuffer[XmlError] = ListBuffer.empty
-
-  override def error(exception: SAXParseException): Unit = errors += ErrorXmlError(exception)
-
-  override def fatalError(exception: SAXParseException): Unit = errors += FatalXmlError(exception)
-
-  override def warning(exception: SAXParseException): Unit = errors += WarningXmlError(exception)
-
-}

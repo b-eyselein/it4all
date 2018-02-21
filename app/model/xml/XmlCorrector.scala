@@ -8,11 +8,25 @@ import javax.xml.transform.stream.StreamSource
 import javax.xml.validation.SchemaFactory
 
 import dtdparser.{DTDLine, DTDParser}
-import org.xml.sax.InputSource
+import org.xml.sax.{ErrorHandler, InputSource, SAXParseException}
 
+import scala.collection.mutable.ListBuffer
 import scala.language.implicitConversions
 import scala.util.{Failure, Success, Try}
 import scala.xml.SAXException
+
+
+class CorrectionErrorHandler extends ErrorHandler {
+
+  val errors: ListBuffer[XmlError] = ListBuffer.empty
+
+  override def error(exception: SAXParseException): Unit = errors += ErrorXmlError(exception)
+
+  override def fatalError(exception: SAXParseException): Unit = errors += FatalXmlError(exception)
+
+  override def warning(exception: SAXParseException): Unit = errors += WarningXmlError(exception)
+
+}
 
 object XmlCorrector {
 

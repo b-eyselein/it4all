@@ -9,7 +9,6 @@ import model.web.WebCorrector.evaluateWebTask
 import model.web.{WebExPart, _}
 import model.yaml.MyYamlFormat
 import model.{JsonFormat, User}
-import net.jcazevedo.moultingyaml.YamlFormat
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.json.JsValue
@@ -36,7 +35,7 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   override type SolType = WebSolutionType
 
   override def readSolutionFromPostRequest(user: User, id: Int)(implicit request: Request[AnyContent]): Option[WebSolutionType] =
-    Solution.stringSolForm.bindFromRequest().fold(_ => None, sol => ??? /*Some(sol.learnerSolution)*/)
+    Solution.stringSolForm.bindFromRequest().fold(_ => None, _ => ??? /*Some(sol.learnerSolution)*/)
 
   override protected def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: WebExPart): Option[WebSolutionType] =
     jsValue.asStr map (sol => WebSolutionType(part, sol))
@@ -81,7 +80,7 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
       val results = Try(getTasks(exercise, learnerSolution.part) map (task => evaluateWebTask(task, driver)))
 
-      results map (WebCompleteResult(learnerSolution.solution, solutionSaved, _))
+      results map (WebCompleteResult(learnerSolution.solution, exercise, learnerSolution.part, solutionSaved, _))
     }
 
   // Handlers for results
@@ -91,7 +90,7 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   protected def onSubmitCorrectionError(user: User, error: CorrectionException): Result = ???
 
-  protected def onLiveCorrectionResult(result: WebCompleteResult): Result = Ok(result.render)
+  protected def onLiveCorrectionResult(result: WebCompleteResult): Result = Ok(result.toJson)
 
   protected def onLiveCorrectionError(error: CorrectionException): Result = BadRequest("TODO!") // ???
 

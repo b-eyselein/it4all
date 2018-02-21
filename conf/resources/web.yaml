@@ -24,30 +24,30 @@ htmlTasks:
   xpathQuery: /html/body//ul
   attributes:
   - {key: class, value: list-group}
-- text: Erstellen Sie das Listenelement für Audi. Geben Sie diesem Element die Klasse 'list-group-item'.
+- id: 4
+  text: Erstellen Sie das Listenelement für Audi. Geben Sie diesem Element die Klasse 'list-group-item'.
   textContent: Audi
   attributes:
   - {key: class, value: list-group-item}
-  xpathQuery: /html/body//ul/li[1]
-  id: 4
-- text: Erstellen Sie das Listenelement für BMW. Geben Sie diesem Element die Klasse 'list-group-item'.
+  xpathQuery: /html/body//ul/li[contains(text(), 'Audi')]
+- id: 5
+  text: Erstellen Sie das Listenelement für BMW. Geben Sie diesem Element die Klasse 'list-group-item'.
   textContent: BMW
   attributes:
   - {key: class, value: list-group-item}
-  xpathQuery: /html/body//ul/li[2]
-  id: 5
-- text: Erstellen Sie das Listenelement für Mercedes. Geben Sie diesem Element die Klasse 'list-group-item'.
+  xpathQuery: /html/body//ul/li[contains(text(), 'BMW')]
+- id: 6
+  text: Erstellen Sie das Listenelement für Mercedes. Geben Sie diesem Element die Klasse 'list-group-item'.
   textContent: Mercedes
   attributes:
   - {key: class, value: list-group-item}
-  xpathQuery: /html/body//ul/li[3]
-  id: 6
-- text: Erstellen Sie das Listenelement für Volkswagen. Geben Sie diesem Element die Klasse 'list-group-item'.
+  xpathQuery: /html/body//ul/li[contains(text(), 'Mercedes')]
+- id: 7
+  text: Erstellen Sie das Listenelement für Volkswagen. Geben Sie diesem Element die Klasse 'list-group-item'.
   textContent: Volkswagen
   attributes:
   - {key: class, value: list-group-item}
-  xpathQuery: /html/body//ul/li[4]
-  id: 7
+  xpathQuery: /html/body//ul/li[contains(text(), 'Volkswagen')]
 ---
 author: bje40dc
 text: Erstellen Sie eine Tabelle in Html!

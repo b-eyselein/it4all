@@ -5,13 +5,14 @@ import model.Enums.SuccessType._
 import model.core.EvaluationResult._
 import model.core.{CompleteResult, EvaluationResult}
 import org.openqa.selenium.WebElement
+import play.api.libs.json.{JsObject, JsValue, Json}
 import play.twirl.api.Html
 
-import scala.util.Try
+import scala.language.postfixOps
 import scalatags.Text
 import scalatags.Text.all._
 
-case class WebCompleteResult(learnerSolution: String, solutionSaved: Boolean, results: Seq[WebResult]) extends CompleteResult[WebResult] {
+case class WebCompleteResult(learnerSolution: String, exercise: WebCompleteEx, part: WebExPart, solutionSaved: Boolean, results: Seq[WebResult]) extends CompleteResult[WebResult] {
 
   override type SolType = String
 
@@ -40,6 +41,15 @@ case class WebCompleteResult(learnerSolution: String, solutionSaved: Boolean, re
     Html(solSaved + resultsRender)
   }
 
+  def toJson: JsValue = Json.obj(
+    "solutionSaved" -> solutionSaved,
+    "success" -> results.forall(_.isSuccessful),
+    "htmlResults" -> results.filter(_.isInstanceOf[ElementResult]).map(_.toJson),
+    "jsResults" -> results.filter(_.isInstanceOf[JsWebResult]).map(_.toJson),
+    "points" -> results.map(_.points).sum,
+    "maxPoints" -> exercise.maxPoints(part)
+  )
+
 }
 
 sealed trait WebResult extends EvaluationResult {
@@ -48,7 +58,13 @@ sealed trait WebResult extends EvaluationResult {
 
   def render: String
 
+  def toJson: JsObject
+
+  def points: Double = ???
+
 }
+
+// Html & CSS Results
 
 case class ElementResult(task: WebCompleteTask, foundElement: Option[WebElement], attributeResults: Seq[AttributeResult], textContentResult: Option[TextContentResult])
   extends WebResult {
@@ -67,21 +83,25 @@ case class ElementResult(task: WebCompleteTask, foundElement: Option[WebElement]
     case None    => asMsg(success = false, "Element konnte nicht gefunden werden!").toString
     case Some(_) => asMsg(COMPLETE, "Element wurde gefunden.").toString + (textContentResult map (_.render) getOrElse "") + (attributeResults.map(_.render) mkString "\n")
   }
+
+  override def toJson: JsObject = Json.obj(
+    "id" -> task.task.id,
+    "points" -> points,
+    "maxPoints" -> task.maxPoints,
+    "success" -> (foundElement.isDefined && textContentResult.forall(_.isSuccessful) && attributeResults.forall(_.isSuccessful)),
+    "elementFound" -> foundElement.isDefined,
+    "textContent" -> (textContentResult map (_.toJson)),
+    "attributeResults" -> (attributeResults map (_.toJson))
+  )
+
+  override val points: Double = foundElement match {
+    case None    => 0
+    case Some(_) => 1 + (textContentResult map (_.points) getOrElse 0d) + (attributeResults map (_.points) sum)
+  }
+
 }
 
-case class JsWebResult(task: WebCompleteTask, preResults: Seq[ConditionResult], actionPerformed: Boolean, postResults: Seq[ConditionResult])
-  extends WebResult {
-
-  override val success: SuccessType = SuccessType.ofBool(allResultsSuccessful(preResults) && actionPerformed && allResultsSuccessful(postResults))
-
-  override def render: String = (preResults map (_.render) mkString "\n") +
-    asMsg(actionPerformed, s"Aktion konnte ${if (actionPerformed) "" else "nicht"} erfolgreich ausgeführt werden.") +
-    (postResults map (_.render) mkString "\n")
-
-
-}
-
-abstract class TextResult(name: String, foundContent: String, awaitedContent: String) extends EvaluationResult {
+abstract class TextResult(name: String, val foundContent: String, val awaitedContent: String) extends EvaluationResult {
 
   override val success: SuccessType = if (foundContent == null) NONE
   else if (foundContent contains awaitedContent) COMPLETE
@@ -94,11 +114,55 @@ abstract class TextResult(name: String, foundContent: String, awaitedContent: St
     case ERROR     => s"$name konnte aufgrund eines Fehler nicht ueberprueft werden."
   })
 
+  def toJson: JsObject
+
 }
 
-case class TextContentResult(f: String, a: String) extends TextResult("Der Textinhalt", f, a)
+case class TextContentResult(f: String, a: String) extends TextResult("Der Textinhalt", f, a) {
 
-case class AttributeResult(attribute: Attribute, foundValue: Try[String]) extends TextResult(s"Das Attribut '${attribute.key}'", foundValue getOrElse "", attribute.value)
+  def toJson: JsObject = Json.obj(
+    "success" -> isSuccessful,
+    "awaited" -> awaitedContent,
+    "found" -> foundContent
+  )
+
+  def points: Double = if (isSuccessful) 1 else 0
+
+}
+
+case class AttributeResult(attribute: Attribute, foundValue: Option[String]) extends TextResult(s"Das Attribut '${attribute.key}'", foundValue getOrElse "", attribute.value) {
+
+  def toJson: JsObject = Json.obj(
+    "success" -> isSuccessful,
+    "attrName" -> attribute.key,
+    "awaited" -> awaitedContent,
+    "found" -> foundContent
+  )
+
+  def points: Double = if (isSuccessful) 1d else foundValue map (_ => 0.5) getOrElse 0d
+
+}
+
+// Javascript Results
+
+case class JsWebResult(task: WebCompleteTask, preResults: Seq[ConditionResult], actionPerformed: Boolean, postResults: Seq[ConditionResult])
+  extends WebResult {
+
+  override val success: SuccessType = SuccessType.ofBool(allResultsSuccessful(preResults) && actionPerformed && allResultsSuccessful(postResults))
+
+  override def render: String = (preResults map (_.render) mkString "\n") +
+    asMsg(actionPerformed, s"Aktion konnte ${if (actionPerformed) "" else "nicht"} erfolgreich ausgeführt werden.") +
+    (postResults map (_.render) mkString "\n")
+
+  override def toJson: JsObject = Json.obj(
+    "preResults" -> Json.arr(),
+    "action" -> "",
+    "postResults" -> Json.arr()
+
+    // FIXME: implement!
+  )
+
+}
 
 case class ConditionResult(override val success: SuccessType, condition: JsCondition, gottenValue: String) extends EvaluationResult {
 

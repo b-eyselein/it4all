@@ -27,15 +27,25 @@ case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTa
     case HtmlPart => htmlTasks.nonEmpty
     case JsPart   => jsTasks.nonEmpty
   }
+
+  def maxPoints(part: WebExPart): Double = part match {
+    case HtmlPart => htmlTasks.map(_.maxPoints).sum
+    case JsPart   => jsTasks.map(_.maxPoints).sum
+  }
+
 }
 
 trait WebCompleteTask {
 
   val task: WebTask
 
+  def maxPoints: Double = ???
+
 }
 
-case class HtmlCompleteTask(task: HtmlTask, attributes: Seq[Attribute]) extends WebCompleteTask
+case class HtmlCompleteTask(task: HtmlTask, attributes: Seq[Attribute]) extends WebCompleteTask {
+  override def maxPoints: Double = 1 + task.textContent.map(_ => 1d).getOrElse(0d) + attributes.size
+}
 
 case class JsCompleteTask(task: JsTask, conditions: Seq[JsCondition]) extends WebCompleteTask
 

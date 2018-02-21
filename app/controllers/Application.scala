@@ -18,6 +18,7 @@ class Application @Inject()(cc: ControllerComponents, val dbConfigProvider: Data
 
   def javascriptRoutes = Action { implicit request =>
     Ok(JavaScriptReverseRouter("jsRoutes")(
+      exes.idPartExes.routes.javascript.WebController.correctLive,
       exes.idPartExes.routes.javascript.XmlController.correctLive
     )).as("text/javascript")
   }
