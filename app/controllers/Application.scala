@@ -1,7 +1,6 @@
 package controllers
 
 import javax.inject._
-
 import model.core.Repository
 import play.Environment
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
@@ -18,6 +17,7 @@ class Application @Inject()(cc: ControllerComponents, val dbConfigProvider: Data
 
   def javascriptRoutes = Action { implicit request =>
     Ok(JavaScriptReverseRouter("jsRoutes")(
+      exCollections.routes.javascript.SqlController.correctLive,
       exes.idPartExes.routes.javascript.WebController.correctLive,
       exes.idPartExes.routes.javascript.XmlController.correctLive
     )).as("text/javascript")

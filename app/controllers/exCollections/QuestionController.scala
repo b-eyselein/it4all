@@ -1,8 +1,7 @@
 package controllers.exCollections
 
-import javax.inject.{Inject, Singleton}
-
 import controllers.Secured
+import javax.inject.{Inject, Singleton}
 import model.Enums.Role
 import model.questions.QuestionEnums.QuestionType
 import model.questions._
@@ -229,8 +228,9 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
        |  </div>
        |</div>""".stripMargin)
 
-  override protected def renderExercise(user: User, quiz: Quiz, exercise: CompleteQuestion, numOfExes: Int): Html =
+  override protected def renderExercise(user: User, quiz: Quiz, exercise: CompleteQuestion, numOfExes: Int): Future[Html] = Future {
     views.html.questions.question(user, quiz, exercise, numOfExes, None /* FIXME: old answer... UserAnswer.finder.byId(new UserAnswerKey(user.name, exercise.id))*/)
+  }
 
   protected def onSubmitCorrectionError(user: User, error: Throwable): Result = ???
 
@@ -242,16 +242,19 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
 
   // Correction
 
-  override def correctEx(user: User, answers: Seq[GivenAnswer], exercise: CompleteQuestion, quiz: Quiz): Try[QuestionResult] = exercise.ex.questionType match {
-    case QuestionType.FREETEXT => Failure(new Exception("Not yet implemented..."))
-    case QuestionType.CHOICE   => Try {
-      val idAnswers: Seq[IdGivenAnswer] = answers flatMap {
-        case idA: IdGivenAnswer => Some(idA)
-        case _                  => None
-      }
+  override def correctEx(user: User, answers: Seq[GivenAnswer], exercise: CompleteQuestion, quiz: Quiz): Future[Try[QuestionResult]] = Future {
+    exercise.ex.questionType match {
+      case QuestionType.FREETEXT => Failure(new Exception("Not yet implemented..."))
+      case QuestionType.CHOICE   => Try {
+        val idAnswers: Seq[IdGivenAnswer] = answers flatMap {
+          case idA: IdGivenAnswer => Some(idA)
+          case _                  => None
+        }
 
-      QuestionResult(idAnswers, exercise)
-      // ???
+        QuestionResult(idAnswers, exercise)
+        // ???
+      }
     }
   }
+  
 }

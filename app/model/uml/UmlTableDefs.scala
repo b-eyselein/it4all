@@ -1,8 +1,7 @@
 package model.uml
 
-import javax.inject.Inject
-
 import controllers.exes.idPartExes.UmlToolObject
+import javax.inject.Inject
 import model.Enums.ExerciseState
 import model._
 import model.uml.UmlConsts._

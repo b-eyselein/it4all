@@ -3,6 +3,7 @@ package model.core.matching
 import model.Enums.MatchType
 import model.Enums.MatchType._
 import model.core.EvaluationResult.PimpedHtmlString
+import play.api.libs.json.{JsString, JsValue, Json}
 
 trait Match[T] {
 
@@ -40,6 +41,16 @@ trait Match[T] {
   def descSampleArgWithReason(implicit isCorrect: Boolean): String = sampleArg map (descArg(_).asCode + ": " + explanation) getOrElse ""
 
   protected def descArg(arg: T): String = arg.toString
+
+  def toJson: JsValue = matchType match {
+    case ONLY_USER   => JsString(userArg map (_.toString) getOrElse "")
+    case ONLY_SAMPLE => JsString(sampleArg map (_.toString) getOrElse "")
+    case _           => Json.obj(
+      "success" -> matchType.name,
+      "userArg" -> JsString(userArg map (_.toString) getOrElse ""),
+      "sampleArg" -> JsString(sampleArg map (_.toString) getOrElse "")
+    )
+  }
 
 }
 

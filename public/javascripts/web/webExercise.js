@@ -154,8 +154,8 @@ function renderResults(results, renderFunc) {
         html += `
 <div class="row">
     <div class="col-md-4">${renderFunc(results[i])}</div>
-    <div class="col-md-4">${secondToRender === undefined ? '' : renderFunc(secondToRender)}</div>
-    <div class="col-md-4">${thirdToRender === undefined ? '' : renderFunc(thirdToRender)}</div>
+    <div class="col-md-4">${secondToRender === null ? '' : renderFunc(secondToRender)}</div>
+    <div class="col-md-4">${thirdToRender === null ? '' : renderFunc(thirdToRender)}</div>
 </div>`.trim();
     }
 

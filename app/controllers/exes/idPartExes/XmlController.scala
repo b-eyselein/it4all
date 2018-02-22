@@ -1,10 +1,10 @@
 package controllers.exes.idPartExes
 
 import java.nio.file._
-import javax.inject._
 
 import controllers.Secured
 import controllers.exes.idPartExes.XmlController._
+import javax.inject._
 import model.User
 import model.core._
 import model.core.tools.ExerciseOptions
@@ -15,12 +15,12 @@ import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import play.twirl.api.Html
+import scalatags.Text.all._
 import views.html.xml._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
 import scala.util.{Failure, Try}
-import scalatags.Text.all._
 
 object XmlController {
 
@@ -121,7 +121,7 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   override protected def onLiveCorrectionError(error: CorrectionException): Result = error match {
     case NoSuchExerciseException(notExistingId)   => BadRequest(Json.obj("msg" -> s"Es gibt keine Aufgabe mit der ID '$notExistingId'!"))
-    case SolutionTransferException()              => BadRequest(Json.obj("msg" -> "Es gab einen Fehler bei der Übertragung ihrer Lösung!"))
+    case SolutionTransferException                => BadRequest(Json.obj("msg" -> "Es gab einen Fehler bei der Übertragung ihrer Lösung!"))
     case OtherCorrectionException(otherException) =>
       BadRequest(Json.obj(
         "msg" -> ("Es gab einen anderen Fehler bei der Korrektur ihrer Lösung:\n" + otherException.getMessage)

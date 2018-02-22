@@ -24,7 +24,7 @@ function onXmlDocumentCorrectionSuccess(response) {
         html += `<div class="alert alert-success">Die Korrektur war erfolgreich. Es wurden keine Fehler gefunden.</div>`;
     } else {
         for (let xmlError of response.results) {
-            let cls = xmlError.errorType === "WARNING" ? "warning" : "danger";
+            let cls = xmlError.errorType === 'WARNING' ? 'warning' : 'danger';
             html += `<div class="alert alert-${cls}"><b>Fehler in Zeile ${xmlError.line}</b>: ${xmlError.errorMessage}</div>`;
         }
     }
@@ -60,7 +60,7 @@ function testSol() {
         url: correctionUrl,
         data: JSON.stringify(dataToSend),
         async: true,
-        success: (exercisePart === "xml") ? onXmlDocumentCorrectionSuccess : onXmlGrammarCorrectionSuccess,
+        success: (exercisePart === 'xml') ? onXmlDocumentCorrectionSuccess : onXmlGrammarCorrectionSuccess,
         error: onXmlCorrectionError
     });
 }

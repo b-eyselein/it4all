@@ -1,6 +1,4 @@
-@import model._
-
-@(user: User, collections: Seq[CompleteCollection[_ <: Exercise, _ <: CompleteEx[_], _ <: ExerciseCollection[_, _]]], toolObject: model.core.tools.CollectionToolObject)
+@(user: model.User, collWrappers: Seq[model.CompleteCollectionWrapper], failures: Seq[scala.util.Failure[_]], toolObject: model.core.tools.CollectionToolObject)
 
 @main("Import: " + toolObject.collectionSingularName, Some(user)) {
     <div class="container">
@@ -13,24 +11,24 @@
 
         <hr>
 
-        @for(collection <- collections) {
-            <h2>@toolObject.collectionSingularName: &quot;@collection.title&quot;</h2>
+        @for(collWrapper <- collWrappers) {
+            <h2>@toolObject.collectionSingularName: &quot;@collWrapper.title&quot;</h2>
 
             <div class="row">
-                <div class="col-sm-2"><b>ID</b>: @collection.id</div>
-                <div class="col-sm-4"><b>Autor</b>: @collection.author</div>
-                <div class="col-sm-2"><b># Aufgaben</b>: @collection.exercises.size</div>
-                <div class="col-sm-4"><b>Status</b>: @collection.state</div>
+                <div class="col-sm-2"><b>ID</b>: @collWrapper.id</div>
+                <div class="col-sm-4"><b>Autor</b>: @collWrapper.author</div>
+                <div class="col-sm-2"><b># Aufgaben</b>: @collWrapper.coll.exercises.size</div>
+                <div class="col-sm-4"><b>Status</b>: @collWrapper.state</div>
             </div>
 
             <div class="row">
                 <div class="col-sm-2"><b>Text:</b></div>
-                <div class="col-sm-10">@collection.text</div>
+                <div class="col-sm-10">@collWrapper.text</div>
             </div>
 
-            @collection.renderRest
+            @collWrapper.coll.renderRest
 
-            @for(exerciseTuple <- collection.exercises.grouped(2)) {
+            @for(exerciseTuple <- collWrapper.coll.exercises.grouped(2)) {
                 <hr>
                 <div class="row">
                 @for(exercise <- exerciseTuple) {

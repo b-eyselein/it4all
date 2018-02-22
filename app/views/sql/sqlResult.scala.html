@@ -1,7 +1,7 @@
 @(result: model.sql.SqlResult)
 
 @for(res <- result.notEmptyMatchingResults) {
-    @res.describe
+    @Html(res.describe)
 }
 
 <div class="row">

@@ -67,11 +67,15 @@ R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseCollec
   def adminImportCollections: EssentialAction = futureWithAdmin { admin =>
     implicit request =>
       val file = toolObject.resourcesFolder / (toolObject.exType + ".yaml")
+
       val reads: Seq[Try[CompColl]] = readAll(file).get.parseYamls map yamlFormat.read
 
-      reads match {
-        case Nil => saveAndPreviewCollections(admin, Seq.empty /* successReads*/)
-        case _   => Future(BadRequest("TODO!"))
+      val (successes, failures) = CommonUtils.splitTries(reads)
+
+      successes.foreach(cc => println(cc.exercises.size))
+
+      saveRead(successes) map {
+        _ => Ok(views.html.admin.collPreview(admin, successes map wrap, failures, toolObject))
       }
   }
 
@@ -131,7 +135,7 @@ R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseCollec
   }
 
   private def collEditForm(admin: User, collection: Option[CompColl]): Html =
-    views.html.admin.collectionEditForm(admin, toolObject, collection, adminRenderEditRest(collection))
+    views.html.admin.collectionEditForm(admin, toolObject, collection map wrap, adminRenderEditRest(collection))
 
   def adminDeleteCollection(id: Int): EssentialAction = futureWithAdmin { _ =>
     implicit request =>
@@ -143,13 +147,6 @@ R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseCollec
 
   // Views and other helper methods for admin
 
-  private def saveAndPreviewCollections(admin: User, read: Seq[CompColl]): Future[Result] = saveRead(read) map (_ => Ok(views.html.admin.collPreview(admin, read, toolObject))) recover {
-    // FIXME: Failures!
-    case throwable: Throwable =>
-      throwable.printStackTrace()
-      BadRequest(throwable.getMessage)
-  }
-
   // TODO: scalarStyle = Folded if fixed...
   private def yamlString(exes: Seq[CompColl]): String = "%YAML 1.2\n---\n" + (exes map (_.toYaml.print(Auto /*, Folded*/)) mkString "---\n")
 
@@ -159,7 +156,7 @@ R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseCollec
 
   def collectionList(page: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
-      futureCompleteColls map (allColls => Ok(views.html.core.collsList(user, takeSlice(allColls, page), renderExesListRest, toolObject, allColls.size / STEP + 1)))
+      futureCompleteColls map (allColls => Ok(views.html.core.collsList(user, takeSlice(allColls, page) map wrap, renderExesListRest, toolObject, allColls.size / STEP + 1)))
   }
 
   def collection(id: Int, page: Int): EssentialAction = futureWithUser { user =>
@@ -176,7 +173,7 @@ R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseCollec
         case None       => Redirect(toolObject.indexCall)
         case Some(coll) =>
           val filteredExes = coll exercisesWithFilter filter
-          Ok(views.html.core.filteredCollection(user, coll, takeSlice(filteredExes, page), toolObject, filter, page, numOfPages(filteredExes.size)))
+          Ok(views.html.core.filteredCollection(user, wrap(coll), takeSlice(filteredExes, page), toolObject, filter, page, numOfPages(filteredExes.size)))
       }
   }
 
@@ -186,9 +183,9 @@ R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseCollec
     implicit request =>
       (futureCollById(collId) zip futureCompleteExById(collId, id) zip numOfExesInColl(collId)) map {
         optTuple => ((optTuple._1._1 zip optTuple._1._2).headOption, optTuple._2)
-      } map {
-        case (None, _)                     => BadRequest("TODO!")
-        case (Some((coll, ex)), numOfExes) => Ok(renderExercise(user, coll, ex, numOfExes))
+      } flatMap {
+        case (None, _)                     => Future(BadRequest("TODO!"))
+        case (Some((coll, ex)), numOfExes) => renderExercise(user, coll, ex, numOfExes) map (f => Ok(f))
       }
   }
 
@@ -201,26 +198,26 @@ R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseCollec
     implicit request => correctAbstract(user, collId, id, readSolutionFromPutRequest, onLiveCorrectionResult, onLiveCorrectionError)
   }
 
-  private def correctAbstract[S, Err](user: User, collId: Int, id: Int, maybeSolution: Option[SolType],
-                                      onCorrectionSuccess: CompResult => Result, onCorrectionError: Throwable => Result)
-                                     (implicit request: Request[AnyContent]): Future[Result] = maybeSolution match {
-    case None           => Future(BadRequest("No solution!"))
-    case Some(solution) => (futureCompleteExById(collId, id) zip futureCollById(collId)) map (opts => (opts._1 zip opts._2).headOption) map {
-      case None                         => NotFound("No such exercise!")
-      case Some((exercise, collection)) => correctEx(user, solution, exercise, collection) match {
-        case Success(result) => onCorrectionSuccess(result)
-        case Failure(error)  => onCorrectionError(error)
+  private def correctAbstract[S, Err](user: User, collId: Int, id: Int, maybeSolution: Option[SolType], onCorrectionSuccess: CompResult => Result,
+                                      onCorrectionError: Throwable => Result)(implicit request: Request[AnyContent]): Future[Result] =
+    maybeSolution match {
+      case None           => Future(onCorrectionError(SolutionTransferException))
+      case Some(solution) => (futureCompleteExById(collId, id) zip futureCollById(collId)) map (opts => (opts._1 zip opts._2).headOption) flatMap {
+        case None                         => Future(onCorrectionError(NoSuchExerciseException(id)))
+        case Some((exercise, collection)) => correctEx(user, solution, exercise, collection) map {
+          case Success(result) => onCorrectionSuccess(result)
+          case Failure(error)  => onCorrectionError(error)
+        }
       }
     }
-  }
 
   // Correction
 
-  protected def correctEx(user: User, form: SolType, exercise: CompEx, collection: Coll): Try[CompResult]
+  protected def correctEx(user: User, form: SolType, exercise: CompEx, collection: Coll): Future[Try[CompResult]]
 
   // Views
 
-  protected def renderExercise(user: User, coll: Coll, exercise: CompEx, numOfExes: Int): Html
+  protected def renderExercise(user: User, coll: Coll, exercise: CompEx, numOfExes: Int): Future[Html]
 
   protected def onSubmitCorrectionResult(user: User, result: CompResult): Result
 

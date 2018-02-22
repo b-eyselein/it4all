@@ -5,6 +5,7 @@ import model.programming.ProgConsts._
 import model.programming.{ProgDataTypes, ProgLanguage}
 import model.{BaseValues, MyYamlProtocol, YamlObj}
 import net.jcazevedo.moultingyaml._
+import play.api.Logger
 
 import scala.util.Try
 
@@ -17,7 +18,13 @@ object RoseExYamlProtocol extends MyYamlProtocol {
       isMp <- yamlObject.boolField("isMultiplayer")
       inputTypes <- yamlObject.arrayField("inputTypes", RoseInputTypeYamlFormat(baseValues.id).read)
       sampleSolution <- yamlObject.someField("sampleSolution") flatMap RoseSampleSolutionYamlFormat(baseValues.id).read
-    } yield RoseCompleteEx(RoseExercise(baseValues, isMp), inputTypes, sampleSolution)
+    } yield {
+      for (inputTypeFailure <- inputTypes._2)
+      // FIXME: return...
+        Logger.error("Could not read rose input type", inputTypeFailure.exception)
+
+      RoseCompleteEx(RoseExercise(baseValues, isMp), inputTypes._1, sampleSolution)
+    }
 
     protected def writeRest(completeEx: RoseCompleteEx): Map[YamlValue, YamlValue] = ???
 

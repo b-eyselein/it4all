@@ -2,7 +2,7 @@ const STD_CLASS_SIZE = 140;
 const HEIGHT_PERCENTAGE = 0.7;
 const COLOR_WHITE = '#ffffff';
 
-let chosenCell = undefined;
+let chosenCellView = null;
 
 const graph = new joint.dia.Graph();
 let paper;
@@ -12,6 +12,9 @@ let sel = 'POINTER';
 let classEditModal;
 
 const UmlTypes = ['String', 'Int', 'Double', 'Char', 'Boolean'];
+
+const CLASS_TYPES = ['CLASS', 'ABSTRACT', 'INTERFACE'];
+const ASSOC_TYPES = ['ASSOCIATION', 'AGGREGATION', 'COMPOSITION', 'IMPLEMENTATION'];
 
 function addClass(clazz) {
     let content = {
@@ -29,15 +32,15 @@ function addClass(clazz) {
     };
 
     switch (clazz.classType) {
-        case INTERFACE:
+        case 'INTERFACE':
             graph.addCell(new joint.shapes.uml.Interface(content));
-            break;
-        case ABSTRACT:
+            return;
+        case 'ABSTRACT':
             graph.addCell(new joint.shapes.uml.Abstract(content));
-            break;
-        case CLASSTYPE:
+            return;
+        case 'CLASS':
             graph.addCell(new joint.shapes.uml.Class(content));
-            break;
+            return;
         default:
             return;
     }
@@ -59,15 +62,8 @@ function newClass(posX, posY) {
 }
 
 function blankOnPointerDown(evt, x, y) {
-    switch (sel) {
-        case INTERFACE:
-        case ABSTRACT:
-        case CLASSTYPE:
-            newClass(x, y);
-            break;
-        default:
-            // Do nothing
-            break;
+    if (CLASS_TYPES.includes(sel)) {
+        newClass(x, y);
     }
 }
 
@@ -109,6 +105,7 @@ function updateClass(elementId) {
             type: $(metGroup).find('select').val()
         }
     }).get();
+
     element.attributes.methods = mets;
     element.attr('.uml-class-methods-text/text', mets.map(m => m.name + ': ' + m.type).join('\n'));
 
@@ -116,121 +113,113 @@ function updateClass(elementId) {
 }
 
 function memberInputs(memberName, memberType = '', isAttr = true) {
-    return `<div class="form-group">
-              <div class="input-group">
-                <input class="form-control" placeholder="${isAttr ? 'Attribut' : 'Methode'} für diese Klasse" value="${memberName}" required>
-                <span class="input-group-addon">:</span>
-                <select class="form-control">
-                  ${UmlTypes.map(umlType => `<option ${umlType === memberType ? 'selected' : ''}>${umlType}</option>`).join("")}
-                </select>
-                <span class="input-group-addon"></span>
-                <button class="form-control btn-warning" title="L&ouml;schen" onclick="deleteMember(this)"><span class="glyphicon glyphicon-remove"></span></button>
-              </div>
-            </div>`;
+    return `
+<div class="form-group">
+  <div class="input-group">
+    <input class="form-control" placeholder="${isAttr ? 'Attribut' : 'Methode'} für diese Klasse" value="${memberName}" required>
+    <span class="input-group-addon">:</span>
+    <select class="form-control">
+      ${UmlTypes.map(umlType => `<option ${umlType === memberType ? 'selected' : ''}>${umlType}</option>`).join("")}
+    </select>
+    <span class="input-group-addon"></span>
+    <button class="form-control btn-warning" title="L&ouml;schen" onclick="deleteMember(this)"><span class="glyphicon glyphicon-remove"></span></button>
+  </div>
+</div>`.trim();
 }
 
-function cellOnLeftClick(cellView) {
-    switch (sel) {
-        case 'POINTER':
+function htmlForClassEdit(cellView) {
+    let classType = cellView.model.attributes.type;
+    let className = cellView.model.attributes.name;
+    let currentAttrs = cellView.model.attributes.attributes;
+    let currentMethods = cellView.model.attributes.methods;
 
-            if (getsHelp) return;
+    return `
+<form action="javascript:updateClass('${cellView.model.id}')">
+   <div class="panel panel-default">
+     <div class="panel-heading">
+       <div class="form-group">
+         <select class="form-control text-center">
+           <option value="${CLASSTYPE}" ${classType === 'uml.Class' ? 'selected' : ''}>&lt;&lt;class&gt;&gt;</option>
+           <option value="${ABSTRACT}" ${classType === 'uml.Abstract' ? 'selected' : ''}>&lt;&lt;abstract&gt;&gt;</option>
+           <option value="${INTERFACE}" ${classType === 'uml.Interface' ? 'selected' : ''}>&lt;&lt;interface&gt;&gt;</option>
+         </select>
+       </div>
+       <div class="form-group">
+         <input value="${className}" id="editClassName" class="form-control text-center" placeholder="Name der Klasse">
+       </div>
+     </div>
+     <div class="panel-body">
+       <div id="editAttrsDiv">
+         ${currentAttrs.map(attr => memberInputs(attr.name, attr.type)).join('\n')}
+         <button class="btn btn-primary" id="editAttrsPlusBtn" onclick="addMember(this, true)">
+           <span class="glyphicon glyphicon-plus"></span> Attribut hinzufügen
+         </button>
+       </div>
+       <hr>
+       <div id="editMethodsDiv">
+         ${currentMethods.map(met => memberInputs(met.name, met.type)).join('\n')}
+         <button class="btn btn-primary" id="editMethodsPlusBtn" onclick="addMember(this, false)">
+           <span class="glyphicon glyphicon-plus"></span> Methode hinzufügen
+         </button>
+       </div>
+     </div>
+   </div>
+   <hr>
+   <div class="btn-group btn-group-justified">
+     <div class="btn-group">
+       <button type="reset" class="btn btn-default" onclick="discardEdits()">Änderungen verwerfen</button>
+     </div>
+     <div class="btn-group">
+       <button class="btn btn-primary">Klasse aktualisieren</button>
+     </div>
+   </div>
+ </form>`.trim();
+}
 
-            // let model = cellView.model;
+function cellOnLeftClick(cellView, evt, x, y) {
 
-            // TODO: Changing class type, name, attributes or methods!?!
-            let bodyEditModalJQ = classEditModal.find('.modal-body');
+    console.log(evt);
 
-            let classType = cellView.model.attributes.type;
-            let className = cellView.model.attributes.name;
-            let currentAttrs = cellView.model.attributes.attributes;
-            let currentMethods = cellView.model.attributes.methods;
+    if (sel === 'POINTER') {
+        if (getsHelp) return;
 
-            bodyEditModalJQ.html(
-                `<form action="javascript:updateClass('${cellView.model.id}')">
-                   <div class="panel panel-default">
-                     <div class="panel-heading">
-                       <div class="form-group">
-                         <select class="form-control text-center">
-                           <option value="${CLASSTYPE}" ${classType === 'uml.Class' ? 'selected' : ''}>&lt;&lt;class&gt;&gt;</option>
-                           <option value="${ABSTRACT}" ${classType === 'uml.Abstract' ? 'selected' : ''}>&lt;&lt;abstract&gt;&gt;</option>
-                           <option value="${INTERFACE}" ${classType === 'uml.Interface' ? 'selected' : ''}>&lt;&lt;interface&gt;&gt;</option>
-                         </select>
-                       </div>
-                       <div class="form-group">
-                         <input value="${className}" id="editClassName" class="form-control text-center" placeholder="Name der Klasse">
-                       </div>
-                     </div>
-                     <div class="panel-body">
-                       <div id="editAttrsDiv">
-                         ${currentAttrs.map(attr => memberInputs(attr.name, attr.type)).join('\n')}
-                         <button class="btn btn-primary" id="editAttrsPlusBtn" onclick="addMember(this, true)">
-                           <span class="glyphicon glyphicon-plus"></span> Attribut hinzufügen
-                         </button>
-                       </div>
-                       <hr>
-                       <div id="editMethodsDiv">
-                         ${currentMethods.map(met => memberInputs(met.name, met.type)).join('\n')}
-                         <button class="btn btn-primary" id="editMethodsPlusBtn" onclick="addMember(this, false)">
-                           <span class="glyphicon glyphicon-plus"></span> Methode hinzufügen
-                         </button>
-                       </div>
-                     </div>
-                   </div>
-                   <hr>
-                   <div class="btn-group btn-group-justified">
-                     <div class="btn-group">
-                       <button type="reset" class="btn btn-default" onclick="discardEdits()">Änderungen verwerfen</button>
-                     </div>
-                     <div class="btn-group">
-                       <button class="btn btn-primary">Klasse aktualisieren</button>
-                     </div>
-                   </div>
-                 </form>`);
+        // TODO: Changing class type, name, attributes or methods!?!
+        let bodyEditModalJQ = classEditModal.find('.modal-body');
 
-            classEditModal.modal('show');
-            break;
+        bodyEditModalJQ.html(htmlForClassEdit(cellView));
 
-        case 'ASSOCIATION':
-        case 'AGGREGATION':
-        case 'COMPOSITION':
-        case 'IMPLEMENTATION':
-            // FIXME: do not select arrows or other things, only classes!
+        classEditModal.modal('show');
 
-            if (chosenCell === undefined) {
-                cellView.highlight();
-                chosenCell = cellView;
-            } else if (chosenCell.model.id === cellView.model.id) {
-                cellView.unhighlight();
-                chosenCell = undefined;
-            } else {
-                cellView.highlight();
-                link(chosenCell.model.id, cellView.model.id);
+    } else if (ASSOC_TYPES.includes(sel)) {
+        // FIXME: do not select arrows or other things, only classes!
+        cellView.highlight();
 
-                chosenCell.unhighlight();
-                cellView.unhighlight();
+        if (chosenCellView === null) {
+            chosenCellView = cellView;
 
-                chosenCell = undefined;
-            }
-            break;
+        } else if (chosenCellView.model.id === cellView.model.id) {
+            cellView.unhighlight();
+            chosenCellView = null;
 
-        case INTERFACE:
-        case ABSTRACT:
-        case CLASSTYPE:
-            // Do nothing
-            break;
+        } else {
+            link(chosenCellView.model.id, cellView.model.id);
 
-        default:
-            console.error('TODO: ' + sel);
-            break;
+            chosenCellView.unhighlight();
+            cellView.unhighlight();
+
+            chosenCellView = null;
+        }
+    } else {
+        console.error('TODO: ' + sel);
     }
 
 }
 
-function cellOnRightClick(cellView) {
+function cellOnRightClick(cellView, evt) {
     let cellInGraph = graph.getCell(cellView.model.id);
     if (getsHelp) {
         alert('Sie können keine Klassen löschen!');
-    } else if (confirm('Wollen Sie die Klasse / das Interface ' + cellInGraph.attributes.name + ' wirklich löschen?')) {
+    } else if (cellInGraph !== null && confirm('Wollen Sie die Klasse / das Interface ' + cellInGraph.attributes.name + ' wirklich löschen?')) {
         cellInGraph.remove();
     }
 }
@@ -373,7 +362,7 @@ function link(sourceId, targetId) {
     }
 
     let members = {
-        source: {id: sourceName},
+        source: {id: sourceId},
         target: {id: targetId},
         labels: [{
             position: 25,

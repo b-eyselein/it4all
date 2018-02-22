@@ -5,10 +5,10 @@ import model.Enums.MatchType._
 import model.Enums.SuccessType._
 import model.core.EvaluationResult
 import model.core.EvaluationResult.PimpedHtmlString
+import play.api.libs.json.{JsObject, Json}
 
 import scala.collection.mutable.ListBuffer
 import scala.language.postfixOps
-import scalatags.Text.all._
 
 trait MatchingResult[T, M <: Match[T]] extends EvaluationResult {
 
@@ -24,6 +24,18 @@ trait MatchingResult[T, M <: Match[T]] extends EvaluationResult {
       PARTIALLY
     else
       COMPLETE
+
+  def toJson: JsObject = {
+    val groupedMatches: Map[Enums.MatchType, Seq[M]] = allMatches groupBy (_.matchType)
+    Json.obj(
+      "success" -> allMatches.forall(_.isSuccessful),
+      // FIXME: implement!
+      "matched" -> (groupedMatches.getOrElse(SUCCESSFUL_MATCH, Seq.empty) ++ groupedMatches.getOrElse(PARTIAL_MATCH, Seq.empty)
+        ++ groupedMatches.getOrElse(UNSUCCESSFUL_MATCH, Seq.empty)).map(_.toJson),
+      "only_user" -> groupedMatches.getOrElse(ONLY_USER, Seq.empty).map(_.toJson),
+      "only_sample" -> groupedMatches.getOrElse(ONLY_SAMPLE, Seq.empty).map(_.toJson)
+    )
+  }
 
   // FIXME: use scalatags for results...
 

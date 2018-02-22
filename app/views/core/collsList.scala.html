@@ -1,7 +1,4 @@
-@import model._
-
-@(user: User, collections: Seq[CompleteCollection[_ <: Exercise, _ <: CompleteEx[_], _ <: ExerciseCollection[_, _]]], rest: Html,
-        toolObject: model.core.tools.CollectionToolObject, pages: Int)
+@(user: model.User, collections: Seq[model.CompleteCollectionWrapper], rest: Html, toolObject: model.core.tools.CollectionToolObject, pages: Int)
 
     @main(toolObject.toolname, Some(user)) {
         <div class="container">

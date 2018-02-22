@@ -35,7 +35,7 @@ object NewProgYamlProtocol extends MyYamlProtocol with FileUtils {
       constructorArguments <- yamlObject.arrayField("init_args", MemberDataTypeYamlFormat.read)
       constructorTests <- yamlObject.arrayField("constructortests", ConstructorTestYamlFormat.read)
       functionTests <- yamlObject.arrayField("functiontests", FunctionTestYamlFormat.read)
-    } yield ClassTest(className, description, constructorArguments, constructorTests, functionTests)
+    } yield ClassTest(className, description, constructorArguments._1, constructorTests._1, functionTests._1)
 
     override def write(obj: ClassTest): YamlValue = YamlObj(
       "classname" -> obj.className,
@@ -91,7 +91,7 @@ object NewProgYamlProtocol extends MyYamlProtocol with FileUtils {
 
       arguments <- yamlObject.arrayField("arguments", MemberDataTypeYamlFormat.read)
       returnType <- yamlObject.enumField("returntype", ProgDataTypes.byName(_) getOrElse ProgDataTypes.STRING)
-    } yield FunctionTest(functionName, description, arguments, returnType)
+    } yield FunctionTest(functionName, description, arguments._1, returnType)
 
     override def write(obj: FunctionTest): YamlValue = YamlObj(
       "functionname" -> obj.functionName,

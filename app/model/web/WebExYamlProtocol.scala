@@ -5,6 +5,7 @@ import model.web.WebConsts._
 import model.web.WebEnums._
 import model.{BaseValues, MyYamlProtocol, YamlArr, YamlObj}
 import net.jcazevedo.moultingyaml._
+import play.api.Logger
 
 import scala.language.{implicitConversions, postfixOps}
 import scala.util.Try
@@ -16,9 +17,19 @@ object WebExYamlProtocol extends MyYamlProtocol {
     override def readRest(yamlObject: YamlObject, baseValues: BaseValues): Try[WebCompleteEx] = for {
       htmlText <- yamlObject.optStringField(HTML_TEXT_NAME)
       jsText <- yamlObject.optStringField(JS_TEXT_NAME)
-      htmlTasks: Seq[HtmlCompleteTask] <- yamlObject.optArrayField(HTML_TASKS_NAME, HtmlCompleteTaskYamlFormat(baseValues.id).read)
-      jsTasks: Seq[JsCompleteTask] <- yamlObject.optArrayField(JS_TASKS_NAME, JsCompleteTaskYamlFormat(baseValues.id).read)
-    } yield WebCompleteEx(WebExercise(baseValues, htmlText, htmlTasks.nonEmpty, jsText, jsTasks.nonEmpty), htmlTasks, jsTasks)
+      htmlTaskTries <- yamlObject.optArrayField(HTML_TASKS_NAME, HtmlCompleteTaskYamlFormat(baseValues.id).read)
+      jsTaskTries <- yamlObject.optArrayField(JS_TASKS_NAME, JsCompleteTaskYamlFormat(baseValues.id).read)
+    } yield {
+      for (htmlTaskFailure <- htmlTaskTries._2)
+      // FIXME: return...
+        Logger.error("Could not read html task", htmlTaskFailure.exception)
+
+      for (jsTaskFailure <- jsTaskTries._2)
+      // FIXME: return...
+        Logger.error("Could not read js task", jsTaskFailure.exception)
+
+      WebCompleteEx(WebExercise(baseValues, htmlText, htmlTaskTries._1.nonEmpty, jsText, jsTaskTries._1.nonEmpty), htmlTaskTries._1, jsTaskTries._1)
+    }
 
     override protected def writeRest(completeEx: WebCompleteEx): Map[YamlValue, YamlValue] = {
 
@@ -64,8 +75,14 @@ object WebExYamlProtocol extends MyYamlProtocol {
       text <- yamlObject.stringField(TEXT_NAME)
       xpathQuery <- yamlObject.stringField(XPATH_NAME)
       textContent <- yamlObject.optForgivingStringField(TEXT_CONTENT_NAME)
-      attributes: Seq[Attribute] <- yamlObject.optArrayField(ATTRS_NAME, TaskAttributeYamlFormat(taskId, exerciseId).read)
-    } yield HtmlCompleteTask(HtmlTask(taskId, exerciseId, text, xpathQuery, textContent), attributes)
+      attributeTries <- yamlObject.optArrayField(ATTRS_NAME, TaskAttributeYamlFormat(taskId, exerciseId).read)
+    } yield {
+      for (attributeFailure <- attributeTries._2)
+      // FIXME: return...
+        Logger.error("Could not read html attribute", attributeFailure.exception)
+
+      HtmlCompleteTask(HtmlTask(taskId, exerciseId, text, xpathQuery, textContent), attributeTries._1)
+    }
   }
 
   case class TaskAttributeYamlFormat(taskId: Int, exerciseId: Int) extends MyYamlObjectFormat[Attribute] {
@@ -100,8 +117,14 @@ object WebExYamlProtocol extends MyYamlProtocol {
       xpathQuery <- yamlObject.stringField(XPATH_NAME)
       actionType <- yamlObject.enumField(ACTION_TYPE_NAME, JsActionType.valueOf)
       keysToSend <- yamlObject.optForgivingStringField(KEYS_TO_SEND_NAME)
-      conditions <- yamlObject.arrayField(CONDITIONS_NAME, JsConditionYamlFormat(taskId, exerciseId).read)
-    } yield JsCompleteTask(JsTask(taskId, exerciseId, text, xpathQuery, actionType, keysToSend), conditions)
+      conditionTries <- yamlObject.arrayField(CONDITIONS_NAME, JsConditionYamlFormat(taskId, exerciseId).read)
+    } yield {
+      for (conditionFailure <- conditionTries._2)
+      // FIXME: return...
+        Logger.error("Could not read js condition", conditionFailure.exception)
+
+      JsCompleteTask(JsTask(taskId, exerciseId, text, xpathQuery, actionType, keysToSend), conditionTries._1)
+    }
 
   }
 

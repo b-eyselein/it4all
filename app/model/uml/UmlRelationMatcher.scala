@@ -5,7 +5,6 @@ import model.Enums.MatchType.{ONLY_SAMPLE, ONLY_USER, SUCCESSFUL_MATCH, UNSUCCES
 import model.core.EvaluationResult.PimpedHtmlString
 import model.core.matching.{Match, Matcher, MatchingResult}
 import model.uml.UmlResult.{describeAssociation, describeImplementation}
-import play.twirl.api.Html
 
 import scala.language.postfixOps
 

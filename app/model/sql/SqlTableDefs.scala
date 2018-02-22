@@ -1,7 +1,6 @@
 package model.sql
 
 import javax.inject.Inject
-
 import model.Enums.ExerciseState
 import model._
 import model.sql.SqlConsts._
@@ -153,6 +152,13 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   val sqlSolutions = TableQuery[SqlSolutionTable]
 
   val sqlSamples = TableQuery[SqlSampleTable]
+
+  // Queries
+
+  def oldSolution(user: User, scenarioId: Int, exerciseId: Int): Future[Option[SqlSolution]] =
+    db.run(sqlSolutions.filter(sol => sol.username === user.username && sol.scenarioId === scenarioId && sol.exerciseId === exerciseId).result.headOption)
+
+  def saveSolution(sol: SqlSolution): Future[Int] = db.run(sqlSolutions insertOrUpdate sol)
 
   // Column types
 

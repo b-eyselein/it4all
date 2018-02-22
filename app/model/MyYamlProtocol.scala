@@ -2,6 +2,7 @@ package model
 
 import model.Enums.ExerciseState
 import model.MyYamlProtocol._
+import model.core.CommonUtils
 import model.core.CoreConsts._
 import model.yaml.MyYamlFormat
 import net.jcazevedo.moultingyaml._
@@ -63,8 +64,8 @@ object MyYamlProtocol {
       case other             => other.toString
     }
 
-    def asArray[T](mapping: YamlValue => Try[T]): Try[Seq[T]] = yaml match {
-      case YamlArray(vector) => Success((vector map mapping) collect { case Success(elem) => elem })
+    def asArray[T](mapping: YamlValue => Try[T]): Try[(Seq[T], Seq[Failure[T]])] = yaml match {
+      case YamlArray(vector) => Success(CommonUtils.splitTries(vector map mapping))
       case other             => Failure(WrongFieldTypeException(other.getClass.toString))
     }
 
@@ -95,12 +96,11 @@ object MyYamlProtocol {
 
     def optForgivingStringField(fieldName: String): Try[Option[String]] = Try(optField(fieldName, _.forgivingStr))
 
-    def arrayField[T](fieldName: String, mapping: YamlValue => Try[T]): Try[Seq[T]] = someField(fieldName) flatMap (_.asArray(mapping))
+    def arrayField[T](fieldName: String, mapping: YamlValue => Try[T]): Try[(Seq[T], Seq[Failure[T]])] = someField(fieldName) flatMap (_.asArray(mapping))
 
-    def optArrayField[T](fieldName: String, mapping: YamlValue => Try[T]): Try[Seq[T]] = someField(fieldName) match {
-      case Failure(_)     => Success(Seq.empty)
-      case Success(field) => field.asArray(mapping)
-
+    def optArrayField[T](fieldName: String, mapping: YamlValue => Try[T]): Try[(Seq[T], Seq[Failure[T]])] = yamlObject.fields get fieldName match {
+      case None        => Success((Seq.empty, Seq.empty))
+      case Some(field) => field.asArray(mapping)
     }
 
     def enumField[T](fieldName: String, valueOf: String => T): Try[T] = stringField(fieldName) map valueOf
@@ -124,7 +124,7 @@ abstract class MyYamlProtocol extends DefaultYamlProtocol {
     title <- yamlObject.stringField(TITLE_NAME)
     author <- yamlObject.stringField(AUTHOR_NAME)
     text <- yamlObject.stringField(TEXT_NAME)
-    state <- yamlObject.enumField(STATE_NAME, ExerciseState.valueOf)
+    state = yamlObject.enumField(STATE_NAME, ExerciseState.valueOf) getOrElse ExerciseState.CREATED
   } yield BaseValues(id, title, author, text, state)
 
   abstract class HasBaseValuesYamlFormat[E <: HasBaseValues] extends MyYamlObjectFormat[E] {

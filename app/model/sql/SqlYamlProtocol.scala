@@ -5,6 +5,7 @@ import model.sql.SqlConsts._
 import model.sql.SqlEnums.{SqlExTag, SqlExerciseType}
 import model.{BaseValues, MyYamlProtocol, YamlArr, YamlObj}
 import net.jcazevedo.moultingyaml._
+import play.api.Logger
 
 import scala.language.postfixOps
 import scala.util.Try
@@ -16,7 +17,13 @@ object SqlYamlProtocol extends MyYamlProtocol {
     override protected def readRest(yamlObject: YamlObject, baseValues: BaseValues): Try[SqlCompleteScenario] = for {
       shortName <- yamlObject.stringField(SHORTNAME_NAME)
       exercises <- yamlObject.arrayField(EXERCISES_NAME, SqlExYamlFormat(baseValues.id).read)
-    } yield SqlCompleteScenario(SqlScenario(baseValues, shortName), exercises)
+    } yield {
+      for (exFailure <- exercises._2)
+      // FIXME: return...
+        Logger.error("Could not read sql exercise: ", exFailure.exception)
+
+      SqlCompleteScenario(SqlScenario(baseValues, shortName), exercises._1)
+    }
 
     override protected def writeRest(completeEx: SqlCompleteScenario): Map[YamlValue, YamlValue] = Map(
       YamlString(SHORTNAME_NAME) -> YamlString(completeEx.coll.shortName),
@@ -29,10 +36,20 @@ object SqlYamlProtocol extends MyYamlProtocol {
 
     override protected def readRest(yamlObject: YamlObject, baseValues: BaseValues): Try[SqlCompleteEx] = for {
       exerciseType <- yamlObject.enumField(ExerciseTypeName, SqlExerciseType.valueOf)
-      tags <- yamlObject.optArrayField(TAGS_NAME, _.asStringEnum(SqlExTag.byString(_).getOrElse(SqlExTag.SQL_JOIN))) map (_ mkString TagJoinChar)
+      tagTries <- yamlObject.optArrayField(TAGS_NAME, _.asStringEnum(SqlExTag.byString(_).getOrElse(SqlExTag.SQL_JOIN)))
       hint <- yamlObject.optStringField(HINT_NAME)
-      samples <- yamlObject.arrayField("samples", SqlSampleYamlFormat(scenarioId, baseValues.id).read)
-    } yield SqlCompleteEx(new SqlExercise(baseValues, scenarioId, exerciseType, tags, hint), samples)
+      sampleTries <- yamlObject.arrayField("samples", SqlSampleYamlFormat(scenarioId, baseValues.id).read)
+    } yield {
+      for (tagFailures <- tagTries._2)
+      // FIXME: return...
+        Logger.error("Could not read sql tag", tagFailures.exception)
+
+      for (sampleFailure <- sampleTries._2)
+      // FIXME: return...
+        Logger.error("Could not read sql sample", sampleFailure.exception)
+
+      SqlCompleteEx(new SqlExercise(baseValues, scenarioId, exerciseType, tagTries._1.mkString(TagJoinChar), hint), sampleTries._1)
+    }
 
     override protected def writeRest(completeEx: SqlCompleteEx): Map[YamlValue, YamlValue] = Map(
       YamlString(ExerciseTypeName) -> YamlString(completeEx.ex.exerciseType.name),

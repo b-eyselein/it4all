@@ -218,14 +218,14 @@ abstract class BaseExerciseController[Ex <: Exercise, CompEx <: CompleteEx[Ex], 
   protected def correctAbstract[S, Err](user: User, id: Int, maybeSolution: Option[SolType], onCorrectionSuccess: CompResult => Result,
                                         onCorrectionError: CorrectionException => Result)(implicit request: Request[AnyContent]): Future[Result] =
     maybeSolution match {
-      case None => Future(onCorrectionError(new SolutionTransferException))
+      case None => Future(onCorrectionError(SolutionTransferException))
 
       case Some(solution) => futureCompleteExById(id) flatMap {
-        case None => Future(onCorrectionError(new NoSuchExerciseException(id)))
+        case None => Future(onCorrectionError(NoSuchExerciseException(id)))
 
         case Some(exercise) => correctEx(user, solution, exercise) map {
           case Success(result) => onCorrectionSuccess(result)
-          case Failure(error)  => onCorrectionError(new OtherCorrectionException(error))
+          case Failure(error)  => onCorrectionError(OtherCorrectionException(error))
         }
       }
     }

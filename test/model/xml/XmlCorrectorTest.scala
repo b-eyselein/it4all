@@ -26,7 +26,7 @@ class XmlCorrectorTest extends FileUtils {
 
   @Test
   def testEmptyXmlAgainstXSD() {
-    val out = XmlCorrector.correct(basePath / "empty.xml", basePath / "note.xsd", XML_XSD)
+    val out = XmlCorrector.correct(basePath / "empty.xml", basePath / "note.xsd")
 
     assertErrorNum(out.size, 1)
     testXmlError(out.head, -1, XmlErrorType.FATAL, "Premature end of file.")
@@ -34,7 +34,7 @@ class XmlCorrectorTest extends FileUtils {
 
   @Test
   def testClosingTagMissingXmlDtd() {
-    val out = XmlCorrector.correct(basePath / "partyNoClosingTag.xml", basePath / "party.dtd", XML_DTD)
+    val out = XmlCorrector.correct(basePath / "partyNoClosingTag.xml", basePath / "party.dtd")
 
     assertNotNull(out)
     assertErrorNum(out.size, 1)
@@ -43,7 +43,7 @@ class XmlCorrectorTest extends FileUtils {
 
   @Test
   def testClosingTagMissingXmlXsd() {
-    val out = XmlCorrector.correct(basePath / "noteNoClosingTag.xml", basePath / "note.xsd", XML_XSD)
+    val out = XmlCorrector.correct(basePath / "noteNoClosingTag.xml", basePath / "note.xsd")
 
     assertNotNull(out)
     assertErrorNum(out.size, 1)
@@ -52,7 +52,7 @@ class XmlCorrectorTest extends FileUtils {
 
   @Test
   def testCorrectDTDAgainstXML() {
-    val out = XmlCorrector.correct(basePath / "party.xml", basePath / "party.dtd", XML_DTD)
+    val out = XmlCorrector.correct(basePath / "party.xml", basePath / "party.dtd")
 
     assertNotNull(out)
     out.isEmpty shouldBe true
@@ -60,7 +60,7 @@ class XmlCorrectorTest extends FileUtils {
 
   @Test
   def testCorrectXMLAgainstDTD() {
-    val out = XmlCorrector.correct(basePath / "party.xml", basePath / "party.dtd", XML_DTD)
+    val out = XmlCorrector.correct(basePath / "party.xml", basePath / "party.dtd")
 
     assertNotNull(out)
     out.isEmpty shouldBe true
@@ -68,7 +68,7 @@ class XmlCorrectorTest extends FileUtils {
 
   @Test
   def testCorrectXMLAgainstXSD() {
-    val out = XmlCorrector.correct(basePath / "note.xml", basePath / "note.xsd", XML_XSD)
+    val out = XmlCorrector.correct(basePath / "note.xml", basePath / "note.xsd")
 
     assertNotNull(out)
     assertTrue(out.isEmpty)
@@ -89,7 +89,7 @@ class XmlCorrectorTest extends FileUtils {
 
   @Test
   def testMissingTagXmlXsd() {
-    val out = XmlCorrector.correct(basePath / "noteMissingTag.xml", basePath / "note.xsd", XML_XSD)
+    val out = XmlCorrector.correct(basePath / "noteMissingTag.xml", basePath / "note.xsd")
 
     assertErrorNum(out.size, 1)
     testXmlError(out.head, 5, XmlErrorType.ERROR,
@@ -98,7 +98,7 @@ class XmlCorrectorTest extends FileUtils {
 
   @Test
   def testNoRootXmlDtd() {
-    val out = XmlCorrector.correct(basePath / "partyNoRoot.xml", basePath / "party.dtd", XML_DTD)
+    val out = XmlCorrector.correct(basePath / "partyNoRoot.xml", basePath / "party.dtd")
 
     assertErrorNum(out.size, 2)
     testXmlError(out.head, 3, XmlErrorType.ERROR, """Document root element "gast", must match DOCTYPE root "party".""")
@@ -107,7 +107,7 @@ class XmlCorrectorTest extends FileUtils {
 
   @Test
   def testNoRootXmlXsd() {
-    val out = XmlCorrector.correct(basePath / "noteNoRootXsd.xml", basePath / "note.xsd", XML_XSD)
+    val out = XmlCorrector.correct(basePath / "noteNoRootXsd.xml", basePath / "note.xsd")
 
     assertErrorNum(out.size, 2)
     testXmlError(out.head, 2, XmlErrorType.ERROR, "cvc-elt.1.a: Cannot find the declaration of element 'to'.")
@@ -144,7 +144,7 @@ class XmlCorrectorTest extends FileUtils {
   @Test
   def testWrongTagXmlXsd() {
 
-    val out = XmlCorrector.correct(basePath / "noteWrongTag.xml", basePath / "note.xsd", XML_XSD)
+    val out = XmlCorrector.correct(basePath / "noteWrongTag.xml", basePath / "note.xsd")
 
     assertErrorNum(out.size, 1)
     testXmlError(out.head, 11, XmlErrorType.ERROR,
@@ -153,7 +153,7 @@ class XmlCorrectorTest extends FileUtils {
 
   @Test
   def testXmlNoElement() {
-    val out = XmlCorrector.correct(basePath / "xmlNoElement.xml", basePath / "party.dtd", XML_DTD)
+    val out = XmlCorrector.correct(basePath / "xmlNoElement.xml", basePath / "party.dtd")
 
     assertErrorNum(out.size, 1)
     testXmlError(out.head, -1, XmlErrorType.FATAL, "Premature end of file.")

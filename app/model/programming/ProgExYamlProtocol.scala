@@ -4,6 +4,7 @@ import model.MyYamlProtocol._
 import model.programming.ProgConsts._
 import model.{BaseValues, MyYamlProtocol, YamlArr, YamlObj}
 import net.jcazevedo.moultingyaml._
+import play.api.Logger
 
 import scala.language.{implicitConversions, postfixOps}
 import scala.util.Try
@@ -22,8 +23,14 @@ object ProgExYamlProtocol extends MyYamlProtocol {
       //      }
 
       sampleSolution <- yamlObject.someField(SAMPLE_SOL_NAME) flatMap ProgSampleSolutionYamlFormat(baseValues.id).read
-      sampleTestData <- yamlObject.arrayField(SAMPLE_TESTDATA_NAME, ProgCompleteSampleTestdataYamlFormat(baseValues.id).read)
-    } yield ProgCompleteEx(ProgExercise(baseValues, functionName, outputType), inputTypes, sampleSolution, sampleTestData)
+      sampleTestDataTries <- yamlObject.arrayField(SAMPLE_TESTDATA_NAME, ProgCompleteSampleTestdataYamlFormat(baseValues.id).read)
+    } yield {
+      for (sampleTdFailure <- sampleTestDataTries._2)
+      // FIXME: return...
+        Logger.error("Could not read sample test data", sampleTdFailure.exception)
+
+      ProgCompleteEx(ProgExercise(baseValues, functionName, outputType), inputTypes, sampleSolution, sampleTestDataTries._1)
+    }
 
     override protected def writeRest(completeEx: ProgCompleteEx): Map[YamlValue, YamlValue] = Map(
       YamlString(FunctionName) -> completeEx.ex.functionName,
@@ -52,8 +59,14 @@ object ProgExYamlProtocol extends MyYamlProtocol {
     override def readObject(yamlObject: YamlObject): Try[CompleteSampleTestData] = for {
       id <- yamlObject.intField(ID_NAME)
       output <- yamlObject.forgivingStringField(OUTPUT_NAME)
-      inputs <- yamlObject.arrayField(INPUTS_NAME, TestDataInputYamlFormat(id, exerciseId).read)
-    } yield CompleteSampleTestData(SampleTestData(id, exerciseId, output), inputs)
+      inputTries <- yamlObject.arrayField(INPUTS_NAME, TestDataInputYamlFormat(id, exerciseId).read)
+    } yield {
+      for (inputFailure <- inputTries._2)
+      // FIXME: return...
+        Logger.error("Could not read prog test data input", inputFailure.exception)
+
+      CompleteSampleTestData(SampleTestData(id, exerciseId, output), inputTries._1)
+    }
 
     override def write(cstd: CompleteSampleTestData): YamlValue = YamlObj(
       ID_NAME -> cstd.testData.id,

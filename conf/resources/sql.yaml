@@ -243,7 +243,7 @@ exercises:
 - id: 8
   title: TODO!
   author: bje40dc
-  text: Bestimmen Sie den Vor- und Nachnamen des Autoren mit der ID 3
+  text: Bestimmen Sie den Vor- und Nachnamen des Autoren mit der ID 3.
   exerciseType: SELECT
   samples:
   - id: 1
@@ -304,8 +304,8 @@ exercises:
   - id: 2
     sample: |
       SELECT title, price
-        FROM books publishers
-        WHERE publishers ON publisher_id = publishers.id
+        FROM books, publishers
+        WHERE publisher_id = publishers.id
           AND publishers.name = 'Carlsen'
   tags: [SQL_JOIN]
   hint: Die Zuordnung von Verlag-Id zu Verlag-Name befindet sich in der Tabelle 'publishers'.
@@ -325,8 +325,8 @@ exercises:
   - id: 2
     sample: |
       SELECT title, isbn
-        FROM books authors
-        WHERE authors on books.author_id = authors.id
+        FROM books, authors
+        WHERE books.author_id = authors.id
           AND family_name = 'Rowling'
   tags: [SQL_JOIN]
 
@@ -379,8 +379,6 @@ exercises:
   samples:
   - id: 1
     sample: |
-      SELECT title
-        FROM books WHERE price < 10
   - id: 2
     sample: |
       SELECT title
@@ -444,7 +442,7 @@ exercises:
   - id: 2
     sample: |
       SELECT COUNT(*) AS Anzahl
-        FROM ratings books
+        FROM ratings, books
         WHERE books.id = ratings.book_id
           AND title = 'Die Stadt in der Wüste'
   tags: [SQL_FUNCTION, SQL_JOIN, SQL_ALIAS]
@@ -464,7 +462,7 @@ exercises:
   - id: 2
     sample: |
       SELECT AVG(rating) AS Durchschnitt
-        FROM ratings books
+        FROM ratings, books
         WHERE books.id = ratings.book_id
           AND title = 'Die Stadt in der Wüste'
   tags: [SQL_FUNCTION, SQL_JOIN, SQL_ALIAS]
@@ -499,7 +497,7 @@ exercises:
   - id: 2
     sample: |
       SELECT min(rating) AS Schlechteste, max(rating) AS Beste
-        FROM books ratings
+        FROM books, ratings
         WHERE books.id = ratings.book_id
           AND title = 'Harry Potter und der Halbblutprinz'
   tags: [SQL_FUNCTION, SQL_ALIAS, SQL_JOIN]
@@ -532,7 +530,7 @@ exercises:
   - id: 2
     sample: |
       SELECT family_name
-        FROM customers wishlists books
+        FROM customers, wishlists, books
         WHERE wishlists.customer_id = customers.id
           AND wishlists.book_id = books.id
           AND title = 'Harry Potter und der Orden des Phönix'
@@ -541,7 +539,7 @@ exercises:
 - id: 27
   title: TODO!
   author: bje40dc
-  text: Suchen Sie die Titel aller Bücher deren Autor George Orwell ist. Ordnen Sie die Titel nach Erscheinungsjahr abwärts.
+  text: Suchen Sie die Titel aller Bücher, deren Autor George Orwell ist. Ordnen Sie die Titel nach Erscheinungsjahr abwärts.
   exerciseType: SELECT
   samples:
   - id: 1
@@ -572,32 +570,6 @@ exercises:
   title: TODO!
   author: bje40dc
   text: >
-    Bestimmen Sie Titel und Preis aller Bücher des Autors 'Tolkien' deren Preis unter 10€ liegt. Ordnen Sie die
-    Einträge nach Erscheinungsjahr abwärts.
-  exerciseType: SELECT
-  samples:
-  - id: 1
-    sample: |
-      SELECT title, price
-        FROM books
-        JOIN authors on books.author_id = authors.id
-        WHERE family_name = 'Tolkien'
-        AND price < 10
-        ORDER BY year DESC
-  - id: 2
-    sample: |
-      SELECT title, price
-        FROM books, authors
-        WHERE family_name = 'Tolkien'
-        AND books.author_id = authors.id
-        AND price < 10
-        ORDER BY year DESC
-  tags: [SQL_ORDER_BY, SQL_JOIN]
-
-- id: 30
-  title: TODO!
-  author: bje40dc
-  text: >
     Wählen Sie alle Bestellungen aus, die das Buch 'Harry Potter und der Halbblutprinz' enthalten. Geben Sie für diese
     Bestellungen jeweils das Datum und die Anzahl der bestellten Exemplare des Buches aus.
   exerciseType: SELECT
@@ -611,8 +583,7 @@ exercises:
           WHERE title = 'Harry Potter und der Halbblutprinz'
   tags: [SQL_DOUBLE_JOIN]
 
-
-- id: 31
+- id: 30
   title: TODO!
   author: bje40dc
   text: Geben Sie alle Email-Adressen der Kunden aus die mit 'gmx.de ' oder mit 'gmail.com ' enden.
@@ -625,11 +596,11 @@ exercises:
         WHERE email LIKE '%gmx.de'
         OR email LIKE '%gmail.com'
 
-- id: 32
+- id: 31
   title: TODO!
   author: bje40dc
   text: >
-    Bestimmen Sie Titel und Preis aller Bücher des Autors 'Tolkien' deren Preis unter 10€ liegt. Ordnen Sie die
+    Bestimmen Sie Titel und Preis aller Bücher des Autors 'Tolkien' deren Preis über 10€ liegt. Ordnen Sie die
     Einträge nach Erscheinungsjahr abwärts.
   exerciseType: SELECT
   samples:
@@ -639,11 +610,11 @@ exercises:
         FROM books
           JOIN authors on authors.id = books.author_id
         WHERE authors.family_name = 'Tolkien'
-        AND price < 10
+        AND price > 10
         ORDER BY year DESC
   tags: [SQL_ORDER_BY]
 
-- id: 33
+- id: 32
   title: TODO!
   author: bje40dc
   text: >
@@ -661,24 +632,24 @@ exercises:
         FROM order_positions WHERE price < 5.00
   tags: [SQL_FUNCTION, SQL_ALIAS]
 
-- id: 34
+- id: 33
   title: TODO!
   author: bje40dc
   text: >
-    Erfassen Sie alle Autoren und den kumulierten Bestand ihrer Bücher. Ordnen Sie die Einträge nach kumulierten
+    Erfassen Sie die ID aller Autoren und den kumulierten Bestand ihrer Bücher. Ordnen Sie die Einträge nach kumulierten
     Bestand abwärts. Benennen Sie die Spalte des kumulierten Bestandes 'stock_sum' (ohne Anführungszeichen).
   exerciseType: SELECT
   samples:
   - id: 1
     sample: |
-      SELECT author, sum(stock) AS stock_sum
+      SELECT author_id, sum(stock) AS stock_sum
         FROM books
-        GROUP BY author
+        GROUP BY author_id
         ORDER BY stock_sum DESC
   tags: [SQL_FUNCTION, SQL_GROUP_BY, SQL_ORDER_BY]
   hint: Verwenden Sie den Sum-Operator und das Schlüsselwort AS.
 
-- id: 35
+- id: 34
   title: TODO!
   author: bje40dc
   text: Wählen Sie alle Kunden aus die im Februar Geburtstag haben und geben Sie den Vornamen Nachnamen und das Geburtsdatum aus.
@@ -691,7 +662,7 @@ exercises:
        WHERE birthday LIKE '%-02-%'
   hint: Verwenden Sie für die Eingrenzung des Geburtsdatums den 'LIKE'-Operator.
 
-- id: 36
+- id: 35
   title: TODO!
   author: bje40dc
   text: Geben Sie den Vornamen Nachnamen und Geburtstag des jüngsten Kunden aus.

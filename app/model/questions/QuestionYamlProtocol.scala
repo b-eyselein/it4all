@@ -5,6 +5,7 @@ import model.questions.QuestionConsts._
 import model.questions.QuestionEnums.{Correctness, QuestionType}
 import model.{BaseValues, MyYamlProtocol, YamlArr}
 import net.jcazevedo.moultingyaml._
+import play.api.Logger
 
 import scala.language.postfixOps
 import scala.util.Try
@@ -15,8 +16,14 @@ object QuestionYamlProtocol extends MyYamlProtocol {
 
     override protected def readRest(yamlObject: YamlObject, baseValues: BaseValues): Try[CompleteQuiz] = for {
       theme <- yamlObject.stringField(ThemeName)
-      questions <- yamlObject.arrayField(EXERCISES_NAME, QuestionYamlFormat(baseValues.id).read)
-    } yield CompleteQuiz(Quiz(baseValues, theme), questions)
+      questionTries <- yamlObject.arrayField(EXERCISES_NAME, QuestionYamlFormat(baseValues.id).read)
+    } yield {
+      for (questionFailure <- questionTries._2)
+      // FIXME: return...
+        Logger.error("Could not read question", questionFailure.exception)
+
+      CompleteQuiz(Quiz(baseValues, theme), questionTries._1)
+    }
 
     override protected def writeRest(completeEx: CompleteQuiz): Map[YamlValue, YamlValue] = Map(
       YamlString(ThemeName) -> completeEx.coll.theme,
@@ -29,8 +36,14 @@ object QuestionYamlProtocol extends MyYamlProtocol {
     override protected def readRest(yamlObject: YamlObject, baseValues: BaseValues): Try[CompleteQuestion] = for {
       questionType <- yamlObject.enumField(ExerciseTypeName, QuestionType.valueOf)
       maxPoints <- yamlObject.intField(MAX_POINTS)
-      answers <- yamlObject.arrayField(ANSWERS_NAME, QuestionAnswerYamlFormat(quizId, baseValues.id).read)
-    } yield CompleteQuestion(Question(baseValues, quizId, questionType, maxPoints), answers)
+      answerTries <- yamlObject.arrayField(ANSWERS_NAME, QuestionAnswerYamlFormat(quizId, baseValues.id).read)
+    } yield {
+      for (answerFailure <- answerTries._2)
+      // FIXME: return...
+        Logger.error("Could not read answer", answerFailure.exception)
+
+      CompleteQuestion(Question(baseValues, quizId, questionType, maxPoints), answerTries._1)
+    }
 
     override protected def writeRest(completeEx: CompleteQuestion): Map[YamlValue, YamlValue] = Map(
       YamlString(ExerciseTypeName) -> completeEx.ex.questionType.name,
