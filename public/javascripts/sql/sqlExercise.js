@@ -133,8 +133,6 @@ function renderExecution(execution) {
  * @param {object} response.execution
  */
 function onSqlCorrectionSuccess(response) {
-    console.log(JSON.stringify(response, null, 2));
-
     $('#testButton').prop('disabled', false);
 
     let newHtml = '';
@@ -160,8 +158,7 @@ function onSqlCorrectionSuccess(response) {
  * @param {string} jqXHR.responseJSON.msg
  */
 function onSqlCorrectionError(jqXHR) {
-    // console.clear();
-    // console.error(jqXHR.responseJSON);
+    $('#testButton').prop('disabled', false);
 
     $('#newCorrectionDiv').html(`
 <div class="panel panel-danger">
@@ -171,7 +168,6 @@ function onSqlCorrectionError(jqXHR) {
     </div>
 </div>`.trim());
 
-    $('#testButton').prop('disabled', false);
 }
 
 function testSqlSol() {

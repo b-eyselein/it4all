@@ -21,7 +21,8 @@ abstract class SqlExecutionDAO(mainDbName: String, port: Int) {
 
   protected val mainDB = db(mainDbName)
 
-  protected def db(schemaName: String): Database = Database.forURL(url = s"jdbc:mysql://localhost:$port/$schemaName?useSSL=false",
+  protected def db(schemaName: String): Database = Database.forURL(
+    url = s"jdbc:mysql://localhost:$port/$schemaName?useSSL=false",
     user = "it4all", password = "sT8aV#k7", driver = "com.mysql.cj.jdbc.Driver")
 
 
@@ -123,5 +124,6 @@ object ChangeDAO extends SqlExecutionDAO("sqlchange", 3108) {
 
 object CreateDAO extends SqlExecutionDAO("sqlcreate", 3109) {
 
-  override protected def executeQuery(schemaName: String, query: Statement): Try[SqlQueryResult] = ???
+  override protected def executeQuery(schemaName: String, query: Statement): Try[SqlQueryResult] = Try(???)
+
 }

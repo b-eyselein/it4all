@@ -116,8 +116,7 @@ class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   protected def onLiveCorrectionError(error: Throwable): Result = {
     Logger.error("There has been a correction error", error)
-    // FIXME: implement...
-    BadRequest("TODO!")
+    BadRequest(Json.obj("msg" -> "Es gab einen internen Fehler bei der Korrektur!"))
   }
 
   protected def onLiveCorrectionResult(result: SqlCorrResult): Result = result match {
