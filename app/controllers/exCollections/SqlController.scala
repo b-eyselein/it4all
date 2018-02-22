@@ -11,6 +11,7 @@ import model.yaml.MyYamlFormat
 import model.{CompleteCollectionWrapper, JsonFormat, User}
 import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
+import play.api.libs.json.Json
 import play.api.mvc._
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
@@ -106,25 +107,22 @@ class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   protected def onSubmitCorrectionError(user: User, error: Throwable): Result = ??? // FIXME: implement...
 
   protected def onSubmitCorrectionResult(user: User, result: SqlCorrResult): Result = result match {
-    case res: SqlResult => Ok(views.html.core.correction(result, sqlResult(res), user, toolObject))
-    case res: SqlFailed =>
+    case res: SqlResult           => Ok(views.html.core.correction(result, sqlResult(res), user, toolObject))
+    case SqlParseFailed(_, error) =>
       // FIXME: implement...
-      ???
+      Logger.error("There has been a sql correction error", error)
+      BadRequest("Es gab einen Fehler bei der Korrektur!")
   }
 
   protected def onLiveCorrectionError(error: Throwable): Result = {
     Logger.error("There has been a correction error", error)
-
     // FIXME: implement...
     BadRequest("TODO!")
-    //    ???
   }
 
   protected def onLiveCorrectionResult(result: SqlCorrResult): Result = result match {
-    case res: SqlResult => Ok(res.toJson)
-    case res: SqlFailed =>
-      // FIXME: implement...
-      ???
+    case res: SqlResult           => Ok(res.toJson)
+    case SqlParseFailed(_, error) => BadRequest(Json.obj("msg" -> error.getMessage))
   }
 
 }

@@ -8,9 +8,28 @@ import play.twirl.api.Html
 
 import scala.util.{Failure, Success, Try}
 
+case class WrongStatementTypeException(awaited: String, gotten: String) extends Exception(s"Wrong type of statement! Expected '$awaited', bot got '$gotten'")
+
+class SqlStatementException(cause: Throwable) extends Exception(cause) {
+
+  override def getMessage: String = {
+    @annotation.tailrec
+    def go(cause: Throwable): String = {
+      if (Option(cause.getMessage).isDefined) cause.getMessage
+      else if (Option(cause.getCause).isEmpty) ""
+      else go(cause.getCause)
+    }
+
+    go(cause)
+  }
+
+}
+
 abstract class SqlCorrResult extends CompleteResult[EvaluationResult] {
 
   override type SolType = String
+
+  override def renderLearnerSolution: Html = new Html(s"<pre>$learnerSolution</pre>")
 
 }
 
@@ -26,8 +45,6 @@ case class SqlResult(learnerSolution: String, columnComparison: ColumnMatchingRe
 
   def notEmptyMatchingResults: Seq[MatchingResult[_, _ <: Match[_]]] = matchingResults filter (_.allMatches.nonEmpty)
 
-  override def renderLearnerSolution: Html = new Html(s"<pre>$learnerSolution</pre>")
-
   def toJson: JsValue = Json.obj(
     "columns" -> columnComparison.toJson,
     "tables" -> tableComparison.toJson,
@@ -40,11 +57,9 @@ case class SqlResult(learnerSolution: String, columnComparison: ColumnMatchingRe
 
 }
 
-case class SqlFailed(learnerSolution: String) extends SqlCorrResult {
+case class SqlParseFailed(learnerSolution: String, error: Throwable) extends SqlCorrResult {
 
-  override val results: Seq[EvaluationResult] = Seq.empty
-
-  override def renderLearnerSolution: Html = new Html(s"<pre>$learnerSolution</pre>")
+  override def results: Seq[EvaluationResult] = Seq.empty
 
 }
 

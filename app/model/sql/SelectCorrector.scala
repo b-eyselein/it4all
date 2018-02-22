@@ -5,8 +5,8 @@ import java.sql.Connection
 import model.core.CommonUtils.using
 import model.sql.ColumnWrapper.wrapColumn
 import net.sf.jsqlparser.expression.Expression
-import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.schema.Table
+import net.sf.jsqlparser.statement.Statement
 import net.sf.jsqlparser.statement.select.{OrderByElement, PlainSelect, Select, SelectItem}
 
 import scala.collection.JavaConverters.asScalaBufferConverter
@@ -70,9 +70,9 @@ object SelectCorrector extends QueryCorrector("SELECT") {
     case _               => Seq.empty
   }
 
-  override protected def parseStatement(statement: String): Try[Select] = Try(CCJSqlParserUtil.parse(statement)) flatMap {
-    case q: Select => Success(q)
-    case _         => Failure(new Exception(s"Das Statement war vom falschen Typ! Erwartet wurde $queryType!"))
+  override protected def checkStatement(statement: Statement): Try[Select] = statement match {
+    case q: Select        => Success(q)
+    case other: Statement => Failure(WrongStatementTypeException(queryType, gotten = other.getClass.getSimpleName))
   }
 
 }

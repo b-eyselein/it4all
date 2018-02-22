@@ -1,33 +1,12 @@
 package model.sql
 
 import model.core.CommonUtils.RicherTry
-import model.core.matching._
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
+import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.schema.Table
+import net.sf.jsqlparser.statement.Statement
 
 import scala.util.{Failure, Success, Try}
-
-case class TableMatch(userArg: Option[Table], sampleArg: Option[Table]) extends Match[Table] {
-
-  override def descArg(arg: Table): String = arg.getName
-
-}
-
-object TableMatcher extends Matcher[Table, TableMatch, TableMatchingResult] {
-
-  override def canMatch: (Table, Table) => Boolean = _.getName == _.getName
-
-  override def matchInstantiation: (Option[Table], Option[Table]) => TableMatch = TableMatch
-
-  override def resultInstantiation: Seq[TableMatch] => TableMatchingResult = TableMatchingResult
-
-}
-
-case class TableMatchingResult(allMatches: Seq[TableMatch]) extends MatchingResult[Table, TableMatch] {
-
-  override val matchName: String = "Tabellen"
-
-}
 
 abstract class QueryCorrector(val queryType: String) {
 
@@ -35,11 +14,15 @@ abstract class QueryCorrector(val queryType: String) {
 
   type AliasMap = Map[String, String]
 
-  def correct(database: SqlExecutionDAO, learnerSolution: String, sampleStatement: SqlSample, exercise: SqlCompleteEx, scenario: SqlScenario): SqlCorrResult =
-    parseStatement(learnerSolution) zip parseStatement(sampleStatement.sample) match {
+  def correct(database: SqlExecutionDAO, learnerSolution: String, sampleSolution: SqlSample, exercise: SqlCompleteEx, scenario: SqlScenario): SqlCorrResult = {
+    val userStatement: Try[Q] = parseStatement(learnerSolution) flatMap checkStatement
+    val sampleStatement: Try[Q] = parseStatement(sampleSolution.sample) flatMap checkStatement
+
+    userStatement zip sampleStatement match {
       case Success((userQ, sampleQ)) => correctQueries(learnerSolution, database, exercise, scenario, userQ, sampleQ)
-      case Failure(_)                => SqlFailed(learnerSolution)
+      case Failure(error)            => SqlParseFailed(learnerSolution, error)
     }
+  }
 
   private def correctQueries(learnerSolution: String, database: SqlExecutionDAO, exercise: SqlCompleteEx, scenario: SqlScenario, userQ: Q, sampleQ: Q) = {
     val (userTAliases, sampleTAliases) = (resolveAliases(userQ), resolveAliases(sampleQ))
@@ -73,8 +56,6 @@ abstract class QueryCorrector(val queryType: String) {
 
   def resolveAliases(query: Q): Map[String, String] = getTables(query).filter(q => Option(q.getAlias).isDefined).map(t => t.getAlias.getName -> t.getName).toMap
 
-  // FIXME: Failure!
-  protected def parseStatement(statement: String): Try[Q]
 
   protected def getColumnWrappers(query: Q): Seq[ColumnWrapper]
 
@@ -85,5 +66,14 @@ abstract class QueryCorrector(val queryType: String) {
   protected def compareGroupByElements(plainUserQuery: Q, plainSampleQuery: Q): Option[GroupByMatchingResult] = None
 
   protected def compareOrderByElements(plainUserQuery: Q, plainSampleQuery: Q): Option[OrderByMatchingResult] = None
+
+  // Parsing
+
+  private def parseStatement(str: String): Try[Statement] = Try(CCJSqlParserUtil.parse(str)) match {
+    case Failure(e) => Failure(new SqlStatementException(e))
+    case other      => other
+  }
+
+  protected def checkStatement(statement: Statement): Try[Q] // FIXME: Failure!?!
 
 }

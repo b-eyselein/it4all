@@ -133,6 +133,8 @@ function renderExecution(execution) {
  * @param {object} response.execution
  */
 function onSqlCorrectionSuccess(response) {
+    console.log(JSON.stringify(response, null, 2));
+
     $('#testButton').prop('disabled', false);
 
     let newHtml = '';
@@ -140,8 +142,12 @@ function onSqlCorrectionSuccess(response) {
     newHtml += renderMatchingResult(response.columns, "Spalten");
     newHtml += renderMatchingResult(response.tables, "Tabellen");
     newHtml += renderMatchingResult(response.wheres, "Bedingungen");
-    newHtml += renderMatchingResult(response.groupBy, "Group Bys");
-    newHtml += renderMatchingResult(response.orderBy, "Order Bys");
+
+    if (response.groupBy != null)
+        newHtml += renderMatchingResult(response.groupBy, "Group Bys");
+
+    if (response.orderBy != null)
+        newHtml += renderMatchingResult(response.orderBy, "Order Bys");
 
     newHtml += renderExecution(response.execution);
 
@@ -150,13 +156,21 @@ function onSqlCorrectionSuccess(response) {
 
 /**
  * @param {object} jqXHR
- * @param {string} jqXHR.responseText
- * @param {string} textStatus
- * @param {string} errorThrown
+ * @param {object} jqXHR.responseJSON
+ * @param {string} jqXHR.responseJSON.msg
  */
-function onSqlCorrectionError(jqXHR, textStatus, errorThrown) {
-    console.clear();
-    console.error(jqXHR.responseText);
+function onSqlCorrectionError(jqXHR) {
+    // console.clear();
+    // console.error(jqXHR.responseJSON);
+
+    $('#newCorrectionDiv').html(`
+<div class="panel panel-danger">
+    <div class="panel-heading"><b>Es gab einen Fehler bei der Korrektur:</b></div>
+    <div class="panel-body">
+        <pre>${jqXHR.responseJSON.msg}</pre>
+    </div>
+</div>`.trim());
+
     $('#testButton').prop('disabled', false);
 }
 

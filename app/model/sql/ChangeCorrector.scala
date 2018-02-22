@@ -3,8 +3,8 @@ package model.sql
 import model.sql.ColumnWrapper.wrapColumn
 import net.sf.jsqlparser.expression.Expression
 import net.sf.jsqlparser.expression.operators.relational.{ExpressionList, MultiExpressionList}
-import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.schema.Table
+import net.sf.jsqlparser.statement.Statement
 import net.sf.jsqlparser.statement.select.SubSelect
 
 import scala.collection.JavaConverters._
@@ -36,10 +36,11 @@ object InsertCorrector extends ChangeCorrector("INSERT") {
 
   override protected def getWhere(query: Q): Option[Expression] = None
 
-  override protected def parseStatement(statement: String): Try[Insert] = Try(CCJSqlParserUtil.parse(statement)) flatMap {
-    case q: Insert => Success(q)
-    case _         => Failure(new Exception(s"Das Statement war vom falschen Typ! Erwartet wurde $queryType!"))
+  override protected def checkStatement(statement: Statement): Try[Insert] = statement match {
+    case q: Insert        => Success(q)
+    case other: Statement => Failure(WrongStatementTypeException(queryType, gotten = other.getClass.getSimpleName))
   }
+
 }
 
 
@@ -53,9 +54,9 @@ object DeleteCorrector extends ChangeCorrector("DELETE") {
 
   override protected def getWhere(query: Q): Option[Expression] = Option(query.getWhere)
 
-  override protected def parseStatement(statement: String): Try[Delete] = Try(CCJSqlParserUtil.parse(statement)) flatMap {
-    case q: Delete => Success(q)
-    case _         => Failure(new Exception(s"Das Statement war vom falschen Typ! Erwartet wurde $queryType!"))
+  override protected def checkStatement(statement: Statement): Try[Delete] = statement match {
+    case q: Delete        => Success(q)
+    case other: Statement => Failure(WrongStatementTypeException(queryType, gotten = other.getClass.getSimpleName))
   }
 
 }
@@ -72,9 +73,9 @@ object UpdateCorrector extends ChangeCorrector("UPDATE") {
 
   override protected def getWhere(query: Q): Option[Expression] = Option(query.getWhere)
 
-  override protected def parseStatement(statement: String): Try[Update] = Try(CCJSqlParserUtil.parse(statement)) flatMap {
-    case q: Update => Success(q)
-    case _         => Failure(new Exception(s"Das Statement war vom falschen Typ! Erwartet wurde $queryType!"))
+  override protected def checkStatement(statement: Statement): Try[Update] = statement match {
+    case q: Update        => Success(q)
+    case other: Statement => Failure(WrongStatementTypeException(queryType, gotten = other.getClass.getSimpleName))
   }
 
 }
