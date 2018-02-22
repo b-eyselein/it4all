@@ -1,8 +1,7 @@
 package model.xml
 
-import javax.inject.Inject
-
 import controllers.exes.idPartExes.XmlToolObject
+import javax.inject.Inject
 import model.Enums.ExerciseState
 import model.xml.XmlEnums.XmlExType
 import model.{BaseValues, Exercise, ExerciseTableDefs, PartsCompleteEx}
@@ -27,7 +26,10 @@ case class XmlExercise(override val id: Int, override val title: String, overrid
 
   override def exerciseRoutes: Map[play.api.mvc.Call, String] = XmlToolObject.exerciseRoutes(this)
 
-  override def hasPart(partType: XmlExPart): Boolean = true
+  override def hasPart(partType: XmlExPart): Boolean = partType match {
+    case DocumentCreationXmlPart => true
+    case GrammarCreationXmlPart  => false
+  }
 
   def getTemplate(part: XmlExPart): String = part match {
     case DocumentCreationXmlPart => s"""<?xml version="1.0" encoding="UTF-8"?>

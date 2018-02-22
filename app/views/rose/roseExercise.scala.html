@@ -1,6 +1,9 @@
 @(user: model.User, toolObject: model.core.tools.IdPartExToolObject[_], exercise: model.rose.RoseCompleteEx, oldSolution: String)
 
 @scripts = {
+    @* Javascript Routes *@
+    <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
+
 @core.editorScripts.render("python", 20, 40)
 
     <script src="@routes.Assets.versioned("javascripts/rose/roseExercise.js")"></script>
@@ -22,6 +25,8 @@
 
     <div id="fullsc" class="container">
 
+        <input type="number" hidden id="exerciseId" value="@exercise.id" title="hidden">
+
         <div class="row">
             <div class="col-md-6">
                 <h2>Aufgabenstellung</h2>
@@ -34,8 +39,7 @@
 
                 <hr>
 
-                <button type="button" class="btn btn-primary btn-block" id="testBtn" onclick="testSol('@toolObject.correctLiveRoute(exercise.id)')">
-                    L&ouml;sung testen</button>
+                <button type="button" class="btn btn-primary btn-block" id="testBtn">L&ouml;sung testen</button>
 
             </div>
 

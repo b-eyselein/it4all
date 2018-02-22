@@ -243,7 +243,7 @@ function selectClassType(button) {
     classButton.className = 'btn btn-primary';
     classButton.dataset.conntype = button.dataset.conntype;
 
-    sel = button.dataset.conntype;
+    sel = button.dataset.conntype.trim();
 
     $('#classType').text(button.textContent);
 }
@@ -255,7 +255,7 @@ function selectAssocType(button) {
     assocButton.className = 'btn btn-primary';
     assocButton.dataset.conntype = button.dataset.conntype;
 
-    sel = button.dataset.conntype;
+    sel = button.dataset.conntype.trim();
     $('#assocType').text(button.textContent);
 }
 
@@ -264,7 +264,7 @@ function selectButton(button) {
 
     button.className = 'btn btn-primary';
 
-    sel = button.dataset.conntype;
+    sel = button.dataset.conntype.trim();
 }
 
 function exportDiagram() {

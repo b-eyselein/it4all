@@ -1,8 +1,9 @@
-function onChangeLanguageSuccess(response) {
-    $('#language').val(response.language);
-    editor.setValue(response, 1000000);
-}
-
+/**
+ * @param {object} completeResult
+ * @param {string} completeResult.resultType
+ * @param {object} completeResult.result
+ * @param {boolean} completeResult.result.correct
+ */
 function onRoseCorrectionSuccess(completeResult) {
     $('#testBtn').prop('disabled', false);
 
@@ -33,7 +34,10 @@ function onRoseCorrectionError(jqXHR) {
     $('#testBtn').prop('disabled', false);
 }
 
-function testSol(url) {
+function testSol() {
+    // noinspection JSUnresolvedFunction, JSUnresolvedVariable
+    let url = jsRoutes.controllers.exes.idPartExes.RoseController.correctLive($('#exerciseId').val()).url;
+
     $('#testBtn').prop('disabled', true);
 
     let dataToSend = {
@@ -60,3 +64,7 @@ function testSol(url) {
 function updatePreview() {
     // Do nothing
 }
+
+$(document).ready(function () {
+    $('#testBtn').click(testSol);
+});

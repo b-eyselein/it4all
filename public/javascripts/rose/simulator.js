@@ -69,7 +69,6 @@ function stepBack() {
 
 
 function play() {
-    console.log("Starting play...");
     if (currentStep <= maxStep) {
         let interval = setInterval(function () {
             stepOn();
@@ -83,15 +82,17 @@ function play() {
  * @param {int} currentStep
  */
 function performAction(simulatorThings, currentStep) {
-    const action = simulatorThings.steps[currentStep];
+    const action = simulatorThings.steps[currentStep] || null;
 
     if (Object.keys(DIRECTIONS).includes(action)) {
         moveRobot(simulatorThings.robot, DIRECTIONS[action]);
     } else if (Object.keys(COLORS).includes(action)) {
         let coordinates = Position.fromRobotPosition(simulatorThings.robot.position()).toCoordinates();
         changeCellColor(simulatorThings.fieldCells, coordinates, action);
+    } else if (action === null) {
+        // Do nothing
     } else {
-        console.error(action)
+        console.error(action);
     }
 }
 

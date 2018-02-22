@@ -106,8 +106,8 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
   private def exScript: Html = Html(script(src := controllers.routes.Assets.versioned("javascripts/xml/xmlExercise.js").url).toString)
 
   def renderExRest(exercise: XmlExercise, urlName: String): Html = XmlExParts.values.find(_.urlName == urlName) match {
-    case (None | Some(DocumentCreationXmlPart)) => Html(div(id := "refFileSection")(pre(exercise.sampleGrammar)).toString)
-    case Some(GrammarCreationXmlPart)           => Html(p(exercise.grammarDescription).toString)
+    case (None | Some(DocumentCreationXmlPart)) => Html(pre(exercise.sampleGrammar).toString)
+    case Some(GrammarCreationXmlPart)           => Html(div(cls := "well")(exercise.grammarDescription).toString)
   }
 
   // Result handlers
