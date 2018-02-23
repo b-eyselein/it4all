@@ -19,9 +19,17 @@ import scala.util.Try
 
 @Singleton
 class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: UmlTableDefs)(implicit ec: ExecutionContext)
-  extends AIdPartExController[UmlExercise, UmlCompleteEx, UmlExPart, EvaluationResult, UmlResult, UmlTableDefs](cc, dbcp, t, UmlToolObject) with JsonFormat with Secured {
+  extends AIdPartExController[UmlExercise, UmlCompleteEx, UmlExPart, UmlTableDefs](cc, dbcp, t, UmlToolObject) with JsonFormat with Secured {
 
   override def partTypeFromUrl(urlName: String): Option[UmlExPart] = UmlExParts.values.find(_.urlName == urlName)
+
+  // Result types
+
+  override type R = EvaluationResult
+
+  override type CompResult = UmlResult
+
+  // Reading solution
 
   override type SolType = UserUmlSolution
 

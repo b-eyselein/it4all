@@ -7,7 +7,7 @@ import model.Enums.{ExerciseState, SuccessType}
 import model.core._
 import model.core.tools.ExerciseOptions
 import model.programming.ProgConsts._
-import model.programming._
+import model.programming.{ProgCompleteResult, _}
 import model.yaml.MyYamlFormat
 import model.{JsonFormat, User}
 import play.api.db.slick.DatabaseConfigProvider
@@ -35,10 +35,16 @@ object ProgController {
 
 @Singleton
 class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: ProgTableDefs)(implicit ec: ExecutionContext)
-  extends AIdPartExController[ProgExercise, ProgCompleteEx, ProgExPart, ProgEvalResult, ProgCompleteResult, ProgTableDefs](cc, dbcp, t, ProgToolObject)
+  extends AIdPartExController[ProgExercise, ProgCompleteEx, ProgExPart, ProgTableDefs](cc, dbcp, t, ProgToolObject)
     with Secured with JsonFormat {
 
   override def partTypeFromUrl(urlName: String): Option[ProgExPart] = ProgExParts.values.find(_.urlName == urlName)
+
+  // Result types
+
+  override type R = ProgEvalResult
+
+  override type CompResult = ProgCompleteResult
 
   // Reading solution from requests
 

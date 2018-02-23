@@ -24,10 +24,16 @@ case class WebSolutionType(part: WebExPart, solution: String)
 
 @Singleton
 class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: WebTableDefs)(implicit ec: ExecutionContext)
-  extends AIdPartExController[WebExercise, WebCompleteEx, WebExPart, WebResult, WebCompleteResult, WebTableDefs](cc, dbcp, t, WebToolObject)
+  extends AIdPartExController[WebExercise, WebCompleteEx, WebExPart, WebTableDefs](cc, dbcp, t, WebToolObject)
     with Secured with JsonFormat {
 
   override def partTypeFromUrl(urlName: String): Option[WebExPart] = WebExParts.values.find(_.urlName == urlName)
+
+  // Result types
+
+  override type R = WebResult
+
+  override type CompResult = WebCompleteResult
 
   // Reading solution from requests
 

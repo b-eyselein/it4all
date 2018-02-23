@@ -40,6 +40,10 @@ GET           /essentials/bool/creation                   controllers.randomExes
 PUT           /essentials/bool/creation                   controllers.randomExes.BoolController.checkBoolCreationSolution
 # Essentials - End
 
+# idPartExes
+#GET /:type/admin controllers.exes.idPartExes.IdExController.adminIndex
+#GET /:type/admin/import
+
 
 
 # XML - Anfang

@@ -6,8 +6,8 @@ import java.sql.SQLSyntaxErrorException
 import controllers.Secured
 import model._
 import model.core.CoreConsts._
-import model.core._
 import model.core.tools.ExToolObject
+import model.core.{CompleteResult, _}
 import model.yaml.MyYamlFormat
 import net.jcazevedo.moultingyaml._
 import play.Logger
@@ -22,9 +22,15 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
 import scala.util.{Failure, Success, Try}
 
-abstract class BaseExerciseController[Ex <: Exercise, CompEx <: CompleteEx[Ex], R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseTableDefs[Ex, CompEx]]
+abstract class BaseExerciseController[Ex <: Exercise, CompEx <: CompleteEx[Ex], Tables <: ExerciseTableDefs[Ex, CompEx]]
 (cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val tables: Tables, val toolObject: ExToolObject)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured with FileUtils {
+
+  // Abstract types
+
+  type R <: EvaluationResult
+
+  type CompResult <: CompleteResult[R]
 
   // Reading solution from requests
 

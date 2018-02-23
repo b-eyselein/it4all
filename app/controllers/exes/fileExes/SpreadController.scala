@@ -26,7 +26,13 @@ object SpreadController {
 
 @Singleton
 class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: SpreadTableDefs)(implicit ec: ExecutionContext)
-  extends AFileExController[SpreadExercise, SpreadExercise, SpreadSheetCorrectionResult, GenericCompleteResult[SpreadSheetCorrectionResult], SpreadTableDefs](cc, dbcp, t, SpreadToolObject) with Secured {
+  extends AFileExController[SpreadExercise, SpreadExercise, SpreadTableDefs](cc, dbcp, t, SpreadToolObject) with Secured {
+
+  // Result types
+
+  override type R = SpreadSheetCorrectionResult
+
+  override type CompResult = GenericCompleteResult[SpreadSheetCorrectionResult]
 
   // Reading solution from requests
 

@@ -19,8 +19,14 @@ import scala.util.Try
 
 @Singleton
 class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: MindmapTableDefs)(implicit ec: ExecutionContext)
-  extends AFileExController[MindmapExercise, MindmapExercise, EvaluationResult, GenericCompleteResult[EvaluationResult], MindmapTableDefs](cc, dbcp, t, MindMapToolObject)
+  extends AFileExController[MindmapExercise, MindmapExercise, MindmapTableDefs](cc, dbcp, t, MindMapToolObject)
     with Secured {
+
+  // Result types
+
+  override type R = EvaluationResult
+
+  override type CompResult = GenericCompleteResult[EvaluationResult]
 
   // Reading solution from requests
 

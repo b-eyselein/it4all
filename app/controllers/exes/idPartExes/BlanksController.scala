@@ -18,12 +18,18 @@ import scala.util.Try
 
 @Singleton
 class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: BlanksTableDefs)(implicit ec: ExecutionContext)
-  extends AIdPartExController[BlanksExercise, BlanksCompleteExercise, BlanksExPart, BlanksAnswerMatchingResult, BlanksCompleteResult, BlanksTableDefs](cc, dbcp, t, BlanksToolObject)
+  extends AIdPartExController[BlanksExercise, BlanksCompleteExercise, BlanksExPart, BlanksTableDefs](cc, dbcp, t, BlanksToolObject)
     with Secured with JsonFormat {
 
   override protected def partTypeFromUrl(urlName: String): Option[BlanksExPart] = Some(BlanksExParts.BlankExSinglePart)
 
   override protected def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: BlanksExPart): Option[Seq[BlanksAnswer]] = ???
+
+  // Result types
+
+  override type R = BlanksAnswerMatchingResult
+
+  override type CompResult = BlanksCompleteResult
 
   // Reading solution from requests
 

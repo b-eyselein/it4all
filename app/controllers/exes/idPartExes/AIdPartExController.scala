@@ -15,10 +15,9 @@ import play.twirl.api.Html
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-abstract class AIdPartExController[Ex <: Exercise, CompEx <: CompleteEx[Ex], PartType <: ExPart,
-R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseTableDefs[Ex, CompEx]]
+abstract class AIdPartExController[Ex <: Exercise, CompEx <: CompleteEx[Ex], PartType <: ExPart, Tables <: ExerciseTableDefs[Ex, CompEx]]
 (cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: Tables, to: IdPartExToolObject[PartType])(implicit ec: ExecutionContext)
-  extends BaseExerciseController[Ex, CompEx, R, CompResult, Tables](cc, dbcp, t, to)
+  extends BaseExerciseController[Ex, CompEx, Tables](cc, dbcp, t, to)
     with Secured with JsonFormat {
 
   protected def partTypeFromUrl(urlName: String): Option[PartType]

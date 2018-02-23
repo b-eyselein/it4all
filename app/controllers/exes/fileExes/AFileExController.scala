@@ -1,7 +1,6 @@
 package controllers.exes.fileExes
 
 import java.nio.file.Path
-import java.sql.SQLSyntaxErrorException
 
 import controllers.Secured
 import controllers.exes.BaseExerciseController
@@ -11,15 +10,15 @@ import model.core._
 import model.core.tools.FileExToolObject
 import model.spread.SpreadConsts
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.mvc.{ControllerComponents, EssentialAction, Result}
+import play.api.mvc.{ControllerComponents, EssentialAction}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
-abstract class AFileExController[Ex <: Exercise, CompEx <: FileCompleteEx[Ex], R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseTableDefs[Ex, CompEx]]
+abstract class AFileExController[Ex <: Exercise, CompEx <: FileCompleteEx[Ex], Tables <: ExerciseTableDefs[Ex, CompEx]]
 (cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: Tables, to: FileExToolObject)(implicit ec: ExecutionContext)
-  extends BaseExerciseController[Ex, CompEx, R, CompResult, Tables](cc, dbcp, t, to) with Secured with FileUtils {
+  extends BaseExerciseController[Ex, CompEx, Tables](cc, dbcp, t, to) with Secured with FileUtils {
 
   // Routes
 

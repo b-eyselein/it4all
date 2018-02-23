@@ -30,9 +30,15 @@ object XmlController {
 
 @Singleton
 class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: XmlTableDefs)(implicit ec: ExecutionContext)
-  extends AIdPartExController[XmlExercise, XmlExercise, XmlExPart, XmlError, XmlCompleteResult, XmlTableDefs](cc, dbcp, t, XmlToolObject) with Secured with FileUtils {
+  extends AIdPartExController[XmlExercise, XmlExercise, XmlExPart, XmlTableDefs](cc, dbcp, t, XmlToolObject) with Secured with FileUtils {
 
   override protected def partTypeFromUrl(urlName: String): Option[XmlExPart] = XmlExParts.values find (_.urlName == urlName)
+
+  // Result types
+
+  override type R = XmlError
+
+  override type CompResult = XmlCompleteResult
 
   // Reading solution from requests
 

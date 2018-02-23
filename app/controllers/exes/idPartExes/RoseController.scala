@@ -16,10 +16,16 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 class RoseController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: RoseTableDefs)(implicit ec: ExecutionContext)
-  extends AIdPartExController[RoseExercise, RoseCompleteEx, RoseExPart, RoseEvalResult, RoseCompleteResult, RoseTableDefs](cc, dbcp, t, RoseToolObject)
+  extends AIdPartExController[RoseExercise, RoseCompleteEx, RoseExPart, RoseTableDefs](cc, dbcp, t, RoseToolObject)
     with Secured with JsonFormat {
 
   override protected def partTypeFromUrl(urlName: String): Option[RoseExPart] = Some(RoseSingleExPart)
+
+  // Result types
+
+  override type R = RoseEvalResult
+
+  override type CompResult = RoseCompleteResult
 
   // Reading solution from requests
 
