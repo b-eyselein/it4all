@@ -34,13 +34,19 @@ object ProgController {
 }
 
 @Singleton
-class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: ProgTableDefs)(implicit ec: ExecutionContext)
-  extends AIdPartExController[ProgExercise, ProgCompleteEx, ProgExPart, ProgTableDefs](cc, dbcp, t, ProgToolObject)
+class ProgController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, protected val tables: ProgTableDefs)(implicit ec: ExecutionContext)
+  extends AIdPartExController[ProgExPart](cc, dbcp, ProgToolObject)
     with Secured with JsonFormat {
 
   override def partTypeFromUrl(urlName: String): Option[ProgExPart] = ProgExParts.values.find(_.urlName == urlName)
 
   // Result types
+
+  override type ExType = ProgExercise
+
+  override type CompExType = ProgCompleteEx
+
+  override type Tables = ProgTableDefs
 
   override type R = ProgEvalResult
 

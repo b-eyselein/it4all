@@ -16,9 +16,10 @@ import play.twirl.api.Html
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
-abstract class AFileExController[Ex <: Exercise, CompEx <: FileCompleteEx[Ex], Tables <: ExerciseTableDefs[Ex, CompEx]]
-(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: Tables, to: FileExToolObject)(implicit ec: ExecutionContext)
-  extends BaseExerciseController[Ex, CompEx, Tables](cc, dbcp, t, to) with Secured with FileUtils {
+abstract class AFileExController(cc: ControllerComponents, dbcp: DatabaseConfigProvider, to: FileExToolObject)(implicit ec: ExecutionContext)
+  extends BaseExerciseController(cc, dbcp, to) with Secured with FileUtils {
+
+  override type CompExType <: FileCompleteEx[ExType]
 
   // Routes
 
@@ -76,9 +77,9 @@ abstract class AFileExController[Ex <: Exercise, CompEx <: FileCompleteEx[Ex], T
 
   // View helpers
 
-  protected def renderExercise(user: User, exercise: CompEx, part: String): Html
+  protected def renderExercise(user: User, exercise: CompExType, part: String): Html
 
-  protected def renderResult(user: User, correctionResult: R, exercise: CompEx, fileExtension: String): Html
+  protected def renderResult(user: User, correctionResult: R, exercise: CompExType, fileExtension: String): Html
 
   // Correction
 
@@ -86,8 +87,8 @@ abstract class AFileExController[Ex <: Exercise, CompEx <: FileCompleteEx[Ex], T
 
   // Creation of exercises
 
-  protected def saveReadToDb(read: CompEx): Future[Int]
+  protected def saveReadToDb(read: CompExType): Future[Int]
 
-  protected def checkFiles(ex: CompEx): Seq[Try[Path]]
+  protected def checkFiles(ex: CompExType): Seq[Try[Path]]
 
 }

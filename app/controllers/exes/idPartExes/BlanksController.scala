@@ -17,15 +17,20 @@ import scala.language.{implicitConversions, postfixOps}
 import scala.util.Try
 
 @Singleton
-class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: BlanksTableDefs)(implicit ec: ExecutionContext)
-  extends AIdPartExController[BlanksExercise, BlanksCompleteExercise, BlanksExPart, BlanksTableDefs](cc, dbcp, t, BlanksToolObject)
-    with Secured with JsonFormat {
+class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, protected val tables: BlanksTableDefs)(implicit ec: ExecutionContext)
+  extends AIdPartExController[BlanksExPart](cc, dbcp, BlanksToolObject) with Secured with JsonFormat {
 
   override protected def partTypeFromUrl(urlName: String): Option[BlanksExPart] = Some(BlanksExParts.BlankExSinglePart)
 
   override protected def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: BlanksExPart): Option[Seq[BlanksAnswer]] = ???
 
-  // Result types
+  // Abstract types
+
+  override type ExType = BlanksExercise
+
+  override type CompExType = BlanksCompleteExercise
+
+  override type Tables = BlanksTableDefs
 
   override type R = BlanksAnswerMatchingResult
 

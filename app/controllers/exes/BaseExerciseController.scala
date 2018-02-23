@@ -22,11 +22,15 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
 import scala.util.{Failure, Success, Try}
 
-abstract class BaseExerciseController[Ex <: Exercise, CompEx <: CompleteEx[Ex], Tables <: ExerciseTableDefs[Ex, CompEx]]
-(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val tables: Tables, val toolObject: ExToolObject)(implicit ec: ExecutionContext)
+abstract class BaseExerciseController
+(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val toolObject: ExToolObject)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured with FileUtils {
 
   // Abstract types
+
+  type ExType <: Exercise
+
+  type CompExType <: CompleteEx[ExType]
 
   type R <: EvaluationResult
 
@@ -42,20 +46,23 @@ abstract class BaseExerciseController[Ex <: Exercise, CompEx <: CompleteEx[Ex], 
 
   // Reading Yaml
 
-  implicit val yamlFormat: MyYamlFormat[CompEx]
+  implicit val yamlFormat: MyYamlFormat[CompExType]
 
   // Database queries
 
+  type Tables <: ExerciseTableDefs[ExType, CompExType]
+
+  protected val tables: Tables
 
   protected def numOfExes: Future[Int] = tables.futureNumOfExes
 
-  protected def futureCompleteExById(id: Int): Future[Option[CompEx]] = tables.futureCompleteExById(id)
+  protected def futureCompleteExById(id: Int): Future[Option[CompExType]] = tables.futureCompleteExById(id)
 
-  protected def futureCompleteExes: Future[Seq[CompEx]] = tables.futureCompleteExes
+  protected def futureCompleteExes: Future[Seq[CompExType]] = tables.futureCompleteExes
 
   protected def statistics: Future[Html] = numOfExes map (num => Html(s"<li>Es existieren insgesamt $num Aufgaben</li>"))
 
-  protected def saveRead(read: Seq[CompEx]): Future[Seq[Any]] = Future.sequence(read map tables.saveCompleteEx)
+  protected def saveRead(read: Seq[CompExType]): Future[Seq[Any]] = Future.sequence(read map tables.saveCompleteEx)
 
   val PROGRESS_LOGGER: Logger.ALogger = Logger.of("progress")
 
@@ -84,8 +91,8 @@ abstract class BaseExerciseController[Ex <: Exercise, CompEx <: CompleteEx[Ex], 
     * @param readTries Seq of read (exercises)
     * @return
     */
-  def saveAndPreviewExercises(admin: User, readTries: Seq[Try[CompEx]]): Future[Result] = {
-    val read: Seq[CompEx] = readTries flatMap {
+  def saveAndPreviewExercises(admin: User, readTries: Seq[Try[CompExType]]): Future[Result] = {
+    val read: Seq[CompExType] = readTries flatMap {
       case Success(x)     => Some(x)
       case Failure(error) =>
         Logger.error("There has been an error reading a exercise", error)
@@ -218,10 +225,10 @@ abstract class BaseExerciseController[Ex <: Exercise, CompEx <: CompleteEx[Ex], 
 
   // Views and other helper methods for admin
 
-  protected def previewExercises(admin: User, read: Seq[CompEx]): Html = exercisePreview(admin, read, toolObject)
+  protected def previewExercises(admin: User, read: Seq[CompExType]): Html = exercisePreview(admin, read, toolObject)
 
   // TODO: scalarStyle = Folded if fixed...
-  private def yamlString(exes: Seq[CompEx]): String = "%YAML 1.2\n---\n" + (exes map (_.toYaml.print(Auto /*, Folded*/)) mkString "---\n")
+  private def yamlString(exes: Seq[CompExType]): String = "%YAML 1.2\n---\n" + (exes map (_.toYaml.print(Auto /*, Folded*/)) mkString "---\n")
 
   // User
 
@@ -235,7 +242,7 @@ abstract class BaseExerciseController[Ex <: Exercise, CompEx <: CompleteEx[Ex], 
       })
   }
 
-  protected def renderExes(user: User, exes: Seq[CompEx], allExesSize: Int): Html = views.html.core.exesList(user, exes, renderExesListRest, toolObject, allExesSize / STEP + 1)
+  protected def renderExes(user: User, exes: Seq[CompExType], allExesSize: Int): Html = views.html.core.exesList(user, exes, renderExesListRest, toolObject, allExesSize / STEP + 1)
 
   protected def correctAbstract(user: User, id: Int, maybeSolution: Option[SolType])(implicit request: Request[AnyContent]): Future[Try[CompResult]] =
     maybeSolution match {
@@ -248,7 +255,7 @@ abstract class BaseExerciseController[Ex <: Exercise, CompEx <: CompleteEx[Ex], 
       }
     }
 
-  protected def correctEx(user: User, sol: SolType, exercise: CompEx): Future[Try[CompResult]]
+  protected def correctEx(user: User, sol: SolType, exercise: CompExType): Future[Try[CompResult]]
 
   /**
     * Used for rendering things such as playgrounds
@@ -259,6 +266,6 @@ abstract class BaseExerciseController[Ex <: Exercise, CompEx <: CompleteEx[Ex], 
 
   // Helper methods
 
-  protected def renderEditRest(exercise: Option[CompEx]): Html = ???
+  protected def renderEditRest(exercise: Option[CompExType]): Html = ???
 
 }

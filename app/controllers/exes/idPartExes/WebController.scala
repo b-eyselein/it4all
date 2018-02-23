@@ -23,13 +23,19 @@ import scala.util.Try
 case class WebSolutionType(part: WebExPart, solution: String)
 
 @Singleton
-class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: WebTableDefs)(implicit ec: ExecutionContext)
-  extends AIdPartExController[WebExercise, WebCompleteEx, WebExPart, WebTableDefs](cc, dbcp, t, WebToolObject)
+class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, protected val tables: WebTableDefs)(implicit ec: ExecutionContext)
+  extends AIdPartExController[ WebExPart](cc, dbcp, WebToolObject)
     with Secured with JsonFormat {
 
   override def partTypeFromUrl(urlName: String): Option[WebExPart] = WebExParts.values.find(_.urlName == urlName)
 
   // Result types
+
+  override type ExType = WebExercise
+
+  override type CompExType = WebCompleteEx
+
+  override type Tables = WebTableDefs
 
   override type R = WebResult
 

@@ -25,10 +25,16 @@ object SpreadController {
 }
 
 @Singleton
-class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: SpreadTableDefs)(implicit ec: ExecutionContext)
-  extends AFileExController[SpreadExercise, SpreadExercise, SpreadTableDefs](cc, dbcp, t, SpreadToolObject) with Secured {
+class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, protected val tables: SpreadTableDefs)(implicit ec: ExecutionContext)
+  extends AFileExController(cc, dbcp, SpreadToolObject) with Secured {
 
-  // Result types
+  // Abstract types
+
+  override type ExType = SpreadExercise
+
+  override type CompExType = SpreadExercise
+
+  override type Tables = SpreadTableDefs
 
   override type R = SpreadSheetCorrectionResult
 

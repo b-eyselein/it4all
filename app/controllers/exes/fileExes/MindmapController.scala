@@ -18,11 +18,16 @@ import scala.language.implicitConversions
 import scala.util.Try
 
 @Singleton
-class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: MindmapTableDefs)(implicit ec: ExecutionContext)
-  extends AFileExController[MindmapExercise, MindmapExercise, MindmapTableDefs](cc, dbcp, t, MindMapToolObject)
-    with Secured {
+class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, protected val tables: MindmapTableDefs)(implicit ec: ExecutionContext)
+  extends AFileExController(cc, dbcp, MindMapToolObject) with Secured {
 
-  // Result types
+  // Abstract types
+
+  override type ExType = MindmapExercise
+
+  override type CompExType = MindmapExercise
+
+  override type Tables = MindmapTableDefs
 
   override type R = EvaluationResult
 
@@ -83,7 +88,5 @@ class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfig
   override protected def onSubmitCorrectionError(user: User, error: Throwable): Html = ???
 
   override protected def onLiveCorrectionResult(result: GenericCompleteResult[EvaluationResult]): JsValue = ???
-
-  override protected def onLiveCorrectionError(error: Throwable): JsValue = ???
 
 }

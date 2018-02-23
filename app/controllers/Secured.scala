@@ -11,7 +11,7 @@ trait Secured {
 
   val actionBuilder: ActionBuilder[Request, AnyContent] = controllerComponents.actionBuilder
 
-  val tables: TableDefs
+  protected val tables: TableDefs
 
   private def username(request: RequestHeader): Option[String] = request.session.get(SESSION_ID_FIELD)
 

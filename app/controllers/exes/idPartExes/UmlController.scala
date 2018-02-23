@@ -18,12 +18,18 @@ import scala.language.implicitConversions
 import scala.util.Try
 
 @Singleton
-class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: UmlTableDefs)(implicit ec: ExecutionContext)
-  extends AIdPartExController[UmlExercise, UmlCompleteEx, UmlExPart, UmlTableDefs](cc, dbcp, t, UmlToolObject) with JsonFormat with Secured {
+class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, protected val tables: UmlTableDefs)(implicit ec: ExecutionContext)
+  extends AIdPartExController[UmlExPart](cc, dbcp, UmlToolObject) with JsonFormat with Secured {
 
   override def partTypeFromUrl(urlName: String): Option[UmlExPart] = UmlExParts.values.find(_.urlName == urlName)
 
   // Result types
+
+  override type ExType = UmlExercise
+
+  override type CompExType = UmlCompleteEx
+
+  override type Tables = UmlTableDefs
 
   override type R = EvaluationResult
 
