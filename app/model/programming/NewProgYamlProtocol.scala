@@ -1,6 +1,5 @@
 package model.programming
 
-import controllers.exes.idPartExes.ProgToolObject
 import model.MyYamlProtocol._
 import model.core.FileUtils
 import model.programming.ProgDataTypes.ProgDataType

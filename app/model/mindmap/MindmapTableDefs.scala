@@ -1,21 +1,15 @@
 package model.mindmap
 
 import javax.inject.Inject
-
-import controllers.exes.fileExes.MindMapToolObject
 import model.Enums.ExerciseState
 import model._
-import model.core.tools.FileExToolObject
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.api.mvc.Call
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 
 case class MindmapExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState) extends Exercise with FileCompleteEx[MindmapExercise] {
-
-  override val toolObject: FileExToolObject = MindMapToolObject
 
   override val baseValues: BaseValues = BaseValues(i, ti, a, te, s)
 
@@ -26,8 +20,6 @@ case class MindmapExercise(i: Int, ti: String, a: String, te: String, s: Exercis
   override def templateFilename: String = ???
 
   override def sampleFilename: String = ???
-
-  override def exerciseRoutes: Map[Call, String] = MindMapToolObject.exerciseRoutes(this)
 
 }
 

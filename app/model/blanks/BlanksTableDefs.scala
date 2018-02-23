@@ -1,8 +1,6 @@
 package model.blanks
 
 import javax.inject.Inject
-
-import controllers.exes.idPartExes.BlanksToolObject
 import model.Enums.ExerciseState
 import model._
 import model.blanks.BlanksExParts.BlanksExPart
@@ -16,8 +14,6 @@ import scala.concurrent.{ExecutionContext, Future}
 case class BlanksCompleteExercise(ex: BlanksExercise, samples: Seq[BlanksAnswer]) extends PartsCompleteEx[BlanksExercise, BlanksExPart] {
 
   override def preview: Html = views.html.blanks.blanksPreview(this)
-
-  override def exerciseRoutes: Map[Call, String] = BlanksToolObject.exerciseRoutes(this)
 
   override def hasPart(partType: BlanksExPart): Boolean = true
 }

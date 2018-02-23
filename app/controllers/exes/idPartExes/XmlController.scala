@@ -2,15 +2,14 @@ package controllers.exes.idPartExes
 
 import java.nio.file._
 
-import controllers.Secured
+import controllers.exes.ExerciseOptions
 import controllers.exes.idPartExes.XmlController._
 import javax.inject._
-import model.User
 import model.core._
-import model.core.tools.ExerciseOptions
 import model.xml.XmlConsts._
 import model.xml._
 import model.yaml.MyYamlFormat
+import model.{Consts, User}
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.json.JsValue
 import play.api.mvc._
@@ -29,16 +28,17 @@ object XmlController {
 }
 
 @Singleton
-class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, protected val tables: XmlTableDefs)(implicit ec: ExecutionContext)
-  extends AIdPartExController[XmlExPart](cc, dbcp, XmlToolObject) with Secured with FileUtils {
+class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, val tables: XmlTableDefs)(implicit ec: ExecutionContext)
+  extends FileUtils with AIdPartExToolMain[XmlExPart, XmlSolution, XmlExercise, XmlExercise] {
 
-  override protected def partTypeFromUrl(urlName: String): Option[XmlExPart] = XmlExParts.values find (_.urlName == urlName)
+  override val exType  : String = "xml"
+  override val toolname: String = "Xml"
+  override val urlPart : String = "xml"
+  override val consts  : Consts = XmlConsts
+
+  override def partTypeFromUrl(urlName: String): Option[XmlExPart] = XmlExParts.values find (_.urlName == urlName)
 
   // Result types
-
-  override type ExType = XmlExercise
-
-  override type CompExType = XmlExercise
 
   override type Tables = XmlTableDefs
 
@@ -46,14 +46,19 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   override type CompResult = XmlCompleteResult
 
-  // Reading solution from requests
+  // Reading solution from requests, saving
 
-  override type SolType = XmlSolution
+  //  override type SolType = XmlSolution
+
+  override def saveSolution(sol: XmlSolution): Future[Boolean] = tables.saveXmlSolution(sol)
+
+  override def readOldSolution(user: User, exerciseId: Int, part: XmlExPart): Future[Option[XmlSolution]] =
+    tables.readXmlSolution(user.username, exerciseId, part)
 
   override def readSolutionFromPostRequest(user: User, id: Int)(implicit request: Request[AnyContent]): Option[XmlSolution] =
     Solution.stringSolForm.bindFromRequest().fold(_ => None, sol => Some(XmlDocumentSolution(id, user.username, sol.learnerSolution)))
 
-  override protected def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: XmlExPart): Option[XmlSolution] = part match {
+  override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: XmlExPart): Option[XmlSolution] = part match {
     case GrammarCreationXmlPart  => jsValue.asStr map (XmlGrammarSolution(id, user.username, _))
     case DocumentCreationXmlPart => jsValue.asStr map (XmlDocumentSolution(id, user.username, _))
   }
@@ -62,25 +67,9 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   override val yamlFormat: MyYamlFormat[XmlExercise] = XmlExYamlProtocol.XmlExYamlFormat
 
-  // db
-
-  // Other routes
-
-  def playground: EssentialAction = withUser { user => implicit request => Ok(xmlPlayground(user)) }
-
-  def playgroundCorrection = Action { implicit request =>
-    Solution.stringSolForm.bindFromRequest.fold(
-      _ => BadRequest("There has been an error!"),
-      sol => {
-        val correctionResult = XmlCorrector.correct(sol.learnerSolution, "")
-        val result = XmlCompleteResult(sol.learnerSolution, solutionSaved = false, correctionResult)
-        Ok(result.render)
-      })
-  }
-
   // Correction
 
-  override protected def correctEx(user: User, solution: XmlSolution, completeEx: XmlExercise): Future[Try[XmlCompleteResult]] = tables.saveXmlSolution(solution) map { solSaved =>
+  override protected def correctEx(user: User, solution: XmlSolution, completeEx: XmlExercise): Future[Try[XmlCompleteResult]] = saveSolution(solution) map { solSaved =>
 
     solution match {
       case xds: XmlDocumentSolution =>
@@ -107,28 +96,34 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   override def renderEditRest(exercise: Option[XmlExercise]): Html = editXmlExRest(exercise)
 
-  override def renderExesListRest: Html = new Html(a(cls := "btn btn-primary btn-block", href := routes.XmlController.playground().url)("Xml-Playground").toString() + "<hr>")
+  //  override def renderExesListRest: Html = new Html(a(cls := "btn btn-primary btn-block", href := routes.XmlController.xmlPlayground().url)("Xml-Playground").toString() + "<hr>")
 
-  override protected def renderExercise(user: User, exercise: XmlExercise, part: XmlExPart): Future[Html] = tables.readXmlSolution(user.username, exercise.ex.id, part) map {
-    maybeOldSolution =>
-      val template = maybeOldSolution getOrElse exercise.getTemplate(part)
-      views.html.core.exercise2Rows(user, toolObject, exOptions, exercise.ex, renderExRest(exercise.ex, _), exScript, template, part)
-  }
+  override def renderExercise(user: User, exercise: XmlExercise, maybePart: Option[XmlExPart]): Future[Html] =
+    maybePart match {
+      case Some(part) =>
+        readOldSolution(user, exercise.ex.id, part) map {
+          maybeOldSolution =>
+            val template = maybeOldSolution map (_.solution) getOrElse exercise.getTemplate(part)
 
-  private def exScript: Html = Html(script(src := controllers.routes.Assets.versioned("javascripts/xml/xmlExercise.js").url).toString)
+            val exScript: Html = Html(script(src := controllers.routes.Assets.versioned("javascripts/xml/xmlExercise.js").url).toString)
 
-  def renderExRest(exercise: XmlExercise, urlName: String): Html = XmlExParts.values.find(_.urlName == urlName) match {
-    case (None | Some(DocumentCreationXmlPart)) => Html(pre(exercise.sampleGrammar).toString)
-    case Some(GrammarCreationXmlPart)           => Html(div(cls := "well")(exercise.grammarDescription).toString)
-  }
+            val exRest = part match {
+              case DocumentCreationXmlPart => Html(pre(exercise.sampleGrammar).toString)
+              case GrammarCreationXmlPart  => Html(div(cls := "well")(exercise.grammarDescription).toString)
+            }
+
+            views.html.core.exercise2Rows(user, this, exOptions, exercise.ex, exRest, exScript, template, part)
+        }
+      case None       => ???
+    }
 
   // Result handlers
 
-  override protected def onSubmitCorrectionResult(user: User, result: XmlCompleteResult): Html =
-    views.html.core.correction.render(result, result.render, user, toolObject)
+  override def onSubmitCorrectionResult(user: User, result: XmlCompleteResult): Html =
+    views.html.core.correction.render(result, result.render, user, this)
 
-  override protected def onSubmitCorrectionError(user: User, error: Throwable): Html = ???
+  override def onSubmitCorrectionError(user: User, error: Throwable): Html = ???
 
-  override protected def onLiveCorrectionResult(result: XmlCompleteResult): JsValue = result.toJson
+  override def onLiveCorrectionResult(result: XmlCompleteResult): JsValue = result.toJson
 
 }

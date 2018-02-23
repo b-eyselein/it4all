@@ -1,18 +1,18 @@
-@(user: model.User, collWrappers: Seq[model.CompleteCollectionWrapper], failures: Seq[scala.util.Failure[_]], toolObject: model.core.tools.CollectionToolObject)
+@(user: model.User, collWrappers: Seq[model.CompleteCollectionWrapper], failures: Seq[scala.util.Failure[_]], toolMainObject: controllers.exCollections.AExCollectionToolMain[_, _, _, _])
 
-@main("Import: " + toolObject.collectionSingularName, Some(user)) {
+@main("Import: " + toolMainObject.collectionSingularName, Some(user)) {
     <div class="container">
         <div class="page-header">
             <h1>Erstellte Aufgabensammlungen</h1>
         </div>
 
-        <a href="@toolObject.adminIndexRoute" class="btn btn-primary btn-block">
+        <a href="@controllers.exCollections.routes.AExCollectionController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
             Zur&uuml;ck zur Administratorseite</a>
 
         <hr>
 
         @for(collWrapper <- collWrappers) {
-            <h2>@toolObject.collectionSingularName: &quot;@collWrapper.title&quot;</h2>
+            <h2>@toolMainObject.collectionSingularName: &quot;@collWrapper.title&quot;</h2>
 
             <div class="row">
                 <div class="col-sm-2"><b>ID</b>: @collWrapper.id</div>

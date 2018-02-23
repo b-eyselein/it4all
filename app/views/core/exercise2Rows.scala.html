@@ -1,6 +1,5 @@
-@import model.core.ExPart
-@(user: model.User, routesObject: model.core.tools.ExToolObject, exerciseOptions: model.core.tools.ExerciseOptions, exercise: model.PartsCompleteEx[_, _],
-        exRest: String => Html, exScript: Html, oldSolution: String, part: ExPart)
+@(user: model.User, toolMainObject: controllers.exes.AToolMain[_, _], exerciseOptions: controllers.exes.ExerciseOptions, exercise: model.PartsCompleteEx[_, _],
+        exRest: Html, exScript: Html, oldSolution: String, part: model.core.ExPart)
 
     @scripts = {
         @* Javascript Routes *@
@@ -14,7 +13,7 @@
 
     }
 
-    @main(exerciseOptions.tool, Some(user), scripts) {
+    @main(toolMainObject.toolname, Some(user), scripts) {
         <div class="container" id="fullsc">
 
 
@@ -29,7 +28,7 @@
 
                     <p><b>@Html(exercise.textForPart(part.urlName))</b></p>
 
-                    @exRest(part.urlName)
+                    @exRest
                 </div>
 
                 <div class="col-md-6">
@@ -54,7 +53,8 @@
                     <div class="btn-group">
                         <button class="btn btn-success" id="testButton">L&ouml;sung testen</button>
                     </div>
-                    <a class="btn btn-default" href="@routesObject.indexCall">Bearbeitung beenden</a>
+                    <a class="btn btn-default" href="@controllers.exes.idPartExes.routes.AIdPartExController.index(toolMainObject.urlPart)">
+                        Bearbeitung beenden</a>
                 </div>
             </div>
 

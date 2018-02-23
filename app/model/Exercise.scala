@@ -2,10 +2,9 @@ package model
 
 import java.nio.file.Path
 
-import model.core.tools.FileExToolObject
+import controllers.exes.AToolMain
 import model.Enums.ExerciseState
 import model.core.{ExPart, FileUtils}
-import play.api.mvc.Call
 import play.twirl.api.Html
 
 case class BaseValues(id: Int, title: String, author: String, text: String, state: ExerciseState)
@@ -64,9 +63,6 @@ trait CompleteEx[E <: Exercise] extends HasBaseValues {
 
   def exType: String = ""
 
-  def exerciseRoutes: Map[Call, String]
-
-
 }
 
 trait PartsCompleteEx[E <: Exercise, PartType <: ExPart] extends CompleteEx[E] {
@@ -79,17 +75,15 @@ trait PartsCompleteEx[E <: Exercise, PartType <: ExPart] extends CompleteEx[E] {
 
 trait FileCompleteEx[Ex <: Exercise] extends CompleteEx[Ex] with FileUtils {
 
-  def toolObject: FileExToolObject
-
   def templateFilename: String
 
   def sampleFilename: String
 
-  def templateFilePath(fileEnding: String): Path = toolObject.templateDirForExercise(ex.id) / (templateFilename + "." + fileEnding)
+  def templateFilePath(toolMain: AToolMain[_, _], fileEnding: String): Path = toolMain.templateDirForExercise(ex.id) / (templateFilename + "." + fileEnding)
 
-  def sampleFilePath(fileEnding: String): Path = toolObject.sampleDirForExercise(ex.id) / (sampleFilename + "." + fileEnding)
+  def sampleFilePath(toolMain: AToolMain[_, _], fileEnding: String): Path = toolMain.sampleDirForExercise(ex.id) / (sampleFilename + "." + fileEnding)
 
-  def available(fileEnding: String): Boolean = templateFilePath(fileEnding).toFile.exists && sampleFilePath(fileEnding).toFile.exists
+  def available(toolMain: AToolMain[_, _], fileEnding: String): Boolean = templateFilePath(toolMain, fileEnding).toFile.exists && sampleFilePath(toolMain, fileEnding).toFile.exists
 
 }
 

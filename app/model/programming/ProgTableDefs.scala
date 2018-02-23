@@ -1,8 +1,6 @@
 package model.programming
 
 import javax.inject.Inject
-
-import controllers.exes.idPartExes.ProgToolObject
 import model.Enums.ExerciseState
 import model._
 import model.programming.ProgConsts._
@@ -21,8 +19,6 @@ case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[InputType], sampleSo
   // FIXME: only one solution?
 
   override def preview: Html = views.html.programming.progPreview.render(this)
-
-  override def exerciseRoutes: Map[Call, String] = ProgToolObject.exerciseRoutes(this)
 
   val inputCount: Int = inputTypes.size
 

@@ -3,11 +3,10 @@ package controllers.exCollections
 import java.nio.file.Files
 
 import controllers.Secured
+import javax.inject.{Inject, Singleton}
 import model._
 import model.core.CoreConsts._
 import model.core._
-import model.core.tools.CollectionToolObject
-import model.yaml.MyYamlFormat
 import net.jcazevedo.moultingyaml._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.Json
@@ -15,87 +14,68 @@ import play.api.mvc._
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
+import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success, Try}
+import scala.util.{Failure, Success}
 
+object AExCollectionController {
 
-abstract class AExCollectionController[Ex <: ExerciseInCollection, CompEx <: CompleteEx[Ex], Coll <: ExerciseCollection[Ex, CompEx], CompColl <: CompleteCollection[Ex, CompEx, Coll],
-R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseCollectionTableDefs[Ex, CompEx, Coll, CompColl]]
-(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val tables: Tables, val toolObject: CollectionToolObject)(implicit ec: ExecutionContext)
+  val CollectionToolMains: mutable.Map[String, AExCollectionToolMain[_ <: Exercise, _ <: CompleteEx[_], _, _]] = mutable.Map.empty
+
+}
+
+@Singleton
+class AExCollectionController @Inject()(cc: ControllerComponents, val dbConfigProvider: DatabaseConfigProvider, val tables: Repository)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] with Secured with FileUtils {
 
-  // Reading solution from Request
-
-  type SolType
-
-  def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[SolType]
-
-  def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[SolType]
-
-  // Reading Yaml
-
-  implicit val yamlFormat: MyYamlFormat[CompColl]
-
-  // Database queries
-
-  protected def numOfExes: Future[Int] = tables.futureNumOfExes
-
-  protected def numOfExesInColl(id: Int): Future[Int]
-
-  protected def futureCollById(id: Int): Future[Option[Coll]] = tables.futureCollById(id)
-
-  protected def futureCompleteColls: Future[Seq[CompColl]] = tables.futureCompleteColls
-
-  protected def futureCompleteCollById(id: Int): Future[Option[CompColl]] = tables.futureCompleteCollById(id)
-
-  protected def futureCompleteExById(collId: Int, id: Int): Future[Option[CompEx]] = tables.futureCompleteExById(collId, id)
-
-  protected def statistics: Future[Html] = numOfExes map (num => Html(s"<li>Es existieren insgesamt $num Aufgaben</li>"))
-
-  protected def saveRead(read: Seq[CompColl]): Future[Seq[Boolean]]
-
-  protected def wrap(compColl: CompColl): CompleteCollectionWrapper
 
   def log(user: User, eventToLog: WorkingEvent): Unit = Unit // PROGRESS_LOGGER.debug(s"""${user.username} - ${Json.toJson(eventToLog)}""")
 
   // Admin
 
-  def adminIndex: EssentialAction = futureWithAdmin { user =>
-    implicit request => statistics map (stats => Ok(views.html.admin.collectionAdminMain(user, stats, toolObject)))
+  def adminIndex(tool: String): EssentialAction = futureWithAdmin { user =>
+    implicit request =>
+      val toolMain = AExCollectionController.CollectionToolMains(tool)
+      toolMain.statistics map (stats => Ok(views.html.admin.collectionAdminMain(user, stats, toolMain)))
   }
 
-  def adminImportCollections: EssentialAction = futureWithAdmin { admin =>
+  def adminImportCollections(tool: String): EssentialAction = futureWithAdmin { admin =>
     implicit request =>
-      val file = toolObject.resourcesFolder / (toolObject.exType + ".yaml")
+      val toolMain = AExCollectionController.CollectionToolMains(tool)
+      val file = toolMain.resourcesFolder / (toolMain.exType + ".yaml")
 
-      val reads: Seq[Try[CompColl]] = readAll(file).get.parseYamls map yamlFormat.read
+      val reads = readAll(file).get.parseYamls map toolMain.yamlFormat.read
 
       val (successes, failures) = CommonUtils.splitTries(reads)
 
-      successes.foreach(cc => println(cc.exercises.size))
+//      successes.foreach(cc => println(cc.exercises.size))
 
-      saveRead(successes) map {
-        _ => Ok(views.html.admin.collPreview(admin, successes map wrap, failures, toolObject))
+      toolMain.saveRead(successes) map {
+        _ => Ok(views.html.admin.collPreview(admin, successes map toolMain.wrap, failures, toolMain))
       }
   }
 
-  def adminExportCollections: EssentialAction = futureWithAdmin { admin =>
-    implicit request => futureCompleteColls map (colls => Ok(views.html.admin.export.render(admin, yamlString(colls), toolObject)))
+  def adminExportCollections(tool: String): EssentialAction = futureWithAdmin { admin =>
+    implicit request =>
+      val toolMain = AExCollectionController.CollectionToolMains(tool)
+      toolMain.futureCompleteColls map (colls => Ok(views.html.admin.export.render(admin, yamlString(colls), toolMain)))
   }
 
-  def adminExportCollectionsAsFile: EssentialAction = futureWithAdmin { _ =>
+  def adminExportCollectionsAsFile(tool: String): EssentialAction = futureWithAdmin { _ =>
     implicit request =>
-      val file = Files.createTempFile(s"export_${toolObject.exType}", ".yaml")
-      futureCompleteColls map (exes => {
+      val toolMain = AExCollectionController.CollectionToolMains(tool)
+      val file = Files.createTempFile(s"export_${toolMain.exType}", ".yaml")
+      toolMain.futureCompleteColls map (exes => {
 
         write(file, yamlString(exes))
 
-        Ok.sendPath(file, fileName = _ => s"export_${toolObject.exType}.yaml", onClose = () => Files.delete(file))
+        Ok.sendPath(file, fileName = _ => s"export_${toolMain.exType}.yaml", onClose = () => Files.delete(file))
       })
   }
 
-  def adminChangeCollectionState(id: Int): EssentialAction = futureWithAdmin { _ =>
+  def adminChangeCollectionState(tool: String, id: Int): EssentialAction = futureWithAdmin { _ =>
     implicit request =>
+      val toolMain = AExCollectionController.CollectionToolMains(tool)
       //      import play.api.data.Forms._
       //      case class StrForm(str: String)
       //      val form = Form(mapping("state" -> nonEmptyText)(StrForm.apply)(StrForm.unapply))
@@ -110,35 +90,44 @@ R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseCollec
       Future(BadRequest("Not yet implemented: changing the state of a collection"))
   }
 
-  def adminCollectionsList: EssentialAction = futureWithAdmin { admin =>
-    implicit request => futureCompleteColls map (colls => Ok(views.html.admin.collectionList(admin, colls map wrap, toolObject)))
-  }
-
-  def adminEditCollectionForm(id: Int): EssentialAction = futureWithAdmin { admin =>
-    implicit request => futureCompleteCollById(id) map (coll => Ok(collEditForm(admin, coll)))
-  }
-
-  def adminEditCollection(id: Int): EssentialAction = withAdmin { _ =>
+  def adminCollectionsList(tool: String): EssentialAction = futureWithAdmin { admin =>
     implicit request =>
+      val toolMain = AExCollectionController.CollectionToolMains(tool)
+      toolMain.futureCompleteColls map (colls => Ok(views.html.admin.collectionList(admin, colls map toolMain.wrap)))
+  }
+
+  def adminEditCollectionForm(tool: String, id: Int): EssentialAction = futureWithAdmin { admin =>
+    implicit request =>
+      val toolMain = AExCollectionController.CollectionToolMains(tool)
+      toolMain.futureCompleteCollById(id) map (coll => Ok(collEditForm(admin, coll)))
+  }
+
+  def adminEditCollection(tool: String, id: Int): EssentialAction = withAdmin { _ =>
+    implicit request =>
+      val toolMain = AExCollectionController.CollectionToolMains(tool)
       // FIXME: implement: editing of collection!
       Ok("TODO: Editing collection...!")
   }
 
-  def adminNewCollectionForm: EssentialAction = withAdmin { admin =>
-    implicit request => Ok(collEditForm(admin, None))
+  def adminNewCollectionForm(tool: String): EssentialAction = withAdmin { admin =>
+    implicit request =>
+      val toolMain = AExCollectionController.CollectionToolMains(tool)
+      Ok(collEditForm(admin, None))
   }
 
-  def adminCreateCollection: EssentialAction = withAdmin { _ =>
+  def adminCreateCollection(tool: String): EssentialAction = withAdmin { _ =>
     implicit request =>
+      val toolMain = AExCollectionController.CollectionToolMains(tool)
       // FIXME: implement: creation of collection!
       Ok("TODO: Creating new collection...!")
   }
 
   private def collEditForm(admin: User, collection: Option[CompColl]): Html =
-    views.html.admin.collectionEditForm(admin, toolObject, collection map wrap, adminRenderEditRest(collection))
+    views.html.admin.collectionEditForm(admin, collection map toolMain.wrap, adminRenderEditRest(collection))
 
-  def adminDeleteCollection(id: Int): EssentialAction = futureWithAdmin { _ =>
+  def adminDeleteCollection(tool: String, id: Int): EssentialAction = futureWithAdmin { _ =>
     implicit request =>
+      val toolMain = AExCollectionController.CollectionToolMains(tool)
       tables.deleteColl(id) map {
         case 0 => NotFound(Json.obj("message" -> s"Die Aufgabe mit ID $id existiert nicht und kann daher nicht geloescht werden!"))
         case _ => Ok(Json.obj("id" -> id))
@@ -152,36 +141,40 @@ R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseCollec
 
   // User
 
-  def index: EssentialAction = collectionList(page = 1)
+  def index(tool: String): EssentialAction = collectionList(tool, page = 1)
 
-  def collectionList(page: Int): EssentialAction = futureWithUser { user =>
+  def collectionList(tool: String, page: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
-      futureCompleteColls map (allColls => Ok(views.html.core.collsList(user, takeSlice(allColls, page) map wrap, renderExesListRest, toolObject, allColls.size / STEP + 1)))
+      val toolMain = AExCollectionController.CollectionToolMains(tool)
+      toolMain.futureCompleteColls map (allColls => Ok(views.html.core.collsList(user, takeSlice(allColls, page) map wrap, renderExesListRest, toolMain, allColls.size / STEP + 1)))
   }
 
-  def collection(id: Int, page: Int): EssentialAction = futureWithUser { user =>
+  def collection(tool: String, id: Int, page: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
-      futureCompleteCollById(id) map {
-        case None       => Redirect(toolObject.indexCall)
-        case Some(coll) => Ok(views.html.core.collection(user, wrap(coll), takeSlice(coll.exercises, page), toolObject, page, numOfPages(coll.exercises.size)))
+      val toolMain = AExCollectionController.CollectionToolMains(tool)
+      toolMain.futureCompleteCollById(id) map {
+        case None       => Redirect(toolMain.indexCall)
+        case Some(coll) => Ok(views.html.core.collection(user, wrap(coll), takeSlice(coll.exercises, page), toolMain, page, numOfPages(coll.exercises.size)))
       }
   }
 
-  def filteredCollection(id: Int, filter: String, page: Int): EssentialAction = futureWithUser { user =>
+  def filteredCollection(tool: String, id: Int, filter: String, page: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
-      futureCompleteCollById(id) map {
-        case None       => Redirect(toolObject.indexCall)
+      val toolMain = AExCollectionController.CollectionToolMains(tool)
+      toolMain.futureCompleteCollById(id) map {
+        case None       => Redirect(controllers.exes.idPartExes.routes.AExCollectionController.index(toolMain.urlPart))
         case Some(coll) =>
           val filteredExes = coll exercisesWithFilter filter
-          Ok(views.html.core.filteredCollection(user, wrap(coll), takeSlice(filteredExes, page), toolObject, filter, page, numOfPages(filteredExes.size)))
+          Ok(views.html.core.filteredCollection(user, wrap(coll), takeSlice(filteredExes, page), toolMain, filter, page, numOfPages(filteredExes.size)))
       }
   }
 
   // User
 
-  def exercise(collId: Int, id: Int): EssentialAction = futureWithUser { user =>
+  def exercise(tool: String, collId: Int, id: Int): EssentialAction = futureWithUser { user =>
     implicit request =>
-      (futureCollById(collId) zip futureCompleteExById(collId, id) zip numOfExesInColl(collId)) map {
+      val toolMain = AExCollectionController.CollectionToolMains(tool)
+      (toolMain.futureCollById(collId) zip toolMain.futureCompleteExById(collId, id) zip toolMain.numOfExesInColl(collId)) map {
         optTuple => ((optTuple._1._1 zip optTuple._1._2).headOption, optTuple._2)
       } flatMap {
         case (None, _)                     => Future(BadRequest("TODO!"))
@@ -190,12 +183,16 @@ R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseCollec
   }
 
 
-  def correct(collId: Int, id: Int): EssentialAction = futureWithUser { user =>
-    implicit request => correctAbstract(user, collId, id, readSolutionFromPostRequest, onSubmitCorrectionResult(user, _), onSubmitCorrectionError(user, _))
+  def correct(tool: String, collId: Int, id: Int): EssentialAction = futureWithUser { user =>
+    implicit request =>
+      val toolMain = AExCollectionController.CollectionToolMains(tool)
+      correctAbstract(user, collId, id, toolMain.readSolutionFromPostRequest, toolMain.onSubmitCorrectionResult(user, _), toolMain.onSubmitCorrectionError(user, _))
   }
 
-  def correctLive(collId: Int, id: Int): EssentialAction = futureWithUser { user =>
-    implicit request => correctAbstract(user, collId, id, readSolutionFromPutRequest, onLiveCorrectionResult, onLiveCorrectionError)
+  def correctLive(tool: String, collId: Int, id: Int): EssentialAction = futureWithUser { user =>
+    implicit request =>
+      val toolMain = AExCollectionController.CollectionToolMains(tool)
+      correctAbstract(user, collId, id, toolMain.readSolutionFromPutRequest, toolMain.onLiveCorrectionResult, toolMain.onLiveCorrectionError)
   }
 
   private def correctAbstract[S, Err](user: User, collId: Int, id: Int, maybeSolution: Option[SolType], onCorrectionSuccess: CompResult => Result,
@@ -211,23 +208,6 @@ R <: EvaluationResult, CompResult <: CompleteResult[R], Tables <: ExerciseCollec
       }
     }
 
-  // Correction
-
-  protected def correctEx(user: User, form: SolType, exercise: CompEx, collection: Coll): Future[Try[CompResult]]
-
-  // Views
-
-  protected def renderExercise(user: User, coll: Coll, exercise: CompEx, numOfExes: Int): Future[Html]
-
-  protected def onSubmitCorrectionResult(user: User, result: CompResult): Result
-
-  protected def onSubmitCorrectionError(user: User, error: Throwable): Result
-
-  protected def onLiveCorrectionResult(result: CompResult): Result
-
-  protected def onLiveCorrectionError(error: Throwable): Result
-
-  protected def adminRenderEditRest(exercise: Option[CompColl]): Html
 
   /**
     * Used for rendering things such as playgrounds

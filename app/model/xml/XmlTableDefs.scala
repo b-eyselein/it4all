@@ -1,6 +1,5 @@
 package model.xml
 
-import controllers.exes.idPartExes.XmlToolObject
 import javax.inject.Inject
 import model.Enums.ExerciseState
 import model.xml.XmlEnums.XmlExType
@@ -23,8 +22,6 @@ case class XmlExercise(override val id: Int, override val title: String, overrid
   override def ex: XmlExercise = this
 
   override def preview: Html = views.html.xml.xmlPreview.render(this)
-
-  override def exerciseRoutes: Map[play.api.mvc.Call, String] = XmlToolObject.exerciseRoutes(this)
 
   override def hasPart(partType: XmlExPart): Boolean = partType match {
     case DocumentCreationXmlPart => true
@@ -81,13 +78,13 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   override def completeExForEx(ex: XmlExercise)(implicit ec: ExecutionContext): Future[XmlExercise] = Future(ex)
 
-  def readXmlSolution(username: String, exerciseId: Int, part: XmlExPart): Future[Option[String]] = {
-    val table: TableQuery[_ <: XmlSolutionsTable[_]] = part match {
+  def readXmlSolution(username: String, exerciseId: Int, part: XmlExPart): Future[Option[XmlSolution]] = {
+    val table: TableQuery[_ <: XmlSolutionsTable[_ <: XmlSolution]] = part match {
       case DocumentCreationXmlPart => xmlDocumentSolutions
       case GrammarCreationXmlPart  => xmlGrammarSolutions
     }
 
-    db.run(table.filter(sol => sol.exerciseId === exerciseId && sol.username === username).map(_.solution).result.headOption)
+    db.run(table.filter(sol => sol.exerciseId === exerciseId && sol.username === username).result.headOption)
   }
 
   // Saving

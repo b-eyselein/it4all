@@ -1,16 +1,14 @@
 package controllers.exCollections
 
-import controllers.Secured
 import javax.inject.{Inject, Singleton}
 import model.Enums.Role
 import model.questions.QuestionEnums.QuestionType
 import model.questions._
 import model.yaml.MyYamlFormat
 import model.{CompleteCollectionWrapper, JsonFormat, User}
-import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
+import play.api.db.slick.DatabaseConfigProvider
 import play.api.mvc._
 import play.twirl.api.Html
-import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
@@ -18,23 +16,22 @@ import scala.util.{Failure, Try}
 
 @Singleton
 class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: QuestionsTableDefs)(implicit ec: ExecutionContext)
-  extends AExCollectionController[Question, CompleteQuestion, Quiz, CompleteQuiz, IdAnswerMatch, QuestionResult, QuestionsTableDefs](cc, dbcp, t, QuestionToolObject)
-    with HasDatabaseConfigProvider[JdbcProfile] with JsonFormat with Secured {
+  extends JsonFormat with AExCollectionToolMain[Question, CompleteQuestion] {
 
-  override type SolType = Seq[GivenAnswer]
+  //  override type SolType = Seq[GivenAnswer]
 
-  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[Seq[GivenAnswer]] = request.body.asJson flatMap (_.asObj) flatMap { jsObj =>
-    jsObj.stringField("questionType") flatMap QuestionType.byString flatMap {
-      case QuestionType.CHOICE   => jsObj.arrayField("chosen", jsValue => Some(IdGivenAnswer(jsValue.asInt getOrElse -1)))
-      case QuestionType.FREETEXT => ??? // Some(Seq.empty)
-    }
-  }
+  //  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[Seq[GivenAnswer]] = request.body.asJson flatMap (_.asObj) flatMap { jsObj =>
+  //    jsObj.stringField("questionType") flatMap QuestionType.byString flatMap {
+  //      case QuestionType.CHOICE   => jsObj.arrayField("chosen", jsValue => Some(IdGivenAnswer(jsValue.asInt getOrElse -1)))
+  //      case QuestionType.FREETEXT => ??? // Some(Seq.empty)
+  //    }
+  //  }
 
-  override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[Seq[GivenAnswer]] = {
-    println(request.body.asFormUrlEncoded)
-
-    None
-  }
+  //  override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[Seq[GivenAnswer]] = {
+  //    println(request.body.asFormUrlEncoded)
+  //
+  //    None
+  //  }
 
   // Yaml
 
@@ -256,5 +253,5 @@ class QuestionController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfi
       }
     }
   }
-  
+
 }

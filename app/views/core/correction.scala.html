@@ -1,27 +1,27 @@
-@(result: model.core.CompleteResult[_], resultAsHtml: Html, user: model.User, toolObject: model.core.tools.ToolObject)
+@(result: model.core.CompleteResult[_], resultAsHtml: Html, user: model.User, toolMainObject: controllers.exes.AToolMain[_, _])
 
-@main(toolObject.toolname.toUpperCase(), Some(user)) {
-    <div class="container">
+    @main(toolMainObject.toolname.toUpperCase(), Some(user)) {
+        <div class="container">
 
-        <div class="alert alert-success">
-            Ihre L&ouml;sung wurde gespeichert. Sie k&ouml;nnen nun weitere <a href="@toolObject.indexCall">
-            Aufgaben bearbeiten.</a>
-        </div>
-
-        <hr>
-
-        <div class="row row-eq-height">
-            <div class="col-md-6">
-                <h2>Ihre L&ouml;sung</h2>
-                @result.renderLearnerSolution
+            <div class="alert alert-success">
+                Ihre L&ouml;sung wurde gespeichert. Sie k&ouml;nnen nun weitere <a href="@controllers.exes.idPartExes.routes.AIdPartExController.index(toolMainObject.urlPart)">
+                Aufgaben bearbeiten.</a>
             </div>
 
-            <div class="col-md-6">
-                <h2>Korrektur</h2>
-                @resultAsHtml
-            </div>
+            <hr>
 
+            <div class="row row-eq-height">
+                <div class="col-md-6">
+                    <h2>Ihre L&ouml;sung</h2>
+                    @result.renderLearnerSolution
+                </div>
+
+                <div class="col-md-6">
+                    <h2>Korrektur</h2>
+                    @resultAsHtml
+                </div>
+
+            </div>
         </div>
-    </div>
-}
+    }
 

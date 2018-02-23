@@ -1,7 +1,7 @@
-@(user: model.User, statistics: Html, toolObject: model.core.tools.CollectionToolObject)
+@(user: model.User, statistics: Html, toolMainObject: controllers.exCollections.AExCollectionToolMain[_, _, _, _])
 
 @title = @{
-    "Administrator " + toolObject.toolname
+    "Administrator " + toolMainObject.toolname
 }
 
 @main(title, Some(user)) {
@@ -20,18 +20,22 @@
         <hr>
 
         <section id="administration">
-            <h2>Verwaltung der @toolObject.pluralName</h2>
-            <a class="btn btn-default btn-block" href="@toolObject.adminExesListRoute">Übersicht über alle @toolObject.collectionPluralName</a>
+            <h2>Verwaltung der @toolMainObject.pluralName</h2>
+
+            @* @toolMainObject.adminExesListRoute *@
+            <a class="btn btn-default btn-block" href="@controllers.exCollections.routes.AExCollectionController.adminExerciseList(toolMainObject.urlPart)">
+                Übersicht über alle @toolMainObject.collectionPluralName</a>
 
                 &nbsp;
 
-            <a class="btn btn-default btn-block" href="@toolObject.newExFormRoute">Neues @toolObject.collectionSingularName erstellen</a>
+            @* @toolMainObject.newExFormRoute *@
+            <a class="btn btn-default btn-block" href="@controllers.exCollections.routes.AExCollectionController.newExerciseForm()">Neues @toolMainObject.collectionSingularName erstellen</a>
 
                 &nbsp;
 
             <div class="btn-group btn-group-justified">
-                <a class="btn btn-default" href="@toolObject.exportExesRoute">@toolObject.collectionPluralName als YAML exportieren</a>
-                <a class="btn btn-default" href="@toolObject.importExesRoute">@toolObject.collectionPluralName aus YAML importieren</a>
+                <a class="btn btn-default" href="@toolMainObject.exportExesRoute">@toolMainObject.collectionPluralName als YAML exportieren</a>
+                <a class="btn btn-default" href="@toolMainObject.importExesRoute">@toolMainObject.collectionPluralName aus YAML importieren</a>
             </div>
         </section>
     </div>

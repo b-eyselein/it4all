@@ -1,49 +1,47 @@
 @(user: model.User, collections: Seq[model.CompleteCollectionWrapper], rest: Html, toolObject: model.core.tools.CollectionToolObject, pages: Int)
 
-    @main(toolObject.toolname, Some(user)) {
-        <div class="container">
-            <div class="page-header">
-                <h1 class="page-title">&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h1>
+@main(toolObject.toolname, Some(user)) {
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h1>
+        </div>
+
+        @if(collections.isEmpty) {
+            <div class="alert alert-danger">Es existieren bisher keine Aufgaben in dieser Kategorie. Wenden Sie Sich bitte an den Administrator.</div>
+        } else {
+            @rest
+
+            <div class="row">
+                <div class="col-sm-2"><h4>Id</h4></div>
+                @if(toolObject.hasTags) {
+                    <div class="col-sm-2"><h4>Tags</h4></div>
+                }
+                <div class="col-sm-3"><h4>Titel</h4></div>
+                <div class="col-sm-5"><h4>Link(s)</h4></div>
             </div>
 
-            @if(collections.isEmpty) {
-                <div class="alert alert-danger">
-                    Es existieren bisher keine Aufgaben in der Kategorie @toolObject.toolname.
-                    Wenden Sie Sich bitte an den Administrator.</div>
-            } else {
-                @rest
+            <hr>
 
+            @for(collection <- collections) {
                 <div class="row">
-                    <div class="col-sm-2"><h4>Id</h4></div>
-                    @if(toolObject.hasTags) {
-                        <div class="col-sm-2"><h4>Tags</h4></div>
-                    }
-                    <div class="col-sm-3"><h4>Titel</h4></div>
-                    <div class="col-sm-5"><h4>Link(s)</h4></div>
+                    <div class="col-sm-2">@collection.coll.id</div>
+                    <div class="col-sm-3">@collection.coll.title</div>
+                    <div class="col-sm-5">
+                        <div class="btn-group btn-group-justified">
+                            <a href="@toolObject.collectionRoute(collection.id)" class="btn btn-primary">Zur Sammlung</a>
+                        </div>
+                    </div>
                 </div>
 
                 <hr>
-
-                @for(collection <- collections) {
-                    <div class="row">
-                        <div class="col-sm-2">@collection.coll.id</div>
-                        <div class="col-sm-3">@collection.coll.title</div>
-                        <div class="col-sm-5">
-                            <div class="btn-group btn-group-justified">
-                                <a href="@toolObject.collectionRoute(collection.id)" class="btn btn-primary">Zur Sammlung</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <hr>
-                    }
-                @*<div class="text-center">*@
-                @*<ul class="pagination">*@
-                @* @for(i <- 1 until pages) {*@
-                @*<li><a href="@toolObject.exerciseListRoute(i)">@i</a></li>*@
-                @*}*@
-                @*</ul>*@
-                @*</div>*@
-            }
-        </div>
-    }
+                }
+            @*<div class="text-center">*@
+            @*<ul class="pagination">*@
+            @* @for(i <- 1 until pages) {*@
+            @*<li><a href="@toolObject.exerciseListRoute(i)">@i</a></li>*@
+            @*}*@
+            @*</ul>*@
+            @*</div>*@
+        }
+    </div>
+}

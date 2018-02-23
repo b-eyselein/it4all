@@ -2,66 +2,49 @@ package controllers.exes.fileExes
 
 import java.nio.file.Path
 
-import controllers.Secured
 import javax.inject._
-import model.User
 import model.core._
-import model.mindmap.{MindmapExercise, MindmapTableDefs}
+import model.mindmap.{MindmapConsts, MindmapExercise, MindmapTableDefs}
 import model.yaml.MyYamlFormat
+import model.{Consts, User}
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.libs.json.JsValue
-import play.api.mvc.{AnyContent, ControllerComponents, Request}
+import play.api.mvc.ControllerComponents
 import play.twirl.api.Html
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 import scala.language.implicitConversions
-import scala.util.Try
 
 @Singleton
-class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, protected val tables: MindmapTableDefs)(implicit ec: ExecutionContext)
-  extends AFileExController(cc, dbcp, MindMapToolObject) with Secured {
+class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, override val tables: MindmapTableDefs)(implicit ec: ExecutionContext)
+  extends AFileExToolMain[MindmapExercise, MindmapExercise] {
+
+  override val urlPart : String = "mindmap"
+  override val toolname: String = "Mindmap"
+  override val exType  : String = "mindmap"
+  override val consts  : Consts = MindmapConsts
+
+  override val fileTypes: Map[String, String] = Map.empty
 
   // Abstract types
-
-  override type ExType = MindmapExercise
-
-  override type CompExType = MindmapExercise
 
   override type Tables = MindmapTableDefs
 
   override type R = EvaluationResult
 
-  override type CompResult = GenericCompleteResult[EvaluationResult]
-
-  // Reading solution from requests
-
-  override type SolType = Path
-
-  override def readSolutionFromPostRequest(user: User, id: Int)(implicit request: Request[AnyContent]): Option[Path] = ???
-
-  override def readSolutionFromPutRequest(user: User, id: Int)(implicit request: Request[AnyContent]): Option[Path] = ???
-
   // Yaml
 
   override implicit val yamlFormat: MyYamlFormat[MindmapExercise] = null
 
-  // db
-
-  override def saveReadToDb(compEx: MindmapExercise): Future[Int] = Future(-1) //???
-
-  override protected def checkFiles(ex: MindmapExercise): Seq[Try[Path]] = Seq.empty // ???
 
   // Views
 
-  override protected def renderExercise(user: User, exercise: MindmapExercise, part: String): Html = ???
+  override def renderExercise(user: User, exercise: MindmapExercise, part: String): Html = ???
 
-  override protected def renderResult(user: User, correctionResult: EvaluationResult, exercise: MindmapExercise, fileExtension: String): Html = ???
+  override def renderResult(user: User, correctionResult: EvaluationResult, exercise: MindmapExercise, fileExtension: String): Html = ???
 
   //Ok(views.html.mindmap.mindmapcorrect.render(user))
 
   // Correction
-
-  override protected def correctEx(user: User, sol: Path, exercise: MindmapExercise): Future[Try[GenericCompleteResult[EvaluationResult]]] = ???
 
   override protected def correctEx(learnerFilePath: Path, sampleFilePath: Path, fileExtension: String): EvaluationResult = ???
 
@@ -83,10 +66,4 @@ class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfig
   //      } catch {
   //        case e@(_: ParsingException | _: IOException) => e.printStackTrace()
   //      }
-  override protected def onSubmitCorrectionResult(user: User, result: GenericCompleteResult[EvaluationResult]): Html = ???
-
-  override protected def onSubmitCorrectionError(user: User, error: Throwable): Html = ???
-
-  override protected def onLiveCorrectionResult(result: GenericCompleteResult[EvaluationResult]): JsValue = ???
-
 }

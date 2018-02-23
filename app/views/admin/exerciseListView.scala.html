@@ -1,4 +1,6 @@
-@(user: model.User, completeExercises: Seq[_ <: model.CompleteEx[_ <: model.Exercise]], toolObject: model.core.tools.ExToolObject)
+@(user: model.User, completeExercises: Seq[_ <: model.CompleteEx[_ <: model.Exercise]], toolMainObject: controllers.exes.AToolMain[_, _])
+
+@* FIXME: convert all routes to js routes! *@
 
 @main("Aufgabenübersicht", Some(user)) {
     <div class="container">
@@ -6,7 +8,8 @@
             <h1>Verf&uuml;gbare Aufgaben</h1>
         </div>
 
-        <a href="@toolObject.adminIndexRoute" class="btn btn-primary btn-block">Zur&uuml;ck zur Administratorseite</a>
+        @* @toolMainObject.adminIndexRoute *@
+        <a href="@controllers.exes.idPartExes.routes.AIdPartExController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">Zur&uuml;ck zur Administratorseite</a>
 
         <hr>
 
@@ -38,17 +41,17 @@
                             }
                             </select>
                             <span class="input-group-btn">
-                                <button class="btn btn-default" id="scb_@exercise.id" onclick="changeState('@toolObject.changeExStateRoute(exercise.id)', @exercise.id)" disabled>
+                                <button class="btn btn-default" id="scb_@exercise.id" onclick="changeState('@@toolMainObject.changeExStateRoute(exercise.id)', @exercise.id)" disabled>
                                     <span class="glyphicon glyphicon-upload"></span></button>
                             </span>
                         </div>
                     </td>
                     <td>
-                        <a class="btn btn-default" title="Aufgabe @exercise.id bearbeiten" id="edit_@exercise.id" href="@toolObject.editExerciseFormRoute(exercise.id)">
+                        <a class="btn btn-default" title="Aufgabe @exercise.id bearbeiten" id="edit_@exercise.id" href="@@toolMainObject.editExerciseFormRoute(exercise.id)">
                             <span class="glyphicon glyphicon-wrench"></span>
                         </a>
                         <button class="btn btn-default" title="Aufgabe @exercise.id l&ouml;schen" id="del_@exercise.id"
-                        onclick="deleteExercise('@toolObject.deleteExerciseRoute(exercise.id) ')">
+                        onclick="deleteExercise('@@toolMainObject.deleteExerciseRoute(exercise.id) ')">
                             <span class="glyphicon glyphicon-remove"></span>
                         </button>
                     </td>

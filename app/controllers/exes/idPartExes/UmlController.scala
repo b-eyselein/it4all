@@ -1,11 +1,10 @@
 package controllers.exes.idPartExes
 
-import controllers.Secured
 import javax.inject._
 import model.core._
 import model.uml._
 import model.yaml.MyYamlFormat
-import model.{JsonFormat, User}
+import model.{Consts, JsonFormat, User}
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
@@ -18,16 +17,17 @@ import scala.language.implicitConversions
 import scala.util.Try
 
 @Singleton
-class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, protected val tables: UmlTableDefs)(implicit ec: ExecutionContext)
-  extends AIdPartExController[UmlExPart](cc, dbcp, UmlToolObject) with JsonFormat with Secured {
+class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, val tables: UmlTableDefs)(implicit ec: ExecutionContext)
+  extends JsonFormat with AIdPartExToolMain[UmlExPart, UserUmlSolution, UmlExercise, UmlCompleteEx] {
+
+  override val urlPart : String = "uml"
+  override val toolname: String = "Uml"
+  override val exType  : String = "uml"
+  override val consts  : Consts = UmlConsts
 
   override def partTypeFromUrl(urlName: String): Option[UmlExPart] = UmlExParts.values.find(_.urlName == urlName)
 
   // Result types
-
-  override type ExType = UmlExercise
-
-  override type CompExType = UmlCompleteEx
 
   override type Tables = UmlTableDefs
 
@@ -37,7 +37,9 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // Reading solution
 
-  override type SolType = UserUmlSolution
+  override def saveSolution(sol: UserUmlSolution): Future[Boolean] = ???
+
+  override def readOldSolution(user: User, exerciseId: Int, part: UmlExPart): Future[Option[UserUmlSolution]] = ???
 
   override def readSolutionFromPostRequest(user: User, id: Int)(implicit request: Request[AnyContent]): Option[UserUmlSolution] = {
     Solution.stringSolForm.bindFromRequest fold(
@@ -56,18 +58,24 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // Views
 
-  override protected def renderExercise(user: User, exercise: UmlCompleteEx, part: UmlExPart): Future[Html] = Future(part match {
-    case ClassSelection     => classSelection.render(user, exercise.ex)
-    case DiagramDrawing     => diagdrawing.render(user, exercise, getsHelp = false)
-    case DiagramDrawingHelp => diagdrawing.render(user, exercise, getsHelp = true)
-    case MemberAllocation   => allocation.render(user, exercise)
-  })
+  override def renderExercise(user: User, exercise: UmlCompleteEx, maybePart: Option[UmlExPart]): Future[Html] = maybePart match {
+    case Some(part) =>
+      val html = part match {
+        case ClassSelection     => classSelection.render(user, exercise.ex)
+        case DiagramDrawing     => diagdrawing.render(user, exercise, getsHelp = false)
+        case DiagramDrawingHelp => diagdrawing.render(user, exercise, getsHelp = true)
+        case MemberAllocation   => allocation.render(user, exercise)
+      }
 
-  override protected val renderExesListRest = new Html(
-    s"""<div class="alert alert-info">
-       |  Neueinsteiger sollten die Variante mit Zwischenkorrektur verwenden, die die einzelnen Schritte der Erstellung eines Klassendiagrammes nach und nach durcharbeitet.
-       |</div>
-       |<hr>""".stripMargin)
+      Future(html)
+    case None       => ???
+  }
+
+  //  override protected val renderExesListRest = new Html(
+  //    s"""<div class="alert alert-info">
+  //       |  Neueinsteiger sollten die Variante mit Zwischenkorrektur verwenden, die die einzelnen Schritte der Erstellung eines Klassendiagrammes nach und nach durcharbeitet.
+  //       |</div>
+  //       |<hr>""".stripMargin)
 
   private def renderResult(corResult: UmlResult): Html = {
 
@@ -75,15 +83,15 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
     val nextPartLink: String = corResult.nextPart match {
       case Some(np) =>
-        a(href := routes.UmlController.exercise(corResult.exercise.ex.id, np.urlName).url, cls := "btn btn-primary btn-block")("Zum nächsten Aufgabenteil").toString
+        a(href := routes.AIdPartExController.exercise("uml", corResult.exercise.ex.id, np.urlName).url, cls := "btn btn-primary btn-block")("Zum nächsten Aufgabenteil").toString
       case None     =>
-        a(href := routes.UmlController.index().url, cls := "btn btn-primary btn-block")("Zurück zur Startseite").toString
+        a(href := routes.AIdPartExController.index("uml").url, cls := "btn btn-primary btn-block")("Zurück zur Startseite").toString
     }
 
     Html(resultsRender + "<hr>" + nextPartLink)
   }
 
-  override protected def renderEditRest(exercise: Option[UmlCompleteEx]): Html = editUmlExRest.render(exercise)
+  override def renderEditRest(exercise: Option[UmlCompleteEx]): Html = editUmlExRest.render(exercise)
 
   // Correction
 
@@ -98,69 +106,13 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
     }
   }
 
-  // Other routes
-
-  def checkSolution: EssentialAction = withAdmin { _ =>
-    implicit request => {
-      //      val solNode = Json.parse(singleStrForm(StringConsts.SOLUTION_NAME).get.str)
-      //      JsonReader.validateJson(solNode, UmlController.SolutionSchemaNode) match {
-      //        case Success(_) => Ok("Ok...")
-      //        case Failure(_) => BadRequest("FEHLER!")
-      //      }
-      Ok("TODO")
-    }
-  }
-
-  def newExerciseStep2: EssentialAction = withAdmin { _ =>
-    implicit request =>
-      //    exerciseReader.initFromForm(0, null /* factory.form().bindFromRequest()*/) match {
-      //      case ReadingError(_, _, _) => BadRequest("There has been an error...")
-      //      case ReadingFailure(_) => BadRequest("There has been an error...")
-      //      case ReadingResult(exercises) =>
-      //        val exercise = exercises.head.read.asInstanceOf[UmlExercise]
-      //        val parser = new UmlExTextParser(exercise.text, exercise.mappings.asScala.toMap, exercise.ignoreWords.asScala.toList)
-      //        Ok(views.html.umlAdmin.newExerciseStep2Form(user, exercise, parser.capitalizedWords.toList))
-      //    }
-      Ok("TODO!")
-  }
-
-  def newExerciseStep3: EssentialAction = withAdmin { _ =>
-    implicit request =>
-      //    exerciseReader.initFromForm(0, null /* factory.form().bindFromRequest()*/) match {
-      //      case ReadingError(_, _, _) => BadRequest("There has been an error...")
-      //      case ReadingFailure(_) => BadRequest("There has been an error...")
-      //      case ReadingResult(exercises) =>
-      //        val exercise = exercises.head.read.asInstanceOf[UmlExercise]
-      //        Ok(views.html.umlAdmin.newExerciseStep3Form(user, exercise))
-      //    }
-      Ok("TODO!")
-  }
-
   // Handlers for results
 
-  protected def onSubmitCorrectionResult(user: User, result: UmlResult): Html = views.html.core.correction.render(result, renderResult(result), user, toolObject)
+  override def onSubmitCorrectionResult(user: User, result: UmlResult): Html = views.html.core.correction.render(result, renderResult(result), user, this)
 
-  protected def onSubmitCorrectionError(user: User, error: Throwable): Html = {
+  override def onSubmitCorrectionError(user: User, error: Throwable): Html = views.html.core.correctionError.render(user, OtherCorrectionException(error))
 
-    views.html.core.correctionError.render(user, OtherCorrectionException(error))
-    //    error match {
-    //      case NoSuchExerciseException(exId) =>
-    //        Logger.error(s"Trying to sumit a correction for exercise $exId!")
-    //        NotFound(s"There is no exercise with id $exId")
-    //
-    //      case SolutionTransferException =>
-    //        Logger.error("There has been an error transfering a solution")
-    //        BadRequest("There has been an error transfering a solution")
-    //
-    //      case OtherCorrectionException(cause) =>
-    //        Logger.error(error.getMessage, cause)
-    //        BadRequest(views.html.core.correctionError.render(user, error))
-    //
-    //      case _ => new Html("TODO!")
-    //    }
-  }
 
-  protected def onLiveCorrectionResult(result: UmlResult): JsValue = ??? // Ok(renderResult(result))
-
+  override def onLiveCorrectionResult(result: UmlResult): JsValue = ??? // Ok(renderResult(result))
 
 }

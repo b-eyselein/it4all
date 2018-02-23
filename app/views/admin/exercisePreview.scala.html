@@ -1,4 +1,4 @@
-@(user: model.User, completeExercises: Seq[model.CompleteEx[_ <: model.Exercise]], toolObject: model.core.tools.ExToolObject)
+@(user: model.User, completeExercises: Seq[model.CompleteEx[_ <: model.Exercise]], toolMainObject: controllers.exes.AToolMain[_, _])
 
 @scripts = {
     <script src="@routes.Assets.versioned("javascripts/admin.js")"></script>
@@ -16,7 +16,8 @@
             <h1>Erstellte Aufgaben:</h1>
         </div>
 
-        <a href="@toolObject.adminIndexRoute" class="btn btn-primary btn-block">Zur&uuml;ck zur Administratorseite</a>
+        <a href="@controllers.exes.idPartExes.routes.AIdPartExController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
+            Zur&uuml;ck zur Administratorseite</a>
 
         <hr>
 

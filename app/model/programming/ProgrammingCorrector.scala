@@ -4,7 +4,6 @@ import java.nio.file.attribute.{PosixFilePermission, PosixFilePermissions}
 import java.nio.file.{Files, Path}
 
 import com.github.dockerjava.api.model.AccessMode
-import controllers.exes.idPartExes.ProgToolObject
 import model.Enums.SuccessType
 import model.core.FileUtils
 import model.docker.DockerConnector.MaxRuntime

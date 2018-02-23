@@ -1,8 +1,6 @@
 package model.web
 
 import javax.inject.Inject
-
-import controllers.exes.idPartExes.WebToolObject
 import model.Enums.ExerciseState
 import model._
 import model.web.WebEnums.JsActionType
@@ -20,8 +18,6 @@ case class WebCompleteEx(ex: WebExercise, htmlTasks: Seq[HtmlCompleteTask], jsTa
   override def preview: Html = views.html.web.webPreview(this)
 
   override def tags: Seq[WebExTag] = Seq(new WebExTag(HtmlPart.partName, ex.hasHtmlPart), new WebExTag(JsPart.partName, ex.hasJsPart))
-
-  override def exerciseRoutes: Map[Call, String] = WebToolObject.exerciseRoutes(this)
 
   override def hasPart(partType: WebExPart): Boolean = partType match {
     case HtmlPart => htmlTasks.nonEmpty
@@ -123,7 +119,7 @@ case class JsCondition(id: Int, taskId: Int, exerciseId: Int, xpathQuery: String
 
 }
 
-case class WebSolution(exerciseId: Int, userName: String, solution: String)
+case class WebSolution(exerciseId: Int, userName: String, part: WebExPart, solution: String)
 
 // Tables
 
@@ -162,7 +158,7 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     saveSeq[JsCondition](jsTask.conditions, c => db.run(conditions += c))
   }
 
-  def saveSolution(sol: WebSolution): Future[Boolean] = db.run(webSolutions insertOrUpdate sol) map (_ => true) recover { case e: Exception => false }
+  def saveSolution(sol: WebSolution): Future[Boolean] = db.run(webSolutions insertOrUpdate sol) map (_ => true) recover { case _: Exception => false }
 
   def getSolution(username: String, exerciseId: Int): Future[Option[WebSolution]] =
     db.run(webSolutions.filter(sol => sol.userName === username && sol.exerciseId === exerciseId).result.headOption)
@@ -192,6 +188,9 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   implicit val ActionTypeColumnType: BaseColumnType[JsActionType] =
     MappedColumnType.base[JsActionType, String](_.name, str => JsActionType.byString(str) getOrElse JsActionType.CLICK)
+
+  implicit val WebExPartColumnType: BaseColumnType[WebExPart] =
+    MappedColumnType.base[WebExPart, String](_.urlName, str => WebExParts.values.find(_.urlName == str) getOrElse HtmlPart)
 
   // Table definitions
 
@@ -300,6 +299,8 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
     def userName = column[String]("user_name")
 
+    def part = column[WebExPart]("part_type")
+
     def solution = column[String]("solution")
 
 
@@ -310,7 +311,7 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     def userFk = foreignKey("user_fk", userName, users)(_.username)
 
 
-    override def * = (exerciseId, userName, solution) <> (WebSolution.tupled, WebSolution.unapply)
+    override def * = (exerciseId, userName, part, solution) <> (WebSolution.tupled, WebSolution.unapply)
 
   }
 

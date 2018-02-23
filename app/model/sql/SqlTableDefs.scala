@@ -60,9 +60,6 @@ case class SqlCompleteEx(ex: SqlExercise, samples: Seq[SqlSample]) extends Compl
        |</div>
        |${samples map (sample => s"<pre>${sample.sample}</pre>") mkString}""".stripMargin)
 
-
-  override def exerciseRoutes: Map[Call, String] = ???
-
 }
 
 // case classes for db

@@ -1,6 +1,5 @@
 package model.uml
 
-import controllers.exes.idPartExes.UmlToolObject
 import javax.inject.Inject
 import model.Enums.ExerciseState
 import model._
@@ -30,8 +29,6 @@ case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping], solution: U
          |}""".stripMargin
     } mkString ","
   }
-
-  override def exerciseRoutes: Map[Call, String] = UmlToolObject.exerciseRoutes(this)
 
   override def hasPart(partType: UmlExPart): Boolean = partType match {
     case (ClassSelection | DiagramDrawing) => true

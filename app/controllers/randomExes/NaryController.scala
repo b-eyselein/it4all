@@ -1,8 +1,7 @@
 package controllers.randomExes
 
-import javax.inject.{Inject, Singleton}
-
 import controllers.Secured
+import javax.inject.{Inject, Singleton}
 import model.JsonFormat
 import model.core.Repository
 import model.essentials.EssentialsConsts._

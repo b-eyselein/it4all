@@ -37,16 +37,13 @@ object SqlController {
 
 @Singleton
 class SqlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProvider, t: SqlTableDefs)(implicit ec: ExecutionContext)
-  extends AExCollectionController[SqlExercise, SqlCompleteEx, SqlScenario, SqlCompleteScenario, EvaluationResult, SqlCorrResult, SqlTableDefs](cc, dbcp, t, SqlToolObject)
-    with HasDatabaseConfigProvider[JdbcProfile] with JsonFormat with Secured {
+  extends JsonFormat with  AExCollectionToolMain[SqlExercise, SqlCompleteEx] {
 
-  override type SolType = String
+//  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[String] =
+//    request.body.asJson flatMap (_.asObj flatMap (jsObj => jsObj.stringField(FORM_VALUE)))
 
-  override def readSolutionFromPutRequest(implicit request: Request[AnyContent]): Option[String] =
-    request.body.asJson flatMap (_.asObj flatMap (jsObj => jsObj.stringField(FORM_VALUE)))
-
-  override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[String] =
-    Solution.stringSolForm.bindFromRequest() fold(_ => None, sol => Some(sol.learnerSolution))
+//  override def readSolutionFromPostRequest(implicit request: Request[AnyContent]): Option[String] =
+//    Solution.stringSolForm.bindFromRequest() fold(_ => None, sol => Some(sol.learnerSolution))
 
   // Yaml
 

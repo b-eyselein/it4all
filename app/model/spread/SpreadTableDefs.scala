@@ -1,8 +1,6 @@
 package model.spread
 
 import javax.inject.Inject
-
-import controllers.exes.fileExes.SpreadToolObject
 import model.Enums.ExerciseState
 import model._
 import model.core.tools.FileExToolObject
@@ -27,13 +25,9 @@ object SpreadExercise {
 
 case class SpreadExercise(override val baseValues: BaseValues, sampleFilename: String, templateFilename: String) extends Exercise with FileCompleteEx[SpreadExercise] {
 
-  override val toolObject: FileExToolObject = SpreadToolObject
-
   override def ex: SpreadExercise = this
 
   override def preview: Html = views.html.spread.spreadPreview.render(this)
-
-  override def exerciseRoutes: Map[Call, String] = SpreadToolObject.exerciseRoutes(this)
 
 }
 

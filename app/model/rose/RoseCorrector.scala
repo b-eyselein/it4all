@@ -1,8 +1,6 @@
 package model.rose
 
 import java.nio.file.Path
-
-import controllers.exes.idPartExes.RoseToolObject
 import model.User
 import model.core.FileUtils
 import model.docker._

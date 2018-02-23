@@ -1,8 +1,6 @@
 package model.rose
 
 import javax.inject.Inject
-
-import controllers.exes.idPartExes.RoseToolObject
 import model.Enums.ExerciseState
 import model._
 import model.programming.ProgDataTypes.ProgDataType
@@ -22,8 +20,6 @@ case class RoseCompleteEx(ex: RoseExercise, inputType: Seq[RoseInputType], sampl
   val NewLine = "\n"
 
   override def preview: Html = views.html.rose.rosePreview.render(this)
-
-  override def exerciseRoutes: Map[Call, String] = RoseToolObject.exerciseRoutes(this)
 
   override def hasPart(partType: RoseExPart): Boolean = true
 
