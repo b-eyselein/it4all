@@ -149,8 +149,8 @@ function renderResults(results, renderFunc) {
     let html = '';
 
     for (let i = 0; i < results.length; i = i + 3) {
-        let secondToRender = results[i + 1];
-        let thirdToRender = results[i + 2];
+        let secondToRender = results[i + 1] || null;
+        let thirdToRender = results[i + 2] || null;
         html += `
 <div class="row">
     <div class="col-md-4">${renderFunc(results[i])}</div>
@@ -174,9 +174,6 @@ function renderResults(results, renderFunc) {
  * @param {object[]} corr.jsResults
  */
 function onWebCorrectionSuccess(corr) {
-    console.clear();
-    console.log(JSON.stringify(corr, null, 2));
-
     let html = '';
 
     if (corr.solutionSaved) {
@@ -208,7 +205,6 @@ function onWebCorrectionSuccess(corr) {
 }
 
 /**
- *
  * @param jqXHR {{responseText: string, responseJSON: string}}
  */
 function onWebCorrectionError(jqXHR) {
@@ -216,8 +212,13 @@ function onWebCorrectionError(jqXHR) {
 
     console.error(jqXHR.responseJSON);
 
-    // $('#correction').html('<div class="alert alert-danger">' + jqXHR.responseText + '</div>');
     $('#testButton').prop('disabled', false);
+
+    $('#correction').html(`
+<div class="alert alert-danger">Es gab einen Fehler bei der Korrekur:
+    <hr>
+    <pre>${jqXHR.responseJSON.msg}</pre>
+</div>`.trim())
 }
 
 function testSol() {

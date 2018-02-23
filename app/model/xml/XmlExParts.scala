@@ -1,6 +1,6 @@
 package model.xml
 
-import controllers.exes.idPartExes.{ExPart, ExParts}
+import model.core.{ExPart, ExParts}
 
 
 sealed abstract class XmlExPart(val partName: String, val urlName: String) extends ExPart

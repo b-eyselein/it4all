@@ -1,8 +1,7 @@
 package controllers.exes.idPartExes
 
-import javax.inject._
-
 import controllers.Secured
+import javax.inject._
 import model.core._
 import model.web.WebConsts._
 import model.web.WebCorrector.evaluateWebTask
@@ -14,12 +13,12 @@ import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.json.JsValue
 import play.api.mvc._
 import play.twirl.api.Html
+import scalatags.Text.all._
 import views.html.web._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
 import scala.util.Try
-import scalatags.Text.all._
 
 case class WebSolutionType(part: WebExPart, solution: String)
 
@@ -85,17 +84,12 @@ class WebController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // Handlers for results
 
-  protected def onSubmitCorrectionResult(user: User, result: WebCompleteResult): Result =
-    Ok(views.html.core.correction.render(result, result.render, user, toolObject))
+  protected def onSubmitCorrectionResult(user: User, result: WebCompleteResult): Html =
+    views.html.core.correction.render(result, result.render, user, toolObject)
 
-  protected def onSubmitCorrectionError(user: User, error: CorrectionException): Result = ???
+  protected def onSubmitCorrectionError(user: User, error: Throwable): Html = ???
 
-  protected def onLiveCorrectionResult(result: WebCompleteResult): Result = Ok(result.toJson)
-
-  protected def onLiveCorrectionError(corrException: CorrectionException): Result = {
-    println(corrException)
-    BadRequest(corrException.getMessage) // ???
-  }
+  protected def onLiveCorrectionResult(result: WebCompleteResult): JsValue = result.toJson
 
   // Other helper methods
 

@@ -1,7 +1,4 @@
-package controllers.exes.idPartExes
-
-
-// FIXME: move to other package...
+package model.core
 
 trait ExParts[Part <: ExPart] {
 

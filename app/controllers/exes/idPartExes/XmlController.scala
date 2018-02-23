@@ -12,7 +12,7 @@ import model.xml.XmlConsts._
 import model.xml._
 import model.yaml.MyYamlFormat
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.JsValue
 import play.api.mvc._
 import play.twirl.api.Html
 import scalatags.Text.all._
@@ -112,20 +112,11 @@ class XmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // Result handlers
 
-  override protected def onSubmitCorrectionResult(user: User, result: XmlCompleteResult): Result =
-    Ok(views.html.core.correction.render(result, result.render, user, toolObject))
+  override protected def onSubmitCorrectionResult(user: User, result: XmlCompleteResult): Html =
+    views.html.core.correction.render(result, result.render, user, toolObject)
 
-  override protected def onSubmitCorrectionError(user: User, error: CorrectionException): Result = ???
+  override protected def onSubmitCorrectionError(user: User, error: Throwable): Html = ???
 
-  override protected def onLiveCorrectionResult(result: XmlCompleteResult): Result = Ok(result.toJson)
-
-  override protected def onLiveCorrectionError(error: CorrectionException): Result = error match {
-    case NoSuchExerciseException(notExistingId)   => BadRequest(Json.obj("msg" -> s"Es gibt keine Aufgabe mit der ID '$notExistingId'!"))
-    case SolutionTransferException                => BadRequest(Json.obj("msg" -> "Es gab einen Fehler bei der Übertragung ihrer Lösung!"))
-    case OtherCorrectionException(otherException) =>
-      BadRequest(Json.obj(
-        "msg" -> ("Es gab einen anderen Fehler bei der Korrektur ihrer Lösung:\n" + otherException.getMessage)
-      ))
-  }
+  override protected def onLiveCorrectionResult(result: XmlCompleteResult): JsValue = result.toJson
 
 }

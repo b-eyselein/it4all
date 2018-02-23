@@ -1,16 +1,15 @@
 package controllers.exes.idPartExes
 
 import model.Enums.ToolState
-import model.{Consts, Enums}
 import model.core.tools.IdPartExToolObject
 import model.rose.{RoseCompleteEx, RoseConsts, RoseExPart, RoseExParts}
+import model.{Consts, Enums}
 import play.api.mvc.Call
 
 object RoseToolObject extends IdPartExToolObject[RoseExPart] {
 
   override type CompEx = RoseCompleteEx
 
-  override val hasTags  : Boolean         = true
   override val toolname : String          = "Rose"
   override val exType   : String          = "rose"
   override val consts   : Consts          = RoseConsts

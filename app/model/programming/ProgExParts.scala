@@ -1,6 +1,6 @@
 package model.programming
 
-import controllers.exes.idPartExes.{ExPart, ExParts}
+import model.core.{ExPart, ExParts}
 
 
 sealed abstract class ProgExPart(val partName: String, val urlName: String) extends ExPart

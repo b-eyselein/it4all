@@ -10,13 +10,11 @@ import scala.language.postfixOps
 object XmlToolObject extends IdPartExToolObject[XmlExPart] {
 
   override type CompEx = XmlExercise
+  override val toolname: String = "Xml"
+  override val exType  : String = "xml"
+  override val consts  : Consts = XmlConsts
 
   override def exParts: Seq[XmlExPart] = XmlExParts.values
-
-  override val hasTags : Boolean = false
-  override val toolname: String  = "Xml"
-  override val exType  : String  = "xml"
-  override val consts  : Consts  = XmlConsts
 
   override def indexCall: Call = routes.XmlController.index()
 

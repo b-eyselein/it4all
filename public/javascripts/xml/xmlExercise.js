@@ -1,6 +1,3 @@
-let exercisePart;
-let correctionUrl;
-
 /**
  * @param {object} response
  * @param {boolean} response.solSaved
@@ -34,7 +31,7 @@ function onXmlDocumentCorrectionSuccess(response) {
 
 
 function onXmlGrammarCorrectionSuccess(response) {
-
+    console.log(response);
 }
 
 /**
@@ -48,8 +45,12 @@ function onXmlCorrectionError(jqXHR) {
 
 
 function testSol() {
+    // noinspection JSUnresolvedFunction, JSUnresolvedVariable
+    let url = jsRoutes.controllers.exes.idPartExes.XmlController.correctLive($('#exerciseId').val()).url;
+    let part = $('#exercisePart').val();
+
     let dataToSend = {
-        part: exercisePart,
+        part,
         solution: editor.getValue()
     };
 
@@ -57,10 +58,10 @@ function testSol() {
         type: 'PUT',
         dataType: 'json', // return type
         contentType: 'application/json', // type of message to server
-        url: correctionUrl,
+        url,
         data: JSON.stringify(dataToSend),
         async: true,
-        success: (exercisePart === 'xml') ? onXmlDocumentCorrectionSuccess : onXmlGrammarCorrectionSuccess,
+        success: (part === 'document') ? onXmlDocumentCorrectionSuccess : onXmlGrammarCorrectionSuccess,
         error: onXmlCorrectionError
     });
 }
@@ -70,10 +71,5 @@ function updatePreview() {
 }
 
 $(document).ready(function () {
-    exercisePart = $('#exercisePart').val();
-    correctionUrl = jsRoutes.controllers.exes.idPartExes.XmlController.correctLive($('#exerciseId').val()).url;
-
-    $('#testButton').click(function (e) {
-        testSol()
-    });
+    $('#testButton').click(testSol);
 });

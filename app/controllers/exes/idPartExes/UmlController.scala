@@ -6,7 +6,6 @@ import model.core._
 import model.uml._
 import model.yaml.MyYamlFormat
 import model.{JsonFormat, User}
-import play.api.Logger
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
@@ -125,24 +124,29 @@ class UmlController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigProv
 
   // Handlers for results
 
-  protected def onSubmitCorrectionResult(user: User, result: UmlResult): Result = Ok(views.html.core.correction.render(result, renderResult(result), user, toolObject))
+  protected def onSubmitCorrectionResult(user: User, result: UmlResult): Html = views.html.core.correction.render(result, renderResult(result), user, toolObject)
 
-  protected def onSubmitCorrectionError(user: User, error: CorrectionException): Result = error match {
-    case NoSuchExerciseException(exId) =>
-      Logger.error(s"Trying to sumit a correction for exercise $exId!")
-      NotFound(s"There is no exercise with id $exId")
+  protected def onSubmitCorrectionError(user: User, error: Throwable): Html = {
 
-    case SolutionTransferException =>
-      Logger.error("There has been an error transfering a solution")
-      BadRequest("There has been an error transfering a solution")
-
-    case OtherCorrectionException(cause) =>
-      Logger.error(error.getMessage, cause)
-      BadRequest(views.html.core.correctionError.render(user, error))
+    views.html.core.correctionError.render(user, OtherCorrectionException(error))
+    //    error match {
+    //      case NoSuchExerciseException(exId) =>
+    //        Logger.error(s"Trying to sumit a correction for exercise $exId!")
+    //        NotFound(s"There is no exercise with id $exId")
+    //
+    //      case SolutionTransferException =>
+    //        Logger.error("There has been an error transfering a solution")
+    //        BadRequest("There has been an error transfering a solution")
+    //
+    //      case OtherCorrectionException(cause) =>
+    //        Logger.error(error.getMessage, cause)
+    //        BadRequest(views.html.core.correctionError.render(user, error))
+    //
+    //      case _ => new Html("TODO!")
+    //    }
   }
 
-  protected def onLiveCorrectionResult(result: UmlResult): Result = Ok(renderResult(result))
+  protected def onLiveCorrectionResult(result: UmlResult): JsValue = ??? // Ok(renderResult(result))
 
-  protected def onLiveCorrectionError(error: CorrectionException): Result = ???
 
 }

@@ -50,7 +50,7 @@ object RoseCorrector extends FileUtils {
       case Success(_) =>
 
         futureImageExists flatMap { _ =>
-          DockerConnector.runContainer(language.dockerImageName, entryPoint = Seq("python3", "sp_main.py"), dockerBinds)
+          DockerConnector.runContainer(language.dockerImageName, entryPoint = Seq("python3", "sp_main.py"), dockerBinds, deleteContainerAfterRun = false)
         } map {
           // Error while waiting for container
           case RunContainerTimeOut => RoseTimeOutResult

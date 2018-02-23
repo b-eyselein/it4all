@@ -12,7 +12,6 @@ object ProgToolObject extends IdPartExToolObject[ProgExPart] {
 
   override def exParts: Seq[ProgExPart] = ProgExParts.values
 
-  override val hasTags  : Boolean   = false
   override val toolname : String    = "Programmierung"
   override val exType   : String    = "prog"
   override val consts   : Consts    = ProgConsts

@@ -1,6 +1,6 @@
 package model.uml
 
-import controllers.exes.idPartExes.ExPart
+import model.core.ExPart
 
 
 sealed abstract class UmlExPart(val partName: String, val urlName: String) extends ExPart

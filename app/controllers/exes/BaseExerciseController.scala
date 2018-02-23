@@ -12,7 +12,7 @@ import model.yaml.MyYamlFormat
 import net.jcazevedo.moultingyaml._
 import play.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
@@ -177,22 +177,38 @@ abstract class BaseExerciseController[Ex <: Exercise, CompEx <: CompleteEx[Ex], 
   }
 
   def correct(id: Int): EssentialAction = futureWithUser { user =>
-    implicit request => correctAbstract(user, id, readSolutionFromPostRequest(user, id), onSubmitCorrectionResult(user, _), onSubmitCorrectionError(user, _))
+    implicit request =>
+      correctAbstract(user, id, readSolutionFromPostRequest(user, id)) map {
+        case Failure(error)  => BadRequest(onSubmitCorrectionError(user, error))
+        case Success(result) => Ok(onSubmitCorrectionResult(user, result))
+      }
   }
 
   def correctLive(id: Int): EssentialAction = futureWithUser { user =>
-    implicit request => correctAbstract(user, id, readSolutionFromPutRequest(user, id), onLiveCorrectionResult, onLiveCorrectionError)
+    implicit request =>
+      correctAbstract(user, id, readSolutionFromPutRequest(user, id)) map {
+        case Failure(error)  => BadRequest(onLiveCorrectionError(error))
+        case Success(result) => Ok(onLiveCorrectionResult(result))
+      }
   }
 
   // Handlers for results
 
-  protected def onSubmitCorrectionResult(user: User, result: CompResult): Result
+  protected def onSubmitCorrectionResult(user: User, result: CompResult): Html
 
-  protected def onSubmitCorrectionError(user: User, error: CorrectionException): Result
+  protected def onSubmitCorrectionError(user: User, error: Throwable): Html
 
-  protected def onLiveCorrectionResult(result: CompResult): Result
+  protected def onLiveCorrectionResult(result: CompResult): JsValue
 
-  protected def onLiveCorrectionError(error: CorrectionException): Result
+  protected def onLiveCorrectionError(error: Throwable): JsValue = {
+    val msg: String = error match {
+      case NoSuchExerciseException(notExistingId) => s"Es gibt keine Aufgabe mit der ID '$notExistingId'!"
+      case SolutionTransferException              => "Es gab einen Fehler bei der Übertragung ihrer Lösung!"
+      case other                                  => "Es gab einen anderen Fehler bei der Korrektur ihrer Lösung:\n" + other.getMessage
+    }
+
+    Json.obj("msg" -> msg)
+  }
 
   // Views and other helper methods for admin
 
@@ -215,18 +231,14 @@ abstract class BaseExerciseController[Ex <: Exercise, CompEx <: CompleteEx[Ex], 
 
   protected def renderExes(user: User, exes: Seq[CompEx], allExesSize: Int): Html = views.html.core.exesList(user, exes, renderExesListRest, toolObject, allExesSize / STEP + 1)
 
-  protected def correctAbstract[S, Err](user: User, id: Int, maybeSolution: Option[SolType], onCorrectionSuccess: CompResult => Result,
-                                        onCorrectionError: CorrectionException => Result)(implicit request: Request[AnyContent]): Future[Result] =
+  protected def correctAbstract(user: User, id: Int, maybeSolution: Option[SolType])(implicit request: Request[AnyContent]): Future[Try[CompResult]] =
     maybeSolution match {
-      case None => Future(onCorrectionError(SolutionTransferException))
+      case None => Future(Failure(SolutionTransferException))
 
       case Some(solution) => futureCompleteExById(id) flatMap {
-        case None => Future(onCorrectionError(NoSuchExerciseException(id)))
+        case None => Future(Failure(NoSuchExerciseException(id)))
 
-        case Some(exercise) => correctEx(user, solution, exercise) map {
-          case Success(result) => onCorrectionSuccess(result)
-          case Failure(error)  => onCorrectionError(OtherCorrectionException(error))
-        }
+        case Some(exercise) => correctEx(user, solution, exercise)
       }
     }
 

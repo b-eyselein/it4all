@@ -1,5 +1,6 @@
+@import model.core.ExPart
 @(user: model.User, routesObject: model.core.tools.ExToolObject, exerciseOptions: model.core.tools.ExerciseOptions, exercise: model.PartsCompleteEx[_, _],
-        exRest: String => Html, exScript: Html, oldSolution: String, part: controllers.exes.idPartExes.ExPart)
+        exRest: String => Html, exScript: Html, oldSolution: String, part: ExPart)
 
     @scripts = {
         @* Javascript Routes *@

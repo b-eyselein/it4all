@@ -1,16 +1,17 @@
 package controllers.exes.fileExes
 
 import java.nio.file.Path
-import javax.inject._
 
 import controllers.Secured
 import controllers.exes.fileExes.SpreadController._
+import javax.inject._
 import model.User
 import model.core._
 import model.spread._
 import model.yaml.MyYamlFormat
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.mvc.{AnyContent, ControllerComponents, Request, Result}
+import play.api.libs.json.JsValue
+import play.api.mvc.{AnyContent, ControllerComponents, Request}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -75,12 +76,10 @@ class SpreadController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
       case Some(corrector) => corrector.correct(samplePath = sampleFilePath, comparePath = learnerFilePath, conditionalFormating = false, compareCharts = false)
     }
 
-  override protected def onSubmitCorrectionResult(user: User, result: GenericCompleteResult[SpreadSheetCorrectionResult]): Result = ???
+  override protected def onSubmitCorrectionResult(user: User, result: GenericCompleteResult[SpreadSheetCorrectionResult]): Html = ???
 
-  override protected def onSubmitCorrectionError(user: User, error: CorrectionException): Result = ???
+  override protected def onSubmitCorrectionError(user: User, error: Throwable): Html = ???
 
-  override protected def onLiveCorrectionResult(result: GenericCompleteResult[SpreadSheetCorrectionResult]): Result = ???
-
-  override protected def onLiveCorrectionError(error: CorrectionException): Result = ???
+  override protected def onLiveCorrectionResult(result: GenericCompleteResult[SpreadSheetCorrectionResult]): JsValue = ???
 
 }

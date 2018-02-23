@@ -31,3 +31,28 @@ sampleSolution:
     for w in range(width - 1):
       self.mark()
       self.go_left()
+---
+id: 2
+title: Kaninchenjagd
+author: bje40dc
+text: >
+  Gehen Sie zum Feld des Kaninchens. Markieren Sie dieses Feld in ihrer Farbe, um das Kaninchen zu fangen. Benutzen Sie dazu die API des Roboters
+  und zum "Zeichnen" die Markierungsfunktions des Roboters! Ihr Roboter startet im Feld (0, 0).
+status: CREATED
+
+isMultiplayer: false
+
+inputTypes:
+- {id: 1, name: rabbit_x, type: int}
+- {id: 2, name: rabbit_y, type: int}
+
+sampleSolution:
+  language: PYTHON_3
+  sample: |
+    for h in range(rabbit_x - 1):
+      self.go_up()
+
+    for w in range(rabbit_y - 1):
+      self.go_right()
+
+    self.mark()

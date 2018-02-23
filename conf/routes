@@ -65,9 +65,9 @@ PUT           /xml/admin/exercise/:id/state               controllers.exes.idPar
 GET           /xml/                                       controllers.exes.idPartExes.XmlController.index
 GET           /xml/exercises                              controllers.exes.idPartExes.XmlController.exerciseList(page: Int ?= 1)
 
-GET           /xml/solve/:id/:part                        controllers.exes.idPartExes.XmlController.exercise(id: Int, part: String)
-PUT           /xml/solve/:id                              controllers.exes.idPartExes.XmlController.correctLive(id: Int)
-POST          /xml/solve/:id                              controllers.exes.idPartExes.XmlController.correct(id: Int)
+GET           /xml/:id/:part                              controllers.exes.idPartExes.XmlController.exercise(id: Int, part: String)
+PUT           /xml/:id                                    controllers.exes.idPartExes.XmlController.correctLive(id: Int)
+POST          /xml/:id                                    controllers.exes.idPartExes.XmlController.correct(id: Int)
 
 
 GET           /xml/playground                             controllers.exes.idPartExes.XmlController.playground

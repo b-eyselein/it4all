@@ -110,7 +110,7 @@ case class JsTask(id: Int, exerciseId: Int, text: String, xpathQuery: String, ac
 
   def actionDescription: String = actionType match {
     case JsActionType.CLICK   => s"Klicke auf Element mit XPath Query $xpathQuery"
-    case JsActionType.FILLOUT => s"Sende Keys '${keysToSend getOrElse ""} an Element mit XPath Query $xpathQuery"
+    case JsActionType.FILLOUT => s"Sende Keys '${keysToSend getOrElse ""}' an Element mit XPath Query $xpathQuery"
   }
 
 }

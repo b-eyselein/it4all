@@ -1,4 +1,4 @@
-package controllers.exes.idPartExes
+package model.blanks
 
 import model.Consts
 

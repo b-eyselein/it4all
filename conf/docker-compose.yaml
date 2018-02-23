@@ -1,5 +1,11 @@
 version: '2'
 
+volumes:
+  main_db_volume:
+  select_db_volume:
+  update_db_volume:
+  create_db_volume:
+
 services:
     dbit4all:
         image:        mysql:8
@@ -8,6 +14,7 @@ services:
         - 3106:3306
         volumes:
         - ./inits/sql_main_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
+        - main_db_volume:/var/lib/mysql
         environment:
         - MYSQL_ROOT_PASSWORD=sT8aV#k7
     
@@ -18,6 +25,7 @@ services:
         - 3107:3306
         volumes:
         - ./inits/sql_select_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
+        - select_db_volume:/var/lib/mysql
         environment:
         - MYSQL_ROOT_PASSWORD=sT8aV#k7
     
@@ -28,6 +36,7 @@ services:
         - 3108:3306
         volumes:
         - ./inits/sql_change_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
+        - update_db_volume:/var/lib/mysql
         environment:
         - MYSQL_ROOT_PASSWORD=sT8aV#k7
 
@@ -38,5 +47,6 @@ services:
         - 3109:3306
         volumes:
         - ./inits/sql_create_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
+        - create_db_volume:/var/lib/mysql
         environment:
         - MYSQL_ROOT_PASSWORD=sT8aV#k7

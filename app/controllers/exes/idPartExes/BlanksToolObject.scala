@@ -2,7 +2,7 @@ package controllers.exes.idPartExes
 
 import model.Enums.ToolState
 import model.blanks.BlanksExParts.BlanksExPart
-import model.blanks.{BlanksCompleteExercise, BlanksExParts}
+import model.blanks.{BlanksCompleteExercise, BlanksConsts, BlanksExParts}
 import model.core.tools.IdPartExToolObject
 import model.{Consts, HasBaseValues}
 import play.api.mvc.Call
@@ -15,7 +15,6 @@ object BlanksToolObject extends IdPartExToolObject[BlanksExPart] {
 
   override def exParts: Seq[BlanksExPart] = BlanksExParts.values
 
-  override val hasTags  : Boolean   = false
   override val toolname : String    = "Lückentext"
   override val exType   : String    = "blanks"
   override val consts   : Consts    = BlanksConsts

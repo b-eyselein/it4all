@@ -1,17 +1,15 @@
 package controllers.exes.idPartExes
 
-import javax.inject._
-
 import controllers.Secured
+import javax.inject._
 import model.blanks.BlanksExParts.BlanksExPart
 import model.blanks._
-import model.core.CorrectionException
 import model.yaml.MyYamlFormat
 import model.{JsonFormat, User}
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.json
 import play.api.libs.json._
-import play.api.mvc.{AnyContent, ControllerComponents, Request, Result}
+import play.api.mvc.{AnyContent, ControllerComponents, Request}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -67,18 +65,16 @@ class BlanksController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfigP
 
   private def renderSample(sample: BlanksAnswer): String = s"<li>${sample.id} &rarr; ${sample.solution}</li>"
 
-  override protected def onSubmitCorrectionResult(user: User, result: BlanksCompleteResult): Result = ???
+  override protected def onSubmitCorrectionResult(user: User, result: BlanksCompleteResult): Html = ???
 
-  override protected def onSubmitCorrectionError(user: User, error: CorrectionException): Result = ???
+  override protected def onSubmitCorrectionError(user: User, error: Throwable): Html = ???
 
-  override protected def onLiveCorrectionResult(result: BlanksCompleteResult): Result = Ok(json.JsArray(
+  override protected def onLiveCorrectionResult(result: BlanksCompleteResult): JsValue = json.JsArray(
     result.result.allMatches map (m => Json.obj(
       "id" -> JsNumber(BigDecimal(m.userArg map (_.id) getOrElse -1)),
       "correctness" -> m.matchType.name,
       "explanation" -> m.explanation))
-  ))
-
-  override protected def onLiveCorrectionError(error: CorrectionException): Result = ???
+  )
 
 }
 

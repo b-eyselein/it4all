@@ -1,6 +1,6 @@
 package model.rose
 
-import controllers.exes.idPartExes.{ExPart, ExParts}
+import model.core.{ExPart, ExParts}
 
 
 abstract sealed class RoseExPart(val partName: String, val urlName: String) extends ExPart

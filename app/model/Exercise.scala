@@ -2,10 +2,9 @@ package model
 
 import java.nio.file.Path
 
-import controllers.exes.idPartExes.ExPart
 import model.core.tools.FileExToolObject
 import model.Enums.ExerciseState
-import model.core.FileUtils
+import model.core.{ExPart, FileUtils}
 import play.api.mvc.Call
 import play.twirl.api.Html
 

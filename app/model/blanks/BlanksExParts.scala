@@ -1,6 +1,6 @@
 package model.blanks
 
-import controllers.exes.idPartExes.ExPart
+import model.core.ExPart
 
 object BlanksExParts {
 

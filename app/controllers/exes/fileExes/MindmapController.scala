@@ -1,15 +1,16 @@
 package controllers.exes.fileExes
 
 import java.nio.file.Path
-import javax.inject._
 
 import controllers.Secured
+import javax.inject._
 import model.User
 import model.core._
 import model.mindmap.{MindmapExercise, MindmapTableDefs}
 import model.yaml.MyYamlFormat
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.mvc.{AnyContent, ControllerComponents, Request, Result}
+import play.api.libs.json.JsValue
+import play.api.mvc.{AnyContent, ControllerComponents, Request}
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -71,12 +72,12 @@ class MindmapController @Inject()(cc: ControllerComponents, dbcp: DatabaseConfig
   //      } catch {
   //        case e@(_: ParsingException | _: IOException) => e.printStackTrace()
   //      }
-  override protected def onSubmitCorrectionResult(user: User, result: GenericCompleteResult[EvaluationResult]): Result = ???
+  override protected def onSubmitCorrectionResult(user: User, result: GenericCompleteResult[EvaluationResult]): Html = ???
 
-  override protected def onSubmitCorrectionError(user: User, error: CorrectionException): Result = ???
+  override protected def onSubmitCorrectionError(user: User, error: Throwable): Html = ???
 
-  override protected def onLiveCorrectionResult(result: GenericCompleteResult[EvaluationResult]): Result = ???
+  override protected def onLiveCorrectionResult(result: GenericCompleteResult[EvaluationResult]): JsValue = ???
 
-  override protected def onLiveCorrectionError(error: CorrectionException): Result = ???
+  override protected def onLiveCorrectionError(error: Throwable): JsValue = ???
 
 }

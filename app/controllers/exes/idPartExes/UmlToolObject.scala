@@ -12,7 +12,6 @@ object UmlToolObject extends IdPartExToolObject[UmlExPart] {
 
   override def exParts: Seq[UmlExPart] = UmlExParts.values
 
-  override val hasTags  : Boolean   = false
   override val toolname : String    = "Uml"
   override val exType   : String    = "uml"
   override val consts   : Consts    = UmlConsts

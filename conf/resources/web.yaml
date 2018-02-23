@@ -313,7 +313,8 @@ jsText: >
   soll den Inhalt (value) des Passwortfeldes auslesen und verschiedene Tests durchführen. Bei fehlgeschlagenen Tests
   soll der Inhalt des Elements mit der ID 'errors' auf den entsprechenden Text gesetzt werden. Es soll immer nur der
   erste fehlgeschlagene Test (in der Reihenfolge der Teilaufgaben) beachtet werden. Wenn kein Test fehlschlägt,
-  soll der Fehlertext gelöscht werden (auf '' setzen)
+  soll der Fehlertext gelöscht werden (auf '' setzen). Wenn das Passwort unter 8 Zeichen lang ist, soll der Fehlertext
+  'Zu kurz' lauten. Wenn die Eingabe den Teilstring 'passwort' enthält, soll 'Zu einfach' gesetzt werden.
 htmlTasks:
 - id: 1
   text: Erstellen Sie ein Texteingabefeld mit der ID 'name'

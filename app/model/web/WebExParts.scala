@@ -1,6 +1,6 @@
 package model.web
 
-import controllers.exes.idPartExes.{ExPart, ExParts}
+import model.core.{ExPart, ExParts}
 
 
 sealed abstract class WebExPart(val partName: String, val urlName: String) extends ExPart
