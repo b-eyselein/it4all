@@ -1,7 +1,7 @@
 @(user: model.User, exercise: model.programming.ProgCompleteEx, oldData: Seq[model.programming.CommitedTestData])
 
 @stdTestSize = @{
-    controllers.exes.idPartExes.ProgController.STD_TEST_DATA_COUNT
+    model.programming.ProgrammingToolMain.STD_TEST_DATA_COUNT
 }
 
 @scripts = {
@@ -21,10 +21,12 @@
 
 @testOutputPlaceholder(id: Int) = @{
     "Test " + (id + 1) + ", Output"
+    0
 }
 
 @url = @{
-    controllers.exes.idPartExes.routes.ProgController.correctLive(exercise.ex.id)
+    // FIXME: part...
+    controllers.exes.routes.ExerciseController.correctLive("prog", exercise.ex.id, part = "TODO!")
 }
 
 @main("Programmierung: Defintion von Testdaten", Some(user), scripts) {

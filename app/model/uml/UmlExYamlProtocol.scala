@@ -1,9 +1,10 @@
 package model.uml
 
+import model.Enums.ExerciseState
 import model.MyYamlProtocol._
 import model.uml.UmlConsts._
 import model.uml.UmlEnums.{UmlAssociationType, UmlClassType, UmlMultiplicity}
-import model.{BaseValues, MyYamlProtocol, YamlArr, YamlObj}
+import model.{MyYamlProtocol, YamlArr, YamlObj}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
@@ -14,10 +15,14 @@ object UmlExYamlProtocol extends MyYamlProtocol {
 
   implicit object UmlExYamlFormat extends HasBaseValuesYamlFormat[UmlCompleteEx] {
 
-    override def readRest(yamlObject: YamlObject, baseValues: BaseValues): Try[UmlCompleteEx] = for {
-      mappingTries <- yamlObject.arrayField(MAPPINGS_NAME, UmlMappingYamlFormat(baseValues.id).read)
+    override def readRest(yamlObject: YamlObject, baseValues: (Int, String, String, String, ExerciseState)): Try[UmlCompleteEx] = for {
+      mappingTries <- yamlObject.arrayField(MAPPINGS_NAME, UmlMappingYamlFormat(baseValues._1).read)
       ignoreWordTries <- yamlObject.arrayField(IGNORE_WORDS_NAME, _ asStr)
-      solution <- yamlObject.someField(SOLUTION_NAME) flatMap UmlSolutionYamlFormat(baseValues.id).read
+
+      classes <- yamlObject.arrayField(CLASSES_NAME, UmlCompleteClassYamlFormat(baseValues._1).read)
+      associations <- yamlObject.arrayField(ASSOCS_NAME, UmlAssocYamlFormat(baseValues._1).read)
+      implementations <- yamlObject.arrayField(IMPLS_NAME, UmlImplYamlFormat(baseValues._1).read)
+
     } yield {
       for (mappingFailure <- mappingTries._2)
       // FIXME: return...
@@ -27,21 +32,39 @@ object UmlExYamlProtocol extends MyYamlProtocol {
       // FIXME: return...
         Logger.error("Could not read ignore word", ignoreWordFailure.exception)
 
+      for (classFailure <- classes._2)
+      // FIXME: return...
+        Logger.error("Could not read uml class", classFailure.exception)
+
+      for (associationFailure <- associations._2)
+      // FIXME: return...
+        Logger.error("Could not read uml association", associationFailure.exception)
+
+      for (implementationFailure <- implementations._2)
+      // FIXME: return...
+        Logger.error("Could not read uml implementation", implementationFailure.exception)
+
+
       val mappings = mappingTries._1
       val ignoreWords = ignoreWordTries._1
 
       val mappingsForTextParser: Map[String, String] = mappings map (mapping => (mapping.key, mapping.value)) toMap
-      val textParser = new UmlExTextParser(baseValues.text, mappingsForTextParser, ignoreWords)
+      val textParser = new UmlExTextParser(baseValues._4, mappingsForTextParser, ignoreWords)
 
       UmlCompleteEx(
-        UmlExercise(baseValues, textParser.parseTextForClassSel, textParser.parseTextForDiagDrawing, ignoreWords mkString TagJoinChar), mappings, solution
+        new UmlExercise(baseValues, textParser.parseTextForClassSel, textParser.parseTextForDiagDrawing, ignoreWords mkString TagJoinChar),
+        mappings, classes._1, associations._1, implementations._1
       )
     }
 
     override protected def writeRest(completeEx: UmlCompleteEx): Map[YamlValue, YamlValue] = Map(
       YamlString(MAPPINGS_NAME) -> YamlArr(completeEx.mappings map UmlMappingYamlFormat(completeEx.ex.id).write),
       YamlString(IGNORE_WORDS_NAME) -> YamlArr(completeEx.ex.splitToIgnore map YamlString),
-      YamlString(SOLUTION_NAME) -> UmlSolutionYamlFormat(completeEx.ex.id).write(completeEx.solution)
+
+
+      YamlString(CLASSES_NAME) -> YamlArr(completeEx.classes map UmlCompleteClassYamlFormat(completeEx.ex.id).write),
+      YamlString(IMPLS_NAME) -> YamlArr(completeEx.implementations map UmlImplYamlFormat(completeEx.ex.id).write),
+      YamlString(ASSOCS_NAME) -> YamlArr(completeEx.associations map UmlAssocYamlFormat(completeEx.ex.id).write)
     )
   }
 
@@ -56,36 +79,6 @@ object UmlExYamlProtocol extends MyYamlProtocol {
       key <- yamlObject.stringField(KEY_NAME)
       value <- yamlObject.stringField(VALUE_NAME)
     } yield UmlMapping(exerciseId, key, value)
-
-  }
-
-  case class UmlSolutionYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[UmlSolution] {
-
-    override def write(sol: UmlSolution): YamlValue = YamlObj(
-      CLASSES_NAME -> YamlArr(sol.classes map UmlCompleteClassYamlFormat(exerciseId).write),
-      IMPLS_NAME -> YamlArr(sol.implementations map UmlImplYamlFormat(exerciseId).write),
-      ASSOCS_NAME -> YamlArr(sol.associations map UmlAssocYamlFormat(exerciseId).write)
-    )
-
-    override def readObject(yamlObject: YamlObject): Try[UmlSolution] = for {
-      classTries <- yamlObject.arrayField(CLASSES_NAME, UmlCompleteClassYamlFormat(exerciseId).read)
-      associationTries <- yamlObject.arrayField(ASSOCS_NAME, UmlAssocYamlFormat(exerciseId).read)
-      implementationTries <- yamlObject.arrayField(IMPLS_NAME, UmlImplYamlFormat(exerciseId).read)
-    } yield {
-      for (classFailure <- classTries._2)
-      // FIXME: return...
-        Logger.error("Could not read uml class", classFailure.exception)
-
-      for (associationFailure <- associationTries._2)
-      // FIXME: return...
-        Logger.error("Could not read uml association", associationFailure.exception)
-
-      for (implementationFailure <- implementationTries._2)
-      // FIXME: return...
-        Logger.error("Could not read uml implementation", implementationFailure.exception)
-
-      UmlSolution(classTries._1, associationTries._1, implementationTries._1)
-    }
 
   }
 

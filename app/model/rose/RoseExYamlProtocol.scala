@@ -1,9 +1,10 @@
 package model.rose
 
+import model.Enums.ExerciseState
 import model.MyYamlProtocol._
 import model.programming.ProgConsts._
 import model.programming.{ProgDataTypes, ProgLanguage}
-import model.{BaseValues, MyYamlProtocol, YamlObj}
+import model.{MyYamlProtocol, YamlObj}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
@@ -14,16 +15,16 @@ object RoseExYamlProtocol extends MyYamlProtocol {
   implicit object RoseExYamlFormat extends HasBaseValuesYamlFormat[RoseCompleteEx] {
 
 
-    protected def readRest(yamlObject: YamlObject, baseValues: BaseValues): Try[RoseCompleteEx] = for {
+    protected def readRest(yamlObject: YamlObject, baseValues: (Int, String, String, String, ExerciseState)): Try[RoseCompleteEx] = for {
       isMp <- yamlObject.boolField("isMultiplayer")
-      inputTypes <- yamlObject.arrayField("inputTypes", RoseInputTypeYamlFormat(baseValues.id).read)
-      sampleSolution <- yamlObject.someField("sampleSolution") flatMap RoseSampleSolutionYamlFormat(baseValues.id).read
+      inputTypes <- yamlObject.arrayField("inputTypes", RoseInputTypeYamlFormat(baseValues._1).read)
+      sampleSolution <- yamlObject.someField("sampleSolution") flatMap RoseSampleSolutionYamlFormat(baseValues._1).read
     } yield {
       for (inputTypeFailure <- inputTypes._2)
       // FIXME: return...
         Logger.error("Could not read rose input type", inputTypeFailure.exception)
 
-      RoseCompleteEx(RoseExercise(baseValues, isMp), inputTypes._1, sampleSolution)
+      RoseCompleteEx(new RoseExercise(baseValues, isMp), inputTypes._1, sampleSolution)
     }
 
     protected def writeRest(completeEx: RoseCompleteEx): Map[YamlValue, YamlValue] = ???

@@ -171,11 +171,13 @@ function onSqlCorrectionError(jqXHR) {
 }
 
 function testSqlSol() {
+    let collId = $('#collId').val(), exerciseId = $('#exerciseId').val();
     // noinspection JSUnresolvedFunction, JSUnresolvedVariable
-    let url = jsRoutes.controllers.exCollections.SqlController.correctLive($('#collId').val(), $('#exerciseId').val()).url;
+    let url = jsRoutes.controllers.exes.CollectionController.correctLive('sql', collId, exerciseId).url;
 
     let learnerSolution = editor.getValue();
     if (learnerSolution === "") {
+        $('#newCorrectionDiv').html(`<div class="alert alert-danger">Sie können keine leere Query abgeben!</div>`);
         return;
     }
 

@@ -2,26 +2,36 @@ package model
 
 import java.nio.file.Path
 
-import controllers.exes.AToolMain
+import controllers.exes.{AToolMain, MyWrapper, Wrappable}
 import model.Enums.ExerciseState
 import model.core.{ExPart, FileUtils}
 import play.twirl.api.Html
 
-case class BaseValues(id: Int, title: String, author: String, text: String, state: ExerciseState)
-
 trait HasBaseValues {
 
-  def baseValues: BaseValues
+  def id: Int
 
-  def id: Int = baseValues.id
+  def title: String
 
-  def title: String = baseValues.title
+  def author: String
 
-  def author: String = baseValues.author
+  def text: String
 
-  def text: String = baseValues.text
+  def state: ExerciseState
 
-  def state: ExerciseState = baseValues.state
+}
+
+trait Solution {
+
+  val username: String
+
+  val exerciseId: Int
+
+}
+
+trait CollectionExSolution extends Solution {
+
+  val collectionId: Int
 
 }
 
@@ -37,25 +47,17 @@ trait ExTag {
 
 }
 
-trait ExerciseIdentifier {
-
-  val id: Int
-
-}
-
 trait Exercise extends HasBaseValues
 
-trait ExerciseInCollection extends Exercise {
+trait ExInColl extends Exercise {
 
   def collectionId: Int
 
 }
 
-trait CompleteEx[E <: Exercise] extends HasBaseValues {
+trait CompleteEx[E <: Exercise] extends Wrappable with HasBaseValues {
 
   def ex: E
-
-  override def baseValues: BaseValues = ex.baseValues
 
   def preview: Html
 
@@ -63,59 +65,58 @@ trait CompleteEx[E <: Exercise] extends HasBaseValues {
 
   def exType: String = ""
 
+  override def wrapped: CompleteExWrapper
+
+  override def id: Int = ex.id
+
+  override def title: String = ex.title
+
+  override def author: String = ex.author
+
+  override def text: String = ex.text
+
+  override def state: ExerciseState = ex.state
+
 }
 
-trait PartsCompleteEx[E <: Exercise, PartType <: ExPart] extends CompleteEx[E] {
+trait SingleCompleteEx[Ex <: Exercise, PartType <: ExPart] extends CompleteEx[Ex] {
 
   def hasPart(partType: PartType): Boolean
 
-  def textForPart(urlName: String): String = text
+}
+
+trait PartsCompleteEx[Ex <: Exercise, PartType <: ExPart] extends SingleCompleteEx[Ex, PartType] {
+
+  def textForPart(urlName: String): String = ex.text
 
 }
 
-trait FileCompleteEx[Ex <: Exercise] extends CompleteEx[Ex] with FileUtils {
+trait FileCompleteEx[Ex <: Exercise, PartType <: ExPart] extends SingleCompleteEx[Ex, PartType] with FileUtils {
 
   def templateFilename: String
 
   def sampleFilename: String
 
-  def templateFilePath(toolMain: AToolMain[_, _], fileEnding: String): Path = toolMain.templateDirForExercise(ex.id) / (templateFilename + "." + fileEnding)
+  def templateFilePath(toolMain: AToolMain, fileEnding: String): Path = toolMain.templateDirForExercise(ex.id) / (templateFilename + "." + fileEnding)
 
-  def sampleFilePath(toolMain: AToolMain[_, _], fileEnding: String): Path = toolMain.sampleDirForExercise(ex.id) / (sampleFilename + "." + fileEnding)
+  def sampleFilePath(toolMain: AToolMain, fileEnding: String): Path = toolMain.sampleDirForExercise(ex.id) / (sampleFilename + "." + fileEnding)
 
-  def available(toolMain: AToolMain[_, _], fileEnding: String): Boolean = templateFilePath(toolMain, fileEnding).toFile.exists && sampleFilePath(toolMain, fileEnding).toFile.exists
-
-}
-
-trait ExerciseCollection[ExType <: Exercise, CompExType <: CompleteEx[ExType]] extends HasBaseValues
-
-
-trait CompleteCollection[Ex <: Exercise, CompEx <: CompleteEx[Ex], Coll <: ExerciseCollection[Ex, CompEx]] extends HasBaseValues {
-
-  def coll: Coll
-
-  override def baseValues: BaseValues = coll.baseValues
-
-  def exercisesWithFilter(filter: String): Seq[CompEx] = exercises
-
-  def exercises: Seq[CompEx]
-
-  def renderRest: Html
+  def available(toolMain: AToolMain, fileEnding: String): Boolean = templateFilePath(toolMain, fileEnding).toFile.exists && sampleFilePath(toolMain, fileEnding).toFile.exists
 
 }
 
-abstract class CompleteCollectionWrapper extends HasBaseValues {
+trait CompleteExInColl[Ex <: Exercise] extends CompleteEx[Ex] {
+
+}
+
+abstract class CompleteExWrapper extends MyWrapper {
 
   type Ex <: Exercise
 
   type CompEx <: CompleteEx[Ex]
 
-  type Coll <: ExerciseCollection[Ex, CompEx]
+  val compEx: CompEx
 
-  type CompColl <: CompleteCollection[Ex, CompEx, Coll]
-
-  val coll: CompColl
-
-  override def baseValues: BaseValues = coll.baseValues
+  override def wrappedObj: Wrappable = compEx
 
 }

@@ -15,6 +15,7 @@ case class WrongFieldTypeException(fieldtype: String) extends Exception
 
 object YamlObj {
 
+  // FIXME: remove cast ...
   def apply(fields: (String, YamlValue)*): YamlObject = YamlObject(fields map (f => (YamlString(f._1).asInstanceOf[YamlValue], f._2)) toMap)
 
 }
@@ -111,29 +112,29 @@ object MyYamlProtocol {
 
 abstract class MyYamlProtocol extends DefaultYamlProtocol {
 
-  protected def writeBaseValues(bv: BaseValues): Map[YamlValue, YamlValue] = Map(
-    YamlString(ID_NAME) -> bv.id,
-    YamlString(TITLE_NAME) -> bv.title,
-    YamlString(AUTHOR_NAME) -> bv.author,
-    YamlString(TEXT_NAME) -> bv.text,
-    YamlString(STATE_NAME) -> bv.state.name
+  protected def writeBaseValues(hasBaseValues: HasBaseValues): Map[YamlValue, YamlValue] = Map(
+    YamlString(ID_NAME) -> hasBaseValues.id,
+    YamlString(TITLE_NAME) -> hasBaseValues.title,
+    YamlString(AUTHOR_NAME) -> hasBaseValues.author,
+    YamlString(TEXT_NAME) -> hasBaseValues.text,
+    YamlString(STATE_NAME) -> hasBaseValues.state.name
   )
 
-  protected def readBaseValues(yamlObject: YamlObject): Try[BaseValues] = for {
+  protected def readBaseValues(yamlObject: YamlObject): Try[(Int, String, String, String, ExerciseState)] = for {
     id <- yamlObject.intField(ID_NAME)
     title <- yamlObject.stringField(TITLE_NAME)
     author <- yamlObject.stringField(AUTHOR_NAME)
     text <- yamlObject.stringField(TEXT_NAME)
     state = yamlObject.enumField(STATE_NAME, ExerciseState.valueOf) getOrElse ExerciseState.CREATED
-  } yield BaseValues(id, title, author, text, state)
+  } yield (id, title, author, text, state)
 
   abstract class HasBaseValuesYamlFormat[E <: HasBaseValues] extends MyYamlObjectFormat[E] {
 
     override def readObject(yamlObject: YamlObject): Try[E] = readBaseValues(yamlObject) flatMap (readRest(yamlObject, _))
 
-    protected def readRest(yamlObject: YamlObject, baseValues: BaseValues): Try[E]
+    protected def readRest(yamlObject: YamlObject, baseValues: (Int, String, String, String, ExerciseState)): Try[E]
 
-    override def write(completeEx: E): YamlObject = YamlObject(writeBaseValues(completeEx.baseValues) ++ writeRest(completeEx))
+    override def write(completeEx: E): YamlObject = YamlObject(writeBaseValues(completeEx) ++ writeRest(completeEx))
 
     protected def writeRest(completeEx: E): Map[YamlValue, YamlValue]
 

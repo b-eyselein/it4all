@@ -26,79 +26,85 @@
 @main("Web", Some(user), scripts) {
     <div class="container-fluid" id="fullsc">
 
-        <input hidden type="number" id="exerciseId" value="@exercise.id" title="hidden">
-        <input hidden type="text" id="part" value="@part.urlName" title="hidden">
+        <input hidden type="number" id="exerciseId" value="@exercise.ex.id" title="hidden">
+        <input hidden type="text" id="exercisePart" value="@part.urlName" title="hidden">
 
-        <div class="row">
-            <div class="col-md-4 col-sm-6">
-                <h2>Aufgabenstellung</h2>
+        <ul class="nav nav-tabs nav-justified">
+            <li class="active"><a data-toggle="tab" href="#exAndEditTab">Aufgabenstellung und Editor</a></li>
+            <li><a data-toggle="tab" href="#previewTab" onclick="updatePreviewNew()">Live-Vorschau</a></li>
+        </ul>
 
-                <hr>
 
-                <p class="text-justify">@exercise.ex.text</p>
-                @if(part == model.web.HtmlPart) {
-                    <p>@Html(exercise.ex.htmlText getOrElse "")</p>
-                } else {
-                    <p>@Html(exercise.ex.jsText getOrElse "")</p>
-                }
+        <div class="tab-content">
 
-                <div class="btn-group btn-group-justified">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-default" onclick="toggleFullscreen()">
-                            Toggle Fullscreen <span class="glyphicon glyphicon-resize-full" id="fullscBtnSpan"></span>
-                        </button>
-                    </div>
-                    <div class="btn-group">
-                        <button class="btn btn-success" id="testButton">L&ouml;sung testen</button>
-                    </div>
-                    <a class="btn btn-default" href="@controllers.exes.idPartExes.WebToolObject.indexCall">Bearbeitung beenden</a>
-                </div>
+            <div id="exAndEditTab" class="tab-pane fade in active">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h2>Aufgabenstellung</h2>
 
-                <hr>
+                        <hr>
 
-                @part match {
-                    case model.web.HtmlPart => {
-                        <div class="pre-scrollable">
-                            <ol>
-                            @for(task <- tasks.sortBy(_.task.id)) {
-                                <li><p id="text_@task.task.id">@task.task.text</p></li>
-                            }
-                            </ol>
+                        <p class="text-justify">@exercise.ex.text</p>
+                        @if(part == model.web.HtmlPart) {
+                            <p>@Html(exercise.ex.htmlText getOrElse "")</p>
+                        } else {
+                            <p>@Html(exercise.ex.jsText getOrElse "")</p>
+                        }
+
+                        <div class="btn-group btn-group-justified">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default" onclick="toggleFullscreen()">
+                                    Toggle Fullscreen <span class="glyphicon glyphicon-resize-full" id="fullscBtnSpan"></span>
+                                </button>
+                            </div>
+                            <div class="btn-group">
+                                <button class="btn btn-success" id="testButton">L&ouml;sung testen</button>
+                            </div>
+                            <a class="btn btn-default" href="@controllers.exes.routes.ExerciseController.index("web")">Bearbeitung beenden</a>
                         </div>
-                    }
-                    case model.web.JsPart => {
-                        <p>Es gibt insgesamt 4 Testf&auml;lle.</p>
-                    }
-                }
-            </div>
 
-            <div class="col-md-4 col-sm-6">
-                <h2>Editor</h2>
+                        <hr>
 
-                <hr>
+                        @if(part == model.web.HtmlPart) {
+                            <div class="pre-scrollable">
+                                <ol>
+                                @for(task <- tasks.sortBy(_.task.id)) {
+                                    <li><p id="text_@task.task.id">@task.task.text</p></li>
+                                }
+                                </ol>
+                            </div>
+                        } else {
+                            <p>Es gibt insgesamt 4 Testf&auml;lle.</p>
+                        }
+                    </div>
 
-                @core.editor(oldSolution)
-            </div>
+                    <div class="col-sm-6">
+                        <h2>Editor</h2>
 
-            <div class="col-md-4 col-sm-12">
-                <h2>Live-Vorschau</h2>
+                        <hr>
 
-                <hr>
-
-                <div class="embed-responsive embed-responsive-4by3">
-                    <iframe class="embed-responsive-item" src="about:blank" id="preview"></iframe>
+                        @core.editor(oldSolution)
+                    </div>
                 </div>
 
                 <hr>
-                <div class="alert alert-info">
-                    Die Vorschau wird bei &Auml;nderungen in der L&ouml;sung automatisch aktualisiert.</div>
+
+                <div id="correction"></div>
+
             </div>
+
+            <div id="previewTab" class="tab-pane fade">
+
+                <div class="container">
+                    <h2>Live-Vorschau</h2>
+
+                    <div class="embed-responsive embed-responsive-16by9">
+                        <iframe class="embed-responsive-item" src="http://localhost:9080/@user.username/@exercise.ex.id/test.html" id="preview"></iframe>
+                    </div>
+                </div>
+
+            </div>
+
         </div>
-
-        <hr>
-
-        <div id="correction"></div>
-
-
     </div>
 }

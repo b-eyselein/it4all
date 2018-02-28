@@ -302,7 +302,7 @@ jsTasks:
     isPrecondition: false
     awaitedValue: 4
 ---
-id: 10
+id: 7
 title: Verzweigungen und Strings
 author: alg81dm
 text: Erstellen Sie ein Anmeldeformular, das eine einfache Passwort-Qualitätsprüfung durchführt.
@@ -368,7 +368,7 @@ jsTasks:
     isPrecondition: false
     awaitedValue: ''
 ---
-id: 11
+id: 8
 title: Schleifen
 author: alg81dm
 text: Erstellen Sie ein einfaches Formular zur Berechnung der Fakultät einer Zahl n (alle Zahlen von 1 bis n multipliziert).

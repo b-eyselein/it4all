@@ -17,8 +17,6 @@ case class XmlCompleteResult(learnerSolution: String, solutionSaved: Boolean, re
   override def renderLearnerSolution: Html = new Html(pre(HtmlFormat.escape(learnerSolution).toString).toString)
 
   def render: Html = {
-    println(this)
-
     val solSaved: String = if (solutionSaved)
       div(cls := "alert alert-success")(span(cls := "glyphicon glyphicon-ok"), " Ihre Lösung wurde gespeichert.").toString
     else

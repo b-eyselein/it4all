@@ -4,7 +4,6 @@ import java.nio.file.Paths
 
 import model.core.FileUtils
 import model.xml.XmlEnums.XmlErrorType
-import model.xml.XmlEnums.XmlExType._
 import org.junit.Assert.{assertNotNull, assertTrue}
 import org.junit.Test
 import org.scalatest.Matchers._

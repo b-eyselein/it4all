@@ -1,6 +1,8 @@
 @(user: model.User, exercise: model.blanks.BlanksCompleteExercise)
 
 @scripts = {
+    @* Javascript Routes *@
+    <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
     <script src="@routes.Assets.versioned("javascripts/blanks/blanks.js")"></script>
 }
 
@@ -10,7 +12,10 @@
             <h1>L&uuml;ckentext</h1>
         </div>
 
-        <form class="form-inline" autocomplete="off" action="javascript:testSol('@exes.idPartExes.routes.BlanksController.correct(exercise.id)')" >
+        <form class="form-inline" autocomplete="off">
+
+            <input type="number" hidden title="hidden" id="exerciseId" value="@exercise.ex.id">
+            <input type="text" hidden title="hidden" id="exercisePart" value="@model.blanks.BlanksExParts.BlankExSinglePart.urlName">
 
             @Html(exercise.ex.blanksText)
 
@@ -18,9 +23,9 @@
 
             <div class="btn-group btn-group-justified">
                 <div class="btn-group">
-                    <button class="btn btn-primary">Eingaben testen</button>
+                    <button type="button" class="btn btn-primary" id="testBtn">Eingaben testen</button>
                 </div>
-                <a href="@exes.idPartExes.routes.BlanksController.index()" class="btn btn-default">Zur&uuml;ck zur Aufgabenseite</a>
+                <a href="@controllers.exes.routes.ExerciseController.index("blanks")" class="btn btn-default">Zur&uuml;ck zur Aufgabenseite</a>
             </div>
         </form>
 

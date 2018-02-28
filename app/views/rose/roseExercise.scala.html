@@ -25,7 +25,7 @@
 
     <div id="fullsc" class="container">
 
-        <input type="number" hidden id="exerciseId" value="@exercise.id" title="hidden">
+        <input type="number" hidden id="exerciseId" value="@exercise.ex.id" title="hidden">
 
         <div class="row">
             <div class="col-md-6">
@@ -33,7 +33,7 @@
 
                 <hr>
 
-                <div class="well">@exercise.text</div>
+                <div class="well">@exercise.ex.text</div>
 
                 <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#robot_api">Roboter API</button>
 

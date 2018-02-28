@@ -3,22 +3,34 @@ package model.uml
 import javax.inject.Inject
 import model.Enums.ExerciseState
 import model._
+import model.persistence.SingleExerciseTableDefs
 import model.uml.UmlConsts._
 import model.uml.UmlEnums._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.api.mvc.Call
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
 
-case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping], solution: UmlSolution) extends PartsCompleteEx[UmlExercise, UmlExPart] {
+// Wrapper classes
+
+class UmlCompleteExWrapper(override val compEx: UmlCompleteEx) extends CompleteExWrapper {
+
+  override type Ex = UmlExercise
+
+  override type CompEx = UmlCompleteEx
+
+}
+
+// Classes for use
+
+case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping], classes: Seq[UmlCompleteClass], associations: Seq[UmlAssociation], implementations: Seq[UmlImplementation])
+  extends PartsCompleteEx[UmlExercise, UmlExPart] {
 
   override def preview: Html = views.html.uml.umlPreview(this)
 
   def getClassesForDiagDrawingHelp: String = {
-    val classes = solution.classes
     val sqrt = Math.round(Math.sqrt(classes.size))
 
     classes.zipWithIndex.map { case (clazz, index) =>
@@ -34,15 +46,15 @@ case class UmlCompleteEx(ex: UmlExercise, mappings: Seq[UmlMapping], solution: U
     case (ClassSelection | DiagramDrawing) => true
     case _                                 => false
   }
-}
-
-case class UmlSolution(classes: Seq[UmlCompleteClass], associations: Seq[UmlAssociation], implementations: Seq[UmlImplementation]) {
 
   def allAttributes: Seq[UmlClassAttribute] = classes flatMap (_.attributes) groupBy (attr => (attr.name, attr.umlType)) map (_._2.head) toSeq
 
   def allMethods: Seq[UmlClassMethod] = classes flatMap (_.methods) groupBy (method => (method.name, method.umlType)) map (_._2.head) toSeq
 
+  override def wrapped: CompleteExWrapper = new UmlCompleteExWrapper(this)
+
 }
+
 
 case class UmlCompleteClass(clazz: UmlClass, attributes: Seq[UmlClassAttribute], methods: Seq[UmlClassMethod]) {
 
@@ -52,20 +64,10 @@ case class UmlCompleteClass(clazz: UmlClass, attributes: Seq[UmlClassAttribute],
 
 // Table classes
 
-object UmlExercise {
+case class UmlExercise(id: Int, title: String, author: String, text: String, state: ExerciseState, classSelText: String, diagDrawText: String, toIgnore: String) extends Exercise {
 
-  def tupled(t: (Int, String, String, String, ExerciseState, String, String, String)): UmlExercise =
-    UmlExercise(t._1, t._2, t._3, t._4, t._5, t._6, t._7, t._8)
-
-  def apply(id: Int, title: String, author: String, text: String, state: ExerciseState, classSelText: String, diagDrawText: String, toIgnore: String) =
-    new UmlExercise(BaseValues(id, title, author, text, state), classSelText, diagDrawText, toIgnore)
-
-  def unapply(arg: UmlExercise): Option[(Int, String, String, String, ExerciseState, String, String, String)] =
-    Some(arg.id, arg.title, arg.author, arg.text, arg.state, arg.classSelText, arg.diagDrawText, arg.toIgnore)
-
-}
-
-case class UmlExercise(baseValues: BaseValues, classSelText: String, diagDrawText: String, toIgnore: String) extends Exercise {
+  def this(baseValues: (Int, String, String, String, ExerciseState), classSelText: String, diagDrawText: String, toIgnore: String) =
+    this(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, classSelText, diagDrawText, toIgnore)
 
   def splitToIgnore: Seq[String] = toIgnore split TagJoinChar
 
@@ -107,19 +109,40 @@ case class UmlAssociation(exerciseId: Int, assocType: UmlAssociationType, assocN
 // Tables
 
 class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
-  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseTableDefs[UmlExercise, UmlCompleteEx] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[UmlExercise, UmlCompleteEx, UmlSolution, UmlExPart] {
 
   import profile.api._
+
+  // Abstract types
+
+  override type ExTableDef = UmlExercisesTable
+
+  override type SolTableDef = UmlSolutionsTable
+
+  // Table Queries
+
+  override val exTable = TableQuery[UmlExercisesTable]
+
+  override val solTable = TableQuery[UmlSolutionsTable]
+
+  val umlMappings = TableQuery[UmlMappingsTable]
+
+  val umlClasses = TableQuery[UmlClassTable]
+
+  val umlClassAttributes = TableQuery[UmlClassAttributesTable]
+
+  val umlClassMethods = TableQuery[UmlClassMethodsTable]
+
+  val umlAssociations = TableQuery[UmlAssociationsTable]
+
+  val umlImplementations = TableQuery[UmlImplementationsTable]
 
   // Reading
 
   override def completeExForEx(ex: UmlExercise)(implicit ec: ExecutionContext): Future[UmlCompleteEx] =
     db.run(mappingsAction(ex.id) zip classesAction(ex.id) zip associationsAction(ex.id) zip implementationsAction(ex.id)) flatMap {
       case (((mappings, classes), assocs), impls) =>
-        completeClasses(ex, classes) map { compClasses =>
-          val solution = UmlSolution(compClasses, assocs, impls)
-          UmlCompleteEx(ex, mappings, solution)
-        }
+        completeClasses(ex, classes) map { compClasses => UmlCompleteEx(ex, mappings, compClasses, assocs, impls) }
     }
 
   private def mappingsAction(id: Int) = umlMappings filter (_.exerciseId === id) result
@@ -140,43 +163,17 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Saving
 
-  override protected def saveExerciseRest(compEx: UmlCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] =
-    saveMappings(compEx.mappings) zip saveSampleSolution(compEx.solution) map (future => future._1 && future._2)
-
-  private def saveMappings(mappings: Seq[UmlMapping])(implicit ec: ExecutionContext): Future[Boolean] = saveSeq[UmlMapping](mappings, m => db.run(umlMappings += m))
-
-  private def saveSampleSolution(solution: UmlSolution)(implicit ec: ExecutionContext): Future[Boolean] = saveSeq(solution.classes, saveClass) zip
-    saveSeq[UmlAssociation](solution.associations, a => db.run(umlAssociations += a)) zip
-    saveSeq[UmlImplementation](solution.implementations, i => db.run(umlImplementations += i)) map (t => t._1._1 && t._1._2 && t._2)
+  override protected def saveExerciseRest(compEx: UmlCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] = for {
+    mappings <- saveSeq[UmlMapping](compEx.mappings, m => db.run(umlMappings += m))
+    classes <- saveSeq[UmlCompleteClass](compEx.classes, saveClass)
+    assocs <- saveSeq[UmlAssociation](compEx.associations, a => db.run(umlAssociations += a))
+    impl <- saveSeq[UmlImplementation](compEx.implementations, i => db.run(umlImplementations += i))
+  } yield mappings && classes && assocs && impl
 
   private def saveClass(umlCompleteClass: UmlCompleteClass)(implicit ec: ExecutionContext): Future[Boolean] = db.run(umlClasses += umlCompleteClass.clazz) flatMap { _ =>
     saveSeq[UmlClassAttribute](umlCompleteClass.attributes, a => db.run(umlClassAttributes += a)) zip
       saveSeq[UmlClassMethod](umlCompleteClass.methods, m => db.run(umlClassMethods += m))
   } map (t => t._1 && t._2)
-
-  // Deletion
-
-  // Table Queries
-
-  val umlExercises = TableQuery[UmlExercisesTable]
-
-
-  val umlMappings = TableQuery[UmlMappingsTable]
-
-  val umlClasses = TableQuery[UmlClassTable]
-
-  val umlClassAttributes = TableQuery[UmlClassAttributesTable]
-
-  val umlClassMethods = TableQuery[UmlClassMethodsTable]
-
-
-  val umlAssociations = TableQuery[UmlAssociationsTable]
-
-  val umlImplementations = TableQuery[UmlImplementationsTable]
-
-  override type ExTableDef = UmlExercisesTable
-
-  override val exTable = umlExercises
 
   // Implicit column types
 
@@ -188,6 +185,19 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   implicit val UmlMultiplicityColumnType: BaseColumnType[UmlMultiplicity] =
     MappedColumnType.base[UmlMultiplicity, String](_.name, str => UmlMultiplicity.byString(str) getOrElse UmlMultiplicity.UNBOUND)
+
+  implicit val UmlExTypeColumnType: BaseColumnType[UmlExPart] =
+    MappedColumnType.base[UmlExPart, String](_.urlName, str => UmlExParts.values.find(_.urlName == str) getOrElse ClassSelection)
+
+
+  implicit val umlCompleteClassesColumnType: BaseColumnType[Seq[UmlCompleteClass]] =
+    MappedColumnType.base[Seq[UmlCompleteClass], String](_.mkString, _ => ???)
+
+  implicit val umlAssociationsColumnType: BaseColumnType[Seq[UmlAssociation]] =
+    MappedColumnType.base[Seq[UmlAssociation], String](_.mkString, _ => ???)
+
+  implicit val umlImplementationsColumnType: BaseColumnType[Seq[UmlImplementation]] =
+    MappedColumnType.base[Seq[UmlImplementation], String](_.mkString, _ => ???)
 
   // Table definitions
 
@@ -218,7 +228,7 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
     def pk = primaryKey("pk", (exerciseId, mappingKey))
 
-    def exerciseFk = foreignKey("exercise_fk", exerciseId, umlExercises)(_.id)
+    def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
 
 
     def * = (exerciseId, mappingKey, mappingValue) <> (UmlMapping.tupled, UmlMapping.unapply)
@@ -236,7 +246,7 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
     def pk = primaryKey("pk", (exerciseId, className))
 
-    def exerciseFk = foreignKey("exercise_fk", exerciseId, umlExercises)(_.id)
+    def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
 
 
     def * = (exerciseId, className, classType) <> (UmlClass.tupled, UmlClass.unapply)
@@ -295,7 +305,7 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
     def pk = primaryKey("pk", (exerciseId, subClass, superClass))
 
-    def exerciseFk = foreignKey("exercise_fk", exerciseId, umlExercises)(_.id)
+    def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
 
 
     def * = (exerciseId, subClass, superClass) <> (UmlImplementation.tupled, UmlImplementation.unapply)
@@ -321,10 +331,28 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
     def pk = primaryKey("pk", (exerciseId, firstEnd, secondEnd))
 
-    def exerciseFk = foreignKey("exercise_fk", exerciseId, umlExercises)(_.id)
+    def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
 
 
     def * = (exerciseId, assocType, assocName.?, firstEnd, firstMult, secondEnd, secondMult) <> (UmlAssociation.tupled, UmlAssociation.unapply)
+
+  }
+
+  class UmlSolutionsTable(tag: Tag) extends SolutionsTable[UmlSolution](tag, "uml_solutions") {
+
+    def part = column[UmlExPart]("part")
+
+    def classes = column[Seq[UmlCompleteClass]]("classes")
+
+    def assocs = column[Seq[UmlAssociation]]("assocs")
+
+    def impls = column[Seq[UmlImplementation]]("impls")
+
+
+    override def pk = primaryKey("pk", (username, exerciseId, part))
+
+
+    override def * = (username, exerciseId, part, classes, assocs, impls) <> (UmlSolution.tupled, UmlSolution.unapply)
 
   }
 

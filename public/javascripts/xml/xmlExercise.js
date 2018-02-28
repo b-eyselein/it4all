@@ -45,23 +45,18 @@ function onXmlCorrectionError(jqXHR) {
 
 
 function testSol() {
+    let exerciseId = $('#exerciseId').val(), exercisePart = $('#exercisePart').val();
     // noinspection JSUnresolvedFunction, JSUnresolvedVariable
-    let url = jsRoutes.controllers.exes.idPartExes.XmlController.correctLive($('#exerciseId').val()).url;
-    let part = $('#exercisePart').val();
-
-    let dataToSend = {
-        part,
-        solution: editor.getValue()
-    };
+    let url = jsRoutes.controllers.exes.ExerciseController.correctLive('xml', exerciseId, exercisePart).url;
 
     $.ajax({
         type: 'PUT',
         dataType: 'json', // return type
         contentType: 'application/json', // type of message to server
         url,
-        data: JSON.stringify(dataToSend),
+        data: JSON.stringify({solution: editor.getValue()}),
         async: true,
-        success: (part === 'document') ? onXmlDocumentCorrectionSuccess : onXmlGrammarCorrectionSuccess,
+        success: (exercisePart === 'document') ? onXmlDocumentCorrectionSuccess : onXmlGrammarCorrectionSuccess,
         error: onXmlCorrectionError
     });
 }

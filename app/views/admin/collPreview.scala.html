@@ -1,4 +1,10 @@
-@(user: model.User, collWrappers: Seq[model.CompleteCollectionWrapper], failures: Seq[scala.util.Failure[_]], toolMainObject: controllers.exCollections.AExCollectionToolMain[_, _, _, _])
+@(user: model.User, readAndSaveResult: model.core.ReadAndSaveResult, toolMainObject: controllers.exes.AExCollectionToolMain)
+
+
+@collWrappers = @{
+    // FIXME: remove cast ...
+    readAndSaveResult.successes.map(_.ex.asInstanceOf[model.CompleteCollectionWrapper])
+}
 
 @main("Import: " + toolMainObject.collectionSingularName, Some(user)) {
     <div class="container">
@@ -6,24 +12,24 @@
             <h1>Erstellte Aufgabensammlungen</h1>
         </div>
 
-        <a href="@controllers.exCollections.routes.AExCollectionController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
+        <a href="@controllers.exes.routes.CollectionController.adminIndex(toolMainObject.urlPart)" class="btn btn-primary btn-block">
             Zur&uuml;ck zur Administratorseite</a>
 
         <hr>
 
         @for(collWrapper <- collWrappers) {
-            <h2>@toolMainObject.collectionSingularName: &quot;@collWrapper.title&quot;</h2>
+            <h2>@toolMainObject.collectionSingularName: &quot;@collWrapper.coll.coll.title&quot;</h2>
 
             <div class="row">
-                <div class="col-sm-2"><b>ID</b>: @collWrapper.id</div>
-                <div class="col-sm-4"><b>Autor</b>: @collWrapper.author</div>
+                <div class="col-sm-2"><b>ID</b>: @collWrapper.coll.coll.id</div>
+                <div class="col-sm-4"><b>Autor</b>: @collWrapper.coll.coll.author</div>
                 <div class="col-sm-2"><b># Aufgaben</b>: @collWrapper.coll.exercises.size</div>
-                <div class="col-sm-4"><b>Status</b>: @collWrapper.state</div>
+                <div class="col-sm-4"><b>Status</b>: @collWrapper.coll.coll.state</div>
             </div>
 
             <div class="row">
                 <div class="col-sm-2"><b>Text:</b></div>
-                <div class="col-sm-10">@collWrapper.text</div>
+                <div class="col-sm-10">@collWrapper.coll.coll.text</div>
             </div>
 
             @collWrapper.coll.renderRest
@@ -33,16 +39,16 @@
                 <div class="row">
                 @for(exercise <- exerciseTuple) {
                     <div class="col-sm-6">
-                        <h3>@exercise.title</h3>
+                        <h3>@exercise.ex.title</h3>
                         <div class="row">
                             <div class="col-md-2"><b>Text:</b></div>
-                            <div class="col-md-10">@exercise.text</div>
+                            <div class="col-md-10">@exercise.ex..text</div>
                         </div>
                         <div class="row">
                             <div class="col-sm-2"><b>ID:</b></div>
-                            <div class="col-sm-4">@exercise.id</div>
+                            <div class="col-sm-4">@exercise.ex..id</div>
                             <div class="col-sm-2"><b>Autor:</b></div>
-                            <div class="col-sm-4">@exercise.author</div>
+                            <div class="col-sm-4">@exercise.ex..author</div>
                         </div>
                         @exercise.preview
                     </div>

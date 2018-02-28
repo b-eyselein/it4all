@@ -139,9 +139,9 @@ function htmlForClassEdit(cellView) {
      <div class="panel-heading">
        <div class="form-group">
          <select class="form-control text-center">
-           <option value="${CLASSTYPE}" ${classType === 'uml.Class' ? 'selected' : ''}>&lt;&lt;class&gt;&gt;</option>
-           <option value="${ABSTRACT}" ${classType === 'uml.Abstract' ? 'selected' : ''}>&lt;&lt;abstract&gt;&gt;</option>
-           <option value="${INTERFACE}" ${classType === 'uml.Interface' ? 'selected' : ''}>&lt;&lt;interface&gt;&gt;</option>
+           <option value="${'CLASS'}" ${classType === 'uml.Class' ? 'selected' : ''}>&lt;&lt;class&gt;&gt;</option>
+           <option value="${'ABSTRACT'}" ${classType === 'uml.Abstract' ? 'selected' : ''}>&lt;&lt;abstract&gt;&gt;</option>
+           <option value="${'INTERFACE'}" ${classType === 'uml.Interface' ? 'selected' : ''}>&lt;&lt;interface&gt;&gt;</option>
          </select>
        </div>
        <div class="form-group">
@@ -268,7 +268,7 @@ function selectButton(button) {
 }
 
 function exportDiagram() {
-    let text = extractParametersAsJson();
+    let text = JSON.stringify(extractParametersAsJson());
     let a = document.getElementById('a');
     let file = new Blob([text], {type: 'text/json'});
     a.href = URL.createObjectURL(file);
@@ -292,8 +292,11 @@ function getMultiplicity(label) {
     return label.attrs.text.text === '1' ? 'SINGLE' : 'UNBOUND';
 }
 
+/**
+ * @return {{classes: object[], associations: object[], implementations: object[]}}
+ */
 function extractParametersAsJson() {
-    let learnerSolution = {
+    return {
         classes: graph.getCells().filter(cell => cell.attributes.name !== undefined)
             .map(function (cell) {
                 return {
@@ -326,8 +329,6 @@ function extractParametersAsJson() {
                 };
             })
     };
-
-    return JSON.stringify(learnerSolution);
 }
 
 function getTypeName(type) {
@@ -346,7 +347,9 @@ function getTypeName(type) {
 }
 
 function prepareFormForSubmitting() {
-    $('#learnerSolution').val(extractParametersAsJson());
+    let solution = extractParametersAsJson();
+
+    $('#learnerSolution').val(JSON.stringify(solution));
 }
 
 function link(sourceId, targetId) {
@@ -440,7 +443,7 @@ function drop(ev) {
     ev.preventDefault();
     addClass({
         name: ev.dataTransfer.getData('text'),
-        classType: CLASSTYPE,
+        classType: 'CLASS',
         attributes: [], methods: [],
         position: {x: ev.x, y: ev.y}
     });

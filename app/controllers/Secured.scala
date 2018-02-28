@@ -1,7 +1,8 @@
 package controllers
 
+import model.User
 import model.core.CoreConsts.SESSION_ID_FIELD
-import model.{TableDefs, User}
+import model.persistence.TableDefs
 import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -20,11 +21,13 @@ trait Secured {
   private def futureOnUnauthorized(request: RequestHeader)(implicit ec: ExecutionContext): Future[Result] =
     Future(Redirect(controllers.routes.LoginController.login()))
 
+
   private def withAuth(f: => String => Request[AnyContent] => Future[Result]): EssentialAction =
     Security.Authenticated(username, onUnauthorized)(user => actionBuilder.async(request => f(user)(request)))
 
   private def withAuth[A](bodyParser: BodyParser[A])(f: => String => Request[A] => Future[Result]): EssentialAction =
     Security.Authenticated(username, onUnauthorized)(user => actionBuilder.async(bodyParser)(request => f(user)(request)))
+
 
   def withUser(f: User => Request[AnyContent] => Result)(implicit ec: ExecutionContext): EssentialAction = withAuth { username =>
     implicit request => {

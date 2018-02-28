@@ -1,46 +1,47 @@
 @(user: model.User, quiz: model.questions.Quiz, question: model.questions.CompleteQuestion, numOfExes: Int, oldAnswer: Option[model.questions.UserAnswer])
 
-    @scripts = {
-        <script src="@routes.Assets.versioned("javascripts/question/question.js")"></script>
-        <script>
-                const theQuestionType = "@question.ex.questionType";
-        </script>
-    }
+@scripts = {
+    <script src="@routes.Assets.versioned("javascripts/question/question.js")"></script>
+    <script>
+            const theQuestionType = "@question.ex.questionType";
+    </script>
+}
 
-    @main("Frage", Some(user), scripts) {
-        <div class="container">
-            <div class="page-header">
-                <h1>@question.text</h1>
-            </div>
+@main("Frage", Some(user), scripts) {
+    <div class="container">
+        <div class="page-header">
+            <h1>@question.ex.text</h1>
+        </div>
 
-            <form class="form-horizontal" action="javascript:testSol('@exCollections.routes.QuestionController.correct(quiz.id, question.id)')">
+        @* FIXME: move to jsRoutes! *@
+        <form class="form-horizontal" action="javascript:testSol('@exes.routes.CollectionController.correct("question", quiz.id, question.ex.id)')">
 
-                <div id="answerDiv">
-                @if(question.ex.questionType == model.questions.QuestionEnums.QuestionType.CHOICE) {
-                    @for(ans <- question.answersForTemplate) {
-                        <div class="form-group">
-                            <div class="col-md-12">
-                                <label for="@ans.id">
-                                    <input type="checkbox" id="@ans.id" data-answerid="@ans.id" name="@ans.id"> @ans.text
-                                </label>
-                            </div>
-                        </div>
-                    }
-                } else {
+            <div id="answerDiv">
+            @if(question.ex.questionType == model.questions.QuestionEnums.QuestionType.CHOICE) {
+                @for(ans <- question.answersForTemplate) {
                     <div class="form-group">
-                        <div class="col-sm-12">
-                            <textarea class="form-control" name="answer" rows="20" placeholder="Freitextantwort..." required>@oldAnswer.getOrElse("")</textarea>
+                        <div class="col-md-12">
+                            <label for="@ans.id">
+                                <input type="checkbox" id="@ans.id" data-answerid="@ans.id" name="@ans.id"> @ans.text
+                            </label>
                         </div>
                     </div>
                 }
+            } else {
+                <div class="form-group">
+                    <div class="col-sm-12">
+                        <textarea class="form-control" name="answer" rows="20" placeholder="Freitextantwort..." required>@oldAnswer.getOrElse("")</textarea>
+                    </div>
                 </div>
+            }
+            </div>
 
-                <button class="btn btn-block btn-primary" id="submit">Kontrollieren</button>
+            <button class="btn btn-block btn-primary" id="submit">Kontrollieren</button>
 
-                <hr>
+            <hr>
 
-                @core.helperTemplates.bsPager(question.id, numOfExes, id => exCollections.routes.QuestionController.exercise(quiz.id, id))
+            @core.helperTemplates.bsPager(question.ex.id, numOfExes, id => exes.routes.CollectionController.exercise("question", quiz.id, id))
 
-            </form>
-        </div>
-    }
+        </form>
+    </div>
+}

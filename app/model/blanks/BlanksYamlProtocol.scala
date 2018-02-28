@@ -1,7 +1,8 @@
 package model.blanks
 
+import model.Enums.ExerciseState
+import model.MyYamlProtocol
 import model.MyYamlProtocol._
-import model.{BaseValues, MyYamlProtocol}
 import net.jcazevedo.moultingyaml.{YamlObject, YamlString, YamlValue}
 
 import scala.collection.mutable
@@ -42,10 +43,10 @@ object BlanksYamlProtocol extends MyYamlProtocol {
 
   implicit object BlanksYamlFormat extends HasBaseValuesYamlFormat[BlanksCompleteExercise] {
 
-    override protected def readRest(yamlObject: YamlObject, baseValues: BaseValues): Try[BlanksCompleteExercise] = for {
+    override protected def readRest(yamlObject: YamlObject, baseValues: (Int, String, String, String, ExerciseState)): Try[BlanksCompleteExercise] = for {
       rawBlanksText <- yamlObject.stringField("blankstext")
-      (parsedText, samples) = parseBlanksText(baseValues.id, rawBlanksText)
-    } yield BlanksCompleteExercise(BlanksExercise(baseValues, rawBlanksText, parsedText), samples)
+      (parsedText, samples) = parseBlanksText(baseValues._1, rawBlanksText)
+    } yield BlanksCompleteExercise(new BlanksExercise(baseValues, rawBlanksText, parsedText), samples)
 
     override protected def writeRest(completeEx: BlanksCompleteExercise): Map[YamlValue, YamlValue] = Map(
       YamlString("blankstext") -> YamlString(completeEx.ex.rawBlanksText)

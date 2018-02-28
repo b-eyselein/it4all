@@ -3,15 +3,27 @@ package model.mindmap
 import javax.inject.Inject
 import model.Enums.ExerciseState
 import model._
+import model.persistence.ExerciseTableDefs
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 
-case class MindmapExercise(i: Int, ti: String, a: String, te: String, s: ExerciseState) extends Exercise with FileCompleteEx[MindmapExercise] {
+// Wrapper classes
 
-  override val baseValues: BaseValues = BaseValues(i, ti, a, te, s)
+class MindmapCompleteExWrapper(override val compEx: MindmapExercise) extends CompleteExWrapper {
+
+  override type Ex = MindmapExercise
+
+  override type CompEx = MindmapExercise
+
+}
+
+// Classes for use
+
+case class MindmapExercise(override val id: Int, override val title: String, override val author: String, override val text: String, override val state: ExerciseState)
+  extends Exercise with FileCompleteEx[MindmapExercise, MindmapExPart] {
 
   override val ex: MindmapExercise = this
 
@@ -21,8 +33,11 @@ case class MindmapExercise(i: Int, ti: String, a: String, te: String, s: Exercis
 
   override def sampleFilename: String = ???
 
-}
+  override def wrapped: CompleteExWrapper = ???
 
+  override def hasPart(partType: MindmapExPart): Boolean = true
+
+}
 
 class MindmapTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
   extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseTableDefs[MindmapExercise, MindmapExercise] {

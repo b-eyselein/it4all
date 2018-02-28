@@ -3,31 +3,38 @@ package model.spread
 import javax.inject.Inject
 import model.Enums.ExerciseState
 import model._
-import model.core.tools.FileExToolObject
+import model.persistence.ExerciseTableDefs
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.api.mvc.Call
 import play.twirl.api.Html
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object SpreadExercise {
+// Wrapper classes
 
-  def tupled(tuple: (Int, String, String, String, ExerciseState, String, String)): SpreadExercise =
-    SpreadExercise(BaseValues(tuple._1, tuple._2, tuple._3, tuple._4, tuple._5), tuple._6, tuple._7)
+class SpreadCompleteExWrapper(override val compEx: SpreadExercise) extends CompleteExWrapper {
 
-  def apply(id: Int, title: String, author: String, text: String, state: ExerciseState, sampleFile: String, templateFile: String) =
-    new SpreadExercise(BaseValues(id, title, author, text, state), sampleFile, templateFile)
+  override type Ex = SpreadExercise
 
-  def unapply(arg: SpreadExercise): Option[(Int, String, String, String, ExerciseState, String, String)] =
-    Some((arg.id, arg.title, arg.author, arg.text, arg.state, arg.sampleFilename, arg.templateFilename))
+  override type CompEx = SpreadExercise
 
 }
 
-case class SpreadExercise(override val baseValues: BaseValues, sampleFilename: String, templateFilename: String) extends Exercise with FileCompleteEx[SpreadExercise] {
+// Classes for use
+
+case class SpreadExercise(override val id: Int, override val title: String, override val author: String, override val text: String, override val state: ExerciseState,
+                          sampleFilename: String, templateFilename: String)
+  extends Exercise with FileCompleteEx[SpreadExercise, SpreadExPart] {
+
+  def this(baseValues: (Int, String, String, String, ExerciseState), sampleFileName: String, templateFileName: String) =
+    this(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, sampleFileName, templateFileName)
 
   override def ex: SpreadExercise = this
 
   override def preview: Html = views.html.spread.spreadPreview.render(this)
+
+  override def wrapped: CompleteExWrapper = new SpreadCompleteExWrapper(this)
+
+  override def hasPart(partType: SpreadExPart): Boolean = true
 
 }
 

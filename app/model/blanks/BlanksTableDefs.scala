@@ -4,50 +4,66 @@ import javax.inject.Inject
 import model.Enums.ExerciseState
 import model._
 import model.blanks.BlanksExParts.BlanksExPart
+import model.persistence.SingleExerciseTableDefs
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.api.mvc.Call
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
+
+// Wrapper classes
+
+class BlanksCompleteExWrapper(override val compEx: BlanksCompleteExercise) extends CompleteExWrapper {
+
+  override type Ex = BlanksExercise
+
+  override type CompEx = BlanksCompleteExercise
+
+}
+
+// Classes for user
 
 case class BlanksCompleteExercise(ex: BlanksExercise, samples: Seq[BlanksAnswer]) extends PartsCompleteEx[BlanksExercise, BlanksExPart] {
 
   override def preview: Html = views.html.blanks.blanksPreview(this)
 
   override def hasPart(partType: BlanksExPart): Boolean = true
-}
 
-object BlanksExercise {
-
-  def tupled(t: (Int, String, String, String, ExerciseState, String, String)): BlanksExercise = BlanksExercise(t._1, t._2, t._3, t._4, t._5, t._6, t._7)
-
-  def apply(id: Int, title: String, author: String, text: String, state: ExerciseState, rawBlanksText: String, blanksText: String): BlanksExercise =
-    new BlanksExercise(BaseValues(id, title, author, text, state), rawBlanksText, blanksText)
-
-  def unapply(arg: BlanksExercise): Option[(Int, String, String, String, ExerciseState, String, String)] =
-    Some((arg.id, arg.title, arg.author, arg.text, arg.state, arg.rawBlanksText, arg.blanksText))
+  override def wrapped: CompleteExWrapper = new BlanksCompleteExWrapper(this)
 
 }
 
-case class BlanksExercise(override val baseValues: BaseValues, rawBlanksText: String, blanksText: String) extends Exercise
+
+case class BlanksExercise(override val id: Int, override val title: String, override val author: String, override val text: String, override val state: ExerciseState,
+                          rawBlanksText: String, blanksText: String) extends Exercise {
+
+  def this(baseValues: (Int, String, String, String, ExerciseState), rawBlanksText: String, blanksText: String) =
+    this(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, rawBlanksText, blanksText)
+
+}
 
 case class BlanksAnswer(id: Int, exerciseId: Int, solution: String)
+
+case class BlanksSolution(username: String, exerciseId: Int, answers: Seq[BlanksAnswer]) extends Solution
 
 // Table definitions
 
 class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
-  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseTableDefs[BlanksExercise, BlanksCompleteExercise] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[BlanksExercise, BlanksCompleteExercise, BlanksSolution, BlanksExPart] {
 
   import profile.api._
 
-  val blanksExercises = TableQuery[BlanksExercisesTable]
-
-  val blanksSamples = TableQuery[BlanksSampleAnswersTable]
+  // Abstract types
 
   override type ExTableDef = BlanksExercisesTable
 
-  override val exTable = blanksExercises
+  override type SolTableDef = BlanksSolutionsTable
+
+  override val exTable = TableQuery[BlanksExercisesTable]
+
+  override val solTable = TableQuery[BlanksSolutionsTable]
+
+  val blanksSamples = TableQuery[BlanksSampleAnswersTable]
 
   override def completeExForEx(ex: BlanksExercise)(implicit ec: ExecutionContext): Future[BlanksCompleteExercise] =
     samplesForExercise(ex) map (samples => BlanksCompleteExercise(ex, samples))
@@ -57,6 +73,11 @@ class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPr
   // Reading
 
   private def samplesForExercise(ex: BlanksExercise)(implicit ec: ExecutionContext): Future[Seq[BlanksAnswer]] = db.run(blanksSamples.filter(_.exerciseId === ex.id).result)
+
+  // Column types
+
+  implicit val givenAnswerColumnType: BaseColumnType[Seq[BlanksAnswer]] =
+    MappedColumnType.base[Seq[BlanksAnswer], String](_.mkString, _ => Seq.empty)
 
   // Table defs
 
@@ -85,11 +106,19 @@ class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
     def pk = primaryKey("pk", (id, exerciseId))
 
-    def exerciseFk = foreignKey("exercise_fk", exerciseId, blanksExercises)(_.id)
+    def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
 
 
     def * = (id, exerciseId, sample) <> (BlanksAnswer.tupled, BlanksAnswer.unapply)
 
+  }
+
+  class BlanksSolutionsTable(tag: Tag) extends SolutionsTable[BlanksSolution](tag, "blanks_answers") {
+
+    def answers = column[Seq[BlanksAnswer]]("answers")
+
+
+    override def * = (username, exerciseId, answers) <> (BlanksSolution.tupled, BlanksSolution.unapply)
   }
 
 }

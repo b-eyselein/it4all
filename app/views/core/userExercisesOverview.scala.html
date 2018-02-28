@@ -1,0 +1,55 @@
+@(user: model.User, dataForUserExesOverview: controllers.exes.UserExOverviewContent, toolObject: controllers.exes.ASingleExerciseToolMain, currentPage: Int)
+
+    @main(toolObject.toolname, Some(user)) {
+        <div class="container">
+            <div class="page-header">
+                <h1 class="page-title">&Uuml;bersicht &uuml;ber verf&uuml;gbare Aufgaben</h1>
+            </div>
+
+            @if(dataForUserExesOverview.exesAndRoutes.isEmpty) {
+                <div class="alert alert-danger">
+                    Es existieren bisher keine Aufgaben in der Kategorie @toolObject.toolname.
+                    Wenden Sie Sich bitte an den Administrator.</div>
+            } else {
+                <div class="row">
+                    <div class="col-sm-2"><h4>Id</h4></div>
+                    @if(toolObject.hasTags) {
+                        <div class="col-sm-2"><h4>Tags</h4></div>
+                        <div class="col-sm-3"><h4>Titel</h4></div>
+                    } else {
+                        <div class="col-sm-5"><h4>Titel</h4></div>
+                    }
+                    <div class="col-sm-5"><h4>Link(s)</h4></div>
+
+                </div>
+
+                <hr>
+
+                @for(exAndRoute <- dataForUserExesOverview.exesAndRoutes) {
+                    <div class="row">
+                        <div class="col-sm-2">@exAndRoute.ex.compEx.ex.id</div>
+                        @if(toolObject.hasTags) {
+                            <div class="col-sm-2">@for(tag <- exAndRoute.ex.compEx.tags) {
+                                @tag.render
+                            }</div>
+                            <div class="col-sm-3">@exAndRoute.ex.compEx.ex.title</div>
+                        } else {
+                            <div class="col-sm-5">@exAndRoute.ex.compEx.ex.title</div>
+                        }
+                        <div class="col-sm-5">
+                            <div class="btn-group btn-group-justified">
+                            @for(exRoute <- exAndRoute.routes) {
+                                <a href="@exRoute._2" class="btn btn-primary">@exRoute._1.partName</a>
+                            }
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+                    }
+
+                @core.helperTemplates.bsPager(currentPage, dataForUserExesOverview.pages, index => controllers.exes.routes.ExerciseController.exerciseList(toolObject.urlPart, index))
+
+            }
+        </div>
+    }

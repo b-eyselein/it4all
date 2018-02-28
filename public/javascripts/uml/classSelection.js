@@ -4,19 +4,16 @@ let chosenClasses = [];
 
 function prepareFormForSubmitting() {
     let solutionToSend = {
-        part: "ClassSelection",
-        solution: {
-            associations: [],
-            implementations: [],
-            classes: chosenClasses.map(function (clazz) {
-                return {
-                    name: clazz,
-                    classType: 'CLASS',
-                    methods: [],
-                    attributes: []
-                };
-            })
-        }
+        associations: [],
+        implementations: [],
+        classes: chosenClasses.map(function (clazz) {
+            return {
+                name: clazz,
+                classType: 'CLASS',
+                methods: [],
+                attributes: []
+            };
+        })
     };
 
     $('#learnerSolution').val(JSON.stringify(solutionToSend))

@@ -13,12 +13,14 @@ function updateAfterDelete(result) {
     editButton.attr('title', 'Diese Aufgabe wurde bereits gelöscht!');
 }
 
-function deleteExercise(theUrl) {
-    $.ajax({
-        type: 'DELETE',
-        url: theUrl,
-        success: updateAfterDelete
-    });
+function deleteExercise() {
+    let url = '';
+    return;
+    // $.ajax({
+    //     type: 'DELETE',
+    //     url,
+    //     success: updateAfterDelete
+    // });
 }
 
 function updateStateChangeButton(id) {
@@ -31,13 +33,15 @@ function onChangeStateSuccess(response) {
     $('#state_' + response.id).data('val', response.newState);
 }
 
-function changeState(theUrl, id) {
-    $.ajax({
-        type: 'PUT',
-        url: theUrl,
-        data: {
-            state: $('#state_' + id).val()
-        },
-        success: onChangeStateSuccess
-    });
+function changeState(id) {
+    let url = '';
+    return;
+    // $.ajax({
+    //     type: 'PUT',
+    //     url: theUrl,
+    //     data: {
+    //         state: $('#state_' + id).val()
+    //     },
+    //     success: onChangeStateSuccess
+    // });
 }

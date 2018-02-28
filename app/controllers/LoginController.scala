@@ -1,8 +1,7 @@
 package controllers
 
-import javax.inject._
-
 import com.github.t3hnar.bcrypt._
+import javax.inject._
 import model.core.CoreConsts._
 import model.core.Repository
 import play.api.data.Form
@@ -84,12 +83,8 @@ class LoginController @Inject()(cc: ControllerComponents, val dbConfigProvider: 
       }
   }
 
-  def login(tries: Int = 0) = Action {
-    implicit request => Ok(views.html.login())
-  }
+  def login = Action { implicit request => Ok(views.html.login()) }
 
-  def logout = Action {
-    implicit request => Redirect(routes.LoginController.login()) withNewSession
-  }
+  def logout = Action { implicit request => Redirect(routes.LoginController.login()).withNewSession }
 
 }

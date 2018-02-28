@@ -33,7 +33,12 @@ function onAjaxError(jqXHR) {
     console.error(jqXHR.responseText);
 }
 
-function testSol(theUrl) {
+function testSol() {
+    let exerciseId = $('#exerciseId').val(), exercisePart = $('#exercisePart').val();
+
+    // noinspection JSUnresolvedFunction, JSUnresolvedVariable
+    let url = jsRoutes.controllers.exes.ExerciseController.correctLive("blanks", exerciseId, exercisePart).url;
+
     let answers = $('input').map((index, elem) => {
         return {id: index + 1, value: elem.value};
     }).get();
@@ -43,7 +48,7 @@ function testSol(theUrl) {
         type: 'PUT',
         dataType: 'json',
         contentType: 'application/json',
-        url: theUrl,
+        url,
         data: JSON.stringify(answers),
         async: true,
         success: onAjaxSuccess,
@@ -51,24 +56,6 @@ function testSol(theUrl) {
     });
 }
 
-// function processCorrection(correction) {
-//     const results = JSON.parse(correction);
-//     for (let i = 0; i < results.length; i++) {
-//         const correct = results[i] === 'COMPLETE';
-//
-//         const inp = document.getElementById('inp' + (i + 1));
-//
-//         inp.parentNode.className = 'form-group has-' + (correct ? 'success' : 'error') + ' has-feedback';
-//
-//         const newNode = document.createElement('span');
-//         newNode.className = 'glyphicon glyphicon-' + (correct ? 'ok' : 'warning-sign') + ' form-control-feedback';
-//
-//         const oldSign = inp.parentNode.getElementsByTagName('span');
-//         console.log(oldSign[0]);
-//         if (oldSign[0] === null) {
-//             inp.parentNode.appendChild(newNode);
-//         } else {
-//             oldSign[0].replaceWith(newNode);
-//         }
-//     }
-// }
+$(document).ready(function () {
+    $('#testBtn').click(testSol);
+});

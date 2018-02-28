@@ -1,9 +1,10 @@
 package model.questions
 
+import model.Enums.ExerciseState
 import model.MyYamlProtocol._
 import model.questions.QuestionConsts._
 import model.questions.QuestionEnums.{Correctness, QuestionType}
-import model.{BaseValues, MyYamlProtocol, YamlArr}
+import model.{MyYamlProtocol, YamlArr}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
@@ -14,41 +15,41 @@ object QuestionYamlProtocol extends MyYamlProtocol {
 
   implicit object QuizYamlFormat extends HasBaseValuesYamlFormat[CompleteQuiz] {
 
-    override protected def readRest(yamlObject: YamlObject, baseValues: BaseValues): Try[CompleteQuiz] = for {
+    override protected def readRest(yamlObject: YamlObject, baseValues: (Int, String, String, String, ExerciseState)): Try[CompleteQuiz] = for {
       theme <- yamlObject.stringField(ThemeName)
-      questionTries <- yamlObject.arrayField(EXERCISES_NAME, QuestionYamlFormat(baseValues.id).read)
+      questionTries <- yamlObject.arrayField(EXERCISES_NAME, QuestionYamlFormat(baseValues._1).read)
     } yield {
       for (questionFailure <- questionTries._2)
       // FIXME: return...
         Logger.error("Could not read question", questionFailure.exception)
 
-      CompleteQuiz(Quiz(baseValues, theme), questionTries._1)
+      CompleteQuiz(new Quiz(baseValues, theme), questionTries._1)
     }
 
     override protected def writeRest(completeEx: CompleteQuiz): Map[YamlValue, YamlValue] = Map(
       YamlString(ThemeName) -> completeEx.coll.theme,
-      YamlString(EXERCISES_NAME) -> YamlArr(completeEx.exercises map QuestionYamlFormat(completeEx.id).write)
+      YamlString(EXERCISES_NAME) -> YamlArr(completeEx.exercises map QuestionYamlFormat(completeEx.coll.id).write)
     )
   }
 
   case class QuestionYamlFormat(quizId: Int) extends HasBaseValuesYamlFormat[CompleteQuestion] {
 
-    override protected def readRest(yamlObject: YamlObject, baseValues: BaseValues): Try[CompleteQuestion] = for {
+    override protected def readRest(yamlObject: YamlObject, baseValues: (Int, String, String, String, ExerciseState)): Try[CompleteQuestion] = for {
       questionType <- yamlObject.enumField(ExerciseTypeName, QuestionType.valueOf)
       maxPoints <- yamlObject.intField(MAX_POINTS)
-      answerTries <- yamlObject.arrayField(ANSWERS_NAME, QuestionAnswerYamlFormat(quizId, baseValues.id).read)
+      answerTries <- yamlObject.arrayField(ANSWERS_NAME, QuestionAnswerYamlFormat(quizId, baseValues._1).read)
     } yield {
       for (answerFailure <- answerTries._2)
       // FIXME: return...
         Logger.error("Could not read answer", answerFailure.exception)
 
-      CompleteQuestion(Question(baseValues, quizId, questionType, maxPoints), answerTries._1)
+      CompleteQuestion(new Question(baseValues, quizId, questionType, maxPoints), answerTries._1)
     }
 
     override protected def writeRest(completeEx: CompleteQuestion): Map[YamlValue, YamlValue] = Map(
       YamlString(ExerciseTypeName) -> completeEx.ex.questionType.name,
       YamlString(MAX_POINTS) -> completeEx.ex.maxPoints,
-      YamlString(ANSWERS_NAME) -> YamlArr(completeEx.answers map QuestionAnswerYamlFormat(completeEx.ex.collectionId, completeEx.id).write)
+      YamlString(ANSWERS_NAME) -> YamlArr(completeEx.answers map QuestionAnswerYamlFormat(completeEx.ex.collectionId, completeEx.ex.id).write)
     )
 
   }

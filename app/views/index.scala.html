@@ -1,36 +1,50 @@
 @(user: model.User, isDev: Boolean)
 
-    @main("HTML-Test", Some(user)) {
-        <div class="container">
+@main("HTML-Test", Some(user)) {
+    <div class="container">
 
-            <section>
-                <h2>Tipps &amp; Tricks</h2>
-                <div class="well">@model.TippHelper.getRandom.str</div>
-                <div class="btn-group btn-group-justified">
-                    <div class="btn-group">
-                        <button class="btn btn-default" disabled>Vorheriger Tipp</button>
-                    </div>
-                    <div class="btn-group">
-                        <button class="btn btn-default" disabled>Nächster Tipp</button>
-                    </div>
+        <section>
+            <h2>Tipps &amp; Tricks</h2>
+            <div class="well">@model.TippHelper.getRandom.str</div>
+            <div class="btn-group btn-group-justified">
+                <div class="btn-group">
+                    <button class="btn btn-default" disabled>Vorheriger Tipp</button>
                 </div>
-            </section>
+                <div class="btn-group">
+                    <button class="btn btn-default" disabled>Nächster Tipp</button>
+                </div>
+            </div>
+        </section>
 
-            <hr>
+        <hr>
 
-            <h2>Verf&uuml;gbare Aufgabentypen</h2>
-            @for(tools <- model.core.tools.ToolList.allToolObjects.grouped(3)) {
-                <div class="row">
-                @for(tool <- tools) {
-                    <div class="col-md-4">
-                        <a class="btn btn-default btn-block" href="@tool.indexCall">
-                            <span class="text-capitalize">@tool.toolname</span>
+        <h2>Verf&uuml;gbare Aufgabentypen</h2>
+        @for(tools <- controllers.exes.SingleExerciseController.ToolMains.grouped(3)) {
+            <div class="row">
+            @for(tool <- tools) {
+                <div class="col-md-4">
+                @tool match {
+                    case a: controllers.exes.AExerciseToolMain => {
+                        <a class="btn btn-default btn-block" href="@controllers.exes.routes.ExerciseController.index(a.urlPart)">
+                            <span class="text-capitalize">@a.toolname</span>
                         </a>
-                    </div>
+                    }
+                    case b: controllers.exes.AExCollectionToolMain => {
+                        <a class="btn btn-default btn-block" href="@controllers.exes.routes.CollectionController.index(b.urlPart)">
+                            <span class="text-capitalize">@b.toolname</span>
+                        </a>
+                    }
+                    case c: controllers.exes.AFileExerciseToolMain => {
+                        <a class="btn btn-default btn-block" href="@controllers.exes.routes.FileExerciseController.index(c.urlPart)">
+                            <span class="text-capitalize">@c.toolname</span>
+                        </a>
+                    }
                 }
                 </div>
-                    &nbsp;
             }
+            </div>
+                &nbsp;
+        }
 
-        </div>
-    }
+    </div>
+}

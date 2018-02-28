@@ -136,6 +136,8 @@ CREATE TABLE IF NOT EXISTS prog_commited_testdata_input (
 CREATE TABLE IF NOT EXISTS prog_solutions (
   username    VARCHAR(50),
   exercise_id INT,
+  part        VARCHAR(10),
+  language    VARCHAR(20),
   solution    TEXT,
 
   PRIMARY KEY (username, exercise_id),
@@ -470,14 +472,15 @@ CREATE TABLE IF NOT EXISTS js_conditions (
 
 CREATE TABLE IF NOT EXISTS web_solutions (
   exercise_id INT,
-  user_name   VARCHAR(30),
+  username    VARCHAR(30),
+  part_type   VARCHAR(4),
   solution    TEXT,
 
-  PRIMARY KEY (exercise_id, user_name),
+  PRIMARY KEY (exercise_id, username),
   FOREIGN KEY (exercise_id) REFERENCES web_exercises (id)
     ON UPDATE CASCADE
     ON DELETE CASCADE,
-  FOREIGN KEY (user_name) REFERENCES users (username)
+  FOREIGN KEY (username) REFERENCES users (username)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
@@ -498,23 +501,10 @@ CREATE TABLE IF NOT EXISTS xml_exercises (
   ref_file_content    TEXT
 );
 
-CREATE TABLE IF NOT EXISTS xml_document_solutions (
+CREATE TABLE IF NOT EXISTS xml_solutions (
   exercise_id INT,
   username    VARCHAR(50),
-  solution    TEXT,
-
-  PRIMARY KEY (exercise_id, username),
-  FOREIGN KEY (exercise_id) REFERENCES xml_exercises (id)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE,
-  FOREIGN KEY (username) REFERENCES users (username)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS xml_grammar_solutions (
-  exercise_id INT,
-  username    VARCHAR(50),
+  part        VARCHAR(10),
   solution    TEXT,
 
   PRIMARY KEY (exercise_id, username),
@@ -530,9 +520,7 @@ CREATE TABLE IF NOT EXISTS xml_grammar_solutions (
 
 # Xml
 
-DROP TABLE IF EXISTS xml_grammar_solutions;
-
-DROP TABLE IF EXISTS xml_document_solutions;
+DROP TABLE IF EXISTS xml_solutions;
 
 DROP TABLE IF EXISTS xml_exercises;
 

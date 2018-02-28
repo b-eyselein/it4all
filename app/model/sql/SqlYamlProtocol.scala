@@ -1,9 +1,10 @@
 package model.sql
 
+import model.Enums.ExerciseState
 import model.MyYamlProtocol._
 import model.sql.SqlConsts._
 import model.sql.SqlEnums.{SqlExTag, SqlExerciseType}
-import model.{BaseValues, MyYamlProtocol, YamlArr, YamlObj}
+import model.{MyYamlProtocol, YamlArr, YamlObj}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
@@ -14,31 +15,31 @@ object SqlYamlProtocol extends MyYamlProtocol {
 
   implicit object SqlScenarioYamlFormat extends HasBaseValuesYamlFormat[SqlCompleteScenario] {
 
-    override protected def readRest(yamlObject: YamlObject, baseValues: BaseValues): Try[SqlCompleteScenario] = for {
+    override protected def readRest(yamlObject: YamlObject, baseValues: (Int, String, String, String, ExerciseState)): Try[SqlCompleteScenario] = for {
       shortName <- yamlObject.stringField(SHORTNAME_NAME)
-      exercises <- yamlObject.arrayField(EXERCISES_NAME, SqlExYamlFormat(baseValues.id).read)
+      exercises <- yamlObject.arrayField(EXERCISES_NAME, SqlExYamlFormat(baseValues._1).read)
     } yield {
       for (exFailure <- exercises._2)
       // FIXME: return...
         Logger.error("Could not read sql exercise: ", exFailure.exception)
 
-      SqlCompleteScenario(SqlScenario(baseValues, shortName), exercises._1)
+      SqlCompleteScenario(new SqlScenario(baseValues, shortName), exercises._1)
     }
 
     override protected def writeRest(completeEx: SqlCompleteScenario): Map[YamlValue, YamlValue] = Map(
       YamlString(SHORTNAME_NAME) -> YamlString(completeEx.coll.shortName),
-      YamlString(EXERCISES_NAME) -> YamlArr(completeEx.exercises map SqlExYamlFormat(completeEx.id).write)
+      YamlString(EXERCISES_NAME) -> YamlArr(completeEx.exercises map SqlExYamlFormat(completeEx.coll.id).write)
     )
   }
 
 
   case class SqlExYamlFormat(scenarioId: Int) extends HasBaseValuesYamlFormat[SqlCompleteEx] {
 
-    override protected def readRest(yamlObject: YamlObject, baseValues: BaseValues): Try[SqlCompleteEx] = for {
+    override protected def readRest(yamlObject: YamlObject, baseValues: (Int, String, String, String, ExerciseState)): Try[SqlCompleteEx] = for {
       exerciseType <- yamlObject.enumField(ExerciseTypeName, SqlExerciseType.valueOf)
       tagTries <- yamlObject.optArrayField(TAGS_NAME, _.asStringEnum(SqlExTag.byString(_).getOrElse(SqlExTag.SQL_JOIN)))
       hint <- yamlObject.optStringField(HINT_NAME)
-      sampleTries <- yamlObject.arrayField("samples", SqlSampleYamlFormat(scenarioId, baseValues.id).read)
+      sampleTries <- yamlObject.arrayField("samples", SqlSampleYamlFormat(scenarioId, baseValues._1).read)
     } yield {
       for (tagFailures <- tagTries._2)
       // FIXME: return...
@@ -53,7 +54,7 @@ object SqlYamlProtocol extends MyYamlProtocol {
 
     override protected def writeRest(completeEx: SqlCompleteEx): Map[YamlValue, YamlValue] = Map(
       YamlString(ExerciseTypeName) -> YamlString(completeEx.ex.exerciseType.name),
-      YamlString("samples") -> YamlArr(completeEx.samples map SqlSampleYamlFormat(completeEx.ex.collectionId, completeEx.id).write)
+      YamlString("samples") -> YamlArr(completeEx.samples map SqlSampleYamlFormat(completeEx.ex.collectionId, completeEx.ex.id).write)
     ) ++ completeEx.ex.hint.map(h => YamlString(HINT_NAME) -> YamlString(h)) ++ writeTags(completeEx)
 
     private def writeTags(completeEx: SqlCompleteEx): Option[(YamlValue, YamlValue)] = completeEx.tags match {

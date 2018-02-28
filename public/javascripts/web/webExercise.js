@@ -208,8 +208,6 @@ function onWebCorrectionSuccess(corr) {
  * @param jqXHR {{responseText: string, responseJSON: string}}
  */
 function onWebCorrectionError(jqXHR) {
-    console.error(jqXHR.responseText);
-
     console.error(jqXHR.responseJSON);
 
     $('#testButton').prop('disabled', false);
@@ -222,21 +220,17 @@ function onWebCorrectionError(jqXHR) {
 }
 
 function testSol() {
-    // noinspection JSUnresolvedFunction, JSUnresolvedVariable
-    let url = jsRoutes.controllers.exes.idPartExes.WebController.correctLive($('#exerciseId').val()).url;
-    let part = $('#part').val();
+    let exerciseId = $('#exerciseId').val(), exercisePart = $('#exercisePart').val();
 
-    let dataToSend = {
-        part,
-        solution: editor.getValue()
-    };
+    // noinspection JSUnresolvedFunction, JSUnresolvedVariable
+    let url = jsRoutes.controllers.exes.ExerciseController.correctLive("web", exerciseId, exercisePart).url;
 
     $.ajax({
         type: 'PUT',
         dataType: 'json', // return type
         contentType: 'application/json', // type of message to server
         url,
-        data: JSON.stringify(dataToSend),
+        data: JSON.stringify({solution: editor.getValue()}),
         async: true,
         success: onWebCorrectionSuccess,
         error: onWebCorrectionError
@@ -250,12 +244,38 @@ function unescapeHTML(escapedHTML) {
     return escapedHTML.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
 }
 
+function updatePreviewNew() {
+    let exerciseId = $('#exerciseId').val(), exercisePart = $('#exercisePart').val();
+
+    // noinspection JSUnresolvedFunction, JSUnresolvedVariable
+    let url = jsRoutes.controllers.exes.ExerciseController.updateWebSolution(exerciseId, exercisePart).url;
+
+    $.ajax({
+        type: 'PUT',
+        //     dataType: 'json', // return type
+        contentType: 'text/plain', // type of message to server, "pure" html
+        url,
+        data: unescapeHTML(editor.getValue()),
+        async: true,
+        success: function (response) {
+            console.log(response);
+            // Refresh iFrame
+            console.log("Refreshing iframe...");
+            $('#preview').attr('src', function (i, val) {
+                return val;
+            });
+        },
+        error: function (jqXHR) {
+            console.error(jqXHR);
+        }
+    });
+}
+
 function updatePreview() {
-    const toWrite = unescapeHTML(editor.getValue());
-
-    const theIFrame = document.getElementById('preview').contentWindow.document;
-    theIFrame.open();
-    theIFrame.write(toWrite);
-    theIFrame.close();
-
+    // const toWrite = unescapeHTML(editor.getValue());
+    //
+    // const theIFrame = document.getElementById('preview').contentWindow.document;
+    // theIFrame.open();
+    // theIFrame.write(toWrite);
+    // theIFrame.close();
 }

@@ -1,17 +1,17 @@
-@(maybeExercise: Option[model.uml.UmlCompleteEx])
+@(exercise: model.uml.UmlCompleteEx)
 
 <div class="form-horizontal">
     <div class="form-group">
         <label class="control-label col-sm-2">Ignoriert:</label>
         <div class="col-md-10">
-            <input class="form-control" value="@maybeExercise.map(_.ex.splitToIgnore).getOrElse(Seq.empty).mkString(", ")">
+            <input class="form-control" value="@exercise.ex.splitToIgnore.mkString(", ")">
         </div>
     </div>
 
     <div class="form-group">
         <label class="control-label col-sm-2">Basisformen:</label>
         <div class="col-md-10">
-        @for(m <- maybeExercise map (_.mappings) getOrElse Seq.empty) {
+        @for(m <- exercise.mappings) {
             <div class="form-group">
                 <div class="col-md-12">
                     <div class="input-group">
@@ -31,7 +31,7 @@
 
     <h3>Klassen</h3>
     <div class="form-horizontal">
-    @for(clazz <- maybeExercise map (_.solution.classes) getOrElse Seq.empty) {
+    @for(clazz <- exercise.classes) {
         <div class="form-group">
             <label class="control-label col-md-1">Name:</label>
             <div class="col-md-5">
@@ -84,7 +84,7 @@
     </div>
 
     <h3>Vererbungen</h3>
-    @for(implementationTuple <- maybeExercise map (_.solution.implementations) getOrElse Seq.empty grouped 2) {
+    @for(implementationTuple <- exercise.implementations.grouped(2)) {
         <div class="row">
         @for(implementation <- implementationTuple) {
             <div class="col-md-6">
@@ -101,7 +101,7 @@
     }
 
     <h3>Assoziationen</h3>
-    @for(association <- maybeExercise map (_.solution.associations) getOrElse Seq.empty) {
+    @for(association <- exercise.associations) {
         <div class="form-group">
             <div class="row">
                 <div class="col-md-2">

@@ -2,22 +2,28 @@ package model.xml
 
 import javax.inject.Inject
 import model.Enums.ExerciseState
-import model.xml.XmlEnums.XmlExType
-import model.{BaseValues, Exercise, ExerciseTableDefs, PartsCompleteEx}
+import model._
+import model.persistence.SingleExerciseTableDefs
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 
+class XmlCompleteExWrapper(val compEx: XmlExercise) extends CompleteExWrapper {
+
+  override type Ex = XmlExercise
+
+  override type CompEx = XmlExercise
+
+}
+
 case class XmlExercise(override val id: Int, override val title: String, override val author: String, override val text: String, override val state: ExerciseState,
                        grammarDescription: String, sampleGrammar: String, rootNode: String)
   extends Exercise with PartsCompleteEx[XmlExercise, XmlExPart] {
 
-  def this(baseValues: BaseValues, grammarDescription: String, sampleGrammar: String, rootNode: String) =
-    this(baseValues.id, baseValues.title, baseValues.author, baseValues.text, baseValues.state, grammarDescription, sampleGrammar, rootNode)
-
-  override def baseValues: BaseValues = BaseValues(id, title, author, text, state)
+  def this(baseValues: (Int, String, String, String, ExerciseState), grammarDescription: String, sampleGrammar: String, rootNode: String) =
+    this(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, grammarDescription, sampleGrammar, rootNode)
 
   override def ex: XmlExercise = this
 
@@ -40,65 +46,47 @@ case class XmlExercise(override val id: Int, override val title: String, overrid
     case Some(GrammarCreationXmlPart)  => "Erstellen Sie eine DTD zu folgender Beschreibung. Benutzen Sie die in Klammern angegebenen Element- bzw. Attributnamen."
   }
 
+  override def wrapped: CompleteExWrapper = new XmlCompleteExWrapper(this)
+
 }
 
-sealed trait XmlSolution {
-  val exerciseId: Int
-  val username  : String
-  val solution  : String
-}
-
-case class XmlDocumentSolution(exerciseId: Int, username: String, solution: String) extends XmlSolution
-
-case class XmlGrammarSolution(exerciseId: Int, username: String, solution: String) extends XmlSolution
+case class XmlSolution(username: String, exerciseId: Int, part: XmlExPart, solution: String) extends Solution
 
 // Table defs
 
 class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
-  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseTableDefs[XmlExercise, XmlExercise] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[XmlExercise, XmlExercise, XmlSolution, XmlExPart] {
 
   import profile.api._
 
-  val xmlExercises = TableQuery[XmlExercisesTable]
-
-  val xmlDocumentSolutions = TableQuery[XmlDocumentSolutionsTable]
-
-  val xmlGrammarSolutions = TableQuery[XmlGrammarSolutionsTable]
+  // Abstract types
 
   override type ExTableDef = XmlExercisesTable
 
-  override val exTable = xmlExercises
+  override type SolTableDef = XmlSolutionsTable
+
+  override val solTable = TableQuery[XmlSolutionsTable]
+
+  override val exTable = TableQuery[XmlExercisesTable]
 
   // Column Types
 
-  implicit val XmlExColumnType: BaseColumnType[XmlExType] =
-    MappedColumnType.base[XmlExType, String](_.toString, str => XmlExType.byString(str) getOrElse XmlExType.XML_DTD)
+  implicit val XmlExPartColumnType: BaseColumnType[XmlExPart] =
+    MappedColumnType.base[XmlExPart, String](_.urlName, str => XmlExParts.values.find(_.urlName == str) getOrElse DocumentCreationXmlPart)
 
   // Reading
 
   override def completeExForEx(ex: XmlExercise)(implicit ec: ExecutionContext): Future[XmlExercise] = Future(ex)
 
-  def readXmlSolution(username: String, exerciseId: Int, part: XmlExPart): Future[Option[XmlSolution]] = {
-    val table: TableQuery[_ <: XmlSolutionsTable[_ <: XmlSolution]] = part match {
-      case DocumentCreationXmlPart => xmlDocumentSolutions
-      case GrammarCreationXmlPart  => xmlGrammarSolutions
-    }
-
-    db.run(table.filter(sol => sol.exerciseId === exerciseId && sol.username === username).result.headOption)
-  }
+  def readXmlSolution(username: String, exerciseId: Int, part: XmlExPart): Future[Option[XmlSolution]] =
+    db.run(solTable.filter(sol => sol.exerciseId === exerciseId && sol.username === username).result.headOption)
 
   // Saving
 
   override def saveExerciseRest(compEx: XmlExercise)(implicit ec: ExecutionContext): Future[Boolean] = Future(true)
 
-  def saveXmlSolution(solution: XmlSolution)(implicit ec: ExecutionContext): Future[Boolean] = {
-    val action = solution match {
-      case xgs: XmlGrammarSolution  => xmlGrammarSolutions insertOrUpdate xgs
-      case xds: XmlDocumentSolution => xmlDocumentSolutions insertOrUpdate xds
-    }
-
-    db.run(action) map (_ => true) recover { case _: Exception => false }
-  }
+  def saveXmlSolution(solution: XmlSolution)(implicit ec: ExecutionContext): Future[Boolean] =
+    db.run(solTable insertOrUpdate solution) map (_ => true) recover { case _: Exception => false }
 
   // Actual table defs
 
@@ -115,33 +103,19 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   }
 
-  abstract class XmlSolutionsTable[SolType <: XmlSolution](tag: Tag, tableName: String) extends Table[SolType](tag, tableName) {
-
-    def exerciseId = column[Int]("exercise_id")
-
-    def username = column[String]("username")
+  class XmlSolutionsTable(tag: Tag) extends SolutionsTable[XmlSolution](tag, "xml_solutions") {
 
     def solution = column[String]("solution")
 
+    def part = column[XmlExPart]("part")
 
-    def pk = primaryKey("pk", (exerciseId, username))
 
-    def exerciseFk = foreignKey("exercise_fk", exerciseId, xmlExercises)(_.id)
+    override def pk = primaryKey("pk", (exerciseId, username, part))
 
-    def userFk = foreignKey("user_fk", username, users)(_.username)
 
-  }
-
-  class XmlDocumentSolutionsTable(tag: Tag) extends XmlSolutionsTable[XmlDocumentSolution](tag, "xml_document_solutions") {
-
-    def * = (exerciseId, username, solution) <> (XmlDocumentSolution.tupled, XmlDocumentSolution.unapply)
+    def * = (username, exerciseId, part, solution) <> (XmlSolution.tupled, XmlSolution.unapply)
 
   }
 
-  class XmlGrammarSolutionsTable(tag: Tag) extends XmlSolutionsTable[XmlGrammarSolution](tag, "xml_grammar_solutions") {
-
-    def * = (exerciseId, username, solution) <> (XmlGrammarSolution.tupled, XmlGrammarSolution.unapply)
-
-  }
 
 }

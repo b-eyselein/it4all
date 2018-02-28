@@ -102,6 +102,8 @@ trait Matcher[T, M <: Match[T], R <: MatchingResult[T, M]] {
     val firstList = ListBuffer.empty ++ firstCollection
     val secondList = ListBuffer.empty ++ secondCollection
 
+    // FIXME: define as tail recursive?!
+
     for (arg1 <- firstList) {
       var matched = false
       for (arg2 <- secondList if !matched) {

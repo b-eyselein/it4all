@@ -3,15 +3,27 @@ package model.rose
 import javax.inject.Inject
 import model.Enums.ExerciseState
 import model._
+import model.persistence.SingleExerciseTableDefs
 import model.programming.ProgDataTypes.ProgDataType
 import model.programming.{ProgDataTypes, ProgLanguage}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.api.mvc.Call
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
+
+// Wrapper classes
+
+class RoseCompleteExWrapper(override val compEx: RoseCompleteEx) extends CompleteExWrapper {
+
+  override type Ex = RoseExercise
+
+  override type CompEx = RoseCompleteEx
+
+}
+
+// Classes for user
 
 case class RoseCompleteEx(ex: RoseExercise, inputType: Seq[RoseInputType], sampleSolution: RoseSampleSolution) extends PartsCompleteEx[RoseExercise, RoseExPart] {
 
@@ -51,24 +63,18 @@ case class RoseCompleteEx(ex: RoseExercise, inputType: Seq[RoseInputType], sampl
 
   def buildSampleSolution: String = declaration(false) + NewLine + sampleSolution.solution.split(NewLine).map(" " * 4 + _).mkString(NewLine)
 
+  override def wrapped: CompleteExWrapper = new RoseCompleteExWrapper(this)
+
 }
 
 // Case classes for tables
 
-object RoseExercise {
+case class RoseExercise(id: Int, title: String, author: String, text: String, state: ExerciseState, isMultiplayer: Boolean) extends Exercise {
 
-  def tupled(t: (Int, String, String, String, ExerciseState, Boolean)): RoseExercise =
-    RoseExercise(t._1, t._2, t._3, t._4, t._5, t._6)
-
-  def apply(id: Int, title: String, author: String, text: String, state: ExerciseState, isMultiplayer: Boolean): RoseExercise =
-    new RoseExercise(BaseValues(id, title, author, text, state), isMultiplayer)
-
-  def unapply(arg: RoseExercise): Option[(Int, String, String, String, ExerciseState, Boolean)] =
-    Some(arg.id, arg.title, arg.author, arg.text, arg.state, arg.isMultiplayer)
+  def this(baseValues: (Int, String, String, String, ExerciseState), isMultiplayer: Boolean) =
+    this(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, isMultiplayer)
 
 }
-
-case class RoseExercise(baseValues: BaseValues, isMultiplayer: Boolean) extends Exercise
 
 case class RoseInputType(id: Int, exerciseId: Int, name: String, inputType: ProgDataType)
 
@@ -76,32 +82,34 @@ case class RoseSampleSolution(exerciseId: Int, language: ProgLanguage, solution:
 
 // Dependent on users and roseExercises
 
-case class RoseSolution(username: String, exerciseId: Int, solution: String)
+case class RoseSolution(username: String, exerciseId: Int, solution: String) extends Solution
 
 // Tables
 
 class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
-  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseTableDefs[RoseExercise, RoseCompleteEx] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[RoseExercise, RoseCompleteEx, RoseSolution, RoseExPart] {
 
   import profile.api._
 
+  // Abstract types
+
+  override type ExTableDef = RoseExercisesTable
+
+  override type SolTableDef = RoseSolutionsTable
+
   // Table Queries
 
-  val roseExercises = TableQuery[RoseExercisesTable]
+  override val exTable = TableQuery[RoseExercisesTable]
+
+  override val solTable = TableQuery[RoseSolutionsTable]
 
   val roseInputs = TableQuery[RoseInputTypesTable]
 
   val roseSamples = TableQuery[RoseSampleSolutionsTable]
 
-  // Dependent tables
+  val roseSolutions = TableQuery[RoseSolutionsTable]
 
-  val roseSolutions = TableQuery[RoseSolutionTable]
-
-  // Other table stuff
-
-  override type ExTableDef = RoseExercisesTable
-
-  override val exTable = roseExercises
+  // Queries
 
   override protected def completeExForEx(ex: RoseExercise)(implicit ec: ExecutionContext): Future[RoseCompleteEx] = {
     val values: Future[(Seq[RoseInputType], RoseSampleSolution)] = for {
@@ -160,7 +168,7 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
     def pk = primaryKey("pk", (id, exerciseId))
 
-    def exerciseFk = foreignKey("exercise_fk", exerciseId, roseExercises)(_.id)
+    def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
 
 
     def * = (id, exerciseId, name, inputType) <> (RoseInputType.tupled, RoseInputType.unapply)
@@ -178,7 +186,7 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
     def pk = primaryKey("pk", (exerciseId, language))
 
-    def exerciseFk = foreignKey("exercise_fk", exerciseId, roseExercises)(_.id)
+    def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
 
 
     def * = (exerciseId, language, solution) <> (RoseSampleSolution.tupled, RoseSampleSolution.unapply)
@@ -188,20 +196,9 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   // Solutions of users
 
-  class RoseSolutionTable(tag: Tag) extends Table[RoseSolution](tag, "rose_solutions") {
-
-    def username = column[String]("username")
-
-    def exerciseId = column[Int]("exercise_id")
+  class RoseSolutionsTable(tag: Tag) extends SolutionsTable[RoseSolution](tag, "rose_solutions") {
 
     def solution = column[String]("solution")
-
-
-    def pk = primaryKey("pk", (username, exerciseId))
-
-    def exerciseFk = foreignKey("exercise_fk", exerciseId, roseExercises)(_.id)
-
-    def userFk = foreignKey("user_fk", username, users)(_.username)
 
 
     def * = (username, exerciseId, solution) <> (RoseSolution.tupled, RoseSolution.unapply)

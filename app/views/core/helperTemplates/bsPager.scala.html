@@ -1,17 +1,40 @@
 @(currentSite: Int, numOfSites: Int, route: Int => Call)
 
+@* FIXME: refactor: take in elements to bsPager on site with elements % STEP == 0! *@
+
 <div class="text-center">
     <ul class="pagination text">
-        <li><a href="@route(1)" @if(currentSite <= 1) {onclick="return false" class="btn disabled"}>&lt;&lt;</a></li>
-
-        <li><a href="@route(currentSite - 1)" @if(currentSite <= 1) {onclick="return false" class="btn disabled"}>&lt;</a></li>
-
-        @for(adder <- -2 to 2 if currentSite + adder > 0 && (currentSite + adder) <= numOfSites) {
-            <li @if(adder == 0) { class="active" }><a href="@route(currentSite + adder)">@{currentSite + adder}</a> </li>
+        @if(currentSite == 1) {
+            <li><a onclick="return false" class="btn disabled">&lt;&lt;</a></li>
+        } else {
+            <li><a href="@route(1)" >&lt;&lt;</a></li>
         }
 
-        <li><a href="@route(currentSite + 1)" @if(currentSite + 1 > numOfSites) {onclick="return false" class="btn disabled"}>&gt;</a></li>
+        @if(currentSite <= 1) {
+            <li><a class="btn disabled">&lt;</a></li>
+        } else {
+            <li><a href="@route(currentSite - 1)" class="btn">&lt;</a></li>
 
-        <li><a href="@route( numOfSites)" @if(currentSite + 1 > numOfSites) {onclick="return false" class="btn disabled"}>&gt;&gt;</a></li>
+        }
+
+        @for(adder <- -2 to 2 if currentSite + adder > 0 && (currentSite + adder) <= numOfSites) {
+            <li @if(adder == 0) {
+                class="active" }><a href="@route(currentSite + adder)">@{
+                currentSite + adder
+            }</a></li>
+        }
+
+        @if(currentSite + 1 > numOfSites) {
+            <li><a onclick="return false" class="btn disabled">&gt;</a></li>
+        } else {
+            <li><a href="@route(currentSite + 1)">&gt;</a></li>
+        }
+
+        @if(currentSite + 1 > numOfSites) {
+            <li><a onclick="return false" class="btn disabled">&gt;&gt;</a></li>
+        } else {
+            <li><a href="@route(numOfSites)" >&gt;&gt;</a></li>
+        }
+
     </ul>
 </div>

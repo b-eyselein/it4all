@@ -54,29 +54,31 @@ object ProgrammingCorrector extends FileUtils with JsonFormat {
     )
   }
 
-  def validateTestdata(user: User, exercise: ProgCompleteEx, solution: TestdataSolution)(implicit ec: ExecutionContext): Future[ProgCompleteResult] = {
+  def validateTestdata(user: User, exercise: ProgCompleteEx, solution: ProgSolution, solutionTargetDir: Path, exerciseResourcesFolder: Path)
+                      (implicit ec: ExecutionContext): Future[ProgCompleteResult] = {
 
     val language = ProgLanguage.STANDARD_LANG
 
-    val targetDir = ProgToolObject.solutionDirForExercise(user.username, exercise.id) / ValidationFolder
+    //    val solutionTargetDir = ProgToolObject.solutionDirForExercise(user.username, exercise.id) / ValidationFolder
 
     val script = exercise.sampleSolution.solution
 
-    correct(exercise, language, targetDir, script, solution.completeCommitedTestData) map ProgValidationCompleteResult
+    correct(exercise, language, solutionTargetDir, script, Seq.empty /*solution.completeCommitedTestData*/ , exerciseResourcesFolder) map ProgValidationCompleteResult
 
   }
 
-  def correctImplementation(user: User, exercise: ProgCompleteEx, learnerSolution: String, language: ProgLanguage)(implicit ec: ExecutionContext): Future[ProgCompleteResult] = {
+  def correctImplementation(user: User, exercise: ProgCompleteEx, learnerSolution: String, language: ProgLanguage, solutionTargetDir: Path, exerciseResourcesFolder: Path)
+                           (implicit ec: ExecutionContext): Future[ProgCompleteResult] = {
 
-    val targetDir = ProgToolObject.solutionDirForExercise(user.username, exercise.id) / ImplementationsFolder
+    //    val solutionTargetDir = ProgToolObject.solutionDirForExercise(user.username, exercise.id) / ImplementationsFolder
 
     val script = if (learnerSolution endsWith "\n") learnerSolution else learnerSolution + "\n"
 
-    correct(exercise, language, targetDir, script, exercise.sampleTestData) map (ProgImplementationCompleteResult(script, _))
+    correct(exercise, language, solutionTargetDir, script, exercise.sampleTestData, exerciseResourcesFolder) map (ProgImplementationCompleteResult(script, _))
 
   }
 
-  private def correct(exercise: ProgCompleteEx, language: ProgLanguage, targetDir: Path, script: String, completeTestData: Seq[CompleteTestData])
+  private def correct(exercise: ProgCompleteEx, language: ProgLanguage, targetDir: Path, script: String, completeTestData: Seq[CompleteTestData], exerciseResourcesFolder: Path)
                      (implicit ec: ExecutionContext): Future[Seq[ProgEvalResult]] = {
 
     val scriptTargetPath = targetDir / ScriptName
@@ -87,7 +89,7 @@ object ProgrammingCorrector extends FileUtils with JsonFormat {
 
     write(targetDir / TestDataFile, Json.prettyPrint(dumpTestDataToJson(exercise.ex, exercise.inputTypes, completeTestData)))
 
-    copy(ProgToolObject.exerciseResourcesFolder / ScriptName, scriptTargetPath)
+    copy(/*ProgToolObject.exerciseResourcesFolder */ exerciseResourcesFolder / ScriptName, scriptTargetPath)
 
     Files.setPosixFilePermissions(scriptTargetPath, FilePermissions)
 

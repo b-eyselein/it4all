@@ -1,47 +1,47 @@
-@(user: model.User, statistics: Html, toolMainObject: controllers.exes.AToolMain[_, _])
+@(user: model.User, statistics: Html, toolMainObject: controllers.exes.AToolMain)
 
-    @title = @{
-        "Administrator " + toolMainObject.toolname
-    }
+@title = @{
+    "Administrator " + toolMainObject.toolname
+}
 
-    @main(title, Some(user)) {
-        <div class="container">
-            <div class="page-header">
-                <h1>@title</h1>
-            </div>
-
-            <section id="statistics">
-                <h2>Statistiken</h2>
-                <ul>
-                @statistics
-                </ul>
-            </section>
-
-            <hr>
-
-            <section id="administration">
-                <h2>Verwaltung der @toolMainObject.pluralName</h2>
-                <a class="btn btn-default btn-block" href="@controllers.exes.idPartExes.routes.AIdPartExController.adminExerciseList(toolMainObject.urlPart)">
-                    Übersicht über alle Aufgaben</a>
-
-                    &nbsp;
-
-                <a class="btn btn-default btn-block" href="@controllers.exes.idPartExes.routes.AIdPartExController.adminNewExerciseForm(toolMainObject.urlPart)">
-                    Neue Aufgabe erstellen</a>
-
-                    &nbsp;
-
-                <div class="btn-group btn-group-justified">
-                    <a class="btn btn-default" href="@controllers.exes.idPartExes.routes.AIdPartExController.adminExportExercises(toolMainObject.urlPart)">
-                        Aufgaben als YAML exportieren</a>
-                    <a class="btn btn-default" href="@controllers.exes.idPartExes.routes.AIdPartExController.adminImportExercises(toolMainObject.urlPart)">
-                        Aufgaben aus YAML importieren</a>
-                </div>
-            </section>
-
-            <hr>
-
-            <a class="btn btn-default btn-block" href="@controllers.exes.idPartExes.routes.AIdPartExController.index(toolMainObject.urlPart)">Zu den Aufgaben</a>
-
+@main(title, Some(user)) {
+    <div class="container">
+        <div class="page-header">
+            <h1>@title</h1>
         </div>
-    }
+
+        <section id="statistics">
+            <h2>Statistiken</h2>
+            <ul>
+            @statistics
+            </ul>
+        </section>
+
+        <hr>
+
+        <section id="administration">
+            <h2>Verwaltung der @toolMainObject.pluralName</h2>
+            <a class="btn btn-default btn-block" href="@controllers.exes.routes.ExerciseController.adminExerciseList(toolMainObject.urlPart)">
+                Übersicht über alle Aufgaben</a>
+
+                &nbsp;
+
+            <a class="btn btn-default btn-block" href="@controllers.exes.routes.ExerciseController.adminNewExerciseForm(toolMainObject.urlPart)">
+                Neue Aufgabe erstellen</a>
+
+                &nbsp;
+
+            <div class="btn-group btn-group-justified">
+                <a class="btn btn-default" href="@controllers.exes.routes.ExerciseController.adminExportExercises(toolMainObject.urlPart)">
+                    Aufgaben als YAML exportieren</a>
+                <a class="btn btn-default" href="@controllers.exes.routes.ExerciseController.adminImportExercises(toolMainObject.urlPart)">
+                    Aufgaben aus YAML importieren</a>
+            </div>
+        </section>
+
+        <hr>
+
+        <a class="btn btn-primary btn-block" href="@controllers.exes.routes.ExerciseController.index(toolMainObject.urlPart)">Zu den Aufgaben</a>
+
+    </div>
+}

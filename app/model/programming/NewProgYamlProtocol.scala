@@ -1,5 +1,7 @@
 package model.programming
 
+import java.nio.file.Path
+
 import model.MyYamlProtocol._
 import model.core.FileUtils
 import model.programming.ProgDataTypes.ProgDataType
@@ -22,7 +24,7 @@ case class FunctionTest(functionName: String, description: String, arguments: Se
 
 object NewProgYamlProtocol extends MyYamlProtocol with FileUtils {
 
-  def testRead: Try[(String, ClassTest)] = readAll(ProgToolObject.exerciseResourcesFolder / "testdata.yaml") flatMap { fileContent =>
+  def testRead(exerciseResourcesFolder: Path): Try[(String, ClassTest)] = readAll(/*ProgToolObject.exerciseResourcesFolder*/ exerciseResourcesFolder / "testdata.yaml") flatMap { fileContent =>
     ClassTestYamlFormat.read(fileContent.parseYaml) map (r => (fileContent, r))
   }
 

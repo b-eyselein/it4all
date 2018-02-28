@@ -7,25 +7,18 @@ import play.api.libs.json.JsValue
 
 object UmlJsonProtocol extends JsonFormat {
 
-  def readUserUmlSolutionFromJson(jsValue: JsValue): Option[UserUmlSolution] = jsValue.asObj flatMap { jsObj =>
-    for {
-      part <- jsObj.enumField("part", str => UmlExParts.values find (_.urlName == str) getOrElse ClassSelection)
-      solution: UmlSolution <- jsObj.objField("solution") flatMap readUmlSolutionFromJson
-    } yield UserUmlSolution(part, solution)
-  }
-
-  private def readUmlSolutionFromJson(jsValue: JsValue): Option[UmlSolution] = jsValue.asObj flatMap { jsObj =>
+  def readUmlSolutionFromJson(username: String, exerciseId: Int, part: UmlExPart, jsValue: JsValue): Option[UmlSolution] = jsValue.asObj flatMap { jsObj =>
     for {
       classes <- jsObj.arrayField(CLASSES_NAME, readClassFromJson)
       associations <- jsObj.arrayField(ASSOCS_NAME, readAssociationFromJson)
       implementations <- jsObj.arrayField(IMPLS_NAME, readImplementationFromJson)
-    } yield UmlSolution(classes, associations, implementations)
+    } yield UmlSolution(username, exerciseId, part, classes, associations, implementations)
   }
 
   private def readClassFromJson(jsValue: JsValue): Option[UmlCompleteClass] = jsValue.asObj flatMap { jsObj =>
     for {
       classname <- jsObj.stringField(NAME_NAME)
-      classType <- jsObj.stringField(CLASSTYPE_NAME) flatMap UmlClassType.byString
+      classType = jsObj.stringField(CLASSTYPE_NAME) flatMap UmlClassType.byString getOrElse UmlClassType.CLASS
       attributes <- jsObj.arrayField(ATTRS_NAME, readMemberFromJson(_, UmlClassAttribute))
       methods <- jsObj.arrayField(METHODS_NAME, readMemberFromJson(_, UmlClassMethod))
     } yield UmlCompleteClass(UmlClass(-1, classname, classType), attributes, methods)

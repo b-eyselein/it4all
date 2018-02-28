@@ -1,8 +1,9 @@
 package model.xml
 
+import model.Enums.ExerciseState
+import model.MyYamlProtocol
 import model.MyYamlProtocol._
 import model.xml.XmlConsts._
-import model.{BaseValues, MyYamlProtocol}
 import net.jcazevedo.moultingyaml._
 
 import scala.language.{implicitConversions, postfixOps}
@@ -12,7 +13,7 @@ object XmlExYamlProtocol extends MyYamlProtocol {
 
   implicit object XmlExYamlFormat extends HasBaseValuesYamlFormat[XmlExercise] {
 
-    override def readRest(yamlObject: YamlObject, baseValues: BaseValues): Try[XmlExercise] = for {
+    override def readRest(yamlObject: YamlObject, baseValues: (Int, String, String, String, ExerciseState)): Try[XmlExercise] = for {
       grammarDescription <- yamlObject.stringField(GrammarDescriptionName)
       sampleGrammar <- yamlObject.stringField(SampleGrammarName)
       rootNode <- yamlObject.stringField(RootNodeName)

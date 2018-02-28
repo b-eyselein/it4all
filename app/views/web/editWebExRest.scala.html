@@ -1,16 +1,16 @@
-@(maybeExercise: Option[model.web.WebCompleteEx])
+@(exercise: model.web.WebCompleteEx)
 
 <fieldset>
     <legend>Angaben zum Html-Teil</legend>
     <div class="form-group">
         <label for="html_text">Text f&uuml;r den Html-Teil:</label>
         <textarea class="form-control" name="html_text" id="html_text" rows="5" placeholder="Text f&uuml;r den Html-Teil"
-        required>@maybeExercise.map(_.ex.htmlText).getOrElse("")</textarea>
+        required>@exercise.ex.htmlText.getOrElse("")</textarea>
     </div>
 
     <div class="form-horizontal">
         <h3>Aufgaben</h3>
-        @for(task <- maybeExercise map (_.htmlTasks) getOrElse Seq.empty) {
+        @for(task <- exercise.htmlTasks) {
             <div class="form-group">
                 <label class="control-label col-md-2" for="html_task_id_@task.task.id">ID:</label>
                 <div class="col-md-10">
@@ -70,12 +70,12 @@
     <div class="form-group">
         <label for="js_text">Text f&uuml;r den Js-Teil:</label>
         <textarea class="form-control" name="js_text" id="js_text" rows="5" placeholder="Text f&uuml;r den Js-Teil"
-        required>@maybeExercise.map(_.ex.jsText).getOrElse("")</textarea>
+        required>@exercise.ex.jsText.getOrElse("")</textarea>
     </div>
 
     <div class="form-horizontal">
         <h3>Aufgaben</h3>
-        @for(task <- maybeExercise map (_.jsTasks) getOrElse Seq.empty) {
+        @for(task <- exercise.jsTasks) {
             @* FIXME: Aufgaben! *@
             <p>@task</p>
         }

@@ -109,6 +109,7 @@ object XLSXCorrector extends SpreadCorrector[Workbook, Sheet, XSSFCell, Font, Sh
     else (true, COMMENT_VALUE_CORRECT)
   }
 
+  // FIXME: remove cast ...
   private def getCharts(sheet: Sheet): List[XSSFChart] = sheet.asInstanceOf[XSSFSheet].createDrawingPatriarch().getCharts.asScala.toList
 
   override def compareChartsInSheet(compareSheet: Sheet, sampleSheet: Sheet): (Boolean, String) = getCharts(sampleSheet) match {
@@ -152,8 +153,10 @@ object XLSXCorrector extends SpreadCorrector[Workbook, Sheet, XSSFCell, Font, Sh
         case None              => Unit
         case Some(cellCompare) =>
 
+          // FIXME: remove cast ...
           val (_, cellsValueMsg) = compareCellValues(cellMaster.asInstanceOf[XSSFCell], cellCompare)
 
+          // FIXME: remove cast ...
           val (cellFormulaSuc, cellFormulaMsg) = compareCellFormulas(cellMaster.asInstanceOf[XSSFCell], cellCompare)
 
           setCellComment(cellCompare, cellsValueMsg + "\n" + cellFormulaMsg)
@@ -175,6 +178,7 @@ object XLSXCorrector extends SpreadCorrector[Workbook, Sheet, XSSFCell, Font, Sh
       row <- master.rowIterator.asScala
       cell <- row.cellIterator.asScala
       if cell.getCellStyle.getFillForegroundColorColor != null && cell.getCellStyle.getFillBackgroundColorColor != null
+      // FIXME: remove cast ...
     } yield cell.asInstanceOf[XSSFCell]).toList
 
 

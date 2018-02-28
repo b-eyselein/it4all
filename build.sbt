@@ -17,20 +17,24 @@ resolvers ++= Seq(
 )
 // Used libraries from Maven Repository
 libraryDependencies ++= Seq(
-  "org.mockito" % "mockito-core" % "2.13.0",
+  "org.mockito" % "mockito-core" % "2.15.0",
   "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % "test",
 
   "mysql" % "mysql-connector-java" % "8.0.8-dmr",
+
+  // Dependency injection
   guice,
+  "net.codingwell" %% "scala-guice" % "4.1.1",
 
   "net.jcazevedo" %% "moultingyaml" % "0.4.0",
 
-  // Test scalatags (html!)
+  // FIXME: remove again!
   "com.lihaoyi" %% "scalatags" % "0.6.7",
 
   // core
+  // TODO: Remove both again?
   "com.github.fge" % "json-schema-validator" % "2.2.6",
-  "com.kjetland" %% "mbknor-jackson-jsonschema" % "1.0.26",
+  "com.kjetland" %% "mbknor-jackson-jsonschema" % "1.0.28",
 
   "com.typesafe.play" %% "play-slick" % "3.0.3",
   evolutions,
@@ -53,8 +57,8 @@ libraryDependencies ++= Seq(
   "com.github.t3hnar" %% "scala-bcrypt" % "3.1",
 
   // Selenium and HtmlUnitDriver for Web+Js
-  "org.seleniumhq.selenium" % "selenium-java" % "3.8.1",
-  "org.seleniumhq.selenium" % "htmlunit-driver" % "2.29.0",
+  "org.seleniumhq.selenium" % "selenium-java" % "3.9.1",
+  "org.seleniumhq.selenium" % "htmlunit-driver" % "2.29.2",
 
   // MyBatis and JSqlParser for SQL
   //  "org.mybatis" % "mybatis" % "3.4.5",

@@ -3,26 +3,42 @@ package model.programming
 import javax.inject.Inject
 import model.Enums.ExerciseState
 import model._
+import model.persistence.SingleExerciseTableDefs
 import model.programming.ProgConsts._
 import model.programming.ProgDataTypes._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.api.mvc.Call
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.{implicitConversions, postfixOps}
 
+// Wrapper classes
+
+class ProgCompleteExWrapper(val compEx: ProgCompleteEx) extends CompleteExWrapper {
+
+  override type Ex = ProgExercise
+
+  override type CompEx = ProgCompleteEx
+
+}
+
+// Classes for user
+
 case class ProgCompleteEx(ex: ProgExercise, inputTypes: Seq[InputType], sampleSolution: ProgSampleSolution, sampleTestData: Seq[CompleteSampleTestData])
   extends PartsCompleteEx[ProgExercise, ProgExPart] {
 
   // FIXME: only one solution?
 
-  override def preview: Html = views.html.programming.progPreview.render(this)
+  override def preview: Html = views.html.programming.progPreview(this)
+
 
   val inputCount: Int = inputTypes.size
 
   override def hasPart(partType: ProgExPart): Boolean = true
+
+  override def wrapped: CompleteExWrapper = new ProgCompleteExWrapper(this)
+
 }
 
 sealed trait CompleteTestData {
@@ -41,20 +57,13 @@ case class CompleteCommitedTestData(testData: CommitedTestData, inputs: Seq[Comm
 
 // Case classes for tables
 
-object ProgExercise {
 
-  def tupled(t: (Int, String, String, String, ExerciseState, String, ProgDataType)): ProgExercise =
-    ProgExercise(t._1, t._2, t._3, t._4, t._5, t._6, t._7)
+case class ProgExercise(id: Int, title: String, author: String, text: String, state: ExerciseState, functionName: String, outputType: ProgDataType) extends Exercise {
 
-  def apply(id: Int, title: String, author: String, text: String, state: ExerciseState, funName: String, outputType: ProgDataType): ProgExercise =
-    new ProgExercise(BaseValues(id, title, author, text, state), funName, outputType)
-
-  def unapply(arg: ProgExercise): Option[(Int, String, String, String, ExerciseState, String, ProgDataType)] =
-    Some(arg.id, arg.title, arg.author, arg.text, arg.state, arg.functionName, arg.outputType)
+  def this(baseValues: (Int, String, String, String, ExerciseState), functionName: String, outputType: ProgDataType) =
+    this(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, functionName, outputType)
 
 }
-
-case class ProgExercise(baseValues: BaseValues, functionName: String, outputType: ProgDataType) extends Exercise
 
 case class InputType(id: Int, exerciseId: Int, inputType: ProgDataType)
 
@@ -86,16 +95,40 @@ case class SampleTestDataInput(id: Int, testId: Int, exerciseId: Int, input: Str
 
 case class CommitedTestDataInput(id: Int, testId: Int, exerciseId: Int, input: String, username: String) extends TestDataInput
 
-// Dependent on users and progExercises
+case class ProgSolution(username: String, exerciseId: Int, part: ProgExPart, language: ProgLanguage, solution: String) extends Solution
 
-case class ProgSolution(username: String, exerciseId: Int, solution: String)
-
-// Tables
+// Table Definitions
 
 class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
-  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseTableDefs[ProgExercise, ProgCompleteEx] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with SingleExerciseTableDefs[ProgExercise, ProgCompleteEx, ProgSolution, ProgExPart] {
 
   import profile.api._
+
+  // Abstract types
+
+  override type ExTableDef = ProgExercisesTable
+
+  override type SolTableDef = ProgSolutionTable
+
+  // Table Queries
+
+  override val exTable = TableQuery[ProgExercisesTable]
+
+  override val solTable = TableQuery[ProgSolutionTable]
+
+  val inputTypesQuery = TableQuery[InputTypesTable]
+
+  val sampleSolutions = TableQuery[ProgSampleSolutionsTable]
+
+  val sampleTestData = TableQuery[SampleTestDataTable]
+
+  val sampleTestDataInputs = TableQuery[SampleTestDataInputsTable]
+
+  val commitedTestData = TableQuery[CommitedTestDataTable]
+
+  val commitedTestDataInput = TableQuery[CommitedTestdataInputTable]
+
+  // Queries
 
   def completeExForEx(ex: ProgExercise)(implicit ec: ExecutionContext): Future[ProgCompleteEx] = db.run(sampleSolForEx(ex) zip inputTypesForEx(ex) zip completeTestDataForEx(ex)) map {
     case ((sampleSol, inputTypes), ctds) =>
@@ -122,47 +155,13 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     .filter(_._1.exerciseId === ex.id)
     .result
 
-  def saveSolution(user: User, exercise: ProgCompleteEx, solution: String): Future[Int] =
-    db.run(progSolutions insertOrUpdate ProgSolution(user.username, exercise.id, solution))
-
-  def loadSolution(user: User, exercise: ProgCompleteEx): Future[Option[ProgSolution]] =
-    db.run(progSolutions.filter(sol => sol.username === user.username && sol.exerciseId === exercise.id).result.headOption)
-
-  def saveCompleteCommitedTestData(compCommTd: Seq[CompleteCommitedTestData])(implicit ec: ExecutionContext): Future[Boolean] =
+  private def saveCompleteCommitedTestData(compCommTd: Seq[CompleteCommitedTestData])(implicit ec: ExecutionContext): Future[Boolean] =
     Future.sequence(compCommTd map saveCompCommTestData) map (_ forall identity)
 
   private def saveCompCommTestData(compCommTestData: CompleteCommitedTestData)(implicit ec: ExecutionContext): Future[Boolean] =
     db.run(commitedTestData += compCommTestData.testData) flatMap { _ =>
       saveSeq[CommitedTestDataInput](compCommTestData.inputs, inp => db.run(commitedTestDataInput += inp))
     }
-
-
-  // Table Queries
-
-  val progExercises = TableQuery[ProgExercisesTable]
-
-  val inputTypesQuery = TableQuery[InputTypesTable]
-
-  val sampleSolutions = TableQuery[ProgSampleSolutionsTable]
-
-  val sampleTestData = TableQuery[SampleTestDataTable]
-
-  val commitedTestData = TableQuery[CommitedTestDataTable]
-
-
-  val sampleTestDataInputs = TableQuery[SampleTestDataInputsTable]
-
-  val commitedTestDataInput = TableQuery[CommitedTestdataInputTable]
-
-  // Dependent tables
-
-  val progSolutions = TableQuery[ProgSolutionTable]
-
-  // Other table stuff
-
-  override type ExTableDef = ProgExercisesTable
-
-  override val exTable = progExercises
 
   // Implicit column types
 
@@ -171,6 +170,9 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   implicit val ProgDataTypesColumnType: BaseColumnType[ProgDataType] =
     MappedColumnType.base[ProgDataType, String](_.typeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING)
+
+  implicit val progExPartColumnType: BaseColumnType[ProgExPart] =
+    MappedColumnType.base[ProgExPart, String](_.urlName, str => ProgExParts.values.find(_.urlName == str) getOrElse Implementation)
 
   // Tables
 
@@ -199,7 +201,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
     def pk = primaryKey("pk", (id, exerciseId))
 
-    def exerciseFk = foreignKey("exercise_fk", exerciseId, progExercises)(_.id)
+    def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
 
 
     def * = (id, exerciseId, inputType) <> (InputType.tupled, InputType.unapply)
@@ -217,7 +219,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
     def pk = primaryKey("pk", (exerciseId, language))
 
-    def exerciseFk = foreignKey("exercise_fk", exerciseId, progExercises)(_.id)
+    def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
 
 
     def * = (exerciseId, language, solution) <> (ProgSampleSolution.tupled, ProgSampleSolution.unapply)
@@ -235,7 +237,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     def output = column[String]("output")
 
 
-    def exerciseFk = foreignKey("exercise_fk", exerciseId, progExercises)(_.id)
+    def exerciseFk = foreignKey("exercise_fk", exerciseId, exTable)(_.id)
 
   }
 
@@ -305,23 +307,16 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   // Solutions of users
 
-  class ProgSolutionTable(tag: Tag) extends Table[ProgSolution](tag, "prog_solutions") {
+  class ProgSolutionTable(tag: Tag) extends SolutionsTable[ProgSolution](tag, "prog_solutions") {
 
-    def username = column[String]("username")
+    def part = column[ProgExPart]("part")
 
-    def exerciseId = column[Int]("exercise_id")
+    def language = column[ProgLanguage]("language")
 
     def solution = column[String]("solution")
 
 
-    def pk = primaryKey("pk", (username, exerciseId))
-
-    def exerciseFk = foreignKey("exercise_fk", exerciseId, progExercises)(_.id)
-
-    def userFk = foreignKey("user_fk", username, users)(_.username)
-
-
-    def * = (username, exerciseId, solution) <> (ProgSolution.tupled, ProgSolution.unapply)
+    def * = (username, exerciseId, part, language, solution) <> (ProgSolution.tupled, ProgSolution.unapply)
 
   }
 

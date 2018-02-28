@@ -19,7 +19,6 @@ object UmlResult {
 
 }
 
-// FIXME: convert to CompleteResult?
 abstract sealed class UmlResult(val exercise: UmlCompleteEx, val learnerSolution: UmlSolution, compareClasses: Boolean, compareClassesExtended: Boolean, assocs: Boolean, impls: Boolean)
   extends CompleteResult[EvaluationResult] {
 
@@ -29,7 +28,8 @@ abstract sealed class UmlResult(val exercise: UmlCompleteEx, val learnerSolution
 
   override def results: Seq[EvaluationResult] = Seq.empty ++ classResult ++ associationResult ++ implementationResult
 
-  val musterSolution: UmlSolution = exercise.solution
+  // FIXME: part!
+  val musterSolution: UmlSolution = UmlSolution("", -1, DiagramDrawing, exercise.classes, exercise.associations, exercise.implementations)
 
   protected val classResult: Option[MatchingResult[UmlCompleteClass, UmlClassMatch]] =
     if (compareClasses) Some(UmlClassMatcher(compareClassesExtended).doMatch(learnerSolution.classes, musterSolution.classes))
@@ -72,7 +72,8 @@ abstract sealed class UmlResult(val exercise: UmlCompleteEx, val learnerSolution
 
 }
 
-case class ClassSelectionResult(e: UmlCompleteEx, l: UmlSolution) extends UmlResult(e, l, compareClasses = true, compareClassesExtended = false, assocs = false, impls = false) {
+class ClassSelectionResult(completeExercise: UmlCompleteEx, learnerSolution: UmlSolution)
+  extends UmlResult(completeExercise, learnerSolution, compareClasses = true, compareClassesExtended = false, assocs = false, impls = false) {
 
   override def renderLearnerSolution: Html = new Html(
     s"""<h4>Ihre Klassen:</h4>
@@ -84,7 +85,8 @@ case class ClassSelectionResult(e: UmlCompleteEx, l: UmlSolution) extends UmlRes
 
 }
 
-case class DiagramDrawingHelpResult(e: UmlCompleteEx, l: UmlSolution) extends UmlResult(e, l, compareClasses = false, compareClassesExtended = true, assocs = true, impls = true) {
+class DiagramDrawingHelpResult(completeExercise: UmlCompleteEx, learnserSolution: UmlSolution)
+  extends UmlResult(completeExercise, learnserSolution, compareClasses = false, compareClassesExtended = true, assocs = true, impls = true) {
 
   // FIXME: implement renderLearnerSolution!
   override def renderLearnerSolution: Html = new Html(displayAssocsAndImpls)
@@ -93,7 +95,8 @@ case class DiagramDrawingHelpResult(e: UmlCompleteEx, l: UmlSolution) extends Um
 
 }
 
-case class DiagramDrawingResult(e: UmlCompleteEx, l: UmlSolution) extends UmlResult(e, l, compareClasses = true, compareClassesExtended = true, assocs = true, impls = true) {
+class DiagramDrawingResult(completeExercise: UmlCompleteEx, learnserSolution: UmlSolution)
+  extends UmlResult(completeExercise, learnserSolution, compareClasses = true, compareClassesExtended = true, assocs = true, impls = true) {
 
   override def renderLearnerSolution: Html = new Html(displayClasses + displayAssocsAndImpls)
 
@@ -101,7 +104,8 @@ case class DiagramDrawingResult(e: UmlCompleteEx, l: UmlSolution) extends UmlRes
 
 }
 
-case class AllocationResult(e: UmlCompleteEx, l: UmlSolution) extends UmlResult(e, l, compareClasses = true, compareClassesExtended = true, assocs = false, impls = false) {
+class AllocationResult(completeExercise: UmlCompleteEx, learnserSolution: UmlSolution)
+  extends UmlResult(completeExercise, learnserSolution, compareClasses = true, compareClassesExtended = true, assocs = false, impls = false) {
 
   override def renderLearnerSolution: Html = new Html(displayClasses)
 

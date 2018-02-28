@@ -11,15 +11,15 @@
 
 @main("SQL", Some(user), scripts) {
     <div class="container">
-        <h1>Aufgabe &quot;@exercise.title&quot;</h1>
+        <h1>Aufgabe &quot;@exercise.ex.title&quot;</h1>
 
         <input type="number" hidden id="collId" value="@scenario.id" title="hidden">
-        <input type="number" hidden id="exerciseId" value="@exercise.id" title="hidden">
+        <input type="number" hidden id="exerciseId" value="@exercise.ex.id" title="hidden">
 
         <div class="row">
             <div class="col-md-6">
 
-                <p>@exercise.text</p>
+                <p>@exercise.ex.text</p>
                 @if(exercise.ex.hint.nonEmpty) {
                     <p><i>Hinweis:</i> @exercise.ex.hint</p>
                 }
@@ -28,7 +28,8 @@
                     <div class="btn-group">
                         <button type="button" class="btn btn-primary" id="testButton">L&ouml;sung testen</button>
                     </div>
-                    <a class="btn btn-default" href="@exCollections.routes.SqlController.collection(scenario.id)">Bearbeitung beenden</a>
+                    <a class="btn btn-default" href="@controllers.exes.routes.CollectionController.collection("sql", scenario.id)">
+                        Bearbeitung beenden</a>
                 </div>
 
             </div>
@@ -68,7 +69,7 @@
 
         <hr>
 
-        @core.helperTemplates.bsPager(exercise.id, numOfExes, id => exCollections.routes.SqlController.exercise(scenario.id, id))
+        @core.helperTemplates.bsPager(exercise.ex.id, numOfExes, id => controllers.exes.routes.CollectionController.exercise("sql", scenario.id, id))
 
     </div>
 

@@ -1,225 +1,171 @@
 @(user: model.User, exercise: model.uml.UmlCompleteEx, getsHelp: Boolean)
 
-@curPart = @{
-    if(getsHelp) model.uml.DiagramDrawingHelp else model.uml.DiagramDrawing
-}
-
-@scripts = {
-    <script src="@routes.Assets.versioned("lib/lodash/lodash.js")"></script>
-    <script src="@routes.Assets.versioned("lib/backbonejs/backbone.js")"></script>
-    <script src="@routes.Assets.versioned("lib/jointjs/dist/joint.js")"></script>
-
-    <script src="@routes.Assets.versioned("javascripts/uml/diagramdrawing.js")"></script>
-
-    <link rel="stylesheet" href="@routes.Assets.versioned("lib/jointjs/dist/joint.css")">
-    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/uml.css")">
-
-        <!--suppress JSUnusedLocalSymbols -->
-    <script>
-            const defaultClasses = [
-                @if(getsHelp) @{Html(exercise.getClassesForDiagDrawingHelp)}
-            ];
-            let getsHelp = @{getsHelp};
-    </script>
-
-    <style>
-            textarea {
-                resize: vertical;
-            }
-    </style>
-}
-
-@main("UML-Test", Some(user), scripts) {
-        <!-- Modal for editing of classes -->
-    @core.helperTemplates.modal("Bearbeitung Klasse", "classEditModal", "lg") {
-        "TODO!"
+    @curPart = @{
+        if(getsHelp) model.uml.DiagramDrawingHelp else model.uml.DiagramDrawing
     }
 
-        <!-- Modal for hints -->
-    @core.helperTemplates.modal("Bearbeitungshinweise", "hintModal") {
-        <!-- FIXME: update both types of hints with currect way... -->
-    @if(getsHelp) {
-        <p>Vervollst&auml;ndigen Sie das vorliegende UML-Klassendiagramm weiter, indem Sie die Beziehungen zwischen den Klassen modellieren.</p>
-        <ul>
-            <li>W&auml;hlen Sie zuerst die Art der Beziehung durch das Aktivieren des jeweiligen Buttons aus.</li>
-            <li>Anschlie&szlig;end klicken Sie auf zuerst auf den Namen der Klasse und klicken dann auf die andere Klasse.</li>
-            <li>Im folgendem Popup-Fenster sollen Sie nun die Multiplizit&auml;ten zwischen den Klassen angeben.</li>
-            <li>Um bereits erstellte Beziehungen zu l&ouml;schen, hovern Sie mit der Maus &uuml;ber ihr und klicken auf das erscheinende rote Kreuz.</li>
-            <li>Nachdem Sie die Beziehungen, die Sie modellieren wollen, erstellt haben, k&ouml;nnen Sie die Ausgabe mittels Buttons verifizieren.</li>
-        </ul>
-    } else {
-        <p>Erstellen Sie ein UML-Klassendiagramm, indem Sie die Beziehungen zwischen den Klassen, inklusive Methoden und Attributen, modellieren.</p>
-        <ul>
-            <li>
-                <b>Klassen erzeugen:</b>
-                Mittels Drag-and-Drop k&ouml;nnen Sie W&ouml;rter aus dem Aufgabentext in die rechts liegende Zeichenfläche ziehen um Klassen zu erzeugen.
-                Alternativ k&ouml;nnen Sie auch
-            </li>
-            <li>
-                <b>Klassen verschieben:</b>
-                Mittels gedr&uuml;ckter Maustaste k&ouml;nnen Sie die jeweilige Klasse verschieben.
-            </li>
-            <li>
-                <b>Klassen l&ouml;schen:</b>
-                Klicken Sie auf den Button "Klasse l&ouml;schen" und anschließend auf die Klasse. Sämtliche Beziehungen werden ebenfalls entfernt.
-            </li>
-            <li>
-                <b>Hinzuf&uuml;gen von Methoden / Attributen:</b>
-                Klicken Sie auf den Button "Methode hinzuf&uuml;gen" bzw. "Attribut hinzuf&uuml;gen" und anschließend auf die Klasse.
-                Mittels Pop-up k&ouml;nnen Sie den gew&uuml;nschten Wert eintragen und mit "OK" bestätigen.
-            </li>
-            <li>
-                <b>Entfernen von Methoden / Attributen:</b>
-                Klicken Sie auf den Button "Methode entfernen" bzw. "Attribut entfernen" und anschließend auf die Klasse.
-                Mittels Pop-up k&ouml;nnen Sie die Stelle angeben, welche entfernt werden soll.(Beispiel:
-                Der Eintrag 2 l&ouml;scht den zweiten Eintrag in der entsprechenden Aufzählung)
-            </li>
-            <li>
-                <b>Beziehungen zwischen Klassen erstellen:</b>
-                W&auml;hlen Sie zuerst die Art der Beziehung (z.B. Standard), durch das Aktivieren des jeweiligen Buttons aus.
-                Anschlie&szlig;end klicken Sie auf zuerst auf den Namen der Klasse und klicken dann auf die andere Klasse.
-                Im folgendem Popup-Fenster sollen Sie nun die Multiplizit&auml;ten zwischen den Klassen angeben.
-                Um bereits erstellte Beziehungen zu l&ouml;schen, hovern Sie mit der Maus &uuml;ber die Verbindung und klicken auf das erscheinende rote Kreuz.
-                Nachdem Sie alle Beziehungen modelliert haben, k&ouml;nnen Sie die Ausgabe mittels Buttons verifizieren.
-            </li>
-        </ul>
-    }
+    @title = @{
+        if(getsHelp) "Modellierung der Beziehungen" else "Freies Zeichnen"
     }
 
+    @scripts = {
+        <script src="@routes.Assets.versioned("lib/lodash/lodash.js")"></script>
+        <script src="@routes.Assets.versioned("lib/backbonejs/backbone.js")"></script>
+        <script src="@routes.Assets.versioned("lib/jointjs/dist/joint.js")"></script>
+
+        <script src="@routes.Assets.versioned("javascripts/uml/diagramdrawing.js")"></script>
+
+        <link rel="stylesheet" href="@routes.Assets.versioned("lib/jointjs/dist/joint.css")">
+        <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/uml.css")">
+
+            <!--suppress JSUnusedLocalSymbols -->
+        <script>
+                const defaultClasses = [
+                    @if(getsHelp) @{Html(exercise.getClassesForDiagDrawingHelp)}
+                ];
+                let getsHelp = @{getsHelp};
+        </script>
+
+        <style>
+                textarea {
+                    resize: vertical;
+                }
+        </style>
+    }
+
+    @main("UML-Test", Some(user), scripts) {
+
+            <!-- Modal for editing of classes -->
+        @core.helperTemplates.modal.render("Bearbeitung Klasse", "classEditModal", "lg", new Html("TODO!"))
+
+        @views.html.uml.diagDrawingExplanation.render(getsHelp)
 
 
 
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-8" id="paperDiv">
-                        <div id="sizepaper">
-                            <div ondrop="drop(event)" ondragover="allowDrop(event)" id="paper"></div>
-                        </div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-8" id="paperDiv">
+                    <div id="sizepaper">
+                        <div ondrop="drop(event)" ondragover="allowDrop(event)" id="paper"></div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <h2>@title
+
+
+                    </h2>
+
+
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#hintModal">&#65311;</button>
+
+                    <h2>Aufgabentext</h2>
+                    <div class="well text-justify">
+                    @if(getsHelp) {
+                        @exercise.ex.text
+                    } else {
+                        @Html(exercise.ex.diagDrawText)
+                    }
                     </div>
 
-                    <div class="col-md-4">
-                        <h2>@if(getsHelp) {Modellierung der Beziehungen} else {Freies Zeichnen}
 
+                    <section id="buttonsDiv">
+                        <h2>Bearbeitung</h2>
 
-
-
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#hintModal">&#65311;</button></h2>
-
-                        <h2>Aufgabentext</h2>
-                        <div class="well text-justify">@{
-        if(getsHelp) exercise.ex.text else Html(exercise.ex.diagDrawText)
-    }
-     </div>
-
-
-
-                        <section id="buttonsDiv">
-                            <h2>Bearbeitung</h2>
-
-                            <div>
-
-                                <div class="btn-group">
-                                    <button class="btn btn-primary" data-conntype="POINTER" onclick="selectButton(this);" title="Maus">
-                                        <span class="glyphicon glyphicon-screenshot"></span>
-                                    </button>
-                                </div>
-
-                                <div class="btn-group">
-                                    <button class="btn btn-default" data-conntype="CLASS" onclick="selectButton(this);" id="classButton"
-@{
-        if(getsHelp) Html("""disabled title="Es wurden bereits alle Klassen erstellt!" """)
-    }
-
-         >
-
-                                        <span class="glyphicon glyphicon-menu-hamburger"></span> <span id="classType">Klasse</span>
-                                    </button>
-                                    <button class="btn btn-default" data-toggle="dropdown"
-@{
-        if(getsHelp) Html("""disabled title="Es wurden bereits alle Klassen erstellt!" """)
-    }
-
-         >
-
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu" role="menu">
-@for(classType <- model.uml.UmlEnums.UmlClassType.values) {
-                                <li>
-                                    <a data-conntype="@classType.name " onclick="selectClassType(this);">@classType.german </a>
-                                </li>
-                            }
-
-
-
-                                    </ul>
-                                </div>
-
-                                <div class="btn-group">
-                                    <button class="btn btn-default" data-conntype="IMPLEMENTATION" onclick="selectButton(this);">
-                                        <span class="glyphicon glyphicon-arrow-up"></span> Vererbung
-                                    </button>
-                                </div>
-
-                                <div class="btn-group">
-                                    <button class="btn btn-default" data-conntype="ASSOCIATION" onclick="selectButton(this);" id="assocButton">
-                                        <span class="glyphicon glyphicon-resize-horizontal"></span> <span id="assocType">
-                                        Assoziation</span>
-                                    </button>
-                                    <button class="btn btn-default" data-toggle="dropdown">
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu" role="menu">
-@for(assocType <- model.uml.UmlEnums.UmlAssociationType.values) {
-                                <li>
-                                    <a data-conntype="@assocType.name " onclick="selectAssocType(this);">@assocType.germanName </a>
-                                </li>
-                            }
-
-
-
-                                    </ul>
-                                </div>
+                        <div>
+                            <div class="btn-group">
+                                <button class="btn btn-primary" data-conntype="POINTER" onclick="selectButton(this);" title="Maus">
+                                    <span class="glyphicon glyphicon-screenshot"></span>
+                                </button>
                             </div>
 
-                            <hr>
+                            <div class="btn-group">
+                                <button class="btn btn-default" data-conntype="CLASS" onclick="selectButton(this);" id="classButton"
+                                    @if(getsHelp) {
+                                        @Html("""disabled title="Es wurden bereits alle Klassen erstellt!" """)
+                                    }>
 
-                            <div class="btn-group btn-group-justified">
-                                <div class="btn-group">
-                                    <button class="btn btn-default" onclick="backwards();" disabled title="R&uuml;ckg&auml;ngig: Noch nicht implementiert...">
-                                        <span class="glyphicon glyphicon-arrow-left"></span>
-                                    </button>
-                                </div>
+                                    <span class="glyphicon glyphicon-menu-hamburger"></span> <span id="classType">Klasse</span>
+                                </button>
 
-                                <div class="btn-group">
-                                    <a href="" id="a" class="btn btn-default" onclick="exportDiagram();">
-                                        <span class="glyphicon glyphicon-download"></span> Export
-                                    </a>
-                                </div>
+                                <button class="btn btn-default" data-toggle="dropdown" @if(getsHelp) {
+                                    @Html("""disabled title="Es wurden bereits alle Klassen erstellt!" """)
+                                }>
+                                    <span class="caret"></span>
+                                </button>
 
-                                <div class="btn-group">
-                                    <button class="btn btn-default" onclick="importDiagram();" title="Import: Noch nicht implementiert..." disabled>
-                                        <span class="glyphicon glyphicon-upload"></span> Import
-                                    </button>
-                                </div>
-
-                                <div class="btn-group">
-                                    <button class="btn btn-default" onclick="forwards();" disabled title="Vorw&auml;rts: Noch nicht implementiert...">
-                                        <span class="glyphicon glyphicon-arrow-right"></span>
-                                    </button>
-                                </div>
+                                <ul class="dropdown-menu" role="menu">
+                                @for(classType <- model.uml.UmlEnums.UmlClassType.values) {
+                                    <li>
+                                        <a data-conntype="@classType.name " onclick="selectClassType(this);">@classType.german </a>
+                                    </li>
+                                }
+                                </ul>
                             </div>
-                        </section>
+
+                            <div class="btn-group">
+                                <button class="btn btn-default" data-conntype="IMPLEMENTATION" onclick="selectButton(this);">
+                                    <span class="glyphicon glyphicon-arrow-up"></span> Vererbung
+                                </button>
+                            </div>
+
+                            <div class="btn-group">
+                                <button class="btn btn-default" data-conntype="ASSOCIATION" onclick="selectButton(this);" id="assocButton">
+                                    <span class="glyphicon glyphicon-resize-horizontal"></span> <span id="assocType">
+                                    Assoziation</span>
+                                </button>
+                                <button class="btn btn-default" data-toggle="dropdown">
+                                    <span class="caret"></span>
+                                </button>
+
+                                <ul class="dropdown-menu" role="menu">
+                                @for(assocType <- model.uml.UmlEnums.UmlAssociationType.values) {
+                                    <li>
+                                        <a data-conntype="@assocType.name " onclick="selectAssocType(this);">@assocType.germanName </a>
+                                    </li>
+                                }
+                                </ul>
+                            </div>
+                        </div>
 
                         <hr>
 
-                        <form method="post" onsubmit="return prepareFormForSubmitting();" action="@controllers.exes.idPartExes.routes.UmlController.correct(exercise.id) ">
-                    <input title="hidden" type="hidden" hidden name="@model.uml.UmlConsts.FORM_VALUE " id="@model.uml.UmlConsts.FORM_VALUE ">
-                    <button class="btn btn-primary btn-block">Aufgabe verifizieren</button>
-                </form>
+                        <div class="btn-group btn-group-justified">
+                            <div class="btn-group">
+                                <button class="btn btn-default" onclick="backwards();" disabled title="R&uuml;ckg&auml;ngig: Noch nicht implementiert...">
+                                    <span class="glyphicon glyphicon-arrow-left"></span>
+                                </button>
+                            </div>
+
+                            <div class="btn-group">
+                                <a href="" id="a" class="btn btn-default" onclick="exportDiagram();">
+                                    <span class="glyphicon glyphicon-download"></span> Export
+                                </a>
+                            </div>
+
+                            <div class="btn-group">
+                                <button class="btn btn-default" onclick="importDiagram();" title="Import: Noch nicht implementiert..." disabled>
+                                    <span class="glyphicon glyphicon-upload"></span> Import
+                                </button>
+                            </div>
+
+                            <div class="btn-group">
+                                <button class="btn btn-default" onclick="forwards();" disabled title="Vorw&auml;rts: Noch nicht implementiert...">
+                                    <span class="glyphicon glyphicon-arrow-right"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <hr>
+
+                    <form method="post" onsubmit="return prepareFormForSubmitting();" action="@controllers.exes.routes.ExerciseController.correct("uml", exercise.ex.id, part = curPart.urlName) ">
+                        <input title="hidden" type="hidden" hidden name="@model.uml.UmlConsts.FORM_VALUE" id="@model.uml.UmlConsts.FORM_VALUE">
+                        <button class="btn btn-primary btn-block">Aufgabe verifizieren</button>
+                    </form>
+
+                </div>
 
             </div>
-
         </div>
-    </div>
-}
+    }

@@ -1,37 +1,37 @@
 @(user: model.User, exercise: model.spread.SpreadExercise, fileType: (String, String))
 
-    @main("Spread-Test", Some(user)) {
-        <div class="container">
-            <div class="page-header">
-                <h1>Aufgabe &quot;@exercise.title&quot;</h1>
+@main("Spread-Test", Some(user)) {
+    <div class="container">
+        <div class="page-header">
+            <h1>Aufgabe &quot;@exercise.title&quot;</h1>
+        </div>
+
+        <p>@exercise.text</p>
+
+        <hr>
+
+        <h2>Download der Musterdatei</h2>
+
+        <a href="@controllers.exes.routes.FileExerciseController.downloadTemplate("spread", exercise.id, fileType._1)" class="btn btn-default btn-block">
+            Musterdatei f&uuml;r @fileType._2 herunterladen</a>
+
+
+        <hr>
+
+        <h2>Upload ihrer L&ouml;sung</h2>
+
+        <form class="form-horizontal" action="@controllers.exes.routes.FileExerciseController.uploadSolution("spread", exercise.id, fileType._1)"
+        method="post" enctype="multipart/form-data">
+
+            <div class="form-group">
+                <label class="control-label col-sm-3">Datei: </label>
+                <div class="col-sm-9">
+                    <input type="file" class="form-control" name="@model.spread.SpreadConsts.FILE_NAME" required>
+                </div>
             </div>
 
-            <p>@exercise.text</p>
+            <button class="btn btn-success btn-block">L&ouml;sung abgeben</button>
 
-            <hr>
-
-            <h2>Download der Musterdatei</h2>
-
-            <a href="@controllers.exes.fileExes.routes.AFileExController.downloadTemplate("spread", exercise.id, fileType._1)" class="btn btn-default btn-block">
-                Musterdatei f&uuml;r @fileType._2 herunterladen</a>
-
-
-            <hr>
-
-            <h2>Upload ihrer L&ouml;sung</h2>
-
-            <form class="form-horizontal" action="@controllers.exes.fileExes.routes.AFileExController.uploadSolution("spread", exercise.id, fileType._1)"
-            method="post" enctype="multipart/form-data">
-
-                <div class="form-group">
-                    <label class="control-label col-sm-3">Datei: </label>
-                    <div class="col-sm-9">
-                        <input type="file" class="form-control" name="@model.spread.SpreadConsts.FILE_NAME" required>
-                    </div>
-                </div>
-
-                <button class="btn btn-success btn-block">L&ouml;sung abgeben</button>
-
-            </form>
-        </div>
-    }
+        </form>
+    </div>
+}

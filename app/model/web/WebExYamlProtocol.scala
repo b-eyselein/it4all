@@ -1,9 +1,10 @@
 package model.web
 
+import model.Enums.ExerciseState
 import model.MyYamlProtocol._
 import model.web.WebConsts._
 import model.web.WebEnums._
-import model.{BaseValues, MyYamlProtocol, YamlArr, YamlObj}
+import model.{MyYamlProtocol, YamlArr, YamlObj}
 import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
@@ -14,11 +15,11 @@ object WebExYamlProtocol extends MyYamlProtocol {
 
   implicit object WebExYamlFormat extends HasBaseValuesYamlFormat[WebCompleteEx] {
 
-    override def readRest(yamlObject: YamlObject, baseValues: BaseValues): Try[WebCompleteEx] = for {
+    override def readRest(yamlObject: YamlObject, baseValues: (Int, String, String, String, ExerciseState)): Try[WebCompleteEx] = for {
       htmlText <- yamlObject.optStringField(HTML_TEXT_NAME)
       jsText <- yamlObject.optStringField(JS_TEXT_NAME)
-      htmlTaskTries <- yamlObject.optArrayField(HTML_TASKS_NAME, HtmlCompleteTaskYamlFormat(baseValues.id).read)
-      jsTaskTries <- yamlObject.optArrayField(JS_TASKS_NAME, JsCompleteTaskYamlFormat(baseValues.id).read)
+      htmlTaskTries <- yamlObject.optArrayField(HTML_TASKS_NAME, HtmlCompleteTaskYamlFormat(baseValues._1).read)
+      jsTaskTries <- yamlObject.optArrayField(JS_TASKS_NAME, JsCompleteTaskYamlFormat(baseValues._1).read)
     } yield {
       for (htmlTaskFailure <- htmlTaskTries._2)
       // FIXME: return...
@@ -28,7 +29,7 @@ object WebExYamlProtocol extends MyYamlProtocol {
       // FIXME: return...
         Logger.error("Could not read js task", jsTaskFailure.exception)
 
-      WebCompleteEx(WebExercise(baseValues, htmlText, htmlTaskTries._1.nonEmpty, jsText, jsTaskTries._1.nonEmpty), htmlTaskTries._1, jsTaskTries._1)
+      WebCompleteEx(new WebExercise(baseValues, htmlText, htmlTaskTries._1.nonEmpty, jsText, jsTaskTries._1.nonEmpty), htmlTaskTries._1, jsTaskTries._1)
     }
 
     override protected def writeRest(completeEx: WebCompleteEx): Map[YamlValue, YamlValue] = {

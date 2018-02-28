@@ -1,13 +1,13 @@
 package model.questions
 
+import controllers.exes.MyWrapper
 import javax.inject.Inject
-
 import model.Enums.ExerciseState
 import model._
+import model.persistence.ExerciseCollectionTableDefs
 import model.questions.QuestionConsts._
 import model.questions.QuestionEnums.{Correctness, QuestionType}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.api.mvc.Call
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
@@ -22,7 +22,15 @@ object QuestionHelper {
 
 }
 
-// Classes for use
+// Wrapper classes
+
+class CompleteQuestionWrapper(override val compEx: CompleteQuestion) extends CompleteExWrapper {
+
+  override type Ex = Question
+
+  override type CompEx = CompleteQuestion
+
+}
 
 class CompleteQuizWrapper(override val coll: CompleteQuiz) extends CompleteCollectionWrapper {
 
@@ -36,7 +44,15 @@ class CompleteQuizWrapper(override val coll: CompleteQuiz) extends CompleteColle
 
 }
 
-case class CompleteQuiz(coll: Quiz, exercises: Seq[CompleteQuestion]) extends CompleteCollection[Question, CompleteQuestion, Quiz] {
+// Classes for use
+
+case class CompleteQuiz(coll: Quiz, exercises: Seq[CompleteQuestion]) extends CompleteCollection {
+
+  override type Ex = Question
+
+  override type CompEx = CompleteQuestion
+
+  override type Coll = Quiz
 
   override def renderRest: Html = new Html("") // FIXME: implement! ???
 
@@ -45,9 +61,10 @@ case class CompleteQuiz(coll: Quiz, exercises: Seq[CompleteQuestion]) extends Co
     case None               => exercises
   }
 
+  override def wrapped: MyWrapper = new CompleteQuizWrapper(this)
 }
 
-case class CompleteQuestion(ex: Question, answers: Seq[Answer]) extends CompleteEx[Question] {
+case class CompleteQuestion(ex: Question, answers: Seq[Answer]) extends CompleteExInColl[Question] {
 
   def givenAnswers: Seq[Answer] = Seq.empty
 
@@ -67,39 +84,26 @@ case class CompleteQuestion(ex: Question, answers: Seq[Answer]) extends Complete
     s"""<div class="col-md-2">${answer.correctness.name}</div>
        |<div class="col-md-10">${answer.text} </div>""".stripMargin
 
+  override def wrapped: CompleteExWrapper = new CompleteQuestionWrapper(this)
+
 }
 
 // Case classes for db
 
-object Quiz {
+case class Quiz(id: Int, title: String, author: String, text: String, state: ExerciseState, theme: String)
+  extends ExerciseCollection[Question, CompleteQuestion] {
 
-  def tupled(t: (Int, String, String, String, ExerciseState, String)): Quiz =
-    Quiz(t._1, t._2, t._3, t._4, t._5, t._6)
-
-  def apply(i: Int, ti: String, a: String, te: String, s: ExerciseState, theme: String) =
-    new Quiz(BaseValues(i, ti, a, te, s), theme)
-
-  def unapply(arg: Quiz): Option[(Int, String, String, String, ExerciseState, String)] =
-    Some((arg.id, arg.title, arg.author, arg.text, arg.state, arg.theme))
+  def this(baseValues: (Int, String, String, String, ExerciseState), theme: String) =
+    this(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, theme)
 
 }
 
-case class Quiz(baseValues: BaseValues, theme: String) extends ExerciseCollection[Question, CompleteQuestion]
 
-object Question {
+case class Question(id: Int, title: String, author: String, text: String, state: ExerciseState,
+                    collectionId: Int, questionType: QuestionType, maxPoints: Int) extends ExInColl {
 
-  def tupled(t: (Int, String, String, String, ExerciseState, Int, QuestionType, Int)): Question =
-    Question(t._1, t._2, t._3, t._4, t._5, t._6, t._7, t._8)
-
-  def apply(i: Int, ti: String, a: String, te: String, s: ExerciseState, quizId: Int, questionType: QuestionType, maxPoints: Int) =
-    new Question(BaseValues(i, ti, a, te, s), quizId, questionType, maxPoints)
-
-  def unapply(arg: Question): Option[(Int, String, String, String, ExerciseState, Int, QuestionType, Int)] =
-    Some((arg.id, arg.title, arg.author, arg.text, arg.state, arg.collectionId, arg.questionType, arg.maxPoints))
-
-}
-
-case class Question(override val baseValues: BaseValues, collectionId: Int, questionType: QuestionType, maxPoints: Int) extends ExerciseInCollection {
+  def this(baseValues: (Int, String, String, String, ExerciseState), collectionId: Int, questionType: QuestionType, maxPoints: Int) =
+    this(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, collectionId, questionType, maxPoints)
 
   def isFreetext: Boolean = questionType == QuestionType.FREETEXT
 
@@ -115,28 +119,55 @@ case class QuestionRating(questionId: Int, userName: String, rating: Int)
 
 case class UserAnswer(questionId: Int, userName: String, text: String)
 
+case class QuestionSolution(username: String, collectionId: Int, exerciseId: Int, answers: Seq[GivenAnswer]) extends CollectionExSolution
+
+// Table Definitions
+
 class QuestionsTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
-  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseCollectionTableDefs[Question, CompleteQuestion, Quiz, CompleteQuiz] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseCollectionTableDefs[Question, CompleteQuestion, Quiz, CompleteQuiz, QuestionSolution] {
 
   import profile.api._
 
+  // Table types
+
+  override type ExTableDef = QuestionsTable
+
+  override type CollTableDef = QuizzesTable
+
+  override type SolTableDef = QuestionSolutionsTable
+
+  // Table queries
+
+  override val exTable = TableQuery[QuestionsTable]
+
+  override val collTable = TableQuery[QuizzesTable]
+
+  override val solTable = TableQuery[QuestionSolutionsTable]
+
+  val answers = TableQuery[AnswersTable]
+
   // Reading
 
-  def questionsInQuiz(id: Int): Future[Int] = db.run(questions.filter(_.collectionId === id).size.result)
 
-  def completeQuizzes(implicit ec: ExecutionContext): Future[Seq[CompleteQuiz]] = db.run(quizzes.result) map { quizSeq => quizSeq map (quiz => CompleteQuiz(quiz, Seq.empty)) }
+  override def completeExForEx(ex: Question)(implicit ec: ExecutionContext): Future[CompleteQuestion] =
+    answersForQuestion(ex.collectionId, ex.id) map (answers => CompleteQuestion(ex, answers))
 
-  def completeQuiz(id: Int)(implicit ec: ExecutionContext): Future[Option[CompleteQuiz]] = db.run(quizzes.filter(_.id === id).result.headOption) flatMap {
+  override def completeCollForColl(coll: Quiz)(implicit ec: ExecutionContext): Future[CompleteQuiz] =
+    questionsForQuiz(coll.id) map (qs => CompleteQuiz(coll, qs))
+
+  def completeQuizzes(implicit ec: ExecutionContext): Future[Seq[CompleteQuiz]] = db.run(collTable.result) map { quizSeq => quizSeq map (quiz => CompleteQuiz(quiz, Seq.empty)) }
+
+  def completeQuiz(id: Int)(implicit ec: ExecutionContext): Future[Option[CompleteQuiz]] = db.run(collTable.filter(_.id === id).result.headOption) flatMap {
     case None       => Future(None)
     case Some(quiz) => questionsForQuiz(id) map (questions => Some(CompleteQuiz(quiz, questions)))
   }
 
-  private def questionsForQuiz(quizId: Int)(implicit ec: ExecutionContext): Future[Seq[CompleteQuestion]] = db.run(questions.filter(_.collectionId === quizId).result) flatMap {
+  private def questionsForQuiz(quizId: Int)(implicit ec: ExecutionContext): Future[Seq[CompleteQuestion]] = db.run(exTable.filter(_.collectionId === quizId).result) flatMap {
     questionSeq => Future.sequence(questionSeq map (question => answersForQuestion(quizId, question.id) map (answers => CompleteQuestion(question, answers))))
   }
 
   def completeQuestion(quizId: Int, questionId: Int)(implicit ec: ExecutionContext): Future[Option[CompleteQuestion]] =
-    db.run(questions.filter(q => q.collectionId === quizId && q.id === questionId).result.headOption) flatMap {
+    db.run(exTable.filter(q => q.collectionId === quizId && q.id === questionId).result.headOption) flatMap {
       case None           => Future(None)
       case Some(question) => answersForQuestion(quizId, questionId) map (answers => Some(CompleteQuestion(question, answers)))
     }
@@ -146,40 +177,18 @@ class QuestionsTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfi
 
   // Saving
 
-  def saveQuiz(compQuiz: CompleteQuiz)(implicit ec: ExecutionContext): Future[Boolean] = db.run(quizzes insertOrUpdate compQuiz.coll) flatMap {
+  override def saveCompleteColl(compQuiz: CompleteQuiz)(implicit ec: ExecutionContext): Future[Boolean] = db.run(collTable insertOrUpdate compQuiz.coll) flatMap {
     _ => Future.sequence(compQuiz.exercises map saveQuestion) map (_.forall(identity))
   } recover { case _: Throwable => false }
 
-  def saveQuestion(compQuestion: CompleteQuestion)(implicit ec: ExecutionContext): Future[Boolean] = db.run(questions insertOrUpdate compQuestion.ex) flatMap {
+  private def saveQuestion(compQuestion: CompleteQuestion)(implicit ec: ExecutionContext): Future[Boolean] = db.run(exTable insertOrUpdate compQuestion.ex) flatMap {
     _ => Future.sequence(compQuestion.answers map saveAnswer) map (_.forall(identity))
   } recover { case _: Throwable => false }
 
-  def saveAnswer(answer: Answer)(implicit ec: ExecutionContext): Future[Boolean] =
+  private def saveAnswer(answer: Answer)(implicit ec: ExecutionContext): Future[Boolean] =
     db.run(answers insertOrUpdate answer) map (_ => true) recover { case _: Throwable => false }
 
-  // Table queries
-
-  val quizzes = TableQuery[QuizzesTable]
-
-  val questions = TableQuery[QuestionsTable]
-
-
-  override type ExTableDef = QuestionsTable
-
-  override type CollTableDef = QuizzesTable
-
-  override val exTable = questions
-
-  override val collTable = quizzes
-
-  override def completeExForEx(ex: Question)(implicit ec: ExecutionContext): Future[CompleteQuestion] =
-    answersForQuestion(ex.collectionId, ex.id) map (answers => CompleteQuestion(ex, answers))
-
-  override def completeCollForColl(coll: Quiz)(implicit ec: ExecutionContext): Future[CompleteQuiz] =
-    questionsForQuiz(coll.id) map (qs => CompleteQuiz(coll, qs))
-
-
-  val answers = TableQuery[AnswersTable]
+  override def saveExerciseRest(compEx: CompleteQuestion)(implicit ec: ExecutionContext): Future[Boolean] = ???
 
   // Column types
 
@@ -188,6 +197,9 @@ class QuestionsTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfi
 
   implicit val correctnessColumnType: BaseColumnType[Correctness] =
     MappedColumnType.base[Correctness, String](_.name, str => Correctness.byString(str) getOrElse Correctness.OPTIONAL)
+
+  implicit val givenAnswerColumnType: BaseColumnType[Seq[GivenAnswer]] =
+    MappedColumnType.base[Seq[GivenAnswer], String](_.mkString, _ => Seq.empty)
 
   // Table defs
 
@@ -212,13 +224,12 @@ class QuestionsTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfi
 
     def pk = primaryKey("pk", (id, collectionId))
 
-    def quizFk = foreignKey("quiz_fk", collectionId, quizzes)(_.id)
+    def quizFk = foreignKey("quiz_fk", collectionId, collTable)(_.id)
 
 
     def * = (id, title, author, text, state, collectionId, questionType, maxPoints) <> (Question.tupled, Question.unapply)
 
   }
-
 
   class AnswersTable(tag: Tag) extends Table[Answer](tag, "question_answers") {
 
@@ -237,10 +248,18 @@ class QuestionsTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfi
 
     def pk = primaryKey("pk", (id, questionId, quizId))
 
-    def questionFk = foreignKey("question_fk", (questionId, quizId), questions)(question => (question.id, question.collectionId))
+    def questionFk = foreignKey("question_fk", (questionId, quizId), exTable)(question => (question.id, question.collectionId))
 
 
     def * = (id, questionId, quizId, ansText, correctness, explanation.?) <> (Answer.tupled, Answer.unapply)
+
+  }
+
+  class QuestionSolutionsTable(tag: Tag) extends CollectionExSolutionsTable[QuestionSolution](tag, "question_solutions") {
+
+    def givenAnswers = column[Seq[GivenAnswer]]("todo")
+
+    def * = (username, collectionId, exerciseId, givenAnswers) <> (QuestionSolution.tupled, QuestionSolution.unapply)
 
   }
 

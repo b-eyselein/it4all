@@ -1,12 +1,13 @@
 package model.sql
 
+import controllers.exes.MyWrapper
 import javax.inject.Inject
 import model.Enums.ExerciseState
 import model._
+import model.persistence.ExerciseCollectionTableDefs
 import model.sql.SqlConsts._
 import model.sql.SqlEnums.{SqlExTag, SqlExerciseType}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.api.mvc.Call
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
@@ -14,7 +15,15 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 import scala.util.Try
 
-// Classes for use
+// Wrapper classes
+
+class SqlCompleteExWrapper(override val compEx: SqlCompleteEx) extends CompleteExWrapper {
+
+  override type Ex = SqlExercise
+
+  override type CompEx = SqlCompleteEx
+
+}
 
 class SqlScenarioWrapper(override val coll: SqlCompleteScenario) extends CompleteCollectionWrapper {
 
@@ -28,7 +37,15 @@ class SqlScenarioWrapper(override val coll: SqlCompleteScenario) extends Complet
 
 }
 
-case class SqlCompleteScenario(override val coll: SqlScenario, override val exercises: Seq[SqlCompleteEx]) extends CompleteCollection[SqlExercise, SqlCompleteEx, SqlScenario] {
+// Classes for use
+
+case class SqlCompleteScenario(override val coll: SqlScenario, override val exercises: Seq[SqlCompleteEx]) extends CompleteCollection {
+
+  override type Ex = SqlExercise
+
+  override type CompEx = SqlCompleteEx
+
+  override type Coll = SqlScenario
 
   override def exercisesWithFilter(filter: String): Seq[SqlCompleteEx] = SqlExerciseType.byString(filter) map (exType => getExercisesByType(exType)) getOrElse Seq.empty
 
@@ -40,9 +57,10 @@ case class SqlCompleteScenario(override val coll: SqlScenario, override val exer
        |  <div class="col-md-4">${coll.shortName}</div>
        |</div>""".stripMargin)
 
+  override def wrapped: MyWrapper = new SqlScenarioWrapper(this)
 }
 
-case class SqlCompleteEx(ex: SqlExercise, samples: Seq[SqlSample]) extends CompleteEx[SqlExercise] {
+case class SqlCompleteEx(ex: SqlExercise, samples: Seq[SqlSample]) extends CompleteExInColl[SqlExercise] {
 
   override def tags: Seq[SqlExTag] = (ex.tags split TagJoinChar).toSeq flatMap SqlExTag.byString
 
@@ -60,102 +78,82 @@ case class SqlCompleteEx(ex: SqlExercise, samples: Seq[SqlSample]) extends Compl
        |</div>
        |${samples map (sample => s"<pre>${sample.sample}</pre>") mkString}""".stripMargin)
 
+  override def wrapped: CompleteExWrapper = new SqlCompleteExWrapper(this)
+
 }
 
 // case classes for db
 
-object SqlScenario {
+case class SqlScenario(id: Int, title: String, author: String, text: String, state: ExerciseState, shortName: String) extends ExerciseCollection[SqlExercise, SqlCompleteEx] {
 
-  def tupled(t: (Int, String, String, String, ExerciseState, String)): SqlScenario =
-    SqlScenario(t._1, t._2, t._3, t._4, t._5, t._6)
-
-  def apply(i: Int, ti: String, a: String, te: String, s: ExerciseState, shortName: String) =
-    new SqlScenario(BaseValues(i, ti, a, te, s), shortName)
-
-  def unapply(arg: SqlScenario): Option[(Int, String, String, String, ExerciseState, String)] =
-    Some((arg.id, arg.title, arg.author, arg.text, arg.state, arg.shortName))
-
-}
-
-case class SqlScenario(override val baseValues: BaseValues, shortName: String) extends ExerciseCollection[SqlExercise, SqlCompleteEx] {
+  def this(baseValues: (Int, String, String, String, ExerciseState), shortName: String) =
+    this(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, shortName)
 
   val imageUrl: String = shortName + ".png"
 
 }
 
-object SqlExercise {
+case class SqlExercise(id: Int, title: String, author: String, text: String, state: ExerciseState,
+                       collectionId: Int, exerciseType: SqlExerciseType, tags: String, hint: Option[String]) extends ExInColl {
 
-  def tupled(t: (Int, String, String, String, ExerciseState, Int, SqlExerciseType, String, Option[String])): SqlExercise =
-    SqlExercise(t._1, t._2, t._3, t._4, t._5, t._6, t._7, t._8, t._9)
-
-  def apply(i: Int, ti: String, a: String, te: String, s: ExerciseState, scenarioId: Int, exerciseType: SqlExerciseType, tags: String, hint: Option[String]) =
-    new SqlExercise(BaseValues(i, ti, a, te, s), scenarioId, exerciseType, tags, hint)
-
-  def unapply(arg: SqlExercise): Option[(Int, String, String, String, ExerciseState, Int, SqlExerciseType, String, Option[String])] =
-    Some((arg.id, arg.title, arg.author, arg.text, arg.state, arg.collectionId, arg.exerciseType, arg.tags, arg.hint))
+  def this(baseValues: (Int, String, String, String, ExerciseState), collectionId: Int, exerciseType: SqlExerciseType, tags: String, hint: Option[String]) =
+    this(baseValues._1, baseValues._2, baseValues._3, baseValues._4, baseValues._5, collectionId, exerciseType, tags, hint)
 
 }
 
-case class SqlExercise(override val baseValues: BaseValues, collectionId: Int, exerciseType: SqlExerciseType, tags: String, hint: Option[String]) extends ExerciseInCollection
-
 case class SqlSample(id: Int, exerciseId: Int, scenarioId: Int, sample: String)
 
-case class SqlSolution(userName: String, scenarioId: Int, exerciseId: Int, solution: String)
+case class SqlSolution(username: String, collectionId: Int, exerciseId: Int, solution: String) extends CollectionExSolution
 
 // Table Definitions
 
 class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
-  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseCollectionTableDefs[SqlExercise, SqlCompleteEx, SqlScenario, SqlCompleteScenario] {
+  extends HasDatabaseConfigProvider[JdbcProfile] with ExerciseCollectionTableDefs[SqlExercise, SqlCompleteEx, SqlScenario, SqlCompleteScenario, SqlSolution] {
 
   import profile.api._
 
-  // Saving
-
-  def saveSqlCompleteScenario(completeScenario: SqlCompleteScenario)(implicit ec: ExecutionContext): Future[Seq[Any]] =
-    db.run(sqlScenarioes insertOrUpdate completeScenario.coll) flatMap (_ => Future.sequence(completeScenario.exercises map saveSqlCompleteEx))
-
-  private def saveSqlCompleteEx(completeEx: SqlCompleteEx)(implicit ec: ExecutionContext) =
-    db.run(sqlExercises insertOrUpdate completeEx.ex) flatMap { _ => Future.sequence(completeEx.samples map saveSqlSample) }
-
-  private def saveSqlSample(sample: SqlSample)(implicit ec: ExecutionContext): Future[Int] =
-    db.run(sqlSamples insertOrUpdate sample)
-
-  // Reading
-
-  def exercisesInScenario(id: Int): Future[Int] = db.run(sqlExercises.filter(_.collectionId === id).size.result)
-
-  // Table queries
-
-  val sqlExercises = TableQuery[SqlExercisesTable]
-
-  val sqlScenarioes = TableQuery[SqlScenarioesTable]
+  // Table types
 
   override type ExTableDef = SqlExercisesTable
 
   override type CollTableDef = SqlScenarioesTable
 
-  override val exTable = sqlExercises
+  override type SolTableDef = SqlSolutionsTable
 
-  override val collTable = sqlScenarioes
+  // Table queries
+
+  override val exTable = TableQuery[SqlExercisesTable]
+
+  override val collTable = TableQuery[SqlScenarioesTable]
+
+  override val solTable = TableQuery[SqlSolutionsTable]
+
+  val sqlSamples = TableQuery[SqlSampleTable]
+
+  // Reading
 
   override def completeExForEx(ex: SqlExercise)(implicit ec: ExecutionContext): Future[SqlCompleteEx] = samplesForEx(ex.collectionId, ex.id) map (samples => SqlCompleteEx(ex, samples))
 
   override def completeCollForColl(coll: SqlScenario)(implicit ec: ExecutionContext): Future[SqlCompleteScenario] =
-    db.run(sqlExercises.filter(_.collectionId === coll.id).result) flatMap (exes => Future.sequence(exes map completeExForEx)) map (exes => SqlCompleteScenario(coll, exes))
+    db.run(exTable.filter(_.collectionId === coll.id).result) flatMap (exes => Future.sequence(exes map completeExForEx)) map (exes => SqlCompleteScenario(coll, exes))
 
   private def samplesForEx(collId: Int, exId: Int)(implicit ec: ExecutionContext): Future[Seq[SqlSample]] =
     db.run(sqlSamples filter (table => table.exerciseId === exId && table.scenarioId === collId) result)
 
-  val sqlSolutions = TableQuery[SqlSolutionTable]
+  // Saving
 
-  val sqlSamples = TableQuery[SqlSampleTable]
+  def saveSolution(sol: SqlSolution)(implicit ec: ExecutionContext): Future[Boolean] = db.run(solTable insertOrUpdate sol) map (_ => true) recover { case _: Throwable => false }
 
-  // Queries
+  override def saveExerciseRest(compEx: SqlCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] = ???
 
-  def oldSolution(user: User, scenarioId: Int, exerciseId: Int): Future[Option[SqlSolution]] =
-    db.run(sqlSolutions.filter(sol => sol.username === user.username && sol.scenarioId === scenarioId && sol.exerciseId === exerciseId).result.headOption)
+  override def saveCompleteColl(completeScenario: SqlCompleteScenario)(implicit ec: ExecutionContext): Future[Boolean] =
+    db.run(collTable insertOrUpdate completeScenario.coll) flatMap (_ => saveSeq(completeScenario.exercises, saveSqlCompleteEx))
 
-  def saveSolution(sol: SqlSolution): Future[Int] = db.run(sqlSolutions insertOrUpdate sol)
+  private def saveSqlCompleteEx(completeEx: SqlCompleteEx)(implicit ec: ExecutionContext): Future[Boolean] =
+    db.run(exTable insertOrUpdate completeEx.ex) flatMap { _ => saveSeq(completeEx.samples, saveSqlSample) }
+
+  private def saveSqlSample(sample: SqlSample)(implicit ec: ExecutionContext): Future[Boolean] =
+    db.run(sqlSamples insertOrUpdate sample) map (_ => true) recover { case _: Throwable => false }
 
   // Column types
 
@@ -190,7 +188,7 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
     def pk = primaryKey("pk", (id, collectionId))
 
-    def scenarioFk = foreignKey("scenario_fk", collectionId, sqlScenarioes)(_.id)
+    def scenarioFk = foreignKey("scenario_fk", collectionId, collTable)(_.id)
 
 
     def * = (id, title, author, text, state, collectionId, exerciseType, tags, hint.?) <> (SqlExercise.tupled, SqlExercise.unapply)
@@ -210,30 +208,19 @@ class SqlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
     def pk = primaryKey("pk", (id, exerciseId, scenarioId))
 
-    def exerciseFk = foreignKey("exercise_fk", (exerciseId, scenarioId), sqlExercises)(exes => (exes.id, exes.collectionId))
+    def exerciseFk = foreignKey("exercise_fk", (exerciseId, scenarioId), exTable)(exes => (exes.id, exes.collectionId))
 
 
     def * = (id, exerciseId, scenarioId, sample) <> (SqlSample.tupled, SqlSample.unapply)
 
   }
 
-  class SqlSolutionTable(tag: Tag) extends Table[SqlSolution](tag, "sql_solutions") {
-
-    def username = column[String]("username")
-
-    def scenarioId = column[Int]("collection_id")
-
-    def exerciseId = column[Int]("exercise_id")
+  class SqlSolutionsTable(tag: Tag) extends CollectionExSolutionsTable[SqlSolution](tag, "sql_solutions") {
 
     def solution = column[String]("solution")
 
 
-    def pk = primaryKey("pk", (username, scenarioId, exerciseId))
-
-    def exerciseFk = foreignKey("exercise_fk", (exerciseId, scenarioId), sqlExercises)(ex => (ex.id, ex.collectionId))
-
-
-    def * = (username, scenarioId, exerciseId, solution) <> (SqlSolution.tupled, SqlSolution.unapply)
+    def * = (username, collectionId, exerciseId, solution) <> (SqlSolution.tupled, SqlSolution.unapply)
 
   }
 
