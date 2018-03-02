@@ -14,7 +14,7 @@ outputType: int
 sampleSolution:
   language: PYTHON_3
   sample: |
-    def ggt(a b):
+    def ggt(a, b):
       while b != 0:
         h = a % b
         a = b

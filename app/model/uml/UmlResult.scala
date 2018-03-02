@@ -24,6 +24,8 @@ abstract sealed class UmlResult(val exercise: UmlCompleteEx, val learnerSolution
 
   override type SolType = UmlSolution
 
+  override val solutionSaved = false
+
   override val success: Enums.SuccessType = NONE
 
   override def results: Seq[EvaluationResult] = Seq.empty ++ classResult ++ associationResult ++ implementationResult

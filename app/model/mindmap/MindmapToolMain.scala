@@ -70,12 +70,8 @@ class MindmapToolMain @Inject()(override val tables: MindmapTableDefs)(implicit 
   //        Validation.checkForMeta(SOLUTION_PATH, META_PATH)
   //        Validation.validateMeta(META_PATH)
   //
-  //        System.out.println("Validation done.")
-  //
   //        Evaluation.evaluate(EvalParserType.MINDMANAGER.getEvalParser, INPUT_PATH, SOLUTION_PATH, RESULT_PATH,
   //          ALT_SOLUTION_PATH, ALT_INPUT_PATH, META_PATH, TEMPLATE_PATH)
-  //
-  //        System.out.println("Evaluation done.")
   //
   //      } catch {
   //        case e@(_: ParsingException | _: IOException) => e.printStackTrace()

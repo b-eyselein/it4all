@@ -27,12 +27,9 @@ abstract class FixedExToolMain(urlPart: String) extends AToolMain(urlPart) {
   val yamlFormat: MyYamlFormat[ReadType]
 
   def readAndSave(yamlFileContent: String)(implicit ec: ExecutionContext): Future[ReadAndSaveResult] = {
-    val readTries: Seq[Try[ReadType]] = yamlFileContent.parseYamls map yamlFormat.read
+    val readTries: Seq[Try[ReadType]] = yamlFileContent.parseYamls map (yamlValue => yamlFormat.read(yamlValue))
 
     val (successes, failures) = CommonUtils.splitTries(readTries)
-
-    for (failure <- failures)
-      println(failure)
 
     futureSaveRead(successes) map {
       saveResult => ReadAndSaveResult(saveResult map (readAndSave => ReadAndSaveSuccess(readAndSave._1.wrapped, readAndSave._2)), failures)

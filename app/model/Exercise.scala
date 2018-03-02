@@ -29,6 +29,14 @@ trait Solution {
 
 }
 
+trait PartSolution extends Solution {
+
+  type PartType <: ExPart
+
+  val part: PartType
+
+}
+
 trait CollectionExSolution extends Solution {
 
   val collectionId: Int

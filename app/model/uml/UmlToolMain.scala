@@ -100,7 +100,7 @@ class UmlToolMain @Inject()(val tables: UmlTableDefs)(implicit ec: ExecutionCont
 
   override def correctEx(user: User, sol: UmlSolution, exercise: UmlCompleteEx): Future[Try[UmlResult]] = Future {
     Try {
-      sol.forPart match {
+      sol.part match {
         case ClassSelection     => new ClassSelectionResult(exercise, sol)
         case DiagramDrawing     => new DiagramDrawingResult(exercise, sol)
         case DiagramDrawingHelp => new DiagramDrawingHelpResult(exercise, sol)

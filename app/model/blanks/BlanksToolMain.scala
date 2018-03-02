@@ -55,7 +55,7 @@ class BlanksToolMain @Inject()(val tables: BlanksTableDefs)(implicit ec: Executi
         id <- jsObj.intField("id")
         answer <- jsObj.stringField("value")
       } yield BlanksAnswer(id, -1, answer)
-    })) map (answers => BlanksSolution(user.username, id, answers))
+    })) map (answers => BlanksSolution(user.username, id, part, answers))
 
   override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: BlanksExPart): Option[BlanksSolution] = ???
 

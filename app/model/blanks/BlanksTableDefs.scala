@@ -3,7 +3,7 @@ package model.blanks
 import javax.inject.Inject
 import model.Enums.ExerciseState
 import model._
-import model.blanks.BlanksExParts.BlanksExPart
+import model.blanks.BlanksExParts.{BlankExSinglePart, BlanksExPart}
 import model.persistence.SingleExerciseTableDefs
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.twirl.api.Html
@@ -44,7 +44,11 @@ case class BlanksExercise(override val id: Int, override val title: String, over
 
 case class BlanksAnswer(id: Int, exerciseId: Int, solution: String)
 
-case class BlanksSolution(username: String, exerciseId: Int, answers: Seq[BlanksAnswer]) extends Solution
+case class BlanksSolution(username: String, exerciseId: Int, part: BlanksExPart, answers: Seq[BlanksAnswer]) extends PartSolution {
+
+  override type PartType = BlanksExPart
+
+}
 
 // Table definitions
 
@@ -78,6 +82,9 @@ class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
   implicit val givenAnswerColumnType: BaseColumnType[Seq[BlanksAnswer]] =
     MappedColumnType.base[Seq[BlanksAnswer], String](_.mkString, _ => Seq.empty)
+
+  override implicit val partTypeColumnType: BaseColumnType[BlanksExPart] =
+    MappedColumnType.base[BlanksExPart, String](_.urlName, str => BlanksExParts.values.find(_.urlName == str) getOrElse BlankExSinglePart)
 
   // Table defs
 
@@ -113,12 +120,12 @@ class BlanksTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
   }
 
-  class BlanksSolutionsTable(tag: Tag) extends SolutionsTable[BlanksSolution](tag, "blanks_answers") {
+  class BlanksSolutionsTable(tag: Tag) extends PartSolutionsTable[BlanksSolution](tag, "blanks_answers") {
 
     def answers = column[Seq[BlanksAnswer]]("answers")
 
 
-    override def * = (username, exerciseId, answers) <> (BlanksSolution.tupled, BlanksSolution.unapply)
+    override def * = (username, exerciseId, part, answers) <> (BlanksSolution.tupled, BlanksSolution.unapply)
   }
 
 }

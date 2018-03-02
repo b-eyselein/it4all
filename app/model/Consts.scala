@@ -7,6 +7,10 @@ trait Consts {
   val ATTRS_NAME   = "attributes"
   val AUTHOR_NAME  = "author"
 
+
+  val Correct   = "correct"
+  val ErrorName = "error"
+
   val EXERCISES_NAME   = "exercises"
   val ExerciseTypeName = "exerciseType"
 

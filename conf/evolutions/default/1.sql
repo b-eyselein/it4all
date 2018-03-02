@@ -230,6 +230,7 @@ CREATE TABLE IF NOT EXISTS rose_samples (
 CREATE TABLE IF NOT EXISTS rose_solutions (
   username    VARCHAR(50),
   exercise_id INT,
+  part        VARCHAR(10),
   solution    TEXT,
 
   PRIMARY KEY (username, exercise_id),
@@ -473,7 +474,7 @@ CREATE TABLE IF NOT EXISTS js_conditions (
 CREATE TABLE IF NOT EXISTS web_solutions (
   exercise_id INT,
   username    VARCHAR(30),
-  part_type   VARCHAR(4),
+  part        VARCHAR(10),
   solution    TEXT,
 
   PRIMARY KEY (exercise_id, username),

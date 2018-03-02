@@ -4,7 +4,7 @@ import java.nio.file.{Files, Path}
 
 import model.core._
 import model.persistence.SingleExerciseTableDefs
-import model.{JsonFormat, Solution, User}
+import model.{JsonFormat, PartSolution, Solution, User}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{AnyContent, Request}
 import play.twirl.api.Html
@@ -18,7 +18,7 @@ abstract class AExerciseToolMain(urlPart: String) extends ASingleExerciseToolMai
 
   type CompResult <: CompleteResult[R]
 
-  type SolType <: Solution
+  type SolType <: PartSolution
 
   override type Tables <: SingleExerciseTableDefs[ExType, CompExType, SolType, PartType]
 

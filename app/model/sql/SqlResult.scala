@@ -29,6 +29,8 @@ abstract class SqlCorrResult extends CompleteResult[EvaluationResult] {
 
   override type SolType = String
 
+  override val solutionSaved = false
+
   override def renderLearnerSolution: Html = new Html(s"<pre>$learnerSolution</pre>")
 
 }

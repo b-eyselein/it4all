@@ -99,7 +99,7 @@ object NaryToolMain extends RandomExerciseToolMain("nary") with JsonFormat {
     }
 
     request.body.asJson flatMap correctionFunction match {
-      case None           => Json.obj(ERROR -> "TODO!")
+      case None           => Json.obj(ErrorName -> "TODO!")
       case Some(solution) => solution.toJson
     }
   }

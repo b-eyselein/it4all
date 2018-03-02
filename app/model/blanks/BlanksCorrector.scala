@@ -10,6 +10,8 @@ case class BlanksCompleteResult(learnerSolution: Seq[BlanksAnswer], result: Blan
 
   override type SolType = Seq[BlanksAnswer]
 
+  override val solutionSaved = false
+
   override def results: Seq[BlanksAnswerMatchingResult] = Seq(result)
 
   override def renderLearnerSolution: Html = ???

@@ -1,8 +1,12 @@
 package model.uml
 
-import model.Solution
+import model.PartSolution
 
-case class UmlSolution(username: String, exerciseId: Int, forPart: UmlExPart,
+case class UmlSolution(username: String, exerciseId: Int, part: UmlExPart,
                        classes: Seq[UmlCompleteClass],
                        associations: Seq[UmlAssociation],
-                       implementations: Seq[UmlImplementation]) extends Solution
+                       implementations: Seq[UmlImplementation]) extends PartSolution {
+
+  override type PartType = UmlExPart
+
+}

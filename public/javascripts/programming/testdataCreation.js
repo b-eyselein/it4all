@@ -22,12 +22,23 @@ function moreTestData() {
 
 /**
  *
- * @param {object[]} response
- * @param {number} response.id
- * @param {boolean} response.correct
+ * @param {object} response
+ * @param {boolean} response.solutionSaved
+ * @param {object[]} response.results
+ * @param {number} response.results.id
+ * @param {boolean} response.results.correct
  */
 function onValidateTDSuccess(response) {
-    for (let data of response) {
+    console.log(JSON.stringify(response, null, 2));
+
+    let msgDiv = $('#messageDiv');
+    if (response.solutionSaved) {
+        msgDiv.html(`<hr><div class="alert alert-success">Ihre Testdaten wurden gespeichert.</div>`);
+    } else {
+        msgDiv.html(`<hr><div class="alert alert-danger">Ihre Testdaten konnten nicht gespeichert werden!</div>`);
+    }
+
+    for (let data of response.results) {
         let row = document.getElementById('tr_' + data.id);
         row.className = data.correct ? 'success' : 'danger';
     }
@@ -37,13 +48,17 @@ function onValidateTDError(jqXHR) {
     console.error(jqXHR.responseText);
 }
 
-function validateTestData(url, part) {
+function testSol() {
+    let toolType = $('#toolType').val(), exerciseId = $('#exerciseId').val(), exercisePart = $('#exercisePart').val();
+
+    // noinspection JSUnresolvedFunction, JSUnresolvedVariable
+    let url = jsRoutes.controllers.exes.ExerciseController.correctLive(toolType, exerciseId, exercisePart).url;
+
     let testDataRows = $('#testDataBody').find('tr');
 
     testDataRows.removeClass('success danger');
 
     let dataToSend = {
-        part,
         solution: testDataRows.map((index, elem) => {
             return {
                 id: $(elem).data('testid'),
@@ -66,3 +81,8 @@ function validateTestData(url, part) {
         error: onValidateTDError
     });
 }
+
+
+$(document).ready(function () {
+    $('#testBtn').click(testSol);
+});

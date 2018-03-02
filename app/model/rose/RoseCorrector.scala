@@ -19,38 +19,40 @@ object RoseCorrector extends FileUtils {
 
   val NewLine = "\n"
 
+  val Image = "beyselein/rose:latest"
+
   def correct(user: User, exercise: RoseCompleteEx, learnerSolution: String, language: ProgLanguage, exerciseResourcesFolder: Path, solutionTargetDir: Path)
              (implicit ec: ExecutionContext): Future[RoseEvalResult] = {
 
     // Check if image exists
-    val futureImageExists: Future[Boolean] = Future(DockerConnector.imageExists(language.dockerImageName) || DockerConnector.pullImage(language.dockerImageName))
+    val futureImageExists: Future[Boolean] = Future(DockerConnector.imageExists(Image))
 
-    //    val solutionTargetDir = RoseToolObject.solutionDirForExercise(user.username, exercise.id)
+    val solutionFileName = s"solution.${language.fileEnding}"
+    val actionsFileName = "actions.json"
 
-    val solutionFileContent: String = exercise.imports + (NewLine * 3) + learnerSolution + (NewLine * 3) + exercise.buildSampleSolution + (NewLine * 3)
+    val solutionFilePath = solutionTargetDir / solutionFileName
+    val actionFilePath = solutionTargetDir / actionsFileName
 
-    val filesCopied: Seq[Try[Path]] = Seq("sp_main.py", "sp_validation.py") map { filePath =>
-      copy(filePath, exerciseResourcesFolder /*RoseToolObject.exerciseResourcesFolder */ , solutionTargetDir)
-    }
-
-    val filesWritten = for {
-      solFile <- write(solutionTargetDir / s"solution.${language.fileEnding}", solutionFileContent)
-    } yield solFile
+    val fileWriteTries: Try[(Path, Path)] = for {
+      solFileTry <- write(solutionFilePath, buildSolutionFileContent(exercise, learnerSolution))
+      actionFileTry <- createEmptyFile(actionFilePath)
+    } yield (solFileTry, actionFileTry)
 
     val dockerBinds: Seq[DockerBind] = Seq(
-      new DockerBind(/*RoseToolObject.exerciseResourcesFolder*/ exerciseResourcesFolder / "base", DockerConnector.DefaultWorkingDir + "/base"),
-      new DockerBind(solutionTargetDir, DockerConnector.DefaultWorkingDir)
+      new DockerBind(solutionFilePath, DockerConnector.DefaultWorkingDir + "/" + solutionFileName),
+      new DockerBind(actionFilePath, DockerConnector.DefaultWorkingDir + "/" + actionsFileName)
     )
 
+    val entryPoint = Seq("python3", "sp_main.py")
 
-    filesWritten match {
+    fileWriteTries match {
       case Failure(e) =>
-        Logger.error("Some files could not be written", e)
+        Logger.error("Some files could not be written:", e)
         Future(RoseEvalFailed)
       case Success(_) =>
 
         futureImageExists flatMap { _ =>
-          DockerConnector.runContainer(language.dockerImageName, entryPoint = Seq("python3", "sp_main.py"), dockerBinds, deleteContainerAfterRun = false)
+          DockerConnector.runContainer(Image, entryPoint, dockerBinds)
         } map {
           // Error while waiting for container
           case RunContainerTimeOut => RoseTimeOutResult
@@ -58,7 +60,7 @@ object RoseCorrector extends FileUtils {
           // Error while running script with status code other than 0 or 124 (from timeout!)
           case RunContainerError(_, msg) => RoseSyntaxErrorResult(msg)
 
-          case RunContainerSuccess => readAll(solutionTargetDir / "actions.json") map (content => RoseExecutionResult(content)) getOrElse RoseEvalFailed
+          case RunContainerSuccess => readAll(actionFilePath) map (content => RoseExecutionResult(content)) getOrElse RoseEvalFailed
 
           case exc: RunContainerException =>
             Logger.error("Error running container:", exc.error)
@@ -66,5 +68,9 @@ object RoseCorrector extends FileUtils {
         }
     }
   }
+
+  private def buildSolutionFileContent(exercise: RoseCompleteEx, learnerSolution: String) =
+    exercise.imports + (NewLine * 3) + learnerSolution + (NewLine * 3) + exercise.buildSampleSolution + (NewLine * 3)
+
 
 }

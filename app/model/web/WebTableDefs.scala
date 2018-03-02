@@ -128,7 +128,11 @@ case class JsCondition(id: Int, taskId: Int, exerciseId: Int, xpathQuery: String
 
 }
 
-case class WebSolution(username: String, exerciseId: Int, part: WebExPart, solution: String) extends Solution
+case class WebSolution(username: String, exerciseId: Int, part: WebExPart, solution: String) extends PartSolution {
+
+  override type PartType = WebExPart
+
+}
 
 // Tables
 
@@ -197,7 +201,7 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   implicit val ActionTypeColumnType: BaseColumnType[JsActionType] =
     MappedColumnType.base[JsActionType, String](_.name, str => JsActionType.byString(str) getOrElse JsActionType.CLICK)
 
-  implicit val WebExPartColumnType: BaseColumnType[WebExPart] =
+  override implicit val partTypeColumnType: BaseColumnType[WebExPart] =
     MappedColumnType.base[WebExPart, String](_.urlName, str => WebExParts.values.find(_.urlName == str) getOrElse HtmlPart)
 
   // Table definitions
@@ -301,9 +305,7 @@ class WebTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   }
 
-  class WebSolutionsTable(tag: Tag) extends SolutionsTable[WebSolution](tag, "web_solutions") {
-
-    def part = column[WebExPart]("part_type")
+  class WebSolutionsTable(tag: Tag) extends PartSolutionsTable[WebSolution](tag, "web_solutions") {
 
     def solution = column[String]("solution")
 

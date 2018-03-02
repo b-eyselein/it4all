@@ -54,67 +54,72 @@ object ProgrammingCorrector extends FileUtils with JsonFormat {
     )
   }
 
-  def validateTestdata(user: User, exercise: ProgCompleteEx, solution: ProgSolution, solutionTargetDir: Path, exerciseResourcesFolder: Path)
-                      (implicit ec: ExecutionContext): Future[ProgCompleteResult] = {
+  def validateTestdata(user: User, exercise: ProgCompleteEx, solution: TestDataSolution, solSaved: Boolean, solutionTargetDir: Path, exerciseResourcesFolder: Path)
+                      (implicit ec: ExecutionContext): Future[ProgValidationCompleteResult] = {
 
     val language = ProgLanguage.STANDARD_LANG
 
-    //    val solutionTargetDir = ProgToolObject.solutionDirForExercise(user.username, exercise.id) / ValidationFolder
-
     val script = exercise.sampleSolution.solution
 
-    correct(exercise, language, solutionTargetDir, script, Seq.empty /*solution.completeCommitedTestData*/ , exerciseResourcesFolder) map ProgValidationCompleteResult
-
+    correct(exercise, language, solutionTargetDir, script, solution.completeCommitedTestData, exerciseResourcesFolder) map (res => ProgValidationCompleteResult.apply(solSaved, res))
   }
 
-  def correctImplementation(user: User, exercise: ProgCompleteEx, learnerSolution: String, language: ProgLanguage, solutionTargetDir: Path, exerciseResourcesFolder: Path)
+
+  def correctImplementation(user: User, exercise: ProgCompleteEx, learnerSolution: String, solSaved: Boolean, language: ProgLanguage, solutionTargetDir: Path, exerciseResourcesFolder: Path)
                            (implicit ec: ExecutionContext): Future[ProgCompleteResult] = {
 
-    //    val solutionTargetDir = ProgToolObject.solutionDirForExercise(user.username, exercise.id) / ImplementationsFolder
-
-    val script = if (learnerSolution endsWith "\n") learnerSolution else learnerSolution + "\n"
-
-    correct(exercise, language, solutionTargetDir, script, exercise.sampleTestData, exerciseResourcesFolder) map (ProgImplementationCompleteResult(script, _))
+    correct(exercise, language, solutionTargetDir, learnerSolution, exercise.sampleTestData, exerciseResourcesFolder) map {
+      res => ProgImplementationCompleteResult(learnerSolution, solSaved, res)
+    }
 
   }
+
 
   private def correct(exercise: ProgCompleteEx, language: ProgLanguage, targetDir: Path, script: String, completeTestData: Seq[CompleteTestData], exerciseResourcesFolder: Path)
                      (implicit ec: ExecutionContext): Future[Seq[ProgEvalResult]] = {
 
     val scriptTargetPath = targetDir / ScriptName
 
-    val futureImageExists: Future[Boolean] = Future(DockerConnector.imageExists(language.dockerImageName) || DockerConnector.pullImage(language.dockerImageName))
-
-    write(targetDir / s"solution.${language.fileEnding}", script)
-
-    write(targetDir / TestDataFile, Json.prettyPrint(dumpTestDataToJson(exercise.ex, exercise.inputTypes, completeTestData)))
-
-    copy(/*ProgToolObject.exerciseResourcesFolder */ exerciseResourcesFolder / ScriptName, scriptTargetPath)
-
-    Files.setPosixFilePermissions(scriptTargetPath, FilePermissions)
+    val futureImageExists: Future[Boolean] = Future(DockerConnector.imageExists(language.dockerImageName))
 
     val workingDir = DockerConnector.DefaultWorkingDir
 
-    // Check if image exists
-    futureImageExists flatMap {
-      _ =>
-        DockerConnector.runContainer(
-          imageName = language.dockerImageName,
-          entryPoint = Seq("timeout", MaxRuntime + "s", s"$workingDir/script." + language.fileEnding),
-          dockerBinds = Seq(new DockerBind(targetDir, workingDir, AccessMode.rw))
-        )
-    } map {
-      // Error while waiting for container
-      case exc: RunContainerException =>
-        Logger.error("Error while running container:", exc.error)
-        Seq(ProgEvalFailed)
+    val fileTries: Try[(Path, Path, Path, Path)] = for {
+      solutionWrite: Path <- write(targetDir / s"solution.${language.fileEnding}", script)
 
-      case RunContainerTimeOut => Seq(TimeOut)
+      testDataWrite: Path <- write(targetDir / TestDataFile, Json.prettyPrint(dumpTestDataToJson(exercise.ex, exercise.inputTypes, completeTestData)))
 
-      // Error while running script with status code other than 0 or 124 (from timeout!)
-      case RunContainerError(_, msg) => Seq(SyntaxError(reason = msg))
+      scriptCopy: Path <- copy(/*ProgToolObject.exerciseResourcesFolder */ exerciseResourcesFolder / ScriptName, scriptTargetPath)
 
-      case RunContainerSuccess => readResultFile(targetDir, completeTestData)
+      permissionChange: Path <- Try(Files.setPosixFilePermissions(scriptTargetPath, FilePermissions))
+    } yield (solutionWrite, testDataWrite, scriptCopy, permissionChange)
+
+    fileTries match {
+      case Failure(error) =>
+        Logger.error("There has been an error writing a file: ", error)
+        Future(Seq.empty)
+      case Success(_)     =>
+        // Check if image exists
+        futureImageExists flatMap {
+          _ =>
+            DockerConnector.runContainer(
+              imageName = language.dockerImageName,
+              entryPoint = Seq("timeout", MaxRuntime + "s", s"$workingDir/script." + language.fileEnding),
+              dockerBinds = Seq(new DockerBind(targetDir, workingDir, AccessMode.rw))
+            )
+        } map {
+          // Error while waiting for container
+          case exc: RunContainerException =>
+            Logger.error("Error while running container:", exc.error)
+            Seq(ProgEvalFailed)
+
+          case RunContainerTimeOut => Seq(TimeOut)
+
+          // Error while running script with status code other than 0 or 124 (from timeout!)
+          case RunContainerError(_, msg) => Seq(SyntaxError(reason = msg))
+
+          case RunContainerSuccess => readResultFile(targetDir, completeTestData)
+        }
     }
   }
 

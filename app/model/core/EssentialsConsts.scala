@@ -8,7 +8,4 @@ trait EssentialsConsts extends Consts {
 
   val generator = new Random
 
-  val Correct = "correct"
-  val ERROR   = "error"
-
 }

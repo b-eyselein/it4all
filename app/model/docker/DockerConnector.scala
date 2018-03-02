@@ -3,12 +3,13 @@ package model.docker
 import java.util.concurrent.TimeUnit
 
 import com.github.dockerjava.api.DockerClient
-import com.github.dockerjava.api.model.{Bind, Frame}
+import com.github.dockerjava.api.model.{Bind, Frame, Image}
 import com.github.dockerjava.core.DockerClientBuilder
 import com.github.dockerjava.core.command.{LogContainerResultCallback, PullImageResultCallback, WaitContainerResultCallback}
 import play.api.Logger
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
@@ -37,12 +38,17 @@ object DockerConnector {
 
   private val DockerClient: DockerClient = DockerClientBuilder.getInstance.build
 
-  def imageExists(imageName: String): Boolean = DockerClient.listImagesCmd.exec.asScala map (_.getRepoTags) exists (_ contains imageName)
+  def imageExists(imageName: String): Boolean = {
+    val images: mutable.Seq[Image] = DockerClient.listImagesCmd.exec.asScala
 
-  def pullImage(imageName: String): Boolean = Try(DockerClient.pullImageCmd(imageName).exec(new PullImageResultCallback()).awaitCompletion()) match {
-    case Success(_) => true
-    case Failure(_) => false
+    images map (_.getRepoTags) filter (_ != null) exists (_ contains imageName)
   }
+
+  def pullImage(imageName: String)(implicit ec: ExecutionContext): Future[Boolean] =
+    Future(Try(DockerClient.pullImageCmd(imageName).exec(new PullImageResultCallback()).awaitCompletion()) match {
+      case Success(_) => true
+      case Failure(_) => false
+    })
 
   private def createContainer(imageName: String, workingDir: String, entrypoint: Seq[String], binds: Seq[Bind] = Seq.empty): Try[String] = Try {
     DockerClient.createContainerCmd(imageName)

@@ -2,8 +2,7 @@ package model.core
 
 import model.Enums.SuccessType
 import model.core.EvaluationResult._
-import play.twirl.api.{Html, HtmlFormat}
-
+import play.twirl.api.Html
 import scalatags.Text
 import scalatags.Text.all._
 
@@ -64,19 +63,13 @@ trait CompleteResult[E <: EvaluationResult] extends EvaluationResult {
 
   def learnerSolution: SolType
 
+  def solutionSaved: Boolean
+
   def results: Seq[E]
 
   def renderLearnerSolution: Html
 
   override def success: SuccessType = SuccessType.ofBool(allResultsSuccessful(results))
-
-}
-
-case class GenericCompleteResult[E <: EvaluationResult](learnerSolution: String, results: Seq[E]) extends CompleteResult[E] {
-
-  override type SolType = String
-
-  override def renderLearnerSolution = new Html(s"<pre>${HtmlFormat.escape(learnerSolution)}</pre>")
 
 }
 

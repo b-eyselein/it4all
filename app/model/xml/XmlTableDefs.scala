@@ -50,7 +50,11 @@ case class XmlExercise(override val id: Int, override val title: String, overrid
 
 }
 
-case class XmlSolution(username: String, exerciseId: Int, part: XmlExPart, solution: String) extends Solution
+case class XmlSolution(username: String, exerciseId: Int, part: XmlExPart, solution: String) extends PartSolution {
+
+  override type PartType = XmlExPart
+
+}
 
 // Table defs
 
@@ -71,7 +75,7 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   // Column Types
 
-  implicit val XmlExPartColumnType: BaseColumnType[XmlExPart] =
+  override implicit val partTypeColumnType: BaseColumnType[XmlExPart] =
     MappedColumnType.base[XmlExPart, String](_.urlName, str => XmlExParts.values.find(_.urlName == str) getOrElse DocumentCreationXmlPart)
 
   // Reading
@@ -103,11 +107,9 @@ class XmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   }
 
-  class XmlSolutionsTable(tag: Tag) extends SolutionsTable[XmlSolution](tag, "xml_solutions") {
+  class XmlSolutionsTable(tag: Tag) extends PartSolutionsTable[XmlSolution](tag, "xml_solutions") {
 
     def solution = column[String]("solution")
-
-    def part = column[XmlExPart]("part")
 
 
     override def pk = primaryKey("pk", (exerciseId, username, part))

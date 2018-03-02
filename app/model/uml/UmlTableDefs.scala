@@ -187,7 +187,7 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   implicit val UmlMultiplicityColumnType: BaseColumnType[UmlMultiplicity] =
     MappedColumnType.base[UmlMultiplicity, String](_.name, str => UmlMultiplicity.byString(str) getOrElse UmlMultiplicity.UNBOUND)
 
-  implicit val UmlExTypeColumnType: BaseColumnType[UmlExPart] =
+  override implicit val partTypeColumnType: BaseColumnType[UmlExPart] =
     MappedColumnType.base[UmlExPart, String](_.urlName, str => UmlExParts.values.find(_.urlName == str) getOrElse ClassSelection)
 
 
@@ -339,9 +339,7 @@ class UmlTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   }
 
-  class UmlSolutionsTable(tag: Tag) extends SolutionsTable[UmlSolution](tag, "uml_solutions") {
-
-    def part = column[UmlExPart]("part")
+  class UmlSolutionsTable(tag: Tag) extends PartSolutionsTable[UmlSolution](tag, "uml_solutions") {
 
     def classes = column[Seq[UmlCompleteClass]]("classes")
 

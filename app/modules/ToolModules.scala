@@ -7,6 +7,8 @@ class ToolModules(environment: Environment, configuration: Configuration) extend
 
   override def configure(): Unit = {
 
+    DockerPullsStartTask
+
     // Random Exes
 
     model.bool.BoolToolMain

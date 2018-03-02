@@ -1,6 +1,7 @@
 package model.rose
 
 import javax.inject.{Inject, Singleton}
+import model.Enums.ToolState
 import model.programming.ProgLanguage
 import model.toolMains.AExerciseToolMain
 import model.yaml.MyYamlFormat
@@ -36,6 +37,8 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   override val toolname: String = "Rose"
 
+  override val toolState: ToolState = ToolState.BETA
+
   override val consts: Consts = RoseConsts
 
   override val exParts: Seq[RoseExPart] = RoseExParts.values
@@ -50,7 +53,7 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
 
   override def readSolutionForPartFromJson(user: User, id: Int, jsValue: JsValue, part: RoseExPart): Option[RoseSolution] = jsValue.asObj flatMap { jsObj =>
     jsObj.stringField("implementation")
-  } map (RoseSolution(user.username, id, _))
+  } map (RoseSolution(user.username, id, part, _))
 
   // Other helper methods
 
@@ -83,7 +86,7 @@ class RoseToolMain @Inject()(val tables: RoseTableDefs)(implicit ec: ExecutionCo
     // FIXME: save solution
     futureSaveSolution(sol)
 
-    RoseCorrector.correct(user, exercise, sol.solution, ProgLanguage.STANDARD_LANG, solutionDirForExercise(user.username, exercise.ex.id), exerciseResourcesFolder) map {
+    RoseCorrector.correct(user, exercise, sol.solution, ProgLanguage.STANDARD_LANG, exerciseResourcesFolder, solutionDirForExercise(user.username, exercise.ex.id)) map {
       result => Try(RoseCompleteResult(sol.solution, result))
     }
 

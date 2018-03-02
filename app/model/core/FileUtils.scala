@@ -15,6 +15,11 @@ trait FileUtils {
 
   }
 
+  def createEmptyFile(filePath: Path): Try[Path] = Try {
+    if (!filePath.toFile.exists()) Files.createFile(filePath)
+    else filePath
+  }
+
   def copy(filename: String, sourceDir: Path, targetDir: Path): Try[Path] = copy(sourceDir / filename, targetDir / filename)
 
   def copy(source: Path, target: Path): Try[Path] = Try {

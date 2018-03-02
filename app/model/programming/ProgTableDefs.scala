@@ -7,6 +7,7 @@ import model.persistence.SingleExerciseTableDefs
 import model.programming.ProgConsts._
 import model.programming.ProgDataTypes._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
+import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
 import play.twirl.api.Html
 import slick.jdbc.JdbcProfile
 
@@ -53,7 +54,18 @@ sealed trait CompleteTestData {
 
 case class CompleteSampleTestData(testData: SampleTestData, inputs: Seq[SampleTestDataInput]) extends CompleteTestData
 
-case class CompleteCommitedTestData(testData: CommitedTestData, inputs: Seq[CommitedTestDataInput]) extends CompleteTestData
+case class CompleteCommitedTestData(testData: CommitedTestData, inputs: Seq[CommitedTestDataInput]) extends CompleteTestData {
+
+  def toJson: JsObject = Json.obj(
+    "id" -> testData.id,
+    "exerciseId" -> testData.exerciseId,
+    "username" -> testData.username,
+    "output" -> testData.output,
+    "state" -> testData.state.name,
+    "inputs" -> JsArray(inputs map (_.toJson))
+  )
+
+}
 
 // Case classes for tables
 
@@ -93,9 +105,102 @@ case class CommitedTestData(id: Int, exerciseId: Int, username: String, output: 
 
 case class SampleTestDataInput(id: Int, testId: Int, exerciseId: Int, input: String) extends TestDataInput
 
-case class CommitedTestDataInput(id: Int, testId: Int, exerciseId: Int, input: String, username: String) extends TestDataInput
+case class CommitedTestDataInput(id: Int, testId: Int, exerciseId: Int, input: String, username: String) extends TestDataInput {
 
-case class ProgSolution(username: String, exerciseId: Int, part: ProgExPart, language: ProgLanguage, solution: String) extends Solution
+  def toJson: JsObject = Json.obj(
+    "id" -> id, "testId" -> testId, "exerciseId" -> exerciseId, "input" -> input, "username" -> username
+  )
+
+}
+
+// Solution types
+
+object TestDataSolution extends JsonFormat {
+
+  def readTestDataFromJson(jsonStr: String): Seq[CompleteCommitedTestData] = Json.parse(jsonStr).asArray {
+    jsValue =>
+
+      def readTestData(jsObject: JsObject): Option[CommitedTestData] = for {
+        id <- jsObject.intField("id")
+        exerciseId <- jsObject.intField("exerciseId")
+        username <- jsObject.stringField("username")
+        output <- jsObject.stringField("output")
+        state <- jsObject.enumField("state", ExerciseState.valueOf)
+      } yield CommitedTestData(id, exerciseId, username, output, state)
+
+      def readInput(jsValue: JsValue): Option[CommitedTestDataInput] = jsValue.asObj flatMap { jsObj =>
+        for {
+          id <- jsObj.intField("id")
+          testId <- jsObj.intField("testId")
+          exerciseId <- jsObj.intField("exerciseId")
+          input <- jsObj.stringField("input")
+          username <- jsObj.stringField("username")
+        } yield CommitedTestDataInput(id, testId, exerciseId, input, username)
+
+      }
+
+      for {
+        jsObj <- jsValue.asObj
+        testData <- readTestData(jsObj)
+        inputs <- jsObj.arrayField("inputs", readInput)
+      } yield CompleteCommitedTestData(testData, inputs)
+
+  } getOrElse Seq.empty
+
+}
+
+object ProgSolution {
+
+  def tupled(t: (String, Int, ProgExPart, ProgLanguage, String)): ProgSolution = t._3 match {
+    case Implementation   => ImplementationSolution(t._1, t._2, t._4, t._5)
+    case TestdataCreation => TestDataSolution(t._1, t._2, t._4, TestDataSolution.readTestDataFromJson(t._5))
+    case ActivityDiagram  => ActivityDiagramSolution(t._1, t._2, t._4, t._5)
+  }
+
+  def apply(username: String, exerciseId: Int, exercisePart: ProgExPart, progLanguage: ProgLanguage, solutionStr: String): ProgSolution = exercisePart match {
+    case Implementation   => ImplementationSolution(username, exerciseId, progLanguage, solutionStr)
+    case TestdataCreation => TestDataSolution(username, exerciseId, progLanguage, TestDataSolution.readTestDataFromJson(solutionStr))
+    case ActivityDiagram  => ActivityDiagramSolution(username, exerciseId, progLanguage, solutionStr)
+  }
+
+  def unapply(arg: ProgSolution): Option[(String, Int, ProgExPart, ProgLanguage, String)] =
+    Some(arg.username, arg.exerciseId, arg.part, arg.language, arg.solution)
+
+}
+
+sealed trait ProgSolution extends PartSolution {
+
+  override type PartType = ProgExPart
+
+  val username  : String
+  val exerciseId: Int
+
+  val part    : ProgExPart
+  val language: ProgLanguage
+
+  def solution: String
+
+}
+
+case class ImplementationSolution(username: String, exerciseId: Int, language: ProgLanguage, solution: String) extends ProgSolution {
+
+  override val part: ProgExPart = Implementation
+
+}
+
+case class TestDataSolution(username: String, exerciseId: Int, language: ProgLanguage, completeCommitedTestData: Seq[CompleteCommitedTestData]) extends ProgSolution {
+
+  override val part: ProgExPart = TestdataCreation
+
+  override def solution: String = "[" + completeCommitedTestData.map(_.toJson).mkString(",") + "]"
+
+}
+
+case class ActivityDiagramSolution(username: String, exerciseId: Int, language: ProgLanguage, solution: String) extends ProgSolution {
+
+  override val part: ProgExPart = ActivityDiagram
+
+}
 
 // Table Definitions
 
@@ -155,14 +260,6 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     .filter(_._1.exerciseId === ex.id)
     .result
 
-  private def saveCompleteCommitedTestData(compCommTd: Seq[CompleteCommitedTestData])(implicit ec: ExecutionContext): Future[Boolean] =
-    Future.sequence(compCommTd map saveCompCommTestData) map (_ forall identity)
-
-  private def saveCompCommTestData(compCommTestData: CompleteCommitedTestData)(implicit ec: ExecutionContext): Future[Boolean] =
-    db.run(commitedTestData += compCommTestData.testData) flatMap { _ =>
-      saveSeq[CommitedTestDataInput](compCommTestData.inputs, inp => db.run(commitedTestDataInput += inp))
-    }
-
   // Implicit column types
 
   implicit val ProgLanguageColumnType: BaseColumnType[ProgLanguage] =
@@ -171,7 +268,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   implicit val ProgDataTypesColumnType: BaseColumnType[ProgDataType] =
     MappedColumnType.base[ProgDataType, String](_.typeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING)
 
-  implicit val progExPartColumnType: BaseColumnType[ProgExPart] =
+  override implicit val partTypeColumnType: BaseColumnType[ProgExPart] =
     MappedColumnType.base[ProgExPart, String](_.urlName, str => ProgExParts.values.find(_.urlName == str) getOrElse Implementation)
 
   // Tables
@@ -307,9 +404,7 @@ class ProgTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   // Solutions of users
 
-  class ProgSolutionTable(tag: Tag) extends SolutionsTable[ProgSolution](tag, "prog_solutions") {
-
-    def part = column[ProgExPart]("part")
+  class ProgSolutionTable(tag: Tag) extends PartSolutionsTable[ProgSolution](tag, "prog_solutions") {
 
     def language = column[ProgLanguage]("language")
 

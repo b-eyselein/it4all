@@ -8,7 +8,7 @@ import net.jcazevedo.moultingyaml._
 import play.api.Logger
 
 import scala.language.implicitConversions
-import scala.util.Try
+import scala.util.{Failure, Try}
 
 object ProgExYamlProtocol extends MyYamlProtocol {
 
@@ -18,11 +18,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
       functionName <- yamlObject.stringField(FunctionName)
       outputType <- yamlObject.enumField(OutputTypeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING)
 
-      inputTypes: Seq[InputType] = Seq.empty
-      // FIXME: input types...
-      //      yamlObject.arrayField(InputTypesName, _.asStr).zipWithIndex.map {
-      //        case (optStr, index) => InputType(index, baseValues._1, optStr flatMap (str => ProgDataTypes.byName(str)) getOrElse ProgDataTypes.STRING)
-      //      }
+      inputTypeNames: (Seq[String], Seq[Failure[String]]) <- yamlObject.arrayField(InputTypesName, _.asStr)
 
       sampleSolution <- yamlObject.someField(SAMPLE_SOL_NAME) flatMap ProgSampleSolutionYamlFormat(baseValues._1).read
       sampleTestDataTries <- yamlObject.arrayField(SAMPLE_TESTDATA_NAME, ProgCompleteSampleTestdataYamlFormat(baseValues._1).read)
@@ -30,6 +26,14 @@ object ProgExYamlProtocol extends MyYamlProtocol {
       for (sampleTdFailure <- sampleTestDataTries._2)
       // FIXME: return...
         Logger.error("Could not read sample test data", sampleTdFailure.exception)
+
+      for (inputTypeFailure <- inputTypeNames._2)
+      // FIXME: ...
+        Logger.error("Could not read input type name ", inputTypeFailure.exception)
+
+      val inputTypes: Seq[InputType] = inputTypeNames._1.zipWithIndex.map {
+        case (str, index) => InputType(index, baseValues._1, ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING)
+      }
 
       ProgCompleteEx(new ProgExercise(baseValues, functionName, outputType), inputTypes, sampleSolution, sampleTestDataTries._1)
     }
@@ -45,7 +49,7 @@ object ProgExYamlProtocol extends MyYamlProtocol {
   case class ProgSampleSolutionYamlFormat(exerciseId: Int) extends MyYamlObjectFormat[ProgSampleSolution] {
 
     override def readObject(yamlObject: YamlObject): Try[ProgSampleSolution] = for {
-      language <- yamlObject.enumField(LANGUAGE_NAME, ProgLanguage.valueOf(_).get)
+      language <- yamlObject.enumField(LANGUAGE_NAME, ProgLanguage.valueOf) map (_ getOrElse PYTHON_3)
       sample <- yamlObject.stringField(SAMPLE_NAME)
     } yield ProgSampleSolution(exerciseId, language, sample)
 

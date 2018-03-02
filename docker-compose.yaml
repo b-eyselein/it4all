@@ -13,7 +13,7 @@ services:
         ports:
         - 9080:80
         volumes:
-        - ../data/web/solutions/:/var/www/html/
+        - ./data/web/solutions/:/var/www/html/
 
     dbit4all:
         image:        mysql
@@ -21,7 +21,7 @@ services:
         ports:
         - 3106:3306
         volumes:
-        - ./inits/sql_main_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
+        - ./conf/inits/sql_main_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
         - main_db_volume:/var/lib/mysql
         environment:
         - MYSQL_ROOT_PASSWORD=sT8aV#k7
@@ -32,7 +32,7 @@ services:
         ports:
         - 3107:3306
         volumes:
-        - ./inits/sql_select_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
+        - ./conf/inits/sql_select_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
         - select_db_volume:/var/lib/mysql
         environment:
         - MYSQL_ROOT_PASSWORD=sT8aV#k7
@@ -43,7 +43,7 @@ services:
         ports:
         - 3108:3306
         volumes:
-        - ./inits/sql_change_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
+        - ./conf/inits/sql_change_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
         - update_db_volume:/var/lib/mysql
         environment:
         - MYSQL_ROOT_PASSWORD=sT8aV#k7
@@ -54,7 +54,7 @@ services:
         ports:
         - 3109:3306
         volumes:
-        - ./inits/sql_create_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
+        - ./conf/inits/sql_create_setup.sql:/docker-entrypoint-initdb.d/sql_init.sql
         - create_db_volume:/var/lib/mysql
         environment:
         - MYSQL_ROOT_PASSWORD=sT8aV#k7

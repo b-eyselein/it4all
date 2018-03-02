@@ -1,8 +1,8 @@
 package model.persistence
 
-import model.toolMains.ToolList.STEP
 import model.core.ExPart
-import model.{CompleteEx, Exercise, Solution}
+import model.toolMains.ToolList.STEP
+import model.{CompleteEx, Exercise, PartSolution, Solution}
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
@@ -42,15 +42,33 @@ trait ExerciseWithSolTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType
 
   }
 
+
 }
 
-trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType <: Solution, PartType <: ExPart] extends ExerciseWithSolTableDefs[Ex, CompEx, SolType] {
+trait SingleExerciseTableDefs[Ex <: Exercise, CompEx <: CompleteEx[Ex], SolType <: PartSolution, PartType <: ExPart] extends ExerciseWithSolTableDefs[Ex, CompEx, SolType] {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
 
   import profile.api._
 
+  override type SolTableDef <: PartSolutionsTable[SolType]
+
+
+  // Implicit column types
+
+  implicit val partTypeColumnType: BaseColumnType[PartType]
+
+  // Queries
+
   def futureOldSolution(username: String, exerciseId: Int, part: PartType): Future[Option[SolType]] =
-    db.run(solTable.filter(sol => sol.username === username && sol.exerciseId === exerciseId).result.headOption)
+    db.run(solTable.filter(sol => sol.username === username && sol.exerciseId === exerciseId && sol.part === part).result.headOption)
+
+  // Abstract table definitions
+
+  abstract class PartSolutionsTable[S <: PartSolution](tag: Tag, name: String) extends SolutionsTable[S](tag, name) {
+
+    def part = column[PartType]("part")
+
+  }
 
 }
 

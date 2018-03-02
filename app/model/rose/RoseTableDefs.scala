@@ -45,8 +45,7 @@ case class RoseCompleteEx(ex: RoseExercise, inputType: Seq[RoseInputType], sampl
     }
 
     s"""class $className(Robot, $actorClass):
-       |  def $methodName(self$parameters) -> $returnType:
-       |    pass""".stripMargin
+       |  def $methodName(self$parameters) -> $returnType:""".stripMargin
   }
 
   def imports: String = if (ex.isMultiplayer) {
@@ -82,7 +81,11 @@ case class RoseSampleSolution(exerciseId: Int, language: ProgLanguage, solution:
 
 // Dependent on users and roseExercises
 
-case class RoseSolution(username: String, exerciseId: Int, solution: String) extends Solution
+case class RoseSolution(username: String, exerciseId: Int, part: RoseExPart, solution: String) extends PartSolution {
+
+  override type PartType = RoseExPart
+
+}
 
 // Tables
 
@@ -141,6 +144,9 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   implicit val ProgDataTypesColumnType: BaseColumnType[ProgDataType] =
     MappedColumnType.base[ProgDataType, String](_.typeName, str => ProgDataTypes.byName(str) getOrElse ProgDataTypes.STRING)
 
+  override implicit val partTypeColumnType: BaseColumnType[RoseExPart] =
+    MappedColumnType.base[RoseExPart, String](_.urlName, str => RoseExParts.values.find(_.urlName == str) getOrElse RoseSingleExPart)
+
   // Tables
 
   class RoseExercisesTable(tag: Tag) extends HasBaseValuesTable[RoseExercise](tag, "rose_exercises") {
@@ -196,12 +202,12 @@ class RoseTableDefs @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   // Solutions of users
 
-  class RoseSolutionsTable(tag: Tag) extends SolutionsTable[RoseSolution](tag, "rose_solutions") {
+  class RoseSolutionsTable(tag: Tag) extends PartSolutionsTable[RoseSolution](tag, "rose_solutions") {
 
     def solution = column[String]("solution")
 
 
-    def * = (username, exerciseId, solution) <> (RoseSolution.tupled, RoseSolution.unapply)
+    def * = (username, exerciseId, part, solution) <> (RoseSolution.tupled, RoseSolution.unapply)
 
   }
 
